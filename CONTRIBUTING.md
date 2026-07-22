@@ -33,8 +33,8 @@ If your PR proves a statement that appears in the blueprint, also edit the corre
 ### 4. Submitting a Pull Request
 
 - When you are ready to submit your solution, create a PR from the working branch of your fork to the project's `main` branch. Include `Closes #ISSUE_NUMBER` in the PR description so the PR is linked to the task.
-- After submitting the PR, comment `propose #PR_NUMBER` on the original issue. This links your PR to the task, and the task will move to the `In Progress` column on the dashboard.
-- A task can only move to `In Progress` if it has been claimed by the user proposing the PR.
+- The dashboard picks the PR up automatically: opening a PR whose description contains `Closes #ISSUE_NUMBER` moves the linked task to the `In Review` column (open a draft PR if you are still working on it).
+- If your PR is not linked this way, comment `propose #PR_NUMBER` on the original issue to link it manually; the task then moves to the `In Progress` column. A task can only move to `In Progress` if it has been claimed by the user proposing the PR.
 
 ### 5. Withdrawing or Updating a PR
 
@@ -43,7 +43,7 @@ If your PR proves a statement that appears in the blueprint, also edit the corre
 
 ### 6. Review Process
 
-- After finishing the task and ensuring your PR is ready for review, comment `awaiting-review` on the PR. This will add the `awaiting-review` label to your PR and move the task from `In Progress` to the `In Review` column of the dashboard.
+- After finishing the task and ensuring your PR is ready for review, comment `awaiting-review` on the PR. This will add the `awaiting-review` label to your PR, signalling the maintainers, and ensure the task shows as `In Review` on the dashboard.
 - The project maintainers will review the PR. They may request changes, approve the PR, or provide feedback. If they comment `awaiting-author`, this will add the `awaiting-author` label to your PR.
 - When you've responded, comment `awaiting-review` again to remove the `awaiting-author` label and add the `awaiting-review` label again.
 
