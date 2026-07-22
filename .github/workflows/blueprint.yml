@@ -1,0 +1,71 @@
+name: Build blueprint and deploy pages
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 6 * * *' # Daily, to refresh the upstreaming dashboard
+  workflow_dispatch:    # Allow manual triggering from the GitHub Actions interface
+
+# Only one Pages deployment at a time. Runs queue rather than cancel: the
+# doc-gen build takes over an hour, and cancelling it on follow-up merges
+# loses the whole run (lesson learned in the MIPRE-test repository).
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build_blueprint:
+    runs-on: ubuntu-latest
+    name: Build blueprint, docs and website
+    steps:
+      # doc-gen over all of Mathlib needs more disk than the default runner
+      # has free; without this step the docs build dies near the end.
+      - name: Cleanup to free disk space
+        uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.0
+        with:
+          tool-cache: false
+          android: true
+          dotnet: false
+          haskell: false
+          large-packages: false
+          docker-images: false
+          swap-storage: false
+
+      - name: Checkout project
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # Fetch all history for all branches and tags
+
+      # See https://github.com/leanprover-community/upstreaming-dashboard-action
+      # for more details on how this action works and its parameters
+      - name: Generate upstreaming dashboard snippets
+        uses: leanprover-community/upstreaming-dashboard-action@e3ee7dc54fd376f093ef62973d7b04cf7beabad0
+        with:
+          website-directory: website
+          project-name: MIPRE
+          branch-name: ${{ github.event.repository.default_branch }}
+
+      - name: Install Lean, get mathlib cache and build project
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
+        with:
+          auto-config: false
+          build: true
+          use-github-cache: false
+          use-mathlib-cache: true
+
+      # Builds the blueprint (pdf + web), the doc-gen4 API documentation and
+      # the Jekyll home page from website/, then deploys everything to Pages:
+      # site root = home page, /blueprint = blueprint, /docs = API docs.
+      - name: Compile blueprint and documentation, deploy pages
+        uses: leanprover-community/docgen-action@10db47458f91456d87804787d3dfcd914b9a19e3 # 2026-06-07
+        with:
+          blueprint: true
+          homepage: website

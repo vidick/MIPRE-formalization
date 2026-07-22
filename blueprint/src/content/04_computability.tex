@@ -1,0 +1,86 @@
+\section{Computability}
+\label{ch:computability}
+
+This chapter collects the computability-theoretic ingredients of the proof: classical
+statements with no quantum content, several of which partially exist in Mathlib. Like
+the results of Section~\ref{ch:required-results}, these are external results that the
+project may initially assume as axioms, and each entry carries the same
+formalization-effort estimate. The toolkit of resource-bounded computability results
+comes first; the recursive compression lemma, which builds on it, isolates the
+self-referential part of the proof.
+
+\subsection{Efficient computability toolkit}
+\label{sec:rr-computability}
+
+\effortHard{} (infrastructure: requires a cost model for computation)
+
+\begin{lemma}[Efficient universal Turing machine]
+\label{lem:universal-tm}
+There is a program $u$ and a polynomial $p$ such that $\phi_u(e, x) = \phi_e(x)$ for
+all $e, x$, with $\mathrm{runtime}(u, (e,x)) \leq
+p\bigl(\abs{e}, \abs{x}, \mathrm{runtime}(e, x)\bigr)$.
+\end{lemma}
+
+\begin{lemma}[Efficient s-m-n]
+\label{lem:smn}
+\uses{lem:universal-tm}
+There is a polynomial-time computable $s$ such that $\phi_{s(e,x)}(y) = \phi_e(x, y)$
+for all $e, x, y$, with the runtimes of $e$ and $s(e,x)$ polynomially equivalent.
+\end{lemma}
+
+\begin{lemma}[Efficient Kleene recursion theorem]
+\label{lem:kleene}
+\uses{lem:universal-tm,lem:smn}
+For every polynomial-time computable $f : \{0,1\}^* \to \{0,1\}^*$ there is a program
+$e$ with $\phi_e = \phi_{f(e)}$ and the runtimes of $e$ and $f(e)$ polynomially
+equivalent.
+\end{lemma}
+
+\paragraph{Source.} Folklore; stated in this efficient form in~\cite{MNY}, Lemmas
+2.1--2.3.
+
+\paragraph{Comments.} Mathlib contains the non-resource-bounded versions (universal
+machine, s-m-n and the Rogers fixed-point theorem for \texttt{Nat.Partrec.Code}). The
+efficient versions require a cost model for the chosen machine model; this is real
+infrastructure work and a prerequisite for everything involving ``polynomial-time''.
+A pragmatic first pass can replace ``polynomial time'' by ``computable'' wherever
+Section~\ref{sec:departures} permits, deferring the cost model.
+
+\subsection{The abstract recursive compression lemma}
+\label{sec:rr-compression}
+
+\effortEasy{} (given the toolkit of Section~\ref{sec:rr-computability})
+
+\begin{lemma}[Recursive compression]
+\label{lem:recursive-compression}
+\uses{def:succinct,def:re,lem:universal-tm,lem:smn,lem:kleene}
+Let $f : \{0,1\}^* \to \N \cup \{\infty\}$ be a function and $A \subseteq \{x : f(x) <
+\infty\}$ a nonempty language. Suppose there is a polynomial-time computable function
+$\compr : \{0,1\}^* \times \N \to \{0,1\}^*$ such that whenever $\hat{x}$ is a succinct
+description (Definition~\ref{def:succinct}) of a string $x$ and $y = \compr(\hat{x},
+n)$:
+\begin{enumerate}
+\item $f(y) \geq \max\{ f(x), n \}$, and
+\item if $x \in A$ then $y \in A$.
+\end{enumerate}
+Then there is a polynomial-time computable function $g$ reducing the halting problem to
+$A$: for every Turing machine $e$, if $\phi_e$ halts on the empty input then $g(e) \in
+A$, and otherwise $f(g(e)) = \infty$.
+\end{lemma}
+
+\paragraph{Source.} Marks, Nezhadi and Yuen~\cite{MNY}, Lemma 5.1 (the variant of
+their Lemma 3.1 with compression parameter $n$); the technique is implicit
+in~\cite{DRS08,FJVY19,JNVWY20}. The proof is a fixed-point construction using the
+efficient universal machine, s-m-n and Kleene recursion theorems
+(Section~\ref{sec:rr-computability}).
+
+\paragraph{Comments.} This is the entire ``self-referential'' part of the proof,
+isolated in a statement with no quantum content. In the application
+(Section~\ref{sec:ps-halting}), $A$ is the set of normal form verifier descriptions
+with $\synval = 1$ and finite entanglement requirement, and $f(\verifier) =
+\Ent(\verifier, \frac12)$ (suitably formalized); the compression procedure is
+Theorem~\ref{thm:compression}. Note that~\cite{MNY} also proves a converse (their
+Lemma 4.1): a halting reduction of this kind exists \emph{only if} a compression
+procedure does, which is evidence that this decomposition of the proof is canonical.
+The lemma and its proof are a self-contained computability project, an ideal early
+milestone.

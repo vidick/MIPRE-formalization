@@ -1,0 +1,452 @@
+\section{Anchored parallel repetition}
+\label{ch:anchored-repetition}
+
+This chapter states the parallel repetition theorem used for gap amplification in the
+compression procedure (Section~\ref{sec:ps-parallel-repetition}): repeating the
+\emph{anchored} version of a game amplifies the completeness-soundness gap while
+preserving entanglement lower bounds. Like the results of
+Section~\ref{ch:required-results}, the main theorem (Theorem~\ref{thm:bvy}) is an
+external result that the project may initially assume as an axiom. Its proof, due to
+Bavarian, Vidick and Yuen~\cite{BVY17}, is a self-contained information-theoretic
+argument, and this chapter organizes discharging the axiom as a sub-project.
+Section~\ref{sec:ar-background} collects the background results the proof relies on:
+standard facts of independent interest --- entropy inequalities, Uhlmann's theorem ---
+most of which are natural QuantumLib content, and some of which already exist there.
+Section~\ref{sec:ar-anchoring} defines the anchoring transformation and states the
+theorem, and Section~\ref{sec:ar-decomposition} decomposes the proof into its main
+steps.
+
+\subsection{Background results}
+\label{sec:ar-background}
+
+The proof of Theorem~\ref{thm:bvy} draws on a toolkit of quantum information theory
+(collected in~\cite[Section 5.1]{BVY17}) together with two classical probability
+lemmas of Holenstein. Everything in this subsection is standard and independent of
+nonlocal games; entries carry the same effort estimates as in
+Section~\ref{ch:required-results}.
+
+\subsubsection{Fidelity and Uhlmann's theorem}
+\label{sec:ar-fidelity}
+
+\effortMedium\ \qlib
+
+\begin{definition}[Fidelity]
+\label{def:fidelity}
+\qlib{}
+The \emph{fidelity} between positive semidefinite matrices $\rho, \sigma$ on $\C^d$ is
+$F(\rho, \sigma) = \norm{\sqrt{\rho}\sqrt{\sigma}}_1$, where $\norm{A}_1 =
+\tr\sqrt{A^\dagger A}$ denotes the trace norm.
+\end{definition}
+
+\begin{theorem}[Uhlmann]
+\label{thm:uhlmann}
+\uses{def:fidelity}
+\qlib{}
+Let $\ket{\psi}, \ket{\varphi} \in \mH_A \ot \mH_B$ be unit vectors and let $\rho,
+\sigma$ denote their reduced density matrices on $\mH_A$. Then there exists a unitary
+$V$ on $\mH_B$ such that
+\begin{equation*}
+  \bra{\varphi} \bigl( \Id \ot V \bigr) \ket{\psi} = F(\rho, \sigma)\;.
+\end{equation*}
+\end{theorem}
+
+\begin{lemma}[Fuchs--van de Graaf]
+\label{lem:fvdg}
+\uses{def:fidelity}
+\qlib{}
+For all density matrices $\rho, \sigma$ on $\C^d$,
+\begin{equation*}
+  1 - F(\rho, \sigma) \;\leq\; \frac12 \norm{\rho - \sigma}_1 \;\leq\;
+  \sqrt{1 - F(\rho, \sigma)^2}\;.
+\end{equation*}
+\end{lemma}
+
+\paragraph{Source.} Uhlmann~\cite{Uhl76}; Fuchs and van de Graaf~\cite{FvdG99}. The
+finite-dimensional statements above are Theorem~9.2.1 and Section~9.3
+of~\cite{Wil13}.
+
+\paragraph{Comments.} This is the tool that converts closeness of \emph{reduced}
+states into \emph{local unitaries}: combined with $\norm{\ket{\psi} - \ket{\varphi}}^2
+= 2(1 - \mathrm{Re}\langle\varphi|\psi\rangle)$, Uhlmann's theorem turns a fidelity
+lower bound between reduced density matrices into a unitary on the complementary
+system carrying one purification close to the other. The proof of
+Lemma~\ref{lem:local-unitaries} applies it three times. The finite-dimensional proof
+is a page of linear algebra (Schmidt decomposition, polar decomposition,
+Cauchy--Schwarz) and, like everything in this subsection, should be stated for
+matrices, with no game-theoretic content.
+
+\subsubsection{The relative entropy toolkit}
+\label{sec:ar-entropy}
+
+\effortMedium\ \qlib
+
+\begin{definition}[Relative entropy and mutual information]
+\label{def:rel-entropy}
+\qlib{}
+For positive semidefinite $\rho, \sigma$ on $\C^d$, the \emph{relative entropy} is
+$D(\rho \,\|\, \sigma) = \tr\bigl(\rho (\log\rho - \log\sigma)\bigr)$ if the support
+of $\rho$ is contained in that of $\sigma$, and $+\infty$ otherwise; the
+\emph{relative min-entropy} is $D_\infty(\rho \,\|\, \sigma) = \min\{\lambda : \rho
+\leq 2^\lambda \sigma\}$, and $+\infty$ if no such $\lambda$ exists. For a bipartite
+state $\rho^{AB}$ the \emph{mutual information} is $I(A : B)_\rho = D(\rho^{AB} \,\|\,
+\rho^A \ot \rho^B)$, and for a tripartite state $\rho^{ABC}$ the \emph{conditional
+mutual information} is $I(A : B \,|\, C)_\rho = I(A : BC)_\rho - I(A : C)_\rho$.
+\end{definition}
+
+\begin{lemma}[Basic properties of the relative entropy]
+\label{lem:rel-ent-basic}
+\uses{def:rel-entropy}
+\qlib{}
+For all density matrices on finite-dimensional spaces, with subsystems as indicated:
+\begin{enumerate}
+\item (\textbf{Nonnegativity}) $D(\rho \,\|\, \sigma) \geq 0$;
+\item (\textbf{Monotonicity under partial trace}) $D(\rho^{X} \,\|\, \sigma^{X}) \leq
+  D(\rho^{XY} \,\|\, \sigma^{XY})$;
+\item (\textbf{Composition with the min-entropy}) if $D(\rho \,\|\, \sigma) \leq
+  \lambda_1$ and $D_\infty(\sigma \,\|\, \tau) \leq \lambda_2$ then $D(\rho \,\|\,
+  \tau) \leq \lambda_1 + \lambda_2$;
+\item (\textbf{Mutual information minimizes over product states}) for all density
+  matrices $\sigma^A$, $\tau^B$,
+  $D(\rho^{AB} \,\|\, \sigma^A \ot \tau^B) \geq I(A : B)_\rho$.
+\end{enumerate}
+\end{lemma}
+
+\begin{lemma}[Quantum Pinsker inequality]
+\label{lem:q-pinsker}
+\uses{def:rel-entropy}
+\qlib{}
+For all density matrices $\rho, \sigma$ on $\C^d$,
+\begin{equation*}
+  \frac{1}{2 \ln 2} \norm{\rho - \sigma}_1^2 \;\leq\; D(\rho \,\|\, \sigma)\;.
+\end{equation*}
+\end{lemma}
+
+\begin{lemma}[Chain rule over a classical register]
+\label{lem:rel-ent-chain}
+\uses{def:rel-entropy}
+\qlib{}
+Let $\rho = \sum_x P(x) \ket{x}\bra{x} \ot \rho_x$ and $\sigma = \sum_x Q(x)
+\ket{x}\bra{x} \ot \sigma_x$ be classical-quantum states. Then
+\begin{equation*}
+  D(\rho \,\|\, \sigma) = D(P \,\|\, Q) + \E_{x \sim P} \, D(\rho_x \,\|\, \sigma_x)\;,
+\end{equation*}
+where $D(P \,\|\, Q)$ is the Kullback--Leibler divergence. In particular, for a
+classical-quantum state $\rho^{XE}$, $I(X : E)_\rho = \E_{x} \, D(\rho^E_x \,\|\,
+\rho^E)$.
+\end{lemma}
+
+\begin{lemma}[Strong subadditivity]
+\label{lem:ssa}
+\uses{def:rel-entropy}
+\qlib{}
+For all tripartite density matrices $\rho^{ABC}$, $I(A : B \,|\, C)_\rho \geq 0$.
+\end{lemma}
+
+\paragraph{Source.} Standard; the statements above are exactly the toolkit collected
+in~\cite[Section 5.1]{BVY17}, with textbook treatment in~\cite[Chapter 11]{Wil13}.
+Strong subadditivity is due to Lieb and Ruskai~\cite{LR73}.
+
+\paragraph{Comments.} Core QuantumLib material, and a substantial part of it
+\emph{already exists} there (including strong subadditivity and much of the relative
+entropy machinery), so the formalization task is largely one of interfacing: fixing a
+convention for classical-quantum states, conditioning on classical registers, and
+expectation notation. Strong subadditivity is the only deep theorem in the list;
+everything else is a page or two of matrix analysis.
+
+\subsubsection{Quantum Raz's lemma}
+\label{sec:ar-raz}
+
+\effortEasy{} (given the toolkit) \qlib
+
+\begin{lemma}[Quantum Raz's lemma]
+\label{lem:quantum-raz}
+\uses{def:rel-entropy,lem:rel-ent-basic,lem:rel-ent-chain,lem:ssa}
+\qlib{}
+Let $\rho = \rho^{X_1 \cdots X_n A}$ and $\sigma = \sigma^{X_1} \ot \cdots \ot
+\sigma^{X_n} \ot \sigma^A$ be states with $X = X_1 \cdots X_n$ classical in both.
+Then
+\begin{equation*}
+  \sum_{i=1}^{n} I(X_i : A)_\rho \;\leq\; D\bigl(\rho^{XA} \,\|\, \sigma^{XA}\bigr)\;.
+\end{equation*}
+\end{lemma}
+
+\paragraph{Source.} \cite[Lemma 5.10]{BVY17}; it is the quantum analogue of the
+classical lemma at the heart of Raz's and Holenstein's proofs of parallel
+repetition~\cite{Raz98,Hol09}. The proof is a page, by induction from the chain rule
+(Lemma~\ref{lem:rel-ent-chain}), item 4 of Lemma~\ref{lem:rel-ent-basic}, and strong
+subadditivity (Lemma~\ref{lem:ssa}).
+
+\paragraph{Comments.} The information-theoretic heart of the argument. In the
+application, $\rho$ is the state of the players' question tuple together with one
+player's entanglement register, conditioned on winning the coordinates in a set $C$;
+$\sigma$ is the corresponding unconditioned (product) state; and the relative entropy
+between the two is at most $\log \frac{1}{\Pr(W_C)}$ plus an answer-length term. The
+lemma then says that \emph{most coordinates} $i$ carry almost no information about the
+entanglement register. Reusable in any parallel-repetition or direct-product argument,
+hence a prime upstreaming candidate.
+
+\subsubsection{Conditioning independent random variables}
+\label{sec:ar-conditioning}
+
+\effortEasy
+
+\begin{lemma}[Holenstein's conditioning lemmas]
+\label{lem:holenstein-conditioning}
+Write $\norm{P - Q}$ for the total variation distance between distributions. Let $U =
+(U_1, \ldots, U_m)$ be independent random variables and $W$ an event with $\Pr(W) >
+0$. Then
+\begin{equation*}
+  \sum_{i=1}^{m} \norm{ P_{U_i | W} - P_{U_i} }^2 \;\leq\; \log \frac{1}{\Pr(W)}\;.
+\end{equation*}
+More generally, let $T, V$ be random variables such that $P_{TUV} = P_T \prod_i
+P_{U_i | T} \cdot P_{V | TU}$ (the $U_i$ are independent conditioned on $T$). Then
+\begin{equation*}
+  \frac{1}{m} \sum_{i=1}^{m} \norm{ P_{T U_i V | W} - P_{T V | W} \, P_{U_i | T} }
+  \;\leq\; \sqrt{ \frac{1}{m} \Bigl( \log \abs{\cal{V}} + \log \frac{1}{\Pr(W)}
+  \Bigr) }\;,
+\end{equation*}
+where $\cal{V}$ is the support of $V$.
+\end{lemma}
+
+\paragraph{Source.} Holenstein~\cite{Hol09}, Lemma 4.1 and Corollary 4.3; restated in
+the form used here in~\cite[Section 4.3]{BVY17}.
+
+\paragraph{Comments.} Purely classical probability (the proof is Kullback--Leibler
+divergence, classical Pinsker, and Jensen); the natural home is Mathlib rather than
+QuantumLib, which is why the entry carries no upstreaming badge. The argument also
+uses, silently, the basic calculus of total variation distance: marginalization is
+contractive, and appending a shared conditional kernel to both distributions preserves
+the distance.
+
+\medskip
+
+Finally, the proof freely uses elementary facts about pure states that should be
+stated once and for all: every bipartite pure state can be brought to the symmetric
+Schmidt form $\sum_j \sqrt{\lambda_j} \ket{v_j}\ket{v_j}$ by a local unitary; for unit
+vectors, $\norm{\psi - \varphi}_1 \leq 2 \norm{ \ket{\psi} - \ket{\varphi} }$; the
+trace distance is contractive under measurements; and the ``transpose trick''
+relating operators applied to either half of a state in symmetric Schmidt form. These
+are one-line lemmas of Mathlib-style linear algebra.
+
+\subsection{The anchoring transformation and the theorem}
+\label{sec:ar-anchoring}
+
+\effortEasy\ \qlib
+
+\begin{definition}[Anchoring]
+\label{def:anchoring}
+\uses{def:game}
+\qlib{}
+Let $\game = (\mX, \mY, \mA, \mB, \mu, D)$ be a game and $0 < \alpha < 1$. The
+\emph{$\alpha$-anchored version} of $\game$ is the game $\game_\perp$ with question
+alphabets $\mX \cup \{\perp\}$ and $\mY \cup \{\perp\}$ and the same answer alphabets,
+in which the referee samples $(x, y) \sim \mu$ and then, independently for each
+player, replaces that player's question by the anchor symbol $\perp$ with probability
+$\alpha$; the decision predicate accepts whenever either question is $\perp$, and
+otherwise applies $D$. Unless indicated otherwise, $\game_\perp$ denotes the
+$\frac12$-anchored version.
+\end{definition}
+
+\begin{lemma}[Anchoring preserves the value]
+\label{lem:anchoring-value}
+\uses{def:anchoring,def:q-value}
+\qlib{}
+For every game $\game$ and $0 < \alpha < 1$,
+\begin{equation*}
+  \valstar(\game_\perp) = 1 - (1 - \alpha)^2 \bigl( 1 - \valstar(\game) \bigr)\;.
+\end{equation*}
+Moreover the relation holds at the level of strategies, without change of dimension:
+extending a strategy for $\game$ by arbitrary answers on $\perp$, or restricting a
+strategy for $\game_\perp$ to the original questions, translates value $p$ in one game
+into value $1 - (1-\alpha)^2 (1 - p)$ in the other. The same relation holds for the
+classical value.
+\end{lemma}
+\begin{proof}
+With probability $1 - (1 - \alpha)^2$ at least one question is $\perp$ and the referee
+accepts regardless of the answers; conditioned on the complement, the question pair is
+distributed according to $\mu$ and the predicate is that of $\game$. Extending a
+value-$p$ strategy for $\game$ by a fixed answer on $\perp$ therefore achieves $1 - (1
+- \alpha)^2 (1 - p)$ in $\game_\perp$, and restricting a strategy for $\game_\perp$ to
+the questions of $\game$ --- same state, same measurements, so the same dimension ---
+inverts the relation. Taking suprema over strategies yields the claim.
+\end{proof}
+
+The theorem below is the form of the parallel repetition theorem invoked by the
+compression procedure (Theorem~\ref{thm:parallel-repetition}). Note that it is an
+entanglement statement, not merely a value statement: this is what soundness of the
+compression recursion requires.
+
+\effortHard\ \qlib
+
+\begin{theorem}[Bavarian--Vidick--Yuen]
+\label{thm:bvy}
+\uses{def:q-value,def:ent,def:anchoring,lem:anchoring-value,lem:dependency-breaking,lem:local-unitaries}
+There exists a universal constant $c > 0$ such that for every two-player game $\game$,
+all positive integers $k$, all $0 < \eps \leq 1$, and all $p$ satisfying
+\begin{equation*}
+  p > \frac{4}{\eps} \exp\Bigl( - \frac{c\, \eps^{17}\, k}{s} \Bigr)\;,
+\end{equation*}
+where $s$ is the bit-length of the players' answers in $\game$ and $\game_\perp$ is
+the anchored version of $\game$ (Definition~\ref{def:anchoring}, with $\alpha =
+\frac12$), it holds that
+\begin{equation*}
+  \Ent\bigl( \game_\perp^{k}, p \bigr) \geq \Ent(\game, 1 - \eps)\;.
+\end{equation*}
+\end{theorem}
+
+\paragraph{Source.} Bavarian, Vidick and Yuen~\cite{BVY17}; the entanglement-preserving
+form quoted here is the one used in~\cite[Section 10]{JNVWY20}. The paper proves the
+theorem for a general anchoring parameter $\alpha$, with an $\alpha^{48}$ dependence in
+the exponent that is absorbed into $c$ at $\alpha = \frac12$; passing from
+$\Ent(\game_\perp, 1 - \eps')$ to $\Ent(\game, 1 - \eps)$ costs only the constant
+factor of Lemma~\ref{lem:anchoring-value}, likewise absorbed. An alternate proof of
+the value form of the theorem was given by Jain and Kundu~\cite{JK20} and may be worth
+evaluating as a formalization route.
+
+\paragraph{Comments.} Used for gap amplification: after answer reduction the
+completeness-soundness gap has shrunk to $1$ vs.\ $1 - 1/\poly$, and repetition of the
+anchored game restores the gap to $1$ vs.\ $\frac12$ while preserving entanglement
+lower bounds. The proof is information-theoretic and long; axiomatize first. Two
+translation points for the formalization: the source works with bipartite
+tensor-product strategies while $\Ent$ (Definition~\ref{def:ent}) is defined via
+synchronous strategies, so the statement must be transported, consistent with the
+convention of Section~\ref{sec:departures}; and the anchored version of a synchronous
+game is not literally synchronous (it accepts unequal answers on the question pair
+$(\perp, \perp)$), which is repaired by fixing a canonical accepted answer on $\perp$.
+The exponent $17$ and the constants are provisional, as per
+Section~\ref{sec:conventions}.
+
+\subsection{Decomposition of the proof}
+\label{sec:ar-decomposition}
+
+This subsection records the structure of the proof of Theorem~\ref{thm:bvy}
+following~\cite{BVY17}, at the level of its two main intermediate statements. It is
+not yet a formalization roadmap, but it identifies where each background result of
+Section~\ref{sec:ar-background} enters.
+
+\paragraph{Shape of the argument.} Like all known proofs of parallel repetition, the
+proof is a \emph{rounding} argument. Let $\strategy$ be a dimension-$d$ strategy for
+the repeated game $\game_\perp^{n}$ with value at least $p$. One shows: if $p$ is
+above the threshold of the theorem, then there is a strategy for $\game_\perp$ of
+dimension \emph{at most $d$} with value at least $1 - \eps$. By
+Lemma~\ref{lem:anchoring-value} this in turn yields a strategy for $\game$, still of
+dimension at most $d$, with value $1 - O(\eps)$; the entanglement inequality of the
+theorem is the contrapositive. Everything hinges on the extracted strategy reusing the
+\emph{same} entangled state (suitably measured) and the same measurements (suitably
+conjugated), so that the dimension does not grow.
+
+A counting argument (\cite[Proposition 6.5]{BVY17}) reduces the problem to a
+conditional one: there exists a set $C \subseteq [n]$ of size $O\bigl(\frac{1}{\eps}
+\log \frac{1}{\eps\, p}\bigr)$ such that, conditioned on the event $W_C$ of winning
+all coordinates in $C$, a uniformly random other coordinate $i$ is won with
+probability at least $1 - \eps/2$. The players would therefore like to play
+coordinate $i$ of $\game_\perp^n$ ``conditioned on $W_C$''. The obstruction is that
+neither the conditioned question distribution nor the conditioned post-measurement
+state is locally sampleable. All error terms are controlled by the single quantity
+\begin{equation}
+\label{eq:ar-delta}
+  \delta = \frac{1}{n - \abs{C}} \Bigl( \log \frac{1}{\Pr(W_C)} + \abs{C} \log
+  \abs{\mA} \abs{\mB} \Bigr)\;,
+\end{equation}
+whose answer-length term is where the parameter $s$ of Theorem~\ref{thm:bvy} enters.
+
+\paragraph{The classical step: dependency-breaking variables.} Following Raz and
+Holenstein, one introduces for each coordinate $i \notin C$ a \emph{dependency-breaking
+variable} $\Omega_i = (D_i, M_i)$: $D_i$ points to one of the two players uniformly at
+random, and $M_i$ is a noisy copy of that player's question, where the noise rate
+$\eta = \alpha/2$ is tuned to the anchoring probability so that the marginal of the
+question pair remains that of $\game_\perp$. Conditioned on $\Omega_i$ the two
+players' questions in coordinate $i$ are \emph{independent}. Write $R_{-i}$ for the
+tuple collecting the $\Omega_j$ for $j \notin C \cup \{i\}$ together with the
+questions and answers in the coordinates of $C$: this is the shared classical data
+that the extracted strategy will (non-uniformly) fix.
+
+\effortMedium
+
+\begin{lemma}[Conditioning does not skew individual coordinates]
+\label{lem:dependency-breaking}
+\uses{def:anchoring,lem:holenstein-conditioning}
+Fix a strategy for $\game_\perp^{n}$, a set $C \subseteq [n]$ with $\Pr(W_C) > 0$, and
+let $\delta$ be as in \eqref{eq:ar-delta} and $m = n - \abs{C}$. Then, writing
+$\E_{i}$ for the expectation over a uniform $i \notin C$:
+\begin{enumerate}
+\item $\E_{i} \, \norm{ P_{\Omega_i X_i Y_i | W_C} - P_{\Omega_i X_i Y_i} } \leq
+  \sqrt{\delta}$;
+\item $\E_{i} \, \norm{ P_{X_i Y_i}\, P_{R_{-i} | X_i = \perp, Y_i = \perp, W_C} -
+  P_{X_i Y_i}\, P_{R_{-i} | X_i, Y_i, W_C} } = O\bigl( \sqrt{\delta} / \alpha^2
+  \bigr)$.
+\end{enumerate}
+\end{lemma}
+
+\paragraph{Source.} \cite[Lemma 4.6]{BVY17}, items condensed; the proof is classical
+probability from Lemma~\ref{lem:holenstein-conditioning}.
+
+\paragraph{Comments.} Item 1 says conditioning on $W_C$ barely disturbs any single
+coordinate; item 2 says the shared data $R_{-i}$ can be sampled without knowing the
+players' actual questions $(x, y)$ --- by pretending both are the anchor --- which is
+the classical half of the correlated sampling problem. This is where anchoring first
+pays: switching a question to $\perp$ costs only a factor $\poly(1/\alpha)$ because
+every question profile has the anchor in its support.
+
+\paragraph{The quantum step: dependency-breaking states.} The quantum analogue must
+also ``condition the entangled state on $W_C$''. For a realization $r_{-i} =
+(\omega_{-i}, a_C, b_C)$ of $R_{-i}$ and questions $x, y$ for coordinate $i$, define
+the \emph{dependency-breaking state}
+\begin{equation*}
+  \ket{\tilde\Phi_{r_{-i}, x, y}} \;\propto\; \bigl( A_{\omega_{-i}, x}(a_C)
+  \bigr)^{1/2} \ot \bigl( B_{\omega_{-i}, y}(b_C) \bigr)^{1/2} \, \ket{\psi}\;,
+\end{equation*}
+where $A_{\omega_{-i}, x}(a_C)$ denotes the POVM element of the strategy producing
+answers $a_C$ in the coordinates of $C$, averaged over all questions outside
+coordinate $i$ consistent with $\omega_{-i}$ and with $X_i = x$ (and symmetrically for
+$B$). This is the post-measurement state of $\ket\psi$ given that the answers on $C$
+were $(a_C, b_C)$, as seen when coordinate $i$ carries $(x, y)$. The extracted
+strategy would like to hold $\ket{\tilde\Phi_{r_{-i}, x, y}}$, but the state depends
+on \emph{both} questions; the key technical statement is that the players can reach it
+from the question-independent state $\ket{\tilde\Phi_{r_{-i}, \perp, \perp}}$ by
+\emph{local} unitaries.
+
+\effortHard
+
+\begin{lemma}[Existence of local unitaries]
+\label{lem:local-unitaries}
+\uses{lem:dependency-breaking,lem:quantum-raz,lem:q-pinsker,lem:rel-ent-basic,lem:rel-ent-chain,thm:uhlmann,lem:fvdg}
+In the setting above there exist, for every $i \notin C$, $r_{-i}$, $x$ and $y$,
+unitaries $U_{r_{-i}, x}$ on the first player's space and $V_{r_{-i}, y}$ on the
+second player's space such that
+\begin{equation*}
+  \E_{i} \; \E_{r_{-i} | W_C} \; \E_{(x,y)} \, \norm{ \bigl( U_{r_{-i}, x} \ot
+  V_{r_{-i}, y} \bigr) \ket{\tilde\Phi_{r_{-i}, \perp, \perp}} -
+  \ket{\tilde\Phi_{r_{-i}, x, y}} } = O\bigl( \delta^{1/16} \alpha^{-3} \bigr)\;,
+\end{equation*}
+where $(x, y)$ is distributed according to the question distribution of
+$\game_\perp$.
+\end{lemma}
+
+\paragraph{Source.} \cite[Proposition 5.1]{BVY17}, proved in Sections 5.2--5.4 there.
+
+\paragraph{Comments.} This is the technical core of the paper, and the second place
+anchoring pays: the state is moved one question at a time, using the anchor as a
+``home base'' connected to every question ($\tilde\Phi_{\perp,\perp} \to
+\tilde\Phi_{x,\perp} \to \tilde\Phi_{x,y}$). Each switch is an application of
+Uhlmann's theorem (Theorem~\ref{thm:uhlmann}, via Lemma~\ref{lem:fvdg}): the required
+closeness of reduced density matrices comes from quantum Raz's lemma
+(Lemma~\ref{lem:quantum-raz}) applied to the state of questions and one player's
+register conditioned on $W_C$, converted to trace distance by Pinsker's inequality
+(Lemma~\ref{lem:q-pinsker}). A separate argument compares the normalization factors of
+the unnormalized states ($\gamma$-comparison, \cite[Lemma 5.17]{BVY17}). The exponent
+$\frac{1}{16}$ is an artifact of chaining these approximations and is provisional.
+
+\paragraph{Assembly.} Given Lemmas~\ref{lem:dependency-breaking}
+and~\ref{lem:local-unitaries}, the extracted strategy for $\game_\perp$ is: fix (by
+averaging) a good coordinate $i$ and realization $r_{-i}$; share the state
+$\ket{\tilde\Phi_{r_{-i}, \perp, \perp}}$; on questions $(x, y)$, apply $U_{r_{-i},
+x}$ and $V_{r_{-i}, y}$; then measure with the original measurements for coordinate
+$i$, conditioned on the fixed answers $(a_C, b_C)$ (a renormalized, ``pretty good''
+version of the strategy's POVMs). The main lemma of~\cite[Section 6]{BVY17} shows the
+resulting question--answer distribution is $O(\delta^{1/16}/\alpha^3)$-close in total
+variation to $P_{X_i Y_i A_i B_i | W_C}$, whose winning probability is at least $1 -
+\eps/2$ by the counting argument; the parameters of Theorem~\ref{thm:bvy} are set so
+that the total loss is at most $\eps$. The state and measurements act on the original
+$d$-dimensional spaces, so the extracted strategy has dimension at most $d$, giving
+the entanglement form of the theorem.

@@ -1,0 +1,43 @@
+name: Website build check
+
+# Fast standalone check that the Jekyll home page builds the same way
+# docgen-action builds it inside the (2-hour) Pages workflow. Exists because
+# two full Pages runs were lost to home-page-only errors.
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'website/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build_website:
+    runs-on: ubuntu-latest
+    name: Build Jekyll website
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v7
+
+      - name: Generate upstreaming dashboard snippets
+        uses: leanprover-community/upstreaming-dashboard-action@e3ee7dc54fd376f093ef62973d7b04cf7beabad0
+        with:
+          website-directory: website
+          project-name: MIPRE
+          branch-name: ${{ github.event.repository.default_branch }}
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          bundler-cache: true
+          working-directory: website
+
+      - name: Build website with Jekyll
+        working-directory: website
+        env:
+          JEKYLL_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: JEKYLL_ENV=production bundle exec jekyll build

@@ -1,0 +1,7 @@
+title: MIP* = RE
+description: A collaborative Lean 4 formalization of MIP* = RE
+theme: minima
+markdown: kramdown
+# Required by the github-pages gem's metadata plugin (docgen-action builds
+# this site with bundler rather than the hosted Pages builder).
+repository: vidick/MIPRE-formalization

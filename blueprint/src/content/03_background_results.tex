@@ -1,0 +1,332 @@
+\section{Background results}
+\label{ch:required-results}
+
+This chapter collects theorems that the proof relies on but whose proofs appear in
+other papers. Each entry gives a full statement, a pointer to the literature, and
+comments on its role and on formalization. The project may initially assume these as
+axioms; discharging them are independent sub-projects. Three of these results are
+larger sub-projects and are developed in their own sections: the computability
+results in Section~\ref{ch:computability} and anchored parallel repetition in
+Section~\ref{ch:anchored-repetition}; they are included in the summary table below
+for completeness. The general-purpose quantum information facts feeding the parallel
+repetition proof (fidelity and Uhlmann's theorem, a relative entropy toolkit, quantum
+Raz's lemma) are collected in Section~\ref{sec:ar-background} and likewise appear in
+the table. Statements are given in the
+form closest to how they will be used; where the source states a bipartite version and
+the project needs a synchronous one (see Section~\ref{sec:departures}), the translation
+is part of the formalization task and is noted in the comments.
+
+Each entry carries an estimate of the formalization effort:
+\effortEasy{} for self-contained arguments of at most a few pages,
+\effortMedium{} for substantial but well-delimited developments, and
+\effortHard{} for results whose formalization is a project in itself;
+\effortMathlib{} marks statements essentially available in Mathlib. The estimates
+are for the statement as it will be used (including any synchronous translation) and
+are of course provisional. Independently of the effort estimate, the \qlib{} badge
+(introduced in Section~\ref{ch:foundations}) marks results of general
+quantum-information interest that are intended to be upstreamed to QuantumLib.
+
+\begin{center}
+\small
+\begin{tabular}{llll}
+\hline
+Result & Statement & Source & Effort \\
+\hline
+Gowers--Hatami & Thm.~\ref{thm:gowers-hatami} & \cite{GH17,dlS21} & medium \\
+Almost-synchronous correlations & Thm.~\ref{thm:almost-sync} & \cite{Vid22} & hard \\
+Orthonormalization & Thm.~\ref{thm:orthonormalization} & \cite{dlS21} & medium \\
+Magic Square rigidity & Thm.~\ref{thm:ms-rigidity} & \cite{WBMS16} & easy \\
+Low individual degree test & Thm.~\ref{thm:qld} & \cite{JNVWY21qld} & hard \\
+Anchored parallel repetition & Thm.~\ref{thm:bvy} & \cite{BVY17} & hard \\
+Uhlmann, Fuchs--van de Graaf & Thm.~\ref{thm:uhlmann}, Lem.~\ref{lem:fvdg} & \cite{Uhl76,FvdG99} & medium \\
+Relative entropy toolkit & Lems.~\ref{lem:rel-ent-basic}--\ref{lem:ssa} & \cite{Wil13,LR73} & medium \\
+Quantum Raz's lemma & Lem.~\ref{lem:quantum-raz} & \cite{BVY17} & easy \\
+Holenstein conditioning lemmas & Lem.~\ref{lem:holenstein-conditioning} & \cite{Hol09} & easy \\
+Recursive compression lemma & Lem.~\ref{lem:recursive-compression} & \cite{MNY} & easy \\
+Efficient computability toolkit & Lems.~\ref{lem:universal-tm}--\ref{lem:kleene} & \cite{MNY} & hard \\
+Halting undecidability & Thm.~\ref{thm:halting-undecidable} & Mathlib & \checkmark \\
+Succinct Cook--Levin & Thm.~\ref{thm:succinct-sat} & \cite{Coo71,PY86} & hard \\
+Self-dual normal bases & Lem.~\ref{lem:self-dual-basis} & \cite{Sho90,Len91} & medium \\
+Schwartz--Zippel & Lem.~\ref{lem:schwartz-zippel} & \cite{Sch80,Zip79} & \checkmark \\
+Value approximable from below & Lem.~\ref{lem:value-lower-approx} & folklore & medium \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{The Gowers--Hatami theorem}
+\label{sec:rr-gowers-hatami}
+
+\effortMedium\ \qlib
+
+\begin{theorem}[Gowers--Hatami]
+\label{thm:gowers-hatami}
+There is a universal constant $C > 0$ such that the following holds. Let $G$ be a
+finite group, $\eps \geq 0$, and $f : G \to U(d)$ a function such that
+\begin{equation*}
+  \E_{x, y \sim G} \, \norm{f(x) f(y) - f(xy)}_{hs}^2 \leq \eps\;,
+\end{equation*}
+where $\norm{A}_{hs}^2 = \tau(A^\dagger A)$ is the dimension-normalized
+Hilbert--Schmidt norm. Then there exist $d' \geq d$ with $d' \leq (1 + C\eps)\, d$, an
+isometry $V : \C^d \to \C^{d'}$, and a representation $\rho : G \to U(d')$ such that
+\begin{equation*}
+  \E_{x \sim G} \, \norm{f(x) - V^\dagger \rho(x) V}_{hs}^2 \leq C \eps\;.
+\end{equation*}
+\end{theorem}
+
+\paragraph{Source.} Gowers and Hatami~\cite{GH17}. A quantitative form suited to
+applications in nonlocal games, and a version adapted to the tracial setting, is given
+by de la Salle~\cite{dlS21} and in~\cite{Vid22}.
+
+\paragraph{Comments.} This is the stability result underlying all rigidity
+(self-testing) arguments in the proof: an approximate representation of the Pauli group
+$\F_2^{2k}$ (with its cocycle) is close to an exact one, which forces the presence of
+EPR pairs. The proof is short (a few pages of finite group representation theory plus a
+compactness-free averaging argument) and is a good early target. The version needed for
+the synchronous framework replaces the bipartite state by the tracial state; this is
+the form proved in~\cite{dlS21}.
+
+\subsection{Almost-synchronous correlations}
+\label{sec:rr-almost-sync}
+
+\effortHard\ \qlib
+
+\begin{theorem}[Almost-synchronous strategies are near synchronous strategies]
+\label{thm:almost-sync}
+\uses{def:sync-game,def:sync-value,def:q-value}
+There are universal constants $C > 0$ and $0 < c \leq 1$ such that for every
+synchronous game $\game$,
+\begin{equation*}
+  1 - \synval(\game) \;\leq\; C \bigl( 1 - \valstar(\game) \bigr)^{c}\;.
+\end{equation*}
+More precisely, every tensor-product strategy for $\game$ with value $1 - \eps$ is,
+up to local isometries, well-approximated on average by a convex combination of
+synchronous strategies each of value at least $1 - C\eps^{c}$.
+\end{theorem}
+
+\paragraph{Source.} Vidick~\cite{Vid22}, building on~\cite{KPS18,PSSTW16}; the
+statement above is the corollary needed here, with constants independent of the game's
+size.
+
+\paragraph{Comments.} The proof uses the orthonormalization
+lemma (Section~\ref{sec:rr-orthonormalization}) and a rounding argument.
+
+\subsection{The orthonormalization lemma}
+\label{sec:rr-orthonormalization}
+
+\effortMedium\ \qlib
+
+\begin{theorem}[Orthonormalization]
+\label{thm:orthonormalization}
+\uses{def:distance}
+There is a universal constant $C > 0$ such that the following holds. Let $(\cal{M},
+\tau)$ be a von Neumann algebra with a normal faithful tracial state (for the finite-%
+dimensional case, $\cal{M} = M_d(\C)$ with the normalized trace). Let $\{M_a\}_{a \in
+\mA}$ be a POVM in $\cal{M}$ that is $\eps$-nearly projective:
+\begin{equation*}
+  \sum_{a \in \mA} \tau\bigl( M_a - M_a^2 \bigr) \leq \eps\;.
+\end{equation*}
+Then there is a projective measurement $\{P_a\}_{a \in \mA}$ in $\cal{M}$ with
+\begin{equation*}
+  \sum_{a \in \mA} \norm{M_a - P_a}_{L^2(\tau)}^2 \leq C\eps\;.
+\end{equation*}
+The same holds, on average, for a family $\{M^x_a\}$ indexed by $x \sim \mu$.
+\end{theorem}
+
+\paragraph{Source.} de la Salle~\cite{dlS21}, which gives a dimension-free bound with
+explicit constants; earlier versions with worse parameters appear in~\cite{KPS18}
+and in~\cite{JNVWY20}.
+
+\paragraph{Comments.} Used constantly: soundness analyses produce POVMs that are only
+approximately projective, and this lemma replaces them by genuinely projective
+measurements on the same space, which is what makes the ``projective strategies
+throughout'' convention of Section~\ref{sec:departures} viable (avoiding Naimark
+dilation). The finite-dimensional case suffices for the main theorem and is a clean,
+self-contained formalization target in linear algebra.
+
+\subsection{Magic Square rigidity}
+\label{sec:rr-magic-square}
+
+\effortEasy\ \qlib
+
+\begin{theorem}[Magic Square rigidity]
+\label{thm:ms-rigidity}
+\uses{def:q-value,def:distance}
+Let $\strategy = (\ket{\psi}, A, B)$ be a strategy that succeeds in the Magic Square
+game $\game^{\MS}$ with probability $1 - \eps$. Then there exist local isometries
+$\phi_\alice : \mH_\alice \to (\C^2)^{\ot 2} \ot \mH_{\alice''}$, $\phi_\bob :
+\mH_\bob \to (\C^2)^{\ot 2} \ot \mH_{\bob''}$ and a state $\ket{\aux} \in
+\mH_{\alice''} \ot \mH_{\bob''}$ such that
+\begin{equation*}
+  \norm{ \phi_\alice \ot \phi_\bob \ket{\psi} - \ket{\EPR_2}^{\ot 2} \ot \ket{\aux} }
+  \leq O(\sqrt{\eps})\;,
+\end{equation*}
+and, writing $\tilde A = \phi_\alice A \phi_\alice^\dagger$, the observables for the
+questions $\Variable_1$ and $\Variable_5$ satisfy
+$\tilde A^{\Variable_1}_b \approx_{\sqrt\eps} \sigma^X_b \ot \Id$ and
+$\tilde A^{\Variable_5}_b \approx_{\sqrt\eps} \sigma^Z_b \ot \Id$ on
+$\ket{\EPR_2}^{\ot 2} \ot \ket{\aux}$ (and symmetrically for $\tilde B$). In
+particular the corresponding $\pm 1$-observables approximately anticommute:
+$\tilde A^{\Variable_1} \tilde A^{\Variable_5} \approx_{\sqrt\eps}
+- \tilde A^{\Variable_5} \tilde A^{\Variable_1}$.
+\end{theorem}
+
+\paragraph{Source.} Wu, Bancal, McKague and Scarani~\cite{WBMS16}; the game is the
+Mermin--Peres magic square. The form above is~\cite[Section 8]{JNVWY20}.
+
+\paragraph{Comments.} This is the elementary seed of all rigidity in the proof: it
+certifies a single pair of anticommuting observables, which the low individual degree
+test then amplifies to many qubits. The game is constant-sized, the proof is a page of
+algebra, and it is an excellent first self-testing target. The synchronous restatement
+(one measurement family, tracial state) should be derived once and reused as a template
+for the other rigidity statements.
+
+\subsection{The quantum low individual degree test}
+\label{sec:rr-qld}
+
+\effortHard\ \qlib
+
+\begin{theorem}[Pauli basis test / quantum low individual degree test]
+\label{thm:qld}
+\uses{def:q-value,def:distance,thm:ms-rigidity}
+There exists a function
+\begin{equation*}
+  \delta_{qld}(\eps, m, d, q) = a (md)^a \bigl( \eps^b + q^{-b} + 2^{-bmd} \bigr)
+\end{equation*}
+for universal constants $a \geq 1$ and $0 < b < 1$ such that the following holds. For
+all admissible parameter tuples $\qldparams = (q, m, d)$ and all strategies
+$\strategy = (\ket{\psi}, A, B)$ for the game $\game^{\pauli}_{\qldparams}$ that
+succeed with probability at least $1 - \eps$, there exist local isometries
+$\phi_\alice, \phi_\bob$ mapping into $\mH' \ot (\C^q)^{\ot M}$ with $M = 2^m$, and a
+state $\ket{\aux}$, such that
+$\norm{\phi_\alice \ot \phi_\bob \ket{\psi} - \ket{\aux} \ot \ket{\EPR_q}^{\ot M}}
+\leq \delta_{qld}$, and for $W \in \{X, Z\}$ the measurements for the questions
+$(\pauli, W)$ are $\delta_{qld}$-close to the Pauli basis measurements $\tau^W_u$, $u
+\in \F_q^M$, acting on $\ket{\EPR_q}^{\ot M}$.
+\end{theorem}
+
+\paragraph{Source.} Ji, Natarajan, Vidick, Wright and Yuen~\cite{JNVWY21qld}, which
+proves quantum soundness of the classical low individual degree test and derives the
+Pauli basis test; this corrects the analysis of the total degree test relied on in
+early versions of~\cite{JNVWY20}. The reduction from the Pauli test to the low
+individual degree test follows~\cite[Section 7]{JNVWY20}, with the Magic Square
+theorem (Theorem~\ref{thm:ms-rigidity}) providing the base anticommutation.
+
+\paragraph{Comments.} This is the largest and hardest imported result: its proof is an
+induction on the number of variables with a delicate self-improvement argument. It is
+the workhorse of question reduction (introspection certifies the players' sampling of
+their own questions against Pauli basis measurements). It should certainly be
+axiomatized at first. A formalization would likely follow the synchronous/tracial
+presentation, using Theorem~\ref{thm:gowers-hatami} and
+Theorem~\ref{thm:orthonormalization} as black boxes.
+
+\subsection{Undecidability of the halting problem}
+\label{sec:rr-halting}
+
+\effortMathlib
+
+\begin{theorem}[Turing]
+\label{thm:halting-undecidable}
+\uses{def:re}
+The halting problem is r.e.\ but not decidable; it is $\RE$-complete under many-one
+(indeed polynomial-time) reductions.
+\end{theorem}
+
+\paragraph{Source.} Turing (1936); in Mathlib as part of the
+\texttt{Computability} library.
+
+\paragraph{Comments.} Listed to close the dependency graph: combined with the halting
+reduction (Theorem~\ref{thm:halting}) it yields undecidability of approximating the
+game value, and $\RE$-completeness gives $\RE \subseteq \MIPstar$.
+
+\subsection{Cook--Levin and succinct satisfiability}
+\label{sec:rr-cook-levin}
+
+\effortHard
+
+\begin{theorem}[Explicit succinct Cook--Levin]
+\label{thm:succinct-sat}
+\uses{def:succinct,def:decider}
+There is a polynomial-time algorithm that, given a decider $\decider$, an index $n$,
+a time bound $T$ (in binary) and strings $x, y$, outputs a succinct description (in the
+sense of Definition~\ref{def:succinct}, via Boolean formulas) of a 3SAT instance
+$\varphi$ of size $2^{\poly(\log T)}$ such that $\varphi$ is satisfiable if and only if
+there exist strings $a, b$ of length at most $T$ with $\decider(n, x, y, a, b) = 1$
+within $T$ steps; moreover satisfying assignments of $\varphi$ encode the
+computation tableau together with $(a,b)$.
+\end{theorem}
+
+\paragraph{Source.} Cook~\cite{Coo71} and Levin for the tableau reduction; Papadimitriou
+and Yannakakis~\cite{PY86} for succinct representations and their complexity;
+the explicit form needed here is~\cite[Section 10]{JNVWY20}.
+
+\paragraph{Comments.} This is the classical core of answer reduction: the players prove
+satisfiability of $\varphi$ (arithmetized over a low-degree extension) instead of
+sending $(a,b)$. The statement is long but entirely combinatorial. Cook--Levin has been
+formalized in other proof assistants; a Lean formalization with the explicit-uniformity
+guarantees above is a substantial but well-specified sub-project.
+
+\subsection{Self-dual normal bases}
+\label{sec:rr-self-dual-basis}
+
+\effortMedium
+
+\tnote{Is this needed?}
+
+\begin{lemma}[Deterministic self-dual normal basis]
+\label{lem:self-dual-basis}
+There is a deterministic algorithm that, given an odd integer $k > 0$, outputs in time
+$\poly(k)$ a self-dual normal basis of $\F_{2^k}$ over $\F_2$ together with its
+multiplication tables.
+\end{lemma}
+
+\paragraph{Source.} Combines Shoup's deterministic irreducible-polynomial
+construction~\cite{Sho90}, Lenstra's isomorphism algorithm~\cite{Len91}, and the
+classical existence and construction of self-dual normal bases in characteristic $2$
+for odd $k$; see the discussion in~\cite[Section 3]{JNVWY20}.
+
+\paragraph{Comments.} Needed so that verifiers can do field arithmetic over
+$\F_{2^k}$ using only $\F_2$-data (the ``downsize'' maps), uniformly and
+deterministically. This is why field sizes are restricted to $q = 2^k$, $k$ odd
+(``admissible''). Self-contained algebra/algorithmics; independent of everything
+quantum.
+
+\subsection{The Schwartz--Zippel lemma}
+\label{sec:rr-schwartz-zippel}
+
+\effortMathlib
+
+\begin{lemma}[Schwartz--Zippel]
+\label{lem:schwartz-zippel}
+Let $f \neq g : \F_q^m \to \F_q$ be polynomials of total degree at most $d$. Then
+$\Pr_{x \sim \F_q^m}[ f(x) = g(x) ] \leq d/q$.
+\end{lemma}
+
+\paragraph{Source.} \cite{Sch80,Zip79}. A version is available in Mathlib
+(multivariate polynomials over finite fields).
+
+\paragraph{Comments.} Used throughout the low-degree machinery (distance of the
+Reed--Muller code, soundness of arithmetization). The variant for individual degree
+should be derived alongside it.
+
+\subsection{Approximating the value from below ($\MIPstar \subseteq \RE$)}
+\label{sec:rr-value-approx}
+
+\effortMedium
+
+\begin{lemma}[The value is approximable from below]
+\label{lem:value-lower-approx}
+\uses{def:game-description,def:sync-value,def:q-value,def:re}
+The set $\{ (g, p) : g \text{ a game description}, p \in \mathbb{Q},
+\synval(\game_g) > p \}$ is recursively enumerable, and likewise for $\valstar$.
+\end{lemma}
+
+\paragraph{Source.} Folklore; see~\cite[Section 12]{JNVWY20}. Enumerate
+tensor-product strategies with entries in $\mathbb{Q}[i]$ and evaluate; density of
+such strategies among all tensor-product strategies gives completeness of the
+enumeration.
+
+\paragraph{Comments.} This is the easy inclusion $\MIPstar \subseteq \RE$ and one half
+of Theorem~\ref{thm:mipstar-eq-re}. The commuting-operator analogue (approximating
+$\valco$ from \emph{above} via the NPA hierarchy~\cite{NPA08}) is \emph{not} needed for
+the main theorem, but becomes relevant for the downstream consequences in
+Section~\ref{ch:downstream}.

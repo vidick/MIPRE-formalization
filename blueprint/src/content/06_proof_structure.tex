@@ -1,0 +1,230 @@
+\section{Structure of the proof}
+\label{ch:proof-structure}
+
+This chapter records the main transformations of~\cite{JNVWY20} at headline level: for
+each, what it does, what it relies on, and one theorem statement so that the dependency
+graph reflects the architecture. Working out each section --- restating it in the
+synchronous framework, decomposing it into lemmas, and setting the constants --- is a
+main task of the project. The paper factors several of these transformations through
+\emph{typed} verifiers and a detyping step; that machinery is not
+reproduced here and should be introduced locally where needed.
+
+\subsection{Conditionally linear functions and samplers}
+\label{sec:ps-cl}
+
+Question distributions must be structured enough that players can sample them
+\emph{on their own} in a certifiable way (introspection), yet expressive enough to
+implement all the verifiers in the pipeline. The right class is that of conditionally
+linear distributions: linear maps applied in stages, where each stage may depend on
+the output of the previous ones.
+
+\begin{definition}[Conditionally linear function]
+\label{def:cl-function}
+Let $V = \F_q^s$ and $\ell \geq 1$. An \emph{$\ell$-level conditionally linear (CL)
+function} on $V$ is defined recursively: a $1$-level CL function is a linear map $L :
+V \to V$; an $\ell$-level CL function is given by a direct sum decomposition $V = V_1
+\oplus V_{>1}$, a linear map $L_1$ on $V_1$, and, for each value $u$ of $L_1$, an
+$(\ell-1)$-level CL function $L^{u}_{>1}$ on $V_{>1}$; it maps $z = z_1 + z_{>1}$ to
+$L_1(z_1) + L^{L_1(z_1)}_{>1}(z_{>1})$. A \emph{CL distribution} is the distribution of
+$(L^\alice(z), L^\bob(z))$ for uniformly random $z \in V$ and CL functions $L^\alice,
+L^\bob$.
+\end{definition}
+
+An $\ell$-level sampler (Definition~\ref{def:sampler}) presents a CL distribution via
+Turing machines answering structured queries (dimensions, marginals, and evaluations of
+the linear maps and their canonical complements). This section of the project should
+fix the query interface once and for all, and prove the closure properties used later:
+products, concatenation, and reduction of the field size to $q = 2$
+(``downsizing'', using Lemma~\ref{lem:self-dual-basis}).
+
+\subsection{Question reduction: introspection}
+\label{sec:ps-introspection}
+
+Introspection removes the verifier's cost of sampling questions: instead of receiving
+questions for $\verifier_{2^n}$, the players \emph{sample the questions themselves} by
+measuring shared EPR pairs, and the new verifier uses the Pauli basis test
+(Theorem~\ref{thm:qld}) to force honest sampling. The CL structure of the sampler is
+what makes commitment to each stage of the sampled question enforceable (the ``hiding''
+directions of the CL decomposition). The result is a verifier whose questions are
+exponentially smaller, at the price of a fixed number of levels.
+
+\begin{theorem}[Introspection]
+\label{thm:introspection}
+\uses{def:normal-verifier,def:lambda-bounded,def:pcc,def:ent,thm:qld,def:cl-function}
+There is a polynomial-time Turing machine $\ComputeIntroVerifier$ that on input
+$(\verifier, \lambda, \ell)$ returns a $5$-level normal form verifier $\vint =
+(\sint, \dint)$ with
+$\TIME_{\sint}(n) = \poly(n, \lambda, \ell)$,
+$\TIME_{\dint}(n) = \poly(2^{\lambda n}, \ell)$ and $\abs{\dint} = \poly(\lambda,
+\ell)$, such that for every $\lambda$-bounded $\ell$-level verifier $\verifier$ there
+is a function $\delta(\eps, n) = a\bigl( (\lambda n)^a \eps^b + (\lambda n)^{-b}
+\bigr)$ (constants $a, b$ depending only on $\ell$) with, for all $n$:
+\begin{enumerate}
+\item (\textbf{Completeness}) If $\verifier_{2^n}$ has a value-$1$ PCC strategy, so
+  does $\vint_n$.
+\item (\textbf{Soundness}) If $\synval(\vint_n) > 1 - \eps$ then
+  $\synval(\verifier_{2^n}) \geq 1 - \delta(\eps, n)$.
+\item (\textbf{Entanglement}) $\Ent(\vint_n, 1 - \eps) \geq \max\bigl\{
+  \Ent(\verifier_{2^n}, 1 - \delta(\eps, n)),\ (1 - \delta(\eps,n))\,
+  2^{2^{\lambda n}} \bigr\}$.
+\end{enumerate}
+\end{theorem}
+
+The soundness analysis is a long rigidity argument~\cite[Section 8]{JNVWY20}. It builds on techniques introduced in~\cite{NW19}, and it may be adviseable to formalize some of the key lemmas there first. These include the Pauli basis test together with a toolkit of approximate-measurement lemmas
+(twirling, commutation, sandwiching). For this project, those lemmas should be stated and proved in the tracial/cynchronous setting. 
+
+\subsection{Oracularization}
+\label{sec:ps-oracularization}
+
+Oracularization converts a normal form verifier into one where a single player (the
+``oracle'') receives both original questions and answers both, while the other player
+receives one of the two questions and must answer consistently. This makes the game's
+predicate a pointwise function of one player's answer --- the format required by answer
+reduction. This is probably the easiest transformation in the paper and could be attempted first to fix the semantics. 
+
+\begin{theorem}[Oracularization]
+\label{thm:oracularization}
+\uses{def:normal-verifier,def:pcc,def:ent}
+There is a polynomial-time Turing machine $\ComputeOracleVerifier$ mapping a normal
+form verifier $\verifier = (\sampler, \decider)$ to a normal form verifier $\vora$
+such that, for some $\delta(\eps) = \poly(\eps)$ and all $n$:
+\begin{enumerate}
+\item (\textbf{Completeness}) If $\verifier_n$ has a value-$1$ PCC strategy then
+  $\vora_n$ has a value-$1$ symmetric PCC strategy.
+\item (\textbf{Soundness}) If $\synval(\vora_n) > 1 - \eps$ then
+  $\synval(\verifier_n) \geq 1 - \delta(\eps)$, and
+  $\Ent(\vora_n, 1 - \eps) \geq \Ent(\verifier_n, 1 - \delta(\eps))$.
+\item (\textbf{Complexity}) The sampler of $\vora$ depends only on $\sampler$, with
+  $\TIME$ within a constant factor and the same number of levels.
+\end{enumerate}
+\end{theorem}
+
+\subsection{Answer reduction}
+\label{sec:ps-answer-reduction}
+
+After introspection the decider still runs in time exponential in $n$ (it simulates
+$\decider$ at index $2^n$), and the players' answers are correspondingly long. Answer
+reduction composes the game with a PCP: by Theorem~\ref{thm:succinct-sat} the
+statement ``the original decider would have accepted our answers'' is a succinct 3SAT
+instance; the players commit to a low-degree encoding of a satisfying assignment
+(their original answers plus the computation tableau) and the new decider spot-checks
+it, using the low individual degree test to certify the encoding and
+Lemma~\ref{lem:schwartz-zippel} for the arithmetization. Answers and decider time
+become polylogarithmic in the original.
+
+\begin{theorem}[Answer reduction]
+\label{thm:answer-reduction}
+\uses{def:normal-verifier,def:pcc,def:ent,thm:succinct-sat,lem:schwartz-zippel,thm:qld,lem:self-dual-basis}
+There is a polynomial-time Turing machine $\ComputeAnsVerifier$ that on input
+$(\verifier, \lambda, \mu, \sigma)$, for $\verifier$ an $\ell$-level normal form
+verifier with $\abs{\decider} \leq \sigma$, $\TIME_\sampler(n) \leq (\lambda n)^\mu$
+and $\TIME_\decider(n) \leq (2^{\lambda n})^\mu$ for $n \geq 2$, outputs a
+$\max\{\ell + 2, 5\}$-level normal form verifier $\vans$ with
+$\TIME_{\sans}(n), \TIME_{\dans}(n) = \poly\bigl( (\lambda n)^\mu, \sigma \bigr)$,
+whose sampler depends only on $(\sampler, \lambda, \mu, \sigma)$, and such that for
+some $\delta(\eps, n) = \sigma^a \bigl( (\lambda n)^{\mu a} \eps^b + (\lambda
+n)^{-\mu b} \bigr)$ (universal constants $a, b$) and all $n$:
+\begin{enumerate}
+\item (\textbf{Completeness}) If $\verifier_n$ has a value-$1$ symmetric PCC strategy
+  then $\vans_n$ has a value-$1$ PCC strategy.
+\item (\textbf{Soundness}) If $\synval(\vans_n) > 1 - \eps$ then
+  $\synval(\verifier_n) \geq 1 - \delta(\eps, n)$, and
+  $\Ent(\vans_n, 1 - \eps) \geq \Ent(\verifier_n, 1 - \delta(\eps, n))$.
+\end{enumerate}
+\end{theorem}
+
+This is the most technically heterogeneous section of the paper
+(\cite[Section 10]{JNVWY20}): half classical (tableaux, Tseitin encoding,
+arithmetization --- see Section~\ref{sec:rr-cook-levin}) and half quantum (a
+low-degree ``sandwiching'' argument recombining the players' committed polynomials). It may also be the hardest. 
+
+\subsection{Gap amplification: parallel repetition}
+\label{sec:ps-parallel-repetition}
+
+Answer reduction leaves a shrunken gap ($1$ vs.\ $1 - 1/\poly(n)$). Anchored parallel
+repetition (Theorem~\ref{thm:bvy}) restores soundness $\frac12$ with polynomially many
+repetitions, at polynomial cost in complexity and $+2$ levels.
+
+\begin{theorem}[Parallel repetition of normal form verifiers]
+\label{thm:parallel-repetition}
+\uses{def:normal-verifier,def:pcc,def:ent,thm:bvy}
+There are universal constants $c, c' > 0$ and a polynomial-time Turing machine
+$\ComputeParrepVerifier$ that on input $(\verifier, \lambda, \tau)$ outputs a normal
+form verifier $\vrep$ such that if $\verifier$ is $\ell$-level then $\vrep$ is
+$(\ell+2)$-level with $\TIME_{\srep}(n) = O(k(n) \TIME_\sampler(n))$ and
+$\TIME_{\drep}(n) = O\bigl(k(n) \max(\TIME_\decider(n), (\lambda n)^\tau)\bigr)$ where
+$k(n) = (\lambda n)^{(1 + c')\tau}$, the sampler of $\vrep$ depends only on
+$(\sampler, \lambda, \tau)$, and for all $n$:
+\begin{enumerate}
+\item (\textbf{Completeness}) If $\verifier_n$ has a value-$1$ PCC strategy and
+  $\TIME_\decider(n) \leq (\lambda n)^\tau$, then $\vrep_n$ has a value-$1$ PCC
+  strategy.
+\item (\textbf{Soundness}) For all $\eps > 0$ and all
+  $p > \frac{4}{\eps} \exp\bigl( -c \eps^{17} k(n) / (\lambda n)^{\tau c'} \bigr)$,
+  $\Ent(\vrep_n, p) \geq \Ent(\verifier_n, 1 - \eps)$.
+\end{enumerate}
+\end{theorem}
+
+\subsection{The compression theorem}
+\label{sec:ps-compression}
+
+Composing the four transformations --- introspection, oracularization, answer
+reduction, repetition --- yields gap-preserving compression: the paper-level form of
+the abstract compression hypothesis of Lemma~\ref{lem:recursive-compression}.
+
+\begin{theorem}[Gap-preserving compression]
+\label{thm:compression}
+\uses{thm:introspection,thm:oracularization,thm:answer-reduction,thm:parallel-repetition,def:lambda-bounded,def:pcc,def:ent}
+There is a universal constant $C_0 > 0$ and a polynomial-time Turing machine
+$\Compress$ that on input $(\verifier, \lambda)$ outputs a $9$-level normal form
+verifier $\vcompr = (\scompr, \dcompr)$ with $\TIME_{\scompr}(n),
+\TIME_{\dcompr}(n) = \poly(n, \lambda)$, where $\scompr$ is independent of
+$\verifier$ and computable from $\lambda$ in time $\polylog(\lambda)$. If moreover
+$\verifier$ is a $\lambda$-bounded $9$-level normal form verifier, then for all $n
+\geq C_0$ and $N = 2^n$:
+\begin{enumerate}
+\item (\textbf{Completeness}) If $\verifier_N$ has a value-$1$ PCC strategy, then so
+  does $\vcompr_n$.
+\item (\textbf{Soundness}) $\Ent\bigl(\vcompr_n, \tfrac12\bigr) \geq \max\bigl\{
+  \Ent\bigl(\verifier_N, \tfrac12\bigr),\ 2^{N^{\lambda} - 1} \bigr\}$.
+\end{enumerate}
+\end{theorem}
+
+\begin{remark}[Relation to the abstract compression lemma]
+\label{rem:compression-abstract}
+\uses{thm:compression,lem:recursive-compression,def:succinct}
+Theorem~\ref{thm:compression} instantiates the hypothesis of
+Lemma~\ref{lem:recursive-compression} in the form given
+in~\cite[Lemma 6.3]{MNY}: take $A$ to be the set of (descriptions of) normal form
+verifier games with a perfect PCC strategy, $f(\game) =
+\Ent(\game, \frac12)$, and note that a description $(\sampler, \decider, n)$ with $n$
+in binary is precisely a succinct description of the game $\verifier_{2^n}$ played by
+a $\lambda$-bounded verifier. The compression map then satisfies $f(\compr(\hat{x},
+n)) \geq \max\{f(x), n\}$ by the entanglement bound above. Making this dictionary
+precise (in particular the encoding of games by verifier descriptions and the role of
+$\lambda$) is a formalization task of this section.
+\end{remark}
+
+\subsection{The halting reduction}
+\label{sec:ps-halting}
+
+\begin{theorem}[Halting reduction]
+\label{thm:halting}
+\uses{thm:compression,rem:compression-abstract,lem:recursive-compression,lem:kleene,def:mipstar,def:game-description}
+There is a computable (indeed polynomial-time) map $\machine \mapsto
+\game_{\machine}$ from Turing machines to synchronous game descriptions, with games
+given by normal form verifiers satisfying the efficiency requirements of
+Definition~\ref{def:mipstar}, such that:
+\begin{enumerate}
+\item if $\machine$ halts on the empty input then $\synval(\game_\machine) = 1$,
+  witnessed by a PCC strategy;
+\item if $\machine$ does not halt on the empty input then
+  $\Ent(\game_\machine, \tfrac12) = \infty$; in particular
+  $\synval(\game_\machine) \leq \tfrac12$.
+\end{enumerate}
+\end{theorem}
+
+The proof is Lemma~\ref{lem:recursive-compression} applied to the instantiation of
+Remark~\ref{rem:compression-abstract}. Note that item 2 gives soundness in the strong
+form (no synchronous strategy of any dimension exceeds $\frac12$, and the supremum
+defining $\synval$ is over such strategies, so $\synval \leq \frac12$ follows).

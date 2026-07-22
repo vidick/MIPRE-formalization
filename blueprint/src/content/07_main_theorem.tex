@@ -1,0 +1,60 @@
+\section{The main theorem}
+\label{ch:main-theorem}
+
+The statement below is the formalization target of the whole project. It matches,
+definition for definition, the Lean file
+\texttt{MIPRE/HaltingGameValue.lean}, which states it on top of Mathlib alone (theorem
+\texttt{halting\_reduces\_to\_gameValue}): Turing machines are Mathlib's
+\texttt{Nat.Partrec.Code}, games are game descriptions
+(Definition~\ref{def:game-description}), and the value is the synchronous value
+(Definition~\ref{def:sync-value}).
+
+\begin{theorem}[Halting reduces to the game value; Theorem 12.2 of~\cite{JNVWY20},
+synchronous form]
+\label{thm:main}
+\uses{thm:halting,def:game-description,def:sync-value,def:re}
+There is a computable map $g$ from Turing machines to game descriptions such that for
+every Turing machine $\machine$:
+\begin{enumerate}
+\item (\textbf{Completeness}) if $\machine$ halts on the empty input, then
+  $\synval(\game_{g(\machine)}) = 1$;
+\item (\textbf{Soundness}) if $\machine$ does not halt on the empty input, then
+  $\synval(\game_{g(\machine)}) \leq \tfrac12$.
+\end{enumerate}
+\end{theorem}
+
+Theorem~\ref{thm:main} follows from Theorem~\ref{thm:halting} by converting the
+normal form verifier at a fixed index into an explicit game description (a finite
+object obtained by running the sampler and decider), and relaxing polynomial-time
+computability of the reduction to computability, per Section~\ref{sec:departures}.
+
+\begin{corollary}[Uncomputability of the game value]
+\label{cor:value-uncomputable}
+\uses{thm:main,thm:halting-undecidable}
+There is no algorithm that, given a game description $g$ with the promise that
+$\synval(\game_g) = 1$ or $\synval(\game_g) \leq \frac12$, decides which is the
+case.
+\end{corollary}
+
+\begin{theorem}[$\MIPstar = \RE$]
+\label{thm:mipstar-eq-re}
+\uses{def:mipstar,def:re,thm:halting,thm:halting-undecidable,lem:value-lower-approx,thm:almost-sync,lem:sync-le-valstar}
+$\MIPstar = \RE$.
+\end{theorem}
+
+For $\RE \subseteq \MIPstar$: the halting problem is $\RE$-complete
+(Theorem~\ref{thm:halting-undecidable}) and Theorem~\ref{thm:halting} provides a
+polynomial-time verifier for it; the bridge results
+(Lemma~\ref{lem:sync-le-valstar} and Theorem~\ref{thm:almost-sync}) transfer the
+completeness--soundness gap from $\synval$ to $\valstar$ as required by
+Definition~\ref{def:mipstar}. For $\MIPstar \subseteq \RE$: given a verifier for $L$
+and an input $z$, enumerate tensor-product strategies
+(Lemma~\ref{lem:value-lower-approx}) and accept upon finding one with value greater
+than $\frac12$; this semi-decides $L$.
+
+\begin{remark}
+The polynomial-time version of Theorem~\ref{thm:main} (Theorem 12.2
+of~\cite{JNVWY20} as stated there) is recorded by Theorem~\ref{thm:halting}; the
+computable version above is what the Lean main statement asserts, and is sufficient
+for every consequence in Section~\ref{ch:downstream}.
+\end{remark}

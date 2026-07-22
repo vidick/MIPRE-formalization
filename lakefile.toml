@@ -1,0 +1,28 @@
+name = "MIPRE"
+version = "0.1.0"
+keywords = ["math"]
+defaultTargets = ["MIPRE"]
+
+[leanOptions]
+pp.unicode.fun = true # pretty-prints `fun a ↦ b`
+autoImplicit = false
+relaxedAutoImplicit = false
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.32.0"
+
+[[require]]
+name = "checkdecls"
+git = "https://github.com/PatrickMassot/checkdecls.git"
+
+# Pinned to the toolchain tag rather than `main` so that doc-gen4 always
+# matches `lean-toolchain`; bump both together (see scripts/update.sh).
+[[require]]
+name = "«doc-gen4»"
+git = "https://github.com/leanprover/doc-gen4"
+rev = "v4.32.0"
+
+[[lean_lib]]
+name = "MIPRE"

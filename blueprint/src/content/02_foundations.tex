@@ -1,0 +1,348 @@
+\section{Foundations}
+\label{ch:foundations}
+
+This chapter fixes the objects that everything else refers to: games, strategies and
+values (in the synchronous framework, see Section~\ref{sec:departures}), the
+computability conventions, and normal form verifiers. Definitions here are meant to be
+final; they are the first formalization targets of the project.
+
+Statements marked \qlib{} are general-purpose quantum information content: they are
+intended to be developed in, or contributed to, the
+\href{\qliburl}{QuantumLib (Lean-QuantumInfo)} library rather than to remain specific
+to this project. The badge marks the general-purpose layer --- games, strategies,
+values, and the rigidity theorems of Section~\ref{ch:required-results} --- as opposed
+to project-specific machinery such as normal form verifiers and the game
+transformations.
+
+\subsection{Games, strategies, and values}
+
+\subsubsection{Games}
+
+\begin{definition}[Nonlocal game]
+\label{def:game}
+\lean{MIPRE.Game}
+\leanok
+\qlib{}
+A \emph{two-player one-round game} $\game$ is a tuple
+$(\mX, \mY, \mA, \mB, \mu, D)$ where $\mX, \mY$ are finite question alphabets, $\mA,
+\mB$ are finite answer alphabets, $\mu$ is a probability distribution on $\mX \times
+\mY$, and $D : \mX \times \mY \times \mA \times \mB \to \{0,1\}$ is the decision
+predicate ($1$ = accept).
+\end{definition}
+
+\begin{definition}[Synchronous game]
+\label{def:sync-game}
+\uses{def:game}
+\lean{MIPRE.SynchronousGame, MIPRE.SynchronousGame.toGame}
+\leanok
+\qlib{}
+A game is \emph{synchronous} if $\mX = \mY$, $\mA = \mB$, and unequal answers to equal
+questions are rejected: $D(x,x,a,b) = 0$ whenever $a \neq b$. We write a synchronous
+game as $\game = (\mX, \mA, \mu, D)$.
+\end{definition}
+
+\subsubsection{Strategies}
+
+
+\begin{definition}[Tensor-product strategy]
+\label{def:tensor-strategy}
+\uses{def:game}
+\lean{MIPRE.TensorProductStrategy}
+\leanok
+\qlib{}
+A \emph{tensor-product strategy} for $\game$ consists of finite-dimensional Hilbert
+spaces $\mH_\alice$, $\mH_\bob$, a unit vector $\ket{\psi} \in \mH_\alice \ot
+\mH_\bob$, and POVMs $\{A^x_a\}$ on $\mH_\alice$ and $\{B^y_b\}$ on $\mH_\bob$. 
+
+Outcome probabilities are computed using the Born rule: the players answer $(a,b)$ to questions $(x,y)$
+with probability $\bra{\psi} A^x_a \ot B^y_b \ket{\psi}$. 
+\end{definition}
+
+
+\begin{definition}[Synchronous strategy]
+\label{def:sync-strategy}
+\uses{def:sync-game}
+\lean{MIPRE.SyncStrategy}
+\leanok
+\qlib{}
+A \emph{synchronous strategy} for a synchronous game $\game = (\mX, \mA, \mu, D)$ is a
+dimension $d \geq 1$ together with a family of projective measurements (PVMs)
+$\{M^x_a\}_{a \in \mA}$ on $\C^d$, one for each $x \in \mX$: each $M^x_a$ is an
+orthogonal projection and $\sum_a M^x_a = \Id$. 
+
+Outcome probabilities are computed with the
+tracial state $\tau(M) = \tr(M)/d$: the players answer $(a,b)$ to questions $(x,y)$
+with probability $\tau(M^x_a M^y_b)$.
+\end{definition}
+
+
+\begin{definition}[Commuting strategy]
+\label{def:commuting-strategy}
+\uses{def:sync-game}
+\lean{MIPRE.CommutingStrategy}
+\leanok
+\qlib{}
+A \emph{commuting strategy} for a synchronous game $\game = (\mX, \mA, \mu, D)$ is a
+unital $C^*$-algebra $\alg$ with a tracial state $\tau$ (a positive linear functional
+with $\tau(1) = 1$ and $\tau(ab) = \tau(ba)$ for all $a, b \in \alg$), together with a
+family of projective measurements $\{M^x_a\}_{a \in \mA}$ in $\alg$, one for each
+$x \in \mX$: each $M^x_a$ is a self-adjoint idempotent and $\sum_a M^x_a = 1$.
+
+Outcome probabilities are computed with $\tau$: the players answer $(a,b)$ to questions
+$(x,y)$ with probability $\tau(M^x_a M^y_b)$, a nonnegative real number since
+$\tau(M^x_a M^y_b) = \tau(M^x_a M^y_b M^x_a)$.
+\end{definition}
+
+\begin{remark}
+A synchronous strategy (Definition~\ref{def:sync-strategy}) is exactly the
+finite-dimensional case $\alg = \C^{d \times d}$, $\tau = \tr/d$. Via the GNS
+representation, commuting strategies capture exactly the synchronous
+commuting-operator correlations of the usual two-prover picture, with Bob's
+measurements acting in the commutant on $L^2(\alg, \tau)$ --- \cite[Theorem
+5.5]{PSSTW16}; see also \cite{Lin23} and \cite[Section 3.4]{Lin25}.
+\end{remark}
+
+\begin{definition}[PCC strategy]
+\label{def:pcc}
+\uses{def:sync-strategy}
+\qlib{}
+A synchronous strategy $\strategy = (d, M)$ for a synchronous game $\game = (\mX,
+\mA, \mu, D)$ is \emph{PCC} (\emph{projective, consistent, and commuting},
+following~\cite[Section 5.2]{JNVWY20}) if the measurements associated with any pair
+of questions asked with positive probability commute: for all $(x, y)$ in the support
+of $\mu$,
+\begin{equation*}
+  M^x_a M^y_b = M^y_b M^x_a \qquad \text{for all } a, b \in \mA\;.
+\end{equation*}
+\end{definition}
+
+\begin{remark}
+In~\cite[Section 5.2]{JNVWY20} a PCC strategy is a tensor-product strategy
+(Definition~\ref{def:tensor-strategy}) with $\mH_\alice = \mH_\bob$ that is
+\emph{projective} (all measurements are PVMs), \emph{consistent} ($A^x_a \ot \Id
+\ket{\psi} = \Id \ot B^x_a \ket{\psi}$ for all $x, a$), and \emph{commuting}
+($[A^x_a, B^y_b] = 0$ for all $(x, y)$ in the support of $\mu$ and all $a, b$). In
+the synchronous framework the first two conditions are automatic: a projective,
+consistent strategy on a maximally entangled state is exactly a synchronous strategy
+(\cite[Remark 5.13]{JNVWY20}; see also \cite[Theorem 5.5]{PSSTW16}), so only the
+commutation condition remains, and we keep the name PCC for alignment with the paper.
+The ``commuting'' in PCC is a condition on question pairs in the support of $\mu$,
+unrelated to the commuting (operator) strategies of
+Definition~\ref{def:commuting-strategy}. Finally, since a synchronous strategy
+describes both players by the same family of measurements, symmetry is automatic, and
+we do not distinguish between the PCC and symmetric PCC (SPCC) strategies
+of~\cite{JNVWY20}.
+\end{remark}
+
+
+
+\subsubsection{Values}
+
+\begin{definition}[Quantum value]
+\label{def:q-value}
+\uses{def:tensor-strategy}
+\lean{MIPRE.TensorProductStrategy.value, MIPRE.quantumValue}
+\leanok
+\qlib{}
+The value of a tensor-product strategy $\strategy = (\mH_\alice,\mH_\bob,\psi,A,B)$ in $\game$ is
+\begin{equation*}
+  \valstar(\game, \strategy) = \sum_{x, y, a, b} \mu(x,y)\, D(x,y,a,b)\,
+  \bra{\psi} A^x_a \ot B^y_b \ket{\psi}\;,
+\end{equation*}
+and the \emph{quantum value} $\valstar(\game)$ is the supremum of
+$\valstar(\game, \strategy)$ over all tensor-product strategies. 
+\end{definition}
+
+
+
+\begin{definition}[Synchronous value]
+\label{def:sync-value}
+\uses{def:sync-strategy}
+\lean{MIPRE.SyncStrategy.value, MIPRE.syncValue}
+\leanok
+\qlib{}
+The value of a synchronous strategy $\strategy = (d, M)$ in $\game$ is
+\begin{equation*}
+  \synval(\game, \strategy) = \sum_{x, y, a, b} \mu(x,y)\, D(x,y,a,b)\,
+  \tau\bigl(M^x_a M^y_b\bigr)\;,
+\end{equation*}
+and the \emph{synchronous value} of $\game$ is $\synval(\game) = \sup_\strategy
+\synval(\game, \strategy)$.
+\end{definition}
+
+
+\begin{definition}[Commuting value]
+\label{def:commuting-value}
+\uses{def:commuting-strategy}
+\lean{MIPRE.CommutingStrategy.value, MIPRE.commValue}
+\leanok
+\qlib{}
+The value of a commuting strategy $\strategy = (\alg, \tau, M)$ in $\game$ is
+\begin{equation*}
+  \valco(\game, \strategy) = \sum_{x, y, a, b} \mu(x,y)\, D(x,y,a,b)\,
+  \tau\bigl(M^x_a M^y_b\bigr)\;,
+\end{equation*}
+and the \emph{commuting value} of $\game$ is $\valco(\game) = \sup_\strategy
+\valco(\game, \strategy)$.
+\end{definition}
+
+
+\begin{definition}[Entanglement requirement]
+\label{def:ent}
+\uses{def:sync-value}
+\lean{MIPRE.entRequirement}
+\leanok
+\qlib{}
+For a game $\game$ and $\nu \in [0,1]$, $\Ent(\game, \nu)$ is the least $d$ such that
+there exists a synchronous strategy (Definition~\ref{def:sync-strategy}) with dimension at most $d$ achieving value at least
+$\nu$ in $\game$, and $\infty$ if no synchronous strategy achieves $\nu$.
+\end{definition}
+
+
+\subsubsection{Relationship lemmas}
+
+\begin{lemma}[Synchronous value lower-bounds the quantum value]
+\label{lem:sync-le-valstar}
+\uses{def:sync-value,def:q-value}
+\lean{MIPRE.syncValue_le_quantumValue}
+\leanok
+\qlib{}
+For every synchronous game $\game$, $\synval(\game) \leq \valstar(\game)$.
+\end{lemma}
+\begin{proof}
+Given a synchronous strategy $\{M^x_a\}$ on $\C^d$, take the tensor-product strategy
+with $\mH_\alice = \mH_\bob = \C^d$, $A^x_a = M^x_a$, $B^y_b = (M^y_b)^{\mathsf{T}}$,
+and $\ket{\psi} = d^{-1/2}\sum_i \ket{i}\ket{i}$; then
+$\bra{\psi} A^x_a \ot B^y_b \ket{\psi} = \tau(M^x_a M^y_b)$, so the values agree.
+\end{proof}
+
+The converse direction --- every good tensor-product strategy for a synchronous
+game can be rounded to a good synchronous strategy --- is the almost-synchronicity
+theorem, imported as Theorem~\ref{thm:almost-sync}.
+
+\begin{lemma}[Synchronous value lower-bounds the commuting value]
+\label{lem:sync-le-valco}
+\uses{def:sync-value,def:commuting-value}
+\lean{MIPRE.syncValue_le_commValue}
+\leanok
+\qlib{}
+For every synchronous game $\game$, $\synval(\game) \leq \valco(\game)$.
+\end{lemma}
+\begin{proof}
+A synchronous strategy $(d, M)$ is a commuting strategy with $\alg = \C^{d \times d}$
+and $\tau = \tr/d$, with the same value.
+\end{proof}
+
+\subsection{Distance measures}
+\label{sec:distances}
+
+\begin{definition}[POVM distance]
+\label{def:distance}
+\uses{def:game}
+\qlib{}
+Let $\mu$ be a distribution on a finite set $\mX$, and
+$\{M^x_a\}$, $\{N^x_a\}$ families of POVMs. We say $M$ and $N$ are
+\emph{$\delta$-close}, written $M^x_a \approx_\delta N^x_a$, if
+$\E_{x \sim \mu} \sum_a \tau((M^x_a - N^x_a)^2) \leq \delta$.
+\end{definition}
+
+
+
+\subsection{Computability conventions}
+\label{sec:computability-conventions}
+
+Turing machines are represented by their G\"odel numbers; in Lean the intended model is
+Mathlib's \texttt{Nat.Partrec.Code}, with $\phi_e$ the partial function computed by
+code $e$ and ``$e$ halts on empty input'' meaning $(\texttt{e.eval } 0).\texttt{Dom}$.
+Running times are counted as in~\cite{MNY}; polynomial-time computability of a function
+of strings and integers means time polynomial in the lengths of the string inputs and
+in $\log$ of the integer inputs, unless an integer is explicitly given in unary.
+
+\begin{definition}[Recursively enumerable]
+\label{def:re}
+A language $L \subseteq \{0,1\}^*$ is in $\RE$ if it is the domain (equivalently, the
+range) of a partial computable function. The \emph{halting problem} --- the set of $e$
+such that $\phi_e$ halts on the empty input --- is $\RE$-complete under many-one
+reductions.
+\end{definition}
+
+\begin{definition}[Succinct description]
+\label{def:succinct}
+Following~\cite{MNY}, a pair $(e, n)$ of a Turing machine $e$ and integer $n$ is a
+\emph{succinct description} of the string $x \in \{0,1\}^*$ if $\abs{x} \leq 2^n$, the
+runtime of $e$ is at most $n$ on every input, and $\phi_e(m)$ equals the $m$-th bit of
+$x$ for $m < \abs{x}$, and $2$ for $m \geq \abs{x}$.
+\end{definition}
+
+\begin{definition}[Game description]
+\label{def:game-description}
+\uses{def:sync-game}
+A \emph{game description} is a tuple $g = (n_\mX, n_\mA, w, \mathrm{acc})$ of two
+integers, a finite list $w$ of weighted question pairs, and a finite list
+$\mathrm{acc}$ of accepted answer tuples. It determines a synchronous game
+$\game_g$ on question alphabet $\{0, \ldots, n_\mX\}$ and answer alphabet $\{0, \ldots,
+n_\mA\}$: the question distribution is $w$ normalized (a fixed point mass if $w$ has
+total weight zero), and the predicate accepts exactly the tuples listed in
+$\mathrm{acc}$, except that unequal answers to equal questions always lose. Game
+descriptions are first-order data and carry a canonical G\"odel numbering
+(\texttt{GameData} in the Lean file).
+\end{definition}
+
+\subsection{Normal form verifiers}
+\label{sec:normal-form-verifiers}
+
+Games produced in the proof are presented by pairs of Turing machines: a
+\emph{sampler}, generating questions by a rigid linear-algebraic procedure that
+introspection can certify, and a \emph{decider}, checking answers.
+
+\begin{definition}[Sampler]
+\label{def:sampler}
+\uses{def:cl-function}
+An \emph{$\ell$-level sampler} with field size $q(n) = 2$ is a Turing machine
+$\sampler$ that on input $n$ specifies a linear space $V = \F_2^{s(n)}$ and a pair of
+$\ell$-level conditionally linear functions $L^\alice, L^\bob$ on $V$
+(Definition~\ref{def:cl-function}); the question distribution it samples is $\mu_n =
+(L^\alice(z), L^\bob(z))$ for uniform $z \in V$. Formally $\sampler$ answers
+dimension, marginal, and linear-evaluation queries as in~\cite{JNVWY20}; the precise
+query interface is fixed in Section~\ref{sec:ps-cl}. $\TIME_\sampler(n)$ denotes its
+maximal running time on queries with index $n$.
+\end{definition}
+
+\begin{definition}[Decider]
+\label{def:decider}
+A \emph{decider} is a $5$-input Turing machine $\decider$, whose input is interpreted
+as $(n, x, y, a, b)$ with $n$ an integer index and $x, y, a, b$ strings. It accepts
+(output $1$) or rejects. $\TIME_\decider(n)$ denotes its maximal running time over
+inputs with index $n$.
+\end{definition}
+
+\begin{definition}[Normal form verifier]
+\label{def:normal-verifier}
+\uses{def:sampler,def:decider,def:sync-game}
+A \emph{normal form verifier} is a pair $\verifier = (\sampler, \decider)$ of a sampler
+and a decider. For each $n$, $\verifier$ determines a game $\verifier_n$ with question
+distribution given by $\sampler$ at index $n$ and decision predicate
+$D(x,y,a,b) = \decider(n,x,y,a,b)$, where answers longer than $\TIME_\decider(n)$ are
+rejected. Symmetrizing the roles of the two players makes $\verifier_n$ a synchronous
+game; we write $\valstar(\verifier_n)$ and $\synval(\verifier_n)$ for its values. The
+description length $\abs{\verifier} = \max\{\abs{\sampler}, \abs{\decider}\}$, and the
+number of levels of $\verifier$ is that of $\sampler$.
+\end{definition}
+
+\begin{definition}[$\lambda$-bounded verifier]
+\label{def:lambda-bounded}
+\uses{def:normal-verifier}
+For $\lambda \in \N$, a normal form verifier $\verifier = (\sampler, \decider)$ is
+\emph{$\lambda$-bounded} if $\TIME_\sampler(n), \TIME_\decider(n) \leq n^\lambda$ for
+all $n \geq 2$, and $\abs{\verifier} \leq \lambda$.
+\end{definition}
+
+\begin{definition}[The class $\MIPstar$]
+\label{def:mipstar}
+\uses{def:normal-verifier,def:q-value}
+A language $L$ is in $\MIPstar$ (more precisely, $\MIP^*_{1, 1/2}(2,1)$) if there is a
+polynomial-time computable map $z \mapsto \game_z$ from strings to (descriptions of)
+games --- given by a sampler and decider running in time $\poly(\abs{z})$ --- such that
+$z \in L$ implies $\valstar(\game_z) = 1$ and $z \notin L$ implies
+$\valstar(\game_z) \leq \frac12$.
+\end{definition}

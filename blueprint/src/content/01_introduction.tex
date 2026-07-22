@@ -1,0 +1,150 @@
+\section{Introduction}
+\label{ch:introduction}
+
+This blueprint organizes a Lean formalization of the theorem $\MIPstar = \RE$ of
+Ji, Natarajan, Vidick, Wright and Yuen~\cite{JNVWY20}. The main result is that
+there is a computable map from Turing machines to nonlocal games that sends halting
+machines to games of (quantum) value $1$ and non-halting machines to games of value at
+most $\frac12$; in particular, approximating the quantum value of a nonlocal game is an
+uncomputable problem. Through the work of Fritz~\cite{Fri12}, Junge et
+al.~\cite{JNPPSW11} and Ozawa~\cite{Oza13}, this refutes Tsirelson's problem and Connes'
+Embedding Problem.
+
+The main theorem is stated in the self-contained (other than importing Mathlib) file
+\texttt{HaltingGameValue.lean}. Every definition it contains
+(POVMs, synchronous games, game descriptions) is elementary linear algebra and
+computability. The goal of this projects are to (a) complete a formalization of this theorem and
+(b) do it in such a way that the required effort benefits the community down-the-line, e.g.\ by
+making the proof modular, stating and proving as many facts as possible in a manner that is reusable, etc.
+Finally, (c) we expect multiple simplifications and clarifications to the proof to accompany the effort.
+
+
+This initial blueprint is a coarse sketch. It maps out the main steps of the proof, in the
+attempt to modularize it and provide a diversity of entrypoints to the formalization effort.
+The most important definitions are complete, but most theorems appear only in ``headline'' form,
+ with the
+decomposition into formalizable lemmas left as a project task.
+
+% The one place
+%where the blueprint is intended to be fully precise is the statement of the main theorem
+%(Section~\ref{ch:main-theorem}), which matches the self-contained Lean file
+%\texttt{HaltingGameValue.lean} stated on top of Mathlib alone.
+
+\subsection{Overview of the proof}
+\label{sec:overview}
+
+The inclusion $\MIPstar \subseteq \RE$ is elementary: the value of a game can be
+approximated from below by enumerating tensor-product strategies
+(Section~\ref{sec:rr-value-approx}). The substance is $\RE \subseteq \MIPstar$, which is proved by
+a reduction from the halting problem.
+The central ingredient in the proof is a \emph{gap-preserving compression}
+procedure for ``normal form'' verifiers (Section~\ref{sec:ps-compression}): a polynomial-time
+transformation that maps a verifier $\verifier$ to a verifier $\vcompr$ which, at index
+$n$, simulates the exponentially larger game $\verifier_{2^n}$, preserving the value-$1$
+property and forcing exponential entanglement lower bounds. Given compression, an
+abstract fixed-point argument (the \emph{recursive compression lemma},
+Section~\ref{sec:rr-compression}, applied via Kleene's recursion theorem) produces the
+halting reduction.
+
+Compression itself is assembled from three transformations, each described in
+Section~\ref{ch:proof-structure}:
+\emph{question reduction} by introspection (the players sample their own questions,
+certified by a Pauli-basis self-test built on the quantum low individual degree test),
+\emph{answer reduction} by PCP composition (the players prove, via a probabilistically
+checkable proof, that their answers would have been accepted), and \emph{gap
+amplification} by anchored parallel repetition. Each of these steps has one central
+ingredient that can be formalized in an independent manner: the low individual degree
+test, the PCP theorem (in a specific form), and a parallel repetition theorem (for a certain
+class of quantum games).
+
+\subsection{Entry points}
+\label{sec:entry-points}
+
+Contributors with different scientific backgrounds can enter the project in different places, largely independently.
+
+\emph{Quantum information.} The foundations chapter
+(Section~\ref{ch:foundations}) and the required results on self-testing: the Magic
+Square game (Section~\ref{sec:rr-magic-square}), the Gowers--Hatami theorem
+(Section~\ref{sec:rr-gowers-hatami}), the orthonormalization lemma
+(Section~\ref{sec:rr-orthonormalization}), and the low individual degree test
+(Section~\ref{sec:rr-qld}). These are self-contained statements about states and
+measurements, formalizable without any complexity theory.
+
+\emph{Complexity and computability theory.} The computability toolkit
+(Section~\ref{sec:rr-computability}), the abstract recursive compression lemma
+(Section~\ref{sec:rr-compression}), succinct descriptions and the Cook--Levin machinery
+feeding answer reduction (Section~\ref{sec:rr-cook-levin}). These are classical
+statements with no quantum content, and several partially exist in Mathlib.
+
+\emph{Operator algebras.} The synchronous framework of
+Section~\ref{ch:foundations}, the bridge between synchronous and tensor-product values
+(Section~\ref{sec:rr-almost-sync}), and the downstream consequences
+(Section~\ref{ch:downstream}), which connect the main theorem to Tsirelson's problem
+and Connes' Embedding Problem.
+
+In addition, contributors can participate at different levels. Contributors with a high degree of Lean expertise may want
+to focus on the foundations and concentrate on those elements of the proof that are of broader interest and may later
+be upstreamed to Mathlib, Physlib, CSLib, etc. For example, the Gowers Hatami theorem, general facts about Turing machines and computability, the PCP theorem,
+formalization of quantum games and quantum game values, etc.
+
+\subsection{Departures from the paper}
+\label{sec:departures}
+
+The formalization is not intended to follow~\cite{JNVWY20} line by line. Since the initial publication of the paper
+a number of simplifications have appeared in the literature. In particular, we plan to incorporate the following.
+
+\paragraph{Synchronous strategies throughout.}
+The paper works with bipartite tensor-product strategies $(\ket{\psi}, A, B)$ on
+$\mH_\alice \ot \mH_\bob$. We instead take \emph{synchronous} strategies --- a single
+family of measurements $\{M^x_a\}$ on one space, evaluated against the tracial state ---
+as the basic object, and define the synchronous value $\synval$
+(Definition~\ref{def:sync-value}). This eliminates the duplication of Hilbert spaces,
+states, and consistency bookkeeping that pervades the paper's soundness analyses, and it
+matches the main Lean statement. The cost is a single bridging step: the
+almost-synchronous correlations theorem (Section~\ref{sec:rr-almost-sync}) shows that
+for synchronous games the two values agree closely enough to transport completeness and
+soundness. All games constructed in the proof are synchronous (or are made so by
+symmetrization), so this is a genuine simplification.
+
+\paragraph{Projective strategies via orthonormalization.}
+Rather than invoking Naimark dilation to replace POVMs by projective measurements (which
+enlarges the space and interacts poorly with the tracial framework), we use the
+orthonormalization lemma (Section~\ref{sec:rr-orthonormalization}) to replace
+almost-projective POVMs by nearby projective measurements on the \emph{same} space. All
+soundness analyses should be carried out for projective strategies from the start.
+
+\paragraph{Computable rather than polynomial-time, where possible.}
+The final undecidability statement only needs the halting reduction to be
+\emph{computable}; polynomial-time bounds matter only inside the compression recursion,
+where the runtime of $\Compress$ must be smaller than the succinctness it exploits (see
+the discussion in~\cite{MNY}). The blueprint keeps time bounds where they are load-bearing
+(normal form verifiers, compression) and drops them everywhere else. In particular the
+main theorem (Section~\ref{ch:main-theorem}) is stated with a computable reduction.
+
+\paragraph{Abstract recursive compression.}
+The fixed-point argument that turns compression into a halting reduction is stated once,
+abstractly, following Marks--Nezhadi--Yuen~\cite{MNY}
+(Section~\ref{sec:rr-compression}), and instantiated with $f = $ entanglement
+requirement. This isolates all uses of Kleene's recursion theorem in one
+quantum-free lemma.
+
+\paragraph{Other candidate simplifications (to be decided).}
+Stating soundness of all transformations directly in terms of the entanglement measure
+$\Ent$ rather than via separate value and dimension statements; using de la Salle's
+quantitative improvements to stability (Gowers--Hatami) where they shorten proofs; other
+simplifications that are present in the follow-up proof of
+$\MIPco=\coRE$~\cite{Lin23,Lin25}.
+
+\subsection{Conventions}
+\label{sec:conventions}
+
+Every definition and theorem carries a \verb|\label|, and \verb|\uses| annotations
+record the dependency graph rendered on the project web page. Lean declaration names
+(\verb|\lean| tags) are deliberately absent at this stage; they will be added as the
+corresponding declarations are created. Statements in
+Sections~\ref{ch:required-results}--\ref{ch:anchored-repetition} are external results: the project may initially
+axiomatize them (each section records the literature source and comments on
+formalization), while statements in Section~\ref{ch:proof-structure} are proof
+obligations of the project. Numerical constants in headline statements (levels, error
+exponents) are copied from~\cite{JNVWY20} and should be treated as provisional until the
+corresponding section is worked out in detail.

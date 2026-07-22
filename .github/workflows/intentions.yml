@@ -1,0 +1,20 @@
+name: Intentions
+
+# Task-claiming automation, following the FLT project. Contributors comment
+# `claim` / `disclaim` / `propose PR #N` / `withdraw PR #N` on issues; the
+# reusable workflow syncs assignment and the "MIPRE Formalization" board.
+# See https://github.com/leanprover-community/intentions for details.
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  intentions:
+    permissions:
+      issues: write
+      pull-requests: write
+    uses: leanprover-community/intentions/.github/workflows/intentions.yml@v1
+    with:
+      project-title: "MIPRE Formalization"
+      default-ttl: "none"
+    secrets:
+      project-token: ${{ secrets.PAT_TOKEN }}

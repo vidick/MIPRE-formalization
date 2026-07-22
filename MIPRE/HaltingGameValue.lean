@@ -1,0 +1,197 @@
+/-
+# A self-contained statement of Theorem 12.2 of "MIP* = RE"
+
+This file states the main result of the paper "MIP* = RE" (Ji, Natarajan,
+Vidick, Wright, Yuen, arXiv:2001.04383), Theorem 12.2: there is a computable
+map from Turing machines to nonlocal games that sends halting machines to
+games of value 1 and non-halting machines to games of value at most 1/2.
+
+All definitions are given from scratch on top of Mathlib only:
+
+* `POVM`: positive operator-valued measures on a finite-dimensional space,
+  represented as self-adjoint complex matrices that are nonnegative in the
+  Loewner order. The definition matches the QuantumLib (Lean-QuantumInfo)
+  `POVM`, with `selfAdjoint (Matrix d d ℂ)` spelled out for its definitionally
+  equal `HermitianMat d ℂ`.
+* `SynchronousGame`: two-player one-round synchronous games, where the two
+  question sets and answer sets are identical and unequal answers lose on
+  equal questions.
+* `SyncStrategy`: synchronous strategies, i.e. a single question-indexed
+  projective measurement family measured against the dimension-normalized
+  trace (tracial) state `τ(M) = Tr(M)/d`.
+* `gameValue`: the synchronous value of a game, the supremum of strategy
+  values over all synchronous strategies.
+* `GameData` / `GameData.toGame`: a codable (first-order) description of a
+  game and its interpretation as a `SynchronousGame`, so that computability of
+  the reduction can be expressed.
+
+The model of computation is Mathlib's `Nat.Partrec.Code` (Gödel-numbered
+partial recursive functions, equivalent to Turing machines); "the machine
+halts on the empty input" is `(c.eval 0).Dom`, and computability of the
+reduction is Mathlib's `Computable`.
+-/
+
+import Mathlib
+
+namespace HaltingGameValue
+
+/- The Loewner order on matrices (`0 ≤ A ↔ A.PosSemidef`) is scoped. -/
+open scoped MatrixOrder
+
+/-! ## POVMs -/
+
+/-- A POVM is a (finite) collection of PSD matrices on the same Hilbert space
+that sum to the identity. Here `X` indexes the matrices, and `d` is the space
+dimension.
+
+This is the QuantumLib (Lean-QuantumInfo) definition of `POVM`, with
+`selfAdjoint (Matrix d d ℂ)` spelled out for its definitionally equal
+`HermitianMat d ℂ`; `0 ≤ mats x` is the Loewner order, i.e. positive
+semidefiniteness. -/
+structure POVM (X : Type*) (d : Type*) [Fintype X] [Fintype d] [DecidableEq d] where
+  mats : X → selfAdjoint (Matrix d d ℂ)
+  nonneg : ∀ x, 0 ≤ mats x
+  normalized : ∑ x, mats x = 1
+
+/-! ## Synchronous games -/
+
+/-- A synchronous game: both players receive questions from the same alphabet
+and answer from the same alphabet; on equal questions, unequal answers always
+lose. -/
+structure SynchronousGame (X A : Type*) [Fintype X] [Fintype A] [DecidableEq A] where
+  μ : X → X → ℝ
+  μ_nonneg : ∀ x y, 0 ≤ μ x y
+  μ_sum_one : ∑ x, ∑ y, μ x y = 1
+  D : X → X → A → A → Bool
+  synchronous : ∀ x a b, a ≠ b → D x x a b = false
+
+variable {X A : Type*} [Fintype X] [Fintype A] [DecidableEq A]
+
+/-! ## Synchronous strategies -/
+
+/-- A synchronous strategy for a synchronous game: a finite-dimensional
+strategy with a single question-indexed projective measurement family. The
+operators act on `ℂ^d` (`d > 0`); each measurement operator is idempotent,
+hence (being positive semidefinite) an orthogonal projection. Measurements for
+different questions need not commute. There is no state vector: outcome
+probabilities are computed with the dimension-normalized trace
+`τ(M) = Tr(M)/d` (see `strategyValue`). -/
+structure SyncStrategy (G : SynchronousGame X A) where
+  d : ℕ
+  d_pos : 0 < d
+  povm : X → POVM A (Fin d)
+  projective : ∀ x a,
+    ((povm x).mats a).val * ((povm x).mats a).val = ((povm x).mats a).val
+
+/-! ## Game value -/
+
+/-- The winning probability of a synchronous strategy: the players answer
+questions `(x, y)` with `(a, b)` with probability `Tr(M^x_a M^y_b)/d`.
+For positive semidefinite matrices this trace is a nonnegative real; we
+take the real part so that the definition typechecks with no proof
+obligations. -/
+noncomputable def strategyValue (G : SynchronousGame X A) (S : SyncStrategy G) : ℝ :=
+  ∑ x, ∑ y, ∑ a, ∑ b,
+    G.μ x y * (if G.D x y a b then 1 else 0) *
+      ((((S.povm x).mats a).val * ((S.povm y).mats b).val).trace.re / (S.d : ℝ))
+
+/-- The synchronous value of a synchronous game: the supremum of winning
+probabilities over all synchronous strategies. -/
+noncomputable def gameValue (G : SynchronousGame X A) : ℝ :=
+  ⨆ S : SyncStrategy G, strategyValue G S
+
+/-! ## Codable game descriptions -/
+
+/-- A first-order description of a synchronous game, suitable for computability
+statements. The question alphabet is `Fin (nX + 1)` and the answer alphabet is
+`Fin (nA + 1)`. The question
+distribution is given by a finite list `w` of unnormalized natural-number
+weights `(x, y, weight)`, and the decision predicate by the list `acc` of
+accepted tuples `(x, y, a, b)`. -/
+structure GameData where
+  nX : ℕ
+  nA : ℕ
+  w : List (ℕ × ℕ × ℕ)
+  acc : List (ℕ × ℕ × ℕ × ℕ)
+
+namespace GameData
+
+/-- `GameData` is just a tuple of naturals and lists. -/
+def equivTuple : GameData ≃ ℕ × ℕ × List (ℕ × ℕ × ℕ) × List (ℕ × ℕ × ℕ × ℕ) where
+  toFun g := (g.nX, g.nA, g.w, g.acc)
+  invFun t := ⟨t.1, t.2.1, t.2.2.1, t.2.2.2⟩
+
+instance : Primcodable GameData := Primcodable.ofEquiv _ equivTuple
+
+/-- Total weight assigned by the list `w` to the question pair `(x, y)`. -/
+def questionWeight (g : GameData) (x y : ℕ) : ℕ :=
+  ((g.w.filter fun t => decide (t.1 = x ∧ t.2.1 = y)).map fun t => t.2.2).sum
+
+/-- Total weight assigned by the list `w` to valid question pairs. -/
+def totalWeight (g : GameData) : ℕ :=
+  ∑ x : Fin (g.nX + 1), ∑ y : Fin (g.nX + 1), g.questionWeight x.val y.val
+
+/-- Interpret a `GameData` as a `SynchronousGame`: normalize the question
+weights (falling back to a point mass on `(0, 0)` when the total weight is
+zero, so that the interpretation is total), and accept exactly the answer
+tuples listed in `acc`, except that unequal answers on equal questions always
+lose. -/
+noncomputable def toGame (g : GameData) :
+    SynchronousGame (Fin (g.nX + 1)) (Fin (g.nA + 1)) where
+  μ x y :=
+    if g.totalWeight = 0 then (if x = 0 ∧ y = 0 then 1 else 0)
+    else (g.questionWeight x.val y.val : ℝ) / (g.totalWeight : ℝ)
+  μ_nonneg x y := by
+    split_ifs
+    · norm_num
+    · norm_num
+    · positivity
+  μ_sum_one := by
+    by_cases h : g.totalWeight = 0
+    · simp only [if_pos h]
+      rw [Finset.sum_eq_single (0 : Fin (g.nX + 1))]
+      · simp
+      · intro b _ hb
+        simp [hb]
+      · intro hmem
+        exact absurd (Finset.mem_univ _) hmem
+    · simp only [if_neg h]
+      have hT : (g.totalWeight : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr h
+      have hsum : ∑ x : Fin (g.nX + 1), ∑ y : Fin (g.nX + 1),
+          (g.questionWeight x.val y.val : ℝ) = (g.totalWeight : ℝ) := by
+        unfold totalWeight
+        push_cast
+        rfl
+      simp_rw [← Finset.sum_div]
+      rw [hsum, div_self hT]
+  D x y a b := if x = y ∧ a ≠ b then false else decide ((x.val, y.val, a.val, b.val) ∈ g.acc)
+  synchronous x a b hne := by
+    simp [hne]
+
+end GameData
+
+/-! ## The halting problem and Theorem 12.2 -/
+
+/-- The program `c` halts on the empty input. (`Nat.Partrec.Code` is
+Mathlib's Gödel numbering of partial recursive functions, an equivalent
+model of computation to Turing machines; the empty input is encoded by
+`0`.) -/
+def HaltsOnEmptyInput (c : Nat.Partrec.Code) : Prop := (c.eval 0).Dom
+
+/-- **Theorem 12.2 of "MIP* = RE"** (arXiv:2001.04383), stated with respect
+to the synchronous game value and with "polynomial-time" relaxed to
+"computable": there is a computable map from Turing machines to nonlocal
+games such that
+
+1. (completeness) if the machine halts on the empty input then the game has
+   synchronous value `1`, and
+2. (soundness) if the machine does not halt on the empty input then the
+   synchronous value of the game is at most `1/2`. -/
+theorem halting_reduces_to_gameValue :
+    ∃ g : Nat.Partrec.Code → GameData, Computable g ∧
+      ∀ c : Nat.Partrec.Code,
+        (HaltsOnEmptyInput c → gameValue (g c).toGame = 1) ∧
+        (¬HaltsOnEmptyInput c → gameValue (g c).toGame ≤ 1 / 2) := by
+  sorry
+
+end HaltingGameValue

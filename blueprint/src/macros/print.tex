@@ -1,0 +1,37 @@
+% Macros used only in the print version of the blueprint.
+
+% Colored effort badges (override the plain fallbacks in macros/common.tex).
+\usepackage{xcolor}
+\definecolor{effEasyBg}{RGB}{223,240,216}\definecolor{effEasyFg}{RGB}{60,118,61}
+\definecolor{effMedBg}{RGB}{252,238,199}\definecolor{effMedFg}{RGB}{138,109,59}
+\definecolor{effHardBg}{RGB}{242,222,222}\definecolor{effHardFg}{RGB}{169,68,66}
+\definecolor{effLibBg}{RGB}{217,237,247}\definecolor{effLibFg}{RGB}{49,112,143}
+\newcommand{\effortpill}[3]{\colorbox{#1}{\textcolor{#2}{\textsf{\footnotesize\strut #3}}}}
+\renewcommand{\effortEasy}{\effortpill{effEasyBg}{effEasyFg}{$\bullet\circ\circ$~easy}}
+\renewcommand{\effortMedium}{\effortpill{effMedBg}{effMedFg}{$\bullet\bullet\circ$~medium}}
+\renewcommand{\effortHard}{\effortpill{effHardBg}{effHardFg}{$\bullet\bullet\bullet$~hard}}
+\renewcommand{\effortMathlib}{\effortpill{effLibBg}{effLibFg}{$\checkmark$~(mostly) in Mathlib}}
+
+% Upstreaming badge (violet, outlined to distinguish it from the effort pills).
+% The inner \textcolor overrides hyperref's urlcolor inside the link.
+\definecolor{qlibBg}{RGB}{237,231,246}\definecolor{qlibFg}{RGB}{94,53,177}
+\renewcommand{\qlib}{{\setlength{\fboxrule}{0.4pt}\fcolorbox{qlibFg}{qlibBg}{\href{\qliburl}{\textcolor{qlibFg}{\textsf{\footnotesize\strut $\uparrow$~QuantumLib}}}}}}
+
+% No-op shims for blueprint web annotations.
+\newcommand{\lean}[1]{}
+\newcommand{\discussion}[1]{}
+\newcommand{\leanok}{}
+\newcommand{\mathlibok}{}
+\newcommand{\notready}{\textbf{[Not ready]}}
+
+\ExplSyntaxOn
+\NewDocumentCommand{\uses}{m}
+ {\clist_map_inline:nn{#1}{$\vphantom{\ref{##1}}$}%
+ \ignorespaces}
+\NewDocumentCommand{\proves}{m}
+ {\clist_map_inline:nn{#1}{$\vphantom{\ref{##1}}$}%
+ \ignorespaces}
+\ExplSyntaxOff
+
+\newcommand{\tnote}[1]{\emph{\color{blue}( Thomas: #1 )}}
+
