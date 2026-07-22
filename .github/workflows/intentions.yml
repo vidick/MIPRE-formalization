@@ -1,12 +1,18 @@
 name: Intentions
 
-# Task-claiming automation, following the FLT project. Contributors comment
-# `claim` / `disclaim` / `propose PR #N` / `withdraw PR #N` on issues; the
-# reusable workflow syncs assignment and the "MIPRE Formalization" board.
+# Task-claiming automation, following the FLT project. One workflow drives the whole
+# "MIPRE Formalization" board: contributors comment `claim` / `disclaim` / `propose #N` /
+# `withdraw #N` on issues (command mode), and issue/PR lifecycle events auto-add new
+# issues to the board and move cards as PRs open, merge, or close — no native GitHub
+# Project workflows needed.
 # See https://github.com/leanprover-community/intentions for details.
 on:
   issue_comment:
     types: [created]
+  issues:
+    types: [opened, closed, reopened]
+  pull_request_target:
+    types: [opened, reopened, ready_for_review, converted_to_draft, closed]
 jobs:
   intentions:
     permissions:
