@@ -38,12 +38,14 @@ jobs:
           await github.rest.issues.addLabels({ owner, repo, issue_number, labels: ['awaiting-review'] });
           await github.rest.issues.removeLabel({ owner, repo, issue_number, name: 'awaiting-author' }).catch(() => {});
 
+    # The board is looked up on its owner rather than through the repository, so it
+    # works whether or not the board has been linked to the repository.
     - name: Retrieve project ID
       id: get_project_id
       run: |
         QUERY=$(cat <<EOF
         {
-          "query": "{ repository(owner: \\"${{ github.repository_owner }}\\", name: \\"${{ github.event.repository.name }}\\") { projectsV2(first: 10) { nodes { id title } } } }"
+          "query": "{ repositoryOwner(login: \\"${{ github.repository_owner }}\\") { ... on User { projectsV2(first: 20) { nodes { id title } } } ... on Organization { projectsV2(first: 20) { nodes { id title } } } } }"
         }
         EOF
         )
@@ -51,7 +53,7 @@ jobs:
           -H "Content-Type: application/json" \
           --data "$QUERY" https://api.github.com/graphql)
 
-        PROJECT_ID=$(echo "$RESPONSE" | jq -r '.data.repository.projectsV2.nodes[] | select(.title == "MIPRE Formalization").id')
+        PROJECT_ID=$(echo "$RESPONSE" | jq -r '.data.repositoryOwner.projectsV2.nodes[] | select(.title == "MIPRE Formalization").id')
 
         if [ -z "$PROJECT_ID" ]; then
           echo "Error: Could not retrieve project ID"
