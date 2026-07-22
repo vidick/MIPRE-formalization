@@ -31,6 +31,8 @@ self-contained; that file is the source for the copied code.
   (blueprint `def:tensor-strategy`).
 - `MIPRE.quantumValue`: the quantum value `val*` of a game (blueprint `def:q-value`).
 - `MIPRE.SyncStrategy`: synchronous strategies (blueprint `def:sync-strategy`).
+- `MIPRE.SyncStrategy.IsPCC`: PCC (projective, consistent, and commuting) strategies
+  (blueprint `def:pcc`).
 - `MIPRE.syncValue`: the synchronous value of a synchronous game (blueprint
   `def:sync-value`).
 - `MIPRE.CommutingStrategy`: commuting strategies, given by a unital C*-algebra with a
@@ -190,6 +192,16 @@ structure SyncStrategy (G : SynchronousGame X A) where
   /-- Each measurement operator is idempotent, so the POVMs are projective (PVMs). -/
   projective : ∀ x a,
     ((povm x).mats a).val * ((povm x).mats a).val = ((povm x).mats a).val
+
+/-- A synchronous strategy is *PCC* (*projective, consistent, and commuting*, following
+JNVWY Section 5.2; blueprint `def:pcc`) if the measurement operators associated with any
+pair of questions asked with positive probability commute. Projectivity is part of
+`SyncStrategy`, and consistency is automatic for synchronous strategies, so only the
+commutation condition remains. -/
+def SyncStrategy.IsPCC {G : SynchronousGame X A} (S : SyncStrategy G) : Prop :=
+  ∀ x y, 0 < G.μ x y → ∀ a b,
+    ((S.povm x).mats a).val * ((S.povm y).mats b).val =
+      ((S.povm y).mats b).val * ((S.povm x).mats a).val
 
 /-- The value of a synchronous strategy in `G` (blueprint `def:sync-value`): the players
 answer questions `(x, y)` with `(a, b)` with probability `τ(M^x_a M^y_b) = Tr(M^x_a
