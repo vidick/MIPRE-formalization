@@ -6,7 +6,7 @@ This repository hosts a collaborative Lean 4 formalization project for the theor
 **MIP\* = RE** (Ji, Natarajan, Vidick, Wright, Yuen,
 [arXiv:2001.04383](https://arxiv.org/abs/2001.04383)).
 
-The main theorem is stated, self-contained on top of Mathlib, in
+A candidate Mathlib-only statement of the main theorem is in
 [`MIPRE/HaltingGameValue.lean`](MIPRE/HaltingGameValue.lean): there is a computable map
 from Turing machines to nonlocal games sending halting machines to games of synchronous
 value 1 and non-halting machines to games of value at most 1/2.
@@ -54,11 +54,7 @@ leanblueprint serve  # preview the website locally
   - [`MIPRE/Mathlib/`](MIPRE/Mathlib) — general-purpose declarations destined
     to be upstreamed to Mathlib (tracked on the
     [upstreaming dashboard](https://vidick.github.io/MIPRE-formalization/)).
-- [`blueprint/src/`](blueprint/src) — the LaTeX sources of the blueprint:
-  introduction and entry points, foundations (synchronous framework), required
-  external results (with formalization effort estimates), computability, the
-  structure of the proof, the main theorem, and downstream consequences
-  (Tsirelson, Connes' Embedding Problem).
+- [`blueprint/src/`](blueprint/src) — the LaTeX sources of the blueprint.
 - [`website/`](website) — the Jekyll home page deployed to GitHub Pages.
 - [`.github/workflows/`](.github/workflows) — CI: project build on every PR,
   blueprint/docs/website deployment on `main`, task-dashboard automation.
@@ -76,6 +72,4 @@ estimates (easy / medium / hard / in Mathlib) in the blueprint.
 This repository is based on the
 [LeanProject template](https://github.com/leanprover-community/LeanProject) and
 copies its collaboration mechanisms from the
-[FLT project](https://github.com/ImperialCollegeLondon/FLT). The infrastructure
-was validated in the (now archived) test repository
-[MIPRE-test](https://github.com/vidick/MIPRE-test).
+[FLT project](https://github.com/ImperialCollegeLondon/FLT). 
