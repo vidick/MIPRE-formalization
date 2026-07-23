@@ -31,7 +31,8 @@ halts on the empty input" is `(c.eval 0).Dom`, and computability of the
 reduction is Mathlib's `Computable`.
 -/
 
-import Mathlib
+import Mathlib.Analysis.Matrix.Order
+import Mathlib.Computability.PartrecCode
 
 namespace HaltingGameValue
 
