@@ -52,10 +52,14 @@ game as $\game = (\mX, \mA, \mu, D)$.
 \qlib{}
 A \emph{tensor-product strategy} for $\game$ consists of finite-dimensional Hilbert
 spaces $\mH_\alice$, $\mH_\bob$, a unit vector $\ket{\psi} \in \mH_\alice \ot
-\mH_\bob$, and POVMs $\{A^x_a\}$ on $\mH_\alice$ and $\{B^y_b\}$ on $\mH_\bob$. 
+\mH_\bob$, and projective measurements (PVMs) $\{A^x_a\}$ on $\mH_\alice$ and
+$\{B^y_b\}$ on $\mH_\bob$, one for each $x$ (resp.\ $y$): each $A^x_a$ is an
+orthogonal projection and $\sum_a A^x_a = \Id$.
 
 Outcome probabilities are computed using the Born rule: the players answer $(a,b)$ to questions $(x,y)$
-with probability $\bra{\psi} A^x_a \ot B^y_b \ket{\psi}$. 
+with probability $\bra{\psi} A^x_a \ot B^y_b \ket{\psi}$. Restricting to projective
+measurements follows~\cite{JNVWY20}; by Naimark dilation, allowing general POVMs
+would define the same quantum value.
 \end{definition}
 
 
@@ -231,8 +235,11 @@ theorem, imported as Theorem~\ref{thm:almost-sync}.
 For every synchronous game $\game$, $\synval(\game) \leq \valco(\game)$.
 \end{lemma}
 \begin{proof}
+\leanok
 A synchronous strategy $(d, M)$ is a commuting strategy with $\alg = \C^{d \times d}$
-and $\tau = \tr/d$, with the same value.
+and $\tau = \tr/d$, with the same value (in Lean,
+\texttt{MIPRE.SyncStrategy.toCommutingStrategy}; the value is preserved by
+definitional equality).
 \end{proof}
 
 \subsection{Distance measures}
