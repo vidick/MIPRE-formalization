@@ -32,7 +32,7 @@ quantum-information interest that are intended to be upstreamed to QuantumLib.
 \hline
 Result & Statement & Source & Effort \\
 \hline
-Gowers--Hatami & Thm.~\ref{thm:gowers-hatami} & \cite{GH17,dlS21} & medium \\
+Gowers--Hatami & Thm.~\ref{thm:gowers-hatami} & \cite{GH17,dlS21} & \checkmark \\
 Almost-synchronous correlations & Thm.~\ref{thm:almost-sync} & \cite{Vid22} & hard \\
 Orthonormalization & Thm.~\ref{thm:orthonormalization} & \cite{dlS21} & medium \\
 Magic Square rigidity & Thm.~\ref{thm:ms-rigidity} & \cite{WBMS16} & easy \\
@@ -56,22 +56,54 @@ Value approximable from below & Lem.~\ref{lem:value-lower-approx} & folklore & m
 \subsection{The Gowers--Hatami theorem}
 \label{sec:rr-gowers-hatami}
 
-\effortMedium\ \qlib
+\qlib
+
+\begin{definition}[Approximate representation]
+\label{def:approx-rep}
+\uses{def:hs-norm}
+\lean{MIPRE.IsApproxRepresentation}
+\leanok
+\qlib{}
+Let $G$ be a finite group and $\eps \in \R$. An \emph{$\eps$-approximate
+representation} of $G$ is a function $f : G \to U(d)$ such that
+\begin{equation*}
+  \E_{x, y \sim G} \, \mathrm{Re}\, \langle f(x) f(y), f(xy) \rangle_{hs}
+  \geq 1 - \eps\;,
+\end{equation*}
+where $\langle \cdot, \cdot \rangle_{hs}$ is the normalized Hilbert--Schmidt
+inner product of Definition~\ref{def:hs-norm}. Since each value of $f$ is
+unitary, $\norm{f(x) f(y) - f(xy)}_{hs}^2 = 2 - 2\, \mathrm{Re}\, \langle f(x)
+f(y), f(xy) \rangle_{hs}$, so the condition is equivalent to the defect form
+$\E_{x, y \sim G} \norm{f(x) f(y) - f(xy)}_{hs}^2 \leq 2 \eps$.
+\end{definition}
 
 \begin{theorem}[Gowers--Hatami]
 \label{thm:gowers-hatami}
-There is a universal constant $C > 0$ such that the following holds. Let $G$ be a
-finite group, $\eps \geq 0$, and $f : G \to U(d)$ a function such that
+\uses{def:hs-norm,def:approx-rep}
+\lean{MIPRE.gowers_hatami}
+\leanok
+Let $G$ be a finite group and $f : G \to U(d)$ an $\eps$-approximate
+representation of $G$. Then there exist $d' \geq d$, an isometry
+$V : \C^d \to \C^{d'}$, and a representation $\rho : G \to U(d')$ such that
 \begin{equation*}
-  \E_{x, y \sim G} \, \norm{f(x) f(y) - f(xy)}_{hs}^2 \leq \eps\;,
-\end{equation*}
-where $\norm{A}_{hs}^2 = \tau(A^\dagger A)$ is the dimension-normalized
-Hilbert--Schmidt norm. Then there exist $d' \geq d$ with $d' \leq (1 + C\eps)\, d$, an
-isometry $V : \C^d \to \C^{d'}$, and a representation $\rho : G \to U(d')$ such that
-\begin{equation*}
-  \E_{x \sim G} \, \norm{f(x) - V^\dagger \rho(x) V}_{hs}^2 \leq C \eps\;.
+  \E_{x \sim G} \, \norm{f(x) - V^\dagger \rho(x) V}_{hs}^2 \leq 2 \eps\;.
 \end{equation*}
 \end{theorem}
+
+\begin{proof}
+\leanok
+Let $L(G, \C^d) \cong \C^{|G| d}$ carry the inner product normalized by $1/|G|$,
+let $V : \C^d \to L(G, \C^d)$ be the map $u \mapsto (x \mapsto f(x) u)$, and let
+$\rho$ be the right regular representation, $(\rho(x) F)(y) = F(yx)$. Then $V$ is
+an isometry, and the compression $V^\dagger \rho(x) V = \E_{y \sim G}
+f(y)^\dagger f(yx)$ is an average of unitaries, hence has squared
+Hilbert--Schmidt norm at most $1$. Moreover
+$\E_{x} \mathrm{Re}\, \langle f(x), V^\dagger \rho(x) V \rangle_{hs} =
+\E_{x, y} \mathrm{Re}\, \langle f(x) f(y), f(xy) \rangle_{hs} \geq 1 - \eps$ by
+hypothesis, and the claim follows by expanding
+$\norm{f(x) - V^\dagger \rho(x) V}_{hs}^2$. The construction gives
+$d' = |G|\, d$.
+\end{proof}
 
 \paragraph{Source.} Gowers and Hatami~\cite{GH17}. A quantitative form suited to
 applications in nonlocal games, and a version adapted to the tracial setting, is given
@@ -80,10 +112,20 @@ by de la Salle~\cite{dlS21} and in~\cite{Vid22}.
 \paragraph{Comments.} This is the stability result underlying all rigidity
 (self-testing) arguments in the proof: an approximate representation of the Pauli group
 $\F_2^{2k}$ (with its cocycle) is close to an exact one, which forces the presence of
-EPR pairs. The proof is short (a few pages of finite group representation theory plus a
-compactness-free averaging argument) and is a good early target. The version needed for
-the synchronous framework replaces the bipartite state by the tracial state; this is
-the form proved in~\cite{dlS21}.
+EPR pairs. The statement above is fully formalized (statement and proof) in
+\texttt{MIPRE/Background/GowersHatami/Basic.lean}, following the regular-representation
+argument sketched in the proof; the intermediate statement, with the exact
+representation living on the concrete index set $G \times \{1, \dots, d\}$, is
+\texttt{MIPRE.gowers\_hatami\_prod}. Two remarks on the statement. (i) It asserts
+only $d' \geq d$, with witness $d' = |G| d$; it does not include the dimension bound
+$d' \leq (1 + C\eps) d$ of~\cite{GH17}, whose proof goes through the Fourier-analytic
+route via irreducible representations. Whether the sharper bound is needed downstream
+(in the Pauli-group application feeding Theorem~\ref{thm:qld}) is to be revisited; if
+so it will be added as a separate strengthening. (ii) In the Lean encoding the
+isometry is stored as the $d \times d'$ matrix of its adjoint, so the isometry
+condition reads $V V^\dagger = \Id$ and the compression is written
+$V \rho(x) V^\dagger$. The normalized Hilbert--Schmidt norm is the tracial form
+needed for the synchronous framework~\cite{dlS21,Vid22}.
 
 \subsection{Almost-synchronous correlations}
 \label{sec:rr-almost-sync}

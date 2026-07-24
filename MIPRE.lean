@@ -1,3 +1,4 @@
+import MIPRE.Background.GowersHatami.Basic
 import MIPRE.Foundations.Compression
 import MIPRE.Foundations.Cost.Basic
 import MIPRE.Foundations.Cost.Encoding
