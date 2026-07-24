@@ -238,14 +238,29 @@ and $\tau = \tr/d$, with the same value.
 \subsection{Distance measures}
 \label{sec:distances}
 
+\begin{definition}[Normalized Hilbert--Schmidt norm]
+\label{def:hs-norm}
+\lean{MIPRE.hsInner, MIPRE.hsNormSq}
+\leanok
+\qlib{}
+For matrices $A, B \in \C^{d \times d}$, let
+$\langle A, B \rangle_{hs} = \tau(A^\dagger B)$ and
+$\norm{A}_{hs}^2 = \tau(A^\dagger A)$, where $\tau = \tr/d$ is the
+dimension-normalized trace.
+\end{definition}
+
 \begin{definition}[POVM distance]
 \label{def:distance}
-\uses{def:game}
+\uses{def:game,def:hs-norm}
+\lean{MIPRE.povmDistance, MIPRE.IsPOVMClose}
+\leanok
 \qlib{}
 Let $\mu$ be a distribution on a finite set $\mX$, and
 $\{M^x_a\}$, $\{N^x_a\}$ families of POVMs. We say $M$ and $N$ are
 \emph{$\delta$-close}, written $M^x_a \approx_\delta N^x_a$, if
-$\E_{x \sim \mu} \sum_a \tau((M^x_a - N^x_a)^2) \leq \delta$.
+$\E_{x \sim \mu} \sum_a \norm{M^x_a - N^x_a}_{hs}^2 \leq \delta$. Since each
+difference $M^x_a - N^x_a$ is Hermitian, the summand equals
+$\tau((M^x_a - N^x_a)^2)$.
 \end{definition}
 
 
