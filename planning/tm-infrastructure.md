@@ -430,7 +430,7 @@ lake exe mk_all               # then commit the regenerated MIPRE.lean
 ## Progress checklist
 
 - [x] **WP1** vendor CSLib (3 files) + commit `planning/tm-infrastructure.md` (2026-08-05)
-- [ ] **WP2** `MultiInput/Deterministic.lean` + `MultiInput/TapeLemmas.lean`
+- [x] **WP2** `MultiInput/Deterministic.lean` + `MultiInput/TapeLemmas.lean` (2026-08-05; note: `moveInputPos` lives in the `MultiTapeTM` namespace, reused via selective `open`; `TransitionOut` is namespaced as `MultiInputTM.TransitionOut` to avoid clashing with the vendored `Turing.TransitionOut`)
 - [ ] **WP3** `MultiInput/Complexity.lean` + `MultiInput/OneInputEquiv.lean` → **Milestone A done**
 - [ ] **WP4** `Code/Raw.lean` + `Code/Observation.lean`
 - [ ] **WP5** `Code/WellFormed.lean` (incl. `actionAt` layer)

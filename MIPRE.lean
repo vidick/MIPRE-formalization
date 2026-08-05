@@ -10,3 +10,5 @@ import MIPRE.Foundations.Cost.Toolkit
 import MIPRE.Foundations.Distances
 import MIPRE.Foundations.Games
 import MIPRE.HaltingGameValue
+import MIPRE.TM.MultiInput.Deterministic
+import MIPRE.TM.MultiInput.TapeLemmas
