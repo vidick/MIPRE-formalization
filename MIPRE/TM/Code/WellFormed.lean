@@ -69,22 +69,27 @@ def RawCode.WellFormed (c : RawCode i) : Prop :=
 
 /-- The executable well-formedness checker; `RawCode.wellFormedB_iff` proves it decides
 `RawCode.WellFormed`. The Milestone C parser accepts exactly the descriptions passing this
-check. -/
+check.
+
+The table loops run over `toList` with `List.all` (not `Array.all`) deliberately:
+`List.all` is structurally recursive, so the kernel can evaluate this checker and
+concrete literals can be certified by `decide`; `Array.all` does not kernel-reduce on
+this toolchain. -/
 def RawCode.wellFormedB (c : RawCode i) : Bool :=
   decide (2 ≤ c.alphabetSize) &&
   (decide (0 < c.stateCount) &&
   (decide (c.startState < c.stateCount) &&
   (decide (c.table.size = c.stateCount * (c.alphabetSize + 1) ^ (i + c.workTapeCount)) &&
-  c.table.all fun a =>
+  c.table.toList.all fun a =>
     decide (a.inputMoves.size = i) &&
     (decide (a.workActions.size = c.workTapeCount) &&
-    ((a.workActions.all fun wa => wa.write.checkB c.alphabetSize) &&
+    ((a.workActions.toList.all fun wa => wa.write.checkB c.alphabetSize) &&
     nextStateCheckB c.stateCount a.nextState)))))
 
 /-- The executable checker decides well-formedness. -/
 theorem RawCode.wellFormedB_iff {c : RawCode i} : c.wellFormedB = true ↔ c.WellFormed := by
   unfold wellFormedB WellFormed
-  simp only [Bool.and_eq_true, decide_eq_true_eq, Array.all_eq_true',
+  simp only [Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true, Array.mem_toList_iff,
     RawWrite.checkB_eq_true_iff, nextStateCheckB_eq_true_iff]
 
 instance : DecidablePred (RawCode.WellFormed (i := i)) := fun c =>

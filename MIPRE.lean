@@ -10,8 +10,10 @@ import MIPRE.Foundations.Cost.Toolkit
 import MIPRE.Foundations.Distances
 import MIPRE.Foundations.Games
 import MIPRE.HaltingGameValue
+import MIPRE.TM.Code.Examples
 import MIPRE.TM.Code.Observation
 import MIPRE.TM.Code.Raw
+import MIPRE.TM.Code.Semantics
 import MIPRE.TM.Code.WellFormed
 import MIPRE.TM.MultiInput.Complexity
 import MIPRE.TM.MultiInput.Deterministic

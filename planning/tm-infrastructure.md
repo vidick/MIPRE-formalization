@@ -96,7 +96,7 @@ which are what we implement now:
 | Milestone | Content | Status |
 |---|---|---|
 | **A** | Multi-input semantics + CSLib equivalence at `i = 1` (WP1–WP3) | ✅ 2026-08-05 |
-| **B** | Finite machine syntax `Code i` + executable `Code.toTM` (WP4–WP6) | ☐ |
+| **B** | Finite machine syntax `Code i` + executable `Code.toTM` (WP4–WP6) | ✅ 2026-08-05 |
 | C | Exact binary serialization: `BitCodec`, framed nat/array codecs, `encodeCode`/`decodeCodeExact`/`decodeCode_sound`, total `decodeCode` via `defaultRejectCode`, `codeSize` | ☐ |
 | D | Pure reference evaluator: `Code.runFor`, `Code.evalWithin`, `Code.Produces` + execution laws | ☐ |
 | E | Port `rtm` semantic core (`Data`, codecs, `Prog`, `InPlace`, controller-style simulator consuming `Code`, never `Fintype.elems`) | ☐ |
@@ -434,7 +434,12 @@ lake exe mk_all               # then commit the regenerated MIPRE.lean
 - [x] **WP3** `MultiInput/Complexity.lean` + `MultiInput/OneInputEquiv.lean` → **Milestone A done** (2026-08-05; all acceptance theorems proved, incl. `toCSLib_computesInTimeAndSpace` and both round trips — `toCSLib_ofCSLib` is `rfl`)
 - [x] **WP4** `Code/Raw.lean` + `Code/Observation.lean` (2026-08-05; both inverse laws proved at all three levels: symbols, observations, transition indices)
 - [x] **WP5** `Code/WellFormed.lean` (incl. `actionAt` layer) (2026-08-05; `WellFormed` is `Decidable` through `wellFormedB`, so literal codes certify by `decide`)
-- [ ] **WP6** `Code/Semantics.lean` + `Code/Examples.lean` → **Milestone B done**
+- [x] **WP6** `Code/Semantics.lean` + `Code/Examples.lean` → **Milestone B done** (2026-08-05.
+  Notes: `wellFormedB`'s table loops were switched to `List.all` over `toList` — `Array.all`
+  does not kernel-reduce on v4.32.0, `List.all` does, and literals now certify by `decide`;
+  the 100-step `loopForever` pins need a local `set_option maxRecDepth 4000`; axiom spot
+  check: `Code.toTM` and the example machines depend only on `propext` and `Quot.sound` —
+  not even `Classical.choice` appears in the data path.)
 - [ ] Roadmap statuses updated; E/F interpreter-ownership decision recorded when taken
 
 Each WP is one commit on `turing-machines` (mergeable as its own PR if the FLT-style
