@@ -56,6 +56,7 @@ open Relation
 variable {i w : ℕ} {State Symbol : Type*}
 
 /-- The output of the transition function of a multi-input Turing machine. -/
+@[ext]
 structure MultiInputTM.TransitionOut (i w : ℕ) (Symbol State : Type*) where
   /-- The movement (attempt) of each input head. -/
   inputMoves : Fin i → SignType

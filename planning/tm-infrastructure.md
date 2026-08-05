@@ -95,7 +95,7 @@ which are what we implement now:
 
 | Milestone | Content | Status |
 |---|---|---|
-| **A** | Multi-input semantics + CSLib equivalence at `i = 1` (WP1–WP3) | ☐ |
+| **A** | Multi-input semantics + CSLib equivalence at `i = 1` (WP1–WP3) | ✅ 2026-08-05 |
 | **B** | Finite machine syntax `Code i` + executable `Code.toTM` (WP4–WP6) | ☐ |
 | C | Exact binary serialization: `BitCodec`, framed nat/array codecs, `encodeCode`/`decodeCodeExact`/`decodeCode_sound`, total `decodeCode` via `defaultRejectCode`, `codeSize` | ☐ |
 | D | Pure reference evaluator: `Code.runFor`, `Code.evalWithin`, `Code.Produces` + execution laws | ☐ |
@@ -431,7 +431,7 @@ lake exe mk_all               # then commit the regenerated MIPRE.lean
 
 - [x] **WP1** vendor CSLib (3 files) + commit `planning/tm-infrastructure.md` (2026-08-05)
 - [x] **WP2** `MultiInput/Deterministic.lean` + `MultiInput/TapeLemmas.lean` (2026-08-05; note: `moveInputPos` lives in the `MultiTapeTM` namespace, reused via selective `open`; `TransitionOut` is namespaced as `MultiInputTM.TransitionOut` to avoid clashing with the vendored `Turing.TransitionOut`)
-- [ ] **WP3** `MultiInput/Complexity.lean` + `MultiInput/OneInputEquiv.lean` → **Milestone A done**
+- [x] **WP3** `MultiInput/Complexity.lean` + `MultiInput/OneInputEquiv.lean` → **Milestone A done** (2026-08-05; all acceptance theorems proved, incl. `toCSLib_computesInTimeAndSpace` and both round trips — `toCSLib_ofCSLib` is `rfl`)
 - [ ] **WP4** `Code/Raw.lean` + `Code/Observation.lean`
 - [ ] **WP5** `Code/WellFormed.lean` (incl. `actionAt` layer)
 - [ ] **WP6** `Code/Semantics.lean` + `Code/Examples.lean` → **Milestone B done**
