@@ -16,6 +16,7 @@ import MIPRE.TM.Code.Raw
 import MIPRE.TM.Code.Semantics
 import MIPRE.TM.Code.WellFormed
 import MIPRE.TM.MultiInput.Complexity
+import MIPRE.TM.MultiInput.Congr
 import MIPRE.TM.MultiInput.Deterministic
 import MIPRE.TM.MultiInput.OneInputEquiv
 import MIPRE.TM.MultiInput.TapeLemmas

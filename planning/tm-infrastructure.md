@@ -54,6 +54,29 @@ which are what we implement now:
    The "who owns the universal interpreter" question is deliberately deferred to the
    Milestone E gate (see Roadmap).
 
+### Fork findings — crei/cslib (checked 2026-08-05, after Milestones A/B landed)
+
+Christian Reitwiessner's fork (github.com/crei/cslib) was inventoried branch by branch.
+Impact on this plan:
+
+- **Milestones A and B are not superseded**: the fork contains no multi-input machines
+  anywhere, and its only `Fin`-typed machine sketch (`rtmfun3:HierarchyTheorems.lean`,
+  `NormalizedTM`, 9 sorries, single-tape) is not a serializable dense-table code.
+- **Adopted for Milestone A**: the `congrState`/`congrSymbol` relabeling API of
+  `finite_in_fin:Regular.lean` (sorry-free, v4.32.0-rc1, tip `4a149e2`), ported to
+  `MIPRE/TM/MultiInput/Congr.lean` (WP3b). The fork file itself targets the pre-#745
+  model (its `Cfg` still has an `output` field), so it cannot be vendored against the
+  current upstream model; the port also replaces the fork's `noncomputable`
+  embedding-plus-`Function.invFun` `congrState` with a computable `Equiv`-based one
+  (its only consumer instantiates with an `Equiv` anyway), keeping decision D5 intact.
+  The fork's DFA simulation and regular-language results were deliberately not ported.
+- **Later-milestone material** (descriptions updated in the roadmap below): the `rtm`
+  branch is the Milestone E port target; `utm:Satisfiability.lean` (sorry-free verified
+  5-tape SAT-verifier TM) is design evidence for the succinct-SAT gateway; open upstream
+  PRs #767 (Classes/SpaceInTime) and #772 (ConfigBound) plus the fork's `BigO` are
+  Milestone G alignment targets. crei's upstream pipeline (issue #611) overlaps
+  Milestones B/F/G — **coordinate before building anything it may deliver upstream.**
+
 ## Fixed decisions (modifications to the GPT program)
 
 - **D1 — vendor CSLib, don't depend.** Vendor 3 files byte-faithfully (adaptations listed in
@@ -99,9 +122,9 @@ which are what we implement now:
 | **B** | Finite machine syntax `Code i` + executable `Code.toTM` (WP4–WP6) | ✅ 2026-08-05 |
 | C | Exact binary serialization: `BitCodec`, framed nat/array codecs, `encodeCode`/`decodeCodeExact`/`decodeCode_sound`, total `decodeCode` via `defaultRejectCode`, `codeSize` | ☐ |
 | D | Pure reference evaluator: `Code.runFor`, `Code.evalWithin`, `Code.Produces` + execution laws | ☐ |
-| E | Port `rtm` semantic core (`Data`, codecs, `Prog`, `InPlace`, controller-style simulator consuming `Code`, never `Fintype.elems`) | ☐ |
-| F | Compile the fixed universal program → `boundedUniversalCode i : Code (i+2)`, `universalCode i : Code (i+1)` + correctness | ☐ |
-| G | Quantitative bounds → `universal_polynomial_overhead` (coarse polynomial; degree not optimized) | ☐ |
+| E | Port `rtm` semantic core (`Data`, codecs, `Prog`, `InPlace`, controller-style simulator consuming `Code`, never `Fintype.elems`). Port target: crei/cslib `rtm` branch (tip 2026-06-24, v4.32.0-rc1): `Data`/`DataEncode`/`Prog`/`ProgSem`+`InPlace` core sorry-free; `PB` 7 sorries, `TMSimulator` 4 (all quantitative) | ☐ |
+| F | Compile the fixed universal program → `boundedUniversalCode i : Code (i+2)`, `universalCode i : Code (i+1)` + correctness. Design evidence: `utm:Satisfiability.lean` (sorry-free verified 5-tape SAT-verifier TM — also a gateway prototype for `thm:succinct-sat`); `rtmfun3:HierarchyTheorems.lean` (`NormalizedTM`, quadratic-overhead universal spec; sketch, 9 sorries) | ☐ |
+| G | Quantitative bounds → `universal_polynomial_overhead` (coarse polynomial; degree not optimized). Align with crei's open upstream PRs: #772 `ConfigBound` (#configs ≤ (n+2)·a·2^(c·s)), #767 `Classes`/`SpaceInTime` (DTIME/DSPACE, L⊆P, PSPACE⊆EXP), fork `landau_calculus:BigO` | ☐ |
 
 **Gate before E/F (record the decision here when made):** one interpreter or two — TM-level
 `universalCode` vs the ambient-model `exists_efficient_universal`/`exists_clocked_universal`
@@ -432,6 +455,7 @@ lake exe mk_all               # then commit the regenerated MIPRE.lean
 - [x] **WP1** vendor CSLib (3 files) + commit `planning/tm-infrastructure.md` (2026-08-05)
 - [x] **WP2** `MultiInput/Deterministic.lean` + `MultiInput/TapeLemmas.lean` (2026-08-05; note: `moveInputPos` lives in the `MultiTapeTM` namespace, reused via selective `open`; `TransitionOut` is namespaced as `MultiInputTM.TransitionOut` to avoid clashing with the vendored `Turing.TransitionOut`)
 - [x] **WP3** `MultiInput/Complexity.lean` + `MultiInput/OneInputEquiv.lean` → **Milestone A done** (2026-08-05; all acceptance theorems proved, incl. `toCSLib_computesInTimeAndSpace` and both round trips — `toCSLib_ofCSLib` is `rfl`)
+- [x] **WP3b** `MultiInput/Congr.lean` — relabeling along `State ≃ State'` / `Symbol ≃ Symbol'` transporting `step`/`configs`/`outputString`/`spaceUsed`/`ComputesInTimeAndSpace`; ported from crei/cslib `finite_in_fin:Regular.lean` (see Fork findings; Equiv-based and computable, unlike the fork's) (2026-08-05)
 - [x] **WP4** `Code/Raw.lean` + `Code/Observation.lean` (2026-08-05; both inverse laws proved at all three levels: symbols, observations, transition indices)
 - [x] **WP5** `Code/WellFormed.lean` (incl. `actionAt` layer) (2026-08-05; `WellFormed` is `Decidable` through `wellFormedB`, so literal codes certify by `decide`)
 - [x] **WP6** `Code/Semantics.lean` + `Code/Examples.lean` → **Milestone B done** (2026-08-05.
