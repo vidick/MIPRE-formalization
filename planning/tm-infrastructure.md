@@ -433,7 +433,7 @@ lake exe mk_all               # then commit the regenerated MIPRE.lean
 - [x] **WP2** `MultiInput/Deterministic.lean` + `MultiInput/TapeLemmas.lean` (2026-08-05; note: `moveInputPos` lives in the `MultiTapeTM` namespace, reused via selective `open`; `TransitionOut` is namespaced as `MultiInputTM.TransitionOut` to avoid clashing with the vendored `Turing.TransitionOut`)
 - [x] **WP3** `MultiInput/Complexity.lean` + `MultiInput/OneInputEquiv.lean` → **Milestone A done** (2026-08-05; all acceptance theorems proved, incl. `toCSLib_computesInTimeAndSpace` and both round trips — `toCSLib_ofCSLib` is `rfl`)
 - [x] **WP4** `Code/Raw.lean` + `Code/Observation.lean` (2026-08-05; both inverse laws proved at all three levels: symbols, observations, transition indices)
-- [ ] **WP5** `Code/WellFormed.lean` (incl. `actionAt` layer)
+- [x] **WP5** `Code/WellFormed.lean` (incl. `actionAt` layer) (2026-08-05; `WellFormed` is `Decidable` through `wellFormedB`, so literal codes certify by `decide`)
 - [ ] **WP6** `Code/Semantics.lean` + `Code/Examples.lean` → **Milestone B done**
 - [ ] Roadmap statuses updated; E/F interpreter-ownership decision recorded when taken
 
