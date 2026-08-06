@@ -13,6 +13,7 @@ import MIPRE.HaltingGameValue
 import MIPRE.TM.Code.Encoding.MachineCode
 import MIPRE.TM.Code.Encoding.Nat
 import MIPRE.TM.Code.Encoding.Total
+import MIPRE.TM.Code.Evaluator
 import MIPRE.TM.Code.Examples
 import MIPRE.TM.Code.Observation
 import MIPRE.TM.Code.Raw
