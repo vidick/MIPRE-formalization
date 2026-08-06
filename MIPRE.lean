@@ -1,4 +1,7 @@
 import MIPRE.Background.GowersHatami.Basic
+import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
+import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
+import MIPRE.Cslib.Foundations.Data.RelatesInSteps
 import MIPRE.Foundations.Compression
 import MIPRE.Foundations.Cost.Basic
 import MIPRE.Foundations.Cost.Encoding
@@ -7,3 +10,16 @@ import MIPRE.Foundations.Cost.Toolkit
 import MIPRE.Foundations.Distances
 import MIPRE.Foundations.Games
 import MIPRE.HaltingGameValue
+import MIPRE.TM.Code.Encoding.MachineCode
+import MIPRE.TM.Code.Encoding.Nat
+import MIPRE.TM.Code.Encoding.Total
+import MIPRE.TM.Code.Examples
+import MIPRE.TM.Code.Observation
+import MIPRE.TM.Code.Raw
+import MIPRE.TM.Code.Semantics
+import MIPRE.TM.Code.WellFormed
+import MIPRE.TM.MultiInput.Complexity
+import MIPRE.TM.MultiInput.Congr
+import MIPRE.TM.MultiInput.Deterministic
+import MIPRE.TM.MultiInput.OneInputEquiv
+import MIPRE.TM.MultiInput.TapeLemmas
