@@ -120,7 +120,7 @@ Impact on this plan:
 |---|---|---|
 | **A** | Multi-input semantics + CSLib equivalence at `i = 1` (WP1–WP3) | ✅ 2026-08-05 |
 | **B** | Finite machine syntax `Code i` + executable `Code.toTM` (WP4–WP6) | ✅ 2026-08-05 |
-| C | Exact binary serialization: prefix-free nat codec, `encodeCode`/`decodeCodeExact`/`decodeCodeExact_sound`, total `decodeCode` via `defaultRejectCode`, `codeSize` (**detailed plan below**, WP7–WP9) | ☐ |
+| C | Exact binary serialization: prefix-free nat codec, `encodeCode`/`decodeCodeExact`/`decodeCodeExact_sound`, total `decodeCode` via `defaultRejectCode`, `codeSize` (**detailed plan below**, WP7–WP9) | ✅ 2026-08-06 |
 | D | Pure reference evaluator: `Code.runFor`, `Code.evalWithin`, `Code.Produces` + execution laws | ☐ |
 | E | Port `rtm` semantic core (`Data`, codecs, `Prog`, `InPlace`, controller-style simulator consuming `Code`, never `Fintype.elems`). Port target: crei/cslib `rtm` branch (tip 2026-06-24, v4.32.0-rc1): `Data`/`DataEncode`/`Prog`/`ProgSem`+`InPlace` core sorry-free; `PB` 7 sorries, `TMSimulator` 4 (all quantitative) | ☐ |
 | F | Compile the fixed universal program → `boundedUniversalCode i : Code (i+2)`, `universalCode i : Code (i+1)` + correctness. Design evidence: `utm:Satisfiability.lean` (sorry-free verified 5-tape SAT-verifier TM — also a gateway prototype for `thm:succinct-sat`); `rtmfun3:HierarchyTheorems.lean` (`NormalizedTM`, quadratic-overhead universal spec; sketch, 9 sorries) | ☐ |
@@ -535,9 +535,9 @@ lake exe mk_all               # then commit the regenerated MIPRE.lean
   the 100-step `loopForever` pins need a local `set_option maxRecDepth 4000`; axiom spot
   check: `Code.toTM` and the example machines depend only on `propext` and `Quot.sound` —
   not even `Classical.choice` appears in the data path.)
-- [ ] **WP7** `Code/Encoding/Nat.lean` — self-delimiting nat codec
-- [ ] **WP8** `Code/Encoding/MachineCode.lean` — machine serialization + exact decoder
-- [ ] **WP9** `Code/Encoding/Total.lean` — total decode, `codeSize`, test battery → **Milestone C done**
+- [x] **WP7** `Code/Encoding/Nat.lean` — self-delimiting nat codec (2026-08-06; fuel-structural digits so the kernel evaluates the codec; length characterized via `2^k`, no `Nat.log2`)
+- [x] **WP8** `Code/Encoding/MachineCode.lean` — machine serialization + exact decoder (2026-08-06; soundness fully compositional via paired prefix/soundness lemmas — the D11 re-encode fallback was not needed)
+- [x] **WP9** `Code/Encoding/Total.lean` — total decode, `codeSize` + `codeSize_le`, test battery → **Milestone C done** (2026-08-06; all round trips and the seven-mode malformed battery kernel-checked by `decide`; size-bound lemmas are stated in `c.raw.*` projections — `omega` treats the `Code.*` abbrevs as distinct atoms)
 - [ ] Roadmap statuses updated; E/F interpreter-ownership decision recorded when taken
 
 Each WP is one commit on `turing-machines` (mergeable as its own PR if the FLT-style
