@@ -120,7 +120,7 @@ Impact on this plan:
 |---|---|---|
 | **A** | Multi-input semantics + CSLib equivalence at `i = 1` (WP1–WP3) | ✅ 2026-08-05 |
 | **B** | Finite machine syntax `Code i` + executable `Code.toTM` (WP4–WP6) | ✅ 2026-08-05 |
-| C | Exact binary serialization: `BitCodec`, framed nat/array codecs, `encodeCode`/`decodeCodeExact`/`decodeCode_sound`, total `decodeCode` via `defaultRejectCode`, `codeSize` | ☐ |
+| C | Exact binary serialization: prefix-free nat codec, `encodeCode`/`decodeCodeExact`/`decodeCodeExact_sound`, total `decodeCode` via `defaultRejectCode`, `codeSize` (**detailed plan below**, WP7–WP9) | ☐ |
 | D | Pure reference evaluator: `Code.runFor`, `Code.evalWithin`, `Code.Produces` + execution laws | ☐ |
 | E | Port `rtm` semantic core (`Data`, codecs, `Prog`, `InPlace`, controller-style simulator consuming `Code`, never `Fintype.elems`). Port target: crei/cslib `rtm` branch (tip 2026-06-24, v4.32.0-rc1): `Data`/`DataEncode`/`Prog`/`ProgSem`+`InPlace` core sorry-free; `PB` 7 sorries, `TMSimulator` 4 (all quantitative) | ☐ |
 | F | Compile the fixed universal program → `boundedUniversalCode i : Code (i+2)`, `universalCode i : Code (i+1)` + correctness. Design evidence: `utm:Satisfiability.lean` (sorry-free verified 5-tape SAT-verifier TM — also a gateway prototype for `thm:succinct-sat`); `rtmfun3:HierarchyTheorems.lean` (`NormalizedTM`, quadratic-overhead universal spec; sketch, 9 sorries) | ☐ |
@@ -422,6 +422,77 @@ evaluate to pinned results.
 
 ---
 
+## Milestone C — exact binary serialization
+
+Machine codes become bit strings: `Code i ↔ {0,1}*` with a canonical encoder, an exact
+partial decoder, and a total decoder defaulting to `defaultRejectCode i`. This is the
+paper's "description `α` of a machine": prerequisite for `|𝒟|` measures, the universal
+machine's input format, and self-reference.
+
+**Decisions (extending D1–D8):**
+
+- **D9 — TM-side only.** The codec lives in the `Turing` namespace over plain
+  `List Bool`; no dependency on, or bridge to, `MIPRE.Cost.SizedEncoding` yet (a
+  `SizedEncoding (Code i)` instance is deferred to the succinct-SAT gateway, the first
+  place ambient-model programs manipulate TM descriptions).
+- **D10 — kernel-evaluable codecs.** Every encoder/parser is structurally recursive
+  (fuel where needed, `List` loops, no `Array.all`-style opaque recursion), so all
+  round-trip and malformed-input tests are `by decide` — same discipline as Milestone B.
+- **D11 — soundness by prefix-free design, not re-encoding.** Every field codec is
+  prefix-free and canonical (the nat parser rejects digit strings with a trailing
+  `false`), and every parser comes with a paired soundness lemma
+  `parse s = some (a, rest) → s = encode a ++ rest`. `decodeCodeExact_sound` then falls
+  out compositionally. Recorded fallback if a soundness proof turns ugly: accept only
+  strings with `encode (parsed) == input` — trivially sound, less elegant.
+
+**Normative format** (cited by Milestones E–G; must never change):
+`encodeNat 0 (version) · workTapeCount · alphabetSize · stateCount · startState · the
+Q·(σ+1)^(i+w) table entries in `transitionIndex` order`. Naturals use the
+self-delimiting code `1^L 0 d₀…d_{L−1}` (`d` = little-endian binary digits, canonical:
+last digit of a nonzero number is `1`; `L` = their count). Per entry: `i` moves
+(`stay = 0`, `right = 10`, `left = 11`), `w` work actions (write `keep = 0`,
+`blank = 10`, `symbol s = 11·encodeNat s`, then the move), output
+(`none = 0`, `some b = 1·b`), successor (`none = 0`, `some q = 1·encodeNat q`).
+The arity `i` stays external (the paper's `[α]_i`). `decodeCodeExact` demands full
+consumption (trailing garbage rejected) and gates on `wellFormedB`.
+
+### WP7 — the self-delimiting nat codec (`Code/Encoding/Nat.lean`)
+
+`natToBits`/`bitsToNat` (little-endian digits, structural via fuel + fuel-irrelevance
+lemma), `encodeNat`, `parseUnary`, `parseNat`. Theorems: both digit round trips
+(`bitsToNat_natToBits`; `natToBits_bitsToNat` on canonical strings), canonicality
+(`natToBits_getLast?_ne_false`), the length characterization
+(`n < 2 ^ (natToBits n).length`, `n < 2^k → length ≤ k` — avoids `Nat.log2`), prefix
+property (`parseNat (encodeNat n ++ rest) = some (n, rest)`), soundness
+(`parseNat_sound`), injectivity, `encodeNat_length` (`= 2L + 1`) and its `2k + 1` bound.
+
+### WP8 — machine serialization (`Code/Encoding/MachineCode.lean`)
+
+Field codecs (`Move`, `RawWrite`, output, successor, `RawWorkAction`) each with prefix +
+soundness lemmas; the generic fixed-count combinator `parseCount` /`encodeListWith` with
+membership-scoped prefix and soundness lemmas; `encodeAction`/`parseAction i w` (prefix
+lemma assumes the entry's arities — supplied by well-formedness at the call site);
+`encodeRawCode`/`encodeCode`/`parseRawCode`/`decodeCodeExact`. Theorems:
+`decodeCodeExact_encodeCode` (simp), `encodeCode_injective`, `decodeCodeExact_sound`.
+
+### WP9 — total decoding, size, tests (`Code/Encoding/Total.lean`)
+
+`decodeCode i s := (decodeCodeExact i s).getD (defaultRejectCode i)` with
+`decodeCode_encodeCode` (simp); `codeSize c := (encodeCode c).length` with `codeSize_eq`
+and an explicit upper bound `codeSize_le` (header nat-lengths + table count × per-entry
+bound; the later `|𝒱| ≤ λ` arithmetic consumes this). Tests, all `by decide`: encode/
+decode round trips for all six Milestone B machines and `defaultRejectCode 1`; the
+malformed battery — empty string, zero states, alphabet of size one, wrong table
+length, out-of-range successor state, out-of-range work symbol, trailing garbage — each
+pinned to `decodeCodeExact = none` **and** `decodeCode = defaultRejectCode 1`.
+
+**Milestone C acceptance (all sorry-free):** the four theorem families
+(`decode_encode`, `encode_injective`, `decode_sound`, `codeSize_eq`+`codeSize_le`)
+landed; format documented normatively; every malformed string decodes totally to the
+canonical default machine; all tests kernel-evaluated (no `native_decide`).
+
+---
+
 ## Verification (every WP; CI-equivalent locally)
 
 ```bash
@@ -464,6 +535,9 @@ lake exe mk_all               # then commit the regenerated MIPRE.lean
   the 100-step `loopForever` pins need a local `set_option maxRecDepth 4000`; axiom spot
   check: `Code.toTM` and the example machines depend only on `propext` and `Quot.sound` —
   not even `Classical.choice` appears in the data path.)
+- [ ] **WP7** `Code/Encoding/Nat.lean` — self-delimiting nat codec
+- [ ] **WP8** `Code/Encoding/MachineCode.lean` — machine serialization + exact decoder
+- [ ] **WP9** `Code/Encoding/Total.lean` — total decode, `codeSize`, test battery → **Milestone C done**
 - [ ] Roadmap statuses updated; E/F interpreter-ownership decision recorded when taken
 
 Each WP is one commit on `turing-machines` (mergeable as its own PR if the FLT-style

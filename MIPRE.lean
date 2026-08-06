@@ -10,6 +10,7 @@ import MIPRE.Foundations.Cost.Toolkit
 import MIPRE.Foundations.Distances
 import MIPRE.Foundations.Games
 import MIPRE.HaltingGameValue
+import MIPRE.TM.Code.Encoding.Nat
 import MIPRE.TM.Code.Examples
 import MIPRE.TM.Code.Observation
 import MIPRE.TM.Code.Raw
