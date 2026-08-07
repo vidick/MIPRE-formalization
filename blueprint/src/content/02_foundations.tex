@@ -242,6 +242,71 @@ and $\tau = \tr/d$, with the same value (in Lean,
 definitional equality).
 \end{proof}
 
+\subsection{Linear constraint system games}
+\label{sec:lcs-games}
+
+A well-studied class of nonlocal games arises from systems of linear equations over
+$\F_2$: the referee asks Alice for a satisfying assignment to a randomly chosen
+equation and Bob for the value of a randomly chosen variable in it, and checks
+consistency. The Mermin--Peres magic square is the canonical example. The
+formalization of this subsection was contributed by Sean Perazzolo
+(\texttt{MIPRE.LCS}); beyond the definitions below it includes observable- and
+projector-based strategy formalisms and their equivalence, a sum-of-squares
+decomposition of the loss operators, the extraction of operator identities from
+perfect play on the EPR state, matrix representations of solution groups, and the
+magic square as a worked example
+(\texttt{MIPRE.LCS.MagicSquare.merminPeresStrategy}).
+
+\begin{definition}[LCS instance]
+\label{def:lcs-instance}
+\lean{MIPRE.LCS.Layout, MIPRE.LCS.Game}
+\leanok
+A \emph{binary linear constraint system} consists of $r$ equations over $s$
+$\F_2$-valued variables, specified by the set $V_i \subseteq \{1, \dots, s\}$ of
+variables occurring in each equation $i$ together with a right-hand side
+$b \in \F_2^r$; equation $i$ reads $\sum_{j \in V_i} x_j = b_i$.
+\end{definition}
+
+\begin{definition}[LCS game]
+\label{def:lcs-game}
+\uses{def:lcs-instance,def:game}
+\lean{MIPRE.LCS.Game.toNonlocalGame}
+\leanok
+The \emph{nonlocal game} of an LCS instance: the referee samples an equation $i$
+uniformly at random, then a uniformly random variable $j \in V_i$; Alice answers an
+assignment to the variables, Bob answers a value for $x_j$, and they win if Alice's
+assignment satisfies equation $i$ and agrees with Bob's answer on $x_j$.
+\end{definition}
+
+\begin{definition}[Solution group]
+\label{def:solution-group}
+\uses{def:lcs-instance}
+\lean{MIPRE.LCS.SolutionGroup}
+\leanok
+The \emph{solution group} of an LCS instance is the group presented by generators
+$g_1, \dots, g_s$ and $J$ subject to the relations: all generators are involutions,
+$J$ is central, variables occurring in a common equation commute, and
+$\prod_{j \in V_i} g_j = J^{b_i}$ for each equation $i$. Operator solutions of the
+system correspond to representations sending $J \mapsto -I$ (in Lean,
+\texttt{MIPRE.LCS.SolutionGroup.solutionGroupRepresentationOfEPRLoss}).
+\end{definition}
+
+\begin{theorem}[Perfect strategies from operator solutions]
+\label{thm:lcs-perfect}
+\uses{def:lcs-game,def:tensor-strategy,def:q-value}
+\lean{MIPRE.LCS.exists_tensorStrategy_value_eq_one_of_localLoss_annihilates_epr}
+\leanok
+If a bipartite observable strategy for an LCS instance is perfect --- its local loss
+operators annihilate the EPR vector --- then the associated LCS game has a
+tensor-product strategy of value $1$.
+\end{theorem}
+\begin{proof}
+Take both players' spaces to be $\C^n$ with the normalized EPR state; Alice measures
+with the joint projective measurements of her equations and Bob with the binary
+measurements of his observables. The Born-rule value then equals the EPR expectation
+of the winning operator, which is $1$ by hypothesis.
+\end{proof}
+
 \subsection{Distance measures}
 \label{sec:distances}
 

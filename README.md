@@ -54,6 +54,14 @@ leanblueprint serve  # preview the website locally
   - [`MIPRE/Mathlib/`](MIPRE/Mathlib) — general-purpose declarations destined
     to be upstreamed to Mathlib (tracked on the
     [upstreaming dashboard](https://vidick.github.io/MIPRE-formalization/)).
+  - [`MIPRE/LCS/`](MIPRE/LCS) — binary linear constraint system (LCS) games,
+    contributed by Sean Perazzolo (vendored with permission from
+    [sean-prz/LCS_In_Lean](https://github.com/sean-prz/LCS_In_Lean) and adapted
+    to this repository: Lean/Mathlib v4.32.0, `ZMod 2` outcome types, Mathlib
+    naming conventions): observable and projector strategies, loss operators
+    and their sum-of-squares decomposition, solution groups, the Mermin–Peres
+    magic square, and a bridge interpreting an LCS instance as a `MIPRE.Game`
+    ([`MIPRE/LCS/NonlocalGame.lean`](MIPRE/LCS/NonlocalGame.lean)).
 - [`blueprint/src/`](blueprint/src) — the LaTeX sources of the blueprint.
 - [`website/`](website) — the Jekyll home page deployed to GitHub Pages.
 - [`.github/workflows/`](.github/workflows) — CI: project build on every PR,
