@@ -144,11 +144,11 @@ $J^2 = 1$.
     negOneMatrixUnitary (n := n) ^ 2 = 1 := by
   simp [negOneMatrixUnitary]
 
-@[simp] lemma negOneMatrixUnitary_pow_fin2_val
-    (b : Fin 2) :
+@[simp] lemma negOneMatrixUnitary_pow_val
+    (b : ZMod 2) :
     ((negOneMatrixUnitary (n := n) ^ b.val : unitary (Matrix n n ℂ)) : Matrix n n ℂ) =
       (-1 : ℂ) ^ b.val • (1 : Matrix n n ℂ) := by
-  rcases fin2_eq_zero_or_one b with rfl | rfl <;> simp [negOneMatrixUnitary]
+  rcases zmod_two_eq_zero_or_one b with rfl | rfl <;> simp [negOneMatrixUnitary]
 
 /-- Alice lift commutes with finite noncommutative products:
 $$
@@ -521,7 +521,7 @@ lemma lift_equationRelator_of_rowIdentity
     apply Subtype.ext
     rw [hword, hrow]
     simpa [solutionGroupGeneratorImage] using
-      (negOneMatrixUnitary_pow_fin2_val (n := n) (b := game.b i)).symm
+      (negOneMatrixUnitary_pow_val (n := n) (b := game.b i)).symm
   have hbLinear : game.toLinearSystem.b i = game.b i := rfl
   simp [equationRelator, genJ, hwordUnit, hbLinear]
 

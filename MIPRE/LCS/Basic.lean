@@ -10,6 +10,7 @@ import Mathlib.Algebra.Module.Basic
 import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.Finset.Sum
 import Mathlib.Data.Complex.Basic
+import Mathlib.Data.ZMod.Basic
 import Mathlib.Data.Matrix.Basic
 import Mathlib.LinearAlgebra.Matrix.Notation
 import Mathlib.LinearAlgebra.Matrix.Kronecker
@@ -42,17 +43,17 @@ structure LCSLayout where
   V : Fin r → Finset (Fin s)
 
 abbrev Assignment (G : LCSLayout) (i : Fin G.r) : Type :=
-  (G.V i) → Fin 2
+  (G.V i) → ZMod 2
 
 
 structure LCSGame (G : LCSLayout) where
-  b : Fin G.r → Fin 2
+  b : Fin G.r → ZMod 2
 
 /-- A full binary linear system with explicit coefficient matrix and right-hand side. -/
 structure LinearSystem where
   layout : LCSLayout
-  A : Fin layout.r → Fin layout.s → Fin 2
-  b : Fin layout.r → Fin 2
+  A : Fin layout.r → Fin layout.s → ZMod 2
+  b : Fin layout.r → ZMod 2
 
 namespace LCSGame
 

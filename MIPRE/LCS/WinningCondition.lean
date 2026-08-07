@@ -48,7 +48,7 @@ and loss operators.
 
 /-- The assignments satisfying equation `i` in the game `game`. -/
 def winning_assignments (i : Fin G.r) : Finset (Assignment G i) :=
-  Finset.univ.filter (fun α => (∑ j : G.V i, (α j : Fin 2)) = b[i])
+  Finset.univ.filter (fun α => (∑ j : G.V i, (α j : ZMod 2)) = b[i])
 
 /-- The local winning operator for a single edge `(i, j)`. -/
 noncomputable def local_winning_operator (i : Fin G.r) (j : G.V i) : R :=
@@ -99,7 +99,7 @@ lemma sum_winning_projectors_eq_row_observable (i : Fin G.r) :
     alice_partial_prod_mul_projector strat i _ x
       (fun j _ j' _ _ => alice_observables_commute strat i j j')
   have hsign : ((G.V i).attach.prod fun j => (-1 : ℂ) ^ (x j).val) =
-      (-1 : ℂ) ^ ((∑ j : G.V i, (x j : Fin 2)).val) :=
+      (-1 : ℂ) ^ ((∑ j : G.V i, (x j : ZMod 2)).val) :=
     prod_sign_eq_sum_sign i x
   -- Expand rhs * E i x
   -- Directly compute both sides and match via sign_indicator
@@ -107,11 +107,11 @@ lemma sum_winning_projectors_eq_row_observable (i : Fin G.r) :
     unfold rhs
     rw [smul_mul_assoc, add_mul, one_mul, smul_mul_assoc, hprod, hsign, smul_add,
         smul_smul, smul_smul, ← add_smul]
-  rw [sign_indicator (b[i]) (∑ j : G.V i, (x j : Fin 2))]
+  rw [sign_indicator (b[i]) (∑ j : G.V i, (x j : ZMod 2))]
   simp [winning_assignments, Finset.mem_filter]
 
 /-- Lemma 4.7.2: the marginal projector sum equals the signed local observable expression. -/
-lemma sum_marginal_projectors_eq_half_one_add_A (i : Fin G.r) (j : G.V i) (y : Fin 2) :
+lemma sum_marginal_projectors_eq_half_one_add_A (i : Fin G.r) (j : G.V i) (y : ZMod 2) :
   (∑ x ∈ Finset.univ.filter (fun x : Assignment G i => x j = y), E[i, x]) =
     (1 / 2 : ℂ) • (1 + (-1 : ℂ) ^ y.val • A[i, j]) := by
   classical
@@ -123,16 +123,16 @@ lemma sum_marginal_projectors_eq_half_one_add_A (i : Fin G.r) (j : G.V i) (y : F
     (strat.E i) (strat.alice_ms i) (fun x => x j)
   have hpart : A + B = 1 := by
     have h := hind.sum_one
-    rw [Fin.sum_univ_two] at h
+    rw [sum_univ_zmod_two] at h
     simp only [InducedMeasurementSystem] at h
     exact h
   unfold Alice_A ObservableOfMeasurementSystem InducedMeasurementSystem
-  rcases fin2_eq_zero_or_one y with rfl | rfl
+  rcases zmod_two_eq_zero_or_one y with rfl | rfl
   · change A = _
-    simp only [Fin.val_zero, pow_zero, one_smul]
+    simp only [ZMod.val_zero, pow_zero, one_smul]
     rw [← hpart]; module
   · change B = _
-    simp only [Fin.val_one, pow_one]
+    simp only [zmod_two_val_one, pow_one]
     rw [← hpart]; module
 
 
@@ -183,11 +183,11 @@ of private rewriting lemmas.
 
 private lemma local_loss_sos_step1 (i : Fin G.r) (j : G.V i) :
   local_loss_operator game strat i j =
-    1 - ∑ y : Fin 2, F[j, y] * (∑ x ∈ S[i].filter (fun x => x j = y), E[i, x]) := by
+    1 - ∑ y : ZMod 2, F[j, y] * (∑ x ∈ S[i].filter (fun x => x j = y), E[i, x]) := by
   unfold local_loss_operator local_winning_operator
   congr 1
-  rw [show (∑ y : Fin 2, F[j, y] * (∑ x ∈ S[i].filter (fun x => x j = y), E[i, x]))
-      = ∑ y : Fin 2, ∑ x ∈ S[i].filter (fun x => x j = y), E[i, x] * F[j, y] by
+  rw [show (∑ y : ZMod 2, F[j, y] * (∑ x ∈ S[i].filter (fun x => x j = y), E[i, x]))
+      = ∑ y : ZMod 2, ∑ x ∈ S[i].filter (fun x => x j = y), E[i, x] * F[j, y] by
     congr 1; ext y
     rw [Finset.mul_sum]
     congr 1; ext x
@@ -200,8 +200,8 @@ private lemma local_loss_sos_step1 (i : Fin G.r) (j : G.V i) :
   rw [hx.2]
 
 private lemma local_loss_sos_step2 (i : Fin G.r) (j : G.V i) :
-    1 - ∑ y : Fin 2, F[j, y] * (∑ x ∈ S[i].filter (fun x => x j = y), E[i, x]) =
-    1 - (1 / 4 : ℂ) • ∑ y : Fin 2,
+    1 - ∑ y : ZMod 2, F[j, y] * (∑ x ∈ S[i].filter (fun x => x j = y), E[i, x]) =
+    1 - (1 / 4 : ℂ) • ∑ y : ZMod 2,
       F[j, y] * ((1 + (-1 : ℂ) ^ (b[i]).val • ∏ₐ[i]) *
                  (1 + (-1 : ℂ) ^ y.val • A[i, j])) := by
   classical
@@ -223,10 +223,10 @@ private lemma local_loss_sos_step2 (i : Fin G.r) (j : G.V i) :
   norm_num [mul_assoc]
 
 private lemma local_loss_sos_step3 (i : Fin G.r) (j : G.V i) :
-    1 - (1 / 4 : ℂ) • ∑ y : Fin 2,
+    1 - (1 / 4 : ℂ) • ∑ y : ZMod 2,
       F[j, y] * ((1 + (-1 : ℂ) ^ (b[i]).val • ∏ₐ[i]) *
                  (1 + (-1 : ℂ) ^ y.val • A[i, j])) =
-    1 - (1 / 4 : ℂ) • ∑ y : Fin 2,
+    1 - (1 / 4 : ℂ) • ∑ y : ZMod 2,
       F[j, y] * (1 + (-1 : ℂ) ^ y.val • A[i, j] +
                  (-1 : ℂ) ^ (b[i]).val • ∏ₐ[i] +
                  ((-1 : ℂ) ^ y.val * (-1 : ℂ) ^ (b[i]).val) •
@@ -244,7 +244,7 @@ private lemma local_loss_sos_step3 (i : Fin G.r) (j : G.V i) :
   abel
 
 private lemma local_loss_sos_step4 (i : Fin G.r) (j : G.V i) :
-    1 - (1 / 4 : ℂ) • ∑ y : Fin 2,
+    1 - (1 / 4 : ℂ) • ∑ y : ZMod 2,
       F[j, y] * (1 + (-1 : ℂ) ^ y.val • A[i, j] +
                  (-1 : ℂ) ^ (b[i]).val • ∏ₐ[i] +
                  ((-1 : ℂ) ^ y.val * (-1 : ℂ) ^ (b[i]).val) •
@@ -253,11 +253,11 @@ private lemma local_loss_sos_step4 (i : Fin G.r) (j : G.V i) :
                          (-1 : ℂ) ^ (b[i]).val • ∏ₐ[i] +
                          B[j] * ((-1 : ℂ) ^ (b[i]).val • (∏ₐ[i] * A[i, j]))) := by
   congr 1; congr 1
-  -- Split ∑ y : Fin 2 into y = 0 and y = 1
-  rw [Fin.sum_univ_two]
+  -- Split ∑ y : ZMod 2 into y = 0 and y = 1
+  rw [sum_univ_zmod_two]
   -- (-1)^0 = 1, (-1)^1 = -1
-  simp only [Fin.val_zero, pow_zero, one_smul, one_mul,
-             Fin.val_one, pow_one, neg_smul, neg_mul]
+  simp only [ZMod.val_zero, pow_zero, one_smul, one_mul,
+             zmod_two_val_one, pow_one, neg_smul, neg_mul]
   -- B[j] = F[j, 0] - F[j, 1]  and F[j, 0] + F[j, 1] = 1
   have ⟨hbob_inv, hone⟩ := bob_measurement_recover strat ↑j
   have hbob : B[j] = strat.F j 0 - strat.F j 1 := hbob_inv.symm
@@ -312,12 +312,12 @@ private lemma local_loss_sos_step5 (i : Fin G.r) (j : G.V i) :
       (bob_is_observable strat j).involutive, (alice_is_observable strat i j).involutive]
   have hO2 : O2 * O2 = 1 := by
     unfold O2
-    rw [smul_mul_assoc, mul_smul_comm, smul_smul, row_prod_sq strat i, sign_fin2_sq (b[i])]
+    rw [smul_mul_assoc, mul_smul_comm, smul_smul, row_prod_sq strat i, sign_sq (b[i])]
     norm_num
   have hO3 : O3 * O3 = 1 := by
     unfold O3
     rw [smul_mul_assoc, mul_smul_comm, smul_smul]
-    rw [sign_fin2_sq (b[i])]
+    rw [sign_sq (b[i])]
     norm_num
     -- Goal: RP * A * B * (RP * A * B) = 1
     simp only [← mul_assoc]

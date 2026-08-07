@@ -37,7 +37,7 @@ structure ProjectorStrategy
   (R : Type*) [Ring R] [StarRing R] [Algebra ℂ R]
   (G : LCSLayout) where
   E : ∀ i, (Assignment G i → R)
-  F : Fin G.s → (Fin 2 → R)
+  F : Fin G.s → (ZMod 2 → R)
   alice_ms : ∀ i, IsMeasurementSystem (E i)
   bob_ms   : ∀ j, IsMeasurementSystem (F j)
   commute  : ∀ i j α β, E i α * F j β = F j β * E i α
@@ -90,9 +90,7 @@ lemma alice_A_mul_projector (i : Fin G.r)
   unfold Alice_A ObservableOfMeasurementSystem InducedMeasurementSystem
   rw [sub_mul, measurement_sum_mul_projector (strat.alice_ms i),
     measurement_sum_mul_projector (strat.alice_ms i)]
-  match h : x j with
-  | 0 => simp [h]
-  | 1 => simp [h]
+  rcases zmod_two_eq_zero_or_one (x j) with h | h <;> simp [h]
 
 lemma alice_partial_prod_mul_projector (i : Fin G.r)
   (s : Finset (G.V i)) (x : Assignment G i)
@@ -138,16 +136,16 @@ lemma bob_measurement_recover (j : Fin G.s) :
   · change _ = ObservableOfMeasurementSystem (strat.F j)
     simp [ObservableOfMeasurementSystem]
   · have h := (strat.bob_ms j).sum_one
-    rw [Fin.sum_univ_two] at h
+    rw [sum_univ_zmod_two] at h
     exact h
 
-lemma bob_measurement_eq_projector (j : Fin G.s) (y : Fin 2) :
+lemma bob_measurement_eq_projector (j : Fin G.s) (y : ZMod 2) :
   F[j, y] = ObservableToProjector B[j] y := by
   classical
   unfold Bob_B ObservableOfMeasurementSystem ObservableToProjector observableSign
   have hsum := (strat.bob_ms j).sum_one
-  rw [Fin.sum_univ_two] at hsum
-  fin_cases y
+  rw [sum_univ_zmod_two] at hsum
+  rcases zmod_two_eq_zero_or_one y with rfl | rfl
   · simp only [← hsum]
     symm
     calc

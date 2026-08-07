@@ -418,7 +418,7 @@ $1 - (-1)^{b_i}T$ in the Stage 2 self-adjointness checks.
 -/
 private lemma sign_star_eq_self {G : LCSLayout} (game : LCSGame G) (i : Fin G.r) :
     star ((-1 : ℂ) ^ (game.b i).val) = (-1 : ℂ) ^ (game.b i).val := by
-  rcases fin2_eq_zero_or_one (game.b i) with hb | hb <;> simp [hb]
+  rcases zmod_two_eq_zero_or_one (game.b i) with hb | hb <;> simp [hb]
 
 /-- If $c$ is real and $T$ is self-adjoint, then the affine relation
 $1 - cT$ is self-adjoint:
@@ -595,7 +595,7 @@ lemma row_relation_of_epr_annihilates
     exact (alice_lift_one_sub_smul_mulVec_epr_eq_zero_iff n c Row).mp hRow'
   have hcRow : c • Row = 1 := (sub_eq_zero.mp hLocal).symm
   have hc : c * c = 1 := by
-    simpa [c] using sign_fin2_sq (game.b i)
+    simpa [c] using sign_sq (game.b i)
   calc
     Row = (1 : ℂ) • Row := (one_smul ℂ Row).symm
     _ = (c * c) • Row := by rw [hc]
