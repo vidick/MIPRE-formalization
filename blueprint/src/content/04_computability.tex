@@ -15,12 +15,7 @@ the proof.
 
 The machine-level side of the project is formalized directly: a concrete multi-tape
 machine model with several input tapes, a canonical first-order syntax of machine
-\emph{codes} with an exact binary serialization, and a reference evaluator. The
-definitions and the serialization lemma below are sorry-free in Lean; the two
-universal-simulation lemmas at the end are stated in Lean and tracked as open
-formalization targets. These objects underlie the succinct Cook--Levin gateway
-(Theorem~\ref{thm:succinct-sat}) and the machine-level universal-simulation statements;
-the ambient toolkit of Section~\ref{sec:rr-computability} does not depend on them.
+\emph{codes} with an exact binary serialization, and a reference evaluator. 
 
 \begin{definition}[Multi-input Turing machine]
 \label{def:multiinput-tm}
@@ -31,8 +26,10 @@ two-way read-only input tapes (heads clamped one blank cell beyond either end of
 input), $w$ bidirectional work tapes over an alphabet extended with a blank symbol, and
 a write-only output stream. A transition may write and move on every work tape, move
 every input head, emit at most one output symbol, and either continue or halt. Time is
-counted in steps, and space as the number of work-tape cells visited. At $i = 1$ this
-is exactly the CSLib multi-tape model, on the nose.
+counted in steps, and space as the number of work-tape cells visited. 
+
+At $i = 1$ this
+is exactly the CSLib multi-tape model.
 \end{definition}
 
 \begin{definition}[Machine codes]
@@ -56,7 +53,7 @@ every malformed string denoting one fixed machine that immediately rejects.
 \uses{def:machine-code}
 \lean{Turing.Code.Produces, Turing.Code.evalWithin}
 \leanok
-Let $c$ be a code with $i$ input tapes, $x = (x_1, \ldots, x_i)$ bit strings and $y \in
+Let $c$ be a machine code with $i$ input tapes, $x = (x_1, \ldots, x_i)$ bit strings and $y \in
 \{0,1\}^*$. The code $c$ \emph{produces} $y$ on $x$ if its run on $x$ halts with output
 $y$ (in some time and space). The \emph{budgeted evaluation} of $c$ on $x$ with budget
 $T$ returns the output if $c$ has halted within $T$ steps, and a timeout marker
@@ -81,10 +78,7 @@ description format.
 \end{lemma}
 
 The following two statements are the machine-level counterparts of
-Lemma~\ref{lem:universal-tm}. They are stated in Lean (with \texttt{sorry}) to freeze
-the target interface; their proofs are the machine-level programme (Milestones E--G of
-the infrastructure plan). The compression pipeline consumes only the ambient
-Lemma~\ref{lem:universal-tm}, not these.
+Lemma~\ref{lem:universal-tm}. 
 
 \begin{lemma}[Universal machine]
 \label{lem:universal-machine}
@@ -98,6 +92,10 @@ whenever $[\alpha]_i$ halts on $x$ within $t$ steps, $U$ halts on $(\alpha; x)$ 
 $P(\abs{\alpha} + t)$ time and space.
 \end{lemma}
 
+\begin{proof}
+TODO
+\end{proof}
+
 \begin{lemma}[Bounded universal machine]
 \label{lem:bounded-universal-machine}
 \uses{def:machine-code, def:code-run}
@@ -109,6 +107,10 @@ $U$ always halts within $P(\abs{\alpha} + T)$ steps, outputting the canonically 
 budgeted evaluation of $[\alpha]_i$ on $x$ with budget $T$.
 \end{lemma}
 
+\begin{proof}
+TODO
+\end{proof}
+
 \subsection{Efficient computability toolkit}
 \label{sec:rr-computability}
 
@@ -116,12 +118,17 @@ budgeted evaluation of $[\alpha]_i$ on $x$ with budget $T$.
 
 \begin{lemma}[Efficient universal Turing machine]
 \label{lem:universal-tm}
+\uses{lem:bounded-universal-machine}
 \lean{MIPRE.Cost.exists_efficient_universal, MIPRE.Cost.exists_clocked_universal}
 \leanok
 There is a program $u$ and a polynomial $p$ such that $\phi_u(e, x) = \phi_e(x)$ for
 all $e, x$, with $\mathrm{runtime}(u, (e,x)) \leq
 p\bigl(\abs{e}, \abs{x}, \mathrm{runtime}(e, x)\bigr)$.
 \end{lemma}
+
+\begin{proof}
+TODO
+\end{proof}
 
 \begin{lemma}[Efficient s-m-n]
 \label{lem:smn}
