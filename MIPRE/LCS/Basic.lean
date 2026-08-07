@@ -25,44 +25,41 @@ An LCS game is defined by a set of binary variables and a set of linear equation
 over $\mathbb{F}_2$.
 
 ## Key Definitions
-- `LCSLayout`: The structure describing the relationship between equations and variables.
-- `Assignment`: A local mapping of values to variables in a specific equation.
-- `LCSGame`: The specification of the right-hand sides of the linear equations.
+- `Layout`: The structure describing the relationship between equations and variables.
+- `Layout.Assignment`: A local mapping of values to variables in a specific equation.
+- `Game`: The specification of the right-hand sides of the linear equations.
 -/
 
 namespace MIPRE.LCS
 
 open scoped BigOperators
 
-variable {R : Type*} [Ring R] [StarRing R]
-
-
-structure LCSLayout where
+structure Layout where
   r : ℕ
   s : ℕ
   V : Fin r → Finset (Fin s)
 
-abbrev Assignment (G : LCSLayout) (i : Fin G.r) : Type :=
+abbrev Layout.Assignment (G : Layout) (i : Fin G.r) : Type :=
   (G.V i) → ZMod 2
 
 
-structure LCSGame (G : LCSLayout) where
+structure Game (G : Layout) where
   b : Fin G.r → ZMod 2
 
 /-- A full binary linear system with explicit coefficient matrix and right-hand side. -/
 structure LinearSystem where
-  layout : LCSLayout
+  layout : Layout
   A : Fin layout.r → Fin layout.s → ZMod 2
   b : Fin layout.r → ZMod 2
 
-namespace LCSGame
+namespace Game
 
 /-- Recover the explicit binary linear system encoded by a support-only LCS game. -/
-def toLinearSystem {G : LCSLayout} (game : LCSGame G) : LinearSystem where
+def toLinearSystem {G : Layout} (game : Game G) : LinearSystem where
   layout := G
   A i j := if j ∈ G.V i then 1 else 0
   b := game.b
 
-end LCSGame
+end Game
 
 end MIPRE.LCS

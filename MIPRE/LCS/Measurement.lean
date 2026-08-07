@@ -15,12 +15,12 @@ that sum to the identity.
 ## Key Definitions
 - `IsMeasurementSystem`: A property of a family of elements $\{E_i\}_{i \in I}$ indicating
   they form a valid measurement system.
-- `InducedMeasurementSystem`: A construction to build a measurement over a smaller outcome space
+- `inducedMeasurementSystem`: A construction to build a measurement over a smaller outcome space
   given a function $g : I \to J$.
 
 ## Key Lemmas
-- `measurement_commute`: Projectors in a measurement system always commute with each other.
-- `measurement_intersection`: The product of two sums of projectors corresponds to the sum
+- `IsMeasurementSystem.commute`: Projectors in a measurement system always commute with each other.
+- `IsMeasurementSystem.sum_mul_sum`: The product of two sums of projectors corresponds to the sum
   over the intersection of the outcome sets.
 -/
 
@@ -39,19 +39,19 @@ structure IsMeasurementSystem
   self_adjoint : ∀ x, star (f x) = f x
 
 
-noncomputable def InducedMeasurementSystem {I J : Type*} [Fintype I] [Fintype J]
+noncomputable def inducedMeasurementSystem {I J : Type*} [Fintype I] [Fintype J]
   [DecidableEq J] (f : I → R) (g : I → J) : J → R :=
   fun j => ∑ i ∈ Finset.univ.filter (fun i => g i = j), f i
 
-lemma induced_measurement_system_is_measurement_system
+lemma IsMeasurementSystem.induced
   {I J : Type*} [Fintype I] [Fintype J] [DecidableEq J]
   (f : I → R) (h : IsMeasurementSystem f) (g : I → J) :
-  IsMeasurementSystem (InducedMeasurementSystem f g) where
+  IsMeasurementSystem (inducedMeasurementSystem f g) where
   sum_one := by
-    dsimp [InducedMeasurementSystem]
+    dsimp [inducedMeasurementSystem]
     rw [Finset.sum_fiberwise Finset.univ g f, h.sum_one]
   idempotent j := by
-    dsimp [InducedMeasurementSystem]
+    dsimp [inducedMeasurementSystem]
     rw [Finset.sum_mul]
     apply Finset.sum_congr rfl (fun x hx => ?_)
     rw [Finset.mul_sum]
@@ -61,7 +61,7 @@ lemma induced_measurement_system_is_measurement_system
       · intro hnx; exact (hnx hx).elim
     rw [this, h.idempotent x]
   orthogonal j1 j2 hj := by
-    dsimp [InducedMeasurementSystem]
+    dsimp [inducedMeasurementSystem]
     rw [Finset.sum_mul]
     apply Finset.sum_eq_zero (fun x hx => ?_)
     rw [Finset.mul_sum]
@@ -70,24 +70,24 @@ lemma induced_measurement_system_is_measurement_system
     rintro rfl
     exact hj ((Finset.mem_filter.1 hx).2.symm.trans (Finset.mem_filter.1 hy).2)
   self_adjoint j := by
-    dsimp [InducedMeasurementSystem]
+    dsimp [inducedMeasurementSystem]
     rw [star_sum]
     exact Finset.sum_congr rfl (fun x _ => h.self_adjoint x)
 
 
-lemma measurement_commute {I} [Fintype I] {f : I → R}
+lemma IsMeasurementSystem.commute {I} [Fintype I] {f : I → R}
   (h : IsMeasurementSystem f) (x y : I) : Commute (f x) (f y) := by
   by_cases hxy : x = y
   · rw [hxy]
   · rw [Commute, SemiconjBy, h.orthogonal x y hxy, h.orthogonal y x (Ne.symm hxy)]
 
-lemma measurement_commute_sum {I} [Fintype I] {f : I → R}
+lemma IsMeasurementSystem.commute_sum {I} [Fintype I] {f : I → R}
   (h : IsMeasurementSystem f) (A B : Finset I) : Commute (∑ x ∈ A, f x) (∑ y ∈ B, f y) :=
   Commute.sum_left _ _ _ (fun x _ =>
-    Commute.sum_right _ _ _ (fun y _ => measurement_commute h x y))
+    Commute.sum_right _ _ _ (fun y _ => IsMeasurementSystem.commute h x y))
 
 
-lemma measurement_intersection {I} [Fintype I] [DecidableEq I] {f : I → R}
+lemma IsMeasurementSystem.sum_mul_sum {I} [Fintype I] [DecidableEq I] {f : I → R}
     (h : IsMeasurementSystem f) (S T : Finset I) :
     (∑ x ∈ S, f x) * (∑ y ∈ T, f y) = ∑ x ∈ (S ∩ T), f x := by
   classical
@@ -109,7 +109,7 @@ lemma measurement_intersection {I} [Fintype I] [DecidableEq I] {f : I → R}
   rw [Finset.sum_congr rfl (fun x _ => h_mul x)]
   rw [Finset.sum_ite, Finset.sum_const_zero, add_zero, Finset.filter_mem_eq_inter]
 
-lemma eq_of_mul_projectors_eq {I} [Fintype I] {f : I → R} (h : IsMeasurementSystem f)
+lemma IsMeasurementSystem.eq_of_forall_mul_eq {I} [Fintype I] {f : I → R} (h : IsMeasurementSystem f)
     {T U : R} (heq : ∀ x, T * f x = U * f x) : T = U := by
   calc T = T * 1 := (mul_one T).symm
        _ = T * ∑ x, f x := by rw [h.sum_one]
@@ -119,7 +119,7 @@ lemma eq_of_mul_projectors_eq {I} [Fintype I] {f : I → R} (h : IsMeasurementSy
        _ = U * 1 := by rw [h.sum_one]
        _ = U := mul_one U
 
-lemma measurement_sum_mul_projector {I} [Fintype I] [DecidableEq I] {f : I → R}
+lemma IsMeasurementSystem.sum_mul_single {I} [Fintype I] [DecidableEq I] {f : I → R}
     (h : IsMeasurementSystem f) (S : Finset I) (x : I) :
     (∑ y ∈ S, f y) * f x = if x ∈ S then f x else 0 := by
   classical

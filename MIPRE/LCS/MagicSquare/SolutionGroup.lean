@@ -10,26 +10,16 @@ import MIPRE.LCS.SolutionGroup
 # Magic Square Solution Group
 
 This module builds the binary linear system of the Mermin-Peres magic square game
-from its layout/game data and attaches the generic `SolutionGroup` construction.
-
-The `#eval` commands below print the matrix rows, right-hand side, and equation
-supports so the finite presentation can be inspected directly.
+from its layout/game data and attaches the generic `SolutionGroup` construction,
+together with helpers rendering the presentation data (coefficient matrix,
+right-hand side, and equation supports) as plain lists.
 -/
 
-namespace MIPRE.LCS
+namespace MIPRE.LCS.MagicSquare
 
 /-- The explicit binary linear system underlying the Mermin-Peres magic square game. -/
-def magic_square_system : LinearSystem :=
-  magic_square_game.toLinearSystem
-
-/-- The generic solution group of the Mermin-Peres magic square system. -/
-abbrev MPSolutionGroup := SolutionGroup magic_square_system
-
-namespace MagicSquareSolutionGroup
-
-/-- The magic square linear system, recovered from the support layout and game. -/
 def linearSystem : LinearSystem :=
-  magic_square_system
+  game.toLinearSystem
 
 /-- The solution group of the magic square linear system. -/
 abbrev solutionGroup : Type :=
@@ -62,19 +52,4 @@ def equationPresentation : List (List Nat × Nat) :=
   (List.finRange linearSystem.layout.r).map fun i =>
     (equationSupportIndices i, (linearSystem.b i).val)
 
-/-- The full solution-group relator list rendered with one-indexed generators. -/
-def formattedRelators : List String :=
-  (solutionRelatorsList magic_square_system).map (formatRelator (S := magic_square_system))
-
-/- Inspect the solution group presentation data. -/
-/- #eval coefficientMatrix -/
-/- #eval rhsVector -/
-/- #eval equationSupports -/
-/- #eval equationPresentation -/
-/- #eval formattedRelators.forM IO.println -/
-
-
-
-end MagicSquareSolutionGroup
-
-end MIPRE.LCS
+end MIPRE.LCS.MagicSquare

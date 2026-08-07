@@ -157,7 +157,7 @@ $$
 $$
 The product is written with `Finset.noncommProd`, so pairwise commutation fixes
 the order ambiguity.  This is useful when the EPR/local-loss row product
-`Alice_Row_Prod` must be identified with the Alice lift of the concrete row
+`ProjectorStrategy.aliceRowProd` must be identified with the Alice lift of the concrete row
 observable product.
 -/
 lemma bipartiteAliceLift_noncommProd
@@ -179,7 +179,7 @@ end MatrixUnitaries
 /-!
 ## Generic presented-group construction
 
-This section is independent of a concrete `LCSGame`.  It starts with a
+This section is independent of a concrete `Game`.  It starts with a
 `LinearSystem S` and a proposed image of the solution-group generators.
 
 The public constructor in this section is `solutionGroupRepresentation`.  It
@@ -244,7 +244,7 @@ images, same-equation commutation, and the equation-relator proofs. -/
 noncomputable def solutionGroupRepresentation
     (obs : Fin S.layout.s → Matrix n n ℂ)
     (obs_is_observable : ∀ j, IsObservable (obs j))
-    (hsame : ∀ {j k}, sameEquation S j k → Commute (obs j) (obs k))
+    (hsame : ∀ {j k}, SameEquation S j k → Commute (obs j) (obs k))
     (hequation : ∀ i, FreeGroup.lift (solutionGroupGeneratorImage obs obs_is_observable)
       (equationRelator S i) = 1) :
     SolutionGroup S →* unitary (Matrix n n ℂ) :=
@@ -276,7 +276,7 @@ noncomputable def solutionGroupRepresentation
 @[simp] lemma solutionGroupRepresentation_var
     (obs : Fin S.layout.s → Matrix n n ℂ)
     (obs_is_observable : ∀ j, IsObservable (obs j))
-    (hsame : ∀ {j k}, sameEquation S j k → Commute (obs j) (obs k))
+    (hsame : ∀ {j k}, SameEquation S j k → Commute (obs j) (obs k))
     (hequation : ∀ i, FreeGroup.lift (solutionGroupGeneratorImage obs obs_is_observable)
       (equationRelator S i) = 1)
     (j : Fin S.layout.s) :
@@ -289,7 +289,7 @@ noncomputable def solutionGroupRepresentation
 @[simp] lemma solutionGroupRepresentation_J
     (obs : Fin S.layout.s → Matrix n n ℂ)
     (obs_is_observable : ∀ j, IsObservable (obs j))
-    (hsame : ∀ {j k}, sameEquation S j k → Commute (obs j) (obs k))
+    (hsame : ∀ {j k}, SameEquation S j k → Commute (obs j) (obs k))
     (hequation : ∀ i, FreeGroup.lift (solutionGroupGeneratorImage obs obs_is_observable)
       (equationRelator S i) = 1) :
     solutionGroupRepresentation obs obs_is_observable hsame hequation
@@ -321,8 +321,8 @@ row identity from `local_matrix_identities_of_local_loss_annihilate_epr`.
 
 section RepresentationData
 
-variable {G : LCSLayout}
-variable (game : LCSGame G)
+variable {G : Layout}
+variable (game : Game G)
 variable {n : Type*} [Fintype n] [DecidableEq n]
 variable (obs : Fin G.s → Matrix n n ℂ)
 
@@ -391,30 +391,30 @@ private lemma orderedSupportProduct_eq_noncommProd
   · exact hsupport_nodup
 
 /-- Relate the sorted row observable product to the `noncommProd` used by
-`Alice_Row_Prod`:
+`ProjectorStrategy.aliceRowProd`:
 $$
   \operatorname{rowObservableProduct}_i
     = \prod_{j \in V_i}^{\mathrm{noncomm}}\operatorname{obs}_j.
 $$
 `rowObservableProduct` uses a sorted list to match `equationWord`, while
-`Alice_Row_Prod` uses `Finset.noncommProd` over the attached row support.  This
+`ProjectorStrategy.aliceRowProd` uses `Finset.noncommProd` over the attached row support.  This
 bridge is useful when importing the row identity extracted from the EPR/SOS
 pipeline.
 -/
 @[simp] lemma aliceRowProd_bipartite
     (strat : BipartiteObservableStrategy n G)
     (i : Fin G.r) :
-    Alice_Row_Prod strat.toProjectorStrategy i =
+    ProjectorStrategy.aliceRowProd strat.toProjectorStrategy i =
       bipartiteAliceLift (rowObservableProduct strat.obs i) := by
-  unfold rowObservableProduct Alice_Row_Prod
+  unfold rowObservableProduct ProjectorStrategy.aliceRowProd
   rw [orderedSupportProduct_eq_noncommProd
     (f := strat.obs) (sameEquation_comm := strat.sameEquation_comm)]
   rw [bipartiteAliceLift_noncommProd]
   simp
 
-/-- In `game.toLinearSystem`, `sameEquation` is exactly common row membership:
+/-- In `game.toLinearSystem`, `SameEquation` is exactly common row membership:
 $$
-  \operatorname{sameEquation}(j,k)
+  \operatorname{SameEquation}(j,k)
     \Longleftrightarrow \exists i,\; j \in V_i \land k \in V_i.
 $$
 This converts the generic presentation's commutation hypothesis into the
@@ -422,9 +422,9 @@ row-wise commutation data carried by an LCS observable strategy.
 -/
 private lemma sameEquation_toLinearSystem_iff
     (j k : Fin G.s) :
-    sameEquation game.toLinearSystem j k ↔
+    SameEquation game.toLinearSystem j k ↔
       ∃ i : Fin G.r, j ∈ G.V i ∧ k ∈ G.V i := by
-  simp [sameEquation, LCSGame.toLinearSystem]
+  simp [SameEquation, Game.toLinearSystem]
 
 /-- The linear-system support of equation $i$ is the game row support $V_i$:
 $$
@@ -437,7 +437,7 @@ private lemma eqSupport_toLinearSystem
     (i : Fin G.r) :
     eqSupport game.toLinearSystem i = G.V i := by
   ext j
-  simp [eqSupport, LCSGame.toLinearSystem]
+  simp [eqSupport, Game.toLinearSystem]
 
 /-- Evaluate the free-group lift of a list of variable generators as matrices:
 $$
@@ -526,7 +526,7 @@ lemma lift_equationRelator_of_rowIdentity
   simp [equationRelator, genJ, hwordUnit, hbLinear]
 
 omit [DecidableEq n] in
-/-- Convert row-wise commutation into `sameEquation` commutation for
+/-- Convert row-wise commutation into `SameEquation` commutation for
 `game.toLinearSystem`:
 $$
   j,k \in V_i \Longrightarrow \operatorname{obs}_j\operatorname{obs}_k
@@ -540,7 +540,7 @@ private lemma sameEquation_comm_of_row_comm
     (sameEquation_comm :
       ∀ i, Pairwise (fun j k : G.V i => Commute (obs j.1) (obs k.1)))
     {j k : Fin G.s}
-    (hjk : sameEquation game.toLinearSystem j k) :
+    (hjk : SameEquation game.toLinearSystem j k) :
     Commute (obs j) (obs k) := by
   rcases (sameEquation_toLinearSystem_iff game j k).mp hjk with
     ⟨i, hj, hk⟩
@@ -582,7 +582,7 @@ lemma rowObservableProduct_eq_sign_of_local_loss
     (hNonempty : ∀ i, Nonempty (G.V i))
     (hLoss :
       ∀ i (j : G.V i),
-        (local_loss_operator game strat.toProjectorStrategy i j) *ᵥ (eprVec n) = 0)
+        (localLossOperator game strat.toProjectorStrategy i j) *ᵥ (eprVec n) = 0)
     (i : Fin G.r) :
     rowObservableProduct strat.obs i =
       (-1 : ℂ) ^ (game.b i).val • (1 : Matrix n n ℂ) := by
@@ -591,18 +591,18 @@ lemma rowObservableProduct_eq_sign_of_local_loss
   change row = (-1 : ℂ) ^ (game.b i).val • (1 : Matrix n n ℂ)
   rcases hNonempty i with ⟨j⟩
   have hAlice :
-      Alice_A strat.toProjectorStrategy i j = bipartiteAliceLift (strat.obs j.1) := by
+      ProjectorStrategy.aliceObs strat.toProjectorStrategy i j = bipartiteAliceLift (strat.obs j.1) := by
     simp
   have hBob :
-      Bob_B strat.toProjectorStrategy j.1 = bipartiteBobLift (strat.obs j.1) := by
+      ProjectorStrategy.bobObs strat.toProjectorStrategy j.1 = bipartiteBobLift (strat.obs j.1) := by
     simp
   have hRowLift :
-      Alice_Row_Prod strat.toProjectorStrategy i = bipartiteAliceLift row := by
+      ProjectorStrategy.aliceRowProd strat.toProjectorStrategy i = bipartiteAliceLift row := by
     simp [row, aliceRowProd_bipartite (n := n) strat i]
   exact
     (local_matrix_identities_of_local_loss_annihilate_epr
       game n strat.toProjectorStrategy i j (strat.obs j.1) (strat.obs j.1) row
-          (hLoss i j) hAlice hBob hRowLift (strat.is_observable j.1)).2.1
+          (hLoss i j) hAlice hBob hRowLift (strat.isObservable j.1)).2.1
 
 /-- End-to-end representation constructor from the EPR/local-loss hypothesis:
 $$
@@ -620,10 +620,10 @@ noncomputable def solutionGroupRepresentationOfEPRLoss
     (hNonempty : ∀ i, Nonempty (G.V i))
     (hLoss :
       ∀ i (j : G.V i),
-        (local_loss_operator game strat.toProjectorStrategy i j) *ᵥ (eprVec n) = 0) :
+        (localLossOperator game strat.toProjectorStrategy i j) *ᵥ (eprVec n) = 0) :
     SolutionGroup game.toLinearSystem →* unitary (Matrix n n ℂ) :=
   solutionGroupRepresentationOfRows game
-    strat.obs strat.is_observable strat.sameEquation_comm
+    strat.obs strat.isObservable strat.sameEquation_comm
     (rowObservableProduct_eq_sign_of_local_loss game strat hNonempty hLoss)
 
 end RepresentationData

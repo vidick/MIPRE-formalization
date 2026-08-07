@@ -36,34 +36,9 @@ section Generators
 inductive SolutionGen (S : LinearSystem) where
   | var : Fin S.layout.s → SolutionGen S
   | J : SolutionGen S
-deriving DecidableEq, Repr
+deriving DecidableEq
 
 end Generators
-
-section PrettyPrinting
-
-private instance {α : Type*} [DecidableEq α] [Repr α] : Repr (FreeGroup α) where
-  reprPrec x prec := reprPrec x.toWord prec
-
-private instance {S : LinearSystem} : ToString (SolutionGen S) where
-  toString
-    | .var j => s!"g{j.val + 1}"
-    | .J => "J"
-
-/-- Pretty-print a free-group relator as a product of solution-group generators. -/
-def formatRelator {S : LinearSystem} (word : FreeGroup (SolutionGen S)) : String :=
-  let letters := FreeGroup.toWord word
-  if letters.isEmpty then
-    "1"
-  else
-    let parts := letters.map fun (gen, isPos) =>
-      if isPos then
-        s!"{toString gen}"
-      else
-        s!"{toString gen}⁻¹"
-    String.intercalate " * " parts
-
-end PrettyPrinting
 
 section DefiningRelators
 /-!
@@ -112,10 +87,10 @@ def equationRelator (S : LinearSystem) (i : Fin S.layout.r) : FreeGroup (Solutio
   equationWord S i * (genJ (S := S) ^ (S.b i).val)⁻¹
 
 /-- Two variables are related when they appear together in some equation. -/
-def sameEquation (S : LinearSystem) (j k : Fin S.layout.s) : Prop :=
+def SameEquation (S : LinearSystem) (j k : Fin S.layout.s) : Prop :=
   ∃ i : Fin S.layout.r, S.A i j = 1 ∧ S.A i k = 1
 
-/-- Computable test for `sameEquation`, used to build an inspectable relator list. -/
+/-- Computable test for `SameEquation`, used to build an inspectable relator list. -/
 def sameEquationBool (S : LinearSystem) (j k : Fin S.layout.s) : Bool :=
   (List.finRange S.layout.r).any fun i =>
     decide (S.A i j = 1 ∧ S.A i k = 1)
@@ -158,15 +133,15 @@ def solutionRelators (S : LinearSystem) : Set (FreeGroup (SolutionGen S)) :=
     -- Relation 2: each variable generator commutes with `J`.
     (∃ j, w = commuteRel (genVar (S := S) j) (genJ (S := S))) ∨
     -- Relation 3: variables appearing together in some equation commute.
-    (∃ j k, j < k ∧ sameEquation S j k ∧
+    (∃ j k, j < k ∧ SameEquation S j k ∧
       w = commuteRel (genVar (S := S) j) (genVar (S := S) k)) ∨
     -- Relation 4: the product for equation `i` equals `J^(b_i)`.
     (∃ i, w = equationRelator S i)
 
 /-- The computable same-equation test agrees with the propositional predicate. -/
 lemma sameEquationBool_iff (S : LinearSystem) (j k : Fin S.layout.s) :
-    sameEquationBool S j k = true ↔ sameEquation S j k := by
-  unfold sameEquationBool sameEquation
+    sameEquationBool S j k = true ↔ SameEquation S j k := by
+  unfold sameEquationBool SameEquation
   constructor
   · intro h
     rcases (List.any_eq_true.mp h) with ⟨i, _hi, hdec⟩
@@ -258,7 +233,7 @@ lemma var_comm_J {S : LinearSystem} (j : Fin S.layout.s) :
   simpa [mul_assoc] using h'
 
 lemma var_comm_of_sameEquation {S : LinearSystem} {j k : Fin S.layout.s}
-    (hjk : sameEquation S j k) :
+    (hjk : SameEquation S j k) :
     var (S := S) j * var (S := S) k = var (S := S) k * var (S := S) j := by
   rcases lt_trichotomy j k with hjk_lt | hjk_eq | hkj_lt
   · have h :
@@ -272,7 +247,7 @@ lemma var_comm_of_sameEquation {S : LinearSystem} {j k : Fin S.layout.s}
     simpa [mul_assoc] using h'
   · subst k
     simp
-  · have hkj : sameEquation S k j := by
+  · have hkj : SameEquation S k j := by
       rcases hjk with ⟨i, hij, hik⟩
       exact ⟨i, hik, hij⟩
     have h :

@@ -12,139 +12,141 @@ open Matrix
 open Kronecker
 open scoped BigOperators
 
+namespace Pauli
+
 -- Base Pauli Matrices
-def I2 : Matrix (Fin 2) (Fin 2) ℂ := !![1, 0; 0, 1]
+def I : Matrix (Fin 2) (Fin 2) ℂ := !![1, 0; 0, 1]
 def X : Matrix (Fin 2) (Fin 2) ℂ := !![0, 1; 1, 0]
 def Y : Matrix (Fin 2) (Fin 2) ℂ := !![0, -Complex.I; Complex.I, 0]
 def Z : Matrix (Fin 2) (Fin 2) ℂ := !![1, 0; 0, -1]
 
-lemma I2_eq_one : I2 = (1 : Matrix (Fin 2) (Fin 2) ℂ) := by
+lemma I_eq_one : I = (1 : Matrix (Fin 2) (Fin 2) ℂ) := by
   ext i j
   fin_cases i
-  · fin_cases j <;> simp [I2]
-  · fin_cases j <;> simp [I2]
+  · fin_cases j <;> simp [I]
+  · fin_cases j <;> simp [I]
 
-lemma I2_comm_left (P : Matrix (Fin 2) (Fin 2) ℂ) : Commute I2 P := by
-  rw [I2_eq_one]; exact Commute.one_left P
+lemma I_comm_left (P : Matrix (Fin 2) (Fin 2) ℂ) : Commute I P := by
+  rw [I_eq_one]; exact Commute.one_left P
 
-lemma I2_comm_right (P : Matrix (Fin 2) (Fin 2) ℂ) : Commute P I2 := by
-  rw [I2_eq_one]; exact Commute.one_right P
+lemma I_comm_right (P : Matrix (Fin 2) (Fin 2) ℂ) : Commute P I := by
+  rw [I_eq_one]; exact Commute.one_right P
 
-lemma I2_sq : I2 * I2 = 1 := by
+lemma I_mul_self : I * I = 1 := by
   ext i j
   fin_cases i
-  · fin_cases j <;> simp [I2]
-  · fin_cases j <;> simp [I2]
+  · fin_cases j <;> simp [I]
+  · fin_cases j <;> simp [I]
 
-lemma X_sq : X * X = 1 := by
+lemma X_mul_self : X * X = 1 := by
   ext i j
   fin_cases i
   · fin_cases j <;> simp [X]
   · fin_cases j <;> simp [X]
 
-lemma Y_sq : Y * Y = 1 := by
+lemma Y_mul_self : Y * Y = 1 := by
   ext i j
   fin_cases i
   · fin_cases j <;> simp [Y]
   · fin_cases j <;> simp [Y]
 
-lemma Z_sq : Z * Z = 1 := by
+lemma Z_mul_self : Z * Z = 1 := by
   ext i j
   fin_cases i
   · fin_cases j <;> simp [Z]
   · fin_cases j <;> simp [Z]
 
-lemma I2_selfAdjoint : star I2 = I2 := by
+lemma star_I : star I = I := by
   ext i j
   fin_cases i
-  · fin_cases j <;> simp [I2, Matrix.star_apply]
-  · fin_cases j <;> simp [I2, Matrix.star_apply]
+  · fin_cases j <;> simp [I, Matrix.star_apply]
+  · fin_cases j <;> simp [I, Matrix.star_apply]
 
-lemma X_selfAdjoint : star X = X := by
+lemma star_X : star X = X := by
   ext i j
   fin_cases i
   · fin_cases j <;> simp [X, Matrix.star_apply]
   · fin_cases j <;> simp [X, Matrix.star_apply]
 
-lemma Y_selfAdjoint : star Y = Y := by
+lemma star_Y : star Y = Y := by
   ext i j
   fin_cases i
   · fin_cases j <;> simp [Y, Matrix.star_apply]
   · fin_cases j <;> simp [Y, Matrix.star_apply]
 
-lemma Z_selfAdjoint : star Z = Z := by
+lemma star_Z : star Z = Z := by
   ext i j
   fin_cases i
   · fin_cases j <;> simp [Z, Matrix.star_apply]
   · fin_cases j <;> simp [Z, Matrix.star_apply]
 
-lemma XY_mul : X * Y = Complex.I • Z := by
+lemma X_mul_Y : X * Y = Complex.I • Z := by
   ext i j
   fin_cases i
   · fin_cases j <;> simp [X, Y, Z]
   · fin_cases j <;> simp [X, Y, Z]
 
-lemma YX_mul : Y * X = (-Complex.I) • Z := by
+lemma Y_mul_X : Y * X = (-Complex.I) • Z := by
   ext i j
   fin_cases i
   · fin_cases j <;> simp [X, Y, Z]
   · fin_cases j <;> simp [X, Y, Z]
 
-lemma XZ_mul : X * Z = (-Complex.I) • Y := by
+lemma X_mul_Z : X * Z = (-Complex.I) • Y := by
   ext i j
   fin_cases i
   · fin_cases j <;> simp [X, Y, Z]
   · fin_cases j <;> simp [X, Y, Z]
 
-lemma ZX_mul : Z * X = Complex.I • Y := by
+lemma Z_mul_X : Z * X = Complex.I • Y := by
   ext i j
   fin_cases i
   · fin_cases j <;> simp [X, Y, Z]
   · fin_cases j <;> simp [X, Y, Z]
 
-lemma YZ_mul : Y * Z = Complex.I • X := by
+lemma Y_mul_Z : Y * Z = Complex.I • X := by
   ext i j
   fin_cases i
   · fin_cases j <;> simp [X, Y, Z]
   · fin_cases j <;> simp [X, Y, Z]
 
-lemma ZY_mul : Z * Y = (-Complex.I) • X := by
+lemma Z_mul_Y : Z * Y = (-Complex.I) • X := by
   ext i j
   fin_cases i
   · fin_cases j <;> simp [X, Y, Z]
   · fin_cases j <;> simp [X, Y, Z]
 
-lemma XY_anticomm : X * Y = -(Y * X) := by
-  rw [YX_mul, XY_mul]
+lemma X_anticomm_Y : X * Y = -(Y * X) := by
+  rw [Y_mul_X, X_mul_Y]
   simp
 
-lemma XZ_anticomm : X * Z = -(Z * X) := by
-  rw [ZX_mul, XZ_mul]
+lemma X_anticomm_Z : X * Z = -(Z * X) := by
+  rw [Z_mul_X, X_mul_Z]
   simp
 
-lemma YZ_anticomm : Y * Z = -(Z * Y) := by
-  rw [ZY_mul, YZ_mul]
+lemma Y_anticomm_Z : Y * Z = -(Z * Y) := by
+  rw [Z_mul_Y, Y_mul_Z]
   simp
 
-lemma I2_observable : IsObservable I2 where
-  involutive := I2_sq
-  self_adjoint := I2_selfAdjoint
+lemma isObservable_I : IsObservable I where
+  involutive := I_mul_self
+  self_adjoint := star_I
 
-lemma X_observable : IsObservable X where
-  involutive := X_sq
-  self_adjoint := X_selfAdjoint
+lemma isObservable_X : IsObservable X where
+  involutive := X_mul_self
+  self_adjoint := star_X
 
-lemma Y_observable : IsObservable Y where
-  involutive := Y_sq
-  self_adjoint := Y_selfAdjoint
+lemma isObservable_Y : IsObservable Y where
+  involutive := Y_mul_self
+  self_adjoint := star_Y
 
-lemma Z_observable : IsObservable Z where
-  involutive := Z_sq
-  self_adjoint := Z_selfAdjoint
+lemma isObservable_Z : IsObservable Z where
+  involutive := Z_mul_self
+  self_adjoint := star_Z
 
+end Pauli
 
-
-lemma kronecker_comm_of_comm {A B C D : Matrix (Fin 2) (Fin 2) ℂ}
+lemma commute_kronecker_of_commute {A B C D : Matrix (Fin 2) (Fin 2) ℂ}
     (hAC : Commute A C) (hBD : Commute B D) :
     Commute (A ⊗ₖ B) (C ⊗ₖ D) := by
   unfold Commute SemiconjBy at hAC hBD ⊢
@@ -153,7 +155,7 @@ lemma kronecker_comm_of_comm {A B C D : Matrix (Fin 2) (Fin 2) ℂ}
     _ = (C * A) ⊗ₖ (D * B) := by rw [hAC, hBD]
     _ = (C ⊗ₖ D) * (A ⊗ₖ B) := by rw [mul_kronecker_mul]
 
-lemma kronecker_comm_of_anticomm {A B C D : Matrix (Fin 2) (Fin 2) ℂ}
+lemma commute_kronecker_of_anticomm {A B C D : Matrix (Fin 2) (Fin 2) ℂ}
     (hAC : A * C = -(C * A)) (hBD : B * D = -(D * B)) :
     Commute (A ⊗ₖ B) (C ⊗ₖ D) := by
   unfold Commute SemiconjBy
@@ -166,7 +168,7 @@ lemma kronecker_comm_of_anticomm {A B C D : Matrix (Fin 2) (Fin 2) ℂ}
       simp
     _ = (C ⊗ₖ D) * (A ⊗ₖ B) := by rw [mul_kronecker_mul]
 
-lemma kronecker_observable {A B : Matrix (Fin 2) (Fin 2) ℂ}
+lemma IsObservable.kronecker {A B : Matrix (Fin 2) (Fin 2) ℂ}
     (hA : IsObservable A) (hB : IsObservable B) :
     IsObservable (A ⊗ₖ B) where
   involutive := by

@@ -23,7 +23,6 @@ and basic properties of the outcome space $\mathbb{F}_2$.
 namespace MIPRE.LCS
 open scoped BigOperators
 
-set_option linter.unusedSectionVars false
 
 
 
@@ -61,15 +60,15 @@ def observableSign (a : ZMod 2) : ℂ :=
 lemma sign_sq (x : ZMod 2) : (-1 : ℂ) ^ x.val * (-1 : ℂ) ^ x.val = 1 := by
   rcases zmod_two_eq_zero_or_one x with rfl | rfl <;> norm_num [ZMod.val_zero, zmod_two_val_one]
 
-lemma prod_sign_eq_sum_sign_aux {G : LCSLayout} {i : Fin G.r}
-  (x : Assignment G i) (s : Finset (G.V i)) :
+lemma prod_sign_eq_sum_sign_aux {G : Layout} {i : Fin G.r}
+  (x : Layout.Assignment G i) (s : Finset (G.V i)) :
   (s.prod fun j => (-1 : ℂ) ^ (x j).val) =
     (-1 : ℂ) ^ ((s.sum fun j => (x j : ZMod 2)).val) := by
   induction s using Finset.cons_induction_on with
   | empty => simp
   | cons a s ha ih => rw [Finset.prod_cons, Finset.sum_cons, ih, sign_mul]
 
-lemma prod_sign_eq_sum_sign {G : LCSLayout} (i : Fin G.r) (x : Assignment G i) :
+lemma prod_sign_eq_sum_sign {G : Layout} (i : Fin G.r) (x : Layout.Assignment G i) :
   ((G.V i).attach.prod fun j => (-1 : ℂ) ^ (x j).val) =
     (-1 : ℂ) ^ ((∑ j : G.V i, (x j : ZMod 2)).val) :=
   prod_sign_eq_sum_sign_aux x _

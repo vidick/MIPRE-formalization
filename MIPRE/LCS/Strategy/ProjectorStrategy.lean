@@ -18,11 +18,11 @@ represented by families of projectors $\{E_{i,x}\}$ and $\{F_{j,y}\}$.
 
 ## Key Definitions
 - `ProjectorStrategy`: The core structure representing a projector-based strategy.
-- `Alice_A`, `Bob_B`: Derived observables extracted from the projector measurements.
+- `ProjectorStrategy.aliceObs`, `ProjectorStrategy.bobObs`: Derived observables extracted from the projector measurements.
 
 ## Key Lemmas
-- `alice_is_observable`, `bob_is_observable`: Proves that the derived operators are observables.
-- `alice_observables_commute`, `alice_bob_commute`: Verification of commutation relations.
+- `ProjectorStrategy.isObservable_aliceObs`, `ProjectorStrategy.isObservable_bobObs`: Proves that the derived operators are observables.
+- `ProjectorStrategy.aliceObs_commute`, `alice_bob_commute`: Verification of commutation relations.
 -/
 
 namespace MIPRE.LCS
@@ -30,70 +30,75 @@ namespace MIPRE.LCS
 open scoped BigOperators
 
 variable {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R]
-variable {G : LCSLayout}
-set_option linter.unusedSectionVars false
+variable {G : Layout}
 
 structure ProjectorStrategy
-  (R : Type*) [Ring R] [StarRing R] [Algebra ℂ R]
-  (G : LCSLayout) where
-  E : ∀ i, (Assignment G i → R)
+  (R : Type*) [Ring R] [StarRing R]
+  (G : Layout) where
+  E : ∀ i, (Layout.Assignment G i → R)
   F : Fin G.s → (ZMod 2 → R)
   alice_ms : ∀ i, IsMeasurementSystem (E i)
   bob_ms   : ∀ j, IsMeasurementSystem (F j)
-  commute  : ∀ i j α β, E i α * F j β = F j β * E i α
+  alice_bob_commute : ∀ i j α β, E i α * F j β = F j β * E i α
 
-noncomputable def Alice_A
+noncomputable def ProjectorStrategy.aliceObs
   (strat : ProjectorStrategy R G) (i : Fin G.r) (j : G.V i) : R :=
-  ObservableOfMeasurementSystem (InducedMeasurementSystem (strat.E i) (fun x => x j))
+  observableOfMeasurementSystem (inducedMeasurementSystem (strat.E i) (fun x => x j))
 
-def Bob_B (strat : ProjectorStrategy R G) (j : Fin G.s) : R :=
-  ObservableOfMeasurementSystem (strat.F j)
+def ProjectorStrategy.bobObs (strat : ProjectorStrategy R G) (j : Fin G.s) : R :=
+  observableOfMeasurementSystem (strat.F j)
 
 section WithStrategy
 
 variable (strat : ProjectorStrategy R G)
 
-local notation "A[" i ", " j "]" => Alice_A strat i j
-local notation "B[" j "]" => Bob_B strat j
+local notation "A[" i ", " j "]" => ProjectorStrategy.aliceObs strat i j
+local notation "B[" j "]" => ProjectorStrategy.bobObs strat j
 local notation "E[" i ", " x "]" => strat.E i x
 local notation "F[" j ", " y "]" => strat.F j y
 
 
-lemma bob_is_observable (j : Fin G.s) :
+omit [Algebra ℂ R] [StarModule ℂ R] in
+lemma ProjectorStrategy.isObservable_bobObs (j : Fin G.s) :
   IsObservable B[j] :=
-  is_observable_of_measurement_system (strat.F j) (strat.bob_ms j)
+  isObservable_observableOfMeasurementSystem (strat.F j) (strat.bob_ms j)
 
-lemma alice_is_observable (i : Fin G.r) (j : G.V i) :
+omit [Algebra ℂ R] [StarModule ℂ R] in
+lemma ProjectorStrategy.isObservable_aliceObs (i : Fin G.r) (j : G.V i) :
   IsObservable A[i, j] :=
-  is_observable_of_measurement_system _
-    (induced_measurement_system_is_measurement_system _ (strat.alice_ms i) _)
+  isObservable_observableOfMeasurementSystem _
+    (IsMeasurementSystem.induced _ (strat.alice_ms i) _)
 
 
-lemma alice_observables_commute (i : Fin G.r) (j j' : G.V i) :
+omit [Algebra ℂ R] [StarModule ℂ R] in
+lemma ProjectorStrategy.aliceObs_commute (i : Fin G.r) (j j' : G.V i) :
   Commute A[i, j] A[i, j'] := by
-  let comm := measurement_commute_sum (strat.alice_ms i)
+  let comm := IsMeasurementSystem.commute_sum (strat.alice_ms i)
   exact Commute.sub_left (Commute.sub_right (comm _ _) (comm _ _))
     (Commute.sub_right (comm _ _) (comm _ _))
 
-lemma alice_bob_commute_gen (i : Fin G.r) (k : G.V i)
+omit [Algebra ℂ R] [StarModule ℂ R] in
+lemma ProjectorStrategy.aliceObs_commute_bobObs (i : Fin G.r) (k : G.V i)
     (j_var : Fin G.s) :
     Commute A[i, k] B[j_var] := by
-  unfold Alice_A Bob_B ObservableOfMeasurementSystem InducedMeasurementSystem
+  unfold ProjectorStrategy.aliceObs ProjectorStrategy.bobObs observableOfMeasurementSystem inducedMeasurementSystem
   apply Commute.sub_left <;> apply Commute.sub_right
   all_goals {
-    apply Commute.sum_left; intro x _; apply strat.commute }
+    apply Commute.sum_left; intro x _; apply strat.alice_bob_commute }
 
-lemma alice_A_mul_projector (i : Fin G.r)
-  (j : G.V i) (x : Assignment G i) :
+omit [StarModule ℂ R] in
+lemma ProjectorStrategy.aliceObs_mul_E (i : Fin G.r)
+  (j : G.V i) (x : Layout.Assignment G i) :
   A[i, j] * E[i, x] = ((-1 : ℂ) ^ (x j).val) • E[i, x] := by
   classical
-  unfold Alice_A ObservableOfMeasurementSystem InducedMeasurementSystem
-  rw [sub_mul, measurement_sum_mul_projector (strat.alice_ms i),
-    measurement_sum_mul_projector (strat.alice_ms i)]
+  unfold ProjectorStrategy.aliceObs observableOfMeasurementSystem inducedMeasurementSystem
+  rw [sub_mul, IsMeasurementSystem.sum_mul_single (strat.alice_ms i),
+    IsMeasurementSystem.sum_mul_single (strat.alice_ms i)]
   rcases zmod_two_eq_zero_or_one (x j) with h | h <;> simp [h]
 
-lemma alice_partial_prod_mul_projector (i : Fin G.r)
-  (s : Finset (G.V i)) (x : Assignment G i)
+omit [StarModule ℂ R] in
+lemma ProjectorStrategy.aliceObs_noncommProd_mul_E (i : Fin G.r)
+  (s : Finset (G.V i)) (x : Layout.Assignment G i)
   (comm :
     (s : Set (G.V i)).Pairwise (fun j j' => Commute A[i, j] A[i, j'])) :
   s.noncommProd (fun j => A[i, j]) comm * E[i, x] =
@@ -104,45 +109,49 @@ lemma alice_partial_prod_mul_projector (i : Fin G.r)
       simp
   | cons a s ha ih =>
       rw [Finset.noncommProd_cons, Finset.prod_cons, mul_assoc, ih]
-      · rw [Algebra.mul_smul_comm, alice_A_mul_projector]
+      · rw [Algebra.mul_smul_comm, ProjectorStrategy.aliceObs_mul_E]
         simp [smul_smul, mul_comm]
 
 /-- The product of Alice's observables for all variables in equation `i`. -/
-noncomputable def Alice_Row_Prod (i : Fin G.r) : R :=
+noncomputable def ProjectorStrategy.aliceRowProd (i : Fin G.r) : R :=
   (G.V i).attach.noncommProd (fun j => A[i, j])
-    (fun j _ j' _ _ => alice_observables_commute strat i j j')
+    (fun j _ j' _ _ => ProjectorStrategy.aliceObs_commute strat i j j')
 
-/-- Paper-style notation for `Alice_Row_Prod strat i`. -/
-local notation "∏ₐ[" i "]" => Alice_Row_Prod strat i
+/-- Paper-style notation for `ProjectorStrategy.aliceRowProd strat i`. -/
+local notation "∏ₐ[" i "]" => ProjectorStrategy.aliceRowProd strat i
 
-lemma bob_commute_row_prod (i : Fin G.r) (j : G.V i) :
+omit [Algebra ℂ R] [StarModule ℂ R] in
+lemma ProjectorStrategy.bobObs_commute_aliceRowProd (i : Fin G.r) (j : G.V i) :
     Commute B[↑j] ∏ₐ[i] := by
-  unfold Alice_Row_Prod
+  unfold ProjectorStrategy.aliceRowProd
   apply Finset.noncommProd_commute
   intro k _
-  exact (alice_bob_commute_gen strat i k ↑j).symm
+  exact (ProjectorStrategy.aliceObs_commute_bobObs strat i k ↑j).symm
 
-lemma alice_commute_row_prod (i : Fin G.r)
+omit [Algebra ℂ R] [StarModule ℂ R] in
+lemma ProjectorStrategy.aliceObs_commute_aliceRowProd (i : Fin G.r)
     (j : G.V i) :
     Commute A[i, j] ∏ₐ[i] := by
-  unfold Alice_Row_Prod
+  unfold ProjectorStrategy.aliceRowProd
   apply Finset.noncommProd_commute
   intro k _
-  exact alice_observables_commute strat i j k
+  exact ProjectorStrategy.aliceObs_commute strat i j k
 
-lemma bob_measurement_recover (j : Fin G.s) :
+omit [Algebra ℂ R] [StarModule ℂ R] in
+lemma ProjectorStrategy.bob_measurement_recover (j : Fin G.s) :
     F[j, 0] - F[j, 1] = B[j] ∧ F[j, 0] + F[j, 1] = 1 := by
   constructor
-  · change _ = ObservableOfMeasurementSystem (strat.F j)
-    simp [ObservableOfMeasurementSystem]
+  · change _ = observableOfMeasurementSystem (strat.F j)
+    simp [observableOfMeasurementSystem]
   · have h := (strat.bob_ms j).sum_one
     rw [sum_univ_zmod_two] at h
     exact h
 
-lemma bob_measurement_eq_projector (j : Fin G.s) (y : ZMod 2) :
-  F[j, y] = ObservableToProjector B[j] y := by
+omit [StarModule ℂ R] in
+lemma ProjectorStrategy.F_eq_observableToProjector (j : Fin G.s) (y : ZMod 2) :
+  F[j, y] = observableToProjector B[j] y := by
   classical
-  unfold Bob_B ObservableOfMeasurementSystem ObservableToProjector observableSign
+  unfold ProjectorStrategy.bobObs observableOfMeasurementSystem observableToProjector observableSign
   have hsum := (strat.bob_ms j).sum_one
   rw [sum_univ_zmod_two] at hsum
   rcases zmod_two_eq_zero_or_one y with rfl | rfl

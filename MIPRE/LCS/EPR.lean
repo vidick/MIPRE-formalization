@@ -29,9 +29,9 @@ The basic EPR identities are:
   $$
     (M \otimes N)\Omega = 0 \quad\Longleftrightarrow\quad MN^T = 0.
   $$
-* `alice_lift_mulVec_epr_eq_zero_iff`,
+* `bipartiteAliceLift_mulVec_epr_eq_zero_iff`,
   `one_sub_kronecker_mulVec_epr_eq_zero_iff`,
-  `alice_lift_one_sub_smul_mulVec_epr_eq_zero_iff`, and
+  `bipartiteAliceLift_one_sub_smul_mulVec_epr_eq_zero_iff`, and
   `one_sub_smul_kronecker_mulVec_epr_eq_zero_iff`, which are the specialized
   injectivity forms used for bipartite Alice/Bob lifts.
 
@@ -147,7 +147,7 @@ $$
   (M \otimes I)\Omega = 0 \quad\Longleftrightarrow\quad M = 0.
 $$
 -/
-lemma alice_lift_mulVec_epr_eq_zero_iff
+lemma bipartiteAliceLift_mulVec_epr_eq_zero_iff
     (n : Type*) [Fintype n] [DecidableEq n]
     (M : Matrix n n ℂ) :
     (bipartiteAliceLift M) *ᵥ (eprVec n) = 0 ↔ M = 0 := by
@@ -254,13 +254,13 @@ $$
   1 - cM = 0.
 $$
 -/
-lemma alice_lift_one_sub_smul_mulVec_epr_eq_zero_iff
+lemma bipartiteAliceLift_one_sub_smul_mulVec_epr_eq_zero_iff
     (n : Type*) [Fintype n] [DecidableEq n]
     (c : ℂ) (M : Matrix n n ℂ) :
     (1 - c • bipartiteAliceLift M) *ᵥ (eprVec n) = 0 ↔
       1 - c • M = 0 := by
   rw [← bipartiteAliceLift_one_sub_smul]
-  exact alice_lift_mulVec_epr_eq_zero_iff n (1 - c • M)
+  exact bipartiteAliceLift_mulVec_epr_eq_zero_iff n (1 - c • M)
 
 /-- EPR injectivity for a scalar multiple of a two-sided Kronecker product:
 $$
@@ -284,23 +284,23 @@ section LCSSOSTerms
 /-!
 ## SOS Relation Terms and Main EPR Pipeline
 
-This section packages the three relation terms from `local_loss_sos`, their
+This section packages the three relation terms from `localLossOperator_sos`, their
 square-sum, and the three extraction stages: loss kills `Ω`, the SOS terms kill
 `Ω`, and the local matrix identities follow.
 -/
 
-variable {G : LCSLayout}
-variable (game : LCSGame G)
+variable {G : Layout}
+variable (game : Game G)
 variable (n : Type*) [Fintype n] [DecidableEq n]
 variable (strat : ProjectorStrategy (Matrix (n × n) (n × n) ℂ) G)
 
 local notation "Ω" => eprVec n
-local notation "A[" i ", " j "]" => Alice_A strat i j
-local notation "B[" j "]" => Bob_B strat j
+local notation "A[" i ", " j "]" => ProjectorStrategy.aliceObs strat i j
+local notation "B[" j "]" => ProjectorStrategy.bobObs strat j
 local notation "b[" i "]" => game.b i
 
-/-- Paper-style notation for `Alice_Row_Prod strat i`. -/
-local notation "∏ₐ[" i "]" => Alice_Row_Prod strat i
+/-- Paper-style notation for `ProjectorStrategy.aliceRowProd strat i`. -/
+local notation "∏ₐ[" i "]" => ProjectorStrategy.aliceRowProd strat i
 
 /-- The consistency SOS relation term. -/
 noncomputable def sosConsistencyTerm
@@ -330,7 +330,7 @@ section Stage1
 -/
 
 /-- The part of the SOS pipeline that is purely a rewrite: if the local loss annihilates EPR,
-then the SOS expression from `local_loss_sos` annihilates EPR.  Extracting each individual
+then the SOS expression from `localLossOperator_sos` annihilates EPR.  Extracting each individual
 square term from this sum requires a positivity/norm argument.
 
 In symbols, this is the formal rewrite step
@@ -339,14 +339,14 @@ $$
     \quad\Longrightarrow\quad
   \frac18\,(T_1^2 + T_2^2 + T_3^2)\Omega = 0,
 $$
-where the three $T_k$ are the SOS relation terms from `local_loss_sos`.
+where the three $T_k$ are the SOS relation terms from `localLossOperator_sos`.
 -/
 lemma local_loss_kills_epr_sos_sum
     (i : Fin G.r) (j : G.V i)
     (hLoss :
-      local_loss_operator game strat i j *ᵥ Ω = 0) :
+      localLossOperator game strat i j *ᵥ Ω = 0) :
     ((1 / 8 : ℂ) • sosSquareSum game n strat i j) *ᵥ Ω = 0 := by
-  simpa [local_loss_sos, sosSquareSum, sosConsistencyTerm, sosRowTerm, sosProductTerm] using hLoss
+  simpa [localLossOperator_sos, sosSquareSum, sosConsistencyTerm, sosRowTerm, sosProductTerm] using hLoss
 
 end Stage1
 
@@ -404,10 +404,10 @@ $1 - (-1)^{b_i}\operatorname{Row}_i(A)$ is self-adjoint.
 private lemma alice_row_prod_conjTranspose_eq_self
     (i : Fin G.r) :
     (∏ₐ[i])ᴴ = ∏ₐ[i] := by
-  unfold Alice_Row_Prod
+  unfold ProjectorStrategy.aliceRowProd
   apply noncommProd_conjTranspose_eq_self
   intro j _
-  simpa [star_eq_conjTranspose] using (alice_is_observable strat i j).self_adjoint
+  simpa [star_eq_conjTranspose] using (ProjectorStrategy.isObservable_aliceObs strat i j).self_adjoint
 
 /-- The LCS sign attached to row $i$ is real:
 $$
@@ -416,7 +416,7 @@ $$
 This small scalar fact is used when taking adjoints of signed relation terms such as
 $1 - (-1)^{b_i}T$ in the Stage 2 self-adjointness checks.
 -/
-private lemma sign_star_eq_self {G : LCSLayout} (game : LCSGame G) (i : Fin G.r) :
+private lemma sign_star_eq_self {G : Layout} (game : Game G) (i : Fin G.r) :
     star ((-1 : ℂ) ^ (game.b i).val) = (-1 : ℂ) ^ (game.b i).val := by
   rcases zmod_two_eq_zero_or_one (game.b i) with hb | hb <;> simp [hb]
 
@@ -449,12 +449,12 @@ private lemma sos_consistency_term_conjTranspose_eq_self
     (sosConsistencyTerm n strat i j)ᴴ =
       sosConsistencyTerm n strat i j := by
   have hA : A[i, j]ᴴ = A[i, j] := by
-    simpa [star_eq_conjTranspose] using (alice_is_observable strat i j).self_adjoint
+    simpa [star_eq_conjTranspose] using (ProjectorStrategy.isObservable_aliceObs strat i j).self_adjoint
   have hB : B[↑j]ᴴ = B[↑j] := by
-    simpa [star_eq_conjTranspose] using (bob_is_observable strat ↑j).self_adjoint
+    simpa [star_eq_conjTranspose] using (ProjectorStrategy.isObservable_bobObs strat ↑j).self_adjoint
   unfold sosConsistencyTerm
   rw [Matrix.conjTranspose_sub, Matrix.conjTranspose_one, Matrix.conjTranspose_mul, hA, hB]
-  rw [(alice_bob_commute_gen strat i j ↑j).eq]
+  rw [(ProjectorStrategy.aliceObs_commute_bobObs strat i j ↑j).eq]
 
 /-- The product inside the third SOS relation is self-adjoint:
 $$
@@ -470,21 +470,21 @@ private lemma sos_product_core_conjTranspose_eq_self
     (∏ₐ[i] * A[i, j] * B[↑j])ᴴ = ∏ₐ[i] * A[i, j] * B[↑j] := by
   have hRow : (∏ₐ[i])ᴴ = ∏ₐ[i] := alice_row_prod_conjTranspose_eq_self n strat i
   have hA : A[i, j]ᴴ = A[i, j] := by
-    simpa [star_eq_conjTranspose] using (alice_is_observable strat i j).self_adjoint
+    simpa [star_eq_conjTranspose] using (ProjectorStrategy.isObservable_aliceObs strat i j).self_adjoint
   have hB : B[↑j]ᴴ = B[↑j] := by
-    simpa [star_eq_conjTranspose] using (bob_is_observable strat ↑j).self_adjoint
+    simpa [star_eq_conjTranspose] using (ProjectorStrategy.isObservable_bobObs strat ↑j).self_adjoint
   rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, hRow, hA, hB]
   calc
     B[↑j] * (A[i, j] * ∏ₐ[i]) = B[↑j] * (∏ₐ[i] * A[i, j]) := by
-          rw [(alice_commute_row_prod strat i j).eq]
+          rw [(ProjectorStrategy.aliceObs_commute_aliceRowProd strat i j).eq]
     _ = (B[↑j] * ∏ₐ[i]) * A[i, j] := by
           rw [Matrix.mul_assoc]
     _ = (∏ₐ[i] * B[↑j]) * A[i, j] := by
-          rw [(bob_commute_row_prod strat i j).eq]
+          rw [(ProjectorStrategy.bobObs_commute_aliceRowProd strat i j).eq]
     _ = ∏ₐ[i] * (B[↑j] * A[i, j]) := by
           rw [Matrix.mul_assoc]
     _ = ∏ₐ[i] * (A[i, j] * B[↑j]) := by
-          rw [(alice_bob_commute_gen strat i j ↑j).eq]
+          rw [(ProjectorStrategy.aliceObs_commute_bobObs strat i j ↑j).eq]
     _ = ∏ₐ[i] * A[i, j] * B[↑j] := by
           rw [Matrix.mul_assoc]
 
@@ -592,7 +592,7 @@ lemma row_relation_of_epr_annihilates
     have hRow' :
         (1 - c • bipartiteAliceLift Row) *ᵥ Ω = 0 := by
       simpa [c, hRowLift, sosRowTerm] using hRow
-    exact (alice_lift_one_sub_smul_mulVec_epr_eq_zero_iff n c Row).mp hRow'
+    exact (bipartiteAliceLift_one_sub_smul_mulVec_epr_eq_zero_iff n c Row).mp hRow'
   have hcRow : c • Row = 1 := (sub_eq_zero.mp hLocal).symm
   have hc : c * c = 1 := by
     simpa [c] using sign_sq (game.b i)
@@ -673,7 +673,7 @@ lemma local_matrix_identities_of_local_loss_annihilate_epr
     (i : Fin G.r) (j : G.V i)
     (A B Row : Matrix n n ℂ)
     (hLoss :
-      local_loss_operator game strat i j *ᵥ Ω = 0)
+      localLossOperator game strat i j *ᵥ Ω = 0)
     (hAlice : A[i, j] = bipartiteAliceLift A)
     (hBob : B[↑j] = bipartiteBobLift B)
     (hRowLift : ∏ₐ[i] = bipartiteAliceLift Row)

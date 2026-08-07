@@ -19,47 +19,46 @@ is represented as a self-adjoint, involutive operator.
 
 ## Key Definitions
 - `IsObservable`: A property of an element $O$ in a star-ring if $O^2=1$ and $O^\dagger=O$.
-- `ObservableOfMeasurementSystem`: Constructs an observable from a binary projector measurement $P$
+- `observableOfMeasurementSystem`: Constructs an observable from a binary projector measurement $P$
   as $O = P_0 - P_1$.
 
 ## Key Lemmas
-- `is_observable_of_measurement_system`: Verifies that the difference of projectors
+- `isObservable_observableOfMeasurementSystem`: Verifies that the difference of projectors
   in a binary measurement forms a valid observable.
 -/
 
 namespace MIPRE.LCS
 
-set_option linter.unusedSectionVars false
 
-variable {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R]
-variable {G : LCSLayout}
+variable {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R]
 
 structure IsObservable (O : R) : Prop where
   involutive   : O * O = 1
   self_adjoint : star O = O
 
-def ObservableOfMeasurementSystem (f : ZMod 2 → R) : R :=
+def observableOfMeasurementSystem (f : ZMod 2 → R) : R :=
   f 0 - f 1
 
 
-lemma is_observable_of_measurement_system
+omit [Algebra ℂ R] in
+lemma isObservable_observableOfMeasurementSystem
   (f : ZMod 2 → R) (h : IsMeasurementSystem f) :
-  IsObservable (ObservableOfMeasurementSystem f) where
+  IsObservable (observableOfMeasurementSystem f) where
   involutive := by
-    dsimp [ObservableOfMeasurementSystem]
+    dsimp [observableOfMeasurementSystem]
     rw [sub_mul, mul_sub, mul_sub, h.idempotent 0, h.idempotent 1]
     rw [h.orthogonal 0 1 (by decide), h.orthogonal 1 0 (by decide)]
     rw [sub_zero, zero_sub, sub_neg_eq_add]
     exact (sum_univ_zmod_two f).symm.trans h.sum_one
   self_adjoint := by
-    dsimp [ObservableOfMeasurementSystem]
+    dsimp [observableOfMeasurementSystem]
     rw [star_sub, h.self_adjoint 0, h.self_adjoint 1]
 
 lemma binary_measurement_eq_projector (f : ZMod 2 → R) (h : IsMeasurementSystem f) (y : ZMod 2) :
-    f y = (1 / 2 : ℂ) • (1 + (-1 : ℂ) ^ y.val • ObservableOfMeasurementSystem f) := by
+    f y = (1 / 2 : ℂ) • (1 + (-1 : ℂ) ^ y.val • observableOfMeasurementSystem f) := by
   have hsum := h.sum_one
   rw [sum_univ_zmod_two] at hsum
-  unfold ObservableOfMeasurementSystem
+  unfold observableOfMeasurementSystem
   have hy : y = 0 ∨ y = 1 := zmod_two_eq_zero_or_one y
   rcases hy with rfl | rfl
   · simp only [ZMod.val_zero, pow_zero, one_smul, ← hsum]

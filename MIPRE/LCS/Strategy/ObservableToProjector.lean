@@ -27,37 +27,37 @@ These projectors form a complete binary measurement system.
 namespace MIPRE.LCS
 
 open scoped BigOperators
-set_option linter.unusedSectionVars false
 
 variable {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R]
 
 
 /-- Converts an observable $O$ and an outcome $a \in \{0, 1\}$ to a projector
 $P = (1/2)(I + (-1)^a O)$. -/
-noncomputable def ObservableToProjector
+noncomputable def observableToProjector
   (O : R) (a : ZMod 2) : R :=
   (1 / 2 : ℂ) • (1 + observableSign a • O)
 
 /-- If $O$ is an observable, then the projector
 $P_a = (1/2)(1 + (-1)^a O)$ is self-adjoint. -/
 lemma star_observableToProjector (O : R) (hO : IsObservable O) (a : ZMod 2) :
-    star (ObservableToProjector O a) = ObservableToProjector O a := by
+    star (observableToProjector O a) = observableToProjector O a := by
   rcases zmod_two_eq_zero_or_one a with rfl | rfl
   all_goals (
-    simp [ObservableToProjector]
+    simp [observableToProjector]
     simp [observableSign]
     simp [hO.self_adjoint]
   )
 
-/-- If $O$ is an observable, then each $\mathrm{ObservableToProjector}(O,a)$ is idempotent,
+omit [StarModule ℂ R] in
+/-- If $O$ is an observable, then each $\mathrm{observableToProjector}(O,a)$ is idempotent,
 so it is a projector. -/
 lemma idempotent_observableToProjector (O : R) (hO : IsObservable O) (a : ZMod 2) :
-    ObservableToProjector O a * ObservableToProjector O a = ObservableToProjector O a := by
+    observableToProjector O a * observableToProjector O a = observableToProjector O a := by
   rcases zmod_two_eq_zero_or_one a with rfl | rfl
   · calc
-      ObservableToProjector O 0 * ObservableToProjector O 0
+      observableToProjector O 0 * observableToProjector O 0
           = ((1 / 2 : ℂ) * (1 / 2 : ℂ)) • ((1 + O) * (1 + O)) := by
-              simpa [ObservableToProjector, observableSign] using
+              simpa [observableToProjector, observableSign] using
                 (smul_mul_smul (1 / 2 : ℂ) (1 + O) (1 / 2 : ℂ) (1 + O))
       _ = ((1 / 2 : ℂ) * (1 / 2 : ℂ)) • ((2 : ℂ) • (1 + O)) := by
             congr 1
@@ -67,12 +67,12 @@ lemma idempotent_observableToProjector (O : R) (hO : IsObservable O) (a : ZMod 2
       _ = (1 / 2 : ℂ) • (1 + O) := by
             rw [smul_smul]
             norm_num
-      _ = ObservableToProjector O 0 := by
-            simp [ObservableToProjector, observableSign]
+      _ = observableToProjector O 0 := by
+            simp [observableToProjector, observableSign]
   · calc
-      ObservableToProjector O 1 * ObservableToProjector O 1
+      observableToProjector O 1 * observableToProjector O 1
           = ((1 / 2 : ℂ) * (1 / 2 : ℂ)) • ((1 + (-1 : ℂ) • O) * (1 + (-1 : ℂ) • O)) := by
-              simpa [ObservableToProjector, observableSign] using
+              simpa [observableToProjector, observableSign] using
                 (smul_mul_smul (1 / 2 : ℂ) (1 + (-1 : ℂ) • O) (1 / 2 : ℂ) (1 + (-1 : ℂ) • O))
       _ = ((1 / 2 : ℂ) * (1 / 2 : ℂ)) • ((2 : ℂ) • (1 + (-1 : ℂ) • O)) := by
             congr 1
@@ -82,17 +82,18 @@ lemma idempotent_observableToProjector (O : R) (hO : IsObservable O) (a : ZMod 2
       _ = (1 / 2 : ℂ) • (1 + (-1 : ℂ) • O) := by
             rw [smul_smul]
             norm_num
-      _ = ObservableToProjector O 1 := by
-            simp [ObservableToProjector, observableSign]
+      _ = observableToProjector O 1 := by
+            simp [observableToProjector, observableSign]
 
+omit [StarModule ℂ R] in
 /-- The two projectors associated to the two outcomes of a single observable are orthogonal:
 $P_0 P_1 = 0$. -/
 lemma orthogonal_observableToProjector (O : R) (hO : IsObservable O) :
-    ObservableToProjector O 0 * ObservableToProjector O 1 = 0 := by
+    observableToProjector O 0 * observableToProjector O 1 = 0 := by
   calc
-    ObservableToProjector O 0 * ObservableToProjector O 1
+    observableToProjector O 0 * observableToProjector O 1
         = ((1 / 2 : ℂ) * (1 / 2 : ℂ)) • ((1 + O) * (1 + (-1 : ℂ) • O)) := by
-            simpa [ObservableToProjector, observableSign] using
+            simpa [observableToProjector, observableSign] using
               (smul_mul_smul (1 / 2 : ℂ) (1 + O) (1 / 2 : ℂ) (1 + (-1 : ℂ) • O))
       _ = ((1 / 2 : ℂ) * (1 / 2 : ℂ)) • (0 : R) := by
           congr 1
@@ -100,43 +101,46 @@ lemma orthogonal_observableToProjector (O : R) (hO : IsObservable O) :
           norm_num
       _ = 0 := by simp
 
+omit [StarRing R] [StarModule ℂ R] in
 /-- The two projectors associated to a single observable form a complete binary measurement:
 $P_0 + P_1 = 1$. -/
 lemma sum_one_observableToProjector (O : R) :
-    ObservableToProjector O 0 + ObservableToProjector O 1 = 1 := by
+    observableToProjector O 0 + observableToProjector O 1 = 1 := by
   calc
-    ObservableToProjector O 0 + ObservableToProjector O 1
+    observableToProjector O 0 + observableToProjector O 1
     = ((1 / 2 : ℂ) + (1 / 2 : ℂ)) • (1 : R) := by
-      rw [ObservableToProjector, ObservableToProjector, observableSign, observableSign, if_pos rfl,
+      rw [observableToProjector, observableToProjector, observableSign, observableSign, if_pos rfl,
         if_neg (by decide)]
       simp [smul_add, add_assoc, ← add_smul]
     _ = 1 := by
       norm_num
 
+omit [StarModule ℂ R] in
 lemma observable_mul_observableToProjector
     (O : R) (hO : IsObservable O) (a : ZMod 2) :
-    O * ObservableToProjector O a =
-      ((-1 : ℂ) ^ a.val) • ObservableToProjector O a := by
+    O * observableToProjector O a =
+      ((-1 : ℂ) ^ a.val) • observableToProjector O a := by
   rcases zmod_two_eq_zero_or_one a with rfl | rfl
-  · simp [ObservableToProjector, observableSign, hO.involutive, mul_add,
+  · simp [observableToProjector, observableSign, hO.involutive, mul_add,
       smul_add, add_comm]
-  · simp [ObservableToProjector, observableSign, hO.involutive, mul_add,
+  · simp [observableToProjector, observableSign, hO.involutive, mul_add,
       smul_add, add_comm]
 
+omit [StarRing R] [StarModule ℂ R] in
 /-- If observables $O₁$ and $O₂$ commute, then all corresponding projectors
 $P_a(O₁)$ and $P_b(O₂)$ commute as well. -/
 lemma commute_observableToProjector {O1 O2 : R} (h : Commute O1 O2) (a b : ZMod 2) :
-    Commute (ObservableToProjector O1 a) (ObservableToProjector O2 b) := by
-  rw [ObservableToProjector, ObservableToProjector]
+    Commute (observableToProjector O1 a) (observableToProjector O2 b) := by
+  rw [observableToProjector, observableToProjector]
   apply Commute.smul_right
   apply Commute.smul_left
   apply Commute.add_left (.one_left _)
   apply Commute.add_right (.one_right _)
   exact (h.smul_left _).smul_right _
 
-/-- Given an observable $O$, the mapping `ObservableToProjector O` is a measurement system. -/
+/-- Given an observable $O$, the mapping `observableToProjector O` is a measurement system. -/
 lemma isMeasurementSystem_observableToProjector (O : R) (hO : IsObservable O) :
-    IsMeasurementSystem (ObservableToProjector O) where
+    IsMeasurementSystem (observableToProjector O) where
   sum_one := by
     rw [sum_univ_zmod_two, sum_one_observableToProjector]
   idempotent a := idempotent_observableToProjector O hO a
