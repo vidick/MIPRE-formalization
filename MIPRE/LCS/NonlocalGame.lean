@@ -71,11 +71,12 @@ noncomputable def Game.toNonlocalGame (game : Game G)
 nonlocal game.
 
 Intended proof: take `dA = dB = Fintype.card n`, let `ψ` be the normalized EPR state
-transported along an equivalence `n ≃ Fin (Fintype.card n)`, let Alice's POVM for
-question `i` be the joint measurement `strat.toProjectorStrategy.E i` restricted to
-the first tensor factor, and let Bob's POVM for question `j` be the binary measurement
-of `strat.obs j`. The `[Nonempty n]` hypothesis is necessary: for empty `n` the
-hypothesis `hLoss` is vacuous while no unit vector exists. -/
+transported along an equivalence `n ≃ Fin (Fintype.card n)`, let Alice's projective
+measurement for question `i` be the joint measurement `strat.toProjectorStrategy.E i`
+restricted to the first tensor factor, and let Bob's projective measurement for
+question `j` be the binary measurement of `strat.obs j`. The `[Nonempty n]` hypothesis
+is necessary: for empty `n` the hypothesis `hLoss` is vacuous while no unit vector
+exists. -/
 theorem exists_tensorStrategy_value_eq_one_of_localLoss_annihilates_epr
     (game : Game G) (hr : 0 < G.r) (hV : ∀ i, (G.V i).Nonempty)
     {n : Type*} [Fintype n] [DecidableEq n] [Nonempty n]
