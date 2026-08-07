@@ -110,6 +110,16 @@ Impact on this plan:
   same halting convention (`state = none`, halted configs are fixed points), space = visited
   work-tape cells, `ComputesInTimeAndSpace` = (halted at `t`) ∧ (output equal) ∧ (space
   exactly `s`). Reuse vendored `Turing.moveInputPos` verbatim (it is arity-agnostic).
+- **D13 — universal-simulation spec frozen existentially, blueprint-tracked (WP11).**
+  The machine-level targets are stated with `sorry` in `MIPRE/TM/Universal/Spec.lean`:
+  `Turing.exists_universalCode` (blueprint `lem:universal-machine`, issue #17) and
+  `Turing.exists_boundedUniversalCode` (blueprint `lem:bounded-universal-machine`,
+  issue #18), per CONTRIBUTING's sorry policy. Statements are existential (`∃ U`),
+  mirroring `Cost/Toolkit.lean`'s ambient nodes — a sorried `def universalCode` would
+  be poisoned data; the concrete `def` arrives only with Milestone F. Blueprint
+  Lemma `lem:universal-tm` stays the ambient/pipeline node (user decision 2026-08-07)
+  and now carries its `\lean{}` tags; the new machine-model subsection
+  (`sec:machine-model`) documents Milestones A–D with `\leanok` nodes.
 - **Policy: all six work packages are sorry-free** (CONTRIBUTING allows merged sorries only
   for blueprint-tracked nodes; nothing here needs one). Every WP runs `lake exe mk_all` and
   commits the regenerated `MIPRE.lean`.
@@ -123,7 +133,7 @@ Impact on this plan:
 | C | Exact binary serialization: prefix-free nat codec, `encodeCode`/`decodeCodeExact`/`decodeCodeExact_sound`, total `decodeCode` via `defaultRejectCode`, `codeSize` (**detailed plan below**, WP7–WP9) | ✅ 2026-08-06 |
 | D | Pure reference evaluator: `Code.runFor`, `Code.evalWithin`, `Code.Produces` + execution laws (**detailed plan below**, WP10) | ✅ 2026-08-06 |
 | E | Port `rtm` semantic core (`Data`, codecs, `Prog`, `InPlace`, controller-style simulator consuming `Code`, never `Fintype.elems`). Port target: crei/cslib `rtm` branch (tip 2026-06-24, v4.32.0-rc1): `Data`/`DataEncode`/`Prog`/`ProgSem`+`InPlace` core sorry-free; `PB` 7 sorries, `TMSimulator` 4 (all quantitative) | ☐ |
-| F | Compile the fixed universal program → `boundedUniversalCode i : Code (i+2)`, `universalCode i : Code (i+1)` + correctness. Design evidence: `utm:Satisfiability.lean` (sorry-free verified 5-tape SAT-verifier TM — also a gateway prototype for `thm:succinct-sat`); `rtmfun3:HierarchyTheorems.lean` (`NormalizedTM`, quadratic-overhead universal spec; sketch, 9 sorries) | ☐ |
+| F | Compile the fixed universal program → `boundedUniversalCode i : Code (i+2)`, `universalCode i : Code (i+1)` + correctness. **Target spec frozen in `TM/Universal/Spec.lean` (WP11; blueprint `lem:universal-machine` / `lem:bounded-universal-machine`; issues #17/#18.)** Design evidence: `utm:Satisfiability.lean` (sorry-free verified 5-tape SAT-verifier TM — also a gateway prototype for `thm:succinct-sat`); `rtmfun3:HierarchyTheorems.lean` (`NormalizedTM`, quadratic-overhead universal spec; sketch, 9 sorries) | ☐ |
 | G | Quantitative bounds → `universal_polynomial_overhead` (coarse polynomial; degree not optimized). Align with crei's open upstream PRs: #772 `ConfigBound` (#configs ≤ (n+2)·a·2^(c·s)), #767 `Classes`/`SpaceInTime` (DTIME/DSPACE, L⊆P, PSPACE⊆EXP), fork `landau_calculus:BigO` | ☐ |
 
 **Gate before E/F (record the decision here when made):** one interpreter or two — TM-level
@@ -548,7 +558,9 @@ lake build                    # green; no warnings beyond the pre-existing Found
 lake exe mk_all               # then commit the regenerated MIPRE.lean
 ```
 
-- `grep -rn "sorry" MIPRE/TM MIPRE/Cslib` → empty.
+- `grep -rn "sorry" MIPRE/TM MIPRE/Cslib` → exactly the two blueprint-tracked sorries
+  of `MIPRE/TM/Universal/Spec.lean` (`exists_universalCode`,
+  `exists_boundedUniversalCode`; D13), nothing else.
 - `grep -rn "noncomputable\|Fintype.elems" MIPRE/TM` → empty (D5; note Milestone A/B never
   needs `Polynomial ℕ`, so nothing here is forced noncomputable).
 - WP1: adaptation-only diff against the pinned upstream sources.
@@ -587,6 +599,10 @@ lake exe mk_all               # then commit the regenerated MIPRE.lean
 - [x] **WP8** `Code/Encoding/MachineCode.lean` — machine serialization + exact decoder (2026-08-06; soundness fully compositional via paired prefix/soundness lemmas — the D11 re-encode fallback was not needed)
 - [x] **WP9** `Code/Encoding/Total.lean` — total decode, `codeSize` + `codeSize_le`, test battery → **Milestone C done** (2026-08-06; all round trips and the seven-mode malformed battery kernel-checked by `decide`; size-bound lemmas are stated in `c.raw.*` projections — `omega` treats the `Code.*` abbrevs as distinct atoms)
 - [x] **WP10** `Code/Evaluator.lean` — reference evaluator + compatibility package → **Milestone D done** (2026-08-06; compiled first try — all laws, `produces_iff_exists_evalWithin`, `Produces.unique`, and the `decide` pins)
+- [x] **WP11** `TM/Universal/Spec.lean` + blueprint machine-model subsection (2026-08-07;
+  spec sorries tracked by issues #17/#18 and blueprint nodes `lem:universal-machine` /
+  `lem:bounded-universal-machine`; `lem:universal-tm` kept ambient and newly
+  `\lean{}`-tagged; `encodeBoundedResult` completes the D12 deferred output codec)
 - [ ] Roadmap statuses updated; E/F interpreter-ownership decision recorded when taken
 
 Each WP is one commit on `turing-machines` (mergeable as its own PR if the FLT-style

@@ -24,3 +24,4 @@ import MIPRE.TM.MultiInput.Congr
 import MIPRE.TM.MultiInput.Deterministic
 import MIPRE.TM.MultiInput.OneInputEquiv
 import MIPRE.TM.MultiInput.TapeLemmas
+import MIPRE.TM.Universal.Spec
