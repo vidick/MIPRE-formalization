@@ -17,6 +17,7 @@ import MIPRE.LCS.MagicSquare.SolutionGroup
 import MIPRE.LCS.MagicSquare.Strategy
 import MIPRE.LCS.MatrixSOS
 import MIPRE.LCS.Measurement
+import MIPRE.LCS.NonlocalGame
 import MIPRE.LCS.Observable
 import MIPRE.LCS.Pauli
 import MIPRE.LCS.SolutionGroup
