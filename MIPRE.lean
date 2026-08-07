@@ -13,6 +13,7 @@ import MIPRE.HaltingGameValue
 import MIPRE.TM.Code.Encoding.MachineCode
 import MIPRE.TM.Code.Encoding.Nat
 import MIPRE.TM.Code.Encoding.Total
+import MIPRE.TM.Code.Evaluator
 import MIPRE.TM.Code.Examples
 import MIPRE.TM.Code.Observation
 import MIPRE.TM.Code.Raw
@@ -23,3 +24,4 @@ import MIPRE.TM.MultiInput.Congr
 import MIPRE.TM.MultiInput.Deterministic
 import MIPRE.TM.MultiInput.OneInputEquiv
 import MIPRE.TM.MultiInput.TapeLemmas
+import MIPRE.TM.Universal.Spec

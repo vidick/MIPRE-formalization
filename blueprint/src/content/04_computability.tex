@@ -5,9 +5,109 @@ This chapter collects the computability-theoretic ingredients of the proof: clas
 statements with no quantum content, several of which partially exist in Mathlib. Like
 the results of Section~\ref{ch:required-results}, these are external results that the
 project may initially assume as axioms, and each entry carries the same
-formalization-effort estimate. The toolkit of resource-bounded computability results
-comes first; the recursive compression lemma, which builds on it, isolates the
-self-referential part of the proof.
+formalization-effort estimate. The concrete machine model and its canonical codes come
+first; then the toolkit of resource-bounded computability results; the recursive
+compression lemma, which builds on the toolkit, isolates the self-referential part of
+the proof.
+
+\subsection{The machine model}
+\label{sec:machine-model}
+
+The machine-level side of the project is formalized directly: a concrete multi-tape
+machine model with several input tapes, a canonical first-order syntax of machine
+\emph{codes} with an exact binary serialization, and a reference evaluator. The
+definitions and the serialization lemma below are sorry-free in Lean; the two
+universal-simulation lemmas at the end are stated in Lean and tracked as open
+formalization targets. These objects underlie the succinct Cook--Levin gateway
+(Theorem~\ref{thm:succinct-sat}) and the machine-level universal-simulation statements;
+the ambient toolkit of Section~\ref{sec:rr-computability} does not depend on them.
+
+\begin{definition}[Multi-input Turing machine]
+\label{def:multiinput-tm}
+\lean{Turing.MultiInputTM, Turing.MultiInputTM.ComputesInTimeAndSpace}
+\leanok
+A \emph{multi-input Turing machine} with $i$ input tapes and $w$ work tapes has $i$
+two-way read-only input tapes (heads clamped one blank cell beyond either end of the
+input), $w$ bidirectional work tapes over an alphabet extended with a blank symbol, and
+a write-only output stream. A transition may write and move on every work tape, move
+every input head, emit at most one output symbol, and either continue or halt. Time is
+counted in steps, and space as the number of work-tape cells visited. At $i = 1$ this
+is exactly the CSLib multi-tape model, on the nose.
+\end{definition}
+
+\begin{definition}[Machine codes]
+\label{def:machine-code}
+\uses{def:multiinput-tm}
+\lean{Turing.Code, Turing.Code.toTM, Turing.encodeCode, Turing.decodeCode,
+Turing.codeSize}
+\leanok
+A \emph{machine code} is first-order data: a header (number of work tapes, alphabet
+size, number of states, start state) and a dense transition table with one entry per
+observation, in a fixed canonical order. A well-formed code is interpreted as a
+multi-input machine, with binary input and output through two reserved alphabet
+symbols. Codes serialize exactly: the \emph{description} $\alpha \in \{0,1\}^*$ of a
+code has size $\abs{\alpha}$, and \emph{total decoding} interprets every string ---
+$[\alpha]_i$ denotes the coded machine with $i$ input tapes described by $\alpha$, with
+every malformed string denoting one fixed machine that immediately rejects.
+\end{definition}
+
+\begin{definition}[Runs of coded machines]
+\label{def:code-run}
+\uses{def:machine-code}
+\lean{Turing.Code.Produces, Turing.Code.evalWithin}
+\leanok
+Let $c$ be a code with $i$ input tapes, $x = (x_1, \ldots, x_i)$ bit strings and $y \in
+\{0,1\}^*$. The code $c$ \emph{produces} $y$ on $x$ if its run on $x$ halts with output
+$y$ (in some time and space). The \emph{budgeted evaluation} of $c$ on $x$ with budget
+$T$ returns the output if $c$ has halted within $T$ steps, and a timeout marker
+otherwise; it is total and executable, and the two notions agree: $c$ produces $y$ if
+and only if some budget suffices to observe it.
+\end{definition}
+
+\begin{lemma}[Canonical serialization]
+\label{lem:code-canonical}
+\uses{def:machine-code}
+\lean{Turing.decodeCodeExact_encodeCode, Turing.encodeCode_injective,
+Turing.decodeCodeExact_sound}
+\leanok
+Exact decoding inverts encoding, distinct codes have distinct descriptions, and every
+description accepted by the exact decoder is the canonical encoding of the code it
+parses to.
+\begin{proof}
+\leanok
+Compositional, from paired prefix and soundness lemmas for each field of the
+description format.
+\end{proof}
+\end{lemma}
+
+The following two statements are the machine-level counterparts of
+Lemma~\ref{lem:universal-tm}. They are stated in Lean (with \texttt{sorry}) to freeze
+the target interface; their proofs are the machine-level programme (Milestones E--G of
+the infrastructure plan). The compression pipeline consumes only the ambient
+Lemma~\ref{lem:universal-tm}, not these.
+
+\begin{lemma}[Universal machine]
+\label{lem:universal-machine}
+\uses{def:machine-code, def:code-run}
+\lean{Turing.exists_universalCode}
+\leanok
+For each arity $i$ there are a machine code $U$ with $i + 1$ input tapes and a
+polynomial $P$ such that for all $\alpha \in \{0,1\}^*$, all inputs $x$ and all $y$:
+$U$ on $(\alpha; x)$ produces $y$ if and only if $[\alpha]_i$ on $x$ produces $y$; and
+whenever $[\alpha]_i$ halts on $x$ within $t$ steps, $U$ halts on $(\alpha; x)$ within
+$P(\abs{\alpha} + t)$ time and space.
+\end{lemma}
+
+\begin{lemma}[Bounded universal machine]
+\label{lem:bounded-universal-machine}
+\uses{def:machine-code, def:code-run}
+\lean{Turing.exists_boundedUniversalCode}
+\leanok
+For each arity $i$ there are a machine code $U$ with $i + 2$ input tapes and a
+polynomial $P$ such that on input $(\alpha;\, T \text{ in binary};\, x)$, the machine
+$U$ always halts within $P(\abs{\alpha} + T)$ steps, outputting the canonically encoded
+budgeted evaluation of $[\alpha]_i$ on $x$ with budget $T$.
+\end{lemma}
 
 \subsection{Efficient computability toolkit}
 \label{sec:rr-computability}
@@ -16,6 +116,8 @@ self-referential part of the proof.
 
 \begin{lemma}[Efficient universal Turing machine]
 \label{lem:universal-tm}
+\lean{MIPRE.Cost.exists_efficient_universal, MIPRE.Cost.exists_clocked_universal}
+\leanok
 There is a program $u$ and a polynomial $p$ such that $\phi_u(e, x) = \phi_e(x)$ for
 all $e, x$, with $\mathrm{runtime}(u, (e,x)) \leq
 p\bigl(\abs{e}, \abs{x}, \mathrm{runtime}(e, x)\bigr)$.
@@ -44,7 +146,10 @@ machine, s-m-n and the Rogers fixed-point theorem for \texttt{Nat.Partrec.Code})
 efficient versions require a cost model for the chosen machine model; this is real
 infrastructure work and a prerequisite for everything involving ``polynomial-time''.
 A pragmatic first pass can replace ``polynomial time'' by ``computable'' wherever
-Section~\ref{sec:departures} permits, deferring the cost model.
+Section~\ref{sec:departures} permits, deferring the cost model. The machine-level
+counterpart, for the concrete model of Section~\ref{sec:machine-model}, is stated as
+Lemmas~\ref{lem:universal-machine} and~\ref{lem:bounded-universal-machine}; the
+pipeline consumes only the present ambient version.
 
 \subsection{The abstract recursive compression lemma}
 \label{sec:rr-compression}
