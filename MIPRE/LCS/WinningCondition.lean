@@ -23,7 +23,6 @@ paper's algebraic winning-condition identities.
 
 namespace MIPRE.LCS
 
-open scoped BigOperators
 
 
 variable {G : Layout} (game : Game G)
@@ -47,7 +46,7 @@ and loss operators.
 
 /-- The assignments satisfying equation `i` in the game `game`. -/
 def winningAssignments (i : Fin G.r) : Finset (Layout.Assignment G i) :=
-  Finset.univ.filter (fun α => (∑ j : G.V i, (α j : ZMod 2)) = b[i])
+  Finset.univ.filter (fun α ↦ (∑ j : G.V i, (α j : ZMod 2)) = b[i])
 
 /-- The local winning operator for a single edge `(i, j)`. -/
 noncomputable def localWinningOperator (i : Fin G.r) (j : G.V i) : R :=
@@ -95,10 +94,10 @@ lemma sum_winning_projectors_eq_row_observable (i : Fin G.r) :
   rw [IsMeasurementSystem.sum_mul_single (strat.alice_ms i) S[i] x]
   -- RHS: expand
   have hprod : prodA * E[i, x] =
-      ((G.V i).attach.prod fun j => (-1 : ℂ) ^ (x j).val) • E[i, x] :=
+      ((G.V i).attach.prod fun j ↦ (-1 : ℂ) ^ (x j).val) • E[i, x] :=
     ProjectorStrategy.aliceObs_noncommProd_mul_E strat i _ x
-      (fun j _ j' _ _ => ProjectorStrategy.aliceObs_commute strat i j j')
-  have hsign : ((G.V i).attach.prod fun j => (-1 : ℂ) ^ (x j).val) =
+      (fun j _ j' _ _ ↦ ProjectorStrategy.aliceObs_commute strat i j j')
+  have hsign : ((G.V i).attach.prod fun j ↦ (-1 : ℂ) ^ (x j).val) =
       (-1 : ℂ) ^ ((∑ j : G.V i, (x j : ZMod 2)).val) :=
     prod_sign_eq_sum_sign i x
   -- Expand rhs * E i x
@@ -113,15 +112,15 @@ lemma sum_winning_projectors_eq_row_observable (i : Fin G.r) :
 omit [StarModule ℂ R] in
 /-- Lemma 4.7.2: the marginal projector sum equals the signed local observable expression. -/
 lemma sum_marginal_projectors_eq_half_one_add_aliceObs (i : Fin G.r) (j : G.V i) (y : ZMod 2) :
-  (∑ x ∈ Finset.univ.filter (fun x : Layout.Assignment G i => x j = y), E[i, x]) =
+  (∑ x ∈ Finset.univ.filter (fun x : Layout.Assignment G i ↦ x j = y), E[i, x]) =
     (1 / 2 : ℂ) • (1 + (-1 : ℂ) ^ y.val • A[i, j]) := by
   classical
-  let A : R := ∑ x ∈ Finset.univ.filter (fun x : Layout.Assignment G i => x j = 0), E[i, x]
-  let B : R := ∑ x ∈ Finset.univ.filter (fun x : Layout.Assignment G i => x j = 1), E[i, x]
+  let A : R := ∑ x ∈ Finset.univ.filter (fun x : Layout.Assignment G i ↦ x j = 0), E[i, x]
+  let B : R := ∑ x ∈ Finset.univ.filter (fun x : Layout.Assignment G i ↦ x j = 1), E[i, x]
   -- inducedMeasurementSystem.sum_one gives A + B = 1 directly,
   -- replacing the manual partition argument (hnot + hpart)
   have hind := IsMeasurementSystem.induced
-    (strat.E i) (strat.alice_ms i) (fun x => x j)
+    (strat.E i) (strat.alice_ms i) (fun x ↦ x j)
   have hpart : A + B = 1 := by
     have h := hind.sum_one
     rw [sum_univ_zmod_two] at h
@@ -147,10 +146,10 @@ private lemma aliceRowProd_mul_self (i : Fin G.r) :
   have hsum := (strat.alice_ms i).sum_one
   have hcomm :
       (((G.V i).attach : Set (G.V i)).Pairwise
-        (fun j j' =>
+        (fun j j' ↦
           Commute (ProjectorStrategy.aliceObs strat i j)
             (ProjectorStrategy.aliceObs strat i j'))) :=
-    fun j _ j' _ _ =>
+    fun j _ j' _ _ ↦
       ProjectorStrategy.aliceObs_commute strat i j j'
   suffices h : ∀ x : Layout.Assignment G i,
       ∏ₐ[i] *
@@ -186,16 +185,16 @@ of private rewriting lemmas.
 omit [Algebra ℂ R] [StarModule ℂ R] in
 private lemma local_loss_sos_step1 (i : Fin G.r) (j : G.V i) :
   localLossOperator game strat i j =
-    1 - ∑ y : ZMod 2, F[j, y] * (∑ x ∈ S[i].filter (fun x => x j = y), E[i, x]) := by
+    1 - ∑ y : ZMod 2, F[j, y] * (∑ x ∈ S[i].filter (fun x ↦ x j = y), E[i, x]) := by
   unfold localLossOperator localWinningOperator
   congr 1
-  rw [show (∑ y : ZMod 2, F[j, y] * (∑ x ∈ S[i].filter (fun x => x j = y), E[i, x]))
-      = ∑ y : ZMod 2, ∑ x ∈ S[i].filter (fun x => x j = y), E[i, x] * F[j, y] by
+  rw [show (∑ y : ZMod 2, F[j, y] * (∑ x ∈ S[i].filter (fun x ↦ x j = y), E[i, x]))
+      = ∑ y : ZMod 2, ∑ x ∈ S[i].filter (fun x ↦ x j = y), E[i, x] * F[j, y] by
     congr 1; ext y
     rw [Finset.mul_sum]
     congr 1; ext x
     exact (strat.alice_bob_commute i ↑j x y).symm]
-  rw [← Finset.sum_fiberwise S[i] (fun x => x j) (fun x => E[i, x] * F[j, x j])]
+  rw [← Finset.sum_fiberwise S[i] (fun x ↦ x j) (fun x ↦ E[i, x] * F[j, x j])]
   congr 1; ext y
   apply Finset.sum_congr rfl
   intro x hx
@@ -204,7 +203,7 @@ private lemma local_loss_sos_step1 (i : Fin G.r) (j : G.V i) :
 
 omit [StarModule ℂ R] in
 private lemma local_loss_sos_step2 (i : Fin G.r) (j : G.V i) :
-    1 - ∑ y : ZMod 2, F[j, y] * (∑ x ∈ S[i].filter (fun x => x j = y), E[i, x]) =
+    1 - ∑ y : ZMod 2, F[j, y] * (∑ x ∈ S[i].filter (fun x ↦ x j = y), E[i, x]) =
     1 - (1 / 4 : ℂ) • ∑ y : ZMod 2,
       F[j, y] * ((1 + (-1 : ℂ) ^ (b[i]).val • ∏ₐ[i]) *
                  (1 + (-1 : ℂ) ^ y.val • A[i, j])) := by
@@ -217,7 +216,7 @@ private lemma local_loss_sos_step2 (i : Fin G.r) (j : G.V i) :
   intro y _
   -- Rewrite the filtered sum as intersection via IsMeasurementSystem.sum_mul_sum
   rw [finset_filter_eq_inter_univ_filter, ← IsMeasurementSystem.sum_mul_sum (strat.alice_ms i)]
-  -- Apply sum_winning_projectors_eq_row_observable and sum_marginal_projectors_eq_half_one_add_aliceObs
+  -- Apply the winning-projector and marginal-projector identities.
   rw [sum_marginal_projectors_eq_half_one_add_aliceObs strat i j y] -- 4.7.2
   have h471 := sum_winning_projectors_eq_row_observable game strat i
   rw [show ∑ x ∈ S[i], E[i, x] = (1 / 2 : ℂ) • (1 + (-1 : ℂ) ^ (b[i]).val • ∏ₐ[i])
@@ -306,7 +305,8 @@ private lemma local_loss_sos_step5 (i : Fin G.r) (j : G.V i) :
   let O2 := (-1 : ℂ) ^ (b[i]).val • ∏ₐ[i]
   let O3 := (-1 : ℂ) ^ (b[i]).val • (∏ₐ[i] * A[i, j] * B[j])
   -- Rearange to be able to rewrite in terms of O1, O2, O3
-  rw [mul_smul_comm, ← mul_assoc, (ProjectorStrategy.bobObs_commute_aliceRowProd strat i j).eq, mul_assoc]
+  rw [mul_smul_comm, ← mul_assoc,
+    (ProjectorStrategy.bobObs_commute_aliceRowProd strat i j).eq, mul_assoc]
   nth_rw 2 [(ProjectorStrategy.aliceObs_commute_bobObs strat i j j).symm.eq]
   rw [← mul_assoc]
   -- Perform the rewriting in terms of O1, O2, O3
@@ -316,7 +316,8 @@ private lemma local_loss_sos_step5 (i : Fin G.r) (j : G.V i) :
     unfold O1
     nth_rw 1 [(ProjectorStrategy.aliceObs_commute_bobObs strat i j j).symm.eq] -- B A = A B
     simp only [mul_assoc, ← mul_assoc B[↑j] B[↑j], one_mul,
-      (ProjectorStrategy.isObservable_bobObs strat j).involutive, (ProjectorStrategy.isObservable_aliceObs strat i j).involutive]
+      (ProjectorStrategy.isObservable_bobObs strat j).involutive,
+      (ProjectorStrategy.isObservable_aliceObs strat i j).involutive]
   have hO2 : O2 * O2 = 1 := by
     unfold O2
     rw [smul_mul_assoc, mul_smul_comm, smul_smul, aliceRowProd_mul_self strat i, sign_sq (b[i])]
@@ -336,7 +337,8 @@ private lemma local_loss_sos_step5 (i : Fin G.r) (j : G.V i) :
     rw [ProjectorStrategy.aliceObs_commute_bobObs strat i j j]
     rw [← mul_assoc]
     simp only [aliceRowProd_mul_self, mul_one, mul_assoc,
-      (ProjectorStrategy.isObservable_aliceObs strat i j).involutive, (ProjectorStrategy.isObservable_bobObs strat j).involutive]
+      (ProjectorStrategy.isObservable_aliceObs strat i j).involutive,
+      (ProjectorStrategy.isObservable_bobObs strat j).involutive]
   -- expand the square on RHS
   simp only [sq, sub_mul, mul_sub, one_mul, mul_one]
   rw [hO1, hO2, hO3]

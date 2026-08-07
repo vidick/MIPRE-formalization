@@ -21,7 +21,6 @@ and basic properties of the outcome space $\mathbb{F}_2$.
 -/
 
 namespace MIPRE.LCS
-open scoped BigOperators
 
 
 
@@ -54,6 +53,7 @@ lemma sign_indicator (b s : ZMod 2) :
       norm_num [ZMod.val_zero, zmod_two_val_one]
 
 
+/-- The sign `(-1)^a` of an `𝔽₂`-value: `1` for `a = 0` and `-1` for `a = 1`. -/
 def observableSign (a : ZMod 2) : ℂ :=
   if a = 0 then 1 else -1
 
@@ -62,14 +62,14 @@ lemma sign_sq (x : ZMod 2) : (-1 : ℂ) ^ x.val * (-1 : ℂ) ^ x.val = 1 := by
 
 lemma prod_sign_eq_sum_sign_aux {G : Layout} {i : Fin G.r}
   (x : Layout.Assignment G i) (s : Finset (G.V i)) :
-  (s.prod fun j => (-1 : ℂ) ^ (x j).val) =
-    (-1 : ℂ) ^ ((s.sum fun j => (x j : ZMod 2)).val) := by
+  (s.prod fun j ↦ (-1 : ℂ) ^ (x j).val) =
+    (-1 : ℂ) ^ ((s.sum fun j ↦ (x j : ZMod 2)).val) := by
   induction s using Finset.cons_induction_on with
   | empty => simp
   | cons a s ha ih => rw [Finset.prod_cons, Finset.sum_cons, ih, sign_mul]
 
 lemma prod_sign_eq_sum_sign {G : Layout} (i : Fin G.r) (x : Layout.Assignment G i) :
-  ((G.V i).attach.prod fun j => (-1 : ℂ) ^ (x j).val) =
+  ((G.V i).attach.prod fun j ↦ (-1 : ℂ) ^ (x j).val) =
     (-1 : ℂ) ^ ((∑ j : G.V i, (x j : ZMod 2)).val) :=
   prod_sign_eq_sum_sign_aux x _
 

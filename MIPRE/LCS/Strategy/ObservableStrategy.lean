@@ -23,28 +23,38 @@ game using the observable formalism. In this formalism, players choose observabl
 
 namespace MIPRE.LCS
 
-open scoped BigOperators
 
 
+/-- An observable-based strategy for the LCS layout `G`: Alice and Bob each assign a
+binary observable to every variable, Alice's observables commute within each equation,
+and every observable of Alice commutes with every observable of Bob. -/
 structure ObservableStrategy
   (R : Type*) [Ring R] [StarRing R]
   (G : Layout) where
+  /-- Alice's observable for each variable. -/
   aliceObs : Fin G.s → R
+  /-- Bob's observable for each variable. -/
   bobObs : Fin G.s → R
+  /-- Alice's operators are observables. -/
   alice_isObservable : ∀ j, IsObservable (aliceObs j)
+  /-- Bob's operators are observables. -/
   bob_isObservable : ∀ j, IsObservable (bobObs j)
+  /-- Alice's observables commute within each equation. -/
   sameEquation_comm :
-    ∀ i, Pairwise (fun j k : G.V i => Commute (aliceObs j.1) (aliceObs k.1))
+    ∀ i, Pairwise (fun j k : G.V i ↦ Commute (aliceObs j.1) (aliceObs k.1))
+  /-- Every observable of Alice commutes with every observable of Bob. -/
   alice_bob_commute :
     ∀ j k, Commute (aliceObs j) (bobObs k)
 
 open Matrix
-open Kronecker
+open scoped Kronecker
 
+/-- Alice's side of the bipartite lift, `M ↦ M ⊗ 1`. -/
 def bipartiteAliceLift {n : Type*} [Fintype n] [DecidableEq n]
     (M : Matrix n n ℂ) : Matrix (n × n) (n × n) ℂ :=
   M ⊗ₖ (1 : Matrix n n ℂ)
 
+/-- Bob's side of the bipartite lift, `M ↦ 1 ⊗ M`. -/
 def bipartiteBobLift {n : Type*} [Fintype n] [DecidableEq n]
     (M : Matrix n n ℂ) : Matrix (n × n) (n × n) ℂ :=
   (1 : Matrix n n ℂ) ⊗ₖ M
@@ -86,28 +96,37 @@ lemma bipartiteAliceLift_commute {n : Type*} [Fintype n] [DecidableEq n]
       (N ⊗ₖ (1 : Matrix n n ℂ)) * (M ⊗ₖ (1 : Matrix n n ℂ))
   rw [← mul_kronecker_mul, ← mul_kronecker_mul, h]
 
+/-- A bipartite observable strategy: a single grid of observables on `ℂ^n`, commuting
+within each equation, which both players use through the Kronecker lifts `M ⊗ 1` and
+`1 ⊗ M` (see `toObservableStrategy`). -/
 structure BipartiteObservableStrategy
     (n : Type*) [Fintype n] [DecidableEq n]
     (G : Layout) where
+  /-- The grid of observables, one per variable. -/
   obs : Fin G.s → Matrix n n ℂ
+  /-- Each grid entry is an observable. -/
   isObservable : ∀ j, IsObservable (obs j)
+  /-- Grid observables commute within each equation. -/
   sameEquation_comm :
-    ∀ i, Pairwise (fun j k : G.V i => Commute (obs j.1) (obs k.1))
+    ∀ i, Pairwise (fun j k : G.V i ↦ Commute (obs j.1) (obs k.1))
 
 namespace BipartiteObservableStrategy
 
+/-- The observable strategy on `ℂ^n ⊗ ℂ^n` induced by a bipartite strategy: Alice plays
+`M ⊗ 1` and Bob plays `1 ⊗ M`. -/
 noncomputable def toObservableStrategy
     {n : Type*} [Fintype n] [DecidableEq n] {G : Layout}
     (strat : BipartiteObservableStrategy n G) :
     ObservableStrategy (Matrix (n × n) (n × n) ℂ) G where
-  aliceObs := fun j => bipartiteAliceLift (strat.obs j)
-  bobObs := fun j => bipartiteBobLift (strat.obs j)
-  alice_isObservable := fun j => isObservable_bipartiteAliceLift (strat.isObservable j)
-  bob_isObservable := fun j => isObservable_bipartiteBobLift (strat.isObservable j)
-  sameEquation_comm := fun i => by
+  aliceObs := fun j ↦ bipartiteAliceLift (strat.obs j)
+  bobObs := fun j ↦ bipartiteBobLift (strat.obs j)
+  alice_isObservable := fun j ↦ isObservable_bipartiteAliceLift (strat.isObservable j)
+  bob_isObservable := fun j ↦ isObservable_bipartiteBobLift (strat.isObservable j)
+  sameEquation_comm := fun i ↦ by
     intro a b hab
     exact bipartiteAliceLift_commute (strat.sameEquation_comm i hab)
-  alice_bob_commute := fun j k => bipartiteAliceLift_commute_bipartiteBobLift (strat.obs j) (strat.obs k)
+  alice_bob_commute := fun j k ↦
+    bipartiteAliceLift_commute_bipartiteBobLift (strat.obs j) (strat.obs k)
 
 @[simp] lemma toObservableStrategy_aliceObs
     {n : Type*} [Fintype n] [DecidableEq n] {G : Layout}

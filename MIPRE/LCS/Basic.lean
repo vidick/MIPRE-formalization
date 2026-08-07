@@ -32,18 +32,24 @@ over $\mathbb{F}_2$.
 
 namespace MIPRE.LCS
 
-open scoped BigOperators
 
+/-- The layout of a binary linear constraint system: `r` equations over `s` variables,
+with `V i` the set of variables occurring in equation `i`. -/
 structure Layout where
+  /-- The number of equations. -/
   r : ℕ
+  /-- The number of variables. -/
   s : ℕ
+  /-- The support of each equation: `V i` is the set of variables occurring in equation `i`. -/
   V : Fin r → Finset (Fin s)
 
+/-- A local assignment of `𝔽₂`-values to the variables of equation `i`. -/
 abbrev Layout.Assignment (G : Layout) (i : Fin G.r) : Type :=
   (G.V i) → ZMod 2
 
-
+/-- An LCS game over the layout `G`, given by the right-hand sides of the equations. -/
 structure Game (G : Layout) where
+  /-- The right-hand side of each equation. -/
   b : Fin G.r → ZMod 2
 
 /-- A full binary linear system with explicit coefficient matrix and right-hand side. -/

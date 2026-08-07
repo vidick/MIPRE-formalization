@@ -24,7 +24,6 @@ which converts an `ObservableStrategy` into an `ProjectorStrategy`. It proves th
 
 namespace MIPRE.LCS
 
-open scoped BigOperators
 
 
 
@@ -36,7 +35,7 @@ $P_y = (1/2)(1 + (-1)^y B_j)$. -/
 noncomputable def ObservableStrategy.bobMeasurement
   (S : ObservableStrategy R G) :
   Fin G.s → ZMod 2 → R :=
-  fun j y => observableToProjector (S.bobObs j) y
+  fun j y ↦ observableToProjector (S.bobObs j) y
 
 /-- For each question $j$, Bob's observable-induced projectors form a measurement system. -/
 lemma ObservableStrategy.isMeasurementSystem_bobMeasurement
@@ -78,12 +77,13 @@ $E_{i,x} = \prod_{j \in V_i} (1/2)(1 + (-1)^{x_j} A_j)$. -/
 noncomputable def ObservableStrategy.aliceMeasurement
   (S : ObservableStrategy R G) :
   ∀ i, Layout.Assignment G i → R :=
-  fun i assignment =>
+  fun i assignment ↦
     (Finset.univ : Finset (G.V i)).noncommProd
-      (fun j_idx => observableToProjector (S.aliceObs j_idx.1) (assignment j_idx))
+      (fun j_idx ↦ observableToProjector (S.aliceObs j_idx.1) (assignment j_idx))
       (by
         intro j hj j' hj' hne
-        exact ObservableStrategy.projector_commute_in_equation S i j j' (assignment j) (assignment j'))
+        exact ObservableStrategy.projector_commute_in_equation S i j j'
+          (assignment j) (assignment j'))
 
 /-- Partial joint measurement over a finite subset $s \subseteq V_i$.
 This is used to prove the normalization of Alice's full measurement by induction on $s$. -/
@@ -91,7 +91,7 @@ noncomputable def ObservableStrategy.jointOn
   (S : ObservableStrategy R G) (i : Fin G.r)
   (s : Finset (G.V i)) (assignment : ∀ j ∈ s, ZMod 2) : R :=
   s.noncommProd
-    (fun j =>
+    (fun j ↦
       if hj : j ∈ s then
         observableToProjector (S.aliceObs j.1) (assignment j hj)
       else 1)
@@ -100,7 +100,8 @@ noncomputable def ObservableStrategy.jointOn
       have hjs : j ∈ s := hj
       have hj's : j' ∈ s := hj'
       simpa [Function.onFun, hjs, hj's] using
-        (ObservableStrategy.projector_commute_in_equation S i j j' (assignment j hjs) (assignment j' hj's)))
+        (ObservableStrategy.projector_commute_in_equation S i j j'
+          (assignment j hjs) (assignment j' hj's)))
 
 omit [StarModule ℂ R] in
 /-- Summing the partial joint projectors over all assignments on $s = V_i$ gives $1$. -/
@@ -111,24 +112,27 @@ lemma ObservableStrategy.jointOn_sum_one
   classical
   intro i
   let sumJointOn :
-      ∀ s : Finset (G.V i), (∑ assignment : ∀ j ∈ s, ZMod 2, ObservableStrategy.jointOn S i s assignment) = 1 := by
+      ∀ s : Finset (G.V i),
+        (∑ assignment : ∀ j ∈ s, ZMod 2, ObservableStrategy.jointOn S i s assignment) = 1 := by
     intro s
     induction s using Finset.induction with
     | empty =>
         simp [ObservableStrategy.jointOn]
     | @insert a s ha ih =>
         let assignEquiv :=
-          Finset.insertPiProdEquiv (fun _ : G.V i => ZMod 2) (s := s) (a := a) ha
+          Finset.insertPiProdEquiv (fun _ : G.V i ↦ ZMod 2) (s := s) (a := a) ha
         calc
-          (∑ assignment : ∀ j ∈ insert a s, ZMod 2, ObservableStrategy.jointOn S i (insert a s) assignment)
+          (∑ assignment : ∀ j ∈ insert a s, ZMod 2,
+            ObservableStrategy.jointOn S i (insert a s) assignment)
               = ∑ p : ZMod 2 × (∀ j ∈ s, ZMod 2),
                   ObservableStrategy.jointOn S i (insert a s) (assignEquiv.symm p) := by
                     refine Fintype.sum_equiv assignEquiv _ _ ?_
                     intro assignment
-                    simp [congrArg (fun y => ObservableStrategy.jointOn S i (insert a s) y)
+                    simp [congrArg (fun y ↦ ObservableStrategy.jointOn S i (insert a s) y)
                       (assignEquiv.left_inv assignment).symm]
           _ = ∑ p : ZMod 2 × (∀ j ∈ s, ZMod 2),
-                observableToProjector (S.aliceObs a.1) p.1 * ObservableStrategy.jointOn S i s p.2 := by
+                observableToProjector (S.aliceObs a.1) p.1 *
+                  ObservableStrategy.jointOn S i s p.2 := by
                 refine Finset.sum_congr rfl ?_
                 intro p
                 simp only [Finset.mem_univ, true_implies]
@@ -136,11 +140,11 @@ lemma ObservableStrategy.jointOn_sum_one
                 unfold ObservableStrategy.jointOn
                 rw [Finset.noncommProd_insert_of_notMem _ _ _ _ ha]
                 have ha_eval : assignEquiv.symm (b, β) a (Finset.mem_insert_self a s) = b := by
-                  change Finset.prodPiInsert (fun _ : G.V i => ZMod 2) (b, β) a
+                  change Finset.prodPiInsert (fun _ : G.V i ↦ ZMod 2) (b, β) a
                     (Finset.mem_insert_self a s) = b
                   simp [Finset.prodPiInsert]
                 simp only [ha_eval, Finset.mem_insert, true_or, ↓reduceDIte]
-                apply congrArg (fun z => observableToProjector (S.aliceObs a.1) b * z)
+                apply congrArg (fun z ↦ observableToProjector (S.aliceObs a.1) b * z)
                 refine Finset.noncommProd_congr rfl ?_ ?_
                 · intro x hx
                   have hxa : x ≠ a := by
@@ -149,12 +153,13 @@ lemma ObservableStrategy.jointOn_sum_one
                     simpa [h] using hx
                   have hx_eval :
                       assignEquiv.symm (b, β) x (Finset.mem_insert_of_mem hx) = β x hx := by
-                    change Finset.prodPiInsert (fun _ : G.V i => ZMod 2) (b, β) x
+                    change Finset.prodPiInsert (fun _ : G.V i ↦ ZMod 2) (b, β) x
                       (Finset.mem_insert_of_mem hx) = β x hx
                     simp [Finset.prodPiInsert, hxa]
                   simp [hx, hx_eval]
           _ = ∑ β : ∀ j ∈ s, ZMod 2,
-                (∑ b : ZMod 2, observableToProjector (S.aliceObs a.1) b) * ObservableStrategy.jointOn S i s β := by
+                (∑ b : ZMod 2, observableToProjector (S.aliceObs a.1) b) *
+                  ObservableStrategy.jointOn S i s β := by
                 rw [Fintype.sum_prod_type]
                 simp [sum_univ_zmod_two, add_mul, Finset.sum_add_distrib]
           _ = ∑ β : ∀ j ∈ s, ZMod 2, ObservableStrategy.jointOn S i s β := by
@@ -169,11 +174,12 @@ omit [StarModule ℂ R] in
 /-- Alice's full assignment-indexed projectors sum to $1$. -/
 lemma ObservableStrategy.aliceMeasurement_sum_one
   (S : ObservableStrategy R G) (i : Fin G.r) :
-  (∑ assignment : Layout.Assignment G i, ObservableStrategy.aliceMeasurement S i assignment) = 1 := by
+  (∑ assignment : Layout.Assignment G i,
+    ObservableStrategy.aliceMeasurement S i assignment) = 1 := by
   classical
   let e : Layout.Assignment G i ≃ (∀ j ∈ (Finset.univ : Finset (G.V i)), ZMod 2) := {
-    toFun := fun assignment j _ => assignment j
-    invFun := fun assignment j => assignment j (by simp)
+    toFun := fun assignment j _ ↦ assignment j
+    invFun := fun assignment j ↦ assignment j (by simp)
     left_inv := by
       intro assignment
       funext j
@@ -218,26 +224,30 @@ omit [StarModule ℂ R] in
 private lemma alice_partial_idempotent
   (S : ObservableStrategy R G) (i : Fin G.r)
   (s : Finset (G.V i)) (assignment : Layout.Assignment G i) :
-  let f : G.V i → R := fun j => observableToProjector (S.aliceObs j.1) (assignment j)
+  let f : G.V i → R := fun j ↦ observableToProjector (S.aliceObs j.1) (assignment j)
   (s.noncommProd f (by
     intro j _ j' _ _
-    exact ObservableStrategy.projector_commute_in_equation S i j j' (assignment j) (assignment j'))) *
+    exact ObservableStrategy.projector_commute_in_equation S i j j'
+      (assignment j) (assignment j'))) *
   (s.noncommProd f (by
     intro j _ j' _ _
-    exact ObservableStrategy.projector_commute_in_equation S i j j' (assignment j) (assignment j'))) =
+    exact ObservableStrategy.projector_commute_in_equation S i j j'
+      (assignment j) (assignment j'))) =
   (s.noncommProd f (by
     intro j _ j' _ _
-    exact ObservableStrategy.projector_commute_in_equation S i j j' (assignment j) (assignment j'))) := by
+    exact ObservableStrategy.projector_commute_in_equation S i j j'
+      (assignment j) (assignment j'))) := by
   classical
   dsimp
-  let f : G.V i → R := fun j => observableToProjector (S.aliceObs j.1) (assignment j)
-  let comm : (s : Set (G.V i)).Pairwise (fun x y => Commute (f x) (f y)) := by
+  let f : G.V i → R := fun j ↦ observableToProjector (S.aliceObs j.1) (assignment j)
+  let comm : (s : Set (G.V i)).Pairwise (fun x y ↦ Commute (f x) (f y)) := by
     intro j hj j' hj' hne
-    simpa [f] using ObservableStrategy.projector_commute_in_equation S i j j' (assignment j) (assignment j')
+    simpa [f] using
+      ObservableStrategy.projector_commute_in_equation S i j j' (assignment j) (assignment j')
   have hmul := Finset.noncommProd_mul_distrib (s := s) f f comm comm comm
   calc
     s.noncommProd f comm * s.noncommProd f comm
-      = s.noncommProd (fun j => f j * f j) (Finset.noncommProd_mul_distrib_aux comm comm comm) := by
+      = s.noncommProd (fun j ↦ f j * f j) (Finset.noncommProd_mul_distrib_aux comm comm comm) := by
           symm
           exact hmul
     _ = s.noncommProd f comm := by
@@ -249,26 +259,29 @@ private lemma alice_partial_idempotent
 private lemma alice_partial_selfAdjoint
   (S : ObservableStrategy R G) (i : Fin G.r)
   (s : Finset (G.V i)) (assignment : Layout.Assignment G i) :
-  let f : G.V i → R := fun j => observableToProjector (S.aliceObs j.1) (assignment j)
+  let f : G.V i → R := fun j ↦ observableToProjector (S.aliceObs j.1) (assignment j)
   star (s.noncommProd f (by
     intro j _ j' _ _
-    exact ObservableStrategy.projector_commute_in_equation S i j j' (assignment j) (assignment j'))) =
+    exact ObservableStrategy.projector_commute_in_equation S i j j'
+      (assignment j) (assignment j'))) =
   s.noncommProd f (by
     intro j _ j' _ _
-    exact ObservableStrategy.projector_commute_in_equation S i j j' (assignment j) (assignment j')) := by
+    exact ObservableStrategy.projector_commute_in_equation S i j j'
+      (assignment j) (assignment j')) := by
   classical
   dsimp
-  let f : G.V i → R := fun j => observableToProjector (S.aliceObs j.1) (assignment j)
-  let comm : (s : Set (G.V i)).Pairwise (fun x y => Commute (f x) (f y)) := by
+  let f : G.V i → R := fun j ↦ observableToProjector (S.aliceObs j.1) (assignment j)
+  let comm : (s : Set (G.V i)).Pairwise (fun x y ↦ Commute (f x) (f y)) := by
     intro j hj j' hj' hne
-    simpa [f] using ObservableStrategy.projector_commute_in_equation S i j j' (assignment j) (assignment j')
+    simpa [f] using
+      ObservableStrategy.projector_commute_in_equation S i j j' (assignment j) (assignment j')
   induction s using Finset.induction with
   | empty =>
       simp
   | @insert a s ha ih =>
       have hcomm_a_s :
-          Commute (f a) (s.noncommProd f (comm.mono fun _ => Finset.mem_insert_of_mem)) := by
-        refine Finset.noncommProd_commute s f (comm.mono fun _ => Finset.mem_insert_of_mem) (f a) ?_
+          Commute (f a) (s.noncommProd f (comm.mono fun _ ↦ Finset.mem_insert_of_mem)) := by
+        refine Finset.noncommProd_commute s f (comm.mono fun _ ↦ Finset.mem_insert_of_mem) (f a) ?_
         intro x hx
         exact comm (Finset.mem_insert_self _ _) (Finset.mem_insert_of_mem hx) (by
           intro hxa
@@ -286,8 +299,8 @@ private lemma alice_partial_orthogonal
   (S : ObservableStrategy R G) (i : Fin G.r)
   (s : Finset (G.V i)) (α β : Layout.Assignment G i) (j0 : G.V i) (hj0 : j0 ∈ s)
   (hneq : α j0 ≠ β j0) :
-  let fα : G.V i → R := fun j => observableToProjector (S.aliceObs j.1) (α j)
-  let fβ : G.V i → R := fun j => observableToProjector (S.aliceObs j.1) (β j)
+  let fα : G.V i → R := fun j ↦ observableToProjector (S.aliceObs j.1) (α j)
+  let fβ : G.V i → R := fun j ↦ observableToProjector (S.aliceObs j.1) (β j)
   (s.noncommProd fα (by
     intro j _ j' _ _
     exact ObservableStrategy.projector_commute_in_equation S i j j' (α j) (α j'))) *
@@ -296,32 +309,32 @@ private lemma alice_partial_orthogonal
     exact ObservableStrategy.projector_commute_in_equation S i j j' (β j) (β j'))) = 0 := by
   classical
   dsimp
-  let fα : G.V i → R := fun j => observableToProjector (S.aliceObs j.1) (α j)
-  let fβ : G.V i → R := fun j => observableToProjector (S.aliceObs j.1) (β j)
-  let commα : (s : Set (G.V i)).Pairwise (fun x y => Commute (fα x) (fα y)) := by
+  let fα : G.V i → R := fun j ↦ observableToProjector (S.aliceObs j.1) (α j)
+  let fβ : G.V i → R := fun j ↦ observableToProjector (S.aliceObs j.1) (β j)
+  let commα : (s : Set (G.V i)).Pairwise (fun x y ↦ Commute (fα x) (fα y)) := by
     intro j hj j' hj' hne
     simpa [fα] using ObservableStrategy.projector_commute_in_equation S i j j' (α j) (α j')
-  let commβ : (s : Set (G.V i)).Pairwise (fun x y => Commute (fβ x) (fβ y)) := by
+  let commβ : (s : Set (G.V i)).Pairwise (fun x y ↦ Commute (fβ x) (fβ y)) := by
     intro j hj j' hj' hne
     simpa [fβ] using ObservableStrategy.projector_commute_in_equation S i j j' (β j) (β j')
-  let commβα : (s : Set (G.V i)).Pairwise (fun x y => Commute (fβ x) (fα y)) := by
+  let commβα : (s : Set (G.V i)).Pairwise (fun x y ↦ Commute (fβ x) (fα y)) := by
     intro j hj j' hj' hne
     simpa [fα, fβ] using
       (ObservableStrategy.projector_commute_in_equation S i j' j (α j') (β j)).symm
   have hmul := Finset.noncommProd_mul_distrib (s := s) fα fβ commα commβ commβα
-  have hcomm_prod : (s : Set (G.V i)).Pairwise (fun x y => Commute (fα x * fβ x) (fα y * fβ y)) :=
+  have hcomm_prod : (s : Set (G.V i)).Pairwise (fun x y ↦ Commute (fα x * fβ x) (fα y * fβ y)) :=
     Finset.noncommProd_mul_distrib_aux commα commβ commβα
   calc
     s.noncommProd fα commα * s.noncommProd fβ commβ
-      = s.noncommProd (fun j => fα j * fβ j) hcomm_prod := by
+      = s.noncommProd (fun j ↦ fα j * fβ j) hcomm_prod := by
           symm
           exact hmul
-    _ = (s.erase j0).noncommProd (fun j => fα j * fβ j) (by
+    _ = (s.erase j0).noncommProd (fun j ↦ fα j * fβ j) (by
           intro j hj j' hj' hne
           exact hcomm_prod (s.mem_of_mem_erase hj)
             (s.mem_of_mem_erase hj') hne) * (fα j0 * fβ j0) := by
             symm
-            exact Finset.noncommProd_erase_mul s hj0 (fun j => fα j * fβ j) hcomm_prod
+            exact Finset.noncommProd_erase_mul s hj0 (fun j ↦ fα j * fβ j) hcomm_prod
     _ = 0 := by
           have hj0zero : fα j0 * fβ j0 = 0 := by
             exact projector_orthogonal_of_ne (S.aliceObs j0.1) (S.alice_isObservable j0.1) (α j0)
@@ -361,9 +374,9 @@ lemma ObservableStrategy.aliceMeasurement_commute_bobMeasurement
   ObservableStrategy.aliceMeasurement S i α * ObservableStrategy.bobMeasurement S j β =
     ObservableStrategy.bobMeasurement S j β * ObservableStrategy.aliceMeasurement S i α := by
   classical
-  let f : G.V i → R := fun k => observableToProjector (S.aliceObs k.1) (α k)
+  let f : G.V i → R := fun k ↦ observableToProjector (S.aliceObs k.1) (α k)
   let comm : ((Finset.univ : Finset (G.V i)) : Set (G.V i)).Pairwise
-      (fun x y => Commute (f x) (f y)) := by
+      (fun x y ↦ Commute (f x) (f y)) := by
     intro x hx y hy hxy
     simpa [f] using ObservableStrategy.projector_commute_in_equation S i x y (α x) (α y)
   have hBob : ∀ x ∈ (Finset.univ : Finset (G.V i)),
@@ -375,7 +388,8 @@ lemma ObservableStrategy.aliceMeasurement_commute_bobMeasurement
       Commute (ObservableStrategy.bobMeasurement S j β)
         ((Finset.univ : Finset (G.V i)).noncommProd f comm) :=
     Finset.noncommProd_commute (Finset.univ : Finset (G.V i)) f comm _ hBob
-  simpa [ObservableStrategy.aliceMeasurement, ObservableStrategy.bobMeasurement] using hcomm_prod.eq.symm
+  simpa [ObservableStrategy.aliceMeasurement, ObservableStrategy.bobMeasurement] using
+    hcomm_prod.eq.symm
 
 omit [StarModule ℂ R] in
 lemma ObservableStrategy.aliceObs_mul_aliceMeasurement
@@ -386,13 +400,14 @@ lemma ObservableStrategy.aliceObs_mul_aliceMeasurement
         ObservableStrategy.aliceMeasurement S i assignment := by
   classical
   let f : G.V i → R :=
-    fun k => observableToProjector (S.aliceObs k.1) (assignment k)
+    fun k ↦ observableToProjector (S.aliceObs k.1) (assignment k)
   let comm : ((Finset.univ : Finset (G.V i)) : Set (G.V i)).Pairwise
-      (fun x y => Commute (f x) (f y)) := by
+      (fun x y ↦ Commute (f x) (f y)) := by
     intro x hx y hy hxy
-    simpa [f] using ObservableStrategy.projector_commute_in_equation S i x y (assignment x) (assignment y)
+    simpa [f] using
+      ObservableStrategy.projector_commute_in_equation S i x y (assignment x) (assignment y)
   let restComm : (((Finset.univ : Finset (G.V i)).erase j) : Set (G.V i)).Pairwise
-      (fun x y => Commute (f x) (f y)) := by
+      (fun x y ↦ Commute (f x) (f y)) := by
     intro x hx y hy hxy
     exact comm
       ((Finset.univ : Finset (G.V i)).mem_of_mem_erase hx)
@@ -486,6 +501,8 @@ lemma ObservableStrategy.toProjectorStrategy_bobObs
 
 namespace BipartiteObservableStrategy
 
+/-- The projector strategy induced by a bipartite observable strategy through
+`toObservableStrategy`. -/
 noncomputable def toProjectorStrategy
     {n : Type*} [Fintype n] [DecidableEq n] {G : Layout}
     (strat : BipartiteObservableStrategy n G) :
@@ -495,14 +512,17 @@ noncomputable def toProjectorStrategy
 @[simp] lemma toProjectorStrategy_aliceObs
     {n : Type*} [Fintype n] [DecidableEq n] {G : Layout}
     (strat : BipartiteObservableStrategy n G) (i : Fin G.r) (j : G.V i) :
-    ProjectorStrategy.aliceObs strat.toProjectorStrategy i j = bipartiteAliceLift (strat.obs j.1) := by
-  simpa [toProjectorStrategy] using ObservableStrategy.toProjectorStrategy_aliceObs strat.toObservableStrategy i j
+    ProjectorStrategy.aliceObs strat.toProjectorStrategy i j =
+      bipartiteAliceLift (strat.obs j.1) := by
+  simpa [toProjectorStrategy] using
+    ObservableStrategy.toProjectorStrategy_aliceObs strat.toObservableStrategy i j
 
 @[simp] lemma toProjectorStrategy_bobObs
     {n : Type*} [Fintype n] [DecidableEq n] {G : Layout}
     (strat : BipartiteObservableStrategy n G) (j : Fin G.s) :
     ProjectorStrategy.bobObs strat.toProjectorStrategy j = bipartiteBobLift (strat.obs j) := by
-  simpa [toProjectorStrategy] using ObservableStrategy.toProjectorStrategy_bobObs strat.toObservableStrategy j
+  simpa [toProjectorStrategy] using
+    ObservableStrategy.toProjectorStrategy_bobObs strat.toObservableStrategy j
 
 end BipartiteObservableStrategy
 

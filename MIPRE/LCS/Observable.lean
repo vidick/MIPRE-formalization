@@ -32,10 +32,14 @@ namespace MIPRE.LCS
 
 variable {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R]
 
+/-- A binary observable in a star-ring: a self-adjoint involution. -/
 structure IsObservable (O : R) : Prop where
+  /-- The observable squares to one. -/
   involutive   : O * O = 1
+  /-- The observable is self-adjoint. -/
   self_adjoint : star O = O
 
+/-- The `±1`-observable `P₀ - P₁` associated with a binary measurement. -/
 def observableOfMeasurementSystem (f : ZMod 2 → R) : R :=
   f 0 - f 1
 

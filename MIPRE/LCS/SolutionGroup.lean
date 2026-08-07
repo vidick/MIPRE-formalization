@@ -8,7 +8,6 @@ import Mathlib.Data.Finset.Sort
 import Mathlib.GroupTheory.FreeGroup.Reduce
 import Mathlib.GroupTheory.PresentedGroup
 
-open scoped BigOperators
 
 /-!
 # Solution Groups for Binary Linear Systems
@@ -76,7 +75,7 @@ The next helper lemmas work towards  the product for equation `i` equals `J^(b_i
 
 /-- The support of equation `i`, extracted from the coefficient matrix. -/
 def eqSupport (S : LinearSystem) (i : Fin S.layout.r) : Finset (Fin S.layout.s) :=
-  Finset.univ.filter fun j => S.A i j = 1
+  Finset.univ.filter fun j ↦ S.A i j = 1
 
 /-- The left-hand-side word of equation `i`, ordered by the `Finset` order. -/
 def equationWord (S : LinearSystem) (i : Fin S.layout.r) : FreeGroup (SolutionGen S) :=
@@ -92,7 +91,7 @@ def SameEquation (S : LinearSystem) (j k : Fin S.layout.s) : Prop :=
 
 /-- Computable test for `SameEquation`, used to build an inspectable relator list. -/
 def sameEquationBool (S : LinearSystem) (j k : Fin S.layout.s) : Bool :=
-  (List.finRange S.layout.r).any fun i =>
+  (List.finRange S.layout.r).any fun i ↦
     decide (S.A i j = 1 ∧ S.A i k = 1)
 
 /-- List of the defining relators of the solution group of `S`. -/
@@ -100,19 +99,19 @@ def solutionRelatorsList (S : LinearSystem) : List (FreeGroup (SolutionGen S)) :
   let vars := List.finRange S.layout.s
   let eqs := List.finRange S.layout.r
   -- Relation 1: involutions.
-  let varInvolutions := vars.map fun j => involutionRel (genVar (S := S) j)
+  let varInvolutions := vars.map fun j ↦ involutionRel (genVar (S := S) j)
   let jInvolution := [involutionRel (genJ (S := S))]
   -- Relation 2: each variable generator commutes with `J`.
-  let jCentrality := vars.map fun j => commuteRel (genVar (S := S) j) (genJ (S := S))
+  let jCentrality := vars.map fun j ↦ commuteRel (genVar (S := S) j) (genJ (S := S))
   -- Relation 3: variables appearing together in some equation commute.
-  let varCommutation := vars.flatMap fun j =>
-    vars.filterMap fun k =>
+  let varCommutation := vars.flatMap fun j ↦
+    vars.filterMap fun k ↦
       if j < k && sameEquationBool S j k then
         some (commuteRel (genVar (S := S) j) (genVar (S := S) k))
       else
         none
   -- Relation 4: the product for equation `i` equals `J^(b_i)`.
-  let equationRels := eqs.map fun i => equationRelator S i
+  let equationRels := eqs.map fun i ↦ equationRelator S i
   varInvolutions ++ jInvolution ++ jCentrality ++ varCommutation ++ equationRels
 
 
@@ -124,7 +123,7 @@ def solutionRelatorsList (S : LinearSystem) : List (FreeGroup (SolutionGen S)) :
 
 /-- The defining relators of the solution group of `S`. -/
 def solutionRelators (S : LinearSystem) : Set (FreeGroup (SolutionGen S)) :=
-  fun w =>
+  fun w ↦
     -- Membership test: `w` is in this set iff it is one of the following relator words.
     -- Relation 1 for variables: `g_j^2 = 1`.
     (∃ j, w = involutionRel (genVar (S := S) j)) ∨
@@ -189,10 +188,8 @@ end DefiningRelators
 
 section PresentedSolutionGroup
 
-/--
-## The Presented Solution Group
-The solution group of a linear system is the presented group with the relators defined above.
--/
+/-- The solution group of a binary linear system: the group presented by the defining
+relators of `solutionRelators`. -/
 abbrev SolutionGroup (S : LinearSystem) :=
   PresentedGroup (solutionRelators S)
 
@@ -229,7 +226,7 @@ lemma var_comm_J {S : LinearSystem} (j : Fin S.layout.s) :
         (rels := solutionRelators S)
         (x := commuteRel (genVar (S := S) j) (genJ (S := S)))
         (Or.inr (Or.inr (Or.inl ⟨j, rfl⟩))))
-  have h' := congrArg (fun z => z * J (S := S) * var (S := S) j) h
+  have h' := congrArg (fun z ↦ z * J (S := S) * var (S := S) j) h
   simpa [mul_assoc] using h'
 
 lemma var_comm_of_sameEquation {S : LinearSystem} {j k : Fin S.layout.s}
@@ -243,7 +240,7 @@ lemma var_comm_of_sameEquation {S : LinearSystem} {j k : Fin S.layout.s}
           (rels := solutionRelators S)
           (x := commuteRel (genVar (S := S) j) (genVar (S := S) k))
           (Or.inr (Or.inr (Or.inr (Or.inl ⟨j, k, hjk_lt, hjk, rfl⟩)))))
-    have h' := congrArg (fun z => z * var (S := S) k * var (S := S) j) h
+    have h' := congrArg (fun z ↦ z * var (S := S) k * var (S := S) j) h
     simpa [mul_assoc] using h'
   · subst k
     simp
@@ -257,7 +254,7 @@ lemma var_comm_of_sameEquation {S : LinearSystem} {j k : Fin S.layout.s}
           (rels := solutionRelators S)
           (x := commuteRel (genVar (S := S) k) (genVar (S := S) j))
           (Or.inr (Or.inr (Or.inr (Or.inl ⟨k, j, hkj_lt, hkj, rfl⟩)))))
-    have h' := congrArg (fun z => z * var (S := S) j * var (S := S) k) h
+    have h' := congrArg (fun z ↦ z * var (S := S) j * var (S := S) k) h
     simpa [mul_assoc] using h'.symm
 
 lemma equation_holds {S : LinearSystem} (i : Fin S.layout.r) :

@@ -53,10 +53,9 @@ square-sum `sosSquareSum`.  The extraction pipeline is:
 
 namespace MIPRE.LCS
 
-open scoped BigOperators
 
 open Matrix
-open Kronecker
+open scoped Kronecker
 
 section EPRVector
 /-!
@@ -70,7 +69,7 @@ $\Omega = \sum_{a : n} e_a \otimes e_a$.
 function on pairs. -/
 noncomputable def eprVec
     (n : Type*) [Fintype n] [DecidableEq n] : (n × n) → ℂ :=
-  fun ab => if ab.1 = ab.2 then 1 else 0
+  fun ab ↦ if ab.1 = ab.2 then 1 else 0
 
 /-- Summing a function over the diagonal of `n × n` is the same as summing it
 over `n`.
@@ -86,13 +85,13 @@ private lemma sum_pair_diag
   classical
   rw [← Finset.sum_filter]
   have hdiag :
-      (Finset.univ.filter fun x : n × n => x.1 = x.2) =
+      (Finset.univ.filter fun x : n × n ↦ x.1 = x.2) =
         (Finset.univ : Finset n).diag := by
     ext x
     simp [Finset.mem_diag]
   rw [hdiag]
   simp only [
-    (Finset.sum_diag (s := Finset.univ) (f := fun x : n × n => f x.1 x.2))
+    (Finset.sum_diag (s := Finset.univ) (f := fun x : n × n ↦ f x.1 x.2))
   ]
 
 end EPRVector
@@ -117,10 +116,10 @@ lemma kronecker_mulVec_epr
     (M N : Matrix n n ℂ) :
     (M ⊗ₖ N) *ᵥ (eprVec n)
       =
-    fun ab => ∑ k : n, M ab.1 k * N ab.2 k := by
+    fun ab ↦ ∑ k : n, M ab.1 k * N ab.2 k := by
   ext ab
   simpa [Matrix.mulVec, dotProduct, eprVec, mul_assoc] using
-    sum_pair_diag (n := n) (fun k l => M ab.1 k * N ab.2 l)
+    sum_pair_diag (n := n) (fun k l ↦ M ab.1 k * N ab.2 l)
 
 /-- The EPR vector turns two-sided annihilation into a local matrix identity:
 $$
@@ -346,7 +345,8 @@ lemma local_loss_kills_epr_sos_sum
     (hLoss :
       localLossOperator game strat i j *ᵥ Ω = 0) :
     ((1 / 8 : ℂ) • sosSquareSum game n strat i j) *ᵥ Ω = 0 := by
-  simpa [localLossOperator_sos, sosSquareSum, sosConsistencyTerm, sosRowTerm, sosProductTerm] using hLoss
+  simpa [localLossOperator_sos, sosSquareSum, sosConsistencyTerm, sosRowTerm,
+    sosProductTerm] using hLoss
 
 end Stage1
 
@@ -367,7 +367,7 @@ annihilation relations.
 private lemma noncommProd_conjTranspose_eq_self
     {ι m : Type*} [Fintype m] [DecidableEq m]
     (s : Finset ι) (f : ι → Matrix m m ℂ)
-    (comm : (s : Set ι).Pairwise fun x y => Commute (f x) (f y))
+    (comm : (s : Set ι).Pairwise fun x y ↦ Commute (f x) (f y))
     (hself : ∀ x ∈ s, (f x)ᴴ = f x) :
     (s.noncommProd f comm)ᴴ = s.noncommProd f comm := by
   classical
@@ -379,13 +379,13 @@ private lemma noncommProd_conjTranspose_eq_self
       rw [Matrix.conjTranspose_mul]
       rw [hself a (Finset.mem_cons_self a s)]
       have ih' :
-          (s.noncommProd f (comm.mono fun _ hx => Finset.mem_cons.2 (.inr hx)))ᴴ =
-            s.noncommProd f (comm.mono fun _ hx => Finset.mem_cons.2 (.inr hx)) := by
-        exact ih _ (fun x hx => hself x (Finset.mem_cons.2 (.inr hx)))
+          (s.noncommProd f (comm.mono fun _ hx ↦ Finset.mem_cons.2 (.inr hx)))ᴴ =
+            s.noncommProd f (comm.mono fun _ hx ↦ Finset.mem_cons.2 (.inr hx)) := by
+        exact ih _ (fun x hx ↦ hself x (Finset.mem_cons.2 (.inr hx)))
       rw [ih']
       have hcomm :
           Commute (f a)
-            (s.noncommProd f (comm.mono fun _ hx => Finset.mem_cons.2 (.inr hx))) := by
+            (s.noncommProd f (comm.mono fun _ hx ↦ Finset.mem_cons.2 (.inr hx))) := by
         apply Finset.noncommProd_commute
         intro y hy
         exact comm (Finset.mem_cons_self a s) (Finset.mem_cons.2 (.inr hy)) (by
@@ -407,7 +407,8 @@ private lemma alice_row_prod_conjTranspose_eq_self
   unfold ProjectorStrategy.aliceRowProd
   apply noncommProd_conjTranspose_eq_self
   intro j _
-  simpa [star_eq_conjTranspose] using (ProjectorStrategy.isObservable_aliceObs strat i j).self_adjoint
+  simpa [star_eq_conjTranspose] using
+    (ProjectorStrategy.isObservable_aliceObs strat i j).self_adjoint
 
 /-- The LCS sign attached to row $i$ is real:
 $$
@@ -449,9 +450,11 @@ private lemma sos_consistency_term_conjTranspose_eq_self
     (sosConsistencyTerm n strat i j)ᴴ =
       sosConsistencyTerm n strat i j := by
   have hA : A[i, j]ᴴ = A[i, j] := by
-    simpa [star_eq_conjTranspose] using (ProjectorStrategy.isObservable_aliceObs strat i j).self_adjoint
+    simpa [star_eq_conjTranspose] using
+      (ProjectorStrategy.isObservable_aliceObs strat i j).self_adjoint
   have hB : B[↑j]ᴴ = B[↑j] := by
-    simpa [star_eq_conjTranspose] using (ProjectorStrategy.isObservable_bobObs strat ↑j).self_adjoint
+    simpa [star_eq_conjTranspose] using
+      (ProjectorStrategy.isObservable_bobObs strat ↑j).self_adjoint
   unfold sosConsistencyTerm
   rw [Matrix.conjTranspose_sub, Matrix.conjTranspose_one, Matrix.conjTranspose_mul, hA, hB]
   rw [(ProjectorStrategy.aliceObs_commute_bobObs strat i j ↑j).eq]
@@ -470,9 +473,11 @@ private lemma sos_product_core_conjTranspose_eq_self
     (∏ₐ[i] * A[i, j] * B[↑j])ᴴ = ∏ₐ[i] * A[i, j] * B[↑j] := by
   have hRow : (∏ₐ[i])ᴴ = ∏ₐ[i] := alice_row_prod_conjTranspose_eq_self n strat i
   have hA : A[i, j]ᴴ = A[i, j] := by
-    simpa [star_eq_conjTranspose] using (ProjectorStrategy.isObservable_aliceObs strat i j).self_adjoint
+    simpa [star_eq_conjTranspose] using
+      (ProjectorStrategy.isObservable_aliceObs strat i j).self_adjoint
   have hB : B[↑j]ᴴ = B[↑j] := by
-    simpa [star_eq_conjTranspose] using (ProjectorStrategy.isObservable_bobObs strat ↑j).self_adjoint
+    simpa [star_eq_conjTranspose] using
+      (ProjectorStrategy.isObservable_bobObs strat ↑j).self_adjoint
   rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, hRow, hA, hB]
   calc
     B[↑j] * (A[i, j] * ∏ₐ[i]) = B[↑j] * (∏ₐ[i] * A[i, j]) := by
@@ -660,8 +665,7 @@ lemma local_matrix_identities_of_sos_terms_annihilate_epr
 
 end Stage3
 
-/-- ### Final Bundle: Local Loss Annihilation on EPR ⇒ Local Matrix Identities
-Final bundled extraction from local-loss annihilation on EPR to the local matrix
+/-- Final bundled extraction from local-loss annihilation on EPR to the local matrix
 identities.
 
 This packages the three stages:

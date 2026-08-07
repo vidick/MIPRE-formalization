@@ -26,7 +26,6 @@ These projectors form a complete binary measurement system.
 
 namespace MIPRE.LCS
 
-open scoped BigOperators
 
 variable {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R]
 

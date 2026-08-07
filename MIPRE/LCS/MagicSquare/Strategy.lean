@@ -30,7 +30,7 @@ It consists of 6 equations (3 rows and 3 columns) over 9 variables (the cells of
 def layout : Layout  := {
   r := 6
   s := 9
-  V := fun i =>
+  V := fun i ↦
   match i with
   | 0 => {0, 1, 2}
   | 1 => {3, 4, 5}
@@ -44,13 +44,12 @@ end Layout
 
 /-- The support-style magic square game, with the final column equation having odd parity. -/
 def game : Game layout := {
-  b := fun i => if i = ⟨5, by decide⟩ then 1 else 0
+  b := fun i ↦ if i = ⟨5, by decide⟩ then 1 else 0
 }
 
 open Matrix
-open Kronecker
+open scoped Kronecker
 open Pauli
-open scoped BigOperators
 
 section Grid
 /-! ## Grid
@@ -121,44 +120,44 @@ macro "solve_line_comm" : tactic => `(tactic| {
 /-- Helper lemmas establishing pairwise commutativity for each row and column. -/
 private lemma row1_comm :
     Pairwise
-      (fun j k : layout.V (0 : Fin 6) =>
+      (fun j k : layout.V (0 : Fin 6) ↦
         Commute (grid j.1) (grid k.1)) := by
   solve_line_comm
 
 private lemma row2_comm :
     Pairwise
-      (fun j k : layout.V (1 : Fin 6) =>
+      (fun j k : layout.V (1 : Fin 6) ↦
         Commute (grid j.1) (grid k.1)) := by
   solve_line_comm
 
 private lemma row3_comm :
     Pairwise
-      (fun j k : layout.V (2 : Fin 6) =>
+      (fun j k : layout.V (2 : Fin 6) ↦
         Commute (grid j.1) (grid k.1)) := by
   solve_line_comm
 
 private lemma col1_comm :
     Pairwise
-      (fun j k : layout.V (3 : Fin 6) =>
+      (fun j k : layout.V (3 : Fin 6) ↦
         Commute (grid j.1) (grid k.1)) := by
   solve_line_comm
 
 private lemma col2_comm :
     Pairwise
-      (fun j k : layout.V (4 : Fin 6) =>
+      (fun j k : layout.V (4 : Fin 6) ↦
         Commute (grid j.1) (grid k.1)) := by
   solve_line_comm
 
 private lemma col3_comm :
     Pairwise
-      (fun j k : layout.V (5 : Fin 6) =>
+      (fun j k : layout.V (5 : Fin 6) ↦
         Commute (grid j.1) (grid k.1)) := by
   solve_line_comm
 
 /-- For every equation of the layout, the associated grid observables commute pairwise. -/
 lemma grid_sameEquation_comm (i : Fin 6) :
     Pairwise
-      (fun j k : layout.V i =>
+      (fun j k : layout.V i ↦
         Commute (grid j.1) (grid k.1)) := by
   fin_cases i
   · exact row1_comm

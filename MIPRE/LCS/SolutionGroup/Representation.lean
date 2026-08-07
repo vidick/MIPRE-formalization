@@ -48,7 +48,6 @@ The file is organized in three layers.
 
 namespace MIPRE.LCS
 
-open scoped BigOperators
 open Matrix
 
 namespace SolutionGroup
@@ -162,10 +161,10 @@ observable product.
 -/
 lemma bipartiteAliceLift_noncommProd
     {α : Type*} (s : Finset α) (f : α → Matrix n n ℂ)
-    (comm : (s : Set α).Pairwise (fun x y => Commute (f x) (f y))) :
+    (comm : (s : Set α).Pairwise (fun x y ↦ Commute (f x) (f y))) :
     bipartiteAliceLift (s.noncommProd f comm) =
-      s.noncommProd (fun x => bipartiteAliceLift (f x))
-        (fun _ hx _ hy hxy => bipartiteAliceLift_commute (comm hx hy hxy)) := by
+      s.noncommProd (fun x ↦ bipartiteAliceLift (f x))
+        (fun _ hx _ hy hxy ↦ bipartiteAliceLift_commute (comm hx hy hxy)) := by
   classical
   induction s using Finset.cons_induction_on with
   | empty =>
@@ -361,13 +360,13 @@ private lemma orderedSupportProduct_eq_noncommProd
     (f : Fin G.s → M)
     (i : Fin G.r)
     (sameEquation_comm :
-      ∀ i, Pairwise (fun j k : G.V i => Commute (f j.1) (f k.1))) :
+      ∀ i, Pairwise (fun j k : G.V i ↦ Commute (f j.1) (f k.1))) :
     orderedSupportProduct (G := G) f i =
-      (G.V i).attach.noncommProd (fun j => f j.1)
-        (fun _ _ _ _ hjk => sameEquation_comm i hjk) := by
+      (G.V i).attach.noncommProd (fun j ↦ f j.1)
+        (fun _ _ _ _ hjk ↦ sameEquation_comm i hjk) := by
   let support : List (G.V i) :=
     ((G.V i).sort (· ≤ ·)).pmap
-      (fun j hj =>
+      (fun j hj ↦
         ⟨j, by
           simpa using (Finset.mem_sort (s := G.V i) (r := (· ≤ ·))).mp hj⟩)
       (by intro _ hj; exact hj)
@@ -375,7 +374,7 @@ private lemma orderedSupportProduct_eq_noncommProd
     ext j
     simp [support]
   have hsupport_prod :
-      (support.map (fun j => f j.1)).prod =
+      (support.map (fun j ↦ f j.1)).prod =
         orderedSupportProduct (G := G) f i := by
     simp [support, orderedSupportProduct]
   have hsupport_nodup : support.Nodup := by
@@ -538,7 +537,7 @@ for every pair of variables that appears together in some equation.
 private lemma sameEquation_comm_of_row_comm
     (obs : Fin G.s → Matrix n n ℂ)
     (sameEquation_comm :
-      ∀ i, Pairwise (fun j k : G.V i => Commute (obs j.1) (obs k.1)))
+      ∀ i, Pairwise (fun j k : G.V i ↦ Commute (obs j.1) (obs k.1)))
     {j k : Fin G.s}
     (hjk : SameEquation game.toLinearSystem j k) :
     Commute (obs j) (obs k) := by
@@ -557,7 +556,7 @@ noncomputable def solutionGroupRepresentationOfRows
     (obs : Fin G.s → Matrix n n ℂ)
     (obs_is_observable : ∀ j, IsObservable (obs j))
     (sameEquation_comm :
-      ∀ i, Pairwise (fun j k : G.V i => Commute (obs j.1) (obs k.1)))
+      ∀ i, Pairwise (fun j k : G.V i ↦ Commute (obs j.1) (obs k.1)))
     (hrow :
       ∀ i, rowObservableProduct obs i =
         (-1 : ℂ) ^ (game.b i).val • (1 : Matrix n n ℂ)) :
@@ -565,7 +564,7 @@ noncomputable def solutionGroupRepresentationOfRows
   solutionGroupRepresentation
     (S := game.toLinearSystem) obs obs_is_observable
     (sameEquation_comm_of_row_comm game obs sameEquation_comm)
-    (fun i => lift_equationRelator_of_rowIdentity game
+    (fun i ↦ lift_equationRelator_of_rowIdentity game
       obs obs_is_observable i (hrow i))
 
 /-- Extract the row equation from the EPR/local-loss hypothesis:
@@ -591,10 +590,12 @@ lemma rowObservableProduct_eq_sign_of_local_loss
   change row = (-1 : ℂ) ^ (game.b i).val • (1 : Matrix n n ℂ)
   rcases hNonempty i with ⟨j⟩
   have hAlice :
-      ProjectorStrategy.aliceObs strat.toProjectorStrategy i j = bipartiteAliceLift (strat.obs j.1) := by
+      ProjectorStrategy.aliceObs strat.toProjectorStrategy i j =
+        bipartiteAliceLift (strat.obs j.1) := by
     simp
   have hBob :
-      ProjectorStrategy.bobObs strat.toProjectorStrategy j.1 = bipartiteBobLift (strat.obs j.1) := by
+      ProjectorStrategy.bobObs strat.toProjectorStrategy j.1 =
+        bipartiteBobLift (strat.obs j.1) := by
     simp
   have hRowLift :
       ProjectorStrategy.aliceRowProd strat.toProjectorStrategy i = bipartiteAliceLift row := by

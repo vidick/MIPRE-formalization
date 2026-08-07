@@ -6,18 +6,32 @@ Authors: Sean Perazzolo
 import MIPRE.LCS.Observable
 import Mathlib.LinearAlgebra.Matrix.Kronecker
 
+/-!
+# Pauli Matrices
+
+This module defines the single-qubit Pauli matrices `Pauli.I`, `Pauli.X`, `Pauli.Y`,
+`Pauli.Z`, together with their multiplication table, anticommutation relations, and
+observable structure. It also records the Kronecker-product lemmas used to combine
+commuting or anticommuting pairs into commuting two-qubit observables.
+-/
+
 namespace MIPRE.LCS
 
 open Matrix
-open Kronecker
-open scoped BigOperators
+open scoped Kronecker
 
 namespace Pauli
 
--- Base Pauli Matrices
+/-- The 2 × 2 identity matrix. -/
 def I : Matrix (Fin 2) (Fin 2) ℂ := !![1, 0; 0, 1]
+
+/-- The Pauli `X` (bit-flip) matrix. -/
 def X : Matrix (Fin 2) (Fin 2) ℂ := !![0, 1; 1, 0]
+
+/-- The Pauli `Y` matrix. -/
 def Y : Matrix (Fin 2) (Fin 2) ℂ := !![0, -Complex.I; Complex.I, 0]
+
+/-- The Pauli `Z` (phase-flip) matrix. -/
 def Z : Matrix (Fin 2) (Fin 2) ℂ := !![1, 0; 0, -1]
 
 lemma I_eq_one : I = (1 : Matrix (Fin 2) (Fin 2) ℂ) := by
