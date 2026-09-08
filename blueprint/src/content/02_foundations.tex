@@ -335,6 +335,27 @@ difference $M^x_a - N^x_a$ is Hermitian, the summand equals
 $\tau((M^x_a - N^x_a)^2)$.
 \end{definition}
 
+\begin{definition}[Inconsistency]
+\label{def:inconsistency}
+\uses{def:game}
+\lean{MIPRE.inconsistency}
+\leanok
+Let $\mu$ be a distribution on a finite set $\mX$, let
+$\ket{\psi} \in \C^{d_\alice} \ot \C^{d_\bob}$, and let $\{M^x_a\}$, $\{N^x_a\}$ be
+families of POVMs on the two factors with a common question set $\mX$ and a common
+answer set. Their \emph{inconsistency} on $\ket{\psi}$ is
+\begin{equation*}
+  \E_{x \sim \mu} \sum_{a \neq b} \bra{\psi} M^x_a \ot N^x_b \ket{\psi},
+\end{equation*}
+the probability that the two measurements return different answers. We say $M$ and $N$
+are \emph{$\delta$-consistent} if their inconsistency is at most $\delta$.
+\end{definition}
+
+\paragraph{Comments.} This is Definition 4.8 of~\cite{JNVWY21qld}, in the two-space
+form used by Theorem~\ref{thm:lidt-soundness}. It is a different notion from the POVM
+distance of Definition~\ref{def:distance}: consistency compares two families across the
+two factors of the state, whereas $\approx_\delta$ compares them as operator families.
+
 
 
 \subsection{Computability conventions}
