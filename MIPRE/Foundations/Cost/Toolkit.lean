@@ -24,13 +24,25 @@ Contents:
   literal `l` to the input and runs `c`. The witness makes [MNY, Lemma 2.2]
   quantitative and stronger than stated there: program-size and time overheads are
   *linear* in `vsize l` (paper: polynomial), with a universal constant.
-* `exists_efficient_universal` (`lem:universal-tm`): a fixed program `univ` with
-  `univ.eval (⌜c⌝ ++ SEP :: v) = c.eval v` and polynomial time overhead.
-* `exists_clocked_universal`: the time-bounded variant ("run `c` on `v` for `k`
-  steps"), used by the recursive compression argument and by the pipeline's
-  deciders (introspection and repetition simulate other deciders under a budget).
-* `efficient_fixed_point` (`lem:kleene`): Kleene's recursion theorem with
-  polynomially-equivalent runtimes, for a polynomial-time map on programs.
+  `smn_polyTime` is the runtime version — the map is itself polynomial-time
+  computable in the model — generic in the type of the hardcoded value.
+* `UniversalMachine` / `exists_efficient_universal` (`lem:universal-tm`): a fixed
+  program `univ` with `univ.eval (⌜c⌝ ++ SEP :: v) = c.eval v` and polynomial time
+  overhead, packaged as data (the program and its overhead polynomial) whose
+  existence is the sorried node.
+* `ClockedUniversalMachine` / `exists_clocked_universal`: the time-bounded variant
+  ("run `c` on `v` for `k` steps"), used by the recursive compression argument and
+  by the pipeline's deciders (introspection and repetition simulate other deciders
+  under a budget).
+* `efficient_fixed_point` (`lem:kleene`): Kleene's recursion theorem for a
+  polynomial-time map on programs, with the runs of the fixed point bounded by
+  those of its image at polynomial overhead.
+
+The statement shapes were audited against the proof of the recursive compression
+lemma (`planning/compression-track.md`, K0): the universal machines are structures so
+that downstream definitions can name the program and its polynomial without any
+sorried `def`; the runtime s-m-n is generic in the hardcoded type; Kleene is stated
+in the one direction the argument uses (see its docstring).
 
 Effort notes (matching the blueprint's `\effortHard` on this section): the s-m-n
 lemmas are elementary once `TimedEval` has its API. The two universal-machine
@@ -155,34 +167,54 @@ theorem hardcode_time_rev (c : Code) (l v w : List ℕ) (t : ℕ)
     ∃ t' ≤ t, TimedEval c (l ++ v) w t' := by
   sorry -- invert the `comp` rule
 
+/-- Hardcoding the first component of a pair: with the separator of the pairing
+convention, `hardcode c (encode a ++ [pairSep α β])` run on `encode b` is `c` run on
+`encode (a, b)`. -/
+theorem hardcode_pair_eval {α β : Type*} [SizedEncoding α] [SizedEncoding β]
+    (c : Code) (a : α) (b : β) :
+    (hardcode c (encode a ++ [pairSep α β])).eval (encode b) = c.eval (encode (a, b)) := by
+  rw [hardcode_eval, encode_prod, List.append_assoc, List.singleton_append]
+
 /-- The s-m-n map itself is polynomial-time computable *in the model* — the clause
 of [MNY, Lemma 2.2] that the recursive compression argument uses at runtime (the
-self-referential decider builds hardcoded programs while executing). Requires the
-closure library. -/
-theorem smn_polyTime :
-    ∃ S : PolyTimeFun (Code × BitStr) Code,
-      ∀ c : Code, ∀ x : BitStr, S (c, x) = hardcode c (encode x) := by
+self-referential decider builds hardcoded programs while executing). The argument
+hardcodes encoded programs and tuples, not only bit strings, hence the statement is
+generic in the hardcoded type `α`; the trailing separator `sep` lets the hardcoded
+value be the first component of a pair (`sep = pairSep α β`, `hardcode_pair_eval`).
+Requires the closure library. -/
+theorem smn_polyTime (α : Type*) [SizedEncoding α] (sep : ℕ) :
+    ∃ S : PolyTimeFun (Code × α) Code,
+      ∀ (c : Code) (a : α), S (c, a) = hardcode c (encode a ++ [sep]) := by
   sorry
 
-/-! ## The efficient universal machine (blueprint `lem:universal-tm`; [MNY, Lemma 2.1]) -/
+/-! ## The efficient universal machine (blueprint `lem:universal-tm`; [MNY, Lemma 2.1])
+
+The two universal machines are *structures*: the program and its overhead polynomial
+are fields, so that downstream definitions (deciders simulating other deciders under a
+budget; the λ-bookkeeping of [JNVWY, §12.2], which chooses λ above the concrete
+overhead polynomials) can refer to them as data. Their existence is the sorried node;
+no `def` is sorried. This is the hard artifact of the toolkit (compare the
+self-interpreters of the Coq call-by-value λ-calculus line of work). -/
 
 /-- Separator cell for `⌜program⌝ ++ SEP :: input` layouts (program tags are `≤ 6`). -/
 def SEP : ℕ := 7
 
 /-- **Efficient universal machine.** A fixed program `univ` simulating any `c` on
-any `v` — with the same divergence behavior — at polynomial time overhead.
+any `v` — with the same divergence behavior — at polynomial time overhead in
+`c.size + vsize v + runtime`. -/
+structure UniversalMachine where
+  /-- The universal program; it takes `encode c ++ SEP :: v`. -/
+  univ : Code
+  /-- The overhead polynomial. -/
+  bound : Polynomial ℕ
+  /-- Same input/output behavior — including divergence — as the simulated program. -/
+  eval_eq : ∀ (c : Code) (v : List ℕ), univ.eval (encode c ++ SEP :: v) = c.eval v
+  /-- A run of `c` yields a run of the simulation at polynomial overhead. -/
+  time_le : ∀ (c : Code) (v w : List ℕ) (t : ℕ), TimedEval c v w t →
+    ∃ t' ≤ bound.eval (c.size + vsize v + t), TimedEval univ (encode c ++ SEP :: v) w t'
 
-This is the hard artifact of the toolkit (compare the self-interpreters of the
-Coq call-by-value λ-calculus line of work). The overhead polynomial is
-existential here; the eventual development should expose it as data, like
-`PolyTimeFun.timeBound`. -/
-theorem exists_efficient_universal :
-    ∃ (univ : Code) (p : Polynomial ℕ),
-      ∀ (c : Code) (v : List ℕ),
-        univ.eval (encode c ++ SEP :: v) = c.eval v ∧
-        ∀ w t, TimedEval c v w t →
-          ∃ t' ≤ p.eval (c.size + vsize v + t),
-            TimedEval univ (encode c ++ SEP :: v) w t' := by
+/-- Existence of an efficient universal machine (blueprint `lem:universal-tm`). -/
+theorem exists_efficient_universal : Nonempty UniversalMachine := by
   sorry
 
 open Classical in
@@ -191,36 +223,52 @@ budget (well-defined by `TimedEval.deterministic`). -/
 noncomputable def evalWithin (c : Code) (v : List ℕ) (k : ℕ) : Option (List ℕ) :=
   if h : ∃ w t, t ≤ k ∧ TimedEval c v w t then some h.choose else none
 
+/-- The word a clocked simulation returns: `1 :: w` on in-budget halting with output
+`w`, and `[0]` on budget exhaustion. -/
+noncomputable def clockedResult (c : Code) (v : List ℕ) (k : ℕ) : List ℕ :=
+  match evalWithin c v k with
+  | some w => 1 :: w
+  | none => [0]
+
 /-- **Clocked universal machine**: total simulation under a step budget `k`
-(supplied as a single unary-priced cell), returning `1 :: w` on in-budget halting
-and `[0]` on budget exhaustion, in time polynomial in the budget. This is the
+(supplied as a single unary-priced cell), returning `clockedResult c v k` in time
+polynomial in the budget, the program size and the input size. This is the
 primitive with which deciders of the pipeline run other deciders, and with which
 the recursive compression argument runs "`e` for `log n` steps". -/
-theorem exists_clocked_universal :
-    ∃ (univT : Code) (p : Polynomial ℕ),
-      ∀ (c : Code) (v : List ℕ) (k : ℕ),
-        ∃ t ≤ p.eval (k + c.size + vsize v),
-          TimedEval univT (k :: (encode c ++ SEP :: v))
-            (match evalWithin c v k with
-              | some w => 1 :: w
-              | none => [0]) t := by
+structure ClockedUniversalMachine where
+  /-- The clocked universal program; it takes `k :: (encode c ++ SEP :: v)`. -/
+  univT : Code
+  /-- The overhead polynomial. -/
+  bound : Polynomial ℕ
+  /-- Total, budget-bounded simulation. -/
+  run : ∀ (c : Code) (v : List ℕ) (k : ℕ),
+    ∃ t ≤ bound.eval (k + c.size + vsize v),
+      TimedEval univT (k :: (encode c ++ SEP :: v)) (clockedResult c v k) t
+
+/-- Existence of a clocked universal machine (blueprint `lem:universal-tm`). -/
+theorem exists_clocked_universal : Nonempty ClockedUniversalMachine := by
   sorry
 
 /-! ## Efficient Kleene recursion (blueprint `lem:kleene`; [MNY, Lemma 2.3]) -/
 
 /-- **Efficient Kleene fixed point**: for a polynomial-time map on programs, a
-program `e` with `e.eval = (F e).eval` and polynomially-equivalent runtimes. The
-proof is the classical construction through `hardcode` and `univ`, tracking the
-overheads; the polynomial `p` depends on `F.timeBound` and should eventually be
-exposed as data (the λ-boundedness bookkeeping of [JNVWY, §12.2] chooses λ above
-it). -/
+program `e` with `e.eval = (F e).eval` whose runs are bounded by the runs of `F e`
+at polynomial overhead. The proof is the classical construction through `hardcode`
+and a `UniversalMachine`, tracking the overheads; the polynomial `p` depends on
+`F.timeBound` and on the machine's `bound`.
+
+Departure from [MNY, Lemma 2.3], which states the runtimes of `e` and `F e` as
+*polynomially equivalent*: only the direction "runs of `F e` bound runs of `e`" is
+used by the recursive compression argument (it is what makes the fixed point
+polynomial-time), and only that direction follows from `UniversalMachine.time_le`.
+The converse would need a lower-bound clause on the universal machine ("a simulation
+is never faster than the simulated run"); it is omitted to keep the universal-machine
+obligation minimal and can be restored with such a clause if a consumer needs it. -/
 theorem efficient_fixed_point (F : PolyTimeFun Code Code) :
     ∃ (e : Code) (p : Polynomial ℕ),
       e.eval = (F e).eval ∧
-      (∀ v w t, TimedEval (F e) v w t →
-        ∃ t' ≤ p.eval (vsize v + t), TimedEval e v w t') ∧
-      (∀ v w t, TimedEval e v w t →
-        ∃ t' ≤ p.eval (vsize v + t), TimedEval (F e) v w t') := by
+      ∀ v w t, TimedEval (F e) v w t →
+        ∃ t' ≤ p.eval (vsize v + t), TimedEval e v w t' := by
   sorry
 
 end MIPRE.Cost

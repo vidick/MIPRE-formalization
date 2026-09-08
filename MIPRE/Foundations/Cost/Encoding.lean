@@ -111,6 +111,15 @@ instance instSizedEncodingProd {α β : Type*} [SizedEncoding α] [SizedEncoding
   bound := max (encBound α) (encBound β) + 1
   cells_le_bound p := by sorry -- routine
 
+/-- The separator cell of the pairing: one above both component alphabets, so it
+occurs in neither component's encoding. -/
+def pairSep (α β : Type*) [SizedEncoding α] [SizedEncoding β] : ℕ :=
+  max (encBound α) (encBound β) + 1
+
+/-- The pairing convention, spelled out. -/
+theorem encode_prod {α β : Type*} [SizedEncoding α] [SizedEncoding β] (a : α) (b : β) :
+    encode (a, b) = encode a ++ pairSep α β :: encode b := rfl
+
 @[simp] theorem esize_bitStr (x : BitStr) : esize x = x.length := by
   simp [esize, encode]
 

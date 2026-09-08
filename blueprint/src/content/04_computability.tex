@@ -133,6 +133,8 @@ TODO
 \begin{lemma}[Efficient s-m-n]
 \label{lem:smn}
 \uses{lem:universal-tm}
+\lean{MIPRE.Cost.hardcode_eval, MIPRE.Cost.hardcode_time, MIPRE.Cost.hardcode_time_rev, MIPRE.Cost.smn_polyTime}
+\leanok
 There is a polynomial-time computable $s$ such that $\phi_{s(e,x)}(y) = \phi_e(x, y)$
 for all $e, x, y$, with the runtimes of $e$ and $s(e,x)$ polynomially equivalent.
 \end{lemma}
@@ -140,9 +142,13 @@ for all $e, x, y$, with the runtimes of $e$ and $s(e,x)$ polynomially equivalent
 \begin{lemma}[Efficient Kleene recursion theorem]
 \label{lem:kleene}
 \uses{lem:universal-tm,lem:smn}
+\lean{MIPRE.Cost.efficient_fixed_point}
+\leanok
 For every polynomial-time computable $f : \{0,1\}^* \to \{0,1\}^*$ there is a program
-$e$ with $\phi_e = \phi_{f(e)}$ and the runtimes of $e$ and $f(e)$ polynomially
-equivalent.
+$e$ with $\phi_e = \phi_{f(e)}$ and the runtime of $e$ polynomially bounded in terms
+of that of $f(e)$. (This is the direction used by Lemma~\ref{lem:recursive-compression};
+\cite{MNY} states the runtimes as polynomially equivalent, and the converse direction
+would require a simulator that is never faster than the simulated program.)
 \end{lemma}
 
 \paragraph{Source.} Folklore; stated in this efficient form in~\cite{MNY}, Lemmas
@@ -166,6 +172,8 @@ pipeline consumes only the present ambient version.
 \begin{lemma}[Recursive compression]
 \label{lem:recursive-compression}
 \uses{def:succinct,def:re,lem:universal-tm,lem:smn,lem:kleene}
+\lean{MIPRE.Cost.recursive_compression}
+\leanok
 Let $f : \{0,1\}^* \to \N \cup \{\infty\}$ be a function and $A \subseteq \{x : f(x) <
 \infty\}$ a nonempty language. Suppose there is a polynomial-time computable function
 $\compr : \{0,1\}^* \times \N \to \{0,1\}^*$ such that whenever $\hat{x}$ is a succinct

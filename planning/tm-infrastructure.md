@@ -22,6 +22,13 @@ which are what we implement now:
   self-reference, `|𝒟|` size measures, and hardwiring; starting from arbitrary Lean
   transition functions provably dead-ends (see verified facts below).
 
+**Re-sequencing note (2026-09-08).** Milestones A–D are complete and merged (PRs #16,
+#19). Before E–G, the project first proves the abstract recursive compression theorem
+in the ambient model — a separate plan, `planning/compression-track.md` (K0–K5) —
+because that theorem needs only the *statements* of the ambient toolkit
+(`Cost/Toolkit.lean`), not the universal-machine construction. See the update of
+2026-09-08 under "Fork findings", the roadmap, and the sharpened gate below.
+
 ### Verified facts this plan relies on (checked 2026-08-05 against live sources)
 
 1. **CSLib upstream** (`leanprover/cslib` `main` @ `3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc`,
@@ -76,6 +83,42 @@ Impact on this plan:
   PRs #767 (Classes/SpaceInTime) and #772 (ConfigBound) plus the fork's `BigO` are
   Milestone G alignment targets. crei's upstream pipeline (issue #611) overlaps
   Milestones B/F/G — **coordinate before building anything it may deliver upstream.**
+
+### Update 2026-09-08 — upstream drift, crei's pivot, re-sequencing
+
+- **CSLib upstream** is on Lean v4.34.0-rc2 (v4.33.0 stable lasted a single commit,
+  `3951377`, 2026-08-10). The vendored model drifted twice: #819 (2026-08-24) put the
+  output tape **back into `Cfg`** (reversing #745, which decision D8 mirrors; new file
+  `MultiTape/Configuration.lean`) and renamed `configs` → `runFrom` (with
+  `runFrom_zero/_succ_eq_step/_add/_of_halt`, `ComputesFunInTimeAndSpace`,
+  `ComputableInTimeAndSpace`, `DecidableInTimeAndSpace`); #820 (2026-09-08) added
+  nondeterministic multi-tape machines. The pinned vendored files (SHA `3aa9d44`)
+  remain correct as pinned and D1 stands (no `require` is possible on v4.32.0);
+  `MultiInputTM` now mirrors the pre-#819 shape — a **known deviation from D8**, to be
+  revisited only when un-vendoring. PRs #767/#772 are unchanged and still open.
+- **crei abandoned the RTM route** (issue #611 comment, 2026-09-03: proving semantics,
+  time and space for each RTM program was too costly) in favour of a **combinator
+  library on multi-tape TMs**, landing upstream quickly: `AlmostConstant` leaves
+  (#854), plumbing + concat/pair (#877), acceptor normal form (#817),
+  `runFrom_comm_of_step` (#878), fork branch `while_loop` (`Combinators/Loop.lean`,
+  748 lines, sorry-free; `While.lean`), and an AI-written prototype (crei/cslib#183,
+  branch `complexity_using_combinators`, +6.5k lines over 15 sorried `Bounds`
+  primitives) with `Examples/Universal.lean` (universal step = table-lookup fold +
+  while; space `n + N · stepGrowth`, step budget supplied by the caller) and
+  `Examples/MachineDesc.lean` (an untyped lookup-table machine description — the
+  fork's improvised counterpart of `Code i`, neither dense nor bit-serialized). His
+  relabel PR #853 was closed with "better to change the definition", so further model
+  drift is plausible. **Consequence:** Milestone E's port target no longer exists; E is
+  re-described in the roadmap as a plumbing/combinator layer.
+- **Re-sequencing (user decision 2026-09-08).** The abstract recursive compression
+  theorem ([MNY, Lemma 5.1]; `MIPRE.Cost.recursive_compression`) is to be an early
+  result. Its proof needs only the *statements* of the ambient toolkit, so the
+  compression track (`planning/compression-track.md`, K0–K5) now precedes Milestones
+  E–G, and the E/F gate becomes "which construction discharges the ambient universal
+  machine" (below). Milestones A–D are not consumed by that theorem; they remain the
+  substrate of route α of the gate and of `thm:succinct-sat`. K0 turned the ambient
+  universal-machine statements into the structures `UniversalMachine` /
+  `ClockedUniversalMachine` (existence = the sorried node), following D13's principle.
 
 ## Fixed decisions (modifications to the GPT program)
 
@@ -132,16 +175,30 @@ Impact on this plan:
 | **B** | Finite machine syntax `Code i` + executable `Code.toTM` (WP4–WP6) | ✅ 2026-08-05 |
 | C | Exact binary serialization: prefix-free nat codec, `encodeCode`/`decodeCodeExact`/`decodeCodeExact_sound`, total `decodeCode` via `defaultRejectCode`, `codeSize` (**detailed plan below**, WP7–WP9) | ✅ 2026-08-06 |
 | D | Pure reference evaluator: `Code.runFor`, `Code.evalWithin`, `Code.Produces` + execution laws (**detailed plan below**, WP10) | ✅ 2026-08-06 |
-| E | Port `rtm` semantic core (`Data`, codecs, `Prog`, `InPlace`, controller-style simulator consuming `Code`, never `Fintype.elems`). Port target: crei/cslib `rtm` branch (tip 2026-06-24, v4.32.0-rc1): `Data`/`DataEncode`/`Prog`/`ProgSem`+`InPlace` core sorry-free; `PB` 7 sorries, `TMSimulator` 4 (all quantitative) | ☐ |
-| F | Compile the fixed universal program → `boundedUniversalCode i : Code (i+2)`, `universalCode i : Code (i+1)` + correctness. **Target spec frozen in `TM/Universal/Spec.lean` (WP11; blueprint `lem:universal-machine` / `lem:bounded-universal-machine`; issues #17/#18.)** Design evidence: `utm:Satisfiability.lean` (sorry-free verified 5-tape SAT-verifier TM — also a gateway prototype for `thm:succinct-sat`); `rtmfun3:HierarchyTheorems.lean` (`NormalizedTM`, quadratic-overhead universal spec; sketch, 9 sorries) | ☐ |
-| G | Quantitative bounds → `universal_polynomial_overhead` (coarse polynomial; degree not optimized). Align with crei's open upstream PRs: #772 `ConfigBound` (#configs ≤ (n+2)·a·2^(c·s)), #767 `Classes`/`SpaceInTime` (DTIME/DSPACE, L⊆P, PSPACE⊆EXP), fork `landau_calculus:BigO` | ☐ |
+| **K** | **Compression track** (`planning/compression-track.md`): K0 statement audit, K1 foundations hygiene, K2 closure library + runtime s-m-n, K3 `recursive_compression` proved, K4 Kleene, K5 Mathlib bridges. **Precedes E–G** (user decision 2026-09-08) | K0 ✅ 2026-09-08 |
+| E | Machine plumbing/combinator layer over `MultiInputTM` — sequential composition, tape extension, input rewind, while/loop — producing `Code`-able machines (structured finite state types with a computable `State ≃ Fin n`, relabeled through `MultiInput/Congr.lean`). Port targets: crei/cslib `while_loop` (`Plumbing/*`, `Combinators/Loop.lean`, `While.lean`, sorry-free core) and PRs #877/#854, all on the post-#819 upstream model (output in `Cfg`, `runFrom`), so ports adapt to our pre-#819-shaped model. **Replaces the `rtm` port** (route abandoned upstream, 2026-09-03). Design to be detailed after the gate; not started before K3 | ☐ (after K3) |
+| F | Compile the fixed universal program → `boundedUniversalCode i : Code (i+2)`, `universalCode i : Code (i+1)` + correctness. **Target spec frozen in `TM/Universal/Spec.lean` (WP11; blueprint `lem:universal-machine` / `lem:bounded-universal-machine`; issues #17/#18.)** Design evidence: `utm:Satisfiability.lean` (sorry-free verified 5-tape SAT-verifier TM — also a gateway prototype for `thm:succinct-sat`); `rtmfun3:HierarchyTheorems.lean` (`NormalizedTM`, quadratic-overhead universal spec; sketch, 9 sorries); crei's combinator prototype `complexity_using_combinators:Examples/Universal.lean` (table-lookup universal step over an untyped table, 2026-09) | ☐ (after K3; route α only) |
+| G | Quantitative bounds → `universal_polynomial_overhead` (coarse polynomial; degree not optimized). Align with crei's open upstream PRs: #772 `ConfigBound` (#configs ≤ (n+2)·a·2^(c·s)), #767 `Classes`/`SpaceInTime` (DTIME/DSPACE, L⊆P, PSPACE⊆EXP), fork `landau_calculus:BigO` | ☐ (after K3; route α only) |
 
-**Gate before E/F (record the decision here when made):** one interpreter or two — TM-level
-`universalCode` vs the ambient-model `exists_efficient_universal`/`exists_clocked_universal`
-of `Cost/Toolkit.lean`, vs one compiled artifact discharging both (likely: an
-`InPlace`-compiled interpreter *of the ambient `ToPartrec.Code` model*, serving
-`thm:succinct-sat` and the toolkit simultaneously — cf. Toolkit's "should share design").
-Also deferred until after C stabilizes: `specialize` (hardwiring) — per GPT §6.
+**Gate (sharpened 2026-09-08; record the decision here when made): which construction
+discharges the ambient `exists_efficient_universal` / `exists_clocked_universal` — now
+the `UniversalMachine` / `ClockedUniversalMachine` structures of `Cost/Toolkit.lean`
+(`planning/compression-track.md`, K-D2).** The compression track proves everything above
+these nodes from their statements, so the gate is decided *after K3*, when the finished
+proof has pinned the exact interface the machine must satisfy.
+
+- *Route α — TM track + bridge:* Milestones E–G build the machine-level
+  `boundedUniversalCode` (`TM/Universal/Spec.lean`), plus a new Milestone H, the
+  ambient⇄TM bridge with time bounds (H1: compile `ToPartrec.Code` to `Code i` in
+  polynomial time — also the substrate of `thm:succinct-sat`, requirement R3; H2:
+  interpret TM codes in `ToPartrec.Code` with polynomial overhead). This is the
+  blueprint's present edge `lem:universal-tm ← lem:bounded-universal-machine`.
+- *Route β — self-interpreter:* a `ToPartrec.Code` program interpreting `encodeList c`
+  (stack machine over one `fix`), no bridge; E–G then serve only `thm:succinct-sat` and
+  the paper-literal machine statements.
+
+Still deferred: `specialize` (hardwiring of `Code i`) — per GPT §6; the *ambient* s-m-n
+(`hardcode`) belongs to the compression track.
 
 ---
 
@@ -603,7 +660,8 @@ lake exe mk_all               # then commit the regenerated MIPRE.lean
   spec sorries tracked by issues #17/#18 and blueprint nodes `lem:universal-machine` /
   `lem:bounded-universal-machine`; `lem:universal-tm` kept ambient and newly
   `\lean{}`-tagged; `encodeBoundedResult` completes the D12 deferred output codec)
-- [ ] Roadmap statuses updated; E/F interpreter-ownership decision recorded when taken
+- [x] 2026-09-08: roadmap re-sequenced behind the compression track (`planning/compression-track.md`); Milestone E re-described (RTM port target abandoned upstream); upstream drift (#819 `Cfg` output field, `runFrom`) recorded as a known D8 deviation
+- [ ] Universal-machine route (α/β) decided after K3 and recorded in the Gate above; Milestone E design detailed then
 
 Each WP is one commit on `turing-machines` (mergeable as its own PR if the FLT-style
 issue/PR workflow is wanted for these), updating this checklist in the same commit.
