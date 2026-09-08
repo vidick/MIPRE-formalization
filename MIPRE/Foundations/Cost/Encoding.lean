@@ -77,13 +77,35 @@ instance : SizedEncoding Bool where
   bound := 1
   cells_le_bound b := by cases b <;> simp
 
+/-- Bits map to the cells `0`/`1`, which are the only cells `≤ 1`. -/
+private theorem all_toNat_le (x : List Bool) : (x.map Bool.toNat).all (· ≤ 1) = true := by
+  simp [List.all_eq_true, Bool.toNat_le]
+
+/-- Reading the cells `0`/`1` back as bits inverts `Bool.toNat`. -/
+private theorem map_toNat_beq_one (x : List Bool) : (x.map Bool.toNat).map (· == 1) = x := by
+  induction x with
+  | nil => rfl
+  | cons b x ih => cases b <;> simp [ih]
+
 /-- Bit strings encode cell-per-bit: `esize x = x.length`. -/
 instance : SizedEncoding BitStr where
   encode x := x.map Bool.toNat
   decode l := if l.all (· ≤ 1) then some (l.map (· == 1)) else none
-  decode_encode x := by sorry -- routine
+  decode_encode x := by
+    show (if (x.map Bool.toNat).all (· ≤ 1) then some ((x.map Bool.toNat).map (· == 1))
+      else none) = some x
+    rw [if_pos (all_toNat_le x), map_toNat_beq_one]
   bound := 1
-  cells_le_bound x := by sorry -- routine
+  cells_le_bound x := by
+    intro y hy
+    obtain ⟨b, -, rfl⟩ := List.mem_map.1 hy
+    exact Bool.toNat_le b
+
+/-- Folding `Nat.bit` over the binary digits of `n` recovers `n`. -/
+theorem Nat.foldr_bit_bits (n : ℕ) : n.bits.foldr Nat.bit 0 = n := by
+  induction n using Nat.binaryRec' with
+  | zero => simp [Nat.zero_bits]
+  | bit b n hn ih => rw [Nat.bits_append_bit n b hn, List.foldr_cons, ih]
 
 /-- Natural numbers encode in **binary** (LSB first): `esize n = Nat.size n`.
 This is the encoding under which indices "`n` in binary" enter succinct
@@ -91,9 +113,15 @@ descriptions (blueprint `def:succinct`). -/
 instance : SizedEncoding ℕ where
   encode n := n.bits.map Bool.toNat
   decode l := if l.all (· ≤ 1) then some ((l.map (· == 1)).foldr Nat.bit 0) else none
-  decode_encode n := by sorry -- `Nat.bits` round-trip, routine
+  decode_encode n := by
+    show (if (n.bits.map Bool.toNat).all (· ≤ 1) then
+      some (((n.bits.map Bool.toNat).map (· == 1)).foldr Nat.bit 0) else none) = some n
+    rw [if_pos (all_toNat_le _), map_toNat_beq_one, Nat.foldr_bit_bits]
   bound := 1
-  cells_le_bound n := by sorry -- routine
+  cells_le_bound n := by
+    intro y hy
+    obtain ⟨b, -, rfl⟩ := List.mem_map.1 hy
+    exact Bool.toNat_le b
 
 /-- Length-additive pairing: `encode (a, b) = encode a ++ sep :: encode b`, with a
 separator cell above both alphabets. `esize (a, b) = esize a + esize b + 1`. -/
@@ -107,9 +135,38 @@ instance instSizedEncodingProd {α β : Type*} [SizedEncoding α] [SizedEncoding
       match (decode (l.take i) : Option α), (decode (l.drop (i + 1)) : Option β) with
       | some a, some b => some (a, b)
       | _, _ => none
-  decode_encode p := by sorry -- the separator does not occur in `encode p.1`; routine
+  decode_encode p := by
+    obtain ⟨a, b⟩ := p
+    have hsep : ∀ x ∈ encode a, (x == max (encBound α) (encBound β) + 1) = false := by
+      intro x hx
+      have hx' : x ≤ encBound α := SizedEncoding.cells_le_bound a x hx
+      have hle : encBound α ≤ max (encBound α) (encBound β) := le_max_left _ _
+      simp only [beq_eq_false_iff_ne, ne_eq]
+      omega
+    have hfind : (encode a ++ (max (encBound α) (encBound β) + 1) :: encode b).findIdx?
+        (· == max (encBound α) (encBound β) + 1) = some (encode a).length := by
+      rw [List.findIdx?_append, List.findIdx?_eq_none_iff.2 hsep, List.findIdx?_cons]
+      simp
+    have hsplit : encode a ++ (max (encBound α) (encBound β) + 1) :: encode b =
+        (encode a ++ [max (encBound α) (encBound β) + 1]) ++ encode b := by simp
+    dsimp only
+    rw [hfind]
+    dsimp only
+    rw [List.take_left, hsplit, List.drop_left' (by simp), SizedEncoding.decode_encode,
+      SizedEncoding.decode_encode]
   bound := max (encBound α) (encBound β) + 1
-  cells_le_bound p := by sorry -- routine
+  cells_le_bound p := by
+    obtain ⟨a, b⟩ := p
+    intro x hx
+    simp only [List.mem_append, List.mem_cons] at hx
+    rcases hx with hx | rfl | hx
+    · have hx' : x ≤ encBound α := SizedEncoding.cells_le_bound a x hx
+      have hle : encBound α ≤ max (encBound α) (encBound β) := le_max_left _ _
+      omega
+    · exact le_rfl
+    · have hx' : x ≤ encBound β := SizedEncoding.cells_le_bound b x hx
+      have hle : encBound β ≤ max (encBound α) (encBound β) := le_max_right _ _
+      omega
 
 /-- The separator cell of the pairing: one above both component alphabets, so it
 occurs in neither component's encoding. -/
@@ -124,7 +181,8 @@ theorem encode_prod {α β : Type*} [SizedEncoding α] [SizedEncoding β] (a : �
   simp [esize, encode]
 
 theorem esize_nat (n : ℕ) : esize n = Nat.size n := by
-  sorry -- `Nat.size_eq_bits_len`
+  show (n.bits.map Bool.toNat).length = _
+  rw [List.length_map, Nat.size_eq_bits_len]
 
 @[simp] theorem esize_prod {α β : Type*} [SizedEncoding α] [SizedEncoding β]
     (a : α) (b : β) : esize (a, b) = esize a + esize b + 1 := by
@@ -132,13 +190,24 @@ theorem esize_nat (n : ℕ) : esize n = Nat.size n := by
   simp [esize]
   omega
 
+/-- A word over cells `≤ B` has `vsize` at most `(B + 1)` per cell. -/
+theorem vsize_le_of_forall_le {l : List ℕ} {B : ℕ} (h : ∀ x ∈ l, x ≤ B) :
+    vsize l ≤ (B + 1) * l.length := by
+  induction l with
+  | nil => simp
+  | cons n l ih =>
+    have hn : n ≤ B := h n (List.mem_cons_self ..)
+    have ih' := ih fun x hx => h x (List.mem_cons_of_mem _ hx)
+    simp only [vsize_cons, List.length_cons, Nat.mul_succ]
+    omega
+
 /-- Encoded data has `vsize` proportional to `esize` (alphabet-boundedness). -/
 theorem vsize_encode_le {α : Type*} [SizedEncoding α] (a : α) :
-    vsize (encode a) ≤ (encBound α + 1) * esize a := by
-  sorry -- routine from `cells_le_bound`
+    vsize (encode a) ≤ (encBound α + 1) * esize a :=
+  vsize_le_of_forall_le (SizedEncoding.cells_le_bound a)
 
 theorem esize_le_vsize_encode {α : Type*} [SizedEncoding α] (a : α) :
-    esize a ≤ vsize (encode a) := by
-  sorry -- routine: each cell contributes at least 1
+    esize a ≤ vsize (encode a) :=
+  length_le_vsize _
 
 end MIPRE.Cost

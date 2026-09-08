@@ -81,11 +81,135 @@ def encodeList : Code → List ℕ
   | .fix f => 6 :: f.encodeList
 
 theorem encodeList_length (c : Code) : c.encodeList.length = c.size := by
-  sorry -- routine induction
+  induction c with
+  | zero' => rfl
+  | succ => rfl
+  | tail => rfl
+  | cons f g ihf ihg => simp only [encodeList, size, List.length_cons, List.length_append, ihf, ihg]
+  | comp f g ihf ihg => simp only [encodeList, size, List.length_cons, List.length_append, ihf, ihg]
+  | case f g ihf ihg => simp only [encodeList, size, List.length_cons, List.length_append, ihf, ihg]
+  | fix f ih => simp only [encodeList, size, List.length_cons, ih]
 
-/-- Tag-based deserialization. -/
-def decodeList (l : List ℕ) : Option Code := by
-  sorry -- structural; routine
+/-- Every cell of a serialized program is a tag `≤ 6`. -/
+theorem encodeList_cells_le (c : Code) : ∀ x ∈ c.encodeList, x ≤ 6 := by
+  induction c with
+  | zero' => simp [encodeList]
+  | succ => simp [encodeList]
+  | tail => simp [encodeList]
+  | cons f g ihf ihg =>
+    simp only [encodeList, List.forall_mem_cons, List.forall_mem_append]
+    exact ⟨by omega, ihf, ihg⟩
+  | comp f g ihf ihg =>
+    simp only [encodeList, List.forall_mem_cons, List.forall_mem_append]
+    exact ⟨by omega, ihf, ihg⟩
+  | case f g ihf ihg =>
+    simp only [encodeList, List.forall_mem_cons, List.forall_mem_append]
+    exact ⟨by omega, ihf, ihg⟩
+  | fix f ih =>
+    simp only [encodeList, List.forall_mem_cons]
+    exact ⟨by omega, ih⟩
+
+/-- Tag-directed parser with fuel: `parseCode fuel l = some (c, rest)` when `l` starts
+with the serialization of a program `c` of size at most `fuel`, followed by `rest`
+(`parseCode_encodeList`). The fuel bounds the recursion structurally, so the parser is
+kernel-evaluable. -/
+def parseCode : ℕ → List ℕ → Option (Code × List ℕ)
+  | 0, _ => none
+  | _ + 1, [] => none
+  | _ + 1, 0 :: l => some (.zero', l)
+  | _ + 1, 1 :: l => some (.succ, l)
+  | _ + 1, 2 :: l => some (.tail, l)
+  | fuel + 1, 3 :: l =>
+    match parseCode fuel l with
+    | some (f, l) =>
+      match parseCode fuel l with
+      | some (g, l) => some (.cons f g, l)
+      | none => none
+    | none => none
+  | fuel + 1, 4 :: l =>
+    match parseCode fuel l with
+    | some (f, l) =>
+      match parseCode fuel l with
+      | some (g, l) => some (.comp f g, l)
+      | none => none
+    | none => none
+  | fuel + 1, 5 :: l =>
+    match parseCode fuel l with
+    | some (f, l) =>
+      match parseCode fuel l with
+      | some (g, l) => some (.case f g, l)
+      | none => none
+    | none => none
+  | fuel + 1, 6 :: l =>
+    match parseCode fuel l with
+    | some (f, l) => some (.fix f, l)
+    | none => none
+  | _ + 1, _ :: _ => none
+
+/-- Tag-based deserialization: inverts `encodeList` (`decodeList_encodeList`); `none` on
+malformed or non-exhausted input. -/
+def decodeList (l : List ℕ) : Option Code :=
+  match parseCode l.length l with
+  | some (c, []) => some c
+  | _ => none
+
+/-- The parser reads back a serialized program, given enough fuel. -/
+theorem parseCode_encodeList (c : Code) :
+    ∀ (fuel : ℕ) (rest : List ℕ), c.size ≤ fuel →
+      parseCode fuel (c.encodeList ++ rest) = some (c, rest) := by
+  induction c with
+  | zero' =>
+    intro fuel rest h
+    cases fuel with
+    | zero => simp [size] at h
+    | succ fuel => simp [encodeList, parseCode]
+  | succ =>
+    intro fuel rest h
+    cases fuel with
+    | zero => simp [size] at h
+    | succ fuel => simp [encodeList, parseCode]
+  | tail =>
+    intro fuel rest h
+    cases fuel with
+    | zero => simp [size] at h
+    | succ fuel => simp [encodeList, parseCode]
+  | cons f g ihf ihg =>
+    intro fuel rest h
+    cases fuel with
+    | zero => simp [size] at h
+    | succ fuel =>
+      simp only [size] at h
+      simp only [encodeList, List.cons_append, List.append_assoc, parseCode,
+        ihf fuel (g.encodeList ++ rest) (by omega), ihg fuel rest (by omega)]
+  | comp f g ihf ihg =>
+    intro fuel rest h
+    cases fuel with
+    | zero => simp [size] at h
+    | succ fuel =>
+      simp only [size] at h
+      simp only [encodeList, List.cons_append, List.append_assoc, parseCode,
+        ihf fuel (g.encodeList ++ rest) (by omega), ihg fuel rest (by omega)]
+  | case f g ihf ihg =>
+    intro fuel rest h
+    cases fuel with
+    | zero => simp [size] at h
+    | succ fuel =>
+      simp only [size] at h
+      simp only [encodeList, List.cons_append, List.append_assoc, parseCode,
+        ihf fuel (g.encodeList ++ rest) (by omega), ihg fuel rest (by omega)]
+  | fix f ih =>
+    intro fuel rest h
+    cases fuel with
+    | zero => simp [size] at h
+    | succ fuel =>
+      simp only [size] at h
+      simp only [encodeList, List.cons_append, parseCode, ih fuel rest (by omega)]
+
+/-- `decodeList` inverts `encodeList`. -/
+theorem decodeList_encodeList (c : Code) : decodeList c.encodeList = some c := by
+  have h := parseCode_encodeList c c.size [] le_rfl
+  rw [List.append_nil] at h
+  simp only [decodeList, encodeList_length, h]
 
 end Turing.ToPartrec.Code
 
@@ -96,9 +220,9 @@ open Turing.ToPartrec Polynomial
 instance : SizedEncoding Code where
   encode := Code.encodeList
   decode := Code.decodeList
-  decode_encode c := by sorry -- prefix-code round trip; routine
+  decode_encode := Code.decodeList_encodeList
   bound := 6
-  cells_le_bound c := by sorry -- routine induction
+  cells_le_bound := Code.encodeList_cells_le
 
 @[simp] theorem esize_code (c : Code) : esize c = c.size := by
   show c.encodeList.length = c.size
@@ -147,25 +271,68 @@ def hardcode (c : Code) (l : List ℕ) : Code := c.comp (pushList l)
     (hardcode c l).eval v = c.eval (l ++ v) := by
   simp [hardcode]
 
+theorem constNum_size (n : ℕ) : (constNum n).size = 2 * n + 5 := by
+  induction n with
+  | zero => rfl
+  | succ n ih => simp only [constNum, Code.size, ih]; omega
+
+theorem push_size (n : ℕ) : (push n).size = 2 * n + 9 := by
+  simp only [push, Code.size, constNum_size, Code.id]
+
+theorem pushList_size (l : List ℕ) : (pushList l).size ≤ 10 * vsize l + 3 := by
+  induction l with
+  | nil => simp [pushList, Code.id, Code.size]
+  | cons n l ih => simp only [pushList, Code.size, push_size, vsize_cons]; omega
+
 /-- Efficient s-m-n, size bound: hardcoding costs *linear* program size.
 (The constant is generous and provisional.) -/
 theorem hardcode_size (c : Code) (l : List ℕ) :
     (hardcode c l).size ≤ c.size + 12 * (vsize l + 1) := by
-  sorry -- routine induction on `l`
+  have := pushList_size l
+  simp only [hardcode, Code.size]
+  omega
+
+/-- The run of `constNum n`: `2n + 5` steps. -/
+theorem constNum_timedEval (n : ℕ) (v : List ℕ) :
+    TimedEval (constNum n) v [n] (2 * n + 5) := by
+  induction n with
+  | zero => exact TimedEval.code_zero v
+  | succ n ih => exact (TimedEval.comp ih (.succ [n])).cast_cost (by omega)
+
+/-- The run of `push n`: `2n + 9` steps. -/
+theorem push_timedEval (n : ℕ) (v : List ℕ) : TimedEval (push n) v (n :: v) (2 * n + 9) :=
+  (TimedEval.cons (constNum_timedEval n v) (TimedEval.code_id v)).cast_cost (by omega)
+
+/-- The run of `pushList l`: linear in `vsize l`. -/
+theorem pushList_timedEval (l v : List ℕ) :
+    ∃ t ≤ 10 * vsize l + 3, TimedEval (pushList l) v (l ++ v) t := by
+  induction l generalizing v with
+  | nil => exact ⟨3, by simp, TimedEval.code_id v⟩
+  | cons n l ih =>
+    obtain ⟨t, ht, h⟩ := ih v
+    refine ⟨t + (2 * n + 9) + 1, ?_, TimedEval.comp h (push_timedEval n (l ++ v))⟩
+    simp only [vsize_cons]
+    omega
 
 /-- Efficient s-m-n, forward time transfer: a run of `c` on `l ++ v` yields a run
 of `hardcode c l` on `v` with *additive, linear* overhead. -/
 theorem hardcode_time (c : Code) (l v w : List ℕ) (t : ℕ)
     (h : TimedEval c (l ++ v) w t) :
     ∃ t' ≤ t + 12 * (vsize l + 1), TimedEval (hardcode c l) v w t' := by
-  sorry -- run `pushList l` (linear), then `h`
+  obtain ⟨s, hs, hp⟩ := pushList_timedEval l v
+  exact ⟨s + t + 1, by omega, TimedEval.comp hp h⟩
 
 /-- Efficient s-m-n, backward time transfer: runs of `hardcode c l` restrict to
 runs of `c`. -/
 theorem hardcode_time_rev (c : Code) (l v w : List ℕ) (t : ℕ)
     (h : TimedEval (hardcode c l) v w t) :
     ∃ t' ≤ t, TimedEval c (l ++ v) w t' := by
-  sorry -- invert the `comp` rule
+  change TimedEval (c.comp (pushList l)) v w t at h
+  cases h with
+  | comp hp hc =>
+    obtain ⟨s, -, hp'⟩ := pushList_timedEval l v
+    obtain ⟨rfl, -⟩ := hp.deterministic hp'
+    exact ⟨_, by omega, hc⟩
 
 /-- Hardcoding the first component of a pair: with the separator of the pairing
 convention, `hardcode c (encode a ++ [pairSep α β])` run on `encode b` is `c` run on

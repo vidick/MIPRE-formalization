@@ -36,6 +36,15 @@ namespace MIPRE.Cost
 
 open Turing.ToPartrec Polynomial
 
+/-- Evaluation of a polynomial with natural coefficients is monotone in the argument. -/
+theorem polynomial_eval_mono (p : Polynomial ℕ) {x y : ℕ} (h : x ≤ y) :
+    p.eval x ≤ p.eval y := by
+  induction p using Polynomial.induction_on' with
+  | add p q hp hq => simp only [Polynomial.eval_add]; exact Nat.add_le_add hp hq
+  | monomial n a =>
+    simp only [Polynomial.eval_monomial]
+    exact Nat.mul_le_mul_left _ (Nat.pow_le_pow_left h n)
+
 /-- A polynomial-time computable function `α → β`: a program of the ambient model
 computing it on encodings, with an explicit polynomial bound on `TimedEval` cost
 in terms of `esize` of the input. -/
@@ -60,7 +69,8 @@ instance : CoeFun (PolyTimeFun α β) fun _ => α → β := ⟨PolyTimeFun.toFun
 This is what makes `comp` below well-bounded. -/
 theorem esize_apply_le (F : PolyTimeFun α β) (a : α) :
     esize (F a) ≤ esize a + F.timeBound.eval (esize a) := by
-  sorry -- from `computes`, `TimedEval.length_le`, `esize = length of encoding`
+  obtain ⟨t, ht, h⟩ := F.computes a
+  exact le_trans h.length_le (Nat.add_le_add_left ht _)
 
 /-- The identity, in polynomial time (`Code.id = tail.comp zero'`, three steps).
 (`noncomputable` refers only to the bundled `Polynomial ℕ`, which is
@@ -69,8 +79,7 @@ noncomputable def id (α : Type*) [SizedEncoding α] : PolyTimeFun α α where
   toFun := _root_.id
   code := Code.id
   timeBound := C 3
-  computes a := ⟨3, by simp, by
-    sorry⟩ -- `TimedEval.comp (.zero' _) (.tail _)`, routine
+  computes a := ⟨3, by simp, TimedEval.code_id _⟩
 
 /-- Composition, with the composed time bound explicit. -/
 noncomputable def comp (G : PolyTimeFun β γ) (F : PolyTimeFun α β) : PolyTimeFun α γ where
@@ -78,7 +87,12 @@ noncomputable def comp (G : PolyTimeFun β γ) (F : PolyTimeFun α β) : PolyTim
   code := G.code.comp F.code
   timeBound := F.timeBound + G.timeBound.comp (X + F.timeBound) + 1
   computes a := by
-    sorry -- chain `F.computes`, `G.computes`, `esize_apply_le`; routine
+    obtain ⟨t₁, ht₁, h₁⟩ := F.computes a
+    obtain ⟨t₂, ht₂, h₂⟩ := G.computes (F a)
+    refine ⟨t₁ + t₂ + 1, ?_, TimedEval.comp h₁ h₂⟩
+    have hmono := polynomial_eval_mono G.timeBound (F.esize_apply_le a)
+    simp only [Polynomial.eval_add, Polynomial.eval_comp, Polynomial.eval_X, Polynomial.eval_one]
+    omega
 
 @[simp] theorem comp_apply (G : PolyTimeFun β γ) (F : PolyTimeFun α β) (a : α) :
     G.comp F a = G (F a) := rfl

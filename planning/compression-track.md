@@ -124,7 +124,7 @@ blueprint itself calls "an ideal early milestone", `\effortEasy` given the toolk
 | WP | Content | Status |
 |---|---|---|
 | **K0** | Statement audit and fixes: this document; `UniversalMachine`/`ClockedUniversalMachine` (K-D2); one-directional Kleene (K-D3); generic `smn_polyTime` + `pairSep`/`encode_prod`/`hardcode_pair_eval` (K-D4); blueprint `\lean{}` tags on `lem:smn`, `lem:kleene`, `lem:recursive-compression`; TM roadmap re-sequenced | ✅ 2026-09-08 |
-| K1 | Foundations hygiene: the ~24 routine sorries of `Cost/Basic|Encoding|PolyTime|Toolkit` incl. the sorried `def decodeList`; **efficient s-m-n sorry-free at program level** | ☐ |
+| K1 | Foundations hygiene: the ~24 routine sorries of `Cost/Basic|Encoding|PolyTime|Toolkit` incl. the sorried `def decodeList`; **efficient s-m-n sorry-free at program level** | ✅ 2026-09-08 |
 | K2 | Minimal closure library (two layers, K-D6) + `smn_polyTime` + the fixed programs of the proof as `PolyTimeFun`s | ☐ |
 | K3 | **`recursive_compression` proved** from the toolkit statements; blueprint `\leanok` + proof text on `lem:recursive-compression` (and on `lem:smn`) | ☐ |
 | K4 | `efficient_fixed_point` from `UniversalMachine` + s-m-n ([MNY, Lemma 2.3]); `lem:kleene` `\leanok` | ☐ |
@@ -314,7 +314,19 @@ lake exe mk_all               # when files were added; commit MIPRE.lean
 ## Progress checklist
 
 - [x] **K0** statement audit and fixes (2026-09-08; branch `compression-track`)
-- [ ] **K1** foundations hygiene
+- [x] **K1** foundations hygiene (2026-09-08). All 24 routine sorries discharged; the
+  `Cost/` sorries are now exactly `smn_polyTime`, `exists_efficient_universal`,
+  `exists_clocked_universal`, `efficient_fixed_point`. Additions (no statement changed):
+  `TimedEval.cast_cost`, `TimedEval.code_id/code_nil/code_zero` (runs of Mathlib's derived
+  programs), `Nat.foldr_bit_bits`, `vsize_le_of_forall_le`, `polynomial_eval_mono`
+  (via `Polynomial.induction_on'`), `Code.encodeList_cells_le`, the fuel-structural parser
+  `Code.parseCode` with `parseCode_encodeList` (fuel ≥ `size`) and `decodeList_encodeList`,
+  and the exact run costs `constNum_timedEval` (`2n+5`), `push_timedEval` (`2n+9`),
+  `pushList_timedEval` (`≤ 10·vsize l + 3`) behind `hardcode_time`. Lessons:
+  `Part.mem_map_iff` takes its function explicitly; IHs of `induction … generalizing`
+  keep the theorem's implicit binders; `simp` normalizes `map ∘ map` before user lemmas
+  fire — state instance-law proofs with `show` + `rw`; `Polynomial.induction_on'`
+  alternatives are `add`/`monomial`.
 - [ ] **K2** closure library + `smn_polyTime`
 - [ ] **K3** `recursive_compression` proved → **abstract compression theorem**
 - [ ] **K4** `efficient_fixed_point` proved

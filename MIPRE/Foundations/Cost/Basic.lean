@@ -135,22 +135,131 @@ namespace TimedEval
 the clauses of `Code.eval` (for `fix`, via `PFun.fix` unfolding). -/
 theorem sound {c : Code} {v w : List ℕ} {t : ℕ} (h : TimedEval c v w t) :
     w ∈ c.eval v := by
-  sorry
+  induction h with
+  | zero' v => simp only [Code.zero'_eval]; exact Part.mem_some _
+  | succ v => simp only [Code.succ_eval]; exact Part.mem_some _
+  | tail v => simp only [Code.tail_eval]; exact Part.mem_some _
+  | cons _ _ ih₁ ih₂ =>
+    simp only [Code.cons_eval, Part.bind_eq_bind, Part.mem_bind_iff, Part.pure_eq_some,
+      Part.mem_some_iff]
+    exact ⟨_, ih₁, _, ih₂, rfl⟩
+  | comp _ _ ih₁ ih₂ =>
+    simp only [Code.comp_eval, Part.bind_eq_bind, Part.mem_bind_iff]
+    exact ⟨_, ih₁, ih₂⟩
+  | case_zero h0 _ ih => simp only [Code.case_eval]; rw [h0]; exact ih
+  | case_succ hs _ ih => simp only [Code.case_eval]; rw [hs]; exact ih
+  | fix_done h0 _ ih =>
+    rw [Code.fix_eval]
+    exact PFun.mem_fix_iff.2 (Or.inl ((Part.mem_map_iff _).2 ⟨_, ih, by simp [h0]⟩))
+  | fix_step hne _ _ ih₁ ih₂ =>
+    rw [Code.fix_eval] at ih₂ ⊢
+    exact PFun.mem_fix_iff.2 (Or.inr ⟨_, (Part.mem_map_iff _).2 ⟨_, ih₁, by simp [hne]⟩, ih₂⟩)
 
-/-- Completeness: every convergent run has a cost. Routine induction along
-`Code.eval` (for `fix`, by induction on the `PFun.fix` approximation). -/
+/-- Completeness: every convergent run has a cost. Induction along `Code.eval`; for
+`fix`, by `PFun.fixInduction` on the `PFun.fix` approximation. -/
 theorem complete {c : Code} {v w : List ℕ} (h : w ∈ c.eval v) :
     ∃ t, TimedEval c v w t := by
-  sorry
+  induction c generalizing v w with
+  | zero' =>
+    simp only [Code.zero'_eval] at h
+    obtain rfl := Part.mem_some_iff.1 h
+    exact ⟨_, .zero' v⟩
+  | succ =>
+    simp only [Code.succ_eval] at h
+    obtain rfl := Part.mem_some_iff.1 h
+    exact ⟨_, .succ v⟩
+  | tail =>
+    simp only [Code.tail_eval] at h
+    obtain rfl := Part.mem_some_iff.1 h
+    exact ⟨_, .tail v⟩
+  | cons f fs ihf ihfs =>
+    simp only [Code.cons_eval, Part.bind_eq_bind, Part.mem_bind_iff, Part.pure_eq_some,
+      Part.mem_some_iff] at h
+    obtain ⟨n, hn, ns, hns, rfl⟩ := h
+    obtain ⟨s, hs⟩ := ihf hn
+    obtain ⟨t, ht⟩ := ihfs hns
+    exact ⟨_, .cons hs ht⟩
+  | comp f g ihf ihg =>
+    simp only [Code.comp_eval, Part.bind_eq_bind, Part.mem_bind_iff] at h
+    obtain ⟨w', hw', hw⟩ := h
+    obtain ⟨s, hs⟩ := ihg hw'
+    obtain ⟨t, ht⟩ := ihf hw
+    exact ⟨_, .comp hs ht⟩
+  | case f g ihf ihg =>
+    simp only [Code.case_eval] at h
+    by_cases hv : v.headI = 0
+    · rw [hv] at h
+      obtain ⟨t, ht⟩ := ihf h
+      exact ⟨_, .case_zero hv ht⟩
+    · obtain ⟨n, hn⟩ := Nat.exists_eq_succ_of_ne_zero hv
+      rw [hn] at h
+      obtain ⟨t, ht⟩ := ihg h
+      exact ⟨_, .case_succ hn ht⟩
+  | fix f ih =>
+    rw [Code.fix_eval] at h
+    refine PFun.fixInduction h fun v' hv' IH => ?_
+    rcases PFun.mem_fix_iff.1 hv' with h1 | ⟨v'', hv'', -⟩
+    · obtain ⟨w', hw', hg⟩ := (Part.mem_map_iff _).1 h1
+      by_cases h0 : w'.headI = 0
+      · simp only [h0, if_true, Sum.inl.injEq] at hg
+        subst hg
+        obtain ⟨t, ht⟩ := ih hw'
+        exact ⟨_, .fix_done h0 ht⟩
+      · simp [h0] at hg
+    · obtain ⟨w', hw', hg⟩ := (Part.mem_map_iff _).1 hv''
+      by_cases h0 : w'.headI = 0
+      · simp [h0] at hg
+      · simp only [h0, if_false, Sum.inr.injEq] at hg
+        subst hg
+        obtain ⟨s, hs⟩ := IH _ hv''
+        obtain ⟨t, ht⟩ := ih hw'
+        exact ⟨_, .fix_step h0 ht hs⟩
 
 /-- The timed semantics is deterministic in both output and cost. -/
 theorem deterministic {c : Code} {v w w' : List ℕ} {t t' : ℕ}
     (h : TimedEval c v w t) (h' : TimedEval c v w' t') : w = w' ∧ t = t' := by
-  sorry
+  induction h generalizing w' t' with
+  | zero' v => cases h'; exact ⟨rfl, rfl⟩
+  | succ v => cases h'; exact ⟨rfl, rfl⟩
+  | tail v => cases h'; exact ⟨rfl, rfl⟩
+  | cons _ _ ih₁ ih₂ =>
+    cases h' with
+    | cons h₁' h₂' =>
+      obtain ⟨rfl, rfl⟩ := ih₁ h₁'
+      obtain ⟨rfl, rfl⟩ := ih₂ h₂'
+      exact ⟨rfl, rfl⟩
+  | comp _ _ ih₁ ih₂ =>
+    cases h' with
+    | comp h₁' h₂' =>
+      obtain ⟨rfl, rfl⟩ := ih₁ h₁'
+      obtain ⟨rfl, rfl⟩ := ih₂ h₂'
+      exact ⟨rfl, rfl⟩
+  | case_zero h0 _ ih =>
+    cases h' with
+    | case_zero _ h₂' => obtain ⟨rfl, rfl⟩ := ih h₂'; exact ⟨rfl, rfl⟩
+    | case_succ hs _ => omega
+  | case_succ hs _ ih =>
+    cases h' with
+    | case_zero h0 _ => omega
+    | case_succ hs' h₂' =>
+      obtain rfl := Nat.add_right_cancel (hs.symm.trans hs')
+      obtain ⟨rfl, rfl⟩ := ih h₂'
+      exact ⟨rfl, rfl⟩
+  | fix_done h0 _ ih =>
+    cases h' with
+    | fix_done _ h₂' => obtain ⟨rfl, rfl⟩ := ih h₂'; exact ⟨rfl, rfl⟩
+    | fix_step hne h₂' _ => obtain ⟨rfl, rfl⟩ := ih h₂'; exact absurd h0 hne
+  | fix_step hne _ _ ih₁ ih₂ =>
+    cases h' with
+    | fix_done h0 h₂' => obtain ⟨rfl, rfl⟩ := ih₁ h₂'; exact absurd h0 hne
+    | fix_step _ h₂' h₃' =>
+      obtain ⟨rfl, rfl⟩ := ih₁ h₂'
+      obtain ⟨rfl, rfl⟩ := ih₂ h₃'
+      exact ⟨rfl, rfl⟩
 
 /-- Costs are positive. -/
 theorem pos {c : Code} {v w : List ℕ} {t : ℕ} (h : TimedEval c v w t) : 0 < t := by
-  sorry
+  cases h <;> omega
 
 /-- Each rule appends at most one cell, so output *length* grows at most linearly
 with cost. (No such bound holds for `vsize`: a step may duplicate a reference to a
@@ -158,7 +267,33 @@ large cell. This is harmless — encodings use bounded cells — and is where th
 dag-simulation meta-remark in the file docstring enters.) -/
 theorem length_le {c : Code} {v w : List ℕ} {t : ℕ} (h : TimedEval c v w t) :
     w.length ≤ v.length + t := by
-  sorry
+  induction h with
+  | zero' v => simp
+  | succ v => simp
+  | tail v => simp only [List.length_tail]; omega
+  | cons _ _ ih₁ ih₂ => simp only [List.length_cons]; omega
+  | comp _ _ ih₁ ih₂ => omega
+  | case_zero _ _ ih => simp only [List.length_tail] at ih; omega
+  | case_succ _ _ ih => simp only [List.length_cons, List.length_tail] at ih; omega
+  | fix_done _ _ ih => simp only [List.length_tail]; omega
+  | fix_step _ _ _ ih₁ ih₂ => simp only [List.length_tail] at ih₂; omega
+
+/-- Transport a run along an equation between costs. -/
+theorem cast_cost {c : Code} {v w : List ℕ} {t t' : ℕ} (h : TimedEval c v w t)
+    (e : t = t') : TimedEval c v w t' :=
+  e ▸ h
+
+/-- The run of Mathlib's `Code.id = tail.comp zero'`: three steps. -/
+theorem code_id (v : List ℕ) : TimedEval Code.id v v 3 :=
+  show TimedEval (Code.tail.comp Code.zero') v v 3 from .comp (.zero' v) (.tail _)
+
+/-- The run of Mathlib's `Code.nil = tail.comp succ`: three steps. -/
+theorem code_nil (v : List ℕ) : TimedEval Code.nil v [] 3 :=
+  show TimedEval (Code.tail.comp Code.succ) v [] 3 from .comp (.succ v) (.tail _)
+
+/-- The run of Mathlib's `Code.zero = cons zero' nil`: five steps. -/
+theorem code_zero (v : List ℕ) : TimedEval Code.zero v [0] 5 :=
+  show TimedEval (Code.cons Code.zero' Code.nil) v [0] 5 from .cons (.zero' v) (code_nil v)
 
 end TimedEval
 
