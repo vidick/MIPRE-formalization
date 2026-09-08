@@ -158,6 +158,13 @@ would require a simulator that is never faster than the simulated program.)
 machine, s-m-n and the Rogers fixed-point theorem for \texttt{Nat.Partrec.Code}). The
 efficient versions require a cost model for the chosen machine model; this is real
 infrastructure work and a prerequisite for everything involving ``polynomial-time''.
+The formalization's ambient model is not a Turing machine but a small first-order
+list-processing language (\texttt{MIPRE.Cost.Prog}, over binary trees) with a unit-cost
+semantics in which reading a value costs its size; it is polynomially equivalent to
+Turing-machine time, programs are their own tree serializations (so ``a program $e$''
+and ``$\abs{e}$'' are literal), and the s-m-n theorem is a linear-overhead syntactic
+operation. Mathlib's \texttt{Turing.ToPartrec.Code} was tried first and rejected: its
+programs cannot rebuild a list in polynomial time.
 A pragmatic first pass can replace ``polynomial time'' by ``computable'' wherever
 Section~\ref{sec:departures} permits, deferring the cost model. The machine-level
 counterpart, for the concrete model of Section~\ref{sec:machine-model}, is stated as

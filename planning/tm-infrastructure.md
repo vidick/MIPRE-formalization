@@ -50,8 +50,11 @@ because that theorem needs only the *statements* of the ambient toolkit
    `utm` is older (3 `sorry`s incl. universal-step correctness); ideas only. Relevant to
    Milestones E–G, not A/B.
 4. **This repo's architecture** (must not be contradicted): the ambient cost model for all
-   polynomial-time statements is `Turing.ToPartrec.Code` + `TimedEval`
-   (decision record in `MIPRE/Foundations/Cost/Basic.lean`); final computability statements
+   polynomial-time statements is the first-order list language `MIPRE.Cost.Prog` over binary
+   trees `MIPRE.Cost.Data`, with the timed semantics `MIPRE.Cost.Eval` (decision record in
+   `MIPRE/Foundations/Cost/Basic.lean`; until 2026-09-08 it was Mathlib's
+   `Turing.ToPartrec.Code`, replaced by decision K-D7 of `planning/compression-track.md`
+   after that model proved unable to rebuild lists in polynomial time); final computability statements
    use `Nat.Partrec.Code` (`MIPRE/HaltingGameValue.lean`, blueprint
    `sec:computability-conventions`). Per that record (R3), a low-level machine appears only
    inside the succinct Cook–Levin gateway (`thm:succinct-sat`); `Cost/Toolkit.lean` notes its
@@ -119,6 +122,12 @@ Impact on this plan:
   substrate of route α of the gate and of `thm:succinct-sat`. K0 turned the ambient
   universal-machine statements into the structures `UniversalMachine` /
   `ClockedUniversalMachine` (existence = the sorried node), following D13's principle.
+  Later the same day the ambient model itself was replaced (`ToPartrec.Code` →
+  `MIPRE.Cost.Prog`, decision K-D7 of the compression track): Mathlib's `ToPartrec.Code`
+  cannot rebuild lists in polynomial time, which also removes its `TMToPartrec` compilation
+  as the "seed" for R3 — Milestone H1 (compile `Prog` to `Code i` with time bounds) is now
+  the only path to the succinct Cook–Levin gateway, which raises the value of the TM track's
+  route α.
 - **complexitylib (github.com/SamuelSchlesinger/complexitylib) evaluated 2026-09-08**
   at `dev` @ `edd0e9e` (2026-09-05): ~475K lines / 1,685 files, Apache-2.0, sorry-free
   (CI `--wfail` plus an axiom guard; the newer PCP/IP material is self-declared
@@ -207,13 +216,13 @@ proof has pinned the exact interface the machine must satisfy.
 
 - *Route α — TM track + bridge:* Milestones E–G build the machine-level
   `boundedUniversalCode` (`TM/Universal/Spec.lean`), plus a new Milestone H, the
-  ambient⇄TM bridge with time bounds (H1: compile `ToPartrec.Code` to `Code i` in
-  polynomial time — also the substrate of `thm:succinct-sat`, requirement R3; H2:
-  interpret TM codes in `ToPartrec.Code` with polynomial overhead). This is the
-  blueprint's present edge `lem:universal-tm ← lem:bounded-universal-machine`.
-- *Route β — self-interpreter:* a `ToPartrec.Code` program interpreting `encodeList c`
-  (stack machine over one `fix`), no bridge; E–G then serve only `thm:succinct-sat` and
-  the paper-literal machine statements.
+  ambient⇄TM bridge with time bounds (H1: compile the ambient language `MIPRE.Cost.Prog`
+  to `Code i` in polynomial time — also the substrate of `thm:succinct-sat`, requirement
+  R3; H2: interpret TM codes in `Prog` with polynomial overhead). This is the blueprint's
+  present edge `lem:universal-tm ← lem:bounded-universal-machine`.
+- *Route β — self-interpreter:* a `Prog` interpreting `Prog.toData c` (a CEK-style
+  machine over `Data` driven by one `loop`), no bridge; E–G then serve only
+  `thm:succinct-sat` and the paper-literal machine statements.
 
 Still deferred: `specialize` (hardwiring of `Code i`) — per GPT §6; the *ambient* s-m-n
 (`hardcode`) belongs to the compression track.
