@@ -119,6 +119,24 @@ Impact on this plan:
   substrate of route α of the gate and of `thm:succinct-sat`. K0 turned the ambient
   universal-machine statements into the structures `UniversalMachine` /
   `ClockedUniversalMachine` (existence = the sorried node), following D13's principle.
+- **complexitylib (github.com/SamuelSchlesinger/complexitylib) evaluated 2026-09-08**
+  at `dev` @ `edd0e9e` (2026-09-05): ~475K lines / 1,685 files, Apache-2.0, sorry-free
+  (CI `--wfail` plus an axiom guard; the newer PCP/IP material is self-declared
+  unreviewed AI-assisted work), Lean v4.34.0-rc2 with the module system, Mathlib pinned
+  to CSLib's commit and a `require` of CSLib (unused; stated intent to rebase *onto*
+  CSLib). Own single-input multi-tape model (`Complexity.TM n`, `Q : Type`, custom
+  one-sided `Tape`, `List Bool` I/O), no relation to Mathlib computability. Has:
+  DTIME/P/FP closure library (existential, asymptotic), Cobham's theorem, Cook–Levin, a
+  sorry-free UTM built from combinators (`utmTM : TM 6`, clocked `TM 7`, time hierarchy)
+  over a sparse single-work-tape code format whose extraction `descOfTM` is
+  `noncomputable` (`Fintype.equivFin`) — the dead end D5 avoids. Lacks: multi-input
+  machines, s-m-n as a computable map, Kleene/fixed point, halting reductions,
+  compression. **Decision: nothing adopted** (incompatible model, toolchain, deep import
+  graph). Design evidence only for Milestones E/F: `docs/UTM-design.md` (virtual tapes,
+  `SimInv`, per-iteration cost) and `docs/N0-MachineAuthoring.md` (a generic
+  routine-syntax compiler was tried and removed in favour of proof-carrying routine
+  records; crei's RTM→TM compiler there, PR #14, has 13 sorries and is dormant). CSLib
+  remains the convergence point for upstreamable TM infrastructure.
 
 ## Fixed decisions (modifications to the GPT program)
 

@@ -66,6 +66,13 @@ blueprint itself calls "an ideal early milestone", `\effortEasy` given the toolk
 5. **Not consumed.** The TM track's Milestones A–D (`MultiInputTM`, `Code i`,
    serialization, evaluator) play no role in the ambient compression lemma; they matter
    here only as route α to the universal machine.
+6. **complexitylib** (SamuelSchlesinger; evaluated 2026-09-08 at `edd0e9e`) has no
+   ambient-model content — no relation to Mathlib's `ToPartrec.Code`, no s-m-n as a
+   computable map, no Kleene fixed point, no halting reduction or compression notion;
+   its `FP` closure library is existential and asymptotic, on its own TM model. **No
+   impact on this track.** Only `Cobham.boundedRec` (limited recursion on notation,
+   bounded by a class function) is an optional packaging idea for K2. Details in
+   `planning/tm-infrastructure.md`, update of 2026-09-08.
 
 ## Fixed decisions
 
