@@ -11,8 +11,9 @@ The script
 * deletes and recreates ``MIPRE/Background/LIDT/MIPStarRE/`` (the destination is
   wholly generated; local hand edits there are lost on purpose — see the plan in
   ``planning/lidt-port.md``, decisions D3 and D6);
-* copies ``MIPStarRE/Quantum/**``, ``MIPStarRE/LDT/**`` and the two aggregators
-  ``MIPStarRE/Quantum.lean``, ``MIPStarRE/LDT.lean``;
+* copies the import closure of the root modules used by this repository's bridge
+  (``ROOTS`` below; pass ``--all`` to copy every module of ``MIPStarRE/Quantum/**`` and
+  ``MIPStarRE/LDT/**`` instead);
 * rewrites ``import MIPStarRE.X`` to ``import MIPRE.Background.LIDT.MIPStarRE.X``;
 * prepends a provenance header to every copied Lean file;
 * copies the upstream Mathlib-only statement closure
@@ -38,6 +39,41 @@ LOCAL_PREFIX = "MIPRE.Background.LIDT.MIPStarRE"
 DEST_REL = Path("MIPRE/Background/LIDT/MIPStarRE")
 COPIED_DIRS = ("Quantum", "LDT")
 COPIED_FILES = ("Quantum.lean", "LDT.lean")
+# The vendored modules imported by MIPRE/Background/LIDT/**; everything they transitively
+# import is vendored, nothing else.
+ROOTS = (
+    "MIPStarRE.LDT.Basic.AxisParallelLine",
+    "MIPStarRE.LDT.Basic.DiagonalLine",
+    "MIPStarRE.LDT.Basic.Distribution",
+    "MIPStarRE.LDT.Basic.LinePolynomials",
+    "MIPStarRE.LDT.Basic.LowDegreePolynomial",
+    "MIPStarRE.LDT.Basic.SubMeasurementFamilies",
+    "MIPStarRE.LDT.Test.Defs",
+    "MIPStarRE.LDT.Test.MainTheorem.MainFormal",
+    "MIPStarRE.LDT.Test.StrategyBiProj.Measurements",
+    "MIPStarRE.LDT.Test.StrategyCore",
+)
+IMPORT_LINE_RE = re.compile(rf"^import\s+({re.escape(UPSTREAM_PREFIX)}(?:\.[A-Za-z0-9_]+)*)\s*$", re.MULTILINE)
+
+
+def module_path(source: Path, module: str) -> Path:
+    return source / (module.replace(".", "/") + ".lean")
+
+
+def import_closure(source: Path, roots: tuple[str, ...]) -> list[Path]:
+    """All upstream modules transitively imported by ``roots`` (including them)."""
+    seen: dict[str, Path] = {}
+    stack = list(roots)
+    while stack:
+        module = stack.pop()
+        if module in seen:
+            continue
+        path = module_path(source, module)
+        if not path.exists():
+            sys.exit(f"error: module {module} not found at {path}")
+        seen[module] = path
+        stack.extend(IMPORT_LINE_RE.findall(path.read_text(encoding="utf-8")))
+    return sorted(seen.values())
 CHALLENGE_REL = Path("scripts/comparator/expected/Challenge.lean.expected")
 
 IMPORT_RE = re.compile(rf"^(\s*import\s+){re.escape(UPSTREAM_PREFIX)}(\.|\s*$)", re.MULTILINE)
@@ -70,7 +106,7 @@ def rewrite_imports(text: str) -> tuple[str, int]:
     return IMPORT_RE.sub(repl, text), count
 
 
-def vendor(source: Path, commit: str, repo_root: Path) -> None:
+def vendor(source: Path, commit: str, repo_root: Path, everything: bool) -> None:
     head = git(source, "rev-parse", "HEAD")
     if not head.startswith(commit):
         sys.exit(f"error: clone at {source} is at {head[:12]}, not {commit}")
@@ -89,10 +125,13 @@ def vendor(source: Path, commit: str, repo_root: Path) -> None:
     dest.mkdir(parents=True)
 
     files: list[Path] = []
-    for d in COPIED_DIRS:
-        files.extend(sorted((src_root / d).rglob("*.lean")))
-    for f in COPIED_FILES:
-        files.append(src_root / f)
+    if everything:
+        for d in COPIED_DIRS:
+            files.extend(sorted((src_root / d).rglob("*.lean")))
+        for f in COPIED_FILES:
+            files.append(src_root / f)
+    else:
+        files = import_closure(source, ROOTS)
 
     rewritten = 0
     lines = 0
@@ -118,7 +157,8 @@ def vendor(source: Path, commit: str, repo_root: Path) -> None:
         BEGIN_MARK,
         f"- Upstream: {UPSTREAM_URL}",
         f"- Commit: `{head}` ({date})",
-        f"- Vendored files: {len(files)} Lean files, {lines} lines; "
+        f"- Vendored files: {len(files)} Lean files, {lines} lines"
+        + ("" if everything else f" (the import closure of {len(ROOTS)} root modules)") + "; "
         f"{rewritten} import lines rewritten from `{UPSTREAM_PREFIX}.` to `{LOCAL_PREFIX}.`",
         f"- Audit aid: `{CHALLENGE_REL.name}` = upstream `{CHALLENGE_REL.as_posix()}`",
         END_MARK,
@@ -179,8 +219,10 @@ def main() -> None:
     parser.add_argument("--source", required=True, type=Path, help="path to a MIPStarRE clone")
     parser.add_argument("--commit", required=True, help="expected upstream commit (prefix ok)")
     parser.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parent.parent)
+    parser.add_argument("--all", action="store_true",
+                        help="copy every module instead of the import closure of ROOTS")
     args = parser.parse_args()
-    vendor(args.source.resolve(), args.commit, args.repo_root.resolve())
+    vendor(args.source.resolve(), args.commit, args.repo_root.resolve(), args.all)
 
 
 if __name__ == "__main__":

@@ -513,8 +513,18 @@ lemmas with the lambda spelled out); `Finset.sum_congr` after `rw [← e.sum_com
 stuck, `Fintype.sum_equiv` does not. Each `lake env lean` check costs ≈2 min of olean
 loading on this machine because of the vendored `import Mathlib`.
 
+Phase 4(b) done the same day: `scripts/vendor-lidt.py` now vendors only the import
+closure of the ten upstream modules the bridge imports (its `ROOTS`; `--all` restores the
+full copy), which dropped 15 of the 337 files — the two aggregators, `Test/AxiomAudit.lean`
+(our `Axioms.lean` guards the final theorem instead), `Test/Classical.lean`,
+`Test/SurfaceVsPoint.lean`, `Basic/DistributionProduct.lean`,
+`Preliminaries/FiniteFields.lean`, the Naimark and projectivization-chain leaves of
+`MakingMeasurementsProjective/`, and `Pasting/{ContextWrappers,Defs/Context}.lean` — so
+almost the whole development is genuinely needed by `mainFormal`. The scratch upstream
+clone was deleted; a re-sync needs a fresh clone at the recorded commit.
+
 Not done (see Phase 4): the corollary collapsing `k`; importing the upstream blueprint
-chapters; pruning the vendored tree.
+chapters.
 
 ## Non-goals
 
