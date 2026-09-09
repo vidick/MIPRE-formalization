@@ -9,6 +9,7 @@ import MIPRE.Foundations.Cost.Clocked
 import MIPRE.Foundations.Cost.Closure
 import MIPRE.Foundations.Cost.Encoding
 import MIPRE.Foundations.Cost.Growth
+import MIPRE.Foundations.Cost.Kleene
 import MIPRE.Foundations.Cost.Loops
 import MIPRE.Foundations.Cost.Numeric
 import MIPRE.Foundations.Cost.PolyTime

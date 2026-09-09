@@ -7,6 +7,7 @@ import MIPRE.Foundations.Cost.Succinct
 import MIPRE.Foundations.Cost.Clocked
 import MIPRE.Foundations.Cost.Threshold
 import MIPRE.Foundations.Cost.Growth
+import MIPRE.Foundations.Cost.Kleene
 import Mathlib.Computability.Halting
 import Mathlib.Data.ENat.Lattice
 

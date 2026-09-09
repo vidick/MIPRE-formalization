@@ -161,6 +161,20 @@ of that of $f(e)$. (This is the direction used by Lemma~\ref{lem:recursive-compr
 would require a simulator that is never faster than the simulated program.)
 \end{lemma}
 
+\begin{proof}
+\leanok
+The classical construction. Let $G$ be the program that on input $(x, v)$ computes
+$s(x, x)$ (Lemma~\ref{lem:smn}), applies $f$ to it, and runs the resulting program on $v$
+through the universal machine (Lemma~\ref{lem:universal-tm}); put $e = s(G, G)$. Then $e$
+on $v$ is $G$ on $(G, v)$, which runs $f(s(G, G)) = f(e)$ on $v$: the two programs halt
+on the same inputs with the same results (the backward direction inverts the run of $G$
+step by step and uses that the universal machine halts only if the simulated program
+does), and a run of $f(e)$ of time $t$ gives a run of $e$ within $p(\abs{v}, t)$, where
+$p$ is the universal machine's overhead polynomial shifted by the fixed size of $f(e)$,
+plus a linear term for the copies of the input and a constant for the fixed computation
+of $f(e)$.
+\end{proof}
+
 \paragraph{Source.} Folklore; stated in this efficient form in~\cite{MNY}, Lemmas
 2.1--2.3.
 

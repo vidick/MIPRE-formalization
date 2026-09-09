@@ -191,7 +191,7 @@ ported (different semantics, closures, space accounting).
 | **K2a** | Closure library part I: calls, projections, pairing, branching (`Cost/Closure.lean`); literal data (K-D9); `smn_polyTime` proved | ✅ 2026-09-09 |
 | K2b | Closure library part II: loops — list length, tree size in unary, `2^j`, zero test/decrement, bit-indexing, threshold, `haltsWithin` — the fixed programs of the proof (K-D5 revised) | ✅ 2026-09-09 |
 | K3 | **`recursive_compression` proved** from the toolkit statements; blueprint `\leanok` + proof text on `lem:recursive-compression` (and on `lem:smn`) | ✅ 2026-09-09 |
-| K4 | `efficient_fixed_point` from `UniversalMachine` + s-m-n ([MNY, Lemma 2.3]); `lem:kleene` `\leanok` | ☐ |
+| K4 | `efficient_fixed_point` from `UniversalMachine` + s-m-n ([MNY, Lemma 2.3]); `lem:kleene` `\leanok` | ✅ 2026-09-09 |
 | K5 | Mathlib bridges (`Primcodable Prog`, `PolyTimeFun.toFun_computable`, `exists_compile`) → `recursive_compression_halting` sorry-free modulo `lem:universal-tm`; independent of K2–K4 | ☐ |
 | gate | Universal machine: route α (TM Milestones E–G + bridge H) or route β (self-interpreter of `Prog` in `Prog`) — **decide after K3**, record in `planning/tm-infrastructure.md` | ☐ |
 
@@ -423,7 +423,13 @@ lake exe mk_all               # when files were added; commit MIPRE.lean
   `omega` does not know `2 ^ k ≥ 0` after its cast to `ℤ` (use `Nat.le_add_left`);
   write `∀ n : ℕ` when a later `(n : ℕ∞)` cast would otherwise fix the binder's type;
   `hCompr _ _ _ n h` — the compression parameter is not determined by the description.
-- [ ] **K4** `efficient_fixed_point` proved
+- [x] **K4** `efficient_fixed_point` proved (2026-09-09): `Cost/Kleene.lean` —
+  `kleeneProg univ F` (on `cons x v`: `s(x, x)` by `smnProg`, then `F.code`, then `univ`),
+  `e = hardcode G (encode G)`; forward run by the K2 call lemmas, backward by inverting the
+  `let_` chain with `Eval.deterministic` against the forward runs and
+  `UniversalMachine.halts_of` (`callVar_runs_rev`). Built green first time. Toolkit's
+  Kleene section now only points to `Cost/Kleene.lean`; sorries: the two universal nodes +
+  Compression's K5 bridges.
 - [ ] **K5** Mathlib bridges → `recursive_compression_halting`
 - [ ] gate: universal-machine route decided and recorded
 

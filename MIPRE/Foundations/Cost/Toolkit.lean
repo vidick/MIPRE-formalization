@@ -31,9 +31,9 @@ Contents:
 * `ClockedUniversalMachine` / `exists_clocked_universal`: the time-bounded variant ("run
   `c` on `v` for `k` steps"), used by the recursive compression argument and by the
   pipeline's deciders (introspection and repetition simulate other deciders under a budget).
-* `efficient_fixed_point` (`lem:kleene`): Kleene's recursion theorem for a polynomial-time
-  map on programs, with the runs of the fixed point bounded by those of its image at
-  polynomial overhead.
+* `efficient_fixed_point` (`lem:kleene`, in `Cost/Kleene.lean`): Kleene's recursion theorem
+  for a polynomial-time map on programs, with the runs of the fixed point bounded by those
+  of its image at polynomial overhead — proved from the universal machine and `hardcode`.
 
 The statement shapes were audited against the proof of the recursive compression lemma
 (`planning/compression-track.md`, K0): the universal machines are structures so that
@@ -211,26 +211,9 @@ structure ClockedUniversalMachine where
 theorem exists_clocked_universal : Nonempty ClockedUniversalMachine := by
   sorry
 
-/-! ## Efficient Kleene recursion (blueprint `lem:kleene`; [MNY, Lemma 2.3]) -/
+/-! ## Efficient Kleene recursion
 
-/-- **Efficient Kleene fixed point**: for a polynomial-time map on programs, a closed
-program `e` with the same input/output behavior as `F e`, whose runs are bounded by the
-runs of `F e` at polynomial overhead. The proof is the classical construction through
-`hardcode` and a `UniversalMachine`, tracking the overheads; the polynomial `p` depends on
-`F.timeBound` and on the machine's `bound`.
-
-Departure from [MNY, Lemma 2.3], which states the runtimes of `e` and `F e` as
-*polynomially equivalent*: only the direction "runs of `F e` bound runs of `e`" is used by
-the recursive compression argument (it is what makes the fixed point polynomial-time), and
-only that direction follows from `UniversalMachine.time_le`. The converse would need a
-lower-bound clause on the universal machine ("a simulation is never faster than the
-simulated run"); it is omitted to keep the universal-machine obligation minimal and can be
-restored with such a clause if a consumer needs it. -/
-theorem efficient_fixed_point (F : PolyTimeFun Prog Prog) :
-    ∃ (e : Prog) (p : Polynomial ℕ),
-      e.WellScoped 1 ∧
-      (∀ v r, (∃ t, e.Runs v r t) ↔ ∃ t, (F e).Runs v r t) ∧
-      ∀ v r t, (F e).Runs v r t → ∃ t' ≤ p.eval (v.size + t), e.Runs v r t' := by
-  sorry
+`efficient_fixed_point` (blueprint `lem:kleene`; [MNY, Lemma 2.3]) is proved in
+`Cost/Kleene.lean` from `hardcode`, `smnProg` and a `UniversalMachine`. -/
 
 end MIPRE.Cost
