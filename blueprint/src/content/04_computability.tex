@@ -139,14 +139,14 @@ There is a polynomial-time computable $s$ such that $\phi_{s(e,x)}(y) = \phi_e(x
 for all $e, x, y$, with the runtimes of $e$ and $s(e,x)$ polynomially equivalent.
 \end{lemma}
 
-egin{proof}
+\begin{proof}
 \leanok
 In the ambient list language, $s(e, x)$ is the program that pairs the literal $x$ with
-its input and runs $e$ on the pair (	exttt{MIPRE.Cost.hardcode}). The time overhead is
-additive and linear in $bs{x}$ and the input size, in both directions, and the
-description of $s(e, x)$ is that of $e$ plus $bs{x}$ plus a constant. The map $s$
+its input and runs $e$ on the pair (\texttt{MIPRE.Cost.hardcode}). The time overhead is
+additive and linear in $\abs{x}$ and the input size, in both directions, and the
+description of $s(e, x)$ is that of $e$ plus $\abs{x}$ plus a constant. The map $s$
 itself is computed in linear time by a fixed program assembling the description
-(	exttt{smnProg}).
+(\texttt{smnProg}).
 \end{proof}
 
 \begin{lemma}[Efficient Kleene recursion theorem]
@@ -205,23 +205,23 @@ $A$: for every Turing machine $e$, if $\phi_e$ halts on the empty input then $g(
 A$, and otherwise $f(g(e)) = \infty$.
 \end{lemma}
 
-egin{proof}
+\begin{proof}
 \leanok
 The construction of~\cite{MNY}, with two harmless modifications: the ``next level'' of
 the recursion is $2n + 1$ instead of $n + 1$ (prepending a bit to a binary numeral is one
 step in the list language, an increment is not), and the threshold below is explicit.
-Let $eta$ be the fixed \emph{bit-query} program that, on input $(((c', e), n), m)$,
+Let $\beta$ be the fixed \emph{bit-query} program that, on input $(((c', e), n), m)$,
 runs the universal machine on $c'$ with input $(e, n)$ to obtain a string $y$ and outputs
-the $m$-th bit of $y$ (or $2$ if $m \geq bs{y}$). Let $a$ be the polynomial-time
+the $m$-th bit of $y$ (or $2$ if $m \geq \abs{y}$). Let $a$ be the polynomial-time
 \emph{decider} that on $(c', (e, n))$ outputs a fixed $y_0 \in A$ if $e$ halts on the
-empty input within $\log n$ steps, and $\comprigl((s(eta, ((c', e), 2n+1)), n),
-nigr)$ otherwise, where $s$ is the s-m-n map of Lemma~ef{lem:smn}. By
-Lemma~ef{lem:kleene} there is a program $c$ with $\phi_c(e, n) = \phi_a(c, (e, n))
-=: h(e, n)$, running in time polynomial in $bs{e} + \log n$. Hence for $n$ above a
-threshold $r(e) = 2^{K + 1 + bs{e}}$ (with $K$ a constant depending only on the
-polynomial overheads), $(s(eta, ((c, e), 2n+1)), n)$ is a succinct description of
+empty input within $\log n$ steps, and $\compr\bigl((s(\beta, ((c', e), 2n+1)), n),
+n\bigr)$ otherwise, where $s$ is the s-m-n map of Lemma~\ref{lem:smn}. By
+Lemma~\ref{lem:kleene} there is a program $c$ with $\phi_c(e, n) = \phi_a(c, (e, n))
+=: h(e, n)$, running in time polynomial in $\abs{e} + \log n$. Hence for $n$ above a
+threshold $r(e) = 2^{K + 1 + \abs{e}}$ (with $K$ a constant depending only on the
+polynomial overheads), $(s(\beta, ((c, e), 2n+1)), n)$ is a succinct description of
 $h(e, 2n+1)$: the string has length at most $2^n$ and the bit-query program answers within
-the budget of Definition~ef{def:succinct}. The reduction is $g(e) = h(e, r(e))$. If $e$
+the budget of Definition~\ref{def:succinct}. The reduction is $g(e) = h(e, r(e))$. If $e$
 does not halt, then for every $n \geq r(e)$ the decider compresses, so $f(h(e, n)) \geq
 \max\{f(h(e, 2n+1)), n\}$, and iterating gives $f(h(e, n)) \geq n + k$ for all $k$,
 i.e.\ $f(g(e)) = \infty$. If $e$ halts in $T$ steps, then $h(e, n) = y_0 \in A$ once
