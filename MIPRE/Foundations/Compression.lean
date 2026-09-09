@@ -8,6 +8,8 @@ import MIPRE.Foundations.Cost.Clocked
 import MIPRE.Foundations.Cost.Threshold
 import MIPRE.Foundations.Cost.Growth
 import MIPRE.Foundations.Cost.Kleene
+import MIPRE.Foundations.Cost.Partrec
+import MIPRE.Foundations.Cost.FromPartrec
 import Mathlib.Computability.Halting
 import Mathlib.Data.ENat.Lattice
 
@@ -272,29 +274,13 @@ theorem recursive_compression
 /-! ## Interface with Mathlib computability
 
 The project's headline statement (`MIPRE.HaltingGameValue`) is phrased for
-`Nat.Partrec.Code` and Mathlib's `Computable`. Two bridges close the gap; both are
-computability-only (no time bounds): the evaluation of `Prog` is partial recursive
-(through the fuel evaluator `evalFuel`), and partial recursive functions compile into
-`Prog` (a universal `Prog` for `Nat.Partrec.Code.eval`, hardcoded with the code). -/
-
-/-- `Prog` is primitively codable (through its tree encoding; routine). Needed only for the
-computability bridges below — never for a time bound. -/
-instance : Primcodable Prog := by
-  sorry
-
-/-- Ambient programs compute partial recursive functions; consequently
-`PolyTimeFun.toFun` is `Computable` for encoded types. Stated here in the one instance
-the project needs. -/
-theorem PolyTimeFun.toFun_computable (F : PolyTimeFun Prog BitStr) :
-    Computable F.toFun := by
-  sorry
-
-/-- The halting problem transfers from `Nat.Partrec.Code` to the ambient model along a
-computable compilation. -/
-theorem exists_compile :
-    ∃ compile : Nat.Partrec.Code → Prog, Computable compile ∧
-      ∀ pc : Nat.Partrec.Code, Halts (compile pc) .nil ↔ (pc.eval 0).Dom := by
-  sorry
+`Nat.Partrec.Code` and Mathlib's `Computable`. Two bridges close the gap, both
+computability-only (no time bounds): ambient evaluation is partial recursive, so a
+polynomial-time function of the model is Mathlib-computable on computably encoded inputs
+(`PolyTimeFun.computable_comp`, `Cost/Partrec.lean`), and the halting problem of
+`Nat.Partrec.Code` compiles into the model along a map that is computable on descriptions
+(`exists_compile`, `Cost/FromPartrec.lean`). Both work at the level of `Data`: no
+`Primcodable` instance for `Prog` is needed, since programs are their own descriptions. -/
 
 /-- The compression lemma, repackaged against Mathlib's halting problem — the form that
 will feed `MIPRE.HaltingGameValue.halting_reduces_to_gameValue` once `A` and `f` are
@@ -313,7 +299,10 @@ theorem recursive_compression_halting
       ∀ pc : Nat.Partrec.Code,
         ((pc.eval 0).Dom → g pc ∈ A) ∧
         (¬(pc.eval 0).Dom → f (g pc) = ⊤) := by
-  sorry -- compose `recursive_compression` with `exists_compile` and
-        -- `PolyTimeFun.toFun_computable`
+  obtain ⟨g, hg⟩ := recursive_compression f A y₀ hy₀ hA Compr hCompr
+  obtain ⟨compile, hc, hspec⟩ := exists_compile
+  refine ⟨fun pc => g (compile pc),
+    PolyTimeFun.computable_comp g compile hc Data.primrec_decode_bitStr.to_comp, fun pc => ?_⟩
+  exact ⟨fun h => (hg _).1 ((hspec pc).2 h), fun h => (hg _).2 fun h' => h ((hspec pc).1 h')⟩
 
 end MIPRE.Cost

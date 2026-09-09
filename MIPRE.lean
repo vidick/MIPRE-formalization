@@ -7,11 +7,16 @@ import MIPRE.Foundations.Cost.Basic
 import MIPRE.Foundations.Cost.BitQuery
 import MIPRE.Foundations.Cost.Clocked
 import MIPRE.Foundations.Cost.Closure
+import MIPRE.Foundations.Cost.Codable
 import MIPRE.Foundations.Cost.Encoding
+import MIPRE.Foundations.Cost.FromPartrec
 import MIPRE.Foundations.Cost.Growth
 import MIPRE.Foundations.Cost.Kleene
 import MIPRE.Foundations.Cost.Loops
+import MIPRE.Foundations.Cost.Machine
+import MIPRE.Foundations.Cost.MachineData
 import MIPRE.Foundations.Cost.Numeric
+import MIPRE.Foundations.Cost.Partrec
 import MIPRE.Foundations.Cost.PolyTime
 import MIPRE.Foundations.Cost.Succinct
 import MIPRE.Foundations.Cost.Threshold

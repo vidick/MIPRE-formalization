@@ -164,6 +164,21 @@ ported (different semantics, closures, space accounting).
   assembled inside `recursive_compression` from the Kleene overhead `p`, the decider's
   `timeBound`, and `bitQueryBound U`, each packaged as an existential
   `∃ Q, ∀ x, Q.eval x = …` so that the proof never unfolds polynomial arithmetic.
+- **K-D12 — Mathlib computability interface at the `Data` level** (2026-09-09, K5). No
+  `Primcodable Prog`: programs are their own descriptions, so every bridge is stated for
+  `Data`-valued encodings — `Computable (fun c => (encode (h c) : Data))` in
+  `PolyTimeFun.computable_comp`, `Computable (fun pc => encode (compile pc))` in
+  `exists_compile`. `Data` itself is `Denumerable` through Cantor pairing, which makes tree
+  recursion primitive recursive by strong recursion on `ℕ` (`Data.primrec_recD`). A
+  `Primcodable Prog` instance would need a primrec parser of `toData` (depth-3 tuple
+  recursion) for no consumer; add it only if a statement needs it.
+- **K-D13 — one evaluation machine for both universal artifacts** (2026-09-09, K5). The
+  CEK machine of `Cost/Machine.lean` charges `Eval` costs at designated steps
+  (`stepCost`; `loop` rules at the frame pop), so that a run's accumulated cost is exactly
+  the derivation's cost, in both directions. Its transport to `Data` (`stepData`, built
+  from `left/right/cons/unaryToNat/getList`) is what K5 proves primitive recursive and what
+  route β implements as a program; the correctness of the self-interpreter reduces to
+  "the interpreter's loop body computes `stepData`".
 - **K-D9 — literal data `const d` is a primitive** (2026-09-09, K2a). It evaluates to
   `d` at cost `d.size` (the universal machine will interpret it by a copy). Reason: with
   literals, `hardcode p d = let_ (cons (const d) (var 0)) p` has a *fixed-shape*
@@ -192,7 +207,7 @@ ported (different semantics, closures, space accounting).
 | K2b | Closure library part II: loops — list length, tree size in unary, `2^j`, zero test/decrement, bit-indexing, threshold, `haltsWithin` — the fixed programs of the proof (K-D5 revised) | ✅ 2026-09-09 |
 | K3 | **`recursive_compression` proved** from the toolkit statements; blueprint `\leanok` + proof text on `lem:recursive-compression` (and on `lem:smn`) | ✅ 2026-09-09 |
 | K4 | `efficient_fixed_point` from `UniversalMachine` + s-m-n ([MNY, Lemma 2.3]); `lem:kleene` `\leanok` | ✅ 2026-09-09 |
-| K5 | Mathlib bridges (`Primcodable Prog`, `PolyTimeFun.toFun_computable`, `exists_compile`) → `recursive_compression_halting` sorry-free modulo `lem:universal-tm`; independent of K2–K4 | ☐ |
+| K5 | Mathlib bridges (`Primcodable Prog`, `PolyTimeFun.toFun_computable`, `exists_compile`) → `recursive_compression_halting` sorry-free modulo `lem:universal-tm`; independent of K2–K4 | ✅ 2026-09-09 |
 | gate | Universal machine: route α (TM Milestones E–G + bridge H) or route β (self-interpreter of `Prog` in `Prog`) — **decide after K3**, record in `planning/tm-infrastructure.md` | ☐ |
 
 Milestones reached along the way: after K1 the efficient s-m-n (program level) is
@@ -430,7 +445,16 @@ lake exe mk_all               # when files were added; commit MIPRE.lean
   `UniversalMachine.halts_of` (`callVar_runs_rev`). Built green first time. Toolkit's
   Kleene section now only points to `Cost/Kleene.lean`; sorries: the two universal nodes +
   Compression's K5 bridges.
-- [ ] **K5** Mathlib bridges → `recursive_compression_halting`
+- [x] **K5** Mathlib bridges → `recursive_compression_halting` proved (2026-09-09), at the
+  `Data` level (K-D12): `Cost/Codable.lean` (`Data ≃ ℕ` by Cantor pairing, `Primcodable
+  Data`, primrec constructor/projections, tree recursion `primrec_recD`, unary numerals,
+  `getList`, bit-string decoding), `Cost/Machine.lean` (CEK machine with exact `Eval` cost
+  accounting; `eval_steps`/`eval_of_steps`/`halts_iff`), `Cost/MachineData.lean` (the
+  machine on `Data`: `stepData`, `stepData_toData`), `Cost/Partrec.lean` (`Primrec
+  stepData`, `evalData = PFun.fix`, `mem_evalData_iff`, `PolyTimeFun.computable_comp`),
+  `Cost/FromPartrec.lean` (`Prog.ofCode : ToPartrec.Code → Prog` with `ofCode_sound` /
+  `ofCode_complete`, `exists_compile` via Mathlib's `ToPartrec.Code.exists_code` on the
+  universal partial function). The machine files are shared with route β.
 - [ ] gate: universal-machine route decided and recorded
 
 Each WP is one commit on the working branch, updating this checklist in the same commit.
