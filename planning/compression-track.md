@@ -148,6 +148,22 @@ ported (different semantics, closures, space accounting).
   bridges go through `evalFuel` (partial recursiveness of evaluation) and a universal `Prog`
   for `Nat.Partrec.Code.eval`; R3's gateway needs a compiler `Prog → Code i` (TM track,
   Milestone H1). The TM track's Milestones A–D are unaffected.
+- **K-D10 — the next level is `2 n + 1`, not `n + 1`** (2026-09-09, K3). The decider at
+  level `n` compresses a description of the string at the next level; the paper uses
+  `n + 1`, which on binary numerals needs a carry propagation (a loop with the cost shape
+  of `decProg`). Prepending a `true` bit is one node (`PolyTimeFun.next`,
+  `encode_two_mul_add_one`), `Nat.size (2 n + 1) = Nat.size n + 1` keeps every overhead
+  polynomial in `esize e + Nat.size n`, and the levels still grow without bound, which is
+  all the two inductions use. Recorded in the module docstring of `Compression.lean` and
+  in the blueprint proof of `lem:recursive-compression`.
+- **K-D11 — explicit threshold, elementary growth lemma** (2026-09-09, K3). The threshold
+  is `r e = 2 ^ (K + 1 + esize e)` with `K` from `exists_threshold Q` (`Cost/Growth.lean`):
+  for every `Q : Polynomial ℕ`, `n ≥ 2 ^ (K + 1 + x)` gives `Q (x + Nat.size n) ≤ n + 1`.
+  The proof is elementary (`Q y ≤ A y ^ D` and `A σ ^ D ≤ 2 ^ σ` for
+  `σ ≥ A (D + 1) ^ (D + 1)`), no real analysis. The master polynomial `Q` of the proof is
+  assembled inside `recursive_compression` from the Kleene overhead `p`, the decider's
+  `timeBound`, and `bitQueryBound U`, each packaged as an existential
+  `∃ Q, ∀ x, Q.eval x = …` so that the proof never unfolds polynomial arithmetic.
 - **K-D9 — literal data `const d` is a primitive** (2026-09-09, K2a). It evaluates to
   `d` at cost `d.size` (the universal machine will interpret it by a copy). Reason: with
   literals, `hardcode p d = let_ (cons (const d) (var 0)) p` has a *fixed-shape*
@@ -174,7 +190,7 @@ ported (different semantics, closures, space accounting).
 | **K1** | Foundations: the ambient language and its metatheory, encodings, `PolyTimeFun` with `id`/`comp`, efficient s-m-n at program level (`hardcode_*`) — all sorry-free; `Cost/` sorries = exactly `smn_polyTime`, `exists_efficient_universal`, `exists_clocked_universal`, `efficient_fixed_point` | ✅ 2026-09-08 (redone on `Prog` after K-D7) |
 | **K2a** | Closure library part I: calls, projections, pairing, branching (`Cost/Closure.lean`); literal data (K-D9); `smn_polyTime` proved | ✅ 2026-09-09 |
 | K2b | Closure library part II: loops — list length, tree size in unary, `2^j`, zero test/decrement, bit-indexing, threshold, `haltsWithin` — the fixed programs of the proof (K-D5 revised) | ✅ 2026-09-09 |
-| K3 | **`recursive_compression` proved** from the toolkit statements; blueprint `\leanok` + proof text on `lem:recursive-compression` (and on `lem:smn`) | ☐ |
+| K3 | **`recursive_compression` proved** from the toolkit statements; blueprint `\leanok` + proof text on `lem:recursive-compression` (and on `lem:smn`) | ✅ 2026-09-09 |
 | K4 | `efficient_fixed_point` from `UniversalMachine` + s-m-n ([MNY, Lemma 2.3]); `lem:kleene` `\leanok` | ☐ |
 | K5 | Mathlib bridges (`Primcodable Prog`, `PolyTimeFun.toFun_computable`, `exists_compile`) → `recursive_compression_halting` sorry-free modulo `lem:universal-tm`; independent of K2–K4 | ☐ |
 | gate | Universal machine: route α (TM Milestones E–G + bridge H) or route β (self-interpreter of `Prog` in `Prog`) — **decide after K3**, record in `planning/tm-infrastructure.md` | ☐ |
@@ -394,7 +410,19 @@ lake exe mk_all               # when files were added; commit MIPRE.lean
   shell heredocs; multi-line `perl -0pi` edits mangle UTF-8 files — use targeted edits.
 - [x] **K2b** loops, numeric/list programs, threshold, `haltsWithin` (2026-09-09);
   `IsSuccinctDesc` budget revised to `(n + 1) * (Nat.size m + 1) ^ 2` (K-D5).
-- [ ] **K3** `recursive_compression` proved → **abstract compression theorem**
+- [x] **K3** `recursive_compression` proved → **abstract compression theorem**
+  (2026-09-09). Files: `Cost/Growth.lean` (threshold arithmetic), `Cost/Succinct.lean`
+  (`IsSuccinctDesc`, moved from `Compression.lean`; bit-query program `bitQueryProg` with
+  conditional correctness `bitQueryProg_runs` and `isSuccinctDesc_hardcode`),
+  `PolyTimeFun.smn`/`next`, `evalWithin_isSome_iff`; `Compression.lean` holds the decider
+  `decFun` (a `PolyTimeFun` built from the K2 combinators; `decFun_apply` is `rfl`) and the
+  proof (K-D10, K-D11). `#print axioms`: `sorryAx` only through the three toolkit nodes.
+  Lessons: keep every constructed object opaque behind its functional equation
+  (`obtain ⟨dec, hdec⟩ : ∃ dec, ∀ …, dec … = …`), including polynomials
+  (`∃ Q, ∀ x, Q.eval x = …`) — the main proof is then pure rewriting plus `omega`;
+  `omega` does not know `2 ^ k ≥ 0` after its cast to `ℤ` (use `Nat.le_add_left`);
+  write `∀ n : ℕ` when a later `(n : ℕ∞)` cast would otherwise fix the binder's type;
+  `hCompr _ _ _ n h` — the compression parameter is not determined by the description.
 - [ ] **K4** `efficient_fixed_point` proved
 - [ ] **K5** Mathlib bridges → `recursive_compression_halting`
 - [ ] gate: universal-machine route decided and recorded

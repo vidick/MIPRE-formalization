@@ -325,4 +325,35 @@ theorem decProg_runs (j : ℕ) (rest : BitStr) :
 
 end Prog
 
+/-! ## The next level index -/
+
+theorem encode_two_mul_add_one (n : ℕ) :
+    encode (2 * n + 1) = Data.cons (.cons .nil .nil) (encode n) := by
+  have h : (2 * n + 1).bits = true :: n.bits := by
+    rw [← Nat.bit_true_apply]
+    exact Nat.bits_append_bit n true (fun _ => rfl)
+  show encode (2 * n + 1).bits = _
+  rw [h]
+  rfl
+
+theorem size_two_mul_add_one (n : ℕ) : Nat.size (2 * n + 1) = Nat.size n + 1 := by
+  rw [← Nat.bit_true_apply, Nat.size_bit (by rw [Nat.bit_true_apply]; omega)]
+
+/-- `n ↦ 2 n + 1` on binary numerals: prepend a `true` bit. This is the "next level"
+map of the recursive compression argument (the paper's `n + 1` would need a carry
+propagation; `2 n + 1` is one node). -/
+noncomputable def PolyTimeFun.next : PolyTimeFun ℕ ℕ where
+  toFun n := 2 * n + 1
+  code := .cons (.const (.cons .nil .nil)) (.var 0)
+  closed := ⟨trivial, Nat.zero_lt_one⟩
+  timeBound := Polynomial.X + Polynomial.C 5
+  computes n := by
+    refine ⟨3 + (esize n + 1) + 1, ?_, ?_⟩
+    · simp only [Polynomial.eval_add, Polynomial.eval_X, Polynomial.eval_C]; omega
+    · rw [encode_two_mul_add_one]
+      exact Eval.cons (Eval.const _ _)
+        (Eval.var_of_get (env := [encode n]) (i := 0) (v := encode n) (by simp))
+
+@[simp] theorem PolyTimeFun.next_apply (n : ℕ) : PolyTimeFun.next n = 2 * n + 1 := rfl
+
 end MIPRE.Cost

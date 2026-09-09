@@ -115,6 +115,23 @@ theorem smnProg_runs (x d : Data) :
       (Eval.var_of_get (env := [x, d, Data.cons x d]) (i := 0) (v := x) (by simp))))
   exact h.cast_cost (by simp only [Data.size_ofNat, Data.size_cons, Data.size_nil]; omega)
 
+/-- The s-m-n map as a polynomial-time function: `(p, a) ↦ hardcode p (encode a)`, computed
+by `smnProg` in linear time. -/
+noncomputable def PolyTimeFun.smn (α : Type*) [SizedEncoding α] :
+    PolyTimeFun (Prog × α) Prog where
+  toFun pa := hardcode pa.1 (encode pa.2)
+  code := smnProg
+  closed := smnProg_wellScoped
+  timeBound := X + C 38
+  computes := by
+    rintro ⟨p, a⟩
+    refine ⟨esize p + esize a + 38, ?_, smnProg_runs p.toData (encode a)⟩
+    simp only [Polynomial.eval_add, Polynomial.eval_X, Polynomial.eval_C, esize_prod]
+    omega
+
+@[simp] theorem PolyTimeFun.smn_apply (α : Type*) [SizedEncoding α] (p : Prog) (a : α) :
+    PolyTimeFun.smn α (p, a) = hardcode p (encode a) := rfl
+
 /-- The s-m-n map itself is polynomial-time computable *in the model* — the clause of
 [MNY, Lemma 2.2] that the recursive compression argument uses at runtime (the
 self-referential decider builds hardcoded programs while executing). The argument hardcodes
@@ -122,16 +139,8 @@ encoded programs and tuples, not only bit strings, hence the statement is generi
 hardcoded type `α`. -/
 theorem smn_polyTime (α : Type*) [SizedEncoding α] :
     ∃ S : PolyTimeFun (Prog × α) Prog,
-      ∀ (p : Prog) (a : α), S (p, a) = hardcode p (encode a) := by
-  refine ⟨{ toFun := fun pa => hardcode pa.1 (encode pa.2)
-            code := smnProg
-            closed := smnProg_wellScoped
-            timeBound := X + C 38
-            computes := ?_ }, fun _ _ => rfl⟩
-  rintro ⟨p, a⟩
-  refine ⟨esize p + esize a + 38, ?_, smnProg_runs p.toData (encode a)⟩
-  simp only [Polynomial.eval_add, Polynomial.eval_X, Polynomial.eval_C, esize_prod]
-  omega
+      ∀ (p : Prog) (a : α), S (p, a) = hardcode p (encode a) :=
+  ⟨PolyTimeFun.smn α, fun _ _ => rfl⟩
 
 /-! ## The efficient universal machine (blueprint `lem:universal-tm`; [MNY, Lemma 2.1])
 
@@ -168,6 +177,11 @@ open Classical in
 (well-defined by `Eval.deterministic`). -/
 noncomputable def evalWithin (c : Prog) (v : Data) (k : ℕ) : Option Data :=
   if h : ∃ r t, t ≤ k ∧ c.Runs v r t then some h.choose else none
+
+theorem evalWithin_isSome_iff (c : Prog) (v : Data) (k : ℕ) :
+    (evalWithin c v k).isSome = true ↔ ∃ r t, t ≤ k ∧ c.Runs v r t := by
+  unfold evalWithin
+  split <;> simp_all
 
 /-- The value a clocked simulation returns: `cons (cons nil nil) r` ("halted, with result
 `r`") on in-budget halting, and `nil` ("timeout") on budget exhaustion. -/

@@ -81,6 +81,8 @@ noncomputable def id (α : Type*) [SizedEncoding α] : PolyTimeFun α α where
   timeBound := X + 1
   computes a := ⟨esize a + 1, by simp, Eval.var _ _⟩
 
+@[simp] theorem id_apply (a : α) : PolyTimeFun.id α a = a := rfl
+
 /-- Composition: bind the value of `F` and run `G` on it. -/
 noncomputable def comp (G : PolyTimeFun β γ) (F : PolyTimeFun α β) : PolyTimeFun α γ where
   toFun := G.toFun ∘ F.toFun
