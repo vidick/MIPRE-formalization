@@ -287,6 +287,19 @@ $u \sim \F^m$ be uniform:
 \item $G^\alice$ and $G^\bob$ are $\delta$-consistent.
 \end{enumerate}
 \end{theorem}
+\begin{proof}
+\leanok
+This is Theorem~1.3 of~\cite{JNVWY21qld} (\texttt{thm:main-formal} there), whose proof
+is the MIPStarRE formalization vendored into this repository. The Lean proof translates
+a strategy for our game into MIPStarRE's strategy container (the state as a density
+matrix; the line measurements as coarse-grainings of the measurements at the canonical
+line questions along the change of parametrization, which makes them covariant under
+rebasing), shows that MIPStarRE's failure surrogate is at most the rejection probability
+$1 - \mathrm{val}$ (the consistency defect of each branch is at most the rejection
+probability of that branch, since acceptance forces the coarse-grained answers to
+agree), applies their main theorem, and reads the resulting measurements back into our
+vocabulary.
+\end{proof}
 
 \paragraph{Source.} Ji, Natarajan, Vidick, Wright and Yuen~\cite{JNVWY21qld},
 Theorem~1.3 (the formal version for general, not necessarily symmetric, strategies).

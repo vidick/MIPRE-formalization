@@ -481,6 +481,41 @@ Read: `references/ldt-paper/test_definition.tex` (the test, Fig. 1; strategies;
   rewritten; the background-results table splits the classical and Pauli rows.
   `leanblueprint pdf` compiles with no undefined references (29 pages).
 
+## Phase 3 findings (2026-09-09)
+
+The bridge is complete and `MIPRE.LIDT.lowIndividualDegree_soundness` is proved, with
+`#print axioms` reporting `[propext, Classical.choice, Quot.sound]` (guarded by
+`MIPRE/Background/LIDT/Axioms.lean`). Files, in dependency order, all under
+`MIPRE/Background/LIDT/Bridge/`:
+
+- `Field.lean` — `lidtParams F m d`, the `FieldModel (Fintype.card F)` instance with
+  carrier `F`, and the coding `enc`/`dec`/`encP`/`decP` with its arithmetic lemmas.
+- `Polynomial.lean` — equivalences between our coefficient alphabets and MIPStarRE's
+  `AxisLinePolynomial`, `DiagonalLinePolynomial`, `Polynomial`, with evaluation
+  compatibility through the coding.
+- `Measurement.lean` — canonical-line lemmas (`Line.through_add_smul`, `param_through`,
+  `param_through_single`), `toProjMeas`, the affine reparametrization `affine` with
+  `affine_comp_shift`, and the point/axis/diagonal measurement families with their
+  covariance proofs (`axisMeas_invariant`, `diagMeas_invariant`).
+- `Strategy.lean` — `toProjStrat` (state via MIPStarRE's `PureState`), `ev_toProjStrat`.
+- `Defect.lean` — generic facts on `qBipartiteConsDefect` for complete measurements:
+  `qBipartiteConsDefect_eq_offDiagonal`, `qBipartiteMatchMass_postprocess`,
+  `qBipartiteConsDefect_postprocess_le`, `bipartiteConsError_uniform`.
+- `Value.lean` — `value_eq_sum`, the five pointwise branch bounds, `mdef` (the branch
+  defect indexed by our samples), `failure_eq_sum`, `failure_le`.
+- `Consistency.lean` — `inconsistency_eq_bipartiteConsError`.
+- `Main.lean` — `ofProjMeas`, `mainFormalError_eq`, `soundness`.
+
+Lessons recorded for future bridge work: `simp` does not rewrite under our `abbrev`
+codings in argument position (use `show`/`rw`); MIPStarRE's `Fin.find_spec`/`find_min`
+take the predicate implicitly; `simp` cannot match `?v ⟨k, _⟩` patterns (state such
+lemmas with the lambda spelled out); `Finset.sum_congr` after `rw [← e.sum_comp]` gets
+stuck, `Fintype.sum_equiv` does not. Each `lake env lean` check costs ≈2 min of olean
+loading on this machine because of the vendored `import Mathlib`.
+
+Not done (see Phase 4): the corollary collapsing `k`; importing the upstream blueprint
+chapters; pruning the vendored tree.
+
 ## Non-goals
 
 - Reproducing MIPStarRE's agentic workflow, CI, audit scripts, or documentation tree.

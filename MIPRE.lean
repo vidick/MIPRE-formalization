@@ -1,4 +1,13 @@
 import MIPRE.Background.GowersHatami.Basic
+import MIPRE.Background.LIDT.Axioms
+import MIPRE.Background.LIDT.Bridge.Consistency
+import MIPRE.Background.LIDT.Bridge.Defect
+import MIPRE.Background.LIDT.Bridge.Field
+import MIPRE.Background.LIDT.Bridge.Main
+import MIPRE.Background.LIDT.Bridge.Measurement
+import MIPRE.Background.LIDT.Bridge.Polynomial
+import MIPRE.Background.LIDT.Bridge.Strategy
+import MIPRE.Background.LIDT.Bridge.Value
 import MIPRE.Background.LIDT.Game
 import MIPRE.Background.LIDT.MIPStarRE.LDT
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.AxisParallelLine

@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 import MIPRE.Background.LIDT.Game
-import MIPRE.Foundations.Distances
+import MIPRE.Background.LIDT.Bridge.Main
 
 /-!
 # Quantum soundness of the classical low individual degree test
@@ -22,53 +22,13 @@ Two corrections to the printed statement, established by the MIPStarRE formaliza
 the error has both a factor `k²` and a term `exp(−k / (2560000 m²))`.
 
 The proof is delegated to `MIPStarRE.LDT.Test.mainFormal` through the bridge in
-`MIPRE.Background.LIDT.Bridge`; until the bridge is complete the proof is `sorry`.
+`MIPRE.Background.LIDT.Bridge` (`Bridge.soundness`), which translates our game,
+strategies, measurements and consistency relation into MIPStarRE's and back.
 -/
 
 namespace MIPRE.LIDT
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]
-
-/-- Polynomials in `m` variables of individual degree at most `d`, given by their
-coefficients on the monomials `∏ᵢ Xᵢ^(eᵢ)` with all `eᵢ ≤ d`. -/
-abbrev LowIndDegPoly := (Fin m → Fin (d + 1)) → F
-
-/-- Evaluation at a point of `F^m`. -/
-def LowIndDegPoly.eval (p : LowIndDegPoly (F := F) (m := m) (d := d)) (u : Point F m) : F :=
-  ∑ e, p e * ∏ i, u i ^ (e i : ℕ)
-
-/-- The field element answered to a point question; ill-typed answers are read as `0`
-(they are rejected by the test, so this only helps the strategy). -/
-def Answer.toValue : Answer F m d → F
-  | .value a => a
-  | _ => 0
-
-/-- The point measurements of player A in a strategy for the test, as POVMs with outcomes
-in `F`. -/
-noncomputable def pointPOVMA (S : TensorProductStrategy (lidtGame F m d)) (u : Point F m) :
-    POVM F (Fin S.dA) :=
-  (S.PA.toPOVM (.point u)).map Answer.toValue
-
-/-- The point measurements of player B in a strategy for the test, as POVMs with outcomes
-in `F`. -/
-noncomputable def pointPOVMB (S : TensorProductStrategy (lidtGame F m d)) (u : Point F m) :
-    POVM F (Fin S.dB) :=
-  (S.PB.toPOVM (.point u)).map Answer.toValue
-
-/-- Evaluation at `u` of a measurement `G` with polynomial outcomes: the POVM with outcomes
-in `F` whose operator for `a` is the sum of the operators of the polynomials `p` with
-`p(u) = a`. -/
-noncomputable def evalPOVM {n : Type*} [Fintype n] [DecidableEq n]
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := m) (d := d)) (Matrix n n ℂ))
-    (u : Point F m) : POVM F n :=
-  (G.toPOVM ()).map fun p => p.eval u
-
-/-- The error bound of the soundness theorem, as proved in the MIPStarRE development:
-`100000 · k² · m⁴ · (ε^(1/40000) + (d/q)^(1/40000) + exp(−k / (2560000 m²)))`. -/
-noncomputable def lidtError (m d q k : ℕ) (ε : ℝ) : ℝ :=
-  100000 * (k : ℝ) ^ 2 * (m : ℝ) ^ 4 *
-    (ε ^ (1 / 40000 : ℝ) + ((d : ℝ) / q) ^ (1 / 40000 : ℝ) +
-      Real.exp (-(k : ℝ) / (2560000 * (m : ℝ) ^ 2)))
 
 /-- **Quantum soundness of the classical low individual degree test**
 (JNVWY21qld, `thm:main-formal`, with the corrections `400·m·d ≤ k` and `0 < k`).
@@ -93,7 +53,7 @@ theorem lowIndividualDegree_soundness
         inconsistency (uniform (Point F m)) S.ψ (evalPOVM GA) (pointPOVMB S) ≤
           lidtError m d (Fintype.card F) k ε ∧
         inconsistency (uniform Unit) S.ψ (fun _ => GA.toPOVM ()) (fun _ => GB.toPOVM ()) ≤
-          lidtError m d (Fintype.card F) k ε := by
-  sorry
+          lidtError m d (Fintype.card F) k ε :=
+  Bridge.soundness S ε hS k hk hk0
 
 end MIPRE.LIDT
