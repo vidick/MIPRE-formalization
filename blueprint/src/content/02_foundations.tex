@@ -357,10 +357,16 @@ reductions.
 
 \begin{definition}[Succinct description]
 \label{def:succinct}
+\lean{MIPRE.Cost.IsSuccinctDesc, MIPRE.Cost.bitQueryAnswer}
+\leanok
 Following~\cite{MNY}, a pair $(e, n)$ of a Turing machine $e$ and integer $n$ is a
 \emph{succinct description} of the string $x \in \{0,1\}^*$ if $\abs{x} \leq 2^n$, the
-runtime of $e$ is at most $n$ on every input, and $\phi_e(m)$ equals the $m$-th bit of
-$x$ for $m < \abs{x}$, and $2$ for $m \geq \abs{x}$.
+runtime of $e$ on input $m$ is at most $(n+1)(\abs{m}+1)^2$, and $\phi_e(m)$ equals the
+$m$-th bit of $x$ for $m < \abs{x}$, and $2$ for $m \geq \abs{x}$. (\cite{MNY} require
+runtime at most $n$ on every input; in a model that charges for reading its input this is
+vacuous for $\abs{m} > n$, and the polynomial slack in $\abs{m}$ is what the ambient
+model's bit-indexing program achieves. Any fixed polynomial in $n$ and $\abs{m}$ would
+do, provided the same one is used in Theorem~\ref{thm:compression}.)
 \end{definition}
 
 \begin{definition}[Game description]

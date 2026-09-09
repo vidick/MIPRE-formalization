@@ -4,10 +4,16 @@ import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
 import MIPRE.Cslib.Foundations.Data.RelatesInSteps
 import MIPRE.Foundations.Compression
 import MIPRE.Foundations.Cost.Basic
+import MIPRE.Foundations.Cost.BitQuery
+import MIPRE.Foundations.Cost.Clocked
 import MIPRE.Foundations.Cost.Closure
 import MIPRE.Foundations.Cost.Encoding
+import MIPRE.Foundations.Cost.Loops
+import MIPRE.Foundations.Cost.Numeric
 import MIPRE.Foundations.Cost.PolyTime
+import MIPRE.Foundations.Cost.Threshold
 import MIPRE.Foundations.Cost.Toolkit
+import MIPRE.Foundations.Cost.Unary
 import MIPRE.Foundations.Distances
 import MIPRE.Foundations.Games
 import MIPRE.HaltingGameValue

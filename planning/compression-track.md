@@ -128,10 +128,14 @@ ported (different semantics, closures, space accounting).
 - **K-D4 — runtime s-m-n generic in the hardcoded type** (K0, restated for `Prog`).
   `smn_polyTime α : ∃ S : PolyTimeFun (Prog × α) Prog, ∀ p a, S (p, a) = hardcode p
   (encode a)`; hardcoding is pairing, no separators are involved.
-- **K-D5 — succinctness bound stays `(n + 1) * (Nat.size m + 1)`** until
-  `thm:compression` is stated (design knob inherited from `Compression.lean`; whatever is
-  chosen must be what the compression theorem for games certifies about its output
-  verifiers).
+- **K-D5 — succinctness bound is `(n + 1) * (Nat.size m + 1) ^ 2`** (revised 2026-09-09,
+  K2b; was `(n + 1) * (Nat.size m + 1)`). The bit-indexing program `bitAtProg` walks the
+  string while decrementing the binary index, and in the list language a zero test or a
+  decrement of the index *copies* it, so each of the `|y|` steps costs
+  `O(size y + |m| ^ 2)` (`bitAtIter_le`): a budget linear in `|m|` is not achievable by
+  the program the proof uses. Still a design knob until `thm:compression` is stated
+  (whatever is chosen must be what the compression theorem for games certifies about its
+  output verifiers); recorded in `Compression.lean` and blueprint `def:succinct`.
 - **K-D6 — two-layer closure library, shared infrastructure.** A *program layer* on
   `Prog` (combinators with `Eval`/`Runs` lemmas, usable for programs whose correctness is
   only conditional — the bit-query program `β` runs an arbitrary input program through the
@@ -169,7 +173,7 @@ ported (different semantics, closures, space accounting).
 | **K0** | Statement audit and fixes: `UniversalMachine`/`ClockedUniversalMachine` (K-D2); one-directional Kleene (K-D3); generic `smn_polyTime` (K-D4); blueprint `\lean{}` tags; TM roadmap re-sequenced | ✅ 2026-09-08 |
 | **K1** | Foundations: the ambient language and its metatheory, encodings, `PolyTimeFun` with `id`/`comp`, efficient s-m-n at program level (`hardcode_*`) — all sorry-free; `Cost/` sorries = exactly `smn_polyTime`, `exists_efficient_universal`, `exists_clocked_universal`, `efficient_fixed_point` | ✅ 2026-09-08 (redone on `Prog` after K-D7) |
 | **K2a** | Closure library part I: calls, projections, pairing, branching (`Cost/Closure.lean`); literal data (K-D9); `smn_polyTime` proved | ✅ 2026-09-09 |
-| K2b | Closure library part II: loops — counted loop, list length, tree flattening/size, binary size in unary, `2^q`, bit-indexing, `haltsWithin` — the fixed programs of the proof as `PolyTimeFun`s | ☐ |
+| K2b | Closure library part II: loops — list length, tree size in unary, `2^j`, zero test/decrement, bit-indexing, threshold, `haltsWithin` — the fixed programs of the proof (K-D5 revised) | ✅ 2026-09-09 |
 | K3 | **`recursive_compression` proved** from the toolkit statements; blueprint `\leanok` + proof text on `lem:recursive-compression` (and on `lem:smn`) | ☐ |
 | K4 | `efficient_fixed_point` from `UniversalMachine` + s-m-n ([MNY, Lemma 2.3]); `lem:kleene` `\leanok` | ☐ |
 | K5 | Mathlib bridges (`Primcodable Prog`, `PolyTimeFun.toFun_computable`, `exists_compile`) → `recursive_compression_halting` sorry-free modulo `lem:universal-tm`; independent of K2–K4 | ☐ |
@@ -204,22 +208,48 @@ conventions keep all of this free of de Bruijn shifting: callees always see thei
 variable `0`, and branches *re-bind the input by copying it* rather than shifting indices.
 `smn_polyTime` is proved with the linear-time program `smnProg` (K-D9).
 
-**K2b (next).** Loops: a *counted loop* combinator (`loop` over a unary counter
-`Data.ofNat k`, running a closed step program `k` times on an accumulator; cost `Σ` of the
-step costs plus the copies of counter and accumulator — quadratic in `k` is acceptable), list
-iteration (`loop` walking a `cons`-chain), and **tree flattening** (a `loop` with an explicit
-stack producing the preorder bit list of a `Data`; from it, the size of a program in unary —
-needed for the threshold `r e = 2 ^ q(esize e)` of K3). Concrete programs: `Nat.size` of a
-binary number in unary, binary decrement and bit-indexing `bitQueryAnswer` (walk the string
-while decrementing the binary index; time `O(|y| · |m|)`, which is where the product form of
-`IsSuccinctDesc` comes from), `2 ^ q(n)` in binary for a polynomial `q` given as data (a
-program `polyProg : Polynomial ℕ → Prog`, `noncomputable` only because `Polynomial ℕ` is),
-and `haltsWithin (UT) : PolyTimeFun (Prog × ℕ) Bool` with `toFun (e, n) = (evalWithin e nil
-(Nat.size n)).isSome` (assemble `(ofNat (Nat.size n), (encode e, nil))`, run `UT.univT`,
-inspect the flag).
+**K2b (done 2026-09-09).** Loops and the numeric/list programs, all sorry-free:
 
-**Acceptance (K2b):** the combinators above with `computes` proofs; `grep sorry` adds
-nothing outside the two universal-machine nodes and Kleene.
+- `Cost/Loops.lean`: the generic loop principle `Eval.loop_of_invariant` (invariant,
+  measure, postcondition, uniform body bound `B` ⇒ a run of `loop b` within
+  `(μ s + 1) · (B + 1)`); list reversal onto an accumulator (`revOntoProg`), list length in
+  unary (`lenProg`: `xs ↦ ofNat |xs|`). Every list walk is *quadratic* in this model — the
+  loop state is rebuilt by copying the tail at each step — so bounds have the shape
+  `(iterations + 1) · (S + c)` with a slack `S` dominating the sizes involved.
+- `Cost/Unary.lean`: unary addition (`addProg`), `2 ^ j` in binary from `j` in unary
+  (`expBitsProg`, via `Nat.bits_two_pow`), and the size of a tree in unary (`sizeProg`, a
+  stack-driven traversal — the "tree flattening" of the original plan reduced to what K3
+  needs).
+- `Cost/Numeric.lean`: bit strings as data (`encode_bitStr_eq_list`, size lemmas,
+  `bitsVal`), zero test (`isZeroProg`) and decrement (`decProg`, specified through
+  `bitsVal` since it may leave a non-canonical representation).
+- `Cost/Threshold.lean`: `PolyTimeFun.threshold K : e ↦ 2 ^ (K + 1 + esize e)`
+  (`sizeProg`, then `addConstProg`, then `expBitsProg`; bound `40 (X + K + 4) ^ 2`). The
+  threshold of K3 is therefore `r e = 2 ^ (K + 1 + esize e)` with a *constant* `K` chosen
+  classically from the toolkit polynomial (`Q(x) ≤ A (x + 1) ^ D` ⇒ for `s ≥ K`,
+  `A (2 s) ^ D ≤ 2 ^ (s - 1)`), so no unary multiplication or powering of polynomials is
+  needed (the planned `polyProg` is dropped).
+- `Cost/BitQuery.lean`: `bitQueryAnswer` (moved here from `Compression.lean`) and the
+  bit-indexing program `bitAtProg` with `bitAtProg_runs`: on `(encode y, encode m)` it
+  computes `bitQueryAnswer y m` within `(|y| + 1) · bitAtIter (size y) (Nat.size m)`,
+  `bitAtIter sy L ≤ (sy + 534) (L + 1) ^ 2` (`bitAtIter_le`). Quadratic in `|m|`: a zero
+  test or a decrement copies the index — hence the revised K-D5.
+- `Cost/Clocked.lean`: `PolyTimeFun.haltsWithin UT : PolyTimeFun (Prog × ℕ) Bool`,
+  `toFun (e, n) = (evalWithin e nil (Nat.size n)).isSome`, bound
+  `UT.bound + (X + 2)(4 X + 14) + 9 X + 40`.
+
+The *counted loop* combinator of the original plan was not needed: every program is a
+direct `loop` with an invariant. Lessons: state each body's exact cost as a lemma
+(`cast_cost` + `omega`) and bound the loop against a fixed slack `S`; give `Nat.succ_mul`
+instances explicit types so that `omega` sees one product atom; **never** rely on
+expected-type propagation for a cost of the form `a + 1 + 1` against a two-metavariable
+pattern such as `Eval.cons`'s `s + u + 1` — Lean's `Nat` offset unification splits it as
+`?s := a, ?u := 2` — build the term with `have h := …` (or a `_` cost) and cast
+afterwards; `by decide` does not see through `WellScoped n (var i)` — use
+`by simp [WellScoped]`.
+
+**Acceptance (K2b, met):** `grep sorry` adds nothing outside the two universal-machine
+nodes, Kleene, and `Compression.lean`'s own nodes.
 
 ## K3 — the compression theorem
 
@@ -362,7 +392,8 @@ lake exe mk_all               # when files were added; commit MIPRE.lean
   branching), `smn_polyTime` proved (2026-09-09). Lessons: `scoped` is a keyword; a
   Windows command line is capped at 8 KB, so files are written with the editor tools, not
   shell heredocs; multi-line `perl -0pi` edits mangle UTF-8 files — use targeted edits.
-- [ ] **K2b** loops, numeric/list programs, `haltsWithin`
+- [x] **K2b** loops, numeric/list programs, threshold, `haltsWithin` (2026-09-09);
+  `IsSuccinctDesc` budget revised to `(n + 1) * (Nat.size m + 1) ^ 2` (K-D5).
 - [ ] **K3** `recursive_compression` proved → **abstract compression theorem**
 - [ ] **K4** `efficient_fixed_point` proved
 - [ ] **K5** Mathlib bridges → `recursive_compression_halting`

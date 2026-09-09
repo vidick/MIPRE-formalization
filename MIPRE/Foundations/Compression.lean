@@ -3,6 +3,7 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
+import MIPRE.Foundations.Cost.BitQuery
 import MIPRE.Foundations.Cost.Toolkit
 import Mathlib.Computability.Halting
 import Mathlib.Data.ENat.Lattice
@@ -31,11 +32,15 @@ the constructed program a *succinct* description at every recursion level
 
 * **Succinctness time bound.** [MNY, Definition 2.4] requires `runtime(e, m) ≤ n` for
   *all* `m`. In any cost model that charges to read its input (ours does), that bound is
-  vacuous for `|m| > n`; we require `≤ (n + 1) * (Nat.size m + 1)` instead. Any
+  vacuous for `|m| > n`; we require `≤ (n + 1) * (Nat.size m + 1) ^ 2` instead. Any
   `poly(n, |m|)` bound would do; the choice only shifts polynomial overheads inside the
   proof, but it must be fixed consistently with the compression theorem for games
-  (`thm:compression`) whose output verifiers are what get succinctly described. **Design
-  knob — revisit when `thm:compression` is stated.**
+  (`thm:compression`) whose output verifiers are what get succinctly described. The
+  quadratic factor in `|m|` is what the bit-query program `Cost.Prog.bitAtProg` achieves:
+  in the list language, a zero test or a decrement of the binary index copies the index,
+  so each of the `|y|` steps of the walk costs `O(size y + |m| ^ 2)`
+  (`Cost.Prog.bitAtIter_le`). **Design knob (K-D5) — revisit when `thm:compression` is
+  stated.**
 * **The instantiation** (blueprint `rem:compression-abstract`): `A` = descriptions of
   normal form verifier games with a perfect PCC strategy, and `f = MIPRE.entRequirement
   (·, 1/2) : _ → ℕ∞` composed with the interpretation of descriptions as games. The `ℕ∞`
@@ -46,15 +51,9 @@ namespace MIPRE.Cost
 
 /-! ## Succinct descriptions ([MNY, Definition 2.4]; blueprint `def:succinct`) -/
 
-/-- The answer a succinct description must give to the bit-query `m` about the string
-`x`: the `m`-th bit for `m < |x|`, and the out-of-range marker (the unary numeral `2`)
-otherwise. -/
-def bitQueryAnswer (x : BitStr) (m : ℕ) : Data :=
-  if h : m < x.length then encode (x.get ⟨m, h⟩) else Data.ofNat 2
-
 /-- `(c, n)` **succinctly describes** the bit string `x`: `c` is a closed program, `x` has
-length at most `2 ^ n`, and `c` answers every bit-query `m` (presented in binary) within
-cost `(n + 1) * (|m| + 1)`.
+length at most `2 ^ n`, and `c` answers every bit-query `m` (presented in binary; the
+answer is `Cost.bitQueryAnswer x m`) within cost `(n + 1) * (|m| + 1) ^ 2`.
 
 [MNY, Definition 2.4], with the time bound adapted as discussed in the module docstring.
 The pair `(c, n)` is exponentially smaller than `x` itself; a compression procedure's
@@ -62,7 +61,7 @@ guarantees are only required on genuine succinct descriptions, but it must *run*
 polynomial time) on all inputs. -/
 def IsSuccinctDesc (c : Prog) (n : ℕ) (x : BitStr) : Prop :=
   c.WellScoped 1 ∧ x.length ≤ 2 ^ n ∧
-    ∀ m : ℕ, ∃ t ≤ (n + 1) * (Nat.size m + 1), c.Runs (encode m) (bitQueryAnswer x m) t
+    ∀ m : ℕ, ∃ t ≤ (n + 1) * (Nat.size m + 1) ^ 2, c.Runs (encode m) (bitQueryAnswer x m) t
 
 /-! ## The compression lemma -/
 
