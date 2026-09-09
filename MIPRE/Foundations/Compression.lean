@@ -10,6 +10,7 @@ import MIPRE.Foundations.Cost.Growth
 import MIPRE.Foundations.Cost.Kleene
 import MIPRE.Foundations.Cost.Partrec
 import MIPRE.Foundations.Cost.FromPartrec
+import MIPRE.Foundations.Cost.Universal
 import Mathlib.Computability.Halting
 import Mathlib.Data.ENat.Lattice
 

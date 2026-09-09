@@ -172,6 +172,33 @@ ported (different semantics, closures, space accounting).
   recursion primitive recursive by strong recursion on `ℕ` (`Data.primrec_recD`). A
   `Primcodable Prog` instance would need a primrec parser of `toData` (depth-3 tuple
   recursion) for no consumer; add it only if a statement needs it.
+- **K-D14 — route β: the universal machines are the self-interpreter** (2026-09-09,
+  gate). `Cost/Interpreter.lean` implements `Machine.stepData` as the closed program
+  `stepProg` (tag dispatch by `elim` chains, case programs called through `callVar` on a
+  packaged tuple, `getListProg` for variable lookup); its cost is `stepBound S =
+  (S+1)(S+40)+200` in the size `S` of the encoded configuration, the only non-constant work
+  being the environment walk. `Cost/MachineBound.lean` bounds the configurations along the
+  run of a derivation (`CfgBound`, `eval_steps_bound`; `size_toData_le`: size at most
+  `cfgSizeBound V L P K`, cubic; `eval_steps_bound_forever` via the fixed final
+  configuration) and counts its steps (`eval_steps_count`: at most `3 t`, the free steps —
+  entering a loop, returning to a `cons`/`let` frame — each matched with a paid one).
+  `Cost/Universal.lean` builds `univProg = let_ univPrelude (loop interpBody)` ("final?
+  stop with the value : continue with `stepProg`"); the forward bound combines the two
+  lemmas, the backward direction inverts the loop with `Eval.deterministic` against the
+  forward body runs and closes with `halts_iff`. The clocked `univTProg` carries in its
+  loop state the remaining cost budget (decremented by `stepCostProg`, which computes
+  `stepCost` exactly, via `subProg`), a step budget `3 k + 1` (termination; a run of cost
+  `t ≤ k` halts within `3 t` steps) and a size guard `Θ = thetaFun (k + esize c + v.size)`,
+  a cubic polynomial computed in unary by `tripleProg`/`repProg`/`sizeProg`, which
+  dominates `cfgSizeBound` for runs of cost at most `k` (`sigmaFun_le_thetaFun`). The guard
+  is checked on the configuration *produced* by a step, whose size `Eval.size_le` bounds
+  by the step's cost, so the loop never handles a configuration larger than
+  `stepBound Θ` even on non-halting runs — no invariant on partial runs is needed.
+  Correctness goes through the mathematical function `clockRun` (`clockLoop_runs`,
+  `clockRun_of_final`, `clockRun_of_not`, `clockRun_eq : … = clockedResult c v k`). No
+  TM-level bridge is involved: the blueprint edge `lem:universal-tm ←
+  lem:bounded-universal-machine` is removed, and TM Milestones E–G serve only
+  `thm:succinct-sat` and the paper-literal machine statements.
 - **K-D13 — one evaluation machine for both universal artifacts** (2026-09-09, K5). The
   CEK machine of `Cost/Machine.lean` charges `Eval` costs at designated steps
   (`stepCost`; `loop` rules at the frame pop), so that a run's accumulated cost is exactly
@@ -208,12 +235,14 @@ ported (different semantics, closures, space accounting).
 | K3 | **`recursive_compression` proved** from the toolkit statements; blueprint `\leanok` + proof text on `lem:recursive-compression` (and on `lem:smn`) | ✅ 2026-09-09 |
 | K4 | `efficient_fixed_point` from `UniversalMachine` + s-m-n ([MNY, Lemma 2.3]); `lem:kleene` `\leanok` | ✅ 2026-09-09 |
 | K5 | Mathlib bridges (`Primcodable Prog`, `PolyTimeFun.toFun_computable`, `exists_compile`) → `recursive_compression_halting` sorry-free modulo `lem:universal-tm`; independent of K2–K4 | ✅ 2026-09-09 |
-| gate | Universal machine: route α (TM Milestones E–G + bridge H) or route β (self-interpreter of `Prog` in `Prog`) — **decide after K3**, record in `planning/tm-infrastructure.md` | ☐ |
+| gate | Universal machine: route α (TM Milestones E–G + bridge H) or route β (self-interpreter of `Prog` in `Prog`) — **decided after K5: route β** (K-D14); `exists_efficient_universal` / `exists_clocked_universal` proved in `Cost/Universal.lean`; recorded in `planning/tm-infrastructure.md` | ✅ 2026-09-09 (route β) |
 
 Milestones reached along the way: after K1 the efficient s-m-n (program level) is
 sorry-free; after K3 the abstract compression theorem is sorry-free modulo two
 blueprint nodes; after K4 modulo the universal machine only; after K5 the same holds
-for the halting-problem corollary consumed by `MIPRE.HaltingGameValue`.
+for the halting-problem corollary consumed by `MIPRE.HaltingGameValue`; after the gate
+(route β) `recursive_compression` and `recursive_compression_halting` are sorry-free
+outright (`#print axioms`: `propext`, `Classical.choice`, `Quot.sound` only).
 
 ---
 
@@ -455,6 +484,22 @@ lake exe mk_all               # when files were added; commit MIPRE.lean
   `Cost/FromPartrec.lean` (`Prog.ofCode : ToPartrec.Code → Prog` with `ofCode_sound` /
   `ofCode_complete`, `exists_compile` via Mathlib's `ToPartrec.Code.exists_code` on the
   universal partial function). The machine files are shared with route β.
-- [ ] gate: universal-machine route decided and recorded
+- [x] **gate — route β** (2026-09-09): `exists_efficient_universal` and
+  `exists_clocked_universal` proved (`Cost/Interpreter.lean`, `Cost/MachineBound.lean`,
+  `Cost/Universal.lean`; K-D14); the compression theorem and its halting form are
+  sorry-free. Blueprint: proof text and `\leanok` on `lem:universal-tm`, its `\uses` edge to
+  the TM node dropped. Lessons: keep one named cost-bound function per program
+  (`stepBound`, `subBound`, `sizeBound`, …) opaque for `omega` and prove monotonicity
+  separately, so the assembly proofs are linear arithmetic over a few atoms; state loop
+  lemmas over the iterate `step^[n] c₀` of the mathematical machine (the final
+  configuration is a fixed point, `step_final`, which turns "bounded up to `N`" into
+  "bounded forever" and identifies results); a `by cases h` inside an anonymous-constructor
+  list swallows the following components as further `cases` targets — use `by simp at h`;
+  a `have := lemma …` whose implicit numeral parameters occur only in `by omega` arguments
+  needs a type ascription; `simp only … at *` fails when nothing changes — wrap it in `try`
+  (`size_omega` macro in `Interpreter.lean`); anonymous-constructor `WellScoped` proofs are
+  brittle for long programs — `simp [prog, WellScoped, callVar_wellScoped, <sub-program
+  facts>]` is robust; a per-frame size bound must leave room for `V = 0`
+  (`V + P + L V + L + 10`, not `+ 9`).
 
 Each WP is one commit on the working branch, updating this checklist in the same commit.

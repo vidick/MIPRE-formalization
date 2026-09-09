@@ -224,6 +224,18 @@ proof has pinned the exact interface the machine must satisfy.
   machine over `Data` driven by one `loop`), no bridge; E–G then serve only
   `thm:succinct-sat` and the paper-literal machine statements.
 
+**Decision (2026-09-09, after K5): route β.** The ambient nodes
+`exists_efficient_universal` / `exists_clocked_universal` are discharged by the
+self-interpreter (`MIPRE/Foundations/Cost/Interpreter.lean`, `MachineBound.lean`,
+`Universal.lean`; compression-track decision K-D14): the CEK evaluation machine of K5 is
+implemented as a closed `Prog` and iterated by a `loop`, with a cost budget, a step budget
+and a size guard for the clocked variant. The blueprint edge `lem:universal-tm ←
+lem:bounded-universal-machine` is removed; the compression theorem and its halting form are
+sorry-free. Milestones E–G (and a bridge H) are no longer needed for the ambient nodes —
+they serve only `thm:succinct-sat` (requirement R3, compiling `Prog` to `Code i`) and the
+paper-literal machine statements `lem:universal-machine` / `lem:bounded-universal-machine`,
+which remain the repo's TM-track sorries.
+
 Still deferred: `specialize` (hardwiring of `Code i`) — per GPT §6; the *ambient* s-m-n
 (`hardcode`) belongs to the compression track.
 

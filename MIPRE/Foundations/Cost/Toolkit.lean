@@ -27,7 +27,8 @@ Contents:
 * `UniversalMachine` / `exists_efficient_universal` (`lem:universal-tm`): a fixed closed
   program `univ` that, on the pair `(encode c, v)`, halts exactly when `c` halts on `v`,
   with the same result and polynomial time overhead — packaged as data (the program and its
-  overhead polynomial) whose existence is the sorried node.
+  overhead polynomial); its existence is proved in `Cost/Universal.lean` by a
+  self-interpreter.
 * `ClockedUniversalMachine` / `exists_clocked_universal`: the time-bounded variant ("run
   `c` on `v` for `k` steps"), used by the recursive compression argument and by the
   pipeline's deciders (introspection and repetition simulate other deciders under a budget).
@@ -43,9 +44,10 @@ the argument uses (see its docstring).
 
 Effort notes (matching the blueprint's `\effortHard` on this section): the s-m-n lemmas
 are elementary. The two universal-machine theorems are the hard core — a self-interpreter
-of `Prog` written in `Prog` with polynomial overhead; this is the same kind of artifact as
-the interpreter underlying the succinct Cook–Levin gateway (`thm:succinct-sat`), and the
-two developments should share design.
+of `Prog` written in `Prog` with polynomial overhead (`Cost/Interpreter.lean`,
+`Cost/MachineBound.lean`, `Cost/Universal.lean`); this is the same kind of artifact as the
+interpreter underlying the succinct Cook–Levin gateway (`thm:succinct-sat`), and the two
+developments should share design.
 -/
 
 namespace MIPRE.Cost
@@ -147,8 +149,8 @@ theorem smn_polyTime (α : Type*) [SizedEncoding α] :
 The two universal machines are *structures*: the program and its overhead polynomial are
 fields, so that downstream definitions (deciders simulating other deciders under a budget;
 the λ-bookkeeping of [JNVWY, §12.2], which chooses λ above the concrete overhead
-polynomials) can refer to them as data. Their existence is the sorried node; no `def` is
-sorried. -/
+polynomials) can refer to them as data. Their existence is proved in `Cost/Universal.lean`
+(`selfUniversal`, `selfClockedUniversal`). -/
 
 /-- **Efficient universal machine.** A fixed closed program `univ` simulating any `c` on
 any `v` — with the same halting behavior and result — at polynomial time overhead in
@@ -168,9 +170,8 @@ structure UniversalMachine where
   halts_of : ∀ (c : Prog) (v r : Data) (t' : ℕ), univ.Runs (.cons (encode c) v) r t' →
     ∃ t, c.Runs v r t
 
-/-- Existence of an efficient universal machine (blueprint `lem:universal-tm`). -/
-theorem exists_efficient_universal : Nonempty UniversalMachine := by
-  sorry
+/-! `exists_efficient_universal : Nonempty UniversalMachine` (blueprint `lem:universal-tm`)
+is proved in `Cost/Universal.lean` by the self-interpreter. -/
 
 open Classical in
 /-- The result of running `c` on `v` for at most `k` cost, if it halts within the budget
@@ -207,9 +208,8 @@ structure ClockedUniversalMachine where
     ∃ t ≤ bound.eval (k + esize c + v.size),
       univT.Runs (.cons (.ofNat k) (.cons (encode c) v)) (clockedResult c v k) t
 
-/-- Existence of a clocked universal machine (blueprint `lem:universal-tm`). -/
-theorem exists_clocked_universal : Nonempty ClockedUniversalMachine := by
-  sorry
+/-! `exists_clocked_universal : Nonempty ClockedUniversalMachine` (blueprint
+`lem:universal-tm`) is proved in `Cost/Universal.lean` by the clocked self-interpreter. -/
 
 /-! ## Efficient Kleene recursion
 

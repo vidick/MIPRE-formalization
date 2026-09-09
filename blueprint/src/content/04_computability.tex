@@ -118,7 +118,6 @@ TODO
 
 \begin{lemma}[Efficient universal Turing machine]
 \label{lem:universal-tm}
-\uses{lem:bounded-universal-machine}
 \lean{MIPRE.Cost.exists_efficient_universal, MIPRE.Cost.exists_clocked_universal}
 \leanok
 There is a program $u$ and a polynomial $p$ such that $\phi_u(e, x) = \phi_e(x)$ for
@@ -127,7 +126,29 @@ p\bigl(\abs{e}, \abs{x}, \mathrm{runtime}(e, x)\bigr)$.
 \end{lemma}
 
 \begin{proof}
-TODO
+\leanok
+Both the universal program and its clocked variant are self-interpreters of the ambient
+list language, written in the language itself (\texttt{MIPRE.Cost.Machine.univProg},
+\texttt{MIPRE.Cost.Machine.univTProg}). Evaluation is first presented as an abstract
+machine on configurations (a control ``evaluate $p$'' or ``return $v$'', an environment
+and a stack of frames) whose steps are charged exactly the costs of the evaluation rules,
+so that a derivation of cost $t$ corresponds to a machine run of at most $3t$ steps
+reaching a final configuration, and conversely every run reaching a final configuration
+comes from a derivation. Configurations are encoded as data and the step function is
+implemented by a fixed program (\texttt{stepProg}) at cost quadratic in the size of the
+configuration. Along the run simulating a derivation of cost $t$ on the input $x$, every
+configuration has size polynomial in $\abs{e} + \abs{x} + t$: values are results of
+sub-derivations, hence of size at most $t$; environments and stacks grow by at most one
+entry per unit of cost. The universal program iterates \texttt{stepProg} until a final
+configuration is reached, so its runs are polynomially bounded, and any of its halting
+runs is a machine run reaching a final configuration, hence a derivation with the same
+result. The clocked variant additionally carries, in unary, the remaining cost budget
+(decremented by the exact cost of each step), a step budget $3k+1$ guaranteeing
+termination, and a size guard $\Theta$, a fixed polynomial in $k + \abs{e} + \abs{x}$
+dominating the configuration sizes of any run of cost at most $k$; it returns the timeout
+value when a budget or the guard is exceeded. The guard is checked on the configuration
+produced by each step, whose size is bounded by the cost of producing it, so the loop
+only handles configurations of polynomial size even when the simulated run does not halt.
 \end{proof}
 
 \begin{lemma}[Efficient s-m-n]
