@@ -3,7 +3,7 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.PolyTime
+import MIPRE.Foundations.Cost.Closure
 
 /-!
 # The efficient computability toolkit
@@ -17,12 +17,13 @@ is new.
 
 Contents:
 
-* `constProg`/`hardcode`: the **efficient s-m-n**. `hardcode p d` binds the pair
-  `(d, input)` as the input of `p`. The witness makes [MNY, Lemma 2.2] quantitative and
-  stronger than stated there: program-size and time overheads are *linear* in the sizes of
-  `d` and of the input (paper: polynomial), with universal constants. `smn_polyTime` is the
-  runtime version — the map is itself polynomial-time computable in the model — generic in
-  the type of the hardcoded value.
+* `hardcode`: the **efficient s-m-n**. `hardcode p d = let_ (cons (const d) (var 0)) p`
+  binds the pair `(d, input)` as the input of `p`. The witness makes [MNY, Lemma 2.2]
+  quantitative and stronger than stated there: the time overhead is *additive and linear*
+  in the sizes of `d` and of the input, and the description grows by exactly `d.size + 35`
+  nodes (paper: polynomial). `smn_polyTime` is the runtime version — the map is itself
+  polynomial-time computable in the model (`smnProg`, linear time) — generic in the type of
+  the hardcoded value.
 * `UniversalMachine` / `exists_efficient_universal` (`lem:universal-tm`): a fixed closed
   program `univ` that, on the pair `(encode c, v)`, halts exactly when `c` halts on `v`,
   with the same result and polynomial time overhead — packaged as data (the program and its
@@ -51,48 +52,19 @@ namespace MIPRE.Cost
 
 open Polynomial
 
-/-- Transport a run along an equation between costs. -/
-theorem Eval.cast_cost {env : Env} {p : Prog} {r : Data} {t t' : ℕ} (h : Eval env p r t)
-    (e : t = t') : Eval env p r t' :=
-  e ▸ h
-
-/-! ## Constants and the efficient s-m-n (blueprint `lem:smn`; [MNY, Lemma 2.2]) -/
-
-/-- The program building the constant `d`: nested `cons`/`nil` nodes. -/
-def constProg : Data → Prog
-  | .nil => .nil
-  | .cons a b => .cons (constProg a) (constProg b)
-
-theorem constProg_wellScoped (d : Data) (n : ℕ) : (constProg d).WellScoped n := by
-  induction d with
-  | nil => trivial
-  | cons a b iha ihb => exact ⟨iha, ihb⟩
-
-/-- `constProg d` builds `d` in exactly `d.size` steps, in any environment. -/
-theorem constProg_eval (d : Data) (env : Env) : Eval env (constProg d) d d.size := by
-  induction d with
-  | nil => exact .nil env
-  | cons a b iha ihb => exact .cons iha ihb
-
-theorem esize_constProg_le (d : Data) : esize (constProg d) ≤ 7 * d.size := by
-  induction d with
-  | nil => decide
-  | cons a b iha ihb =>
-    simp only [Prog.esize_eq_size_toData, constProg, Prog.toData, Data.size_cons,
-      Data.size_ofNat] at iha ihb ⊢
-    omega
+/-! ## The efficient s-m-n (blueprint `lem:smn`; [MNY, Lemma 2.2]) -/
 
 /-- The s-m-n transformation: `hardcode p d` runs `p` on the pair `(d, input)`. -/
-def hardcode (p : Prog) (d : Data) : Prog := .let_ (.cons (constProg d) (.var 0)) p
+def hardcode (p : Prog) (d : Data) : Prog := .let_ (.cons (.const d) (.var 0)) p
 
 theorem hardcode_wellScoped {p : Prog} (hp : p.WellScoped 1) (d : Data) :
     (hardcode p d).WellScoped 1 :=
-  ⟨⟨constProg_wellScoped d 1, Nat.zero_lt_one⟩, hp.mono (by omega) _⟩
+  ⟨⟨trivial, Nat.zero_lt_one⟩, hp.mono (by omega) _⟩
 
 /-- The run of the pairing prefix of `hardcode`. -/
 theorem hardcode_prefix_eval (d x : Data) :
-    Eval [x] (.cons (constProg d) (.var 0)) (.cons d x) (d.size + (x.size + 1) + 1) :=
-  .cons (constProg_eval d _) (by simpa using Eval.var [x] 0)
+    Eval [x] (.cons (.const d) (.var 0)) (.cons d x) (d.size + (x.size + 1) + 1) :=
+  .cons (.const _ _) (Eval.var_of_get (by simp))
 
 /-- Efficient s-m-n, functional equation and forward time transfer: a run of `p` on
 `cons d x` yields a run of `hardcode p d` on `x` with *additive, linear* overhead. -/
@@ -105,30 +77,61 @@ theorem hardcode_time {p : Prog} (hp : p.WellScoped 1) {d x r : Data} {t : ℕ}
 `p`. -/
 theorem hardcode_time_rev {p : Prog} (hp : p.WellScoped 1) {d x r : Data} {t : ℕ}
     (h : (hardcode p d).Runs x r t) : ∃ t' ≤ t, p.Runs (.cons d x) r t' := by
-  change Eval [x] (.let_ (.cons (constProg d) (.var 0)) p) r t at h
+  change Eval [x] (.let_ (.cons (.const d) (.var 0)) p) r t at h
   cases h with
   | let_ h₁ h₂ =>
     obtain ⟨rfl, -⟩ := h₁.deterministic (hardcode_prefix_eval d x)
     exact ⟨_, by omega,
       Eval.of_append_of_wellScoped (env := [.cons d x]) (extra := [x]) h₂ hp⟩
 
-/-- Efficient s-m-n, size bound: hardcoding costs *linear* program size. -/
+/-- The description of a hardcoded program, spelled out. -/
+theorem toData_hardcode (p : Prog) (d : Data) :
+    (hardcode p d).toData = .cons (.ofNat 4) (.cons (.cons (.ofNat 2)
+      (.cons (.cons (.ofNat 6) d) (.cons .nil .nil))) p.toData) := rfl
+
+/-- Efficient s-m-n, size: hardcoding adds exactly `d.size + 35` nodes to the description. -/
 theorem hardcode_size (p : Prog) (d : Data) :
-    esize (hardcode p d) ≤ esize p + 7 * d.size + 21 := by
-  have := esize_constProg_le d
-  simp only [Prog.esize_eq_size_toData, hardcode, Prog.toData, Data.size_cons,
-    Data.size_ofNat] at this ⊢
+    esize (hardcode p d) = esize p + d.size + 35 := by
+  simp only [Prog.esize_eq_size_toData, toData_hardcode, Data.size_cons, Data.size_ofNat,
+    Data.size_nil]
   omega
+
+/-- The program computing the s-m-n map on descriptions: from `(toData p, encode a)` it
+assembles `toData (hardcode p (encode a))` — a fixed-shape tree around the two inputs. -/
+def smnProg : Prog :=
+  .elim 0 .nil (.cons (.const (.ofNat 4)) (.cons (.cons (.const (.ofNat 2))
+    (.cons (.cons (.const (.ofNat 6)) (.var 1)) (.const (.cons .nil .nil)))) (.var 0)))
+
+theorem smnProg_wellScoped : smnProg.WellScoped 1 := by simp [smnProg, Prog.WellScoped]
+
+theorem smnProg_runs (x d : Data) :
+    smnProg.Runs (.cons x d) (.cons (.ofNat 4) (.cons (.cons (.ofNat 2)
+      (.cons (.cons (.ofNat 6) d) (.cons .nil .nil))) x)) (x.size + d.size + 38) := by
+  have h := Eval.elim_cons (env := [Data.cons x d]) (i := 0) (n := .nil) (by simp)
+    (Eval.cons (Eval.const _ (.ofNat 4)) (Eval.cons (Eval.cons (Eval.const _ (.ofNat 2))
+      (Eval.cons (Eval.cons (Eval.const _ (.ofNat 6))
+        (Eval.var_of_get (env := [x, d, Data.cons x d]) (i := 1) (v := d) (by simp)))
+        (Eval.const _ (.cons .nil .nil))))
+      (Eval.var_of_get (env := [x, d, Data.cons x d]) (i := 0) (v := x) (by simp))))
+  exact h.cast_cost (by simp only [Data.size_ofNat, Data.size_cons, Data.size_nil]; omega)
 
 /-- The s-m-n map itself is polynomial-time computable *in the model* — the clause of
 [MNY, Lemma 2.2] that the recursive compression argument uses at runtime (the
 self-referential decider builds hardcoded programs while executing). The argument hardcodes
 encoded programs and tuples, not only bit strings, hence the statement is generic in the
-hardcoded type `α`. Requires the closure library. -/
+hardcoded type `α`. -/
 theorem smn_polyTime (α : Type*) [SizedEncoding α] :
     ∃ S : PolyTimeFun (Prog × α) Prog,
       ∀ (p : Prog) (a : α), S (p, a) = hardcode p (encode a) := by
-  sorry
+  refine ⟨{ toFun := fun pa => hardcode pa.1 (encode pa.2)
+            code := smnProg
+            closed := smnProg_wellScoped
+            timeBound := X + C 38
+            computes := ?_ }, fun _ _ => rfl⟩
+  rintro ⟨p, a⟩
+  refine ⟨esize p + esize a + 38, ?_, smnProg_runs p.toData (encode a)⟩
+  simp only [Polynomial.eval_add, Polynomial.eval_X, Polynomial.eval_C, esize_prod]
+  omega
 
 /-! ## The efficient universal machine (blueprint `lem:universal-tm`; [MNY, Lemma 2.1])
 

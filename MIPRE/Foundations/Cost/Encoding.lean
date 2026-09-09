@@ -179,7 +179,7 @@ theorem encode_prod {α β : Type*} [SizedEncoding α] [SizedEncoding β] (a : �
 
 namespace Prog
 
-/-- Programs as data: a unary tag (`0`–`5`) paired with the fields. -/
+/-- Programs as data: a unary tag (`0`–`6`) paired with the fields. -/
 def toData : Prog → Data
   | var i => .cons (.ofNat 0) (.ofNat i)
   | nil => .cons (.ofNat 1) .nil
@@ -187,6 +187,7 @@ def toData : Prog → Data
   | elim i n c => .cons (.ofNat 3) (.cons (.ofNat i) (.cons n.toData c.toData))
   | let_ e b => .cons (.ofNat 4) (.cons e.toData b.toData)
   | loop b => .cons (.ofNat 5) b.toData
+  | const d => .cons (.ofNat 6) d
 
 /-- Reading a program back from its data (`ofData_toData`). -/
 def ofData : Data → Option Prog
@@ -200,11 +201,14 @@ def ofData : Data → Option Prog
     pure (let_ (← ofData e) (← ofData b))
   | .cons (.cons .nil (.cons .nil (.cons .nil (.cons .nil (.cons .nil .nil))))) b =>
     (ofData b).map loop
+  | .cons (.cons .nil (.cons .nil (.cons .nil (.cons .nil (.cons .nil (.cons .nil .nil))))))
+      d => some (const d)
   | _ => none
 
 theorem ofData_toData : ∀ p : Prog, ofData p.toData = some p
   | var i => by simp [toData, ofData, Data.ofNat]
   | nil => by simp [toData, ofData, Data.ofNat]
+  | const d => by simp [toData, ofData, Data.ofNat]
   | cons h t => by simp [toData, ofData, Data.ofNat, ofData_toData h, ofData_toData t]
   | elim i n c => by simp [toData, ofData, Data.ofNat, ofData_toData n, ofData_toData c]
   | let_ e b => by simp [toData, ofData, Data.ofNat, ofData_toData e, ofData_toData b]

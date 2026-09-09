@@ -35,9 +35,10 @@ trailing `0` cells are moreover invisible to programs), and `smn_polyTime`,
 user rejected the alternative of a "zone/junk" convention on top of `ToPartrec.Code` as a
 hack and chose a principled language (option (b) of the 2026-09-08 report).
 
-`Prog` = `var i | nil | cons h t | elim i n c | let_ e b | loop b` with de Bruijn variables;
-`Eval env p r t` charges one unit per rule, plus the size of the value for `var` (values are
-copied when read, inspected in place by `elim`), so `Eval.size_le : r.size ≤ t`. Closed
+`Prog` = `var i | nil | const d | cons h t | elim i n c | let_ e b | loop b` with de Bruijn
+variables; `Eval env p r t` charges one unit per rule, plus the size of the value for `var`
+and `const` (values are copied when read, inspected in place by `elim`), so
+`Eval.size_le : r.size ≤ t`. Closed
 programs are `Prog.WellScoped 1`; extra environment entries are inert for well-scoped
 programs (`Eval.append_of_wellScoped`, `Eval.of_append_of_wellScoped`), which is what makes
 `let_`-composition and hardcoding sound. Data encodings target `Data` directly (bits
@@ -57,12 +58,17 @@ ported (different semantics, closures, space accounting).
    `ofData_toData`), size lemmas (`esize_bitStr_le`, `esize_nat_le`, `esize_prod`) — all
    proved. `Cost/PolyTime.lean`: `Prog.Runs`, `PolyTimeFun` (fields `toFun`, `code`,
    `closed`, `timeBound`, `computes`), `esize_apply_le`, `id`, `comp`,
-   `polynomial_eval_mono` — proved. `Cost/Toolkit.lean`: `constProg` (+ `constProg_eval`,
-   exactly `d.size` steps), `hardcode` with `hardcode_wellScoped`, `hardcode_time`
-   (overhead `d.size + x.size + 3`), `hardcode_time_rev`, `hardcode_size`
-   (`≤ esize p + 7 d.size + 21`) — proved; `smn_polyTime`, `UniversalMachine` /
-   `exists_efficient_universal`, `ClockedUniversalMachine` / `exists_clocked_universal`
-   (with `evalWithin`, `clockedResult`), `efficient_fixed_point` — sorried nodes.
+   `polynomial_eval_mono` — proved. `Cost/Closure.lean` (K2a): `Eval.cast_cost`,
+   `Eval.var_of_get`, `Prog.callVar` (call a closed program on variable `i`; `callVar_eval`,
+   `callVar_wellScoped`), `Prog.fstProg`/`sndProg` with their runs, and the `PolyTimeFun`
+   combinators `const`, `pair`, `fst`, `snd`, `ite` — proved. `Cost/Toolkit.lean`:
+   `hardcode p d = let_ (cons (const d) (var 0)) p` with `hardcode_wellScoped`,
+   `hardcode_time` (overhead `d.size + x.size + 3`), `hardcode_time_rev`, `toData_hardcode`
+   (`rfl`), `hardcode_size` (`= esize p + d.size + 35`), the runtime map `smnProg` with
+   `smnProg_runs` (cost `x.size + d.size + 38`) and **`smn_polyTime` proved**;
+   `UniversalMachine` / `exists_efficient_universal`, `ClockedUniversalMachine` /
+   `exists_clocked_universal` (with `evalWithin`, `clockedResult`), `efficient_fixed_point`
+   — sorried nodes.
    `Foundations/Compression.lean`: `bitQueryAnswer`, `IsSuccinctDesc`,
    `recursive_compression`, and the Mathlib bridges `Primcodable Prog`,
    `PolyTimeFun.toFun_computable`, `exists_compile`, `recursive_compression_halting`
@@ -138,6 +144,14 @@ ported (different semantics, closures, space accounting).
   bridges go through `evalFuel` (partial recursiveness of evaluation) and a universal `Prog`
   for `Nat.Partrec.Code.eval`; R3's gateway needs a compiler `Prog → Code i` (TM track,
   Milestone H1). The TM track's Milestones A–D are unaffected.
+- **K-D9 — literal data `const d` is a primitive** (2026-09-09, K2a). It evaluates to
+  `d` at cost `d.size` (the universal machine will interpret it by a copy). Reason: with
+  literals, `hardcode p d = let_ (cons (const d) (var 0)) p` has a *fixed-shape*
+  description — `toData_hardcode` is `rfl` and `hardcode_size` is an equality
+  (`esize p + d.size + 35`) — so the runtime s-m-n map `smnProg` is pairing plus copying,
+  and neither K2 nor K3 needs tree recursion to emit program descriptions. Without it, the
+  constant would be a `cons`-tree program and `smn_polyTime` would require a stack-driven
+  traversal with an invariant proof.
 - **K-D8 — closedness by `WellScoped`.** Specifications are runs in the environment `[x]`
   (`Prog.Runs`); `PolyTimeFun` carries `closed : code.WellScoped 1`, and the universal
   machines are closed (`scoped` is a Lean keyword, hence the field name). Weakening/strengthening (`Eval.append_of_wellScoped` /
@@ -154,7 +168,8 @@ ported (different semantics, closures, space accounting).
 |---|---|---|
 | **K0** | Statement audit and fixes: `UniversalMachine`/`ClockedUniversalMachine` (K-D2); one-directional Kleene (K-D3); generic `smn_polyTime` (K-D4); blueprint `\lean{}` tags; TM roadmap re-sequenced | ✅ 2026-09-08 |
 | **K1** | Foundations: the ambient language and its metatheory, encodings, `PolyTimeFun` with `id`/`comp`, efficient s-m-n at program level (`hardcode_*`) — all sorry-free; `Cost/` sorries = exactly `smn_polyTime`, `exists_efficient_universal`, `exists_clocked_universal`, `efficient_fixed_point` | ✅ 2026-09-08 (redone on `Prog` after K-D7) |
-| K2 | Minimal closure library (two layers, K-D6) + `smn_polyTime` + the fixed programs of the proof as `PolyTimeFun`s | ☐ |
+| **K2a** | Closure library part I: calls, projections, pairing, branching (`Cost/Closure.lean`); literal data (K-D9); `smn_polyTime` proved | ✅ 2026-09-09 |
+| K2b | Closure library part II: loops — counted loop, list length, tree flattening/size, binary size in unary, `2^q`, bit-indexing, `haltsWithin` — the fixed programs of the proof as `PolyTimeFun`s | ☐ |
 | K3 | **`recursive_compression` proved** from the toolkit statements; blueprint `\leanok` + proof text on `lem:recursive-compression` (and on `lem:smn`) | ☐ |
 | K4 | `efficient_fixed_point` from `UniversalMachine` + s-m-n ([MNY, Lemma 2.3]); `lem:kleene` `\leanok` | ☐ |
 | K5 | Mathlib bridges (`Primcodable Prog`, `PolyTimeFun.toFun_computable`, `exists_compile`) → `recursive_compression_halting` sorry-free modulo `lem:universal-tm`; independent of K2–K4 | ☐ |
@@ -178,28 +193,33 @@ is copied once); the strengthening lemma needs `WellScoped` — keep every progr
 
 ## K2 — closure library and the programs of the proof
 
-Program layer (raw `Prog`, `Runs`/`Eval` lemmas): projections `elim 0 nil (var 0)` /
-`(var 1)` (cost `O(size of the component)`), pairing (`cons`), sequencing (`let_`),
-branching on a bit or on `nil`/`cons` (`elim`), a *for* combinator (`loop` over a unary
-counter `Data.ofNat k`, `k` iterations of a body with a size-bounded state), list iteration
-(`loop` walking a `cons`-chain), and **tree recursion** (structural recursion on `Data` by a
-`loop` with an explicit stack) — needed by `smn_polyTime` to emit `toData (constProg d)`.
-Concrete programs: `Nat.size` of a binary number (unary or binary output), binary decrement,
-bit-indexing `bitQueryAnswer` (walk the string while decrementing the binary index; time
-`O(|y| · |m|)`, which is where the product form of `IsSuccinctDesc` comes from), `2 ^ q(n)`
-in binary for a polynomial `q` given as data (a program `polyProg : Polynomial ℕ → Prog`,
-`noncomputable` only because `Polynomial ℕ` is).
+**K2a (done).** Program layer (`Cost/Closure.lean`): `callVar i q = let_ (var i) q` calls a
+closed program on the value of variable `i` (`callVar_eval`: cost `size + 1 + t + 1`);
+projections `fstProg = elim 0 nil (var 0)` / `sndProg = elim 0 nil (var 1)` (cost `size of
+the component + 2`); `Eval.var_of_get`, `Eval.cast_cost`. Function layer: `const` (cost
+`esize b`), `pair` (`cons`, bound `F + G + 1`), `fst`/`snd` (bound `X + 2`), `ite` (the
+condition is bound as variable `0`; the `nil` branch calls `G` on the input at variable `1`,
+the `cons` branch calls `F` on it at variable `3`; bound `c + X + F + G + 4`). Two
+conventions keep all of this free of de Bruijn shifting: callees always see their input at
+variable `0`, and branches *re-bind the input by copying it* rather than shifting indices.
+`smn_polyTime` is proved with the linear-time program `smnProg` (K-D9).
 
-Function layer (`PolyTimeFun`): `ofProg` (bundle a closed program with a proved bound),
-`const`, `pair`, `fst`, `snd`, `ite` on a `Bool`, plus the two derived from the universal
-machines: `haltsWithin (UT) : PolyTimeFun (Prog × ℕ) Bool` with `toFun (e, n) =
-(evalWithin e nil (Nat.size n)).isSome` (assemble `(ofNat (Nat.size n), (encode e, nil))`,
-run `UT.univT`, inspect the flag), and the s-m-n witness of `smn_polyTime` (emit
-`toData (hardcode p (encode a))` = `cons (ofNat 4) (cons (cons (ofNat 2) (cons (toData
-(constProg (encode a))) (toData (var 0)))) (toData p))`).
+**K2b (next).** Loops: a *counted loop* combinator (`loop` over a unary counter
+`Data.ofNat k`, running a closed step program `k` times on an accumulator; cost `Σ` of the
+step costs plus the copies of counter and accumulator — quadratic in `k` is acceptable), list
+iteration (`loop` walking a `cons`-chain), and **tree flattening** (a `loop` with an explicit
+stack producing the preorder bit list of a `Data`; from it, the size of a program in unary —
+needed for the threshold `r e = 2 ^ q(esize e)` of K3). Concrete programs: `Nat.size` of a
+binary number in unary, binary decrement and bit-indexing `bitQueryAnswer` (walk the string
+while decrementing the binary index; time `O(|y| · |m|)`, which is where the product form of
+`IsSuccinctDesc` comes from), `2 ^ q(n)` in binary for a polynomial `q` given as data (a
+program `polyProg : Polynomial ℕ → Prog`, `noncomputable` only because `Polynomial ℕ` is),
+and `haltsWithin (UT) : PolyTimeFun (Prog × ℕ) Bool` with `toFun (e, n) = (evalWithin e nil
+(Nat.size n)).isSome` (assemble `(ofNat (Nat.size n), (encode e, nil))`, run `UT.univT`,
+inspect the flag).
 
-**Acceptance:** `smn_polyTime` proved; the combinators above with `computes` proofs;
-`grep sorry` adds nothing outside the two universal-machine nodes and Kleene.
+**Acceptance (K2b):** the combinators above with `computes` proofs; `grep sorry` adds
+nothing outside the two universal-machine nodes and Kleene.
 
 ## K3 — the compression theorem
 
@@ -338,7 +358,11 @@ lake exe mk_all               # when files were added; commit MIPRE.lean
   of hardcode needs it; `Eval.size_le` replaces all output-size bookkeeping; state
   instance-law and evaluator proofs with `obtain`/`rcases` on the discriminants rather than
   bare `simp`.
-- [ ] **K2** closure library + `smn_polyTime`
+- [x] **K2a** literals (K-D9), `Cost/Closure.lean` (calls, projections, pairing,
+  branching), `smn_polyTime` proved (2026-09-09). Lessons: `scoped` is a keyword; a
+  Windows command line is capped at 8 KB, so files are written with the editor tools, not
+  shell heredocs; multi-line `perl -0pi` edits mangle UTF-8 files — use targeted edits.
+- [ ] **K2b** loops, numeric/list programs, `haltsWithin`
 - [ ] **K3** `recursive_compression` proved → **abstract compression theorem**
 - [ ] **K4** `efficient_fixed_point` proved
 - [ ] **K5** Mathlib bridges → `recursive_compression_halting`

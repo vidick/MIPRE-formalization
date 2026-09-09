@@ -4,6 +4,7 @@ import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
 import MIPRE.Cslib.Foundations.Data.RelatesInSteps
 import MIPRE.Foundations.Compression
 import MIPRE.Foundations.Cost.Basic
+import MIPRE.Foundations.Cost.Closure
 import MIPRE.Foundations.Cost.Encoding
 import MIPRE.Foundations.Cost.PolyTime
 import MIPRE.Foundations.Cost.Toolkit

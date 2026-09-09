@@ -24,11 +24,11 @@ counts nodes; it is the bit-length of the preorder serialization `Data.toBits`, 
 sizes are additive under pairing (R4 below).
 
 Programs (`Prog`) form a minimal first-order language with de Bruijn variables over an
-environment of `Data` values: `var i` reads a variable, `nil` and `cons h t` build
-values, `elim i n c` inspects the `i`-th variable (binding the two components of a
-`cons`), `let_ e b` binds, and `loop b` iterates `b` on the state held in variable `0`
+environment of `Data` values: `var i` reads a variable, `nil`, `const d` and `cons h t`
+build values, `elim i n c` inspects the `i`-th variable (binding the two components of
+a `cons`), `let_ e b` binds, and `loop b` iterates `b` on the state held in variable `0`
 until it signals stop. The timed big-step semantics `Eval env p r t` charges one unit
-per rule, except that reading a variable additionally costs the size of the value read:
+per rule, except that reading a variable or a literal costs the size of the value:
 **values are copied when read and inspected in place by `elim`**. Consequently a run
 of cost `t` produces a result of size at most `t` (`Eval.size_le`), so every value
 occurring in a computation is polynomially bounded by the running time — which is what
@@ -82,15 +82,15 @@ Three natural alternatives fail:
 `Prog` sits in the sweet spot: `cons` builds and `elim` destructs anywhere in a value, so
 string algorithms and recursion on notation are direct (R1); programs are trees, hence
 data with additive sizes (`Prog.toData` in `Cost.Encoding`), and hardcoding an argument is
-`let_ (cons (constant) (var 0))` at linear cost (R2, R4); and the language is small enough
+`let_ (cons (const d) (var 0))` at linear cost (R2, R4); and the language is small enough
 for its metatheory and for a self-interpreter — the universal machine of `Cost.Toolkit` —
 to be manageable, and to be compiled to the machine model for R3. The design follows the
 "rose tree machine" idea of C. Reitwiessner (CSLib issue #611) with binary trees in place of
 rose trees and a time-only semantics.
 
 **Meta-remark (not formalized).** A pointer machine represents values as DAGs of `cons`
-cells: `cons`, `elim` and `let_` are constant-time, `var i` copies its value in time
-proportional to its size (exactly the charged cost), so a run of cost `t` takes `O(t)`
+cells: `cons`, `elim` and `let_` are constant-time, `var i` and `const d` copy a value in
+time proportional to its size (exactly the charged cost), so a run of cost `t` takes `O(t)`
 pointer-machine time on `O(t + input)` cells, and Turing-machine time polynomial in that.
 This justifies reading `PolyTimeFun` as honest "polynomial time"; nothing in the project
 depends on it formally, since the final theorem only claims `Computable`.
@@ -174,6 +174,8 @@ inductive Prog where
   | var (i : ℕ)
   /-- The atom. -/
   | nil
+  /-- Literal data: evaluates to `d`, at cost `d.size` (the value is built). -/
+  | const (d : Data)
   /-- Build a node from the values of `h` and `t`. -/
   | cons (h t : Prog)
   /-- Inspect variable `i` in place: if it is `nil`, run `n`; if it is `cons a b`, run `c`
@@ -193,6 +195,7 @@ namespace Prog
 def WellScoped : ℕ → Prog → Prop
   | n, var i => i < n
   | _, nil => True
+  | _, const _ => True
   | n, cons h t => WellScoped n h ∧ WellScoped n t
   | n, elim i a c => i < n ∧ WellScoped n a ∧ WellScoped (n + 2) c
   | n, let_ e b => WellScoped n e ∧ WellScoped (n + 1) b
@@ -202,6 +205,7 @@ theorem WellScoped.mono {n m : ℕ} (h : n ≤ m) :
     ∀ (p : Prog), WellScoped n p → WellScoped m p
   | var _, hp => Nat.lt_of_lt_of_le hp h
   | nil, _ => trivial
+  | const _, _ => trivial
   | cons a b, ⟨ha, hb⟩ => ⟨mono h a ha, mono h b hb⟩
   | elim _ a c, ⟨hi, ha, hc⟩ =>
     ⟨Nat.lt_of_lt_of_le hi h, mono h a ha, mono (Nat.add_le_add_right h 2) c hc⟩
@@ -239,11 +243,12 @@ theorem Env.get_append {env extra : Env} {i : ℕ} (h : i < env.length) :
       exact ih (by simpa using h)
 
 /-- Timed big-step semantics: `Eval env p r t` means that `p`, in environment `env`, halts
-with result `r` at cost `t`. One unit per rule; reading a variable additionally costs the
-size of the value read. -/
+with result `r` at cost `t`. One unit per rule; reading a variable or a literal additionally
+costs the size of the value. -/
 inductive Eval : Env → Prog → Data → ℕ → Prop
   | var (env : Env) (i : ℕ) : Eval env (.var i) (env.get i) ((env.get i).size + 1)
   | nil (env : Env) : Eval env .nil .nil 1
+  | const (env : Env) (d : Data) : Eval env (.const d) d d.size
   | cons {env : Env} {h t : Prog} {a b : Data} {s u : ℕ} :
       Eval env h a s → Eval env t b u → Eval env (.cons h t) (.cons a b) (s + u + 1)
   | elim_nil {env : Env} {i : ℕ} {n c : Prog} {r : Data} {t : ℕ} :
@@ -264,7 +269,7 @@ namespace Eval
 
 /-- Costs are positive. -/
 theorem pos {env : Env} {p : Prog} {r : Data} {t : ℕ} (h : Eval env p r t) : 0 < t := by
-  cases h <;> omega
+  cases h <;> first | omega | exact Data.size_pos _
 
 /-- The semantics is deterministic in both result and cost. -/
 theorem deterministic {env : Env} {p : Prog} {r r' : Data} {t t' : ℕ}
@@ -272,6 +277,7 @@ theorem deterministic {env : Env} {p : Prog} {r r' : Data} {t t' : ℕ}
   induction h generalizing r' t' with
   | var env i => cases h'; exact ⟨rfl, rfl⟩
   | nil env => cases h'; exact ⟨rfl, rfl⟩
+  | const env d => cases h'; exact ⟨rfl, rfl⟩
   | cons _ _ ih₁ ih₂ =>
     cases h' with
     | cons h₁' h₂' =>
@@ -317,12 +323,13 @@ theorem deterministic {env : Env} {p : Prog} {r r' : Data} {t t' : ℕ}
       exact ⟨rfl, rfl⟩
 
 /-- A run of cost `t` produces a result of size at most `t`: every node of the result was
-either built (`cons`, `nil`) or copied (`var`) at unit cost per node. -/
+either built (`cons`, `nil`) or copied (`var`, `const`) at unit cost per node. -/
 theorem size_le {env : Env} {p : Prog} {r : Data} {t : ℕ} (h : Eval env p r t) :
     r.size ≤ t := by
   induction h with
   | var env i => omega
   | nil env => simp
+  | const env d => omega
   | cons _ _ ih₁ ih₂ => simp only [Data.size_cons]; omega
   | elim_nil _ _ ih => omega
   | elim_cons _ _ ih => omega
@@ -341,6 +348,7 @@ theorem append_of_wellScoped {env : Env} {p : Prog} {r : Data} {t : ℕ}
     rw [← Env.get_append (extra := extra) hi]
     exact .var _ _
   | nil env => exact .nil _
+  | const env d => exact .const _ _
   | cons _ _ ih₁ ih₂ =>
     obtain ⟨h₁, h₂⟩ := hp
     exact .cons (ih₁ h₁) (ih₂ h₂)
@@ -378,6 +386,7 @@ theorem of_append_of_wellScoped {env extra : Env} {p : Prog} {r : Data} {t : ℕ
     rw [Env.get_append hi]
     exact .var _ _
   | nil _ => exact .nil _
+  | const _ d => exact .const _ _
   | cons _ _ ih₁ ih₂ =>
     obtain ⟨h₁, h₂⟩ := hp
     exact .cons (ih₁ (env := env) h₁ henv) (ih₂ (env := env) h₂ henv)
@@ -417,6 +426,7 @@ def evalFuel : ℕ → Env → Prog → Option (Data × ℕ)
   | 0, _, _ => none
   | _ + 1, env, .var i => some (env.get i, (env.get i).size + 1)
   | _ + 1, _, .nil => some (.nil, 1)
+  | _ + 1, _, .const d => some (d, d.size)
   | f + 1, env, .cons h t =>
     match evalFuel f env h, evalFuel f env t with
     | some (a, s), some (b, u) => some (.cons a b, s + u + 1)
@@ -454,6 +464,10 @@ theorem evalFuel_sound : ∀ (f : ℕ) (env : Env) (p : Prog) (r : Data) (t : �
       simp only [evalFuel, Option.some.injEq, Prod.mk.injEq] at h
       obtain ⟨rfl, rfl⟩ := h
       exact .nil env
+    | const d =>
+      simp only [evalFuel, Option.some.injEq, Prod.mk.injEq] at h
+      obtain ⟨rfl, rfl⟩ := h
+      exact .const env d
     | cons h₁ t₁ =>
       simp only [evalFuel] at h
       rcases hh : evalFuel f env h₁ with _ | ⟨a, s⟩ <;>
