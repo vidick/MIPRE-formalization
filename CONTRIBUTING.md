@@ -28,6 +28,8 @@ Once you are assigned to an issue, begin working on the corresponding task. You 
 
 Before pushing, please check that the project still builds (`lake build`) and, if you added or removed files, that the root import file is up to date (`lake exe mk_all` regenerates it).
 
+The directory `MIPRE/Background/LIDT/MIPStarRE/` is a generated copy of an external project and is not edited by hand: fixes go upstream to [MIPStarRE](https://github.com/LionSR/MIPStarRE) and are brought back with `scripts/vendor-lidt.py` (see the README in that directory). Code elsewhere in the repository must not refer to the `MIPStarRE` namespace; use the bridge in `MIPRE/Background/LIDT/` instead.
+
 If your PR proves a statement that appears in the blueprint, also edit the corresponding environment in the blueprint sources ([`blueprint/src/content/`](blueprint/src/content)): add `\lean{...}` with the full name of the Lean declaration, and `\leanok` to the statement (and to its proof once the proof is `sorry`-free) so that the dependency graph reflects the progress.
 
 ### 4. Submitting a Pull Request

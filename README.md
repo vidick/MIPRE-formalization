@@ -62,6 +62,15 @@ leanblueprint serve  # preview the website locally
     and their sum-of-squares decomposition, solution groups, the Mermin–Peres
     magic square, and a bridge interpreting an LCS instance as a `MIPRE.Game`
     ([`MIPRE/LCS/NonlocalGame.lean`](MIPRE/LCS/NonlocalGame.lean)).
+  - [`MIPRE/Background/LIDT/`](MIPRE/Background/LIDT) — the classical low
+    individual degree test. The subdirectory
+    [`MIPStarRE/`](MIPRE/Background/LIDT/MIPStarRE) is a generated, read-only copy
+    of Sirui Lu's [MIPStarRE](https://github.com/LionSR/MIPStarRE) formalization of
+    the soundness theorem of arXiv:2009.12982 (vendored with the authors'
+    permission by [`scripts/vendor-lidt.py`](scripts/vendor-lidt.py); see its
+    [README](MIPRE/Background/LIDT/MIPStarRE/README.md)). The rest of the
+    directory states the theorem in this repository's vocabulary and bridges the
+    two; the plan is in [`planning/lidt-port.md`](planning/lidt-port.md).
 - [`blueprint/src/`](blueprint/src) — the LaTeX sources of the blueprint.
 - [`website/`](website) — the Jekyll home page deployed to GitHub Pages.
 - [`.github/workflows/`](.github/workflows) — CI: project build on every PR,
