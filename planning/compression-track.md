@@ -1,0 +1,505 @@
+# Compression track — the abstract recursive compression theorem (K0–K5)
+
+## Context
+
+Goal: make the abstract recursive compression theorem of Marks–Nezhadi–Yuen ("The
+recursive compression method for proving undecidability results", [MNY]; Lemma 3.1 and
+its parameterized variant Lemma 5.1) an **early, sorry-free result** of the project, in
+the ambient cost model, *ahead of* the universal-machine construction. User decision
+2026-09-08. The TM-infrastructure roadmap (`planning/tm-infrastructure.md`) is
+re-sequenced accordingly: its Milestones E–G now follow this track, and serve (among
+other things) one of the two routes to the universal machine (see the gate below).
+
+Why this can be early: the proof of [MNY, Lemma 3.1/5.1] uses only the *statements* of
+the efficient universal machine, efficient s-m-n and efficient Kleene recursion
+([MNY, Lemmas 2.1–2.3]) — never their constructions. Those statements exist, sorried, in
+`MIPRE/Foundations/Cost/Toolkit.lean`, and the compression lemma is stated in
+`MIPRE/Foundations/Compression.lean` (`MIPRE.Cost.recursive_compression`; blueprint
+`lem:recursive-compression`, which the blueprint itself calls "an ideal early milestone",
+`\effortEasy` given the toolkit).
+
+### The ambient model (decision K-D7, 2026-09-08)
+
+The ambient model is the first-order list language `MIPRE.Cost.Prog` over binary trees
+`MIPRE.Cost.Data`, with the timed big-step semantics `MIPRE.Cost.Eval` (`Cost/Basic.lean`,
+whose docstring is the decision record). It **replaced Mathlib's `Turing.ToPartrec.Code`**
+on 2026-09-08, after the attempt to build the closure library (K2) on that model exposed an
+obstruction: `ToPartrec.Code`'s primitives act only on the front of a single `List ℕ` value
+and pass it by value, so every output has the form `p ++ v.drop k`, and the input suffix can
+only be discarded by first dropping everything built in front of it — retaining a
+program-size-bounded number of cells of polynomially bounded value, i.e. `O(log t)` bits.
+Hence `List.reverse`, `x ↦ x ++ [b]`, binary addition and the runtime s-m-n map are not
+polynomial-time computable in that model (it is a one-stack machine with a read-only input;
+trailing `0` cells are moreover invisible to programs), and `smn_polyTime`,
+`exists_efficient_universal` and `exists_clocked_universal` were unprovable as stated. The
+user rejected the alternative of a "zone/junk" convention on top of `ToPartrec.Code` as a
+hack and chose a principled language (option (b) of the 2026-09-08 report).
+
+`Prog` = `var i | nil | const d | cons h t | elim i n c | let_ e b | loop b` with de Bruijn
+variables; `Eval env p r t` charges one unit per rule, plus the size of the value for `var`
+and `const` (values are copied when read, inspected in place by `elim`), so
+`Eval.size_le : r.size ≤ t`. Closed
+programs are `Prog.WellScoped 1`; extra environment entries are inert for well-scoped
+programs (`Eval.append_of_wellScoped`, `Eval.of_append_of_wellScoped`), which is what makes
+`let_`-composition and hardcoding sound. Data encodings target `Data` directly (bits
+`nil`/`cons nil nil`, lists as `cons`-chains, numbers in binary, pairs as `cons`, programs
+as `Prog.toData`); sizes are additive. The design follows C. Reitwiessner's rose-tree
+machine idea (CSLib issue #611) with binary trees and a time-only semantics; his code was not
+ported (different semantics, closures, space accounting).
+
+### Verified facts (checked 2026-09-08 against the repo on branch `compression-track`)
+
+1. **Lean statements.** `Cost/Basic.lean`: `Data`, `Data.size`, `Data.toBits`, `Data.ofNat`
+   (unary numerals), `Prog`, `Prog.WellScoped` (+ `mono`), `Env.get`, `Eval` with
+   `pos`/`deterministic`/`size_le` and the two scoping lemmas, the fuel evaluator `evalFuel`
+   with `evalFuel_sound`, `Halts`/`HaltsWithin`/`TimeBound` — all proved.
+   `Cost/Encoding.lean`: `SizedEncoding` (into `Data`), `esize`, instances for `Bool`,
+   `BitStr`, `ℕ` (binary, `Nat.foldr_bit_bits`), pairs (`cons`), `Prog` (`toData`/`ofData`,
+   `ofData_toData`), size lemmas (`esize_bitStr_le`, `esize_nat_le`, `esize_prod`) — all
+   proved. `Cost/PolyTime.lean`: `Prog.Runs`, `PolyTimeFun` (fields `toFun`, `code`,
+   `closed`, `timeBound`, `computes`), `esize_apply_le`, `id`, `comp`,
+   `polynomial_eval_mono` — proved. `Cost/Closure.lean` (K2a): `Eval.cast_cost`,
+   `Eval.var_of_get`, `Prog.callVar` (call a closed program on variable `i`; `callVar_eval`,
+   `callVar_wellScoped`), `Prog.fstProg`/`sndProg` with their runs, and the `PolyTimeFun`
+   combinators `const`, `pair`, `fst`, `snd`, `ite` — proved. `Cost/Toolkit.lean`:
+   `hardcode p d = let_ (cons (const d) (var 0)) p` with `hardcode_wellScoped`,
+   `hardcode_time` (overhead `d.size + x.size + 3`), `hardcode_time_rev`, `toData_hardcode`
+   (`rfl`), `hardcode_size` (`= esize p + d.size + 35`), the runtime map `smnProg` with
+   `smnProg_runs` (cost `x.size + d.size + 38`) and **`smn_polyTime` proved**;
+   `UniversalMachine` / `exists_efficient_universal`, `ClockedUniversalMachine` /
+   `exists_clocked_universal` (with `evalWithin`, `clockedResult`), `efficient_fixed_point`
+   — sorried nodes.
+   `Foundations/Compression.lean`: `bitQueryAnswer`, `IsSuccinctDesc`,
+   `recursive_compression`, and the Mathlib bridges `Primcodable Prog`,
+   `PolyTimeFun.toFun_computable`, `exists_compile`, `recursive_compression_halting`
+   (5 sorries).
+2. **Fidelity to [MNY].** `recursive_compression` is Lemma 5.1 (the `max{f(x), n}`
+   variant; conclusion: a `PolyTimeFun Prog BitStr` reduction `g` with `Halts e nil ⇒
+   g e ∈ A`, otherwise `f (g e) = ⊤`). `IsSuccinctDesc c n x` is Definition 2.4 with the
+   runtime bound `(n + 1) * (Nat.size m + 1)` in place of the paper's "≤ n for all m" (a
+   model that charges to read `m` makes the paper's bound vacuous for `|m| > n`) and with
+   closedness of `c`. The toolkit statements are Lemmas 2.1–2.3.
+3. **What the proof consumes** ([MNY] §3 and §5, read against `Toolkit.lean`):
+
+   | proof step | toolkit clause |
+   |---|---|
+   | program `a`: "run `e` on the empty input for `log n` steps" | `ClockedUniversalMachine.run` with budget `Data.ofNat (Nat.size n)` |
+   | `b(c, e, n)`: the bit-query program, assembled *at runtime* by `a` | `smn_polyTime` + `UniversalMachine.time_le` (to evaluate `c` on `(e, n)`) |
+   | `(b(c, e, n+1), n)` is a succinct description of `h(e, n+1)` for `n ≥ r(e)` | `hardcode_time` (forward transfer) + the overhead polynomials, so that `r(e) = 2^{q(esize e)}` is polynomial-time computable |
+   | closing the self-reference | `efficient_fixed_point` applied to `F c' = hardcode a (encode c')` |
+   | the fixed point `c` runs in polynomial time | Kleene's clause "runs of `F e` bound runs of `e`" — and *only* that direction |
+   | `g(e) = h(e, r(e))` is a `PolyTimeFun` | closure library: `comp`, `pair`, `const`, size and `2^q` arithmetic |
+
+4. **Blueprint state.** `lem:universal-tm` carries
+   `\lean{MIPRE.Cost.exists_efficient_universal, MIPRE.Cost.exists_clocked_universal}`
+   and `\uses{lem:bounded-universal-machine}`; `lem:smn`, `lem:kleene` and
+   `lem:recursive-compression` carry `\lean{}` tags (added in K0), so every sorry beneath
+   the compression theorem is blueprint-tracked (CONTRIBUTING's sorry policy). The blueprint
+   names no model ("a cost model"); its `sec:rr-computability` comments now mention `Prog`.
+5. **Not consumed.** The TM track's Milestones A–D (`MultiInputTM`, `Code i`,
+   serialization, evaluator) play no role in the ambient compression lemma; they matter
+   here only as route α to the universal machine.
+6. **complexitylib** (SamuelSchlesinger; evaluated 2026-09-08 at `edd0e9e`) has no
+   ambient-model content — no relation to the project's language, no s-m-n as a computable
+   map, no Kleene fixed point, no halting reduction or compression notion; its `FP` closure
+   library is existential and asymptotic, on its own TM model. **No impact on this track.**
+   Only `Cobham.boundedRec` (limited recursion on notation, bounded by a class function) is an
+   optional packaging idea for K2. Details in `planning/tm-infrastructure.md`, update of
+   2026-09-08.
+
+## Fixed decisions
+
+- **K-D1 — prove from statements, discharge later.** `recursive_compression` is proved
+  from the toolkit *statements*. The sorries beneath it are then exactly the
+  blueprint-tracked nodes `lem:universal-tm` and `lem:kleene`; after K4, only
+  `lem:universal-tm`. No new sorry is ever introduced outside those nodes.
+- **K-D2 — universal machines as data, existence as the sorried node** (K0).
+  `UniversalMachine` and `ClockedUniversalMachine` are structures bundling the (closed)
+  program, its overhead polynomial and the semantic clauses; `exists_efficient_universal` /
+  `exists_clocked_universal` are `Nonempty` statements (names unchanged, so the blueprint
+  tags stay valid). Downstream definitions refer to the fields of an obtained machine; no
+  `def` is ever sorried — the same principle as decision D13 of the TM plan.
+- **K-D3 — Kleene stated in the used direction only** (K0). `efficient_fixed_point`
+  asserts that `e` and `F e` have the same input/output behavior and that "runs of `F e`
+  bound runs of `e`" with polynomial overhead. [MNY, Lemma 2.3] states polynomial
+  *equivalence*; the converse direction is unused by the compression argument and is *not*
+  derivable from an upper bound on the simulator's time. Restorable by adding a "simulation
+  is never faster" clause to `UniversalMachine` should a consumer ever need it.
+- **K-D4 — runtime s-m-n generic in the hardcoded type** (K0, restated for `Prog`).
+  `smn_polyTime α : ∃ S : PolyTimeFun (Prog × α) Prog, ∀ p a, S (p, a) = hardcode p
+  (encode a)`; hardcoding is pairing, no separators are involved.
+- **K-D5 — succinctness bound is `(n + 1) * (Nat.size m + 1) ^ 2`** (revised 2026-09-09,
+  K2b; was `(n + 1) * (Nat.size m + 1)`). The bit-indexing program `bitAtProg` walks the
+  string while decrementing the binary index, and in the list language a zero test or a
+  decrement of the index *copies* it, so each of the `|y|` steps costs
+  `O(size y + |m| ^ 2)` (`bitAtIter_le`): a budget linear in `|m|` is not achievable by
+  the program the proof uses. Still a design knob until `thm:compression` is stated
+  (whatever is chosen must be what the compression theorem for games certifies about its
+  output verifiers); recorded in `Compression.lean` and blueprint `def:succinct`.
+- **K-D6 — two-layer closure library, shared infrastructure.** A *program layer* on
+  `Prog` (combinators with `Eval`/`Runs` lemmas, usable for programs whose correctness is
+  only conditional — the bit-query program `β` runs an arbitrary input program through the
+  universal machine and cannot be a total `PolyTimeFun`), and a *function layer* of
+  `PolyTimeFun` combinators with explicit `timeBound` polynomials on top. Both live under
+  `MIPRE/Foundations/Cost/` (a `Cost/Closure/` directory once they outgrow `PolyTime.lean`).
+  Everything built here is R1 infrastructure the pipeline needs anyway.
+- **K-D7 — the ambient language is `MIPRE.Cost.Prog`** (above; decision record in
+  `Cost/Basic.lean`). Consequences: no Mathlib evaluation bridge comes for free — K5's
+  bridges go through `evalFuel` (partial recursiveness of evaluation) and a universal `Prog`
+  for `Nat.Partrec.Code.eval`; R3's gateway needs a compiler `Prog → Code i` (TM track,
+  Milestone H1). The TM track's Milestones A–D are unaffected.
+- **K-D10 — the next level is `2 n + 1`, not `n + 1`** (2026-09-09, K3). The decider at
+  level `n` compresses a description of the string at the next level; the paper uses
+  `n + 1`, which on binary numerals needs a carry propagation (a loop with the cost shape
+  of `decProg`). Prepending a `true` bit is one node (`PolyTimeFun.next`,
+  `encode_two_mul_add_one`), `Nat.size (2 n + 1) = Nat.size n + 1` keeps every overhead
+  polynomial in `esize e + Nat.size n`, and the levels still grow without bound, which is
+  all the two inductions use. Recorded in the module docstring of `Compression.lean` and
+  in the blueprint proof of `lem:recursive-compression`.
+- **K-D11 — explicit threshold, elementary growth lemma** (2026-09-09, K3). The threshold
+  is `r e = 2 ^ (K + 1 + esize e)` with `K` from `exists_threshold Q` (`Cost/Growth.lean`):
+  for every `Q : Polynomial ℕ`, `n ≥ 2 ^ (K + 1 + x)` gives `Q (x + Nat.size n) ≤ n + 1`.
+  The proof is elementary (`Q y ≤ A y ^ D` and `A σ ^ D ≤ 2 ^ σ` for
+  `σ ≥ A (D + 1) ^ (D + 1)`), no real analysis. The master polynomial `Q` of the proof is
+  assembled inside `recursive_compression` from the Kleene overhead `p`, the decider's
+  `timeBound`, and `bitQueryBound U`, each packaged as an existential
+  `∃ Q, ∀ x, Q.eval x = …` so that the proof never unfolds polynomial arithmetic.
+- **K-D12 — Mathlib computability interface at the `Data` level** (2026-09-09, K5). No
+  `Primcodable Prog`: programs are their own descriptions, so every bridge is stated for
+  `Data`-valued encodings — `Computable (fun c => (encode (h c) : Data))` in
+  `PolyTimeFun.computable_comp`, `Computable (fun pc => encode (compile pc))` in
+  `exists_compile`. `Data` itself is `Denumerable` through Cantor pairing, which makes tree
+  recursion primitive recursive by strong recursion on `ℕ` (`Data.primrec_recD`). A
+  `Primcodable Prog` instance would need a primrec parser of `toData` (depth-3 tuple
+  recursion) for no consumer; add it only if a statement needs it.
+- **K-D14 — route β: the universal machines are the self-interpreter** (2026-09-09,
+  gate). `Cost/Interpreter.lean` implements `Machine.stepData` as the closed program
+  `stepProg` (tag dispatch by `elim` chains, case programs called through `callVar` on a
+  packaged tuple, `getListProg` for variable lookup); its cost is `stepBound S =
+  (S+1)(S+40)+200` in the size `S` of the encoded configuration, the only non-constant work
+  being the environment walk. `Cost/MachineBound.lean` bounds the configurations along the
+  run of a derivation (`CfgBound`, `eval_steps_bound`; `size_toData_le`: size at most
+  `cfgSizeBound V L P K`, cubic; `eval_steps_bound_forever` via the fixed final
+  configuration) and counts its steps (`eval_steps_count`: at most `3 t`, the free steps —
+  entering a loop, returning to a `cons`/`let` frame — each matched with a paid one).
+  `Cost/Universal.lean` builds `univProg = let_ univPrelude (loop interpBody)` ("final?
+  stop with the value : continue with `stepProg`"); the forward bound combines the two
+  lemmas, the backward direction inverts the loop with `Eval.deterministic` against the
+  forward body runs and closes with `halts_iff`. The clocked `univTProg` carries in its
+  loop state the remaining cost budget (decremented by `stepCostProg`, which computes
+  `stepCost` exactly, via `subProg`), a step budget `3 k + 1` (termination; a run of cost
+  `t ≤ k` halts within `3 t` steps) and a size guard `Θ = thetaFun (k + esize c + v.size)`,
+  a cubic polynomial computed in unary by `tripleProg`/`repProg`/`sizeProg`, which
+  dominates `cfgSizeBound` for runs of cost at most `k` (`sigmaFun_le_thetaFun`). The guard
+  is checked on the configuration *produced* by a step, whose size `Eval.size_le` bounds
+  by the step's cost, so the loop never handles a configuration larger than
+  `stepBound Θ` even on non-halting runs — no invariant on partial runs is needed.
+  Correctness goes through the mathematical function `clockRun` (`clockLoop_runs`,
+  `clockRun_of_final`, `clockRun_of_not`, `clockRun_eq : … = clockedResult c v k`). No
+  TM-level bridge is involved: the blueprint edge `lem:universal-tm ←
+  lem:bounded-universal-machine` is removed, and TM Milestones E–G serve only
+  `thm:succinct-sat` and the paper-literal machine statements.
+- **K-D13 — one evaluation machine for both universal artifacts** (2026-09-09, K5). The
+  CEK machine of `Cost/Machine.lean` charges `Eval` costs at designated steps
+  (`stepCost`; `loop` rules at the frame pop), so that a run's accumulated cost is exactly
+  the derivation's cost, in both directions. Its transport to `Data` (`stepData`, built
+  from `left/right/cons/unaryToNat/getList`) is what K5 proves primitive recursive and what
+  route β implements as a program; the correctness of the self-interpreter reduces to
+  "the interpreter's loop body computes `stepData`".
+- **K-D9 — literal data `const d` is a primitive** (2026-09-09, K2a). It evaluates to
+  `d` at cost `d.size` (the universal machine will interpret it by a copy). Reason: with
+  literals, `hardcode p d = let_ (cons (const d) (var 0)) p` has a *fixed-shape*
+  description — `toData_hardcode` is `rfl` and `hardcode_size` is an equality
+  (`esize p + d.size + 35`) — so the runtime s-m-n map `smnProg` is pairing plus copying,
+  and neither K2 nor K3 needs tree recursion to emit program descriptions. Without it, the
+  constant would be a `cons`-tree program and `smn_polyTime` would require a stack-driven
+  traversal with an invariant proof.
+- **K-D8 — closedness by `WellScoped`.** Specifications are runs in the environment `[x]`
+  (`Prog.Runs`); `PolyTimeFun` carries `closed : code.WellScoped 1`, and the universal
+  machines are closed (`scoped` is a Lean keyword, hence the field name). Weakening/strengthening (`Eval.append_of_wellScoped` /
+  `Eval.of_append_of_wellScoped`) make `let_`-composition and both directions of
+  `hardcode` sound; combinators must maintain `WellScoped` (routine).
+- **Policy.** Every WP is one commit on the working branch; `lake build` green;
+  `lake exe mk_all` whenever a file is added; sorry-free except the blueprint-tracked
+  nodes; Mathlib style, docstrings on every declaration (CONTRIBUTING). Blueprint
+  `\leanok` (with proof text) is added to a node in the WP that proves it.
+
+## Roadmap
+
+| WP | Content | Status |
+|---|---|---|
+| **K0** | Statement audit and fixes: `UniversalMachine`/`ClockedUniversalMachine` (K-D2); one-directional Kleene (K-D3); generic `smn_polyTime` (K-D4); blueprint `\lean{}` tags; TM roadmap re-sequenced | ✅ 2026-09-08 |
+| **K1** | Foundations: the ambient language and its metatheory, encodings, `PolyTimeFun` with `id`/`comp`, efficient s-m-n at program level (`hardcode_*`) — all sorry-free; `Cost/` sorries = exactly `smn_polyTime`, `exists_efficient_universal`, `exists_clocked_universal`, `efficient_fixed_point` | ✅ 2026-09-08 (redone on `Prog` after K-D7) |
+| **K2a** | Closure library part I: calls, projections, pairing, branching (`Cost/Closure.lean`); literal data (K-D9); `smn_polyTime` proved | ✅ 2026-09-09 |
+| K2b | Closure library part II: loops — list length, tree size in unary, `2^j`, zero test/decrement, bit-indexing, threshold, `haltsWithin` — the fixed programs of the proof (K-D5 revised) | ✅ 2026-09-09 |
+| K3 | **`recursive_compression` proved** from the toolkit statements; blueprint `\leanok` + proof text on `lem:recursive-compression` (and on `lem:smn`) | ✅ 2026-09-09 |
+| K4 | `efficient_fixed_point` from `UniversalMachine` + s-m-n ([MNY, Lemma 2.3]); `lem:kleene` `\leanok` | ✅ 2026-09-09 |
+| K5 | Mathlib bridges (`Primcodable Prog`, `PolyTimeFun.toFun_computable`, `exists_compile`) → `recursive_compression_halting` sorry-free modulo `lem:universal-tm`; independent of K2–K4 | ✅ 2026-09-09 |
+| gate | Universal machine: route α (TM Milestones E–G + bridge H) or route β (self-interpreter of `Prog` in `Prog`) — **decided after K5: route β** (K-D14); `exists_efficient_universal` / `exists_clocked_universal` proved in `Cost/Universal.lean`; recorded in `planning/tm-infrastructure.md` | ✅ 2026-09-09 (route β) |
+
+Milestones reached along the way: after K1 the efficient s-m-n (program level) is
+sorry-free; after K3 the abstract compression theorem is sorry-free modulo two
+blueprint nodes; after K4 modulo the universal machine only; after K5 the same holds
+for the halting-problem corollary consumed by `MIPRE.HaltingGameValue`; after the gate
+(route β) `recursive_compression` and `recursive_compression_halting` are sorry-free
+outright (`#print axioms`: `propext`, `Classical.choice`, `Quot.sound` only).
+
+---
+
+## K1 — foundations (done)
+
+What is proved, file by file, is listed in verified fact 1. Points worth knowing before
+K2: `Eval.size_le` bounds every result by the cost, so `PolyTimeFun.comp`'s time bound is
+`F + G ∘ F + 1` with no separate output-size bookkeeping; `constProg d` runs in exactly
+`d.size` steps; `hardcode` costs `d.size + x.size + 3` on top of the run of `p` (the input
+is copied once); the strengthening lemma needs `WellScoped` — keep every program closed;
+`evalFuel` makes concrete programs executable (`#eval`/`decide` pins, as in the TM track).
+
+## K2 — closure library and the programs of the proof
+
+**K2a (done).** Program layer (`Cost/Closure.lean`): `callVar i q = let_ (var i) q` calls a
+closed program on the value of variable `i` (`callVar_eval`: cost `size + 1 + t + 1`);
+projections `fstProg = elim 0 nil (var 0)` / `sndProg = elim 0 nil (var 1)` (cost `size of
+the component + 2`); `Eval.var_of_get`, `Eval.cast_cost`. Function layer: `const` (cost
+`esize b`), `pair` (`cons`, bound `F + G + 1`), `fst`/`snd` (bound `X + 2`), `ite` (the
+condition is bound as variable `0`; the `nil` branch calls `G` on the input at variable `1`,
+the `cons` branch calls `F` on it at variable `3`; bound `c + X + F + G + 4`). Two
+conventions keep all of this free of de Bruijn shifting: callees always see their input at
+variable `0`, and branches *re-bind the input by copying it* rather than shifting indices.
+`smn_polyTime` is proved with the linear-time program `smnProg` (K-D9).
+
+**K2b (done 2026-09-09).** Loops and the numeric/list programs, all sorry-free:
+
+- `Cost/Loops.lean`: the generic loop principle `Eval.loop_of_invariant` (invariant,
+  measure, postcondition, uniform body bound `B` ⇒ a run of `loop b` within
+  `(μ s + 1) · (B + 1)`); list reversal onto an accumulator (`revOntoProg`), list length in
+  unary (`lenProg`: `xs ↦ ofNat |xs|`). Every list walk is *quadratic* in this model — the
+  loop state is rebuilt by copying the tail at each step — so bounds have the shape
+  `(iterations + 1) · (S + c)` with a slack `S` dominating the sizes involved.
+- `Cost/Unary.lean`: unary addition (`addProg`), `2 ^ j` in binary from `j` in unary
+  (`expBitsProg`, via `Nat.bits_two_pow`), and the size of a tree in unary (`sizeProg`, a
+  stack-driven traversal — the "tree flattening" of the original plan reduced to what K3
+  needs).
+- `Cost/Numeric.lean`: bit strings as data (`encode_bitStr_eq_list`, size lemmas,
+  `bitsVal`), zero test (`isZeroProg`) and decrement (`decProg`, specified through
+  `bitsVal` since it may leave a non-canonical representation).
+- `Cost/Threshold.lean`: `PolyTimeFun.threshold K : e ↦ 2 ^ (K + 1 + esize e)`
+  (`sizeProg`, then `addConstProg`, then `expBitsProg`; bound `40 (X + K + 4) ^ 2`). The
+  threshold of K3 is therefore `r e = 2 ^ (K + 1 + esize e)` with a *constant* `K` chosen
+  classically from the toolkit polynomial (`Q(x) ≤ A (x + 1) ^ D` ⇒ for `s ≥ K`,
+  `A (2 s) ^ D ≤ 2 ^ (s - 1)`), so no unary multiplication or powering of polynomials is
+  needed (the planned `polyProg` is dropped).
+- `Cost/BitQuery.lean`: `bitQueryAnswer` (moved here from `Compression.lean`) and the
+  bit-indexing program `bitAtProg` with `bitAtProg_runs`: on `(encode y, encode m)` it
+  computes `bitQueryAnswer y m` within `(|y| + 1) · bitAtIter (size y) (Nat.size m)`,
+  `bitAtIter sy L ≤ (sy + 534) (L + 1) ^ 2` (`bitAtIter_le`). Quadratic in `|m|`: a zero
+  test or a decrement copies the index — hence the revised K-D5.
+- `Cost/Clocked.lean`: `PolyTimeFun.haltsWithin UT : PolyTimeFun (Prog × ℕ) Bool`,
+  `toFun (e, n) = (evalWithin e nil (Nat.size n)).isSome`, bound
+  `UT.bound + (X + 2)(4 X + 14) + 9 X + 40`.
+
+The *counted loop* combinator of the original plan was not needed: every program is a
+direct `loop` with an invariant. Lessons: state each body's exact cost as a lemma
+(`cast_cost` + `omega`) and bound the loop against a fixed slack `S`; give `Nat.succ_mul`
+instances explicit types so that `omega` sees one product atom; **never** rely on
+expected-type propagation for a cost of the form `a + 1 + 1` against a two-metavariable
+pattern such as `Eval.cons`'s `s + u + 1` — Lean's `Nat` offset unification splits it as
+`?s := a, ?u := 2` — build the term with `have h := …` (or a `_` cost) and cast
+afterwards; `by decide` does not see through `WellScoped n (var i)` — use
+`by simp [WellScoped]`.
+
+**Acceptance (K2b, met):** `grep sorry` adds nothing outside the two universal-machine
+nodes, Kleene, and `Compression.lean`'s own nodes.
+
+## K3 — the compression theorem
+
+Proof plan for `recursive_compression` (paper §5, in repo terms). Obtain
+`U : UniversalMachine`, `UT : ClockedUniversalMachine` and the s-m-n witnesses from the
+statements. All programs below are built from K2.
+
+1. **Bit-query program `β` (program layer, conditional correctness).** On input
+   `encode (((c', e), n), m)`: run `U.univ` on `cons (encode c') (encode (e, n))` to obtain
+   `y`, then output `bitQueryAnswer y m`. Lemma: if `c'` is closed and runs on
+   `encode (e, n)` to `encode y` at cost `t`, then `β` runs on that input to
+   `bitQueryAnswer y m` within `Q(esize c' + esize e + Nat.size n + t) · (Nat.size m + 1)`
+   for a fixed polynomial `Q`. `β` is *not* a `PolyTimeFun` (its input `c'` may diverge);
+   this is why K-D6 has a program layer. `b c' e n := hardcode β (encode ((c', e), n))`, and
+   `(b c' e n).Runs (encode m)` is `β.Runs (encode (((c', e), n), m))` up to the
+   `hardcode_time` overhead.
+2. **Decider `a` (function layer, total).** `decFun : PolyTimeFun (Prog × (Prog × ℕ))
+   BitStr` with `toFun (c', (e, n)) = if haltsWithin (e, n) then y₀ else
+   Compr ((S (β, ((c', e), n + 1)), n), n)`; its `computes` field *is* the correctness of
+   the program `a := decFun.code`.
+3. **Self-reference.** `F : PolyTimeFun Prog Prog`, `F c' = hardcode a (encode c')` (K2);
+   `obtain ⟨c, p, hc, hc_eval, hc_time⟩ := efficient_fixed_point F`. Then `c.Runs (encode
+   (e, n))` agrees with `a.Runs (encode (c, (e, n)))` (`hardcode_time`/`_rev`), so `c` runs
+   on `encode (e, n)` to `encode (h e n)` where `h e n := decFun (c, (e, n))` — a plain
+   definition, all recursion is inside `c`. Time: by `hc_time`, `hardcode_time` and
+   `decFun.computes`, `c` runs on `encode (e, n)` within `P (esize e + Nat.size n)` for a
+   polynomial `P`.
+4. **Threshold `r`.** Arithmetic lemma (`Nat.size`/`Nat.log` estimates): for a polynomial
+   `Q` there is a polynomial `q` with `n ≥ 2 ^ q(esize e) → Q(esize e + Nat.size n) ≤ n + 1`.
+   Define `r e := 2 ^ q(esize e)` (a `PolyTimeFun Prog ℕ`: `esize e` is the size of the
+   input; the output is `q(esize e)` zero bits then a one). For `n ≥ r e`:
+   `|h e (n + 1)| ≤ 2 ^ n` (`Eval.size_le`) and `IsSuccinctDesc (b c e (n + 1)) n (h e (n +
+   1))` (step 1 with `c' = c`, `t ≤ P`).
+5. **Reduction `g := c ∘ (e ↦ (e, r e))`** as a `PolyTimeFun Prog BitStr` via `ofProg`,
+   `pair`, `comp`; `g e = h e (r e)`.
+6. **Non-halting `e`.** For every `n`, `haltsWithin (e, n) = false`, so `h e n =
+   Compr ((b c e (n + 1), n), n)`; for `n ≥ r e`, `hCompr` gives `f (h e n) ≥
+   max (f (h e (n + 1))) n`; by induction on `k`, `f (h e n) ≥ n + k` for all `k`, hence
+   `f (h e n) = ⊤` (`ENat`). With `n = r e`: `f (g e) = ⊤`.
+7. **Halting `e`.** A run of `e` on `nil` has some cost `T`; for `Nat.size n ≥ T`
+   (`n ≥ 2 ^ T`) `h e n = y₀ ∈ A`. Downward induction (`Nat.decreasingInduction`) from
+   `N := max (r e) (2 ^ T)` to `r e`: if `haltsWithin (e, n)` then `y₀ ∈ A`, else
+   `h e n = Compr ((b c e (n + 1), n), n) ∈ A` by `hCompr.2` from `h e (n + 1) ∈ A` and
+   the succinct description of step 4. Hence `g e = h e (r e) ∈ A`.
+
+**Acceptance:** `recursive_compression` sorry-free; `#print axioms` shows no `sorryAx`
+beyond `exists_efficient_universal`, `exists_clocked_universal`, `efficient_fixed_point`
+(and `smn_polyTime` if K2 leaves it); blueprint `lem:recursive-compression` gets
+`\leanok` and its proof text.
+
+## K4 — efficient Kleene recursion
+
+[MNY, Lemma 2.3] from `U : UniversalMachine` and `hardcode`: for `F`, let `d` be the closed
+program that on input `cons x v` computes `F (hardcode x x)` (polynomial time, K2) and then
+runs `U.univ` on `cons (encode (F (hardcode x x))) v`; set `e := hardcode d (encode d)`. Then
+`e.Runs v` agrees with `(F e).Runs v` because `hardcode d (encode d) = e`
+(`hardcode_time`/`_rev`), and a run of `F e` of cost `t` yields a run of `e` within
+`U.bound (esize (F e) + v.size + t) + O(esize d)`, the constant covering the fixed
+computation of `F (hardcode d (encode d))` and the copy of the input. Only the direction of
+K-D3 is stated, and only it follows.
+
+## K5 — Mathlib bridges (independent)
+
+`Primcodable Prog` (through `Data.toBits`/tree encodings; routine), `PolyTimeFun.toFun_computable`
+(partial recursiveness of `Prog` evaluation: `evalFuel` is primitive recursive in the fuel —
+after `Primcodable Data`/`Prog` — and evaluation is its unbounded search over the fuel),
+`exists_compile` (a fixed universal `Prog` computing `Nat.Partrec.Code.eval` on encoded
+arguments, obtained from Mathlib's universality, hardcoded with the code via `hardcode`),
+then `recursive_compression_halting` by composition. Risk: proving `Primrec` of a
+structurally recursive evaluator over trees in Mathlib is laborious; budget for it, or route
+through `Nat.Partrec.Code` directly.
+
+## The universal-machine gate (after K3)
+
+Two constructions can provide `exists_efficient_universal`/`exists_clocked_universal`;
+choose after K3 and record the choice in `planning/tm-infrastructure.md`:
+
+- **Route α — TM track + bridge.** Milestones E–G build the machine-level
+  `boundedUniversalCode` (`TM/Universal/Spec.lean`); a new Milestone H bridges the models
+  with time bounds: H1 compiles `Prog` to `Code i` with polynomial time (also the substrate
+  of `thm:succinct-sat`, requirement R3), H2 interprets TM codes in `Prog` with polynomial
+  overhead. This is the blueprint's current edge `lem:universal-tm ←
+  lem:bounded-universal-machine`. More work for *this* theorem, but H1 is needed for the
+  gateway regardless.
+- **Route β — self-interpreter.** A `Prog` interpreting `toData c` on `v`: a CEK-style
+  machine over `Data` (program pointer, environment as a list, continuation stack) driven by
+  one `loop`; per step cost polynomial in `esize c` and in the current value sizes, which
+  `Eval.size_le` bounds by the simulated cost, so the total is polynomial in
+  `esize c + v.size + t`. No bridge needed; the correctness proof is an invariant relating
+  interpreter configurations to `Eval` derivations. Milestones E–G then serve only
+  `thm:succinct-sat` and the paper-literal machine statements.
+
+## Verification (every WP; CI-equivalent locally)
+
+```bash
+lake build                    # green; no new warnings
+lake exe mk_all               # when files were added; commit MIPRE.lean
+```
+
+- `grep -rn "sorry" MIPRE/Foundations/Cost MIPRE/Foundations/Compression.lean` shrinks
+  monotonically to the blueprint-tracked nodes named in each WP's acceptance.
+- `grep -rn "noncomputable" MIPRE/Foundations/Cost` → only what `Polynomial ℕ` and
+  `evalWithin` force (K2's `polyProg`, `PolyTimeFun` constructors).
+- `#print axioms` on the headline theorem at K3/K4/K5 as stated in their acceptance.
+
+## Risks and mitigations
+
+1. **Closure-library sprawl (K2)** — the proof needs a dozen combinators, each with an
+   `Eval` bound. Mitigation: two layers (K-D6), program-layer lemmas stated once as
+   time-transfer rules and reused; automation deferred until the pipeline sections need
+   it.
+2. **Expressivity of `Prog`** — the model change was forced by an expressivity gap in
+   `ToPartrec.Code`; `Prog` builds and destructs values freely, but this should be validated
+   early in K2 by the tree-recursion combinator and by `smn_polyTime` (a genuine
+   string-to-string transformation).
+3. **Threshold arithmetic (K3 step 4)** — polynomial-versus-`2^n` estimates over `ℕ`
+   are fiddly. Mitigation: one lemma with a crude `q` (degree not optimized), proved via
+   `Nat.log`/`Nat.size` bounds already in Mathlib.
+4. **Statement drift into `thm:compression`** — the succinctness bound (K-D5) and the
+   pairing of descriptions `(c, m)` with the parameter `n` must match how the game
+   compression theorem describes its verifiers. Mitigation: `thm:compression` is
+   stated against `IsSuccinctDesc` when its section is formalized; changes flow back
+   here as a recorded decision.
+5. **K5 Mathlib gap** — see K5.
+6. **Universal machine remains the deep sorry** until the gate's construction lands;
+   the track is designed so that nothing above it waits.
+
+## Progress checklist
+
+- [x] **K0** statement audit and fixes (2026-09-08; branch `compression-track`)
+- [x] **K1** foundations on `ToPartrec.Code` (2026-09-08, commit `b24731c`) — superseded
+  the same day by K-D7
+- [x] **K1** foundations on `Prog` (2026-09-08): language, metatheory, encodings,
+  `PolyTimeFun`, program-level s-m-n, all sorry-free; `Cost/` sorries = the four blueprint
+  nodes. Lessons: keep every program closed (`WellScoped`) — the strengthening direction
+  of hardcode needs it; `Eval.size_le` replaces all output-size bookkeeping; state
+  instance-law and evaluator proofs with `obtain`/`rcases` on the discriminants rather than
+  bare `simp`.
+- [x] **K2a** literals (K-D9), `Cost/Closure.lean` (calls, projections, pairing,
+  branching), `smn_polyTime` proved (2026-09-09). Lessons: `scoped` is a keyword; a
+  Windows command line is capped at 8 KB, so files are written with the editor tools, not
+  shell heredocs; multi-line `perl -0pi` edits mangle UTF-8 files — use targeted edits.
+- [x] **K2b** loops, numeric/list programs, threshold, `haltsWithin` (2026-09-09);
+  `IsSuccinctDesc` budget revised to `(n + 1) * (Nat.size m + 1) ^ 2` (K-D5).
+- [x] **K3** `recursive_compression` proved → **abstract compression theorem**
+  (2026-09-09). Files: `Cost/Growth.lean` (threshold arithmetic), `Cost/Succinct.lean`
+  (`IsSuccinctDesc`, moved from `Compression.lean`; bit-query program `bitQueryProg` with
+  conditional correctness `bitQueryProg_runs` and `isSuccinctDesc_hardcode`),
+  `PolyTimeFun.smn`/`next`, `evalWithin_isSome_iff`; `Compression.lean` holds the decider
+  `decFun` (a `PolyTimeFun` built from the K2 combinators; `decFun_apply` is `rfl`) and the
+  proof (K-D10, K-D11). `#print axioms`: `sorryAx` only through the three toolkit nodes.
+  Lessons: keep every constructed object opaque behind its functional equation
+  (`obtain ⟨dec, hdec⟩ : ∃ dec, ∀ …, dec … = …`), including polynomials
+  (`∃ Q, ∀ x, Q.eval x = …`) — the main proof is then pure rewriting plus `omega`;
+  `omega` does not know `2 ^ k ≥ 0` after its cast to `ℤ` (use `Nat.le_add_left`);
+  write `∀ n : ℕ` when a later `(n : ℕ∞)` cast would otherwise fix the binder's type;
+  `hCompr _ _ _ n h` — the compression parameter is not determined by the description.
+- [x] **K4** `efficient_fixed_point` proved (2026-09-09): `Cost/Kleene.lean` —
+  `kleeneProg univ F` (on `cons x v`: `s(x, x)` by `smnProg`, then `F.code`, then `univ`),
+  `e = hardcode G (encode G)`; forward run by the K2 call lemmas, backward by inverting the
+  `let_` chain with `Eval.deterministic` against the forward runs and
+  `UniversalMachine.halts_of` (`callVar_runs_rev`). Built green first time. Toolkit's
+  Kleene section now only points to `Cost/Kleene.lean`; sorries: the two universal nodes +
+  Compression's K5 bridges.
+- [x] **K5** Mathlib bridges → `recursive_compression_halting` proved (2026-09-09), at the
+  `Data` level (K-D12): `Cost/Codable.lean` (`Data ≃ ℕ` by Cantor pairing, `Primcodable
+  Data`, primrec constructor/projections, tree recursion `primrec_recD`, unary numerals,
+  `getList`, bit-string decoding), `Cost/Machine.lean` (CEK machine with exact `Eval` cost
+  accounting; `eval_steps`/`eval_of_steps`/`halts_iff`), `Cost/MachineData.lean` (the
+  machine on `Data`: `stepData`, `stepData_toData`), `Cost/Partrec.lean` (`Primrec
+  stepData`, `evalData = PFun.fix`, `mem_evalData_iff`, `PolyTimeFun.computable_comp`),
+  `Cost/FromPartrec.lean` (`Prog.ofCode : ToPartrec.Code → Prog` with `ofCode_sound` /
+  `ofCode_complete`, `exists_compile` via Mathlib's `ToPartrec.Code.exists_code` on the
+  universal partial function). The machine files are shared with route β.
+- [x] **gate — route β** (2026-09-09): `exists_efficient_universal` and
+  `exists_clocked_universal` proved (`Cost/Interpreter.lean`, `Cost/MachineBound.lean`,
+  `Cost/Universal.lean`; K-D14); the compression theorem and its halting form are
+  sorry-free. Blueprint: proof text and `\leanok` on `lem:universal-tm`, its `\uses` edge to
+  the TM node dropped. Lessons: keep one named cost-bound function per program
+  (`stepBound`, `subBound`, `sizeBound`, …) opaque for `omega` and prove monotonicity
+  separately, so the assembly proofs are linear arithmetic over a few atoms; state loop
+  lemmas over the iterate `step^[n] c₀` of the mathematical machine (the final
+  configuration is a fixed point, `step_final`, which turns "bounded up to `N`" into
+  "bounded forever" and identifies results); a `by cases h` inside an anonymous-constructor
+  list swallows the following components as further `cases` targets — use `by simp at h`;
+  a `have := lemma …` whose implicit numeral parameters occur only in `by omega` arguments
+  needs a type ascription; `simp only … at *` fails when nothing changes — wrap it in `try`
+  (`size_omega` macro in `Interpreter.lean`); anonymous-constructor `WellScoped` proofs are
+  brittle for long programs — `simp [prog, WellScoped, callVar_wellScoped, <sub-program
+  facts>]` is robust; a per-frame size bound must leave room for `V = 0`
+  (`V + P + L V + L + 10`, not `+ 9`).
+
+Each WP is one commit on the working branch, updating this checklist in the same commit.

@@ -10,126 +10,217 @@ import Mathlib.Data.Nat.Size
 /-!
 # Size-aware encodings
 
-Interface between ordinary types and the ambient machine model: a `SizedEncoding α`
-renders `a : α` as a machine value `List ℕ` over a *bounded alphabet* (bits, plus
-finitely many tags/separators), so that `esize a` — the number of cells — is an
-honest bit-length up to a constant factor. All polynomial-time statements
-(`Cost.PolyTime`) are relative to these encodings.
+Interface between ordinary types and the ambient model: a `SizedEncoding α` renders
+`a : α` as a value `encode a : Data`, and `esize a` is its size (the length of its
+preorder serialization `Data.toBits`), an honest bit-length up to a constant factor.
+All polynomial-time statements (`Cost.PolyTime`) are relative to these encodings.
 
-This deliberately does **not** reuse Mathlib's `Encodable`/`Denumerable`/
-`Primcodable`: those encode into `ℕ` via the quadratic pairing `Nat.pair`, whose
-iterated use distorts lengths exponentially (a list of `k` unit-size items encodes
-with `Θ(2ᵏ)` bits). Here, by contrast:
+Conventions:
 
-* numbers are encoded in **binary** (`esize n = Nat.size n`, up to a constant);
-* pairing and list formation are **length-additive** (separator cells above the
-  component alphabets), as in the paper's string conventions.
+* bits are `false ↦ nil` and `true ↦ cons nil nil`;
+* lists are `cons`-chains ending in `nil`, so a bit string of length `n` has size between
+  `2n + 1` and `4n + 1`;
+* natural numbers are encoded in **binary** (LSB first, `Nat.bits`), so
+  `esize n ≤ 4 · Nat.size n + 1`;
+* pairs are `cons`: `esize (a, b) = esize a + esize b + 1` — length-additive pairing, with
+  no separators;
+* programs are their tree encoding `Prog.toData`, a length-faithful serialization (this,
+  not any numeric Gödel numbering, is how programs occur as *data*).
 
-Design notes / open knobs:
-
-* Encodings target `List ℕ` directly (rather than `List Bool` then a bit-map)
-  so that separators are single cells; the `bound` field certifies the alphabet.
-* Only the instances needed downstream are given here (`Bool`, `ℕ`, `List Bool`,
-  products). `Turing.ToPartrec.Code` gets its instance in `Cost.Toolkit`; further
-  instances (finite field elements, matrices, verifier descriptions) belong to the
-  respective sections of the pipeline.
-* `decode` is only required to invert `encode` (a partial-inverse spec would also
-  be fine); well-formedness checking is a job for in-model programs, not for the
-  meta-level interface.
+This deliberately does **not** reuse Mathlib's `Encodable`/`Primcodable`: those encode into
+`ℕ` via the quadratic pairing `Nat.pair`, whose iterated use distorts lengths exponentially.
 -/
 
 namespace MIPRE.Cost
 
-open Turing.ToPartrec
-
-/-- A size-faithful encoding of `α` as machine values: cells are bounded by
-`bound` (so the number of cells measures bit-length up to a constant), and
-`decode` inverts `encode`. -/
+/-- A size-faithful encoding of `α` as data, with `decode` inverting `encode`. -/
 class SizedEncoding (α : Type*) where
-  /-- Encoding of a value as a machine word. -/
-  encode : α → List ℕ
-  /-- Decoding; must invert `encode` (on well-formed words). -/
-  decode : List ℕ → Option α
+  /-- Encoding of a value. -/
+  encode : α → Data
+  /-- Decoding; must invert `encode` (on well-formed data). -/
+  decode : Data → Option α
   decode_encode : ∀ a, decode (encode a) = some a
-  /-- Alphabet bound: every cell of every encoding is `≤ bound`. -/
-  bound : ℕ
-  cells_le_bound : ∀ a, ∀ x ∈ encode a, x ≤ bound
 
 export SizedEncoding (encode decode)
 
-/-- The size of a value: its number of cells. On the instances below this is the
-bit-length of the standard string encoding, up to a constant factor. -/
-def esize {α : Type*} [SizedEncoding α] (a : α) : ℕ := (encode a).length
+/-- The size of a value: the number of nodes of its encoding. -/
+def esize {α : Type*} [SizedEncoding α] (a : α) : ℕ := (encode a).size
 
-/-- The alphabet bound of an encoding, with the type explicit. -/
-def encBound (α : Type*) [h : SizedEncoding α] : ℕ := h.bound
+theorem esize_pos {α : Type*} [SizedEncoding α] (a : α) : 0 < esize a := Data.size_pos _
+
+theorem encode_injective {α : Type*} [SizedEncoding α] : Function.Injective (encode : α → Data) := by
+  intro a b h
+  have := SizedEncoding.decode_encode a
+  rw [h, SizedEncoding.decode_encode] at this
+  exact (Option.some.inj this).symm
 
 /-- Binary strings, the `{0,1}*` of the paper. -/
 abbrev BitStr := List Bool
 
+namespace Data
+
+/-- Bits: `false ↦ nil`, `true ↦ cons nil nil`. -/
+def ofBool : Bool → Data
+  | false => nil
+  | true => cons nil nil
+
+/-- Reading a bit back. -/
+def toBool? : Data → Option Bool
+  | nil => some false
+  | cons nil nil => some true
+  | cons _ _ => none
+
+@[simp] theorem toBool?_ofBool (b : Bool) : toBool? (ofBool b) = some b := by cases b <;> rfl
+
+theorem size_ofBool (b : Bool) : (ofBool b).size ≤ 3 := by cases b <;> simp [ofBool]
+
+/-- Lists: `cons`-chains ending in `nil`. -/
+def ofList {α : Type*} (f : α → Data) : List α → Data
+  | [] => nil
+  | a :: l => cons (f a) (ofList f l)
+
+/-- Reading a list back, elementwise. -/
+def toList? {α : Type*} (g : Data → Option α) : Data → Option (List α)
+  | nil => some []
+  | cons a d => do
+    let x ← g a
+    let l ← toList? g d
+    pure (x :: l)
+
+theorem toList?_ofList {α : Type*} {f : α → Data} {g : Data → Option α}
+    (hfg : ∀ a, g (f a) = some a) (l : List α) : toList? g (ofList f l) = some l := by
+  induction l with
+  | nil => rfl
+  | cons a l ih => simp [ofList, toList?, hfg, ih]
+
+theorem size_ofList_le {α : Type*} {f : α → Data} {B : ℕ} (hf : ∀ a, (f a).size ≤ B)
+    (l : List α) : (ofList f l).size ≤ (B + 1) * l.length + 1 := by
+  induction l with
+  | nil => simp [ofList]
+  | cons a l ih =>
+    have := hf a
+    simp only [ofList, size_cons, List.length_cons, Nat.mul_succ]
+    omega
+
+theorem length_le_size_ofList {α : Type*} (f : α → Data) (l : List α) :
+    l.length ≤ (ofList f l).size := by
+  induction l with
+  | nil => simp [ofList]
+  | cons a l ih =>
+    have := size_pos (f a)
+    simp only [ofList, size_cons, List.length_cons]
+    omega
+
+end Data
+
 instance : SizedEncoding Bool where
-  encode b := [b.toNat]
-  decode l := match l with
-    | [0] => some false
-    | [1] => some true
-    | _ => none
-  decode_encode b := by cases b <;> rfl
-  bound := 1
-  cells_le_bound b := by cases b <;> simp
+  encode := Data.ofBool
+  decode := Data.toBool?
+  decode_encode := Data.toBool?_ofBool
 
-/-- Bit strings encode cell-per-bit: `esize x = x.length`. -/
+/-- Bit strings encode as lists of bits. -/
 instance : SizedEncoding BitStr where
-  encode x := x.map Bool.toNat
-  decode l := if l.all (· ≤ 1) then some (l.map (· == 1)) else none
-  decode_encode x := by sorry -- routine
-  bound := 1
-  cells_le_bound x := by sorry -- routine
+  encode := Data.ofList Data.ofBool
+  decode := Data.toList? Data.toBool?
+  decode_encode := Data.toList?_ofList Data.toBool?_ofBool
 
-/-- Natural numbers encode in **binary** (LSB first): `esize n = Nat.size n`.
-This is the encoding under which indices "`n` in binary" enter succinct
-descriptions (blueprint `def:succinct`). -/
+theorem esize_bitStr_le (x : BitStr) : esize x ≤ 4 * x.length + 1 :=
+  Data.size_ofList_le Data.size_ofBool x
+
+theorem length_le_esize_bitStr (x : BitStr) : x.length ≤ esize x :=
+  Data.length_le_size_ofList _ x
+
+/-- Folding `Nat.bit` over the binary digits of `n` recovers `n`. -/
+theorem Nat.foldr_bit_bits (n : ℕ) : n.bits.foldr Nat.bit 0 = n := by
+  induction n using Nat.binaryRec' with
+  | zero => simp [Nat.zero_bits]
+  | bit b n hn ih => rw [Nat.bits_append_bit n b hn, List.foldr_cons, ih]
+
+/-- Natural numbers encode in **binary** (LSB first): the bit string `n.bits`. This is the
+encoding under which indices "`n` in binary" enter succinct descriptions (blueprint
+`def:succinct`). -/
 instance : SizedEncoding ℕ where
-  encode n := n.bits.map Bool.toNat
-  decode l := if l.all (· ≤ 1) then some ((l.map (· == 1)).foldr Nat.bit 0) else none
-  decode_encode n := by sorry -- `Nat.bits` round-trip, routine
-  bound := 1
-  cells_le_bound n := by sorry -- routine
+  encode n := encode n.bits
+  decode d := (decode d : Option BitStr).map fun l => l.foldr Nat.bit 0
+  decode_encode n := by simp [SizedEncoding.decode_encode, Nat.foldr_bit_bits]
 
-/-- Length-additive pairing: `encode (a, b) = encode a ++ sep :: encode b`, with a
-separator cell above both alphabets. `esize (a, b) = esize a + esize b + 1`. -/
+theorem esize_nat_le (n : ℕ) : esize n ≤ 4 * Nat.size n + 1 := by
+  have := esize_bitStr_le n.bits
+  rw [Nat.size_eq_bits_len] at this
+  exact this
+
+theorem size_le_esize_nat (n : ℕ) : Nat.size n ≤ esize n := by
+  have := length_le_esize_bitStr n.bits
+  rw [Nat.size_eq_bits_len] at this
+  exact this
+
+/-- Length-additive pairing: `encode (a, b) = cons (encode a) (encode b)`. -/
 instance instSizedEncodingProd {α β : Type*} [SizedEncoding α] [SizedEncoding β] :
     SizedEncoding (α × β) where
-  encode p := encode p.1 ++ (max (encBound α) (encBound β) + 1) :: encode p.2
-  decode l :=
-    match l.findIdx? (· == max (encBound α) (encBound β) + 1) with
-    | none => none
-    | some i =>
-      match (decode (l.take i) : Option α), (decode (l.drop (i + 1)) : Option β) with
-      | some a, some b => some (a, b)
+  encode p := .cons (encode p.1) (encode p.2)
+  decode d :=
+    match d with
+    | .cons a b =>
+      match (decode a : Option α), (decode b : Option β) with
+      | some x, some y => some (x, y)
       | _, _ => none
-  decode_encode p := by sorry -- the separator does not occur in `encode p.1`; routine
-  bound := max (encBound α) (encBound β) + 1
-  cells_le_bound p := by sorry -- routine
+    | .nil => none
+  decode_encode p := by
+    obtain ⟨a, b⟩ := p
+    simp [SizedEncoding.decode_encode]
 
-@[simp] theorem esize_bitStr (x : BitStr) : esize x = x.length := by
-  simp [esize, encode]
+@[simp] theorem esize_prod {α β : Type*} [SizedEncoding α] [SizedEncoding β] (a : α) (b : β) :
+    esize (a, b) = esize a + esize b + 1 := rfl
 
-theorem esize_nat (n : ℕ) : esize n = Nat.size n := by
-  sorry -- `Nat.size_eq_bits_len`
+theorem encode_prod {α β : Type*} [SizedEncoding α] [SizedEncoding β] (a : α) (b : β) :
+    encode (a, b) = .cons (encode a) (encode b) := rfl
 
-@[simp] theorem esize_prod {α β : Type*} [SizedEncoding α] [SizedEncoding β]
-    (a : α) (b : β) : esize (a, b) = esize a + esize b + 1 := by
-  show (encode a ++ (max (encBound α) (encBound β) + 1) :: encode b).length = _
-  simp [esize]
-  omega
+/-! ## Programs as data -/
 
-/-- Encoded data has `vsize` proportional to `esize` (alphabet-boundedness). -/
-theorem vsize_encode_le {α : Type*} [SizedEncoding α] (a : α) :
-    vsize (encode a) ≤ (encBound α + 1) * esize a := by
-  sorry -- routine from `cells_le_bound`
+namespace Prog
 
-theorem esize_le_vsize_encode {α : Type*} [SizedEncoding α] (a : α) :
-    esize a ≤ vsize (encode a) := by
-  sorry -- routine: each cell contributes at least 1
+/-- Programs as data: a unary tag (`0`–`6`) paired with the fields. -/
+def toData : Prog → Data
+  | var i => .cons (.ofNat 0) (.ofNat i)
+  | nil => .cons (.ofNat 1) .nil
+  | cons h t => .cons (.ofNat 2) (.cons h.toData t.toData)
+  | elim i n c => .cons (.ofNat 3) (.cons (.ofNat i) (.cons n.toData c.toData))
+  | let_ e b => .cons (.ofNat 4) (.cons e.toData b.toData)
+  | loop b => .cons (.ofNat 5) b.toData
+  | const d => .cons (.ofNat 6) d
+
+/-- Reading a program back from its data (`ofData_toData`). -/
+def ofData : Data → Option Prog
+  | .cons .nil i => (Data.toNat? i).map var
+  | .cons (.cons .nil .nil) .nil => some nil
+  | .cons (.cons .nil (.cons .nil .nil)) (.cons h t) => do
+    pure (cons (← ofData h) (← ofData t))
+  | .cons (.cons .nil (.cons .nil (.cons .nil .nil))) (.cons i (.cons n c)) => do
+    pure (elim (← Data.toNat? i) (← ofData n) (← ofData c))
+  | .cons (.cons .nil (.cons .nil (.cons .nil (.cons .nil .nil)))) (.cons e b) => do
+    pure (let_ (← ofData e) (← ofData b))
+  | .cons (.cons .nil (.cons .nil (.cons .nil (.cons .nil (.cons .nil .nil))))) b =>
+    (ofData b).map loop
+  | .cons (.cons .nil (.cons .nil (.cons .nil (.cons .nil (.cons .nil (.cons .nil .nil))))))
+      d => some (const d)
+  | _ => none
+
+theorem ofData_toData : ∀ p : Prog, ofData p.toData = some p
+  | var i => by simp [toData, ofData, Data.ofNat]
+  | nil => by simp [toData, ofData, Data.ofNat]
+  | const d => by simp [toData, ofData, Data.ofNat]
+  | cons h t => by simp [toData, ofData, Data.ofNat, ofData_toData h, ofData_toData t]
+  | elim i n c => by simp [toData, ofData, Data.ofNat, ofData_toData n, ofData_toData c]
+  | let_ e b => by simp [toData, ofData, Data.ofNat, ofData_toData e, ofData_toData b]
+  | loop b => by simp [toData, ofData, Data.ofNat, ofData_toData b]
+
+instance : SizedEncoding Prog where
+  encode := toData
+  decode := ofData
+  decode_encode := ofData_toData
+
+theorem esize_eq_size_toData (p : Prog) : esize p = p.toData.size := rfl
+
+end Prog
 
 end MIPRE.Cost

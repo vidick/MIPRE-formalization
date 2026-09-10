@@ -118,7 +118,6 @@ TODO
 
 \begin{lemma}[Efficient universal Turing machine]
 \label{lem:universal-tm}
-\uses{lem:bounded-universal-machine}
 \lean{MIPRE.Cost.exists_efficient_universal, MIPRE.Cost.exists_clocked_universal}
 \leanok
 There is a program $u$ and a polynomial $p$ such that $\phi_u(e, x) = \phi_e(x)$ for
@@ -127,23 +126,75 @@ p\bigl(\abs{e}, \abs{x}, \mathrm{runtime}(e, x)\bigr)$.
 \end{lemma}
 
 \begin{proof}
-TODO
+\leanok
+Both the universal program and its clocked variant are self-interpreters of the ambient
+list language, written in the language itself (\texttt{MIPRE.Cost.Machine.univProg},
+\texttt{MIPRE.Cost.Machine.univTProg}). Evaluation is first presented as an abstract
+machine on configurations (a control ``evaluate $p$'' or ``return $v$'', an environment
+and a stack of frames) whose steps are charged exactly the costs of the evaluation rules,
+so that a derivation of cost $t$ corresponds to a machine run of at most $3t$ steps
+reaching a final configuration, and conversely every run reaching a final configuration
+comes from a derivation. Configurations are encoded as data and the step function is
+implemented by a fixed program (\texttt{stepProg}) at cost quadratic in the size of the
+configuration. Along the run simulating a derivation of cost $t$ on the input $x$, every
+configuration has size polynomial in $\abs{e} + \abs{x} + t$: values are results of
+sub-derivations, hence of size at most $t$; environments and stacks grow by at most one
+entry per unit of cost. The universal program iterates \texttt{stepProg} until a final
+configuration is reached, so its runs are polynomially bounded, and any of its halting
+runs is a machine run reaching a final configuration, hence a derivation with the same
+result. The clocked variant additionally carries, in unary, the remaining cost budget
+(decremented by the exact cost of each step), a step budget $3k+1$ guaranteeing
+termination, and a size guard $\Theta$, a fixed polynomial in $k + \abs{e} + \abs{x}$
+dominating the configuration sizes of any run of cost at most $k$; it returns the timeout
+value when a budget or the guard is exceeded. The guard is checked on the configuration
+produced by each step, whose size is bounded by the cost of producing it, so the loop
+only handles configurations of polynomial size even when the simulated run does not halt.
 \end{proof}
 
 \begin{lemma}[Efficient s-m-n]
 \label{lem:smn}
 \uses{lem:universal-tm}
+\lean{MIPRE.Cost.hardcode_time, MIPRE.Cost.hardcode_time_rev, MIPRE.Cost.hardcode_size, MIPRE.Cost.smn_polyTime}
+\leanok
 There is a polynomial-time computable $s$ such that $\phi_{s(e,x)}(y) = \phi_e(x, y)$
 for all $e, x, y$, with the runtimes of $e$ and $s(e,x)$ polynomially equivalent.
 \end{lemma}
 
+\begin{proof}
+\leanok
+In the ambient list language, $s(e, x)$ is the program that pairs the literal $x$ with
+its input and runs $e$ on the pair (\texttt{MIPRE.Cost.hardcode}). The time overhead is
+additive and linear in $\abs{x}$ and the input size, in both directions, and the
+description of $s(e, x)$ is that of $e$ plus $\abs{x}$ plus a constant. The map $s$
+itself is computed in linear time by a fixed program assembling the description
+(\texttt{smnProg}).
+\end{proof}
+
 \begin{lemma}[Efficient Kleene recursion theorem]
 \label{lem:kleene}
 \uses{lem:universal-tm,lem:smn}
+\lean{MIPRE.Cost.efficient_fixed_point}
+\leanok
 For every polynomial-time computable $f : \{0,1\}^* \to \{0,1\}^*$ there is a program
-$e$ with $\phi_e = \phi_{f(e)}$ and the runtimes of $e$ and $f(e)$ polynomially
-equivalent.
+$e$ with $\phi_e = \phi_{f(e)}$ and the runtime of $e$ polynomially bounded in terms
+of that of $f(e)$. (This is the direction used by Lemma~\ref{lem:recursive-compression};
+\cite{MNY} states the runtimes as polynomially equivalent, and the converse direction
+would require a simulator that is never faster than the simulated program.)
 \end{lemma}
+
+\begin{proof}
+\leanok
+The classical construction. Let $G$ be the program that on input $(x, v)$ computes
+$s(x, x)$ (Lemma~\ref{lem:smn}), applies $f$ to it, and runs the resulting program on $v$
+through the universal machine (Lemma~\ref{lem:universal-tm}); put $e = s(G, G)$. Then $e$
+on $v$ is $G$ on $(G, v)$, which runs $f(s(G, G)) = f(e)$ on $v$: the two programs halt
+on the same inputs with the same results (the backward direction inverts the run of $G$
+step by step and uses that the universal machine halts only if the simulated program
+does), and a run of $f(e)$ of time $t$ gives a run of $e$ within $p(\abs{v}, t)$, where
+$p$ is the universal machine's overhead polynomial shifted by the fixed size of $f(e)$,
+plus a linear term for the copies of the input and a constant for the fixed computation
+of $f(e)$.
+\end{proof}
 
 \paragraph{Source.} Folklore; stated in this efficient form in~\cite{MNY}, Lemmas
 2.1--2.3.
@@ -152,6 +203,13 @@ equivalent.
 machine, s-m-n and the Rogers fixed-point theorem for \texttt{Nat.Partrec.Code}). The
 efficient versions require a cost model for the chosen machine model; this is real
 infrastructure work and a prerequisite for everything involving ``polynomial-time''.
+The formalization's ambient model is not a Turing machine but a small first-order
+list-processing language (\texttt{MIPRE.Cost.Prog}, over binary trees) with a unit-cost
+semantics in which reading a value costs its size; it is polynomially equivalent to
+Turing-machine time, programs are their own tree serializations (so ``a program $e$''
+and ``$\abs{e}$'' are literal), and the s-m-n theorem is a linear-overhead syntactic
+operation. Mathlib's \texttt{Turing.ToPartrec.Code} was tried first and rejected: its
+programs cannot rebuild a list in polynomial time.
 A pragmatic first pass can replace ``polynomial time'' by ``computable'' wherever
 Section~\ref{sec:departures} permits, deferring the cost model. The machine-level
 counterpart, for the concrete model of Section~\ref{sec:machine-model}, is stated as
@@ -166,6 +224,8 @@ pipeline consumes only the present ambient version.
 \begin{lemma}[Recursive compression]
 \label{lem:recursive-compression}
 \uses{def:succinct,def:re,lem:universal-tm,lem:smn,lem:kleene}
+\lean{MIPRE.Cost.recursive_compression}
+\leanok
 Let $f : \{0,1\}^* \to \N \cup \{\infty\}$ be a function and $A \subseteq \{x : f(x) <
 \infty\}$ a nonempty language. Suppose there is a polynomial-time computable function
 $\compr : \{0,1\}^* \times \N \to \{0,1\}^*$ such that whenever $\hat{x}$ is a succinct
@@ -179,6 +239,31 @@ Then there is a polynomial-time computable function $g$ reducing the halting pro
 $A$: for every Turing machine $e$, if $\phi_e$ halts on the empty input then $g(e) \in
 A$, and otherwise $f(g(e)) = \infty$.
 \end{lemma}
+
+\begin{proof}
+\leanok
+The construction of~\cite{MNY}, with two harmless modifications: the ``next level'' of
+the recursion is $2n + 1$ instead of $n + 1$ (prepending a bit to a binary numeral is one
+step in the list language, an increment is not), and the threshold below is explicit.
+Let $\beta$ be the fixed \emph{bit-query} program that, on input $(((c', e), n), m)$,
+runs the universal machine on $c'$ with input $(e, n)$ to obtain a string $y$ and outputs
+the $m$-th bit of $y$ (or $2$ if $m \geq \abs{y}$). Let $a$ be the polynomial-time
+\emph{decider} that on $(c', (e, n))$ outputs a fixed $y_0 \in A$ if $e$ halts on the
+empty input within $\log n$ steps, and $\compr\bigl((s(\beta, ((c', e), 2n+1)), n),
+n\bigr)$ otherwise, where $s$ is the s-m-n map of Lemma~\ref{lem:smn}. By
+Lemma~\ref{lem:kleene} there is a program $c$ with $\phi_c(e, n) = \phi_a(c, (e, n))
+=: h(e, n)$, running in time polynomial in $\abs{e} + \log n$. Hence for $n$ above a
+threshold $r(e) = 2^{K + 1 + \abs{e}}$ (with $K$ a constant depending only on the
+polynomial overheads), $(s(\beta, ((c, e), 2n+1)), n)$ is a succinct description of
+$h(e, 2n+1)$: the string has length at most $2^n$ and the bit-query program answers within
+the budget of Definition~\ref{def:succinct}. The reduction is $g(e) = h(e, r(e))$. If $e$
+does not halt, then for every $n \geq r(e)$ the decider compresses, so $f(h(e, n)) \geq
+\max\{f(h(e, 2n+1)), n\}$, and iterating gives $f(h(e, n)) \geq n + k$ for all $k$,
+i.e.\ $f(g(e)) = \infty$. If $e$ halts in $T$ steps, then $h(e, n) = y_0 \in A$ once
+$n \geq 2^T$, and by downward induction along the levels $n, 2n+1, 4n + 3, \ldots$ the
+second property of $\compr$ gives $h(e, n) \in A$ for every $n \geq r(e)$, in particular
+$g(e) \in A$.
+\end{proof}
 
 \paragraph{Source.} Marks, Nezhadi and Yuen~\cite{MNY}, Lemma 5.1 (the variant of
 their Lemma 3.1 with compression parameter $n$); the technique is implicit
