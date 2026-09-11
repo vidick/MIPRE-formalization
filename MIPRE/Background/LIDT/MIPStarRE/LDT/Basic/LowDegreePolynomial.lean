@@ -8,6 +8,10 @@ Upstream path: MIPStarRE/LDT/Basic/LowDegreePolynomial.lean
 import Mathlib
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LinePolynomials
 
+-- Vendoring compile fix (Lean v4.33): several proofs in this file need the pre-v4.33
+-- transparency behaviour; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Low-individual-degree polynomials for the low individual degree test
 

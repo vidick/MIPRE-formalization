@@ -7,6 +7,10 @@ Upstream path: MIPStarRE/LDT/ExpansionHypercubeGraph/MatrixRealization/Core.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Fourier
 
+-- Vendoring compile fix (Lean v4.33): several proofs in this file need the pre-v4.33
+-- transparency behaviour; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 7 — Matrix realization
 
@@ -208,7 +212,7 @@ private lemma orthogonalModeProjectorMatrix_eq_sum (params : Parameters) :
           rw [orthogonalModeProjectorMatrix,
             constantModeProjectorMatrix_eq_fourierBasisProjector_zero,
             sum_fourierBasisProjector_eq_one]
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): `rw` now closes this step
     _ = ∑ α ∈ (Finset.univ.erase (0 : Point params)), fourierBasisProjector params α := by
           rw [← hsplit]
           simp [sub_eq_add_neg, add_left_comm]
@@ -242,7 +246,7 @@ private lemma matrixAdjacencyOperator_spectral_decomp (params : Parameters) :
               star (fourierBasisState params α v) * fourierBasisState params α w := by
             congr 1 with w
             rw [fourierBasisState_inner_product_dual params v w]
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): `rw` now closes this step
     _ = ∑ α : Point params,
           star (fourierBasisState params α v) *
             ((matrixAdjacencyOperator params).mulVec (fourierBasisState params α)) u := by
@@ -311,7 +315,7 @@ private lemma matrixLaplacianOperator_spectral_decomp (params : Parameters) :
             (((adjacencyEigenvalue params α : Error) : ℂ) • fourierBasisProjector params α) := by
           rw [matrixLaplacianOperator, sum_fourierBasisProjector_eq_one,
             matrixAdjacencyOperator_spectral_decomp]
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): `rw` now closes this step
     _ = ∑ α : Point params,
           (((hypercubeVertexCount params : ℂ)⁻¹ -
               (((adjacencyEigenvalue params α : Error) : ℂ))) •
@@ -369,7 +373,7 @@ private lemma matrixLaplacianOperator_mul_fourierBasisState (params : Parameters
     _ = ((hypercubeVertexCount params : ℂ)⁻¹) • fourierBasisState params α -
           (((adjacencyEigenvalue params α : Error) : ℂ) • fourierBasisState params α) := by
             rw [Matrix.sub_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec, eigenvectors params α]
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): `rw` now closes this step
     _ = (((hypercubeVertexCount params : ℂ)⁻¹ -
             (((adjacencyEigenvalue params α : Error) : ℂ))) • fourierBasisState params α) := by
             rw [← sub_smul]
@@ -423,7 +427,7 @@ private lemma fourierBasisChange_conj_laplacian (params : Parameters) :
     _ = (((laplacianEigenvalue params β : Error) : ℂ) *
           (if α = β then 1 else 0)) := by
             rw [fourierBasisState_inner_product params α β]
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): `rw` now closes this step
     _ = Matrix.diagonal (fun γ => ((laplacianEigenvalue params γ : Error) : ℂ)) α β := by
             by_cases hαβ : α = β
             · subst hαβ

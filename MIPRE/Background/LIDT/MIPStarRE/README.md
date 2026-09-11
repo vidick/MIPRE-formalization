@@ -40,6 +40,11 @@ repository with v4.33.0), applied by hand and marked in the source by a comment:
 2. `LDT/Basic/AxisParallelLine.lean` and `LDT/ExpansionHypercubeGraph/Defs/Fourier.lean`:
    the same option, set for the whole file after the imports, for the `simp`/`rw` steps
    that fail under the check.
+3. `LDT/Basic/LowDegreePolynomial.lean` and
+   `LDT/ExpansionHypercubeGraph/MatrixRealization/Core.lean`: the same file-wide option.
+   In `Core.lean`, five `calc` steps ended with an explicit `rfl` after a `rw` that now
+   closes the goal by itself; these are `try rfl`, so that the proofs work whether or not
+   `rw` closes the goal.
 
 ## Provenance
 
