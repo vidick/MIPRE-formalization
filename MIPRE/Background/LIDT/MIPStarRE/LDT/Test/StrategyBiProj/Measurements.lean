@@ -54,7 +54,7 @@ noncomputable def localDirectSumMeasurement {Outcome ιA ιB : Type*}
     (MA : Measurement Outcome ιA) (MB : Measurement Outcome ιB) (a : Outcome) :
     (localDirectSumMeasurement MA MB).outcome a =
       localDirectSumBlock (MA.outcome a) (MB.outcome a) :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem localDirectSumMeasurement_total {Outcome ιA ιB : Type*}
     [Fintype Outcome] [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
@@ -78,7 +78,7 @@ noncomputable def localDirectSumProjMeas {Outcome ιA ιB : Type*}
     (MA : ProjMeas Outcome ιA) (MB : ProjMeas Outcome ιB) (a : Outcome) :
     (localDirectSumProjMeas MA MB).outcome a =
       localDirectSumBlock (MA.outcome a) (MB.outcome a) :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- Role-register measurement obtained by placing two complete direct-sum
 measurements in the `Role.A` and `Role.B` sectors. -/
@@ -101,7 +101,7 @@ noncomputable def roleBlockMeasurement {Outcome ιA ιB : Type*}
     [Fintype Outcome] [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (MA MB : Measurement Outcome (LocalCarrierSum ιA ιB)) (a : Outcome) :
     (roleBlockMeasurement MA MB).outcome a = roleBlock (MA.outcome a) (MB.outcome a) :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem roleBlockMeasurement_total {Outcome ιA ιB : Type*}
     [Fintype Outcome] [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
@@ -123,7 +123,7 @@ noncomputable def roleBlockProjMeas {Outcome ιA ιB : Type*}
     [Fintype Outcome] [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (MA MB : ProjMeas Outcome (LocalCarrierSum ιA ιB)) (a : Outcome) :
     (roleBlockProjMeas MA MB).outcome a = roleBlock (MA.outcome a) (MB.outcome a) :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /--
 Heterogeneous role-register projective measurement for a two-space strategy.
@@ -153,7 +153,7 @@ noncomputable def roleRegisterProjMeas {Outcome ιA ιB : Type*}
     (a : Outcome) (i j : ιA) :
     (roleRegisterProjMeas MA MB).outcome a (Role.A, Sum.inl i) (Role.A, Sum.inl j) =
       MA.outcome a i j :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem roleRegisterProjMeas_B_inr_inr {Outcome ιA ιB : Type*}
     [Inhabited Outcome] [Fintype Outcome]
@@ -162,7 +162,7 @@ noncomputable def roleRegisterProjMeas {Outcome ιA ιB : Type*}
     (a : Outcome) (i j : ιB) :
     (roleRegisterProjMeas MA MB).outcome a (Role.B, Sum.inr i) (Role.B, Sum.inr j) =
       MB.outcome a i j :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem roleRegisterProjMeas_A_B {Outcome ιA ιB : Type*}
     [Inhabited Outcome] [Fintype Outcome]
@@ -170,7 +170,7 @@ noncomputable def roleRegisterProjMeas {Outcome ιA ιB : Type*}
     (MA : ProjMeas Outcome ιA) (MB : ProjMeas Outcome ιB)
     (a : Outcome) (i j : LocalCarrierSum ιA ιB) :
     (roleRegisterProjMeas MA MB).outcome a (Role.A, i) (Role.B, j) = 0 :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem roleRegisterProjMeas_B_A {Outcome ιA ιB : Type*}
     [Inhabited Outcome] [Fintype Outcome]
@@ -178,7 +178,7 @@ noncomputable def roleRegisterProjMeas {Outcome ιA ιB : Type*}
     (MA : ProjMeas Outcome ιA) (MB : ProjMeas Outcome ιB)
     (a : Outcome) (i j : LocalCarrierSum ιA ιB) :
     (roleRegisterProjMeas MA MB).outcome a (Role.B, i) (Role.A, j) = 0 :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 variable {params : Parameters} [FieldModel params.q]
 variable {ιA : Type*} [Fintype ιA] [DecidableEq ιA]

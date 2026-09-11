@@ -42,7 +42,7 @@ repository with v4.33.0), applied by `scripts/vendor-lidt.py`:
 2. With the option, a tactic step may close the goal one line earlier than under Lean
    v4.32, and a trailing `rfl` then fails with "no goals". Every bare `rfl` tactic line of
    the tree is therefore `try rfl` (marked by a comment); a `rfl` that is still needed
-   runs as before.
+   runs as before. Term-mode proofs consisting of `rfl` alone are left unchanged.
 3. Two recorded fixes in the script's `FIXES` table, marked in the source by a comment:
    the same tolerance for one trailing `exact` in
    `LDT/ExpansionHypercubeGraph/Theorems/Foundations.lean`, and, in

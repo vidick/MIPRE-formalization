@@ -174,7 +174,7 @@ def appendAtHeight (params : Parameters) [FieldModel params.q]
 @[simp] theorem appendAtHeight_apply {params : Parameters} [FieldModel params.q]
     (f : AxisLinePolynomial params) (x t : Fq params) :
     appendAtHeight params f x t = f t :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- Slice extension commutes with translating the line parameter on axis-line answers. -/
 @[simp] theorem appendAtHeight_reparamAt {params : Parameters} [FieldModel params.q]
@@ -362,7 +362,7 @@ def reparamAt {params : Parameters} [FieldModel params.q]
 @[simp] theorem reparamAt_apply {params : Parameters} [FieldModel params.q]
     (f : DiagonalLineAnswer params) (t s : Fq params) :
     reparamAt f t s = f (addCoord t s) :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem reparamAt_zero {params : Parameters} [FieldModel params.q]
     (f : DiagonalLineAnswer params) :
@@ -399,12 +399,12 @@ def restrictAtHeight (params : Parameters) (f : DiagonalLineAnswer params.next)
 @[simp] theorem appendAtHeight_apply (params : Parameters)
     (f : DiagonalLineAnswer params) (x : Fq params) (t : Fq params.next) :
     appendAtHeight params f x t = f t :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem restrictAtHeight_apply (params : Parameters)
     (f : DiagonalLineAnswer params.next) (x : Fq params) (t : Fq params) :
     restrictAtHeight params f x t = f t :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem appendAtHeight_reparamAt {params : Parameters} [FieldModel params.q]
     (f : DiagonalLineAnswer params) (t x : Fq params) :
@@ -435,7 +435,7 @@ noncomputable def toAnswer {params : Parameters} [FieldModel params.q]
 @[simp] theorem toAnswer_apply {params : Parameters} [FieldModel params.q]
     (f : DiagonalLinePolynomial params) (t : Fq params) :
     f.toAnswer t = f t :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem toAnswer_reparamAt {params : Parameters} [FieldModel params.q]
     (f : DiagonalLinePolynomial params) (t : Fq params) :

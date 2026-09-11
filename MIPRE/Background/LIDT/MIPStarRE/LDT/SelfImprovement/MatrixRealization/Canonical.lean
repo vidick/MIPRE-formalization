@@ -54,7 +54,7 @@ noncomputable def matrixSdpCanonicalObjectiveOperator (params : Parameters)
     [FieldModel params.q]
     (model : MatrixSdpRealization params) :
     matrixSdpCanonicalObjectiveBlockFamily params model none = 0 :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem matrixSdpCanonicalObjectiveBlockFamily_some (params : Parameters)
     [FieldModel params.q]
@@ -62,7 +62,7 @@ noncomputable def matrixSdpCanonicalObjectiveOperator (params : Parameters)
     (g : Polynomial params) :
     matrixSdpCanonicalObjectiveBlockFamily params model (some g) =
       matrixAveragedPointOperator params model g :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem matrixSdpCanonicalDiagonalBlock_objectiveOperator_none
     (params : Parameters) [FieldModel params.q]
@@ -109,7 +109,7 @@ noncomputable def matrixSdpCanonicalDualOperator (params : Parameters)
     (Z : MatrixOperator model.space)
     (b : MatrixSdpCanonicalBlockIndex params) :
     matrixSdpCanonicalDualOperatorBlockFamily params model Z b = Z :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem matrixSdpCanonicalDiagonalBlock_dualOperator
     (params : Parameters) [FieldModel params.q]
@@ -138,7 +138,7 @@ noncomputable def matrixSdpCanonicalDualSlackBlockFamily (params : Parameters)
     (model : MatrixSdpRealization params)
     (Z : MatrixOperator model.space) :
     matrixSdpCanonicalDualSlackBlockFamily params model Z none = Z :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem matrixSdpCanonicalDualSlackBlockFamily_some (params : Parameters)
     [FieldModel params.q]
@@ -147,7 +147,7 @@ noncomputable def matrixSdpCanonicalDualSlackBlockFamily (params : Parameters)
     (g : Polynomial params) :
     matrixSdpCanonicalDualSlackBlockFamily params model Z (some g) =
       matrixSdpDualSlackOperator params model Z g :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- The canonical dual slack is the difference between the canonical dual
 operator and the canonical objective operator. -/

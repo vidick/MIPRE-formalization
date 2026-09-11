@@ -95,13 +95,13 @@ noncomputable def roleSymmetrizedMeasurement {Outcome ι : Type*}
     (MA MB : Measurement Outcome ι) (a : Outcome) :
     (roleSymmetrizedMeasurement MA MB).outcome a =
       roleCond Role.A (MA.outcome a) + roleCond Role.B (MB.outcome a) :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem roleSymmetrizedMeasurement_total {Outcome ι : Type*}
     [Fintype Outcome] [Fintype ι] [DecidableEq ι]
     (MA MB : Measurement Outcome ι) :
     (roleSymmetrizedMeasurement MA MB).total = 1 :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- For complete measurements, the bipartite consistency defect is the total
 expectation minus the matching mass. -/

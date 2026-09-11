@@ -70,7 +70,7 @@ theorem submatrixLinearMap_apply (R : Type*) {m n m' n' α : Type*}
     [Semiring R] [AddCommMonoid α] [Module R α]
     (row : m' → m) (col : n' → n) (A : Matrix m n α) :
     Matrix.submatrixLinearMap R row col A = Matrix.submatrix A row col :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- The trace pairing of two block-diagonal matrices is the sum of the trace
 pairings of the corresponding diagonal blocks. -/

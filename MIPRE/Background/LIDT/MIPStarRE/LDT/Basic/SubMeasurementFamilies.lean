@@ -147,13 +147,13 @@ noncomputable def transport {α β : Type*} {ι : Type*}
     [Fintype α] [Fintype β] [Fintype ι] [DecidableEq ι]
     (e : α ≃ β) (A : SubMeas α ι) (b : β) :
     (transport e A).outcome b = A.outcome (e.symm b) :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem transport_total {α β : Type*} {ι : Type*}
     [Fintype α] [Fintype β] [Fintype ι] [DecidableEq ι]
     (e : α ≃ β) (A : SubMeas α ι) :
     (transport e A).total = A.total :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- Postprocessing after transporting outcomes along an equivalence agrees with
 postprocessing the original submeasurement after precomposing the readout map
@@ -368,7 +368,7 @@ noncomputable def transport {α β : Type*} {ι : Type*}
     [Fintype α] [Fintype β] [Fintype ι] [DecidableEq ι]
     (e : α ≃ β) (A : ProjMeas α ι) :
     (transport e A).toSubMeas = SubMeas.transport e A.toSubMeas :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- Postprocess a projective measurement along a relabeling of the outcome type.
 
@@ -388,7 +388,7 @@ noncomputable def postprocess {α β : Type*} {ι : Type*}
     [Fintype α] [Fintype β] [Fintype ι] [DecidableEq ι]
     (A : ProjMeas α ι) (f : α → β) :
     (postprocess A f).toSubMeas = MIPStarRE.LDT.postprocess A.toSubMeas f :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 end ProjMeas
 
@@ -490,7 +490,7 @@ private def mkRightPlacedSubMeas {α : Type*}
     [Fintype α] (A : SubMeas α ιA) (a : α) :
     (mkLeftPlacedSubMeas (ιB := ιB) A).outcome a =
       leftTensor (ι₂ := ιB) (A.outcome a) :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- Helper-level projection equation for left-placed totals. -/
 @[simp] theorem mkLeftPlacedSubMeas_total {α : Type*}
@@ -498,7 +498,7 @@ private def mkRightPlacedSubMeas {α : Type*}
     [Fintype α] (A : SubMeas α ιA) :
     (mkLeftPlacedSubMeas (ιB := ιB) A).total =
       leftTensor (ι₂ := ιB) A.total :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- Helper-level projection equation for right-placed outcomes. -/
 @[simp] theorem mkRightPlacedSubMeas_outcome {α : Type*}
@@ -506,7 +506,7 @@ private def mkRightPlacedSubMeas {α : Type*}
     [Fintype α] (A : SubMeas α ιB) (a : α) :
     (mkRightPlacedSubMeas (ιA := ιA) A).outcome a =
       rightTensor (ι₁ := ιA) (A.outcome a) :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- Helper-level projection equation for right-placed totals. -/
 @[simp] theorem mkRightPlacedSubMeas_total {α : Type*}
@@ -514,7 +514,7 @@ private def mkRightPlacedSubMeas {α : Type*}
     [Fintype α] (A : SubMeas α ιB) :
     (mkRightPlacedSubMeas (ιA := ιA) A).total =
       rightTensor (ι₁ := ιA) A.total :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-! ### Square bipartite lifts -/
 
@@ -566,7 +566,7 @@ def leftPlacedSubMeas {α : Type*}
     [Fintype α] (A : SubMeas α ιA) (a : α) :
     (leftPlacedSubMeas (ιB := ιB) A).outcome a =
       leftTensor (ι₂ := ιB) (A.outcome a) :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- The total operator of a left-placed submeasurement is a left tensor placement. -/
 @[simp] theorem leftPlacedSubMeas_total {α : Type*}
@@ -574,7 +574,7 @@ def leftPlacedSubMeas {α : Type*}
     [Fintype α] (A : SubMeas α ιA) :
     (leftPlacedSubMeas (ιB := ιB) A).total =
       leftTensor (ι₂ := ιB) A.total :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- Place a submeasurement on the right tensor factor of `ιA × ιB`. -/
 def rightPlacedSubMeas {α : Type*}
@@ -590,7 +590,7 @@ def rightPlacedSubMeas {α : Type*}
     [Fintype α] (A : SubMeas α ιB) (a : α) :
     (rightPlacedSubMeas (ιA := ιA) A).outcome a =
       rightTensor (ι₁ := ιA) (A.outcome a) :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- The total operator of a right-placed submeasurement is a right tensor placement. -/
 @[simp] theorem rightPlacedSubMeas_total {α : Type*}
@@ -598,7 +598,7 @@ def rightPlacedSubMeas {α : Type*}
     [Fintype α] (A : SubMeas α ιB) :
     (rightPlacedSubMeas (ιA := ιA) A).total =
       rightTensor (ι₁ := ιA) A.total :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- Lift an indexed submeasurement family to the left tensor factor of
 `ιA × ιB` (general bipartite placement). -/

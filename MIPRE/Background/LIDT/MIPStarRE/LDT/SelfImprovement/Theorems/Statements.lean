@@ -161,7 +161,7 @@ def primalMeasurement {params : Parameters} [FieldModel params.q]
     {Z : MIPStarRE.Quantum.Op ι}
     (h : SdpOptimalPairWithSlackness params strategy T Z) :
     h.primalMeasurement.toSubMeas = T :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 end SdpOptimalPairWithSlackness
 

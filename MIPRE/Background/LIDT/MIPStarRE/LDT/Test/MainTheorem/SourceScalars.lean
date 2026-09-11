@@ -80,7 +80,7 @@ theorem mainFormalScalarSigma_eq_mainInductionError (params : Parameters)
     (k : ℕ) (eps : Error) :
     cascadeSigma params k (mainFormalInductionNu params k eps) =
       MainInductionStep.mainInductionError params k (3 * eps) (3 * eps) (3 * eps) :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- Nonnegativity of the symmetrized main-induction `ν` under the standing
 cascade hypotheses. -/

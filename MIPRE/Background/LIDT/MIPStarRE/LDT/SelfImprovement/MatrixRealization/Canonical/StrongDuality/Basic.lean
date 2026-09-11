@@ -129,7 +129,7 @@ theorem matrixSdpCanonicalDiagonalBlockCLM_apply
     (X : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model)) :
     matrixSdpCanonicalDiagonalBlockCLM params model b X =
       matrixSdpCanonicalDiagonalBlock params model X b :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- The canonical equality-constraint operator as a continuous real-linear map. -/
 noncomputable def matrixSdpCanonicalConstraintOperatorCLM

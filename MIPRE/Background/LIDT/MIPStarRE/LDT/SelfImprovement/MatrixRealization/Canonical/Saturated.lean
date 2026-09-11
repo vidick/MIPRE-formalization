@@ -60,7 +60,7 @@ noncomputable def matrixSdpCanonicalSaturateSlackBlockFamily
     (model : MatrixSdpRealization params)
     (X : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model)) :
     matrixSdpCanonicalSaturateSlackBlockFamily params model X none = 0 :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem matrixSdpCanonicalSaturateSlackBlockFamily_some
     (params : Parameters) [FieldModel params.q]
@@ -72,7 +72,7 @@ noncomputable def matrixSdpCanonicalSaturateSlackBlockFamily
         if g = sdpDistinguishedPolynomial params then
           matrixSdpCanonicalDiagonalBlock params model X none
         else 0 :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- The saturated canonical matrix obtained by completing the slack at the
 distinguished polynomial block.

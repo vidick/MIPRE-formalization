@@ -140,14 +140,14 @@ noncomputable def toSubMeas {Outcome : Type*}
     {H : FiniteHilbertSpace}
     (M : MatrixSubmeasurement Outcome H) (a : Outcome) :
     (toSubMeas M).outcome a = M.effect a :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem toSubMeas_total {Outcome : Type*}
     [Fintype Outcome] [DecidableEq Outcome]
     {H : FiniteHilbertSpace}
     (M : MatrixSubmeasurement Outcome H) :
     (toSubMeas M).total = MIPStarRE.Quantum.Submeasurement.total M :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 end MatrixSubmeasurement
 
@@ -168,14 +168,14 @@ noncomputable def toMeasurement {Outcome : Type*}
     (M : MatrixMeasurement Outcome H) :
     (toMeasurement M).toSubMeas =
       MatrixSubmeasurement.toSubMeas M.toSubmeasurement :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem toMeasurement_outcome {Outcome : Type*}
     [Fintype Outcome] [DecidableEq Outcome]
     {H : FiniteHilbertSpace}
     (M : MatrixMeasurement Outcome H) (a : Outcome) :
     (toMeasurement M).outcome a = M.effect a :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 end MatrixMeasurement
 

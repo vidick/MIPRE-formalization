@@ -109,7 +109,8 @@ set_option backward.isDefEq.respectTransparency false
 # With the option, a tactic step may close the goal one line earlier than under Lean
 # v4.32, and a trailing `rfl` then fails with "no goals". Every bare `rfl` tactic line of
 # the vendored tree is therefore made tolerant (`soften_rfl`); a `try rfl` that is still
-# needed runs as before, and one that is not is skipped.
+# needed runs as before, and one that is not is skipped. Term-mode `rfl` proofs are
+# left alone.
 RFL_MARK = "try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal"
 
 # Recorded compile fixes, applied after copying: `old` must occur exactly once in the
@@ -150,10 +151,19 @@ FIXES: list[tuple[str, str, str]] = [
 
 
 def soften_rfl(text: str) -> str:
-    """Replace every line consisting of the tactic `rfl` by `RFL_MARK`."""
+    """Replace every line consisting of the *tactic* `rfl` by `RFL_MARK`. A bare `rfl` line
+    that is the whole term-mode proof (the previous non-blank, non-comment line ends with
+    `:=`) is left alone: there `try` would be `do`-notation, not a tactic."""
+    lines = text.split("\n")
     out = []
-    for line in text.split("\n"):
+    for i, line in enumerate(lines):
         if line.strip() == "rfl":
+            j = i - 1
+            while j >= 0 and (lines[j].strip() == "" or lines[j].strip().startswith("--")):
+                j -= 1
+            if j >= 0 and lines[j].rstrip().endswith(":="):
+                out.append(line)
+                continue
             out.append(line[:len(line) - len(line.lstrip())] + RFL_MARK)
         else:
             out.append(line)

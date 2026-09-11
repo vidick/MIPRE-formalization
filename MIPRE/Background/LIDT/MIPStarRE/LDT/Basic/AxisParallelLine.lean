@@ -90,7 +90,7 @@ def rebaseAt {params : Parameters} [FieldModel params.q]
 @[simp] theorem rebaseAt_direction {params : Parameters} [FieldModel params.q]
     (ℓ : AxisParallelLine params) (t : Fq params) :
     (rebaseAt ℓ t).direction = ℓ.direction :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- The canonical affine parameterization of `throughPoint u i` at parameter
 `sampleParameter u i = u i` returns the original point `u`. -/

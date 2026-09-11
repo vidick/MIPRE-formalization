@@ -492,7 +492,7 @@ noncomputable def family {params : Parameters}
       PerSliceInductionData params strategy eps delta gamma restrictionPkg k}
     (pkg : SelfImprovementData params strategy eps delta gamma k restrictionPkg inductionPkg) :
     pkg.family.meas = pkg.sliceProj :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem family_witness {params : Parameters}
     [FieldModel params.q]
@@ -504,7 +504,7 @@ noncomputable def family {params : Parameters}
     (pkg : SelfImprovementData params strategy eps delta gamma k restrictionPkg inductionPkg)
     (x : Fq params) :
     pkg.family.witness x = pkg.sliceWitness x :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem family_dominationTarget {params : Parameters}
     [FieldModel params.q]
@@ -517,7 +517,7 @@ noncomputable def family {params : Parameters}
     (x : Fq params) (g : Polynomial params) :
     pkg.family.dominationTarget x g =
       IdxPolyFamily.averagedSlicePointEvaluationOperator strategy x g :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 end SelfImprovementData
 
@@ -607,7 +607,7 @@ noncomputable def family {params : Parameters}
     (pkg :
       AnswerSelfImprovementData params strategy eps delta gamma k restrictionPkg inductionPkg) :
     pkg.family.meas = pkg.sliceProj :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem family_witness {params : Parameters}
     [FieldModel params.q]
@@ -620,7 +620,7 @@ noncomputable def family {params : Parameters}
       AnswerSelfImprovementData params strategy eps delta gamma k restrictionPkg inductionPkg)
     (x : Fq params) :
     pkg.family.witness x = pkg.sliceWitness x :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem family_dominationTarget {params : Parameters}
     [FieldModel params.q]
@@ -634,7 +634,7 @@ noncomputable def family {params : Parameters}
     (x : Fq params) (g : Polynomial params) :
     pkg.family.dominationTarget x g =
       IdxPolyFamily.averagedSlicePointEvaluationOperator strategy x g :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 end AnswerSelfImprovementData
 

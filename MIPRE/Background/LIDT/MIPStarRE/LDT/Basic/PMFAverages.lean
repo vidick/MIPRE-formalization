@@ -97,7 +97,7 @@ theorem realWeightedSumLinearMap_apply {α M : Type*} [Fintype α]
     [AddCommMonoid M] [Module MIPStarRE.LDT.Error M]
     (p : PMF α) (f : α → M) :
     realWeightedSumLinearMap p f = realWeightedSum p f :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- The finite total-variation distance between two probability mass functions,
 written as half the `L^1` distance between their real weights.

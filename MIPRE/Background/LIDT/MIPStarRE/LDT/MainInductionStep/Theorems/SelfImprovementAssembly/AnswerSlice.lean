@@ -178,7 +178,7 @@ noncomputable def xRestrictedAnswerSymStratOfAnswer
     (strategy : AnswerSymStrat params.next ι)
     (x : Fq params) :
     (xRestrictedAnswerSymStratOfAnswer params strategy x).state = strategy.state :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- Answer-valued slice restriction reindexes point questions by appending the
 slice height. -/
@@ -190,7 +190,7 @@ slice height. -/
     (u : Point params) :
     (xRestrictedAnswerSymStratOfAnswer params strategy x).pointMeasurement u =
       strategy.pointMeasurement (appendPoint params u x) :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- Answer-valued slice restriction reuses the parent normalization witness. -/
 @[simp] theorem xRestrictedAnswerSymStratOfAnswer_isNormalized
@@ -200,7 +200,7 @@ slice height. -/
     (x : Fq params) :
     (xRestrictedAnswerSymStratOfAnswer params strategy x).isNormalized =
       strategy.isNormalized :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- The diagonal measurement of an answer-valued slice is the full answer-valued
 restriction of the ambient diagonal measurement. -/
@@ -212,7 +212,7 @@ restriction of the ambient diagonal measurement. -/
     (ℓ : DiagonalLine params) :
     (xRestrictedAnswerSymStratOfAnswer params strategy x).diagonalMeasurement ℓ =
       restrictAnswerDiagonalAnswerMeasurement params strategy x ℓ :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- Transport data for producing the answer-valued self-improvement data from
 concrete per-slice symmetric strategies.

@@ -57,54 +57,54 @@ noncomputable def extractRoleRegisterBobBlock {ιA ιB : Type*}
 @[simp] theorem extractRoleRegisterAliceBlock_apply {ιA ιB : Type*}
     (Y : MIPStarRE.Quantum.Op (RoleRegisterLocal ιA ιB)) (i j : ιA) :
     extractRoleRegisterAliceBlock Y i j = Y (Role.A, Sum.inl i) (Role.A, Sum.inl j) :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem extractRoleRegisterBobBlock_apply {ιA ιB : Type*}
     (Y : MIPStarRE.Quantum.Op (RoleRegisterLocal ιA ιB)) (i j : ιB) :
     extractRoleRegisterBobBlock Y i j = Y (Role.B, Sum.inr i) (Role.B, Sum.inr j) :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem extractRoleRegisterAliceBlock_zero {ιA ιB : Type*} :
     extractRoleRegisterAliceBlock (ιA := ιA) (ιB := ιB) 0 = 0 :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem extractRoleRegisterBobBlock_zero {ιA ιB : Type*} :
     extractRoleRegisterBobBlock (ιA := ιA) (ιB := ιB) 0 = 0 :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem extractRoleRegisterAliceBlock_add {ιA ιB : Type*}
     (X Y : MIPStarRE.Quantum.Op (RoleRegisterLocal ιA ιB)) :
     extractRoleRegisterAliceBlock (X + Y) =
       extractRoleRegisterAliceBlock X + extractRoleRegisterAliceBlock Y :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem extractRoleRegisterBobBlock_add {ιA ιB : Type*}
     (X Y : MIPStarRE.Quantum.Op (RoleRegisterLocal ιA ιB)) :
     extractRoleRegisterBobBlock (X + Y) =
       extractRoleRegisterBobBlock X + extractRoleRegisterBobBlock Y :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem extractRoleRegisterAliceBlock_sub {ιA ιB : Type*}
     (X Y : MIPStarRE.Quantum.Op (RoleRegisterLocal ιA ιB)) :
     extractRoleRegisterAliceBlock (X - Y) =
       extractRoleRegisterAliceBlock X - extractRoleRegisterAliceBlock Y :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem extractRoleRegisterBobBlock_sub {ιA ιB : Type*}
     (X Y : MIPStarRE.Quantum.Op (RoleRegisterLocal ιA ιB)) :
     extractRoleRegisterBobBlock (X - Y) =
       extractRoleRegisterBobBlock X - extractRoleRegisterBobBlock Y :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem extractRoleRegisterAliceBlock_smul {ιA ιB : Type*}
     (c : ℂ) (Y : MIPStarRE.Quantum.Op (RoleRegisterLocal ιA ιB)) :
     extractRoleRegisterAliceBlock (c • Y) = c • extractRoleRegisterAliceBlock Y :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem extractRoleRegisterBobBlock_smul {ιA ιB : Type*}
     (c : ℂ) (Y : MIPStarRE.Quantum.Op (RoleRegisterLocal ιA ιB)) :
     extractRoleRegisterBobBlock (c • Y) = c • extractRoleRegisterBobBlock Y :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem extractRoleRegisterAliceBlock_finset_sum {α ιA ιB : Type*}
     (s : Finset α) (f : α → MIPStarRE.Quantum.Op (RoleRegisterLocal ιA ιB)) :
@@ -217,26 +217,26 @@ noncomputable def extractRoleRegisterBob {α ιA ιB : Type*}
     (A : SubMeas α (ProjStrat.RoleRegisterLocal ιA ιB)) (a : α) :
     (A.extractRoleRegisterAlice).outcome a =
       ProjStrat.extractRoleRegisterAliceBlock (A.outcome a) :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem extractRoleRegisterBob_outcome {α ιA ιB : Type*}
     [Fintype α] [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (A : SubMeas α (ProjStrat.RoleRegisterLocal ιA ιB)) (a : α) :
     (A.extractRoleRegisterBob).outcome a =
       ProjStrat.extractRoleRegisterBobBlock (A.outcome a) :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem extractRoleRegisterAlice_total {α ιA ιB : Type*}
     [Fintype α] [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (A : SubMeas α (ProjStrat.RoleRegisterLocal ιA ιB)) :
     (A.extractRoleRegisterAlice).total = ProjStrat.extractRoleRegisterAliceBlock A.total :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem extractRoleRegisterBob_total {α ιA ιB : Type*}
     [Fintype α] [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (A : SubMeas α (ProjStrat.RoleRegisterLocal ιA ιB)) :
     (A.extractRoleRegisterBob).total = ProjStrat.extractRoleRegisterBobBlock A.total :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 /-- Alice extraction commutes with outcome postprocessing. -/
 theorem extractRoleRegisterAlice_postprocess {α β ιA ιB : Type*}
@@ -298,27 +298,27 @@ noncomputable def extractRoleRegisterBob {α ιA ιB : Type*}
     [Fintype α] [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (A : Measurement α (ProjStrat.RoleRegisterLocal ιA ιB)) :
     (A.extractRoleRegisterAlice).toSubMeas = A.toSubMeas.extractRoleRegisterAlice :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem extractRoleRegisterBob_toSubMeas {α ιA ιB : Type*}
     [Fintype α] [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (A : Measurement α (ProjStrat.RoleRegisterLocal ιA ιB)) :
     (A.extractRoleRegisterBob).toSubMeas = A.toSubMeas.extractRoleRegisterBob :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem extractRoleRegisterAlice_outcome {α ιA ιB : Type*}
     [Fintype α] [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (A : Measurement α (ProjStrat.RoleRegisterLocal ιA ιB)) (a : α) :
     (A.extractRoleRegisterAlice).outcome a =
       ProjStrat.extractRoleRegisterAliceBlock (A.outcome a) :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 @[simp] theorem extractRoleRegisterBob_outcome {α ιA ιB : Type*}
     [Fintype α] [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (A : Measurement α (ProjStrat.RoleRegisterLocal ιA ιB)) (a : α) :
     (A.extractRoleRegisterBob).outcome a =
       ProjStrat.extractRoleRegisterBobBlock (A.outcome a) :=
-  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
+  rfl
 
 end Measurement
 
