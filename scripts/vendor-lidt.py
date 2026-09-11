@@ -146,6 +146,20 @@ FIXES: list[tuple[str, str, str]] = [
         commuteGHalfSandwich_postMoveFlatError_sum params gamma zeta r,
         gHatSelfConsistencyError, h1, h1', h2, h2']
       ring
+"""),
+    ('LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/MoveChain/FlatChainStep.lean',
+     """      simpa [commuteGHalfSandwich_flatChainFamily, commuteGHalfSandwich_flatChainError,
+        commuteGHalfSandwich_postMoveFlatLength, commuteGHalfSandwich_postMoveFlatFamily,
+        commuteGHalfSandwich_moveChainFamily, izero] using
+        htransport
+""",
+     """      -- Vendoring compile fix (Lean v4.33): `simp` must also unfold the chain length to
+      -- decide the index conditions.
+      simpa [commuteGHalfSandwich_flatChainFamily, commuteGHalfSandwich_flatChainError,
+        commuteGHalfSandwich_flatChainLength,
+        commuteGHalfSandwich_postMoveFlatLength, commuteGHalfSandwich_postMoveFlatFamily,
+        commuteGHalfSandwich_moveChainFamily, izero] using
+        htransport
 """)
 ]
 

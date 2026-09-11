@@ -349,7 +349,10 @@ lemma commuteGHalfSandwich_flatChainStep
               leftTensor_one, leftTensor_mul_leftTensor, mul_assoc])
           (fun _ _ => rfl)
           hstep
+      -- Vendoring compile fix (Lean v4.33): `simp` must also unfold the chain length to
+      -- decide the index conditions.
       simpa [commuteGHalfSandwich_flatChainFamily, commuteGHalfSandwich_flatChainError,
+        commuteGHalfSandwich_flatChainLength,
         commuteGHalfSandwich_postMoveFlatLength, commuteGHalfSandwich_postMoveFlatFamily,
         commuteGHalfSandwich_moveChainFamily, izero] using
         htransport
