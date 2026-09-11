@@ -107,7 +107,7 @@ theorem.
 | Phase | Content | Status |
 |---|---|---|
 | 0 | Issue #27 opened and claimed; decisions above | done 2026-09-11 |
-| 1 | Toolchain bump to v4.33.0; CI on LIDT + `Cost/` | v4.33 transparency fix pushed (`ee03405`); CI pending |
+| 1 | Toolchain bump to v4.33.0; CI on LIDT + `Cost/` | done: Lean v4.33's transparency check is handled with `backward.isDefEq.respectTransparency false` per declaration or per file at the affected sites (a project-wide setting broke other modules), plus small proof edits; vendored fixes recorded in the READMEs |
 | 2 | `scripts/vendor-repetition.py`; both artifacts vendored; `MIPRE.lean` regenerated; READMEs, NOTICE | done 2026-09-11 (CI pending) |
 | 3 | Bridge: `Game.repeat`, bipartite co-value, `thm:direct-repetition-co` (sorry-free), `thm:direct-repetition-q` (modulo `lem:povm-value-eq`), `thm:tracial-density`, axiom guards | done 2026-09-11 (CI pending) |
 | 4 | Blueprint: `05_parallel_repetition.tex` with a formalized direct-repetition section; ch03 table; bibliography; under D8 the value-form restructuring | done 2026-09-11, including the D8 value-form restructuring |
@@ -116,9 +116,14 @@ theorem.
 
 ## Risks
 
-1. Toolchain crossing (ten-proofs and LIDT from v4.32 to v4.33): unknown until CI runs.
-   Every compile check goes through `workflow_dispatch` on the branch (no local Lean in
-   the porting environment).
+1. Toolchain crossing (ten-proofs and LIDT from v4.32 to v4.33): resolved in five CI
+   rounds. The failures were Lean v4.33's transparency check (`rw`/`simp` targets that
+   are not type-correct at implicit transparency) in a handful of declarations across
+   the LIDT tree, the ten-proofs module and three project files, handled with the option
+   Mathlib uses on such declarations; a project-wide setting instead broke other modules
+   (typeclass timeouts in commuting-repetition, `simp` closing goals early). Every
+   compile check goes through `workflow_dispatch` on the branch (no local Lean in the
+   porting environment).
 2. `autoImplicit` reliance in 131 upstream files: handled mechanically by D3(c).
 3. Build and doc-gen time: +126k lines, all `import Mathlib`.
 4. `lem:povm-value-eq` is proof work, not plumbing.
