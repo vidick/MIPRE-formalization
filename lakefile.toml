@@ -7,6 +7,11 @@ defaultTargets = ["MIPRE"]
 pp.unicode.fun = true # pretty-prints `fun a ↦ b`
 autoImplicit = false
 relaxedAutoImplicit = false
+# Lean v4.33 makes `rw`/`simp` reject targets that are not type-correct at implicit
+# transparency (proof terms such as `comm.mono …`, derived `Fintype` instances). Mathlib
+# sets this option on the affected declarations; we set it project-wide, which also covers
+# the read-only vendored trees. Remove once the affected proofs are migrated.
+backward.isDefEq.respectTransparency = false
 
 [[require]]
 name = "mathlib"
