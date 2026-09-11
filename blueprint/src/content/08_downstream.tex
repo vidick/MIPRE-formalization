@@ -30,7 +30,9 @@ There is an explicit synchronous game $\game^{\sep}$ with
 $\valstar(\game^{\sep}) \leq \frac12$ and $\valco(\game^{\sep}) = 1$.
 \end{theorem}
 
-Sketch: apply the reduction of Theorem~\ref{thm:halting} to a machine that searches
+Sketch: the bound on $\valstar$ is the soundness clause of Theorem~\ref{thm:halting}
+verbatim, now that the clause is stated in $\valstar$; it does not follow from a $\synval$
+bound. Apply that reduction to a machine that searches
 for a proof of its own non-halting (or any non-halting machine whose game retains a
 perfect commuting-operator strategy), and track through the pipeline that
 completeness holds not just for PCC strategies but for

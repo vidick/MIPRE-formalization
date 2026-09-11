@@ -210,6 +210,18 @@ rather than exhibiting a failure among the symmetric games the pipeline produces
 source's proof needs in either case is the diagonal weight itself, the synchronicity
 defect being measured against the marginal and controlled only by the diagonal pairs.
 
+A positive diagonal weight does not rescue the printed statement either: the hypothesis
+has to be quantitative. For $p \in (0,1)$ let $\mu$ give weight $p/2$ to each of $(1,1)$
+and $(2,2)$ and $(1-p)/2$ to each of $(1,2)$ and $(2,1)$, with $D$ accepting equal answers
+on the diagonal and $(a,b) = (0,1)$ off it; every question then carries diagonal weight
+exactly $p$. Answering $0$ and $1$ deterministically loses only the diagonal, so
+$\valstar(\game) \geq 1 - p$, while a synchronous strategy wins the diagonal with certainty
+($\sum_a \tau(M^x_a M^x_a) = 1$ for a projective family) and, by the computation above, at
+most half of the remaining weight, so $\synval(\game) = \frac{1+p}{2}$. Thus
+$1 - \synval(\game) = \frac{1-p}{2}$ stays above $\frac14$ for $p \leq \frac12$ while
+$1 - \valstar(\game) \leq p$ tends to $0$: no constants independent of the game satisfy the
+printed inequality, and the $\kappa$ of the corrected one cannot be absorbed into $C$.
+
 Nor does the hypothesis survive repetition: if $\mu(x,x) = \kappa \sum_y \mu(x,y)$ for
 every $x$, the $k$-fold product distribution satisfies the same inequality with $\kappa^k$
 and no better. A bound on the synchronous value of a $k$-fold repetition therefore says
@@ -218,6 +230,17 @@ Theorem~\ref{thm:almost-sync} is used in this blueprint only on the game being r
 inside the proof of Theorem~\ref{thm:parallel-repetition}, never on a repeated game, and
 the soundness of the pipeline is stated in $\valstar$ from that point onwards. The
 invariant that supplies the hypothesis there is Remark~\ref{rem:sync-invariant}.
+
+Even with the hypothesis, the transport cannot by itself reach the threshold
+$\frac12$ that Definition~\ref{def:mipstar} demands. Take $\mX = \{1,2\}$, a singleton
+answer alphabet, $\mu(1,1) = \mu(2,2) = \frac12$, and $D$ accepting at $(1,1)$ only: both
+values are $\frac12$ and $\kappa = 1$, so the corrected inequality forces $C \geq
+2^{c-1}$, whence $(2C)^{-1/c} \leq \frac12$. From $\synval(\game) \leq \frac12$ it then
+concludes at best $\valstar(\game) \leq 1 - \kappa (2C)^{-1/c}$, and that bound is never
+better than $\frac12$. The threshold must therefore come from
+Theorem~\ref{thm:direct-repetition-q}, which is a $\valstar$ theorem, and carrying
+soundness in $\valstar$ from the repetition step outwards is not a convenience but the
+only available route.
 \end{remark}
 
 \subsection{The orthonormalization lemma}

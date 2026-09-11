@@ -26,11 +26,12 @@ every Turing machine $\machine$:
 Theorem~\ref{thm:main} follows from Theorem~\ref{thm:halting} by converting the
 normal form verifier at a fixed index into an explicit game description (a finite
 object obtained by running the sampler and decider), and relaxing polynomial-time
-computability of the reduction to computability, per Section~\ref{sec:departures}. The
-conversion leaves both values unchanged because the decider of $\game_\machine$ already
-rejects unequal answers to equal questions (item 1 of
-Remark~\ref{rem:sync-invariant}); a game description imposes that by fiat
-(Definition~\ref{def:game-description}), which would otherwise change the game.
+computability of the reduction to computability, per Section~\ref{sec:departures}. A game
+description rejects unequal answers to equal questions by fiat
+(Definition~\ref{def:game-description}), which costs nothing here: against a tracial state
+a projective family is perfectly consistent, so the terms the fiat deletes carry no weight
+in $\synval$, which is unchanged, and it can only lower $\valstar$ --- the safe direction
+for the soundness clause, while the completeness witness is synchronous and survives.
 
 \begin{corollary}[Halting reduces to the quantum value]
 \label{cor:main-quantum}

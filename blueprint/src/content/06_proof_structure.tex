@@ -11,8 +11,12 @@ reproduced here and should be introduced locally where needed.
 
 Following Lin~\cite{Lin25}, every soundness statement below is in \emph{value form}: a
 transformation preserves the property ``value at most $1 - \eps$'' up to a quantitative
-loss, and compression preserves ``value at most $\frac12$''. No entanglement lower bound is
-tracked. Remark~\ref{rem:direct-vs-anchored} explains why none is needed,
+loss, and compression preserves ``value at most $\frac12$''. The three inner
+transformations carry that property in $\synval$; repetition and hence compression conclude
+in $\valstar$, which is the class the compressibility criterion is instantiated with and
+the form Definition~\ref{def:mipstar} requires (Remark~\ref{rem:compression-abstract}), the
+passage between the two values being needed once and inwards only
+(Remark~\ref{rem:almost-sync-hypothesis}). No entanglement lower bound is tracked. Remark~\ref{rem:direct-vs-anchored} explains why none is needed,
 Section~\ref{sec:rr-compression} states the abstract lemma (Lin's compressibility
 criterion) that turns value-form compression into the halting reduction, and the
 entanglement clauses of~\cite{JNVWY20} are recorded for reference in
@@ -76,8 +80,8 @@ is a function $\delta(\eps, n) = a\bigl( (\lambda n)^a \eps^b + (\lambda n)^{-b}
 \end{enumerate}
 \end{theorem}
 
-The soundness analysis is a long rigidity argument~\cite[Section 8]{JNVWY20}. It builds on techniques introduced in~\cite{NW19}, and it may be adviseable to formalize some of the key lemmas there first. These include the Pauli basis test together with a toolkit of approximate-measurement lemmas
-(twirling, commutation, sandwiching). For this project, those lemmas should be stated and proved in the tracial/cynchronous setting. 
+The soundness analysis is a long rigidity argument~\cite[Section 8]{JNVWY20}. It builds on techniques introduced in~\cite{NW19}, and it may be advisable to formalize some of the key lemmas there first. These include the Pauli basis test together with a toolkit of approximate-measurement lemmas
+(twirling, commutation, sandwiching). For this project, those lemmas should be stated and proved in the tracial/synchronous setting.
 
 \subsection{Oracularization}
 \label{sec:ps-oracularization}
@@ -298,6 +302,14 @@ the second term grows much faster than the levels of the recursion), with $f =
 conclusion $\Ent(\game_\machine, \frac12) = \infty$ for non-halting $\machine$. The
 value form adopted here needs none of it; the entanglement clauses remain of interest for
 the corollaries of Remark~\ref{rem:further}.
+
+One proviso on the measure: the clauses above are transcribed from~\cite{JNVWY20}, where
+the quantity is the least local dimension of a \emph{bipartite} tensor-product strategy,
+whereas $\Ent$ of Definition~\ref{def:ent} is the least dimension of a \emph{synchronous}
+one. Relating the two is the same transport as
+Theorem~\ref{thm:almost-sync} and carries its hypothesis
+(Remark~\ref{rem:almost-sync-hypothesis}), so the clauses should be read in the paper's
+measure until that is done.
 \end{remark}
 
 \subsection{The halting reduction}
@@ -320,7 +332,11 @@ Definition~\ref{def:mipstar}, such that:
 \end{theorem}
 
 The proof is Lemma~\ref{lem:compressible-criterion} applied to the instantiation of
-Remark~\ref{rem:compression-abstract}; the semidecidability hypothesis of the lemma is
-Lemma~\ref{lem:value-lower-approx}. The entanglement form of the statement, with the
+Remark~\ref{rem:compression-abstract}; the semidecidability hypothesis of the lemma is the
+$\valstar$ half of Lemma~\ref{lem:value-lower-approx}. Two obligations of that
+instantiation are open and are inherited here: the four listed in
+Remark~\ref{rem:compression-abstract}, and the synchronization invariant that the soundness
+clause of Theorem~\ref{thm:compression} requires of the games produced inside $\Compress$
+(Remark~\ref{rem:sync-invariant}). The entanglement form of the statement, with the
 stronger conclusion $\Ent(\game_\machine, \frac12) = \infty$ for non-halting
 $\machine$, is discussed in Remark~\ref{rem:entanglement-form}.
