@@ -332,6 +332,8 @@ import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing
 import MIPRE.Background.LIDT.MIPStarRE.Quantum.Measurement
 import MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB
 import MIPRE.Background.LIDT.Soundness
+import MIPRE.Background.Repetition.Axioms
+import MIPRE.Background.Repetition.Commuting
 import MIPRE.Background.Repetition.CommutingRepetition.Game.Basic
 import MIPRE.Background.Repetition.CommutingRepetition.Game.Mixture
 import MIPRE.Background.Repetition.CommutingRepetition.Game.Monotone
@@ -462,10 +464,14 @@ import MIPRE.Background.Repetition.CommutingRepetition.VN.StandardFormOf
 import MIPRE.Background.Repetition.CommutingRepetition.VN.SubModel
 import MIPRE.Background.Repetition.CommutingRepetition.VN.TensorPower
 import MIPRE.Background.Repetition.CommutingRepetition.VN.TensorStep
+import MIPRE.Background.Repetition.Direct
+import MIPRE.Background.Repetition.Entangled
 import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition
+import MIPRE.Background.Repetition.TracialDensity
 import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
 import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
 import MIPRE.Cslib.Foundations.Data.RelatesInSteps
+import MIPRE.Foundations.CommutingOperator
 import MIPRE.Foundations.Compression
 import MIPRE.Foundations.Cost.Basic
 import MIPRE.Foundations.Cost.BitQuery
