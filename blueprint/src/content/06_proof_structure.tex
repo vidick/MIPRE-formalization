@@ -96,7 +96,7 @@ form verifier $\verifier = (\sampler, \decider)$ to a normal form verifier $\vor
 such that, for some $\delta(\eps) = \poly(\eps)$ and all $n$:
 \begin{enumerate}
 \item (\textbf{Completeness}) If $\verifier_n$ has a value-$1$ PCC strategy then
-  $\vora_n$ has a value-$1$ symmetric PCC strategy.
+  $\vora_n$ has a value-$1$ PCC strategy.
 \item (\textbf{Soundness}) If $\synval(\vora_n) > 1 - \eps$ then
   $\synval(\verifier_n) \geq 1 - \delta(\eps)$.
 \item (\textbf{Complexity}) The sampler of $\vora$ depends only on $\sampler$, with
@@ -121,16 +121,16 @@ become polylogarithmic in the original.
 \label{thm:answer-reduction}
 \uses{def:normal-verifier,def:pcc,thm:succinct-sat,lem:schwartz-zippel,thm:qld,lem:self-dual-basis}
 There is a polynomial-time Turing machine $\ComputeAnsVerifier$ that on input
-$(\verifier, \lambda, \mu, \sigma)$, for $\verifier$ an $\ell$-level normal form
+$(\verifier, \lambda, \ell, \mu, \sigma)$, for $\verifier$ an $\ell$-level normal form
 verifier with $\abs{\decider} \leq \sigma$, $\TIME_\sampler(n) \leq (\lambda n)^\mu$
 and $\TIME_\decider(n) \leq (2^{\lambda n})^\mu$ for $n \geq 2$, outputs a
 $\max\{\ell + 2, 5\}$-level normal form verifier $\vans$ with
 $\TIME_{\sans}(n), \TIME_{\dans}(n) = \poly\bigl( (\lambda n)^\mu, \sigma \bigr)$,
-whose sampler depends only on $(\sampler, \lambda, \mu, \sigma)$, and such that for
+whose sampler depends only on $(\sampler, \lambda, \ell, \mu, \sigma)$, and such that for
 some $\delta(\eps, n) = \sigma^a \bigl( (\lambda n)^{\mu a} \eps^b + (\lambda
 n)^{-\mu b} \bigr)$ (universal constants $a, b$) and all $n$:
 \begin{enumerate}
-\item (\textbf{Completeness}) If $\verifier_n$ has a value-$1$ symmetric PCC strategy
+\item (\textbf{Completeness}) If $\verifier_n$ has a value-$1$ PCC strategy
   then $\vans_n$ has a value-$1$ PCC strategy.
 \item (\textbf{Soundness}) If $\synval(\vans_n) > 1 - \eps$ then
   $\synval(\verifier_n) \geq 1 - \delta(\eps, n)$.
@@ -146,44 +146,57 @@ low-degree ``sandwiching'' argument recombining the players' committed polynomia
 \label{sec:ps-parallel-repetition}
 
 Answer reduction leaves a shrunken gap ($1$ vs.\ $1 - 1/\poly(n)$). Direct parallel
-repetition (Theorem~\ref{thm:direct-repetition-q}, formalized) restores soundness
+repetition (Theorem~\ref{thm:direct-repetition-q}, formalized modulo
+Lemma~\ref{lem:povm-value-eq}) restores soundness
 $\frac12$ with polynomially many repetitions, at polynomial cost in complexity and without
 anchoring; the anchored, entanglement-form theorem used in~\cite{JNVWY20}
 (Theorem~\ref{thm:bvy}) is not needed (Remark~\ref{rem:direct-vs-anchored}).
 
 \begin{theorem}[Parallel repetition of normal form verifiers]
 \label{thm:parallel-repetition}
-\uses{def:normal-verifier,def:pcc,def:direct-repetition,thm:direct-repetition-q,thm:almost-sync,lem:sync-le-valstar}
-There are universal constants $b, c, c' > 0$ and a polynomial-time Turing machine
-$\ComputeParrepVerifier$ that on input $(\verifier, \lambda, \tau)$ outputs a normal
-form verifier $\vrep$ whose game $\vrep_n$ is the $k(n)$-fold direct repetition
-(Definition~\ref{def:direct-repetition}) of $\verifier_n$, with $k(n) = (\lambda n)^{(1 +
-c')\tau}$, such that if $\verifier$ is $\ell$-level then $\vrep$ is $\ell$-level with
+\uses{def:normal-verifier,def:pcc,def:direct-repetition,thm:direct-repetition-q,thm:almost-sync,rem:sync-invariant,def:mipstar}
+There are universal constants $b, c > 0$ such that the following holds for every
+$\kappa \in (0,1]$. There are a constant $c' > 0$, depending only on $\kappa$, and a
+polynomial-time Turing machine $\ComputeParrepVerifier$ that on input
+$(\verifier, \lambda, \ell, \tau)$, for $\verifier$ an $\ell$-level normal form verifier,
+outputs an $\ell$-level normal form verifier $\vrep$ whose game $\vrep_n$ is the
+$k(n)$-fold direct repetition (Definition~\ref{def:direct-repetition}) of $\verifier_n$
+--- up to the encoding of answer tuples as strings, the decider parsing a self-delimiting
+$k(n)$-tuple and rejecting malformed answers --- with $k(n) = (\lambda n)^{(1 + c')\tau}$,
 $\TIME_{\srep}(n) = O(k(n) \TIME_\sampler(n))$ and $\TIME_{\drep}(n) = O\bigl(k(n)
-\max(\TIME_\decider(n), (\lambda n)^\tau)\bigr)$, the sampler of $\vrep$ depends only on
-$(\sampler, \lambda, \tau)$, and for all $n$:
+\max(\TIME_\decider(n), (\lambda n)^\tau)\bigr)$, the sampler of $\vrep$ depending only on
+$(\sampler, \lambda, \ell, \tau)$, and for all $n$:
 \begin{enumerate}
 \item (\textbf{Completeness}) If $\verifier_n$ has a value-$1$ PCC strategy and
   $\TIME_\decider(n) \leq (\lambda n)^\tau$, then $\vrep_n$ has a value-$1$ PCC
   strategy.
-\item (\textbf{Soundness}) For all $\eps > 0$, if $\synval(\verifier_n) \leq 1 - \eps$
-  and $\TIME_\decider(n) \leq (\lambda n)^\tau$, then
-  $\synval(\vrep_n) \leq \exp\bigl( -c\, \eps^{b}\, k(n) / (\lambda n)^{\tau} \bigr)$;
-  in particular $\synval(\vrep_n) \leq \frac12$ whenever $\eps \geq (\lambda
-  n)^{-\tau}$, for $c'$ large enough and $n \geq 2$.
+\item (\textbf{Soundness}) For all $\eps > 0$, if $\synval(\verifier_n) \leq 1 - \eps$,
+  $\TIME_\decider(n) \leq (\lambda n)^\tau$, and $\verifier_n$ satisfies the
+  synchronization invariant of Remark~\ref{rem:sync-invariant} with the constant $\kappa$,
+  then
+  $\valstar(\vrep_n) \leq \exp\bigl( -c\, \kappa^{13} \eps^{b}\, k(n) /
+  (\lambda n)^{\tau} \bigr)$; in particular $\valstar(\vrep_n) \leq \frac12$ whenever
+  $\eps \geq (\lambda n)^{-\tau}$, for $c'$ large enough and $n \geq 2$.
 \end{enumerate}
 \end{theorem}
 
 The game $\vrep_n$ is $\verifier_n^{k(n)}$: its sampler runs $k(n)$ independent copies of
 $\sampler$ (a product of conditionally linear functions of the same level) and its
 decider runs $\decider$ on every coordinate. Completeness: the $k(n)$-fold tensor power of
-a value-$1$ PCC strategy is a value-$1$ PCC strategy for the repeated game. Soundness: by
-the almost-synchronous transport (Theorem~\ref{thm:almost-sync}), $\synval(\verifier_n)
-\leq 1 - \eps$ gives $\valstar(\verifier_n) \leq 1 - \eps'$ with $\eps' =
-\Omega(\eps^{a})$ for a universal $a$; Theorem~\ref{thm:direct-repetition-q} bounds
-$\valstar(\verifier_n^{k(n)})$, where the answer alphabets of $\verifier_n$ have size at
-most $2^{\TIME_\decider(n)}$ so that $\log(\abs{\mA}\abs{\mB}) \leq 2 (\lambda n)^\tau$;
-and $\synval \leq \valstar$ (Lemma~\ref{lem:sync-le-valstar}) concludes, with $b = 13 a$.
+a value-$1$ PCC strategy is a value-$1$ PCC strategy for the repeated game. Soundness: the
+synchronization invariant (Remark~\ref{rem:sync-invariant}) supplies the diagonal-weight
+hypothesis for $\verifier_n$, so the almost-synchronous transport
+(Theorem~\ref{thm:almost-sync}), used contrapositively, turns $\synval(\verifier_n) \leq 1
+- \eps$ into $\valstar(\verifier_n) \leq 1 - \eps'$ with $\eps' = \Omega\bigl( \kappa\,
+\eps^{a} \bigr)$ for a universal $a$ --- the diagonal weight multiplies the gap the
+transport recovers, it does not divide it. Theorem~\ref{thm:direct-repetition-q} then
+bounds $\valstar(\verifier_n^{k(n)})$, where the answer alphabets of $\verifier_n$ have
+size at most $2^{\TIME_\decider(n)}$ so that $\log(\abs{\mA}\abs{\mB}) \leq 2 (\lambda
+n)^\tau$; this gives $b = 13a$ and the factor $\kappa^{13}$ of the statement. The
+conclusion is left in $\valstar$, and deliberately so: that is the form
+Definition~\ref{def:mipstar} asks of the final game, while the transport cannot be applied
+a second time at the outer end of the pipeline, the diagonal weight of a $k$-fold product
+decaying as $\kappa^{k}$ (Remark~\ref{rem:almost-sync-hypothesis}).
 The exponent $b$ and the constants are provisional (Section~\ref{sec:conventions}).
 
 \subsection{The compression theorem}
@@ -197,36 +210,70 @@ an entanglement bound (Remark~\ref{rem:entanglement-form}).
 
 \begin{theorem}[Gap-preserving compression]
 \label{thm:compression}
-\uses{thm:introspection,thm:oracularization,thm:answer-reduction,thm:parallel-repetition,def:lambda-bounded,def:pcc}
+\uses{thm:introspection,thm:oracularization,thm:answer-reduction,thm:parallel-repetition,def:lambda-bounded,def:pcc,lem:sync-le-valstar,rem:sync-invariant}
 There is a universal constant $C_0 > 0$ and a polynomial-time Turing machine
-$\Compress$ that on input $(\verifier, \lambda)$ outputs a $9$-level normal form
+$\Compress$ that on input $(\verifier, \lambda)$ outputs a $7$-level normal form
 verifier $\vcompr = (\scompr, \dcompr)$ with $\TIME_{\scompr}(n),
 \TIME_{\dcompr}(n) = \poly(n, \lambda)$, where $\scompr$ is independent of
 $\verifier$ and computable from $\lambda$ in time $\polylog(\lambda)$. If moreover
-$\verifier$ is a $\lambda$-bounded $9$-level normal form verifier, then for all $n
+$\verifier$ is a $\lambda$-bounded $7$-level normal form verifier, then for all $n
 \geq C_0$ and $N = 2^n$:
 \begin{enumerate}
 \item (\textbf{Completeness}) If $\verifier_N$ has a value-$1$ PCC strategy, then so
   does $\vcompr_n$.
 \item (\textbf{Soundness}) If $\synval(\verifier_N) \leq \tfrac12$ then
-  $\synval(\vcompr_n) \leq \tfrac12$.
+  $\valstar(\vcompr_n) \leq \tfrac12$. Since $\synval \leq \valstar$
+  (Lemma~\ref{lem:sync-le-valstar}), the class ``$\valstar \leq \tfrac12$'' is in
+  particular preserved: $\valstar(\verifier_N) \leq \tfrac12$ implies
+  $\valstar(\vcompr_n) \leq \tfrac12$.
 \end{enumerate}
 \end{theorem}
+
+The level count is forced by the chain rather than chosen: introspection outputs a
+$5$-level verifier whatever the level of its input (Theorem~\ref{thm:introspection}),
+oracularization preserves the level (Theorem~\ref{thm:oracularization}), answer reduction
+takes $\ell$ to $\max\{\ell + 2, 5\}$, here $7$ (Theorem~\ref{thm:answer-reduction}), and
+direct repetition preserves it (Theorem~\ref{thm:parallel-repetition}); so $\Compress$
+outputs a $7$-level verifier on every input, and $7$ is consequently the level at which
+the recursion closes. A verifier of fewer levels is presented at that level by padding its
+decomposition with trivial factors, which an $\ell$-level conditionally linear function
+(Definition~\ref{def:cl-function}) admits. In~\cite{JNVWY20} the count is $9$, anchored
+repetition adding two levels (Remark~\ref{rem:direct-vs-anchored}).
+
+Soundness moreover inherits the hypothesis of Theorem~\ref{thm:parallel-repetition}: the
+answer-reduced game to which repetition is applied must satisfy the synchronization
+invariant with a constant $\kappa$ uniform along the recursion
+(Remark~\ref{rem:sync-invariant}). Discharging that is open, and it is a requirement on the
+three inner transformations, not on $\verifier$.
 
 \begin{remark}[Relation to the abstract compression lemma]
 \label{rem:compression-abstract}
 \uses{thm:compression,lem:compressible-criterion,def:succinct,lem:value-lower-approx}
 Theorem~\ref{thm:compression} instantiates the hypotheses of
 Lemma~\ref{lem:compressible-criterion}: take $A$ to be the set of (descriptions of) normal
-form verifier games with a value-$1$ PCC strategy and $B$ the set of those with $\synval
+form verifier games with a value-$1$ PCC strategy and $B$ the set of those with $\valstar
 \leq \frac12$, with the trivially accepting and the trivially rejecting game as the
-distinguished elements; the complement of $B$ is semidecided by enumerating synchronous
-strategies (Lemma~\ref{lem:value-lower-approx}); and a description $(\sampler, \decider,
-n)$ with $n$ in binary is precisely a succinct description of the game $\verifier_{2^n}$
-played by a $\lambda$-bounded verifier. Completeness of compression is the preservation
-of $A$ and soundness the preservation of $B$. Making this dictionary precise (in
-particular the encoding of games by verifier descriptions and the role of $\lambda$) is a
-formalization task of this section. The entanglement form of~\cite{JNVWY20}
+distinguished elements; the complement of $B$ is semidecided by enumerating tensor-product
+strategies, the $\valstar$ half of Lemma~\ref{lem:value-lower-approx}; and a description
+$(\sampler, \decider, n)$ with $n$ in binary is a succinct description of the game
+$\verifier_{2^n}$ played by a $\lambda$-bounded verifier. Completeness of compression is
+the preservation of $A$; preservation of $B$ is the soundness clause of
+Theorem~\ref{thm:compression} composed with $\synval \leq \valstar$ at the inner end, as
+that clause records. Taking $B$ in $\valstar$ rather than in $\synval$ is what keeps
+Theorem~\ref{thm:almost-sync} away from the outer end of the pipeline, where its
+hypothesis is unavailable (Remark~\ref{rem:almost-sync-hypothesis}); it is also the form in
+which the semidecision procedure is the more readily available, the rounding argument for
+the $\synval$ half not being the same one. Making this dictionary precise is a
+formalization task of this section, and four obligations in it are open: the universe of
+the criterion's strings --- if they are games, $\compr$ cannot be polynomial-time, a game
+of $\verifier_{2^n}$ having $2^{\poly(n,\lambda)}$ questions, so they must be descriptions
+and the interpretation of a description as a game must sit outside the time bound;
+compression from a \emph{succinct} input rather than from a verifier read verbatim, as
+Definition~\ref{def:succinct} and the polynomial-time convention of
+Section~\ref{sec:conventions} require; preservation of $A$ and $B$ on inputs that are not
+$\lambda$-bounded descriptions, a property the criterion demands of every string while
+$\lambda$-boundedness is undecidable; and the choice of $\lambda$ along the recursion,
+whose descriptions grow with the level. The entanglement form of~\cite{JNVWY20}
 (Remark~\ref{rem:entanglement-form}) instantiates Lemma~\ref{lem:recursive-compression}
 instead, with $f = \Ent(\cdot, \frac12)$; it is not used by the main theorem.
 \end{remark}
@@ -239,8 +286,10 @@ clause, obtained from the same proofs by tracking the dimension of the extracted
 strategies: $\Ent(\vint_n, 1 - \eps) \geq \max\{\Ent(\verifier_{2^n}, 1 -
 \delta(\eps, n)),\ (1 - \delta(\eps, n))\, 2^{2^{\lambda n}}\}$ for introspection;
 $\Ent(\vora_n, 1 - \eps) \geq \Ent(\verifier_n, 1 - \delta(\eps))$ for
-oracularization; $\Ent(\vans_n, 1 - \eps) \geq \Ent(\verifier_n, 1 - \delta(\eps, n))$
-for answer reduction; Theorem~\ref{thm:bvy} for anchored repetition; and, composed,
+oracularization; $\Ent(\vans_n, 1 - \eps) \geq \frac12 \Ent(\verifier_n, 1 - \delta(\eps, n))$
+for answer reduction, the factor $\frac12$ being the Schmidt-rank doubling of the
+symmetrization step, which the synchronous framework of this blueprint does not perform
+(symmetry being definitional there) and therefore does not pay; Theorem~\ref{thm:bvy} for anchored repetition; and, composed,
 $\Ent(\vcompr_n, \frac12) \geq \frac12 \max\{\Ent(\verifier_N, \frac12),\
 2^{N^\lambda - 1}\}$ for compression. Fed into the variant of
 Lemma~\ref{lem:recursive-compression} tolerating the factor $\frac12$ (harmless, since
@@ -256,16 +305,17 @@ the corollaries of Remark~\ref{rem:further}.
 
 \begin{theorem}[Halting reduction]
 \label{thm:halting}
-\uses{thm:compression,rem:compression-abstract,lem:compressible-criterion,lem:value-lower-approx,lem:kleene,def:mipstar,def:game-description}
+\uses{thm:compression,rem:compression-abstract,lem:compressible-criterion,lem:value-lower-approx,lem:kleene,def:mipstar,def:game-description,lem:sync-le-valstar}
 There is a computable (indeed polynomial-time) map $\machine \mapsto
 \game_{\machine}$ from Turing machines to synchronous game descriptions, with games
 given by normal form verifiers satisfying the efficiency requirements of
 Definition~\ref{def:mipstar}, such that:
 \begin{enumerate}
-\item if $\machine$ halts on the empty input then $\synval(\game_\machine) = 1$,
-  witnessed by a PCC strategy;
+\item if $\machine$ halts on the empty input then $\game_\machine$ has a value-$1$ PCC
+  strategy, so $\synval(\game_\machine) = \valstar(\game_\machine) = 1$;
 \item if $\machine$ does not halt on the empty input then
-  $\synval(\game_\machine) \leq \tfrac12$.
+  $\valstar(\game_\machine) \leq \tfrac12$, and hence also
+  $\synval(\game_\machine) \leq \tfrac12$ (Lemma~\ref{lem:sync-le-valstar}).
 \end{enumerate}
 \end{theorem}
 

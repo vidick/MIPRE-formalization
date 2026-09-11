@@ -26,28 +26,48 @@ every Turing machine $\machine$:
 Theorem~\ref{thm:main} follows from Theorem~\ref{thm:halting} by converting the
 normal form verifier at a fixed index into an explicit game description (a finite
 object obtained by running the sampler and decider), and relaxing polynomial-time
-computability of the reduction to computability, per Section~\ref{sec:departures}.
+computability of the reduction to computability, per Section~\ref{sec:departures}. The
+conversion leaves both values unchanged because the decider of $\game_\machine$ already
+rejects unequal answers to equal questions (item 1 of
+Remark~\ref{rem:sync-invariant}); a game description imposes that by fiat
+(Definition~\ref{def:game-description}), which would otherwise change the game.
+
+\begin{corollary}[Halting reduces to the quantum value]
+\label{cor:main-quantum}
+\uses{thm:halting,thm:main,lem:sync-le-valstar,def:q-value,def:game-description}
+With $g$ as in Theorem~\ref{thm:main}: if $\machine$ halts on the empty input then
+$\valstar(\game_{g(\machine)}) = 1$, and if $\machine$ does not halt on the empty input
+then $\valstar(\game_{g(\machine)}) \leq \tfrac12$.
+\end{corollary}
+
+Both forms come from the two items of Theorem~\ref{thm:halting} directly: the value-$1$
+witness is a PCC, hence synchronous, strategy, so it gives value $1$ in both senses; and
+the soundness conclusion is $\valstar(\game_\machine) \leq \frac12$, which gives
+$\synval(\game_\machine) \leq \frac12$ by Lemma~\ref{lem:sync-le-valstar}. The quantum
+form is the one Definition~\ref{def:mipstar} asks for; no transport from $\synval$ to
+$\valstar$ is involved, the pipeline's soundness being carried in $\valstar$ from the
+repetition step onwards (Theorem~\ref{thm:parallel-repetition}).
 
 \begin{corollary}[Uncomputability of the game value]
 \label{cor:value-uncomputable}
-\uses{thm:main,thm:halting-undecidable}
+\uses{thm:main,cor:main-quantum,thm:halting-undecidable}
 There is no algorithm that, given a game description $g$ with the promise that
 $\synval(\game_g) = 1$ or $\synval(\game_g) \leq \frac12$, decides which is the
-case.
+case; the same holds with $\valstar$ in place of $\synval$
+(Corollary~\ref{cor:main-quantum}).
 \end{corollary}
 
 \begin{theorem}[$\MIPstar = \RE$]
 \label{thm:mipstar-eq-re}
-\uses{def:mipstar,def:re,thm:halting,thm:halting-undecidable,lem:value-lower-approx,thm:almost-sync,lem:sync-le-valstar}
+\uses{def:mipstar,def:re,thm:halting,cor:main-quantum,thm:halting-undecidable,lem:value-lower-approx}
 $\MIPstar = \RE$.
 \end{theorem}
 
 For $\RE \subseteq \MIPstar$: the halting problem is $\RE$-complete
 (Theorem~\ref{thm:halting-undecidable}) and Theorem~\ref{thm:halting} provides a
-polynomial-time verifier for it; the bridge results
-(Lemma~\ref{lem:sync-le-valstar} and Theorem~\ref{thm:almost-sync}) transfer the
-completeness--soundness gap from $\synval$ to $\valstar$ as required by
-Definition~\ref{def:mipstar}. For $\MIPstar \subseteq \RE$: given a verifier for $L$
+polynomial-time verifier for it, whose completeness--soundness gap is already in the form
+Definition~\ref{def:mipstar} requires (Corollary~\ref{cor:main-quantum}); no transport
+between the two values is needed. For $\MIPstar \subseteq \RE$: given a verifier for $L$
 and an input $z$, enumerate tensor-product strategies
 (Lemma~\ref{lem:value-lower-approx}) and accept upon finding one with value greater
 than $\frac12$; this semi-decides $L$.

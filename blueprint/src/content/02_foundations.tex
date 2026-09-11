@@ -128,9 +128,11 @@ In~\cite[Section 5.2]{JNVWY20} a PCC strategy is a tensor-product strategy
 \emph{projective} (all measurements are PVMs), \emph{consistent} ($A^x_a \ot \Id
 \ket{\psi} = \Id \ot B^x_a \ket{\psi}$ for all $x, a$), and \emph{commuting}
 ($[A^x_a, B^y_b] = 0$ for all $(x, y)$ in the support of $\mu$ and all $a, b$). In
-the synchronous framework the first two conditions are automatic: a projective,
-consistent strategy on a maximally entangled state is exactly a synchronous strategy
-(\cite[Remark 5.13]{JNVWY20}; see also \cite[Theorem 5.5]{PSSTW16}), so only the
+the synchronous framework the first two conditions come for free in the direction this
+blueprint uses: the tensor-product realization of a synchronous strategy on the maximally
+entangled state (the proof of Lemma~\ref{lem:sync-le-valstar}) is projective and
+consistent (\cite[Remark 5.13]{JNVWY20}; see also \cite[Theorem 5.5]{PSSTW16}), so only
+the
 commutation condition remains, and we keep the name PCC for alignment with the paper.
 The ``commuting'' in PCC is a condition on question pairs in the support of $\mu$,
 unrelated to the commuting (operator) strategies of
@@ -222,9 +224,11 @@ and $\ket{\psi} = d^{-1/2}\sum_i \ket{i}\ket{i}$; then
 $\bra{\psi} A^x_a \ot B^y_b \ket{\psi} = \tau(M^x_a M^y_b)$, so the values agree.
 \end{proof}
 
-The converse direction --- every good tensor-product strategy for a synchronous
-game can be rounded to a good synchronous strategy --- is the almost-synchronicity
-theorem, imported as Theorem~\ref{thm:almost-sync}.
+The converse direction --- every good tensor-product strategy for a synchronous game
+whose questions carry proportional weight on the diagonal can be rounded to a good
+synchronous strategy --- is the almost-synchronicity theorem, imported as
+Theorem~\ref{thm:almost-sync}. The hypothesis on the diagonal cannot be dropped: without
+it the two values are unrelated (Remark~\ref{rem:almost-sync-hypothesis}).
 
 \begin{lemma}[Synchronous value lower-bounds the commuting value]
 \label{lem:sync-le-valco}
@@ -439,11 +443,48 @@ A \emph{normal form verifier} is a pair $\verifier = (\sampler, \decider)$ of a 
 and a decider. For each $n$, $\verifier$ determines a game $\verifier_n$ with question
 distribution given by $\sampler$ at index $n$ and decision predicate
 $D(x,y,a,b) = \decider(n,x,y,a,b)$, where answers longer than $\TIME_\decider(n)$ are
-rejected. Symmetrizing the roles of the two players makes $\verifier_n$ a synchronous
-game; we write $\valstar(\verifier_n)$ and $\synval(\verifier_n)$ for its values. The
+rejected. Symmetrizing the roles of the two players makes the question distribution and
+the decision predicate symmetric; that $\verifier_n$ is moreover \emph{synchronous} in the
+sense of Definition~\ref{def:sync-game} is a further condition on the decider, which must
+reject unequal answers to equal questions, and not a consequence of symmetrization
+(Remark~\ref{rem:sync-invariant}). We write $\valstar(\verifier_n)$ for the quantum value
+of $\verifier_n$ and, when $\verifier_n$ is synchronous, $\synval(\verifier_n)$ for its
+synchronous value. The
 description length $\abs{\verifier} = \max\{\abs{\sampler}, \abs{\decider}\}$, and the
 number of levels of $\verifier$ is that of $\sampler$.
 \end{definition}
+
+\begin{remark}[The synchronization invariant]
+\label{rem:sync-invariant}
+\uses{def:normal-verifier,def:sync-game,thm:almost-sync}
+Two properties are asked of the games produced along the compression pipeline of
+Section~\ref{ch:proof-structure}, and neither follows from symmetrizing the players'
+roles:
+\begin{enumerate}
+\item \emph{Synchronicity}: equal questions reject unequal answers, so that $\synval$ is
+  defined at all. For a game given by a game description this holds by fiat
+  (Definition~\ref{def:game-description}); for a game given by a normal form verifier it
+  is a condition on the decider. It is needed wherever $\synval$ occurs --- in the
+  soundness clauses of all four transformations and at the inner end of the recursion ---
+  and direct repetition preserves it, since two unequal answer tuples to equal question
+  tuples differ in some coordinate, where the repeated game rejects.
+\item \emph{Diagonal weight}: the game to which the almost-synchronous transport is
+  applied satisfies $\mu(x,x) \geq \kappa \sum_y \mu(x,y)$ for every $x$, with the same
+  $\kappa > 0$ along the whole recursion. This is the hypothesis of
+  Theorem~\ref{thm:almost-sync}, without which the two values of a game are unrelated
+  (Remark~\ref{rem:almost-sync-hypothesis}).
+\end{enumerate}
+The transport is applied once, to the game that the repetition step repeats --- the
+answer-reduced game --- so the second property is a requirement on the constructions of
+introspection, oracularization and answer reduction, and not something inherited from the
+game being compressed. It is emphatically not a property of repeated games: the $k$-fold
+repetition of a game with diagonal weight $\kappa$ has diagonal weight $\kappa^k$, which
+is why the pipeline's soundness is carried in $\valstar$ from the repetition step outwards
+and the transport is never applied to a repeated game. Establishing either property is
+open: neither is recorded in the statements of Section~\ref{ch:proof-structure}, and
+in~\cite{JNVWY20} both come from the typed structure of the samplers, which this blueprint
+does not carry (Section~\ref{sec:departures}).
+\end{remark}
 
 \begin{definition}[$\lambda$-bounded verifier]
 \label{def:lambda-bounded}

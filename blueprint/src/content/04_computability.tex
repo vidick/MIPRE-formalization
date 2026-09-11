@@ -323,15 +323,19 @@ before, for $n$ above a threshold $r(e) = 2^{K + 1 + \abs{e}}$ and $m = r(e)$, t
 $(s(\beta, ((c, e), (m, 2n+1))), n)$ is a succinct description of $h(e, m, 2n+1)$; the
 start level $m$ is carried as data so that the threshold can be chosen from the running
 time of $a$ afterwards. The reduction is $g(e) = h(e, r(e), r(e)) =: x_e$; the second
-branch tests, at every level, whether $S$ halts on $x_e$.
+branch tests, at each level it is run at, whether $S$ halts on $x_e$. Two facts are used
+implicitly below and hold along the chain: $\abs{m} \leq \abs{n}$ at levels $n \geq r(e)
+\geq m$, which is what keeps $K$ out of its own defining polynomial; and ``$e$ halts within
+$\log n$ steps'' is monotone in $n$, so the first branch, once it fires, fires at every
+higher level.
 
 If $e$ does not halt, suppose $x_e \notin B$. Then $S$ halts on $x_e$ in some time $T$,
 so at every level $n$ with $\log n \geq T$ the decider outputs $y_{\mathrm{no}} \in B$,
 and by downward induction along the levels $r(e), 2r(e)+1, 4r(e)+3, \ldots$ from such a
-level, property 2 of $\compr$ gives $h(e, r(e), n) \in B$ at every level, in particular
+level, property 2 of $\compr$ gives $h(e, r(e), n) \in B$ at every level of the chain, in particular
 $x_e \in B$, a contradiction. If $e$ halts in $T$ steps, then $h(e, r(e), n) =
 y_{\mathrm{yes}} \in A$ once $\log n \geq T$, and by downward induction property 1 gives
-$h(e, r(e), n) \in A$ at every level, provided the second branch never fires at a level
+$h(e, r(e), n) \in A$ at every level of the chain, provided the second branch never fires at a level
 where the first has not. If it fired at such a level $n_1$, then $S$ halts on $x_e$, so
 $x_e \notin B$; but the output $y_{\mathrm{no}} \in B$ at level $n_1$ and property 2, by
 downward induction along the levels between $r(e)$ and $n_1$ (at which the first branch
@@ -347,7 +351,7 @@ decision problem is $\RE$-complete if and only if it is compressible.
 
 \paragraph{Comments.} This is the lemma the main theorem uses
 (Section~\ref{sec:ps-halting}): $A$ is the set of normal form verifier descriptions with a
-value-$1$ PCC strategy, $B$ the set of those with $\synval \leq \frac12$, and $S$ the
+value-$1$ PCC strategy, $B$ the set of those with $\valstar \leq \frac12$, and $S$ the
 enumeration of Lemma~\ref{lem:value-lower-approx}. Compared with
 Lemma~\ref{lem:recursive-compression}, the growth hypothesis on a measure is replaced by
 the semidecidability of the complement of $B$ --- both directions of the specification of

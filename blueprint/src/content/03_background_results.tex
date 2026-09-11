@@ -144,23 +144,81 @@ needed for the synchronous framework~\cite{dlS21,Vid22}.
 
 \begin{theorem}[Almost-synchronous strategies are near synchronous strategies]
 \label{thm:almost-sync}
-\uses{def:sync-game,def:sync-value,def:q-value}
-There are universal constants $C > 0$ and $0 < c \leq 1$ such that for every
-synchronous game $\game$,
+\uses{def:sync-game,def:sync-value,def:q-value,def:inconsistency}
+There are universal constants $C > 0$ and $0 < c \leq 1$ such that the following holds.
+Let $\game$ be a synchronous game whose question distribution gives the diagonal
+pointwise proportional weight: for some $\kappa \in (0, 1]$,
 \begin{equation*}
-  1 - \synval(\game) \;\leq\; C \bigl( 1 - \valstar(\game) \bigr)^{c}\;.
+  \mu(x,x) \;\geq\; \kappa \sum_{y \in \mX} \mu(x,y) \qquad \text{for all } x \in \mX\;.
+\end{equation*}
+Then, writing $\eps = 1 - \valstar(\game)$,
+\begin{equation*}
+  1 - \synval(\game) \;\leq\; C \bigl( \eps / \kappa \bigr)^{c}\;.
 \end{equation*}
 More precisely, every tensor-product strategy for $\game$ with value $1 - \eps$ is,
 up to local isometries, well-approximated on average by a convex combination of
-synchronous strategies each of value at least $1 - C\eps^{c}$.
+synchronous strategies each of value at least $1 - C(\eps/\kappa)^{c}$.
 \end{theorem}
 
 \paragraph{Source.} Vidick~\cite{Vid22}, building on~\cite{KPS18,PSSTW16}; the
 statement above is the corollary needed here, with constants independent of the game's
-size.
+size. What the source controls is not the game's value directly but the
+\emph{synchronicity defect} of a strategy --- its inconsistency
+(Definition~\ref{def:inconsistency}) at equal questions, taken against the marginal of
+$\mu$ on $\mX$; the diagonal-weight hypothesis is what turns the game's rejection
+probability $\eps$ into the bound $\eps/\kappa$ on that defect, the pairs $(x,x)$ carrying
+at least a $\kappa$ fraction of the weight of $x$. Without it the two values are unrelated
+(Remark~\ref{rem:almost-sync-hypothesis}).
 
 \paragraph{Comments.} The proof uses the orthonormalization
-lemma (Section~\ref{sec:rr-orthonormalization}) and a rounding argument.
+lemma (Section~\ref{sec:rr-orthonormalization}) and a rounding argument. Used
+contrapositively, as Theorem~\ref{thm:parallel-repetition} uses it, the theorem turns a
+bound $\synval(\game) \leq 1 - \delta$ into $\valstar(\game) \leq 1 - \Omega(\kappa
+\delta^{1/c})$: the diagonal weight multiplies the gap recovered, so a small $\kappa$ is a
+loss. The hypothesis is also not preserved by repetition, which is why the soundness of
+the pipeline is carried in $\valstar$ from Theorem~\ref{thm:parallel-repetition} onwards.
+
+\begin{remark}[The diagonal-weight hypothesis cannot be dropped]
+\label{rem:almost-sync-hypothesis}
+\uses{thm:almost-sync,def:sync-game,def:sync-value,def:q-value}
+Some lower bound on the diagonal weight is necessary, and its absence is not merely
+lossy: the two values become unrelated. Let $\mX = \mA = \{0,1\}$, let $\mu$ give weight
+$\frac12$ to each of $(0,1)$ and $(1,0)$ and none to the diagonal, and let $D$ accept
+exactly the answer pair $(a,b) = (0,1)$ at those two question pairs and reject unequal
+answers at the two diagonal pairs, as Definition~\ref{def:sync-game} requires --- which
+costs nothing here, the diagonal carrying no weight. Alice answering $0$ and Bob answering
+$1$, deterministically, is a tensor-product strategy of value $1$, so
+$\valstar(\game) = 1$. A synchronous strategy, by contrast, is a single family
+$\{M^x_a\}$ of projective measurements against a tracial state $\tau$; writing
+$P = M^0_0$ and $Q = M^1_0$, its value is
+\begin{equation*}
+  \tfrac12 \tau\bigl( P (\Id - Q) \bigr) + \tfrac12 \tau\bigl( Q (\Id - P) \bigr)
+  \;=\; \tfrac12 \bigl( \tau(P) + \tau(Q) \bigr) - \tau(PQ)
+\end{equation*}
+by traciality. Now $\tau(PQ) \geq \max\{0,\ \tau(P) + \tau(Q) - 1\}$: the first bound
+because $\tau(PQ) = \tau(QPQ) \geq 0$, the second because
+$\tau\bigl( (\Id - P)(\Id - Q) \bigr) = \tau\bigl( (\Id - Q)(\Id - P)(\Id - Q) \bigr)
+\geq 0$. With $s = \tau(P) + \tau(Q)$ the value is therefore at most
+$\min\{ s/2,\ 1 - s/2 \} \leq \frac12$, attained in dimension $1$ at $P = \Id$, $Q = 0$.
+Hence $\synval(\game) = \frac12$ while $1 - \valstar(\game) = 0$.
+
+This game is not symmetric, and for this instance symmetry alone repairs the conclusion:
+symmetrizing $D$ so as to accept every unequal answer pair off the diagonal gives
+$\synval(\game) = 1$ too, by $P = \ket{0}\bra{0}$, $Q = \ket{1}\bra{1}$ in dimension $2$.
+The counterexample therefore refutes the theorem as quantified over all synchronous games,
+rather than exhibiting a failure among the symmetric games the pipeline produces; what the
+source's proof needs in either case is the diagonal weight itself, the synchronicity
+defect being measured against the marginal and controlled only by the diagonal pairs.
+
+Nor does the hypothesis survive repetition: if $\mu(x,x) = \kappa \sum_y \mu(x,y)$ for
+every $x$, the $k$-fold product distribution satisfies the same inequality with $\kappa^k$
+and no better. A bound on the synchronous value of a $k$-fold repetition therefore says
+nothing about its quantum value once $k$ grows with the instance size. For that reason
+Theorem~\ref{thm:almost-sync} is used in this blueprint only on the game being repeated,
+inside the proof of Theorem~\ref{thm:parallel-repetition}, never on a repeated game, and
+the soundness of the pipeline is stated in $\valstar$ from that point onwards. The
+invariant that supplies the hypothesis there is Remark~\ref{rem:sync-invariant}.
+\end{remark}
 
 \subsection{The orthonormalization lemma}
 \label{sec:rr-orthonormalization}
@@ -470,10 +528,13 @@ The set $\{ (g, p) : g \text{ a game description}, p \in \mathbb{Q},
 \paragraph{Source.} Folklore; see~\cite[Section 12]{JNVWY20}. Enumerate
 tensor-product strategies with entries in $\mathbb{Q}[i]$ and evaluate; density of
 such strategies among all tensor-product strategies gives completeness of the
-enumeration.
+enumeration. That argument gives the $\valstar$ half; the $\synval$ half needs its own
+enumeration and density argument, since rounding the entries of a synchronous strategy
+does not preserve projectivity or synchronicity.
 
 \paragraph{Comments.} This is the easy inclusion $\MIPstar \subseteq \RE$ and one half
-of Theorem~\ref{thm:mipstar-eq-re}. The commuting-operator analogue (approximating
+of Theorem~\ref{thm:mipstar-eq-re}. The pipeline consumes only the $\valstar$ half, as the
+semidecision procedure of Remark~\ref{rem:compression-abstract}. The commuting-operator analogue (approximating
 $\valco$ from \emph{above} via the NPA hierarchy~\cite{NPA08}) is \emph{not} needed for
 the main theorem, but becomes relevant for the downstream consequences in
 Section~\ref{ch:downstream}.

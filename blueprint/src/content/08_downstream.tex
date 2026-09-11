@@ -11,8 +11,15 @@ independent value.
 \subsection{Uncomputability of the value}
 
 Corollary~\ref{cor:value-uncomputable} is already a headline consequence requiring
-nothing further: no algorithm can approximate the (synchronous or quantum)
-value of a nonlocal game to within any constant better than $\frac12$.
+nothing further: no algorithm can approximate the (synchronous or quantum) value of a
+nonlocal game to within an additive constant $c < \frac14$, since an estimate of additive
+error $c$ separates value $1$ from value $\frac12$ exactly when $c < \frac14$ (at
+$c = \frac14$ the estimate $\frac34$ is consistent with both). The threshold rises to the
+trivial $\frac12$ once the gap is amplified: repeating the game drives the soundness value
+below any $\delta > 0$ while preserving value $1$
+(Theorem~\ref{thm:direct-repetition-q}), at a cost polynomial in the description, so for
+every $c < \frac12$ no algorithm approximates the value to within additive error $c$. That
+stronger form depends on the repetition theorem as well as on the main theorem.
 
 \subsection{Separation of quantum and commuting values}
 

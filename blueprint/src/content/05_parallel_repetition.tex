@@ -5,10 +5,11 @@ This chapter states the parallel repetition theorems available for gap amplifica
 in the compression procedure (Section~\ref{sec:ps-parallel-repetition}). It has two
 parts. Section~\ref{sec:pr-direct} states \emph{direct} (unanchored) parallel
 repetition in value form, for entangled and for commuting-operator strategies, together
-with Lin's tracial density theorem. These theorems are formalized: two external Lean
-developments proving them are vendored into this repository, and the section records
-their statements in the vocabulary of Section~\ref{ch:foundations} together with the
-bridges connecting the two. Sections~\ref{sec:ar-background}--\ref{sec:ar-decomposition}
+with Lin's tracial density theorem. Both theorems are imported from external Lean
+developments vendored into this repository, and the section records their statements in the
+vocabulary of Section~\ref{ch:foundations} together with the bridges connecting the two:
+the commuting-operator statement is formalized end to end, the entangled one modulo
+Lemma~\ref{lem:povm-value-eq}. Sections~\ref{sec:ar-background}--\ref{sec:ar-decomposition}
 state the \emph{anchored}, entanglement-preserving theorem of Bavarian, Vidick and
 Yuen~\cite{BVY17} used in~\cite{JNVWY20}: repeating the anchored version of a game
 amplifies the completeness-soundness gap while preserving entanglement lower bounds.
