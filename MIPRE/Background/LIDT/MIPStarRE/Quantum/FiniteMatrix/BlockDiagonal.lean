@@ -61,7 +61,7 @@ theorem blockDiagonalLinearMap_apply (R : Type*) (m n o α : Type*)
     [Semiring R] [DecidableEq o] [AddCommMonoid α] [Module R α]
     (B : o → Matrix m n α) :
     Matrix.blockDiagonalLinearMap R m n o α B = Matrix.blockDiagonal B :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- A block-diagonal complex matrix is positive semidefinite when all of its
 diagonal blocks are positive semidefinite. -/

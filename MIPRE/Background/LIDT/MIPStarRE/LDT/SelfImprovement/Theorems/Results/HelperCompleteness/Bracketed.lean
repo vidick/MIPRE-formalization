@@ -275,7 +275,7 @@ theorem helperBracketedCompletenessQuantity_eq_mass
       subMeasMass strategy.state
         (averagedSandwichedPolynomialSubMeas params strategy T).liftLeft := by
   rw [helper_mass_eq_avg_pointwise_bracketed_sum]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The paper-shaped `Hhat`-versus-`Z` comparison assembled from the bracketed
 expression, the two Cauchy--Schwarz estimates, and complementary slackness.

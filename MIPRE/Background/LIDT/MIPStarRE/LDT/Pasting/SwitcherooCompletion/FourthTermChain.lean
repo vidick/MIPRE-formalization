@@ -290,7 +290,7 @@ lemma switcherooAggregateOnceCommutedScalar_close_mixed
                     (M q.2).outcome o)) *
                 rightTensor (ι₁ := ι) ((family.meas q.1).outcome g))) =
         switcherooAggregateMixedScalar params ψbi family M := by
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   calc
     |switcherooAggregateOnceCommutedScalar params ψbi family M -
         switcherooAggregateMixedScalar params ψbi family M|

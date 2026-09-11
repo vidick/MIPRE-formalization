@@ -186,7 +186,7 @@ theorem mainFormalConclusion_ofRoleRegisterScalarBoundary
               Real.sqrt (scalars.line169Error + scalars.zeta3 / 2) := by
             nlinarith
         _ = scalars.zeta4Repaired := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     exact hrepaired.trans (MainFormalScalarBounds.zeta4Repaired_le_mainFormalError scalars)
   have hsourceSelf :
       ζ₃src / 2 ≤ mainFormalError params k eps := by

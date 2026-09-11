@@ -500,7 +500,7 @@ lemma avg_postprocess_sandwichTensor_eq_diag_add_collision
             ev ψ
               (leftTensor (ι₂ := ι) (B.outcome b * A.outcome aa.1 * B.outcome b) *
                 rightTensor (ι₁ := ι) (A.outcome aa.2)) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The x-collision residual is nonnegative term-by-term. -/
 private lemma fullSliceBABAxCollisionFactored_nonneg

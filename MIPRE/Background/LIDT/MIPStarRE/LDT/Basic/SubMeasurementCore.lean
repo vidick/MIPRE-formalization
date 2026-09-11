@@ -134,7 +134,7 @@ the same total operator. -/
           cases Subsingleton.elim posB posA
           cases Subsingleton.elim sumB sumA
           cases Subsingleton.elim leB leA
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Two measurements are equal when they have the same outcome operators. -/
 @[ext] theorem Measurement.ext {α : Type*} {ι : Type*}
@@ -155,7 +155,7 @@ the same total operator. -/
                 _ = BtoSubMeas.total := BtotalEqOne.symm
           cases hsub
           cases Subsingleton.elim BtotalEqOne AtotalEqOne
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Two projective measurements are equal when they have the same outcome
 operators. -/
@@ -174,7 +174,7 @@ operators. -/
             simpa using houtcome a
           cases hmeas
           cases Subsingleton.elim Bproj Aproj
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- A one-outcome submeasurement associated to a single positive operator
 bounded by the identity. -/
@@ -191,12 +191,12 @@ def SubMeas.singleOutcome {ι : Type*} [Fintype ι] [DecidableEq ι]
     (A : MIPStarRE.Quantum.Op ι) (hA_pos : 0 ≤ A) (hA_le_one : A ≤ 1)
     (u : Unit) :
     (SubMeas.singleOutcome (ι := ι) A hA_pos hA_le_one).outcome u = A :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem SubMeas.singleOutcome_total {ι : Type*} [Fintype ι] [DecidableEq ι]
     (A : MIPStarRE.Quantum.Op ι) (hA_pos : 0 ≤ A) (hA_le_one : A ≤ 1) :
     (SubMeas.singleOutcome (ι := ι) A hA_pos hA_le_one).total = A :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- PSD outcomes are Hermitian. -/
 theorem SubMeas.outcome_hermitian {α : Type*} {ι : Type*}
@@ -254,13 +254,13 @@ def SubMeas.toMeasurement {α : Type*} {ι : Type*}
     [Fintype α] [Fintype ι] [DecidableEq ι]
     (A : SubMeas α ι) (hcomplete : A.total = 1) :
     (A.toMeasurement hcomplete).toSubMeas = A :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem SubMeas.toMeasurement_outcome {α : Type*} {ι : Type*}
     [Fintype α] [Fintype ι] [DecidableEq ι]
     (A : SubMeas α ι) (hcomplete : A.total = 1) (a : α) :
     (A.toMeasurement hcomplete).outcome a = A.outcome a :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Every submeasurement outcome is bounded by the total operator. -/
 theorem SubMeas.outcome_le_total {α : Type*} {ι : Type*}

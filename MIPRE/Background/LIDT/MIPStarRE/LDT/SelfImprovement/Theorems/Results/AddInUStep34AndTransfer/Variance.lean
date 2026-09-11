@@ -307,7 +307,7 @@ lemma add_in_u_cs_chain_q2_q3_variance_factor_le_globalVarianceDeviation_sum
             intro uv
             refine Finset.sum_congr rfl ?_
             intro h _
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ avgOver (uniformDistribution (Point params × Point params)) (fun uv =>
           ∑ h : Polynomial params, squaredTerm uv h) := hvariance_le_squared
     _ = ∑ g : Polynomial params,

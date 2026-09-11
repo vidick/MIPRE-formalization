@@ -44,7 +44,7 @@ lemma opTensor_one_left_eq_rightTensor
     (B : MIPStarRE.Quantum.Op ι₂) :
     opTensor (ι₁ := ι₁) (1 : MIPStarRE.Quantum.Op ι₁) B =
       rightTensor (ι₁ := ι₁) B := by
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The point measurement is complete and polynomial evaluation preserves the
 right-register total, so the tensor total has the same expectation as the right

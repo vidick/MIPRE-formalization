@@ -234,7 +234,7 @@ lemma qBipartiteConsDefect_completeAtOutcome_right_le
             ev ψ (opTensor (1 : MIPStarRE.Quantum.Op ιA) R) := by
               simp [A.total_eq_one]
       _ = ev ψ (opTensor A.toSubMeas.total B.total) + ev ψ (rightTensor (ι₁ := ιA) R) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hinnerB_le :
       ev ψ (opTensor A.toSubMeas.total B.total) - qBipartiteMatchMass ψ A.toSubMeas B ≤
         qBipartiteConsDefect ψ A.toSubMeas B := by

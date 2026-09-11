@@ -172,7 +172,7 @@ theorem helperMoveOverVQuantity_lower_of_pointConsistencyAddInU_transfer
             𝒟.weight v •
               (T.toSubMeas.outcome h *
                 pointConditionedOutcomeOperatorAtPolynomial params strategy h v) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       _ = ∑ v ∈ 𝒟.support,
             T.toSubMeas.outcome h *
               (𝒟.weight v • pointConditionedOutcomeOperatorAtPolynomial params strategy h v) := by
@@ -184,7 +184,7 @@ theorem helperMoveOverVQuantity_lower_of_pointConsistencyAddInU_transfer
               𝒟.weight v • pointConditionedOutcomeOperatorAtPolynomial params strategy h v) := by
             rw [Matrix.mul_sum]
       _ = T.toSubMeas.outcome h * averagedPointOperator params strategy h := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hmove_eq :
       helperMoveOverVQuantity params strategy T.toSubMeas =
         avgOver 𝒟 (fun u =>

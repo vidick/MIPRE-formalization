@@ -627,7 +627,7 @@ private lemma addInU_selected_cs_chain_step34_variance_factor_le_globalVarianceD
             (opTensor ((Av - Au) * Moh * (Av - Au)) (T.outcome ah.2))
         else 0)
         = avgOver (uniformDistribution (Point params × Point params)) varianceTerm := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ avgOver (uniformDistribution (Point params × Point params)) (fun uv =>
           ∑ h : Polynomial params, squaredTerm uv h) := hvariance_le_squared
     _ = ∑ g : Polynomial params,

@@ -334,7 +334,7 @@ lemma projectiveLowRankSum_truncate {Outcome : Type uOutcome}
       change (Multiset.card (Multiset.sigma Finset.univ.val fun a => (fiber a).val)) =
         ∑ a, (fiber a).card
       rw [Multiset.card_sigma]
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     have hrankQ : ∑ a, (Q.outcome a).rank ≤ Fintype.card ι := by
       have hsum_rank : ∑ a, (Q.outcome a).rank = ∑ a, (fiber a).card := by
         refine Finset.sum_congr rfl ?_

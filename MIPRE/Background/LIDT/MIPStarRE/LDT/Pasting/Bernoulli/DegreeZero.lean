@@ -344,7 +344,7 @@ private theorem degreeZero_averagedSlice_pointConsistency
         IdxMeas.toIdxSubMeas lineMeas =
           liftedVerticalLineAnswerFamily params strategy := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     rw [hline_eq]
     simpa [eps', delta'] using
       degreeZero_averagedSlice_liftedVerticalLineConsistency params strategy
@@ -374,12 +374,12 @@ private theorem degreeZero_averagedSlice_pointConsistency
         IdxMeas.toIdxSubMeas lineMeas =
           liftedVerticalLineAnswerFamily params strategy := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     have hpoint_eq :
         IdxMeas.toIdxSubMeas pointMeas =
           IdxProjMeas.toIdxSubMeas strategy.pointMeasurement := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     rw [hline_eq, hpoint_eq]
     exact Preliminaries.sddRel_symm strategy.state
       (uniformDistribution (Point params.next)) _ _ _ hpublic
@@ -587,7 +587,7 @@ private theorem degreeZero_averagedSlice_pointConsistency_of_axis_self
         IdxMeas.toIdxSubMeas lineMeas =
           liftedVerticalLineAnswerFamily params strategy := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     rw [hline_eq]
     simpa [eps', delta'] using
       degreeZero_averagedSlice_liftedVerticalLineConsistency_of_axis_self params strategy
@@ -617,12 +617,12 @@ private theorem degreeZero_averagedSlice_pointConsistency_of_axis_self
         IdxMeas.toIdxSubMeas lineMeas =
           liftedVerticalLineAnswerFamily params strategy := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     have hpoint_eq :
         IdxMeas.toIdxSubMeas pointMeas =
           IdxProjMeas.toIdxSubMeas strategy.pointMeasurement := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     rw [hline_eq, hpoint_eq]
     exact Preliminaries.sddRel_symm strategy.state
       (uniformDistribution (Point params.next)) _ _ _ hpublic

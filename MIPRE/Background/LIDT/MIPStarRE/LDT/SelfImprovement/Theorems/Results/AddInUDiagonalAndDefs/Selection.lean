@@ -687,7 +687,7 @@ private lemma addInURightOperatorAtPoint_selfConsistencySelection_proj_eq
         pointConditionedOutcomeOperatorAtPolynomial params strategy h u *
           T.outcome h *
           pointConditionedOutcomeOperatorAtPolynomial params strategy h u := by
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   rw [hsandwich]
   congr 1
   exact proj_outer_sandwich_eq _ _ hproj

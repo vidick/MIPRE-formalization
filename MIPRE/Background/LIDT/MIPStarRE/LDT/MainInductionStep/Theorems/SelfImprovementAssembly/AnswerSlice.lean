@@ -117,7 +117,7 @@ private theorem restrictAnswerDiagonalAnswerMeasurement_transportInvariant
   have hcomm : ∀ g, f (eNext g) = eSlice (f g) := by
     intro g
     funext s
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hpost : postprocess (SubMeas.transport eNext A) f =
       SubMeas.transport eSlice (postprocess A f) :=
     SubMeas.postprocess_transport_equiv eNext eSlice A f f hcomm
@@ -142,7 +142,7 @@ recovers the ambient answer-valued diagonal readout. -/
         (fun f : DiagonalLineAnswer params.next => f zeroCoord) := by
   simp [restrictAnswerDiagonalAnswerMeasurement, ProjMeas.postprocess_toSubMeas,
     SubMeas.postprocess_comp, DiagonalLineAnswer.restrictAtHeight]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The `x`-restricted strategy of an answer-valued successor strategy.
 
@@ -178,7 +178,7 @@ noncomputable def xRestrictedAnswerSymStratOfAnswer
     (strategy : AnswerSymStrat params.next ι)
     (x : Fq params) :
     (xRestrictedAnswerSymStratOfAnswer params strategy x).state = strategy.state :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Answer-valued slice restriction reindexes point questions by appending the
 slice height. -/
@@ -190,7 +190,7 @@ slice height. -/
     (u : Point params) :
     (xRestrictedAnswerSymStratOfAnswer params strategy x).pointMeasurement u =
       strategy.pointMeasurement (appendPoint params u x) :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Answer-valued slice restriction reuses the parent normalization witness. -/
 @[simp] theorem xRestrictedAnswerSymStratOfAnswer_isNormalized
@@ -200,7 +200,7 @@ slice height. -/
     (x : Fq params) :
     (xRestrictedAnswerSymStratOfAnswer params strategy x).isNormalized =
       strategy.isNormalized :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The diagonal measurement of an answer-valued slice is the full answer-valued
 restriction of the ambient diagonal measurement. -/
@@ -212,7 +212,7 @@ restriction of the ambient diagonal measurement. -/
     (ℓ : DiagonalLine params) :
     (xRestrictedAnswerSymStratOfAnswer params strategy x).diagonalMeasurement ℓ =
       restrictAnswerDiagonalAnswerMeasurement params strategy x ℓ :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Transport data for producing the answer-valued self-improvement data from
 concrete per-slice symmetric strategies.

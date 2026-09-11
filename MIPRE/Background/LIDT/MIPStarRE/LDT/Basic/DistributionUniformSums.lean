@@ -438,7 +438,7 @@ theorem uniformOnFinset_filter_sum_smul_eq_subtype {α M : Type*}
         (Distribution.uniformOnFinset (Finset.univ.filter p)).weight a • f a =
         ∑ a ∈ (Distribution.uniformOnFinset support).support,
           (Distribution.uniformOnFinset support).weight a • f a := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = ∑ a ∈ (uniformDistribution {a : α // a ∈ support}).support,
           (uniformDistribution {a : α // a ∈ support}).weight a • f a.1 := by
           exact uniformOnFinset_sum_smul_eq_subtype support f

@@ -210,12 +210,12 @@ theorem final_fields_completeness_of_helper_completeness
         constSubMeasFamily Hhat.liftLeft =
           IdxSubMeas.liftLeft (constSubMeasFamily Hhat) := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     have hright :
         constSubMeasFamily H.toSubMeas.liftLeft =
           IdxSubMeas.liftLeft (constSubMeasFamily H.toSubMeas) := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     rw [← hleft, ← hright]
     exact horth
   -- Apply the generic transport theorem.

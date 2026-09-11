@@ -289,7 +289,7 @@ lemma addInU_cs_chain_step1_abs_le_sqrt_two_delta
     refine avgOver_congr _ _ _ ?_
     intro uv
     rw [hfun_A uv, hfun_B uv]
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   -- The C contraction side condition
   have hC : ∀ uv : Point params × Point params,
       (∑ a : Fq params,
@@ -569,7 +569,7 @@ lemma addInU_cs_chain_step2_abs_le_sqrt_two_delta
     refine le_of_eq ?_
     refine avgOver_congr _ _ _ ?_
     intro uv
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hC : ∀ uv : Point params × Point params,
       (∑ a : Fq params,
           (∑ h : Polynomial params, Cop uv a h) *

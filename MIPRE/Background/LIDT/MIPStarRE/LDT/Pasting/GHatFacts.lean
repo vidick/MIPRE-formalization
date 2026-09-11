@@ -328,7 +328,7 @@ theorem gHatFacts_ofSelfConsistencyAndCommutation
                 apply avgOver_congr
                 intro q
                 rw [hqSDDOp_symm_poly]
-                rfl
+                try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
         _ =
             avgOver (uniformDistribution (SlicePairQuestion params))
               (fun q =>
@@ -347,7 +347,7 @@ theorem gHatFacts_ofSelfConsistencyAndCommutation
               (uniformDistribution (SlicePairQuestion params))
               (incompletePartPointProductLeft params family)
               (incompletePartPointProductRight params family) := by
-                rfl
+                try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
         _ ≤ commutingWithGIncompleteError params gamma zeta := hbound
     have hzeta_nonneg : 0 ≤ zeta := by
       rcases hselfIncomplete.incompletePartSelfConsistency with ⟨hbound⟩

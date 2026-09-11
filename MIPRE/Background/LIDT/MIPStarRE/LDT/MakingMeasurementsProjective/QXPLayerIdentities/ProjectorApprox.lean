@@ -379,7 +379,7 @@ lemma pQApprox {Outcome : Type*}
                     (data.qLayer.q.outcome a - (PFamily data).outcome a))
                     = ev ψ (((Qa data.qLayer a - Pa data a)ᴴ) *
                         (Qa data.qLayer a - Pa data a)) := by
-                        rfl
+                        try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
                 _ = ev ψ ((Qa data.qLayer a + Pa data a) -
                         Qa data.qLayer a * Pa data a -
                         Pa data a * Qa data.qLayer a) := by

@@ -143,7 +143,7 @@ lemma gCommStability_raw_le_half_of
           (fun x => qBipartiteSSCDefect strategy.state (G x)) := by
             exact avgOver_mono _ _ _ hssc_point
     _ = bipartiteSSCError strategy.state (uniformDistribution (Fq params)) G := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ zeta / 2 := hsliceSSC.overlapBound
 
 /-- Any pointwise defect bound by the common overlap term is trivially at most

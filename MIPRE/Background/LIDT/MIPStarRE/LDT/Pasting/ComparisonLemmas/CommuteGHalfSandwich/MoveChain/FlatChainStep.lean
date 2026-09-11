@@ -367,7 +367,7 @@ lemma commuteGHalfSandwich_flatChainStep
           intro q ogs
           have hsrc_le : i.1 ≤ r + 1 := by omega
           conv_lhs => simp [commuteGHalfSandwich_flatChainFamily, hsrc_le]
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
         have htgt_eq :
             ∀ q ogs,
               ((commuteGHalfSandwich_flatChainFamily params family (r + 1))
@@ -378,7 +378,7 @@ lemma commuteGHalfSandwich_flatChainStep
           intro q ogs
           have htgt_le : i.1 ≤ r := by omega
           conv_lhs => simp [commuteGHalfSandwich_flatChainFamily, htgt_le]
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
         simpa [commuteGHalfSandwich_flatChainError, hi] using
           (CommutativityPoints.sddOpRel_congr_outcome ψbi
             (uniformDistribution (SliceQuestion params × SliceQuestion params ×

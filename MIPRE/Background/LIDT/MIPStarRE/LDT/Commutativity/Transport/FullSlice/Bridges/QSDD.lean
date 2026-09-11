@@ -185,6 +185,6 @@ lemma fullSliceCommutation_qSDDOp_avg_eq
           ring
     _ = 2 * (fullSliceABAAvg params strategy family -
           fullSliceABABAvg params strategy family) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 end MIPStarRE.LDT.Commutativity

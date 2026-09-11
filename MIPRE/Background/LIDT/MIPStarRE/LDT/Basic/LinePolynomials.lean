@@ -163,7 +163,7 @@ theorem hasUnivariateDegreeAtMost {params : Parameters} [FieldModel params.q]
     HasUnivariateDegreeAtMost params params.d f := by
   refine ⟨f.poly, f.degreeBounded, ?_⟩
   funext t
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Extend an axis-line answer to the slice at height `x`. -/
 def appendAtHeight (params : Parameters) [FieldModel params.q]
@@ -174,7 +174,7 @@ def appendAtHeight (params : Parameters) [FieldModel params.q]
 @[simp] theorem appendAtHeight_apply {params : Parameters} [FieldModel params.q]
     (f : AxisLinePolynomial params) (x t : Fq params) :
     appendAtHeight params f x t = f t :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Slice extension commutes with translating the line parameter on axis-line answers. -/
 @[simp] theorem appendAtHeight_reparamAt {params : Parameters} [FieldModel params.q]
@@ -182,7 +182,7 @@ def appendAtHeight (params : Parameters) [FieldModel params.q]
     appendAtHeight params (reparamAt f t) x =
       reparamAt (appendAtHeight params f x) t := by
   apply AxisLinePolynomial.ext
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The inverse reparametrization equivalence commutes with slice extension on
 axis-line answers. -/
@@ -193,7 +193,7 @@ axis-line answers. -/
         (appendAtHeight params f x)) =
       appendAtHeight params (((reparamAtEquiv (params := params) t).symm) f) x := by
   apply AxisLinePolynomial.ext
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Restrict an axis-line answer in `m + 1` variables to the slice at height `x`. -/
 def restrictAtHeight (params : Parameters) [FieldModel params.q]
@@ -304,7 +304,7 @@ theorem hasUnivariateDegreeAtMost {params : Parameters} [FieldModel params.q]
     HasUnivariateDegreeAtMost params (params.m * params.d) f := by
   refine ⟨f.poly, f.degreeBounded, ?_⟩
   funext t
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Extend a diagonal-line answer to the slice at height `x`. -/
 def appendAtHeight (params : Parameters) [FieldModel params.q]
@@ -318,7 +318,7 @@ def appendAtHeight (params : Parameters) [FieldModel params.q]
     appendAtHeight params (reparamAt f t) x =
       reparamAt (appendAtHeight params f x) t := by
   apply DiagonalLinePolynomial.ext
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The inverse reparametrization equivalence commutes with slice extension on
 diagonal-line answers. -/
@@ -329,7 +329,7 @@ diagonal-line answers. -/
         (appendAtHeight params f x)) =
       appendAtHeight params (((reparamAtEquiv (params := params) t).symm) f) x := by
   apply DiagonalLinePolynomial.ext
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Restrict a diagonal-line answer in `m + 1` variables to the slice at height `x`.
 This interface now makes the stronger slice-wise degree requirement explicit. -/
@@ -362,7 +362,7 @@ def reparamAt {params : Parameters} [FieldModel params.q]
 @[simp] theorem reparamAt_apply {params : Parameters} [FieldModel params.q]
     (f : DiagonalLineAnswer params) (t s : Fq params) :
     reparamAt f t s = f (addCoord t s) :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem reparamAt_zero {params : Parameters} [FieldModel params.q]
     (f : DiagonalLineAnswer params) :
@@ -399,19 +399,19 @@ def restrictAtHeight (params : Parameters) (f : DiagonalLineAnswer params.next)
 @[simp] theorem appendAtHeight_apply (params : Parameters)
     (f : DiagonalLineAnswer params) (x : Fq params) (t : Fq params.next) :
     appendAtHeight params f x t = f t :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem restrictAtHeight_apply (params : Parameters)
     (f : DiagonalLineAnswer params.next) (x : Fq params) (t : Fq params) :
     restrictAtHeight params f x t = f t :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem appendAtHeight_reparamAt {params : Parameters} [FieldModel params.q]
     (f : DiagonalLineAnswer params) (t x : Fq params) :
     appendAtHeight params (reparamAt f t) x =
       reparamAt (appendAtHeight params f x) t := by
   funext s
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem reparamAtEquiv_symm_appendAtHeight
     {params : Parameters} [FieldModel params.q]
@@ -420,7 +420,7 @@ def restrictAtHeight (params : Parameters) (f : DiagonalLineAnswer params.next)
         (appendAtHeight params f x)) =
       appendAtHeight params (((reparamAtEquiv (params := params) t).symm) f) x := by
   funext s
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 end DiagonalLineAnswer
 
@@ -435,7 +435,7 @@ noncomputable def toAnswer {params : Parameters} [FieldModel params.q]
 @[simp] theorem toAnswer_apply {params : Parameters} [FieldModel params.q]
     (f : DiagonalLinePolynomial params) (t : Fq params) :
     f.toAnswer t = f t :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem toAnswer_reparamAt {params : Parameters} [FieldModel params.q]
     (f : DiagonalLinePolynomial params) (t : Fq params) :
@@ -448,7 +448,7 @@ noncomputable def toAnswer {params : Parameters} [FieldModel params.q]
     (appendAtHeight params f x).toAnswer =
       DiagonalLineAnswer.appendAtHeight params f.toAnswer x := by
   funext t
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 end DiagonalLinePolynomial
 

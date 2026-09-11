@@ -76,7 +76,7 @@ theorem consRel_constPolynomialEvaluation
       bipartiteConsError ψ (uniformDistribution (Point params)) Aconst Bconst
           = avgOver (uniformDistribution (Point params))
               (fun _ : Point params => qBipartiteConsDefect ψ A.toSubMeas B.toSubMeas) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       _ = qBipartiteConsDefect ψ A.toSubMeas B.toSubMeas := hpoint_avg
       _ = bipartiteConsError ψ (uniformDistribution Unit)
             (constSubMeasFamily A.toSubMeas) (constSubMeasFamily B.toSubMeas) :=
@@ -137,7 +137,7 @@ theorem consRel_constPolynomialEvaluation_heterogeneous
       bipartiteConsError ψ (uniformDistribution (Point params)) Aconst Bconst
           = avgOver (uniformDistribution (Point params))
               (fun _ : Point params => qBipartiteConsDefect ψ A.toSubMeas B.toSubMeas) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       _ = qBipartiteConsDefect ψ A.toSubMeas B.toSubMeas := hpoint_avg
       _ = bipartiteConsError ψ (uniformDistribution Unit)
             (constSubMeasFamily A.toSubMeas) (constSubMeasFamily B.toSubMeas) :=

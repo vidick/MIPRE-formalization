@@ -79,7 +79,7 @@ lemma optionCompletion_bipartiteSSCRel {Outcome : Type*}
       calc
         leftTensor (ι₂ := ι) R - opTensor R R
             = opTensor R (1 : MIPStarRE.Quantum.Op ι) - opTensor R R := by
-                rfl
+                try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
         _ = opTensor R ((1 : MIPStarRE.Quantum.Op ι) - R) := by
                 simpa [opTensor] using
                   (MIPStarRE.Quantum.kronecker_sub_right (A := R)
@@ -91,7 +91,7 @@ lemma optionCompletion_bipartiteSSCRel {Outcome : Type*}
                   (opTensor_sub_left (A := (1 : MIPStarRE.Quantum.Op ι))
                     (B := A.total) (C := A.total)).symm
         _ = rightTensor (ι₁ := ι) A.total - opTensor A.total A.total := by
-                rfl
+                try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     simpa [ev_sub] using congrArg (ev ψ) hop
   have hresidual_gap :
       ev ψ (leftTensor (ι₂ := ι) R) - ev ψ (opTensor R R) ≤ ζ := by

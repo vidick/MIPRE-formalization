@@ -180,7 +180,7 @@ end PureState
     swapVector (swapVector ψ) = ψ := by
   funext ij
   rcases ij with ⟨i, j⟩
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The expectation `Re τ(ψ X)`. Dimensions match by construction. -/
 noncomputable def ev {ι : Type*} [Fintype ι] [DecidableEq ι]

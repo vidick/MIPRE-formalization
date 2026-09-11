@@ -319,9 +319,9 @@ lemma globalVarianceTraceForm_eq_orthogonalClosedForm (params : Parameters)
                 by_cases huv : u = v
                 · subst huv
                   simp [model, abstractMatrixModel, matrixExpectation, ev]
-                  rfl
+                  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
                 · simp only [Matrix.one_apply, huv, ↓reduceIte, zero_mul, Complex.zero_re]
-                  exact (if_neg huv).symm
+                  try exact (if_neg huv).symm -- vendoring compile fix (Lean v4.33)
         _ = ∑ u, ev ψ ((decomp.orthogonalComponent u)ᴴ *
               decomp.orthogonalComponent u) := by
               simp
@@ -382,7 +382,7 @@ lemma globalVarianceTraceForm_eq_closedForm (params : Parameters)
                 (f := fun u => ∑ v, ev ψ ((A u)ᴴ * A v))
                 (a := c)).symm
       _ = c * corrSum := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have havg_conj :
       avgᴴ = (c : ℂ) • ∑ u, (A u)ᴴ := by
     rw [havg_eq, Matrix.conjTranspose_smul, Matrix.conjTranspose_sum]

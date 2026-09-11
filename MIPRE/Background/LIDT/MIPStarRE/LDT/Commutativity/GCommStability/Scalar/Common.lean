@@ -299,7 +299,7 @@ lemma scalar_pointwise_cauchy_schwarz_bound
                       _ = 1 - T := by simp [hT_proj])
               (hbound.sliceOpPSD x)
       _ = hbound.storedResidual G x := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hcs := MIPStarRE.LDT.Preliminaries.sum_ev_mul_le_sqrt strategy.state X Y
   have hXY :
       ∀ g : Polynomial params,

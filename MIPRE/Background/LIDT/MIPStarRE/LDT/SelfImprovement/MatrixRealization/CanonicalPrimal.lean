@@ -76,7 +76,7 @@ noncomputable def matrixSdpCanonicalDiagonalBlockLinearMap (params : Parameters)
     (X : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model)) :
     matrixSdpCanonicalDiagonalBlockLinearMap params model b X =
       matrixSdpCanonicalDiagonalBlock params model X b :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The diagonal-block projection sends the zero canonical matrix to zero. -/
 @[simp] theorem matrixSdpCanonicalDiagonalBlock_zero (params : Parameters)
@@ -269,7 +269,7 @@ theorem matrixSdpCanonicalBlockDiagonalLinearMap_apply (params : Parameters)
       matrixSdpCanonicalBlockDiagonal params model B :=
   by
     ext x y
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The canonical SDP block layout is the Mathlib block-diagonal layout after
 commuting the matrix-space index with the block index. -/
@@ -282,7 +282,7 @@ theorem matrixSdpCanonicalBlockDiagonal_eq_reindex_blockDiagonal
         (Equiv.prodComm model.space.carrier (MatrixSdpCanonicalBlockIndex params))
         (Equiv.prodComm model.space.carrier (MatrixSdpCanonicalBlockIndex params))
         (Matrix.blockDiagonal B) :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The canonical block-diagonal construction sends the zero family to the zero
 operator. -/
@@ -589,7 +589,7 @@ noncomputable def matrixSdpCanonicalPrimalBlockFamily (params : Parameters)
     (T : MatrixSubmeasurement (DegreeBoundedPolynomialAnswer params) model.space) :
     matrixSdpCanonicalPrimalBlockFamily params model T none =
       matrixSdpCanonicalSlackOperator params model T :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem matrixSdpCanonicalPrimalBlockFamily_some (params : Parameters)
     [FieldModel params.q]
@@ -597,7 +597,7 @@ noncomputable def matrixSdpCanonicalPrimalBlockFamily (params : Parameters)
     (T : MatrixSubmeasurement (DegreeBoundedPolynomialAnswer params) model.space)
     (g : Polynomial params) :
     matrixSdpCanonicalPrimalBlockFamily params model T (some g) = T.effect g :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The canonical block matrix associated to the paper primal submeasurement. -/
 noncomputable def matrixSdpCanonicalPrimalBlockMatrix (params : Parameters)
@@ -760,7 +760,7 @@ noncomputable def matrixSdpCanonicalExtractedPrimalSubmeasurement
     (g : Polynomial params) :
     (matrixSdpCanonicalExtractedPrimalSubmeasurement params model X hX).effect g =
       matrixSdpCanonicalDiagonalBlock params model X (some g) :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The slack block of the submeasurement extracted from a feasible canonical
 matrix is the original canonical slack diagonal block. -/
@@ -786,7 +786,7 @@ theorem matrixSdpCanonicalSlackOperator_extractedPrimalSubmeasurement
           (matrixSdpCanonicalExtractedPrimalSubmeasurement params model X hX).effect g =
         1 - ∑ g : Polynomial params,
           matrixSdpCanonicalDiagonalBlock params model X (some g) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = matrixSdpCanonicalDiagonalBlock params model X none := by
           rw [← hsum]
           abel
@@ -850,7 +850,7 @@ theorem matrixSdpCanonicalPrimalFeasible_extracts_submeasurement
         T.effect g = matrixSdpCanonicalDiagonalBlock params model X (some g) := by
   refine ⟨matrixSdpCanonicalExtractedPrimalSubmeasurement params model X hX, ?_⟩
   intro g
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 
 end MIPStarRE.LDT.SelfImprovement

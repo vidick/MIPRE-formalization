@@ -397,7 +397,7 @@ theorem commutativityPoints
           (pointPairSharedDiagonalLineDistribution params)
           (pointMeasurementProductAlongSharedLine params strategy)
           (pointMeasurementProductAlongSharedLineReversed params strategy) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ commutativityPointsError params gamma := hshared'
 
 end MIPStarRE.LDT.CommutativityPoints

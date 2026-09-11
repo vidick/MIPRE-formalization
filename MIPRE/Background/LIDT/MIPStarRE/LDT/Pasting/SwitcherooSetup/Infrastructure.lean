@@ -52,12 +52,12 @@ lemma switcherooSelfConsistency_bip
       switcherooSelfConsistencyLeft params M =
         IdxSubMeas.liftLeft (IdxProjSubMeas.toIdxSubMeas M) := by
     funext x
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hright :
       switcherooSelfConsistencyRight params M =
         IdxSubMeas.liftRight (IdxProjSubMeas.toIdxSubMeas M) := by
     funext x
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   rw [← hleft, ← hright]
   exact hselfM.squaredDistanceBound
 
@@ -148,7 +148,7 @@ lemma avgOver_abs_le_avgOver_abs
           intro a _
           rw [abs_mul, abs_of_nonneg (𝒟.nonnegative a)]
     _ = avgOver 𝒟 (fun a => |f a|) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- A projective sandwich family with middle operator bounded by `1` sums to at
 most `1`. -/

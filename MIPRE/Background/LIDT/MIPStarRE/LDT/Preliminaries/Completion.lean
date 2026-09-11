@@ -70,12 +70,12 @@ noncomputable def completeAtOutcomeProj {Outcome : Type*}
     {ι : Type*} [Fintype Outcome] [Fintype ι] [DecidableEq ι]
     (P : ProjSubMeas Outcome ι) (a0 : Outcome) :
     (completeAtOutcomeProj P a0).toMeasurement = completeAtOutcome P.toSubMeas a0 :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem completeAtOutcomeProj_toSubMeas {Outcome : Type*}
     {ι : Type*} [Fintype Outcome] [Fintype ι] [DecidableEq ι]
     (P : ProjSubMeas Outcome ι) (a0 : Outcome) :
     (completeAtOutcomeProj P a0).toSubMeas = (completeAtOutcome P.toSubMeas a0).toSubMeas :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 end MIPStarRE.LDT.Preliminaries

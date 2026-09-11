@@ -180,12 +180,12 @@ theorem hAConsistency_submeas_from_lineConsistency_of_axis_self
         IdxMeas.toIdxSubMeas pointLineMeas =
           liftedVerticalLineAnswerFamily params strategy := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     have hpoint_eq :
         IdxMeas.toIdxSubMeas pointMeas =
           IdxProjMeas.toIdxSubMeas strategy.pointMeasurement := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     rw [hline_eq, hpoint_eq]
     exact Preliminaries.sddRel_symm strategy.state
       (uniformDistribution (Point params.next)) _ _ _ hpublic

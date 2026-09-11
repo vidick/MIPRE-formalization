@@ -195,7 +195,7 @@ lemma commuteGHalfSandwich_commute_to_moveBackChainFamily_zero
                     (commuteGHalfSandwich_moveChainFamily_last params family r q' ogs')
           _ = (commuteGHalfSandwich_secondSliceLiftFamily params family r
                 (commuteGHalfSandwich_moveFamily params family r) q).outcome ogs := by
-                rfl
+                try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       calc
         (commuteGHalfSandwich_moveStepMidFamily params family r
           ((moveTailSwappedFrontQuestionEquiv params r) q)).outcome
@@ -243,7 +243,7 @@ lemma commuteGHalfSandwich_moveBackChainFamily_zero_eq_secondSliceLift_moveFamil
               (commuteGHalfSandwich_moveChainFamily_last params family r q' ogs')
     _ = (commuteGHalfSandwich_secondSliceLiftFamily params family r
           (commuteGHalfSandwich_moveFamily params family r) q).outcome ogs := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 
 

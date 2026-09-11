@@ -110,7 +110,7 @@ lemma commDataProcessedG_of_commutativityPoints
   let G : Fq params → SubMeas (Polynomial params) ι := fun x => (family.meas x).toSubMeas
   have hG : ∀ x, G x = (family.meas x).toSubMeas := by
     intro x
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hpostSSC :
       SDDRel strategy.state
         (uniformDistribution (Point params.next))

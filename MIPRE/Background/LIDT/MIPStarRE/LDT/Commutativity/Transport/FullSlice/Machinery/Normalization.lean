@@ -187,7 +187,7 @@ lemma fullSlice_selfConsistency_fst_bound
             qSDD strategy.state
               ((IdxSubMeas.liftLeft (IdxProjSubMeas.toIdxSubMeas family.meas)) xy.1)
               ((IdxSubMeas.liftRight (IdxProjSubMeas.toIdxSubMeas family.meas)) xy.1)) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (uniformDistribution (Fq params))
           (fun x =>
             qSDD strategy.state
@@ -230,7 +230,7 @@ lemma fullSlice_selfConsistency_snd_bound
             qSDD strategy.state
               ((IdxSubMeas.liftLeft (IdxProjSubMeas.toIdxSubMeas family.meas)) xy.2)
               ((IdxSubMeas.liftRight (IdxProjSubMeas.toIdxSubMeas family.meas)) xy.2)) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (uniformDistribution (Fq params))
           (fun y =>
             qSDD strategy.state
@@ -278,7 +278,7 @@ lemma evaluatedSlice_selfConsistency_snd_bound
             qSDD strategy.state
               (evaluatedPointFamilyLeft params family q.2)
               (evaluatedPointFamilyRight params family q.2)) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (uniformDistribution (Point params.next))
           (fun u =>
             qSDD strategy.state

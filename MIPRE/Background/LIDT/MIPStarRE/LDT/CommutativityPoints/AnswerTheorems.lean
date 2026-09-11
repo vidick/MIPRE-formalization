@@ -236,7 +236,7 @@ private lemma answerSampledDiagonalLineApproximation_ignore_first
               OpFamily.leftPlacedOpFamily OpFamily.rightPlacedOpFamily
               answerSampledPointMeasurement sampledPointFromDiagonalQuestion
               answerSampledDiagonalLineEvaluation SubMeas.toOpFamily
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (pointWithDiagonalLineDistribution params)
           (fun q =>
             qSDD strategy.state
@@ -253,7 +253,7 @@ private lemma answerSampledDiagonalLineApproximation_ignore_first
           (pointWithDiagonalLineDistribution params)
           (IdxSubMeas.liftLeft (answerSampledPointMeasurement params strategy))
           (IdxSubMeas.liftRight (answerSampledDiagonalLineEvaluation params strategy)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ pointDiagonalLineApproxError params gamma := by
           change
             sddError strategy.state (pointWithDiagonalLineDistribution params)
@@ -308,7 +308,7 @@ private lemma answerSampledDiagonalLineApproximation_ignore_second
               OpFamily.leftPlacedOpFamily OpFamily.rightPlacedOpFamily
               answerSampledPointMeasurement sampledPointFromDiagonalQuestion
               answerSampledDiagonalLineEvaluation SubMeas.toOpFamily
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (pointWithDiagonalLineDistribution params)
           (fun q =>
             qSDD strategy.state
@@ -325,7 +325,7 @@ private lemma answerSampledDiagonalLineApproximation_ignore_second
           (pointWithDiagonalLineDistribution params)
           (IdxSubMeas.liftLeft (answerSampledPointMeasurement params strategy))
           (IdxSubMeas.liftRight (answerSampledDiagonalLineEvaluation params strategy)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ pointDiagonalLineApproxError params gamma := by
           change
             sddError strategy.state (pointWithDiagonalLineDistribution params)
@@ -961,7 +961,7 @@ theorem answerCommutativityPoints
           (pointPairSharedDiagonalLineDistribution params)
           (answerPointMeasurementProductAlongSharedLine params strategy)
           (answerPointMeasurementProductAlongSharedLineReversed params strategy) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ commutativityPointsError params gamma := hshared'
 
 end MIPStarRE.LDT.CommutativityPoints

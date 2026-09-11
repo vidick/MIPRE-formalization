@@ -129,7 +129,7 @@ theorem matrixSdpCanonicalDiagonalBlockCLM_apply
     (X : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model)) :
     matrixSdpCanonicalDiagonalBlockCLM params model b X =
       matrixSdpCanonicalDiagonalBlock params model X b :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The canonical equality-constraint operator as a continuous real-linear map. -/
 noncomputable def matrixSdpCanonicalConstraintOperatorCLM
@@ -240,7 +240,7 @@ theorem matrixSdpCanonicalDualOperator_trace_constraint
   simp only [matrixSdpCanonicalDualOperatorBlockFamily_apply]
   rw [← Matrix.trace_sum]
   rw [← Finset.mul_sum]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The canonical equality-constraint image of a positive canonical primal
 matrix is positive semidefinite. -/

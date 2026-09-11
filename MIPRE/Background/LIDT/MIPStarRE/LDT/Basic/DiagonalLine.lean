@@ -184,7 +184,7 @@ def appendAtHeight (params : Parameters) [FieldModel params.q]
       funext i
       by_cases hi : i.1 < params.m
       · simp only [appendPoint, addPoint, smulPoint, addCoord, mulCoord, hi, ↓reduceDIte]
-        rfl
+        try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       · simp only [appendPoint, hi, ↓reduceDIte, addPoint, addCoord, smulPoint, mulCoord,
           zeroCoord, decode_encodeScalar]
         rw [← encode_decodeScalar x]

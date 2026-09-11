@@ -64,10 +64,10 @@ lemma fromHToG_gHatSandwichFamily_cons_outcome
     simpa [U, gHatIdxMeas] using ((gHatIdxMeas params family x).toSubMeas).outcome_hermitian g
   have hxs : pointTupleTail (Fin.cons x xs) = xs := by
     funext i
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hgs : gHatTupleOutcomeTail (Fin.cons g gs) = gs := by
     funext i
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   calc
     (gHatSandwichFamily params family (n + 1) (Fin.cons x xs)).outcome (Fin.cons g gs)
         = (U * T) * (U * T)ᴴ := by
@@ -235,7 +235,7 @@ lemma fromHToGTailStageMass_cons_eq_adjacentStageA0_branch
             (averagedSandwichByTypeSubMeas params family (n + 1)
               (prependTypeBit b τ)).total * rightTensor (ι₁ := ι) S) := by
             unfold fromHToGTailStageMass fromHToGTailStageFamily
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (uniformDistribution (PointTuple params (n + 1))) (fun xs' =>
           ∑ gs' ∈ (Finset.univ : Finset (GHatTupleOutcome params (n + 1))) with
               gHatTupleType gs' = prependTypeBit b τ,

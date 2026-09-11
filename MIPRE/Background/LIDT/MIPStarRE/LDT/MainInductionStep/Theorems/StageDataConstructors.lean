@@ -286,7 +286,7 @@ private theorem restrictedPointSubMeasurement_eq_answer
       IdxProjMeas.toIdxSubMeas
         (xRestrictedAnswerSymStrat params strategy x).pointMeasurement := by
   funext u
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- View a per-slice induction data record over an answer-forgotten restriction
 data record as an answer-valued data record.

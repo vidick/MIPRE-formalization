@@ -43,7 +43,7 @@ theorem trace_reindex {α β R : Type*} [Fintype α] [Fintype β]
   classical
   simp only [Matrix.trace, Matrix.diag_apply, Matrix.reindex_apply]
   rw [← e.symm.sum_comp (fun i : α => M i i)]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-! ### Linear matrix maps -/
 
@@ -59,18 +59,18 @@ def submatrixLinearMap (R : Type*) {m n m' n' α : Type*}
   map_add' := by
     intro A B
     ext i j
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   map_smul' := by
     intro c A
     ext i j
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp]
 theorem submatrixLinearMap_apply (R : Type*) {m n m' n' α : Type*}
     [Semiring R] [AddCommMonoid α] [Module R α]
     (row : m' → m) (col : n' → n) (A : Matrix m n α) :
     Matrix.submatrixLinearMap R row col A = Matrix.submatrix A row col :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The trace pairing of two block-diagonal matrices is the sum of the trace
 pairings of the corresponding diagonal blocks. -/

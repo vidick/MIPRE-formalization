@@ -254,6 +254,6 @@ lemma switcherooAggregateFirstTerm_eq_split_by_g
                     simp [completePartSubMeas, postprocess_total]
     _ = switcherooAggregateFirstTerm params ψbi family M := by
           unfold switcherooAggregateFirstTerm
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 end MIPStarRE.LDT.Pasting

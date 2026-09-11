@@ -115,7 +115,7 @@ lemma fullSliceABAB_scalar_to_BABAtensor
               fullSliceABABTerm params strategy family xy gh) := by
             simpa [𝒟] using hBABA_to_ABAB
       _ = fullSliceABABAvg params strategy family := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hTensor :
       avgOver 𝒟
           (fun xy => ∑ g : Polynomial params, ∑ h : Polynomial params,

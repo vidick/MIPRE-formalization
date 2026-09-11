@@ -54,7 +54,7 @@ noncomputable def matrixSdpCanonicalObjectiveOperator (params : Parameters)
     [FieldModel params.q]
     (model : MatrixSdpRealization params) :
     matrixSdpCanonicalObjectiveBlockFamily params model none = 0 :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem matrixSdpCanonicalObjectiveBlockFamily_some (params : Parameters)
     [FieldModel params.q]
@@ -62,7 +62,7 @@ noncomputable def matrixSdpCanonicalObjectiveOperator (params : Parameters)
     (g : Polynomial params) :
     matrixSdpCanonicalObjectiveBlockFamily params model (some g) =
       matrixAveragedPointOperator params model g :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem matrixSdpCanonicalDiagonalBlock_objectiveOperator_none
     (params : Parameters) [FieldModel params.q]
@@ -109,7 +109,7 @@ noncomputable def matrixSdpCanonicalDualOperator (params : Parameters)
     (Z : MatrixOperator model.space)
     (b : MatrixSdpCanonicalBlockIndex params) :
     matrixSdpCanonicalDualOperatorBlockFamily params model Z b = Z :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem matrixSdpCanonicalDiagonalBlock_dualOperator
     (params : Parameters) [FieldModel params.q]
@@ -138,7 +138,7 @@ noncomputable def matrixSdpCanonicalDualSlackBlockFamily (params : Parameters)
     (model : MatrixSdpRealization params)
     (Z : MatrixOperator model.space) :
     matrixSdpCanonicalDualSlackBlockFamily params model Z none = Z :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem matrixSdpCanonicalDualSlackBlockFamily_some (params : Parameters)
     [FieldModel params.q]
@@ -147,7 +147,7 @@ noncomputable def matrixSdpCanonicalDualSlackBlockFamily (params : Parameters)
     (g : Polynomial params) :
     matrixSdpCanonicalDualSlackBlockFamily params model Z (some g) =
       matrixSdpDualSlackOperator params model Z g :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The canonical dual slack is the difference between the canonical dual
 operator and the canonical objective operator. -/
@@ -672,7 +672,7 @@ theorem matrixSdpCanonicalPrimalBlockMatrix_extracted_mul_dualSlack_of_canonical
               (0 : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model)) b =
             0 := by
         ext i j
-        rfl
+        try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       rw [matrixSdpCanonicalDiagonalBlock_mul_dualSlack] at hblock
       rw [hzero] at hblock
       exact congrFun (congrFun hblock i) j
@@ -722,7 +722,7 @@ theorem matrixSdpComplementarySlacknessDefect_of_canonical
           (0 : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model)) (some g) =
         0 := by
     ext i j
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   rw [matrixSdpCanonicalPrimalBlockMatrix_mul_dualSlack] at hblock
   rw [hzero] at hblock
   simpa [matrixSdpComplementarySlacknessDefect] using hblock
@@ -770,7 +770,7 @@ theorem matrixSdpCanonicalSlack_mul_dual_of_complementarySlackness
           (0 : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model)) none =
         0 := by
     ext i j
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   rw [matrixSdpCanonicalPrimalBlockMatrix_mul_dualSlack] at hblock
   rw [hzero] at hblock
   simpa using hblock

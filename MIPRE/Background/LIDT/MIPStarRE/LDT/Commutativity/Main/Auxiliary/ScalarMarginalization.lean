@@ -329,13 +329,13 @@ lemma fullSlice_scalar_marginalize_x
           IdxSubMeas.liftLeft
             (IdxProjSubMeas.toIdxSubMeas (evaluatedPointProj params family)) := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     have hright :
         evaluatedPointFamilyRight params family =
           IdxSubMeas.liftRight
             (IdxProjSubMeas.toIdxSubMeas (evaluatedPointProj params family)) := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     rw [← hleft, ← hright]
     exact hevalRel.squaredDistanceBound
   have hevalSwitch :=

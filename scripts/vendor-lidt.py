@@ -106,53 +106,58 @@ TRANSPARENCY_BLOCK = """
 set_option backward.isDefEq.respectTransparency false
 """
 
+# With the option, a tactic step may close the goal one line earlier than under Lean
+# v4.32, and a trailing `rfl` then fails with "no goals". Every bare `rfl` tactic line of
+# the vendored tree is therefore made tolerant (`soften_rfl`); a `try rfl` that is still
+# needed runs as before, and one that is not is skipped.
+RFL_MARK = "try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal"
+
 # Recorded compile fixes, applied after copying: `old` must occur exactly once in the
 # vendored file `path` (relative to the destination directory) and is replaced by `new`.
-# With the option above, six `rfl` steps follow a tactic that now closes the goal.
 FIXES: list[tuple[str, str, str]] = [
-    ('LDT/ExpansionHypercubeGraph/MatrixRealization/Core.lean',
-     """            sum_fourierBasisProjector_eq_one]
-          rfl
+    ('LDT/ExpansionHypercubeGraph/Theorems/Foundations.lean',
+     """                · simp only [Matrix.one_apply, huv, ↓reduceIte, zero_mul, Complex.zero_re]
+                  exact (if_neg huv).symm
 """,
-     """            sum_fourierBasisProjector_eq_one]
-          try rfl -- vendoring compile fix (Lean v4.33): `rw` now closes this step
+     """                · simp only [Matrix.one_apply, huv, ↓reduceIte, zero_mul, Complex.zero_re]
+                  try exact (if_neg huv).symm -- vendoring compile fix (Lean v4.33)
 """),
-    ('LDT/ExpansionHypercubeGraph/MatrixRealization/Core.lean',
-     """            rw [fourierBasisState_inner_product_dual params v w]
-            rfl
+    ('LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/MoveChain/FlatChain.lean',
+     """      rw [Fin.sum_univ_succ]
+      rw [Fin.sum_univ_succ]
+      simp [commuteGHalfSandwich_postMoveFlatError,
+        commuteGHalfSandwich_postMoveFlatError_sum params gamma zeta r,
+        gHatSelfConsistencyError]
+      ring
 """,
-     """            rw [fourierBasisState_inner_product_dual params v w]
-            try rfl -- vendoring compile fix (Lean v4.33): `rw` now closes this step
-"""),
-    ('LDT/ExpansionHypercubeGraph/MatrixRealization/Core.lean',
-     """            matrixAdjacencyOperator_spectral_decomp]
-          rfl
-""",
-     """            matrixAdjacencyOperator_spectral_decomp]
-          try rfl -- vendoring compile fix (Lean v4.33): `rw` now closes this step
-"""),
-    ('LDT/ExpansionHypercubeGraph/MatrixRealization/Core.lean',
-     """            rw [Matrix.sub_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec, eigenvectors params α]
-            rfl
-""",
-     """            rw [Matrix.sub_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec, eigenvectors params α]
-            try rfl -- vendoring compile fix (Lean v4.33): `rw` now closes this step
-"""),
-    ('LDT/ExpansionHypercubeGraph/MatrixRealization/Core.lean',
-     """            rw [fourierBasisState_inner_product params α β]
-            rfl
-""",
-     """            rw [fourierBasisState_inner_product params α β]
-            try rfl -- vendoring compile fix (Lean v4.33): `rw` now closes this step
-"""),
-    ('LDT/MainInductionStep/Defs.lean',
-     """  simp [diagonalValueRepresentative, DiagonalLinePolynomial.toFun, evalLinePolynomialModel]
-  rfl
-""",
-     """  simp [diagonalValueRepresentative, DiagonalLinePolynomial.toFun, evalLinePolynomialModel]
-  try rfl -- vendoring compile fix (Lean v4.33): `simp` now closes this goal
+     """      rw [Fin.sum_univ_succ]
+      rw [Fin.sum_univ_succ]
+      -- Vendoring compile fix (Lean v4.33): the index conditions of the second summand
+      -- are no longer decided by `simp` alone; they follow from `hone_lt`.
+      have hlen : 1 < commuteGHalfSandwich_postMoveFlatLength (1 + r) := by
+        rw [Nat.add_comm]; exact hone_lt
+      have h1 : commuteGHalfSandwich_postMoveFlatLength (1 + r) ≠ 1 := hlen.ne'
+      have h1' : commuteGHalfSandwich_postMoveFlatLength (r + 1) ≠ 1 := hone_lt.ne'
+      have h2 : 1 % commuteGHalfSandwich_postMoveFlatLength (1 + r) = 1 := Nat.mod_eq_of_lt hlen
+      have h2' : 1 % commuteGHalfSandwich_postMoveFlatLength (r + 1) = 1 :=
+        Nat.mod_eq_of_lt hone_lt
+      simp [commuteGHalfSandwich_postMoveFlatError,
+        commuteGHalfSandwich_postMoveFlatError_sum params gamma zeta r,
+        gHatSelfConsistencyError, h1, h1', h2, h2']
+      ring
 """)
 ]
+
+
+def soften_rfl(text: str) -> str:
+    """Replace every line consisting of the tactic `rfl` by `RFL_MARK`."""
+    out = []
+    for line in text.split("\n"):
+        if line.strip() == "rfl":
+            out.append(line[:len(line) - len(line.lstrip())] + RFL_MARK)
+        else:
+            out.append(line)
+    return "\n".join(out)
 
 
 def insert_transparency_block(text: str) -> str:
@@ -226,6 +231,7 @@ def vendor(source: Path, commit: str, repo_root: Path, everything: bool) -> None
         text, n = rewrite_imports(text)
         rewritten += n
         text = insert_transparency_block(text)
+        text = soften_rfl(text)
         lines += text.count("\n")
         header = HEADER_TEMPLATE.format(
             url=UPSTREAM_URL, short=short, date=date,
@@ -250,8 +256,8 @@ def vendor(source: Path, commit: str, repo_root: Path, everything: bool) -> None
         f"{rewritten} import lines rewritten from `{UPSTREAM_PREFIX}.` to `{LOCAL_PREFIX}.`",
         f"- Audit aid: `{CHALLENGE_REL.name}` = upstream `{CHALLENGE_REL.as_posix()}`",
         "- `set_option backward.isDefEq.respectTransparency false` inserted after the imports of "
-        "every file, and recorded compile fixes applied: "
-        f"{fixed} (listed under \"Local deviations from upstream\")",
+        "every file; every bare `rfl` tactic line made `try rfl`; recorded compile fixes "
+        f"applied: {fixed} (listed under \"Local deviations from upstream\")",
         END_MARK,
     ])
     if readme_text is None:

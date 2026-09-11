@@ -147,7 +147,7 @@ noncomputable def gHatSandwichFamily (params : Parameters) [FieldModel.{v} param
                 have htail :
                     gHatTupleOutcomeTail ((Fin.consEquiv α) p) = p.2 := by
                   funext i
-                  rfl
+                  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
                 simp [gHatHalfProductOutcomeOperator, htail,
                   Matrix.conjTranspose_mul,
                   Matrix.mul_assoc, (gHatIdxMeas params family (xs 0)).outcome_hermitian])

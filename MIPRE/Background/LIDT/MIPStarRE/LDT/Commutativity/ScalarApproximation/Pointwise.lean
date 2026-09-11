@@ -79,7 +79,7 @@ lemma gCommStability_sliceSSC
                     ((G x).liftLeft)
                     ((G x).liftRight))]
             · rw [avgOver_const_mul]
-              rfl
+              try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
             · intro x
               simpa [hG x] using
                 qBipartiteSSCDefect_eq_half_qSDD_of_proj
@@ -382,7 +382,7 @@ private lemma gCommStability_pointwise_summand_bound
             (evaluatedPointFamily params family q.2).outcome
               (ah.2 (truncatePoint params q.2)) *
             A.outcome ah.1 := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       _ ≤ A.outcome ah.1 * 1 * A.outcome ah.1 := by
             exact
               IsSelfAdjoint.conjugate_le_conjugate

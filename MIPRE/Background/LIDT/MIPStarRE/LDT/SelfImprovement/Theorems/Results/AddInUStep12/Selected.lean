@@ -408,7 +408,7 @@ lemma addInU_selected_cs_chain_step1_abs_le_sqrt_two_delta
     refine avgOver_congr _ _ _ ?_
     intro uv
     rw [hfun_A uv, hfun_B uv]
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hsum_C : ∀ (uv : Point params × Point params) (a : Fq params),
       (∑ ah : Outcome × Polynomial params, Cop uv a ah) =
         ∑ ah ∈ (addInUSelectionPairs params S uv.1).filter (fun ah => ah.2 uv.2 = a),
@@ -622,7 +622,7 @@ lemma addInU_selected_cs_chain_step2_abs_le_sqrt_two_delta
     refine le_of_eq ?_
     refine avgOver_congr _ _ _ ?_
     intro uv
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hsum_C : ∀ (uv : Point params × Point params) (a : Fq params),
       (∑ ah : Outcome × Polynomial params, Cop uv a ah) =
         ∑ ah ∈ (addInUSelectionPairs params S uv.1).filter (fun ah => ah.2 uv.2 = a),

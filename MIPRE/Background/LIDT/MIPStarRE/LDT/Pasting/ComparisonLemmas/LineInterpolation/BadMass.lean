@@ -374,7 +374,7 @@ lemma ldSandwichLineOnePointRightMeasurement_outcome_some_eq_sum
         else 0 := by
   simp [ldSandwichLineOnePointRightMeasurement, ldSandwichLineOnePointRightFamily,
     postprocess, i.2, Finset.sum_filter]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 lemma grouped_coordinate_mismatch_le_left_falseOutcome
     (params : Parameters) [FieldModel params.q]
@@ -557,7 +557,7 @@ lemma hBConsistencyCoordMass_le_linePointDefect
         qBipartiteConsDefect strategy.state
           ((ldSandwichLineOnePointLeftFamily params strategy family k i.1) q)
           ((ldSandwichLineOnePointRightFamily params strategy family k i.1) q) := by
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   calc
     (∑ f : AxisLinePolynomial params.next,
       ev strategy.state

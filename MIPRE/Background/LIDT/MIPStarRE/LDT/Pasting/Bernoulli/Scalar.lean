@@ -92,7 +92,7 @@ private lemma binomial_centered_mgf_eq
   calc
     ProbabilityTheory.mgf (fun i : ℕ => p * k - i) (ProbabilityTheory.binomial k pI) t
       = ∫ i, Real.exp (t * (p * k - i)) ∂ProbabilityTheory.binomial k pI := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = ∑ r ∈ Finset.Iic k,
           (Nat.choose k r : Error) * (p ^ r * (1 - p) ^ (k - r)) *
             Real.exp (t * (p * k - r)) := by
@@ -148,7 +148,7 @@ private lemma binomial_centered_mgf_le
             ((p * Real.exp (t * (p - 1))) ^ r * ((1 - p) * Real.exp (t * p)) ^ (k - r)) := by
               rw [← mul_pow, ← mul_pow]
       _ = (Nat.choose k r : Error) * (a ^ r * b ^ (k - r)) := by
-              rfl
+              try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hpow :
       (∑ r ∈ Finset.range (k + 1), (Nat.choose k r : Error) * (a ^ r * b ^ (k - r))) =
         (a + b) ^ k := by
@@ -272,7 +272,7 @@ private lemma binomial_lowerTail_eq
                     rw [hIcoZero, add_zero] at hsplit
                     exact hsplit
     _ = scalarBernoulliLowerTail k degree p := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The binomial lower tail obeys the additive Hoeffding bound. -/
 private lemma scalarBernoulliLowerTail_le_exp

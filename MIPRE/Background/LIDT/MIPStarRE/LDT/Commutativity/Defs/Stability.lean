@@ -164,7 +164,7 @@ lemma commDataProcessedGStabilityOneLeft_outcome
             (fullSliceQuestionOfEvaluatedSlice params q)).total) *
         rightTensor (ι₁ := ι)
           (CFC.sqrt ((G (pointHeight params q.2)).outcome ah.2)) := by
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Expand one outcome of the second `G^y` stability family. -/
 lemma commDataProcessedGStabilityOneRight_outcome
@@ -179,7 +179,7 @@ lemma commDataProcessedGStabilityOneRight_outcome
               (ah.1, ah.2 (truncatePoint params q.2))) *
         rightTensor (ι₁ := ι)
           (CFC.sqrt ((G (pointHeight params q.2)).outcome ah.2)) := by
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Expand one outcome of the first `G^x` stability family. -/
 lemma commDataProcessedGStabilityTwoLeft_outcome
@@ -196,7 +196,7 @@ lemma commDataProcessedGStabilityTwoLeft_outcome
             (fullSliceQuestionOfEvaluatedSlice params q)).total) *
         rightTensor (ι₁ := ι)
           (CFC.sqrt ((G (pointHeight params q.1)).outcome gb.1)) := by
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Expand one outcome of the second `G^x` stability family. -/
 lemma commDataProcessedGStabilityTwoRight_outcome
@@ -213,7 +213,7 @@ lemma commDataProcessedGStabilityTwoRight_outcome
               (gb.1 (truncatePoint params q.1), gb.2)) *
         rightTensor (ι₁ := ι)
           (CFC.sqrt ((G (pointHeight params q.1)).outcome gb.1)) := by
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 
 end MIPStarRE.LDT.Commutativity

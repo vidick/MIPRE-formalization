@@ -104,7 +104,7 @@ theorem matrixSdpDualSlackOperator_ofPointRealization (params : Parameters)
       sdpDualSlackOperator params strategy Z g := by
   rw [matrixSdpDualSlackOperator, sdpDualSlackOperator,
     matrixAveragedPointOperator_ofPointRealization]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Canonical primal-dual data with complementary slackness and zero slack
 block.

@@ -81,13 +81,13 @@ noncomputable def localPairBABlock {ιA ιB : Type*}
     (X : MIPStarRE.Quantum.Op (ιA × ιB)) (i i' : ιA) (j j' : ιB) :
     localPairABBlock X (Sum.inl i, Sum.inr j) (Sum.inl i', Sum.inr j') =
       X (i, j) (i', j') :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem localPairBABlock_BA_BA {ιA ιB : Type*}
     (X : MIPStarRE.Quantum.Op (ιB × ιA)) (i i' : ιB) (j j' : ιA) :
     localPairBABlock X (Sum.inr i, Sum.inl j) (Sum.inr i', Sum.inl j') =
       X (i, j) (i', j') :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem localPairABBlock_conjTranspose {ιA ιB : Type*}
     (X : MIPStarRE.Quantum.Op (ιA × ιB)) :
@@ -538,22 +538,22 @@ noncomputable def localDirectSumBlock {ιA ιB : Type*}
 @[simp] theorem localDirectSumBlock_inl_inl {ιA ιB : Type*}
     (A : MIPStarRE.Quantum.Op ιA) (B : MIPStarRE.Quantum.Op ιB)
     (i j : ιA) : localDirectSumBlock A B (Sum.inl i) (Sum.inl j) = A i j :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem localDirectSumBlock_inl_inr {ιA ιB : Type*}
     (A : MIPStarRE.Quantum.Op ιA) (B : MIPStarRE.Quantum.Op ιB)
     (i : ιA) (j : ιB) : localDirectSumBlock A B (Sum.inl i) (Sum.inr j) = 0 :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem localDirectSumBlock_inr_inl {ιA ιB : Type*}
     (A : MIPStarRE.Quantum.Op ιA) (B : MIPStarRE.Quantum.Op ιB)
     (i : ιB) (j : ιA) : localDirectSumBlock A B (Sum.inr i) (Sum.inl j) = 0 :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem localDirectSumBlock_inr_inr {ιA ιB : Type*}
     (A : MIPStarRE.Quantum.Op ιA) (B : MIPStarRE.Quantum.Op ιB)
     (i j : ιB) : localDirectSumBlock A B (Sum.inr i) (Sum.inr j) = B i j :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem localDirectSumBlock_one {ιA ιB : Type*}
     [DecidableEq ιA] [DecidableEq ιB] :
@@ -647,25 +647,25 @@ noncomputable def roleBlock {ιA ιB : Type*}
     (A B : MIPStarRE.Quantum.Op (LocalCarrierSum ιA ιB))
     (i j : LocalCarrierSum ιA ιB) :
     roleBlock A B (Role.A, i) (Role.A, j) = A i j :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem roleBlock_B {ιA ιB : Type*}
     (A B : MIPStarRE.Quantum.Op (LocalCarrierSum ιA ιB))
     (i j : LocalCarrierSum ιA ιB) :
     roleBlock A B (Role.B, i) (Role.B, j) = B i j :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem roleBlock_AB {ιA ιB : Type*}
     (A B : MIPStarRE.Quantum.Op (LocalCarrierSum ιA ιB))
     (i j : LocalCarrierSum ιA ιB) :
     roleBlock A B (Role.A, i) (Role.B, j) = 0 :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem roleBlock_BA {ιA ιB : Type*}
     (A B : MIPStarRE.Quantum.Op (LocalCarrierSum ιA ιB))
     (i j : LocalCarrierSum ιA ιB) :
     roleBlock A B (Role.B, i) (Role.A, j) = 0 :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem roleBlock_one {ιA ιB : Type*}
     [DecidableEq ιA] [DecidableEq ιB] :

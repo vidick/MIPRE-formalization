@@ -222,7 +222,7 @@ private theorem restrictAxisParallelMeasurement_transportInvariant
       = (strategy.axisParallelMeasurement
           (AxisParallelLine.appendAtHeight params (AxisParallelLine.rebaseAt ℓ t) x)).outcome
           (liftAxisAnswer params x a) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = (strategy.axisParallelMeasurement
           (AxisParallelLine.rebaseAt (AxisParallelLine.appendAtHeight params ℓ x) t)).outcome
           (liftAxisAnswer params x a) := by
@@ -242,7 +242,7 @@ private theorem restrictAxisParallelMeasurement_transportInvariant
             simp [liftAxisAnswer]
     _ = (restrictAxisParallelMeasurement params strategy x ℓ).outcome
           (((AxisLinePolynomial.reparamAtEquiv (params := params) t).symm) a) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = (AxisParallelLine.transportMeasurement (params := params)
           (restrictAxisParallelMeasurement params strategy x ℓ) t).outcome a := by
             simp [AxisParallelLine.transportMeasurement, ProjMeas.transport,
@@ -365,7 +365,7 @@ noncomputable def xRestrictedAnswerSymStrat (params : Parameters) [FieldModel pa
     [FieldModel params.q]
     (strategy : SymStrat params.next ι) (x : Fq params) :
     (xRestrictedAnswerSymStrat params strategy x).state = strategy.state :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The function-answer restricted strategy reindexes point questions by appending
 the slice height. -/
@@ -374,14 +374,14 @@ the slice height. -/
     (strategy : SymStrat params.next ι) (x : Fq params) (u : Point params) :
     (xRestrictedAnswerSymStrat params strategy x).pointMeasurement u =
       strategy.pointMeasurement (appendPoint params u x) :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The function-answer restricted strategy reuses the parent normalization witness. -/
 @[simp] theorem xRestrictedAnswerSymStrat_isNormalized (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι) (x : Fq params) :
     (xRestrictedAnswerSymStrat params strategy x).isNormalized = strategy.isNormalized :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The function-answer restricted diagonal measurement is the answer-valued
 restriction of the ambient diagonal measurement. -/
@@ -390,7 +390,7 @@ restriction of the ambient diagonal measurement. -/
     (strategy : SymStrat params.next ι) (x : Fq params) (ℓ : DiagonalLine params) :
     (xRestrictedAnswerSymStrat params strategy x).diagonalMeasurement ℓ =
       restrictDiagonalAnswerMeasurement params strategy x ℓ :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Evaluating the answer-valued restricted diagonal measurement at the base point
 recovers the ambient slice-preserving diagonal readout. -/
@@ -407,7 +407,7 @@ recovers the ambient slice-preserving diagonal readout. -/
   simp [restrictDiagonalAnswerMeasurement, ProjMeas.postprocess_toSubMeas,
     SubMeas.postprocess_comp, DiagonalLinePolynomial.toAnswer,
     DiagonalLineAnswer.restrictAtHeight]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The `x`-restricted strategy from the proof of the main induction theorem. -/
 noncomputable def xRestrictedStrategy (params : Parameters) [FieldModel params.q]
@@ -426,14 +426,14 @@ noncomputable def xRestrictedStrategy (params : Parameters) [FieldModel params.q
     [FieldModel params.q]
     (strategy : SymStrat params.next ι) (x : Fq params) :
     (xRestrictedStrategy params strategy x).state = strategy.state :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Restricting a strategy reuses the parent strategy's normalization witness. -/
 @[simp] theorem xRestrictedStrategy_isNormalized (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι) (x : Fq params) :
     (xRestrictedStrategy params strategy x).isNormalized = strategy.isNormalized :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Restricting a strategy reindexes point questions by appending the slice height. -/
 @[simp] theorem xRestrictedStrategy_pointMeasurement_apply (params : Parameters)
@@ -441,7 +441,7 @@ noncomputable def xRestrictedStrategy (params : Parameters) [FieldModel params.q
     (strategy : SymStrat params.next ι) (x : Fq params) (u : Point params) :
     (xRestrictedStrategy params strategy x).pointMeasurement u =
       strategy.pointMeasurement (appendPoint params u x) :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Restricting an axis-parallel measurement reindexes outcomes by slice extension. -/
 @[simp] theorem restrictAxisParallelMeasurement_outcome (params : Parameters)
@@ -452,7 +452,7 @@ noncomputable def xRestrictedStrategy (params : Parameters) [FieldModel params.q
       (strategy.axisParallelMeasurement
         (AxisParallelLine.appendAtHeight params ℓ x)).toSubMeas.outcome
         (liftAxisAnswer params x f) :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Postprocessing the restricted diagonal measurement at the base point recovers
 exactly the ambient slice-preserving diagonal answer distribution at the base
@@ -473,7 +473,7 @@ point. -/
   simp only [restrictDiagonalMeasurement, ProjMeas.postprocess_toSubMeas,
     SubMeas.postprocess_comp]
   simp [diagonalValueRepresentative, DiagonalLinePolynomial.toFun, evalLinePolynomialModel]
-  try rfl -- vendoring compile fix (Lean v4.33): `simp` now closes this goal
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The intermediate `ν` from `thm:main-induction`. -/
 noncomputable def mainInductionNu (params : Parameters) (k : ℕ)

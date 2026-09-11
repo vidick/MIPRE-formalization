@@ -148,7 +148,7 @@ theorem naimarkProductExtensionDensity_eq_reindex_opTensor
         (naimarkProductExtensionEquiv HA HB HauxA HauxB)
         (opTensor ψ.density aux.density) := by
   ext r c
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The product-extension density is positive semidefinite. -/
 theorem naimarkProductExtensionDensity_nonneg

@@ -324,16 +324,16 @@ lemma switcherooAggregate_qSDDOp_expand_avg
             (M q.2).outcome o))
   have hA :
       avgOver 𝒟q A = switcherooAggregateFirstTerm params ψbi family M := by
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hB :
       avgOver 𝒟q B = switcherooAggregateSecondTerm params ψbi family M := by
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hC :
       avgOver 𝒟q C = switcherooAggregateThirdTerm params ψbi family M := by
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hD :
       avgOver 𝒟q D = switcherooAggregateFourthTerm params ψbi family M := by
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   change avgOver 𝒟q
       (fun q => qSDDOp ψbi
         (switcherooAggregateLeft params family M q)

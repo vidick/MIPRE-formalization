@@ -201,21 +201,21 @@ private lemma qSSCDefect_leftPlacedMeasurement_le_two_qBipartiteConsDefect
         (leftPlacedSubMeas (ιB := ιB) A.toSubMeas).outcome a =
           leftTensor (ι₂ := ιB) (A.outcome a) := by
     intro a
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hleftPlaced_total :
       (leftPlacedSubMeas (ιB := ιB) A.toSubMeas).total =
         leftTensor (ι₂ := ιB) A.total :=
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hrightPlaced_outcome :
       ∀ a : Outcome,
         (rightPlacedSubMeas (ιA := ιA) B.toSubMeas).outcome a =
           rightTensor (ι₁ := ιA) (B.outcome a) := by
     intro a
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hrightPlaced_total :
       (rightPlacedSubMeas (ιA := ιA) B.toSubMeas).total =
         rightTensor (ι₁ := ιA) B.total :=
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hdiagA_le : diagA ≤ totalMass := by
     calc
       diagA ≤ ev ψ (leftTensor (ι₂ := ιB) (1 : MIPStarRE.Quantum.Op ιA)) := by
@@ -318,21 +318,21 @@ private lemma qSSCDefect_rightPlacedMeasurement_le_two_qBipartiteConsDefect
         (leftPlacedSubMeas (ιB := ιB) A.toSubMeas).outcome a =
           leftTensor (ι₂ := ιB) (A.outcome a) := by
     intro a
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hleftPlaced_total :
       (leftPlacedSubMeas (ιB := ιB) A.toSubMeas).total =
         leftTensor (ι₂ := ιB) A.total :=
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hrightPlaced_outcome :
       ∀ a : Outcome,
         (rightPlacedSubMeas (ιA := ιA) B.toSubMeas).outcome a =
           rightTensor (ι₁ := ιA) (B.outcome a) := by
     intro a
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hrightPlaced_total :
       (rightPlacedSubMeas (ιA := ιA) B.toSubMeas).total =
         rightTensor (ι₁ := ιA) B.total :=
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hdiagA_le : diagA ≤ totalMass := by
     calc
       diagA ≤ ev ψ (leftTensor (ι₂ := ιB) (1 : MIPStarRE.Quantum.Op ιA)) := by
@@ -599,7 +599,7 @@ lemma qSDD_leftPlaced_zeroProjSubMeas_le_one {Outcome : Type*}
             rw [SubMeas.outcome_hermitian (leftPlacedSubMeas (ιB := ιB) A) a]
       _ = ev ψ (((leftPlacedSubMeas (ιB := ιB) A).outcome a) *
             ((leftPlacedSubMeas (ιB := ιB) A).outcome a)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   rw [hq]
   simpa using
     MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_one ψ hψ
@@ -648,7 +648,7 @@ lemma qSDD_rightPlaced_zeroProjSubMeas_le_one {Outcome : Type*}
             rw [SubMeas.outcome_hermitian (rightPlacedSubMeas (ιA := ιA) A) a]
       _ = ev ψ (((rightPlacedSubMeas (ιA := ιA) A).outcome a) *
             ((rightPlacedSubMeas (ιA := ιA) A).outcome a)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   rw [hq]
   simpa using
     MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_one ψ hψ

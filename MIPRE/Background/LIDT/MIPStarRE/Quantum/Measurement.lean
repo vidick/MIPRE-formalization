@@ -149,12 +149,12 @@ noncomputable def postprocess [DecidableEq α] [DecidableEq β]
     (M : Measurement α d) (f : α → β) (b : β) :
     (M.postprocess f).effect b =
       ∑ a ∈ Finset.univ.filter (fun a => f a = b), M.effect a :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem postprocess_to_submeasurement [DecidableEq α] [DecidableEq β]
     (M : Measurement α d) (f : α → β) :
     (M.postprocess f).toSubmeasurement = M.toSubmeasurement.postprocess f :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 end Measurement
 

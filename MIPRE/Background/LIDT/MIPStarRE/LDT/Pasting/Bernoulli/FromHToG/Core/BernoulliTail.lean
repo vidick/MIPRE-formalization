@@ -149,7 +149,7 @@ lemma fromHToG_truncatedTypeSums_full_eq_bernoulliTailOperator
           fromHToG_truncatedTypeSums_full_as_finset_sum G d k
     _ = bernoulliTailOperator k d G := by
           rw [fromHToG_sum_finsets_by_card_indicator]
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- At prefix length zero, the recurrence weight is exactly the eligibility
 indicator for the remaining type: the empty prefix contributes the identity when

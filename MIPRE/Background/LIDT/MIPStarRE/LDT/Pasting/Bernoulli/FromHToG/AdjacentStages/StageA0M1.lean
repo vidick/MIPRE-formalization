@@ -92,7 +92,7 @@ lemma fromHToGStageMass_eq_adjacentStageA0
           unfold fromHToGAdjacentStageA0
           change (∑ b : Bool, ∑ τ : GHatType n, _) =
             (let n := k - (ℓ + 1); ∑ b : Bool, ∑ τ : GHatType n, _)
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The paper's first adjacent-stage intermediate scalar `M₁`: the head
 completed-slice outcome has been moved to the right tensor factor. -/

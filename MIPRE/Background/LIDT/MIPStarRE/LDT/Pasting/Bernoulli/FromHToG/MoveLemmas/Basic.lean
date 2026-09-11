@@ -225,7 +225,7 @@ lemma fromHToG_pointTupleTail_snoc
         Fin.snoc (α := fun _ : Fin (n + 1) => Fq params) (pointTupleTail xs) x
           j.castSucc = xs j.succ := by
       rw [Fin.snoc_castSucc]
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     exact hL.trans hR.symm
 
 /-- Tail of a snoc completed-outcome tuple. -/
@@ -253,7 +253,7 @@ lemma fromHToG_gHatTupleOutcomeTail_snoc
         Fin.snoc (α := fun _ : Fin (n + 1) => GHatOutcome params)
           (gHatTupleOutcomeTail gs) g j.castSucc = gs j.succ := by
       rw [Fin.snoc_castSucc]
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     exact hL.trans hR.symm
 
 /-- Ordered half-products satisfy a snoc recursion. -/

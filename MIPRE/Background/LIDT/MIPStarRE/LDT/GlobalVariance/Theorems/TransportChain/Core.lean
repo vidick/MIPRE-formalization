@@ -257,7 +257,7 @@ lemma avgOver_axisParallelTestSample_update_eq_rerandomizeCoord
       (fun sx => f (sx.1.1, Function.update sx.1.1 sx.1.2 sx.2)) =
     avgOver (rerandomizeCoord params) f := by
   rw [avgOver_rerandomizeCoord_eq_uniform_sample]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 lemma weightedGeneralizeBRightOperatorAtPolynomial_point_eq
     (params : Parameters)

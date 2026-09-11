@@ -101,7 +101,7 @@ lemma ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_facts
               _ = leftTensor (ι₂ := ι)
                     (ldSandwichLineOnePointCS_orderedHalf params family hi q gs *
                       (ldSandwichLineOnePointCS_orderedHalf params family hi q gs)ᴴ) := by
-                    rfl
+                    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       _ = 1 := by
             calc
               ∑ gs : GHatTupleOutcome params (i + 1),
@@ -177,7 +177,7 @@ lemma ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_facts
               _ = leftTensor (ι₂ := ι)
                     (ldSandwichLineOnePointCS_rotatedHalf params family hi q gs *
                       (ldSandwichLineOnePointCS_rotatedHalf params family hi q gs)ᴴ) := by
-                    rfl
+                    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       _ = 1 := by
             calc
               ∑ gs : GHatTupleOutcome params (i + 1),

@@ -431,7 +431,7 @@ private lemma helper_moveOverV_C_contraction
             (T.outcome hh.1)
         else 0)) = K a := by
     intro a
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hK_herm : ∀ a, (K a)ᴴ = K a := by
     intro a
     have hH_herm : ∀ h : Polynomial params,
@@ -592,7 +592,7 @@ theorem helperDeleteAClonedQuantity_abs_sub_moveOverVQuantity_le_sqrt_two_delta
     refine avgOver_congr _ _ _ ?_
     intro uv
     rw [hfun_A uv, hfun_B uv]
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hC : ∀ uv : Point params × Point params,
       (∑ a : Fq params,
         (∑ hh : Polynomial params × Polynomial params, Cop uv a hh)ᴴ *

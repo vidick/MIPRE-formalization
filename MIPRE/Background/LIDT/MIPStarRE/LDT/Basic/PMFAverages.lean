@@ -97,7 +97,7 @@ theorem realWeightedSumLinearMap_apply {α M : Type*} [Fintype α]
     [AddCommMonoid M] [Module MIPStarRE.LDT.Error M]
     (p : PMF α) (f : α → M) :
     realWeightedSumLinearMap p f = realWeightedSum p f :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The finite total-variation distance between two probability mass functions,
 written as half the `L^1` distance between their real weights.
@@ -126,7 +126,7 @@ theorem map_apply_toReal {α β : Type*} [Fintype α]
     by_cases h : b = e a
     · rw [if_pos h, if_pos h]
     · rw [if_neg h, if_neg h]
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   · intro a _
     by_cases h : b = e a
     · simp [h, p.apply_ne_top a]
@@ -314,7 +314,7 @@ theorem sum_rpow_one_div_le_rpow_sum {α : Type*}
     calc
       z a ^ (n : MIPStarRE.LDT.Error) =
           (Real.rpow (f a) (1 / (n : MIPStarRE.LDT.Error))) ^ (n : MIPStarRE.LDT.Error) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       _ = Real.rpow (f a) ((1 / (n : MIPStarRE.LDT.Error)) * (n : MIPStarRE.LDT.Error)) := by
           symm
           exact Real.rpow_mul (hf a) _ _
@@ -631,7 +631,7 @@ theorem totalVariationDistance_eq_sum_max_sub {α : Type*}
   calc
     totalVariationDistance p q =
         (1 / 2) * ∑ a : α, |(p a).toReal - (q a).toReal| := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = (∑ a : α, ((q a).toReal - (p a).toReal) +
           ∑ a : α, |(p a).toReal - (q a).toReal|) / 2 := by
           rw [hdiff_sum]

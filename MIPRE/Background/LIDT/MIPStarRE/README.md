@@ -39,10 +39,16 @@ repository with v4.33.0), applied by `scripts/vendor-lidt.py`:
    is the option Mathlib sets on its own affected declarations. Setting it for the whole
    tree matches what a project-wide setting achieved for these files, while the rest of
    the repository keeps the check.
-2. With the option, six `rfl` steps follow a tactic that now closes the goal by itself
-   (five `calc` steps in `LDT/ExpansionHypercubeGraph/MatrixRealization/Core.lean`, one in
-   `LDT/MainInductionStep/Defs.lean`); they are `try rfl`, recorded in the script's
-   `FIXES` table and marked in the source by a comment.
+2. With the option, a tactic step may close the goal one line earlier than under Lean
+   v4.32, and a trailing `rfl` then fails with "no goals". Every bare `rfl` tactic line of
+   the tree is therefore `try rfl` (marked by a comment); a `rfl` that is still needed
+   runs as before.
+3. Two recorded fixes in the script's `FIXES` table, marked in the source by a comment:
+   the same tolerance for one trailing `exact` in
+   `LDT/ExpansionHypercubeGraph/Theorems/Foundations.lean`, and, in
+   `LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/MoveChain/FlatChain.lean`, the two
+   index conditions of a summand supplied to `simp` explicitly (they follow from the
+   hypothesis `hone_lt` already in the proof).
 
 ## Provenance
 
@@ -51,5 +57,5 @@ repository with v4.33.0), applied by `scripts/vendor-lidt.py`:
 - Commit: `507e81220d95266ff3d589d125b2f87c7300a9fb` (2026-08-25)
 - Vendored files: 322 Lean files, 122381 lines (the import closure of 10 root modules); 658 import lines rewritten from `MIPStarRE.` to `MIPRE.Background.LIDT.MIPStarRE.`
 - Audit aid: `Challenge.lean.expected` = upstream `scripts/comparator/expected/Challenge.lean.expected`
-- `set_option backward.isDefEq.respectTransparency false` inserted after the imports of every file, and recorded compile fixes applied: 6 (listed under "Local deviations from upstream")
+- `set_option backward.isDefEq.respectTransparency false` inserted after the imports of every file; every bare `rfl` tactic line made `try rfl`; recorded compile fixes applied: 2 (listed under "Local deviations from upstream")
 <!-- END GENERATED -->

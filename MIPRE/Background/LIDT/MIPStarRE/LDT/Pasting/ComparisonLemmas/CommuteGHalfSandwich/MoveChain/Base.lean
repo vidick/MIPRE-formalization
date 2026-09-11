@@ -91,7 +91,7 @@ lemma commuteGHalfSandwich_recursiveTarget_eq_split
       T = gHatHalfProductOutcomeOperator params family r
         (pointTupleTail (Fin.cons q.2.1 q.2.2))
         (gHatTupleOutcomeTail (Fin.cons ogs.2.1 ogs.2.2)) := by
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   calc
     (commuteGHalfSandwich_recursiveTargetFamily params family r q).outcome ogs
       = leftTensor (ι₂ := ι) (A * (T * G)) := by

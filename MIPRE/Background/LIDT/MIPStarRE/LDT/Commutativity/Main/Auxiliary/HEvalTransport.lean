@@ -360,7 +360,7 @@ lemma fullSlice_closenessOfIP_CAB_hEval_sqrt
           exact abs_of_nonneg hd_nonneg
     _ ≤ Real.sqrt δ := hd_le_sqrt
     _ = Real.sqrt (commDataProcessedGError params gamma zeta) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Combined `closenessOfIP` chain on the evaluated side
 (`commutativity-G.tex` lines 301, 334, 359-360, 394, 396), stated with the

@@ -507,7 +507,7 @@ lemma commuteGHalfSandwich_moveStepMid_toTarget
       let G := (gHatIdxMeas params family q.2.2.1).outcome ogs.2.2.1
       let T := gHatReverseHalfProductOutcomeOperator params family r q.2.2.2 ogs.2.2.2
       have hAop : (Aop q).outcome ogs.2.2.1 = leftTensor (ι₂ := ι) G := by
-        rfl
+        try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       have hcomm : rightTensor (ι₁ := ι) T * leftTensor (ι₂ := ι) G =
           leftTensor (ι₂ := ι) G * rightTensor (ι₁ := ι) T := by
         rw [rightTensor_mul_leftTensor_eq_opTensor, leftTensor_mul_rightTensor_eq_opTensor]
@@ -546,7 +546,7 @@ lemma commuteGHalfSandwich_moveStepMid_toTarget
       let G := (gHatIdxMeas params family q.2.2.1).outcome ogs.2.2.1
       let T := gHatReverseHalfProductOutcomeOperator params family r q.2.2.2 ogs.2.2.2
       have hBop : (Bop q).outcome ogs.2.2.1 = rightTensor (ι₁ := ι) G := by
-        rfl
+        try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       calc
         (reindexedTarget q).outcome ogs
           = leftTensor (ι₂ := ι) (A * B) *

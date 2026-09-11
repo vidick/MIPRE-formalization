@@ -286,7 +286,7 @@ private lemma overAllOutcomes_distinct_lineConsistent_indicator_mass_le_mdq
                     (distinctTupleDistribution_weight_sum_le_one params k) hδ_nonneg
             _ = δ := by ring
     _ = ((params.m * params.d : ℕ) : Error) / (params.q : Error) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The local finite-sum/SZ comparison after the one-point line-mismatch
 aggregation has been separated off.

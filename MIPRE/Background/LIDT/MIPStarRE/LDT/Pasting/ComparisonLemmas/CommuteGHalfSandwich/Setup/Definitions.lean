@@ -58,7 +58,7 @@ def pointTupleConsEquiv (params : Parameters) (k : ℕ) :
     | succ j => rfl
   right_inv p := by
     cases p
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Reverse-ordered half-product of completed-slice outcome operators. -/
 noncomputable def gHatReverseHalfProductOutcomeOperator
@@ -320,10 +320,10 @@ def thirdSliceFrontEquiv (params : Parameters) (r : ℕ) :
   invFun q := (q.2.1, q.2.2.1, q.1, q.2.2.2)
   left_inv q := by
     rcases q with ⟨x₁, x₂, x₃, xs⟩
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   right_inv q := by
     rcases q with ⟨x₃, x₁, x₂, xs⟩
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-! ### Question/outcome equivalences -/
 
@@ -376,7 +376,7 @@ def splitSuccQuestionEquiv (params : Parameters) (r : ℕ) :
     | succ j => rfl
   right_inv q := by
     cases q
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Outcome analogue of `splitSuccQuestionEquiv`. -/
 def splitSuccOutcomeEquiv (params : Parameters) [FieldModel params.q] (r : ℕ) :
@@ -394,7 +394,7 @@ def splitSuccOutcomeEquiv (params : Parameters) [FieldModel params.q] (r : ℕ) 
     | succ j => rfl
   right_inv og := by
     cases og
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Expose the first coordinate of the tail in a successor move question. -/
 def moveTailQuestionEquiv (params : Parameters) (r : ℕ) :
@@ -413,7 +413,7 @@ def moveTailQuestionEquiv (params : Parameters) (r : ℕ) :
     | succ j => rfl
   right_inv q := by
     cases q
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Outcome analogue of `moveTailQuestionEquiv`. -/
 def moveTailOutcomeEquiv (params : Parameters) [FieldModel params.q] (r : ℕ) :
@@ -432,7 +432,7 @@ def moveTailOutcomeEquiv (params : Parameters) [FieldModel params.q] (r : ℕ) :
     | succ j => rfl
   right_inv og := by
     cases og
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Move a new leading slice coordinate from the product suffix to the front of
 the exposed move-tail question. -/
@@ -445,10 +445,10 @@ def firstSliceBackQuestionEquiv (params : Parameters) (r : ℕ) :
   invFun q := ((q.2.1, q.2.2.1, q.2.2.2), q.1)
   left_inv q := by
     rcases q with ⟨⟨x₂, x₃, xs⟩, x₁⟩
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   right_inv q := by
     rcases q with ⟨x₁, x₂, x₃, xs⟩
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Outcome analogue of `firstSliceBackQuestionEquiv`. -/
 def firstSliceBackOutcomeEquiv (params : Parameters) [FieldModel params.q] (r : ℕ) :
@@ -460,10 +460,10 @@ def firstSliceBackOutcomeEquiv (params : Parameters) [FieldModel params.q] (r : 
   invFun og := ((og.2.1, og.2.2.1, og.2.2.2), og.1)
   left_inv og := by
     rcases og with ⟨⟨g₂, g₃, gs⟩, g₁⟩
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   right_inv og := by
     rcases og with ⟨g₁, g₂, g₃, gs⟩
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-! ### Move-step and source families -/
 
@@ -585,7 +585,7 @@ lemma commuteGHalfSandwich_moveSource_eq_split
                   T = gHatHalfProductOutcomeOperator params family r
                     (pointTupleTail (Fin.cons q.2.1 q.2.2))
                     (gHatTupleOutcomeTail (Fin.cons ogs.2.1 ogs.2.2)) := by
-                rfl
+                try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
               exact congrArg (fun t => leftTensor (ι₂ := ι) (A * (B * t))) htail
     _ = (headTailOrderedFamily params family (r + 1) (q.1, Fin.cons q.2.1 q.2.2)).outcome
           (ogs.1, Fin.cons ogs.2.1 ogs.2.2) := by
@@ -618,7 +618,7 @@ def pointTupleOneEquiv (params : Parameters) :
   left_inv xs := by
     funext i
     fin_cases i
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   right_inv x := by rfl
 
 /-- Identify a one-element completed-slice outcome tuple with its unique
@@ -630,7 +630,7 @@ def gHatTupleOutcomeOneEquiv (params : Parameters) [FieldModel params.q] :
   left_inv gs := by
     funext i
     fin_cases i
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   right_inv g := by rfl
 
 /-- Specialization of `splitQuestionEquiv` for a one-element tuple. -/
@@ -670,9 +670,9 @@ def thirdSliceFrontOutcomeEquiv (params : Parameters) [FieldModel params.q] (r :
   invFun og := (og.2.2.1, ((og.1, og.2.1), og.2.2.2))
   left_inv og := by
     rcases og with ⟨g₃, ⟨⟨g₁, g₂⟩, gs⟩⟩
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   right_inv og := by
     rcases og with ⟨g₁, g₂, g₃, gs⟩
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 end MIPStarRE.LDT.Pasting

@@ -256,7 +256,7 @@ def gHatTupleOutcomeConsEquiv' (params : Parameters) [FieldModel params.q] (k : 
     | succ j => rfl
   right_inv p := by
     cases p
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The total operator of the ordered half-product is always the identity. -/
 lemma gHatHalfProductTotalOperator_eq_one (params : Parameters) [FieldModel params.q]

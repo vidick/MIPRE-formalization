@@ -454,7 +454,7 @@ theorem postprocess_total {α β : Type*} {ι : Type*} [Fintype ι] [DecidableEq
     [Fintype α] [Fintype β]
     (A : SubMeas α ι) (f : α → β) :
     (postprocess A f).total = A.total := by
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The self-distance `qSDD ψ A A` is zero. -/
 theorem qSDD_self {Outcome : Type*} {ι : Type*} [Fintype ι] [DecidableEq ι]

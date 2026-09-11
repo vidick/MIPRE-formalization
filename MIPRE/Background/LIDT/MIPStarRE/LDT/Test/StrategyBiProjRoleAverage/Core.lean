@@ -742,7 +742,7 @@ theorem roleRegisterSymmStrategy_axisParallel_eq_roleAverage
   calc
     (strategy.roleRegisterSymmStrategy).axisParallelFailureProbability
       = avgOver axParDist symmErr := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver axParDist (fun s => (pointLeftLineRight s + lineLeftPointRight s) / 2) :=
           hcongr
     _ = (avgOver axParDist pointLeftLineRight +
@@ -820,7 +820,7 @@ theorem roleRegisterSymmStrategy_diagonal_eq_roleAverage
       = (1 / (params.m : Error)) *
           ∑ j : Fin params.m,
             avgOver (uniformDistribution (RestrictedDiagonalSample params j)) (symmErr j) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = (1 / (params.m : Error)) *
           ∑ j : Fin params.m,
             avgOver (uniformDistribution (RestrictedDiagonalSample params j))

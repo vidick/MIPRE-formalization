@@ -59,7 +59,7 @@ noncomputable def realTracePairingCLM {d : Type*} [Fintype d] [DecidableEq d]
 theorem realTracePairingCLM_apply {d : Type*} [Fintype d] [DecidableEq d]
     (Z X : Op d) :
     realTracePairingCLM Z X = Complex.re (Matrix.trace (Z * X)) :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The trace pairing against a single matrix unit reads the transposed coordinate of `Z`. -/
 theorem realTracePairingCLM_single {d : Type*} [Fintype d] [DecidableEq d]
@@ -181,7 +181,7 @@ theorem hermitianTracePairingMatrixOfRealCLM_apply_of_isHermitian
         (realTracePairingCLM_selfAdjointPart_apply_of_isHermitian
           (tracePairingMatrixOfRealCLM ψ) hX).symm
     _ = Complex.re (Matrix.trace (hermitianTracePairingMatrixOfRealCLM ψ * X)) := by
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The real trace pairing of two positive semidefinite operators is
 nonnegative.

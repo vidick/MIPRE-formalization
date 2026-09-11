@@ -343,7 +343,7 @@ lemma sampledDiagonalLineApproximation_ignore_first
             unfold qSDDOp qSDD qSDDCore IdxSubMeas.liftLeft IdxSubMeas.liftRight
               OpFamily.leftPlacedOpFamily OpFamily.rightPlacedOpFamily
               sampledPointMeasurement sampledPointFromDiagonalQuestion SubMeas.toOpFamily
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (pointWithDiagonalLineDistribution params)
           (fun q =>
             qSDD strategy.state
@@ -358,7 +358,7 @@ lemma sampledDiagonalLineApproximation_ignore_first
           (pointWithDiagonalLineDistribution params)
           (IdxSubMeas.liftLeft (sampledPointMeasurement params strategy))
           (IdxSubMeas.liftRight (sampledDiagonalLineEvaluation params strategy)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ pointDiagonalLineApproxError params gamma := happrox
 
 lemma sampledDiagonalLineApproximation_ignore_second
@@ -400,7 +400,7 @@ lemma sampledDiagonalLineApproximation_ignore_second
             unfold qSDDOp qSDD qSDDCore IdxSubMeas.liftLeft IdxSubMeas.liftRight
               OpFamily.leftPlacedOpFamily OpFamily.rightPlacedOpFamily
               sampledPointMeasurement sampledPointFromDiagonalQuestion SubMeas.toOpFamily
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (pointWithDiagonalLineDistribution params)
           (fun q =>
             qSDD strategy.state
@@ -415,7 +415,7 @@ lemma sampledDiagonalLineApproximation_ignore_second
           (pointWithDiagonalLineDistribution params)
           (IdxSubMeas.liftLeft (sampledPointMeasurement params strategy))
           (IdxSubMeas.liftRight (sampledDiagonalLineEvaluation params strategy)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ pointDiagonalLineApproxError params gamma := happrox
 
 end MIPStarRE.LDT.CommutativityPoints

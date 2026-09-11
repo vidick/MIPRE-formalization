@@ -468,7 +468,7 @@ theorem helper_mass_sub_release_eq_polynomial_off_diagonal
           (opTensor
             ((sandwichedPolynomialSubMeasAt params strategy T.toSubMeas u).outcome h')
             (1 : MIPStarRE.Quantum.Op ι)) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       _ =
         ev strategy.state
           (opTensor

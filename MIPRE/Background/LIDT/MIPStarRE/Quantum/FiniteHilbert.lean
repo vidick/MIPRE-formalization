@@ -127,7 +127,7 @@ theorem exists_mul_conjTranspose_eq_one_of_card_le
             exact L.adjoint_comp_self'
       _ = Matrix.toEuclideanLin (1 : Matrix m m 𝕜) := by
             rw [Matrix.toEuclideanLin, Matrix.toLpLin_one]
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   refine ⟨X, ?_⟩
   simpa [X] using hMstarM
 

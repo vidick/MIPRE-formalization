@@ -93,7 +93,7 @@ lemma weightedFinsetCauchySchwarz
                   Finset.sum_nonneg fun a _ => hy q a)
     _ = Real.sqrt (∑ q ∈ 𝒟.support, 𝒟.weight q * ∑ a : Outcome, x q a) *
           Real.sqrt (avgOver 𝒟 (fun q => ∑ a : Outcome, y q a)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Weighted finite Cauchy--Schwarz with the summand restricted to a selected
 support.

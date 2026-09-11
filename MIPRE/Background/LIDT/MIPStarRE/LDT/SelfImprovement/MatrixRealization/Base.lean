@@ -220,7 +220,7 @@ theorem one_le_matrixSdpStrictDualWitness_dualSlack (params : Parameters)
         exact sub_le_sub_left (matrixAveragedPointOperator_le_one params model g)
           (matrixSdpStrictDualWitness model)
     _ = matrixSdpDualSlackOperator params model (matrixSdpStrictDualWitness model) g := by
-        rfl
+        try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Dual feasibility already implies that the dual operator is positive
 semidefinite, since every averaged point operator `A_g` is positive. -/

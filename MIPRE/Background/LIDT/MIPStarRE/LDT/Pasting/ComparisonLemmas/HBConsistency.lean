@@ -97,7 +97,7 @@ private lemma hBConsistency_core_of_axis_self
           qBipartiteConsDefect strategy.state
             (hRestrictionToVerticalLine params (constructedPastedSubMeas params family k) u)
             (verticalLineMeasurementFamily params strategy u)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ avgOver (uniformDistribution (Point params)) (fun u =>
           avgOver (distinctTupleDistribution params k) (fun xs =>
             qBipartiteConsDefect strategy.state

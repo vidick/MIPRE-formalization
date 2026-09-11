@@ -265,14 +265,14 @@ noncomputable def bernoulliTailSubMeas {ι : Type*} [Fintype ι] [DecidableEq ι
     (hXpsd : 0 ≤ X) (hXleOne : X ≤ 1) (u : Unit) :
     (bernoulliTailSubMeas k degree X hXpsd hXleOne).outcome u =
       bernoulliTailOperator k degree X :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem bernoulliTailSubMeas_total {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k degree : ℕ) (X : MIPStarRE.Quantum.Op ι)
     (hXpsd : 0 ≤ X) (hXleOne : X ≤ 1) :
     (bernoulliTailSubMeas k degree X hXpsd hXleOne).total =
       bernoulliTailOperator k degree X :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The Bernoulli-tail polynomial in the averaged complete operator `G = E_x \sum_g G^x_g`. -/
 noncomputable def bernoulliTailFromFamily (params : Parameters) [FieldModel params.q]

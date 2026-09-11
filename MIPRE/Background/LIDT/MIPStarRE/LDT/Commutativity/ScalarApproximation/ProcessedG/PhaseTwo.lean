@@ -80,7 +80,7 @@ lemma evaluatedSlice_phaseTwo_stability_defect_bound
       evaluatedSlicePhaseTwoStabilityDefect params strategy family G =
         gCommStabilityScalarDefect params strategy family G := by
     funext y
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   rw [hdef]
   exact gCommStability_scalar params strategy zeta hnorm family G hG hbound
 
@@ -601,7 +601,7 @@ lemma evaluatedSlice_phaseTwo_questionDefect_avg_eq_stabilityDefect
       avgOver (uniformDistribution (EvaluatedSliceQuestion params)) defect =
           avgOver (uniformDistribution (Point params.next × Point params.next))
             (fun qq => defect qq) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       _ = avgOver (uniformDistribution (Point params.next × Point params.next))
             (fun qq => defect (qq.2, qq.1)) := by
             simpa [Prod.swap] using
@@ -656,7 +656,7 @@ lemma evaluatedSlice_phaseTwo_questionDefect_avg_eq_stabilityDefect
             (fun v => Pfun g v) =
           IdxPolyFamily.averagedSlicePointEvaluationOperator strategy y g := by
       intro g
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     calc
       avgOver (uniformDistribution (Point params))
           (fun v => avgOver (uniformDistribution (Point params.next))

@@ -143,7 +143,7 @@ private lemma gCommStabilityTwo_pointwise_summand_bound
               Sᴴ * S
                 = (((A.outcome a * B.outcome gb.2)ᴴ) *
                     (A.outcome a * B.outcome gb.2)) := by
-                    rfl
+                    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
               _ = ((B.outcome gb.2)ᴴ * (A.outcome a)ᴴ) *
                     (A.outcome a * B.outcome gb.2) := by
                     simp [Matrix.conjTranspose_mul]

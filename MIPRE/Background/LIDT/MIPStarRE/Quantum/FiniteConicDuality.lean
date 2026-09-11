@@ -112,7 +112,7 @@ theorem conicNormalizedSeparatorFunctional_apply
     conicNormalizedSeparatorFunctional φ y =
       ((-conicSeparatorObjectiveCoefficient φ)⁻¹) *
         conicSeparatorConstraintFunctional φ y := by
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- A separator that is nonnegative on a conic image gives a normalized
 functional dual bound on any point whose constraint-objective image lies in

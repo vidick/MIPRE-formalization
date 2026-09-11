@@ -40,7 +40,7 @@ lemma swapDensity_eq_reindex {ι : Type*}
   ext x y
   rcases x with ⟨i₁, i₂⟩
   rcases y with ⟨j₁, j₂⟩
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] lemma swapDensity_swapDensity {ι : Type*}
     (X : MIPStarRE.Quantum.Op (ι × ι)) :
@@ -48,7 +48,7 @@ lemma swapDensity_eq_reindex {ι : Type*}
   ext x y
   rcases x with ⟨i₁, i₂⟩
   rcases y with ⟨j₁, j₂⟩
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] lemma swapDensity_add {ι : Type*}
     (X Y : MIPStarRE.Quantum.Op (ι × ι)) :
@@ -56,7 +56,7 @@ lemma swapDensity_eq_reindex {ι : Type*}
   ext x y
   rcases x with ⟨i₁, i₂⟩
   rcases y with ⟨j₁, j₂⟩
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] lemma swapDensity_smul {ι : Type*} (c : ℂ)
     (X : MIPStarRE.Quantum.Op (ι × ι)) :
@@ -64,7 +64,7 @@ lemma swapDensity_eq_reindex {ι : Type*}
   ext x y
   rcases x with ⟨i₁, i₂⟩
   rcases y with ⟨j₁, j₂⟩
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- `swapDensity` preserves matrix multiplication. -/
 lemma swapDensity_mul {ι : Type*} [Fintype ι]

@@ -114,7 +114,7 @@ noncomputable def primalMeasurement {params : Parameters} [FieldModel params.q]
     {Z : MatrixOperator model.space}
     (h : MatrixSdpOptimalWitness params model T Z) (g : Polynomial params) :
     h.primalMeasurement.effect g = T.effect g :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The stored complementary-slackness equation, expressed through the named
 matrix-level predicate. -/

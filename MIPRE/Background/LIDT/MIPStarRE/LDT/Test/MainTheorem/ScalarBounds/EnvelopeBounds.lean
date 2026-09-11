@@ -132,7 +132,7 @@ theorem sqrt_stepEnvelope_le {params : Parameters} {k : ℕ} {eps : Error}
     _ = stepEnvelope params k eps (2 * n) (2 * N) := by
       rw [sqrt_rpow_one_div h.hepsNN hn, sqrt_rpow_one_div h.dqNN hn,
         sqrt_exp_neg_div k (params.m : Error) N hmPos hN]
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 theorem stepEnvelope_le_sq_stepEnvelope {params : Parameters} {k : ℕ} {eps : Error}
     (h : CascadeHypotheses params k eps) {n N : Error} (hn : 0 < n) (hN : 0 < N) :
@@ -314,7 +314,7 @@ theorem rpow_one_four_eq_sqrt_sqrt {x : Error} (hx : 0 ≤ x) :
       simpa using (Real.rpow_mul hx (1 / (2 : Error)) (1 / (2 : Error)))
     _ = Real.sqrt (Real.sqrt x) := by
       rw [Real.sqrt_eq_rpow, Real.sqrt_eq_rpow]
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 theorem rpow_one_eight_eq_sqrt_sqrt_sqrt {x : Error} (hx : 0 ≤ x) :
     Real.rpow x (1 / (8 : Error)) = Real.sqrt (Real.sqrt (Real.sqrt x)) := by
@@ -326,7 +326,7 @@ theorem rpow_one_eight_eq_sqrt_sqrt_sqrt {x : Error} (hx : 0 ≤ x) :
       simpa using (Real.rpow_mul hx (1 / (4 : Error)) (1 / (2 : Error)))
     _ = Real.sqrt (Real.sqrt (Real.sqrt x)) := by
       rw [Real.sqrt_eq_rpow, rpow_one_four_eq_sqrt_sqrt hx]
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 theorem stepEnvelope_rpow_quarter_le {params : Parameters} {k : ℕ} {eps : Error}
     (h : CascadeHypotheses params k eps) :

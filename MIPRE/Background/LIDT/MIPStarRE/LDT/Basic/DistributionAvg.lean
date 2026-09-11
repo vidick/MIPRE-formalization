@@ -322,7 +322,7 @@ theorem totalVariationDistance_eq_sum_max_sub {α : Type*} [DecidableEq α]
   calc
     totalVariationDistance μ ν
         = (1 / 2) * ∑ a ∈ u, |μ.weight a - ν.weight a| := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = (∑ a ∈ u, (ν.weight a - μ.weight a) +
           ∑ a ∈ u, |μ.weight a - ν.weight a|) / 2 := by
             rw [hdiff_sum]

@@ -131,7 +131,7 @@ lemma polynomialAgreement_avg_le_mdq
     cases g
     cases g'
     cases hpoly
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hsz := schwartzZippel_individualDegree gLow g'Low hneqLow
   have havg_scalar :
       avgOver (uniformDistribution (Fin params.m → Scalar params))

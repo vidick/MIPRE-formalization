@@ -112,7 +112,7 @@ lemma avgOver_distinct_eligibleMass_eq_global_add_nonglobal
               (IsGloballyConsistent params xs)).liftLeft)) +
         overAllOutcomesDistinctNonglobalMass params strategy family k := by
           rw [avgOver_add]
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The distinct-tuple line-mismatch mass that appears after inserting the
 vertical-line measurement in `ld-pasting.tex` lines 1178--1202.
@@ -500,6 +500,6 @@ lemma overAllOutcomes_distinct_nonglobal_mass_le_bad_line_mass_add_lineConsisten
     _ = overAllOutcomesDistinctBadLineMass params strategy family k +
           overAllOutcomesDistinctLineConsistentNonglobalMass params strategy family k := by
           rw [avgOver_add]
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 end MIPStarRE.LDT.Pasting

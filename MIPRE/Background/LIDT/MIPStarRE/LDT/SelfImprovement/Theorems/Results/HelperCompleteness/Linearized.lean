@@ -89,7 +89,7 @@ theorem helper_linearized_completeness_eq_dual_mass_of_complementary_slackness
           𝒟.weight u •
             (T.outcome h *
               pointConditionedOutcomeOperatorAtPolynomial params strategy h u) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       _ =
         ∑ u ∈ 𝒟.support,
           T.outcome h *
@@ -106,7 +106,7 @@ theorem helper_linearized_completeness_eq_dual_mass_of_complementary_slackness
           rw [Matrix.mul_sum]
       _ =
         T.outcome h * averagedPointOperator params strategy h := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   calc
     avgOver (uniformDistribution (Point params)) (fun u =>
         ∑ h : Polynomial params,
@@ -291,7 +291,7 @@ theorem helper_first_move_abs_sub_bracketed_le_two_sqrt_delta
     refine avgOver_congr _ _ _ ?_
     intro u
     rw [hfun_A u, hfun_B u]
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hC : ∀ u : Point params,
       (∑ a : Fq params, (∑ b : Unit, Cop u a b)ᴴ * (∑ b : Unit, Cop u a b)) ≤
         (1 : MIPStarRE.Quantum.Op (ι × ι)) := by

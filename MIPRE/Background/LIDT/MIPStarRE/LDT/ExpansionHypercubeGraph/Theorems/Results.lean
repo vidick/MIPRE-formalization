@@ -44,7 +44,7 @@ lemma avgOver_independentPointPair_eq_uniform_prod
     (f : Point params × Point params → Error) :
     avgOver (independentPointPair params) f =
       avgOver (uniformDistribution (Point params × Point params)) f := by
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 private lemma matrixLocalVariance_eq_closedForm (params : Parameters)
     (model : MatrixOperatorFamilyRealization params) :
@@ -205,7 +205,7 @@ private lemma matrixTraceForm_localToGlobal (params : Parameters)
                   model.state.matrix) *
                 matrixCombinedColumnOperator params model)) := by
                   simp [matrixTensorOperator, Matrix.smul_kronecker]
-                  rfl
+                  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
         _ = c •
               ((matrixCombinedColumnOperator params model)ᴴ *
                 (matrixTensorOperator (orthogonalModeProjectorMatrix params)

@@ -123,7 +123,7 @@ private lemma ev_uniformAverage_sq_le_avg
       _ = (∑ a : α, c * Real.sqrt (x a)) * ∑ b : α, c * Real.sqrt (x b) := by
             rw [← Finset.sum_mul]
       _ = s * s := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hs_le :
       s ≤ Real.sqrt (avgOver (uniformDistribution α) x) := by
     have hs_raw :
@@ -203,7 +203,7 @@ private lemma qSDD_unit_family_of_average_le_avg
           exact ev_uniformAverage_sq_le_avg ψ D
     _ = avgOver (uniformDistribution α)
           (fun a => ev ψ (((A a - B a)ᴴ) * (A a - B a))) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Lift pointwise operator deviation bounds to an `SDDRel` bound for
 unit-valued averaged families. -/

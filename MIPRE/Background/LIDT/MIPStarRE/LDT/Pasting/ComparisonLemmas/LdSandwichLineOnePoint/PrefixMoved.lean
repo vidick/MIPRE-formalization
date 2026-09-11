@@ -253,7 +253,7 @@ lemma gHatSandwich_sum_last_eq_prefix
           (fun j => xs ⟨j.1, by omega⟩) gsPrefix *
         (gHatHalfProductOutcomeOperator params family n
           (fun j => xs ⟨j.1, by omega⟩) gsPrefix)ᴴ := by
-        rfl
+        try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Reversing the prefix after moving the last coordinate to the front gives the adjoint product. -/
 lemma gHatHalfProduct_lastReverse_eq_conjTranspose
@@ -408,6 +408,6 @@ lemma gHatRotatedHalfProduct_lastReverse_eq_conjTranspose_lastFront
       rw [htail, hgtail]
       rw [hprefixAdj]
       rw [hfront, Matrix.conjTranspose_mul, hhead]
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 end MIPStarRE.LDT.Pasting

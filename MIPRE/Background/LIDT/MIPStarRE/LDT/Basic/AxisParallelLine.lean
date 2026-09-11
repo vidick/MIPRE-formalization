@@ -90,7 +90,7 @@ def rebaseAt {params : Parameters} [FieldModel params.q]
 @[simp] theorem rebaseAt_direction {params : Parameters} [FieldModel params.q]
     (ℓ : AxisParallelLine params) (t : Fq params) :
     (rebaseAt ℓ t).direction = ℓ.direction :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The canonical affine parameterization of `throughPoint u i` at parameter
 `sampleParameter u i = u i` returns the original point `u`. -/
@@ -147,7 +147,7 @@ def appendAtHeight (params : Parameters)
       by_cases hdir : i = embedCoord params direction
       · subst i
         simp [appendPoint, pointAt, embedCoord]
-        rfl
+        try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       · by_cases hi : i.1 < params.m
         · have hdir' : (⟨i.1, hi⟩ : Fin params.m) ≠ direction := by
             intro h

@@ -293,7 +293,7 @@ private lemma gCommStabilityTwo_raw_scalar_pointwise_bound
         ∀ g : Polynomial params,
           averageOperatorOverDistribution 𝒟U (fun u => Q u g) = W g := by
       intro g
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     calc
       avgOver 𝒟U (fun u =>
           ∑ g : Polynomial params, ∑ b : Fq params,

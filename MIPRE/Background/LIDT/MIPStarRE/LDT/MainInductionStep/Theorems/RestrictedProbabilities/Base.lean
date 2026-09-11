@@ -91,12 +91,12 @@ lemma avgOver_uniform_restrictedDiagonalSample_append
         (fun xs => g (appendPoint params xs.2.1 xs.1, xs.2.2))
         = avgOver (uniformDistribution (Fq params × (Point params × β)))
             (fun xs => g' (appendPoint params xs.2.1 xs.1, xs.2.2)) := by
-              rfl
+              try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (uniformDistribution (Point params.next × β)) g' := by
           exact avgOver_uniform_pointAppend_prod params β g'
     _ = avgOver (uniformDistribution
           (RestrictedDiagonalSample params.next (embedCoord params j))) g := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Averaging the self-consistency defect over all horizontal restrictions
 recovers the ambient self-consistency defect. -/
@@ -116,11 +116,11 @@ lemma selfConsistencyRestrictedAverage_eq
       = avgOver (uniformDistribution (Fq params))
           (fun x => avgOver (uniformDistribution (Point params))
             (fun u => g (appendPoint params u x))) := by
-              rfl
+              try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (uniformDistribution (Point params.next)) g := by
           simpa using (CommutativityPoints.avgOver_uniform_pointNext_decompose params g).symm
     _ = strategy.selfConsistencyFailureProbability := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The weighted average over embedded transverse directions is bounded by the
 ambient average over all directions. -/

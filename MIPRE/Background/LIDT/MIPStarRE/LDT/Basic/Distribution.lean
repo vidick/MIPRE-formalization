@@ -259,7 +259,7 @@ noncomputable def weightedSumLinearMap (M : Type*) [AddCommMonoid M] [Module Err
 theorem weightedSumLinearMap_apply (M : Type*) [AddCommMonoid M] [Module Error M]
     {α : Type*} (𝒟 : Distribution α) (f : α → M) :
     𝒟.weightedSumLinearMap M f = ∑ a ∈ 𝒟.support, 𝒟.weight a • f a :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The scalar average is the weighted finite-sum linear map applied to a scalar
 family. -/
@@ -299,7 +299,7 @@ theorem averageOperatorOverDistribution_eq_weightedSumLinearMap {α : Type*}
     (f : α → MIPStarRE.Quantum.Op ι) :
     averageOperatorOverDistribution 𝒟 f =
       𝒟.weightedSumLinearMap (MIPStarRE.Quantum.Op ι) f :=
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Operator-valued averaging against a pushed-forward distribution is
 operator-valued averaging of the pulled-back family against the original
