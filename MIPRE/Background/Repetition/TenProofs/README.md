@@ -27,7 +27,14 @@ repository. Every file carries a header saying so.
 
 ## Local deviations from upstream
 
-None yet (beyond the mechanical ones above).
+Compile fixes for the toolchain crossing (upstream builds with Lean v4.32.0, this
+repository with v4.33.0), applied by `scripts/vendor-repetition.py` from its recorded
+`fixes` table:
+
+1. `exists_proofSchmidtDecomposition`: under Lean v4.33 the closing `simpa` no longer
+   reduces the coordinate `T (basisFun a) b` to `ξ (a, b)` through the abbreviation
+   `Matrix.toEuclideanLin`; the coordinate identity is now established first by an
+   explicit `Matrix.toLpLin_apply` rewrite. The statement is unchanged.
 
 ## Provenance
 
@@ -37,4 +44,5 @@ None yet (beyond the mechanical ones above).
 - Vendored files: 1 Lean files, 70984 lines
 - Copied verbatim: `G_QuantumParallelRepetition.lean.expected` = upstream `ComparatorChallenges/G_QuantumParallelRepetition.lean`
 - `set_option autoImplicit true` inserted after the imports: yes
+- Recorded compile fixes applied: 1 (listed under "Local deviations from upstream")
 <!-- END GENERATED -->

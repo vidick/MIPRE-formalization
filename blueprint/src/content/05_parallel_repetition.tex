@@ -12,11 +12,12 @@ bridges connecting the two. Sections~\ref{sec:ar-background}--\ref{sec:ar-decomp
 state the \emph{anchored}, entanglement-preserving theorem of Bavarian, Vidick and
 Yuen~\cite{BVY17} used in~\cite{JNVWY20}: repeating the anchored version of a game
 amplifies the completeness-soundness gap while preserving entanglement lower bounds.
-That theorem is a blueprint-only external result, which the pipeline of
-Section~\ref{ch:proof-structure} invokes as long as its soundness clauses are stated
-through the entanglement requirement (Definition~\ref{def:ent});
-Remark~\ref{rem:direct-vs-anchored} explains how the value-form theorems of
-Section~\ref{sec:pr-direct} can replace it. Section~\ref{sec:ar-background} collects
+That theorem is a blueprint-only external result, and it is no longer on the path to
+the main theorem: the pipeline of Section~\ref{ch:proof-structure} is stated in value
+form and uses the direct theorems (Remark~\ref{rem:direct-vs-anchored}). The anchored
+sections are kept as the record of the entanglement-form route of~\cite{JNVWY20}, whose
+remaining interest is the entanglement-requirement corollaries
+(Remark~\ref{rem:entanglement-form}). Section~\ref{sec:ar-background} collects
 the background results the anchored proof relies on --- entropy inequalities, Uhlmann's
 theorem --- most of which are natural QuantumLib content, and some of which already
 exist there. Section~\ref{sec:ar-anchoring} defines the anchoring transformation and
@@ -274,22 +275,20 @@ requirements: the anchored proof extracts from a good strategy for the repeated 
 strategy for the original game of \emph{no larger dimension}, whereas the proofs of the
 direct theorems round through auxiliary resources (an embezzling state
 in~\cite{OpenAI26}, a tracial approximation in~\cite{Vid26}) and give no control of the
-dimension. The pipeline of Section~\ref{ch:proof-structure} follows~\cite{JNVWY20} in
-stating soundness through $\Ent$, and the gap amplification step
-(Theorem~\ref{thm:parallel-repetition}) therefore invokes Theorem~\ref{thm:bvy}. Lin's
-proof of $\MIPco = \coRE$~\cite{Lin25} shows that the entanglement clauses are
-dispensable: with completeness and soundness of compression stated in value form
-(perfect strategies are preserved, value at most $\frac12$ is preserved), the halting
-reduction follows from the enumeration of Lemma~\ref{lem:value-lower-approx} and
-Kleene's recursion theorem alone, and gap amplification then needs only a value
-statement --- exactly the theorems of this section, applied to the game as it is,
-without anchoring. Restating the pipeline in that form would retire
-Theorem~\ref{thm:bvy} and its toolkit
-(Sections~\ref{sec:ar-background}--\ref{sec:ar-decomposition}) from the proof of the
-main theorem; it is listed among the candidate simplifications of
-Section~\ref{sec:departures}. In either form, the transport between bipartite and
-synchronous strategies (Section~\ref{sec:departures}) is the pipeline's responsibility,
-as it is for Theorem~\ref{thm:bvy}.
+dimension. Lin's proof of $\MIPco = \coRE$~\cite{Lin25} shows that the entanglement clauses
+of~\cite{JNVWY20} are dispensable: with completeness and soundness of compression stated
+in value form (perfect strategies are preserved, value at most $\frac12$ is preserved),
+the halting reduction follows from the enumeration of Lemma~\ref{lem:value-lower-approx}
+and Kleene's recursion theorem alone (Lemma~\ref{lem:compressible-criterion}), and gap
+amplification then needs only a value statement --- exactly the theorems of this section,
+applied to the game as it is, without anchoring. The pipeline of
+Section~\ref{ch:proof-structure} is stated in that form (Section~\ref{sec:departures}):
+Theorem~\ref{thm:parallel-repetition} rests on Theorem~\ref{thm:direct-repetition-q},
+and Theorem~\ref{thm:bvy} with its toolkit
+(Sections~\ref{sec:ar-background}--\ref{sec:ar-decomposition}) is not on the path to the
+main theorem; the entanglement clauses are recorded in
+Remark~\ref{rem:entanglement-form}. In either form, the transport between bipartite and
+synchronous strategies (Section~\ref{sec:departures}) is the pipeline's responsibility.
 \end{remark}
 
 \subsection{Background results}
@@ -548,10 +547,10 @@ inverts the relation. Taking suprema over strategies yields the claim.
 \end{proof}
 
 The theorem below is the form of the parallel repetition theorem invoked by the
-compression procedure (Theorem~\ref{thm:parallel-repetition}). Note that it is an
-entanglement statement, not merely a value statement: this is what soundness of the
-compression recursion requires when it is stated, as in~\cite{JNVWY20}, in terms of
-$\Ent$ (Remark~\ref{rem:direct-vs-anchored}).
+compression procedure of~\cite{JNVWY20}. It is an entanglement statement, not merely a
+value statement: this is what soundness of the compression recursion requires when it is
+stated in terms of $\Ent$ (Remark~\ref{rem:entanglement-form}); the value-form pipeline
+of Section~\ref{ch:proof-structure} uses Theorem~\ref{thm:direct-repetition-q} instead.
 
 \effortHard\ \qlib
 
@@ -584,8 +583,9 @@ evaluating as a formalization route.
 completeness-soundness gap has shrunk to $1$ vs.\ $1 - 1/\poly$, and repetition of the
 anchored game restores the gap to $1$ vs.\ $\frac12$ while preserving entanglement
 lower bounds. The proof is information-theoretic and long; axiomatize first. Direct, value-form
-repetition is formalized (Section~\ref{sec:pr-direct}), and
-Remark~\ref{rem:direct-vs-anchored} discusses when it can replace this theorem. Two
+repetition is formalized (Section~\ref{sec:pr-direct}) and has replaced this theorem in
+the pipeline (Remark~\ref{rem:direct-vs-anchored}); this theorem is retained for the
+entanglement form of the argument (Remark~\ref{rem:entanglement-form}). Two
 translation points for the formalization: the source works with bipartite
 tensor-product strategies while $\Ent$ (Definition~\ref{def:ent}) is defined via
 synchronous strategies, so the statement must be transported, consistent with the

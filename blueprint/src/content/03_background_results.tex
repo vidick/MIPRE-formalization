@@ -46,7 +46,8 @@ Uhlmann, Fuchs--van de Graaf & Thm.~\ref{thm:uhlmann}, Lem.~\ref{lem:fvdg} & \ci
 Relative entropy toolkit & Lems.~\ref{lem:rel-ent-basic}--\ref{lem:ssa} & \cite{Wil13,LR73} & medium \\
 Quantum Raz's lemma & Lem.~\ref{lem:quantum-raz} & \cite{BVY17} & easy \\
 Holenstein conditioning lemmas & Lem.~\ref{lem:holenstein-conditioning} & \cite{Hol09} & easy \\
-Recursive compression lemma & Lem.~\ref{lem:recursive-compression} & \cite{MNY} & easy \\
+Recursive compression lemma & Lem.~\ref{lem:recursive-compression} & \cite{MNY} & \checkmark \\
+Compressibility criterion & Lem.~\ref{lem:compressible-criterion} & \cite{Lin25} & \checkmark \\
 Efficient computability toolkit & Lems.~\ref{lem:universal-tm}--\ref{lem:kleene} & \cite{MNY} & hard \\
 Halting undecidability & Thm.~\ref{thm:halting-undecidable} & Mathlib & \checkmark \\
 Succinct Cook--Levin & Thm.~\ref{thm:succinct-sat} & \cite{Coo71,PY86} & hard \\
@@ -59,6 +60,8 @@ Value approximable from below & Lem.~\ref{lem:value-lower-approx} & folklore & m
 
 \noindent $^\dagger$The Lean proof of Theorem~\ref{thm:direct-repetition-q} is complete
 modulo Lemma~\ref{lem:povm-value-eq}, which is stated in Lean but not yet proved.
+Theorem~\ref{thm:bvy} and the results of Section~\ref{sec:ar-background} are no longer on
+the path to the main theorem (Remark~\ref{rem:direct-vs-anchored}).
 
 \subsection{The Gowers--Hatami theorem}
 \label{sec:rr-gowers-hatami}

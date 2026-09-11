@@ -6884,8 +6884,20 @@ theorem exists_proofSchmidtDecomposition
         rw [v.sum_repr']
       _ = _ := by
         simp
-  have hcoord := congrArg
-    (fun z : EuclideanSpace ℂ (Fin d) => z b) hrepr
+  -- Vendoring compile fix (Lean v4.33): the `simpa` below no longer reduces the
+  -- coordinate `T (basisFun a) b` to `ξ (a, b)` through the abbreviation
+  -- `Matrix.toEuclideanLin`; that step is done by hand first. See README.md.
+  have hT : T ((EuclideanSpace.basisFun (Fin d) ℂ) a) b = ξ (a, b) := by
+    simp only [T, C, EuclideanSpace.basisFun_apply]
+    show (Matrix.toLpLin 2 2 (fun b a => ξ (a, b) : Matrix (Fin d) (Fin d) ℂ)
+      (EuclideanSpace.single a 1)) b = ξ (a, b)
+    rw [Matrix.toLpLin_apply]
+    simp [Matrix.mulVec, dotProduct, EuclideanSpace.single_apply]
+  have hcoord : T ((EuclideanSpace.basisFun (Fin d) ℂ) a) b =
+      (∑ i : Fin d,
+        inner ℂ (v i) ((EuclideanSpace.basisFun (Fin d) ℂ) a) • T (v i)) b :=
+    congrArg (fun z : EuclideanSpace ℂ (Fin d) => z b) hrepr
+  rw [hT] at hcoord
   simpa [T, C, Matrix.toLpLin_apply,
     EuclideanSpace.basisFun_apply, Matrix.mulVec_single_one,
     Matrix.col_apply, EuclideanSpace.inner_single_right,

@@ -30,7 +30,13 @@ MIPStarRE contributors; every file carries a header saying so.
 
 ## Local deviations from upstream
 
-None yet.
+Compile fixes for the toolchain crossing (upstream builds with Lean v4.32.0, this
+repository with v4.33.0), applied by hand and marked in the source by a comment:
+
+1. `LDT/Basic/ParametersBase.lean`: `set_option backward.isDefEq.respectTransparency false
+   in` before `inductive Role`, whose derived `Fintype` instance does not elaborate under
+   Lean v4.33's transparency check (the same fix Mathlib applies to affected
+   declarations).
 
 ## Provenance
 

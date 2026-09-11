@@ -225,14 +225,17 @@ theorem axisAnswer_reparamAt (b : F) (a : Answer F m d) (t : Fq (lidtParams F m 
   apply AxisLinePolynomial.ext
   change (affine _ b 1).comp (_root_.Polynomial.C (decodeScalar t) + _root_.Polynomial.X) =
     affine _ (b + dec t) 1
-  rw [affine_comp_shift, one_mul]
+  -- `rw [affine_comp_shift]` no longer finds its pattern under Lean v4.33; use the lemma
+  -- as a term, up to `1 * s = s`.
+  exact (affine_comp_shift _ _ _ _).trans
+    (congrArg (fun s => affine (axisPolyOf a) (b + s) 1) (one_mul _))
 
 theorem diagAnswer_reparamAt (b c : F) (a : Answer F m d) (t : Fq (lidtParams F m d)) :
     (diagAnswer b c a).reparamAt t = diagAnswer (b + c * dec t) c a := by
   apply DiagonalLinePolynomial.ext
   change (affine _ b c).comp (_root_.Polynomial.C (decodeScalar t) + _root_.Polynomial.X) =
     affine _ (b + c * dec t) c
-  rw [affine_comp_shift]
+  exact affine_comp_shift _ _ _ _
 
 /-- The value at the coded parameter `0` of an axis-line answer. -/
 theorem axisAnswer_zeroCoord (b : F) (a : Answer F m d) :

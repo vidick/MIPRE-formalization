@@ -154,6 +154,7 @@ bit symbols are ever emitted (`Code.outputSymbol_isBit`). -/
 def decodeBitOutput (c : Code i) (l : List c.Symbol) : List Bool :=
   l.map fun s => s.val == 1
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem decodeBitOutput_map_bitEmbedding (c : Code i) (l : List Bool) :
     c.decodeBitOutput (l.map fun b => c.bitEmbedding b) = l := by

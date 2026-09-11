@@ -88,7 +88,7 @@ projective) must be related to upstream's `entangledValue` (mixed state, POVM):
 `lem:povm-value-eq` (purification + Naimark, finite dimension) is the one genuinely new
 lemma, tracked by a sub-issue and allowed to land as a `sorry`.
 
-**D8 — Direction of the blueprint (Option B, pending the maintainer's confirmation).**
+**D8 — Direction of the blueprint (Option B, confirmed by the maintainer on 2026-09-11).**
 Following Lin's compressibility criterion, the pipeline's soundness can be stated in
 value form throughout: the entanglement-requirement clauses of `thm:introspection`,
 `thm:oracularization`, `thm:answer-reduction`, `thm:parallel-repetition`,
@@ -98,8 +98,9 @@ theorems (which are stated for both models at once), and `lem:recursive-compress
 value-form compression + a coRE algorithm for the no-instances + Kleene). The
 search-from-below algorithm is `lem:value-lower-approx`, already in the blueprint's
 background table. The same criterion with NPA in place of the search gives the
-`MIPco = coRE` track. Until confirmed, `thm:bvy` stays in the blueprint as the input
-of `thm:parallel-repetition`, with a remark on dimension preservation.
+`MIPco = coRE` track. Done: `thm:bvy` and its toolkit stay in the blueprint as the
+record of the entanglement-form route (`rem:entanglement-form`), off the path to the main
+theorem.
 
 ## Phases
 
@@ -109,8 +110,8 @@ of `thm:parallel-repetition`, with a remark on dimension preservation.
 | 1 | Toolchain bump to v4.33.0; CI on LIDT + `Cost/` | v4.33 transparency fix pushed (`ee03405`); CI pending |
 | 2 | `scripts/vendor-repetition.py`; both artifacts vendored; `MIPRE.lean` regenerated; READMEs, NOTICE | done 2026-09-11 (CI pending) |
 | 3 | Bridge: `Game.repeat`, bipartite co-value, `thm:direct-repetition-co` (sorry-free), `thm:direct-repetition-q` (modulo `lem:povm-value-eq`), `thm:tracial-density`, axiom guards | done 2026-09-11 (CI pending) |
-| 4 | Blueprint: `05_parallel_repetition.tex` with a formalized direct-repetition section; ch03 table; bibliography; under D8 the value-form restructuring | section, table, bibliography, ½ fix done 2026-09-11; D8 restructuring awaits confirmation |
-| 5 | Lean: `lem:compressible-criterion` from the `Cost/` toolkit (`Compression.lean`), old lemma kept as a corollary or retired | parallel to 3–4 |
+| 4 | Blueprint: `05_parallel_repetition.tex` with a formalized direct-repetition section; ch03 table; bibliography; under D8 the value-form restructuring | done 2026-09-11, including the D8 value-form restructuring |
+| 5 | Lean: `lem:compressible-criterion` from the `Cost/` toolkit (`Compression.lean`), old lemma kept | written 2026-09-11 (CI pending) |
 | 6 | PR with `Closes #27`, `awaiting-review` | after CI green |
 
 ## Risks

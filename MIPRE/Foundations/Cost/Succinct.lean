@@ -73,8 +73,9 @@ theorem bitQueryBound_eval (U : UniversalMachine) (s : ℕ) :
 /-- Conditional correctness of the bit-query program: if `c'` runs on `encode (e, n)` to
 `encode y` at cost `t`, then `bitQueryProg U.univ` answers the bit-query `m` about `y`
 within `bitQueryBound U (esize c' + esize e + esize n + t) · (|m| + 1) ^ 2`. -/
-theorem Prog.bitQueryProg_runs (U : UniversalMachine) (c' e : Prog) (n : ℕ) (y : BitStr)
-    (m : ℕ) {t : ℕ} (hrun : c'.Runs (encode (e, n)) (encode y) t) :
+theorem Prog.bitQueryProg_runs (U : UniversalMachine) {α : Type*} [SizedEncoding α]
+    (c' e : Prog) (n : α) (y : BitStr) (m : ℕ) {t : ℕ}
+    (hrun : c'.Runs (encode (e, n)) (encode y) t) :
     ∃ T ≤ (bitQueryBound U).eval (esize c' + esize e + esize n + t) * (Nat.size m + 1) ^ 2,
       (bitQueryProg U.univ).Runs (encode (((c', e), n), m)) (bitQueryAnswer y m) T := by
   obtain ⟨t', ht', h'⟩ := U.time_le c' (encode (e, n)) (encode y) t hrun
@@ -157,9 +158,10 @@ theorem Prog.bitQueryProg_runs (U : UniversalMachine) (c' e : Prog) (n : ℕ) (y
 
 /-- Hardcoding `((c', e), n')` into the bit-query program gives a succinct description of
 the output `y` of `c'` on `encode (e, n')`, with parameter `n`, as soon as the run of `c'`
-fits the budget: its cost `t` is at most `2 ^ n`, and the bit-query overhead is at most
+fits the budget (`n'` may be any encodable value, e.g. a level or a pair of levels): its cost `t` is at most `2 ^ n`, and the bit-query overhead is at most
 `n + 1`. -/
-theorem isSuccinctDesc_hardcode (U : UniversalMachine) (c' e : Prog) (n' n : ℕ) (y : BitStr)
+theorem isSuccinctDesc_hardcode (U : UniversalMachine) {α : Type*} [SizedEncoding α]
+    (c' e : Prog) (n' : α) (n : ℕ) (y : BitStr)
     {t : ℕ} (hrun : c'.Runs (encode (e, n')) (encode y) t) (hlen : t ≤ 2 ^ n)
     (hbudget : (bitQueryBound U).eval (esize c' + esize e + esize n' + t) +
       (esize c' + esize e + 1 + esize n' + 1) + 4 ≤ n + 1) :

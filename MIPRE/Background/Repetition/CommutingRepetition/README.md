@@ -46,4 +46,5 @@ None yet (beyond the mechanical ones above).
 - Vendored files: 130 Lean files, 54798 lines (the import closure of 2 root modules); 246 import lines rewritten from `CommutingRepetition.` to `MIPRE.Background.Repetition.CommutingRepetition.`
 - Copied verbatim: `NOTICE` = upstream `lean/NOTICE`
 - `set_option autoImplicit true` inserted after the imports: yes
+- Recorded compile fixes applied: 0 (listed under "Local deviations from upstream")
 <!-- END GENERATED -->

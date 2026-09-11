@@ -24,6 +24,9 @@ namespace MIPStarRE.LDT
 
 abbrev Error := ℝ
 
+-- Vendoring compile fix (Lean v4.33): the derived `Fintype` instance needs the
+-- pre-v4.33 transparency behaviour; see README.md.
+set_option backward.isDefEq.respectTransparency false in
 inductive Role where
   | A
   | B
