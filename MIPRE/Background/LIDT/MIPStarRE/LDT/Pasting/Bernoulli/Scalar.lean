@@ -9,6 +9,11 @@ import Mathlib.Probability.Moments.SubGaussian
 import Mathlib.Probability.Distributions.Binomial
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.TruncatedSums
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Scalar Bernoulli polynomial helpers for pasting
 

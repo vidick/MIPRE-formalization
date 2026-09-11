@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/ApproxDelta.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.InnerProduct
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Switch-sandwich preparation: `approx_δ` overlap gaps
 

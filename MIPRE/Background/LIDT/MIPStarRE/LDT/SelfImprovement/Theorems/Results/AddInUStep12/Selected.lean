@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep12/Selec
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep12.Algebra
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Selected add-in-u Step 1/2 Cauchy--Schwarz bounds
 

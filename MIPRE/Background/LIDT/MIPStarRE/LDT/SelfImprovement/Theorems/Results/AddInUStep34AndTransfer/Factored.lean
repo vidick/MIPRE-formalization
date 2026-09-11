@@ -17,6 +17,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddI
 import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep12.Selected
 import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.HelperCompleteness.Bracketed
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Add-in-u Step 3/4 factored Cauchy--Schwarz bounds
 

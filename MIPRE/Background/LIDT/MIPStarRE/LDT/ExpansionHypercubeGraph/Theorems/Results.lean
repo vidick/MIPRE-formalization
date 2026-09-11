@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Results.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 7 hypercube graph: local-to-global variance theorems
 

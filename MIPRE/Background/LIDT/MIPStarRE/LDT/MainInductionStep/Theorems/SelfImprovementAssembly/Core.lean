@@ -13,6 +13,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.Final
 import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Statements
 import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.SelfImprovementTop.Core
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 6 — Ordinary Self-Improvement Data
 

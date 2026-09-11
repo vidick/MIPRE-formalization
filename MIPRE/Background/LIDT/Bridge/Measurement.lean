@@ -7,6 +7,10 @@ import MIPRE.Background.LIDT.Bridge.Polynomial
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore
 
+-- Lean v4.33's transparency check breaks `dif_pos`/`dif_neg` rewrites in this file
+-- (the same failure Mathlib patches with this option on affected declarations).
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Bridge, part 3: measurements
 

@@ -10,6 +10,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Orthonor
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Option Completion in the Orthonormalization Argument
 

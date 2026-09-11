@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/MoveLemmas/Basic.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.FactBundles
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: from-H-to-G move lemmas
 

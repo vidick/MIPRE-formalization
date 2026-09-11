@@ -10,6 +10,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Core.CompletePart
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Sandwich.PastedFamilies
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LowDegreePolynomial
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: comparison common helpers
 

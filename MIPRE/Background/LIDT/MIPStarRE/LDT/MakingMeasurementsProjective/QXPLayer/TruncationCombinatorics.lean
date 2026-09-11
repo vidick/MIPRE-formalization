@@ -12,6 +12,11 @@ import Mathlib.Data.Finset.Max
 import Mathlib.Data.Finset.Powerset
 import Mathlib.Analysis.Real.Sqrt
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 5 — Combinatorial core of the `r > d` truncation branch
 

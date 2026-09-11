@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Pasting/SwitcherooCompletion/FourthTermChain.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooContraction.ScalarTerms
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooCompletion.Expansion
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: fourth-term chain helpers
 

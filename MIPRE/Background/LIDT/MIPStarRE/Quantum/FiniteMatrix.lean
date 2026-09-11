@@ -16,6 +16,11 @@ import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
 
 This aggregate module preserves the historical `MIPStarRE.Quantum.FiniteMatrix`
 import path while the underlying facts are organized into mathematical leaves:
+
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
 basic operator and trace facts, positive-semidefinite order and cone facts,
 real trace-pairing representation, block-diagonal order facts, and normalized
 trace/projector material.

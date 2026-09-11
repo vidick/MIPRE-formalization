@@ -9,6 +9,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementCore
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Tensor-placement helper lemmas and sandwich tensor estimates
 

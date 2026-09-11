@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Basic/OperatorExpectations.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Operator expectation infrastructure for the low individual degree test
 

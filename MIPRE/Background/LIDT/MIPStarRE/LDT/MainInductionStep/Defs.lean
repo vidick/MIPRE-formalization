@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/MainInductionStep/Defs.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 6 — Definitions
 
@@ -468,7 +473,7 @@ point. -/
   simp only [restrictDiagonalMeasurement, ProjMeas.postprocess_toSubMeas,
     SubMeas.postprocess_comp]
   simp [diagonalValueRepresentative, DiagonalLinePolynomial.toFun, evalLinePolynomialModel]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): `simp` now closes this goal
 
 /-- The intermediate `ν` from `thm:main-induction`. -/
 noncomputable def mainInductionNu (params : Parameters) (k : ℕ)

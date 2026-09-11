@@ -95,6 +95,91 @@ def git(source: Path, *args: str) -> str:
     return subprocess.check_output(["git", "-C", str(source), *args], text=True).strip()
 
 
+# Lean v4.33 introduced a transparency check (`backward.isDefEq.respectTransparency`) that
+# rejects a number of `rw`/`simp` steps of the upstream proofs (upstream builds with Lean
+# v4.32). Mathlib disables the check on affected declarations; the vendored tree is built
+# with it disabled file by file, by the block below inserted after each file's imports.
+TRANSPARENCY_BLOCK = """
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+"""
+
+# Recorded compile fixes, applied after copying: `old` must occur exactly once in the
+# vendored file `path` (relative to the destination directory) and is replaced by `new`.
+# With the option above, six `rfl` steps follow a tactic that now closes the goal.
+FIXES: list[tuple[str, str, str]] = [
+    ('LDT/ExpansionHypercubeGraph/MatrixRealization/Core.lean',
+     """            sum_fourierBasisProjector_eq_one]
+          rfl
+""",
+     """            sum_fourierBasisProjector_eq_one]
+          try rfl -- vendoring compile fix (Lean v4.33): `rw` now closes this step
+"""),
+    ('LDT/ExpansionHypercubeGraph/MatrixRealization/Core.lean',
+     """            rw [fourierBasisState_inner_product_dual params v w]
+            rfl
+""",
+     """            rw [fourierBasisState_inner_product_dual params v w]
+            try rfl -- vendoring compile fix (Lean v4.33): `rw` now closes this step
+"""),
+    ('LDT/ExpansionHypercubeGraph/MatrixRealization/Core.lean',
+     """            matrixAdjacencyOperator_spectral_decomp]
+          rfl
+""",
+     """            matrixAdjacencyOperator_spectral_decomp]
+          try rfl -- vendoring compile fix (Lean v4.33): `rw` now closes this step
+"""),
+    ('LDT/ExpansionHypercubeGraph/MatrixRealization/Core.lean',
+     """            rw [Matrix.sub_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec, eigenvectors params α]
+            rfl
+""",
+     """            rw [Matrix.sub_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec, eigenvectors params α]
+            try rfl -- vendoring compile fix (Lean v4.33): `rw` now closes this step
+"""),
+    ('LDT/ExpansionHypercubeGraph/MatrixRealization/Core.lean',
+     """            rw [fourierBasisState_inner_product params α β]
+            rfl
+""",
+     """            rw [fourierBasisState_inner_product params α β]
+            try rfl -- vendoring compile fix (Lean v4.33): `rw` now closes this step
+"""),
+    ('LDT/MainInductionStep/Defs.lean',
+     """  simp [diagonalValueRepresentative, DiagonalLinePolynomial.toFun, evalLinePolynomialModel]
+  rfl
+""",
+     """  simp [diagonalValueRepresentative, DiagonalLinePolynomial.toFun, evalLinePolynomialModel]
+  try rfl -- vendoring compile fix (Lean v4.33): `simp` now closes this goal
+""")
+]
+
+
+def insert_transparency_block(text: str) -> str:
+    """Insert `TRANSPARENCY_BLOCK` right after the leading import block."""
+    lines = text.split("\n")
+    first = next((i for i, l in enumerate(lines) if l.startswith("import ")), None)
+    if first is None:
+        return TRANSPARENCY_BLOCK + text
+    end = first
+    while end < len(lines) and (lines[end].startswith("import ") or lines[end].strip() == ""):
+        end += 1
+    block = lines[first:end]
+    while block and block[-1].strip() == "":
+        block.pop()
+    return "\n".join(lines[:first] + block + TRANSPARENCY_BLOCK.rstrip("\n").split("\n") + [""] + lines[end:])
+
+
+def apply_fixes(dest: Path) -> int:
+    for rel, old, new in FIXES:
+        target = dest / rel
+        text = target.read_text(encoding="utf-8")
+        if text.count(old) != 1:
+            sys.exit(f"error: recorded fix for {rel} matched {text.count(old)} times, expected 1")
+        target.write_text(text.replace(old, new), encoding="utf-8", newline="\n")
+    return len(FIXES)
+
+
 def rewrite_imports(text: str) -> tuple[str, int]:
     count = 0
 
@@ -140,6 +225,7 @@ def vendor(source: Path, commit: str, repo_root: Path, everything: bool) -> None
         text = path.read_text(encoding="utf-8")
         text, n = rewrite_imports(text)
         rewritten += n
+        text = insert_transparency_block(text)
         lines += text.count("\n")
         header = HEADER_TEMPLATE.format(
             url=UPSTREAM_URL, short=short, date=date,
@@ -148,6 +234,8 @@ def vendor(source: Path, commit: str, repo_root: Path, everything: bool) -> None
         target = dest / rel
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(header + text, encoding="utf-8", newline="\n")
+
+    fixed = apply_fixes(dest)
 
     challenge_src = source / CHALLENGE_REL
     if challenge_src.exists():
@@ -161,6 +249,9 @@ def vendor(source: Path, commit: str, repo_root: Path, everything: bool) -> None
         + ("" if everything else f" (the import closure of {len(ROOTS)} root modules)") + "; "
         f"{rewritten} import lines rewritten from `{UPSTREAM_PREFIX}.` to `{LOCAL_PREFIX}.`",
         f"- Audit aid: `{CHALLENGE_REL.name}` = upstream `{CHALLENGE_REL.as_posix()}`",
+        "- `set_option backward.isDefEq.respectTransparency false` inserted after the imports of "
+        "every file, and recorded compile fixes applied: "
+        f"{fixed} (listed under \"Local deviations from upstream\")",
         END_MARK,
     ])
     if readme_text is None:

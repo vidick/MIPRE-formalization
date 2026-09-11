@@ -9,6 +9,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution
 import Mathlib.Analysis.MeanInequalitiesPow
 import Mathlib.Probability.ProbabilityMassFunction.Monad
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # PMF-weighted finite expectation identities
 

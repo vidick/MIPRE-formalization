@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Basic/ParametersBase.lean
 -/
 import Mathlib
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Basic parameters and scalar infrastructure for the low individual degree test
 
@@ -24,9 +29,6 @@ namespace MIPStarRE.LDT
 
 abbrev Error := ℝ
 
--- Vendoring compile fix (Lean v4.33): the derived `Fintype` instance needs the
--- pre-v4.33 transparency behaviour; see README.md.
-set_option backward.isDefEq.respectTransparency false in
 inductive Role where
   | A
   | B

@@ -9,6 +9,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonCore
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ConsistencyBridges
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Preliminary comparison theorems: projective converse
 
