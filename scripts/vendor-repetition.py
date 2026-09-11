@@ -66,36 +66,14 @@ class Fix:
     reason: str
 
 
-TP_FIX_SCHMIDT_OLD = """  have hcoord := congrArg
-    (fun z : EuclideanSpace ℂ (Fin d) => z b) hrepr
-  simpa [T, C, Matrix.toLpLin_apply,
-    EuclideanSpace.basisFun_apply, Matrix.mulVec_single_one,
-    Matrix.col_apply, EuclideanSpace.inner_single_right,
-    conjugateUnitary_apply,
-    orthonormalBasisUnitary_apply, hsing,
-    mul_assoc, mul_left_comm, mul_comm] using hcoord
+TP_FIX_SCHMIDT_OLD = """theorem exists_proofSchmidtDecomposition
 """
 
-TP_FIX_SCHMIDT_NEW = """  -- Vendoring compile fix (Lean v4.33): the `simpa` below no longer reduces the
-  -- coordinate `T (basisFun a) b` to `ξ (a, b)` through the abbreviation
-  -- `Matrix.toEuclideanLin`; that step is done by hand first. See README.md.
-  have hT : T ((EuclideanSpace.basisFun (Fin d) ℂ) a) b = ξ (a, b) := by
-    simp only [T, C, EuclideanSpace.basisFun_apply]
-    show (Matrix.toLpLin 2 2 (fun b a => ξ (a, b) : Matrix (Fin d) (Fin d) ℂ)
-      (EuclideanSpace.single a 1)) b = ξ (a, b)
-    rw [Matrix.toLpLin_apply]
-    simp [Matrix.mulVec, dotProduct, EuclideanSpace.single_apply]
-  have hcoord : T ((EuclideanSpace.basisFun (Fin d) ℂ) a) b =
-      (∑ i : Fin d,
-        inner ℂ (v i) ((EuclideanSpace.basisFun (Fin d) ℂ) a) • T (v i)) b :=
-    congrArg (fun z : EuclideanSpace ℂ (Fin d) => z b) hrepr
-  rw [hT] at hcoord
-  simpa [T, C, Matrix.toLpLin_apply,
-    EuclideanSpace.basisFun_apply, Matrix.mulVec_single_one,
-    Matrix.col_apply, EuclideanSpace.inner_single_right,
-    conjugateUnitary_apply,
-    orthonormalBasisUnitary_apply, hsing,
-    mul_assoc, mul_left_comm, mul_comm] using hcoord
+TP_FIX_SCHMIDT_NEW = """-- Vendoring compile fix (Lean v4.33): this proof needs the pre-v4.33 transparency
+-- behaviour (its closing `simpa` no longer sees through `Matrix.toEuclideanLin`);
+-- see README.md.
+set_option backward.isDefEq.respectTransparency false in
+theorem exists_proofSchmidtDecomposition
 """
 
 
@@ -245,8 +223,7 @@ SOURCES = {
                 path="QuantumParallelRepetition.lean",
                 old=TP_FIX_SCHMIDT_OLD,
                 new=TP_FIX_SCHMIDT_NEW,
-                reason="Lean v4.33: `simpa` no longer reduces through `Matrix.toEuclideanLin` "
-                       "in `exists_proofSchmidtDecomposition`",
+                reason="Lean v4.33 transparency check: `exists_proofSchmidtDecomposition`",
             ),
         ),
     ),

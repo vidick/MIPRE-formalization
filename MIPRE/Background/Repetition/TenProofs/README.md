@@ -31,10 +31,10 @@ Compile fixes for the toolchain crossing (upstream builds with Lean v4.32.0, thi
 repository with v4.33.0), applied by `scripts/vendor-repetition.py` from its recorded
 `fixes` table:
 
-1. `exists_proofSchmidtDecomposition`: under Lean v4.33 the closing `simpa` no longer
-   reduces the coordinate `T (basisFun a) b` to `ξ (a, b)` through the abbreviation
-   `Matrix.toEuclideanLin`; the coordinate identity is now established first by an
-   explicit `Matrix.toLpLin_apply` rewrite. The statement is unchanged.
+1. `exists_proofSchmidtDecomposition`: `set_option backward.isDefEq.respectTransparency
+   false in` before the theorem. Under Lean v4.33's transparency check its closing `simpa`
+   no longer sees through the abbreviation `Matrix.toEuclideanLin` (the same fix Mathlib
+   applies to affected declarations). The statement and proof are unchanged.
 
 ## Provenance
 

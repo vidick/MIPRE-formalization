@@ -37,6 +37,9 @@ repository with v4.33.0), applied by hand and marked in the source by a comment:
    in` before `inductive Role`, whose derived `Fintype` instance does not elaborate under
    Lean v4.33's transparency check (the same fix Mathlib applies to affected
    declarations).
+2. `LDT/Basic/AxisParallelLine.lean` and `LDT/ExpansionHypercubeGraph/Defs/Fourier.lean`:
+   the same option, set for the whole file after the imports, for the `simp`/`rw` steps
+   that fail under the check.
 
 ## Provenance
 

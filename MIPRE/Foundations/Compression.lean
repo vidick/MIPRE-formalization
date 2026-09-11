@@ -346,9 +346,10 @@ theorem searchProg_runs (U : UniversalMachine) {S : Prog} (hS : S.WellScoped 1)
     (env := x :: [encode (c', (e, (m, m))), Data.nil,
       Data.cons (encode (c', (e, (m, m)))) Data.nil])
     (i := 0) hS (v := x) (by simp) hSr
-  refine ⟨_, hardcode_time (searchProg_wellScoped U.closed hS) ?_⟩
-  exact Eval.elim_cons (env := [Data.cons (encode (c', (e, (m, m)))) Data.nil]) (i := 0)
-    (n := .nil) (a := encode (c', (e, (m, m)))) (b := .nil) (by simp) (Eval.let_ s1 s2)
+  have hrun : (searchProg U.univ S).Runs (.cons (encode (c', (e, (m, m)))) .nil) r _ :=
+    Eval.elim_cons (env := [Data.cons (encode (c', (e, (m, m)))) Data.nil]) (i := 0)
+      (n := .nil) (a := encode (c', (e, (m, m)))) (b := .nil) (by simp) (Eval.let_ s1 s2)
+  exact ⟨_, hardcode_time (searchProg_wellScoped U.closed hS) hrun⟩
 
 /-- Backward: a run of the hardcoded search program on the empty input yields a run of `c'`
 on `encode (e, (m, m))` to some `x` on which `S` halts. -/

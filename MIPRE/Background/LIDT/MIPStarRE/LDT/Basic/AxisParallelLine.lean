@@ -7,6 +7,10 @@ Upstream path: MIPStarRE/LDT/Basic/AxisParallelLine.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.ParametersBase
 
+-- Vendoring compile fix (Lean v4.33): several proofs in this file need the pre-v4.33
+-- transparency behaviour; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Axis-parallel lines for the low individual degree test
 

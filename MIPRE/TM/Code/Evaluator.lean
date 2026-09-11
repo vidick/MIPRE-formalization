@@ -5,6 +5,10 @@ Authors: Thomas Vidick
 -/
 import MIPRE.TM.Code.Examples
 
+-- Lean v4.33's transparency check breaks several `rw`/`simp` steps in this file
+-- (the same failure Mathlib patches with this option on affected declarations).
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # The reference evaluator for coded machines
 
