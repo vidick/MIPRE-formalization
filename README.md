@@ -84,6 +84,8 @@ leanblueprint serve  # preview the website locally
 - [`website/`](website) — the Jekyll home page deployed to GitHub Pages.
 - [`.github/workflows/`](.github/workflows) — CI: project build on every PR,
   blueprint/docs/website deployment on `main`, task-dashboard automation.
+- [`planning/`](planning) — plans and decision records of the larger tracks;
+  [`planning/next-steps.md`](planning/next-steps.md) is the current roadmap.
 
 ## Contributing
 

@@ -114,6 +114,9 @@ theorem.
 | 5 | Lean: `lem:compressible-criterion` from the `Cost/` toolkit (`Compression.lean`), old lemma kept | written 2026-09-11 (CI pending) |
 | 6 | PR with `Closes #27`, `awaiting-review` | done 2026-09-11: PR #30, CI green on `c7d27e5` |
 
+Follow-ups after PR #30 (issues #28, #29, the value-form audit, the semidecider of the
+halting theorem, maintenance decisions) are tracked in `planning/next-steps.md`.
+
 ## Risks
 
 1. Toolchain crossing (ten-proofs and LIDT from v4.32 to v4.33): resolved in five CI
