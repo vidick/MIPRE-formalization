@@ -112,7 +112,7 @@ theorem.
 | 3 | Bridge: `Game.repeat`, bipartite co-value, `thm:direct-repetition-co` (sorry-free), `thm:direct-repetition-q` (modulo `lem:povm-value-eq`), `thm:tracial-density`, axiom guards | done 2026-09-11 (CI pending) |
 | 4 | Blueprint: `05_parallel_repetition.tex` with a formalized direct-repetition section; ch03 table; bibliography; under D8 the value-form restructuring | done 2026-09-11, including the D8 value-form restructuring |
 | 5 | Lean: `lem:compressible-criterion` from the `Cost/` toolkit (`Compression.lean`), old lemma kept | written 2026-09-11 (CI pending) |
-| 6 | PR with `Closes #27`, `awaiting-review` | after CI green |
+| 6 | PR with `Closes #27`, `awaiting-review` | done 2026-09-11: PR #30, CI green on `c7d27e5` |
 
 ## Risks
 
