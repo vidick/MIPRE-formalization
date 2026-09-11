@@ -9,6 +9,11 @@ import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.Order
 import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing
 import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 9 -- Canonical SDP strong-duality preliminaries
 
@@ -235,7 +240,7 @@ theorem matrixSdpCanonicalDualOperator_trace_constraint
   simp only [matrixSdpCanonicalDualOperatorBlockFamily_apply]
   rw [← Matrix.trace_sum]
   rw [← Finset.mul_sum]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The canonical equality-constraint image of a positive canonical primal
 matrix is positive semidefinite. -/

@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Preliminaries/BipartiteSelfConsistency/Completion.l
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Core
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Preliminary comparison theorems: bipartite self-consistency (completion)
 
@@ -229,7 +234,7 @@ lemma qBipartiteConsDefect_completeAtOutcome_right_le
             ev ψ (opTensor (1 : MIPStarRE.Quantum.Op ιA) R) := by
               simp [A.total_eq_one]
       _ = ev ψ (opTensor A.toSubMeas.total B.total) + ev ψ (rightTensor (ι₁ := ιA) R) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hinnerB_le :
       ev ψ (opTensor A.toSubMeas.total B.total) - qBipartiteMatchMass ψ A.toSubMeas B ≤
         qBipartiteConsDefect ψ A.toSubMeas B := by

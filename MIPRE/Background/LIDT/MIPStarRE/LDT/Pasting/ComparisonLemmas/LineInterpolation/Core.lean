@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/Core.lea
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.Common
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Line interpolation: core API
 
@@ -67,7 +72,7 @@ lemma axisLinePolynomial_ne_gives_support_eval_ne
   cases f
   cases g
   cases hpoly
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 lemma nonglobal_gives_slice_mismatch_against_interpolant
     (params : Parameters) [FieldModel params.q]
@@ -140,9 +145,9 @@ lemma restrictToVerticalLine_eval_eq_restrictAtHeight_eval
     funext i
     by_cases hi : i.1 < params.m
     · simp [coord, Polynomial.restrictAtHeightCoordinateMap, decodePoint, appendPoint, hi]
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     · simp [coord, Polynomial.restrictAtHeightCoordinateMap, decodePoint, appendPoint, hi]
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hEval := MvPolynomial.eval_eval₂ (x := decodePoint u)
     (f := MvPolynomial.C) (g := coord) (p := h.poly)
   calc
@@ -159,7 +164,7 @@ lemma restrictToVerticalLine_eval_eq_restrictAtHeight_eval
               = encodeScalar
                   (MvPolynomial.eval (decodePoint u)
                     (MvPolynomial.eval₂Hom MvPolynomial.C coord h.poly)) := by
-                      rfl
+                      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
             _ = encodeScalar
                   (MvPolynomial.eval₂
                     ((MvPolynomial.eval (decodePoint u)).comp MvPolynomial.C)
@@ -180,7 +185,7 @@ lemma restrictToVerticalLine_eval_eq_restrictAtHeight_eval
                         (fun g => encodeScalar (params := params.next)
                           (MvPolynomial.eval₂ (RingHom.id _) g h.poly)) hcoord
              _ = h (appendPoint params u x) := by
-                   rfl
+                   try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 lemma interpolateCompletedSlicesFromSupport_restrictAtHeight_poly_eq_get_of_mem
     (params : Parameters) [FieldModel params.q]
@@ -242,7 +247,7 @@ lemma interpolateCompletedSlicesFromSupport_restrictAtHeight_poly_eq_get_of_mem
         funext j
         simp [Function.comp, Polynomial.restrictAtHeightCoordinateMap, embedCoord]
       rw [hmap, MvPolynomial.bind₁_X_left]
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     have hLi :
         MvPolynomial.eval₂Hom MvPolynomial.C
           (Polynomial.restrictAtHeightCoordinateMap params (xs i))
@@ -331,7 +336,7 @@ lemma interpolateCompletedSlicesFromSupport_restrictAtHeight_poly_eq_get_of_mem
         funext m
         simp [Function.comp, Polynomial.restrictAtHeightCoordinateMap, embedCoord]
       rw [hmap, MvPolynomial.bind₁_X_left]
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     have hLi :
         MvPolynomial.eval₂Hom MvPolynomial.C
           (Polynomial.restrictAtHeightCoordinateMap params (xs i))

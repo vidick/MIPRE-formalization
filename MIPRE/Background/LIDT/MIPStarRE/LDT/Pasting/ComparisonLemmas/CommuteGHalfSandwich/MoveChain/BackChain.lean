@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/MoveC
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.MoveChain.Chain
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: half-sandwich move-back chain
 
@@ -190,7 +195,7 @@ lemma commuteGHalfSandwich_commute_to_moveBackChainFamily_zero
                     (commuteGHalfSandwich_moveChainFamily_last params family r q' ogs')
           _ = (commuteGHalfSandwich_secondSliceLiftFamily params family r
                 (commuteGHalfSandwich_moveFamily params family r) q).outcome ogs := by
-                rfl
+                try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       calc
         (commuteGHalfSandwich_moveStepMidFamily params family r
           ((moveTailSwappedFrontQuestionEquiv params r) q)).outcome
@@ -238,7 +243,7 @@ lemma commuteGHalfSandwich_moveBackChainFamily_zero_eq_secondSliceLift_moveFamil
               (commuteGHalfSandwich_moveChainFamily_last params family r q' ogs')
     _ = (commuteGHalfSandwich_secondSliceLiftFamily params family r
           (commuteGHalfSandwich_moveFamily params family r) q).outcome ogs := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 
 

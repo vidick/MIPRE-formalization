@@ -9,6 +9,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.Restricted
 import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.SelfImprovementAssembly.AnswerSlice
 import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.MainError
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 6 -- Answer-Valued Restricted Probability Statement
 
@@ -37,7 +42,7 @@ lemma answerRestricted_axisParallelFailureProbability_eq
     (strategy : SymStrat params.next ι) (x : Fq params) :
     (xRestrictedAnswerSymStrat params strategy x).axisParallelFailureProbability =
       (xRestrictedStrategy params strategy x).axisParallelFailureProbability := by
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The answer-valued slice has the same self-consistency failure probability as
 the legacy restricted slice. -/
@@ -47,7 +52,7 @@ lemma answerRestricted_selfConsistencyFailureProbability_eq
     (strategy : SymStrat params.next ι) (x : Fq params) :
     (xRestrictedAnswerSymStrat params strategy x).selfConsistencyFailureProbability =
       (xRestrictedStrategy params strategy x).selfConsistencyFailureProbability := by
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The answer-valued slice has the same verifier-visible diagonal failure
 probability as the legacy restricted slice after evaluating line answers at the
@@ -300,7 +305,7 @@ lemma answerSuccessor_weighted_axisParallel_bound
             (xRestrictedAnswerSymStrat params carrier x).axisParallelFailureProbability) := by
             refine avgOver_congr _ _ _ ?_
             intro x
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ eps :=
         answer_weighted_axisParallel_bound params carrier eps delta
           carrier.diagonalFailureProbability hcarrier_good
@@ -325,7 +330,7 @@ lemma answerSuccessor_selfConsistencyRestrictedAverage_eq
             (xRestrictedAnswerSymStrat params carrier x).selfConsistencyFailureProbability) := by
             refine avgOver_congr _ _ _ ?_
             intro x
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (uniformDistribution (Fq params))
           (fun x => (xRestrictedStrategy params carrier x).selfConsistencyFailureProbability) := by
             refine avgOver_congr _ _ _ ?_
@@ -334,7 +339,7 @@ lemma answerSuccessor_selfConsistencyRestrictedAverage_eq
     _ = carrier.selfConsistencyFailureProbability :=
         selfConsistencyRestrictedAverage_eq params carrier
     _ = strategy.selfConsistencyFailureProbability := by
-        rfl
+        try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 private lemma answerSuccessorRestrictedDiagonalSampleError_eq
     (params : Parameters)
@@ -361,12 +366,12 @@ private lemma answerSuccessorRestrictedDiagonalSampleError_eq
     · by_cases hk : k.1 ≤ j.1
       · simp [appendPoint, extendRestrictedDirection, embedCoord, hkm, hk]
       · simp [appendPoint, extendRestrictedDirection, embedCoord, hkm, hk]
-        rfl
+        try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     · have hnotle : ¬ k.1 ≤ j.1 := by
           intro hk
           exact hkm (lt_of_le_of_lt hk j.2)
       simp [appendPoint, extendRestrictedDirection, embedCoord, hkm, hnotle]
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hline :
       DiagonalLine.appendAtHeight params
           { base := s.1, direction := extendRestrictedDirection j s.2 } x =
@@ -378,7 +383,7 @@ private lemma answerSuccessorRestrictedDiagonalSampleError_eq
   simp [AnswerSymStrat.diagonalPointAnswerFamily,
     AnswerSymStrat.diagonalLineAnswerFamily, xRestrictedAnswerSymStratOfAnswer]
   simp [diagonalPointAnswerFamilyOf, diagonalLineAnswerFamilyOf, hline]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 private noncomputable def answerSuccessorDiagonalSliceIndexError
     (params : Parameters)
@@ -439,7 +444,7 @@ private lemma answerSuccessorDiagonalSliceIndexErrorAverage_eq_diagonalIndexErro
           g := by
             exact avgOver_uniform_restrictedDiagonalSample_append params j g
     _ = answerSuccessorDiagonalIndexError params strategy (embedCoord params j) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 private lemma answerSuccessorAverageRestrictedDiagonalFailure_eq_embeddedDiagonalIndices
     (params : Parameters)
@@ -556,7 +561,7 @@ lemma answerSuccessor_weighted_diagonal_bound
                       symm
                       rw [Finset.mul_sum]
           _ = strategy.diagonalFailureProbability := by
-                rfl
+                try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ gamma := hgood.diagonalLineTest
 
 /-- Assemble the weighted answer-valued successor restricted-probability bounds
@@ -604,7 +609,7 @@ lemma AnswerSuccessorRestrictedProbabilitiesStatement.ofWeightedBounds
             (fun x =>
               AnswerSymStrat.selfConsistencyFailureProbability
                 (xRestrictedAnswerSymStratOfAnswer params strategy x)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       _ = strategy.selfConsistencyFailureProbability := by
             exact answerSuccessor_selfConsistencyRestrictedAverage_eq params strategy
       _ ≤ delta := hgood.selfConsistencyTest

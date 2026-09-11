@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Basic/LowDegreePolynomial.lean
 import Mathlib
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LinePolynomials
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Low-individual-degree polynomials for the low individual degree test
 
@@ -55,7 +60,7 @@ theorem hasLowIndividualDegree {params : Parameters} [FieldModel params.q]
     HasLowIndividualDegree params g := by
   refine ⟨g.poly, g.lowIndividualDegree, ?_⟩
   funext u
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The constant polynomial with value `a`. -/
 noncomputable def const (params : Parameters) [FieldModel params.q] (a : Fq params) :
@@ -85,7 +90,7 @@ theorem totalDegree_le_mul_degree (params : Parameters) [FieldModel params.q]
     s.sum (fun _ e => e) = ∑ i : Fin params.m, s i := by
       rw [Finsupp.sum_fintype]
       intro i
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ ∑ _i : Fin params.m, params.d := by
       refine Finset.sum_le_sum ?_
       intro i _
@@ -154,9 +159,9 @@ appended coordinate. -/
       decodePoint (appendPoint params u y) ∘ embedCoord params = decodePoint u := by
     funext i
     simp [decodePoint, appendPoint, embedCoord]
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   rw [hcoords]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Coordinate map for restricting a polynomial in `m+1` variables to the slice `X_m = x`. -/
 noncomputable def restrictAtHeightCoordinateMap (params : Parameters) [FieldModel params.q]

@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Test/MainTheorem/MainFormal.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceScalars
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceRoleRegister.Final
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Main-formal soundness theorem
 
@@ -181,7 +186,7 @@ theorem mainFormalConclusion_ofRoleRegisterScalarBoundary
               Real.sqrt (scalars.line169Error + scalars.zeta3 / 2) := by
             nlinarith
         _ = scalars.zeta4Repaired := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     exact hrepaired.trans (MainFormalScalarBounds.zeta4Repaired_le_mainFormalError scalars)
   have hsourceSelf :
       ζ₃src / 2 ≤ mainFormalError params k eps := by

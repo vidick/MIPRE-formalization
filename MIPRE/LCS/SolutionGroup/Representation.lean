@@ -7,6 +7,10 @@ import MIPRE.LCS.EPR
 import MIPRE.LCS.SolutionGroup
 import Mathlib.Algebra.Star.Unitary
 
+-- Lean v4.33's transparency check breaks several `rw`/`simp` steps in this file
+-- (the same failure Mathlib patches with this option on affected declarations).
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Representations of Solution Groups
 

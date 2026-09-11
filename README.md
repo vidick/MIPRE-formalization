@@ -34,6 +34,15 @@ value 1 and non-halting machines to games of value at most 1/2.
    lake build
    ```
 
+### Cloud sessions
+
+Claude Code cloud sessions on this repository get Lean 4, a compiled Mathlib
+and a warm build of `MIPRE`, provisioned once by the cloud environment's setup
+script (`.claude/cloud-setup.sh`) and exposed to the session's checkout by a
+SessionStart hook and the `lean-lsp` MCP server; see
+[docs/lean-cloud.md](docs/lean-cloud.md) for the one-time environment
+configuration.
+
 ## Building the blueprint locally (optional)
 
 The blueprint is compiled by CI on every push to `main`, so you do not need a
@@ -75,6 +84,8 @@ leanblueprint serve  # preview the website locally
 - [`website/`](website) — the Jekyll home page deployed to GitHub Pages.
 - [`.github/workflows/`](.github/workflows) — CI: project build on every PR,
   blueprint/docs/website deployment on `main`, task-dashboard automation.
+- [`planning/`](planning) — plans and decision records of the larger tracks;
+  [`planning/next-steps.md`](planning/next-steps.md) is the current roadmap.
 
 ## Contributing
 

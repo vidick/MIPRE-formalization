@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Pasting/GHatFacts.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.CommutingWithG.Incomplete
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: G-hat facts
 
@@ -323,7 +328,7 @@ theorem gHatFacts_ofSelfConsistencyAndCommutation
                 apply avgOver_congr
                 intro q
                 rw [hqSDDOp_symm_poly]
-                rfl
+                try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
         _ =
             avgOver (uniformDistribution (SlicePairQuestion params))
               (fun q =>
@@ -342,7 +347,7 @@ theorem gHatFacts_ofSelfConsistencyAndCommutation
               (uniformDistribution (SlicePairQuestion params))
               (incompletePartPointProductLeft params family)
               (incompletePartPointProductRight params family) := by
-                rfl
+                try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
         _ ≤ commutingWithGIncompleteError params gamma zeta := hbound
     have hzeta_nonneg : 0 ≤ zeta := by
       rcases hselfIncomplete.incompletePartSelfConsistency with ⟨hbound⟩

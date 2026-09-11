@@ -9,6 +9,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonCore
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ConsistencyBridges
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Preliminary comparison theorems: projective converse
 
@@ -130,7 +135,7 @@ private lemma two_questionConsistency_eq_questionSDD_of_projective
       calc
         ev ψ (A.toSubMeas.liftLeft.total * B.toSubMeas.liftRight.total)
           = ev ψ (leftTensor (ι₂ := ι) A.total * rightTensor (ι₁ := ι) B.total) := by
-              rfl
+              try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
         _ = ev ψ
               (leftTensor (ι₂ := ι) (1 : MIPStarRE.Quantum.Op ι) *
                 rightTensor (ι₁ := ι) (1 : MIPStarRE.Quantum.Op ι)) := by
@@ -314,7 +319,7 @@ private lemma two_questionConsistency_eq_questionSDD_of_projective_heterogeneous
             ((leftPlacedSubMeas (ιB := ιB) A.toSubMeas).total *
               (rightPlacedSubMeas (ιA := ιA) B.toSubMeas).total)
           = ev ψ (leftTensor (ι₂ := ιB) A.total * rightTensor (ι₁ := ιA) B.total) := by
-              rfl
+              try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
         _ = ev ψ
               (leftTensor (ι₂ := ιB) (1 : MIPStarRE.Quantum.Op ιA) *
                 rightTensor (ι₁ := ιA) (1 : MIPStarRE.Quantum.Op ιB)) := by

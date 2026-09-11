@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Pasting/Bernoulli/DegreeZero.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.ScalarBounds
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.HAConsistency
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: degree-zero branch
 
@@ -339,7 +344,7 @@ private theorem degreeZero_averagedSlice_pointConsistency
         IdxMeas.toIdxSubMeas lineMeas =
           liftedVerticalLineAnswerFamily params strategy := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     rw [hline_eq]
     simpa [eps', delta'] using
       degreeZero_averagedSlice_liftedVerticalLineConsistency params strategy
@@ -369,12 +374,12 @@ private theorem degreeZero_averagedSlice_pointConsistency
         IdxMeas.toIdxSubMeas lineMeas =
           liftedVerticalLineAnswerFamily params strategy := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     have hpoint_eq :
         IdxMeas.toIdxSubMeas pointMeas =
           IdxProjMeas.toIdxSubMeas strategy.pointMeasurement := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     rw [hline_eq, hpoint_eq]
     exact Preliminaries.sddRel_symm strategy.state
       (uniformDistribution (Point params.next)) _ _ _ hpublic
@@ -582,7 +587,7 @@ private theorem degreeZero_averagedSlice_pointConsistency_of_axis_self
         IdxMeas.toIdxSubMeas lineMeas =
           liftedVerticalLineAnswerFamily params strategy := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     rw [hline_eq]
     simpa [eps', delta'] using
       degreeZero_averagedSlice_liftedVerticalLineConsistency_of_axis_self params strategy
@@ -612,12 +617,12 @@ private theorem degreeZero_averagedSlice_pointConsistency_of_axis_self
         IdxMeas.toIdxSubMeas lineMeas =
           liftedVerticalLineAnswerFamily params strategy := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     have hpoint_eq :
         IdxMeas.toIdxSubMeas pointMeas =
           IdxProjMeas.toIdxSubMeas strategy.pointMeasurement := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     rw [hline_eq, hpoint_eq]
     exact Preliminaries.sddRel_symm strategy.state
       (uniformDistribution (Point params.next)) _ _ _ hpublic

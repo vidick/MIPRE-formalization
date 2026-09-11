@@ -9,6 +9,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.Help
 import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.SdpMatrixBridge
 import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.MainTheorems
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Helper completeness: bracketed mass identities and reduced reductions
 
@@ -270,7 +275,7 @@ theorem helperBracketedCompletenessQuantity_eq_mass
       subMeasMass strategy.state
         (averagedSandwichedPolynomialSubMeas params strategy T).liftLeft := by
   rw [helper_mass_eq_avg_pointwise_bracketed_sum]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The paper-shaped `Hhat`-versus-`Z` comparison assembled from the bracketed
 expression, the two Cauchy--Schwarz estimates, and complementary slackness.

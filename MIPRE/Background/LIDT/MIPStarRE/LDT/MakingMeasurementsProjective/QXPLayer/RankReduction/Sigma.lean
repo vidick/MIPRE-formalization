@@ -12,6 +12,11 @@ import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteHilbert
 import MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB
 import Mathlib.Analysis.Matrix.Spectrum
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 5 — Q/X/XHat/P rank reduction
 

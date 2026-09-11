@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Matrix.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Foundations
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 7 hypercube graph: matrix-realization theorems
 
@@ -96,7 +101,7 @@ private lemma orthogonalModeProjector_re_sum (params : Parameters)
           intro v hv
           simp [orthogonalModeProjectorMatrix, constantModeProjectorMatrix, Matrix.one_apply,
             sub_mul]
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = ∑ u, ∑ v, Complex.re (((if u = v then (1 : ℂ) else 0) * z u v)) -
           ∑ u, ∑ v, Complex.re (((hypercubeVertexCount params : ℂ)⁻¹ * z u v)) := by
           simp_rw [Finset.sum_sub_distrib]
@@ -769,7 +774,7 @@ lemma matrixLocalVarianceTraceForm_eq_closedForm (params : Parameters)
               refine Finset.sum_congr rfl ?_
               intro v hv
               simp [matrixLaplacianOperator, Matrix.one_apply, sub_mul]
-              rfl
+              try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = ∑ u, ∑ v,
           Complex.re
             (((if u = v then ((hypercubeVertexCount params : ℂ)⁻¹) else 0) *

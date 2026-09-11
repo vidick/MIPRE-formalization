@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/ExpansionHypercubeGraph/MatrixRealization/Core.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Fourier
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 7 — Matrix realization
 
@@ -108,7 +113,7 @@ private lemma sum_fourierBasisProjector_eq_one (params : Parameters) :
   by_cases h : v = u
   · subst v
     change (if u = u then (1 : ℂ) else 0) = (if u = u then 1 else 0)
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   · change (if v = u then (1 : ℂ) else 0) = (if u = v then 1 else 0)
     simp [h, show u ≠ v by intro huv; exact h huv.symm]
 
@@ -208,7 +213,7 @@ private lemma orthogonalModeProjectorMatrix_eq_sum (params : Parameters) :
           rw [orthogonalModeProjectorMatrix,
             constantModeProjectorMatrix_eq_fourierBasisProjector_zero,
             sum_fourierBasisProjector_eq_one]
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = ∑ α ∈ (Finset.univ.erase (0 : Point params)), fourierBasisProjector params α := by
           rw [← hsplit]
           simp [sub_eq_add_neg, add_left_comm]
@@ -242,7 +247,7 @@ private lemma matrixAdjacencyOperator_spectral_decomp (params : Parameters) :
               star (fourierBasisState params α v) * fourierBasisState params α w := by
             congr 1 with w
             rw [fourierBasisState_inner_product_dual params v w]
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = ∑ α : Point params,
           star (fourierBasisState params α v) *
             ((matrixAdjacencyOperator params).mulVec (fourierBasisState params α)) u := by
@@ -311,7 +316,7 @@ private lemma matrixLaplacianOperator_spectral_decomp (params : Parameters) :
             (((adjacencyEigenvalue params α : Error) : ℂ) • fourierBasisProjector params α) := by
           rw [matrixLaplacianOperator, sum_fourierBasisProjector_eq_one,
             matrixAdjacencyOperator_spectral_decomp]
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = ∑ α : Point params,
           (((hypercubeVertexCount params : ℂ)⁻¹ -
               (((adjacencyEigenvalue params α : Error) : ℂ))) •
@@ -365,11 +370,11 @@ private lemma matrixLaplacianOperator_mul_fourierBasisState (params : Parameters
       = ((((hypercubeVertexCount params : ℂ)⁻¹) •
             (1 : MatrixOperator (pointHilbertSpace params))) -
           matrixAdjacencyOperator params).mulVec (fourierBasisState params α) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = ((hypercubeVertexCount params : ℂ)⁻¹) • fourierBasisState params α -
           (((adjacencyEigenvalue params α : Error) : ℂ) • fourierBasisState params α) := by
             rw [Matrix.sub_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec, eigenvectors params α]
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = (((hypercubeVertexCount params : ℂ)⁻¹ -
             (((adjacencyEigenvalue params α : Error) : ℂ))) • fourierBasisState params α) := by
             rw [← sub_smul]
@@ -398,7 +403,7 @@ private lemma fourierBasisChange_conj_laplacian (params : Parameters) :
     _ = ∑ u : Point params,
           star (fourierBasisState params α u) *
             ((matrixLaplacianOperator params * fourierBasisChangeMatrix params) u β) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _
       = ∑ u : Point params,
           star (fourierBasisState params α u) *
@@ -423,7 +428,7 @@ private lemma fourierBasisChange_conj_laplacian (params : Parameters) :
     _ = (((laplacianEigenvalue params β : Error) : ℂ) *
           (if α = β then 1 else 0)) := by
             rw [fourierBasisState_inner_product params α β]
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = Matrix.diagonal (fun γ => ((laplacianEigenvalue params γ : Error) : ℂ)) α β := by
             by_cases hαβ : α = β
             · subst hαβ
@@ -836,7 +841,7 @@ theorem laplacianSpectralGapOrdered (params : Parameters)
               rw [Finset.map_univ_equiv baseEnum]
       _ = (Finset.univ : Finset (Fin M)).val.map raw := by
             rw [Finset.map_val, Multiset.map_map]
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   let pairRaw : Fin M → Error × Fin M := fun i => (raw i, i)
   let sortedPairs : List (Error × Fin M) :=
     (List.ofFn pairRaw).mergeSort (fun a b => a.1 ≤ b.1)
@@ -911,7 +916,7 @@ theorem laplacianSpectralGapOrdered (params : Parameters)
       rw [← hsortedPairs_perm.mem_iff]
       exact hp
     rcases (List.mem_ofFn' pairRaw p).1 hp' with ⟨i, rfl⟩
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hmu_eq : ∀ i : Fin M, mu i = laplacianEigenvalue params (enum i) := by
     intro i
     have hpair := hpair_property (sortedPairs.get (finCongr hsortedPairs_len.symm i)) (by

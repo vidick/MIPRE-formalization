@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical.lean
 import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing
 import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.CanonicalPrimal
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 9 — Canonical matrix SDP dual and slackness layer
 
@@ -667,7 +672,7 @@ theorem matrixSdpCanonicalPrimalBlockMatrix_extracted_mul_dualSlack_of_canonical
               (0 : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model)) b =
             0 := by
         ext i j
-        rfl
+        try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       rw [matrixSdpCanonicalDiagonalBlock_mul_dualSlack] at hblock
       rw [hzero] at hblock
       exact congrFun (congrFun hblock i) j
@@ -717,7 +722,7 @@ theorem matrixSdpComplementarySlacknessDefect_of_canonical
           (0 : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model)) (some g) =
         0 := by
     ext i j
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   rw [matrixSdpCanonicalPrimalBlockMatrix_mul_dualSlack] at hblock
   rw [hzero] at hblock
   simpa [matrixSdpComplementarySlacknessDefect] using hblock
@@ -765,7 +770,7 @@ theorem matrixSdpCanonicalSlack_mul_dual_of_complementarySlackness
           (0 : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model)) none =
         0 := by
     ext i j
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   rw [matrixSdpCanonicalPrimalBlockMatrix_mul_dualSlack] at hblock
   rw [hzero] at hblock
   simpa using hblock

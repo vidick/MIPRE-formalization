@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/Quantum/FiniteMatrix/TracePairing.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.Order
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Real trace pairing for finite matrix operators
 
@@ -176,7 +181,7 @@ theorem hermitianTracePairingMatrixOfRealCLM_apply_of_isHermitian
         (realTracePairingCLM_selfAdjointPart_apply_of_isHermitian
           (tracePairingMatrixOfRealCLM ψ) hX).symm
     _ = Complex.re (Matrix.trace (hermitianTracePairingMatrixOfRealCLM ψ * X)) := by
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The real trace pairing of two positive semidefinite operators is
 nonnegative.

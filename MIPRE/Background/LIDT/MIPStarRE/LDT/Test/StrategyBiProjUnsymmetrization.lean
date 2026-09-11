@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Test/StrategyBiProjUnsymmetrization.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProjRoleAverage.Final
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Heterogeneous role-register measurement extraction
 
@@ -391,7 +396,7 @@ private lemma opTensor_submatrix_prod {ιL ιR κL κR : Type*}
       (fun z : κL × κR => (fL z.1, fR z.2)) =
       opTensor (A.submatrix fL fL) (B.submatrix fR fR) := by
   ext x y
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 private lemma trace_rolePairDirectSumCond_mul {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
@@ -418,7 +423,7 @@ private lemma trace_rolePairDirectSumCond_mul {ιA ιB : Type*}
   rw [Matrix.trace_reindex]
   rw [rolePairProj_eq_single_pair]
   rw [trace_single_tensor_mul_eq_trace_submatrix]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 private lemma trace_localPairABBlock_mul_arbitrary {ιA ιB : Type*}
     [Fintype ιA] [Fintype ιB]

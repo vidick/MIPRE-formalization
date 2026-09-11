@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/Quantum/FiniteConicDuality.lean
 import Mathlib.Analysis.Convex.Cone.Dual
 import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.PiProd
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Finite conic-duality separation lemmas
 
@@ -107,7 +112,7 @@ theorem conicNormalizedSeparatorFunctional_apply
     conicNormalizedSeparatorFunctional φ y =
       ((-conicSeparatorObjectiveCoefficient φ)⁻¹) *
         conicSeparatorConstraintFunctional φ y := by
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- A separator that is nonnegative on a conic image gives a normalized
 functional dual bound on any point whose constraint-objective image lies in

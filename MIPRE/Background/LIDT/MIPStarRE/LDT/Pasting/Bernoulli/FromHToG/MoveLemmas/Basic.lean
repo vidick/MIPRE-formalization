@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/MoveLemmas/Basic.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.FactBundles
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: from-H-to-G move lemmas
 
@@ -220,7 +225,7 @@ lemma fromHToG_pointTupleTail_snoc
         Fin.snoc (α := fun _ : Fin (n + 1) => Fq params) (pointTupleTail xs) x
           j.castSucc = xs j.succ := by
       rw [Fin.snoc_castSucc]
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     exact hL.trans hR.symm
 
 /-- Tail of a snoc completed-outcome tuple. -/
@@ -248,7 +253,7 @@ lemma fromHToG_gHatTupleOutcomeTail_snoc
         Fin.snoc (α := fun _ : Fin (n + 1) => GHatOutcome params)
           (gHatTupleOutcomeTail gs) g j.castSucc = gs j.succ := by
       rw [Fin.snoc_castSucc]
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     exact hL.trans hR.symm
 
 /-- Ordered half-products satisfy a snoc recursion. -/

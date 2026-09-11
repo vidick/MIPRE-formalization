@@ -9,6 +9,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Ave
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Y
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Normalization
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Core full-slice closeness-of-inner-product comparison
 
@@ -110,7 +115,7 @@ lemma fullSliceABAB_scalar_to_BABAtensor
               fullSliceABABTerm params strategy family xy gh) := by
             simpa [𝒟] using hBABA_to_ABAB
       _ = fullSliceABABAvg params strategy family := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hTensor :
       avgOver 𝒟
           (fun xy => ∑ g : Polynomial params, ∑ h : Polynomial params,

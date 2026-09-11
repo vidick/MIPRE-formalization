@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Pasting/Sandwich/GHatSandwich.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Sandwich.Switcheroo
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 — Sandwich constructions: `GHat` sandwich families
 
@@ -142,7 +147,7 @@ noncomputable def gHatSandwichFamily (params : Parameters) [FieldModel.{v} param
                 have htail :
                     gHatTupleOutcomeTail ((Fin.consEquiv α) p) = p.2 := by
                   funext i
-                  rfl
+                  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
                 simp [gHatHalfProductOutcomeOperator, htail,
                   Matrix.conjTranspose_mul,
                   Matrix.mul_assoc, (gHatIdxMeas params family (xs 0)).outcome_hermitian])

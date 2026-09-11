@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Pasting/Sandwich/Switcheroo.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Families
 import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Defs
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 — Sandwich constructions: switcheroo families
 
@@ -251,7 +256,7 @@ def gHatTupleOutcomeConsEquiv' (params : Parameters) [FieldModel params.q] (k : 
     | succ j => rfl
   right_inv p := by
     cases p
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The total operator of the ordered half-product is always the identity. -/
 lemma gHatHalfProductTotalOperator_eq_one (params : Parameters) [FieldModel params.q]

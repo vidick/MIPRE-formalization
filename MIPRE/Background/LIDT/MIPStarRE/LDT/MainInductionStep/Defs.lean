@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/MainInductionStep/Defs.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 6 — Definitions
 
@@ -217,7 +222,7 @@ private theorem restrictAxisParallelMeasurement_transportInvariant
       = (strategy.axisParallelMeasurement
           (AxisParallelLine.appendAtHeight params (AxisParallelLine.rebaseAt ℓ t) x)).outcome
           (liftAxisAnswer params x a) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = (strategy.axisParallelMeasurement
           (AxisParallelLine.rebaseAt (AxisParallelLine.appendAtHeight params ℓ x) t)).outcome
           (liftAxisAnswer params x a) := by
@@ -237,7 +242,7 @@ private theorem restrictAxisParallelMeasurement_transportInvariant
             simp [liftAxisAnswer]
     _ = (restrictAxisParallelMeasurement params strategy x ℓ).outcome
           (((AxisLinePolynomial.reparamAtEquiv (params := params) t).symm) a) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = (AxisParallelLine.transportMeasurement (params := params)
           (restrictAxisParallelMeasurement params strategy x ℓ) t).outcome a := by
             simp [AxisParallelLine.transportMeasurement, ProjMeas.transport,
@@ -402,7 +407,7 @@ recovers the ambient slice-preserving diagonal readout. -/
   simp [restrictDiagonalAnswerMeasurement, ProjMeas.postprocess_toSubMeas,
     SubMeas.postprocess_comp, DiagonalLinePolynomial.toAnswer,
     DiagonalLineAnswer.restrictAtHeight]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The `x`-restricted strategy from the proof of the main induction theorem. -/
 noncomputable def xRestrictedStrategy (params : Parameters) [FieldModel params.q]
@@ -468,7 +473,7 @@ point. -/
   simp only [restrictDiagonalMeasurement, ProjMeas.postprocess_toSubMeas,
     SubMeas.postprocess_comp]
   simp [diagonalValueRepresentative, DiagonalLinePolynomial.toFun, evalLinePolynomialModel]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The intermediate `ν` from `thm:main-induction`. -/
 noncomputable def mainInductionNu (params : Parameters) (k : ℕ)

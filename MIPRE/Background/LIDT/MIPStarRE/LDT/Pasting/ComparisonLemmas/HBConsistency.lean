@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/HBConsistency.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.Core
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.HBError
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: H-B consistency
 
@@ -92,7 +97,7 @@ private lemma hBConsistency_core_of_axis_self
           qBipartiteConsDefect strategy.state
             (hRestrictionToVerticalLine params (constructedPastedSubMeas params family k) u)
             (verticalLineMeasurementFamily params strategy u)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ avgOver (uniformDistribution (Point params)) (fun u =>
           avgOver (distinctTupleDistribution params k) (fun xs =>
             qBipartiteConsDefect strategy.state

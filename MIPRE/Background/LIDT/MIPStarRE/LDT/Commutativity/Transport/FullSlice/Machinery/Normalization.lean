@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Normali
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Averages
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Full-slice normalization and self-consistency machinery
 
@@ -182,7 +187,7 @@ lemma fullSlice_selfConsistency_fst_bound
             qSDD strategy.state
               ((IdxSubMeas.liftLeft (IdxProjSubMeas.toIdxSubMeas family.meas)) xy.1)
               ((IdxSubMeas.liftRight (IdxProjSubMeas.toIdxSubMeas family.meas)) xy.1)) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (uniformDistribution (Fq params))
           (fun x =>
             qSDD strategy.state
@@ -225,7 +230,7 @@ lemma fullSlice_selfConsistency_snd_bound
             qSDD strategy.state
               ((IdxSubMeas.liftLeft (IdxProjSubMeas.toIdxSubMeas family.meas)) xy.2)
               ((IdxSubMeas.liftRight (IdxProjSubMeas.toIdxSubMeas family.meas)) xy.2)) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (uniformDistribution (Fq params))
           (fun y =>
             qSDD strategy.state
@@ -273,7 +278,7 @@ lemma evaluatedSlice_selfConsistency_snd_bound
             qSDD strategy.state
               (evaluatedPointFamilyLeft params family q.2)
               (evaluatedPointFamilyRight params family q.2)) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (uniformDistribution (Point params.next))
           (fun u =>
             qSDD strategy.state

@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Pasting/SwitcherooCompletion/Expansion.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooContraction.ScalarTerms
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: switcheroo expansion
 
@@ -319,16 +324,16 @@ lemma switcherooAggregate_qSDDOp_expand_avg
             (M q.2).outcome o))
   have hA :
       avgOver 𝒟q A = switcherooAggregateFirstTerm params ψbi family M := by
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hB :
       avgOver 𝒟q B = switcherooAggregateSecondTerm params ψbi family M := by
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hC :
       avgOver 𝒟q C = switcherooAggregateThirdTerm params ψbi family M := by
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hD :
       avgOver 𝒟q D = switcherooAggregateFourthTerm params ψbi family M := by
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   change avgOver 𝒟q
       (fun q => qSDDOp ψbi
         (switcherooAggregateLeft params family M q)

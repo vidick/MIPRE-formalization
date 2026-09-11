@@ -9,6 +9,11 @@ import Mathlib.Algebra.MvPolynomial.SchwartzZippel
 import Mathlib.Algebra.MvPolynomial.CommRing
 import Mathlib.RingTheory.MvPolynomial.Basic
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Polynomial preliminaries
 
@@ -73,7 +78,7 @@ theorem totalDegree_le_mul_of_degreeOf_le {m d : ℕ} {K : Type*} [CommSemiring 
     s.sum (fun _ e => e) = ∑ i : Fin m, s i := by
       rw [Finsupp.sum_fintype]
       intro i
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ ∑ _i : Fin m, d := by
       refine Finset.sum_le_sum ?_
       intro i _

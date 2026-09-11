@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/OverAllOutcomes/Final.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.OverAllOutcomes.NonglobalDecomposition
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: over all outcomes — Schwartz–Zippel bounds and final assembly
 
@@ -281,7 +286,7 @@ private lemma overAllOutcomes_distinct_lineConsistent_indicator_mass_le_mdq
                     (distinctTupleDistribution_weight_sum_le_one params k) hδ_nonneg
             _ = δ := by ring
     _ = ((params.m * params.d : ℕ) : Error) / (params.q : Error) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The local finite-sum/SZ comparison after the one-point line-mismatch
 aggregation has been separated off.

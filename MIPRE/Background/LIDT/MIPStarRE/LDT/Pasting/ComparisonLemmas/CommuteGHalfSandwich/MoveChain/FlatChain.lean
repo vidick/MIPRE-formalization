@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/MoveC
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.MoveChain.Chain
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: half-sandwich flat chain
 
@@ -105,9 +110,18 @@ lemma commuteGHalfSandwich_postMoveFlatError_sum
         commuteGHalfSandwich_postMoveFlatError params gamma zeta (r + 1) i = _
       rw [Fin.sum_univ_succ]
       rw [Fin.sum_univ_succ]
+      -- Vendoring compile fix (Lean v4.33): the index conditions of the second summand
+      -- are no longer decided by `simp` alone; they follow from `hone_lt`.
+      have hlen : 1 < commuteGHalfSandwich_postMoveFlatLength (1 + r) := by
+        rw [Nat.add_comm]; exact hone_lt
+      have h1 : commuteGHalfSandwich_postMoveFlatLength (1 + r) ≠ 1 := hlen.ne'
+      have h1' : commuteGHalfSandwich_postMoveFlatLength (r + 1) ≠ 1 := hone_lt.ne'
+      have h2 : 1 % commuteGHalfSandwich_postMoveFlatLength (1 + r) = 1 := Nat.mod_eq_of_lt hlen
+      have h2' : 1 % commuteGHalfSandwich_postMoveFlatLength (r + 1) = 1 :=
+        Nat.mod_eq_of_lt hone_lt
       simp [commuteGHalfSandwich_postMoveFlatError,
         commuteGHalfSandwich_postMoveFlatError_sum params gamma zeta r,
-        gHatSelfConsistencyError]
+        gHatSelfConsistencyError, h1, h1', h2, h2']
       ring
 
 /-- Length of the combined move and post-move flat chain. -/

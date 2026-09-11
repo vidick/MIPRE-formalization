@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/MoveC
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.MoveChain.FlatChain
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.MoveChain.BackChain
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: half-sandwich flat-chain steps
 
@@ -344,7 +349,10 @@ lemma commuteGHalfSandwich_flatChainStep
               leftTensor_one, leftTensor_mul_leftTensor, mul_assoc])
           (fun _ _ => rfl)
           hstep
+      -- Vendoring compile fix (Lean v4.33): `simp` must also unfold the chain length to
+      -- decide the index conditions.
       simpa [commuteGHalfSandwich_flatChainFamily, commuteGHalfSandwich_flatChainError,
+        commuteGHalfSandwich_flatChainLength,
         commuteGHalfSandwich_postMoveFlatLength, commuteGHalfSandwich_postMoveFlatFamily,
         commuteGHalfSandwich_moveChainFamily, izero] using
         htransport
@@ -362,7 +370,7 @@ lemma commuteGHalfSandwich_flatChainStep
           intro q ogs
           have hsrc_le : i.1 ≤ r + 1 := by omega
           conv_lhs => simp [commuteGHalfSandwich_flatChainFamily, hsrc_le]
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
         have htgt_eq :
             ∀ q ogs,
               ((commuteGHalfSandwich_flatChainFamily params family (r + 1))
@@ -373,7 +381,7 @@ lemma commuteGHalfSandwich_flatChainStep
           intro q ogs
           have htgt_le : i.1 ≤ r := by omega
           conv_lhs => simp [commuteGHalfSandwich_flatChainFamily, htgt_le]
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
         simpa [commuteGHalfSandwich_flatChainError, hi] using
           (CommutativityPoints.sddOpRel_congr_outcome ψbi
             (uniformDistribution (SliceQuestion params × SliceQuestion params ×

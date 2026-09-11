@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Test/StrategyCore.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 3 — Strategy core
 
@@ -35,7 +40,7 @@ lemma swapDensity_eq_reindex {ι : Type*}
   ext x y
   rcases x with ⟨i₁, i₂⟩
   rcases y with ⟨j₁, j₂⟩
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] lemma swapDensity_swapDensity {ι : Type*}
     (X : MIPStarRE.Quantum.Op (ι × ι)) :
@@ -43,7 +48,7 @@ lemma swapDensity_eq_reindex {ι : Type*}
   ext x y
   rcases x with ⟨i₁, i₂⟩
   rcases y with ⟨j₁, j₂⟩
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] lemma swapDensity_add {ι : Type*}
     (X Y : MIPStarRE.Quantum.Op (ι × ι)) :
@@ -51,7 +56,7 @@ lemma swapDensity_eq_reindex {ι : Type*}
   ext x y
   rcases x with ⟨i₁, i₂⟩
   rcases y with ⟨j₁, j₂⟩
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] lemma swapDensity_smul {ι : Type*} (c : ℂ)
     (X : MIPStarRE.Quantum.Op (ι × ι)) :
@@ -59,7 +64,7 @@ lemma swapDensity_eq_reindex {ι : Type*}
   ext x y
   rcases x with ⟨i₁, i₂⟩
   rcases y with ⟨j₁, j₂⟩
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- `swapDensity` preserves matrix multiplication. -/
 lemma swapDensity_mul {ι : Type*} [Fintype ι]

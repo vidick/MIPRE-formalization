@@ -104,6 +104,7 @@ noncomputable def ObservableStrategy.jointOn
           (assignment j hjs) (assignment j' hj's)))
 
 omit [StarModule ℂ R] in
+set_option backward.isDefEq.respectTransparency false in
 /-- Summing the partial joint projectors over all assignments on $s = V_i$ gives $1$. -/
 lemma ObservableStrategy.jointOn_sum_one
   (S : ObservableStrategy R G) :
@@ -255,6 +256,7 @@ private lemma alice_partial_idempotent
           intro j hj
           simp [f, idempotent_observableToProjector, S.alice_isObservable]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The partial Alice measurement over $s$ is self-adjoint. -/
 private lemma alice_partial_selfAdjoint
   (S : ObservableStrategy R G) (i : Fin G.r)

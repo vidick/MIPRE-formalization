@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Final.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Helper
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 9 — final-stage numerical threshold absorptions
 
@@ -129,7 +134,7 @@ theorem selfImprovementHelperError_eq_finalStagePowerSum
     (params : Parameters) [FieldModel params.q] (eps delta : Error) :
     selfImprovementHelperError params eps delta =
       100 * (params.m : Error) * finalStagePowerSum params eps delta (1 / (2 : Error)) := by
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The final self-improvement threshold as the final-stage power sum with
 exponent `1/32`.
@@ -140,7 +145,7 @@ theorem selfImprovementError_eq_finalStagePowerSum
     (params : Parameters) [FieldModel params.q] (eps delta : Error) :
     selfImprovementError params eps delta =
       3000 * (params.m : Error) * finalStagePowerSum params eps delta (1 / (32 : Error)) := by
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 private theorem sqrt_selfImprovementHelperError_le_ten_m_powerSum_quarter
     (params : Parameters) [FieldModel params.q]

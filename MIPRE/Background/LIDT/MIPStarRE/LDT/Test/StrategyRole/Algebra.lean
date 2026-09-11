@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Test/StrategyRole/Algebra.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyRole.Core
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Role-register algebraic identities for the low individual degree test
 
@@ -114,7 +119,7 @@ theorem qBipartiteConsDefect_of_measurements {Outcome : Type*} {ιA ιB : Type*}
     calc
       qBipartiteMatchMass ψ A.toSubMeas B.toSubMeas
         = ∑ a : Outcome, ev ψ (opTensor (A.outcome a) (B.outcome a)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       _ ≤ ∑ a : Outcome, ev ψ (leftTensor (ι₂ := ιB) (A.outcome a)) := by
             refine Finset.sum_le_sum ?_
             intro a _

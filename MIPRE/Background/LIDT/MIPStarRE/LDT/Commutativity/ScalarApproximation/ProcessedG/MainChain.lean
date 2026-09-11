@@ -12,6 +12,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.EvaluatedSliceCommutati
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.Scalar.RawSecond
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.PhaseTwo
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Main scalar chain assembly
 
@@ -438,7 +443,7 @@ lemma evaluatedSlice_scalar_chain_bound
         avgOver 𝒟 phase3PaperInserted =
           avgOver 𝒟 (fun q => ∑ a : Fq params, ∑ b : Fq params,
             ev strategy.state (C q a b * B q a)) := by
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     have hclose :=
       MIPStarRE.LDT.Preliminaries.closenessOfIP
         strategy.state _hnorm 𝒟 h𝒟 A B C (4 * zeta) hAB hC
@@ -801,7 +806,7 @@ lemma evaluatedSlice_scalar_chain_bound
       _ = commDataProcessedGError params gamma zeta := by
         unfold commDataProcessedGError
         rw [Real.sqrt_eq_rpow gamma, Real.sqrt_eq_rpow zeta]
-        rfl
+        try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   simpa [𝒟, avgABA, avgABAB] using hassemble
 
 end MIPStarRE.LDT.Commutativity

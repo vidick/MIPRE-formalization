@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Tactic/LdtSimp.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Tactic.LdtSimpAttr
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Audited `ldt_simp` whitelist
 

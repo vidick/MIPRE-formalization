@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/ExpansionHypercubeGraph/Defs/Fourier.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Core
 import Mathlib.Analysis.Fourier.ZMod
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 7 hypercube graph: Fourier basis
 

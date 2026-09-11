@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Test/StrategyBiProj/Measurements.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProj.DirectSum
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Two-Space Projective Strategies: Role-Register Measurements
 
@@ -532,7 +537,7 @@ theorem lowIndividualDegreeFailureProbability_eq_role_averages
     strategy.lowIndividualDegreeFailureProbability =
       (strategy.axisParallelRoleAverage + strategy.pointAgreementFailureProbability +
         strategy.diagonalRoleAverage) / 3 := by
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 
 /-- Passing the full low-individual-degree test with error `ε`, for the

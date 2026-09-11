@@ -9,6 +9,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.Cor
 import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Approximation
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.Extensions
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 11 commutativity: pointwise scalar approximation
 
@@ -74,7 +79,7 @@ lemma gCommStability_sliceSSC
                     ((G x).liftLeft)
                     ((G x).liftRight))]
             · rw [avgOver_const_mul]
-              rfl
+              try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
             · intro x
               simpa [hG x] using
                 qBipartiteSSCDefect_eq_half_qSDD_of_proj
@@ -377,7 +382,7 @@ private lemma gCommStability_pointwise_summand_bound
             (evaluatedPointFamily params family q.2).outcome
               (ah.2 (truncatePoint params q.2)) *
             A.outcome ah.1 := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       _ ≤ A.outcome ah.1 * 1 * A.outcome ah.1 := by
             exact
               IsSelfAdjoint.conjugate_le_conjugate

@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Basic/SubMeasurementCore.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Core submeasurement structures for the low individual degree test
 
@@ -129,7 +134,7 @@ the same total operator. -/
           cases Subsingleton.elim posB posA
           cases Subsingleton.elim sumB sumA
           cases Subsingleton.elim leB leA
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Two measurements are equal when they have the same outcome operators. -/
 @[ext] theorem Measurement.ext {α : Type*} {ι : Type*}
@@ -150,7 +155,7 @@ the same total operator. -/
                 _ = BtoSubMeas.total := BtotalEqOne.symm
           cases hsub
           cases Subsingleton.elim BtotalEqOne AtotalEqOne
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Two projective measurements are equal when they have the same outcome
 operators. -/
@@ -169,7 +174,7 @@ operators. -/
             simpa using houtcome a
           cases hmeas
           cases Subsingleton.elim Bproj Aproj
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- A one-outcome submeasurement associated to a single positive operator
 bounded by the identity. -/

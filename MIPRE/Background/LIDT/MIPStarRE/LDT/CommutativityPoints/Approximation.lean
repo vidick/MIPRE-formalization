@@ -10,6 +10,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Defs
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonCore
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 10 — commutativity points approximation layer
 
@@ -112,7 +117,7 @@ private noncomputable def lastRestrictedDirectionEquiv
     have hidx :
         (⟨i.val, Nat.lt_succ_of_le hle⟩ : Fin ((lastRestrictionIndex params).val + 1)) = i := by
       ext
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     rw [← hidx]
     simp [extendRestrictedDirection, hle]
   right_inv := fun direction => by
@@ -125,7 +130,7 @@ private noncomputable def lastRestrictedDirectionEquiv
             have h := lastRestrictionIndex_val_succ params
             omega⟩ : Fin params.m) = k := by
       ext
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     rw [← hidx]
     simp [extendRestrictedDirection, hk]
 
@@ -153,7 +158,7 @@ private noncomputable def lastRestrictedSampleEquivDiagonalLine
     have hidx :
         (⟨i.val, Nat.lt_succ_of_le hle⟩ : Fin ((lastRestrictionIndex params).val + 1)) = i := by
       ext
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     rw [← hidx]
     simp [lastRestrictedDirectionEquiv, extendRestrictedDirection, hle]
   right_inv := fun ⟨base, direction⟩ => by
@@ -174,7 +179,7 @@ private noncomputable def lastRestrictedSampleEquivDiagonalLine
             have h := lastRestrictionIndex_val_succ params
             omega⟩ : Fin params.m) = k := by
       ext
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     rw [← hidx]
     simp [extendRestrictedDirection, hk]
 
@@ -384,7 +389,7 @@ lemma sampledDiagonalLineApproximation_pointWithDiagonalLine
         (IdxSubMeas.liftLeft (sampledPointMeasurement params strategy))
         (IdxSubMeas.liftRight (sampledDiagonalLineEvaluation params strategy))
       = avgOver (pointWithDiagonalLineDistribution params) f := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver
           (uniformDistribution (RestrictedDiagonalSample params j × Fq params))
           (fun st => f (e st)) := hreindex
@@ -479,7 +484,7 @@ lemma sampledDiagonalLineApproximation_pointWithDiagonalLine
           (uniformDistribution (RestrictedDiagonalSample params j))
           (IdxSubMeas.liftLeft (diagonalPointAnswerFamily strategy j))
           (IdxSubMeas.liftRight (rawDiagonalLineAnswerFamily params strategy j)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ pointDiagonalLineApproxError params gamma := hbase
 
 /-- Evaluate each answer-valued restricted diagonal measurement at the
@@ -669,7 +674,7 @@ lemma answer_sampledDiagonalLineApproximation_pointWithDiagonalLine
           (fun q => postprocess ((strategy.diagonalMeasurement q.1).toSubMeas)
             (fun f => f q.2)))
       = avgOver (pointWithDiagonalLineDistribution params) f := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver
           (uniformDistribution (RestrictedDiagonalSample params j × Fq params))
           (fun st => f (e st)) := hreindex
@@ -806,7 +811,7 @@ lemma answer_sampledDiagonalLineApproximation_pointWithDiagonalLine
           (uniformDistribution (RestrictedDiagonalSample params j))
           (IdxSubMeas.liftLeft (AnswerSymStrat.diagonalPointAnswerFamily strategy j))
           (IdxSubMeas.liftRight (rawAnswerDiagonalLineAnswerFamily params strategy j)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ pointDiagonalLineApproxError params gamma := hbase
 
 end MIPStarRE.LDT.CommutativityPoints

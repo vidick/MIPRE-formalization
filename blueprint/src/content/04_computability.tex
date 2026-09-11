@@ -216,7 +216,7 @@ counterpart, for the concrete model of Section~\ref{sec:machine-model}, is state
 Lemmas~\ref{lem:universal-machine} and~\ref{lem:bounded-universal-machine}; the
 pipeline consumes only the present ambient version.
 
-\subsection{The abstract recursive compression lemma}
+\subsection{The abstract compression lemmas}
 \label{sec:rr-compression}
 
 \effortEasy{} (given the toolkit of Section~\ref{sec:rr-computability})
@@ -276,8 +276,82 @@ isolated in a statement with no quantum content. In the application
 (Section~\ref{sec:ps-halting}), $A$ is the set of normal form verifier descriptions
 with $\synval = 1$ and finite entanglement requirement, and $f(\verifier) =
 \Ent(\verifier, \frac12)$ (suitably formalized); the compression procedure is
-Theorem~\ref{thm:compression}. Note that~\cite{MNY} also proves a converse (their
+Theorem~\ref{thm:compression}. The value-form pipeline of
+Section~\ref{ch:proof-structure} uses Lemma~\ref{lem:compressible-criterion} below
+instead; this lemma is retained as the entanglement-form route
+(Remark~\ref{rem:entanglement-form}), where the factor $\frac12$ in the entanglement
+bound of compression requires the variant with hypothesis $f(y) \geq \frac12
+\max\{f(x), G(n)\}$ for a function $G$ growing faster than the levels. Note that~\cite{MNY} also proves a converse (their
 Lemma 4.1): a halting reduction of this kind exists \emph{only if} a compression
 procedure does, which is evidence that this decomposition of the proof is canonical.
 The lemma and its proof are a self-contained computability project, an ideal early
 milestone.
+
+\begin{lemma}[Compressibility criterion]
+\label{lem:compressible-criterion}
+\uses{def:succinct,def:re,lem:universal-tm,lem:smn,lem:kleene}
+\lean{MIPRE.Cost.compressibility_criterion}
+\leanok
+Let $A, B \subseteq \{0,1\}^*$ be languages with distinguished elements
+$y_{\mathrm{yes}} \in A$ and $y_{\mathrm{no}} \in B$, and suppose that the complement of
+$B$ is recursively enumerable: there is a program $S$ that halts on input $x$ if and only
+if $x \notin B$. Suppose there is a polynomial-time computable function $\compr : \{0,1\}^*
+\times \N \to \{0,1\}^*$ such that whenever $\hat{x}$ is a succinct description
+(Definition~\ref{def:succinct}) of a string $x$ and $y = \compr(\hat{x}, n)$:
+\begin{enumerate}
+\item if $x \in A$ then $y \in A$, and
+\item if $x \in B$ then $y \in B$.
+\end{enumerate}
+Then there is a polynomial-time computable function $g$ reducing the halting problem to
+$(A, B)$: for every Turing machine $e$, if $\phi_e$ halts on the empty input then $g(e)
+\in A$, and otherwise $g(e) \in B$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The construction of Lemma~\ref{lem:recursive-compression}, with a third branch. Let
+$\beta$ be the bit-query program of that proof, and let $\sigma$ be the program that, on
+$((c', (e, (m, m))), \cdot)$, runs the universal machine on $c'$ with input $(e, (m, m))$
+to obtain a string $x$ and then runs $S$ on $x$. Let $a$ be the polynomial-time decider
+that on $(c', (e, (m, n)))$ outputs $y_{\mathrm{yes}}$ if $e$ halts on the empty input
+within $\log n$ steps; otherwise $y_{\mathrm{no}}$ if $s(\sigma, (c', (e, (m, m))))$
+halts within $\log n$ steps; and otherwise $\compr\bigl((s(\beta, ((c', e), (m,
+2n+1))), n), n\bigr)$, where $s$ is the s-m-n map of Lemma~\ref{lem:smn}. By
+Lemma~\ref{lem:kleene} there is a program $c$ with $\phi_c(e, (m, n)) = \phi_a(c, (e, (m,
+n))) =: h(e, m, n)$, running in time polynomial in $\abs{e} + \log m + \log n$. As
+before, for $n$ above a threshold $r(e) = 2^{K + 1 + \abs{e}}$ and $m = r(e)$, the pair
+$(s(\beta, ((c, e), (m, 2n+1))), n)$ is a succinct description of $h(e, m, 2n+1)$; the
+start level $m$ is carried as data so that the threshold can be chosen from the running
+time of $a$ afterwards. The reduction is $g(e) = h(e, r(e), r(e)) =: x_e$; the second
+branch tests, at every level, whether $S$ halts on $x_e$.
+
+If $e$ does not halt, suppose $x_e \notin B$. Then $S$ halts on $x_e$ in some time $T$,
+so at every level $n$ with $\log n \geq T$ the decider outputs $y_{\mathrm{no}} \in B$,
+and by downward induction along the levels $r(e), 2r(e)+1, 4r(e)+3, \ldots$ from such a
+level, property 2 of $\compr$ gives $h(e, r(e), n) \in B$ at every level, in particular
+$x_e \in B$, a contradiction. If $e$ halts in $T$ steps, then $h(e, r(e), n) =
+y_{\mathrm{yes}} \in A$ once $\log n \geq T$, and by downward induction property 1 gives
+$h(e, r(e), n) \in A$ at every level, provided the second branch never fires at a level
+where the first has not. If it fired at such a level $n_1$, then $S$ halts on $x_e$, so
+$x_e \notin B$; but the output $y_{\mathrm{no}} \in B$ at level $n_1$ and property 2, by
+downward induction along the levels between $r(e)$ and $n_1$ (at which the first branch
+does not fire either), give $x_e \in B$, a contradiction. Hence $g(e) = x_e \in A$.
+\end{proof}
+
+\paragraph{Source.} Lin~\cite{Lin25}, the compression criterion for $\RE$-complete
+problems (direction ``weakly compressible implies $\RE$-complete''), whose
+self-referential sequence has exactly these three branches; the formulation through
+succinct descriptions is that of~\cite{MNY} and of Lemma~\ref{lem:recursive-compression}.
+Lin's theorem is an equivalence: given that the no-instances form a $\coRE$ set, a
+decision problem is $\RE$-complete if and only if it is compressible.
+
+\paragraph{Comments.} This is the lemma the main theorem uses
+(Section~\ref{sec:ps-halting}): $A$ is the set of normal form verifier descriptions with a
+value-$1$ PCC strategy, $B$ the set of those with $\synval \leq \frac12$, and $S$ the
+enumeration of Lemma~\ref{lem:value-lower-approx}. Compared with
+Lemma~\ref{lem:recursive-compression}, the growth hypothesis on a measure is replaced by
+the semidecidability of the complement of $B$ --- both directions of the specification of
+$S$ are used --- and nothing about entanglement is required of the compression procedure.
+The Lean proof reuses the toolkit of Section~\ref{sec:rr-computability}: the search
+branch runs the semidecision procedure through the clocked universal machine, and the
+start level of the recursion is carried as data next to the current level.

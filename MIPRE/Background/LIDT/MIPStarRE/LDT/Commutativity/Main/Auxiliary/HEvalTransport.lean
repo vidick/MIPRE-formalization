@@ -12,6 +12,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Zer
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.EvaluationSpecialization
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.EvaluatedSliceCommutation.Averages
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 11 commutativity: hEval/closenessOfIP transport
 
@@ -355,7 +360,7 @@ lemma fullSlice_closenessOfIP_CAB_hEval_sqrt
           exact abs_of_nonneg hd_nonneg
     _ ≤ Real.sqrt δ := hd_le_sqrt
     _ = Real.sqrt (commDataProcessedGError params gamma zeta) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Combined `closenessOfIP` chain on the evaluated side
 (`commutativity-G.tex` lines 301, 334, 359-360, 394, 396), stated with the

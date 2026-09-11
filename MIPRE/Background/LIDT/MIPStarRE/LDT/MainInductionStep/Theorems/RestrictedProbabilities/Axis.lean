@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Base
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 6 -- Axis-Parallel Restricted Probability Bounds
 
@@ -55,7 +60,7 @@ private lemma restrictedAxisSampleError_eq
               (AxisParallelLine.appendAtHeight params ℓ x)).toSubMeas) := by
       refine SubMeas.ext ?_ ?_
       · intro f
-        rfl
+        try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       · simpa [SubMeas.transport,
           (strategy.axisParallelMeasurement
             (AxisParallelLine.appendAtHeight params ℓ x)).total_eq_one] using
@@ -68,9 +73,9 @@ private lemma restrictedAxisSampleError_eq
           (fun f : AxisLinePolynomial params.next => f zeroCoord) := by
       funext a
       cases a
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     rw [hreadout]
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   change
     qBipartiteConsDefect strategy.state
       ((strategy.pointMeasurement (appendPoint params u x)).toSubMeas)
@@ -141,7 +146,7 @@ private lemma sliceAxisDirectionErrorAverage_eq_axisDirectionError
     _ = avgOver (uniformDistribution (Point params.next)) g := by
           simpa using (CommutativityPoints.avgOver_uniform_pointNext_decompose params g).symm
     _ = axisDirectionError params strategy (embedCoord params i) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 private lemma averageRestrictedAxisFailure_eq_embeddedAxisDirections
     (params : Parameters)
@@ -186,7 +191,7 @@ private lemma averageRestrictedAxisFailure_eq_embeddedAxisDirections
                                         (xRestrictedStrategy params strategy x) (u, i)))
                 _ = avgOver (uniformDistribution (Fin params.m))
                       (fun i => sliceAxisDirectionError params strategy x i) := by
-                                rfl
+                                try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (uniformDistribution (Fin params.m))
           (fun i => avgOver (uniformDistribution (Fq params))
             (fun x => sliceAxisDirectionError params strategy x i)) := by
@@ -249,7 +254,7 @@ lemma weighted_axisParallel_bound
                   exact (avgOver_uniform_prod_swap
                     (α := Point params.next) (β := Fin params.next.m) (f := err)).symm
           _ = strategy.axisParallelFailureProbability := by
-                rfl
+                try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ eps := hgood.axisParallelTest
 
 end MIPStarRE.LDT.MainInductionStep

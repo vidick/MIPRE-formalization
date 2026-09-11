@@ -14,6 +14,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.AnswerTheorems
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.DegreeZero
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Tactic.AvgCongr
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 6 — Pasting Assembly: Averaged Family Fields
 
@@ -516,7 +521,7 @@ lemma family_pointConsistencyError_eq_avg
         (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)
         (IdxPolyFamily.evaluatedAtNextPoint hself.family)
       = avgOver (uniformDistribution (Point params.next)) g := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (uniformDistribution (Fq params))
           (fun x => avgOver (uniformDistribution (Point params))
             (fun u => g (appendPoint params u x))) := by
@@ -530,7 +535,7 @@ lemma family_pointConsistencyError_eq_avg
           avg_congr with x, u
           simp [g, IdxPolyFamily.evaluatedAtNextPoint, polynomialEvaluationFamily,
             IdxProjMeas.toIdxSubMeas]
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Point-consistency averaging for answer-valued restricted slices of an
 ordinary ambient successor strategy. -/
@@ -557,7 +562,7 @@ lemma family_answerRestrictedPointConsistencyError_eq_avg
         (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)
         (IdxPolyFamily.evaluatedAtNextPoint family)
       = avgOver (uniformDistribution (Point params.next)) g := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (uniformDistribution (Fq params))
           (fun x => avgOver (uniformDistribution (Point params))
             (fun u => g (appendPoint params u x))) := by
@@ -572,7 +577,7 @@ lemma family_answerRestrictedPointConsistencyError_eq_avg
           avg_congr with x, u
           simp [g, IdxPolyFamily.evaluatedAtNextPoint, polynomialEvaluationFamily,
             IdxProjMeas.toIdxSubMeas, xRestrictedAnswerSymStrat]
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Answer-valued point-consistency averaging over the last coordinate.
 
@@ -604,7 +609,7 @@ lemma answer_family_pointConsistencyError_eq_avg
         (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)
         (IdxPolyFamily.evaluatedAtNextPoint family)
       = avgOver (uniformDistribution (Point params.next)) g := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (uniformDistribution (Fq params))
           (fun x => avgOver (uniformDistribution (Point params))
             (fun u => g (appendPoint params u x))) := by
@@ -619,7 +624,7 @@ lemma answer_family_pointConsistencyError_eq_avg
           avg_congr with x, u
           simp [g, IdxPolyFamily.evaluatedAtNextPoint, polynomialEvaluationFamily,
             IdxProjMeas.toIdxSubMeas, xRestrictedAnswerSymStratOfAnswer]
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Average slice-wise point consistency for an answer-valued successor strategy.
 
@@ -702,7 +707,7 @@ lemma idxPolyFamily_stronglySelfConsistent_of_slice_bounds
           (fun x =>
             qSDD ψ ((family.meas x).toSubMeas.liftLeft)
               ((family.meas x).toSubMeas.liftRight)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ avgOver (uniformDistribution (Fq params)) sliceError := by
           exact avgOver_mono (uniformDistribution (Fq params)) _ _ hpointwise
     _ ≤ zeta := havg

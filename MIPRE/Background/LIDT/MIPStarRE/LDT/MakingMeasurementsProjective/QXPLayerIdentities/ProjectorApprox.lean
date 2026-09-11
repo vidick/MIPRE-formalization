@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/Pro
 import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.LayerAlgebra
 import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.RectangularSvd
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 5 — P-Q approximation for QXP layers
 
@@ -374,7 +379,7 @@ lemma pQApprox {Outcome : Type*}
                     (data.qLayer.q.outcome a - (PFamily data).outcome a))
                     = ev ψ (((Qa data.qLayer a - Pa data a)ᴴ) *
                         (Qa data.qLayer a - Pa data a)) := by
-                        rfl
+                        try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
                 _ = ev ψ ((Qa data.qLayer a + Pa data a) -
                         Qa data.qLayer a * Pa data a -
                         Pa data a * Qa data.qLayer a) := by

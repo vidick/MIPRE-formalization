@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Commutativity/GCommStability/OverlapTwo.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.OverlapOne
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CompletionTransfer
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 11 commutativity: `G`-stability overlap (step two)
 
@@ -138,7 +143,7 @@ private lemma gCommStabilityTwo_pointwise_summand_bound
               Sᴴ * S
                 = (((A.outcome a * B.outcome gb.2)ᴴ) *
                     (A.outcome a * B.outcome gb.2)) := by
-                    rfl
+                    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
               _ = ((B.outcome gb.2)ᴴ * (A.outcome a)ᴴ) *
                     (A.outcome a * B.outcome gb.2) := by
                     simp [Matrix.conjTranspose_mul]

@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Basic/LinePolynomials.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DiagonalLine
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # One-variable line polynomials for the low individual degree test
 
@@ -158,7 +163,7 @@ theorem hasUnivariateDegreeAtMost {params : Parameters} [FieldModel params.q]
     HasUnivariateDegreeAtMost params params.d f := by
   refine ⟨f.poly, f.degreeBounded, ?_⟩
   funext t
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Extend an axis-line answer to the slice at height `x`. -/
 def appendAtHeight (params : Parameters) [FieldModel params.q]
@@ -177,7 +182,7 @@ def appendAtHeight (params : Parameters) [FieldModel params.q]
     appendAtHeight params (reparamAt f t) x =
       reparamAt (appendAtHeight params f x) t := by
   apply AxisLinePolynomial.ext
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The inverse reparametrization equivalence commutes with slice extension on
 axis-line answers. -/
@@ -188,7 +193,7 @@ axis-line answers. -/
         (appendAtHeight params f x)) =
       appendAtHeight params (((reparamAtEquiv (params := params) t).symm) f) x := by
   apply AxisLinePolynomial.ext
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Restrict an axis-line answer in `m + 1` variables to the slice at height `x`. -/
 def restrictAtHeight (params : Parameters) [FieldModel params.q]
@@ -299,7 +304,7 @@ theorem hasUnivariateDegreeAtMost {params : Parameters} [FieldModel params.q]
     HasUnivariateDegreeAtMost params (params.m * params.d) f := by
   refine ⟨f.poly, f.degreeBounded, ?_⟩
   funext t
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Extend a diagonal-line answer to the slice at height `x`. -/
 def appendAtHeight (params : Parameters) [FieldModel params.q]
@@ -313,7 +318,7 @@ def appendAtHeight (params : Parameters) [FieldModel params.q]
     appendAtHeight params (reparamAt f t) x =
       reparamAt (appendAtHeight params f x) t := by
   apply DiagonalLinePolynomial.ext
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The inverse reparametrization equivalence commutes with slice extension on
 diagonal-line answers. -/
@@ -324,7 +329,7 @@ diagonal-line answers. -/
         (appendAtHeight params f x)) =
       appendAtHeight params (((reparamAtEquiv (params := params) t).symm) f) x := by
   apply DiagonalLinePolynomial.ext
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Restrict a diagonal-line answer in `m + 1` variables to the slice at height `x`.
 This interface now makes the stronger slice-wise degree requirement explicit. -/
@@ -406,7 +411,7 @@ def restrictAtHeight (params : Parameters) (f : DiagonalLineAnswer params.next)
     appendAtHeight params (reparamAt f t) x =
       reparamAt (appendAtHeight params f x) t := by
   funext s
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp] theorem reparamAtEquiv_symm_appendAtHeight
     {params : Parameters} [FieldModel params.q]
@@ -415,7 +420,7 @@ def restrictAtHeight (params : Parameters) (f : DiagonalLineAnswer params.next)
         (appendAtHeight params f x)) =
       appendAtHeight params (((reparamAtEquiv (params := params) t).symm) f) x := by
   funext s
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 end DiagonalLineAnswer
 
@@ -443,7 +448,7 @@ noncomputable def toAnswer {params : Parameters} [FieldModel params.q]
     (appendAtHeight params f x).toAnswer =
       DiagonalLineAnswer.appendAtHeight params f.toAnswer x := by
   funext t
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 end DiagonalLinePolynomial
 

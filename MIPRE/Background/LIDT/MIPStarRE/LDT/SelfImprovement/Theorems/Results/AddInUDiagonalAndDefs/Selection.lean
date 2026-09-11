@@ -13,6 +13,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.F
 import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Statements
 import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.CommonHelpers
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Diagonal add-in-u selection and point-sandwich endpoints
 
@@ -682,7 +687,7 @@ private lemma addInURightOperatorAtPoint_selfConsistencySelection_proj_eq
         pointConditionedOutcomeOperatorAtPolynomial params strategy h u *
           T.outcome h *
           pointConditionedOutcomeOperatorAtPolynomial params strategy h u := by
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   rw [hsandwich]
   congr 1
   exact proj_outer_sandwich_eq _ _ hproj

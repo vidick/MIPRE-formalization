@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.Sigma
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 5 — Q/X/XHat/P low-rank truncation
 
@@ -329,7 +334,7 @@ lemma projectiveLowRankSum_truncate {Outcome : Type uOutcome}
       change (Multiset.card (Multiset.sigma Finset.univ.val fun a => (fiber a).val)) =
         ∑ a, (fiber a).card
       rw [Multiset.card_sigma]
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     have hrankQ : ∑ a, (Q.outcome a).rank ≤ Fintype.card ι := by
       have hsum_rank : ∑ a, (Q.outcome a).rank = ∑ a, (fiber a).card := by
         refine Finset.sum_congr rfl ?_

@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/Quantum/FiniteMatrix/Basic.lean
 -/
 import Mathlib
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Basic finite-dimensional matrix operators
 
@@ -38,7 +43,7 @@ theorem trace_reindex {α β R : Type*} [Fintype α] [Fintype β]
   classical
   simp only [Matrix.trace, Matrix.diag_apply, Matrix.reindex_apply]
   rw [← e.symm.sum_comp (fun i : α => M i i)]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-! ### Linear matrix maps -/
 
@@ -54,11 +59,11 @@ def submatrixLinearMap (R : Type*) {m n m' n' α : Type*}
   map_add' := by
     intro A B
     ext i j
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   map_smul' := by
     intro c A
     ext i j
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 @[simp]
 theorem submatrixLinearMap_apply (R : Type*) {m n m' n' α : Type*}

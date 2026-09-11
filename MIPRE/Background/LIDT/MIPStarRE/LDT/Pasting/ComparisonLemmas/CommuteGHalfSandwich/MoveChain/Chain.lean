@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/MoveC
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.MoveChain.Lifting
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: half-sandwich move chain
 
@@ -107,11 +112,11 @@ lemma commuteGHalfSandwich_moveChain_step
         have hsrc : i.1 < r + 1 := Nat.lt_trans hi (Nat.lt_succ_self r)
         have hj_cast : j.castSucc = i := by
           ext
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
         have hj_succ :
             j.succ = (⟨i.1 + 1, Nat.succ_lt_succ hi⟩ : Fin (r + 1)) := by
           ext
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
         simpa [commuteGHalfSandwich_moveChainFamily, hi,
           hsrc, Nat.succ_lt_succ hi, hj_cast, hj_succ] using
           commuteGHalfSandwich_moveChainLift params ψbi family r
@@ -126,7 +131,7 @@ lemma commuteGHalfSandwich_moveChain_step
             r hsc
         have hlastIndex : (⟨r, Nat.lt_succ_self r⟩ : Fin (r + 1)) = Fin.last r := by
           ext
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
         simpa [commuteGHalfSandwich_moveChainFamily, hlastIndex] using
           (CommutativityPoints.sddOpRel_congr_outcome ψbi
             (uniformDistribution (SliceQuestion params × SliceQuestion params ×

@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/MainInductionStep/Theorems/SelfImprovementAssembly/
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.SelfImprovementAssembly.Core
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 6 — Answer-Valued Self-Improvement Slice Transport
 
@@ -112,7 +117,7 @@ private theorem restrictAnswerDiagonalAnswerMeasurement_transportInvariant
   have hcomm : ∀ g, f (eNext g) = eSlice (f g) := by
     intro g
     funext s
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hpost : postprocess (SubMeas.transport eNext A) f =
       SubMeas.transport eSlice (postprocess A f) :=
     SubMeas.postprocess_transport_equiv eNext eSlice A f f hcomm
@@ -137,7 +142,7 @@ recovers the ambient answer-valued diagonal readout. -/
         (fun f : DiagonalLineAnswer params.next => f zeroCoord) := by
   simp [restrictAnswerDiagonalAnswerMeasurement, ProjMeas.postprocess_toSubMeas,
     SubMeas.postprocess_comp, DiagonalLineAnswer.restrictAtHeight]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The `x`-restricted strategy of an answer-valued successor strategy.
 

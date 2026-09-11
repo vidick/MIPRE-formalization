@@ -41,8 +41,8 @@ The central ingredient in the proof is a \emph{gap-preserving compression}
 procedure for ``normal form'' verifiers (Section~\ref{sec:ps-compression}): a polynomial-time
 transformation that maps a verifier $\verifier$ to a verifier $\vcompr$ which, at index
 $n$, simulates the exponentially larger game $\verifier_{2^n}$, preserving the value-$1$
-property and forcing exponential entanglement lower bounds. Given compression, an
-abstract fixed-point argument (the \emph{recursive compression lemma},
+property and the property of having value at most $\frac12$. Given compression, an
+abstract fixed-point argument (Lin's \emph{compressibility criterion},
 Section~\ref{sec:rr-compression}, applied via Kleene's recursion theorem) produces the
 halting reduction.
 
@@ -52,10 +52,10 @@ Section~\ref{ch:proof-structure}:
 certified by a Pauli-basis self-test built on the quantum low individual degree test),
 \emph{answer reduction} by PCP composition (the players prove, via a probabilistically
 checkable proof, that their answers would have been accepted), and \emph{gap
-amplification} by anchored parallel repetition. Each of these steps has one central
+amplification} by parallel repetition (anchored in~\cite{JNVWY20}, direct here). Each of these steps has one central
 ingredient that can be formalized in an independent manner: the low individual degree
-test, the PCP theorem (in a specific form), and a parallel repetition theorem (for a certain
-class of quantum games).
+test, the PCP theorem (in a specific form), and a parallel repetition theorem
+(Section~\ref{ch:parallel-repetition}; the direct, value-form theorems are formalized).
 
 \subsection{Entry points}
 \label{sec:entry-points}
@@ -121,18 +121,22 @@ the discussion in~\cite{MNY}). The blueprint keeps time bounds where they are lo
 (normal form verifiers, compression) and drops them everywhere else. In particular the
 main theorem (Section~\ref{ch:main-theorem}) is stated with a computable reduction.
 
-\paragraph{Abstract recursive compression.}
+\paragraph{Abstract compression, in value form.}
 The fixed-point argument that turns compression into a halting reduction is stated once,
-abstractly, following Marks--Nezhadi--Yuen~\cite{MNY}
-(Section~\ref{sec:rr-compression}), and instantiated with $f = $ entanglement
-requirement. This isolates all uses of Kleene's recursion theorem in one
-quantum-free lemma.
+abstractly, as Lin's compressibility criterion~\cite{Lin25}
+(Section~\ref{sec:rr-compression}): a compression procedure preserving ``perfect PCC
+strategy'' and ``value at most $\frac12$'', together with the semidecidability of ``value
+above $\frac12$'', yields the reduction. This isolates all uses of Kleene's recursion
+theorem in one quantum-free lemma, and it removes the entanglement bookkeeping
+of~\cite{JNVWY20} from the pipeline: no transformation needs an entanglement clause, and
+gap amplification uses direct rather than anchored parallel repetition, for which complete
+formalizations exist (Section~\ref{sec:pr-direct}). The recursive compression lemma of
+Marks--Nezhadi--Yuen~\cite{MNY}, instantiated with $f = $ entanglement requirement, is
+retained as the entanglement-form alternative (Remark~\ref{rem:entanglement-form}).
 
 \paragraph{Other candidate simplifications (to be decided).}
-Stating soundness of all transformations directly in terms of the entanglement measure
-$\Ent$ rather than via separate value and dimension statements; using de la Salle's
-quantitative improvements to stability (Gowers--Hatami) where they shorten proofs; other
-simplifications that are present in the follow-up proof of
+Using de la Salle's quantitative improvements to stability (Gowers--Hatami) where they
+shorten proofs; other simplifications that are present in the follow-up proof of
 $\MIPco=\coRE$~\cite{Lin23,Lin25}.
 
 \subsection{Conventions}
@@ -142,7 +146,7 @@ Every definition and theorem carries a \verb|\label|, and \verb|\uses| annotatio
 record the dependency graph rendered on the project web page. Lean declaration names
 (\verb|\lean| tags) are deliberately absent at this stage; they will be added as the
 corresponding declarations are created. Statements in
-Sections~\ref{ch:required-results}--\ref{ch:anchored-repetition} are external results: the project may initially
+Sections~\ref{ch:required-results}--\ref{ch:parallel-repetition} are external results: the project may initially
 axiomatize them (each section records the literature source and comments on
 formalization), while statements in Section~\ref{ch:proof-structure} are proof
 obligations of the project. Numerical constants in headline statements (levels, error

@@ -10,6 +10,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Orthonor
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Option Completion in the Orthonormalization Argument
 
@@ -74,7 +79,7 @@ lemma optionCompletion_bipartiteSSCRel {Outcome : Type*}
       calc
         leftTensor (ι₂ := ι) R - opTensor R R
             = opTensor R (1 : MIPStarRE.Quantum.Op ι) - opTensor R R := by
-                rfl
+                try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
         _ = opTensor R ((1 : MIPStarRE.Quantum.Op ι) - R) := by
                 simpa [opTensor] using
                   (MIPStarRE.Quantum.kronecker_sub_right (A := R)
@@ -86,7 +91,7 @@ lemma optionCompletion_bipartiteSSCRel {Outcome : Type*}
                   (opTensor_sub_left (A := (1 : MIPStarRE.Quantum.Op ι))
                     (B := A.total) (C := A.total)).symm
         _ = rightTensor (ι₁ := ι) A.total - opTensor A.total A.total := by
-                rfl
+                try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     simpa [ev_sub] using congrArg (ev ψ) hop
   have hresidual_gap :
       ev ψ (leftTensor (ι₂ := ι) R) - ev ψ (opTensor R R) ≤ ζ := by

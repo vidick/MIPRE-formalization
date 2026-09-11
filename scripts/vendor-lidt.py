@@ -95,6 +95,120 @@ def git(source: Path, *args: str) -> str:
     return subprocess.check_output(["git", "-C", str(source), *args], text=True).strip()
 
 
+# Lean v4.33 introduced a transparency check (`backward.isDefEq.respectTransparency`) that
+# rejects a number of `rw`/`simp` steps of the upstream proofs (upstream builds with Lean
+# v4.32). Mathlib disables the check on affected declarations; the vendored tree is built
+# with it disabled file by file, by the block below inserted after each file's imports.
+TRANSPARENCY_BLOCK = """
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+"""
+
+# With the option, a tactic step may close the goal one line earlier than under Lean
+# v4.32, and a trailing `rfl` then fails with "no goals". Every bare `rfl` tactic line of
+# the vendored tree is therefore made tolerant (`soften_rfl`); a `try rfl` that is still
+# needed runs as before, and one that is not is skipped. Term-mode `rfl` proofs are
+# left alone.
+RFL_MARK = "try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal"
+
+# Recorded compile fixes, applied after copying: `old` must occur exactly once in the
+# vendored file `path` (relative to the destination directory) and is replaced by `new`.
+FIXES: list[tuple[str, str, str]] = [
+    ('LDT/ExpansionHypercubeGraph/Theorems/Foundations.lean',
+     """                · simp only [Matrix.one_apply, huv, ↓reduceIte, zero_mul, Complex.zero_re]
+                  exact (if_neg huv).symm
+""",
+     """                · simp only [Matrix.one_apply, huv, ↓reduceIte, zero_mul, Complex.zero_re]
+                  try exact (if_neg huv).symm -- vendoring compile fix (Lean v4.33)
+"""),
+    ('LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/MoveChain/FlatChain.lean',
+     """      rw [Fin.sum_univ_succ]
+      rw [Fin.sum_univ_succ]
+      simp [commuteGHalfSandwich_postMoveFlatError,
+        commuteGHalfSandwich_postMoveFlatError_sum params gamma zeta r,
+        gHatSelfConsistencyError]
+      ring
+""",
+     """      rw [Fin.sum_univ_succ]
+      rw [Fin.sum_univ_succ]
+      -- Vendoring compile fix (Lean v4.33): the index conditions of the second summand
+      -- are no longer decided by `simp` alone; they follow from `hone_lt`.
+      have hlen : 1 < commuteGHalfSandwich_postMoveFlatLength (1 + r) := by
+        rw [Nat.add_comm]; exact hone_lt
+      have h1 : commuteGHalfSandwich_postMoveFlatLength (1 + r) ≠ 1 := hlen.ne'
+      have h1' : commuteGHalfSandwich_postMoveFlatLength (r + 1) ≠ 1 := hone_lt.ne'
+      have h2 : 1 % commuteGHalfSandwich_postMoveFlatLength (1 + r) = 1 := Nat.mod_eq_of_lt hlen
+      have h2' : 1 % commuteGHalfSandwich_postMoveFlatLength (r + 1) = 1 :=
+        Nat.mod_eq_of_lt hone_lt
+      simp [commuteGHalfSandwich_postMoveFlatError,
+        commuteGHalfSandwich_postMoveFlatError_sum params gamma zeta r,
+        gHatSelfConsistencyError, h1, h1', h2, h2']
+      ring
+"""),
+    ('LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/MoveChain/FlatChainStep.lean',
+     """      simpa [commuteGHalfSandwich_flatChainFamily, commuteGHalfSandwich_flatChainError,
+        commuteGHalfSandwich_postMoveFlatLength, commuteGHalfSandwich_postMoveFlatFamily,
+        commuteGHalfSandwich_moveChainFamily, izero] using
+        htransport
+""",
+     """      -- Vendoring compile fix (Lean v4.33): `simp` must also unfold the chain length to
+      -- decide the index conditions.
+      simpa [commuteGHalfSandwich_flatChainFamily, commuteGHalfSandwich_flatChainError,
+        commuteGHalfSandwich_flatChainLength,
+        commuteGHalfSandwich_postMoveFlatLength, commuteGHalfSandwich_postMoveFlatFamily,
+        commuteGHalfSandwich_moveChainFamily, izero] using
+        htransport
+""")
+]
+
+
+def soften_rfl(text: str) -> str:
+    """Replace every line consisting of the *tactic* `rfl` by `RFL_MARK`. A bare `rfl` line
+    that is the whole term-mode proof (the previous non-blank, non-comment line ends with
+    `:=`) is left alone: there `try` would be `do`-notation, not a tactic."""
+    lines = text.split("\n")
+    out = []
+    for i, line in enumerate(lines):
+        if line.strip() == "rfl":
+            j = i - 1
+            while j >= 0 and (lines[j].strip() == "" or lines[j].strip().startswith("--")):
+                j -= 1
+            if j >= 0 and lines[j].rstrip().endswith(":="):
+                out.append(line)
+                continue
+            out.append(line[:len(line) - len(line.lstrip())] + RFL_MARK)
+        else:
+            out.append(line)
+    return "\n".join(out)
+
+
+def insert_transparency_block(text: str) -> str:
+    """Insert `TRANSPARENCY_BLOCK` right after the leading import block."""
+    lines = text.split("\n")
+    first = next((i for i, l in enumerate(lines) if l.startswith("import ")), None)
+    if first is None:
+        return TRANSPARENCY_BLOCK + text
+    end = first
+    while end < len(lines) and (lines[end].startswith("import ") or lines[end].strip() == ""):
+        end += 1
+    block = lines[first:end]
+    while block and block[-1].strip() == "":
+        block.pop()
+    return "\n".join(lines[:first] + block + TRANSPARENCY_BLOCK.rstrip("\n").split("\n") + [""] + lines[end:])
+
+
+def apply_fixes(dest: Path) -> int:
+    for rel, old, new in FIXES:
+        target = dest / rel
+        text = target.read_text(encoding="utf-8")
+        if text.count(old) != 1:
+            sys.exit(f"error: recorded fix for {rel} matched {text.count(old)} times, expected 1")
+        target.write_text(text.replace(old, new), encoding="utf-8", newline="\n")
+    return len(FIXES)
+
+
 def rewrite_imports(text: str) -> tuple[str, int]:
     count = 0
 
@@ -140,6 +254,8 @@ def vendor(source: Path, commit: str, repo_root: Path, everything: bool) -> None
         text = path.read_text(encoding="utf-8")
         text, n = rewrite_imports(text)
         rewritten += n
+        text = insert_transparency_block(text)
+        text = soften_rfl(text)
         lines += text.count("\n")
         header = HEADER_TEMPLATE.format(
             url=UPSTREAM_URL, short=short, date=date,
@@ -148,6 +264,8 @@ def vendor(source: Path, commit: str, repo_root: Path, everything: bool) -> None
         target = dest / rel
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(header + text, encoding="utf-8", newline="\n")
+
+    fixed = apply_fixes(dest)
 
     challenge_src = source / CHALLENGE_REL
     if challenge_src.exists():
@@ -161,6 +279,9 @@ def vendor(source: Path, commit: str, repo_root: Path, everything: bool) -> None
         + ("" if everything else f" (the import closure of {len(ROOTS)} root modules)") + "; "
         f"{rewritten} import lines rewritten from `{UPSTREAM_PREFIX}.` to `{LOCAL_PREFIX}.`",
         f"- Audit aid: `{CHALLENGE_REL.name}` = upstream `{CHALLENGE_REL.as_posix()}`",
+        "- `set_option backward.isDefEq.respectTransparency false` inserted after the imports of "
+        "every file; every bare `rfl` tactic line made `try rfl`; recorded compile fixes "
+        f"applied: {fixed} (listed under \"Local deviations from upstream\")",
         END_MARK,
     ])
     if readme_text is None:

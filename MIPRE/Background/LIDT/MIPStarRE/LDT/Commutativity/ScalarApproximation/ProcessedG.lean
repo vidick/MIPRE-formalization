@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.MainChain
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Processed `G` scalar approximation
 
@@ -105,7 +110,7 @@ lemma commDataProcessedG_of_commutativityPoints
   let G : Fq params → SubMeas (Polynomial params) ι := fun x => (family.meas x).toSubMeas
   have hG : ∀ x, G x = (family.meas x).toSubMeas := by
     intro x
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hpostSSC :
       SDDRel strategy.state
         (uniformDistribution (Point params.next))

@@ -67,6 +67,7 @@ Two local projector identities used in the sum-of-squares derivation.
 -/
 
 omit [StarModule ℂ R] in
+set_option backward.isDefEq.respectTransparency false in
 /-- Lemma 4.7.1: the sum of winning projectors equals the signed row-product expression. -/
 lemma sum_winning_projectors_eq_row_observable (i : Fin G.r) :
   (∑ x ∈ S[i], E[i, x]) =

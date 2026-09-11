@@ -10,6 +10,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.DataPro
 import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
 import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Statements
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Final-fields completeness construction
 
@@ -205,12 +210,12 @@ theorem final_fields_completeness_of_helper_completeness
         constSubMeasFamily Hhat.liftLeft =
           IdxSubMeas.liftLeft (constSubMeasFamily Hhat) := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     have hright :
         constSubMeasFamily H.toSubMeas.liftLeft =
           IdxSubMeas.liftLeft (constSubMeasFamily H.toSubMeas) := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     rw [← hleft, ← hright]
     exact horth
   -- Apply the generic transport theorem.

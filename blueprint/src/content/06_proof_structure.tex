@@ -9,6 +9,15 @@ main task of the project. The paper factors several of these transformations thr
 \emph{typed} verifiers and a detyping step; that machinery is not
 reproduced here and should be introduced locally where needed.
 
+Following Lin~\cite{Lin25}, every soundness statement below is in \emph{value form}: a
+transformation preserves the property ``value at most $1 - \eps$'' up to a quantitative
+loss, and compression preserves ``value at most $\frac12$''. No entanglement lower bound is
+tracked. Remark~\ref{rem:direct-vs-anchored} explains why none is needed,
+Section~\ref{sec:rr-compression} states the abstract lemma (Lin's compressibility
+criterion) that turns value-form compression into the halting reduction, and the
+entanglement clauses of~\cite{JNVWY20} are recorded for reference in
+Remark~\ref{rem:entanglement-form}.
+
 \subsection{Conditionally linear functions and samplers}
 \label{sec:ps-cl}
 
@@ -50,7 +59,7 @@ exponentially smaller, at the price of a fixed number of levels.
 
 \begin{theorem}[Introspection]
 \label{thm:introspection}
-\uses{def:normal-verifier,def:lambda-bounded,def:pcc,def:ent,thm:qld,def:cl-function}
+\uses{def:normal-verifier,def:lambda-bounded,def:pcc,thm:qld,def:cl-function}
 There is a polynomial-time Turing machine $\ComputeIntroVerifier$ that on input
 $(\verifier, \lambda, \ell)$ returns a $5$-level normal form verifier $\vint =
 (\sint, \dint)$ with
@@ -64,9 +73,6 @@ is a function $\delta(\eps, n) = a\bigl( (\lambda n)^a \eps^b + (\lambda n)^{-b}
   does $\vint_n$.
 \item (\textbf{Soundness}) If $\synval(\vint_n) > 1 - \eps$ then
   $\synval(\verifier_{2^n}) \geq 1 - \delta(\eps, n)$.
-\item (\textbf{Entanglement}) $\Ent(\vint_n, 1 - \eps) \geq \max\bigl\{
-  \Ent(\verifier_{2^n}, 1 - \delta(\eps, n)),\ (1 - \delta(\eps,n))\,
-  2^{2^{\lambda n}} \bigr\}$.
 \end{enumerate}
 \end{theorem}
 
@@ -84,7 +90,7 @@ reduction. This is probably the easiest transformation in the paper and could be
 
 \begin{theorem}[Oracularization]
 \label{thm:oracularization}
-\uses{def:normal-verifier,def:pcc,def:ent}
+\uses{def:normal-verifier,def:pcc}
 There is a polynomial-time Turing machine $\ComputeOracleVerifier$ mapping a normal
 form verifier $\verifier = (\sampler, \decider)$ to a normal form verifier $\vora$
 such that, for some $\delta(\eps) = \poly(\eps)$ and all $n$:
@@ -92,8 +98,7 @@ such that, for some $\delta(\eps) = \poly(\eps)$ and all $n$:
 \item (\textbf{Completeness}) If $\verifier_n$ has a value-$1$ PCC strategy then
   $\vora_n$ has a value-$1$ symmetric PCC strategy.
 \item (\textbf{Soundness}) If $\synval(\vora_n) > 1 - \eps$ then
-  $\synval(\verifier_n) \geq 1 - \delta(\eps)$, and
-  $\Ent(\vora_n, 1 - \eps) \geq \Ent(\verifier_n, 1 - \delta(\eps))$.
+  $\synval(\verifier_n) \geq 1 - \delta(\eps)$.
 \item (\textbf{Complexity}) The sampler of $\vora$ depends only on $\sampler$, with
   $\TIME$ within a constant factor and the same number of levels.
 \end{enumerate}
@@ -114,7 +119,7 @@ become polylogarithmic in the original.
 
 \begin{theorem}[Answer reduction]
 \label{thm:answer-reduction}
-\uses{def:normal-verifier,def:pcc,def:ent,thm:succinct-sat,lem:schwartz-zippel,thm:qld,lem:self-dual-basis}
+\uses{def:normal-verifier,def:pcc,thm:succinct-sat,lem:schwartz-zippel,thm:qld,lem:self-dual-basis}
 There is a polynomial-time Turing machine $\ComputeAnsVerifier$ that on input
 $(\verifier, \lambda, \mu, \sigma)$, for $\verifier$ an $\ell$-level normal form
 verifier with $\abs{\decider} \leq \sigma$, $\TIME_\sampler(n) \leq (\lambda n)^\mu$
@@ -128,8 +133,7 @@ n)^{-\mu b} \bigr)$ (universal constants $a, b$) and all $n$:
 \item (\textbf{Completeness}) If $\verifier_n$ has a value-$1$ symmetric PCC strategy
   then $\vans_n$ has a value-$1$ PCC strategy.
 \item (\textbf{Soundness}) If $\synval(\vans_n) > 1 - \eps$ then
-  $\synval(\verifier_n) \geq 1 - \delta(\eps, n)$, and
-  $\Ent(\vans_n, 1 - \eps) \geq \Ent(\verifier_n, 1 - \delta(\eps, n))$.
+  $\synval(\verifier_n) \geq 1 - \delta(\eps, n)$.
 \end{enumerate}
 \end{theorem}
 
@@ -141,40 +145,59 @@ low-degree ``sandwiching'' argument recombining the players' committed polynomia
 \subsection{Gap amplification: parallel repetition}
 \label{sec:ps-parallel-repetition}
 
-Answer reduction leaves a shrunken gap ($1$ vs.\ $1 - 1/\poly(n)$). Anchored parallel
-repetition (Theorem~\ref{thm:bvy}) restores soundness $\frac12$ with polynomially many
-repetitions, at polynomial cost in complexity and $+2$ levels.
+Answer reduction leaves a shrunken gap ($1$ vs.\ $1 - 1/\poly(n)$). Direct parallel
+repetition (Theorem~\ref{thm:direct-repetition-q}, formalized) restores soundness
+$\frac12$ with polynomially many repetitions, at polynomial cost in complexity and without
+anchoring; the anchored, entanglement-form theorem used in~\cite{JNVWY20}
+(Theorem~\ref{thm:bvy}) is not needed (Remark~\ref{rem:direct-vs-anchored}).
 
 \begin{theorem}[Parallel repetition of normal form verifiers]
 \label{thm:parallel-repetition}
-\uses{def:normal-verifier,def:pcc,def:ent,thm:bvy}
-There are universal constants $c, c' > 0$ and a polynomial-time Turing machine
+\uses{def:normal-verifier,def:pcc,def:direct-repetition,thm:direct-repetition-q,thm:almost-sync,lem:sync-le-valstar}
+There are universal constants $b, c, c' > 0$ and a polynomial-time Turing machine
 $\ComputeParrepVerifier$ that on input $(\verifier, \lambda, \tau)$ outputs a normal
-form verifier $\vrep$ such that if $\verifier$ is $\ell$-level then $\vrep$ is
-$(\ell+2)$-level with $\TIME_{\srep}(n) = O(k(n) \TIME_\sampler(n))$ and
-$\TIME_{\drep}(n) = O\bigl(k(n) \max(\TIME_\decider(n), (\lambda n)^\tau)\bigr)$ where
-$k(n) = (\lambda n)^{(1 + c')\tau}$, the sampler of $\vrep$ depends only on
+form verifier $\vrep$ whose game $\vrep_n$ is the $k(n)$-fold direct repetition
+(Definition~\ref{def:direct-repetition}) of $\verifier_n$, with $k(n) = (\lambda n)^{(1 +
+c')\tau}$, such that if $\verifier$ is $\ell$-level then $\vrep$ is $\ell$-level with
+$\TIME_{\srep}(n) = O(k(n) \TIME_\sampler(n))$ and $\TIME_{\drep}(n) = O\bigl(k(n)
+\max(\TIME_\decider(n), (\lambda n)^\tau)\bigr)$, the sampler of $\vrep$ depends only on
 $(\sampler, \lambda, \tau)$, and for all $n$:
 \begin{enumerate}
 \item (\textbf{Completeness}) If $\verifier_n$ has a value-$1$ PCC strategy and
   $\TIME_\decider(n) \leq (\lambda n)^\tau$, then $\vrep_n$ has a value-$1$ PCC
   strategy.
-\item (\textbf{Soundness}) For all $\eps > 0$ and all
-  $p > \frac{4}{\eps} \exp\bigl( -c \eps^{17} k(n) / (\lambda n)^{\tau c'} \bigr)$,
-  $\Ent(\vrep_n, p) \geq \Ent(\verifier_n, 1 - \eps)$.
+\item (\textbf{Soundness}) For all $\eps > 0$, if $\synval(\verifier_n) \leq 1 - \eps$
+  and $\TIME_\decider(n) \leq (\lambda n)^\tau$, then
+  $\synval(\vrep_n) \leq \exp\bigl( -c\, \eps^{b}\, k(n) / (\lambda n)^{\tau} \bigr)$;
+  in particular $\synval(\vrep_n) \leq \frac12$ whenever $\eps \geq (\lambda
+  n)^{-\tau}$, for $c'$ large enough and $n \geq 2$.
 \end{enumerate}
 \end{theorem}
+
+The game $\vrep_n$ is $\verifier_n^{k(n)}$: its sampler runs $k(n)$ independent copies of
+$\sampler$ (a product of conditionally linear functions of the same level) and its
+decider runs $\decider$ on every coordinate. Completeness: the $k(n)$-fold tensor power of
+a value-$1$ PCC strategy is a value-$1$ PCC strategy for the repeated game. Soundness: by
+the almost-synchronous transport (Theorem~\ref{thm:almost-sync}), $\synval(\verifier_n)
+\leq 1 - \eps$ gives $\valstar(\verifier_n) \leq 1 - \eps'$ with $\eps' =
+\Omega(\eps^{a})$ for a universal $a$; Theorem~\ref{thm:direct-repetition-q} bounds
+$\valstar(\verifier_n^{k(n)})$, where the answer alphabets of $\verifier_n$ have size at
+most $2^{\TIME_\decider(n)}$ so that $\log(\abs{\mA}\abs{\mB}) \leq 2 (\lambda n)^\tau$;
+and $\synval \leq \valstar$ (Lemma~\ref{lem:sync-le-valstar}) concludes, with $b = 13 a$.
+The exponent $b$ and the constants are provisional (Section~\ref{sec:conventions}).
 
 \subsection{The compression theorem}
 \label{sec:ps-compression}
 
 Composing the four transformations --- introspection, oracularization, answer
 reduction, repetition --- yields gap-preserving compression: the paper-level form of
-the abstract compression hypothesis of Lemma~\ref{lem:recursive-compression}.
+the compression hypothesis of Lemma~\ref{lem:compressible-criterion}. The soundness
+clause is the value-form clause that~\cite{JNVWY20} state first and then strengthen to
+an entanglement bound (Remark~\ref{rem:entanglement-form}).
 
 \begin{theorem}[Gap-preserving compression]
 \label{thm:compression}
-\uses{thm:introspection,thm:oracularization,thm:answer-reduction,thm:parallel-repetition,def:lambda-bounded,def:pcc,def:ent}
+\uses{thm:introspection,thm:oracularization,thm:answer-reduction,thm:parallel-repetition,def:lambda-bounded,def:pcc}
 There is a universal constant $C_0 > 0$ and a polynomial-time Turing machine
 $\Compress$ that on input $(\verifier, \lambda)$ outputs a $9$-level normal form
 verifier $\vcompr = (\scompr, \dcompr)$ with $\TIME_{\scompr}(n),
@@ -185,24 +208,47 @@ $\verifier$ is a $\lambda$-bounded $9$-level normal form verifier, then for all 
 \begin{enumerate}
 \item (\textbf{Completeness}) If $\verifier_N$ has a value-$1$ PCC strategy, then so
   does $\vcompr_n$.
-\item (\textbf{Soundness}) $\Ent\bigl(\vcompr_n, \tfrac12\bigr) \geq \max\bigl\{
-  \Ent\bigl(\verifier_N, \tfrac12\bigr),\ 2^{N^{\lambda} - 1} \bigr\}$.
+\item (\textbf{Soundness}) If $\synval(\verifier_N) \leq \tfrac12$ then
+  $\synval(\vcompr_n) \leq \tfrac12$.
 \end{enumerate}
 \end{theorem}
 
 \begin{remark}[Relation to the abstract compression lemma]
 \label{rem:compression-abstract}
-\uses{thm:compression,lem:recursive-compression,def:succinct}
-Theorem~\ref{thm:compression} instantiates the hypothesis of
-Lemma~\ref{lem:recursive-compression} in the form given
-in~\cite[Lemma 6.3]{MNY}: take $A$ to be the set of (descriptions of) normal form
-verifier games with a perfect PCC strategy, $f(\game) =
-\Ent(\game, \frac12)$, and note that a description $(\sampler, \decider, n)$ with $n$
-in binary is precisely a succinct description of the game $\verifier_{2^n}$ played by
-a $\lambda$-bounded verifier. The compression map then satisfies $f(\compr(\hat{x},
-n)) \geq \max\{f(x), n\}$ by the entanglement bound above. Making this dictionary
-precise (in particular the encoding of games by verifier descriptions and the role of
-$\lambda$) is a formalization task of this section.
+\uses{thm:compression,lem:compressible-criterion,def:succinct,lem:value-lower-approx}
+Theorem~\ref{thm:compression} instantiates the hypotheses of
+Lemma~\ref{lem:compressible-criterion}: take $A$ to be the set of (descriptions of) normal
+form verifier games with a value-$1$ PCC strategy and $B$ the set of those with $\synval
+\leq \frac12$, with the trivially accepting and the trivially rejecting game as the
+distinguished elements; the complement of $B$ is semidecided by enumerating synchronous
+strategies (Lemma~\ref{lem:value-lower-approx}); and a description $(\sampler, \decider,
+n)$ with $n$ in binary is precisely a succinct description of the game $\verifier_{2^n}$
+played by a $\lambda$-bounded verifier. Completeness of compression is the preservation
+of $A$ and soundness the preservation of $B$. Making this dictionary precise (in
+particular the encoding of games by verifier descriptions and the role of $\lambda$) is a
+formalization task of this section. The entanglement form of~\cite{JNVWY20}
+(Remark~\ref{rem:entanglement-form}) instantiates Lemma~\ref{lem:recursive-compression}
+instead, with $f = \Ent(\cdot, \frac12)$; it is not used by the main theorem.
+\end{remark}
+
+\begin{remark}[The entanglement form of~\cite{JNVWY20}]
+\label{rem:entanglement-form}
+\uses{def:ent,thm:bvy,lem:recursive-compression}
+The paper states the soundness of each transformation with an additional entanglement
+clause, obtained from the same proofs by tracking the dimension of the extracted
+strategies: $\Ent(\vint_n, 1 - \eps) \geq \max\{\Ent(\verifier_{2^n}, 1 -
+\delta(\eps, n)),\ (1 - \delta(\eps, n))\, 2^{2^{\lambda n}}\}$ for introspection;
+$\Ent(\vora_n, 1 - \eps) \geq \Ent(\verifier_n, 1 - \delta(\eps))$ for
+oracularization; $\Ent(\vans_n, 1 - \eps) \geq \Ent(\verifier_n, 1 - \delta(\eps, n))$
+for answer reduction; Theorem~\ref{thm:bvy} for anchored repetition; and, composed,
+$\Ent(\vcompr_n, \frac12) \geq \frac12 \max\{\Ent(\verifier_N, \frac12),\
+2^{N^\lambda - 1}\}$ for compression. Fed into the variant of
+Lemma~\ref{lem:recursive-compression} tolerating the factor $\frac12$ (harmless, since
+the second term grows much faster than the levels of the recursion), with $f =
+\Ent(\cdot, \frac12)$, this yields Theorem~\ref{thm:halting} with the stronger
+conclusion $\Ent(\game_\machine, \frac12) = \infty$ for non-halting $\machine$. The
+value form adopted here needs none of it; the entanglement clauses remain of interest for
+the corollaries of Remark~\ref{rem:further}.
 \end{remark}
 
 \subsection{The halting reduction}
@@ -210,7 +256,7 @@ $\lambda$) is a formalization task of this section.
 
 \begin{theorem}[Halting reduction]
 \label{thm:halting}
-\uses{thm:compression,rem:compression-abstract,lem:recursive-compression,lem:kleene,def:mipstar,def:game-description}
+\uses{thm:compression,rem:compression-abstract,lem:compressible-criterion,lem:value-lower-approx,lem:kleene,def:mipstar,def:game-description}
 There is a computable (indeed polynomial-time) map $\machine \mapsto
 \game_{\machine}$ from Turing machines to synchronous game descriptions, with games
 given by normal form verifiers satisfying the efficiency requirements of
@@ -219,12 +265,12 @@ Definition~\ref{def:mipstar}, such that:
 \item if $\machine$ halts on the empty input then $\synval(\game_\machine) = 1$,
   witnessed by a PCC strategy;
 \item if $\machine$ does not halt on the empty input then
-  $\Ent(\game_\machine, \tfrac12) = \infty$; in particular
   $\synval(\game_\machine) \leq \tfrac12$.
 \end{enumerate}
 \end{theorem}
 
-The proof is Lemma~\ref{lem:recursive-compression} applied to the instantiation of
-Remark~\ref{rem:compression-abstract}. Note that item 2 gives soundness in the strong
-form (no synchronous strategy of any dimension exceeds $\frac12$, and the supremum
-defining $\synval$ is over such strategies, so $\synval \leq \frac12$ follows).
+The proof is Lemma~\ref{lem:compressible-criterion} applied to the instantiation of
+Remark~\ref{rem:compression-abstract}; the semidecidability hypothesis of the lemma is
+Lemma~\ref{lem:value-lower-approx}. The entanglement form of the statement, with the
+stronger conclusion $\Ent(\game_\machine, \frac12) = \infty$ for non-halting
+$\machine$, is discussed in Remark~\ref{rem:entanglement-form}.

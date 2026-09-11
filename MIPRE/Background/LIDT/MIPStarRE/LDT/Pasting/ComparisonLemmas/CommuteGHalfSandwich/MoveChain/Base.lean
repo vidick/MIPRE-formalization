@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/MoveC
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.StepLemmas.Split
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.StepLemmas.Move
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: half-sandwich move-chain base
 
@@ -86,7 +91,7 @@ lemma commuteGHalfSandwich_recursiveTarget_eq_split
       T = gHatHalfProductOutcomeOperator params family r
         (pointTupleTail (Fin.cons q.2.1 q.2.2))
         (gHatTupleOutcomeTail (Fin.cons ogs.2.1 ogs.2.2)) := by
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   calc
     (commuteGHalfSandwich_recursiveTargetFamily params family r q).outcome ogs
       = leftTensor (ι₂ := ι) (A * (T * G)) := by

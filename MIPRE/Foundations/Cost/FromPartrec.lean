@@ -169,8 +169,8 @@ theorem ofCode_sound : ∀ (c : Code) (v w : List ℕ), w ∈ c.eval v →
       (v := encL v) (by simp) h₂
     exact ⟨_, Eval.let_ h₁ (Eval.let_ h₂' h₃)⟩
   | .comp f g, v, w, hw => by
-    simp only [Code.eval, Part.bind_eq_bind, Part.mem_bind_iff] at hw
-    obtain ⟨u, hu, hw⟩ := hw
+    simp only [Code.eval] at hw
+    obtain ⟨u, hu, hw⟩ := Part.mem_bind_iff.mp hw
     obtain ⟨t₁, h₁⟩ := ofCode_sound g v u hu
     obtain ⟨t₂, h₂⟩ := ofCode_sound f u w hw
     exact ⟨_, Eval.let_ h₁ (Eval.append_of_wellScoped h₂ (ofCode_wellScoped f) [encL v])⟩
@@ -270,8 +270,8 @@ theorem ofCode_complete : ∀ (c : Code) (v : List ℕ) (r : Data) (t : ℕ),
         (ofCode_wellScoped f)
       obtain ⟨w, rfl, hw⟩ := ofCode_complete f u _ _ h₂'
       refine ⟨w, rfl, ?_⟩
-      simp only [Code.eval, Part.bind_eq_bind, Part.mem_bind_iff]
-      exact ⟨u, hu, hw⟩
+      simp only [Code.eval]
+      exact Part.mem_bind_iff.mpr ⟨u, hu, hw⟩
   | .case f g, v, r, t, h => by
     change Eval [encL v] (.elim 0 (callVar 0 (ofCode f))
       (.elim 0 (callVar 1 (ofCode f)) (.let_ (.cons (.var 1) (.var 3)) (callVar 0 (ofCode g))))) r t

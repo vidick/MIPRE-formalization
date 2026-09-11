@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/GlobalVariance/Theorems/TransportChain/Core.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Point
 import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 namespace MIPStarRE.LDT.GlobalVariance
 
 open MIPStarRE.LDT
@@ -252,7 +257,7 @@ lemma avgOver_axisParallelTestSample_update_eq_rerandomizeCoord
       (fun sx => f (sx.1.1, Function.update sx.1.1 sx.1.2 sx.2)) =
     avgOver (rerandomizeCoord params) f := by
   rw [avgOver_rerandomizeCoord_eq_uniform_sample]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 lemma weightedGeneralizeBRightOperatorAtPolynomial_point_eq
     (params : Parameters)

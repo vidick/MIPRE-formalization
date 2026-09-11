@@ -10,6 +10,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.MeasurementLift
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Completion
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 5 — Rounding To Projectors Core
 
@@ -196,7 +201,7 @@ private lemma qSSCDefect_leftPlacedMeasurement_le_two_qBipartiteConsDefect
         (leftPlacedSubMeas (ιB := ιB) A.toSubMeas).outcome a =
           leftTensor (ι₂ := ιB) (A.outcome a) := by
     intro a
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hleftPlaced_total :
       (leftPlacedSubMeas (ιB := ιB) A.toSubMeas).total =
         leftTensor (ι₂ := ιB) A.total :=
@@ -206,7 +211,7 @@ private lemma qSSCDefect_leftPlacedMeasurement_le_two_qBipartiteConsDefect
         (rightPlacedSubMeas (ιA := ιA) B.toSubMeas).outcome a =
           rightTensor (ι₁ := ιA) (B.outcome a) := by
     intro a
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hrightPlaced_total :
       (rightPlacedSubMeas (ιA := ιA) B.toSubMeas).total =
         rightTensor (ι₁ := ιA) B.total :=
@@ -313,7 +318,7 @@ private lemma qSSCDefect_rightPlacedMeasurement_le_two_qBipartiteConsDefect
         (leftPlacedSubMeas (ιB := ιB) A.toSubMeas).outcome a =
           leftTensor (ι₂ := ιB) (A.outcome a) := by
     intro a
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hleftPlaced_total :
       (leftPlacedSubMeas (ιB := ιB) A.toSubMeas).total =
         leftTensor (ι₂ := ιB) A.total :=
@@ -323,7 +328,7 @@ private lemma qSSCDefect_rightPlacedMeasurement_le_two_qBipartiteConsDefect
         (rightPlacedSubMeas (ιA := ιA) B.toSubMeas).outcome a =
           rightTensor (ι₁ := ιA) (B.outcome a) := by
     intro a
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hrightPlaced_total :
       (rightPlacedSubMeas (ιA := ιA) B.toSubMeas).total =
         rightTensor (ι₁ := ιA) B.total :=
@@ -594,7 +599,7 @@ lemma qSDD_leftPlaced_zeroProjSubMeas_le_one {Outcome : Type*}
             rw [SubMeas.outcome_hermitian (leftPlacedSubMeas (ιB := ιB) A) a]
       _ = ev ψ (((leftPlacedSubMeas (ιB := ιB) A).outcome a) *
             ((leftPlacedSubMeas (ιB := ιB) A).outcome a)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   rw [hq]
   simpa using
     MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_one ψ hψ
@@ -643,7 +648,7 @@ lemma qSDD_rightPlaced_zeroProjSubMeas_le_one {Outcome : Type*}
             rw [SubMeas.outcome_hermitian (rightPlacedSubMeas (ιA := ιA) A) a]
       _ = ev ψ (((rightPlacedSubMeas (ιA := ιA) A).outcome a) *
             ((rightPlacedSubMeas (ιA := ιA) A).outcome a)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   rw [hq]
   simpa using
     MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_one ψ hψ

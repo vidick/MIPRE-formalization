@@ -1,20 +1,295 @@
-\section{Anchored parallel repetition}
-\label{ch:anchored-repetition}
+\section{Parallel repetition}
+\label{ch:parallel-repetition}
 
-This chapter states the parallel repetition theorem used for gap amplification in the
-compression procedure (Section~\ref{sec:ps-parallel-repetition}): repeating the
-\emph{anchored} version of a game amplifies the completeness-soundness gap while
-preserving entanglement lower bounds. Like the results of
-Section~\ref{ch:required-results}, the main theorem (Theorem~\ref{thm:bvy}) is an
-external result that the project may initially assume as an axiom. Its proof, due to
-Bavarian, Vidick and Yuen~\cite{BVY17}, is a self-contained information-theoretic
-argument, and this chapter organizes discharging the axiom as a sub-project.
-Section~\ref{sec:ar-background} collects the background results the proof relies on:
-standard facts of independent interest --- entropy inequalities, Uhlmann's theorem ---
-most of which are natural QuantumLib content, and some of which already exist there.
-Section~\ref{sec:ar-anchoring} defines the anchoring transformation and states the
-theorem, and Section~\ref{sec:ar-decomposition} decomposes the proof into its main
-steps.
+This chapter states the parallel repetition theorems available for gap amplification
+in the compression procedure (Section~\ref{sec:ps-parallel-repetition}). It has two
+parts. Section~\ref{sec:pr-direct} states \emph{direct} (unanchored) parallel
+repetition in value form, for entangled and for commuting-operator strategies, together
+with Lin's tracial density theorem. These theorems are formalized: two external Lean
+developments proving them are vendored into this repository, and the section records
+their statements in the vocabulary of Section~\ref{ch:foundations} together with the
+bridges connecting the two. Sections~\ref{sec:ar-background}--\ref{sec:ar-decomposition}
+state the \emph{anchored}, entanglement-preserving theorem of Bavarian, Vidick and
+Yuen~\cite{BVY17} used in~\cite{JNVWY20}: repeating the anchored version of a game
+amplifies the completeness-soundness gap while preserving entanglement lower bounds.
+That theorem is a blueprint-only external result, and it is no longer on the path to
+the main theorem: the pipeline of Section~\ref{ch:proof-structure} is stated in value
+form and uses the direct theorems (Remark~\ref{rem:direct-vs-anchored}). The anchored
+sections are kept as the record of the entanglement-form route of~\cite{JNVWY20}, whose
+remaining interest is the entanglement-requirement corollaries
+(Remark~\ref{rem:entanglement-form}). Section~\ref{sec:ar-background} collects
+the background results the anchored proof relies on --- entropy inequalities, Uhlmann's
+theorem --- most of which are natural QuantumLib content, and some of which already
+exist there. Section~\ref{sec:ar-anchoring} defines the anchoring transformation and
+states the theorem, and Section~\ref{sec:ar-decomposition} decomposes the proof into
+its main steps.
+
+\subsection{Direct parallel repetition}
+\label{sec:pr-direct}
+
+The $n$-fold direct repetition of a game asks $n$ independent question pairs at once and
+accepts if all $n$ answer pairs are accepted. Two recent Lean developments prove that
+the value of the repeated game decays exponentially in $n$, for every game, with no
+anchoring and at a rate depending only on the gap $1 - \val(\game)$ and on the size of
+the answer alphabets: one for tensor-product (entangled) strategies, by
+OpenAI~\cite{OpenAI26}, and one for commuting-operator strategies~\cite{Vid26}, the
+latter building on the former and on Lin's tracial density theorem~\cite{Lin23}. Both
+are vendored into this repository (\texttt{MIPRE/Background/Repetition/}, with
+provenance recorded in the \texttt{README.md} of each directory) and connected to the
+definitions of Section~\ref{ch:foundations} by explicit bridges; the statements below
+are the bridged forms. The commuting-operator theorem is recorded now, although only
+the entangled one enters $\MIPstar = \RE$, because it is the form needed for the
+commuting-operator counterpart $\MIPco = \coRE$~\cite{Lin25} (Remark~\ref{rem:further}).
+
+\begin{definition}[Direct repetition]
+\label{def:direct-repetition}
+\uses{def:game,def:sync-game}
+\lean{MIPRE.Game.repeat, MIPRE.SynchronousGame.repeat}
+\leanok
+Let $\game = (\mX, \mY, \mA, \mB, \mu, D)$ be a game and $n \geq 0$ an integer. The
+\emph{$n$-fold direct repetition} of $\game$ is the game $\game^{n}$ with question
+alphabets $\mX^n$, $\mY^n$ and answer alphabets $\mA^n$, $\mB^n$, question distribution
+$\mu^{n}(\bar{x}, \bar{y}) = \prod_{i=1}^{n} \mu(x_i, y_i)$, and decision predicate
+$D^{n}(\bar{x}, \bar{y}, \bar{a}, \bar{b}) = \bigwedge_{i=1}^{n} D(x_i, y_i, a_i, b_i)$.
+The direct repetition of a synchronous game is synchronous, with the same data.
+\end{definition}
+
+The entangled theorem is stated for the quantum value of Definition~\ref{def:q-value},
+whose strategies are bipartite. The commuting-operator theorem needs the bipartite
+counterpart of the commuting value, which Section~\ref{ch:foundations} defines in
+synchronous (tracial) form only (Definition~\ref{def:commuting-value}); the two are
+related by Lemma~\ref{lem:tracial-le-co}.
+
+\begin{definition}[Commuting-operator strategy]
+\label{def:co-strategy-bipartite}
+\uses{def:game}
+\lean{MIPRE.CommutingOperatorStrategy}
+\leanok
+\qlib{}
+A \emph{commuting-operator strategy} for $\game$ consists of a Hilbert space $\mH$ (a
+complete inner product space over $\C$, of any dimension), a unit vector $\ket{\psi}
+\in \mH$, and POVMs $\{E^x_a\}_{a \in \mA}$ and $\{F^y_b\}_{b \in \mB}$ on $\mH$, one
+for each $x$ (resp.\ $y$) --- each $E^x_a$ and $F^y_b$ is a positive bounded operator,
+$\sum_a E^x_a = \Id$ and $\sum_b F^y_b = \Id$ --- such that $E^x_a F^y_b = F^y_b
+E^x_a$ for all $x, y, a, b$. The players answer $(a, b)$ to questions $(x, y)$ with
+probability $\bra{\psi} E^x_a F^y_b \ket{\psi}$.
+\end{definition}
+
+\begin{definition}[Commuting-operator value]
+\label{def:co-value-bipartite}
+\uses{def:co-strategy-bipartite}
+\lean{MIPRE.CommutingOperatorStrategy.value, MIPRE.commutingOperatorValue}
+\leanok
+\qlib{}
+The value of a commuting-operator strategy $\strategy = (\mH, \psi, E, F)$ in $\game$
+is
+\begin{equation*}
+  \omegaco(\game, \strategy) = \sum_{x, y, a, b} \mu(x,y)\, D(x,y,a,b)\,
+  \bra{\psi} E^x_a F^y_b \ket{\psi}\;,
+\end{equation*}
+and the \emph{commuting-operator value} $\omegaco(\game)$ of $\game$ is the supremum of
+$\omegaco(\game, \strategy)$ over all commuting-operator strategies.
+\end{definition}
+
+\paragraph{Comments.} As in Definition~\ref{def:q-value}, the formalization takes the
+real part of the (real, nonnegative) probability. The Hilbert space of a strategy lives
+in the lowest universe, as in the vendored development; this is no restriction for the
+suprema, which are bounded by $1$. The notation $\omegaco$ follows~\cite{Vid26} and
+keeps the bipartite value apart from the tracial value $\valco$ of
+Definition~\ref{def:commuting-value}.
+
+\effortMedium\ \qlib
+
+\begin{lemma}[Tracial strategies are commuting-operator strategies]
+\label{lem:tracial-le-co}
+\uses{def:sync-game,def:commuting-strategy,def:commuting-value,def:co-value-bipartite}
+\qlib{}
+For every synchronous game $\game$, $\valco(\game) \leq \omegaco(\game)$.
+\end{lemma}
+\begin{proof}
+Let $(\alg, \tau, M)$ be a commuting strategy (Definition~\ref{def:commuting-strategy})
+and let $\mH = L^2(\alg, \tau)$ be the completion of $\alg$ for the inner product
+$\langle a, b \rangle = \tau(a^* b)$, with the class of $1$ as the unit vector $\xi$.
+Left multiplication $\pi(a) : b \mapsto ab$ and right multiplication $\rho(a) : b
+\mapsto ba$ extend to bounded operators on $\mH$ (for $\rho$ this uses traciality:
+$\norm{ba}^2 = \tau(a^* b^* b a) = \tau(b^* b\, a a^*) \leq \norm{a}^2 \norm{b}^2$),
+commute with each other, and satisfy $\rho(p)^* = \rho(p^*)$ (again by traciality) so
+that $\rho$ maps projections to projections. Setting $E^x_a = \pi(M^x_a)$ and $F^y_b =
+\rho(M^y_b)$ gives a commuting-operator strategy with $\bra{\xi} E^x_a F^y_b \ket{\xi}
+= \langle 1, M^x_a M^y_b \rangle = \tau(M^x_a M^y_b)$, hence with the same value as
+$(\alg, \tau, M)$. Taking suprema yields the claim.
+\end{proof}
+
+\paragraph{Comments.} This is the direction needed to apply
+Theorem~\ref{thm:direct-repetition-co} to the tracial value used in the pipeline: a
+bound on $\omegaco(\game^n)$ is a bound on $\valco(\game^n)$. The reverse comparison
+(from $\omegaco$ to $\valco$, which is false in general and true up to error for
+synchronous games) is the commuting-operator analogue of
+Theorem~\ref{thm:almost-sync}, proved by Lin~\cite{Lin23}; it is part of the transport
+discussed in Section~\ref{sec:departures} and not of this section. The Lean statement
+of this lemma and its GNS construction are a sub-project of their own.
+
+\effortHard\ \qlib
+
+\begin{theorem}[Direct parallel repetition for commuting-operator strategies]
+\label{thm:direct-repetition-co}
+\uses{def:direct-repetition,def:co-value-bipartite}
+\lean{MIPRE.Repetition.commutingOperatorValue_repeat_le}
+\leanok
+\qlib{}
+There is a universal constant $c > 0$ such that for every game $\game$ with nonempty
+alphabets and every integer $n \geq 1$, writing $\eps = 1 - \omegaco(\game)$,
+\begin{equation*}
+  \omegaco\bigl( \game^{n} \bigr) \;\leq\;
+  \exp\Bigl( - \frac{c\, \eps^{7}\, n}{\eps + \log\bigl(\abs{\mA}\,\abs{\mB}\bigr)} \Bigr)\;.
+\end{equation*}
+\end{theorem}
+\begin{proof}
+\leanok
+This is the main theorem of~\cite{Vid26} (Theorem~7.1 there), whose Lean proof is
+vendored at \texttt{MIPRE/Background/Repetition/CommutingRepetition/}. The bridge
+identifies a game of Definition~\ref{def:game} with the game of the vendored
+development having the $\{0, 1\}$-valued payoff $D$, a commuting-operator strategy of
+Definition~\ref{def:co-strategy-bipartite} with a strategy of the vendored development
+(field by field, so that the two suprema defining the value range over the same set of
+numbers), and the two direct repetitions with each other. When $\eps = 0$ and $\abs{\mA}
+= \abs{\mB} = 1$ the formalization reads the quotient as $0$ and the bound is trivial.
+\end{proof}
+
+\begin{theorem}[Direct parallel repetition for entangled strategies]
+\label{thm:direct-repetition-q}
+\uses{def:direct-repetition,def:q-value,lem:povm-value-eq}
+\lean{MIPRE.Repetition.quantumValue_repeat_le}
+\leanok
+\qlib{}
+There is a universal constant $c > 0$ such that for every game $\game$ with nonempty
+answer alphabets and $\valstar(\game) < 1$, and every integer $n \geq 1$, writing
+$\eps = 1 - \valstar(\game)$,
+\begin{equation*}
+  \valstar\bigl( \game^{n} \bigr) \;\leq\;
+  \exp\Bigl( - \frac{c\, \eps^{13}\, n}{\eps + \log\bigl(\abs{\mA}\,\abs{\mB}\bigr)} \Bigr)\;.
+\end{equation*}
+\end{theorem}
+\begin{proof}
+This is the main theorem of Chapter~6 of~\cite{OpenAI26}, whose Lean proof is vendored
+at \texttt{MIPRE/Background/Repetition/TenProofs/}. Its entangled value is defined with
+a density matrix on the product of two finite sets and POVMs; Lemma~\ref{lem:povm-value-eq}
+identifies it with $\valstar$ (Definition~\ref{def:q-value}), after which the two direct
+repetitions are literally the same construction. The Lean proof is complete modulo that
+lemma.
+\end{proof}
+
+\effortMedium\ \qlib
+
+\begin{lemma}[Mixed states and POVMs do not change the quantum value]
+\label{lem:povm-value-eq}
+\uses{def:tensor-strategy,def:q-value}
+\lean{MIPRE.Repetition.quantumValue_eq_entangledValue}
+\leanok
+\qlib{}
+Let $\valstar_{\mathrm{POVM}}(\game)$ be the supremum of the winning probabilities
+$\sum_{x,y,a,b} \mu(x,y)\, D(x,y,a,b)\, \tr\bigl( (A^x_a \ot B^y_b)\, \rho \bigr)$ over
+all finite sets $S_\alice$, $S_\bob$, density matrices $\rho$ on $\C^{S_\alice} \ot
+\C^{S_\bob}$ and POVMs $\{A^x_a\}$ on $\C^{S_\alice}$, $\{B^y_b\}$ on $\C^{S_\bob}$.
+Then $\valstar_{\mathrm{POVM}}(\game) = \valstar(\game)$.
+\end{lemma}
+\begin{proof}
+A tensor-product strategy (Definition~\ref{def:tensor-strategy}) is a strategy of the
+second kind, with $S_\alice = \{1, \ldots, d_\alice\}$, $S_\bob = \{1, \ldots,
+d_\bob\}$, $\rho = \ket{\psi}\bra{\psi}$ and projective measurements, which gives
+$\valstar \leq \valstar_{\mathrm{POVM}}$. Conversely, given a strategy of the second
+kind, purify $\rho$ on a reference system placed on Bob's side (Bob's POVM acts as the
+identity on it), then dilate the two POVMs to projective measurements on enlarged
+spaces (Naimark); neither step changes the outcome probabilities or the tensor-product
+structure, and reindexing the finite sets by initial segments of $\N$ yields a
+tensor-product strategy with the same value.
+\end{proof}
+
+\paragraph{Comments.} The lemma is the only piece of the entangled bridge that is
+stated but not yet proved in Lean; it is a general fact of independent interest. The
+vendored definition of the entangled value has the strategy's two finite sets as
+arbitrary types in the lowest universe, and the bridge reindexes them.
+
+\effortHard\ \qlib
+
+\begin{theorem}[Lin's tracial density theorem]
+\label{thm:tracial-density}
+\uses{def:co-strategy-bipartite}
+\lean{MIPRE.Repetition.tracialDensity}
+\leanok
+\qlib{}
+Let $\mX$ and $\mA$ be finite nonempty sets. Call a correlation $q(a, b \mid x, y)$ on
+question alphabets $\mX, \mX$ and answer alphabets $\mA, \mA$ \emph{tracially
+embeddable} if there are: a unital $*$-algebra $\alg$ over $\C$ with a tracial state
+$\tau$ ($\tau(1) = 1$, $\tau(ab) = \tau(ba)$, $\tau(a^*) = \overline{\tau(a)}$); a
+Hilbert space $\mH$ with a linear map $\iota : \alg \to \mH$ of dense range satisfying
+$\langle \iota a, \iota b \rangle = \tau(a^* b)$, on which $\alg$ acts on the left by
+bounded operators $L(a)$ with $L(a)\, \iota b = \iota(ab)$; a positive element $\sigma
+\in \alg$ with $\tau(\sigma^* \sigma) = 1$; POVMs $\{E^x_a\}_{a} \subseteq \alg$ of
+positive elements summing to $1$; and POVMs $\{G^y_b\}_{b}$ of positive bounded
+operators on $\mH$ summing to $\Id$ and commuting with $L(\alg)$, such that
+\begin{equation*}
+  q(a, b \mid x, y) = \bigl\langle \iota\sigma,\ L(E^x_a)\, G^y_b\, \iota\sigma \bigr\rangle\;.
+\end{equation*}
+Then every commuting-operator correlation $p(a, b \mid x, y) = \bra{\psi} E^x_a F^y_b
+\ket{\psi}$ on these alphabets (Definition~\ref{def:co-strategy-bipartite}) is an
+$\ell^1$-limit of tracially embeddable correlations: for every $\delta > 0$ there is a
+tracially embeddable $q$ with $\sum_{x, y, a, b} \abs{p(a, b \mid x, y) - q(a, b \mid
+x, y)} < \delta$.
+\end{theorem}
+\begin{proof}
+\leanok
+This is Theorem~3.2 of~\cite{Lin23}, as formalized in~\cite{Vid26} (the density
+programme of the vendored development, \texttt{Tracial/Density/Main.lean}). The
+statement above is that of the vendored development, in its own vocabulary --- its
+tracially embeddable correlations have the shape of Lin's Definition~3.1, with Bob's
+measurement taken in the commutant of the left action; restating it through the
+definitions of Section~\ref{ch:foundations} is pending.
+\end{proof}
+
+\paragraph{Source.} Direct parallel repetition for entangled strategies is Chapter~6 of
+OpenAI's \emph{Ten advances}~\cite{OpenAI26}, with the Lean proof in the accompanying
+repository; for commuting-operator strategies it is~\cite{Vid26}, whose proof reduces
+to the tracially embeddable case by Theorem~\ref{thm:tracial-density} and then rounds
+by adapting the argument of~\cite{OpenAI26}. Earlier value-form theorems cover
+restricted classes of games or give polynomial rates; the anchored theorem of
+Section~\ref{sec:ar-anchoring} is the one used in~\cite{JNVWY20}.
+The rates $\eps^{13}$ and $\eps^{7}$ are those of the sources; any polynomial rate
+suffices for the pipeline.
+
+\paragraph{Comments.} Both vendored developments are sorry-free and use only the
+standard axioms; the file \texttt{MIPRE/Background/Repetition/Axioms.lean} guards the
+axioms of the bridged commuting-operator theorem and of Theorem~\ref{thm:tracial-density}
+(the entangled theorem joins it once Lemma~\ref{lem:povm-value-eq} is proved). Vendoring
+is done by \texttt{scripts/vendor-repetition.py}, never by hand; the copies are
+read-only and the only local changes are recorded in each directory's
+\texttt{README.md}. Nothing outside \texttt{MIPRE/Background/Repetition/} refers to
+the vendored namespaces.
+
+\begin{remark}[Direct versus anchored repetition]
+\label{rem:direct-vs-anchored}
+\uses{thm:direct-repetition-q,thm:direct-repetition-co,thm:bvy}
+Theorems~\ref{thm:direct-repetition-q} and~\ref{thm:direct-repetition-co} are
+statements about values, while Theorem~\ref{thm:bvy} is a statement about entanglement
+requirements: the anchored proof extracts from a good strategy for the repeated game a
+strategy for the original game of \emph{no larger dimension}, whereas the proofs of the
+direct theorems round through auxiliary resources (an embezzling state
+in~\cite{OpenAI26}, a tracial approximation in~\cite{Vid26}) and give no control of the
+dimension. Lin's proof of $\MIPco = \coRE$~\cite{Lin25} shows that the entanglement clauses
+of~\cite{JNVWY20} are dispensable: with completeness and soundness of compression stated
+in value form (perfect strategies are preserved, value at most $\frac12$ is preserved),
+the halting reduction follows from the enumeration of Lemma~\ref{lem:value-lower-approx}
+and Kleene's recursion theorem alone (Lemma~\ref{lem:compressible-criterion}), and gap
+amplification then needs only a value statement --- exactly the theorems of this section,
+applied to the game as it is, without anchoring. The pipeline of
+Section~\ref{ch:proof-structure} is stated in that form (Section~\ref{sec:departures}):
+Theorem~\ref{thm:parallel-repetition} rests on Theorem~\ref{thm:direct-repetition-q},
+and Theorem~\ref{thm:bvy} with its toolkit
+(Sections~\ref{sec:ar-background}--\ref{sec:ar-decomposition}) is not on the path to the
+main theorem; the entanglement clauses are recorded in
+Remark~\ref{rem:entanglement-form}. In either form, the transport between bipartite and
+synchronous strategies (Section~\ref{sec:departures}) is the pipeline's responsibility.
+\end{remark}
 
 \subsection{Background results}
 \label{sec:ar-background}
@@ -272,9 +547,10 @@ inverts the relation. Taking suprema over strategies yields the claim.
 \end{proof}
 
 The theorem below is the form of the parallel repetition theorem invoked by the
-compression procedure (Theorem~\ref{thm:parallel-repetition}). Note that it is an
-entanglement statement, not merely a value statement: this is what soundness of the
-compression recursion requires.
+compression procedure of~\cite{JNVWY20}. It is an entanglement statement, not merely a
+value statement: this is what soundness of the compression recursion requires when it is
+stated in terms of $\Ent$ (Remark~\ref{rem:entanglement-form}); the value-form pipeline
+of Section~\ref{ch:proof-structure} uses Theorem~\ref{thm:direct-repetition-q} instead.
 
 \effortHard\ \qlib
 
@@ -306,7 +582,10 @@ evaluating as a formalization route.
 \paragraph{Comments.} Used for gap amplification: after answer reduction the
 completeness-soundness gap has shrunk to $1$ vs.\ $1 - 1/\poly$, and repetition of the
 anchored game restores the gap to $1$ vs.\ $\frac12$ while preserving entanglement
-lower bounds. The proof is information-theoretic and long; axiomatize first. Two
+lower bounds. The proof is information-theoretic and long; axiomatize first. Direct, value-form
+repetition is formalized (Section~\ref{sec:pr-direct}) and has replaced this theorem in
+the pipeline (Remark~\ref{rem:direct-vs-anchored}); this theorem is retained for the
+entanglement form of the argument (Remark~\ref{rem:entanglement-form}). Two
 translation points for the formalization: the source works with bipartite
 tensor-product strategies while $\Ent$ (Definition~\ref{def:ent}) is defined via
 synchronous strategies, so the statement must be transported, consistent with the

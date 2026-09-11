@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Basic/SubMeasurementFamilies.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.TensorPlacement
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Indexed and bipartite submeasurement infrastructure
 
@@ -109,7 +114,7 @@ the readout map. -/
   · ext a
     simp
   · intro a _
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Postprocessing a submeasurement by the identity readout leaves it unchanged. -/
 @[simp] theorem postprocess_id {α ι : Type*}

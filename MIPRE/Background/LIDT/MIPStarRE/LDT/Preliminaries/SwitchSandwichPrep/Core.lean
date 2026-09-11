@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/Core.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ConsistencyBridges
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
 namespace MIPStarRE.LDT.Preliminaries
@@ -88,7 +93,7 @@ lemma weightedFinsetCauchySchwarz
                   Finset.sum_nonneg fun a _ => hy q a)
     _ = Real.sqrt (∑ q ∈ 𝒟.support, 𝒟.weight q * ∑ a : Outcome, x q a) *
           Real.sqrt (avgOver 𝒟 (fun q => ∑ a : Outcome, y q a)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Weighted finite Cauchy--Schwarz with the summand restricted to a selected
 support.

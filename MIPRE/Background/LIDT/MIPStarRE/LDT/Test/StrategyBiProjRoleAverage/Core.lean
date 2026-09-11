@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Test/StrategyBiProjRoleAverage/Core.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProj.Measurements
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Role-Register Averaging: Branch Equalities
 
@@ -737,7 +742,7 @@ theorem roleRegisterSymmStrategy_axisParallel_eq_roleAverage
   calc
     (strategy.roleRegisterSymmStrategy).axisParallelFailureProbability
       = avgOver axParDist symmErr := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver axParDist (fun s => (pointLeftLineRight s + lineLeftPointRight s) / 2) :=
           hcongr
     _ = (avgOver axParDist pointLeftLineRight +
@@ -815,7 +820,7 @@ theorem roleRegisterSymmStrategy_diagonal_eq_roleAverage
       = (1 / (params.m : Error)) *
           ∑ j : Fin params.m,
             avgOver (uniformDistribution (RestrictedDiagonalSample params j)) (symmErr j) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = (1 / (params.m : Error)) *
           ∑ j : Fin params.m,
             avgOver (uniformDistribution (RestrictedDiagonalSample params j))

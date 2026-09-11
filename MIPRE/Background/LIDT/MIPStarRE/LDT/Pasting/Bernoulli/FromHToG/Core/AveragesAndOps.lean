@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/AveragesAndOps.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Statements
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.Weights
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: operator averages and projective submeasurement lemmas
 
@@ -146,7 +151,7 @@ lemma fromHToG_gHatIdxMeas_sum_isSome_true
         (gHatIdxMeas params family x).outcome g)
         = ∑ g ∈ ((Finset.univ : Finset (GHatOutcome params)).filter fun g =>
             g.isSome = true), (gHatIdxMeas params family x).outcome g := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = ∑ g ∈ (Finset.univ.image fun p : Polynomial params =>
             (some p : GHatOutcome params)), (gHatIdxMeas params family x).outcome g := by
           rw [hfilter]
@@ -154,7 +159,7 @@ lemma fromHToG_gHatIdxMeas_sum_isSome_true
           rw [Finset.sum_image]
           intro a _ha b _hb h
           cases h
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = ∑ p : Polynomial params, (family.meas x).outcome p := by
           simp [gHatIdxMeas, completeSubMeas]
     _ = (completePartSubMeas params family x).total := by
@@ -178,7 +183,7 @@ lemma fromHToG_gHatIdxMeas_sum_isSome_false
         (gHatIdxMeas params family x).outcome g)
         = ∑ g ∈ ((Finset.univ : Finset (GHatOutcome params)).filter fun g =>
             g.isSome = false), (gHatIdxMeas params family x).outcome g := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = (gHatIdxMeas params family x).outcome none := by
           rw [hfilter]
           simp

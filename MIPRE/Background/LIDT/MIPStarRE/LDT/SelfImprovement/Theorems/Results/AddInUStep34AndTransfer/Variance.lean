@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTra
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Factored
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Unselected add-in-u Step 3/4 global-variance bounds
 
@@ -302,7 +307,7 @@ lemma add_in_u_cs_chain_q2_q3_variance_factor_le_globalVarianceDeviation_sum
             intro uv
             refine Finset.sum_congr rfl ?_
             intro h _
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ avgOver (uniformDistribution (Point params × Point params)) (fun uv =>
           ∑ h : Polynomial params, squaredTerm uv h) := hvariance_le_squared
     _ = ∑ g : Polynomial params,

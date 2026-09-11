@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/HAConsistency.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.HBConsistency
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.CommutingWithG.Incomplete
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: H-A consistency
 
@@ -175,12 +180,12 @@ theorem hAConsistency_submeas_from_lineConsistency_of_axis_self
         IdxMeas.toIdxSubMeas pointLineMeas =
           liftedVerticalLineAnswerFamily params strategy := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     have hpoint_eq :
         IdxMeas.toIdxSubMeas pointMeas =
           IdxProjMeas.toIdxSubMeas strategy.pointMeasurement := by
       funext u
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     rw [hline_eq, hpoint_eq]
     exact Preliminaries.sddRel_symm strategy.state
       (uniformDistribution (Point params.next)) _ _ _ hpublic

@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/SelfImprovement/MatrixRealization/CanonicalPrimal.l
 import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.BlockDiagonal
 import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Base
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 9 — Canonical matrix SDP primal block form
 
@@ -264,7 +269,7 @@ theorem matrixSdpCanonicalBlockDiagonalLinearMap_apply (params : Parameters)
       matrixSdpCanonicalBlockDiagonal params model B :=
   by
     ext x y
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The canonical SDP block layout is the Mathlib block-diagonal layout after
 commuting the matrix-space index with the block index. -/
@@ -781,7 +786,7 @@ theorem matrixSdpCanonicalSlackOperator_extractedPrimalSubmeasurement
           (matrixSdpCanonicalExtractedPrimalSubmeasurement params model X hX).effect g =
         1 - ∑ g : Polynomial params,
           matrixSdpCanonicalDiagonalBlock params model X (some g) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = matrixSdpCanonicalDiagonalBlock params model X none := by
           rw [← hsum]
           abel
@@ -845,7 +850,7 @@ theorem matrixSdpCanonicalPrimalFeasible_extracts_submeasurement
         T.effect g = matrixSdpCanonicalDiagonalBlock params model X (some g) := by
   refine ⟨matrixSdpCanonicalExtractedPrimalSubmeasurement params model X hX, ?_⟩
   intro g
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 
 end MIPStarRE.LDT.SelfImprovement

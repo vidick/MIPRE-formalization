@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/MoveC
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.MoveChain.Base
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: half-sandwich lifting constructions
 
@@ -46,10 +51,10 @@ def swappedFrontQuestionEquiv (params : Parameters) (r : ℕ) :
   invFun q := (q.2.1, q.1, q.2.2.1, q.2.2.2)
   left_inv q := by
     rcases q with ⟨x₁, x₂, x₃, xs⟩
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   right_inv q := by
     rcases q with ⟨x₁, x₂, x₃, xs⟩
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Outcome analogue of `swappedFrontQuestionEquiv`. -/
 def swappedFrontOutcomeEquiv (params : Parameters) [FieldModel params.q] (r : ℕ) :
@@ -60,10 +65,10 @@ def swappedFrontOutcomeEquiv (params : Parameters) [FieldModel params.q] (r : �
   invFun og := (og.2.1, og.1, og.2.2.1, og.2.2.2)
   left_inv og := by
     rcases og with ⟨g₁, g₂, g₃, gs⟩
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   right_inv og := by
     rcases og with ⟨g₁, g₂, g₃, gs⟩
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Expose the tail coordinate of an `(r+1)`-move question and put the first two
 distinguished slice coordinates in swapped-front order. -/

@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Basic/QuantumState.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.ParametersBase
 import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Quantum states and tensor placement for the low individual degree test
 
@@ -175,7 +180,7 @@ end PureState
     swapVector (swapVector ψ) = ψ := by
   funext ij
   rcases ij with ⟨i, j⟩
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The expectation `Re τ(ψ X)`. Dimensions match by construction. -/
 noncomputable def ev {ι : Type*} [Fintype ι] [DecidableEq ι]

@@ -11,6 +11,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Polynomials
 import Mathlib.Algebra.Polynomial.Roots
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Polynomial agreement bound (Step 5 hammer)
 
@@ -126,7 +131,7 @@ lemma polynomialAgreement_avg_le_mdq
     cases g
     cases g'
     cases hpoly
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hsz := schwartzZippel_individualDegree gLow g'Low hneqLow
   have havg_scalar :
       avgOver (uniformDistribution (Fin params.m → Scalar params))

@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/MakingMeasurementsProjective/Statements.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Defs
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 5 — Statements
 
@@ -143,7 +148,7 @@ theorem naimarkProductExtensionDensity_eq_reindex_opTensor
         (naimarkProductExtensionEquiv HA HB HauxA HauxB)
         (opTensor ψ.density aux.density) := by
   ext r c
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The product-extension density is positive semidefinite. -/
 theorem naimarkProductExtensionDensity_nonneg

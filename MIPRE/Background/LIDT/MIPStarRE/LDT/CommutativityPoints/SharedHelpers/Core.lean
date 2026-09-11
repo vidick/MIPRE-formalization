@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/CommutativityPoints/SharedHelpers/Core.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Approximation
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 10 commutativity points: shared helpers core
 
@@ -74,7 +79,7 @@ lemma qSDDOp_reindex
              total := A.total } : OpFamily Outcome' ι)
           ({ outcome := fun a' => B.outcome (e.symm a')
              total := B.total } : OpFamily Outcome' ι) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Reindexing the outcome type of both indexed families preserves `SDDOpRel`. -/
 lemma sddOpRel_reindex
@@ -162,7 +167,7 @@ lemma liftLeft_mul_leftPlaced_outcome
   calc
     (A.liftLeft).outcome a * (OpFamily.leftPlacedOpFamily B.toOpFamily).outcome b
       = leftTensor (A.outcome a) * leftTensor (B.outcome b) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = leftTensor (A.outcome a * B.outcome b) := by
           rw [leftTensor_mul_leftTensor]
 
@@ -177,7 +182,7 @@ lemma liftLeft_mul_rightPlaced_outcome
   calc
     (A.liftLeft).outcome a * (OpFamily.rightPlacedOpFamily B.toOpFamily).outcome b
       = leftTensor (A.outcome a) * rightTensor (B.outcome b) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = opTensor (A.outcome a) (B.outcome b) := by
           rw [leftTensor_mul_rightTensor_eq_opTensor]
 
@@ -192,7 +197,7 @@ lemma liftRight_mul_leftPlaced_outcome
   calc
     (A.liftRight).outcome a * (OpFamily.leftPlacedOpFamily B.toOpFamily).outcome b
       = rightTensor (A.outcome a) * leftTensor (B.outcome b) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = opTensor (B.outcome b) (A.outcome a) := by
           rw [rightTensor_mul_leftTensor_eq_opTensor]
 
@@ -207,7 +212,7 @@ lemma liftRight_mul_rightPlaced_outcome
   calc
     (A.liftRight).outcome a * (OpFamily.rightPlacedOpFamily B.toOpFamily).outcome b
       = rightTensor (A.outcome a) * rightTensor (B.outcome b) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = rightTensor (A.outcome a * B.outcome b) := by
           rw [rightTensor_mul_rightTensor]
 

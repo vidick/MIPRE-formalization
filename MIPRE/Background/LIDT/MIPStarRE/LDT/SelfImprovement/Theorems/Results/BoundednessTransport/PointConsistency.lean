@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTranspo
 import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.ProjectivizationChain.Basic
 import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.BoundednessTransport.Decomposition
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Boundedness transport point-consistency estimates
 
@@ -39,7 +44,7 @@ lemma opTensor_one_left_eq_rightTensor
     (B : MIPStarRE.Quantum.Op ι₂) :
     opTensor (ι₁ := ι₁) (1 : MIPStarRE.Quantum.Op ι₁) B =
       rightTensor (ι₁ := ι₁) B := by
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The point measurement is complete and polynomial evaluation preserves the
 right-register total, so the tensor total has the same expectation as the right

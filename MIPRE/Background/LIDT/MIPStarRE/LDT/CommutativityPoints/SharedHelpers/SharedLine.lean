@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/CommutativityPoints/SharedHelpers/SharedLine.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionMapAverages
 import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.Core
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 10 commutativity points: shared-line helpers
 
@@ -338,7 +343,7 @@ lemma sampledDiagonalLineApproximation_ignore_first
             unfold qSDDOp qSDD qSDDCore IdxSubMeas.liftLeft IdxSubMeas.liftRight
               OpFamily.leftPlacedOpFamily OpFamily.rightPlacedOpFamily
               sampledPointMeasurement sampledPointFromDiagonalQuestion SubMeas.toOpFamily
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (pointWithDiagonalLineDistribution params)
           (fun q =>
             qSDD strategy.state
@@ -353,7 +358,7 @@ lemma sampledDiagonalLineApproximation_ignore_first
           (pointWithDiagonalLineDistribution params)
           (IdxSubMeas.liftLeft (sampledPointMeasurement params strategy))
           (IdxSubMeas.liftRight (sampledDiagonalLineEvaluation params strategy)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ pointDiagonalLineApproxError params gamma := happrox
 
 lemma sampledDiagonalLineApproximation_ignore_second
@@ -395,7 +400,7 @@ lemma sampledDiagonalLineApproximation_ignore_second
             unfold qSDDOp qSDD qSDDCore IdxSubMeas.liftLeft IdxSubMeas.liftRight
               OpFamily.leftPlacedOpFamily OpFamily.rightPlacedOpFamily
               sampledPointMeasurement sampledPointFromDiagonalQuestion SubMeas.toOpFamily
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (pointWithDiagonalLineDistribution params)
           (fun q =>
             qSDD strategy.state
@@ -410,7 +415,7 @@ lemma sampledDiagonalLineApproximation_ignore_second
           (pointWithDiagonalLineDistribution params)
           (IdxSubMeas.liftLeft (sampledPointMeasurement params strategy))
           (IdxSubMeas.liftRight (sampledDiagonalLineEvaluation params strategy)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ pointDiagonalLineApproxError params gamma := happrox
 
 end MIPStarRE.LDT.CommutativityPoints

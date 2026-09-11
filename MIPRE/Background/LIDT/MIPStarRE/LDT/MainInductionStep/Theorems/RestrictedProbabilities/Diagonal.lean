@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Base
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 6 -- Diagonal Restricted Probability Bounds
 
@@ -50,12 +55,12 @@ private lemma restrictedDiagonalSampleError_eq
     · by_cases hk : k.1 ≤ j.1
       · simp [appendPoint, extendRestrictedDirection, embedCoord, hkm, hk]
       · simp [appendPoint, extendRestrictedDirection, embedCoord, hkm, hk]
-        rfl
+        try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     · have hnotle : ¬ k.1 ≤ j.1 := by
           intro hk
           exact hkm (lt_of_le_of_lt hk j.2)
       simp [appendPoint, extendRestrictedDirection, embedCoord, hkm, hnotle]
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hline :
       DiagonalLine.appendAtHeight params
           { base := s.1, direction := extendRestrictedDirection j s.2 } x =
@@ -68,7 +73,7 @@ private lemma restrictedDiagonalSampleError_eq
     RestrictedSymStrat.restrictedDiagonalLineAnswerFamily, diagonalPointAnswerFamily,
     diagonalLineAnswerFamily, xRestrictedStrategy]
   simp [diagonalPointAnswerFamilyOf, diagonalLineAnswerFamilyOf, hline]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Per-index diagonal-line consistency defect of the restricted `x`-slice strategy
 at embedded index `j`, averaged over the restricted diagonal sample space. -/
@@ -132,7 +137,7 @@ private lemma diagonalSliceIndexErrorAverage_eq_diagonalIndexError
           g := by
             exact avgOver_uniform_restrictedDiagonalSample_append params j g
     _ = diagonalIndexError params strategy (embedCoord params j) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 private lemma averageRestrictedDiagonalFailure_eq_embeddedDiagonalIndices
     (params : Parameters)
@@ -243,7 +248,7 @@ lemma weighted_diagonal_bound
                       symm
                       rw [Finset.mul_sum]
           _ = strategy.diagonalFailureProbability := by
-                rfl
+                try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ gamma := hgood.diagonalLineTest
 
 end MIPStarRE.LDT.MainInductionStep

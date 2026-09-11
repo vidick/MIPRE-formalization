@@ -9,6 +9,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Statements
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.Extensions
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.SimEq
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: vertical-line consistency transfer
 
@@ -86,13 +91,13 @@ private lemma ldGbconAxisLineMeasurement_eq_verticalLineMeasurement
               (AxisParallelLine.rebaseAt ℓ (pointHeight params u))).toSubMeas)
             (· zeroCoord)).outcome a := by
               simp [ldGbconAxisLineMeasurement, hrebased, ℓ]
-              rfl
+              try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       _ = (postprocess ((strategy.axisParallelMeasurement ℓ).toSubMeas)
             (fun f => f (pointHeight params u))).outcome a := by
               exact AxisParallelCovariantMeasurement.reparamInvariant
                 strategy.axisParallelMeasurement ℓ (pointHeight params u) a
       _ = (ldGbconVerticalLineMeasurement params strategy u).toSubMeas.outcome a := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   · have hA : (ldGbconAxisLineMeasurement params strategy u).toSubMeas.total = 1 := by
         let ℓ : AxisParallelLine params.next := { base := u, direction := lastCoord params }
         have hA' :
@@ -233,7 +238,7 @@ theorem pointVerticalLineSdd_of_axis_self
       IdxMeas.toIdxSubMeas pointMeas =
         IdxProjMeas.toIdxSubMeas strategy.pointMeasurement := by
     funext u
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have haxis_all : ConsRel strategy.state
       (uniformDistribution (AxisParallelTestSample params.next))
       (axisParallelPointAnswerFamily strategy)
@@ -411,7 +416,7 @@ theorem ldGbcon_of_axis_self
       IdxMeas.toIdxSubMeas pointMeas =
         IdxProjMeas.toIdxSubMeas strategy.pointMeasurement := by
     funext u
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have haxis_all : ConsRel strategy.state
       (uniformDistribution (AxisParallelTestSample params.next))
       (axisParallelPointAnswerFamily strategy)

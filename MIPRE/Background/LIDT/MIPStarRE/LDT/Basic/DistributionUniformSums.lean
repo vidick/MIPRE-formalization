@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Basic/DistributionUniformSums.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.PMFUniformAverages
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Module-valued uniform finite sums for project distributions
 
@@ -433,7 +438,7 @@ theorem uniformOnFinset_filter_sum_smul_eq_subtype {α M : Type*}
         (Distribution.uniformOnFinset (Finset.univ.filter p)).weight a • f a =
         ∑ a ∈ (Distribution.uniformOnFinset support).support,
           (Distribution.uniformOnFinset support).weight a • f a := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = ∑ a ∈ (uniformDistribution {a : α // a ∈ support}).support,
           (uniformDistribution {a : α // a ∈ support}).weight a • f a.1 := by
           exact uniformOnFinset_sum_smul_eq_subtype support f

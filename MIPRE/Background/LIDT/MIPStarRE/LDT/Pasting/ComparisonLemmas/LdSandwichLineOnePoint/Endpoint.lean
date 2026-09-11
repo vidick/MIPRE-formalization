@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/End
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.EndpointEquivs
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Core.LdGbcon
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: line one-point transport — endpoint lemmas
 
@@ -45,7 +50,7 @@ lemma ldSandwichLineOnePointRightEndpointMeasurement_toSubMeas
       postprocess (verticalLineMeasurementFamily params strategy ux.1) (fun f => f ux.2) := by
   simp [ldSandwichLineOnePointRightEndpointMeasurement, verticalLineMeasurementFamily,
     postprocessMeasurement]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 lemma ldSandwichLineOnePoint_endpoint_ldGbcon_of_axis_self
     (params : Parameters)
@@ -117,7 +122,7 @@ lemma ldSandwichLineOnePoint_endpoint_ldGbcon_of_axis_self
   convert hprod' using 2
   · rename_i ux
     rw [ldSandwichLineOnePointRightEndpointMeasurement_toSubMeas]
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 -- The proof lifts the endpoint consistency relation through the split
 -- sandwiched-line equivalence; the chain of rewriting identities unfolds this

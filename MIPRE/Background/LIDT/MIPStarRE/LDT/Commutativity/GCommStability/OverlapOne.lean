@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Commutativity/GCommStability/OverlapOne.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.Pointwise
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 11 commutativity: `G`-stability overlap (step one)
 
@@ -138,7 +143,7 @@ lemma gCommStability_raw_le_half_of
           (fun x => qBipartiteSSCDefect strategy.state (G x)) := by
             exact avgOver_mono _ _ _ hssc_point
     _ = bipartiteSSCError strategy.state (uniformDistribution (Fq params)) G := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ zeta / 2 := hsliceSSC.overlapBound
 
 /-- Any pointwise defect bound by the common overlap term is trivially at most

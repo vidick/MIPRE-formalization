@@ -9,6 +9,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChai
 import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransportSum
 import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.PolynomialSumBounds
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 namespace MIPStarRE.LDT.GlobalVariance
 
 open MIPStarRE.LDT

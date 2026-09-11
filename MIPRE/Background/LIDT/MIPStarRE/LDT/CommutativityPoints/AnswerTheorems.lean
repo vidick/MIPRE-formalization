@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/CommutativityPoints/AnswerTheorems.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.DistanceBounds
+
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
 /-!
 # Section 10 commutativity points: answer-valued diagonal measurements
 This file proves the commutativity-at-points theorem using the answer-valued
@@ -231,7 +236,7 @@ private lemma answerSampledDiagonalLineApproximation_ignore_first
               OpFamily.leftPlacedOpFamily OpFamily.rightPlacedOpFamily
               answerSampledPointMeasurement sampledPointFromDiagonalQuestion
               answerSampledDiagonalLineEvaluation SubMeas.toOpFamily
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (pointWithDiagonalLineDistribution params)
           (fun q =>
             qSDD strategy.state
@@ -248,7 +253,7 @@ private lemma answerSampledDiagonalLineApproximation_ignore_first
           (pointWithDiagonalLineDistribution params)
           (IdxSubMeas.liftLeft (answerSampledPointMeasurement params strategy))
           (IdxSubMeas.liftRight (answerSampledDiagonalLineEvaluation params strategy)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ pointDiagonalLineApproxError params gamma := by
           change
             sddError strategy.state (pointWithDiagonalLineDistribution params)
@@ -303,7 +308,7 @@ private lemma answerSampledDiagonalLineApproximation_ignore_second
               OpFamily.leftPlacedOpFamily OpFamily.rightPlacedOpFamily
               answerSampledPointMeasurement sampledPointFromDiagonalQuestion
               answerSampledDiagonalLineEvaluation SubMeas.toOpFamily
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = avgOver (pointWithDiagonalLineDistribution params)
           (fun q =>
             qSDD strategy.state
@@ -320,7 +325,7 @@ private lemma answerSampledDiagonalLineApproximation_ignore_second
           (pointWithDiagonalLineDistribution params)
           (IdxSubMeas.liftLeft (answerSampledPointMeasurement params strategy))
           (IdxSubMeas.liftRight (answerSampledDiagonalLineEvaluation params strategy)) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ pointDiagonalLineApproxError params gamma := by
           change
             sddError strategy.state (pointWithDiagonalLineDistribution params)
@@ -956,7 +961,7 @@ theorem answerCommutativityPoints
           (pointPairSharedDiagonalLineDistribution params)
           (answerPointMeasurementProductAlongSharedLine params strategy)
           (answerPointMeasurementProductAlongSharedLineReversed params strategy) := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ ≤ commutativityPointsError params gamma := hshared'
 
 end MIPStarRE.LDT.CommutativityPoints

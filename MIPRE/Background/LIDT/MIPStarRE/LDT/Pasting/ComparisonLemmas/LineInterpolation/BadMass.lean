@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadMass.
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.BadLine
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Line interpolation: bad-mass comparison
 
@@ -369,7 +374,7 @@ lemma ldSandwichLineOnePointRightMeasurement_outcome_some_eq_sum
         else 0 := by
   simp [ldSandwichLineOnePointRightMeasurement, ldSandwichLineOnePointRightFamily,
     postprocess, i.2, Finset.sum_filter]
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 lemma grouped_coordinate_mismatch_le_left_falseOutcome
     (params : Parameters) [FieldModel params.q]
@@ -552,7 +557,7 @@ lemma hBConsistencyCoordMass_le_linePointDefect
         qBipartiteConsDefect strategy.state
           ((ldSandwichLineOnePointLeftFamily params strategy family k i.1) q)
           ((ldSandwichLineOnePointRightFamily params strategy family k i.1) q) := by
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   calc
     (∑ f : AxisLinePolynomial params.next,
       ev strategy.state

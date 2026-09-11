@@ -10,6 +10,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.OverlapOne
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 11 commutativity: shared scalar stability helpers
 
@@ -294,7 +299,7 @@ lemma scalar_pointwise_cauchy_schwarz_bound
                       _ = 1 - T := by simp [hT_proj])
               (hbound.sliceOpPSD x)
       _ = hbound.storedResidual G x := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   have hcs := MIPStarRE.LDT.Preliminaries.sum_ev_mul_le_sqrt strategy.state X Y
   have hXY :
       ∀ g : Polynomial params,

@@ -9,6 +9,11 @@ import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix
 import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.MatrixRealization.TraceForms
 import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Defs
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 9 — Matrix realization
 
@@ -215,7 +220,7 @@ theorem one_le_matrixSdpStrictDualWitness_dualSlack (params : Parameters)
         exact sub_le_sub_left (matrixAveragedPointOperator_le_one params model g)
           (matrixSdpStrictDualWitness model)
     _ = matrixSdpDualSlackOperator params model (matrixSdpStrictDualWitness model) g := by
-        rfl
+        try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Dual feasibility already implies that the dual operator is positive
 semidefinite, since every averaged point operator `A_g` is positive. -/

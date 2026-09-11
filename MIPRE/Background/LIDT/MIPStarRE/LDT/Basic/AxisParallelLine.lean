@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Basic/AxisParallelLine.lean
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.ParametersBase
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Axis-parallel lines for the low individual degree test
 
@@ -142,7 +147,7 @@ def appendAtHeight (params : Parameters)
       by_cases hdir : i = embedCoord params direction
       · subst i
         simp [appendPoint, pointAt, embedCoord]
-        rfl
+        try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       · by_cases hi : i.1 < params.m
         · have hdir' : (⟨i.1, hi⟩ : Fin params.m) ≠ direction := by
             intro h

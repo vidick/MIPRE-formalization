@@ -17,3 +17,6 @@
 __pycache__/
 .DS_Store
 .cache/*
+
+# Scratch files for local Lean checks (see docs/lean-cloud.md)
+/Scratch/

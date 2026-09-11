@@ -8,6 +8,11 @@ Upstream path: MIPStarRE/LDT/Basic/DistributionAvg.lean
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionUniformSums
 import Mathlib.Probability.ProbabilityMassFunction.Integrals
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Average lemmas for finite-support distributions
 
@@ -317,7 +322,7 @@ theorem totalVariationDistance_eq_sum_max_sub {α : Type*} [DecidableEq α]
   calc
     totalVariationDistance μ ν
         = (1 / 2) * ∑ a ∈ u, |μ.weight a - ν.weight a| := by
-            rfl
+            try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = (∑ a ∈ u, (ν.weight a - μ.weight a) +
           ∑ a ∈ u, |μ.weight a - ν.weight a|) / 2 := by
             rw [hdiff_sum]

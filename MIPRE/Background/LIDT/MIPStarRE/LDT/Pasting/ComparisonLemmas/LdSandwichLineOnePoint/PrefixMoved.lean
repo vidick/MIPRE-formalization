@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Pre
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.Endpoint
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 12 pasting: line one-point transport — prefix moved lemmas
 
@@ -248,7 +253,7 @@ lemma gHatSandwich_sum_last_eq_prefix
           (fun j => xs ⟨j.1, by omega⟩) gsPrefix *
         (gHatHalfProductOutcomeOperator params family n
           (fun j => xs ⟨j.1, by omega⟩) gsPrefix)ᴴ := by
-        rfl
+        try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- Reversing the prefix after moving the last coordinate to the front gives the adjoint product. -/
 lemma gHatHalfProduct_lastReverse_eq_conjTranspose
@@ -403,6 +408,6 @@ lemma gHatRotatedHalfProduct_lastReverse_eq_conjTranspose_lastFront
       rw [htail, hgtail]
       rw [hprefixAdj]
       rw [hfront, Matrix.conjTranspose_mul, hhead]
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 end MIPStarRE.LDT.Pasting

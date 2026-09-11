@@ -9,6 +9,11 @@ import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution
 import Mathlib.Analysis.MeanInequalitiesPow
 import Mathlib.Probability.ProbabilityMassFunction.Monad
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # PMF-weighted finite expectation identities
 
@@ -121,7 +126,7 @@ theorem map_apply_toReal {α β : Type*} [Fintype α]
     by_cases h : b = e a
     · rw [if_pos h, if_pos h]
     · rw [if_neg h, if_neg h]
-      rfl
+      try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   · intro a _
     by_cases h : b = e a
     · simp [h, p.apply_ne_top a]
@@ -309,7 +314,7 @@ theorem sum_rpow_one_div_le_rpow_sum {α : Type*}
     calc
       z a ^ (n : MIPStarRE.LDT.Error) =
           (Real.rpow (f a) (1 / (n : MIPStarRE.LDT.Error))) ^ (n : MIPStarRE.LDT.Error) := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
       _ = Real.rpow (f a) ((1 / (n : MIPStarRE.LDT.Error)) * (n : MIPStarRE.LDT.Error)) := by
           symm
           exact Real.rpow_mul (hf a) _ _
@@ -626,7 +631,7 @@ theorem totalVariationDistance_eq_sum_max_sub {α : Type*}
   calc
     totalVariationDistance p q =
         (1 / 2) * ∑ a : α, |(p a).toReal - (q a).toReal| := by
-          rfl
+          try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
     _ = (∑ a : α, ((q a).toReal - (p a).toReal) +
           ∑ a : α, |(p a).toReal - (q a).toReal|) / 2 := by
           rw [hdiff_sum]

@@ -1,0 +1,8 @@
+CommutingRepetition Lean formalization
+Copyright 2026 the commuting-repetition contributors
+
+This project includes material ported from the Apache-2.0 licensed
+repository github.com/openai/ten-proofs (QuantumParallelRepetition.lean):
+the finite-event-law/greedy-stopping engine, the finite Pinsker and
+classical-information toolkits, the shared-permutation sampler, and
+negMulLog helper lemmas. Ported files carry per-file attribution headers.

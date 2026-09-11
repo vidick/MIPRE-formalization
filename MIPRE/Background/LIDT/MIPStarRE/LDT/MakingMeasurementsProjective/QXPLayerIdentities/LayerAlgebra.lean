@@ -7,6 +7,11 @@ Upstream path: MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/Lay
 -/
 import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Sigma
 
+-- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
+-- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
+-- Mathlib sets on declarations affected by Lean v4.33's check; see README.md.
+set_option backward.isDefEq.respectTransparency false
+
 /-!
 # Section 5 — Q/X/XHat/P algebraic identities
 
@@ -30,7 +35,7 @@ lemma xa_t {Outcome : Type*}
     [Fintype Outcome]
     (data : QXPLayerData Outcome ι) (a : Outcome) :
     Xa data a = Ta data.qLayer a * data.x := by
-  rfl
+  try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- **`Q_a` restated** (`lem:qa-restated`).
 
@@ -281,7 +286,7 @@ lemma paRestated {Outcome : Type*}
       Pa data a = (XHatA data a)ᴴ * data.xHat := by
   constructor
   · -- The first conjunct is definitional from `Pa`.
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
   · have hTa : (Ta data.qLayer a)ᴴ = Ta data.qLayer a := by
       simpa [Ta] using ProjMeas.outcome_hermitian data.qLayer.t a
     have hXHatA : (XHatA data a)ᴴ = data.xHatᴴ * Ta data.qLayer a := by
@@ -621,7 +626,7 @@ lemma pProjectivity {Outcome : Type*}
             simp [Ta, data.qLayer.t.proj a, Matrix.mul_assoc]
       _ = Pa data a := rfl
   · intro a
-    rfl
+    try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The canonical projective submeasurement obtained from the Q/X/XHat/P
 layer. Its outcomes are the paper's operators `P_a`. -/
