@@ -54,8 +54,8 @@ certified by a Pauli-basis self-test built on the quantum low individual degree 
 checkable proof, that their answers would have been accepted), and \emph{gap
 amplification} by anchored parallel repetition. Each of these steps has one central
 ingredient that can be formalized in an independent manner: the low individual degree
-test, the PCP theorem (in a specific form), and a parallel repetition theorem (for a certain
-class of quantum games).
+test, the PCP theorem (in a specific form), and a parallel repetition theorem
+(Section~\ref{ch:parallel-repetition}; the direct, value-form theorems are formalized).
 
 \subsection{Entry points}
 \label{sec:entry-points}
@@ -133,7 +133,10 @@ Stating soundness of all transformations directly in terms of the entanglement m
 $\Ent$ rather than via separate value and dimension statements; using de la Salle's
 quantitative improvements to stability (Gowers--Hatami) where they shorten proofs; other
 simplifications that are present in the follow-up proof of
-$\MIPco=\coRE$~\cite{Lin23,Lin25}.
+$\MIPco=\coRE$~\cite{Lin23,Lin25}, first among them stating the pipeline in value form
+throughout, following Lin's compressibility criterion, so that gap amplification uses
+direct rather than anchored parallel repetition and Theorem~\ref{thm:bvy} is not needed
+(Remark~\ref{rem:direct-vs-anchored}).
 
 \subsection{Conventions}
 \label{sec:conventions}
@@ -142,7 +145,7 @@ Every definition and theorem carries a \verb|\label|, and \verb|\uses| annotatio
 record the dependency graph rendered on the project web page. Lean declaration names
 (\verb|\lean| tags) are deliberately absent at this stage; they will be added as the
 corresponding declarations are created. Statements in
-Sections~\ref{ch:required-results}--\ref{ch:anchored-repetition} are external results: the project may initially
+Sections~\ref{ch:required-results}--\ref{ch:parallel-repetition} are external results: the project may initially
 axiomatize them (each section records the literature source and comments on
 formalization), while statements in Section~\ref{ch:proof-structure} are proof
 obligations of the project. Numerical constants in headline statements (levels, error

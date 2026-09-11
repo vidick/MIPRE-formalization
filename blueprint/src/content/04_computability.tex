@@ -276,7 +276,9 @@ isolated in a statement with no quantum content. In the application
 (Section~\ref{sec:ps-halting}), $A$ is the set of normal form verifier descriptions
 with $\synval = 1$ and finite entanglement requirement, and $f(\verifier) =
 \Ent(\verifier, \frac12)$ (suitably formalized); the compression procedure is
-Theorem~\ref{thm:compression}. Note that~\cite{MNY} also proves a converse (their
+Theorem~\ref{thm:compression}, whose soundness bound carries a factor $\frac12$, so the
+application needs the variant of the lemma tolerating such a loss per level
+(Remark~\ref{rem:compression-abstract}). Note that~\cite{MNY} also proves a converse (their
 Lemma 4.1): a halting reduction of this kind exists \emph{only if} a compression
 procedure does, which is evidence that this decomposition of the proof is canonical.
 The lemma and its proof are a self-contained computability project, an ideal early

@@ -106,10 +106,10 @@ of `thm:parallel-repetition`, with a remark on dimension preservation.
 | Phase | Content | Status |
 |---|---|---|
 | 0 | Issue #27 opened and claimed; decisions above | done 2026-09-11 |
-| 1 | Toolchain bump to v4.33.0; CI on LIDT + `Cost/` | running |
+| 1 | Toolchain bump to v4.33.0; CI on LIDT + `Cost/` | v4.33 transparency fix pushed (`ee03405`); CI pending |
 | 2 | `scripts/vendor-repetition.py`; both artifacts vendored; `MIPRE.lean` regenerated; READMEs, NOTICE | done 2026-09-11 (CI pending) |
-| 3 | Bridge: `Game.repeat`, bipartite co-value, `thm:direct-repetition-co` (sorry-free), `thm:direct-repetition-q` (modulo `lem:povm-value-eq`), `thm:tracial-density`, axiom guards | next |
-| 4 | Blueprint: `05_parallel_repetition.tex` with a formalized direct-repetition section; ch03 table; bibliography; under D8 the value-form restructuring | after 3 |
+| 3 | Bridge: `Game.repeat`, bipartite co-value, `thm:direct-repetition-co` (sorry-free), `thm:direct-repetition-q` (modulo `lem:povm-value-eq`), `thm:tracial-density`, axiom guards | done 2026-09-11 (CI pending) |
+| 4 | Blueprint: `05_parallel_repetition.tex` with a formalized direct-repetition section; ch03 table; bibliography; under D8 the value-form restructuring | section, table, bibliography, ½ fix done 2026-09-11; D8 restructuring awaits confirmation |
 | 5 | Lean: `lem:compressible-criterion` from the `Cost/` toolkit (`Compression.lean`), old lemma kept as a corollary or retired | parallel to 3–4 |
 | 6 | PR with `Closes #27`, `awaiting-review` | after CI green |
 

@@ -143,7 +143,10 @@ low-degree ``sandwiching'' argument recombining the players' committed polynomia
 
 Answer reduction leaves a shrunken gap ($1$ vs.\ $1 - 1/\poly(n)$). Anchored parallel
 repetition (Theorem~\ref{thm:bvy}) restores soundness $\frac12$ with polynomially many
-repetitions, at polynomial cost in complexity and $+2$ levels.
+repetitions, at polynomial cost in complexity and $+2$ levels. In value form the same is
+achieved by direct repetition, without anchoring (Theorems~\ref{thm:direct-repetition-q}
+and~\ref{thm:direct-repetition-co}, both formalized);
+Remark~\ref{rem:direct-vs-anchored} discusses the two forms.
 
 \begin{theorem}[Parallel repetition of normal form verifiers]
 \label{thm:parallel-repetition}
@@ -185,8 +188,8 @@ $\verifier$ is a $\lambda$-bounded $9$-level normal form verifier, then for all 
 \begin{enumerate}
 \item (\textbf{Completeness}) If $\verifier_N$ has a value-$1$ PCC strategy, then so
   does $\vcompr_n$.
-\item (\textbf{Soundness}) $\Ent\bigl(\vcompr_n, \tfrac12\bigr) \geq \max\bigl\{
-  \Ent\bigl(\verifier_N, \tfrac12\bigr),\ 2^{N^{\lambda} - 1} \bigr\}$.
+\item (\textbf{Soundness}) $\Ent\bigl(\vcompr_n, \tfrac12\bigr) \geq \tfrac12
+  \max\bigl\{ \Ent\bigl(\verifier_N, \tfrac12\bigr),\ 2^{N^{\lambda} - 1} \bigr\}$.
 \end{enumerate}
 \end{theorem}
 
@@ -199,10 +202,19 @@ in~\cite[Lemma 6.3]{MNY}: take $A$ to be the set of (descriptions of) normal for
 verifier games with a perfect PCC strategy, $f(\game) =
 \Ent(\game, \frac12)$, and note that a description $(\sampler, \decider, n)$ with $n$
 in binary is precisely a succinct description of the game $\verifier_{2^n}$ played by
-a $\lambda$-bounded verifier. The compression map then satisfies $f(\compr(\hat{x},
-n)) \geq \max\{f(x), n\}$ by the entanglement bound above. Making this dictionary
-precise (in particular the encoding of games by verifier descriptions and the role of
-$\lambda$) is a formalization task of this section.
+a $\lambda$-bounded verifier. The entanglement bound above then gives $f(\compr(\hat{x},
+n)) \geq \frac12 \max\{f(x), 2^{N^\lambda - 1}\}$ with $N = 2^n$, which is the
+hypothesis of Lemma~\ref{lem:recursive-compression} up to the factor $\frac12$
+of~\cite[Theorem 12.1]{JNVWY20}. The factor is harmless because the second term grows
+much faster than the levels of the recursion: after $j$ levels the iteration in the
+proof of the lemma gives $f(g(e)) \geq 2^{-j-1}\, 2^{N_j^\lambda - 1}$ with $N_j =
+2^{n_j}$ and $n_j \geq 2^j r(e)$, which still tends to infinity with $j$. The lemma is
+stated in the lossless form, so this instantiation requires the variant with hypothesis
+$f(y) \geq \frac12 \max\{f(x), G(n)\}$ for a function $G$ growing faster than the
+levels; that variant, with the same proof, is a pending strengthening of the Lean
+statement. Making the rest of the dictionary precise (in particular the encoding of
+games by verifier descriptions and the role of $\lambda$) is likewise a formalization
+task of this section.
 \end{remark}
 
 \subsection{The halting reduction}

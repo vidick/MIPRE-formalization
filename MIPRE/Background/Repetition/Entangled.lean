@@ -54,7 +54,7 @@ theorem quantumValue_eq_entangledValue (G : Game X Y A B) :
 end Bridge
 
 /-- **Uniform exponential parallel repetition for entangled strategies** (blueprint
-`thm:direct-repetition-q`; OpenAI 2026, Chapter 6, Theorem 1.1, via the vendored root
+`thm:direct-repetition-q`; OpenAI 2026, Chapter 6, via the vendored root
 `QuantumParallelRepetition.distributionUniformExponential`): there is a universal constant
 `c > 0` such that for every game `G` with nonempty answer alphabets and
 `ε = 1 - val*(G) > 0`, and every `n ≥ 1`,

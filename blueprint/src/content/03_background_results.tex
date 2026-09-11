@@ -6,8 +6,8 @@ other papers. Each entry gives a full statement, a pointer to the literature, an
 comments on its role and on formalization. The project may initially assume these as
 axioms; discharging them are independent sub-projects. Three of these results are
 larger sub-projects and are developed in their own sections: the computability
-results in Section~\ref{ch:computability} and anchored parallel repetition in
-Section~\ref{ch:anchored-repetition}; they are included in the summary table below
+results in Section~\ref{ch:computability} and parallel repetition in
+Section~\ref{ch:parallel-repetition}; they are included in the summary table below
 for completeness. The general-purpose quantum information facts feeding the parallel
 repetition proof (fidelity and Uhlmann's theorem, a relative entropy toolkit, quantum
 Raz's lemma) are collected in Section~\ref{sec:ar-background} and likewise appear in
@@ -39,6 +39,9 @@ Magic Square rigidity & Thm.~\ref{thm:ms-rigidity} & \cite{WBMS16} & easy \\
 Low individual degree test (classical) & Thm.~\ref{thm:lidt-soundness} & \cite{JNVWY21qld} & \checkmark \\
 Low individual degree test (Pauli) & Thm.~\ref{thm:qld} & \cite{JNVWY21qld} & hard \\
 Anchored parallel repetition & Thm.~\ref{thm:bvy} & \cite{BVY17} & hard \\
+Direct parallel repetition (commuting-operator) & Thm.~\ref{thm:direct-repetition-co} & \cite{Vid26} & \checkmark \\
+Direct parallel repetition (entangled) & Thm.~\ref{thm:direct-repetition-q} & \cite{OpenAI26} & \checkmark$^\dagger$ \\
+Tracial density & Thm.~\ref{thm:tracial-density} & \cite{Lin23,Vid26} & \checkmark \\
 Uhlmann, Fuchs--van de Graaf & Thm.~\ref{thm:uhlmann}, Lem.~\ref{lem:fvdg} & \cite{Uhl76,FvdG99} & medium \\
 Relative entropy toolkit & Lems.~\ref{lem:rel-ent-basic}--\ref{lem:ssa} & \cite{Wil13,LR73} & medium \\
 Quantum Raz's lemma & Lem.~\ref{lem:quantum-raz} & \cite{BVY17} & easy \\
@@ -53,6 +56,9 @@ Value approximable from below & Lem.~\ref{lem:value-lower-approx} & folklore & m
 \hline
 \end{tabular}
 \end{center}
+
+\noindent $^\dagger$The Lean proof of Theorem~\ref{thm:direct-repetition-q} is complete
+modulo Lemma~\ref{lem:povm-value-eq}, which is stated in Lean but not yet proved.
 
 \subsection{The Gowers--Hatami theorem}
 \label{sec:rr-gowers-hatami}
