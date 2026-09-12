@@ -242,6 +242,77 @@ theorem exists_isometry_of_povm {d A : Type} [Fintype d] [DecidableEq d]
       simp [hVdef]
     rw [h3, ← hKE a j k]
 
+/-- The isometry `d → d × A` that pads a vector with the fixed ancilla state `|a₀⟩`. -/
+def ancillaEmbed (d : Type) [DecidableEq d] {A : Type} [DecidableEq A] (a₀ : A) :
+    Matrix (d × A) d ℂ :=
+  Matrix.of fun p j => if p = (j, a₀) then 1 else 0
+
+theorem ancillaEmbed_isometry {d A : Type} [Fintype d] [DecidableEq d]
+    [Fintype A] [DecidableEq A] (a₀ : A) :
+    (ancillaEmbed d a₀)ᴴ * ancillaEmbed d a₀ = (1 : Matrix d d ℂ) := by
+  ext j k
+  rw [Matrix.mul_apply, Finset.sum_eq_single (k, a₀)]
+  · by_cases h : j = k
+    · subst h
+      simp [ancillaEmbed, Matrix.one_apply]
+    · simp [ancillaEmbed, Matrix.one_apply_ne h, Prod.mk.injEq, Ne.symm h]
+  · intro p _ hp
+    simp [ancillaEmbed, hp]
+  · simp
+
+/-- Any isometry into `d × A` extends to a unitary of `d × A` agreeing with it on the
+`a₀`-slice: `U · (ancillaEmbed d a₀) = V`. This is the completion of an orthonormal family to
+an orthonormal basis, imported from Mathlib as
+`Orthonormal.exists_orthonormalBasis_extension_of_card_eq`; it is the step that lets a whole
+question-indexed family of POVMs be dilated against one fixed state. -/
+theorem exists_unitary_extending {d A : Type} [Fintype d] [DecidableEq d]
+    [Fintype A] [DecidableEq A] (a₀ : A) {V : Matrix (d × A) d ℂ}
+    (hV : Vᴴ * V = (1 : Matrix d d ℂ)) :
+    ∃ U : Matrix (d × A) (d × A) ℂ, Uᴴ * U = 1 ∧ U * ancillaEmbed d a₀ = V := by
+  classical
+  set w : (d × A) → EuclideanSpace ℂ (d × A) :=
+    fun p => WithLp.toLp 2 (fun q => V q p.1) with hw
+  have hinner : ∀ p q : d × A, inner ℂ (w p) (w q) = (Vᴴ * V) p.1 q.1 := by
+    intro p q
+    rw [hw, EuclideanSpace.inner_toLp_toLp, Matrix.mul_apply]
+    simp [dotProduct, Matrix.conjTranspose_apply, mul_comm]
+  have hortho : Orthonormal ℂ (Set.domRestrict {p : d × A | p.2 = a₀} w) := by
+    rw [orthonormal_iff_ite]
+    intro p q
+    have hpq : inner ℂ (w (p : d × A)) (w (q : d × A))
+        = (1 : Matrix d d ℂ) (p : d × A).1 (q : d × A).1 := by
+      rw [hinner, hV]
+    have hiff : (p = q) ↔ ((p : d × A).1 = (q : d × A).1) := by
+      refine ⟨fun h => by rw [h], fun h => Subtype.ext (Prod.ext h ?_)⟩
+      have hp : (p : d × A).2 = a₀ := p.property
+      have hq : (q : d × A).2 = a₀ := q.property
+      rw [hp, hq]
+    show inner ℂ (w (p : d × A)) (w (q : d × A)) = _
+    rw [hpq, Matrix.one_apply]
+    by_cases h : p = q
+    · simp [h, hiff.mp h]
+    · have h' : ¬((p : d × A).1 = (q : d × A).1) := fun hc => h (hiff.mpr hc)
+      rw [if_neg h, if_neg h']
+  obtain ⟨b, hb⟩ := hortho.exists_orthonormalBasis_extension_of_card_eq finrank_euclideanSpace
+  have hbb : ∀ p p' : d × A,
+      ∑ q : d × A, star ((b p : EuclideanSpace ℂ (d × A)) q) * (b p' q)
+        = if p = p' then (1 : ℂ) else 0 := by
+    intro p p'
+    rw [← orthonormal_iff_ite.mp b.orthonormal p p', EuclideanSpace.inner_eq_star_dotProduct]
+    simp [dotProduct, mul_comm]
+  refine ⟨Matrix.of fun q p => (b p : EuclideanSpace ℂ (d × A)) q, ?_, ?_⟩
+  · ext p p'
+    rw [Matrix.mul_apply]
+    simp only [Matrix.conjTranspose_apply, Matrix.of_apply]
+    rw [hbb, Matrix.one_apply]
+  · ext q j
+    rw [Matrix.mul_apply, Finset.sum_eq_single (j, a₀)]
+    · have hj : b (j, a₀) = w (j, a₀) := hb _ rfl
+      simp [ancillaEmbed, hj, hw]
+    · intro p _ hp
+      simp [ancillaEmbed, hp]
+    · simp
+
 /-- **The dilation direction of `lem:povm-value-eq`**, still open (issue #28): mixed states
 and POVMs do not help. Two standard finite-dimensional constructions are needed, neither of
 them in Mathlib as of v4.33:
