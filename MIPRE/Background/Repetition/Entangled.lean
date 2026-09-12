@@ -28,6 +28,9 @@ statement here whose proof is still open.
 
 namespace MIPRE.Repetition
 
+open Matrix
+open scoped ComplexOrder Kronecker
+
 section Bridge
 
 variable {X Y A B : Type} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
@@ -44,12 +47,117 @@ theorem toTP_repeat (G : Game X Y A B) (n : ℕ) :
     toTP (G.repeat n) = (toTP G).repeat n :=
   rfl
 
+/-! ### From a tensor-product strategy to a strategy of the vendored kind
+
+The embedding direction of `lem:povm-value-eq`: a pure state is a density matrix, a
+projective measurement is a POVM, and the two index conventions already agree (both sides
+put Alice's and Bob's systems in a Kronecker product over `Fin dA × Fin dB`). -/
+
+/-- A self-adjoint idempotent matrix is positive semidefinite: it equals `Pᴴ * P`. -/
+theorem posSemidef_of_selfAdjoint_idem {d : Type} [Fintype d] [DecidableEq d]
+    {P : Matrix d d ℂ} (hs : star P = P) (hp : P * P = P) : P.PosSemidef := by
+  have hH : Pᴴ = P := by rw [← Matrix.star_eq_conjTranspose]; exact hs
+  have hPP : P = Pᴴ * P := by rw [hH]; exact hp.symm
+  rw [hPP]
+  exact Matrix.posSemidef_conjTranspose_mul_self P
+
+/-- The Born rule for a pure state written as a rank-one density matrix:
+`tr(|ψ⟩⟨ψ| E) = ⟨ψ| E |ψ⟩`. -/
+theorem trace_vecMulVec_star_mul {d : Type} [Fintype d] (ψ : d → ℂ) (E : Matrix d d ℂ) :
+    Matrix.trace (Matrix.vecMulVec ψ (star ψ) * E) = star ψ ⬝ᵥ (E *ᵥ ψ) := by
+  rw [Matrix.trace_mul_comm, Matrix.mul_vecMulVec, Matrix.trace_vecMulVec,
+    dotProduct_comm]
+
+/-- A tensor-product strategy of this repository, as a strategy of the vendored module:
+the state is the rank-one density matrix `|ψ⟩⟨ψ|`, and each projective measurement is a
+POVM. -/
+noncomputable def ofTensorProductStrategy {G : Game X Y A B}
+    (S : TensorProductStrategy G) : QuantumParallelRepetition.Strategy (toTP G) where
+  Alice := Fin S.dA
+  Bob := Fin S.dB
+  alice_fintype := inferInstance
+  bob_fintype := inferInstance
+  alice_decidableEq := inferInstance
+  bob_decidableEq := inferInstance
+  state :=
+    { matrix := Matrix.vecMulVec S.ψ (star S.ψ)
+      positive := Matrix.posSemidef_vecMulVec_self_star S.ψ
+      trace_one := by
+        rw [Matrix.trace_vecMulVec, dotProduct_comm]
+        exact S.ψ_unit }
+  aliceMeasurement x :=
+    { effect := S.PA.M x
+      positive := fun a =>
+        posSemidef_of_selfAdjoint_idem (S.PA.selfAdjoint x a) (S.PA.projective x a)
+      complete := S.PA.normalized x }
+  bobMeasurement y :=
+    { effect := S.PB.M y
+      positive := fun b =>
+        posSemidef_of_selfAdjoint_idem (S.PB.selfAdjoint y b) (S.PB.projective y b)
+      complete := S.PB.normalized y }
+
+/-- The embedding preserves the value. -/
+theorem ofTensorProductStrategy_winProbability {G : Game X Y A B}
+    (S : TensorProductStrategy G) :
+    (ofTensorProductStrategy S).winProbability = S.value := by
+  classical
+  unfold QuantumParallelRepetition.Strategy.winProbability TensorProductStrategy.value
+  refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ => ?_
+  rw [Finset.mul_sum]
+  refine Finset.sum_congr rfl fun a _ => ?_
+  rw [Finset.mul_sum]
+  refine Finset.sum_congr rfl fun b _ => ?_
+  have hprob :
+      (ofTensorProductStrategy S).outcomeProbability x y a b =
+        (star S.ψ ⬝ᵥ ((S.PA.M x a ⊗ₖ S.PB.M y b) *ᵥ S.ψ)).re := by
+    change
+      (Matrix.trace
+        (Matrix.vecMulVec S.ψ (star S.ψ) * (S.PA.M x a ⊗ₖ S.PB.M y b))).re = _
+    rw [trace_vecMulVec_star_mul]
+  rw [hprob]
+  by_cases h : G.D x y a b = true
+  · simp [toTP, h]
+  · simp [toTP, h]
+
+/-- **The embedding direction of `lem:povm-value-eq`**: every tensor-product strategy is a
+strategy of the vendored kind with the same value, so the quantum value of this repository
+is at most the vendored entangled value. -/
+theorem quantumValue_le_entangledValue (G : Game X Y A B) :
+    quantumValue G ≤ QuantumParallelRepetition.entangledValue (toTP G) := by
+  refine Real.iSup_le (fun S => ?_)
+    (QuantumParallelRepetition.entangledValue_nonneg (toTP G))
+  rw [← ofTensorProductStrategy_winProbability S]
+  exact le_csSup (QuantumParallelRepetition.winProbabilities_bddAbove (toTP G))
+    ⟨ofTensorProductStrategy S, rfl⟩
+
+/-- **The dilation direction of `lem:povm-value-eq`**, still open (issue #28): mixed states
+and POVMs do not help. Two standard finite-dimensional constructions are needed, neither of
+them in Mathlib as of v4.33:
+
+* *Purification.* A density matrix `ρ` on `Alice × Bob` factors as `ρ = star K * K`
+  (`CStarAlgebra.nonneg_iff_eq_star_mul_self`), and the vector `ψ (d, r) = K r d` on
+  `(Alice × Bob) × R` with `R := Alice × Bob` satisfies `⟨ψ| M ⊗ 1 |ψ⟩ = tr(ρ M)`.
+  Reassociating so that the reference system `R` sits on Bob's side keeps the bipartite
+  structure, Bob's effects acting as `B ⊗ 1` on `Bob × R`.
+* *Naimark dilation of a family.* For each question `x` the POVM `{E^x_a}` dilates to a
+  projective measurement, but the dilating isometry depends on `x` while the state may not.
+  The fixed-state form is needed: adjoin one ancilla `ℂ^A` in a fixed state, extend each
+  isometry `v ↦ ∑_a (√(E^x_a) v) ⊗ |a⟩` to a unitary `U_x` of `ℂ^d ⊗ ℂ^A`, and take
+  `P^x_a := U_xᴴ (1 ⊗ |a⟩⟨a|) U_x`.
+
+Both systems are then reindexed by `Fin` types through `Fintype.equivFin`, which changes no
+outcome probability. -/
+theorem entangledValue_le_quantumValue (G : Game X Y A B) :
+    QuantumParallelRepetition.entangledValue (toTP G) ≤ quantumValue G := by
+  sorry
+
 /-- The quantum value of this repository (pure states, projective measurements) equals
 the entangled value of the vendored module (density matrices, POVMs): purification and
-Naimark dilation (blueprint `lem:povm-value-eq`). -/
+Naimark dilation (blueprint `lem:povm-value-eq`). The embedding direction is proved; the
+dilation direction is `entangledValue_le_quantumValue` (issue #28). -/
 theorem quantumValue_eq_entangledValue (G : Game X Y A B) :
-    quantumValue G = QuantumParallelRepetition.entangledValue (toTP G) := by
-  sorry
+    quantumValue G = QuantumParallelRepetition.entangledValue (toTP G) :=
+  le_antisymm (quantumValue_le_entangledValue G) (entangledValue_le_quantumValue G)
 
 end Bridge
 
