@@ -119,6 +119,29 @@ theorem ofTensorProductStrategy_winProbability {G : Game X Y A B}
   · simp [toTP, h]
   · simp [toTP, h]
 
+/-- A tensor-product strategy's value is at most one, because it is the winning probability
+of the vendored strategy it embeds to. -/
+theorem value_le_one {G : Game X Y A B} (S : TensorProductStrategy G) : S.value ≤ 1 := by
+  rw [← ofTensorProductStrategy_winProbability S]
+  exact (ofTensorProductStrategy S).winProbability_le_one
+
+/-- A tensor-product strategy's value is nonnegative, for the same reason. -/
+theorem value_nonneg {G : Game X Y A B} (S : TensorProductStrategy G) : 0 ≤ S.value := by
+  rw [← ofTensorProductStrategy_winProbability S]
+  exact (ofTensorProductStrategy S).winProbability_nonneg
+
+/-- The values of tensor-product strategies are bounded above, so `val*` is attained as a
+genuine supremum and `le_ciSup` applies to it. -/
+theorem bddAbove_range_value (G : Game X Y A B) :
+    BddAbove (Set.range fun S : TensorProductStrategy G => S.value) := by
+  refine ⟨1, ?_⟩
+  rintro _ ⟨S, rfl⟩
+  exact value_le_one S
+
+/-- `val*(G) ≥ 0`, including when no tensor-product strategy exists (then it is `0`). -/
+theorem quantumValue_nonneg (G : Game X Y A B) : 0 ≤ quantumValue G :=
+  Real.iSup_nonneg fun S => value_nonneg S
+
 /-- **The embedding direction of `lem:povm-value-eq`**: every tensor-product strategy is a
 strategy of the vendored kind with the same value, so the quantum value of this repository
 is at most the vendored entangled value. -/
@@ -312,6 +335,76 @@ theorem exists_unitary_extending {d A : Type} [Fintype d] [DecidableEq d]
     · intro p _ hp
       simp [ancillaEmbed, hp]
     · simp
+
+/-- **Naimark dilation of a question-indexed POVM family against a fixed state.** A family of
+POVMs `{E^x_a}` on `d` is the compression, by the *single* question-independent isometry
+`ancillaEmbed d a₀`, of a family of genuinely *projective* measurements `{P^x_a}` on `d × A`.
+That the compression does not depend on the question is what lets the dilation be applied to a
+fixed shared state, and it is why the unitary extension of the previous step was needed. -/
+theorem exists_projective_dilation {d A X : Type} [Fintype d] [DecidableEq d]
+    [Fintype A] [DecidableEq A] (a₀ : A) {E : X → A → Matrix d d ℂ}
+    (hpos : ∀ x a, (E x a).PosSemidef) (hsum : ∀ x, ∑ a, E x a = 1) :
+    ∃ P : X → A → Matrix (d × A) (d × A) ℂ,
+      (∀ x a, star (P x a) = P x a) ∧
+      (∀ x a, P x a * P x a = P x a) ∧
+      (∀ x, ∑ a, P x a = 1) ∧
+      (∀ x a, (ancillaEmbed d a₀)ᴴ * (P x a * ancillaEmbed d a₀) = E x a) := by
+  classical
+  choose V hViso hVE using fun x : X => exists_isometry_of_povm (hpos x) (hsum x)
+  choose U hUiso hUV using fun x : X => exists_unitary_extending a₀ (hViso x)
+  have hUU : ∀ x, U x * (U x)ᴴ = 1 := fun x => mul_eq_one_comm.mp (hUiso x)
+  refine ⟨fun x a => (U x)ᴴ * (ancillaProj d a * U x), ?_, ?_, ?_, ?_⟩
+  · intro x a
+    rw [Matrix.star_eq_conjTranspose, Matrix.conjTranspose_mul, Matrix.conjTranspose_mul,
+      Matrix.conjTranspose_conjTranspose, ancillaProj_conjTranspose, Matrix.mul_assoc]
+  · intro x a
+    have h : (U x)ᴴ * (ancillaProj d a * U x) * ((U x)ᴴ * (ancillaProj d a * U x))
+        = (U x)ᴴ * (ancillaProj d a * (U x * (U x)ᴴ * (ancillaProj d a * U x))) := by
+      simp only [Matrix.mul_assoc]
+    rw [h, hUU, Matrix.one_mul, ← Matrix.mul_assoc (ancillaProj d a) (ancillaProj d a) (U x),
+      ancillaProj_mul_self]
+  · intro x
+    have h : ∑ a : A, (U x)ᴴ * (ancillaProj d a * U x)
+        = (U x)ᴴ * ((∑ a : A, ancillaProj d a) * U x) := by
+      rw [Finset.sum_mul, Finset.mul_sum]
+    rw [h, sum_ancillaProj, Matrix.one_mul, hUiso]
+  · intro x a
+    have h : (ancillaEmbed d a₀)ᴴ * ((U x)ᴴ * (ancillaProj d a * U x) * ancillaEmbed d a₀)
+        = (U x * ancillaEmbed d a₀)ᴴ * (ancillaProj d a * (U x * ancillaEmbed d a₀)) := by
+      rw [Matrix.conjTranspose_mul]
+      simp only [Matrix.mul_assoc]
+    rw [h, hUV, hVE]
+
+/-! ### Transport of Born-rule expectations
+
+Three ways a quadratic form `⟨v| M |v⟩` moves: along a bijective reindexing of the space,
+along an arbitrary linear map (which is how a dilation is compressed back), and the
+special case `M = 1` that transports unit vectors. -/
+
+/-- Reindexing the space by a bijection changes no Born-rule expectation. -/
+theorem dotProduct_mulVec_submatrix {ι κ : Type} [Fintype ι] [Fintype κ] (e : ι ≃ κ)
+    (M : Matrix κ κ ℂ) (v : κ → ℂ) :
+    star (v ∘ e) ⬝ᵥ ((M.submatrix e e) *ᵥ (v ∘ e)) = star v ⬝ᵥ (M *ᵥ v) := by
+  simp only [dotProduct, Matrix.mulVec, Matrix.submatrix_apply, Function.comp_apply,
+    Pi.star_apply]
+  rw [← Equiv.sum_comp e fun k => star (v k) * ∑ k' : κ, M k k' * v k']
+  exact Finset.sum_congr rfl fun i _ => by
+    rw [Equiv.sum_comp e fun k' => M (e i) k' * v k']
+
+/-- Reindexing the space by a bijection preserves the norm. -/
+theorem dotProduct_comp_equiv {ι κ : Type} [Fintype ι] [Fintype κ] (e : ι ≃ κ) (v : κ → ℂ) :
+    star (v ∘ e) ⬝ᵥ (v ∘ e) = star v ⬝ᵥ v := by
+  simp only [dotProduct, Function.comp_apply, Pi.star_apply]
+  exact Equiv.sum_comp e fun k => star (v k) * v k
+
+/-- Pulling a Born-rule expectation back along a linear map `W` conjugates the observable:
+`⟨Wv| M |Wv⟩ = ⟨v| Wᴴ M W |v⟩`. With `W` an isometry and `M` a projection this is how a
+dilated projective measurement compresses back to the POVM it came from. -/
+theorem dotProduct_mulVec_conj {ι κ : Type} [Fintype ι] [Fintype κ]
+    (W : Matrix κ ι ℂ) (M : Matrix κ κ ℂ) (v : ι → ℂ) :
+    star (W *ᵥ v) ⬝ᵥ (M *ᵥ (W *ᵥ v)) = star v ⬝ᵥ ((Wᴴ * (M * W)) *ᵥ v) := by
+  rw [Matrix.mulVec_mulVec, Matrix.star_mulVec, ← Matrix.dotProduct_mulVec,
+    Matrix.mulVec_mulVec]
 
 /-- **The dilation direction of `lem:povm-value-eq`**, still open (issue #28): mixed states
 and POVMs do not help. Two standard finite-dimensional constructions are needed, neither of
