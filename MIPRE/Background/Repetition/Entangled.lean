@@ -277,7 +277,7 @@ theorem ancillaEmbed_isometry {d A : Type} [Fintype d] [DecidableEq d]
   rw [Matrix.mul_apply, Finset.sum_eq_single (k, a₀)]
   · by_cases h : j = k
     · subst h
-      simp [ancillaEmbed, Matrix.one_apply]
+      simp [ancillaEmbed]
     · simp [ancillaEmbed, Matrix.one_apply_ne h, Prod.mk.injEq, Ne.symm h]
   · intro p _ hp
     simp [ancillaEmbed, hp]
@@ -313,7 +313,7 @@ theorem exists_unitary_extending {d A : Type} [Fintype d] [DecidableEq d]
     show inner ℂ (w (p : d × A)) (w (q : d × A)) = _
     rw [hpq, Matrix.one_apply]
     by_cases h : p = q
-    · simp [h, hiff.mp h]
+    · simp [h]
     · have h' : ¬((p : d × A).1 = (q : d × A).1) := fun hc => h (hiff.mpr hc)
       rw [if_neg h, if_neg h']
   obtain ⟨b, hb⟩ := hortho.exists_orthonormalBasis_extension_of_card_eq finrank_euclideanSpace
@@ -484,26 +484,156 @@ theorem projective_value_le_quantumValue {HA HB : Type} [Fintype HA] [DecidableE
   rw [← hS]
   exact le_ciSup (bddAbove_range_value G) S
 
-/-- **The dilation direction of `lem:povm-value-eq`**, still open (issue #28): mixed states
-and POVMs do not help. Two standard finite-dimensional constructions are needed, neither of
-them in Mathlib as of v4.33:
+/-- Purification with the reference system placed on Bob's side. A density matrix `ρ` on
+`dA × dB` is the reduced state of a pure state on `dA × (dB × R)` with `R = dA × dB`, against
+which Alice's operators act as `E ⊗ 1` and Bob's as `F ⊗ 1_R`; so the purification keeps the
+bipartite structure, at the cost of enlarging Bob's space. -/
+theorem exists_purification_bipartite {dA dB : Type} [Fintype dA] [DecidableEq dA]
+    [Fintype dB] [DecidableEq dB] {ρ : Matrix (dA × dB) (dA × dB) ℂ} (hρ : ρ.PosSemidef)
+    (htr : Matrix.trace ρ = 1) :
+    ∃ ψ : dA × (dB × (dA × dB)) → ℂ, star ψ ⬝ᵥ ψ = 1 ∧
+      ∀ (E : Matrix dA dA ℂ) (F : Matrix dB dB ℂ),
+        star ψ ⬝ᵥ ((E ⊗ₖ (F ⊗ₖ (1 : Matrix (dA × dB) (dA × dB) ℂ))) *ᵥ ψ)
+          = Matrix.trace (ρ * (E ⊗ₖ F)) := by
+  classical
+  obtain ⟨ψ₀, hunit, hborn⟩ := exists_purification hρ htr
+  refine ⟨ψ₀ ∘ (Equiv.prodAssoc dA dB (dA × dB)).symm, ?_, ?_⟩
+  · rw [dotProduct_comp_equiv, hunit]
+  · intro E F
+    have h : E ⊗ₖ (F ⊗ₖ (1 : Matrix (dA × dB) (dA × dB) ℂ))
+        = ((E ⊗ₖ F) ⊗ₖ (1 : Matrix (dA × dB) (dA × dB) ℂ)).submatrix
+            (Equiv.prodAssoc dA dB (dA × dB)).symm
+            (Equiv.prodAssoc dA dB (dA × dB)).symm := by
+      rw [← Matrix.kronecker_assoc, Matrix.reindex_apply]
+    rw [h, dotProduct_mulVec_submatrix, hborn]
 
-* *Purification.* A density matrix `ρ` on `Alice × Bob` factors as `ρ = star K * K`
-  (`CStarAlgebra.nonneg_iff_eq_star_mul_self`), and the vector `ψ (d, r) = K r d` on
-  `(Alice × Bob) × R` with `R := Alice × Bob` satisfies `⟨ψ| M ⊗ 1 |ψ⟩ = tr(ρ M)`.
-  Reassociating so that the reference system `R` sits on Bob's side keeps the bipartite
-  structure, Bob's effects acting as `B ⊗ 1` on `Bob × R`.
-* *Naimark dilation of a family.* For each question `x` the POVM `{E^x_a}` dilates to a
-  projective measurement, but the dilating isometry depends on `x` while the state may not.
-  The fixed-state form is needed: adjoin one ancilla `ℂ^A` in a fixed state, extend each
-  isometry `v ↦ ∑_a (√(E^x_a) v) ⊗ |a⟩` to a unitary `U_x` of `ℂ^d ⊗ ℂ^A`, and take
-  `P^x_a := U_xᴴ (1 ⊗ |a⟩⟨a|) U_x`.
-
-Both systems are then reindexed by `Fin` types through `Fintype.equivFin`, which changes no
-outcome probability. -/
+/-- **The dilation direction of `lem:povm-value-eq`**: mixed states and POVMs do not help.
+Given a vendored strategy — a density matrix `ρ` on `Alice × Bob` and POVMs `{E^x_a}`,
+`{F^y_b}` — purify `ρ` into a pure state on `Alice × (Bob × R)`, dilate each POVM family to a
+projective family on one extra register (`exists_projective_dilation`, whose compressing
+isometry is the same for every question), and reindex the two local spaces to `Fin` types
+(`projective_value_le_quantumValue`). No outcome probability changes along the way, so the
+winning probability is the value of a tensor-product strategy. -/
 theorem entangledValue_le_quantumValue (G : Game X Y A B) :
     QuantumParallelRepetition.entangledValue (toTP G) ≤ quantumValue G := by
-  sorry
+  classical
+  unfold QuantumParallelRepetition.entangledValue
+  refine Real.sSup_le ?_ (quantumValue_nonneg G)
+  rintro r ⟨S, rfl⟩
+  -- the question distribution is a probability distribution, so there is a question to ask
+  have hX : Nonempty X := by
+    by_contra hX
+    rw [not_nonempty_iff] at hX
+    have h := G.μ_sum_one
+    simp at h
+  obtain ⟨x₀⟩ := hX
+  have hY : Nonempty Y := by
+    by_contra hY
+    rw [not_nonempty_iff] at hY
+    have h := G.μ_sum_one
+    simp at h
+  obtain ⟨y₀⟩ := hY
+  -- a state of trace one lives on a nonempty space, and then a POVM has a nonempty outcome set
+  have hAB : Nonempty (S.Alice × S.Bob) := by
+    by_contra h
+    rw [not_nonempty_iff] at h
+    have htr := S.state.trace_one
+    simp [Matrix.trace] at htr
+  have hA : Nonempty A := by
+    by_contra hA
+    rw [not_nonempty_iff] at hA
+    have hc := (S.aliceMeasurement x₀).complete
+    rw [Finset.univ_eq_empty, Finset.sum_empty] at hc
+    obtain ⟨i, _⟩ := hAB
+    have h := congrFun (congrFun hc i) i
+    simp at h
+  have hB : Nonempty B := by
+    by_contra hB
+    rw [not_nonempty_iff] at hB
+    have hc := (S.bobMeasurement y₀).complete
+    rw [Finset.univ_eq_empty, Finset.sum_empty] at hc
+    obtain ⟨_, j⟩ := hAB
+    have h := congrFun (congrFun hc j) j
+    simp at h
+  obtain ⟨a₀⟩ := hA
+  obtain ⟨b₀⟩ := hB
+  -- purify, keeping the bipartite structure
+  obtain ⟨ψ, hψunit, hψborn⟩ :=
+    exists_purification_bipartite S.state.positive S.state.trace_one
+  -- Bob's POVMs, acting on his enlarged space `Bob × R`
+  have hFpos : ∀ (y : Y) (b : B),
+      (((S.bobMeasurement y).effect b) ⊗ₖ
+        (1 : Matrix (S.Alice × S.Bob) (S.Alice × S.Bob) ℂ)).PosSemidef :=
+    fun y b => ((S.bobMeasurement y).positive b).kronecker Matrix.PosSemidef.one
+  have hFsum : ∀ y : Y, ∑ b : B, ((S.bobMeasurement y).effect b ⊗ₖ
+      (1 : Matrix (S.Alice × S.Bob) (S.Alice × S.Bob) ℂ)) = 1 := by
+    intro y
+    have h : ∑ b : B, ((S.bobMeasurement y).effect b ⊗ₖ
+          (1 : Matrix (S.Alice × S.Bob) (S.Alice × S.Bob) ℂ))
+        = (∑ b : B, (S.bobMeasurement y).effect b) ⊗ₖ
+          (1 : Matrix (S.Alice × S.Bob) (S.Alice × S.Bob) ℂ) := by
+      ext p q
+      simp [Matrix.sum_apply, Matrix.kroneckerMap_apply, Finset.sum_mul]
+    rw [h, (S.bobMeasurement y).complete, Matrix.one_kronecker_one]
+  -- dilate both POVM families to projective families
+  obtain ⟨PA, hPAself, hPAproj, hPAnorm, hPAcomp⟩ :=
+    exists_projective_dilation a₀ (fun x a => (S.aliceMeasurement x).positive a)
+      (fun x => (S.aliceMeasurement x).complete)
+  obtain ⟨PB, hPBself, hPBproj, hPBnorm, hPBcomp⟩ :=
+    exists_projective_dilation b₀ hFpos hFsum
+  -- the shared state, with both ancillas in their fixed states
+  obtain ⟨ψ₂, hψ₂⟩ :
+      ∃ v : (S.Alice × A) × ((S.Bob × (S.Alice × S.Bob)) × B) → ℂ,
+        v = (ancillaEmbed S.Alice a₀ ⊗ₖ ancillaEmbed (S.Bob × (S.Alice × S.Bob)) b₀) *ᵥ ψ :=
+    ⟨_, rfl⟩
+  have hWiso : (ancillaEmbed S.Alice a₀ ⊗ₖ
+      ancillaEmbed (S.Bob × (S.Alice × S.Bob)) b₀)ᴴ *
+      (ancillaEmbed S.Alice a₀ ⊗ₖ ancillaEmbed (S.Bob × (S.Alice × S.Bob)) b₀) = 1 := by
+    rw [Matrix.conjTranspose_kronecker, ← Matrix.mul_kronecker_mul, ancillaEmbed_isometry,
+      ancillaEmbed_isometry, Matrix.one_kronecker_one]
+  have hψ₂unit : star ψ₂ ⬝ᵥ ψ₂ = 1 := by
+    rw [hψ₂]
+    have h := dotProduct_mulVec_conj
+      (ancillaEmbed S.Alice a₀ ⊗ₖ ancillaEmbed (S.Bob × (S.Alice × S.Bob)) b₀) 1 ψ
+    rw [Matrix.one_mulVec] at h
+    rw [h, Matrix.one_mul, hWiso, Matrix.one_mulVec, hψunit]
+  -- the Born probabilities are unchanged
+  have hborn2 : ∀ (x : X) (y : Y) (a : A) (b : B),
+      star ψ₂ ⬝ᵥ ((PA x a ⊗ₖ PB y b) *ᵥ ψ₂)
+        = Matrix.trace (S.state.matrix *
+            ((S.aliceMeasurement x).effect a ⊗ₖ (S.bobMeasurement y).effect b)) := by
+    intro x y a b
+    rw [hψ₂, dotProduct_mulVec_conj]
+    have hc : (ancillaEmbed S.Alice a₀ ⊗ₖ ancillaEmbed (S.Bob × (S.Alice × S.Bob)) b₀)ᴴ *
+          ((PA x a ⊗ₖ PB y b) *
+            (ancillaEmbed S.Alice a₀ ⊗ₖ ancillaEmbed (S.Bob × (S.Alice × S.Bob)) b₀))
+        = (S.aliceMeasurement x).effect a ⊗ₖ ((S.bobMeasurement y).effect b ⊗ₖ
+            (1 : Matrix (S.Alice × S.Bob) (S.Alice × S.Bob) ℂ)) := by
+      rw [Matrix.conjTranspose_kronecker, ← Matrix.mul_kronecker_mul, ← Matrix.mul_kronecker_mul,
+        hPAcomp, hPBcomp]
+    rw [hc, hψborn]
+  -- assemble: the winning probability is the value of a pure projective strategy
+  have hval : QuantumParallelRepetition.Strategy.winProbability S
+      = ∑ x, ∑ y, ∑ a, ∑ b, G.μ x y * (if G.D x y a b then 1 else 0) *
+          (star ψ₂ ⬝ᵥ ((PA x a ⊗ₖ PB y b) *ᵥ ψ₂)).re := by
+    unfold QuantumParallelRepetition.Strategy.winProbability
+    refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ => ?_
+    rw [Finset.mul_sum]
+    refine Finset.sum_congr rfl fun a _ => ?_
+    rw [Finset.mul_sum]
+    refine Finset.sum_congr rfl fun b _ => ?_
+    have hprob : (star ψ₂ ⬝ᵥ ((PA x a ⊗ₖ PB y b) *ᵥ ψ₂)).re
+        = S.outcomeProbability x y a b := by
+      rw [hborn2 x y a b]
+      rfl
+    rw [hprob]
+    by_cases h : G.D x y a b = true
+    · simp [toTP, h]
+    · simp [toTP, h]
+  rw [hval]
+  exact projective_value_le_quantumValue ψ₂ hψ₂unit
+    { M := PA, selfAdjoint := hPAself, projective := hPAproj, normalized := hPAnorm }
+    { M := PB, selfAdjoint := hPBself, projective := hPBproj, normalized := hPBnorm }
 
 /-- The quantum value of this repository (pure states, projective measurements) equals
 the entangled value of the vendored module (density matrices, POVMs): purification and
