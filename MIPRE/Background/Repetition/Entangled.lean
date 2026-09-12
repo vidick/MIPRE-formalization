@@ -29,7 +29,7 @@ statement here whose proof is still open.
 namespace MIPRE.Repetition
 
 open Matrix
-open scoped ComplexOrder Kronecker
+open scoped ComplexOrder Kronecker MatrixOrder
 
 section Bridge
 
@@ -129,6 +129,39 @@ theorem quantumValue_le_entangledValue (G : Game X Y A B) :
   rw [← ofTensorProductStrategy_winProbability S]
   exact le_csSup (QuantumParallelRepetition.winProbabilities_bddAbove (toTP G))
     ⟨ofTensorProductStrategy S, rfl⟩
+
+/-- **Purification**, the first of the two inputs to the dilation direction. A density
+matrix `ρ` on `d` is the reduced state of a unit vector on `d × d`: factoring `ρ = K * Kᴴ`,
+the vector `ψ (i, r) = K i r` satisfies `⟨ψ| M ⊗ 1 |ψ⟩ = tr(ρ M)` for every `M`, the second
+factor being the reference system. Neither a matrix square root nor the spectral theorem is
+needed, only the factorization of a positive semidefinite matrix. (General-purpose: it
+belongs in `MIPRE/Mathlib/` once the dilation direction lands.) -/
+theorem exists_purification {d : Type} [Fintype d] [DecidableEq d]
+    {ρ : Matrix d d ℂ} (hρ : ρ.PosSemidef) (htr : Matrix.trace ρ = 1) :
+    ∃ ψ : d × d → ℂ, star ψ ⬝ᵥ ψ = 1 ∧
+      ∀ M : Matrix d d ℂ,
+        star ψ ⬝ᵥ ((M ⊗ₖ (1 : Matrix d d ℂ)) *ᵥ ψ) = Matrix.trace (ρ * M) := by
+  classical
+  obtain ⟨K₀, hK₀⟩ := CStarAlgebra.nonneg_iff_eq_star_mul_self.mp hρ.nonneg
+  set K : Matrix d d ℂ := star K₀ with hKdef
+  have hρK : ρ = K * star K := by rw [hKdef, star_star]; exact hK₀
+  refine ⟨fun p => K p.1 p.2, ?_, fun M => ?_⟩
+  · have hn : star (fun p : d × d => K p.1 p.2) ⬝ᵥ (fun p : d × d => K p.1 p.2)
+        = Matrix.trace (K * star K) := by
+      simp [dotProduct, Matrix.trace, Matrix.diag, Matrix.mul_apply,
+        Fintype.sum_prod_type, Pi.star_apply, Matrix.star_apply, mul_comm]
+    rw [hn, ← hρK, htr]
+  · have hb : star (fun p : d × d => K p.1 p.2) ⬝ᵥ
+        ((M ⊗ₖ (1 : Matrix d d ℂ)) *ᵥ fun p : d × d => K p.1 p.2)
+        = Matrix.trace (M * (K * star K)) := by
+      simp [dotProduct, Matrix.mulVec, Matrix.kroneckerMap_apply, Matrix.one_apply,
+        Matrix.trace, Matrix.diag, Matrix.mul_apply, Fintype.sum_prod_type,
+        Pi.star_apply, Matrix.star_apply, Finset.mul_sum, Finset.sum_mul, mul_comm]
+      -- the two sides differ only by the order of the inner two summations
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [Finset.sum_comm]
+      exact Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun r _ => by ring
+    rw [hb, ← hρK, Matrix.trace_mul_comm]
 
 /-- **The dilation direction of `lem:povm-value-eq`**, still open (issue #28): mixed states
 and POVMs do not help. Two standard finite-dimensional constructions are needed, neither of
