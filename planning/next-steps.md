@@ -24,13 +24,12 @@ decisions, items with a done criterion, risks. Update the status column as items
 - Still `sorry` or blueprint-only on that path, in order of appearance:
   `lem:sync-le-valstar` (a `sorry` in `MIPRE/Foundations/Games.lean:653`, and after the
   value-form repair it is load-bearing in three places: the soundness clause of
-  `thm:compression`, `thm:halting` and `cor:main-quantum`),
-  `lem:povm-value-eq` (#28, one `sorry`), `thm:almost-sync` (#22, no Lean, and false as
-  printed until 2026-09-11), `lem:value-lower-approx` (no Lean), and the whole of chapter 6
-  (introspection,
-  oracularization, answer reduction, `thm:parallel-repetition`, `thm:compression`,
-  `thm:halting`), unchanged by the port. The `Cost/` toolkit statements that the
-  universal machine still owes are tracked in `planning/tm-infrastructure.md`.
+  `thm:compression`, `thm:halting` and `cor:main-quantum`), `thm:almost-sync` (#22, no
+  Lean, and false as printed until 2026-09-11), `lem:value-lower-approx` (no Lean), and the
+  whole of chapter 6 (introspection, oracularization, answer reduction,
+  `thm:parallel-repetition`, `thm:compression`, `thm:halting`), unchanged by the port. The
+  `Cost/` toolkit statements that the universal machine still owes are tracked in
+  `planning/tm-infrastructure.md`.
 - Off the main path but part of the port's follow-ups: `lem:tracial-le-co` (#29),
   the restatement of `thm:tracial-density` in foundations vocabulary, and the
   commuting-operator (MIP^co) track that `thm:direct-repetition-co` opens.
@@ -41,7 +40,7 @@ decisions, items with a done criterion, risks. Update the status column as items
 |---|---|---|---|---|
 | 1 | PR #30 review and merge; cloud environment re-save | 2 | maintainer | merged 2026-09-11; re-save outstanding |
 | 2 | First blueprint build on `main` | — | small | done 2026-09-11 (run 34608202078 green) |
-| 3 | #28 `lem:povm-value-eq`: close the entangled bridge | `\leanok` on `thm:direct-repetition-q`, item 4 | medium | open |
+| 3 | #28 `lem:povm-value-eq`: close the entangled bridge | `\leanok` on `thm:direct-repetition-q`, item 4 | medium | done 2026-09-12 |
 | 4 | `lem:value-lower-approx` in Lean, `val*` half (MIP* ⊆ RE; hypothesis `hS` of the criterion) | `thm:halting`, `thm:mipstar-eq-re` | medium–hard | open |
 | 5 | #22 `thm:almost-sync`, with the diagonal-weight hypothesis (then #23, commuting case) | `thm:parallel-repetition` soundness | hard | open |
 | 6 | #29 `lem:tracial-le-co` (GNS); restate `thm:tracial-density` | MIP^co track | medium–hard | open |
@@ -85,27 +84,40 @@ decisions, items with a done criterion, risks. Update the status column as items
   dependency graph shows `thm:direct-repetition-co`, `thm:direct-repetition-q` and
   `lem:compressible-criterion` with their Lean status, and the dashboard refreshes.
 
-### 3. #28 — `lem:povm-value-eq`: close the entangled repetition bridge
+### 3. #28 — `lem:povm-value-eq`: close the entangled repetition bridge — **done 2026-09-12**
 
-- Target: `MIPRE.Repetition.quantumValue_eq_entangledValue`
-  (`MIPRE/Background/Repetition/Entangled.lean`), the only `sorry` under
-  `MIPRE/Background/Repetition/`. Issue #28 has the full sketch.
-- Decomposition. (a) `≤`: a `TensorProductStrategy` is a vendored `Strategy` with
-  `Alice = Fin dA`, `Bob = Fin dB`, density matrix `|ψ⟩⟨ψ|`, projective measurements as
-  POVMs; the winning probabilities agree termwise. (b) `≥`: three general lemmas that
-  belong in `MIPRE/Foundations/` (nothing outside `Background/Repetition/` may mention the
-  vendored namespaces, so only the glue stays in `Entangled.lean`): purification of a
-  density matrix on `Alice × Bob` into a unit vector on `Alice × (Bob × R)`; Naimark
-  dilation of a finite POVM on a finite-dimensional space into a projective measurement on
-  `H ⊗ ℂ^k` (check Mathlib's `Analysis.CStarAlgebra` / `LinearAlgebra.Matrix` first — as
-  far as known there is no packaged Naimark theorem at v4.33); reindexing of Kronecker
-  products along `Fintype.equivFin`. (c) The `sSup`/`iSup` comparison: both sides bounded
-  by 1 over nonempty sets.
-- Then: add `quantumValue_repeat_le` to `MIPRE/Background/Repetition/Axioms.lean`; in
-  `05_parallel_repetition.tex` mark the proofs of `lem:povm-value-eq` and
-  `thm:direct-repetition-q` `\leanok`; drop the dagger from the chapter-3 table.
-- Independent of everything else and self-contained (finite-dimensional linear algebra):
-  a good first Lean task in the cloud environment.
+- `MIPRE.Repetition.quantumValue_eq_entangledValue` is proved, so there is no `sorry` left
+  anywhere under `MIPRE/Background/Repetition/`, and
+  `MIPRE.Repetition.quantumValue_repeat_le` — the entangled direct-repetition theorem in
+  this repository's vocabulary — is unconditional. `Axioms.lean` now guards it: it depends
+  on exactly `propext`, `Classical.choice`, `Quot.sound`.
+- What was built, all in `MIPRE/Background/Repetition/Entangled.lean`:
+  - `ofTensorProductStrategy` and the termwise value equality, giving `≤` (this was the
+    easy half, done first);
+  - `exists_purification`: `ρ = K Kᴴ` from `CStarAlgebra.nonneg_iff_eq_star_mul_self`, so
+    no matrix square root and no spectral theorem are needed, and
+    `exists_purification_bipartite`, which reassociates so the reference system sits on
+    Bob's side and the bipartite structure survives;
+  - `exists_isometry_of_povm` → `exists_unitary_extending` → `exists_projective_dilation`:
+    Naimark dilation of a *question-indexed family* against a *fixed* state. The fixed
+    state is the whole difficulty — the dilating isometry depends on the question — and it
+    is why the isometry has to be extended to a unitary, which is Mathlib's
+    `Orthonormal.exists_orthonormalBasis_extension_of_card_eq`. Mathlib has no Naimark
+    dilation and no `Matrix.PosSemidef.sqrt` at v4.33; this development needs neither.
+  - three transport lemmas for `⟨v| M |v⟩` (reindexing, conjugation by a linear map, norm)
+    and `projective_value_le_quantumValue`, which reindexes arbitrary finite local spaces
+    to `Fin` types through `Fintype.equivFin`;
+  - as a by-product of the `≤` half: `value_le_one`, `value_nonneg`,
+    `bddAbove_range_value` and `quantumValue_nonneg`, which the `iSup` comparisons need.
+- Deviation from the plan recorded above: the general lemmas were left in
+  `Entangled.lean` rather than moved to `MIPRE/Foundations/`. None of them mentions a
+  vendored namespace, so the move is available at any time and costs nothing; it is worth
+  doing only when a second consumer appears. `exists_purification`,
+  `exists_projective_dilation` and the transport lemmas are the candidates.
+- Consequences already applied: `\leanok` on the proofs of `lem:povm-value-eq` and
+  `thm:direct-repetition-q`, the dagger dropped from the chapter-3 table, and the
+  blueprint proof of `lem:povm-value-eq` rewritten to describe the construction that was
+  actually formalized.
 
 ### 4. `lem:value-lower-approx` in Lean — MIP* ⊆ RE and the halting theorem's semidecider
 
@@ -219,9 +231,11 @@ Lean v4.33.0.
   non-halting, candidate strategies with entries in `(1/k)ℤ[i]`, stability and density
   with explicit constants, three verification passes and a claim-test. Feeds item 4
   directly. Caveat for this repository: `MIPRE.quantumValue` ranges over *projective*
-  measurements, so their rounding argument transfers only after #28
-  (`quantumValue = entangledValue`, POVMs and mixed states) — which makes #28 a
-  dependency of item 4, or else the Cayley-transform route of item 4 is needed. Totality
+  measurements, so their rounding argument needed #28
+  (`quantumValue = entangledValue`, POVMs and mixed states), which is now **proved**: item
+  4 may work with mixed states and POVMs and transport through
+  `quantumValue_eq_entangledValue`, and the Cayley-transform route is no longer forced.
+  Totality
   (malformed strings must land in `B`, and the decoder must be total) is the place where
   the deferred timeout-counter layer is genuinely consumed.
 - **R3 — obligations the direct route inherits** (§6). The answer alphabet of `V^rep_n`
