@@ -7,8 +7,8 @@ parts. Section~\ref{sec:pr-direct} states \emph{direct} (unanchored) parallel
 repetition in value form, for entangled and for commuting-operator strategies, together
 with Lin's tracial density theorem. Both theorems are imported from external Lean
 developments vendored into this repository, and the section records their statements in the
-vocabulary of Section~\ref{ch:foundations} together with the bridges connecting the two:
-the commuting-operator statement is formalized end to end, the entangled one modulo
+vocabulary of Section~\ref{ch:foundations} together with the bridges connecting the two;
+both are formalized end to end, the entangled one through
 Lemma~\ref{lem:povm-value-eq}. Sections~\ref{sec:ar-background}--\ref{sec:ar-decomposition}
 state the \emph{anchored}, entanglement-preserving theorem of Bavarian, Vidick and
 Yuen~\cite{BVY17} used in~\cite{JNVWY20}: repeating the anchored version of a game
@@ -173,12 +173,12 @@ $\eps = 1 - \valstar(\game)$,
 \end{equation*}
 \end{theorem}
 \begin{proof}
+\leanok
 This is the main theorem of Chapter~6 of~\cite{OpenAI26}, whose Lean proof is vendored
 at \texttt{MIPRE/Background/Repetition/TenProofs/}. Its entangled value is defined with
 a density matrix on the product of two finite sets and POVMs; Lemma~\ref{lem:povm-value-eq}
 identifies it with $\valstar$ (Definition~\ref{def:q-value}), after which the two direct
-repetitions are literally the same construction. The Lean proof is complete modulo that
-lemma.
+repetitions are literally the same construction.
 \end{proof}
 
 \effortMedium\ \qlib
@@ -196,19 +196,37 @@ all finite sets $S_\alice$, $S_\bob$, density matrices $\rho$ on $\C^{S_\alice} 
 Then $\valstar_{\mathrm{POVM}}(\game) = \valstar(\game)$.
 \end{lemma}
 \begin{proof}
+\leanok
 A tensor-product strategy (Definition~\ref{def:tensor-strategy}) is a strategy of the
 second kind, with $S_\alice = \{1, \ldots, d_\alice\}$, $S_\bob = \{1, \ldots,
 d_\bob\}$, $\rho = \ket{\psi}\bra{\psi}$ and projective measurements, which gives
-$\valstar \leq \valstar_{\mathrm{POVM}}$. Conversely, given a strategy of the second
-kind, purify $\rho$ on a reference system placed on Bob's side (Bob's POVM acts as the
-identity on it), then dilate the two POVMs to projective measurements on enlarged
-spaces (Naimark); neither step changes the outcome probabilities or the tensor-product
-structure, and reindexing the finite sets by initial segments of $\N$ yields a
-tensor-product strategy with the same value.
+$\valstar \leq \valstar_{\mathrm{POVM}}$.
+
+Conversely, given a strategy of the second kind, purify $\rho$ on a reference system
+placed on Bob's side, where Bob's effects act as $B^y_b \ot \Id$, so that the
+bipartite structure survives; then dilate the two POVM \emph{families} to projective
+measurements on one extra register each, and reindex the two finite sets by initial
+segments of $\N$. Neither step changes an outcome probability, so the result is a
+tensor-product strategy of the same value.
+
+The dilation is the only delicate point, and the reason is that the shared state may
+not depend on the questions while the dilating isometry does. Writing $A^x_a =
+(K^x_a)^\dagger K^x_a$, the isometry $V_x : v \mapsto \sum_a (K^x_a v) \ot \ket{a}$
+satisfies $V_x^\dagger (\Id \ot \ket{a}\bra{a}) V_x = A^x_a$; extending each $V_x$ to a
+unitary $U_x$ of $\C^{S_\alice} \ot \C^{\mA}$ and setting $P^x_a := U_x^\dagger (\Id
+\ot \ket{a}\bra{a}) U_x$ gives projective measurements all of which are compressed back
+to the POVMs by the \emph{same}, question-independent isometry $v \mapsto v \ot
+\ket{a_0}$, so that the single state $\ket{\psi} \ot \ket{a_0} \ot \ket{b_0}$
+works for every question. In Lean the extension is Mathlib's completion of an orthonormal
+family to an orthonormal basis, and only the factorization $A^x_a = (K^x_a)^\dagger K^x_a$ is
+used, not a matrix square root, which Mathlib does not have. The nonemptiness of $\mA$
+and $\mB$ needed to choose $a_0$ and $b_0$ is derived, not assumed: $\mu$ is a
+probability distribution, so some question is asked, and a POVM on a space carrying a
+state has a nonempty outcome set.
 \end{proof}
 
-\paragraph{Comments.} The lemma is the only piece of the entangled bridge that is
-stated but not yet proved in Lean; it is a general fact of independent interest. The
+\paragraph{Comments.} The lemma is a general fact of independent interest, and the
+substantive part of the entangled bridge; Naimark dilation is not in Mathlib. The
 vendored definition of the entangled value has the strategy's two finite sets as
 arbitrary types in the lowest universe, and the bridge reindexes them.
 
@@ -261,8 +279,8 @@ suffices for the pipeline.
 
 \paragraph{Comments.} Both vendored developments are sorry-free and use only the
 standard axioms; the file \texttt{MIPRE/Background/Repetition/Axioms.lean} guards the
-axioms of the bridged commuting-operator theorem and of Theorem~\ref{thm:tracial-density}
-(the entangled theorem joins it once Lemma~\ref{lem:povm-value-eq} is proved). Vendoring
+axioms of Theorem~\ref{thm:tracial-density} and of both bridged repetition theorems.
+Vendoring
 is done by \texttt{scripts/vendor-repetition.py}, never by hand; the copies are
 read-only and the only local changes are recorded in each directory's
 \texttt{README.md}. Nothing outside \texttt{MIPRE/Background/Repetition/} refers to
