@@ -406,6 +406,84 @@ theorem dotProduct_mulVec_conj {ι κ : Type} [Fintype ι] [Fintype κ]
   rw [Matrix.mulVec_mulVec, Matrix.star_mulVec, ← Matrix.dotProduct_mulVec,
     Matrix.mulVec_mulVec]
 
+/-! ### From arbitrary finite local spaces to `Fin d` -/
+
+/-- A pure state together with two projective families on *arbitrary* finite local spaces
+already bounds `val*(G)` from below: reindexing the two spaces by `Fintype.equivFin` turns
+them into a `TensorProductStrategy`, and a bijective reindexing changes no outcome
+probability. This is what lets the dilation steps above work with the natural index types
+(`Alice × A`, `(Bob × R) × B`) and only convert to `Fin d` at the end. -/
+theorem projective_value_le_quantumValue {HA HB : Type} [Fintype HA] [DecidableEq HA]
+    [Fintype HB] [DecidableEq HB] {G : Game X Y A B} (ψ : HA × HB → ℂ)
+    (hψ : star ψ ⬝ᵥ ψ = 1)
+    (PA : ProjectiveMeasurement X A (Matrix HA HA ℂ))
+    (PB : ProjectiveMeasurement Y B (Matrix HB HB ℂ)) :
+    ∑ x, ∑ y, ∑ a, ∑ b, G.μ x y * (if G.D x y a b then 1 else 0) *
+        (star ψ ⬝ᵥ ((PA.M x a ⊗ₖ PB.M y b) *ᵥ ψ)).re ≤ quantumValue G := by
+  classical
+  set fA : Fin (Fintype.card HA) ≃ HA := (Fintype.equivFin HA).symm with hfA
+  set fB : Fin (Fintype.card HB) ≃ HB := (Fintype.equivFin HB).symm with hfB
+  set e : (Fin (Fintype.card HA) × Fin (Fintype.card HB)) ≃ (HA × HB) :=
+    fA.prodCongr fB with he
+  have hsub : ∀ (M : Matrix HA HA ℂ) (N : Matrix HB HB ℂ),
+      (M.submatrix fA fA) ⊗ₖ (N.submatrix fB fB) = (M ⊗ₖ N).submatrix e e := by
+    intro M N
+    ext p q
+    rfl
+  have hAself : ∀ x a, star ((PA.M x a).submatrix fA fA) = (PA.M x a).submatrix fA fA := by
+    intro x a
+    rw [Matrix.star_eq_conjTranspose, Matrix.conjTranspose_submatrix,
+      ← Matrix.star_eq_conjTranspose, PA.selfAdjoint]
+  have hAproj : ∀ x a, (PA.M x a).submatrix fA fA * (PA.M x a).submatrix fA fA
+      = (PA.M x a).submatrix fA fA := by
+    intro x a
+    rw [Matrix.submatrix_mul_equiv, PA.projective]
+  have hAnorm : ∀ x, ∑ a, (PA.M x a).submatrix fA fA = 1 := by
+    intro x
+    have h : ∑ a : A, (PA.M x a).submatrix fA fA = (∑ a : A, PA.M x a).submatrix fA fA := by
+      ext i j
+      simp [Matrix.sum_apply]
+    rw [h, PA.normalized, Matrix.submatrix_one_equiv]
+  have hBself : ∀ y b, star ((PB.M y b).submatrix fB fB) = (PB.M y b).submatrix fB fB := by
+    intro y b
+    rw [Matrix.star_eq_conjTranspose, Matrix.conjTranspose_submatrix,
+      ← Matrix.star_eq_conjTranspose, PB.selfAdjoint]
+  have hBproj : ∀ y b, (PB.M y b).submatrix fB fB * (PB.M y b).submatrix fB fB
+      = (PB.M y b).submatrix fB fB := by
+    intro y b
+    rw [Matrix.submatrix_mul_equiv, PB.projective]
+  have hBnorm : ∀ y, ∑ b, (PB.M y b).submatrix fB fB = 1 := by
+    intro y
+    have h : ∑ b : B, (PB.M y b).submatrix fB fB = (∑ b : B, PB.M y b).submatrix fB fB := by
+      ext i j
+      simp [Matrix.sum_apply]
+    rw [h, PB.normalized, Matrix.submatrix_one_equiv]
+  obtain ⟨S, hS⟩ : ∃ S : TensorProductStrategy G, S.value =
+      ∑ x, ∑ y, ∑ a, ∑ b, G.μ x y * (if G.D x y a b then 1 else 0) *
+        (star ψ ⬝ᵥ ((PA.M x a ⊗ₖ PB.M y b) *ᵥ ψ)).re := by
+    refine ⟨{ dA := Fintype.card HA
+              dB := Fintype.card HB
+              ψ := ψ ∘ e
+              ψ_unit := by rw [dotProduct_comp_equiv, hψ]
+              PA := { M := fun x a => (PA.M x a).submatrix fA fA
+                      selfAdjoint := hAself
+                      projective := hAproj
+                      normalized := hAnorm }
+              PB := { M := fun y b => (PB.M y b).submatrix fB fB
+                      selfAdjoint := hBself
+                      projective := hBproj
+                      normalized := hBnorm } }, ?_⟩
+    unfold TensorProductStrategy.value
+    refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ =>
+      Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
+    have hq : star (ψ ∘ e) ⬝ᵥ
+        ((((PA.M x a).submatrix fA fA) ⊗ₖ ((PB.M y b).submatrix fB fB)) *ᵥ (ψ ∘ e))
+          = star ψ ⬝ᵥ ((PA.M x a ⊗ₖ PB.M y b) *ᵥ ψ) := by
+      rw [hsub, dotProduct_mulVec_submatrix]
+    rw [hq]
+  rw [← hS]
+  exact le_ciSup (bddAbove_range_value G) S
+
 /-- **The dilation direction of `lem:povm-value-eq`**, still open (issue #28): mixed states
 and POVMs do not help. Two standard finite-dimensional constructions are needed, neither of
 them in Mathlib as of v4.33:
