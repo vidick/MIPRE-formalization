@@ -18,9 +18,11 @@ are the usual ones.
 
 This is the two-prover picture of the commuting-operator model. The synchronous,
 tracial commuting strategies of `MIPRE.Foundations.Games` (`CommutingStrategy`,
-`commValue`) are the picture used by the compression pipeline; the two agree for
-synchronous games only up to the rounding of almost-synchronous correlations
-(blueprint `thm:almost-sync`), which is why both are defined. The definitions mirror
+`commValue`) are the picture used by the compression pipeline; the two agree, for
+synchronous games whose questions carry proportional weight on the diagonal, only up to the
+rounding of almost-synchronous correlations (blueprint `thm:almost-sync`), which is why both
+are defined. Without that weight they can differ by a constant (blueprint
+`rem:almost-sync-hypothesis`). The definitions mirror
 those of the vendored development `MIPRE/Background/Repetition/CommutingRepetition/`
 field by field, so that its theorems transfer by a field-by-field identification.
 

@@ -5,10 +5,11 @@ This chapter states the parallel repetition theorems available for gap amplifica
 in the compression procedure (Section~\ref{sec:ps-parallel-repetition}). It has two
 parts. Section~\ref{sec:pr-direct} states \emph{direct} (unanchored) parallel
 repetition in value form, for entangled and for commuting-operator strategies, together
-with Lin's tracial density theorem. These theorems are formalized: two external Lean
-developments proving them are vendored into this repository, and the section records
-their statements in the vocabulary of Section~\ref{ch:foundations} together with the
-bridges connecting the two. Sections~\ref{sec:ar-background}--\ref{sec:ar-decomposition}
+with Lin's tracial density theorem. Both theorems are imported from external Lean
+developments vendored into this repository, and the section records their statements in the
+vocabulary of Section~\ref{ch:foundations} together with the bridges connecting the two:
+the commuting-operator statement is formalized end to end, the entangled one modulo
+Lemma~\ref{lem:povm-value-eq}. Sections~\ref{sec:ar-background}--\ref{sec:ar-decomposition}
 state the \emph{anchored}, entanglement-preserving theorem of Bavarian, Vidick and
 Yuen~\cite{BVY17} used in~\cite{JNVWY20}: repeating the anchored version of a game
 amplifies the completeness-soundness gap while preserving entanglement lower bounds.
@@ -123,8 +124,9 @@ $(\alg, \tau, M)$. Taking suprema yields the claim.
 \paragraph{Comments.} This is the direction needed to apply
 Theorem~\ref{thm:direct-repetition-co} to the tracial value used in the pipeline: a
 bound on $\omegaco(\game^n)$ is a bound on $\valco(\game^n)$. The reverse comparison
-(from $\omegaco$ to $\valco$, which is false in general and true up to error for
-synchronous games) is the commuting-operator analogue of
+(from $\omegaco$ to $\valco$, false in general and true up to error for synchronous games
+that carry proportional weight on the diagonal, as in
+Remark~\ref{rem:almost-sync-hypothesis}) is the commuting-operator analogue of
 Theorem~\ref{thm:almost-sync}, proved by Lin~\cite{Lin23}; it is part of the transport
 discussed in Section~\ref{sec:departures} and not of this section. The Lean statement
 of this lemma and its GNS construction are a sub-project of their own.
@@ -277,8 +279,10 @@ direct theorems round through auxiliary resources (an embezzling state
 in~\cite{OpenAI26}, a tracial approximation in~\cite{Vid26}) and give no control of the
 dimension. Lin's proof of $\MIPco = \coRE$~\cite{Lin25} shows that the entanglement clauses
 of~\cite{JNVWY20} are dispensable: with completeness and soundness of compression stated
-in value form (perfect strategies are preserved, value at most $\frac12$ is preserved),
-the halting reduction follows from the enumeration of Lemma~\ref{lem:value-lower-approx}
+in value form (perfect strategies are preserved, and $\valstar$ at most $\frac12$ is
+preserved, the $\synval$ hypothesis side being converted by the free comparison
+Lemma~\ref{lem:sync-le-valstar}), the halting reduction follows from the $\valstar$ half of
+the enumeration of Lemma~\ref{lem:value-lower-approx}
 and Kleene's recursion theorem alone (Lemma~\ref{lem:compressible-criterion}), and gap
 amplification then needs only a value statement --- exactly the theorems of this section,
 applied to the game as it is, without anchoring. The pipeline of

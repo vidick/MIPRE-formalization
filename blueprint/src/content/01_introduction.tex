@@ -101,10 +101,16 @@ as the basic object, and define the synchronous value $\synval$
 (Definition~\ref{def:sync-value}). This eliminates the duplication of Hilbert spaces,
 states, and consistency bookkeeping that pervades the paper's soundness analyses, and it
 matches the main Lean statement. The cost is a single bridging step: the
-almost-synchronous correlations theorem (Section~\ref{sec:rr-almost-sync}) shows that
-for synchronous games the two values agree closely enough to transport completeness and
-soundness. All games constructed in the proof are synchronous (or are made so by
-symmetrization), so this is a genuine simplification.
+almost-synchronous correlations theorem (Section~\ref{sec:rr-almost-sync}) shows that,
+for synchronous games whose questions carry proportional weight on the diagonal, the two
+values agree closely enough to transport soundness inwards. That hypothesis is the
+synchronization invariant of Remark~\ref{rem:sync-invariant}, which symmetrizing the two
+players' roles does not by itself deliver, and it is why the soundness of the pipeline is
+stated in $\valstar$ from the repetition step outwards
+(Remark~\ref{rem:almost-sync-hypothesis}). The departure is also linked to the next one:
+with synchronous strategies symmetry is definitional, which removes the factor $\frac12$
+that the paper's symmetrization step costs (Remark~\ref{rem:entanglement-form}), while the
+tracial framework is what makes Naimark dilation unattractive.
 
 \paragraph{Projective strategies via orthonormalization.}
 Rather than invoking Naimark dilation to replace POVMs by projective measurements (which
@@ -125,8 +131,8 @@ main theorem (Section~\ref{ch:main-theorem}) is stated with a computable reducti
 The fixed-point argument that turns compression into a halting reduction is stated once,
 abstractly, as Lin's compressibility criterion~\cite{Lin25}
 (Section~\ref{sec:rr-compression}): a compression procedure preserving ``perfect PCC
-strategy'' and ``value at most $\frac12$'', together with the semidecidability of ``value
-above $\frac12$'', yields the reduction. This isolates all uses of Kleene's recursion
+strategy'' and ``quantum value at most $\frac12$'', together with the semidecidability of
+``quantum value above $\frac12$'', yields the reduction. This isolates all uses of Kleene's recursion
 theorem in one quantum-free lemma, and it removes the entanglement bookkeeping
 of~\cite{JNVWY20} from the pipeline: no transformation needs an entanglement clause, and
 gap amplification uses direct rather than anchored parallel repetition, for which complete
@@ -149,6 +155,8 @@ corresponding declarations are created. Statements in
 Sections~\ref{ch:required-results}--\ref{ch:parallel-repetition} are external results: the project may initially
 axiomatize them (each section records the literature source and comments on
 formalization), while statements in Section~\ref{ch:proof-structure} are proof
-obligations of the project. Numerical constants in headline statements (levels, error
-exponents) are copied from~\cite{JNVWY20} and should be treated as provisional until the
-corresponding section is worked out in detail.
+obligations of the project. Numerical constants in headline statements (error exponents)
+are copied from~\cite{JNVWY20} and should be treated as provisional until the corresponding
+section is worked out in detail. The level budget is an exception: it is derived here, and
+the $7$ levels of Theorem~\ref{thm:compression} differ from the paper's $9$ precisely
+because direct repetition adds no anchoring level.
