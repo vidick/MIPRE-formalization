@@ -163,6 +163,85 @@ theorem exists_purification {d : Type} [Fintype d] [DecidableEq d]
       exact Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun r _ => by ring
     rw [hb, ← hρK, Matrix.trace_mul_comm]
 
+/-! ### Naimark dilation of a question-indexed family
+
+The second input to the dilation direction. A POVM dilates to an isometry into one extra
+register (`exists_isometry_of_povm`); extending that isometry to a unitary turns it into a
+*projective* measurement on the larger space whose expectations against a **fixed** state are
+the POVM's. The extension is what makes the construction work for a whole question-indexed
+family at once: the isometry depends on the question, the state must not. -/
+
+/-- The ancilla projection `1 ⊗ |a⟩⟨a|` on `d × A`: the identity on the first factor and the
+rank-one projection onto `a` on the second. It is a diagonal matrix, and saying so is what
+makes the dilation computations below elementary. -/
+def ancillaProj (d : Type) [DecidableEq d] {A : Type} [DecidableEq A] (a : A) :
+    Matrix (d × A) (d × A) ℂ :=
+  Matrix.diagonal fun p => if p.2 = a then 1 else 0
+
+theorem ancillaProj_conjTranspose {d A : Type} [DecidableEq d] [DecidableEq A] (a : A) :
+    (ancillaProj d a)ᴴ = ancillaProj d a := by
+  rw [ancillaProj, Matrix.diagonal_conjTranspose]
+  congr 1
+  funext p
+  simp only [Pi.star_apply]
+  split_ifs <;> simp
+
+theorem ancillaProj_mul_self {d A : Type} [Fintype d] [DecidableEq d] [Fintype A]
+    [DecidableEq A] (a : A) :
+    ancillaProj d a * ancillaProj d a = ancillaProj d a := by
+  rw [ancillaProj, Matrix.diagonal_mul_diagonal]
+  congr 1
+  funext p
+  split_ifs <;> simp
+
+theorem sum_ancillaProj {d A : Type} [DecidableEq d] [Fintype A] [DecidableEq A] :
+    ∑ a : A, ancillaProj d a = (1 : Matrix (d × A) (d × A) ℂ) := by
+  ext p q
+  rw [Matrix.sum_apply]
+  by_cases h : p = q
+  · subst h
+    simp [ancillaProj, Matrix.one_apply_eq]
+  · simp [ancillaProj, Matrix.diagonal_apply_ne _ h, Matrix.one_apply_ne h]
+
+/-- Every POVM dilates to an isometry into one extra register: there is `V` with `Vᴴ V = 1`
+and `Vᴴ (1 ⊗ |a⟩⟨a|) V = E a`. Only the factorization of a positive semidefinite matrix is
+used, not a square root: with `E a = (K a)ᴴ (K a)`, the isometry is
+`V : v ↦ ∑ a, (K a v) ⊗ |a⟩`. -/
+theorem exists_isometry_of_povm {d A : Type} [Fintype d] [DecidableEq d]
+    [Fintype A] [DecidableEq A] {E : A → Matrix d d ℂ}
+    (hpos : ∀ a, (E a).PosSemidef) (hsum : ∑ a, E a = 1) :
+    ∃ V : Matrix (d × A) d ℂ, Vᴴ * V = 1 ∧
+      ∀ a : A, Vᴴ * (ancillaProj d a * V) = E a := by
+  classical
+  choose K hK using fun a : A => CStarAlgebra.nonneg_iff_eq_star_mul_self.mp (hpos a).nonneg
+  have hKE : ∀ (a : A) (j k : d),
+      E a j k = ∑ i : d, (starRingEnd ℂ) (K a i j) * K a i k := by
+    intro a j k
+    rw [hK a]
+    simp [Matrix.mul_apply, Matrix.star_apply]
+  set V : Matrix (d × A) d ℂ := Matrix.of fun p j => K p.2 p.1 j with hVdef
+  refine ⟨V, ?_, ?_⟩
+  · ext j k
+    have h1 : (Vᴴ * V) j k = ∑ i : d, ∑ a : A, (starRingEnd ℂ) (K a i j) * K a i k := by
+      simp [hVdef, Matrix.mul_apply, Matrix.conjTranspose_apply, Fintype.sum_prod_type]
+    rw [h1, Finset.sum_comm]
+    have h2 : ∑ a : A, ∑ i : d, (starRingEnd ℂ) (K a i j) * K a i k = ∑ a : A, E a j k :=
+      Finset.sum_congr rfl fun a _ => (hKE a j k).symm
+    rw [h2, ← Matrix.sum_apply, hsum]
+  · intro a
+    ext j k
+    have hAV : ∀ (p : d × A) (m : d),
+        (ancillaProj d a * V) p m = if p.2 = a then K p.2 p.1 m else 0 := by
+      intro p m
+      rw [ancillaProj, Matrix.diagonal_mul, hVdef]
+      split_ifs <;> simp
+    have h3 : (Vᴴ * (ancillaProj d a * V)) j k
+        = ∑ i : d, (starRingEnd ℂ) (K a i j) * K a i k := by
+      rw [Matrix.mul_apply, Fintype.sum_prod_type]
+      simp only [hAV, Matrix.conjTranspose_apply, mul_ite, mul_zero]
+      simp [hVdef]
+    rw [h3, ← hKE a j k]
+
 /-- **The dilation direction of `lem:povm-value-eq`**, still open (issue #28): mixed states
 and POVMs do not help. Two standard finite-dimensional constructions are needed, neither of
 them in Mathlib as of v4.33:
