@@ -276,6 +276,22 @@ throughout'' convention of Section~\ref{sec:departures} viable (avoiding Naimark
 dilation). The finite-dimensional case suffices for the main theorem and is a clean,
 self-contained formalization target in linear algebra.
 
+Two claims about the source, from the verification campaign~\cite{Audit26} and
+\emph{not} checked against~\cite{dlS21} here (that text is not vendored in this
+repository). First, the statement above is over-hypothesized: the source is reported to
+need only a \emph{normal} state, not a normal faithful tracial one, to give constant $9$
+and exponent $1$, and to return a full projective measurement in the algebra. The tracial
+hypothesis is not harmless bookkeeping --- it excludes the bipartite vector-state
+applications that several of the projectivization sites of Section~\ref{ch:proof-structure}
+need, so weakening it would turn three of those sites into genuine improvements while the
+rest would still need Naimark dilation or the projective-by-definition convention of
+Section~\ref{sec:departures}. Second, the attribution of the weaker predecessor
+to~\cite{KPS18} and~\cite{JNVWY20} is reported to be wrong, the source crediting the low
+individual degree paper and Kempe--Vidick instead. Both should be settled against the
+source before this lemma is relied on in that generality; the campaign also offers a
+consistency-to-projectivity step giving $O(\delta)$ in place of $O(\delta^{1/4})$, which
+would sharpen the proof of Theorem~\ref{thm:almost-sync}.
+
 \subsection{Magic Square rigidity}
 \label{sec:rr-magic-square}
 
@@ -447,6 +463,16 @@ and Theorem~\ref{thm:gowers-hatami} and Theorem~\ref{thm:orthonormalization} as 
 boxes, together with a corollary of Theorem~\ref{thm:lidt-soundness} collapsing the
 sampling parameter $k$ into a single error function.
 
+The statement is bipartite, so every use of it inside the synchronous pipeline costs one
+application of the transport of Theorem~\ref{thm:almost-sync}, with its hypothesis and its
+loss $\eps \mapsto \eps^{c}$; restating the rigidity lemmas tracially once, rather than
+transporting at each use, is the cheaper route and is not yet done. The verification
+campaign~\cite{Audit26} further reports three corrections in the tensor-code material the
+proof passes through --- $\kappa$-convexity requires $c_1 \leq 1$, the synchronicity
+defect obeys $\delta_{\mathrm{sync}} \leq 4\eps$ rather than $3\eps$, and one corner block
+pairs with a transpose --- none checked here, none affecting the statement above, all
+relevant to whoever writes its proof.
+
 \subsection{Undecidability of the halting problem}
 \label{sec:rr-halting}
 
@@ -492,6 +518,16 @@ satisfiability of $\varphi$ (arithmetized over a low-degree extension) instead o
 sending $(a,b)$. The statement is long but entirely combinatorial. Cook--Levin has been
 formalized in other proof assistants; a Lean formalization with the explicit-uniformity
 guarantees above is a substantial but well-specified sub-project.
+
+A caution on the construction, from the verification campaign~\cite{Audit26} and not
+checked here: in the Tseitin encoding of~\cite{NW19}, which the explicit form
+of~\cite[Section 10]{JNVWY20} follows, the formula is reported to omit the output-wire
+conjunct, so that it is satisfiable for every input and the central equivalence of the
+construction fails as written. The statement above is end-to-end and so does not inherit
+the defect textually, but a formalization of it must supply what the repair needs: the
+output-wire conjunct, the out-degree-zero hypothesis that yields individual degree $6$,
+and the exact variable count on which the later PCP parameters depend --- none of which
+the statement currently fixes.
 
 \subsection{Self-dual normal bases}
 \label{sec:rr-self-dual-basis}

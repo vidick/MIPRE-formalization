@@ -241,6 +241,11 @@ Lean v4.33.0.
   (`paper/qld-prelim.tex`, two independent verifiers). Citation slip to fix at the same
   time: the `ε^{1/4}` predecessor is attributed here to KPS18 and JNVWY20, by de la Salle
   to the JNVWY low-degree paper and KV11. Attach to #22 (the transport work uses it).
+  *Recorded in the text* (2026-09-12): both claims now sit in `thm:orthonormalization`'s
+  comments, attributed to `\cite{Audit26}` and marked unverified here, since de la Salle's
+  text is not vendored in this repository. What remains is to check them against the source
+  and then weaken the hypothesis, which is the part that unblocks the projectivization
+  sites.
 - **R5 — typed verifiers: dropped in name, kept in arithmetic** (§10). `def:sampler`
   admits one pair of CL functions on one space, and nothing assembles a question
   distribution from structurally different sub-distributions selected by a type graph,
@@ -256,6 +261,12 @@ Lean v4.33.0.
   codes and the Vid21 interface: `κ`-convexity needs `c₁ ≤ 1`, `δ_sync ≤ 4ε` not `3ε`, a
   transpose slip in `extensions.tex`. Also: Magic Square rigidity's source becomes WBMS16,
   and whether the self-dual-basis import is needed at all. Comments paragraphs, cheap.
+  *Recorded in the text* (2026-09-12): the Tseitin defect and what a formalization of
+  `thm:succinct-sat` must supply are in that theorem's comments; the three tensor-code
+  corrections are in `thm:qld`'s, together with the observation that each bipartite use of
+  `thm:qld` costs one application of the transport. Both are attributed and marked
+  unverified here. Two items needed nothing: Magic Square rigidity already cites WBMS16,
+  and the self-dual-basis section already carries the "is this needed?" note.
 - **R7 — round-11 additions** (§13). Their `lem:ar-ora` had a real gap (decoded answers
   longer than the oracularized decider's parsing bound), repaired by truncating the
   decoding; the blueprint states `thm:answer-reduction` without proof, so the gap will
@@ -263,6 +274,10 @@ Lean v4.33.0.
   `thm:qld` needs Parseval over `F_q²`. And the identical-measurement-operators provenance
   chain, which their proof needs through four transformations, is definitional in the
   synchronous framework: a simplification this blueprint gets for free and should claim.
+  *Recorded in the text* (2026-09-12): the last of the three is now claimed in the
+  paragraph after `thm:halting`, which also notes what it buys for `thm:separation`'s
+  commuting completeness. The other two are about proofs chapter 6 does not yet contain, so
+  they stay here until those proofs are written.
 - **R8 — errata on the transport's own sources** (§1, end). Vid21 `cor:c2`'s proof applies
   `lem:close-cor` one-sidedly and needs two mirrored applications, each costing
   `O(√γ_λ)`; and the exact interface between JNVWY's product-basis transposes and Vid21's

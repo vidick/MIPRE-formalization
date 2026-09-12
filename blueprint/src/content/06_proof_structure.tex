@@ -337,6 +337,18 @@ $\valstar$ half of Lemma~\ref{lem:value-lower-approx}. Two obligations of that
 instantiation are open and are inherited here: the four listed in
 Remark~\ref{rem:compression-abstract}, and the synchronization invariant that the soundness
 clause of Theorem~\ref{thm:compression} requires of the games produced inside $\Compress$
-(Remark~\ref{rem:sync-invariant}). The entanglement form of the statement, with the
+(Remark~\ref{rem:sync-invariant}).
+
+One property the synchronous framework gets for nothing is worth recording. The value-$1$
+witness of item 1 is a PCC, hence synchronous, strategy: a \emph{single} family of
+measurements used by both players. In the bipartite framework of~\cite{JNVWY20} that the
+two players measure identically is an extra property, established by tracking it through
+oracularization, answer reduction, detyping and repetition, and the verification
+campaign~\cite{Audit26} reports that the chain is delicate, since the completeness clause
+of compression carries only PCC and the property has to be read off the last application
+rather than carried by the induction. Here it holds by definition
+(Definition~\ref{def:sync-strategy}), so no such chain is needed --- which is also what
+makes the commuting completeness of Theorem~\ref{thm:separation} a question about one
+transformation at a time rather than about a provenance argument. The entanglement form of the statement, with the
 stronger conclusion $\Ent(\game_\machine, \frac12) = \infty$ for non-halting
 $\machine$, is discussed in Remark~\ref{rem:entanglement-form}.
