@@ -457,33 +457,33 @@ number of levels of $\verifier$ is that of $\sampler$.
 \begin{remark}[The synchronization invariant]
 \label{rem:sync-invariant}
 \uses{def:normal-verifier,def:sync-game,thm:almost-sync}
-Two properties are asked of the games produced along the compression pipeline of
-Section~\ref{ch:proof-structure}, and neither follows from symmetrizing the players'
-roles:
+An earlier arrangement of the pipeline of Section~\ref{ch:proof-structure} asked two
+properties of the games it produces, neither of which follows from symmetrizing the
+players' roles. The pipeline no longer needs either, its soundness being carried in
+$\valstar$ throughout (Remark~\ref{rem:bipartite-route}); the two are recorded here
+because they are what a synchronous route would have to establish, and because the second
+is the reason there is no synchronous route:
 \begin{enumerate}
 \item \emph{Synchronicity}: equal questions reject unequal answers, so that $\synval$ is
   defined at all. For a game given by a game description this holds by fiat
   (Definition~\ref{def:game-description}); for a game given by a normal form verifier it
-  is a condition on the decider. It is needed wherever $\synval$ occurs --- in the
-  soundness clauses of all four transformations and at the inner end of the recursion ---
-  and direct repetition preserves it, since two unequal answer tuples to equal question
-  tuples differ in some coordinate, where the repeated game rejects.
+  is a condition on the decider. It would be needed wherever $\synval$ occurs; direct
+  repetition preserves it, since two unequal answer tuples to equal question tuples differ
+  in some coordinate, where the repeated game rejects.
 \item \emph{Diagonal weight}: the game to which the almost-synchronous transport is
   applied satisfies $\mu(x,x) \geq \kappa \sum_y \mu(x,y)$ for every $x$, with the same
   $\kappa > 0$ along the whole recursion. This is the hypothesis of
   Theorem~\ref{thm:almost-sync}, without which the two values of a game are unrelated
   (Remark~\ref{rem:almost-sync-hypothesis}).
 \end{enumerate}
-The transport is applied once, to the game that the repetition step repeats --- the
-answer-reduced game --- so the second property is a requirement on the constructions of
-introspection, oracularization and answer reduction, and not something inherited from the
-game being compressed. It is emphatically not a property of repeated games: the $k$-fold
-repetition of a game with diagonal weight $\kappa$ has diagonal weight $\kappa^k$, which
-is why the pipeline's soundness is carried in $\valstar$ from the repetition step outwards
-and the transport is never applied to a repeated game. Establishing either property is
-open: neither is recorded in the statements of Section~\ref{ch:proof-structure}, and
-in~\cite{JNVWY20} both come from the typed structure of the samplers, which this blueprint
-does not carry (Section~\ref{sec:departures}).
+The second property is emphatically not one of repeated games: the $k$-fold repetition of
+a game with diagonal weight $\kappa$ has diagonal weight $\kappa^k$. A synchronous route
+would therefore have to establish it for the constructions of introspection,
+oracularization and answer reduction --- never inheriting it from the game being
+compressed, and never applying the transport to a repeated game --- and in~\cite{JNVWY20}
+both properties come from the typed structure of the samplers, which this blueprint does
+not carry (Section~\ref{sec:departures}). Neither is established here, and neither needs
+to be.
 \end{remark}
 
 \begin{definition}[$\lambda$-bounded verifier]
