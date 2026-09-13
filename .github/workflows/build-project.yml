@@ -77,6 +77,11 @@ jobs:
       # same trick as Mathlib's own `lake exe cache get`.
       - name: Publish the prebuilt module bundle
         if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        # "Build project" is a required check and this step is an optimisation
+        # for cloud sessions, not a gate: a failed upload is an annotation on the
+        # run, and the session hook says "no MIPRE modules prebuilt" if it stays
+        # broken. It must never turn a green build red.
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: prebuilt-main
