@@ -12,10 +12,19 @@ on:
       - main
   workflow_dispatch: # Allow manual triggering of the workflow from the GitHub Actions interface
 
-# Cancel previous runs if a new commit is pushed to the same PR or branch
+# Keyed to the commit, not the ref, and deliberately so. "Build project" is a
+# required status check, and a cancelled run reports nothing — exactly as bad as
+# the filtered-out run warned about above. With `group: github.ref` every run for
+# a PR shares one group, so a run for an *older* head that starts late cancels the
+# run for the newer head, and the required check is then permanently missing for
+# the commit being merged: observed on PR #36, where a reopen and a push 45
+# seconds apart left the head with a cancelled run and an unmergeable PR. Keying
+# the group to the head SHA means runs for different commits never cancel each
+# other; duplicate runs for the *same* commit still collapse, which is what the
+# saving was actually for.
 concurrency:
-  group: ${{ github.ref }}  # Group runs by the ref (branch or PR)
-  cancel-in-progress: true  # Cancel any ongoing runs in the same group
+  group: ${{ github.workflow }}-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: true
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages and modify PR labels
 permissions:
@@ -37,6 +46,14 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0 # Fetch all history for all branches and tags
+
+      # Pure-Python, seconds: these catch blueprint/Lean drift before the Lean
+      # build starts, and are the only feedback a blueprint-only PR gets (the
+      # blueprint itself builds on main only).
+      - name: Blueprint and Lean-coverage checks
+        run: |
+          python3 scripts/ledger-sync.py
+          python3 scripts/lean-coverage.py --check
 
       - name: Install and configure Lean, and get mathlib cache
         uses: leanprover/lean-action@50fcf42d2e460296f1a34b402e990d1b24f8b596 # v1.6.0

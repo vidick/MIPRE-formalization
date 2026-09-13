@@ -144,7 +144,8 @@ and 11 are off the critical path, item 9 is no longer load-bearing. The cost, re
 there: the rigidity and approximate-measurement lemmas must be stated bipartitely rather
 than tracially, which is what the sources do anyway.
 
-**P3 — expand blueprint chapter 6 along the ledger.** Turn six monoliths into the
+**P3 — expand blueprint chapter 6 along the ledger. Stages 1.5 and 1.6 done 2026-09-13.**
+Turn six monoliths into the
 ledger's stage decomposition with a `\lean{}` name per statement, starting with
 stage 1.5 (compression, 6 challenges, engine already proved) and 1.6 (recursion, 13).
 This is blueprint-only work and it is what makes chapter 6 formalizable at all.
@@ -162,11 +163,13 @@ read a `val*` conclusion synchronously and never the other way.
 
 | ledger node | blueprint | Lean | state |
 |---|---|---|---|
-| `1.1.7.2.1` (norm constraint half) | — | `MIPRE.ValueApprox.posSemidef_realSmul_one_add_and_sub_iff` | proved 2026-09-13 |
+| `1.1.7.2.1` (norm constraint half) | `lem:norm-two-psd` | `MIPRE.ValueApprox.posSemidef_realSmul_one_add_and_sub_iff` | proved 2026-09-13 |
 | `1.1.7.2.1` (exact arithmetic, psd decidability) | — | — | open |
 | `1.1.7.2.2` candidate set finiteness | — | — | open |
-| `1.1.7.2.3` stability | — | — | open |
-| `1.1.7.2.4` density | — | — | open |
+| `1.1.7.2.3` stability (the split) | `lem:perturbation-split` | `MIPRE.ValueApprox.dotProduct_mulVec_perturb` | proved 2026-09-13 |
+| `1.1.7.2.3` stability (the bound) | — | — | open |
+| `1.1.7.2.4` density (the split) | `lem:perturbation-split` | `MIPRE.ValueApprox.kronecker_sub_kronecker`, `dotProduct_kronecker_perturb` | proved 2026-09-13 |
+| `1.1.7.2.4` density (the bound) | — | — | open |
 | `1.1.7.2.5` halting biconditional | `lem:value-lower-approx` | — | open |
 | `1.1.7.2.6` application, MIP* ⊆ RE | `thm:mipstar-eq-re` (⊆) | — | open |
 | `1.1.7.2.6` "WLOG projective by Naimark" | `lem:povm-value-eq` | `MIPRE.Repetition.quantumValue_eq_entangledValue` | proved 2026-09-12 |
@@ -179,6 +182,65 @@ of which is in Mathlib — followed by `1.1.7.2.3`/`1.1.7.2.4`, whose engine is 
 Lipschitz bound on the Born value in the entries of the data. The three transport
 lemmas proved for `lem:povm-value-eq` (`dotProduct_mulVec_submatrix`,
 `dotProduct_mulVec_conj`, `dotProduct_comp_equiv`) are the tools for that.
+
+## Stages 1.5 and 1.6, done 2026-09-13
+
+Both are fully accounted for: 9/9 nodes of stage 1.5 and 8/8 of stage 1.6, which
+`scripts/ledger-sync.py` reports. Eight new blueprint statements, not seventeen — the
+principle is that every node is *accounted for*, not that every node becomes a statement.
+The umbrella and assembly nodes are annotations on `thm:compression` and `thm:halting`,
+the three per-stage bookkeeping nodes are annotations on the chain remark, and the
+remaining nine are statements in their own right:
+
+| ledger node | blueprint | why |
+|---|---|---|
+| `1.5`, `1.5.7` | `thm:compression` (annotated) | umbrella and assembly |
+| `1.5.1` | `lem:compress-sampler-indep` | the recursion needs it: a fixed point must quote its own sampler |
+| `1.5.3` | `lem:compress-margin` | pure arithmetic on the imported constants; claim-tested upstream |
+| `1.5.5` | `lem:compress-tau` | ditto |
+| `1.5.2`, `1.5.4`, `1.5.6`, `1.5.8` | `rem:compression-chain` | the staged chain and its margins |
+| `1.6`, `1.6.6` | `thm:halting` (annotated) | umbrella and assembly |
+| `1.6.1` | `lem:halt-construction` | the self-referential decider |
+| `1.6.4` | `lem:lambda-bound` | pure arithmetic; claim-tested upstream |
+| `1.6.5` | `lem:lambda` | the verifier's parameter |
+| `1.6.2`, `1.6.3` | `lem:dhalt-values` | the two value cases |
+| `1.6.7` | `rem:identical-operators` | a paragraph promoted to a labelled remark |
+
+**The finding this turned up** is in `rem:compression-chain`, from node `1.5.8`, and it
+favours the architecture already chosen. Compression's soundness clause is proved by
+applying each transformation's clause contrapositively with a strict margin, which is an
+implication between `val*` bounds at every step. The route of JNVWY cannot take it: their
+repetition step's soundness hypothesis is an *entanglement* bound, and `Ent(G, 1-ε) = ∞`
+needs `val*(G) < 1-ε` **strictly**, so a non-strict `≤` leaves the requirement finite.
+They therefore run the chain in `Ent`, and a value-form route would force them to apply
+repetition at `ε₂/2`, costing `2^17` in the repetition exponent. Direct repetition takes a
+value hypothesis, so it needs no strictness and pays no such factor. That is the second
+place — after `rem:direct-vs-anchored` — where the value form is *cheaper* than the
+entanglement form rather than merely equivalent, and it is why no entanglement lower bound
+has to be tracked in chapter 6 at all.
+
+Two of the nine new statements, `lem:compress-margin` (`1.5.3`) and `lem:lambda-bound`
+(`1.6.4`), are pure arithmetic with no quantum content and are claim-tested upstream.
+They are the cheapest genuine chapter-6 Lean targets in the whole pipeline and are the
+natural next Lean work after P1.
+
+## Keeping the correspondence: `scripts/ledger-sync.py`
+
+The ledger is a live artifact in another repository, so the correspondence rots silently
+unless something checks it. A blueprint statement declares what it accounts for with
+`\ledgernode{1.5.3}`, a macro that expands to nothing, and the script has two modes:
+
+* no arguments — check the annotations against the committed snapshot
+  `planning/ledger-index.json`, reporting annotations naming an unknown node, cited nodes
+  the ledger records as *admitted* rather than validated, and per-stage coverage. Exit
+  status 1 on a problem, so it is usable in CI.
+* `--ledger PATH` — replay a clone of `vidick/mipre-proof`, rewrite the snapshot, and say
+  which nodes changed, flagging separately those the blueprint cites. A cited node whose
+  statement hash changed is exactly the case a human must look at.
+
+Neither mode needs Lean, LaTeX or the network. The snapshot records the ledger head
+(`11a03e8`), its event count, and for each node its state, challenge and amendment counts
+and the sha256 of its statement.
 
 ## Correspondence to maintain
 

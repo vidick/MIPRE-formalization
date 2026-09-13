@@ -99,6 +99,15 @@
 \def\vcompr{\verifier^{\compr}}
 \def\scompr{\sampler^{\compr}}
 \def\dcompr{\decider^{\compr}}
+\def\vhalt{\verifier^{\mathsf{halt}}}
+\def\shalt{\sampler^{\mathsf{halt}}}
+\def\dhalt{\decider^{\mathsf{halt}}}
+
+% Provenance: the node of the vibefeld ledger in vidick/mipre-proof that a statement
+% here accounts for. Source-only — it expands to nothing, so it cannot affect plastex or
+% pdflatex output; scripts/ledger-sync.py reads it out of the .tex source and checks it
+% against planning/ledger-index.json. Takes a comma-separated list of node ids.
+\newcommand{\ledgernode}[1]{}
 
 % Formalization-effort badges for background results (Sections 3--5).
 % Plain fallback (web/plastex); macros/print.tex overrides these with colored pills.

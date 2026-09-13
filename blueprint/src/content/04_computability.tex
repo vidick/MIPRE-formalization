@@ -359,3 +359,38 @@ $S$ are used --- and nothing about entanglement is required of the compression p
 The Lean proof reuses the toolkit of Section~\ref{sec:rr-computability}: the search
 branch runs the semidecision procedure through the clocked universal machine, and the
 start level of the recursion is carried as data next to the current level.
+
+\effortEasy
+
+\begin{lemma}[Halting form of the two reduction lemmas]
+\label{lem:halting-form}
+\uses{lem:recursive-compression,lem:compressible-criterion,def:re}
+\lean{MIPRE.Cost.recursive_compression_halting,
+MIPRE.Cost.compressibility_criterion_halting}
+\leanok
+Lemma~\ref{lem:recursive-compression} and Lemma~\ref{lem:compressible-criterion} both
+hold with the halting problem taken in the ambient formalization's own form: the reduction
+may be presented as a computable map defined on the codes of a fixed G\"odel numbering of
+the partial recursive functions, halting being halting of the code on input $0$, rather
+than on the programs of the cost model in which the two lemmas are proved.
+\end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:recursive-compression,lem:compressible-criterion}
+Compose the reduction with a compiler from codes to programs of the cost model that is
+computable on descriptions and preserves halting on the empty input: hardcode the code's
+index into a fixed program for the universal partial function, which exists because that
+partial function is partial recursive, and observe that the description of the result is a
+fixed primitive recursive tree around the index. Only the interface changes; neither
+lemma's content is touched, and the compiler carries no time bound, which is why this step
+is available for the computable version of the main theorem and not for the
+polynomial-time one.
+\end{proof}
+
+\paragraph{Comments.} This is the seam at which the development meets Mathlib's halting
+problem, hence the form Theorem~\ref{thm:main} consumes: \texttt{Nat.Partrec.Code} is
+what \texttt{Computable} is stated against, while the two reduction lemmas are proved
+about programs of the cost model of Section~\ref{sec:rr-computability}, whose
+polynomial-time predicate the fixed-point construction needs. Separating the two keeps the
+cost model out of the main statement entirely.

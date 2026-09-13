@@ -65,6 +65,48 @@ full build is slow, and not a habit to copy.
 
 Environment setup, the allowed-host list and troubleshooting: `docs/lean-cloud.md`.
 
+## The companion proof repository
+
+`vidick/MIPRE-proof` (private) holds the paper source under `paper/` and the vibefeld
+adversarial-verification ledger under `proofs/mipre-undecidability/ledger/`. **Before
+formalizing a blueprint statement, read the paper's own statement and proof of it.** The
+blueprint is a paraphrase written to be formalizable; the paper is the authority, and the
+paraphrase has been wrong.
+
+It is not attached to a session by default. Attach it with `add_repo` for
+`vidick/MIPRE-proof`, or ask the maintainer. If it is unavailable, formalize from the
+blueprint — but do not record a paraphrase question as settled, and say in the PR that the
+paper was not consulted.
+
+Where things are (`paper/README.md` has the full map):
+
+| blueprint | paper file |
+|---|---|
+| ch. 2 games, values, PCC, `Ent` | `games.tex`, `linear.tex`, `types.tex` |
+| ch. 3 low-degree test, Magic Square, Pauli | `ldt.tex`; `external/` for its dependencies |
+| ch. 3 `thm:qld` (Pauli basis test soundness) | `qld-appendix.tex` and `qld-{prelim,commutation,combining,separating,isometry}.tex` |
+| ch. 3 Cook--Levin, succinct SAT | `answer_reduction.tex` |
+| ch. 6 introspection | `introspection.tex` |
+| ch. 6 oracularization | `oracularization.tex` |
+| ch. 6 answer reduction | `answer_reduction.tex`, `ld_compiler.tex` |
+| ch. 6 repetition | `parallel_amplification.tex` |
+| ch. 6 compression, halting; ch. 8 separation | `recursive.tex` |
+| preliminaries, TM conventions, low-degree encoding | `preliminaries.tex` |
+
+Two things to know about reading it:
+
+- **The ledger's node statements are paraphrases too, and are not self-certifying.** Node
+  `1.6.3` is marked *validated* and states a lemma that is false; only `paper/recursive.tex`
+  settles it (`reports/ledger-node-1.6.3-overstated.md`). Where a node and the paper
+  disagree, the paper wins and the disagreement is worth a report. A node's `\cnote{}`
+  repairs and challenge history, on the other hand, are gold: they say exactly which steps
+  are delicate.
+- **Nothing from it may be copied into this repository.** `MIPRE-proof` is private and
+  `MIPRE-formalization` is public; `paper/external/` additionally holds third-party paper
+  sources and unpublished errata against other people's work. Read it, cite it in
+  `blueprint/src/content/bibliography.tex` at a pinned commit, and quote at most a
+  statement you are formalizing. Do not vendor `paper/`.
+
 ## Things that will bite
 
 - **Vendored trees are read-only**: `MIPRE/Background/Repetition/TenProofs/`,
@@ -77,6 +119,15 @@ Environment setup, the allowed-host list and troubleshooting: `docs/lean-cloud.m
 - **Blueprint** builds only on `main`, never on a branch. Before merging LaTeX,
   check mechanically that every `\ref`, `\uses`, `\cite` target exists and every
   `\lean{}` name resolves — there is no plastex or pdflatex in a session.
+  `scripts/lean-coverage.py` is that check — labels, refs, uses, cites, environment
+  nesting, `\lean{}` resolution — and it also guards against a reorganization
+  dropping Lean code; `scripts/ledger-sync.py` checks the ledger correspondence. CI
+  runs both before the Lean build. Tags and `\uses` lists wrap across lines here, so
+  never check them with a per-line grep: that silently skips the continuations.
+- **`\leanok` is two marks, not one**: inside the environment it claims the
+  *statement* is formalized, inside `\begin{proof}` that the *proof* is. Only ever
+  add the second after `#print axioms` shows the declaration free of `sorryAx`;
+  `planning/lean-coverage.md` records the audit that established the current state.
 - **`intentions / lifecycle`** is red on every PR: its project-board token is
   rejected repository-wide. Not a PR's fault; do not try to fix it from a PR.
 

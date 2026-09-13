@@ -397,6 +397,8 @@ do, provided the same one is used in Theorem~\ref{thm:compression}.)
 \begin{definition}[Game description]
 \label{def:game-description}
 \uses{def:sync-game}
+\lean{HaltingGameValue.GameData, HaltingGameValue.GameData.toGame}
+\leanok
 A \emph{game description} is a tuple $g = (n_\mX, n_\mA, w, \mathrm{acc})$ of two
 integers, a finite list $w$ of weighted question pairs, and a finite list
 $\mathrm{acc}$ of accepted answer tuples. It determines a synchronous game
