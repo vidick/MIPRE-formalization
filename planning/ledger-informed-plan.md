@@ -183,6 +183,39 @@ Lipschitz bound on the Born value in the entries of the data. The three transpor
 lemmas proved for `lem:povm-value-eq` (`dotProduct_mulVec_submatrix`,
 `dotProduct_mulVec_conj`, `dotProduct_comp_equiv`) are the tools for that.
 
+## Stage 1.3, done 2026-09-13
+
+13/13 nodes, by three annotations, two new statements and three new remarks. Two
+statement-level repairs came out of reading `paper/oracularization.tex` and
+`paper/ld_compiler.tex` against the blueprint:
+
+- `thm:oracularization` said `\delta(\eps) = \poly(\eps)`. The audit shows `\delta_ora`
+  carries one square root (the step from measurement closeness to a value statement is
+  NW19 Fact 4.31, not an identity), and `\sqrt\eps` is not a polynomial in `\eps`. Now
+  `O(\sqrt\eps)`. Its completeness clause also gains *identical measurement operators* —
+  SPCC was withdrawn upstream because nothing symmetrizes a value-1 PCC strategy while
+  preserving projectivity, consistency and value 1 — and a note that the oracle families
+  are projective, outcomes failing the bounded parse being grouped into one distinguished
+  outcome.
+- `thm:pcp-decider` (new) states the validity inequalities as *exact* (`|x|, |y| <= Q`)
+  and carries the hypothesis that `m` is a power of two. That is a confirmed upstream
+  defect: the `m`-variate low-degree test needs `m | q` with `q` a power of two, but only
+  the outer count `m' = 5m + 5 + s` was guaranteed to be one. `rem:pcp-power-of-two`
+  records it.
+
+`rem:ar-composition` accounts for node `1.3.4`, which carries 29 challenges — more than
+any other node of the campaign. Four are structural (the direct sum over two different
+fields, the consistency subtest omitted from the low-degree hypothesis, projectivity
+missing from Claim ar-4, and the `B_D(n)` truncation), and one does not reach this
+blueprint at all: JNVWY's answer reduction carries `Ent(V^ans_n, 1-\eps) >= (1/2)
+Ent(V_n, 1-\delta)`, the recursion consumes that `1/2`, and the campaign found the factor
+is not delivered by the written proof because the symmetrization it opens with doubles the
+Schmidt rank. The value-form pipeline has no entanglement clause to get wrong. That is the
+fourth place it is strictly cheaper rather than merely equivalent, after
+`rem:direct-vs-anchored`, `rem:compression-chain` and node `1.5.8`.
+
+Stage coverage now: 1.3 at 13/13, 1.5 at 9/9, 1.6 at 8/8; 33 of 123 nodes annotated.
+
 ## Stages 1.5 and 1.6, done 2026-09-13
 
 Both are fully accounted for: 9/9 nodes of stage 1.5 and 8/8 of stage 1.6, which
