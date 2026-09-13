@@ -168,8 +168,10 @@ enable lean-lsp-mcp's local Loogle (13 GiB peak).
   `lean-<version>-linux.tar.zst` as a release asset of *this* repository and set
   `TOOLCHAIN_URL` to it. It is tried first.
 * **The prebuilt bundle**: `build-project.yml` rebuilds it on every push to `main`
-  and replaces the asset on the `prebuilt-main` release; the tag is a fixed
-  anchor, not a version. A session holding a bundle can read
+  (or on a manual dispatch of that workflow on `main`) and replaces the asset on
+  the `prebuilt-main` release; the tag is a fixed anchor, not a version. It is
+  around 250 MB: `.lake/build` is some 3 GB, but 1.7 of that is generated C, which
+  compresses about elevenfold, so fetching it costs tens of seconds. A session holding a bundle can read
   `.lake/build/BUNDLE-INFO` for the commit, toolchain and Mathlib pin it was built
   from. It is skipped when it would exceed the 2 GiB release-asset limit, which
   the run's log warns about; if that ever happens, either split it or drop the

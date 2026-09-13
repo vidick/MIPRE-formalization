@@ -76,7 +76,7 @@ jobs:
       # built on a runner replays in /opt/warm on a session VM — so this is the
       # same trick as Mathlib's own `lake exe cache get`.
       - name: Publish the prebuilt module bundle
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: prebuilt-main
@@ -103,5 +103,6 @@ jobs:
           fi
           gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" \
             --prerelease --title "Prebuilt MIPRE modules (rolling)" \
-            --notes "Compiled .lake/build for the modules of this repository, republished on every push to main. Consumed by .claude/cloud-setup.sh and .claude/hooks/lean-warm.sh; see docs/lean-cloud.md. The tag is a fixed anchor, not a version: only the attached asset moves."
+            --notes "Compiled .lake/build for the modules of this repository, republished on every push to main. Consumed by .claude/cloud-setup.sh and .claude/hooks/lean-warm.sh; see docs/lean-cloud.md. The tag is a fixed anchor, not a version: only the attached asset moves." \
+            || true
           gh release upload "$TAG" mipre-build.tar.zst --clobber

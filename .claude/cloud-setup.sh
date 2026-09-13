@@ -58,7 +58,8 @@ REPORT=/opt/warm/SETUP-REPORT.txt
 STAMP=/opt/warm/SETUP-STAMP
 
 # The compiled modules, published by .github/workflows/build-project.yml on every
-# push to main. About a minute to fetch, against 30-45 to compile. Empty to skip.
+# push to main: some 250 MB, tens of seconds to fetch, against 30-45 minutes to
+# compile the same thing. Empty to skip.
 PREBUILT_URL=${PREBUILT_URL:-https://github.com/vidick/MIPRE-formalization/releases/download/prebuilt-main/mipre-build.tar.zst}
 
 # Seconds to spend compiling modules the bundle did not cover (a feature branch
