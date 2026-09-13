@@ -488,24 +488,44 @@ $\TIME_{\dhalt}(n), \TIME_{\shalt}(n) = \poly(n, \abs{\machine})$.
 \begin{lemma}[Values of the halting verifier]
 \label{lem:dhalt-values}
 \ledgernode{1.6.2, 1.6.3}
-\uses{lem:halt-construction,lem:lambda,thm:compression,def:pcc,def:q-value}
+\uses{lem:halt-construction,lem:lambda,lem:compress-sampler-indep,def:pcc,def:q-value}
 For every $n$:
 \begin{enumerate}
 \item if $\machine$ halts within $n$ steps then $\valstar(\vhalt_n) = 1$, witnessed by a
   value-$1$ PCC strategy;
-\item if $\machine$ does not halt within $n$ steps then $\valstar(\vhalt_n) \leq
-  \frac12$.
+\item if $\machine$ does not halt within $n$ steps then $\vhalt_n$ and $\vcompr_n$ are the
+  same game up to an identification of the answer alphabets; in particular
+  $\valstar(\vhalt_n) = \valstar(\vcompr_n)$, and $\vhalt_n$ has a value-$1$ PCC strategy
+  if and only if $\vcompr_n$ does.
 \end{enumerate}
 \end{lemma}
 \begin{proof}
-Item 1 is the fixed-answer strategy. Item 2 applies the soundness clause of
-Theorem~\ref{thm:compression} to the verifier built from $F$'s description; the induction
-is over scales and is well founded, the self-reference introducing no circularity because
-$\dhalt$ at index $n$ only ever invokes compression at strictly smaller scales. This is
-the node the companion repository's audit challenged twice; the two challenges concerned
-the well-foundedness and the answer-alphabet identification, and both were resolved
-in the source.
+Item 1 is the fixed-answer strategy: when $\machine$ halts within $n$ steps, $\dhalt$
+accepts every answer pair on every question pair in the support, so any strategy has value
+$1$ and the constant-$0$ strategy is PCC. For item 2, $\dhalt$ at index $n$ performs the
+same question-length check as $\dcompr$ and then runs $\dcompr(n, x, y, a, b)$ verbatim,
+with $\mathtt{TIMEOUT}$ rejecting in both, so the two deciders accept on exactly the same
+inputs; and the two verifiers share the sampler $\shalt = \mathtt{ComputeSampler}(\lambda)$
+(Lemma~\ref{lem:compress-sampler-indep}), so a strategy for either is a strategy for the
+other with the same winning probability. The timeout counter of $\dhalt$ does not
+interfere: its bound is chosen in Lemma~\ref{lem:lambda} so that the computations above
+finish first.
 \end{proof}
+
+\begin{remark}[Item 2 is a transfer, not a bound]
+\label{rem:dhalt-transfer}
+\uses{lem:dhalt-values,thm:halting,thm:compression}
+Item 2 is deliberately not ``$\valstar(\vhalt_n) \leq \frac12$''. That per-level bound is
+false: if $\machine$ halts for the first time at step $T$, then for every $n < T$ it does
+not halt within $n$ steps, yet $\valstar(\vhalt_n) = 1$ --- item 1 gives value $1$ at every
+level $\geq T$, and item 2 together with the completeness clause of
+Theorem~\ref{thm:compression} carries it \emph{downward} from level $2^n$ to level $n$,
+which is exactly how the completeness half of Theorem~\ref{thm:halting} is proved. The
+absolute bound needs $\machine$ never to halt, and is then the conclusion of the recursion
+in Theorem~\ref{thm:halting}, not an ingredient of it. Recorded here because an earlier
+revision of this chapter did state item 2 as the bound, and because the ledger node
+`1.6.3' states it that way too; the formalization should follow the paper.
+\end{remark}
 
 \effortHard
 

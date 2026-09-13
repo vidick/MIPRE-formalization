@@ -427,6 +427,22 @@ Lean v4.33.0.
   exponent at `c = 1/64` for the main theorem and about `1/256` in value form; the
   constants of `thm:almost-sync` and `thm:parallel-repetition` should be pinned to that
   when item 5 is worked out. Attach to #22.
+## `lem:dhalt-values` item 2 was false — repaired 2026-09-13
+
+Found by checking chapter 6 against `paper/recursive.tex` in the companion repository.
+Item 2 read "if `M` does not halt within `n` steps then `val*(V^halt_n) <= 1/2`". That is
+false for any `M` halting first at step `T` and any `n < T`, and it made the completeness
+half of `thm:halting` unprovable: completeness needs value `1` at exactly those levels,
+carried downward from level `2^n` by compression's completeness clause. The paper states
+item 2 as a *transfer* — `V^halt_n` and `V^compr_n` are the same game when `M` has not
+halted within `n` steps — and its own proof of `thm:halting` applies it in the value-`1`
+direction. The blueprint now states the transfer form, with `rem:dhalt-transfer` recording
+why the bound is wrong.
+
+Ledger node `1.6.3` carries the same defect and can only be amended from the companion
+repository: `reports/ledger-node-1.6.3-overstated.md` is the write-up to act on. Node
+`1.6` itself is correct.
+
 ## The blueprint/Lean coverage audit of 2026-09-13
 
 Prompted by the question of whether the ledger-driven restructuring could lose Lean code.
