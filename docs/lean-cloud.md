@@ -16,7 +16,7 @@ installs:
 | What | Where |
 | --- | --- |
 | Lean toolchain (`lean`, `lake`), version taken from this repository's `lean-toolchain` | `/opt/lean`, symlinked into `/usr/local/bin` |
-| A warm clone of this repository with the Lake dependencies, the Mathlib olean cache and the built `MIPRE` modules | `/opt/warm/MIPRE-formalization` |
+| A warm clone of this repository with the Lake dependencies, the Mathlib olean cache and as many built `MIPRE` modules as `BUILD_BUDGET` reached | `/opt/warm/MIPRE-formalization` |
 | lean-lsp-mcp, pre-fetched | the uv cache |
 
 Nothing is compiled from source except this repository's own modules; Mathlib
@@ -41,14 +41,29 @@ LeanSearch available.
    package managers*, and add:
 
    ```text
-   lakecache.blob.core.windows.net
-   release.lean-lang.org
+   github.com
+   release-assets.githubusercontent.com
+   objects.githubusercontent.com
    releases.lean-lang.org
+   release.lean-lang.org
+   lakecache.blob.core.windows.net
    loogle.lean-lang.org
    leansearch.net
    premise-search.com
    leanpremise.net
    ```
+
+   The first three are the ones easy to miss. `lake-manifest.json` pins fifteen
+   dependencies, all on `github.com`. And the toolchain URL is a chain:
+   `releases.lean-lang.org` 302s to `github.com`, which 302s again to
+   `release-assets.githubusercontent.com`, and that last hop is where the 575 MB
+   actually comes from — allow only the first and the request starts and then dies
+   on the hop carrying the payload.
+
+   `reservoir.lean-lang.org` is **not** in the list: it is unreachable from these
+   VMs, and it is not needed, because the manifest pins every dependency's git URL
+   so Lake never resolves a `scope`. The price is that `lake update` cannot work
+   here at all.
 
 3. **Setup script**: paste the contents of `.claude/cloud-setup.sh`, adjusting
    `BRANCH` if the toolchain of a feature branch differs from `main`.
@@ -66,8 +81,16 @@ enable lean-lsp-mcp's local Loogle (13 GiB peak).
   `import MIPRE.<Module>` for definitions from this repository.
 * Scratch files: write them under `Scratch/` (ignored by git) and use the
   file-based tools, or `lake env lean Scratch/Foo.lean`.
-* Never run `lake build` on Mathlib and never `lake update`; both would try to
-  compile Mathlib and will not finish on the VM.
+* Prefer the `lean-lsp` MCP tools to `lake build` for iterating. Once a
+  module's imports are built, `lean_diagnostic_messages` returns the file's
+  errors in ten seconds or so, against minutes for `lake build`, and
+  `lean_goal` / `lean_multi_attempt` let a tactic be tried without touching the
+  file. This is the single largest difference in feedback speed available here.
+* A bare `lake build` is never quick even when nothing changed: it replays the
+  traces of all 8855 modules. Always name the module you care about.
+* Never run `lake build` on Mathlib and never `lake update`; the first would
+  compile Mathlib from source and not finish, and the second needs Reservoir,
+  which is unreachable.
 * When the network policy allows the hosts above but the snapshot has no Lean
   (for example in a session started before the environment was configured),
   the setup can be reproduced by hand in a few minutes: install `zstd`,
@@ -81,12 +104,19 @@ enable lean-lsp-mcp's local Loogle (13 GiB peak).
   edit, even a comment) to trigger a rebuild. The hook refuses to use the warm
   clone when the checkout wants another Lean version than the snapshot has.
 * **Toolchain download returns 403**: the cloud GitHub proxy only serves
-  release assets of repositories attached to the session, and
-  `releases.lean-lang.org` redirects to a GitHub release asset. If the download
-  fails, upload the tarball as a release asset of this repository and set
-  `TOOLCHAIN_URL` in the setup script to the asset URL.
-* **Setup exceeds the five-minute budget**: drop `lake build MIPRE` from the
-  setup script; the first session then builds the modules once.
+  release assets of repositories attached to the session, and every public
+  toolchain URL ends at a release asset of `leanprover/lean4`, which is not
+  attached. The script tries `releases.lean-lang.org` and then the direct
+  `github.com` release URL, logging each attempt; if both 403, upload
+  `lean-<version>-linux.tar.zst` as a release asset of *this* repository and set
+  `TOOLCHAIN_URL` at the top of the script to it. That URL is tried first.
+* **Setup takes too long**: lower `BUILD_BUDGET` at the top of the setup
+  script. It caps the pre-build with `timeout`, so the script always exits
+  cleanly rather than being killed, and Lake keeps every module that finished —
+  a partial pre-build is still a win. `BUILD_BUDGET=0` skips the pre-build
+  entirely: setup is then only a few minutes, but the first in-session build of
+  anything importing the vendored repetition trees costs 20 to 40 minutes.
+  Building all 533 modules takes 30 to 45 minutes.
 * **Local use**: the project-scope `.mcp.json` points `LEAN_PROJECT_PATH` at
   the cloud checkout path by default; set `LEAN_PROJECT_PATH` to your local
   checkout to use lean-lsp from this repository locally.
