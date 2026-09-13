@@ -27,6 +27,11 @@ jobs:
   build_project:
     runs-on: ubuntu-latest
     name: Build project
+    # `contents: write` is for the prebuilt-bundle upload in the last step,
+    # which runs only on pushes to `main`. This job deploys nothing, so it does
+    # not need the `pages`/`id-token` scopes declared above.
+    permissions:
+      contents: write
     steps:
       - name: Checkout project
         uses: actions/checkout@v7
@@ -44,12 +49,65 @@ jobs:
         run: |
           ~/.elan/bin/lake exe mk_all --check || { echo "ERROR: please ensure that MIPRE.lean is up to date, for instance by running lake exe mk_all"; exit 1; }
 
+      # The commit is in the key so that every run writes a fresh entry and the
+      # restore-keys ladder picks the newest earlier build of the same toolchain
+      # and dependency pins. Keyed on the two hashes alone, the cache is written
+      # once and never again, so it falls further behind `main` with every merge
+      # until the next toolchain or Mathlib bump.
       - name: Cache build artifacts
         uses: actions/cache@v6
         with:
           path: .lake/build
-          key: LakeBuild-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}
-          restore-keys: LakeBuild-
+          key: LakeBuild-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: |
+            LakeBuild-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-
+            LakeBuild-${{ runner.os }}-
+            LakeBuild-
 
       - name: Build project
         run: ~/.elan/bin/lake build MIPRE
+
+      # Cloud sessions cannot build these modules for themselves: a cloud
+      # environment's setup script has about five minutes, of which fetching the
+      # Mathlib olean cache already takes two, while building all 533 modules
+      # takes 30 to 45. So `main` publishes them here and
+      # `.claude/cloud-setup.sh` downloads this asset into the snapshot instead
+      # (see docs/lean-cloud.md). Lake's traces are path-independent — an olean
+      # built on a runner replays in /opt/warm on a session VM — so this is the
+      # same trick as Mathlib's own `lake exe cache get`.
+      - name: Publish the prebuilt module bundle
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        # "Build project" is a required check and this step is an optimisation
+        # for cloud sessions, not a gate: a failed upload is an annotation on the
+        # run, and the session hook says "no MIPRE modules prebuilt" if it stays
+        # broken. It must never turn a green build red.
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: prebuilt-main
+        run: |
+          set -euo pipefail
+          mathlib=$(python3 -c "import json; print(next(p['rev'] for p in json.load(open('lake-manifest.json'))['packages'] if p['name'] == 'mathlib'))")
+          # Travels inside the bundle so a session can say what it is holding.
+          # Lake ignores files it does not know about under .lake/build.
+          cat > .lake/build/BUNDLE-INFO <<EOF
+          commit: ${{ github.sha }}
+          toolchain: $(cat lean-toolchain)
+          mathlib: $mathlib
+          oleans: $(find .lake/build/lib -name '*.olean' | wc -l)
+          built-at: $(date -u +%FT%TZ)
+          EOF
+          tar --use-compress-program 'zstd -T0 -3' -cf mipre-build.tar.zst .lake/build
+          size=$(stat -c%s mipre-build.tar.zst)
+          echo "bundle: $(numfmt --to=iec "$size"), $(grep '^oleans:' .lake/build/BUNDLE-INFO)"
+          # A release asset has to stay under 2 GiB. Warn rather than fail: the
+          # build itself succeeded, and a stale bundle is better than a red run.
+          if [ "$size" -gt 2040109465 ]; then
+            echo "::warning::prebuilt bundle is $(numfmt --to=iec "$size"), over the 2 GiB release-asset limit; not uploaded"
+            exit 0
+          fi
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" \
+            --prerelease --title "Prebuilt MIPRE modules (rolling)" \
+            --notes "Compiled .lake/build for the modules of this repository, republished on every push to main. Consumed by .claude/cloud-setup.sh and .claude/hooks/lean-warm.sh; see docs/lean-cloud.md. The tag is a fixed anchor, not a version: only the attached asset moves." \
+            || true
+          gh release upload "$TAG" mipre-build.tar.zst --clobber
