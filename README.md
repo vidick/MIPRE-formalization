@@ -36,10 +36,12 @@ value 1 and non-halting machines to games of value at most 1/2.
 
 ### Cloud sessions
 
-Claude Code cloud sessions on this repository get Lean 4, a compiled Mathlib
-and a warm build of `MIPRE`, provisioned once by the cloud environment's setup
-script (`.claude/cloud-setup.sh`) and exposed to the session's checkout by a
-SessionStart hook and the `lean-lsp` MCP server; see
+Claude Code cloud sessions on this repository get Lean 4, a compiled Mathlib and
+this repository's own compiled modules — the latter published by CI on every push
+to `main` and downloaded into the environment's snapshot by its setup script
+(`.claude/cloud-setup.sh`), since nothing can be compiled inside the five minutes
+a setup script gets. A SessionStart hook and the `lean-lsp` MCP server expose all
+of it to the session's checkout; see
 [docs/lean-cloud.md](docs/lean-cloud.md) for the one-time environment
 configuration.
 
