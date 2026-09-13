@@ -186,6 +186,13 @@ Then, and only then, the transformations themselves — introspection first, as 
 - One transformation per pull request; the blueprint edit that goes with it in the same
   pull request.
 - A `sorry` is acceptable only against a blueprint node tracked by an open issue
-  (`CONTRIBUTING.md`); vendored signed statements are the one case under discussion (#42).
+  (`CONTRIBUTING.md`). There is now one standing exception, created by #42 and not yet
+  ratified: the four upstream *signed statements* in the vendored
+  `Orthonormalization/Orthogonalization/Basic.lean` — the unconditional general forms of
+  de la Salle's Theorems 1.1, 1.2, 1.4 and Corollary 1.5, which nothing uses and which
+  `Orthonormalization/Axioms.lean` asserts still carry `sorryAx`. They answer to
+  `rem:orthonormalization-scope` but to no issue. Either an issue should be opened
+  ("discharge `MvNStructureTheory`") or `CONTRIBUTING.md` should exempt vendored signed
+  statements explicitly; until one of the two happens, the rule and the tree disagree.
 - When the paper and the blueprint disagree, stop and resolve it before writing Lean. The
   answer is worth more than the hour it costs, and it belongs in the blueprint's comments.
