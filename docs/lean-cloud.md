@@ -142,8 +142,10 @@ enable lean-lsp-mcp's local Loogle (13 GiB peak).
   way around missing oleans, though: the language server runs `lake setup-file`,
   which builds a file's import closure on demand, so the first request on a file
   whose imports are unbuilt costs what building them costs.
-* A bare `lake build` builds all 533 modules of this repository, and even with
-  nothing to do it replays the traces of all 8855. Always name the module.
+* A bare `lake build` is the whole library: 44 minutes from nothing (110
+  CPU-minutes, 25 of them the one 71k-line vendored module), but 8 seconds when
+  everything is built, which is the cheapest full check there is. Name the module
+  while iterating; run the bare one before pushing.
 * Never run `lake build` on Mathlib, never `lake update` (it needs Reservoir,
   which is unreachable), and never `lake clean`: `.lake` here is a symlink into
   the shared warm tree, and clean "deletes the build directories of every package
@@ -170,8 +172,9 @@ enable lean-lsp-mcp's local Loogle (13 GiB peak).
 * **The prebuilt bundle**: `build-project.yml` rebuilds it on every push to `main`
   (or on a manual dispatch of that workflow on `main`) and replaces the asset on
   the `prebuilt-main` release; the tag is a fixed anchor, not a version. It is
-  around 250 MB: `.lake/build` is some 3 GB, but 1.7 of that is generated C, which
-  compresses about elevenfold, so fetching it costs tens of seconds. A session holding a bundle can read
+  248 MB, measured: `.lake/build` is 3.1 GB for the 533 modules, most of it
+  generated C, and zstd takes it down twelvefold in six seconds. Fetching it costs
+  tens of seconds, against the 44 minutes (110 CPU-minutes) of building it. A session holding a bundle can read
   `.lake/build/BUNDLE-INFO` for the commit, toolchain and Mathlib pin it was built
   from. It is skipped when it would exceed the 2 GiB release-asset limit, which
   the run's log warns about; if that ever happens, either split it or drop the

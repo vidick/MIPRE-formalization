@@ -80,7 +80,7 @@ fi
 if [ "$built" -eq 0 ]; then
   warm_note="no MIPRE modules prebuilt and the bundle could not be fetched, so the first build of anything importing the vendored repetition trees will take 30-45 minutes; work in Foundations/TM/LCS (which import only Mathlib) costs seconds either way"
 else
-  warm_note="$built/$total MIPRE modules prebuilt"
+  warm_note="$built/$total MIPRE modules prebuilt, so a bare 'lake build' rechecks the whole library in seconds"
 fi
 
 # Is the snapshot still in step with the repository? Two kinds of drift, both
@@ -95,5 +95,5 @@ if [ -n "$pasted_sha" ] && [ -n "$repo_sha" ] && [ "$pasted_sha" != "$repo_sha" 
   echo "lean-warm: NOTE the script pasted into the environment is not the repository's .claude/cloud-setup.sh. Paste the repository's copy so the two cannot drift apart."
 fi
 
-echo "lean-warm: Lean ${installed:-?} + Mathlib ready for $HERE (LEAN_PROJECT_PATH); $warm_note.${mathlib_note} Iterate with the lean-lsp MCP tools (lean_diagnostic_messages, lean_goal, lean_multi_attempt): seconds per cycle, and they see edits without a build. Confirm a module with 'lake build MIPRE.<Module>' — seconds when its imports are built. Never a bare 'lake build' (it builds all $total modules), never 'lake build' on Mathlib, never 'lake update', and never 'lake clean' (.lake is shared with the snapshot: it would delete Mathlib's 7.6 GB too). Scratch files go in Scratch/."
+echo "lean-warm: Lean ${installed:-?} + Mathlib ready for $HERE (LEAN_PROJECT_PATH); $warm_note.${mathlib_note} Iterate with the lean-lsp MCP tools (lean_diagnostic_messages, lean_goal, lean_multi_attempt): seconds per cycle, and they see edits without a build. Confirm a module with 'lake build MIPRE.<Module>' — seconds when its imports are built. Never 'lake build' on Mathlib, never 'lake update', and never 'lake clean' (.lake is shared with the snapshot: it would delete Mathlib's 7.6 GB too). Scratch files go in Scratch/."
 exit 0

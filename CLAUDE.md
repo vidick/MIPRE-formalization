@@ -40,9 +40,14 @@ In order of preference:
    Mathlib's traces.
 3. CI — only as the final check. Three to four minutes when the build cache hits.
 
-Four commands to never run:
+A bare **`lake build`** is worth understanding rather than avoiding: it is the
+whole library, so it costs 44 minutes (110 CPU-minutes; 25 of them are the single
+71k-line vendored module) when the modules are not built, and **8 seconds** when
+they are, replaying all 9239 jobs. With the bundle in place it is the cheapest
+possible final check before pushing. Without it, it is your afternoon.
 
-* a bare **`lake build`** — it builds all 533 modules;
+Three commands to never run:
+
 * **`lake build` on Mathlib** — it would compile Mathlib from source and not finish;
 * **`lake update`** — it needs Reservoir, which the cloud VMs cannot reach; every
   dependency is pinned in `lake-manifest.json`;
