@@ -147,6 +147,9 @@
   "MIPRE.LIDT.lowIndividualDegree_soundness": [
    "thm:lidt-soundness"
   ],
+  "MIPRE.Orthonormalization.povm_orthogonalization_finDim": [
+   "thm:orthonormalization"
+  ],
   "MIPRE.Repetition.commutingOperatorValue_repeat_le": [
    "thm:direct-repetition-co"
   ],
@@ -324,6 +327,7 @@
   "MIPRE.LCS.observableToProjector",
   "MIPRE.LIDT.lidtGame",
   "MIPRE.LIDT.lowIndividualDegree_soundness",
+  "MIPRE.Orthonormalization.povm_orthogonalization_finDim",
   "MIPRE.Repetition.commutingOperatorValue_repeat_le",
   "MIPRE.Repetition.quantumValue_eq_entangledValue",
   "MIPRE.Repetition.quantumValue_repeat_le",
@@ -377,6 +381,9 @@
   ],
   "MIPRE/Background/LIDT/Soundness.lean": [
    "MIPRE.LIDT.lowIndividualDegree_soundness"
+  ],
+  "MIPRE/Background/Orthonormalization/Statement.lean": [
+   "MIPRE.Orthonormalization.povm_orthogonalization_finDim"
   ],
   "MIPRE/Background/Repetition/Commuting.lean": [
    "MIPRE.Repetition.commutingOperatorValue_repeat_le"
@@ -528,7 +535,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 53,
+ "lean_tags": 54,
  "module_sizes": {
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
   "MIPRE/Background/LIDT/Axioms.lean": 0,
@@ -542,6 +549,8 @@
   "MIPRE/Background/LIDT/Bridge/Value.lean": 28,
   "MIPRE/Background/LIDT/Game.lean": 25,
   "MIPRE/Background/LIDT/Soundness.lean": 1,
+  "MIPRE/Background/Orthonormalization/Axioms.lean": 0,
+  "MIPRE/Background/Orthonormalization/Statement.lean": 1,
   "MIPRE/Background/Repetition/Axioms.lean": 0,
   "MIPRE/Background/Repetition/Commuting.lean": 8,
   "MIPRE/Background/Repetition/Direct.lean": 3,
@@ -614,8 +623,8 @@
  "unresolved": [],
  "xref_counts": {
   "bibitems": 38,
-  "cites": 154,
-  "labels": 168,
-  "refs": 649
+  "cites": 156,
+  "labels": 172,
+  "refs": 674
  }
 }
