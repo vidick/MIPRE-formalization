@@ -53,6 +53,46 @@ Four rules follow, and they are not symmetric:
   Not a line: no normal form verifier, no sampler, no conditionally linear function. That
   is the gap this plan is about.
 
+## Read the Lean before adding to it
+
+The blueprint names 91 declarations. The repository has **1516**. Forty-seven modules,
+884 declarations between them, are not named by the blueprint at all — not because they
+are unimportant but because the blueprint names headline statements and little else. An
+agent who reads the blueprint and starts typing will rebuild things that already exist,
+and will do it in slightly incompatible vocabulary, which is worse than not doing it.
+
+So: before stating anything, look. `scripts/lean-coverage.py` (no arguments) prints every
+module with its named/total counts and then the unaccounted list; `lean_local_search` and
+`lean_loogle` from the `lean-lsp` MCP tools find declarations by name and by type. What is
+already there, per item of the plan below:
+
+- **H1** — `MIPRE/Background/LIDT/Bridge/Field.lean` already carries a coded finite field
+  with a `FieldModel` instance and the encode/decode of scalars, points and lines, built
+  for the low-degree test; CL functions live over the same `F_q^s`. `MIPRE/Foundations/Cost/`
+  is the machine model a sampler's query interface has to be written in. Nothing exists yet
+  for self-dual normal bases, so downsizing to `q = 2` genuinely starts from zero.
+- **H2** — `MIPRE/TM/Code/` (raw syntax, semantics, well-formedness, the evaluator, the
+  encodings) and `MIPRE/TM/MultiInput/` are a hundred-odd declarations built for exactly
+  this proof, with `MIPRE/Cslib/…/MultiTape/` underneath. The two specifications are
+  already stated; the infrastructure they are to be proved from is already there.
+- **H3** — `MIPRE/Foundations/Cost/FromPartrec.lean` is the bridge from Mathlib's partial
+  recursive functions into the ambient model, with `exists_compile` for the halting
+  problem: that is the last step of H3, done. `Foundations/Distances.lean` has the POVM
+  distance vocabulary (`hsNormSq`, `povmDistance`, `IsPOVMClose`, `inconsistency`) that the
+  stability and density estimates want, and `Foundations/Games.lean` the value definitions.
+- **H4** — `MIPRE/Foundations/Cost/Succinct.lean` is `IsSuccinctDesc` (blueprint
+  `def:succinct`, MNY Definition 2.4) together with the bit-query program and
+  `isSuccinctDesc_hardcode`, which is most of obligation (b); `Cost/Toolkit.lean` is the
+  efficient universal machine, s-m-n and Kleene recursion *with time bounds*;
+  `Foundations/Compression.lean` is the criterion itself.
+
+The general habit: `Cost/` before writing any machine-level lemma, `Foundations/Games.lean`
+before any statement about values or strategies, and the vendored bridges under
+`Background/` before any statement about the low-degree test, repetition or
+orthonormalization. When a reused declaration turns out to be the right name for a
+blueprint statement, give that statement the `\lean{}` tag — that is how the accounted
+fraction grows without anyone writing new Lean.
+
 ## Off the path: do not spend time here
 
 - **`thm:almost-sync` (#22) and its commuting case (#23).** `rem:bipartite-route` now
@@ -185,14 +225,11 @@ Then, and only then, the transformations themselves — introspection first, as 
   statement it serves should carry the matching `\ledgernode{}`.
 - One transformation per pull request; the blueprint edit that goes with it in the same
   pull request.
-- A `sorry` is acceptable only against a blueprint node tracked by an open issue
-  (`CONTRIBUTING.md`). There is now one standing exception, created by #42 and not yet
-  ratified: the four upstream *signed statements* in the vendored
-  `Orthonormalization/Orthogonalization/Basic.lean` — the unconditional general forms of
-  de la Salle's Theorems 1.1, 1.2, 1.4 and Corollary 1.5, which nothing uses and which
-  `Orthonormalization/Axioms.lean` asserts still carry `sorryAx`. They answer to
-  `rem:orthonormalization-scope` but to no issue. Either an issue should be opened
-  ("discharge `MvNStructureTheory`") or `CONTRIBUTING.md` should exempt vendored signed
-  statements explicitly; until one of the two happens, the rule and the tree disagree.
+- A `sorry` is acceptable only against a blueprint node tracked by an open issue, with one
+  exception for vendored *signed statements* — `CONTRIBUTING.md`, "Style", states both and
+  the three conditions the exception carries. The four in
+  `Orthonormalization/Orthogonalization/Basic.lean` are the case it was written for: nothing
+  depends on them, `rem:orthonormalization-scope` says what the tree does and does not
+  prove, and `Orthonormalization/Axioms.lean` asserts that each still carries `sorryAx`.
 - When the paper and the blueprint disagree, stop and resolve it before writing Lean. The
   answer is worth more than the hour it costs, and it belongs in the blueprint's comments.
