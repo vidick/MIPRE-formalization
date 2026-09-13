@@ -539,7 +539,7 @@ conventions and index arithmetic that the PCP layer and the composition consume.
 
 \begin{theorem}[The bespoke PCP for deciders]
 \label{thm:pcp-decider}
-\ledgernode{1.3.3, 1.3.3.1, 1.3.3.2, 1.3.3.3, 1.3.3.4}
+\ledgernode{1.3.3}
 \uses{lem:decoupled-5sat,lem:schwartz-zippel,thm:qld,def:decider}
 There is a verifier $\pcpverifier$ which, given a valid decider specification $(\decider,
 n, T, Q, \sigma, x, y)$ --- validity requiring $\abs{\decider} \leq \sigma$, $\max\{Q,
@@ -563,6 +563,62 @@ arithmetization. Four obligations are separate in the source and stay separate h
 proof format and query structure, completeness, the zero-testing argument with its error
 bounds, and the complexity bound the composition consumes.
 \end{proof}
+
+The theorem has four obligations, and they are separate in the source because they fail
+separately.
+
+\effortMedium
+
+\begin{lemma}[The PCP's proof format and query structure]
+\label{lem:pcp-format}
+\ledgernode{1.3.3.1}
+\uses{thm:pcp-decider,lem:decoupled-5sat}
+The proof $\Pi$ that $\pcpverifier$ reads is well defined: it consists of the low-degree
+encodings $g_1, g_2$ of the two padded answer prefixes, together with the auxiliary
+polynomials the zero-test needs, in the stated input formats; and $\pcpverifier$'s queries and
+decision rule are determined by them.
+\end{lemma}
+
+\effortMedium
+
+\begin{lemma}[PCP completeness]
+\label{lem:pcp-completeness}
+\ledgernode{1.3.3.2}
+\uses{lem:pcp-format,thm:succinct-sat}
+If the decider accepts $(n, x, y, a, b)$ within $T$ steps, then the honestly generated proof
+$\Pi$ --- the low-degree encodings of the actual answers, with the auxiliary polynomials
+computed from them --- makes $\pcpverifier$ accept with certainty.
+\end{lemma}
+
+\effortHard
+
+\begin{lemma}[PCP soundness]
+\label{lem:pcp-soundness}
+\ledgernode{1.3.3.3}
+\uses{lem:pcp-format,lem:schwartz-zippel,thm:qld}
+If $\pcpverifier$ accepts with probability greater than $\tfrac12$ on views consistent with
+low-degree $g_1, g_2$, then the decider accepts the answers those two polynomials decode to.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:schwartz-zippel}
+Zero-testing of the constraint polynomial against a zero basis, with
+Lemma~\ref{lem:schwartz-zippel} bounding the probability that a nonzero polynomial vanishes
+on a random point. The stated error bounds are what the composition consumes, so a
+formalization should carry them rather than an asymptotic form.
+\end{proof}
+
+\effortMedium
+
+\begin{lemma}[PCP complexity]
+\label{lem:pcp-complexity}
+\ledgernode{1.3.3.4}
+\uses{lem:pcp-format}
+$\pcpverifier$ runs in time $\poly(\log T, \log n, Q, \sigma)$, with circuit-size and
+randomness bounds of the same form. These are the bounds the composition of
+Remark~\ref{rem:ar-composition} consumes; in particular the randomness bound is what makes the
+answer-reduced sampler conditionally linear.
+\end{lemma}
 
 \begin{remark}[Why $m$ is a power of two]
 \label{rem:pcp-power-of-two}
