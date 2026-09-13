@@ -20,6 +20,7 @@ transformations.
 
 \begin{definition}[Nonlocal game]
 \label{def:game}
+\ledgernode{1.1, 1.1.1}
 \lean{MIPRE.Game}
 \leanok
 \qlib{}
@@ -407,6 +408,7 @@ dimension-normalized trace.
 
 \begin{definition}[POVM distance]
 \label{def:distance}
+\ledgernode{1.1.1.1}
 \uses{def:game,def:hs-norm}
 \lean{MIPRE.povmDistance, MIPRE.IsPOVMClose}
 \leanok
@@ -520,6 +522,7 @@ inputs with index $n$.
 
 \begin{definition}[Normal form verifier]
 \label{def:normal-verifier}
+\ledgernode{1.1.3}
 \uses{def:sampler,def:decider,def:sync-game}
 A \emph{normal form verifier} is a pair $\verifier = (\sampler, \decider)$ of a sampler
 and a decider. For each $n$, $\verifier$ determines a game $\verifier_n$ with question
@@ -578,6 +581,7 @@ all $n \geq 2$, and $\abs{\verifier} \leq \lambda$.
 
 \begin{definition}[The class $\MIPstar$]
 \label{def:mipstar}
+\ledgernode{1.1.7, 1.1.7.1}
 \uses{def:normal-verifier,def:q-value}
 A language $L$ is in $\MIPstar$ (more precisely, $\MIP^*_{1, 1/2}(2,1)$) if there is a
 polynomial-time computable map $z \mapsto \game_z$ from strings to (descriptions of)

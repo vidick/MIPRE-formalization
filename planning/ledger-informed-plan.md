@@ -183,6 +183,41 @@ Lipschitz bound on the Born value in the entries of the data. The three transpor
 lemmas proved for `lem:povm-value-eq` (`dotProduct_mulVec_submatrix`,
 `dotProduct_mulVec_conj`, `dotProduct_comp_equiv`) are the tools for that.
 
+## The ledger is fully accounted for, 2026-09-13
+
+123 of 123 nodes. Stages 1.1 (21), 1.4 (8), 1.7 (1) and the root (1) closed the remainder,
+by thirteen annotations on statements that already existed and three new remarks for the
+node groups that had no home: `rem:typed-detyping` (node 1.1.4 — typed verifiers, the
+`16^-|T|` detyping loss and the +2 levels this blueprint inherits without stating a type
+graph), `rem:tm-conventions` (nodes 1.1.5.x — the paper's timeout-counter formalism, which
+the cost model of `sec:rr-computability` replaces, keeping the three details a formalization
+would otherwise rediscover the hard way) and `rem:admitted-nodes`.
+
+`rem:admitted-nodes` is the one worth reading. With everything named, the assumptions are
+countable: of 123 nodes, 120 are validated and exactly three are admitted, and the
+value-form route treats them very differently.
+
+- **Anchored parallel repetition** (1.4.2, `thm:bvy`) — **not used at all.** Direct
+  repetition replaces it, is formalized end to end, and takes a value hypothesis. One of
+  the three admitted nodes leaves the pipeline entirely.
+- **Magic Square rigidity** (1.2.2.4.1, `thm:ms-rigidity`) — used through a single
+  anticommutation consequence, and not at all by the completeness leg, whose in-file
+  argument is already in Lean (`lem:mermin-peres`).
+- **Efficient self-dual normal bases** (1.1.6.1, `lem:self-dual-basis`) — unavoidable, and
+  the only genuinely load-bearing one. Also the most benign: three classical
+  computational-algebra results, and the source of the `q = 2^k`, `k` odd convention.
+
+So what this blueprint assumes beyond Mathlib is one classical algebra lemma and one
+rigidity theorem used through one consequence — a smaller surface than the paper's, and
+smaller *because of* the value form and direct repetition.
+
+Also checked while closing the root: live node `1` gives undecidability of approximating
+`val*` to additive error `< 1/4`, and notes that pushing the threshold to `1/2` needs a
+further gap-amplification step it does not carry out. `ch:downstream` already says exactly
+this, with the reason (`at c = 1/4 the estimate 3/4 is consistent with both`) and with the
+`1/2` form flagged as depending on the repetition theorem. No correction needed — the
+blueprint was already the more careful of the two.
+
 ## Stage 1.2, done 2026-09-13
 
 62/62 nodes — the heaviest stage, 169 of the campaign's 291 challenges — by four

@@ -36,6 +36,7 @@ the output of the previous ones.
 
 \begin{definition}[Conditionally linear function]
 \label{def:cl-function}
+\ledgernode{1.1.2}
 Let $V = \F_q^s$ and $\ell \geq 1$. An \emph{$\ell$-level conditionally linear (CL)
 function} on $V$ is defined recursively: a $1$-level CL function is a linear map $L :
 V \to V$; an $\ell$-level CL function is given by a direct sum decomposition $V = V_1
@@ -98,6 +99,50 @@ measuring shared EPR pairs, and the new verifier uses the Pauli basis test
 what makes commitment to each stage of the sampled question enforceable (the ``hiding''
 directions of the CL decomposition). The result is a verifier whose questions are
 exponentially smaller, at the price of a fixed number of levels.
+
+\begin{remark}[Typed verifiers, and why this blueprint has none]
+\label{rem:typed-detyping}
+\ledgernode{1.1.4}
+\uses{def:normal-verifier,def:pcc,thm:oracularization,thm:answer-reduction}
+The transformations of this chapter are performed in~\cite{JNVWY20} on \emph{typed}
+verifiers --- a type graph whose vertices label the roles a question can play, with the
+sampler producing a pair of types and then a pair of questions --- and converted back by a
+detyping lemma at the end of each. This blueprint states the untyped forms throughout,
+which is why no type graph appears in Theorem~\ref{thm:oracularization} or
+Theorem~\ref{thm:answer-reduction}.
+
+That is a presentational choice with two costs a formalization will have to pay, both
+recorded on ledger node $1.1.4$ so they are not forgotten. Detyping preserves the value
+only up to a factor $16^{-\abs{T}}$ in the type graph's size, which is where the
+``constant-factor loss'' in the soundness chains comes from; and it adds $2$ to the level
+count, which is part of why the level budget is what it is. The lemma also needs the type
+graph to have at least one edge --- a hypothesis every instantiation in the paper satisfies
+but which the source leaves unstated --- and its soundness argument truncates over-long
+answers, justified by the same answer-truncation lemma that anchoring uses
+(Lemma~\ref{lem:anchoring-value}).
+\end{remark}
+
+\begin{remark}[Turing machine conventions, and the cost model that replaces them]
+\label{rem:tm-conventions}
+\ledgernode{1.1.5, 1.1.5.1, 1.1.5.2, 1.1.5.3}
+\uses{def:decider,def:lambda-bounded,lem:universal-tm}
+The paper fixes a concrete Turing machine formalism and a \emph{timeout-counter} normal form
+$B(n) = c_0 (c_1 n)^{c_2}$: a machine is wrapped so that it always halts within its bound,
+and the wrapped description is canonical enough that the parameters can be read back off
+it. Four ledger nodes are about that machinery, and this blueprint replaces all of it with
+the cost model of Section~\ref{sec:rr-computability}
+(Section~\ref{sec:departures} records the departure).
+
+Three things in those nodes are worth keeping even so, because they are the kind of detail a
+formalization rediscovers the hard way. The canonical form has to be genuinely injective in
+the parameters for the timeout bound to be well defined at all, and the audit had to supply
+an explicit parser to establish it --- in the source the parser's existence was asserted
+rather than constructed. The overhead polynomial relating a machine's running time to its
+bound needs the normalization $c_1 \geq 2$, without which the claim fails outright at
+$c_1 = 1$, $n = 1$. And the whole scheme rests on the bound dominating $n$, which holds only
+because the constants are positive integers. None of the three is deep; all three are the
+sort of thing that stops a formalization dead.
+\end{remark}
 
 \begin{theorem}[Introspection]
 \label{thm:introspection}
@@ -341,6 +386,7 @@ anchoring; the anchored, entanglement-form theorem used in~\cite{JNVWY20}
 
 \begin{theorem}[Parallel repetition of normal form verifiers]
 \label{thm:parallel-repetition}
+\ledgernode{1.4, 1.4.3, 1.4.3.1}
 \uses{def:normal-verifier,def:pcc,def:direct-repetition,thm:direct-repetition-q,def:mipstar}
 There are universal constants $b, c > 0$ such that the following holds for every
 $\kappa \in (0,1]$. There are a constant $c' > 0$, depending only on $\kappa$, and a

@@ -147,10 +147,10 @@ def check(snap, cited):
         for n in admitted:
             print("   %-12s cited by %s" % (n, ", ".join(cited[n])))
 
-    print("\ncoverage by stage, counting only nodes an annotation names. A stage at 0 is")
-    print("not necessarily uncovered: stages 1.1, 1.4 and 1.7 are carried by chapters 2, 5")
-    print("and 7 without annotations yet, and some nodes are validation records that should")
-    print("never become blueprint statements (see planning/ledger-informed-plan.md).")
+    print("\ncoverage by stage, counting only nodes an annotation names. Every node of the")
+    print("snapshot is annotated as of 2026-09-13, so a stage below 100% now means either a")
+    print("new node upstream or an annotation lost in an edit -- both worth a look. See")
+    print("planning/ledger-informed-plan.md for what each stage is accounted for by.")
     by_stage = {}
     for nid in nodes:
         by_stage.setdefault(stage_of(nid), [0, 0])[0] += 1
