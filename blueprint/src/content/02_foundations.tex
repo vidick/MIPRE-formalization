@@ -509,16 +509,43 @@ introspection can certify, and a \emph{decider}, checking answers.
 
 \begin{definition}[Sampler]
 \label{def:sampler}
-\uses{def:cl-function}
-An \emph{$\ell$-level sampler} with field size $q(n) = 2$ is a Turing machine
-$\sampler$ that on input $n$ specifies a linear space $V = \F_2^{s(n)}$ and a pair of
-$\ell$-level conditionally linear functions $L^\alice, L^\bob$ on $V$
-(Definition~\ref{def:cl-function}); the question distribution it samples is $\mu_n =
-(L^\alice(z), L^\bob(z))$ for uniform $z \in V$. Formally $\sampler$ answers
-dimension, marginal, and linear-evaluation queries as in~\cite{JNVWY20}; the precise
-query interface is fixed in Section~\ref{sec:ps-cl}. $\TIME_\sampler(n)$ denotes its
-maximal running time on queries with index $n$.
+\uses{def:cl-function,lem:cl-structure}
+\lean{MIPRE.CL.Sampler, MIPRE.CL.Sampler.Query, MIPRE.CL.Sampler.dist,
+  MIPRE.CL.Sampler.TimeBound}
+\leanok
+An \emph{$\ell$-level sampler} (with field size $2$) is a Turing machine $\sampler$ together
+with, for each $n$, a dimension $s(n)$ and two $\ell$-level CL functions $L^\alice, L^\bob$ on
+$V = \F_2^{s(n)}$ given with exact decomposition data (Lemma~\ref{lem:cl-structure}) such
+that, writing vectors and register subspaces of $V$ as bit strings of length $s(n)$
+(coordinates, respectively indicator vectors), for all $w \in \{\alice, \bob\}$, $j \in \{1,
+\ldots, \ell\}$ and bit strings $z, u, y$ of length $s(n)$:
+\begin{itemize}
+\item on input $(n, \mathtt{dimension})$, $\sampler$ outputs $s(n)$;
+\item on input $(n, w, \mathtt{marginal}, j, z)$, it outputs the marginal $L^w_{\leq j}(z)$;
+\item on input $(n, w, \mathtt{linear}, j, u, y)$, it outputs $L^w_{j,u}(y)$, provided
+  $u \in L^w_{<j}(V)$;
+\item on input $(n, w, \mathtt{factor}, j, u)$, it outputs the factor space $V^w_{j,u}$,
+  provided $u \in L^w_{<j}(V)$;
+\end{itemize}
+and $\sampler$ halts on every input of the form $(n, \ldots)$, well formed or not; nothing is
+required of its outputs on other inputs. The \emph{distribution of $\sampler$ at index $n$}
+is the CL distribution $\mu_n$ of $(L^\alice(x), L^\bob(x))$ for uniform $x \in V$
+(Definition~\ref{def:cl-function}), and $\TIME_\sampler(n)$ denotes the maximal running time
+of $\sampler$ over all inputs of the form $(n, \ldots)$.
 \end{definition}
+
+\paragraph{Comments.} This is the paper's \texttt{def:sampler} (\texttt{linear.tex}) at
+field size $2$, the only size the normal form verifiers of this blueprint use; the paper's
+samplers over $\F_{2^t}$ reach this form by downsizing (Section~\ref{sec:ps-cl}). Two points
+the formalization fixes. The correctness clauses for $\mathtt{linear}$ and $\mathtt{factor}$
+are imposed only for prefixes in the range of $L^w_{<j}$, as the paper's amended definition
+states, and are well defined there by Lemma~\ref{lem:cl-structure}. And totality on all inputs
+$(n, \ldots)$ is what makes $\TIME_\sampler(n)$ finite; the paper secures it by bounded format
+checks that read only a prescribed prefix of each input, a convention the Lean definition does
+not have to spell out, since $\TIME_\sampler(n) \le T(n)$ is stated directly as halting within
+cost $T(n)$ on every such input (\texttt{Sampler.TimeBound}). In Lean the machine is a program
+of the ambient cost model (Section~\ref{sec:computability-conventions}), its input the pair of
+$n$ and a query (\texttt{Sampler.Query}).
 
 \begin{definition}[Decider]
 \label{def:decider}

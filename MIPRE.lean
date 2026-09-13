@@ -516,6 +516,10 @@ import MIPRE.Background.Repetition.TracialDensity
 import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
 import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
 import MIPRE.Cslib.Foundations.Data.RelatesInSteps
+import MIPRE.Foundations.CL.Basic
+import MIPRE.Foundations.CL.Closure
+import MIPRE.Foundations.CL.Register
+import MIPRE.Foundations.CL.Sampler
 import MIPRE.Foundations.CommutingOperator
 import MIPRE.Foundations.Compression
 import MIPRE.Foundations.Cost.Basic

@@ -15,6 +15,87 @@
   "HaltingGameValue.halting_reduces_to_gameValue": [
    "thm:main"
   ],
+  "MIPRE.CL.CLFun": [
+   "def:cl-function"
+  ],
+  "MIPRE.CL.CLFun.ExactlyOn": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.ExactlyOn.biUnion_factorAt": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.SupportedOn": [
+   "def:cl-function"
+  ],
+  "MIPRE.CL.CLFun.SupportedOn.disjoint_factorAt": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.SupportedOn.eval_truncate_eq_sum": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.SupportedOn.factorAt_subset": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.SupportedOn.factorOfPrefix_eval": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.SupportedOn.mapOfPrefix_eval": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.concat": [
+   "lem:cl-closure"
+  ],
+  "MIPRE.CL.CLFun.directSum": [
+   "lem:cl-closure"
+  ],
+  "MIPRE.CL.CLFun.eval": [
+   "def:cl-function"
+  ],
+  "MIPRE.CL.CLFun.factorAt": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.factorOfPrefix": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.mapAt": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.mapOfPrefix": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.truncate": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.IsCLFun": [
+   "def:cl-function"
+  ],
+  "MIPRE.CL.IsCLFun.concat": [
+   "lem:cl-closure"
+  ],
+  "MIPRE.CL.IsCLFun.directSum": [
+   "lem:cl-closure"
+  ],
+  "MIPRE.CL.IsCLFun.directSum'": [
+   "lem:cl-closure"
+  ],
+  "MIPRE.CL.IsCLFun.succ": [
+   "lem:cl-closure"
+  ],
+  "MIPRE.CL.Sampler": [
+   "def:sampler"
+  ],
+  "MIPRE.CL.Sampler.Query": [
+   "def:sampler"
+  ],
+  "MIPRE.CL.Sampler.TimeBound": [
+   "def:sampler"
+  ],
+  "MIPRE.CL.Sampler.dist": [
+   "def:sampler"
+  ],
+  "MIPRE.CL.clDist": [
+   "def:cl-function"
+  ],
   "MIPRE.CommutingOperatorStrategy": [
    "def:co-strategy-bipartite"
   ],
@@ -283,6 +364,33 @@
   "HaltingGameValue.GameData.toGame",
   "HaltingGameValue.gameValue",
   "HaltingGameValue.halting_reduces_to_gameValue",
+  "MIPRE.CL.CLFun",
+  "MIPRE.CL.CLFun.ExactlyOn",
+  "MIPRE.CL.CLFun.ExactlyOn.biUnion_factorAt",
+  "MIPRE.CL.CLFun.SupportedOn",
+  "MIPRE.CL.CLFun.SupportedOn.disjoint_factorAt",
+  "MIPRE.CL.CLFun.SupportedOn.eval_truncate_eq_sum",
+  "MIPRE.CL.CLFun.SupportedOn.factorAt_subset",
+  "MIPRE.CL.CLFun.SupportedOn.factorOfPrefix_eval",
+  "MIPRE.CL.CLFun.SupportedOn.mapOfPrefix_eval",
+  "MIPRE.CL.CLFun.concat",
+  "MIPRE.CL.CLFun.directSum",
+  "MIPRE.CL.CLFun.eval",
+  "MIPRE.CL.CLFun.factorAt",
+  "MIPRE.CL.CLFun.factorOfPrefix",
+  "MIPRE.CL.CLFun.mapAt",
+  "MIPRE.CL.CLFun.mapOfPrefix",
+  "MIPRE.CL.CLFun.truncate",
+  "MIPRE.CL.IsCLFun",
+  "MIPRE.CL.IsCLFun.concat",
+  "MIPRE.CL.IsCLFun.directSum",
+  "MIPRE.CL.IsCLFun.directSum'",
+  "MIPRE.CL.IsCLFun.succ",
+  "MIPRE.CL.Sampler",
+  "MIPRE.CL.Sampler.Query",
+  "MIPRE.CL.Sampler.TimeBound",
+  "MIPRE.CL.Sampler.dist",
+  "MIPRE.CL.clDist",
   "MIPRE.CommutingOperatorStrategy",
   "MIPRE.CommutingOperatorStrategy.value",
   "MIPRE.CommutingStrategy",
@@ -398,6 +506,39 @@
   ],
   "MIPRE/Background/Repetition/TracialDensity.lean": [
    "MIPRE.Repetition.tracialDensity"
+  ],
+  "MIPRE/Foundations/CL/Basic.lean": [
+   "MIPRE.CL.CLFun",
+   "MIPRE.CL.CLFun.ExactlyOn",
+   "MIPRE.CL.CLFun.ExactlyOn.biUnion_factorAt",
+   "MIPRE.CL.CLFun.SupportedOn",
+   "MIPRE.CL.CLFun.SupportedOn.disjoint_factorAt",
+   "MIPRE.CL.CLFun.SupportedOn.eval_truncate_eq_sum",
+   "MIPRE.CL.CLFun.SupportedOn.factorAt_subset",
+   "MIPRE.CL.CLFun.SupportedOn.factorOfPrefix_eval",
+   "MIPRE.CL.CLFun.SupportedOn.mapOfPrefix_eval",
+   "MIPRE.CL.CLFun.eval",
+   "MIPRE.CL.CLFun.factorAt",
+   "MIPRE.CL.CLFun.factorOfPrefix",
+   "MIPRE.CL.CLFun.mapAt",
+   "MIPRE.CL.CLFun.mapOfPrefix",
+   "MIPRE.CL.CLFun.truncate",
+   "MIPRE.CL.IsCLFun",
+   "MIPRE.CL.IsCLFun.succ"
+  ],
+  "MIPRE/Foundations/CL/Closure.lean": [
+   "MIPRE.CL.CLFun.concat",
+   "MIPRE.CL.CLFun.directSum",
+   "MIPRE.CL.IsCLFun.concat",
+   "MIPRE.CL.IsCLFun.directSum",
+   "MIPRE.CL.IsCLFun.directSum'",
+   "MIPRE.CL.clDist"
+  ],
+  "MIPRE/Foundations/CL/Sampler.lean": [
+   "MIPRE.CL.Sampler",
+   "MIPRE.CL.Sampler.Query",
+   "MIPRE.CL.Sampler.TimeBound",
+   "MIPRE.CL.Sampler.dist"
   ],
   "MIPRE/Foundations/CommutingOperator.lean": [
    "MIPRE.CommutingOperatorStrategy",
@@ -535,7 +676,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 54,
+ "lean_tags": 58,
  "module_sizes": {
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
   "MIPRE/Background/LIDT/Axioms.lean": 0,
@@ -559,6 +700,10 @@
   "MIPRE/Cslib/Computability/Machines/Turing/MultiTape/Deterministic.lean": 44,
   "MIPRE/Cslib/Computability/Machines/Turing/MultiTape/TapeLemmas.lean": 12,
   "MIPRE/Cslib/Foundations/Data/RelatesInSteps.lean": 25,
+  "MIPRE/Foundations/CL/Basic.lean": 68,
+  "MIPRE/Foundations/CL/Closure.lean": 18,
+  "MIPRE/Foundations/CL/Register.lean": 42,
+  "MIPRE/Foundations/CL/Sampler.lean": 21,
   "MIPRE/Foundations/CommutingOperator.lean": 4,
   "MIPRE/Foundations/Compression.lean": 18,
   "MIPRE/Foundations/Cost/Basic.lean": 31,
@@ -584,7 +729,7 @@
   "MIPRE/Foundations/Cost/Unary.lean": 26,
   "MIPRE/Foundations/Cost/Universal.lean": 130,
   "MIPRE/Foundations/Distances.lean": 10,
-  "MIPRE/Foundations/Games.lean": 47,
+  "MIPRE/Foundations/Games.lean": 61,
   "MIPRE/Foundations/ValueApprox.lean": 8,
   "MIPRE/HaltingGameValue.lean": 12,
   "MIPRE/LCS/Basic.lean": 5,
@@ -622,9 +767,9 @@
  },
  "unresolved": [],
  "xref_counts": {
-  "bibitems": 38,
-  "cites": 156,
-  "labels": 172,
-  "refs": 674
+  "bibitems": 32,
+  "cites": 150,
+  "labels": 196,
+  "refs": 782
  }
 }
