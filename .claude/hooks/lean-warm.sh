@@ -38,5 +38,27 @@ fi
 # oleans; nothing is compiled from source except this repository's changed modules.
 ( cd "$HERE" && lake exe cache get >/dev/null 2>&1 ) || true
 
-echo "lean-warm: Lean ${installed:-?} + Mathlib ready for $HERE (LEAN_PROJECT_PATH). Check modules with 'lake build MIPRE.<Module>' or the lean-lsp MCP tools (scratch files go in Scratch/). Never run lake build on Mathlib and never lake update."
+# Is the snapshot still in step with the repository? Two kinds of drift, both
+# otherwise invisible until a build is mysteriously slow or a host is refused.
+STAMP=/opt/warm/SETUP-STAMP
+repo_sha=$(sed -n 's/^repo-script-sha256: //p' "$STAMP" 2>/dev/null)
+pasted_sha=$(sed -n 's/^pasted-script-sha256: //p' "$STAMP" 2>/dev/null)
+here_sha=$(sha256sum "$HERE/.claude/cloud-setup.sh" 2>/dev/null | cut -d' ' -f1)
+if [ -n "$repo_sha" ] && [ -n "$here_sha" ] && [ "$repo_sha" != "$here_sha" ]; then
+  echo "lean-warm: NOTE .claude/cloud-setup.sh has changed since this snapshot was built. Re-save the environment's setup script (paste the current file) so the snapshot picks it up; see docs/lean-cloud.md."
+fi
+if [ -n "$pasted_sha" ] && [ -n "$repo_sha" ] && [ "$pasted_sha" != "$repo_sha" ]; then
+  echo "lean-warm: NOTE the script pasted into the environment is not the repository's .claude/cloud-setup.sh. Paste the repository's copy so the two cannot drift apart."
+fi
+
+# How much is prebuilt decides whether checking a module costs seconds or an hour.
+built=$(find "$WARM/.lake/build/lib" -name '*.olean' 2>/dev/null | wc -l)
+total=$(( $(find "$HERE/MIPRE" -name '*.lean' 2>/dev/null | wc -l) + 1 ))
+if [ "$built" -eq 0 ]; then
+  warm_note="no MIPRE modules prebuilt, so the first build of one importing the vendored repetition trees will take 20-40 minutes: prefer the lean-lsp MCP tools, and raise BUILD_BUDGET in the setup script"
+else
+  warm_note="$built/$total MIPRE modules prebuilt"
+fi
+
+echo "lean-warm: Lean ${installed:-?} + Mathlib ready for $HERE (LEAN_PROJECT_PATH); $warm_note. Iterate with the lean-lsp MCP tools (lean_diagnostic_messages, lean_goal, lean_multi_attempt) — seconds per cycle, against minutes for lake build; confirm with 'lake build MIPRE.<Module>', never a bare 'lake build', never on Mathlib, and never 'lake update'. Scratch files go in Scratch/."
 exit 0

@@ -67,8 +67,32 @@ LeanSearch available.
 
 3. **Setup script**: paste the contents of `.claude/cloud-setup.sh`, adjusting
    `BRANCH` if the toolchain of a feature branch differs from `main`.
-4. Save. The first session in the environment runs the script (a few minutes);
-   later sessions start from the snapshot.
+4. Save. The first session in the environment runs the script; later sessions
+   start from the snapshot.
+
+## Checking that it took
+
+The setup script and the SessionStart hook are two halves of one mechanism, and
+the script has to be pasted by hand into a web form, so they can drift apart. Both
+halves now say so rather than leaving it to be noticed:
+
+* The script writes `/opt/warm/SETUP-STAMP` (what branch, commit and toolchain the
+  snapshot was built from, the sha256 of both the pasted text and the repository's
+  `.claude/cloud-setup.sh`, and how many modules it managed to build) and
+  `/opt/warm/SETUP-REPORT.txt` (every step, timestamped — read this first when
+  setup fails).
+* The hook compares them against the checkout at every session start and prints,
+  in its `lean-warm:` line, how many MIPRE modules are prebuilt out of how many
+  exist. It adds a note when `.claude/cloud-setup.sh` has changed since the
+  snapshot was built (re-save needed), and another when the text pasted into the
+  environment is not the repository's copy at all (which is how the toolchain
+  override and the pre-build went missing).
+
+So a healthy session opens with one line naming the Lean version and a module
+count close to the total, and no notes. A count of zero means the pre-build did
+not happen; `BUILD_BUDGET` is the knob. A missing `lean-warm:` line altogether
+means the snapshot has no Lean, so the script never finished — `SETUP-REPORT.txt`
+says where it stopped.
 
 The warm tree is about 8 GB on disk (the Mathlib cache alone is 7.6 GB). Do not
 enable lean-lsp-mcp's local Loogle (13 GiB peak).

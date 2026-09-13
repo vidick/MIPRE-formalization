@@ -145,6 +145,25 @@ log "MIPRE modules built: $(find .lake/build/lib -name '*.olean' 2>/dev/null | w
 #    server is the fast feedback loop — see docs/lean-cloud.md.
 uvx lean-lsp-mcp --help >/dev/null 2>&1 || log "uvx prefetch skipped"
 
+# 6. Stamp what this snapshot was built from, so that .claude/hooks/lean-warm.sh
+#    can tell a session at startup whether the snapshot is still in step with the
+#    repository — the drift that is otherwise invisible until something is slow or
+#    broken. `pasted-script-sha256` is the text actually pasted into the
+#    environment box, when the shell lets us read it; `repo-script-sha256` is
+#    .claude/cloud-setup.sh as committed on BRANCH. They differing means the
+#    pasted copy is not the repository's copy.
+SELF="${BASH_SOURCE[0]:-$0}"
+{
+  echo "built-at: $(date -u +%FT%TZ)"
+  echo "branch: $BRANCH"
+  echo "commit: $(git -C "$WARM" rev-parse --short HEAD 2>/dev/null)"
+  echo "toolchain: $LEAN"
+  echo "repo-script-sha256: $(sha256sum "$WARM/.claude/cloud-setup.sh" 2>/dev/null | cut -d' ' -f1)"
+  [ -r "$SELF" ] && echo "pasted-script-sha256: $(sha256sum "$SELF" | cut -d' ' -f1)"
+  echo "mipre-oleans: $(find "$WARM/.lake/build/lib" -name '*.olean' 2>/dev/null | wc -l)"
+  echo "build-budget: ${BUILD_BUDGET}"
+} > /opt/warm/SETUP-STAMP
+
 chmod -R a+rwX /opt/lean /opt/warm 2>/dev/null || true
 log "done in $(( $(date +%s) - T0 ))s; $(df -h / | awk 'NR==2{print $4}') disk free"
 exit 0
