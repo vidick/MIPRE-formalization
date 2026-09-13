@@ -48,6 +48,11 @@ SNAPSHOT = os.path.join(HERE, "planning", "ledger-index.json")
 CONTENT = os.path.join(HERE, "blueprint", "src", "content", "*.tex")
 
 NODE_RE = re.compile(r"\\ledgernode\{([^}]*)\}")
+
+# A site naming this many nodes or more is reported as an umbrella rather than a
+# statement written for them. Five is where "a lemma and its parts" stops being a
+# fair description of the grouping.
+UMBRELLA_MIN = 5
 LABEL_RE = re.compile(r"\\label\{([^}]*)\}")
 
 
@@ -161,6 +166,32 @@ def check(snap, cited):
         total, done = by_stage[st]
         bar = "#" * int(round(20.0 * done / total)) if total else ""
         print("   %-5s %3d/%-3d %s" % (st, done, total, bar))
+
+    # How thinly is each annotation spread? A site naming one node is a statement
+    # written for that node; a site naming twenty is an umbrella, and the nodes under
+    # it are "accounted for" only in the sense that something upstream of them exists.
+    # Counting nodes is therefore not the same as describing them, and this report is
+    # here so the coverage figure above cannot be read as the stronger claim.
+    sites = {}
+    for nid, owners in cited.items():
+        if nid in nodes:
+            for o in owners:
+                sites.setdefault(o, []).append(nid)
+    umbrella = sorted(((o, ns) for o, ns in sites.items() if len(ns) >= UMBRELLA_MIN),
+                      key=lambda kv: -len(kv[1]))
+    if umbrella:
+        carried = sum(len(ns) for _, ns in umbrella)
+        print("\nannotation spread. %d node(s) are carried by %d umbrella site(s) naming"
+              % (carried, len(umbrella)))
+        print("%d or more nodes each. Those nodes are cited, not described: the blueprint"
+              % UMBRELLA_MIN)
+        print("says nothing about their substructure, and a reader cannot tell from it what")
+        print("the sub-nodes contain. Defensible when the umbrella's proof is finished in")
+        print("Lean; a gap when it is not.")
+        for o, ns in umbrella:
+            print("   %-30s %3d nodes  (%s ...)" % (o, len(ns), ", ".join(sorted(ns)[:3])))
+        solo = sum(1 for o, ns in sites.items() if len(ns) == 1)
+        print("   for contrast, %d site(s) name exactly one node." % solo)
 
     total = len(nodes)
     accounted = sum(1 for n in cited if n in nodes)

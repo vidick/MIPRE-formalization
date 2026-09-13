@@ -183,6 +183,40 @@ Lipschitz bound on the Born value in the entries of the data. The three transpor
 lemmas proved for `lem:povm-value-eq` (`dotProduct_mulVec_submatrix`,
 `dotProduct_mulVec_conj`, `dotProduct_comp_equiv`) are the tools for that.
 
+## What "123/123 accounted for" does and does not mean
+
+Read this before trusting the coverage figure. `scripts/ledger-sync.py` verifies that every
+cited node id *resolves* against the snapshot. It does not verify that the blueprint says
+anything about a node, and 123/123 is a citation figure, not a description figure.
+
+The distinction is large. Of 126 citations across 40 sites, **66 sit on four umbrella sites**:
+
+| site | nodes cited | statement |
+|---|---|---|
+| `thm:lidt-soundness` | 28 | 1533 chars |
+| `thm:qld` | 23 | 1244 chars |
+| `thm:introspection` | 10 | 1020 chars |
+| `thm:pcp-decider` | 5 | 1065 chars |
+
+**64 of the 123 nodes are cited only** — their ids appear solely on an umbrella, so the
+blueprint asserts the umbrella statement and says nothing about their substructure. 59 have
+a statement written for them or for a small group containing them.
+
+Only one of the umbrellas is defensible. `thm:lidt-soundness` has a *complete, sorry-free*
+Lean proof, so its 28 sub-nodes genuinely are the internals of something finished
+(`rem:lidt-formalized`). `thm:qld` and `thm:introspection` are unproved statements whose
+substructure the blueprint does not describe at all — 33 nodes on two umbrellas, and this is
+the real remaining gap in the chapter-6 accounting. Nothing about the question-reduction
+pipeline's internals is written down: the 3-level typed verifier, the Hide types, the
+cross-check against the Pauli basis test, the separate completeness and soundness arguments,
+and for `thm:qld` the five-file appendix that holds the actual proof.
+
+`ledger-sync.py` now prints an "annotation spread" report on every run naming the umbrellas
+and the count they carry, and the ledger explorer marks each node *described* or *cited
+only*, so the weaker reading cannot hide behind the stronger figure. Closing the gap means
+writing the substructure of `thm:qld` and `thm:introspection` as real statements — the same
+work stages 1.5 and 1.6 got, which is why those stages have no umbrellas.
+
 ## The ledger is fully accounted for, 2026-09-13
 
 123 of 123 nodes. Stages 1.1 (21), 1.4 (8), 1.7 (1) and the root (1) closed the remainder,
