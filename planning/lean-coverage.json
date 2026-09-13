@@ -24,6 +24,9 @@
   "MIPRE.CL.CLFun.ExactlyOn.biUnion_factorAt": [
    "lem:cl-structure"
   ],
+  "MIPRE.CL.CLFun.ExactlyOn.downsize": [
+   "lem:cl-downsize"
+  ],
   "MIPRE.CL.CLFun.SupportedOn": [
    "def:cl-function"
   ],
@@ -48,8 +51,17 @@
   "MIPRE.CL.CLFun.directSum": [
    "lem:cl-closure"
   ],
+  "MIPRE.CL.CLFun.downsize": [
+   "lem:cl-downsize"
+  ],
   "MIPRE.CL.CLFun.eval": [
    "def:cl-function"
+  ],
+  "MIPRE.CL.CLFun.eval_downsize": [
+   "lem:cl-downsize"
+  ],
+  "MIPRE.CL.CLFun.eval_truncate_downsize": [
+   "lem:cl-downsize"
   ],
   "MIPRE.CL.CLFun.factorAt": [
    "lem:cl-structure"
@@ -57,11 +69,20 @@
   "MIPRE.CL.CLFun.factorOfPrefix": [
    "lem:cl-structure"
   ],
+  "MIPRE.CL.CLFun.factorOfPrefix_downsize": [
+   "lem:cl-downsize"
+  ],
   "MIPRE.CL.CLFun.mapAt": [
    "lem:cl-structure"
   ],
   "MIPRE.CL.CLFun.mapOfPrefix": [
    "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.mapOfPrefix_downsize": [
+   "lem:cl-downsize"
+  ],
+  "MIPRE.CL.CLFun.reindex": [
+   "lem:cl-downsize"
   ],
   "MIPRE.CL.CLFun.truncate": [
    "lem:cl-structure"
@@ -77,6 +98,12 @@
   ],
   "MIPRE.CL.IsCLFun.directSum'": [
    "lem:cl-closure"
+  ],
+  "MIPRE.CL.IsCLFun.downsize": [
+   "lem:cl-downsize"
+  ],
+  "MIPRE.CL.IsCLFun.reindex": [
+   "lem:cl-downsize"
   ],
   "MIPRE.CL.IsCLFun.succ": [
    "lem:cl-closure"
@@ -95,6 +122,12 @@
   ],
   "MIPRE.CL.clDist": [
    "def:cl-function"
+  ],
+  "MIPRE.CL.clDist_downsize": [
+   "lem:cl-downsize"
+  ],
+  "MIPRE.CL.downsizeEquiv": [
+   "lem:cl-downsize"
   ],
   "MIPRE.CommutingOperatorStrategy": [
    "def:co-strategy-bipartite"
@@ -397,6 +430,7 @@
   "MIPRE.CL.CLFun",
   "MIPRE.CL.CLFun.ExactlyOn",
   "MIPRE.CL.CLFun.ExactlyOn.biUnion_factorAt",
+  "MIPRE.CL.CLFun.ExactlyOn.downsize",
   "MIPRE.CL.CLFun.SupportedOn",
   "MIPRE.CL.CLFun.SupportedOn.disjoint_factorAt",
   "MIPRE.CL.CLFun.SupportedOn.eval_truncate_eq_sum",
@@ -405,22 +439,32 @@
   "MIPRE.CL.CLFun.SupportedOn.mapOfPrefix_eval",
   "MIPRE.CL.CLFun.concat",
   "MIPRE.CL.CLFun.directSum",
+  "MIPRE.CL.CLFun.downsize",
   "MIPRE.CL.CLFun.eval",
+  "MIPRE.CL.CLFun.eval_downsize",
+  "MIPRE.CL.CLFun.eval_truncate_downsize",
   "MIPRE.CL.CLFun.factorAt",
   "MIPRE.CL.CLFun.factorOfPrefix",
+  "MIPRE.CL.CLFun.factorOfPrefix_downsize",
   "MIPRE.CL.CLFun.mapAt",
   "MIPRE.CL.CLFun.mapOfPrefix",
+  "MIPRE.CL.CLFun.mapOfPrefix_downsize",
+  "MIPRE.CL.CLFun.reindex",
   "MIPRE.CL.CLFun.truncate",
   "MIPRE.CL.IsCLFun",
   "MIPRE.CL.IsCLFun.concat",
   "MIPRE.CL.IsCLFun.directSum",
   "MIPRE.CL.IsCLFun.directSum'",
+  "MIPRE.CL.IsCLFun.downsize",
+  "MIPRE.CL.IsCLFun.reindex",
   "MIPRE.CL.IsCLFun.succ",
   "MIPRE.CL.Sampler",
   "MIPRE.CL.Sampler.Query",
   "MIPRE.CL.Sampler.TimeBound",
   "MIPRE.CL.Sampler.dist",
   "MIPRE.CL.clDist",
+  "MIPRE.CL.clDist_downsize",
+  "MIPRE.CL.downsizeEquiv",
   "MIPRE.CommutingOperatorStrategy",
   "MIPRE.CommutingOperatorStrategy.value",
   "MIPRE.CommutingStrategy",
@@ -573,6 +617,19 @@
    "MIPRE.CL.IsCLFun.directSum",
    "MIPRE.CL.IsCLFun.directSum'",
    "MIPRE.CL.clDist"
+  ],
+  "MIPRE/Foundations/CL/Downsize.lean": [
+   "MIPRE.CL.CLFun.ExactlyOn.downsize",
+   "MIPRE.CL.CLFun.downsize",
+   "MIPRE.CL.CLFun.eval_downsize",
+   "MIPRE.CL.CLFun.eval_truncate_downsize",
+   "MIPRE.CL.CLFun.factorOfPrefix_downsize",
+   "MIPRE.CL.CLFun.mapOfPrefix_downsize",
+   "MIPRE.CL.CLFun.reindex",
+   "MIPRE.CL.IsCLFun.downsize",
+   "MIPRE.CL.IsCLFun.reindex",
+   "MIPRE.CL.clDist_downsize",
+   "MIPRE.CL.downsizeEquiv"
   ],
   "MIPRE/Foundations/CL/Sampler.lean": [
    "MIPRE.CL.Sampler",
@@ -728,7 +785,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 61,
+ "lean_tags": 62,
  "module_sizes": {
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
   "MIPRE/Background/LIDT/Axioms.lean": 0,
@@ -754,6 +811,7 @@
   "MIPRE/Cslib/Foundations/Data/RelatesInSteps.lean": 25,
   "MIPRE/Foundations/CL/Basic.lean": 68,
   "MIPRE/Foundations/CL/Closure.lean": 18,
+  "MIPRE/Foundations/CL/Downsize.lean": 45,
   "MIPRE/Foundations/CL/Register.lean": 42,
   "MIPRE/Foundations/CL/Sampler.lean": 23,
   "MIPRE/Foundations/CommutingOperator.lean": 4,
@@ -822,7 +880,7 @@
  "xref_counts": {
   "bibitems": 32,
   "cites": 150,
-  "labels": 196,
-  "refs": 785
+  "labels": 197,
+  "refs": 787
  }
 }
