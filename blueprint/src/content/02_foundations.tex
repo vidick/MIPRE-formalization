@@ -295,6 +295,86 @@ system correspond to representations sending $J \mapsto -I$ (in Lean,
 \texttt{MIPRE.LCS.SolutionGroup.solutionGroupRepresentationOfEPRLoss}).
 \end{definition}
 
+\begin{definition}[Binary observables]
+\label{def:observable}
+\uses{def:lcs-instance}
+\lean{MIPRE.LCS.IsObservable, MIPRE.LCS.observableOfMeasurementSystem,
+MIPRE.LCS.binary_measurement_eq_projector}
+\leanok
+An \emph{observable} in a star-algebra is a self-adjoint element squaring to $1$. Binary
+projective measurements and observables are two views of the same data: $\{P_0, P_1\}$
+gives the observable $P_0 - P_1$, and an observable $O$ gives the measurement
+$\{\tfrac12(1 + O), \tfrac12(1 - O)\}$.
+\end{definition}
+
+\begin{lemma}[Observables and projective measurements correspond]
+\label{lem:observable-projector}
+\uses{def:observable}
+\lean{MIPRE.LCS.observableToProjector,
+MIPRE.LCS.isMeasurementSystem_observableToProjector,
+MIPRE.LCS.commute_observableToProjector}
+\leanok
+For an observable $O$ the family $a \mapsto \tfrac12(1 + (-1)^a O)$ is a projective
+measurement indexed by $\F_2$, and the correspondence preserves commutation: if $O_1$ and
+$O_2$ commute then so do all of their projectors.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Self-adjointness, idempotence, orthogonality and summation to $1$ are each a two-line
+computation from $O^* = O$ and $O^2 = 1$; commutation is inherited term by term.
+\end{proof}
+
+\begin{lemma}[From an observable strategy to a projective strategy]
+\label{lem:observable-strategy}
+\uses{def:observable,lem:observable-projector,def:tensor-strategy}
+\lean{MIPRE.LCS.ObservableStrategy.toProjectorStrategy,
+MIPRE.LCS.ObservableStrategy.isMeasurementSystem_aliceMeasurement,
+MIPRE.LCS.ObservableStrategy.aliceMeasurement_commute_bobMeasurement}
+\leanok
+A strategy given by commuting observables, one per variable of an LCS instance, yields a
+strategy given by genuine projective measurements: for a question consisting of several
+variables the joint measurement is the product of the corresponding binary projectors,
+which is projective because the observables commute, and the two players' measurements
+commute with each other.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The joint family over an equation's support is a product of commuting binary projectors,
+so it is a projective measurement and sums to $1$ over the outcomes; commutation across
+players is inherited from commutation of the underlying observables.
+\end{proof}
+
+\begin{definition}[The Magic Square]
+\label{def:magic-square}
+\uses{def:lcs-instance,def:lcs-game,def:solution-group}
+\lean{MIPRE.LCS.MagicSquare.layout, MIPRE.LCS.MagicSquare.game,
+MIPRE.LCS.MagicSquare.solutionGroup}
+\leanok
+The Magic Square is the LCS instance over $\F_2$ with nine variables in a $3 \times 3$
+grid and six equations, one per row and column, the rows summing to $0$ and the columns to
+$1$. It has no classical solution, since the six equations sum to $0 = 1$.
+\end{definition}
+
+\begin{lemma}[The Mermin--Peres strategy is perfect]
+\label{lem:mermin-peres}
+\uses{def:magic-square,def:observable,lem:observable-strategy}
+\lean{MIPRE.LCS.MagicSquare.grid, MIPRE.LCS.MagicSquare.isObservable_grid,
+MIPRE.LCS.MagicSquare.grid_sameEquation_comm, MIPRE.LCS.MagicSquare.merminPeresStrategy}
+\leanok
+There are nine observables on $(\C^2)^{\ot 2}$, one per cell of the Magic Square, such
+that the three in each row or column commute and multiply to $+1$ for a row and $-1$ for a
+column. They give a strategy for the Magic Square game of value $1$ on two EPR pairs.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The grid is the Mermin--Peres square of tensor products of Pauli matrices. That each entry
+is an observable, and that entries sharing an equation commute, are finite computations on
+$4 \times 4$ matrices.
+\end{proof}
+
 \begin{theorem}[Perfect strategies from operator solutions]
 \label{thm:lcs-perfect}
 \uses{def:lcs-game,def:tensor-strategy,def:q-value}

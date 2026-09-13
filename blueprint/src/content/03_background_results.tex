@@ -297,6 +297,7 @@ would sharpen the proof of Theorem~\ref{thm:almost-sync}.
 
 \begin{theorem}[Magic Square rigidity]
 \label{thm:ms-rigidity}
+\ledgernode{1.2.2.4.1}
 \uses{def:q-value,def:distance}
 Let $\strategy = (\ket{\psi}, A, B)$ be a strategy that succeeds in the Magic Square
 game $\game^{\MS}$ with probability $1 - \eps$. Then there exist local isometries
@@ -367,6 +368,10 @@ parametrization.
 
 \begin{theorem}[Quantum soundness of the classical low individual degree test]
 \label{thm:lidt-soundness}
+\ledgernode{1.2.1, 1.2.1.1, 1.2.1.2, 1.2.1.3, 1.2.1.4, 1.2.1.5, 1.2.1.6, 1.2.1.7, 1.2.1.7.1,
+1.2.1.7.1.1, 1.2.1.7.1.2, 1.2.1.7.1.3, 1.2.1.7.2, 1.2.1.7.2.1, 1.2.1.7.2.2,
+1.2.1.7.2.3, 1.2.1.7.2.4, 1.2.1.7.3, 1.2.1.7.4, 1.2.1.7.5, 1.2.1.7.6, 1.2.1.7.7,
+1.2.1.7.8, 1.2.1.8, 1.2.1.9, 1.2.1.9.1, 1.2.1.9.2, 1.2.1.9.3}
 \uses{def:lidt,def:tensor-strategy,def:inconsistency}
 \lean{MIPRE.LIDT.lowIndividualDegree_soundness}
 \leanok
@@ -425,8 +430,43 @@ derivation.
 
 \effortHard\ \qlib
 
+\begin{remark}[The one background result that is already formalized]
+\label{rem:lidt-formalized}
+\ledgernode{1.2.1, 1.2.1.7.2.4}
+\uses{thm:lidt-soundness,def:lidt}
+Theorem~\ref{thm:lidt-soundness} is the only statement of this section whose Lean proof is
+complete, and the way it got there is worth recording, because the ledger and the
+formalization disagree about what kind of statement it is.
+
+The ledger marks node $1.2.1$ \emph{imported}: in the paper the quantum soundness of the
+simultaneous low-degree test is obtained by reducing to the two-prover tensor-code test
+of~\cite{JNVWY21tensor}, which is not reproved. The Lean statement is not an axiom, and
+its \texttt{\#print axioms} guard fails the build if it ever becomes one: it is proved
+from Mathlib alone through the vendored formalization of~\cite{JNVWY21qld}, with the
+bridge modules of \texttt{MIPRE/Background/LIDT/Bridge/} translating this development's
+games, strategies and consistency relation into that one's and back. So on this node the
+formalization is strictly stronger than the paper, and the $28$ nodes of the subtree are
+accounted for as the internal structure of a proof that is finished.
+
+It also corrected the statement. The printed parameter constraint is $md \leq k$; the
+formalization establishes it only for $400\,md \leq k$, and additionally needs $k > 0$.
+Both corrections are in the statement above, and they cost nothing downstream because $k$
+is free --- the error carries a factor $k^2$ against a term $e^{-k/(2560000 m^2)}$, so it
+is minimized at some finite $k$ either way.
+
+One node of the subtree is a warning rather than a step. Node $1.2.1.7.2.4$ records that
+the interface between the product-basis transposes of~\cite{JNVWY20} and the
+Schmidt-diagonal symmetric strategies of~\cite{Vid22} is \emph{false} as stated, with an
+explicit $2 \times 2$ counterexample, and needs the approximate Takagi bridge instead. It
+does not affect Theorem~\ref{thm:lidt-soundness}, whose Lean proof does not go through
+that interface, but it is a live hazard for anything that reuses the transpose trick.
+\end{remark}
+
 \begin{theorem}[Pauli basis test / quantum low individual degree test]
 \label{thm:qld}
+\ledgernode{1.2.2, 1.2.2.1, 1.2.2.2, 1.2.2.3, 1.2.2.3.1, 1.2.2.4, 1.2.2.4.2, 1.2.2.5, 1.2.2.6,
+1.2.2.7, 1.2.2.7.1, 1.2.2.7.2, 1.2.2.7.3, 1.2.2.8, 1.2.2.9, 1.2.2.10, 1.2.2.11,
+1.2.2.12, 1.2.2.13, 1.2.2.14, 1.2.2.15, 1.2.2.16, 1.2.2.17}
 \uses{def:q-value,def:distance,thm:ms-rigidity,thm:lidt-soundness}
 There exists a function
 \begin{equation*}
@@ -494,6 +534,37 @@ game value, and $\RE$-completeness gives $\RE \subseteq \MIPstar$.
 \label{sec:rr-cook-levin}
 
 \effortHard
+
+\begin{remark}[What stage 1.2 leaves open, and where its weight is]
+\label{rem:qld-admitted}
+\uses{thm:qld,thm:ms-rigidity,thm:lidt-soundness,def:distance}
+Stage $1.2$ of the ledger is by far its heaviest: $62$ nodes and $169$ of the campaign's
+$291$ challenges, against $46$ for answer reduction and $19$ for repetition. Three facts
+about it bear on how this section should be formalized.
+
+First, Theorem~\ref{thm:ms-rigidity} is one of only \emph{three} admitted nodes in the
+whole campaign (node $1.2.2.4.1$; the others are anchored repetition and self-dual normal
+bases). It is an import of~\cite[Theorem 6.9]{CS17}, not vendored and not reproved, with
+two adaptations made in the paper: a weakening of trace-norm $O(\eps)$ closeness to
+Euclidean $O(\sqrt{\eps})$, and a local basis change between two anticommuting pairs. The
+saving grace for a formalization is how narrowly it is consumed --- only through one
+anticommutation consequence, and not at all by the completeness leg, which uses the
+in-file argument that anticommuting observables give a perfect Magic Square strategy
+(Lemma~\ref{lem:mermin-peres} below is that strategy, and it is already in Lean).
+
+Second, the soundness proof of Theorem~\ref{thm:qld} is not in the main text at all: it is
+deferred to a five-file appendix, which is where most of stage $1.2$'s challenge weight
+sits. One of them was the campaign's only \emph{critical} finding, at node $1.2.2.15$: the
+construction of exact Pauli operators rested on an identity between a codeword's
+coordinates and the polynomial's values that is simply false, and had to be replaced by a
+Schwartz--Zippel bound on the non-multilinear outcome mass. A formalization should treat
+the appendix as the real content and the main-text statement as its interface.
+
+Third, the introspection statement that consumes all of this (node $1.2$,
+Theorem~\ref{thm:introspection}) is the one place in the pipeline where the soundness
+guarantee is only $1 - \eps$ for a universal constant $\eps$ rather than a bound that can
+be driven down, which is exactly why parallel repetition has to follow it.
+\end{remark}
 
 \begin{theorem}[Explicit succinct Cook--Levin]
 \label{thm:succinct-sat}

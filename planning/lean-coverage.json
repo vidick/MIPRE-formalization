@@ -84,14 +84,62 @@
   "MIPRE.LCS.Game.toNonlocalGame": [
    "def:lcs-game"
   ],
+  "MIPRE.LCS.IsObservable": [
+   "def:observable"
+  ],
   "MIPRE.LCS.Layout": [
    "def:lcs-instance"
+  ],
+  "MIPRE.LCS.MagicSquare.game": [
+   "def:magic-square"
+  ],
+  "MIPRE.LCS.MagicSquare.grid": [
+   "lem:mermin-peres"
+  ],
+  "MIPRE.LCS.MagicSquare.grid_sameEquation_comm": [
+   "lem:mermin-peres"
+  ],
+  "MIPRE.LCS.MagicSquare.isObservable_grid": [
+   "lem:mermin-peres"
+  ],
+  "MIPRE.LCS.MagicSquare.layout": [
+   "def:magic-square"
+  ],
+  "MIPRE.LCS.MagicSquare.merminPeresStrategy": [
+   "lem:mermin-peres"
+  ],
+  "MIPRE.LCS.MagicSquare.solutionGroup": [
+   "def:magic-square"
+  ],
+  "MIPRE.LCS.ObservableStrategy.aliceMeasurement_commute_bobMeasurement": [
+   "lem:observable-strategy"
+  ],
+  "MIPRE.LCS.ObservableStrategy.isMeasurementSystem_aliceMeasurement": [
+   "lem:observable-strategy"
+  ],
+  "MIPRE.LCS.ObservableStrategy.toProjectorStrategy": [
+   "lem:observable-strategy"
   ],
   "MIPRE.LCS.SolutionGroup": [
    "def:solution-group"
   ],
+  "MIPRE.LCS.binary_measurement_eq_projector": [
+   "def:observable"
+  ],
+  "MIPRE.LCS.commute_observableToProjector": [
+   "lem:observable-projector"
+  ],
   "MIPRE.LCS.exists_tensorStrategy_value_eq_one_of_localLoss_annihilates_epr": [
    "thm:lcs-perfect"
+  ],
+  "MIPRE.LCS.isMeasurementSystem_observableToProjector": [
+   "lem:observable-projector"
+  ],
+  "MIPRE.LCS.observableOfMeasurementSystem": [
+   "def:observable"
+  ],
+  "MIPRE.LCS.observableToProjector": [
+   "lem:observable-projector"
   ],
   "MIPRE.LIDT.lidtGame": [
    "def:lidt"
@@ -255,9 +303,25 @@
   "MIPRE.IsPOVMClose",
   "MIPRE.LCS.Game",
   "MIPRE.LCS.Game.toNonlocalGame",
+  "MIPRE.LCS.IsObservable",
   "MIPRE.LCS.Layout",
+  "MIPRE.LCS.MagicSquare.game",
+  "MIPRE.LCS.MagicSquare.grid",
+  "MIPRE.LCS.MagicSquare.grid_sameEquation_comm",
+  "MIPRE.LCS.MagicSquare.isObservable_grid",
+  "MIPRE.LCS.MagicSquare.layout",
+  "MIPRE.LCS.MagicSquare.merminPeresStrategy",
+  "MIPRE.LCS.MagicSquare.solutionGroup",
+  "MIPRE.LCS.ObservableStrategy.aliceMeasurement_commute_bobMeasurement",
+  "MIPRE.LCS.ObservableStrategy.isMeasurementSystem_aliceMeasurement",
+  "MIPRE.LCS.ObservableStrategy.toProjectorStrategy",
   "MIPRE.LCS.SolutionGroup",
+  "MIPRE.LCS.binary_measurement_eq_projector",
+  "MIPRE.LCS.commute_observableToProjector",
   "MIPRE.LCS.exists_tensorStrategy_value_eq_one_of_localLoss_annihilates_epr",
+  "MIPRE.LCS.isMeasurementSystem_observableToProjector",
+  "MIPRE.LCS.observableOfMeasurementSystem",
+  "MIPRE.LCS.observableToProjector",
   "MIPRE.LIDT.lidtGame",
   "MIPRE.LIDT.lowIndividualDegree_soundness",
   "MIPRE.Repetition.commutingOperatorValue_repeat_le",
@@ -400,12 +464,38 @@
    "MIPRE.LCS.Game",
    "MIPRE.LCS.Layout"
   ],
+  "MIPRE/LCS/MagicSquare/SolutionGroup.lean": [
+   "MIPRE.LCS.MagicSquare.solutionGroup"
+  ],
+  "MIPRE/LCS/MagicSquare/Strategy.lean": [
+   "MIPRE.LCS.MagicSquare.game",
+   "MIPRE.LCS.MagicSquare.grid",
+   "MIPRE.LCS.MagicSquare.grid_sameEquation_comm",
+   "MIPRE.LCS.MagicSquare.isObservable_grid",
+   "MIPRE.LCS.MagicSquare.layout",
+   "MIPRE.LCS.MagicSquare.merminPeresStrategy"
+  ],
   "MIPRE/LCS/NonlocalGame.lean": [
    "MIPRE.LCS.Game.toNonlocalGame",
    "MIPRE.LCS.exists_tensorStrategy_value_eq_one_of_localLoss_annihilates_epr"
   ],
+  "MIPRE/LCS/Observable.lean": [
+   "MIPRE.LCS.IsObservable",
+   "MIPRE.LCS.binary_measurement_eq_projector",
+   "MIPRE.LCS.observableOfMeasurementSystem"
+  ],
   "MIPRE/LCS/SolutionGroup.lean": [
    "MIPRE.LCS.SolutionGroup"
+  ],
+  "MIPRE/LCS/Strategy/Equivalence.lean": [
+   "MIPRE.LCS.ObservableStrategy.aliceMeasurement_commute_bobMeasurement",
+   "MIPRE.LCS.ObservableStrategy.isMeasurementSystem_aliceMeasurement",
+   "MIPRE.LCS.ObservableStrategy.toProjectorStrategy"
+  ],
+  "MIPRE/LCS/Strategy/ObservableToProjector.lean": [
+   "MIPRE.LCS.commute_observableToProjector",
+   "MIPRE.LCS.isMeasurementSystem_observableToProjector",
+   "MIPRE.LCS.observableToProjector"
   ],
   "MIPRE/TM/Code/Encoding/MachineCode.lean": [
    "Turing.decodeCodeExact_encodeCode",
@@ -438,7 +528,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 48,
+ "lean_tags": 53,
  "module_sizes": {
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
   "MIPRE/Background/LIDT/Axioms.lean": 0,
@@ -523,9 +613,9 @@
  },
  "unresolved": [],
  "xref_counts": {
-  "bibitems": 36,
-  "cites": 149,
-  "labels": 155,
-  "refs": 590
+  "bibitems": 38,
+  "cites": 154,
+  "labels": 168,
+  "refs": 649
  }
 }

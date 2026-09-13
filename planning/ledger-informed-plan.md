@@ -183,6 +183,56 @@ Lipschitz bound on the Born value in the entries of the data. The three transpor
 lemmas proved for `lem:povm-value-eq` (`dotProduct_mulVec_submatrix`,
 `dotProduct_mulVec_conj`, `dotProduct_comp_equiv`) are the tools for that.
 
+## Stage 1.2, done 2026-09-13
+
+62/62 nodes — the heaviest stage, 169 of the campaign's 291 challenges — by four
+annotations and three new remarks, plus five new chapter-2 statements that give the `LCS/`
+Lean development something to be named by. Three findings.
+
+**The formalization is stronger than the paper on node `1.2.1`.** The ledger marks it
+*imported*: the paper obtains quantum soundness of the simultaneous low-degree test by
+reducing to the tensor-codes theorem, which it does not reprove. But
+`MIPRE.LIDT.lowIndividualDegree_soundness` is proved from Mathlib alone through the
+vendored MIPStarRE formalization, with an `#print axioms` guard that fails the build if it
+ever becomes an axiom. All 28 nodes of the subtree are therefore accounted for as the
+internal structure of a finished proof. The formalization also corrected the statement:
+the printed constraint is `md <= k`, the proof needs `400 md <= k` and `k > 0`, and the
+blueprint already states the corrected form (checked, not assumed). Recorded in
+`rem:lidt-formalized`, which also carries node `1.2.1.7.2.4`: the interface between
+JNVWY's product-basis transposes and Vid22's Schmidt-diagonal symmetric strategies is
+*false* as stated, with a 2x2 counterexample. It does not touch `thm:lidt-soundness`, but
+it is a hazard for anything reusing the transpose trick.
+
+**Stage 1.2 holds the only admitted node the pipeline actually consumes.**
+`thm:ms-rigidity` is node `1.2.2.4.1`, one of three admitted nodes in the whole campaign,
+an import of Coladangelo--Stark Thm 6.9 that is neither vendored nor reproved. It is
+consumed narrowly — one anticommutation consequence, and not at all by the completeness
+leg, which uses the in-file argument that anticommuting observables give a perfect Magic
+Square strategy. That argument is already in Lean, and is now `lem:mermin-peres`.
+`scripts/ledger-sync.py` emits a standing Note that a cited node is admitted, which is the
+checker working as designed.
+
+**The soundness of `thm:qld` is not in the main text.** It is deferred to a five-file
+appendix, which is where most of stage 1.2's challenge weight sits, including the
+campaign's only *critical* finding (node `1.2.2.15`: the exact-Pauli construction rested
+on a false identity between a codeword's coordinates and the polynomial's values, replaced
+by a Schwartz--Zippel bound). A formalization should treat the appendix as the content and
+the main-text statement as its interface. Recorded in `rem:qld-admitted`.
+
+**The `LCS/` coverage gap is now half closed.** Five new chapter-2 statements name 16 Lean
+declarations, all verified sorry-free: `def:observable`, `lem:observable-projector`,
+`lem:observable-strategy` (the observable-to-projective-strategy construction of
+`LCS/Strategy/Equivalence.lean`), `def:magic-square` and `lem:mermin-peres`. Modules the
+blueprint accounts for: 29 -> 34 of 80; distinct Lean names cited: 75 -> 91. What remains
+unnamed in `LCS/` is the Pauli group development (`LCS/Pauli.lean`, 31 declarations),
+`LCS/EPR.lean` and `LCS/SolutionGroup/Representation.lean` — the natural next increment,
+and the one that would give `thm:qld` a Lean-side foothold.
+
+Stage coverage now: 1.2 at 62/62, 1.3 at 13/13, 1.5 at 9/9, 1.6 at 8/8; 95 of 123 nodes
+annotated. What is left is 1.1 (framework, 21 nodes, carried by chapter 2 without
+annotations), 1.4 (repetition, 8 nodes, chapter 5), 1.7 (separation, chapter 8) and the
+root.
+
 ## Stage 1.3, done 2026-09-13
 
 13/13 nodes, by three annotations, two new statements and three new remarks. Two
