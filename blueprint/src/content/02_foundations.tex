@@ -219,10 +219,18 @@ $\nu$ in $\game$, and $\infty$ if no synchronous strategy achieves $\nu$.
 For every synchronous game $\game$, $\synval(\game) \leq \valstar(\game)$.
 \end{lemma}
 \begin{proof}
+\leanok
 Given a synchronous strategy $\{M^x_a\}$ on $\C^d$, take the tensor-product strategy
 with $\mH_\alice = \mH_\bob = \C^d$, $A^x_a = M^x_a$, $B^y_b = (M^y_b)^{\mathsf{T}}$,
-and $\ket{\psi} = d^{-1/2}\sum_i \ket{i}\ket{i}$; then
-$\bra{\psi} A^x_a \ot B^y_b \ket{\psi} = \tau(M^x_a M^y_b)$, so the values agree.
+and $\ket{\psi} = d^{-1/2}\sum_i \ket{i}\ket{i}$ (in Lean,
+\texttt{MIPRE.SyncStrategy.toTensorProductStrategy}). On that state
+$\bra{\psi} M \ot N \ket{\psi} = \tr(M N^{\mathsf{T}})/d$
+(\texttt{MIPRE.dotProduct\_kronecker\_maxEntangled}), so with $N = (M^y_b)^{\mathsf{T}}$ the
+Born-rule probability is $\tau(M^x_a M^y_b)$ and the values agree
+(\texttt{MIPRE.SyncStrategy.value\_toTensorProductStrategy}). Taking the supremum uses that
+the quantum value is a supremum over a possibly empty type with bounded range:
+\texttt{MIPRE.TensorProductStrategy.value\_le\_one} and
+\texttt{MIPRE.quantumValue\_nonneg}, both proved from the Born rule.
 \end{proof}
 
 The converse direction --- every good tensor-product strategy for a synchronous game

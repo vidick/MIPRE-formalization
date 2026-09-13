@@ -377,6 +377,99 @@ strategy values over all tensor-product strategies. -/
 noncomputable def quantumValue (G : Game X Y A B) : ℝ :=
   ⨆ S : TensorProductStrategy G, S.value
 
+/-! ### Born-rule bounds
+
+The quantum value is a supremum over a type that may be empty, so the comparison lemmas
+below need the range of `TensorProductStrategy.value` to be bounded and `quantumValue` to
+be nonnegative. Both come from the Born rule: for fixed questions the outcome
+probabilities are nonnegative and sum to `⟨ψ|ψ⟩ = 1`.
+
+(`MIPRE.Repetition` proves the same two bounds by transporting through the vendored
+parallel-repetition development; those proofs are not available here, since
+`MIPRE/Foundations/` cannot import `MIPRE/Background/`.) -/
+
+/-- A Kronecker product of two projections is positive semidefinite: it is its own
+`Pᴴ * P`. A candidate for `MIPRE/Mathlib/` if a second consumer appears. -/
+theorem posSemidef_kronecker {m n : Type*} [Fintype m] [DecidableEq m] [Fintype n]
+    [DecidableEq n] {P : Matrix m m ℂ} {Q : Matrix n n ℂ} (hPs : star P = P)
+    (hPp : P * P = P) (hQs : star Q = Q) (hQp : Q * Q = Q) : (P ⊗ₖ Q).PosSemidef := by
+  have hPH : Pᴴ = P := by rw [← Matrix.star_eq_conjTranspose]; exact hPs
+  have hQH : Qᴴ = Q := by rw [← Matrix.star_eq_conjTranspose]; exact hQs
+  have h : (P ⊗ₖ Q)ᴴ * (P ⊗ₖ Q) = P ⊗ₖ Q := by
+    rw [Matrix.conjTranspose_kronecker, hPH, hQH, ← Matrix.mul_kronecker_mul, hPp, hQp]
+  have := Matrix.posSemidef_conjTranspose_mul_self (P ⊗ₖ Q)
+  rwa [h] at this
+
+namespace TensorProductStrategy
+
+variable {G : Game X Y A B}
+
+/-- A Born-rule probability of a tensor-product strategy is nonnegative: `A^x_a ⊗ B^y_b`
+is a projection, hence positive semidefinite. -/
+theorem re_dotProduct_nonneg (S : TensorProductStrategy G) (x : X) (y : Y) (a : A) (b : B) :
+    0 ≤ (star S.ψ ⬝ᵥ ((S.PA.M x a ⊗ₖ S.PB.M y b) *ᵥ S.ψ)).re := by
+  have hps := posSemidef_kronecker (S.PA.selfAdjoint x a) (S.PA.projective x a)
+    (S.PB.selfAdjoint y b) (S.PB.projective y b)
+  simpa using (Complex.le_def.mp (hps.dotProduct_mulVec_nonneg S.ψ)).1
+
+/-- The value of a tensor-product strategy is nonnegative. -/
+theorem value_nonneg (S : TensorProductStrategy G) : 0 ≤ S.value := by
+  refine Finset.sum_nonneg fun x _ => Finset.sum_nonneg fun y _ =>
+    Finset.sum_nonneg fun a _ => Finset.sum_nonneg fun b _ => ?_
+  have hind : (0 : ℝ) ≤ if G.D x y a b then 1 else 0 := by split_ifs <;> norm_num
+  exact mul_nonneg (mul_nonneg (G.μ_nonneg x y) hind) (S.re_dotProduct_nonneg x y a b)
+
+/-- For each question pair the Born-rule probabilities sum to `⟨ψ|ψ⟩ = 1`: the measurement
+operators sum to one on each side, and the Kronecker product is bilinear. -/
+theorem sum_dotProduct_kronecker (S : TensorProductStrategy G) (x : X) (y : Y) :
+    ∑ a, ∑ b, (star S.ψ ⬝ᵥ ((S.PA.M x a ⊗ₖ S.PB.M y b) *ᵥ S.ψ)) = 1 := by
+  have hmat : ∑ a, ∑ b, (S.PA.M x a ⊗ₖ S.PB.M y b) = 1 := by
+    have hsplit : ∑ a, ∑ b, (S.PA.M x a ⊗ₖ S.PB.M y b)
+        = (∑ a, S.PA.M x a) ⊗ₖ (∑ b, S.PB.M y b) := by
+      ext p q
+      simp only [Matrix.sum_apply, kroneckerMap_apply, Finset.sum_mul_sum]
+    rw [hsplit, S.PA.normalized, S.PB.normalized, Matrix.one_kronecker_one]
+  calc ∑ a, ∑ b, (star S.ψ ⬝ᵥ ((S.PA.M x a ⊗ₖ S.PB.M y b) *ᵥ S.ψ))
+      = star S.ψ ⬝ᵥ ((∑ a, ∑ b, (S.PA.M x a ⊗ₖ S.PB.M y b)) *ᵥ S.ψ) := by
+        simp_rw [Matrix.sum_mulVec, dotProduct_sum]
+    _ = star S.ψ ⬝ᵥ S.ψ := by rw [hmat, Matrix.one_mulVec]
+    _ = 1 := S.ψ_unit
+
+/-- The value of a tensor-product strategy is at most one. -/
+theorem value_le_one (S : TensorProductStrategy G) : S.value ≤ 1 := by
+  have key : ∀ x y, ∑ a, ∑ b,
+      (star S.ψ ⬝ᵥ ((S.PA.M x a ⊗ₖ S.PB.M y b) *ᵥ S.ψ)).re = 1 := fun x y => by
+    simpa [Complex.re_sum] using congrArg Complex.re (S.sum_dotProduct_kronecker x y)
+  calc S.value
+      ≤ ∑ x, ∑ y, G.μ x y * ∑ a, ∑ b,
+          (star S.ψ ⬝ᵥ ((S.PA.M x a ⊗ₖ S.PB.M y b) *ᵥ S.ψ)).re := by
+        refine Finset.sum_le_sum fun x _ => Finset.sum_le_sum fun y _ => ?_
+        rw [Finset.mul_sum]
+        refine Finset.sum_le_sum fun a _ => ?_
+        rw [Finset.mul_sum]
+        refine Finset.sum_le_sum fun b _ => ?_
+        cases hD : G.D x y a b with
+        | false =>
+          simpa [hD] using mul_nonneg (G.μ_nonneg x y) (S.re_dotProduct_nonneg x y a b)
+        | true => simp
+    _ = ∑ x, ∑ y, G.μ x y := by
+        refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ => ?_
+        rw [key, mul_one]
+    _ = 1 := G.μ_sum_one
+
+/-- The values of tensor-product strategies are bounded above (by one). -/
+theorem bddAbove_range_value (G : Game X Y A B) :
+    BddAbove (Set.range fun S : TensorProductStrategy G => S.value) := by
+  refine ⟨1, ?_⟩
+  rintro r ⟨S, rfl⟩
+  exact S.value_le_one
+
+end TensorProductStrategy
+
+/-- The quantum value is nonnegative. -/
+theorem quantumValue_nonneg (G : Game X Y A B) : 0 ≤ quantumValue G :=
+  Real.iSup_nonneg fun S => S.value_nonneg
+
 /-! ## The generic tracial value -/
 
 variable [DecidableEq A]
@@ -644,13 +737,102 @@ noncomputable def entRequirement (G : SynchronousGame X A) (ν : ℝ) : ℕ∞ :
 
 /-! ## Relationship lemmas -/
 
+/-! ### The maximally entangled state
+
+The transpose trick: on `ψ = d^{-1/2} ∑ᵢ |i⟩|i⟩` one has `⟨ψ| M ⊗ N |ψ⟩ = Tr(M Nᵀ)/d`, so
+`N = (M')ᵀ` turns the Born rule into the normalized trace that defines the synchronous
+value. Like `posSemidef_kronecker`, these three are candidates for `MIPRE/Mathlib/` once a
+second consumer appears. -/
+
+/-- The maximally entangled state `d^{-1/2} ∑ᵢ |i⟩|i⟩` on `ℂ^d ⊗ ℂ^d`, realized as a
+vector on `Fin d × Fin d`. -/
+noncomputable def maxEntangled (d : ℕ) : Fin d × Fin d → ℂ :=
+  fun p => if p.1 = p.2 then ((Real.sqrt d)⁻¹ : ℝ) else 0
+
+/-- `d^{-1/2} · d^{-1/2} = d⁻¹`, in `ℂ`. -/
+theorem ofReal_invSqrt_mul_self (d : ℕ) :
+    ((((Real.sqrt d)⁻¹ : ℝ)) : ℂ) * ((((Real.sqrt d)⁻¹ : ℝ)) : ℂ) = (d : ℂ)⁻¹ := by
+  rw [← Complex.ofReal_mul, ← mul_inv, Real.mul_self_sqrt (Nat.cast_nonneg d),
+    Complex.ofReal_inv, Complex.ofReal_natCast]
+
+/-- The maximally entangled state is a unit vector. -/
+theorem dotProduct_maxEntangled_self {d : ℕ} (hd : 0 < d) :
+    star (maxEntangled d) ⬝ᵥ maxEntangled d = 1 := by
+  classical
+  simp only [dotProduct, maxEntangled, Pi.star_apply, Fintype.sum_prod_type,
+    apply_ite (starRingEnd ℂ), map_zero, Complex.star_def, Complex.conj_ofReal,
+    ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true,
+    ofReal_invSqrt_mul_self, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
+    nsmul_eq_mul]
+  exact mul_inv_cancel₀ (Nat.cast_ne_zero.mpr hd.ne')
+
+/-- One entry of `(M ⊗ₖ N) *ᵥ ψ` against the maximally entangled state. -/
+theorem kronecker_mulVec_maxEntangled {d : ℕ} (M N : Matrix (Fin d) (Fin d) ℂ)
+    (p : Fin d × Fin d) :
+    ((M ⊗ₖ N) *ᵥ maxEntangled d) p
+      = (((Real.sqrt d)⁻¹ : ℝ) : ℂ) * ∑ k, M p.1 k * N p.2 k := by
+  classical
+  simp [mulVec, dotProduct, maxEntangled, Fintype.sum_prod_type, mul_ite, mul_zero,
+    Finset.sum_ite_eq, Finset.mul_sum, mul_comm, mul_assoc]
+
+/-- The transpose trick: `⟨ψ| M ⊗ N |ψ⟩ = Tr(M Nᵀ)/d` on the maximally entangled state. -/
+theorem dotProduct_kronecker_maxEntangled {d : ℕ} (M N : Matrix (Fin d) (Fin d) ℂ) :
+    star (maxEntangled d) ⬝ᵥ ((M ⊗ₖ N) *ᵥ maxEntangled d) = (d : ℂ)⁻¹ * (M * Nᵀ).trace := by
+  classical
+  simp only [dotProduct, kronecker_mulVec_maxEntangled, maxEntangled, Pi.star_apply,
+    Fintype.sum_prod_type, apply_ite (starRingEnd ℂ), map_zero, Complex.star_def,
+    Complex.conj_ofReal, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [← mul_assoc, ofReal_invSqrt_mul_self, ← Finset.mul_sum, trace, diag_apply,
+    mul_apply, transpose_apply]
+
+/-! ### A synchronous strategy is a tensor-product strategy -/
+
+/-- A synchronous strategy `{M^x_a}` on `ℂ^d` as a tensor-product strategy for the same
+game (the content of blueprint `lem:sync-le-valstar`): `A^x_a = M^x_a`, `B^y_b = (M^y_b)ᵀ`,
+and the maximally entangled state. Transposing preserves self-adjointness and
+projectivity, and reverses products, so the transposed family is again a projective
+measurement. -/
+noncomputable def SyncStrategy.toTensorProductStrategy {G : SynchronousGame X A}
+    (S : SyncStrategy G) : TensorProductStrategy G.toGame where
+  dA := S.d
+  dB := S.d
+  ψ := maxEntangled S.d
+  ψ_unit := dotProduct_maxEntangled_self S.d_pos
+  PA := S.P
+  PB :=
+    { M := fun y b => (S.P.M y b)ᵀ
+      selfAdjoint := fun y b => by
+        rw [show star ((S.P.M y b)ᵀ) = (star (S.P.M y b))ᵀ from rfl, S.P.selfAdjoint y b]
+      projective := fun y b => by
+        rw [← Matrix.transpose_mul, S.P.projective y b]
+      normalized := fun y => by
+        rw [← Matrix.transpose_sum, S.P.normalized y, Matrix.transpose_one] }
+
+/-- `SyncStrategy.toTensorProductStrategy` preserves the value: the Born-rule probability
+`⟨ψ| M^x_a ⊗ (M^y_b)ᵀ |ψ⟩` is `Tr(M^x_a M^y_b)/d`, which is the probability computed by
+`SyncStrategy.value` (see `SyncStrategy.value_eq`). -/
+@[simp] theorem SyncStrategy.value_toTensorProductStrategy {G : SynchronousGame X A}
+    (S : SyncStrategy G) : S.toTensorProductStrategy.value = S.value := by
+  rw [S.value_eq]
+  refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ =>
+    Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
+  congr 1
+  show (star (maxEntangled S.d) ⬝ᵥ ((S.P.M x a ⊗ₖ (S.P.M y b)ᵀ) *ᵥ maxEntangled S.d)).re = _
+  rw [dotProduct_kronecker_maxEntangled, Matrix.transpose_transpose,
+    show ((S.d : ℂ))⁻¹ = (((S.d : ℝ)⁻¹ : ℝ) : ℂ) by
+      rw [Complex.ofReal_inv, Complex.ofReal_natCast],
+    Complex.re_ofReal_mul, inv_mul_eq_div]
+
 /-- The synchronous value lower-bounds the quantum value (blueprint
 `lem:sync-le-valstar`): a synchronous strategy `{M^x_a}` on `ℂ^d` yields the
 tensor-product strategy `A^x_a = M^x_a`, `B^y_b = (M^y_b)ᵀ`,
-`ψ = d^{-1/2} ∑ᵢ |i⟩|i⟩` with the same value. -/
+`ψ = d^{-1/2} ∑ᵢ |i⟩|i⟩` with the same value
+(`SyncStrategy.value_toTensorProductStrategy`). -/
 theorem syncValue_le_quantumValue (G : SynchronousGame X A) :
-    syncValue G ≤ quantumValue G.toGame :=
-  sorry
+    syncValue G ≤ quantumValue G.toGame := by
+  refine Real.iSup_le (fun S => ?_) (quantumValue_nonneg _)
+  rw [← S.value_toTensorProductStrategy]
+  exact le_ciSup (TensorProductStrategy.bddAbove_range_value _) S.toTensorProductStrategy
 
 /-- The synchronous value lower-bounds the commuting value (blueprint
 `lem:sync-le-valco`): a synchronous strategy on `ℂ^d` is a commuting strategy with
