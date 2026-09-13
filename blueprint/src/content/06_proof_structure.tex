@@ -144,10 +144,281 @@ because the constants are positive integers. None of the three is deep; all thre
 sort of thing that stops a formalization dead.
 \end{remark}
 
+
+\subsubsection{The introspective verifier}
+
+\begin{definition}[The introspective verifier]
+\label{def:intro-verifier}
+\ledgernode{1.2.3}
+\uses{def:normal-verifier,def:cl-function,rem:typed-detyping,thm:qld}
+Fix $\ell$ and a $\lambda$-bounded $\ell$-level verifier $\verifier$. The
+\emph{introspective verifier} $\vint$ is the typed verifier whose players sample the
+conditionally linear question distribution of $\verifier_{2^n}$ \emph{themselves}: the
+question $y \in V = \F_q^s$ is not sent to them, but obtained by each player measuring its
+half of $Q$ shared EPR pairs in a Pauli basis, and reported back. Its decider runs three
+kinds of test.
+\begin{enumerate}
+\item a \textbf{Pauli test}, which is the game of Theorem~\ref{thm:qld} on the same EPR
+  pairs, so that the measurements the players use to sample are forced to be genuine Pauli
+  measurements in the low-degree-encoded basis;
+\item a \textbf{sampling test}, which forces the reported $y$ to be distributed as the
+  conditionally linear distribution of $\verifier_{2^n}$ rather than as anything else the
+  players might prefer;
+\item a \textbf{hiding test}, which forces each player not to learn the parts of the
+  question that the conditional sampling should have hidden from it --- the types
+  $\mathtt{Hide}_1, \ldots, \mathtt{Hide}_\ell$ exist for this, one per level.
+\end{enumerate}
+It is a $3$-level \emph{typed} verifier, hence $5$-level once detyped
+(Remark~\ref{rem:typed-detyping}), and that $5$ is what the compression pipeline consumes.
+\end{definition}
+
+\effortHard
+
+\begin{lemma}[Complexity of the introspective verifier]
+\label{lem:intro-complexity}
+\ledgernode{1.2.3.1}
+\uses{def:intro-verifier,def:lambda-bounded}
+There are Turing machines computing the two halves of $\vint$ separately: one which on input
+$(\lambda, \ell)$ outputs the sampler $\sint$ in time $\polylog(\lambda, \ell)$, with
+$\TIME_{\sint}(n) = \poly(n, \lambda, \ell)$ and $\sint$ a $3$-level typed sampler; and one
+which on input $(\verifier, \lambda, \ell)$ outputs the decider $\dint$ in standard
+timeout-counter form, in polynomial time, with $\abs{\dint} = \poly(\lambda, \ell)$ and
+timeout bound $B_{\dint}(n) = \poly(2^{\lambda n}, \ell)$. The sampler's description does not
+depend on $\verifier$ at all.
+\end{lemma}
+
+\begin{remark}[A false step in computing the hidden subspace]
+\label{rem:intro-lperp}
+\uses{lem:intro-complexity,def:cl-function}
+The decider has to compute, for a level $k$ and a prefix $u$, the orthogonal complement
+$(L^v_{k+1, u})^\perp$ of the conditionally linear map at that level. The printed procedure
+computed it by taking a basis of $\ker(M)$ and forming its canonical complement --- and the
+canonical complement of a basis of $\ker(M)$ is \emph{not} a basis of $\ker(M)^\perp$. Over
+$\F_2^2$ the map $L(x_1, x_2) = (x_1 + x_2, 0)$ is a counterexample, found independently by
+two checkers. Only the computation was wrong: the test itself is defined abstractly through
+the complement, so the statement of Lemma~\ref{lem:intro-complexity} and its bound are
+unaffected. It is recorded because a formalization must supply a procedure that is actually
+correct, and this is the obvious place to get it wrong. The same audit closed a second seam
+here, an answer-length bound of $8Q$ that only holds once the honest answer is truncated the
+way oracularization and answer reduction already truncate theirs.
+\end{remark}
+
+\subsubsection{Completeness: two identities about Pauli measurements}
+
+The honest strategy measures EPR pairs in the bases the sampled question prescribes, so the
+completeness proof is not an approximation argument at all: it is two exact statements about
+how Pauli operators interact with measurements of a linear map, and then a check that the
+seven tests of the decider all pass with certainty. Both identities are finite-field linear
+algebra, and both are plausible early Lean targets.
+
+\effortMedium
+
+\begin{lemma}[Pauli operators against a linear-map measurement]
+\label{lem:pauli-linear-fourier}
+\ledgernode{1.2.3.2}
+\uses{def:cl-function}
+Let $L : \F^k \to \F^k$ be linear, let $W \in \{X, Z\}$, and for $a$ in the range of $L$
+pick $u_a$ with $L(u_a) = a$. Write $\sigma^W_{[L(\cdot) = a]}$ for the projector onto the
+event that a $W$-basis measurement returns a preimage of $a$. Then for every
+$v \in \ker(L)^\perp$,
+\begin{equation*}
+  \sigma^W(v) = \sum_{a \in \F^k} \omega^{\fieldtr(u_a \cdot v)}\, \sigma^W_{[L(\cdot) = a]},
+\end{equation*}
+and conversely, for every $a$ in the range of $L$,
+\begin{equation*}
+  \sigma^W_{[L(\cdot) = a]} = \E_{v \sim \ker(L)^\perp}\ \omega^{-\fieldtr(v \cdot u_a)}\,
+    \sigma^W(v).
+\end{equation*}
+The choice of $u_a$ off the range of $L$ is immaterial, since there the projector vanishes.
+\end{lemma}
+
+\begin{proof}
+Each identity is the Fourier expansion of the other over the group $\ker(L)^\perp$: the
+character $v \mapsto \omega^{\fieldtr(u_a \cdot v)}$ depends only on $a = L(u_a)$, because two
+preimages of $a$ differ by an element of $\ker(L)$, which the trace pairing annihilates
+against $\ker(L)^\perp$.
+\end{proof}
+
+\effortEasy
+
+\begin{lemma}[A commutation criterion for $X$ and $Z$ measurements]
+\label{lem:pauli-commute-criterion}
+\ledgernode{1.2.3.2}
+\uses{lem:pauli-linear-fourier}
+Let $L, R : \F^k \to \F^k$ be linear with $\ker(R)^\perp \subseteq \ker(L)$. Then the
+measurements $\{\sigma^Z_{[L(\cdot) = b]}\}_b$ and $\{\sigma^X_{[R(\cdot) = d]}\}_d$ commute.
+\end{lemma}
+
+\begin{proof}
+Expand both families by Lemma~\ref{lem:pauli-linear-fourier}. The $Z$-side expansion runs
+over $v \in \ker(L)^\perp$ and the $X$-side over $w \in \ker(R)^\perp$, and
+$\sigma^Z(v)$ and $\sigma^X(w)$ commute exactly when $\fieldtr(v \cdot w) = 0$. The
+hypothesis gives $w \in \ker(L)$ for every such $w$, and $v \in \ker(L)^\perp$, so the pairing
+vanishes term by term.
+\end{proof}
+
+\effortHard
+
+\begin{lemma}[Completeness of introspection]
+\label{lem:intro-completeness}
+\ledgernode{1.2.3.2}
+\uses{def:intro-verifier,def:pcc,lem:pauli-linear-fourier,lem:pauli-commute-criterion}
+If $\verifier_{2^n}$ has a value-$1$ PCC strategy, then $\vint_n$ has one: the players
+measure their EPR halves in the bases the sampled question prescribes and then play the
+value-$1$ strategy of $\verifier_{2^n}$ on the question they have obtained. Every test of the
+decider accepts with certainty, and the resulting strategy is again projective, consistent
+and commuting.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:pauli-linear-fourier,lem:pauli-commute-criterion}
+Lemma~\ref{lem:pauli-linear-fourier} identifies the honest sampling measurement with a Pauli
+measurement, which is what the Pauli test checks; Lemma~\ref{lem:pauli-commute-criterion}
+gives the commutation the hiding test needs, the hypothesis
+$\ker(R)^\perp \subseteq \ker(L)$ being exactly the nesting of consecutive conditionally
+linear levels. Consistency and projectivity pass through the construction because each
+player's measurement is a product of commuting projective measurements.
+\end{proof}
+
+\subsubsection{The soundness toolkit}
+
+Soundness needs three groups of lemmas before the induction can start, and they are
+separated here because they are independent of introspection and reusable: a Pauli twirl, a
+conversion from sub-measurements to measurements, and a way to condition on part of a
+question.
+
+\effortHard
+
+\begin{lemma}[The Pauli twirl]
+\label{lem:pauli-twirl}
+\ledgernode{1.2.3.3}
+\uses{def:distance,def:q-value}
+Averaging a measurement against a Pauli operator, on a state that contains EPR pairs,
+replaces it by one that commutes with the Pauli basis, at a controlled cost. The group of
+statements comprises: commuting with the Pauli basis implies commuting with the Pauli
+observables; a mixing lemma for a linear map and one for a unitary; and a lemma combining
+the two sides. The error accumulates additively through the group.
+\end{lemma}
+
+\effortMedium
+
+\begin{lemma}[Close to a sub-measurement implies close to a measurement]
+\label{lem:close-submeasurement}
+\ledgernode{1.2.3.3}
+\uses{def:distance}
+Let $\{A^x_a\}$ be a projective measurement, let each $B^x_a$ be positive semidefinite with
+$\sum_a B^x_a \leq \Id$, and let $\{C^x_a\}$ be a POVM with $C^x_a \geq B^x_a$ for all $x$
+and $a$. If $A^x_a \approx_\eps B^x_a$ on average over $x$, then
+$A^x_a \approx_{\sqrt{\eps}} C^x_a$.
+\end{lemma}
+
+\begin{proof}
+The gap $\sum_a (C^x_a - B^x_a)$ is a positive operator of small expectation, because
+$\{A^x_a\}$ sums to $\Id$ and is $\eps$-close to $B$; Cauchy--Schwarz turns that bound on the
+expectation into a bound on the Hilbert--Schmidt distance, which is where the square root
+comes from.
+\end{proof}
+
+\effortHard
+
+\begin{lemma}[Conditioning on part of a question]
+\label{lem:conditional-measurement}
+\ledgernode{1.2.3.4}
+\uses{def:distance,def:inconsistency}
+On a state that factors as a question part times an answer part, a projective measurement of
+the question part induces a distribution on it, and consistency or commutation statements
+about the unconditioned measurements transfer to the measurements conditioned on the sampled
+question. In particular, if
+$\sum_{x, y, z} \bra{\psi} A^y_{x, z} \ot B_{x, y, z} \ket{\psi} \geq 1 - \delta$ with
+$\{B_{x,y,z}\}$ projective, then
+$\Id \ot B_{x, y, z} \approx_\delta A^y_{x, z} \ot B_{x, y}$.
+\end{lemma}
+
+\subsubsection{Soundness}
+
+\effortHard
+
+\begin{lemma}[Extracting a Pauli strategy]
+\label{lem:intro-pauli-extract}
+\ledgernode{1.2.3.5}
+\uses{def:intro-verifier,thm:qld,lem:pauli-twirl,def:distance}
+There is $\delta_1(\eps, R) = a\bigl( (\log R)^a \eps^b + (\log R)^{-b} \bigr)$, with $a > 1$
+and $0 < b < 1$ depending only on $\ell$, such that any strategy for $\vint_n$ of value
+$1 - \eps$ is within $\delta_1$ of a projective strategy whose state is
+$\ket{\EPR_2}^{\ot Q} \ot \ket{\aux}$ and whose Pauli-test measurements are the actual Pauli
+operators $\sigma^W_x$ on those $Q$ qubits, for both players.
+\end{lemma}
+
+\begin{proof}
+\uses{thm:qld,lem:pauli-twirl}
+This is Theorem~\ref{thm:qld} applied to the Pauli-test part of the decider, followed by the
+twirl of Lemma~\ref{lem:pauli-twirl} to replace the strategy's own measurements by ones that
+commute with the Pauli basis.
+\end{proof}
+
+\effortHard
+
+\begin{lemma}[The sampling test forces the question distribution]
+\label{lem:intro-sampling-test}
+\ledgernode{1.2.3.5}
+\uses{lem:intro-pauli-extract,def:cl-function,def:inconsistency}
+For the strategy of Lemma~\ref{lem:intro-pauli-extract} and each level
+$k \in \{1, \ldots, \ell\}$, the player's reported question agrees with the $Z$-measurement
+of the conditionally linear map at that level up to $\delta$, and the two players' reports
+agree with each other up to $\delta$. Consequently the reported $y$ is distributed as the
+conditionally linear distribution of $\verifier_{2^n}$, up to $\delta$.
+\end{lemma}
+
+\effortHard
+
+\begin{lemma}[The hiding test]
+\label{lem:intro-hiding-test}
+\ledgernode{1.2.3.6}
+\uses{lem:intro-sampling-test,lem:conditional-measurement,def:distance}
+For each level $k$, a player's answer on the $\mathtt{Hide}_k$ type is $\delta$-close to one
+computed from the level-$k$ complement alone, and the chain of these relations across levels
+$j \leq k$ is stable: knowing the answer at level $j$ tells a player nothing about the
+conditionally sampled part at level $k$ beyond what it is entitled to. The rigidity form
+states this as closeness of the hiding measurement to an explicit product of $Z$- and
+$X$-measurements on the complements.
+\end{lemma}
+
+\effortHard
+
+\begin{lemma}[The soundness induction]
+\label{lem:intro-induction}
+\ledgernode{1.2.3.7}
+\uses{lem:intro-sampling-test,lem:intro-hiding-test,lem:conditional-measurement,lem:close-submeasurement,def:ent}
+For each level $k \in \{1, \ldots, \ell + 1\}$ there are ancilla states and projective
+measurements, acting on the player's space together with the ancilla, which reproduce the
+strategy's behaviour on the first $k$ levels while acting as the identity on the subspace the
+first $k$ levels have already fixed. Running the induction to $k = \ell + 1$ converts a
+strategy for $\vint_n$ of value $1 - \eps$ into a strategy for $\verifier_{2^n}$ of value
+$1 - \delta(\eps, n)$ on a state of comparable entanglement, which is the soundness and
+entanglement content of Theorem~\ref{thm:introspection}.
+\end{lemma}
+
+\begin{remark}[One step of the induction is documented rather than repaired]
+\label{rem:intro-commutation-gap}
+\uses{lem:intro-induction,lem:conditional-measurement}
+The induction's $Z$-step applies a commutation analysis to \emph{fine} operators where the
+surrounding chain supplies only the \emph{coarse} ones. The audit recorded the repair recipe
+in the source at the point of use --- re-run the commutation analysis with the coarse
+operators, exactly as the parallel $X$-step already does --- but left the rewrite itself to
+the authors, because it touches a fifty-line induction. So this is the one place in
+introspection where the blueprint is ahead of the source: the statement of
+Lemma~\ref{lem:intro-induction} is the intended one, and a formalization will have to carry
+out the coarse-operator version rather than transcribe what is printed. It is the only known
+open step in the section; everything else was verified line by line, including the whole
+twirl toolkit and the final constant arithmetic.
+\end{remark}
+
+\subsubsection{The theorem}
+
 \begin{theorem}[Introspection]
 \label{thm:introspection}
-\ledgernode{1.2, 1.2.3, 1.2.3.1, 1.2.3.2, 1.2.3.3, 1.2.3.4, 1.2.3.5, 1.2.3.6, 1.2.3.7, 1.2.3.8}
-\uses{def:normal-verifier,def:lambda-bounded,def:pcc,thm:qld,def:cl-function}
+\ledgernode{1.2, 1.2.3.8}
+\uses{def:normal-verifier,def:lambda-bounded,def:pcc,thm:qld,def:cl-function,def:intro-verifier,lem:intro-complexity,lem:intro-completeness,lem:intro-induction}
 There is a polynomial-time Turing machine $\ComputeIntroVerifier$ that on input
 $(\verifier, \lambda, \ell)$ returns a $5$-level normal form verifier $\vint =
 (\sint, \dint)$ with
@@ -268,7 +539,7 @@ conventions and index arithmetic that the PCP layer and the composition consume.
 
 \begin{theorem}[The bespoke PCP for deciders]
 \label{thm:pcp-decider}
-\ledgernode{1.3.3, 1.3.3.1, 1.3.3.2, 1.3.3.3, 1.3.3.4}
+\ledgernode{1.3.3}
 \uses{lem:decoupled-5sat,lem:schwartz-zippel,thm:qld,def:decider}
 There is a verifier $\pcpverifier$ which, given a valid decider specification $(\decider,
 n, T, Q, \sigma, x, y)$ --- validity requiring $\abs{\decider} \leq \sigma$, $\max\{Q,
@@ -292,6 +563,62 @@ arithmetization. Four obligations are separate in the source and stay separate h
 proof format and query structure, completeness, the zero-testing argument with its error
 bounds, and the complexity bound the composition consumes.
 \end{proof}
+
+The theorem has four obligations, and they are separate in the source because they fail
+separately.
+
+\effortMedium
+
+\begin{lemma}[The PCP's proof format and query structure]
+\label{lem:pcp-format}
+\ledgernode{1.3.3.1}
+\uses{thm:pcp-decider,lem:decoupled-5sat}
+The proof $\Pi$ that $\pcpverifier$ reads is well defined: it consists of the low-degree
+encodings $g_1, g_2$ of the two padded answer prefixes, together with the auxiliary
+polynomials the zero-test needs, in the stated input formats; and $\pcpverifier$'s queries and
+decision rule are determined by them.
+\end{lemma}
+
+\effortMedium
+
+\begin{lemma}[PCP completeness]
+\label{lem:pcp-completeness}
+\ledgernode{1.3.3.2}
+\uses{lem:pcp-format,thm:succinct-sat}
+If the decider accepts $(n, x, y, a, b)$ within $T$ steps, then the honestly generated proof
+$\Pi$ --- the low-degree encodings of the actual answers, with the auxiliary polynomials
+computed from them --- makes $\pcpverifier$ accept with certainty.
+\end{lemma}
+
+\effortHard
+
+\begin{lemma}[PCP soundness]
+\label{lem:pcp-soundness}
+\ledgernode{1.3.3.3}
+\uses{lem:pcp-format,lem:schwartz-zippel,thm:qld}
+If $\pcpverifier$ accepts with probability greater than $\tfrac12$ on views consistent with
+low-degree $g_1, g_2$, then the decider accepts the answers those two polynomials decode to.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:schwartz-zippel}
+Zero-testing of the constraint polynomial against a zero basis, with
+Lemma~\ref{lem:schwartz-zippel} bounding the probability that a nonzero polynomial vanishes
+on a random point. The stated error bounds are what the composition consumes, so a
+formalization should carry them rather than an asymptotic form.
+\end{proof}
+
+\effortMedium
+
+\begin{lemma}[PCP complexity]
+\label{lem:pcp-complexity}
+\ledgernode{1.3.3.4}
+\uses{lem:pcp-format}
+$\pcpverifier$ runs in time $\poly(\log T, \log n, Q, \sigma)$, with circuit-size and
+randomness bounds of the same form. These are the bounds the composition of
+Remark~\ref{rem:ar-composition} consumes; in particular the randomness bound is what makes the
+answer-reduced sampler conditionally linear.
+\end{lemma}
 
 \begin{remark}[Why $m$ is a power of two]
 \label{rem:pcp-power-of-two}

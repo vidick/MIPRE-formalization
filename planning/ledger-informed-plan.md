@@ -183,6 +183,92 @@ Lipschitz bound on the Born value in the entries of the data. The three transpor
 lemmas proved for `lem:povm-value-eq` (`dotProduct_mulVec_submatrix`,
 `dotProduct_mulVec_conj`, `dotProduct_comp_equiv`) are the tools for that.
 
+## The umbrellas are gone, 2026-09-13
+
+Read the section below for what the coverage figure used to hide. It is now honest: **83
+annotation sites, the largest naming 4 nodes, 55 naming exactly one**, and the
+annotation-spread report in `scripts/ledger-sync.py` prints nothing because there is nothing
+to report. Four rounds of work got there.
+
+| was | nodes on it | now |
+|---|---|---|
+| `thm:introspection` | 10 | a five-part section, 12 statements + 2 remarks |
+| `thm:qld` | 23 | a five-stage section, 15 statements + 1 architecture remark |
+| `thm:lidt-soundness` | 28 | the reduction written out, + two theorems re-homed |
+| `thm:pcp-decider` | 5 | four obligations split out |
+
+Four findings came out of the reading, in rough order of how much they change things.
+
+**Two blueprint theorems were themselves nodes of the subtree they were hidden under.**
+`thm:orthonormalization` is node `1.2.1.7.1` and `thm:almost-sync` is node `1.2.1.7.2` —
+both have been in this blueprint since before the ledger work began, and both carried *no*
+annotation while their own nodes sat bulk-listed under `thm:lidt-soundness`. The umbrella
+annotation created that mis-homing and then hid it. This is the clearest evidence that
+counting nodes was the wrong metric.
+
+**`thm:almost-sync` is off the pipeline but inside an import.** The blueprint says it is not
+needed, and that is true of the pipeline: soundness runs in `val*` end to end. But
+`lem:tensor-codes-bipartite` (node `1.2.1.7.8`) consumes it, and `thm:lidt-soundness` reduces
+to that — so the dependency is real, transitively, through an import. It is benign because
+the Lean proof of `lowIndividualDegree_soundness` is sorry-free, so the chain already
+discharges it. The planning consequence: issues #22/#23 are about the *pipeline's* optional
+use of it, not about this one. `rem:almost-sync-transitive` states this.
+
+**`thm:lidt-soundness` is an input to `thm:qld`**, at node `1.2.2.13`: the simultaneous global
+measurement comes from applying the classical test's quantum soundness to padded points with
+parameters `(q, 4m, d)`. The one background result whose Lean proof is finished feeds the one
+that was the largest gap, which is the right way round and means that stage's analytic core is
+done. `rem:qld-architecture`.
+
+**Node `1.2.2.3` is not `thm:orthonormalization`.** That theorem assumes near-projectivity;
+the qld appendix needs bipartite consistency, and node `1.2.2.3.1` is the Cauchy–Schwarz
+bridge between them. It is `cor:ortho-from-consistency`, with the bridge written out — not a
+duplicate theorem, which is what assuming they matched would have produced.
+
+Also recorded along the way: `rem:intro-lperp` (the canonical complement of a basis of
+`ker(M)` is not a basis of `ker(M)^⊥`, with an `𝔽₂²` counterexample), and
+`rem:intro-commutation-gap` (the one open step in introspection, where the blueprint is
+deliberately ahead of the source).
+
+Cheapest new Lean targets this exposed, both in sections otherwise marked hard:
+`lem:pauli-linear-fourier` and `lem:pauli-commute-criterion` — the two exact identities
+introspection's completeness rests on, finite-field linear algebra with no analysis in them.
+`lem:qld-sublines` is the most self-contained statement in the qld appendix.
+
+## What "123/123 accounted for" does and does not mean
+
+Read this before trusting the coverage figure. `scripts/ledger-sync.py` verifies that every
+cited node id *resolves* against the snapshot. It does not verify that the blueprint says
+anything about a node, and 123/123 is a citation figure, not a description figure.
+
+The distinction is large. Of 126 citations across 40 sites, **66 sit on four umbrella sites**:
+
+| site | nodes cited | statement |
+|---|---|---|
+| `thm:lidt-soundness` | 28 | 1533 chars |
+| `thm:qld` | 23 | 1244 chars |
+| `thm:introspection` | 10 | 1020 chars |
+| `thm:pcp-decider` | 5 | 1065 chars |
+
+**64 of the 123 nodes are cited only** — their ids appear solely on an umbrella, so the
+blueprint asserts the umbrella statement and says nothing about their substructure. 59 have
+a statement written for them or for a small group containing them.
+
+Only one of the umbrellas is defensible. `thm:lidt-soundness` has a *complete, sorry-free*
+Lean proof, so its 28 sub-nodes genuinely are the internals of something finished
+(`rem:lidt-formalized`). `thm:qld` and `thm:introspection` are unproved statements whose
+substructure the blueprint does not describe at all — 33 nodes on two umbrellas, and this is
+the real remaining gap in the chapter-6 accounting. Nothing about the question-reduction
+pipeline's internals is written down: the 3-level typed verifier, the Hide types, the
+cross-check against the Pauli basis test, the separate completeness and soundness arguments,
+and for `thm:qld` the five-file appendix that holds the actual proof.
+
+`ledger-sync.py` now prints an "annotation spread" report on every run naming the umbrellas
+and the count they carry, and the ledger explorer marks each node *described* or *cited
+only*, so the weaker reading cannot hide behind the stronger figure. Closing the gap means
+writing the substructure of `thm:qld` and `thm:introspection` as real statements — the same
+work stages 1.5 and 1.6 got, which is why those stages have no umbrellas.
+
 ## The ledger is fully accounted for, 2026-09-13
 
 123 of 123 nodes. Stages 1.1 (21), 1.4 (8), 1.7 (1) and the root (1) closed the remainder,
