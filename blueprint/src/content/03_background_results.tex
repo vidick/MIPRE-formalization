@@ -142,6 +142,7 @@ needed for the synchronous framework~\cite{dlS21,Vid22}.
 
 \begin{theorem}[Almost-synchronous strategies are near synchronous strategies]
 \label{thm:almost-sync}
+\ledgernode{1.2.1.7.2, 1.2.1.7.2.1, 1.2.1.7.2.2, 1.2.1.7.2.3}
 \uses{def:sync-game,def:sync-value,def:q-value,def:inconsistency}
 There are universal constants $C > 0$ and $0 < c \leq 1$ such that the following holds.
 Let $\game$ be a synchronous game whose question distribution gives the diagonal
@@ -248,6 +249,7 @@ only available route.
 
 \begin{theorem}[Orthonormalization]
 \label{thm:orthonormalization}
+\ledgernode{1.2.1.7.1, 1.2.1.7.1.1, 1.2.1.7.1.2, 1.2.1.7.1.3}
 \uses{def:distance}
 There is a universal constant $C > 0$ such that the following holds. Let $(\cal{M},
 \tau)$ be a von Neumann algebra with a normal faithful tracial state (for the finite-%
@@ -368,10 +370,7 @@ parametrization.
 
 \begin{theorem}[Quantum soundness of the classical low individual degree test]
 \label{thm:lidt-soundness}
-\ledgernode{1.2.1, 1.2.1.1, 1.2.1.2, 1.2.1.3, 1.2.1.4, 1.2.1.5, 1.2.1.6, 1.2.1.7, 1.2.1.7.1,
-1.2.1.7.1.1, 1.2.1.7.1.2, 1.2.1.7.1.3, 1.2.1.7.2, 1.2.1.7.2.1, 1.2.1.7.2.2,
-1.2.1.7.2.3, 1.2.1.7.2.4, 1.2.1.7.3, 1.2.1.7.4, 1.2.1.7.5, 1.2.1.7.6, 1.2.1.7.7,
-1.2.1.7.8, 1.2.1.8, 1.2.1.9, 1.2.1.9.1, 1.2.1.9.2, 1.2.1.9.3}
+\ledgernode{1.2.1}
 \uses{def:lidt,def:tensor-strategy,def:inconsistency}
 \lean{MIPRE.LIDT.lowIndividualDegree_soundness}
 \leanok
@@ -424,6 +423,181 @@ $k = 0$. The parameter $k$ remains free: the error carries both a factor $k^2$ a
 term $e^{-k/(2560000m^2)}$, so no single choice of $k$ reduces it to a function of
 $(\eps, m, d, q)$; a corollary in the shape of $\delta_{qld}$ below is a separate
 derivation.
+
+
+\subsubsection{How Theorem~\ref{thm:lidt-soundness} is proved}
+
+The proof is a reduction to a \emph{two-prover tensor code test}, and the reduction is the
+paper's own; only the tensor code theorem is imported. This matters for reading the Lean
+development, whose proof of Theorem~\ref{thm:lidt-soundness} follows the same shape
+(Remark~\ref{rem:lidt-formalized}).
+
+\effortMedium
+
+\begin{lemma}[Setup, and the two tests are not the same test]
+\label{lem:lidt-reduction-setup}
+\ledgernode{1.2.1.1, 1.2.1.2}
+\uses{def:lidt,def:tensor-strategy}
+Let $C$ be the Reed--Solomon code of degree $d$ over $\F_q$. The codewords of $C^{\ot m}$ are
+exactly the evaluation tables of $m$-variate polynomials of individual degree at most $d$. The
+low individual degree test is \emph{not} the two-prover tensor code test --- the two differ in
+which lines they sample and how they label answers --- so a strategy for the former must be
+converted, and the converted strategy $\strategy'$ is well defined and projective: points by
+reversing the coordinate order, lines by choosing a seed in the fibre of size $q/m$ with
+answers relabelled through the parametrization of the line, pairs by restriction.
+\end{lemma}
+
+\effortHard
+
+\begin{lemma}[Transfer of the line and pair tests]
+\label{lem:lidt-test-transfer}
+\ledgernode{1.2.1.3, 1.2.1.4}
+\uses{lem:lidt-reduction-setup,def:lidt}
+Assume $m \mid q$. Then a uniform axis-parallel line of $[q]^m$ together with a uniform seed
+from its fibre and a uniform point on it induces exactly the axis-parallel-line distribution
+the tensor code test uses; and for two independent uniform points of a subcube fixing the last
+$j - 1$ coordinates, the pair (point, difference) is distributed as the diagonal-line test
+requires, the seed law $\Pr[\chi(s) = i] \propto q^{i-1}$ matching the conditional law of the
+low individual degree test.
+\end{lemma}
+
+\begin{proof}
+The line case needs the conditional law of the seed given the line, which is immediate from
+the joint distribution rather than part of the cited normal form; the divisibility $m \mid q$ is
+where it is used, and is the same hypothesis that appears in
+Remark~\ref{rem:pcp-power-of-two} for the same reason.
+\end{proof}
+
+\effortMedium
+
+\begin{lemma}[Transfer of synchronicity]
+\label{lem:lidt-sync-transfer}
+\ledgernode{1.2.1.5}
+\uses{lem:lidt-reduction-setup,def:inconsistency,lem:schwartz-zippel}
+Points synchronicity of $\strategy'$ fails with probability at most $9\eps$, and lines
+synchronicity with probability at most $81\eps + d/q$.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:schwartz-zippel}
+A triangle chain through the other player's point measurement, plus the observation that two
+distinct univariate polynomials of degree $d$ agree at no more than $d$ of the $q$ points,
+which is Lemma~\ref{lem:schwartz-zippel} in one variable.
+\end{proof}
+
+\effortMedium
+
+\begin{lemma}[Summation, derandomization, and the parameter choice]
+\label{lem:lidt-derandomize}
+\ledgernode{1.2.1.6, 1.2.1.8}
+\uses{lem:lidt-test-transfer,lem:lidt-sync-transfer,thm:tensor-codes}
+Summing the per-subtest bounds with the tensor code test's weights gives expected total failure
+at most $\eps' = C(\eps + md/q)$ over the independent uniform choices of seeds, so some
+deterministic choice achieves $\eps'$. For the Reed--Solomon code the number of codeword
+coefficients is $t = d + 1$, and $k = m^3 d + 12m(d+1)$ satisfies the tensor code theorem's
+hypothesis $k \geq 12mt$ for \emph{all} $m, d \geq 1$ while keeping $e^{-k/m^2} \leq e^{-md}$ and
+$k = \poly(m, d)$.
+\end{lemma}
+
+\effortHard
+
+\begin{theorem}[Two-prover tensor code test]
+\label{thm:tensor-codes}
+\ledgernode{1.2.1.7, 1.2.1.7.3}
+\uses{def:tensor-strategy,def:inconsistency,thm:orthonormalization,thm:almost-sync}
+A two-prover strategy passing the two-prover tensor code test for $C^{\ot m}$ with probability
+$1 - \eps'$, with the free parameter $k \geq 12mt$, is close to one measuring codewords of
+$C^{\ot m}$, with error
+$\eta = \poly(m, t, k) \cdot \poly\bigl( \eps', n^{-1}, e^{-\Omega(k/m^2)} \bigr)$.
+\end{theorem}
+
+\begin{proof}
+Imported from~\cite{JNVWY21tensor}, in the published form. The source is vendored and was
+audited in full; the statement above is its synchronous form instantiated at the free
+parameter, and Lemma~\ref{lem:tensor-codes-bipartite} is the two-prover form the reduction
+actually consumes.
+\end{proof}
+
+\effortHard
+
+\begin{lemma}[The induction inside the tensor code theorem]
+\label{lem:tensor-codes-induction}
+\ledgernode{1.2.1.7.4, 1.2.1.7.5}
+\uses{thm:tensor-codes,lem:tensor-codes-tools}
+The theorem is proved by induction on the number of tensor factors. For a single factor a
+synchronous strategy passing the test yields a measurement over codewords of $C$ with the
+claimed consistency. The step from $m$ to $m+1$ composes the two tools of
+Lemma~\ref{lem:tensor-codes-tools}, and the closing arithmetic propagates the error terms with
+universal constants.
+\end{lemma}
+
+\effortHard
+
+\begin{lemma}[Self-improvement and pasting]
+\label{lem:tensor-codes-tools}
+\ledgernode{1.2.1.7.6, 1.2.1.7.7}
+\uses{thm:orthonormalization,def:distance}
+Two tools drive the induction. \emph{Self-improvement}: a measurement family that almost
+satisfies the test's conditions can be replaced by an exactly projective family that is
+approximately consistent, at controlled error. \emph{Pasting}: measurements for the first $j$
+coordinates and for coordinate $j+1$ that approximately commute on average --- which the
+subcube commutation test certifies --- can be pasted into a joint measurement over the
+restricted tensor code.
+\end{lemma}
+
+\effortHard
+
+\begin{lemma}[From the synchronous to the two-prover form]
+\label{lem:tensor-codes-bipartite}
+\ledgernode{1.2.1.7.8}
+\uses{thm:tensor-codes,thm:almost-sync}
+The two-prover form of Theorem~\ref{thm:tensor-codes} follows from the synchronous form by
+symmetrizing the strategy --- the swap construction, which preserves the passing probability
+--- and then applying Theorem~\ref{thm:almost-sync} with a concavified error function.
+\end{lemma}
+
+\begin{remark}[Almost-synchronicity is off the pipeline but inside an import]
+\label{rem:almost-sync-transitive}
+\uses{thm:almost-sync,lem:tensor-codes-bipartite,thm:lidt-soundness,rem:almost-sync-hypothesis}
+This is worth stating plainly, because the blueprint elsewhere says
+Theorem~\ref{thm:almost-sync} is not needed, and that is only true of the pipeline. The
+pipeline does not invoke it: soundness is carried in $\valstar$ from end to end, so no
+transport from $\synval$ is required (Remark~\ref{rem:almost-sync-hypothesis} explains why its
+hypothesis would not even be available at the outer end). But
+Lemma~\ref{lem:tensor-codes-bipartite} consumes it, and
+Theorem~\ref{thm:lidt-soundness} reduces to that lemma --- so the blueprint depends on
+almost-synchronicity \emph{transitively, through an import}, and cannot simply drop it.
+
+What makes this benign rather than alarming is that the dependency is already discharged in
+Lean. The proof of \texttt{MIPRE.LIDT.lowIndividualDegree\_soundness} is sorry-free
+(Remark~\ref{rem:lidt-formalized}), so everything its chain needs --- this included --- is
+proved from Mathlib in the vendored development. The practical consequence is for planning
+rather than for soundness: issues on the synchronous transport are about the
+\emph{pipeline's} use of Theorem~\ref{thm:almost-sync}, which is genuinely optional, and not
+about this one, which is not.
+\end{remark}
+
+\effortHard
+
+\begin{lemma}[Several codewords: the simultaneity reduction]
+\label{lem:lidt-ldc}
+\ledgernode{1.2.1.9, 1.2.1.9.1, 1.2.1.9.2, 1.2.1.9.3}
+\uses{lem:lidt-derandomize,def:lidt}
+The general case of Theorem~\ref{thm:lidt-soundness}, with several codewords tested at once,
+reduces to the single-codeword case \emph{in the paper}, importing nothing further. The
+reduction replaces the parameters $(q, m, d, \mathrm{ldc})$ by $(q, M, d, 1)$ where $M$ is the
+least power of two with $M \geq m + \mathrm{ldc}$ --- forced by the divisibility $M \mid q$, and
+satisfying $M \leq 4m\,\mathrm{ldc}$ --- leaving the degree unchanged. The resulting error is
+$\delta_{lidt}(\eps, q, m, d, \mathrm{ldc}) = a (dm\,\mathrm{ldc})^a \bigl( \eps^b + q^{-b} +
+2^{-bmd} \bigr)$, the $\mathrm{ldc}^a$ factor and the substitution $m \mapsto M$ being the only
+changes.
+\end{lemma}
+
+\begin{proof}
+The construction is modelled on the corresponding derivation in~\cite{NW19}, but is written out
+for this test rather than cited: the vendored audit of that source confirmed that the theorem
+it would have imported is not the one needed here.
+\end{proof}
 
 \subsection{The quantum low individual degree test}
 \label{sec:rr-qld}
