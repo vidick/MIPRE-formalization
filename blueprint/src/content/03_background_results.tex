@@ -470,9 +470,7 @@ not the exact identity it replaces.
 
 \begin{theorem}[Pauli basis test / quantum low individual degree test]
 \label{thm:qld}
-\ledgernode{1.2.2, 1.2.2.1, 1.2.2.2, 1.2.2.3, 1.2.2.3.1, 1.2.2.4, 1.2.2.4.2, 1.2.2.5, 1.2.2.6,
-1.2.2.7, 1.2.2.7.1, 1.2.2.7.2, 1.2.2.7.3, 1.2.2.8, 1.2.2.9, 1.2.2.10, 1.2.2.11,
-1.2.2.12, 1.2.2.13, 1.2.2.14, 1.2.2.15, 1.2.2.16, 1.2.2.17}
+\ledgernode{1.2.2, 1.2.2.17}
 \uses{def:q-value,def:distance,thm:ms-rigidity,thm:lidt-soundness}
 There exists a function
 \begin{equation*}
@@ -516,6 +514,348 @@ proof passes through --- $\kappa$-convexity requires $c_1 \leq 1$, the synchroni
 defect obeys $\delta_{\mathrm{sync}} \leq 4\eps$ rather than $3\eps$, and one corner block
 pairs with a transpose --- none checked here, none affecting the statement above, all
 relevant to whoever writes its proof.
+
+
+\subsubsection{The shape of the soundness proof}
+
+\begin{remark}[How the soundness proof of Theorem~\ref{thm:qld} is organized]
+\label{rem:qld-architecture}
+\uses{thm:qld,thm:lidt-soundness,thm:orthonormalization,thm:ms-rigidity}
+The soundness half of Theorem~\ref{thm:qld} is not proved in the main text of~\cite{JNVWY21qld};
+it is a five-file appendix, and it is the largest single proof the pipeline imports. Its
+architecture is worth stating before its pieces, because the pieces are unreadable without it.
+There are five stages.
+\begin{enumerate}
+\item \textbf{Preliminaries}: three utility lemmas about closeness, one of which
+  (Corollary~\ref{cor:ortho-from-consistency}) is used on almost every page.
+\item \textbf{Win implications}: unpack ``succeeds with probability $1 - \eps$'' into one
+  consistency or commutation statement per subtest (Lemma~\ref{lem:qld-win}).
+\item \textbf{Expansion}: adjoin EPR ancillas and replace the strategy's measurements by ones
+  on the enlarged space that exactly commute across the two bases
+  (Lemmas~\ref{lem:qld-expanded-points} and~\ref{lem:qld-expanded-lines}).
+\item \textbf{Combining}: build a \emph{single} measurement returning both the $X$- and the
+  $Z$-polynomial, by padding the ambient space and applying the classical low individual
+  degree test to the padded points (Lemma~\ref{lem:qld-simultaneous}).
+\item \textbf{Separation and the swap isometry}: extract exact Pauli operators from that
+  single measurement and rotate them onto honest EPR pairs
+  (Lemmas~\ref{lem:qld-exact-paulis} and~\ref{lem:qld-swap}).
+\end{enumerate}
+Two features of this decomposition matter for a formalization. Stage 4 \emph{consumes}
+Theorem~\ref{thm:lidt-soundness}: the simultaneous measurement is obtained by applying the
+classical test's quantum soundness to the padded point measurements with parameters
+$(q, 4m, d)$ and a single codeword. So the one background result whose Lean proof is already
+finished and sorry-free (Remark~\ref{rem:lidt-formalized}) is an input to the one that is the
+largest remaining gap --- which is the right way round, and means the hard analytic core of
+stage 4 is done. And stage 5, not stage 4, is where the exactness comes from: the Pauli group
+relations are recovered \emph{exactly}, not approximately, which is what lets the swap
+isometry be the standard one.
+\end{remark}
+
+\subsubsection{Preliminaries}
+
+\effortEasy
+
+\begin{lemma}[Averaging preserves closeness]
+\label{lem:qld-averaging}
+\ledgernode{1.2.2.1}
+\uses{def:distance}
+Let $A^x \approx_\delta B^x$ on average over $x \sim \mu$, and let $\alpha_x$ be coefficients
+with $\abs{\alpha_x} \leq 1$. Then $\E_x \alpha_x A^x \approx_\delta \E_x \alpha_x B^x$.
+\end{lemma}
+
+\begin{proof}
+Triangle inequality and Jensen. Note the hypothesis is $\abs{\alpha_x} \leq 1$, not
+$\abs{\alpha_x} = 1$: the lemma is used with genuinely contractive coefficients.
+\end{proof}
+
+\effortEasy
+
+\begin{lemma}[From POVM elements to generalized observables]
+\label{lem:qld-povm-to-obs}
+\ledgernode{1.2.2.2}
+\uses{def:distance,lem:qld-averaging}
+Let $\{A^x_a\}$ and $\{B^x_a\}$ be POVMs with a common outcome set $\mA$, and let $\alpha_a$
+be coefficients of unit modulus. If $A^x_a \approx_\delta B^x_a$ then the generalized
+observables $A^x = \sum_a \alpha_a A^x_a$ and $B^x = \sum_a \alpha_a B^x_a$ satisfy
+$A^x \approx_{\abs{\mA} \delta} B^x$.
+\end{lemma}
+
+\effortMedium
+
+\begin{corollary}[Orthonormalization from consistency]
+\label{cor:ortho-from-consistency}
+\ledgernode{1.2.2.3, 1.2.2.3.1}
+\uses{thm:orthonormalization,def:inconsistency,def:distance}
+There is $\eta(\delta) = O(\delta)$ such that the following holds. Let $\{Q_a\}$ be a POVM on
+$\mH_\alice$ and $\{R_a\}$ a POVM on $\mH_\bob$ that are $\delta$-consistent on
+$\ket{\psi}$. Then there is a \emph{projective} measurement $\{P_a\}$ on $\mH_\alice$ with
+$P_a \ot \Id \approx_{\eta(\delta)} Q_a \ot \Id$ on $\ket{\psi}$.
+\end{corollary}
+
+\begin{proof}
+\uses{thm:orthonormalization}
+This is not Theorem~\ref{thm:orthonormalization} restated: that theorem's hypothesis is
+near-projectivity, $\sum_a \tau(Q_a - Q_a^2) \leq \eps$, while what the appendix has is
+bipartite consistency. The bridge is a Cauchy--Schwarz step. Write
+$\gamma = \sum_{a \neq b} \bra{\psi} Q_a \ot R_b \ket{\psi}$, so that
+$\sum_a \bra{\psi} Q_a \ot R_a \ket{\psi} = 1 - \gamma$. Since
+$\sum_a R_a^2 \leq \sum_a R_a = \Id$, Cauchy--Schwarz over $a$ gives
+$\sum_a \bra{\psi} Q_a^2 \ot \Id \ket{\psi} \geq (1 - \gamma)^2 \geq 1 - 2\gamma$, which is
+near-projectivity with $\eps = 2\gamma$. Theorem~\ref{thm:orthonormalization}, applied to the
+von Neumann algebra $\cal{L}(\mH_\alice) \ot \Id$ with the normal vector state of
+$\ket{\psi}$, then returns the projective family, necessarily of the form $P_a \ot \Id$.
+\end{proof}
+
+\subsubsection{What winning implies}
+
+\effortHard
+
+\begin{lemma}[Win implications]
+\label{lem:qld-win}
+\ledgernode{1.2.2.4, 1.2.2.4.2}
+\uses{thm:qld,thm:ms-rigidity,def:inconsistency,def:distance}
+Assume $6md \leq q$. A strategy succeeding with probability $1 - \eps$ in the Pauli basis test
+satisfies, with the conditional weight of each subtest carried explicitly, a list of
+consistency and commutation relations: self-consistency of the point measurements; the
+low-degree subtest's relations; the anticommutation relations coming from the Magic Square
+subtest; the relations tying the $(\mathtt{Point}, W)$ measurements to the
+$(\mathtt{Line}, W)$ ones; and Pauli-basis consistency, commutation, and
+commutation-consistency.
+\end{lemma}
+
+\begin{proof}
+\uses{thm:ms-rigidity}
+Each item is the definition of the value of the corresponding subtest, divided by the
+probability that the subtest is selected. The only non-elementary input is the
+anticommutation item, which is where Theorem~\ref{thm:ms-rigidity} --- the admitted node --- is
+consumed, and it is consumed exactly once.
+\end{proof}
+
+\subsubsection{Expansion: making the two bases commute exactly}
+
+\effortHard
+
+\begin{lemma}[Expanded point measurements]
+\label{lem:qld-expanded-points}
+\ledgernode{1.2.2.5}
+\uses{lem:qld-win,cor:ortho-from-consistency,def:distance}
+Adjoin EPR ancilla registers to $\ket{\psi}$. There are measurements
+$\widehat{M}^{(\mathtt{Point}, W), u}$ on each player's space together with its ancilla such
+that, with $\delta_{\mathrm{acom}}(\eps) = O(\sqrt{\eps})$: they are self-consistent across
+the two sides at error $\eps$, and the $X$-side and $Z$-side coarse observables
+\emph{approximately commute} on the expanded state at error $\delta_{\mathrm{acom}}$.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:qld-win}
+The pivotal step is an exact cancellation of a sign $(-1)^\gamma$ between the strategy's own
+observables, supplied by the anticommutation relations of Lemma~\ref{lem:qld-win}, and the
+ancilla observables. Without the ancillas the two bases only commute up to an error that does
+not improve; with them the sign cancels identically and what is left is the stated
+$\sqrt{\eps}$.
+\end{proof}
+
+\effortHard
+
+\begin{lemma}[Expanded line measurements]
+\label{lem:qld-expanded-lines}
+\ledgernode{1.2.2.6}
+\uses{lem:qld-expanded-points,cor:ortho-from-consistency}
+For each $W \in \{X, Z\}$ and each line $\ell$ there is a \emph{projective} measurement
+$\widehat{M}^{(\mathtt{Line}, W), \ell}_f$, with outcomes the degree-$md$ polynomials on
+$\ell$, such that with $\delta_{\mathrm{Line}}(\eps) = O(\sqrt{\eps})$ it is self-consistent
+over the line--point distribution and consistent with the expanded point measurements of
+Lemma~\ref{lem:qld-expanded-points}, in both the form that compares a line outcome with a
+point outcome and the form that compares the evaluation of the line polynomial at the point.
+\end{lemma}
+
+\begin{proof}
+Projectivity comes from an orthogonality property of the convolution defining the family,
+not from Corollary~\ref{cor:ortho-from-consistency}; consistency in both forms is
+Lemma~\ref{lem:qld-expanded-points} together with the line subtest's relations.
+\end{proof}
+
+\subsubsection{Combining the two bases}
+
+The point of this stage is a single measurement that returns the $X$-polynomial and the
+$Z$-polynomial at once. It is reached by padding the ambient space from $\F_q^m$ to
+$\F_q^{4m}$, so that a point of the padded space encodes a point in each basis together with
+a pair of coefficients, and then applying the classical low individual degree test to the
+padded points.
+
+\effortHard
+
+\begin{theorem}[Exact linearity from approximate linearity]
+\label{thm:linearity}
+\ledgernode{1.2.2.7, 1.2.2.7.1, 1.2.2.7.2, 1.2.2.7.3}
+\uses{def:distance,thm:gowers-hatami}
+Let $\{O^u\}_{u \in \F_2^t}$ be observables satisfying approximate linearity on average,
+$O^u O^{u'} \approx_\delta O^{u + u'}$. Then on an extended space there are \emph{exactly}
+linear observables $\{L^u\}$ --- a representation of $\F_2^t$, with $L^0 = \Id$ --- such that
+$L^u \approx_\delta O^u$ on average over $u$. The error is linear in $\delta$, with no loss in
+the exponent.
+\end{theorem}
+
+\begin{proof}
+Imported from Natarajan and Vidick~\cite{NV17}, whose proof is the Fourier argument: the
+operators $\widehat{A}^u = \E_a (-1)^{a \cdot u} A(a)$ have squares forming a POVM by
+Parseval, Naimark dilates that POVM to a projective family on an extended space, and the
+exactly linear observables are recovered from it by inverting the transform. The source is
+vendored and was audited line by line, including its state-dependent distance toolkit; the
+only facts it needs beyond that are Parseval and Naimark.
+\end{proof}
+
+\effortHard
+
+\begin{lemma}[Combined $XZ$ point measurements]
+\label{lem:qld-combined-points}
+\ledgernode{1.2.2.8}
+\uses{thm:linearity,lem:qld-expanded-points,def:distance}
+There is $\delta_Q(\eps) = \poly(\eps)$ and, for every pair $(x, z) \in \F_q^m \times \F_q^m$,
+a projective measurement $\widehat{Q}^{x, z}_{a, b}$ jointly returning the $X$-value at $x$
+and the $Z$-value at $z$, self-consistent on average over uniform $(x, z)$ and consistent
+with \emph{both} ordered products $\widehat{M}^Z_b \widehat{M}^X_a$ and
+$\widehat{M}^X_a \widehat{M}^Z_b$ of the expanded point measurements. It is built as a Fourier
+transform of the exactly linear family supplied by Theorem~\ref{thm:linearity}. Its marginals
+are not claimed here; they are obtained in Lemma~\ref{lem:qld-pairs-of-lines}.
+\end{lemma}
+
+\effortHard
+
+\begin{lemma}[Pairs of lines]
+\label{lem:qld-pairs-of-lines}
+\ledgernode{1.2.2.9}
+\uses{lem:qld-combined-points,lem:qld-expanded-lines}
+There is $\delta_P(\eps, m, d, q) = \poly(\eps, md/q)$ and, for every pair of lines
+$(\ell_X, \ell_Z)$, a POVM with outcomes pairs of degree-$md$ polynomials, consistent on
+average over the pair-of-lines distribution with the combined point measurements evaluated at
+points of the respective lines.
+\end{lemma}
+
+\effortMedium
+
+\begin{lemma}[Padded point measurements]
+\label{lem:qld-padded-points}
+\ledgernode{1.2.2.10}
+\uses{lem:qld-combined-points}
+Write a point of the padded space $\F_q^{4m}$ as $u = (x, z, \alpha, \beta, w)$. The
+measurement $\widehat{Q}^u$ returning the combined value $\alpha g_X(x) + \beta g_Z(z)$ is
+well defined --- independent of the dummy coordinates $w$ --- projective, self-consistent, and
+consistent with both ordered products of the expanded point measurements. The coarse-graining
+onto the fibres $\{\alpha a + \beta b = c\}$ is justified by character orthogonality.
+\end{lemma}
+
+\effortMedium
+
+\begin{lemma}[The sublines distribution]
+\label{lem:qld-sublines}
+\ledgernode{1.2.2.11}
+\uses{def:lidt}
+There is a distribution over triples $(\ell, \ell_X, \ell_Z)$ --- a line in the padded space
+together with a line in each unpadded copy --- whose $\ell$-marginal is the line marginal of
+the padded space's line--point distribution, whose $(\ell_X, \ell_Z)$-marginals are mixtures
+of the restricted line--point distributions, and for which the evaluation constraints tying
+$f|_\ell$ to the pair $(f_X, f_Z)$ hold pointwise.
+\end{lemma}
+
+\begin{proof}
+Purely combinatorial: the three constraints are checked separately, and nothing quantum
+enters. This is the most self-contained statement in the appendix and a reasonable place to
+start formalizing it.
+\end{proof}
+
+\effortHard
+
+\begin{lemma}[Padded line POVM]
+\label{lem:qld-padded-lines}
+\ledgernode{1.2.2.12}
+\uses{lem:qld-pairs-of-lines,lem:qld-sublines,lem:qld-padded-points}
+There is $\delta_{\mathrm{combine}}(\eps, m, d, q) = m \cdot \poly(\eps, md/q)$ and, for every
+line $\ell$ in the padded space, a POVM with outcomes the degree-$(md + 1)$ polynomials on
+$\ell$, consistent on average over the padded line--point distribution with the padded point
+measurement evaluated at a point of $\ell$.
+\end{lemma}
+
+\effortHard
+
+\begin{lemma}[The simultaneous global measurement]
+\label{lem:qld-simultaneous}
+\ledgernode{1.2.2.13}
+\uses{lem:qld-padded-lines,lem:qld-padded-points,thm:lidt-soundness}
+There is
+$\delta_S(\eps, m, d, q) = a (md)^a \bigl( \eps^b + q^{-b} + 2^{-bmd} \bigr)$ and a projective
+measurement $\widehat{S}_{g_X, g_Z}$ with outcomes pairs of polynomials of individual degree
+at most $d$ on $\F_q^m$, such that for each $W \in \{X, Z\}$ the $W$-marginal evaluated at a
+point is consistent with the expanded $(\mathtt{Point}, W)$ measurement, in the sandwiched
+form $\widehat{M}^X \widehat{M}^Z \widehat{M}^X$ and its mirror.
+\end{lemma}
+
+\begin{proof}
+\uses{thm:lidt-soundness}
+Apply Theorem~\ref{thm:lidt-soundness} --- the quantum soundness of the \emph{classical} test
+--- to the padded point and line measurements, with parameters $(q, 4m, d)$ and a single
+codeword. This is the step at which the finished Lean proof of that theorem becomes an input
+to this one (Remark~\ref{rem:qld-architecture}), and it is why $\delta_S$ has the shape of
+$\delta_{lidt}$ rather than of the errors above it.
+\end{proof}
+
+\subsubsection{Separation and the swap isometry}
+
+\effortMedium
+
+\begin{lemma}[The marginals track the point measurements]
+\label{lem:qld-helper}
+\ledgernode{1.2.2.14}
+\uses{lem:qld-simultaneous,def:distance}
+For $W \in \{X, Z\}$ and on average over $u \in \F_q^m$, the $W$-marginal
+$\widehat{S}^W_g$ of the simultaneous measurement satisfies
+$\sum_g \widehat{S}^W_g \ot \widehat{M}^{(\mathtt{Point}, W), u}_{g(u)} \approx_{\delta_S} \Id$
+and $\widehat{S}^W_g \bigl( \Id - \widehat{M}^{(\mathtt{Point}, W), u}_{g(u)} \bigr)
+\approx_{\delta_S} 0$.
+\end{lemma}
+
+\effortHard
+
+\begin{lemma}[Exact Pauli operators]
+\label{lem:qld-exact-paulis}
+\ledgernode{1.2.2.15}
+\uses{lem:qld-simultaneous,lem:qld-helper,lem:qld-win,lem:schwartz-zippel}
+From the simultaneous measurement one constructs, for $W \in \{X, Z\}$, measurements and
+binary observables on the expanded space which satisfy the Pauli group relations
+\emph{exactly} --- linearity in the argument, and $XZ$ commutation or anticommutation with the
+correct phase --- and which are $\delta$-close to the strategy's
+$(\mathtt{Point}, W)$ measurements on the expanded state.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:schwartz-zippel}
+Exactness of the linearity comes from projectivity of the simultaneous measurement together
+with the group law of the Pauli basis; Theorem~\ref{thm:linearity} is \emph{not} used here.
+The remaining ingredient bounds the mass the simultaneous measurement places on
+non-multilinear outcomes, via Lemma~\ref{lem:schwartz-zippel} applied in the correct
+direction --- distinct polynomials of degree $md$ \emph{agree} on at most an $md/q$ fraction,
+so it is the agreement and not the disagreement that the bound controls
+(Remark~\ref{rem:qld-admitted}).
+\end{proof}
+
+\effortHard
+
+\begin{lemma}[The swap isometry]
+\label{lem:qld-swap}
+\ledgernode{1.2.2.16}
+\uses{lem:qld-exact-paulis,def:distance}
+There is $\delta_{qld} = O\bigl( \delta_S^{1/4} + md/q \bigr)$ and local unitaries $V_\alice$,
+$V_\bob$ on the expanded spaces such that $V_\alice \ot V_\bob$ maps the expanded state within
+$\delta_{qld}$ of $\ket{\aux} \ot \ket{\EPR_q}^{\ot M}$, and conjugation by them carries the
+exact Pauli observables of Lemma~\ref{lem:qld-exact-paulis} to the honest Pauli operators
+acting on the EPR registers.
+\end{lemma}
+
+\begin{proof}
+The standard swap-isometry argument. It is standard \emph{because} the representation is
+exact: an approximate representation would not give a unitary, which is the whole reason
+Lemma~\ref{lem:qld-exact-paulis} is stated with exact relations.
+\end{proof}
 
 \subsection{Undecidability of the halting problem}
 \label{sec:rr-halting}
