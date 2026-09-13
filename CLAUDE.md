@@ -95,12 +95,18 @@ Where things are (`paper/README.md` has the full map):
 
 Two things to know about reading it:
 
-- **The ledger's node statements are paraphrases too, and are not self-certifying.** Node
-  `1.6.3` is marked *validated* and states a lemma that is false; only `paper/recursive.tex`
-  settles it (`reports/ledger-node-1.6.3-overstated.md`). Where a node and the paper
-  disagree, the paper wins and the disagreement is worth a report. A node's `\cnote{}`
-  repairs and challenge history, on the other hand, are gold: they say exactly which steps
-  are delicate.
+- **Never read node statements by hand.** A `node_amended` event carries the new text in
+  `new_statement` (with the old in `previous_statement`); a script that looks for a field
+  called `statement` silently skips every amendment and reports the original
+  `node_created` text as live. **61 of the 123 nodes have been amended**, so that mistake
+  misreports about half the ledger — it has already put four wrong claims into this
+  blueprint (`reports/ledger-node-1.6.3-overstated.md`). Derive statements with
+  `scripts/ledger-sync.py`, which handles this correctly, or copy its event handling.
+- **Node statements are paraphrases, and not self-certifying.** Where a node and the paper
+  disagree, the paper wins and the disagreement is worth a report — but check the *live*
+  statement first, per the previous point. A node's `\cnote{}` repairs and challenge
+  history are gold: they say exactly which steps are delicate. Challenge events are not
+  amended, so they can be read directly.
 - **Nothing from it may be copied into this repository.** `MIPRE-proof` is private and
   `MIPRE-formalization` is public; `paper/external/` additionally holds third-party paper
   sources and unpublished errata against other people's work. Read it, cite it in

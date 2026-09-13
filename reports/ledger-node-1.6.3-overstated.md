@@ -1,72 +1,40 @@
-# Ledger node `1.6.3` overstates `lem:dhalt-values` item 2
+# Retracted: ledger node `1.6.3` was already repaired
 
-Found 2026-09-13 while checking the blueprint's chapter 6 against
-`paper/recursive.tex` in `vidick/mipre-proof`. The blueprint has been repaired
-(`lem:dhalt-values` and the new `rem:dhalt-transfer` in
-`blueprint/src/content/06_proof_structure.tex`). The ledger cannot be repaired from this
-repository — `af` lives in the companion repo — so this is the record.
+**Status: retracted 2026-09-13.** The claim this file originally made — that node `1.6.3`
+is marked validated while stating a false lemma — was wrong. The node was amended to the
+correct transfer form on **2026-08-20**, three weeks before this file was written, after
+challenge `ch-0bb5ccf596ca5ec4` caught the same defect. The ledger is fine.
 
-## The node as recorded
+## What was actually wrong, and what was not
 
-> `1.6.3` — lem:dhalt-values, non-halting case (item 2): if M does not halt in n steps
-> then the compression guarantee applied to the verifier V (built from F's description)
-> forces val*(V^halt_n) <= 1/2, via the entanglement lower bound compounding across
-> scales; the induction over scales is well-founded (no circularity in the
-> self-reference).
+The **mathematics** in the original write-up was right, and the maintainer's own reading
+note on the node (added 2026-09-13) derives it identically: the node's *original*
+statement said "if `M` does not halt in `n` steps then ... `val*(V^halt_n) <= 1/2`", and
+that is false — if `M` first halts at step `T` then for `C_0 <= n < T` the hypothesis holds
+while `val*(V^halt_n) = 1`, by downward propagation of compression's completeness from
+levels `>= T` (since `2^n > n`), exactly as the paper's own `claim:induction-game` does.
 
-State: validated.
+The **blueprint repair that came out of it also stands**: `lem:dhalt-values` item 2 really
+did carry the false absolute bound, and it is now the transfer form, matching both the
+paper and the live ledger node. `rem:dhalt-transfer` records why the bound is wrong.
 
-## Why it is false
+What was wrong was only the claim about the *ledger's* state.
 
-Take a machine `M` that halts for the first time at step `T`, and any level `n` with
-`C_0 <= n < T`. Then `M` does not halt within `n` steps, so the node's hypothesis holds.
-But `val*(V^halt_n) = 1`, not `<= 1/2`:
+## Root cause, so it does not happen again
 
-- item 1 of the same lemma gives `val*(V^halt_m) = 1` with a value-1 PCC strategy for
-  every `m >= T`;
-- at level `n`, `V^halt_n` is `V^compr_n`, and the *completeness* clause of
-  `thm:compression` says `V^compr_n` has a value-1 PCC strategy if `V^halt_{2^n}` does;
-- `2^n > n`, so downward induction from the levels above `T` gives a value-1 PCC
-  strategy at every level down to `C_0`.
+The ad-hoc script used to read node statements in that session took a `node_amended`
+event's new text from a field called `statement`. The events carry it as `new_statement`
+(alongside `previous_statement`). Every amendment was therefore silently skipped and the
+original `node_created` text was reported as live. **61 of the ledger's 123 nodes have been
+amended**, so this was not a one-off risk: reading the ledger without honouring
+`new_statement` misreports roughly half of it.
 
-The per-level hypothesis "does not halt in `n` steps" is simply too weak to bound the
-value: the recursion looks *upward*, to level `2^n`, where `M` may well have halted.
+`scripts/ledger-sync.py` reads `new_statement` correctly, and
+`planning/ledger-index.json` and the CI check were never affected. The lesson is to derive
+node statements with that script — or at least its event handling — rather than by hand.
 
-## What the paper says
-
-`paper/recursive.tex`, `lem:dhalt-values` item 2:
-
-> If `M` does not halt in `n` steps then `V^halt_n` has a value-1 PCC strategy if and
-> only if `V^compr_n` does. Furthermore, under the same assumption it holds that
-> `Ent(V^halt_n, 1/2) = Ent(V^compr_n, 1/2)`.
-
-A *transfer*, with no absolute bound — and its proof says why: when `M` does not halt
-within `n` steps, `D^halt` accepts exactly when `D^compr` does, and the two verifiers
-share the sampler, so the two games coincide up to an identification of the answer
-alphabets. The absolute bound `val*(V^halt_n) <= 1/2` requires `M` never to halt and is
-the *conclusion* of the recursion in `thm:halting`, not an ingredient.
-
-Decisively, the paper's own proof of `thm:halting` applies item 2 under the hypothesis
-"`M` does not halt in `n` steps" to conclude that `game_n` has value **1** — inside
-`claim:induction-game`, the completeness half. So the node's reading and the paper's use
-of the lemma point in opposite directions in the same regime.
-
-## Consequences
-
-- **In the blueprint:** the old form made the completeness half of `thm:halting`
-  unprovable, since it asserted `<= 1/2` exactly where completeness needs `1`. Repaired.
-- **In the ledger:** node `1.6.3` should be amended to the transfer form. Node `1.6`
-  (the stage statement) is fine as written: it quantifies correctly, "if M does not halt,
-  `val*(V^M_n) <= 1/2` for all n".
-- **For the campaign:** worth a look at how a validated node came to carry a hypothesis
-  weaker than its conclusion supports. The node text names the right mechanism (the
-  entanglement lower bound compounding across scales, well-founded induction) but attaches
-  it to the wrong hypothesis, which suggests the challenge rounds tested the mechanism and
-  not the quantifier.
-
-## Not a discrepancy, checked and cleared
-
-The blueprint's `thm:compression` outputs a **7**-level verifier where the paper's outputs
-a **9**-level one. This is deliberate and already documented at
-`blueprint/src/content/01_introduction.tex:161`: direct repetition adds no anchoring level.
-Flagged here only so the next reader does not re-open it.
+Three other blueprint claims written from the same stale reads have been corrected in the
+same commit: node `1.2.1` is not marked imported wholesale (the import is node `1.2.1.7`,
+the tensor-code theorem, and the reduction to it is proved in the paper); node
+`1.2.1.7.2.4` is *resolved* by an approximate Takagi bridge rather than a live hazard; and
+introspection leaves a `1/poly(n)` soundness gap, not a constant one.

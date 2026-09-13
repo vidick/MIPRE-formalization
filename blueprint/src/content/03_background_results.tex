@@ -438,9 +438,11 @@ Theorem~\ref{thm:lidt-soundness} is the only statement of this section whose Lea
 complete, and the way it got there is worth recording, because the ledger and the
 formalization disagree about what kind of statement it is.
 
-The ledger marks node $1.2.1$ \emph{imported}: in the paper the quantum soundness of the
-simultaneous low-degree test is obtained by reducing to the two-prover tensor-code test
-of~\cite{JNVWY21tensor}, which is not reproved. The Lean statement is not an axiom, and
+The paper proves node $1.2.1$ by an explicit reduction --- nodes $1.2.1.1$ to $1.2.1.8$ ---
+to the two-prover tensor-code test of~\cite{JNVWY21tensor}, and the general case of several
+codewords is proved in the paper too, importing nothing. So the assumption is narrower than
+the statement: exactly one node, $1.2.1.7$, is an import, namely the tensor-code theorem
+itself. The Lean statement is not an axiom, and
 its \texttt{\#print axioms} guard fails the build if it ever becomes one: it is proved
 from Mathlib alone through the vendored formalization of~\cite{JNVWY21qld}, with the
 bridge modules of \texttt{MIPRE/Background/LIDT/Bridge/} translating this development's
@@ -454,12 +456,16 @@ Both corrections are in the statement above, and they cost nothing downstream be
 is free --- the error carries a factor $k^2$ against a term $e^{-k/(2560000 m^2)}$, so it
 is minimized at some finite $k$ either way.
 
-One node of the subtree is a warning rather than a step. Node $1.2.1.7.2.4$ records that
-the interface between the product-basis transposes of~\cite{JNVWY20} and the
-Schmidt-diagonal symmetric strategies of~\cite{Vid22} is \emph{false} as stated, with an
-explicit $2 \times 2$ counterexample, and needs the approximate Takagi bridge instead. It
-does not affect Theorem~\ref{thm:lidt-soundness}, whose Lean proof does not go through
-that interface, but it is a live hazard for anything that reuses the transpose trick.
+One node of the subtree is worth reading before reusing anything from it. Node
+$1.2.1.7.2.4$ records that the interface between the product-basis transposes
+of~\cite{JNVWY20} and the Schmidt-diagonal symmetric strategies of~\cite{Vid22} is
+\emph{false} as stated, with an explicit $2 \times 2$ counterexample. It is closed, not
+open: the repair is an approximate Takagi bridge, which puts every strategy of the first
+form within a controlled synchronicity defect of one of the second after a local basis
+change, with the closure constants re-derived and checked by a registered claim-test. It
+does not affect Theorem~\ref{thm:lidt-soundness}, whose Lean proof does not go through the
+interface at all. The lesson for a formalization is that the bridge is the thing to state,
+not the exact identity it replaces.
 \end{remark}
 
 \begin{theorem}[Pauli basis test / quantum low individual degree test]
@@ -561,9 +567,10 @@ Schwartz--Zippel bound on the non-multilinear outcome mass. A formalization shou
 the appendix as the real content and the main-text statement as its interface.
 
 Third, the introspection statement that consumes all of this (node $1.2$,
-Theorem~\ref{thm:introspection}) is the one place in the pipeline where the soundness
-guarantee is only $1 - \eps$ for a universal constant $\eps$ rather than a bound that can
-be driven down, which is exactly why parallel repetition has to follow it.
+Theorem~\ref{thm:introspection}) leaves a soundness gap of $1/\poly(n)$ --- \emph{not} a
+constant, which is the stronger reading and the one the ledger is explicit about. That is
+exactly why parallel repetition has to follow it: repetition is what turns a gap shrinking
+with $n$ back into the constant $\frac12$ the recursion needs.
 \end{remark}
 
 \begin{theorem}[Explicit succinct Cook--Levin]
