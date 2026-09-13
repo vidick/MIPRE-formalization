@@ -63,6 +63,16 @@ decisions, items with a done criterion, risks. Update the status column as items
 - Done when: a fresh cloud session prints a `lean-warm:` line for v4.33.0 and
   `lake build MIPRE.Foundations.Compression` is a no-op. The session that opened the PR
   is subscribed to its events (CI, reviews) until it is merged.
+- Still outstanding as of 2026-09-12, verified rather than assumed:
+  `/opt/warm/MIPRE-formalization/.lake` does not exist on the session VM, which is the
+  condition `.claude/hooks/lean-warm.sh` tests, so it prints its "no Lean/Mathlib
+  environment" line. The toolchain itself is fine (`lake` reports Lean 4.33.0, matching
+  `lean-toolchain`), and Lean did run in this session — but only because the toolchain and
+  Mathlib cache were installed by hand; the snapshot carries neither.
+- When re-saving, drop line 48 of `.claude/cloud-setup.sh` (`lake build MIPRE || true`).
+  The script's own budget note gives it about five minutes, which a full `MIPRE` build
+  overruns; the dependencies and the Mathlib cache are what is worth snapshotting, and
+  this repository's own modules then build in seconds.
 
 ### 2. The first blueprint build on `main` after the merge
 
@@ -172,10 +182,100 @@ decisions, items with a done criterion, risks. Update the status column as items
   Chapter 6's soundness analyses still invoke bipartite rigidity results
   (`thm:lidt-soundness`, `thm:qld`, both stated for tensor-product strategies), whose
   synchronous restatement is separate work; that is a different use of the transport from
-  the one inside repetition, and it does not disappear with the value-form repair.",
-     "item 5: the corrected hypothesis and the single use site")
+  the one inside repetition, and it does not disappear with the value-form repair.
+- Plan: (i) `thm:orthonormalization` as a standalone lemma (issue #22 suggests it first);
+  (ii) `thm:almost-sync` in finite dimension (#22); (iii) the commuting case (#23, Lin
+  2023, arXiv:2304.01940), needed only for the MIP^co track and best done after (ii) with
+  a parallel statement. Suggested location: `MIPRE/Background/Synchronous/`, statements in
+  the vocabulary of `Foundations/Games.lean`.
+- The constants `a` and `b = 13a` in `thm:parallel-repetition` are provisional
+  (`sec:conventions`) and are fixed by whatever (ii) proves.
 
-edit("planning/next-steps.md", ## The external referee report of 2026-09-11
+### 6. #29 — `lem:tracial-le-co` (GNS), and the tracial-density restatement
+
+- `commValue G ≤ commutingOperatorValue G.toGame` via the GNS representation
+  `L²(𝒜, τ)` of a tracial state, with left multiplication for Alice and right
+  multiplication for Bob (issue #29 has the sketch and the Mathlib notes; the vendored
+  `StdTracialAlgebra` of `CommutingRepetition/Statement.lean` is a template but may not be
+  referred to). Location: `MIPRE/Foundations/` (`CommutingOperator.lean` or a new
+  `GNS.lean`). Needed to use `thm:direct-repetition-co` for tracial values of repeated
+  synchronous games and for the MIP^co track; not on the main-theorem path.
+- `thm:tracial-density`: `MIPRE.Repetition.tracialDensity`
+  (`MIPRE/Background/Repetition/TracialDensity.lean`) re-exports the vendored hypothesis
+  `CommutingRepetition.TracialDensityHypothesis` verbatim. Restate it through the
+  foundations definitions (tracial states and projective measurements of
+  `Foundations/Games.lean`, `commValue`) once the GNS material of #29 exists, since both
+  use the same `L²(𝒜, τ)` construction; then point the blueprint's `\lean` at the
+  restated theorem.
+
+### 7. Audit chapter 6 (value form) against Lin's propositions — blueprint only
+
+- Risk 5 of `repetition-port.md`. The D8 restatements of `thm:introspection`,
+  `thm:oracularization`, `thm:answer-reduction`, `thm:parallel-repetition` and
+  `thm:compression` were obtained from JNVWY's value-form clauses by removing the
+  entanglement clauses and replacing the repetition step; Lin's versions
+  (arXiv:2510.07162, `Seqandcompression.tex:408–587`) use a different index convention
+  (same `n`, runtime `n^α → polylog n`, against JNVWY's `N = 2^n`).
+- Check node by node: parameters and time bounds compose across the four
+  transformations; the instantiation of `lem:compressible-criterion` in
+  `rem:compression-abstract` — the classes `A` (descriptions with a value-1 PCC strategy)
+  and `B` (quantum value at most ½), and whether the paper's compression input
+  (a normal-form verifier `V` and an index) is a succinct description in the sense of
+  `IsSuccinctDesc c m x` (a program computing the bits of the game description `x` from
+  the index `m`), which is what `Compr : PolyTimeFun ((Prog × ℕ) × ℕ) BitStr` receives;
+  and that no per-level loss appears in value form (JNVWY's factor ½ per level lives only
+  in the `Ent` clause, `rem:entanglement-form`).
+- Output: corrections to chapter 6 and, from them, the sub-issue list for the chapter-6
+  formalization track (the next large track after this one).
+
+### 8. Maintenance decisions (open)
+
+- (a) The tree-wide `try rfl` rule of `scripts/vendor-lidt.py` (292 lines in the vendored
+  LIDT tree) versus a recorded per-site list. Recommendation: keep the rule until the
+  next upstream MIPStarRE update; if upstream has moved to Lean ≥ v4.33 by then, drop
+  both the rule and the tree-wide transparency option and re-vendor.
+- (b) `backward.isDefEq.respectTransparency false` at project sites (file-wide in
+  `TM/Code/Evaluator`, `LCS/SolutionGroup/Representation`, `LIDT/Bridge/Measurement`; per
+  declaration in `TM/Code/Semantics`, `LCS/WinningCondition`, `LCS/Strategy/Equivalence`):
+  each is a small proof rewrite away from not needing the option. Do it when touching the
+  file; never reintroduce a project-wide setting (it broke other modules).
+- (c) `set_option autoImplicit true` in the 131 vendored files (D3(c)): test removal now
+  that Lean runs in sessions; drop the insertion from both vendoring scripts if unneeded.
+- (d) Upstream pins: commuting-repetition `cfa2f1b`, ten-proofs `94bc0fe`, MIPStarRE
+  `507e812`. Re-vendor only with the scripts, then re-validate every recorded fix.
+- (e) CI wall time is 35–40 minutes per run (the ten-proofs module alone 20–32 minutes);
+  if it becomes a bottleneck, cache `.lake/build` of the vendored directories keyed on
+  their tree hash. With Lean in sessions, prefer local `lake build MIPRE.<Module>` and
+  use CI runs for the final check only.
+- (f) Untouched open issues: #17, #18 (universal machine, `planning/tm-infrastructure.md`),
+  #5 (QuantumLib dependency).
+
+## Working conventions for the next sessions
+
+- Lean in cloud sessions: `docs/lean-cloud.md`. Check a module with
+  `lake build MIPRE.<Module>`; never `lake build` Mathlib, never `lake update`. Until
+  item 1's re-save has happened, a session can reproduce the setup by hand in a few
+  minutes (same page, "Using Lean from a session").
+- CI (`build-project.yml`): dispatch only when no run is in progress on the branch
+  (the concurrency group cancels the running one); Lake skips dependents of a failing
+  module, so a CI-only workflow surfaces failures one dependency layer per run.
+- Blueprint: builds only on `main`; check labels, `\uses`, `\cite` targets and `\lean{}`
+  names mechanically before merging, and watch the first run after each merge (item 2).
+- Pull requests: `Closes #N`, label `awaiting-review`, squash merge; commit messages
+  name the tracking issue.
+
+## Dependencies
+
+```
+1 → 2
+3 ─────────────────────→ thm:direct-repetition-q \leanok
+4 ─────────────────────→ thm:halting (hypothesis hS); thm:mipstar-eq-re (⊆)
+5 (with 3) ────────────→ thm:parallel-repetition soundness
+6 ─────────────────────→ MIP^co track; tracial statements of chapter 5
+7 ─────────────────────→ chapter-6 formalization track (statements fixed first)
+```
+
+## The external referee report of 2026-09-11
 
 Source: the adversarial-verification campaign on `vidick/mipre-proof` (paper and
 ledger at `4768735`, branch `claude/install-vibefeld-mipre-eythiq`), reporting against
@@ -305,96 +405,3 @@ Lean v4.33.0.
   (`paper/linear.tex`), a parameter table for compression with two large claim-tests, and
   the errata files. Their side has adopted `B = val*` and the de la Salle bridge, and is
   gating the synchronous route and the abstract compression on their items 1–4.
-
-### Working conventions for the next sessions
-- Plan: (i) `thm:orthonormalization` as a standalone lemma (issue #22 suggests it first);
-  (ii) `thm:almost-sync` in finite dimension (#22); (iii) the commuting case (#23, Lin
-  2023, arXiv:2304.01940), needed only for the MIP^co track and best done after (ii) with
-  a parallel statement. Suggested location: `MIPRE/Background/Synchronous/`, statements in
-  the vocabulary of `Foundations/Games.lean`.
-- The constants `a` and `b = 13a` in `thm:parallel-repetition` are provisional
-  (`sec:conventions`) and are fixed by whatever (ii) proves.
-
-### 6. #29 — `lem:tracial-le-co` (GNS), and the tracial-density restatement
-
-- `commValue G ≤ commutingOperatorValue G.toGame` via the GNS representation
-  `L²(𝒜, τ)` of a tracial state, with left multiplication for Alice and right
-  multiplication for Bob (issue #29 has the sketch and the Mathlib notes; the vendored
-  `StdTracialAlgebra` of `CommutingRepetition/Statement.lean` is a template but may not be
-  referred to). Location: `MIPRE/Foundations/` (`CommutingOperator.lean` or a new
-  `GNS.lean`). Needed to use `thm:direct-repetition-co` for tracial values of repeated
-  synchronous games and for the MIP^co track; not on the main-theorem path.
-- `thm:tracial-density`: `MIPRE.Repetition.tracialDensity`
-  (`MIPRE/Background/Repetition/TracialDensity.lean`) re-exports the vendored hypothesis
-  `CommutingRepetition.TracialDensityHypothesis` verbatim. Restate it through the
-  foundations definitions (tracial states and projective measurements of
-  `Foundations/Games.lean`, `commValue`) once the GNS material of #29 exists, since both
-  use the same `L²(𝒜, τ)` construction; then point the blueprint's `\lean` at the
-  restated theorem.
-
-### 7. Audit chapter 6 (value form) against Lin's propositions — blueprint only
-
-- Risk 5 of `repetition-port.md`. The D8 restatements of `thm:introspection`,
-  `thm:oracularization`, `thm:answer-reduction`, `thm:parallel-repetition` and
-  `thm:compression` were obtained from JNVWY's value-form clauses by removing the
-  entanglement clauses and replacing the repetition step; Lin's versions
-  (arXiv:2510.07162, `Seqandcompression.tex:408–587`) use a different index convention
-  (same `n`, runtime `n^α → polylog n`, against JNVWY's `N = 2^n`).
-- Check node by node: parameters and time bounds compose across the four
-  transformations; the instantiation of `lem:compressible-criterion` in
-  `rem:compression-abstract` — the classes `A` (descriptions with a value-1 PCC strategy)
-  and `B` (quantum value at most ½), and whether the paper's compression input
-  (a normal-form verifier `V` and an index) is a succinct description in the sense of
-  `IsSuccinctDesc c m x` (a program computing the bits of the game description `x` from
-  the index `m`), which is what `Compr : PolyTimeFun ((Prog × ℕ) × ℕ) BitStr` receives;
-  and that no per-level loss appears in value form (JNVWY's factor ½ per level lives only
-  in the `Ent` clause, `rem:entanglement-form`).
-- Output: corrections to chapter 6 and, from them, the sub-issue list for the chapter-6
-  formalization track (the next large track after this one).
-
-### 8. Maintenance decisions (open)
-
-- (a) The tree-wide `try rfl` rule of `scripts/vendor-lidt.py` (292 lines in the vendored
-  LIDT tree) versus a recorded per-site list. Recommendation: keep the rule until the
-  next upstream MIPStarRE update; if upstream has moved to Lean ≥ v4.33 by then, drop
-  both the rule and the tree-wide transparency option and re-vendor.
-- (b) `backward.isDefEq.respectTransparency false` at project sites (file-wide in
-  `TM/Code/Evaluator`, `LCS/SolutionGroup/Representation`, `LIDT/Bridge/Measurement`; per
-  declaration in `TM/Code/Semantics`, `LCS/WinningCondition`, `LCS/Strategy/Equivalence`):
-  each is a small proof rewrite away from not needing the option. Do it when touching the
-  file; never reintroduce a project-wide setting (it broke other modules).
-- (c) `set_option autoImplicit true` in the 131 vendored files (D3(c)): test removal now
-  that Lean runs in sessions; drop the insertion from both vendoring scripts if unneeded.
-- (d) Upstream pins: commuting-repetition `cfa2f1b`, ten-proofs `94bc0fe`, MIPStarRE
-  `507e812`. Re-vendor only with the scripts, then re-validate every recorded fix.
-- (e) CI wall time is 35–40 minutes per run (the ten-proofs module alone 20–32 minutes);
-  if it becomes a bottleneck, cache `.lake/build` of the vendored directories keyed on
-  their tree hash. With Lean in sessions, prefer local `lake build MIPRE.<Module>` and
-  use CI runs for the final check only.
-- (f) Untouched open issues: #17, #18 (universal machine, `planning/tm-infrastructure.md`),
-  #5 (QuantumLib dependency).
-
-## Working conventions for the next sessions
-
-- Lean in cloud sessions: `docs/lean-cloud.md`. Check a module with
-  `lake build MIPRE.<Module>`; never `lake build` Mathlib, never `lake update`. Until
-  item 1's re-save has happened, a session can reproduce the setup by hand in a few
-  minutes (same page, "Using Lean from a session").
-- CI (`build-project.yml`): dispatch only when no run is in progress on the branch
-  (the concurrency group cancels the running one); Lake skips dependents of a failing
-  module, so a CI-only workflow surfaces failures one dependency layer per run.
-- Blueprint: builds only on `main`; check labels, `\uses`, `\cite` targets and `\lean{}`
-  names mechanically before merging, and watch the first run after each merge (item 2).
-- Pull requests: `Closes #N`, label `awaiting-review`, squash merge; commit messages
-  name the tracking issue.
-
-## Dependencies
-
-```
-1 → 2
-3 ─────────────────────→ thm:direct-repetition-q \leanok
-4 ─────────────────────→ thm:halting (hypothesis hS); thm:mipstar-eq-re (⊆)
-5 (with 3) ────────────→ thm:parallel-repetition soundness
-6 ─────────────────────→ MIP^co track; tracial statements of chapter 5
-7 ─────────────────────→ chapter-6 formalization track (statements fixed first)
-```
