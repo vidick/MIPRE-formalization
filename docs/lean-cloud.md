@@ -16,18 +16,34 @@ installs:
 | What | Where |
 | --- | --- |
 | Lean toolchain (`lean`, `lake`), version taken from this repository's `lean-toolchain` | `/opt/lean`, symlinked into `/usr/local/bin` |
-| A warm clone of this repository with the Lake dependencies, the Mathlib olean cache and as many built `MIPRE` modules as `BUILD_BUDGET` reached | `/opt/warm/MIPRE-formalization` |
+| A warm clone of this repository with the Lake dependencies and the Mathlib olean cache | `/opt/warm/MIPRE-formalization` |
+| This repository's own compiled modules, downloaded as a bundle | `/opt/warm/MIPRE-formalization/.lake/build` |
 | lean-lsp-mcp, pre-fetched | the uv cache |
 
-Nothing is compiled from source except this repository's own modules; Mathlib
-comes from the official olean cache. The snapshot is rebuilt only when the setup
-script or the allowed hosts change, or after about seven days.
+**Nothing is compiled during setup.** That is not an optimisation, it is forced:
+the platform stops a setup script at about five minutes
+([docs](https://code.claude.com/docs/en/cloud-environments#setup-scripts)), of
+which the clone and the Mathlib olean cache already take about 140 seconds, while
+compiling the 533 modules of this repository takes 30 to 45 minutes. So Mathlib
+comes from the official olean cache and this repository's modules come from a
+bundle that `.github/workflows/build-project.yml` publishes on every push to
+`main` — the `prebuilt-main` release asset. Lake's build traces are
+path-independent, so an olean compiled on a CI runner is *replayed*, not rebuilt,
+under `/opt/warm` on a session VM; it is the same trick as `lake exe cache get`.
+
+The snapshot is rebuilt only when the setup script or the allowed hosts change, or
+after about seven days. Between rebuilds the bundle ages: Lake recompiles whatever
+changed on `main` since, and nothing else.
 
 Per session, the SessionStart hook
 [`.claude/hooks/lean-warm.sh`](../.claude/hooks/lean-warm.sh) links the warm
 clone's `.lake` directory into the session's checkout, so that `lake build`
 there rebuilds only the modules whose sources differ, exports
-`LEAN_PROJECT_PATH`, and refreshes the Mathlib cache if the pin moved.
+`LEAN_PROJECT_PATH`, creates `Scratch/`, and refreshes the Mathlib oleans only if
+the pin moved (comparing the checkout's `lake-manifest.json` against the stamp, so
+that an unchanged pin costs nothing at session start). If the snapshot holds no
+compiled modules at all it fetches the bundle itself, which is the difference
+between a session that can check a bridge module and one that cannot.
 [`.mcp.json`](../.mcp.json) starts the `lean-lsp` MCP server against the
 checkout, so the agent has goal states, diagnostics, `lean_run_code`, Loogle and
 LeanSearch available.
@@ -41,9 +57,6 @@ LeanSearch available.
    package managers*, and add:
 
    ```text
-   github.com
-   release-assets.githubusercontent.com
-   objects.githubusercontent.com
    releases.lean-lang.org
    release.lean-lang.org
    lakecache.blob.core.windows.net
@@ -53,12 +66,19 @@ LeanSearch available.
    leanpremise.net
    ```
 
-   The first three are the ones easy to miss. `lake-manifest.json` pins fifteen
-   dependencies, all on `github.com`. And the toolchain URL is a chain:
-   `releases.lean-lang.org` 302s to `github.com`, which 302s again to
-   `release-assets.githubusercontent.com`, and that last hop is where the 575 MB
-   actually comes from — allow only the first and the request starts and then dies
-   on the hop carrying the payload.
+   GitHub needs nothing added. `github.com`, `codeload.github.com`,
+   `objects.githubusercontent.com` and `release-assets.githubusercontent.com` are
+   all in the default list, and GitHub traffic takes a
+   [separate proxy](https://code.claude.com/docs/en/cloud-environments#github-proxy)
+   that does not go through the allowlist at all — which is what makes the
+   prebuilt bundle reachable, since it is a release asset of this repository. The
+   toolchain URL is a chain (`releases.lean-lang.org` 302s to `github.com`, which
+   302s again to `release-assets.githubusercontent.com`, where the 575 MB
+   actually is), so only its first hop has to be listed.
+
+   Two of the search hosts did not answer from a session on 2026-09-13
+   (`premise-search.com`, `leanpremise.net`), so lean-lsp-mcp's premise search is
+   unavailable; `leansearch.net` and `loogle.lean-lang.org` did answer.
 
    `reservoir.lean-lang.org` is **not** in the list: it is unreachable from these
    VMs, and it is not needed, because the manifest pins every dependency's git URL
@@ -76,9 +96,10 @@ The setup script and the SessionStart hook are two halves of one mechanism, and
 the script has to be pasted by hand into a web form, so they can drift apart. Both
 halves now say so rather than leaving it to be noticed:
 
-* The script writes `/opt/warm/SETUP-STAMP` (what branch, commit and toolchain the
-  snapshot was built from, the sha256 of both the pasted text and the repository's
-  `.claude/cloud-setup.sh`, and how many modules it managed to build) and
+* The script writes `/opt/warm/SETUP-STAMP` (what branch, commit, toolchain and
+  Mathlib pin the snapshot was built from, the sha256 of both the pasted text and
+  the repository's `.claude/cloud-setup.sh`, which bundle it fetched and how many
+  modules are in place) and
   `/opt/warm/SETUP-REPORT.txt` (every step, timestamped — read this first when
   setup fails).
 * The hook compares them against the checkout at every session start and prints,
@@ -89,32 +110,44 @@ halves now say so rather than leaving it to be noticed:
   override and the pre-build went missing).
 
 So a healthy session opens with one line naming the Lean version and a module
-count close to the total, and no notes. A count of zero means the pre-build did
-not happen; `BUILD_BUDGET` is the knob. A missing `lean-warm:` line altogether
-means the snapshot has no Lean, so the script never finished — `SETUP-REPORT.txt`
-says where it stopped.
+count close to the total, and no notes. A count of zero means the bundle did not
+land — the hook then tries to fetch it itself, so a zero that survives into the
+`lean-warm:` line means the asset is missing, `zstd` is not installed, or the
+download timed out; `SETUP-REPORT.txt` has the setup-side reason. A missing
+`lean-warm:` line altogether means the snapshot has no Lean, so the script never
+got that far — `SETUP-REPORT.txt` says where it stopped.
 
 The warm tree is about 8 GB on disk (the Mathlib cache alone is 7.6 GB). Do not
 enable lean-lsp-mcp's local Loogle (13 GiB peak).
 
 ## Using Lean from a session
 
+* Know which regime you are in: `MIPRE/Foundations`, `MIPRE/TM`, `MIPRE/LCS` and
+  `MIPRE/Cslib` never import `MIPRE/Background`, so they cost seconds to check
+  whatever the snapshot holds. Only the nine modules that reach the vendored trees
+  (`Repetition/Entangled.lean`, `Repetition/{Commuting,TracialDensity}.lean`, the
+  six `LIDT/Bridge/*.lean`) depend on the bundle having landed.
 * Check a module: `lake build MIPRE.Foundations.Compression` (only its
   dependencies are built).
+* After adding or removing a file, run `lake exe mk_all`; CI fails if `MIPRE.lean`
+  does not list every module.
 * Standalone snippets: `lean_run_code` with `import Mathlib`, plus
   `import MIPRE.<Module>` for definitions from this repository.
 * Scratch files: write them under `Scratch/` (ignored by git) and use the
   file-based tools, or `lake env lean Scratch/Foo.lean`.
-* Prefer the `lean-lsp` MCP tools to `lake build` for iterating. Once a
-  module's imports are built, `lean_diagnostic_messages` returns the file's
-  errors in ten seconds or so, against minutes for `lake build`, and
-  `lean_goal` / `lean_multi_attempt` let a tactic be tried without touching the
-  file. This is the single largest difference in feedback speed available here.
-* A bare `lake build` is never quick even when nothing changed: it replays the
-  traces of all 8855 modules. Always name the module you care about.
-* Never run `lake build` on Mathlib and never `lake update`; the first would
-  compile Mathlib from source and not finish, and the second needs Reservoir,
-  which is unreachable.
+* Prefer the `lean-lsp` MCP tools to `lake build` for iterating: they answer in
+  seconds and they see the buffer, so no build is needed between edits.
+  `lean_diagnostic_messages` gives a file's errors, `lean_goal` the proof state,
+  `lean_multi_attempt` tries a tactic without touching the file. They are not a
+  way around missing oleans, though: the language server runs `lake setup-file`,
+  which builds a file's import closure on demand, so the first request on a file
+  whose imports are unbuilt costs what building them costs.
+* A bare `lake build` builds all 533 modules of this repository, and even with
+  nothing to do it replays the traces of all 8855. Always name the module.
+* Never run `lake build` on Mathlib, never `lake update` (it needs Reservoir,
+  which is unreachable), and never `lake clean`: `.lake` here is a symlink into
+  the shared warm tree, and clean "deletes the build directories of every package
+  in the workspace" — Mathlib's 7.6 GB with it, to be refetched at best.
 * When the network policy allows the hosts above but the snapshot has no Lean
   (for example in a session started before the environment was configured),
   the setup can be reproduced by hand in a few minutes: install `zstd`,
@@ -127,20 +160,26 @@ enable lean-lsp-mcp's local Loogle (13 GiB peak).
   `lean-toolchain`, so after a bump re-save the environment's setup script (any
   edit, even a comment) to trigger a rebuild. The hook refuses to use the warm
   clone when the checkout wants another Lean version than the snapshot has.
-* **Toolchain download returns 403**: the cloud GitHub proxy only serves
-  release assets of repositories attached to the session, and every public
-  toolchain URL ends at a release asset of `leanprover/lean4`, which is not
-  attached. The script tries `releases.lean-lang.org` and then the direct
-  `github.com` release URL, logging each attempt; if both 403, upload
+* **Toolchain download fails**: the script tries `TOOLCHAIN_URL`, then
+  `releases.lean-lang.org`, then the direct `github.com` release URL, logging each
+  attempt. All three end at a release asset of `leanprover/lean4`; that download
+  worked from a session on 2026-09-13, but if it ever 403s (the GitHub proxy
+  refusing assets of a repository not attached to the session), upload
   `lean-<version>-linux.tar.zst` as a release asset of *this* repository and set
-  `TOOLCHAIN_URL` at the top of the script to it. That URL is tried first.
-* **Setup takes too long**: lower `BUILD_BUDGET` at the top of the setup
-  script. It caps the pre-build with `timeout`, so the script always exits
-  cleanly rather than being killed, and Lake keeps every module that finished —
-  a partial pre-build is still a win. `BUILD_BUDGET=0` skips the pre-build
-  entirely: setup is then only a few minutes, but the first in-session build of
-  anything importing the vendored repetition trees costs 20 to 40 minutes.
-  Building all 533 modules takes 30 to 45 minutes.
-* **Local use**: the project-scope `.mcp.json` points `LEAN_PROJECT_PATH` at
-  the cloud checkout path by default; set `LEAN_PROJECT_PATH` to your local
-  checkout to use lean-lsp from this repository locally.
+  `TOOLCHAIN_URL` to it. It is tried first.
+* **The prebuilt bundle**: `build-project.yml` rebuilds it on every push to `main`
+  and replaces the asset on the `prebuilt-main` release; the tag is a fixed
+  anchor, not a version. A session holding a bundle can read
+  `.lake/build/BUNDLE-INFO` for the commit, toolchain and Mathlib pin it was built
+  from. It is skipped when it would exceed the 2 GiB release-asset limit, which
+  the run's log warns about; if that ever happens, either split it or drop the
+  vendored trees from it. `PREBUILT_URL=` (empty) in the setup script turns the
+  whole mechanism off.
+* **Setup takes too long**: it should now take about three minutes, nearly all of
+  it `lake exe cache get` and the bundle. `BUILD_BUDGET` (default 0) is the only
+  part that compiles anything, and it is capped by `DEADLINE` in any case. Raising
+  it cannot buy a full build: the platform's limit is about five minutes total.
+* **Local use**: the project-scope `.mcp.json` leaves `LEAN_PROJECT_PATH` at `.`,
+  the checkout the server is started in, which is what a local clone wants; cloud
+  sessions get the absolute path from the hook instead. Nothing in
+  `.claude/hooks/lean-warm.sh` runs outside a cloud session.

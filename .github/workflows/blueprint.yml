@@ -53,6 +53,21 @@ jobs:
           project-name: MIPRE
           branch-name: ${{ github.event.repository.default_branch }}
 
+      # Same cache as build-project.yml, and the same key, so this workflow
+      # reuses whatever that one built for the commit instead of compiling all
+      # 533 modules again — about 40 minutes on top of the two hours the
+      # blueprint and doc-gen already take. `save-always` is off by default and
+      # `build-project.yml` is the writer; this job only reads.
+      - name: Restore build artifacts
+        uses: actions/cache/restore@v6
+        with:
+          path: .lake/build
+          key: LakeBuild-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: |
+            LakeBuild-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-
+            LakeBuild-${{ runner.os }}-
+            LakeBuild-
+
       - name: Install Lean, get mathlib cache and build project
         uses: leanprover/lean-action@50fcf42d2e460296f1a34b402e990d1b24f8b596 # v1.6.0
         with:
