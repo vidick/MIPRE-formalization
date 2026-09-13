@@ -560,11 +560,26 @@ in-file argument that anticommuting observables give a perfect Magic Square stra
 
 Second, the soundness proof of Theorem~\ref{thm:qld} is not in the main text at all: it is
 deferred to a five-file appendix, which is where most of stage $1.2$'s challenge weight
-sits. One of them was the campaign's only \emph{critical} finding, at node $1.2.2.15$: the
-construction of exact Pauli operators rested on an identity between a codeword's
-coordinates and the polynomial's values that is simply false, and had to be replaced by a
-Schwartz--Zippel bound on the non-multilinear outcome mass. A formalization should treat
-the appendix as the real content and the main-text statement as its interface.
+sits, including one of the campaign's three \emph{critical} findings, at node $1.2.2.15$:
+the construction of exact Pauli operators applied Schwartz--Zippel in the wrong direction
+--- distinct polynomials of degree $md$ \emph{agree} on at most an $md/q$ fraction, so for a
+non-multilinear $g$ the disagreement indicator has expectation near $1$ --- which made the
+step equivalent to an unproven assertion about how much mass the simultaneous measurement
+places on non-multilinear outcomes. It is resolved, by bounding that mass first. A
+formalization should treat the appendix as the real content and the main-text statement as
+its interface.
+
+The other two critical findings are worth naming here, because neither reaches this
+blueprint and the reason is the same in both cases. At node $1.4$, the anchored repetition
+theorem was applied to a game that is not of the anchored product form at all: detyping
+destroys the product structure, and restricting a repeated strategy to the event that every
+coordinate is a real question costs $16^k$. At node $1.5$, the compression statement had
+omitted the doubly exponential term in its entanglement lower bound, which the recursion
+needs. Both are resolved upstream; both live in the entanglement-form apparatus that
+Theorem~\ref{thm:direct-repetition-q} and the $\valstar$ chain replace
+(Remark~\ref{rem:admitted-nodes}). All three criticals are resolved, so this is not a
+soundness worry --- it is an indication of where the delicate machinery is, and two thirds
+of it is machinery this route does not carry.
 
 Third, the introspection statement that consumes all of this (node $1.2$,
 Theorem~\ref{thm:introspection}) leaves a soundness gap of $1/\poly(n)$ --- \emph{not} a
