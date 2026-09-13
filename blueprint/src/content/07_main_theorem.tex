@@ -45,9 +45,11 @@ Both forms come from the two items of Theorem~\ref{thm:halting} directly: the va
 witness is a PCC, hence synchronous, strategy, so it gives value $1$ in both senses; and
 the soundness conclusion is $\valstar(\game_\machine) \leq \frac12$, which gives
 $\synval(\game_\machine) \leq \frac12$ by Lemma~\ref{lem:sync-le-valstar}. The quantum
-form is the one Definition~\ref{def:mipstar} asks for; no transport from $\synval$ to
-$\valstar$ is involved, the pipeline's soundness being carried in $\valstar$ from the
-repetition step onwards (Theorem~\ref{thm:parallel-repetition}).
+form is the one Definition~\ref{def:mipstar} asks for, and it is the primary one: no
+transport from $\synval$ to $\valstar$ is involved anywhere, the pipeline's soundness being
+carried in $\valstar$ at every step (Remark~\ref{rem:bipartite-route}). The synchronous
+reading of Theorem~\ref{thm:main} is the derived one, obtained from this corollary by the
+free comparison $\synval \leq \valstar$.
 
 \begin{corollary}[Uncomputability of the game value]
 \label{cor:value-uncomputable}

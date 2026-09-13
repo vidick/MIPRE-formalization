@@ -12,11 +12,14 @@ reproduced here and should be introduced locally where needed.
 Following Lin~\cite{Lin25}, every soundness statement below is in \emph{value form}: a
 transformation preserves the property ``value at most $1 - \eps$'' up to a quantitative
 loss, and compression preserves ``value at most $\frac12$''. The three inner
-transformations carry that property in $\synval$; repetition and hence compression conclude
-in $\valstar$, which is the class the compressibility criterion is instantiated with and
-the form Definition~\ref{def:mipstar} requires (Remark~\ref{rem:compression-abstract}), the
-passage between the two values being needed once and inwards only
-(Remark~\ref{rem:almost-sync-hypothesis}). No entanglement lower bound is tracked. Remark~\ref{rem:direct-vs-anchored} explains why none is needed,
+transformations, repetition and compression all carry that property in $\valstar$, the
+bipartite tensor-product value: it is the class the compressibility criterion is
+instantiated with and the form Definition~\ref{def:mipstar} requires
+(Remark~\ref{rem:compression-abstract}), and no passage between the two values occurs
+anywhere on the path. The synchronous value is not used, and neither is the
+almost-synchronous transport of Theorem~\ref{thm:almost-sync}; see
+Remark~\ref{rem:sync-invariant} for why that is the better arrangement and
+Remark~\ref{rem:bipartite-route} for the evidence. No entanglement lower bound is tracked. Remark~\ref{rem:direct-vs-anchored} explains why none is needed,
 Section~\ref{sec:rr-compression} states the abstract lemma (Lin's compressibility
 criterion) that turns value-form compression into the halting reduction, and the
 entanglement clauses of~\cite{JNVWY20} are recorded for reference in
@@ -50,6 +53,41 @@ fix the query interface once and for all, and prove the closure properties used 
 products, concatenation, and reduction of the field size to $q = 2$
 (``downsizing'', using Lemma~\ref{lem:self-dual-basis}).
 
+\begin{remark}[Why the pipeline is bipartite throughout]
+\label{rem:bipartite-route}
+\uses{def:q-value,def:sync-value,thm:almost-sync,rem:almost-sync-hypothesis,rem:sync-invariant,lem:sync-le-valstar}
+Every soundness clause of this chapter is stated in $\valstar$ and none in $\synval$. The
+choice is deliberate and rests on two things.
+
+First, it is forced at the outer end. Applied to a game supported on the diagonal the
+corrected transport (Theorem~\ref{thm:almost-sync}) forces its constant to satisfy $C \geq
+2^{c-1}$, so the best it can conclude from $\synval \leq \frac12$ is $\valstar \leq 1 -
+\kappa (2C)^{-1/c}$, which is never better than $\frac12$; and its diagonal-weight
+hypothesis is in any case unavailable on a $k$-fold product, whose diagonal weight decays
+as $\kappa^{k}$ (Remark~\ref{rem:almost-sync-hypothesis}). So the threshold has to come
+from a $\valstar$ theorem, which Theorem~\ref{thm:direct-repetition-q} is.
+
+Second, the inner end does not need $\synval$ either. The adversarially verified
+decomposition of the proof recorded in the companion repository
+\texttt{vidick/mipre-proof} --- 123 nodes, 291 challenges all resolved --- states every
+node in the bipartite tensor-product value, from the top claim to the conclusion; not one
+of its nodes mentions the synchronous value. Stating this chapter's clauses in $\synval$
+therefore buys nothing the sources provide and costs three things: the transport itself
+(Theorem~\ref{thm:almost-sync}, whose printed form was false), its polynomial loss and the
+factor $\kappa^{13}$ it contributed to
+Theorem~\ref{thm:parallel-repetition}, and the invariant of
+Remark~\ref{rem:sync-invariant}, which had to be established for three transformations and
+never was. All three are now off the path. Lemma~\ref{lem:sync-le-valstar} survives as the
+free comparison it always was, used only to read a $\valstar$ conclusion in $\synval$ when
+a synchronous statement is wanted (Theorem~\ref{thm:halting}, Theorem~\ref{thm:main}),
+never in the other direction.
+
+What this costs in turn is that the rigidity and approximate-measurement lemmas the inner
+analyses consume must be stated bipartitely, as their sources state them, rather than
+tracially. That is the arrangement of~\cite{JNVWY20} and of the companion repository's
+paper, so it is the arrangement with the least to prove.
+\end{remark}
+
 \subsection{Question reduction: introspection}
 \label{sec:ps-introspection}
 
@@ -75,13 +113,13 @@ is a function $\delta(\eps, n) = a\bigl( (\lambda n)^a \eps^b + (\lambda n)^{-b}
 \begin{enumerate}
 \item (\textbf{Completeness}) If $\verifier_{2^n}$ has a value-$1$ PCC strategy, so
   does $\vint_n$.
-\item (\textbf{Soundness}) If $\synval(\vint_n) > 1 - \eps$ then
-  $\synval(\verifier_{2^n}) \geq 1 - \delta(\eps, n)$.
+\item (\textbf{Soundness}) If $\valstar(\vint_n) > 1 - \eps$ then
+  $\valstar(\verifier_{2^n}) \geq 1 - \delta(\eps, n)$.
 \end{enumerate}
 \end{theorem}
 
 The soundness analysis is a long rigidity argument~\cite[Section 8]{JNVWY20}. It builds on techniques introduced in~\cite{NW19}, and it may be advisable to formalize some of the key lemmas there first. These include the Pauli basis test together with a toolkit of approximate-measurement lemmas
-(twirling, commutation, sandwiching). For this project, those lemmas should be stated and proved in the tracial/synchronous setting.
+(twirling, commutation, sandwiching). For this project, those lemmas should be stated and proved in the bipartite setting, as in the sources: the pipeline carries $\valstar$ throughout, so no tracial restatement is needed and none should be attempted (Remark~\ref{rem:bipartite-route}).
 
 \subsection{Oracularization}
 \label{sec:ps-oracularization}
@@ -101,8 +139,8 @@ such that, for some $\delta(\eps) = \poly(\eps)$ and all $n$:
 \begin{enumerate}
 \item (\textbf{Completeness}) If $\verifier_n$ has a value-$1$ PCC strategy then
   $\vora_n$ has a value-$1$ PCC strategy.
-\item (\textbf{Soundness}) If $\synval(\vora_n) > 1 - \eps$ then
-  $\synval(\verifier_n) \geq 1 - \delta(\eps)$.
+\item (\textbf{Soundness}) If $\valstar(\vora_n) > 1 - \eps$ then
+  $\valstar(\verifier_n) \geq 1 - \delta(\eps)$.
 \item (\textbf{Complexity}) The sampler of $\vora$ depends only on $\sampler$, with
   $\TIME$ within a constant factor and the same number of levels.
 \end{enumerate}
@@ -136,8 +174,8 @@ n)^{-\mu b} \bigr)$ (universal constants $a, b$) and all $n$:
 \begin{enumerate}
 \item (\textbf{Completeness}) If $\verifier_n$ has a value-$1$ PCC strategy
   then $\vans_n$ has a value-$1$ PCC strategy.
-\item (\textbf{Soundness}) If $\synval(\vans_n) > 1 - \eps$ then
-  $\synval(\verifier_n) \geq 1 - \delta(\eps, n)$.
+\item (\textbf{Soundness}) If $\valstar(\vans_n) > 1 - \eps$ then
+  $\valstar(\verifier_n) \geq 1 - \delta(\eps, n)$.
 \end{enumerate}
 \end{theorem}
 
@@ -158,7 +196,7 @@ anchoring; the anchored, entanglement-form theorem used in~\cite{JNVWY20}
 
 \begin{theorem}[Parallel repetition of normal form verifiers]
 \label{thm:parallel-repetition}
-\uses{def:normal-verifier,def:pcc,def:direct-repetition,thm:direct-repetition-q,thm:almost-sync,rem:sync-invariant,def:mipstar}
+\uses{def:normal-verifier,def:pcc,def:direct-repetition,thm:direct-repetition-q,def:mipstar}
 There are universal constants $b, c > 0$ such that the following holds for every
 $\kappa \in (0,1]$. There are a constant $c' > 0$, depending only on $\kappa$, and a
 polynomial-time Turing machine $\ComputeParrepVerifier$ that on input
@@ -174,33 +212,32 @@ $(\sampler, \lambda, \ell, \tau)$, and for all $n$:
 \item (\textbf{Completeness}) If $\verifier_n$ has a value-$1$ PCC strategy and
   $\TIME_\decider(n) \leq (\lambda n)^\tau$, then $\vrep_n$ has a value-$1$ PCC
   strategy.
-\item (\textbf{Soundness}) For all $\eps > 0$, if $\synval(\verifier_n) \leq 1 - \eps$,
-  $\TIME_\decider(n) \leq (\lambda n)^\tau$, and $\verifier_n$ satisfies the
-  synchronization invariant of Remark~\ref{rem:sync-invariant} with the constant $\kappa$,
-  then
-  $\valstar(\vrep_n) \leq \exp\bigl( -c\, \kappa^{13} \eps^{b}\, k(n) /
-  (\lambda n)^{\tau} \bigr)$; in particular $\valstar(\vrep_n) \leq \frac12$ whenever
-  $\eps \geq (\lambda n)^{-\tau}$, for $c'$ large enough and $n \geq 2$.
+\item (\textbf{Soundness}) For all $\eps > 0$, if $\valstar(\verifier_n) \leq 1 - \eps$
+  and $\TIME_\decider(n) \leq (\lambda n)^\tau$, then
+  $\valstar(\vrep_n) \leq \exp\bigl( -c\, \eps^{13}\, k(n) / (\lambda n)^{\tau} \bigr)$;
+  in particular $\valstar(\vrep_n) \leq \frac12$ whenever $\eps \geq (\lambda
+  n)^{-\tau}$, for $c'$ large enough and $n \geq 2$.
 \end{enumerate}
 \end{theorem}
 
 The game $\vrep_n$ is $\verifier_n^{k(n)}$: its sampler runs $k(n)$ independent copies of
 $\sampler$ (a product of conditionally linear functions of the same level) and its
 decider runs $\decider$ on every coordinate. Completeness: the $k(n)$-fold tensor power of
-a value-$1$ PCC strategy is a value-$1$ PCC strategy for the repeated game. Soundness: the
-synchronization invariant (Remark~\ref{rem:sync-invariant}) supplies the diagonal-weight
-hypothesis for $\verifier_n$, so the almost-synchronous transport
-(Theorem~\ref{thm:almost-sync}), used contrapositively, turns $\synval(\verifier_n) \leq 1
-- \eps$ into $\valstar(\verifier_n) \leq 1 - \eps'$ with $\eps' = \Omega\bigl( \kappa\,
-\eps^{a} \bigr)$ for a universal $a$ --- the diagonal weight multiplies the gap the
-transport recovers, it does not divide it. Theorem~\ref{thm:direct-repetition-q} then
-bounds $\valstar(\verifier_n^{k(n)})$, where the answer alphabets of $\verifier_n$ have
-size at most $2^{\TIME_\decider(n)}$ so that $\log(\abs{\mA}\abs{\mB}) \leq 2 (\lambda
-n)^\tau$; this gives $b = 13a$ and the factor $\kappa^{13}$ of the statement. The
-conclusion is left in $\valstar$, and deliberately so: that is the form
-Definition~\ref{def:mipstar} asks of the final game, while the transport cannot be applied
-a second time at the outer end of the pipeline, the diagonal weight of a $k$-fold product
-decaying as $\kappa^{k}$ (Remark~\ref{rem:almost-sync-hypothesis}).
+a value-$1$ PCC strategy is a value-$1$ PCC strategy for the repeated game. Soundness is
+now a direct application of Theorem~\ref{thm:direct-repetition-q}: the hypothesis is
+already a $\valstar$ bound, so nothing has to be transported first. That theorem bounds
+$\valstar(\verifier_n^{k(n)})$ by $\exp\bigl( -c\, k(n)\, \eps^{13} / (\eps +
+\log(\abs{\mA}\abs{\mB})) \bigr)$, and the answer alphabets of $\verifier_n$ have size at
+most $2^{\TIME_\decider(n)}$, so $\log(\abs{\mA}\abs{\mB}) \leq 2 (\lambda n)^\tau$ and
+the denominator is $O((\lambda n)^\tau)$; with $\eps \geq (\lambda n)^{-\tau}$ and $k(n) =
+(\lambda n)^{(1 + c')\tau}$ the exponent is at least $(\lambda n)^{(c' - 13)\tau}$, so
+$c' > 13$ suffices. The exponent $13$ is the one of
+Theorem~\ref{thm:direct-repetition-q} itself, with no further loss: carrying the
+hypothesis in $\valstar$ rather than $\synval$ removes both the transport's polynomial
+loss and the factor $\kappa^{13}$ that its diagonal-weight hypothesis used to contribute.
+The conclusion is in $\valstar$, as is the hypothesis: that is the form
+Definition~\ref{def:mipstar} asks of the final game, and it is available at every step
+because nothing in the chain ever leaves $\valstar$ (Remark~\ref{rem:bipartite-route}).
 The exponent $b$ and the constants are provisional (Section~\ref{sec:conventions}).
 
 \subsection{The compression theorem}
@@ -214,7 +251,7 @@ an entanglement bound (Remark~\ref{rem:entanglement-form}).
 
 \begin{theorem}[Gap-preserving compression]
 \label{thm:compression}
-\uses{thm:introspection,thm:oracularization,thm:answer-reduction,thm:parallel-repetition,def:lambda-bounded,def:pcc,lem:sync-le-valstar,rem:sync-invariant}
+\uses{thm:introspection,thm:oracularization,thm:answer-reduction,thm:parallel-repetition,def:lambda-bounded,def:pcc}
 There is a universal constant $C_0 > 0$ and a polynomial-time Turing machine
 $\Compress$ that on input $(\verifier, \lambda)$ outputs a $7$-level normal form
 verifier $\vcompr = (\scompr, \dcompr)$ with $\TIME_{\scompr}(n),
@@ -225,11 +262,9 @@ $\verifier$ is a $\lambda$-bounded $7$-level normal form verifier, then for all 
 \begin{enumerate}
 \item (\textbf{Completeness}) If $\verifier_N$ has a value-$1$ PCC strategy, then so
   does $\vcompr_n$.
-\item (\textbf{Soundness}) If $\synval(\verifier_N) \leq \tfrac12$ then
-  $\valstar(\vcompr_n) \leq \tfrac12$. Since $\synval \leq \valstar$
-  (Lemma~\ref{lem:sync-le-valstar}), the class ``$\valstar \leq \tfrac12$'' is in
-  particular preserved: $\valstar(\verifier_N) \leq \tfrac12$ implies
-  $\valstar(\vcompr_n) \leq \tfrac12$.
+\item (\textbf{Soundness}) If $\valstar(\verifier_N) \leq \tfrac12$ then
+  $\valstar(\vcompr_n) \leq \tfrac12$: the class ``$\valstar \leq \tfrac12$'' is
+  preserved, in the same value at both ends.
 \end{enumerate}
 \end{theorem}
 
@@ -244,12 +279,6 @@ decomposition with trivial factors, which an $\ell$-level conditionally linear f
 (Definition~\ref{def:cl-function}) admits. In~\cite{JNVWY20} the count is $9$, anchored
 repetition adding two levels (Remark~\ref{rem:direct-vs-anchored}).
 
-Soundness moreover inherits the hypothesis of Theorem~\ref{thm:parallel-repetition}: the
-answer-reduced game to which repetition is applied must satisfy the synchronization
-invariant with a constant $\kappa$ uniform along the recursion
-(Remark~\ref{rem:sync-invariant}). Discharging that is open, and it is a requirement on the
-three inner transformations, not on $\verifier$.
-
 \begin{remark}[Relation to the abstract compression lemma]
 \label{rem:compression-abstract}
 \uses{thm:compression,lem:compressible-criterion,def:succinct,lem:value-lower-approx}
@@ -262,12 +291,13 @@ strategies, the $\valstar$ half of Lemma~\ref{lem:value-lower-approx}; and a des
 $(\sampler, \decider, n)$ with $n$ in binary is a succinct description of the game
 $\verifier_{2^n}$ played by a $\lambda$-bounded verifier. Completeness of compression is
 the preservation of $A$; preservation of $B$ is the soundness clause of
-Theorem~\ref{thm:compression} composed with $\synval \leq \valstar$ at the inner end, as
-that clause records. Taking $B$ in $\valstar$ rather than in $\synval$ is what keeps
-Theorem~\ref{thm:almost-sync} away from the outer end of the pipeline, where its
-hypothesis is unavailable (Remark~\ref{rem:almost-sync-hypothesis}); it is also the form in
-which the semidecision procedure is the more readily available, the rounding argument for
-the $\synval$ half not being the same one. Making this dictionary precise is a
+Theorem~\ref{thm:compression} verbatim, hypothesis and conclusion being in the same value.
+Taking $B$ in $\valstar$ throughout is what keeps Theorem~\ref{thm:almost-sync} out of the
+pipeline altogether --- at the outer end its hypothesis is unavailable
+(Remark~\ref{rem:almost-sync-hypothesis}) and at the inner end it is simply not needed
+(Remark~\ref{rem:bipartite-route}); it is also the form in which the semidecision
+procedure is available, the rounding argument for the $\synval$ half not being the same
+one. Making this dictionary precise is a
 formalization task of this section, and four obligations in it are open: the universe of
 the criterion's strings --- if they are games, $\compr$ cannot be polynomial-time, a game
 of $\verifier_{2^n}$ having $2^{\poly(n,\lambda)}$ questions, so they must be descriptions
@@ -333,11 +363,11 @@ Definition~\ref{def:mipstar}, such that:
 
 The proof is Lemma~\ref{lem:compressible-criterion} applied to the instantiation of
 Remark~\ref{rem:compression-abstract}; the semidecidability hypothesis of the lemma is the
-$\valstar$ half of Lemma~\ref{lem:value-lower-approx}. Two obligations of that
-instantiation are open and are inherited here: the four listed in
-Remark~\ref{rem:compression-abstract}, and the synchronization invariant that the soundness
-clause of Theorem~\ref{thm:compression} requires of the games produced inside $\Compress$
-(Remark~\ref{rem:sync-invariant}).
+$\valstar$ half of Lemma~\ref{lem:value-lower-approx}. The obligations of that
+instantiation that are open are inherited here: the four listed in
+Remark~\ref{rem:compression-abstract}. The synchronization invariant that an earlier
+revision also required of the games produced inside $\Compress$ is no longer among them
+(Remark~\ref{rem:bipartite-route}).
 
 One property the synchronous framework gets for nothing is worth recording. The value-$1$
 witness of item 1 is a PCC, hence synchronous, strategy: a \emph{single} family of

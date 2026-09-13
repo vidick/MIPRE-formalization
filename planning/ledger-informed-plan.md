@@ -134,22 +134,29 @@ six-node decomposition with explicit constants instead of an open route choice.
 Done when `lem:value-lower-approx` carries `\lean{}` and a `\leanok` proof and the
 `⊆` direction of `thm:mipstar-eq-re` follows.
 
-**P2 — put Finding 2 to the maintainer.** One decision, three roadmap items and one
-hard external theorem downstream of it. Costs nothing to ask and changes what P4
-means.
+**P2 — ~~put Finding 2 to the maintainer~~ — decided 2026-09-13: follow the ledger, carry
+`val*` throughout.** Applied to the blueprint the same day: every soundness clause of
+chapter 6 is now in `\valstar`, the new `rem:bipartite-route` records the decision and its
+evidence, `rem:sync-invariant` keeps its mathematics but loses its obligations, and
+`thm:parallel-repetition` loses both the transport's polynomial loss and the factor
+`κ^13` — its exponent is now the `13` of `thm:direct-repetition-q` itself. Roadmap items 5
+and 11 are off the critical path, item 9 is no longer load-bearing. The cost, recorded
+there: the rigidity and approximate-measurement lemmas must be stated bipartitely rather
+than tracially, which is what the sources do anyway.
 
 **P3 — expand blueprint chapter 6 along the ledger.** Turn six monoliths into the
 ledger's stage decomposition with a `\lean{}` name per statement, starting with
 stage 1.5 (compression, 6 challenges, engine already proved) and 1.6 (recursion, 13).
 This is blueprint-only work and it is what makes chapter 6 formalizable at all.
 
-**P4 — the inner transformations**, stage 1.2 first only if P2 says bipartite.
-169 challenges over 62 nodes; the long haul. `1.3.4` (29 challenges) is where to
-expect trouble.
+**P4 — the inner transformations**, bipartitely, as P2 settled. 169 challenges over
+62 nodes; the long haul. `1.3.4` (29 challenges) is where to expect trouble, and the
+rigidity and approximate-measurement lemmas are now to be stated bipartitely rather than
+tracially.
 
-Deliberately *not* first: `thm:almost-sync` (item 5) and `lem:sync-le-valstar`
-(item 9), pending P2 — proving either could turn out to be work the ledger says the
-proof does not need.
+No longer on the path at all: `thm:almost-sync` (item 5) and the synchronization invariant
+(item 11); `lem:sync-le-valstar` (item 9) survives only as the free comparison, used to
+read a `val*` conclusion synchronously and never the other way.
 
 ## Progress
 

@@ -22,10 +22,7 @@ decisions, items with a done criterion, risks. Update the status column as items
 - After the merge the path to the main theorem is in *value form* throughout (D8): no
   entanglement lower bound is stated or needed anywhere.
 - Still `sorry` or blueprint-only on that path, in order of appearance:
-  `lem:sync-le-valstar` (a `sorry` in `MIPRE/Foundations/Games.lean:653`, and after the
-  value-form repair it is load-bearing in three places: the soundness clause of
-  `thm:compression`, `thm:halting` and `cor:main-quantum`), `thm:almost-sync` (#22, no
-  Lean, and false as printed until 2026-09-11), `lem:value-lower-approx` (no Lean), and the
+  `lem:value-lower-approx` (no Lean), and the
   whole of chapter 6 (introspection, oracularization, answer reduction,
   `thm:parallel-repetition`, `thm:compression`, `thm:halting`), unchanged by the port. The
   `Cost/` toolkit statements that the universal machine still owes are tracked in
@@ -42,13 +39,13 @@ decisions, items with a done criterion, risks. Update the status column as items
 | 2 | First blueprint build on `main` | — | small | done 2026-09-11 (run 34608202078 green) |
 | 3 | #28 `lem:povm-value-eq`: close the entangled bridge | `\leanok` on `thm:direct-repetition-q`, item 4 | medium | done 2026-09-12 |
 | 4 | `lem:value-lower-approx` in Lean, `val*` half (MIP* ⊆ RE; hypothesis `hS` of the criterion) | `thm:halting`, `thm:mipstar-eq-re` | medium–hard | open |
-| 5 | #22 `thm:almost-sync`, with the diagonal-weight hypothesis (then #23, commuting case) | `thm:parallel-repetition` soundness | hard | open |
+| 5 | #22 `thm:almost-sync`, with the diagonal-weight hypothesis (then #23, commuting case) | — | hard | **off the critical path 2026-09-13** |
 | 6 | #29 `lem:tracial-le-co` (GNS); restate `thm:tracial-density` | MIP^co track | medium–hard | open |
 | 7 | Audit chapter 6 (value form) against Lin's propositions | chapter-6 formalization track | blueprint only | open |
 | 8 | Maintenance decisions (`try rfl` rule, transparency options, `autoImplicit`, upstream pins, CI time) | — | small each | open |
-| 9 | `lem:sync-le-valstar` in Lean (a `sorry`; transpose of a synchronous strategy on the maximally entangled state) | `thm:compression`, `thm:halting`, `cor:main-quantum` | small | open |
+| 9 | `lem:sync-le-valstar` in Lean (a `sorry`; transpose of a synchronous strategy on the maximally entangled state) | the synchronous *readings* of `thm:halting` and `thm:main` only | small | open, no longer load-bearing |
 | 10 | The referee report's deferred findings (last section of this file) | chapter-6 track | see there | open |
-| 11 | The synchronization invariant `rem:sync-invariant`: preserved by each transformation | `thm:parallel-repetition` soundness | medium | open |
+| 11 | The synchronization invariant `rem:sync-invariant`: preserved by each transformation | — | medium | **retired 2026-09-13** |
 
 ### 1. PR #30 → `main`, then the cloud environment (maintainer)
 
@@ -168,7 +165,25 @@ decisions, items with a done criterion, risks. Update the status column as items
   statement, its `Prog` form); the `FromPartrec.lean` lemma; `\lean`/`\leanok` on
   `lem:value-lower-approx` and `def:game-description`; the chapter-3 table row.
 
-### 5. #22 / #23 — synchronous transport (`thm:almost-sync`)
+### 5. #22 / #23 — synchronous transport (`thm:almost-sync`) — **off the critical path 2026-09-13**
+
+- The maintainer decided on 2026-09-13 to follow the ledger and carry the pipeline in
+  `val*` throughout (`planning/ledger-informed-plan.md`, finding 2; blueprint
+  `rem:bipartite-route`). The transport is then used **nowhere**: chapter 6's clauses are
+  all in `\valstar`, and `lem:sync-le-valstar` is applied only in the free direction, to
+  read a `\valstar` conclusion synchronously. So items 5 and 11 leave the critical path and
+  item 9 stops being load-bearing.
+- `thm:almost-sync` remains a background result worth stating correctly — it is the reason
+  the synchronous route cannot work, which is now recorded as the justification for the
+  bipartite one — and the commuting case (#23) is still wanted for the MIP^co track. Neither
+  blocks anything.
+- What follows *is* now owed, and is the cost of the decision: the rigidity and
+  approximate-measurement lemmas that the inner analyses consume must be stated
+  bipartitely, as `\cite{JNVWY20}` and the companion repository's paper state them, rather
+  than tracially. That is a change of target for the chapter-6 track, not extra work — it
+  was going to be a tracial restatement otherwise.
+
+### The original plan for item 5, kept for the record
 
 - Why: the soundness of `thm:parallel-repetition` argues
   `synval(V_n) ≤ 1 − ε ⇒ val*(V_n) ≤ 1 − ε'` through `thm:almost-sync` (Vidick 2022,
@@ -270,7 +285,7 @@ decisions, items with a done criterion, risks. Update the status column as items
 1 → 2
 3 ─────────────────────→ thm:direct-repetition-q \leanok
 4 ─────────────────────→ thm:halting (hypothesis hS); thm:mipstar-eq-re (⊆)
-5 (with 3) ────────────→ thm:parallel-repetition soundness
+5              ────────→ (nothing; off the critical path since 2026-09-13)
 6 ─────────────────────→ MIP^co track; tracial statements of chapter 5
 7 ─────────────────────→ chapter-6 formalization track (statements fixed first)
 ```
