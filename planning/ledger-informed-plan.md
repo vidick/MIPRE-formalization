@@ -360,6 +360,28 @@ Neither mode needs Lean, LaTeX or the network. The snapshot records the ledger h
 (`11a03e8`), its event count, and for each node its state, challenge and amendment counts
 and the sha256 of its statement.
 
+## Stage 1.4 is 3/8 on purpose, from 2026-09-13
+
+`scripts/ledger-sync.py` now reports stage 1.4 at 3 of 8 nodes, and the drop is not an
+annotation lost in an edit. The anchored parallel repetition material left the blueprint
+that day: `def:anchoring` (1.4.1), `lem:anchoring-value` (1.4.1.1--1.4.1.3) and `thm:bvy`
+(1.4.2) carried the five missing annotations, and they were deleted along with the
+toolkit their proof needs --- fidelity and Uhlmann, the relative entropy lemmas, quantum
+Raz, Holenstein conditioning.
+
+This is the consequence of what the section above already records: anchored repetition is
+*not used at all* on this route. Anchoring is what the entanglement form forces, because
+`lem:recursive-compression` needs a measure preserved by every transformation; Lin's
+criterion has no measure, so value decay suffices and repetition applies to the game as it
+is. The five nodes stay in the ledger --- they are what the source's proof needs --- and
+this blueprint no longer accounts for them, which is the honest state: not "unaccounted
+for yet", but "not on this route". The three that remain (1.4.3--1.4.5, the direct
+theorems and `thm:parallel-repetition`) are what the pipeline uses.
+
+If the anchored route is ever wanted back --- for the entanglement-requirement corollaries
+of `rem:entanglement-form`, say --- it comes back from `\cite{BVY17}` and from git history
+(`de3e22c`), not from a gap in the blueprint.
+
 ## Correspondence to maintain
 
 As P1 proceeds, each Lean declaration should name the ledger node it discharges, and

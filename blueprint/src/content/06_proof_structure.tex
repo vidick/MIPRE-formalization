@@ -118,8 +118,8 @@ only up to a factor $16^{-\abs{T}}$ in the type graph's size, which is where the
 count, which is part of why the level budget is what it is. The lemma also needs the type
 graph to have at least one edge --- a hypothesis every instantiation in the paper satisfies
 but which the source leaves unstated --- and its soundness argument truncates over-long
-answers, justified by the same answer-truncation lemma that anchoring uses
-(Lemma~\ref{lem:anchoring-value}).
+answers, justified by the same answer-truncation lemma that the anchoring
+construction of~\cite{BVY17} uses.
 \end{remark}
 
 \begin{remark}[Turing machine conventions, and the cost model that replaces them]
@@ -382,7 +382,7 @@ repetition (Theorem~\ref{thm:direct-repetition-q}, formalized end to end) restor
 soundness
 $\frac12$ with polynomially many repetitions, at polynomial cost in complexity and without
 anchoring; the anchored, entanglement-form theorem used in~\cite{JNVWY20}
-(Theorem~\ref{thm:bvy}) is not needed (Remark~\ref{rem:direct-vs-anchored}).
+(\cite{BVY17}) is not needed (Remark~\ref{rem:direct-vs-anchored}).
 
 \begin{theorem}[Parallel repetition of normal form verifiers]
 \label{thm:parallel-repetition}
@@ -606,7 +606,7 @@ instead, with $f = \Ent(\cdot, \frac12)$; it is not used by the main theorem.
 
 \begin{remark}[The entanglement form of~\cite{JNVWY20}]
 \label{rem:entanglement-form}
-\uses{def:ent,thm:bvy,lem:recursive-compression}
+\uses{def:ent,lem:recursive-compression}
 The paper states the soundness of each transformation with an additional entanglement
 clause, obtained from the same proofs by tracking the dimension of the extracted
 strategies: $\Ent(\vint_n, 1 - \eps) \geq \max\{\Ent(\verifier_{2^n}, 1 -
@@ -615,7 +615,7 @@ $\Ent(\vora_n, 1 - \eps) \geq \Ent(\verifier_n, 1 - \delta(\eps))$ for
 oracularization; $\Ent(\vans_n, 1 - \eps) \geq \frac12 \Ent(\verifier_n, 1 - \delta(\eps, n))$
 for answer reduction, the factor $\frac12$ being the Schmidt-rank doubling of the
 symmetrization step, which the synchronous framework of this blueprint does not perform
-(symmetry being definitional there) and therefore does not pay; Theorem~\ref{thm:bvy} for anchored repetition; and, composed,
+(symmetry being definitional there) and therefore does not pay; the anchored repetition theorem of~\cite{BVY17}; and, composed,
 $\Ent(\vcompr_n, \frac12) \geq \frac12 \max\{\Ent(\verifier_N, \frac12),\
 2^{N^\lambda - 1}\}$ for compression. Fed into the variant of
 Lemma~\ref{lem:recursive-compression} tolerating the factor $\frac12$ (harmless, since
