@@ -251,6 +251,7 @@ an entanglement bound (Remark~\ref{rem:entanglement-form}).
 
 \begin{theorem}[Gap-preserving compression]
 \label{thm:compression}
+\ledgernode{1.5, 1.5.7}
 \uses{thm:introspection,thm:oracularization,thm:answer-reduction,thm:parallel-repetition,def:lambda-bounded,def:pcc}
 There is a universal constant $C_0 > 0$ and a polynomial-time Turing machine
 $\Compress$ that on input $(\verifier, \lambda)$ outputs a $7$-level normal form
@@ -278,6 +279,106 @@ the recursion closes. A verifier of fewer levels is presented at that level by p
 decomposition with trivial factors, which an $\ell$-level conditionally linear function
 (Definition~\ref{def:cl-function}) admits. In~\cite{JNVWY20} the count is $9$, anchored
 repetition adding two levels (Remark~\ref{rem:direct-vs-anchored}).
+
+The four stages are chained through a parameter budget rather than composed blindly:
+each stage's soundness clause is applied contrapositively, and each application needs a
+strict margin between the loss it suffers and the gap it is handed. Those margins are
+arithmetic facts about the imported constants, isolated here as
+Lemma~\ref{lem:compress-margin} and Lemma~\ref{lem:compress-tau}. The provenance notes
+name the corresponding nodes of the companion repository's ledger
+(\texttt{vidick/mipre-proof}); see \texttt{planning/ledger-informed-plan.md}.
+
+\begin{lemma}[The compressed sampler does not depend on the verifier]
+\label{lem:compress-sampler-indep}
+\ledgernode{1.5.1}
+\uses{thm:compression,def:normal-verifier,def:cl-function}
+For all inputs $(\verifier, \lambda)$ --- $\lambda$-bounded or not, well-formed or not
+--- the sampler $\scompr$ of $\Compress(\verifier, \lambda)$ depends only on $\lambda$,
+and there is a Turing machine $\mathtt{ComputeSampler}$ that outputs its description from
+$\lambda$ in time $\polylog(\lambda)$.
+\end{lemma}
+\begin{proof}
+Chain the verifier-independence of the sampler through the three stages: introspection's
+sampler depends only on $(\lambda, \ell)$, answer reduction's only on its input sampler
+and the parameters, and repetition's only on its input sampler and $(\lambda, \ell,
+\tau)$. $\mathtt{ComputeSampler}$ is then realized by running $\Compress$ on the trivial
+verifier. It is this lemma that makes the recursion of Section~\ref{sec:ps-halting}
+possible at all: a fixed point has to quote its own sampler, so the sampler must not
+depend on what is being compressed.
+\end{proof}
+
+\effortMedium
+
+\begin{lemma}[The margin claim]
+\label{lem:compress-margin}
+\ledgernode{1.5.3}
+\uses{thm:introspection,thm:answer-reduction}
+Write $(a_1, b_1)$ for the constants of Theorem~\ref{thm:introspection} and $(a_2, b_2)$
+for those of Theorem~\ref{thm:answer-reduction}, normalized so that $a_1, a_2 \geq 1$.
+Put $\sigma = \lceil C_{\mathrm{intro}} \lambda^{C_{\mathrm{intro}}} \rceil$ and
+\begin{equation*}
+  \mu = \Bigl\lceil \max\Bigl\{ C_{\mathrm{intro}},\ \frac{9 a_1 + 2 a_2
+  C_{\mathrm{intro}}}{b_1 b_2} \Bigr\} \Bigr\rceil .
+\end{equation*}
+Then $\mu$ is a universal constant, $\mu \geq C_{\mathrm{intro}}$, and
+\begin{equation*}
+  (\lambda n)^{-b_2 \mu} \;<\; \frac{\eps_1}{2 \sigma^{a_2}}
+  \qquad \text{for all } n \geq 2 \text{ and all } \lambda \geq 1,
+\end{equation*}
+where $\eps_1 = \bigl( 8 a_1 (\lambda n)^{a_1} \bigr)^{-1/b_1}$.
+\end{lemma}
+
+\effortEasy
+
+\begin{lemma}[A universal repetition exponent]
+\label{lem:compress-tau}
+\ledgernode{1.5.5}
+\uses{thm:parallel-repetition,thm:answer-reduction}
+There is a universal integer $\tau$ such that, with $k(n) = (\lambda n)^{\tau}$ and
+$\eps_2$ the function of $(n, \lambda)$ fixed by the answer-reduction stage, the
+repetition bound of Theorem~\ref{thm:parallel-repetition} is below $\frac12$ for all $n
+\geq \tau$ and all integers $\lambda \geq 1$.
+\end{lemma}
+\begin{proof}
+$1/\eps_2$ is bounded by a fixed polynomial in $\lambda n$, because $\eps_1$, $\sigma$
+and $\mu$ are, so $\eps_2^{13} \geq (\lambda n)^{-P}$ for a universal $P$; choosing $\tau$
+larger than $P$ plus the answer-reduction exponent, with slack for the constants, makes
+the exponent of the bound grow as a positive fixed power of $\lambda n$. Purely
+arithmetic, and computationally testable --- the companion repository tests it.
+\end{proof}
+
+\effortEasy
+
+\begin{remark}[How the value chain composes, and what it avoids]
+\label{rem:compression-chain}
+\ledgernode{1.5.8, 1.5.2, 1.5.4, 1.5.6}
+\uses{thm:compression,thm:introspection,thm:oracularization,thm:answer-reduction,thm:parallel-repetition,def:ent,lem:compress-margin,lem:compress-tau}
+The soundness clause of Theorem~\ref{thm:compression} is obtained by applying each
+transformation's soundness clause contrapositively, with a margin at every step. From
+$\valstar(\verifier_N) \leq \frac12$ and $\delta_1(\eps_1, n) < \frac12$: were
+$\valstar(\verifier^{(1)}_n) > 1 - \eps_1$, Theorem~\ref{thm:introspection} would give
+$\valstar(\verifier_N) \geq 1 - \delta_1 > \frac12$, so
+$\valstar(\verifier^{(1)}_n) \leq 1 - \eps_1$. The same step through
+Theorem~\ref{thm:oracularization} and then Theorem~\ref{thm:answer-reduction}, using
+$\delta_2(\eps_2, n) < \eps_1$ (Lemma~\ref{lem:compress-margin}), gives
+$\valstar(\verifier^{(2)}_n) \leq 1 - \eps_2$; and
+Theorem~\ref{thm:parallel-repetition} with Lemma~\ref{lem:compress-tau} brings that below
+$\frac12$.
+
+Every step of that chain is an implication between $\valstar$ bounds, which is worth
+recording because the route of~\cite{JNVWY20} cannot take it. There the repetition step's
+soundness hypothesis is an \emph{entanglement} bound, and $\Ent(\game, 1 - \eps) = \infty$
+needs $\valstar(\game) < 1 - \eps$ \emph{strictly} --- a non-strict $\leq$ leaves the value
+possibly attained and the entanglement requirement finite. So the paper runs the whole
+chain in $\Ent$, starting it at the threshold $1 - \delta_1$ rather than at $\frac12$; the
+value-form route would force it to apply repetition at $\eps_2/2$ instead of $\eps_2$, at a
+cost of $2^{17}$ in the exponent of its repetition parameter. Direct repetition
+(Theorem~\ref{thm:direct-repetition-q}) takes a value hypothesis and so needs no
+strictness and pays no such factor: this is the second place, after
+Remark~\ref{rem:direct-vs-anchored}, where the value-form pipeline is cheaper than the
+entanglement-form one rather than merely equivalent to it. It is also why no entanglement
+lower bound has to be tracked anywhere in this chapter.
+\end{remark}
 
 \begin{remark}[Relation to the abstract compression lemma]
 \label{rem:compression-abstract}
@@ -345,9 +446,73 @@ measure until that is done.
 \subsection{The halting reduction}
 \label{sec:ps-halting}
 
+The ingredients, with provenance to the companion repository's ledger nodes.
+
+\begin{lemma}[The self-referential decider is well defined]
+\label{lem:halt-construction}
+\ledgernode{1.6.1}
+\uses{def:normal-verifier,lem:compress-sampler-indep,lem:kleene}
+There is a Turing machine $F$ and a decider $\dhalt = F$ carrying its own description,
+with a timeout bound $B_{\dhalt}(n)$, such that $\dhalt$ is total within its timeout and
+$\vhalt = (\mathtt{ComputeSampler}(\lambda), \dhalt)$ is a normal form verifier. The
+self-reference is by direct construction rather than by the recursion theorem, the
+input-length check precedes the $n$-step simulation of $\machine$, and the
+halting-freeze convention makes the decider total.
+\end{lemma}
+
+\effortMedium
+
+\begin{lemma}[A uniform bound on the verifier's parameter]
+\label{lem:lambda-bound}
+\ledgernode{1.6.4}
+For all integers $C, C' \geq 1$, all $\lambda \geq 4 \max\{ (4C)^{8C},\ C \log C' \}$
+and all $n \geq 2$,
+\begin{equation*}
+  C\, (C' \lambda n)^{C} \;\leq\; n^{\lambda} .
+\end{equation*}
+\end{lemma}
+
+\effortEasy
+
+\begin{lemma}[The parameter of the halting verifier]
+\label{lem:lambda}
+\ledgernode{1.6.5}
+\uses{lem:halt-construction,lem:lambda-bound,def:lambda-bounded}
+There is a $\lambda$, computable from the description of $\machine$ in polynomial time and
+of size $\poly(\abs{\machine})$, such that $\vhalt$ is $\lambda$-bounded and
+$\TIME_{\dhalt}(n), \TIME_{\shalt}(n) = \poly(n, \abs{\machine})$.
+\end{lemma}
+
+\effortMedium
+
+\begin{lemma}[Values of the halting verifier]
+\label{lem:dhalt-values}
+\ledgernode{1.6.2, 1.6.3}
+\uses{lem:halt-construction,lem:lambda,thm:compression,def:pcc,def:q-value}
+For every $n$:
+\begin{enumerate}
+\item if $\machine$ halts within $n$ steps then $\valstar(\vhalt_n) = 1$, witnessed by a
+  value-$1$ PCC strategy;
+\item if $\machine$ does not halt within $n$ steps then $\valstar(\vhalt_n) \leq
+  \frac12$.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+Item 1 is the fixed-answer strategy. Item 2 applies the soundness clause of
+Theorem~\ref{thm:compression} to the verifier built from $F$'s description; the induction
+is over scales and is well founded, the self-reference introducing no circularity because
+$\dhalt$ at index $n$ only ever invokes compression at strictly smaller scales. This is
+the node the companion repository's audit challenged twice; the two challenges concerned
+the well-foundedness and the answer-alphabet identification, and both were resolved
+in the source.
+\end{proof}
+
+\effortHard
+
 \begin{theorem}[Halting reduction]
 \label{thm:halting}
-\uses{thm:compression,rem:compression-abstract,lem:compressible-criterion,lem:value-lower-approx,lem:kleene,def:mipstar,def:game-description,lem:sync-le-valstar}
+\ledgernode{1.6, 1.6.6}
+\uses{thm:compression,rem:compression-abstract,lem:compressible-criterion,lem:value-lower-approx,lem:kleene,def:mipstar,def:game-description,lem:sync-le-valstar,lem:dhalt-values,lem:lambda}
 There is a computable (indeed polynomial-time) map $\machine \mapsto
 \game_{\machine}$ from Turing machines to synchronous game descriptions, with games
 given by normal form verifiers satisfying the efficiency requirements of
@@ -369,6 +534,10 @@ Remark~\ref{rem:compression-abstract}. The synchronization invariant that an ear
 revision also required of the games produced inside $\Compress$ is no longer among them
 (Remark~\ref{rem:bipartite-route}).
 
+\begin{remark}[Identical measurement operators]
+\label{rem:identical-operators}
+\ledgernode{1.6.7}
+\uses{thm:halting,def:sync-strategy,def:pcc,thm:separation}
 One property the synchronous framework gets for nothing is worth recording. The value-$1$
 witness of item 1 is a PCC, hence synchronous, strategy: a \emph{single} family of
 measurements used by both players. In the bipartite framework of~\cite{JNVWY20} that the
@@ -382,3 +551,4 @@ makes the commuting completeness of Theorem~\ref{thm:separation} a question abou
 transformation at a time rather than about a provenance argument. The entanglement form of the statement, with the
 stronger conclusion $\Ent(\game_\machine, \frac12) = \infty$ for non-halting
 $\machine$, is discussed in Remark~\ref{rem:entanglement-form}.
+\end{remark}
