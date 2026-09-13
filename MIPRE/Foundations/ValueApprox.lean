@@ -31,7 +31,7 @@ Mathlib's several matrix-norm instances is in scope.
 namespace MIPRE.ValueApprox
 
 open Matrix
-open scoped ComplexOrder
+open scoped ComplexOrder Kronecker
 
 variable {d : Type} [Fintype d] [DecidableEq d]
 
@@ -95,5 +95,46 @@ theorem posSemidef_realSmul_one_add_and_sub_iff {M : Matrix d d ℂ} (hM : M.IsH
       exact sub_nonneg.mpr (h x).1
     · rw [dotProduct_realSmul_one_sub]
       exact sub_nonneg.mpr (h x).2
+
+/-! ### Perturbing a candidate
+
+Nodes `1.1.7.2.3` (stability) and `1.1.7.2.4` (density) both compare the value of an
+approximate candidate with the value of an exact strategy nearby, and both do it by the
+same algebra: split the difference of two Born expectations into a part where only the
+operators moved and a part where only the state moved. The identities below are that
+split, exactly and with no estimates in them; the analytic bounds of those two nodes are
+obtained by bounding each term separately. -/
+
+/-- A difference of Kronecker products splits over the two factors. This is what lets the
+two players' operators be perturbed one at a time. -/
+theorem kronecker_sub_kronecker {dA dB : Type} (A A' : Matrix dA dA ℂ) (B B' : Matrix dB dB ℂ) :
+    A ⊗ₖ B - A' ⊗ₖ B' = (A - A') ⊗ₖ B + A' ⊗ₖ (B - B') := by
+  ext p q
+  simp only [Matrix.sub_apply, Matrix.add_apply, Matrix.kroneckerMap_apply]
+  ring
+
+omit [DecidableEq d] in
+/-- **The perturbation split.** The difference of the Born expectations of `(M, ψ)` and
+`(N, φ)` is an operator term, in which only `M - N` appears, plus two state terms, in which
+only `ψ - φ` appears. Exact: no norms and no estimates. -/
+theorem dotProduct_mulVec_perturb (M N : Matrix d d ℂ) (ψ φ : d → ℂ) :
+    star ψ ⬝ᵥ (M *ᵥ ψ) - star φ ⬝ᵥ (N *ᵥ φ)
+      = star ψ ⬝ᵥ ((M - N) *ᵥ ψ) + star (ψ - φ) ⬝ᵥ (N *ᵥ ψ)
+        + star φ ⬝ᵥ (N *ᵥ (ψ - φ)) := by
+  simp only [Matrix.sub_mulVec, Matrix.mulVec_sub, dotProduct_sub, sub_dotProduct, star_sub]
+  ring
+
+/-- The split a candidate strategy actually needs: a bipartite Born expectation with both
+players' operators and the state perturbed at once decomposes into four terms, each moving
+exactly one of `A`, `B` and `ψ`. Combining `kronecker_sub_kronecker` with
+`dotProduct_mulVec_perturb`. -/
+theorem dotProduct_kronecker_perturb {dA dB : Type} [Fintype dA] [Fintype dB]
+    (A A' : Matrix dA dA ℂ) (B B' : Matrix dB dB ℂ) (ψ φ : dA × dB → ℂ) :
+    star ψ ⬝ᵥ ((A ⊗ₖ B) *ᵥ ψ) - star φ ⬝ᵥ ((A' ⊗ₖ B') *ᵥ φ)
+      = star ψ ⬝ᵥ (((A - A') ⊗ₖ B) *ᵥ ψ) + star ψ ⬝ᵥ ((A' ⊗ₖ (B - B')) *ᵥ ψ)
+        + star (ψ - φ) ⬝ᵥ ((A' ⊗ₖ B') *ᵥ ψ)
+        + star φ ⬝ᵥ ((A' ⊗ₖ B') *ᵥ (ψ - φ)) := by
+  rw [dotProduct_mulVec_perturb (A ⊗ₖ B) (A' ⊗ₖ B') ψ φ, kronecker_sub_kronecker,
+    Matrix.add_mulVec, dotProduct_add]
 
 end MIPRE.ValueApprox
