@@ -549,30 +549,54 @@ $n$ and a query (\texttt{Sampler.Query}).
 
 \begin{definition}[Decider]
 \label{def:decider}
+\lean{MIPRE.Decider, MIPRE.Decider.Accepts, MIPRE.Decider.TimeBound}
+\leanok
 A \emph{decider} is a $5$-input Turing machine $\decider$, whose input is interpreted
-as $(n, x, y, a, b)$ with $n$ an integer index and $x, y, a, b$ strings. It accepts
-(output $1$) or rejects. $\TIME_\decider(n)$ denotes its maximal running time over
-inputs with index $n$.
+as $(n, x, y, a, b)$ with $n$ an integer index and $x, y, a, b$ strings. It \emph{accepts}
+if it halts with output $1$, and \emph{rejects} otherwise (output $0$, or a timeout).
+$\TIME_\decider(n)$ denotes its maximal running time over all inputs with index $n$.
 \end{definition}
 
 \begin{definition}[Normal form verifier]
 \label{def:normal-verifier}
 \ledgernode{1.1.3}
-\uses{def:sampler,def:decider,def:sync-game}
+\uses{def:sampler,def:decider,def:game,def:sync-game}
+\lean{MIPRE.Verifier, MIPRE.Verifier.game, MIPRE.Verifier.Answers, MIPRE.Verifier.size,
+  MIPRE.Verifier.IsSynchronousAt, MIPRE.Verifier.syncGame}
+\leanok
 A \emph{normal form verifier} is a pair $\verifier = (\sampler, \decider)$ of a sampler
-and a decider. For each $n$, $\verifier$ determines a game $\verifier_n$ with question
-distribution given by $\sampler$ at index $n$ and decision predicate
-$D(x,y,a,b) = \decider(n,x,y,a,b)$, where answers longer than $\TIME_\decider(n)$ are
-rejected. Symmetrizing the roles of the two players makes the question distribution and
-the decision predicate symmetric; that $\verifier_n$ is moreover \emph{synchronous} in the
-sense of Definition~\ref{def:sync-game} is a further condition on the decider, which must
-reject unequal answers to equal questions, and not a consequence of symmetrization
-(Remark~\ref{rem:sync-invariant}). We write $\valstar(\verifier_n)$ for the quantum value
-of $\verifier_n$ and, when $\verifier_n$ is synchronous, $\synval(\verifier_n)$ for its
-synchronous value. The
-description length $\abs{\verifier} = \max\{\abs{\sampler}, \abs{\decider}\}$, and the
-number of levels of $\verifier$ is that of $\sampler$.
+(with field size $2$) and a decider such that, on input $(n, x, y, a, b)$, the decider first
+computes the dimension $s(n)$ of the sampler and rejects unless $\abs{x} = \abs{y} = s(n)$.
+For each $n$ with $\TIME_\decider(n) < \infty$, $\verifier$ determines the \emph{$n$-th game}
+$\verifier_n$: its question sets are $\mX = \mY = \{0,1\}^{s(n)}$, its answer sets $\mA = \mB$
+are the strings of length at most $\TIME_\decider(n)$, its question distribution is the
+distribution of $\sampler$ at index $n$ (Definition~\ref{def:sampler}), and its decision
+predicate is $D_n(x, y, a, b) = 1$ if and only if $\decider(n, x, y, a, b)$ accepts. We write
+$\valstar(\verifier_n)$ for its quantum value. The game is \emph{synchronous} in the sense of
+Definition~\ref{def:sync-game} when the decider rejects unequal answers to equal questions;
+this is a condition on the decider (Remark~\ref{rem:sync-invariant}), and
+$\synval(\verifier_n)$ then denotes the synchronous value. The description length is
+$\abs{\verifier} = \max\{\abs{\sampler}, \abs{\decider}\}$, and the number of levels of
+$\verifier$ is that of $\sampler$.
 \end{definition}
+
+\paragraph{Comments.} The paper's \texttt{def:normal-ver} and \texttt{def:normal-game}
+(\texttt{games.tex}), including the amended question-length check, which the previous text
+of this definition omitted; in the paper the check is what gives $s(n) \le \TIME_\decider(n)$
+(\texttt{rmk:normal-verifier-question-length-check}). The formalization takes the
+answer-length bound as a parameter: \texttt{Verifier.game n T} is $\verifier_n$ with answers
+of length at most $T$, the paper's game being the case $T = \TIME_\decider(n)$; every statement
+about $\verifier_n$ carries its time bound explicitly, as the paper's do
+($\TIME_\decider(n) \le n^\lambda$, $\poly(2^{\lambda n}, \ell)$, and so on), and the exact
+supremum would only add the degenerate case $\TIME_\decider(n) = \infty$, where the paper's
+game is undefined, to every definition. Timeouts are not modelled: in the cost model of
+Section~\ref{sec:computability-conventions} a decider with $\TIME_\decider(n) < \infty$ halts
+on every input of index $n$, and acceptance is halting with output $1$. The question-length
+check is kept in the form of its consequence for the game, that the decider accepts only
+questions of length $s(n)$ (\texttt{Verifier.accepts\_length}); where the paper uses
+$s(n) \le \TIME_\decider(n)$, the formalization has $s(n) \le \TIME_\sampler(n)$ instead,
+which follows from the sampler's marginal queries producing outputs of length $s(n)$
+(\texttt{Sampler.dim\_le\_of\_timeBoundAt}).
 
 \begin{remark}[The synchronization invariant]
 \label{rem:sync-invariant}
@@ -609,6 +633,8 @@ to be.
 \begin{definition}[$\lambda$-bounded verifier]
 \label{def:lambda-bounded}
 \uses{def:normal-verifier}
+\lean{MIPRE.Verifier.IsBounded}
+\leanok
 For $\lambda \in \N$, a normal form verifier $\verifier = (\sampler, \decider)$ is
 \emph{$\lambda$-bounded} if $\TIME_\sampler(n), \TIME_\decider(n) \leq n^\lambda$ for
 all $n \geq 2$, and $\abs{\verifier} \leq \lambda$.
