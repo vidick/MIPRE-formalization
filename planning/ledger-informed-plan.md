@@ -183,6 +183,124 @@ Lipschitz bound on the Born value in the entries of the data. The three transpor
 lemmas proved for `lem:povm-value-eq` (`dotProduct_mulVec_submatrix`,
 `dotProduct_mulVec_conj`, `dotProduct_comp_equiv`) are the tools for that.
 
+## The ledger is fully accounted for, 2026-09-13
+
+123 of 123 nodes. Stages 1.1 (21), 1.4 (8), 1.7 (1) and the root (1) closed the remainder,
+by thirteen annotations on statements that already existed and three new remarks for the
+node groups that had no home: `rem:typed-detyping` (node 1.1.4 — typed verifiers, the
+`16^-|T|` detyping loss and the +2 levels this blueprint inherits without stating a type
+graph), `rem:tm-conventions` (nodes 1.1.5.x — the paper's timeout-counter formalism, which
+the cost model of `sec:rr-computability` replaces, keeping the three details a formalization
+would otherwise rediscover the hard way) and `rem:admitted-nodes`.
+
+`rem:admitted-nodes` is the one worth reading. With everything named, the assumptions are
+countable: of 123 nodes, 120 are validated and exactly three are admitted, and the
+value-form route treats them very differently.
+
+- **Anchored parallel repetition** (1.4.2, `thm:bvy`) — **not used at all.** Direct
+  repetition replaces it, is formalized end to end, and takes a value hypothesis. One of
+  the three admitted nodes leaves the pipeline entirely.
+- **Magic Square rigidity** (1.2.2.4.1, `thm:ms-rigidity`) — used through a single
+  anticommutation consequence, and not at all by the completeness leg, whose in-file
+  argument is already in Lean (`lem:mermin-peres`).
+- **Efficient self-dual normal bases** (1.1.6.1, `lem:self-dual-basis`) — unavoidable, and
+  the only genuinely load-bearing one. Also the most benign: three classical
+  computational-algebra results, and the source of the `q = 2^k`, `k` odd convention.
+
+So what this blueprint assumes beyond Mathlib is one classical algebra lemma and one
+rigidity theorem used through one consequence — a smaller surface than the paper's, and
+smaller *because of* the value form and direct repetition.
+
+Also checked while closing the root: live node `1` gives undecidability of approximating
+`val*` to additive error `< 1/4`, and notes that pushing the threshold to `1/2` needs a
+further gap-amplification step it does not carry out. `ch:downstream` already says exactly
+this, with the reason (`at c = 1/4 the estimate 3/4 is consistent with both`) and with the
+`1/2` form flagged as depending on the repetition theorem. No correction needed — the
+blueprint was already the more careful of the two.
+
+## Stage 1.2, done 2026-09-13
+
+62/62 nodes — the heaviest stage, 169 of the campaign's 291 challenges — by four
+annotations and three new remarks, plus five new chapter-2 statements that give the `LCS/`
+Lean development something to be named by. Three findings.
+
+**The formalization is stronger than the paper on node `1.2.1`.** The ledger marks it
+*imported*: the paper obtains quantum soundness of the simultaneous low-degree test by
+reducing to the tensor-codes theorem, which it does not reprove. But
+`MIPRE.LIDT.lowIndividualDegree_soundness` is proved from Mathlib alone through the
+vendored MIPStarRE formalization, with an `#print axioms` guard that fails the build if it
+ever becomes an axiom. All 28 nodes of the subtree are therefore accounted for as the
+internal structure of a finished proof. The formalization also corrected the statement:
+the printed constraint is `md <= k`, the proof needs `400 md <= k` and `k > 0`, and the
+blueprint already states the corrected form (checked, not assumed). Recorded in
+`rem:lidt-formalized`, which also carries node `1.2.1.7.2.4`: the interface between
+JNVWY's product-basis transposes and Vid22's Schmidt-diagonal symmetric strategies is
+*false* as stated, with a 2x2 counterexample. It does not touch `thm:lidt-soundness`, but
+it is a hazard for anything reusing the transpose trick.
+
+**Stage 1.2 holds the only admitted node the pipeline actually consumes.**
+`thm:ms-rigidity` is node `1.2.2.4.1`, one of three admitted nodes in the whole campaign,
+an import of Coladangelo--Stark Thm 6.9 that is neither vendored nor reproved. It is
+consumed narrowly — one anticommutation consequence, and not at all by the completeness
+leg, which uses the in-file argument that anticommuting observables give a perfect Magic
+Square strategy. That argument is already in Lean, and is now `lem:mermin-peres`.
+`scripts/ledger-sync.py` emits a standing Note that a cited node is admitted, which is the
+checker working as designed.
+
+**The soundness of `thm:qld` is not in the main text.** It is deferred to a five-file
+appendix, which is where most of stage 1.2's challenge weight sits, including the
+campaign's only *critical* finding (node `1.2.2.15`: the exact-Pauli construction rested
+on a false identity between a codeword's coordinates and the polynomial's values, replaced
+by a Schwartz--Zippel bound). A formalization should treat the appendix as the content and
+the main-text statement as its interface. Recorded in `rem:qld-admitted`.
+
+**The `LCS/` coverage gap is now half closed.** Five new chapter-2 statements name 16 Lean
+declarations, all verified sorry-free: `def:observable`, `lem:observable-projector`,
+`lem:observable-strategy` (the observable-to-projective-strategy construction of
+`LCS/Strategy/Equivalence.lean`), `def:magic-square` and `lem:mermin-peres`. Modules the
+blueprint accounts for: 29 -> 34 of 80; distinct Lean names cited: 75 -> 91. What remains
+unnamed in `LCS/` is the Pauli group development (`LCS/Pauli.lean`, 31 declarations),
+`LCS/EPR.lean` and `LCS/SolutionGroup/Representation.lean` — the natural next increment,
+and the one that would give `thm:qld` a Lean-side foothold.
+
+Stage coverage now: 1.2 at 62/62, 1.3 at 13/13, 1.5 at 9/9, 1.6 at 8/8; 95 of 123 nodes
+annotated. What is left is 1.1 (framework, 21 nodes, carried by chapter 2 without
+annotations), 1.4 (repetition, 8 nodes, chapter 5), 1.7 (separation, chapter 8) and the
+root.
+
+## Stage 1.3, done 2026-09-13
+
+13/13 nodes, by three annotations, two new statements and three new remarks. Two
+statement-level repairs came out of reading `paper/oracularization.tex` and
+`paper/ld_compiler.tex` against the blueprint:
+
+- `thm:oracularization` said `\delta(\eps) = \poly(\eps)`. The audit shows `\delta_ora`
+  carries one square root (the step from measurement closeness to a value statement is
+  NW19 Fact 4.31, not an identity), and `\sqrt\eps` is not a polynomial in `\eps`. Now
+  `O(\sqrt\eps)`. Its completeness clause also gains *identical measurement operators* —
+  SPCC was withdrawn upstream because nothing symmetrizes a value-1 PCC strategy while
+  preserving projectivity, consistency and value 1 — and a note that the oracle families
+  are projective, outcomes failing the bounded parse being grouped into one distinguished
+  outcome.
+- `thm:pcp-decider` (new) states the validity inequalities as *exact* (`|x|, |y| <= Q`)
+  and carries the hypothesis that `m` is a power of two. That is a confirmed upstream
+  defect: the `m`-variate low-degree test needs `m | q` with `q` a power of two, but only
+  the outer count `m' = 5m + 5 + s` was guaranteed to be one. `rem:pcp-power-of-two`
+  records it.
+
+`rem:ar-composition` accounts for node `1.3.4`, which carries 29 challenges — more than
+any other node of the campaign. Four are structural (the direct sum over two different
+fields, the consistency subtest omitted from the low-degree hypothesis, projectivity
+missing from Claim ar-4, and the `B_D(n)` truncation), and one does not reach this
+blueprint at all: JNVWY's answer reduction carries `Ent(V^ans_n, 1-\eps) >= (1/2)
+Ent(V_n, 1-\delta)`, the recursion consumes that `1/2`, and the campaign found the factor
+is not delivered by the written proof because the symmetrization it opens with doubles the
+Schmidt rank. The value-form pipeline has no entanglement clause to get wrong. That is the
+fourth place it is strictly cheaper rather than merely equivalent, after
+`rem:direct-vs-anchored`, `rem:compression-chain` and node `1.5.8`.
+
+Stage coverage now: 1.3 at 13/13, 1.5 at 9/9, 1.6 at 8/8; 33 of 123 nodes annotated.
+
 ## Stages 1.5 and 1.6, done 2026-09-13
 
 Both are fully accounted for: 9/9 nodes of stage 1.5 and 8/8 of stage 1.6, which

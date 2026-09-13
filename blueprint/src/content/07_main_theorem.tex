@@ -75,6 +75,7 @@ free comparison $\synval \leq \valstar$.
 
 \begin{corollary}[Uncomputability of the game value]
 \label{cor:value-uncomputable}
+\ledgernode{1.7}
 \uses{thm:main,cor:main-quantum,thm:halting-undecidable}
 There is no algorithm that, given a game description $g$ with the promise that
 $\synval(\game_g) = 1$ or $\synval(\game_g) \leq \frac12$, decides which is the
@@ -84,6 +85,7 @@ case; the same holds with $\valstar$ in place of $\synval$
 
 \begin{theorem}[$\MIPstar = \RE$]
 \label{thm:mipstar-eq-re}
+\ledgernode{1}
 \uses{def:mipstar,def:re,thm:halting,cor:main-quantum,thm:halting-undecidable,lem:value-lower-approx}
 $\MIPstar = \RE$.
 \end{theorem}

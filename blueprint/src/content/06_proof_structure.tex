@@ -36,6 +36,7 @@ the output of the previous ones.
 
 \begin{definition}[Conditionally linear function]
 \label{def:cl-function}
+\ledgernode{1.1.2}
 Let $V = \F_q^s$ and $\ell \geq 1$. An \emph{$\ell$-level conditionally linear (CL)
 function} on $V$ is defined recursively: a $1$-level CL function is a linear map $L :
 V \to V$; an $\ell$-level CL function is given by a direct sum decomposition $V = V_1
@@ -99,8 +100,53 @@ what makes commitment to each stage of the sampled question enforceable (the ``h
 directions of the CL decomposition). The result is a verifier whose questions are
 exponentially smaller, at the price of a fixed number of levels.
 
+\begin{remark}[Typed verifiers, and why this blueprint has none]
+\label{rem:typed-detyping}
+\ledgernode{1.1.4}
+\uses{def:normal-verifier,def:pcc,thm:oracularization,thm:answer-reduction}
+The transformations of this chapter are performed in~\cite{JNVWY20} on \emph{typed}
+verifiers --- a type graph whose vertices label the roles a question can play, with the
+sampler producing a pair of types and then a pair of questions --- and converted back by a
+detyping lemma at the end of each. This blueprint states the untyped forms throughout,
+which is why no type graph appears in Theorem~\ref{thm:oracularization} or
+Theorem~\ref{thm:answer-reduction}.
+
+That is a presentational choice with two costs a formalization will have to pay, both
+recorded on ledger node $1.1.4$ so they are not forgotten. Detyping preserves the value
+only up to a factor $16^{-\abs{T}}$ in the type graph's size, which is where the
+``constant-factor loss'' in the soundness chains comes from; and it adds $2$ to the level
+count, which is part of why the level budget is what it is. The lemma also needs the type
+graph to have at least one edge --- a hypothesis every instantiation in the paper satisfies
+but which the source leaves unstated --- and its soundness argument truncates over-long
+answers, justified by the same answer-truncation lemma that anchoring uses
+(Lemma~\ref{lem:anchoring-value}).
+\end{remark}
+
+\begin{remark}[Turing machine conventions, and the cost model that replaces them]
+\label{rem:tm-conventions}
+\ledgernode{1.1.5, 1.1.5.1, 1.1.5.2, 1.1.5.3}
+\uses{def:decider,def:lambda-bounded,lem:universal-tm}
+The paper fixes a concrete Turing machine formalism and a \emph{timeout-counter} normal form
+$B(n) = c_0 (c_1 n)^{c_2}$: a machine is wrapped so that it always halts within its bound,
+and the wrapped description is canonical enough that the parameters can be read back off
+it. Four ledger nodes are about that machinery, and this blueprint replaces all of it with
+the cost model of Section~\ref{sec:rr-computability}
+(Section~\ref{sec:departures} records the departure).
+
+Three things in those nodes are worth keeping even so, because they are the kind of detail a
+formalization rediscovers the hard way. The canonical form has to be genuinely injective in
+the parameters for the timeout bound to be well defined at all, and the audit had to supply
+an explicit parser to establish it --- in the source the parser's existence was asserted
+rather than constructed. The overhead polynomial relating a machine's running time to its
+bound needs the normalization $c_1 \geq 2$, without which the claim fails outright at
+$c_1 = 1$, $n = 1$. And the whole scheme rests on the bound dominating $n$, which holds only
+because the constants are positive integers. None of the three is deep; all three are the
+sort of thing that stops a formalization dead.
+\end{remark}
+
 \begin{theorem}[Introspection]
 \label{thm:introspection}
+\ledgernode{1.2, 1.2.3, 1.2.3.1, 1.2.3.2, 1.2.3.3, 1.2.3.4, 1.2.3.5, 1.2.3.6, 1.2.3.7, 1.2.3.8}
 \uses{def:normal-verifier,def:lambda-bounded,def:pcc,thm:qld,def:cl-function}
 There is a polynomial-time Turing machine $\ComputeIntroVerifier$ that on input
 $(\verifier, \lambda, \ell)$ returns a $5$-level normal form verifier $\vint =
@@ -132,19 +178,57 @@ reduction. This is probably the easiest transformation in the paper and could be
 
 \begin{theorem}[Oracularization]
 \label{thm:oracularization}
-\uses{def:normal-verifier,def:pcc}
+\ledgernode{1.3.5}
+\uses{def:normal-verifier,def:pcc,def:sync-strategy}
 There is a polynomial-time Turing machine $\ComputeOracleVerifier$ mapping a normal
 form verifier $\verifier = (\sampler, \decider)$ to a normal form verifier $\vora$
-such that, for some $\delta(\eps) = \poly(\eps)$ and all $n$:
+such that, for some $\delta(\eps) = O(\sqrt{\eps})$ and all $n$:
 \begin{enumerate}
 \item (\textbf{Completeness}) If $\verifier_n$ has a value-$1$ PCC strategy then
-  $\vora_n$ has a value-$1$ PCC strategy.
+  $\vora_n$ has a value-$1$ PCC strategy, in which moreover both players measure with the
+  same family of operators.
 \item (\textbf{Soundness}) If $\valstar(\vora_n) > 1 - \eps$ then
   $\valstar(\verifier_n) \geq 1 - \delta(\eps)$.
 \item (\textbf{Complexity}) The sampler of $\vora$ depends only on $\sampler$, with
   $\TIME$ within a constant factor and the same number of levels.
 \end{enumerate}
+The oracularized decider's preamble performs a type check, a question-length check, and a
+bounded parse of each answer component against the decider's timeout bound $B_\decider(n)$;
+answers failing the parse are grouped into one distinguished outcome, so the oracle
+families are projective measurements and not sub-measurements.
 \end{theorem}
+
+\begin{remark}[What the audit changed in oracularization]
+\label{rem:oracularization-repairs}
+\ledgernode{1.3.5}
+\uses{thm:oracularization,def:pcc,def:sync-strategy,rem:identical-operators}
+Node $1.3.5$ was added late --- round 12 of the campaign found that
+\texttt{oracularization.tex} was covered by no ledger node at all, although both of its
+theorems are consumed by answer reduction --- and it carries four repairs that the
+statement above has been written to respect.
+\begin{enumerate}
+\item The soundness constant $\delta_\ora$ carries \emph{one square root}: the step from a
+  $1 - O(\eps)$ measurement-closeness to a $1 - O(\sqrt{\eps})$ statement about the value
+  is an application of \cite[Fact 4.31]{NW19}, not an identity. An earlier revision of this
+  blueprint wrote $\delta(\eps) = \poly(\eps)$, which is not merely imprecise but false as
+  stated: $\sqrt{\eps}$ is not a polynomial in $\eps$.
+\item The completeness witness's extra property is \emph{identical measurement operators},
+  not symmetry of the state. The campaign found the claim that the constructed strategy is
+  symmetric ``by construction'' unjustified --- the hypothesis supplies a value-$1$ PCC
+  strategy whose state is reused unchanged, and no lemma in the paper symmetrizes such a
+  strategy while preserving projectivity, consistency and value $1$. SPCC was withdrawn
+  from the completeness clause in consequence. In the synchronous framework this is exactly
+  what is free (Remark~\ref{rem:identical-operators}).
+\item The oracle families are genuine projective measurements. Outcomes failing the
+  decider's bounded parse are grouped into a distinguished outcome; leaving that implicit
+  made them sub-measurements, which the later sandwiching argument may not use.
+\item The truncation of answers to $B_\decider(n)$ symbols is justified by a corollary of
+  the timeout-counter form, not by the assertion that a timeout-form decider inspects at
+  most $B_\decider(n)$ symbols. Nothing forces $B_\decider(n)$ to exceed the time bound
+  $T$ against which the PCP decodes, so the truncation is load-bearing and a formalization
+  must carry it explicitly.
+\end{enumerate}
+\end{remark}
 
 \subsection{Answer reduction}
 \label{sec:ps-answer-reduction}
@@ -159,9 +243,76 @@ it, using the low individual degree test to certify the encoding and
 Lemma~\ref{lem:schwartz-zippel} for the arithmetization. Answers and decider time
 become polylogarithmic in the original.
 
+\begin{lemma}[Succinct decoupled 5SAT]
+\label{lem:decoupled-5sat}
+\ledgernode{1.3.2, 1.3.2.1, 1.3.2.2, 1.3.2.3}
+\uses{thm:succinct-sat,def:succinct,def:decider}
+The succinct 3SAT instance of Theorem~\ref{thm:succinct-sat} can be converted, in time
+polynomial in $n$, $\log T$, $Q$ and $\sigma$, into a \emph{decoupled} 5SAT instance: the
+variables are partitioned into five blocks, two of which are the players' answer strings
+$a$ and $b$, and every clause touches each block at most once. The conversion preserves
+satisfiability in both directions, and both the explicit and the padded succinct
+descriptions of the result are computable within the same bound.
+\end{lemma}
+
+\begin{proof}
+Decoupling is a syntactic transformation: a clause touching one block twice is split by
+introducing a fresh variable in a new block together with an equality clause. Satisfiability
+in both directions and the block discipline for every clause of the image are checked
+clause by clause. The two description layers are separate obligations --- the explicit
+description fixes the circuit sizes and input formats, and the padded one fixes the padding
+conventions and index arithmetic that the PCP layer and the composition consume.
+\end{proof}
+
+\effortHard
+
+\begin{theorem}[The bespoke PCP for deciders]
+\label{thm:pcp-decider}
+\ledgernode{1.3.3, 1.3.3.1, 1.3.3.2, 1.3.3.3, 1.3.3.4}
+\uses{lem:decoupled-5sat,lem:schwartz-zippel,thm:qld,def:decider}
+There is a verifier $\pcpverifier$ which, given a valid decider specification $(\decider,
+n, T, Q, \sigma, x, y)$ --- validity requiring $\abs{\decider} \leq \sigma$, $\max\{Q,
+2\lceil \log n \rceil\} \leq T$ \emph{and} $\abs{x}, \abs{y} \leq Q$, as exact inequalities
+--- together with a PCP view $(z, \Xi)$, runs in time $\poly(\log T, \log n, Q, \sigma)$
+and satisfies:
+\begin{enumerate}
+\item (\textbf{Completeness}) if $\decider$ accepts $(n, x, y, a, b)$ within $T$ steps,
+  then the low-degree proof with $g_1, g_2$ the low-degree encodings of the padded answers
+  is accepted with probability $1$ over uniform $z$;
+\item (\textbf{Soundness}) any low-degree proof accepted with probability greater than
+  $\frac12$ decodes to strings whose prefixes $\decider$ accepts within $T$ steps.
+\end{enumerate}
+Here the number of variables $m$ of the arithmetization must be a power of two.
+\end{theorem}
+
+\begin{proof}
+Low-degree tests on the committed polynomials, sum-check-style zero-testing of the
+constraint polynomial against a zero basis, and Lemma~\ref{lem:schwartz-zippel} for the
+arithmetization. Four obligations are separate in the source and stay separate here: the
+proof format and query structure, completeness, the zero-testing argument with its error
+bounds, and the complexity bound the composition consumes.
+\end{proof}
+
+\begin{remark}[Why $m$ is a power of two]
+\label{rem:pcp-power-of-two}
+\uses{thm:pcp-decider,thm:qld}
+The hypothesis is not cosmetic and was a confirmed defect in the source. The $m$-variate
+low-degree test needs $m \mid q$, and $q$ is a power of two, so $m$ must be one as well.
+The padded description guarantees this only for the \emph{outer} variable count $m' = 5m +
+5 + s$; the inner $m$, inherited from the succinct-SAT reduction, carries no such
+guarantee, which leaves the conditionally linear functions of the axis-parallel and
+diagonal lines ill defined and the applications of low-degree soundness with an unverified
+hypothesis. The repair is to round $m$ up to a power of two in the padding step, which
+costs nothing asymptotically. A formalization must state it as a hypothesis, as
+Theorem~\ref{thm:pcp-decider} does.
+\end{remark}
+
+\effortHard
+
 \begin{theorem}[Answer reduction]
 \label{thm:answer-reduction}
-\uses{def:normal-verifier,def:pcc,thm:succinct-sat,lem:schwartz-zippel,thm:qld,lem:self-dual-basis}
+\ledgernode{1.3, 1.3.4}
+\uses{def:normal-verifier,def:pcc,thm:succinct-sat,lem:decoupled-5sat,thm:pcp-decider,lem:schwartz-zippel,thm:qld,lem:self-dual-basis,thm:oracularization}
 There is a polynomial-time Turing machine $\ComputeAnsVerifier$ that on input
 $(\verifier, \lambda, \ell, \mu, \sigma)$, for $\verifier$ an $\ell$-level normal form
 verifier with $\abs{\decider} \leq \sigma$, $\TIME_\sampler(n) \leq (\lambda n)^\mu$
@@ -184,6 +335,45 @@ This is the most technically heterogeneous section of the paper
 arithmetization --- see Section~\ref{sec:rr-cook-levin}) and half quantum (a
 low-degree ``sandwiching'' argument recombining the players' committed polynomials). It may also be the hardest. 
 
+\begin{remark}[The composition, and what the value form does not inherit]
+\label{rem:ar-composition}
+\ledgernode{1.3.4}
+\uses{thm:answer-reduction,thm:oracularization,thm:pcp-decider,def:ent,rem:compression-chain}
+The composition of the oracularized verifier with $\pcpverifier$ --- questions append
+conditionally-linearly sampled PCP evaluation points to the oracularized questions, so the
+sampler stays conditionally linear, and answers are PCP evaluations --- is ledger node
+$1.3.4$, which carries $29$ challenges, more than any other node of the campaign. Most are
+local: misnamed objects, a wrong exponent, an averaging omitted from a display, an
+undefined sampler symbol. Four are structural, and one of those does not reach this
+blueprint at all.
+\begin{enumerate}
+\item The ambient space of the answer-reduced sampler is declared as a direct sum of the
+  oracularized and PCP spaces, but the summands are over different fields: a normal form
+  verifier's sampler has field size $2$, while the PCP space is an $\Fq$-space. The
+  conditionally linear functions are $\Fq$-linear, so the decomposition needs stating over
+  a common field.
+\item The success probability fed into low-degree soundness omits the consistency subtest,
+  so the lemma's hypothesis is not verified as written.
+\item Claim ar-4 omits the word \emph{projective} for the simultaneous family, and the
+  sandwiching lemma uses projectivity of that family in its proof.
+\item The decoded answers have length up to $T$, while the oracle decider rejects any
+  answer component longer than $B_\decider(n)$, and nothing forces $B_\decider(n) \geq T$.
+  This is the truncation of Remark~\ref{rem:oracularization-repairs}, item 4.
+\end{enumerate}
+The one that does not reach us is the \emph{entanglement} clause. In~\cite{JNVWY20} answer
+reduction carries $\Ent(\vans_n, 1 - \eps) \geq \frac12 \Ent(\verifier_n, 1 -
+\delta(\eps, n))$, and the recursion consumes exactly that $\frac12$. The campaign found
+the factor unaccounted for --- the symmetrization the argument begins with doubles the
+Schmidt rank and carried no dimension clause --- and it is now attributed to exactly that
+doubling, so the clause stands with its constant explained rather than assumed.
+Theorem~\ref{thm:answer-reduction} above has no entanglement clause at all: the pipeline is
+carried in $\valstar$ throughout, and no entanglement lower bound is tracked anywhere in
+this chapter (Remark~\ref{rem:compression-chain}). So the whole question --- whether the
+$\frac12$ is earned, and whether a second factor of $2$ hides behind it --- is one this
+route never has to ask. That is the fourth place where the value form is strictly cheaper
+rather than merely equivalent.
+\end{remark}
+
 \subsection{Gap amplification: parallel repetition}
 \label{sec:ps-parallel-repetition}
 
@@ -196,6 +386,7 @@ anchoring; the anchored, entanglement-form theorem used in~\cite{JNVWY20}
 
 \begin{theorem}[Parallel repetition of normal form verifiers]
 \label{thm:parallel-repetition}
+\ledgernode{1.4, 1.4.3, 1.4.3.1}
 \uses{def:normal-verifier,def:pcc,def:direct-repetition,thm:direct-repetition-q,def:mipstar}
 There are universal constants $b, c > 0$ such that the following holds for every
 $\kappa \in (0,1]$. There are a constant $c' > 0$, depending only on $\kappa$, and a

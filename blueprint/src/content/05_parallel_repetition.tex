@@ -532,6 +532,7 @@ are one-line lemmas of Mathlib-style linear algebra.
 
 \begin{definition}[Anchoring]
 \label{def:anchoring}
+\ledgernode{1.4.1}
 \uses{def:game}
 \qlib{}
 Let $\game = (\mX, \mY, \mA, \mB, \mu, D)$ be a game and $0 < \alpha < 1$. The
@@ -546,6 +547,7 @@ $\frac12$-anchored version.
 
 \begin{lemma}[Anchoring preserves the value]
 \label{lem:anchoring-value}
+\ledgernode{1.4.1.1, 1.4.1.2, 1.4.1.3}
 \uses{def:anchoring,def:q-value}
 \qlib{}
 For every game $\game$ and $0 < \alpha < 1$,
@@ -578,6 +580,7 @@ of Section~\ref{ch:proof-structure} uses Theorem~\ref{thm:direct-repetition-q} i
 
 \begin{theorem}[Bavarian--Vidick--Yuen]
 \label{thm:bvy}
+\ledgernode{1.4.2}
 \uses{def:q-value,def:ent,def:anchoring,lem:anchoring-value,lem:dependency-breaking,lem:local-unitaries}
 There exists a universal constant $c > 0$ such that for every two-player game $\game$,
 all positive integers $k$, all $0 < \eps \leq 1$, and all $p$ satisfying
