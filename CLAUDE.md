@@ -35,6 +35,15 @@ list and troubleshooting: `docs/lean-cloud.md`.
 - **Blueprint** builds only on `main`, never on a branch. Before merging LaTeX,
   check mechanically that every `\ref`, `\uses`, `\cite` target exists and every
   `\lean{}` name resolves — there is no plastex or pdflatex in a session.
+  `scripts/lean-coverage.py` is that check — labels, refs, uses, cites, environment
+  nesting, `\lean{}` resolution — and it also guards against a reorganization
+  dropping Lean code; `scripts/ledger-sync.py` checks the ledger correspondence. CI
+  runs both before the Lean build. Tags and `\uses` lists wrap across lines here, so
+  never check them with a per-line grep: that silently skips the continuations.
+- **`\leanok` is two marks, not one**: inside the environment it claims the
+  *statement* is formalized, inside `\begin{proof}` that the *proof* is. Only ever
+  add the second after `#print axioms` shows the declaration free of `sorryAx`;
+  `planning/lean-coverage.md` records the audit that established the current state.
 - **`intentions / lifecycle`** is red on every PR: its project-board token is
   rejected repository-wide. Not a PR's fault; do not try to fix it from a PR.
 

@@ -163,11 +163,13 @@ read a `val*` conclusion synchronously and never the other way.
 
 | ledger node | blueprint | Lean | state |
 |---|---|---|---|
-| `1.1.7.2.1` (norm constraint half) | — | `MIPRE.ValueApprox.posSemidef_realSmul_one_add_and_sub_iff` | proved 2026-09-13 |
+| `1.1.7.2.1` (norm constraint half) | `lem:norm-two-psd` | `MIPRE.ValueApprox.posSemidef_realSmul_one_add_and_sub_iff` | proved 2026-09-13 |
 | `1.1.7.2.1` (exact arithmetic, psd decidability) | — | — | open |
 | `1.1.7.2.2` candidate set finiteness | — | — | open |
-| `1.1.7.2.3` stability | — | — | open |
-| `1.1.7.2.4` density | — | — | open |
+| `1.1.7.2.3` stability (the split) | `lem:perturbation-split` | `MIPRE.ValueApprox.dotProduct_mulVec_perturb` | proved 2026-09-13 |
+| `1.1.7.2.3` stability (the bound) | — | — | open |
+| `1.1.7.2.4` density (the split) | `lem:perturbation-split` | `MIPRE.ValueApprox.kronecker_sub_kronecker`, `dotProduct_kronecker_perturb` | proved 2026-09-13 |
+| `1.1.7.2.4` density (the bound) | — | — | open |
 | `1.1.7.2.5` halting biconditional | `lem:value-lower-approx` | — | open |
 | `1.1.7.2.6` application, MIP* ⊆ RE | `thm:mipstar-eq-re` (⊆) | — | open |
 | `1.1.7.2.6` "WLOG projective by Naimark" | `lem:povm-value-eq` | `MIPRE.Repetition.quantumValue_eq_entangledValue` | proved 2026-09-12 |

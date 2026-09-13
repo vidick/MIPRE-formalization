@@ -13,6 +13,8 @@ definition for definition, the Lean file
 synchronous form]
 \label{thm:main}
 \uses{thm:halting,def:game-description,def:sync-value,def:re}
+\lean{HaltingGameValue.halting_reduces_to_gameValue}
+\leanok
 There is a computable map $g$ from Turing machines to game descriptions such that for
 every Turing machine $\machine$:
 \begin{enumerate}
@@ -32,6 +34,26 @@ description rejects unequal answers to equal questions by fiat
 a projective family is perfectly consistent, so the terms the fiat deletes carry no weight
 in $\synval$, which is unchanged, and it can only lower $\valstar$ --- the safe direction
 for the soundness clause, while the completeness witness is synchronous and survives.
+
+\begin{remark}[The standalone restatement]
+\label{rem:standalone-restatement}
+\uses{def:game-description,def:sync-value}
+\lean{HaltingGameValue.gameValue, HaltingGameValue.GameData.equivTuple}
+\leanok
+The Lean main statement is deliberately self-contained: the file
+\texttt{MIPRE/HaltingGameValue.lean} imports nothing from the rest of this development,
+re-declaring the synchronous game, the synchronous strategy and the value on top of
+Mathlib alone, so that Theorem~\ref{thm:main} can be read without any of the vocabulary
+built in Section~\ref{ch:foundations}. In that reduced vocabulary \texttt{gameValue} is
+the synchronous value of Definition~\ref{def:sync-value} and \texttt{equivTuple}
+exhibits the canonical G\"odel numbering asserted in
+Definition~\ref{def:game-description} as an explicit equivalence between game
+descriptions and a tuple of integers and lists, which is what supplies the
+\texttt{Encodable} instance the computability clause quantifies over. The duplication is
+the price of a statement that stands alone, and keeping the two vocabularies in step is a
+maintenance obligation rather than a mathematical one: the definitions match one for one,
+and this is the list of the ones that do.
+\end{remark}
 
 \begin{corollary}[Halting reduces to the quantum value]
 \label{cor:main-quantum}

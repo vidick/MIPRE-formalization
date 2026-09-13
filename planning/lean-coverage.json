@@ -1,0 +1,531 @@
+{
+ "cited_labels": {
+  "HaltingGameValue.GameData": [
+   "def:game-description"
+  ],
+  "HaltingGameValue.GameData.equivTuple": [
+   "rem:standalone-restatement"
+  ],
+  "HaltingGameValue.GameData.toGame": [
+   "def:game-description"
+  ],
+  "HaltingGameValue.gameValue": [
+   "rem:standalone-restatement"
+  ],
+  "HaltingGameValue.halting_reduces_to_gameValue": [
+   "thm:main"
+  ],
+  "MIPRE.CommutingOperatorStrategy": [
+   "def:co-strategy-bipartite"
+  ],
+  "MIPRE.CommutingOperatorStrategy.value": [
+   "def:co-value-bipartite"
+  ],
+  "MIPRE.CommutingStrategy": [
+   "def:commuting-strategy"
+  ],
+  "MIPRE.CommutingStrategy.value": [
+   "def:commuting-value"
+  ],
+  "MIPRE.Cost.IsSuccinctDesc": [
+   "def:succinct"
+  ],
+  "MIPRE.Cost.bitQueryAnswer": [
+   "def:succinct"
+  ],
+  "MIPRE.Cost.compressibility_criterion": [
+   "lem:compressible-criterion"
+  ],
+  "MIPRE.Cost.compressibility_criterion_halting": [
+   "lem:halting-form"
+  ],
+  "MIPRE.Cost.efficient_fixed_point": [
+   "lem:kleene"
+  ],
+  "MIPRE.Cost.exists_clocked_universal": [
+   "lem:universal-tm"
+  ],
+  "MIPRE.Cost.exists_efficient_universal": [
+   "lem:universal-tm"
+  ],
+  "MIPRE.Cost.hardcode_size": [
+   "lem:smn"
+  ],
+  "MIPRE.Cost.hardcode_time": [
+   "lem:smn"
+  ],
+  "MIPRE.Cost.hardcode_time_rev": [
+   "lem:smn"
+  ],
+  "MIPRE.Cost.recursive_compression": [
+   "lem:recursive-compression"
+  ],
+  "MIPRE.Cost.recursive_compression_halting": [
+   "lem:halting-form"
+  ],
+  "MIPRE.Cost.smn_polyTime": [
+   "lem:smn"
+  ],
+  "MIPRE.Game": [
+   "def:game"
+  ],
+  "MIPRE.Game.repeat": [
+   "def:direct-repetition"
+  ],
+  "MIPRE.IsApproxRepresentation": [
+   "def:approx-rep"
+  ],
+  "MIPRE.IsPOVMClose": [
+   "def:distance"
+  ],
+  "MIPRE.LCS.Game": [
+   "def:lcs-instance"
+  ],
+  "MIPRE.LCS.Game.toNonlocalGame": [
+   "def:lcs-game"
+  ],
+  "MIPRE.LCS.Layout": [
+   "def:lcs-instance"
+  ],
+  "MIPRE.LCS.SolutionGroup": [
+   "def:solution-group"
+  ],
+  "MIPRE.LCS.exists_tensorStrategy_value_eq_one_of_localLoss_annihilates_epr": [
+   "thm:lcs-perfect"
+  ],
+  "MIPRE.LIDT.lidtGame": [
+   "def:lidt"
+  ],
+  "MIPRE.LIDT.lowIndividualDegree_soundness": [
+   "thm:lidt-soundness"
+  ],
+  "MIPRE.Repetition.commutingOperatorValue_repeat_le": [
+   "thm:direct-repetition-co"
+  ],
+  "MIPRE.Repetition.quantumValue_eq_entangledValue": [
+   "lem:povm-value-eq"
+  ],
+  "MIPRE.Repetition.quantumValue_repeat_le": [
+   "thm:direct-repetition-q"
+  ],
+  "MIPRE.Repetition.tracialDensity": [
+   "thm:tracial-density"
+  ],
+  "MIPRE.SyncStrategy": [
+   "def:sync-strategy"
+  ],
+  "MIPRE.SyncStrategy.IsPCC": [
+   "def:pcc"
+  ],
+  "MIPRE.SyncStrategy.value": [
+   "def:sync-value"
+  ],
+  "MIPRE.SynchronousGame": [
+   "def:sync-game"
+  ],
+  "MIPRE.SynchronousGame.repeat": [
+   "def:direct-repetition"
+  ],
+  "MIPRE.SynchronousGame.toGame": [
+   "def:sync-game"
+  ],
+  "MIPRE.TensorProductStrategy": [
+   "def:tensor-strategy"
+  ],
+  "MIPRE.TensorProductStrategy.value": [
+   "def:q-value"
+  ],
+  "MIPRE.ValueApprox.dotProduct_kronecker_perturb": [
+   "lem:perturbation-split"
+  ],
+  "MIPRE.ValueApprox.dotProduct_mulVec_perturb": [
+   "lem:perturbation-split"
+  ],
+  "MIPRE.ValueApprox.kronecker_sub_kronecker": [
+   "lem:perturbation-split"
+  ],
+  "MIPRE.ValueApprox.posSemidef_realSmul_one_add_and_sub_iff": [
+   "lem:norm-two-psd"
+  ],
+  "MIPRE.commValue": [
+   "def:commuting-value"
+  ],
+  "MIPRE.commutingOperatorValue": [
+   "def:co-value-bipartite"
+  ],
+  "MIPRE.entRequirement": [
+   "def:ent"
+  ],
+  "MIPRE.gowers_hatami": [
+   "thm:gowers-hatami"
+  ],
+  "MIPRE.hsInner": [
+   "def:hs-norm"
+  ],
+  "MIPRE.hsNormSq": [
+   "def:hs-norm"
+  ],
+  "MIPRE.inconsistency": [
+   "def:inconsistency"
+  ],
+  "MIPRE.povmDistance": [
+   "def:distance"
+  ],
+  "MIPRE.quantumValue": [
+   "def:q-value"
+  ],
+  "MIPRE.syncValue": [
+   "def:sync-value"
+  ],
+  "MIPRE.syncValue_le_commValue": [
+   "lem:sync-le-valco"
+  ],
+  "MIPRE.syncValue_le_quantumValue": [
+   "lem:sync-le-valstar"
+  ],
+  "Turing.Code": [
+   "def:machine-code"
+  ],
+  "Turing.Code.Produces": [
+   "def:code-run"
+  ],
+  "Turing.Code.evalWithin": [
+   "def:code-run"
+  ],
+  "Turing.Code.toTM": [
+   "def:machine-code"
+  ],
+  "Turing.MultiInputTM": [
+   "def:multiinput-tm"
+  ],
+  "Turing.MultiInputTM.ComputesInTimeAndSpace": [
+   "def:multiinput-tm"
+  ],
+  "Turing.codeSize": [
+   "def:machine-code"
+  ],
+  "Turing.decodeCode": [
+   "def:machine-code"
+  ],
+  "Turing.decodeCodeExact_encodeCode": [
+   "lem:code-canonical"
+  ],
+  "Turing.decodeCodeExact_sound": [
+   "lem:code-canonical"
+  ],
+  "Turing.encodeCode": [
+   "def:machine-code"
+  ],
+  "Turing.encodeCode_injective": [
+   "lem:code-canonical"
+  ],
+  "Turing.exists_boundedUniversalCode": [
+   "lem:bounded-universal-machine"
+  ],
+  "Turing.exists_universalCode": [
+   "lem:universal-machine"
+  ]
+ },
+ "cited_names": [
+  "HaltingGameValue.GameData",
+  "HaltingGameValue.GameData.equivTuple",
+  "HaltingGameValue.GameData.toGame",
+  "HaltingGameValue.gameValue",
+  "HaltingGameValue.halting_reduces_to_gameValue",
+  "MIPRE.CommutingOperatorStrategy",
+  "MIPRE.CommutingOperatorStrategy.value",
+  "MIPRE.CommutingStrategy",
+  "MIPRE.CommutingStrategy.value",
+  "MIPRE.Cost.IsSuccinctDesc",
+  "MIPRE.Cost.bitQueryAnswer",
+  "MIPRE.Cost.compressibility_criterion",
+  "MIPRE.Cost.compressibility_criterion_halting",
+  "MIPRE.Cost.efficient_fixed_point",
+  "MIPRE.Cost.exists_clocked_universal",
+  "MIPRE.Cost.exists_efficient_universal",
+  "MIPRE.Cost.hardcode_size",
+  "MIPRE.Cost.hardcode_time",
+  "MIPRE.Cost.hardcode_time_rev",
+  "MIPRE.Cost.recursive_compression",
+  "MIPRE.Cost.recursive_compression_halting",
+  "MIPRE.Cost.smn_polyTime",
+  "MIPRE.Game",
+  "MIPRE.Game.repeat",
+  "MIPRE.IsApproxRepresentation",
+  "MIPRE.IsPOVMClose",
+  "MIPRE.LCS.Game",
+  "MIPRE.LCS.Game.toNonlocalGame",
+  "MIPRE.LCS.Layout",
+  "MIPRE.LCS.SolutionGroup",
+  "MIPRE.LCS.exists_tensorStrategy_value_eq_one_of_localLoss_annihilates_epr",
+  "MIPRE.LIDT.lidtGame",
+  "MIPRE.LIDT.lowIndividualDegree_soundness",
+  "MIPRE.Repetition.commutingOperatorValue_repeat_le",
+  "MIPRE.Repetition.quantumValue_eq_entangledValue",
+  "MIPRE.Repetition.quantumValue_repeat_le",
+  "MIPRE.Repetition.tracialDensity",
+  "MIPRE.SyncStrategy",
+  "MIPRE.SyncStrategy.IsPCC",
+  "MIPRE.SyncStrategy.value",
+  "MIPRE.SynchronousGame",
+  "MIPRE.SynchronousGame.repeat",
+  "MIPRE.SynchronousGame.toGame",
+  "MIPRE.TensorProductStrategy",
+  "MIPRE.TensorProductStrategy.value",
+  "MIPRE.ValueApprox.dotProduct_kronecker_perturb",
+  "MIPRE.ValueApprox.dotProduct_mulVec_perturb",
+  "MIPRE.ValueApprox.kronecker_sub_kronecker",
+  "MIPRE.ValueApprox.posSemidef_realSmul_one_add_and_sub_iff",
+  "MIPRE.commValue",
+  "MIPRE.commutingOperatorValue",
+  "MIPRE.entRequirement",
+  "MIPRE.gowers_hatami",
+  "MIPRE.hsInner",
+  "MIPRE.hsNormSq",
+  "MIPRE.inconsistency",
+  "MIPRE.povmDistance",
+  "MIPRE.quantumValue",
+  "MIPRE.syncValue",
+  "MIPRE.syncValue_le_commValue",
+  "MIPRE.syncValue_le_quantumValue",
+  "Turing.Code",
+  "Turing.Code.Produces",
+  "Turing.Code.evalWithin",
+  "Turing.Code.toTM",
+  "Turing.MultiInputTM",
+  "Turing.MultiInputTM.ComputesInTimeAndSpace",
+  "Turing.codeSize",
+  "Turing.decodeCode",
+  "Turing.decodeCodeExact_encodeCode",
+  "Turing.decodeCodeExact_sound",
+  "Turing.encodeCode",
+  "Turing.encodeCode_injective",
+  "Turing.exists_boundedUniversalCode",
+  "Turing.exists_universalCode"
+ ],
+ "covered_modules": {
+  "MIPRE/Background/GowersHatami/Basic.lean": [
+   "MIPRE.IsApproxRepresentation",
+   "MIPRE.gowers_hatami"
+  ],
+  "MIPRE/Background/LIDT/Game.lean": [
+   "MIPRE.LIDT.lidtGame"
+  ],
+  "MIPRE/Background/LIDT/Soundness.lean": [
+   "MIPRE.LIDT.lowIndividualDegree_soundness"
+  ],
+  "MIPRE/Background/Repetition/Commuting.lean": [
+   "MIPRE.Repetition.commutingOperatorValue_repeat_le"
+  ],
+  "MIPRE/Background/Repetition/Direct.lean": [
+   "MIPRE.Game.repeat",
+   "MIPRE.SynchronousGame.repeat"
+  ],
+  "MIPRE/Background/Repetition/Entangled.lean": [
+   "MIPRE.Repetition.quantumValue_eq_entangledValue",
+   "MIPRE.Repetition.quantumValue_repeat_le"
+  ],
+  "MIPRE/Background/Repetition/TracialDensity.lean": [
+   "MIPRE.Repetition.tracialDensity"
+  ],
+  "MIPRE/Foundations/CommutingOperator.lean": [
+   "MIPRE.CommutingOperatorStrategy",
+   "MIPRE.CommutingOperatorStrategy.value",
+   "MIPRE.commutingOperatorValue"
+  ],
+  "MIPRE/Foundations/Compression.lean": [
+   "MIPRE.Cost.compressibility_criterion",
+   "MIPRE.Cost.compressibility_criterion_halting",
+   "MIPRE.Cost.recursive_compression",
+   "MIPRE.Cost.recursive_compression_halting"
+  ],
+  "MIPRE/Foundations/Cost/BitQuery.lean": [
+   "MIPRE.Cost.bitQueryAnswer"
+  ],
+  "MIPRE/Foundations/Cost/Kleene.lean": [
+   "MIPRE.Cost.efficient_fixed_point"
+  ],
+  "MIPRE/Foundations/Cost/Succinct.lean": [
+   "MIPRE.Cost.IsSuccinctDesc"
+  ],
+  "MIPRE/Foundations/Cost/Toolkit.lean": [
+   "MIPRE.Cost.hardcode_size",
+   "MIPRE.Cost.hardcode_time",
+   "MIPRE.Cost.hardcode_time_rev",
+   "MIPRE.Cost.smn_polyTime"
+  ],
+  "MIPRE/Foundations/Cost/Universal.lean": [
+   "MIPRE.Cost.exists_clocked_universal",
+   "MIPRE.Cost.exists_efficient_universal"
+  ],
+  "MIPRE/Foundations/Distances.lean": [
+   "MIPRE.IsPOVMClose",
+   "MIPRE.hsInner",
+   "MIPRE.hsNormSq",
+   "MIPRE.inconsistency",
+   "MIPRE.povmDistance"
+  ],
+  "MIPRE/Foundations/Games.lean": [
+   "MIPRE.CommutingStrategy",
+   "MIPRE.CommutingStrategy.value",
+   "MIPRE.Game",
+   "MIPRE.SyncStrategy",
+   "MIPRE.SyncStrategy.IsPCC",
+   "MIPRE.SyncStrategy.value",
+   "MIPRE.SynchronousGame",
+   "MIPRE.SynchronousGame.toGame",
+   "MIPRE.TensorProductStrategy",
+   "MIPRE.TensorProductStrategy.value",
+   "MIPRE.commValue",
+   "MIPRE.entRequirement",
+   "MIPRE.quantumValue",
+   "MIPRE.syncValue",
+   "MIPRE.syncValue_le_commValue",
+   "MIPRE.syncValue_le_quantumValue"
+  ],
+  "MIPRE/Foundations/ValueApprox.lean": [
+   "MIPRE.ValueApprox.dotProduct_kronecker_perturb",
+   "MIPRE.ValueApprox.dotProduct_mulVec_perturb",
+   "MIPRE.ValueApprox.kronecker_sub_kronecker",
+   "MIPRE.ValueApprox.posSemidef_realSmul_one_add_and_sub_iff"
+  ],
+  "MIPRE/HaltingGameValue.lean": [
+   "HaltingGameValue.GameData",
+   "HaltingGameValue.GameData.equivTuple",
+   "HaltingGameValue.GameData.toGame",
+   "HaltingGameValue.gameValue",
+   "HaltingGameValue.halting_reduces_to_gameValue"
+  ],
+  "MIPRE/LCS/Basic.lean": [
+   "MIPRE.LCS.Game",
+   "MIPRE.LCS.Layout"
+  ],
+  "MIPRE/LCS/NonlocalGame.lean": [
+   "MIPRE.LCS.Game.toNonlocalGame",
+   "MIPRE.LCS.exists_tensorStrategy_value_eq_one_of_localLoss_annihilates_epr"
+  ],
+  "MIPRE/LCS/SolutionGroup.lean": [
+   "MIPRE.LCS.SolutionGroup"
+  ],
+  "MIPRE/TM/Code/Encoding/MachineCode.lean": [
+   "Turing.decodeCodeExact_encodeCode",
+   "Turing.decodeCodeExact_sound",
+   "Turing.encodeCode",
+   "Turing.encodeCode_injective"
+  ],
+  "MIPRE/TM/Code/Encoding/Total.lean": [
+   "Turing.codeSize",
+   "Turing.decodeCode"
+  ],
+  "MIPRE/TM/Code/Evaluator.lean": [
+   "Turing.Code.Produces",
+   "Turing.Code.evalWithin"
+  ],
+  "MIPRE/TM/Code/Semantics.lean": [
+   "Turing.Code.toTM"
+  ],
+  "MIPRE/TM/Code/WellFormed.lean": [
+   "Turing.Code"
+  ],
+  "MIPRE/TM/MultiInput/Complexity.lean": [
+   "Turing.MultiInputTM.ComputesInTimeAndSpace"
+  ],
+  "MIPRE/TM/MultiInput/Deterministic.lean": [
+   "Turing.MultiInputTM"
+  ],
+  "MIPRE/TM/Universal/Spec.lean": [
+   "Turing.exists_boundedUniversalCode",
+   "Turing.exists_universalCode"
+  ]
+ },
+ "lean_tags": 48,
+ "module_sizes": {
+  "MIPRE/Background/GowersHatami/Basic.lean": 44,
+  "MIPRE/Background/LIDT/Axioms.lean": 0,
+  "MIPRE/Background/LIDT/Bridge/Consistency.lean": 1,
+  "MIPRE/Background/LIDT/Bridge/Defect.lean": 8,
+  "MIPRE/Background/LIDT/Bridge/Field.lean": 26,
+  "MIPRE/Background/LIDT/Bridge/Main.lean": 7,
+  "MIPRE/Background/LIDT/Bridge/Measurement.lean": 37,
+  "MIPRE/Background/LIDT/Bridge/Polynomial.lean": 24,
+  "MIPRE/Background/LIDT/Bridge/Strategy.lean": 4,
+  "MIPRE/Background/LIDT/Bridge/Value.lean": 28,
+  "MIPRE/Background/LIDT/Game.lean": 25,
+  "MIPRE/Background/LIDT/Soundness.lean": 1,
+  "MIPRE/Background/Repetition/Axioms.lean": 0,
+  "MIPRE/Background/Repetition/Commuting.lean": 8,
+  "MIPRE/Background/Repetition/Direct.lean": 3,
+  "MIPRE/Background/Repetition/Entangled.lean": 29,
+  "MIPRE/Background/Repetition/TracialDensity.lean": 1,
+  "MIPRE/Cslib/Computability/Machines/Turing/MultiTape/Deterministic.lean": 44,
+  "MIPRE/Cslib/Computability/Machines/Turing/MultiTape/TapeLemmas.lean": 12,
+  "MIPRE/Cslib/Foundations/Data/RelatesInSteps.lean": 25,
+  "MIPRE/Foundations/CommutingOperator.lean": 4,
+  "MIPRE/Foundations/Compression.lean": 18,
+  "MIPRE/Foundations/Cost/Basic.lean": 31,
+  "MIPRE/Foundations/Cost/BitQuery.lean": 19,
+  "MIPRE/Foundations/Cost/Clocked.lean": 5,
+  "MIPRE/Foundations/Cost/Closure.lean": 21,
+  "MIPRE/Foundations/Cost/Codable.lean": 43,
+  "MIPRE/Foundations/Cost/Encoding.lean": 25,
+  "MIPRE/Foundations/Cost/FromPartrec.lean": 21,
+  "MIPRE/Foundations/Cost/Growth.lean": 3,
+  "MIPRE/Foundations/Cost/Interpreter.lean": 73,
+  "MIPRE/Foundations/Cost/Kleene.lean": 9,
+  "MIPRE/Foundations/Cost/Loops.lean": 26,
+  "MIPRE/Foundations/Cost/Machine.lean": 17,
+  "MIPRE/Foundations/Cost/MachineBound.lean": 27,
+  "MIPRE/Foundations/Cost/MachineData.lean": 17,
+  "MIPRE/Foundations/Cost/Numeric.lean": 36,
+  "MIPRE/Foundations/Cost/Partrec.lean": 19,
+  "MIPRE/Foundations/Cost/PolyTime.lean": 8,
+  "MIPRE/Foundations/Cost/Succinct.lean": 7,
+  "MIPRE/Foundations/Cost/Threshold.lean": 8,
+  "MIPRE/Foundations/Cost/Toolkit.lean": 18,
+  "MIPRE/Foundations/Cost/Unary.lean": 26,
+  "MIPRE/Foundations/Cost/Universal.lean": 130,
+  "MIPRE/Foundations/Distances.lean": 10,
+  "MIPRE/Foundations/Games.lean": 47,
+  "MIPRE/Foundations/ValueApprox.lean": 8,
+  "MIPRE/HaltingGameValue.lean": 12,
+  "MIPRE/LCS/Basic.lean": 5,
+  "MIPRE/LCS/Common.lean": 10,
+  "MIPRE/LCS/EPR.lean": 22,
+  "MIPRE/LCS/MagicSquare/SolutionGroup.lean": 8,
+  "MIPRE/LCS/MagicSquare/Strategy.lean": 6,
+  "MIPRE/LCS/MatrixSOS.lean": 1,
+  "MIPRE/LCS/Measurement.lean": 8,
+  "MIPRE/LCS/NonlocalGame.lean": 2,
+  "MIPRE/LCS/Observable.lean": 4,
+  "MIPRE/LCS/Pauli.lean": 31,
+  "MIPRE/LCS/SolutionGroup.lean": 22,
+  "MIPRE/LCS/SolutionGroup/Representation.lean": 23,
+  "MIPRE/LCS/Strategy/Equivalence.lean": 16,
+  "MIPRE/LCS/Strategy/ObservableStrategy.lean": 11,
+  "MIPRE/LCS/Strategy/ObservableToProjector.lean": 8,
+  "MIPRE/LCS/Strategy/ProjectorStrategy.lean": 14,
+  "MIPRE/LCS/WinningCondition.lean": 8,
+  "MIPRE/TM/Code/Encoding/MachineCode.lean": 40,
+  "MIPRE/TM/Code/Encoding/Nat.lean": 28,
+  "MIPRE/TM/Code/Encoding/Total.lean": 9,
+  "MIPRE/TM/Code/Evaluator.lean": 22,
+  "MIPRE/TM/Code/Examples.lean": 13,
+  "MIPRE/TM/Code/Observation.lean": 23,
+  "MIPRE/TM/Code/Raw.lean": 6,
+  "MIPRE/TM/Code/Semantics.lean": 16,
+  "MIPRE/TM/Code/WellFormed.lean": 27,
+  "MIPRE/TM/MultiInput/Complexity.lean": 2,
+  "MIPRE/TM/MultiInput/Congr.lean": 31,
+  "MIPRE/TM/MultiInput/Deterministic.lean": 35,
+  "MIPRE/TM/MultiInput/OneInputEquiv.lean": 21,
+  "MIPRE/TM/MultiInput/TapeLemmas.lean": 12,
+  "MIPRE/TM/Universal/Spec.lean": 3
+ },
+ "unresolved": [],
+ "xref_counts": {
+  "bibitems": 36,
+  "cites": 149,
+  "labels": 155,
+  "refs": 590
+ }
+}
