@@ -31,7 +31,7 @@ Result & Statement & Source & Effort \\
 \hline
 Gowers--Hatami & Thm.~\ref{thm:gowers-hatami} & \cite{GH17,dlS21} & \checkmark \\
 Almost-synchronous correlations & Thm.~\ref{thm:almost-sync} & \cite{Vid22} & hard \\
-Orthonormalization & Thm.~\ref{thm:orthonormalization} & \cite{dlS21} & medium \\
+Orthonormalization & Thm.~\ref{thm:orthonormalization} & \cite{dlS21} & \checkmark \\
 Magic Square rigidity & Thm.~\ref{thm:ms-rigidity} & \cite{WBMS16} & easy \\
 Low individual degree test (classical) & Thm.~\ref{thm:lidt-soundness} & \cite{JNVWY21qld} & \checkmark \\
 Low individual degree test (Pauli) & Thm.~\ref{thm:qld} & \cite{JNVWY21qld} & hard \\
@@ -244,23 +244,59 @@ only available route.
 \label{thm:orthonormalization}
 \ledgernode{1.2.1.7.1, 1.2.1.7.1.1, 1.2.1.7.1.2, 1.2.1.7.1.3}
 \uses{def:distance}
-There is a universal constant $C > 0$ such that the following holds. Let $(\cal{M},
-\tau)$ be a von Neumann algebra with a normal faithful tracial state (for the finite-%
-dimensional case, $\cal{M} = M_d(\C)$ with the normalized trace). Let $\{M_a\}_{a \in
-\mA}$ be a POVM in $\cal{M}$ that is $\eps$-nearly projective:
+\lean{MIPRE.Orthonormalization.povm_orthogonalization_finDim}
+\leanok
+Let $\cal{M}$ be a von Neumann algebra on a finite-dimensional Hilbert space, let
+$\varphi$ be a normal state on $\cal{M}$, and let $\{M_a\}_{a \in \mA}$ be a POVM in
+$\cal{M}$ that is $\eps$-nearly projective:
 \begin{equation*}
-  \sum_{a \in \mA} \tau\bigl( M_a - M_a^2 \bigr) \leq \eps\;.
+  \varphi\Bigl( \sum_{a \in \mA} M_a^2 \Bigr) > 1 - \eps\;.
 \end{equation*}
 Then there is a projective measurement $\{P_a\}_{a \in \mA}$ in $\cal{M}$ with
 \begin{equation*}
-  \sum_{a \in \mA} \norm{M_a - P_a}_{L^2(\tau)}^2 \leq C\eps\;.
+  \varphi\Bigl( \sum_{a \in \mA} (M_a - P_a)^*(M_a - P_a) \Bigr) < 9\eps\;.
 \end{equation*}
-The same holds, on average, for a family $\{M^x_a\}$ indexed by $x \sim \mu$.
+The same holds, on average, for a family $\{M^x_a\}$ indexed by $x \sim \mu$, by applying
+it to $\varphi$ averaged over $x$.
 \end{theorem}
+
+\begin{remark}[What is proved, and in what generality]
+\label{rem:orthonormalization-scope}
+\uses{thm:orthonormalization}
+\leanok
+The statement above is the finite-dimensional case, which is the one the main theorem
+needs and the one that is formalized. The vendored development proves three
+unconditional cases, in increasing generality of the algebra and decreasing generality of
+the state: every von Neumann algebra on a finite-dimensional space, for every normal
+state (\texttt{MIPRE.Orthonormalization.povm\_orthogonalization\_finDim}, the
+statement above, bridging \texttt{povm\_orthogonalization\_finDim\_vn}); $\cal{B}(H)$
+for arbitrary $H$ (\texttt{povm\_orthogonalization\_fullAlgebra\_general}); and II$_1$
+factors whose trace and state are both of trace-class form
+(\texttt{povm\_orthogonalization\_II\textsubscript{1}Factor}), which is the case a
+tracial, commuting-operator strategy lives in.
+
+The general case --- every von Neumann algebra, every normal state --- is proved only as
+an implication. Its hypothesis, \texttt{MvNStructureTheory}, bundles eight facts: seven
+are classical Murray--von Neumann structure theory that Mathlib does not have (normal
+functionals are of trace-class form; the type decomposition; the finite decomposition;
+increasing nets of finite projections in the semifinite part; the center-valued trace;
+halving in type III), and the eighth is the measurable-selection step of the source's own
+Lemma~3.1 for the finite type~I part. No term of that type is constructed, so the
+unconditional general statement remains open upstream, and with it the three companion
+results (Theorems 1.1 and 1.4 and Corollary 1.5 of~\cite{dlS21}), which are formalized in
+finite dimension and conditionally in general.
+\texttt{MIPRE/Background/Orthonormalization/Axioms.lean} makes the split mechanical: it
+fails to build if an unconditional result acquires an axiom, or if one of the four open
+targets is closed upstream without this blueprint being updated.
+\end{remark}
 
 \paragraph{Source.} de la Salle~\cite{dlS21}, which gives a dimension-free bound with
 explicit constants; earlier versions with worse parameters appear in~\cite{KPS18}
-and in~\cite{JNVWY20}.
+and in~\cite{JNVWY20}. The Lean proof is vendored from the
+\texttt{orthogonalization} package of the \texttt{commuting-repetition} repository
+(the same upstream as Theorem~\ref{thm:direct-repetition-co}) by
+\texttt{scripts/vendor-repetition.py}; see that directory's \texttt{README.md} for what
+the copy changes (import prefixes, nothing else).
 
 \paragraph{Comments.} Used constantly: soundness analyses produce POVMs that are only
 approximately projective, and this lemma replaces them by genuinely projective
@@ -269,21 +305,28 @@ throughout'' convention of Section~\ref{sec:departures} viable (avoiding Naimark
 dilation). The finite-dimensional case suffices for the main theorem and is a clean,
 self-contained formalization target in linear algebra.
 
-Two claims about the source, from the verification campaign~\cite{Audit26} and
-\emph{not} checked against~\cite{dlS21} here (that text is not vendored in this
-repository). First, the statement above is over-hypothesized: the source is reported to
-need only a \emph{normal} state, not a normal faithful tracial one, to give constant $9$
-and exponent $1$, and to return a full projective measurement in the algebra. The tracial
-hypothesis is not harmless bookkeeping --- it excludes the bipartite vector-state
-applications that several of the projectivization sites of Section~\ref{ch:proof-structure}
-need, so weakening it would turn three of those sites into genuine improvements while the
-rest would still need Naimark dilation or the projective-by-definition convention of
-Section~\ref{sec:departures}. Second, the attribution of the weaker predecessor
-to~\cite{KPS18} and~\cite{JNVWY20} is reported to be wrong, the source crediting the low
-individual degree paper and Kempe--Vidick instead. Both should be settled against the
-source before this lemma is relied on in that generality; the campaign also offers a
-consistency-to-projectivity step giving $O(\delta)$ in place of $O(\delta^{1/4})$, which
-would sharpen the proof of Theorem~\ref{thm:almost-sync}.
+The first of the two claims about the source made by the verification
+campaign~\cite{Audit26} --- that this statement was over-hypothesized, the result needing
+only a \emph{normal} state rather than a normal faithful tracial one, with constant $9$
+and exponent $1$ --- is now settled in the direction the campaign predicted, and settled
+by proof rather than by reading: the statement above carries neither faithfulness nor
+traciality and is checked. That matters beyond bookkeeping, because the tracial
+hypothesis excluded the bipartite vector-state applications that several of the
+projectivization sites of Section~\ref{ch:proof-structure} need; those sites can now use
+this lemma, where before they needed Naimark dilation or the projective-by-definition
+convention of Section~\ref{sec:departures}. What is settled is the mathematics, not the
+attribution: the campaign's second claim, that crediting the weaker predecessor
+to~\cite{KPS18} and~\cite{JNVWY20} is wrong and the source credits the low individual
+degree paper and Kempe--Vidick instead, is still unchecked here, \cite{dlS21} not being
+vendored in this repository. The campaign also offers a consistency-to-projectivity step
+giving $O(\delta)$ in place of $O(\delta^{1/4})$, which would sharpen the proof of
+Theorem~\ref{thm:almost-sync}.
+
+One difference from the statement this blueprint carried before: the hypothesis and the
+conclusion are both strict, and the near-projectivity hypothesis is written
+$\varphi(\sum_a M_a^2) > 1 - \eps$ rather than $\sum_a \tau(M_a - M_a^2) \leq \eps$. For a
+POVM the two agree, since $\sum_a M_a = 1$; converting the strict form to a non-strict one
+costs the constant, $9$ becoming $10$.
 
 \subsection{Magic Square rigidity}
 \label{sec:rr-magic-square}

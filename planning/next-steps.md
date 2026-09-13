@@ -209,7 +209,12 @@ decisions, items with a done criterion, risks. Update the status column as items
   (`thm:lidt-soundness`, `thm:qld`, both stated for tensor-product strategies), whose
   synchronous restatement is separate work; that is a different use of the transport from
   the one inside repetition, and it does not disappear with the value-form repair.
-- Plan: (i) `thm:orthonormalization` as a standalone lemma (issue #22 suggests it first);
+- Plan: (i) `thm:orthonormalization` as a standalone lemma (issue #22 suggests it first)
+  — **done 2026-09-13, by import rather than by proof**: the `orthogonalization` package
+  of `vidick/commuting-repetition` is vendored under
+  `MIPRE/Background/Orthonormalization/`, and gives the finite-dimensional case
+  unconditionally, for a *normal* state, with constant 9 (see R4 below for what that
+  settles and what it does not);
   (ii) `thm:almost-sync` in finite dimension (#22); (iii) the commuting case (#23, Lin
   2023, arXiv:2304.01940), needed only for the MIP^co track and best done after (ii) with
   a parallel statement. Suggested location: `MIPRE/Background/Synchronous/`, statements in
@@ -383,9 +388,17 @@ Lean v4.33.0.
   to the JNVWY low-degree paper and KV11. Attach to #22 (the transport work uses it).
   *Recorded in the text* (2026-09-12): both claims now sit in `thm:orthonormalization`'s
   comments, attributed to `\cite{Audit26}` and marked unverified here, since de la Salle's
-  text is not vendored in this repository. What remains is to check them against the source
-  and then weaken the hypothesis, which is the part that unblocks the projectivization
-  sites.
+  text is not vendored in this repository.
+  *Settled, in one direction* (2026-09-13): the mathematical claim is now proved, not
+  read. `thm:orthonormalization` is restated with a normal state and no faithfulness or
+  traciality, constant 9, and carries `\lean`/`\leanok` on
+  `Orthogonalization.povm_orthogonalization_finDim_vn` from the vendored package. So the
+  projectivization sites are unblocked for finite-dimensional algebras. Three things are
+  *not* settled: the attribution (KPS18/JNVWY20 versus the low-degree paper and KV11) —
+  still unchecked, the source not being vendored; the general von Neumann case, which the
+  package proves only as an implication from an eight-field structure-theory interface
+  that nobody has discharged (`rem:orthonormalization-scope`); and the `O(δ)` versus
+  `O(δ^{1/4})` consistency-to-projectivity step, which is a different lemma.
 - **R5 — typed verifiers: dropped in name, kept in arithmetic** (§10). `def:sampler`
   admits one pair of CL functions on one space, and nothing assembles a question
   distribution from structurally different sub-distributions selected by a type graph,
