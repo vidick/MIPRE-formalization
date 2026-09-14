@@ -1069,11 +1069,7 @@ lower bound has to be tracked anywhere in this chapter.
 \lean{MIPRE.quantumValue_eq_of_equiv, MIPRE.quantumValue_extendAnswers,
   MIPRE.Verifier.valStar_congr, MIPRE.Verifier.hasPerfectPCC_congr,
   MIPRE.Verifier.valStar_eq_of_rejects, MIPRE.Verifier.hasPerfectPCC_of_le,
-  MIPRE.Verifier.valStar_eq_one_of_hasPerfectPCC, MIPRE.Verifier.freeze,
-  MIPRE.Verifier.freeze_valStar, MIPRE.Verifier.freeze_hasPerfectPCC,
-  MIPRE.Verifier.freeze_isBounded, MIPRE.Cost.Data.toBitsPost, MIPRE.Cost.Data.parse,
-  MIPRE.Cost.Data.parse_toBitsPost, MIPRE.Cost.Data.natOf, MIPRE.Cost.Prog.parseProg_runs,
-  MIPRE.Cost.Prog.serProg_runs, MIPRE.Cost.PolyBounded}
+  MIPRE.Verifier.valStar_eq_one_of_hasPerfectPCC}
 Theorem~\ref{thm:compression} instantiates the hypotheses of
 Lemma~\ref{lem:compressible-criterion}: take $A$ to be the set of (descriptions of) normal
 form verifier games with a value-$1$ PCC strategy and $B$ the set of those with $\valstar
@@ -1118,13 +1114,10 @@ of the recursion.
   \poly(n)$ is a fixed formula and $\decider_{\hat x}$ is the decider that, at its own
   index $N$, reads $x = (\lambda', \decider')$ from $\hat x$ by bit queries (at most $2n +
   O(1)$ of them, rejecting otherwise), forms the verifier $\verifier'$ of $x$ \emph{frozen
-  at index $2n + 1$} (\texttt{Verifier.freeze}: a program that replaces the index in its
-  input by the frozen one, so that its sampler and decider answer at every index as
-  $\verifier'$ does at index $2n + 1$, and its game at index $2^n$ is the game of $x$ at
-  level $2n + 1$ --- \texttt{freeze\_valStar}, \texttt{freeze\_hasPerfectPCC},
-  with $\lambda$-boundedness transferred by \texttt{freeze\_isBounded}; the answer-length
-  bound is immaterial above the length the decider rejects,
-  \texttt{Verifier.valStar\_eq\_of\_rejects}, \texttt{hasPerfectPCC\_of\_le}) --- runs
+  at index $2n + 1$} --- its sampler and decider answer at every index as $\verifier'$ does
+  at index $2n + 1$, so its game at index $2^n$ is the game of $x$ at level $2n + 1$, the
+  answer-length bound being immaterial above the length the decider rejects
+  (\texttt{Verifier.valStar\_eq\_of\_rejects}, \texttt{hasPerfectPCC\_of\_le}) --- runs
   $\Compress(\verifier', \lambda(n))$, and finally the compressed decider at index $N$. The
   freezing reconciles the recursion's levels $n \to 2n + 1$ with the compression theorem's
   $n \leftarrow 2^n$, at the cost of a logarithmic factor in $\lambda(n)$.
@@ -1149,24 +1142,10 @@ always-rejected extra answers (\texttt{quantumValue\_extendAnswers}, by zero ext
 way and merging of outcomes the other), and for the games of a verifier the deciders'
 acceptance at an index determines $\valstar$ and the perfect PCC strategies
 (\texttt{Verifier.valStar\_congr}, \texttt{hasPerfectPCC\_congr}), which survive answer
-padding and give $\valstar = 1$ (\texttt{valStar\_eq\_one\_of\_hasPerfectPCC}). The frozen
-verifier of item 2 is in Lean with its value, PCC and $\lambda$-boundedness transfer
-(\texttt{Verifier.freeze}), and so is the ambient toolkit its decider is built from: a
-description travels as a bit string through the postorder serialization
-\texttt{Data.toBitsPost}, read back by the stack machine \texttt{Data.parse} (postorder
-rather than preorder because a stack machine is a loop of the ambient model, while a
-recursive-descent reader is not), with the reading and writing programs
-\texttt{Prog.parseProg}, \texttt{Prog.serProg}; every string names a parameter through the
-normalization \texttt{Data.natOf}, so no validity condition on strings is needed; and the
-format checks and budgets are the bounded walks \texttt{Prog.bitWalkProg},
-\texttt{eqBitsProg} and the arithmetic \texttt{incProg}, \texttt{toUnaryProg},
-\texttt{mulProg}, \texttt{polyProg}, each with a cost bound of the shape
-$T \cdot (\abs{\text{input}} + 1)$ that Definition~\ref{def:decider} asks for. Costs compose
-through \texttt{Cost.PolyBounded}, which also gives the threshold above which a polynomial
-bound falls under $2^n$. Still owed are the descriptions read as verifiers --- the wrapper
-decider around $\decider'$ and the classes $A_n, B_n$ --- the tabulation of $\verifier_n$ as
-a game description with the agreement of its value with $\valstar(\verifier_n)$, and the
-compressor's own decider with its time accounting
+padding and give $\valstar = 1$ (\texttt{valStar\_eq\_one\_of\_hasPerfectPCC}). Still owed
+are the descriptions and classes, the frozen verifier, the tabulation of $\verifier_n$ as a
+game description with the agreement of its value with $\valstar(\verifier_n)$, and the
+ambient programs of item 2 with their time accounting
 (\texttt{planning/formalization-plan.md}, H4). The entanglement form
 of~\cite{JNVWY20}
 (Remark~\ref{rem:entanglement-form}) instantiates Lemma~\ref{lem:recursive-compression}

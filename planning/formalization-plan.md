@@ -274,25 +274,10 @@ for PCC strategies and the constant strategy) and `Foundations/VerifierValue.lea
 games of a verifier: same sampler and same acceptance at an index give the same `val*` and
 the same perfect PCC strategies; answer padding raises `val*`, preserves perfect PCC
 strategies, and is neutral when the decider rejects long answers; a perfect PCC strategy
-gives `val* = 1`). Part 3b done the same day, in two halves; the first is
-the frozen verifier and the ambient toolkit its programs are built from
-(`Foundations/Halting/`): `Verifier.freeze` at an index, with the transfer of acceptance,
-of `val*`, of perfect PCC strategies and of `λ`-boundedness (`Freeze.lean`); descriptions
-as bit strings through the postorder serialization `Data.toBitsPost`, read back by the
-stack machine `Data.parse` — postorder because a stack machine is a loop of the ambient
-model while a recursive-descent reader is not — with the normalization `Data.natOf` that
-makes every string name a parameter (`Descriptions.lean`) and the two programs
-`parseProg`, `serProg` (`Serial.lean`); the bounded walks `bitWalkProg`, `eqBitsProg`,
-`normBinProg` for the format checks (`Lists.lean`); the arithmetic `incProg`,
-`toUnaryProg`, `mulProg`, `polyProg` for the budgets (`Arith.lean`); and `PolyBounded`,
-which composes the dozen cost bounds and supplies the threshold above which a polynomial
-falls under `2 ^ n` (`PolyBounded.lean`). Every cost bound is of the shape
-`T · (|input| + 1)` that `Decider.TimeBoundAt` asks for — which is what the H1 repair of
-the same day was found from. Remaining, in order: (3b-ii) the wrapper decider that reads a
-description as a verifier, and the classes `A n`, `B n`; (3c) the tabulation of `V_n` as a
-`GameData` with the agreement of values, and the semidecider for `x ∉ B n`; (4) the
-compressor's own decider and its time accounting; (5) the assembly of `thm:halting` from
-`thm:compression`, then `thm:main` through the tabulation.
+gives `val* = 1`). Remaining, in order: (3) descriptions, the classes, the
+frozen verifier, and the tabulation of `V_n` as a `GameData` with the agreement of values;
+(4) the ambient programs of the compressor's output and their time accounting; (5) the
+assembly of `thm:halting` from `thm:compression`, then `thm:main` through the tabulation.
 
 ## What to start with
 
