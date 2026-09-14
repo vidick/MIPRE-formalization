@@ -219,6 +219,9 @@
   "MIPRE.Decider.TimeBound": [
    "def:decider"
   ],
+  "MIPRE.Decider.wrap": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Game": [
    "def:game"
   ],
@@ -454,6 +457,12 @@
   "MIPRE.Verifier.Answers": [
    "def:normal-verifier"
   ],
+  "MIPRE.Verifier.InClassA": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.InClassB": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Verifier.IsBounded": [
    "def:lambda-bounded"
   ],
@@ -664,6 +673,7 @@
   "MIPRE.Decider",
   "MIPRE.Decider.Accepts",
   "MIPRE.Decider.TimeBound",
+  "MIPRE.Decider.wrap",
   "MIPRE.Game",
   "MIPRE.Game.repeat",
   "MIPRE.GapCompression",
@@ -742,6 +752,8 @@
   "MIPRE.ValueApprox.rePred_lt_quantumValue",
   "MIPRE.Verifier",
   "MIPRE.Verifier.Answers",
+  "MIPRE.Verifier.InClassA",
+  "MIPRE.Verifier.InClassB",
   "MIPRE.Verifier.IsBounded",
   "MIPRE.Verifier.IsSynchronousAt",
   "MIPRE.Verifier.freeze",

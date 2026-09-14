@@ -1103,7 +1103,12 @@ of the recursion.
   every string names a normal form verifier, and the interpretation sits outside every
   time bound. $A_n$ is the set of strings whose verifier is $n$-bounded and whose $n$-th
   game has a value-$1$ PCC strategy, $B_n$ the set of those that are $n$-bounded with
-  $\valstar \leq \frac12$ at index $n$. Tying the bound $\lambda = n$ to the level is what
+  $\valstar \leq \frac12$ at index $n$ (\texttt{Verifier.InClassA},
+  \texttt{InClassB}; disjoint, since a perfect PCC strategy gives $\valstar = 1$). Only the
+  length check has to go into the wrapper: synchronicity at an index and the answer-length
+  bound are conditions on membership in these classes, not on well-formedness, and the
+  paper's timeout counter is not needed either --- a decider that fails to halt simply fails
+  to be $n$-bounded, and its string then lies in neither class. Tying the bound $\lambda = n$ to the level is what
   replaces the choice of $\lambda$ along the recursion (Lemma~\ref{lem:lambda}): the levels
   $r(e) = 2^{K + 1 + \abs{e}}$ at which the recursion runs are exponential in $\abs{e}$,
   above every polynomial in $\abs{e}$ that the paper's $\lambda$ has to dominate.
