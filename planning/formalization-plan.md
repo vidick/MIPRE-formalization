@@ -249,7 +249,16 @@ structure — `C₀`, the compressed sampler with its polynomial-time descriptio
 pairs of programs, every output packaged as a `Verifier 7`, the `poly(n, λ)` time bound,
 completeness (`Verifier.HasPerfectPCC`) and value-form soundness at `n ≥ C₀` for `λ`-bounded
 inputs, with the answer alphabets cut at the time bounds; `thm:compression` and
-`lem:compress-sampler-indep` carry `\lean`. Remaining, in order: (3) descriptions, the classes, the
+`lem:compress-sampler-indep` carry `\lean`. Part 3a done the same day: the value
+bookkeeping, `Foundations/GameTransport.lean` (the quantum value under relabeling of the
+alphabets, monotonicity in the decision predicate, and invariance under always-rejected
+extra answers — zero extension one way, merging of outcomes the other, which needs the
+orthogonality of the outcomes of a projective measurement; the synchronous counterparts
+for PCC strategies and the constant strategy) and `Foundations/VerifierValue.lean` (for the
+games of a verifier: same sampler and same acceptance at an index give the same `val*` and
+the same perfect PCC strategies; answer padding raises `val*`, preserves perfect PCC
+strategies, and is neutral when the decider rejects long answers; a perfect PCC strategy
+gives `val* = 1`). Remaining, in order: (3) descriptions, the classes, the
 frozen verifier, and the tabulation of `V_n` as a `GameData` with the agreement of values;
 (4) the ambient programs of the compressor's output and their time accounting; (5) the
 assembly of `thm:halting` from `thm:compression`, then `thm:main` through the tabulation.
