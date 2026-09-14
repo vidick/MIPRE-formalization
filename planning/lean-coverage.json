@@ -156,6 +156,9 @@
   "MIPRE.Cost.compressibility_criterion_halting": [
    "lem:halting-form"
   ],
+  "MIPRE.Cost.compressibility_criterion_levels": [
+   "lem:compressible-criterion"
+  ],
   "MIPRE.Cost.efficient_fixed_point": [
    "lem:kleene"
   ],
@@ -164,9 +167,6 @@
   ],
   "MIPRE.Cost.exists_efficient_universal": [
    "lem:universal-tm"
-  ],
-  "MIPRE.Cost.exists_semidecider": [
-   "lem:value-lower-approx"
   ],
   "MIPRE.Cost.hardcode_size": [
    "lem:smn"
@@ -200,6 +200,10 @@
   ],
   "MIPRE.Game.repeat": [
    "def:direct-repetition"
+  ],
+  "MIPRE.GapCompression": [
+   "lem:compress-sampler-indep",
+   "thm:compression"
   ],
   "MIPRE.IsApproxRepresentation": [
    "def:approx-rep"
@@ -450,9 +454,6 @@
   "MIPRE.entRequirement": [
    "def:ent"
   ],
-  "MIPRE.exists_semidecider_lt_quantumValue": [
-   "lem:value-lower-approx"
-  ],
   "MIPRE.gowers_hatami": [
    "thm:gowers-hatami"
   ],
@@ -473,9 +474,6 @@
   ],
   "MIPRE.quantumValue": [
    "def:q-value"
-  ],
-  "MIPRE.rePred_lt_quantumValue_comp": [
-   "lem:value-lower-approx"
   ],
   "MIPRE.syncValue": [
    "def:sync-value"
@@ -582,10 +580,10 @@
   "MIPRE.Cost.bitQueryAnswer",
   "MIPRE.Cost.compressibility_criterion",
   "MIPRE.Cost.compressibility_criterion_halting",
+  "MIPRE.Cost.compressibility_criterion_levels",
   "MIPRE.Cost.efficient_fixed_point",
   "MIPRE.Cost.exists_clocked_universal",
   "MIPRE.Cost.exists_efficient_universal",
-  "MIPRE.Cost.exists_semidecider",
   "MIPRE.Cost.hardcode_size",
   "MIPRE.Cost.hardcode_time",
   "MIPRE.Cost.hardcode_time_rev",
@@ -597,6 +595,7 @@
   "MIPRE.Decider.TimeBound",
   "MIPRE.Game",
   "MIPRE.Game.repeat",
+  "MIPRE.GapCompression",
   "MIPRE.IsApproxRepresentation",
   "MIPRE.IsPOVMClose",
   "MIPRE.IsRE",
@@ -680,7 +679,6 @@
   "MIPRE.commValue",
   "MIPRE.commutingOperatorValue",
   "MIPRE.entRequirement",
-  "MIPRE.exists_semidecider_lt_quantumValue",
   "MIPRE.gowers_hatami",
   "MIPRE.hsInner",
   "MIPRE.hsNormSq",
@@ -688,7 +686,6 @@
   "MIPRE.isRE_iff",
   "MIPRE.povmDistance",
   "MIPRE.quantumValue",
-  "MIPRE.rePred_lt_quantumValue_comp",
   "MIPRE.syncValue",
   "MIPRE.syncValue_le_commValue",
   "MIPRE.syncValue_le_quantumValue",
@@ -786,9 +783,7 @@
    "MIPRE.MIPStar",
    "MIPRE.MIPStar.exists_semidecider",
    "MIPRE.MIPStar.isRE",
-   "MIPRE.exists_semidecider_lt_quantumValue",
-   "MIPRE.isRE_iff",
-   "MIPRE.rePred_lt_quantumValue_comp"
+   "MIPRE.isRE_iff"
   ],
   "MIPRE/Foundations/CommutingOperator.lean": [
    "MIPRE.CommutingOperatorStrategy",
@@ -798,6 +793,7 @@
   "MIPRE/Foundations/Compression.lean": [
    "MIPRE.Cost.compressibility_criterion",
    "MIPRE.Cost.compressibility_criterion_halting",
+   "MIPRE.Cost.compressibility_criterion_levels",
    "MIPRE.Cost.recursive_compression",
    "MIPRE.Cost.recursive_compression_halting"
   ],
@@ -806,9 +802,6 @@
   ],
   "MIPRE/Foundations/Cost/Kleene.lean": [
    "MIPRE.Cost.efficient_fixed_point"
-  ],
-  "MIPRE/Foundations/Cost/Semidecide.lean": [
-   "MIPRE.Cost.exists_semidecider"
   ],
   "MIPRE/Foundations/Cost/Succinct.lean": [
    "MIPRE.Cost.IsSuccinctDesc"
@@ -850,6 +843,9 @@
    "MIPRE.syncValue",
    "MIPRE.syncValue_le_commValue",
    "MIPRE.syncValue_le_quantumValue"
+  ],
+  "MIPRE/Foundations/GapCompression.lean": [
+   "MIPRE.GapCompression"
   ],
   "MIPRE/Foundations/ValueApprox.lean": [
    "MIPRE.ValueApprox.dotProduct_kronecker_perturb",
@@ -1024,7 +1020,7 @@
   "MIPRE/Foundations/CL/Sampler.lean": 23,
   "MIPRE/Foundations/ClassMIPStar.lean": 8,
   "MIPRE/Foundations/CommutingOperator.lean": 4,
-  "MIPRE/Foundations/Compression.lean": 18,
+  "MIPRE/Foundations/Compression.lean": 20,
   "MIPRE/Foundations/Cost/Basic.lean": 31,
   "MIPRE/Foundations/Cost/BitQuery.lean": 19,
   "MIPRE/Foundations/Cost/Clocked.lean": 5,
@@ -1051,6 +1047,7 @@
   "MIPRE/Foundations/Distances.lean": 10,
   "MIPRE/Foundations/GameDescription.lean": 4,
   "MIPRE/Foundations/Games.lean": 61,
+  "MIPRE/Foundations/GapCompression.lean": 2,
   "MIPRE/Foundations/ValueApprox.lean": 8,
   "MIPRE/Foundations/ValueApprox/Cayley.lean": 16,
   "MIPRE/Foundations/ValueApprox/Dense.lean": 2,

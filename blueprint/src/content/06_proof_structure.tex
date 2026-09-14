@@ -899,7 +899,9 @@ an entanglement bound (Remark~\ref{rem:entanglement-form}).
 \begin{theorem}[Gap-preserving compression]
 \label{thm:compression}
 \ledgernode{1.5, 1.5.7}
-\uses{thm:introspection,thm:oracularization,thm:answer-reduction,thm:parallel-repetition,def:lambda-bounded,def:pcc}
+\uses{thm:introspection,thm:oracularization,thm:answer-reduction,thm:parallel-repetition,def:lambda-bounded,def:pcc,def:normal-verifier}
+\lean{MIPRE.GapCompression}
+\leanok
 There is a universal constant $C_0 > 0$ and a polynomial-time Turing machine
 $\Compress$ that on input $(\verifier, \lambda)$ outputs a $7$-level normal form
 verifier $\vcompr = (\scompr, \dcompr)$ with $\TIME_{\scompr}(n),
@@ -927,6 +929,26 @@ decomposition with trivial factors, which an $\ell$-level conditionally linear f
 (Definition~\ref{def:cl-function}) admits. In~\cite{JNVWY20} the count is $9$, anchored
 repetition adding two levels (Remark~\ref{rem:direct-vs-anchored}).
 
+\paragraph{Lean statement.} The theorem is the structure \texttt{MIPRE.GapCompression}: a
+record of the constant $C_0$; the compressed sampler $\lambda \mapsto \scompr_\lambda$, a
+valid $7$-level sampler for every $\lambda$, with a polynomial-time program computing its
+description from the binary representation of $\lambda$ (Lemma~\ref{lem:compress-sampler-indep});
+the polynomial-time map $\Compress$ from pairs of programs and $\lambda$ to the program of
+the compressed decider; the packaging of every output, well-formed input or not, as a
+$7$-level normal form verifier with that sampler and that decider; the bound $\poly(n,
+\lambda)$ on the running times of the output at index $n$; and the completeness and
+soundness clauses for $\lambda$-bounded $7$-level inputs at $n \geq C_0$. An instance of the
+structure is the theorem; the pipeline of this chapter is its proof, and the halting
+reduction consumes an instance (Remark~\ref{rem:compression-abstract}). Two readings are
+fixed there. $\verifier_N$ is taken with answers of length at most $N^\lambda$, the bound
+that $\lambda$-boundedness puts on the running time of its decider, and $\vcompr_n$ with
+answers of length at most the stated running-time bound, since the exact running times of
+Definition~\ref{def:normal-verifier} are not functions of the verifier in the
+formalization. And ``a value-$1$ PCC strategy'' is a PCC synchronous strategy of value $1$
+for the game read as synchronous (\texttt{Verifier.HasPerfectPCC}), which presupposes that
+the decider rejects unequal answers to equal questions at that index, as the deciders of
+the pipeline do.
+
 The four stages are chained through a parameter budget rather than composed blindly:
 each stage's soundness clause is applied contrapositively, and each application needs a
 strict margin between the loss it suffers and the gap it is handed. Those margins are
@@ -939,6 +961,8 @@ name the corresponding nodes of the companion repository's ledger
 \label{lem:compress-sampler-indep}
 \ledgernode{1.5.1}
 \uses{thm:compression,def:normal-verifier,def:cl-function}
+\lean{MIPRE.GapCompression}
+\leanok
 For all inputs $(\verifier, \lambda)$ --- $\lambda$-bounded or not, well-formed or not
 --- the sampler $\scompr$ of $\Compress(\verifier, \lambda)$ depends only on $\lambda$,
 and there is a Turing machine $\mathtt{ComputeSampler}$ that outputs its description from
@@ -951,7 +975,10 @@ and the parameters, and repetition's only on its input sampler and $(\lambda, \e
 \tau)$. $\mathtt{ComputeSampler}$ is then realized by running $\Compress$ on the trivial
 verifier. It is this lemma that makes the recursion of Section~\ref{sec:ps-halting}
 possible at all: a fixed point has to quote its own sampler, so the sampler must not
-depend on what is being compressed.
+depend on what is being compressed. In Lean the lemma is built into the statement of
+Theorem~\ref{thm:compression}: the fields \texttt{sampler} and \texttt{samplerProg} of
+\texttt{MIPRE.GapCompression} are the map $\lambda \mapsto \scompr_\lambda$ and its
+polynomial-time description, and \texttt{output\_sampler} says that every output carries it.
 \end{proof}
 
 \effortMedium
@@ -1046,16 +1073,59 @@ pipeline altogether --- at the outer end its hypothesis is unavailable
 (Remark~\ref{rem:bipartite-route}); it is also the form in which the semidecision
 procedure is available, the rounding argument for the $\synval$ half not being the same
 one. Making this dictionary precise is a
-formalization task of this section, and four obligations in it are open: the universe of
-the criterion's strings --- if they are games, $\compr$ cannot be polynomial-time, a game
-of $\verifier_{2^n}$ having $2^{\poly(n,\lambda)}$ questions, so they must be descriptions
-and the interpretation of a description as a game must sit outside the time bound;
-compression from a \emph{succinct} input rather than from a verifier read verbatim, as
-Definition~\ref{def:succinct} and the polynomial-time convention of
-Section~\ref{sec:conventions} require; preservation of $A$ and $B$ on inputs that are not
-$\lambda$-bounded descriptions, a property the criterion demands of every string while
-$\lambda$-boundedness is undecidable; and the choice of $\lambda$ along the recursion,
-whose descriptions grow with the level. The entanglement form of~\cite{JNVWY20}
+formalization task of this section. The four obligations recorded here from the referee
+report (R1) --- the universe of the criterion's strings, compression from a
+\emph{succinct} input, preservation on inputs that are not $\lambda$-bounded descriptions,
+and the choice of $\lambda$ along the recursion --- are settled as follows, against the
+per-level form of the lemma (\texttt{compressibility\_criterion\_levels},
+Lemma~\ref{lem:compressible-criterion}), whose classes $A_n, B_n$ are indexed by the level
+of the recursion.
+\begin{enumerate}
+\item \emph{Strings are descriptions, never games.} If they were games, $\compr$ could not
+  be polynomial-time, a game of $\verifier_{2^n}$ having $2^{\poly(n, \lambda)}$
+  questions. A string is a pair $(\lambda, \decider)$ of a parameter and a decider
+  program, read as the verifier $(\scompr_\lambda, \decider)$ with the compressed sampler
+  of Lemma~\ref{lem:compress-sampler-indep}, the length check of
+  Definition~\ref{def:normal-verifier} being enforced by a wrapper around $\decider$; so
+  every string names a normal form verifier, and the interpretation sits outside every
+  time bound. $A_n$ is the set of strings whose verifier is $n$-bounded and whose $n$-th
+  game has a value-$1$ PCC strategy, $B_n$ the set of those that are $n$-bounded with
+  $\valstar \leq \frac12$ at index $n$. Tying the bound $\lambda = n$ to the level is what
+  replaces the choice of $\lambda$ along the recursion (Lemma~\ref{lem:lambda}): the levels
+  $r(e) = 2^{K + 1 + \abs{e}}$ at which the recursion runs are exponential in $\abs{e}$,
+  above every polynomial in $\abs{e}$ that the paper's $\lambda$ has to dominate.
+\item \emph{Compression from a succinct input.} The compressor cannot read the string it
+  is handed: its time is polynomial in the length of $(\hat x, n)$, hence polylogarithmic
+  in $n$, and a single bit query to $\hat x$ costs up to $n$. On $(\hat x, n)$ it
+  therefore outputs the string $(\lambda(n), \decider_{\hat x})$, where $\lambda(n) =
+  \poly(n)$ is a fixed formula and $\decider_{\hat x}$ is the decider that, at its own
+  index $N$, reads $x = (\lambda', \decider')$ from $\hat x$ by bit queries (at most $2n +
+  O(1)$ of them, rejecting otherwise), forms the verifier $\verifier'$ of $x$ \emph{frozen
+  at index $2n + 1$} --- its sampler and decider answer at every index as $\verifier'$ does
+  at index $2n + 1$, so its game at index $2^n$ is the game of $x$ at level $2n + 1$, the
+  answer-length bound being immaterial above the decider's running time --- runs
+  $\Compress(\verifier', \lambda(n))$, and finally the compressed decider at index $N$. The
+  freezing reconciles the recursion's levels $n \to 2n + 1$ with the compression theorem's
+  $n \leftarrow 2^n$, at the cost of a logarithmic factor in $\lambda(n)$.
+  Theorem~\ref{thm:compression} at index $n \geq C_0$ then transfers the class of $x$ at
+  level $2n + 1$ to the class of the output at level $n$, and the output is $n$-bounded
+  for $n$ above a universal threshold: its size is $\abs{\hat x} + O(\log n) \leq n$ by the
+  slack $2\abs{\hat x} \leq n$ of the lemma, and its time at index $N$ is $\poly(N, n) \leq
+  N^n$.
+\item \emph{Junk inputs.} Nothing is demanded of the compressor off strings in $A_{2n+1}
+  \cup B_{2n+1}$, every string names a verifier, and $\lambda$-boundedness is decided
+  nowhere. What the lemma does demand is that the complement of $B_n$ be semidecidable:
+  ``not $n$-bounded'' is witnessed by a run exceeding its budget, and ``$\valstar > \frac12$
+  at index $n$'' is the $\valstar$ half of Lemma~\ref{lem:value-lower-approx} applied to
+  the tabulated game, which is computable from an $n$-bounded verifier.
+\item \emph{The choice of $\lambda$.} Absorbed into item 1.
+\end{enumerate}
+Of this dictionary the per-level lemma and the Lean statement of
+Theorem~\ref{thm:compression} as a hypothesis (\texttt{MIPRE.GapCompression}) are in Lean;
+still owed are the descriptions and classes, the frozen verifier, the tabulation of $\verifier_n$ as a game description with the agreement of its
+value with $\valstar(\verifier_n)$, and the ambient programs of item 2 with their time
+accounting (\texttt{planning/formalization-plan.md}, H4). The entanglement form
+of~\cite{JNVWY20}
 (Remark~\ref{rem:entanglement-form}) instantiates Lemma~\ref{lem:recursive-compression}
 instead, with $f = \Ent(\cdot, \frac12)$; it is not used by the main theorem.
 \end{remark}

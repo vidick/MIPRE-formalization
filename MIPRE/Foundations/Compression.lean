@@ -65,12 +65,18 @@ self-reference; the time-transfer clauses are what make the constructed program 
   overhead polynomial by `exists_threshold` (`Cost/Growth.lean`): above it, the polynomial
   overhead in `esize e + Nat.size n` is at most `n + 1`. It is computed by
   `PolyTimeFun.threshold K`.
-* **The instantiation** (blueprint `rem:compression-abstract`): `A` = descriptions of
-  normal form verifier games with a perfect PCC strategy, `B` = descriptions of games with
-  value at most `1/2`, and `S` = the enumeration of strategies of value above `1/2`
-  (blueprint `lem:value-lower-approx`), composed with the interpretation of descriptions as
-  games. For `recursive_compression`, `f = MIPRE.entRequirement (·, 1/2) : _ → ℕ∞`; the
-  `ℕ∞` codomain there matches `entRequirement`.
+* **The instantiation** (blueprint `rem:compression-abstract`) uses the per-level form
+  `compressibility_criterion_levels`: `A n` = descriptions of `n`-bounded normal form
+  verifiers whose `n`-th game has a value-`1` PCC strategy, `B n` = those with value at most
+  `1/2` at index `n`, and `S` = the enumeration of strategies of value above `1/2`
+  (blueprint `lem:value-lower-approx`, `MIPRE.exists_semidecider_lt_quantumValue`) on the
+  tabulated `n`-th game. The compressor cannot read the succinct description it is handed —
+  a bit query costs up to `n`, its own time is polylogarithmic in `n` — so it embeds the
+  description into a decider that reads it at game time, with the verifier it describes
+  frozen at index `2n + 1`; that is what the size slack `2 · |c| ≤ n` and the level
+  bookkeeping of the per-level form are for. For `recursive_compression`,
+  `f = MIPRE.entRequirement (·, 1/2) : _ → ℕ∞`; the `ℕ∞` codomain there matches
+  `entRequirement`.
 -/
 
 namespace MIPRE.Cost
@@ -292,7 +298,13 @@ self-referential decider gains a *search branch*: at level `n` it also runs, for
 `Nat.size n` steps, the semidecision procedure on the string at the *start* of the
 recursion. The start level `m` is carried as data next to the level `n` (the decider's input
 is `(c', (e, (m, n)))`), so that the decider's code does not depend on the threshold, which is
-chosen afterwards from the decider's time bound exactly as in `recursive_compression`. -/
+chosen afterwards from the decider's time bound exactly as in `recursive_compression`.
+
+The lemma is proved in a *per-level* form (`compressibility_criterion_levels`): the classes
+`A n`, `B n` are indexed by the level, the semidecider runs on `(x, n)`, and the compression
+hypothesis is only required of short descriptions with parameter the level, transferring the
+class at level `2n + 1` to the class at level `n` — precisely what the proof uses. The
+level-free statement (`compressibility_criterion`) is its special case. -/
 
 /-- The levels of the recursion started at `R`: `R, 2R + 1, 4R + 3, …`. -/
 def levels (R : ℕ) : ℕ → ℕ
@@ -320,58 +332,75 @@ theorem two_pow_le_levels {R : ℕ} (hR : 1 ≤ R) : ∀ k, 2 ^ k ≤ levels R k
 namespace Prog
 
 /-- The program of the search branch. On the pair `(d, input)` with
-`d = encode (c', (e, (m, m)))` (the input is ignored), run `univ` on `d` — that is, `c'` on
-`encode (e, (m, m))`, the string at the start level `m` — and then `S` on the result.
-Hardcoding `d` (`hardcode (searchProg univ S) d`) gives the program the search branch tests
-for halting. -/
+`d = encode ((c', (e, (m, m))), m)` (the input is ignored), run `univ` on the first component
+of `d` — that is, `c'` on `encode (e, (m, m))`, the string at the start level `m` — and then
+`S` on the pair of the result with the start level `m`. Hardcoding `d`
+(`hardcode (searchProg univ S) d`) gives the program the search branch tests for halting. -/
 def searchProg (univ S : Prog) : Prog :=
-  .elim 0 .nil (.let_ (callVar 0 univ) (callVar 0 S))
+  .elim 0 .nil (.elim 0 .nil
+    (.let_ (callVar 0 univ) (.let_ (.cons (.var 0) (.var 2)) (callVar 0 S))))
 
 theorem searchProg_wellScoped {univ S : Prog} (hU : univ.WellScoped 1) (hS : S.WellScoped 1) :
     (searchProg univ S).WellScoped 1 :=
-  ⟨Nat.zero_lt_one, trivial, callVar_wellScoped (by decide) hU,
-    callVar_wellScoped (by decide) hS⟩
+  ⟨Nat.zero_lt_one, trivial, by omega, trivial, callVar_wellScoped (by omega) hU,
+    ⟨show 0 < 6 by omega, show 2 < 6 by omega⟩, callVar_wellScoped (by omega) hS⟩
 
-/-- Forward: if `c'` on `encode (e, (m, m))` produces `x` and `S` halts on `x`, then the
+/-- Forward: if `c'` on `encode (e, (m, m))` produces `x` and `S` halts on `(x, m)`, then the
 hardcoded search program halts on the empty input. -/
 theorem searchProg_runs (U : UniversalMachine) {S : Prog} (hS : S.WellScoped 1)
     {c' e : Prog} {m : ℕ} {x r : Data} {tx ts : ℕ}
-    (hx : c'.Runs (encode (e, (m, m))) x tx) (hSr : S.Runs x r ts) :
-    ∃ T, (hardcode (searchProg U.univ S) (encode (c', (e, (m, m))))).Runs .nil r T := by
+    (hx : c'.Runs (encode (e, (m, m))) x tx) (hSr : S.Runs (.cons x (encode m)) r ts) :
+    ∃ T, (hardcode (searchProg U.univ S) (encode ((c', (e, (m, m))), m))).Runs .nil r T := by
   obtain ⟨tU, -, hU⟩ := U.time_le c' (encode (e, (m, m))) x tx hx
   have s1 := callVar_eval
-    (env := [encode (c', (e, (m, m))), Data.nil, Data.cons (encode (c', (e, (m, m)))) Data.nil])
+    (env := [encode (c', (e, (m, m))), encode m, encode ((c', (e, (m, m))), m), Data.nil,
+      Data.cons (encode ((c', (e, (m, m))), m)) Data.nil])
     (i := 0) U.closed (v := .cons (encode c') (encode (e, (m, m)))) (by simp [encode_prod]) hU
   have s2 := callVar_eval
-    (env := x :: [encode (c', (e, (m, m))), Data.nil,
-      Data.cons (encode (c', (e, (m, m)))) Data.nil])
-    (i := 0) hS (v := x) (by simp) hSr
-  have hrun : (searchProg U.univ S).Runs (.cons (encode (c', (e, (m, m)))) .nil) r _ :=
-    Eval.elim_cons (env := [Data.cons (encode (c', (e, (m, m)))) Data.nil]) (i := 0)
-      (n := .nil) (a := encode (c', (e, (m, m)))) (b := .nil) (by simp) (Eval.let_ s1 s2)
+    (env := Data.cons x (encode m) :: x :: [encode (c', (e, (m, m))), encode m,
+      encode ((c', (e, (m, m))), m), Data.nil, Data.cons (encode ((c', (e, (m, m))), m)) Data.nil])
+    (i := 0) hS (v := .cons x (encode m)) (by simp) hSr
+  have hrun : (searchProg U.univ S).Runs (.cons (encode ((c', (e, (m, m))), m)) .nil) r _ :=
+    Eval.elim_cons (env := [Data.cons (encode ((c', (e, (m, m))), m)) Data.nil]) (i := 0)
+      (n := .nil) (a := encode ((c', (e, (m, m))), m)) (b := .nil) (by simp)
+      (Eval.elim_cons (i := 0) (n := .nil) (a := encode (c', (e, (m, m)))) (b := encode m)
+        (by simp [encode_prod])
+        (Eval.let_ s1 (Eval.let_ (Eval.cons (Eval.var_of_get (i := 0) (v := x) (by simp))
+          (Eval.var_of_get (i := 2) (v := encode m) (by simp))) s2)))
   exact ⟨_, hardcode_time (searchProg_wellScoped U.closed hS) hrun⟩
 
 /-- Backward: a run of the hardcoded search program on the empty input yields a run of `c'`
-on `encode (e, (m, m))` to some `x` on which `S` halts. -/
+on `encode (e, (m, m))` to some `x` such that `S` halts on `(x, m)`. -/
 theorem searchProg_halts_of (U : UniversalMachine) {S : Prog} (hS : S.WellScoped 1)
     {c' e : Prog} {m : ℕ} {r : Data} {T : ℕ}
-    (h : (hardcode (searchProg U.univ S) (encode (c', (e, (m, m))))).Runs .nil r T) :
-    ∃ x tx, c'.Runs (encode (e, (m, m))) x tx ∧ Halts S x := by
+    (h : (hardcode (searchProg U.univ S) (encode ((c', (e, (m, m))), m))).Runs .nil r T) :
+    ∃ x tx, c'.Runs (encode (e, (m, m))) x tx ∧ Halts S (.cons x (encode m)) := by
   obtain ⟨T', -, h'⟩ := hardcode_time_rev (searchProg_wellScoped U.closed hS) h
-  change Eval [Data.cons (encode (c', (e, (m, m)))) Data.nil] (.elim 0 .nil _) r T' at h'
+  change Eval [Data.cons (encode ((c', (e, (m, m))), m)) Data.nil] (.elim 0 .nil _) r T' at h'
   cases h' with
   | elim_nil hget _ => simp at hget
   | elim_cons hget h₁ =>
     rw [Env.get_cons_zero] at hget
     obtain ⟨rfl, rfl⟩ := Data.cons.inj hget
     cases h₁ with
-    | let_ h₂ h₃ =>
-      obtain ⟨tU, -, hU⟩ := callVar_runs_rev U.closed h₂
-      rw [Env.get_cons_zero] at hU
-      obtain ⟨tx, hx⟩ := U.halts_of c' (encode (e, (m, m))) _ tU hU
-      obtain ⟨ts, -, hSr⟩ := callVar_runs_rev hS h₃
-      rw [Env.get_cons_zero] at hSr
-      exact ⟨_, tx, hx, _, ts, hSr⟩
+    | elim_nil hget₂ _ => simp [encode_prod] at hget₂
+    | elim_cons hget₂ h₂ =>
+      rw [Env.get_cons_zero, encode_prod] at hget₂
+      obtain ⟨rfl, rfl⟩ := Data.cons.inj hget₂
+      cases h₂ with
+      | let_ h₃ h₄ =>
+        obtain ⟨tU, -, hU⟩ := callVar_runs_rev U.closed h₃
+        rw [Env.get_cons_zero] at hU
+        obtain ⟨tx, hx⟩ := U.halts_of c' (encode (e, (m, m))) _ tU hU
+        cases h₄ with
+        | let_ h₅ h₆ =>
+          cases h₅ with
+          | cons h₅₁ h₅₂ =>
+            cases h₅₁
+            cases h₅₂
+            obtain ⟨ts, -, hSr⟩ := callVar_runs_rev hS h₆
+            simp only [Env.get_cons_zero, Env.get_cons_succ] at hSr
+            exact ⟨_, tx, hx, _, ts, hSr⟩
 
 end Prog
 
@@ -379,11 +408,11 @@ end Prog
 `(c', (e, (m, n)))`: if `e` halts on the empty input within `Nat.size n` steps, the fixed
 string `yYes`; else if the search program for the string at the start level `m` halts within
 `Nat.size n` steps, the fixed string `yNo`; otherwise `Compr` applied to the succinct
-description `(hardcode β ((c', e), (m, 2n + 1)), n)` — where `β` is the bit-query program —
-with parameter `n`. As for `decFun`, the self-referential program `c` of the proof is a
-Kleene fixed point of `c' ↦ hardcode (decFunV …).code (encode c')`. -/
+description `hardcode β ((c', e), (m, 2n + 1))` — where `β` is the bit-query program — with
+parameter `n`. As for `decFun`, the self-referential program `c` of the proof is a Kleene
+fixed point of `c' ↦ hardcode (decFunV …).code (encode c')`. -/
 noncomputable def decFunV (U : UniversalMachine) (UT : ClockedUniversalMachine) (S : Prog)
-    (Compr : PolyTimeFun ((Prog × ℕ) × ℕ) BitStr) (yYes yNo : BitStr) :
+    (Compr : PolyTimeFun (Prog × ℕ) BitStr) (yYes yNo : BitStr) :
     PolyTimeFun (Prog × (Prog × (ℕ × ℕ))) BitStr :=
   PolyTimeFun.ite
     ((PolyTimeFun.haltsWithin UT).comp
@@ -393,53 +422,66 @@ noncomputable def decFunV (U : UniversalMachine) (UT : ClockedUniversalMachine) 
     (PolyTimeFun.ite
       ((PolyTimeFun.haltsWithin UT).comp
         (PolyTimeFun.pair
-          ((PolyTimeFun.smn (Prog × (Prog × (ℕ × ℕ)))).comp
+          ((PolyTimeFun.smn ((Prog × (Prog × (ℕ × ℕ))) × ℕ)).comp
             (PolyTimeFun.pair (PolyTimeFun.const (Prog.searchProg U.univ S))
-              (PolyTimeFun.pair PolyTimeFun.fst
-                (PolyTimeFun.pair (PolyTimeFun.fst.comp PolyTimeFun.snd)
-                  (PolyTimeFun.pair
-                    (PolyTimeFun.fst.comp (PolyTimeFun.snd.comp PolyTimeFun.snd))
-                    (PolyTimeFun.fst.comp (PolyTimeFun.snd.comp PolyTimeFun.snd)))))))
+              (PolyTimeFun.pair
+                (PolyTimeFun.pair PolyTimeFun.fst
+                  (PolyTimeFun.pair (PolyTimeFun.fst.comp PolyTimeFun.snd)
+                    (PolyTimeFun.pair
+                      (PolyTimeFun.fst.comp (PolyTimeFun.snd.comp PolyTimeFun.snd))
+                      (PolyTimeFun.fst.comp (PolyTimeFun.snd.comp PolyTimeFun.snd)))))
+                (PolyTimeFun.fst.comp (PolyTimeFun.snd.comp PolyTimeFun.snd)))))
           (PolyTimeFun.snd.comp (PolyTimeFun.snd.comp PolyTimeFun.snd))))
       (PolyTimeFun.const yNo)
       (Compr.comp (PolyTimeFun.pair
-        (PolyTimeFun.pair
-          ((PolyTimeFun.smn ((Prog × Prog) × (ℕ × ℕ))).comp
-            (PolyTimeFun.pair (PolyTimeFun.const (Prog.bitQueryProg U.univ))
+        ((PolyTimeFun.smn ((Prog × Prog) × (ℕ × ℕ))).comp
+          (PolyTimeFun.pair (PolyTimeFun.const (Prog.bitQueryProg U.univ))
+            (PolyTimeFun.pair
+              (PolyTimeFun.pair PolyTimeFun.fst (PolyTimeFun.fst.comp PolyTimeFun.snd))
               (PolyTimeFun.pair
-                (PolyTimeFun.pair PolyTimeFun.fst (PolyTimeFun.fst.comp PolyTimeFun.snd))
-                (PolyTimeFun.pair
-                  (PolyTimeFun.fst.comp (PolyTimeFun.snd.comp PolyTimeFun.snd))
-                  (PolyTimeFun.next.comp
-                    (PolyTimeFun.snd.comp (PolyTimeFun.snd.comp PolyTimeFun.snd)))))))
-          (PolyTimeFun.snd.comp (PolyTimeFun.snd.comp PolyTimeFun.snd)))
+                (PolyTimeFun.fst.comp (PolyTimeFun.snd.comp PolyTimeFun.snd))
+                (PolyTimeFun.next.comp
+                  (PolyTimeFun.snd.comp (PolyTimeFun.snd.comp PolyTimeFun.snd)))))))
         (PolyTimeFun.snd.comp (PolyTimeFun.snd.comp PolyTimeFun.snd)))))
 
 theorem decFunV_apply (U : UniversalMachine) (UT : ClockedUniversalMachine) (S : Prog)
-    (Compr : PolyTimeFun ((Prog × ℕ) × ℕ) BitStr) (yYes yNo : BitStr) (c' e : Prog)
-    (m n : ℕ) :
+    (Compr : PolyTimeFun (Prog × ℕ) BitStr) (yYes yNo : BitStr) (c' e : Prog) (m n : ℕ) :
     decFunV U UT S Compr yYes yNo (c', (e, (m, n))) =
       if (evalWithin e .nil (Nat.size n)).isSome then yYes
-      else if (evalWithin (hardcode (Prog.searchProg U.univ S) (encode (c', (e, (m, m))))) .nil
-          (Nat.size n)).isSome then yNo
-      else Compr ((hardcode (Prog.bitQueryProg U.univ) (encode ((c', e), (m, 2 * n + 1))), n),
-        n) :=
+      else if (evalWithin (hardcode (Prog.searchProg U.univ S) (encode ((c', (e, (m, m))), m)))
+          .nil (Nat.size n)).isSome then yNo
+      else Compr (hardcode (Prog.bitQueryProg U.univ) (encode ((c', e), (m, 2 * n + 1))), n) :=
   rfl
 
-/-- **Compressibility criterion** (Lin; blueprint `lem:compressible-criterion`), the
-value-form abstract compression lemma.
+/-- **Compressibility criterion, per level** (Lin; blueprint `lem:compressible-criterion`),
+the value-form abstract compression lemma in the form an instantiation by gap-preserving
+compression can meet.
 
-Data: two languages `A`, `B` with distinguished elements `yYes ∈ A` and `yNo ∈ B`; a
-semidecision procedure `S` for the complement of `B` (a closed program halting on `encode x`
-exactly when `x ∉ B`); and a *polynomial-time* compression procedure `Compr` taking a
-(claimed) succinct description `(c, m)` and a target parameter `n`, such that whenever
-`(c, m)` genuinely describes `x`:
+Data: two families of languages `A n`, `B n` indexed by the level `n` of the recursion, with
+distinguished elements `yYes ∈ A n` and `yNo ∈ B n` at every level `n ≥ n₀`; a semidecision
+procedure `S` for the complement of `B` (a closed program halting on `encode (x, n)` exactly
+when `x ∉ B n`); and a *polynomial-time* compression procedure `Compr` taking a (claimed)
+succinct description `c` with parameter `n` — the level — such that whenever `n ≥ n₀`, `c` is
+short (`2 · |c| ≤ n`) and genuinely describes `x` with parameter `n`:
 
-1. `x ∈ A → Compr ((c, m), n) ∈ A`, and
-2. `x ∈ B → Compr ((c, m), n) ∈ B`.
+1. `x ∈ A (2n + 1) → Compr (c, n) ∈ A n`, and
+2. `x ∈ B (2n + 1) → Compr (c, n) ∈ B n`.
 
 Conclusion: a polynomial-time reduction `g` from the halting problem (of the ambient model,
-on the empty input `nil`) with `g e ∈ A` on halting `e` and `g e ∈ B` on non-halting `e`.
+on the empty input `nil`) and a constant `K` such that, with `R e = 2 ^ (K + 1 + |e|)` (a level
+at least `n₀`), `g e ∈ A (R e)` on halting `e` and `g e ∈ B (R e)` on non-halting `e`.
+
+The level bookkeeping is what an instantiation needs. The compressor is polynomial-time in
+the *size* of its input `(c, n)`, that is, polylogarithmic in `n`, while a bit query to `c`
+costs up to `n` — so `Compr` cannot read the string `x` it is compressing, only embed `c` into
+its output for a later reader (a decider at index `n`, whose time budget is polynomial in
+`n`); the slack `2 · |c| ≤ n` is what lets that output stay short. And the hypothesis relates
+the class of `x` at level `2n + 1` to the class of the output at level `n`, which is exactly
+what the proof uses: at level `n` the self-referential decider compresses the string it
+itself computes at level `2n + 1`. See the module docstring for the reading of the levels
+in the instantiation. Nothing is demanded of `Compr` off short genuine descriptions above
+`n₀`, but it is total and fast everywhere.
+
 There is no measure and no growth hypothesis: the self-referential decider at level `n`
 compresses the next level `2n + 1`, unless `e` halts within `Nat.size n` steps (output
 `yYes`) or the semidecision procedure, run on the string at the start level of the
@@ -448,28 +490,30 @@ string were outside `B`, the search branch would eventually fire, and preservati
 down the levels would put the start string in `B`. Halting `e`: the search branch can never
 fire before `e` halts, by the same downward argument, so preservation of `A` down from the
 level where `e` halts applies. -/
-theorem compressibility_criterion
-    (A B : Set BitStr)
-    (yYes : BitStr) (hyes : yYes ∈ A) (yNo : BitStr) (hno : yNo ∈ B)
-    (S : Prog) (hSws : S.WellScoped 1) (hS : ∀ x : BitStr, Halts S (encode x) ↔ x ∉ B)
-    (Compr : PolyTimeFun ((Prog × ℕ) × ℕ) BitStr)
-    (hCompr : ∀ (c : Prog) (m : ℕ) (x : BitStr) (n : ℕ),
-      IsSuccinctDesc c m x →
-        (x ∈ A → Compr ((c, m), n) ∈ A) ∧ (x ∈ B → Compr ((c, m), n) ∈ B)) :
-    ∃ g : PolyTimeFun Prog BitStr,
-      ∀ e : Prog,
-        (Halts e .nil → g e ∈ A) ∧
-        (¬ Halts e .nil → g e ∈ B) := by
+theorem compressibility_criterion_levels
+    (A B : ℕ → Set BitStr) (n₀ : ℕ)
+    (yYes : BitStr) (hyes : ∀ n, n₀ ≤ n → yYes ∈ A n)
+    (yNo : BitStr) (hno : ∀ n, n₀ ≤ n → yNo ∈ B n)
+    (S : Prog) (hSws : S.WellScoped 1)
+    (hS : ∀ (x : BitStr) (n : ℕ), Halts S (encode (x, n)) ↔ x ∉ B n)
+    (Compr : PolyTimeFun (Prog × ℕ) BitStr)
+    (hCompr : ∀ (c : Prog) (x : BitStr) (n : ℕ), n₀ ≤ n → 2 * esize c ≤ n →
+      IsSuccinctDesc c n x →
+        (x ∈ A (2 * n + 1) → Compr (c, n) ∈ A n) ∧ (x ∈ B (2 * n + 1) → Compr (c, n) ∈ B n)) :
+    ∃ (g : PolyTimeFun Prog BitStr) (K : ℕ),
+      ∀ e : Prog, n₀ ≤ 2 ^ (K + 1 + esize e) ∧
+        (Halts e .nil → g e ∈ A (2 ^ (K + 1 + esize e))) ∧
+        (¬ Halts e .nil → g e ∈ B (2 ^ (K + 1 + esize e))) := by
   obtain ⟨U⟩ := exists_efficient_universal
   obtain ⟨UT⟩ := exists_clocked_universal
   -- the decider, kept opaque through its functional equation
   obtain ⟨dec, hdec⟩ : ∃ dec : PolyTimeFun (Prog × (Prog × (ℕ × ℕ))) BitStr, ∀ c' e m n,
       dec (c', (e, (m, n))) =
         if (evalWithin e .nil (Nat.size n)).isSome then yYes
-        else if (evalWithin (hardcode (Prog.searchProg U.univ S) (encode (c', (e, (m, m)))))
+        else if (evalWithin (hardcode (Prog.searchProg U.univ S) (encode ((c', (e, (m, m))), m)))
             .nil (Nat.size n)).isSome then yNo
-        else Compr ((hardcode (Prog.bitQueryProg U.univ) (encode ((c', e), (m, 2 * n + 1))),
-          n), n) :=
+        else Compr (hardcode (Prog.bitQueryProg U.univ) (encode ((c', e), (m, 2 * n + 1))),
+          n) :=
     ⟨decFunV U UT S Compr yYes yNo, decFunV_apply U UT S Compr yYes yNo⟩
   -- the self-reference: `c` on `q` computes `dec (c, q)`
   obtain ⟨F, hF⟩ : ∃ F : PolyTimeFun Prog Prog, ∀ c', F c' = hardcode dec.code (encode c') :=
@@ -504,25 +548,42 @@ theorem compressibility_criterion
        closed := hc
        timeBound := cB
        computes := fun q => c_runs q }, fun _ => rfl⟩
-  -- the overhead polynomial in `x = esize e + Nat.size n`, and the threshold constant
+  -- the overhead polynomials in `x = esize e + Nat.size n`, and the threshold constant:
+  -- `Q₁` bounds the run of `c` at level `2n + 1`, `Q₂` the bit-query overhead, `Q₃` twice
+  -- the size of the hardcoded bit-query program
   obtain ⟨Q₁, hQ₁⟩ : ∃ Q₁ : Polynomial ℕ, ∀ x, Q₁.eval x = cB.eval (9 * x + 8) :=
     ⟨cB.comp (C 9 * X + C 8), fun x => by simp [Polynomial.eval_comp]⟩
   obtain ⟨Q₂, hQ₂⟩ : ∃ Q₂ : Polynomial ℕ, ∀ x, Q₂.eval x =
       (bitQueryBound U).eval (Q₁.eval x + 9 * x + (esize c + 7)) + 9 * x + (esize c + 13) :=
     ⟨(bitQueryBound U).comp (Q₁ + C 9 * X + C (esize c + 7)) + C 9 * X + C (esize c + 13),
       fun x => by simp [Polynomial.eval_comp]⟩
-  obtain ⟨K, hK⟩ := exists_threshold (Q₁ + Q₂)
+  obtain ⟨Q₃, hQ₃⟩ : ∃ Q₃ : Polynomial ℕ, ∀ x, Q₃.eval x =
+      2 * (esize (Prog.bitQueryProg U.univ) + esize c + 9 * x + 44) + 1 :=
+    ⟨C 2 * (C (esize (Prog.bitQueryProg U.univ) + esize c + 44) + C 9 * X) + C 1,
+      fun x => by simp; ring⟩
+  obtain ⟨K₀, hK₀⟩ := exists_threshold (Q₁ + Q₂ + Q₃)
+  -- the threshold constant also puts every level above `n₀`
+  obtain ⟨K, hK, hKn₀⟩ : ∃ K : ℕ,
+      (∀ x n : ℕ, 2 ^ (K + 1 + x) ≤ n → (Q₁ + Q₂ + Q₃).eval (x + Nat.size n) ≤ n + 1) ∧
+      ∀ x n : ℕ, 2 ^ (K + 1 + x) ≤ n → n₀ ≤ n := by
+    refine ⟨K₀ + Nat.size n₀, fun x n hn => hK₀ x n ?_, fun x n hn => ?_⟩
+    · exact le_trans (Nat.pow_le_pow_right two_pos (by omega)) hn
+    · exact le_trans (Nat.lt_size_self n₀).le
+        (le_trans (Nat.pow_le_pow_right two_pos (by omega)) hn)
   -- above the threshold `R = 2 ^ (K + 1 + esize e)`, which is also the start level, `c` at
   -- level `2n + 1` is fast and its output is succinctly described by the hardcoded bit-query
-  -- program with parameter `n`
+  -- program with parameter `n`; that program is short, and the level is at least `n₀`
   have key : ∀ e n, 2 ^ (K + 1 + esize e) ≤ n →
+      n₀ ≤ n ∧
+      2 * esize (hardcode (Prog.bitQueryProg U.univ)
+        (encode ((c, e), (2 ^ (K + 1 + esize e), 2 * n + 1)))) ≤ n ∧
       IsSuccinctDesc (hardcode (Prog.bitQueryProg U.univ)
           (encode ((c, e), (2 ^ (K + 1 + esize e), 2 * n + 1)))) n
         (dec (c, (e, (2 ^ (K + 1 + esize e), 2 * n + 1)))) := by
     intro e n hn
     obtain ⟨t, ht, hrun⟩ := c_runs (e, (2 ^ (K + 1 + esize e), 2 * n + 1))
     have hQ := hK (esize e) n hn
-    rw [Polynomial.eval_add, hQ₁, hQ₂, hQ₁] at hQ
+    rw [Polynomial.eval_add, Polynomial.eval_add, hQ₁, hQ₂, hQ₁, hQ₃] at hQ
     have hlt : K + 1 + esize e < Nat.size n := Nat.lt_size.mpr hn
     have hsm : esize (2 ^ (K + 1 + esize e)) ≤ 4 * Nat.size n + 1 := by
       have h1 := esize_nat_le (2 ^ (K + 1 + esize e))
@@ -532,6 +593,16 @@ theorem compressibility_criterion
       have := esize_nat_le (2 * n + 1)
       rw [size_two_mul_add_one] at this
       omega
+    have hsize : esize (hardcode (Prog.bitQueryProg U.univ)
+        (encode ((c, e), (2 ^ (K + 1 + esize e), 2 * n + 1)))) ≤
+        esize (Prog.bitQueryProg U.univ) + esize c + 9 * (esize e + Nat.size n) + 44 := by
+      rw [hardcode_size]
+      have hd : (encode ((c, e), (2 ^ (K + 1 + esize e), 2 * n + 1))).size =
+          esize ((c, e), (2 ^ (K + 1 + esize e), 2 * n + 1)) := rfl
+      rw [hd]
+      simp only [esize_prod]
+      omega
+    refine ⟨hKn₀ (esize e) n hn, by omega, ?_⟩
     have ht₁ : t ≤ cB.eval (9 * (esize e + Nat.size n) + 8) := by
       refine ht.trans (polynomial_eval_mono cB ?_)
       simp only [esize_prod]
@@ -548,7 +619,7 @@ theorem compressibility_criterion
   -- the reduction: the string at level `R = 2 ^ (K + 1 + esize e)` of the recursion started
   -- at `R`
   refine ⟨cFun.comp (PolyTimeFun.pair (PolyTimeFun.id Prog)
-    (PolyTimeFun.pair (PolyTimeFun.threshold K) (PolyTimeFun.threshold K))), fun e => ?_⟩
+    (PolyTimeFun.pair (PolyTimeFun.threshold K) (PolyTimeFun.threshold K))), K, fun e => ?_⟩
   have hg : cFun.comp (PolyTimeFun.pair (PolyTimeFun.id Prog)
       (PolyTimeFun.pair (PolyTimeFun.threshold K) (PolyTimeFun.threshold K))) e =
       dec (c, (e, (2 ^ (K + 1 + esize e), 2 ^ (K + 1 + esize e)))) := by
@@ -557,32 +628,35 @@ theorem compressibility_criterion
   rw [hg]
   have key' := key e
   have hR1 : 1 ≤ 2 ^ (K + 1 + esize e) := Nat.one_le_two_pow
-  generalize hR : 2 ^ (K + 1 + esize e) = R at key' hR1 ⊢
+  have hRn₀ : n₀ ≤ 2 ^ (K + 1 + esize e) := hKn₀ (esize e) _ le_rfl
+  generalize hR : 2 ^ (K + 1 + esize e) = R at key' hR1 hRn₀ ⊢
+  -- the level of every step of the recursion is at least `n₀`
+  have hlev : ∀ j, n₀ ≤ levels R j := fun j => hRn₀.trans (le_levels R j)
   -- the clocked halting test is monotone in the budget
   have hmono : ∀ (q : Prog) (k k' : ℕ), k ≤ k' → (evalWithin q .nil k).isSome = true →
       (evalWithin q .nil k').isSome = true := by
     intro q k k' hkk' h
     obtain ⟨r, t, ht, hr⟩ := (evalWithin_isSome_iff _ _ _).1 h
     exact (evalWithin_isSome_iff _ _ _).2 ⟨r, t, ht.trans hkk', hr⟩
-  -- the search branch, both ways: it fires only if the start string is outside `B`, and it
-  -- eventually fires if the start string is outside `B`
+  -- the search branch, both ways: it fires only if the start string is outside `B R`, and it
+  -- eventually fires if the start string is outside `B R`
   have hsearch_of : ∀ k, (evalWithin (hardcode (Prog.searchProg U.univ S)
-      (encode (c, (e, (R, R))))) .nil k).isSome = true → dec (c, (e, (R, R))) ∉ B := by
+      (encode ((c, (e, (R, R))), R))) .nil k).isSome = true → dec (c, (e, (R, R))) ∉ B R := by
     intro k h
     obtain ⟨r, t, -, hrun⟩ := (evalWithin_isSome_iff _ _ _).1 h
     obtain ⟨x, tx, hx, hSx⟩ := Prog.searchProg_halts_of U hSws hrun
     obtain ⟨t', -, hc'⟩ := c_runs (e, (R, R))
     obtain ⟨rfl, -⟩ := Eval.deterministic hx hc'
-    exact (hS _).1 hSx
-  have hsearch_fires : dec (c, (e, (R, R))) ∉ B → ∃ T₀, ∀ k, T₀ ≤ k →
-      (evalWithin (hardcode (Prog.searchProg U.univ S) (encode (c, (e, (R, R))))) .nil
+    exact (hS _ _).1 hSx
+  have hsearch_fires : dec (c, (e, (R, R))) ∉ B R → ∃ T₀, ∀ k, T₀ ≤ k →
+      (evalWithin (hardcode (Prog.searchProg U.univ S) (encode ((c, (e, (R, R))), R))) .nil
         k).isSome = true := by
     intro hnB
-    obtain ⟨r, ts, hSr⟩ := (hS _).2 hnB
+    obtain ⟨r, ts, hSr⟩ := (hS _ _).2 hnB
     obtain ⟨t', -, hc'⟩ := c_runs (e, (R, R))
     obtain ⟨T₀, hT₀⟩ := Prog.searchProg_runs U hSws hc' hSr
     exact ⟨T₀, fun k hk => (evalWithin_isSome_iff _ _ _).2 ⟨r, T₀, hk, hT₀⟩⟩
-  refine ⟨fun hh => ?_, fun hnh => ?_⟩
+  refine ⟨hRn₀, fun hh => ?_, fun hnh => ?_⟩
   · -- halting `e`
     obtain ⟨r₀, T, hT⟩ := hh
     have htrue : ∀ n, T ≤ Nat.size n → (evalWithin e .nil (Nat.size n)).isSome = true :=
@@ -590,9 +664,9 @@ theorem compressibility_criterion
     -- below a level where the search fires while `e` has not yet halted, every level of the
     -- recursion is in `B`
     have hB : ∀ j₀, (evalWithin e .nil (Nat.size (levels R j₀))).isSome = false →
-        (evalWithin (hardcode (Prog.searchProg U.univ S) (encode (c, (e, (R, R))))) .nil
+        (evalWithin (hardcode (Prog.searchProg U.univ S) (encode ((c, (e, (R, R))), R))) .nil
           (Nat.size (levels R j₀))).isSome = true →
-        ∀ i j, j + i = j₀ → dec (c, (e, (R, levels R j))) ∈ B := by
+        ∀ i j, j + i = j₀ → dec (c, (e, (R, levels R j))) ∈ B (levels R j) := by
       intro j₀ hnot hfire i
       induction i with
       | zero =>
@@ -600,7 +674,7 @@ theorem compressibility_criterion
         rw [Nat.add_zero] at hj
         subst hj
         rw [hdec, hnot, if_neg Bool.false_ne_true, hfire, if_pos rfl]
-        exact hno
+        exact hno _ (hlev _)
       | succ i ih =>
         intro j hj
         have hjle : Nat.size (levels R j) ≤ Nat.size (levels R j₀) :=
@@ -614,26 +688,28 @@ theorem compressibility_criterion
         | false =>
           rw [hb₁, if_neg Bool.false_ne_true] at hd
           cases hb₂ : (evalWithin (hardcode (Prog.searchProg U.univ S)
-              (encode (c, (e, (R, R))))) .nil (Nat.size (levels R j))).isSome with
+              (encode ((c, (e, (R, R))), R))) .nil (Nat.size (levels R j))).isSome with
           | true =>
             rw [hb₂, if_pos rfl] at hd
             rw [hd]
-            exact hno
+            exact hno _ (hlev _)
           | false =>
             rw [hb₂, if_neg Bool.false_ne_true] at hd
             rw [hd]
             have hnext := ih (j + 1) (by omega)
             rw [levels_succ] at hnext
-            exact (hCompr _ _ _ _ (key' (levels R j) (le_levels R j))).2 hnext
+            obtain ⟨h₀, h₁, h₂⟩ := key' (levels R j) (le_levels R j)
+            exact (hCompr _ _ _ h₀ h₁ h₂).2 hnext
     -- from a level where `e` has halted, every level of the recursion is in `A`
-    have hA : ∀ k j, T ≤ Nat.size (levels R (j + k)) → dec (c, (e, (R, levels R j))) ∈ A := by
+    have hA : ∀ k j, T ≤ Nat.size (levels R (j + k)) →
+        dec (c, (e, (R, levels R j))) ∈ A (levels R j) := by
       intro k
       induction k with
       | zero =>
         intro j hj
         rw [Nat.add_zero] at hj
         rw [hdec, htrue _ hj, if_pos rfl]
-        exact hyes
+        exact hyes _ (hlev _)
       | succ k ih =>
         intro j hj
         have hd := hdec c e R (levels R j)
@@ -641,11 +717,11 @@ theorem compressibility_criterion
         | true =>
           rw [hb₁, if_pos rfl] at hd
           rw [hd]
-          exact hyes
+          exact hyes _ (hlev _)
         | false =>
           rw [hb₁, if_neg Bool.false_ne_true] at hd
           cases hb₂ : (evalWithin (hardcode (Prog.searchProg U.univ S)
-              (encode (c, (e, (R, R))))) .nil (Nat.size (levels R j))).isSome with
+              (encode ((c, (e, (R, R))), R))) .nil (Nat.size (levels R j))).isSome with
           | true =>
             exfalso
             have hRB := hB j hb₁ hb₂ j 0 (by omega)
@@ -656,7 +732,8 @@ theorem compressibility_criterion
             rw [hd]
             have hnext := ih (j + 1) (by rw [show j + 1 + k = j + (k + 1) by omega]; exact hj)
             rw [levels_succ] at hnext
-            exact (hCompr _ _ _ _ (key' (levels R j) (le_levels R j))).1 hnext
+            obtain ⟨h₀, h₁, h₂⟩ := key' (levels R j) (le_levels R j)
+            exact (hCompr _ _ _ h₀ h₁ h₂).1 hnext
     obtain ⟨k, hk⟩ : ∃ k, T ≤ Nat.size (levels R k) := by
       refine ⟨T, ?_⟩
       have h1 := Nat.size_le_size (two_pow_le_levels hR1 T)
@@ -674,30 +751,32 @@ theorem compressibility_criterion
     by_contra hnB
     obtain ⟨T₀, hT₀⟩ := hsearch_fires hnB
     -- from a level where the search fires, every level of the recursion is in `B`
-    have hB : ∀ k j, T₀ ≤ Nat.size (levels R (j + k)) → dec (c, (e, (R, levels R j))) ∈ B := by
+    have hB : ∀ k j, T₀ ≤ Nat.size (levels R (j + k)) →
+        dec (c, (e, (R, levels R j))) ∈ B (levels R j) := by
       intro k
       induction k with
       | zero =>
         intro j hj
         rw [Nat.add_zero] at hj
         rw [hdec, hfalse (levels R j), if_neg Bool.false_ne_true, hT₀ _ hj, if_pos rfl]
-        exact hno
+        exact hno _ (hlev _)
       | succ k ih =>
         intro j hj
         have hd := hdec c e R (levels R j)
         rw [hfalse (levels R j), if_neg Bool.false_ne_true] at hd
         cases hb₂ : (evalWithin (hardcode (Prog.searchProg U.univ S)
-            (encode (c, (e, (R, R))))) .nil (Nat.size (levels R j))).isSome with
+            (encode ((c, (e, (R, R))), R))) .nil (Nat.size (levels R j))).isSome with
         | true =>
           rw [hb₂, if_pos rfl] at hd
           rw [hd]
-          exact hno
+          exact hno _ (hlev _)
         | false =>
           rw [hb₂, if_neg Bool.false_ne_true] at hd
           rw [hd]
           have hnext := ih (j + 1) (by rw [show j + 1 + k = j + (k + 1) by omega]; exact hj)
           rw [levels_succ] at hnext
-          exact (hCompr _ _ _ _ (key' (levels R j) (le_levels R j))).2 hnext
+          obtain ⟨h₀, h₁, h₂⟩ := key' (levels R j) (le_levels R j)
+          exact (hCompr _ _ _ h₀ h₁ h₂).2 hnext
     obtain ⟨k, hk⟩ : ∃ k, T₀ ≤ Nat.size (levels R k) := by
       refine ⟨T₀, ?_⟩
       have h1 := Nat.size_le_size (two_pow_le_levels hR1 T₀)
@@ -706,6 +785,56 @@ theorem compressibility_criterion
     have hfin := hB k 0 (by simpa using hk)
     rw [levels_zero] at hfin
     exact hnB hfin
+
+/-- **Compressibility criterion** (Lin; blueprint `lem:compressible-criterion`), the
+value-form abstract compression lemma in its level-free form: the special case of
+`compressibility_criterion_levels` with the same classes at every level and a compressor
+that receives the parameter of the succinct description separately from the level.
+
+Data: two languages `A`, `B` with distinguished elements `yYes ∈ A` and `yNo ∈ B`; a
+semidecision procedure `S` for the complement of `B` (a closed program halting on `encode x`
+exactly when `x ∉ B`); and a *polynomial-time* compression procedure `Compr` taking a
+(claimed) succinct description `(c, m)` and a target parameter `n`, such that whenever
+`(c, m)` genuinely describes `x`:
+
+1. `x ∈ A → Compr ((c, m), n) ∈ A`, and
+2. `x ∈ B → Compr ((c, m), n) ∈ B`.
+
+Conclusion: a polynomial-time reduction `g` from the halting problem (of the ambient model,
+on the empty input `nil`) with `g e ∈ A` on halting `e` and `g e ∈ B` on non-halting `e`.
+This is the form of [Lin], [MNY]; the per-level form is the one the instantiation by
+gap-preserving compression can satisfy (blueprint `rem:compression-abstract`). -/
+theorem compressibility_criterion
+    (A B : Set BitStr)
+    (yYes : BitStr) (hyes : yYes ∈ A) (yNo : BitStr) (hno : yNo ∈ B)
+    (S : Prog) (hSws : S.WellScoped 1) (hS : ∀ x : BitStr, Halts S (encode x) ↔ x ∉ B)
+    (Compr : PolyTimeFun ((Prog × ℕ) × ℕ) BitStr)
+    (hCompr : ∀ (c : Prog) (m : ℕ) (x : BitStr) (n : ℕ),
+      IsSuccinctDesc c m x →
+        (x ∈ A → Compr ((c, m), n) ∈ A) ∧ (x ∈ B → Compr ((c, m), n) ∈ B)) :
+    ∃ g : PolyTimeFun Prog BitStr,
+      ∀ e : Prog,
+        (Halts e .nil → g e ∈ A) ∧
+        (¬ Halts e .nil → g e ∈ B) := by
+  -- the semidecider on pairs `(x, n)`: project to `x`
+  have hS' : ∀ (x : BitStr) (n : ℕ), Halts (.let_ Prog.fstProg S) (encode (x, n)) ↔ x ∉ B := by
+    intro x n
+    rw [← hS x]
+    have hpre := Prog.fstProg_runs (encode x) (encode n)
+    constructor
+    · rintro ⟨r, t, h⟩
+      cases h with
+      | let_ h₁ h₂ =>
+        obtain ⟨rfl, -⟩ := h₁.deterministic hpre
+        exact ⟨r, _, Eval.of_append_of_wellScoped (env := [_]) (extra := [_]) h₂ hSws⟩
+    · rintro ⟨r, t, h⟩
+      exact ⟨r, _, Eval.let_ hpre (Eval.append_of_wellScoped h hSws _)⟩
+  obtain ⟨g, K, hg⟩ := compressibility_criterion_levels (fun _ => A) (fun _ => B) 0
+    yYes (fun _ _ => hyes) yNo (fun _ _ => hno) (.let_ Prog.fstProg S)
+    ⟨Prog.fstProg_wellScoped, hSws.mono (by omega) _⟩ hS'
+    (Compr.comp (PolyTimeFun.pair (PolyTimeFun.id _) PolyTimeFun.snd))
+    (fun c x n _ _ hsucc => by simpa using hCompr c n x n hsucc)
+  exact ⟨g, fun e => ⟨(hg e).2.1, (hg e).2.2⟩⟩
 
 /-! ## Interface with Mathlib computability
 
