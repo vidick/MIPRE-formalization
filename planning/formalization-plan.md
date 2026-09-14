@@ -188,8 +188,17 @@ exact strategy with `ℚ(i)` entries has value `> t`, by the Cayley route (exact
 no stability claim, no psd test; the departure from the paper's proof of (S) is recorded
 under `lem:value-lower-approx`). Part 2 done the same day: `lem:value-lower-approx` is `\lean`/`\leanok` with a `\leanok`
 proof (`MIPRE.ValueApprox.rePred_lt_quantumValue`, an `REPred` on `GameData × ℕ × ℕ` for
-thresholds `p / q`), by a primitive recursive certificate check on raw candidates. Part 3 —
-the `Prog` semidecider with the `⊆` half of `thm:mipstar-eq-re` — remains.
+thresholds `p / q`), by a primitive recursive certificate check on raw candidates. Part 3 done
+the same day: `MIPRE.Cost.exists_semidecider` (`Cost/Semidecide.lean`) turns any `REPred` on
+bit strings into a well-scoped `Prog` halting exactly on its members (a `ToPartrec` code for
+the predicate, translated by `Prog.ofCode`, after an ambient loop shifts the bits up by one —
+a `ToPartrec` code cannot see trailing zeros, and `false` encodes as `nil`), with the converse
+`rePred_halts`; `Foundations/ClassMIPStar.lean` defines `IsRE` and `MIPStar` (the computable
+version, on game descriptions — `def:mipstar` records the difference) and proves
+`MIPStar.isRE`, the blueprint's new `lem:mipstar-sub-re`, and
+`exists_semidecider_lt_quantumValue`, the criterion's `hS` for any computable family of game
+descriptions. **H3 is done.** What it does not include is the tabulation of a normal form
+verifier's game as a game description, which belongs to H4.
 
 ### H4 — Instantiating the compressibility criterion
 
@@ -219,8 +228,9 @@ H1 and H3 in parallel, H2 whenever someone wants a self-contained hard problem.
 - **H1 is the one to start now.** It is the only item that unblocks other people's work:
   every chapter-6 statement waits on it, and its interface decision gets more expensive
   the longer it is deferred.
-- **H3 continues** where `ValueApprox.lean` left off, and has the best-specified source of
-  the four — a full proof with explicit constants, already claim-tested upstream.
+- **H3 is done** (issue #48, three pull requests): `lem:value-lower-approx`, `def:re`,
+  `def:mipstar` and `lem:mipstar-sub-re` are in Lean, and the criterion's `hS` is supplied
+  for any computable family of game descriptions.
 - **H2 is independent of both** and can proceed on its own schedule; it blocks H4 and the
   complexity clauses, not H1 or H3.
 - **H4 after H2**, and after enough of H1 to know what a description is.

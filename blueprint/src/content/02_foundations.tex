@@ -464,11 +464,21 @@ in $\log$ of the integer inputs, unless an integer is explicitly given in unary.
 
 \begin{definition}[Recursively enumerable]
 \label{def:re}
+\lean{MIPRE.IsRE, MIPRE.isRE_iff}
+\leanok
 A language $L \subseteq \{0,1\}^*$ is in $\RE$ if it is the domain (equivalently, the
 range) of a partial computable function. The \emph{halting problem} --- the set of $e$
 such that $\phi_e$ halts on the empty input --- is $\RE$-complete under many-one
 reductions.
 \end{definition}
+
+In Lean (\texttt{MIPRE.IsRE}) membership in $L$ is Mathlib's \texttt{REPred}, the domain
+of a partial computable function; equivalently (\texttt{MIPRE.isRE\_iff}), $L$ is the
+halting set of a well-scoped program of the ambient model
+(Section~\ref{sec:rr-computability}) on encoded strings, which is the form in which the
+compressibility criterion (Lemma~\ref{lem:compressible-criterion}) consumes recursive
+enumerability. The completeness of the halting problem is
+Theorem~\ref{thm:halting-undecidable}, not part of the definition.
 
 \begin{definition}[Succinct description]
 \label{def:succinct}
@@ -644,10 +654,25 @@ all $n \geq 2$, and $\abs{\verifier} \leq \lambda$.
 \begin{definition}[The class $\MIPstar$]
 \label{def:mipstar}
 \ledgernode{1.1.7, 1.1.7.1}
-\uses{def:normal-verifier,def:q-value}
+\uses{def:normal-verifier,def:q-value,def:game-description}
+\lean{MIPRE.MIPStar}
+\leanok
 A language $L$ is in $\MIPstar$ (more precisely, $\MIP^*_{1, 1/2}(2,1)$) if there is a
 polynomial-time computable map $z \mapsto \game_z$ from strings to (descriptions of)
 games --- given by a sampler and decider running in time $\poly(\abs{z})$ --- such that
 $z \in L$ implies $\valstar(\game_z) = 1$ and $z \notin L$ implies
 $\valstar(\game_z) \leq \frac12$.
+
+The Lean definition (\texttt{MIPRE.MIPStar}) is the \emph{computable} version of the class,
+with games given as explicit descriptions: a computable map $z \mapsto \game_z$ from strings
+to game descriptions (Definition~\ref{def:game-description}) with the same completeness and
+soundness clauses. Every language with a polynomial-time verifier whose games are
+synchronous is in it --- the game at input $z$ is finite and computable from the verifier,
+and for a synchronous game the description's rejection of unequal answers to equal
+questions changes nothing --- and that is the shape Theorem~\ref{thm:halting} delivers
+(Section~\ref{ch:main-theorem}); for a general verifier the tabulation preserves soundness,
+but a value-$1$ witness that is inconsistent on equal questions need not survive it. The
+computable version is what the Lean main statement asserts, the inclusion in $\RE$ is
+formalized for it (Lemma~\ref{lem:mipstar-sub-re}), and the polynomial-time clause is not
+formalized.
 \end{definition}

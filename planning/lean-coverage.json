@@ -165,6 +165,9 @@
   "MIPRE.Cost.exists_efficient_universal": [
    "lem:universal-tm"
   ],
+  "MIPRE.Cost.exists_semidecider": [
+   "lem:value-lower-approx"
+  ],
   "MIPRE.Cost.hardcode_size": [
    "lem:smn"
   ],
@@ -203,6 +206,9 @@
   ],
   "MIPRE.IsPOVMClose": [
    "def:distance"
+  ],
+  "MIPRE.IsRE": [
+   "def:re"
   ],
   "MIPRE.LCS.Game": [
    "def:lcs-instance"
@@ -272,6 +278,15 @@
   ],
   "MIPRE.LIDT.lowIndividualDegree_soundness": [
    "thm:lidt-soundness"
+  ],
+  "MIPRE.MIPStar": [
+   "def:mipstar"
+  ],
+  "MIPRE.MIPStar.exists_semidecider": [
+   "lem:mipstar-sub-re"
+  ],
+  "MIPRE.MIPStar.isRE": [
+   "lem:mipstar-sub-re"
   ],
   "MIPRE.Orthonormalization.povm_orthogonalization_finDim": [
    "thm:orthonormalization"
@@ -435,6 +450,9 @@
   "MIPRE.entRequirement": [
    "def:ent"
   ],
+  "MIPRE.exists_semidecider_lt_quantumValue": [
+   "lem:value-lower-approx"
+  ],
   "MIPRE.gowers_hatami": [
    "thm:gowers-hatami"
   ],
@@ -447,11 +465,17 @@
   "MIPRE.inconsistency": [
    "def:inconsistency"
   ],
+  "MIPRE.isRE_iff": [
+   "def:re"
+  ],
   "MIPRE.povmDistance": [
    "def:distance"
   ],
   "MIPRE.quantumValue": [
    "def:q-value"
+  ],
+  "MIPRE.rePred_lt_quantumValue_comp": [
+   "lem:value-lower-approx"
   ],
   "MIPRE.syncValue": [
    "def:sync-value"
@@ -561,6 +585,7 @@
   "MIPRE.Cost.efficient_fixed_point",
   "MIPRE.Cost.exists_clocked_universal",
   "MIPRE.Cost.exists_efficient_universal",
+  "MIPRE.Cost.exists_semidecider",
   "MIPRE.Cost.hardcode_size",
   "MIPRE.Cost.hardcode_time",
   "MIPRE.Cost.hardcode_time_rev",
@@ -574,6 +599,7 @@
   "MIPRE.Game.repeat",
   "MIPRE.IsApproxRepresentation",
   "MIPRE.IsPOVMClose",
+  "MIPRE.IsRE",
   "MIPRE.LCS.Game",
   "MIPRE.LCS.Game.toNonlocalGame",
   "MIPRE.LCS.IsObservable",
@@ -597,6 +623,9 @@
   "MIPRE.LCS.observableToProjector",
   "MIPRE.LIDT.lidtGame",
   "MIPRE.LIDT.lowIndividualDegree_soundness",
+  "MIPRE.MIPStar",
+  "MIPRE.MIPStar.exists_semidecider",
+  "MIPRE.MIPStar.isRE",
   "MIPRE.Orthonormalization.povm_orthogonalization_finDim",
   "MIPRE.Repetition.commutingOperatorValue_repeat_le",
   "MIPRE.Repetition.quantumValue_eq_entangledValue",
@@ -651,12 +680,15 @@
   "MIPRE.commValue",
   "MIPRE.commutingOperatorValue",
   "MIPRE.entRequirement",
+  "MIPRE.exists_semidecider_lt_quantumValue",
   "MIPRE.gowers_hatami",
   "MIPRE.hsInner",
   "MIPRE.hsNormSq",
   "MIPRE.inconsistency",
+  "MIPRE.isRE_iff",
   "MIPRE.povmDistance",
   "MIPRE.quantumValue",
+  "MIPRE.rePred_lt_quantumValue_comp",
   "MIPRE.syncValue",
   "MIPRE.syncValue_le_commValue",
   "MIPRE.syncValue_le_quantumValue",
@@ -749,6 +781,15 @@
    "MIPRE.CL.Sampler.TimeBound",
    "MIPRE.CL.Sampler.dist"
   ],
+  "MIPRE/Foundations/ClassMIPStar.lean": [
+   "MIPRE.IsRE",
+   "MIPRE.MIPStar",
+   "MIPRE.MIPStar.exists_semidecider",
+   "MIPRE.MIPStar.isRE",
+   "MIPRE.exists_semidecider_lt_quantumValue",
+   "MIPRE.isRE_iff",
+   "MIPRE.rePred_lt_quantumValue_comp"
+  ],
   "MIPRE/Foundations/CommutingOperator.lean": [
    "MIPRE.CommutingOperatorStrategy",
    "MIPRE.CommutingOperatorStrategy.value",
@@ -765,6 +806,9 @@
   ],
   "MIPRE/Foundations/Cost/Kleene.lean": [
    "MIPRE.Cost.efficient_fixed_point"
+  ],
+  "MIPRE/Foundations/Cost/Semidecide.lean": [
+   "MIPRE.Cost.exists_semidecider"
   ],
   "MIPRE/Foundations/Cost/Succinct.lean": [
    "MIPRE.Cost.IsSuccinctDesc"
@@ -949,7 +993,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 65,
+ "lean_tags": 68,
  "module_sizes": {
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
   "MIPRE/Background/LIDT/Axioms.lean": 0,
@@ -978,6 +1022,7 @@
   "MIPRE/Foundations/CL/Downsize.lean": 45,
   "MIPRE/Foundations/CL/Register.lean": 42,
   "MIPRE/Foundations/CL/Sampler.lean": 23,
+  "MIPRE/Foundations/ClassMIPStar.lean": 8,
   "MIPRE/Foundations/CommutingOperator.lean": 4,
   "MIPRE/Foundations/Compression.lean": 18,
   "MIPRE/Foundations/Cost/Basic.lean": 31,
@@ -997,6 +1042,7 @@
   "MIPRE/Foundations/Cost/Numeric.lean": 36,
   "MIPRE/Foundations/Cost/Partrec.lean": 19,
   "MIPRE/Foundations/Cost/PolyTime.lean": 8,
+  "MIPRE/Foundations/Cost/Semidecide.lean": 32,
   "MIPRE/Foundations/Cost/Succinct.lean": 7,
   "MIPRE/Foundations/Cost/Threshold.lean": 8,
   "MIPRE/Foundations/Cost/Toolkit.lean": 18,
@@ -1057,7 +1103,7 @@
  "xref_counts": {
   "bibitems": 32,
   "cites": 150,
-  "labels": 199,
-  "refs": 804
+  "labels": 200,
+  "refs": 820
  }
 }
