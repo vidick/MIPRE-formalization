@@ -201,6 +201,10 @@
   "MIPRE.Game.repeat": [
    "def:direct-repetition"
   ],
+  "MIPRE.GapCompression": [
+   "lem:compress-sampler-indep",
+   "thm:compression"
+  ],
   "MIPRE.IsApproxRepresentation": [
    "def:approx-rep"
   ],
@@ -591,6 +595,7 @@
   "MIPRE.Decider.TimeBound",
   "MIPRE.Game",
   "MIPRE.Game.repeat",
+  "MIPRE.GapCompression",
   "MIPRE.IsApproxRepresentation",
   "MIPRE.IsPOVMClose",
   "MIPRE.IsRE",
@@ -839,6 +844,9 @@
    "MIPRE.syncValue_le_commValue",
    "MIPRE.syncValue_le_quantumValue"
   ],
+  "MIPRE/Foundations/GapCompression.lean": [
+   "MIPRE.GapCompression"
+  ],
   "MIPRE/Foundations/ValueApprox.lean": [
    "MIPRE.ValueApprox.dotProduct_kronecker_perturb",
    "MIPRE.ValueApprox.dotProduct_mulVec_perturb",
@@ -981,7 +989,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 68,
+ "lean_tags": 70,
  "module_sizes": {
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
   "MIPRE/Background/LIDT/Axioms.lean": 0,
@@ -1039,6 +1047,7 @@
   "MIPRE/Foundations/Distances.lean": 10,
   "MIPRE/Foundations/GameDescription.lean": 4,
   "MIPRE/Foundations/Games.lean": 61,
+  "MIPRE/Foundations/GapCompression.lean": 2,
   "MIPRE/Foundations/ValueApprox.lean": 8,
   "MIPRE/Foundations/ValueApprox/Cayley.lean": 16,
   "MIPRE/Foundations/ValueApprox/Dense.lean": 2,
@@ -1092,6 +1101,6 @@
   "bibitems": 32,
   "cites": 150,
   "labels": 200,
-  "refs": 824
+  "refs": 829
  }
 }
