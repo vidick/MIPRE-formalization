@@ -1255,17 +1255,132 @@ should be derived alongside it.
 \begin{lemma}[The value is approximable from below]
 \label{lem:value-lower-approx}
 \ledgernode{1.1.7.2, 1.1.7.2.2, 1.1.7.2.5, 1.1.7.2.6}
-\uses{def:game-description,def:sync-value,def:q-value,def:re,lem:norm-two-psd,lem:perturbation-split}
+\uses{def:game-description,def:sync-value,def:q-value,def:re,lem:rational-strategies-suffice}
 The set $\{ (g, p) : g \text{ a game description}, p \in \mathbb{Q},
 \synval(\game_g) > p \}$ is recursively enumerable, and likewise for $\valstar$.
 \end{lemma}
 
-\paragraph{Source.} Folklore; see~\cite[Section 12]{JNVWY20}. Enumerate
-tensor-product strategies with entries in $\mathbb{Q}[i]$ and evaluate; density of
-such strategies among all tensor-product strategies gives completeness of the
-enumeration. That argument gives the $\valstar$ half; the $\synval$ half needs its own
-enumeration and density argument, since rounding the entries of a synchronous strategy
-does not preserve projectivity or synchronicity.
+\paragraph{Source.} Folklore; see~\cite[Section 12]{JNVWY20}, and statement (S) in the
+proof of \texttt{cor:mip-re} of \texttt{recursive.tex} for a complete argument. The
+$\valstar$ half is Lemma~\ref{lem:rational-strategies-suffice} plus an enumeration: the
+valid exact strategies with entries in $\mathbb{Q}(i)$ can be enumerated, validity is a
+finite conjunction of polynomial identities in the entries, and the value is a rational
+function of them, so ``some enumerated strategy has value $> p$'' is semi-decidable in
+exact arithmetic. The $\synval$ half needs its own enumeration and density argument, since
+rounding the entries of a synchronous strategy preserves neither projectivity nor
+synchronicity; the pipeline does not consume it (Remark~\ref{rem:compression-abstract}),
+and it is not planned.
+
+\paragraph{Comments.} The Lean route to the $\valstar$ half departs from the paper's proof
+of (S). The paper enumerates \emph{approximate} candidates --- tuples with entries in
+$\frac1k \mathbb{Z}[i]$ satisfying relaxed POVM constraints, tested by positive
+semidefiniteness (Lemma~\ref{lem:norm-two-psd}) --- and repairs each into an exact POVM by
+conjugating with $T_x^{-1/2}$, with the explicit slack $\Delta(d,k) = 250(\abs{\cal A} +
+\abs{\cal B})^2 d/k$ (its Claims ``Stability'' and ``Density''; ledger nodes
+\texttt{1.1.7.2.3} and \texttt{1.1.7.2.4}). The formalization enumerates \emph{exact}
+projective strategies instead: every projective measurement is $U \Pi_a U^*$ for a unitary
+$U$ and coordinate projections $\Pi_a$, and up to a phase every unitary is the Cayley
+transform of a skew-Hermitian matrix, which is what gets rounded
+(Lemma~\ref{lem:rational-pvm-dense}). Every candidate is then a genuine strategy, so only
+the density half of the argument is needed, with no slack, no matrix square root and no
+positive-semidefiniteness test, and the biconditional of
+Lemma~\ref{lem:rational-strategies-suffice} is sharp. Lemma~\ref{lem:norm-two-psd} is
+proved but no longer on the path; Lemma~\ref{lem:perturbation-split} is used as stated. The
+choice was made for the formalization's sake --- the stability claim needs the functional
+calculus for $T_x^{-1/2}$ and the candidate test needs decidability of positive
+semidefiniteness over $\mathbb{Q}(i)$, both heavier in Lean than the Cayley
+parametrization --- and it proves the same statement (S); it reverses the route decision
+recorded in Finding 3 of \texttt{planning/ledger-informed-plan.md}, which is annotated
+accordingly.
+
+\begin{lemma}[Gaussian-rational projective measurements are dense]
+\label{lem:rational-pvm-dense}
+\lean{MIPRE.ValueApprox.IsPVM, MIPRE.ValueApprox.IsPVM.exists_unitary_pattern,
+  MIPRE.ValueApprox.cayley, MIPRE.ValueApprox.cayley_mem_unitaryGroup,
+  MIPRE.ValueApprox.exists_isSkewHermitian_cayley_eq,
+  MIPRE.ValueApprox.exists_norm_eq_one_isUnit_one_add_smul,
+  MIPRE.ValueApprox.norm_cayley_sub_cayley_le, MIPRE.ValueApprox.GaussianRat,
+  MIPRE.ValueApprox.exists_unitary_entriesIn_norm_smul_sub_le,
+  MIPRE.ValueApprox.IsPVM.exists_entriesIn_norm_sub_le}
+\leanok
+Let $\{M_a\}_{a \in \cal A}$ be a projective measurement on $\C^d$ and $\eta > 0$. There is
+a projective measurement $\{M'_a\}_{a \in \cal A}$ on $\C^d$ with all entries in
+$\mathbb{Q}(i)$ such that $\norm{M_a - M'_a} \leq \eta$ for every $a$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Diagonalize a Hermitian combination $\sum_a w_a M_a$ with distinct real weights $w_a$:
+$M_a = U \Pi_a U^*$ for a unitary $U$ and the coordinate projections $\Pi_a$ of a pattern
+$r : [d] \to \cal A$. For a unit scalar $z$, $(zU) \Pi_a (zU)^* = U \Pi_a U^*$, and
+$\det(\Id + zU)$ is a polynomial in $z$ with constant term $1$, so some unit $z$ makes
+$\Id + zU$ invertible; then $zU = (\Id - S)(\Id + S)^{-1}$ is the Cayley transform of the
+skew-Hermitian matrix $S = 2(\Id + zU)^{-1} - \Id$. Round $S$ entrywise to $R$ with entries
+in $\mathbb{Q}(i)$ and re-symmetrize, $S' = (R - R^*)/2$: $S'$ is skew-Hermitian, has
+entries in $\mathbb{Q}(i)$, and $\abs{S_{ij} - S'_{ij}}$ is at most the rounding
+precision. Its Cayley transform $U' = (\Id - S')(\Id + S')^{-1}$ is unitary with entries
+in $\mathbb{Q}(i)$, and $\norm{zU - U'} \leq 2 \norm{S - S'}$, since $zU - U' =
+2(\Id + S)^{-1}(S' - S)(\Id + S')^{-1}$ and $\norm{(\Id + S)^{-1}} \leq 1$ for skew-Hermitian
+$S$ (the cross term of $\norm{x + Sx}^2$ vanishes). Finally $M'_a = U' \Pi_a U'^*$
+satisfies $\norm{M_a - M'_a} \leq 2 \norm{zU - U'}$.
+\end{proof}
+
+\begin{lemma}[Exact rational strategies suffice]
+\label{lem:rational-strategies-suffice}
+\uses{def:tensor-strategy,def:q-value,lem:rational-pvm-dense,lem:perturbation-split}
+\lean{MIPRE.ValueApprox.ExactStrategy, MIPRE.ValueApprox.ExactStrategy.IsValid,
+  MIPRE.ValueApprox.ExactStrategy.EntriesIn, MIPRE.ValueApprox.ExactStrategy.value,
+  MIPRE.ValueApprox.ExactStrategy.toStrategy,
+  MIPRE.ValueApprox.ExactStrategy.value_le_quantumValue,
+  MIPRE.ValueApprox.abs_bornValue_sub_le, MIPRE.ValueApprox.exists_exactStrategy_value_gt,
+  MIPRE.ValueApprox.lt_quantumValue_iff}
+\leanok
+\ledgernode{1.1.7.2.3, 1.1.7.2.4}
+An \emph{exact strategy} for a game $\game$ is the data of dimensions $d_\alice, d_\bob$,
+matrices $A^x_a \in \C^{d_\alice \times d_\alice}$ and $B^y_b \in \C^{d_\bob \times
+d_\bob}$, and a vector $u \in \C^{d_\alice} \ot \C^{d_\bob}$; it is \emph{valid} if each
+$\{A^x_a\}_a$ and each $\{B^y_b\}_b$ is a projective measurement and $u \neq 0$, and its
+value is
+\[
+  \omega \;=\; \frac{1}{\norm{u}^2} \sum_{x,y} \mu(x,y) \sum_{a,b} D(x,y,a,b)\,
+  \bra{u} A^x_a \ot B^y_b \ket{u},
+\]
+a rational function of the entries. Suppose the answer alphabets of $\game$ are nonempty.
+Then for every real $t$, $\valstar(\game) > t$ if and only if some valid exact strategy
+with all entries in $\mathbb{Q}(i)$ has value $\omega > t$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+A valid exact strategy with the state normalized to $u/\norm{u}$ is a tensor-product
+strategy of value $\omega$, so $\omega \leq \valstar(\game)$. Conversely, if
+$\valstar(\game) > t$ then, $\valstar$ being a supremum over a nonempty set, some
+tensor-product strategy $(\psi, \{A^x_a\}, \{B^y_b\})$ has value $v > t$, and it suffices
+to find, for every $\varepsilon > 0$, a valid exact strategy with $\mathbb{Q}(i)$ entries of
+value $> v - \varepsilon$. Replace each $\{A^x_a\}_a$ and $\{B^y_b\}_b$ by a $\mathbb{Q}(i)$
+projective measurement within $\eta$ of it (Lemma~\ref{lem:rational-pvm-dense}), and
+$\psi$ by an entrywise rounding $u \neq 0$ with $\norm{u - \psi} \leq \eta/4$, so that
+$\norm{u/\norm{u} - \psi} \leq \eta/2$. The value is Lipschitz in the data: by
+Lemma~\ref{lem:perturbation-split}, a Born term $\bra{\psi} A \ot B \ket{\psi}$ changes by
+at most $\norm{A - A'}\norm{B} + \norm{A'}\norm{B - B'} + 2\norm{A'}\norm{B'}\norm{\psi -
+\psi'}$ between unit vectors $\psi, \psi'$, using $\norm{A \ot B} \leq \norm{A}\norm{B}$;
+projections have norm at most one, so each term moves by at most $4\eta$ and the value, a
+$\mu$-average of sums of at most $\abs{\cal A}\abs{\cal B}$ such terms, by at most
+$4\abs{\cal A}\abs{\cal B}\eta$. Take $\eta < \varepsilon / (4\abs{\cal A}\abs{\cal B})$.
+\end{proof}
+
+\paragraph{Comments.} The lemma is the mathematical content of
+Lemma~\ref{lem:value-lower-approx}, isolated from the computability: only the right-hand
+side involves the enumeration. It accounts for the ledger's stability and density nodes
+(\texttt{1.1.7.2.3}, \texttt{1.1.7.2.4}) by a different proof, as explained under
+Lemma~\ref{lem:value-lower-approx}: stability is vacuous for exact candidates, and density
+is Lemma~\ref{lem:rational-pvm-dense} plus the Lipschitz bound, whose constant
+$4\abs{\cal A}\abs{\cal B}$ is crude and immaterial. The nonemptiness of the answer
+alphabets is what makes a strategy exist at all: with it $\valstar$ is a supremum over a
+nonempty set, without it the supremum is $0$ by convention and the equivalence fails for
+$t < 0$. Game descriptions (Definition~\ref{def:game-description}) always satisfy it. In
+Lean the data type \texttt{ExactStrategy} carries no proofs, so that the computability layer
+can enumerate it and test validity.
 
 \begin{lemma}[Decidable candidate set: a norm constraint is two psd tests]
 \label{lem:norm-two-psd}

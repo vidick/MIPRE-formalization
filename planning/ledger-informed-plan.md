@@ -119,6 +119,17 @@ and supplies the rounding lemma** (`1.1.7.2.4`), with the stability counterpart
 decision is settled in favour of the route the roadmap set aside, and the Cayley
 machinery is not needed.
 
+*Reversed 2026-09-14, in the formalization (issue #48).* The Lean takes the Cayley route
+after all: exact `ℚ(i)` projective measurements are dense (`U Π U*`, a phase making `1 + zU`
+invertible, the Cayley transform of an entrywise-rounded skew-Hermitian matrix), so the
+candidates are exact strategies, the stability node `1.1.7.2.3` is vacuous, and the density
+node `1.1.7.2.4` is the Lipschitz bound `|Δvalue| ≤ 4|A||B|η` with no slack; neither
+`T_x^{-1/2}` nor the psd test of `1.1.7.2.1` is needed. The reason is cost in Lean, not
+mathematics: the ledger's route needs the functional calculus for `T_x^{-1/2}` and
+decidability of positive semidefiniteness over `ℚ(i)`, the Cayley route needs neither. Both
+prove statement (S); the blueprint records the departure under `lem:value-lower-approx`, and
+`lem:rational-strategies-suffice` carries the two nodes' `\ledgernode` annotations.
+
 Its one dependency also just cleared: `1.1.7.2.6`'s "WLOG projective by Naimark" is
 exactly `lem:povm-value-eq`, proved sorry-free here on 2026-09-12
 (`MIPRE.Repetition.quantumValue_eq_entangledValue`).
