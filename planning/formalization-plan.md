@@ -188,17 +188,8 @@ exact strategy with `ℚ(i)` entries has value `> t`, by the Cayley route (exact
 no stability claim, no psd test; the departure from the paper's proof of (S) is recorded
 under `lem:value-lower-approx`). Part 2 done the same day: `lem:value-lower-approx` is `\lean`/`\leanok` with a `\leanok`
 proof (`MIPRE.ValueApprox.rePred_lt_quantumValue`, an `REPred` on `GameData × ℕ × ℕ` for
-thresholds `p / q`), by a primitive recursive certificate check on raw candidates. Part 3 done
-the same day: `MIPRE.Cost.exists_semidecider` (`Cost/Semidecide.lean`) turns any `REPred` on
-bit strings into a well-scoped `Prog` halting exactly on its members (a `ToPartrec` code for
-the predicate, translated by `Prog.ofCode`, after an ambient loop shifts the bits up by one —
-a `ToPartrec` code cannot see trailing zeros, and `false` encodes as `nil`), with the converse
-`rePred_halts`; `Foundations/ClassMIPStar.lean` defines `IsRE` and `MIPStar` (the computable
-version, on game descriptions — `def:mipstar` records the difference) and proves
-`MIPStar.isRE`, the blueprint's new `lem:mipstar-sub-re`, and
-`exists_semidecider_lt_quantumValue`, the criterion's `hS` for any computable family of game
-descriptions. **H3 is done.** What it does not include is the tabulation of a normal form
-verifier's game as a game description, which belongs to H4.
+thresholds `p / q`), by a primitive recursive certificate check on raw candidates. Part 3 —
+the `Prog` semidecider with the `⊆` half of `thm:mipstar-eq-re` — remains.
 
 ### H4 — Instantiating the compressibility criterion
 

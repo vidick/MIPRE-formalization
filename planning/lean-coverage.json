@@ -993,7 +993,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 68,
+ "lean_tags": 65,
  "module_sizes": {
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
   "MIPRE/Background/LIDT/Axioms.lean": 0,
@@ -1103,7 +1103,7 @@
  "xref_counts": {
   "bibitems": 32,
   "cites": 150,
-  "labels": 200,
-  "refs": 820
+  "labels": 199,
+  "refs": 804
  }
 }
