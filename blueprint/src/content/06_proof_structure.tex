@@ -936,13 +936,22 @@ description from the binary representation of $\lambda$ (Lemma~\ref{lem:compress
 the polynomial-time map $\Compress$ from pairs of programs and $\lambda$ to the program of
 the compressed decider; the packaging of every output, well-formed input or not, as a
 $7$-level normal form verifier with that sampler and that decider; the bound $\poly(n,
-\lambda)$ on the running times of the output at index $n$; and the completeness and
-soundness clauses for $\lambda$-bounded $7$-level inputs at $n \geq C_0$. An instance of the
-structure is the theorem; the pipeline of this chapter is its proof, and the halting
-reduction consumes an instance (Remark~\ref{rem:compression-abstract}). Two readings are
-fixed there. $\verifier_N$ is taken with answers of length at most $N^\lambda$, the bound
-that $\lambda$-boundedness puts on the running time of its decider, and $\vcompr_n$ with
-answers of length at most the stated running-time bound, since the exact running times of
+\lambda)$ on the running times of the output at index $n$ (up to the cost of reading the
+input, Definition~\ref{def:decider}), the same bound on the dimension of the compressed
+sampler (in the paper a consequence of its running time) and on the length of the answers
+the compressed decider can accept (\texttt{output\_rejects\_long}: the paper's repeated
+decider accepts only after fully parsing the answers, so an answer longer than its time bound
+forces a timeout, the property the amended proof of Lemma~\ref{lem:dhalt-values} relies on;
+in the ambient model, where running times scale with the input, it is a demand on the
+construction, an explicit length check); and the completeness and soundness clauses for
+$\lambda$-bounded $7$-level inputs at $n \geq C_0$. An instance of the structure is the
+theorem; the pipeline of this chapter is its proof, and the halting reduction consumes an
+instance (Remark~\ref{rem:compression-abstract}). Two readings are fixed there.
+$\verifier_N$ is taken with answers of length at most $N^\lambda$, the bound that
+$\lambda$-boundedness puts on the running time of its decider, and $\vcompr_n$ with answers
+of length at most the stated running-time bound --- beyond which its decider rejects, so
+that its value is the same with any larger alphabet
+(\texttt{Verifier.valStar\_eq\_of\_rejects}) --- since the exact running times of
 Definition~\ref{def:normal-verifier} are not functions of the verifier in the
 formalization. And ``a value-$1$ PCC strategy'' is a PCC synchronous strategy of value $1$
 for the game read as synchronous (\texttt{Verifier.HasPerfectPCC}), which presupposes that

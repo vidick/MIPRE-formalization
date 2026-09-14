@@ -24,17 +24,26 @@ The reading of the paper's statement in the vocabulary of `MIPRE.Verifier`:
   computable from `λ` in time polynomial in the length of `λ` (the paper's `polylog(λ)`).
 * On every input, well-formed or not, the output is a normal form verifier: `output` packages
   the compressed sampler and decider as a `Verifier 7`. Its sampler and decider run within
-  `bound (n + λ)` at index `n`, the paper's `poly(n, λ)`.
+  `bound (n + λ)` at index `n` (up to the cost of reading the input, `TimeBoundAt`), the
+  paper's `poly(n, λ)`; the compressed sampler has dimension at most `bound (n + λ)`, the
+  paper's `s(n) ≤ TIME_S(n)`; and the compressed decider accepts no answer longer than
+  `bound (n + λ)` (`output_rejects_long`), the property of the paper's repeated decider that
+  its amended proof of `lem:dhalt-values` relies on — it accepts only after fully parsing the
+  answers, so an answer longer than its time bound forces a timeout. In the ambient model,
+  where the running time scales with the input, this is a demand on the construction (an
+  explicit length check), recorded as a field.
 * For a `λ`-bounded 7-level input `V`, at every `n ≥ C₀` and with `N = 2 ^ n`: a value-`1`
   PCC strategy for `V_N` yields one for `V^compr_n` (completeness), and `val*(V_N) ≤ 1/2`
   implies `val*(V^compr_n) ≤ 1/2` (soundness, in value form).
 
 Answer alphabets: `V_N` is taken with answers of length at most `N ^ λ`, the bound that
 `λ`-boundedness puts on the running time of its decider, and `V^compr_n` with answers of
-length at most `bound (n + λ)`, the bound on the running time of the compressed decider; the
-paper's alphabets are cut at the exact running times, which are not functions of the
-verifier in this formalization (see `Verifier.game`). The level count is `7`, the blueprint's
-(direct repetition); the paper's is `9`, with anchoring.
+length at most `bound (n + λ)`, the bound on the running time of the compressed decider,
+beyond which it rejects (`output_rejects_long`), so that by `Verifier.valStar_eq_of_rejects`
+its value is the same with any larger alphabet; the paper's alphabets are cut at the exact
+running times, which are not functions of the verifier in this formalization (see
+`Verifier.game`). The level count is `7`, the blueprint's (direct repetition); the paper's is
+`9`, with anchoring.
 -/
 
 namespace MIPRE
@@ -74,11 +83,20 @@ structure GapCompression where
   output : Prog × Prog → ℕ → Verifier 7
   output_sampler : ∀ (V : Prog × Prog) (lam : ℕ), (output V lam).sampler = sampler lam
   output_decider : ∀ (V : Prog × Prog) (lam : ℕ), (output V lam).decider.prog = compress (V, lam)
-  /-- The polynomial `poly(n, λ)` bounding the running times of the output at index `n`. -/
+  /-- The polynomial `poly(n, λ)` bounding the running times of the output at index `n`, the
+  dimension of the compressed sampler, and the length of the answers the compressed decider
+  can accept. -/
   bound : Polynomial ℕ
   sampler_time : ∀ lam n : ℕ, (sampler lam).TimeBoundAt n (bound.eval (n + lam))
+  /-- `s(n) ≤ poly(n, λ)` for the compressed sampler (in the paper, from its running time). -/
+  sampler_dim : ∀ lam n : ℕ, (sampler lam).dim n ≤ bound.eval (n + lam)
   decider_time : ∀ (V : Prog × Prog) (lam n : ℕ),
     (output V lam).decider.TimeBoundAt n (bound.eval (n + lam))
+  /-- The compressed decider accepts no answer longer than its time bound: the paper's
+  repeated decider accepts only after fully parsing the answers. -/
+  output_rejects_long : ∀ (V : Prog × Prog) (lam n : ℕ) (x y a b : BitStr),
+    bound.eval (n + lam) < a.length ∨ bound.eval (n + lam) < b.length →
+      ¬ (output V lam).decider.Accepts n x y a b
   /-- **Completeness.** For a `λ`-bounded input and `n ≥ C₀`: a value-`1` PCC strategy for
   `V_{2^n}` gives one for `V^compr_n`. -/
   completeness : ∀ (V : Verifier 7) (lam n : ℕ), V.IsBounded lam → C₀ ≤ n →
