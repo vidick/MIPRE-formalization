@@ -31,7 +31,11 @@ for `1 ≤ j ≤ ℓ`, `z, y` of length `s(n)`, and — for the last two — `u`
 `L^w_{< j}`, exactly as the paper quantifies (`CLFun.SupportedOn.factorOfPrefix_eval` is what
 makes the answers well defined there). The sampler must moreover halt on *every* input of the
 form `(n, …)`; the paper's bounded format checks are what make its running time on index `n`,
-the supremum over all such inputs, finite, and `Sampler.TimeBound` is that supremum bounded.
+the supremum over all such inputs, finite. `Sampler.TimeBoundAt n T` is that supremum bounded
+by `T`, read as halting within cost `T · (|d| + 1)` on every input `(n, d)`: the ambient model
+has no cursor into its input, and a bound uniform over all inputs is not satisfiable by any
+program that walks a list of unbounded length (see the module docstring of
+`MIPRE.Foundations.Verifier`).
 Vectors and register subspaces of `𝔽₂^s` travel as bit strings of length `s` (`toBits`,
 `ofBits`, `indicatorBits`); the paper's binary representation over `𝔽_{2^k}` through a
 self-dual basis is not needed at field size `2`.
@@ -209,9 +213,11 @@ namespace Sampler
 
 variable {ℓ : ℕ} (S : Sampler ℓ)
 
-/-- `TIME_𝒮(n) ≤ T`: the sampler halts within cost `T` on every input of the form `(n, …)` —
-the supremum of `def:sampler` at index `n`, bounded. -/
-def TimeBoundAt (n T : ℕ) : Prop := ∀ d : Data, HaltsWithin S.prog (.cons (encode n) d) T
+/-- `TIME_𝒮(n) ≤ T`: the sampler halts within cost `T · (|d| + 1)` on every input `(n, d)`,
+well formed or not — the supremum of `def:sampler` at index `n`, bounded up to the cost of
+reading the input. -/
+def TimeBoundAt (n T : ℕ) : Prop :=
+  ∀ d : Data, HaltsWithin S.prog (.cons (encode n) d) (T * (d.size + 1))
 
 /-- `TIME_𝒮(n) ≤ T n` for every `n`. -/
 def TimeBound (T : ℕ → ℕ) : Prop := ∀ n, S.TimeBoundAt n (T n)
@@ -219,22 +225,10 @@ def TimeBound (T : ℕ → ℕ) : Prop := ∀ n, S.TimeBoundAt n (T n)
 /-- The description length `|𝒮|` of the sampler. -/
 def size : ℕ := esize S.prog
 
-/-- `s(n) ≤ TIME_𝒮(n)` for a sampler of level at least `1`: a marginal query outputs a bit
-string of length `s(n)`, and a run of cost `t` produces an output of size at most `t`. (The
-paper derives the analogous `s(n) ≤ TIME_𝒟(n)` from the decider's question-length check.) -/
-theorem dim_le_of_timeBoundAt (hℓ : 1 ≤ ℓ) {n T : ℕ} (h : S.TimeBoundAt n T) : S.dim n ≤ T := by
-  obtain ⟨t, ht⟩ := S.runs_marginal n .alice 1 (toBits (0 : Fin (S.dim n) → 𝔽₂)) le_rfl hℓ
-    (length_toBits _)
-  obtain ⟨r, t', ht', hrun⟩ := h (encode (Sampler.Query.marginal .alice 1 (toBits 0)))
-  obtain ⟨rfl, rfl⟩ := Eval.deterministic hrun ht
-  have h₁ := Eval.size_le ht
-  have h₂ := length_le_esize_bitStr (toBits (((S.cl n .alice).truncate 1).eval (ofBits (S.dim n)
-    (toBits (0 : Fin (S.dim n) → 𝔽₂)))))
-  rw [length_toBits] at h₂
-  have h₃ : esize (toBits (((S.cl n .alice).truncate 1).eval (ofBits (S.dim n)
-      (toBits (0 : Fin (S.dim n) → 𝔽₂))))) = (encode (toBits (((S.cl n .alice).truncate 1).eval
-      (ofBits (S.dim n) (toBits (0 : Fin (S.dim n) → 𝔽₂)))))).size := rfl
-  omega
+/-! The paper's `s(n) ≤ TIME_𝒮(n)` (a marginal query writes `s(n)` output cells) does not
+follow from `TimeBoundAt`, whose bound grows with the input — the query carrying a vector of
+length `s(n)` is itself of size about `3 s(n)`. Where the pipeline needs it, it is a clause of
+`Verifier.IsBounded`. -/
 
 /-- The distribution of the sampler on index `n` (paper `def:sampler-sample`): the CL
 distribution of its two CL functions, `(L^𝖠 x, L^𝖡 x)` for `x` uniform in `𝔽₂^{s(n)}`. -/

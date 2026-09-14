@@ -142,6 +142,22 @@ concatenation, downsizing — are proved, and `def:normal-verifier` can be state
 place where the paper's interface had to be made precise to be formalizable. The campaign
 has offered CL closure lemmas (referee report, R9) — ask for them before proving them.
 
+**Repair 2026-09-14 (found from H4).** `Decider.TimeBoundAt` and `Sampler.TimeBoundAt` were
+stated as the paper's supremum over all inputs: halting within cost `T` on every input of
+index `n`. In the ambient model that is unsatisfiable by any decider that checks
+`|x| = s(n)` for unbounded `s(n)`: a value is inspected in place one node at a time, but a
+loop carries the rest of a list to its next iteration only by copying it, so no program
+walks an unbounded list within a cost independent of its length. So no normal form
+verifier with `s(n) → ∞` was `λ`-bounded, and `MIPRE.GapCompression` had no instance. The
+reading is now `T · (|input| + 1)`, the paper's bound up to the cost of reading the input,
+with `s(n) ≤ n^λ` (in the paper a consequence) as a clause of `IsBounded`; `GapCompression`
+gained `sampler_dim` and `output_rejects_long`, both properties the paper's construction
+has and the pipeline will have to establish explicitly. Found while writing the frozen
+verifier of H4 (part 3b), the first concrete program whose time bound had to be proved;
+nothing else depended on the old reading, no `TimeBoundAt` having been proved anywhere. The
+blueprint records the reading at `def:sampler`, `def:decider`, `def:lambda-bounded` and
+`thm:compression`.
+
 ### H2 — The universal machine (#17, #18)
 
 **Why.** `MIPRE/Foundations/Cost/` is 22 modules of computability toolkit, and the two

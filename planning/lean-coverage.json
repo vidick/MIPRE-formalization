@@ -1073,7 +1073,7 @@
   "MIPRE/Foundations/CL/Closure.lean": 18,
   "MIPRE/Foundations/CL/Downsize.lean": 45,
   "MIPRE/Foundations/CL/Register.lean": 42,
-  "MIPRE/Foundations/CL/Sampler.lean": 23,
+  "MIPRE/Foundations/CL/Sampler.lean": 22,
   "MIPRE/Foundations/ClassMIPStar.lean": 8,
   "MIPRE/Foundations/CommutingOperator.lean": 4,
   "MIPRE/Foundations/Compression.lean": 20,
@@ -1159,6 +1159,6 @@
   "bibitems": 32,
   "cites": 150,
   "labels": 200,
-  "refs": 831
+  "refs": 838
  }
 }
