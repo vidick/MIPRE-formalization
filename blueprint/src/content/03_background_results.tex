@@ -1257,7 +1257,9 @@ should be derived alongside it.
 \lean{MIPRE.ValueApprox.rePred_lt_quantumValue, MIPRE.ValueApprox.RawStrategy,
   MIPRE.ValueApprox.RawStrategy.interp, MIPRE.ValueApprox.Check,
   MIPRE.ValueApprox.primrecPred_check, MIPRE.ValueApprox.check_iff_interp,
-  MIPRE.ValueApprox.exists_check_iff, MIPRE.ValueApprox.REPred.of_primrecRel_exists}
+  MIPRE.ValueApprox.exists_check_iff, MIPRE.ValueApprox.REPred.of_primrecRel_exists,
+  MIPRE.rePred_lt_quantumValue_comp, MIPRE.exists_semidecider_lt_quantumValue,
+  MIPRE.Cost.exists_semidecider}
 \leanok
 \ledgernode{1.1.7.2, 1.1.7.2.1, 1.1.7.2.2, 1.1.7.2.5, 1.1.7.2.6}
 \uses{def:game-description,def:q-value,def:re,lem:rational-strategies-suffice}
@@ -1303,7 +1305,17 @@ in the paper's (S), where $t \in [0,1]$; a negative threshold is trivial since $
 (Definition~\ref{def:game-description}), read as a game of the foundations by
 \texttt{GameData.game}, and recursive enumerability is Mathlib's \texttt{REPred}, the
 domain of a partial computable function; integers travel as pairs of naturals, because
-Mathlib's primitive recursion has no arithmetic on $\mathbb{Z}$.
+Mathlib's primitive recursion has no arithmetic on $\mathbb{Z}$. The form the
+compressibility criterion consumes (its hypothesis that the complement of $B$ is the halting
+set of a program, Lemma~\ref{lem:compressible-criterion}) is
+\texttt{MIPRE.exists\_semidecider\_lt\_quantumValue}: for a computable family of game
+descriptions and a threshold $p/q$, a well-scoped program of the ambient model halting
+exactly on the strings whose game has value greater than $p/q$. It comes from the generic
+passage \texttt{MIPRE.Cost.exists\_semidecider} from an \texttt{REPred} on bit strings to a
+program (Definition~\ref{def:re}): a \texttt{ToPartrec} code for the predicate, translated
+into the model by \texttt{Prog.ofCode}, run after an ambient loop has shifted every bit up
+by one, since a \texttt{ToPartrec} code cannot see trailing zeros of its input and the bit
+$0$ encodes as \texttt{nil}.
 
 \paragraph{Comments.} The Lean route to the $\valstar$ half departs from the paper's proof
 of (S). The paper enumerates \emph{approximate} candidates --- tuples with entries in
