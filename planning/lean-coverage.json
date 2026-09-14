@@ -728,7 +728,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 61,
+ "lean_tags": 58,
  "module_sizes": {
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
   "MIPRE/Background/LIDT/Axioms.lean": 0,
@@ -755,7 +755,7 @@
   "MIPRE/Foundations/CL/Basic.lean": 68,
   "MIPRE/Foundations/CL/Closure.lean": 18,
   "MIPRE/Foundations/CL/Register.lean": 42,
-  "MIPRE/Foundations/CL/Sampler.lean": 23,
+  "MIPRE/Foundations/CL/Sampler.lean": 21,
   "MIPRE/Foundations/CommutingOperator.lean": 4,
   "MIPRE/Foundations/Compression.lean": 18,
   "MIPRE/Foundations/Cost/Basic.lean": 31,
@@ -823,6 +823,6 @@
   "bibitems": 32,
   "cites": 150,
   "labels": 196,
-  "refs": 785
+  "refs": 782
  }
 }
