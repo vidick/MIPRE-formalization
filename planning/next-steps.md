@@ -175,6 +175,20 @@ decisions, items with a done criterion, risks. Update the status column as items
   `ValueApprox` lemmas that exist. `lem:value-lower-approx` itself still has no Lean.
   On the route, read Finding 3 of `planning/ledger-informed-plan.md` before the Cayley
   paragraph above: the ledger settles this against Cayley.
+- Delivered 2026-09-14 (H3, part 1 of 3; tracking issue #48): the mathematics, by the
+  Cayley route after all — `MIPRE/Foundations/ValueApprox/{Projective,Cayley,Norms,Gaussian,
+  Dense,Strategy}.lean`, no sorry. `ExactStrategy` is the proof-free data of a strategy with
+  an unnormalized state, `IsValid` its projectivity and `u ≠ 0`, `value` the rational
+  function `⟨u, Λ u⟩/⟨u, u⟩`; `lt_quantumValue_iff` is `val*(G) > t ↔ ∃ valid Gaussian-rational
+  data with value > t`, from `IsPVM.exists_entriesIn_norm_sub_le` (exact `ℚ(i)` projective
+  measurements are dense: `U Π U*`, a phase, the Cayley transform of a rounded
+  skew-Hermitian matrix) and the Lipschitz bound `abs_bornValue_sub_le`. The blueprint has
+  the two new lemmas (`lem:rational-pvm-dense`, `lem:rational-strategies-suffice`) and, under
+  `lem:value-lower-approx`, why the route departs from the ledger's: with exact candidates
+  the stability node is vacuous, and no `T^{-1/2}` or psd test is needed. Still owed: the
+  `REPred` on a concrete description type (part 2) and the `Prog` form for the criterion's
+  `hS` with the `⊆` half of `thm:mipstar-eq-re` (part 3); `lem:value-lower-approx` itself has
+  no `\lean` tag yet.
 
 ### 5. #22 / #23 — synchronous transport (`thm:almost-sync`) — **off the critical path 2026-09-13**
 

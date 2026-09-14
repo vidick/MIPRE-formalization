@@ -209,13 +209,32 @@ namespace Sampler
 
 variable {ℓ : ℕ} (S : Sampler ℓ)
 
-/-- `TIME_𝒮(n) ≤ T n`: the sampler halts within cost `T n` on every input of the form
-`(n, …)` — the supremum of `def:sampler`, bounded. -/
-def TimeBound (T : ℕ → ℕ) : Prop :=
-  ∀ (n : ℕ) (d : Data), HaltsWithin S.prog (.cons (encode n) d) (T n)
+/-- `TIME_𝒮(n) ≤ T`: the sampler halts within cost `T` on every input of the form `(n, …)` —
+the supremum of `def:sampler` at index `n`, bounded. -/
+def TimeBoundAt (n T : ℕ) : Prop := ∀ d : Data, HaltsWithin S.prog (.cons (encode n) d) T
+
+/-- `TIME_𝒮(n) ≤ T n` for every `n`. -/
+def TimeBound (T : ℕ → ℕ) : Prop := ∀ n, S.TimeBoundAt n (T n)
 
 /-- The description length `|𝒮|` of the sampler. -/
 def size : ℕ := esize S.prog
+
+/-- `s(n) ≤ TIME_𝒮(n)` for a sampler of level at least `1`: a marginal query outputs a bit
+string of length `s(n)`, and a run of cost `t` produces an output of size at most `t`. (The
+paper derives the analogous `s(n) ≤ TIME_𝒟(n)` from the decider's question-length check.) -/
+theorem dim_le_of_timeBoundAt (hℓ : 1 ≤ ℓ) {n T : ℕ} (h : S.TimeBoundAt n T) : S.dim n ≤ T := by
+  obtain ⟨t, ht⟩ := S.runs_marginal n .alice 1 (toBits (0 : Fin (S.dim n) → 𝔽₂)) le_rfl hℓ
+    (length_toBits _)
+  obtain ⟨r, t', ht', hrun⟩ := h (encode (Sampler.Query.marginal .alice 1 (toBits 0)))
+  obtain ⟨rfl, rfl⟩ := Eval.deterministic hrun ht
+  have h₁ := Eval.size_le ht
+  have h₂ := length_le_esize_bitStr (toBits (((S.cl n .alice).truncate 1).eval (ofBits (S.dim n)
+    (toBits (0 : Fin (S.dim n) → 𝔽₂)))))
+  rw [length_toBits] at h₂
+  have h₃ : esize (toBits (((S.cl n .alice).truncate 1).eval (ofBits (S.dim n)
+      (toBits (0 : Fin (S.dim n) → 𝔽₂))))) = (encode (toBits (((S.cl n .alice).truncate 1).eval
+      (ofBits (S.dim n) (toBits (0 : Fin (S.dim n) → 𝔽₂)))))).size := rfl
+  omega
 
 /-- The distribution of the sampler on index `n` (paper `def:sampler-sample`): the CL
 distribution of its two CL functions, `(L^𝖠 x, L^𝖡 x)` for `x` uniform in `𝔽₂^{s(n)}`. -/

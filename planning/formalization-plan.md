@@ -182,6 +182,13 @@ does not preserve synchronicity — which is one more reason the pipeline is in 
 **Done when.** `lem:value-lower-approx` carries `\lean`/`\leanok`, and the easy inclusion
 of `thm:mipstar-eq-re` follows from it in Lean.
 
+**Status 2026-09-14** (issue #48). Part 1 of 3 done: the mathematics, in
+`MIPRE/Foundations/ValueApprox/` — `lt_quantumValue_iff`, `val*(G) > t` iff some valid
+exact strategy with `ℚ(i)` entries has value `> t`, by the Cayley route (exact candidates,
+no stability claim, no psd test; the departure from the paper's proof of (S) is recorded
+under `lem:value-lower-approx`). Parts 2 and 3 — the `REPred` over a concrete description
+type, and the `Prog` semidecider with the `⊆` half of `thm:mipstar-eq-re` — remain.
+
 ### H4 — Instantiating the compressibility criterion
 
 **Why.** `MIPRE.Cost.compressibility_criterion` is proved and sorry-free — the abstract top

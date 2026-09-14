@@ -518,6 +518,7 @@ import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
 import MIPRE.Cslib.Foundations.Data.RelatesInSteps
 import MIPRE.Foundations.CL.Basic
 import MIPRE.Foundations.CL.Closure
+import MIPRE.Foundations.CL.Downsize
 import MIPRE.Foundations.CL.Register
 import MIPRE.Foundations.CL.Sampler
 import MIPRE.Foundations.CommutingOperator
@@ -547,6 +548,12 @@ import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Distances
 import MIPRE.Foundations.Games
 import MIPRE.Foundations.ValueApprox
+import MIPRE.Foundations.ValueApprox.Cayley
+import MIPRE.Foundations.ValueApprox.Dense
+import MIPRE.Foundations.ValueApprox.Gaussian
+import MIPRE.Foundations.ValueApprox.Norms
+import MIPRE.Foundations.ValueApprox.Projective
+import MIPRE.Foundations.ValueApprox.Strategy
 import MIPRE.Foundations.Verifier
 import MIPRE.HaltingGameValue
 import MIPRE.LCS.Basic
