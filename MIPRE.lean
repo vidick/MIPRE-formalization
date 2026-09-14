@@ -546,6 +546,7 @@ import MIPRE.Foundations.Cost.Toolkit
 import MIPRE.Foundations.Cost.Unary
 import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Distances
+import MIPRE.Foundations.GameDescription
 import MIPRE.Foundations.Games
 import MIPRE.Foundations.ValueApprox
 import MIPRE.Foundations.ValueApprox.Cayley
@@ -553,6 +554,12 @@ import MIPRE.Foundations.ValueApprox.Dense
 import MIPRE.Foundations.ValueApprox.Gaussian
 import MIPRE.Foundations.ValueApprox.Norms
 import MIPRE.Foundations.ValueApprox.Projective
+import MIPRE.Foundations.ValueApprox.RE
+import MIPRE.Foundations.ValueApprox.RawComplete
+import MIPRE.Foundations.ValueApprox.RawInt
+import MIPRE.Foundations.ValueApprox.RawPrimrec
+import MIPRE.Foundations.ValueApprox.RawSemantics
+import MIPRE.Foundations.ValueApprox.RawStrategy
 import MIPRE.Foundations.ValueApprox.Strategy
 import MIPRE.Foundations.Verifier
 import MIPRE.HaltingGameValue

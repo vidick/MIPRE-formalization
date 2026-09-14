@@ -1254,22 +1254,56 @@ should be derived alongside it.
 
 \begin{lemma}[The value is approximable from below]
 \label{lem:value-lower-approx}
-\ledgernode{1.1.7.2, 1.1.7.2.2, 1.1.7.2.5, 1.1.7.2.6}
-\uses{def:game-description,def:sync-value,def:q-value,def:re,lem:rational-strategies-suffice}
-The set $\{ (g, p) : g \text{ a game description}, p \in \mathbb{Q},
-\synval(\game_g) > p \}$ is recursively enumerable, and likewise for $\valstar$.
+\lean{MIPRE.ValueApprox.rePred_lt_quantumValue, MIPRE.ValueApprox.RawStrategy,
+  MIPRE.ValueApprox.RawStrategy.interp, MIPRE.ValueApprox.Check,
+  MIPRE.ValueApprox.primrecPred_check, MIPRE.ValueApprox.check_iff_interp,
+  MIPRE.ValueApprox.exists_check_iff, MIPRE.ValueApprox.REPred.of_primrecRel_exists}
+\leanok
+\ledgernode{1.1.7.2, 1.1.7.2.1, 1.1.7.2.2, 1.1.7.2.5, 1.1.7.2.6}
+\uses{def:game-description,def:q-value,def:re,lem:rational-strategies-suffice}
+Write $\game_g$ for the game described by a game description $g$
+(Definition~\ref{def:game-description}). The set
+\[
+  \{ (g, p, q) : g \text{ a game description},\ p, q \in \N,\ \valstar(\game_g) > p/q \}
+\]
+is recursively enumerable.
 \end{lemma}
+
+\begin{proof}
+\leanok
+By Lemma~\ref{lem:rational-strategies-suffice}, $\valstar(\game_g) > p/q$ if and only if
+some valid exact strategy with entries in $\mathbb{Q}(i)$ has value greater than $p/q$.
+A \emph{raw candidate} is a common denominator $k$, two dimensions, the Gaussian-integer
+numerators of the two players' operators as lists of list matrices, and the numerators of
+the state; it denotes the exact strategy with entries divided by $k$, and every valid exact
+strategy with $\mathbb{Q}(i)$ entries is denoted by one (clear a common denominator of its
+finitely many entries). Raw candidates are first-order data, hence enumerable. For a raw
+candidate the check ``$k > 0$, each family of operators is Hermitian, idempotent
+($M^2 = kM$) and sums to $k\Id$, the state is nonzero, and $p \cdot W \cdot k^2 \cdot
+\langle v, v\rangle < q \cdot \sum_{x,y} w(x,y) \sum_{a,b} D(x,y,a,b)\, \mathrm{re}\langle v,
+(A^x_a \otimes B^y_b) v\rangle$'' is a finite conjunction of polynomial identities and one
+comparison in Gaussian-integer arithmetic, so it is primitive recursive, and it holds if
+and only if the denoted strategy is valid with value greater than $p/q$ (for $q = 0$, where
+$p/q = 0$, the comparison is replaced by positivity of the numerator). Dovetailing over the
+candidates and halting on the first that passes the check therefore halts exactly when
+$\valstar(\game_g) > p/q$; the boundary case $\valstar(\game_g) = p/q$ is correctly
+non-halting.
+\end{proof}
 
 \paragraph{Source.} Folklore; see~\cite[Section 12]{JNVWY20}, and statement (S) in the
 proof of \texttt{cor:mip-re} of \texttt{recursive.tex} for a complete argument. The
-$\valstar$ half is Lemma~\ref{lem:rational-strategies-suffice} plus an enumeration: the
-valid exact strategies with entries in $\mathbb{Q}(i)$ can be enumerated, validity is a
-finite conjunction of polynomial identities in the entries, and the value is a rational
-function of them, so ``some enumerated strategy has value $> p$'' is semi-decidable in
-exact arithmetic. The $\synval$ half needs its own enumeration and density argument, since
-rounding the entries of a synchronous strategy preserves neither projectivity nor
-synchronicity; the pipeline does not consume it (Remark~\ref{rem:compression-abstract}),
-and it is not planned.
+statement was previously given for $\synval$ ``and likewise for $\valstar$''; it is now the
+$\valstar$ statement, which is the one the pipeline consumes
+(Remark~\ref{rem:compression-abstract}) and the one the paper proves. The $\synval$
+analogue needs its own enumeration and density argument, since rounding the entries of a
+synchronous strategy preserves neither projectivity nor synchronicity; it is not needed and
+not planned. Thresholds are nonnegative rationals written as fractions $p/q$ of naturals, as
+in the paper's (S), where $t \in [0,1]$; a negative threshold is trivial since $\valstar
+\geq 0$. In Lean the game description is \texttt{HaltingGameValue.GameData}
+(Definition~\ref{def:game-description}), read as a game of the foundations by
+\texttt{GameData.game}, and recursive enumerability is Mathlib's \texttt{REPred}, the
+domain of a partial computable function; integers travel as pairs of naturals, because
+Mathlib's primitive recursion has no arithmetic on $\mathbb{Z}$.
 
 \paragraph{Comments.} The Lean route to the $\valstar$ half departs from the paper's proof
 of (S). The paper enumerates \emph{approximate} candidates --- tuples with entries in
@@ -1285,7 +1319,9 @@ transform of a skew-Hermitian matrix, which is what gets rounded
 the density half of the argument is needed, with no slack, no matrix square root and no
 positive-semidefiniteness test, and the biconditional of
 Lemma~\ref{lem:rational-strategies-suffice} is sharp. Lemma~\ref{lem:norm-two-psd} is
-proved but no longer on the path; Lemma~\ref{lem:perturbation-split} is used as stated. The
+proved but no longer on the path (the ledger's node \texttt{1.1.7.2.1}, exact arithmetic
+and the decidability of the candidate test, is accounted for by the primitive recursive
+check itself); Lemma~\ref{lem:perturbation-split} is used as stated. The
 choice was made for the formalization's sake --- the stability claim needs the functional
 calculus for $T_x^{-1/2}$ and the candidate test needs decidability of positive
 semidefiniteness over $\mathbb{Q}(i)$, both heavier in Lean than the Cayley

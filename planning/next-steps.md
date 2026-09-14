@@ -189,6 +189,19 @@ decisions, items with a done criterion, risks. Update the status column as items
   `REPred` on a concrete description type (part 2) and the `Prog` form for the criterion's
   `hS` with the `⊆` half of `thm:mipstar-eq-re` (part 3); `lem:value-lower-approx` itself has
   no `\lean` tag yet.
+- Delivered 2026-09-14 (H3, part 2 of 3): `lem:value-lower-approx` carries `\lean`/`\leanok`
+  with a `\leanok` proof — `MIPRE.ValueApprox.rePred_lt_quantumValue`, the set of
+  `(g, p, q)` with `p / q < val*(G_g)` is an `REPred` on `GameData × ℕ × ℕ`. The search is
+  over `RawStrategy` (a common denominator, dimensions, Gaussian-integer numerators as lists;
+  `Primcodable`), and `Check g p q r` is the primitive recursive test that `interp r` is a valid
+  strategy of value `> p / q` (`RawStrategy`, `RawPrimrec`); `RawSemantics` proves
+  `Check ↔ IsValid ∧ p / q < value`, `RawComplete` clears denominators to turn every valid
+  `ℚ(i)` exact strategy into a raw candidate. `GameData.game` (`Foundations/GameDescription.lean`)
+  reads a description as a `MIPRE.Game`; the agreement lemma between `HaltingGameValue.gameValue`
+  and `MIPRE.syncValue` is still owed. The blueprint statement is now the `val*` one (the
+  `synval` version is recorded as not needed). Integers are pairs of naturals (`RawInt`),
+  since Mathlib's `Primrec` has no `ℤ`. Still owed: part 3, the `Prog` semidecider for the
+  criterion's `hS` and the `⊆` half of `thm:mipstar-eq-re`.
 
 ### 5. #22 / #23 — synchronous transport (`thm:almost-sync`) — **off the critical path 2026-09-13**
 
