@@ -899,7 +899,9 @@ an entanglement bound (Remark~\ref{rem:entanglement-form}).
 \begin{theorem}[Gap-preserving compression]
 \label{thm:compression}
 \ledgernode{1.5, 1.5.7}
-\uses{thm:introspection,thm:oracularization,thm:answer-reduction,thm:parallel-repetition,def:lambda-bounded,def:pcc}
+\uses{thm:introspection,thm:oracularization,thm:answer-reduction,thm:parallel-repetition,def:lambda-bounded,def:pcc,def:normal-verifier}
+\lean{MIPRE.GapCompression}
+\leanok
 There is a universal constant $C_0 > 0$ and a polynomial-time Turing machine
 $\Compress$ that on input $(\verifier, \lambda)$ outputs a $7$-level normal form
 verifier $\vcompr = (\scompr, \dcompr)$ with $\TIME_{\scompr}(n),
@@ -927,6 +929,26 @@ decomposition with trivial factors, which an $\ell$-level conditionally linear f
 (Definition~\ref{def:cl-function}) admits. In~\cite{JNVWY20} the count is $9$, anchored
 repetition adding two levels (Remark~\ref{rem:direct-vs-anchored}).
 
+\paragraph{Lean statement.} The theorem is the structure \texttt{MIPRE.GapCompression}: a
+record of the constant $C_0$; the compressed sampler $\lambda \mapsto \scompr_\lambda$, a
+valid $7$-level sampler for every $\lambda$, with a polynomial-time program computing its
+description from the binary representation of $\lambda$ (Lemma~\ref{lem:compress-sampler-indep});
+the polynomial-time map $\Compress$ from pairs of programs and $\lambda$ to the program of
+the compressed decider; the packaging of every output, well-formed input or not, as a
+$7$-level normal form verifier with that sampler and that decider; the bound $\poly(n,
+\lambda)$ on the running times of the output at index $n$; and the completeness and
+soundness clauses for $\lambda$-bounded $7$-level inputs at $n \geq C_0$. An instance of the
+structure is the theorem; the pipeline of this chapter is its proof, and the halting
+reduction consumes an instance (Remark~\ref{rem:compression-abstract}). Two readings are
+fixed there. $\verifier_N$ is taken with answers of length at most $N^\lambda$, the bound
+that $\lambda$-boundedness puts on the running time of its decider, and $\vcompr_n$ with
+answers of length at most the stated running-time bound, since the exact running times of
+Definition~\ref{def:normal-verifier} are not functions of the verifier in the
+formalization. And ``a value-$1$ PCC strategy'' is a PCC synchronous strategy of value $1$
+for the game read as synchronous (\texttt{Verifier.HasPerfectPCC}), which presupposes that
+the decider rejects unequal answers to equal questions at that index, as the deciders of
+the pipeline do.
+
 The four stages are chained through a parameter budget rather than composed blindly:
 each stage's soundness clause is applied contrapositively, and each application needs a
 strict margin between the loss it suffers and the gap it is handed. Those margins are
@@ -939,6 +961,8 @@ name the corresponding nodes of the companion repository's ledger
 \label{lem:compress-sampler-indep}
 \ledgernode{1.5.1}
 \uses{thm:compression,def:normal-verifier,def:cl-function}
+\lean{MIPRE.GapCompression}
+\leanok
 For all inputs $(\verifier, \lambda)$ --- $\lambda$-bounded or not, well-formed or not
 --- the sampler $\scompr$ of $\Compress(\verifier, \lambda)$ depends only on $\lambda$,
 and there is a Turing machine $\mathtt{ComputeSampler}$ that outputs its description from
@@ -951,7 +975,10 @@ and the parameters, and repetition's only on its input sampler and $(\lambda, \e
 \tau)$. $\mathtt{ComputeSampler}$ is then realized by running $\Compress$ on the trivial
 verifier. It is this lemma that makes the recursion of Section~\ref{sec:ps-halting}
 possible at all: a fixed point has to quote its own sampler, so the sampler must not
-depend on what is being compressed.
+depend on what is being compressed. In Lean the lemma is built into the statement of
+Theorem~\ref{thm:compression}: the fields \texttt{sampler} and \texttt{samplerProg} of
+\texttt{MIPRE.GapCompression} are the map $\lambda \mapsto \scompr_\lambda$ and its
+polynomial-time description, and \texttt{output\_sampler} says that every output carries it.
 \end{proof}
 
 \effortMedium
@@ -1093,9 +1120,9 @@ of the recursion.
   the tabulated game, which is computable from an $n$-bounded verifier.
 \item \emph{The choice of $\lambda$.} Absorbed into item 1.
 \end{enumerate}
-Of this dictionary the per-level lemma is in Lean; still owed are the Lean statement of
-Theorem~\ref{thm:compression} as a hypothesis, the descriptions and classes, the frozen
-verifier, the tabulation of $\verifier_n$ as a game description with the agreement of its
+Of this dictionary the per-level lemma and the Lean statement of
+Theorem~\ref{thm:compression} as a hypothesis (\texttt{MIPRE.GapCompression}) are in Lean;
+still owed are the descriptions and classes, the frozen verifier, the tabulation of $\verifier_n$ as a game description with the agreement of its
 value with $\valstar(\verifier_n)$, and the ambient programs of item 2 with their time
 accounting (\texttt{planning/formalization-plan.md}, H4). The entanglement form
 of~\cite{JNVWY20}

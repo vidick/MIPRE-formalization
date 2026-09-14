@@ -550,6 +550,7 @@ import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Distances
 import MIPRE.Foundations.GameDescription
 import MIPRE.Foundations.Games
+import MIPRE.Foundations.GapCompression
 import MIPRE.Foundations.ValueApprox
 import MIPRE.Foundations.ValueApprox.Cayley
 import MIPRE.Foundations.ValueApprox.Dense

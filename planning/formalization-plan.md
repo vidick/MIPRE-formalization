@@ -234,9 +234,13 @@ freezing the described verifier at index `2n + 1` before compressing it. The dic
 stands as: strings are pairs `(λ, decider)` read with the compressed sampler `S^compr_λ`
 (every string names a verifier); `λ` is the level, `n`-bounded at level `n`, which absorbs
 obligation d; obligation c reduces to the semidecidability of `x ∉ B n`, a boundedness
-violation or `val* > 1/2` on the tabulated game. Remaining, in order: (2) the Lean
-statement of `thm:compression` as a hypothesis structure (Compress, ComputeSampler, `C₀`,
-the clauses at `n ≥ C₀` for `λ`-bounded 7-level inputs); (3) descriptions, the classes, the
+violation or `val* > 1/2` on the tabulated game. Part 2 done the same day: `MIPRE.GapCompression`
+(`Foundations/GapCompression.lean`), the statement of `thm:compression` as a hypothesis
+structure — `C₀`, the compressed sampler with its polynomial-time description, `Compress` on
+pairs of programs, every output packaged as a `Verifier 7`, the `poly(n, λ)` time bound,
+completeness (`Verifier.HasPerfectPCC`) and value-form soundness at `n ≥ C₀` for `λ`-bounded
+inputs, with the answer alphabets cut at the time bounds; `thm:compression` and
+`lem:compress-sampler-indep` carry `\lean`. Remaining, in order: (3) descriptions, the classes, the
 frozen verifier, and the tabulation of `V_n` as a `GameData` with the agreement of values;
 (4) the ambient programs of the compressor's output and their time accounting; (5) the
 assembly of `thm:halting` from `thm:compression`, then `thm:main` through the tabulation.
