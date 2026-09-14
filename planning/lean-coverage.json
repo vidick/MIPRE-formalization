@@ -168,6 +168,9 @@
   "MIPRE.Cost.exists_efficient_universal": [
    "lem:universal-tm"
   ],
+  "MIPRE.Cost.exists_semidecider": [
+   "lem:value-lower-approx"
+  ],
   "MIPRE.Cost.hardcode_size": [
    "lem:smn"
   ],
@@ -439,11 +442,26 @@
   "MIPRE.Verifier.game": [
    "def:normal-verifier"
   ],
+  "MIPRE.Verifier.hasPerfectPCC_congr": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.hasPerfectPCC_of_le": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Verifier.size": [
    "def:normal-verifier"
   ],
   "MIPRE.Verifier.syncGame": [
    "def:normal-verifier"
+  ],
+  "MIPRE.Verifier.valStar_congr": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.valStar_eq_of_rejects": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.valStar_eq_one_of_hasPerfectPCC": [
+   "rem:compression-abstract"
   ],
   "MIPRE.commValue": [
    "def:commuting-value"
@@ -453,6 +471,9 @@
   ],
   "MIPRE.entRequirement": [
    "def:ent"
+  ],
+  "MIPRE.exists_semidecider_lt_quantumValue": [
+   "lem:value-lower-approx"
   ],
   "MIPRE.gowers_hatami": [
    "thm:gowers-hatami"
@@ -474,6 +495,15 @@
   ],
   "MIPRE.quantumValue": [
    "def:q-value"
+  ],
+  "MIPRE.quantumValue_eq_of_equiv": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.quantumValue_extendAnswers": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.rePred_lt_quantumValue_comp": [
+   "lem:value-lower-approx"
   ],
   "MIPRE.syncValue": [
    "def:sync-value"
@@ -584,6 +614,7 @@
   "MIPRE.Cost.efficient_fixed_point",
   "MIPRE.Cost.exists_clocked_universal",
   "MIPRE.Cost.exists_efficient_universal",
+  "MIPRE.Cost.exists_semidecider",
   "MIPRE.Cost.hardcode_size",
   "MIPRE.Cost.hardcode_time",
   "MIPRE.Cost.hardcode_time_rev",
@@ -674,11 +705,17 @@
   "MIPRE.Verifier.IsBounded",
   "MIPRE.Verifier.IsSynchronousAt",
   "MIPRE.Verifier.game",
+  "MIPRE.Verifier.hasPerfectPCC_congr",
+  "MIPRE.Verifier.hasPerfectPCC_of_le",
   "MIPRE.Verifier.size",
   "MIPRE.Verifier.syncGame",
+  "MIPRE.Verifier.valStar_congr",
+  "MIPRE.Verifier.valStar_eq_of_rejects",
+  "MIPRE.Verifier.valStar_eq_one_of_hasPerfectPCC",
   "MIPRE.commValue",
   "MIPRE.commutingOperatorValue",
   "MIPRE.entRequirement",
+  "MIPRE.exists_semidecider_lt_quantumValue",
   "MIPRE.gowers_hatami",
   "MIPRE.hsInner",
   "MIPRE.hsNormSq",
@@ -686,6 +723,9 @@
   "MIPRE.isRE_iff",
   "MIPRE.povmDistance",
   "MIPRE.quantumValue",
+  "MIPRE.quantumValue_eq_of_equiv",
+  "MIPRE.quantumValue_extendAnswers",
+  "MIPRE.rePred_lt_quantumValue_comp",
   "MIPRE.syncValue",
   "MIPRE.syncValue_le_commValue",
   "MIPRE.syncValue_le_quantumValue",
@@ -783,7 +823,9 @@
    "MIPRE.MIPStar",
    "MIPRE.MIPStar.exists_semidecider",
    "MIPRE.MIPStar.isRE",
-   "MIPRE.isRE_iff"
+   "MIPRE.exists_semidecider_lt_quantumValue",
+   "MIPRE.isRE_iff",
+   "MIPRE.rePred_lt_quantumValue_comp"
   ],
   "MIPRE/Foundations/CommutingOperator.lean": [
    "MIPRE.CommutingOperatorStrategy",
@@ -802,6 +844,9 @@
   ],
   "MIPRE/Foundations/Cost/Kleene.lean": [
    "MIPRE.Cost.efficient_fixed_point"
+  ],
+  "MIPRE/Foundations/Cost/Semidecide.lean": [
+   "MIPRE.Cost.exists_semidecider"
   ],
   "MIPRE/Foundations/Cost/Succinct.lean": [
    "MIPRE.Cost.IsSuccinctDesc"
@@ -825,6 +870,10 @@
   ],
   "MIPRE/Foundations/GameDescription.lean": [
    "HaltingGameValue.GameData.game"
+  ],
+  "MIPRE/Foundations/GameTransport.lean": [
+   "MIPRE.quantumValue_eq_of_equiv",
+   "MIPRE.quantumValue_extendAnswers"
   ],
   "MIPRE/Foundations/Games.lean": [
    "MIPRE.CommutingStrategy",
@@ -914,6 +963,13 @@
    "MIPRE.Verifier.size",
    "MIPRE.Verifier.syncGame"
   ],
+  "MIPRE/Foundations/VerifierValue.lean": [
+   "MIPRE.Verifier.hasPerfectPCC_congr",
+   "MIPRE.Verifier.hasPerfectPCC_of_le",
+   "MIPRE.Verifier.valStar_congr",
+   "MIPRE.Verifier.valStar_eq_of_rejects",
+   "MIPRE.Verifier.valStar_eq_one_of_hasPerfectPCC"
+  ],
   "MIPRE/HaltingGameValue.lean": [
    "HaltingGameValue.GameData",
    "HaltingGameValue.GameData.equivTuple",
@@ -989,7 +1045,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 68,
+ "lean_tags": 71,
  "module_sizes": {
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
   "MIPRE/Background/LIDT/Axioms.lean": 0,
@@ -1046,6 +1102,7 @@
   "MIPRE/Foundations/Cost/Universal.lean": 130,
   "MIPRE/Foundations/Distances.lean": 10,
   "MIPRE/Foundations/GameDescription.lean": 4,
+  "MIPRE/Foundations/GameTransport.lean": 30,
   "MIPRE/Foundations/Games.lean": 61,
   "MIPRE/Foundations/GapCompression.lean": 2,
   "MIPRE/Foundations/ValueApprox.lean": 8,
@@ -1062,6 +1119,7 @@
   "MIPRE/Foundations/ValueApprox/RawStrategy.lean": 31,
   "MIPRE/Foundations/ValueApprox/Strategy.lean": 20,
   "MIPRE/Foundations/Verifier.lean": 16,
+  "MIPRE/Foundations/VerifierValue.lean": 12,
   "MIPRE/HaltingGameValue.lean": 12,
   "MIPRE/LCS/Basic.lean": 5,
   "MIPRE/LCS/Common.lean": 10,
@@ -1101,6 +1159,6 @@
   "bibitems": 32,
   "cites": 150,
   "labels": 200,
-  "refs": 820
+  "refs": 831
  }
 }

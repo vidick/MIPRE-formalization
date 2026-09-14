@@ -1057,6 +1057,10 @@ lower bound has to be tracked anywhere in this chapter.
 \begin{remark}[Relation to the abstract compression lemma]
 \label{rem:compression-abstract}
 \uses{thm:compression,lem:compressible-criterion,def:succinct,lem:value-lower-approx}
+\lean{MIPRE.quantumValue_eq_of_equiv, MIPRE.quantumValue_extendAnswers,
+  MIPRE.Verifier.valStar_congr, MIPRE.Verifier.hasPerfectPCC_congr,
+  MIPRE.Verifier.valStar_eq_of_rejects, MIPRE.Verifier.hasPerfectPCC_of_le,
+  MIPRE.Verifier.valStar_eq_one_of_hasPerfectPCC}
 Theorem~\ref{thm:compression} instantiates the hypotheses of
 Lemma~\ref{lem:compressible-criterion}: take $A$ to be the set of (descriptions of) normal
 form verifier games with a value-$1$ PCC strategy and $B$ the set of those with $\valstar
@@ -1103,7 +1107,8 @@ of the recursion.
   O(1)$ of them, rejecting otherwise), forms the verifier $\verifier'$ of $x$ \emph{frozen
   at index $2n + 1$} --- its sampler and decider answer at every index as $\verifier'$ does
   at index $2n + 1$, so its game at index $2^n$ is the game of $x$ at level $2n + 1$, the
-  answer-length bound being immaterial above the decider's running time --- runs
+  answer-length bound being immaterial above the length the decider rejects
+  (\texttt{Verifier.valStar\_eq\_of\_rejects}, \texttt{hasPerfectPCC\_of\_le}) --- runs
   $\Compress(\verifier', \lambda(n))$, and finally the compressed decider at index $N$. The
   freezing reconciles the recursion's levels $n \to 2n + 1$ with the compression theorem's
   $n \leftarrow 2^n$, at the cost of a logarithmic factor in $\lambda(n)$.
@@ -1120,11 +1125,19 @@ of the recursion.
   the tabulated game, which is computable from an $n$-bounded verifier.
 \item \emph{The choice of $\lambda$.} Absorbed into item 1.
 \end{enumerate}
-Of this dictionary the per-level lemma and the Lean statement of
-Theorem~\ref{thm:compression} as a hypothesis (\texttt{MIPRE.GapCompression}) are in Lean;
-still owed are the descriptions and classes, the frozen verifier, the tabulation of $\verifier_n$ as a game description with the agreement of its
-value with $\valstar(\verifier_n)$, and the ambient programs of item 2 with their time
-accounting (\texttt{planning/formalization-plan.md}, H4). The entanglement form
+Of this dictionary the per-level lemma, the Lean statement of
+Theorem~\ref{thm:compression} as a hypothesis (\texttt{MIPRE.GapCompression}) and the
+value bookkeeping are in Lean: the quantum value is invariant under relabelings of the
+alphabets (\texttt{quantumValue\_eq\_of\_equiv}, the tool for the tabulation) and under
+always-rejected extra answers (\texttt{quantumValue\_extendAnswers}, by zero extension one
+way and merging of outcomes the other), and for the games of a verifier the deciders'
+acceptance at an index determines $\valstar$ and the perfect PCC strategies
+(\texttt{Verifier.valStar\_congr}, \texttt{hasPerfectPCC\_congr}), which survive answer
+padding and give $\valstar = 1$ (\texttt{valStar\_eq\_one\_of\_hasPerfectPCC}). Still owed
+are the descriptions and classes, the frozen verifier, the tabulation of $\verifier_n$ as a
+game description with the agreement of its value with $\valstar(\verifier_n)$, and the
+ambient programs of item 2 with their time accounting
+(\texttt{planning/formalization-plan.md}, H4). The entanglement form
 of~\cite{JNVWY20}
 (Remark~\ref{rem:entanglement-form}) instantiates Lemma~\ref{lem:recursive-compression}
 instead, with $f = \Ent(\cdot, \frac12)$; it is not used by the main theorem.

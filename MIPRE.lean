@@ -549,6 +549,7 @@ import MIPRE.Foundations.Cost.Unary
 import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Distances
 import MIPRE.Foundations.GameDescription
+import MIPRE.Foundations.GameTransport
 import MIPRE.Foundations.Games
 import MIPRE.Foundations.GapCompression
 import MIPRE.Foundations.ValueApprox
@@ -565,6 +566,7 @@ import MIPRE.Foundations.ValueApprox.RawSemantics
 import MIPRE.Foundations.ValueApprox.RawStrategy
 import MIPRE.Foundations.ValueApprox.Strategy
 import MIPRE.Foundations.Verifier
+import MIPRE.Foundations.VerifierValue
 import MIPRE.HaltingGameValue
 import MIPRE.LCS.Basic
 import MIPRE.LCS.Common
