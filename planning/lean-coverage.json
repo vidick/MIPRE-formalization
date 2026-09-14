@@ -6,6 +6,9 @@
   "HaltingGameValue.GameData.equivTuple": [
    "rem:standalone-restatement"
   ],
+  "HaltingGameValue.GameData.game": [
+   "def:game-description"
+  ],
   "HaltingGameValue.GameData.toGame": [
    "def:game-description"
   ],
@@ -309,6 +312,9 @@
   "MIPRE.TensorProductStrategy.value": [
    "def:q-value"
   ],
+  "MIPRE.ValueApprox.Check": [
+   "lem:value-lower-approx"
+  ],
   "MIPRE.ValueApprox.ExactStrategy": [
    "lem:rational-strategies-suffice"
   ],
@@ -339,6 +345,15 @@
   "MIPRE.ValueApprox.IsPVM.exists_unitary_pattern": [
    "lem:rational-pvm-dense"
   ],
+  "MIPRE.ValueApprox.REPred.of_primrecRel_exists": [
+   "lem:value-lower-approx"
+  ],
+  "MIPRE.ValueApprox.RawStrategy": [
+   "lem:value-lower-approx"
+  ],
+  "MIPRE.ValueApprox.RawStrategy.interp": [
+   "lem:value-lower-approx"
+  ],
   "MIPRE.ValueApprox.abs_bornValue_sub_le": [
    "lem:rational-strategies-suffice"
   ],
@@ -348,11 +363,17 @@
   "MIPRE.ValueApprox.cayley_mem_unitaryGroup": [
    "lem:rational-pvm-dense"
   ],
+  "MIPRE.ValueApprox.check_iff_interp": [
+   "lem:value-lower-approx"
+  ],
   "MIPRE.ValueApprox.dotProduct_kronecker_perturb": [
    "lem:perturbation-split"
   ],
   "MIPRE.ValueApprox.dotProduct_mulVec_perturb": [
    "lem:perturbation-split"
+  ],
+  "MIPRE.ValueApprox.exists_check_iff": [
+   "lem:value-lower-approx"
   ],
   "MIPRE.ValueApprox.exists_exactStrategy_value_gt": [
    "lem:rational-strategies-suffice"
@@ -377,6 +398,12 @@
   ],
   "MIPRE.ValueApprox.posSemidef_realSmul_one_add_and_sub_iff": [
    "lem:norm-two-psd"
+  ],
+  "MIPRE.ValueApprox.primrecPred_check": [
+   "lem:value-lower-approx"
+  ],
+  "MIPRE.ValueApprox.rePred_lt_quantumValue": [
+   "lem:value-lower-approx"
   ],
   "MIPRE.Verifier": [
    "def:normal-verifier"
@@ -481,6 +508,7 @@
  "cited_names": [
   "HaltingGameValue.GameData",
   "HaltingGameValue.GameData.equivTuple",
+  "HaltingGameValue.GameData.game",
   "HaltingGameValue.GameData.toGame",
   "HaltingGameValue.gameValue",
   "HaltingGameValue.halting_reduces_to_gameValue",
@@ -582,6 +610,7 @@
   "MIPRE.SynchronousGame.toGame",
   "MIPRE.TensorProductStrategy",
   "MIPRE.TensorProductStrategy.value",
+  "MIPRE.ValueApprox.Check",
   "MIPRE.ValueApprox.ExactStrategy",
   "MIPRE.ValueApprox.ExactStrategy.EntriesIn",
   "MIPRE.ValueApprox.ExactStrategy.IsValid",
@@ -592,11 +621,16 @@
   "MIPRE.ValueApprox.IsPVM",
   "MIPRE.ValueApprox.IsPVM.exists_entriesIn_norm_sub_le",
   "MIPRE.ValueApprox.IsPVM.exists_unitary_pattern",
+  "MIPRE.ValueApprox.REPred.of_primrecRel_exists",
+  "MIPRE.ValueApprox.RawStrategy",
+  "MIPRE.ValueApprox.RawStrategy.interp",
   "MIPRE.ValueApprox.abs_bornValue_sub_le",
   "MIPRE.ValueApprox.cayley",
   "MIPRE.ValueApprox.cayley_mem_unitaryGroup",
+  "MIPRE.ValueApprox.check_iff_interp",
   "MIPRE.ValueApprox.dotProduct_kronecker_perturb",
   "MIPRE.ValueApprox.dotProduct_mulVec_perturb",
+  "MIPRE.ValueApprox.exists_check_iff",
   "MIPRE.ValueApprox.exists_exactStrategy_value_gt",
   "MIPRE.ValueApprox.exists_isSkewHermitian_cayley_eq",
   "MIPRE.ValueApprox.exists_norm_eq_one_isUnit_one_add_smul",
@@ -605,6 +639,8 @@
   "MIPRE.ValueApprox.lt_quantumValue_iff",
   "MIPRE.ValueApprox.norm_cayley_sub_cayley_le",
   "MIPRE.ValueApprox.posSemidef_realSmul_one_add_and_sub_iff",
+  "MIPRE.ValueApprox.primrecPred_check",
+  "MIPRE.ValueApprox.rePred_lt_quantumValue",
   "MIPRE.Verifier",
   "MIPRE.Verifier.Answers",
   "MIPRE.Verifier.IsBounded",
@@ -750,6 +786,9 @@
    "MIPRE.inconsistency",
    "MIPRE.povmDistance"
   ],
+  "MIPRE/Foundations/GameDescription.lean": [
+   "HaltingGameValue.GameData.game"
+  ],
   "MIPRE/Foundations/Games.lean": [
    "MIPRE.CommutingStrategy",
    "MIPRE.CommutingStrategy.value",
@@ -793,6 +832,24 @@
   "MIPRE/Foundations/ValueApprox/Projective.lean": [
    "MIPRE.ValueApprox.IsPVM",
    "MIPRE.ValueApprox.IsPVM.exists_unitary_pattern"
+  ],
+  "MIPRE/Foundations/ValueApprox/RE.lean": [
+   "MIPRE.ValueApprox.REPred.of_primrecRel_exists",
+   "MIPRE.ValueApprox.rePred_lt_quantumValue"
+  ],
+  "MIPRE/Foundations/ValueApprox/RawComplete.lean": [
+   "MIPRE.ValueApprox.exists_check_iff"
+  ],
+  "MIPRE/Foundations/ValueApprox/RawPrimrec.lean": [
+   "MIPRE.ValueApprox.primrecPred_check"
+  ],
+  "MIPRE/Foundations/ValueApprox/RawSemantics.lean": [
+   "MIPRE.ValueApprox.check_iff_interp"
+  ],
+  "MIPRE/Foundations/ValueApprox/RawStrategy.lean": [
+   "MIPRE.ValueApprox.Check",
+   "MIPRE.ValueApprox.RawStrategy",
+   "MIPRE.ValueApprox.RawStrategy.interp"
   ],
   "MIPRE/Foundations/ValueApprox/Strategy.lean": [
    "MIPRE.ValueApprox.ExactStrategy",
@@ -892,7 +949,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 64,
+ "lean_tags": 65,
  "module_sizes": {
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
   "MIPRE/Background/LIDT/Axioms.lean": 0,
@@ -946,6 +1003,7 @@
   "MIPRE/Foundations/Cost/Unary.lean": 26,
   "MIPRE/Foundations/Cost/Universal.lean": 130,
   "MIPRE/Foundations/Distances.lean": 10,
+  "MIPRE/Foundations/GameDescription.lean": 4,
   "MIPRE/Foundations/Games.lean": 61,
   "MIPRE/Foundations/ValueApprox.lean": 8,
   "MIPRE/Foundations/ValueApprox/Cayley.lean": 16,
@@ -953,6 +1011,12 @@
   "MIPRE/Foundations/ValueApprox/Gaussian.lean": 26,
   "MIPRE/Foundations/ValueApprox/Norms.lean": 27,
   "MIPRE/Foundations/ValueApprox/Projective.lean": 9,
+  "MIPRE/Foundations/ValueApprox/RE.lean": 2,
+  "MIPRE/Foundations/ValueApprox/RawComplete.lean": 5,
+  "MIPRE/Foundations/ValueApprox/RawInt.lean": 53,
+  "MIPRE/Foundations/ValueApprox/RawPrimrec.lean": 50,
+  "MIPRE/Foundations/ValueApprox/RawSemantics.lean": 27,
+  "MIPRE/Foundations/ValueApprox/RawStrategy.lean": 31,
   "MIPRE/Foundations/ValueApprox/Strategy.lean": 20,
   "MIPRE/Foundations/Verifier.lean": 16,
   "MIPRE/HaltingGameValue.lean": 12,
@@ -994,6 +1058,6 @@
   "bibitems": 32,
   "cites": 150,
   "labels": 199,
-  "refs": 803
+  "refs": 804
  }
 }

@@ -186,8 +186,10 @@ of `thm:mipstar-eq-re` follows from it in Lean.
 `MIPRE/Foundations/ValueApprox/` — `lt_quantumValue_iff`, `val*(G) > t` iff some valid
 exact strategy with `ℚ(i)` entries has value `> t`, by the Cayley route (exact candidates,
 no stability claim, no psd test; the departure from the paper's proof of (S) is recorded
-under `lem:value-lower-approx`). Parts 2 and 3 — the `REPred` over a concrete description
-type, and the `Prog` semidecider with the `⊆` half of `thm:mipstar-eq-re` — remain.
+under `lem:value-lower-approx`). Part 2 done the same day: `lem:value-lower-approx` is `\lean`/`\leanok` with a `\leanok`
+proof (`MIPRE.ValueApprox.rePred_lt_quantumValue`, an `REPred` on `GameData × ℕ × ℕ` for
+thresholds `p / q`), by a primitive recursive certificate check on raw candidates. Part 3 —
+the `Prog` semidecider with the `⊆` half of `thm:mipstar-eq-re` — remains.
 
 ### H4 — Instantiating the compressibility criterion
 
