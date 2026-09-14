@@ -51,7 +51,7 @@ theorem bitsVal_inc (l : BitStr) : bitsVal (inc l) = bitsVal l + 1 := by
     cases b
     · simp [inc, bitsVal_cons, Nat.bit]
     · simp only [inc, bitsVal_cons, ih, Nat.bit]
-      simp only [Bool.cond_false, Bool.cond_true]
+      simp only [Bool.false_eq_true, ↓reduceIte, Bool.cond_false, Bool.cond_true]
       omega
 
 theorem inc_ne_nil (l : BitStr) : inc l ≠ [] := by
@@ -301,7 +301,7 @@ theorem incProg_runs (l : BitStr) :
       incProg.Runs (encode l) (encode (inc l)) t := by
   have hsz : (encode l : Data).size ≤ 4 * l.length + 1 := esize_bitStr_le l
   obtain ⟨t₁, ht₁, h₁⟩ := incLoop_runs l [] [encode l] ((encode l : Data).size + 3 * l.length + 1)
-    (by simp only [encode_bitStr_nil, Data.size_nil]; omega)
+    (by simp only [encode_bitStr_nil, Data.size_nil, List.length_nil]; omega)
   -- phase 2
   set a := (incAcc l []).1 with ha
   set r := (incAcc l []).2 with hr
@@ -645,7 +645,7 @@ theorem polyProg_runs (cs : List ℕ) :
     have hbody' := Eval.append_of_wellScoped hbody
       (by simp [WellScoped, mulProg, mulBody, addProg, lenBody]) env
     refine ⟨_, ?_, Eval.let_ h₁ (by simpa [polyEval, hp] using hbody')⟩
-    simp only [eval_add, eval_mul, eval_X, eval_C, eval_one, eval_ofNat]
+    simp only [eval_add, eval_mul, eval_X, eval_C, eval_one, eval_ofNat, eval_natCast]
     have hprod : m * p ≤ m * Q.eval m := Nat.mul_le_mul_left _ hpQ
     have hmulle : (p + 1) * ((m + 1) * (4 * m + 2 * (m * p) + 15) + 4 * m + 4 * (m * p) + 2 * p + 41) ≤
         (Q.eval m + 1) * ((m + 1) * (4 * m + 2 * (m * Q.eval m) + 15) + 4 * m + 4 * (m * Q.eval m) +
