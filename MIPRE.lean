@@ -547,6 +547,7 @@ import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Distances
 import MIPRE.Foundations.Games
 import MIPRE.Foundations.ValueApprox
+import MIPRE.Foundations.Verifier
 import MIPRE.HaltingGameValue
 import MIPRE.LCS.Basic
 import MIPRE.LCS.Common
