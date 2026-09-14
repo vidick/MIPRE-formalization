@@ -161,6 +161,13 @@ for the machine conventions and the cost model the paper assumes.
 **Done when.** Both `sorry`s in `Spec.lean` are closed, and `Cost/`'s statements that
 quote them are unconditional.
 
+**Note 2026-09-14.** The premise above is out of date. Since route β
+(`planning/tm-infrastructure.md`, decision of 2026-09-09) the ambient universal machines
+are proved by the self-interpreter (`Cost/Universal.lean`, `exists_efficient_universal`),
+and `Cost/` imports nothing from `TM/`: no complexity claim of the pipeline rests on these
+two `sorry`s. They remain the paper-literal machine statements and the substrate of
+`thm:succinct-sat` (requirement R3). H4 does not wait for them.
+
 ### H3 — MIP\* ⊆ RE, end to end
 
 **Why.** It is one complete half of the main theorem, it is self-contained, and it is the
@@ -212,9 +219,32 @@ must be chosen along a recursion whose descriptions grow with the level.
 **Done when.** The instantiation is stated in Lean with each obligation either discharged
 or an explicit hypothesis, and the blueprint says which is which.
 
+**Status 2026-09-14** (started). Part 1: the criterion in the form the instantiation needs,
+`MIPRE.Cost.compressibility_criterion_levels` (`Foundations/Compression.lean`; the previous
+statement is now its corollary). Classes `A n`, `B n` per level, the semidecider run on
+`(x, n)`, and the compression hypothesis restricted to what the proof uses: `n ≥ n₀`,
+`2 · |c| ≤ n`, `c` a succinct description with parameter `n`, class at level `2n + 1` to
+class at level `n`, with the start level `2 ^ (K + 1 + |e|)` explicit in the conclusion. Two
+findings drove it, both recorded in `rem:compression-abstract`: the compressor's time is
+polylogarithmic in `n` while one bit query to its input costs `n`, so it cannot read the
+string it compresses at all (obligation b is not about reading a verifier verbatim: the
+description is embedded in the output for the decider at index `n` to read); and the
+recursion's levels go `n → 2n + 1` while compression relates `n` to `2^n`, reconciled by
+freezing the described verifier at index `2n + 1` before compressing it. The dictionary now
+stands as: strings are pairs `(λ, decider)` read with the compressed sampler `S^compr_λ`
+(every string names a verifier); `λ` is the level, `n`-bounded at level `n`, which absorbs
+obligation d; obligation c reduces to the semidecidability of `x ∉ B n`, a boundedness
+violation or `val* > 1/2` on the tabulated game. Remaining, in order: (2) the Lean
+statement of `thm:compression` as a hypothesis structure (Compress, ComputeSampler, `C₀`,
+the clauses at `n ≥ C₀` for `λ`-bounded 7-level inputs); (3) descriptions, the classes, the
+frozen verifier, and the tabulation of `V_n` as a `GameData` with the agreement of values;
+(4) the ambient programs of the compressor's output and their time accounting; (5) the
+assembly of `thm:halting` from `thm:compression`, then `thm:main` through the tabulation.
+
 ## What to start with
 
-H1 and H3 in parallel, H2 whenever someone wants a self-contained hard problem.
+H1 and H3 are done; H4 is in progress; H2 whenever someone wants a self-contained hard
+problem.
 
 - **H1 is the one to start now.** It is the only item that unblocks other people's work:
   every chapter-6 statement waits on it, and its interface decision gets more expensive
@@ -224,7 +254,8 @@ H1 and H3 in parallel, H2 whenever someone wants a self-contained hard problem.
   for any computable family of game descriptions.
 - **H2 is independent of both** and can proceed on its own schedule; it blocks H4 and the
   complexity clauses, not H1 or H3.
-- **H4 after H2**, and after enough of H1 to know what a description is.
+- **H4 now.** It does not wait for H2 (see the note there), and H1 has fixed what a
+  description is: a sampler and a decider of the ambient model.
 
 Then, and only then, the transformations themselves — introspection first, as the largest
 (`paper/introspection.tex` is 3376 lines) and the one the other two build on.

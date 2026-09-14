@@ -290,7 +290,7 @@ milestone.
 \begin{lemma}[Compressibility criterion]
 \label{lem:compressible-criterion}
 \uses{def:succinct,def:re,lem:universal-tm,lem:smn,lem:kleene}
-\lean{MIPRE.Cost.compressibility_criterion}
+\lean{MIPRE.Cost.compressibility_criterion, MIPRE.Cost.compressibility_criterion_levels}
 \leanok
 Let $A, B \subseteq \{0,1\}^*$ be languages with distinguished elements
 $y_{\mathrm{yes}} \in A$ and $y_{\mathrm{no}} \in B$, and suppose that the complement of
@@ -359,6 +359,23 @@ $S$ are used --- and nothing about entanglement is required of the compression p
 The Lean proof reuses the toolkit of Section~\ref{sec:rr-computability}: the search
 branch runs the semidecision procedure through the clocked universal machine, and the
 start level of the recursion is carried as data next to the current level.
+
+The Lean file proves a \emph{per-level} form first,
+\texttt{compressibility\_criterion\_levels}, and derives the statement above from it. There
+the classes are families $A_n, B_n$ indexed by the level $n$ of the recursion, the
+semidecision procedure receives the pair $(x, n)$, and the compression hypothesis reads: for
+$n \geq n_0$, if $\hat x$ describes $x$ succinctly with parameter $n$ and $2\abs{\hat x}
+\leq n$, then $x \in A_{2n+1}$ implies $\compr(\hat x, n) \in A_n$, and likewise for $B$;
+the conclusion places $g(e)$ in $A_{r(e)}$ or $B_{r(e)}$ at the explicit start level $r(e)
+= 2^{K + 1 + \abs{e}}$, which is at least $n_0$. This is exactly what the proof uses, and
+it is the form an instantiation by gap-preserving compression can meet
+(Remark~\ref{rem:compression-abstract}): $\compr$ runs in time polynomial in the
+\emph{length} of $(\hat x, n)$, hence polylogarithmic in $n$, while a single bit query to
+$\hat x$ costs up to $n$, so $\compr$ cannot read the string $x$ it compresses and can only
+embed $\hat x$ into its output, for a reader whose budget is polynomial in $n$ --- the
+decider of a game at index $n$. The size slack $2\abs{\hat x} \leq n$ keeps that output
+short, and the levels are what let the class of the output be judged at the index where
+it is played.
 
 \effortEasy
 
