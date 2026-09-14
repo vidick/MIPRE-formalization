@@ -136,52 +136,12 @@ presentations and carry no hypotheses; that the supports are disjoint enters in 
 lemmas identifying the function presented.
 \end{proof}
 
-\begin{lemma}[Downsizing]
-\label{lem:cl-downsize}
-\uses{def:cl-function,lem:cl-structure}
-\lean{MIPRE.CL.downsizeEquiv, MIPRE.CL.CLFun.downsize, MIPRE.CL.CLFun.eval_downsize,
-  MIPRE.CL.CLFun.eval_truncate_downsize, MIPRE.CL.CLFun.factorOfPrefix_downsize,
-  MIPRE.CL.CLFun.mapOfPrefix_downsize, MIPRE.CL.CLFun.ExactlyOn.downsize,
-  MIPRE.CL.IsCLFun.downsize, MIPRE.CL.clDist_downsize, MIPRE.CL.CLFun.reindex,
-  MIPRE.CL.IsCLFun.reindex}
-\leanok
-Let $\F$ be a finite field, $\mathbb{K}$ a subfield, and $e_1, \ldots, e_t$ a basis of $\F$
-over $\mathbb{K}$; let $\downsize : \F^n \to \mathbb{K}^{nt}$ be the $\mathbb{K}$-linear
-bijection reading off the coordinates of each entry in this basis. If $L$ is an $\ell$-level CL
-function on $V = \F^n$, then $L^\downsize = \downsize \circ L \circ \downsize^{-1}$ is an
-$\ell$-level CL function on $\mathbb{K}^{nt}$, whose decomposition data are the downsized data
-of $L$: for $j \in \{1, \ldots, \ell\}$ and $u \in L_{<j}(V)$,
-\begin{equation*}
-  L^\downsize_{\le j} = \downsize \circ L_{\le j} \circ \downsize^{-1}, \qquad
-  V^\downsize_{j,\, \downsize(u)} = \downsize(V_{j,u}), \qquad
-  L^\downsize_{j,\, \downsize(u)} = \downsize \circ L_{j,u} \circ \downsize^{-1},
-\end{equation*}
-where $\downsize(V_{j,u})$ is the register subspace of $\mathbb{K}^{nt}$ on the coordinates
-$(i, k)$ with $i$ a coordinate of $V_{j,u}$. Exactness is preserved, and the CL distribution of
-$(L^\downsize, R^\downsize)$ is the image under $\downsize$ of that of $(L, R)$.
-\end{lemma}
-
-\begin{proof}
-\leanok
-\texttt{lem:cl-downsize} and \texttt{lem:downsize-cl-dist} of \texttt{linear.tex}, by
-induction on the level; the one fact used is that $\downsize$ commutes with the coordinate
-projections onto register subspaces (\texttt{lem:downsize\_subspace} of
-\texttt{preliminaries.tex}, in the register case).
-\end{proof}
-
-\paragraph{Comments.} The paper states the lemma for admissible $q = 2^t$, $t$ odd, with the
-self-dual normal basis of Lemma~\ref{lem:self-dual-basis}; the formalization proves it for any
-basis of any finite field over any subfield, the coordinates of $\mathbb{K}^{nt}$ being indexed
-by pairs $(i, k)$ and identified with $\{1, \ldots, nt\}$ by a reindexing
-(\texttt{CLFun.reindex}, the transport along any bijection of coordinates, which preserves
-everything above). The self-dual normal basis matters elsewhere: for the arithmetic of
-$\F_{2^t}$ to be computable from $\F_2$-data in polynomial time by the samplers and deciders
-that use it, a matter for the efficient-computability toolkit rather than for this lemma. The
-paper's downsized \emph{sampler} (\texttt{def:downsize\_sampler},
-\texttt{lem:downsize\_sampler}), a Turing machine wrapping a sampler over $\F_{2^t}$, has no
-counterpart here: samplers are over $\F_2$ by definition (Definition~\ref{def:sampler}), and a
-construction native to $\F_{2^t}$, such as the introspection sampler, is to present the
-downsized CL functions directly, this lemma supplying their decomposition data.
+What remains of the paper's treatment is \emph{downsizing} (\texttt{lem:cl-downsize},
+\texttt{lem:downsize\_sampler} of \texttt{linear.tex}): through the self-dual basis of
+Lemma~\ref{lem:self-dual-basis}, a CL function over $\F_{2^t}$, $t$ odd, is a CL function of
+the same level over $\F_2$, and a sampler over $\F_{2^t}$ becomes one over $\F_2$. It is what
+lets the introspection sampler, native to $\F_q$, be a sampler in the sense of
+Definition~\ref{def:sampler}, which fixes the query interface; it is not yet formalized.
 
 \begin{remark}[Why the pipeline is bipartite throughout]
 \label{rem:bipartite-route}
