@@ -302,14 +302,23 @@ wrapper: the *only* structural obligation of `def:normal-verifier` is `accepts_l
 the wrapper enforces the question-length check and nothing else — synchronicity and the
 answer-length bound are conditions on class membership, not on well-formedness, and the
 paper's timeout counter is unnecessary because a non-halting decider simply fails to be
-`n`-bounded. Remaining, in order: (3b-iii) the time accounting of the wrapper, and the two
-strings realizing the distinguished verifiers; (3c) the tabulation of `V_n` as a `GameData`
-with the agreement of values, and the semidecider for `x ∉ B n` — the semidecider splits as
-"not `n`-bounded" (a search for an input whose run exceeds the budget, which is Σ₁) or
-"`val* > 1/2` on the *clocked* tabulation", which agrees with the real game exactly when the
-verifier is `n`-bounded, so the disjunction is equivalent to `x ∉ B n` without deciding
-boundedness; (4) the compressor's own decider and its time accounting; (5) the assembly of
-`thm:halting` from `thm:compression`, then `thm:main` through the tabulation.
+`n`-bounded. Part 3c-i done the same day
+(`Halting/Enumerate.lean`): the two alphabets of `V_n` enumerated — the bit strings of length
+at most `T` without repetition, giving `Verifier.answerEquiv`, and the questions through
+Mathlib's `finFunctionFinEquiv` (`𝔽₂ = ZMod 2` is `Fin 2`), giving `questionEquiv` — and the
+bridge `quantumValue_toGame_eq_valStar`: a game description matching `V_n` along those
+indexings has the same `val*`, which is what carries the verdict of `lem:value-lower-approx`,
+a procedure that runs on game descriptions, back to a verifier. With it, `not_inClassB_iff`:
+`x ∉ B n` is "not `n`-bounded" (a search for an input whose run exceeds the budget, Σ₁) or
+"`val* > 1/2`", so the semidecider never has to decide `n`-boundedness, which is Π₁.
+
+Remaining, in order: (3b-iii) the time accounting of the wrapper, and the two
+strings realizing the distinguished verifiers; (3c-ii) the *computation* of the tabulation —
+running the sampler on every point of `𝔽₂^{s(n)}` to count the question weights and the
+decider under its budget to fill in the acceptance table, then `Computable` for the whole map
+— and the assembly of the semidecider from the two Σ₁ disjuncts; (4) the compressor's own
+decider and its time accounting; (5) the assembly of `thm:halting` from `thm:compression`,
+then `thm:main` through the tabulation.
 
 ## What to start with
 

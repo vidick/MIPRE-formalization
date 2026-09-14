@@ -469,6 +469,9 @@
   "MIPRE.Verifier.IsSynchronousAt": [
    "def:normal-verifier"
   ],
+  "MIPRE.Verifier.answerEquiv": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Verifier.freeze": [
    "rem:compression-abstract"
   ],
@@ -493,6 +496,9 @@
   "MIPRE.Verifier.hasPerfectPCC_of_le": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Verifier.not_inClassB_iff": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Verifier.not_inClassB_of_inClassA": [
    "rem:compression-abstract"
   ],
@@ -500,6 +506,12 @@
    "rem:compression-abstract"
   ],
   "MIPRE.Verifier.ofSamplerDecider_accepts": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.quantumValue_toGame_eq_valStar": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.questionEquiv": [
    "rem:compression-abstract"
   ],
   "MIPRE.Verifier.size": [
@@ -771,6 +783,7 @@
   "MIPRE.Verifier.InClassB",
   "MIPRE.Verifier.IsBounded",
   "MIPRE.Verifier.IsSynchronousAt",
+  "MIPRE.Verifier.answerEquiv",
   "MIPRE.Verifier.freeze",
   "MIPRE.Verifier.freeze_hasPerfectPCC",
   "MIPRE.Verifier.freeze_isBounded",
@@ -779,9 +792,12 @@
   "MIPRE.Verifier.hasPerfectPCC_congr",
   "MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal",
   "MIPRE.Verifier.hasPerfectPCC_of_le",
+  "MIPRE.Verifier.not_inClassB_iff",
   "MIPRE.Verifier.not_inClassB_of_inClassA",
   "MIPRE.Verifier.ofSamplerDecider",
   "MIPRE.Verifier.ofSamplerDecider_accepts",
+  "MIPRE.Verifier.quantumValue_toGame_eq_valStar",
+  "MIPRE.Verifier.questionEquiv",
   "MIPRE.Verifier.size",
   "MIPRE.Verifier.syncGame",
   "MIPRE.Verifier.valStar_congr",
@@ -984,6 +1000,12 @@
    "MIPRE.Cost.Data.parse",
    "MIPRE.Cost.Data.parse_toBitsPost",
    "MIPRE.Cost.Data.toBitsPost"
+  ],
+  "MIPRE/Foundations/Halting/Enumerate.lean": [
+   "MIPRE.Verifier.answerEquiv",
+   "MIPRE.Verifier.not_inClassB_iff",
+   "MIPRE.Verifier.quantumValue_toGame_eq_valStar",
+   "MIPRE.Verifier.questionEquiv"
   ],
   "MIPRE/Foundations/Halting/Freeze.lean": [
    "MIPRE.Verifier.freeze",
@@ -1215,6 +1237,7 @@
   "MIPRE/Foundations/Halting/Arith.lean": 48,
   "MIPRE/Foundations/Halting/Classes.lean": 10,
   "MIPRE/Foundations/Halting/Descriptions.lean": 32,
+  "MIPRE/Foundations/Halting/Enumerate.lean": 19,
   "MIPRE/Foundations/Halting/Freeze.lean": 29,
   "MIPRE/Foundations/Halting/Lists.lean": 42,
   "MIPRE/Foundations/Halting/PolyBounded.lean": 17,
