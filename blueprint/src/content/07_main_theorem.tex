@@ -83,10 +83,32 @@ case; the same holds with $\valstar$ in place of $\synval$
 (Corollary~\ref{cor:main-quantum}).
 \end{corollary}
 
+\begin{lemma}[$\MIPstar \subseteq \RE$]
+\label{lem:mipstar-sub-re}
+\uses{def:mipstar,def:re,lem:value-lower-approx}
+\lean{MIPRE.MIPStar.isRE, MIPRE.MIPStar.exists_semidecider}
+\leanok
+Every language in $\MIPstar$ is recursively enumerable.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Let $z \mapsto \game_z$ witness $L \in \MIPstar$. Under the promise, $z \in L$ if and only
+if $\valstar(\game_z) > \frac12$: the value is $1$ on $L$ and at most $\frac12$ off it. By
+Lemma~\ref{lem:value-lower-approx} the set of game descriptions $g$ with
+$\valstar(\game_g) > \frac12$ is recursively enumerable, and $L$ is its preimage under the
+computable map $z \mapsto \game_z$; the preimage of an r.e.\ set under a computable map is
+r.e. Concretely: given $z$, compute $\game_z$, enumerate tensor-product strategies and accept
+upon finding one of value greater than $\frac12$; this semi-decides $L$. In Lean the class
+is the computable one (Definition~\ref{def:mipstar}), and
+\texttt{MIPStar.exists\_semidecider} gives the semidecider as a program of the ambient
+model.
+\end{proof}
+
 \begin{theorem}[$\MIPstar = \RE$]
 \label{thm:mipstar-eq-re}
 \ledgernode{1}
-\uses{def:mipstar,def:re,thm:halting,cor:main-quantum,thm:halting-undecidable,lem:value-lower-approx}
+\uses{def:mipstar,def:re,thm:halting,cor:main-quantum,thm:halting-undecidable,lem:value-lower-approx,lem:mipstar-sub-re}
 $\MIPstar = \RE$.
 \end{theorem}
 
@@ -94,10 +116,8 @@ For $\RE \subseteq \MIPstar$: the halting problem is $\RE$-complete
 (Theorem~\ref{thm:halting-undecidable}) and Theorem~\ref{thm:halting} provides a
 polynomial-time verifier for it, whose completeness--soundness gap is already in the form
 Definition~\ref{def:mipstar} requires (Corollary~\ref{cor:main-quantum}); no transport
-between the two values is needed. For $\MIPstar \subseteq \RE$: given a verifier for $L$
-and an input $z$, enumerate tensor-product strategies
-(Lemma~\ref{lem:value-lower-approx}) and accept upon finding one with value greater
-than $\frac12$; this semi-decides $L$.
+between the two values is needed. $\MIPstar \subseteq \RE$ is
+Lemma~\ref{lem:mipstar-sub-re}.
 
 \begin{remark}
 The polynomial-time version of Theorem~\ref{thm:main} (Theorem 12.2

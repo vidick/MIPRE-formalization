@@ -521,6 +521,7 @@ import MIPRE.Foundations.CL.Closure
 import MIPRE.Foundations.CL.Downsize
 import MIPRE.Foundations.CL.Register
 import MIPRE.Foundations.CL.Sampler
+import MIPRE.Foundations.ClassMIPStar
 import MIPRE.Foundations.CommutingOperator
 import MIPRE.Foundations.Compression
 import MIPRE.Foundations.Cost.Basic
@@ -540,6 +541,7 @@ import MIPRE.Foundations.Cost.MachineData
 import MIPRE.Foundations.Cost.Numeric
 import MIPRE.Foundations.Cost.Partrec
 import MIPRE.Foundations.Cost.PolyTime
+import MIPRE.Foundations.Cost.Semidecide
 import MIPRE.Foundations.Cost.Succinct
 import MIPRE.Foundations.Cost.Threshold
 import MIPRE.Foundations.Cost.Toolkit

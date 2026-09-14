@@ -219,8 +219,9 @@ H1 and H3 in parallel, H2 whenever someone wants a self-contained hard problem.
 - **H1 is the one to start now.** It is the only item that unblocks other people's work:
   every chapter-6 statement waits on it, and its interface decision gets more expensive
   the longer it is deferred.
-- **H3 continues** where `ValueApprox.lean` left off, and has the best-specified source of
-  the four — a full proof with explicit constants, already claim-tested upstream.
+- **H3 is done** (issue #48, three pull requests): `lem:value-lower-approx`, `def:re`,
+  `def:mipstar` and `lem:mipstar-sub-re` are in Lean, and the criterion's `hS` is supplied
+  for any computable family of game descriptions.
 - **H2 is independent of both** and can proceed on its own schedule; it blocks H4 and the
   complexity clauses, not H1 or H3.
 - **H4 after H2**, and after enough of H1 to know what a description is.
