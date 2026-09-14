@@ -144,8 +144,29 @@
   "MIPRE.CommutingStrategy.value": [
    "def:commuting-value"
   ],
+  "MIPRE.Cost.Data.natOf": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.Data.parse": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.Data.parse_toBitsPost": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.Data.toBitsPost": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Cost.IsSuccinctDesc": [
    "def:succinct"
+  ],
+  "MIPRE.Cost.PolyBounded": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.Prog.parseProg_runs": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.Prog.serProg_runs": [
+   "rem:compression-abstract"
   ],
   "MIPRE.Cost.bitQueryAnswer": [
    "def:succinct"
@@ -439,6 +460,18 @@
   "MIPRE.Verifier.IsSynchronousAt": [
    "def:normal-verifier"
   ],
+  "MIPRE.Verifier.freeze": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.freeze_hasPerfectPCC": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.freeze_isBounded": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.freeze_valStar": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Verifier.game": [
    "def:normal-verifier"
   ],
@@ -606,7 +639,14 @@
   "MIPRE.CommutingOperatorStrategy.value",
   "MIPRE.CommutingStrategy",
   "MIPRE.CommutingStrategy.value",
+  "MIPRE.Cost.Data.natOf",
+  "MIPRE.Cost.Data.parse",
+  "MIPRE.Cost.Data.parse_toBitsPost",
+  "MIPRE.Cost.Data.toBitsPost",
   "MIPRE.Cost.IsSuccinctDesc",
+  "MIPRE.Cost.PolyBounded",
+  "MIPRE.Cost.Prog.parseProg_runs",
+  "MIPRE.Cost.Prog.serProg_runs",
   "MIPRE.Cost.bitQueryAnswer",
   "MIPRE.Cost.compressibility_criterion",
   "MIPRE.Cost.compressibility_criterion_halting",
@@ -704,6 +744,10 @@
   "MIPRE.Verifier.Answers",
   "MIPRE.Verifier.IsBounded",
   "MIPRE.Verifier.IsSynchronousAt",
+  "MIPRE.Verifier.freeze",
+  "MIPRE.Verifier.freeze_hasPerfectPCC",
+  "MIPRE.Verifier.freeze_isBounded",
+  "MIPRE.Verifier.freeze_valStar",
   "MIPRE.Verifier.game",
   "MIPRE.Verifier.hasPerfectPCC_congr",
   "MIPRE.Verifier.hasPerfectPCC_of_le",
@@ -895,6 +939,25 @@
   ],
   "MIPRE/Foundations/GapCompression.lean": [
    "MIPRE.GapCompression"
+  ],
+  "MIPRE/Foundations/Halting/Descriptions.lean": [
+   "MIPRE.Cost.Data.natOf",
+   "MIPRE.Cost.Data.parse",
+   "MIPRE.Cost.Data.parse_toBitsPost",
+   "MIPRE.Cost.Data.toBitsPost"
+  ],
+  "MIPRE/Foundations/Halting/Freeze.lean": [
+   "MIPRE.Verifier.freeze",
+   "MIPRE.Verifier.freeze_hasPerfectPCC",
+   "MIPRE.Verifier.freeze_isBounded",
+   "MIPRE.Verifier.freeze_valStar"
+  ],
+  "MIPRE/Foundations/Halting/PolyBounded.lean": [
+   "MIPRE.Cost.PolyBounded"
+  ],
+  "MIPRE/Foundations/Halting/Serial.lean": [
+   "MIPRE.Cost.Prog.parseProg_runs",
+   "MIPRE.Cost.Prog.serProg_runs"
   ],
   "MIPRE/Foundations/ValueApprox.lean": [
    "MIPRE.ValueApprox.dotProduct_kronecker_perturb",
@@ -1105,6 +1168,12 @@
   "MIPRE/Foundations/GameTransport.lean": 30,
   "MIPRE/Foundations/Games.lean": 61,
   "MIPRE/Foundations/GapCompression.lean": 2,
+  "MIPRE/Foundations/Halting/Arith.lean": 48,
+  "MIPRE/Foundations/Halting/Descriptions.lean": 32,
+  "MIPRE/Foundations/Halting/Freeze.lean": 29,
+  "MIPRE/Foundations/Halting/Lists.lean": 41,
+  "MIPRE/Foundations/Halting/PolyBounded.lean": 17,
+  "MIPRE/Foundations/Halting/Serial.lean": 26,
   "MIPRE/Foundations/ValueApprox.lean": 8,
   "MIPRE/Foundations/ValueApprox/Cayley.lean": 16,
   "MIPRE/Foundations/ValueApprox/Dense.lean": 2,
@@ -1159,6 +1228,6 @@
   "bibitems": 32,
   "cites": 150,
   "labels": 200,
-  "refs": 838
+  "refs": 839
  }
 }
