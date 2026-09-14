@@ -1,7 +1,7 @@
 # MIPRE-formalization
 
 A Lean 4 + Mathlib formalization of MIP* = RE, with a leanblueprint under
-`blueprint/`. Roadmap and open items: `planning/next-steps.md`.
+`blueprint/`. What to work on next and why: `planning/formalization-plan.md`.
 
 ## The shape of the library decides your feedback loop
 
@@ -66,6 +66,25 @@ full build is slow, and not a habit to copy.
 Environment setup, the allowed-host list and troubleshooting: `docs/lean-cloud.md`.
 
 ## The companion proof repository
+
+Three artifacts, and each is authoritative for exactly one thing:
+
+- **the paper** (`vidick/MIPRE-proof`, `paper/`) — **the mathematics**: every statement,
+  every constant, every proof;
+- **the blueprint** (`blueprint/`) — **the plan and the progress**: what is to be
+  formalized, in what order, what is done. It is derived from the paper, through
+  `\ledgernode{}`, and it is never evidence for a mathematical claim;
+- **the Lean** (`MIPRE/`) — **what has been checked by machine**, which is the only thing
+  in the project that is true because this repository says so.
+
+So the formalization is driven by the blueprint and **must keep it current as it goes** —
+`\lean{}` and `\leanok` when a declaration appears and a proof closes, and, in the same
+pull request, the repair when formalizing shows a blueprint statement to be wrong or
+unusable as written. A blueprint that lags the Lean is worse than none, because the
+dependency graph then lies about what rests on what. When the Lean contradicts the
+*paper*, that is a finding: report it upstream and record it, rather than diverging
+quietly or weakening the Lean until it goes through. `planning/formalization-plan.md` has
+the longer form of this and the current priorities.
 
 `vidick/MIPRE-proof` (private) holds the paper source under `paper/` and the vibefeld
 adversarial-verification ledger under `proofs/mipre-undecidability/ledger/`. **Before

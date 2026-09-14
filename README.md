@@ -87,7 +87,8 @@ leanblueprint serve  # preview the website locally
 - [`.github/workflows/`](.github/workflows) — CI: project build on every PR,
   blueprint/docs/website deployment on `main`, task-dashboard automation.
 - [`planning/`](planning) — plans and decision records of the larger tracks;
-  [`planning/next-steps.md`](planning/next-steps.md) is the current roadmap.
+  [`planning/formalization-plan.md`](planning/formalization-plan.md) is the current plan
+  (what to work on next, and which of the three artifacts is authoritative for what).
 
 ## Contributing
 

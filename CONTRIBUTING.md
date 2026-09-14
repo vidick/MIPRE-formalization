@@ -60,6 +60,8 @@ If your PR proves a statement that appears in the blueprint, also edit the corre
 - General-purpose lemmas that do not mention project-specific definitions belong in the [`MIPRE/Mathlib/`](MIPRE/Mathlib) directory, mirroring Mathlib's own directory structure, so they can be upstreamed.
 - Leaving a `sorry` in a merged PR is acceptable **only** if the sorried statement corresponds to a blueprint node that is tracked by an open issue.
 
+There is one exception, for vendored trees. An upstream development may state its own targets up front — *signed statements*, stated so that each stage of the work can be compared against them — and leave them `sorry` until they are discharged. Such a statement may be vendored, provided all three hold: nothing in this repository depends on it; the blueprint says which results the tree does and does not prove (as `rem:orthonormalization-scope` does); and the tree's `Axioms.lean` asserts with `#guard_msgs` that the statement still carries `sorryAx`. The last is what keeps the exception from being a loophole: the build fails if such a statement is closed upstream without this repository noticing, and equally if anything here starts depending on one.
+
 ## Additional Guidelines and Notes
 
 1. Please adhere to the issue claiming process. If an issue is already assigned to another contributor, refrain from working on it without prior communication with the current claimant. This ensures a collaborative and respectful workflow that values each contributor's efforts.
