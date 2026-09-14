@@ -219,6 +219,9 @@
   "MIPRE.Decider.TimeBound": [
    "def:decider"
   ],
+  "MIPRE.Decider.wrap": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Game": [
    "def:game"
   ],
@@ -454,6 +457,12 @@
   "MIPRE.Verifier.Answers": [
    "def:normal-verifier"
   ],
+  "MIPRE.Verifier.InClassA": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.InClassB": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Verifier.IsBounded": [
    "def:lambda-bounded"
   ],
@@ -478,7 +487,19 @@
   "MIPRE.Verifier.hasPerfectPCC_congr": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Verifier.hasPerfectPCC_of_le": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.not_inClassB_of_inClassA": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.ofSamplerDecider": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.ofSamplerDecider_accepts": [
    "rem:compression-abstract"
   ],
   "MIPRE.Verifier.size": [
@@ -494,6 +515,9 @@
    "rem:compression-abstract"
   ],
   "MIPRE.Verifier.valStar_eq_one_of_hasPerfectPCC": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.valStar_eq_zero_of_rejects_all": [
    "rem:compression-abstract"
   ],
   "MIPRE.commValue": [
@@ -664,6 +688,7 @@
   "MIPRE.Decider",
   "MIPRE.Decider.Accepts",
   "MIPRE.Decider.TimeBound",
+  "MIPRE.Decider.wrap",
   "MIPRE.Game",
   "MIPRE.Game.repeat",
   "MIPRE.GapCompression",
@@ -742,6 +767,8 @@
   "MIPRE.ValueApprox.rePred_lt_quantumValue",
   "MIPRE.Verifier",
   "MIPRE.Verifier.Answers",
+  "MIPRE.Verifier.InClassA",
+  "MIPRE.Verifier.InClassB",
   "MIPRE.Verifier.IsBounded",
   "MIPRE.Verifier.IsSynchronousAt",
   "MIPRE.Verifier.freeze",
@@ -750,12 +777,17 @@
   "MIPRE.Verifier.freeze_valStar",
   "MIPRE.Verifier.game",
   "MIPRE.Verifier.hasPerfectPCC_congr",
+  "MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal",
   "MIPRE.Verifier.hasPerfectPCC_of_le",
+  "MIPRE.Verifier.not_inClassB_of_inClassA",
+  "MIPRE.Verifier.ofSamplerDecider",
+  "MIPRE.Verifier.ofSamplerDecider_accepts",
   "MIPRE.Verifier.size",
   "MIPRE.Verifier.syncGame",
   "MIPRE.Verifier.valStar_congr",
   "MIPRE.Verifier.valStar_eq_of_rejects",
   "MIPRE.Verifier.valStar_eq_one_of_hasPerfectPCC",
+  "MIPRE.Verifier.valStar_eq_zero_of_rejects_all",
   "MIPRE.commValue",
   "MIPRE.commutingOperatorValue",
   "MIPRE.entRequirement",
@@ -940,6 +972,13 @@
   "MIPRE/Foundations/GapCompression.lean": [
    "MIPRE.GapCompression"
   ],
+  "MIPRE/Foundations/Halting/Classes.lean": [
+   "MIPRE.Verifier.InClassA",
+   "MIPRE.Verifier.InClassB",
+   "MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal",
+   "MIPRE.Verifier.not_inClassB_of_inClassA",
+   "MIPRE.Verifier.valStar_eq_zero_of_rejects_all"
+  ],
   "MIPRE/Foundations/Halting/Descriptions.lean": [
    "MIPRE.Cost.Data.natOf",
    "MIPRE.Cost.Data.parse",
@@ -958,6 +997,11 @@
   "MIPRE/Foundations/Halting/Serial.lean": [
    "MIPRE.Cost.Prog.parseProg_runs",
    "MIPRE.Cost.Prog.serProg_runs"
+  ],
+  "MIPRE/Foundations/Halting/Wrapper.lean": [
+   "MIPRE.Decider.wrap",
+   "MIPRE.Verifier.ofSamplerDecider",
+   "MIPRE.Verifier.ofSamplerDecider_accepts"
   ],
   "MIPRE/Foundations/ValueApprox.lean": [
    "MIPRE.ValueApprox.dotProduct_kronecker_perturb",
@@ -1169,11 +1213,13 @@
   "MIPRE/Foundations/Games.lean": 61,
   "MIPRE/Foundations/GapCompression.lean": 2,
   "MIPRE/Foundations/Halting/Arith.lean": 48,
+  "MIPRE/Foundations/Halting/Classes.lean": 10,
   "MIPRE/Foundations/Halting/Descriptions.lean": 32,
   "MIPRE/Foundations/Halting/Freeze.lean": 29,
-  "MIPRE/Foundations/Halting/Lists.lean": 41,
+  "MIPRE/Foundations/Halting/Lists.lean": 42,
   "MIPRE/Foundations/Halting/PolyBounded.lean": 17,
   "MIPRE/Foundations/Halting/Serial.lean": 26,
+  "MIPRE/Foundations/Halting/Wrapper.lean": 27,
   "MIPRE/Foundations/ValueApprox.lean": 8,
   "MIPRE/Foundations/ValueApprox/Cayley.lean": 16,
   "MIPRE/Foundations/ValueApprox/Dense.lean": 2,

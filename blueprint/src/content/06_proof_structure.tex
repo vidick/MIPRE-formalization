@@ -1073,7 +1073,11 @@ lower bound has to be tracked anywhere in this chapter.
   MIPRE.Verifier.freeze_valStar, MIPRE.Verifier.freeze_hasPerfectPCC,
   MIPRE.Verifier.freeze_isBounded, MIPRE.Cost.Data.toBitsPost, MIPRE.Cost.Data.parse,
   MIPRE.Cost.Data.parse_toBitsPost, MIPRE.Cost.Data.natOf, MIPRE.Cost.Prog.parseProg_runs,
-  MIPRE.Cost.Prog.serProg_runs, MIPRE.Cost.PolyBounded}
+  MIPRE.Cost.Prog.serProg_runs, MIPRE.Cost.PolyBounded, MIPRE.Verifier.InClassA,
+  MIPRE.Verifier.InClassB, MIPRE.Verifier.not_inClassB_of_inClassA,
+  MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal,
+  MIPRE.Verifier.valStar_eq_zero_of_rejects_all, MIPRE.Verifier.ofSamplerDecider,
+  MIPRE.Verifier.ofSamplerDecider_accepts, MIPRE.Decider.wrap}
 Theorem~\ref{thm:compression} instantiates the hypotheses of
 Lemma~\ref{lem:compressible-criterion}: take $A$ to be the set of (descriptions of) normal
 form verifier games with a value-$1$ PCC strategy and $B$ the set of those with $\valstar
@@ -1107,7 +1111,12 @@ of the recursion.
   every string names a normal form verifier, and the interpretation sits outside every
   time bound. $A_n$ is the set of strings whose verifier is $n$-bounded and whose $n$-th
   game has a value-$1$ PCC strategy, $B_n$ the set of those that are $n$-bounded with
-  $\valstar \leq \frac12$ at index $n$. Tying the bound $\lambda = n$ to the level is what
+  $\valstar \leq \frac12$ at index $n$ (\texttt{Verifier.InClassA},
+  \texttt{InClassB}; disjoint, since a perfect PCC strategy gives $\valstar = 1$). Only the
+  length check has to go into the wrapper: synchronicity at an index and the answer-length
+  bound are conditions on membership in these classes, not on well-formedness, and the
+  paper's timeout counter is not needed either --- a decider that fails to halt simply fails
+  to be $n$-bounded, and its string then lies in neither class. Tying the bound $\lambda = n$ to the level is what
   replaces the choice of $\lambda$ along the recursion (Lemma~\ref{lem:lambda}): the levels
   $r(e) = 2^{K + 1 + \abs{e}}$ at which the recursion runs are exponential in $\abs{e}$,
   above every polynomial in $\abs{e}$ that the paper's $\lambda$ has to dominate.
@@ -1167,7 +1176,18 @@ bound falls under $2^n$. Still owed are the descriptions read as verifiers --- t
 decider around $\decider'$ and the classes $A_n, B_n$ --- the tabulation of $\verifier_n$ as
 a game description with the agreement of its value with $\valstar(\verifier_n)$, and the
 compressor's own decider with its time accounting
-(\texttt{planning/formalization-plan.md}, H4). The entanglement form
+(\texttt{planning/formalization-plan.md}, H4). The reading of a string as a verifier is in
+Lean too: \texttt{Decider.wrap} is the wrapper --- it computes $s(N)$ by running the
+sampler through the universal machine, compares it with the lengths of the two questions,
+and runs the string's own decider through the universal machine if both agree --- and
+\texttt{Verifier.ofSamplerDecider} is the normal form verifier a pair denotes, with
+\texttt{ofSamplerDecider\_accepts} saying that it accepts exactly when the questions have
+the sampler's dimension and the string's decider accepts. The two distinguished strings of
+the criterion are covered at the level of verifiers by
+\texttt{hasPerfectPCC\_of\_accepts\_diagonal} (a decider that is synchronous at $n$ and
+accepts one fixed answer on every question pair has a value-$1$ PCC strategy: the paper's
+trivial strategy) and \texttt{valStar\_eq\_zero\_of\_rejects\_all}. Still owed there are
+the time accounting of the wrapper and the two strings realizing those verifiers. The entanglement form
 of~\cite{JNVWY20}
 (Remark~\ref{rem:entanglement-form}) instantiates Lemma~\ref{lem:recursive-compression}
 instead, with $f = \Ent(\cdot, \frac12)$; it is not used by the main theorem.
