@@ -58,7 +58,8 @@ what is open can be enumerated rather than searched for:
   `questionEquiv` and the value agreement along them is
   `Verifier.quantumValue_toGame_eq_valStar`; what is owed is the computation — the sampler
   run over every point of `𝔽₂^{s(n)}` for the question weights, and the decider run under its
-  budget for the acceptance table.
+  budget for the acceptance table. Note that `tab_value` holds only of an `n`-bounded
+  verifier, and cannot hold of every string: see the field's own docstring.
 * **O3** (`sem`, `sem_closed`, `sem_spec`) — a program halting on `(x, n)` exactly off
   `classB n`. Its shape is `Verifier.not_inClassB_iff`: a search for a run exceeding the
   budget, or the `val*` half of `lem:value-lower-approx`
@@ -180,8 +181,15 @@ structure Obligations (G : GapCompression) (U : UniversalMachine) where
   /-- **O2.** The tabulation is computable. -/
   tab_computable : Computable fun p : BitStr × ℕ => tab p.1 p.2
   /-- **O2.** The tabulation has the value it tabulates
-  (`Verifier.quantumValue_toGame_eq_valStar`). -/
-  tab_value : ∀ (x : BitStr) (n : ℕ),
+  (`Verifier.quantumValue_toGame_eq_valStar`), for an `n`-bounded verifier.
+
+  The hypothesis is not slack: without it the field is *unsatisfiable*. Whether the decider a
+  string denotes accepts a given tuple is `Σ₁`, so a computable `tab` correct at every string
+  would decide the halting problem — take two strings whose deciders differ only in how long
+  they run before accepting, and no fixed budget separates them. Boundedness is exactly what
+  turns acceptance into a decidable question, by supplying the budget. Both uses in
+  `halting_reduction` have it, membership in either class carrying `IsBounded n`. -/
+  tab_value : ∀ (x : BitStr) (n : ℕ), (Vof G U x).IsBounded n →
     quantumValue (tab x n).game = (Vof G U x).valStar n (ansBound G x n)
 
 /-! ## The reduction -/
@@ -225,9 +233,10 @@ theorem halting_reduction (O : Obligations G U) :
     O.tab_computable.comp
       ((PolyTimeFun.computable_comp g compile hc Data.primrec_decode_bitStr.to_comp).pair hlevel),
     fun pc => ⟨fun hdom => ?_, fun hdom => ?_⟩⟩
-  · rw [O.tab_value,
-      (Vof G U _).valStar_eq_one_of_hasPerfectPCC ((hg (compile pc)).2.1 ((hspec pc).2 hdom)).2]
-  · rw [O.tab_value]
-    exact ((hg (compile pc)).2.2 fun h => hdom ((hspec pc).1 h)).2
+  · have hx := (hg (compile pc)).2.1 ((hspec pc).2 hdom)
+    rw [O.tab_value _ _ hx.1, (Vof G U _).valStar_eq_one_of_hasPerfectPCC hx.2]
+  · have hx := (hg (compile pc)).2.2 fun h => hdom ((hspec pc).1 h)
+    rw [O.tab_value _ _ hx.1]
+    exact hx.2
 
 end MIPRE.Halting

@@ -526,6 +526,7 @@ import MIPRE.Foundations.CommutingOperator
 import MIPRE.Foundations.Compression
 import MIPRE.Foundations.Cost.Basic
 import MIPRE.Foundations.Cost.BitQuery
+import MIPRE.Foundations.Cost.BoundedEval
 import MIPRE.Foundations.Cost.Clocked
 import MIPRE.Foundations.Cost.Closure
 import MIPRE.Foundations.Cost.Codable
