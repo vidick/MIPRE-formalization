@@ -245,6 +245,18 @@ theorem evalData_encode {α β : Type*} [SizedEncoding α] [SizedEncoding β] (F
   obtain ⟨t, -, h⟩ := F.computes a
   exact ⟨t, h⟩
 
+/-- **The `Data`-level form**: a polynomial-time function of the ambient model, precomposed
+with a computable encoding of its input, has a computable *encoded* output. No `Primcodable`
+on the output type is needed, which matters — `Prog` deliberately has none (see the module
+docstring of `Cost/Codable.lean`), so this is the only way a `PolyTimeFun _ Prog` such as
+`GapCompression.samplerProg` can reach a computability proof at all. -/
+theorem PolyTimeFun.computable_encode_comp {α β γ : Type*} [SizedEncoding α] [SizedEncoding β]
+    [Primcodable γ] (F : PolyTimeFun α β) (h : γ → α)
+    (hh : Computable fun c => (encode (h c) : Data)) :
+    Computable fun c => (encode (F (h c)) : Data) :=
+  Partrec.of_eq_tot (Machine.partrec_evalData.comp (Computable.const (encode F.code)) hh)
+    fun c => by rw [evalData_encode]; exact Part.mem_some _
+
 /-- A polynomial-time function of the ambient model, precomposed with a computable
 encoding of its input and followed by a computable decoding of its output, is
 Mathlib-computable. -/
@@ -253,11 +265,8 @@ theorem PolyTimeFun.computable_comp {α β γ : Type*} [SizedEncoding α] [Sized
     (hh : Computable fun c => (encode (h c) : Data))
     (hβ : Computable fun d : Data => (SizedEncoding.decode d : Option β)) :
     Computable fun c => F (h c) := by
-  have h1 : Computable fun c => (encode (F (h c)) : Data) :=
-    Partrec.of_eq_tot (Machine.partrec_evalData.comp (Computable.const (encode F.code)) hh)
-      fun c => by rw [evalData_encode]; exact Part.mem_some _
   have h2 : Computable fun c => (SizedEncoding.decode (encode (F (h c)) : Data) : Option β) :=
-    hβ.comp h1
+    hβ.comp (F.computable_encode_comp h hh)
   refine (Primrec.option_getD_default.to_comp.comp h2).of_eq fun c => ?_
   simp [SizedEncoding.decode_encode]
 

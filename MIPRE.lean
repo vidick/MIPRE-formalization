@@ -543,6 +543,7 @@ import MIPRE.Foundations.Cost.MachineData
 import MIPRE.Foundations.Cost.Numeric
 import MIPRE.Foundations.Cost.Partrec
 import MIPRE.Foundations.Cost.PolyTime
+import MIPRE.Foundations.Cost.ProgData
 import MIPRE.Foundations.Cost.Semidecide
 import MIPRE.Foundations.Cost.Succinct
 import MIPRE.Foundations.Cost.Threshold

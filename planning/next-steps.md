@@ -213,6 +213,22 @@ decisions, items with a done criterion, risks. Update the status column as items
   `lem:mipstar-sub-re`; `exists_semidecider_lt_quantumValue` is the criterion's `hS` for any
   computable family of game descriptions. Not done here: the passage from a normal form
   verifier to a game description (a computable tabulation), which is H4's.
+- Delivered 2026-09-15 (H4, obligation O2), which closes the gap the previous bullet leaves:
+  the tabulation is `MIPRE.Halting.tab` in `Foundations/Halting/Instantiation.lean`, over
+  `Halting/Tabulate.lean` (`tabOf`, the `GameData` two encoded programs and three numbers
+  describe) and the new `Foundations/Cost/ProgData.lean` (`progOk`, `progNorm`, deciding
+  program-hood so that junk data tabulates as the program `nil` it denotes). `tab_computable`,
+  `tab_match`, `tab_le` and `tab_value` are proved sorry-free, and the four fields that stood
+  for them have left `MIPRE.Halting.Obligations`, which now carries O1 (inhabited), O3 and O4.
+  So this item's `exists_semidecider_lt_quantumValue` has its first real consumer, and the next
+  piece of H4 — O3, the semidecider for the complement of `classB` — is where it is spent: the
+  `val*` disjunct of `Verifier.not_inClassB_iff` is two lines from `tab_computable`
+  (`rePred_lt_quantumValue_comp`), and what is left around it is a `Σ₁` search for a
+  boundedness violation, a computable-test version of `REPred.of_primrecRel_exists`, the merge
+  of the two disjuncts, the passage from a `BitStr` input to `encode (x, n)`
+  (`Cost.exists_semidecider` reads one bit string), and one question of substance — `tab`
+  matches a verifier only where it is synchronous, and `classB` does not ask for synchronicity.
+  `planning/h4-assembly.md` §4 item 3 has the list and the three candidate repairs.
 
 ### 5. #22 / #23 — synchronous transport (`thm:almost-sync`) — **off the critical path 2026-09-13**
 

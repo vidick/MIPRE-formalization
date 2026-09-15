@@ -93,6 +93,33 @@ theorem nodup_bitStrsLE (T : ℕ) : (bitStrsLE T).Nodup := by
   rintro z rfl h
   exact hne h
 
+/-! The two enumerations are primitive recursive: the tabulation of `MIPRE.Halting` walks both
+of them, so both are on the critical path of `MIPRE.Halting.tab_computable`. -/
+
+theorem primrec_bitStrsOfLen : Primrec Data.bitStrsOfLen := by
+  have hstep : Primrec₂ fun (_ : Unit) (p : ℕ × List BitStr) =>
+      p.2.flatMap fun l => [false :: l, true :: l] := by
+    refine (Primrec.list_flatMap
+      (f := fun q : Unit × ℕ × List BitStr => q.2.2)
+      (g := fun _ (l : BitStr) => [false :: l, true :: l])
+      (Primrec.snd.comp Primrec.snd) ?_).to₂
+    have h1 : Primrec fun q : (Unit × ℕ × List BitStr) × BitStr => false :: q.2 :=
+      Primrec.list_cons.comp (Primrec.const false) Primrec.snd
+    have h2 : Primrec fun q : (Unit × ℕ × List BitStr) × BitStr => true :: q.2 :=
+      Primrec.list_cons.comp (Primrec.const true) Primrec.snd
+    exact (Primrec.list_cons.comp h1
+      (Primrec.list_cons.comp h2 (Primrec.const ([] : List BitStr)))).to₂
+  have h := Primrec.nat_rec' (f := fun n : ℕ => n) (g := fun _ : ℕ => [([] : BitStr)])
+    Primrec.id (Primrec.const _) (hstep.comp (Primrec.const ()) Primrec.snd).to₂
+  refine h.of_eq fun k => ?_
+  induction k with
+  | zero => rfl
+  | succ k ih => rw [Data.bitStrsOfLen, ← ih]
+
+theorem primrec_bitStrsLE : Primrec Data.bitStrsLE :=
+  Primrec.list_flatMap (Primrec.list_range.comp (Primrec.succ))
+    (primrec_bitStrsOfLen.comp Primrec.snd).to₂
+
 theorem length_bitStrsLE_pos (T : ℕ) : 0 < (bitStrsLE T).length :=
   List.length_pos_iff.2 fun h => by
     have := (mem_bitStrsLE T []).2 (Nat.zero_le T)

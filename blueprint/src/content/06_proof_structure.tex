@@ -1094,7 +1094,23 @@ lower bound has to be tracked anywhere in this chapter.
   MIPRE.Verifier.exists_isBounded, MIPRE.Cost.Prog.wrapCore_hasPolyCost,
   MIPRE.Verifier.ofSamplerDecider_isBounded, MIPRE.Halting.yYes, MIPRE.Halting.yNo,
   MIPRE.Halting.yYes_mem, MIPRE.Halting.yNo_mem, MIPRE.Cost.Machine.runForD,
-  MIPRE.Cost.Machine.runForD_eq_some_iff, MIPRE.Verifier.accepts_iff_runForD}
+  MIPRE.Cost.Machine.runForD_eq_some_iff, MIPRE.Verifier.accepts_iff_runForD,
+  MIPRE.Decider.acceptBudget, MIPRE.CL.Sampler.queryUnder,
+  MIPRE.CL.Sampler.queryUnder_dimension, MIPRE.CL.Sampler.queryUnder_marginal,
+  MIPRE.Cost.Prog.two_le_esize, MIPRE.Verifier.IsBounded.two_le,
+  MIPRE.Verifier.bitsToIdx, MIPRE.Verifier.weightList,
+  MIPRE.Verifier.questionWeight_weightList, MIPRE.Verifier.totalWeight_weightList,
+  MIPRE.Verifier.accList, MIPRE.Verifier.mem_accList_iff, MIPRE.Halting.dimOf,
+  MIPRE.Halting.margOf, MIPRE.Halting.accOf, MIPRE.Halting.tabOf,
+  MIPRE.Halting.primrec_tabOf, MIPRE.Cost.progOk, MIPRE.Cost.progNorm,
+  MIPRE.Cost.progNorm_eq, MIPRE.Cost.Prog.ProgD.dWrapCore,
+  MIPRE.Cost.Prog.ProgD.dWrapCore_eq, MIPRE.Cost.PolyTimeFun.computable_encode_comp,
+  MIPRE.Halting.sampData, MIPRE.Halting.decProgData, MIPRE.Halting.sampData_eq,
+  MIPRE.Halting.decProgData_eq, MIPRE.Halting.tab, MIPRE.Halting.tab_computable,
+  MIPRE.Halting.dimOf_eq, MIPRE.Halting.margOf_eq, MIPRE.Halting.accOf_iff,
+  MIPRE.Halting.eXof, MIPRE.Halting.eAof, MIPRE.Halting.mu_clause,
+  MIPRE.Halting.acc_mem_iff, MIPRE.Halting.tab_match, MIPRE.Halting.tab_le,
+  MIPRE.Halting.tab_value}
 Theorem~\ref{thm:compression} instantiates the hypotheses of
 Lemma~\ref{lem:compressible-criterion}: take $A$ to be the set of (descriptions of) normal
 form verifier games with a value-$1$ PCC strategy and $B$ the set of those with $\valstar
@@ -1184,18 +1200,24 @@ of the recursion.
   budgeted run then settles it (\texttt{Verifier.accepts\_iff\_runForD}, on
   \texttt{Machine.runForD}: iterate the evaluation machine's step function $3k$ times and read
   off the result if the configuration reached is final, which is enough because a derivation of
-  cost $t$ is a run of at most $3t$ steps and final configurations are fixed). The Lean
-  statement of the tabulation's correctness carries that hypothesis for this reason. It carries
+  cost $t$ is a run of at most $3t$ steps and final configurations are fixed). Every Lean
+  statement about the tabulation carries that hypothesis for this reason, and it does one more
+  thing than supply the budget: the time clauses of $\lambda$-boundedness are guarded by
+  $2 \leq n$, so at $n = 0, 1$ no budget exists at all, and what excludes those two indices is
+  the size clause --- every program encodes to a non-empty datum, so
+  $2 \leq \abs{\decider} \leq \abs{\verifier} \leq \lambda$
+  (\texttt{Verifier.IsBounded.two\_le}, on \texttt{Cost.Prog.two\_le\_esize}). Each
+  statement carries
   a second one, and for a reason worth naming: a game description denotes a \emph{synchronous}
   game by construction --- Definition~\ref{def:game-description} rejects unequal answers to
   equal questions --- whereas $\verifier_n$ does no such thing, so no description can match a
   verifier that is not synchronous at $n$, and $B_n$ does not ask that it be. The match
-  (\texttt{Obligations.tab\_match}) is therefore asked only of a synchronous verifier, which is
-  what $A_n$ supplies through its value-$1$ PCC strategy; for $B_n$ the soundness branch needs
-  only that the description does not \emph{overshoot}, and forcing those tuples to reject can
-  only lower the value (\texttt{quantumValue\_mono}), which is the field
-  \texttt{Obligations.tab\_le}. The
-  tabulation itself is read with the answer
+  (\texttt{MIPRE.Halting.tab\_match}) is therefore asked only of a synchronous verifier,
+  which is what $A_n$ supplies through its value-$1$ PCC strategy; for $B_n$ the soundness
+  branch needs only that the description does not \emph{overshoot}, and forcing those tuples
+  to reject can only lower the value (\texttt{quantumValue\_mono}), which is
+  \texttt{tab\_le}. Both are now theorems rather than hypotheses --- the paragraph after this
+  enumerate says how. The tabulation itself is read with the answer
   alphabet enumerated by \texttt{Verifier.answerEquiv} and the questions by
   \texttt{questionEquiv}, and a description matching $\verifier_n$ along those indexings has
   the same value (\texttt{quantumValue\_toGame\_eq\_valStar}), which is what carries the
@@ -1238,9 +1260,12 @@ bound falls under $2^n$. The dictionary itself is now in Lean: \texttt{MIPRE.Hal
 and \texttt{descDec} read a string as a parameter and a decider, \texttt{Vof} is the verifier
 it denotes, and \texttt{classA}, \texttt{classB} are $A_n, B_n$, with answers cut at the
 length beyond which a compressed decider with that parameter rejects. What remains is
-collected as the four fields of \texttt{MIPRE.Halting.Obligations}, the structure
+collected as the fields of \texttt{MIPRE.Halting.Obligations}, the structure
 Theorem~\ref{thm:halting} is proved from
-(\texttt{planning/formalization-plan.md}, H4; \texttt{planning/h4-assembly.md}).
+(\texttt{planning/formalization-plan.md}, H4; \texttt{planning/h4-assembly.md}): the two
+distinguished strings, the semidecider, and the compressor. The tabulation was a fourth group
+of fields and is one no longer --- it is proved below, and \texttt{halting\_reduction} uses
+those theorems directly.
 The reading of a string as a verifier is in
 Lean too: \texttt{Decider.wrap} is the wrapper --- it computes $s(N)$ by running the
 sampler through the universal machine, compares it with the lengths of the two questions,
@@ -1263,10 +1288,44 @@ it is handed a question pair: the length program on any datum, one length check 
 \texttt{Data.spine} with $s(n)$, the head whose cost depends on the index alone, and the three
 outcomes of the whole. That is also the first inhabitant of $\lambda$-boundedness anywhere in
 the development --- every earlier proof of it was conditional on another time bound --- so
-Definition~\ref{def:lambda-bounded}, twice repaired, is now known to be satisfiable. Still
-owed there is the computation of the tabulation --- running the sampler on every point of
-$\F_2^{s(n)}$ to count the question weights, and the decider under its budget to fill in the
-acceptance table. The entanglement form
+Definition~\ref{def:lambda-bounded}, twice repaired, is now known to be satisfiable. The
+computation of the tabulation --- running the sampler on every point of $\F_2^{s(n)}$ to count
+the question weights, and the decider under its budget to fill in the acceptance table --- is
+in Lean too, and with it the whole of that obligation: \texttt{MIPRE.Halting.tab} is the
+$n$-th game of the verifier a string denotes, \texttt{tab\_computable} its computability in
+the string and the level, \texttt{tab\_match} and \texttt{tab\_le} the two clauses of item 3
+above, and \texttt{tab\_value} the equality of values read off the match. Three features of
+the construction are worth recording, because that is where the work went. \emph{A
+computability proof may not mention a verifier}: a verifier is a structure carrying proofs
+while \texttt{Primrec} quantifies over data, so the tabulation is written twice ---
+\texttt{Halting.tabOf} takes five arguments that are plain data and no verifier (the two
+encoded programs, the sampler's dimension at the level, the answer cut and the level), with
+\texttt{dimOf}, \texttt{margOf} and \texttt{accOf} running the two programs under the budgets
+\texttt{CL.Sampler.queryUnder} and \texttt{Decider.acceptBudget}, each defaulting when its
+budget is missed; \texttt{tab} is \texttt{tabOf} fed what the string supplies; and
+\texttt{dimOf\_eq}, \texttt{margOf\_eq}, \texttt{accOf\_iff} are the bridge back, saying that
+on an $n$-bounded verifier those runs deliver the verifier's own sampler and decider, so that
+the default is never taken. \emph{The programs have to be got into data}: the compressed
+sampler's program is delivered by a polynomial-time function of $\lambda$, which is not a
+Mathlib-computable function of its argument in any direct sense, and what carries it is that
+the tabulation runs that function on an encoded input
+(\texttt{Cost.PolyTimeFun.computable\_encode\_comp}); the decider is the \emph{wrapper} around
+the string's own, that being what $\lambda$-boundedness bounds, so the wrapper's syntax tree
+is rebuilt in \texttt{Data} (\texttt{Cost.Prog.ProgD.dWrapCore}, the encoding of
+\texttt{wrapCore} by \texttt{rfl}), and the string's own decider is normalized by
+\texttt{Cost.progNorm}, which decides program-hood (\texttt{Cost.progOk}) so that the
+tabulation falls back on \texttt{nil} exactly where \texttt{descDec} does --- getting that
+wrong would not leave a gap but make the tabulation \emph{wrong}, the verifier accepting
+nothing on junk data while a tabulation that ran the junk could accept. \emph{The two clauses
+are separate arguments}: the $\mu$ clause is a count, \texttt{Verifier.weightList} placing one
+unit of weight at the index pair on which the two marginals of a point of $\F_2^{s(n)}$ land,
+so that its question weight is the number of points landing on a given pair and its total
+weight is $2^{s(n)}$, which is exactly the quotient the sampler's distribution is
+(\texttt{questionWeight\_weightList}, \texttt{totalWeight\_weightList}); the $D$ clause is the
+acceptance table \texttt{Verifier.accList} read back (\texttt{acc\_mem\_iff}) along the
+relabelings \texttt{eXof} and \texttt{eAof}, which carry \texttt{questionEquiv} and
+\texttt{answerEquiv} across the arithmetic of the two sizes, together with the synchronicity
+fiat that item 3 sends to \texttt{tab\_le}. The entanglement form
 of~\cite{JNVWY20}
 (Remark~\ref{rem:entanglement-form}) instantiates Lemma~\ref{lem:recursive-compression}
 instead, with $f = \Ent(\cdot, \frac12)$; it is not used by the main theorem.
@@ -1493,18 +1552,24 @@ Definition~\ref{def:mipstar}, such that:
 The proof is Lemma~\ref{lem:compressible-criterion} applied to the instantiation of
 Remark~\ref{rem:compression-abstract}; the semidecidability hypothesis of the lemma is the
 $\valstar$ half of Lemma~\ref{lem:value-lower-approx}. The obligations of that
-instantiation that are open are inherited here: the four listed in
-Remark~\ref{rem:compression-abstract}. The synchronization invariant that an earlier
+instantiation that are open are inherited here: three of the four listed in
+Remark~\ref{rem:compression-abstract}, the tabulation --- the fourth --- being formalized
+(\texttt{MIPRE.Halting.tab}, with \texttt{tab\_match}, \texttt{tab\_le} and
+\texttt{tab\_value}). The synchronization invariant that an earlier
 revision also required of the games produced inside $\Compress$ is no longer among them
 (Remark~\ref{rem:bipartite-route}).
 
 In Lean the assembly is \texttt{MIPRE.Halting.halting\_reduction}. It is complete and free
 of \texttt{sorry}, and it takes three hypotheses: a \texttt{MIPRE.GapCompression} (which is
 Theorem~\ref{thm:compression}), a universal machine, and an inhabitant of
-\texttt{MIPRE.Halting.Obligations}, whose four fields are exactly what
-Remark~\ref{rem:compression-abstract} leaves owed: the two distinguished strings, the
-tabulation with its value agreement, the semidecider, and the compressor. So what is open is
-a structure to be inhabited rather than an argument to be found, and
+\texttt{MIPRE.Halting.Obligations}, whose fields are exactly what
+Remark~\ref{rem:compression-abstract} still leaves owed: the two distinguished strings ---
+which \texttt{yYes\_mem} and \texttt{yNo\_mem} already supply, and which wait only on the
+other fields to be assembled into an inhabitant --- the semidecider, and the compressor. The
+tabulation with its value agreement was a fourth group of fields and is one no longer:
+\texttt{tab}, \texttt{tab\_computable}, \texttt{tab\_match}, \texttt{tab\_le} and
+\texttt{tab\_value} are theorems, which \texttt{halting\_reduction} applies directly. So what
+is open is a structure to be inhabited rather than an argument to be found, and
 \texttt{\#print axioms} cannot hide any of it.
 That assembly concludes in $\valstar$ only, and item 1 claims more: the witness is a
 \emph{PCC} strategy, so $\synval = \valstar = 1$. The two steps that carry it there are now in
@@ -1524,11 +1589,11 @@ neither step, only $\synval \leq \valstar$ (Lemma~\ref{lem:sync-le-valstar}), wh
 consume the tabulation's agreement with $\verifier_n$ in the form of the two alphabet
 equivalences and the matching of $\mu$ and $D$ along them, not merely the equality of
 $\valstar$ they imply --- from that equality alone the synchronous half cannot be recovered,
-$\synval \leq \valstar$ pointing the wrong way. That is why the field
-\texttt{MIPRE.Halting.Obligations.tab\_match} delivers the matching data, with
-\texttt{Obligations.tab\_value} reading the equality of values off it; O2 constructs the
-equivalences anyway, by \texttt{answerEquiv} and \texttt{questionEquiv}, so the stronger field
-costs nothing.
+$\synval \leq \valstar$ pointing the wrong way. That is why
+\texttt{MIPRE.Halting.tab\_match} delivers the matching data and not only the equality of
+values, with \texttt{tab\_value} reading that equality off it; the tabulation builds the
+equivalences anyway, out of \texttt{answerEquiv} and \texttt{questionEquiv}, so the stronger
+statement cost nothing.
 
 \begin{remark}[Identical measurement operators]
 \label{rem:identical-operators}
