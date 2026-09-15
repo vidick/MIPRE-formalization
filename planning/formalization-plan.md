@@ -428,9 +428,15 @@ soundness branch needs only that the tabulation does not overshoot, and forcing 
 reject can only lower the value, which is the new field `tab_le`. `halting_reduction` uses
 `tab_value` in the halting branch and `tab_le` in the other, and is unchanged otherwise.
 
-Remaining for O2: the acceptance table from `Verifier.accepts_iff_runForD`, then the assembly
-of `tab`, `tab_computable`, `tab_match` and `tab_le` — where the weights become `μ` and the
-table becomes `D`. Then, in order, and identified with the fields of
+The acceptance table followed: `Verifier.accList` enumerates the index tuples of the answer
+tuples a predicate accepts over the two alphabets, `mem_accList_iff` says exactly what is in
+it, and `bitsToIdx_injOn` is what lets a tuple be read back — among the strings of a fixed
+length, a question's index determines it.
+
+Remaining for O2: the assembly of `tab` from the weight list and the acceptance table,
+`tab_computable`, and the two agreement fields `tab_match` and `tab_le` — where the weights
+become `μ` and the table becomes `D`, the predicate being `Verifier.accepts_iff_runForD` under
+the verifier's own time bound. Then, in order, and identified with the fields of
 `MIPRE.Halting.Obligations`:
 the *computation* of the tabulation — running the sampler on every point of `𝔽₂^{s(n)}` to
 count the question weights and the decider under its budget to fill in the acceptance table,
