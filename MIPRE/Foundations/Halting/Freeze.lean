@@ -19,7 +19,7 @@ does at the frozen index, so its game at index `2 ^ n` is the original's game at
 
 * `Cost.Prog.freezeProg k p`: on input `cons N d`, run `p` on `cons (encode k) d`. Its cost
   is that of `p` plus the cost of copying the input, which is what the reading of the time
-  bounds up to the cost of reading the input (`Decider.TimeBoundAt`) allows.
+  bounds a polynomial in the size of the input (`Decider.TimeBoundAt`) allows.
 * `CL.Sampler.freeze`, `Decider.freeze`, `Verifier.freeze`: the frozen sampler, decider and
   verifier, with the transfer of the query clauses, of acceptance (`Decider.freeze_accepts`),
   of the values and perfect PCC strategies (`Verifier.freeze_valStar`,
@@ -84,17 +84,21 @@ theorem esize_freezeProg (k : ℕ) (p : Prog) : esize (freezeProg k p) = esize p
 
 end Cost.Prog
 
-/-! ## Time bounds are monotone -/
-
-theorem CL.Sampler.TimeBoundAt.mono {ℓ : ℕ} {S : CL.Sampler ℓ} {n T T' : ℕ}
-    (h : S.TimeBoundAt n T) (hT : T ≤ T') : S.TimeBoundAt n T' := fun d =>
-  let ⟨r, t, ht, hrun⟩ := h d
-  ⟨r, t, ht.trans (Nat.mul_le_mul_right _ hT), hrun⟩
-
-theorem Decider.TimeBoundAt.mono {D : Decider} {n T T' : ℕ}
-    (h : D.TimeBoundAt n T) (hT : T ≤ T') : D.TimeBoundAt n T' := fun d =>
-  let ⟨r, t, ht, hrun⟩ := h d
-  ⟨r, t, ht.trans (Nat.mul_le_mul_right _ hT), hrun⟩
+/-- The arithmetic shared by the two freezing time bounds: the frozen program's cost fits
+under the same polynomial with the coefficient shifted by the cost of copying, once the
+degree is at least one. -/
+theorem freeze_cost_le {T j e t s : ℕ} (ht : t ≤ T * (s + 1) ^ j) :
+    t + e + s + 4 ≤ (T + e + 4) * (s + 1) ^ max j 1 := by
+  have h1 : (s + 1) ^ j ≤ (s + 1) ^ max j 1 :=
+    Nat.pow_le_pow_right (by omega) (le_max_left _ _)
+  have h2 : s + 1 ≤ (s + 1) ^ max j 1 := by
+    calc s + 1 = (s + 1) ^ 1 := (pow_one _).symm
+      _ ≤ (s + 1) ^ max j 1 := Nat.pow_le_pow_right (by omega) (le_max_right _ _)
+  have h3 : (T + e + 4) * (s + 1) ^ max j 1 =
+      T * (s + 1) ^ max j 1 + (e + 4) * (s + 1) ^ max j 1 := by ring
+  have h4 : (e + 4) * (s + 1) ≤ (e + 4) * (s + 1) ^ max j 1 := Nat.mul_le_mul_left _ h2
+  have h5 : T * (s + 1) ^ j ≤ T * (s + 1) ^ max j 1 := Nat.mul_le_mul_left _ h1
+  nlinarith
 
 /-! ## The frozen sampler -/
 
@@ -139,15 +143,11 @@ theorem freeze_size (k : ℕ) : (S.freeze k).size = S.size + esize k + 53 :=
 
 /-- The frozen sampler's running time at any index is that of `S` at the frozen index, up
 to the cost of copying the input. -/
-theorem freeze_timeBoundAt {k T : ℕ} (h : S.TimeBoundAt k T) (n : ℕ) :
-    (S.freeze k).TimeBoundAt n (T + esize k + 4) := by
+theorem freeze_timeBoundAt {k T j : ℕ} (h : S.TimeBoundAt k T j) (n : ℕ) :
+    (S.freeze k).TimeBoundAt n (T + esize k + 4) (max j 1) := by
   intro d
   obtain ⟨r, t, ht, hrun⟩ := h d
-  refine ⟨r, t + esize k + d.size + 4, ?_, Prog.freezeProg_runs S.closed hrun⟩
-  have h1 : (T + esize k + 4) * (d.size + 1) = T * (d.size + 1) + (esize k + 4) * d.size +
-      (esize k + 4) := by ring
-  have h2 : d.size ≤ (esize k + 4) * d.size := Nat.le_mul_of_pos_left _ (by omega)
-  omega
+  exact ⟨r, t + esize k + d.size + 4, freeze_cost_le ht, Prog.freezeProg_runs S.closed hrun⟩
 
 end CL.Sampler
 
@@ -170,15 +170,11 @@ theorem freeze_accepts (k n : ℕ) (x y a b : BitStr) :
 theorem freeze_size (k : ℕ) : (D.freeze k).size = D.size + esize k + 53 :=
   Prog.esize_freezeProg k D.prog
 
-theorem freeze_timeBoundAt {k T : ℕ} (h : D.TimeBoundAt k T) (n : ℕ) :
-    (D.freeze k).TimeBoundAt n (T + esize k + 4) := by
+theorem freeze_timeBoundAt {k T j : ℕ} (h : D.TimeBoundAt k T j) (n : ℕ) :
+    (D.freeze k).TimeBoundAt n (T + esize k + 4) (max j 1) := by
   intro d
   obtain ⟨r, t, ht, hrun⟩ := h d
-  refine ⟨r, t + esize k + d.size + 4, ?_, Prog.freezeProg_runs D.closed hrun⟩
-  have h1 : (T + esize k + 4) * (d.size + 1) = T * (d.size + 1) + (esize k + 4) * d.size +
-      (esize k + 4) := by ring
-  have h2 : d.size ≤ (esize k + 4) * d.size := Nat.le_mul_of_pos_left _ (by omega)
-  omega
+  exact ⟨r, t + esize k + d.size + 4, freeze_cost_le ht, Prog.freezeProg_runs D.closed hrun⟩
 
 end Decider
 
@@ -234,16 +230,17 @@ theorem freeze_hasPerfectPCC (k n T : ℕ) :
 /-- **`λ`-boundedness of the frozen verifier.** The frozen verifier is `λ`-bounded when the
 dimension and the running times of `V` at the frozen index, shifted by the cost of freezing,
 fit under `2 ^ λ`, and its size, shifted by the size of the index, fits under `λ`. -/
-theorem freeze_isBounded (k lam TS TD : ℕ) (hS : V.sampler.TimeBoundAt k TS)
-    (hD : V.decider.TimeBoundAt k TD) (hdim : V.sampler.dim k ≤ 2 ^ lam)
+theorem freeze_isBounded (k lam TS TD jS jD : ℕ) (hS : V.sampler.TimeBoundAt k TS jS)
+    (hD : V.decider.TimeBoundAt k TD jD) (hdim : V.sampler.dim k ≤ 2 ^ lam)
     (hTS : TS + esize k + 4 ≤ 2 ^ lam) (hTD : TD + esize k + 4 ≤ 2 ^ lam)
+    (hjS : max jS 1 ≤ lam) (hjD : max jD 1 ≤ lam)
     (hsize : V.size + esize k + 53 ≤ lam) : (V.freeze k).IsBounded lam := by
   refine ⟨fun n hn => ?_, ?_⟩
   · have h2 : 2 ^ lam ≤ n ^ lam := Nat.pow_le_pow_left hn lam
     refine ⟨?_, ?_, ?_⟩
     · exact (V.sampler.freeze_dim k n).le.trans (hdim.trans h2)
-    · exact (V.sampler.freeze_timeBoundAt hS n).mono (hTS.trans h2)
-    · exact (V.decider.freeze_timeBoundAt hD n).mono (hTD.trans h2)
+    · exact (V.sampler.freeze_timeBoundAt hS n).mono (hTS.trans h2) hjS
+    · exact (V.decider.freeze_timeBoundAt hD n).mono (hTD.trans h2) hjD
   · rw [V.freeze_size k]; exact hsize
 
 end Verifier

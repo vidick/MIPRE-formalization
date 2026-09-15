@@ -554,17 +554,27 @@ states, and are well defined there by Lemma~\ref{lem:cl-structure}. And totality
 $(n, \ldots)$ is what makes $\TIME_\sampler(n)$ finite; the paper secures it by bounded format
 checks that read only a prescribed prefix of each input. In Lean the machine is a program of
 the ambient cost model (Section~\ref{sec:computability-conventions}), its input the pair of
-$n$ and a query (\texttt{Sampler.Query}), and $\TIME_\sampler(n) \le T$ is read as halting
-within cost $T \cdot (\abs{d} + 1)$ on every input $(n, d)$, well formed or not
-(\texttt{Sampler.TimeBoundAt}). The paper's bound is uniform over all inputs, and that
-reading is not available in the ambient model: a value is inspected in place one node at a
-time, but a loop carries the rest of a list to its next iteration only by copying it, so no
-program walks an unbounded list within a cost independent of its length, and a bound uniform
-over all inputs is met by no sampler or decider that checks the length of a string against
-an unbounded $s(n)$. The bound is therefore stated up to the cost of reading the input; on
-the well-formed inputs of the game, whose size is bounded by the answer-length bound, it is a
-polynomial bound in $T$, which is all the pipeline uses, and a machine that performs the
-paper's format checks first meets it.
+$n$ and a query (\texttt{Sampler.Query}), and $\TIME_\sampler(n) \le T$ \emph{at degree $k$}
+is read as halting within cost $T \cdot (\abs{d} + 1)^k$ on every input $(n, d)$, well formed
+or not (\texttt{Sampler.TimeBoundAt}).
+
+Two departures from the paper are forced here, and both were found by trying to prove the
+bound for a concrete machine rather than by inspection. First, the paper's bound is
+\emph{uniform} over all inputs, and that reading is not available in the ambient model: a
+value is inspected in place one node at a time, but a loop carries the rest of a list to its
+next iteration only by copying it, so no program walks an unbounded list within a cost
+independent of its length, and a uniform bound is met by no sampler or decider that checks
+the length of a string against an unbounded $s(n)$. The running time is therefore bounded by a
+polynomial in the size of the input. Second, the \emph{degree} $k$ of that polynomial has to
+be carried alongside the coefficient $T$, because every decider of the pipeline runs another
+program through the universal machine, whose overhead is a polynomial $Q$ of degree above one
+(\texttt{Cost.Universal.univPoly}): a simulated run costing $T (\abs{d}+1)^k$ becomes one
+costing about $Q(T (\abs{d}+1)^k)$, of degree $k \cdot \deg Q$. No fixed degree is closed
+under the composition the deciders perform; a bounded degree is. Collapsing the two into one
+parameter --- reading the bound as $T (\abs{d}+1)^T$ --- would also be closed, but then
+$\lambda$-boundedness would allow degree $n^\lambda$ in the input size, which is not a
+polynomial-time condition at all and would make Theorem~\ref{thm:compression} assume
+compression of verifiers its proof cannot compress.
 
 \begin{definition}[Decider]
 \label{def:decider}
@@ -574,9 +584,9 @@ A \emph{decider} is a $5$-input Turing machine $\decider$, whose input is interp
 as $(n, x, y, a, b)$ with $n$ an integer index and $x, y, a, b$ strings. It \emph{accepts}
 if it halts with output $1$, and \emph{rejects} otherwise (output $0$, or a timeout).
 $\TIME_\decider(n)$ denotes its maximal running time over all inputs with index $n$. In Lean,
-$\TIME_\decider(n) \le T$ is read as halting within cost $T \cdot (\abs{d} + 1)$ on every
-input $(n, d)$ (\texttt{Decider.TimeBoundAt}), for the reason given after
-Definition~\ref{def:sampler}.
+$\TIME_\decider(n) \le T$ at degree $k$ is read as halting within cost
+$T \cdot (\abs{d} + 1)^k$ on every input $(n, d)$ (\texttt{Decider.TimeBoundAt}), for the
+reasons given after Definition~\ref{def:sampler}.
 \end{definition}
 
 \begin{definition}[Normal form verifier]
@@ -618,7 +628,7 @@ check is kept in the form of its consequence for the game, that the decider acce
 questions of length $s(n)$ (\texttt{Verifier.accepts\_length}); where the paper uses
 $s(n) \le \TIME_\decider(n)$, the formalization requires $s(n) \le n^\lambda$ as a clause of
 $\lambda$-boundedness (Definition~\ref{def:lambda-bounded}): with the running times bounded
-up to the cost of reading the input (Definition~\ref{def:sampler}), neither
+by a polynomial in the size of the input (Definition~\ref{def:sampler}), neither
 $s(n) \le \TIME_\decider(n)$ nor $s(n) \le \TIME_\sampler(n)$ is a consequence any more.
 
 \begin{remark}[The synchronization invariant]
@@ -662,9 +672,11 @@ For $\lambda \in \N$, a normal form verifier $\verifier = (\sampler, \decider)$ 
 \emph{$\lambda$-bounded} if $\TIME_\sampler(n), \TIME_\decider(n) \leq n^\lambda$ for
 all $n \geq 2$, and $\abs{\verifier} \leq \lambda$. In Lean (\texttt{Verifier.IsBounded}) the
 two time bounds are read as in Definitions~\ref{def:sampler} and~\ref{def:decider}, halting
-within cost $n^\lambda (\abs{d} + 1)$ on every input $(n, d)$, and the clause
-$s(n) \le n^\lambda$ --- in the paper a consequence of $\TIME_\sampler(n) \le n^\lambda$,
-the sampler having to write $s(n)$ output cells --- is required directly.
+within cost $n^\lambda (\abs{d} + 1)^\lambda$ on every input $(n, d)$ --- so $\lambda$ bounds
+both the coefficient and the degree of the polynomial dependence on the input size, which is
+what makes the condition a polynomial-time one --- and the clause $s(n) \le n^\lambda$ --- in
+the paper a consequence of $\TIME_\sampler(n) \le n^\lambda$, the sampler having to write
+$s(n)$ output cells --- is required directly.
 \end{definition}
 
 \begin{definition}[The class $\MIPstar$]

@@ -63,15 +63,17 @@ point the input sits at index `19`. -/
 def wrapTail (univ dec : Prog) : Prog :=
   .let_ (.cons (.const (encode dec)) (.var 19)) (callVar 0 univ)
 
-/-- The prefix: compute the sampler's dimension at the input index, in unary, and take the two
-questions apart. -/
-def wrapPre (univ sampProg c : Prog) : Prog :=
+/-- The head: compute the sampler's dimension at the input index, in unary. -/
+def wrapHead (univ sampProg c : Prog) : Prog :=
   .elim 0 .nil
     (.let_ (.cons (.const (encode sampProg))
         (.cons (.var 0) (.const (encode CL.Sampler.Query.dimension))))
       (.let_ (callVar 0 univ)
-        (.let_ (callVar 0 toUnaryProg)
-          (.elim 4 .nil (.elim 1 .nil c)))))
+        (.let_ (callVar 0 toUnaryProg) c)))
+
+/-- The prefix: the head, then the two questions taken apart. -/
+def wrapPre (univ sampProg c : Prog) : Prog :=
+  wrapHead univ sampProg (.elim 4 .nil (.elim 1 .nil c))
 
 /-- The wrapper's program. Input: `encode (N, x, y, a, b)`. -/
 def wrapCore (univ sampProg dec : Prog) : Prog :=
@@ -88,14 +90,16 @@ theorem wrapTail_wellScoped {univ : Prog} (hU : univ.WellScoped 1) (dec : Prog) 
     (wrapTail univ dec).WellScoped 20 :=
   ⟨⟨trivial, by simp [WellScoped]⟩, callVar_wellScoped (by simp) hU⟩
 
-theorem wrapPre_wellScoped {univ : Prog} (hU : univ.WellScoped 1) (sampProg : Prog) {c : Prog}
-    (hc : c.WellScoped 10) : (wrapPre univ sampProg c).WellScoped 1 := by
+theorem wrapHead_wellScoped {univ : Prog} (hU : univ.WellScoped 1) (sampProg : Prog) {c : Prog}
+    (hc : c.WellScoped 6) : (wrapHead univ sampProg c).WellScoped 1 := by
   refine ⟨by simp, trivial, ?_⟩
   refine ⟨⟨trivial, ⟨by simp [WellScoped], trivial⟩⟩, ?_⟩
   refine ⟨callVar_wellScoped (by simp) hU, ?_⟩
-  refine ⟨callVar_wellScoped (by simp) toUnaryProg_wellScoped, ?_⟩
-  refine ⟨by simp, trivial, ?_⟩
-  exact ⟨by simp, trivial, hc⟩
+  exact ⟨callVar_wellScoped (by simp) toUnaryProg_wellScoped, hc⟩
+
+theorem wrapPre_wellScoped {univ : Prog} (hU : univ.WellScoped 1) (sampProg : Prog) {c : Prog}
+    (hc : c.WellScoped 10) : (wrapPre univ sampProg c).WellScoped 1 :=
+  wrapHead_wellScoped hU sampProg ⟨by simp, trivial, ⟨by simp, trivial, hc⟩⟩
 
 theorem wrapCore_wellScoped {univ : Prog} (hU : univ.WellScoped 1) (sampProg dec : Prog) :
     (wrapCore univ sampProg dec).WellScoped 1 :=

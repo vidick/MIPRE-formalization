@@ -24,8 +24,8 @@ The reading of the paper's statement in the vocabulary of `MIPRE.Verifier`:
   computable from `λ` in time polynomial in the length of `λ` (the paper's `polylog(λ)`).
 * On every input, well-formed or not, the output is a normal form verifier: `output` packages
   the compressed sampler and decider as a `Verifier 7`. Its sampler and decider run within
-  `bound (n + λ)` at index `n` (up to the cost of reading the input, `TimeBoundAt`), the
-  paper's `poly(n, λ)`; the compressed sampler has dimension at most `bound (n + λ)`, the
+  `bound (n + λ)` at index `n`, at the degree `deg` in the size of the input that
+  `TimeBoundAt` carries, the paper's `poly(n, λ)`; the compressed sampler has dimension at most `bound (n + λ)`, the
   paper's `s(n) ≤ TIME_S(n)`; and the compressed decider accepts no answer longer than
   `bound (n + λ)` (`output_rejects_long`), the property of the paper's repeated decider that
   its amended proof of `lem:dhalt-values` relies on — it accepts only after fully parsing the
@@ -87,11 +87,14 @@ structure GapCompression where
   dimension of the compressed sampler, and the length of the answers the compressed decider
   can accept. -/
   bound : Polynomial ℕ
-  sampler_time : ∀ lam n : ℕ, (sampler lam).TimeBoundAt n (bound.eval (n + lam))
+  /-- The degree, in the size of the input, of the running times of the output: a universal
+  constant of the construction (see the module docstring of `MIPRE.Foundations.Verifier`). -/
+  deg : ℕ
+  sampler_time : ∀ lam n : ℕ, (sampler lam).TimeBoundAt n (bound.eval (n + lam)) deg
   /-- `s(n) ≤ poly(n, λ)` for the compressed sampler (in the paper, from its running time). -/
   sampler_dim : ∀ lam n : ℕ, (sampler lam).dim n ≤ bound.eval (n + lam)
   decider_time : ∀ (V : Prog × Prog) (lam n : ℕ),
-    (output V lam).decider.TimeBoundAt n (bound.eval (n + lam))
+    (output V lam).decider.TimeBoundAt n (bound.eval (n + lam)) deg
   /-- The compressed decider accepts no answer longer than its time bound: the paper's
   repeated decider accepts only after fully parsing the answers. -/
   output_rejects_long : ∀ (V : Prog × Prog) (lam n : ℕ) (x y a b : BitStr),
