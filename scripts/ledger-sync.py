@@ -82,6 +82,9 @@ def read_ledger(path):
                 "state": "created",
                 "challenges": 0,
                 "amended": 0,
+                "archived": False,
+                "taint": None,
+                "deps": sorted(n.get("dependencies") or []),
                 "statement_sha256": hashlib.sha256(
                     n.get("statement", "").encode("utf-8")).hexdigest(),
             }
@@ -95,6 +98,16 @@ def read_ledger(path):
             nodes[nid]["state"] = transitions[t]
         elif t == "challenge_raised":
             nodes[nid]["challenges"] += 1
+        elif t == "node_archived":
+            # A superseded node. It keeps its history but is no longer an obligation,
+            # so it must leave the coverage denominator -- otherwise a re-grain upstream
+            # silently pushes a stage below 100%.
+            nodes[nid]["archived"] = True
+        elif t == "taint_recomputed":
+            nodes[nid]["taint"] = e.get("new_taint")
+        elif t == "node_deps_amended":
+            # 0.1.7+mipre.deps1 appends edge corrections rather than rewriting the node.
+            nodes[nid]["deps"] = sorted(e.get("new_dependencies") or [])
         elif t == "node_amended":
             nodes[nid]["amended"] += 1
             st = e.get("new_statement")
@@ -128,6 +141,45 @@ def read_blueprint():
     return cited
 
 
+def import_reach(nodes):
+    """{node_id: [admitted nodes its correctness rests on]}, over live nodes.
+
+    The ledger's own ``taint`` field is computed from tree ancestry alone --- see
+    ``reports/vibefeld-issue-dependency-edges.md`` in the companion repository, which
+    records that 0.1.7 does not propagate along reference edges. So a node that consumes
+    an admitted import through a declared dependency displays as ``clean``. This walks
+    both relations, children *and* declared dependencies, which is what "my correctness
+    rests on an admission" actually means, and is therefore the figure to quote when the
+    blueprint says what it assumes beyond Mathlib.
+    """
+    live = {k: v for k, v in nodes.items() if not v.get("archived")}
+    edges = {}
+    for k, v in live.items():
+        e = set(d for d in v.get("deps", []) if d in live)
+        if "." in k:
+            parent = k.rsplit(".", 1)[0]
+            if parent in live:
+                edges.setdefault(parent, set()).add(k)   # a parent rests on its children
+        edges.setdefault(k, set()).update(e)
+    memo = {}
+
+    def walk(k, stack):
+        if k in memo:
+            return memo[k]
+        if k in stack:
+            return set()
+        if live[k]["state"] == "admitted":
+            memo[k] = {k}
+            return memo[k]
+        out = set()
+        for c in edges.get(k, ()):
+            out |= walk(c, stack | {k})
+        memo[k] = out
+        return out
+
+    return dict((k, sorted(walk(k, set()))) for k in live)
+
+
 def load_snapshot():
     if not os.path.exists(SNAPSHOT):
         sys.exit("no snapshot at %s; run with --ledger PATH to create one" % SNAPSHOT)
@@ -135,14 +187,23 @@ def load_snapshot():
 
 
 def check(snap, cited):
-    nodes = snap["nodes"]
+    all_nodes = snap["nodes"]
+    nodes = dict((k, v) for k, v in all_nodes.items() if not v.get("archived"))
     problems = 0
 
-    unknown = sorted(n for n in cited if n not in nodes)
+    unknown = sorted(n for n in cited if n not in all_nodes)
     if unknown:
         problems += len(unknown)
         print("PROBLEM: %d annotation(s) name a node the snapshot does not have:" % len(unknown))
         for n in unknown:
+            print("   %-12s cited by %s" % (n, ", ".join(cited[n])))
+
+    archived = sorted(n for n in cited if n in all_nodes and all_nodes[n].get("archived"))
+    if archived:
+        problems += len(archived)
+        print("PROBLEM: %d annotation(s) name a node the ledger has ARCHIVED (superseded "
+              "upstream; re-home the annotation on its replacement):" % len(archived))
+        for n in archived:
             print("   %-12s cited by %s" % (n, ", ".join(cited[n])))
 
     admitted = sorted(n for n in cited if n in nodes and nodes[n]["state"] == "admitted")
@@ -152,9 +213,12 @@ def check(snap, cited):
         for n in admitted:
             print("   %-12s cited by %s" % (n, ", ".join(cited[n])))
 
-    print("\ncoverage by stage, counting only nodes an annotation names. Every node of the")
-    print("snapshot is annotated as of 2026-09-13, so a stage below 100% now means either a")
-    print("new node upstream or an annotation lost in an edit -- both worth a look. See")
+    print("\ncoverage by stage, counting only nodes an annotation names, archived nodes excluded.")
+    print("The blueprint accounts for all 123 nodes of the 2026-09-13 campaign state. The rounds")
+    print("of 2026-09-13/14 then refined that to 316 by decomposing statements already accounted")
+    print("for -- so a stage below 100% here is finer grain upstream, not a lost annotation, with")
+    print("one exception: stage 1.8 is new material (the downstream corollaries), and 0/27 there")
+    print("is a real gap. A stage that *falls* between runs is the case to look at. See")
     print("planning/ledger-informed-plan.md for what each stage is accounted for by.")
     by_stage = {}
     for nid in nodes:
@@ -193,11 +257,33 @@ def check(snap, cited):
         solo = sum(1 for o, ns in sites.items() if len(ns) == 1)
         print("   for contrast, %d site(s) name exactly one node." % solo)
 
+    # What does the blueprint actually rest on? The admitted nodes it reaches, following
+    # declared dependencies as well as decomposition. See import_reach's docstring for why
+    # this is not the ledger's own taint figure.
+    reach = import_reach(all_nodes)
+    resting = {}
+    for n in cited:
+        for adm in reach.get(n, ()):
+            resting.setdefault(adm, set()).update(cited[n])
+    if resting:
+        print("\nimport reach. Statements of this blueprint reach %d admitted node(s). Reach"
+              % len(resting))
+        print("follows the decomposition tree, and a node's children include its *corollaries*")
+        print("as well as its premises -- stage 1.8 hangs under the root that way -- so read a")
+        print("reach through a corollary subtree as 'the chapter needs it', not 'the theorem")
+        print("assumes it'.")
+        for adm in sorted(resting):
+            who = sorted(resting[adm])
+            print("   %-12s from %d statement(s): %s%s"
+                  % (adm, len(who), ", ".join(who[:4]), " ..." if len(who) > 4 else ""))
+        clean = sum(1 for n in cited if n in reach and not reach[n])
+        print("   %d of %d cited nodes reach no admission at all." % (clean, len(cited)))
+
     total = len(nodes)
     accounted = sum(1 for n in cited if n in nodes)
-    print("\nsnapshot: %s at %s, %d events, %d nodes"
+    print("\nsnapshot: %s at %s, %d events, %d nodes (%d archived, excluded)"
           % (snap.get("source", "?"), snap.get("head") or "(unknown)",
-             snap.get("events", 0), total))
+             snap.get("events", 0), total, len(all_nodes) - total))
     print("explicitly annotated: %d of %d nodes" % (accounted, total))
     print("PROBLEMS: %d" % problems)
     return problems
@@ -222,7 +308,8 @@ def refresh(path, cited):
             was, now = on.get(k, {}), nn.get(k, {})
             detail = ""
             if what == "changed":
-                diffs = [f for f in ("state", "challenges", "amended", "statement_sha256")
+                diffs = [f for f in ("state", "challenges", "amended", "archived", "taint", "deps",
+                                  "statement_sha256")
                          if was.get(f) != now.get(f)]
                 detail = " (" + ", ".join(diffs) + ")"
             print("   %-12s %-8s%s  cited by %s" % (k, what, detail, ", ".join(cited[k])))
