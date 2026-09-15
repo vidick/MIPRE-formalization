@@ -148,8 +148,13 @@ Two things to know about reading it:
   check mechanically that every `\ref`, `\uses`, `\cite` target exists and every
   `\lean{}` name resolves — there is no plastex or pdflatex in a session.
   `scripts/lean-coverage.py` is that check — labels, refs, uses, cites, environment
-  nesting, `\lean{}` resolution — and it also guards against a reorganization
-  dropping Lean code; `scripts/ledger-sync.py` checks the ledger correspondence. CI
+  nesting, `\lean{}` resolution, and every command used being defined — and it also
+  guards against a reorganization dropping Lean code. That last check earns its keep:
+  an undefined control sequence does **not** stop pdflatex under nonstopmode, so the
+  PDF is written, the exit code is 1 only at the very end, latexmk aborts, and the CI
+  log has no `!` line anywhere near its tail. `\downsize` went undefined that way and
+  `main`'s blueprint was red for about thirty hours across a dozen merges. Commands
+  that LaTeX or a package provides live in `scripts/latex-allowed-commands.txt`; `scripts/ledger-sync.py` checks the ledger correspondence. CI
   runs both before the Lean build. Tags and `\uses` lists wrap across lines here, so
   never check them with a per-line grep: that silently skips the continuations.
 - **`\leanok` is two marks, not one**: inside the environment it claims the
