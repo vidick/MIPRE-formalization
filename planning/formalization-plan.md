@@ -283,7 +283,8 @@ bookkeeping, `Foundations/GameTransport.lean` (the quantum value under relabelin
 alphabets, monotonicity in the decision predicate, and invariance under always-rejected
 extra answers — zero extension one way, merging of outcomes the other, which needs the
 orthogonality of the outcomes of a projective measurement; the synchronous counterparts
-for PCC strategies and the constant strategy) and `Foundations/VerifierValue.lean` (for the
+for PCC strategies and the constant strategy, joined in part 6 by the synchronous value
+under relabeling) and `Foundations/VerifierValue.lean` (for the
 games of a verifier: same sampler and same acceptance at an index give the same `val*` and
 the same perfect PCC strategies; answer padding raises `val*`, preserves perfect PCC
 strategies, and is neutral when the decider rejects long answers; a perfect PCC strategy
@@ -338,9 +339,9 @@ whose fields are exactly the four open obligations, marked O1–O4 in the file a
 `planning/h4-assembly.md`. It is sorry-free, so `#print axioms` cannot hide any of them.
 Two things are deliberately outside it: the conclusion is in `val*`, since carrying a
 perfect PCC strategy to the tabulation needs a synchronous counterpart of
-`quantumValue_eq_of_equiv` that does not exist yet, and reaching
-`HaltingGameValue.halting_reduces_to_gameValue` additionally needs `MIPRE.syncValue` related
-to `HaltingGameValue.gameValue`, those being parallel developments. Soundness needs neither.
+`quantumValue_eq_of_equiv`, and reaching `HaltingGameValue.halting_reduces_to_gameValue`
+additionally needs `MIPRE.syncValue` related to `HaltingGameValue.gameValue`, those being
+parallel developments. Soundness needs neither.
 One tool was added on the way: `Data.primrec_size`, because the level at which the recursion
 runs is `2 ^ (K + 1 + esize e)`.
 
@@ -367,13 +368,40 @@ derivation of cost `t` is a machine run of at most `3 t` steps and final configu
 fixed by the step function; and `Halting/Tabulate.lean`, acceptance by an `n`-bounded verifier
 as one budgeted run, which is what fills in the acceptance table.
 
+Part 6 done 2026-09-15: those two bridges, which are not part of the assembly and were the
+only things standing between `halting_reduction` and `thm:halting` as stated.
+`SyncStrategy.relabel` (`Foundations/GameTransport.lean`) plays a synchronous strategy through
+a relabeling of the questions and of the answers, with `value_relabel` and `isPCC_relabel`
+keeping the value and the commutation condition, hence `syncValue_eq_of_equiv`, the
+counterpart of `quantumValue_eq_of_equiv` by the same two-sided `iSup` argument.
+`GameData.gameValue_eq_syncValue` (`Foundations/GameDescription.lean`) identifies
+`HaltingGameValue.gameValue g.toGame` with `MIPRE.syncValue g.syncGame`: the two structures
+of synchronous strategy repackage into each other with the same dimension and the same
+operators (`toSyncStrategy`, `ofSyncStrategy`), and `MIPRE.SyncStrategy.value_eq` is already
+`HaltingGameValue.strategyValue` written out, so each strategy value is preserved by
+definitional unfolding and the two suprema coincide. Both directions went through, so the
+result is an equality and not just the two inequalities the reduction needs. The consumer is
+`Foundations/SyncTransport.lean`, written against `V.HasPerfectPCC` as the synchronous
+analogue of `quantumValue_toGame_eq_valStar`: a description matching `V_n` along the two
+indexings inherits its value-`1` PCC strategy (`exists_perfectPCC_syncGame`), hence
+`syncValue_syncGame_eq_one`, hence `gameValue_toGame_eq_one`; and in the other direction
+`gameValue_toGame_le_of_valStar_le` carries `val*(V_n) ≤ c` to the description, so both
+halves of `thm:halting` are now available in the vocabulary of
+`halting_reduces_to_gameValue`. One seam is left, and it belongs to O2 rather than to the
+bridges: `Obligations.tab_value` records the tabulation's agreement with `V_n` as an equality
+of `val*` — under the `IsBounded n` hypothesis this branch's sibling added for a different
+reason — and the synchronous half cannot be recovered from it, `synval ≤ val*` pointing the
+wrong way; both consumers want instead the matching data along `answerEquiv` and
+`questionEquiv`, which is what O2 constructs anyway. See `planning/h4-assembly.md` §3.
+
 Remaining, in order, and identified with the fields of `MIPRE.Halting.Obligations`:
 (O2, the rest)
 the *computation* of the tabulation — running the sampler on every point of `𝔽₂^{s(n)}` to
 count the question weights and the decider under its budget to fill in the acceptance table,
 then `Computable` for the whole map; (O3) the semidecider, from the two Σ₁ disjuncts of
 `not_inClassB_iff` once O2 exists; (O4, part 4) the compressor's own decider and its time
-accounting. Then `thm:main`, which needs the two synchronous bridges above.
+accounting. Then `thm:main`, whose two synchronous bridges are now in place (part 6), so that
+what it waits on is O2–O4 and the tabulation's own `Computable` witness.
 
 ## What to start with
 

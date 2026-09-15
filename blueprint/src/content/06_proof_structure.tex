@@ -1080,6 +1080,14 @@ lower bound has to be tracked anywhere in this chapter.
   MIPRE.Verifier.ofSamplerDecider_accepts, MIPRE.Decider.wrap,
   MIPRE.Verifier.answerEquiv, MIPRE.Verifier.questionEquiv,
   MIPRE.Verifier.quantumValue_toGame_eq_valStar, MIPRE.Verifier.not_inClassB_iff,
+  MIPRE.SyncStrategy.relabel, MIPRE.SyncStrategy.value_relabel,
+  MIPRE.SyncStrategy.isPCC_relabel, MIPRE.syncValue_eq_of_equiv,
+  MIPRE.Verifier.exists_perfectPCC_syncGame, MIPRE.Verifier.syncValue_syncGame_eq_one,
+  MIPRE.Verifier.gameValue_toGame_eq_one,
+  MIPRE.Verifier.gameValue_toGame_le_of_valStar_le,
+  HaltingGameValue.GameData.toSyncStrategy, HaltingGameValue.GameData.ofSyncStrategy,
+  HaltingGameValue.GameData.gameValue_eq_syncValue,
+  HaltingGameValue.GameData.gameValue_le_quantumValue,
   MIPRE.Halting.descLam, MIPRE.Halting.descDec, MIPRE.Halting.Vof,
   MIPRE.Halting.classA, MIPRE.Halting.classB, MIPRE.Halting.Obligations,
   MIPRE.Cost.Prog.HasPolyCost, MIPRE.Verifier.IsBounded.mono,
@@ -1173,7 +1181,9 @@ of the recursion.
   alphabet enumerated by \texttt{Verifier.answerEquiv} and the questions by
   \texttt{questionEquiv}, and a description matching $\verifier_n$ along those indexings has
   the same value (\texttt{quantumValue\_toGame\_eq\_valStar}), which is what carries the
-  verdict of a procedure that runs on game descriptions back to the verifier.
+  verdict of a procedure that runs on game descriptions back to the verifier. The same
+  transport in $\synval$ is \texttt{Verifier.syncValue\_syncGame\_eq\_one}, which is what
+  item 1 of Theorem~\ref{thm:halting} needs; see the end of this remark.
 \item \emph{The choice of $\lambda$.} Absorbed into item 1.
 \end{enumerate}
 Of this dictionary the per-level lemma, the Lean statement of
@@ -1181,7 +1191,15 @@ Theorem~\ref{thm:compression} as a hypothesis (\texttt{MIPRE.GapCompression}) an
 value bookkeeping are in Lean: the quantum value is invariant under relabelings of the
 alphabets (\texttt{quantumValue\_eq\_of\_equiv}, the tool for the tabulation) and under
 always-rejected extra answers (\texttt{quantumValue\_extendAnswers}, by zero extension one
-way and merging of outcomes the other), and for the games of a verifier the deciders'
+way and merging of outcomes the other). The synchronous value transports the same way
+(\texttt{syncValue\_eq\_of\_equiv}, from \texttt{SyncStrategy.relabel}, which preserves both
+the value and the commutation condition --- \texttt{value\_relabel},
+\texttt{isPCC\_relabel}), so a value-$1$ PCC strategy of $\verifier_n$ reaches the tabulation
+(\texttt{Verifier.exists\_perfectPCC\_syncGame}); and the two vocabularies for the
+synchronous value are identified, \texttt{MIPRE.syncValue} of a description read in the
+foundations being \texttt{HaltingGameValue.gameValue} of the same description
+(\texttt{GameData.gameValue\_eq\_syncValue}, by repackaging strategies in both directions,
+\texttt{toSyncStrategy} and \texttt{ofSyncStrategy}). For the games of a verifier the deciders'
 acceptance at an index determines $\valstar$ and the perfect PCC strategies
 (\texttt{Verifier.valStar\_congr}, \texttt{hasPerfectPCC\_congr}), which survive answer
 padding and give $\valstar = 1$ (\texttt{valStar\_eq\_one\_of\_hasPerfectPCC}). The frozen
@@ -1386,14 +1404,30 @@ Remark~\ref{rem:compression-abstract} leaves owed: the two distinguished strings
 tabulation with its value agreement, the semidecider, and the compressor. So what is open is
 a structure to be inhabited rather than an argument to be found, and
 \texttt{\#print axioms} cannot hide any of it.
-Two things are deliberately not in that statement, and neither belongs to the instantiation.
-It concludes in $\valstar$ only: item 1's $\synval = 1$ needs a \emph{synchronous} strategy to
-transport along the relabelings of the tabulation, for which there is no counterpart of
-\texttt{quantumValue\_eq\_of\_equiv} yet, and the passage to
-\texttt{HaltingGameValue.halting\_reduces\_to\_gameValue} additionally needs
-\texttt{MIPRE.syncValue} related to \texttt{HaltingGameValue.gameValue}, those being parallel
-developments (Section~\ref{ch:main-theorem}). Soundness needs neither, by
-Lemma~\ref{lem:sync-le-valstar}.
+That assembly concludes in $\valstar$ only, and item 1 claims more: the witness is a
+\emph{PCC} strategy, so $\synval = \valstar = 1$. The two steps that carry it there are now in
+Lean, neither of them part of the instantiation. First, a synchronous strategy transports along
+a relabeling of the alphabets (\texttt{MIPRE.syncValue\_eq\_of\_equiv}, from
+\texttt{SyncStrategy.relabel}, which preserves the value and the commutation condition), so a
+value-$1$ PCC strategy of $\verifier_n$ gives one for a description tabulating it:
+\texttt{Verifier.exists\_perfectPCC\_syncGame}, hence
+\texttt{Verifier.syncValue\_syncGame\_eq\_one}. Second, \texttt{MIPRE.syncValue} and
+\texttt{HaltingGameValue.gameValue} --- parallel developments with parallel notions of
+synchronous strategy --- are the same number on the same description
+(\texttt{HaltingGameValue.GameData.gameValue\_eq\_syncValue}), so the conclusion is available
+in the vocabulary of \texttt{halting\_reduces\_to\_gameValue}
+(Section~\ref{ch:main-theorem}): \texttt{Verifier.gameValue\_toGame\_eq\_one}. Soundness needs
+neither step, only $\synval \leq \valstar$ (Lemma~\ref{lem:sync-le-valstar}), which is
+\texttt{Verifier.gameValue\_toGame\_le\_of\_valStar\_le} in the same vocabulary. One seam is
+left, and it is in the assembly rather than in the bridges: both consumers take the tabulation's
+agreement with $\verifier_n$ in the form the bridges need --- the equivalences of the two
+alphabets and the matching of $\mu$ and $D$ along them --- whereas the field
+\texttt{Obligations.tab\_value} records, of an $n$-bounded verifier, only the resulting
+equality of $\valstar$, from which the synchronous half cannot be recovered ($\synval \leq
+\valstar$ pointing the wrong way). The
+matching data is what O2 will construct anyway, by \texttt{answerEquiv} and
+\texttt{questionEquiv}; stating the field in that form, or adding the synchronous clause beside
+it, belongs to O2.
 
 \begin{remark}[Identical measurement operators]
 \label{rem:identical-operators}
