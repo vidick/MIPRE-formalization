@@ -31,3 +31,12 @@ info: 'MIPRE.Repetition.quantumValue_repeat_le' depends on axioms: [propext, Cla
 -/
 #guard_msgs in
 #print axioms MIPRE.Repetition.quantumValue_repeat_le
+
+-- Blueprint `lem:povm-value-eq` carries a proof-level `\leanok`, so the bridge it names is
+-- guarded here beside the three theorems of the vendored development, where the imports are
+-- already paid for.
+/--
+info: 'MIPRE.Repetition.quantumValue_eq_entangledValue' depends on axioms: [propext, Classical.choice, Quot.sound]
+-/
+#guard_msgs in
+#print axioms MIPRE.Repetition.quantumValue_eq_entangledValue

@@ -411,3 +411,91 @@ what \texttt{Computable} is stated against, while the two reduction lemmas are p
 about programs of the cost model of Section~\ref{sec:rr-computability}, whose
 polynomial-time predicate the fixed-point construction needs. Separating the two keeps the
 cost model out of the main statement entirely.
+
+\subsection{Deciding a cost budget, and semideciders on encoded values}
+\label{sec:rr-cost-budget}
+
+Lemma~\ref{lem:compressible-criterion} consumes semidecidability as an \emph{equivalence}:
+its program $S$ halts on exactly the complement of $B$. When the criterion is instantiated
+by the halting reduction that complement is a disjunction of two searches
+(Remark~\ref{rem:compression-abstract}, item 3), one of them for an input on which a time
+bound of Definition~\ref{def:lambda-bounded} fails. Recognizing such an input exactly ---
+and not merely recognizing a program that runs for a long time --- is what the first lemma
+here provides; the second moves the resulting semidecider off bit strings, the criterion's
+$B$ being indexed by a level as well as a string.
+
+\begin{lemma}[Halting within a cost budget is decidable]
+\label{lem:cost-budget-decidable}
+\uses{def:decider}
+\lean{MIPRE.Cost.Machine.stepCostD, MIPRE.Cost.Machine.stepCostD_toData,
+  MIPRE.Cost.Machine.costStep, MIPRE.Cost.Machine.costStep_iterate,
+  MIPRE.Cost.Machine.evalForCostD, MIPRE.Cost.Machine.evalForCostD_eq_some,
+  MIPRE.Cost.Machine.haltsWithin_of_evalForCostD,
+  MIPRE.Cost.Machine.haltsWithin_iff_evalForCostD, MIPRE.Cost.Machine.haltsWithinB,
+  MIPRE.Cost.Machine.primrec_haltsWithinB, MIPRE.Cost.decidableHaltsWithin}
+\leanok
+Whether a program of the cost model halts on a given input within a given cost is a
+primitive recursive predicate of the program, the input and the cost; in particular it is
+decidable.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Carry the cost along the run. The cost the evaluation machine charges at a step is a
+function of the configuration alone, so it is a function of the encoded configuration too
+(\texttt{Machine.stepCostD}, dispatching on the same seven program tags and four frame tags
+as the step function itself, and primitive recursive for the same reason); iterating the
+step function paired with the running total, from the initial configuration and total $0$,
+therefore computes the pair (configuration, accumulated cost) at every step
+(\texttt{costStep\_iterate}). A derivation of cost $t$ is a machine run of at most $3t$
+steps, so $3k + 1$ iterations suffice to reach the end of every run of cost at most $k$;
+and once the end is reached nothing more is charged, a final configuration being fixed by
+the step function and free. So the test is: iterate $3k + 1$ times, and report success if
+the configuration reached is final \emph{and} the total is at most $k$
+(\texttt{evalForCostD}). Completeness is the step count above; soundness is that the total
+at a final configuration is the cost of the derivation that reached it, which is the
+backward direction of the machine--derivation correspondence together with the freeness of
+the steps after the end.
+\end{proof}
+
+\paragraph{Comments.} A step budget does not decide a cost budget, which is why this is not
+a corollary of \texttt{Machine.runForD} (Remark~\ref{rem:compression-abstract}, item 3): a
+step is not a unit of cost, reading a variable or a constant being charged the size of the
+value, so a run of $3k$ steps can cost far more than $k$ and finding a value after $3k$
+steps says only that the program halted. The clocked universal machine of
+Lemma~\ref{lem:universal-tm} decides the same question as a \emph{program}; what is added
+here is the Lean-level decision procedure, which is what a computability statement about a
+family of verifiers can be built from.
+
+\effortEasy
+
+\begin{lemma}[Semideciders on encoded values]
+\label{lem:semidecide-encoded}
+\uses{def:re}
+\lean{MIPRE.Cost.Data.primrec_decode_prod_nat, MIPRE.Cost.exists_semidecider_of_decode,
+  MIPRE.Cost.exists_semidecider_prod_nat}
+\leanok
+Let $\alpha$ be a type encoded as data with a primitive recursive decoding. Then every
+recursively enumerable predicate on $\alpha$ is the halting set of a closed program of the
+cost model on the encodings of its arguments. In particular this holds for pairs
+$(x, n)$ of a bit string and a number.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Prefix the bit-string semidecider of Lemma~\ref{lem:value-lower-approx} with the program
+that writes the postorder serialization of its input (\texttt{Prog.serProg},
+Remark~\ref{rem:compression-abstract}). Serialization and the stack machine
+\texttt{Data.parse} invert each other, so the predicate ``decode the parse of this bit
+string, and test it'' holds of the serialization of $\mathrm{encode}(a)$ exactly when the
+original predicate holds of $a$; and it is recursively enumerable, being the original
+predicate precomposed with a computable function.
+\end{proof}
+
+\paragraph{Comments.} The detour through a serialization is what keeps the translation into
+\texttt{ToPartrec} codes untouched. That translation is delicate for one reason --- a
+\texttt{ToPartrec} code cannot see trailing zeros of its input list, while the bit
+\texttt{false} encodes as the datum $\mathtt{nil}$ --- and doing it again for each new type
+of argument would repeat the delicate step; serializing first does it once.
+
+\effortEasy

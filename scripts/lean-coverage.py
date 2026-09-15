@@ -44,7 +44,8 @@ VENDORED = (
     "MIPRE/Background/Orthonormalization/Orthogonalization/",
 )
 
-DECL_KINDS = ("theorem", "lemma", "def", "abbrev", "structure", "inductive", "class")
+DECL_KINDS = ("theorem", "lemma", "def", "abbrev", "structure", "inductive", "class",
+               "instance")
 DECL_RE = re.compile(
     r"^(?:@\[[^\]]*\]\s*)?"
     r"(?:private\s+|protected\s+|noncomputable\s+|partial\s+|unsafe\s+|scoped\s+)*"
@@ -201,11 +202,90 @@ def undefined_macros():
     return sorted(used - defined - allowed), len(used), len(defined)
 
 
+AXIOM_GUARDS = [ROOT / "MIPRE" / "Axioms.lean",
+                ROOT / "MIPRE" / "Background" / "LIDT" / "Axioms.lean",
+                ROOT / "MIPRE" / "Background" / "Repetition" / "Axioms.lean"]
+
+PROOF_ENV_RE = re.compile(r"\\begin\{proof\}(.*?)\\end\{proof\}", re.S)
+PRINT_AX_RE = re.compile(r"^#print axioms\s+([A-Za-z0-9_.']+)", re.M)
+NAME_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_.']*")
+
+
+def proof_level_leanok():
+    """Declarations whose *proof* the blueprint marks \\leanok, by blueprint label."""
+    out = {}
+    for f in sorted(CONTENT.glob("*.tex")):
+        text = strip_comments(f.read_text())
+        for m in PROOF_ENV_RE.finditer(text):
+            if "\\leanok" not in m.group(1):
+                continue
+            before = text[: m.start()]
+            tags = LEAN_RE.findall(before)
+            if not tags:
+                continue
+            labs = LABEL_RE.findall(before)
+            label = labs[-1] if labs else f"{f.name}:?"
+            names = {n.strip() for n in tags[-1].split(",") if n.strip()}
+            out.setdefault(label, set()).update(names)
+    return out
+
+
+def guarded_names():
+    """Declarations asserted sorry-free by an axiom-guard file."""
+    out = set()
+    for f in AXIOM_GUARDS:
+        if not f.exists():
+            continue
+        lines = f.read_text().splitlines()
+        i = 0
+        while i < len(lines):
+            # Only a real invocation starts the line; the elaborator's own definition and its
+            # doc-comment mention `#guard_sorry_free` indented or inside backticks.
+            if lines[i].startswith("#guard_sorry_free"):
+                chunk = [lines[i][len("#guard_sorry_free"):]]
+                i += 1
+                while i < len(lines) and lines[i][:1].isspace() and lines[i].strip():
+                    chunk.append(lines[i])
+                    i += 1
+                out.update(NAME_RE.findall(" ".join(chunk)))
+            else:
+                i += 1
+        out.update(PRINT_AX_RE.findall("\n".join(lines)))
+    return out
+
+
+def leanok_guard_problems():
+    """The blueprint's proof-level claims and the axiom guards must name the same set.
+
+    `\\leanok` inside a proof asserts the proof closes. Nothing checked that until now; the
+    one audit behind it (`planning/lean-coverage.md`) was run by hand against a tree of 80
+    modules and the tree has grown well past it. A claim without a guard is an unchecked
+    assertion about the project's own mathematics, and a guard without a claim is a leftover
+    that will one day be read as one.
+    """
+    claimed = proof_level_leanok()
+    flat = {n for v in claimed.values() for n in v}
+    guarded = guarded_names()
+    problems = []
+    for label in sorted(claimed):
+        for n in sorted(claimed[label] - guarded):
+            problems.append(f"{label}: proof marked \\leanok but {n} is not asserted "
+                            f"sorry-free in any axiom-guard file")
+    for n in sorted(guarded - flat):
+        problems.append(f"{n} is axiom-guarded but no blueprint proof claims it; "
+                        f"drop the guard or restore the \\leanok")
+    return problems, len(flat), len(guarded)
+
+
 def build():
     cited, tags = blueprint_names()
     index, per_module = lean_declarations()
     unresolved = sorted(n for n in cited if n not in index)
     xref_problems, xref_counts = cross_references()
+    guard_problems, n_claimed, n_guarded = leanok_guard_problems()
+    xref_problems.extend(guard_problems)
+    xref_counts["leanok_claimed"] = n_claimed
+    xref_counts["leanok_guarded"] = n_guarded
     undef, used_cmds, defined_cmds = undefined_macros()
     xref_counts["commands_used"] = used_cmds
     xref_counts["commands_defined"] = defined_cmds
@@ -239,6 +319,8 @@ def report(state):
     print(f"labels {xc['labels']}   refs+uses {xc['refs']}   cites {xc['cites']}   "
           f"bibitems {xc['bibitems']}")
     print(f"commands used {xc['commands_used']}   defined in macros/ {xc['commands_defined']}")
+    print(f"proof-level \\leanok declarations {xc['leanok_claimed']}   "
+          f"axiom-guarded {xc['leanok_guarded']}")
     if state["xref_problems"]:
         print("\nCROSS-REFERENCE PROBLEMS:")
         for q in state["xref_problems"]:

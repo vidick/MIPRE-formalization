@@ -1178,12 +1178,21 @@ of the recursion.
 \item \emph{Junk inputs.} Nothing is demanded of the compressor off strings in $A_{2n+1}
   \cup B_{2n+1}$, every string names a verifier, and $\lambda$-boundedness is decided
   nowhere. What the lemma does demand is that the complement of $B_n$ be semidecidable:
-  ``not $n$-bounded'' is witnessed by a run exceeding its budget --- a search over inputs, so
-  $\Sigma_1$ --- and ``$\valstar > \frac12$ at index $n$'' is the $\valstar$ half of
+  ``not $n$-bounded'' is witnessed by an index and an input on which a time bound fails --- a
+  search, so $\Sigma_1$, and this is Lemma~\ref{lem:bounded-violation-re} --- and
+  ``$\valstar > \frac12$ at index $n$'' is the $\valstar$ half of
   Lemma~\ref{lem:value-lower-approx} applied to the tabulated game, which is computable from
   an $n$-bounded verifier. Neither disjunct decides $n$-boundedness, which is $\Pi_1$; the
   point of taking the disjunction is that it does not have to
-  (\texttt{Verifier.not\_inClassB\_iff}). The clause ``computable from an $n$-bounded
+  (\texttt{Verifier.not\_inClassB\_iff}), and Lemma~\ref{lem:halting-semidecider} is the
+  two merged. Two things about the search for a violated bound. The budget it tests against is a
+  \emph{cost} and not a number of machine steps, and a step is not a unit of cost, so
+  \texttt{Machine.runForD} below does not decide it and Lemma~\ref{lem:cost-budget-decidable}
+  is what does. And the index at which a bound fails ranges over all of $\N$, while the bound
+  reads its input with the index encoded in binary; carrying the index as a \emph{datum}, read
+  back by \texttt{Data.natOf}, is what makes the encoding primitive recursive in the search
+  witness and so keeps the enumeration from needing the primitive recursiveness of
+  $n \mapsto \mathrm{encode}(n)$, which the development does not yet have. The clause ``computable from an $n$-bounded
   verifier'' is load-bearing and not a convenience: acceptance by a decider is $\Sigma_1$, so a
   tabulation correct at \emph{every} string would decide the halting problem --- take two
   strings whose deciders differ only in how long they run before accepting. Boundedness is what
@@ -1321,6 +1330,90 @@ of~\cite{JNVWY20}
 (Remark~\ref{rem:entanglement-form}) instantiates Lemma~\ref{lem:recursive-compression}
 instead, with $f = \Ent(\cdot, \frac12)$; it is not used by the main theorem.
 \end{remark}
+
+\begin{lemma}[A violated time bound is enumerable]
+\label{lem:bounded-violation-re}
+\uses{def:lambda-bounded,def:re,lem:cost-budget-decidable}
+\lean{MIPRE.Verifier.ComputablyPresented, MIPRE.Verifier.boundBudget,
+  MIPRE.Verifier.BoundViolation, MIPRE.Verifier.boundViolationB,
+  MIPRE.Verifier.boundViolationB_iff, MIPRE.Verifier.not_isBounded_iff_exists,
+  MIPRE.Verifier.rePred_not_isBounded, MIPRE.REPred.of_computable_exists,
+  MIPRE.Cost.primrec_natLeB}
+\leanok
+Call a family $a \mapsto \verifier^a$ of normal form verifiers \emph{computably presented}
+when the program of its sampler, the program of its decider, and the dimension $s^a(n)$ of
+its sampler's ambient space are computable in $a$ (and, for the dimension, in $n$). For such
+a family the set of pairs $(a, \lambda)$ with $\verifier^a$ \emph{not} $\lambda$-bounded
+(Definition~\ref{def:lambda-bounded}) is recursively enumerable.
+\end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:cost-budget-decidable}
+Every clause of Definition~\ref{def:lambda-bounded} is universally quantified --- over
+indices $m \geq 2$, and, inside the two time bounds, over the inputs of the sampler and of
+the decider at $m$ --- and the remaining clause $\abs{\verifier} \leq \lambda$ is a
+comparison of two computable numbers. So the negation is an unbounded search for a pair
+(index, input), and each test is decidable: the dimension clause because the dimension is
+computable by hypothesis, the two time bounds by
+Lemma~\ref{lem:cost-budget-decidable}. The index is carried as a datum and read back by
+\texttt{Data.natOf}, which is a surjection onto $\N$ inverting the encoding on canonical
+binary data, so nothing is lost and the encoding the time bounds prepend to their input is
+primitive recursive in the witness.
+\end{proof}
+
+\paragraph{Comments.} The hypothesis is not an artefact of the proof: $\lambda$-boundedness
+of a family of verifiers cannot be enumerably refuted unless the family can be run, and the
+three data named are exactly what running it takes. They are also what the tabulation of
+item 3 needs before anything else --- the question weights come from running the sampler over
+$\F_2^{s(n)}$ --- so the hypothesis is discharged once, for the family \texttt{Vof}, and
+serves both.
+
+\effortMedium
+
+\begin{lemma}[The semidecider of the halting reduction]
+\label{lem:halting-semidecider}
+\uses{lem:bounded-violation-re,lem:value-lower-approx,lem:semidecide-encoded,def:game-description}
+\lean{MIPRE.Halting.exists_sem_of_tab, MIPRE.REPred.or}
+\leanok
+Let the family \texttt{Vof} of verifiers named by strings be computably presented
+(Lemma~\ref{lem:bounded-violation-re}) and let $x, n \mapsto \game_{x,n}$ be a computable
+family of game descriptions with $\valstar(\game_{x, n}) = \valstar(\verifier^x_n)$
+whenever $\verifier^x$ is $n$-bounded. Then there is a closed program of the cost model
+halting on $\mathrm{encode}(x, n)$ exactly when $x \notin B_n$: the field
+\texttt{Obligations.sem} of Remark~\ref{rem:compression-abstract} with its two
+specifications.
+\end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:bounded-violation-re,lem:semidecide-encoded}
+$x \notin B_n$ is ``$\verifier^x$ is not $n$-bounded or $\valstar(\verifier^x_n) >
+\frac12$'' (\texttt{Verifier.not\_inClassB\_iff}). Under the hypothesis on the family the
+second disjunct may be read on $\game_{x,n}$ instead, in both directions: if $\verifier^x$
+is $n$-bounded the two values are equal, and if it is not then the first disjunct holds
+anyway. The first disjunct is recursively enumerable by
+Lemma~\ref{lem:bounded-violation-re} and the second by the $\valstar$ half of
+Lemma~\ref{lem:value-lower-approx} along the computable family; a union of two recursively
+enumerable sets is recursively enumerable, by dovetailing. Lemma~\ref{lem:semidecide-encoded}
+turns the result into a program on the encodings of pairs.
+\end{proof}
+
+\paragraph{Comments.} The hypothesis is an equality of values under $n$-boundedness
+\emph{alone}, and that is more than \texttt{Obligations.tab\_match} delivers: a game
+description denotes a synchronous game by construction, so the match is asked only of a
+verifier synchronous at $n$ (item 3 above), while membership in $B_n$ does not carry
+synchronicity. So this lemma does not compose with that field as the two are currently
+stated, and the semidecider is \emph{not} obtainable from the tabulation together with a
+disjunction, as the plan had it. Three ways to close the gap, none of them this lemma's to
+choose: tabulate the game on a doubled question set $\{0,1\} \times \mX$ --- Alice on the
+first copy, Bob on the second --- so that the distribution avoids the diagonal and the forced
+rejections there are never asked about; make the wrapper of item 1 reject unequal answers to
+equal questions, so that every string names a synchronous verifier; or add synchronicity at
+$n$ to $B_n$, which costs a synchronicity clause in the compressor's obligation instead. The
+first changes only the tabulation, the second only the wrapper, the third only the classes.
+
+\effortMedium
 
 \begin{remark}[The entanglement form of~\cite{JNVWY20}]
 \label{rem:entanglement-form}

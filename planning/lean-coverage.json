@@ -180,17 +180,50 @@
   "MIPRE.Cost.Data.parse_toBitsPost": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Cost.Data.primrec_decode_prod_nat": [
+   "lem:semidecide-encoded"
+  ],
   "MIPRE.Cost.Data.toBitsPost": [
    "rem:compression-abstract"
   ],
   "MIPRE.Cost.IsSuccinctDesc": [
    "def:succinct"
   ],
+  "MIPRE.Cost.Machine.costStep": [
+   "lem:cost-budget-decidable"
+  ],
+  "MIPRE.Cost.Machine.costStep_iterate": [
+   "lem:cost-budget-decidable"
+  ],
+  "MIPRE.Cost.Machine.evalForCostD": [
+   "lem:cost-budget-decidable"
+  ],
+  "MIPRE.Cost.Machine.evalForCostD_eq_some": [
+   "lem:cost-budget-decidable"
+  ],
+  "MIPRE.Cost.Machine.haltsWithinB": [
+   "lem:cost-budget-decidable"
+  ],
+  "MIPRE.Cost.Machine.haltsWithin_iff_evalForCostD": [
+   "lem:cost-budget-decidable"
+  ],
+  "MIPRE.Cost.Machine.haltsWithin_of_evalForCostD": [
+   "lem:cost-budget-decidable"
+  ],
+  "MIPRE.Cost.Machine.primrec_haltsWithinB": [
+   "lem:cost-budget-decidable"
+  ],
   "MIPRE.Cost.Machine.runForD": [
    "rem:compression-abstract"
   ],
   "MIPRE.Cost.Machine.runForD_eq_some_iff": [
    "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.Machine.stepCostD": [
+   "lem:cost-budget-decidable"
+  ],
+  "MIPRE.Cost.Machine.stepCostD_toData": [
+   "lem:cost-budget-decidable"
   ],
   "MIPRE.Cost.PolyBounded": [
    "rem:compression-abstract"
@@ -231,6 +264,9 @@
   "MIPRE.Cost.compressibility_criterion_levels": [
    "lem:compressible-criterion"
   ],
+  "MIPRE.Cost.decidableHaltsWithin": [
+   "lem:cost-budget-decidable"
+  ],
   "MIPRE.Cost.efficient_fixed_point": [
    "lem:kleene"
   ],
@@ -243,6 +279,12 @@
   "MIPRE.Cost.exists_semidecider": [
    "lem:value-lower-approx"
   ],
+  "MIPRE.Cost.exists_semidecider_of_decode": [
+   "lem:semidecide-encoded"
+  ],
+  "MIPRE.Cost.exists_semidecider_prod_nat": [
+   "lem:semidecide-encoded"
+  ],
   "MIPRE.Cost.hardcode_size": [
    "lem:smn"
   ],
@@ -251,6 +293,9 @@
   ],
   "MIPRE.Cost.hardcode_time_rev": [
    "lem:smn"
+  ],
+  "MIPRE.Cost.primrec_natLeB": [
+   "lem:bounded-violation-re"
   ],
   "MIPRE.Cost.progNorm": [
    "rem:compression-abstract"
@@ -339,6 +384,9 @@
   ],
   "MIPRE.Halting.eXof": [
    "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.exists_sem_of_tab": [
+   "lem:halting-semidecider"
   ],
   "MIPRE.Halting.halting_reduction": [
    "thm:halting"
@@ -480,6 +528,12 @@
   ],
   "MIPRE.Orthonormalization.povm_orthogonalization_finDim": [
    "thm:orthonormalization"
+  ],
+  "MIPRE.REPred.of_computable_exists": [
+   "lem:bounded-violation-re"
+  ],
+  "MIPRE.REPred.or": [
+   "lem:halting-semidecider"
   ],
   "MIPRE.Repetition.commutingOperatorValue_repeat_le": [
    "thm:direct-repetition-co"
@@ -625,6 +679,12 @@
   "MIPRE.Verifier.Answers": [
    "def:normal-verifier"
   ],
+  "MIPRE.Verifier.BoundViolation": [
+   "lem:bounded-violation-re"
+  ],
+  "MIPRE.Verifier.ComputablyPresented": [
+   "lem:bounded-violation-re"
+  ],
   "MIPRE.Verifier.InClassA": [
    "rem:compression-abstract"
   ],
@@ -654,6 +714,15 @@
   ],
   "MIPRE.Verifier.bitsToIdx": [
    "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.boundBudget": [
+   "lem:bounded-violation-re"
+  ],
+  "MIPRE.Verifier.boundViolationB": [
+   "lem:bounded-violation-re"
+  ],
+  "MIPRE.Verifier.boundViolationB_iff": [
+   "lem:bounded-violation-re"
   ],
   "MIPRE.Verifier.exists_isBounded": [
    "rem:compression-abstract"
@@ -700,6 +769,9 @@
   "MIPRE.Verifier.not_inClassB_of_inClassA": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Verifier.not_isBounded_iff_exists": [
+   "lem:bounded-violation-re"
+  ],
   "MIPRE.Verifier.ofSamplerDecider": [
    "rem:compression-abstract"
   ],
@@ -717,6 +789,9 @@
   ],
   "MIPRE.Verifier.questionWeight_weightList": [
    "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.rePred_not_isBounded": [
+   "lem:bounded-violation-re"
   ],
   "MIPRE.Verifier.size": [
    "def:normal-verifier"
@@ -902,10 +977,21 @@
   "MIPRE.Cost.Data.natOf",
   "MIPRE.Cost.Data.parse",
   "MIPRE.Cost.Data.parse_toBitsPost",
+  "MIPRE.Cost.Data.primrec_decode_prod_nat",
   "MIPRE.Cost.Data.toBitsPost",
   "MIPRE.Cost.IsSuccinctDesc",
+  "MIPRE.Cost.Machine.costStep",
+  "MIPRE.Cost.Machine.costStep_iterate",
+  "MIPRE.Cost.Machine.evalForCostD",
+  "MIPRE.Cost.Machine.evalForCostD_eq_some",
+  "MIPRE.Cost.Machine.haltsWithinB",
+  "MIPRE.Cost.Machine.haltsWithin_iff_evalForCostD",
+  "MIPRE.Cost.Machine.haltsWithin_of_evalForCostD",
+  "MIPRE.Cost.Machine.primrec_haltsWithinB",
   "MIPRE.Cost.Machine.runForD",
   "MIPRE.Cost.Machine.runForD_eq_some_iff",
+  "MIPRE.Cost.Machine.stepCostD",
+  "MIPRE.Cost.Machine.stepCostD_toData",
   "MIPRE.Cost.PolyBounded",
   "MIPRE.Cost.PolyTimeFun.computable_encode_comp",
   "MIPRE.Cost.Prog.HasPolyCost",
@@ -919,13 +1005,17 @@
   "MIPRE.Cost.compressibility_criterion",
   "MIPRE.Cost.compressibility_criterion_halting",
   "MIPRE.Cost.compressibility_criterion_levels",
+  "MIPRE.Cost.decidableHaltsWithin",
   "MIPRE.Cost.efficient_fixed_point",
   "MIPRE.Cost.exists_clocked_universal",
   "MIPRE.Cost.exists_efficient_universal",
   "MIPRE.Cost.exists_semidecider",
+  "MIPRE.Cost.exists_semidecider_of_decode",
+  "MIPRE.Cost.exists_semidecider_prod_nat",
   "MIPRE.Cost.hardcode_size",
   "MIPRE.Cost.hardcode_time",
   "MIPRE.Cost.hardcode_time_rev",
+  "MIPRE.Cost.primrec_natLeB",
   "MIPRE.Cost.progNorm",
   "MIPRE.Cost.progNorm_eq",
   "MIPRE.Cost.progOk",
@@ -955,6 +1045,7 @@
   "MIPRE.Halting.dimOf_eq",
   "MIPRE.Halting.eAof",
   "MIPRE.Halting.eXof",
+  "MIPRE.Halting.exists_sem_of_tab",
   "MIPRE.Halting.halting_reduction",
   "MIPRE.Halting.margOf",
   "MIPRE.Halting.margOf_eq",
@@ -1002,6 +1093,8 @@
   "MIPRE.MIPStar.exists_semidecider",
   "MIPRE.MIPStar.isRE",
   "MIPRE.Orthonormalization.povm_orthogonalization_finDim",
+  "MIPRE.REPred.of_computable_exists",
+  "MIPRE.REPred.or",
   "MIPRE.Repetition.commutingOperatorValue_repeat_le",
   "MIPRE.Repetition.quantumValue_eq_entangledValue",
   "MIPRE.Repetition.quantumValue_repeat_le",
@@ -1050,6 +1143,8 @@
   "MIPRE.ValueApprox.rePred_lt_quantumValue",
   "MIPRE.Verifier",
   "MIPRE.Verifier.Answers",
+  "MIPRE.Verifier.BoundViolation",
+  "MIPRE.Verifier.ComputablyPresented",
   "MIPRE.Verifier.InClassA",
   "MIPRE.Verifier.InClassB",
   "MIPRE.Verifier.IsBounded",
@@ -1060,6 +1155,9 @@
   "MIPRE.Verifier.accepts_iff_runForD",
   "MIPRE.Verifier.answerEquiv",
   "MIPRE.Verifier.bitsToIdx",
+  "MIPRE.Verifier.boundBudget",
+  "MIPRE.Verifier.boundViolationB",
+  "MIPRE.Verifier.boundViolationB_iff",
   "MIPRE.Verifier.exists_isBounded",
   "MIPRE.Verifier.exists_perfectPCC_syncGame",
   "MIPRE.Verifier.freeze",
@@ -1075,12 +1173,14 @@
   "MIPRE.Verifier.mem_accList_iff",
   "MIPRE.Verifier.not_inClassB_iff",
   "MIPRE.Verifier.not_inClassB_of_inClassA",
+  "MIPRE.Verifier.not_isBounded_iff_exists",
   "MIPRE.Verifier.ofSamplerDecider",
   "MIPRE.Verifier.ofSamplerDecider_accepts",
   "MIPRE.Verifier.ofSamplerDecider_isBounded",
   "MIPRE.Verifier.quantumValue_toGame_eq_valStar",
   "MIPRE.Verifier.questionEquiv",
   "MIPRE.Verifier.questionWeight_weightList",
+  "MIPRE.Verifier.rePred_not_isBounded",
   "MIPRE.Verifier.size",
   "MIPRE.Verifier.syncGame",
   "MIPRE.Verifier.syncValue_syncGame_eq_one",
@@ -1310,6 +1410,19 @@
    "MIPRE.Verifier.not_inClassB_of_inClassA",
    "MIPRE.Verifier.valStar_eq_zero_of_rejects_all"
   ],
+  "MIPRE/Foundations/Halting/CostBudget.lean": [
+   "MIPRE.Cost.Machine.costStep",
+   "MIPRE.Cost.Machine.costStep_iterate",
+   "MIPRE.Cost.Machine.evalForCostD",
+   "MIPRE.Cost.Machine.evalForCostD_eq_some",
+   "MIPRE.Cost.Machine.haltsWithinB",
+   "MIPRE.Cost.Machine.haltsWithin_iff_evalForCostD",
+   "MIPRE.Cost.Machine.haltsWithin_of_evalForCostD",
+   "MIPRE.Cost.Machine.primrec_haltsWithinB",
+   "MIPRE.Cost.Machine.stepCostD",
+   "MIPRE.Cost.Machine.stepCostD_toData",
+   "MIPRE.Cost.decidableHaltsWithin"
+  ],
   "MIPRE/Foundations/Halting/Descriptions.lean": [
    "MIPRE.Cost.Data.natOf",
    "MIPRE.Cost.Data.parse",
@@ -1356,6 +1469,24 @@
   "MIPRE/Foundations/Halting/PolyBounded.lean": [
    "MIPRE.Cost.PolyBounded",
    "MIPRE.Cost.Prog.HasPolyCost"
+  ],
+  "MIPRE/Foundations/Halting/Semidecide.lean": [
+   "MIPRE.Cost.Data.primrec_decode_prod_nat",
+   "MIPRE.Cost.exists_semidecider_of_decode",
+   "MIPRE.Cost.exists_semidecider_prod_nat"
+  ],
+  "MIPRE/Foundations/Halting/Semidecider.lean": [
+   "MIPRE.Cost.primrec_natLeB",
+   "MIPRE.Halting.exists_sem_of_tab",
+   "MIPRE.REPred.of_computable_exists",
+   "MIPRE.REPred.or",
+   "MIPRE.Verifier.BoundViolation",
+   "MIPRE.Verifier.ComputablyPresented",
+   "MIPRE.Verifier.boundBudget",
+   "MIPRE.Verifier.boundViolationB",
+   "MIPRE.Verifier.boundViolationB_iff",
+   "MIPRE.Verifier.not_isBounded_iff_exists",
+   "MIPRE.Verifier.rePred_not_isBounded"
   ],
   "MIPRE/Foundations/Halting/Serial.lean": [
    "MIPRE.Cost.Prog.parseProg_runs",
@@ -1552,13 +1683,14 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 72,
+ "lean_tags": 76,
  "module_sizes": {
+  "MIPRE/Axioms.lean": 0,
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
   "MIPRE/Background/LIDT/Axioms.lean": 0,
   "MIPRE/Background/LIDT/Bridge/Consistency.lean": 1,
   "MIPRE/Background/LIDT/Bridge/Defect.lean": 8,
-  "MIPRE/Background/LIDT/Bridge/Field.lean": 26,
+  "MIPRE/Background/LIDT/Bridge/Field.lean": 27,
   "MIPRE/Background/LIDT/Bridge/Main.lean": 7,
   "MIPRE/Background/LIDT/Bridge/Measurement.lean": 37,
   "MIPRE/Background/LIDT/Bridge/Polynomial.lean": 24,
@@ -1590,7 +1722,7 @@
   "MIPRE/Foundations/Cost/Clocked.lean": 5,
   "MIPRE/Foundations/Cost/Closure.lean": 21,
   "MIPRE/Foundations/Cost/Codable.lean": 48,
-  "MIPRE/Foundations/Cost/Encoding.lean": 26,
+  "MIPRE/Foundations/Cost/Encoding.lean": 27,
   "MIPRE/Foundations/Cost/FromPartrec.lean": 21,
   "MIPRE/Foundations/Cost/Growth.lean": 3,
   "MIPRE/Foundations/Cost/Interpreter.lean": 73,
@@ -1617,12 +1749,15 @@
   "MIPRE/Foundations/Halting/Arith.lean": 50,
   "MIPRE/Foundations/Halting/Bounded.lean": 9,
   "MIPRE/Foundations/Halting/Classes.lean": 10,
+  "MIPRE/Foundations/Halting/CostBudget.lean": 22,
   "MIPRE/Foundations/Halting/Descriptions.lean": 34,
-  "MIPRE/Foundations/Halting/Enumerate.lean": 21,
+  "MIPRE/Foundations/Halting/Enumerate.lean": 22,
   "MIPRE/Foundations/Halting/Freeze.lean": 28,
   "MIPRE/Foundations/Halting/Instantiation.lean": 44,
   "MIPRE/Foundations/Halting/Lists.lean": 42,
   "MIPRE/Foundations/Halting/PolyBounded.lean": 28,
+  "MIPRE/Foundations/Halting/Semidecide.lean": 4,
+  "MIPRE/Foundations/Halting/Semidecider.lean": 11,
   "MIPRE/Foundations/Halting/Serial.lean": 26,
   "MIPRE/Foundations/Halting/Strings.lean": 16,
   "MIPRE/Foundations/Halting/Tabulate.lean": 41,
@@ -1684,7 +1819,9 @@
   "cites": 153,
   "commands_defined": 99,
   "commands_used": 206,
-  "labels": 222,
-  "refs": 948
+  "labels": 227,
+  "leanok_claimed": 123,
+  "leanok_guarded": 123,
+  "refs": 978
  }
 }

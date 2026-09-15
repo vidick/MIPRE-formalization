@@ -123,8 +123,8 @@ respectively a value-`1` PCC strategy or `val* <= 1/2` at index `n`.
 | | Obligation | What it needs |
 |---|---|---|
 | ~~**O1**~~ | *Done 2026-09-15.* `yYes_mem`, `yNo_mem` in `Halting/Strings.lean`, on the wrapper's time bound in `WrapperCost.lean` and the `IsBounded` plumbing in `Bounded.lean` | — |
-| ~~**O2**~~ | *Done 2026-09-15.* No longer a field: `tab`, `tab_computable`, `tab_match`, `tab_le` and `tab_value` are theorems of `Halting/Instantiation.lean`, over `Halting/Tabulate.lean` (`tabOf`, the `GameData` that two encoded programs and three numbers describe) and the new `Cost/ProgData.lean` (deciding program-hood) | — |
-| **O3** | `sem`, `sem_closed`, `sem_spec`: a program halting on `(x, n)` exactly when `x ∉ classB n` | the two `Σ₁` disjuncts of `Verifier.not_inClassB_iff` merged — the `val*` one is two lines from `tab_computable` (`rePred_lt_quantumValue_comp`), the boundedness one is a search that still has to be written, and one of the two directions needs synchronicity, which `classB` does not carry; §4 has the list |
+| ~~**O2**~~ | *Done 2026-09-15.* No longer a field: `tab`, `tab_computable`, `tab_match`, `tab_le` and `tab_value` are theorems of `Halting/Instantiation.lean`, over `Halting/Tabulate.lean` (`tabOf`, the `GameData` that two encoded programs and three numbers describe) and the new `Cost/ProgData.lean` (deciding program-hood). **Still owed to O3**: the doubled question set, so that the value agreement holds under `n`-boundedness alone (§4 item 3) | the doubling |
+| **O3** | `sem_spec`: a program halting on `(x, n)` exactly when `x ∉ classB n` | *Mostly done 2026-09-15* (`Halting/Semidecider.lean`): both `Σ₁` disjuncts of `Verifier.not_inClassB_iff` are r.e. and merged, on the cost-budget decision procedure of `Halting/CostBudget.lean` and the pair-input semidecider of `Halting/Semidecide.lean`. What is left is two hypotheses of `Halting.exists_sem_of_tab`, both O2's: `Verifier.ComputablyPresented (Vof G U)`, and a tabulation whose value agrees with `val*` under `n`-boundedness **alone** — which `tab_match` does not give (see §3, the synchronicity seam) |
 | **O4** | `compr_spec`: the compressor preserves the classes across levels | the decider that reads its description by bit queries, freezes at `2n+1`, runs `Compress`, and its time accounting |
 
 *The theorem.* `MIPRE.Halting.halting_reduction` takes `G : GapCompression` and
@@ -237,64 +237,64 @@ unchanged. Three things are worth carrying forward.
    is what would have refuted it a third time. It did not; the definition of #61 went through
    unchanged. The small-parameter corner the ledger flags did not bite either: `|𝒱| ≤ λ` is
    free, a verifier's size being a constant, and the rest is what the threshold `n₀` absorbs.
-2. ~~**O2.**~~ Done 2026-09-15. The largest piece, and needed twice, by O3 and by the assembly.
-   The record is in §3; the line to carry away is that writing the consumer first did not stop
-   the statement moving three times, but it did keep every move on the statement side.
-3. **O3.** The cheapest piece that is left, but not free, and one item on the list is not
-   plumbing. `sem_spec` asks for a program halting on `encode (x, n)` exactly when
-   `x ∉ classB n`, which `Verifier.not_inClassB_iff` splits into "not `n`-bounded" and
-   "`1/2 < val*`".
-   1. The `val*` disjunct is two lines and has been checked:
-      `rePred_lt_quantumValue_comp (tab_computable G U) 1 2` (`Foundations/ClassMIPStar.lean`,
-      already general in the index type), plus an `of_eq` and `norm_num` to read `(1 : ℝ) / 2`
-      off the casts, is
-      `REPred fun p : BitStr × ℕ => 1 / 2 < quantumValue (tab G U p.1 p.2).game`. Only the last
-      step, `exists_semidecider_lt_quantumValue`, is specialized to `BitStr`.
-   2. The boundedness disjunct has to be written: `¬ (Vof G U x).IsBounded n` as an `REPred` of
-      the pair. The witness is an index `m ≥ 2` together with an input `d`, and the test is
-      `Machine.runForD` (`Cost/BoundedEval.lean`, O2's own tool) returning `none` at the budget
-      `m ^ n * (|d| + 1) ^ n`, which contradicts `HaltsWithin` by `runForD_eq_some`. Two of the
-      three clauses have to be negated *together*: the sampler's dimension is observable only
-      through a budgeted query (`CL.Sampler.queryUnder_dimension`), so `dim m ≤ m ^ n` can be
-      tested only where the sampler's time clause holds, and where it does not, that clause is
-      the violated one. The third, `|𝒱| ≤ n`, is decidable off `sampData` and `decProgData`
-      (`esize p = (encode p).size`), whose bridges `sampData_eq` and `decProgData_eq` carry no
-      hypothesis.
-   3. That search is *not* primitive recursive — `sampData` runs a `PolyTimeFun` through the
-      machine and is only `Computable` — while `ValueApprox.REPred.of_primrecRel_exists` is
-      stated for a `PrimrecRel`. Its proof uses the test only through `hq.to_comp`, so the
-      generalization to a computable test is a couple of lines, but it has to be made.
-   4. The two disjuncts then merge, by Mathlib's `Partrec.merge'`
-      (`Mathlib/Computability/RE.lean`, whose conclusion is exactly
-      `(k a).Dom ↔ (f a).Dom ∨ (g a).Dom`), or by one search over a sum-typed witness.
-   5. The result is an `REPred` on `BitStr × ℕ`, and `Cost.exists_semidecider` yields a program
-      halting on `encode x` for a single *bit string*. `compressibility_criterion`'s
-      `.let_ Prog.fstProg S` is the precedent for adapting the input, but in the easy direction
-      — there `B` does not depend on the level, so the pair is projected away. Here the
-      predicate genuinely depends on both, so the pair has to be packed into one bit string by
-      an ambient prologue, or `exists_semidecider` re-proved at `BitStr × ℕ` — where
-      `shiftRevProg`'s obstacle, that a `ToPartrec` code cannot see the trailing zeros of its
-      input, has to be dodged again.
-   6. **The item that is not plumbing.** One direction of `sem_spec` does not follow from the
-      tabulation at all. Halting implies `x ∉ classB n`: if the verifier is `n`-bounded then
-      `tab_le` gives `1/2 < quantumValue (tab x n).game ≤ val*`, and if it is not then the other
-      disjunct applies. The converse fails. From `1/2 < val*` only `tab_value` recovers the
-      tabulated value, and `tab_value` needs `IsSynchronousAt n`, which `classB n` does not ask
-      for (`InClassB n T := IsBounded n ∧ valStar n T ≤ 1/2`); nothing in the repository
-      excludes a bounded, non-synchronous verifier with `val* > 1/2` whose *synchronized*
-      tabulation has value at most `1/2`. Three ways out, and §1's rule says to choose by
-      writing the proof first: make `Decider.wrap` reject unequal answers to equal questions
-      (`Prog.eqBitsProg` already compares bit lists), so that every `Vof x` is synchronous at
-      every index, `tab_le` becomes a corollary of `tab_value` and the question disappears — at
-      the price of reopening the wrapper's cost accounting (`WrapperCost.lean`,
-      `Cost.Prog.ProgD.dWrapCore`, and O1's two strings); or put `IsSynchronousAt n` into
-      `classB`, which adds a third `Σ₁` disjunct, a search for an accepted `(q, q, a, b)` with
-      `a ≠ b`, and moves the cost to O4 — `GapCompression` gives synchronicity of the compressed
-      verifier only through `completeness`'s `HasPerfectPCC`, so its soundness branch would need
-      a new field and `thm:compression` a new clause; or describe `𝒱_n` by something whose
-      diagonal carries no weight, which needs invariance of `quantumValue` under questions of
-      weight zero, a lemma `Foundations/GameTransport.lean` does not have, its transport being
-      along bijections.
+2. **O2.** *Mostly done 2026-09-15.* The largest piece, and needed twice, by O3 and by the
+   assembly. `tab`, `tab_computable`, `tab_match`, `tab_le` and `tab_value` are theorems of
+   `Halting/Instantiation.lean` and the four fields have left `Obligations`; §3 has the
+   record. One step is left, and O3 below is what asks for it: **the doubled question set**,
+   which makes the value agreement hold under `n`-boundedness alone. Writing the consumer
+   first did not stop the statement moving three times, but it did keep every move on the
+   statement side.
+3. **O3.** *Mostly done 2026-09-15*, and it was not "short once O2 is done" — that was wrong
+   in two ways, both worth keeping.
+
+   First, the *cost* budget. `Verifier.accepts_iff_runForD` decides acceptance under a bound
+   by running the machine `3k` steps, which is all the tabulation needs: a program obeying its
+   bound halts, so a long-enough run settles what it returns. O3 needs the opposite verdict —
+   that a program does *not* halt within a given cost — and needs it exactly, `sem_spec` being
+   an equivalence. A step is not a unit of cost (reading a variable or a constant is charged
+   the size of the value), so `runForD` returning a value after `3k` steps says only that the
+   program halted, not that it halted in budget. `Halting/CostBudget.lean` carries the cost
+   along the run instead — `Machine.stepCostD`, `Machine.stepCost` on encoded configurations —
+   and gets `Prog.HaltsWithin` primitive recursive in all three arguments, hence decidable.
+   That is the `noncomputable` `Cost.evalWithin` made computable, as `runForD` is for
+   `Machine.evalData`.
+
+   Second, `sem_spec` is about `encode (x, n)`, and `Cost.exists_semidecider` is about bit
+   strings; `encode (x, n) = cons (encode x) (encode n)` is not the encoding of any bit
+   string, and the difference cannot be arranged by choosing the predicate.
+   `Halting/Semidecide.lean` closes it once for every type whose `SizedEncoding` decodes primitive
+   recursively, by prefixing `Prog.serProg` — the serializer that was written for O4's
+   compressor — so that the `ToPartrec` translation of `Cost/Semidecide.lean`, delicate for
+   its own reason, is not re-entered.
+
+   What is proved outright is the enumerability of a *violated* universal clause:
+   `Verifier.rePred_not_isBounded`, for any computably presented family of verifiers. The
+   assembly `Halting.exists_sem_of_tab` then merges the two disjuncts by dovetailing
+   (`REPred.or`, from Mathlib's `Partrec.merge'`, which had no such corollary).
+
+   Two things found in the writing, both now on the record in the blueprint
+   (`lem:bounded-violation-re`, `lem:halting-semidecider`) and in the `Obligations`
+   docstring:
+
+   - **The synchronicity seam is also O3's.** `exists_sem_of_tab` needs the tabulation's value
+     to equal `val*` at every `n`-bounded string, in both directions. `tab_match` gives that
+     only where the verifier is *synchronous* at `n` — §3's repair, and unavoidable, a
+     `GameData` describing a synchronous game by construction — and `classB n` does not ask
+     for synchronicity. So O2 and O3 as currently stated do not compose. Three repairs, in
+     increasing order of blast radius: tabulate on the doubled question set `{0,1} × X`, Alice
+     on the first copy and Bob on the second, so the distribution avoids the diagonal and the
+     forced rejections there are never asked about (changes the tabulation only); make
+     `Decider.wrap` reject unequal answers to equal questions, so every string names a
+     synchronous verifier (changes the wrapper only, and its cost accounting); or add
+     synchronicity at `n` to `classB n` and pay for it with a synchronicity clause in
+     `compr_spec` (changes the classes only). The first looks cheapest and is O2's to make.
+   - **`Primrec fun n : ℕ => (encode n : Data)` is missing**, natural numbers encoding in
+     binary (`Nat.bits`). It is a prerequisite of `ComputablyPresented` for `Vof` — the
+     sampler's dimension is read off a run of its program on `encode (n, dimension)` — hence
+     of O2's `tab_computable` too, which runs the sampler at an index. `rePred_not_isBounded`
+     itself avoids it by carrying the search's index as a *datum* and reading it back with
+     `Data.natOf`, so the encoding it prepends is `Data.normBin` of the witness; that trick
+     does not extend to a genuine `ℕ` argument.
 4. **O4.** The second-largest, and the only one where the paper's construction is followed
    closely; read `recursive.tex` `sec:halt` and nodes `1.6.1`, `1.6.5` again before starting.
 

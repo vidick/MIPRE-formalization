@@ -1,3 +1,4 @@
+import MIPRE.Axioms
 import MIPRE.Background.GowersHatami.Basic
 import MIPRE.Background.LIDT.Axioms
 import MIPRE.Background.LIDT.Bridge.Consistency
@@ -557,12 +558,15 @@ import MIPRE.Foundations.GapCompression
 import MIPRE.Foundations.Halting.Arith
 import MIPRE.Foundations.Halting.Bounded
 import MIPRE.Foundations.Halting.Classes
+import MIPRE.Foundations.Halting.CostBudget
 import MIPRE.Foundations.Halting.Descriptions
 import MIPRE.Foundations.Halting.Enumerate
 import MIPRE.Foundations.Halting.Freeze
 import MIPRE.Foundations.Halting.Instantiation
 import MIPRE.Foundations.Halting.Lists
 import MIPRE.Foundations.Halting.PolyBounded
+import MIPRE.Foundations.Halting.Semidecide
+import MIPRE.Foundations.Halting.Semidecider
 import MIPRE.Foundations.Halting.Serial
 import MIPRE.Foundations.Halting.Strings
 import MIPRE.Foundations.Halting.Tabulate
