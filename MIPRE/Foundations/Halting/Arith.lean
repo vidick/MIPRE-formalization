@@ -661,7 +661,7 @@ end Prog
 /-! ## Evaluating a fixed polynomial, primitively recursively
 
 The answer-length budget of the tabulation is `bound.eval (n + λ)` for the fixed polynomial
-`bound` of `MIPRE.GapCompression`, so `Obligations.tab_computable` needs a polynomial's
+`bound` of `MIPRE.GapCompression`, so `MIPRE.Halting.tab_computable` needs a polynomial's
 evaluation to be primitive recursive in its argument. It goes through this file's own
 `Data.polyEval` and `hornerCoeffs` rather than Mathlib's `Polynomial` API: the coefficient
 list is fixed data, and Horner's rule on a fixed list is a fixed composition of `+` and `*`.

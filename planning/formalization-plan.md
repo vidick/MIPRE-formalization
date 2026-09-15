@@ -142,6 +142,19 @@ concatenation, downsizing — are proved, and `def:normal-verifier` can be state
 place where the paper's interface had to be made precise to be formalizable. The campaign
 has offered CL closure lemmas (referee report, R9) — ask for them before proving them.
 
+**Invariant 2026-09-15 (found from H4, obligation O2).** No repair this time: the definition
+survived its second consumer, and the consumer documented a clause. The time clauses of
+`Verifier.IsBounded λ` are guarded by `2 ≤ n`, so at `n = 0, 1` they say nothing and no budget
+exists — acceptance at those indices is genuinely `Σ₁`, and the tabulation's bridges to the
+verifier (`accOf_iff`, `dimOf_eq`, `margOf_eq`) would have nothing to run under. Nothing at the
+use sites supplies `2 ≤ n`. What does is the clause `|𝒱| ≤ λ`, every program encoding to a
+`Data.cons` (`Cost.Prog.two_le_esize`), now recorded as `Verifier.IsBounded.two_le` with the
+consequence stated where it will be read: drop the size clause and those three bridges become
+unprovable, and with them obligation O2. `IsBounded` was written for `GapCompression`, which
+*supplies* it; the tabulation is the first thing that *spends* it, which is why the clause could
+look free for as long as it did. The reading of #61 has now been used from both sides and stands
+unchanged.
+
 **Repair 2026-09-15 (found from H4, part 3b-iii).** The reading below was still too tight.
 `Decider.TimeBoundAt n T` bounded the cost by `T · (|input| + 1)`, linear in the input size;
 but every decider of the pipeline runs another program through the universal machine, whose
@@ -335,8 +348,10 @@ compressed decider with that parameter rejects. `halting_reduction` then proves
 `thm:halting` in `val*` form — a computable map from `Nat.Partrec.Code` to game descriptions
 of quantum value `1` when the machine halts and at most `1/2` when it does not — from three
 hypotheses: a `GapCompression`, a universal machine, and a `MIPRE.Halting.Obligations`,
-whose fields are exactly the four open obligations, marked O1–O4 in the file and in
-`planning/h4-assembly.md`. It is sorry-free, so `#print axioms` cannot hide any of them.
+whose fields are exactly the open obligations O1, O3 and O4, marked in the file and in
+`planning/h4-assembly.md` (O2, the tabulation, is discharged and is no longer a field; the
+assembly calls `tab_computable`, `tab_value` and `tab_le` directly). It is sorry-free, so
+`#print axioms` cannot hide any of them.
 Two things are deliberately outside it: the conclusion is in `val*`, since carrying a
 perfect PCC strategy to the tabulation needs a synchronous counterpart of
 `quantumValue_eq_of_equiv`, and reaching `HaltingGameValue.halting_reduces_to_gameValue`
@@ -390,17 +405,18 @@ halves of `thm:halting` are now available in the vocabulary of
 `halting_reduces_to_gameValue`. It also found a seam in O2, since closed: `Obligations.tab_value`
 recorded the tabulation's agreement with `V_n` as an equality of `val*`, from which the
 synchronous half cannot be recovered, `synval ≤ val*` pointing the wrong way. Both consumers
-here want the matching data along `answerEquiv` and `questionEquiv` instead, so the field is
-now `tab_match` and delivers it (next paragraph).
+here want the matching data along `answerEquiv` and `questionEquiv` instead, so the field
+became `tab_match` and delivers it (next paragraph). Both are theorems rather than fields now
+that O2 is closed; the paragraph below records that.
 
 O2 continued the same day, and the field changed shape a second time. The parallel branch that
 proved the two synchronous bridges reported that an equality of `val*` is not enough for them:
 `thm:halting` item 1 claims a value-`1` PCC strategy, so `synval = 1`, and `synval ≤ val*`
 points the wrong way — from the value alone a perfect PCC strategy of `𝒱_n` cannot be pushed
 onto the tabulation. So `tab_value` is now `tab_match`, delivering the two alphabet
-relabelings with the agreement of `μ` and `D` along them, from which `Obligations.tab_value`
-reads the value equality off `quantumValue_toGame_eq_valStar` and the synchronous half is
-available too. O2 has the relabelings in hand anyway, building `tab` from `answerEquiv` and
+relabelings with the agreement of `μ` and `D` along them, from which `tab_value` reads the
+value equality off `quantumValue_toGame_eq_valStar` and the synchronous half is available
+too. O2 has the relabelings in hand anyway, building `tab` from `answerEquiv` and
 `questionEquiv`, so this costs nothing. Then the pieces the tabulation needs:
 `CL.Sampler.queryUnder` (one sampler query under the budget its time bound supplies, with the
 dimension and marginal queries read off it — the marginal at the top level is the CL function
@@ -433,17 +449,60 @@ tuples a predicate accepts over the two alphabets, `mem_accList_iff` says exactl
 it, and `bitsToIdx_injOn` is what lets a tuple be read back — among the strings of a fixed
 length, a question's index determines it.
 
-Remaining for O2: the assembly of `tab` from the weight list and the acceptance table,
-`tab_computable`, and the two agreement fields `tab_match` and `tab_le` — where the weights
-become `μ` and the table becomes `D`, the predicate being `Verifier.accepts_iff_runForD` under
-the verifier's own time bound. Then, in order, and identified with the fields of
-`MIPRE.Halting.Obligations`:
-the *computation* of the tabulation — running the sampler on every point of `𝔽₂^{s(n)}` to
-count the question weights and the decider under its budget to fill in the acceptance table,
-then `Computable` for the whole map; (O3) the semidecider, from the two Σ₁ disjuncts of
-`not_inClassB_iff` once O2 exists; (O4, part 4) the compressor's own decider and its time
-accounting. Then `thm:main`, whose two synchronous bridges are now in place (part 6), so that
-what it waits on is O2–O4 and the tabulation's own `Computable` witness.
+O2 done 2026-09-15, and the four fields have left `Obligations`, which now carries O1
+(inhabited, `Halting/Strings.lean`), O3 and O4. `MIPRE.Halting.tab`, `tab_computable`,
+`tab_match`, `tab_le` and `tab_value` are theorems of `Halting/Instantiation.lean` that
+`halting_reduction` calls directly; it is unchanged otherwise, and sorry-free as before.
+`tab x n` is `Tabulate`'s `tabOf` — the `GameData` two encoded programs and three numbers
+describe, and not a verifier, because a `Verifier` is a structure carrying proofs and no
+`Primrec` statement can mention one — applied to what a string supplies: the encoded sampler
+program `sampData`, the encoded *wrapped* decider `decProgData`, and the dimension, the answer
+bound and the level. Both encoded programs needed new machinery. `sampData` is `G.samplerProg`
+run by the ambient machine on an encoded input, which is the only way a `PolyTimeFun _ Prog`
+reaches a computability proof at all, `Prog` deliberately having no `Primcodable` instance
+(`PolyTimeFun.computable_encode_comp`, `Cost/Partrec.lean`). `decProgData` is the wrapper's own
+syntax tree built directly in `Data` (`Cost.Prog.ProgD.dWrapCore`, `Halting/Wrapper.lean`,
+`dWrapCore_eq` being `rfl`, since it is the same definition seen through the encoding) around
+the string's decider read through `Cost.progNorm` — the new module `Cost/ProgData.lean`, which
+decides program-hood by one `Data.recD` at a four-component state, four because `Prog.toData`'s
+grammar reaches two levels down and a tree recursion sees its children but not its
+grandchildren. That fallback is not a nicety: a string whose right component is not an encoding
+denotes `Prog.nil`, which accepts nothing, so a tabulation that ran the junk instead would be
+*wrong* rather than merely partial. Under all of it, the small arithmetic a budgeted run needs —
+`encode_nat_rec`, `primrec_nat_pow` and a bridge between two `BEq` instances for `List.idxOf`
+(`Cost/Codable.lean`), the two enumerations (`Halting/Enumerate.lean`), and Horner evaluation of
+a fixed polynomial for the answer bound (`Halting/Arith.lean`).
+
+The bridges back are what the rest rests on. `sampData_eq` and `decProgData_eq` hold of every
+string; `accOf_iff`, `dimOf_eq` and `margOf_eq` say that on an `n`-bounded verifier the
+tabulated numbers *are* the verifier's own. Those three need `2 ≤ n`, which nothing at the use
+sites supplies and `Verifier.IsBounded.two_le` does — the subject of the invariant note in H1
+above. Then the two clauses of the match: `mu_clause` is the counting argument (the tabulated
+weight of a question pair is the number of points of `𝔽₂^{s(n)}` whose two marginals land on it,
+over `2^{s(n)}`, which is exactly the quotient `clDist` is) and the `D` clause is the acceptance
+table read back through `acc_mem_iff`, with `eXof` and `eAof` the two indexings transported
+across `tab`'s sizes. Two findings are about elaboration rather than mathematics and will recur
+in O4: the five arguments of `tabOf` are assembled one declaration at a time because the nested
+tuple does not elaborate in one go within any heartbeat budget worth setting, and `tab` is made
+`local irreducible` before `halting_reduction` for the same reason.
+
+What H4 waits on now is O3 and O4. O3 is the semidecider for the complement of `classB`, and O2
+made most of it cheap: the `val*` disjunct of `Verifier.not_inClassB_iff` is two lines,
+`rePred_lt_quantumValue_comp` at `tab_computable`, that wrapper being already general in the
+index type. What is left is the boundedness disjunct as a search over `Machine.runForD` — with
+the `dim` clause and the sampler's time clause negated together, the dimension being observable
+only through a budgeted query — a computable-test version of `REPred.of_primrecRel_exists` (the
+search is not primitive recursive, `sampData` running a `PolyTimeFun` through the machine), the
+merge of the two disjuncts, the passage from an `REPred` on `BitStr × ℕ` to a program reading
+`encode (x, n)` (`Cost.exists_semidecider` reads a single bit string), and one item that is not
+plumbing: `tab_value` needs `IsSynchronousAt n` and `classB` does not ask for it, so the
+completeness direction of `sem_spec` is not provable from the tabulation alone.
+`planning/h4-assembly.md` §4 item 3 has the six-item list and the three candidate repairs — the
+cheapest, a synchronous `Decider.wrap`, reopens O1's cost accounting, and the next adds a clause
+to `thm:compression`. O4 (part 4) is unchanged: the compressor's own decider, reading its
+description by bit queries and freezing at `2n + 1`, and its time accounting. `thm:main` waits
+on O3 and O4 and nothing else, its two synchronous bridges being in place (part 6) and the
+tabulation's `Computable` witness now proved.
 
 ## What to start with
 
@@ -459,7 +518,11 @@ problem.
 - **H2 is independent of both** and can proceed on its own schedule; it blocks H4 and the
   complexity clauses, not H1 or H3.
 - **H4 now.** It does not wait for H2 (see the note there), and H1 has fixed what a
-  description is: a sampler and a decider of the ambient model.
+  description is: a sampler and a decider of the ambient model. Inside H4, **O3 next**: it is
+  the shortest piece left, and it is the only one whose *shape* is still in question — its
+  completeness direction needs synchronicity that `classB` does not carry, and two of the three
+  ways to supply it change a definition (`Decider.wrap`) or a hypothesis (`thm:compression`).
+  Settling that before O4 keeps the classes from being redefined underneath the compressor.
 
 Then, and only then, the transformations themselves — introspection first, as the largest
 (`paper/introspection.tex` is 3376 lines) and the one the other two build on.

@@ -403,7 +403,6 @@ def tuples (s T : ℕ) : List (BitStr × BitStr × BitStr × BitStr) :=
       (Data.bitStrsLE T).flatMap fun a =>
         (Data.bitStrsLE T).map fun b => (x, y, a, b)
 
-set_option maxHeartbeats 1000000 in
 theorem primrec_tuples : Primrec₂ tuples := by
   have h4 : Primrec fun q : ((((ℕ × ℕ) × BitStr) × BitStr) × BitStr) =>
       (Data.bitStrsLE q.1.1.1.2).map fun b => (q.1.1.2, q.1.2, q.2, b) := by
@@ -430,12 +429,6 @@ theorem primrec_tuples : Primrec₂ tuples := by
   exact (Primrec.list_flatMap (Data.primrec_bitStrsOfLen.comp Primrec.fst) h2.to₂).to₂
 
 
-theorem filterMap_flatMap {α β γ : Type*} (l : List α) (f : α → List β) (g : β → Option γ) :
-    (l.flatMap f).filterMap g = l.flatMap fun a => (f a).filterMap g := by
-  induction l with
-  | nil => rfl
-  | cons a l ih => simp [List.flatMap_cons, List.filterMap_append, ih]
-
 /-- The acceptance table is one `filterMap` over the flat product. -/
 theorem accList_eq_filterMap (s T : ℕ) (acc? : BitStr → BitStr → BitStr → BitStr → Bool) :
     Verifier.accList s T acc? = (tuples s T).filterMap fun q =>
@@ -443,9 +436,9 @@ theorem accList_eq_filterMap (s T : ℕ) (acc? : BitStr → BitStr → BitStr �
         some (Verifier.bitsToIdx q.1, Verifier.bitsToIdx q.2.1,
           (Data.bitStrsLE T).idxOf q.2.2.1, (Data.bitStrsLE T).idxOf q.2.2.2)
       else none := by
-  simp only [Verifier.accList, tuples, filterMap_flatMap, List.filterMap_map, Function.comp_def]
+  simp only [Verifier.accList, tuples, List.filterMap_flatMap, List.filterMap_map,
+    Function.comp_def]
 
-set_option maxHeartbeats 1000000 in
 theorem primrec_accList {α : Type*} [Primcodable α] {s T : α → ℕ}
     {acc? : α → BitStr → BitStr → BitStr → BitStr → Bool}
     (hs : Primrec s) (hT : Primrec T)
@@ -503,7 +496,9 @@ def dimOf (sd : Data) (n : ℕ) : ℕ :=
     fun d => (SizedEncoding.decode d : Option ℕ)).getD 0
 
 /-- Player `w`'s marginal question at the point `z`, from the encoded sampler program alone.
-The `7` is the number of variables of a `Verifier 7`. -/
+The `7` is the number of levels of a `Verifier 7`'s CL functions; `queryUnder_marginal` needs
+the query at exactly level `ℓ`, since only there is the marginal the CL function itself
+(`CLFun.truncate_self`). -/
 def margOf (sd : Data) (n : ℕ) (w : Player) (z : BitStr) : BitStr :=
   ((Machine.runForD sd (encode (n, CL.Sampler.Query.marginal w 7 z))
       (n ^ n * ((encode (CL.Sampler.Query.marginal w 7 z) : Data).size + 1) ^ n)).bind
@@ -543,7 +538,6 @@ theorem primrec_dimOf : Primrec fun q : Data × ℕ => dimOf q.1 q.2 := by
       (Data.primrec_decode_nat.comp Primrec.snd).to₂)
     (Primrec.const 0)
 
-set_option maxHeartbeats 1000000 in
 theorem primrec_margOf (w : Player) :
     Primrec fun q : (Data × ℕ) × BitStr => margOf q.1.1 q.1.2 w q.2 := by
   have hsd : Primrec fun q : (Data × ℕ) × BitStr => q.1.1 := Primrec.fst.comp Primrec.fst
@@ -577,6 +571,7 @@ theorem primrec_weightList :
     ((Verifier.primrec_bitsToIdx.comp ((primrec_margOf Player.bob).comp hpair)).pair
       (Primrec.const 1))).to₂
 
+-- `primrec_accOf` measures 210049 heartbeats, just over the 200000 default.
 set_option maxHeartbeats 1000000 in
 theorem primrec_accOf :
     Primrec fun q : ((Data × Data) × ℕ × ℕ × ℕ) × BitStr × BitStr × BitStr × BitStr =>
@@ -618,7 +613,6 @@ theorem primrec_accOf :
   exact (Primrec.ite hfin (Primrec.const true) (Primrec.const false)).of_eq fun q => by
     simp only [accOf]; split <;> simp_all
 
-set_option maxHeartbeats 1000000 in
 theorem primrec_tabOf :
     Primrec fun q : (Data × Data) × ℕ × ℕ × ℕ => tabOf q.1.1 q.1.2 q.2.1 q.2.2.1 q.2.2.2 := by
   have hs : Primrec fun q : (Data × Data) × ℕ × ℕ × ℕ => q.2.1 := Primrec.fst.comp Primrec.snd

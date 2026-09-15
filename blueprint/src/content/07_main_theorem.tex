@@ -41,9 +41,11 @@ the tabulation (\texttt{MIPRE.Verifier.gameValue\_toGame\_eq\_one}, through
 \texttt{MIPRE.Verifier.gameValue\_toGame\_le\_of\_valStar\_le} for soundness; both are stated
 directly in \texttt{HaltingGameValue.gameValue}, by
 Remark~\ref{rem:standalone-restatement}'s identification of the two vocabularies. What the
-proof of Theorem~\ref{thm:main} still waits on is the four open obligations of
-Theorem~\ref{thm:halting}, and, within the tabulation, the record of its agreement with
-$\verifier_n$ in the form the completeness bridge consumes (Remark~\ref{rem:compression-abstract}).
+proof of Theorem~\ref{thm:main} still waits on is the three obligations of
+Theorem~\ref{thm:halting} that remain open --- the two distinguished strings, the semidecider
+and the compressor. The tabulation is no longer among them, and neither is the record of its
+agreement with $\verifier_n$ in the form the completeness bridge consumes: that record is
+\texttt{MIPRE.Halting.tab\_match} (Remark~\ref{rem:compression-abstract}).
 
 \begin{remark}[The standalone restatement]
 \label{rem:standalone-restatement}

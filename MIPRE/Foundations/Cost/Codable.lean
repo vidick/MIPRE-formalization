@@ -299,7 +299,7 @@ The companion of `primrec_decode_bitStr` in the other direction. A natural is en
 bit string of `Nat.bits`, so its encoding satisfies the halving recursion below, and strong
 recursion on `ℕ` turns that into a primitive recursive definition. Every budgeted run of the
 tabulation feeds the machine an `encode (n, …)`, so this is on the critical path of
-`MIPRE.Halting.Obligations.tab_computable`. -/
+`MIPRE.Halting.tab_computable`. -/
 
 /-- The binary encoding of a natural as data, in recursive form. -/
 theorem encode_nat_rec (n : ℕ) : (encode n : Data) =

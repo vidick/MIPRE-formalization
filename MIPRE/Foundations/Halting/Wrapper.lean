@@ -453,13 +453,13 @@ def dE (i : ℕ) (n c : Data) : Data := .cons (.ofNat 3) (.cons (.ofNat i) (.con
 def dL (e b : Data) : Data := .cons (.ofNat 4) (.cons e b)
 def dK (d : Data) : Data := .cons (.ofNat 6) d
 
-@[simp] theorem dV_eq (i : ℕ) : (encode (Prog.var i) : Data) = dV i := rfl
-@[simp] theorem dNil_eq : (encode Prog.nil : Data) = dNil := rfl
-@[simp] theorem dC_eq (h t : Prog) : (encode (Prog.cons h t) : Data) = dC (encode h) (encode t) := rfl
-@[simp] theorem dE_eq (i : ℕ) (n c : Prog) :
+theorem dV_eq (i : ℕ) : (encode (Prog.var i) : Data) = dV i := rfl
+theorem dNil_eq : (encode Prog.nil : Data) = dNil := rfl
+theorem dC_eq (h t : Prog) : (encode (Prog.cons h t) : Data) = dC (encode h) (encode t) := rfl
+theorem dE_eq (i : ℕ) (n c : Prog) :
     (encode (Prog.elim i n c) : Data) = dE i (encode n) (encode c) := rfl
-@[simp] theorem dL_eq (e b : Prog) : (encode (Prog.let_ e b) : Data) = dL (encode e) (encode b) := rfl
-@[simp] theorem dK_eq (d : Data) : (encode (Prog.const d) : Data) = dK d := rfl
+theorem dL_eq (e b : Prog) : (encode (Prog.let_ e b) : Data) = dL (encode e) (encode b) := rfl
+theorem dK_eq (d : Data) : (encode (Prog.const d) : Data) = dK d := rfl
 
 theorem primrec_dC : Primrec₂ dC :=
   (Data.primrec_cons.comp (Primrec.const (Data.ofNat 2))

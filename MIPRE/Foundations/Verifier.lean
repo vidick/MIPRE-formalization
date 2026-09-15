@@ -214,8 +214,9 @@ This is small and entirely load-bearing. The time clauses of `IsBounded` are all
 `2 ≤ n`, so at `n = 0, 1` they say nothing and no budget exists — acceptance at those indices
 is genuinely `Σ₁`. What rules those indices out is not an extra hypothesis anywhere but this
 lemma: a verifier that is `n`-bounded is so at an `n` that is at least `2`. **If the
-`V.size ≤ lam` clause is ever dropped from `IsBounded`, obligation O2 of
-`MIPRE.Halting.Obligations` becomes unsatisfiable.** -/
+`V.size ≤ lam` clause is ever dropped from `IsBounded`, the three bridges
+`MIPRE.Halting.accOf_iff`, `MIPRE.Halting.dimOf_eq` and `MIPRE.Halting.margOf_eq` become
+unprovable, and with them the tabulation, obligation O2.** -/
 theorem IsBounded.two_le {lam : ℕ} (h : V.IsBounded lam) : 2 ≤ lam :=
   le_trans (le_trans (Cost.Prog.two_le_esize V.decider.prog) (le_max_right _ _)) h.2
 

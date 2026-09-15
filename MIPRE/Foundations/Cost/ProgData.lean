@@ -18,7 +18,7 @@ has to make that same fallback, so it has to decide program-hood — and getting
 not merely leave a gap, it would make the tabulation *wrong*: on junk data the verifier uses
 `Prog.nil`, which accepts nothing, while a tabulation that ran the junk could accept.
 
-`Data.progNorm` is that normalization, as a primitive recursive function of data:
+`progNorm` is that normalization, as a primitive recursive function of data:
 `progNorm d = encode ((decode d : Option Prog)).getD nil`. Its correctness (`progNorm_eq`) is
 what lets the two be used interchangeably, the definitional one in the mathematics and the
 primitive recursive one in the computability proof.

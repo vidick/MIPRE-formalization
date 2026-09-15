@@ -74,8 +74,10 @@ is open can be enumerated rather than searched for:
   bit queries, freezes the verifier at index `2n + 1` (`Verifier.freeze`), runs `Compress`,
   and its time accounting.
 
-O3 is O2 plus a disjunction and so is cheap now that O2 is in hand; O4 is the substance that
-remains. `planning/h4-assembly.md` has the order of work.
+O3 is O2 plus a disjunction, and most of it is cheap now that O2 is in hand — but not all:
+`tab_value` needs `IsSynchronousAt n` and `classB` does not ask for it, so the direction
+`x ∉ classB n → Halts sem` is not available from the tabulation alone. O4 is the substance
+that remains. `planning/h4-assembly.md` has the order of work and the candidate repairs.
 
 ## What this is not
 
@@ -174,8 +176,9 @@ Two of them take work:
   decider arrives through `Cost.progNorm`, which is `descDec` read off the data and re-encoded
   — the same program, in the normal form a `Primrec` proof can reach.
 
-The four bridges at the end are what the rest of O2 rests on: on an `n`-bounded verifier the
-tabulated numbers *are* the verifier's own sampler and decider, budget or no budget.
+The three bridges at the end — `accOf_iff`, `dimOf_eq`, `margOf_eq` — are what the rest of O2
+rests on: on an `n`-bounded verifier the tabulated numbers *are* the verifier's own sampler
+and decider, budget or no budget.
 -/
 
 /-- The encoded sampler program of the verifier a string denotes. -/
@@ -226,17 +229,17 @@ theorem computable_tabArgs : Computable fun p : BitStr × ℕ =>
   ((computable_sampData_fst G).pair (computable_decProgData_fst G U)).pair
     ((computable_dimOf_fst G).pair ((computable_ansBound G).pair Computable.snd))
 
-set_option maxHeartbeats 1000000 in
-/-- **O2's second field.** The tabulation is computable in the string and the level. -/
+/-- **O2, computability.** The tabulation is computable in the string and the level. -/
 theorem tab_computable : Computable fun p : BitStr × ℕ => tab G U p.1 p.2 :=
   (primrec_tabOf.to_comp.comp (computable_tabArgs G U)).of_eq fun _ => rfl
 
 /-! ### The tabulated numbers are the verifier's own
 
-Each of the four is the same shape: rewrite the budgeted run into `CL.Sampler.queryUnder` or
-`Verifier.accepts_iff_runForD`, which `IsBounded` then evaluates. `IsBounded.two_le` supplies
-the `2 ≤ n` those need — see the warning there, since without it these are all false at
-`n = 0, 1`. -/
+`sampData_eq` and `decProgData_eq` only unfold the two encodings, and hold at every `n`. The
+other three — `accOf_iff`, `dimOf_eq`, `margOf_eq` — are the same shape: rewrite the budgeted
+run into `CL.Sampler.queryUnder` or `Verifier.accepts_iff_runForD`, which `IsBounded` then
+evaluates. `IsBounded.two_le` supplies the `2 ≤ n` those need — see the warning there: at
+`n = 0, 1` the time clauses say nothing and no budget exists. -/
 
 theorem sampData_eq (x : BitStr) : sampData G x = encode ((G.sampler (descLam x)).prog) := by
   rw [sampData, G.samplerProg_eq]
@@ -463,7 +466,7 @@ theorem game_D_true_iff (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n)
   classical
   exact decide_eq_true_iff
 
-/-- **O2's third field.** On an `n`-bounded, `n`-synchronous verifier the tabulation matches
+/-- **O2, the match.** On an `n`-bounded, `n`-synchronous verifier the tabulation matches
 `𝒱_n` along `eXof` and `eAof`. -/
 theorem tab_match (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n)
     (hs : (Vof G U x).IsSynchronousAt n) :
@@ -483,9 +486,9 @@ theorem tab_match (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n)
   · rw [if_neg hc, decide_eq_true_iff]
     exact acc_mem_iff G U x n hb i j k l
 
-/-- **O2's fourth field.** Without synchronicity the tabulation still does not overshoot: the
-tuples a `GameData` forces to reject are exactly the ones whose rejection can only lower the
-value (`quantumValue_mono`). -/
+/-- **O2, the soundness bound.** Without synchronicity the tabulation still does not
+overshoot: the tuples a `GameData` forces to reject are exactly the ones whose rejection can
+only lower the value (`quantumValue_mono`). -/
 theorem tab_le (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n) :
     quantumValue (tab G U x n).game ≤ (Vof G U x).valStar n (ansBound G x n) := by
   classical
@@ -591,8 +594,9 @@ on the empty input and at most `1/2` when it does not.
 The proof is the per-level compressibility criterion at the classes `classA`, `classB`,
 followed by the value agreement of the tabulation: the criterion produces a description at
 level `2 ^ (K + 1 + esize e)` lying in `A` or in `B` according to whether `e` halts, a value-`1`
-PCC strategy gives `val* = 1` (`Verifier.valStar_eq_one_of_hasPerfectPCC`), and `tab_value`
-carries both verdicts to the tabulated game. -/
+PCC strategy gives `val* = 1` (`Verifier.valStar_eq_one_of_hasPerfectPCC`), and the two
+verdicts reach the tabulated game by different routes: `tab_value` in the halting branch,
+where the verifier is synchronous, and `tab_le` in the other, where it need not be. -/
 theorem halting_reduction (O : Obligations G U) :
     ∃ g : Nat.Partrec.Code → GameData, Computable g ∧
       ∀ pc : Nat.Partrec.Code,

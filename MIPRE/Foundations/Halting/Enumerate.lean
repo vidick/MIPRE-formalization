@@ -94,7 +94,7 @@ theorem nodup_bitStrsLE (T : ℕ) : (bitStrsLE T).Nodup := by
   exact hne h
 
 /-! The two enumerations are primitive recursive: the tabulation of `MIPRE.Halting` walks both
-of them, so both are on the critical path of `Obligations.tab_computable`. -/
+of them, so both are on the critical path of `MIPRE.Halting.tab_computable`. -/
 
 theorem primrec_bitStrsOfLen : Primrec Data.bitStrsOfLen := by
   have hstep : Primrec₂ fun (_ : Unit) (p : ℕ × List BitStr) =>

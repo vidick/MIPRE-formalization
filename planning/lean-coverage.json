@@ -141,6 +141,15 @@
   "MIPRE.CL.Sampler.dist": [
    "def:sampler"
   ],
+  "MIPRE.CL.Sampler.queryUnder": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.CL.Sampler.queryUnder_dimension": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.CL.Sampler.queryUnder_marginal": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.CL.clDist": [
    "def:cl-function"
   ],
@@ -186,13 +195,25 @@
   "MIPRE.Cost.PolyBounded": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Cost.PolyTimeFun.computable_encode_comp": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Cost.Prog.HasPolyCost": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.Prog.ProgD.dWrapCore": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.Prog.ProgD.dWrapCore_eq": [
    "rem:compression-abstract"
   ],
   "MIPRE.Cost.Prog.parseProg_runs": [
    "rem:compression-abstract"
   ],
   "MIPRE.Cost.Prog.serProg_runs": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.Prog.two_le_esize": [
    "rem:compression-abstract"
   ],
   "MIPRE.Cost.Prog.wrapCore_hasPolyCost": [
@@ -231,6 +252,15 @@
   "MIPRE.Cost.hardcode_time_rev": [
    "lem:smn"
   ],
+  "MIPRE.Cost.progNorm": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.progNorm_eq": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.progOk": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Cost.recursive_compression": [
    "lem:recursive-compression"
   ],
@@ -248,6 +278,9 @@
   ],
   "MIPRE.Decider.TimeBound": [
    "def:decider"
+  ],
+  "MIPRE.Decider.acceptBudget": [
+   "rem:compression-abstract"
   ],
   "MIPRE.Decider.wrap": [
    "rem:compression-abstract"
@@ -268,10 +301,25 @@
   "MIPRE.Halting.Vof": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Halting.accOf": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.accOf_iff": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.acc_mem_iff": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Halting.classA": [
    "rem:compression-abstract"
   ],
   "MIPRE.Halting.classB": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.decProgData": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.decProgData_eq": [
    "rem:compression-abstract"
   ],
   "MIPRE.Halting.descDec": [
@@ -280,8 +328,56 @@
   "MIPRE.Halting.descLam": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Halting.dimOf": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.dimOf_eq": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.eAof": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.eXof": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Halting.halting_reduction": [
    "thm:halting"
+  ],
+  "MIPRE.Halting.margOf": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.margOf_eq": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.mu_clause": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.primrec_tabOf": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.sampData": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.sampData_eq": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.tab": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.tabOf": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.tab_computable": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.tab_le": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.tab_match": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.tab_value": [
+   "rem:compression-abstract"
   ],
   "MIPRE.Halting.yNo": [
    "rem:compression-abstract"
@@ -541,13 +637,22 @@
   "MIPRE.Verifier.IsBounded.mono": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Verifier.IsBounded.two_le": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Verifier.IsSynchronousAt": [
    "def:normal-verifier"
+  ],
+  "MIPRE.Verifier.accList": [
+   "rem:compression-abstract"
   ],
   "MIPRE.Verifier.accepts_iff_runForD": [
    "rem:compression-abstract"
   ],
   "MIPRE.Verifier.answerEquiv": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.bitsToIdx": [
    "rem:compression-abstract"
   ],
   "MIPRE.Verifier.exists_isBounded": [
@@ -586,6 +691,9 @@
   "MIPRE.Verifier.hasPerfectPCC_of_le": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Verifier.mem_accList_iff": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Verifier.not_inClassB_iff": [
    "rem:compression-abstract"
   ],
@@ -607,6 +715,9 @@
   "MIPRE.Verifier.questionEquiv": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Verifier.questionWeight_weightList": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Verifier.size": [
    "def:normal-verifier"
   ],
@@ -614,6 +725,9 @@
    "def:normal-verifier"
   ],
   "MIPRE.Verifier.syncValue_syncGame_eq_one": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.totalWeight_weightList": [
    "rem:compression-abstract"
   ],
   "MIPRE.Verifier.valStar_congr": [
@@ -626,6 +740,9 @@
    "rem:compression-abstract"
   ],
   "MIPRE.Verifier.valStar_eq_zero_of_rejects_all": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.weightList": [
    "rem:compression-abstract"
   ],
   "MIPRE.commValue": [
@@ -772,6 +889,9 @@
   "MIPRE.CL.Sampler.Query",
   "MIPRE.CL.Sampler.TimeBound",
   "MIPRE.CL.Sampler.dist",
+  "MIPRE.CL.Sampler.queryUnder",
+  "MIPRE.CL.Sampler.queryUnder_dimension",
+  "MIPRE.CL.Sampler.queryUnder_marginal",
   "MIPRE.CL.clDist",
   "MIPRE.CL.clDist_downsize",
   "MIPRE.CL.downsizeEquiv",
@@ -787,9 +907,13 @@
   "MIPRE.Cost.Machine.runForD",
   "MIPRE.Cost.Machine.runForD_eq_some_iff",
   "MIPRE.Cost.PolyBounded",
+  "MIPRE.Cost.PolyTimeFun.computable_encode_comp",
   "MIPRE.Cost.Prog.HasPolyCost",
+  "MIPRE.Cost.Prog.ProgD.dWrapCore",
+  "MIPRE.Cost.Prog.ProgD.dWrapCore_eq",
   "MIPRE.Cost.Prog.parseProg_runs",
   "MIPRE.Cost.Prog.serProg_runs",
+  "MIPRE.Cost.Prog.two_le_esize",
   "MIPRE.Cost.Prog.wrapCore_hasPolyCost",
   "MIPRE.Cost.bitQueryAnswer",
   "MIPRE.Cost.compressibility_criterion",
@@ -802,23 +926,48 @@
   "MIPRE.Cost.hardcode_size",
   "MIPRE.Cost.hardcode_time",
   "MIPRE.Cost.hardcode_time_rev",
+  "MIPRE.Cost.progNorm",
+  "MIPRE.Cost.progNorm_eq",
+  "MIPRE.Cost.progOk",
   "MIPRE.Cost.recursive_compression",
   "MIPRE.Cost.recursive_compression_halting",
   "MIPRE.Cost.smn_polyTime",
   "MIPRE.Decider",
   "MIPRE.Decider.Accepts",
   "MIPRE.Decider.TimeBound",
+  "MIPRE.Decider.acceptBudget",
   "MIPRE.Decider.wrap",
   "MIPRE.Game",
   "MIPRE.Game.repeat",
   "MIPRE.GapCompression",
   "MIPRE.Halting.Obligations",
   "MIPRE.Halting.Vof",
+  "MIPRE.Halting.accOf",
+  "MIPRE.Halting.accOf_iff",
+  "MIPRE.Halting.acc_mem_iff",
   "MIPRE.Halting.classA",
   "MIPRE.Halting.classB",
+  "MIPRE.Halting.decProgData",
+  "MIPRE.Halting.decProgData_eq",
   "MIPRE.Halting.descDec",
   "MIPRE.Halting.descLam",
+  "MIPRE.Halting.dimOf",
+  "MIPRE.Halting.dimOf_eq",
+  "MIPRE.Halting.eAof",
+  "MIPRE.Halting.eXof",
   "MIPRE.Halting.halting_reduction",
+  "MIPRE.Halting.margOf",
+  "MIPRE.Halting.margOf_eq",
+  "MIPRE.Halting.mu_clause",
+  "MIPRE.Halting.primrec_tabOf",
+  "MIPRE.Halting.sampData",
+  "MIPRE.Halting.sampData_eq",
+  "MIPRE.Halting.tab",
+  "MIPRE.Halting.tabOf",
+  "MIPRE.Halting.tab_computable",
+  "MIPRE.Halting.tab_le",
+  "MIPRE.Halting.tab_match",
+  "MIPRE.Halting.tab_value",
   "MIPRE.Halting.yNo",
   "MIPRE.Halting.yNo_mem",
   "MIPRE.Halting.yYes",
@@ -905,9 +1054,12 @@
   "MIPRE.Verifier.InClassB",
   "MIPRE.Verifier.IsBounded",
   "MIPRE.Verifier.IsBounded.mono",
+  "MIPRE.Verifier.IsBounded.two_le",
   "MIPRE.Verifier.IsSynchronousAt",
+  "MIPRE.Verifier.accList",
   "MIPRE.Verifier.accepts_iff_runForD",
   "MIPRE.Verifier.answerEquiv",
+  "MIPRE.Verifier.bitsToIdx",
   "MIPRE.Verifier.exists_isBounded",
   "MIPRE.Verifier.exists_perfectPCC_syncGame",
   "MIPRE.Verifier.freeze",
@@ -920,6 +1072,7 @@
   "MIPRE.Verifier.hasPerfectPCC_congr",
   "MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal",
   "MIPRE.Verifier.hasPerfectPCC_of_le",
+  "MIPRE.Verifier.mem_accList_iff",
   "MIPRE.Verifier.not_inClassB_iff",
   "MIPRE.Verifier.not_inClassB_of_inClassA",
   "MIPRE.Verifier.ofSamplerDecider",
@@ -927,13 +1080,16 @@
   "MIPRE.Verifier.ofSamplerDecider_isBounded",
   "MIPRE.Verifier.quantumValue_toGame_eq_valStar",
   "MIPRE.Verifier.questionEquiv",
+  "MIPRE.Verifier.questionWeight_weightList",
   "MIPRE.Verifier.size",
   "MIPRE.Verifier.syncGame",
   "MIPRE.Verifier.syncValue_syncGame_eq_one",
+  "MIPRE.Verifier.totalWeight_weightList",
   "MIPRE.Verifier.valStar_congr",
   "MIPRE.Verifier.valStar_eq_of_rejects",
   "MIPRE.Verifier.valStar_eq_one_of_hasPerfectPCC",
   "MIPRE.Verifier.valStar_eq_zero_of_rejects_all",
+  "MIPRE.Verifier.weightList",
   "MIPRE.commValue",
   "MIPRE.commutingOperatorValue",
   "MIPRE.entRequirement",
@@ -1069,8 +1225,19 @@
    "MIPRE.Cost.Machine.runForD",
    "MIPRE.Cost.Machine.runForD_eq_some_iff"
   ],
+  "MIPRE/Foundations/Cost/Encoding.lean": [
+   "MIPRE.Cost.Prog.two_le_esize"
+  ],
   "MIPRE/Foundations/Cost/Kleene.lean": [
    "MIPRE.Cost.efficient_fixed_point"
+  ],
+  "MIPRE/Foundations/Cost/Partrec.lean": [
+   "MIPRE.Cost.PolyTimeFun.computable_encode_comp"
+  ],
+  "MIPRE/Foundations/Cost/ProgData.lean": [
+   "MIPRE.Cost.progNorm",
+   "MIPRE.Cost.progNorm_eq",
+   "MIPRE.Cost.progOk"
   ],
   "MIPRE/Foundations/Cost/Semidecide.lean": [
    "MIPRE.Cost.exists_semidecider"
@@ -1164,11 +1331,27 @@
   "MIPRE/Foundations/Halting/Instantiation.lean": [
    "MIPRE.Halting.Obligations",
    "MIPRE.Halting.Vof",
+   "MIPRE.Halting.accOf_iff",
+   "MIPRE.Halting.acc_mem_iff",
    "MIPRE.Halting.classA",
    "MIPRE.Halting.classB",
+   "MIPRE.Halting.decProgData",
+   "MIPRE.Halting.decProgData_eq",
    "MIPRE.Halting.descDec",
    "MIPRE.Halting.descLam",
-   "MIPRE.Halting.halting_reduction"
+   "MIPRE.Halting.dimOf_eq",
+   "MIPRE.Halting.eAof",
+   "MIPRE.Halting.eXof",
+   "MIPRE.Halting.halting_reduction",
+   "MIPRE.Halting.margOf_eq",
+   "MIPRE.Halting.mu_clause",
+   "MIPRE.Halting.sampData",
+   "MIPRE.Halting.sampData_eq",
+   "MIPRE.Halting.tab",
+   "MIPRE.Halting.tab_computable",
+   "MIPRE.Halting.tab_le",
+   "MIPRE.Halting.tab_match",
+   "MIPRE.Halting.tab_value"
   ],
   "MIPRE/Foundations/Halting/PolyBounded.lean": [
    "MIPRE.Cost.PolyBounded",
@@ -1185,9 +1368,26 @@
    "MIPRE.Halting.yYes_mem"
   ],
   "MIPRE/Foundations/Halting/Tabulate.lean": [
-   "MIPRE.Verifier.accepts_iff_runForD"
+   "MIPRE.CL.Sampler.queryUnder",
+   "MIPRE.CL.Sampler.queryUnder_dimension",
+   "MIPRE.CL.Sampler.queryUnder_marginal",
+   "MIPRE.Decider.acceptBudget",
+   "MIPRE.Halting.accOf",
+   "MIPRE.Halting.dimOf",
+   "MIPRE.Halting.margOf",
+   "MIPRE.Halting.primrec_tabOf",
+   "MIPRE.Halting.tabOf",
+   "MIPRE.Verifier.accList",
+   "MIPRE.Verifier.accepts_iff_runForD",
+   "MIPRE.Verifier.bitsToIdx",
+   "MIPRE.Verifier.mem_accList_iff",
+   "MIPRE.Verifier.questionWeight_weightList",
+   "MIPRE.Verifier.totalWeight_weightList",
+   "MIPRE.Verifier.weightList"
   ],
   "MIPRE/Foundations/Halting/Wrapper.lean": [
+   "MIPRE.Cost.Prog.ProgD.dWrapCore",
+   "MIPRE.Cost.Prog.ProgD.dWrapCore_eq",
    "MIPRE.Decider.wrap",
    "MIPRE.Verifier.ofSamplerDecider",
    "MIPRE.Verifier.ofSamplerDecider_accepts"
@@ -1264,6 +1464,7 @@
    "MIPRE.Verifier",
    "MIPRE.Verifier.Answers",
    "MIPRE.Verifier.IsBounded",
+   "MIPRE.Verifier.IsBounded.two_le",
    "MIPRE.Verifier.IsSynchronousAt",
    "MIPRE.Verifier.game",
    "MIPRE.Verifier.size",
@@ -1388,8 +1589,8 @@
   "MIPRE/Foundations/Cost/BoundedEval.lean": 9,
   "MIPRE/Foundations/Cost/Clocked.lean": 5,
   "MIPRE/Foundations/Cost/Closure.lean": 21,
-  "MIPRE/Foundations/Cost/Codable.lean": 43,
-  "MIPRE/Foundations/Cost/Encoding.lean": 25,
+  "MIPRE/Foundations/Cost/Codable.lean": 48,
+  "MIPRE/Foundations/Cost/Encoding.lean": 26,
   "MIPRE/Foundations/Cost/FromPartrec.lean": 21,
   "MIPRE/Foundations/Cost/Growth.lean": 3,
   "MIPRE/Foundations/Cost/Interpreter.lean": 73,
@@ -1399,8 +1600,9 @@
   "MIPRE/Foundations/Cost/MachineBound.lean": 27,
   "MIPRE/Foundations/Cost/MachineData.lean": 17,
   "MIPRE/Foundations/Cost/Numeric.lean": 36,
-  "MIPRE/Foundations/Cost/Partrec.lean": 19,
+  "MIPRE/Foundations/Cost/Partrec.lean": 20,
   "MIPRE/Foundations/Cost/PolyTime.lean": 8,
+  "MIPRE/Foundations/Cost/ProgData.lean": 9,
   "MIPRE/Foundations/Cost/Semidecide.lean": 32,
   "MIPRE/Foundations/Cost/Succinct.lean": 7,
   "MIPRE/Foundations/Cost/Threshold.lean": 8,
@@ -1412,19 +1614,19 @@
   "MIPRE/Foundations/GameTransport.lean": 39,
   "MIPRE/Foundations/Games.lean": 61,
   "MIPRE/Foundations/GapCompression.lean": 2,
-  "MIPRE/Foundations/Halting/Arith.lean": 48,
+  "MIPRE/Foundations/Halting/Arith.lean": 50,
   "MIPRE/Foundations/Halting/Bounded.lean": 9,
   "MIPRE/Foundations/Halting/Classes.lean": 10,
   "MIPRE/Foundations/Halting/Descriptions.lean": 34,
-  "MIPRE/Foundations/Halting/Enumerate.lean": 19,
+  "MIPRE/Foundations/Halting/Enumerate.lean": 21,
   "MIPRE/Foundations/Halting/Freeze.lean": 28,
-  "MIPRE/Foundations/Halting/Instantiation.lean": 15,
+  "MIPRE/Foundations/Halting/Instantiation.lean": 44,
   "MIPRE/Foundations/Halting/Lists.lean": 42,
   "MIPRE/Foundations/Halting/PolyBounded.lean": 28,
   "MIPRE/Foundations/Halting/Serial.lean": 26,
   "MIPRE/Foundations/Halting/Strings.lean": 16,
-  "MIPRE/Foundations/Halting/Tabulate.lean": 15,
-  "MIPRE/Foundations/Halting/Wrapper.lean": 29,
+  "MIPRE/Foundations/Halting/Tabulate.lean": 41,
+  "MIPRE/Foundations/Halting/Wrapper.lean": 53,
   "MIPRE/Foundations/Halting/WrapperCost.lean": 17,
   "MIPRE/Foundations/SyncTransport.lean": 4,
   "MIPRE/Foundations/ValueApprox.lean": 8,
@@ -1440,7 +1642,7 @@
   "MIPRE/Foundations/ValueApprox/RawSemantics.lean": 27,
   "MIPRE/Foundations/ValueApprox/RawStrategy.lean": 31,
   "MIPRE/Foundations/ValueApprox/Strategy.lean": 20,
-  "MIPRE/Foundations/Verifier.lean": 17,
+  "MIPRE/Foundations/Verifier.lean": 18,
   "MIPRE/Foundations/VerifierValue.lean": 12,
   "MIPRE/HaltingGameValue.lean": 12,
   "MIPRE/LCS/Basic.lean": 5,
@@ -1483,6 +1685,6 @@
   "commands_defined": 99,
   "commands_used": 206,
   "labels": 222,
-  "refs": 947
+  "refs": 948
  }
 }
