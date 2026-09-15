@@ -408,10 +408,20 @@ itself, `CLFun.truncate_self`), and `Verifier.bitsToIdx` with `questionEquiv_sym
 says the index of a question is the number its bit string denotes: a `GameData`'s questions are
 `Fin (nX + 1)`, so everything a sampler query returns has to become a number.
 
-Remaining for O2: the question weights (one entry per point of `𝔽₂^{s(n)}`, giving
-`questionWeight` the count and `totalWeight` the value `2^{s(n)}`, which is exactly the shape
-of `clDist`), the answer-index bridge for `answerEquiv`, the acceptance table, the assembly of
-`tab`, and `tab_computable`. Then, in order, and identified with the fields of
+The question weights followed (`Halting/Tabulate.lean`): `Verifier.weightList` is one entry of
+weight `1` per point of `𝔽₂^{s(n)}`, at the index pair its two marginals land on, and
+`questionWeight_weightList` and `totalWeight_weightList` say that its `questionWeight` is the
+number of points landing on a given pair and its `totalWeight` is `2^{s(n)}` — exactly the
+quotient `clDist` is. The bridge is `length_filter_bitStrsOfLen`: the bit strings of length `s`
+are the vectors of `𝔽₂^s`, so a count over one is a count over the other.
+
+The answer side followed the question side: `answerEquiv_symm_val` says an answer's index is
+its position among the bit strings of length at most `T`, the enumeration `answerList` being
+`bitStrsLE` mapped by a truncation that is the identity on them.
+
+Remaining for O2: the acceptance table from `Verifier.accepts_iff_runForD`, then the assembly
+of `tab`, `tab_computable`, and `tab_match` itself — where the weights become `μ` and the table
+becomes `D`. Then, in order, and identified with the fields of
 `MIPRE.Halting.Obligations`:
 the *computation* of the tabulation — running the sampler on every point of `𝔽₂^{s(n)}` to
 count the question weights and the decider under its budget to fill in the acceptance table,

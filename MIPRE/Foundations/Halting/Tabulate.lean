@@ -23,6 +23,20 @@ settles the question (`Machine.runForD`).
   procedures, and `Verifier.accepts_iff_runForD` for the verifier a string denotes, where the
   bound comes from `Verifier.IsBounded`.
 
+The other half of the tabulation is the question distribution, and the rest of this file is
+what a `GameData` needs for it. `CL.Sampler.queryUnder` runs one sampler query under the same
+kind of budget; `Verifier.bitsToIdx` turns the bit string a query returns into the number a
+`GameData` names its questions by, and agrees with `Verifier.questionEquiv`; and
+`Verifier.weightList` is the weight list itself — one entry of weight `1` for each point of
+`𝔽₂^{s(n)}`, at the index pair its two marginals land on. Its `questionWeight` is then the
+number of points landing on a given pair and its `totalWeight` is `2 ^ s(n)`, which is exactly
+the quotient `CL.clDist` is: `length_filter_bitStrsOfLen` is the bridge, the bit strings of
+length `s` being the vectors of `𝔽₂^s`.
+
+`Verifier.answerEquiv_symm_val` is the same service on the answer side: an answer's index is
+its position among the bit strings of length at most `T`, the enumeration `answerList` being
+`bitStrsLE` mapped by a truncation that is the identity on them.
+
 Nothing here is efficient and nothing needs to be: the tabulation is a computable map, not a
 polynomial-time one, and the budget it runs under is the verifier's own time bound.
 -/
@@ -30,6 +44,7 @@ polynomial-time one, and the budget it runs under is the verifier's own time bou
 namespace MIPRE
 
 open Cost
+open HaltingGameValue (GameData)
 
 namespace Decider
 
@@ -159,6 +174,136 @@ tabulation name questions by numbers while the value agreement is read along
 @[simp] theorem bitsToIdx_toBits_questionEquiv {s : ℕ} (i : Fin (2 ^ s)) :
     bitsToIdx (CL.toBits (questionEquiv s i)) = (i : ℕ) := by
   rw [← questionEquiv_symm_val, Equiv.symm_apply_apply]
+
+/-! ## The question weights -/
+
+/-- The index of a bit string is below `2 ^ its length`. -/
+theorem bitsToIdx_lt (l : BitStr) : bitsToIdx l < 2 ^ l.length := by
+  induction l with
+  | nil => simp
+  | cons b l ih => rw [bitsToIdx_cons, List.length_cons, pow_succ]; split <;> omega
+
+/-- **The weight list of a tabulation**: one entry of weight `1` for each point of `𝔽₂^s`, at
+the index pair its two marginals land on. -/
+def weightList (s : ℕ) (fA fB : BitStr → ℕ) : List (ℕ × ℕ × ℕ) :=
+  (Data.bitStrsOfLen s).map fun z => (fA z, fB z, 1)
+
+theorem questionWeight_weightList (nX nA s : ℕ) (fA fB : BitStr → ℕ)
+    (acc : List (ℕ × ℕ × ℕ × ℕ)) (i j : ℕ) :
+    (GameData.mk nX nA (weightList s fA fB) acc).questionWeight i j =
+      ((Data.bitStrsOfLen s).filter fun z => decide (fA z = i ∧ fB z = j)).length := by
+  show ((((weightList s fA fB).filter fun t => decide (t.1 = i ∧ t.2.1 = j)).map
+    fun t => t.2.2).sum) = _
+  rw [weightList, List.filter_map, List.map_map]
+  simp [Function.comp_def]
+
+/-- Every point of `𝔽₂^s` is counted once, so the total weight is `2 ^ s`. -/
+theorem sum_filter_length {N : ℕ} (fA fB : BitStr → ℕ) (l : List BitStr)
+    (hA : ∀ z ∈ l, fA z < N) (hB : ∀ z ∈ l, fB z < N) :
+    ∑ x : Fin N, ∑ y : Fin N,
+      (l.filter fun z => decide (fA z = x.val ∧ fB z = y.val)).length = l.length := by
+  induction l with
+  | nil => simp
+  | cons z l ih =>
+    have hAz : fA z < N := hA z (by simp)
+    have hBz : fB z < N := hB z (by simp)
+    have hstep : ∀ x y : Fin N,
+        ((z :: l).filter fun w => decide (fA w = x.val ∧ fB w = y.val)).length =
+          (if fA z = x.val ∧ fB z = y.val then 1 else 0) +
+            (l.filter fun w => decide (fA w = x.val ∧ fB w = y.val)).length := by
+      intro x y
+      rw [List.filter_cons]
+      by_cases h : fA z = x.val ∧ fB z = y.val
+      · rw [if_pos (by simpa using h), List.length_cons, if_pos h]; omega
+      · rw [if_neg (by simpa using h), if_neg h]; omega
+    simp only [hstep, Finset.sum_add_distrib]
+    rw [ih (fun w hw => hA w (by simp [hw])) (fun w hw => hB w (by simp [hw])),
+      List.length_cons]
+    have hone : ∑ x : Fin N, ∑ y : Fin N,
+        (if fA z = x.val ∧ fB z = y.val then 1 else 0) = 1 := by
+      rw [Finset.sum_eq_single (⟨fA z, hAz⟩ : Fin N)]
+      · rw [Finset.sum_eq_single (⟨fB z, hBz⟩ : Fin N)]
+        · simp
+        · intro b _ hb
+          exact if_neg fun h => hb (Fin.ext h.2.symm)
+        · intro hmem; exact absurd (Finset.mem_univ _) hmem
+      · intro a _ ha
+        exact Finset.sum_eq_zero fun b _ => if_neg fun h => ha (Fin.ext h.1.symm)
+      · intro hmem; exact absurd (Finset.mem_univ _) hmem
+    omega
+
+/-- The total weight of the list is `2 ^ s`: every point of `𝔽₂^s` contributes `1`, and the
+index pairs it can land on are all in range. That denominator is exactly the one `CL.clDist`
+divides by. -/
+theorem totalWeight_weightList (nX nA s : ℕ) (fA fB : BitStr → ℕ)
+    (acc : List (ℕ × ℕ × ℕ × ℕ))
+    (hA : ∀ z ∈ Data.bitStrsOfLen s, fA z < nX + 1)
+    (hB : ∀ z ∈ Data.bitStrsOfLen s, fB z < nX + 1) :
+    (GameData.mk nX nA (weightList s fA fB) acc).totalWeight = 2 ^ s := by
+  show ∑ x : Fin (nX + 1), ∑ y : Fin (nX + 1),
+    (GameData.mk nX nA (weightList s fA fB) acc).questionWeight x.val y.val = _
+  simp only [questionWeight_weightList]
+  rw [sum_filter_length fA fB _ hA hB, Data.length_bitStrsOfLen]
+
+
+/-- **Counting over `𝔽₂^s` by enumerating bit strings.** The bit strings of length `s` are the
+vectors of `𝔽₂^s`, so a count over one is a count over the other — which is what turns the
+tabulation's weight list into the numerator of `CL.clDist`. -/
+theorem length_filter_bitStrsOfLen {s : ℕ} (P : (Fin s → CL.𝔽₂) → Bool) :
+    ((Data.bitStrsOfLen s).filter fun z => P (CL.ofBits s z)).length
+      = (Finset.univ.filter fun v : Fin s → CL.𝔽₂ => P v = true).card := by
+  classical
+  have hinj : ∀ z ∈ Data.bitStrsOfLen s, ∀ z' ∈ Data.bitStrsOfLen s,
+      CL.ofBits s z = CL.ofBits s z' → z = z' := by
+    intro z hz z' hz' h
+    rw [← CL.toBits_ofBits ((Data.mem_bitStrsOfLen s z).1 hz),
+      ← CL.toBits_ofBits ((Data.mem_bitStrsOfLen s z').1 hz'), h]
+  have hnd : ((Data.bitStrsOfLen s).map (CL.ofBits s)).Nodup :=
+    (Data.nodup_bitStrsOfLen s).map_on hinj
+  have huniv : ((Data.bitStrsOfLen s).map (CL.ofBits s)).toFinset = Finset.univ :=
+    Finset.eq_univ_of_forall fun v => List.mem_toFinset.2
+      (List.mem_map.2 ⟨CL.toBits v, (Data.mem_bitStrsOfLen s _).2 (by simp), by simp⟩)
+  have key : (((Data.bitStrsOfLen s).map (CL.ofBits s)).filter P).length
+      = ((Data.bitStrsOfLen s).filter fun z => P (CL.ofBits s z)).length := by
+    rw [List.filter_map, List.length_map]; rfl
+  rw [← key, ← List.toFinset_card_of_nodup (hnd.filter _), List.toFinset_filter, huniv]
+
+/-! ## Answers as numbers -/
+
+/-- The index of a mapped element, when the map is injective on the list. -/
+theorem idxOf_map_of_injOn {α β : Type*} [BEq α] [LawfulBEq α] [BEq β] [LawfulBEq β]
+    (f : α → β) (l : List α) (hinj : ∀ x ∈ l, ∀ y ∈ l, f x = f y → x = y) {x : α} (hx : x ∈ l) :
+    (l.map f).idxOf (f x) = l.idxOf x := by
+  induction l with
+  | nil => simp at hx
+  | cons a l ih =>
+    by_cases hax : a = x
+    · subst hax; simp
+    · have hne : f a ≠ f x := fun h => hax (hinj a (by simp) x (by simp [hx]) h)
+      have hxl : x ∈ l := by
+        rcases List.mem_cons.1 hx with h | h
+        · exact absurd h.symm hax
+        · exact h
+      rw [List.map_cons, List.idxOf_cons_ne _ hne, List.idxOf_cons_ne _ hax,
+        ih (fun u hu v hv h => hinj u (by simp [hu]) v (by simp [hv]) h) hxl]
+
+/-- The answers of length at most `T` are indexed by their position among the bit strings of
+length at most `T`: the enumeration `answerList` is `bitStrsLE` mapped by truncation, which is
+the identity on those strings. -/
+theorem answerEquiv_symm_val (T : ℕ) (a : Answers T) :
+    (((answerEquiv T).symm a : Fin (answerList T).length) : ℕ) = (Data.bitStrsLE T).idxOf a.1 := by
+  have hinj : ∀ x ∈ Data.bitStrsLE T, ∀ y ∈ Data.bitStrsLE T,
+      toAnswer T x = toAnswer T y → x = y := by
+    intro x hx y hy h
+    have ex : x.take T = x := List.take_of_length_le ((Data.mem_bitStrsLE T x).1 hx)
+    have ey : y.take T = y := List.take_of_length_le ((Data.mem_bitStrsLE T y).1 hy)
+    rw [← ex, ← ey]
+    exact congrArg Subtype.val h
+  calc (((answerEquiv T).symm a : Fin (answerList T).length) : ℕ)
+      = ((Data.bitStrsLE T).map (toAnswer T)).idxOf (toAnswer T a.1) := by
+        rw [toAnswer_val]; rfl
+    _ = (Data.bitStrsLE T).idxOf a.1 :=
+        idxOf_map_of_injOn _ _ hinj ((Data.mem_bitStrsLE T a.1).2 a.2)
 
 end Verifier
 
