@@ -1077,7 +1077,9 @@ lower bound has to be tracked anywhere in this chapter.
   MIPRE.Verifier.InClassB, MIPRE.Verifier.not_inClassB_of_inClassA,
   MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal,
   MIPRE.Verifier.valStar_eq_zero_of_rejects_all, MIPRE.Verifier.ofSamplerDecider,
-  MIPRE.Verifier.ofSamplerDecider_accepts, MIPRE.Decider.wrap}
+  MIPRE.Verifier.ofSamplerDecider_accepts, MIPRE.Decider.wrap,
+  MIPRE.Verifier.answerEquiv, MIPRE.Verifier.questionEquiv,
+  MIPRE.Verifier.quantumValue_toGame_eq_valStar, MIPRE.Verifier.not_inClassB_iff}
 Theorem~\ref{thm:compression} instantiates the hypotheses of
 Lemma~\ref{lem:compressible-criterion}: take $A$ to be the set of (descriptions of) normal
 form verifier games with a value-$1$ PCC strategy and $B$ the set of those with $\valstar
@@ -1145,9 +1147,16 @@ of the recursion.
 \item \emph{Junk inputs.} Nothing is demanded of the compressor off strings in $A_{2n+1}
   \cup B_{2n+1}$, every string names a verifier, and $\lambda$-boundedness is decided
   nowhere. What the lemma does demand is that the complement of $B_n$ be semidecidable:
-  ``not $n$-bounded'' is witnessed by a run exceeding its budget, and ``$\valstar > \frac12$
-  at index $n$'' is the $\valstar$ half of Lemma~\ref{lem:value-lower-approx} applied to
-  the tabulated game, which is computable from an $n$-bounded verifier.
+  ``not $n$-bounded'' is witnessed by a run exceeding its budget --- a search over inputs, so
+  $\Sigma_1$ --- and ``$\valstar > \frac12$ at index $n$'' is the $\valstar$ half of
+  Lemma~\ref{lem:value-lower-approx} applied to the tabulated game, which is computable from
+  an $n$-bounded verifier. Neither disjunct decides $n$-boundedness, which is $\Pi_1$; the
+  point of taking the disjunction is that it does not have to
+  (\texttt{Verifier.not\_inClassB\_iff}). The tabulation itself is read with the answer
+  alphabet enumerated by \texttt{Verifier.answerEquiv} and the questions by
+  \texttt{questionEquiv}, and a description matching $\verifier_n$ along those indexings has
+  the same value (\texttt{quantumValue\_toGame\_eq\_valStar}), which is what carries the
+  verdict of a procedure that runs on game descriptions back to the verifier.
 \item \emph{The choice of $\lambda$.} Absorbed into item 1.
 \end{enumerate}
 Of this dictionary the per-level lemma, the Lean statement of
@@ -1187,7 +1196,10 @@ the criterion are covered at the level of verifiers by
 \texttt{hasPerfectPCC\_of\_accepts\_diagonal} (a decider that is synchronous at $n$ and
 accepts one fixed answer on every question pair has a value-$1$ PCC strategy: the paper's
 trivial strategy) and \texttt{valStar\_eq\_zero\_of\_rejects\_all}. Still owed there are
-the time accounting of the wrapper and the two strings realizing those verifiers. The entanglement form
+the time accounting of the wrapper and the two strings realizing those verifiers, and the
+computation of the tabulation --- running the sampler on every point of $\F_2^{s(n)}$ to
+count the question weights, and the decider under its budget to fill in the acceptance
+table. The entanglement form
 of~\cite{JNVWY20}
 (Remark~\ref{rem:entanglement-form}) instantiates Lemma~\ref{lem:recursive-compression}
 instead, with $f = \Ent(\cdot, \frac12)$; it is not used by the main theorem.

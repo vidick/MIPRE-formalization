@@ -555,6 +555,7 @@ import MIPRE.Foundations.GapCompression
 import MIPRE.Foundations.Halting.Arith
 import MIPRE.Foundations.Halting.Classes
 import MIPRE.Foundations.Halting.Descriptions
+import MIPRE.Foundations.Halting.Enumerate
 import MIPRE.Foundations.Halting.Freeze
 import MIPRE.Foundations.Halting.Lists
 import MIPRE.Foundations.Halting.PolyBounded
