@@ -24,9 +24,16 @@ game under different answer-length bounds (blueprint `rem:compression-abstract`)
   (`ProjectiveMeasurement.merge`), which needs the orthogonality of the outcomes of a
   projective measurement (`ProjectiveMeasurement.mul_eq_zero_of_ne`) and can only raise the
   value.
-* The synchronous counterparts for PCC strategies: `SyncStrategy.extend` keeps the value and
-  the PCC property, and the constant strategy `SyncStrategy.const` is PCC with value the
-  acceptance mass of a fixed answer pair.
+* The synchronous counterparts for PCC strategies: `SyncStrategy.relabel` plays a strategy
+  through a relabeling of the questions and of the answers, keeping the value
+  (`value_relabel`) and the commutation condition (`isPCC_relabel`), whence
+  `syncValue_eq_of_equiv` by the same two-sided `iSup` argument as `quantumValue_eq_of_equiv`;
+  `SyncStrategy.extend` keeps the value and the PCC property; and the constant strategy
+  `SyncStrategy.const` is PCC with value the acceptance mass of a fixed answer pair.
+
+The synchronous relabeling is what carries a value-`1` PCC strategy of a verifier's game to a
+tabulation of it as a game description, which is item 1 of blueprint `thm:halting`; the
+consumer is `MIPRE.Foundations.SyncTransport`.
 -/
 
 namespace MIPRE
@@ -445,6 +452,54 @@ theorem isPCC_extend {A' : Type*} [Fintype A'] [DecidableEq A'] {S : SyncStrateg
     · rw [S.P.extend_M_of_not_mem ι y hb, mul_zero, zero_mul]
   · rw [S.P.extend_M_of_not_mem ι x ha, mul_zero, zero_mul]
 
+/-- Play `S` on `G'` through relabelings of the questions (any map) and of the answers
+(an equivalence). The synchronous counterpart of `TensorProductStrategy.relabel`. -/
+def relabel {X' A' : Type*} [Fintype X'] [Fintype A'] [DecidableEq A'] (S : SyncStrategy G)
+    (G' : SynchronousGame X' A') (eX : X' → X) (eA : A' ≃ A) : SyncStrategy G' :=
+  ⟨S.d, S.d_pos, S.P.reindex eX eA⟩
+
+@[simp] theorem relabel_d {X' A' : Type*} [Fintype X'] [Fintype A'] [DecidableEq A']
+    (S : SyncStrategy G) (G' : SynchronousGame X' A') (eX : X' → X) (eA : A' ≃ A) :
+    (S.relabel G' eX eA).d = S.d := rfl
+
+@[simp] theorem relabel_P_M {X' A' : Type*} [Fintype X'] [Fintype A'] [DecidableEq A']
+    (S : SyncStrategy G) (G' : SynchronousGame X' A') (eX : X' → X) (eA : A' ≃ A)
+    (x' : X') (a' : A') : (S.relabel G' eX eA).P.M x' a' = S.P.M (eX x') (eA a') := rfl
+
+/-- Relabeling along equivalences with matching distribution and decision predicate
+preserves the value. -/
+theorem value_relabel {X' A' : Type*} [Fintype X'] [Fintype A'] [DecidableEq A']
+    (S : SyncStrategy G) (G' : SynchronousGame X' A') (eX : X' ≃ X) (eA : A' ≃ A)
+    (hμ : ∀ x' y', G'.μ x' y' = G.μ (eX x') (eX y'))
+    (hD : ∀ x' y' a' b', G'.D x' y' a' b' = G.D (eX x') (eX y') (eA a') (eA b')) :
+    (S.relabel G' eX eA).value = S.value := by
+  rw [value_eq, value_eq]
+  show (∑ x', ∑ y', ∑ a', ∑ b', G'.μ x' y' * (if G'.D x' y' a' b' then 1 else 0) *
+      ((S.P.M (eX x') (eA a') * S.P.M (eX y') (eA b')).trace.re / (S.d : ℝ))) =
+    ∑ x, ∑ y, ∑ a, ∑ b, G.μ x y * (if G.D x y a b then 1 else 0) *
+      ((S.P.M x a * S.P.M y b).trace.re / (S.d : ℝ))
+  symm
+  refine Fintype.sum_equiv eX.symm _ _ fun x => Fintype.sum_equiv eX.symm _ _ fun y =>
+    Fintype.sum_equiv eA.symm _ _ fun a => Fintype.sum_equiv eA.symm _ _ fun b => ?_
+  simp only [hμ, hD, Equiv.apply_symm_apply]
+
+/-- Relabeling preserves the PCC property: the operators of the relabeled strategy are
+operators of the original one, at question pairs that keep their weight. -/
+theorem isPCC_relabel {X' A' : Type*} [Fintype X'] [Fintype A'] [DecidableEq A']
+    {S : SyncStrategy G} (hS : S.IsPCC) (G' : SynchronousGame X' A') (eX : X' → X)
+    (eA : A' ≃ A) (hμ : ∀ x' y', G'.μ x' y' = G.μ (eX x') (eX y')) :
+    (S.relabel G' eX eA).IsPCC := by
+  intro x' y' hxy a' b'
+  rw [hμ] at hxy
+  exact hS _ _ hxy _ _
+
+/-- The values of synchronous strategies are bounded above (by one). -/
+theorem bddAbove_range_value (G : SynchronousGame X A) :
+    BddAbove (Set.range fun S : SyncStrategy G => S.value) := by
+  refine ⟨1, ?_⟩
+  rintro r ⟨S, rfl⟩
+  exact S.value_le_one
+
 /-- The constant strategy: one-dimensional, always answering `a₀`. -/
 def const (G : SynchronousGame X A) (a₀ : A) : SyncStrategy G where
   d := 1
@@ -485,5 +540,34 @@ theorem value_const (G : SynchronousGame X A) (a₀ : A) :
   simp [Finset.sum_ite_eq', ite_and]
 
 end SyncStrategy
+
+/-! ## The synchronous value under transport -/
+
+/-- The synchronous value is nonnegative. -/
+theorem syncValue_nonneg [DecidableEq A] (G : SynchronousGame X A) : 0 ≤ syncValue G :=
+  Real.iSup_nonneg fun S => S.value_nonneg
+
+/-- The synchronous value is at most one. -/
+theorem syncValue_le_one [DecidableEq A] (G : SynchronousGame X A) : syncValue G ≤ 1 :=
+  Real.iSup_le (fun S => S.value_le_one) zero_le_one
+
+/-- Synchronous games related by equivalences of their alphabets, with matching distribution
+and decision predicate, have the same synchronous value. The synchronous counterpart of
+`quantumValue_eq_of_equiv`, and what carries a perfect PCC strategy of a verifier's game to a
+tabulation of it as a game description. -/
+theorem syncValue_eq_of_equiv [DecidableEq A] {X' A' : Type*} [Fintype X'] [Fintype A']
+    [DecidableEq A'] (G : SynchronousGame X A) (G' : SynchronousGame X' A') (eX : X' ≃ X)
+    (eA : A' ≃ A)
+    (hμ : ∀ x' y', G'.μ x' y' = G.μ (eX x') (eX y'))
+    (hD : ∀ x' y' a' b', G'.D x' y' a' b' = G.D (eX x') (eX y') (eA a') (eA b')) :
+    syncValue G' = syncValue G := by
+  apply le_antisymm
+  · refine Real.iSup_le (fun S' => ?_) (syncValue_nonneg _)
+    have h := le_ciSup (SyncStrategy.bddAbove_range_value G) (S'.relabel G eX.symm eA.symm)
+    rwa [S'.value_relabel G eX.symm eA.symm (fun x y => by simp [hμ])
+      (fun x y a b => by simp [hD])] at h
+  · refine Real.iSup_le (fun S => ?_) (syncValue_nonneg _)
+    have h := le_ciSup (SyncStrategy.bddAbove_range_value G') (S.relabel G' eX eA)
+    rwa [S.value_relabel G' eX eA hμ hD] at h
 
 end MIPRE

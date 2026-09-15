@@ -124,6 +124,50 @@ Soundness needs neither, `synval ≤ val*` being the right direction there. Both
 in `rem:compression-abstract` and in the plan, so the gap between `halting_reduction` and
 `thm:main` is on the record rather than a surprise waiting at the end.
 
+*The two bridges, done 2026-09-15*, in `Foundations/GameTransport.lean`,
+`Foundations/GameDescription.lean` and the new `Foundations/SyncTransport.lean`. Three things
+found in the writing, all of them cheaper than the entry above expected.
+
+- **The synchronous relabeling is the tensor-product one with one alphabet instead of four.**
+  `SyncStrategy.relabel` is `⟨S.d, S.d_pos, S.P.reindex eX eA⟩` — `ProjectiveMeasurement.reindex`
+  already existed, built for `TensorProductStrategy.relabel` — and `value_relabel` is the same
+  fourfold `Fintype.sum_equiv` argument, `isPCC_relabel` one `rw` at the weight hypothesis.
+  `syncValue_eq_of_equiv` is then `quantumValue_eq_of_equiv`'s two-sided `iSup` argument
+  verbatim. What had to be added was `SyncStrategy.bddAbove_range_value`, which `Games.lean`
+  has for `TensorProductStrategy` and `CommutingStrategy` but not for `SyncStrategy`;
+  `syncValue_nonneg` and `syncValue_le_one` were missing for the same reason. Nothing about PCC
+  obstructs the transport: commutation is a condition at question pairs of positive weight, and
+  a relabeling with matching `μ` matches exactly those pairs.
+- **The two `SyncStrategy` structures differ only in packaging, and the values agree by
+  unfolding.** `MIPRE.SyncStrategy.value_eq` was already written in the shape of
+  `HaltingGameValue.strategyValue`, and `MIPRE.SyncStrategy.ofPOVM` / `.povm` were already the
+  two halves of the repackaging, so `value_toSyncStrategy` and `strategyValue_ofSyncStrategy`
+  are each `rw [value_eq]; rfl`. Both directions go through, so
+  `GameData.gameValue_eq_syncValue` is an equality and not the pair of inequalities that would
+  have sufficed. Consequence worth recording: `HaltingGameValue.gameValue` inherits whatever is
+  proved about `MIPRE.syncValue`, and `gameValue_nonneg`, `gameValue_le_one` and
+  `gameValue_le_quantumValue` fall out. Nothing in `MIPRE/HaltingGameValue.lean` had to change,
+  which matters — it is the file `thm:main` is read against.
+- **The consumer needed no hypothesis the `val*` one does not already have.**
+  `Verifier.syncGame_toGame` is a field-level identity, so the `μ` and `D` hypotheses of
+  `quantumValue_toGame_eq_valStar` transfer to the synchronous game unchanged: the consumer is
+  that theorem with `quantumValue` replaced by `syncValue`
+  (`Verifier.syncValue_syncGame_eq_one`, from `exists_perfectPCC_syncGame`), and with `val* ≤ c`
+  the same hypotheses give the soundness half in `HaltingGameValue.gameValue`
+  (`gameValue_toGame_le_of_valStar_le`).
+
+**One seam the bridges do not close, and it is O2's.** `Obligations.tab_value` concludes
+`quantumValue (tab x n).game = (Vof G U x).valStar n (ansBound G x n)` — an equality of `val*`
+and nothing more. (#65 has since added an `IsBounded n` hypothesis to it, for an unrelated
+reason: without one the field is unsatisfiable. That does not touch the point here.) Both consumers here need the *matching data* instead: the two equivalences of
+the alphabets and `hμ`, `hD` along them. From `tab_value` alone the synchronous half is not
+recoverable, `synval ≤ val*` pointing the wrong way, so a value-`1` PCC strategy of `𝒱_n` cannot
+be pushed onto the tabulation. This is not a gap in the bridges and costs nothing to repair:
+O2 builds `tab` from `Verifier.answerEquiv` and `questionEquiv`, so the matching data is exactly
+what it has in hand, and the field should be stated in that form (or carry a second clause in
+`syncValue`) when O2 is written. Recorded here because `Instantiation.lean` is where the change
+goes and this branch does not touch it. With that done, `thm:main` waits on O1–O4 alone.
+
 ## 4. Order of work
 
 1. ~~**O1.**~~ Done. The rule of §1 paid: `Verifier.IsBounded` had no inhabitant at all
