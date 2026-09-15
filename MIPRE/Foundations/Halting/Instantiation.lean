@@ -58,10 +58,12 @@ what is open can be enumerated rather than searched for:
   `Verifier.answerEquiv` and `questionEquiv`; `Obligations.tab_value` reads the equality of
   values off it (`Verifier.quantumValue_toGame_eq_valStar`). What is owed is the computation —
   the sampler run over every point of `𝔽₂^{s(n)}` for the question weights, and the decider run
-  under its budget for the acceptance table. Two features of the field's shape are deliberate
-  and both are explained in its own docstring: it holds only of an `n`-bounded verifier (and
-  cannot hold of every string), and it delivers the relabelings rather than only the value they
-  equate, because `synval ≤ val*` points the wrong way for item 1 of `thm:halting`.
+  under its budget for the acceptance table. Three features of the fields' shape are deliberate
+  and each is explained in its own docstring: they hold only of an `n`-bounded verifier (and
+  cannot hold of every string); `tab_match` delivers the relabelings rather than only the value
+  they equate, because `synval ≤ val*` points the wrong way for item 1 of `thm:halting`; and
+  the match itself is asked only of a verifier synchronous at `n`, a `GameData` describing a
+  synchronous game by construction, with `tab_le` carrying the soundness branch instead.
 * **O3** (`sem`, `sem_closed`, `sem_spec`) — a program halting on `(x, n)` exactly off
   `classB n`. Its shape is `Verifier.not_inClassB_iff`: a search for a run exceeding the
   budget, or the `val*` half of `lem:value-lower-approx`
@@ -208,18 +210,30 @@ structure Obligations (G : GapCompression) (U : UniversalMachine) where
   it (`MIPRE.Verifier.exists_perfectPCC_syncGame`), and O2 has them in hand anyway, building
   `tab` from `Verifier.answerEquiv` and `questionEquiv`. -/
   tab_match : ∀ (x : BitStr) (n : ℕ), (Vof G U x).IsBounded n →
+      (Vof G U x).IsSynchronousAt n →
     ∃ (eX : Fin ((tab x n).nX + 1) ≃ (Vof G U x).Questions n)
       (eA : Fin ((tab x n).nA + 1) ≃ Verifier.Answers (ansBound G x n)),
       (∀ i j, (tab x n).game.μ i j = (Vof G U x).sampler.dist n (eX i) (eX j)) ∧
       (∀ i j k l, (tab x n).game.D i j k l =
         ((Vof G U x).game n (ansBound G x n)).D (eX i) (eX j) (eA k) (eA l))
+  /-- **O2.** Without synchronicity the tabulation still does not *overshoot*.
+
+  A `GameData` describes a synchronous game by construction — `GameData.toGame` forces
+  `D x x a b` to `false` for `a ≠ b` — whereas `Verifier.game` does no such thing, so no
+  tabulation can match a verifier that accepts unequal answers to equal questions. That is not
+  a defect of the tabulation but of demanding a match unconditionally: `classB n` does not ask
+  for synchronicity, only for `val* ≤ 1/2`, and the reduction's soundness branch needs only an
+  upper bound. Forcing those tuples to reject can only lower the value
+  (`MIPRE.quantumValue_mono`), which is the right direction. -/
+  tab_le : ∀ (x : BitStr) (n : ℕ), (Vof G U x).IsBounded n →
+    quantumValue (tab x n).game ≤ (Vof G U x).valStar n (ansBound G x n)
 
 /-- The equality of values the matching data implies: the tabulated game has the value it
 tabulates. -/
 theorem Obligations.tab_value {G : GapCompression} {U : UniversalMachine} (O : Obligations G U)
-    (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n) :
+    (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n) (hs : (Vof G U x).IsSynchronousAt n) :
     quantumValue (O.tab x n).game = (Vof G U x).valStar n (ansBound G x n) := by
-  obtain ⟨eX, eA, hμ, hD⟩ := O.tab_match x n hb
+  obtain ⟨eX, eA, hμ, hD⟩ := O.tab_match x n hb hs
   exact Verifier.quantumValue_toGame_eq_valStar _ _ _ _ eX eA hμ hD
 
 /-! ## The reduction -/
@@ -264,9 +278,9 @@ theorem halting_reduction (O : Obligations G U) :
       ((PolyTimeFun.computable_comp g compile hc Data.primrec_decode_bitStr.to_comp).pair hlevel),
     fun pc => ⟨fun hdom => ?_, fun hdom => ?_⟩⟩
   · have hx := (hg (compile pc)).2.1 ((hspec pc).2 hdom)
-    rw [O.tab_value _ _ hx.1, (Vof G U _).valStar_eq_one_of_hasPerfectPCC hx.2]
+    obtain ⟨hsync, -⟩ := hx.2
+    rw [O.tab_value _ _ hx.1 hsync, (Vof G U _).valStar_eq_one_of_hasPerfectPCC hx.2]
   · have hx := (hg (compile pc)).2.2 fun h => hdom ((hspec pc).1 h)
-    rw [O.tab_value _ _ hx.1]
-    exact hx.2
+    exact (O.tab_le _ _ hx.1).trans hx.2
 
 end MIPRE.Halting

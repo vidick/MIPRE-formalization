@@ -419,9 +419,18 @@ The answer side followed the question side: `answerEquiv_symm_val` says an answe
 its position among the bit strings of length at most `T`, the enumeration `answerList` being
 `bitStrsLE` mapped by a truncation that is the identity on them.
 
+Then `tab_match` had to be split, on a third finding of the same kind. A `GameData` denotes a
+*synchronous* game by construction — `GameData.toGame` forces `D x x a b` to `false` for
+`a ≠ b` — while `Verifier.game` does not, so no tabulation can match a verifier that is not
+synchronous at `n`, and `classB n` does not ask for synchronicity. The match is now asked only
+of a synchronous verifier, which `classA` supplies through its value-`1` PCC strategy; the
+soundness branch needs only that the tabulation does not overshoot, and forcing those tuples to
+reject can only lower the value, which is the new field `tab_le`. `halting_reduction` uses
+`tab_value` in the halting branch and `tab_le` in the other, and is unchanged otherwise.
+
 Remaining for O2: the acceptance table from `Verifier.accepts_iff_runForD`, then the assembly
-of `tab`, `tab_computable`, and `tab_match` itself — where the weights become `μ` and the table
-becomes `D`. Then, in order, and identified with the fields of
+of `tab`, `tab_computable`, `tab_match` and `tab_le` — where the weights become `μ` and the
+table becomes `D`. Then, in order, and identified with the fields of
 `MIPRE.Halting.Obligations`:
 the *computation* of the tabulation — running the sampler on every point of `𝔽₂^{s(n)}` to
 count the question weights and the decider under its budget to fill in the acceptance table,

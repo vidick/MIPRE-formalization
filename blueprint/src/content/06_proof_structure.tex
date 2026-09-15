@@ -1176,7 +1176,16 @@ of the recursion.
   \texttt{Machine.runForD}: iterate the evaluation machine's step function $3k$ times and read
   off the result if the configuration reached is final, which is enough because a derivation of
   cost $t$ is a run of at most $3t$ steps and final configurations are fixed). The Lean
-  statement of the tabulation's correctness carries that hypothesis for this reason. The
+  statement of the tabulation's correctness carries that hypothesis for this reason. It carries
+  a second one, and for a reason worth naming: a game description denotes a \emph{synchronous}
+  game by construction --- Definition~\ref{def:game-description} rejects unequal answers to
+  equal questions --- whereas $\verifier_n$ does no such thing, so no description can match a
+  verifier that is not synchronous at $n$, and $B_n$ does not ask that it be. The match
+  (\texttt{Obligations.tab\_match}) is therefore asked only of a synchronous verifier, which is
+  what $A_n$ supplies through its value-$1$ PCC strategy; for $B_n$ the soundness branch needs
+  only that the description does not \emph{overshoot}, and forcing those tuples to reject can
+  only lower the value (\texttt{quantumValue\_mono}), which is the field
+  \texttt{Obligations.tab\_le}. The
   tabulation itself is read with the answer
   alphabet enumerated by \texttt{Verifier.answerEquiv} and the questions by
   \texttt{questionEquiv}, and a description matching $\verifier_n$ along those indexings has
