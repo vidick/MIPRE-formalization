@@ -167,11 +167,52 @@ def lean_declarations():
     return index, per_module
 
 
+MACRO_DIR = ROOT / "blueprint" / "src" / "macros"
+ALLOWED_COMMANDS = ROOT / "scripts" / "latex-allowed-commands.txt"
+
+CMD_USE_RE = re.compile(r"\\([A-Za-z]+)")
+MACRO_DEF_RE = re.compile(
+    r"\\(?:newcommand|renewcommand|providecommand)\*?\s*\{?\\([A-Za-z]+)\}?"
+    r"|\\def\s*\\([A-Za-z]+)"
+    r"|\\DeclareMathOperator\*?\s*\{\\([A-Za-z]+)\}"
+    r"|\\DeclarePairedDelimiter\s*\{\\([A-Za-z]+)\}")
+
+
+def undefined_macros():
+    """Commands used in the content and defined neither in macros/ nor in the allowlist.
+
+    An undefined control sequence does not stop pdflatex under nonstopmode: it writes
+    the PDF anyway and only returns 1 at the end, so latexmk aborts with no error line
+    near the tail of the CI log. That is how \\downsize kept the blueprint red on main
+    for about thirty hours. There is no pdflatex in a session, so this is the check.
+    """
+    used = set()
+    for f in sorted(CONTENT.glob("*.tex")):
+        used |= set(CMD_USE_RE.findall(strip_comments(f.read_text())))
+    defined = set()
+    for f in sorted(MACRO_DIR.glob("*.tex")):
+        for m in MACRO_DEF_RE.finditer(f.read_text()):
+            defined.add(next(g for g in m.groups() if g))
+    allowed = set()
+    if ALLOWED_COMMANDS.exists():
+        for line in ALLOWED_COMMANDS.read_text().splitlines():
+            if not line.startswith("#"):
+                allowed.update(line.split())
+    return sorted(used - defined - allowed), len(used), len(defined)
+
+
 def build():
     cited, tags = blueprint_names()
     index, per_module = lean_declarations()
     unresolved = sorted(n for n in cited if n not in index)
     xref_problems, xref_counts = cross_references()
+    undef, used_cmds, defined_cmds = undefined_macros()
+    xref_counts["commands_used"] = used_cmds
+    xref_counts["commands_defined"] = defined_cmds
+    for name in undef:
+        xref_problems.append(
+            f"\\{name} is used in the blueprint but defined nowhere in "
+            f"blueprint/src/macros/ (and is not in scripts/latex-allowed-commands.txt)")
     covered_modules = {}
     for rel, decls in per_module.items():
         hits = sorted(n for n in decls if n in cited)
@@ -197,6 +238,7 @@ def report(state):
     xc = state["xref_counts"]
     print(f"labels {xc['labels']}   refs+uses {xc['refs']}   cites {xc['cites']}   "
           f"bibitems {xc['bibitems']}")
+    print(f"commands used {xc['commands_used']}   defined in macros/ {xc['commands_defined']}")
     if state["xref_problems"]:
         print("\nCROSS-REFERENCE PROBLEMS:")
         for q in state["xref_problems"]:
