@@ -117,10 +117,13 @@ Two things to know about reading it:
 - **Never read node statements by hand.** A `node_amended` event carries the new text in
   `new_statement` (with the old in `previous_statement`); a script that looks for a field
   called `statement` silently skips every amendment and reports the original
-  `node_created` text as live. **61 of the 123 nodes have been amended**, so that mistake
-  misreports about half the ledger — it has already put four wrong claims into this
+  `node_created` text as live. **79 of the ledger's 316 live nodes have been amended**, so
+  that mistake misreports a quarter of it — it has already put four wrong claims into this
   blueprint (`reports/ledger-node-1.6.3-overstated.md`). Derive statements with
-  `scripts/ledger-sync.py`, which handles this correctly, or copy its event handling.
+  `scripts/ledger-sync.py`, which handles this correctly, or copy its event handling. The same
+  applies to `node_archived` and `node_deps_amended`: four nodes are archived and must leave a
+  coverage denominator, and declared dependencies are corrected by appended events rather than
+  rewritten in place.
 - **Node statements are paraphrases, and not self-certifying.** Where a node and the paper
   disagree, the paper wins and the disagreement is worth a report — but check the *live*
   statement first, per the previous point. A node's `\cnote{}` repairs and challenge
@@ -153,8 +156,10 @@ Two things to know about reading it:
   *statement* is formalized, inside `\begin{proof}` that the *proof* is. Only ever
   add the second after `#print axioms` shows the declaration free of `sorryAx`;
   `planning/lean-coverage.md` records the audit that established the current state.
-- **`intentions / lifecycle`** is red on every PR: its project-board token is
-  rejected repository-wide. Not a PR's fault; do not try to fix it from a PR.
+- **`intentions / lifecycle`** was red on every PR for a long time, because its project-board
+  token was rejected repository-wide — not a PR's fault, and not fixable from a PR. It passed
+  on PR #39 on 2026-09-13, so the token may have been rotated. Read the run before concluding
+  anything either way: neither assume it is broken nor assume it is fixed.
 
 ## Conventions
 
