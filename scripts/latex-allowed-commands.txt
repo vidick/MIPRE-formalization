@@ -1,0 +1,24 @@
+# Commands the blueprint may use without defining them: standard LaTeX, amsmath,
+# amssymb, hyperref, and the leanblueprint package's own (\uses, \lean, \leanok,
+# \notready, ...). scripts/lean-coverage.py treats every *other* command used in
+# blueprint/src/content/ and not defined in blueprint/src/macros/ as a problem.
+#
+# Why this file exists: an undefined control sequence does not stop pdflatex under
+# nonstopmode. It still writes a PDF, and only returns 1 at the end, so latexmk
+# aborts and the blueprint never deploys -- with no "! " line anywhere near the end
+# of the CI log to point at. \downsize went undefined that way and the blueprint
+# build was red on main for about thirty hours across a dozen merges before anyone
+# traced it. There is no pdflatex in a session, so this list is what stands in.
+#
+# Adding a name here asserts it is provided by LaTeX or a loaded package. If the
+# command is this project's, define it in blueprint/src/macros/ instead.
+Bigl Bigr Delta Gamma Omega Phi Pi Pr Psi Sigma Theta Xi alpha approx ast bar
+begin beta bibitem bigcap bigl bigoplus bigr bigwedge cdot checkmark chi circ
+cite cong cup dagger deg delta det dots ell emph end eta exp frac gamma geq
+hat hline href in infty iota item kappa ker label lambda langle lceil ldots
+le leftarrow leq log mapsto mathbb mathrm mathsf mathtt max mid min mu neq
+newblock noindent notin nu omega oplus otimes overline paragraph perp phi pi
+pm prod propto psi qquad rangle rceil ref rho section sigma sim small sqrt
+subsection subseteq subsubsection succeq sum sup tau text textbf
+textsubscript texttt tfrac tilde times to url uses varepsilon varphi verb
+widehat xi
