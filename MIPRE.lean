@@ -552,6 +552,7 @@ import MIPRE.Foundations.Cost.Unary
 import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Distances
 import MIPRE.Foundations.GameDescription
+import MIPRE.Foundations.GameDouble
 import MIPRE.Foundations.GameTransport
 import MIPRE.Foundations.Games
 import MIPRE.Foundations.GapCompression

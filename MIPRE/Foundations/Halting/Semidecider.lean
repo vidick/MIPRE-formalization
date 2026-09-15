@@ -327,6 +327,36 @@ theorem exists_sem_of_tab (hV : Verifier.ComputablyPresented (Vof G U))
     · simp [hb]
   exact Cost.exists_semidecider_prod_nat (p := fun x n => x ∉ classB G U n) hre
 
+/-- **The family `Vof` is computably presented.** All three fields, and all three are O2's:
+the two programs by `computable_sampData`/`sampData_eq` and
+`computable_decProgData`/`decProgData_eq`, and the third — the sampler's dimension,
+*unconditionally* in the string and the level — by the re-budgeted `dimOf` read back by
+`dimOf_eq`. That `dimOf_eq` carries no hypothesis is the whole point: `ComputablyPresented`
+asks for the true dimension at every string and every level, including `n = 0` and `n = 1`,
+and the budget `IsBounded n` supplies cannot reach those. What supplies it instead is
+`GapCompression.sampler_time`, which holds for every parameter and every index. -/
+theorem computablyPresented_Vof (G : GapCompression) (U : UniversalMachine) :
+    Verifier.ComputablyPresented (Vof G U) where
+  samplerProg := (computable_sampData G).of_eq fun x => sampData_eq G x
+  deciderProg := (computable_decProgData G U).of_eq fun x => decProgData_eq G U x
+  dim := (computable_dimOf_fst G).of_eq fun q => dimOf_eq G U q.1 q.2
+
+/-- **Obligation O3, with no hypotheses left.** Both arguments of `exists_sem_of_tab` are
+discharged by O2: the computable presentation by the re-budgeted sampler runs, and `hval` —
+the value equality at every `n`-bounded string, in both directions and with no synchronicity
+— by the doubled question set of `Foundations/GameDouble.lean`.
+
+This is the repair blueprint `lem:halting-semidecider` records as the first of three, and the
+only one that changes nothing outside the tabulation: the two alternatives were to make
+`Decider.wrap` reject unequal answers at equal questions, which changes what a string
+*denotes* and so reopens `accOf_iff`, the classes and `thm:compression`; or to put
+synchronicity into `classB`, which moves the cost into `compr_spec`, a field of the one
+obligation still open. -/
+theorem exists_sem (G : GapCompression) (U : UniversalMachine) :
+    ∃ S : Prog, S.WellScoped 1 ∧
+      ∀ (x : BitStr) (n : ℕ), Halts S (encode (x, n)) ↔ x ∉ classB G U n :=
+  exists_sem_of_tab (computablyPresented_Vof G U) (tab G U) (tab_computable G U) (tab_value G U)
+
 end Halting
 
 end MIPRE

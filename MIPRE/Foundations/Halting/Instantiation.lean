@@ -5,6 +5,7 @@ Authors: Thomas Vidick
 -/
 import MIPRE.Foundations.Halting.Enumerate
 import MIPRE.Foundations.Halting.Tabulate
+import MIPRE.Foundations.SyncTransport
 import MIPRE.Foundations.Cost.ProgData
 import MIPRE.Foundations.Compression
 
@@ -204,9 +205,31 @@ around the string's decider, built in `Data` rather than in `Prog`. -/
 noncomputable def decProgData (x : BitStr) : Data :=
   Prog.ProgD.dWrapCore (encode U.univ) (sampData G x) (progNorm (Data.parse x).right)
 
-/-- **The tabulation of `(Vof G U x)`'s `n`-th game.** -/
+/-! The two concrete instantiations of `Tabulate`'s generic `Primrec` statements. `s` and `B`
+are paired so that `n` stays at the depth it has in the tuple today: that is what keeps this
+one instantiation cheap, and what lets `tabOf`'s argument list grow without re-running the
+expensive `primrec_accOf`. -/
+
+theorem primrec_dimOf_tuple (k : ℕ) :
+    Primrec fun q : (Data × ℕ) × ℕ => dimOf q.1.1 q.2 k q.1.2 :=
+  primrec_dimOf k (Primrec.fst.comp Primrec.fst) Primrec.snd (Primrec.snd.comp Primrec.fst)
+
+theorem primrec_tabOf_tuple (k : ℕ) :
+    Primrec fun q : (Data × Data) × (ℕ × ℕ) × ℕ × ℕ =>
+      tabOf q.1.1 q.1.2 q.2.1.1 q.2.2.1 q.2.1.2 k q.2.2.2 :=
+  primrec_tabOf k (Primrec.fst.comp Primrec.fst) (Primrec.snd.comp Primrec.fst)
+    (Primrec.fst.comp (Primrec.fst.comp Primrec.snd))
+    (Primrec.fst.comp (Primrec.snd.comp Primrec.snd))
+    (Primrec.snd.comp (Primrec.fst.comp Primrec.snd))
+    (Primrec.snd.comp (Primrec.snd.comp Primrec.snd))
+
+/-- **The tabulation of `(Vof G U x)`'s `n`-th game**, doubled and re-budgeted.  The sampler
+runs under the budget the *compressed sampler's own* time bound supplies — coefficient
+`ansBound G x n = G.bound.eval (n + descLam x)`, degree `G.deg` — neither of which needs
+`(Vof G U x).IsBounded n`. -/
 noncomputable def tab (x : BitStr) (n : ℕ) : GameData :=
-  tabOf (sampData G x) (decProgData G U x) (dimOf (sampData G x) n) (ansBound G x n) n
+  tabOf (sampData G x) (decProgData G U x)
+    (dimOf (sampData G x) (ansBound G x n) G.deg n) (ansBound G x n) (ansBound G x n) G.deg n
 
 /-! ### The tabulation is computable -/
 
@@ -235,18 +258,23 @@ theorem computable_sampData_fst : Computable fun p : BitStr × ℕ => sampData G
 theorem computable_decProgData_fst : Computable fun p : BitStr × ℕ => decProgData G U p.1 :=
   (computable_decProgData G U).comp Computable.fst
 
-theorem computable_dimOf_fst : Computable fun p : BitStr × ℕ => dimOf (sampData G p.1) p.2 :=
-  (primrec_dimOf.to_comp.comp ((computable_sampData_fst G).pair Computable.snd)).of_eq fun _ => rfl
+theorem computable_dimOf_fst : Computable fun p : BitStr × ℕ =>
+    dimOf (sampData G p.1) (ansBound G p.1 p.2) G.deg p.2 :=
+  ((primrec_dimOf_tuple G.deg).to_comp.comp
+    (((computable_sampData_fst G).pair Computable.snd).pair (computable_ansBound G))).of_eq
+    fun _ => rfl
 
 theorem computable_tabArgs : Computable fun p : BitStr × ℕ =>
     ((sampData G p.1, decProgData G U p.1),
-      (dimOf (sampData G p.1) p.2, ansBound G p.1 p.2, p.2)) :=
+      ((dimOf (sampData G p.1) (ansBound G p.1 p.2) G.deg p.2, ansBound G p.1 p.2),
+        (ansBound G p.1 p.2, p.2))) :=
   ((computable_sampData_fst G).pair (computable_decProgData_fst G U)).pair
-    ((computable_dimOf_fst G).pair ((computable_ansBound G).pair Computable.snd))
+    (((computable_dimOf_fst G).pair (computable_ansBound G)).pair
+      ((computable_ansBound G).pair Computable.snd))
 
-/-- **O2, computability.** The tabulation is computable in the string and the level. -/
+/-- **O2, computability.** -/
 theorem tab_computable : Computable fun p : BitStr × ℕ => tab G U p.1 p.2 :=
-  (primrec_tabOf.to_comp.comp (computable_tabArgs G U)).of_eq fun _ => rfl
+  ((primrec_tabOf_tuple G.deg).to_comp.comp (computable_tabArgs G U)).of_eq fun _ => rfl
 
 /-! ### The tabulated numbers are the verifier's own
 
@@ -271,57 +299,48 @@ theorem accOf_iff (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n) (x' y' a
   rw [accOf, decide_eq_true_iff, decProgData_eq,
     ← (Vof G U x).accepts_iff_runForD hb hb.two_le x' y' a b]
 
-/-- The tabulated dimension **is** the sampler's, on an `n`-bounded verifier. -/
-theorem dimOf_eq (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n) :
-    dimOf (sampData G x) n = (Vof G U x).sampler.dim n := by
-  have hS : (G.sampler (descLam x)).TimeBoundAt n (n ^ n) n := (hb.1 n hb.two_le).2.1
+/-- The sampler's time bound at the string's own compression parameter, with no hypothesis. -/
+theorem sampler_timeBound (x : BitStr) (n : ℕ) :
+    (G.sampler (descLam x)).TimeBoundAt n (ansBound G x n) G.deg :=
+  G.sampler_time (descLam x) n
+
+/-- **The tabulated dimension is the sampler's, at every string and every level** — `n = 0`
+and `n = 1` included, which the `n ^ n` budget could never reach. -/
+theorem dimOf_eq (x : BitStr) (n : ℕ) :
+    dimOf (sampData G x) (ansBound G x n) G.deg n = (Vof G U x).sampler.dim n := by
+  have hS := sampler_timeBound G x n
   rw [dimOf, sampData_eq,
     show Machine.runForD (encode ((G.sampler (descLam x)).prog))
         (encode (n, CL.Sampler.Query.dimension))
-        (n ^ n * ((encode CL.Sampler.Query.dimension : Data).size + 1) ^ n)
-      = (G.sampler (descLam x)).queryUnder (n ^ n) n n CL.Sampler.Query.dimension from rfl,
+        (ansBound G x n * ((encode CL.Sampler.Query.dimension : Data).size + 1) ^ G.deg)
+      = (G.sampler (descLam x)).queryUnder (ansBound G x n) G.deg n CL.Sampler.Query.dimension
+      from rfl,
     (G.sampler (descLam x)).queryUnder_dimension hS]
   simp [SizedEncoding.decode_encode]
   rfl
 
-/-- The tabulated marginal **is** the sampler's conditional linear function evaluated at the
-point, on an `n`-bounded verifier. -/
-theorem margOf_eq (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n) (w : Player) (z : BitStr)
+/-- **The tabulated marginal is the sampler's, at every string and every level.**  The only
+remaining hypothesis is the length condition on the point, which is not a boundedness one. -/
+theorem margOf_eq (x : BitStr) (n : ℕ) (w : Player) (z : BitStr)
     (hz : z.length = (Vof G U x).sampler.dim n) :
-    margOf (sampData G x) n w z
+    margOf (sampData G x) (ansBound G x n) G.deg n w z
       = CL.toBits (((Vof G U x).sampler.cl n w).eval
           (CL.ofBits ((Vof G U x).sampler.dim n) z)) := by
-  have hS : (G.sampler (descLam x)).TimeBoundAt n (n ^ n) n := (hb.1 n hb.two_le).2.1
+  have hS := sampler_timeBound G x n
   rw [margOf, sampData_eq,
     show Machine.runForD (encode ((G.sampler (descLam x)).prog))
         (encode (n, CL.Sampler.Query.marginal w 7 z))
-        (n ^ n * ((encode (CL.Sampler.Query.marginal w 7 z) : Data).size + 1) ^ n)
-      = (G.sampler (descLam x)).queryUnder (n ^ n) n n (CL.Sampler.Query.marginal w 7 z) from rfl,
+        (ansBound G x n * ((encode (CL.Sampler.Query.marginal w 7 z) : Data).size + 1) ^ G.deg)
+      = (G.sampler (descLam x)).queryUnder (ansBound G x n) G.deg n
+          (CL.Sampler.Query.marginal w 7 z) from rfl,
     (G.sampler (descLam x)).queryUnder_marginal hS (by norm_num) w z hz]
   simp [SizedEncoding.decode_encode]
   rfl
 
-/-! ## The tabulation matches the verifier
-
-What remains is the dictionary between the two namings of each alphabet. A `GameData` names
-its questions `Fin (nX + 1)` and its answers `Fin (nA + 1)`; the verifier names them
-`𝔽₂^{s(n)}` and the bit strings of length at most `T`. `Verifier.questionEquiv` and
-`Verifier.answerEquiv` are the two bijections, and `eXof`/`eAof` are them transported across
-the arithmetic of `tab`'s two sizes (`tab_nX`, `tab_nA`).
-
-The two clauses are then separate pieces of work. The `μ` clause is a counting argument: the
-tabulated weight of a question pair is the number of points of `𝔽₂^{s(n)}` whose two marginals
-land on it, and the total weight is `2 ^ s(n)`, which is exactly the quotient `CL.clDist` is.
-The `D` clause is the acceptance table read back (`acc_mem_iff`), plus the one place where the
-two notions of game differ: a `GameData` rejects unequal answers to equal questions by
-construction, which is why `tab_match` asks for synchronicity and `tab_le` settles for an
-inequality.
--/
-
-theorem tab_nX (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n) :
-    (tab G U x n).nX + 1 = 2 ^ ((Vof G U x).sampler.dim n) := by
-  show 2 ^ dimOf (sampData G x) n - 1 + 1 = _
-  rw [dimOf_eq G U x n hb]
+theorem tab_nX (x : BitStr) (n : ℕ) :
+    (tab G U x n).nX + 1 = 2 ^ ((Vof G U x).sampler.dim n + 1) := by
+  show 2 ^ (dimOf (sampData G x) (ansBound G x n) G.deg n + 1) - 1 + 1 = _
+  rw [dimOf_eq G U x n]
   exact Nat.succ_pred_eq_of_pos (Nat.two_pow_pos _)
 
 theorem tab_nA (x : BitStr) (n : ℕ) :
@@ -330,226 +349,216 @@ theorem tab_nA (x : BitStr) (n : ℕ) :
   rw [Verifier.answerList, List.length_map]
   exact Nat.succ_pred_eq_of_pos (Data.length_bitStrsLE_pos _)
 
-/-- The question relabeling: a tabulated question index is a point of `𝔽₂^{s(n)}`. -/
-noncomputable def eXof (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n) :
-    Fin ((tab G U x n).nX + 1) ≃ (Vof G U x).Questions n :=
-  (finCongr (tab_nX G U x n hb)).trans (Verifier.questionEquiv _)
+/-- The question relabeling: a tabulated question index is a *tag* and a point of `𝔽₂^{s(n)}`. -/
+noncomputable def eXof (x : BitStr) (n : ℕ) :
+    Fin ((tab G U x n).nX + 1) ≃ Bool × (Vof G U x).Questions n :=
+  (finCongr (tab_nX G U x n)).trans (Verifier.tagEquiv _).symm
 
-/-- The answer relabeling: a tabulated answer index is a bit string of length at most the
-answer bound. -/
+/-- The answer relabeling, unchanged from `eAof`. -/
 noncomputable def eAof (x : BitStr) (n : ℕ) :
     Fin ((tab G U x n).nA + 1) ≃ Verifier.Answers (ansBound G x n) :=
   (finCongr (tab_nA G U x n)).trans (Verifier.answerEquiv _)
 
-theorem eXof_apply (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n)
+theorem eXof_apply (x : BitStr) (n : ℕ)
     (i : Fin ((tab G U x n).nX + 1)) :
-    Verifier.bitsToIdx (CL.toBits (eXof G U x n hb i)) = (i : ℕ) := by
-  rw [eXof]
-  simp [Verifier.bitsToIdx_toBits_questionEquiv]
+    Verifier.bitsToIdx ((eXof G U x n i).1 :: CL.toBits (eXof G U x n i).2) = (i : ℕ) := by
+  rw [eXof, Equiv.trans_apply, Verifier.bitsToIdx_tagEquiv_symm]
+  simp
 
 theorem eAof_apply (x : BitStr) (n : ℕ) (k : Fin ((tab G U x n).nA + 1)) :
     (Data.bitStrsLE (ansBound G x n)).idxOf (eAof G U x n k).1 = (k : ℕ) := by
   rw [← Verifier.answerEquiv_symm_val, eAof]
   simp
 
-/-- The dictionary the `μ` clause runs on: a tabulated marginal lands on the index `i` exactly
-when the verifier's own marginal lands on the question `eXof i`. -/
-theorem marg_idx_eq (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n) (w : Player)
-    (z : BitStr) (hz : z.length = (Vof G U x).sampler.dim n)
+/-- The dictionary the `μ` clause runs on, with the tag: a tagged marginal lands on the index
+`i` exactly when the tag is `i`'s tag and the verifier's own marginal is `i`'s point. -/
+theorem marg_idx_eq (x : BitStr) (n : ℕ) (w : Player)
+    (tg : Bool) (z : BitStr) (hz : z.length = (Vof G U x).sampler.dim n)
     (i : Fin ((tab G U x n).nX + 1)) :
-    Verifier.bitsToIdx (margOf (sampData G x) n w z) = (i : ℕ)
-      ↔ ((Vof G U x).sampler.cl n w).eval (CL.ofBits ((Vof G U x).sampler.dim n) z)
-          = eXof G U x n hb i := by
-  rw [margOf_eq G U x n hb w z hz, ← Verifier.questionEquiv_symm_val, eXof]
-  constructor
-  · intro h
-    have h' : (Verifier.questionEquiv _).symm
-        (((Vof G U x).sampler.cl n w).eval (CL.ofBits ((Vof G U x).sampler.dim n) z))
-        = finCongr (tab_nX G U x n hb) i := Fin.ext h
-    rw [Equiv.trans_apply, ← h', Equiv.apply_symm_apply]
-  · intro h
-    rw [Equiv.trans_apply] at h
-    have h' : (Verifier.questionEquiv ((Vof G U x).sampler.dim n)).symm
-        (((Vof G U x).sampler.cl n w).eval (CL.ofBits ((Vof G U x).sampler.dim n) z))
-        = finCongr (tab_nX G U x n hb) i := by rw [h, Equiv.symm_apply_apply]
-    exact (congrArg Fin.val h').trans (by simp)
+    Verifier.bitsToIdx (tg :: margOf (sampData G x) (ansBound G x n) G.deg n w z) = (i : ℕ)
+      ↔ (tg = (eXof G U x n i).1 ∧
+          ((Vof G U x).sampler.cl n w).eval (CL.ofBits ((Vof G U x).sampler.dim n) z)
+            = (eXof G U x n i).2) := by
+  rw [margOf_eq G U x n w z hz, ← eXof_apply G U x n i,
+    Verifier.bitsToIdx_cons_toBits_eq_iff]
 
-/-- **The `μ` clause.** The tabulated distribution is the sampler's, along `eXof`. -/
-theorem mu_clause (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n)
+/-- **The `μ` clause, doubled.** The tabulated distribution is the sampler's on the block
+`(false, ·) × (true, ·)` and zero everywhere else — which is exactly the doubled game's. -/
+theorem mu_clause (x : BitStr) (n : ℕ)
     (i j : Fin ((tab G U x n).nX + 1)) :
     (tab G U x n).game.μ i j
-      = (Vof G U x).sampler.dist n (eXof G U x n hb i) (eXof G U x n hb j) := by
+      = ((Vof G U x).doubledGame n (ansBound G x n)).μ
+          (eXof G U x n i) (eXof G U x n j) := by
   classical
-  have hdim : dimOf (sampData G x) n = (Vof G U x).sampler.dim n := dimOf_eq G U x n hb
+  have hdim : dimOf (sampData G x) (ansBound G x n) G.deg n = (Vof G U x).sampler.dim n := dimOf_eq G U x n
   have hlen : ∀ (w : Player) (z : BitStr), z.length = (Vof G U x).sampler.dim n →
-      (margOf (sampData G x) n w z).length = (Vof G U x).sampler.dim n := by
+      (margOf (sampData G x) (ansBound G x n) G.deg n w z).length = (Vof G U x).sampler.dim n := by
     intro w z hz
-    rw [margOf_eq G U x n hb w z hz, CL.length_toBits]
-  have hrange : ∀ (w : Player), ∀ z ∈ Data.bitStrsOfLen (dimOf (sampData G x) n),
-      Verifier.bitsToIdx (margOf (sampData G x) n w z) < (tab G U x n).nX + 1 := by
-    intro w z hz
-    have hz' : z.length = (Vof G U x).sampler.dim n := by
-      rw [← hdim]; exact (Data.mem_bitStrsOfLen _ _).1 hz
-    have hlt := Verifier.bitsToIdx_lt (margOf (sampData G x) n w z)
-    rw [hlen w z hz'] at hlt
-    rw [tab_nX G U x n hb]
+    rw [margOf_eq G U x n w z hz, CL.length_toBits]
+  have hmem : ∀ z ∈ Data.bitStrsOfLen (dimOf (sampData G x) (ansBound G x n) G.deg n),
+      z.length = (Vof G U x).sampler.dim n := by
+    intro z hz
+    rw [← hdim]; exact (Data.mem_bitStrsOfLen _ _).1 hz
+  have hrange : ∀ (tg : Bool) (w : Player),
+      ∀ z ∈ Data.bitStrsOfLen (dimOf (sampData G x) (ansBound G x n) G.deg n),
+        Verifier.bitsToIdx (tg :: margOf (sampData G x) (ansBound G x n) G.deg n w z) < (tab G U x n).nX + 1 := by
+    intro tg w z hz
+    have hlt := Verifier.bitsToIdx_lt (tg :: margOf (sampData G x) (ansBound G x n) G.deg n w z)
+    rw [List.length_cons, hlen w z (hmem z hz)] at hlt
+    rw [tab_nX G U x n]
     exact hlt
-  have htot : (tab G U x n).totalWeight = 2 ^ dimOf (sampData G x) n :=
-    Verifier.totalWeight_weightList _ _ _ _ _ _ (hrange .alice) (hrange .bob)
+  have htot : (tab G U x n).totalWeight = 2 ^ dimOf (sampData G x) (ansBound G x n) G.deg n :=
+    Verifier.totalWeight_weightList _ _ _ _ _ _ (hrange false .alice) (hrange true .bob)
   have hqw : ∀ a b : ℕ, (tab G U x n).questionWeight a b
-      = ((Data.bitStrsOfLen (dimOf (sampData G x) n)).filter fun z =>
-          decide (Verifier.bitsToIdx (margOf (sampData G x) n .alice z) = a
-            ∧ Verifier.bitsToIdx (margOf (sampData G x) n .bob z) = b)).length :=
+      = ((Data.bitStrsOfLen (dimOf (sampData G x) (ansBound G x n) G.deg n)).filter fun z =>
+          decide (Verifier.bitsToIdx (false :: margOf (sampData G x) (ansBound G x n) G.deg n .alice z) = a
+            ∧ Verifier.bitsToIdx (true :: margOf (sampData G x) (ansBound G x n) G.deg n .bob z) = b)).length :=
     fun a b => Verifier.questionWeight_weightList _ _ _ _ _ _ a b
-  rw [GameData.game_μ, htot, if_neg (Nat.two_pow_pos _).ne', hqw]
-  have hnum : ((Data.bitStrsOfLen (dimOf (sampData G x) n)).filter fun z =>
-        decide (Verifier.bitsToIdx (margOf (sampData G x) n .alice z) = (i : ℕ)
-          ∧ Verifier.bitsToIdx (margOf (sampData G x) n .bob z) = (j : ℕ))).length
-      = (Finset.univ.filter fun v : (Vof G U x).Questions n =>
-          ((Vof G U x).sampler.cl n .alice).eval v = eXof G U x n hb i
-            ∧ ((Vof G U x).sampler.cl n .bob).eval v = eXof G U x n hb j).card := by
+  rw [GameData.game_μ, htot, if_neg (Nat.two_pow_pos _).ne', hqw,
+    show ((Vof G U x).doubledGame n (ansBound G x n)).μ
+        (eXof G U x n i) (eXof G U x n j)
+      = if (eXof G U x n i).1 = false ∧ (eXof G U x n j).1 = true then
+          (Vof G U x).sampler.dist n (eXof G U x n i).2 (eXof G U x n j).2 else 0 from rfl]
+  by_cases htag : (eXof G U x n i).1 = false ∧ (eXof G U x n j).1 = true
+  · rw [if_pos htag]
+    have hnum : ((Data.bitStrsOfLen (dimOf (sampData G x) (ansBound G x n) G.deg n)).filter fun z =>
+          decide (Verifier.bitsToIdx (false :: margOf (sampData G x) (ansBound G x n) G.deg n .alice z) = (i : ℕ)
+            ∧ Verifier.bitsToIdx (true :: margOf (sampData G x) (ansBound G x n) G.deg n .bob z) = (j : ℕ))).length
+        = (Finset.univ.filter fun v : (Vof G U x).Questions n =>
+            ((Vof G U x).sampler.cl n .alice).eval v = (eXof G U x n i).2
+              ∧ ((Vof G U x).sampler.cl n .bob).eval v = (eXof G U x n j).2).card := by
+      rw [hdim]
+      rw [show ((Data.bitStrsOfLen ((Vof G U x).sampler.dim n)).filter fun z =>
+          decide (Verifier.bitsToIdx (false :: margOf (sampData G x) (ansBound G x n) G.deg n .alice z) = (i : ℕ)
+            ∧ Verifier.bitsToIdx (true :: margOf (sampData G x) (ansBound G x n) G.deg n .bob z) = (j : ℕ)))
+          = ((Data.bitStrsOfLen ((Vof G U x).sampler.dim n)).filter fun z =>
+            (fun v : (Vof G U x).Questions n =>
+              decide (((Vof G U x).sampler.cl n .alice).eval v = (eXof G U x n i).2
+                ∧ ((Vof G U x).sampler.cl n .bob).eval v = (eXof G U x n j).2))
+              (CL.ofBits ((Vof G U x).sampler.dim n) z)) from ?_]
+      · rw [Verifier.length_filter_bitStrsOfLen (s := (Vof G U x).sampler.dim n)
+          (fun v => decide (((Vof G U x).sampler.cl n .alice).eval v = (eXof G U x n i).2
+            ∧ ((Vof G U x).sampler.cl n .bob).eval v = (eXof G U x n j).2))]
+        congr 1
+        ext v
+        simp
+      · refine List.filter_congr fun z hz => ?_
+        have hz' : z.length = (Vof G U x).sampler.dim n :=
+          (Data.mem_bitStrsOfLen _ _).1 hz
+        simp only [decide_eq_decide]
+        rw [marg_idx_eq G U x n .alice false z hz' i,
+          marg_idx_eq G U x n .bob true z hz' j, htag.1, htag.2]
+        simp
+    rw [hnum,
+      show (Vof G U x).sampler.dist n (eXof G U x n i).2 (eXof G U x n j).2
+        = ((Finset.univ.filter fun v : (Vof G U x).Questions n =>
+            ((Vof G U x).sampler.cl n .alice).eval v = (eXof G U x n i).2
+              ∧ ((Vof G U x).sampler.cl n .bob).eval v = (eXof G U x n j).2).card : ℝ)
+          / (Fintype.card ((Vof G U x).Questions n) : ℝ) from rfl]
+    congr 1
     rw [hdim]
-    rw [show ((Data.bitStrsOfLen ((Vof G U x).sampler.dim n)).filter fun z =>
-        decide (Verifier.bitsToIdx (margOf (sampData G x) n .alice z) = (i : ℕ)
-          ∧ Verifier.bitsToIdx (margOf (sampData G x) n .bob z) = (j : ℕ)))
-        = ((Data.bitStrsOfLen ((Vof G U x).sampler.dim n)).filter fun z =>
-          (fun v : (Vof G U x).Questions n =>
-            decide (((Vof G U x).sampler.cl n .alice).eval v = eXof G U x n hb i
-              ∧ ((Vof G U x).sampler.cl n .bob).eval v = eXof G U x n hb j))
-            (CL.ofBits ((Vof G U x).sampler.dim n) z)) from ?_]
-    · rw [Verifier.length_filter_bitStrsOfLen (s := (Vof G U x).sampler.dim n)
-        (fun v => decide (((Vof G U x).sampler.cl n .alice).eval v = eXof G U x n hb i
-          ∧ ((Vof G U x).sampler.cl n .bob).eval v = eXof G U x n hb j))]
-      congr 1
-      ext v
-      simp
-    · refine List.filter_congr fun z hz => ?_
-      have hz' : z.length = (Vof G U x).sampler.dim n := (Data.mem_bitStrsOfLen _ _).1 hz
-      simp only [decide_eq_decide]
-      rw [marg_idx_eq G U x n hb .alice z hz' i, marg_idx_eq G U x n hb .bob z hz' j]
-  rw [hnum]
-  rw [show (Vof G U x).sampler.dist n (eXof G U x n hb i) (eXof G U x n hb j)
-      = ((Finset.univ.filter fun v : (Vof G U x).Questions n =>
-          ((Vof G U x).sampler.cl n .alice).eval v = eXof G U x n hb i
-            ∧ ((Vof G U x).sampler.cl n .bob).eval v = eXof G U x n hb j).card : ℝ)
-        / (Fintype.card ((Vof G U x).Questions n) : ℝ) from rfl]
-  congr 1
-  rw [hdim]
-  simp [Verifier.Questions]
+    simp [Verifier.Questions]
+  · rw [if_neg htag]
+    have hnil : ((Data.bitStrsOfLen (dimOf (sampData G x) (ansBound G x n) G.deg n)).filter fun z =>
+        decide (Verifier.bitsToIdx (false :: margOf (sampData G x) (ansBound G x n) G.deg n .alice z) = (i : ℕ)
+          ∧ Verifier.bitsToIdx (true :: margOf (sampData G x) (ansBound G x n) G.deg n .bob z) = (j : ℕ))) = [] := by
+      refine List.filter_eq_nil_iff.2 fun z hz => ?_
+      simp only [decide_eq_true_eq, not_and]
+      intro h1 h2
+      exact htag ⟨((marg_idx_eq G U x n .alice false z (hmem z hz) i).1 h1).1.symm,
+        ((marg_idx_eq G U x n .bob true z (hmem z hz) j).1 h2).1.symm⟩
+    rw [hnil]
+    simp
 
-/-- **The acceptance table read back.** A tuple of indices is in the table exactly when the
-verifier's decider accepts the tuple of strings they name. -/
+/-- **The acceptance table read back, doubled.** A tuple of indices is in the table exactly
+when the tags are Alice's and Bob's *and* the verifier's decider accepts. -/
 theorem acc_mem_iff (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n)
     (i j : Fin ((tab G U x n).nX + 1)) (k l : Fin ((tab G U x n).nA + 1)) :
     ((i : ℕ), (j : ℕ), (k : ℕ), (l : ℕ)) ∈ (tab G U x n).acc
-      ↔ (Vof G U x).decider.Accepts n (CL.toBits (eXof G U x n hb i))
-          (CL.toBits (eXof G U x n hb j)) (eAof G U x n k).1 (eAof G U x n l).1 := by
-  have hdim : dimOf (sampData G x) n = (Vof G U x).sampler.dim n := dimOf_eq G U x n hb
+      ↔ ((eXof G U x n i).1 = false ∧ (eXof G U x n j).1 = true ∧
+          (Vof G U x).decider.Accepts n (CL.toBits (eXof G U x n i).2)
+            (CL.toBits (eXof G U x n j).2) (eAof G U x n k).1 (eAof G U x n l).1) := by
+  have hdim : dimOf (sampData G x) (ansBound G x n) G.deg n = (Vof G U x).sampler.dim n := dimOf_eq G U x n
   have hqmem : ∀ (m : Fin ((tab G U x n).nX + 1)),
-      CL.toBits (eXof G U x n hb m) ∈ Data.bitStrsOfLen (dimOf (sampData G x) n) := by
+      CL.toBits (eXof G U x n m).2 ∈ Data.bitStrsOfLen (dimOf (sampData G x) (ansBound G x n) G.deg n) := by
     intro m
     rw [Data.mem_bitStrsOfLen, CL.length_toBits, hdim]
   have hamem : ∀ (m : Fin ((tab G U x n).nA + 1)),
       (eAof G U x n m).1 ∈ Data.bitStrsLE (ansBound G x n) :=
     fun m => (Data.mem_bitStrsLE _ _).2 (eAof G U x n m).2
-  rw [show (tab G U x n).acc = Verifier.accList (dimOf (sampData G x) n) (ansBound G x n)
-      (accOf (decProgData G U x) n) from rfl, Verifier.mem_accList_iff]
+  rw [show (tab G U x n).acc = Verifier.accListW (dimOf (sampData G x) (ansBound G x n) G.deg n) (ansBound G x n)
+      (fun u => Verifier.bitsToIdx (false :: u)) (fun v => Verifier.bitsToIdx (true :: v))
+      (accOf (decProgData G U x) n) from rfl, Verifier.mem_accListW_iff]
   constructor
   · rintro ⟨u, hu, v, hv, a, ha, b, hb', hacc, hi, hj, hk, hl⟩
-    have hu' : u = CL.toBits (eXof G U x n hb i) :=
-      Verifier.bitsToIdx_injOn ((Data.mem_bitStrsOfLen _ _).1 hu)
-        (by rw [CL.length_toBits, hdim]) (by rw [← hi, eXof_apply])
-    have hv' : v = CL.toBits (eXof G U x n hb j) :=
-      Verifier.bitsToIdx_injOn ((Data.mem_bitStrsOfLen _ _).1 hv)
-        (by rw [CL.length_toBits, hdim]) (by rw [← hj, eXof_apply])
+    have hu' : (eXof G U x n i).1 = false ∧ CL.toBits (eXof G U x n i).2 = u :=
+      List.cons_eq_cons.mp (Verifier.bitsToIdx_injOn
+        (s := (Vof G U x).sampler.dim n + 1) (by simp)
+        (by rw [List.length_cons, (Data.mem_bitStrsOfLen _ _).1 hu, hdim])
+        (by rw [eXof_apply G U x n i, hi]))
+    have hv' : (eXof G U x n j).1 = true ∧ CL.toBits (eXof G U x n j).2 = v :=
+      List.cons_eq_cons.mp (Verifier.bitsToIdx_injOn
+        (s := (Vof G U x).sampler.dim n + 1) (by simp)
+        (by rw [List.length_cons, (Data.mem_bitStrsOfLen _ _).1 hv, hdim])
+        (by rw [eXof_apply G U x n j, hj]))
     have ha' : a = (eAof G U x n k).1 := (List.idxOf_inj ha).1 (by rw [← hk, eAof_apply])
     have hb'' : b = (eAof G U x n l).1 := (List.idxOf_inj hb').1 (by rw [← hl, eAof_apply])
-    subst hu'; subst hv'; subst ha'; subst hb''
+    refine ⟨hu'.1, hv'.1, ?_⟩
+    rw [hu'.2, hv'.2, ← ha', ← hb'']
     exact (accOf_iff G U x n hb _ _ _ _).1 hacc
-  · intro h
-    exact ⟨_, hqmem i, _, hqmem j, _, hamem k, _, hamem l,
-      (accOf_iff G U x n hb _ _ _ _).2 h,
-      (eXof_apply G U x n hb i).symm, (eXof_apply G U x n hb j).symm,
+  · rintro ⟨ht1, ht2, h⟩
+    refine ⟨_, hqmem i, _, hqmem j, _, hamem k, _, hamem l,
+      (accOf_iff G U x n hb _ _ _ _).2 h, ?_, ?_,
       (eAof_apply G U x n k).symm, (eAof_apply G U x n l).symm⟩
+    · rw [← ht1, eXof_apply G U x n i]
+    · rw [← ht2, eXof_apply G U x n j]
 
-theorem game_D_true_iff (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n)
-    (i j : Fin ((tab G U x n).nX + 1)) (k l : Fin ((tab G U x n).nA + 1)) :
-    ((Vof G U x).game n (ansBound G x n)).D (eXof G U x n hb i) (eXof G U x n hb j)
-        (eAof G U x n k) (eAof G U x n l) = true
-      ↔ (Vof G U x).decider.Accepts n (CL.toBits (eXof G U x n hb i))
-          (CL.toBits (eXof G U x n hb j)) (eAof G U x n k).1 (eAof G U x n l).1 := by
-  classical
-  exact decide_eq_true_iff
-
-/-- **O2, the match.** On an `n`-bounded, `n`-synchronous verifier the tabulation matches
-`𝒱_n` along `eXof` and `eAof`. -/
-theorem tab_match (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n)
-    (hs : (Vof G U x).IsSynchronousAt n) :
-    ∃ (eX : Fin ((tab G U x n).nX + 1) ≃ (Vof G U x).Questions n)
+/-- **O2, the match — doubled, and with no synchronicity hypothesis.** On an `n`-bounded
+verifier the doubled tabulation matches the *doubled* game of `𝒱_n` along `eXof` and `eAof`.
+The forced rejections of a `GameData` sit on the diagonal, which the doubled distribution
+avoids; and the doubled game rejects off the tag block, which is what the table omits. -/
+theorem tab_match (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n) :
+    ∃ (eX : Fin ((tab G U x n).nX + 1) ≃ Bool × (Vof G U x).Questions n)
       (eA : Fin ((tab G U x n).nA + 1) ≃ Verifier.Answers (ansBound G x n)),
-      (∀ i j, (tab G U x n).game.μ i j = (Vof G U x).sampler.dist n (eX i) (eX j)) ∧
-      (∀ i j k l, (tab G U x n).game.D i j k l =
-        ((Vof G U x).game n (ansBound G x n)).D (eX i) (eX j) (eA k) (eA l)) := by
-  refine ⟨eXof G U x n hb, eAof G U x n, mu_clause G U x n hb, fun i j k l => ?_⟩
-  refine Bool.eq_iff_iff.2 ?_
-  rw [GameData.game_D, game_D_true_iff G U x n hb]
-  by_cases hc : i = j ∧ k ≠ l
-  · rw [if_pos hc]
-    obtain ⟨rfl, hkl⟩ := hc
-    simp only [Bool.false_eq_true, false_iff]
-    exact hs _ _ _ (fun h => hkl ((eAof G U x n).injective (Subtype.ext h)))
-  · rw [if_neg hc, decide_eq_true_iff]
-    exact acc_mem_iff G U x n hb i j k l
-
-/-- **O2, the soundness bound.** Without synchronicity the tabulation still does not
-overshoot: the tuples a `GameData` forces to reject are exactly the ones whose rejection can
-only lower the value (`quantumValue_mono`). -/
-theorem tab_le (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n) :
-    quantumValue (tab G U x n).game ≤ (Vof G U x).valStar n (ansBound G x n) := by
+      (∀ i j, (tab G U x n).game.μ i j
+        = ((Vof G U x).doubledGame n (ansBound G x n)).μ (eX i) (eX j)) ∧
+      (∀ i j k l, (tab G U x n).game.D i j k l
+        = ((Vof G U x).doubledGame n (ansBound G x n)).D (eX i) (eX j) (eA k) (eA l)) := by
   classical
-  obtain ⟨Gs, hGsμ, hGsD⟩ : ∃ Gs : Game ((Vof G U x).Questions n) ((Vof G U x).Questions n)
-      (Verifier.Answers (ansBound G x n)) (Verifier.Answers (ansBound G x n)),
-      (∀ a b, Gs.μ a b = ((Vof G U x).game n (ansBound G x n)).μ a b) ∧
-      (∀ a b c d, Gs.D a b c d
-        = if a = b ∧ c ≠ d then false else ((Vof G U x).game n (ansBound G x n)).D a b c d) :=
-    ⟨{ (Vof G U x).game n (ansBound G x n) with
-        D := fun a b c d => if a = b ∧ c ≠ d then false
-          else ((Vof G U x).game n (ansBound G x n)).D a b c d },
-      fun _ _ => rfl, fun _ _ _ _ => rfl⟩
-  have hDs : ∀ (i j : Fin ((tab G U x n).nX + 1)) (k l : Fin ((tab G U x n).nA + 1)),
-      (tab G U x n).game.D i j k l
-        = Gs.D (eXof G U x n hb i) (eXof G U x n hb j) (eAof G U x n k) (eAof G U x n l) := by
-    intro i j k l
-    rw [GameData.game_D, hGsD]
-    by_cases hc : i = j ∧ k ≠ l
-    · rw [if_pos hc, if_pos ⟨by rw [hc.1], fun h => hc.2 ((eAof G U x n).injective h)⟩]
-    · have hc' : ¬((eXof G U x n hb) i = (eXof G U x n hb) j
-          ∧ (eAof G U x n) k ≠ (eAof G U x n) l) :=
-        fun h => hc ⟨(eXof G U x n hb).injective h.1, fun h' => h.2 (by rw [h'])⟩
-      rw [if_neg hc, if_neg hc']
-      refine Bool.eq_iff_iff.2 ?_
-      rw [decide_eq_true_iff, game_D_true_iff G U x n hb]
-      exact acc_mem_iff G U x n hb i j k l
-  have h1 : quantumValue (tab G U x n).game = quantumValue Gs :=
-    quantumValue_eq_of_equiv Gs (tab G U x n).game (eXof G U x n hb) (eXof G U x n hb)
-      (eAof G U x n) (eAof G U x n) (fun i j => (mu_clause G U x n hb i j).trans (hGsμ _ _).symm)
-      hDs
-  have h2 : quantumValue Gs ≤ quantumValue ((Vof G U x).game n (ansBound G x n)) := by
-    refine quantumValue_mono Gs _ (fun a b => (hGsμ a b).symm) ?_
-    intro a b c d hD
-    rw [hGsD] at hD
-    by_cases hc : a = b ∧ c ≠ d
-    · rw [if_pos hc] at hD; exact absurd hD (by simp)
-    · rwa [if_neg hc] at hD
-  exact h1.trans_le h2
+  refine ⟨eXof G U x n, eAof G U x n, mu_clause G U x n, fun i j k l => ?_⟩
+  refine Bool.eq_iff_iff.2 ?_
+  rw [GameData.game_D,
+    show ((Vof G U x).doubledGame n (ansBound G x n)).D
+        (eXof G U x n i) (eXof G U x n j) (eAof G U x n k) (eAof G U x n l)
+      = if (eXof G U x n i).1 = false ∧ (eXof G U x n j).1 = true then
+          ((Vof G U x).game n (ansBound G x n)).D (eXof G U x n i).2
+            (eXof G U x n j).2 (eAof G U x n k) (eAof G U x n l) else false from rfl]
+  by_cases hc : i = j ∧ k ≠ l
+  · rw [if_pos hc, if_neg (by rw [hc.1]; exact fun h => by simp_all)]
+  · rw [if_neg hc, decide_eq_true_iff, acc_mem_iff G U x n hb]
+    by_cases ht : (eXof G U x n i).1 = false ∧ (eXof G U x n j).1 = true
+    · rw [if_pos ht]
+      show _ ↔ (decide ((Vof G U x).decider.Accepts n _ _ _ _) = true)
+      rw [decide_eq_true_iff]
+      exact ⟨fun h => h.2.2, fun h => ⟨ht.1, ht.2, h⟩⟩
+    · rw [if_neg ht]
+      simp only [Bool.false_eq_true, iff_false]
+      exact fun h => ht ⟨h.1, h.2.1⟩
 
-/-- The equality of values the matching data implies: on a bounded, synchronous verifier the
-tabulated game has the value it tabulates. -/
-theorem tab_value (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n)
-    (hs : (Vof G U x).IsSynchronousAt n) :
+/-- **O2, the value — doubled**: the tabulated game has the value of `𝒱_n` at *every*
+`n`-bounded string, with no synchronicity hypothesis. This is `Halting.exists_sem_of_tab`'s
+`hval`. -/
+theorem tab_value (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n) :
     quantumValue (tab G U x n).game = (Vof G U x).valStar n (ansBound G x n) := by
-  obtain ⟨eX, eA, hμ, hD⟩ := tab_match G U x n hb hs
-  exact Verifier.quantumValue_toGame_eq_valStar _ _ _ _ eX eA hμ hD
+  obtain ⟨eX, eA, hμ, hD⟩ := tab_match G U x n hb
+  exact Verifier.quantumValue_toGame_eq_valStar_doubled _ _ _ _ eX eA hμ hD
+
+/-- The completeness branch, in the value of `HaltingGameValue`. -/
+theorem gameValue_tab_eq_one (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n)
+    (hV : (Vof G U x).HasPerfectPCC n (ansBound G x n)) :
+    HaltingGameValue.gameValue (tab G U x n).toGame = 1 := by
+  obtain ⟨eX, eA, hμ, hD⟩ := tab_match G U x n hb
+  exact Verifier.gameValue_toGame_eq_one_doubled _ _ _ _ eX eA hμ hD hV
 
 /-! ## The obligations -/
 
@@ -612,9 +621,9 @@ on the empty input and at most `1/2` when it does not.
 The proof is the per-level compressibility criterion at the classes `classA`, `classB`,
 followed by the value agreement of the tabulation: the criterion produces a description at
 level `2 ^ (K + 1 + esize e)` lying in `A` or in `B` according to whether `e` halts, a value-`1`
-PCC strategy gives `val* = 1` (`Verifier.valStar_eq_one_of_hasPerfectPCC`), and the two
-verdicts reach the tabulated game by different routes: `tab_value` in the halting branch,
-where the verifier is synchronous, and `tab_le` in the other, where it need not be. -/
+PCC strategy gives `val* = 1` (`Verifier.valStar_eq_one_of_hasPerfectPCC`), and `tab_value`
+carries both verdicts to the tabulated game — the same equality in both branches, the
+doubled question set having removed the synchronicity hypothesis that once split them. -/
 theorem halting_reduction (O : Obligations G U) :
     ∃ g : Nat.Partrec.Code → GameData, Computable g ∧
       ∀ pc : Nat.Partrec.Code,
@@ -634,9 +643,8 @@ theorem halting_reduction (O : Obligations G U) :
       ((PolyTimeFun.computable_comp g compile hc Data.primrec_decode_bitStr.to_comp).pair hlevel),
     fun pc => ⟨fun hdom => ?_, fun hdom => ?_⟩⟩
   · have hx := (hg (compile pc)).2.1 ((hspec pc).2 hdom)
-    obtain ⟨hsync, -⟩ := hx.2
-    rw [tab_value G U _ _ hx.1 hsync, (Vof G U _).valStar_eq_one_of_hasPerfectPCC hx.2]
+    rw [tab_value G U _ _ hx.1, (Vof G U _).valStar_eq_one_of_hasPerfectPCC hx.2]
   · have hx := (hg (compile pc)).2.2 fun h => hdom ((hspec pc).1 h)
-    exact (tab_le G U _ _ hx.1).trans hx.2
+    exact (tab_value G U _ _ hx.1).le.trans hx.2
 
 end MIPRE.Halting

@@ -355,6 +355,63 @@ theorem bitsToIdx_injOn {s : ℕ} {x y : BitStr} (hx : x.length = s) (hy : y.len
   rw [← hx', ← hy', ← questionEquiv_symm_val, ← questionEquiv_symm_val] at this
   rw [← hx', ← hy', (questionEquiv s).symm.injective (Fin.ext this)]
 
+/-! ## The doubled question alphabet, indexed
+
+A question of the doubled game is a tag bit and a point of `𝔽₂^s`. It is packed into one
+number by **prepending the tag bit to the point's bit string**: the index of `(b, v)` is
+`bitsToIdx (b :: CL.toBits v)`. Three things this packing buys, and they are the reason for
+it:
+
+* the packed index is `bitsToIdx` of a bit string of length `s + 1`, so `bitsToIdx_lt` bounds
+  it by `2 ^ (s + 1)` and `bitsToIdx_injOn` — injectivity on strings of a *fixed length* —
+  reads it back, both verbatim at `s + 1`;
+* Alice's indices are even and Bob's odd, so the two copies are automatically disjoint;
+* nothing else in the tabulation changes: the weight list still enumerates `𝔽₂^s`.
+-/
+
+/-- `CL.toBits` is injective: it is the binary expansion read by `questionEquiv`. -/
+theorem toBits_injective (s : ℕ) :
+    Function.Injective (CL.toBits (s := s)) := by
+  intro v w h
+  refine (questionEquiv s).symm.injective (Fin.ext ?_)
+  rw [questionEquiv_symm_val, questionEquiv_symm_val, h]
+
+/-- **The packing is injective, componentwise.** This is `bitsToIdx_injOn` at length `s + 1`,
+which is why the tag is *prepended* rather than appended or added as an offset. -/
+theorem bitsToIdx_cons_toBits_inj {s : ℕ} {b c : Bool} {v w : Fin s → CL.𝔽₂}
+    (h : bitsToIdx (b :: CL.toBits v) = bitsToIdx (c :: CL.toBits w)) : b = c ∧ v = w := by
+  have hlen : ∀ (d : Bool) (u : Fin s → CL.𝔽₂), (d :: CL.toBits u).length = s + 1 := by
+    intro d u; simp
+  obtain ⟨hb, hv⟩ := List.cons_eq_cons.mp (bitsToIdx_injOn (hlen b v) (hlen c w) h)
+  exact ⟨hb, toBits_injective s hv⟩
+
+theorem bitsToIdx_cons_toBits_eq_iff {s : ℕ} (b c : Bool) (v w : Fin s → CL.𝔽₂) :
+    bitsToIdx (b :: CL.toBits v) = bitsToIdx (c :: CL.toBits w) ↔ b = c ∧ v = w :=
+  ⟨bitsToIdx_cons_toBits_inj, fun h => by rw [h.1, h.2]⟩
+
+/-- The packed index of a tagged question. -/
+def tagIdx {s : ℕ} (p : Bool × (Fin s → CL.𝔽₂)) : Fin (2 ^ (s + 1)) :=
+  ⟨bitsToIdx (p.1 :: CL.toBits p.2), by simpa using bitsToIdx_lt (p.1 :: CL.toBits p.2)⟩
+
+theorem tagIdx_injective (s : ℕ) : Function.Injective (tagIdx (s := s)) := by
+  rintro ⟨b, v⟩ ⟨c, w⟩ h
+  obtain ⟨hb, hv⟩ := bitsToIdx_cons_toBits_inj (congrArg Fin.val h)
+  exact Prod.ext hb hv
+
+/-- **The doubled question alphabet.** -/
+noncomputable def tagEquiv (s : ℕ) : Bool × (Fin s → CL.𝔽₂) ≃ Fin (2 ^ (s + 1)) :=
+  Equiv.ofBijective tagIdx
+    ((Fintype.bijective_iff_injective_and_card _).2 ⟨tagIdx_injective s, by
+      simp [Fintype.card_prod, pow_succ, mul_comm]⟩)
+
+/-- **Reading a packed index back.** -/
+theorem bitsToIdx_tagEquiv_symm (s : ℕ) (i : Fin (2 ^ (s + 1))) :
+    bitsToIdx (((tagEquiv s).symm i).1 :: CL.toBits ((tagEquiv s).symm i).2) = (i : ℕ) :=
+  congrArg Fin.val ((tagEquiv s).apply_symm_apply i)
+
+@[simp] theorem tagEquiv_apply (s : ℕ) (p : Bool × (Fin s → CL.𝔽₂)) :
+    ((tagEquiv s p : Fin (2 ^ (s + 1))) : ℕ) = bitsToIdx (p.1 :: CL.toBits p.2) := rfl
+
 /-- **The acceptance table**: the index tuples of the answer tuples a predicate accepts,
 enumerated over the two alphabets. -/
 def accList (s T : ℕ) (acc? : BitStr → BitStr → BitStr → BitStr → Bool) :
@@ -429,40 +486,85 @@ theorem primrec_tuples : Primrec₂ tuples := by
   exact (Primrec.list_flatMap (Data.primrec_bitStrsOfLen.comp Primrec.fst) h2.to₂).to₂
 
 
-/-- The acceptance table is one `filterMap` over the flat product. -/
-theorem accList_eq_filterMap (s T : ℕ) (acc? : BitStr → BitStr → BitStr → BitStr → Bool) :
-    Verifier.accList s T acc? = (tuples s T).filterMap fun q =>
+def accListW (s T : ℕ) (fA fB : BitStr → ℕ)
+    (acc? : BitStr → BitStr → BitStr → BitStr → Bool) : List (ℕ × ℕ × ℕ × ℕ) :=
+  (Data.bitStrsOfLen s).flatMap fun x =>
+    (Data.bitStrsOfLen s).flatMap fun y =>
+      (Data.bitStrsLE T).flatMap fun a =>
+        (Data.bitStrsLE T).filterMap fun b =>
+          if acc? x y a b then
+            some (fA x, fB y, (Data.bitStrsLE T).idxOf a, (Data.bitStrsLE T).idxOf b)
+          else none
+
+theorem accList_eq_accListW (s T : ℕ) (acc? : BitStr → BitStr → BitStr → BitStr → Bool) :
+    accList s T acc? = accListW s T bitsToIdx bitsToIdx acc? := rfl
+
+theorem mem_accListW_iff {s T : ℕ} {fA fB : BitStr → ℕ}
+    {acc? : BitStr → BitStr → BitStr → BitStr → Bool} {i j k l : ℕ} :
+    (i, j, k, l) ∈ accListW s T fA fB acc? ↔
+      ∃ x ∈ Data.bitStrsOfLen s, ∃ y ∈ Data.bitStrsOfLen s,
+        ∃ a ∈ Data.bitStrsLE T, ∃ b ∈ Data.bitStrsLE T,
+          acc? x y a b = true ∧ i = fA x ∧ j = fB y ∧
+            k = (Data.bitStrsLE T).idxOf a ∧ l = (Data.bitStrsLE T).idxOf b := by
+  simp only [accListW, List.mem_flatMap, List.mem_filterMap]
+  constructor
+  · rintro ⟨x, hx, y, hy, a, ha, b, hb, h⟩
+    by_cases hc : acc? x y a b
+    · rw [if_pos hc] at h
+      obtain ⟨hi, hj, hk, hl⟩ : fA x = i ∧ fB y = j ∧
+          (Data.bitStrsLE T).idxOf a = k ∧ (Data.bitStrsLE T).idxOf b = l := by simpa using h
+      exact ⟨x, hx, y, hy, a, ha, b, hb, hc, hi.symm, hj.symm, hk.symm, hl.symm⟩
+    · rw [if_neg hc] at h; exact absurd h (by simp)
+  · rintro ⟨x, hx, y, hy, a, ha, b, hb, hc, rfl, rfl, rfl, rfl⟩
+    exact ⟨x, hx, y, hy, a, ha, b, hb, by rw [if_pos hc]⟩
+
+theorem accListW_eq_filterMap (s T : ℕ) (fA fB : BitStr → ℕ)
+    (acc? : BitStr → BitStr → BitStr → BitStr → Bool) :
+    accListW s T fA fB acc? = (tuples s T).filterMap fun q =>
       if acc? q.1 q.2.1 q.2.2.1 q.2.2.2 then
-        some (Verifier.bitsToIdx q.1, Verifier.bitsToIdx q.2.1,
+        some (fA q.1, fB q.2.1,
           (Data.bitStrsLE T).idxOf q.2.2.1, (Data.bitStrsLE T).idxOf q.2.2.2)
       else none := by
-  simp only [Verifier.accList, tuples, List.filterMap_flatMap, List.filterMap_map,
-    Function.comp_def]
+  simp only [accListW, tuples, List.filterMap_flatMap, List.filterMap_map, Function.comp_def]
 
-theorem primrec_accList {α : Type*} [Primcodable α] {s T : α → ℕ}
+theorem primrec_accListW {α : Type*} [Primcodable α] {s T : α → ℕ} {fA fB : BitStr → ℕ}
     {acc? : α → BitStr → BitStr → BitStr → BitStr → Bool}
-    (hs : Primrec s) (hT : Primrec T)
+    (hs : Primrec s) (hT : Primrec T) (hfA : Primrec fA) (hfB : Primrec fB)
     (hacc : Primrec fun q : α × BitStr × BitStr × BitStr × BitStr =>
       acc? q.1 q.2.1 q.2.2.1 q.2.2.2.1 q.2.2.2.2) :
-    Primrec fun a => Verifier.accList (s a) (T a) (acc? a) := by
+    Primrec fun a => Verifier.accListW (s a) (T a) fA fB (acc? a) := by
   have hbl : Primrec fun q : α × BitStr × BitStr × BitStr × BitStr =>
       Data.bitStrsLE (T q.1) := Data.primrec_bitStrsLE.comp (hT.comp Primrec.fst)
   have hbody : Primrec₂ fun (a : α) (q : BitStr × BitStr × BitStr × BitStr) =>
       (if acc? a q.1 q.2.1 q.2.2.1 q.2.2.2 then
-        some (Verifier.bitsToIdx q.1, Verifier.bitsToIdx q.2.1,
+        some (fA q.1, fB q.2.1,
           (Data.bitStrsLE (T a)).idxOf q.2.2.1, (Data.bitStrsLE (T a)).idxOf q.2.2.2)
         else none) := by
     refine Primrec.ite ⟨inferInstance, hacc.of_eq fun q => by
         cases h : acc? q.1 q.2.1 q.2.2.1 q.2.2.2.1 q.2.2.2.2 <;> simp [h]⟩ ?_ (Primrec.const none)
     refine Primrec.option_some.comp
-      ((primrec_bitsToIdx.comp (Primrec.fst.comp Primrec.snd)).pair
-        ((primrec_bitsToIdx.comp (Primrec.fst.comp (Primrec.snd.comp Primrec.snd))).pair
+      ((hfA.comp (Primrec.fst.comp Primrec.snd)).pair
+        ((hfB.comp (Primrec.fst.comp (Primrec.snd.comp Primrec.snd))).pair
           ((Cost.primrec_idxOf_bitStr.comp
               (Primrec.fst.comp (Primrec.snd.comp (Primrec.snd.comp Primrec.snd))) hbl).pair
             (Cost.primrec_idxOf_bitStr.comp
               (Primrec.snd.comp (Primrec.snd.comp (Primrec.snd.comp Primrec.snd))) hbl))))
   exact (Primrec.listFilterMap (primrec_tuples.comp hs hT) hbody).of_eq fun a =>
-    (accList_eq_filterMap (s a) (T a) (acc? a)).symm
+    (accListW_eq_filterMap (s a) (T a) fA fB (acc? a)).symm
+
+/-- The original `primrec_accList` is the case `fA = fB = bitsToIdx`, so generalizing costs
+nothing downstream. -/
+theorem primrec_accList_of_W {α : Type*} [Primcodable α] {s T : α → ℕ}
+    {acc? : α → BitStr → BitStr → BitStr → BitStr → Bool}
+    (hs : Primrec s) (hT : Primrec T)
+    (hacc : Primrec fun q : α × BitStr × BitStr × BitStr × BitStr =>
+      acc? q.1 q.2.1 q.2.2.1 q.2.2.2.1 q.2.2.2.2) :
+    Primrec fun a => Verifier.accList (s a) (T a) (acc? a) :=
+  primrec_accListW hs hT primrec_bitsToIdx primrec_bitsToIdx hacc
+
+/-- Prepending a fixed tag bit is primitive recursive. -/
+theorem primrec_tagIdxOf (b : Bool) : Primrec fun z : BitStr => bitsToIdx (b :: z) :=
+  primrec_bitsToIdx.comp (Primrec.list_cons.comp (Primrec.const b) Primrec.id)
 
 end Verifier
 
@@ -485,150 +587,152 @@ verifier the default is never taken.
 
 namespace Halting
 
-/-- The sampler's dimension at level `n`, from the encoded sampler program alone.
-
-The budgeted run is written out rather than factored through a `queryOf sd n q` helper: the
-extra delta step is enough to send `primrec_dimOf` and `primrec_margOf` below into a `whnf`
-timeout. -/
-def dimOf (sd : Data) (n : ℕ) : ℕ :=
+def dimOf (sd : Data) (B k n : ℕ) : ℕ :=
   ((Machine.runForD sd (encode (n, CL.Sampler.Query.dimension))
-      (n ^ n * ((encode CL.Sampler.Query.dimension : Data).size + 1) ^ n)).bind
+      (B * ((encode CL.Sampler.Query.dimension : Data).size + 1) ^ k)).bind
     fun d => (SizedEncoding.decode d : Option ℕ)).getD 0
 
-/-- Player `w`'s marginal question at the point `z`, from the encoded sampler program alone.
-The `7` is the number of levels of a `Verifier 7`'s CL functions; `queryUnder_marginal` needs
-the query at exactly level `ℓ`, since only there is the marginal the CL function itself
-(`CLFun.truncate_self`). -/
-def margOf (sd : Data) (n : ℕ) (w : Player) (z : BitStr) : BitStr :=
+/-- Player `w`'s marginal question at the point `z`, under the budget `B * (|q| + 1) ^ k`. -/
+def margOf (sd : Data) (B k n : ℕ) (w : Player) (z : BitStr) : BitStr :=
   ((Machine.runForD sd (encode (n, CL.Sampler.Query.marginal w 7 z))
-      (n ^ n * ((encode (CL.Sampler.Query.marginal w 7 z) : Data).size + 1) ^ n)).bind
+      (B * ((encode (CL.Sampler.Query.marginal w 7 z) : Data).size + 1) ^ k)).bind
     fun d => (SizedEncoding.decode d : Option BitStr)).getD []
 
-/-- Acceptance, from the encoded decider program alone. `decide (… = some …)` rather than
-`… == some …`: the `BEq` a `==` elaborates to here is not the one `Primrec.eq` is stated at,
-and reconciling them is a long detour for no gain. -/
+/-- Acceptance, from the encoded decider program alone. Unlike the two sampler runs this one
+cannot be re-budgeted off `GapCompression.sampler_time`: the decider of the verifier a string
+denotes is the string's *own*, wrapped, and nothing bounds it unconditionally. So `accOf` keeps
+the budget `n`-boundedness supplies, and `MIPRE.Halting.accOf_iff` keeps its hypothesis.
+
+`decide (… = some …)` rather than `… == some …`: the `BEq` a `==` elaborates to here is not the
+one `Primrec.eq` is stated at, and reconciling them is a long detour for no gain. -/
 def accOf (pd : Data) (n : ℕ) (x y a b : BitStr) : Bool :=
   decide (Machine.runForD pd (encode (n, x, y, a, b))
     (Decider.acceptBudget (n ^ n) n x y a b) = some (encode true))
 
-/-- **The tabulation.** `s` is a parameter rather than `dimOf sd n` inlined: the question
-enumeration and the acceptance table must be built at the *same* `s`, and `Primrec` proofs
-about a `GameData` whose two halves each recompute it do not go through. -/
-def tabOf (sd pd : Data) (s T n : ℕ) : GameData where
-  nX := 2 ^ s - 1
+/-- **The tabulation**, doubled and re-budgeted.  Alice's question index is her marginal's bit
+string with a `false` tag prepended, Bob's with a `true` tag: the two blocks are disjoint and
+the diagonal carries no weight.  The weight list still enumerates `𝔽₂^s` once, so the total
+weight is still `2 ^ s`. -/
+def tabOf (sd pd : Data) (s T B k n : ℕ) : GameData where
+  nX := 2 ^ (s + 1) - 1
   nA := (Data.bitStrsLE T).length - 1
   w := Verifier.weightList s
-        (fun z => Verifier.bitsToIdx (margOf sd n .alice z))
-        (fun z => Verifier.bitsToIdx (margOf sd n .bob z))
-  acc := Verifier.accList s T (accOf pd n)
+        (fun z => Verifier.bitsToIdx (false :: margOf sd B k n .alice z))
+        (fun z => Verifier.bitsToIdx (true :: margOf sd B k n .bob z))
+  acc := Verifier.accListW s T (fun u => Verifier.bitsToIdx (false :: u))
+          (fun v => Verifier.bitsToIdx (true :: v)) (accOf pd n)
 
-/-! ### Each component is primitive recursive -/
-
-theorem primrec_dimOf : Primrec fun q : Data × ℕ => dimOf q.1 q.2 := by
-  have hbudget : Primrec fun q : Data × ℕ =>
-      q.2 ^ q.2 * ((encode CL.Sampler.Query.dimension : Data).size + 1) ^ q.2 :=
-    Primrec.nat_mul.comp (primrec_nat_pow.comp Primrec.snd Primrec.snd)
-      (primrec_nat_pow.comp (Primrec.const _) Primrec.snd)
-  have hinput : Primrec fun q : Data × ℕ =>
-      (encode (q.2, CL.Sampler.Query.dimension) : Data) :=
-    Data.primrec_cons.comp (Data.primrec_encode_nat.comp Primrec.snd)
+theorem primrec_dimOf {α : Type*} [Primcodable α] {sd : α → Data} {B lvl : α → ℕ} (k : ℕ)
+    (hsd : Primrec sd) (hB : Primrec B) (hlvl : Primrec lvl) :
+    Primrec fun a : α => dimOf (sd a) (B a) k (lvl a) := by
+  have hbudget : Primrec fun a : α =>
+      B a * ((encode CL.Sampler.Query.dimension : Data).size + 1) ^ k :=
+    Primrec.nat_mul.comp hB (primrec_nat_pow.comp (Primrec.const _) (Primrec.const k))
+  have hinput : Primrec fun a : α => (encode (lvl a, CL.Sampler.Query.dimension) : Data) :=
+    Data.primrec_cons.comp (Data.primrec_encode_nat.comp hlvl)
       (Primrec.const (encode CL.Sampler.Query.dimension : Data))
   exact Primrec.option_getD.comp
-    (Primrec.option_bind (Machine.primrec_runForD.comp ((Primrec.fst.pair hinput).pair hbudget))
+    (Primrec.option_bind (Machine.primrec_runForD.comp ((hsd.pair hinput).pair hbudget))
       (Data.primrec_decode_nat.comp Primrec.snd).to₂)
     (Primrec.const 0)
 
-theorem primrec_margOf (w : Player) :
-    Primrec fun q : (Data × ℕ) × BitStr => margOf q.1.1 q.1.2 w q.2 := by
-  have hsd : Primrec fun q : (Data × ℕ) × BitStr => q.1.1 := Primrec.fst.comp Primrec.fst
-  have hn : Primrec fun q : (Data × ℕ) × BitStr => q.1.2 := Primrec.snd.comp Primrec.fst
-  have hq : Primrec fun q : (Data × ℕ) × BitStr =>
+theorem primrec_margOf {α : Type*} [Primcodable α] {sd : α → Data} {B lvl : α → ℕ} (k : ℕ)
+    (hsd : Primrec sd) (hB : Primrec B) (hlvl : Primrec lvl) (w : Player) :
+    Primrec fun q : α × BitStr => margOf (sd q.1) (B q.1) k (lvl q.1) w q.2 := by
+  have hq : Primrec fun q : α × BitStr =>
       (encode (CL.Sampler.Query.marginal w 7 q.2) : Data) :=
     (CL.Sampler.primrec_encode_marginal w 7).comp Primrec.snd
-  have hinput : Primrec fun q : (Data × ℕ) × BitStr =>
-      (encode (q.1.2, CL.Sampler.Query.marginal w 7 q.2) : Data) :=
-    Data.primrec_cons.comp (Data.primrec_encode_nat.comp hn) hq
-  have hbudget : Primrec fun q : (Data × ℕ) × BitStr =>
-      q.1.2 ^ q.1.2 * ((encode (CL.Sampler.Query.marginal w 7 q.2) : Data).size + 1) ^ q.1.2 :=
-    Primrec.nat_mul.comp (primrec_nat_pow.comp hn hn)
-      (primrec_nat_pow.comp (Primrec.succ.comp (Data.primrec_size.comp hq)) hn)
+  have hinput : Primrec fun q : α × BitStr =>
+      (encode (lvl q.1, CL.Sampler.Query.marginal w 7 q.2) : Data) :=
+    Data.primrec_cons.comp (Data.primrec_encode_nat.comp (hlvl.comp Primrec.fst)) hq
+  have hbudget : Primrec fun q : α × BitStr =>
+      B q.1 * ((encode (CL.Sampler.Query.marginal w 7 q.2) : Data).size + 1) ^ k :=
+    Primrec.nat_mul.comp (hB.comp Primrec.fst)
+      (primrec_nat_pow.comp (Primrec.succ.comp (Data.primrec_size.comp hq)) (Primrec.const k))
   exact Primrec.option_getD.comp
-    (Primrec.option_bind (Machine.primrec_runForD.comp ((hsd.pair hinput).pair hbudget))
+    (Primrec.option_bind
+      (Machine.primrec_runForD.comp (((hsd.comp Primrec.fst).pair hinput).pair hbudget))
       (Data.primrec_decode_bitStr.comp Primrec.snd).to₂)
     (Primrec.const [])
 
-theorem primrec_weightList :
-    Primrec fun q : (Data × Data) × ℕ × ℕ × ℕ =>
-      Verifier.weightList q.2.1
-        (fun z => Verifier.bitsToIdx (margOf q.1.1 q.2.2.2 .alice z))
-        (fun z => Verifier.bitsToIdx (margOf q.1.1 q.2.2.2 .bob z)) := by
-  refine Primrec.list_map (Data.primrec_bitStrsOfLen.comp (Primrec.fst.comp Primrec.snd)) ?_
-  have hpair : Primrec fun r : ((Data × Data) × ℕ × ℕ × ℕ) × BitStr =>
-      ((r.1.1.1, r.1.2.2.2), r.2) :=
-    ((Primrec.fst.comp (Primrec.fst.comp Primrec.fst)).pair
-      (Primrec.snd.comp (Primrec.snd.comp (Primrec.snd.comp Primrec.fst)))).pair Primrec.snd
-  exact ((Verifier.primrec_bitsToIdx.comp ((primrec_margOf Player.alice).comp hpair)).pair
-    ((Verifier.primrec_bitsToIdx.comp ((primrec_margOf Player.bob).comp hpair)).pair
-      (Primrec.const 1))).to₂
+/-- The weight list of the doubled, re-budgeted tabulation.  `Verifier.weightList` itself is
+untouched: only the two index maps it is applied to have changed. -/
+theorem primrec_weightList {α : Type*} [Primcodable α] {sd : α → Data} {s B lvl : α → ℕ}
+    (k : ℕ) (hsd : Primrec sd) (hs : Primrec s) (hB : Primrec B) (hlvl : Primrec lvl) :
+    Primrec fun a : α =>
+      Verifier.weightList (s a)
+        (fun z => Verifier.bitsToIdx (false :: margOf (sd a) (B a) k (lvl a) .alice z))
+        (fun z => Verifier.bitsToIdx (true :: margOf (sd a) (B a) k (lvl a) .bob z)) := by
+  refine Primrec.list_map (Data.primrec_bitStrsOfLen.comp hs) ?_
+  exact (((Verifier.primrec_tagIdxOf false).comp
+      (primrec_margOf k hsd hB hlvl Player.alice)).pair
+    (((Verifier.primrec_tagIdxOf true).comp
+      (primrec_margOf k hsd hB hlvl Player.bob)).pair (Primrec.const 1))).to₂
 
--- `primrec_accOf` measures 210049 heartbeats, just over the 200000 default.
 set_option maxHeartbeats 1000000 in
-theorem primrec_accOf :
-    Primrec fun q : ((Data × Data) × ℕ × ℕ × ℕ) × BitStr × BitStr × BitStr × BitStr =>
-      accOf q.1.1.2 q.1.2.2.2 q.2.1 q.2.2.1 q.2.2.2.1 q.2.2.2.2 := by
-  have hpd : Primrec fun q : ((Data × Data) × ℕ × ℕ × ℕ) × BitStr × BitStr × BitStr × BitStr =>
-      q.1.1.2 := Primrec.snd.comp (Primrec.fst.comp Primrec.fst)
-  have hn : Primrec fun q : ((Data × Data) × ℕ × ℕ × ℕ) × BitStr × BitStr × BitStr × BitStr =>
-      q.1.2.2.2 := Primrec.snd.comp (Primrec.snd.comp (Primrec.snd.comp Primrec.fst))
-  have hx : Primrec fun q : ((Data × Data) × ℕ × ℕ × ℕ) × BitStr × BitStr × BitStr × BitStr =>
-      q.2.1 := Primrec.fst.comp Primrec.snd
-  have hy : Primrec fun q : ((Data × Data) × ℕ × ℕ × ℕ) × BitStr × BitStr × BitStr × BitStr =>
-      q.2.2.1 := Primrec.fst.comp (Primrec.snd.comp Primrec.snd)
-  have ha : Primrec fun q : ((Data × Data) × ℕ × ℕ × ℕ) × BitStr × BitStr × BitStr × BitStr =>
-      q.2.2.2.1 := Primrec.fst.comp (Primrec.snd.comp (Primrec.snd.comp Primrec.snd))
-  have hb : Primrec fun q : ((Data × Data) × ℕ × ℕ × ℕ) × BitStr × BitStr × BitStr × BitStr =>
-      q.2.2.2.2 := Primrec.snd.comp (Primrec.snd.comp (Primrec.snd.comp Primrec.snd))
+/-- `primrec_accOf`, generic in the ambient parameter type.  `accOf` reads only the decider
+data and the level, so the shape of the tuple carrying them is irrelevant.  Stating it this way
+is what makes the re-budget cheap: a change to `tabOf`'s parameter list never re-runs this
+proof, which measures 210049 heartbeats at one fixed tuple, and composing it with a projection
+to reach a wider one times out at the default budget. -/
+theorem primrec_accOf {α : Type*} [Primcodable α] {pd : α → Data} {lvl : α → ℕ}
+    (hpd : Primrec pd) (hlvl : Primrec lvl) :
+    Primrec fun q : α × BitStr × BitStr × BitStr × BitStr =>
+      accOf (pd q.1) (lvl q.1) q.2.1 q.2.2.1 q.2.2.2.1 q.2.2.2.2 := by
+  have hpd' : Primrec fun q : α × BitStr × BitStr × BitStr × BitStr => pd q.1 :=
+    hpd.comp Primrec.fst
+  have hn : Primrec fun q : α × BitStr × BitStr × BitStr × BitStr => lvl q.1 :=
+    hlvl.comp Primrec.fst
+  have hx : Primrec fun q : α × BitStr × BitStr × BitStr × BitStr => q.2.1 :=
+    Primrec.fst.comp Primrec.snd
+  have hy : Primrec fun q : α × BitStr × BitStr × BitStr × BitStr => q.2.2.1 :=
+    Primrec.fst.comp (Primrec.snd.comp Primrec.snd)
+  have ha : Primrec fun q : α × BitStr × BitStr × BitStr × BitStr => q.2.2.2.1 :=
+    Primrec.fst.comp (Primrec.snd.comp (Primrec.snd.comp Primrec.snd))
+  have hb : Primrec fun q : α × BitStr × BitStr × BitStr × BitStr => q.2.2.2.2 :=
+    Primrec.snd.comp (Primrec.snd.comp (Primrec.snd.comp Primrec.snd))
   have hebs : Primrec fun l : BitStr => (encode l : Data) := primrec_encode_bitStr
-  have htup : Primrec fun q : ((Data × Data) × ℕ × ℕ × ℕ) × BitStr × BitStr × BitStr × BitStr =>
-      (encode q.2 : Data) :=
+  have htup : Primrec fun q : α × BitStr × BitStr × BitStr × BitStr => (encode q.2 : Data) :=
     Data.primrec_cons.comp (hebs.comp hx)
       (Data.primrec_cons.comp (hebs.comp hy)
         (Data.primrec_cons.comp (hebs.comp ha) (hebs.comp hb)))
-  have hinput : Primrec fun q : ((Data × Data) × ℕ × ℕ × ℕ) × BitStr × BitStr × BitStr × BitStr =>
-      (encode (q.1.2.2.2, q.2) : Data) :=
+  have hinput : Primrec fun q : α × BitStr × BitStr × BitStr × BitStr =>
+      (encode (lvl q.1, q.2) : Data) :=
     Data.primrec_cons.comp (Data.primrec_encode_nat.comp hn) htup
-  have hbudget : Primrec fun q : ((Data × Data) × ℕ × ℕ × ℕ) × BitStr × BitStr × BitStr × BitStr =>
-      Decider.acceptBudget (q.1.2.2.2 ^ q.1.2.2.2) q.1.2.2.2 q.2.1 q.2.2.1 q.2.2.2.1 q.2.2.2.2 :=
+  have hbudget : Primrec fun q : α × BitStr × BitStr × BitStr × BitStr =>
+      Decider.acceptBudget (lvl q.1 ^ lvl q.1) (lvl q.1) q.2.1 q.2.2.1 q.2.2.2.1 q.2.2.2.2 :=
     Primrec.nat_mul.comp (primrec_nat_pow.comp hn hn)
       (primrec_nat_pow.comp (Primrec.succ.comp (Data.primrec_size.comp htup)) hn)
-  -- `Primrec.eq.comp` lands in `PrimrecPred`, which is an existential over a `DecidablePred`
-  -- instance and not a `Primrec`, so it cannot be `exact`ed into the goal; `Primrec.ite`
-  -- is the way back.
-  have hfin : PrimrecPred fun q : ((Data × Data) × ℕ × ℕ × ℕ) × BitStr × BitStr × BitStr × BitStr =>
-      Machine.runForD q.1.1.2 (encode (q.1.2.2.2, q.2))
-        (Decider.acceptBudget (q.1.2.2.2 ^ q.1.2.2.2) q.1.2.2.2 q.2.1 q.2.2.1 q.2.2.2.1 q.2.2.2.2)
+  have hfin : PrimrecPred fun q : α × BitStr × BitStr × BitStr × BitStr =>
+      Machine.runForD (pd q.1) (encode (lvl q.1, q.2))
+        (Decider.acceptBudget (lvl q.1 ^ lvl q.1) (lvl q.1) q.2.1 q.2.2.1 q.2.2.2.1 q.2.2.2.2)
         = some (encode true) :=
-    Primrec.eq.comp (Machine.primrec_runForD.comp ((hpd.pair hinput).pair hbudget))
+    Primrec.eq.comp (Machine.primrec_runForD.comp ((hpd'.pair hinput).pair hbudget))
       (Primrec.const (some (encode true) : Option Data))
   exact (Primrec.ite hfin (Primrec.const true) (Primrec.const false)).of_eq fun q => by
     simp only [accOf]; split <;> simp_all
 
-theorem primrec_tabOf :
-    Primrec fun q : (Data × Data) × ℕ × ℕ × ℕ => tabOf q.1.1 q.1.2 q.2.1 q.2.2.1 q.2.2.2 := by
-  have hs : Primrec fun q : (Data × Data) × ℕ × ℕ × ℕ => q.2.1 := Primrec.fst.comp Primrec.snd
-  have hT : Primrec fun q : (Data × Data) × ℕ × ℕ × ℕ => q.2.2.1 :=
-    Primrec.fst.comp (Primrec.snd.comp Primrec.snd)
-  have hnX : Primrec fun q : (Data × Data) × ℕ × ℕ × ℕ => 2 ^ q.2.1 - 1 :=
-    Primrec.nat_sub.comp (primrec_nat_pow.comp (Primrec.const 2) hs) (Primrec.const 1)
-  have hnA : Primrec fun q : (Data × Data) × ℕ × ℕ × ℕ => (Data.bitStrsLE q.2.2.1).length - 1 :=
+/-- **O2, computability, on numbers alone**: the doubled, re-budgeted tabulation is primitive
+recursive in every one of its parameters. -/
+theorem primrec_tabOf {α : Type*} [Primcodable α] {sd pd : α → Data} {s T B lvl : α → ℕ}
+    (k : ℕ) (hsd : Primrec sd) (hpd : Primrec pd) (hs : Primrec s) (hT : Primrec T)
+    (hB : Primrec B) (hlvl : Primrec lvl) :
+    Primrec fun a : α => tabOf (sd a) (pd a) (s a) (T a) (B a) k (lvl a) := by
+  have hnX : Primrec fun a : α => 2 ^ (s a + 1) - 1 :=
+    Primrec.nat_sub.comp
+      (primrec_nat_pow.comp (Primrec.const 2) (Primrec.succ.comp hs)) (Primrec.const 1)
+  have hnA : Primrec fun a : α => (Data.bitStrsLE (T a)).length - 1 :=
     Primrec.nat_sub.comp (Primrec.list_length.comp (Data.primrec_bitStrsLE.comp hT))
       (Primrec.const 1)
-  have hacc := Verifier.primrec_accList (s := fun q : (Data × Data) × ℕ × ℕ × ℕ => q.2.1)
-    (T := fun q : (Data × Data) × ℕ × ℕ × ℕ => q.2.2.1)
-    (acc? := fun q : (Data × Data) × ℕ × ℕ × ℕ => accOf q.1.2 q.2.2.2) hs hT primrec_accOf
+  have hacc := Verifier.primrec_accListW (s := s) (T := T)
+    (fA := fun u => Verifier.bitsToIdx (false :: u))
+    (fB := fun v => Verifier.bitsToIdx (true :: v))
+    (acc? := fun a => accOf (pd a) (lvl a)) hs hT
+    (Verifier.primrec_tagIdxOf false) (Verifier.primrec_tagIdxOf true)
+    (primrec_accOf hpd hlvl)
   refine ((Primrec.of_equiv_symm (e := GameData.equivTuple)).comp
-    (hnX.pair (hnA.pair (primrec_weightList.pair hacc)))).of_eq ?_
-  intro q
+    (hnX.pair (hnA.pair ((primrec_weightList k hsd hs hB hlvl).pair hacc)))).of_eq ?_
+  intro a
   rfl
 
 end Halting
