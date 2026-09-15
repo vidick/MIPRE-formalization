@@ -356,8 +356,19 @@ empty answer from both players. The small-parameter corner the ledger flags did 
 `n₀` absorbs. Worth recording that before this nothing in the repository inhabited
 `Verifier.IsBounded`, the definition repaired twice in #57 and #61; it went through unchanged.
 
+O2 started 2026-09-15, and its first step was a repair. `Obligations.tab_value` had been
+stated for every string; that field is unsatisfiable, acceptance being `Σ₁`, so a computable
+`tab` correct at every string would decide the halting problem. It now carries
+`(Vof G U x).IsBounded n`, which both uses in `halting_reduction` already have. Then the two
+tools the tabulation is built on: `Cost/BoundedEval.lean`, running a program under a *cost*
+budget as a total computable function (`Machine.evalData` is only partial recursive and
+`Cost.evalWithin` is `noncomputable`, so neither could compute anything) — right because a
+derivation of cost `t` is a machine run of at most `3 t` steps and final configurations are
+fixed by the step function; and `Halting/Tabulate.lean`, acceptance by an `n`-bounded verifier
+as one budgeted run, which is what fills in the acceptance table.
+
 Remaining, in order, and identified with the fields of `MIPRE.Halting.Obligations`:
-(O2, part 3c-ii)
+(O2, the rest)
 the *computation* of the tabulation — running the sampler on every point of `𝔽₂^{s(n)}` to
 count the question weights and the decider under its budget to fill in the acceptance table,
 then `Computable` for the whole map; (O3) the semidecider, from the two Σ₁ disjuncts of

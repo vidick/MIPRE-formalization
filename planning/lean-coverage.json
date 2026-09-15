@@ -159,6 +159,12 @@
   "MIPRE.Cost.IsSuccinctDesc": [
    "def:succinct"
   ],
+  "MIPRE.Cost.Machine.runForD": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.Machine.runForD_eq_some_iff": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Cost.PolyBounded": [
    "rem:compression-abstract"
   ],
@@ -511,6 +517,9 @@
   "MIPRE.Verifier.IsSynchronousAt": [
    "def:normal-verifier"
   ],
+  "MIPRE.Verifier.accepts_iff_runForD": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Verifier.answerEquiv": [
    "rem:compression-abstract"
   ],
@@ -728,6 +737,8 @@
   "MIPRE.Cost.Data.parse_toBitsPost",
   "MIPRE.Cost.Data.toBitsPost",
   "MIPRE.Cost.IsSuccinctDesc",
+  "MIPRE.Cost.Machine.runForD",
+  "MIPRE.Cost.Machine.runForD_eq_some_iff",
   "MIPRE.Cost.PolyBounded",
   "MIPRE.Cost.Prog.HasPolyCost",
   "MIPRE.Cost.Prog.parseProg_runs",
@@ -845,6 +856,7 @@
   "MIPRE.Verifier.IsBounded",
   "MIPRE.Verifier.IsBounded.mono",
   "MIPRE.Verifier.IsSynchronousAt",
+  "MIPRE.Verifier.accepts_iff_runForD",
   "MIPRE.Verifier.answerEquiv",
   "MIPRE.Verifier.exists_isBounded",
   "MIPRE.Verifier.freeze",
@@ -998,6 +1010,10 @@
   "MIPRE/Foundations/Cost/BitQuery.lean": [
    "MIPRE.Cost.bitQueryAnswer"
   ],
+  "MIPRE/Foundations/Cost/BoundedEval.lean": [
+   "MIPRE.Cost.Machine.runForD",
+   "MIPRE.Cost.Machine.runForD_eq_some_iff"
+  ],
   "MIPRE/Foundations/Cost/Kleene.lean": [
    "MIPRE.Cost.efficient_fixed_point"
   ],
@@ -1103,6 +1119,9 @@
    "MIPRE.Halting.yNo_mem",
    "MIPRE.Halting.yYes",
    "MIPRE.Halting.yYes_mem"
+  ],
+  "MIPRE/Foundations/Halting/Tabulate.lean": [
+   "MIPRE.Verifier.accepts_iff_runForD"
   ],
   "MIPRE/Foundations/Halting/Wrapper.lean": [
    "MIPRE.Decider.wrap",
@@ -1296,6 +1315,7 @@
   "MIPRE/Foundations/Compression.lean": 20,
   "MIPRE/Foundations/Cost/Basic.lean": 31,
   "MIPRE/Foundations/Cost/BitQuery.lean": 19,
+  "MIPRE/Foundations/Cost/BoundedEval.lean": 9,
   "MIPRE/Foundations/Cost/Clocked.lean": 5,
   "MIPRE/Foundations/Cost/Closure.lean": 21,
   "MIPRE/Foundations/Cost/Codable.lean": 43,
@@ -1333,6 +1353,7 @@
   "MIPRE/Foundations/Halting/PolyBounded.lean": 28,
   "MIPRE/Foundations/Halting/Serial.lean": 26,
   "MIPRE/Foundations/Halting/Strings.lean": 16,
+  "MIPRE/Foundations/Halting/Tabulate.lean": 5,
   "MIPRE/Foundations/Halting/Wrapper.lean": 29,
   "MIPRE/Foundations/Halting/WrapperCost.lean": 17,
   "MIPRE/Foundations/ValueApprox.lean": 8,

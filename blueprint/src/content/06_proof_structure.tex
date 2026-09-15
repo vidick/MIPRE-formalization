@@ -1085,7 +1085,8 @@ lower bound has to be tracked anywhere in this chapter.
   MIPRE.Cost.Prog.HasPolyCost, MIPRE.Verifier.IsBounded.mono,
   MIPRE.Verifier.exists_isBounded, MIPRE.Cost.Prog.wrapCore_hasPolyCost,
   MIPRE.Verifier.ofSamplerDecider_isBounded, MIPRE.Halting.yYes, MIPRE.Halting.yNo,
-  MIPRE.Halting.yYes_mem, MIPRE.Halting.yNo_mem}
+  MIPRE.Halting.yYes_mem, MIPRE.Halting.yNo_mem, MIPRE.Cost.Machine.runForD,
+  MIPRE.Cost.Machine.runForD_eq_some_iff, MIPRE.Verifier.accepts_iff_runForD}
 Theorem~\ref{thm:compression} instantiates the hypotheses of
 Lemma~\ref{lem:compressible-criterion}: take $A$ to be the set of (descriptions of) normal
 form verifier games with a value-$1$ PCC strategy and $B$ the set of those with $\valstar
@@ -1158,7 +1159,17 @@ of the recursion.
   Lemma~\ref{lem:value-lower-approx} applied to the tabulated game, which is computable from
   an $n$-bounded verifier. Neither disjunct decides $n$-boundedness, which is $\Pi_1$; the
   point of taking the disjunction is that it does not have to
-  (\texttt{Verifier.not\_inClassB\_iff}). The tabulation itself is read with the answer
+  (\texttt{Verifier.not\_inClassB\_iff}). The clause ``computable from an $n$-bounded
+  verifier'' is load-bearing and not a convenience: acceptance by a decider is $\Sigma_1$, so a
+  tabulation correct at \emph{every} string would decide the halting problem --- take two
+  strings whose deciders differ only in how long they run before accepting. Boundedness is what
+  makes acceptance decidable, by supplying a budget within which the decider must halt, and one
+  budgeted run then settles it (\texttt{Verifier.accepts\_iff\_runForD}, on
+  \texttt{Machine.runForD}: iterate the evaluation machine's step function $3k$ times and read
+  off the result if the configuration reached is final, which is enough because a derivation of
+  cost $t$ is a run of at most $3t$ steps and final configurations are fixed). The Lean
+  statement of the tabulation's correctness carries that hypothesis for this reason. The
+  tabulation itself is read with the answer
   alphabet enumerated by \texttt{Verifier.answerEquiv} and the questions by
   \texttt{questionEquiv}, and a description matching $\verifier_n$ along those indexings has
   the same value (\texttt{quantumValue\_toGame\_eq\_valStar}), which is what carries the
