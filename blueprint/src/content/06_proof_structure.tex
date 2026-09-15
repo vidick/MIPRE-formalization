@@ -1081,7 +1081,11 @@ lower bound has to be tracked anywhere in this chapter.
   MIPRE.Verifier.answerEquiv, MIPRE.Verifier.questionEquiv,
   MIPRE.Verifier.quantumValue_toGame_eq_valStar, MIPRE.Verifier.not_inClassB_iff,
   MIPRE.Halting.descLam, MIPRE.Halting.descDec, MIPRE.Halting.Vof,
-  MIPRE.Halting.classA, MIPRE.Halting.classB, MIPRE.Halting.Obligations}
+  MIPRE.Halting.classA, MIPRE.Halting.classB, MIPRE.Halting.Obligations,
+  MIPRE.Cost.Prog.HasPolyCost, MIPRE.Verifier.IsBounded.mono,
+  MIPRE.Verifier.exists_isBounded, MIPRE.Cost.Prog.wrapCore_hasPolyCost,
+  MIPRE.Verifier.ofSamplerDecider_isBounded, MIPRE.Halting.yYes, MIPRE.Halting.yNo,
+  MIPRE.Halting.yYes_mem, MIPRE.Halting.yNo_mem}
 Theorem~\ref{thm:compression} instantiates the hypotheses of
 Lemma~\ref{lem:compressible-criterion}: take $A$ to be the set of (descriptions of) normal
 form verifier games with a value-$1$ PCC strategy and $B$ the set of those with $\valstar
@@ -1200,11 +1204,22 @@ the sampler's dimension and the string's decider accepts. The two distinguished 
 the criterion are covered at the level of verifiers by
 \texttt{hasPerfectPCC\_of\_accepts\_diagonal} (a decider that is synchronous at $n$ and
 accepts one fixed answer on every question pair has a value-$1$ PCC strategy: the paper's
-trivial strategy) and \texttt{valStar\_eq\_zero\_of\_rejects\_all}. Still owed there are
-the time accounting of the wrapper and the two strings realizing those verifiers, and the
-computation of the tabulation --- running the sampler on every point of $\F_2^{s(n)}$ to
-count the question weights, and the decider under its budget to fill in the acceptance
-table. The entanglement form
+trivial strategy) and \texttt{valStar\_eq\_zero\_of\_rejects\_all}, and both are now
+realized by strings: \texttt{MIPRE.Halting.yYes} and \texttt{yNo} are the descriptions
+$(0, \decider)$ whose deciders are the program \texttt{nil}, which returns \texttt{nil} and so
+accepts nothing, and a six-node program returning \texttt{encode true} exactly on the empty
+answer from both players. Their $\lambda$-boundedness is
+\texttt{Verifier.ofSamplerDecider\_isBounded}, and behind it the wrapper's time accounting
+(\texttt{Halting/WrapperCost.lean}), proved on arbitrary data throughout since
+Definition~\ref{def:decider} quantifies over every input at the index and no stage may assume
+it is handed a question pair: the length program on any datum, one length check comparing
+\texttt{Data.spine} with $s(n)$, the head whose cost depends on the index alone, and the three
+outcomes of the whole. That is also the first inhabitant of $\lambda$-boundedness anywhere in
+the development --- every earlier proof of it was conditional on another time bound --- so
+Definition~\ref{def:lambda-bounded}, twice repaired, is now known to be satisfiable. Still
+owed there is the computation of the tabulation --- running the sampler on every point of
+$\F_2^{s(n)}$ to count the question weights, and the decider under its budget to fill in the
+acceptance table. The entanglement form
 of~\cite{JNVWY20}
 (Remark~\ref{rem:entanglement-form}) instantiates Lemma~\ref{lem:recursive-compression}
 instead, with $f = \Ent(\cdot, \frac12)$; it is not used by the main theorem.
