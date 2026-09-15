@@ -75,17 +75,23 @@ substance; `planning/h4-assembly.md` has the order of work.
 
 ## What this is not
 
-`halting_reduction` delivers blueprint `thm:halting` in `val*` form: the quantum value of the
-game is `1`, respectively at most `1/2`. The blueprint's item 1 says more — the witness is a
-value-`1` *PCC* strategy, so `synval = val* = 1` — and the headline
-`HaltingGameValue.halting_reduces_to_gameValue` is stated in `synval`. Two bridges are missing
-for that, neither of them part of this assembly: a synchronous strategy does not yet transport
-along a relabeling of the alphabets (`quantumValue_eq_of_equiv` has no synchronous
-counterpart), which is what would carry a perfect PCC strategy of `𝒱_n` to the tabulation, and
-`MIPRE.SyncStrategy` and `HaltingGameValue.SyncStrategy` are parallel developments with no
-lemma relating `MIPRE.syncValue` to `HaltingGameValue.gameValue`. The soundness half needs
-neither: `synval ≤ val*` (`MIPRE.syncValue_le_quantumValue`, blueprint `lem:sync-le-valstar`)
-is the right direction there.
+`halting_reduction` concludes in `val*`: the quantum value of the game is `1`, respectively at
+most `1/2`. The blueprint's item 1 says more — the witness is a value-`1` *PCC* strategy, so
+`synval = val* = 1` — and the headline `HaltingGameValue.halting_reduces_to_gameValue` is
+stated in `synval`. The two steps that carry the conclusion there are in Lean and neither is
+part of this assembly: a synchronous strategy transports along a relabeling of the alphabets
+(`MIPRE.syncValue_eq_of_equiv`), and `MIPRE.syncValue` and `HaltingGameValue.gameValue` are the
+same number on the same description (`HaltingGameValue.GameData.gameValue_eq_syncValue`).
+`MIPRE.Verifier.gameValue_toGame_eq_one` is the two composed, in `Foundations/SyncTransport.lean`.
+
+Both take the tabulation's agreement with `𝒱_n` as the *matching data* — the two alphabet
+equivalences with `hμ` and `hD` — rather than the equality of `val*` it implies, which is why
+`Obligations.tab_match` has the shape it has. The soundness half needs neither step, only
+`synval ≤ val*` (`MIPRE.syncValue_le_quantumValue`, blueprint `lem:sync-le-valstar`);
+`Verifier.gameValue_toGame_le_of_valStar_le` is it in that vocabulary.
+
+So what stands between `halting_reduction` and the headline is an inhabitant of `Obligations`
+and nothing else.
 -/
 
 namespace MIPRE.Halting

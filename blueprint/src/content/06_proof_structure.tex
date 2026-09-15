@@ -1418,16 +1418,15 @@ synchronous strategy --- are the same number on the same description
 in the vocabulary of \texttt{halting\_reduces\_to\_gameValue}
 (Section~\ref{ch:main-theorem}): \texttt{Verifier.gameValue\_toGame\_eq\_one}. Soundness needs
 neither step, only $\synval \leq \valstar$ (Lemma~\ref{lem:sync-le-valstar}), which is
-\texttt{Verifier.gameValue\_toGame\_le\_of\_valStar\_le} in the same vocabulary. One seam is
-left, and it is in the assembly rather than in the bridges: both consumers take the tabulation's
-agreement with $\verifier_n$ in the form the bridges need --- the equivalences of the two
-alphabets and the matching of $\mu$ and $D$ along them --- whereas the field
-\texttt{Obligations.tab\_value} records, of an $n$-bounded verifier, only the resulting
-equality of $\valstar$, from which the synchronous half cannot be recovered ($\synval \leq
-\valstar$ pointing the wrong way). The
-matching data is what O2 will construct anyway, by \texttt{answerEquiv} and
-\texttt{questionEquiv}; stating the field in that form, or adding the synchronous clause beside
-it, belongs to O2.
+\texttt{Verifier.gameValue\_toGame\_le\_of\_valStar\_le} in the same vocabulary. Both steps
+consume the tabulation's agreement with $\verifier_n$ in the form of the two alphabet
+equivalences and the matching of $\mu$ and $D$ along them, not merely the equality of
+$\valstar$ they imply --- from that equality alone the synchronous half cannot be recovered,
+$\synval \leq \valstar$ pointing the wrong way. That is why the field
+\texttt{MIPRE.Halting.Obligations.tab\_match} delivers the matching data, with
+\texttt{Obligations.tab\_value} reading the equality of values off it; O2 constructs the
+equivalences anyway, by \texttt{answerEquiv} and \texttt{questionEquiv}, so the stronger field
+costs nothing.
 
 \begin{remark}[Identical measurement operators]
 \label{rem:identical-operators}

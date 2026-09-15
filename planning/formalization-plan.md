@@ -368,6 +368,31 @@ derivation of cost `t` is a machine run of at most `3 t` steps and final configu
 fixed by the step function; and `Halting/Tabulate.lean`, acceptance by an `n`-bounded verifier
 as one budgeted run, which is what fills in the acceptance table.
 
+Part 6 done 2026-09-15: those two bridges, which are not part of the assembly and were the
+only things standing between `halting_reduction` and `thm:halting` as stated.
+`SyncStrategy.relabel` (`Foundations/GameTransport.lean`) plays a synchronous strategy through
+a relabeling of the questions and of the answers, with `value_relabel` and `isPCC_relabel`
+keeping the value and the commutation condition, hence `syncValue_eq_of_equiv`, the
+counterpart of `quantumValue_eq_of_equiv` by the same two-sided `iSup` argument.
+`GameData.gameValue_eq_syncValue` (`Foundations/GameDescription.lean`) identifies
+`HaltingGameValue.gameValue g.toGame` with `MIPRE.syncValue g.syncGame`: the two structures
+of synchronous strategy repackage into each other with the same dimension and the same
+operators (`toSyncStrategy`, `ofSyncStrategy`), and `MIPRE.SyncStrategy.value_eq` is already
+`HaltingGameValue.strategyValue` written out, so each strategy value is preserved by
+definitional unfolding and the two suprema coincide. Both directions went through, so the
+result is an equality and not just the two inequalities the reduction needs. The consumer is
+`Foundations/SyncTransport.lean`, written against `V.HasPerfectPCC` as the synchronous
+analogue of `quantumValue_toGame_eq_valStar`: a description matching `V_n` along the two
+indexings inherits its value-`1` PCC strategy (`exists_perfectPCC_syncGame`), hence
+`syncValue_syncGame_eq_one`, hence `gameValue_toGame_eq_one`; and in the other direction
+`gameValue_toGame_le_of_valStar_le` carries `val*(V_n) ≤ c` to the description, so both
+halves of `thm:halting` are now available in the vocabulary of
+`halting_reduces_to_gameValue`. It also found a seam in O2, since closed: `Obligations.tab_value`
+recorded the tabulation's agreement with `V_n` as an equality of `val*`, from which the
+synchronous half cannot be recovered, `synval ≤ val*` pointing the wrong way. Both consumers
+here want the matching data along `answerEquiv` and `questionEquiv` instead, so the field is
+now `tab_match` and delivers it (next paragraph).
+
 O2 continued the same day, and the field changed shape a second time. The parallel branch that
 proved the two synchronous bridges reported that an equality of `val*` is not enough for them:
 `thm:halting` item 1 claims a value-`1` PCC strategy, so `synval = 1`, and `synval ≤ val*`
