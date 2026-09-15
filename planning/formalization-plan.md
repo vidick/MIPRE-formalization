@@ -274,10 +274,42 @@ for PCC strategies and the constant strategy) and `Foundations/VerifierValue.lea
 games of a verifier: same sampler and same acceptance at an index give the same `val*` and
 the same perfect PCC strategies; answer padding raises `val*`, preserves perfect PCC
 strategies, and is neutral when the decider rejects long answers; a perfect PCC strategy
-gives `val* = 1`). Remaining, in order: (3) descriptions, the classes, the
-frozen verifier, and the tabulation of `V_n` as a `GameData` with the agreement of values;
-(4) the ambient programs of the compressor's output and their time accounting; (5) the
-assembly of `thm:halting` from `thm:compression`, then `thm:main` through the tabulation.
+gives `val* = 1`). Part 3b done the same day, in two halves; the first is
+the frozen verifier and the ambient toolkit its programs are built from
+(`Foundations/Halting/`): `Verifier.freeze` at an index, with the transfer of acceptance,
+of `val*`, of perfect PCC strategies and of `λ`-boundedness (`Freeze.lean`); descriptions
+as bit strings through the postorder serialization `Data.toBitsPost`, read back by the
+stack machine `Data.parse` — postorder because a stack machine is a loop of the ambient
+model while a recursive-descent reader is not — with the normalization `Data.natOf` that
+makes every string name a parameter (`Descriptions.lean`) and the two programs
+`parseProg`, `serProg` (`Serial.lean`); the bounded walks `bitWalkProg`, `eqBitsProg`,
+`normBinProg` for the format checks (`Lists.lean`); the arithmetic `incProg`,
+`toUnaryProg`, `mulProg`, `polyProg` for the budgets (`Arith.lean`); and `PolyBounded`,
+which composes the dozen cost bounds and supplies the threshold above which a polynomial
+falls under `2 ^ n` (`PolyBounded.lean`). Every cost bound is of the shape
+`T · (|input| + 1)` that `Decider.TimeBoundAt` asks for — which is what the H1 repair of
+the same day was found from. Part 3b-ii done the same day: the classes at the level of verifiers
+(`Verifier.InClassA`, `InClassB`, disjoint since a perfect PCC strategy gives `val* = 1`)
+with the two distinguished verifiers — a decider that is synchronous at `n` and accepts one
+fixed answer on every question pair has a value-`1` PCC strategy
+(`hasPerfectPCC_of_accepts_diagonal`, the paper's trivial strategy; note that in the
+synchronous framework the *everything-accepting* decider is not synchronous at all, so this
+is the form the paper's halting case takes here), and a decider that accepts nothing gives
+`val* = 0` (`Halting/Classes.lean`); and the reading of a string as a verifier,
+`Decider.wrap` and `Verifier.ofSamplerDecider` (`Halting/Wrapper.lean`), with
+`ofSamplerDecider_accepts`, the characterization of acceptance. A finding shaped the
+wrapper: the *only* structural obligation of `def:normal-verifier` is `accepts_length`, so
+the wrapper enforces the question-length check and nothing else — synchronicity and the
+answer-length bound are conditions on class membership, not on well-formedness, and the
+paper's timeout counter is unnecessary because a non-halting decider simply fails to be
+`n`-bounded. Remaining, in order: (3b-iii) the time accounting of the wrapper, and the two
+strings realizing the distinguished verifiers; (3c) the tabulation of `V_n` as a `GameData`
+with the agreement of values, and the semidecider for `x ∉ B n` — the semidecider splits as
+"not `n`-bounded" (a search for an input whose run exceeds the budget, which is Σ₁) or
+"`val* > 1/2` on the *clocked* tabulation", which agrees with the real game exactly when the
+verifier is `n`-bounded, so the disjunction is equivalent to `x ∉ B n` without deciding
+boundedness; (4) the compressor's own decider and its time accounting; (5) the assembly of
+`thm:halting` from `thm:compression`, then `thm:main` through the tabulation.
 
 ## What to start with
 

@@ -86,6 +86,16 @@ def eqBits : Data → Data → Bool
   | cons h₁ l₁, cons h₂ l₂ => (bitOf h₁ == bitOf h₂) && eqBits l₁ l₂
   | _, _ => false
 
+/-- On unary numerals, `eqBits` is equality of the numbers: every element is `nil`, so the
+walk compares only the lengths. -/
+theorem eqBits_ofNat (a b : ℕ) : eqBits (ofNat a) (ofNat b) = decide (a = b) := by
+  induction a generalizing b with
+  | zero => cases b <;> simp [eqBits, ofNat]
+  | succ a ih =>
+    cases b with
+    | zero => simp [eqBits, ofNat]
+    | succ b => simp [eqBits, ofNat, ih, bitOf]
+
 theorem eqBits_encode (x y : BitStr) : eqBits (encode x) (encode y) = (x == y) := by
   induction x generalizing y with
   | nil => cases y <;> simp [eqBits, encode_bitStr_nil, encode_bitStr_cons]
