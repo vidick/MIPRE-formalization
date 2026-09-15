@@ -38,19 +38,26 @@ length `s` being the vectors of `𝔽₂^s`.
 its position among the bit strings of length at most `T`, the enumeration `answerList` being
 `bitStrsLE` mapped by a truncation that is the identity on them.
 
-`Verifier.accList` is then the acceptance table: the index tuples of the answer tuples a
-predicate accepts, enumerated over the two alphabets, with `mem_accList_iff` saying exactly
-what is in it. `bitsToIdx_injOn` is what lets a tuple be read back — the index of a question
-determines it, among the strings of a fixed length.
+`Verifier.accListW` is then the acceptance table: the index tuples of the answer tuples a
+predicate accepts, enumerated over the two alphabets, with `mem_accListW_iff` saying exactly
+what is in it. It takes the two question indexings `fA`, `fB` as parameters, because the
+tabulation tags Alice's question differently from Bob's; `Verifier.accList` is the case
+`fA = fB = bitsToIdx` and is the same list definitionally (`accList_eq_accListW`), so nothing
+downstream of the old name changed. `bitsToIdx_injOn` is what lets a tuple be read back — the
+index of a question determines it, among the strings of a fixed length — and `tagEquiv` is the
+tagged alphabet it supports: a tag bit and a point of `𝔽₂^s` packed into one index by
+*prepending* the tag, so that `bitsToIdx_lt` and `bitsToIdx_injOn` apply verbatim at `s + 1`.
 
-`MIPRE.Halting.tabOf` at the end assembles all of it: the `GameData` five *numbers* describe,
-with `primrec_tabOf` its computability. Five numbers and not a verifier, because a `Verifier`
-is a structure carrying proofs and so is not the sort of thing a `Primrec` statement can
-mention; the bridge back to the verifier those numbers came from is in
+`MIPRE.Halting.tabOf` at the end assembles all of it: the `GameData` two encoded programs and
+five numbers describe, with `primrec_tabOf` its computability. Plain data and not a verifier,
+because a `Verifier` is a structure carrying proofs and so is not the sort of thing a `Primrec`
+statement can mention; the bridge back to the verifier those parameters came from is in
 `Halting/Instantiation.lean`.
 
 Nothing here is efficient and nothing needs to be: the tabulation is a computable map, not a
-polynomial-time one, and the budget it runs under is the verifier's own time bound.
+polynomial-time one. The budget is not one number: the two sampler runs take theirs as the
+parameters `B`, `k`, so that a caller can pass the sampler's own time bound, while `accOf`
+alone runs at the `n ^ n` that the verifier's `n`-boundedness supplies.
 -/
 
 namespace MIPRE
@@ -570,19 +577,29 @@ end Verifier
 
 /-! ## The tabulation on parameters alone
 
-`tabOf sd pd s T n` is the `GameData` five numbers describe: `sd` the encoded sampler
+`tabOf sd pd s T B k n` is the `GameData` seven parameters describe: `sd` the encoded sampler
 program, `pd` the encoded decider program, `s` the sampler's dimension at level `n`, `T` the
-answer-length cut and `n` the level itself. Nothing here mentions a `Verifier`, and that is
+answer-length cut, `B` and `k` the coefficient and the degree of the budget the two sampler
+runs get, and `n` the level itself. Nothing here mentions a `Verifier`, and that is
 the point — a `Verifier` is a structure carrying proofs, so a function of one is not data,
-while `Primrec` needs its input to be. The bridge back, that on an `n`-bounded verifier these
-numbers compute the verifier's own sampler and decider, is `MIPRE.Halting.dimOf_eq`,
-`margOf_eq` and `accOf_iff` in `Halting/Instantiation.lean`.
+while `Primrec` needs its input to be. The bridge back, that these parameters compute the
+verifier's own sampler and decider, is `MIPRE.Halting.dimOf_eq`, `margOf_eq` and `accOf_iff`
+in `Halting/Instantiation.lean` — the first two at every string and every level, the third on
+an `n`-bounded verifier.
 
-The three components run the two programs under the budget boundedness supplies: `dimOf` and
-`margOf` one sampler query each (`CL.Sampler.queryUnder` at `T = n ^ n`, `k = n`), `accOf`
-one decider run (`Decider.acceptBudget`). Each defaults — to `0`, `[]`, `false` — when the
-budget is missed or the answer does not decode, which is what makes them total; on a bounded
-verifier the default is never taken.
+The three components each run one program under a budget, and the budgets differ: `dimOf` and
+`margOf` one sampler query each (`CL.Sampler.queryUnder` at the `B * (|q| + 1) ^ k` passed in,
+which the caller takes from the sampler's own time bound), `accOf` one decider run
+(`Decider.acceptBudget` at `T = n ^ n`, `k = n`, the budget `n`-boundedness supplies — see
+`accOf`, which cannot be re-budgeted and says why). Each defaults — to `0`, `[]`, `false` — when
+the budget is missed or the answer does not decode, which is what makes them total; where the
+budget is the right one the default is never taken.
+
+The questions are *doubled*: Alice's index is her marginal's bit string with a `false` tag
+prepended, Bob's with a `true` tag, so `nX + 1 = 2 ^ (s + 1)` and the acceptance table is
+`Verifier.accListW` at those two indexings rather than `accList`. The packing is the section
+"The doubled question alphabet, indexed" above; why the doubling is needed at all is in
+`Foundations/GameDouble.lean`.
 -/
 
 namespace Halting

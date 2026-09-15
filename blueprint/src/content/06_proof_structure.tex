@@ -1115,7 +1115,11 @@ lower bound has to be tracked anywhere in this chapter.
   MIPRE.SyncStrategy.double, MIPRE.SyncStrategy.isPCC_double,
   MIPRE.Verifier.doubledGame, MIPRE.Verifier.quantumValue_toGame_eq_valStar_doubled,
   MIPRE.Verifier.gameValue_toGame_eq_one_doubled, MIPRE.Verifier.tagEquiv,
-  MIPRE.Verifier.accListW}
+  MIPRE.Verifier.accListW, MIPRE.Halting.sampler_timeBound,
+  MIPRE.Verifier.quantumValue_doubledGame,
+  MIPRE.Verifier.exists_perfectPCC_syncGame_doubled,
+  MIPRE.Verifier.syncValue_syncGame_eq_one_doubled,
+  MIPRE.Verifier.gameValue_toGame_le_of_valStar_le_doubled}
 Theorem~\ref{thm:compression} instantiates the hypotheses of
 Lemma~\ref{lem:compressible-criterion}: take $A$ to be the set of (descriptions of) normal
 form verifier games with a value-$1$ PCC strategy and $B$ the set of those with $\valstar
@@ -1197,7 +1201,9 @@ of the recursion.
   reads its input with the index encoded in binary; carrying the index as a \emph{datum}, read
   back by \texttt{Data.natOf}, is what makes the encoding primitive recursive in the search
   witness and so keeps the enumeration from needing the primitive recursiveness of
-  $n \mapsto \mathrm{encode}(n)$, which the development does not yet have. The clause ``computable from an $n$-bounded
+  $n \mapsto \mathrm{encode}(n)$, which the development did not have when that enumeration was
+  written --- it is now \texttt{MIPRE.Cost.Data.primrec\_encode\_nat}, written for the
+  tabulation of item 3 and load-bearing under it. The clause ``computable from an $n$-bounded
   verifier'' is load-bearing and not a convenience: acceptance by a decider is $\Sigma_1$, so a
   tabulation correct at \emph{every} string would decide the halting problem --- take two
   strings whose deciders differ only in how long they run before accepting. Boundedness is what
@@ -1206,29 +1212,46 @@ of the recursion.
   \texttt{Machine.runForD}: iterate the evaluation machine's step function $3k$ times and read
   off the result if the configuration reached is final, which is enough because a derivation of
   cost $t$ is a run of at most $3t$ steps and final configurations are fixed). Every Lean
-  statement about the tabulation carries that hypothesis for this reason, and it does one more
-  thing than supply the budget: the time clauses of $\lambda$-boundedness are guarded by
+  statement about the tabulation's \emph{acceptance} carries that hypothesis for this reason ---
+  the two sampler runs are budgeted otherwise and carry none, as the paragraph after this
+  enumerate records --- and it does one more thing than supply the budget: the time clauses of $\lambda$-boundedness are guarded by
   $2 \leq n$, so at $n = 0, 1$ no budget exists at all, and what excludes those two indices is
   the size clause --- every program encodes to a non-empty datum, so
   $2 \leq \abs{\decider} \leq \abs{\verifier} \leq \lambda$
   (\texttt{Verifier.IsBounded.two\_le}, on \texttt{Cost.Prog.two\_le\_esize}). Each
-  statement carries
-  a second one, and for a reason worth naming: a game description denotes a \emph{synchronous}
-  game by construction --- Definition~\ref{def:game-description} rejects unequal answers to
-  equal questions --- whereas $\verifier_n$ does no such thing, so no description can match a
-  verifier that is not synchronous at $n$, and $B_n$ does not ask that it be. The match
-  (\texttt{MIPRE.Halting.tab\_match}) is therefore asked only of a synchronous verifier,
-  which is what $A_n$ supplies through its value-$1$ PCC strategy; for $B_n$ the soundness
-  branch needs only that the description does not \emph{overshoot}, and forcing those tuples
-  to reject can only lower the value (\texttt{quantumValue\_mono}), which is
-  \texttt{tab\_le}. Both are now theorems rather than hypotheses --- the paragraph after this
-  enumerate says how. The tabulation itself is read with the answer
-  alphabet enumerated by \texttt{Verifier.answerEquiv} and the questions by
-  \texttt{questionEquiv}, and a description matching $\verifier_n$ along those indexings has
-  the same value (\texttt{quantumValue\_toGame\_eq\_valStar}), which is what carries the
-  verdict of a procedure that runs on game descriptions back to the verifier. The same
-  transport in $\synval$ is \texttt{Verifier.syncValue\_syncGame\_eq\_one}, which is what
-  item 1 of Theorem~\ref{thm:halting} needs; see the end of this remark.
+  statement carried a second hypothesis until the doubling, and why it did is worth naming: a
+  game description denotes a \emph{synchronous} game by construction ---
+  Definition~\ref{def:game-description} rejects unequal answers to equal questions --- whereas
+  $\verifier_n$ does no such thing, so no description can match a verifier that is not
+  synchronous at $n$, and $B_n$ does not ask that it be. What is tabulated is therefore not
+  the game of $\verifier_n$ but its \emph{doubled} one (\texttt{MIPRE.Game.doubled},
+  \texttt{Verifier.doubledGame}): the questions are $\{0,1\} \times \mX$, Alice is asked a
+  question tagged $0$ and Bob one tagged $1$, and every other pair --- the diagonal included
+  --- carries no weight and is rejected outright. Two things follow, and both are what make
+  the repair cheap. The diagonal carries no weight, so the description's veto is
+  \emph{implied by the distribution} rather than imposed on the verifier, and the doubled
+  game is synchronous whatever $\verifier_n$ is; and since the decision predicate rejects off
+  the tag block as well, a description matches the doubled game \emph{totally}, at every
+  question pair and not merely on the support, so \texttt{quantumValue\_eq\_of\_equiv} and
+  \texttt{SyncStrategy.isPCC\_relabel} apply unchanged and no support-restricted version of
+  either is needed. Neither value moves: $\valstar$ is unchanged because a strategy for the
+  doubled game restricts to Alice's $0$-tagged and Bob's $1$-tagged measurements while one
+  for the original ignores the tag (\texttt{quantumValue\_doubled}), and a value-$1$ PCC
+  strategy doubles to one (\texttt{SyncStrategy.double}, \texttt{isPCC\_double}), the doubled
+  support mapping \emph{into} the original so that no commutation obligation is added. The
+  match (\texttt{MIPRE.Halting.tab\_match}) is therefore asked of every $n$-bounded verifier,
+  synchronous or not, which is what Lemma~\ref{lem:halting-semidecider} needs and what $B_n$
+  was never going to supply; and the separate soundness clause that used to stand beside it
+  --- that the description does not \emph{overshoot}, forcing the diagonal tuples to reject
+  being a lowering of the value --- is deleted, the soundness branch of
+  Theorem~\ref{thm:halting} taking the equality of values instead. The tabulation itself is
+  read with the answer alphabet enumerated by \texttt{Verifier.answerEquiv} and the doubled
+  question alphabet by \texttt{Verifier.tagEquiv}, a tag bit prepended to the point's bit
+  string, and a description matching the doubled game along those indexings has the value of
+  $\verifier_n$ (\texttt{quantumValue\_toGame\_eq\_valStar\_doubled}), which is what carries
+  the verdict of a procedure that runs on game descriptions back to the verifier. The same
+  transport in $\synval$ is \texttt{Verifier.syncValue\_syncGame\_eq\_one\_doubled}, which is
+  what item 1 of Theorem~\ref{thm:halting} needs; see the end of this remark.
 \item \emph{The choice of $\lambda$.} Absorbed into item 1.
 \end{enumerate}
 Of this dictionary the per-level lemma, the Lean statement of
@@ -1298,19 +1321,37 @@ computation of the tabulation --- running the sampler on every point of $\F_2^{s
 the question weights, and the decider under its budget to fill in the acceptance table --- is
 in Lean too, and with it the whole of that obligation: \texttt{MIPRE.Halting.tab} is the
 $n$-th game of the verifier a string denotes, \texttt{tab\_computable} its computability in
-the string and the level, \texttt{tab\_match} and \texttt{tab\_le} the two clauses of item 3
-above, and \texttt{tab\_value} the equality of values read off the match. Three features of
+the string and the level, \texttt{tab\_match} the match of item 3
+above --- against the \emph{doubled} game of $\verifier_n$, with $n$-boundedness its only
+hypothesis --- \texttt{tab\_value} the equality of values read off it, and
+\texttt{gameValue\_tab\_eq\_one} the completeness branch in the vocabulary of
+\texttt{HaltingGameValue}. Three features of
 the construction are worth recording, because that is where the work went. \emph{A
 computability proof may not mention a verifier}: a verifier is a structure carrying proofs
 while \texttt{Primrec} quantifies over data, so the tabulation is written twice ---
-\texttt{Halting.tabOf} takes five arguments that are plain data and no verifier (the two
-encoded programs, the sampler's dimension at the level, the answer cut and the level), with
-\texttt{dimOf}, \texttt{margOf} and \texttt{accOf} running the two programs under the budgets
+\texttt{Halting.tabOf} takes seven arguments that are plain data and no verifier (the two
+encoded programs, the sampler's dimension at the level, the answer cut, the budget the two
+sampler runs are given and its exponent, and the level), with \texttt{dimOf}, \texttt{margOf}
+and \texttt{accOf} running the two programs under the budgets
 \texttt{CL.Sampler.queryUnder} and \texttt{Decider.acceptBudget}, each defaulting when its
 budget is missed; \texttt{tab} is \texttt{tabOf} fed what the string supplies; and
 \texttt{dimOf\_eq}, \texttt{margOf\_eq}, \texttt{accOf\_iff} are the bridge back, saying that
-on an $n$-bounded verifier those runs deliver the verifier's own sampler and decider, so that
-the default is never taken. \emph{The programs have to be got into data}: the compressed
+those runs deliver the verifier's own sampler and decider, so that the default is never
+taken. Which budget the sampler runs are given is not a detail: they used to read it off
+$n$-boundedness, and they now take it as a parameter and are fed the one
+Theorem~\ref{thm:compression} supplies at every parameter and every index
+(\texttt{Halting.sampler\_timeBound}, from \texttt{GapCompression.sampler\_time}), so that
+\texttt{dimOf\_eq} and \texttt{margOf\_eq} carry no hypothesis at all. They have to: a
+computable presentation (Lemma~\ref{lem:bounded-violation-re}) asks for the sampler's
+dimension at \emph{every} string and level, $n = 0$ and $n = 1$ included, which the budget
+$n^n(\abs{q} + 1)^n$ of $n$-boundedness cannot reach --- the time clauses being guarded by
+$2 \leq n$, as item 3 says. So the family \texttt{Vof} is computably presented outright
+(\texttt{Halting.computablyPresented\_Vof}), and the hypothesis
+Lemma~\ref{lem:bounded-violation-re} leaves to its user is discharged once. \texttt{accOf}
+cannot follow and provably must not: the decider of the verifier a string denotes is the
+string's \emph{own}, wrapped, and nothing bounds it unconditionally, so \texttt{accOf\_iff}
+--- and with it \texttt{tab\_match} and \texttt{tab\_value} --- keeps $n$-boundedness, for the
+reason item 3 gives. \emph{The programs have to be got into data}: the compressed
 sampler's program is delivered by a polynomial-time function of $\lambda$, which is not a
 Mathlib-computable function of its argument in any direct sense, and what carries it is that
 the tabulation runs that function on an encoded input
@@ -1327,10 +1368,17 @@ unit of weight at the index pair on which the two marginals of a point of $\F_2^
 so that its question weight is the number of points landing on a given pair and its total
 weight is $2^{s(n)}$, which is exactly the quotient the sampler's distribution is
 (\texttt{questionWeight\_weightList}, \texttt{totalWeight\_weightList}); the $D$ clause is the
-acceptance table \texttt{Verifier.accList} read back (\texttt{acc\_mem\_iff}) along the
-relabelings \texttt{eXof} and \texttt{eAof}, which carry \texttt{questionEquiv} and
-\texttt{answerEquiv} across the arithmetic of the two sizes, together with the synchronicity
-fiat that item 3 sends to \texttt{tab\_le}. The entanglement form
+acceptance table read back (\texttt{acc\_mem\_iff}) along the relabelings \texttt{eXof} and
+\texttt{eAof}, which carry \texttt{Verifier.tagEquiv} and \texttt{answerEquiv} across the
+arithmetic of the two sizes. Both clauses are where the doubling is actually performed, and
+each takes one indexing that prepends a tag bit: \texttt{Verifier.accListW} is the acceptance
+table indexed by two \emph{given} indexings of the questions rather than by
+\texttt{bitsToIdx} twice, with the old \texttt{accList} recovered as the case of two equal
+ones by \texttt{rfl}, so that nothing downstream of that name changed. Prepending the tag
+rather than appending it is what keeps the bounds and injectivity of \texttt{bitsToIdx}
+applicable verbatim at length $s(n) + 1$; and the weight list still enumerates $\F_2^{s(n)}$
+once, so the total weight is still $2^{s(n)}$ --- enumerating the strings of length
+$s(n) + 1$ instead would compile and silently halve every probability. The entanglement form
 of~\cite{JNVWY20}
 (Remark~\ref{rem:entanglement-form}) instantiates Lemma~\ref{lem:recursive-compression}
 instead, with $f = \Ent(\cdot, \frac12)$; it is not used by the main theorem.
@@ -1405,18 +1453,38 @@ turns the result into a program on the encodings of pairs.
 \end{proof}
 
 \paragraph{Comments.} The hypothesis is an equality of values under $n$-boundedness
-\emph{alone}, and that is more than \texttt{Obligations.tab\_match} delivers: a game
-description denotes a synchronous game by construction, so the match is asked only of a
-verifier synchronous at $n$ (item 3 above), while membership in $B_n$ does not carry
-synchronicity. So this lemma does not compose with that field as the two are currently
-stated, and the semidecider is \emph{not} obtainable from the tabulation together with a
-disjunction, as the plan had it. Three ways to close the gap, none of them this lemma's to
-choose: tabulate the game on a doubled question set $\{0,1\} \times \mX$ --- Alice on the
-first copy, Bob on the second --- so that the distribution avoids the diagonal and the forced
-rejections there are never asked about; make the wrapper of item 1 reject unequal answers to
-equal questions, so that every string names a synchronous verifier; or add synchronicity at
-$n$ to $B_n$, which costs a synchronicity clause in the compressor's obligation instead. The
-first changes only the tabulation, the second only the wrapper, the third only the classes.
+\emph{alone}, and for a while that was more than the tabulation delivered: a game description
+denotes a synchronous game by construction, so the match was asked only of a verifier
+synchronous at $n$ (item 3 of Remark~\ref{rem:compression-abstract}), while membership in
+$B_n$ does not carry synchronicity, and the semidecider was therefore \emph{not} obtainable
+from the tabulation together with a disjunction, as the plan had it. Three ways to close the
+gap were on the record, none of them this lemma's to choose, and the choice has since been
+made: it is the first. The game is tabulated on a doubled question set
+$\{0,1\} \times \mX$ --- Alice on the first copy, Bob on the second --- so that the
+distribution avoids the diagonal and the forced rejections there are never asked about
+(\texttt{MIPRE.Game.doubled} and \texttt{Verifier.doubledGame}, with
+\texttt{MIPRE.Halting.tab\_match} now matching the doubled game; item 3 there has the
+construction). \texttt{MIPRE.Halting.tab\_value} is then this lemma's second hypothesis
+exactly, $n$-boundedness being its only condition.
+
+The other two were rejected for what they would have cost elsewhere, which is why the choice
+was not this lemma's to make. Making the wrapper of item 1 reject unequal answers to equal
+questions would change what a string \emph{denotes}, and the denotation is what
+\texttt{accOf\_iff}, the classes $A_n, B_n$ and the compression hypothesis of
+Theorem~\ref{thm:compression} are all stated about; all three would be reopened, and the
+wrapper is deliberately the length check and nothing else (item 1). Adding synchronicity at
+$n$ to $B_n$ would leave the tabulation alone but move the cost into the preservation clause
+of the compressor, which would then have to produce a verifier synchronous at $n$ as well as
+a bounded one --- and that clause is the one obligation of
+Remark~\ref{rem:compression-abstract} still open. The doubling costs nothing outside the
+tabulation, and it is not the only hypothesis this lemma has lost: the family \texttt{Vof} is
+computably presented outright (\texttt{MIPRE.Halting.computablyPresented\_Vof}, off the
+re-budgeted sampler runs of Remark~\ref{rem:compression-abstract}), so
+\texttt{MIPRE.Halting.exists\_sem} takes no hypotheses at all and
+\texttt{Obligations.sem} with its two specifications is a theorem. It is a field of that
+structure still, which is what the next piece of work removes: \texttt{exists\_sem} sits above
+\texttt{Obligations} in the import order, so dropping the three fields is a module move rather
+than mathematics.
 
 \effortMedium
 
@@ -1557,40 +1625,51 @@ Definition~\ref{def:mipstar}, such that:
 The proof is Lemma~\ref{lem:compressible-criterion} applied to the instantiation of
 Remark~\ref{rem:compression-abstract}; the semidecidability hypothesis of the lemma is the
 $\valstar$ half of Lemma~\ref{lem:value-lower-approx}. The obligations of that
-instantiation that are open are inherited here: three of the four listed in
-Remark~\ref{rem:compression-abstract}, the tabulation --- the fourth --- being formalized
-(\texttt{MIPRE.Halting.tab}, with \texttt{tab\_match}, \texttt{tab\_le} and
-\texttt{tab\_value}). The synchronization invariant that an earlier
+instantiation are inherited here, and of the four listed in
+Remark~\ref{rem:compression-abstract} only the compressor is still to be found: the
+tabulation is formalized (\texttt{MIPRE.Halting.tab}, with \texttt{tab\_match},
+\texttt{tab\_value} and \texttt{gameValue\_tab\_eq\_one}), the semidecider is formalized on
+top of it (\texttt{MIPRE.Halting.exists\_sem}, Lemma~\ref{lem:halting-semidecider}, which
+takes no hypotheses), and the two distinguished strings are
+\texttt{MIPRE.Halting.yYes\_mem} and \texttt{yNo\_mem}. The synchronization invariant that an earlier
 revision also required of the games produced inside $\Compress$ is no longer among them
 (Remark~\ref{rem:bipartite-route}).
 
 In Lean the assembly is \texttt{MIPRE.Halting.halting\_reduction}. It is complete and free
 of \texttt{sorry}, and it takes three hypotheses: a \texttt{MIPRE.GapCompression} (which is
 Theorem~\ref{thm:compression}), a universal machine, and an inhabitant of
-\texttt{MIPRE.Halting.Obligations}, whose fields are exactly what
-Remark~\ref{rem:compression-abstract} still leaves owed: the two distinguished strings ---
-which \texttt{yYes\_mem} and \texttt{yNo\_mem} already supply, and which wait only on the
-other fields to be assembled into an inhabitant --- the semidecider, and the compressor. The
+\texttt{MIPRE.Halting.Obligations}, whose fields are what
+Remark~\ref{rem:compression-abstract} enumerates: the two distinguished strings --- which
+\texttt{yYes\_mem} and \texttt{yNo\_mem} already supply, and which wait only on the other
+fields to be assembled into an inhabitant --- the semidecider, and the compressor. The
 tabulation with its value agreement was a fourth group of fields and is one no longer:
-\texttt{tab}, \texttt{tab\_computable}, \texttt{tab\_match}, \texttt{tab\_le} and
-\texttt{tab\_value} are theorems, which \texttt{halting\_reduction} applies directly. So what
-is open is a structure to be inhabited rather than an argument to be found, and
-\texttt{\#print axioms} cannot hide any of it.
+\texttt{tab}, \texttt{tab\_computable}, \texttt{tab\_match}, \texttt{tab\_value} and
+\texttt{gameValue\_tab\_eq\_one} are theorems, which \texttt{halting\_reduction} applies
+directly. The semidecider is a theorem too (\texttt{MIPRE.Halting.exists\_sem}), and its three
+fields survive only until a module move puts \texttt{Obligations} below it in the import
+order; mathematically what is owed is the compressor alone. So what is open is a structure to
+be inhabited rather than an argument to be found, and \texttt{\#print axioms} cannot hide any
+of it.
 That assembly concludes in $\valstar$ only, and item 1 claims more: the witness is a
 \emph{PCC} strategy, so $\synval = \valstar = 1$. The two steps that carry it there are now in
 Lean, neither of them part of the instantiation. First, a synchronous strategy transports along
 a relabeling of the alphabets (\texttt{MIPRE.syncValue\_eq\_of\_equiv}, from
 \texttt{SyncStrategy.relabel}, which preserves the value and the commutation condition), so a
-value-$1$ PCC strategy of $\verifier_n$ gives one for a description tabulating it:
-\texttt{Verifier.exists\_perfectPCC\_syncGame}, hence
-\texttt{Verifier.syncValue\_syncGame\_eq\_one}. Second, \texttt{MIPRE.syncValue} and
+value-$1$ PCC strategy of $\verifier_n$ gives one for a description tabulating it --- after
+the strategy has been doubled along with the game (\texttt{SyncStrategy.double},
+\texttt{isPCC\_double}), the tabulation matching the doubled game:
+\texttt{Verifier.exists\_perfectPCC\_syncGame\_doubled}, hence
+\texttt{Verifier.syncValue\_syncGame\_eq\_one\_doubled}. Second, \texttt{MIPRE.syncValue} and
 \texttt{HaltingGameValue.gameValue} --- parallel developments with parallel notions of
 synchronous strategy --- are the same number on the same description
 (\texttt{HaltingGameValue.GameData.gameValue\_eq\_syncValue}), so the conclusion is available
 in the vocabulary of \texttt{halting\_reduces\_to\_gameValue}
-(Section~\ref{ch:main-theorem}): \texttt{Verifier.gameValue\_toGame\_eq\_one}. Soundness needs
-neither step, only $\synval \leq \valstar$ (Lemma~\ref{lem:sync-le-valstar}), which is
-\texttt{Verifier.gameValue\_toGame\_le\_of\_valStar\_le} in the same vocabulary. Both steps
+(Section~\ref{ch:main-theorem}): \texttt{Verifier.gameValue\_toGame\_eq\_one\_doubled}, which
+on the tabulation is \texttt{MIPRE.Halting.gameValue\_tab\_eq\_one}. Soundness needs neither
+step, only $\synval \leq \valstar$ (Lemma~\ref{lem:sync-le-valstar}), which is
+\texttt{Verifier.gameValue\_toGame\_le\_of\_valStar\_le\_doubled} in the same vocabulary. The
+four undoubled bridges are still there and still true, and are simply not the ones this
+tabulation feeds. Both steps
 consume the tabulation's agreement with $\verifier_n$ in the form of the two alphabet
 equivalences and the matching of $\mu$ and $D$ along them, not merely the equality of
 $\valstar$ they imply --- from that equality alone the synchronous half cannot be recovered,

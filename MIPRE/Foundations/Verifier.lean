@@ -214,9 +214,17 @@ This is small and entirely load-bearing. The time clauses of `IsBounded` are all
 `2 ≤ n`, so at `n = 0, 1` they say nothing and no budget exists — acceptance at those indices
 is genuinely `Σ₁`. What rules those indices out is not an extra hypothesis anywhere but this
 lemma: a verifier that is `n`-bounded is so at an `n` that is at least `2`. **If the
-`V.size ≤ lam` clause is ever dropped from `IsBounded`, the three bridges
-`MIPRE.Halting.accOf_iff`, `MIPRE.Halting.dimOf_eq` and `MIPRE.Halting.margOf_eq` become
-unprovable, and with them the tabulation, obligation O2.** -/
+`V.size ≤ lam` clause is ever dropped from `IsBounded`, `MIPRE.Halting.accOf_iff` becomes
+unprovable, and with it the acceptance table of the tabulation, obligation O2.**
+
+`accOf_iff` is the one bridge still hostage to it. The two sampler runs of the tabulation are
+budgeted from `MIPRE.GapCompression.sampler_time`, a bound at *every* index carrying no
+hypothesis, so `MIPRE.Halting.dimOf_eq` and `MIPRE.Halting.margOf_eq` hold at `n = 0` and
+`n = 1` as well and appeal neither to `IsBounded` nor to this lemma. The decider cannot be
+budgeted that way — the one a string denotes is the string's own, wrapped, and only
+`IsBounded n` bounds it — so `accOf_iff` runs at the budget `n ^ n` that boundedness supplies,
+needs `2 ≤ n` to have it, and carries `MIPRE.Halting.acc_mem_iff`, `tab_match` and `tab_value`
+with it. -/
 theorem IsBounded.two_le {lam : ℕ} (h : V.IsBounded lam) : 2 ≤ lam :=
   le_trans (le_trans (Cost.Prog.two_le_esize V.decider.prog) (le_max_right _ _)) h.2
 

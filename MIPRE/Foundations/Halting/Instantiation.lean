@@ -58,42 +58,49 @@ is open can be enumerated rather than searched for:
   decider programs realizing them.
 * **O2** — **done**, and so no longer a field of `Obligations`. The tabulation of `𝒱_n` as a
   game description matching it along relabelings of the two alphabets is `tab`,
-  `tab_computable`, `tab_match`, `tab_le` and `tab_value` in the section above, which
-  `halting_reduction` uses directly; the relabelings are `Verifier.questionEquiv` and
+  `tab_computable`, `tab_match`, `tab_value` and `gameValue_tab_eq_one` in the section above,
+  which `halting_reduction` uses directly; the relabelings are `Verifier.tagEquiv` and
   `answerEquiv`, transported across the two sizes. Three features of their shape are
-  deliberate and each is explained where it is stated: they hold only of an `n`-bounded
-  verifier, and could not hold of every string, acceptance being `Σ₁`; `tab_match` delivers
-  the relabelings rather than only the value they equate, because `synval ≤ val*` points the
-  wrong way for item 1 of `thm:halting`; and the match itself is asked only of a verifier
-  synchronous at `n`, a `GameData` describing a synchronous game by construction, with
-  `tab_le` carrying the soundness branch instead. That last one is the piece O3 cannot use as
-  it stands, and the paragraph below the list says what is owed.
+  deliberate and each is explained where it is stated: the match and the value hold of an
+  `n`-bounded verifier and could not hold of every string, acceptance being `Σ₁` — while
+  `dimOf_eq` and `margOf_eq`, budgeted from the compressed sampler's own time bound, hold at
+  every string and every level; `tab_match` delivers the relabelings rather than only the
+  value they equate, because `synval ≤ val*` points the wrong way for item 1 of `thm:halting`;
+  and the game it matches is the *doubled* one, `(Vof G U x).doubledGame`, so that the
+  diagonal a `GameData` vetoes carries no weight and no synchronicity is asked of the
+  verifier. That last one is what makes the tabulation usable by O3, and the paragraph below
+  the list says how.
 * **O3** (`sem`, `sem_closed`, `sem_spec`) — a program halting on `(x, n)` exactly off
   `classB n`. Its shape is `Verifier.not_inClassB_iff`: a boundedness violation, or the
   `val*` half of `lem:value-lower-approx` on a tabulation. Both disjuncts are proved
   recursively enumerable in `Halting/Semidecider.lean`
   (`Verifier.rePred_not_isBounded`, `MIPRE.rePred_lt_quantumValue_comp`), merged there by
-  dovetailing and turned into a program by `Cost.exists_semidecider_prod_nat`; what
-  `Halting.exists_sem_of_tab` still takes as hypotheses is a computable presentation of the
-  family `Vof` (`Verifier.ComputablyPresented`) and a computable tabulation, both of which
-  are O2's.
+  dovetailing and turned into a program by `Cost.exists_semidecider_prod_nat`. The two
+  hypotheses of `Halting.exists_sem_of_tab` were O2's and are now discharged — the computable
+  presentation of the family `Vof` (`Verifier.ComputablyPresented`) by
+  `Halting.computablyPresented_Vof`, the computable tabulation of the right value by
+  `tab_computable` and `tab_value` — so `Halting.exists_sem` proves all three fields with no
+  hypotheses. They remain fields here only because `Halting/Semidecider.lean` imports this
+  file; removing them is a module move rather than mathematics.
 * **O4** (`compr`, `compr_spec`) — the compressor: the decider that reads its description by
   bit queries, freezes the verifier at index `2n + 1` (`Verifier.freeze`), runs `Compress`,
   and its time accounting.
 
-O2 and O4 are the substance, and `planning/h4-assembly.md` has the order of work. O3 was
+O4 is the substance that is left, and `planning/h4-assembly.md` has the order of work. O3 was
 recorded there as "O2 plus a disjunction"; it is not, and the reason is worth naming.
 `Halting.exists_sem_of_tab` needs the tabulation to have the value of `𝒱_n` at every
-`n`-bounded string, in both directions, because `sem_spec` is an equivalence — while
-`tab_match` gives that only where the verifier is also *synchronous* at `n`, a `GameData`
-describing a synchronous game by construction (see `tab_le`), and `classB n` does not ask
-for synchronicity. So the two do not compose as they stand. Three repairs are on the
-record in blueprint `lem:halting-semidecider`: tabulate on a doubled question set so that
-the distribution avoids the diagonal, make `Decider.wrap` reject unequal answers to equal
-questions so that every string names a synchronous verifier, or put synchronicity into
-`classB` and pay for it in `compr_spec`. The first is the cheapest and is the tabulation's
-to make; until it is made, `tab_value` is the conditional statement below and
-`exists_sem_of_tab`'s `hval` is not yet in hand.
+`n`-bounded string, in both directions, because `sem_spec` is an equivalence — while a match
+against `(Vof G U x).game` gives that only where the verifier is also *synchronous* at `n`,
+a `GameData` describing a synchronous game by construction
+(`Verifier.isSynchronousAt_of_game_matches`), and `classB n` does not ask for synchronicity.
+Three repairs were on the record in blueprint `lem:halting-semidecider`: tabulate on a doubled
+question set so that the distribution avoids the diagonal, make `Decider.wrap` reject unequal
+answers to equal questions so that every string names a synchronous verifier, or put
+synchronicity into `classB` and pay for it in `compr_spec`. **The first is the one made**
+(`Foundations/GameDouble.lean`, `Verifier.doubledGame`): it is the cheapest and the only one
+that changes nothing outside the tabulation. So `tab_match` and `tab_value` below ask the
+verifier's decider for nothing beyond `n`-boundedness, and `exists_sem_of_tab`'s `hval` is
+`tab_value` itself.
 
 ## What this is not
 
@@ -178,8 +185,10 @@ theorem notMem_classB_of_mem_classA {n : ℕ} {x : BitStr} (h : x ∈ classA G U
 /-! ## The tabulation of the verifier a string denotes
 
 `tab x n` is the `GameData` for `(Vof G U x)`'s `n`-th game, and it is computable because it
-is `Tabulate`'s `tabOf` — a function of five *numbers* — fed the three the string supplies.
-Two of them take work:
+is `Tabulate`'s `tabOf` — a function of two encoded programs and five numbers — fed what the
+string and the level supply: the two programs, the sampler's dimension, the answer cut
+`ansBound G x n`, and that same `ansBound` with `G.deg` as the budget of the sampler runs.
+Two of the seven take work:
 
 * `sampData x`, the encoded sampler program, is `G.samplerProg (descLam x)` encoded. A
   `PolyTimeFun` is not a Mathlib-computable function of its argument in any direct sense; what
@@ -193,8 +202,10 @@ Two of them take work:
   — the same program, in the normal form a `Primrec` proof can reach.
 
 The three bridges at the end — `accOf_iff`, `dimOf_eq`, `margOf_eq` — are what the rest of O2
-rests on: on an `n`-bounded verifier the tabulated numbers *are* the verifier's own sampler
-and decider, budget or no budget.
+rests on: the tabulated numbers *are* the verifier's own sampler and decider. `dimOf_eq` and
+`margOf_eq` say so at every string and every level, their budget being the compressed
+sampler's own (`sampler_timeBound`, from `GapCompression.sampler_time`); `accOf_iff` says so
+on an `n`-bounded verifier, whose budget is the only one the string's own decider has.
 -/
 
 /-- The encoded sampler program of the verifier a string denotes. -/
@@ -248,9 +259,9 @@ theorem computable_ansBound : Computable fun p : BitStr × ℕ => ansBound G p.1
   ((primrec_poly_eval G.bound).comp
     (Primrec.nat_add.comp Primrec.snd (primrec_descLam.comp Primrec.fst))).to_comp
 
-/-! The five arguments of `tabOf` are assembled one declaration at a time. Inlining them into a
-single term is not a stylistic choice: the tuple is nested four deep and elaborating it in one
-go does not terminate within any heartbeat budget worth setting. -/
+/-! The seven arguments of `tabOf` are assembled one declaration at a time. Inlining them into
+a single term is not a stylistic choice: the tuple is nested four deep and elaborating it in
+one go does not terminate within any heartbeat budget worth setting. -/
 
 theorem computable_sampData_fst : Computable fun p : BitStr × ℕ => sampData G p.1 :=
   (computable_sampData G).comp Computable.fst
@@ -280,9 +291,12 @@ theorem tab_computable : Computable fun p : BitStr × ℕ => tab G U p.1 p.2 :=
 
 `sampData_eq` and `decProgData_eq` only unfold the two encodings, and hold at every `n`. The
 other three — `accOf_iff`, `dimOf_eq`, `margOf_eq` — are the same shape: rewrite the budgeted
-run into `CL.Sampler.queryUnder` or `Verifier.accepts_iff_runForD`, which `IsBounded` then
-evaluates. `IsBounded.two_le` supplies the `2 ≤ n` those need — see the warning there: at
-`n = 0, 1` the time clauses say nothing and no budget exists. -/
+run into `CL.Sampler.queryUnder` or `Verifier.accepts_iff_runForD`, which a time bound then
+evaluates. Which bound differs, and that is the point of the re-budget. The two sampler runs
+take `sampler_timeBound` — `GapCompression.sampler_time` at the string's own parameter, a
+bound at *every* index — so `dimOf_eq` and `margOf_eq` carry no hypothesis. `accOf_iff` has
+only `IsBounded n` to draw on, and `IsBounded.two_le` supplies the `2 ≤ n` it needs — see the
+warning there: at `n = 0, 1` the time clauses say nothing and no budget exists. -/
 
 theorem sampData_eq (x : BitStr) : sampData G x = encode ((G.sampler (descLam x)).prog) := by
   rw [sampData, G.samplerProg_eq]
@@ -337,6 +351,26 @@ theorem margOf_eq (x : BitStr) (n : ℕ) (w : Player) (z : BitStr)
   simp [SizedEncoding.decode_encode]
   rfl
 
+/-! ## The tabulation matches the verifier, doubled
+
+What remains is the dictionary between the two namings of each alphabet. A `GameData` names
+its questions `Fin (nX + 1)` and its answers `Fin (nA + 1)`; the doubled game names them
+`Bool × 𝔽₂^{s(n)}` and the bit strings of length at most `T`. `Verifier.tagEquiv` and
+`Verifier.answerEquiv` are the two bijections, and `eXof`/`eAof` are them transported across
+the arithmetic of `tab`'s two sizes (`tab_nX`, `tab_nA`) — `nX + 1 = 2 ^ (s(n) + 1)`, the
+extra bit being the tag.
+
+The two clauses are then separate pieces of work. The `μ` clause (`mu_clause`) is a counting
+argument: the tabulated weight of a question pair is the number of points of `𝔽₂^{s(n)}` whose
+two tagged marginals land on it, and the total weight is still `2 ^ s(n)`, which is exactly
+the quotient `CL.clDist` is — the weight list enumerates `𝔽₂^{s(n)}` once, not the strings of
+length `s(n) + 1`. The `D` clause is the acceptance table read back (`acc_mem_iff`), and the
+one place where the two notions of game differ has stopped costing anything: a `GameData`
+rejects unequal answers to equal questions by construction, and the doubled game puts no
+weight there and rejects there too, so `tab_match` is a *total* match and needs nothing of the
+decider beyond `n`-boundedness.
+-/
+
 theorem tab_nX (x : BitStr) (n : ℕ) :
     (tab G U x n).nX + 1 = 2 ^ ((Vof G U x).sampler.dim n + 1) := by
   show 2 ^ (dimOf (sampData G x) (ansBound G x n) G.deg n + 1) - 1 + 1 = _
@@ -354,7 +388,8 @@ noncomputable def eXof (x : BitStr) (n : ℕ) :
     Fin ((tab G U x n).nX + 1) ≃ Bool × (Vof G U x).Questions n :=
   (finCongr (tab_nX G U x n)).trans (Verifier.tagEquiv _).symm
 
-/-- The answer relabeling, unchanged from `eAof`. -/
+/-- The answer relabeling: a tabulated answer index is a bit string of length at most the
+answer bound. Only the questions are doubled, so this is unchanged by it. -/
 noncomputable def eAof (x : BitStr) (n : ℕ) :
     Fin ((tab G U x n).nA + 1) ≃ Verifier.Answers (ansBound G x n) :=
   (finCongr (tab_nA G U x n)).trans (Verifier.answerEquiv _)
@@ -609,8 +644,9 @@ private theorem primrec_two_pow : Primrec fun n : ℕ => 2 ^ n :=
     (Primrec.nat_mul.comp (Primrec.const 2) Primrec.snd).to₂).of_eq fun n => two_pow_iterate n
 
 -- The tabulation is opaque from here on. `halting_reduction` only ever feeds it to
--- `tab_computable`, `tab_value` and `tab_le`; letting unification unfold it into `tabOf` and
--- the two budgeted runs instead costs more heartbeats than any budget worth setting.
+-- `tab_computable` and `tab_value` (once as an equality, once through `.le`); letting
+-- unification unfold it into `tabOf` and the two budgeted runs instead costs more heartbeats
+-- than any budget worth setting.
 attribute [local irreducible] tab
 
 /-- **The halting reduction** (blueprint `thm:halting`), in `val*` form: from gap-preserving

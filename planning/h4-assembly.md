@@ -1,12 +1,16 @@
 # H4: the assembly, and how the remaining obligations are tracked
 
-Status 2026-09-15, with O1 and O2 closed. Written after two process failures (below) and a
+Status 2026-09-15, with O1, O2 and O3 closed. Written after two process failures (below) and a
 reading of the companion repository's ledger nodes `1.6.*`. It says what the assembly is,
-which obligations remain open — O3 and O4 — how they are marked so they cannot be forgotten,
-and in what order to discharge them. One mark has changed kind along the way: O2 is no longer
-a field of `Obligations` but a block of theorems in `Halting/Instantiation.lean` that
-`halting_reduction` calls directly, while O1's fields are still there, discharged from outside
-in `Halting/Strings.lean`.
+which obligation remains open — O4, the compressor, the only one left with mathematics in it —
+how they are marked so they cannot be forgotten, and in what order to discharge them. Two marks
+have changed kind along the way. O2 is no longer a field of `Obligations` but a block of
+theorems in `Halting/Instantiation.lean` that `halting_reduction` calls directly. O3 is now
+`MIPRE.Halting.exists_sem` (`Halting/Semidecider.lean`), a theorem taking **no** hypotheses at
+all — but its three fields `sem`, `sem_closed`, `sem_spec` are still in `Obligations`, because
+`Halting/Semidecider.lean` imports `Halting/Instantiation.lean`, where the structure lives, so
+nothing can discharge them where they stand; dropping them is the module move of §4 item 5.
+O1's fields are still there too, discharged from outside in `Halting/Strings.lean`.
 
 ## 1. Review: what went wrong, and the rules that follow
 
@@ -48,17 +52,39 @@ load-bearing.** The time clauses of `IsBounded λ` are guarded by `2 ≤ n`, so 
 Nothing at the use sites supplies `2 ≤ n`. What supplies it is the clause `|𝒱| ≤ λ`: every
 program encodes to a `Data.cons`, so `2 ≤ |𝒟| ≤ |𝒱| ≤ λ` (`Cost.Prog.two_le_esize`, then the
 new `Verifier.IsBounded.two_le`), and a verifier that is `n`-bounded is so at an `n` that is at
-least `2`. The three bridges that need a budget — `accOf_iff`, `dimOf_eq`, `margOf_eq`, hence
-`tab_match` and `tab_le` — all run through it, and the lemma says so where a reader will meet
-it: **drop the size clause from `IsBounded` and those three become unprovable, and with them
-O2.** No change to the definition itself; the reading of #61 has now been used from both sides
-and stands.
+least `2`. One bridge needs a budget and runs through it — `accOf_iff`, hence `tab_match` and
+`tab_value` — and the lemma says so where a reader will meet it: **drop the size clause from
+`IsBounded` and `accOf_iff` becomes unprovable, and with it O2.** No change to the definition
+itself; the reading of #61 has now been used from both sides and stands.
 
 *Rule.* **A clause is not documented until something would break without it.** `IsBounded` was
 written for `GapCompression`, which *supplies* it; the tabulation is the first thing that
 *spends* it, and it found a clause the supplier had made free. When a definition acquires a
 second consumer, re-read it from that side and write down what the reading needs — that is the
 cheapest moment to discover it, and the only one before the clause is quietly dropped.
+
+*Corrected later the same day, and this is the finding worth carrying forward.* The lesson
+above said **three** bridges — `accOf_iff`, `dimOf_eq`, `margOf_eq` — and named `tab_le` beside
+`tab_match`. Two of the three have since left and `tab_le` is deleted. `dimOf` and `margOf` were
+taking the budget `n^n · (|q|+1)^n` that `IsBounded n` supplies because it was the budget in the
+room, not because it was the right one for a sampler run: `GapCompression.sampler_time` is
+`∀ λ n` with no hypothesis at all, and had been all along. The two runs now take the budget as
+parameters, fed `(ansBound G x n, G.deg)`, and `dimOf_eq`, `margOf_eq` carry no hypothesis.
+What found this was not a reading of `dimOf` — it had been read many times — but writing down
+what `Verifier.ComputablyPresented (Vof G U)` asks for: the sampler's true dimension at *every*
+string and *every* level, `n = 0` and `n = 1` included, which is exactly where the `IsBounded`
+budget says nothing. The hypothesis could not be kept, so the consumer had to name a budget that
+could replace it, and one had been sitting in `GapCompression` unused. `accOf_iff` cannot be
+freed the same way and must not be: the decider of the verifier a string denotes is the string's
+own, wrapped, and nothing bounds it unconditionally. So the size clause is still load-bearing,
+for one bridge instead of three.
+
+*Rule.* **Write the consumer first — and ask it again of the definitions already written.** The
+rule at the end of this section is usually heard as advice about new definitions; this is that
+rule applied to a finished bridge, and it found that the hypothesis the bridge carried had
+never been necessary. When a second consumer arrives, do not ask what the existing statement
+needs; ask what the consumer needs, and let it re-derive the hypotheses from nothing. The
+budget that answered was sitting in `GapCompression` all along.
 
 **Infrastructure was built ahead of demand.** `Halting/Serial.lean` (`parseProg`, `serProg`)
 is not used by anything yet, and parts of `Halting/Arith.lean` are not either. Not wrong —
@@ -123,18 +149,19 @@ respectively a value-`1` PCC strategy or `val* <= 1/2` at index `n`.
 | | Obligation | What it needs |
 |---|---|---|
 | ~~**O1**~~ | *Done 2026-09-15.* `yYes_mem`, `yNo_mem` in `Halting/Strings.lean`, on the wrapper's time bound in `WrapperCost.lean` and the `IsBounded` plumbing in `Bounded.lean` | — |
-| ~~**O2**~~ | *Done 2026-09-15.* No longer a field: `tab`, `tab_computable`, `tab_match`, `tab_le` and `tab_value` are theorems of `Halting/Instantiation.lean`, over `Halting/Tabulate.lean` (`tabOf`, the `GameData` that two encoded programs and three numbers describe) and the new `Cost/ProgData.lean` (deciding program-hood). **Still owed to O3**: the doubled question set, so that the value agreement holds under `n`-boundedness alone (§4 item 3) | the doubling |
-| **O3** | `sem_spec`: a program halting on `(x, n)` exactly when `x ∉ classB n` | *Mostly done 2026-09-15* (`Halting/Semidecider.lean`): both `Σ₁` disjuncts of `Verifier.not_inClassB_iff` are r.e. and merged, on the cost-budget decision procedure of `Halting/CostBudget.lean` and the pair-input semidecider of `Halting/Semidecide.lean`. What is left is two hypotheses of `Halting.exists_sem_of_tab`, both O2's: `Verifier.ComputablyPresented (Vof G U)`, and a tabulation whose value agrees with `val*` under `n`-boundedness **alone** — which `tab_match` does not give (see §3, the synchronicity seam) |
+| ~~**O2**~~ | *Done 2026-09-15, with both payloads to O3 delivered the same day.* No longer a field: `tab`, `tab_computable`, `tab_match`, `tab_value` and `gameValue_tab_eq_one` are theorems of `Halting/Instantiation.lean`, over `Halting/Tabulate.lean` (`tabOf`, the `GameData` that two encoded programs and five numbers describe), the new `Foundations/GameDouble.lean` (the doubled question set) and `Cost/ProgData.lean` (deciding program-hood). `tab_le` is deleted: `(tab_value …).le` inhabits its exact type now that the value agreement holds in both branches | — |
+| ~~**O3**~~ | `sem_spec`: a program halting on `(x, n)` exactly when `x ∉ classB n` | *Done 2026-09-15.* `MIPRE.Halting.exists_sem` (`Halting/Semidecider.lean`) takes **no** hypotheses: both `Σ₁` disjuncts of `Verifier.not_inClassB_iff` are r.e. and merged, on the cost-budget decision procedure of `Halting/CostBudget.lean` and the pair-input semidecider of `Halting/Semidecide.lean`, and the two arguments `exists_sem_of_tab` was left holding are supplied by O2 — `Halting.computablyPresented_Vof` from the re-budgeted sampler runs, and `tab_value` from the doubled question set. The fields `sem`, `sem_closed`, `sem_spec` are still in `Obligations`, which sits above its own discharge in the import order; §4 item 5 | the module move |
 | **O4** | `compr_spec`: the compressor preserves the classes across levels | the decider that reads its description by bit queries, freezes at `2n+1`, runs `Compress`, and its time accounting |
 
 *The theorem.* `MIPRE.Halting.halting_reduction` takes `G : GapCompression` and
 `O : Obligations G U` and produces the computable map from `Nat.Partrec.Code` to game
 descriptions with value `1` when the machine halts and at most `1/2` when it does not — the
 blueprint's `thm:halting` in `val*` form. Its proof is the per-level criterion plus the
-tabulation's value agreement — `tab_value` in the halting branch, `tab_le` in the other, both
-now theorems rather than hypotheses; it is complete, and it is what makes the remaining work a
-matter of inhabiting the fields that are left — O1's two strings, which are in hand, and O3 and
-O4 — rather than of finding an argument.
+tabulation's value agreement — `tab_value` in both branches now, the doubled question set
+having removed the synchronicity hypothesis that once split them, so that `tab_le` is
+`(tab_value …).le` and is deleted; it is complete, and it is what makes the remaining work a
+matter of inhabiting the fields that are left — O1's two strings and O3's semidecider, all
+three in hand, and O4 — rather than of finding an argument.
 
 *Done 2026-09-15*, with one thing learned in the writing. The conclusion is in `val*` and
 stops there. `thm:halting` item 1 claims more — the witness is a value-`1` *PCC* strategy, so
@@ -195,9 +222,9 @@ consumers, and this one had two — the assembly and the bridges — that wanted
 from the same field. Neither would have noticed alone.
 
 **O2, done 2026-09-15.** The tabulation is `tabOf` — a `GameData` assembled from two encoded
-programs and three numbers (`Halting/Tabulate.lean`) — fed what a string supplies, and its five
-theorems now sit in `Halting/Instantiation.lean` where the four fields used to be.
-`halting_reduction` calls `tab_computable`, `tab_value` and `tab_le` directly and is otherwise
+programs and five numbers (`Halting/Tabulate.lean`) — fed what the string and the level supply,
+and its five theorems now sit in `Halting/Instantiation.lean` where the four fields used to be.
+`halting_reduction` calls `tab_computable` and `tab_value` directly and is otherwise
 unchanged. Three things are worth carrying forward.
 
 - **Nothing that mentions a `Verifier` can be `Primrec`,** so the whole computable layer is
@@ -224,11 +251,58 @@ unchanged. Three things are worth carrying forward.
   `GameData` *is* a synchronous game and cannot match a verifier that is not. §1's rule about
   writing the consumer first paid three times on one field, and note exactly what it bought:
   each move cost a statement, never a proof.
-- **The last step was shaped by elaboration, not by mathematics.** The five arguments of `tabOf`
-  are assembled one declaration at a time because the nested tuple does not elaborate in one go
-  within any heartbeat budget worth setting, and `tab` is made `local irreducible` before
-  `halting_reduction`, which only ever feeds it to the three theorems above. Expect the same in
-  O4, which builds a larger term of the same kind.
+- **The last step was shaped by elaboration, not by mathematics.** The seven arguments of
+  `tabOf` are assembled one declaration at a time because the nested tuple does not elaborate in
+  one go within any heartbeat budget worth setting, and `tab` is made `local irreducible` before
+  `halting_reduction`, which only ever feeds it to `tab_computable` and `tab_value`. Expect the
+  same in O4, which builds a larger term of the same kind.
+
+**O2's two payloads to O3, done 2026-09-15**, and each needed a different repair. #75 left
+`Halting.exists_sem_of_tab` holding two arguments, both O2's; `MIPRE.Halting.exists_sem` now
+takes none.
+
+- **The sampler runs are re-budgeted**, which is what `Verifier.ComputablyPresented (Vof G U)`
+  needed, and `Halting.computablyPresented_Vof` is the consequence — its three fields the two
+  encoded programs and the dimension. The repair, and the question that found it, are §1's
+  correction above; it is the one finding of this round to carry into O4. The cost was two `_eq`
+  statements *losing* a hypothesis and `dimOf`, `margOf` growing a `(B k : ℕ)` pair of
+  parameters. No proof changed. `accOf` did not follow and cannot, so `accOf_iff`, and with it
+  `tab_value`, keep `IsBounded n`.
+- **The question set is doubled** (`Foundations/GameDouble.lean`). A `GameData` forces
+  `D x x a b` to `false` for `a ≠ b`, so a description matches `𝒱_n` only where `𝒱_n` is
+  synchronous, and `classB n` does not ask for synchronicity. `Game.doubled` plays on
+  `Bool × 𝒳` with Alice tagged `false` and Bob `true` and rejects everything off that block, so
+  the diagonal carries no weight, the description's veto is implied by the distribution rather
+  than constraining the verifier, and — the point that made it cheap — `hD` stays *total*, so
+  `quantumValue_eq_of_equiv` and `SyncStrategy.isPCC_relabel` apply unchanged and no
+  support-restricted version of either was needed. `quantumValue_doubled` is the familiar
+  two-sided `iSup`, on `TensorProductStrategy.double`/`undouble`; `SyncStrategy.double` with
+  `isPCC_double` carries completeness, the doubled support mapping *into* the original so no
+  commutation obligation is added. `Foundations/SyncTransport.lean` gains `Verifier.doubledGame`
+  and six lemmas on it, **added beside** the four bridges of part 6, which are untouched.
+  `tab_match` now matches `(Vof G U x).doubledGame n T`; its old form is not recoverable for the
+  new `tab`, the doubled question set having no equivalence with `Questions n`, and both of its
+  consumers — `tab_value` and `gameValue_tab_eq_one` — are supplied.
+- **Two details of the doubling that would have failed silently.** The tag is *prepended* to the
+  question's bit string, so the index is `bitsToIdx (tag :: z)` and `bitsToIdx_lt`,
+  `bitsToIdx_injOn` apply verbatim at `s + 1`; and the weight list still enumerates `𝔽₂^s`
+  once, so the total weight is still `2^s` — enumerating the length-`s+1` strings instead would
+  compile and halve every probability. Only `nX` doubles, to `2^(s+1) - 1`.
+- **Two elaboration findings for O4.** First: **state every `Primrec` lemma generic in the
+  ambient parameter type.** `Halting/Tabulate.lean` now does throughout, as
+  `Verifier.primrec_accList` already did, and that is what let `tabOf` grow two arguments
+  without re-running a single `Primrec` proof — each proof sees `α` and a projection, never the
+  tuple. `Verifier.accListW` is the same move one level down, taking the two question indexings
+  as parameters, with `accList = accListW _ _ bitsToIdx bitsToIdx _` by `rfl` so that nothing
+  downstream of the old name changed. Second, a measurement, because the tree carries a number
+  that no longer holds: `primrec_accOf` keeps `set_option maxHeartbeats 1000000` and a docstring
+  saying the proof measures 210049 heartbeats, and `#count_heartbeats` says **about fifty** —
+  the figure drifts by a unit or two between runs and contexts, which is itself the lesson —
+  for the generic statement and for the deleted tuple-specific one alike, against a default
+  of 200000. The counter is honest — at `maxHeartbeats 40` the same declaration times out at
+  `isDefEq` — so the `set_option` is vestigial and the number is inherited from an earlier
+  shape of the file. The generic statement is still the right one; its payoff is that a change
+  to `tabOf`'s argument list never re-runs the proof, not a heartbeat saving.
 
 ## 4. Order of work
 
@@ -237,15 +311,17 @@ unchanged. Three things are worth carrying forward.
    is what would have refuted it a third time. It did not; the definition of #61 went through
    unchanged. The small-parameter corner the ledger flags did not bite either: `|𝒱| ≤ λ` is
    free, a verifier's size being a constant, and the rest is what the threshold `n₀` absorbs.
-2. **O2.** *Mostly done 2026-09-15.* The largest piece, and needed twice, by O3 and by the
-   assembly. `tab`, `tab_computable`, `tab_match`, `tab_le` and `tab_value` are theorems of
-   `Halting/Instantiation.lean` and the four fields have left `Obligations`; §3 has the
-   record. One step is left, and O3 below is what asks for it: **the doubled question set**,
-   which makes the value agreement hold under `n`-boundedness alone. Writing the consumer
-   first did not stop the statement moving three times, but it did keep every move on the
-   statement side.
-3. **O3.** *Mostly done 2026-09-15*, and it was not "short once O2 is done" — that was wrong
-   in two ways, both worth keeping.
+2. ~~**O2.**~~ Done 2026-09-15, payloads included. The largest piece, and needed twice, by O3
+   and by the assembly. `tab`, `tab_computable`, `tab_match`, `tab_value` and
+   `gameValue_tab_eq_one` are theorems of `Halting/Instantiation.lean` and the four fields have
+   left `Obligations`; `tab_le` is deleted, being `(tab_value …).le`. §3 has the record,
+   including the two payloads O3 was waiting on — the re-budgeted sampler runs and the doubled
+   question set — which went in the same day. Writing the consumer first did not stop the
+   statement moving three times, but it did keep every move on the statement side; and the
+   re-budget was a fourth move of the same kind, on a neighbouring definition, found by the
+   same question.
+3. ~~**O3.**~~ Done 2026-09-15 — `MIPRE.Halting.exists_sem`, no hypotheses — and it was not
+   "short once O2 is done"; that was wrong in two ways, both worth keeping.
 
    First, the *cost* budget. `Verifier.accepts_iff_runForD` decides acceptance under a bound
    by running the machine `3k` steps, which is all the tabulation needs: a program obeying its
@@ -288,14 +364,50 @@ unchanged. Three things are worth carrying forward.
      synchronous verifier (changes the wrapper only, and its cost accounting); or add
      synchronicity at `n` to `classB n` and pay for it with a synchronicity clause in
      `compr_spec` (changes the classes only). The first looks cheapest and is O2's to make.
-   - **`Primrec fun n : ℕ => (encode n : Data)` is missing**, natural numbers encoding in
+
+     **Made 2026-09-15, and the estimate held.** The doubling changed the tabulation and
+     nothing else: `Decider.wrap` still denotes what it denoted, `classB` is unchanged, and
+     `thm:compression` gained no clause. It cost one new module of 184 lines
+     (`Foundations/GameDouble.lean`), 89 lines added to `Foundations/SyncTransport.lean` —
+     `Verifier.doubledGame` and six lemmas, added beside the existing four, none of which was
+     restated — and a rework of `Halting/Tabulate.lean` and `Halting/Instantiation.lean` that
+     is mostly the two index maps and the re-budget. What made it cheap was not the size of the
+     construction but that the doubled distribution leaves `hD` **total**, so the transport
+     lemmas apply as they stand and no support-restricted `quantumValue_eq_of_equiv` or
+     `isPCC_relabel` had to be proved; that was the thing worth checking before choosing, and
+     it is what "looks cheapest" was resting on. The one surprise was in the opposite
+     direction and is recorded in §3: the tag must be *prepended* to the question's bit string
+     and the weight list must keep enumerating `𝔽₂^s`, or the tabulation compiles and is
+     quietly wrong.
+   - **`Primrec fun n : ℕ => (encode n : Data)` was missing**, natural numbers encoding in
      binary (`Nat.bits`). It is a prerequisite of `ComputablyPresented` for `Vof` — the
      sampler's dimension is read off a run of its program on `encode (n, dimension)` — hence
      of O2's `tab_computable` too, which runs the sampler at an index. `rePred_not_isBounded`
      itself avoids it by carrying the search's index as a *datum* and reading it back with
      `Data.natOf`, so the encoding it prepends is `Data.normBin` of the witness; that trick
-     does not extend to a genuine `ℕ` argument.
-4. **O4.** The second-largest, and the only one where the paper's construction is followed
-   closely; read `recursive.tex` `sec:halt` and nodes `1.6.1`, `1.6.5` again before starting.
+     does not extend to a genuine `ℕ` argument. **Supplied since**, as
+     `MIPRE.Cost.Data.primrec_encode_nat` (`Cost/Codable.lean`, written for the tabulation in
+     #73), and it is what `computablyPresented_Vof` and every budgeted run in
+     `Halting/Tabulate.lean` are built on.
+4. **O4.** The largest piece left and the only obligation with mathematics still in it, and the
+   only one where the paper's construction is followed closely; read `recursive.tex` `sec:halt`
+   and nodes `1.6.1`, `1.6.5` again before starting.
+5. **The module move.** Numbered last because it was found last; it comes *before* O4 in the
+   doing, being what turns O3's discharge into a smaller `Obligations`. The structure and
+   `halting_reduction` are at the end of `MIPRE/Foundations/Halting/Instantiation.lean`, and
+   `Halting/Semidecider.lean` — where `exists_sem` is — imports that file, so `Obligations`
+   sits *above* its own discharge and the three O3 fields cannot be dropped where they stand.
+   What moves: everything from `/-! ## The obligations -/` to the end of `Instantiation.lean`
+   — the `Obligations` structure, `two_pow_iterate`, `primrec_two_pow`, the
+   `attribute [local irreducible] tab` line and `halting_reduction` — into a new module *below*
+   `Semidecider.lean`, say `MIPRE/Foundations/Halting/Reduction.lean`, importing
+   `MIPRE.Foundations.Halting.Semidecider`. Then drop `sem`, `sem_closed` and `sem_spec` from
+   the structure and let `halting_reduction` obtain them from `exists_sem G U` instead of from
+   `O`, leaving O1 and O4. Then `lake exe mk_all`, which CI checks. Nothing else has to change:
+   `Halting/Strings.lean` proves `yYes_mem` and `yNo_mem` as standalone `∃ n₀` theorems and
+   never names a field, `MIPRE/Axioms.lean` guards `exists_sem_of_tab`, which stays in
+   `Semidecider.lean`, and the blueprint's `\lean{}` tags resolve by name in the unchanged
+   namespace `MIPRE.Halting`. It is a reorganization, not mathematics; do it before O4 so that
+   `compr_spec` is honestly the last field.
 
 Each is one pull request, rebased onto `main` before merging, per the rule in §1.

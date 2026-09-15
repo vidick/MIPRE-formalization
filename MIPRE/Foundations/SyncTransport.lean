@@ -104,7 +104,11 @@ theorem gameValue_toGame_le_of_valStar_le {c : ℝ}
   rwa [show g.syncGame.toGame = g.game from rfl,
     quantumValue_eq_of_equiv (V.game n T) g.game eX eX eA eA hμ hD]
 
-/-! ## The same four bridges, against the doubled game -/
+/-! ## The doubled game, and the same bridges against it
+
+Five, not four: the four above, plus `quantumValue_toGame_eq_valStar_doubled`, which is the
+doubled form of `MIPRE.Verifier.quantumValue_toGame_eq_valStar` from
+`Foundations/Halting/Enumerate.lean` and has no un-doubled counterpart in this file. -/
 
 /-- **`𝒱_n` on the doubled question set.** Alice is asked `(false, x)`, Bob `(true, y)`.
 Synchronous by construction — no hypothesis on the decider — because the distribution puts no

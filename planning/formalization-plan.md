@@ -145,15 +145,32 @@ has offered CL closure lemmas (referee report, R9) — ask for them before provi
 **Invariant 2026-09-15 (found from H4, obligation O2).** No repair this time: the definition
 survived its second consumer, and the consumer documented a clause. The time clauses of
 `Verifier.IsBounded λ` are guarded by `2 ≤ n`, so at `n = 0, 1` they say nothing and no budget
-exists — acceptance at those indices is genuinely `Σ₁`, and the tabulation's bridges to the
-verifier (`accOf_iff`, `dimOf_eq`, `margOf_eq`) would have nothing to run under. Nothing at the
+exists — acceptance at those indices is genuinely `Σ₁`, and `accOf_iff`, the tabulation's bridge
+from its acceptance table to the verifier, would have nothing to run under. Nothing at the
 use sites supplies `2 ≤ n`. What does is the clause `|𝒱| ≤ λ`, every program encoding to a
 `Data.cons` (`Cost.Prog.two_le_esize`), now recorded as `Verifier.IsBounded.two_le` with the
-consequence stated where it will be read: drop the size clause and those three bridges become
-unprovable, and with them obligation O2. `IsBounded` was written for `GapCompression`, which
+consequence stated where it will be read: drop the size clause and that bridge becomes
+unprovable, and with it obligation O2. `IsBounded` was written for `GapCompression`, which
 *supplies* it; the tabulation is the first thing that *spends* it, which is why the clause could
 look free for as long as it did. The reading of #61 has now been used from both sides and stands
 unchanged.
+
+**Amended later the same day, and the amendment is the more useful half.** This note named
+*three* bridges — `accOf_iff`, `dimOf_eq`, `margOf_eq`. Only the first is hostage to the size
+clause now. `dimOf` and `margOf` were budgeted from `IsBounded` because that was the budget in
+the room; `GapCompression.sampler_time` is `∀ λ n` with no hypothesis, and always was, so the
+two sampler runs now take the budget as parameters, fed `(ansBound G x n, G.deg)`, and
+`dimOf_eq`, `margOf_eq` hold at every string and every level. The question that found it was
+not "what does `dimOf` need?" but "what does `Verifier.ComputablyPresented (Vof G U)` ask
+for?" — the true dimension at every string and level, `n = 0` and `n = 1` included, precisely
+where an `IsBounded` budget says nothing, so the hypothesis had to go and the consumer had to
+name the budget that replaced it. That is `planning/h4-assembly.md` §1's rule, *write the
+consumer first*, paying on a definition that was already finished: it is usually heard as advice
+about new definitions, and it is worth as much asked of an existing bridge by its second
+consumer, which is where §1 now records it. `accOf_iff` cannot be freed the same way and must
+not be — the decider of the verifier a string denotes is the string's own, wrapped, and nothing
+bounds it unconditionally — so the size clause stays load-bearing, for one bridge instead of
+three.
 
 **Repair 2026-09-15 (found from H4, part 3b-iii).** The reading below was still too tight.
 `Decider.TimeBoundAt n T` bounded the cost by `T · (|input| + 1)`, linear in the input size;
@@ -350,8 +367,9 @@ of quantum value `1` when the machine halts and at most `1/2` when it does not �
 hypotheses: a `GapCompression`, a universal machine, and a `MIPRE.Halting.Obligations`,
 whose fields are exactly the open obligations O1, O3 and O4, marked in the file and in
 `planning/h4-assembly.md` (O2, the tabulation, is discharged and is no longer a field; the
-assembly calls `tab_computable`, `tab_value` and `tab_le` directly). It is sorry-free, so
-`#print axioms` cannot hide any of them.
+assembly calls `tab_computable` and `tab_value` directly — and `tab_le`, until the doubling
+below deleted it later the same day). It is sorry-free, so `#print axioms` cannot hide any of
+them.
 Two things are deliberately outside it: the conclusion is in `val*`, since carrying a
 perfect PCC strategy to the tabulation needs a synchronous counterpart of
 `quantumValue_eq_of_equiv`, and reaching `HaltingGameValue.halting_reduces_to_gameValue`
@@ -452,7 +470,10 @@ length, a question's index determines it.
 O2 done 2026-09-15, and the four fields have left `Obligations`, which now carries O1
 (inhabited, `Halting/Strings.lean`), O3 and O4. `MIPRE.Halting.tab`, `tab_computable`,
 `tab_match`, `tab_le` and `tab_value` are theorems of `Halting/Instantiation.lean` that
-`halting_reduction` calls directly; it is unchanged otherwise, and sorry-free as before.
+`halting_reduction` calls directly; it is unchanged otherwise, and sorry-free as before. (Of
+those five, `tab_le` did not survive the day: the doubling recorded below makes `tab_value`
+hold in both branches, and `(tab_value …).le` inhabits `tab_le`'s exact type, so it is
+deleted.)
 `tab x n` is `Tabulate`'s `tabOf` — the `GameData` two encoded programs and three numbers
 describe, and not a verifier, because a `Verifier` is a structure carrying proofs and no
 `Primrec` statement can mention one — applied to what a string supplies: the encoded sampler
@@ -486,23 +507,52 @@ in O4: the five arguments of `tabOf` are assembled one declaration at a time bec
 tuple does not elaborate in one go within any heartbeat budget worth setting, and `tab` is made
 `local irreducible` before `halting_reduction` for the same reason.
 
-What H4 waits on now is O3 and O4. O3 is the semidecider for the complement of `classB`, and O2
-made most of it cheap: the `val*` disjunct of `Verifier.not_inClassB_iff` is two lines,
-`rePred_lt_quantumValue_comp` at `tab_computable`, that wrapper being already general in the
-index type. What is left is the boundedness disjunct as a search over `Machine.runForD` — with
-the `dim` clause and the sampler's time clause negated together, the dimension being observable
-only through a budgeted query — a computable-test version of `REPred.of_primrecRel_exists` (the
-search is not primitive recursive, `sampData` running a `PolyTimeFun` through the machine), the
-merge of the two disjuncts, the passage from an `REPred` on `BitStr × ℕ` to a program reading
-`encode (x, n)` (`Cost.exists_semidecider` reads a single bit string), and one item that is not
-plumbing: `tab_value` needs `IsSynchronousAt n` and `classB` does not ask for it, so the
-completeness direction of `sem_spec` is not provable from the tabulation alone.
-`planning/h4-assembly.md` §4 item 3 has the six-item list and the three candidate repairs — the
-cheapest, a synchronous `Decider.wrap`, reopens O1's cost accounting, and the next adds a clause
-to `thm:compression`. O4 (part 4) is unchanged: the compressor's own decider, reading its
-description by bit queries and freezing at `2n + 1`, and its time accounting. `thm:main` waits
-on O3 and O4 and nothing else, its two synchronous bridges being in place (part 6) and the
-tabulation's `Computable` witness now proved.
+O3 done 2026-09-15, on `Halting/Semidecider.lean` over `Halting/CostBudget.lean` and
+`Halting/Semidecide.lean`, and the five plumbing items it was expected to need went through as
+listed: the `val*` disjunct of `Verifier.not_inClassB_iff` is two lines,
+`rePred_lt_quantumValue_comp` at `tab_computable`; the boundedness disjunct is a search over
+`Machine.runForD` with the `dim` clause and the sampler's time clause negated together
+(`Verifier.rePred_not_isBounded`, for any computably presented family), over the
+computable-test variant of `REPred.of_primrecRel_exists` that such a search needs — it is not
+primitive recursive, `sampData` running a `PolyTimeFun` through the machine — which is
+`REPred.of_computable_exists`; the two disjuncts merge by dovetailing (`REPred.or`, from
+Mathlib's `Partrec.merge'`, which had no such corollary); and the passage to a program reading
+`encode (x, n)` goes through `Halting/Semidecide.lean`, once for every type whose
+`SizedEncoding` decodes primitive recursively. The sixth item, the one that was not plumbing,
+is settled by O2's two payloads, delivered the same day, and they are what makes
+`MIPRE.Halting.exists_sem` take **no** hypotheses.
+
+The first payload is the re-budget of the sampler runs, and the amended invariant note in H1
+above has it: `dimOf_eq` and `margOf_eq` lost their `IsBounded` hypothesis, which is exactly
+what `Verifier.ComputablyPresented (Vof G U)` needed, and `Halting.computablyPresented_Vof` is
+the consequence. The second is the doubled question set (`Foundations/GameDouble.lean`), the
+cheapest of the three candidate repairs of `planning/h4-assembly.md` §4 item 3 and the only one
+that changes nothing outside the tabulation: a `GameData` forces `D x x a b` to `false` for
+`a ≠ b`, so a description can match `𝒱_n` only where `𝒱_n` is synchronous and `classB` does
+not ask for that, whereas `Game.doubled` — Alice tagged `false`, Bob `true`, everything off that
+block rejected — puts no weight on the diagonal at all, so the description's veto is implied by
+the distribution rather than constraining the verifier. `hD` stays *total*, which is what made
+it cheap: `quantumValue_eq_of_equiv` and `SyncStrategy.isPCC_relabel` apply unchanged and no
+support-restricted version of either was needed. `quantumValue_doubled` is the two-sided `iSup`
+on `TensorProductStrategy.double` and `undouble`, `SyncStrategy.double` with `isPCC_double`
+carries completeness, and `Foundations/SyncTransport.lean` gains `Verifier.doubledGame` and six
+lemmas on it beside the four bridges of part 6, which are unchanged. `tab_match` now matches
+the doubled game, `tab_value` holds at every `n`-bounded string with no synchronicity
+hypothesis, `halting_reduction` uses it in both branches, and `tab_le` is deleted. So neither
+`Decider.wrap` nor `thm:compression` had to move, and the classes are fixed under the
+compressor rather than waiting on it.
+
+What H4 waits on now is O4, and O4 is the substance: the compressor's own decider, reading its
+description by bit queries and freezing at `2n + 1`, and its time accounting (part 4,
+unchanged). Before it, one piece of housekeeping that is not mathematics. `Obligations` still
+carries O3's `sem`, `sem_closed` and `sem_spec`, and cannot drop them where it stands:
+`Halting/Semidecider.lean`, where `exists_sem` is, imports `Halting/Instantiation.lean`, where
+the structure is, so the structure sits above its own discharge. Moving `Obligations` and
+`halting_reduction` into a module below `exists_sem` in the import order lets the three fields
+go and leaves O1 and O4; `planning/h4-assembly.md` §4 item 5 says what moves where. `thm:main`
+then waits on O4 alone among the obligations — O1's two strings are inhabited in
+`Halting/Strings.lean`, the two synchronous bridges are in place (part 6), the tabulation's
+`Computable` witness is proved, and the semidecider is a theorem.
 
 ## What to start with
 
@@ -518,11 +568,14 @@ problem.
 - **H2 is independent of both** and can proceed on its own schedule; it blocks H4 and the
   complexity clauses, not H1 or H3.
 - **H4 now.** It does not wait for H2 (see the note there), and H1 has fixed what a
-  description is: a sampler and a decider of the ambient model. Inside H4, **O3 next**: it is
-  the shortest piece left, and it is the only one whose *shape* is still in question — its
-  completeness direction needs synchronicity that `classB` does not carry, and two of the three
-  ways to supply it change a definition (`Decider.wrap`) or a hypothesis (`thm:compression`).
-  Settling that before O4 keeps the classes from being redefined underneath the compressor.
+  description is: a sampler and a decider of the ambient model. Inside H4, O1, O2 and O3 are
+  done, and the shape question that made O3 worth doing before O4 is settled the cheapest of
+  the three ways: the synchronicity `classB` does not carry is supplied by the doubled question
+  set, which changes the tabulation only, so neither `Decider.wrap` nor `thm:compression` moved
+  and the classes are fixed under the compressor. **The module move next** — `Obligations` and
+  `halting_reduction` below `exists_sem`, so the structure drops its three O3 fields — which is
+  reorganization and no mathematics; then **O4**, the compressor's decider and its time
+  accounting, which is all that is left.
 
 Then, and only then, the transformations themselves — introspection first, as the largest
 (`paper/introspection.tex` is 3376 lines) and the one the other two build on.

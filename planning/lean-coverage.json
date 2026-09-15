@@ -421,6 +421,9 @@
   "MIPRE.Halting.sampData_eq": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Halting.sampler_timeBound": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Halting.tab": [
    "rem:compression-abstract"
   ],
@@ -751,6 +754,9 @@
   "MIPRE.Verifier.exists_perfectPCC_syncGame": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Verifier.exists_perfectPCC_syncGame_doubled": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Verifier.freeze": [
    "rem:compression-abstract"
   ],
@@ -773,6 +779,9 @@
    "rem:compression-abstract"
   ],
   "MIPRE.Verifier.gameValue_toGame_le_of_valStar_le": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.gameValue_toGame_le_of_valStar_le_doubled": [
    "rem:compression-abstract"
   ],
   "MIPRE.Verifier.hasPerfectPCC_congr": [
@@ -805,6 +814,9 @@
   "MIPRE.Verifier.ofSamplerDecider_isBounded": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Verifier.quantumValue_doubledGame": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Verifier.quantumValue_toGame_eq_valStar": [
    "rem:compression-abstract"
   ],
@@ -827,6 +839,9 @@
    "def:normal-verifier"
   ],
   "MIPRE.Verifier.syncValue_syncGame_eq_one": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.syncValue_syncGame_eq_one_doubled": [
    "rem:compression-abstract"
   ],
   "MIPRE.Verifier.tagEquiv": [
@@ -1090,6 +1105,7 @@
   "MIPRE.Halting.primrec_tabOf",
   "MIPRE.Halting.sampData",
   "MIPRE.Halting.sampData_eq",
+  "MIPRE.Halting.sampler_timeBound",
   "MIPRE.Halting.tab",
   "MIPRE.Halting.tabOf",
   "MIPRE.Halting.tab_computable",
@@ -1200,6 +1216,7 @@
   "MIPRE.Verifier.doubledGame",
   "MIPRE.Verifier.exists_isBounded",
   "MIPRE.Verifier.exists_perfectPCC_syncGame",
+  "MIPRE.Verifier.exists_perfectPCC_syncGame_doubled",
   "MIPRE.Verifier.freeze",
   "MIPRE.Verifier.freeze_hasPerfectPCC",
   "MIPRE.Verifier.freeze_isBounded",
@@ -1208,6 +1225,7 @@
   "MIPRE.Verifier.gameValue_toGame_eq_one",
   "MIPRE.Verifier.gameValue_toGame_eq_one_doubled",
   "MIPRE.Verifier.gameValue_toGame_le_of_valStar_le",
+  "MIPRE.Verifier.gameValue_toGame_le_of_valStar_le_doubled",
   "MIPRE.Verifier.hasPerfectPCC_congr",
   "MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal",
   "MIPRE.Verifier.hasPerfectPCC_of_le",
@@ -1218,6 +1236,7 @@
   "MIPRE.Verifier.ofSamplerDecider",
   "MIPRE.Verifier.ofSamplerDecider_accepts",
   "MIPRE.Verifier.ofSamplerDecider_isBounded",
+  "MIPRE.Verifier.quantumValue_doubledGame",
   "MIPRE.Verifier.quantumValue_toGame_eq_valStar",
   "MIPRE.Verifier.quantumValue_toGame_eq_valStar_doubled",
   "MIPRE.Verifier.questionEquiv",
@@ -1226,6 +1245,7 @@
   "MIPRE.Verifier.size",
   "MIPRE.Verifier.syncGame",
   "MIPRE.Verifier.syncValue_syncGame_eq_one",
+  "MIPRE.Verifier.syncValue_syncGame_eq_one_doubled",
   "MIPRE.Verifier.tagEquiv",
   "MIPRE.Verifier.totalWeight_weightList",
   "MIPRE.Verifier.valStar_congr",
@@ -1511,6 +1531,7 @@
    "MIPRE.Halting.mu_clause",
    "MIPRE.Halting.sampData",
    "MIPRE.Halting.sampData_eq",
+   "MIPRE.Halting.sampler_timeBound",
    "MIPRE.Halting.tab",
    "MIPRE.Halting.tab_computable",
    "MIPRE.Halting.tab_match",
@@ -1584,11 +1605,15 @@
   "MIPRE/Foundations/SyncTransport.lean": [
    "MIPRE.Verifier.doubledGame",
    "MIPRE.Verifier.exists_perfectPCC_syncGame",
+   "MIPRE.Verifier.exists_perfectPCC_syncGame_doubled",
    "MIPRE.Verifier.gameValue_toGame_eq_one",
    "MIPRE.Verifier.gameValue_toGame_eq_one_doubled",
    "MIPRE.Verifier.gameValue_toGame_le_of_valStar_le",
+   "MIPRE.Verifier.gameValue_toGame_le_of_valStar_le_doubled",
+   "MIPRE.Verifier.quantumValue_doubledGame",
    "MIPRE.Verifier.quantumValue_toGame_eq_valStar_doubled",
-   "MIPRE.Verifier.syncValue_syncGame_eq_one"
+   "MIPRE.Verifier.syncValue_syncGame_eq_one",
+   "MIPRE.Verifier.syncValue_syncGame_eq_one_doubled"
   ],
   "MIPRE/Foundations/ValueApprox.lean": [
    "MIPRE.ValueApprox.dotProduct_kronecker_perturb",
@@ -1880,6 +1905,6 @@
   "labels": 227,
   "leanok_claimed": 123,
   "leanok_guarded": 123,
-  "refs": 978
+  "refs": 989
  }
 }

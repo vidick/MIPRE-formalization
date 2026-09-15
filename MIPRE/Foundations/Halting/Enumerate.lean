@@ -179,13 +179,24 @@ acceptance table holds, while `Verifier.game` accepts exactly what the decider a
 `hD` of `quantumValue_toGame_eq_valStar` below forces the decider to reject those tuples --- for
 every question and every pair of in-range answers.
 
-This is why `MIPRE.Halting.Obligations.tab_match` carries `IsSynchronousAt n` and why the
-soundness half was split off into `tab_le`, which needs no such hypothesis. `IsBounded n` does
-not supply synchronicity: the wrapper of `Decider.wrap` enforces `accepts_length` and nothing
-else. The split itself was made in #72; what is added here is the *check* --- the entailment
-was explained in that commit message but nothing in the build held it, so an edit could
-reintroduce the unsatisfiable shape silently. With this lemma, dropping the hypothesis is a
-build failure. -/
+This is what rules the *un-doubled* bridges out of the halting reduction. Every statement
+whose `hD` matches a description against `V.game n T` --- `quantumValue_toGame_eq_valStar`
+below, and the four of `Foundations/SyncTransport.lean` --- is satisfiable only at a verifier
+synchronous at `n`. For the three completeness bridges there (`exists_perfectPCC_syncGame`,
+`syncValue_syncGame_eq_one`, `gameValue_toGame_eq_one`) that costs nothing, `HasPerfectPCC n T`
+carrying `IsSynchronousAt n` already. Where this lemma bites is the other two --- the value
+bridge below, and `gameValue_toGame_le_of_valStar_le`, the soundness side: their hypotheses
+mention no synchronicity and it is forced on them anyway. `IsBounded n` does not supply it (the
+wrapper of `Decider.wrap` enforces `accepts_length` and nothing else), and neither does
+`MIPRE.Halting.classB`, which is the class the soundness branch of the halting reduction runs
+in. That is why `Foundations/GameDouble.lean` and the `_doubled` bridges beside them exist:
+`MIPRE.Halting.tab_match` matches `(Vof G U x).doubledGame`, whose distribution puts no weight
+on the diagonal, and asks the verifier for no synchronicity at all.
+
+Nothing consumes this lemma, and that is deliberate: it is the machine-checked form of the
+obstruction, so that a match stated against `V.game n T` again --- the shape an earlier
+`tab_match` had, with the `IsSynchronousAt n` hypothesis it needed --- can be met with it
+rather than with a commit message. -/
 theorem isSynchronousAt_of_game_matches {ℓ : ℕ} (V : Verifier ℓ) (n T : ℕ) (g : GameData)
     (eX : Fin (g.nX + 1) ≃ V.Questions n) (eA : Fin (g.nA + 1) ≃ Answers T)
     (hD : ∀ i j k l, g.game.D i j k l = (V.game n T).D (eX i) (eX j) (eA k) (eA l))
