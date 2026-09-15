@@ -103,7 +103,7 @@ respectively a value-`1` PCC strategy or `val* <= 1/2` at index `n`.
 |---|---|---|
 | ~~**O1**~~ | *Done 2026-09-15.* `yYes_mem`, `yNo_mem` in `Halting/Strings.lean`, on the wrapper's time bound in `WrapperCost.lean` and the `IsBounded` plumbing in `Bounded.lean` | — |
 | **O2** | `tab`, `tab_computable`, `tab_match`: the `n`-th game of a string's verifier as a computable game description matching it along both alphabets | bounded evaluation of ambient programs, proved `Computable` (done, `Cost/BoundedEval.lean`); the question weights by running the sampler over `F_2^{s(n)}`; the acceptance table under the budget (decidable, done) |
-| **O3** | `sem_spec`: a program halting on `(x, n)` exactly when `x ∉ classB n` | O2, plus the two `Σ₁` disjuncts of `Verifier.not_inClassB_iff` merged |
+| **O3** | `sem_spec`: a program halting on `(x, n)` exactly when `x ∉ classB n` | *Mostly done 2026-09-15* (`Halting/Semidecider.lean`): both `Σ₁` disjuncts of `Verifier.not_inClassB_iff` are r.e. and merged, on the cost-budget decision procedure of `Halting/CostBudget.lean` and the pair-input semidecider of `Halting/Semidecide.lean`. What is left is two hypotheses of `Halting.exists_sem_of_tab`, both O2's: `Verifier.ComputablyPresented (Vof G U)`, and a tabulation whose value agrees with `val*` under `n`-boundedness **alone** — which `tab_match` does not give (see §3, the synchronicity seam) |
 | **O4** | `compr_spec`: the compressor preserves the classes across levels | the decider that reads its description by bit queries, freezes at `2n+1`, runs `Compress`, and its time accounting |
 
 *The theorem.* `MIPRE.Halting.halting_reduction` takes `G : GapCompression` and
@@ -179,7 +179,57 @@ from the same field. Neither would have noticed alone.
    free, a verifier's size being a constant, and the rest is what the threshold `n₀` absorbs.
 2. **O2.** The largest piece, and needed twice (by O3 and by the assembly). Write the
    consumer first: state `tab_match` and build the tabulation against it.
-3. **O3.** Short once O2 is done.
+3. **O3.** *Mostly done 2026-09-15*, and it was not "short once O2 is done" — that was wrong
+   in two ways, both worth keeping.
+
+   First, the *cost* budget. `Verifier.accepts_iff_runForD` decides acceptance under a bound
+   by running the machine `3k` steps, which is all the tabulation needs: a program obeying its
+   bound halts, so a long-enough run settles what it returns. O3 needs the opposite verdict —
+   that a program does *not* halt within a given cost — and needs it exactly, `sem_spec` being
+   an equivalence. A step is not a unit of cost (reading a variable or a constant is charged
+   the size of the value), so `runForD` returning a value after `3k` steps says only that the
+   program halted, not that it halted in budget. `Halting/CostBudget.lean` carries the cost
+   along the run instead — `Machine.stepCostD`, `Machine.stepCost` on encoded configurations —
+   and gets `Prog.HaltsWithin` primitive recursive in all three arguments, hence decidable.
+   That is the `noncomputable` `Cost.evalWithin` made computable, as `runForD` is for
+   `Machine.evalData`.
+
+   Second, `sem_spec` is about `encode (x, n)`, and `Cost.exists_semidecider` is about bit
+   strings; `encode (x, n) = cons (encode x) (encode n)` is not the encoding of any bit
+   string, and the difference cannot be arranged by choosing the predicate.
+   `Halting/Semidecide.lean` closes it once for every type whose `SizedEncoding` decodes primitive
+   recursively, by prefixing `Prog.serProg` — the serializer that was written for O4's
+   compressor — so that the `ToPartrec` translation of `Cost/Semidecide.lean`, delicate for
+   its own reason, is not re-entered.
+
+   What is proved outright is the enumerability of a *violated* universal clause:
+   `Verifier.rePred_not_isBounded`, for any computably presented family of verifiers. The
+   assembly `Halting.exists_sem_of_tab` then merges the two disjuncts by dovetailing
+   (`REPred.or`, from Mathlib's `Partrec.merge'`, which had no such corollary).
+
+   Two things found in the writing, both now on the record in the blueprint
+   (`lem:bounded-violation-re`, `lem:halting-semidecider`) and in the `Obligations`
+   docstring:
+
+   - **The synchronicity seam is also O3's.** `exists_sem_of_tab` needs the tabulation's value
+     to equal `val*` at every `n`-bounded string, in both directions. `tab_match` gives that
+     only where the verifier is *synchronous* at `n` — §3's repair, and unavoidable, a
+     `GameData` describing a synchronous game by construction — and `classB n` does not ask
+     for synchronicity. So O2 and O3 as currently stated do not compose. Three repairs, in
+     increasing order of blast radius: tabulate on the doubled question set `{0,1} × X`, Alice
+     on the first copy and Bob on the second, so the distribution avoids the diagonal and the
+     forced rejections there are never asked about (changes the tabulation only); make
+     `Decider.wrap` reject unequal answers to equal questions, so every string names a
+     synchronous verifier (changes the wrapper only, and its cost accounting); or add
+     synchronicity at `n` to `classB n` and pay for it with a synchronicity clause in
+     `compr_spec` (changes the classes only). The first looks cheapest and is O2's to make.
+   - **`Primrec fun n : ℕ => (encode n : Data)` is missing**, natural numbers encoding in
+     binary (`Nat.bits`). It is a prerequisite of `ComputablyPresented` for `Vof` — the
+     sampler's dimension is read off a run of its program on `encode (n, dimension)` — hence
+     of O2's `tab_computable` too, which runs the sampler at an index. `rePred_not_isBounded`
+     itself avoids it by carrying the search's index as a *datum* and reading it back with
+     `Data.natOf`, so the encoding it prepends is `Data.normBin` of the witness; that trick
+     does not extend to a genuine `ℕ` argument.
 4. **O4.** The second-largest, and the only one where the paper's construction is followed
    closely; read `recursive.tex` `sec:halt` and nodes `1.6.1`, `1.6.5` again before starting.
 

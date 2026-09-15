@@ -65,15 +65,29 @@ what is open can be enumerated rather than searched for:
   the match itself is asked only of a verifier synchronous at `n`, a `GameData` describing a
   synchronous game by construction, with `tab_le` carrying the soundness branch instead.
 * **O3** (`sem`, `sem_closed`, `sem_spec`) — a program halting on `(x, n)` exactly off
-  `classB n`. Its shape is `Verifier.not_inClassB_iff`: a search for a run exceeding the
-  budget, or the `val*` half of `lem:value-lower-approx`
-  (`MIPRE.exists_semidecider_lt_quantumValue`) on the tabulation of O2.
+  `classB n`. Its shape is `Verifier.not_inClassB_iff`: a boundedness violation, or the
+  `val*` half of `lem:value-lower-approx` on a tabulation. Both disjuncts are proved
+  recursively enumerable in `Halting/Semidecider.lean`
+  (`Verifier.rePred_not_isBounded`, `MIPRE.rePred_lt_quantumValue_comp`), merged there by
+  dovetailing and turned into a program by `Cost.exists_semidecider_prod_nat`; what
+  `Halting.exists_sem_of_tab` still takes as hypotheses is a computable presentation of the
+  family `Vof` (`Verifier.ComputablyPresented`) and a computable tabulation, both of which
+  are O2's.
 * **O4** (`compr`, `compr_spec`) — the compressor: the decider that reads its description by
   bit queries, freezes the verifier at index `2n + 1` (`Verifier.freeze`), runs `Compress`,
   and its time accounting.
 
-Two of these are cheap once O2 exists (O3 is O2 plus a disjunction), and O2 and O4 are the
-substance; `planning/h4-assembly.md` has the order of work.
+O2 and O4 are the substance, and `planning/h4-assembly.md` has the order of work. O3 was
+recorded there as "O2 plus a disjunction"; it is not, and the reason is worth naming.
+`Halting.exists_sem_of_tab` needs the tabulation to have the value of `𝒱_n` at every
+`n`-bounded string, in both directions, because `sem_spec` is an equivalence — while
+`tab_match` gives that only where the verifier is also *synchronous* at `n`, a `GameData`
+describing a synchronous game by construction (see `tab_le`), and `classB n` does not ask
+for synchronicity. So the two fields as stated do not compose. Three repairs are on the
+record in blueprint `lem:halting-semidecider`: tabulate on a doubled question set so that
+the distribution avoids the diagonal, make `Decider.wrap` reject unequal answers to equal
+questions so that every string names a synchronous verifier, or put synchronicity into
+`classB` and pay for it in `compr_spec`. Which one is right is not O3's to decide.
 
 ## What this is not
 
@@ -174,7 +188,10 @@ structure Obligations (G : GapCompression) (U : UniversalMachine) where
   yNo : BitStr
   yNo_mem : ∀ n, n₀ ≤ n → yNo ∈ classB G U n
   /-- **O3.** A semidecider for the complement of `B`: a closed program halting on `(x, n)`
-  exactly when `x` is not in the class `B` at level `n` (`Verifier.not_inClassB_iff`). -/
+  exactly when `x` is not in the class `B` at level `n` (`Verifier.not_inClassB_iff`,
+  `Halting.exists_sem_of_tab`). Note that this field precedes `tab`, so `sem_spec` cannot
+  mention the tabulation; the tabulation enters through the theorem that inhabits the field,
+  not through its statement. -/
   sem : Prog
   sem_closed : sem.WellScoped 1
   sem_spec : ∀ (x : BitStr) (n : ℕ), Halts sem (encode (x, n)) ↔ x ∉ classB G U n
