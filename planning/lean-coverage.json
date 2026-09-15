@@ -1423,7 +1423,7 @@
   "MIPRE/Foundations/Halting/PolyBounded.lean": 28,
   "MIPRE/Foundations/Halting/Serial.lean": 26,
   "MIPRE/Foundations/Halting/Strings.lean": 16,
-  "MIPRE/Foundations/Halting/Tabulate.lean": 5,
+  "MIPRE/Foundations/Halting/Tabulate.lean": 15,
   "MIPRE/Foundations/Halting/Wrapper.lean": 29,
   "MIPRE/Foundations/Halting/WrapperCost.lean": 17,
   "MIPRE/Foundations/SyncTransport.lean": 4,
@@ -1480,6 +1480,8 @@
  "xref_counts": {
   "bibitems": 33,
   "cites": 153,
+  "commands_defined": 99,
+  "commands_used": 206,
   "labels": 222,
   "refs": 947
  }

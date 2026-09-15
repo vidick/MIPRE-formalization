@@ -53,13 +53,15 @@ what is open can be enumerated rather than searched for:
   verifier-level statements are `Verifier.inClassA_of_accepts_diagonal` and
   `inClassB_of_rejects_all`; what is owed is the wrapper's time bound, hence the two concrete
   decider programs realizing them.
-* **O2** (`tab`, `tab_computable`, `tab_value`) — the tabulation of `𝒱_n` as a game
-  description of the same value. The relabelings are `Verifier.answerEquiv` and
-  `questionEquiv` and the value agreement along them is
-  `Verifier.quantumValue_toGame_eq_valStar`; what is owed is the computation — the sampler
-  run over every point of `𝔽₂^{s(n)}` for the question weights, and the decider run under its
-  budget for the acceptance table. Note that `tab_value` holds only of an `n`-bounded
-  verifier, and cannot hold of every string: see the field's own docstring.
+* **O2** (`tab`, `tab_computable`, `tab_match`) — the tabulation of `𝒱_n` as a game
+  description matching it along relabelings of the two alphabets, which are
+  `Verifier.answerEquiv` and `questionEquiv`; `Obligations.tab_value` reads the equality of
+  values off it (`Verifier.quantumValue_toGame_eq_valStar`). What is owed is the computation —
+  the sampler run over every point of `𝔽₂^{s(n)}` for the question weights, and the decider run
+  under its budget for the acceptance table. Two features of the field's shape are deliberate
+  and both are explained in its own docstring: it holds only of an `n`-bounded verifier (and
+  cannot hold of every string), and it delivers the relabelings rather than only the value they
+  equate, because `synval ≤ val*` points the wrong way for item 1 of `thm:halting`.
 * **O3** (`sem`, `sem_closed`, `sem_spec`) — a program halting on `(x, n)` exactly off
   `classB n`. Its shape is `Verifier.not_inClassB_iff`: a search for a run exceeding the
   budget, or the `val*` half of `lem:value-lower-approx`
@@ -73,17 +75,23 @@ substance; `planning/h4-assembly.md` has the order of work.
 
 ## What this is not
 
-`halting_reduction` delivers blueprint `thm:halting` in `val*` form: the quantum value of the
-game is `1`, respectively at most `1/2`. The blueprint's item 1 says more — the witness is a
-value-`1` *PCC* strategy, so `synval = val* = 1` — and the headline
-`HaltingGameValue.halting_reduces_to_gameValue` is stated in `synval`. Two bridges are missing
-for that, neither of them part of this assembly: a synchronous strategy does not yet transport
-along a relabeling of the alphabets (`quantumValue_eq_of_equiv` has no synchronous
-counterpart), which is what would carry a perfect PCC strategy of `𝒱_n` to the tabulation, and
-`MIPRE.SyncStrategy` and `HaltingGameValue.SyncStrategy` are parallel developments with no
-lemma relating `MIPRE.syncValue` to `HaltingGameValue.gameValue`. The soundness half needs
-neither: `synval ≤ val*` (`MIPRE.syncValue_le_quantumValue`, blueprint `lem:sync-le-valstar`)
-is the right direction there.
+`halting_reduction` concludes in `val*`: the quantum value of the game is `1`, respectively at
+most `1/2`. The blueprint's item 1 says more — the witness is a value-`1` *PCC* strategy, so
+`synval = val* = 1` — and the headline `HaltingGameValue.halting_reduces_to_gameValue` is
+stated in `synval`. The two steps that carry the conclusion there are in Lean and neither is
+part of this assembly: a synchronous strategy transports along a relabeling of the alphabets
+(`MIPRE.syncValue_eq_of_equiv`), and `MIPRE.syncValue` and `HaltingGameValue.gameValue` are the
+same number on the same description (`HaltingGameValue.GameData.gameValue_eq_syncValue`).
+`MIPRE.Verifier.gameValue_toGame_eq_one` is the two composed, in `Foundations/SyncTransport.lean`.
+
+Both take the tabulation's agreement with `𝒱_n` as the *matching data* — the two alphabet
+equivalences with `hμ` and `hD` — rather than the equality of `val*` it implies, which is why
+`Obligations.tab_match` has the shape it has. The soundness half needs neither step, only
+`synval ≤ val*` (`MIPRE.syncValue_le_quantumValue`, blueprint `lem:sync-le-valstar`);
+`Verifier.gameValue_toGame_le_of_valStar_le` is it in that vocabulary.
+
+So what stands between `halting_reduction` and the headline is an inhabitant of `Obligations`
+and nothing else.
 -/
 
 namespace MIPRE.Halting
@@ -180,17 +188,39 @@ structure Obligations (G : GapCompression) (U : UniversalMachine) where
   tab : BitStr → ℕ → GameData
   /-- **O2.** The tabulation is computable. -/
   tab_computable : Computable fun p : BitStr × ℕ => tab p.1 p.2
-  /-- **O2.** The tabulation has the value it tabulates
-  (`Verifier.quantumValue_toGame_eq_valStar`), for an `n`-bounded verifier.
+  /-- **O2.** For an `n`-bounded verifier, the tabulation *matches* `𝒱_n`: there are
+  relabelings of the two alphabets along which its distribution and its decision predicate are
+  those of `𝒱_n`. `Obligations.tab_value` derives the equality of values from it
+  (`Verifier.quantumValue_toGame_eq_valStar`).
 
-  The hypothesis is not slack: without it the field is *unsatisfiable*. Whether the decider a
-  string denotes accepts a given tuple is `Σ₁`, so a computable `tab` correct at every string
-  would decide the halting problem — take two strings whose deciders differ only in how long
-  they run before accepting, and no fixed budget separates them. Boundedness is exactly what
-  turns acceptance into a decidable question, by supplying the budget. Both uses in
-  `halting_reduction` have it, membership in either class carrying `IsBounded n`. -/
-  tab_value : ∀ (x : BitStr) (n : ℕ), (Vof G U x).IsBounded n →
-    quantumValue (tab x n).game = (Vof G U x).valStar n (ansBound G x n)
+  Two things about the shape. The hypothesis is not slack: without it the field is
+  *unsatisfiable*, since whether the decider a string denotes accepts a given tuple is `Σ₁`, so
+  a computable `tab` correct at every string would decide the halting problem — take two
+  strings whose deciders differ only in how long they run before accepting, and no fixed budget
+  separates them. Boundedness is what turns acceptance into a decidable question, by supplying
+  the budget; both uses in `halting_reduction` have it, membership in either class carrying
+  `IsBounded n`.
+
+  And the *matching data* is what is required, not merely the equality of values it implies.
+  `thm:halting` item 1 claims a value-`1` PCC strategy, so `synval = 1` and not only
+  `val* = 1`, and `synval ≤ val*` points the wrong way: from an equality of `val*` alone a
+  perfect PCC strategy of `𝒱_n` cannot be pushed onto the tabulation. The relabelings can carry
+  it (`MIPRE.Verifier.exists_perfectPCC_syncGame`), and O2 has them in hand anyway, building
+  `tab` from `Verifier.answerEquiv` and `questionEquiv`. -/
+  tab_match : ∀ (x : BitStr) (n : ℕ), (Vof G U x).IsBounded n →
+    ∃ (eX : Fin ((tab x n).nX + 1) ≃ (Vof G U x).Questions n)
+      (eA : Fin ((tab x n).nA + 1) ≃ Verifier.Answers (ansBound G x n)),
+      (∀ i j, (tab x n).game.μ i j = (Vof G U x).sampler.dist n (eX i) (eX j)) ∧
+      (∀ i j k l, (tab x n).game.D i j k l =
+        ((Vof G U x).game n (ansBound G x n)).D (eX i) (eX j) (eA k) (eA l))
+
+/-- The equality of values the matching data implies: the tabulated game has the value it
+tabulates. -/
+theorem Obligations.tab_value {G : GapCompression} {U : UniversalMachine} (O : Obligations G U)
+    (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n) :
+    quantumValue (O.tab x n).game = (Vof G U x).valStar n (ansBound G x n) := by
+  obtain ⟨eX, eA, hμ, hD⟩ := O.tab_match x n hb
+  exact Verifier.quantumValue_toGame_eq_valStar _ _ _ _ eX eA hμ hD
 
 /-! ## The reduction -/
 

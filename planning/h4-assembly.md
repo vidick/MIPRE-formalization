@@ -102,7 +102,7 @@ respectively a value-`1` PCC strategy or `val* <= 1/2` at index `n`.
 | | Obligation | What it needs |
 |---|---|---|
 | ~~**O1**~~ | *Done 2026-09-15.* `yYes_mem`, `yNo_mem` in `Halting/Strings.lean`, on the wrapper's time bound in `WrapperCost.lean` and the `IsBounded` plumbing in `Bounded.lean` | — |
-| **O2** | `tab`, `tab_computable`, `tab_value`: the `n`-th game of a string's verifier as a computable game description with the same value | bounded evaluation of ambient programs, proved `Computable`; the question weights by running the sampler over `F_2^{s(n)}`; the acceptance table under the budget |
+| **O2** | `tab`, `tab_computable`, `tab_match`: the `n`-th game of a string's verifier as a computable game description matching it along both alphabets | bounded evaluation of ambient programs, proved `Computable` (done, `Cost/BoundedEval.lean`); the question weights by running the sampler over `F_2^{s(n)}`; the acceptance table under the budget (decidable, done) |
 | **O3** | `sem_spec`: a program halting on `(x, n)` exactly when `x ∉ classB n` | O2, plus the two `Σ₁` disjuncts of `Verifier.not_inClassB_iff` merged |
 | **O4** | `compr_spec`: the compressor preserves the classes across levels | the decider that reads its description by bit queries, freezes at `2n+1`, runs `Compress`, and its time accounting |
 
@@ -156,17 +156,19 @@ found in the writing, all of them cheaper than the entry above expected.
   the same hypotheses give the soundness half in `HaltingGameValue.gameValue`
   (`gameValue_toGame_le_of_valStar_le`).
 
-**One seam the bridges do not close, and it is O2's.** `Obligations.tab_value` concludes
+**A seam the bridges found in O2, since closed.** `Obligations.tab_value` concluded
 `quantumValue (tab x n).game = (Vof G U x).valStar n (ansBound G x n)` — an equality of `val*`
-and nothing more. (#65 has since added an `IsBounded n` hypothesis to it, for an unrelated
-reason: without one the field is unsatisfiable. That does not touch the point here.) Both consumers here need the *matching data* instead: the two equivalences of
-the alphabets and `hμ`, `hD` along them. From `tab_value` alone the synchronous half is not
-recoverable, `synval ≤ val*` pointing the wrong way, so a value-`1` PCC strategy of `𝒱_n` cannot
-be pushed onto the tabulation. This is not a gap in the bridges and costs nothing to repair:
-O2 builds `tab` from `Verifier.answerEquiv` and `questionEquiv`, so the matching data is exactly
-what it has in hand, and the field should be stated in that form (or carry a second clause in
-`syncValue`) when O2 is written. Recorded here because `Instantiation.lean` is where the change
-goes and this branch does not touch it. With that done, `thm:main` waits on O1–O4 alone.
+and nothing more. Both consumers of the bridges need the *matching data* instead: the two
+equivalences of the alphabets and `hμ`, `hD` along them. From the equality alone the
+synchronous half is not recoverable, `synval ≤ val*` pointing the wrong way, so a value-`1` PCC
+strategy of `𝒱_n` cannot be pushed onto the tabulation. It cost nothing to repair, O2 building
+`tab` from `Verifier.answerEquiv` and `questionEquiv` and so having the matching data in hand:
+the field is now `tab_match` and delivers it, with `Obligations.tab_value` a derived lemma
+(#68). `thm:main` waits on O1–O4 alone.
+
+Worth keeping as an instance of the rule in §1: a hypothesis structure is only as good as its
+consumers, and this one had two — the assembly and the bridges — that wanted different things
+from the same field. Neither would have noticed alone.
 
 ## 4. Order of work
 
@@ -176,7 +178,7 @@ goes and this branch does not touch it. With that done, `thm:main` waits on O1�
    unchanged. The small-parameter corner the ledger flags did not bite either: `|𝒱| ≤ λ` is
    free, a verifier's size being a constant, and the rest is what the threshold `n₀` absorbs.
 2. **O2.** The largest piece, and needed twice (by O3 and by the assembly). Write the
-   consumer first: state `tab_value` and build the tabulation against it.
+   consumer first: state `tab_match` and build the tabulation against it.
 3. **O3.** Short once O2 is done.
 4. **O4.** The second-largest, and the only one where the paper's construction is followed
    closely; read `recursive.tex` `sec:halt` and nodes `1.6.1`, `1.6.5` again before starting.
