@@ -158,9 +158,15 @@ Two things to know about reading it:
   runs both before the Lean build. Tags and `\uses` lists wrap across lines here, so
   never check them with a per-line grep: that silently skips the continuations.
 - **`\leanok` is two marks, not one**: inside the environment it claims the
-  *statement* is formalized, inside `\begin{proof}` that the *proof* is. Only ever
-  add the second after `#print axioms` shows the declaration free of `sorryAx`;
-  `planning/lean-coverage.md` records the audit that established the current state.
+  *statement* is formalized, inside `\begin{proof}` that the *proof* is. The second is now
+  mechanical: every declaration under a proof-level `\leanok` must be named in an axiom-guard
+  file — `MIPRE/Axioms.lean` for this project's own results, the three
+  `MIPRE/Background/*/Axioms.lean` for the vendored ones — and `scripts/lean-coverage.py`
+  fails if the two sets differ in either direction. So add the mark and the guard together;
+  the guard is what makes the claim true, and `#guard_sorry_free` fails the build if the
+  declaration depends on `sorryAx`. `planning/lean-coverage.md` records the hand audit this
+  replaces, which was exact when written and had drifted 45 modules by the time it was
+  mechanised.
 - **`intentions / lifecycle`** was red on every PR for a long time, because its project-board
   token was rejected repository-wide — not a PR's fault, and not fixable from a PR. It passed
   on PR #39 on 2026-09-13, so the token may have been rotated. Read the run before concluding

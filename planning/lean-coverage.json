@@ -1353,6 +1353,7 @@
  },
  "lean_tags": 72,
  "module_sizes": {
+  "MIPRE/Axioms.lean": 0,
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
   "MIPRE/Background/LIDT/Axioms.lean": 0,
   "MIPRE/Background/LIDT/Bridge/Consistency.lean": 1,
@@ -1416,14 +1417,14 @@
   "MIPRE/Foundations/Halting/Bounded.lean": 9,
   "MIPRE/Foundations/Halting/Classes.lean": 10,
   "MIPRE/Foundations/Halting/Descriptions.lean": 34,
-  "MIPRE/Foundations/Halting/Enumerate.lean": 19,
+  "MIPRE/Foundations/Halting/Enumerate.lean": 20,
   "MIPRE/Foundations/Halting/Freeze.lean": 28,
   "MIPRE/Foundations/Halting/Instantiation.lean": 15,
   "MIPRE/Foundations/Halting/Lists.lean": 42,
   "MIPRE/Foundations/Halting/PolyBounded.lean": 28,
   "MIPRE/Foundations/Halting/Serial.lean": 26,
   "MIPRE/Foundations/Halting/Strings.lean": 16,
-  "MIPRE/Foundations/Halting/Tabulate.lean": 15,
+  "MIPRE/Foundations/Halting/Tabulate.lean": 26,
   "MIPRE/Foundations/Halting/Wrapper.lean": 29,
   "MIPRE/Foundations/Halting/WrapperCost.lean": 17,
   "MIPRE/Foundations/SyncTransport.lean": 4,
@@ -1483,6 +1484,8 @@
   "commands_defined": 99,
   "commands_used": 206,
   "labels": 222,
-  "refs": 947
+  "leanok_claimed": 98,
+  "leanok_guarded": 98,
+  "refs": 948
  }
 }
