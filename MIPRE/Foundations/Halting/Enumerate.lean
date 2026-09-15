@@ -146,6 +146,32 @@ def questionEquiv (s : ℕ) : Fin (2 ^ s) ≃ (Fin s → CL.𝔽₂) :=
 
 open HaltingGameValue (GameData)
 
+/-- **A game description can match `𝒱_n` only if `𝒱_n` is synchronous.** `GameData.game`
+rejects unequal answers at equal questions by construction (`GameData.game_D`), whatever the
+acceptance table holds, while `Verifier.game` accepts exactly what the decider accepts. So the
+`hD` of `quantumValue_toGame_eq_valStar` below forces the decider to reject those tuples --- for
+every question and every pair of in-range answers.
+
+This is why `MIPRE.Halting.Obligations.tab_match` carries `IsSynchronousAt n` and why the
+soundness half was split off into `tab_le`, which needs no such hypothesis. `IsBounded n` does
+not supply synchronicity: the wrapper of `Decider.wrap` enforces `accepts_length` and nothing
+else. The split itself was made in #72; what is added here is the *check* --- the entailment
+was explained in that commit message but nothing in the build held it, so an edit could
+reintroduce the unsatisfiable shape silently. With this lemma, dropping the hypothesis is a
+build failure. -/
+theorem isSynchronousAt_of_game_matches {ℓ : ℕ} (V : Verifier ℓ) (n T : ℕ) (g : GameData)
+    (eX : Fin (g.nX + 1) ≃ V.Questions n) (eA : Fin (g.nA + 1) ≃ Answers T)
+    (hD : ∀ i j k l, g.game.D i j k l = (V.game n T).D (eX i) (eX j) (eA k) (eA l))
+    (q : V.Questions n) (a b : Answers T) (hab : a ≠ b) :
+    ¬ V.decider.Accepts n (CL.toBits q) (CL.toBits q) a.1 b.1 := by
+  have h := hD (eX.symm q) (eX.symm q) (eA.symm a) (eA.symm b)
+  rw [GameData.game_D] at h
+  simp only [Equiv.apply_symm_apply] at h
+  have hne : eA.symm a ≠ eA.symm b := fun hc => hab (by simpa using congrArg eA hc)
+  rw [if_pos ⟨trivial, hne⟩] at h
+  have hfalse : (V.game n T).D q q a b = false := h.symm
+  simpa [Verifier.game] using hfalse
+
 /-- **The bridge to game descriptions.** A game description whose question distribution and
 decision predicate match those of `𝒱_n` along the two indexings has the same quantum value.
 The semidecision procedure of `lem:value-lower-approx` runs on game descriptions, and this is

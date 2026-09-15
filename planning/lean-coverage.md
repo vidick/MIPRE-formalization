@@ -1,5 +1,16 @@
 # What the blueprint accounts for, and what it does not
 
+> **Superseded in part, 2026-09-15.** The `#print axioms` audit at the end of this file — the
+> evidence behind every proof-level `\leanok` — is now performed by the build instead of by
+> hand. `MIPRE/Axioms.lean` asserts each of this project's own claims sorry-free with
+> `#guard_sorry_free`, the three `MIPRE/Background/*/Axioms.lean` do the same for the vendored
+> results, and `scripts/lean-coverage.py` fails when the set of guarded names and the set of
+> proof-level `\leanok` declarations differ in either direction. All 98 were verified clean at
+> the time of the change, so the audit below was still *true*; it had simply stopped being
+> *checked*, having been written against 80 modules and 1502 declarations when the tree had
+> reached 122 and 2467. Read the rest of this file for what the blueprint names; do not read
+> its axiom table as current.
+
 Written for the chapter-by-chapter restructuring along the vibefeld ledger
 (`planning/ledger-informed-plan.md`). The purpose is narrow: before any chapter is
 rearranged, there should be a record of which Lean declarations the blueprint actually
