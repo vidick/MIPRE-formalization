@@ -31,11 +31,11 @@ for `1 ≤ j ≤ ℓ`, `z, y` of length `s(n)`, and — for the last two — `u`
 `L^w_{< j}`, exactly as the paper quantifies (`CLFun.SupportedOn.factorOfPrefix_eval` is what
 makes the answers well defined there). The sampler must moreover halt on *every* input of the
 form `(n, …)`; the paper's bounded format checks are what make its running time on index `n`,
-the supremum over all such inputs, finite. `Sampler.TimeBoundAt n T` is that supremum bounded
-by `T`, read as halting within cost `T · (|d| + 1)` on every input `(n, d)`: the ambient model
-has no cursor into its input, and a bound uniform over all inputs is not satisfiable by any
-program that walks a list of unbounded length (see the module docstring of
-`MIPRE.Foundations.Verifier`).
+the supremum over all such inputs, finite. `Sampler.TimeBoundAt n T k` is that supremum
+bounded by `T`, read as halting within cost `T · (|d| + 1)^k` on every input `(n, d)`: the
+ambient model has no cursor into its input, and a bound uniform over all inputs is not
+satisfiable by any program that walks a list of unbounded length (see the module docstring of
+`MIPRE.Foundations.Verifier`, which also says why the degree `k` is needed).
 Vectors and register subspaces of `𝔽₂^s` travel as bit strings of length `s` (`toBits`,
 `ofBits`, `indicatorBits`); the paper's binary representation over `𝔽_{2^k}` through a
 self-dual basis is not needed at field size `2`.
@@ -213,14 +213,20 @@ namespace Sampler
 
 variable {ℓ : ℕ} (S : Sampler ℓ)
 
-/-- `TIME_𝒮(n) ≤ T`: the sampler halts within cost `T · (|d| + 1)` on every input `(n, d)`,
-well formed or not — the supremum of `def:sampler` at index `n`, bounded up to the cost of
-reading the input. -/
-def TimeBoundAt (n T : ℕ) : Prop :=
-  ∀ d : Data, HaltsWithin S.prog (.cons (encode n) d) (T * (d.size + 1))
+/-- `TIME_𝒮(n) ≤ T`: the sampler halts within cost `T · (|d| + 1)^k` on every input `(n, d)`,
+well formed or not — the supremum of `def:sampler` at index `n`, bounded by a polynomial in
+the size of the input with coefficient `T` and degree `k`. -/
+def TimeBoundAt (n T k : ℕ) : Prop :=
+  ∀ d : Data, HaltsWithin S.prog (.cons (encode n) d) (T * (d.size + 1) ^ k)
 
-/-- `TIME_𝒮(n) ≤ T n` for every `n`. -/
-def TimeBound (T : ℕ → ℕ) : Prop := ∀ n, S.TimeBoundAt n (T n)
+/-- `TIME_𝒮(n) ≤ T n` for every `n`, at degree `k`. -/
+def TimeBound (T : ℕ → ℕ) (k : ℕ) : Prop := ∀ n, S.TimeBoundAt n (T n) k
+
+/-- The bound is monotone in both parameters. -/
+theorem TimeBoundAt.mono {ℓ : ℕ} {S : Sampler ℓ} {n T k T' k' : ℕ} (h : S.TimeBoundAt n T k)
+    (hT : T ≤ T') (hk : k ≤ k') : S.TimeBoundAt n T' k' := fun d =>
+  let ⟨r, t, ht, hrun⟩ := h d
+  ⟨r, t, ht.trans (Nat.mul_le_mul hT (Nat.pow_le_pow_right (by omega) hk)), hrun⟩
 
 /-- The description length `|𝒮|` of the sampler. -/
 def size : ℕ := esize S.prog

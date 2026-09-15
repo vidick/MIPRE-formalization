@@ -1202,7 +1202,7 @@
   "MIPRE/Foundations/CL/Closure.lean": 18,
   "MIPRE/Foundations/CL/Downsize.lean": 45,
   "MIPRE/Foundations/CL/Register.lean": 42,
-  "MIPRE/Foundations/CL/Sampler.lean": 22,
+  "MIPRE/Foundations/CL/Sampler.lean": 23,
   "MIPRE/Foundations/ClassMIPStar.lean": 8,
   "MIPRE/Foundations/CommutingOperator.lean": 4,
   "MIPRE/Foundations/Compression.lean": 20,
@@ -1238,11 +1238,11 @@
   "MIPRE/Foundations/Halting/Classes.lean": 10,
   "MIPRE/Foundations/Halting/Descriptions.lean": 32,
   "MIPRE/Foundations/Halting/Enumerate.lean": 19,
-  "MIPRE/Foundations/Halting/Freeze.lean": 29,
+  "MIPRE/Foundations/Halting/Freeze.lean": 28,
   "MIPRE/Foundations/Halting/Lists.lean": 42,
-  "MIPRE/Foundations/Halting/PolyBounded.lean": 17,
+  "MIPRE/Foundations/Halting/PolyBounded.lean": 27,
   "MIPRE/Foundations/Halting/Serial.lean": 26,
-  "MIPRE/Foundations/Halting/Wrapper.lean": 27,
+  "MIPRE/Foundations/Halting/Wrapper.lean": 29,
   "MIPRE/Foundations/ValueApprox.lean": 8,
   "MIPRE/Foundations/ValueApprox/Cayley.lean": 16,
   "MIPRE/Foundations/ValueApprox/Dense.lean": 2,
@@ -1256,7 +1256,7 @@
   "MIPRE/Foundations/ValueApprox/RawSemantics.lean": 27,
   "MIPRE/Foundations/ValueApprox/RawStrategy.lean": 31,
   "MIPRE/Foundations/ValueApprox/Strategy.lean": 20,
-  "MIPRE/Foundations/Verifier.lean": 16,
+  "MIPRE/Foundations/Verifier.lean": 17,
   "MIPRE/Foundations/VerifierValue.lean": 12,
   "MIPRE/HaltingGameValue.lean": 12,
   "MIPRE/LCS/Basic.lean": 5,
@@ -1297,6 +1297,6 @@
   "bibitems": 32,
   "cites": 150,
   "labels": 200,
-  "refs": 839
+  "refs": 840
  }
 }

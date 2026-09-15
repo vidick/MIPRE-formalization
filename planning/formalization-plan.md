@@ -142,6 +142,19 @@ concatenation, downsizing — are proved, and `def:normal-verifier` can be state
 place where the paper's interface had to be made precise to be formalizable. The campaign
 has offered CL closure lemmas (referee report, R9) — ask for them before proving them.
 
+**Repair 2026-09-15 (found from H4, part 3b-iii).** The reading below was still too tight.
+`Decider.TimeBoundAt n T` bounded the cost by `T · (|input| + 1)`, linear in the input size;
+but every decider of the pipeline runs another program through the universal machine, whose
+overhead polynomial has degree well above one, so a simulated run costing `T · (s + 1)`
+becomes one costing about `Q(T · (s + 1))`, of degree `deg Q` in `s`. No fixed degree is
+closed under that composition. `TimeBoundAt n T k` now bounds the cost by `T · (s + 1) ^ k`,
+and `IsBounded λ` takes coefficient `n ^ λ` and degree `λ`, so that `λ` bounds both and the
+condition stays a polynomial-time one. (Collapsing the two parameters into `T · (s + 1) ^ T`
+would also compose, but would let `λ`-boundedness allow degree `n ^ λ` in the input size,
+making `thm:compression` an assumption about verifiers its proof cannot compress.)
+`GapCompression` gains a `deg` field. Found while writing the wrapper's own time bound, which
+is the first place a concrete decider's cost had to be produced rather than assumed.
+
 **Repair 2026-09-14 (found from H4).** `Decider.TimeBoundAt` and `Sampler.TimeBoundAt` were
 stated as the paper's supremum over all inputs: halting within cost `T` on every input of
 index `n`. In the ambient model that is unsatisfiable by any decider that checks

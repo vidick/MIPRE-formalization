@@ -16,11 +16,12 @@ of games: a sampler (`MIPRE.CL.Sampler`), which produces the questions, and a de
 checks the answers, both programs of the ambient cost model (`MIPRE.Cost`).
 
 * `MIPRE.Decider`: a program whose one input is `encode (n, x, y, a, b)`; it *accepts* when it
-  halts with output `1` (`Decider.Accepts`), and rejects otherwise. `Decider.TimeBoundAt n T`
-  is `TIME_𝒟(n) ≤ T`, read as halting within cost `T · (|d| + 1)` on every input `(n, d)`,
-  well formed or not: the paper's bound is uniform over all inputs, which the ambient model
-  cannot achieve (see below), so the running time is bounded up to the cost of reading the
-  input.
+  halts with output `1` (`Decider.Accepts`), and rejects otherwise.
+  `Decider.TimeBoundAt n T k` is `TIME_𝒟(n) ≤ T`, read as halting within cost
+  `T · (|d| + 1)^k` on every input `(n, d)`, well formed or not: the paper's bound is uniform
+  over all inputs, which the ambient model cannot achieve (see below), so the running time is
+  bounded by a polynomial in the size of the input whose coefficient is `T` and whose degree
+  is `k`.
 * `MIPRE.Verifier ℓ`: a sampler and a decider, with the paper's requirement that the decider
   accept only questions of the sampler's dimension `s(n)` (it "first checks
   `|x| = |y| = s(n)`", `Verifier.accepts_length`).
@@ -32,30 +33,39 @@ checks the answers, both programs of the ambient cost model (`MIPRE.Cost`).
   undefined) to every definition. `Verifier.syncGame` is the same game as a
   `SynchronousGame`, under the condition on the decider that makes it one
   (`Verifier.IsSynchronousAt`).
-* `Verifier.IsBounded λ`: `def:lambda-bounded`, `TIME_𝒮(n), TIME_𝒟(n) ≤ n^λ` and `s(n) ≤ n^λ`
-  for `n ≥ 2`, and `|𝒱| ≤ λ`.
+* `Verifier.IsBounded λ`: `def:lambda-bounded`, `TIME_𝒮(n), TIME_𝒟(n) ≤ n^λ` with degree `λ`
+  in the input size, and `s(n) ≤ n^λ`, for `n ≥ 2`, and `|𝒱| ≤ λ`.
 
 Timeouts are not modelled: in the ambient cost model a decider with `TIME_𝒟(n) < ∞` halts on
 every input of index `n`, and the paper's convention that a timeout is a rejection is the
 convention that anything but halting with output `1` is.
 
-## Why the time bound scales with the input
+## Why the time bound is a polynomial in the input size
 
 The paper's `TIME_𝒟(n)` is the maximum of the running time over *all* inputs of index `n`,
 finite because a Turing machine can stop reading after a bounded prefix. The ambient model
 has no cursor into its input: a value is inspected in place by `elim`, one node per step, but
 a loop can carry the rest of a list from one iteration to the next only by copying it
-(`Eval.var` costs the size of the value), so walking `k` cells of a list of size `s` costs
-about `k · s`, and no program can check `|x| = s(n)` for unbounded `s(n)` within a cost
+(`Eval.var` costs the size of the value), so walking `j` cells of a list of size `s` costs
+about `j · s`, and no program can check `|x| = s(n)` for unbounded `s(n)` within a cost
 independent of `|x|`. A bound uniform over all inputs is therefore satisfiable only by
 deciders that never look past a fixed depth of their input — none that satisfies
-`Verifier.accepts_length` with `s(n) → ∞`. The reading `T · (|d| + 1)` is the one the model
-supports: `T` for the work at index `n`, times the cost of reading the input. On well-formed
-inputs of the game, whose size is bounded by the answer-length bound, it is a polynomial
-bound in `T`, which is all the pipeline uses; and a decider that performs the paper's format
-checks first (walking at most `s(n)` cells of each question and `T` cells of each answer
-before doing anything else) meets it. The consequence `s(n) ≤ TIME_𝒮(n)` of the paper, which
-depended on the uniform bound, is put into `IsBounded` as a clause.
+`Verifier.accepts_length` with `s(n) → ∞`.
+
+The degree `k` is needed as well as the coefficient `T`, and this is forced by the one thing
+every decider of the pipeline does: run another program through the universal machine. The
+overhead of `MIPRE.Cost.UniversalMachine` is a polynomial `Q` in `|c| + |v| + t`, of degree
+well above one (`Cost.Universal.univPoly`), so a simulated run costing `T · (|d| + 1)^k`
+becomes one costing about `Q(T · (|d| + 1)^k)`, of degree `k · deg Q` in the input size. No
+fixed degree is closed under the composition the deciders perform; a *bounded* degree is, and
+`k` is that bound. Taking one parameter for both — `T · (|d| + 1)^T` — would be closed too,
+but then `λ`-boundedness would read as degree `n^λ` in the input size, which is not a
+polynomial-time condition at all and would make `MIPRE.GapCompression` assume compression of
+verifiers the paper's proof cannot compress.
+
+So `TimeBoundAt n T k` is "cost at most `T · (|d| + 1)^k`", and `λ`-boundedness bounds both
+parameters by `λ`'s: coefficient `n^λ`, degree `λ`. The consequence `s(n) ≤ TIME_𝒮(n)` of the
+paper, which depended on the uniform bound, is put into `IsBounded` as a clause.
 -/
 
 namespace MIPRE
@@ -81,14 +91,20 @@ output `0`, or not halting — is rejection. -/
 def Accepts (n : ℕ) (x y a b : BitStr) : Prop :=
   ∃ t, D.prog.Runs (encode (n, x, y, a, b)) (encode true) t
 
-/-- `TIME_𝒟(n) ≤ T`: the decider halts within cost `T · (|d| + 1)` on every input `(n, d)`,
-well formed or not — the paper's bound up to the cost of reading the input (see the module
-docstring). -/
-def TimeBoundAt (n T : ℕ) : Prop :=
-  ∀ d : Data, HaltsWithin D.prog (.cons (encode n) d) (T * (d.size + 1))
+/-- `TIME_𝒟(n) ≤ T`: the decider halts within cost `T · (|d| + 1)^k` on every input `(n, d)`,
+well formed or not — the paper's bound, read as a polynomial in the size of the input with
+coefficient `T` and degree `k` (see the module docstring). -/
+def TimeBoundAt (n T k : ℕ) : Prop :=
+  ∀ d : Data, HaltsWithin D.prog (.cons (encode n) d) (T * (d.size + 1) ^ k)
 
-/-- `TIME_𝒟(n) ≤ T n` for every `n`. -/
-def TimeBound (T : ℕ → ℕ) : Prop := ∀ n, D.TimeBoundAt n (T n)
+/-- `TIME_𝒟(n) ≤ T n` for every `n`, at degree `k`. -/
+def TimeBound (T : ℕ → ℕ) (k : ℕ) : Prop := ∀ n, D.TimeBoundAt n (T n) k
+
+/-- The bound is monotone in both parameters. -/
+theorem TimeBoundAt.mono {D : Decider} {n T k T' k' : ℕ} (h : D.TimeBoundAt n T k)
+    (hT : T ≤ T') (hk : k ≤ k') : D.TimeBoundAt n T' k' := fun d =>
+  let ⟨r, t, ht, hrun⟩ := h d
+  ⟨r, t, ht.trans (Nat.mul_le_mul hT (Nat.pow_le_pow_right (by omega) hk)), hrun⟩
 
 /-- The description length `|𝒟|`. -/
 def size : ℕ := esize D.prog
@@ -181,13 +197,14 @@ noncomputable def syncGame (n T : ℕ) (h : V.IsSynchronousAt n) :
 theorem syncGame_toGame (n T : ℕ) (h : V.IsSynchronousAt n) :
     (V.syncGame n T h).toGame = V.game n T := rfl
 
-/-- `def:lambda-bounded`: `TIME_𝒮(n), TIME_𝒟(n) ≤ n^λ` and `s(n) ≤ n^λ` for all `n ≥ 2`, and
-`|𝒱| ≤ λ`. The clause `s(n) ≤ n^λ` is, in the paper, a consequence of the time bound (the
-sampler writes `s(n)` output cells); with the running time bounded up to the cost of reading
-the input (`TimeBoundAt`) it is not, and it is required directly. -/
+/-- `def:lambda-bounded`: `TIME_𝒮(n), TIME_𝒟(n) ≤ n^λ` — at degree `λ` in the size of the
+input (`TimeBoundAt`) — and `s(n) ≤ n^λ`, for all `n ≥ 2`, and `|𝒱| ≤ λ`. The clause
+`s(n) ≤ n^λ` is, in the paper, a consequence of the time bound (the sampler writes `s(n)`
+output cells); with the running time bounded by a polynomial in the input size it is not, and
+it is required directly. -/
 def IsBounded (lam : ℕ) : Prop :=
   (∀ n, 2 ≤ n → V.sampler.dim n ≤ n ^ lam ∧
-    V.sampler.TimeBoundAt n (n ^ lam) ∧ V.decider.TimeBoundAt n (n ^ lam)) ∧
+    V.sampler.TimeBoundAt n (n ^ lam) lam ∧ V.decider.TimeBoundAt n (n ^ lam) lam) ∧
     V.size ≤ lam
 
 end Verifier

@@ -20,7 +20,14 @@ bounds be composed without ever writing the polynomial down:
 * `PolyBounded.comp`: a polynomially bounded function of a polynomially bounded function;
 * `PolyBounded.eval`: a fixed polynomial evaluated at a polynomially bounded argument;
 * `PolyBounded.mono`: domination by a polynomially bounded function;
-* `PolyBounded.exists_le_two_pow`: the threshold, `f n ≤ 2 ^ n` for all `n` above some `n₀`.
+* `PolyBounded.exists_le_two_pow`: the threshold, `f n ≤ 2 ^ n` for all `n` above some `n₀`;
+  `PolyBounded.exists_le_pow`: a single `λ` with `f n ≤ n ^ λ` for *every* `n ≥ 2`, which is the
+  shape `Verifier.IsBounded` asks for.
+
+`PolyCost` and `HasPolyCost` are the same notion for the cost of a program at index `n` on an
+input `d`: bounded by `C n · (|d| + 1) ^ k` with `C` polynomially bounded and `k` constant —
+exactly what `Decider.TimeBoundAt` asks for, and what the stages of a decider's run compose
+into (`PolyCost.add`, `mul`, `poly`, the last being the universal machine's overhead).
 
 The polynomial of a `PolyBounded` function can be extracted (`PolyBounded.choose`) where an
 explicit `Polynomial ℕ` is required, as in the `timeBound` field of `PolyTimeFun`.
@@ -100,10 +107,108 @@ theorem exists_le_two_pow {f : ℕ → ℕ} (hf : PolyBounded f) : ∃ n₀, ∀
   have h2 : A * n ^ D ≤ 2 ^ n := mul_pow_le_two_pow A D n (by omega)
   exact (hP n).trans (h1.trans h2)
 
+/-- **A single exponent for every index.** A polynomially bounded function is below `n ^ λ` for
+one `λ` and *all* `n ≥ 2` — the form `Verifier.IsBounded` asks for. -/
+theorem exists_le_pow {f : ℕ → ℕ} (hf : PolyBounded f) : ∃ lam, ∀ n, 2 ≤ n → f n ≤ n ^ lam := by
+  obtain ⟨P, hP⟩ := hf
+  set A := ∑ i ∈ Finset.range (P.natDegree + 1), P.coeff i with hA
+  set D := P.natDegree with hD
+  refine ⟨D + A, fun n hn => ?_⟩
+  have h1 : P.eval n ≤ A * n ^ D := polynomial_eval_le_sum_coeff_mul_pow P (by omega)
+  have h2 : A ≤ 2 ^ A := Nat.le_of_lt Nat.lt_two_pow_self
+  have h3 : (2 : ℕ) ^ A ≤ n ^ A := Nat.pow_le_pow_left hn A
+  calc f n ≤ A * n ^ D := (hP n).trans h1
+    _ ≤ n ^ A * n ^ D := Nat.mul_le_mul_right _ (h2.trans h3)
+    _ = n ^ (D + A) := by rw [← pow_add, Nat.add_comm]
+
 end PolyBounded
 
 /-- The size of the binary encoding of `n` is polynomially bounded. -/
 theorem polyBounded_esize_nat : PolyBounded fun n => esize n :=
   ((PolyBounded.size.const_mul 4).add_const 1).mono fun n => esize_nat_le n
+
+/-! ## Costs, polynomially bounded in the index and in the input -/
+
+/-- A cost function of an index and an input, bounded by `C n · (|d| + 1) ^ k` with `C`
+polynomially bounded and `k` constant. -/
+def PolyCost (f : ℕ → Data → ℕ) : Prop :=
+  ∃ (C : ℕ → ℕ) (k : ℕ), PolyBounded C ∧ ∀ n d, f n d ≤ C n * (d.size + 1) ^ k
+
+namespace PolyCost
+
+theorem mono {f g : ℕ → Data → ℕ} (hg : PolyCost g) (h : ∀ n d, f n d ≤ g n d) : PolyCost f :=
+  let ⟨C, k, hC, hb⟩ := hg
+  ⟨C, k, hC, fun n d => (h n d).trans (hb n d)⟩
+
+theorem const (c : ℕ) : PolyCost fun _ _ => c :=
+  ⟨fun _ => c, 0, PolyBounded.const c, fun _ d => by simp⟩
+
+theorem ofIndex {g : ℕ → ℕ} (hg : PolyBounded g) : PolyCost fun n _ => g n :=
+  ⟨g, 0, hg, fun _ d => by simp⟩
+
+theorem size : PolyCost fun _ d => d.size :=
+  ⟨fun _ => 1, 1, PolyBounded.const 1, fun _ d => by simp⟩
+
+theorem add {f g : ℕ → Data → ℕ} (hf : PolyCost f) (hg : PolyCost g) :
+    PolyCost fun n d => f n d + g n d := by
+  obtain ⟨C₁, k₁, hC₁, hb₁⟩ := hf
+  obtain ⟨C₂, k₂, hC₂, hb₂⟩ := hg
+  refine ⟨fun n => C₁ n + C₂ n, max k₁ k₂, hC₁.add hC₂, fun n d => ?_⟩
+  show f n d + g n d ≤ (C₁ n + C₂ n) * (d.size + 1) ^ max k₁ k₂
+  have e₁ : (d.size + 1) ^ k₁ ≤ (d.size + 1) ^ max k₁ k₂ :=
+    Nat.pow_le_pow_right (by omega) (le_max_left _ _)
+  have e₂ : (d.size + 1) ^ k₂ ≤ (d.size + 1) ^ max k₁ k₂ :=
+    Nat.pow_le_pow_right (by omega) (le_max_right _ _)
+  have b₁ := hb₁ n d
+  have b₂ := hb₂ n d
+  have m₁ : C₁ n * (d.size + 1) ^ k₁ ≤ C₁ n * (d.size + 1) ^ max k₁ k₂ :=
+    Nat.mul_le_mul_left _ e₁
+  have m₂ : C₂ n * (d.size + 1) ^ k₂ ≤ C₂ n * (d.size + 1) ^ max k₁ k₂ :=
+    Nat.mul_le_mul_left _ e₂
+  have hsum : (C₁ n + C₂ n) * (d.size + 1) ^ max k₁ k₂ =
+      C₁ n * (d.size + 1) ^ max k₁ k₂ + C₂ n * (d.size + 1) ^ max k₁ k₂ := by ring
+  omega
+
+theorem mul {f g : ℕ → Data → ℕ} (hf : PolyCost f) (hg : PolyCost g) :
+    PolyCost fun n d => f n d * g n d := by
+  obtain ⟨C₁, k₁, hC₁, hb₁⟩ := hf
+  obtain ⟨C₂, k₂, hC₂, hb₂⟩ := hg
+  refine ⟨fun n => C₁ n * C₂ n, k₁ + k₂, hC₁.mul hC₂, fun n d => ?_⟩
+  show f n d * g n d ≤ C₁ n * C₂ n * (d.size + 1) ^ (k₁ + k₂)
+  calc f n d * g n d ≤ (C₁ n * (d.size + 1) ^ k₁) * (C₂ n * (d.size + 1) ^ k₂) :=
+        Nat.mul_le_mul (hb₁ n d) (hb₂ n d)
+    _ = C₁ n * C₂ n * (d.size + 1) ^ (k₁ + k₂) := by rw [pow_add]; ring
+
+/-- A fixed polynomial at a polynomially bounded cost: the universal machine's overhead. -/
+theorem poly (P : Polynomial ℕ) {f : ℕ → Data → ℕ} (hf : PolyCost f) :
+    PolyCost fun n d => P.eval (f n d) := by
+  obtain ⟨C, k, hC, hb⟩ := hf
+  set A := ∑ i ∈ Finset.range (P.natDegree + 1), P.coeff i with hA
+  set D := P.natDegree with hD
+  refine ⟨fun n => A * (C n + 1) ^ D, k * D, ((hC.add_const 1).pow D).const_mul A, fun n d => ?_⟩
+  show P.eval (f n d) ≤ A * (C n + 1) ^ D * (d.size + 1) ^ (k * D)
+  have h1 : P.eval (f n d) ≤ P.eval (C n * (d.size + 1) ^ k) := polynomial_eval_mono P (hb n d)
+  have h2 : P.eval (C n * (d.size + 1) ^ k + 1) ≤ A * (C n * (d.size + 1) ^ k + 1) ^ D :=
+    polynomial_eval_le_sum_coeff_mul_pow P (by omega)
+  have h3 : P.eval (C n * (d.size + 1) ^ k) ≤ P.eval (C n * (d.size + 1) ^ k + 1) :=
+    polynomial_eval_mono P (by omega)
+  have h4 : C n * (d.size + 1) ^ k + 1 ≤ (C n + 1) * (d.size + 1) ^ k := by
+    have : 1 ≤ (d.size + 1) ^ k := Nat.one_le_pow _ _ (by omega)
+    nlinarith
+  have h5 : ((C n + 1) * (d.size + 1) ^ k) ^ D = (C n + 1) ^ D * (d.size + 1) ^ (k * D) := by
+    rw [mul_pow, ← pow_mul]
+  calc P.eval (f n d) ≤ A * (C n * (d.size + 1) ^ k + 1) ^ D := h1.trans (h3.trans h2)
+    _ ≤ A * ((C n + 1) * (d.size + 1) ^ k) ^ D :=
+        Nat.mul_le_mul_left _ (Nat.pow_le_pow_left h4 D)
+    _ = A * (C n + 1) ^ D * (d.size + 1) ^ (k * D) := by rw [h5]; ring
+
+end PolyCost
+
+/-- A program whose cost at index `n` on input `d` is polynomially bounded: the hypothesis the
+deciders of the instantiation carry, and (through `hasPolyCost_iff_exists_isBounded`) what
+`λ`-boundedness comes from. -/
+def Prog.HasPolyCost (p : Prog) : Prop :=
+  ∃ (C : ℕ → ℕ) (k : ℕ), PolyBounded C ∧
+    ∀ (n : ℕ) (d : Data), ∃ r t, t ≤ C n * (d.size + 1) ^ k ∧ p.Runs (.cons (encode n) d) r t
 
 end MIPRE.Cost
