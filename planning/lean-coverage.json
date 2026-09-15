@@ -162,10 +162,16 @@
   "MIPRE.Cost.PolyBounded": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Cost.Prog.HasPolyCost": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Cost.Prog.parseProg_runs": [
    "rem:compression-abstract"
   ],
   "MIPRE.Cost.Prog.serProg_runs": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.Prog.wrapCore_hasPolyCost": [
    "rem:compression-abstract"
   ],
   "MIPRE.Cost.bitQueryAnswer": [
@@ -252,6 +258,18 @@
   ],
   "MIPRE.Halting.halting_reduction": [
    "thm:halting"
+  ],
+  "MIPRE.Halting.yNo": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.yNo_mem": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.yYes": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.yYes_mem": [
+   "rem:compression-abstract"
   ],
   "MIPRE.IsApproxRepresentation": [
    "def:approx-rep"
@@ -487,10 +505,16 @@
   "MIPRE.Verifier.IsBounded": [
    "def:lambda-bounded"
   ],
+  "MIPRE.Verifier.IsBounded.mono": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Verifier.IsSynchronousAt": [
    "def:normal-verifier"
   ],
   "MIPRE.Verifier.answerEquiv": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.exists_isBounded": [
    "rem:compression-abstract"
   ],
   "MIPRE.Verifier.freeze": [
@@ -527,6 +551,9 @@
    "rem:compression-abstract"
   ],
   "MIPRE.Verifier.ofSamplerDecider_accepts": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.ofSamplerDecider_isBounded": [
    "rem:compression-abstract"
   ],
   "MIPRE.Verifier.quantumValue_toGame_eq_valStar": [
@@ -702,8 +729,10 @@
   "MIPRE.Cost.Data.toBitsPost",
   "MIPRE.Cost.IsSuccinctDesc",
   "MIPRE.Cost.PolyBounded",
+  "MIPRE.Cost.Prog.HasPolyCost",
   "MIPRE.Cost.Prog.parseProg_runs",
   "MIPRE.Cost.Prog.serProg_runs",
+  "MIPRE.Cost.Prog.wrapCore_hasPolyCost",
   "MIPRE.Cost.bitQueryAnswer",
   "MIPRE.Cost.compressibility_criterion",
   "MIPRE.Cost.compressibility_criterion_halting",
@@ -732,6 +761,10 @@
   "MIPRE.Halting.descDec",
   "MIPRE.Halting.descLam",
   "MIPRE.Halting.halting_reduction",
+  "MIPRE.Halting.yNo",
+  "MIPRE.Halting.yNo_mem",
+  "MIPRE.Halting.yYes",
+  "MIPRE.Halting.yYes_mem",
   "MIPRE.IsApproxRepresentation",
   "MIPRE.IsPOVMClose",
   "MIPRE.IsRE",
@@ -810,8 +843,10 @@
   "MIPRE.Verifier.InClassA",
   "MIPRE.Verifier.InClassB",
   "MIPRE.Verifier.IsBounded",
+  "MIPRE.Verifier.IsBounded.mono",
   "MIPRE.Verifier.IsSynchronousAt",
   "MIPRE.Verifier.answerEquiv",
+  "MIPRE.Verifier.exists_isBounded",
   "MIPRE.Verifier.freeze",
   "MIPRE.Verifier.freeze_hasPerfectPCC",
   "MIPRE.Verifier.freeze_isBounded",
@@ -824,6 +859,7 @@
   "MIPRE.Verifier.not_inClassB_of_inClassA",
   "MIPRE.Verifier.ofSamplerDecider",
   "MIPRE.Verifier.ofSamplerDecider_accepts",
+  "MIPRE.Verifier.ofSamplerDecider_isBounded",
   "MIPRE.Verifier.quantumValue_toGame_eq_valStar",
   "MIPRE.Verifier.questionEquiv",
   "MIPRE.Verifier.size",
@@ -1016,6 +1052,10 @@
   "MIPRE/Foundations/GapCompression.lean": [
    "MIPRE.GapCompression"
   ],
+  "MIPRE/Foundations/Halting/Bounded.lean": [
+   "MIPRE.Verifier.IsBounded.mono",
+   "MIPRE.Verifier.exists_isBounded"
+  ],
   "MIPRE/Foundations/Halting/Classes.lean": [
    "MIPRE.Verifier.InClassA",
    "MIPRE.Verifier.InClassB",
@@ -1051,16 +1091,27 @@
    "MIPRE.Halting.halting_reduction"
   ],
   "MIPRE/Foundations/Halting/PolyBounded.lean": [
-   "MIPRE.Cost.PolyBounded"
+   "MIPRE.Cost.PolyBounded",
+   "MIPRE.Cost.Prog.HasPolyCost"
   ],
   "MIPRE/Foundations/Halting/Serial.lean": [
    "MIPRE.Cost.Prog.parseProg_runs",
    "MIPRE.Cost.Prog.serProg_runs"
   ],
+  "MIPRE/Foundations/Halting/Strings.lean": [
+   "MIPRE.Halting.yNo",
+   "MIPRE.Halting.yNo_mem",
+   "MIPRE.Halting.yYes",
+   "MIPRE.Halting.yYes_mem"
+  ],
   "MIPRE/Foundations/Halting/Wrapper.lean": [
    "MIPRE.Decider.wrap",
    "MIPRE.Verifier.ofSamplerDecider",
    "MIPRE.Verifier.ofSamplerDecider_accepts"
+  ],
+  "MIPRE/Foundations/Halting/WrapperCost.lean": [
+   "MIPRE.Cost.Prog.wrapCore_hasPolyCost",
+   "MIPRE.Verifier.ofSamplerDecider_isBounded"
   ],
   "MIPRE/Foundations/ValueApprox.lean": [
    "MIPRE.ValueApprox.dotProduct_kronecker_perturb",
@@ -1272,15 +1323,18 @@
   "MIPRE/Foundations/Games.lean": 61,
   "MIPRE/Foundations/GapCompression.lean": 2,
   "MIPRE/Foundations/Halting/Arith.lean": 48,
+  "MIPRE/Foundations/Halting/Bounded.lean": 9,
   "MIPRE/Foundations/Halting/Classes.lean": 10,
   "MIPRE/Foundations/Halting/Descriptions.lean": 34,
   "MIPRE/Foundations/Halting/Enumerate.lean": 19,
   "MIPRE/Foundations/Halting/Freeze.lean": 28,
   "MIPRE/Foundations/Halting/Instantiation.lean": 15,
   "MIPRE/Foundations/Halting/Lists.lean": 42,
-  "MIPRE/Foundations/Halting/PolyBounded.lean": 27,
+  "MIPRE/Foundations/Halting/PolyBounded.lean": 28,
   "MIPRE/Foundations/Halting/Serial.lean": 26,
+  "MIPRE/Foundations/Halting/Strings.lean": 16,
   "MIPRE/Foundations/Halting/Wrapper.lean": 29,
+  "MIPRE/Foundations/Halting/WrapperCost.lean": 17,
   "MIPRE/Foundations/ValueApprox.lean": 8,
   "MIPRE/Foundations/ValueApprox/Cayley.lean": 16,
   "MIPRE/Foundations/ValueApprox/Dense.lean": 2,
@@ -1335,6 +1389,6 @@
   "bibitems": 32,
   "cites": 150,
   "labels": 200,
-  "refs": 844
+  "refs": 847
  }
 }

@@ -344,10 +344,20 @@ to `HaltingGameValue.gameValue`, those being parallel developments. Soundness ne
 One tool was added on the way: `Data.primrec_size`, because the level at which the recursion
 runs is `2 ^ (K + 1 + esize e)`.
 
-Remaining, in order, and now identified with the fields of `MIPRE.Halting.Obligations`:
-(O1, part 3b-iii) the time accounting of the wrapper, then the two strings realizing the
-distinguished verifiers — check there the small-parameter corner that ledger challenge
-`ch-6879ad98822a57d8` on node `1.6` flags for the paper's `|V^halt| ≤ λ`; (O2, part 3c-ii)
+O1 done 2026-09-15 (`Halting/Bounded.lean`, `WrapperCost.lean`, `Strings.lean`). The abstract
+half: `IsBounded` is monotone in `λ`, so a verifier bounded at some `λ` lies in the classes at
+every level above it, and a cost `C n · (|d|+1)^k` with `C` polynomially bounded fits under
+`n^λ · (|d|+1)^λ` for a single `λ` — with the converse, which is the direction
+`GapCompression` supplies. The concrete half: the cost of `Decider.wrap`, proved on arbitrary
+data throughout, since `TimeBoundAt` quantifies over every input at the index. Then the two
+strings, `yNo` with the decider `nil` and `yYes` with a six-node program accepting exactly the
+empty answer from both players. The small-parameter corner the ledger flags did not bite: the
+`|𝒱| ≤ λ` clause is free, a verifier's size being a constant, and the thresholds are what
+`n₀` absorbs. Worth recording that before this nothing in the repository inhabited
+`Verifier.IsBounded`, the definition repaired twice in #57 and #61; it went through unchanged.
+
+Remaining, in order, and identified with the fields of `MIPRE.Halting.Obligations`:
+(O2, part 3c-ii)
 the *computation* of the tabulation — running the sampler on every point of `𝔽₂^{s(n)}` to
 count the question weights and the decider under its budget to fill in the acceptance table,
 then `Computable` for the whole map; (O3) the semidecider, from the two Σ₁ disjuncts of

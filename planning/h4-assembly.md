@@ -101,7 +101,7 @@ respectively a value-`1` PCC strategy or `val* <= 1/2` at index `n`.
 
 | | Obligation | What it needs |
 |---|---|---|
-| **O1** | `yYes_mem`, `yNo_mem`: the two distinguished strings lie in the classes above `n₀` | the wrapper's time bound (`Halting/WrapperCost.lean`, half written), then two small decider programs |
+| ~~**O1**~~ | *Done 2026-09-15.* `yYes_mem`, `yNo_mem` in `Halting/Strings.lean`, on the wrapper's time bound in `WrapperCost.lean` and the `IsBounded` plumbing in `Bounded.lean` | — |
 | **O2** | `tab`, `tab_computable`, `tab_value`: the `n`-th game of a string's verifier as a computable game description with the same value | bounded evaluation of ambient programs, proved `Computable`; the question weights by running the sampler over `F_2^{s(n)}`; the acceptance table under the budget |
 | **O3** | `sem_spec`: a program halting on `(x, n)` exactly when `x ∉ classB n` | O2, plus the two `Σ₁` disjuncts of `Verifier.not_inClassB_iff` merged |
 | **O4** | `compr_spec`: the compressor preserves the classes across levels | the decider that reads its description by bit queries, freezes at `2n+1`, runs `Compress`, and its time accounting |
@@ -126,8 +126,11 @@ in `rem:compression-abstract` and in the plan, so the gap between `halting_reduc
 
 ## 4. Order of work
 
-1. **O1.** Finish `Halting/WrapperCost.lean` against the definition of #61. Check the
-   small-parameter corner the ledger flags. Then the two distinguished strings.
+1. ~~**O1.**~~ Done. The rule of §1 paid: `Verifier.IsBounded` had no inhabitant at all
+   before this, and the wrapper — the first thing whose cost had to be produced against it —
+   is what would have refuted it a third time. It did not; the definition of #61 went through
+   unchanged. The small-parameter corner the ledger flags did not bite either: `|𝒱| ≤ λ` is
+   free, a verifier's size being a constant, and the rest is what the threshold `n₀` absorbs.
 2. **O2.** The largest piece, and needed twice (by O3 and by the assembly). Write the
    consumer first: state `tab_value` and build the tabulation against it.
 3. **O3.** Short once O2 is done.

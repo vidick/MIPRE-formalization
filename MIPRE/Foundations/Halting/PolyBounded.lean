@@ -211,4 +211,15 @@ def Prog.HasPolyCost (p : Prog) : Prop :=
   ∃ (C : ℕ → ℕ) (k : ℕ), PolyBounded C ∧
     ∀ (n : ℕ) (d : Data), ∃ r t, t ≤ C n * (d.size + 1) ^ k ∧ p.Runs (.cons (encode n) d) r t
 
+/-- A cost bound of the composable shape `PolyCost` is a `HasPolyCost`: the two differ only in
+whether the polynomial in the input size is displayed. Cost analyses are assembled in the first
+form, where `add`, `mul` and `poly` apply, and consumed in the second. -/
+theorem Prog.hasPolyCost_of_polyCost {p : Prog} {B : ℕ → Data → ℕ} (hB : PolyCost B)
+    (h : ∀ (n : ℕ) (d : Data), ∃ r t, t ≤ B n d ∧ p.Runs (.cons (encode n) d) r t) :
+    p.HasPolyCost := by
+  obtain ⟨C, k, hC, hb⟩ := hB
+  refine ⟨C, k, hC, fun n d => ?_⟩
+  obtain ⟨r, t, ht, hr⟩ := h n d
+  exact ⟨r, t, ht.trans (hb n d), hr⟩
+
 end MIPRE.Cost
