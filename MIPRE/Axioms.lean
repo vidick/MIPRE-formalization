@@ -12,6 +12,7 @@ import MIPRE.Foundations.Cost.Semidecide
 import MIPRE.Foundations.Cost.Toolkit
 import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Games
+import MIPRE.Foundations.Halting.Semidecider
 import MIPRE.Foundations.ValueApprox
 import MIPRE.Foundations.ValueApprox.Cayley
 import MIPRE.Foundations.ValueApprox.Dense
@@ -72,6 +73,17 @@ elab "#guard_sorry_free " ids:ident,* : command => do
     if ax.contains ``sorryAx then
       throwErrorAt id "{n} depends on sorryAx, but the blueprint marks its proof \\leanok"
 
+-- blueprint `lem:bounded-violation-re`
+#guard_sorry_free MIPRE.Cost.primrec_natLeB,
+  MIPRE.REPred.of_computable_exists,
+  MIPRE.Verifier.BoundViolation,
+  MIPRE.Verifier.ComputablyPresented,
+  MIPRE.Verifier.boundBudget,
+  MIPRE.Verifier.boundViolationB,
+  MIPRE.Verifier.boundViolationB_iff,
+  MIPRE.Verifier.not_isBounded_iff_exists,
+  MIPRE.Verifier.rePred_not_isBounded
+
 -- blueprint `lem:cl-closure`
 #guard_sorry_free MIPRE.CL.CLFun.concat,
   MIPRE.CL.CLFun.directSum,
@@ -116,9 +128,26 @@ elab "#guard_sorry_free " ids:ident,* : command => do
 #guard_sorry_free MIPRE.Cost.compressibility_criterion,
   MIPRE.Cost.compressibility_criterion_levels
 
+-- blueprint `lem:cost-budget-decidable`
+#guard_sorry_free MIPRE.Cost.Machine.costStep,
+  MIPRE.Cost.Machine.costStep_iterate,
+  MIPRE.Cost.Machine.evalForCostD,
+  MIPRE.Cost.Machine.evalForCostD_eq_some,
+  MIPRE.Cost.Machine.haltsWithinB,
+  MIPRE.Cost.Machine.haltsWithin_iff_evalForCostD,
+  MIPRE.Cost.Machine.haltsWithin_of_evalForCostD,
+  MIPRE.Cost.Machine.primrec_haltsWithinB,
+  MIPRE.Cost.Machine.stepCostD,
+  MIPRE.Cost.Machine.stepCostD_toData,
+  MIPRE.Cost.decidableHaltsWithin
+
 -- blueprint `lem:halting-form`
 #guard_sorry_free MIPRE.Cost.compressibility_criterion_halting,
   MIPRE.Cost.recursive_compression_halting
+
+-- blueprint `lem:halting-semidecider`
+#guard_sorry_free MIPRE.Halting.exists_sem_of_tab,
+  MIPRE.REPred.or
 
 -- blueprint `lem:kleene`
 #guard_sorry_free MIPRE.Cost.efficient_fixed_point
@@ -176,6 +205,11 @@ elab "#guard_sorry_free " ids:ident,* : command => do
 
 -- blueprint `lem:recursive-compression`
 #guard_sorry_free MIPRE.Cost.recursive_compression
+
+-- blueprint `lem:semidecide-encoded`
+#guard_sorry_free MIPRE.Cost.Data.primrec_decode_prod_nat,
+  MIPRE.Cost.exists_semidecider_of_decode,
+  MIPRE.Cost.exists_semidecider_prod_nat
 
 -- blueprint `lem:smn`
 #guard_sorry_free MIPRE.Cost.hardcode_size,

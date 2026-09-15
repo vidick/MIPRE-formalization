@@ -44,7 +44,8 @@ VENDORED = (
     "MIPRE/Background/Orthonormalization/Orthogonalization/",
 )
 
-DECL_KINDS = ("theorem", "lemma", "def", "abbrev", "structure", "inductive", "class")
+DECL_KINDS = ("theorem", "lemma", "def", "abbrev", "structure", "inductive", "class",
+               "instance")
 DECL_RE = re.compile(
     r"^(?:@\[[^\]]*\]\s*)?"
     r"(?:private\s+|protected\s+|noncomputable\s+|partial\s+|unsafe\s+|scoped\s+)*"
