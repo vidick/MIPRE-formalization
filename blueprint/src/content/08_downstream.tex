@@ -26,22 +26,9 @@ stronger form depends on the repetition theorem as well as on the main theorem.
 
 The non-explicit route mentioned below, and the explicit separating game, both rest on the
 same pair of procedures: the entangled value is semidecidable from below, the commuting value
-from above. Neither is hard, but both have hypotheses a paraphrase loses, so they are stated.
-
-\effortMedium
-
-\begin{lemma}[Lower semidecision of the entangled value]
-\label{lem:val-lower-re}
-\ledgernode{1.8.1}
-\uses{def:q-value,lem:value-lower-approx}
-For a nonlocal game $\game$ with rational data and rational $r$, the relation
-$\valstar(\game) > r$ is recursively enumerable. Enumerate dimensions together with vectors
-and POVMs whose entries are exact algebraic numbers; these are effectively enumerable and
-dense among all finite-dimensional strategies, the payoff is continuous, so a strict
-inequality is witnessed at some enumerated point, and exact algebraic comparison certifies it.
-No supremum is assumed to be attained, and the supremum over $C_q$ agrees with the one over
-$C_{qa}$ by continuity.
-\end{lemma}
+from above. The first is already available and formalized ---
+Lemma~\ref{lem:value-lower-approx}, which is ledger node $1.8.1$ --- so only the second is
+stated here, with the two ingredients it rests on.
 
 \effortHard
 
@@ -179,7 +166,7 @@ much less work, and is the recommended first target.
 \begin{corollary}[Tsirelson's problem, negative answer]
 \label{cor:tsirelson}
 \ledgernode{1.8.5}
-\uses{thm:separation,lem:val-lower-re,lem:valco-upper-re,cor:value-uncomputable}
+\uses{thm:separation,lem:value-lower-approx,lem:valco-upper-re,cor:value-uncomputable}
 There exist finite question and answer sets for which the closure $C_{qa}$ of the set
 of finite-dimensional quantum correlations is strictly contained in the set $C_{qc}$
 of commuting-operator correlations.

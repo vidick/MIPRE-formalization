@@ -37,22 +37,151 @@ the output of the previous ones.
 \begin{definition}[Conditionally linear function]
 \label{def:cl-function}
 \ledgernode{1.1.2}
-Let $V = \F_q^s$ and $\ell \geq 1$. An \emph{$\ell$-level conditionally linear (CL)
-function} on $V$ is defined recursively: a $1$-level CL function is a linear map $L :
-V \to V$; an $\ell$-level CL function is given by a direct sum decomposition $V = V_1
-\oplus V_{>1}$, a linear map $L_1$ on $V_1$, and, for each value $u$ of $L_1$, an
-$(\ell-1)$-level CL function $L^{u}_{>1}$ on $V_{>1}$; it maps $z = z_1 + z_{>1}$ to
-$L_1(z_1) + L^{L_1(z_1)}_{>1}(z_{>1})$. A \emph{CL distribution} is the distribution of
-$(L^\alice(z), L^\bob(z))$ for uniformly random $z \in V$ and CL functions $L^\alice,
-L^\bob$.
+\lean{MIPRE.CL.CLFun, MIPRE.CL.CLFun.eval, MIPRE.CL.CLFun.SupportedOn, MIPRE.CL.IsCLFun,
+  MIPRE.CL.clDist}
+\leanok
+Let $V = \F^n$ for a finite field $\F$ and $n \geq 0$. A \emph{register subspace} of $V$ is
+the span of a subset of the standard basis; for a register subspace $W$ and $x \in V$, $x^W$
+denotes the projection of $x$ onto $W$ along the complementary register subspace. For
+$\ell \geq 0$, the \emph{$\ell$-level conditionally linear (CL) functions} on $V$ are defined
+inductively: the only $0$-level CL function is the zero function on $V$; for $\ell \geq 1$, an
+$\ell$-level CL function is a function $L : V \to V$ of the form
+\begin{equation*}
+  L(x) = L_1\bigl(x^{V_1}\bigr) + L_{>1,\, L_1(x^{V_1})}\bigl(x^{V_{>1}}\bigr)
+\end{equation*}
+for complementary register subspaces $V = V_1 \oplus V_{>1}$, a linear map $L_1 : V_1 \to
+V_1$, and, for each $v$ in the range of $L_1$, an $(\ell-1)$-level CL function $L_{>1,v}$ on
+$V_{>1}$. A \emph{CL distribution} is the distribution of $(L^\alice(x), L^\bob(x))$ for
+uniformly random $x \in V$ and CL functions $L^\alice, L^\bob$ on $V$.
 \end{definition}
 
-An $\ell$-level sampler (Definition~\ref{def:sampler}) presents a CL distribution via
-Turing machines answering structured queries (dimensions, marginals, and evaluations of
-the linear maps and their canonical complements). This section of the project should
-fix the query interface once and for all, and prove the closure properties used later:
-products, concatenation, and reduction of the field size to $q = 2$
-(``downsizing'', using Lemma~\ref{lem:self-dual-basis}).
+\paragraph{Comments.} This is the paper's definition (\texttt{linear.tex},
+\texttt{def:cl-func}); the paraphrase this blueprint carried before started at level $1$ and
+let $V_1 \oplus V_{>1}$ be any direct sum decomposition, both departures from the paper. Two
+things about the formalization. Every consumer of the definition --- the structure lemma
+below, the query interface of a sampler, the hiding tests of introspection --- works with the
+decomposition data $(V_1, L_1, L_{>1,\cdot})$, which the function does not determine; so the
+Lean object is a \emph{presentation}, \texttt{CLFun}, an inductive type indexed by the level,
+with \texttt{CLFun.eval} the function it presents and \texttt{IsCLFun} the paper's notion
+(some presentation on $V$ evaluates to the function). And presentations live on one ambient
+space $\F^\iota$ whose register subspaces are sets of coordinates; ``a presentation on $V_T$''
+is the predicate \texttt{CLFun.SupportedOn}, under which the paper's $V_{>1}$ is the
+complement of $V_1$ inside $V_T$. The continuations $L_{>1,v}$ are indexed by all $v$ rather
+than by the range of $L_1$; the extra ones are never evaluated. The distribution is
+\texttt{clDist}, in the real-valued format of Definition~\ref{def:game}.
+
+\begin{lemma}[Structure of a CL function]
+\label{lem:cl-structure}
+\uses{def:cl-function}
+\lean{MIPRE.CL.CLFun.truncate, MIPRE.CL.CLFun.factorAt, MIPRE.CL.CLFun.mapAt,
+  MIPRE.CL.CLFun.factorOfPrefix, MIPRE.CL.CLFun.mapOfPrefix, MIPRE.CL.CLFun.ExactlyOn,
+  MIPRE.CL.CLFun.SupportedOn.eval_truncate_eq_sum, MIPRE.CL.CLFun.SupportedOn.disjoint_factorAt,
+  MIPRE.CL.CLFun.SupportedOn.factorAt_subset, MIPRE.CL.CLFun.ExactlyOn.biUnion_factorAt,
+  MIPRE.CL.CLFun.SupportedOn.factorOfPrefix_eval, MIPRE.CL.CLFun.SupportedOn.mapOfPrefix_eval}
+\leanok
+Let $L$ be an $\ell$-level CL function on $V$, given with its decomposition data. For $k \in
+\{1, \ldots, \ell\}$ there are a $k$-level CL function $L_{\leq k} : V \to V$ on $V$, the
+\emph{$k$-th marginal} (with $L_{\le 0} = 0$ and $L_{<k} = L_{\le k-1}$), and, for every
+prefix $u \in L_{<k}(V)$, a register subspace $V_{k,u}$ of $V$, the \emph{$k$-th factor space},
+and a linear map $L_{k,u} : V_{k,u} \to V_{k,u}$, the \emph{$k$-th linear map}, such that for
+all $x \in V$, writing $u_i = L_{<i}(x)$:
+\begin{enumerate}
+\item $L_{\leq k}(x) = \sum_{i=1}^{k} L_{i,u_i}\bigl(x^{V_{i,u_i}}\bigr)$, and
+  $L = L_{\le \ell}$;
+\item the factor spaces $V_{1,u_1}, \ldots, V_{\ell,u_\ell}$ are pairwise disjoint register
+  subspaces of $V$, and $V = \bigoplus_{i=1}^{\ell} V_{i,u_i}$ when the data are
+  \emph{exact}, that is, when the last level of every branch leaves no coordinate over.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\leanok
+This is \texttt{lem:cl-kth} of \texttt{linear.tex}, by induction on the level. In Lean the
+marginal is \texttt{CLFun.truncate}; the factor space and the linear map of a stage are
+computed both along a run (\texttt{factorAt}, \texttt{mapAt}) and from the prefix alone
+(\texttt{factorOfPrefix}, \texttt{mapOfPrefix}), and the two agree
+(\texttt{factorOfPrefix\_eval}, \texttt{mapOfPrefix\_eval}): that is what makes the paper's
+indexing by prefixes well defined, and it is the fact the queries of a sampler rest on.
+Exactness is \texttt{CLFun.ExactlyOn}. The paper states the lemma as an equivalence, with the
+data normalized so that the factor spaces always exhaust $V$; the formalization keeps the
+paper's own inductive definition, under which a level-$0$ remainder is allowed, and records
+exactness as the separate predicate that samplers are required to satisfy.
+\end{proof}
+
+\begin{lemma}[Closure of CL functions]
+\label{lem:cl-closure}
+\uses{def:cl-function,lem:cl-structure}
+\lean{MIPRE.CL.CLFun.concat, MIPRE.CL.CLFun.directSum, MIPRE.CL.IsCLFun.succ,
+  MIPRE.CL.IsCLFun.concat, MIPRE.CL.IsCLFun.directSum, MIPRE.CL.IsCLFun.directSum'}
+\leanok
+Let $V = U \oplus W$ be a decomposition of $V$ into complementary register subspaces.
+\begin{enumerate}
+\item (Levels.) Every $\ell$-level CL function is $(\ell+1)$-level.
+\item (Concatenation.) If $L$ is a $k$-level CL function on $U$ and $R_u$ an $\ell$-level CL
+  function on $W$ for each $u \in L(U)$, then $x \mapsto L(x^U) + R_{L(x^U)}(x^W)$ is a
+  $(k+\ell)$-level CL function on $V$.
+\item (Direct sums.) If $L$ is a $k$-level CL function on $U$ and $R$ an $\ell$-level CL
+  function on $W$, then $x \mapsto L(x^U) + R(x^W)$ is a $\max(k,\ell)$-level CL function on
+  $V$.
+\end{enumerate}
+Concatenation and direct sums preserve exactness in the sense of
+Lemma~\ref{lem:cl-structure}.
+\end{lemma}
+
+\begin{proof}
+\leanok
+\texttt{rk:higher-level}, \texttt{lem:cl-concat} and \texttt{lem:cl-func-prod} of
+\texttt{linear.tex}, the last for two summands, which iterates. The Lean constructions are on
+presentations and carry no hypotheses; that the supports are disjoint enters in the evaluation
+lemmas identifying the function presented.
+\end{proof}
+
+\begin{lemma}[Downsizing]
+\label{lem:cl-downsize}
+\uses{def:cl-function,lem:cl-structure}
+\lean{MIPRE.CL.downsizeEquiv, MIPRE.CL.CLFun.downsize, MIPRE.CL.CLFun.eval_downsize,
+  MIPRE.CL.CLFun.eval_truncate_downsize, MIPRE.CL.CLFun.factorOfPrefix_downsize,
+  MIPRE.CL.CLFun.mapOfPrefix_downsize, MIPRE.CL.CLFun.ExactlyOn.downsize,
+  MIPRE.CL.IsCLFun.downsize, MIPRE.CL.clDist_downsize, MIPRE.CL.CLFun.reindex,
+  MIPRE.CL.IsCLFun.reindex}
+\leanok
+Let $\F$ be a finite field, $\mathbb{K}$ a subfield, and $e_1, \ldots, e_t$ a basis of $\F$
+over $\mathbb{K}$; let $\downsize : \F^n \to \mathbb{K}^{nt}$ be the $\mathbb{K}$-linear
+bijection reading off the coordinates of each entry in this basis. If $L$ is an $\ell$-level CL
+function on $V = \F^n$, then $L^\downsize = \downsize \circ L \circ \downsize^{-1}$ is an
+$\ell$-level CL function on $\mathbb{K}^{nt}$, whose decomposition data are the downsized data
+of $L$: for $j \in \{1, \ldots, \ell\}$ and $u \in L_{<j}(V)$,
+\begin{equation*}
+  L^\downsize_{\le j} = \downsize \circ L_{\le j} \circ \downsize^{-1}, \qquad
+  V^\downsize_{j,\, \downsize(u)} = \downsize(V_{j,u}), \qquad
+  L^\downsize_{j,\, \downsize(u)} = \downsize \circ L_{j,u} \circ \downsize^{-1},
+\end{equation*}
+where $\downsize(V_{j,u})$ is the register subspace of $\mathbb{K}^{nt}$ on the coordinates
+$(i, k)$ with $i$ a coordinate of $V_{j,u}$. Exactness is preserved, and the CL distribution of
+$(L^\downsize, R^\downsize)$ is the image under $\downsize$ of that of $(L, R)$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+\texttt{lem:cl-downsize} and \texttt{lem:downsize-cl-dist} of \texttt{linear.tex}, by
+induction on the level; the one fact used is that $\downsize$ commutes with the coordinate
+projections onto register subspaces (\texttt{lem:downsize\_subspace} of
+\texttt{preliminaries.tex}, in the register case).
+\end{proof}
+
+\paragraph{Comments.} The paper states the lemma for admissible $q = 2^t$, $t$ odd, with the
+self-dual normal basis of Lemma~\ref{lem:self-dual-basis}; the formalization proves it for any
+basis of any finite field over any subfield, the coordinates of $\mathbb{K}^{nt}$ being indexed
+by pairs $(i, k)$ and identified with $\{1, \ldots, nt\}$ by a reindexing
+(\texttt{CLFun.reindex}, the transport along any bijection of coordinates, which preserves
+everything above). The self-dual normal basis matters elsewhere: for the arithmetic of
+$\F_{2^t}$ to be computable from $\F_2$-data in polynomial time by the samplers and deciders
+that use it, a matter for the efficient-computability toolkit rather than for this lemma. The
+paper's downsized \emph{sampler} (\texttt{def:downsize\_sampler},
+\texttt{lem:downsize\_sampler}), a Turing machine wrapping a sampler over $\F_{2^t}$, has no
+counterpart here: samplers are over $\F_2$ by definition (Definition~\ref{def:sampler}), and a
+construction native to $\F_{2^t}$, such as the introspection sampler, is to present the
+downsized CL functions directly, this lemma supplying their decomposition data.
 
 \begin{remark}[Why the pipeline is bipartite throughout]
 \label{rem:bipartite-route}
@@ -118,8 +247,8 @@ only up to a factor $16^{-\abs{T}}$ in the type graph's size, which is where the
 count, which is part of why the level budget is what it is. The lemma also needs the type
 graph to have at least one edge --- a hypothesis every instantiation in the paper satisfies
 but which the source leaves unstated --- and its soundness argument truncates over-long
-answers, justified by the same answer-truncation lemma that anchoring uses
-(Lemma~\ref{lem:anchoring-value}).
+answers, justified by the same answer-truncation lemma that the anchoring
+construction of~\cite{BVY17} uses.
 \end{remark}
 
 \begin{remark}[Turing machine conventions, and the cost model that replaces them]
@@ -709,7 +838,7 @@ repetition (Theorem~\ref{thm:direct-repetition-q}, formalized end to end) restor
 soundness
 $\frac12$ with polynomially many repetitions, at polynomial cost in complexity and without
 anchoring; the anchored, entanglement-form theorem used in~\cite{JNVWY20}
-(Theorem~\ref{thm:bvy}) is not needed (Remark~\ref{rem:direct-vs-anchored}).
+(\cite{BVY17}) is not needed (Remark~\ref{rem:direct-vs-anchored}).
 
 \begin{theorem}[Parallel repetition of normal form verifiers]
 \label{thm:parallel-repetition}
@@ -770,7 +899,9 @@ an entanglement bound (Remark~\ref{rem:entanglement-form}).
 \begin{theorem}[Gap-preserving compression]
 \label{thm:compression}
 \ledgernode{1.5, 1.5.7}
-\uses{thm:introspection,thm:oracularization,thm:answer-reduction,thm:parallel-repetition,def:lambda-bounded,def:pcc}
+\uses{thm:introspection,thm:oracularization,thm:answer-reduction,thm:parallel-repetition,def:lambda-bounded,def:pcc,def:normal-verifier}
+\lean{MIPRE.GapCompression}
+\leanok
 There is a universal constant $C_0 > 0$ and a polynomial-time Turing machine
 $\Compress$ that on input $(\verifier, \lambda)$ outputs a $7$-level normal form
 verifier $\vcompr = (\scompr, \dcompr)$ with $\TIME_{\scompr}(n),
@@ -798,6 +929,35 @@ decomposition with trivial factors, which an $\ell$-level conditionally linear f
 (Definition~\ref{def:cl-function}) admits. In~\cite{JNVWY20} the count is $9$, anchored
 repetition adding two levels (Remark~\ref{rem:direct-vs-anchored}).
 
+\paragraph{Lean statement.} The theorem is the structure \texttt{MIPRE.GapCompression}: a
+record of the constant $C_0$; the compressed sampler $\lambda \mapsto \scompr_\lambda$, a
+valid $7$-level sampler for every $\lambda$, with a polynomial-time program computing its
+description from the binary representation of $\lambda$ (Lemma~\ref{lem:compress-sampler-indep});
+the polynomial-time map $\Compress$ from pairs of programs and $\lambda$ to the program of
+the compressed decider; the packaging of every output, well-formed input or not, as a
+$7$-level normal form verifier with that sampler and that decider; the bound $\poly(n,
+\lambda)$ on the running times of the output at index $n$, at the degree \texttt{deg} in the
+size of the input that Definition~\ref{def:decider} carries, the same bound on the dimension of the compressed
+sampler (in the paper a consequence of its running time) and on the length of the answers
+the compressed decider can accept (\texttt{output\_rejects\_long}: the paper's repeated
+decider accepts only after fully parsing the answers, so an answer longer than its time bound
+forces a timeout, the property the amended proof of Lemma~\ref{lem:dhalt-values} relies on;
+in the ambient model, where running times scale with the input, it is a demand on the
+construction, an explicit length check); and the completeness and soundness clauses for
+$\lambda$-bounded $7$-level inputs at $n \geq C_0$. An instance of the structure is the
+theorem; the pipeline of this chapter is its proof, and the halting reduction consumes an
+instance (Remark~\ref{rem:compression-abstract}). Two readings are fixed there.
+$\verifier_N$ is taken with answers of length at most $N^\lambda$, the bound that
+$\lambda$-boundedness puts on the running time of its decider, and $\vcompr_n$ with answers
+of length at most the stated running-time bound --- beyond which its decider rejects, so
+that its value is the same with any larger alphabet
+(\texttt{Verifier.valStar\_eq\_of\_rejects}) --- since the exact running times of
+Definition~\ref{def:normal-verifier} are not functions of the verifier in the
+formalization. And ``a value-$1$ PCC strategy'' is a PCC synchronous strategy of value $1$
+for the game read as synchronous (\texttt{Verifier.HasPerfectPCC}), which presupposes that
+the decider rejects unequal answers to equal questions at that index, as the deciders of
+the pipeline do.
+
 The four stages are chained through a parameter budget rather than composed blindly:
 each stage's soundness clause is applied contrapositively, and each application needs a
 strict margin between the loss it suffers and the gap it is handed. Those margins are
@@ -810,6 +970,8 @@ name the corresponding nodes of the companion repository's ledger
 \label{lem:compress-sampler-indep}
 \ledgernode{1.5.1}
 \uses{thm:compression,def:normal-verifier,def:cl-function}
+\lean{MIPRE.GapCompression}
+\leanok
 For all inputs $(\verifier, \lambda)$ --- $\lambda$-bounded or not, well-formed or not
 --- the sampler $\scompr$ of $\Compress(\verifier, \lambda)$ depends only on $\lambda$,
 and there is a Turing machine $\mathtt{ComputeSampler}$ that outputs its description from
@@ -822,7 +984,10 @@ and the parameters, and repetition's only on its input sampler and $(\lambda, \e
 \tau)$. $\mathtt{ComputeSampler}$ is then realized by running $\Compress$ on the trivial
 verifier. It is this lemma that makes the recursion of Section~\ref{sec:ps-halting}
 possible at all: a fixed point has to quote its own sampler, so the sampler must not
-depend on what is being compressed.
+depend on what is being compressed. In Lean the lemma is built into the statement of
+Theorem~\ref{thm:compression}: the fields \texttt{sampler} and \texttt{samplerProg} of
+\texttt{MIPRE.GapCompression} are the map $\lambda \mapsto \scompr_\lambda$ and its
+polynomial-time description, and \texttt{output\_sampler} says that every output carries it.
 \end{proof}
 
 \effortMedium
@@ -901,6 +1066,22 @@ lower bound has to be tracked anywhere in this chapter.
 \begin{remark}[Relation to the abstract compression lemma]
 \label{rem:compression-abstract}
 \uses{thm:compression,lem:compressible-criterion,def:succinct,lem:value-lower-approx}
+\lean{MIPRE.quantumValue_eq_of_equiv, MIPRE.quantumValue_extendAnswers,
+  MIPRE.Verifier.valStar_congr, MIPRE.Verifier.hasPerfectPCC_congr,
+  MIPRE.Verifier.valStar_eq_of_rejects, MIPRE.Verifier.hasPerfectPCC_of_le,
+  MIPRE.Verifier.valStar_eq_one_of_hasPerfectPCC, MIPRE.Verifier.freeze,
+  MIPRE.Verifier.freeze_valStar, MIPRE.Verifier.freeze_hasPerfectPCC,
+  MIPRE.Verifier.freeze_isBounded, MIPRE.Cost.Data.toBitsPost, MIPRE.Cost.Data.parse,
+  MIPRE.Cost.Data.parse_toBitsPost, MIPRE.Cost.Data.natOf, MIPRE.Cost.Prog.parseProg_runs,
+  MIPRE.Cost.Prog.serProg_runs, MIPRE.Cost.PolyBounded, MIPRE.Verifier.InClassA,
+  MIPRE.Verifier.InClassB, MIPRE.Verifier.not_inClassB_of_inClassA,
+  MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal,
+  MIPRE.Verifier.valStar_eq_zero_of_rejects_all, MIPRE.Verifier.ofSamplerDecider,
+  MIPRE.Verifier.ofSamplerDecider_accepts, MIPRE.Decider.wrap,
+  MIPRE.Verifier.answerEquiv, MIPRE.Verifier.questionEquiv,
+  MIPRE.Verifier.quantumValue_toGame_eq_valStar, MIPRE.Verifier.not_inClassB_iff,
+  MIPRE.Halting.descLam, MIPRE.Halting.descDec, MIPRE.Halting.Vof,
+  MIPRE.Halting.classA, MIPRE.Halting.classB, MIPRE.Halting.Obligations}
 Theorem~\ref{thm:compression} instantiates the hypotheses of
 Lemma~\ref{lem:compressible-criterion}: take $A$ to be the set of (descriptions of) normal
 form verifier games with a value-$1$ PCC strategy and $B$ the set of those with $\valstar
@@ -917,23 +1098,121 @@ pipeline altogether --- at the outer end its hypothesis is unavailable
 (Remark~\ref{rem:bipartite-route}); it is also the form in which the semidecision
 procedure is available, the rounding argument for the $\synval$ half not being the same
 one. Making this dictionary precise is a
-formalization task of this section, and four obligations in it are open: the universe of
-the criterion's strings --- if they are games, $\compr$ cannot be polynomial-time, a game
-of $\verifier_{2^n}$ having $2^{\poly(n,\lambda)}$ questions, so they must be descriptions
-and the interpretation of a description as a game must sit outside the time bound;
-compression from a \emph{succinct} input rather than from a verifier read verbatim, as
-Definition~\ref{def:succinct} and the polynomial-time convention of
-Section~\ref{sec:conventions} require; preservation of $A$ and $B$ on inputs that are not
-$\lambda$-bounded descriptions, a property the criterion demands of every string while
-$\lambda$-boundedness is undecidable; and the choice of $\lambda$ along the recursion,
-whose descriptions grow with the level. The entanglement form of~\cite{JNVWY20}
+formalization task of this section. The four obligations recorded here from the referee
+report (R1) --- the universe of the criterion's strings, compression from a
+\emph{succinct} input, preservation on inputs that are not $\lambda$-bounded descriptions,
+and the choice of $\lambda$ along the recursion --- are settled as follows, against the
+per-level form of the lemma (\texttt{compressibility\_criterion\_levels},
+Lemma~\ref{lem:compressible-criterion}), whose classes $A_n, B_n$ are indexed by the level
+of the recursion.
+\begin{enumerate}
+\item \emph{Strings are descriptions, never games.} If they were games, $\compr$ could not
+  be polynomial-time, a game of $\verifier_{2^n}$ having $2^{\poly(n, \lambda)}$
+  questions. A string is a pair $(\lambda, \decider)$ of a parameter and a decider
+  program, read as the verifier $(\scompr_\lambda, \decider)$ with the compressed sampler
+  of Lemma~\ref{lem:compress-sampler-indep}, the length check of
+  Definition~\ref{def:normal-verifier} being enforced by a wrapper around $\decider$; so
+  every string names a normal form verifier, and the interpretation sits outside every
+  time bound. $A_n$ is the set of strings whose verifier is $n$-bounded and whose $n$-th
+  game has a value-$1$ PCC strategy, $B_n$ the set of those that are $n$-bounded with
+  $\valstar \leq \frac12$ at index $n$ (\texttt{Verifier.InClassA},
+  \texttt{InClassB}; disjoint, since a perfect PCC strategy gives $\valstar = 1$). Only the
+  length check has to go into the wrapper: synchronicity at an index and the answer-length
+  bound are conditions on membership in these classes, not on well-formedness, and the
+  paper's timeout counter is not needed either --- a decider that fails to halt simply fails
+  to be $n$-bounded, and its string then lies in neither class. Tying the bound $\lambda = n$ to the level is what
+  replaces the choice of $\lambda$ along the recursion (Lemma~\ref{lem:lambda}): the levels
+  $r(e) = 2^{K + 1 + \abs{e}}$ at which the recursion runs are exponential in $\abs{e}$,
+  above every polynomial in $\abs{e}$ that the paper's $\lambda$ has to dominate.
+\item \emph{Compression from a succinct input.} The compressor cannot read the string it
+  is handed: its time is polynomial in the length of $(\hat x, n)$, hence polylogarithmic
+  in $n$, and a single bit query to $\hat x$ costs up to $n$. On $(\hat x, n)$ it
+  therefore outputs the string $(\lambda(n), \decider_{\hat x})$, where $\lambda(n) =
+  \poly(n)$ is a fixed formula and $\decider_{\hat x}$ is the decider that, at its own
+  index $N$, reads $x = (\lambda', \decider')$ from $\hat x$ by bit queries (at most $2n +
+  O(1)$ of them, rejecting otherwise), forms the verifier $\verifier'$ of $x$ \emph{frozen
+  at index $2n + 1$} (\texttt{Verifier.freeze}: a program that replaces the index in its
+  input by the frozen one, so that its sampler and decider answer at every index as
+  $\verifier'$ does at index $2n + 1$, and its game at index $2^n$ is the game of $x$ at
+  level $2n + 1$ --- \texttt{freeze\_valStar}, \texttt{freeze\_hasPerfectPCC},
+  with $\lambda$-boundedness transferred by \texttt{freeze\_isBounded}; the answer-length
+  bound is immaterial above the length the decider rejects,
+  \texttt{Verifier.valStar\_eq\_of\_rejects}, \texttt{hasPerfectPCC\_of\_le}) --- runs
+  $\Compress(\verifier', \lambda(n))$, and finally the compressed decider at index $N$. The
+  freezing reconciles the recursion's levels $n \to 2n + 1$ with the compression theorem's
+  $n \leftarrow 2^n$, at the cost of a logarithmic factor in $\lambda(n)$.
+  Theorem~\ref{thm:compression} at index $n \geq C_0$ then transfers the class of $x$ at
+  level $2n + 1$ to the class of the output at level $n$, and the output is $n$-bounded
+  for $n$ above a universal threshold: its size is $\abs{\hat x} + O(\log n) \leq n$ by the
+  slack $2\abs{\hat x} \leq n$ of the lemma, and its time at index $N$ is $\poly(N, n) \leq
+  N^n$.
+\item \emph{Junk inputs.} Nothing is demanded of the compressor off strings in $A_{2n+1}
+  \cup B_{2n+1}$, every string names a verifier, and $\lambda$-boundedness is decided
+  nowhere. What the lemma does demand is that the complement of $B_n$ be semidecidable:
+  ``not $n$-bounded'' is witnessed by a run exceeding its budget --- a search over inputs, so
+  $\Sigma_1$ --- and ``$\valstar > \frac12$ at index $n$'' is the $\valstar$ half of
+  Lemma~\ref{lem:value-lower-approx} applied to the tabulated game, which is computable from
+  an $n$-bounded verifier. Neither disjunct decides $n$-boundedness, which is $\Pi_1$; the
+  point of taking the disjunction is that it does not have to
+  (\texttt{Verifier.not\_inClassB\_iff}). The tabulation itself is read with the answer
+  alphabet enumerated by \texttt{Verifier.answerEquiv} and the questions by
+  \texttt{questionEquiv}, and a description matching $\verifier_n$ along those indexings has
+  the same value (\texttt{quantumValue\_toGame\_eq\_valStar}), which is what carries the
+  verdict of a procedure that runs on game descriptions back to the verifier.
+\item \emph{The choice of $\lambda$.} Absorbed into item 1.
+\end{enumerate}
+Of this dictionary the per-level lemma, the Lean statement of
+Theorem~\ref{thm:compression} as a hypothesis (\texttt{MIPRE.GapCompression}) and the
+value bookkeeping are in Lean: the quantum value is invariant under relabelings of the
+alphabets (\texttt{quantumValue\_eq\_of\_equiv}, the tool for the tabulation) and under
+always-rejected extra answers (\texttt{quantumValue\_extendAnswers}, by zero extension one
+way and merging of outcomes the other), and for the games of a verifier the deciders'
+acceptance at an index determines $\valstar$ and the perfect PCC strategies
+(\texttt{Verifier.valStar\_congr}, \texttt{hasPerfectPCC\_congr}), which survive answer
+padding and give $\valstar = 1$ (\texttt{valStar\_eq\_one\_of\_hasPerfectPCC}). The frozen
+verifier of item 2 is in Lean with its value, PCC and $\lambda$-boundedness transfer
+(\texttt{Verifier.freeze}), and so is the ambient toolkit its decider is built from: a
+description travels as a bit string through the postorder serialization
+\texttt{Data.toBitsPost}, read back by the stack machine \texttt{Data.parse} (postorder
+rather than preorder because a stack machine is a loop of the ambient model, while a
+recursive-descent reader is not), with the reading and writing programs
+\texttt{Prog.parseProg}, \texttt{Prog.serProg}; every string names a parameter through the
+normalization \texttt{Data.natOf}, so no validity condition on strings is needed; and the
+format checks and budgets are the bounded walks \texttt{Prog.bitWalkProg},
+\texttt{eqBitsProg} and the arithmetic \texttt{incProg}, \texttt{toUnaryProg},
+\texttt{mulProg}, \texttt{polyProg}, each with a cost bound of the shape
+$T \cdot (\abs{\text{input}} + 1)$ that Definition~\ref{def:decider} asks for. Costs compose
+through \texttt{Cost.PolyBounded}, which also gives the threshold above which a polynomial
+bound falls under $2^n$. The dictionary itself is now in Lean: \texttt{MIPRE.Halting.descLam}
+and \texttt{descDec} read a string as a parameter and a decider, \texttt{Vof} is the verifier
+it denotes, and \texttt{classA}, \texttt{classB} are $A_n, B_n$, with answers cut at the
+length beyond which a compressed decider with that parameter rejects. What remains is
+collected as the four fields of \texttt{MIPRE.Halting.Obligations}, the structure
+Theorem~\ref{thm:halting} is proved from
+(\texttt{planning/formalization-plan.md}, H4; \texttt{planning/h4-assembly.md}).
+The reading of a string as a verifier is in
+Lean too: \texttt{Decider.wrap} is the wrapper --- it computes $s(N)$ by running the
+sampler through the universal machine, compares it with the lengths of the two questions,
+and runs the string's own decider through the universal machine if both agree --- and
+\texttt{Verifier.ofSamplerDecider} is the normal form verifier a pair denotes, with
+\texttt{ofSamplerDecider\_accepts} saying that it accepts exactly when the questions have
+the sampler's dimension and the string's decider accepts. The two distinguished strings of
+the criterion are covered at the level of verifiers by
+\texttt{hasPerfectPCC\_of\_accepts\_diagonal} (a decider that is synchronous at $n$ and
+accepts one fixed answer on every question pair has a value-$1$ PCC strategy: the paper's
+trivial strategy) and \texttt{valStar\_eq\_zero\_of\_rejects\_all}. Still owed there are
+the time accounting of the wrapper and the two strings realizing those verifiers, and the
+computation of the tabulation --- running the sampler on every point of $\F_2^{s(n)}$ to
+count the question weights, and the decider under its budget to fill in the acceptance
+table. The entanglement form
+of~\cite{JNVWY20}
 (Remark~\ref{rem:entanglement-form}) instantiates Lemma~\ref{lem:recursive-compression}
 instead, with $f = \Ent(\cdot, \frac12)$; it is not used by the main theorem.
 \end{remark}
 
 \begin{remark}[The entanglement form of~\cite{JNVWY20}]
 \label{rem:entanglement-form}
-\uses{def:ent,thm:bvy,lem:recursive-compression}
+\uses{def:ent,lem:recursive-compression}
 The paper states the soundness of each transformation with an additional entanglement
 clause, obtained from the same proofs by tracking the dimension of the extracted
 strategies: $\Ent(\vint_n, 1 - \eps) \geq \max\{\Ent(\verifier_{2^n}, 1 -
@@ -942,7 +1221,7 @@ $\Ent(\vora_n, 1 - \eps) \geq \Ent(\verifier_n, 1 - \delta(\eps))$ for
 oracularization; $\Ent(\vans_n, 1 - \eps) \geq \frac12 \Ent(\verifier_n, 1 - \delta(\eps, n))$
 for answer reduction, the factor $\frac12$ being the Schmidt-rank doubling of the
 symmetrization step, which the synchronous framework of this blueprint does not perform
-(symmetry being definitional there) and therefore does not pay; Theorem~\ref{thm:bvy} for anchored repetition; and, composed,
+(symmetry being definitional there) and therefore does not pay; the anchored repetition theorem of~\cite{BVY17}; and, composed,
 $\Ent(\vcompr_n, \frac12) \geq \frac12 \max\{\Ent(\verifier_N, \frac12),\
 2^{N^\lambda - 1}\}$ for compression. Fed into the variant of
 Lemma~\ref{lem:recursive-compression} tolerating the factor $\frac12$ (harmless, since
@@ -1051,6 +1330,7 @@ revision of this chapter did state item 2 as the bound, and because the ledger n
 \label{thm:halting}
 \ledgernode{1.6, 1.6.6}
 \uses{thm:compression,rem:compression-abstract,lem:compressible-criterion,lem:value-lower-approx,lem:kleene,def:mipstar,def:game-description,lem:sync-le-valstar,lem:dhalt-values,lem:lambda}
+\lean{MIPRE.Halting.halting_reduction}
 There is a computable (indeed polynomial-time) map $\machine \mapsto
 \game_{\machine}$ from Turing machines to synchronous game descriptions, with games
 given by normal form verifiers satisfying the efficiency requirements of
@@ -1071,6 +1351,23 @@ instantiation that are open are inherited here: the four listed in
 Remark~\ref{rem:compression-abstract}. The synchronization invariant that an earlier
 revision also required of the games produced inside $\Compress$ is no longer among them
 (Remark~\ref{rem:bipartite-route}).
+
+In Lean the assembly is \texttt{MIPRE.Halting.halting\_reduction}. It is complete and free
+of \texttt{sorry}, and it takes three hypotheses: a \texttt{MIPRE.GapCompression} (which is
+Theorem~\ref{thm:compression}), a universal machine, and an inhabitant of
+\texttt{MIPRE.Halting.Obligations}, whose four fields are exactly what
+Remark~\ref{rem:compression-abstract} leaves owed: the two distinguished strings, the
+tabulation with its value agreement, the semidecider, and the compressor. So what is open is
+a structure to be inhabited rather than an argument to be found, and
+\texttt{\#print axioms} cannot hide any of it.
+Two things are deliberately not in that statement, and neither belongs to the instantiation.
+It concludes in $\valstar$ only: item 1's $\synval = 1$ needs a \emph{synchronous} strategy to
+transport along the relabelings of the tabulation, for which there is no counterpart of
+\texttt{quantumValue\_eq\_of\_equiv} yet, and the passage to
+\texttt{HaltingGameValue.halting\_reduces\_to\_gameValue} additionally needs
+\texttt{MIPRE.syncValue} related to \texttt{HaltingGameValue.gameValue}, those being parallel
+developments (Section~\ref{ch:main-theorem}). Soundness needs neither, by
+Lemma~\ref{lem:sync-le-valstar}.
 
 \begin{remark}[Identical measurement operators]
 \label{rem:identical-operators}

@@ -6,6 +6,9 @@
   "HaltingGameValue.GameData.equivTuple": [
    "rem:standalone-restatement"
   ],
+  "HaltingGameValue.GameData.game": [
+   "def:game-description"
+  ],
   "HaltingGameValue.GameData.toGame": [
    "def:game-description"
   ],
@@ -14,6 +17,120 @@
   ],
   "HaltingGameValue.halting_reduces_to_gameValue": [
    "thm:main"
+  ],
+  "MIPRE.CL.CLFun": [
+   "def:cl-function"
+  ],
+  "MIPRE.CL.CLFun.ExactlyOn": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.ExactlyOn.biUnion_factorAt": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.ExactlyOn.downsize": [
+   "lem:cl-downsize"
+  ],
+  "MIPRE.CL.CLFun.SupportedOn": [
+   "def:cl-function"
+  ],
+  "MIPRE.CL.CLFun.SupportedOn.disjoint_factorAt": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.SupportedOn.eval_truncate_eq_sum": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.SupportedOn.factorAt_subset": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.SupportedOn.factorOfPrefix_eval": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.SupportedOn.mapOfPrefix_eval": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.concat": [
+   "lem:cl-closure"
+  ],
+  "MIPRE.CL.CLFun.directSum": [
+   "lem:cl-closure"
+  ],
+  "MIPRE.CL.CLFun.downsize": [
+   "lem:cl-downsize"
+  ],
+  "MIPRE.CL.CLFun.eval": [
+   "def:cl-function"
+  ],
+  "MIPRE.CL.CLFun.eval_downsize": [
+   "lem:cl-downsize"
+  ],
+  "MIPRE.CL.CLFun.eval_truncate_downsize": [
+   "lem:cl-downsize"
+  ],
+  "MIPRE.CL.CLFun.factorAt": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.factorOfPrefix": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.factorOfPrefix_downsize": [
+   "lem:cl-downsize"
+  ],
+  "MIPRE.CL.CLFun.mapAt": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.mapOfPrefix": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.CLFun.mapOfPrefix_downsize": [
+   "lem:cl-downsize"
+  ],
+  "MIPRE.CL.CLFun.reindex": [
+   "lem:cl-downsize"
+  ],
+  "MIPRE.CL.CLFun.truncate": [
+   "lem:cl-structure"
+  ],
+  "MIPRE.CL.IsCLFun": [
+   "def:cl-function"
+  ],
+  "MIPRE.CL.IsCLFun.concat": [
+   "lem:cl-closure"
+  ],
+  "MIPRE.CL.IsCLFun.directSum": [
+   "lem:cl-closure"
+  ],
+  "MIPRE.CL.IsCLFun.directSum'": [
+   "lem:cl-closure"
+  ],
+  "MIPRE.CL.IsCLFun.downsize": [
+   "lem:cl-downsize"
+  ],
+  "MIPRE.CL.IsCLFun.reindex": [
+   "lem:cl-downsize"
+  ],
+  "MIPRE.CL.IsCLFun.succ": [
+   "lem:cl-closure"
+  ],
+  "MIPRE.CL.Sampler": [
+   "def:sampler"
+  ],
+  "MIPRE.CL.Sampler.Query": [
+   "def:sampler"
+  ],
+  "MIPRE.CL.Sampler.TimeBound": [
+   "def:sampler"
+  ],
+  "MIPRE.CL.Sampler.dist": [
+   "def:sampler"
+  ],
+  "MIPRE.CL.clDist": [
+   "def:cl-function"
+  ],
+  "MIPRE.CL.clDist_downsize": [
+   "lem:cl-downsize"
+  ],
+  "MIPRE.CL.downsizeEquiv": [
+   "lem:cl-downsize"
   ],
   "MIPRE.CommutingOperatorStrategy": [
    "def:co-strategy-bipartite"
@@ -27,8 +144,29 @@
   "MIPRE.CommutingStrategy.value": [
    "def:commuting-value"
   ],
+  "MIPRE.Cost.Data.natOf": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.Data.parse": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.Data.parse_toBitsPost": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.Data.toBitsPost": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Cost.IsSuccinctDesc": [
    "def:succinct"
+  ],
+  "MIPRE.Cost.PolyBounded": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.Prog.parseProg_runs": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.Prog.serProg_runs": [
+   "rem:compression-abstract"
   ],
   "MIPRE.Cost.bitQueryAnswer": [
    "def:succinct"
@@ -39,6 +177,9 @@
   "MIPRE.Cost.compressibility_criterion_halting": [
    "lem:halting-form"
   ],
+  "MIPRE.Cost.compressibility_criterion_levels": [
+   "lem:compressible-criterion"
+  ],
   "MIPRE.Cost.efficient_fixed_point": [
    "lem:kleene"
   ],
@@ -47,6 +188,9 @@
   ],
   "MIPRE.Cost.exists_efficient_universal": [
    "lem:universal-tm"
+  ],
+  "MIPRE.Cost.exists_semidecider": [
+   "lem:value-lower-approx"
   ],
   "MIPRE.Cost.hardcode_size": [
    "lem:smn"
@@ -66,17 +210,57 @@
   "MIPRE.Cost.smn_polyTime": [
    "lem:smn"
   ],
+  "MIPRE.Decider": [
+   "def:decider"
+  ],
+  "MIPRE.Decider.Accepts": [
+   "def:decider"
+  ],
+  "MIPRE.Decider.TimeBound": [
+   "def:decider"
+  ],
+  "MIPRE.Decider.wrap": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Game": [
    "def:game"
   ],
   "MIPRE.Game.repeat": [
    "def:direct-repetition"
   ],
+  "MIPRE.GapCompression": [
+   "lem:compress-sampler-indep",
+   "thm:compression"
+  ],
+  "MIPRE.Halting.Obligations": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.Vof": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.classA": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.classB": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.descDec": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.descLam": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.halting_reduction": [
+   "thm:halting"
+  ],
   "MIPRE.IsApproxRepresentation": [
    "def:approx-rep"
   ],
   "MIPRE.IsPOVMClose": [
    "def:distance"
+  ],
+  "MIPRE.IsRE": [
+   "def:re"
   ],
   "MIPRE.LCS.Game": [
    "def:lcs-instance"
@@ -147,6 +331,18 @@
   "MIPRE.LIDT.lowIndividualDegree_soundness": [
    "thm:lidt-soundness"
   ],
+  "MIPRE.MIPStar": [
+   "def:mipstar"
+  ],
+  "MIPRE.MIPStar.exists_semidecider": [
+   "lem:mipstar-sub-re"
+  ],
+  "MIPRE.MIPStar.isRE": [
+   "lem:mipstar-sub-re"
+  ],
+  "MIPRE.Orthonormalization.povm_orthogonalization_finDim": [
+   "thm:orthonormalization"
+  ],
   "MIPRE.Repetition.commutingOperatorValue_repeat_le": [
    "thm:direct-repetition-co"
   ],
@@ -183,17 +379,179 @@
   "MIPRE.TensorProductStrategy.value": [
    "def:q-value"
   ],
+  "MIPRE.ValueApprox.Check": [
+   "lem:value-lower-approx"
+  ],
+  "MIPRE.ValueApprox.ExactStrategy": [
+   "lem:rational-strategies-suffice"
+  ],
+  "MIPRE.ValueApprox.ExactStrategy.EntriesIn": [
+   "lem:rational-strategies-suffice"
+  ],
+  "MIPRE.ValueApprox.ExactStrategy.IsValid": [
+   "lem:rational-strategies-suffice"
+  ],
+  "MIPRE.ValueApprox.ExactStrategy.toStrategy": [
+   "lem:rational-strategies-suffice"
+  ],
+  "MIPRE.ValueApprox.ExactStrategy.value": [
+   "lem:rational-strategies-suffice"
+  ],
+  "MIPRE.ValueApprox.ExactStrategy.value_le_quantumValue": [
+   "lem:rational-strategies-suffice"
+  ],
+  "MIPRE.ValueApprox.GaussianRat": [
+   "lem:rational-pvm-dense"
+  ],
+  "MIPRE.ValueApprox.IsPVM": [
+   "lem:rational-pvm-dense"
+  ],
+  "MIPRE.ValueApprox.IsPVM.exists_entriesIn_norm_sub_le": [
+   "lem:rational-pvm-dense"
+  ],
+  "MIPRE.ValueApprox.IsPVM.exists_unitary_pattern": [
+   "lem:rational-pvm-dense"
+  ],
+  "MIPRE.ValueApprox.REPred.of_primrecRel_exists": [
+   "lem:value-lower-approx"
+  ],
+  "MIPRE.ValueApprox.RawStrategy": [
+   "lem:value-lower-approx"
+  ],
+  "MIPRE.ValueApprox.RawStrategy.interp": [
+   "lem:value-lower-approx"
+  ],
+  "MIPRE.ValueApprox.abs_bornValue_sub_le": [
+   "lem:rational-strategies-suffice"
+  ],
+  "MIPRE.ValueApprox.cayley": [
+   "lem:rational-pvm-dense"
+  ],
+  "MIPRE.ValueApprox.cayley_mem_unitaryGroup": [
+   "lem:rational-pvm-dense"
+  ],
+  "MIPRE.ValueApprox.check_iff_interp": [
+   "lem:value-lower-approx"
+  ],
   "MIPRE.ValueApprox.dotProduct_kronecker_perturb": [
    "lem:perturbation-split"
   ],
   "MIPRE.ValueApprox.dotProduct_mulVec_perturb": [
    "lem:perturbation-split"
   ],
+  "MIPRE.ValueApprox.exists_check_iff": [
+   "lem:value-lower-approx"
+  ],
+  "MIPRE.ValueApprox.exists_exactStrategy_value_gt": [
+   "lem:rational-strategies-suffice"
+  ],
+  "MIPRE.ValueApprox.exists_isSkewHermitian_cayley_eq": [
+   "lem:rational-pvm-dense"
+  ],
+  "MIPRE.ValueApprox.exists_norm_eq_one_isUnit_one_add_smul": [
+   "lem:rational-pvm-dense"
+  ],
+  "MIPRE.ValueApprox.exists_unitary_entriesIn_norm_smul_sub_le": [
+   "lem:rational-pvm-dense"
+  ],
   "MIPRE.ValueApprox.kronecker_sub_kronecker": [
    "lem:perturbation-split"
   ],
+  "MIPRE.ValueApprox.lt_quantumValue_iff": [
+   "lem:rational-strategies-suffice"
+  ],
+  "MIPRE.ValueApprox.norm_cayley_sub_cayley_le": [
+   "lem:rational-pvm-dense"
+  ],
   "MIPRE.ValueApprox.posSemidef_realSmul_one_add_and_sub_iff": [
    "lem:norm-two-psd"
+  ],
+  "MIPRE.ValueApprox.primrecPred_check": [
+   "lem:value-lower-approx"
+  ],
+  "MIPRE.ValueApprox.rePred_lt_quantumValue": [
+   "lem:value-lower-approx"
+  ],
+  "MIPRE.Verifier": [
+   "def:normal-verifier"
+  ],
+  "MIPRE.Verifier.Answers": [
+   "def:normal-verifier"
+  ],
+  "MIPRE.Verifier.InClassA": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.InClassB": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.IsBounded": [
+   "def:lambda-bounded"
+  ],
+  "MIPRE.Verifier.IsSynchronousAt": [
+   "def:normal-verifier"
+  ],
+  "MIPRE.Verifier.answerEquiv": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.freeze": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.freeze_hasPerfectPCC": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.freeze_isBounded": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.freeze_valStar": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.game": [
+   "def:normal-verifier"
+  ],
+  "MIPRE.Verifier.hasPerfectPCC_congr": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.hasPerfectPCC_of_le": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.not_inClassB_iff": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.not_inClassB_of_inClassA": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.ofSamplerDecider": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.ofSamplerDecider_accepts": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.quantumValue_toGame_eq_valStar": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.questionEquiv": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.size": [
+   "def:normal-verifier"
+  ],
+  "MIPRE.Verifier.syncGame": [
+   "def:normal-verifier"
+  ],
+  "MIPRE.Verifier.valStar_congr": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.valStar_eq_of_rejects": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.valStar_eq_one_of_hasPerfectPCC": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.valStar_eq_zero_of_rejects_all": [
+   "rem:compression-abstract"
   ],
   "MIPRE.commValue": [
    "def:commuting-value"
@@ -203,6 +561,9 @@
   ],
   "MIPRE.entRequirement": [
    "def:ent"
+  ],
+  "MIPRE.exists_semidecider_lt_quantumValue": [
+   "lem:value-lower-approx"
   ],
   "MIPRE.gowers_hatami": [
    "thm:gowers-hatami"
@@ -216,11 +577,23 @@
   "MIPRE.inconsistency": [
    "def:inconsistency"
   ],
+  "MIPRE.isRE_iff": [
+   "def:re"
+  ],
   "MIPRE.povmDistance": [
    "def:distance"
   ],
   "MIPRE.quantumValue": [
    "def:q-value"
+  ],
+  "MIPRE.quantumValue_eq_of_equiv": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.quantumValue_extendAnswers": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.rePred_lt_quantumValue_comp": [
+   "lem:value-lower-approx"
   ],
   "MIPRE.syncValue": [
    "def:sync-value"
@@ -277,30 +650,91 @@
  "cited_names": [
   "HaltingGameValue.GameData",
   "HaltingGameValue.GameData.equivTuple",
+  "HaltingGameValue.GameData.game",
   "HaltingGameValue.GameData.toGame",
   "HaltingGameValue.gameValue",
   "HaltingGameValue.halting_reduces_to_gameValue",
+  "MIPRE.CL.CLFun",
+  "MIPRE.CL.CLFun.ExactlyOn",
+  "MIPRE.CL.CLFun.ExactlyOn.biUnion_factorAt",
+  "MIPRE.CL.CLFun.ExactlyOn.downsize",
+  "MIPRE.CL.CLFun.SupportedOn",
+  "MIPRE.CL.CLFun.SupportedOn.disjoint_factorAt",
+  "MIPRE.CL.CLFun.SupportedOn.eval_truncate_eq_sum",
+  "MIPRE.CL.CLFun.SupportedOn.factorAt_subset",
+  "MIPRE.CL.CLFun.SupportedOn.factorOfPrefix_eval",
+  "MIPRE.CL.CLFun.SupportedOn.mapOfPrefix_eval",
+  "MIPRE.CL.CLFun.concat",
+  "MIPRE.CL.CLFun.directSum",
+  "MIPRE.CL.CLFun.downsize",
+  "MIPRE.CL.CLFun.eval",
+  "MIPRE.CL.CLFun.eval_downsize",
+  "MIPRE.CL.CLFun.eval_truncate_downsize",
+  "MIPRE.CL.CLFun.factorAt",
+  "MIPRE.CL.CLFun.factorOfPrefix",
+  "MIPRE.CL.CLFun.factorOfPrefix_downsize",
+  "MIPRE.CL.CLFun.mapAt",
+  "MIPRE.CL.CLFun.mapOfPrefix",
+  "MIPRE.CL.CLFun.mapOfPrefix_downsize",
+  "MIPRE.CL.CLFun.reindex",
+  "MIPRE.CL.CLFun.truncate",
+  "MIPRE.CL.IsCLFun",
+  "MIPRE.CL.IsCLFun.concat",
+  "MIPRE.CL.IsCLFun.directSum",
+  "MIPRE.CL.IsCLFun.directSum'",
+  "MIPRE.CL.IsCLFun.downsize",
+  "MIPRE.CL.IsCLFun.reindex",
+  "MIPRE.CL.IsCLFun.succ",
+  "MIPRE.CL.Sampler",
+  "MIPRE.CL.Sampler.Query",
+  "MIPRE.CL.Sampler.TimeBound",
+  "MIPRE.CL.Sampler.dist",
+  "MIPRE.CL.clDist",
+  "MIPRE.CL.clDist_downsize",
+  "MIPRE.CL.downsizeEquiv",
   "MIPRE.CommutingOperatorStrategy",
   "MIPRE.CommutingOperatorStrategy.value",
   "MIPRE.CommutingStrategy",
   "MIPRE.CommutingStrategy.value",
+  "MIPRE.Cost.Data.natOf",
+  "MIPRE.Cost.Data.parse",
+  "MIPRE.Cost.Data.parse_toBitsPost",
+  "MIPRE.Cost.Data.toBitsPost",
   "MIPRE.Cost.IsSuccinctDesc",
+  "MIPRE.Cost.PolyBounded",
+  "MIPRE.Cost.Prog.parseProg_runs",
+  "MIPRE.Cost.Prog.serProg_runs",
   "MIPRE.Cost.bitQueryAnswer",
   "MIPRE.Cost.compressibility_criterion",
   "MIPRE.Cost.compressibility_criterion_halting",
+  "MIPRE.Cost.compressibility_criterion_levels",
   "MIPRE.Cost.efficient_fixed_point",
   "MIPRE.Cost.exists_clocked_universal",
   "MIPRE.Cost.exists_efficient_universal",
+  "MIPRE.Cost.exists_semidecider",
   "MIPRE.Cost.hardcode_size",
   "MIPRE.Cost.hardcode_time",
   "MIPRE.Cost.hardcode_time_rev",
   "MIPRE.Cost.recursive_compression",
   "MIPRE.Cost.recursive_compression_halting",
   "MIPRE.Cost.smn_polyTime",
+  "MIPRE.Decider",
+  "MIPRE.Decider.Accepts",
+  "MIPRE.Decider.TimeBound",
+  "MIPRE.Decider.wrap",
   "MIPRE.Game",
   "MIPRE.Game.repeat",
+  "MIPRE.GapCompression",
+  "MIPRE.Halting.Obligations",
+  "MIPRE.Halting.Vof",
+  "MIPRE.Halting.classA",
+  "MIPRE.Halting.classB",
+  "MIPRE.Halting.descDec",
+  "MIPRE.Halting.descLam",
+  "MIPRE.Halting.halting_reduction",
   "MIPRE.IsApproxRepresentation",
   "MIPRE.IsPOVMClose",
+  "MIPRE.IsRE",
   "MIPRE.LCS.Game",
   "MIPRE.LCS.Game.toNonlocalGame",
   "MIPRE.LCS.IsObservable",
@@ -324,6 +758,10 @@
   "MIPRE.LCS.observableToProjector",
   "MIPRE.LIDT.lidtGame",
   "MIPRE.LIDT.lowIndividualDegree_soundness",
+  "MIPRE.MIPStar",
+  "MIPRE.MIPStar.exists_semidecider",
+  "MIPRE.MIPStar.isRE",
+  "MIPRE.Orthonormalization.povm_orthogonalization_finDim",
   "MIPRE.Repetition.commutingOperatorValue_repeat_le",
   "MIPRE.Repetition.quantumValue_eq_entangledValue",
   "MIPRE.Repetition.quantumValue_repeat_le",
@@ -336,19 +774,78 @@
   "MIPRE.SynchronousGame.toGame",
   "MIPRE.TensorProductStrategy",
   "MIPRE.TensorProductStrategy.value",
+  "MIPRE.ValueApprox.Check",
+  "MIPRE.ValueApprox.ExactStrategy",
+  "MIPRE.ValueApprox.ExactStrategy.EntriesIn",
+  "MIPRE.ValueApprox.ExactStrategy.IsValid",
+  "MIPRE.ValueApprox.ExactStrategy.toStrategy",
+  "MIPRE.ValueApprox.ExactStrategy.value",
+  "MIPRE.ValueApprox.ExactStrategy.value_le_quantumValue",
+  "MIPRE.ValueApprox.GaussianRat",
+  "MIPRE.ValueApprox.IsPVM",
+  "MIPRE.ValueApprox.IsPVM.exists_entriesIn_norm_sub_le",
+  "MIPRE.ValueApprox.IsPVM.exists_unitary_pattern",
+  "MIPRE.ValueApprox.REPred.of_primrecRel_exists",
+  "MIPRE.ValueApprox.RawStrategy",
+  "MIPRE.ValueApprox.RawStrategy.interp",
+  "MIPRE.ValueApprox.abs_bornValue_sub_le",
+  "MIPRE.ValueApprox.cayley",
+  "MIPRE.ValueApprox.cayley_mem_unitaryGroup",
+  "MIPRE.ValueApprox.check_iff_interp",
   "MIPRE.ValueApprox.dotProduct_kronecker_perturb",
   "MIPRE.ValueApprox.dotProduct_mulVec_perturb",
+  "MIPRE.ValueApprox.exists_check_iff",
+  "MIPRE.ValueApprox.exists_exactStrategy_value_gt",
+  "MIPRE.ValueApprox.exists_isSkewHermitian_cayley_eq",
+  "MIPRE.ValueApprox.exists_norm_eq_one_isUnit_one_add_smul",
+  "MIPRE.ValueApprox.exists_unitary_entriesIn_norm_smul_sub_le",
   "MIPRE.ValueApprox.kronecker_sub_kronecker",
+  "MIPRE.ValueApprox.lt_quantumValue_iff",
+  "MIPRE.ValueApprox.norm_cayley_sub_cayley_le",
   "MIPRE.ValueApprox.posSemidef_realSmul_one_add_and_sub_iff",
+  "MIPRE.ValueApprox.primrecPred_check",
+  "MIPRE.ValueApprox.rePred_lt_quantumValue",
+  "MIPRE.Verifier",
+  "MIPRE.Verifier.Answers",
+  "MIPRE.Verifier.InClassA",
+  "MIPRE.Verifier.InClassB",
+  "MIPRE.Verifier.IsBounded",
+  "MIPRE.Verifier.IsSynchronousAt",
+  "MIPRE.Verifier.answerEquiv",
+  "MIPRE.Verifier.freeze",
+  "MIPRE.Verifier.freeze_hasPerfectPCC",
+  "MIPRE.Verifier.freeze_isBounded",
+  "MIPRE.Verifier.freeze_valStar",
+  "MIPRE.Verifier.game",
+  "MIPRE.Verifier.hasPerfectPCC_congr",
+  "MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal",
+  "MIPRE.Verifier.hasPerfectPCC_of_le",
+  "MIPRE.Verifier.not_inClassB_iff",
+  "MIPRE.Verifier.not_inClassB_of_inClassA",
+  "MIPRE.Verifier.ofSamplerDecider",
+  "MIPRE.Verifier.ofSamplerDecider_accepts",
+  "MIPRE.Verifier.quantumValue_toGame_eq_valStar",
+  "MIPRE.Verifier.questionEquiv",
+  "MIPRE.Verifier.size",
+  "MIPRE.Verifier.syncGame",
+  "MIPRE.Verifier.valStar_congr",
+  "MIPRE.Verifier.valStar_eq_of_rejects",
+  "MIPRE.Verifier.valStar_eq_one_of_hasPerfectPCC",
+  "MIPRE.Verifier.valStar_eq_zero_of_rejects_all",
   "MIPRE.commValue",
   "MIPRE.commutingOperatorValue",
   "MIPRE.entRequirement",
+  "MIPRE.exists_semidecider_lt_quantumValue",
   "MIPRE.gowers_hatami",
   "MIPRE.hsInner",
   "MIPRE.hsNormSq",
   "MIPRE.inconsistency",
+  "MIPRE.isRE_iff",
   "MIPRE.povmDistance",
   "MIPRE.quantumValue",
+  "MIPRE.quantumValue_eq_of_equiv",
+  "MIPRE.quantumValue_extendAnswers",
+  "MIPRE.rePred_lt_quantumValue_comp",
   "MIPRE.syncValue",
   "MIPRE.syncValue_le_commValue",
   "MIPRE.syncValue_le_quantumValue",
@@ -378,6 +875,9 @@
   "MIPRE/Background/LIDT/Soundness.lean": [
    "MIPRE.LIDT.lowIndividualDegree_soundness"
   ],
+  "MIPRE/Background/Orthonormalization/Statement.lean": [
+   "MIPRE.Orthonormalization.povm_orthogonalization_finDim"
+  ],
   "MIPRE/Background/Repetition/Commuting.lean": [
    "MIPRE.Repetition.commutingOperatorValue_repeat_le"
   ],
@@ -392,6 +892,61 @@
   "MIPRE/Background/Repetition/TracialDensity.lean": [
    "MIPRE.Repetition.tracialDensity"
   ],
+  "MIPRE/Foundations/CL/Basic.lean": [
+   "MIPRE.CL.CLFun",
+   "MIPRE.CL.CLFun.ExactlyOn",
+   "MIPRE.CL.CLFun.ExactlyOn.biUnion_factorAt",
+   "MIPRE.CL.CLFun.SupportedOn",
+   "MIPRE.CL.CLFun.SupportedOn.disjoint_factorAt",
+   "MIPRE.CL.CLFun.SupportedOn.eval_truncate_eq_sum",
+   "MIPRE.CL.CLFun.SupportedOn.factorAt_subset",
+   "MIPRE.CL.CLFun.SupportedOn.factorOfPrefix_eval",
+   "MIPRE.CL.CLFun.SupportedOn.mapOfPrefix_eval",
+   "MIPRE.CL.CLFun.eval",
+   "MIPRE.CL.CLFun.factorAt",
+   "MIPRE.CL.CLFun.factorOfPrefix",
+   "MIPRE.CL.CLFun.mapAt",
+   "MIPRE.CL.CLFun.mapOfPrefix",
+   "MIPRE.CL.CLFun.truncate",
+   "MIPRE.CL.IsCLFun",
+   "MIPRE.CL.IsCLFun.succ"
+  ],
+  "MIPRE/Foundations/CL/Closure.lean": [
+   "MIPRE.CL.CLFun.concat",
+   "MIPRE.CL.CLFun.directSum",
+   "MIPRE.CL.IsCLFun.concat",
+   "MIPRE.CL.IsCLFun.directSum",
+   "MIPRE.CL.IsCLFun.directSum'",
+   "MIPRE.CL.clDist"
+  ],
+  "MIPRE/Foundations/CL/Downsize.lean": [
+   "MIPRE.CL.CLFun.ExactlyOn.downsize",
+   "MIPRE.CL.CLFun.downsize",
+   "MIPRE.CL.CLFun.eval_downsize",
+   "MIPRE.CL.CLFun.eval_truncate_downsize",
+   "MIPRE.CL.CLFun.factorOfPrefix_downsize",
+   "MIPRE.CL.CLFun.mapOfPrefix_downsize",
+   "MIPRE.CL.CLFun.reindex",
+   "MIPRE.CL.IsCLFun.downsize",
+   "MIPRE.CL.IsCLFun.reindex",
+   "MIPRE.CL.clDist_downsize",
+   "MIPRE.CL.downsizeEquiv"
+  ],
+  "MIPRE/Foundations/CL/Sampler.lean": [
+   "MIPRE.CL.Sampler",
+   "MIPRE.CL.Sampler.Query",
+   "MIPRE.CL.Sampler.TimeBound",
+   "MIPRE.CL.Sampler.dist"
+  ],
+  "MIPRE/Foundations/ClassMIPStar.lean": [
+   "MIPRE.IsRE",
+   "MIPRE.MIPStar",
+   "MIPRE.MIPStar.exists_semidecider",
+   "MIPRE.MIPStar.isRE",
+   "MIPRE.exists_semidecider_lt_quantumValue",
+   "MIPRE.isRE_iff",
+   "MIPRE.rePred_lt_quantumValue_comp"
+  ],
   "MIPRE/Foundations/CommutingOperator.lean": [
    "MIPRE.CommutingOperatorStrategy",
    "MIPRE.CommutingOperatorStrategy.value",
@@ -400,6 +955,7 @@
   "MIPRE/Foundations/Compression.lean": [
    "MIPRE.Cost.compressibility_criterion",
    "MIPRE.Cost.compressibility_criterion_halting",
+   "MIPRE.Cost.compressibility_criterion_levels",
    "MIPRE.Cost.recursive_compression",
    "MIPRE.Cost.recursive_compression_halting"
   ],
@@ -408,6 +964,9 @@
   ],
   "MIPRE/Foundations/Cost/Kleene.lean": [
    "MIPRE.Cost.efficient_fixed_point"
+  ],
+  "MIPRE/Foundations/Cost/Semidecide.lean": [
+   "MIPRE.Cost.exists_semidecider"
   ],
   "MIPRE/Foundations/Cost/Succinct.lean": [
    "MIPRE.Cost.IsSuccinctDesc"
@@ -429,6 +988,13 @@
    "MIPRE.inconsistency",
    "MIPRE.povmDistance"
   ],
+  "MIPRE/Foundations/GameDescription.lean": [
+   "HaltingGameValue.GameData.game"
+  ],
+  "MIPRE/Foundations/GameTransport.lean": [
+   "MIPRE.quantumValue_eq_of_equiv",
+   "MIPRE.quantumValue_extendAnswers"
+  ],
   "MIPRE/Foundations/Games.lean": [
    "MIPRE.CommutingStrategy",
    "MIPRE.CommutingStrategy.value",
@@ -447,11 +1013,128 @@
    "MIPRE.syncValue_le_commValue",
    "MIPRE.syncValue_le_quantumValue"
   ],
+  "MIPRE/Foundations/GapCompression.lean": [
+   "MIPRE.GapCompression"
+  ],
+  "MIPRE/Foundations/Halting/Classes.lean": [
+   "MIPRE.Verifier.InClassA",
+   "MIPRE.Verifier.InClassB",
+   "MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal",
+   "MIPRE.Verifier.not_inClassB_of_inClassA",
+   "MIPRE.Verifier.valStar_eq_zero_of_rejects_all"
+  ],
+  "MIPRE/Foundations/Halting/Descriptions.lean": [
+   "MIPRE.Cost.Data.natOf",
+   "MIPRE.Cost.Data.parse",
+   "MIPRE.Cost.Data.parse_toBitsPost",
+   "MIPRE.Cost.Data.toBitsPost"
+  ],
+  "MIPRE/Foundations/Halting/Enumerate.lean": [
+   "MIPRE.Verifier.answerEquiv",
+   "MIPRE.Verifier.not_inClassB_iff",
+   "MIPRE.Verifier.quantumValue_toGame_eq_valStar",
+   "MIPRE.Verifier.questionEquiv"
+  ],
+  "MIPRE/Foundations/Halting/Freeze.lean": [
+   "MIPRE.Verifier.freeze",
+   "MIPRE.Verifier.freeze_hasPerfectPCC",
+   "MIPRE.Verifier.freeze_isBounded",
+   "MIPRE.Verifier.freeze_valStar"
+  ],
+  "MIPRE/Foundations/Halting/Instantiation.lean": [
+   "MIPRE.Halting.Obligations",
+   "MIPRE.Halting.Vof",
+   "MIPRE.Halting.classA",
+   "MIPRE.Halting.classB",
+   "MIPRE.Halting.descDec",
+   "MIPRE.Halting.descLam",
+   "MIPRE.Halting.halting_reduction"
+  ],
+  "MIPRE/Foundations/Halting/PolyBounded.lean": [
+   "MIPRE.Cost.PolyBounded"
+  ],
+  "MIPRE/Foundations/Halting/Serial.lean": [
+   "MIPRE.Cost.Prog.parseProg_runs",
+   "MIPRE.Cost.Prog.serProg_runs"
+  ],
+  "MIPRE/Foundations/Halting/Wrapper.lean": [
+   "MIPRE.Decider.wrap",
+   "MIPRE.Verifier.ofSamplerDecider",
+   "MIPRE.Verifier.ofSamplerDecider_accepts"
+  ],
   "MIPRE/Foundations/ValueApprox.lean": [
    "MIPRE.ValueApprox.dotProduct_kronecker_perturb",
    "MIPRE.ValueApprox.dotProduct_mulVec_perturb",
    "MIPRE.ValueApprox.kronecker_sub_kronecker",
    "MIPRE.ValueApprox.posSemidef_realSmul_one_add_and_sub_iff"
+  ],
+  "MIPRE/Foundations/ValueApprox/Cayley.lean": [
+   "MIPRE.ValueApprox.cayley",
+   "MIPRE.ValueApprox.cayley_mem_unitaryGroup",
+   "MIPRE.ValueApprox.exists_isSkewHermitian_cayley_eq",
+   "MIPRE.ValueApprox.exists_norm_eq_one_isUnit_one_add_smul"
+  ],
+  "MIPRE/Foundations/ValueApprox/Dense.lean": [
+   "MIPRE.ValueApprox.IsPVM.exists_entriesIn_norm_sub_le",
+   "MIPRE.ValueApprox.exists_unitary_entriesIn_norm_smul_sub_le"
+  ],
+  "MIPRE/Foundations/ValueApprox/Gaussian.lean": [
+   "MIPRE.ValueApprox.GaussianRat"
+  ],
+  "MIPRE/Foundations/ValueApprox/Norms.lean": [
+   "MIPRE.ValueApprox.norm_cayley_sub_cayley_le"
+  ],
+  "MIPRE/Foundations/ValueApprox/Projective.lean": [
+   "MIPRE.ValueApprox.IsPVM",
+   "MIPRE.ValueApprox.IsPVM.exists_unitary_pattern"
+  ],
+  "MIPRE/Foundations/ValueApprox/RE.lean": [
+   "MIPRE.ValueApprox.REPred.of_primrecRel_exists",
+   "MIPRE.ValueApprox.rePred_lt_quantumValue"
+  ],
+  "MIPRE/Foundations/ValueApprox/RawComplete.lean": [
+   "MIPRE.ValueApprox.exists_check_iff"
+  ],
+  "MIPRE/Foundations/ValueApprox/RawPrimrec.lean": [
+   "MIPRE.ValueApprox.primrecPred_check"
+  ],
+  "MIPRE/Foundations/ValueApprox/RawSemantics.lean": [
+   "MIPRE.ValueApprox.check_iff_interp"
+  ],
+  "MIPRE/Foundations/ValueApprox/RawStrategy.lean": [
+   "MIPRE.ValueApprox.Check",
+   "MIPRE.ValueApprox.RawStrategy",
+   "MIPRE.ValueApprox.RawStrategy.interp"
+  ],
+  "MIPRE/Foundations/ValueApprox/Strategy.lean": [
+   "MIPRE.ValueApprox.ExactStrategy",
+   "MIPRE.ValueApprox.ExactStrategy.EntriesIn",
+   "MIPRE.ValueApprox.ExactStrategy.IsValid",
+   "MIPRE.ValueApprox.ExactStrategy.toStrategy",
+   "MIPRE.ValueApprox.ExactStrategy.value",
+   "MIPRE.ValueApprox.ExactStrategy.value_le_quantumValue",
+   "MIPRE.ValueApprox.abs_bornValue_sub_le",
+   "MIPRE.ValueApprox.exists_exactStrategy_value_gt",
+   "MIPRE.ValueApprox.lt_quantumValue_iff"
+  ],
+  "MIPRE/Foundations/Verifier.lean": [
+   "MIPRE.Decider",
+   "MIPRE.Decider.Accepts",
+   "MIPRE.Decider.TimeBound",
+   "MIPRE.Verifier",
+   "MIPRE.Verifier.Answers",
+   "MIPRE.Verifier.IsBounded",
+   "MIPRE.Verifier.IsSynchronousAt",
+   "MIPRE.Verifier.game",
+   "MIPRE.Verifier.size",
+   "MIPRE.Verifier.syncGame"
+  ],
+  "MIPRE/Foundations/VerifierValue.lean": [
+   "MIPRE.Verifier.hasPerfectPCC_congr",
+   "MIPRE.Verifier.hasPerfectPCC_of_le",
+   "MIPRE.Verifier.valStar_congr",
+   "MIPRE.Verifier.valStar_eq_of_rejects",
+   "MIPRE.Verifier.valStar_eq_one_of_hasPerfectPCC"
   ],
   "MIPRE/HaltingGameValue.lean": [
    "HaltingGameValue.GameData",
@@ -528,7 +1211,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 53,
+ "lean_tags": 72,
  "module_sizes": {
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
   "MIPRE/Background/LIDT/Axioms.lean": 0,
@@ -542,6 +1225,8 @@
   "MIPRE/Background/LIDT/Bridge/Value.lean": 28,
   "MIPRE/Background/LIDT/Game.lean": 25,
   "MIPRE/Background/LIDT/Soundness.lean": 1,
+  "MIPRE/Background/Orthonormalization/Axioms.lean": 0,
+  "MIPRE/Background/Orthonormalization/Statement.lean": 1,
   "MIPRE/Background/Repetition/Axioms.lean": 0,
   "MIPRE/Background/Repetition/Commuting.lean": 8,
   "MIPRE/Background/Repetition/Direct.lean": 3,
@@ -550,8 +1235,14 @@
   "MIPRE/Cslib/Computability/Machines/Turing/MultiTape/Deterministic.lean": 44,
   "MIPRE/Cslib/Computability/Machines/Turing/MultiTape/TapeLemmas.lean": 12,
   "MIPRE/Cslib/Foundations/Data/RelatesInSteps.lean": 25,
+  "MIPRE/Foundations/CL/Basic.lean": 68,
+  "MIPRE/Foundations/CL/Closure.lean": 18,
+  "MIPRE/Foundations/CL/Downsize.lean": 45,
+  "MIPRE/Foundations/CL/Register.lean": 42,
+  "MIPRE/Foundations/CL/Sampler.lean": 23,
+  "MIPRE/Foundations/ClassMIPStar.lean": 8,
   "MIPRE/Foundations/CommutingOperator.lean": 4,
-  "MIPRE/Foundations/Compression.lean": 18,
+  "MIPRE/Foundations/Compression.lean": 20,
   "MIPRE/Foundations/Cost/Basic.lean": 31,
   "MIPRE/Foundations/Cost/BitQuery.lean": 19,
   "MIPRE/Foundations/Cost/Clocked.lean": 5,
@@ -569,14 +1260,42 @@
   "MIPRE/Foundations/Cost/Numeric.lean": 36,
   "MIPRE/Foundations/Cost/Partrec.lean": 19,
   "MIPRE/Foundations/Cost/PolyTime.lean": 8,
+  "MIPRE/Foundations/Cost/Semidecide.lean": 32,
   "MIPRE/Foundations/Cost/Succinct.lean": 7,
   "MIPRE/Foundations/Cost/Threshold.lean": 8,
   "MIPRE/Foundations/Cost/Toolkit.lean": 18,
   "MIPRE/Foundations/Cost/Unary.lean": 26,
   "MIPRE/Foundations/Cost/Universal.lean": 130,
   "MIPRE/Foundations/Distances.lean": 10,
-  "MIPRE/Foundations/Games.lean": 47,
+  "MIPRE/Foundations/GameDescription.lean": 4,
+  "MIPRE/Foundations/GameTransport.lean": 30,
+  "MIPRE/Foundations/Games.lean": 61,
+  "MIPRE/Foundations/GapCompression.lean": 2,
+  "MIPRE/Foundations/Halting/Arith.lean": 48,
+  "MIPRE/Foundations/Halting/Classes.lean": 10,
+  "MIPRE/Foundations/Halting/Descriptions.lean": 34,
+  "MIPRE/Foundations/Halting/Enumerate.lean": 19,
+  "MIPRE/Foundations/Halting/Freeze.lean": 28,
+  "MIPRE/Foundations/Halting/Instantiation.lean": 15,
+  "MIPRE/Foundations/Halting/Lists.lean": 42,
+  "MIPRE/Foundations/Halting/PolyBounded.lean": 27,
+  "MIPRE/Foundations/Halting/Serial.lean": 26,
+  "MIPRE/Foundations/Halting/Wrapper.lean": 29,
   "MIPRE/Foundations/ValueApprox.lean": 8,
+  "MIPRE/Foundations/ValueApprox/Cayley.lean": 16,
+  "MIPRE/Foundations/ValueApprox/Dense.lean": 2,
+  "MIPRE/Foundations/ValueApprox/Gaussian.lean": 26,
+  "MIPRE/Foundations/ValueApprox/Norms.lean": 27,
+  "MIPRE/Foundations/ValueApprox/Projective.lean": 9,
+  "MIPRE/Foundations/ValueApprox/RE.lean": 2,
+  "MIPRE/Foundations/ValueApprox/RawComplete.lean": 5,
+  "MIPRE/Foundations/ValueApprox/RawInt.lean": 53,
+  "MIPRE/Foundations/ValueApprox/RawPrimrec.lean": 50,
+  "MIPRE/Foundations/ValueApprox/RawSemantics.lean": 27,
+  "MIPRE/Foundations/ValueApprox/RawStrategy.lean": 31,
+  "MIPRE/Foundations/ValueApprox/Strategy.lean": 20,
+  "MIPRE/Foundations/Verifier.lean": 17,
+  "MIPRE/Foundations/VerifierValue.lean": 12,
   "MIPRE/HaltingGameValue.lean": 12,
   "MIPRE/LCS/Basic.lean": 5,
   "MIPRE/LCS/Common.lean": 10,
@@ -613,9 +1332,9 @@
  },
  "unresolved": [],
  "xref_counts": {
-  "bibitems": 38,
-  "cites": 154,
-  "labels": 168,
-  "refs": 649
+  "bibitems": 32,
+  "cites": 150,
+  "labels": 200,
+  "refs": 844
  }
 }

@@ -33,7 +33,7 @@ namespace MIPRE.ValueApprox
 open Matrix
 open scoped ComplexOrder Kronecker
 
-variable {d : Type} [Fintype d] [DecidableEq d]
+variable {d : Type*} [Fintype d] [DecidableEq d]
 
 omit [Fintype d] in
 /-- Shifting by a real multiple of the identity keeps a matrix Hermitian. -/
@@ -107,7 +107,7 @@ obtained by bounding each term separately. -/
 
 /-- A difference of Kronecker products splits over the two factors. This is what lets the
 two players' operators be perturbed one at a time. -/
-theorem kronecker_sub_kronecker {dA dB : Type} (A A' : Matrix dA dA ℂ) (B B' : Matrix dB dB ℂ) :
+theorem kronecker_sub_kronecker {dA dB : Type*} (A A' : Matrix dA dA ℂ) (B B' : Matrix dB dB ℂ) :
     A ⊗ₖ B - A' ⊗ₖ B' = (A - A') ⊗ₖ B + A' ⊗ₖ (B - B') := by
   ext p q
   simp only [Matrix.sub_apply, Matrix.add_apply, Matrix.kroneckerMap_apply]
@@ -128,7 +128,7 @@ theorem dotProduct_mulVec_perturb (M N : Matrix d d ℂ) (ψ φ : d → ℂ) :
 players' operators and the state perturbed at once decomposes into four terms, each moving
 exactly one of `A`, `B` and `ψ`. Combining `kronecker_sub_kronecker` with
 `dotProduct_mulVec_perturb`. -/
-theorem dotProduct_kronecker_perturb {dA dB : Type} [Fintype dA] [Fintype dB]
+theorem dotProduct_kronecker_perturb {dA dB : Type*} [Fintype dA] [Fintype dB]
     (A A' : Matrix dA dA ℂ) (B B' : Matrix dB dB ℂ) (ψ φ : dA × dB → ℂ) :
     star ψ ⬝ᵥ ((A ⊗ₖ B) *ᵥ ψ) - star φ ⬝ᵥ ((A' ⊗ₖ B') *ᵥ φ)
       = star ψ ⬝ᵥ (((A - A') ⊗ₖ B) *ᵥ ψ) + star ψ ⬝ᵥ ((A' ⊗ₖ (B - B')) *ᵥ ψ)

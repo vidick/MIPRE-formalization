@@ -38,7 +38,7 @@ decisions, items with a done criterion, risks. Update the status column as items
 | 1 | PR #30 review and merge; cloud environment re-save | 2 | maintainer | merged 2026-09-11; re-save outstanding |
 | 2 | First blueprint build on `main` | — | small | done 2026-09-11 (run 34608202078 green) |
 | 3 | #28 `lem:povm-value-eq`: close the entangled bridge | `\leanok` on `thm:direct-repetition-q`, item 4 | medium | done 2026-09-12 |
-| 4 | `lem:value-lower-approx` in Lean, `val*` half (MIP* ⊆ RE; hypothesis `hS` of the criterion) | `thm:halting`, `thm:mipstar-eq-re` | medium–hard | open |
+| 4 | `lem:value-lower-approx` in Lean, `val*` half (MIP* ⊆ RE; hypothesis `hS` of the criterion) | `thm:halting`, `thm:mipstar-eq-re` | medium–hard | done 2026-09-14 (#48, three PRs) |
 | 5 | #22 `thm:almost-sync`, with the diagonal-weight hypothesis (then #23, commuting case) | — | hard | **off the critical path 2026-09-13** |
 | 6 | #29 `lem:tracial-le-co` (GNS); restate `thm:tracial-density` | MIP^co track | medium–hard | open |
 | 7 | Audit chapter 6 (value form) against Lin's propositions | chapter-6 formalization track | blueprint only | open |
@@ -175,6 +175,44 @@ decisions, items with a done criterion, risks. Update the status column as items
   `ValueApprox` lemmas that exist. `lem:value-lower-approx` itself still has no Lean.
   On the route, read Finding 3 of `planning/ledger-informed-plan.md` before the Cayley
   paragraph above: the ledger settles this against Cayley.
+- Delivered 2026-09-14 (H3, part 1 of 3; tracking issue #48): the mathematics, by the
+  Cayley route after all — `MIPRE/Foundations/ValueApprox/{Projective,Cayley,Norms,Gaussian,
+  Dense,Strategy}.lean`, no sorry. `ExactStrategy` is the proof-free data of a strategy with
+  an unnormalized state, `IsValid` its projectivity and `u ≠ 0`, `value` the rational
+  function `⟨u, Λ u⟩/⟨u, u⟩`; `lt_quantumValue_iff` is `val*(G) > t ↔ ∃ valid Gaussian-rational
+  data with value > t`, from `IsPVM.exists_entriesIn_norm_sub_le` (exact `ℚ(i)` projective
+  measurements are dense: `U Π U*`, a phase, the Cayley transform of a rounded
+  skew-Hermitian matrix) and the Lipschitz bound `abs_bornValue_sub_le`. The blueprint has
+  the two new lemmas (`lem:rational-pvm-dense`, `lem:rational-strategies-suffice`) and, under
+  `lem:value-lower-approx`, why the route departs from the ledger's: with exact candidates
+  the stability node is vacuous, and no `T^{-1/2}` or psd test is needed. Still owed: the
+  `REPred` on a concrete description type (part 2) and the `Prog` form for the criterion's
+  `hS` with the `⊆` half of `thm:mipstar-eq-re` (part 3); `lem:value-lower-approx` itself has
+  no `\lean` tag yet.
+- Delivered 2026-09-14 (H3, part 2 of 3): `lem:value-lower-approx` carries `\lean`/`\leanok`
+  with a `\leanok` proof — `MIPRE.ValueApprox.rePred_lt_quantumValue`, the set of
+  `(g, p, q)` with `p / q < val*(G_g)` is an `REPred` on `GameData × ℕ × ℕ`. The search is
+  over `RawStrategy` (a common denominator, dimensions, Gaussian-integer numerators as lists;
+  `Primcodable`), and `Check g p q r` is the primitive recursive test that `interp r` is a valid
+  strategy of value `> p / q` (`RawStrategy`, `RawPrimrec`); `RawSemantics` proves
+  `Check ↔ IsValid ∧ p / q < value`, `RawComplete` clears denominators to turn every valid
+  `ℚ(i)` exact strategy into a raw candidate. `GameData.game` (`Foundations/GameDescription.lean`)
+  reads a description as a `MIPRE.Game`; the agreement lemma between `HaltingGameValue.gameValue`
+  and `MIPRE.syncValue` is still owed. The blueprint statement is now the `val*` one (the
+  `synval` version is recorded as not needed). Integers are pairs of naturals (`RawInt`),
+  since Mathlib's `Primrec` has no `ℤ`. Part 3 followed the same day (next bullet).
+- Delivered 2026-09-14 (H3, part 3 of 3; closes #48): `MIPRE.Cost.exists_semidecider`
+  (`Cost/Semidecide.lean`) — every `REPred` on bit strings is the halting set of a well-scoped
+  `Prog` on encoded strings, through `Turing.ToPartrec.Code.exists_code` and `ofCode_halts_iff`
+  after an ambient loop shifts the bits up by one (a `ToPartrec` code cannot see trailing
+  zeros of its input, and `false` encodes as `nil = ofNat 0`) — with the converse
+  `rePred_halts`, so `MIPRE.isRE_iff` identifies `def:re` with the halting sets of the model.
+  `Foundations/ClassMIPStar.lean` has `IsRE`, `MIPStar` (the computable version, on game
+  descriptions; the blueprint's `def:mipstar` records the difference and its limits) and
+  `MIPStar.isRE`, the `⊆` half of `thm:mipstar-eq-re`, now the blueprint's
+  `lem:mipstar-sub-re`; `exists_semidecider_lt_quantumValue` is the criterion's `hS` for any
+  computable family of game descriptions. Not done here: the passage from a normal form
+  verifier to a game description (a computable tabulation), which is H4's.
 
 ### 5. #22 / #23 — synchronous transport (`thm:almost-sync`) — **off the critical path 2026-09-13**
 
@@ -209,7 +247,12 @@ decisions, items with a done criterion, risks. Update the status column as items
   (`thm:lidt-soundness`, `thm:qld`, both stated for tensor-product strategies), whose
   synchronous restatement is separate work; that is a different use of the transport from
   the one inside repetition, and it does not disappear with the value-form repair.
-- Plan: (i) `thm:orthonormalization` as a standalone lemma (issue #22 suggests it first);
+- Plan: (i) `thm:orthonormalization` as a standalone lemma (issue #22 suggests it first)
+  — **done 2026-09-13, by import rather than by proof**: the `orthogonalization` package
+  of `vidick/commuting-repetition` is vendored under
+  `MIPRE/Background/Orthonormalization/`, and gives the finite-dimensional case
+  unconditionally, for a *normal* state, with constant 9 (see R4 below for what that
+  settles and what it does not);
   (ii) `thm:almost-sync` in finite dimension (#22); (iii) the commuting case (#23, Lin
   2023, arXiv:2304.01940), needed only for the MIP^co track and best done after (ii) with
   a parallel statement. Suggested location: `MIPRE/Background/Synchronous/`, statements in
@@ -383,9 +426,17 @@ Lean v4.33.0.
   to the JNVWY low-degree paper and KV11. Attach to #22 (the transport work uses it).
   *Recorded in the text* (2026-09-12): both claims now sit in `thm:orthonormalization`'s
   comments, attributed to `\cite{Audit26}` and marked unverified here, since de la Salle's
-  text is not vendored in this repository. What remains is to check them against the source
-  and then weaken the hypothesis, which is the part that unblocks the projectivization
-  sites.
+  text is not vendored in this repository.
+  *Settled, in one direction* (2026-09-13): the mathematical claim is now proved, not
+  read. `thm:orthonormalization` is restated with a normal state and no faithfulness or
+  traciality, constant 9, and carries `\lean`/`\leanok` on
+  `Orthogonalization.povm_orthogonalization_finDim_vn` from the vendored package. So the
+  projectivization sites are unblocked for finite-dimensional algebras. Three things are
+  *not* settled: the attribution (KPS18/JNVWY20 versus the low-degree paper and KV11) —
+  still unchecked, the source not being vendored; the general von Neumann case, which the
+  package proves only as an implication from an eight-field structure-theory interface
+  that nobody has discharged (`rem:orthonormalization-scope`); and the `O(δ)` versus
+  `O(δ^{1/4})` consistency-to-projectivity step, which is a different lemma.
 - **R5 — typed verifiers: dropped in name, kept in arithmetic** (§10). `def:sampler`
   admits one pair of CL functions on one space, and nothing assembles a question
   distribution from structurally different sub-distributions selected by a type graph,

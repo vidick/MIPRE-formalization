@@ -464,11 +464,21 @@ in $\log$ of the integer inputs, unless an integer is explicitly given in unary.
 
 \begin{definition}[Recursively enumerable]
 \label{def:re}
+\lean{MIPRE.IsRE, MIPRE.isRE_iff}
+\leanok
 A language $L \subseteq \{0,1\}^*$ is in $\RE$ if it is the domain (equivalently, the
 range) of a partial computable function. The \emph{halting problem} --- the set of $e$
 such that $\phi_e$ halts on the empty input --- is $\RE$-complete under many-one
 reductions.
 \end{definition}
+
+In Lean (\texttt{MIPRE.IsRE}) membership in $L$ is Mathlib's \texttt{REPred}, the domain
+of a partial computable function; equivalently (\texttt{MIPRE.isRE\_iff}), $L$ is the
+halting set of a well-scoped program of the ambient model
+(Section~\ref{sec:rr-computability}) on encoded strings, which is the form in which the
+compressibility criterion (Lemma~\ref{lem:compressible-criterion}) consumes recursive
+enumerability. The completeness of the halting problem is
+Theorem~\ref{thm:halting-undecidable}, not part of the definition.
 
 \begin{definition}[Succinct description]
 \label{def:succinct}
@@ -487,7 +497,8 @@ do, provided the same one is used in Theorem~\ref{thm:compression}.)
 \begin{definition}[Game description]
 \label{def:game-description}
 \uses{def:sync-game}
-\lean{HaltingGameValue.GameData, HaltingGameValue.GameData.toGame}
+\lean{HaltingGameValue.GameData, HaltingGameValue.GameData.toGame,
+  HaltingGameValue.GameData.game}
 \leanok
 A \emph{game description} is a tuple $g = (n_\mX, n_\mA, w, \mathrm{acc})$ of two
 integers, a finite list $w$ of weighted question pairs, and a finite list
@@ -509,43 +520,116 @@ introspection can certify, and a \emph{decider}, checking answers.
 
 \begin{definition}[Sampler]
 \label{def:sampler}
-\uses{def:cl-function}
-An \emph{$\ell$-level sampler} with field size $q(n) = 2$ is a Turing machine
-$\sampler$ that on input $n$ specifies a linear space $V = \F_2^{s(n)}$ and a pair of
-$\ell$-level conditionally linear functions $L^\alice, L^\bob$ on $V$
-(Definition~\ref{def:cl-function}); the question distribution it samples is $\mu_n =
-(L^\alice(z), L^\bob(z))$ for uniform $z \in V$. Formally $\sampler$ answers
-dimension, marginal, and linear-evaluation queries as in~\cite{JNVWY20}; the precise
-query interface is fixed in Section~\ref{sec:ps-cl}. $\TIME_\sampler(n)$ denotes its
-maximal running time on queries with index $n$.
+\uses{def:cl-function,lem:cl-structure}
+\lean{MIPRE.CL.Sampler, MIPRE.CL.Sampler.Query, MIPRE.CL.Sampler.dist,
+  MIPRE.CL.Sampler.TimeBound}
+\leanok
+An \emph{$\ell$-level sampler} (with field size $2$) is a Turing machine $\sampler$ together
+with, for each $n$, a dimension $s(n)$ and two $\ell$-level CL functions $L^\alice, L^\bob$ on
+$V = \F_2^{s(n)}$ given with exact decomposition data (Lemma~\ref{lem:cl-structure}) such
+that, writing vectors and register subspaces of $V$ as bit strings of length $s(n)$
+(coordinates, respectively indicator vectors), for all $w \in \{\alice, \bob\}$, $j \in \{1,
+\ldots, \ell\}$ and bit strings $z, u, y$ of length $s(n)$:
+\begin{itemize}
+\item on input $(n, \mathtt{dimension})$, $\sampler$ outputs $s(n)$;
+\item on input $(n, w, \mathtt{marginal}, j, z)$, it outputs the marginal $L^w_{\leq j}(z)$;
+\item on input $(n, w, \mathtt{linear}, j, u, y)$, it outputs $L^w_{j,u}(y)$, provided
+  $u \in L^w_{<j}(V)$;
+\item on input $(n, w, \mathtt{factor}, j, u)$, it outputs the factor space $V^w_{j,u}$,
+  provided $u \in L^w_{<j}(V)$;
+\end{itemize}
+and $\sampler$ halts on every input of the form $(n, \ldots)$, well formed or not; nothing is
+required of its outputs on other inputs. The \emph{distribution of $\sampler$ at index $n$}
+is the CL distribution $\mu_n$ of $(L^\alice(x), L^\bob(x))$ for uniform $x \in V$
+(Definition~\ref{def:cl-function}), and $\TIME_\sampler(n)$ denotes the maximal running time
+of $\sampler$ over all inputs of the form $(n, \ldots)$.
 \end{definition}
+
+\paragraph{Comments.} This is the paper's \texttt{def:sampler} (\texttt{linear.tex}) at
+field size $2$, the only size the normal form verifiers of this blueprint use; the paper's
+samplers over $\F_{2^t}$ reach this form by downsizing (Section~\ref{sec:ps-cl}). Two points
+the formalization fixes. The correctness clauses for $\mathtt{linear}$ and $\mathtt{factor}$
+are imposed only for prefixes in the range of $L^w_{<j}$, as the paper's amended definition
+states, and are well defined there by Lemma~\ref{lem:cl-structure}. And totality on all inputs
+$(n, \ldots)$ is what makes $\TIME_\sampler(n)$ finite; the paper secures it by bounded format
+checks that read only a prescribed prefix of each input. In Lean the machine is a program of
+the ambient cost model (Section~\ref{sec:computability-conventions}), its input the pair of
+$n$ and a query (\texttt{Sampler.Query}), and $\TIME_\sampler(n) \le T$ \emph{at degree $k$}
+is read as halting within cost $T \cdot (\abs{d} + 1)^k$ on every input $(n, d)$, well formed
+or not (\texttt{Sampler.TimeBoundAt}).
+
+Two departures from the paper are forced here, and both were found by trying to prove the
+bound for a concrete machine rather than by inspection. First, the paper's bound is
+\emph{uniform} over all inputs, and that reading is not available in the ambient model: a
+value is inspected in place one node at a time, but a loop carries the rest of a list to its
+next iteration only by copying it, so no program walks an unbounded list within a cost
+independent of its length, and a uniform bound is met by no sampler or decider that checks
+the length of a string against an unbounded $s(n)$. The running time is therefore bounded by a
+polynomial in the size of the input. Second, the \emph{degree} $k$ of that polynomial has to
+be carried alongside the coefficient $T$, because every decider of the pipeline runs another
+program through the universal machine, whose overhead is a polynomial $Q$ of degree above one
+(\texttt{Cost.Universal.univPoly}): a simulated run costing $T (\abs{d}+1)^k$ becomes one
+costing about $Q(T (\abs{d}+1)^k)$, of degree $k \cdot \deg Q$. No fixed degree is closed
+under the composition the deciders perform; a bounded degree is. Collapsing the two into one
+parameter --- reading the bound as $T (\abs{d}+1)^T$ --- would also be closed, but then
+$\lambda$-boundedness would allow degree $n^\lambda$ in the input size, which is not a
+polynomial-time condition at all and would make Theorem~\ref{thm:compression} assume
+compression of verifiers its proof cannot compress.
 
 \begin{definition}[Decider]
 \label{def:decider}
+\lean{MIPRE.Decider, MIPRE.Decider.Accepts, MIPRE.Decider.TimeBound}
+\leanok
 A \emph{decider} is a $5$-input Turing machine $\decider$, whose input is interpreted
-as $(n, x, y, a, b)$ with $n$ an integer index and $x, y, a, b$ strings. It accepts
-(output $1$) or rejects. $\TIME_\decider(n)$ denotes its maximal running time over
-inputs with index $n$.
+as $(n, x, y, a, b)$ with $n$ an integer index and $x, y, a, b$ strings. It \emph{accepts}
+if it halts with output $1$, and \emph{rejects} otherwise (output $0$, or a timeout).
+$\TIME_\decider(n)$ denotes its maximal running time over all inputs with index $n$. In Lean,
+$\TIME_\decider(n) \le T$ at degree $k$ is read as halting within cost
+$T \cdot (\abs{d} + 1)^k$ on every input $(n, d)$ (\texttt{Decider.TimeBoundAt}), for the
+reasons given after Definition~\ref{def:sampler}.
 \end{definition}
 
 \begin{definition}[Normal form verifier]
 \label{def:normal-verifier}
 \ledgernode{1.1.3}
-\uses{def:sampler,def:decider,def:sync-game}
+\uses{def:sampler,def:decider,def:game,def:sync-game}
+\lean{MIPRE.Verifier, MIPRE.Verifier.game, MIPRE.Verifier.Answers, MIPRE.Verifier.size,
+  MIPRE.Verifier.IsSynchronousAt, MIPRE.Verifier.syncGame}
+\leanok
 A \emph{normal form verifier} is a pair $\verifier = (\sampler, \decider)$ of a sampler
-and a decider. For each $n$, $\verifier$ determines a game $\verifier_n$ with question
-distribution given by $\sampler$ at index $n$ and decision predicate
-$D(x,y,a,b) = \decider(n,x,y,a,b)$, where answers longer than $\TIME_\decider(n)$ are
-rejected. Symmetrizing the roles of the two players makes the question distribution and
-the decision predicate symmetric; that $\verifier_n$ is moreover \emph{synchronous} in the
-sense of Definition~\ref{def:sync-game} is a further condition on the decider, which must
-reject unequal answers to equal questions, and not a consequence of symmetrization
-(Remark~\ref{rem:sync-invariant}). We write $\valstar(\verifier_n)$ for the quantum value
-of $\verifier_n$ and, when $\verifier_n$ is synchronous, $\synval(\verifier_n)$ for its
-synchronous value. The
-description length $\abs{\verifier} = \max\{\abs{\sampler}, \abs{\decider}\}$, and the
-number of levels of $\verifier$ is that of $\sampler$.
+(with field size $2$) and a decider such that, on input $(n, x, y, a, b)$, the decider first
+computes the dimension $s(n)$ of the sampler and rejects unless $\abs{x} = \abs{y} = s(n)$.
+For each $n$ with $\TIME_\decider(n) < \infty$, $\verifier$ determines the \emph{$n$-th game}
+$\verifier_n$: its question sets are $\mX = \mY = \{0,1\}^{s(n)}$, its answer sets $\mA = \mB$
+are the strings of length at most $\TIME_\decider(n)$, its question distribution is the
+distribution of $\sampler$ at index $n$ (Definition~\ref{def:sampler}), and its decision
+predicate is $D_n(x, y, a, b) = 1$ if and only if $\decider(n, x, y, a, b)$ accepts. We write
+$\valstar(\verifier_n)$ for its quantum value. The game is \emph{synchronous} in the sense of
+Definition~\ref{def:sync-game} when the decider rejects unequal answers to equal questions;
+this is a condition on the decider (Remark~\ref{rem:sync-invariant}), and
+$\synval(\verifier_n)$ then denotes the synchronous value. The description length is
+$\abs{\verifier} = \max\{\abs{\sampler}, \abs{\decider}\}$, and the number of levels of
+$\verifier$ is that of $\sampler$.
 \end{definition}
+
+\paragraph{Comments.} The paper's \texttt{def:normal-ver} and \texttt{def:normal-game}
+(\texttt{games.tex}), including the amended question-length check, which the previous text
+of this definition omitted; in the paper the check is what gives $s(n) \le \TIME_\decider(n)$
+(\texttt{rmk:normal-verifier-question-length-check}). The formalization takes the
+answer-length bound as a parameter: \texttt{Verifier.game n T} is $\verifier_n$ with answers
+of length at most $T$, the paper's game being the case $T = \TIME_\decider(n)$; every statement
+about $\verifier_n$ carries its time bound explicitly, as the paper's do
+($\TIME_\decider(n) \le n^\lambda$, $\poly(2^{\lambda n}, \ell)$, and so on), and the exact
+supremum would only add the degenerate case $\TIME_\decider(n) = \infty$, where the paper's
+game is undefined, to every definition. Timeouts are not modelled: in the cost model of
+Section~\ref{sec:computability-conventions} a decider with $\TIME_\decider(n) < \infty$ halts
+on every input of index $n$, and acceptance is halting with output $1$. The question-length
+check is kept in the form of its consequence for the game, that the decider accepts only
+questions of length $s(n)$ (\texttt{Verifier.accepts\_length}); where the paper uses
+$s(n) \le \TIME_\decider(n)$, the formalization requires $s(n) \le n^\lambda$ as a clause of
+$\lambda$-boundedness (Definition~\ref{def:lambda-bounded}): with the running times bounded
+by a polynomial in the size of the input (Definition~\ref{def:sampler}), neither
+$s(n) \le \TIME_\decider(n)$ nor $s(n) \le \TIME_\sampler(n)$ is a consequence any more.
 
 \begin{remark}[The synchronization invariant]
 \label{rem:sync-invariant}
@@ -582,18 +666,41 @@ to be.
 \begin{definition}[$\lambda$-bounded verifier]
 \label{def:lambda-bounded}
 \uses{def:normal-verifier}
+\lean{MIPRE.Verifier.IsBounded}
+\leanok
 For $\lambda \in \N$, a normal form verifier $\verifier = (\sampler, \decider)$ is
 \emph{$\lambda$-bounded} if $\TIME_\sampler(n), \TIME_\decider(n) \leq n^\lambda$ for
-all $n \geq 2$, and $\abs{\verifier} \leq \lambda$.
+all $n \geq 2$, and $\abs{\verifier} \leq \lambda$. In Lean (\texttt{Verifier.IsBounded}) the
+two time bounds are read as in Definitions~\ref{def:sampler} and~\ref{def:decider}, halting
+within cost $n^\lambda (\abs{d} + 1)^\lambda$ on every input $(n, d)$ --- so $\lambda$ bounds
+both the coefficient and the degree of the polynomial dependence on the input size, which is
+what makes the condition a polynomial-time one --- and the clause $s(n) \le n^\lambda$ --- in
+the paper a consequence of $\TIME_\sampler(n) \le n^\lambda$, the sampler having to write
+$s(n)$ output cells --- is required directly.
 \end{definition}
 
 \begin{definition}[The class $\MIPstar$]
 \label{def:mipstar}
 \ledgernode{1.1.7, 1.1.7.1}
-\uses{def:normal-verifier,def:q-value}
+\uses{def:normal-verifier,def:q-value,def:game-description}
+\lean{MIPRE.MIPStar}
+\leanok
 A language $L$ is in $\MIPstar$ (more precisely, $\MIP^*_{1, 1/2}(2,1)$) if there is a
 polynomial-time computable map $z \mapsto \game_z$ from strings to (descriptions of)
 games --- given by a sampler and decider running in time $\poly(\abs{z})$ --- such that
 $z \in L$ implies $\valstar(\game_z) = 1$ and $z \notin L$ implies
 $\valstar(\game_z) \leq \frac12$.
+
+The Lean definition (\texttt{MIPRE.MIPStar}) is the \emph{computable} version of the class,
+with games given as explicit descriptions: a computable map $z \mapsto \game_z$ from strings
+to game descriptions (Definition~\ref{def:game-description}) with the same completeness and
+soundness clauses. Every language with a polynomial-time verifier whose games are
+synchronous is in it --- the game at input $z$ is finite and computable from the verifier,
+and for a synchronous game the description's rejection of unequal answers to equal
+questions changes nothing --- and that is the shape Theorem~\ref{thm:halting} delivers
+(Section~\ref{ch:main-theorem}); for a general verifier the tabulation preserves soundness,
+but a value-$1$ witness that is inconsistent on equal questions need not survive it. The
+computable version is what the Lean main statement asserts, the inclusion in $\RE$ is
+formalized for it (Lemma~\ref{lem:mipstar-sub-re}), and the polynomial-time clause is not
+formalized.
 \end{definition}

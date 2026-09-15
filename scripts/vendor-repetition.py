@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
-"""Vendor the two direct parallel repetition formalizations into this repository.
+"""Vendor the external formalizations of parallel repetition and orthonormalization.
 
 Usage (from the repository root):
 
     python scripts/vendor-repetition.py \
         --cr-source <path to a commuting-repetition clone> --cr-commit <sha> \
-        --tp-source <path to a ten-proofs clone> --tp-commit <sha>
+        --tp-source <path to a ten-proofs clone> --tp-commit <sha> \
+        --or-source <the same commuting-repetition clone> --or-commit <sha>
+
+``--or`` vendors the ``orthogonalization/`` Lean package of the commuting-repetition
+repository (de la Salle's POVM orthogonalization, blueprint ``thm:orthonormalization``)
+into ``MIPRE/Background/Orthonormalization/``; it is a second package in the same clone
+as ``--cr``, not a second repository.
 
 The script
 
@@ -89,6 +95,9 @@ class Source:
     module_root: Path               # directory of the clone that module names resolve in
     roots: tuple[str, ...] = ()     # import closure of these (module names)...
     files: tuple[str, ...] = ()     # ...or these files (relative to src_subdir)
+    extra_prefixes: tuple[tuple[str, str], ...] = ()   # further (upstream, local) import
+                                    # prefixes to rewrite, for a package that imports
+                                    # another vendored one
     extra_files: tuple[tuple[str, str], ...] = ()   # (relative to clone, dest name)
     audit_aids: tuple[tuple[str, str], ...] = ()    # (relative to clone, dest name)
     readme: str = ""
@@ -191,6 +200,55 @@ None yet (beyond the mechanical ones above).
 {generated}
 """
 
+ORTHO_ROOTS = (
+    # What tier T1b/T2/T4 prove outright, and what tier T3 proves from the interface.
+    "Orthogonalization.Blocks.Main",         # Thm 1.2, any von Neumann algebra on a
+                                             # finite-dimensional space
+    "Orthogonalization.Blocks.Corollaries",  # Thms 1.1 and 1.4 in finite dimension
+    "Orthogonalization.Blocks.Fourier",      # Cor 1.5 in finite dimension
+    "Orthogonalization.FinDim.Main",         # Thm 1.2 for B(H), H finite-dimensional
+    "Orthogonalization.MvN.FullAlgebra",     # Thm 1.2 for B(H), H arbitrary
+    "Orthogonalization.MvN.II1Factor",       # Thm 1.2 for II_1 factors
+    "Orthogonalization.MvN.Main",            # Thm 1.2, conditional on MvNStructureTheory
+    "Orthogonalization.MvN.Corollaries",     # Thms 1.1, 1.4 and Cor 1.5, conditional
+)
+
+
+OR_README = """# Vendored orthonormalization sources
+
+This directory is a generated copy of the `orthogonalization/` Lean package of
+[commuting-repetition](https://github.com/vidick/commuting-repetition), the
+formalization of de la Salle's POVM orthogonalization theorem
+([arXiv:2103.14126](https://arxiv.org/abs/2103.14126)) --- blueprint
+`thm:orthonormalization`. It is vendored by `scripts/vendor-repetition.py` (`--or-source`),
+never edited by hand, and the import prefixes are rewritten twice: `Orthogonalization.` to
+this directory's, and `CommutingRepetition.` to the sibling tree already vendored under
+`MIPRE/Background/Repetition/CommutingRepetition/`, which the package depends on and which
+is therefore not duplicated here.
+
+What is proved unconditionally, and what is not, is the thing to know before citing any of
+it; `MIPRE/Background/Orthonormalization/Axioms.lean` records the axioms of each root, and
+the blueprint states the split. The four `sorry`s in `Orthogonalization/Basic.lean` are
+upstream's *signed statements* --- the unconditional general forms of Theorems 1.1, 1.2,
+1.4 and Corollary 1.5, stated so that the tiers can be compared against them. They have no
+users anywhere in the package: nothing proved here depends on them, as the axiom guard
+shows.
+
+## Conventions
+
+- Do not edit files here by hand: re-run `scripts/vendor-repetition.py` instead. The only
+  differences from upstream are the header, the two rewritten `import` prefixes and the
+  `set_option autoImplicit true` line inserted after the imports. Lean *namespaces* are
+  unchanged (`Orthogonalization`).
+- Nothing outside `MIPRE/Background/Orthonormalization/` may refer to that namespace.
+- Only the import closure of the root modules is vendored (`ORTHO_ROOTS` in the script).
+  Docstrings cite upstream documents (`PLAN.md`, `FIDELITY.md`, `DIFFERENCES.md`, the
+  manuscript); these resolve in the upstream repository at the commit below.
+
+{generated}
+"""
+
+
 SOURCES = {
     "cr": Source(
         key="cr",
@@ -226,6 +284,20 @@ SOURCES = {
                 reason="Lean v4.33 transparency check: `exists_proofSchmidtDecomposition`",
             ),
         ),
+    ),
+    "or": Source(
+        key="or",
+        url="https://github.com/vidick/commuting-repetition",
+        copyright="the commuting-repetition contributors",
+        dest=Path("MIPRE/Background/Orthonormalization/Orthogonalization"),
+        module_prefix="Orthogonalization",
+        local_prefix="MIPRE.Background.Orthonormalization.Orthogonalization",
+        src_subdir=Path("orthogonalization/Orthogonalization"),
+        module_root=Path("orthogonalization"),
+        roots=ORTHO_ROOTS,
+        extra_prefixes=(("CommutingRepetition",
+                         "MIPRE.Background.Repetition.CommutingRepetition"),),
+        readme=OR_README,
     ),
 }
 
@@ -329,6 +401,9 @@ def vendor(src: Source, clone: Path, commit: str, repo_root: Path, auto_implicit
         if src.module_prefix is not None:
             text, n = rewrite_imports(text, src.module_prefix, src.local_prefix)
             rewritten += n
+        for upstream_prefix, local in src.extra_prefixes:
+            text, n = rewrite_imports(text, upstream_prefix, local)
+            rewritten += n
         if auto_implicit:
             text = insert_auto_implicit(text)
         lines += text.count("\n")
@@ -376,6 +451,10 @@ def main() -> None:
     parser.add_argument("--cr-commit", help="expected commuting-repetition commit (prefix ok)")
     parser.add_argument("--tp-source", type=Path, help="path to a ten-proofs clone")
     parser.add_argument("--tp-commit", help="expected ten-proofs commit (prefix ok)")
+    parser.add_argument("--or-source", type=Path,
+                        help="path to a commuting-repetition clone (the orthogonalization "
+                             "package; the same clone as --cr-source)")
+    parser.add_argument("--or-commit", help="expected commuting-repetition commit (prefix ok)")
     parser.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parent.parent)
     parser.add_argument("--no-auto-implicit", action="store_true",
                         help="do not insert `set_option autoImplicit true`")
@@ -393,8 +472,14 @@ def main() -> None:
         vendor(SOURCES["tp"], args.tp_source.resolve(), args.tp_commit,
                args.repo_root.resolve(), not args.no_auto_implicit)
         done += 1
+    if args.or_source:
+        if not args.or_commit:
+            sys.exit("error: --or-commit is required with --or-source")
+        vendor(SOURCES["or"], args.or_source.resolve(), args.or_commit,
+               args.repo_root.resolve(), not args.no_auto_implicit)
+        done += 1
     if not done:
-        sys.exit("error: give --cr-source and/or --tp-source")
+        sys.exit("error: give --cr-source, --tp-source and/or --or-source")
     print("next: lake exe mk_all && lake build")
 
 

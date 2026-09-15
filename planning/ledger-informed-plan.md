@@ -132,6 +132,17 @@ and supplies the rounding lemma** (`1.1.7.2.4`), with the stability counterpart
 decision is settled in favour of the route the roadmap set aside, and the Cayley
 machinery is not needed.
 
+*Reversed 2026-09-14, in the formalization (issue #48).* The Lean takes the Cayley route
+after all: exact `ℚ(i)` projective measurements are dense (`U Π U*`, a phase making `1 + zU`
+invertible, the Cayley transform of an entrywise-rounded skew-Hermitian matrix), so the
+candidates are exact strategies, the stability node `1.1.7.2.3` is vacuous, and the density
+node `1.1.7.2.4` is the Lipschitz bound `|Δvalue| ≤ 4|A||B|η` with no slack; neither
+`T_x^{-1/2}` nor the psd test of `1.1.7.2.1` is needed. The reason is cost in Lean, not
+mathematics: the ledger's route needs the functional calculus for `T_x^{-1/2}` and
+decidability of positive semidefiniteness over `ℚ(i)`, the Cayley route needs neither. Both
+prove statement (S); the blueprint records the departure under `lem:value-lower-approx`, and
+`lem:rational-strategies-suffice` carries the two nodes' `\ledgernode` annotations.
+
 Its one dependency also just cleared: `1.1.7.2.6`'s "WLOG projective by Naimark" is
 exactly `lem:povm-value-eq`, proved sorry-free here on 2026-09-12
 (`MIPRE.Repetition.quantumValue_eq_entangledValue`).
@@ -459,6 +470,28 @@ Neither mode needs Lean, LaTeX or the network. The snapshot records the ledger h
 (`11a03e8`), its event count, and for each node its state, challenge and amendment counts
 and the sha256 of its statement.
 
+## Stage 1.4 is 3/8 on purpose, from 2026-09-13
+
+`scripts/ledger-sync.py` now reports stage 1.4 at 3 of 8 nodes, and the drop is not an
+annotation lost in an edit. The anchored parallel repetition material left the blueprint
+that day: `def:anchoring` (1.4.1), `lem:anchoring-value` (1.4.1.1--1.4.1.3) and `thm:bvy`
+(1.4.2) carried the five missing annotations, and they were deleted along with the
+toolkit their proof needs --- fidelity and Uhlmann, the relative entropy lemmas, quantum
+Raz, Holenstein conditioning.
+
+This is the consequence of what the section above already records: anchored repetition is
+*not used at all* on this route. Anchoring is what the entanglement form forces, because
+`lem:recursive-compression` needs a measure preserved by every transformation; Lin's
+criterion has no measure, so value decay suffices and repetition applies to the game as it
+is. The five nodes stay in the ledger --- they are what the source's proof needs --- and
+this blueprint no longer accounts for them, which is the honest state: not "unaccounted
+for yet", but "not on this route". The three that remain (1.4.3--1.4.5, the direct
+theorems and `thm:parallel-repetition`) are what the pipeline uses.
+
+If the anchored route is ever wanted back --- for the entanglement-requirement corollaries
+of `rem:entanglement-form`, say --- it comes back from `\cite{BVY17}` and from git history
+(`de3e22c`), not from a gap in the blueprint.
+
 ## Correspondence to maintain
 
 As P1 proceeds, each Lean declaration should name the ledger node it discharges, and
@@ -482,7 +515,7 @@ Blueprint coverage after the propagation of 2026-09-15:
 | 1.1 | 22/37 | the 16 sub-nodes under `1.1.6.1` that prove normal-basis construction and self-dualization |
 | 1.2 | 65/149 | finer grain under `1.2.1.7` (self-improvement 20, pasting 13, induction 9, bipartite 9) and under `1.2.2.4.1` (9) |
 | 1.3 | 13/13 | — |
-| 1.4 | 8/63 | the BVY decomposition, 55 nodes, for a theorem this blueprint does not use |
+| 1.4 | 3/63 | the BVY decomposition, for a theorem this blueprint no longer states at all |
 | 1.5 | 9/9 | — |
 | 1.6 | 8/16 | 8 new sub-nodes on the halting reduction |
 | 1.7 | 1/1 | — |
@@ -499,9 +532,19 @@ self-improvement subtree (20 nodes) is the natural next increment.
 computational algebra, it is the one place this blueprint still carries an assumption, and
 `lem:self-dual-basis` now says exactly which ingredient remains admitted.
 
-**Stage 1.4 is not worth doing.** The 55 new nodes decompose `thm:bvy`, which
-`thm:direct-repetition-q` replaces; the blueprint states it for the entanglement-form argument
-only. Annotating them would raise a coverage number and describe nothing this project needs.
-That is the right trade-off to make explicitly rather than by neglect, and it is why the
-coverage note in `ledger-sync.py` says a stage that *falls* between runs is the case to look
-at — a stage that never rose may simply be out of scope.
+**Stage 1.4 is not worth doing.** Those nodes decompose the anchored repetition theorem,
+which `thm:direct-repetition-q` replaces and which PR #40 removed from this blueprint
+altogether. Annotating them would raise a coverage number and describe nothing this project
+needs. That is the right trade-off to make explicitly rather than by neglect.
+
+Note for a future reader of the coverage table: **stage 1.4 fell from 8/63 to 3/63 on
+2026-09-15, and that fall is correct.** The annotations that disappeared were attached to the
+anchored-repetition statements PR #40 deleted. The coverage note in `ledger-sync.py` says a
+stage that falls is the case to look at, which is right as a default — this is the documented
+exception, and the reason the note says *look at* rather than *fix*.
+
+One site trips the umbrella threshold: `lem:value-lower-approx` names six nodes
+(`1.1.7.2` with four of its children, plus `1.8.1`). This is the case the spread report itself
+calls defensible — that statement is formalized and `\leanok` on both statement and proof, so
+its sub-nodes really are the internals of something finished, and four of them are *also* cited
+individually by `lem:norm-two-psd` and `lem:perturbation-split`. Left as is deliberately.

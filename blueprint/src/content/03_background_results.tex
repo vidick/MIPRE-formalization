@@ -8,10 +8,7 @@ axioms; discharging them are independent sub-projects. Three of these results ar
 larger sub-projects and are developed in their own sections: the computability
 results in Section~\ref{ch:computability} and parallel repetition in
 Section~\ref{ch:parallel-repetition}; they are included in the summary table below
-for completeness. The general-purpose quantum information facts feeding the parallel
-repetition proof (fidelity and Uhlmann's theorem, a relative entropy toolkit, quantum
-Raz's lemma) are collected in Section~\ref{sec:ar-background} and likewise appear in
-the table. Statements are given in the
+for completeness. Statements are given in the
 form closest to how they will be used; where the source states a bipartite version and
 the project needs a synchronous one (see Section~\ref{sec:departures}), the translation
 is part of the formalization task and is noted in the comments.
@@ -34,18 +31,13 @@ Result & Statement & Source & Effort \\
 \hline
 Gowers--Hatami & Thm.~\ref{thm:gowers-hatami} & \cite{GH17,dlS21} & \checkmark \\
 Almost-synchronous correlations & Thm.~\ref{thm:almost-sync} & \cite{Vid22} & hard \\
-Orthonormalization & Thm.~\ref{thm:orthonormalization} & \cite{dlS21} & medium \\
+Orthonormalization & Thm.~\ref{thm:orthonormalization} & \cite{dlS21} & \checkmark \\
 Magic Square rigidity & Thm.~\ref{thm:ms-rigidity} & \cite{WBMS16} & easy \\
 Low individual degree test (classical) & Thm.~\ref{thm:lidt-soundness} & \cite{JNVWY21qld} & \checkmark \\
 Low individual degree test (Pauli) & Thm.~\ref{thm:qld} & \cite{JNVWY21qld} & hard \\
-Anchored parallel repetition & Thm.~\ref{thm:bvy} & \cite{BVY17} & hard \\
 Direct parallel repetition (commuting-operator) & Thm.~\ref{thm:direct-repetition-co} & \cite{Vid26} & \checkmark \\
 Direct parallel repetition (entangled) & Thm.~\ref{thm:direct-repetition-q} & \cite{OpenAI26} & \checkmark \\
 Tracial density & Thm.~\ref{thm:tracial-density} & \cite{Lin23,Vid26} & \checkmark \\
-Uhlmann, Fuchs--van de Graaf & Thm.~\ref{thm:uhlmann}, Lem.~\ref{lem:fvdg} & \cite{Uhl76,FvdG99} & medium \\
-Relative entropy toolkit & Lems.~\ref{lem:rel-ent-basic}--\ref{lem:ssa} & \cite{Wil13,LR73} & medium \\
-Quantum Raz's lemma & Lem.~\ref{lem:quantum-raz} & \cite{BVY17} & easy \\
-Holenstein conditioning lemmas & Lem.~\ref{lem:holenstein-conditioning} & \cite{Hol09} & easy \\
 Recursive compression lemma & Lem.~\ref{lem:recursive-compression} & \cite{MNY} & \checkmark \\
 Compressibility criterion & Lem.~\ref{lem:compressible-criterion} & \cite{Lin25} & \checkmark \\
 Efficient computability toolkit & Lems.~\ref{lem:universal-tm}--\ref{lem:kleene} & \cite{MNY} & hard \\
@@ -58,8 +50,9 @@ Value approximable from below & Lem.~\ref{lem:value-lower-approx} & folklore & m
 \end{tabular}
 \end{center}
 
-\noindent Theorem~\ref{thm:bvy} and the results of Section~\ref{sec:ar-background} are no
-longer on the path to the main theorem (Remark~\ref{rem:direct-vs-anchored}).
+\noindent The anchored parallel repetition theorem of~\cite{BVY17}, and the entropy and
+fidelity toolkit its proof needs, are not on the path to the main theorem and are not
+stated in this blueprint (Remark~\ref{rem:direct-vs-anchored}).
 
 \subsection{The Gowers--Hatami theorem}
 \label{sec:rr-gowers-hatami}
@@ -251,23 +244,59 @@ only available route.
 \label{thm:orthonormalization}
 \ledgernode{1.2.1.7.1, 1.2.1.7.1.1, 1.2.1.7.1.2, 1.2.1.7.1.3}
 \uses{def:distance}
-There is a universal constant $C > 0$ such that the following holds. Let $(\cal{M},
-\tau)$ be a von Neumann algebra with a normal faithful tracial state (for the finite-%
-dimensional case, $\cal{M} = M_d(\C)$ with the normalized trace). Let $\{M_a\}_{a \in
-\mA}$ be a POVM in $\cal{M}$ that is $\eps$-nearly projective:
+\lean{MIPRE.Orthonormalization.povm_orthogonalization_finDim}
+\leanok
+Let $\cal{M}$ be a von Neumann algebra on a finite-dimensional Hilbert space, let
+$\varphi$ be a normal state on $\cal{M}$, and let $\{M_a\}_{a \in \mA}$ be a POVM in
+$\cal{M}$ that is $\eps$-nearly projective:
 \begin{equation*}
-  \sum_{a \in \mA} \tau\bigl( M_a - M_a^2 \bigr) \leq \eps\;.
+  \varphi\Bigl( \sum_{a \in \mA} M_a^2 \Bigr) > 1 - \eps\;.
 \end{equation*}
 Then there is a projective measurement $\{P_a\}_{a \in \mA}$ in $\cal{M}$ with
 \begin{equation*}
-  \sum_{a \in \mA} \norm{M_a - P_a}_{L^2(\tau)}^2 \leq C\eps\;.
+  \varphi\Bigl( \sum_{a \in \mA} (M_a - P_a)^*(M_a - P_a) \Bigr) < 9\eps\;.
 \end{equation*}
-The same holds, on average, for a family $\{M^x_a\}$ indexed by $x \sim \mu$.
+The same holds, on average, for a family $\{M^x_a\}$ indexed by $x \sim \mu$, by applying
+it to $\varphi$ averaged over $x$.
 \end{theorem}
+
+\begin{remark}[What is proved, and in what generality]
+\label{rem:orthonormalization-scope}
+\uses{thm:orthonormalization}
+\leanok
+The statement above is the finite-dimensional case, which is the one the main theorem
+needs and the one that is formalized. The vendored development proves three
+unconditional cases, in increasing generality of the algebra and decreasing generality of
+the state: every von Neumann algebra on a finite-dimensional space, for every normal
+state (\texttt{MIPRE.Orthonormalization.povm\_orthogonalization\_finDim}, the
+statement above, bridging \texttt{povm\_orthogonalization\_finDim\_vn}); $\cal{B}(H)$
+for arbitrary $H$ (\texttt{povm\_orthogonalization\_fullAlgebra\_general}); and II$_1$
+factors whose trace and state are both of trace-class form
+(\texttt{povm\_orthogonalization\_II\textsubscript{1}Factor}), which is the case a
+tracial, commuting-operator strategy lives in.
+
+The general case --- every von Neumann algebra, every normal state --- is proved only as
+an implication. Its hypothesis, \texttt{MvNStructureTheory}, bundles eight facts: seven
+are classical Murray--von Neumann structure theory that Mathlib does not have (normal
+functionals are of trace-class form; the type decomposition; the finite decomposition;
+increasing nets of finite projections in the semifinite part; the center-valued trace;
+halving in type III), and the eighth is the measurable-selection step of the source's own
+Lemma~3.1 for the finite type~I part. No term of that type is constructed, so the
+unconditional general statement remains open upstream, and with it the three companion
+results (Theorems 1.1 and 1.4 and Corollary 1.5 of~\cite{dlS21}), which are formalized in
+finite dimension and conditionally in general.
+\texttt{MIPRE/Background/Orthonormalization/Axioms.lean} makes the split mechanical: it
+fails to build if an unconditional result acquires an axiom, or if one of the four open
+targets is closed upstream without this blueprint being updated.
+\end{remark}
 
 \paragraph{Source.} de la Salle~\cite{dlS21}, which gives a dimension-free bound with
 explicit constants; earlier versions with worse parameters appear in~\cite{KPS18}
-and in~\cite{JNVWY20}.
+and in~\cite{JNVWY20}. The Lean proof is vendored from the
+\texttt{orthogonalization} package of the \texttt{commuting-repetition} repository
+(the same upstream as Theorem~\ref{thm:direct-repetition-co}) by
+\texttt{scripts/vendor-repetition.py}; see that directory's \texttt{README.md} for what
+the copy changes (import prefixes, nothing else).
 
 \paragraph{Comments.} Used constantly: soundness analyses produce POVMs that are only
 approximately projective, and this lemma replaces them by genuinely projective
@@ -276,21 +305,28 @@ throughout'' convention of Section~\ref{sec:departures} viable (avoiding Naimark
 dilation). The finite-dimensional case suffices for the main theorem and is a clean,
 self-contained formalization target in linear algebra.
 
-Two claims about the source, from the verification campaign~\cite{Audit26} and
-\emph{not} checked against~\cite{dlS21} here (that text is not vendored in this
-repository). First, the statement above is over-hypothesized: the source is reported to
-need only a \emph{normal} state, not a normal faithful tracial one, to give constant $9$
-and exponent $1$, and to return a full projective measurement in the algebra. The tracial
-hypothesis is not harmless bookkeeping --- it excludes the bipartite vector-state
-applications that several of the projectivization sites of Section~\ref{ch:proof-structure}
-need, so weakening it would turn three of those sites into genuine improvements while the
-rest would still need Naimark dilation or the projective-by-definition convention of
-Section~\ref{sec:departures}. Second, the attribution of the weaker predecessor
-to~\cite{KPS18} and~\cite{JNVWY20} is reported to be wrong, the source crediting the low
-individual degree paper and Kempe--Vidick instead. Both should be settled against the
-source before this lemma is relied on in that generality; the campaign also offers a
-consistency-to-projectivity step giving $O(\delta)$ in place of $O(\delta^{1/4})$, which
-would sharpen the proof of Theorem~\ref{thm:almost-sync}.
+The first of the two claims about the source made by the verification
+campaign~\cite{Audit26} --- that this statement was over-hypothesized, the result needing
+only a \emph{normal} state rather than a normal faithful tracial one, with constant $9$
+and exponent $1$ --- is now settled in the direction the campaign predicted, and settled
+by proof rather than by reading: the statement above carries neither faithfulness nor
+traciality and is checked. That matters beyond bookkeeping, because the tracial
+hypothesis excluded the bipartite vector-state applications that several of the
+projectivization sites of Section~\ref{ch:proof-structure} need; those sites can now use
+this lemma, where before they needed Naimark dilation or the projective-by-definition
+convention of Section~\ref{sec:departures}. What is settled is the mathematics, not the
+attribution: the campaign's second claim, that crediting the weaker predecessor
+to~\cite{KPS18} and~\cite{JNVWY20} is wrong and the source credits the low individual
+degree paper and Kempe--Vidick instead, is still unchecked here, \cite{dlS21} not being
+vendored in this repository. The campaign also offers a consistency-to-projectivity step
+giving $O(\delta)$ in place of $O(\delta^{1/4})$, which would sharpen the proof of
+Theorem~\ref{thm:almost-sync}.
+
+One difference from the statement this blueprint carried before: the hypothesis and the
+conclusion are both strict, and the near-projectivity hypothesis is written
+$\varphi(\sum_a M_a^2) > 1 - \eps$ rather than $\sum_a \tau(M_a - M_a^2) \leq \eps$. For a
+POVM the two agree, since $\sum_a M_a = 1$; converting the strict form to a non-strict one
+costs the constant, $9$ becoming $10$.
 
 \subsection{Magic Square rigidity}
 \label{sec:rr-magic-square}
@@ -1253,7 +1289,7 @@ with $n$ back into the constant $\frac12$ the recursion needs.
 
 \begin{remark}[What is still admitted, after the discharges of September 2026]
 \label{rem:admitted-nodes}
-\uses{thm:ms-rigidity,lem:ms-direct-anticomm,lem:self-dual-basis,thm:bvy,thm:direct-repetition-q,rem:direct-vs-anchored}
+\uses{thm:ms-rigidity,lem:ms-direct-anticomm,lem:self-dual-basis,thm:direct-repetition-q,rem:direct-vs-anchored}
 With the ledger accounted for, the assumptions are countable. Of its $316$ live nodes,
 $313$ are validated and exactly three are \emph{admitted} --- asserted on the strength of a
 cited source rather than proved. The interesting fact is that these are not the three that
@@ -1263,20 +1299,22 @@ the present three are in new territory.
 What was discharged, and how, is the useful part:
 
 \begin{enumerate}
-\item \textbf{Anchored parallel repetition} (node $1.4.2$, Theorem~\ref{thm:bvy}) is no
-  longer admitted: the campaign decomposed it into a $60$-node subtree, and the quantum
-  relative-entropy data-processing inequality it rested on is derived there rather than
-  imported --- by joint convexity plus a Weyl twirl realising the partial trace as a convex
-  combination of unitary conjugations, which is legitimate for the finite-dimensional
-  partial-trace case. It remains \emph{unused} here regardless, since direct repetition
-  (Theorem~\ref{thm:direct-repetition-q}) replaces it and takes a value hypothesis rather
-  than an entanglement one (Remark~\ref{rem:direct-vs-anchored}).
+\item \textbf{Anchored parallel repetition} (node $1.4.2$, the theorem of~\cite{BVY17}, which
+  this blueprint no longer states) is no longer admitted upstream either: the campaign
+  decomposed it into a $60$-node subtree, and the quantum relative-entropy data-processing
+  inequality it rested on is derived there rather than imported --- by joint convexity plus a
+  Weyl twirl realising the partial trace as a convex combination of unitary conjugations, which
+  is legitimate for the finite-dimensional partial-trace case. It is \emph{unused} here
+  regardless, since direct repetition (Theorem~\ref{thm:direct-repetition-q}) replaces it and
+  takes a value hypothesis rather than an entanglement one
+  (Remark~\ref{rem:direct-vs-anchored}).
 \item \textbf{Magic Square rigidity} (node $1.2.2.4.1$) is no longer admitted either, and
   this one matters, because it was the assumption the pipeline actually consumed. The
   consequence the proof needs is not full self-testing but a single anticommutation bound,
   and that bound is now proved directly: Lemma~\ref{lem:ms-direct-anticomm}.
   Theorem~\ref{thm:ms-rigidity} stays in this section as cited background, with no live
-  invocation.
+  invocation, and the completeness leg never used it at all
+  (Lemma~\ref{lem:mermin-peres}).
 \item \textbf{Efficient self-dual normal bases} (node $1.1.6.1$,
   Lemma~\ref{lem:self-dual-basis}) was narrowed rather than removed. Normal-basis
   construction and self-dualization are now proved, over sixteen sub-nodes; what survives as
@@ -1393,18 +1431,181 @@ should be derived alongside it.
 
 \begin{lemma}[The value is approximable from below]
 \label{lem:value-lower-approx}
-\ledgernode{1.1.7.2, 1.1.7.2.2, 1.1.7.2.5, 1.1.7.2.6}
-\uses{def:game-description,def:sync-value,def:q-value,def:re,lem:norm-two-psd,lem:perturbation-split}
-The set $\{ (g, p) : g \text{ a game description}, p \in \mathbb{Q},
-\synval(\game_g) > p \}$ is recursively enumerable, and likewise for $\valstar$.
+\lean{MIPRE.ValueApprox.rePred_lt_quantumValue, MIPRE.ValueApprox.RawStrategy,
+  MIPRE.ValueApprox.RawStrategy.interp, MIPRE.ValueApprox.Check,
+  MIPRE.ValueApprox.primrecPred_check, MIPRE.ValueApprox.check_iff_interp,
+  MIPRE.ValueApprox.exists_check_iff, MIPRE.ValueApprox.REPred.of_primrecRel_exists,
+  MIPRE.rePred_lt_quantumValue_comp, MIPRE.exists_semidecider_lt_quantumValue,
+  MIPRE.Cost.exists_semidecider}
+\leanok
+\ledgernode{1.1.7.2, 1.1.7.2.1, 1.1.7.2.2, 1.1.7.2.5, 1.1.7.2.6, 1.8.1}
+\uses{def:game-description,def:q-value,def:re,lem:rational-strategies-suffice}
+Write $\game_g$ for the game described by a game description $g$
+(Definition~\ref{def:game-description}). The set
+\[
+  \{ (g, p, q) : g \text{ a game description},\ p, q \in \N,\ \valstar(\game_g) > p/q \}
+\]
+is recursively enumerable.
 \end{lemma}
 
-\paragraph{Source.} Folklore; see~\cite[Section 12]{JNVWY20}. Enumerate
-tensor-product strategies with entries in $\mathbb{Q}[i]$ and evaluate; density of
-such strategies among all tensor-product strategies gives completeness of the
-enumeration. That argument gives the $\valstar$ half; the $\synval$ half needs its own
-enumeration and density argument, since rounding the entries of a synchronous strategy
-does not preserve projectivity or synchronicity.
+\begin{proof}
+\leanok
+By Lemma~\ref{lem:rational-strategies-suffice}, $\valstar(\game_g) > p/q$ if and only if
+some valid exact strategy with entries in $\mathbb{Q}(i)$ has value greater than $p/q$.
+A \emph{raw candidate} is a common denominator $k$, two dimensions, the Gaussian-integer
+numerators of the two players' operators as lists of list matrices, and the numerators of
+the state; it denotes the exact strategy with entries divided by $k$, and every valid exact
+strategy with $\mathbb{Q}(i)$ entries is denoted by one (clear a common denominator of its
+finitely many entries). Raw candidates are first-order data, hence enumerable. For a raw
+candidate the check ``$k > 0$, each family of operators is Hermitian, idempotent
+($M^2 = kM$) and sums to $k\Id$, the state is nonzero, and $p \cdot W \cdot k^2 \cdot
+\langle v, v\rangle < q \cdot \sum_{x,y} w(x,y) \sum_{a,b} D(x,y,a,b)\, \mathrm{re}\langle v,
+(A^x_a \otimes B^y_b) v\rangle$'' is a finite conjunction of polynomial identities and one
+comparison in Gaussian-integer arithmetic, so it is primitive recursive, and it holds if
+and only if the denoted strategy is valid with value greater than $p/q$ (for $q = 0$, where
+$p/q = 0$, the comparison is replaced by positivity of the numerator). Dovetailing over the
+candidates and halting on the first that passes the check therefore halts exactly when
+$\valstar(\game_g) > p/q$; the boundary case $\valstar(\game_g) = p/q$ is correctly
+non-halting.
+\end{proof}
+
+\paragraph{Source.} Folklore; see~\cite[Section 12]{JNVWY20}, and statement (S) in the
+proof of \texttt{cor:mip-re} of \texttt{recursive.tex} for a complete argument. The
+statement was previously given for $\synval$ ``and likewise for $\valstar$''; it is now the
+$\valstar$ statement, which is the one the pipeline consumes
+(Remark~\ref{rem:compression-abstract}) and the one the paper proves. The $\synval$
+analogue needs its own enumeration and density argument, since rounding the entries of a
+synchronous strategy preserves neither projectivity nor synchronicity; it is not needed and
+not planned. Thresholds are nonnegative rationals written as fractions $p/q$ of naturals, as
+in the paper's (S), where $t \in [0,1]$; a negative threshold is trivial since $\valstar
+\geq 0$. In Lean the game description is \texttt{HaltingGameValue.GameData}
+(Definition~\ref{def:game-description}), read as a game of the foundations by
+\texttt{GameData.game}, and recursive enumerability is Mathlib's \texttt{REPred}, the
+domain of a partial computable function; integers travel as pairs of naturals, because
+Mathlib's primitive recursion has no arithmetic on $\mathbb{Z}$. The form the
+compressibility criterion consumes (its hypothesis that the complement of $B$ is the halting
+set of a program, Lemma~\ref{lem:compressible-criterion}) is
+\texttt{MIPRE.exists\_semidecider\_lt\_quantumValue}: for a computable family of game
+descriptions and a threshold $p/q$, a well-scoped program of the ambient model halting
+exactly on the strings whose game has value greater than $p/q$. It comes from the generic
+passage \texttt{MIPRE.Cost.exists\_semidecider} from an \texttt{REPred} on bit strings to a
+program (Definition~\ref{def:re}): a \texttt{ToPartrec} code for the predicate, translated
+into the model by \texttt{Prog.ofCode}, run after an ambient loop has shifted every bit up
+by one, since a \texttt{ToPartrec} code cannot see trailing zeros of its input and the bit
+$0$ encodes as \texttt{nil}.
+
+\paragraph{Comments.} The Lean route to the $\valstar$ half departs from the paper's proof
+of (S). The paper enumerates \emph{approximate} candidates --- tuples with entries in
+$\frac1k \mathbb{Z}[i]$ satisfying relaxed POVM constraints, tested by positive
+semidefiniteness (Lemma~\ref{lem:norm-two-psd}) --- and repairs each into an exact POVM by
+conjugating with $T_x^{-1/2}$, with the explicit slack $\Delta(d,k) = 250(\abs{\cal A} +
+\abs{\cal B})^2 d/k$ (its Claims ``Stability'' and ``Density''; ledger nodes
+\texttt{1.1.7.2.3} and \texttt{1.1.7.2.4}). The formalization enumerates \emph{exact}
+projective strategies instead: every projective measurement is $U \Pi_a U^*$ for a unitary
+$U$ and coordinate projections $\Pi_a$, and up to a phase every unitary is the Cayley
+transform of a skew-Hermitian matrix, which is what gets rounded
+(Lemma~\ref{lem:rational-pvm-dense}). Every candidate is then a genuine strategy, so only
+the density half of the argument is needed, with no slack, no matrix square root and no
+positive-semidefiniteness test, and the biconditional of
+Lemma~\ref{lem:rational-strategies-suffice} is sharp. Lemma~\ref{lem:norm-two-psd} is
+proved but no longer on the path (the ledger's node \texttt{1.1.7.2.1}, exact arithmetic
+and the decidability of the candidate test, is accounted for by the primitive recursive
+check itself); Lemma~\ref{lem:perturbation-split} is used as stated. The
+choice was made for the formalization's sake --- the stability claim needs the functional
+calculus for $T_x^{-1/2}$ and the candidate test needs decidability of positive
+semidefiniteness over $\mathbb{Q}(i)$, both heavier in Lean than the Cayley
+parametrization --- and it proves the same statement (S); it reverses the route decision
+recorded in Finding 3 of \texttt{planning/ledger-informed-plan.md}, which is annotated
+accordingly.
+
+\begin{lemma}[Gaussian-rational projective measurements are dense]
+\label{lem:rational-pvm-dense}
+\lean{MIPRE.ValueApprox.IsPVM, MIPRE.ValueApprox.IsPVM.exists_unitary_pattern,
+  MIPRE.ValueApprox.cayley, MIPRE.ValueApprox.cayley_mem_unitaryGroup,
+  MIPRE.ValueApprox.exists_isSkewHermitian_cayley_eq,
+  MIPRE.ValueApprox.exists_norm_eq_one_isUnit_one_add_smul,
+  MIPRE.ValueApprox.norm_cayley_sub_cayley_le, MIPRE.ValueApprox.GaussianRat,
+  MIPRE.ValueApprox.exists_unitary_entriesIn_norm_smul_sub_le,
+  MIPRE.ValueApprox.IsPVM.exists_entriesIn_norm_sub_le}
+\leanok
+Let $\{M_a\}_{a \in \cal A}$ be a projective measurement on $\C^d$ and $\eta > 0$. There is
+a projective measurement $\{M'_a\}_{a \in \cal A}$ on $\C^d$ with all entries in
+$\mathbb{Q}(i)$ such that $\norm{M_a - M'_a} \leq \eta$ for every $a$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Diagonalize a Hermitian combination $\sum_a w_a M_a$ with distinct real weights $w_a$:
+$M_a = U \Pi_a U^*$ for a unitary $U$ and the coordinate projections $\Pi_a$ of a pattern
+$r : [d] \to \cal A$. For a unit scalar $z$, $(zU) \Pi_a (zU)^* = U \Pi_a U^*$, and
+$\det(\Id + zU)$ is a polynomial in $z$ with constant term $1$, so some unit $z$ makes
+$\Id + zU$ invertible; then $zU = (\Id - S)(\Id + S)^{-1}$ is the Cayley transform of the
+skew-Hermitian matrix $S = 2(\Id + zU)^{-1} - \Id$. Round $S$ entrywise to $R$ with entries
+in $\mathbb{Q}(i)$ and re-symmetrize, $S' = (R - R^*)/2$: $S'$ is skew-Hermitian, has
+entries in $\mathbb{Q}(i)$, and $\abs{S_{ij} - S'_{ij}}$ is at most the rounding
+precision. Its Cayley transform $U' = (\Id - S')(\Id + S')^{-1}$ is unitary with entries
+in $\mathbb{Q}(i)$, and $\norm{zU - U'} \leq 2 \norm{S - S'}$, since $zU - U' =
+2(\Id + S)^{-1}(S' - S)(\Id + S')^{-1}$ and $\norm{(\Id + S)^{-1}} \leq 1$ for skew-Hermitian
+$S$ (the cross term of $\norm{x + Sx}^2$ vanishes). Finally $M'_a = U' \Pi_a U'^*$
+satisfies $\norm{M_a - M'_a} \leq 2 \norm{zU - U'}$.
+\end{proof}
+
+\begin{lemma}[Exact rational strategies suffice]
+\label{lem:rational-strategies-suffice}
+\uses{def:tensor-strategy,def:q-value,lem:rational-pvm-dense,lem:perturbation-split}
+\lean{MIPRE.ValueApprox.ExactStrategy, MIPRE.ValueApprox.ExactStrategy.IsValid,
+  MIPRE.ValueApprox.ExactStrategy.EntriesIn, MIPRE.ValueApprox.ExactStrategy.value,
+  MIPRE.ValueApprox.ExactStrategy.toStrategy,
+  MIPRE.ValueApprox.ExactStrategy.value_le_quantumValue,
+  MIPRE.ValueApprox.abs_bornValue_sub_le, MIPRE.ValueApprox.exists_exactStrategy_value_gt,
+  MIPRE.ValueApprox.lt_quantumValue_iff}
+\leanok
+\ledgernode{1.1.7.2.3, 1.1.7.2.4}
+An \emph{exact strategy} for a game $\game$ is the data of dimensions $d_\alice, d_\bob$,
+matrices $A^x_a \in \C^{d_\alice \times d_\alice}$ and $B^y_b \in \C^{d_\bob \times
+d_\bob}$, and a vector $u \in \C^{d_\alice} \ot \C^{d_\bob}$; it is \emph{valid} if each
+$\{A^x_a\}_a$ and each $\{B^y_b\}_b$ is a projective measurement and $u \neq 0$, and its
+value is
+\[
+  \omega \;=\; \frac{1}{\norm{u}^2} \sum_{x,y} \mu(x,y) \sum_{a,b} D(x,y,a,b)\,
+  \bra{u} A^x_a \ot B^y_b \ket{u},
+\]
+a rational function of the entries. Suppose the answer alphabets of $\game$ are nonempty.
+Then for every real $t$, $\valstar(\game) > t$ if and only if some valid exact strategy
+with all entries in $\mathbb{Q}(i)$ has value $\omega > t$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+A valid exact strategy with the state normalized to $u/\norm{u}$ is a tensor-product
+strategy of value $\omega$, so $\omega \leq \valstar(\game)$. Conversely, if
+$\valstar(\game) > t$ then, $\valstar$ being a supremum over a nonempty set, some
+tensor-product strategy $(\psi, \{A^x_a\}, \{B^y_b\})$ has value $v > t$, and it suffices
+to find, for every $\varepsilon > 0$, a valid exact strategy with $\mathbb{Q}(i)$ entries of
+value $> v - \varepsilon$. Replace each $\{A^x_a\}_a$ and $\{B^y_b\}_b$ by a $\mathbb{Q}(i)$
+projective measurement within $\eta$ of it (Lemma~\ref{lem:rational-pvm-dense}), and
+$\psi$ by an entrywise rounding $u \neq 0$ with $\norm{u - \psi} \leq \eta/4$, so that
+$\norm{u/\norm{u} - \psi} \leq \eta/2$. The value is Lipschitz in the data: by
+Lemma~\ref{lem:perturbation-split}, a Born term $\bra{\psi} A \ot B \ket{\psi}$ changes by
+at most $\norm{A - A'}\norm{B} + \norm{A'}\norm{B - B'} + 2\norm{A'}\norm{B'}\norm{\psi -
+\psi'}$ between unit vectors $\psi, \psi'$, using $\norm{A \ot B} \leq \norm{A}\norm{B}$;
+projections have norm at most one, so each term moves by at most $4\eta$ and the value, a
+$\mu$-average of sums of at most $\abs{\cal A}\abs{\cal B}$ such terms, by at most
+$4\abs{\cal A}\abs{\cal B}\eta$. Take $\eta < \varepsilon / (4\abs{\cal A}\abs{\cal B})$.
+\end{proof}
+
+\paragraph{Comments.} The lemma is the mathematical content of
+Lemma~\ref{lem:value-lower-approx}, isolated from the computability: only the right-hand
+side involves the enumeration. It accounts for the ledger's stability and density nodes
+(\texttt{1.1.7.2.3}, \texttt{1.1.7.2.4}) by a different proof, as explained under
+Lemma~\ref{lem:value-lower-approx}: stability is vacuous for exact candidates, and density
+is Lemma~\ref{lem:rational-pvm-dense} plus the Lipschitz bound, whose constant
+$4\abs{\cal A}\abs{\cal B}$ is crude and immaterial. The nonemptiness of the answer
+alphabets is what makes a strategy exist at all: with it $\valstar$ is a supremum over a
+nonempty set, without it the supremum is $0$ by convention and the equivalence fails for
+$t < 0$. Game descriptions (Definition~\ref{def:game-description}) always satisfy it. In
+Lean the data type \texttt{ExactStrategy} carries no proofs, so that the computability layer
+can enumerate it and test validity.
 
 \begin{lemma}[Decidable candidate set: a norm constraint is two psd tests]
 \label{lem:norm-two-psd}
