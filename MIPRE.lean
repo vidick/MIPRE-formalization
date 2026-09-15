@@ -564,6 +564,7 @@ import MIPRE.Foundations.Halting.Lists
 import MIPRE.Foundations.Halting.PolyBounded
 import MIPRE.Foundations.Halting.Serial
 import MIPRE.Foundations.Halting.Strings
+import MIPRE.Foundations.Halting.Tabulate
 import MIPRE.Foundations.Halting.Wrapper
 import MIPRE.Foundations.Halting.WrapperCost
 import MIPRE.Foundations.ValueApprox
