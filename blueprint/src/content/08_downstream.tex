@@ -35,7 +35,7 @@ stated here, with the two ingredients it rests on.
 \begin{theorem}[NPA convergence and compactness]
 \label{thm:npa-convergence}
 \ledgernode{1.8.2, 1.8.2.6}
-\uses{def:commuting-value,lem:npa-dilation,lem:npa-levels,lem:npa-moment-bound,lem:npa-diagonal,lem:npa-gns}
+\uses{def:co-value-bipartite,lem:npa-dilation,lem:npa-levels,lem:npa-moment-bound,lem:npa-diagonal,lem:npa-gns}
 Fix a finite bipartite scenario. The normalized full-word level-$k$ NPA feasible sets have
 uniformly bounded moments, their correlation projections $K_k$ are compact and decreasing, and
 $\bigcap_k K_k = C_{qc}$, with the POVM and projective definitions of $C_{qc}$ equivalent. In
@@ -47,7 +47,7 @@ asserted. The five lemmas below are its ingredients.
 \begin{lemma}[Common projective dilation of commuting POVMs]
 \label{lem:npa-dilation}
 \ledgernode{1.8.2.1}
-\uses{def:commuting-value}
+\uses{def:co-strategy-bipartite}
 Commuting finite-outcome POVMs admit a correlation-preserving common \emph{projective}
 dilation. For $Vh = (\sqrt{A_a} h)_a$ the operator
 $U = \begin{pmatrix} 0 & V^* \\ V & \Id - VV^* \end{pmatrix}$ is a self-adjoint
@@ -57,10 +57,19 @@ algebras, so iterating the dilation preserves both commutation and the joint dis
 effects and arbitrary Hilbert space dimension are allowed.
 \end{lemma}
 
+\paragraph{Comments.} Two steps here are one line on paper and real work in Lean. That $U$ is a
+self-adjoint unitary uses $V^*V = \Id$, which is exactly $\sum_a A_a = \Id$, and then that
+$VV^*$ is a projection; $U^2 = \Id$ follows. And the commutation claim needs more than
+$[A_a, B] = 0$: the dilation is built from $\sqrt{A_a}$, so what has to commute with $B$ is
+$\sqrt{A_a}$, which follows from $[A_a, B] = 0$ by continuous functional calculus and not
+formally. In the commuting-operator model --- where both players act on \emph{one} space and
+merely commute, rather than on tensor factors --- that functional-calculus step is what keeps
+the dilated PVMs commuting, so it cannot be skipped.
+
 \begin{lemma}[The full-word levels, and that they are effectively enumerable]
 \label{lem:npa-levels}
 \ledgernode{1.8.2.2}
-\uses{def:commuting-value}
+\uses{def:co-value-bipartite}
 For a finite Bell scenario, level $k$ of the full-word NPA hierarchy consists of the normalized
 positive semidefinite moment matrices on words of length at most $k$, subject to the
 contextual projection, completeness and cross-commutation relations of degree at most $2k$,
@@ -121,17 +130,30 @@ only one that this chapter, rather than the main theorem, is responsible for.
 
 \effortMedium
 
-\begin{lemma}[Upper semidecision of the commuting value]
+\begin{lemma}[Upper semidecision of the commuting-operator value]
 \label{lem:valco-upper-re}
 \ledgernode{1.8.4, 1.8.4.1}
-\uses{thm:npa-convergence,lem:rcf-decision,def:commuting-value}
-For a game $\game$ with rational data and rational $r$, the relation $\valco(\game) < r$ is
+\uses{thm:npa-convergence,lem:rcf-decision,def:co-value-bipartite,lem:tracial-le-co}
+For a game $\game$ with rational data and rational $r$, the relation $\omegaco(\game) < r$ is
 recursively enumerable: at each full-word NPA level decide exact rational semialgebraic
-feasibility of payoff $\geq r$ using Lemma~\ref{lem:rcf-decision}. Some level is infeasible
-exactly when $\valco(\game) < r$; otherwise Theorem~\ref{thm:npa-convergence} assembles a
-commuting-operator strategy of payoff $\geq r$. Dovetailing over rational $r < 1$ halts
-exactly when $\valco(\game) < 1$. No efficiency claim and no numerical SDP certificate is
-involved --- the decision is exact, and succinct descriptions are expanded first.
+feasibility of payoff $\geq r$ using Lemma~\ref{lem:rcf-decision} --- positive semidefiniteness
+is the nonnegativity of the principal minors, so the constraint set is semialgebraic. Some level
+is infeasible exactly when $\omegaco(\game) < r$: one direction because $C_{qc}$ is feasible at
+every level, the other because the $K_k$ of Theorem~\ref{thm:npa-convergence} are compact and
+decreasing with intersection $C_{qc}$, so their payoff maxima decrease to the maximum over
+$C_{qc}$. Otherwise that theorem assembles a commuting-operator strategy of payoff $\geq r$.
+Dovetailing over rational $r < 1$ halts exactly when $\omegaco(\game) < 1$. No efficiency claim
+and no numerical SDP certificate is involved --- the decision is exact, and succinct
+descriptions are expanded first.
+
+The value here is the \emph{bipartite} commuting-operator value of
+Definition~\ref{def:co-value-bipartite}, not the tracial $\valco$ of
+Definition~\ref{def:commuting-value}: the NPA moment matrices are indexed by words in both
+players' generators and their limit is the bipartite set $C_{qc}$. The two must not be
+interchanged --- Lemma~\ref{lem:tracial-le-co} gives $\valco \leq \omegaco$ and the reverse
+comparison is false in general --- so this lemma yields a \emph{sound} semidecider for
+$\valco(\game) < r$ and not a complete one. That is all the arguments below need, since they
+consume the correlation sets rather than the tracial value.
 \end{lemma}
 
 \subsection{Separation of quantum and commuting values}
@@ -139,10 +161,38 @@ involved --- the decision is exact, and succinct descriptions are expanded first
 \begin{theorem}[Separation]
 \label{thm:separation}
 \ledgernode{1.8.8, 1.8.9, 1.8.10, 1.8.11}
-\uses{thm:halting,def:commuting-value,def:q-value,lem:valco-upper-re,thm:compression}
+\uses{thm:halting,def:co-value-bipartite,def:q-value,lem:valco-upper-re,thm:compression}
 There is an explicit synchronous game $\game^{\sep}$ with
-$\valstar(\game^{\sep}) \leq \frac12$ and $\valco(\game^{\sep}) = 1$.
+$\valstar(\game^{\sep}) \leq \frac12$ and $\omegaco(\game^{\sep}) = 1$.
 \end{theorem}
+
+\begin{remark}[Which commuting value this is, and why it is not the tracial one]
+\label{rem:separation-which-value}
+\uses{thm:separation,lem:valco-upper-re,lem:tracial-le-co,def:commuting-value,def:co-value-bipartite}
+Theorem~\ref{thm:separation} is stated for the \emph{bipartite} commuting-operator value
+$\omegaco$ (Definition~\ref{def:co-value-bipartite}), not for the tracial $\valco$
+(Definition~\ref{def:commuting-value}) that this blueprint otherwise carries. That is not a
+slip, and the distinction is forced by the proof rather than cosmetic.
+
+The argument is a dichotomy against the semidecider of
+Lemma~\ref{lem:valco-upper-re}. If the commuting value is $1$ the semidecider never halts, the
+early-accept branch is absent, and compression drives $\Ent(\verifier^{\sep}_n, \frac12)$ above
+every bound, giving $\valstar \leq \frac12$; if it is less than $1$ the semidecider halts, the
+early-accept branch supplies a value-$1$ PCC strategy at every level, and $\valstar = 1$
+contradicts $\valstar \leq \omegaco < 1$. So the value proved equal to $1$ is exactly the value
+the semidecider is complete for --- and that semidecider is the NPA hierarchy, whose limit is
+the bipartite set $C_{qc}$. Nothing in the argument exhibits a strategy: as the source puts it,
+the proof does not produce an explicit value-$1$ commuting-operator strategy.
+
+Since $\valco \leq \omegaco$ with the reverse comparison false in general
+(Lemma~\ref{lem:tracial-le-co}), $\valco(\game^{\sep}) = 1$ would be a \emph{stronger}
+statement, and this route does not prove it: it would need a hierarchy converging to the tracial
+value from above, which is a separate question and not what the source uses. Earlier drafts of
+this chapter stated the theorem with $\valco$, which overclaimed. Everything downstream is
+unaffected --- Corollary~\ref{cor:tsirelson} separates the correlation sets $C_{qa}$ and
+$C_{qc}$, which is a statement about $\omegaco$'s model --- so the repair is to the statement,
+not to the consequences.
+\end{remark}
 
 Sketch: the bound on $\valstar$ is the soundness clause of Theorem~\ref{thm:halting}
 verbatim, now that the clause is stated in $\valstar$; it does not follow from a $\synval$
@@ -155,7 +205,7 @@ completeness} property is an additional obligation on
 Sections~\ref{sec:ps-introspection}--\ref{sec:ps-compression} that the blueprint
 should make explicit when those sections are worked out; it is the only new
 ingredient beyond the main theorem. An alternative route: if $\valstar =
-\valco$ for all games, then combining Lemma~\ref{lem:value-lower-approx} (value
+\omegaco$ for all games, then combining Lemma~\ref{lem:value-lower-approx} (value
 approximable from below) with the NPA hierarchy~\cite{NPA08} (commuting value
 approximable from above) would make the value computable, contradicting
 Corollary~\ref{cor:value-uncomputable}; this gives a non-explicit separation with
@@ -223,7 +273,7 @@ $k \geq 1$, $m \geq 2$.
 \begin{lemma}[Commuting correlations restrict states on the maximal tensor product]
 \label{lem:commuting-restricts-state}
 \ledgernode{1.8.6.5}
-\uses{def:commuting-value,lem:cep-bell-algebra}
+\uses{def:co-value-bipartite,lem:cep-bell-algebra}
 Every commuting-operator correlation in a finite bipartite scenario with common parameters
 $(k,m)$ is the restriction to the coordinate projections of a state on
 $A \ot_{\max} A$. Under CEP that same functional is a state on $A \ot_{\min} A$.
@@ -248,7 +298,7 @@ to $C_{qa}$, the closure of the finite-dimensional tensor-product POVM correlati
 \begin{lemma}[CEP forces equality of the correlation sets]
 \label{lem:cep-implies-equal}
 \ledgernode{1.8.6, 1.8.6.8}
-\uses{def:commuting-value,lem:commuting-restricts-state,lem:spatial-values-cqa}
+\uses{def:co-value-bipartite,lem:commuting-restricts-state,lem:spatial-values-cqa}
 If every separable II$_1$ factor embeds into an ultrapower of the hyperfinite II$_1$ factor,
 then $C_{qa} = C_{qc}$ in every finite bipartite scenario, including unequal alphabet sizes.
 Consequently exhibiting one finite-scenario separation of $C_{qa}$ from $C_{qc}$ refutes CEP.
