@@ -21,11 +21,138 @@ below any $\delta > 0$ while preserving value $1$
 every $c < \frac12$ no algorithm approximates the value to within additive error $c$. That
 stronger form depends on the repetition theorem as well as on the main theorem.
 
+\subsection{Semidecision from both sides}
+\label{sec:ds-semidecision}
+
+The non-explicit route mentioned below, and the explicit separating game, both rest on the
+same pair of procedures: the entangled value is semidecidable from below, the commuting value
+from above. Neither is hard, but both have hypotheses a paraphrase loses, so they are stated.
+
+\effortMedium
+
+\begin{lemma}[Lower semidecision of the entangled value]
+\label{lem:val-lower-re}
+\ledgernode{1.8.1}
+\uses{def:q-value,lem:value-lower-approx}
+For a nonlocal game $\game$ with rational data and rational $r$, the relation
+$\valstar(\game) > r$ is recursively enumerable. Enumerate dimensions together with vectors
+and POVMs whose entries are exact algebraic numbers; these are effectively enumerable and
+dense among all finite-dimensional strategies, the payoff is continuous, so a strict
+inequality is witnessed at some enumerated point, and exact algebraic comparison certifies it.
+No supremum is assumed to be attained, and the supremum over $C_q$ agrees with the one over
+$C_{qa}$ by continuity.
+\end{lemma}
+
+\effortHard
+
+\begin{theorem}[NPA convergence and compactness]
+\label{thm:npa-convergence}
+\ledgernode{1.8.2, 1.8.2.6}
+\uses{def:commuting-value,lem:npa-dilation,lem:npa-levels,lem:npa-moment-bound,lem:npa-diagonal,lem:npa-gns}
+Fix a finite bipartite scenario. The normalized full-word level-$k$ NPA feasible sets have
+uniformly bounded moments, their correlation projections $K_k$ are compact and decreasing, and
+$\bigcap_k K_k = C_{qc}$, with the POVM and projective definitions of $C_{qc}$ equivalent. In
+particular $C_{qc}$ is compact, every finite game payoff attains its maximum over it, and
+$C_{qa} \subseteq C_{qc}$. No finite-dimensional attainment and no convergence rate is
+asserted. The five lemmas below are its ingredients.
+\end{theorem}
+
+\begin{lemma}[Common projective dilation of commuting POVMs]
+\label{lem:npa-dilation}
+\ledgernode{1.8.2.1}
+\uses{def:commuting-value}
+Commuting finite-outcome POVMs admit a correlation-preserving common \emph{projective}
+dilation. For $Vh = (\sqrt{A_a} h)_a$ the operator
+$U = \begin{pmatrix} 0 & V^* \\ V & \Id - VV^* \end{pmatrix}$ is a self-adjoint
+unitary on $\mH \oplus \mH^r$ whose conjugated coordinate projections compress to $A_a$, and
+all questions share one embedding. Across the two players the block entries stay in commuting
+algebras, so iterating the dilation preserves both commutation and the joint distribution. Zero
+effects and arbitrary Hilbert space dimension are allowed.
+\end{lemma}
+
+\begin{lemma}[The full-word levels, and that they are effectively enumerable]
+\label{lem:npa-levels}
+\ledgernode{1.8.2.2}
+\uses{def:commuting-value}
+For a finite Bell scenario, level $k$ of the full-word NPA hierarchy consists of the normalized
+positive semidefinite moment matrices on words of length at most $k$, subject to the
+contextual projection, completeness and cross-commutation relations of degree at most $2k$,
+with two-letter moments equal to the correlation coordinates. These constraints are finite and
+effectively enumerable, every $C_{qc}$ correlation is feasible at every level, the levels are
+nested, and this redundant presentation agrees with the standard reduced one by
+degree-preserving linear substitutions.
+\end{lemma}
+
+\begin{lemma}[Moment entries are bounded, so the levels are compact]
+\label{lem:npa-moment-bound}
+\ledgernode{1.8.2.3}
+\uses{lem:npa-levels}
+Every feasible level-$k$ moment satisfies $\abs{L_k(w)} \leq 1$ for $\abs{w} \leq 2k$: the
+identity $\sum_a \Gamma[e_a v, e_a v] = \Gamma[v,v]$ with positivity bounds each
+leading-generator diagonal by its suffix diagonal, and induction together with the positive
+semidefinite $2 \times 2$ minors bounds every entry. Hence each finite-level feasible set, and
+its correlation projection, is compact.
+\end{lemma}
+
+\begin{lemma}[A diagonal subsequence, from certificates that need not be compatible]
+\label{lem:npa-diagonal}
+\ledgernode{1.8.2.4}
+\uses{lem:npa-moment-bound}
+If a correlation is feasible at every level, a countable diagonal subsequence of the bounded
+certificates --- which need \emph{not} be compatible across levels, and this is the step where
+a paraphrase overclaims --- defines a normalized positive functional on the polynomial
+$*$-algebra modulo the measurement relations. Every polynomial positivity constraint and every
+finite contextual relation survives the limit.
+\end{lemma}
+
+\begin{lemma}[GNS: a positive functional gives a commuting projective representation]
+\label{lem:npa-gns}
+\ledgernode{1.8.2.5}
+\uses{lem:npa-diagonal}
+A normalized positive functional on the measurement $*$-algebra yields a separable commuting
+projective representation. Quotient by the zero-norm subspace and complete; left multiplication
+by a projection generator $g$ is a contraction because
+$\norm{u}^2 - \norm{gu}^2 = \norm{(\Id - g)u}^2$, so the null subspace is invariant, and the
+PVM and cross-commutation identities extend from the dense polynomial quotient. The
+distinguished unit vector is the class of $1$.
+\end{lemma}
+
+\effortEasy
+
+\begin{lemma}[Decidability of the first-order theory of real closed fields]
+\label{lem:rcf-decision}
+\ledgernode{1.8.3}
+A first-order sentence over real closed fields with rational coefficients is decidable; in
+particular so is feasibility of a finite conjunction of polynomial equalities and weak or
+strict inequalities over $\R$.
+\end{lemma}
+
+\paragraph{Source.} Tarski; the effective form used here is Basu, Pollack and
+Roy~\cite{BPR06}. This is an import: the companion ledger records it as \emph{admitted}, one
+of only three assumptions in the campaign (Remark~\ref{rem:admitted-nodes}), and it is the
+only one that this chapter, rather than the main theorem, is responsible for.
+
+\effortMedium
+
+\begin{lemma}[Upper semidecision of the commuting value]
+\label{lem:valco-upper-re}
+\ledgernode{1.8.4, 1.8.4.1}
+\uses{thm:npa-convergence,lem:rcf-decision,def:commuting-value}
+For a game $\game$ with rational data and rational $r$, the relation $\valco(\game) < r$ is
+recursively enumerable: at each full-word NPA level decide exact rational semialgebraic
+feasibility of payoff $\geq r$ using Lemma~\ref{lem:rcf-decision}. Some level is infeasible
+exactly when $\valco(\game) < r$; otherwise Theorem~\ref{thm:npa-convergence} assembles a
+commuting-operator strategy of payoff $\geq r$. Dovetailing over rational $r < 1$ halts
+exactly when $\valco(\game) < 1$. No efficiency claim and no numerical SDP certificate is
+involved --- the decision is exact, and succinct descriptions are expanded first.
+\end{lemma}
+
 \subsection{Separation of quantum and commuting values}
 
 \begin{theorem}[Separation]
 \label{thm:separation}
-\uses{thm:halting,def:commuting-value,def:q-value}
+\ledgernode{1.8.8, 1.8.9, 1.8.10, 1.8.11}
+\uses{thm:halting,def:commuting-value,def:q-value,lem:valco-upper-re,thm:compression}
 There is an explicit synchronous game $\game^{\sep}$ with
 $\valstar(\game^{\sep}) \leq \frac12$ and $\valco(\game^{\sep}) = 1$.
 \end{theorem}
@@ -51,7 +178,8 @@ much less work, and is the recommended first target.
 
 \begin{corollary}[Tsirelson's problem, negative answer]
 \label{cor:tsirelson}
-\uses{thm:separation}
+\ledgernode{1.8.5}
+\uses{thm:separation,lem:val-lower-re,lem:valco-upper-re,cor:value-uncomputable}
 There exist finite question and answer sets for which the closure $C_{qa}$ of the set
 of finite-dimensional quantum correlations is strictly contained in the set $C_{qc}$
 of commuting-operator correlations.
@@ -65,9 +193,84 @@ from the machinery here.)
 
 \subsection{Refutation of Connes' Embedding Problem}
 
+\effortHard
+
+\begin{lemma}[Kirchberg's forward implication]
+\label{lem:kirchberg-forward}
+\ledgernode{1.8.6.1}
+If CEP has an affirmative answer then the minimal and maximal C$^*$-tensor norms coincide on
+$C^*(F_\infty) \ot_{\mathrm{alg}} C^*(F_\infty)$, where $F_\infty$ is the free group on
+countably many generators and $C^*$ denotes the full unital group algebra.
+\end{lemma}
+
+\paragraph{Source.} Kirchberg; see~\cite{Oza13}. This is the second of the two imports this
+chapter carries: the companion ledger records it as \emph{admitted} (node $1.8.6.1$), and it is
+the only step of the chain below that is not proved there.
+
+\begin{lemma}[Finitely many generators]
+\label{lem:cep-free-group}
+\ledgernode{1.8.6.2}
+\uses{lem:kirchberg-forward}
+Conditional on CEP, $\min = \max$ on
+$C^*(F_k) \ot_{\mathrm{alg}} C^*(F_k)$ for every finite $k \geq 1$.
+\end{lemma}
+
+\begin{lemma}[A completely positive section onto the Bell algebra]
+\label{lem:bell-algebra-section}
+\ledgernode{1.8.6.3}
+For $A = \ast_{x=1}^{k} \C^m$ and $B = C^*(F_k)$ with $k \geq 1$ and $m \geq 2$, the
+canonical quotient $q : B \to A$ has a unital completely positive section $\Psi$, obtained as
+the $(0,0)$ corner of an explicitly constructed unital $*$-homomorphism
+$\gamma : A \to M_m(B)$. In particular $q \Psi = \mathrm{id}$ on all of $A$.
+\end{lemma}
+
+\begin{lemma}[Transport to the Bell algebra]
+\label{lem:cep-bell-algebra}
+\ledgernode{1.8.6.4}
+\uses{lem:cep-free-group,lem:bell-algebra-section}
+Conditional on CEP, the minimal and maximal tensor norms coincide on
+$A \ot_{\mathrm{alg}} A$ for every finite Bell algebra $A = \ast_{x=1}^{k} \C^m$,
+$k \geq 1$, $m \geq 2$.
+\end{lemma}
+
+\begin{lemma}[Commuting correlations restrict states on the maximal tensor product]
+\label{lem:commuting-restricts-state}
+\ledgernode{1.8.6.5}
+\uses{def:commuting-value,lem:cep-bell-algebra}
+Every commuting-operator correlation in a finite bipartite scenario with common parameters
+$(k,m)$ is the restriction to the coordinate projections of a state on
+$A \ot_{\max} A$. Under CEP that same functional is a state on $A \ot_{\min} A$.
+\end{lemma}
+
+\begin{lemma}[Vector states are dense on finitely many coordinates]
+\label{lem:spatial-coordinates}
+\ledgernode{1.8.6.6}
+On any finite collection of self-adjoint coordinate observables in a faithfully represented
+spatial C$^*$-tensor product, every state is approximable by finite convex combinations of
+unit-vector states in that same spatial representation.
+\end{lemma}
+
+\begin{lemma}[States on the spatial product give $C_{qa}$ correlations]
+\label{lem:spatial-values-cqa}
+\ledgernode{1.8.6.7}
+\uses{lem:spatial-coordinates}
+The coordinate values of any state on a spatial tensor product of finite Bell algebras belong
+to $C_{qa}$, the closure of the finite-dimensional tensor-product POVM correlations.
+\end{lemma}
+
+\begin{lemma}[CEP forces equality of the correlation sets]
+\label{lem:cep-implies-equal}
+\ledgernode{1.8.6, 1.8.6.8}
+\uses{def:commuting-value,lem:commuting-restricts-state,lem:spatial-values-cqa}
+If every separable II$_1$ factor embeds into an ultrapower of the hyperfinite II$_1$ factor,
+then $C_{qa} = C_{qc}$ in every finite bipartite scenario, including unequal alphabet sizes.
+Consequently exhibiting one finite-scenario separation of $C_{qa}$ from $C_{qc}$ refutes CEP.
+\end{lemma}
+
 \begin{corollary}[Connes' Embedding Problem, negative answer]
 \label{cor:cep}
-\uses{cor:tsirelson}
+\ledgernode{1.8.7}
+\uses{cor:tsirelson,lem:cep-implies-equal}
 There is a separable II$_1$ factor (indeed, a tracial von Neumann algebra generated by
 finitely many projections) that does not embed into an ultrapower
 $\cal{R}^{\omega}$ of the hyperfinite II$_1$ factor.
@@ -123,4 +326,43 @@ more speculatively, connections
 to the undecidability of the spectral gap and to the existence of non-hyperlinear
 groups, the latter being \emph{not} implied by CEP's failure and best recorded as an
 open problem.
+\end{remark}
+
+\subsection{Provenance of this chapter}
+
+\begin{remark}[Stage 1.8 of the ledger, and how much of it has been challenged]
+\label{rem:downstream-nodes}
+\ledgernode{1.8}
+\uses{thm:separation,cor:tsirelson,cor:cep,lem:cep-implies-equal,lem:valco-upper-re,lem:rcf-decision,rem:admitted-nodes}
+The statements of this chapter were roadmap sketches until September 2026, when the companion
+campaign opened a stage for them: stage $1.8$, twenty-seven nodes, which the statements above
+now account for one for one. Three things about that stage are worth carrying here rather than
+leaving in the other repository.
+
+First, it is where two of the campaign's three remaining admissions live ---
+Lemma~\ref{lem:rcf-decision} (node $1.8.3$) and the forward Kirchberg implication inside
+Lemma~\ref{lem:cep-implies-equal} (node $1.8.6.1$). Neither is reached by the main theorem:
+they are assumptions of the \emph{corollaries}, which is the right place for them, and
+Remark~\ref{rem:admitted-nodes} keeps the main theorem's own surface to a single classical
+algorithmic result.
+
+Second, the separating game is more delicate than Theorem~\ref{thm:separation}'s statement
+suggests, and the nodes say where. The construction needs effective bounded self-reference at a
+fixed $C_0 \geq 2$ through one canonical specialization-and-timeout compiler (node $1.8.8$);
+the commuting value is $1$ because if the upper semidecider ever halted, an early-accept branch
+would supply a genuine one-dimensional perfect commuting strategy (node $1.8.9$); and
+$\valstar \leq \frac12$ is an entanglement-cost divergence argument along $n_{j+1} = 2^{n_j}$
+--- \emph{not} an unattained-supremum argument (node $1.8.10$). Only the last of these is
+visible in the sketch above, and a formalization will meet all three.
+
+Third, and this is the part to be honest about: these nodes have had far less adversarial
+scrutiny than the rest of the ledger. Two of the twenty-seven carry a challenge, against $85\%$
+of the nodes in the original campaign state, and the adversarial round of 2026-09-14 --- which
+re-examined seventy-five nodes and found one real defect
+(Remark~\ref{rem:sync-transfer-marginal}) --- worked entirely within stage $1.2$ and did not
+touch stage $1.8$ at all. Node $1.8$'s own statement says its derivations ``remain pending
+adversarial review''. So the annotations in this chapter record that a decomposition exists and
+that it has been checked once, not that it has been attacked; treat the statements here as
+better-specified sketches rather than as verified mathematics, and expect the numbered details
+above to move.
 \end{remark}

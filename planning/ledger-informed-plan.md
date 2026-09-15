@@ -10,23 +10,36 @@ campaign in `vidick/mipre-proof`, branch `claude/install-vibefeld-mipre-eythiq`
 
 Replayed from the event log rather than read from a summary:
 
-| | |
-|---|---|
-| nodes | 123 |
-| currently validated | 120 |
-| admitted (assumed) | 3 |
-| challenges raised / still open | 291 / **0** |
-| claim-tests | 12 Python checkers, each with a recorded `.out` |
-| repairs marked in the paper source (`\cnote{}`) | 318 |
+| | at `0392e23` (2026-09-13) | at `d6d9b7a` (2026-09-15) |
+|---|---|---|
+| nodes (live / archived) | 123 / 0 | **316 / 4** |
+| currently validated | 120 | **313** |
+| admitted (assumed) | 3 | 3, but *different* 3 |
+| challenges raised / still open | 291 / **0** | **309 / 0** |
+| claim-tests | 12 Python checkers, each with a recorded `.out` | 22 |
+| repairs marked in the paper source (`\cnote{}`) | 318 | 318 |
 
-The three admitted nodes are declared external imports, not gaps: anchored parallel
-repetition (BVY Thm 6.1, node `1.4.2`), Magic Square rigidity (Coladangelo–Stark
-Thm 6.9, `1.2.2.4.1`), efficient self-dual normal bases (Shoup/Lenstra/Wang,
-`1.1.6.1`).
+The admissions moved, and that is the most important thing to know about the September
+rounds. All three of the original ones were discharged: BVY anchored repetition (`1.4.2`) was
+decomposed to sixty sub-nodes with the quantum relative-entropy DPI derived rather than cited;
+Magic Square rigidity (`1.2.2.4.1`) was replaced by a direct derivation of the single
+anticommutation bound the pipeline consumes; and efficient self-dual normal bases (`1.1.6.1`)
+was narrowed to one ingredient. The three that remain are `1.1.6.1.1` (Shoup's deterministic
+irreducible-polynomial construction at *p* = 2), `1.8.3` (decidability of real closed fields)
+and `1.8.6.1` (Kirchberg's forward implication). Only the first is reached by the main theorem;
+the other two belong to the downstream corollaries.
 
-So the ledger is a *dependency-ordered decomposition of the whole proof into 123
+So the ledger is a *dependency-ordered decomposition of the whole proof into 316
 statements, each adversarially challenged and re-validated*. That is precisely the
 artifact a blueprint wants and does not have.
+
+**Caveat on "each adversarially challenged", added 2026-09-15.** It holds of the original 123
+(104 of them carry a challenge) and not yet of the 197 added in September: 13 of those carry
+one. The round of 2026-09-14 re-examined 75 nodes and found one real defect — the Vid21
+Corollary 4.1 marginal condition, `blueprint/src/content/03_background_results.tex`
+`rem:sync-transfer-marginal` — but it worked entirely inside stage 1.2 and did not reach stage
+1.8, whose own root node says its derivations "remain pending adversarial review". Coverage
+figures from `ledger-sync.py` count citations, not scrutiny; this is the scrutiny figure.
 
 ## Finding 1 — chapter 6 is nine monoliths; the ledger has the decomposition
 
@@ -452,3 +465,43 @@ As P1 proceeds, each Lean declaration should name the ledger node it discharges,
 this file should keep the node → blueprint label → Lean declaration table, so the
 two projects can be diffed. The ledger is authoritative on *what the proof needs*;
 this repository is authoritative on *what has been checked by machine*.
+
+## The September 2026 refinement rounds, and what is now unaccounted for
+
+The campaign merged its working branch to `main` and then ran five refinement rounds plus one
+fresh adversarial round. The ledger went from 123 live nodes to 316. Nothing was rewritten:
+2892 event files were added and none modified or deleted, and the dependency corrections the
+rounds needed were appended as a new `node_deps_amended` event rather than edited into the
+nodes, under a project extension `0.1.7+mipre.deps1`.
+
+Blueprint coverage after the propagation of 2026-09-15:
+
+| stage | annotated / live | what the shortfall is |
+|---|---|---|
+| 1 | 1/1 | — |
+| 1.1 | 22/37 | the 16 sub-nodes under `1.1.6.1` that prove normal-basis construction and self-dualization |
+| 1.2 | 65/149 | finer grain under `1.2.1.7` (self-improvement 20, pasting 13, induction 9, bipartite 9) and under `1.2.2.4.1` (9) |
+| 1.3 | 13/13 | — |
+| 1.4 | 8/63 | the BVY decomposition, 55 nodes, for a theorem this blueprint does not use |
+| 1.5 | 9/9 | — |
+| 1.6 | 8/16 | 8 new sub-nodes on the halting reduction |
+| 1.7 | 1/1 | — |
+| 1.8 | 27/27 | — |
+
+Two of these are worth doing and one is not.
+
+**Stage 1.2's finer grain is worth doing**, because those nodes are the internals of
+`thm:tensor-codes`, which stopped being an import in September: its derivation is now in the
+ledger, so there is something to describe where previously there was a citation. The
+self-improvement subtree (20 nodes) is the natural next increment.
+
+**Stage 1.1's `1.1.6.1` subtree is worth doing**, and is cheap: it is classical
+computational algebra, it is the one place this blueprint still carries an assumption, and
+`lem:self-dual-basis` now says exactly which ingredient remains admitted.
+
+**Stage 1.4 is not worth doing.** The 55 new nodes decompose `thm:bvy`, which
+`thm:direct-repetition-q` replaces; the blueprint states it for the entanglement-form argument
+only. Annotating them would raise a coverage number and describe nothing this project needs.
+That is the right trade-off to make explicitly rather than by neglect, and it is why the
+coverage note in `ledger-sync.py` says a stage that *falls* between runs is the case to look
+at — a stage that never rose may simply be out of scope.
