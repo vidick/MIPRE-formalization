@@ -367,8 +367,26 @@ derivation of cost `t` is a machine run of at most `3 t` steps and final configu
 fixed by the step function; and `Halting/Tabulate.lean`, acceptance by an `n`-bounded verifier
 as one budgeted run, which is what fills in the acceptance table.
 
-Remaining, in order, and identified with the fields of `MIPRE.Halting.Obligations`:
-(O2, the rest)
+O2 continued the same day, and the field changed shape a second time. The parallel branch that
+proved the two synchronous bridges reported that an equality of `val*` is not enough for them:
+`thm:halting` item 1 claims a value-`1` PCC strategy, so `synval = 1`, and `synval ≤ val*`
+points the wrong way — from the value alone a perfect PCC strategy of `𝒱_n` cannot be pushed
+onto the tabulation. So `tab_value` is now `tab_match`, delivering the two alphabet
+relabelings with the agreement of `μ` and `D` along them, from which `Obligations.tab_value`
+reads the value equality off `quantumValue_toGame_eq_valStar` and the synchronous half is
+available too. O2 has the relabelings in hand anyway, building `tab` from `answerEquiv` and
+`questionEquiv`, so this costs nothing. Then the pieces the tabulation needs:
+`CL.Sampler.queryUnder` (one sampler query under the budget its time bound supplies, with the
+dimension and marginal queries read off it — the marginal at the top level is the CL function
+itself, `CLFun.truncate_self`), and `Verifier.bitsToIdx` with `questionEquiv_symm_val`, which
+says the index of a question is the number its bit string denotes: a `GameData`'s questions are
+`Fin (nX + 1)`, so everything a sampler query returns has to become a number.
+
+Remaining for O2: the question weights (one entry per point of `𝔽₂^{s(n)}`, giving
+`questionWeight` the count and `totalWeight` the value `2^{s(n)}`, which is exactly the shape
+of `clDist`), the answer-index bridge for `answerEquiv`, the acceptance table, the assembly of
+`tab`, and `tab_computable`. Then, in order, and identified with the fields of
+`MIPRE.Halting.Obligations`:
 the *computation* of the tabulation — running the sampler on every point of `𝔽₂^{s(n)}` to
 count the question weights and the decider under its budget to fill in the acceptance table,
 then `Computable` for the whole map; (O3) the semidecider, from the two Σ₁ disjuncts of
