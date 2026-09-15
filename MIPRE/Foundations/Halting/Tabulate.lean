@@ -33,6 +33,10 @@ number of points landing on a given pair and its `totalWeight` is `2 ^ s(n)`, wh
 the quotient `CL.clDist` is: `length_filter_bitStrsOfLen` is the bridge, the bit strings of
 length `s` being the vectors of `𝔽₂^s`.
 
+`Verifier.answerEquiv_symm_val` is the same service on the answer side: an answer's index is
+its position among the bit strings of length at most `T`, the enumeration `answerList` being
+`bitStrsLE` mapped by a truncation that is the identity on them.
+
 Nothing here is efficient and nothing needs to be: the tabulation is a computable map, not a
 polynomial-time one, and the budget it runs under is the verifier's own time bound.
 -/
@@ -263,6 +267,43 @@ theorem length_filter_bitStrsOfLen {s : ℕ} (P : (Fin s → CL.𝔽₂) → Boo
       = ((Data.bitStrsOfLen s).filter fun z => P (CL.ofBits s z)).length := by
     rw [List.filter_map, List.length_map]; rfl
   rw [← key, ← List.toFinset_card_of_nodup (hnd.filter _), List.toFinset_filter, huniv]
+
+/-! ## Answers as numbers -/
+
+/-- The index of a mapped element, when the map is injective on the list. -/
+theorem idxOf_map_of_injOn {α β : Type*} [BEq α] [LawfulBEq α] [BEq β] [LawfulBEq β]
+    (f : α → β) (l : List α) (hinj : ∀ x ∈ l, ∀ y ∈ l, f x = f y → x = y) {x : α} (hx : x ∈ l) :
+    (l.map f).idxOf (f x) = l.idxOf x := by
+  induction l with
+  | nil => simp at hx
+  | cons a l ih =>
+    by_cases hax : a = x
+    · subst hax; simp
+    · have hne : f a ≠ f x := fun h => hax (hinj a (by simp) x (by simp [hx]) h)
+      have hxl : x ∈ l := by
+        rcases List.mem_cons.1 hx with h | h
+        · exact absurd h.symm hax
+        · exact h
+      rw [List.map_cons, List.idxOf_cons_ne _ hne, List.idxOf_cons_ne _ hax,
+        ih (fun u hu v hv h => hinj u (by simp [hu]) v (by simp [hv]) h) hxl]
+
+/-- The answers of length at most `T` are indexed by their position among the bit strings of
+length at most `T`: the enumeration `answerList` is `bitStrsLE` mapped by truncation, which is
+the identity on those strings. -/
+theorem answerEquiv_symm_val (T : ℕ) (a : Answers T) :
+    (((answerEquiv T).symm a : Fin (answerList T).length) : ℕ) = (Data.bitStrsLE T).idxOf a.1 := by
+  have hinj : ∀ x ∈ Data.bitStrsLE T, ∀ y ∈ Data.bitStrsLE T,
+      toAnswer T x = toAnswer T y → x = y := by
+    intro x hx y hy h
+    have ex : x.take T = x := List.take_of_length_le ((Data.mem_bitStrsLE T x).1 hx)
+    have ey : y.take T = y := List.take_of_length_le ((Data.mem_bitStrsLE T y).1 hy)
+    rw [← ex, ← ey]
+    exact congrArg Subtype.val h
+  calc (((answerEquiv T).symm a : Fin (answerList T).length) : ℕ)
+      = ((Data.bitStrsLE T).map (toAnswer T)).idxOf (toAnswer T a.1) := by
+        rw [toAnswer_val]; rfl
+    _ = (Data.bitStrsLE T).idxOf a.1 :=
+        idxOf_map_of_injOn _ _ hinj ((Data.mem_bitStrsLE T a.1).2 a.2)
 
 end Verifier
 

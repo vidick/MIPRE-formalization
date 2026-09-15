@@ -415,10 +415,13 @@ number of points landing on a given pair and its `totalWeight` is `2^{s(n)}` —
 quotient `clDist` is. The bridge is `length_filter_bitStrsOfLen`: the bit strings of length `s`
 are the vectors of `𝔽₂^s`, so a count over one is a count over the other.
 
-Remaining for O2: the answer-index bridge for `answerEquiv` (the analogue of
-`questionEquiv_symm_val` on the answer side), the acceptance table from
-`Verifier.accepts_iff_runForD`, the assembly of `tab`, `tab_computable`, and `tab_match`
-itself — where the weights become `μ` and the table becomes `D`. Then, in order, and identified with the fields of
+The answer side followed the question side: `answerEquiv_symm_val` says an answer's index is
+its position among the bit strings of length at most `T`, the enumeration `answerList` being
+`bitStrsLE` mapped by a truncation that is the identity on them.
+
+Remaining for O2: the acceptance table from `Verifier.accepts_iff_runForD`, then the assembly
+of `tab`, `tab_computable`, and `tab_match` itself — where the weights become `μ` and the table
+becomes `D`. Then, in order, and identified with the fields of
 `MIPRE.Halting.Obligations`:
 the *computation* of the tabulation — running the sampler on every point of `𝔽₂^{s(n)}` to
 count the question weights and the decider under its budget to fill in the acceptance table,
