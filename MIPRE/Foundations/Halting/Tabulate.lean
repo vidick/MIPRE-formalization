@@ -37,6 +37,11 @@ length `s` being the vectors of `𝔽₂^s`.
 its position among the bit strings of length at most `T`, the enumeration `answerList` being
 `bitStrsLE` mapped by a truncation that is the identity on them.
 
+`Verifier.accList` is then the acceptance table: the index tuples of the answer tuples a
+predicate accepts, enumerated over the two alphabets, with `mem_accList_iff` saying exactly
+what is in it. `bitsToIdx_injOn` is what lets a tuple be read back — the index of a question
+determines it, among the strings of a fixed length.
+
 Nothing here is efficient and nothing needs to be: the tabulation is a computable map, not a
 polynomial-time one, and the budget it runs under is the verifier's own time bound.
 -/
@@ -304,6 +309,50 @@ theorem answerEquiv_symm_val (T : ℕ) (a : Answers T) :
         rw [toAnswer_val]; rfl
     _ = (Data.bitStrsLE T).idxOf a.1 :=
         idxOf_map_of_injOn _ _ hinj ((Data.mem_bitStrsLE T a.1).2 a.2)
+
+/-! ## The acceptance table -/
+
+/-- `bitsToIdx` is injective on the bit strings of a fixed length: it is the binary expansion,
+read through `questionEquiv`. -/
+theorem bitsToIdx_injOn {s : ℕ} {x y : BitStr} (hx : x.length = s) (hy : y.length = s)
+    (h : bitsToIdx x = bitsToIdx y) : x = y := by
+  have hx' : CL.toBits (CL.ofBits s x) = x := CL.toBits_ofBits hx
+  have hy' : CL.toBits (CL.ofBits s y) = y := CL.toBits_ofBits hy
+  have := h
+  rw [← hx', ← hy', ← questionEquiv_symm_val, ← questionEquiv_symm_val] at this
+  rw [← hx', ← hy', (questionEquiv s).symm.injective (Fin.ext this)]
+
+/-- **The acceptance table**: the index tuples of the answer tuples a predicate accepts,
+enumerated over the two alphabets. -/
+def accList (s T : ℕ) (acc? : BitStr → BitStr → BitStr → BitStr → Bool) :
+    List (ℕ × ℕ × ℕ × ℕ) :=
+  (Data.bitStrsOfLen s).flatMap fun x =>
+    (Data.bitStrsOfLen s).flatMap fun y =>
+      (Data.bitStrsLE T).flatMap fun a =>
+        (Data.bitStrsLE T).filterMap fun b =>
+          if acc? x y a b then
+            some (bitsToIdx x, bitsToIdx y,
+              (Data.bitStrsLE T).idxOf a, (Data.bitStrsLE T).idxOf b)
+          else none
+
+theorem mem_accList_iff {s T : ℕ} {acc? : BitStr → BitStr → BitStr → BitStr → Bool}
+    {i j k l : ℕ} :
+    (i, j, k, l) ∈ accList s T acc? ↔
+      ∃ x ∈ Data.bitStrsOfLen s, ∃ y ∈ Data.bitStrsOfLen s,
+        ∃ a ∈ Data.bitStrsLE T, ∃ b ∈ Data.bitStrsLE T,
+          acc? x y a b = true ∧ i = bitsToIdx x ∧ j = bitsToIdx y ∧
+            k = (Data.bitStrsLE T).idxOf a ∧ l = (Data.bitStrsLE T).idxOf b := by
+  simp only [accList, List.mem_flatMap, List.mem_filterMap]
+  constructor
+  · rintro ⟨x, hx, y, hy, a, ha, b, hb, h⟩
+    by_cases hc : acc? x y a b
+    · rw [if_pos hc] at h
+      obtain ⟨hi, hj, hk, hl⟩ : bitsToIdx x = i ∧ bitsToIdx y = j ∧
+          (Data.bitStrsLE T).idxOf a = k ∧ (Data.bitStrsLE T).idxOf b = l := by simpa using h
+      exact ⟨x, hx, y, hy, a, ha, b, hb, hc, hi.symm, hj.symm, hk.symm, hl.symm⟩
+    · rw [if_neg hc] at h; exact absurd h (by simp)
+  · rintro ⟨x, hx, y, hy, a, ha, b, hb, hc, rfl, rfl, rfl, rfl⟩
+    exact ⟨x, hx, y, hy, a, ha, b, hb, by rw [if_pos hc]⟩
 
 end Verifier
 
