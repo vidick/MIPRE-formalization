@@ -325,13 +325,34 @@ a procedure that runs on game descriptions, back to a verifier. With it, `not_in
 `x ∉ B n` is "not `n`-bounded" (a search for an input whose run exceeds the budget, Σ₁) or
 "`val* > 1/2`", so the semidecider never has to decide `n`-boundedness, which is Π₁.
 
-Remaining, in order: (3b-iii) the time accounting of the wrapper, and the two
-strings realizing the distinguished verifiers; (3c-ii) the *computation* of the tabulation —
-running the sampler on every point of `𝔽₂^{s(n)}` to count the question weights and the
-decider under its budget to fill in the acceptance table, then `Computable` for the whole map
-— and the assembly of the semidecider from the two Σ₁ disjuncts; (4) the compressor's own
-decider and its time accounting; (5) the assembly of `thm:halting` from `thm:compression`,
-then `thm:main` through the tabulation.
+Part 5 done 2026-09-15, out of order and on purpose: the assembly
+(`Halting/Instantiation.lean`), so that what is left is a structure to be inhabited rather
+than an argument to be found. A string is read as a parameter and a decider (`descLam`,
+`descDec`, with `descOf` the inverse), hence as a verifier (`Vof`), hence the two classes
+`classA n`, `classB n` with answers cut at `bound (n + λ)`, the length beyond which a
+compressed decider with that parameter rejects. `halting_reduction` then proves
+`thm:halting` in `val*` form — a computable map from `Nat.Partrec.Code` to game descriptions
+of quantum value `1` when the machine halts and at most `1/2` when it does not — from three
+hypotheses: a `GapCompression`, a universal machine, and a `MIPRE.Halting.Obligations`,
+whose fields are exactly the four open obligations, marked O1–O4 in the file and in
+`planning/h4-assembly.md`. It is sorry-free, so `#print axioms` cannot hide any of them.
+Two things are deliberately outside it: the conclusion is in `val*`, since carrying a
+perfect PCC strategy to the tabulation needs a synchronous counterpart of
+`quantumValue_eq_of_equiv` that does not exist yet, and reaching
+`HaltingGameValue.halting_reduces_to_gameValue` additionally needs `MIPRE.syncValue` related
+to `HaltingGameValue.gameValue`, those being parallel developments. Soundness needs neither.
+One tool was added on the way: `Data.primrec_size`, because the level at which the recursion
+runs is `2 ^ (K + 1 + esize e)`.
+
+Remaining, in order, and now identified with the fields of `MIPRE.Halting.Obligations`:
+(O1, part 3b-iii) the time accounting of the wrapper, then the two strings realizing the
+distinguished verifiers — check there the small-parameter corner that ledger challenge
+`ch-6879ad98822a57d8` on node `1.6` flags for the paper's `|V^halt| ≤ λ`; (O2, part 3c-ii)
+the *computation* of the tabulation — running the sampler on every point of `𝔽₂^{s(n)}` to
+count the question weights and the decider under its budget to fill in the acceptance table,
+then `Computable` for the whole map; (O3) the semidecider, from the two Σ₁ disjuncts of
+`not_inClassB_iff` once O2 exists; (O4, part 4) the compressor's own decider and its time
+accounting. Then `thm:main`, which needs the two synchronous bridges above.
 
 ## What to start with
 

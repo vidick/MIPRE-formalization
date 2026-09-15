@@ -29,6 +29,10 @@ versions.
   Every string thereby names a parameter and a decider (`descLam`, `descDec`), and the
   wrapper decider of `Halting/Wrapper.lean` interprets the raw data the same way, so that no
   validity condition on strings is needed anywhere.
+
+Each of these is also given in primitive recursive form, `Data.parse` and `Data.natOf` among
+them, together with `Data.primrec_size`: the level at which the halting reduction runs is
+`2 ^ (K + 1 + esize e)`, so the size of an encoding has to be computable.
 -/
 
 namespace MIPRE.Cost.Data
@@ -290,5 +294,21 @@ theorem primrec_decode_nat : Primrec fun d : Data => (decode d : Option ℕ) := 
 
 theorem primrec_natOf : Primrec natOf :=
   Primrec.option_getD.comp (primrec_decode_nat.comp primrec_normBin) (Primrec.const 0)
+
+/-! ## The size of data -/
+
+/-- The size of data is a tree recursion. -/
+theorem size_eq_recD (d : Data) : d.size = recD 1 (fun _ _ ra rb => ra + rb + 1) d := by
+  induction d with
+  | nil => rfl
+  | cons a b iha ihb => rw [size_cons, recD_cons, iha, ihb]
+
+/-- The size of data is primitive recursive, hence so is `esize` of anything whose encoding
+is: `Cost.esize a = (encode a).size`. The halting reduction needs it for the level
+`2 ^ (K + 1 + esize e)` at which the recursion runs. -/
+theorem primrec_size : Primrec Data.size :=
+  (primrec_recD 1 _ (Primrec.nat_add.comp
+    (Primrec.nat_add.comp (Primrec.fst.comp Primrec.snd) (Primrec.snd.comp Primrec.snd))
+    (Primrec.const 1))).of_eq fun d => (size_eq_recD d).symm
 
 end MIPRE.Cost.Data

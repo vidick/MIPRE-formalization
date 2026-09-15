@@ -1079,7 +1079,9 @@ lower bound has to be tracked anywhere in this chapter.
   MIPRE.Verifier.valStar_eq_zero_of_rejects_all, MIPRE.Verifier.ofSamplerDecider,
   MIPRE.Verifier.ofSamplerDecider_accepts, MIPRE.Decider.wrap,
   MIPRE.Verifier.answerEquiv, MIPRE.Verifier.questionEquiv,
-  MIPRE.Verifier.quantumValue_toGame_eq_valStar, MIPRE.Verifier.not_inClassB_iff}
+  MIPRE.Verifier.quantumValue_toGame_eq_valStar, MIPRE.Verifier.not_inClassB_iff,
+  MIPRE.Halting.descLam, MIPRE.Halting.descDec, MIPRE.Halting.Vof,
+  MIPRE.Halting.classA, MIPRE.Halting.classB, MIPRE.Halting.Obligations}
 Theorem~\ref{thm:compression} instantiates the hypotheses of
 Lemma~\ref{lem:compressible-criterion}: take $A$ to be the set of (descriptions of) normal
 form verifier games with a value-$1$ PCC strategy and $B$ the set of those with $\valstar
@@ -1181,11 +1183,14 @@ format checks and budgets are the bounded walks \texttt{Prog.bitWalkProg},
 \texttt{mulProg}, \texttt{polyProg}, each with a cost bound of the shape
 $T \cdot (\abs{\text{input}} + 1)$ that Definition~\ref{def:decider} asks for. Costs compose
 through \texttt{Cost.PolyBounded}, which also gives the threshold above which a polynomial
-bound falls under $2^n$. Still owed are the descriptions read as verifiers --- the wrapper
-decider around $\decider'$ and the classes $A_n, B_n$ --- the tabulation of $\verifier_n$ as
-a game description with the agreement of its value with $\valstar(\verifier_n)$, and the
-compressor's own decider with its time accounting
-(\texttt{planning/formalization-plan.md}, H4). The reading of a string as a verifier is in
+bound falls under $2^n$. The dictionary itself is now in Lean: \texttt{MIPRE.Halting.descLam}
+and \texttt{descDec} read a string as a parameter and a decider, \texttt{Vof} is the verifier
+it denotes, and \texttt{classA}, \texttt{classB} are $A_n, B_n$, with answers cut at the
+length beyond which a compressed decider with that parameter rejects. What remains is
+collected as the four fields of \texttt{MIPRE.Halting.Obligations}, the structure
+Theorem~\ref{thm:halting} is proved from
+(\texttt{planning/formalization-plan.md}, H4; \texttt{planning/h4-assembly.md}).
+The reading of a string as a verifier is in
 Lean too: \texttt{Decider.wrap} is the wrapper --- it computes $s(N)$ by running the
 sampler through the universal machine, compares it with the lengths of the two questions,
 and runs the string's own decider through the universal machine if both agree --- and
@@ -1325,6 +1330,7 @@ revision of this chapter did state item 2 as the bound, and because the ledger n
 \label{thm:halting}
 \ledgernode{1.6, 1.6.6}
 \uses{thm:compression,rem:compression-abstract,lem:compressible-criterion,lem:value-lower-approx,lem:kleene,def:mipstar,def:game-description,lem:sync-le-valstar,lem:dhalt-values,lem:lambda}
+\lean{MIPRE.Halting.halting_reduction}
 There is a computable (indeed polynomial-time) map $\machine \mapsto
 \game_{\machine}$ from Turing machines to synchronous game descriptions, with games
 given by normal form verifiers satisfying the efficiency requirements of
@@ -1345,6 +1351,23 @@ instantiation that are open are inherited here: the four listed in
 Remark~\ref{rem:compression-abstract}. The synchronization invariant that an earlier
 revision also required of the games produced inside $\Compress$ is no longer among them
 (Remark~\ref{rem:bipartite-route}).
+
+In Lean the assembly is \texttt{MIPRE.Halting.halting\_reduction}. It is complete and free
+of \texttt{sorry}, and it takes three hypotheses: a \texttt{MIPRE.GapCompression} (which is
+Theorem~\ref{thm:compression}), a universal machine, and an inhabitant of
+\texttt{MIPRE.Halting.Obligations}, whose four fields are exactly what
+Remark~\ref{rem:compression-abstract} leaves owed: the two distinguished strings, the
+tabulation with its value agreement, the semidecider, and the compressor. So what is open is
+a structure to be inhabited rather than an argument to be found, and
+\texttt{\#print axioms} cannot hide any of it.
+Two things are deliberately not in that statement, and neither belongs to the instantiation.
+It concludes in $\valstar$ only: item 1's $\synval = 1$ needs a \emph{synchronous} strategy to
+transport along the relabelings of the tabulation, for which there is no counterpart of
+\texttt{quantumValue\_eq\_of\_equiv} yet, and the passage to
+\texttt{HaltingGameValue.halting\_reduces\_to\_gameValue} additionally needs
+\texttt{MIPRE.syncValue} related to \texttt{HaltingGameValue.gameValue}, those being parallel
+developments (Section~\ref{ch:main-theorem}). Soundness needs neither, by
+Lemma~\ref{lem:sync-le-valstar}.
 
 \begin{remark}[Identical measurement operators]
 \label{rem:identical-operators}

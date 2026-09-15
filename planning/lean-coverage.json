@@ -232,6 +232,27 @@
    "lem:compress-sampler-indep",
    "thm:compression"
   ],
+  "MIPRE.Halting.Obligations": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.Vof": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.classA": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.classB": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.descDec": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.descLam": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.halting_reduction": [
+   "thm:halting"
+  ],
   "MIPRE.IsApproxRepresentation": [
    "def:approx-rep"
   ],
@@ -704,6 +725,13 @@
   "MIPRE.Game",
   "MIPRE.Game.repeat",
   "MIPRE.GapCompression",
+  "MIPRE.Halting.Obligations",
+  "MIPRE.Halting.Vof",
+  "MIPRE.Halting.classA",
+  "MIPRE.Halting.classB",
+  "MIPRE.Halting.descDec",
+  "MIPRE.Halting.descLam",
+  "MIPRE.Halting.halting_reduction",
   "MIPRE.IsApproxRepresentation",
   "MIPRE.IsPOVMClose",
   "MIPRE.IsRE",
@@ -1013,6 +1041,15 @@
    "MIPRE.Verifier.freeze_isBounded",
    "MIPRE.Verifier.freeze_valStar"
   ],
+  "MIPRE/Foundations/Halting/Instantiation.lean": [
+   "MIPRE.Halting.Obligations",
+   "MIPRE.Halting.Vof",
+   "MIPRE.Halting.classA",
+   "MIPRE.Halting.classB",
+   "MIPRE.Halting.descDec",
+   "MIPRE.Halting.descLam",
+   "MIPRE.Halting.halting_reduction"
+  ],
   "MIPRE/Foundations/Halting/PolyBounded.lean": [
    "MIPRE.Cost.PolyBounded"
   ],
@@ -1174,7 +1211,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 71,
+ "lean_tags": 72,
  "module_sizes": {
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
   "MIPRE/Background/LIDT/Axioms.lean": 0,
@@ -1236,9 +1273,10 @@
   "MIPRE/Foundations/GapCompression.lean": 2,
   "MIPRE/Foundations/Halting/Arith.lean": 48,
   "MIPRE/Foundations/Halting/Classes.lean": 10,
-  "MIPRE/Foundations/Halting/Descriptions.lean": 32,
+  "MIPRE/Foundations/Halting/Descriptions.lean": 34,
   "MIPRE/Foundations/Halting/Enumerate.lean": 19,
   "MIPRE/Foundations/Halting/Freeze.lean": 28,
+  "MIPRE/Foundations/Halting/Instantiation.lean": 15,
   "MIPRE/Foundations/Halting/Lists.lean": 42,
   "MIPRE/Foundations/Halting/PolyBounded.lean": 27,
   "MIPRE/Foundations/Halting/Serial.lean": 26,
@@ -1297,6 +1335,6 @@
   "bibitems": 32,
   "cites": 150,
   "labels": 200,
-  "refs": 840
+  "refs": 844
  }
 }
