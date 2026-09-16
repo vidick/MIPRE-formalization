@@ -1,6 +1,7 @@
 # H4: the assembly, and how the remaining obligations are tracked
 
-Status 2026-09-15, with O1, O2 and O3 closed. Written after two process failures (below) and a
+Status 2026-09-16, with O1, O2 and O3 closed and O4 begun — §4 item 4 has its plan. Written
+after two process failures (below) and a
 reading of the companion repository's ledger nodes `1.6.*`. It says what the assembly is,
 which obligation remains open — O4, the compressor, the only one left with mathematics in it —
 how they are marked so they cannot be forgotten, and in what order to discharge them. Two marks
@@ -458,33 +459,126 @@ takes none.
    bound: that one was verified twice against a proof that already had the missing fact, this
    one is an argument about a construction that does not exist yet.
 
-   **What is left** is the construction itself, and it is the larger half: the ambient program
-   for the output decider (read `x` out of the succinct description by bit queries, parse it,
-   freeze the verifier at `2n+1`, run `Compress`, run the compressed decider), the proof that
-   its acceptance agrees with `G.output`'s so that `valStar_congr`/`hasPerfectPCC_congr` bridge
-   the values, and its cost accounting against `IsBounded n`. Compare #57 and #64 for the scale
-   of the program-plus-accounting work; this is bigger than either. The class transfer on top of
-   it is short — `freeze_hasPerfectPCC` and `freeze_valStar` for the level bridge, `completeness`
-   and `soundness` for the compression step, `hasPerfectPCC_of_le` for the answer bound,
-   `freeze_isBounded` and `lambda_bound` for the boundedness — and none of it is blocked any
-   more. Read `recursive.tex` `sec:halt` and nodes `1.6.1`, `1.6.5` again before starting it:
-   this is the one obligation where the paper's construction is followed closely.
-5. **The module move.** Numbered last because it was found last; it comes *before* O4 in the
-   doing, being what turns O3's discharge into a smaller `Obligations`. The structure and
-   `halting_reduction` are at the end of `MIPRE/Foundations/Halting/Instantiation.lean`, and
-   `Halting/Semidecider.lean` — where `exists_sem` is — imports that file, so `Obligations`
-   sits *above* its own discharge and the three O3 fields cannot be dropped where they stand.
-   What moves: everything from `/-! ## The obligations -/` to the end of `Instantiation.lean`
-   — the `Obligations` structure, `two_pow_iterate`, `primrec_two_pow`, the
-   `attribute [local irreducible] tab` line and `halting_reduction` — into a new module *below*
-   `Semidecider.lean`, say `MIPRE/Foundations/Halting/Reduction.lean`, importing
-   `MIPRE.Foundations.Halting.Semidecider`. Then drop `sem`, `sem_closed` and `sem_spec` from
-   the structure and let `halting_reduction` obtain them from `exists_sem G U` instead of from
-   `O`, leaving O1 and O4. Then `lake exe mk_all`, which CI checks. Nothing else has to change:
-   `Halting/Strings.lean` proves `yYes_mem` and `yNo_mem` as standalone `∃ n₀` theorems and
-   never names a field, `MIPRE/Axioms.lean` guards `exists_sem_of_tab`, which stays in
+   **Finding 2, corroborated by the paper (2026-09-16, second reading).** The confidence caveat
+   above can be dropped. The paper's `F` has the check *in its construction* — Step 6 of
+   `fig:halt_f`: "Simulate `D^compr` on `(n,x,y,a,b)` if the input tuple has length at most
+   `B_{D^compr}(n)` (if it has length exceeding this, reject)" — and the amended proof of
+   `lem:dhalt-values` spends it exactly where the Lean gets stuck: "here we use that the answer
+   alphabets may be identified, since any answer tuple of total length larger than
+   `B_{D^compr}(n)` is rejected by both deciders". Ledger challenge `ch-0bb5ccf596ca5ec4` on
+   node `1.6.3` recorded that fact as load-bearing. So rejection of long answers is a property
+   `V^halt` has by construction in the paper, and the Lean's classes, ranging over arbitrary
+   strings, lost it; `GapCompression.output_rejects_long` was added for this and bounds the
+   compressor's *output*, while `compr_spec` needs it of the compressor's *input*. Of the three
+   shapes listed above, one is right: **thread a well-formedness predicate through the
+   criterion.** `compressibility_criterion_levels` gains `P : BitStr → ℕ → Prop` with
+   `∀ m, P yYes m`, `∀ m, P yNo m` and `∀ c m, P (Compr (c, m)) m`, and `hCompr` gets
+   `P x (2n+1)`; the proof has what it needs already — the functional equation `hdec`, which says
+   every string of the recursion is `yYes`, `yNo` or `Compr (…, 2n+1)`, and on which the
+   `hA`/`hB` branches case-split. The instantiation takes `P x m` to be "`(Vof G U x).decider`
+   rejects every answer longer than `ansBound G x m` at index `m`": `yNo` rejects everything,
+   `yYes` accepts only empty answers, and the output's decider runs a compressed decider, so
+   `output_rejects_long` gives it. This is the alternative that `rem:compression-abstract`
+   obligation (c) already names — "re-quantified over a `Compr`-closed class" — so the blueprint
+   gets sharper, not longer. The other two shapes are worse: rejection in the classes reopens
+   O3 (`sem_spec` would need a second `Σ₁` disjunct), and no change to `ansBound` can work,
+   soundness living at the exponential bound `(2^n)^λ` that no polynomial answer bound reaches,
+   while lowering a bound under `HasPerfectPCC` needs rejection as much as raising one under
+   `valStar` does.
+
+   **A fourth finding, from writing the consumer of the accounting before the program.** Every
+   `IsBounded` witness so far — `ofSamplerDecider_isBounded`, hence O1 — is
+   `∃ n₀, ∀ n ≥ n₀, IsBounded n` for a *fixed* program, with `HasPolyCost` quantifying its
+   polynomial existentially. O4's decider depends on `(c, n)`, and `compr_spec` needs one `n₀`
+   for all of them. So the cost lemma has to carry explicit constants depending only on `G` and
+   `U`, with `2|c| ≤ n`, `|x| ≤ n + 1` and `descLam x < 2^(n+1)` as the only size inputs, and the
+   absorption into `n'^n · (|d|+1)^n` has to be proved for every index `n' ≥ 2` — `n' = 2` and
+   `n' < n` included — at `n ≥ n₀(G, U)`. The arithmetic closes: the degree in `|d|` is at most
+   the constant `(G.deg + 1) · deg(U.bound)`, the coefficient is `poly(n, n')`, and
+   `lambda_bound` absorbs both with its `lam` read as the level `n` and its `n` as the index
+   `n'`. But it is a different *shape* from `HasPolyCost`, and `TimeBoundAt` has been revised
+   three times by a first consumer of exactly this kind; state the cost lemma before writing the
+   program. Two design choices fall out of the same check. `λ(n)` must be computed in binary in
+   time `poly(|c| + log n)` — the compressor cannot write a unary numeral — so take
+   `λ(n) := 2^(K + D · Nat.size n)`, a `1` followed by zeros, with `D` above the degrees of
+   `G.samplerProg.timeBound` and `G.bound` and `2^K` absorbing the constants; it covers the
+   frozen verifier's needs (`2^λ ≥ (2n+1)^(2n+1) + …`, `λ ≥ 2n+1`), and `(Vof x).size ≤ 2n+1`
+   comes free from the size clause of `IsBounded (2n+1)`. The strings of the recursion are then
+   of size `O(log n)` at level `n`, far under the `n + 1` bound and consistent with
+   `descLam x < 2^(n+1)`.
+
+   **Issue #77 does not block O4 mechanically, but it should be decided first.**
+   `G.completeness` as stated *concludes* `HasPerfectPCC`, hence `IsSynchronousAt n` of the
+   compressed decider, so O4 transfers it by `hasPerfectPCC_congr` without proving anything; the
+   cost lands on chapter 6, which would have to prove of the pipeline's decider a property the
+   paper never states, and nothing tracks it. Restating `HasPerfectPCC` on the doubled game
+   removes the clause from `thm:compression`; it touches `GapCompression.lean`,
+   `VerifierValue.lean`, `Freeze.lean`, `Classes.lean`, `SyncTransport.lean` and `Strings.lean`
+   with the same proofs (`copy`, `relabel`), and doing it after O4 would reshape O4's transfer
+   proof as well.
+
+   **The plan, in pull requests** (each rebased onto `main` before merging, per §1):
+
+   - **PR-0, the module move** — item 5 below. No mathematics.
+   - **PR-1, statements first.** (a) #77: `HasPerfectPCC` on the doubled game, and blueprint
+     `thm:compression` corrected at its "as the deciders of the pipeline do". (b) Finding 2: the
+     predicate `P` through `compressibility_criterion_levels`; `compr_spec` gains the rejection
+     hypothesis on `x`; a new field `compr_rejects : ∀ c n, RejectsLong G U (compr (c, n)) n`;
+     blueprint `lem:compressible-criterion` and obligation (c) of `rem:compression-abstract`
+     updated. (c) **The consumer, written first**: an abstract transfer theorem producing
+     `Obligations G U` from three *named* hypotheses on a hypothetical program — acceptance
+     agreement with `G.output` at index `n`, an explicit cost bound in `(n, n', |d|)`, and the
+     growth of `λ(n)` — proving the class transfer once (`hasPerfectPCC_of_le` with
+     `exists_ansBound_le`, `freeze_hasPerfectPCC`, `completeness`, `hasPerfectPCC_congr`;
+     `valStar_eq_of_rejects`, `freeze_valStar`, `soundness`, `valStar_congr`;
+     `freeze_isBounded` with `lambda_bound` for the boundedness) and pinning the exact statement
+     the construction must meet. (a) and (b) change theorem statements in the blueprint and are
+     the maintainer's decisions.
+   - **PR-2, `Halting/Compressor.lean`, the program** — the module three toolkit docstrings
+     already name. Sub-programs each with `_runs` lemmas, as `Wrapper.lean` does: the bit-query
+     reading loop (`incProg` over the index, `U.univ` on the embedded `c`, stopping at the
+     out-of-range marker of `bitQueryAnswer`), `parseProg`, the extraction of `(λ_x, dec_x)`,
+     `dFreeze` (the `Data` form of `freezeProg`, `rfl` to `toData` as `dWrapCore_eq` is),
+     `(sampP, decP)` from a run of `G.samplerProg.code` and `dWrapCore`, `G.compress.code`
+     through `U`, and the compressed decider through `U` on the decider's own input. Forward
+     runs and the inversion give the acceptance agreement. Expect `tabOf`'s elaboration
+     trouble; build the term one declaration at a time.
+   - **PR-3, the accounting** — explicit constants; `IsBounded λ(n)` of the frozen `Vof x` by
+     `freeze_isBounded`; `(Vof (compr (c, n))).IsBounded n` uniformly for `n ≥ n₀(G, U)`;
+     `λ(n)` computed in binary.
+   - **PR-4, the assembly** — `compr` as a `PolyTimeFun` (`hardcode` of `(c, n, λ(n))` into the
+     fixed program, then `serProg`), `compr_rejects`, PR-1's theorem applied, so that
+     `halting_reduction` needs only `G`. Blueprint: `\lean{}` on `lem:halt-construction`,
+     `lem:lambda` and `lem:dhalt-values` with a Comments paragraph on the route (no
+     self-reference, freeze at `2n+1`, `λ(n)` explicit); #53 closed.
+   - **PR-5, `thm:main` conditionally** — `halting_reduces_to_gameValue_of (G : GapCompression)`
+     sorry-free through `gameValue_tab_eq_one` and
+     `gameValue_toGame_le_of_valStar_le_doubled`; the unconditional statement keeps its `sorry`
+     as the chapter-6 target, and the blueprint says so. After it the honest headline is
+     *MIP\* = RE ⟸ `thm:compression`, machine-checked*: one structure is the whole remaining
+     assumption, and `#print axioms` shows nothing else.
+
+   Compare #57 and #64 for the scale of PR-2 and PR-3; together they are bigger than either.
+   Read `recursive.tex` `sec:halt` and nodes `1.6.1`, `1.6.5` again before PR-2: this is the
+   one obligation where the paper's construction is followed closely.
+5. **PR-0, the module move.** Numbered last because it was found last; it comes *before* the
+   rest of O4 in the doing, being what turns O1's and O3's discharges into a smaller
+   `Obligations`. The structure and `halting_reduction` are at the end of
+   `MIPRE/Foundations/Halting/Instantiation.lean`, and both `Halting/Semidecider.lean` — where
+   `exists_sem` is — and `Halting/Strings.lean` — where `yYes_mem` and `yNo_mem` are — import
+   that file, so `Obligations` sits *above* its own discharges and the seven O1 and O3 fields
+   cannot be dropped where they stand. What moves: everything from `/-! ## The obligations -/`
+   to the end of `Instantiation.lean` — the `Obligations` structure, `two_pow_iterate`,
+   `primrec_two_pow`, the `attribute [local irreducible] tab` line and `halting_reduction` —
+   into a new module *below* both, `MIPRE/Foundations/Halting/Reduction.lean`, importing
+   `Halting.Semidecider` and `Halting.Strings`. Then drop O1's four fields and O3's three, and
+   let `halting_reduction` obtain them from `yYes_mem G U`, `yNo_mem G U` and `exists_sem G U`,
+   the criterion's threshold being the maximum of their two thresholds and `n₀`. `Obligations`
+   is then `n₀`, `compr`, `compr_spec` — honestly O4, and the docstring of `Instantiation.lean`
+   stops describing an assembly that is no longer in it. Then `lake exe mk_all`, which CI
+   checks, and `scripts/lean-coverage.py --refresh`, since a module is added. Nothing else has
+   to change: `MIPRE/Axioms.lean` guards `exists_sem_of_tab`, which stays in
    `Semidecider.lean`, and the blueprint's `\lean{}` tags resolve by name in the unchanged
-   namespace `MIPRE.Halting`. It is a reorganization, not mathematics; do it before O4 so that
-   `compr_spec` is honestly the last field.
+   namespace `MIPRE.Halting`. It is a reorganization, not mathematics.
 
 Each is one pull request, rebased onto `main` before merging, per the rule in §1.
