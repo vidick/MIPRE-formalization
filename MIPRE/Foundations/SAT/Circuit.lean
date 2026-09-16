@@ -98,17 +98,23 @@ structure Circuit where
 
 namespace Circuit
 
-/-- The values of the gates in order, from the values of the earlier ones. -/
-def evalAux (x : ℕ → Bool) : List Gate → List Bool → List Bool
-  | [], vals => vals
-  | g :: gs, vals => evalAux x gs (vals ++ [g.eval x vals])
+/-- The value of gate `g` of `C` on the input bits `x`: the gate evaluated on the values of
+the earlier gates (a gate beyond the list reads as the constant `false`). -/
+def valueAt (C : Circuit) (x : ℕ → Bool) : ℕ → Bool
+  | g => (C.gates.getD g (.const false)).eval x (List.ofFn fun k : Fin g => C.valueAt x k)
+  decreasing_by exact k.isLt
 
 /-- The values of all gates of `C` on the input bits `x`. -/
-def values (C : Circuit) (x : ℕ → Bool) : List Bool := evalAux x C.gates []
+def values (C : Circuit) (x : ℕ → Bool) : List Bool := List.ofFn fun g : Fin C.gates.length => C.valueAt x g
 
 /-- The output of `C` on the input bits `x`: the value of the last gate (`false` for the
 empty circuit). -/
-def eval (C : Circuit) (x : ℕ → Bool) : Bool := ((C.values x).getLast?).getD false
+def eval (C : Circuit) (x : ℕ → Bool) : Bool :=
+  if C.gates = [] then false else C.valueAt x (C.gates.length - 1)
+
+theorem valueAt_eq (C : Circuit) (x : ℕ → Bool) (g : ℕ) :
+    C.valueAt x g = (C.gates.getD g (.const false)).eval x (List.ofFn fun k : Fin g => C.valueAt x k) := by
+  rw [valueAt]
 
 /-- The output of `C` on a bit string (missing bits read `false`). -/
 def evalBits (C : Circuit) (l : List Bool) : Bool := C.eval fun i => l.getD i false
