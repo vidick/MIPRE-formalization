@@ -123,24 +123,39 @@ of $\mu$,
 \end{equation*}
 \end{definition}
 
-\begin{remark}
-In~\cite[Section 5.2]{JNVWY20} a PCC strategy is a tensor-product strategy
-(Definition~\ref{def:tensor-strategy}) with $\mH_\alice = \mH_\bob$ that is
-\emph{projective} (all measurements are PVMs), \emph{consistent} ($A^x_a \ot \Id
-\ket{\psi} = \Id \ot B^x_a \ket{\psi}$ for all $x, a$), and \emph{commuting}
-($[A^x_a, B^y_b] = 0$ for all $(x, y)$ in the support of $\mu$ and all $a, b$). In
-the synchronous framework the first two conditions come for free in the direction this
-blueprint uses: the tensor-product realization of a synchronous strategy on the maximally
-entangled state (the proof of Lemma~\ref{lem:sync-le-valstar}) is projective and
-consistent (\cite[Remark 5.13]{JNVWY20}; see also \cite[Theorem 5.5]{PSSTW16}), so only
-the
-commutation condition remains, and we keep the name PCC for alignment with the paper.
-The ``commuting'' in PCC is a condition on question pairs in the support of $\mu$,
-unrelated to the commuting (operator) strategies of
-Definition~\ref{def:commuting-strategy}. Finally, since a synchronous strategy
-describes both players by the same family of measurements, symmetry is automatic, and
-we do not distinguish between the PCC and symmetric PCC (SPCC) strategies
-of~\cite{JNVWY20}.
+\begin{remark}[Source PCC and the required representation bridge]
+\label{rem:pcc-representation-bridge}
+\uses{def:pcc,def:tensor-strategy,lem:sync-le-valstar}
+The paper's PCC condition applies to a tensor-product strategy on equal local spaces.
+Besides projectivity and $[A^x_a,B^y_b]=0$ on the support of the question distribution,
+it requires each measurement separately to be consistent with itself on the state:
+\begin{equation*}
+  (A^x_a\ot\Id)\ket{\psi}=(\Id\ot A^x_a)\ket{\psi},
+  \qquad
+  (B^y_b\ot\Id)\ket{\psi}=(\Id\ot B^y_b)\ket{\psi}.
+\end{equation*}
+These are the conditions of \texttt{def:consistent-measurement},
+\texttt{def:consistent-strategy} and \texttt{def:spcc} in the companion
+\texttt{games.tex}~\cite{AuditSync26}; see also~\cite[Section 5.2]{JNVWY20}.
+The checked realization in Lemma~\ref{lem:sync-le-valstar} uses $A=M$ and
+$B=M^{\mathsf T}$. It preserves
+probabilities and gives cross-player consistency, but does not establish the displayed
+same-measurement identities for arbitrary complex $M$, nor does commutation of two
+matrices imply commutation of one with the transpose of the other.
+
+Consequently Definition~\ref{def:pcc} is the current synchronous PCC interface, and
+using it as an input to the paper's completeness theorems requires a separate
+\emph{PCC representation bridge}. The forward bridge must preserve all probabilities
+and support commutation while producing a source PCC strategy. A candidate is to
+realify each complex projector on dimension $2d$, then use the same real symmetric
+projectors on both halves of a maximally entangled state. Projectivity, the normalized
+trace probabilities, the two consistency identities and the symmetry required for
+SPCC all need verification for that construction; no such bridge is proved here.
+Any transfer back from source PCC strategies to this synchronous interface also needs
+its own stated hypotheses and proof. The name PCC in the Lean definition does not
+discharge either direction. In both interfaces, commutation is required only on
+question pairs in the support of $\mu$ and is distinct from the commuting-operator
+model of Definition~\ref{def:commuting-strategy}.
 \end{remark}
 
 
@@ -541,22 +556,31 @@ that, writing vectors and register subspaces of $V$ as bit strings of length $s(
 and $\sampler$ halts on every input of the form $(n, \ldots)$, well formed or not; nothing is
 required of its outputs on other inputs. The \emph{distribution of $\sampler$ at index $n$}
 is the CL distribution $\mu_n$ of $(L^\alice(x), L^\bob(x))$ for uniform $x \in V$
-(Definition~\ref{def:cl-function}), and $\TIME_\sampler(n)$ denotes the maximal running time
-of $\sampler$ over all inputs of the form $(n, \ldots)$.
+(Definition~\ref{def:cl-function}). In the paper's Turing-machine model,
+$\TIME_\sampler(n)$ denotes the absolute supremum of the running times over all inputs
+of the form $(n, \ldots)$; totality alone does not make that supremum finite.
 \end{definition}
 
-\paragraph{Comments.} This is the paper's \texttt{def:sampler} (\texttt{linear.tex}) at
+\paragraph{Comments.} This follows the query interface of the paper's
+\texttt{def:sampler} (\texttt{linear.tex})~\cite{AuditSync26} at
 field size $2$, the only size the normal form verifiers of this blueprint use; the paper's
-samplers over $\F_{2^t}$ reach this form by downsizing (Section~\ref{sec:ps-cl}). Two points
-the formalization fixes. The correctness clauses for $\mathtt{linear}$ and $\mathtt{factor}$
+samplers over $\F_{2^t}$ reach this form by downsizing (Section~\ref{sec:ps-cl}). Two
+interface details matter here. The correctness clauses for $\mathtt{linear}$ and $\mathtt{factor}$
 are imposed only for prefixes in the range of $L^w_{<j}$, as the paper's amended definition
-states, and are well defined there by Lemma~\ref{lem:cl-structure}. And totality on all inputs
-$(n, \ldots)$ is what makes $\TIME_\sampler(n)$ finite; the paper secures it by bounded format
-checks that read only a prescribed prefix of each input. In Lean the machine is a program of
-the ambient cost model (Section~\ref{sec:computability-conventions}), its input the pair of
-$n$ and a query (\texttt{Sampler.Query}), and $\TIME_\sampler(n) \le T$ \emph{at degree $k$}
-is read as halting within cost $T \cdot (\abs{d} + 1)^k$ on every input $(n, d)$, well formed
-or not (\texttt{Sampler.TimeBoundAt}).
+states, and are well defined there by Lemma~\ref{lem:cl-structure}. The paper additionally
+requires bounded-prefix format and length checks: after computing $s(n)$, a sampler
+inspects only the prescribed prefix of each auxiliary input, rejecting with a fixed default
+when the format fails. Together with totality, this bounds the paper's absolute
+$\TIME_\sampler(n)$ uniformly over even malformed or overlong inputs. A total program
+that scans an ignored, arbitrarily long suffix would not satisfy that source contract.
+
+In Lean the machine is a program of the ambient cost model
+(Section~\ref{sec:computability-conventions}), its well-formed input is the pair of $n$
+and a query (\texttt{Sampler.Query}), and \texttt{Sampler.TimeBoundAt n T k} is a
+\emph{relative cost bound}: it requires halting within
+$T\cdot(\abs{d}+1)^k$ on every input $(n,d)$, well formed or not. It is a separate
+predicate, not a bound $\TIME_\sampler(n)\leq T$ on the absolute supremum. In particular,
+neither this predicate nor the totality field supplies the paper's bounded-prefix contract.
 
 Two departures from the paper are forced here, and both were found by trying to prove the
 bound for a concrete machine rather than by inspection. First, the paper's bound is
@@ -583,53 +607,60 @@ compression of verifiers its proof cannot compress.
 A \emph{decider} is a $5$-input Turing machine $\decider$, whose input is interpreted
 as $(n, x, y, a, b)$ with $n$ an integer index and $x, y, a, b$ strings. It \emph{accepts}
 if it halts with output $1$, and \emph{rejects} otherwise (output $0$, or a timeout).
-$\TIME_\decider(n)$ denotes its maximal running time over all inputs with index $n$. In Lean,
-$\TIME_\decider(n) \le T$ at degree $k$ is read as halting within cost
-$T \cdot (\abs{d} + 1)^k$ on every input $(n, d)$ (\texttt{Decider.TimeBoundAt}), for the
+In the paper, $\TIME_\decider(n)$ denotes the absolute supremum of its running times
+over all inputs with index $n$, possibly infinite. In Lean,
+\texttt{Decider.TimeBoundAt n T k} instead requires halting within cost
+$T \cdot (\abs{d} + 1)^k$ on every input $(n, d)$. This relative bound implies
+totality at index $n$, but need not imply finite absolute $\TIME_\decider(n)$, for the
 reasons given after Definition~\ref{def:sampler}.
 \end{definition}
 
-\begin{definition}[Normal form verifier]
+\begin{definition}[Normal form verifier in the ambient model]
 \label{def:normal-verifier}
-\ledgernode{1.1.3}
 \uses{def:sampler,def:decider,def:game,def:sync-game}
 \lean{MIPRE.Verifier, MIPRE.Verifier.game, MIPRE.Verifier.Answers, MIPRE.Verifier.size,
   MIPRE.Verifier.IsSynchronousAt, MIPRE.Verifier.syncGame}
 \leanok
-A \emph{normal form verifier} is a pair $\verifier = (\sampler, \decider)$ of a sampler
-(with field size $2$) and a decider such that, on input $(n, x, y, a, b)$, the decider first
-computes the dimension $s(n)$ of the sampler and rejects unless $\abs{x} = \abs{y} = s(n)$.
-For each $n$ with $\TIME_\decider(n) < \infty$, $\verifier$ determines the \emph{$n$-th game}
-$\verifier_n$: its question sets are $\mX = \mY = \{0,1\}^{s(n)}$, its answer sets $\mA = \mB$
-are the strings of length at most $\TIME_\decider(n)$, its question distribution is the
-distribution of $\sampler$ at index $n$ (Definition~\ref{def:sampler}), and its decision
-predicate is $D_n(x, y, a, b) = 1$ if and only if $\decider(n, x, y, a, b)$ accepts. We write
-$\valstar(\verifier_n)$ for its quantum value. The game is \emph{synchronous} in the sense of
-Definition~\ref{def:sync-game} when the decider rejects unequal answers to equal questions;
-this is a condition on the decider (Remark~\ref{rem:sync-invariant}), and
-$\synval(\verifier_n)$ then denotes the synchronous value. The description length is
+An ambient \emph{normal form verifier} is a pair $\verifier=(\sampler,\decider)$ of
+a sampler over $\F_2$ and a decider satisfying the extensional condition
+\begin{equation*}
+  \decider(n,x,y,a,b)\text{ accepts}\;\Rightarrow\;
+  \abs{x}=\abs{y}=s(n).
+\end{equation*}
+This is \texttt{Verifier.accepts\_length}; no particular sequence of preliminary checks
+is part of the structure. For each index $n$ and independently chosen answer cut
+$T\in\N$, the game $\verifier_{n,T}$ (\texttt{Verifier.game n T}) has question sets
+$\mX=\mY=\{0,1\}^{s(n)}$, answer sets consisting of the bit strings of length at most
+$T$, the sampler distribution at index $n$, and decision predicate equal to the decider's
+acceptance predicate. Its definition imposes no time-bound hypothesis. We write
+$\verifier_n$ when the answer cut is specified by the surrounding statement.
+
+The condition \texttt{Verifier.IsSynchronousAt n} says that the decider rejects unequal
+answers to equal questions at index $n$. Under this condition,
+\texttt{Verifier.syncGame n T} is the same game as a synchronous game, so its synchronous
+value is defined (Remark~\ref{rem:sync-invariant}). The description length is
 $\abs{\verifier} = \max\{\abs{\sampler}, \abs{\decider}\}$, and the number of levels of
 $\verifier$ is that of $\sampler$.
 \end{definition}
 
-\paragraph{Comments.} The paper's \texttt{def:normal-ver} and \texttt{def:normal-game}
-(\texttt{games.tex}), including the amended question-length check, which the previous text
-of this definition omitted; in the paper the check is what gives $s(n) \le \TIME_\decider(n)$
-(\texttt{rmk:normal-verifier-question-length-check}). The formalization takes the
-answer-length bound as a parameter: \texttt{Verifier.game n T} is $\verifier_n$ with answers
-of length at most $T$, the paper's game being the case $T = \TIME_\decider(n)$; every statement
-about $\verifier_n$ carries its time bound explicitly, as the paper's do
-($\TIME_\decider(n) \le n^\lambda$, $\poly(2^{\lambda n}, \ell)$, and so on), and the exact
-supremum would only add the degenerate case $\TIME_\decider(n) = \infty$, where the paper's
-game is undefined, to every definition. Timeouts are not modelled: in the cost model of
-Section~\ref{sec:computability-conventions} a decider with $\TIME_\decider(n) < \infty$ halts
-on every input of index $n$, and acceptance is halting with output $1$. The question-length
-check is kept in the form of its consequence for the game, that the decider accepts only
-questions of length $s(n)$ (\texttt{Verifier.accepts\_length}); where the paper uses
-$s(n) \le \TIME_\decider(n)$, the formalization requires $s(n) \le n^\lambda$ as a clause of
-$\lambda$-boundedness (Definition~\ref{def:lambda-bounded}): with the running times bounded
-by a polynomial in the size of the input (Definition~\ref{def:sampler}), neither
-$s(n) \le \TIME_\decider(n)$ nor $s(n) \le \TIME_\sampler(n)$ is a consequence any more.
+\begin{remark}[Comparison with the source normal-verifier contract]
+\label{rem:source-normal-verifier}
+\ledgernode{1.1.3}
+\uses{def:normal-verifier,rem:runtime-contract-bridge}
+The paper's \texttt{def:normal-ver} requires an operational first step: compute $s(n)$
+and check both question lengths before continuing. Its \texttt{def:normal-game} uses
+answer strings of length at most the finite absolute time $\TIME_\decider(n)$
+(\texttt{games.tex}~\cite{AuditSync26}). The dimension check yields
+$s(n)\leq\TIME_\decider(n)$ in that machine model. These source requirements are not
+the checked ambient definition above.
+
+Relating executions in the two models and identifying the source answer cut are part of
+the pending normalization in Remark~\ref{rem:runtime-contract-bridge}. An ambient
+relative-cost coefficient need not be the source absolute time, and increasing an answer
+cut may change the value. In the ambient model acceptance is halting with output $1$;
+the relative time bound ensures totality with input-dependent budgets. The dimension bound
+needed by the pipeline is required independently in Definition~\ref{def:lambda-bounded}.
+\end{remark}
 
 \begin{remark}[The synchronization invariant]
 \label{rem:sync-invariant}
@@ -647,8 +678,9 @@ is the reason there is no synchronous route:
   is a condition on the decider. It would be needed wherever $\synval$ occurs; direct
   repetition preserves it, since two unequal answer tuples to equal question tuples differ
   in some coordinate, where the repeated game rejects.
-\item \emph{Diagonal weight}: the game to which the almost-synchronous transport is
-  applied satisfies $\mu(x,x) \geq \kappa \sum_y \mu(x,y)$ for every $x$, with the same
+\item \emph{Common marginals and diagonal weight}: the game's two marginals agree,
+  with common marginal $\nu$, and the almost-synchronous transport requires
+  $\mu(x,x)\geq\kappa\nu(x)$ for every $x$, with the same
   $\kappa > 0$ along the whole recursion. This is the hypothesis of
   Theorem~\ref{thm:almost-sync}, without which the two values of a game are unrelated
   (Remark~\ref{rem:almost-sync-hypothesis}).
@@ -663,44 +695,79 @@ not carry (Section~\ref{sec:departures}). Neither is established here, and neith
 to be.
 \end{remark}
 
-\begin{definition}[$\lambda$-bounded verifier]
+\begin{definition}[$\lambda$-bounded verifier in the ambient model]
 \label{def:lambda-bounded}
 \uses{def:normal-verifier}
 \lean{MIPRE.Verifier.IsBounded}
 \leanok
-For $\lambda \in \N$, a normal form verifier $\verifier = (\sampler, \decider)$ is
-\emph{$\lambda$-bounded} if $\TIME_\sampler(n), \TIME_\decider(n) \leq n^\lambda$ for
-all $n \geq 2$, and $\abs{\verifier} \leq \lambda$. In Lean (\texttt{Verifier.IsBounded}) the
-two time bounds are read as in Definitions~\ref{def:sampler} and~\ref{def:decider}, halting
-within cost $n^\lambda (\abs{d} + 1)^\lambda$ on every input $(n, d)$ --- so $\lambda$ bounds
-both the coefficient and the degree of the polynomial dependence on the input size, which is
-what makes the condition a polynomial-time one --- and the clause $s(n) \le n^\lambda$ --- in
-the paper a consequence of $\TIME_\sampler(n) \le n^\lambda$, the sampler having to write
-$s(n)$ output cells --- is required directly.
+For $\lambda\in\N$, an ambient normal form verifier $\verifier=(\sampler,\decider)$
+is \emph{$\lambda$-bounded} if $\abs{\verifier}\leq\lambda$ and, for every $n\geq2$,
+$s(n)\leq n^\lambda$ and both programs halt within cost
+$n^\lambda(\abs{d}+1)^\lambda$ on every encoded input $(n,d)$. Equivalently, both
+\texttt{Sampler.TimeBoundAt} and \texttt{Decider.TimeBoundAt} hold at parameters
+$(n,n^\lambda,\lambda)$. The parameter $\lambda$ controls
+the coefficient's growth in $n$ and bounds the polynomial degree in the auxiliary input
+size. The dimension bound is a separate clause; neither it nor an absolute-time bound
+is inferred from the relative cost predicates.
 \end{definition}
 
-\begin{definition}[The class $\MIPstar$]
+\begin{remark}[Comparison with source boundedness]
+\label{rem:source-lambda-bounded}
+\uses{def:lambda-bounded,rem:source-normal-verifier}
+The paper's \texttt{def:lambda} instead requires
+$\TIME_\sampler(n),\TIME_\decider(n)\leq n^\lambda$ in the absolute-time model,
+for $n\geq2$, and $\abs{\verifier}\leq\lambda$~\cite{AuditSync26}. The source dimension
+bound follows from writing the sampler's output and from the decider's initial checks.
+This condition and the marked ambient definition above are different contracts; their
+comparison requires the normalization obligation below.
+\end{remark}
+
+\begin{remark}[The runtime-contract bridge remains an obligation]
+\label{rem:runtime-contract-bridge}
+\uses{def:sampler,def:decider,def:normal-verifier,def:lambda-bounded}
+The paper's transformation contracts use absolute simulation budgets and, where stated,
+standard timeout form. They cannot be applied to \texttt{Verifier.IsBounded} solely by
+reinterpreting $\TIME$: even on inputs of size $O(N^\lambda)$ the relative budget
+$N^\lambda(\abs{d}+1)^\lambda$ can be much larger than $N^\lambda$. A normalization
+bridge must supply bounded-prefix behavior and the required timeout form, preserve the
+sampler distribution and the chosen finite game, and transfer the relevant completeness
+witnesses. It must keep the original answer cut by rejecting longer answers rather than
+silently enlarging the alphabet when it increases the simulation budget. Any new absolute
+bound, for example $N^{p(\lambda)}$, must then be propagated through the transformation
+parameters. This is a pending bridge between the source and ambient interfaces; the
+existing conditional Lean results do not construct it.
+\end{remark}
+
+\begin{definition}[The computable class $\MIPstar$ used in Lean]
 \label{def:mipstar}
-\ledgernode{1.1.7, 1.1.7.1}
-\uses{def:normal-verifier,def:q-value,def:game-description}
+\uses{def:q-value,def:game-description}
 \lean{MIPRE.MIPStar}
 \leanok
-A language $L$ is in $\MIPstar$ (more precisely, $\MIP^*_{1, 1/2}(2,1)$) if there is a
-polynomial-time computable map $z \mapsto \game_z$ from strings to (descriptions of)
-games --- given by a sampler and decider running in time $\poly(\abs{z})$ --- such that
-$z \in L$ implies $\valstar(\game_z) = 1$ and $z \notin L$ implies
-$\valstar(\game_z) \leq \frac12$.
-
-The Lean definition (\texttt{MIPRE.MIPStar}) is the \emph{computable} version of the class,
-with games given as explicit descriptions: a computable map $z \mapsto \game_z$ from strings
-to game descriptions (Definition~\ref{def:game-description}) with the same completeness and
-soundness clauses. Every language with a polynomial-time verifier whose games are
-synchronous is in it --- the game at input $z$ is finite and computable from the verifier,
-and for a synchronous game the description's rejection of unequal answers to equal
-questions changes nothing --- and that is the shape Theorem~\ref{thm:halting} delivers
-(Section~\ref{ch:main-theorem}); for a general verifier the tabulation preserves soundness,
-but a value-$1$ witness that is inconsistent on equal questions need not survive it. The
-computable version is what the Lean main statement asserts, the inclusion in $\RE$ is
-formalized for it (Lemma~\ref{lem:mipstar-sub-re}), and the polynomial-time clause is not
-formalized.
+A language $L\subseteq\{0,1\}^*$ is in the class denoted $\MIPstar$ here if there exists
+a computable map $g$ from bit strings to \texttt{HaltingGameValue.GameData}
+(Definition~\ref{def:game-description}) such that for every string $z$,
+\begin{equation*}
+  z\in L\ \Longrightarrow\ \valstar(\game_{g(z)})=1,
+  \qquad
+  z\notin L\ \Longrightarrow\ \valstar(\game_{g(z)})\leq\tfrac12.
+\end{equation*}
+The game $\game_{g(z)}$ is the explicit game \texttt{(g z).game}. Computability is the
+Mathlib \texttt{Computable} predicate; there is no polynomial-time bound on $g$ in this
+definition. This is exactly \texttt{MIPRE.MIPStar}, the class used by the checked
+inclusion in $\RE$ and the conditional main theorem.
 \end{definition}
+
+\begin{remark}[Comparison with the source complexity class]
+\label{rem:source-mipstar}
+\ledgernode{1.1.7, 1.1.7.1}
+\uses{def:mipstar,rem:source-normal-verifier}
+The paper's $\MIP^*_{1,1/2}(2,1)$ uses a sampler and decider running in time polynomial
+in the input length, with the same perfect-completeness and $\frac12$-soundness gap
+(\texttt{games.tex}~\cite{AuditSync26}). That polynomial-time verifier convention is not
+part of the marked class above. Explicitly tabulating a finite game is a computable
+operation but may take much more than polynomial time. Moreover, general bipartite games
+must be represented in \texttt{GameData} with value-preserving transport; merely forcing
+unequal answers to equal questions to lose can destroy a perfect strategy. The checked
+halting reduction supplies its particular explicit descriptions, while the source
+polynomial-time complexity-class claim requires its own efficient verifier construction.
+\end{remark}

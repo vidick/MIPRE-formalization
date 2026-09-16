@@ -75,7 +75,7 @@ def blueprint_names():
     out = collections.defaultdict(list)
     tags = 0
     for f in sorted(CONTENT.glob("*.tex")):
-        text = strip_comments(f.read_text())
+        text = strip_comments(f.read_text(encoding="utf-8"))
         for m in LEAN_RE.finditer(text):
             tags += 1
             # the nearest preceding \label is the environment this tag belongs to
@@ -94,7 +94,7 @@ def cross_references():
     labels, dup, refs, cites = {}, [], [], []
     problems, env_events = [], []
     for f in sorted(CONTENT.glob("*.tex")):
-        text = strip_comments(f.read_text())
+        text = strip_comments(f.read_text(encoding="utf-8"))
         for m in LABEL_RE.finditer(text):
             lab = m.group(1).strip()
             line = text.count("\n", 0, m.start()) + 1
@@ -128,7 +128,7 @@ def cross_references():
         env_events.append(len(marks))
     bib = set()
     for f in sorted(CONTENT.glob("*.tex")):
-        bib |= set(BIBITEM_RE.findall(f.read_text()))
+        bib |= set(BIBITEM_RE.findall(f.read_text(encoding="utf-8")))
     problems += dup
     for target, where in refs:
         if target not in labels:
@@ -145,9 +145,9 @@ def lean_declarations():
     index = {}
     per_module = {}
     for p in sorted(ROOT.glob("MIPRE/**/*.lean")):
-        rel = str(p.relative_to(ROOT))
+        rel = p.relative_to(ROOT).as_posix()
         stack, decls = [], []
-        for line in p.read_text().splitlines():
+        for line in p.read_text(encoding="utf-8").splitlines():
             mo = NS_OPEN.match(line)
             if mo:
                 stack.append(mo.group(1))
@@ -189,14 +189,14 @@ def undefined_macros():
     """
     used = set()
     for f in sorted(CONTENT.glob("*.tex")):
-        used |= set(CMD_USE_RE.findall(strip_comments(f.read_text())))
+        used |= set(CMD_USE_RE.findall(strip_comments(f.read_text(encoding="utf-8"))))
     defined = set()
     for f in sorted(MACRO_DIR.glob("*.tex")):
-        for m in MACRO_DEF_RE.finditer(f.read_text()):
+        for m in MACRO_DEF_RE.finditer(f.read_text(encoding="utf-8")):
             defined.add(next(g for g in m.groups() if g))
     allowed = set()
     if ALLOWED_COMMANDS.exists():
-        for line in ALLOWED_COMMANDS.read_text().splitlines():
+        for line in ALLOWED_COMMANDS.read_text(encoding="utf-8").splitlines():
             if not line.startswith("#"):
                 allowed.update(line.split())
     return sorted(used - defined - allowed), len(used), len(defined)
@@ -215,7 +215,7 @@ def proof_level_leanok():
     """Declarations whose *proof* the blueprint marks \\leanok, by blueprint label."""
     out = {}
     for f in sorted(CONTENT.glob("*.tex")):
-        text = strip_comments(f.read_text())
+        text = strip_comments(f.read_text(encoding="utf-8"))
         for m in PROOF_ENV_RE.finditer(text):
             if "\\leanok" not in m.group(1):
                 continue
@@ -236,7 +236,7 @@ def guarded_names():
     for f in AXIOM_GUARDS:
         if not f.exists():
             continue
-        lines = f.read_text().splitlines()
+        lines = f.read_text(encoding="utf-8").splitlines()
         i = 0
         while i < len(lines):
             # Only a real invocation starts the line; the elaborator's own definition and its
@@ -346,7 +346,7 @@ def check(state):
     if not SNAPSHOT.exists():
         print(f"no snapshot at {SNAPSHOT.relative_to(ROOT)}; run --refresh", file=sys.stderr)
         return 1
-    old = json.loads(SNAPSHOT.read_text())
+    old = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
     problems = list(state["xref_problems"])
     for n in state["unresolved"]:
         problems.append(f"\\lean{{{n}}} does not resolve "
@@ -377,7 +377,7 @@ def main():
     if "--refresh" in sys.argv:
         SNAPSHOT.parent.mkdir(parents=True, exist_ok=True)
         snap = {k: v for k, v in state.items() if k != "xref_problems"}
-        SNAPSHOT.write_text(json.dumps(snap, indent=1, sort_keys=True) + "\n")
+        SNAPSHOT.write_text(json.dumps(snap, indent=1, sort_keys=True) + "\n", encoding="utf-8")
         print(f"wrote {SNAPSHOT.relative_to(ROOT)}")
         return 0
     if "--check" in sys.argv:

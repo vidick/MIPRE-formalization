@@ -21,9 +21,10 @@ compression}, Theorem~\ref{thm:compression}, stated as the structure
 \texttt{MIPRE.GapCompression}: \texttt{MIPRE.Halting.halting\_reduces\_to\_gameValue\_of}
 takes that one structure and concludes Theorem~\ref{thm:main} with no \texttt{sorry}, and
 \texttt{\#print axioms} shows nothing else. The unconditional statement keeps its
-\texttt{sorry} as the target. What remains is the proof of compression itself
-(Section~\ref{ch:proof-structure}): introspection, oracularization, answer reduction and
-parallel repetition, assembled by the margin arithmetic of Section~\ref{sec:ps-compression}. The goal of this projects are to (a) complete a formalization of this theorem and
+\texttt{sorry} as the target. The abstract compression assembly and the repetition
+instance are formalized. What remains is to supply introspection and answer reduction
+(including its internal typed oracularization), with the paper-to-model
+interfaces recorded in Section~\ref{ch:proof-structure}, remains work. The goals of this project are to (a) complete a formalization of this theorem and
 (b) do it in such a way that the required effort benefits the community down-the-line, e.g.\ by
 making the proof modular, stating and proving as many facts as possible in a manner that is reusable, etc.
 Finally, (c) we expect multiple simplifications and clarifications to the proof to accompany the effort.
@@ -103,31 +104,25 @@ formalization of quantum games and quantum game values, etc.
 The formalization is not intended to follow~\cite{JNVWY20} line by line. Since the initial publication of the paper
 a number of simplifications have appeared in the literature. In particular, we plan to incorporate the following.
 
-\paragraph{Synchronous strategies throughout.}
-The paper works with bipartite tensor-product strategies $(\ket{\psi}, A, B)$ on
-$\mH_\alice \ot \mH_\bob$. We instead take \emph{synchronous} strategies --- a single
-family of measurements $\{M^x_a\}$ on one space, evaluated against the tracial state ---
-as the basic object, and define the synchronous value $\synval$
-(Definition~\ref{def:sync-value}). This eliminates the duplication of Hilbert spaces,
-states, and consistency bookkeeping that pervades the paper's soundness analyses, and it
-matches the main Lean statement. The cost is a single bridging step: the
-almost-synchronous correlations theorem (Section~\ref{sec:rr-almost-sync}) shows that,
-for synchronous games whose questions carry proportional weight on the diagonal, the two
-values agree closely enough to transport soundness inwards. That hypothesis is the
-synchronization invariant of Remark~\ref{rem:sync-invariant}, which symmetrizing the two
-players' roles does not by itself deliver, and it is why the soundness of the pipeline is
-stated in $\valstar$ from the repetition step outwards
-(Remark~\ref{rem:almost-sync-hypothesis}). The departure is also linked to the next one:
-with synchronous strategies symmetry is definitional, which removes the factor $\frac12$
-that the paper's symmetrization step costs (Remark~\ref{rem:entanglement-form}), while the
-tracial framework is what makes Naimark dilation unattractive.
+\paragraph{Bipartite soundness and synchronous completeness.}
+The compression pipeline keeps the paper's bipartite tensor-product value $\valstar$
+throughout (Remark~\ref{rem:bipartite-route}). Synchronous strategies and the value
+$\synval$ provide the vocabulary for the final Lean statement and the doubled-game
+completeness witnesses; they do not replace arbitrary bipartite strategies in the inner
+soundness proofs. Consequently the pipeline does not invoke almost-synchronous transport
+to recover a gap from $\synval$. That transport remains part of the paper's tensor-code
+route, with its explicit marginal hypotheses, and is separate from the alternative
+formalized classical low-degree theorem. A bridge between the paper's and the
+formalization's PCC conventions must preserve the stated completeness properties, not
+merely game value (Definition~\ref{def:pcc}).
 
 \paragraph{Projective strategies via orthonormalization.}
-Rather than invoking Naimark dilation to replace POVMs by projective measurements (which
-enlarges the space and interacts poorly with the tracial framework), we use the
-orthonormalization lemma (Section~\ref{sec:rr-orthonormalization}) to replace
-almost-projective POVMs by nearby projective measurements on the \emph{same} space. All
-soundness analyses should be carried out for projective strategies from the start.
+The orthonormalization lemma (Section~\ref{sec:rr-orthonormalization}) replaces
+almost-projective POVMs by nearby projective measurements on the \emph{same} space when
+its quantitative hypothesis has been established. This is distinct from Naimark dilation,
+which enlarges the space and is available where a bipartite argument permits it. Each
+soundness lemma must state the strategy class it accepts and pay for any rounding step;
+projectivity is not a blanket assumption on arbitrary near-optimal strategies.
 
 \paragraph{Computable rather than polynomial-time, where possible.}
 The final undecidability statement only needs the halting reduction to be
@@ -160,12 +155,12 @@ $\MIPco=\coRE$~\cite{Lin23,Lin25}.
 
 Every definition and theorem carries a \verb|\label|, and \verb|\uses| annotations
 record the dependency graph rendered on the project web page. Lean declaration names
-(\verb|\lean| tags) are deliberately absent at this stage; they will be added as the
-corresponding declarations are created. Statements in
-Sections~\ref{ch:required-results}--\ref{ch:parallel-repetition} are external results: the project may initially
-axiomatize them (each section records the literature source and comments on
-formalization), while statements in Section~\ref{ch:proof-structure} are proof
-obligations of the project. Numerical constants in headline statements (error exponents)
+(\verb|\lean| tags) identify the actual declarations; a statement-level \verb|\leanok|
+records a formalized statement, and a proof-level mark records a guarded proof.
+An implication from a transformation structure remains conditional until that structure
+is supplied. Sections~\ref{ch:required-results}--\ref{ch:parallel-repetition} distinguish
+formalized results, source theorems and open adapters individually; their common placement
+does not make them all imports or all proved. Numerical constants in headline statements (error exponents)
 are copied from~\cite{JNVWY20} and should be treated as provisional until the corresponding
 section is worked out in detail. The level budget is an exception: it is derived here, and
 the $7$ levels of Theorem~\ref{thm:compression} differ from the paper's $9$ precisely
