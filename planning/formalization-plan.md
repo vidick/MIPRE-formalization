@@ -572,13 +572,60 @@ problem.
   done, and the shape question that made O3 worth doing before O4 is settled the cheapest of
   the three ways: the synchronicity `classB` does not carry is supplied by the doubled question
   set, which changes the tabulation only, so neither `Decider.wrap` nor `thm:compression` moved
-  and the classes are fixed under the compressor. **The module move next** — `Obligations` and
-  `halting_reduction` below `exists_sem`, so the structure drops its three O3 fields — which is
-  reorganization and no mathematics; then **O4**, the compressor's decider and its time
-  accounting, which is all that is left.
+  and the classes are fixed under the compressor. **O4 is under way, and has a plan** —
+  `planning/h4-assembly.md` §4 item 4, six pull requests: the module move (PR-0), the
+  statements and an abstract transfer theorem written before any program (PR-1, which carries
+  the two decisions that are the maintainer's, #77 and the rejection hypothesis `compr_spec`
+  still lacks), the compressor's program (PR-2), its accounting with constants uniform in the
+  level (PR-3), the assembly (PR-4), and `thm:main` conditionally on `GapCompression` (PR-5).
+  What O4 landed first — `lem:lambda-bound`, the length bound `compr_spec` was unsatisfiable
+  without, and the answer-budget comparison — is recorded there too, with two findings of the
+  kind §1 of that file collects.
 
 Then, and only then, the transformations themselves — introspection first, as the largest
-(`paper/introspection.tex` is 3376 lines) and the one the other two build on.
+(`paper/introspection.tex` is 3376 lines) and the one the other two build on — with one step
+in between, argued in the next section.
+
+## After H4: the milestone, and what to state before proving
+
+**The milestone.** With O4 done and `thm:main` proved conditionally on `GapCompression` (PR-5 of
+the O4 plan), the project's claim becomes *MIP\* = RE ⟸ `thm:compression`, machine-checked*:
+one structure is the entire remaining assumption, and `#print axioms` shows nothing else. Say
+so in the README and in the blueprint's introduction when it lands; it is a different kind of
+claim from "H4 done". Chapter 7's corollaries (`cor:main-quantum`, `cor:value-uncomputable`,
+`thm:mipstar-eq-re`) are short once `thm:main` is conditional, and `lem:mipstar-sub-re` is
+already in.
+
+**The mountain is chapter 6 and its chapter-3 inputs.** Coverage at `2f4cd53`: chapter 6 has 10
+of 37 statements with `\lean{}` (the CL foundations and the two hypothesis structures) and 6
+with a proof; chapter 3 has 10 of 44, and everything introspection needs — `thm:qld` and its
+fifteen lemmas, `thm:ms-rigidity`, the `lem:lidt-*` transfers — is at zero, as are
+`thm:succinct-sat` and the two universal-machine specifications (#17, #18) that answer
+reduction's Cook–Levin step rests on. Put **one step before introspection: H5, the assembly of
+`thm:compression` from four hypothesis structures** — `Introspection`, `Oracularization`,
+`AnswerReduction`, `Repetition`, each a `structure` in the vocabulary of `MIPRE.Verifier` with
+its time bounds, and `GapCompression` derived from them by the margin arithmetic
+(`lem:compress-margin`, `lem:compress-tau`). It is what H4 did for the halting reduction, and
+it worked: the mathematics becomes four independent structures, each with a paper section and
+a ledger stage, each writable by a separate session, and each validated by its consumer before
+anyone proves it. Order after that by distance to done: repetition (the game-level theorem is
+vendored; the verifier-level packaging is what is missing), oracularization (one theorem),
+answer reduction (needs H2 and `thm:succinct-sat`), introspection last and deepest.
+
+**The standing risk** is the one `planning/h4-assembly.md` §4 item 4 names: `GapCompression`
+has been consumed five times and supplied never — `TimeBoundAt` was refuted three times and
+`IsSynchronousAt` once (#77), each time by a consumer — and chapter 6 will read the structure
+from the supply side. H5 multiplies that by four. The rule that has held — write the consumer
+first, then a witness, even a trivial one — is the mitigation, and the reason to prefer H5's
+statement work over another three thousand lines of proof. A cheap partial check is available
+now: a witness for the non-theorem clauses of `GapCompression` alone (`output_*`,
+`sampler_time`, `decider_time`, `sampler_dim`, `output_rejects_long`), to confirm the shape is
+inhabitable; a full trivial instance is impossible, the structure asserting a genuine theorem.
+
+**Chapter 8** (separation, Tsirelson, CEP) has 20 statements and no Lean, and needs NPA
+convergence, GNS, and `lem:rcf-decision` — decidability of real closed fields, which Mathlib
+does not have and which is a project of its own. Scope it; do not start it before chapter 6 has
+moved.
 
 ## Working rules for this track
 
