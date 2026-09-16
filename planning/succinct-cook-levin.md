@@ -98,15 +98,55 @@ satisfiable with the input-tape rows fixed iff the machine accepts within `S` st
 the explicit variable count. Pure combinatorics over `MultiInputTM.step`, generic in the
 machine; independent of S2 and S3, and the piece with the least risk.
 
-**S2 — the interpreter machine `U`** (`MIPRE/TM/Interp/`). The hardest and least certain
-piece. A prefix serialization of `Cfg.toData` on a work tape (balanced-parenthesis form,
-`Data.toBitsPost` or its two-symbol variant); a small *verified macro layer* over `Code`
-first — sequencing, a counter tape, copy and skip of a balanced substring, comparison —
-without which transition tables cannot be verified by hand; then `stepData` as a machine
-(every case of `Machine.stepEv`/`stepRet` is "copy or skip a subtree" plus a tag dispatch),
-the simulation theorem against the CEK machine, and the step count `poly(T, |𝒟|, |input|)`
-from `MachineBound`. If the macro layer turns out well it also pays for the two TM-track
-universal-machine statements still `sorry` (`TM/Universal/Spec.lean`, #17, #18).
+**S2 — the interpreter machine `U`** (`MIPRE/TM/Interp/`). The hardest piece; the
+design, revised after S1 (2026-09-16):
+
+* *Not a `Code`, and not `stepData`.* `U` is a `MultiInputTM` defined directly in Lean,
+  with a structured control type (an inductive of control points, each routine's phases
+  parametrized by a return site) and a transition function written as a Lean `match`.
+  The tableau needs only finiteness and decidable equality of states and symbols, and the
+  check circuit of S3 is built from the truth table of `checkPred U acc` (a fixed Boolean
+  function: any such function has a circuit, of constant size), so nothing requires a
+  dense transition table. `U`'s spec is stated against `Machine.step` on `Cfg` directly,
+  by the same case analysis as `stepData_toData`; the tape representation of a
+  configuration is `U`'s own, chosen for the tape:
+  - values `v : Data` as `v.toBits` (prefix code, bits `0`/`1`);
+  - the control on tape `C`: `0 · (p.toData).toBits` for `ev p`, `1 · v.toBits` for `ret v`;
+  - the environment on tape `E` as `S(vₙ) # … # S(v₁) #`, innermost value at the right end,
+    so that push and pop are appends and truncations and `env.get i` is a walk over `i + 1`
+    separators from the right end (past the start: `nil`);
+  - the stack on tape `K` as frames bottom to top, each `tag · payload · $`, a closure frame
+    carrying its environment in the same `#`-form after a `¶`;
+  - alphabet `0 1 # $ ¶` and the blank; `s₀ s₁ = 0 1`, `acc = 1`.
+  Each CEK step is a straight-line sequence of routine calls on the shape of the
+  configuration (fifteen cases: seven controls to evaluate, the halted return, and the
+  returns to the four frames, `loop1` in three sub-cases), rebuilding `C` through a scratch
+  tape and updating `E` and `K` at their right ends. The routines: copy a subtree
+  (prefix-code scan with a unary depth counter on a counter tape), copy to a marker, skip,
+  rewind, move to the end, read a unary tag, locate the `i`-th environment entry, push and
+  pop on `E` and `K`, write a constant, and `charge k` (pop `k` cells of a unary budget
+  tape, rejecting when it is empty). Cost is exact: `stepCost` is charged per step, the
+  sizes of copied values counted while copying, against a unary budget `T` built from the
+  binary `T` on an input tape; so `U` accepts exactly when `𝒟` accepts within cost `T`.
+* *Inputs.* Seven input tapes: `𝒟` as `(𝒟.toData).toBits`; `n`, `x`, `y` as the bits of their
+  `encode`; `T` in binary; the answers `a'`, `b'` as raw bit strings, from which `U` builds
+  `(encode a').toBits` (a list of `ofBool`), rejecting a string longer than `T` — so that the
+  formula's answer blocks, cells `0 … T - 1` of the two free tapes, are exactly the two-bit
+  encodings of strings of length at most `T` (`tapeBits`: bit `2k` "blank", bit `2k + 1`
+  "symbol `1`"; the "symbol `0`" cell variable is forced by the one-hot clauses). `U` then
+  runs `𝒟.toData` on `encode (n, x, y, a', b')` from `initData`.
+* *Statement.* For every CEK configuration `c`, from the tape representation of `c`, `U`
+  reaches the representation of `step c` in a number of steps linear in the size of the
+  representation, having charged `stepCost c`; hence, with `eval_steps_count` (at most `3T`
+  CEK steps) and `eval_steps_bound` (every configuration of the run bounded by
+  `CfgBound`, hence of representation size polynomial in `T`, `|𝒟|` and the input), `U`
+  halts with output `[1]` within an explicit polynomial `S(T, |𝒟|, |x| + |y| + 2T)` steps iff
+  `𝒟` accepts within cost `T`; on other inputs it halts without output or runs past `S`.
+* *Framework* (`Interp/Tape.lean`, `Interp/Reach.lean`): tape-content predicates (a list
+  held from a position, blanks beyond), the composition of runs (`configs_add`,
+  `outputString_add_eq_append`), and the routine specifications as reachability triples
+  with step bounds. Routines are verified against the full machine, unfolding only their
+  own control points; the correctness of a CEK step composes them.
 
 **S3 — the explicit describer** (`MIPRE/Foundations/SAT/Describer.lean` and ambient
 programs). The `Prog` that, given `(𝒟, n, T, Q, σ, x, y)`, outputs the circuit `C` for the
@@ -200,5 +240,5 @@ all deliberate:
   what the padding to `2^m` needs, and the exact figure is only meaningful once the
   numbering is fixed.
 
-**S2, S3, S4** — not started.
+**S2** — in progress (design above). **S3, S4** — not started.
 
