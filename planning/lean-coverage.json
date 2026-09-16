@@ -433,6 +433,10 @@
   "MIPRE.Halting.eXof": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Halting.exists_code_halts_of_isRE": [
+   "thm:halting-undecidable",
+   "thm:mipstar-eq-re"
+  ],
   "MIPRE.Halting.exists_compressorSpec": [
    "lem:lambda"
   ],
@@ -450,6 +454,9 @@
   ],
   "MIPRE.Halting.gameValue_tab_eq_one": [
    "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.gameValue_uncomputable_of": [
+   "cor:value-uncomputable"
   ],
   "MIPRE.Halting.haltProg": [
    "lem:halt-construction",
@@ -473,8 +480,14 @@
   "MIPRE.Halting.halting_reduction": [
    "thm:halting"
   ],
+  "MIPRE.Halting.halting_reduction_both_of": [
+   "cor:main-quantum"
+  ],
   "MIPRE.Halting.halting_reduction_of": [
    "thm:halting"
+  ],
+  "MIPRE.Halting.halting_reduction_quantum_of": [
+   "cor:main-quantum"
   ],
   "MIPRE.Halting.isBounded_comprStr": [
    "lem:lambda"
@@ -497,6 +510,9 @@
   "MIPRE.Halting.margOf_eq": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Halting.mipstar_eq_re_of": [
+   "thm:mipstar-eq-re"
+  ],
   "MIPRE.Halting.mu_clause": [
    "rem:compression-abstract"
   ],
@@ -510,6 +526,12 @@
   ],
   "MIPRE.Halting.primrec_tabOf": [
    "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.quantumValue_uncomputable_of": [
+   "cor:value-uncomputable"
+  ],
+  "MIPRE.Halting.re_subset_mipstar_of": [
+   "thm:mipstar-eq-re"
   ],
   "MIPRE.Halting.sampData": [
    "rem:compression-abstract"
@@ -997,6 +1019,12 @@
   "MIPRE.gowers_hatami": [
    "thm:gowers-hatami"
   ],
+  "MIPRE.halting_re": [
+   "thm:halting-undecidable"
+  ],
+  "MIPRE.halting_undecidable": [
+   "thm:halting-undecidable"
+  ],
   "MIPRE.hsInner": [
    "def:hs-norm"
   ],
@@ -1224,19 +1252,23 @@
   "MIPRE.Halting.dimOf_eq",
   "MIPRE.Halting.eAof",
   "MIPRE.Halting.eXof",
+  "MIPRE.Halting.exists_code_halts_of_isRE",
   "MIPRE.Halting.exists_compressorSpec",
   "MIPRE.Halting.exists_obligations",
   "MIPRE.Halting.exists_sem",
   "MIPRE.Halting.exists_sem_of_tab",
   "MIPRE.Halting.four_mul_succ_lt_two_pow",
   "MIPRE.Halting.gameValue_tab_eq_one",
+  "MIPRE.Halting.gameValue_uncomputable_of",
   "MIPRE.Halting.haltProg",
   "MIPRE.Halting.haltProg_accepts_iff",
   "MIPRE.Halting.haltProg_runs",
   "MIPRE.Halting.haltProg_runs_inv",
   "MIPRE.Halting.halting_reduces_to_gameValue_of",
   "MIPRE.Halting.halting_reduction",
+  "MIPRE.Halting.halting_reduction_both_of",
   "MIPRE.Halting.halting_reduction_of",
+  "MIPRE.Halting.halting_reduction_quantum_of",
   "MIPRE.Halting.isBounded_comprStr",
   "MIPRE.Halting.lamOf",
   "MIPRE.Halting.lamOf_ge",
@@ -1244,10 +1276,13 @@
   "MIPRE.Halting.log_lt_div",
   "MIPRE.Halting.margOf",
   "MIPRE.Halting.margOf_eq",
+  "MIPRE.Halting.mipstar_eq_re_of",
   "MIPRE.Halting.mu_clause",
   "MIPRE.Halting.prepProg",
   "MIPRE.Halting.prepProg_runs",
   "MIPRE.Halting.primrec_tabOf",
+  "MIPRE.Halting.quantumValue_uncomputable_of",
+  "MIPRE.Halting.re_subset_mipstar_of",
   "MIPRE.Halting.sampData",
   "MIPRE.Halting.sampData_eq",
   "MIPRE.Halting.sampler_timeBound",
@@ -1410,6 +1445,8 @@
   "MIPRE.entRequirement",
   "MIPRE.exists_semidecider_lt_quantumValue",
   "MIPRE.gowers_hatami",
+  "MIPRE.halting_re",
+  "MIPRE.halting_undecidable",
   "MIPRE.hsInner",
   "MIPRE.hsNormSq",
   "MIPRE.inconsistency",
@@ -1658,7 +1695,18 @@
    "MIPRE.Halting.comprPoly",
    "MIPRE.Halting.exists_obligations",
    "MIPRE.Halting.halting_reduces_to_gameValue_of",
-   "MIPRE.Halting.halting_reduction_of"
+   "MIPRE.Halting.halting_reduction_both_of",
+   "MIPRE.Halting.halting_reduction_of",
+   "MIPRE.Halting.halting_reduction_quantum_of"
+  ],
+  "MIPRE/Foundations/Halting/Corollaries.lean": [
+   "MIPRE.Halting.exists_code_halts_of_isRE",
+   "MIPRE.Halting.gameValue_uncomputable_of",
+   "MIPRE.Halting.mipstar_eq_re_of",
+   "MIPRE.Halting.quantumValue_uncomputable_of",
+   "MIPRE.Halting.re_subset_mipstar_of",
+   "MIPRE.halting_re",
+   "MIPRE.halting_undecidable"
   ],
   "MIPRE/Foundations/Halting/CostBudget.lean": [
    "MIPRE.Cost.Machine.costStep",
@@ -1962,7 +2010,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 80,
+ "lean_tags": 84,
  "module_sizes": {
   "MIPRE/Axioms.lean": 0,
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
@@ -2032,7 +2080,8 @@
   "MIPRE/Foundations/Halting/Classes.lean": 10,
   "MIPRE/Foundations/Halting/Compressor.lean": 77,
   "MIPRE/Foundations/Halting/CompressorCost.lean": 53,
-  "MIPRE/Foundations/Halting/CompressorProgram.lean": 15,
+  "MIPRE/Foundations/Halting/CompressorProgram.lean": 17,
+  "MIPRE/Foundations/Halting/Corollaries.lean": 7,
   "MIPRE/Foundations/Halting/CostBudget.lean": 22,
   "MIPRE/Foundations/Halting/Descriptions.lean": 39,
   "MIPRE/Foundations/Halting/Enumerate.lean": 22,
@@ -2106,8 +2155,8 @@
   "commands_defined": 99,
   "commands_used": 206,
   "labels": 227,
-  "leanok_claimed": 159,
-  "leanok_guarded": 159,
-  "refs": 1021
+  "leanok_claimed": 168,
+  "leanok_guarded": 168,
+  "refs": 1036
  }
 }

@@ -12,7 +12,7 @@ import MIPRE.Foundations.Cost.Semidecide
 import MIPRE.Foundations.Cost.Toolkit
 import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Games
-import MIPRE.Foundations.Halting.CompressorProgram
+import MIPRE.Foundations.Halting.Corollaries
 import MIPRE.Foundations.Halting.LambdaBound
 import MIPRE.Foundations.Halting.Semidecider
 import MIPRE.Foundations.ValueApprox
@@ -146,6 +146,24 @@ elab "#guard_sorry_free " ids:ident,* : command => do
 -- blueprint `lem:halting-form`
 #guard_sorry_free MIPRE.Cost.compressibility_criterion_halting,
   MIPRE.Cost.recursive_compression_halting
+
+-- blueprint `cor:main-quantum`
+#guard_sorry_free MIPRE.Halting.halting_reduction_both_of,
+  MIPRE.Halting.halting_reduction_quantum_of
+
+-- blueprint `cor:value-uncomputable`
+#guard_sorry_free MIPRE.Halting.gameValue_uncomputable_of,
+  MIPRE.Halting.quantumValue_uncomputable_of
+
+-- blueprint `thm:halting-undecidable`
+#guard_sorry_free MIPRE.Halting.exists_code_halts_of_isRE,
+  MIPRE.halting_re,
+  MIPRE.halting_undecidable
+
+-- blueprint `thm:mipstar-eq-re`
+#guard_sorry_free MIPRE.Halting.mipstar_eq_re_of,
+  MIPRE.Halting.re_subset_mipstar_of,
+  MIPRE.Halting.exists_code_halts_of_isRE
 
 -- blueprint `lem:halt-construction`
 #guard_sorry_free MIPRE.Cost.Prog.freezeBuildProg,
