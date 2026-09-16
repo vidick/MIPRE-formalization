@@ -45,21 +45,18 @@ compressor's output is part of `Obligations.compr_spec`. Tying the boundedness p
 the level (`n`-bounded at level `n`) is what replaces the paper's choice of `λ` along the
 recursion (blueprint `rem:compression-abstract`, item 1, and `lem:lambda`).
 
-## What is proved and what is assumed
+## Where the assembly is
 
-`halting_reduction` is complete: no `sorry`, and its only hypotheses are a `GapCompression`,
-a `UniversalMachine` (`exists_efficient_universal` provides one) and an `Obligations`
-structure. The remaining pieces of work are exactly the fields of `Obligations`, so that what
-is open can be enumerated rather than searched for:
+`halting_reduction`, and the structure `MIPRE.Halting.Obligations` of what it still owes, are
+in `Halting/Reduction.lean`, which sits below this file, `Halting/Strings.lean` and
+`Halting/Semidecider.lean` in the import order, so that the two distinguished strings (O1) and
+the semidecider (O3) are applied there as theorems rather than assumed as fields. What this
+file contributes to it, beyond the objects above, is the tabulation:
 
-* **O1** (`yYes`, `yYes_mem`, `yNo`, `yNo_mem`) — the two distinguished strings. The
-  verifier-level statements are `Verifier.inClassA_of_accepts_diagonal` and
-  `inClassB_of_rejects_all`; what is owed is the wrapper's time bound, hence the two concrete
-  decider programs realizing them.
-* **O2** — **done**, and so no longer a field of `Obligations`. The tabulation of `𝒱_n` as a
-  game description matching it along relabelings of the two alphabets is `tab`,
-  `tab_computable`, `tab_match`, `tab_value` and `gameValue_tab_eq_one` in the section above,
-  which `halting_reduction` uses directly; the relabelings are `Verifier.tagEquiv` and
+* **O2** — the tabulation of `𝒱_n` as a game description matching it along relabelings of
+  the two alphabets: `tab`, `tab_computable`, `tab_match`, `tab_value` and
+  `gameValue_tab_eq_one`, in the last section of this file, which `halting_reduction` uses
+  directly; the relabelings are `Verifier.tagEquiv` and
   `answerEquiv`, transported across the two sizes. Three features of their shape are
   deliberate and each is explained where it is stated: the match and the value hold of an
   `n`-bounded verifier and could not hold of every string, acceptance being `Σ₁` — while
@@ -70,32 +67,9 @@ is open can be enumerated rather than searched for:
   diagonal a `GameData` vetoes carries no weight and no synchronicity is asked of the
   verifier. That last one is what makes the tabulation usable by O3, and the paragraph below
   the list says how.
-* **O3** (`sem`, `sem_closed`, `sem_spec`) — a program halting on `(x, n)` exactly off
-  `classB n`. Its shape is `Verifier.not_inClassB_iff`: a boundedness violation, or the
-  `val*` half of `lem:value-lower-approx` on a tabulation. Both disjuncts are proved
-  recursively enumerable in `Halting/Semidecider.lean`
-  (`Verifier.rePred_not_isBounded`, `MIPRE.rePred_lt_quantumValue_comp`), merged there by
-  dovetailing and turned into a program by `Cost.exists_semidecider_prod_nat`. The two
-  hypotheses of `Halting.exists_sem_of_tab` were O2's and are now discharged — the computable
-  presentation of the family `Vof` (`Verifier.ComputablyPresented`) by
-  `Halting.computablyPresented_Vof`, the computable tabulation of the right value by
-  `tab_computable` and `tab_value` — so `Halting.exists_sem` proves all three fields with no
-  hypotheses. They remain fields here only because `Halting/Semidecider.lean` imports this
-  file; removing them is a module move rather than mathematics.
-* **O4** (`compr`, `compr_spec`) — the compressor: the decider that reads its description by
-  bit queries, freezes the verifier at index `2n + 1` (`Verifier.freeze`), runs `Compress`,
-  and its time accounting. Its `λ` is chosen by `lem:lambda-bound`
-  (`MIPRE.Halting.lambda_bound`), which turns the output's `poly(n, λ)` running times into the
-  `n ^ λ` that `IsBounded` asks for. The field's fourth hypothesis, `x.length ≤ n + 1`, is what
-  makes it satisfiable at all; its docstring says why, and
-  `Cost.compressibility_criterion_levels` supplies it from a bound its own proof already had,
-  and `exists_ansBound_le` (below, checked) is the step that consumes it: it puts the answer
-  budget of level `2n + 1` under the one `GapCompression.completeness` supplies strategies at.
-  What is not here yet is the construction — the ambient program, its agreement with
-  `G.output`, and its cost accounting.
 
-O4 is the substance that is left, and `planning/h4-assembly.md` has the order of work. O3 was
-recorded there as "O2 plus a disjunction"; it is not, and the reason is worth naming.
+O3 was recorded in `planning/h4-assembly.md` as "O2 plus a disjunction"; it is not, and the
+reason is worth naming, because it shaped the tabulation.
 `Halting.exists_sem_of_tab` needs the tabulation to have the value of `𝒱_n` at every
 `n`-bounded string, in both directions, because `sem_spec` is an equivalence — while a match
 against `(Vof G U x).game` gives that only where the verifier is also *synchronous* at `n`,
@@ -109,26 +83,6 @@ synchronicity into `classB` and pay for it in `compr_spec`. **The first is the o
 that changes nothing outside the tabulation. So `tab_match` and `tab_value` below ask the
 verifier's decider for nothing beyond `n`-boundedness, and `exists_sem_of_tab`'s `hval` is
 `tab_value` itself.
-
-## What this is not
-
-`halting_reduction` concludes in `val*`: the quantum value of the game is `1`, respectively at
-most `1/2`. The blueprint's item 1 says more — the witness is a value-`1` *PCC* strategy, so
-`synval = val* = 1` — and the headline `HaltingGameValue.halting_reduces_to_gameValue` is
-stated in `synval`. The two steps that carry the conclusion there are in Lean and neither is
-part of this assembly: a synchronous strategy transports along a relabeling of the alphabets
-(`MIPRE.syncValue_eq_of_equiv`), and `MIPRE.syncValue` and `HaltingGameValue.gameValue` are the
-same number on the same description (`HaltingGameValue.GameData.gameValue_eq_syncValue`).
-`MIPRE.Verifier.gameValue_toGame_eq_one` is the two composed, in `Foundations/SyncTransport.lean`.
-
-Both take the tabulation's agreement with `𝒱_n` as the *matching data* — the two alphabet
-equivalences with `hμ` and `hD` — rather than the equality of `val*` it implies, which is why
-`tab_match` has the shape it has. The soundness half needs neither step, only
-`synval ≤ val*` (`MIPRE.syncValue_le_quantumValue`, blueprint `lem:sync-le-valstar`);
-`Verifier.gameValue_toGame_le_of_valStar_le` is it in that vocabulary.
-
-So what stands between `halting_reduction` and the headline is an inhabitant of `Obligations`
-and nothing else.
 -/
 
 namespace MIPRE.Halting
@@ -666,126 +620,5 @@ theorem gameValue_tab_eq_one (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded 
     HaltingGameValue.gameValue (tab G U x n).toGame = 1 := by
   obtain ⟨eX, eA, hμ, hD⟩ := tab_match G U x n hb
   exact Verifier.gameValue_toGame_eq_one_doubled _ _ _ _ eX eA hμ hD hV
-
-/-! ## The obligations -/
-
-/-- **What the halting reduction still owes.** Each field is a piece of work identified in
-blueprint `rem:compression-abstract` and tracked in `planning/h4-assembly.md`; nothing else is
-assumed, and `halting_reduction` below is proved outright from an inhabitant of this
-structure. The grouping is O1 (the two distinguished strings), O3 (the semidecider) and O4
-(the compressor); O2, the tabulation, is discharged above and is not a field here. -/
-structure Obligations (G : GapCompression) (U : UniversalMachine) where
-  /-- The level above which the guarantees hold. -/
-  n₀ : ℕ
-  /-- **O1.** A string in the class `A` at every level above `n₀`: a verifier that accepts one
-  fixed answer on every question pair (`Verifier.inClassA_of_accepts_diagonal`). -/
-  yYes : BitStr
-  yYes_mem : ∀ n, n₀ ≤ n → yYes ∈ classA G U n
-  /-- **O1.** A string in the class `B` at every level above `n₀`: a verifier that accepts
-  nothing (`Verifier.inClassB_of_rejects_all`). -/
-  yNo : BitStr
-  yNo_mem : ∀ n, n₀ ≤ n → yNo ∈ classB G U n
-  /-- **O3.** A semidecider for the complement of `B`: a closed program halting on `(x, n)`
-  exactly when `x` is not in the class `B` at level `n` (`Verifier.not_inClassB_iff`,
-  `Halting.exists_sem_of_tab`). Note that this field precedes `tab`, so `sem_spec` cannot
-  mention the tabulation; the tabulation enters through the theorem that inhabits the field,
-  not through its statement. -/
-  sem : Prog
-  sem_closed : sem.WellScoped 1
-  sem_spec : ∀ (x : BitStr) (n : ℕ), Halts sem (encode (x, n)) ↔ x ∉ classB G U n
-  /-- **O4.** The compressor: a polynomial-time map on `(description, level)` pairs. -/
-  compr : PolyTimeFun (Prog × ℕ) BitStr
-  /-- **O4.** On a succinct description of a string at level `2n + 1`, with the size slack and
-  the length bound the criterion provides, the compressor preserves both classes down to level
-  `n`.
-
-  The clause `x.length ≤ n + 1` is not slack either, and it is what makes the field
-  *satisfiable*. `classA G U (2n+1)` asks for a value-`1` PCC strategy at the answer bound
-  `ansBound G x (2n+1) = G.bound.eval (2n+1 + descLam x)`, while the only source of such a
-  strategy for a compressed verifier is `GapCompression.completeness`, which takes its input at
-  the bound `(2 ^ n) ^ λ` with `λ` the parameter the compressor writes into its output — so `λ`
-  is bounded by the compressor's own output size and cannot be made arbitrarily large. Without a
-  bound on `descLam x` the two cannot be related: nothing in `IsBounded` constrains a string's
-  compression parameter (for a `G` whose compressed sampler does not vary with `λ`, membership
-  in either class is insensitive to it), while `ansBound` grows with it. With
-  `x.length ≤ n + 1` we get `descLam x < 2 ^ (n+1)`, hence
-  `ansBound G x (2n+1) ≤ G.bound.eval (2n+1 + 2^(n+1)) ≤ (2 ^ n) ^ λ` already for
-  `λ ≥ 2 · deg(G.bound) + 1` and `n` above a threshold read off `G.bound` too, and
-  `hasPerfectPCC_of_le` carries the hypothesis across. `exists_ansBound_le` above is that step,
-  checked; note the threshold is set by the polynomial `G.bound`, not by `G.deg`.
-
-  **Open, and the field is expected to need one more hypothesis.** That argument settles the
-  `classA` direction, where `hasPerfectPCC_of_le` raises the answer bound. The `classB`
-  direction runs the other way and does not close with these hypotheses: `G.soundness` wants
-  `valStar (2 ^ n) ((2 ^ n) ^ λ) ≤ 1/2`, membership in `classB G U (2n+1)` gives it at
-  `ansBound G x (2n+1)`, and `valStar_le_of_le` only *raises* the value with the bound — so the
-  `ansBound ≤ (2 ^ n) ^ λ` that the `classA` direction needs is exactly the wrong direction
-  here, and the two cannot be met by one `λ` (the same `λ` is written into the output, so it is
-  the same in both). The escape is `valStar_eq_of_rejects`: if `x`'s decider rejects every
-  answer longer than `ansBound G x (2n+1)` at index `2n + 1`, raising the bound does not move
-  the value and both directions go through the one inequality. `ansBound` is *defined* to be
-  that rejection threshold for a compressed decider of parameter `descLam x`
-  (`GapCompression.output_rejects_long`), and in the criterion's recursion every string is the
-  compressor's own output one level up, so the criterion can supply it — but it is not supplied
-  now, and an arbitrary `descDec x` does not reject. Settle the shape of the hypothesis when
-  the construction is built, not before; `planning/h4-assembly.md` §4 item 4 has the argument
-  and issue #53 tracks it. -/
-  compr_spec : ∀ (c : Prog) (x : BitStr) (n : ℕ), n₀ ≤ n → 2 * esize c ≤ n →
-    IsSuccinctDesc c n x → x.length ≤ n + 1 →
-      (x ∈ classA G U (2 * n + 1) → compr (c, n) ∈ classA G U n) ∧
-      (x ∈ classB G U (2 * n + 1) → compr (c, n) ∈ classB G U n)
-
-/-! ## The reduction -/
-
-/-- `2 ^ ·` is primitive recursive: the level at which the recursion of the criterion runs is
-`2 ^ (K + 1 + esize e)`, and the reduction has to compute it. -/
-private theorem two_pow_iterate (n : ℕ) : (fun b : ℕ => 2 * b)^[n] 1 = 2 ^ n := by
-  induction n with
-  | zero => rfl
-  | succ n ih => rw [Function.iterate_succ_apply', ih, pow_succ]; ring
-
-private theorem primrec_two_pow : Primrec fun n : ℕ => 2 ^ n :=
-  (Primrec.nat_iterate Primrec.id (Primrec.const 1)
-    (Primrec.nat_mul.comp (Primrec.const 2) Primrec.snd).to₂).of_eq fun n => two_pow_iterate n
-
--- The tabulation is opaque from here on. `halting_reduction` only ever feeds it to
--- `tab_computable` and `tab_value` (once as an equality, once through `.le`); letting
--- unification unfold it into `tabOf` and the two budgeted runs instead costs more heartbeats
--- than any budget worth setting.
-attribute [local irreducible] tab
-
-/-- **The halting reduction** (blueprint `thm:halting`), in `val*` form: from gap-preserving
-compression, the tabulation above and the remaining obligations, a computable map from
-`Nat.Partrec.Code` to game descriptions whose game has quantum value `1` when the machine halts
-on the empty input and at most `1/2` when it does not.
-
-The proof is the per-level compressibility criterion at the classes `classA`, `classB`,
-followed by the value agreement of the tabulation: the criterion produces a description at
-level `2 ^ (K + 1 + esize e)` lying in `A` or in `B` according to whether `e` halts, a value-`1`
-PCC strategy gives `val* = 1` (`Verifier.valStar_eq_one_of_hasPerfectPCC`), and `tab_value`
-carries both verdicts to the tabulated game — the same equality in both branches, the
-doubled question set having removed the synchronicity hypothesis that once split them. -/
-theorem halting_reduction (O : Obligations G U) :
-    ∃ g : Nat.Partrec.Code → GameData, Computable g ∧
-      ∀ pc : Nat.Partrec.Code,
-        ((pc.eval 0).Dom → quantumValue (g pc).game = 1) ∧
-        (¬ (pc.eval 0).Dom → quantumValue (g pc).game ≤ 1 / 2) := by
-  obtain ⟨g, K, hg⟩ := Cost.compressibility_criterion_levels
-    (classA G U) (classB G U) O.n₀ O.yYes O.yYes_mem O.yNo O.yNo_mem
-    O.sem O.sem_closed O.sem_spec O.compr O.compr_spec
-  obtain ⟨compile, hc, hspec⟩ := exists_compile
-  have hsize : Computable fun pc : Nat.Partrec.Code => esize (compile pc) :=
-    Data.primrec_size.to_comp.comp hc
-  have hlevel : Computable fun pc : Nat.Partrec.Code => 2 ^ (K + 1 + esize (compile pc)) :=
-    (primrec_two_pow.comp (Primrec.nat_add.comp (Primrec.const (K + 1)) Primrec.id)).to_comp.comp
-      hsize
-  refine ⟨fun pc => tab G U (g (compile pc)) (2 ^ (K + 1 + esize (compile pc))),
-    (tab_computable G U).comp
-      ((PolyTimeFun.computable_comp g compile hc Data.primrec_decode_bitStr.to_comp).pair hlevel),
-    fun pc => ⟨fun hdom => ?_, fun hdom => ?_⟩⟩
-  · have hx := (hg (compile pc)).2.1 ((hspec pc).2 hdom)
-    rw [tab_value G U _ _ hx.1, (Vof G U _).valStar_eq_one_of_hasPerfectPCC hx.2]
-  · have hx := (hg (compile pc)).2.2 fun h => hdom ((hspec pc).1 h)
-    exact (tab_value G U _ _ hx.1).le.trans hx.2
 
 end MIPRE.Halting

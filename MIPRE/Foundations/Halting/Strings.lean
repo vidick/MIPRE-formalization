@@ -9,8 +9,9 @@ import MIPRE.Foundations.Halting.WrapperCost
 /-!
 # The two distinguished strings
 
-Obligation **O1** of `MIPRE.Halting.Obligations`: a string whose verifier lies in `classA n`
-at every level above a threshold, and one whose verifier lies in `classB n`.
+Obligation **O1** of the halting reduction (`Halting/Reduction.lean`, which applies `yYes_mem`
+and `yNo_mem` directly): a string whose verifier lies in `classA n` at every level above a
+threshold, and one whose verifier lies in `classB n`.
 
 Both are descriptions `descOf 0 𝒟` with the compressed sampler at parameter `0` and a decider
 program of three or four nodes:

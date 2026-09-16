@@ -11,8 +11,9 @@ import MIPRE.Foundations.Halting.Semidecide
 /-!
 # The semidecider of the halting reduction (obligation O3)
 
-`MIPRE.Halting.Obligations.sem_spec` asks for a closed program halting on `encode (x, n)`
-exactly when the string `x` lies outside the class `B` at level `n`. By
+Obligation O3 of the halting reduction (`Halting/Reduction.lean`) asks for a closed program
+halting on `encode (x, n)` exactly when the string `x` lies outside the class `B` at level
+`n`. By
 `Verifier.not_inClassB_iff` that is a disjunction of two `Σ₁` statements — the verifier `x`
 denotes is not `n`-bounded, or its `n`-th game has value more than `1/2` — and the obligation
 is an *equivalence*, so both disjuncts have to be recognized exactly.
@@ -46,9 +47,8 @@ the two programs. Stating them rather than proving them keeps the mathematical c
 that the *violation* of a `∀`-clause over an infinite index set is enumerable — independent of
 how the tabulation is built. Both are now supplied: `Halting.computablyPresented_Vof` at the
 end of this file, and `Halting.tab_value` in `Halting/Instantiation.lean`, so that
-**`Halting.exists_sem` takes no hypotheses** and the three O3 fields of `Obligations` are
-proved outright — they remain fields only because `Obligations` sits in the file this one
-imports.
+**`Halting.exists_sem` takes no hypotheses**; `halting_reduction` (`Halting/Reduction.lean`,
+below this file in the import order) applies it directly, and `Obligations` has no O3 field.
 
 Two things found in the writing, both recorded in `planning/h4-assembly.md`, and both since
 discharged — by different repairs. The findings are kept because they say where the seams
@@ -313,8 +313,8 @@ variable {G : GapCompression} {U : UniversalMachine}
 
 /-- **Obligation O3 from the tabulation of O2.** For a computably presented family of
 verifiers and a computable tabulation whose game has the value of `𝒱_n` at every `n`-bounded
-string, a closed program halts on `encode (x, n)` exactly off the class `B` at level `n`:
-`Obligations.sem`, `sem_closed` and `sem_spec`.
+string, a closed program halts on `encode (x, n)` exactly off the class `B` at level `n` —
+obligation O3 of the halting reduction, applied by `halting_reduction` through `exists_sem`.
 
 The two disjuncts of `Verifier.not_inClassB_iff` are enumerated separately — the boundedness
 violation by `Verifier.rePred_not_isBounded`, the value by `lem:value-lower-approx` on the
