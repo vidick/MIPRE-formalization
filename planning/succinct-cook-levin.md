@@ -154,3 +154,51 @@ formats `item:a=1`–`item:a=8`), `sec:succinct-deciders` (decoupled 5SAT,
 `prop:explicit-padded-succinct-deciders`). Ledger: node 1.3.1 validated, three challenges,
 none open; 1.3.2 amended once (the scope of the existential over the equivalence, now
 displayed as an equivalence of two existential statements — the form S0 states).
+
+## Status
+
+**S0 — done** (`MIPRE/Foundations/SAT/{Circuit,Cnf,Succinct,Decoupled,Tseitin}.lean`). The
+statement `MIPRE.SAT.SuccinctCookLevin`, validated by `MIPRE.SAT.DecoupledDescriber`; the
+blueprint restated with the five items; Tseitin with its correctness, in the form the tableau
+uses (`tseitin_sat_of_values`: a given assignment carrying the gate values satisfies the
+formula; `eval_of_tseitin_sat`: a satisfying assignment witnesses acceptance).
+
+**S1 — done** (`MIPRE/TM/CookLevin/{Local,Tableau,Semantics,Correct,Sound}.lean`;
+blueprint `lem:correct-tableau`, guarded). The tableau `tableau M s₀ s₁ S fixed chk` of `S`
+steps of a `Turing.MultiInputTM`, its correctness `tableau_sat_iff`, and the two halves
+S4 will use directly: `tableau_sat_of_acceptsIn` (the assignment `runAssign` of an
+accepting run satisfies the formula, and its time-`0` rows are `inputCellVal` of the inputs
+by definition) and `acceptsIn_of_tableau_sat` (a satisfying assignment reads `inputOf` on
+its time-`0` rows — `a (cell 0 (inl j) p v) = decide (v = inputCellVal (inputOf j) p)` —
+and the machine accepts `inputOf` within `S` steps). Departures from the sketch above,
+all deliberate:
+
+* *Windows are five cells wide*, not three, indexed by a center on every tape
+  (`Center S = Fin (2S + 3)`): a head at one of the middle three cells sees both the cell it
+  leaves and the cell it reaches, and the clamped moves of an input head (`moveInputPos`
+  at the ends of the input) are decided from the window alone (`newOffset`). The local
+  check is a predicate on the window's one-hot bits (`checkPred`: the bits encode a
+  `LocalCfg` that is `LocallyConsistent`), and *the check circuit is a parameter* of the
+  formula with its specification `IsCheckCircuit M acc chk` (`chk.evalBits (winBits win) =
+  true ↔ checkPred M acc win`) a hypothesis of the lemma. S3 supplies the circuit; the
+  circuit-combinator library it needs (one-hot decoding, equality of encoded values,
+  the transition table as a lookup) is S3's.
+* *Cells*: `2S + 7` per tape, cells `0, 1` and the last two boundary markers; input position
+  value `k` at cell `k + 2`, work position `z` at cell `z + S + 3`. Every head is on an
+  interior cell at every time `t ≤ S` (`headsIn_cfgAt`: a head moves at most one cell per
+  step), which is what makes the boundary rows sound without a bound on the input length —
+  a longer input is truncated by the tableau but never reached within `S` steps.
+* *Acceptance* is `AcceptsIn M acc input S`: halted at time `S` with output string exactly
+  `[acc]`; the emission bookkeeping (`emitOne`, `emitBad`, `emitted`) encodes "one symbol
+  output, and it is `acc`". S2's machine `U` must accept in this form (the `Code` convention
+  `decodeBitOutput` of a single output symbol is the same thing).
+* *Free tapes* hold strings over two symbols `s₀ s₁` (the bit symbols of a `Code` machine)
+  followed by blanks; the string is read off the time-`0` row by `freeString`.
+* *The explicit variable count* is deferred to S3, where the variables get their binary
+  formats: `TabVar` is a finite inductive type and the count is a sum of products of `S`,
+  `2S + 7`, the alphabet and state sizes and the window count `(2S + 3)^(i + w)`, which is
+  what the padding to `2^m` needs, and the exact figure is only meaningful once the
+  numbering is fixed.
+
+**S2, S3, S4** — not started.
+

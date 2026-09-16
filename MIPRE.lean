@@ -606,6 +606,7 @@ import MIPRE.Foundations.SAT.Circuit
 import MIPRE.Foundations.SAT.Cnf
 import MIPRE.Foundations.SAT.Decoupled
 import MIPRE.Foundations.SAT.Succinct
+import MIPRE.Foundations.SAT.Tseitin
 import MIPRE.Foundations.SyncTransport
 import MIPRE.Foundations.TensorFamily
 import MIPRE.Foundations.ValueApprox
@@ -650,6 +651,11 @@ import MIPRE.TM.Code.Observation
 import MIPRE.TM.Code.Raw
 import MIPRE.TM.Code.Semantics
 import MIPRE.TM.Code.WellFormed
+import MIPRE.TM.CookLevin.Correct
+import MIPRE.TM.CookLevin.Local
+import MIPRE.TM.CookLevin.Semantics
+import MIPRE.TM.CookLevin.Sound
+import MIPRE.TM.CookLevin.Tableau
 import MIPRE.TM.MultiInput.Complexity
 import MIPRE.TM.MultiInput.Congr
 import MIPRE.TM.MultiInput.Deterministic

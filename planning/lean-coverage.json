@@ -827,6 +827,9 @@
   "MIPRE.SynchronousGame.toGame": [
    "def:sync-game"
   ],
+  "MIPRE.TM.CookLevin.tableau_sat_iff": [
+   "lem:correct-tableau"
+  ],
   "MIPRE.TensorProductStrategy": [
    "def:tensor-strategy"
   ],
@@ -1504,6 +1507,7 @@
   "MIPRE.SynchronousGame",
   "MIPRE.SynchronousGame.repeat",
   "MIPRE.SynchronousGame.toGame",
+  "MIPRE.TM.CookLevin.tableau_sat_iff",
   "MIPRE.TensorProductStrategy",
   "MIPRE.TensorProductStrategy.value",
   "MIPRE.ValueApprox.Check",
@@ -2230,6 +2234,9 @@
   "MIPRE/TM/Code/WellFormed.lean": [
    "Turing.Code"
   ],
+  "MIPRE/TM/CookLevin/Sound.lean": [
+   "MIPRE.TM.CookLevin.tableau_sat_iff"
+  ],
   "MIPRE/TM/MultiInput/Complexity.lean": [
    "Turing.MultiInputTM.ComputesInTimeAndSpace"
   ],
@@ -2241,7 +2248,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 97,
+ "lean_tags": 98,
  "module_sizes": {
   "MIPRE/Axioms.lean": 0,
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
@@ -2351,10 +2358,11 @@
   "MIPRE/Foundations/Repeat/RepSampler.lean": 35,
   "MIPRE/Foundations/Repeat/Sampler.lean": 26,
   "MIPRE/Foundations/Repeat/SamplerCost.lean": 22,
-  "MIPRE/Foundations/SAT/Circuit.lean": 17,
+  "MIPRE/Foundations/SAT/Circuit.lean": 18,
   "MIPRE/Foundations/SAT/Cnf.lean": 10,
   "MIPRE/Foundations/SAT/Decoupled.lean": 5,
   "MIPRE/Foundations/SAT/Succinct.lean": 12,
+  "MIPRE/Foundations/SAT/Tseitin.lean": 15,
   "MIPRE/Foundations/SyncTransport.lean": 6,
   "MIPRE/Foundations/TensorFamily.lean": 9,
   "MIPRE/Foundations/ValueApprox.lean": 8,
@@ -2399,6 +2407,11 @@
   "MIPRE/TM/Code/Raw.lean": 6,
   "MIPRE/TM/Code/Semantics.lean": 16,
   "MIPRE/TM/Code/WellFormed.lean": 27,
+  "MIPRE/TM/CookLevin/Correct.lean": 42,
+  "MIPRE/TM/CookLevin/Local.lean": 16,
+  "MIPRE/TM/CookLevin/Semantics.lean": 28,
+  "MIPRE/TM/CookLevin/Sound.lean": 49,
+  "MIPRE/TM/CookLevin/Tableau.lean": 31,
   "MIPRE/TM/MultiInput/Complexity.lean": 2,
   "MIPRE/TM/MultiInput/Congr.lean": 31,
   "MIPRE/TM/MultiInput/Deterministic.lean": 35,
@@ -2409,12 +2422,12 @@
  "unresolved": [],
  "xref_counts": {
   "bibitems": 33,
-  "cites": 154,
+  "cites": 155,
   "commands_defined": 99,
   "commands_used": 208,
-  "labels": 231,
-  "leanok_claimed": 200,
-  "leanok_guarded": 200,
-  "refs": 1076
+  "labels": 232,
+  "leanok_claimed": 201,
+  "leanok_guarded": 201,
+  "refs": 1079
  }
 }

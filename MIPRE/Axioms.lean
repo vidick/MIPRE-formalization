@@ -29,6 +29,7 @@ import MIPRE.Foundations.ValueApprox.RawPrimrec
 import MIPRE.Foundations.ValueApprox.RawSemantics
 import MIPRE.Foundations.ValueApprox.RawStrategy
 import MIPRE.Foundations.ValueApprox.Strategy
+import MIPRE.TM.CookLevin.Sound
 import MIPRE.LCS.MagicSquare.Strategy
 import MIPRE.LCS.Strategy.Equivalence
 import MIPRE.LCS.Strategy.ObservableToProjector
@@ -131,6 +132,9 @@ elab "#guard_sorry_free " ids:ident,* : command => do
 -- blueprint `lem:compressible-criterion`
 #guard_sorry_free MIPRE.Cost.compressibility_criterion,
   MIPRE.Cost.compressibility_criterion_levels
+
+-- blueprint `lem:correct-tableau`
+#guard_sorry_free MIPRE.TM.CookLevin.tableau_sat_iff
 
 -- blueprint `lem:cost-budget-decidable`
 #guard_sorry_free MIPRE.Cost.Machine.costStep,

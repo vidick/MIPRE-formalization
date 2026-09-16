@@ -63,6 +63,7 @@ omit [Fintype Symbol] [DecidableEq Symbol] [Fintype State] [DecidableEq State] i
 theorem cfgAt_succ (t : ℕ) : cfgAt M (input := input) (t + 1) = M.step (cfgAt M t) :=
   configs_succ_eq_step'
 
+omit [Fintype Symbol] [Fintype State] in
 /-- The encoding of the local configuration of the run at `(t, js)` is the run's assignment
 on the window's variables. -/
 theorem encode_localCfgOf (G : ℕ) (t : Fin S) (js : Tape i w → Center S)
@@ -75,6 +76,7 @@ theorem encode_localCfgOf (G : ℕ) (t : Fin S) (js : Tape i w → Center S)
 
 /-! ## Heads -/
 
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
 /-- The head of tape `d` is in the window at offset `δ` iff its cell is that cell. -/
 theorem headPre_localCfgOf (c : Cfg i w Symbol State input) (js : Tape i w → Center S)
     (d : Tape i w) (δ : Fin 5) :
@@ -82,6 +84,7 @@ theorem headPre_localCfgOf (c : Cfg i w Symbol State input) (js : Tape i w → C
       headCell (S := S) c d = ((cellIdx (js d) δ : Pos S) : ℕ) := by
   simp [localCfgOf]
 
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
 theorem headAt_localCfgOf (c : Cfg i w Symbol State input) (js : Tape i w → Center S)
     (d : Tape i w) (δ : Fin 5) (h : headCell (S := S) c d = ((cellIdx (js d) δ : Pos S) : ℕ)) :
     (localCfgOf M acc c js).HeadAt d δ := by
@@ -91,9 +94,10 @@ theorem headAt_localCfgOf (c : Cfg i w Symbol State input) (js : Tape i w → Ce
   · subst hδ; simp
   · have : (js d : ℕ) + (δ : ℕ) ≠ (js d : ℕ) + (δ' : ℕ) := by
       intro e; exact hδ (Fin.ext (by omega)).symm
-    simp [this, hδ]
-    push_cast; omega
+    simp [hδ]
+    omega
 
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
 /-- No two heads of a tape in a window of a run. -/
 theorem not_twoHeads_localCfgOf (c : Cfg i w Symbol State input) (js : Tape i w → Center S)
     (d : Tape i w) : ¬ (localCfgOf M acc c js).TwoHeads d := by
@@ -103,24 +107,24 @@ theorem not_twoHeads_localCfgOf (c : Cfg i w Symbol State input) (js : Tape i w 
 
 /-! ## The step, componentwise -/
 
-omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] [DecidableEq Symbol] in
 theorem step_state (c : Cfg i w Symbol State input) {q : State} (hst : c.state = some q) :
     (M.step c).state = (M.tr q c.inputSymbols c.workTapeSymbols).q' := by
   unfold step; rw [hst]
 
-omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] [DecidableEq Symbol] in
 theorem step_inputPos (c : Cfg i w Symbol State input) {q : State} (hst : c.state = some q)
     (j : Fin i) : (M.step c).inputPos j =
       moveInputPos (c.inputPos j) ((M.tr q c.inputSymbols c.workTapeSymbols).inputMoves j) := by
   unfold step; rw [hst]
 
-omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] [DecidableEq Symbol] in
 theorem step_workTapePos (c : Cfg i w Symbol State input) {q : State} (hst : c.state = some q)
     (j : Fin w) : (M.step c).workTapePos j =
       c.workTapePos j + ((M.tr q c.inputSymbols c.workTapeSymbols).workActions j).2 := by
   unfold step; rw [hst]
 
-omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] [DecidableEq Symbol] in
 theorem step_workTapes (c : Cfg i w Symbol State input) {q : State} (hst : c.state = some q)
     (j : Fin w) : (M.step c).workTapes j =
       match ((M.tr q c.inputSymbols c.workTapeSymbols).workActions j).1 with
@@ -134,8 +138,9 @@ theorem moveInputPos_sub_le {n : ℕ} (p : Fin (n + 2)) (m : SignType) :
   have hp := p.isLt
   unfold moveInputPos
   dsimp only
-  split_ifs with h <;> cases m <;> simp only [SignType.cast, Fin.val_mk] at h ⊢ <;> omega
+  split_ifs with h <;> cases m <;> simp only [SignType.cast] at h ⊢ <;> omega
 
+omit [Fintype Symbol] [DecidableEq Symbol] [Fintype State] [DecidableEq State] in
 /-- A head moves by at most one cell in a step. -/
 theorem headCell_step_le (c : Cfg i w Symbol State input) (d : Tape i w) :
     -1 ≤ headCell (S := S) (M.step c) d - headCell (S := S) c d ∧
@@ -154,6 +159,7 @@ theorem headCell_step_le (c : Cfg i w Symbol State input) (d : Tape i w) :
       cases ((M.tr q c.inputSymbols c.workTapeSymbols).workActions j).2 <;>
         simp [SignType.cast]
 
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
 /-- A tape whose head is not near the center keeps its center cell and has no head there
 after the step. -/
 theorem far_localCfgOf (c : Cfg i w Symbol State input) (js : Tape i w → Center S) (d : Tape i w)
@@ -190,7 +196,7 @@ theorem far_localCfgOf (c : Cfg i w Symbol State input) (js : Tape i w → Cente
 
 /-! ## The cells under the heads -/
 
-omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] [DecidableEq Symbol] in
 /-- An interior input cell: the symbol of the input at index `p - 3`, if any, else a blank. -/
 theorem inputCellVal_eq (x : List Symbol) (p : Pos S) (hnb : ¬ p.IsBdry) :
     inputCellVal x p =
@@ -208,20 +214,20 @@ theorem inputCellVal_eq (x : List Symbol) (p : Pos S) (hnb : ¬ p.IsBdry) :
     · rw [dif_neg (fun h => hl h.2), List.getElem?_eq_none (by omega)]
   · rw [if_neg h3, dif_neg (fun h => h3 h.1)]
 
-omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] [DecidableEq Symbol] in
 theorem inputCellVal_ne_bdry (x : List Symbol) (p : Pos S) (hnb : ¬ p.IsBdry) :
     inputCellVal x p ≠ .bdry := by
   unfold inputCellVal
   rw [if_neg hnb]
   split_ifs <;> simp
 
-omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] [DecidableEq Symbol] in
 theorem inputCellVal_bdry_iff (x : List Symbol) (p : Pos S) :
     inputCellVal x p = .bdry ↔ p.IsBdry := by
   unfold inputCellVal
   split_ifs <;> simp_all
 
-omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] [DecidableEq Symbol] in
 /-- The symbol under an input head is the cell of the tableau at the head's cell. -/
 theorem toOpt_inputCellVal_headCell (c : Cfg i w Symbol State input) (j : Fin i) (p : Pos S)
     (hp : (p : ℕ) = (c.inputPos j : ℕ) + 2) (hnb : ¬ p.IsBdry) :
@@ -244,7 +250,7 @@ theorem toOpt_inputCellVal_headCell (c : Cfg i w Symbol State input) (j : Fin i)
     · rw [dif_neg h1, List.getElem?_eq_getElem (by omega)]
       rfl
 
-omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] [DecidableEq Symbol] in
 theorem cellValAt_inr (c : Cfg i w Symbol State input) (j : Fin w) (p : Pos S) (hnb : ¬ p.IsBdry) :
     cellValAt (S := S) c (.inr j) p = .ofOpt (c.workTapes j ((p : ℤ) - (S + 3))) := by
   simp [cellValAt, hnb]
@@ -257,7 +263,7 @@ structure HeadsIn (c : Cfg i w Symbol State input) (S : ℕ) : Prop where
   input_pos : ∀ j, (c.inputPos j : ℕ) ≤ 2 * S + 2
   work_pos : ∀ j, -(S : ℤ) ≤ c.workTapePos j ∧ c.workTapePos j ≤ S
 
-omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] [DecidableEq Symbol] in
 theorem HeadsIn.headCell_bounds {c : Cfg i w Symbol State input} (h : HeadsIn c S) (d : Tape i w) :
     2 ≤ headCell (S := S) c d ∧ headCell (S := S) c d + 2 < numCells S := by
   have hnc : numCells S = 2 * S + 7 := rfl
@@ -284,6 +290,7 @@ theorem moveInputPos_pos_right {n : ℕ} (p : Fin (n + 2)) (h : (p : ℕ) = n + 
   rw [dif_neg (by simp [SignType.cast]; omega)]
   simp [h]
 
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
 /-- When every head is at an offset `1..3`, the local configuration of the run satisfies the
 full transition check. -/
 theorem fullStep_localCfgOf (c : Cfg i w Symbol State input) (js : Tape i w → Center S)
@@ -294,7 +301,7 @@ theorem fullStep_localCfgOf (c : Cfg i w Symbol State input) (js : Tape i w → 
   have hhead : ∀ d, headCell (S := S) c d = (js d : ℤ) + (δ d : ℕ) := by
     intro d
     have h := (hδ d).2.2 (δ d)
-    simp only [localCfgOf, cellIdx_val, eq_self_iff_true, decide_true] at h
+    simp only [localCfgOf, cellIdx_val, decide_true] at h
     have h' := of_decide_eq_true h
     push_cast at h'
     exact h'
@@ -315,21 +322,21 @@ theorem fullStep_localCfgOf (c : Cfg i w Symbol State input) (js : Tape i w → 
       rw [not_isBdry_iff]
       have := hbd d
       have := hhead d
-      simp only [cellIdx_val]; push_cast at *; omega
+      simp only [cellIdx_val]; omega
     -- the cells under the heads carry the symbols the machine reads
     have hcell_in : ∀ j, (cellValAt (S := S) c (.inl j) (cellIdx (js (.inl j)) (δ (.inl j)))).toOpt =
         c.inputSymbol j := by
       intro j
       have := hhead (.inl j)
       simp only [headCell] at this
-      exact toOpt_inputCellVal_headCell c j _ (by simp only [cellIdx_val]; push_cast at this; omega)
+      exact toOpt_inputCellVal_headCell c j _ (by simp only [cellIdx_val]; omega)
         (hnb (.inl j))
     have hcell_wk : ∀ j, (cellValAt (S := S) c (.inr j) (cellIdx (js (.inr j)) (δ (.inr j)))).toOpt =
         c.workTapeSymbols j := by
       intro j
       rw [cellValAt_inr c j _ (hnb _), CellVal.toOpt_ofOpt]
       have := hhead (.inr j)
-      simp only [headCell, cellIdx_val] at this
+      simp only [headCell] at this
       simp only [Cfg.workTapeSymbols]
       congr 1
       simp only [cellIdx_val]
@@ -384,7 +391,7 @@ theorem fullStep_localCfgOf (c : Cfg i w Symbol State input) (js : Tape i w → 
       have hlen := hin.input_pos j
       have h1 := (hδ (.inl j)).1
       have h3 := (hδ (.inl j)).2.1
-      simp only [headCell, step_inputPos M c hst, center_val, newOffset, Tape.isInput, true_and]
+      simp only [headCell, step_inputPos M c hst, center_val, newOffset, true_and]
       -- the neighbor cell and the head cell
       have hnbr : cellValAt (S := S) c (.inl j) (cellIdx (js (.inl j)) ⟨(δ (.inl j) : ℕ) - 1, by omega⟩) = .bdry ↔
           (c.inputPos j : ℕ) = 0 := by
@@ -392,13 +399,13 @@ theorem fullStep_localCfgOf (c : Cfg i w Symbol State input) (js : Tape i w → 
         rw [inputCellVal_bdry_iff, Pos.IsBdry]
         have hnc : numCells S = 2 * S + 7 := rfl
         simp only [cellIdx_val]
-        push_cast at hh; omega
+        omega
       have hself : cellValAt (S := S) c (.inl j) (cellIdx (js (.inl j)) (δ (.inl j))) = .blank ↔
           ((c.inputPos j : ℕ) = 0 ∨ (c.inputPos j : ℕ) = (input j).length + 1) := by
         show inputCellVal (S := S) (input j) _ = .blank ↔ _
         rw [inputCellVal_eq _ _ (hnb (.inl j))]
         have hp : ((cellIdx (js (.inl j)) (δ (.inl j)) : Pos S) : ℕ) = (c.inputPos j : ℕ) + 2 := by
-          simp only [cellIdx_val]; push_cast at hh; omega
+          simp only [cellIdx_val]; omega
         rw [hp]
         by_cases h0 : (c.inputPos j : ℕ) = 0
         · rw [if_neg (by omega)]; simp [h0]
@@ -445,14 +452,14 @@ theorem fullStep_localCfgOf (c : Cfg i w Symbol State input) (js : Tape i w → 
     · -- work heads
       have hh := hhead (.inr j)
       simp only [headCell] at hh
-      simp only [headCell, step_workTapePos M c hst, center_val, newOffset, Tape.isInput, false_and,
-        if_false]
+      simp only [headCell, step_workTapePos M c hst, center_val, newOffset]
       cases ((M.tr q c.inputSymbols c.workTapeSymbols).workActions j).2 <;>
-        simp only [SignType.cast, Tape.isInput, Bool.false_eq_true, false_and, if_false] <;>
+        simp only [SignType.cast, Bool.false_eq_true, false_and, if_false] <;>
         apply decide_eq_decide.mpr <;> push_cast at hh ⊢ <;> omega
     · simp [outputSymbol, hst]
     · simp [outputSymbol, hst]
 
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
 /-- **The windows of a run are locally consistent.** -/
 theorem locallyConsistent_localCfgOf (c : Cfg i w Symbol State input) (js : Tape i w → Center S)
     (hin : HeadsIn c S) : LocallyConsistent M acc (localCfgOf M acc c js) := by

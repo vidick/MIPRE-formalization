@@ -1370,7 +1370,7 @@ two and a terminal output gate, and their size is the number of gates.
 \begin{theorem}[Explicit succinct Cook--Levin]
 \label{thm:succinct-sat}
 \ledgernode{1.3.1}
-\uses{def:succinct-3sat,def:decider}
+\uses{def:succinct-3sat,def:decider,lem:correct-tableau}
 \lean{MIPRE.SAT.SuccinctCookLevin}
 \leanok
 There is a polynomial-time algorithm that, given a decider $\decider$, an index $n$, a
@@ -1422,6 +1422,53 @@ the defect textually, but a formalization of it must supply what the repair need
 output-wire conjunct, the out-degree-zero hypothesis that yields individual degree $6$,
 and the exact variable count on which the later PCP parameters depend --- none of which
 the statement currently fixes.
+
+\begin{lemma}[Correctness of the Cook--Levin tableau]
+\label{lem:correct-tableau}
+\uses{def:multiinput-tm}
+\lean{MIPRE.TM.CookLevin.tableau_sat_iff}
+\leanok
+Let $M$ be a multi-input Turing machine (Definition~\ref{def:multiinput-tm}) with $i$ input
+tapes and $w$ work tapes over a finite alphabet, $\mathsf{acc}$, $s_0$, $s_1$ symbols and
+$S$ a step bound, and fix the strings on some of the input tapes. The \emph{tableau formula}
+of $S$ steps of $M$ is the 3SAT formula on the variables ``cell $p$ of tape $d$ at time $t$
+holds $v$'' (one for each of $2S + 7$ cells and each value: a symbol, the blank or the
+boundary marker), ``the head of tape $d$ is on cell $p$ at time $t$'', ``the state at time
+$t$ is $q$'', the emission flags of every step, and, for every step and every choice of a
+five-cell window on each tape, the gate variables of a circuit deciding local consistency
+of the window; its clauses are the start row, the boundary rows, the free-tape row (a
+string over $\{s_0, s_1\}$ followed by blanks), the emission bookkeeping, the acceptance
+row and the circuit-to-3SAT clauses of the local check at every window. The formula is
+satisfiable if and only if $M$, started on the fixed strings and on some strings over
+$\{s_0, s_1\}$ on the free input tapes, halts within $S$ steps having output exactly
+$\mathsf{acc}$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Completeness: the encoding of the run satisfies every clause, the window clauses because
+the windows of a run pass the local check (\texttt{locallyConsistent\_localCfgOf}) and the
+circuit computes it, which is its specification (\texttt{IsCheckCircuit}). Soundness: the
+time-$0$ rows of a satisfying assignment determine the free strings; by induction on time
+the rows encode the run, because a locally consistent window whose time-$t$ part is that
+of a configuration has the time-$(t + 1)$ part of its successor (\texttt{post\_of\_pre});
+the acceptance row and the emission bookkeeping then give the output. Every head stays on
+an interior cell: a head moves at most one cell per step and a tape has $2S + 7$ cells.
+\end{proof}
+
+\paragraph{Source.} The tableau of~\cite[Section 10]{JNVWY20} and the standard argument of
+Cook~\cite{Coo71}; the companion paper's \texttt{answer\_reduction.tex} (its
+\texttt{lem:correct-tableau}).
+
+\paragraph{Comments.} The lemma is Cook--Levin for one fixed machine; the theorem applies
+it to a fixed interpreter machine for the decider's program, and the succinct description
+is a circuit for the clauses of this formula --- pieces S2 and S3 of
+\texttt{planning/succinct-cook-levin.md}. The local check circuit is a parameter of the
+formula, with its specification a hypothesis of the lemma, so that the lemma is proved once
+and the circuit supplied with the describer. The windows are five cells wide: a head at one
+of the middle three cells then sees, in the window, both the cell it leaves and the cell it
+reaches, and the clamped moves of an input head at the ends of the input are decided from
+the window alone.
 
 \subsection{Self-dual normal bases}
 \label{sec:rr-self-dual-basis}

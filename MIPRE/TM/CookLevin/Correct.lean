@@ -57,7 +57,7 @@ omit [Fintype Symbol] [DecidableEq Symbol] [Fintype State] [DecidableEq State] i
 theorem SignType.cast_bounds (m : SignType) : -1 ≤ (m : ℤ) ∧ (m : ℤ) ≤ 1 := by
   cases m <;> simp [SignType.cast]
 
-omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] [DecidableEq Symbol] in
 /-- An input head is at position at most `t + 1` at time `t`. -/
 theorem inputPos_cfgAt_le (t : ℕ) (j : Fin i) :
     ((cfgAt M (input := input) t).inputPos j : ℕ) ≤ t + 1 := by
@@ -73,7 +73,7 @@ theorem inputPos_cfgAt_le (t : ℕ) (j : Fin i) :
         ((M.tr q (cfgAt M (input := input) t).inputSymbols (cfgAt M (input := input) t).workTapeSymbols).inputMoves j)
       omega
 
-omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] [DecidableEq Symbol] in
 /-- A work head is at a position of absolute value at most `t` at time `t`. -/
 theorem workTapePos_cfgAt_bounds (t : ℕ) (j : Fin w) :
     -(t : ℤ) ≤ (cfgAt M (input := input) t).workTapePos j ∧
@@ -90,7 +90,7 @@ theorem workTapePos_cfgAt_bounds (t : ℕ) (j : Fin w) :
         ((M.tr q (cfgAt M (input := input) t).inputSymbols (cfgAt M (input := input) t).workTapeSymbols).workActions j).2
       push_cast; omega
 
-omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] [DecidableEq Symbol] in
 /-- At every time `t ≤ S`, every head of the run is on an interior cell. -/
 theorem headsIn_cfgAt (t : ℕ) (ht : t ≤ S) : HeadsIn (cfgAt M (input := input) t) S where
   input_pos j := by have := inputPos_cfgAt_le M (input := input) t j; omega
@@ -203,48 +203,48 @@ theorem runAssign_inpOf (t : Fin S) (js : Tape i w → Center S) (n : ℕ) :
 
 variable {G : ℕ}
 
-omit [Fintype Symbol] [Fintype State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq Symbol] [DecidableEq State] in
 theorem unit_eval (f : TabVar i w Symbol State S G → Bool) (v : TabVar i w Symbol State S G)
     (b : Bool) : (unit v b).eval f = true ↔ f v = b := by
   cases b <;> cases h : f v <;> simp [unit, cl, Clause3.eval, Lit.eval, h]
 
-omit [Fintype Symbol] [Fintype State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq Symbol] [DecidableEq State] in
 theorem imp2_eval (f : TabVar i w Symbol State S G → Bool) (a b : TabVar i w Symbol State S G) :
     (imp2 a b).eval f = true ↔ (f a = true → f b = true) := by
   cases ha : f a <;> cases hb : f b <;> simp [imp2, cl, Clause3.eval, Lit.eval, ha, hb]
 
-omit [Fintype Symbol] [Fintype State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq Symbol] [DecidableEq State] in
 theorem nand2_eval (f : TabVar i w Symbol State S G → Bool) (a b : TabVar i w Symbol State S G) :
     (nand2 a b).eval f = true ↔ ¬ (f a = true ∧ f b = true) := by
   cases ha : f a <;> cases hb : f b <;> simp [nand2, cl, Clause3.eval, Lit.eval, ha, hb]
 
-omit [Fintype Symbol] [Fintype State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq Symbol] [DecidableEq State] in
 theorem cl_eval (f : TabVar i w Symbol State S G → Bool) (l₁ l₂ l₃ : Lit (TabVar i w Symbol State S G)) :
     (cl l₁ l₂ l₃).eval f = true ↔ l₁.eval f = true ∨ l₂.eval f = true ∨ l₃.eval f = true := by
   simp [cl, Clause3.eval, or_assoc]
 
-omit [Fintype Symbol] [Fintype State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq Symbol] [DecidableEq State] in
 @[simp] theorem lit_eval_true (f : TabVar i w Symbol State S G → Bool) (v) :
     (Lit.eval f ⟨v, true⟩) = f v := rfl
 
-omit [Fintype Symbol] [Fintype State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq Symbol] [DecidableEq State] in
 @[simp] theorem lit_eval_false (f : TabVar i w Symbol State S G → Bool) (v) :
     (Lit.eval f ⟨v, false⟩) = !f v := rfl
 
 /-! ## Cells -/
 
-omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] [DecidableEq Symbol] in
 theorem cellValAt_inl (c : Cfg i w Symbol State input) (j : Fin i) (p : Pos S) :
     cellValAt (S := S) c (.inl j) p = inputCellVal (input j) p := rfl
 
-omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] [DecidableEq Symbol] in
 theorem cellValAt_bdry (c : Cfg i w Symbol State input) (d : Tape i w) (p : Pos S) (hb : p.IsBdry) :
     cellValAt (S := S) c d p = .bdry := by
   cases d with
   | inl j => exact (inputCellVal_bdry_iff _ _).mpr hb
   | inr j => simp [cellValAt, hb]
 
-omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] [DecidableEq Symbol] in
 /-- An interior input cell holds a blank or a symbol of the string. -/
 theorem inputCellVal_mem (x : List Symbol) (p : Pos S) (hnb : ¬ p.IsBdry) :
     inputCellVal x p = .blank ∨
@@ -260,7 +260,7 @@ theorem inputCellVal_mem (x : List Symbol) (p : Pos S) (hnb : ¬ p.IsBdry) :
       rw [List.getElem?_eq_none (by omega)]
   · left; rw [if_neg h3]
 
-omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] [DecidableEq Symbol] in
 /-- Cell `2` of an input tape is blank. -/
 theorem inputCellVal_two (x : List Symbol) :
     inputCellVal (S := S) x ⟨2, by unfold numCells; omega⟩ = .blank := by
@@ -268,7 +268,7 @@ theorem inputCellVal_two (x : List Symbol) :
     rw [not_isBdry_iff]; simp [numCells]
   rw [inputCellVal_eq x _ hnb, if_neg (by simp)]
 
-omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
+omit [Fintype Symbol] [Fintype State] [DecidableEq State] [DecidableEq Symbol] in
 /-- Blanks propagate to the right on an input tape. -/
 theorem inputCellVal_blank_mono (x : List Symbol) (p p' : Pos S) (h2 : 2 < (p : ℕ))
     (hnb' : ¬ p'.IsBdry) (hpp' : p < p') (h : inputCellVal x p = .blank) :
@@ -288,7 +288,7 @@ theorem inputCellVal_blank_mono (x : List Symbol) (p p' : Pos S) (h2 : 2 < (p : 
 
 /-! ## Completeness: the window clauses -/
 
-omit [Fintype State] [DecidableEq State] in
+omit [Fintype Symbol] [Fintype State] in
 theorem baseAssign_emitted_zero :
     baseAssign M acc (input := input) G (.emitted (0 : Fin (S + 1))) = false := by
   simp [baseAssign, outputString_zero]
@@ -346,11 +346,11 @@ theorem startClauses_sat (hfix : ∀ j x, fixed j = some x → input j = x) :
     apply decide_eq_decide.mpr
     cases d with
     | inl j =>
-      simp only [headCell, initCfg, startCell, Fin.ext_iff, Fin.val_one, Fin.val_mk]
+      simp only [headCell, initCfg, startCell, Fin.ext_iff, Fin.val_one]
       push_cast; omega
     | inr j =>
-      simp only [headCell, initCfg, startCell, Fin.ext_iff, Fin.val_mk]
-      push_cast; omega
+      simp only [headCell, initCfg, startCell, Fin.ext_iff]
+      omega
   · rw [unit_eval, runAssign_state]
     simp only [baseAssign]
     rw [cfgAt_zero']
@@ -443,7 +443,7 @@ theorem emitClauses_sat (hacc : M.outputString (M.initCfg input) S = [acc]) :
     exact baseAssign_emitted_zero M acc
   · rw [cl_eval]
     simp only [lit_eval_true, lit_eval_false, runAssign_emitted, runAssign_emitOne, baseAssign,
-      Fin.val_succ, Fin.coe_castSucc, Bool.not_eq_eq_eq_not, Bool.not_true, decide_eq_false_iff_not,
+      Fin.val_succ, Fin.val_castSucc, Bool.not_eq_eq_eq_not, Bool.not_true, decide_eq_false_iff_not,
       decide_eq_true_iff, not_not]
     rw [outputString_succ']
     by_cases hA : M.outputString (M.initCfg input) t = []
@@ -453,18 +453,18 @@ theorem emitClauses_sat (hacc : M.outputString (M.initCfg input) S = [acc]) :
       · right; right; exact (outputSymbol_of_accepting M acc (input := input) hacc t t.isLt ho).1
     · right; left; exact hA
   · rw [imp2_eval]
-    simp only [runAssign_emitted, baseAssign, Fin.val_succ, Fin.coe_castSucc, decide_eq_true_iff]
+    simp only [runAssign_emitted, baseAssign, Fin.val_succ, Fin.val_castSucc, decide_eq_true_iff]
     intro h
     rw [outputString_succ']
     exact fun h' => h (List.append_eq_nil_iff.mp h').1
   · rw [imp2_eval]
-    simp only [runAssign_emitted, runAssign_emitOne, baseAssign, Fin.val_succ, Fin.coe_castSucc,
+    simp only [runAssign_emitted, runAssign_emitOne, baseAssign, Fin.val_succ,
       decide_eq_true_iff]
     intro h
     rw [outputString_succ', h]
     simp
   · rw [nand2_eval]
-    simp only [runAssign_emitted, runAssign_emitOne, baseAssign, Fin.coe_castSucc,
+    simp only [runAssign_emitted, runAssign_emitOne, baseAssign, Fin.val_castSucc,
       decide_eq_true_iff]
     rintro ⟨h, h'⟩
     exact h' (outputSymbol_of_accepting M acc (input := input) hacc t t.isLt (by rw [h]; simp)).2
