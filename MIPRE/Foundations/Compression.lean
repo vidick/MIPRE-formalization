@@ -498,7 +498,7 @@ theorem compressibility_criterion_levels
     (hS : ∀ (x : BitStr) (n : ℕ), Halts S (encode (x, n)) ↔ x ∉ B n)
     (Compr : PolyTimeFun (Prog × ℕ) BitStr)
     (hCompr : ∀ (c : Prog) (x : BitStr) (n : ℕ), n₀ ≤ n → 2 * esize c ≤ n →
-      IsSuccinctDesc c n x →
+      IsSuccinctDesc c n x → x.length ≤ n + 1 →
         (x ∈ A (2 * n + 1) → Compr (c, n) ∈ A n) ∧ (x ∈ B (2 * n + 1) → Compr (c, n) ∈ B n)) :
     ∃ (g : PolyTimeFun Prog BitStr) (K : ℕ),
       ∀ e : Prog, n₀ ≤ 2 ^ (K + 1 + esize e) ∧
@@ -579,7 +579,8 @@ theorem compressibility_criterion_levels
         (encode ((c, e), (2 ^ (K + 1 + esize e), 2 * n + 1)))) ≤ n ∧
       IsSuccinctDesc (hardcode (Prog.bitQueryProg U.univ)
           (encode ((c, e), (2 ^ (K + 1 + esize e), 2 * n + 1)))) n
-        (dec (c, (e, (2 ^ (K + 1 + esize e), 2 * n + 1)))) := by
+        (dec (c, (e, (2 ^ (K + 1 + esize e), 2 * n + 1)))) ∧
+      (dec (c, (e, (2 ^ (K + 1 + esize e), 2 * n + 1)))).length ≤ n + 1 := by
     intro e n hn
     obtain ⟨t, ht, hrun⟩ := c_runs (e, (2 ^ (K + 1 + esize e), 2 * n + 1))
     have hQ := hK (esize e) n hn
@@ -608,6 +609,11 @@ theorem compressibility_criterion_levels
       simp only [esize_prod]
       omega
     have hpow : n + 1 ≤ 2 ^ n := Nat.lt_two_pow_self
+    -- the run producing `x` costs at most `n + 1`, so `x` is that short: the bound
+    -- `IsSuccinctDesc` records is `2 ^ n`, which is what obligation O4 then cannot use
+    have hxlen : (dec (c, (e, (2 ^ (K + 1 + esize e), 2 * n + 1)))).length ≤ n + 1 :=
+      (length_le_esize_bitStr _).trans (hrun.size_le.trans (by omega))
+    refine ⟨?_, hxlen⟩
     refine isSuccinctDesc_hardcode U c e (2 ^ (K + 1 + esize e), 2 * n + 1) n _ hrun
       (by omega) ?_
     have hb := polynomial_eval_mono (bitQueryBound U)
@@ -698,8 +704,8 @@ theorem compressibility_criterion_levels
             rw [hd]
             have hnext := ih (j + 1) (by omega)
             rw [levels_succ] at hnext
-            obtain ⟨h₀, h₁, h₂⟩ := key' (levels R j) (le_levels R j)
-            exact (hCompr _ _ _ h₀ h₁ h₂).2 hnext
+            obtain ⟨h₀, h₁, h₂, h₃⟩ := key' (levels R j) (le_levels R j)
+            exact (hCompr _ _ _ h₀ h₁ h₂ h₃).2 hnext
     -- from a level where `e` has halted, every level of the recursion is in `A`
     have hA : ∀ k j, T ≤ Nat.size (levels R (j + k)) →
         dec (c, (e, (R, levels R j))) ∈ A (levels R j) := by
@@ -732,8 +738,8 @@ theorem compressibility_criterion_levels
             rw [hd]
             have hnext := ih (j + 1) (by rw [show j + 1 + k = j + (k + 1) by omega]; exact hj)
             rw [levels_succ] at hnext
-            obtain ⟨h₀, h₁, h₂⟩ := key' (levels R j) (le_levels R j)
-            exact (hCompr _ _ _ h₀ h₁ h₂).1 hnext
+            obtain ⟨h₀, h₁, h₂, h₃⟩ := key' (levels R j) (le_levels R j)
+            exact (hCompr _ _ _ h₀ h₁ h₂ h₃).1 hnext
     obtain ⟨k, hk⟩ : ∃ k, T ≤ Nat.size (levels R k) := by
       refine ⟨T, ?_⟩
       have h1 := Nat.size_le_size (two_pow_le_levels hR1 T)
@@ -775,8 +781,8 @@ theorem compressibility_criterion_levels
           rw [hd]
           have hnext := ih (j + 1) (by rw [show j + 1 + k = j + (k + 1) by omega]; exact hj)
           rw [levels_succ] at hnext
-          obtain ⟨h₀, h₁, h₂⟩ := key' (levels R j) (le_levels R j)
-          exact (hCompr _ _ _ h₀ h₁ h₂).2 hnext
+          obtain ⟨h₀, h₁, h₂, h₃⟩ := key' (levels R j) (le_levels R j)
+          exact (hCompr _ _ _ h₀ h₁ h₂ h₃).2 hnext
     obtain ⟨k, hk⟩ : ∃ k, T₀ ≤ Nat.size (levels R k) := by
       refine ⟨T₀, ?_⟩
       have h1 := Nat.size_le_size (two_pow_le_levels hR1 T₀)
@@ -833,7 +839,7 @@ theorem compressibility_criterion
     yYes (fun _ _ => hyes) yNo (fun _ _ => hno) (.let_ Prog.fstProg S)
     ⟨Prog.fstProg_wellScoped, hSws.mono (by omega) _⟩ hS'
     (Compr.comp (PolyTimeFun.pair (PolyTimeFun.id _) PolyTimeFun.snd))
-    (fun c x n _ _ hsucc => by simpa using hCompr c n x n hsucc)
+    (fun c x n _ _ hsucc _ => by simpa using hCompr c n x n hsucc)
   exact ⟨g, fun e => ⟨(hg e).2.1, (hg e).2.2⟩⟩
 
 /-! ## Interface with Mathlib computability

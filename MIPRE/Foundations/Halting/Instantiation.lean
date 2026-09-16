@@ -84,7 +84,15 @@ is open can be enumerated rather than searched for:
   file; removing them is a module move rather than mathematics.
 * **O4** (`compr`, `compr_spec`) — the compressor: the decider that reads its description by
   bit queries, freezes the verifier at index `2n + 1` (`Verifier.freeze`), runs `Compress`,
-  and its time accounting.
+  and its time accounting. Its `λ` is chosen by `lem:lambda-bound`
+  (`MIPRE.Halting.lambda_bound`), which turns the output's `poly(n, λ)` running times into the
+  `n ^ λ` that `IsBounded` asks for. The field's fourth hypothesis, `x.length ≤ n + 1`, is what
+  makes it satisfiable at all; its docstring says why, and
+  `Cost.compressibility_criterion_levels` supplies it from a bound its own proof already had,
+  and `exists_ansBound_le` (below, checked) is the step that consumes it: it puts the answer
+  budget of level `2n + 1` under the one `GapCompression.completeness` supplies strategies at.
+  What is not here yet is the construction — the ambient program, its agreement with
+  `G.output`, and its cost accounting.
 
 O4 is the substance that is left, and `planning/h4-assembly.md` has the order of work. O3 was
 recorded there as "O2 plus a disjunction"; it is not, and the reason is worth naming.
@@ -162,6 +170,70 @@ def Vof (x : BitStr) : Verifier 7 :=
 /-- The answer-length budget the classes are read with at level `n`: the bound a compressed
 decider with the string's parameter obeys at index `n`. -/
 def ansBound (x : BitStr) (n : ℕ) : ℕ := G.bound.eval (n + descLam x)
+
+/-! ### The answer budget of a short description
+
+What obligation O4 needs of `ansBound`: on a string short enough to have come out of the
+compressibility criterion, the budget the classes are read with at level `2n + 1` is below the
+budget `GapCompression.completeness` supplies strategies at. Both bounds are exponential in
+`n`; the point is which exponent, and the string's own parameter is what could have broken it.
+-/
+
+/-- **A string denotes a parameter exponential in its length at worst.** The parameter is the
+number the left component of the parsed datum denotes, and parsing a string of length `L`
+yields a datum of size at most `L` (`Data.size_parse_le`), which denotes a number below
+`2 ^ L` (`Data.natOf_lt`). -/
+theorem descLam_lt (x : BitStr) : descLam x < 2 ^ max 1 x.length :=
+  lt_of_lt_of_le (Data.natOf_lt _)
+    (Nat.pow_le_pow_right (by norm_num)
+      ((Machine.size_left_le _).trans (Data.size_parse_le x)))
+
+/-- The form the criterion's length bound is used in: `compr_spec`'s hypothesis
+`x.length ≤ n + 1` caps the denoted parameter at `2 ^ (n + 1)`. -/
+theorem descLam_lt_of_length_le {x : BitStr} {n : ℕ} (h : x.length ≤ n + 1) :
+    descLam x < 2 ^ (n + 1) :=
+  lt_of_lt_of_le (descLam_lt x) (Nat.pow_le_pow_right (by norm_num) (by omega))
+
+/-- **The answer budget of level `2n + 1` fits under the compression theorem's.** For `λ` and
+`n` above thresholds depending only on `G.bound`, a string of length at most `n + 1` has
+`ansBound G x (2n+1) ≤ (2 ^ n) ^ λ` --- the budget at which `GapCompression.completeness`
+takes its hypothesis. With `Verifier.hasPerfectPCC_of_le` this is what carries a value-`1` PCC
+strategy from membership in `classA G U (2 * n + 1)` into that clause, and it is why
+`Obligations.compr_spec` carries the length bound: `ansBound` grows with the string's own
+parameter, so without it no pair of thresholds would do.
+
+The thresholds are `λ ≥ 2 · deg(bound) + 1` and `n ≥ log₂(‖bound‖) + 2 · deg(bound) + 1`,
+where `‖bound‖` is the sum of its coefficients; note they are set by the *polynomial* `bound`,
+not by `G.deg`, which grades running times in the input size instead. -/
+theorem exists_ansBound_le (G : GapCompression) :
+    ∃ lam₀ n₀ : ℕ, ∀ (x : BitStr) (lam n : ℕ), lam₀ ≤ lam → n₀ ≤ n → x.length ≤ n + 1 →
+      ansBound G x (2 * n + 1) ≤ (2 ^ n) ^ lam := by
+  obtain ⟨D, hD⟩ : ∃ D, D = G.bound.natDegree := ⟨_, rfl⟩
+  obtain ⟨A, hA⟩ : ∃ A, A = ∑ i ∈ Finset.range (G.bound.natDegree + 1), G.bound.coeff i :=
+    ⟨_, rfl⟩
+  have hQ : ∀ y, 1 ≤ y → G.bound.eval y ≤ A * y ^ D := fun y hy => by
+    rw [hA, hD]; exact polynomial_eval_le_sum_coeff_mul_pow G.bound hy
+  refine ⟨2 * D + 1, Nat.size A + 2 * D + 1, fun x lam n hlam hn hx => ?_⟩
+  have hdl : descLam x < 2 ^ (n + 1) := descLam_lt_of_length_le hx
+  have h1 : n + 1 ≤ 2 ^ n := Nat.lt_two_pow_self
+  have h2 : 2 ^ (n + 1) = 2 * 2 ^ n := by ring
+  have h3 : 2 ^ (n + 2) = 2 * 2 ^ (n + 1) := by ring
+  have hm : 2 * n + 1 + descLam x ≤ 2 ^ (n + 2) := by omega
+  have hev : G.bound.eval (2 * n + 1 + descLam x) ≤ A * (2 ^ (n + 2)) ^ D :=
+    (polynomial_eval_mono G.bound hm).trans (hQ _ Nat.one_le_two_pow)
+  have key : Nat.size A + (n + 2) * D ≤ n * lam := by
+    have h : Nat.size A + 2 * D ≤ n := by omega
+    have e1 : Nat.size A + (n + 2) * D = Nat.size A + 2 * D + n * D := by ring
+    have e2 : n * (2 * D + 1) = n + (n * D + n * D) := by ring
+    refine le_trans ?_ (Nat.mul_le_mul_left n hlam)
+    rw [e1, e2]
+    exact Nat.add_le_add h (Nat.le_add_right _ _)
+  calc ansBound G x (2 * n + 1) ≤ A * (2 ^ (n + 2)) ^ D := hev
+    _ ≤ 2 ^ Nat.size A * (2 ^ (n + 2)) ^ D :=
+        Nat.mul_le_mul_right _ (Nat.lt_size_self A).le
+    _ = 2 ^ (Nat.size A + (n + 2) * D) := by rw [← pow_mul, ← pow_add]
+    _ ≤ 2 ^ (n * lam) := Nat.pow_le_pow_right (by norm_num) key
+    _ = (2 ^ n) ^ lam := by rw [← pow_mul]
 
 /-- **The class `A` at level `n`**: the strings whose verifier is `n`-bounded and whose `n`-th
 game has a value-`1` PCC strategy. -/
@@ -623,10 +695,43 @@ structure Obligations (G : GapCompression) (U : UniversalMachine) where
   sem_spec : ∀ (x : BitStr) (n : ℕ), Halts sem (encode (x, n)) ↔ x ∉ classB G U n
   /-- **O4.** The compressor: a polynomial-time map on `(description, level)` pairs. -/
   compr : PolyTimeFun (Prog × ℕ) BitStr
-  /-- **O4.** On a succinct description of a string at level `2n + 1`, with the size slack the
-  criterion provides, the compressor preserves both classes down to level `n`. -/
+  /-- **O4.** On a succinct description of a string at level `2n + 1`, with the size slack and
+  the length bound the criterion provides, the compressor preserves both classes down to level
+  `n`.
+
+  The clause `x.length ≤ n + 1` is not slack either, and it is what makes the field
+  *satisfiable*. `classA G U (2n+1)` asks for a value-`1` PCC strategy at the answer bound
+  `ansBound G x (2n+1) = G.bound.eval (2n+1 + descLam x)`, while the only source of such a
+  strategy for a compressed verifier is `GapCompression.completeness`, which takes its input at
+  the bound `(2 ^ n) ^ λ` with `λ` the parameter the compressor writes into its output — so `λ`
+  is bounded by the compressor's own output size and cannot be made arbitrarily large. Without a
+  bound on `descLam x` the two cannot be related: nothing in `IsBounded` constrains a string's
+  compression parameter (for a `G` whose compressed sampler does not vary with `λ`, membership
+  in either class is insensitive to it), while `ansBound` grows with it. With
+  `x.length ≤ n + 1` we get `descLam x < 2 ^ (n+1)`, hence
+  `ansBound G x (2n+1) ≤ G.bound.eval (2n+1 + 2^(n+1)) ≤ (2 ^ n) ^ λ` already for
+  `λ ≥ 2 · deg(G.bound) + 1` and `n` above a threshold read off `G.bound` too, and
+  `hasPerfectPCC_of_le` carries the hypothesis across. `exists_ansBound_le` above is that step,
+  checked; note the threshold is set by the polynomial `G.bound`, not by `G.deg`.
+
+  **Open, and the field is expected to need one more hypothesis.** That argument settles the
+  `classA` direction, where `hasPerfectPCC_of_le` raises the answer bound. The `classB`
+  direction runs the other way and does not close with these hypotheses: `G.soundness` wants
+  `valStar (2 ^ n) ((2 ^ n) ^ λ) ≤ 1/2`, membership in `classB G U (2n+1)` gives it at
+  `ansBound G x (2n+1)`, and `valStar_le_of_le` only *raises* the value with the bound — so the
+  `ansBound ≤ (2 ^ n) ^ λ` that the `classA` direction needs is exactly the wrong direction
+  here, and the two cannot be met by one `λ` (the same `λ` is written into the output, so it is
+  the same in both). The escape is `valStar_eq_of_rejects`: if `x`'s decider rejects every
+  answer longer than `ansBound G x (2n+1)` at index `2n + 1`, raising the bound does not move
+  the value and both directions go through the one inequality. `ansBound` is *defined* to be
+  that rejection threshold for a compressed decider of parameter `descLam x`
+  (`GapCompression.output_rejects_long`), and in the criterion's recursion every string is the
+  compressor's own output one level up, so the criterion can supply it — but it is not supplied
+  now, and an arbitrary `descDec x` does not reject. Settle the shape of the hypothesis when
+  the construction is built, not before; `planning/h4-assembly.md` §4 item 4 has the argument
+  and issue #53 tracks it. -/
   compr_spec : ∀ (c : Prog) (x : BitStr) (n : ℕ), n₀ ≤ n → 2 * esize c ≤ n →
-    IsSuccinctDesc c n x →
+    IsSuccinctDesc c n x → x.length ≤ n + 1 →
       (x ∈ classA G U (2 * n + 1) → compr (c, n) ∈ classA G U n) ∧
       (x ∈ classB G U (2 * n + 1) → compr (c, n) ∈ classB G U n)
 

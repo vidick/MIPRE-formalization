@@ -252,6 +252,76 @@ theorem encode_natOf (d : Data) : (encode (natOf d) : Data) = normBin d := by
       exact encode_of_decode_bitStr hdec
   · rfl
 
+/-! ## How large a parameter a short string can denote
+
+The bound a string of length `L` places on the number it denotes. Obligation O4 of the
+halting reduction needs it: the answer budget the classes are read with at level `n` grows
+with the described string's own compression parameter (`MIPRE.Halting.ansBound`), while the
+compression theorem's completeness clause supplies strategies at a budget fixed by the
+compressor's output, so the two can only be related through a bound on that parameter. -/
+
+/-- Normalization does not grow a datum: it is either the datum or `nil`. -/
+theorem size_normBin_le (d : Data) : (normBin d).size ≤ d.size := by
+  unfold normBin
+  split
+  · exact le_rfl
+  · have := d.size_pos
+    simp only [size_nil]
+    omega
+
+/-- **A datum denotes a number smaller than `2` to its size.** Through
+`encode_natOf`, the normalized datum *is* the binary encoding of the number it denotes, so
+the number has at most `d.size` binary digits. -/
+theorem natOf_lt (d : Data) : natOf d < 2 ^ d.size := by
+  refine lt_of_lt_of_le (Nat.lt_size_self _) (Nat.pow_le_pow_right (by norm_num) ?_)
+  calc Nat.size (natOf d) ≤ esize (natOf d) := size_le_esize_nat _
+    _ = (normBin d).size := by
+        show (encode (natOf d) : Data).size = _
+        rw [encode_natOf]
+    _ ≤ d.size := size_normBin_le d
+
+/-- One step of the stack machine adds at most one to the total size on the stack: a `0`
+pushes `nil`, and a `1` replaces two entries by one node above them. -/
+theorem size_sum_stackStep_le (s : List Data) (bit : Bool) :
+    ((stackStep s bit).map size).sum ≤ (s.map size).sum + 1 := by
+  cases bit
+  · simp only [stackStep_false, List.map_cons, List.sum_cons, size_nil]
+    omega
+  · by_cases h : 2 ≤ s.length
+    · obtain ⟨b, a, t, rfl⟩ : ∃ b a t, s = b :: a :: t := by
+        match s with
+        | [] => simp at h
+        | [_] => simp at h
+        | b :: a :: t => exact ⟨b, a, t, rfl⟩
+      simp only [stackStep_true_cons_cons, List.map_cons, List.sum_cons, size_cons]
+      omega
+    · simp [stackStep, h]
+
+/-- So the whole run adds at most the length of the string. -/
+theorem size_sum_stackRun_le (x : BitStr) (s : List Data) :
+    ((stackRun x s).map size).sum ≤ (s.map size).sum + x.length := by
+  induction x generalizing s with
+  | nil => simp
+  | cons bit x ih =>
+    rw [stackRun_cons]
+    have h1 := ih (stackStep s bit)
+    have h2 := size_sum_stackStep_le s bit
+    simp only [List.length_cons]
+    omega
+
+/-- **What a string of length `L` can parse to**: a datum of size at most `L`, or `nil` when
+the run leaves the stack empty. -/
+theorem size_parse_le (x : BitStr) : (parse x).size ≤ max 1 x.length := by
+  have h := size_sum_stackRun_le x []
+  simp only [List.map_nil, List.sum_nil, Nat.zero_add] at h
+  unfold parse
+  rcases hs : stackRun x [] with _ | ⟨d, t⟩
+  · simp
+  · rw [hs] at h
+    simp only [List.map_cons, List.sum_cons] at h
+    simp only [List.headD_cons]
+    exact le_max_of_le_right (by omega)
+
 theorem primrec_isBit : Primrec isBit := by
   refine (Primrec.ite (PrimrecRel.comp Primrec.eq Primrec.id (Primrec.const nil))
     (Primrec.const true) (Primrec.ite (PrimrecRel.comp Primrec.eq Primrec.id

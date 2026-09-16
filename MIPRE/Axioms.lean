@@ -12,6 +12,7 @@ import MIPRE.Foundations.Cost.Semidecide
 import MIPRE.Foundations.Cost.Toolkit
 import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Games
+import MIPRE.Foundations.Halting.LambdaBound
 import MIPRE.Foundations.Halting.Semidecider
 import MIPRE.Foundations.ValueApprox
 import MIPRE.Foundations.ValueApprox.Cayley
@@ -151,6 +152,12 @@ elab "#guard_sorry_free " ids:ident,* : command => do
 
 -- blueprint `lem:kleene`
 #guard_sorry_free MIPRE.Cost.efficient_fixed_point
+
+-- blueprint `lem:lambda-bound`
+#guard_sorry_free MIPRE.Halting.four_mul_succ_lt_two_pow,
+  MIPRE.Halting.lambda_bound,
+  MIPRE.Halting.log_lt_div,
+  MIPRE.Halting.sq_le_two_pow_of_four_le
 
 -- blueprint `lem:mermin-peres`
 #guard_sorry_free MIPRE.LCS.MagicSquare.grid,
