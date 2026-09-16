@@ -13,6 +13,7 @@ import MIPRE.Foundations.Cost.Toolkit
 import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Games
 import MIPRE.Foundations.Halting.Corollaries
+import MIPRE.Foundations.Pipeline.Compress
 import MIPRE.Foundations.Halting.LambdaBound
 import MIPRE.Foundations.Halting.Semidecider
 import MIPRE.Foundations.ValueApprox
@@ -146,6 +147,27 @@ elab "#guard_sorry_free " ids:ident,* : command => do
 -- blueprint `lem:halting-form`
 #guard_sorry_free MIPRE.Cost.compressibility_criterion_halting,
   MIPRE.Cost.recursive_compression_halting
+
+-- blueprint `thm:compression` (proof: the composition of the three stages)
+#guard_sorry_free MIPRE.GapCompression,
+  MIPRE.GapCompression.ofPipeline
+
+-- blueprint `lem:compress-sampler-indep`
+#guard_sorry_free MIPRE.GapCompression,
+  MIPRE.Pipeline.sampler,
+  MIPRE.Pipeline.samplerProg_eq,
+  MIPRE.Pipeline.output_sampler
+
+-- blueprint `lem:compress-margin`
+#guard_sorry_free MIPRE.Pipeline.eps1,
+  MIPRE.Pipeline.intro_margin,
+  MIPRE.Pipeline.exists_mu,
+  MIPRE.Pipeline.eps2,
+  MIPRE.Pipeline.ar_margin
+
+-- blueprint `lem:compress-tau`
+#guard_sorry_free MIPRE.Pipeline.exists_eps2_lower,
+  MIPRE.Pipeline.exists_tau
 
 -- blueprint `cor:main-quantum`
 #guard_sorry_free MIPRE.Halting.halting_reduction_both_of,

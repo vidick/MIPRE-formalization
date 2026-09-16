@@ -580,6 +580,13 @@ import MIPRE.Foundations.Halting.Strings
 import MIPRE.Foundations.Halting.Tabulate
 import MIPRE.Foundations.Halting.Wrapper
 import MIPRE.Foundations.Halting.WrapperCost
+import MIPRE.Foundations.Pipeline.AnswerReduction
+import MIPRE.Foundations.Pipeline.Budget
+import MIPRE.Foundations.Pipeline.Compress
+import MIPRE.Foundations.Pipeline.Introspection
+import MIPRE.Foundations.Pipeline.Margin
+import MIPRE.Foundations.Pipeline.Oracularization
+import MIPRE.Foundations.Pipeline.Repetition
 import MIPRE.Foundations.SyncTransport
 import MIPRE.Foundations.ValueApprox
 import MIPRE.Foundations.ValueApprox.Cayley

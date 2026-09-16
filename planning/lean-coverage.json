@@ -36,6 +36,9 @@
   "HaltingGameValue.halting_reduces_to_gameValue": [
    "thm:main"
   ],
+  "MIPRE.AnswerReduction": [
+   "thm:answer-reduction"
+  ],
   "MIPRE.CL.CLFun": [
    "def:cl-function"
   ],
@@ -363,6 +366,9 @@
    "lem:compress-sampler-indep",
    "thm:compression"
   ],
+  "MIPRE.GapCompression.ofPipeline": [
+   "thm:compression"
+  ],
   "MIPRE.Halting.CompressorSpec": [
    "rem:compression-abstract"
   ],
@@ -572,6 +578,9 @@
   "MIPRE.Halting.yYes_mem": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Introspection": [
+   "thm:introspection"
+  ],
   "MIPRE.IsApproxRepresentation": [
    "def:approx-rep"
   ],
@@ -659,14 +668,56 @@
   "MIPRE.MIPStar.isRE": [
    "lem:mipstar-sub-re"
   ],
+  "MIPRE.Oracularization": [
+   "thm:oracularization"
+  ],
   "MIPRE.Orthonormalization.povm_orthogonalization_finDim": [
    "thm:orthonormalization"
+  ],
+  "MIPRE.Pipeline.ar_margin": [
+   "lem:compress-margin"
+  ],
+  "MIPRE.Pipeline.eps1": [
+   "lem:compress-margin"
+  ],
+  "MIPRE.Pipeline.eps2": [
+   "lem:compress-margin"
+  ],
+  "MIPRE.Pipeline.exists_eps2_lower": [
+   "lem:compress-tau"
+  ],
+  "MIPRE.Pipeline.exists_mu": [
+   "lem:compress-margin"
+  ],
+  "MIPRE.Pipeline.exists_tau": [
+   "lem:compress-tau"
+  ],
+  "MIPRE.Pipeline.intro_margin": [
+   "lem:compress-margin"
+  ],
+  "MIPRE.Pipeline.output_hasPerfectPCC": [
+   "rem:compression-chain"
+  ],
+  "MIPRE.Pipeline.output_sampler": [
+   "lem:compress-sampler-indep"
+  ],
+  "MIPRE.Pipeline.output_valStar_le": [
+   "rem:compression-chain"
+  ],
+  "MIPRE.Pipeline.sampler": [
+   "lem:compress-sampler-indep"
+  ],
+  "MIPRE.Pipeline.samplerProg_eq": [
+   "lem:compress-sampler-indep"
   ],
   "MIPRE.REPred.of_computable_exists": [
    "lem:bounded-violation-re"
   ],
   "MIPRE.REPred.or": [
    "lem:halting-semidecider"
+  ],
+  "MIPRE.Repetition": [
+   "thm:parallel-repetition"
   ],
   "MIPRE.Repetition.commutingOperatorValue_repeat_le": [
    "thm:direct-repetition-co"
@@ -676,6 +727,9 @@
   ],
   "MIPRE.Repetition.quantumValue_repeat_le": [
    "thm:direct-repetition-q"
+  ],
+  "MIPRE.Repetition.soundBound": [
+   "thm:parallel-repetition"
   ],
   "MIPRE.Repetition.tracialDensity": [
    "thm:tracial-density"
@@ -1122,6 +1176,7 @@
   "HaltingGameValue.GameData.toSyncStrategy",
   "HaltingGameValue.gameValue",
   "HaltingGameValue.halting_reduces_to_gameValue",
+  "MIPRE.AnswerReduction",
   "MIPRE.CL.CLFun",
   "MIPRE.CL.CLFun.ExactlyOn",
   "MIPRE.CL.CLFun.ExactlyOn.biUnion_factorAt",
@@ -1230,6 +1285,7 @@
   "MIPRE.Game.doubled",
   "MIPRE.Game.repeat",
   "MIPRE.GapCompression",
+  "MIPRE.GapCompression.ofPipeline",
   "MIPRE.Halting.CompressorSpec",
   "MIPRE.Halting.CompressorSpec.toObligations",
   "MIPRE.Halting.Obligations",
@@ -1296,6 +1352,7 @@
   "MIPRE.Halting.yNo_mem",
   "MIPRE.Halting.yYes",
   "MIPRE.Halting.yYes_mem",
+  "MIPRE.Introspection",
   "MIPRE.IsApproxRepresentation",
   "MIPRE.IsPOVMClose",
   "MIPRE.IsRE",
@@ -1325,12 +1382,27 @@
   "MIPRE.MIPStar",
   "MIPRE.MIPStar.exists_semidecider",
   "MIPRE.MIPStar.isRE",
+  "MIPRE.Oracularization",
   "MIPRE.Orthonormalization.povm_orthogonalization_finDim",
+  "MIPRE.Pipeline.ar_margin",
+  "MIPRE.Pipeline.eps1",
+  "MIPRE.Pipeline.eps2",
+  "MIPRE.Pipeline.exists_eps2_lower",
+  "MIPRE.Pipeline.exists_mu",
+  "MIPRE.Pipeline.exists_tau",
+  "MIPRE.Pipeline.intro_margin",
+  "MIPRE.Pipeline.output_hasPerfectPCC",
+  "MIPRE.Pipeline.output_sampler",
+  "MIPRE.Pipeline.output_valStar_le",
+  "MIPRE.Pipeline.sampler",
+  "MIPRE.Pipeline.samplerProg_eq",
   "MIPRE.REPred.of_computable_exists",
   "MIPRE.REPred.or",
+  "MIPRE.Repetition",
   "MIPRE.Repetition.commutingOperatorValue_repeat_le",
   "MIPRE.Repetition.quantumValue_eq_entangledValue",
   "MIPRE.Repetition.quantumValue_repeat_le",
+  "MIPRE.Repetition.soundBound",
   "MIPRE.Repetition.tracialDensity",
   "MIPRE.SyncStrategy",
   "MIPRE.SyncStrategy.IsPCC",
@@ -1851,6 +1923,36 @@
    "MIPRE.Cost.Prog.wrapCore_hasPolyCost",
    "MIPRE.Verifier.ofSamplerDecider_isBounded"
   ],
+  "MIPRE/Foundations/Pipeline/AnswerReduction.lean": [
+   "MIPRE.AnswerReduction"
+  ],
+  "MIPRE/Foundations/Pipeline/Compress.lean": [
+   "MIPRE.GapCompression.ofPipeline",
+   "MIPRE.Pipeline.output_hasPerfectPCC",
+   "MIPRE.Pipeline.output_sampler",
+   "MIPRE.Pipeline.output_valStar_le",
+   "MIPRE.Pipeline.sampler",
+   "MIPRE.Pipeline.samplerProg_eq"
+  ],
+  "MIPRE/Foundations/Pipeline/Introspection.lean": [
+   "MIPRE.Introspection"
+  ],
+  "MIPRE/Foundations/Pipeline/Margin.lean": [
+   "MIPRE.Pipeline.ar_margin",
+   "MIPRE.Pipeline.eps1",
+   "MIPRE.Pipeline.eps2",
+   "MIPRE.Pipeline.exists_eps2_lower",
+   "MIPRE.Pipeline.exists_mu",
+   "MIPRE.Pipeline.exists_tau",
+   "MIPRE.Pipeline.intro_margin"
+  ],
+  "MIPRE/Foundations/Pipeline/Oracularization.lean": [
+   "MIPRE.Oracularization"
+  ],
+  "MIPRE/Foundations/Pipeline/Repetition.lean": [
+   "MIPRE.Repetition",
+   "MIPRE.Repetition.soundBound"
+  ],
   "MIPRE/Foundations/SyncTransport.lean": [
    "MIPRE.Verifier.exists_perfectPCC_syncGame_doubled",
    "MIPRE.Verifier.gameValue_toGame_eq_one_doubled",
@@ -2010,7 +2112,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 84,
+ "lean_tags": 91,
  "module_sizes": {
   "MIPRE/Axioms.lean": 0,
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
@@ -2098,6 +2200,13 @@
   "MIPRE/Foundations/Halting/Tabulate.lean": 54,
   "MIPRE/Foundations/Halting/Wrapper.lean": 58,
   "MIPRE/Foundations/Halting/WrapperCost.lean": 23,
+  "MIPRE/Foundations/Pipeline/AnswerReduction.lean": 5,
+  "MIPRE/Foundations/Pipeline/Budget.lean": 18,
+  "MIPRE/Foundations/Pipeline/Compress.lean": 71,
+  "MIPRE/Foundations/Pipeline/Introspection.lean": 4,
+  "MIPRE/Foundations/Pipeline/Margin.lean": 14,
+  "MIPRE/Foundations/Pipeline/Oracularization.lean": 3,
+  "MIPRE/Foundations/Pipeline/Repetition.lean": 7,
   "MIPRE/Foundations/SyncTransport.lean": 6,
   "MIPRE/Foundations/ValueApprox.lean": 8,
   "MIPRE/Foundations/ValueApprox/Cayley.lean": 16,
@@ -2151,12 +2260,12 @@
  "unresolved": [],
  "xref_counts": {
   "bibitems": 33,
-  "cites": 153,
+  "cites": 154,
   "commands_defined": 99,
   "commands_used": 206,
   "labels": 227,
-  "leanok_claimed": 168,
-  "leanok_guarded": 168,
-  "refs": 1036
+  "leanok_claimed": 180,
+  "leanok_guarded": 180,
+  "refs": 1052
  }
 }

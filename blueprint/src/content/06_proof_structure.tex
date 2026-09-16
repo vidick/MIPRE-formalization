@@ -548,6 +548,8 @@ twirl toolkit and the final constant arithmetic.
 \label{thm:introspection}
 \ledgernode{1.2, 1.2.3.8}
 \uses{def:normal-verifier,def:lambda-bounded,def:pcc,thm:qld,def:cl-function,def:intro-verifier,lem:intro-complexity,lem:intro-completeness,lem:intro-induction}
+\lean{MIPRE.Introspection}
+\leanok
 There is a polynomial-time Turing machine $\ComputeIntroVerifier$ that on input
 $(\verifier, \lambda, \ell)$ returns a $5$-level normal form verifier $\vint =
 (\sint, \dint)$ with
@@ -563,6 +565,22 @@ is a function $\delta(\eps, n) = a\bigl( (\lambda n)^a \eps^b + (\lambda n)^{-b}
   $\valstar(\verifier_{2^n}) \geq 1 - \delta(\eps, n)$.
 \end{enumerate}
 \end{theorem}
+
+\paragraph{Lean statement.} The theorem is the structure \texttt{MIPRE.Introspection},
+parametrized by $\ell$: the introspective sampler as a function of $\lambda$ alone with its
+program computable in polynomial time, the introspective decider's program as a
+polynomial-time function of the input programs and $\lambda$, the packaging as a $5$-level
+normal form verifier on every input, the complexity clauses for every input and index ---
+$\TIME_{\sint}(n) \leq (\lambda n + 1)^C$, $\TIME_{\dint}(n) \leq 2^{C(\lambda n + 1)}$ and
+$\abs{\dint} \leq C(\lambda + 1)^C$ for a constant $C$, the paper's $C_{\mathrm{intro}}$, with
+the decider rejecting answers longer than its time bound --- and the two value clauses for
+$\lambda$-bounded $\ell$-level inputs, with $a \geq 1$ (the paper's $a > 0$, normalized as
+the proof of Theorem~\ref{thm:compression} does). The complexity clauses are stated in the
+vocabulary of resource budgets (\texttt{MIPRE.Budget}, \texttt{Verifier.Within}: the running-time
+coefficients of sampler and decider and their degree, the question dimension, and the answer
+length beyond which the decider rejects), which is what lets the four transformations be
+chained. The composition \texttt{MIPRE.GapCompression.ofPipeline} consumes an instance at
+$\ell = 7$.
 
 The soundness analysis is a long rigidity argument~\cite[Section 8]{JNVWY20}. It builds on techniques introduced in~\cite{NW19}, and it may be advisable to formalize some of the key lemmas there first. These include the Pauli basis test together with a toolkit of approximate-measurement lemmas
 (twirling, commutation, sandwiching). For this project, those lemmas should be stated and proved in the bipartite setting, as in the sources: the pipeline carries $\valstar$ throughout, so no tracial restatement is needed and none should be attempted (Remark~\ref{rem:bipartite-route}).
@@ -580,6 +598,8 @@ reduction. This is probably the easiest transformation in the paper and could be
 \label{thm:oracularization}
 \ledgernode{1.3.5}
 \uses{def:normal-verifier,def:pcc,def:sync-strategy}
+\lean{MIPRE.Oracularization}
+\leanok
 There is a polynomial-time Turing machine $\ComputeOracleVerifier$ mapping a normal
 form verifier $\verifier = (\sampler, \decider)$ to a normal form verifier $\vora$
 such that, for some $\delta(\eps) = O(\sqrt{\eps})$ and all $n$:
@@ -597,6 +617,17 @@ bounded parse of each answer component against the decider's timeout bound $B_\d
 answers failing the parse are grouped into one distinguished outcome, so the oracle
 families are projective measurements and not sub-measurements.
 \end{theorem}
+
+\paragraph{Lean statement.} The theorem is the structure \texttt{MIPRE.Oracularization},
+stated in the same vocabulary as the other three transformations. It is not a stage of
+$\Compress$: in the paper $\Compress$ has three steps, and oracularization is the first step
+of the \emph{proof} of Theorem~\ref{thm:answer-reduction}, whose $\ComputeAnsVerifier$ begins
+by computing the oracularized verifier. So \texttt{MIPRE.GapCompression.ofPipeline} does not
+consume it; a proof that \texttt{MIPRE.AnswerReduction} is inhabited will. The length
+$B_\decider(n)$ against which the decider parses each answer component is an explicit
+parameter $(\lambda n)^\beta$, the ambient model having no timeout-counter form; the decider's
+complexity, absent from the statement above, is a polynomial in that length, the input's
+bounds and $\abs{\verifier}$, at a degree affine in the input's.
 
 \begin{remark}[What the audit changed in oracularization]
 \label{rem:oracularization-repairs}
@@ -769,6 +800,8 @@ Theorem~\ref{thm:pcp-decider} does.
 \label{thm:answer-reduction}
 \ledgernode{1.3, 1.3.4}
 \uses{def:normal-verifier,def:pcc,thm:succinct-sat,lem:decoupled-5sat,thm:pcp-decider,lem:schwartz-zippel,thm:qld,lem:self-dual-basis,thm:oracularization}
+\lean{MIPRE.AnswerReduction}
+\leanok
 There is a polynomial-time Turing machine $\ComputeAnsVerifier$ that on input
 $(\verifier, \lambda, \ell, \mu, \sigma)$, for $\verifier$ an $\ell$-level normal form
 verifier with $\abs{\decider} \leq \sigma$, $\TIME_\sampler(n) \leq (\lambda n)^\mu$
@@ -777,7 +810,8 @@ $\max\{\ell + 2, 5\}$-level normal form verifier $\vans$ with
 $\TIME_{\sans}(n), \TIME_{\dans}(n) = \poly\bigl( (\lambda n)^\mu, \sigma \bigr)$,
 whose sampler depends only on $(\sampler, \lambda, \ell, \mu, \sigma)$, and such that for
 some $\delta(\eps, n) = \sigma^a \bigl( (\lambda n)^{\mu a} \eps^b + (\lambda
-n)^{-\mu b} \bigr)$ (universal constants $a, b$) and all $n$:
+n)^{-\mu b} \bigr)$ (universal constants $a, b$) and a universal constant
+$C_{\mathrm{ar}}$, for all $n \geq C_{\mathrm{ar}}$:
 \begin{enumerate}
 \item (\textbf{Completeness}) If $\verifier_n$ has a value-$1$ PCC strategy
   then $\vans_n$ has a value-$1$ PCC strategy.
@@ -785,6 +819,16 @@ n)^{-\mu b} \bigr)$ (universal constants $a, b$) and all $n$:
   $\valstar(\verifier_n) \geq 1 - \delta(\eps, n)$.
 \end{enumerate}
 \end{theorem}
+
+\paragraph{Lean statement.} The theorem is the structure \texttt{MIPRE.AnswerReduction},
+parametrized by $\ell$, its output at $\max\{\ell + 2, 5\}$ levels. The hypotheses on the
+input are the budget \texttt{AnswerReduction.inBudget}: sampler within $(\lambda n + 1)^\mu$,
+decider within $2^{\mu(\lambda n + 1)}$, both at degree $\mu$, questions of dimension at most
+the sampler's bound and answers rejected beyond the decider's, together with $\abs{\decider}
+\leq \sigma$; the output is then within a universal polynomial of $(\lambda n + 1)^\mu +
+\sigma$ at a universal degree, and rejects longer answers. The threshold $C_{\mathrm{ar}}$ is
+the paper's (\texttt{thm:ar} in \texttt{ld\_compiler.tex}); an earlier statement here had the
+value clauses for all $n$. The composition consumes an instance at $\ell = 5$.
 
 This is the most technically heterogeneous section of the paper
 (\cite[Section 10]{JNVWY20}): half classical (tableaux, Tseitin encoding,
@@ -844,48 +888,72 @@ anchoring; the anchored, entanglement-form theorem used in~\cite{JNVWY20}
 \label{thm:parallel-repetition}
 \ledgernode{1.4, 1.4.3, 1.4.3.1}
 \uses{def:normal-verifier,def:pcc,def:direct-repetition,thm:direct-repetition-q,def:mipstar}
-There are universal constants $b, c > 0$ such that the following holds for every
-$\kappa \in (0,1]$. There are a constant $c' > 0$, depending only on $\kappa$, and a
-polynomial-time Turing machine $\ComputeParrepVerifier$ that on input
-$(\verifier, \lambda, \ell, \tau)$, for $\verifier$ an $\ell$-level normal form verifier,
-outputs an $\ell$-level normal form verifier $\vrep$ whose game $\vrep_n$ is the
-$k(n)$-fold direct repetition (Definition~\ref{def:direct-repetition}) of $\verifier_n$
---- up to the encoding of answer tuples as strings, the decider parsing a self-delimiting
-$k(n)$-tuple and rejecting malformed answers --- with $k(n) = (\lambda n)^{(1 + c')\tau}$,
-$\TIME_{\srep}(n) = O(k(n) \TIME_\sampler(n))$ and $\TIME_{\drep}(n) = O\bigl(k(n)
-\max(\TIME_\decider(n), (\lambda n)^\tau)\bigr)$, the sampler of $\vrep$ depending only on
-$(\sampler, \lambda, \ell, \tau)$, and for all $n$:
+\lean{MIPRE.Repetition, MIPRE.Repetition.soundBound}
+\leanok
+There are a universal constant $c > 0$ and a polynomial-time Turing machine
+$\ComputeParrepVerifier$ that on input $(\verifier, \ell, \lambda, \tau, \beta)$, for
+$\verifier$ an $\ell$-level normal form verifier, outputs an $\ell$-level normal form
+verifier $\vrep$ whose game $\vrep_n$ is the $k(n)$-fold direct repetition
+(Definition~\ref{def:direct-repetition}) of $\verifier_n$ with answers of length at most
+$B(n) = 2^{\beta(|\lambda| + |n|)}$, with $|\cdot|$ the bit length --- up to the encoding of
+answer tuples as strings, the decider parsing a self-delimiting $k(n)$-tuple, each coordinate
+against $B(n)$, and rejecting malformed answers --- with $k(n) = 2^{\tau(|\lambda| + |n|)}$,
+$\TIME_{\srep}(n) = \poly\bigl(k(n),
+\TIME_\sampler(n)\bigr)$ and $\TIME_{\drep}(n) = \poly\bigl(k(n), B(n), \TIME_\decider(n),
+\abs{\verifier}\bigr)$, the sampler of $\vrep$ depending only on $(\sampler, \lambda, \ell,
+\tau)$, and for all $n$:
 \begin{enumerate}
-\item (\textbf{Completeness}) If $\verifier_n$ has a value-$1$ PCC strategy and
-  $\TIME_\decider(n) \leq (\lambda n)^\tau$, then $\vrep_n$ has a value-$1$ PCC
-  strategy.
-\item (\textbf{Soundness}) For all $\eps > 0$, if $\valstar(\verifier_n) \leq 1 - \eps$
-  and $\TIME_\decider(n) \leq (\lambda n)^\tau$, then
-  $\valstar(\vrep_n) \leq \exp\bigl( -c\, \eps^{13}\, k(n) / (\lambda n)^{\tau} \bigr)$;
-  in particular $\valstar(\vrep_n) \leq \frac12$ whenever $\eps \geq (\lambda
-  n)^{-\tau}$, for $c'$ large enough and $n \geq 2$.
+\item (\textbf{Completeness}) If $\verifier_n$ has a value-$1$ PCC strategy, then $\vrep_n$
+  has a value-$1$ PCC strategy.
+\item (\textbf{Soundness}) For all $0 < \eps \leq 1$, if $\valstar(\verifier_n) \leq 1 -
+  \eps$ then
+  \begin{equation*}
+    \valstar(\vrep_n) \;\leq\; \exp\Bigl( - \frac{c\, \eps^{13}\, k(n)}{B(n) + 1} \Bigr)\;.
+  \end{equation*}
 \end{enumerate}
 \end{theorem}
 
-The game $\vrep_n$ is $\verifier_n^{k(n)}$: its sampler runs $k(n)$ independent copies of
-$\sampler$ (a product of conditionally linear functions of the same level) and its
-decider runs $\decider$ on every coordinate. Completeness: the $k(n)$-fold tensor power of
-a value-$1$ PCC strategy is a value-$1$ PCC strategy for the repeated game. Soundness is
-now a direct application of Theorem~\ref{thm:direct-repetition-q}: the hypothesis is
-already a $\valstar$ bound, so nothing has to be transported first. That theorem bounds
-$\valstar(\verifier_n^{k(n)})$ by $\exp\bigl( -c\, k(n)\, \eps^{13} / (\eps +
-\log(\abs{\mA}\abs{\mB})) \bigr)$, and the answer alphabets of $\verifier_n$ have size at
-most $2^{\TIME_\decider(n)}$, so $\log(\abs{\mA}\abs{\mB}) \leq 2 (\lambda n)^\tau$ and
-the denominator is $O((\lambda n)^\tau)$; with $\eps \geq (\lambda n)^{-\tau}$ and $k(n) =
-(\lambda n)^{(1 + c')\tau}$ the exponent is at least $(\lambda n)^{(c' - 13)\tau}$, so
-$c' > 13$ suffices. The exponent $13$ is the one of
-Theorem~\ref{thm:direct-repetition-q} itself, with no further loss: carrying the
-hypothesis in $\valstar$ rather than $\synval$ removes both the transport's polynomial
-loss and the factor $\kappa^{13}$ that its diagonal-weight hypothesis used to contribute.
-The conclusion is in $\valstar$, as is the hypothesis: that is the form
+The game $\vrep_n$ is $\verifier_n^{k(n)}$ at the truncated alphabet: its sampler runs
+$k(n)$ independent copies of $\sampler$ (a product of conditionally linear functions of the
+same level) and its decider runs $\decider$ on every coordinate. Completeness: the
+$k(n)$-fold tensor power of a value-$1$ PCC strategy is a value-$1$ PCC strategy for the
+repeated game. Soundness is a direct application of
+Theorem~\ref{thm:direct-repetition-q}: the hypothesis is already a $\valstar$ bound, so
+nothing has to be transported first. That theorem bounds $\valstar(\verifier_n^{k(n)})$ by
+$\exp\bigl( -c\, k(n)\, \eps^{13} / (\eps + \log(\abs{\mA}\abs{\mB})) \bigr)$, and the answer
+alphabets are the strings of length at most $B(n)$, so $\log(\abs{\mA}\abs{\mB}) \leq 2(B(n)
++ 1)$ and the denominator is at most $3(B(n) + 1)$, the factor absorbed into $c$. The
+exponent $13$ is the one of Theorem~\ref{thm:direct-repetition-q} itself, with no further
+loss: carrying the hypothesis in $\valstar$ rather than $\synval$ removes both the
+transport's polynomial loss and the factor $\kappa^{13}$ that its diagonal-weight hypothesis
+used to contribute. The conclusion is in $\valstar$, as is the hypothesis: that is the form
 Definition~\ref{def:mipstar} asks of the final game, and it is available at every step
 because nothing in the chain ever leaves $\valstar$ (Remark~\ref{rem:bipartite-route}).
-The exponent $b$ and the constants are provisional (Section~\ref{sec:conventions}).
+In~\cite{JNVWY20} the answer length is the timeout bound $B_\decider(n)$ read off the
+decider and $\tau$ is chosen against it; the ambient model has no timeout-counter form, so
+the parse length is the explicit parameter $\beta$, and the choice of $\tau$ against it is
+Lemma~\ref{lem:compress-tau}. The counts are powers of two rather than the paper's
+$(\lambda n)^\tau$ because a program of the ambient model writes $2^{\tau(|\lambda| + |n|)}$
+down by a walk over the bits of $\lambda$ and $n$, where $(\lambda n)^\tau$ would need
+multiplication; $(\lambda n + 1)^\tau \leq 2^{\tau(|\lambda| + |n|)} \leq (\lambda n +
+1)^{6\tau}$ for $\lambda, n \geq 1$, so nothing downstream can tell the difference.
+
+\paragraph{Lean statement.} The theorem is the structure \texttt{MIPRE.Repetition},
+parametrized by $\ell$: the repeated sampler as a function of the input sampler and
+$(\lambda, \tau)$ with its program computable in polynomial time, the repeated decider's
+program as a polynomial-time function of the input programs and $(\lambda, \tau, \beta)$,
+the packaging as an $\ell$-level normal form verifier, the complexity clause in the
+vocabulary of budgets (\texttt{Verifier.Within}) at a degree affine in the input's --- the
+repeated decider runs the input decider through the universal machine, whose overhead is
+polynomial --- and the two value clauses at the answer bounds stated, with $\lambda n + 1$ in
+place of $\lambda n$ so that every quantity is meaningful at every index. An earlier
+statement of this theorem coupled the answer length to a hypothesis $\TIME_\decider(n) \leq
+(\lambda n)^\tau$ and took $k(n) = (\lambda n)^{(1 + c')\tau}$ for a constant $c'$ depending
+on a parameter $\kappa$ left over from the transport through $\synval$; writing the consumer
+showed that the repetition count and the answer length have to be independent parameters,
+and the constant $c'$ is now the choice of $\tau$ in Lemma~\ref{lem:compress-tau}. Its
+inhabitation, from \texttt{MIPRE.Repetition.quantumValue\_repeat\_le}, is the next piece of
+work.
 
 \subsection{The compression theorem}
 \label{sec:ps-compression}
@@ -900,7 +968,7 @@ an entanglement bound (Remark~\ref{rem:entanglement-form}).
 \label{thm:compression}
 \ledgernode{1.5, 1.5.7}
 \uses{thm:introspection,thm:oracularization,thm:answer-reduction,thm:parallel-repetition,def:lambda-bounded,def:pcc,def:normal-verifier}
-\lean{MIPRE.GapCompression}
+\lean{MIPRE.GapCompression, MIPRE.GapCompression.ofPipeline}
 \leanok
 There is a universal constant $C_0 > 0$ and a polynomial-time Turing machine
 $\Compress$ that on input $(\verifier, \lambda)$ outputs a $7$-level normal form
@@ -917,6 +985,28 @@ $\verifier$ is a $\lambda$-bounded $7$-level normal form verifier, then for all 
   preserved, in the same value at both ends.
 \end{enumerate}
 \end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:introspection,thm:answer-reduction,thm:parallel-repetition,lem:compress-margin,lem:compress-tau,rem:compression-chain}
+$\Compress(\verifier, \lambda)$ is $\ComputeIntroVerifier(\verifier, \lambda, 7)$, then
+$\ComputeAnsVerifier(\cdot, \lambda, \mu, \sigma(\lambda))$, then
+$\ComputeParrepVerifier(\cdot, 7, \lambda, \tau, \beta)$, with $\mu$ from
+Lemma~\ref{lem:compress-margin}, $\sigma(\lambda)$ a polynomial in $\lambda$ dominating
+$C_{\mathrm{intro}} (\lambda + 1)^{C_{\mathrm{intro}}}$, $\beta$ an exponent with
+$\poly\bigl((\lambda n + 1)^\mu + \sigma(\lambda)\bigr) \leq (\lambda n + 1)^\beta$, and
+$\tau$ from Lemma~\ref{lem:compress-tau}; $C_0$ is the largest of the thresholds. The
+complexity clauses chain the three complexity clauses through the budgets: every bound is a
+monotone polynomial expression in $n$, $\lambda$, $\sigma(\lambda)$ and the sizes of the
+programs along the chain, hence at most a polynomial in $n + \lambda$. The value clauses are
+Remark~\ref{rem:compression-chain}. In Lean this is
+\texttt{MIPRE.GapCompression.ofPipeline}: an \texttt{Introspection 7}, an
+\texttt{AnswerReduction 5} and a \texttt{Repetition 7} give a \texttt{GapCompression}.
+$\sigma(\lambda)$ is computed by iterating the program of $\lambda(n)$ of
+Lemma~\ref{lem:lambda}, there being no polynomial-time arithmetic in the toolkit for the
+paper's $\lceil C_{\mathrm{intro}} \lambda^{C_{\mathrm{intro}}} \rceil$, which only has to be
+dominated. Oracularization is not a stage: it is the first step of the proof of
+Theorem~\ref{thm:answer-reduction}.
+\end{proof}
 
 The level count is forced by the chain rather than chosen: introspection outputs a
 $5$-level verifier whatever the level of its input (Theorem~\ref{thm:introspection}),
@@ -976,7 +1066,8 @@ name the corresponding nodes of the companion repository's ledger
 \label{lem:compress-sampler-indep}
 \ledgernode{1.5.1}
 \uses{thm:compression,def:normal-verifier,def:cl-function}
-\lean{MIPRE.GapCompression}
+\lean{MIPRE.GapCompression, MIPRE.Pipeline.sampler, MIPRE.Pipeline.samplerProg_eq,
+  MIPRE.Pipeline.output_sampler}
 \leanok
 For all inputs $(\verifier, \lambda)$ --- $\lambda$-bounded or not, well-formed or not
 --- the sampler $\scompr$ of $\Compress(\verifier, \lambda)$ depends only on $\lambda$,
@@ -984,6 +1075,7 @@ and there is a Turing machine $\mathtt{ComputeSampler}$ that outputs its descrip
 $\lambda$ in time $\polylog(\lambda)$.
 \end{lemma}
 \begin{proof}
+\leanok
 Chain the verifier-independence of the sampler through the three stages: introspection's
 sampler depends only on $(\lambda, \ell)$, answer reduction's only on its input sampler
 and the parameters, and repetition's only on its input sampler and $(\lambda, \ell,
@@ -994,6 +1086,9 @@ depend on what is being compressed. In Lean the lemma is built into the statemen
 Theorem~\ref{thm:compression}: the fields \texttt{sampler} and \texttt{samplerProg} of
 \texttt{MIPRE.GapCompression} are the map $\lambda \mapsto \scompr_\lambda$ and its
 polynomial-time description, and \texttt{output\_sampler} says that every output carries it.
+The chaining is \texttt{MIPRE.Pipeline.sampler}, the composite of the three sampler maps, with
+\texttt{samplerProg\_eq} its polynomial-time description and \texttt{output\_sampler} the
+claim for every input.
 \end{proof}
 
 \effortMedium
@@ -1002,37 +1097,59 @@ polynomial-time description, and \texttt{output\_sampler} says that every output
 \label{lem:compress-margin}
 \ledgernode{1.5.3}
 \uses{thm:introspection,thm:answer-reduction}
+\lean{MIPRE.Pipeline.eps1, MIPRE.Pipeline.intro_margin, MIPRE.Pipeline.exists_mu,
+  MIPRE.Pipeline.eps2, MIPRE.Pipeline.ar_margin}
+\leanok
 Write $(a_1, b_1)$ for the constants of Theorem~\ref{thm:introspection} and $(a_2, b_2)$
-for those of Theorem~\ref{thm:answer-reduction}, normalized so that $a_1, a_2 \geq 1$.
-Put $\sigma = \lceil C_{\mathrm{intro}} \lambda^{C_{\mathrm{intro}}} \rceil$ and
-\begin{equation*}
-  \mu = \Bigl\lceil \max\Bigl\{ C_{\mathrm{intro}},\ \frac{9 a_1 + 2 a_2
-  C_{\mathrm{intro}}}{b_1 b_2} \Bigr\} \Bigr\rceil .
-\end{equation*}
-Then $\mu$ is a universal constant, $\mu \geq C_{\mathrm{intro}}$, and
-\begin{equation*}
-  (\lambda n)^{-b_2 \mu} \;<\; \frac{\eps_1}{2 \sigma^{a_2}}
-  \qquad \text{for all } n \geq 2 \text{ and all } \lambda \geq 1,
-\end{equation*}
-where $\eps_1 = \bigl( 8 a_1 (\lambda n)^{a_1} \bigr)^{-1/b_1}$.
+for those of Theorem~\ref{thm:answer-reduction}, normalized so that $a_1, a_2 \geq 1$, and
+$x = \lambda n$. Put $\eps_1 = \bigl( 8 a_1 x^{a_1} \bigr)^{-1/b_1}$.
+\begin{enumerate}
+\item $\delta_1(\eps_1, n) < \frac12$ for all $x \geq (4 a_1)^{1/b_1}$.
+\item For every $K$ and $C$ there are a universal $\mu \geq C$ and a threshold $N$ such
+  that, for all $x \geq N$ and all $1 \leq \sigma \leq x^K$,
+  \begin{equation*}
+    \sigma^{a_2} x^{-b_2 \mu} \;<\; \frac{\eps_1}{2}\;;
+  \end{equation*}
+  and then, with $\eps_2 = \bigl( \eps_1 / (3 \sigma^{a_2} x^{\mu a_2}) \bigr)^{1/b_2}$,
+  $\delta_2(\eps_2, n) < \eps_1$.
+\end{enumerate}
 \end{lemma}
+\begin{proof}
+\leanok
+The first term of $\delta_1(\eps_1, n)$ is exactly $\frac18$ and the second is at most
+$\frac14$ once $x^{b_1} \geq 4 a_1$. For the second item take $\mu$ with $\mu b_2 \geq K a_2
++ a_1 / b_1 + 1$: then $\sigma^{a_2} x^{-b_2 \mu} \leq x^{-a_1/b_1 - 1}$, which is below
+$\eps_1 / 2 = (8 a_1)^{-1/b_1} x^{-a_1/b_1} / 2$ as soon as $x > 2 (8 a_1)^{1/b_1}$; and the
+first term of $\delta_2(\eps_2, n)$ is exactly $\eps_1 / 3$. The paper fixes $\sigma =
+\lceil C_{\mathrm{intro}} \lambda^{C_{\mathrm{intro}}} \rceil$ and $\mu = \lceil \max\{
+C_{\mathrm{intro}}, (9 a_1 + 2 a_2 C_{\mathrm{intro}}) / (b_1 b_2) \} \rceil$ and has the bound
+for all $n \geq 2$; the formalization takes $\sigma$ any polynomial in $\lambda$ dominating
+$C_{\mathrm{intro}} (\lambda + 1)^{C_{\mathrm{intro}}}$, hence $\sigma \leq x^K$ for a
+universal $K$, and a threshold on $n$ that $C_0$ absorbs.
+\end{proof}
 
 \effortEasy
 
 \begin{lemma}[A universal repetition exponent]
 \label{lem:compress-tau}
 \ledgernode{1.5.5}
-\uses{thm:parallel-repetition,thm:answer-reduction}
-There is a universal integer $\tau$ such that, with $k(n) = (\lambda n)^{\tau}$ and
-$\eps_2$ the function of $(n, \lambda)$ fixed by the answer-reduction stage, the
-repetition bound of Theorem~\ref{thm:parallel-repetition} is below $\frac12$ for all $n
-\geq \tau$ and all integers $\lambda \geq 1$.
+\uses{thm:parallel-repetition,thm:answer-reduction,lem:compress-margin}
+\lean{MIPRE.Pipeline.exists_eps2_lower, MIPRE.Pipeline.exists_tau}
+\leanok
+With $\eps_2$ as in Lemma~\ref{lem:compress-margin}, $1 / \eps_2 \leq x^P$ for a universal
+$P$ and all $x$ past a threshold. Consequently, for every $c > 0$ and every $\beta$ there is
+a universal integer $\tau$ such that, with $z = \lambda n + 1$, for every $k \geq z^\tau$ and
+every $0 \leq B \leq z^\beta$, the repetition bound $\exp\bigl( -c\, \eps^{13} k / (B + 1)
+\bigr)$ of Theorem~\ref{thm:parallel-repetition} is at most $\frac12$ for all $n \geq \tau$,
+all integers $\lambda \geq 1$ and all $\eps \geq z^{-P}$; the counts $k(n) \geq z^\tau$ and
+$B(n) \leq z^{6\beta}$ of that theorem qualify.
 \end{lemma}
 \begin{proof}
-$1/\eps_2$ is bounded by a fixed polynomial in $\lambda n$, because $\eps_1$, $\sigma$
-and $\mu$ are, so $\eps_2^{13} \geq (\lambda n)^{-P}$ for a universal $P$; choosing $\tau$
-larger than $P$ plus the answer-reduction exponent, with slack for the constants, makes
-the exponent of the bound grow as a positive fixed power of $\lambda n$. Purely
+\leanok
+$1 / \eps_2 = \bigl( 3 \sigma^{a_2} x^{\mu a_2} (8 a_1)^{1/b_1} x^{a_1/b_1} \bigr)^{1/b_2}$,
+and each factor is a power of $x$ once $x \geq \max\{3, 8 a_1\}$ and $\sigma \leq x^K$. Then
+$c\, \eps^{13} z^\tau / (z^\beta + 1) \geq \frac{c}{2} z^{\tau - 13 P - \beta} \geq
+\frac{c}{2} z \geq \log 2$ for $\tau \geq 13 P + \beta + 1 + 2/c$ and $z \geq \tau$. Purely
 arithmetic, and computationally testable --- the companion repository tests it.
 \end{proof}
 
@@ -1042,14 +1159,17 @@ arithmetic, and computationally testable --- the companion repository tests it.
 \label{rem:compression-chain}
 \ledgernode{1.5.8, 1.5.2, 1.5.4, 1.5.6}
 \uses{thm:compression,thm:introspection,thm:oracularization,thm:answer-reduction,thm:parallel-repetition,def:ent,lem:compress-margin,lem:compress-tau}
+\lean{MIPRE.Pipeline.output_valStar_le, MIPRE.Pipeline.output_hasPerfectPCC}
 The soundness clause of Theorem~\ref{thm:compression} is obtained by applying each
 transformation's soundness clause contrapositively, with a margin at every step. From
 $\valstar(\verifier_N) \leq \frac12$ and $\delta_1(\eps_1, n) < \frac12$: were
 $\valstar(\verifier^{(1)}_n) > 1 - \eps_1$, Theorem~\ref{thm:introspection} would give
 $\valstar(\verifier_N) \geq 1 - \delta_1 > \frac12$, so
 $\valstar(\verifier^{(1)}_n) \leq 1 - \eps_1$. The same step through
-Theorem~\ref{thm:oracularization} and then Theorem~\ref{thm:answer-reduction}, using
-$\delta_2(\eps_2, n) < \eps_1$ (Lemma~\ref{lem:compress-margin}), gives
+Theorem~\ref{thm:answer-reduction} --- whose proof is oracularization followed by the PCP
+composition, so that Theorem~\ref{thm:oracularization} is not a separate step of the chain,
+as an earlier version of this remark had it --- using $\delta_2(\eps_2, n) < \eps_1$
+(Lemma~\ref{lem:compress-margin}), gives
 $\valstar(\verifier^{(2)}_n) \leq 1 - \eps_2$; and
 Theorem~\ref{thm:parallel-repetition} with Lemma~\ref{lem:compress-tau} brings that below
 $\frac12$.
