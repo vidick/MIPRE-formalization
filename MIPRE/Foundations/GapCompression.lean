@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 import MIPRE.Foundations.Verifier
+import MIPRE.Foundations.GameDouble
 
 /-!
 # Gap-preserving compression, as a hypothesis
@@ -54,11 +55,31 @@ namespace Verifier
 
 variable {ℓ : ℕ} (V : Verifier ℓ)
 
-/-- `𝒱_n`, with answers of length at most `T`, has a value-`1` PCC strategy: the game is
-synchronous at index `n` (blueprint `def:sync-game`), and some PCC synchronous strategy
-(`def:pcc`) wins it with certainty. -/
+/-- **`𝒱_n` on the doubled question set.** Alice is asked `(false, x)`, Bob `(true, y)`; every
+other pair carries no weight and is rejected (`MIPRE.Game.doubled`). A synchronous game for
+*every* verifier, with no hypothesis on the decider, because the distribution puts no weight on
+the diagonal. -/
+noncomputable def doubledGame (n T : ℕ) : SynchronousGame (Bool × V.Questions n) (Answers T) :=
+  (V.game n T).doubled
+
+/-- **The doubled game has the value it doubles**, with no synchronicity hypothesis. -/
+theorem quantumValue_doubledGame (n T : ℕ) :
+    quantumValue (V.doubledGame n T).toGame = V.valStar n T :=
+  quantumValue_doubled (V.game n T)
+
+/-- `𝒱_n`, with answers of length at most `T`, has a value-`1` PCC strategy: some PCC
+synchronous strategy (blueprint `def:pcc`) for the game on the doubled question set wins it
+with certainty — a single family of projective measurements, played by both players, commuting
+on the support of the question distribution.
+
+Read on the doubled game rather than on `𝒱_n` itself (issue #77): a synchronous game has to
+reject unequal answers to equal questions, which is a property of the *decider*
+(`IsSynchronousAt`) that the paper's completeness clause does not supply and the paper does not
+state — there, synchronous is a property of a strategy — while the doubled game is synchronous
+for every verifier. What the paper's clause supplies, identical measurement operators for the
+two players commuting on the support, is exactly a PCC strategy of the doubled game. -/
 def HasPerfectPCC (n T : ℕ) : Prop :=
-  ∃ (h : V.IsSynchronousAt n) (S : SyncStrategy (V.syncGame n T h)), S.IsPCC ∧ S.value = 1
+  ∃ S : SyncStrategy (V.doubledGame n T), S.IsPCC ∧ S.value = 1
 
 end Verifier
 

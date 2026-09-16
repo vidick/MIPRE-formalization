@@ -181,12 +181,10 @@ every question and every pair of in-range answers.
 
 This is what rules the *un-doubled* bridges out of the halting reduction. Every statement
 whose `hD` matches a description against `V.game n T` --- `quantumValue_toGame_eq_valStar`
-below, and the four of `Foundations/SyncTransport.lean` --- is satisfiable only at a verifier
-synchronous at `n`. For the three completeness bridges there (`exists_perfectPCC_syncGame`,
-`syncValue_syncGame_eq_one`, `gameValue_toGame_eq_one`) that costs nothing, `HasPerfectPCC n T`
-carrying `IsSynchronousAt n` already. Where this lemma bites is the other two --- the value
-bridge below, and `gameValue_toGame_le_of_valStar_le`, the soundness side: their hypotheses
-mention no synchronicity and it is forced on them anyway. `IsBounded n` does not supply it (the
+below, and `gameValue_toGame_le_of_valStar_le` of `Foundations/SyncTransport.lean` --- is
+satisfiable only at a verifier synchronous at `n`, while their hypotheses mention no
+synchronicity, so it is forced on them anyway. (Three un-doubled completeness bridges once sat
+beside them; they went when `HasPerfectPCC` moved to the doubled game, issue #77.) `IsBounded n` does not supply it (the
 wrapper of `Decider.wrap` enforces `accepts_length` and nothing else), and neither does
 `MIPRE.Halting.classB`, which is the class the soundness branch of the halting reduction runs
 in. That is why `Foundations/GameDouble.lean` and the `_doubled` bridges beside them exist:
@@ -229,12 +227,15 @@ a search — or its value at index `n` exceeds `1/2`, which is the `val*` half o
 `lem:value-lower-approx` on the tabulation. Neither disjunct decides `n`-boundedness, which is
 `Π₁`; the point of the disjunction is that it does not have to. -/
 theorem not_inClassB_iff {ℓ : ℕ} (V : Verifier ℓ) (n T : ℕ) :
-    ¬ V.InClassB n T ↔ (¬ V.IsBounded n ∨ 1 / 2 < V.valStar n T) := by
-  rw [InClassB, not_and_or, not_le]
+    ¬ V.InClassB n T ↔
+      (¬ V.IsBounded n ∨ ¬ V.RejectsLong n T ∨ 1 / 2 < V.valStar n T) := by
+  rw [InClassB, not_and_or, not_and_or, not_le]
 
-/-- A verifier that *is* `n`-bounded lies outside `B` exactly when its value exceeds `1/2`. -/
+/-- A verifier that *is* `n`-bounded lies outside `B` exactly when it accepts a long answer
+or its value exceeds `1/2`. -/
 theorem not_inClassB_iff_of_isBounded {ℓ : ℕ} (V : Verifier ℓ) {n T : ℕ}
-    (hb : V.IsBounded n) : ¬ V.InClassB n T ↔ 1 / 2 < V.valStar n T := by
+    (hb : V.IsBounded n) :
+    ¬ V.InClassB n T ↔ (¬ V.RejectsLong n T ∨ 1 / 2 < V.valStar n T) := by
   rw [not_inClassB_iff]
   simp [hb]
 

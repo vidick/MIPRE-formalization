@@ -50,7 +50,12 @@ proof applies directly, and the structure's content is the fourth:
   What is not here yet is the construction — the ambient program, its agreement with
   `G.output`, and its cost accounting.
 
-O4 is the substance that is left, and `planning/h4-assembly.md` §4 item 4 has the plan.
+O4 is the substance that is left, and `planning/h4-assembly.md` §4 item 4 has the plan. Its
+consumer is written first, below: `CompressorSpec` says what the compressor's program has to
+satisfy — the parameter it carries, the agreement of its decider with the compressed decider
+of the frozen verifier, its boundedness, the growth of the parameter — and
+`CompressorSpec.toObligations` is the class transfer from those fields alone, so that the
+construction owes the fields and nothing that would come out in a proof later.
 
 ## What this is not
 
@@ -114,26 +119,148 @@ structure Obligations (G : GapCompression) (U : UniversalMachine) where
   (`Halting/Instantiation.lean`) is that step, checked; note the threshold is set by the
   polynomial `G.bound`, not by `G.deg`.
 
-  **Open, and the field is expected to need one more hypothesis.** That argument settles the
-  `classA` direction, where `hasPerfectPCC_of_le` raises the answer bound. The `classB`
-  direction runs the other way and does not close with these hypotheses: `G.soundness` wants
+  **Both directions close from these hypotheses, and the second needs the rejection clause of
+  the classes.** The `classA` direction is the argument above, `hasPerfectPCC_of_le` raising the
+  answer bound. The `classB` direction runs the other way: `G.soundness` wants
   `valStar (2 ^ n) ((2 ^ n) ^ λ) ≤ 1/2`, membership in `classB G U (2n+1)` gives it at
-  `ansBound G x (2n+1)`, and `valStar_le_of_le` only *raises* the value with the bound — so the
-  `ansBound ≤ (2 ^ n) ^ λ` that the `classA` direction needs is exactly the wrong direction
-  here, and the two cannot be met by one `λ` (the same `λ` is written into the output, so it is
-  the same in both). The escape is `valStar_eq_of_rejects`: if `x`'s decider rejects every
-  answer longer than `ansBound G x (2n+1)` at index `2n + 1`, raising the bound does not move
-  the value and both directions go through the one inequality. `ansBound` is *defined* to be
-  that rejection threshold for a compressed decider of parameter `descLam x`
-  (`GapCompression.output_rejects_long`), and in the criterion's recursion every string is the
-  compressor's own output one level up, so the criterion can supply it — but it is not supplied
-  now, and an arbitrary `descDec x` does not reject. Settle the shape of the hypothesis when
-  the construction is built, not before; `planning/h4-assembly.md` §4 item 4 has the argument
-  and issue #53 tracks it. -/
+  `ansBound G x (2n+1)`, and `valStar_le_of_le` only *raises* a value with its bound. What
+  carries it is `valStar_eq_of_rejects`: membership carries `Verifier.RejectsLong`, the decider
+  rejecting every answer longer than `ansBound G x (2n+1)` at index `2n + 1`, so raising the
+  bound to `(2 ^ n) ^ λ` does not move the value. In return the output has to reject beyond
+  `ansBound G (compr (c, n)) n` to be in either class, which `GapCompression.output_rejects_long`
+  supplies once the output's decider is a compressed decider. The paper's `V^halt` has both by
+  construction, Step 6 of its decider `F` being an explicit length check spent in the amended
+  proof of `lem:dhalt-values`; `planning/h4-assembly.md` §4 item 4 has the argument and the
+  choice to put the clause in the classes rather than through the criterion. -/
   compr_spec : ∀ (c : Prog) (x : BitStr) (n : ℕ), n₀ ≤ n → 2 * esize c ≤ n →
     IsSuccinctDesc c n x → x.length ≤ n + 1 →
       (x ∈ classA G U (2 * n + 1) → compr (c, n) ∈ classA G U n) ∧
       (x ∈ classB G U (2 * n + 1) → compr (c, n) ∈ classB G U n)
+
+/-! ## What the compressor must supply
+
+The consumer of obligation O4, written before its construction (`planning/h4-assembly.md` §1,
+"write the consumer first"): a structure `CompressorSpec` of the properties the compressor's
+program has to have, and the theorem `obligations_of_spec` turning one into an `Obligations`.
+It is the class transfer of `rem:compression-abstract` item 2 done once, against named
+hypotheses, so that what the construction owes is exactly the fields below and nothing that
+comes out in a proof later.
+
+The reading. On a succinct description `c` of a short string `x` at level `n`, the output
+`compr (c, n)` is a string denoting the parameter `lam n` and a decider that, at every index,
+accepts what the compressed decider of *the verifier of `x` frozen at index `2n + 1`* accepts
+(`accepts_compr`); its verifier is `n`-bounded (`isBounded_compr`, the accounting); and `lam n`
+grows fast enough for the frozen verifier to be `lam n`-bounded (`lam_ge`, consumed by
+`Verifier.freeze_isBounded`) and for the answer budget of level `2n + 1` to fit under the one
+`GapCompression.completeness` takes its hypothesis at (`ansBound_le`, from `exists_ansBound_le`
+with `n₀` past its threshold). -/
+
+/-- **The specification of the compressor.** What obligation O4's construction has to prove of
+its program; `obligations_of_spec` is the class transfer on top. -/
+structure CompressorSpec (G : GapCompression) (U : UniversalMachine) where
+  /-- The level above which everything holds; at least `G.C₀`. -/
+  n₀ : ℕ
+  C₀_le : G.C₀ ≤ n₀
+  /-- The compressor. -/
+  compr : PolyTimeFun (Prog × ℕ) BitStr
+  /-- The parameter the output carries at level `n`. -/
+  lam : ℕ → ℕ
+  /-- The output at level `n` denotes the parameter `lam n`. -/
+  descLam_compr : ∀ (c : Prog) (n : ℕ), descLam (compr (c, n)) = lam n
+  /-- **Acceptance agreement.** The output's decider accepts, at every index, exactly what the
+  compressed decider of the verifier of `x` frozen at `2n + 1` accepts. -/
+  accepts_compr : ∀ (c : Prog) (x : BitStr) (n : ℕ), n₀ ≤ n → 2 * esize c ≤ n →
+    IsSuccinctDesc c n x → x.length ≤ n + 1 →
+    ∀ (m : ℕ) (x' y' a b : BitStr),
+      (Vof G U (compr (c, n))).decider.Accepts m x' y' a b ↔
+        (G.output (((Vof G U x).freeze (2 * n + 1)).sampler.prog,
+          ((Vof G U x).freeze (2 * n + 1)).decider.prog) (lam n)).decider.Accepts m x' y' a b
+  /-- **The accounting.** The output's verifier is `n`-bounded, given that the described
+  verifier is `(2n + 1)`-bounded. -/
+  isBounded_compr : ∀ (c : Prog) (x : BitStr) (n : ℕ), n₀ ≤ n → 2 * esize c ≤ n →
+    IsSuccinctDesc c n x → x.length ≤ n + 1 → (Vof G U x).IsBounded (2 * n + 1) →
+    (Vof G U (compr (c, n))).IsBounded n
+  /-- **Growth of the parameter**, as `Verifier.freeze_isBounded` consumes it: the running
+  times and dimension of a `(2n + 1)`-bounded verifier at index `2n + 1`, shifted by the cost
+  of freezing, fit under `2 ^ lam n`, and the index and the size fit under `lam n`. -/
+  lam_ge : ∀ n, n₀ ≤ n →
+    (2 * n + 1) ^ (2 * n + 1) + esize (2 * n + 1) + 4 ≤ 2 ^ lam n ∧
+    2 * n + 1 + esize (2 * n + 1) + 53 ≤ lam n
+  /-- **The answer budget fits**: `exists_ansBound_le` with `n₀` past its threshold and `lam n`
+  past `lam₀`. -/
+  ansBound_le : ∀ (x : BitStr) (n : ℕ), n₀ ≤ n → x.length ≤ n + 1 →
+    ansBound G x (2 * n + 1) ≤ (2 ^ n) ^ lam n
+
+namespace CompressorSpec
+
+variable {G U} (S : CompressorSpec G U)
+
+/-- The verifier of `x` frozen at `2n + 1` is `lam n`-bounded, from its `(2n + 1)`-boundedness
+and the growth of `lam`. -/
+theorem frozen_isBounded {x : BitStr} {n : ℕ} (hn : S.n₀ ≤ n)
+    (hb : (Vof G U x).IsBounded (2 * n + 1)) :
+    ((Vof G U x).freeze (2 * n + 1)).IsBounded (S.lam n) := by
+  obtain ⟨h1, h2⟩ := S.lam_ge n hn
+  obtain ⟨hdim, hS, hD⟩ := hb.1 (2 * n + 1) hb.two_le
+  exact (Vof G U x).freeze_isBounded (2 * n + 1) (S.lam n) _ _ _ _ hS hD
+    (hdim.trans (by omega)) h1 h1 (by omega) (by omega) (by have := hb.2; omega)
+
+/-- The output's verifier has the compressed sampler at `lam n`, as the compression theorem's
+output does. -/
+theorem sampler_eq (c : Prog) (n : ℕ) (V : Prog × Prog) :
+    (G.output V (S.lam n)).sampler = (Vof G U (S.compr (c, n))).sampler := by
+  rw [G.output_sampler, Vof, Verifier.ofSamplerDecider_sampler, S.descLam_compr]
+
+/-- The answer budget the output's class is read with is the one the compression theorem's
+output is judged at. -/
+theorem ansBound_compr (c : Prog) (n : ℕ) :
+    ansBound G (S.compr (c, n)) n = G.bound.eval (n + S.lam n) := by
+  rw [ansBound, S.descLam_compr]
+
+/-- **The class transfer.** A compressor meeting the specification inhabits `Obligations`. -/
+def toObligations : Obligations G U where
+  n₀ := S.n₀
+  compr := S.compr
+  compr_spec := by
+    intro c x n hn hc hsd hlen
+    -- the objects: the described verifier, frozen; the compression theorem's output
+    set V := Vof G U x with hV
+    set W := G.output ((V.freeze (2 * n + 1)).sampler.prog, (V.freeze (2 * n + 1)).decider.prog)
+      (S.lam n) with hW
+    have hacc := S.accepts_compr c x n hn hc hsd hlen
+    have hS : (Vof G U (S.compr (c, n))).sampler = W.sampler := (S.sampler_eq c n _).symm
+    have hC₀ : G.C₀ ≤ n := S.C₀_le.trans hn
+    have hans := S.ansBound_le x n hn hlen
+    -- the output rejects long answers, as every compressed decider does
+    have hrej : (Vof G U (S.compr (c, n))).RejectsLong n (ansBound G (S.compr (c, n)) n) := by
+      intro x' y' a b hl h
+      rw [S.ansBound_compr] at hl
+      exact G.output_rejects_long _ (S.lam n) n x' y' a b hl ((hacc n x' y' a b).1 h)
+    refine ⟨fun hA => ?_, fun hB => ?_⟩
+    · obtain ⟨hb, -, hpcc⟩ := hA
+      refine ⟨S.isBounded_compr c x n hn hc hsd hlen hb, hrej, ?_⟩
+      -- raise the answer bound, freeze, compress, and read the result on the output's verifier
+      have h1 : V.HasPerfectPCC (2 * n + 1) ((2 ^ n) ^ S.lam n) :=
+        V.hasPerfectPCC_of_le hans hpcc
+      have h2 : (V.freeze (2 * n + 1)).HasPerfectPCC (2 ^ n) ((2 ^ n) ^ S.lam n) :=
+        (V.freeze_hasPerfectPCC (2 * n + 1) (2 ^ n) _).2 h1
+      have h3 : W.HasPerfectPCC n (G.bound.eval (n + S.lam n)) :=
+        G.completeness _ (S.lam n) n (S.frozen_isBounded hn hb) hC₀ h2
+      rw [S.ansBound_compr]
+      exact (Verifier.hasPerfectPCC_congr hS fun x' y' a b => (hacc n x' y' a b).symm).1 h3
+    · obtain ⟨hb, hrejx, hval⟩ := hB
+      refine ⟨S.isBounded_compr c x n hn hc hsd hlen hb, hrej, ?_⟩
+      -- the described verifier rejects beyond its answer bound, so raising it keeps the value
+      have h1 : V.valStar (2 * n + 1) ((2 ^ n) ^ S.lam n) ≤ 1 / 2 := by
+        rw [V.valStar_eq_of_rejects hans hrejx]; exact hval
+      have h2 : (V.freeze (2 * n + 1)).valStar (2 ^ n) ((2 ^ n) ^ S.lam n) ≤ 1 / 2 := by
+        rw [V.freeze_valStar]; exact h1
+      have h3 : W.valStar n (G.bound.eval (n + S.lam n)) ≤ 1 / 2 :=
+        G.soundness _ (S.lam n) n (S.frozen_isBounded hn hb) hC₀ h2
+      rw [S.ansBound_compr, ← Verifier.valStar_congr hS fun x' y' a b => (hacc n x' y' a b).symm]
+      exact h3
+
+end CompressorSpec
 
 /-! ## The reduction -/
 
@@ -190,8 +317,8 @@ theorem halting_reduction (O : Obligations G U) :
       ((PolyTimeFun.computable_comp g compile hc Data.primrec_decode_bitStr.to_comp).pair hlevel),
     fun pc => ⟨fun hdom => ?_, fun hdom => ?_⟩⟩
   · have hx := (hg (compile pc)).2.1 ((hspec pc).2 hdom)
-    rw [tab_value G U _ _ hx.1, (Vof G U _).valStar_eq_one_of_hasPerfectPCC hx.2]
+    rw [tab_value G U _ _ hx.1, (Vof G U _).valStar_eq_one_of_hasPerfectPCC hx.2.2]
   · have hx := (hg (compile pc)).2.2 fun h => hdom ((hspec pc).1 h)
-    exact (tab_value G U _ _ hx.1).le.trans hx.2
+    exact (tab_value G U _ _ hx.1).le.trans hx.2.2
 
 end MIPRE.Halting

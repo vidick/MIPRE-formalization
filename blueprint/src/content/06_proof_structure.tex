@@ -954,9 +954,15 @@ that its value is the same with any larger alphabet
 (\texttt{Verifier.valStar\_eq\_of\_rejects}) --- since the exact running times of
 Definition~\ref{def:normal-verifier} are not functions of the verifier in the
 formalization. And ``a value-$1$ PCC strategy'' is a PCC synchronous strategy of value $1$
-for the game read as synchronous (\texttt{Verifier.HasPerfectPCC}), which presupposes that
-the decider rejects unequal answers to equal questions at that index, as the deciders of
-the pipeline do.
+for the game on the \emph{doubled} question set (\texttt{Verifier.HasPerfectPCC}, on
+\texttt{Verifier.doubledGame}: Alice's questions tagged $0$, Bob's tagged $1$, every other
+pair of weight zero and rejected), which is a synchronous game for every verifier, so nothing
+is presupposed of the decider. An earlier reading took $\vcompr_n$ itself as the synchronous
+game, which asks its decider to reject unequal answers to equal questions --- a property of
+the decider that the paper never states, \emph{synchronous} there being a property of
+strategies, and one the paper's completeness clause does not supply. What that clause does
+supply --- identical measurement operators for the two players, commuting on the support of
+the question distribution --- is exactly a PCC strategy of the doubled game.
 
 The four stages are chained through a parameter budget rather than composed blindly:
 each stage's soundness clause is applied contrapositively, and each application needs a
@@ -1068,7 +1074,8 @@ lower bound has to be tracked anywhere in this chapter.
 \uses{thm:compression,lem:compressible-criterion,def:succinct,lem:value-lower-approx}
 \lean{MIPRE.quantumValue_eq_of_equiv, MIPRE.quantumValue_extendAnswers,
   MIPRE.Verifier.valStar_congr, MIPRE.Verifier.hasPerfectPCC_congr,
-  MIPRE.Verifier.valStar_eq_of_rejects, MIPRE.Verifier.hasPerfectPCC_of_le,
+  MIPRE.Verifier.valStar_eq_of_rejects, MIPRE.Verifier.RejectsLong,
+  MIPRE.Verifier.freeze_rejectsLong, MIPRE.Verifier.hasPerfectPCC_of_le,
   MIPRE.Verifier.valStar_eq_one_of_hasPerfectPCC, MIPRE.Verifier.freeze,
   MIPRE.Verifier.freeze_valStar, MIPRE.Verifier.freeze_hasPerfectPCC,
   MIPRE.Verifier.freeze_isBounded, MIPRE.Cost.Data.toBitsPost, MIPRE.Cost.Data.parse,
@@ -1082,14 +1089,13 @@ lower bound has to be tracked anywhere in this chapter.
   MIPRE.Verifier.quantumValue_toGame_eq_valStar, MIPRE.Verifier.not_inClassB_iff,
   MIPRE.SyncStrategy.relabel, MIPRE.SyncStrategy.value_relabel,
   MIPRE.SyncStrategy.isPCC_relabel, MIPRE.syncValue_eq_of_equiv,
-  MIPRE.Verifier.exists_perfectPCC_syncGame, MIPRE.Verifier.syncValue_syncGame_eq_one,
-  MIPRE.Verifier.gameValue_toGame_eq_one,
   MIPRE.Verifier.gameValue_toGame_le_of_valStar_le,
   HaltingGameValue.GameData.toSyncStrategy, HaltingGameValue.GameData.ofSyncStrategy,
   HaltingGameValue.GameData.gameValue_eq_syncValue,
   HaltingGameValue.GameData.gameValue_le_quantumValue,
   MIPRE.Halting.descLam, MIPRE.Halting.descDec, MIPRE.Halting.Vof,
   MIPRE.Halting.classA, MIPRE.Halting.classB, MIPRE.Halting.Obligations,
+  MIPRE.Halting.CompressorSpec, MIPRE.Halting.CompressorSpec.toObligations,
   MIPRE.Cost.Prog.HasPolyCost, MIPRE.Verifier.IsBounded.mono,
   MIPRE.Verifier.exists_isBounded, MIPRE.Cost.Prog.wrapCore_hasPolyCost,
   MIPRE.Verifier.ofSamplerDecider_isBounded, MIPRE.Halting.yYes, MIPRE.Halting.yNo,
@@ -1152,11 +1158,21 @@ of the recursion.
   Definition~\ref{def:normal-verifier} being enforced by a wrapper around $\decider$; so
   every string names a normal form verifier, and the interpretation sits outside every
   time bound. $A_n$ is the set of strings whose verifier is $n$-bounded and whose $n$-th
-  game has a value-$1$ PCC strategy, $B_n$ the set of those that are $n$-bounded with
-  $\valstar \leq \frac12$ at index $n$ (\texttt{Verifier.InClassA},
-  \texttt{InClassB}; disjoint, since a perfect PCC strategy gives $\valstar = 1$). Only the
-  length check has to go into the wrapper: synchronicity at an index and the answer-length
-  bound are conditions on membership in these classes, not on well-formedness, and the
+  game has a value-$1$ PCC strategy and whose decider rejects every answer longer than the
+  answer bound at index $n$; $B_n$ the set of those that are $n$-bounded, reject long
+  answers, and have $\valstar \leq \frac12$ at index $n$ (\texttt{Verifier.InClassA},
+  \texttt{InClassB}, the rejection clause being \texttt{Verifier.RejectsLong}; disjoint,
+  since a perfect PCC strategy gives $\valstar = 1$). The rejection clause is Step~6 of the
+  paper's decider $F$ --- an explicit length check before $\dcompr$ is run, which the amended
+  proof of Lemma~\ref{lem:dhalt-values} spends to identify the answer alphabets of
+  $\vhalt_n$ and $\vcompr_n$ --- made a condition on membership: the soundness direction of
+  the compressor's obligation raises the answer bound from the one a class is read with to
+  the one Theorem~\ref{thm:compression} takes its hypothesis at, and only a decider that
+  rejects beyond the former keeps the value fixed under that
+  (\texttt{Verifier.valStar\_eq\_of\_rejects}; enlarging the bound can otherwise only raise
+  the value). Only the length check has to go into the wrapper: the answer-length bound is a
+  condition on membership in these classes, not on well-formedness, synchronicity is asked
+  of no decider at all (the value-$1$ PCC strategy lives on the doubled game), and the
   paper's timeout counter is not needed either --- a decider that fails to halt simply fails
   to be $n$-bounded, and its string then lies in neither class. Tying the bound $\lambda = n$ to the level is what
   replaces the choice of $\lambda$ along the recursion (Lemma~\ref{lem:lambda}): the levels
@@ -1183,18 +1199,27 @@ of the recursion.
   level $2n + 1$ to the class of the output at level $n$, and the output is $n$-bounded
   for $n$ above a universal threshold: its size is $\abs{\hat x} + O(\log n) \leq n$ by the
   slack $2\abs{\hat x} \leq n$ of the lemma, and its time at index $N$ is $\poly(N, n) \leq
-  N^n$.
+  N^n$. In Lean that transfer is done once, against a specification of the output written
+  before its construction --- \texttt{MIPRE.Halting.CompressorSpec}: the parameter
+  $\lambda(n)$ the output carries, the agreement of its decider at every index with the
+  compressed decider of the frozen verifier, its $n$-boundedness, the growth of $\lambda(n)$
+  that \texttt{freeze\_isBounded} consumes, and the answer-budget comparison of
+  \texttt{exists\_ansBound\_le} --- and \texttt{CompressorSpec.toObligations} is the class
+  transfer, in both directions, from those fields alone. What the construction owes is
+  exactly the fields of that structure.
 \item \emph{Junk inputs.} Nothing is demanded of the compressor off strings in $A_{2n+1}
   \cup B_{2n+1}$, every string names a verifier, and $\lambda$-boundedness is decided
   nowhere. What the lemma does demand is that the complement of $B_n$ be semidecidable:
   ``not $n$-bounded'' is witnessed by an index and an input on which a time bound fails --- a
-  search, so $\Sigma_1$, and this is Lemma~\ref{lem:bounded-violation-re} --- and
+  search, so $\Sigma_1$, and this is Lemma~\ref{lem:bounded-violation-re} ---, ``accepts some
+  answer longer than the bound'' is witnessed by the tuple and a run, a search again
+  (\texttt{Verifier.rePred\_not\_rejectsLong}), and
   ``$\valstar > \frac12$ at index $n$'' is the $\valstar$ half of
   Lemma~\ref{lem:value-lower-approx} applied to the tabulated game, which is computable from
-  an $n$-bounded verifier. Neither disjunct decides $n$-boundedness, which is $\Pi_1$; the
-  point of taking the disjunction is that it does not have to
+  an $n$-bounded verifier. No disjunct decides $n$-boundedness, which is $\Pi_1$; the point
+  of taking the disjunction is that it does not have to
   (\texttt{Verifier.not\_inClassB\_iff}), and Lemma~\ref{lem:halting-semidecider} is the
-  two merged. Two things about the search for a violated bound. The budget it tests against is a
+  three merged. Two things about the search for a violated bound. The budget it tests against is a
   \emph{cost} and not a number of machine steps, and a step is not a unit of cost, so
   \texttt{Machine.runForD} below does not decide it and Lemma~\ref{lem:cost-budget-decidable}
   is what does. And the index at which a bound fails ranges over all of $\N$, while the bound
@@ -1427,27 +1452,30 @@ serves both.
 \begin{lemma}[The semidecider of the halting reduction]
 \label{lem:halting-semidecider}
 \uses{lem:bounded-violation-re,lem:value-lower-approx,lem:semidecide-encoded,def:game-description}
-\lean{MIPRE.Halting.exists_sem_of_tab, MIPRE.REPred.or}
+\lean{MIPRE.Halting.exists_sem_of_tab, MIPRE.REPred.or, MIPRE.Verifier.LongAcceptance,
+  MIPRE.Verifier.longAcceptanceB, MIPRE.Verifier.longAcceptanceB_iff,
+  MIPRE.Verifier.not_rejectsLong_iff_exists, MIPRE.Verifier.rePred_not_rejectsLong}
 \leanok
 Let the family \texttt{Vof} of verifiers named by strings be computably presented
 (Lemma~\ref{lem:bounded-violation-re}) and let $x, n \mapsto \game_{x,n}$ be a computable
 family of game descriptions with $\valstar(\game_{x, n}) = \valstar(\verifier^x_n)$
 whenever $\verifier^x$ is $n$-bounded. Then there is a closed program of the cost model
-halting on $\mathrm{encode}(x, n)$ exactly when $x \notin B_n$: the field
-\texttt{Obligations.sem} of Remark~\ref{rem:compression-abstract} with its two
-specifications.
+halting on $\mathrm{encode}(x, n)$ exactly when $x \notin B_n$: obligation O3 of
+Remark~\ref{rem:compression-abstract}.
 \end{lemma}
 
 \begin{proof}
 \leanok
 \uses{lem:bounded-violation-re,lem:semidecide-encoded}
-$x \notin B_n$ is ``$\verifier^x$ is not $n$-bounded or $\valstar(\verifier^x_n) >
-\frac12$'' (\texttt{Verifier.not\_inClassB\_iff}). Under the hypothesis on the family the
-second disjunct may be read on $\game_{x,n}$ instead, in both directions: if $\verifier^x$
-is $n$-bounded the two values are equal, and if it is not then the first disjunct holds
-anyway. The first disjunct is recursively enumerable by
-Lemma~\ref{lem:bounded-violation-re} and the second by the $\valstar$ half of
-Lemma~\ref{lem:value-lower-approx} along the computable family; a union of two recursively
+$x \notin B_n$ is ``$\verifier^x$ is not $n$-bounded, or its decider accepts some answer
+longer than the answer bound at index $n$, or $\valstar(\verifier^x_n) > \frac12$''
+(\texttt{Verifier.not\_inClassB\_iff}). Under the hypothesis on the family the last disjunct
+may be read on $\game_{x,n}$ instead, in both directions: if $\verifier^x$ is $n$-bounded the
+two values are equal, and if it is not then the first disjunct holds anyway. The first
+disjunct is recursively enumerable by Lemma~\ref{lem:bounded-violation-re}; the second by the
+same pattern with a simpler witness --- the tuple and a step budget, tested by one budgeted
+run of the decider (\texttt{Verifier.rePred\_not\_rejectsLong}); the third by the $\valstar$
+half of Lemma~\ref{lem:value-lower-approx} along the computable family. A union of recursively
 enumerable sets is recursively enumerable, by dovetailing. Lemma~\ref{lem:semidecide-encoded}
 turns the result into a program on the encodings of pairs.
 \end{proof}
@@ -1480,11 +1508,12 @@ Remark~\ref{rem:compression-abstract} still open. The doubling costs nothing out
 tabulation, and it is not the only hypothesis this lemma has lost: the family \texttt{Vof} is
 computably presented outright (\texttt{MIPRE.Halting.computablyPresented\_Vof}, off the
 re-budgeted sampler runs of Remark~\ref{rem:compression-abstract}), so
-\texttt{MIPRE.Halting.exists\_sem} takes no hypotheses at all and
-\texttt{Obligations.sem} with its two specifications is a theorem. It is a field of that
-structure still, which is what the next piece of work removes: \texttt{exists\_sem} sits above
-\texttt{Obligations} in the import order, so dropping the three fields is a module move rather
-than mathematics.
+\texttt{MIPRE.Halting.exists\_sem} takes no hypotheses at all; \texttt{Obligations}
+(\texttt{Halting/Reduction.lean}) sits below it in the import order and
+\texttt{halting\_reduction} applies it directly, so O3 is a theorem and not a field. The
+rejection clause of the classes arrived later than the doubling and cost this lemma one more
+disjunct, enumerated by the same search; what it buys is the soundness direction of the
+compressor's obligation (Remark~\ref{rem:compression-abstract}, item 1).
 
 \effortMedium
 
@@ -1677,9 +1706,8 @@ That assembly concludes in $\valstar$ only, and item 1 claims more: the witness 
 Lean, neither of them part of the instantiation. First, a synchronous strategy transports along
 a relabeling of the alphabets (\texttt{MIPRE.syncValue\_eq\_of\_equiv}, from
 \texttt{SyncStrategy.relabel}, which preserves the value and the commutation condition), so a
-value-$1$ PCC strategy of $\verifier_n$ gives one for a description tabulating it --- after
-the strategy has been doubled along with the game (\texttt{SyncStrategy.double},
-\texttt{isPCC\_double}), the tabulation matching the doubled game:
+value-$1$ PCC strategy of $\verifier_n$ --- a strategy of its doubled game, which is what
+\texttt{HasPerfectPCC} is --- gives one for a description tabulating that doubled game:
 \texttt{Verifier.exists\_perfectPCC\_syncGame\_doubled}, hence
 \texttt{Verifier.syncValue\_syncGame\_eq\_one\_doubled}. Second, \texttt{MIPRE.syncValue} and
 \texttt{HaltingGameValue.gameValue} --- parallel developments with parallel notions of
@@ -1690,8 +1718,11 @@ in the vocabulary of \texttt{halting\_reduces\_to\_gameValue}
 on the tabulation is \texttt{MIPRE.Halting.gameValue\_tab\_eq\_one}. Soundness needs neither
 step, only $\synval \leq \valstar$ (Lemma~\ref{lem:sync-le-valstar}), which is
 \texttt{Verifier.gameValue\_toGame\_le\_of\_valStar\_le\_doubled} in the same vocabulary. The
-four undoubled bridges are still there and still true, and are simply not the ones this
-tabulation feeds. Both steps
+soundness bridge against $\verifier_n$ itself is still there and still true; the three
+un-doubled completeness bridges went with the restatement of \texttt{HasPerfectPCC} on the
+doubled game (Theorem~\ref{thm:compression}, ``two readings''), a strategy of the doubled game
+having no reason to agree with itself across the two tags on the diagonal, which carries no
+weight. Both steps
 consume the tabulation's agreement with $\verifier_n$ in the form of the two alphabet
 equivalences and the matching of $\mu$ and $D$ along them, not merely the equality of
 $\valstar$ they imply --- from that equality alone the synchronous half cannot be recovered,

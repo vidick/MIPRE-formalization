@@ -203,6 +203,12 @@ theorem freeze_isSynchronousAt (k n : ℕ) :
     (V.freeze k).IsSynchronousAt n ↔ V.IsSynchronousAt k := by
   simp only [IsSynchronousAt, freeze_decider, Decider.freeze_accepts]
 
+/-- The frozen verifier rejects long answers at any index exactly when `V` does at the frozen
+index. -/
+theorem freeze_rejectsLong (k n T : ℕ) :
+    (V.freeze k).RejectsLong n T ↔ V.RejectsLong k T := by
+  simp only [RejectsLong, freeze_decider, Decider.freeze_accepts]
+
 /-- The value of the frozen verifier at any index is the value of `V` at the frozen index. -/
 theorem freeze_valStar (k n T : ℕ) : (V.freeze k).valStar n T = V.valStar k T := by
   unfold valStar
@@ -214,18 +220,22 @@ theorem freeze_valStar (k n T : ℕ) : (V.freeze k).valStar n T = V.valStar k T 
 the frozen index. -/
 theorem freeze_hasPerfectPCC (k n T : ℕ) :
     (V.freeze k).HasPerfectPCC n T ↔ V.HasPerfectPCC k T := by
+  have hD : ∀ p q a b, ((V.freeze k).doubledGame n T).D p q a b
+      = (V.doubledGame k T).D p q a b := by
+    intro p q a b
+    change (if p.1 = false ∧ q.1 = true then ((V.freeze k).game n T).D p.2 q.2 a b else false)
+      = (if p.1 = false ∧ q.1 = true then (V.game k T).D p.2 q.2 a b else false)
+    split_ifs
+    · exact decide_eq_decide.2 (V.decider.freeze_accepts k n _ _ _ _)
+    · rfl
   constructor
-  · rintro ⟨hs, S, hpcc, hval⟩
-    have hs' : V.IsSynchronousAt k := (V.freeze_isSynchronousAt k n).1 hs
-    refine ⟨hs', S.copy (V.syncGame k T hs'), S.isPCC_copy hpcc _ (fun _ _ => rfl), ?_⟩
-    exact (S.value_copy (V.syncGame k T hs') (fun _ _ => rfl) fun x y a b =>
-      decide_eq_decide.2 (V.decider.freeze_accepts k n _ _ _ _).symm).trans hval
-  · rintro ⟨hs, S, hpcc, hval⟩
-    have hs' : (V.freeze k).IsSynchronousAt n := (V.freeze_isSynchronousAt k n).2 hs
-    refine ⟨hs', S.copy ((V.freeze k).syncGame n T hs'), S.isPCC_copy hpcc _ (fun _ _ => rfl),
-      ?_⟩
-    exact (S.value_copy ((V.freeze k).syncGame n T hs') (fun _ _ => rfl) fun x y a b =>
-      decide_eq_decide.2 (V.decider.freeze_accepts k n _ _ _ _)).trans hval
+  · rintro ⟨S, hpcc, hval⟩
+    refine ⟨S.copy (V.doubledGame k T), S.isPCC_copy hpcc _ (fun _ _ => rfl), ?_⟩
+    exact (S.value_copy (V.doubledGame k T) (fun _ _ => rfl) fun p q a b =>
+      (hD p q a b).symm).trans hval
+  · rintro ⟨S, hpcc, hval⟩
+    refine ⟨S.copy ((V.freeze k).doubledGame n T), S.isPCC_copy hpcc _ (fun _ _ => rfl), ?_⟩
+    exact (S.value_copy ((V.freeze k).doubledGame n T) (fun _ _ => rfl) hD).trans hval
 
 /-- **`λ`-boundedness of the frozen verifier.** The frozen verifier is `λ`-bounded when the
 dimension and the running times of `V` at the frozen index, shifted by the cost of freezing,

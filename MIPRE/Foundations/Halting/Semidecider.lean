@@ -14,9 +14,10 @@ import MIPRE.Foundations.Halting.Semidecide
 Obligation O3 of the halting reduction (`Halting/Reduction.lean`) asks for a closed program
 halting on `encode (x, n)` exactly when the string `x` lies outside the class `B` at level
 `n`. By
-`Verifier.not_inClassB_iff` that is a disjunction of two `Σ₁` statements — the verifier `x`
-denotes is not `n`-bounded, or its `n`-th game has value more than `1/2` — and the obligation
-is an *equivalence*, so both disjuncts have to be recognized exactly.
+`Verifier.not_inClassB_iff` that is a disjunction of three `Σ₁` statements — the verifier `x`
+denotes is not `n`-bounded, or its decider accepts some answer longer than the answer bound,
+or its `n`-th game has value more than `1/2` — and the obligation is an *equivalence*, so all
+three have to be recognized exactly.
 
 The second disjunct is the tabulation's, and is O2's to supply: with a computable game
 description whose value is that of `𝒱_n`, `lem:value-lower-approx`
@@ -35,7 +36,10 @@ here, and it is the part of O3 that O2 does not contain:
   and not only its length.
 * `Verifier.rePred_not_isBounded`: hence, **for a computably presented family of verifiers
   (`Verifier.ComputablyPresented`), the boundedness violation is recursively enumerable**.
-* `Halting.exists_sem_of_tab` merges the two disjuncts (`REPred.or`, by `Partrec.merge'`) and
+* `Verifier.rePred_not_rejectsLong`: the acceptance of a long answer is recursively enumerable
+  too, by the same pattern with a simpler witness — the tuple and a step budget — and one
+  budgeted run of the decider (`Machine.runForD`).
+* `Halting.exists_sem_of_tab` merges the three disjuncts (`REPred.or`, by `Partrec.merge'`) and
   hands the result to `Cost.exists_semidecider_prod_nat`, which is `Cost.exists_semidecider`
   on pair-encoded inputs. Out comes `sem`, `sem_closed` and `sem_spec`.
 
@@ -119,6 +123,13 @@ theorem REPred.of_computable_exists {α β : Type*} [Primcodable α] [Primcodabl
 compose with `Computable` arguments; this is the same fact in usable form. -/
 theorem Cost.primrec_natLeB : Primrec fun p : ℕ × ℕ => decide (p.1 ≤ p.2) := by
   obtain ⟨_, h⟩ := Primrec.nat_le
+  exact h.of_eq fun p => by rw [Bool.eq_iff_iff]; simp
+
+/-- Equality on `Option Data` as a primitive recursive `Bool`-valued function, extracted from
+`Primrec.eq` the way `primrec_natLeB` extracts `Primrec.nat_le`. -/
+theorem Cost.primrec_optionDataEqB :
+    Primrec fun p : Option Data × Option Data => decide (p.1 = p.2) := by
+  obtain ⟨_, h⟩ := (Primrec.eq : PrimrecRel fun a b : Option Data => a = b)
   exact h.of_eq fun p => by rw [Bool.eq_iff_iff]; simp
 
 namespace Verifier
@@ -222,6 +233,146 @@ theorem not_isBounded_iff_exists (lam : ℕ) :
 
 end
 
+/-! ## The rejection of long answers, violated -/
+
+section
+
+variable {ℓ : ℕ} (V : Verifier ℓ)
+
+/-- **A witness that the decider accepts a long answer at index `n`**: a tuple of two questions
+and two answers, one of the answers longer than `T`, and a step budget within which the
+decider's run on the tuple returns `true`. The budget is what makes the acceptance, a `Σ₁`
+statement, testable. -/
+def LongAcceptance (n T : ℕ) (w : (BitStr × BitStr × BitStr × BitStr) × ℕ) : Prop :=
+  (T < w.1.2.2.1.length ∨ T < w.1.2.2.2.length) ∧
+    Machine.runForD (encode V.decider.prog)
+      (encode (n, w.1.1, w.1.2.1, w.1.2.2.1, w.1.2.2.2)) w.2 = some (encode true)
+
+/-- The witness test, as a `Bool`. -/
+def longAcceptanceB (n T : ℕ) (w : (BitStr × BitStr × BitStr × BitStr) × ℕ) : Bool :=
+  (decide (T + 1 ≤ w.1.2.2.1.length) || decide (T + 1 ≤ w.1.2.2.2.length)) &&
+    decide (Machine.runForD (encode V.decider.prog)
+      (encode (n, w.1.1, w.1.2.1, w.1.2.2.1, w.1.2.2.2)) w.2 = some (encode true))
+
+theorem longAcceptanceB_iff (n T : ℕ) (w : (BitStr × BitStr × BitStr × BitStr) × ℕ) :
+    V.longAcceptanceB n T w = true ↔ V.LongAcceptance n T w := by
+  simp only [longAcceptanceB, LongAcceptance, Bool.and_eq_true, Bool.or_eq_true,
+    decide_eq_true_eq, Nat.succ_le_iff]
+
+/-- **Rejection of long answers fails exactly when some witness works**: `RejectsLong` is a
+universal statement over tuples, so its negation is a search for a tuple, and acceptance on
+the tuple is a search for a budget, `Machine.runForD` returning the result of a run within
+its budget (`Machine.runForD_eq_some_iff`). -/
+theorem not_rejectsLong_iff_exists (n T : ℕ) :
+    ¬ V.RejectsLong n T ↔ ∃ w, V.LongAcceptance n T w := by
+  constructor
+  · intro h
+    simp only [RejectsLong, not_forall, not_not] at h
+    obtain ⟨x, y, a, b, hlen, t, ht⟩ := h
+    exact ⟨((x, y, a, b), t), hlen,
+      (Machine.runForD_eq_some_iff ⟨encode true, t, le_rfl, ht⟩).2 ⟨t, ht⟩⟩
+  · rintro ⟨⟨⟨x, y, a, b⟩, k⟩, hlen, hrun⟩ h
+    exact h x y a b hlen (Machine.runs_of_runForD hrun)
+
+end
+
+section
+
+variable {α : Type*} [Primcodable α] {ℓ : ℕ} {V : α → Verifier ℓ}
+
+/-- The search space of `rePred_not_rejectsLong`: a witness paired with the parameters. -/
+private abbrev LongZ (α : Type*) := (α × ℕ) × ((BitStr × BitStr × BitStr × BitStr) × ℕ)
+
+private theorem computable_longInput :
+    Computable fun z : LongZ α =>
+      (encode (z.1.2, z.2.1.1, z.2.1.2.1, z.2.1.2.2.1, z.2.1.2.2.2) : Data) := by
+  have hw : Computable fun z : LongZ α => z.2.1 := Computable.fst.comp Computable.snd
+  have hn : Computable fun z : LongZ α => z.1.2 := Computable.snd.comp Computable.fst
+  have hx : Computable fun z : LongZ α => z.2.1.1 := Computable.fst.comp hw
+  have hy : Computable fun z : LongZ α => z.2.1.2.1 :=
+    Computable.fst.comp (Computable.snd.comp hw)
+  have ha : Computable fun z : LongZ α => z.2.1.2.2.1 :=
+    Computable.fst.comp (Computable.snd.comp (Computable.snd.comp hw))
+  have hb : Computable fun z : LongZ α => z.2.1.2.2.2 :=
+    Computable.snd.comp (Computable.snd.comp (Computable.snd.comp hw))
+  have hebs : Computable fun l : BitStr => (encode l : Data) := Cost.primrec_encode_bitStr.to_comp
+  exact Data.primrec_cons.to_comp.comp (Data.primrec_encode_nat.to_comp.comp hn)
+    (Data.primrec_cons.to_comp.comp (hebs.comp hx)
+      (Data.primrec_cons.to_comp.comp (hebs.comp hy)
+        (Data.primrec_cons.to_comp.comp (hebs.comp ha) (hebs.comp hb))))
+
+private theorem computable_longRun (hV : ComputablyPresented V) :
+    Computable fun z : LongZ α =>
+      Machine.runForD (encode (V z.1.1).decider.prog)
+        (encode (z.1.2, z.2.1.1, z.2.1.2.1, z.2.1.2.2.1, z.2.1.2.2.2)) z.2.2 :=
+  Computable.comp (f := fun q : (Data × Data) × ℕ => Machine.runForD q.1.1 q.1.2 q.2)
+    (g := fun z : LongZ α =>
+      (((encode (V z.1.1).decider.prog : Data),
+        (encode (z.1.2, z.2.1.1, z.2.1.2.1, z.2.1.2.2.1, z.2.1.2.2.2) : Data)), z.2.2))
+    Machine.primrec_runForD.to_comp
+    (((hV.deciderProg.comp (Computable.fst.comp Computable.fst)).pair computable_longInput).pair
+      (Computable.snd.comp Computable.snd))
+
+private theorem computable_longRunB (hV : ComputablyPresented V) :
+    Computable fun z : LongZ α =>
+      decide (Machine.runForD (encode (V z.1.1).decider.prog)
+        (encode (z.1.2, z.2.1.1, z.2.1.2.1, z.2.1.2.2.1, z.2.1.2.2.2)) z.2.2
+          = some (encode true)) :=
+  -- the constant is taken at the `Primrec` level over `Option Data`: `Computable.const` over
+  -- the search space itself is what made `rePred_not_isBounded` take eight minutes to elaborate
+  Computable.comp (f := fun r : Option Data => decide (r = some (encode true)))
+    (g := fun z : LongZ α =>
+      Machine.runForD (encode (V z.1.1).decider.prog)
+        (encode (z.1.2, z.2.1.1, z.2.1.2.1, z.2.1.2.2.1, z.2.1.2.2.2)) z.2.2)
+    (Cost.primrec_optionDataEqB.comp (Primrec.id.pair (Primrec.const (some (encode true))))).to_comp
+    (computable_longRun hV)
+
+private theorem computable_longLen {T : α → ℕ → ℕ}
+    (hT : Computable fun q : α × ℕ => T q.1 q.2) :
+    Computable fun z : LongZ α =>
+      (decide (T z.1.1 z.1.2 + 1 ≤ z.2.1.2.2.1.length)
+        || decide (T z.1.1 z.1.2 + 1 ≤ z.2.1.2.2.2.length)) := by
+  have hw : Computable fun z : LongZ α => z.2.1 := Computable.fst.comp Computable.snd
+  have ha : Computable fun z : LongZ α => z.2.1.2.2.1 :=
+    Computable.fst.comp (Computable.snd.comp (Computable.snd.comp hw))
+  have hb : Computable fun z : LongZ α => z.2.1.2.2.2 :=
+    Computable.snd.comp (Computable.snd.comp (Computable.snd.comp hw))
+  have hTq : Computable fun z : LongZ α => T z.1.1 z.1.2 + 1 :=
+    Computable.comp (f := Nat.succ) (g := fun z : LongZ α => T z.1.1 z.1.2)
+      Primrec.succ.to_comp (hT.comp Computable.fst)
+  have hA : Computable fun z : LongZ α => decide (T z.1.1 z.1.2 + 1 ≤ z.2.1.2.2.1.length) :=
+    Computable.comp (f := fun p : ℕ × ℕ => decide (p.1 ≤ p.2))
+      (g := fun z : LongZ α => (T z.1.1 z.1.2 + 1, z.2.1.2.2.1.length))
+      Cost.primrec_natLeB.to_comp (hTq.pair (Primrec.list_length.to_comp.comp ha))
+  have hB : Computable fun z : LongZ α => decide (T z.1.1 z.1.2 + 1 ≤ z.2.1.2.2.2.length) :=
+    Computable.comp (f := fun p : ℕ × ℕ => decide (p.1 ≤ p.2))
+      (g := fun z : LongZ α => (T z.1.1 z.1.2 + 1, z.2.1.2.2.2.length))
+      Cost.primrec_natLeB.to_comp (hTq.pair (Primrec.list_length.to_comp.comp hb))
+  exact Primrec.or.to_comp.comp hA hB
+
+private theorem computable_longAcceptanceB (hV : ComputablyPresented V) {T : α → ℕ → ℕ}
+    (hT : Computable fun q : α × ℕ => T q.1 q.2) :
+    Computable fun z : LongZ α => (V z.1.1).longAcceptanceB z.1.2 (T z.1.1 z.1.2) z.2 := by
+  unfold longAcceptanceB
+  exact Primrec.and.to_comp.comp (computable_longLen hT) (computable_longRunB hV)
+
+/-- **The acceptance of a long answer is recursively enumerable** for a computably presented
+family and a computable answer bound: `Verifier.not_rejectsLong_iff_exists` turns the failure
+of `RejectsLong` into a search, `longAcceptanceB` runs the test — the length comparison and one
+budgeted run of the decider — and `REPred.of_computable_exists` does the searching. This is the
+third disjunct of `Verifier.not_inClassB_iff`. -/
+theorem rePred_not_rejectsLong (hV : ComputablyPresented V) {T : α → ℕ → ℕ}
+    (hT : Computable fun q : α × ℕ => T q.1 q.2) :
+    REPred fun q : α × ℕ => ¬ (V q.1).RejectsLong q.2 (T q.1 q.2) := by
+  refine (REPred.of_computable_exists (β := (BitStr × BitStr × BitStr × BitStr) × ℕ)
+    (test := fun (q : α × ℕ) w => (V q.1).longAcceptanceB q.2 (T q.1 q.2) w)
+    (computable_longAcceptanceB hV hT)).of_eq fun q => ?_
+  rw [not_rejectsLong_iff_exists]
+  exact ⟨fun ⟨w, hw⟩ => ⟨w, ((V q.1).longAcceptanceB_iff q.2 (T q.1 q.2) w).1 hw⟩,
+    fun ⟨w, hw⟩ => ⟨w, ((V q.1).longAcceptanceB_iff q.2 (T q.1 q.2) w).2 hw⟩⟩
+
+end
+
 /-- **The boundedness violation is recursively enumerable** for a computably presented family:
 `Verifier.not_isBounded_iff_exists` turns it into a search, `Verifier.boundViolationB` runs the
 test, and `REPred.of_computable_exists` does the searching. -/
@@ -316,9 +467,10 @@ verifiers and a computable tabulation whose game has the value of `𝒱_n` at ev
 string, a closed program halts on `encode (x, n)` exactly off the class `B` at level `n` —
 obligation O3 of the halting reduction, applied by `halting_reduction` through `exists_sem`.
 
-The two disjuncts of `Verifier.not_inClassB_iff` are enumerated separately — the boundedness
-violation by `Verifier.rePred_not_isBounded`, the value by `lem:value-lower-approx` on the
-tabulation — and merged by dovetailing (`REPred.or`). -/
+The three disjuncts of `Verifier.not_inClassB_iff` are enumerated separately — the
+boundedness violation by `Verifier.rePred_not_isBounded`, the acceptance of a long answer by
+`Verifier.rePred_not_rejectsLong`, the value by `lem:value-lower-approx` on the tabulation —
+and merged by dovetailing (`REPred.or`). -/
 theorem exists_sem_of_tab (hV : Verifier.ComputablyPresented (Vof G U))
     (tab : BitStr → ℕ → GameData) (htab : Computable fun q : BitStr × ℕ => tab q.1 q.2)
     (hval : ∀ (x : BitStr) (n : ℕ), (Vof G U x).IsBounded n →
@@ -326,12 +478,13 @@ theorem exists_sem_of_tab (hV : Verifier.ComputablyPresented (Vof G U))
     ∃ S : Prog, S.WellScoped 1 ∧
       ∀ (x : BitStr) (n : ℕ), Halts S (encode (x, n)) ↔ x ∉ classB G U n := by
   have hre : REPred fun q : BitStr × ℕ => q.1 ∉ classB G U q.2 := by
-    refine (REPred.or (Verifier.rePred_not_isBounded hV)
+    refine (REPred.or (REPred.or (Verifier.rePred_not_isBounded hV)
+      (Verifier.rePred_not_rejectsLong hV (computable_ansBound G)))
       (rePred_lt_quantumValue_comp htab 1 2)).of_eq fun q => ?_
     rw [Halting.mem_classB_iff, Verifier.not_inClassB_iff]
     simp only [Nat.cast_one, Nat.cast_ofNat]
     by_cases hb : (Vof G U q.1).IsBounded q.2
-    · rw [hval q.1 q.2 hb]
+    · rw [hval q.1 q.2 hb, or_assoc]
     · simp [hb]
   exact Cost.exists_semidecider_prod_nat (p := fun x n => x ∉ classB G U n) hre
 

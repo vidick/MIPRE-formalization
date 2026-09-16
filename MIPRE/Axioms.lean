@@ -148,7 +148,12 @@ elab "#guard_sorry_free " ids:ident,* : command => do
 
 -- blueprint `lem:halting-semidecider`
 #guard_sorry_free MIPRE.Halting.exists_sem_of_tab,
-  MIPRE.REPred.or
+  MIPRE.REPred.or,
+  MIPRE.Verifier.LongAcceptance,
+  MIPRE.Verifier.longAcceptanceB,
+  MIPRE.Verifier.longAcceptanceB_iff,
+  MIPRE.Verifier.not_rejectsLong_iff_exists,
+  MIPRE.Verifier.rePred_not_rejectsLong
 
 -- blueprint `lem:kleene`
 #guard_sorry_free MIPRE.Cost.efficient_fixed_point

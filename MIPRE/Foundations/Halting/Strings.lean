@@ -168,23 +168,23 @@ theorem yNo_mem : ∃ n₀, ∀ n, n₀ ≤ n → yNo ∈ classB G U n := by
 
 /-- **O1, the accepting side.** `yYes` lies in the class `A` at every level from some `n₀` on:
 its verifier accepts the empty answer from both players on every question pair and nothing
-else, so it is synchronous at every index and the constant strategy is a value-`1` PCC
-strategy. -/
+else, so the constant strategy is a value-`1` PCC strategy and every long answer is
+rejected. -/
 theorem yYes_mem : ∃ n₀, ∀ n, n₀ ≤ n → yYes ∈ classA G U n := by
   obtain ⟨n₀, hn₀⟩ := Verifier.ofSamplerDecider_isBounded U (G.sampler 0) decYes
     (sampler_hasPolyCost G 0) (sampler_polyBounded_dim G 0) decYes_hasPolyCost
   refine ⟨n₀, fun n hn => ?_⟩
   show (Vof G U yYes).InClassA n (ansBound G yYes n)
   rw [Vof_yYes]
-  have hsync : (Verifier.ofSamplerDecider U (G.sampler 0) decYes).IsSynchronousAt n := by
-    intro x a b hab hacc
+  refine Verifier.inClassA_of_accepts_diagonal _ (hn₀ n hn) ?_
+    (⟨[], by simp⟩ : Verifier.Answers (ansBound G yYes n)) fun p q => ?_
+  · -- only the empty answers are accepted, so every long one is rejected
+    intro x y a b hlen hacc
     rw [Verifier.ofSamplerDecider_accepts] at hacc
     obtain ⟨-, -, hrun⟩ := hacc
-    obtain ⟨rfl, rfl⟩ := (decYes_runs_true_iff n x x a b).1 hrun
-    exact hab rfl
-  refine Verifier.inClassA_of_accepts_diagonal _ (hn₀ n hn) hsync
-    (⟨[], by simp⟩ : Verifier.Answers (ansBound G yYes n)) fun p q => ?_
-  rw [Verifier.ofSamplerDecider_accepts]
-  exact ⟨CL.length_toBits p, CL.length_toBits q, (decYes_runs_true_iff n _ _ [] []).2 ⟨rfl, rfl⟩⟩
+    obtain ⟨rfl, rfl⟩ := (decYes_runs_true_iff n x y a b).1 hrun
+    simp at hlen
+  · rw [Verifier.ofSamplerDecider_accepts]
+    exact ⟨CL.length_toBits p, CL.length_toBits q, (decYes_runs_true_iff n _ _ [] []).2 ⟨rfl, rfl⟩⟩
 
 end MIPRE.Halting

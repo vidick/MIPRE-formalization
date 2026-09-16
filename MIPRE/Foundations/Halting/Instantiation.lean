@@ -34,8 +34,8 @@ the compressed sampler at the string's own parameter (which depends on `λ` alon
 decider wrapped in the question-length check of `def:normal-verifier` (`Decider.wrap`). The
 two classes of the criterion are then
 
-  `classA n = {x | Vof x is n-bounded and 𝒱_n has a value-1 PCC strategy}`,
-  `classB n = {x | Vof x is n-bounded and val*(𝒱_n) ≤ 1/2}`,
+  `classA n = {x | Vof x is n-bounded, rejects long answers, and 𝒱_n has a value-1 PCC strategy}`,
+  `classB n = {x | Vof x is n-bounded, rejects long answers, and val*(𝒱_n) ≤ 1/2}`,
 
 with answers cut at `ansBound x n = bound (n + descLam x)`, the length beyond which a
 compressed decider with parameter `descLam x` rejects (`GapCompression.output_rejects_long`);
