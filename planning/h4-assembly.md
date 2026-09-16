@@ -603,6 +603,28 @@ takes none.
    decider's own cost). PR-3 is therefore arithmetic on top of `wrapCore`'s cost
    (`WrapperCost.lean`, redone with explicit constants rather than `HasPolyCost`),
    `G.decider_time` for `t`, `U.bound` for the simulation, and `lambda_bound`.
+
+   **PR-3, PR-4 and PR-5 done 2026-09-16, in the same pull request (#82). O4 is discharged.**
+   `Halting/Absorb.lean`: `PolyBounded.absorb` (a polynomially bounded function of
+   `(m + n + 1) · y` is below `m^n · y^n` past a threshold) and `absorb_log` (a polynomial in
+   `log n` is below `n / 2`), the two arithmetic facts the accounting reduces to;
+   `lambda_bound` was not needed in the end, `log_lt_div` from its proof was.
+   `WrapperCost.lean` restated with explicit constants (`wrapHeadZ`, `wrapCoreCost`,
+   `wrapCore_cost'`), the `HasPolyCost` versions as corollaries. `Halting/CompressorCost.lean`:
+   `lamOf n = 2^(2 · size n)` (no `K`, `D`: the absorb lemma supplies the threshold, so the
+   parameter only has to be `≥ (n+1)^2` for `lamOf_ge` and computable in binary), the three
+   clauses of `IsBounded n` — sampler, size, decider, the last through `innerBound` and the
+   master bound `decZ` with `gcongr` for the monotonicity and the `PolyBounded` closure lemmas
+   — `isBounded_comprStr`, `lamOf_ge`, `ansBound_le_lamOf`, `exists_compressorSpec`.
+   `Halting/CompressorProgram.lean`: `lamProg` (two `lenBody` walks), `comprProg`
+   (`smnProg`, `serProg`), `comprPoly : PolyTimeFun (Prog × ℕ) BitStr`, `exists_obligations`,
+   `halting_reduction_of` (a `GapCompression` and a `UniversalMachine` only) and
+   `halting_reduces_to_gameValue_of` (the headline in `gameValue`). Blueprint: `\lean{}` on
+   `lem:halt-construction`, `lem:lambda`, `lem:dhalt-values`, `thm:halting`, `thm:main`, with
+   Comments on the route; no proof-level `\leanok` was added, since the blueprint statements
+   are about the self-referential `V^halt` and say "polynomial-time" where the Lean says
+   computable — whether to mark them is the maintainer's call, and the axiom guard is ready
+   for it. The honest headline is now *MIP\* = RE ⟸ `thm:compression`, machine-checked*.
 5. **PR-0, the module move.** Numbered last because it was found last; it comes *before* the
    rest of O4 in the doing, being what turns O1's and O3's discharges into a smaller
    `Obligations`. The structure and `halting_reduction` are at the end of

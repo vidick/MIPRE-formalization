@@ -562,6 +562,7 @@ import MIPRE.Foundations.Halting.Bounded
 import MIPRE.Foundations.Halting.Classes
 import MIPRE.Foundations.Halting.Compressor
 import MIPRE.Foundations.Halting.CompressorCost
+import MIPRE.Foundations.Halting.CompressorProgram
 import MIPRE.Foundations.Halting.CostBudget
 import MIPRE.Foundations.Halting.Descriptions
 import MIPRE.Foundations.Halting.Enumerate

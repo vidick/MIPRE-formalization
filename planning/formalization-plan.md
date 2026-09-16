@@ -588,11 +588,13 @@ in between, argued in the next section.
 
 ## After H4: the milestone, and what to state before proving
 
-**The milestone.** With O4 done and `thm:main` proved conditionally on `GapCompression` (PR-5 of
-the O4 plan), the project's claim becomes *MIP\* = RE ⟸ `thm:compression`, machine-checked*:
-one structure is the entire remaining assumption, and `#print axioms` shows nothing else. Say
-so in the README and in the blueprint's introduction when it lands; it is a different kind of
-claim from "H4 done". Chapter 7's corollaries (`cor:main-quantum`, `cor:value-uncomputable`,
+**The milestone, reached 2026-09-16 (#82).** With O4 done (`MIPRE.Halting.exists_obligations`)
+and `thm:main` proved conditionally on `GapCompression`
+(`MIPRE.Halting.halting_reduces_to_gameValue_of`, `Halting/CompressorProgram.lean`), the
+project's claim is *MIP\* = RE ⟸ `thm:compression`, machine-checked*: one structure is the
+entire remaining assumption, and `#print axioms` shows nothing else. The blueprint's
+`thm:main` and `thm:halting` say so; the README and the blueprint's introduction should too,
+since it is a different kind of claim from "H4 done". Chapter 7's corollaries (`cor:main-quantum`, `cor:value-uncomputable`,
 `thm:mipstar-eq-re`) are short once `thm:main` is conditional, and `lem:mipstar-sub-re` is
 already in.
 

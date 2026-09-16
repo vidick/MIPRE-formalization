@@ -13,7 +13,7 @@ definition for definition, the Lean file
 synchronous form]
 \label{thm:main}
 \uses{thm:halting,def:game-description,def:sync-value,def:re}
-\lean{HaltingGameValue.halting_reduces_to_gameValue}
+\lean{HaltingGameValue.halting_reduces_to_gameValue, MIPRE.Halting.halting_reduces_to_gameValue_of}
 \leanok
 There is a computable map $g$ from Turing machines to game descriptions such that for
 every Turing machine $\machine$:
@@ -24,6 +24,13 @@ every Turing machine $\machine$:
   $\synval(\game_{g(\machine)}) \leq \tfrac12$.
 \end{enumerate}
 \end{theorem}
+
+\emph{Status.} The theorem is proved in Lean conditionally on Theorem~\ref{thm:compression}:
+\texttt{MIPRE.Halting.halting\_reduces\_to\_gameValue\_of} takes a
+\texttt{MIPRE.GapCompression} and a universal machine and concludes exactly this statement,
+free of \texttt{sorry}; the unconditional \texttt{HaltingGameValue.halting\_reduces\_to\_gameValue}
+keeps its \texttt{sorry} as the target of Chapter~\ref{ch:proof-structure}, and the
+difference between the two is one structure.
 
 Theorem~\ref{thm:main} follows from Theorem~\ref{thm:halting} by converting the
 normal form verifier at a fixed index into an explicit game description (a finite

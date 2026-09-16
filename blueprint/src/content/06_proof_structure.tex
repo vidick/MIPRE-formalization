@@ -1224,10 +1224,11 @@ of the recursion.
   output string \texttt{comprStr} is $\lambda(n)$ together with that decider with $(c, n,
   \lambda(n))$ hardcoded, and \texttt{comprStr\_accepts} is the field
   \texttt{accepts\_compr} verbatim, from the forward runs and the inversion
-  \texttt{haltProg\_accepts\_iff}. Every stage carries an explicit cost
-  (\texttt{prepBound}), so that what remains is the accounting: the field
-  \texttt{isBounded\_compr}, the choice $\lambda(n) = 2^{K + D \log n}$, and the compressor as a
-  polynomial-time function.
+  \texttt{haltProg\_accepts\_iff}. The accounting is done too, with $\lambda(n) = 2^{2 \log n}$
+  (Lemma~\ref{lem:lambda}: \texttt{isBounded\_comprStr}, \texttt{lamOf\_ge},
+  \texttt{ansBound\_le\_lamOf}), the compressor is a polynomial-time function
+  (\texttt{comprPoly}), and \texttt{exists\_obligations} inhabits the structure: obligation
+  (d) is discharged.
 \item \emph{Junk inputs.} Nothing is demanded of the compressor off strings in $A_{2n+1}
   \cup B_{2n+1}$, every string names a verifier, and $\lambda$-boundedness is decided
   nowhere. What the lemma does demand is that the complement of $B_n$ be semidecidable:
@@ -1649,10 +1650,38 @@ exponential in it.
 \label{lem:lambda}
 \ledgernode{1.6.5}
 \uses{lem:halt-construction,lem:lambda-bound,def:lambda-bounded}
+\lean{MIPRE.Halting.lamOf, MIPRE.Halting.isBounded_comprStr, MIPRE.Halting.lamOf_ge,
+  MIPRE.Halting.ansBound_le_lamOf, MIPRE.Halting.exists_compressorSpec,
+  MIPRE.Halting.comprPoly, MIPRE.Cost.PolyBounded.absorb, MIPRE.Cost.PolyBounded.absorb_log,
+  MIPRE.Cost.Prog.wrapCoreCost, MIPRE.Cost.Prog.wrapCore_cost'}
 There is a $\lambda$, computable from the description of $\machine$ in polynomial time and
 of size $\poly(\abs{\machine})$, such that $\vhalt$ is $\lambda$-bounded and
 $\TIME_{\dhalt}(n), \TIME_{\shalt}(n) = \poly(n, \abs{\machine})$.
 \end{lemma}
+
+\paragraph{Comments.} In the Lean route of Remark~\ref{rem:compression-abstract} the parameter
+is a function of the \emph{level}, $\lambda(n) = 2^{2 \log n}$
+(\texttt{MIPRE.Halting.lamOf}, at least $(n+1)^2$ and written in binary by the compressor in
+time $O(\log n)$), and the boundedness claim is the field
+\texttt{CompressorSpec.isBounded\_compr}: the verifier the output denotes is $n$-bounded,
+uniformly in the description $(c, n)$, for every $n$ past a threshold depending on
+$\Compress$ and the universal machine alone (\texttt{isBounded\_comprStr},
+\texttt{Halting/CompressorCost.lean}). Its three clauses are the sampler's
+(\texttt{GapCompression.sampler\_dim}, \texttt{sampler\_time} at $\lambda(n)$), the size's
+(the compressed sampler's program is $\poly(\log n)$ and the wrapper carries $c$, which the
+slack $2\abs{c} \leq n$ of Lemma~\ref{lem:compressible-criterion} leaves room for), and the
+decider's: the wrapper's cost with explicit constants (\texttt{Prog.wrapCoreCost},
+\texttt{Halting/WrapperCost.lean}) around the preparation, the universal machine and the
+compressed decider's own time (\texttt{GapCompression.decider\_time}). Each is absorbed into
+$m^n \cdot (\abs{d}+1)^n$ by \texttt{PolyBounded.absorb} (\texttt{Halting/Absorb.lean}): a
+polynomially bounded function of the largest of the index, the level and the input size is
+below $m^n \cdot y^n$ once $n$ is past a threshold set by the polynomial, which is
+Lemma~\ref{lem:lambda-bound} in a coarser form. The growth conditions that freezing at
+$2n + 1$ needs are \texttt{lamOf\_ge} and \texttt{ansBound\_le\_lamOf}, and
+\texttt{exists\_compressorSpec} assembles the specification from a polynomial-time program
+computing the output string, which \texttt{comprPoly}
+(\texttt{Halting/CompressorProgram.lean}) is. There is no timeout counter and no
+$\TIME_{\dhalt}$ to compute: totality within a bound is the accounting itself.
 
 \effortMedium
 
@@ -1660,6 +1689,8 @@ $\TIME_{\dhalt}(n), \TIME_{\shalt}(n) = \poly(n, \abs{\machine})$.
 \label{lem:dhalt-values}
 \ledgernode{1.6.2, 1.6.3}
 \uses{lem:halt-construction,lem:lambda,lem:compress-sampler-indep,def:pcc,def:q-value}
+\lean{MIPRE.Halting.comprStr_accepts, MIPRE.Halting.haltProg_accepts_iff,
+  MIPRE.Halting.CompressorSpec.toObligations}
 For every $n$:
 \begin{enumerate}
 \item if $\machine$ halts within $n$ steps then $\valstar(\vhalt_n) = 1$, witnessed by a
@@ -1683,6 +1714,16 @@ interfere: its bound is chosen in Lemma~\ref{lem:lambda} so that the computation
 finish first.
 \end{proof}
 
+\paragraph{Comments.} Item 2 is, in the Lean route, the acceptance agreement
+\texttt{MIPRE.Halting.comprStr\_accepts}: the decider of the verifier the compressor's output
+denotes accepts, at every index, exactly what the compressed decider of the described
+verifier frozen at $2n + 1$ accepts, with the same sampler (\texttt{Vof\_comprStr}); the
+transfer of values and of value-$1$ PCC strategies along it, in both directions, is
+\texttt{CompressorSpec.toObligations}. Item 1 does not appear at this point of the route: the
+halting case is the criterion's, through the distinguished string \texttt{yYes} of
+Lemma~\ref{lem:compressible-criterion}, and the $n$-step simulation of $\machine$ is the
+criterion's recursion, not the decider's.
+
 \begin{remark}[Item 2 is a transfer, not a bound]
 \label{rem:dhalt-transfer}
 \uses{lem:dhalt-values,thm:halting,thm:compression}
@@ -1704,7 +1745,8 @@ revision of this chapter did state item 2 as the bound, and because the ledger n
 \label{thm:halting}
 \ledgernode{1.6, 1.6.6}
 \uses{thm:compression,rem:compression-abstract,lem:compressible-criterion,lem:value-lower-approx,lem:kleene,def:mipstar,def:game-description,lem:sync-le-valstar,lem:dhalt-values,lem:lambda}
-\lean{MIPRE.Halting.halting_reduction}
+\lean{MIPRE.Halting.halting_reduction, MIPRE.Halting.halting_reduction_of,
+  MIPRE.Halting.exists_obligations, MIPRE.Halting.halting_reduces_to_gameValue_of}
 There is a computable (indeed polynomial-time) map $\machine \mapsto
 \game_{\machine}$ from Turing machines to synchronous game descriptions, with games
 given by normal form verifiers satisfying the efficiency requirements of
@@ -1721,28 +1763,31 @@ Definition~\ref{def:mipstar}, such that:
 The proof is Lemma~\ref{lem:compressible-criterion} applied to the instantiation of
 Remark~\ref{rem:compression-abstract}; the semidecidability hypothesis of the lemma is the
 $\valstar$ half of Lemma~\ref{lem:value-lower-approx}. The obligations of that
-instantiation are inherited here, and of the four listed in
-Remark~\ref{rem:compression-abstract} only the compressor is still to be found: the
-tabulation is formalized (\texttt{MIPRE.Halting.tab}, with \texttt{tab\_match},
-\texttt{tab\_value} and \texttt{gameValue\_tab\_eq\_one}), the semidecider is formalized on
-top of it (\texttt{MIPRE.Halting.exists\_sem}, Lemma~\ref{lem:halting-semidecider}, which
-takes no hypotheses), and the two distinguished strings are
-\texttt{MIPRE.Halting.yYes\_mem} and \texttt{yNo\_mem}. The synchronization invariant that an earlier
-revision also required of the games produced inside $\Compress$ is no longer among them
-(Remark~\ref{rem:bipartite-route}).
+instantiation are inherited here, and all four listed in
+Remark~\ref{rem:compression-abstract} are formalized: the tabulation
+(\texttt{MIPRE.Halting.tab}, with \texttt{tab\_match}, \texttt{tab\_value} and
+\texttt{gameValue\_tab\_eq\_one}), the semidecider on top of it
+(\texttt{MIPRE.Halting.exists\_sem}, Lemma~\ref{lem:halting-semidecider}, which takes no
+hypotheses), the two distinguished strings \texttt{MIPRE.Halting.yYes\_mem} and
+\texttt{yNo\_mem}, and the compressor (Lemmas~\ref{lem:halt-construction},
+\ref{lem:lambda} and~\ref{lem:dhalt-values}: \texttt{MIPRE.Halting.comprPoly}, its
+specification \texttt{exists\_compressorSpec}, and \texttt{exists\_obligations}). The
+synchronization invariant that an earlier revision also required of the games produced
+inside $\Compress$ is no longer among them (Remark~\ref{rem:bipartite-route}).
 
 In Lean the assembly is \texttt{MIPRE.Halting.halting\_reduction}
-(\texttt{Halting/Reduction.lean}). It is complete and free of \texttt{sorry}, and it takes
-three hypotheses: a \texttt{MIPRE.GapCompression} (which is Theorem~\ref{thm:compression}), a
-universal machine, and an inhabitant of \texttt{MIPRE.Halting.Obligations}, whose content is
-exactly the compressor --- \texttt{compr}, \texttt{compr\_spec}, and the threshold above which
-its guarantee holds. The other three obligations of Remark~\ref{rem:compression-abstract} are
-theorems that the proof applies directly: the two distinguished strings, \texttt{yYes\_mem}
-and \texttt{yNo\_mem}; the tabulation with its value agreement, \texttt{tab},
-\texttt{tab\_computable}, \texttt{tab\_match}, \texttt{tab\_value} and
-\texttt{gameValue\_tab\_eq\_one}; and the semidecider, \texttt{MIPRE.Halting.exists\_sem},
-which takes no hypotheses. So what is open is a structure to be inhabited rather than an
-argument to be found, and \texttt{\#print axioms} cannot hide any of it.
+(\texttt{Halting/Reduction.lean}), which takes three hypotheses: a
+\texttt{MIPRE.GapCompression} (which is Theorem~\ref{thm:compression}), a universal machine,
+and an inhabitant of \texttt{MIPRE.Halting.Obligations}, whose content is exactly the
+compressor --- \texttt{compr}, \texttt{compr\_spec}, and the threshold above which its
+guarantee holds. The other three obligations of Remark~\ref{rem:compression-abstract} are
+theorems that the proof applies directly, and the fourth is now a theorem too:
+\texttt{MIPRE.Halting.exists\_obligations} (\texttt{Halting/CompressorProgram.lean})
+inhabits the structure, so \texttt{MIPRE.Halting.halting\_reduction\_of} takes only a
+\texttt{GapCompression} and a universal machine --- of which
+\texttt{Cost.exists\_efficient\_universal} provides one --- and is free of \texttt{sorry}.
+So the reduction is machine-checked from Theorem~\ref{thm:compression} alone, and
+\texttt{\#print axioms} shows nothing else.
 That assembly concludes in $\valstar$ only, and item 1 claims more: the witness is a
 \emph{PCC} strategy, so $\synval = \valstar = 1$. The two steps that carry it there are now in
 Lean, neither of them part of the instantiation. First, a synchronous strategy transports along
