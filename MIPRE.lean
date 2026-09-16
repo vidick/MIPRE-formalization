@@ -590,6 +590,7 @@ import MIPRE.Foundations.Pipeline.Introspection
 import MIPRE.Foundations.Pipeline.Margin
 import MIPRE.Foundations.Pipeline.Oracularization
 import MIPRE.Foundations.Pipeline.Repetition
+import MIPRE.Foundations.Repeat.Prims
 import MIPRE.Foundations.SyncTransport
 import MIPRE.Foundations.TensorFamily
 import MIPRE.Foundations.ValueApprox
