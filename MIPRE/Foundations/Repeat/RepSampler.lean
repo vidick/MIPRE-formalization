@@ -93,9 +93,6 @@ theorem lockCost_mono {s C C' U U' Y Y' Z : ℕ} (hC : C ≤ C') (hU : U ≤ U')
 
 theorem encode_nat_zero : (encode (0 : ℕ) : Data) = .nil := rfl
 
-theorem encode_nat_eq_list (n : ℕ) : (encode n : Data) = list (n.bits.map ofBool) :=
-  encode_bitStr_eq_list n.bits
-
 /-- The dimension branch on `(s, λ, n, τ)`, `s` in binary: the numeral `2^{τ(|λ| + |n|)} s`. -/
 theorem dimProg_runs_encode (lam tau n s : ℕ) :
     ∃ t ≤ dimCost tau (Nat.size lam + Nat.size n) (esize lam) (esize n) (esize s) + 3,

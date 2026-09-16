@@ -758,6 +758,138 @@ theorem coordLoop_inv {univ : Prog} (hU : univ.WellScoped 1) (dD nD : Data) (s B
               exact ih _ _ _ _ env hrest
             · cases h
 
+/-! ## The loop with costs -/
+
+/-- The potential queries of the loop, in order: one per coordinate while answers remain. -/
+def decQueries (dD nD : Data) (s : ℕ) :
+    ℕ → List Data → List Data → List Data → List Data → List Data
+  | 0, _, _, _, _ => []
+  | k + 1, remX, remY, ai :: remA', bi :: remB' =>
+      decQuery dD nD (list (remX.take s)) (list (remY.take s)) ai bi ::
+        decQueries dD nD s k (remX.drop s) (remY.drop s) remA' remB'
+  | _ + 1, _, _, [], _ => []
+  | _ + 1, _, _, _ :: _, [] => []
+
+/-- The per-iteration budget of the loop, in a bound `Z` on the sizes and the cost `Tu` of a
+call. -/
+def coordIter (Z Tu : ℕ) : ℕ := 40 * (Z + 30) ^ 2 + Tu
+
+theorem preCost_le {s B U Y A Bs C K Z : ℕ} (h : s + B + U + Y + A + Bs + C + K ≤ Z) :
+    preCost s B U Y A Bs C K ≤ 30 * (Z + 30) ^ 2 := by
+  unfold preCost
+  have h1 := pairTakeCost_le (Z := Z) (s := s) (U := U) (Y := Y) (by omega)
+  have h2 : (B + 1) * (A + (2 * B + 1) + 21) ≤ (Z + 30) * (3 * (Z + 30)) :=
+    Nat.mul_le_mul (by omega) (by omega)
+  have h3 : (B + 1) * (Bs + (2 * B + 1) + 21) ≤ (Z + 30) * (3 * (Z + 30)) :=
+    Nat.mul_le_mul (by omega) (by omega)
+  have h4 : 8 * (U + Y + A + Bs + C + K) + 8 * s + 8 * B + 120 ≤ 7 * ((Z + 30) * (Z + 30)) := by
+    nlinarith
+  have e : (Z + 30) * (3 * (Z + 30)) = 3 * ((Z + 30) * (Z + 30)) := by ring
+  rw [e] at h2 h3
+  rw [pow_two] at h1 ⊢
+  omega
+
+/-- **The loop halts within `(k + 1) · coordIter Z Tu`** when `univ` answers every potential
+query within `Tu` and the sizes in play are bounded by `Z`. -/
+theorem coordLoop_runs_bounded {univ : Prog} (hU : univ.WellScoped 1) (dD nD : Data) (s B : ℕ)
+    (fq : Data → Data) (Tu Z : ℕ) :
+    ∀ (k : ℕ) (remX remY remA remB : List Data) (env : Env),
+      (∀ q ∈ decQueries dD nD s k remX remY remA remB, ∃ t ≤ Tu, Eval [q] univ (fq q) t) →
+      s + B + (list remX).size + (list remY).size + (list remA).size + (list remB).size +
+        (decCtx dD nD s B).size + (ofNat k).size + 10 ≤ Z →
+      ∃ r t, t ≤ (k + 1) * coordIter Z Tu ∧
+        Eval (decState (ofNat k) remX remY remA remB (decCtx dD nD s B) :: env)
+          (.loop (coordBody univ)) r t := by
+  intro k
+  induction k with
+  | zero =>
+    intro remX remY remA remB env _ hZ
+    obtain ⟨t, ht, h⟩ := coordBody_stop univ remX remY remA remB (decCtx dD nD s B)
+    refine ⟨_, t + 1, ?_, Eval.loop_stop (Eval.append_of_wellScoped h (coordBody_wellScoped hU) env)⟩
+    unfold coordIter
+    nlinarith
+  | succ k ih =>
+    intro remX remY remA remB env hq hZ
+    set ctx := decCtx dD nD s B with hctx
+    set inp := decState (ofNat k) remX remY remA remB ctx with hinp
+    have hinp_sz : inp.size ≤ Z := by
+      simp only [hinp, decState, size_cons, size_ofNat] at hZ ⊢
+      omega
+    -- a stop of the step, from a `nil` of `preProg`
+    have stop_of_nil : ∀ {t₀ : ℕ}, Eval [inp] preProg .nil t₀ → t₀ ≤ 8 →
+        ∃ r t, t ≤ (k + 1 + 1) * coordIter Z Tu ∧
+          Eval (decState (ofNat (k + 1)) remX remY remA remB ctx :: env)
+            (.loop (coordBody univ)) r t := fun hp ht₀ => by
+      have h₁ := stepProg_runs_nil univ inp hp
+      have h₂ := coordBody_step hU k remX remY remA remB ctx h₁
+      refine ⟨_, _, ?_, Eval.loop_stop (Eval.append_of_wellScoped h₂ (coordBody_wellScoped hU) env)⟩
+      unfold coordIter
+      rw [← hinp]
+      nlinarith
+    rcases remA with _ | ⟨ai, remA'⟩
+    · obtain ⟨t₀, ht₀, hp⟩ := preProg_runs_nilA (ofNat k) remX remY remB ctx
+      exact stop_of_nil hp (by omega)
+    rcases remB with _ | ⟨bi, remB'⟩
+    · obtain ⟨t₀, ht₀, hp⟩ := preProg_runs_nilB (ofNat k) remX remY ai remA' ctx
+      exact stop_of_nil hp (by omega)
+    obtain ⟨t₀, ht₀, hp⟩ := preProg_runs dD nD s B (ofNat k) remX remY ai bi remA' remB'
+    have hpre_le : t₀ ≤ 30 * (Z + 30) ^ 2 := by
+      refine ht₀.trans (preCost_le ?_)
+      simp only [hctx, decCtx, size_cons, size_ofNat] at hZ ⊢
+      omega
+    by_cases hok : (okBits B ai && okBits B bi) = true
+    · rw [show preResult dD nD s B (ofNat k) remX remY ai bi remA' remB' =
+          .cons (decQuery dD nD (list (remX.take s)) (list (remY.take s)) ai bi)
+            (decState (ofNat k) (remX.drop s) (remY.drop s) remA' remB' ctx) by
+        simp [preResult, hok, hctx]] at hp
+      set q := decQuery dD nD (list (remX.take s)) (list (remY.take s)) ai bi with hq'
+      set st' := decState (ofNat k) (remX.drop s) (remY.drop s) remA' remB' ctx with hst'
+      obtain ⟨tr, htr, hr⟩ := hq q (by simp [decQueries, hq'])
+      obtain ⟨t₁, ht₁, h₁⟩ := stepProg_runs_call hU inp q st' hp hr
+      have h₂ := coordBody_step hU k remX remY (ai :: remA') (bi :: remB') ctx h₁
+      have hq_sz : q.size ≤ 2 * Z := by
+        have := size_list_take_le s remX
+        have := size_list_take_le s remY
+        simp only [hq', decQuery, size_cons]
+        simp only [hctx, decCtx, size_cons, size_ofNat, size_list_cons] at hZ
+        omega
+      have hst_sz : st'.size ≤ Z := by
+        have := size_list_drop_le s remX
+        have := size_list_drop_le s remY
+        simp only [hst', decState, size_cons, size_ofNat, hctx, decCtx]
+        simp only [hctx, decCtx, size_cons, size_ofNat, size_list_cons] at hZ
+        omega
+      have hstep : t₁ + 2 * inp.size + 7 + 1 ≤ coordIter Z Tu := by
+        unfold coordIter
+        nlinarith
+      by_cases hr1 : fq q = .cons .nil .nil
+      · -- continue
+        rw [show stepResult st' (fq q) = .cons (.cons .nil .nil) st' by simp [stepResult, hr1]] at h₂
+        obtain ⟨r, t₂, ht₂, h₃⟩ := ih (remX.drop s) (remY.drop s) remA' remB' env
+          (fun q' hq'' => hq q' (by simp [decQueries, hq'']))
+          (by
+            have := size_list_drop_le s remX
+            have := size_list_drop_le s remY
+            simp only [hctx, decCtx, size_cons, size_ofNat, size_list_cons] at hZ ⊢
+            omega)
+        refine ⟨r, _, ?_, Eval.loop_step (Eval.append_of_wellScoped h₂ (coordBody_wellScoped hU) env) h₃⟩
+        rw [← hinp]
+        have : (k + 1 + 1) * coordIter Z Tu = (k + 1) * coordIter Z Tu + coordIter Z Tu := by ring
+        omega
+      · rw [show stepResult st' (fq q) = .cons .nil .nil by simp [stepResult, hr1]] at h₂
+        refine ⟨_, _, ?_, Eval.loop_stop (Eval.append_of_wellScoped h₂ (coordBody_wellScoped hU) env)⟩
+        rw [← hinp]
+        have : (k + 1 + 1) * coordIter Z Tu = (k + 1) * coordIter Z Tu + coordIter Z Tu := by ring
+        omega
+    · rw [show preResult dD nD s B (ofNat k) remX remY ai bi remA' remB' = .nil by
+        simp only [preResult]; rw [if_neg hok]] at hp
+      have h₁ := stepProg_runs_nil univ inp hp
+      have h₂ := coordBody_step hU k remX remY (ai :: remA') (bi :: remB') ctx h₁
+      refine ⟨_, _, ?_, Eval.loop_stop (Eval.append_of_wellScoped h₂ (coordBody_wellScoped hU) env)⟩
+      unfold coordIter
+      rw [← hinp]
+      nlinarith
+
 end Prog
 
 end MIPRE.Cost

@@ -108,6 +108,9 @@ def bitsOf (l : List Data) : BitStr := l.map bitOf
 @[simp] theorem bitsOf_map_ofBool (x : BitStr) : bitsOf (x.map ofBool) = x := by
   simp [bitsOf, List.map_map, Function.comp_def]
 
+theorem encode_nat_eq_list (n : ℕ) : (encode n : Data) = list (n.bits.map ofBool) :=
+  encode_bitStr_eq_list n.bits
+
 theorem toList_encode_bitStr (x : BitStr) : toList (encode x) = x.map ofBool := by
   rw [encode_bitStr_eq_list, toList_list]
 
