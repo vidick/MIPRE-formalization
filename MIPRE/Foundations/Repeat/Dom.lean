@@ -37,6 +37,11 @@ theorem const (c : ℕ) : Dom W X K c 0 0 c := by simp [Dom]
 
 theorem ofLeW {v : ℕ} (h : v ≤ W) : Dom W X K 1 1 0 v := by simp [Dom]; omega
 
+/-- An affine function of `W` is dominated by `(a + b)(W + 1)`. -/
+theorem ofAffine {a b v : ℕ} (h : v ≤ a * W + b) : Dom W X K (a + b) 1 0 v := by
+  simp only [Dom, pow_one, zero_mul, pow_zero, mul_one]
+  nlinarith
+
 theorem ofLeX (hX : 1 ≤ X) {v : ℕ} (h : v ≤ X) : Dom W X K 1 0 1 v := by
   simp only [Dom, one_mul, pow_zero, one_mul]
   exact h.trans (Nat.le_self_pow (by omega) X)
