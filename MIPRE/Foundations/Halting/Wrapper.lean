@@ -423,4 +423,108 @@ theorem ofSamplerDecider_congr {dec dec' : Prog} {n T : ℕ}
 
 end Verifier
 
+namespace Cost.Prog
+
+open Cost Data
+
+/-! ## The wrapper at the level of data
+
+`Decider.wrap` is what `Verifier.IsBounded` bounds, and it is therefore what a tabulation has
+to run: the bound says nothing about the *inner* decider `descDec x`, since
+`UniversalMachine.halts_of` produces a run with no bound on its cost. So the tabulation needs
+`encode (wrapCore univ sampProg dec)` as a primitive recursive function of the two encoded
+programs — which it can be, because `wrapCore` mentions its program arguments only under
+`Prog.const (encode ·)`.
+
+`ProgD` is that mirror: the constructors of `Prog` at the level of `Data`, and the wrapper
+rebuilt from them. Every `_eq` lemma is `rfl`, `Prog.toData` being structural, and
+`dWrapCore_eq` is `rfl` too — nothing here is a second definition to keep in step with the
+first, it is the same definition seen through the encoding. The existing `wrapCheck`,
+`wrapHead`, `wrapTail`, `wrapCore` and everything proved about them are untouched.
+-/
+
+namespace ProgD
+open Cost.Prog
+
+def dV (i : ℕ) : Data := .cons (.ofNat 0) (.ofNat i)
+def dNil : Data := .cons (.ofNat 1) .nil
+def dC (h t : Data) : Data := .cons (.ofNat 2) (.cons h t)
+def dE (i : ℕ) (n c : Data) : Data := .cons (.ofNat 3) (.cons (.ofNat i) (.cons n c))
+def dL (e b : Data) : Data := .cons (.ofNat 4) (.cons e b)
+def dK (d : Data) : Data := .cons (.ofNat 6) d
+
+theorem dV_eq (i : ℕ) : (encode (Prog.var i) : Data) = dV i := rfl
+theorem dNil_eq : (encode Prog.nil : Data) = dNil := rfl
+theorem dC_eq (h t : Prog) : (encode (Prog.cons h t) : Data) = dC (encode h) (encode t) := rfl
+theorem dE_eq (i : ℕ) (n c : Prog) :
+    (encode (Prog.elim i n c) : Data) = dE i (encode n) (encode c) := rfl
+theorem dL_eq (e b : Prog) : (encode (Prog.let_ e b) : Data) = dL (encode e) (encode b) := rfl
+theorem dK_eq (d : Data) : (encode (Prog.const d) : Data) = dK d := rfl
+
+theorem primrec_dC : Primrec₂ dC :=
+  (Data.primrec_cons.comp (Primrec.const (Data.ofNat 2))
+    (Data.primrec_cons.comp Primrec.fst Primrec.snd)).to₂
+
+theorem primrec_dL : Primrec₂ dL :=
+  (Data.primrec_cons.comp (Primrec.const (Data.ofNat 4))
+    (Data.primrec_cons.comp Primrec.fst Primrec.snd)).to₂
+
+theorem primrec_dK : Primrec dK := Data.primrec_cons.comp (Primrec.const (Data.ofNat 6)) Primrec.id
+
+theorem primrec_dE (i : ℕ) : Primrec₂ (dE i) :=
+  (Data.primrec_cons.comp (Primrec.const (Data.ofNat 3))
+    (Data.primrec_cons.comp (Primrec.const (Data.ofNat i))
+      (Data.primrec_cons.comp Primrec.fst Primrec.snd))).to₂
+
+/-! The wrapper, at the level of data. -/
+
+def dWrapCheck (i j : ℕ) (c : Data) : Data :=
+  dL (dL (dV i) (encode Prog.lenProg))
+    (dL (dC (dV 0) (dV (j + 1)))
+      (dL (dL (dV 0) (encode Prog.eqBitsProg)) (dE 0 dNil c)))
+
+def dWrapTail (univ decD : Data) : Data := dL (dC (dK decD) (dV 19)) (dL (dV 0) univ)
+
+def dWrapHead (univ sampD c : Data) : Data :=
+  dE 0 dNil
+    (dL (dC (dK sampD) (dC (dV 0) (dK (encode CL.Sampler.Query.dimension))))
+      (dL (dL (dV 0) univ) (dL (dL (dV 0) (encode Prog.toUnaryProg)) c)))
+
+def dWrapCore (univ sampD decD : Data) : Data :=
+  dWrapHead univ sampD (dE 4 dNil (dE 1 dNil
+    (dWrapCheck 2 4 (dWrapCheck 5 9 (dWrapTail univ decD)))))
+
+theorem dWrapCore_eq (univ sampProg dec : Prog) :
+    dWrapCore (encode univ) (encode sampProg) (encode dec)
+      = encode (Prog.wrapCore univ sampProg dec) := rfl
+
+
+theorem primrec_dWrapCheck (i j : ℕ) : Primrec (dWrapCheck i j) :=
+  (primrec_dL.comp (Primrec.const _)
+    (primrec_dL.comp (Primrec.const _)
+      (primrec_dL.comp (Primrec.const _) ((primrec_dE 0).comp (Primrec.const dNil) Primrec.id))))
+
+theorem primrec_dWrapTail (univ : Data) : Primrec (dWrapTail univ) :=
+  primrec_dL.comp (primrec_dC.comp (primrec_dK.comp Primrec.id) (Primrec.const (dV 19)))
+    (Primrec.const (dL (dV 0) univ))
+
+theorem primrec_dWrapCore (univ : Data) : Primrec₂ (dWrapCore univ) := by
+  have hhead : Primrec₂ fun sampD c : Data => dWrapHead univ sampD c :=
+    ((primrec_dE 0).comp (Primrec.const dNil)
+      (primrec_dL.comp
+        (primrec_dC.comp (primrec_dK.comp Primrec.fst)
+          (Primrec.const (dC (dV 0) (dK (encode CL.Sampler.Query.dimension)))))
+        (primrec_dL.comp (Primrec.const (dL (dV 0) univ))
+          (primrec_dL.comp (Primrec.const (dL (dV 0) (encode Prog.toUnaryProg)))
+            Primrec.snd)))).to₂
+  exact (hhead.comp Primrec.fst
+    ((primrec_dE 4).comp (Primrec.const dNil)
+      ((primrec_dE 1).comp (Primrec.const dNil)
+        ((primrec_dWrapCheck 2 4).comp ((primrec_dWrapCheck 5 9).comp
+          ((primrec_dWrapTail univ).comp Primrec.snd)))))).to₂
+
+end ProgD
+
+end Cost.Prog
+
 end MIPRE

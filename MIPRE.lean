@@ -543,6 +543,7 @@ import MIPRE.Foundations.Cost.MachineData
 import MIPRE.Foundations.Cost.Numeric
 import MIPRE.Foundations.Cost.Partrec
 import MIPRE.Foundations.Cost.PolyTime
+import MIPRE.Foundations.Cost.ProgData
 import MIPRE.Foundations.Cost.Semidecide
 import MIPRE.Foundations.Cost.Succinct
 import MIPRE.Foundations.Cost.Threshold
@@ -551,6 +552,7 @@ import MIPRE.Foundations.Cost.Unary
 import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Distances
 import MIPRE.Foundations.GameDescription
+import MIPRE.Foundations.GameDouble
 import MIPRE.Foundations.GameTransport
 import MIPRE.Foundations.Games
 import MIPRE.Foundations.GapCompression

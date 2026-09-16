@@ -293,6 +293,99 @@ theorem primrec_decode_bitStr :
     Primrec fun d : Data => (SizedEncoding.decode d : Option BitStr) :=
   primrec_toList? primrec_toBool?
 
+/-! ## Encoding naturals
+
+The companion of `primrec_decode_bitStr` in the other direction. A natural is encoded as the
+bit string of `Nat.bits`, so its encoding satisfies the halving recursion below, and strong
+recursion on `ℕ` turns that into a primitive recursive definition. Every budgeted run of the
+tabulation feeds the machine an `encode (n, …)`, so this is on the critical path of
+`MIPRE.Halting.tab_computable`. -/
+
+/-- The binary encoding of a natural as data, in recursive form. -/
+theorem encode_nat_rec (n : ℕ) : (encode n : Data) =
+    if n = 0 then Data.nil
+    else Data.cons (if n % 2 = 1 then Data.cons Data.nil Data.nil else Data.nil)
+      (encode (n / 2) : Data) := by
+  by_cases h : n = 0
+  · subst h; rfl
+  rw [if_neg h]
+  show (encode n.bits : Data) = Data.cons _ (encode (n / 2).bits : Data)
+  rcases Nat.even_or_odd n with he | ho
+  · have h0 : n % 2 = 0 := Nat.even_iff.1 he
+    have h2 : n = 2 * (n / 2) := by omega
+    have hne : n / 2 ≠ 0 := by omega
+    rw [if_neg (by omega)]
+    conv_lhs => rw [h2]
+    rw [Nat.bit0_bits _ hne]
+    rfl
+  · have h1 : n % 2 = 1 := Nat.odd_iff.1 ho
+    have h2 : n = 2 * (n / 2) + 1 := by omega
+    rw [if_pos h1]
+    conv_lhs => rw [h2]
+    rw [Nat.bit1_bits]
+    rfl
+
+/-- Encoding a natural as data is primitive recursive. -/
+theorem primrec_encode_nat : Primrec fun n : ℕ => (encode n : Data) := by
+  have hstep : Primrec₂ (fun (_ : Unit) (l : List Data) =>
+      some (if l.length = 0 then Data.nil
+        else Data.cons (if l.length % 2 = 1 then Data.cons Data.nil Data.nil else Data.nil)
+          (l.getD (l.length / 2) Data.nil))) := by
+    have hlen : Primrec fun p : Unit × List Data => p.2.length :=
+      Primrec.list_length.comp Primrec.snd
+    have body : Primrec fun p : Unit × List Data =>
+        (if p.2.length = 0 then Data.nil
+          else Data.cons (if p.2.length % 2 = 1 then Data.cons Data.nil Data.nil else Data.nil)
+            (p.2.getD (p.2.length / 2) Data.nil)) := ?_
+    · exact (Primrec.option_some.comp body).to₂
+    refine Primrec.ite (Primrec.eq.comp hlen (Primrec.const 0)) (Primrec.const Data.nil) ?_
+    refine primrec_cons.comp ?_ ?_
+    · exact Primrec.ite
+        (Primrec.eq.comp (Primrec.nat_mod.comp hlen (Primrec.const 2)) (Primrec.const 1))
+        (Primrec.const (Data.cons Data.nil Data.nil)) (Primrec.const Data.nil)
+    · exact (Primrec.list_getD Data.nil).comp Primrec.snd
+        (Primrec.nat_div.comp hlen (Primrec.const 2))
+  have H : ∀ (_ : Unit) (n : ℕ),
+      (fun (_ : Unit) (l : List Data) =>
+        some (if l.length = 0 then Data.nil
+          else Data.cons (if l.length % 2 = 1 then Data.cons Data.nil Data.nil else Data.nil)
+            (l.getD (l.length / 2) Data.nil))) ()
+        ((List.range n).map fun m => (encode m : Data)) = some (encode n : Data) := by
+    intro _ n
+    simp only [List.length_map, List.length_range]
+    by_cases h : n = 0
+    · subst h; rfl
+    rw [if_neg h]
+    conv_rhs => rw [encode_nat_rec n, if_neg h]
+    congr 2
+    rw [List.getD_eq_getElem?_getD, List.getElem?_map, List.getElem?_range (by omega)]
+    rfl
+  exact (Primrec.nat_strong_rec (fun (_ : Unit) (n : ℕ) => (encode n : Data)) hstep H).comp
+    (Primrec.const ()) Primrec.id
+
 end Data
+
+/-! ## Two small gaps in the ambient library -/
+
+/-- Exponentiation is primitive recursive. Mathlib has `Nat.Primrec.pow` on the unpaired
+form but no `Primrec₂` spelling. -/
+theorem primrec_nat_pow : Primrec₂ ((· ^ ·) : ℕ → ℕ → ℕ) := Primrec₂.unpaired'.1 Nat.Primrec.pow
+
+/-- Two `LawfulBEq` instances give the same `List.idxOf`. `List Bool` has its own `BEq`, while
+Mathlib's `Primrec.list_idxOf` is stated at the one derived from `DecidableEq`; the two are
+propositionally equal, but reducing them to a common normal form sends `whnf` a very long way
+indeed, so the bridge is proved once, here, rather than left to unification. -/
+theorem List.idxOf_congr_inst {α : Type*} (i1 i2 : BEq α) [@LawfulBEq α i1] [@LawfulBEq α i2]
+    (a : α) (l : List α) : @List.idxOf α i1 a l = @List.idxOf α i2 a l := by
+  show @List.findIdx α _ l = @List.findIdx α _ l
+  congr 1
+  funext b
+  exact Bool.eq_iff_iff.2 (by rw [@beq_iff_eq α i1 _, @beq_iff_eq α i2 _])
+
+/-- The index of a bit string in a list of bit strings, at the instance the enumerations of
+`Halting/Enumerate.lean` actually elaborate to. -/
+theorem primrec_idxOf_bitStr :
+    Primrec₂ (fun (a : BitStr) (l : List BitStr) => @List.idxOf BitStr List.instBEq a l) :=
+  Primrec.list_idxOf.of_eq fun a l => List.idxOf_congr_inst instBEqOfDecidableEq List.instBEq a l
 
 end MIPRE.Cost

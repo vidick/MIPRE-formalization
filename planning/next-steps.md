@@ -213,6 +213,47 @@ decisions, items with a done criterion, risks. Update the status column as items
   `lem:mipstar-sub-re`; `exists_semidecider_lt_quantumValue` is the criterion's `hS` for any
   computable family of game descriptions. Not done here: the passage from a normal form
   verifier to a game description (a computable tabulation), which is H4's.
+- Delivered 2026-09-15 (H4, obligation O2), which closes the gap the previous bullet leaves:
+  the tabulation is `MIPRE.Halting.tab` in `Foundations/Halting/Instantiation.lean`, over
+  `Halting/Tabulate.lean` (`tabOf`, the `GameData` two encoded programs and three numbers
+  describe) and the new `Foundations/Cost/ProgData.lean` (`progOk`, `progNorm`, deciding
+  program-hood so that junk data tabulates as the program `nil` it denotes). `tab_computable`,
+  `tab_match`, `tab_le` and `tab_value` are proved sorry-free, and the four fields that stood
+  for them have left `MIPRE.Halting.Obligations`, which now carries O1 (inhabited), O3 and O4.
+  So this item's `exists_semidecider_lt_quantumValue` has its first real consumer, and the next
+  piece of H4 — O3, the semidecider for the complement of `classB` — is where it is spent: the
+  `val*` disjunct of `Verifier.not_inClassB_iff` is two lines from `tab_computable`
+  (`rePred_lt_quantumValue_comp`), and what is left around it is a `Σ₁` search for a
+  boundedness violation, a computable-test version of `REPred.of_primrecRel_exists`, the merge
+  of the two disjuncts, the passage from a `BitStr` input to `encode (x, n)`
+  (`Cost.exists_semidecider` reads one bit string), and one question of substance — `tab`
+  matches a verifier only where it is synchronous, and `classB` does not ask for synchronicity.
+  `planning/h4-assembly.md` §4 item 3 has the list and the three candidate repairs.
+- Delivered 2026-09-15 (H4, obligation O3, and the two payloads O2 still owed it):
+  `MIPRE.Halting.exists_sem` (`Foundations/Halting/Semidecider.lean`) takes **no** hypotheses —
+  a closed program halting on `encode (x, n)` exactly when `x ∉ classB n`, sorry-free, over
+  `Halting/CostBudget.lean` (a cost budget carried along the run, so that *not* halting in
+  budget is decidable, which `runForD` alone does not give) and `Halting/Semidecide.lean` (the
+  pair input). The plumbing items of the previous bullet all went through as listed. The
+  question of substance was settled the cheapest of the three ways, by tabulating on the
+  **doubled question set** (`Foundations/GameDouble.lean`: `Game.doubled` on `Bool × 𝒳`, Alice
+  tagged `false` and Bob `true`, everything off that block rejected, so the distribution avoids
+  the diagonal and a `GameData`'s built-in veto on unequal answers at equal questions constrains
+  no verifier). It changed the tabulation only, as the estimate said: `Decider.wrap` and
+  `thm:compression` are untouched, and `Foundations/SyncTransport.lean` gained
+  `Verifier.doubledGame` and six lemmas beside its four existing bridges rather than having any
+  of them restated — `hD` stays total under the doubling, so `quantumValue_eq_of_equiv` and
+  `SyncStrategy.isPCC_relabel` apply as they stand. The second payload,
+  `Verifier.ComputablyPresented (Vof G U)`, came from re-budgeting the two sampler runs off
+  `GapCompression.sampler_time`, which carries no hypothesis, instead of off
+  `Verifier.IsBounded`, which does: `dimOf_eq` and `margOf_eq` now hold at every string and
+  every level, `n = 0` and `n = 1` included, which is what `ComputablyPresented` asks for and
+  what no `IsBounded` budget can reach. `tab_le` is deleted along the way, `tab_value` now
+  holding in both branches of `halting_reduction`. What is left of H4 is **O4**, the
+  compressor's decider and its time accounting — and, before it, a module move: `Obligations`
+  and `halting_reduction` have to sit below `exists_sem` in the import order for the structure
+  to drop its three O3 fields (`planning/h4-assembly.md` §4 item 5), which is reorganization
+  rather than mathematics.
 
 ### 5. #22 / #23 — synchronous transport (`thm:almost-sync`) — **off the critical path 2026-09-13**
 

@@ -36,14 +36,21 @@ in $\synval$, which is unchanged, and it can only lower $\valstar$ --- the safe 
 for the soundness clause, while the completeness witness is synchronous and survives.
 The two passages this needs from Theorem~\ref{thm:halting}, whose Lean assembly concludes in
 $\valstar$, are formalized: the transport of a value-$1$ PCC strategy along the relabelings of
-the tabulation (\texttt{MIPRE.Verifier.gameValue\_toGame\_eq\_one}, through
+the tabulation (\texttt{MIPRE.Verifier.gameValue\_toGame\_eq\_one\_doubled}, through
 \texttt{MIPRE.syncValue\_eq\_of\_equiv}) for completeness, and
-\texttt{MIPRE.Verifier.gameValue\_toGame\_le\_of\_valStar\_le} for soundness; both are stated
-directly in \texttt{HaltingGameValue.gameValue}, by
-Remark~\ref{rem:standalone-restatement}'s identification of the two vocabularies. What the
-proof of Theorem~\ref{thm:main} still waits on is the four open obligations of
-Theorem~\ref{thm:halting}, and, within the tabulation, the record of its agreement with
-$\verifier_n$ in the form the completeness bridge consumes (Remark~\ref{rem:compression-abstract}).
+\texttt{MIPRE.Verifier.gameValue\_toGame\_le\_of\_valStar\_le\_doubled} for soundness; both are
+stated directly in \texttt{HaltingGameValue.gameValue}, by
+Remark~\ref{rem:standalone-restatement}'s identification of the two vocabularies, and both are
+read against the \emph{doubled} game of $\verifier_n$, which is how the tabulation matches it
+without asking the verifier to be synchronous (Remark~\ref{rem:compression-abstract}, item 3).
+On the tabulation the completeness bridge is \texttt{MIPRE.Halting.gameValue\_tab\_eq\_one}.
+What the proof of Theorem~\ref{thm:main} still waits on is the obligations of
+Theorem~\ref{thm:halting} that remain open, and mathematically that is the compressor alone:
+the two distinguished strings and the semidecider are theorems, kept as fields of
+\texttt{MIPRE.Halting.Obligations} until they are assembled into an inhabitant. The
+tabulation is not among them at all, and neither is the record of its agreement with
+$\verifier_n$ in the form the completeness bridge consumes: that record is
+\texttt{MIPRE.Halting.tab\_match} (Remark~\ref{rem:compression-abstract}).
 
 \begin{remark}[The standalone restatement]
 \label{rem:standalone-restatement}

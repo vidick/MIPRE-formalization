@@ -221,6 +221,15 @@ instance : SizedEncoding Prog where
 
 theorem esize_eq_size_toData (p : Prog) : esize p = p.toData.size := rfl
 
+/-- **Every program has size at least two.** `Prog.toData` is a `Data.cons` whatever the
+constructor, so no program encodes to `nil`. Small, and load-bearing: it is what forces
+`2 ≤ λ` in `Verifier.IsBounded` (`Verifier.IsBounded.two_le`), and so what puts the index of
+the halting reduction inside the range where `IsBounded`'s time clauses say anything. -/
+theorem two_le_esize (p : Prog) : 2 ≤ esize p := by
+  cases p <;>
+    simp only [esize_eq_size_toData, toData, Data.size_cons, Data.size_nil, Data.size_ofNat] <;>
+    omega
+
 end Prog
 
 end MIPRE.Cost

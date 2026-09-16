@@ -38,28 +38,36 @@ here, and it is the part of O3 that O2 does not contain:
   hands the result to `Cost.exists_semidecider_prod_nat`, which is `Cost.exists_semidecider`
   on pair-encoded inputs. Out comes `sem`, `sem_closed` and `sem_spec`.
 
-## What is assumed, and why
+## What was assumed, and what discharged it
 
-`exists_sem_of_tab` takes the tabulation and the presentation of the family as hypotheses. Both
-are O2's, and are exactly what `Obligations.tab_computable` will have to produce on the way to
-itself: a `GameData` for `𝒱_n` cannot be computed without the sampler's dimension and the two
-programs. Stating them rather than proving them keeps this file out of O2's way; the
-mathematical content here — that the *violation* of a `∀`-clause over an infinite index set is
-enumerable — is proved outright.
+`exists_sem_of_tab` takes the tabulation and the presentation of the family as hypotheses.
+Both are O2's: a `GameData` for `𝒱_n` cannot be computed without the sampler's dimension and
+the two programs. Stating them rather than proving them keeps the mathematical content here —
+that the *violation* of a `∀`-clause over an infinite index set is enumerable — independent of
+how the tabulation is built. Both are now supplied: `Halting.computablyPresented_Vof` at the
+end of this file, and `Halting.tab_value` in `Halting/Instantiation.lean`, so that
+**`Halting.exists_sem` takes no hypotheses** and the three O3 fields of `Obligations` are
+proved outright — they remain fields only because `Obligations` sits in the file this one
+imports.
 
-Two things found in the writing, both recorded in `planning/h4-assembly.md`:
+Two things found in the writing, both recorded in `planning/h4-assembly.md`, and both since
+discharged — by different repairs. The findings are kept because they say where the seams
+were:
 
 1. **O3 is not "O2 plus a disjunction"**, as the plan and `Obligations`' docstring said. The
    hypothesis `hval` below asks the tabulation to have the value of `𝒱_n` for every
-   `n`-bounded verifier, and `Obligations.tab_match` gives that only for a verifier
+   `n`-bounded verifier, and the match as it then stood gave that only for a verifier
    *synchronous* at `n` — because a `GameData` describes a synchronous game by construction
-   (`Obligations.tab_le`). Membership in `B` does not carry synchronicity, so the equivalence
-   `sem_spec` demands is not available from `tab_match` as it stands. Three ways out are on
-   the record; none is O3's to choose.
-2. `Primrec fun n : ℕ => (encode n : Data)` — natural numbers encode in binary
-   (`Nat.bits`) — is missing and is a prerequisite of `ComputablyPresented` for the verifier a
-   string denotes, hence of O2's `tab_computable` too. The witness trick above is what keeps
-   *this* file from needing it.
+   (`MIPRE.Verifier.isSynchronousAt_of_game_matches`). Membership in `B` does not carry
+   synchronicity, so the equivalence `sem_spec` demands was not available. Three ways out were
+   on the record; the one taken is the doubled question set of `Foundations/GameDouble.lean`.
+   `MIPRE.Halting.tab_match` now matches `(Vof G U x).doubledGame`, whose distribution puts no
+   weight on the diagonal a `GameData` vetoes, and `MIPRE.Halting.tab_value` is `hval` on the
+   nose — the equality, in both directions, at every `n`-bounded string.
+2. `Primrec fun n : ℕ => (encode n : Data)` — natural numbers encode in binary (`Nat.bits`) —
+   was missing and is a prerequisite of `ComputablyPresented` for the verifier a string
+   denotes, hence of O2's tabulation too. It is now `MIPRE.Cost.Data.primrec_encode_nat`. The
+   witness trick above is what kept *this* file from needing it in the first place.
 -/
 
 namespace MIPRE
@@ -120,7 +128,7 @@ dimension of its sampler are computable in `a` — the programs as the data that
 which is the form every computability statement of the ambient model takes.
 
 This is what a computable tabulation of the games of the family needs anyway
-(`MIPRE.Halting.Obligations.tab_computable`): the question weights come from running the
+(`MIPRE.Halting.tab_computable`): the question weights come from running the
 sampler over `𝔽₂^{s(n)}`, so `s(n)` has to be computed before anything else can be. -/
 structure ComputablyPresented {α : Type*} [Primcodable α] {ℓ : ℕ} (V : α → Verifier ℓ) :
     Prop where
@@ -326,6 +334,36 @@ theorem exists_sem_of_tab (hV : Verifier.ComputablyPresented (Vof G U))
     · rw [hval q.1 q.2 hb]
     · simp [hb]
   exact Cost.exists_semidecider_prod_nat (p := fun x n => x ∉ classB G U n) hre
+
+/-- **The family `Vof` is computably presented.** All three fields, and all three are O2's:
+the two programs by `computable_sampData`/`sampData_eq` and
+`computable_decProgData`/`decProgData_eq`, and the third — the sampler's dimension,
+*unconditionally* in the string and the level — by the re-budgeted `dimOf` read back by
+`dimOf_eq`. That `dimOf_eq` carries no hypothesis is the whole point: `ComputablyPresented`
+asks for the true dimension at every string and every level, including `n = 0` and `n = 1`,
+and the budget `IsBounded n` supplies cannot reach those. What supplies it instead is
+`GapCompression.sampler_time`, which holds for every parameter and every index. -/
+theorem computablyPresented_Vof (G : GapCompression) (U : UniversalMachine) :
+    Verifier.ComputablyPresented (Vof G U) where
+  samplerProg := (computable_sampData G).of_eq fun x => sampData_eq G x
+  deciderProg := (computable_decProgData G U).of_eq fun x => decProgData_eq G U x
+  dim := (computable_dimOf_fst G).of_eq fun q => dimOf_eq G U q.1 q.2
+
+/-- **Obligation O3, with no hypotheses left.** Both arguments of `exists_sem_of_tab` are
+discharged by O2: the computable presentation by the re-budgeted sampler runs, and `hval` —
+the value equality at every `n`-bounded string, in both directions and with no synchronicity
+— by the doubled question set of `Foundations/GameDouble.lean`.
+
+This is the repair blueprint `lem:halting-semidecider` records as the first of three, and the
+only one that changes nothing outside the tabulation: the two alternatives were to make
+`Decider.wrap` reject unequal answers at equal questions, which changes what a string
+*denotes* and so reopens `accOf_iff`, the classes and `thm:compression`; or to put
+synchronicity into `classB`, which moves the cost into `compr_spec`, a field of the one
+obligation still open. -/
+theorem exists_sem (G : GapCompression) (U : UniversalMachine) :
+    ∃ S : Prog, S.WellScoped 1 ∧
+      ∀ (x : BitStr) (n : ℕ), Halts S (encode (x, n)) ↔ x ∉ classB G U n :=
+  exists_sem_of_tab (computablyPresented_Vof G U) (tab G U) (tab_computable G U) (tab_value G U)
 
 end Halting
 
