@@ -100,6 +100,26 @@ its scratch tape of length at most `xl`. -/
 abbrev StepTo (c : Cfg input) (B : ℕ) (m' : Machine.Cfg) (r' xl : ℕ) : Prop :=
   PreTo c B (at_ .dispatch 0) m' r' (ctrlRepr m'.ctrl).length (kontRepr m'.kont).length xl
 
+/-- `PreTo` with at least one step. -/
+def PreTo1 (c : Cfg input) (B : ℕ) (q : Option Ctl) (m' : Machine.Cfg) (r' pC pK xl : ℕ) : Prop :=
+  ∃ n, 1 ≤ n ∧ n ≤ B ∧ ∃ c' ds', Reach c n c' [] ∧ Desc c' q ds' ∧ RepOf ds' m' r' pC pK ∧
+    (ds' X).l.length ≤ xl
+
+/-- `StepTo` with at least one step. -/
+abbrev RunTo (c : Cfg input) (B : ℕ) (m' : Machine.Cfg) (r' xl : ℕ) : Prop :=
+  PreTo1 c B (at_ .dispatch 0) m' r' (ctrlRepr m'.ctrl).length (kontRepr m'.kont).length xl
+
+theorem PreTo1.mono {c : Cfg input} {B B' : ℕ} {q : Option Ctl} {m' : Machine.Cfg}
+    {r' pC pK xl xl' : ℕ} (h : PreTo1 c B q m' r' pC pK xl) (hB : B ≤ B') (hx : xl ≤ xl') :
+    PreTo1 c B' q m' r' pC pK xl' := by
+  obtain ⟨n, h1, hn, c', ds', hr, hd, hrep, hxl⟩ := h
+  exact ⟨n, h1, by omega, c', ds', hr, hd, hrep, by omega⟩
+
+theorem PreTo1.toPreTo {c : Cfg input} {B : ℕ} {q : Option Ctl} {m' : Machine.Cfg}
+    {r' pC pK xl : ℕ} (h : PreTo1 c B q m' r' pC pK xl) : PreTo c B q m' r' pC pK xl := by
+  obtain ⟨n, _, hn, c', ds', hr, hd, hrep, hxl⟩ := h
+  exact ⟨n, hn, c', ds', hr, hd, hrep, hxl⟩
+
 theorem PreTo.mono {c : Cfg input} {B B' : ℕ} {q : Option Ctl} {m' : Machine.Cfg}
     {r' pC pK xl xl' : ℕ} (h : PreTo c B q m' r' pC pK xl) (hB : B ≤ B') (hx : xl ≤ xl') :
     PreTo c B' q m' r' pC pK xl' := by
@@ -264,7 +284,7 @@ final `0` of the tag. -/
 theorem dispatch_ev {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispatch 0) ds)
     {p : Prog} {env : Env} {k : List Frame} {r : ℕ}
     (hr : RepOf ds ⟨.ev p, env, k⟩ r (ctrlRepr (.ev p)).length (kontRepr k).length) :
-    PreTo c ((ctrlRepr (.ev p)).length + 26) (at_ (evTarget p) 0) ⟨.ev p, env, k⟩ r (evHead p)
+    PreTo1 c ((ctrlRepr (.ev p)).length + 26) (at_ (evTarget p) 0) ⟨.ev p, env, k⟩ r (evHead p)
       (kontRepr k).length (ds X).l.length := by
   obtain ⟨g, hC⟩ := hr.ctrl
   have hE := hr.env
@@ -284,11 +304,12 @@ theorem dispatch_ev {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .disp
   -- the description after the dispatcher, with the head of `C` at `n`
   have fin : ∀ (n : ℕ) (c' : Cfg input), Reach c₂ (3 * (n / 2)) c' [] →
       Desc c' (at_ (evTarget p) 0) (Function.update ds C ⟨(ds C).l, n⟩) → n = evHead p →
-      PreTo c ((ctrlRepr (.ev p)).length + 26) (at_ (evTarget p) 0) ⟨.ev p, env, k⟩ r (evHead p)
+      PreTo1 c ((ctrlRepr (.ev p)).length + 26) (at_ (evTarget p) 0) ⟨.ev p, env, k⟩ r (evHead p)
         (kontRepr k).length (ds X).l.length := by
     intro n c' hr' hd' hn
     subst hn
-    refine ⟨_, ?_, c', _, (hR.trans hr').cast_out (by simp), hd', ⟨⟨g, ?_⟩, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
+    refine ⟨_, by omega, ?_, c', _, (hR.trans hr').cast_out (by simp), hd', ⟨⟨g, ?_⟩, ?_, ?_, ?_, ?_, ?_⟩,
+      ?_⟩
     · cases p <;> simp [evHead] <;> omega
     · simp [hC]
     · simp [hE]
@@ -1039,7 +1060,7 @@ on the value and the head of `K` on the second tag bit. -/
 theorem dispatch_ret {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispatch 0) ds)
     {v : Data} {env : Env} {f : Frame} {k : List Frame} {r : ℕ}
     (hr : RepOf ds ⟨.ret v, env, f :: k⟩ r (ctrlRepr (.ret v)).length (kontRepr (f :: k)).length) :
-    PreTo c (v.size + (frameBody f).length + 20) (at_ (retTarget f) 0) ⟨.ret v, env, f :: k⟩ r 1
+    PreTo1 c (v.size + (frameBody f).length + 20) (at_ (retTarget f) 0) ⟨.ret v, env, f :: k⟩ r 1
       ((kontRepr k).length + 1) (ds X).l.length := by
   obtain ⟨g, hds⟩ := hr.eq
   have hX := hr.scratch
@@ -1068,10 +1089,10 @@ theorem dispatch_ret {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dis
       Desc c' (at_ (retTarget f) 0) ds' →
       RepOf ds' ⟨.ret v, env, f :: k⟩ r 1 ((kontRepr k).length + 1) →
       (ds' X).l.length ≤ (ds X).l.length →
-      PreTo c (v.size + (frameBody f).length + 20) (at_ (retTarget f) 0) ⟨.ret v, env, f :: k⟩ r 1
+      PreTo1 c (v.size + (frameBody f).length + 20) (at_ (retTarget f) 0) ⟨.ret v, env, f :: k⟩ r 1
         ((kontRepr k).length + 1) (ds X).l.length := by
     intro m c' ds' hr' hm hd' hrep hxl
-    exact ⟨_, by omega, c', ds', (hR.trans hr').cast_out (by simp), hd', hrep, hxl⟩
+    exact ⟨_, by omega, by omega, c', ds', (hR.trans hr').cast_out (by simp), hd', hrep, hxl⟩
   cases f with
   | cons1 t env' =>
     obtain ⟨c₇, hr₇, hd₇⟩ := D_branch_taken rfl hd₆ (by norm_ds_goal; rw [read_tag0]; rfl)
@@ -1825,10 +1846,11 @@ theorem final_run {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispat
 a scratch tape of length `xl`. -/
 def stepBound (m : Machine.Cfg) (xl : ℕ) : ℕ := caseBound m xl + sz m + 30
 
-theorem PreTo.after_dispatch {c c₁ : Cfg input} {n₁ B₁ : ℕ} (hr₁ : Reach c n₁ c₁ []) (hn₁ : n₁ ≤ B₁)
-    {B q m' r pC pK xl} (h : PreTo c₁ B q m' r pC pK xl) : PreTo c (B₁ + B) q m' r pC pK xl := by
+theorem PreTo.after_dispatch {c c₁ : Cfg input} {n₁ B₁ : ℕ} (hr₁ : Reach c n₁ c₁ []) (h1 : 1 ≤ n₁)
+    (hn₁ : n₁ ≤ B₁) {B q m' r pC pK xl} (h : PreTo c₁ B q m' r pC pK xl) :
+    PreTo1 c (B₁ + B) q m' r pC pK xl := by
   obtain ⟨n, hn, c', ds', hr, hd, hrep, hxl⟩ := h
-  exact ⟨n₁ + n, by omega, c', ds', (hr₁.trans hr).cast_out (by simp), hd, hrep, hxl⟩
+  exact ⟨n₁ + n, by omega, by omega, c', ds', (hr₁.trans hr).cast_out (by simp), hd, hrep, hxl⟩
 
 /-- **One step of the machine**, when the budget covers its cost: from the dispatcher
 representing `m`, `U` reaches the dispatcher representing `step m` with the cost charged. -/
@@ -1836,11 +1858,11 @@ theorem step_run {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispatc
     {m : Machine.Cfg} {r : ℕ}
     (hr : RepOf ds m r (ctrlRepr m.ctrl).length (kontRepr m.kont).length)
     (hnf : ∀ v, m.ctrl = .ret v → m.kont ≠ []) (hcost : stepCost m ≤ r) :
-    StepTo c (stepBound m (ds X).l.length) (Machine.step m) (r - stepCost m) ((ds X).l.length + sz m) := by
+    RunTo c (stepBound m (ds X).l.length) (Machine.step m) (r - stepCost m) ((ds X).l.length + sz m) := by
   obtain ⟨ctrl, env, k⟩ := m
   cases ctrl with
   | ev p =>
-    obtain ⟨n₁, hn₁, c₁, ds₁, hr₁, hd₁, hrep₁, hxl₁⟩ := dispatch_ev hd hr
+    obtain ⟨n₁, hn₁₀, hn₁, c₁, ds₁, hr₁, hd₁, hrep₁, hxl₁⟩ := dispatch_ev hd hr
     have hmono : caseBound ⟨.ev p, env, k⟩ (ds₁ X).l.length ≤ caseBound ⟨.ev p, env, k⟩ (ds X).l.length := by
       simp only [caseBound]; omega
     cases p with
@@ -1848,28 +1870,28 @@ theorem step_run {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispatc
       simp only [stepCost] at hcost ⊢
       simp only [Machine.step]
       rw [show r = r - ((Env.get env i).size + 1) + ((Env.get env i).size + 1) by omega] at hrep₁
-      refine (PreTo.after_dispatch hr₁ hn₁ (case_evVar hd₁ hrep₁)).mono ?_ ?_
+      refine (PreTo.after_dispatch hr₁ hn₁₀ hn₁ (case_evVar hd₁ hrep₁)).mono ?_ ?_
       · simp only [stepBound, sz]; omega
       · simp only [sz]; omega
     | nil =>
       simp only [stepCost] at hcost ⊢
       simp only [Machine.step]
       rw [show r = r - 1 + 1 by omega] at hrep₁
-      refine (PreTo.after_dispatch hr₁ hn₁ (case_evNil hd₁ hrep₁)).mono ?_ ?_
+      refine (PreTo.after_dispatch hr₁ hn₁₀ hn₁ (case_evNil hd₁ hrep₁)).mono ?_ ?_
       · simp only [stepBound, sz]; omega
       · simp only [sz]; omega
     | const d =>
       simp only [stepCost] at hcost ⊢
       simp only [Machine.step]
       rw [show r = r - d.size + d.size by omega] at hrep₁
-      refine (PreTo.after_dispatch hr₁ hn₁ (case_evConst hd₁ hrep₁)).mono ?_ ?_
+      refine (PreTo.after_dispatch hr₁ hn₁₀ hn₁ (case_evConst hd₁ hrep₁)).mono ?_ ?_
       · simp only [stepBound, sz]; omega
       · simp only [sz]; omega
     | cons h t =>
       simp only [stepCost] at hcost ⊢
       simp only [Machine.step]
       rw [show r = r - 1 + 1 by omega] at hrep₁
-      refine (PreTo.after_dispatch hr₁ hn₁ ((case_evCons hd₁ hrep₁).charge_jump rfl (by decide) rfl)).mono ?_ ?_
+      refine (PreTo.after_dispatch hr₁ hn₁₀ hn₁ ((case_evCons hd₁ hrep₁).charge_jump rfl (by decide) rfl)).mono ?_ ?_
       · simp only [stepBound, sz]; omega
       · simp only [sz]; omega
     | elim i n cc =>
@@ -1877,30 +1899,30 @@ theorem step_run {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispatc
       simp only [Machine.step]
       rw [show r = r - 1 + 1 by omega] at hrep₁
       rcases hv : Env.get env i with _ | ⟨a, b⟩
-      · refine (PreTo.after_dispatch hr₁ hn₁ ((case_evElim_nil hd₁ hrep₁ hv).charge_jump rfl (by decide) rfl)).mono ?_ ?_
+      · refine (PreTo.after_dispatch hr₁ hn₁₀ hn₁ ((case_evElim_nil hd₁ hrep₁ hv).charge_jump rfl (by decide) rfl)).mono ?_ ?_
         · simp only [stepBound, sz]; omega
         · simp only [sz]; omega
-      · refine (PreTo.after_dispatch hr₁ hn₁ ((case_evElim_cons hd₁ hrep₁ hv).charge_jump rfl (by decide) rfl)).mono ?_ ?_
+      · refine (PreTo.after_dispatch hr₁ hn₁₀ hn₁ ((case_evElim_cons hd₁ hrep₁ hv).charge_jump rfl (by decide) rfl)).mono ?_ ?_
         · simp only [stepBound, sz]; omega
         · simp only [sz]; omega
     | let_ e b =>
       simp only [stepCost] at hcost ⊢
       simp only [Machine.step]
       rw [show r = r - 1 + 1 by omega] at hrep₁
-      refine (PreTo.after_dispatch hr₁ hn₁ ((case_evLet hd₁ hrep₁).charge_jump rfl (by decide) rfl)).mono ?_ ?_
+      refine (PreTo.after_dispatch hr₁ hn₁₀ hn₁ ((case_evLet hd₁ hrep₁).charge_jump rfl (by decide) rfl)).mono ?_ ?_
       · simp only [stepBound, sz]; omega
       · simp only [sz]; omega
     | loop b =>
       simp only [stepCost] at hcost ⊢
       simp only [Machine.step]
-      refine (PreTo.after_dispatch hr₁ hn₁ (case_evLoop hd₁ hrep₁)).mono ?_ ?_
+      refine (PreTo.after_dispatch hr₁ hn₁₀ hn₁ (case_evLoop hd₁ hrep₁)).mono ?_ ?_
       · simp only [stepBound, sz]; omega
       · simp only [sz]; omega
   | ret v =>
     cases k with
     | nil => exact absurd rfl (hnf v rfl)
     | cons f k =>
-      obtain ⟨n₁, hn₁, c₁, ds₁, hr₁, hd₁, hrep₁, hxl₁⟩ := dispatch_ret hd hr
+      obtain ⟨n₁, hn₁₀, hn₁, c₁, ds₁, hr₁, hd₁, hrep₁, hxl₁⟩ := dispatch_ret hd hr
       have hmono : caseBound ⟨.ret v, env, f :: k⟩ (ds₁ X).l.length ≤
           caseBound ⟨.ret v, env, f :: k⟩ (ds X).l.length := by
         simp only [caseBound]; omega
@@ -1910,19 +1932,19 @@ theorem step_run {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispatc
       | cons1 t env' =>
         simp only [stepCost, Nat.sub_zero] at hcost ⊢
         simp only [Machine.step]
-        refine (PreTo.after_dispatch hr₁ hn₁ (case_retCons1 hd₁ hrep₁)).mono ?_ ?_
+        refine (PreTo.after_dispatch hr₁ hn₁₀ hn₁ (case_retCons1 hd₁ hrep₁)).mono ?_ ?_
         · simp only [stepBound, sz, ctrlRepr_ret, List.length_cons, length_S] at hfb ⊢; omega
         · simp only [sz]; omega
       | cons2 a =>
         simp only [stepCost, Nat.sub_zero] at hcost ⊢
         simp only [Machine.step]
-        refine (PreTo.after_dispatch hr₁ hn₁ (case_retCons2 hd₁ hrep₁)).mono ?_ ?_
+        refine (PreTo.after_dispatch hr₁ hn₁₀ hn₁ (case_retCons2 hd₁ hrep₁)).mono ?_ ?_
         · simp only [stepBound, sz, ctrlRepr_ret, List.length_cons, length_S] at hfb ⊢; omega
         · simp only [sz]; omega
       | let1 b env' =>
         simp only [stepCost, Nat.sub_zero] at hcost ⊢
         simp only [Machine.step]
-        refine (PreTo.after_dispatch hr₁ hn₁ (case_retLet1 hd₁ hrep₁)).mono ?_ ?_
+        refine (PreTo.after_dispatch hr₁ hn₁₀ hn₁ (case_retLet1 hd₁ hrep₁)).mono ?_ ?_
         · simp only [stepBound, sz, ctrlRepr_ret, List.length_cons, length_S] at hfb ⊢; omega
         · simp only [sz]; omega
       | loop1 b env' =>
@@ -1930,13 +1952,13 @@ theorem step_run {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispatc
         simp only [Machine.step]
         rw [show r = r - 1 + 1 by omega] at hrep₁
         rcases v with _ | ⟨_ | ⟨y, z⟩, v'⟩
-        · refine (PreTo.after_dispatch hr₁ hn₁ ((case_retLoopNil hd₁ hrep₁).charge_jump rfl (by decide) rfl)).mono ?_ ?_
+        · refine (PreTo.after_dispatch hr₁ hn₁₀ hn₁ ((case_retLoopNil hd₁ hrep₁).charge_jump rfl (by decide) rfl)).mono ?_ ?_
           · simp only [stepBound, sz, ctrlRepr_ret, List.length_cons, length_S] at hfb ⊢; omega
           · simp only [sz]; omega
-        · refine (PreTo.after_dispatch hr₁ hn₁ ((case_retLoopStop hd₁ hrep₁).charge_jump rfl (by decide) rfl)).mono ?_ ?_
+        · refine (PreTo.after_dispatch hr₁ hn₁₀ hn₁ ((case_retLoopStop hd₁ hrep₁).charge_jump rfl (by decide) rfl)).mono ?_ ?_
           · simp only [stepBound, sz, ctrlRepr_ret, List.length_cons, length_S] at hfb ⊢; omega
           · simp only [sz]; omega
-        · refine (PreTo.after_dispatch hr₁ hn₁ ((case_retLoopCont hd₁ hrep₁).charge_jump rfl (by decide) rfl)).mono ?_ ?_
+        · refine (PreTo.after_dispatch hr₁ hn₁₀ hn₁ ((case_retLoopCont hd₁ hrep₁).charge_jump rfl (by decide) rfl)).mono ?_ ?_
           · simp only [stepBound, sz, ctrlRepr_ret, List.length_cons, length_S] at hfb ⊢; omega
           · simp only [sz]; omega
 
@@ -1949,7 +1971,7 @@ theorem step_fail {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispat
   obtain ⟨ctrl, env, k⟩ := m
   cases ctrl with
   | ev p =>
-    obtain ⟨n₁, hn₁, c₁, ds₁, hr₁, hd₁, hrep₁, hxl₁⟩ := dispatch_ev hd hr
+    obtain ⟨n₁, hn₁₀, hn₁, c₁, ds₁, hr₁, hd₁, hrep₁, hxl₁⟩ := dispatch_ev hd hr
     have hmono : caseBound ⟨.ev p, env, k⟩ (ds₁ X).l.length ≤ caseBound ⟨.ev p, env, k⟩ (ds X).l.length := by
       simp only [caseBound]; omega
     cases p with
@@ -1989,7 +2011,7 @@ theorem step_fail {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispat
     cases k with
     | nil => exact absurd rfl (hnf v rfl)
     | cons f k =>
-      obtain ⟨n₁, hn₁, c₁, ds₁, hr₁, hd₁, hrep₁, hxl₁⟩ := dispatch_ret hd hr
+      obtain ⟨n₁, hn₁₀, hn₁, c₁, ds₁, hr₁, hd₁, hrep₁, hxl₁⟩ := dispatch_ret hd hr
       have hmono : caseBound ⟨.ret v, env, f :: k⟩ (ds₁ X).l.length ≤
           caseBound ⟨.ret v, env, f :: k⟩ (ds X).l.length := by
         simp only [caseBound]; omega
