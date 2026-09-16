@@ -131,12 +131,13 @@ inductive Instr
   | write (t : WT) (s : Sym)
   /-- Move right (`dir = true`) or left. -/
   | move (t : WT) (dir : Bool)
-  /-- Move left to the blank, then one right: to cell `0` when cells `0 … pos` are not
-  blank. -/
+  /-- One left, then left to the blank, then one right: to cell `0` when cells
+  `0 … pos - 1` are not blank (the head may sit on the blank after the content). -/
   | rewind (t : WT)
   /-- Move right to the first blank. -/
   | toEnd (t : WT)
-  /-- Erase rightwards to the first blank, ending on it. -/
+  /-- Erase rightwards to the first blank (the cells erased must not contain `$`, which
+  marks the start meanwhile), ending where it started. -/
   | eraseRight (t : WT)
   /-- Move one left, then left to the marker `m` or a blank, then one right. -/
   | leftToMarker (m : Sym) (t : WT)
@@ -200,7 +201,7 @@ def initProg : List Instr :=
 finish when the stack is empty. -/
 def dispatchProg : List Instr :=
   [rewind C, branch C (some .zero) evDispatch,
-   move C true, move K false, branch K none final, move K true, leftToMarker .fr K,
+   move C true, move K false, branch K none final, leftToMarker .fr K,
    branch K (some .zero) ret0x, move K true, branch K (some .zero) retLet1, jump retLoop1]
 
 def ret0xProg : List Instr :=
@@ -279,7 +280,7 @@ def evLoopProg : List Instr :=
 
 /-- `ret v` to `cons1 t env'`: environment `env'`, push `cons2 v`, evaluate `t`. -/
 def retCons1Prog : List Instr :=
-  [move K true, move K true, rewind X, copyTree K (some X) false, move K true,
+  [move K true, rewind X, copyTree K (some X) false, move K true,
    rewind E, copyUntil (some .fr) K E, eraseRight E,
    move K true, popBack .fr K,
    write K .zero, write K .one, copyTree C (some K) false, write K .fr,
@@ -288,10 +289,10 @@ def retCons1Prog : List Instr :=
 
 /-- `ret v` to `cons2 a`: return `cons a v`. -/
 def retCons2Prog : List Instr :=
-  [move K true, move K true, rewind X, write X .one, write X .one,
+  [move K true, rewind X, write X .one,
    copyTree K (some X) false, copyTree C (some X) false,
    move K true, popBack .fr K,
-   rewind C, rewind X, copyTree X (some C) false,
+   rewind C, write C .one, rewind X, copyTree X (some C) false,
    jump dispatch]
 
 /-- `ret v` to `let1 b env'`: environment `v :: env'`, evaluate `b`. -/
@@ -328,13 +329,14 @@ def retLoopStopProg : List Instr :=
 /-- `v = cons (cons _ _) v'`: environment `v' :: env'.tail`, the frame updated, evaluate
 `b`, at cost one. -/
 def retLoopContProg : List Instr :=
-  [move C true, copyTree C none false, rewind X, copyTree C (some X) false,
+  [copyTree C none false, rewind X, copyTree C (some X) false,
    move K true, copyTree K none false, move K true,
    rewind E, copyUntil (some .fr) K E, eraseRight E,
    popBack .sep E,
    rewind X, copyTree X (some E) false, write E .sep,
    move K true, popBack .en K, rewind E, copyUntil none E K, write K .fr,
-   leftToMarker .fr K, move K true, move K true, rewind X, copyTree K (some X) false,
+   move K false, leftToMarker .fr K, move K true, move K true, rewind X,
+   copyTree K (some X) false,
    rewind C, write C .zero, rewind X, copyTree X (some C) false, toEnd K,
    charge false, jump dispatch]
 

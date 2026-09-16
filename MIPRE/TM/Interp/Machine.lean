@@ -127,17 +127,35 @@ def execInstr (ins : Instr) (ph : Phase) (as : IT → Option Sym) (bs : WT → O
   | .write t s => (base .adv).ww t (some s) |>.mw t 1
   | .move t dir => (base .adv).mw t (if dir then 1 else -1)
   | .rewind t =>
-    match bs t with
-    | none => (base .adv).mw t 1
-    | some _ => (base (.stay p0)).mw t (-1)
+    match ph with
+    -- `p0`: one left, unconditionally (the head may sit on the blank after the content).
+    | p0 => (base (.stay p1)).mw t (-1)
+    | _ =>
+      match bs t with
+      | none => (base .adv).mw t 1
+      | some _ => (base (.stay p1)).mw t (-1)
   | .toEnd t =>
     match bs t with
     | none => base .adv
     | some _ => (base (.stay p0)).mw t 1
   | .eraseRight t =>
-    match bs t with
-    | none => base .adv
-    | some _ => (base (.stay p0)).ww t none |>.mw t 1
+    match ph with
+    -- `p0`: nothing to erase, or mark the start with `$` and go right.
+    | p0 =>
+      match bs t with
+      | none => base .adv
+      | some _ => (base (.stay p1)).ww t (some .fr) |>.mw t 1
+    -- `p1`: erase rightwards to the blank, then turn back.
+    | p1 =>
+      match bs t with
+      | none => (base (.stay p2)).mw t (-1)
+      | some _ => (base (.stay p1)).ww t none |>.mw t 1
+    -- `p2`: back over the blanks to the mark, erase it, done.
+    | _ =>
+      match bs t with
+      | none => (base (.stay p2)).mw t (-1)
+      | some .fr => (base .adv).ww t none
+      | some _ => base .halt
   | .leftToMarker m t =>
     match ph with
     | p0 => (base (.stay p1)).mw t (-1)

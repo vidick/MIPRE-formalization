@@ -192,53 +192,38 @@ theorem exec_toEnd {k : ProgId} {pc : Fin maxPc} {t : WT}
 
 /-! ## `rewind` -/
 
-/-- From cell `p + n` with cells `p … p + n` not blank and `p - 1` blank, `rewind` reaches
-cell `p`. -/
-theorem exec_rewind {k : ProgId} {pc : Fin maxPc} {t : WT}
+/-- The scan of `rewind` from `p1`: cells `pos - n + 1 … pos` not blank, `pos - n` blank. -/
+theorem scan_rewind {k : ProgId} {pc : Fin maxPc} {t : WT}
     (hins : instrAt k pc = .rewind t) (hpc : pc.val + 1 < maxPc) (n : ℕ) :
-    ∀ (c : Cfg input), c.state = at_ k pc →
-      (∀ q, c.workTapePos t - n ≤ q → q ≤ c.workTapePos t → c.workTapes t q ≠ none) →
-      c.workTapes t (c.workTapePos t - n - 1) = none →
-    ∃ c', Reach c (n + 2) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [t] ∧
-      c'.workTapes t = c.workTapes t ∧ c'.workTapePos t = c.workTapePos t - n := by
+    ∀ (c : Cfg input), c.state = some ⟨k, pc, p1⟩ →
+      (∀ q, c.workTapePos t - n < q → q ≤ c.workTapePos t → c.workTapes t q ≠ none) →
+      c.workTapes t (c.workTapePos t - n) = none →
+    ∃ c', Reach c (n + 1) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [t] ∧
+      c'.workTapes t = c.workTapes t ∧ c'.workTapePos t = c.workTapePos t - n + 1 := by
   induction n with
   | zero =>
-    intro c hq hne hbl
-    -- one step left, one step right
+    intro c hq _ hbl
     have h := step_instr hq hins
     simp only [execInstr, workTapeSymbols_eq] at h
-    obtain ⟨s, hs⟩ := Option.ne_none_iff_exists'.mp (hne (c.workTapePos t) (by simp) le_rfl)
-    rw [hs] at h
-    simp only [Act.mw_out, Act.base_out, Option.toList_none, Act.mw_next, Act.base_next,
-      resolve_stay] at h
-    set c₁ := applyAct ((Act.base (.stay p0)).mw t (-1)) (some ⟨k, pc, p0⟩) c with hc₁
-    have hu : Untouched c c₁ [] [t] :=
-      untouched_applyAct ⟨fun j _ => rfl, fun d hd => by
+    simp only [Nat.cast_zero, sub_zero] at hbl
+    rw [hbl] at h
+    simp only [Act.mw_out, Act.base_out, Option.toList_none, Act.mw_next, Act.base_next] at h
+    refine ⟨_, h, ?_, ?_, ?_, ?_⟩
+    · simp [resolve_adv k pc hpc]
+    · exact untouched_applyAct ⟨fun j _ => rfl, fun d hd => by
         have : d ≠ t := by simpa using hd
         simp [Act.mw_works_of_ne _ this]⟩ _ _
-    have htape : c₁.workTapes t = c.workTapes t := by
-      rw [hc₁, applyAct_workTapes_of_none _ _ _ t (by simp)]
-    have hpos : c₁.workTapePos t = c.workTapePos t - 1 := by simp [hc₁]; ring
-    have h2 := step_instr (c := c₁) (k := k) (pc := pc) (ph := p0) (by simp [hc₁]) hins
-    simp only [execInstr, workTapeSymbols_eq, htape, hpos] at h2
-    rw [show c.workTapePos t - 1 = c.workTapePos t - (0 : ℕ) - 1 by simp, hbl] at h2
-    simp only [Act.mw_out, Act.base_out, Option.toList_none, Act.mw_next, Act.base_next] at h2
-    refine ⟨_, (h.trans h2).cast_out (List.nil_append _), ?_, ?_, ?_, ?_⟩
-    · simp [resolve_adv k pc hpc]
-    · exact (hu.trans (untouched_applyAct (SI := []) (SW := [t]) ⟨fun j _ => rfl, fun d hd => by
-        have : d ≠ t := by simpa using hd
-        simp [Act.mw_works_of_ne _ this]⟩ _ _)).mono (by simp) (by simp)
-    · rw [applyAct_workTapes_of_none _ _ _ t (by simp), htape]
-    · simp [hpos]
+    · rw [applyAct_workTapes_of_none _ _ _ t (by simp)]
+    · simp
   | succ n ih =>
     intro c hq hne hbl
     have h := step_instr hq hins
     simp only [execInstr, workTapeSymbols_eq] at h
-    obtain ⟨s, hs⟩ := Option.ne_none_iff_exists'.mp (hne (c.workTapePos t) (by omega) le_rfl)
+    obtain ⟨s, hs⟩ := Option.ne_none_iff_exists'.mp (hne (c.workTapePos t) (by push_cast; omega) le_rfl)
     rw [hs] at h
     simp only [Act.mw_out, Act.base_out, Option.toList_none, Act.mw_next, Act.base_next,
       resolve_stay] at h
-    set c₁ := applyAct ((Act.base (.stay p0)).mw t (-1)) (some ⟨k, pc, p0⟩) c with hc₁
+    set c₁ := applyAct ((Act.base (.stay p1)).mw t (-1)) (some ⟨k, pc, p1⟩) c with hc₁
     have hu : Untouched c c₁ [] [t] :=
       untouched_applyAct ⟨fun j _ => rfl, fun d hd => by
         have : d ≠ t := by simpa using hd
@@ -246,31 +231,63 @@ theorem exec_rewind {k : ProgId} {pc : Fin maxPc} {t : WT}
     have htape : c₁.workTapes t = c.workTapes t := by
       rw [hc₁, applyAct_workTapes_of_none _ _ _ t (by simp)]
     have hpos : c₁.workTapePos t = c.workTapePos t - 1 := by simp [hc₁]; ring
-    have hne' : ∀ q, c₁.workTapePos t - n ≤ q → q ≤ c₁.workTapePos t → c₁.workTapes t q ≠ none := by
-      intro q h1 h2
-      rw [htape]
-      rw [hpos] at h1 h2
-      exact hne q (by push_cast at h1 ⊢; omega) (by omega)
-    have hbl' : c₁.workTapes t (c₁.workTapePos t - n - 1) = none := by
-      rw [htape, hpos]; convert hbl using 2; push_cast; ring
-    obtain ⟨c', hr, hst, hu', htape', hpos'⟩ := ih c₁ (by simp [hc₁]) hne' hbl'
+    obtain ⟨c', hr, hst, hu', htape', hpos'⟩ := ih c₁ (by simp [hc₁])
+      (by
+        intro q h1 h2
+        rw [htape]
+        rw [hpos] at h1 h2
+        exact hne q (by push_cast; omega) (by omega))
+      (by rw [htape, hpos]; convert hbl using 2; push_cast; ring)
     refine ⟨c', ((h.trans hr).cast_n (by omega)).cast_out (List.nil_append _), hst, ?_,
       htape'.trans htape, ?_⟩
     · exact (hu.trans hu').mono (by simp) (by simp)
     · rw [hpos', hpos]; push_cast; ring
 
+/-- From cell `p + n` with cells `p … p + n - 1` not blank and `p - 1` blank, `rewind`
+reaches cell `p` (the head may start on the blank after the content). -/
+theorem exec_rewind {k : ProgId} {pc : Fin maxPc} {t : WT}
+    (hins : instrAt k pc = .rewind t) (hpc : pc.val + 1 < maxPc) (n : ℕ)
+    (c : Cfg input) (hq : c.state = at_ k pc)
+    (hne : ∀ q, c.workTapePos t - n ≤ q → q < c.workTapePos t → c.workTapes t q ≠ none)
+    (hbl : c.workTapes t (c.workTapePos t - n - 1) = none) :
+    ∃ c', Reach c (n + 2) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [t] ∧
+      c'.workTapes t = c.workTapes t ∧ c'.workTapePos t = c.workTapePos t - n := by
+  have h := step_instr hq hins
+  simp only [execInstr, Act.mw_out, Act.base_out, Option.toList_none, Act.mw_next, Act.base_next,
+    resolve_stay] at h
+  set c₁ := applyAct ((Act.base (.stay p1)).mw t (-1)) (some ⟨k, pc, p1⟩) c with hc₁
+  have hu : Untouched c c₁ [] [t] :=
+    untouched_applyAct ⟨fun j _ => rfl, fun d hd => by
+      have : d ≠ t := by simpa using hd
+      simp [Act.mw_works_of_ne _ this]⟩ _ _
+  have htape : c₁.workTapes t = c.workTapes t := by
+    rw [hc₁, applyAct_workTapes_of_none _ _ _ t (by simp)]
+  have hpos : c₁.workTapePos t = c.workTapePos t - 1 := by simp [hc₁]; ring
+  obtain ⟨c', hr, hst, hu', htape', hpos'⟩ := scan_rewind hins hpc n c₁ (by simp [hc₁])
+    (by
+      intro q h1 h2
+      rw [htape]
+      rw [hpos] at h1 h2
+      exact hne q (by omega) (by omega))
+    (by rw [htape, hpos]; convert hbl using 2; ring)
+  refine ⟨c', ((h.trans hr).cast_n (by omega)).cast_out (List.nil_append _), hst, ?_,
+    htape'.trans htape, ?_⟩
+  · exact (hu.trans hu').mono (by simp) (by simp)
+  · rw [hpos', hpos]; ring
+
 /-! ## `eraseRight` -/
 
-/-- Erase the `l` held from the head, ending on the blank after it. -/
-theorem exec_eraseRight {k : ProgId} {pc : Fin maxPc} {t : WT}
-    (hins : instrAt k pc = .eraseRight t) (hpc : pc.val + 1 < maxPc) (l : List Sym) :
-    ∀ (c : Cfg input), c.state = at_ k pc → Holds (c.workTapes t) (c.workTapePos t) l →
+/-- The erasing scan of `eraseRight` (`p1`): erase the `l` held from the head, then one
+left. -/
+theorem scan_erase {k : ProgId} {pc : Fin maxPc} {t : WT}
+    (hins : instrAt k pc = .eraseRight t) (l : List Sym) :
+    ∀ (c : Cfg input), c.state = some ⟨k, pc, p1⟩ → Holds (c.workTapes t) (c.workTapePos t) l →
       c.workTapes t (c.workTapePos t + l.length) = none →
-    ∃ c', Reach c (l.length + 1) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [t] ∧
+    ∃ c', Reach c (l.length + 1) c' [] ∧ c'.state = some ⟨k, pc, p2⟩ ∧ Untouched c c' [] [t] ∧
       (∀ q, (q < c.workTapePos t ∨ c.workTapePos t + l.length ≤ q) →
         c'.workTapes t q = c.workTapes t q) ∧
       BlankFrom (c'.workTapes t) (c.workTapePos t) l.length ∧
-      c'.workTapePos t = c.workTapePos t + l.length := by
+      c'.workTapePos t = c.workTapePos t + l.length - 1 := by
   induction l with
   | nil =>
     intro c hq _ hend
@@ -278,13 +295,15 @@ theorem exec_eraseRight {k : ProgId} {pc : Fin maxPc} {t : WT}
     simp only [execInstr, workTapeSymbols_eq] at h
     simp only [List.length_nil, Nat.cast_zero, add_zero] at hend
     rw [hend] at h
-    simp only [Act.base_out, Option.toList_none, Act.base_next] at h
-    refine ⟨_, h, ?_, ?_, ?_, ?_, ?_⟩
-    · simp [resolve_adv k pc hpc]
-    · exact untouched_applyAct ⟨fun j _ => rfl, fun d _ => rfl⟩ _ _
+    simp only [Act.mw_out, Act.base_out, Option.toList_none, Act.mw_next, Act.base_next,
+      resolve_stay] at h
+    refine ⟨_, h, rfl, ?_, ?_, ?_, ?_⟩
+    · exact untouched_applyAct ⟨fun j _ => rfl, fun d hd => by
+        have : d ≠ t := by simpa using hd
+        simp [Act.mw_works_of_ne _ this]⟩ _ _
     · intro q _; rw [applyAct_workTapes_of_none _ _ _ t (by simp)]
     · intro q _ h2; simp at h2; omega
-    · simp
+    · simp; ring
   | cons s l ih =>
     intro c hq hl hend
     have h := step_instr hq hins
@@ -292,7 +311,7 @@ theorem exec_eraseRight {k : ProgId} {pc : Fin maxPc} {t : WT}
     rw [hl.head] at h
     simp only [Act.mw_out, Act.ww_out, Act.base_out, Option.toList_none, Act.mw_next, Act.ww_next,
       Act.base_next, resolve_stay] at h
-    set c₁ := applyAct (((Act.base (.stay p0)).ww t none).mw t 1) (some ⟨k, pc, p0⟩) c with hc₁
+    set c₁ := applyAct (((Act.base (.stay p1)).ww t none).mw t 1) (some ⟨k, pc, p1⟩) c with hc₁
     have hu : Untouched c c₁ [] [t] :=
       untouched_applyAct ⟨fun j _ => rfl, fun d hd => by
         have : d ≠ t := by simpa using hd
@@ -319,6 +338,129 @@ theorem exec_eraseRight {k : ProgId} {pc : Fin maxPc} {t : WT}
         rw [hout _ (Or.inl (by rw [hpos]; omega)), htape, Function.update_self]
       · exact hblank q (by rw [hpos]; omega) (by rw [hpos]; push_cast at h2 ⊢; omega)
     · rw [hpos', hpos]; simp only [List.length_cons]; push_cast; ring
+
+/-- The return scan of `eraseRight` (`p2`): back over `n` blanks to the `$`, erase it. -/
+theorem scan_eraseBack {k : ProgId} {pc : Fin maxPc} {t : WT}
+    (hins : instrAt k pc = .eraseRight t) (hpc : pc.val + 1 < maxPc) (n : ℕ) :
+    ∀ (c : Cfg input), c.state = some ⟨k, pc, p2⟩ →
+      BlankFrom (c.workTapes t) (c.workTapePos t - n + 1) n →
+      c.workTapes t (c.workTapePos t - n) = some .fr →
+    ∃ c', Reach c (n + 1) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [t] ∧
+      c'.workTapes t = Function.update (c.workTapes t) (c.workTapePos t - n) none ∧
+      c'.workTapePos t = c.workTapePos t - n := by
+  induction n with
+  | zero =>
+    intro c hq _ hm
+    have h := step_instr hq hins
+    simp only [execInstr, workTapeSymbols_eq] at h
+    simp only [Nat.cast_zero, sub_zero] at hm
+    rw [hm] at h
+    simp only [Act.ww_out, Act.base_out, Option.toList_none, Act.ww_next, Act.base_next] at h
+    refine ⟨_, h, ?_, ?_, ?_, ?_⟩
+    · simp [resolve_adv k pc hpc]
+    · exact untouched_applyAct ⟨fun j _ => rfl, fun d hd => by
+        have : d ≠ t := by simpa using hd
+        simp [Act.ww_works_of_ne _ this]⟩ _ _
+    · rw [applyAct_workTapes_of_some _ _ _ t (s := none) (by simp)]; simp
+    · simp
+  | succ n ih =>
+    intro c hq hbl hm
+    have h := step_instr hq hins
+    simp only [execInstr, workTapeSymbols_eq] at h
+    have hread : c.workTapes t (c.workTapePos t) = none :=
+      hbl _ (by push_cast; omega) (by push_cast; omega)
+    rw [hread] at h
+    simp only [Act.mw_out, Act.base_out, Option.toList_none, Act.mw_next, Act.base_next,
+      resolve_stay] at h
+    set c₁ := applyAct ((Act.base (.stay p2)).mw t (-1)) (some ⟨k, pc, p2⟩) c with hc₁
+    have hu : Untouched c c₁ [] [t] :=
+      untouched_applyAct ⟨fun j _ => rfl, fun d hd => by
+        have : d ≠ t := by simpa using hd
+        simp [Act.mw_works_of_ne _ this]⟩ _ _
+    have htape : c₁.workTapes t = c.workTapes t := by
+      rw [hc₁, applyAct_workTapes_of_none _ _ _ t (by simp)]
+    have hpos : c₁.workTapePos t = c.workTapePos t - 1 := by simp [hc₁]; ring
+    obtain ⟨c', hr, hst, hu', htape', hpos'⟩ := ih c₁ (by simp [hc₁])
+      (by
+        intro q h1 h2
+        rw [htape]
+        rw [hpos] at h1 h2
+        exact hbl q (by push_cast at h1 ⊢; omega) (by push_cast at h2 ⊢; omega))
+      (by rw [htape, hpos]; convert hm using 2; push_cast; ring)
+    refine ⟨c', ((h.trans hr).cast_n (by omega)).cast_out (List.nil_append _), hst, ?_, ?_, ?_⟩
+    · exact (hu.trans hu').mono (by simp) (by simp)
+    · rw [htape', htape, hpos]; congr 1; push_cast; ring
+    · rw [hpos', hpos]; push_cast; ring
+
+/-- Erase the `l` held from the head (no `$` among its symbols), ending where it started. -/
+theorem exec_eraseRight {k : ProgId} {pc : Fin maxPc} {t : WT}
+    (hins : instrAt k pc = .eraseRight t) (hpc : pc.val + 1 < maxPc) (l : List Sym)
+    (c : Cfg input) (hq : c.state = at_ k pc) (hl : Holds (c.workTapes t) (c.workTapePos t) l)
+    (hend : c.workTapes t (c.workTapePos t + l.length) = none) :
+    ∃ c', Reach c (2 * l.length + 1) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [t] ∧
+      (∀ q, (q < c.workTapePos t ∨ c.workTapePos t + l.length ≤ q) →
+        c'.workTapes t q = c.workTapes t q) ∧
+      BlankFrom (c'.workTapes t) (c.workTapePos t) l.length ∧
+      c'.workTapePos t = c.workTapePos t := by
+  cases l with
+  | nil =>
+    have h := step_instr hq hins
+    simp only [execInstr, workTapeSymbols_eq] at h
+    simp only [List.length_nil, Nat.cast_zero, add_zero] at hend
+    rw [hend] at h
+    simp only [Act.base_out, Option.toList_none, Act.base_next] at h
+    refine ⟨_, h, ?_, ?_, ?_, ?_, ?_⟩
+    · simp [resolve_adv k pc hpc]
+    · exact untouched_applyAct ⟨fun j _ => rfl, fun d _ => rfl⟩ _ _
+    · intro q _; rw [applyAct_workTapes_of_none _ _ _ t (by simp)]
+    · intro q _ h2; simp at h2; omega
+    · simp
+  | cons s l =>
+    have h := step_instr hq hins
+    simp only [execInstr, workTapeSymbols_eq] at h
+    rw [hl.head] at h
+    simp only [Act.mw_out, Act.ww_out, Act.base_out, Option.toList_none, Act.mw_next, Act.ww_next,
+      Act.base_next, resolve_stay] at h
+    set c₁ := applyAct (((Act.base (.stay p1)).ww t (some .fr)).mw t 1) (some ⟨k, pc, p1⟩) c
+      with hc₁
+    have hu : Untouched c c₁ [] [t] :=
+      untouched_applyAct ⟨fun j _ => rfl, fun d hd => by
+        have : d ≠ t := by simpa using hd
+        simp [Act.mw_works_of_ne _ this, Act.ww_works_of_ne _ this]⟩ _ _
+    have htape : c₁.workTapes t = Function.update (c.workTapes t) (c.workTapePos t) (some .fr) := by
+      rw [hc₁, applyAct_workTapes_of_some _ _ _ t (s := some .fr) (by simp)]
+    have hpos : c₁.workTapePos t = c.workTapePos t + 1 := by simp [hc₁]
+    simp only [List.length_cons] at hend
+    obtain ⟨c₂, hr₂, hst₂, hu₂, hout₂, hblank₂, hpos₂⟩ := scan_erase hins l c₁ (by simp [hc₁])
+      (by rw [htape, hpos]; exact hl.tail.update_of_not_mem _ (Or.inl (by omega)))
+      (by
+        rw [htape, hpos, Function.update_of_ne (by omega)]
+        convert hend using 2
+        push_cast; ring)
+    have hmark : c₂.workTapes t (c.workTapePos t) = some .fr := by
+      rw [hout₂ _ (Or.inl (by rw [hpos]; omega)), htape, Function.update_self]
+    obtain ⟨c₃, hr₃, hst₃, hu₃, htape₃, hpos₃⟩ := scan_eraseBack hins hpc l.length c₂ hst₂
+      (by
+        intro q h1 h2
+        rw [hpos₂, hpos] at h1 h2
+        exact hblank₂ q (by rw [hpos]; omega) (by rw [hpos]; omega))
+      (by rw [hpos₂, hpos]; convert hmark using 2; ring)
+    have hp₀ : c₂.workTapePos t - l.length = c.workTapePos t := by rw [hpos₂, hpos]; ring
+    refine ⟨c₃, (((h.trans hr₂).trans hr₃).cast_n (by simp only [List.length_cons]; omega)).cast_out
+      (by simp), hst₃, ((hu.trans hu₂).trans hu₃).mono (by simp) (by simp), ?_, ?_, ?_⟩
+    · intro q hq'
+      simp only [List.length_cons] at hq'
+      rw [htape₃, hp₀, Function.update_of_ne (by push_cast at hq'; omega),
+        hout₂ q (by rw [hpos]; push_cast at hq' ⊢; omega), htape,
+        Function.update_of_ne (by push_cast at hq'; omega)]
+    · intro q h1 h2
+      simp only [List.length_cons] at h2
+      rw [htape₃, hp₀]
+      by_cases hq0 : q = c.workTapePos t
+      · subst hq0; simp
+      · rw [Function.update_of_ne hq0]
+        exact hblank₂ q (by rw [hpos]; omega) (by rw [hpos]; push_cast at h2 ⊢; omega)
+    · rw [hpos₃, hp₀]
 
 /-! ## `copyUntil` -/
 
