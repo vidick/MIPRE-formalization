@@ -1660,21 +1660,18 @@ takes no hypotheses), and the two distinguished strings are
 revision also required of the games produced inside $\Compress$ is no longer among them
 (Remark~\ref{rem:bipartite-route}).
 
-In Lean the assembly is \texttt{MIPRE.Halting.halting\_reduction}. It is complete and free
-of \texttt{sorry}, and it takes three hypotheses: a \texttt{MIPRE.GapCompression} (which is
-Theorem~\ref{thm:compression}), a universal machine, and an inhabitant of
-\texttt{MIPRE.Halting.Obligations}, whose fields are what
-Remark~\ref{rem:compression-abstract} enumerates: the two distinguished strings --- which
-\texttt{yYes\_mem} and \texttt{yNo\_mem} already supply, and which wait only on the other
-fields to be assembled into an inhabitant --- the semidecider, and the compressor. The
-tabulation with its value agreement was a fourth group of fields and is one no longer:
-\texttt{tab}, \texttt{tab\_computable}, \texttt{tab\_match}, \texttt{tab\_value} and
-\texttt{gameValue\_tab\_eq\_one} are theorems, which \texttt{halting\_reduction} applies
-directly. The semidecider is a theorem too (\texttt{MIPRE.Halting.exists\_sem}), and its three
-fields survive only until a module move puts \texttt{Obligations} below it in the import
-order; mathematically what is owed is the compressor alone. So what is open is a structure to
-be inhabited rather than an argument to be found, and \texttt{\#print axioms} cannot hide any
-of it.
+In Lean the assembly is \texttt{MIPRE.Halting.halting\_reduction}
+(\texttt{Halting/Reduction.lean}). It is complete and free of \texttt{sorry}, and it takes
+three hypotheses: a \texttt{MIPRE.GapCompression} (which is Theorem~\ref{thm:compression}), a
+universal machine, and an inhabitant of \texttt{MIPRE.Halting.Obligations}, whose content is
+exactly the compressor --- \texttt{compr}, \texttt{compr\_spec}, and the threshold above which
+its guarantee holds. The other three obligations of Remark~\ref{rem:compression-abstract} are
+theorems that the proof applies directly: the two distinguished strings, \texttt{yYes\_mem}
+and \texttt{yNo\_mem}; the tabulation with its value agreement, \texttt{tab},
+\texttt{tab\_computable}, \texttt{tab\_match}, \texttt{tab\_value} and
+\texttt{gameValue\_tab\_eq\_one}; and the semidecider, \texttt{MIPRE.Halting.exists\_sem},
+which takes no hypotheses. So what is open is a structure to be inhabited rather than an
+argument to be found, and \texttt{\#print axioms} cannot hide any of it.
 That assembly concludes in $\valstar$ only, and item 1 claims more: the witness is a
 \emph{PCC} strategy, so $\synval = \valstar = 1$. The two steps that carry it there are now in
 Lean, neither of them part of the instantiation. First, a synchronous strategy transports along

@@ -397,11 +397,20 @@
   "MIPRE.Halting.exists_sem_of_tab": [
    "lem:halting-semidecider"
   ],
+  "MIPRE.Halting.four_mul_succ_lt_two_pow": [
+   "lem:lambda-bound"
+  ],
   "MIPRE.Halting.gameValue_tab_eq_one": [
    "rem:compression-abstract"
   ],
   "MIPRE.Halting.halting_reduction": [
    "thm:halting"
+  ],
+  "MIPRE.Halting.lambda_bound": [
+   "lem:lambda-bound"
+  ],
+  "MIPRE.Halting.log_lt_div": [
+   "lem:lambda-bound"
   ],
   "MIPRE.Halting.margOf": [
    "rem:compression-abstract"
@@ -423,6 +432,9 @@
   ],
   "MIPRE.Halting.sampler_timeBound": [
    "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.sq_le_two_pow_of_four_le": [
+   "lem:lambda-bound"
   ],
   "MIPRE.Halting.tab": [
    "rem:compression-abstract"
@@ -1097,8 +1109,11 @@
   "MIPRE.Halting.eXof",
   "MIPRE.Halting.exists_sem",
   "MIPRE.Halting.exists_sem_of_tab",
+  "MIPRE.Halting.four_mul_succ_lt_two_pow",
   "MIPRE.Halting.gameValue_tab_eq_one",
   "MIPRE.Halting.halting_reduction",
+  "MIPRE.Halting.lambda_bound",
+  "MIPRE.Halting.log_lt_div",
   "MIPRE.Halting.margOf",
   "MIPRE.Halting.margOf_eq",
   "MIPRE.Halting.mu_clause",
@@ -1106,6 +1121,7 @@
   "MIPRE.Halting.sampData",
   "MIPRE.Halting.sampData_eq",
   "MIPRE.Halting.sampler_timeBound",
+  "MIPRE.Halting.sq_le_two_pow_of_four_le",
   "MIPRE.Halting.tab",
   "MIPRE.Halting.tabOf",
   "MIPRE.Halting.tab_computable",
@@ -1512,7 +1528,6 @@
    "MIPRE.Verifier.freeze_valStar"
   ],
   "MIPRE/Foundations/Halting/Instantiation.lean": [
-   "MIPRE.Halting.Obligations",
    "MIPRE.Halting.Vof",
    "MIPRE.Halting.accOf_iff",
    "MIPRE.Halting.acc_mem_iff",
@@ -1526,7 +1541,6 @@
    "MIPRE.Halting.eAof",
    "MIPRE.Halting.eXof",
    "MIPRE.Halting.gameValue_tab_eq_one",
-   "MIPRE.Halting.halting_reduction",
    "MIPRE.Halting.margOf_eq",
    "MIPRE.Halting.mu_clause",
    "MIPRE.Halting.sampData",
@@ -1537,9 +1551,19 @@
    "MIPRE.Halting.tab_match",
    "MIPRE.Halting.tab_value"
   ],
+  "MIPRE/Foundations/Halting/LambdaBound.lean": [
+   "MIPRE.Halting.four_mul_succ_lt_two_pow",
+   "MIPRE.Halting.lambda_bound",
+   "MIPRE.Halting.log_lt_div",
+   "MIPRE.Halting.sq_le_two_pow_of_four_le"
+  ],
   "MIPRE/Foundations/Halting/PolyBounded.lean": [
    "MIPRE.Cost.PolyBounded",
    "MIPRE.Cost.Prog.HasPolyCost"
+  ],
+  "MIPRE/Foundations/Halting/Reduction.lean": [
+   "MIPRE.Halting.Obligations",
+   "MIPRE.Halting.halting_reduction"
   ],
   "MIPRE/Foundations/Halting/Semidecide.lean": [
    "MIPRE.Cost.Data.primrec_decode_prod_nat",
@@ -1765,7 +1789,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 76,
+ "lean_tags": 77,
  "module_sizes": {
   "MIPRE/Axioms.lean": 0,
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
@@ -1833,12 +1857,14 @@
   "MIPRE/Foundations/Halting/Bounded.lean": 9,
   "MIPRE/Foundations/Halting/Classes.lean": 10,
   "MIPRE/Foundations/Halting/CostBudget.lean": 22,
-  "MIPRE/Foundations/Halting/Descriptions.lean": 34,
+  "MIPRE/Foundations/Halting/Descriptions.lean": 39,
   "MIPRE/Foundations/Halting/Enumerate.lean": 22,
   "MIPRE/Foundations/Halting/Freeze.lean": 28,
-  "MIPRE/Foundations/Halting/Instantiation.lean": 46,
+  "MIPRE/Foundations/Halting/Instantiation.lean": 47,
+  "MIPRE/Foundations/Halting/LambdaBound.lean": 4,
   "MIPRE/Foundations/Halting/Lists.lean": 42,
   "MIPRE/Foundations/Halting/PolyBounded.lean": 28,
+  "MIPRE/Foundations/Halting/Reduction.lean": 2,
   "MIPRE/Foundations/Halting/Semidecide.lean": 4,
   "MIPRE/Foundations/Halting/Semidecider.lean": 13,
   "MIPRE/Foundations/Halting/Serial.lean": 26,
@@ -1903,8 +1929,8 @@
   "commands_defined": 99,
   "commands_used": 206,
   "labels": 227,
-  "leanok_claimed": 123,
-  "leanok_guarded": 123,
-  "refs": 989
+  "leanok_claimed": 127,
+  "leanok_guarded": 127,
+  "refs": 994
  }
 }

@@ -567,6 +567,7 @@ import MIPRE.Foundations.Halting.Instantiation
 import MIPRE.Foundations.Halting.LambdaBound
 import MIPRE.Foundations.Halting.Lists
 import MIPRE.Foundations.Halting.PolyBounded
+import MIPRE.Foundations.Halting.Reduction
 import MIPRE.Foundations.Halting.Semidecide
 import MIPRE.Foundations.Halting.Semidecider
 import MIPRE.Foundations.Halting.Serial
