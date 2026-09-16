@@ -51,13 +51,13 @@ Remark~\ref{rem:standalone-restatement}'s identification of the two vocabularies
 read against the \emph{doubled} game of $\verifier_n$, which is how the tabulation matches it
 without asking the verifier to be synchronous (Remark~\ref{rem:compression-abstract}, item 3).
 On the tabulation the completeness bridge is \texttt{MIPRE.Halting.gameValue\_tab\_eq\_one}.
-What the proof of Theorem~\ref{thm:main} still waits on is the obligations of
-Theorem~\ref{thm:halting} that remain open, and mathematically that is the compressor alone:
-the two distinguished strings and the semidecider are theorems, kept as fields of
-\texttt{MIPRE.Halting.Obligations} until they are assembled into an inhabitant. The
-tabulation is not among them at all, and neither is the record of its agreement with
-$\verifier_n$ in the form the completeness bridge consumes: that record is
-\texttt{MIPRE.Halting.tab\_match} (Remark~\ref{rem:compression-abstract}).
+The four obligations of Theorem~\ref{thm:halting} are all discharged
+(\texttt{MIPRE.Halting.exists\_obligations}), so nothing but Theorem~\ref{thm:compression}
+stands between the conditional and the unconditional statement. The record of the
+tabulation's agreement with $\verifier_n$ in the form the completeness bridge consumes is
+\texttt{MIPRE.Halting.tab\_match} (Remark~\ref{rem:compression-abstract}), and
+\texttt{MIPRE.Halting.halting\_reduction\_both\_of} is the one map carrying both readings
+of the value at once, which is what Corollary~\ref{cor:main-quantum} asks.
 
 \begin{remark}[The standalone restatement]
 \label{rem:standalone-restatement}
@@ -93,10 +93,21 @@ $\synval \leq \valstar$ (Lemma~\ref{lem:sync-le-valstar}) in that vocabulary.
 \begin{corollary}[Halting reduces to the quantum value]
 \label{cor:main-quantum}
 \uses{thm:halting,thm:main,lem:sync-le-valstar,def:q-value,def:game-description}
+\lean{MIPRE.Halting.halting_reduction_quantum_of, MIPRE.Halting.halting_reduction_both_of}
+\leanok
 With $g$ as in Theorem~\ref{thm:main}: if $\machine$ halts on the empty input then
 $\valstar(\game_{g(\machine)}) = 1$, and if $\machine$ does not halt on the empty input
 then $\valstar(\game_{g(\machine)}) \leq \tfrac12$.
 \end{corollary}
+
+\begin{proof}
+\leanok
+Conditionally on Theorem~\ref{thm:compression}, as Theorem~\ref{thm:main} is:
+\texttt{MIPRE.Halting.halting\_reduction\_both\_of} produces one computable map with both
+values, the quantum one from \texttt{tab\_value} and
+\texttt{Verifier.valStar\_eq\_one\_of\_hasPerfectPCC} in the halting branch and from
+\texttt{tab\_value} alone in the other; the corollary is its quantum half.
+\end{proof}
 
 Both forms come from the two items of Theorem~\ref{thm:halting} directly: the value-$1$
 witness is a PCC, hence synchronous, strategy, so it gives value $1$ in both senses; and
@@ -112,11 +123,23 @@ free comparison $\synval \leq \valstar$.
 \label{cor:value-uncomputable}
 \ledgernode{1.7}
 \uses{thm:main,cor:main-quantum,thm:halting-undecidable}
+\lean{MIPRE.Halting.gameValue_uncomputable_of, MIPRE.Halting.quantumValue_uncomputable_of}
+\leanok
 There is no algorithm that, given a game description $g$ with the promise that
 $\synval(\game_g) = 1$ or $\synval(\game_g) \leq \frac12$, decides which is the
 case; the same holds with $\valstar$ in place of $\synval$
 (Corollary~\ref{cor:main-quantum}).
 \end{corollary}
+
+\begin{proof}
+\leanok
+A computable $f$ answering \emph{true} on every description of value $1$ and \emph{false} on
+every description of value at most $\frac12$, composed with the map of
+Theorem~\ref{thm:main} (respectively Corollary~\ref{cor:main-quantum}), would decide
+whether a machine halts on the empty input, against Theorem~\ref{thm:halting-undecidable}.
+In Lean the algorithm is a Mathlib-computable Boolean function
+(\texttt{Halting/Corollaries.lean}), conditionally on Theorem~\ref{thm:compression}.
+\end{proof}
 
 \begin{lemma}[$\MIPstar \subseteq \RE$]
 \label{lem:mipstar-sub-re}
@@ -144,15 +167,25 @@ model.
 \label{thm:mipstar-eq-re}
 \ledgernode{1}
 \uses{def:mipstar,def:re,thm:halting,cor:main-quantum,thm:halting-undecidable,lem:value-lower-approx,lem:mipstar-sub-re}
+\lean{MIPRE.Halting.mipstar_eq_re_of, MIPRE.Halting.re_subset_mipstar_of,
+  MIPRE.Halting.exists_code_halts_of_isRE}
+\leanok
 $\MIPstar = \RE$.
 \end{theorem}
 
+\begin{proof}
+\leanok
 For $\RE \subseteq \MIPstar$: the halting problem is $\RE$-complete
 (Theorem~\ref{thm:halting-undecidable}) and Theorem~\ref{thm:halting} provides a
 polynomial-time verifier for it, whose completeness--soundness gap is already in the form
 Definition~\ref{def:mipstar} requires (Corollary~\ref{cor:main-quantum}); no transport
 between the two values is needed. $\MIPstar \subseteq \RE$ is
-Lemma~\ref{lem:mipstar-sub-re}.
+Lemma~\ref{lem:mipstar-sub-re}. In Lean the many-one reduction of an r.e.\ language to
+halting on the empty input is \texttt{MIPRE.IsRE.exists\_code\_halts}, from Mathlib's
+\texttt{Nat.Partrec.Code.curry}, and the class $\MIPstar$ is the computable one of
+Definition~\ref{def:mipstar}; the equality is conditional on Theorem~\ref{thm:compression},
+as Theorem~\ref{thm:main} is.
+\end{proof}
 
 \begin{remark}
 The polynomial-time version of Theorem~\ref{thm:main} (Theorem 12.2

@@ -1222,9 +1222,20 @@ Lemma~\ref{lem:qld-exact-paulis} is stated with exact relations.
 \begin{theorem}[Turing]
 \label{thm:halting-undecidable}
 \uses{def:re}
+\lean{MIPRE.halting_undecidable, MIPRE.halting_re, MIPRE.Halting.exists_code_halts_of_isRE}
+\leanok
 The halting problem is r.e.\ but not decidable; it is $\RE$-complete under many-one
 (indeed polynomial-time) reductions.
 \end{theorem}
+
+\begin{proof}
+\leanok
+Mathlib: \texttt{ComputablePred.halting\_problem} and \texttt{halting\_problem\_re}, both
+at the empty input; the many-one reduction of an r.e.\ language to halting on the empty input
+is \texttt{MIPRE.IsRE.exists\_code\_halts}, by Mathlib's $S^m_n$ function
+\texttt{Nat.Partrec.Code.curry}. Polynomial-time computability of the reduction is not
+formalized (Section~\ref{sec:departures}).
+\end{proof}
 
 \paragraph{Source.} Turing (1936); in Mathlib as part of the
 \texttt{Computability} library.

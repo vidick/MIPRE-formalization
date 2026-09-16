@@ -593,10 +593,11 @@ and `thm:main` proved conditionally on `GapCompression`
 (`MIPRE.Halting.halting_reduces_to_gameValue_of`, `Halting/CompressorProgram.lean`), the
 project's claim is *MIP\* = RE ⟸ `thm:compression`, machine-checked*: one structure is the
 entire remaining assumption, and `#print axioms` shows nothing else. The blueprint's
-`thm:main` and `thm:halting` say so; the README and the blueprint's introduction should too,
-since it is a different kind of claim from "H4 done". Chapter 7's corollaries (`cor:main-quantum`, `cor:value-uncomputable`,
-`thm:mipstar-eq-re`) are short once `thm:main` is conditional, and `lem:mipstar-sub-re` is
-already in.
+`thm:main` and `thm:halting` say so, and so do the README and the blueprint's introduction,
+since it is a different kind of claim from "H4 done". Chapter 7's corollaries (`cor:main-quantum`,
+`cor:value-uncomputable`, `thm:mipstar-eq-re`) are in, conditionally on the same structure
+(`Halting/Corollaries.lean`), together with `thm:halting-undecidable` from Mathlib's
+`ComputablePred.halting_problem`; `lem:mipstar-sub-re` was already in.
 
 **The mountain is chapter 6 and its chapter-3 inputs.** Coverage at `2f4cd53`: chapter 6 has 10
 of 37 statements with `\lean{}` (the CL foundations and the two hypothesis structures) and 6

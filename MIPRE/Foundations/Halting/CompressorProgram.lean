@@ -239,17 +239,18 @@ theorem halting_reduction_of :
 attribute [local irreducible] tab
 
 include G U in
-/-- **The headline, conditionally** (blueprint `thm:main` from `thm:compression`): from a
-`GapCompression`, a computable map from machines to game descriptions whose *synchronous* game
-value is `1` when the machine halts on the empty input and at most `1/2` when it does not.
-This is `HaltingGameValue.halting_reduces_to_gameValue` with the compression theorem as a
-hypothesis; the unconditional statement keeps its `sorry` as the target of chapter 6. -/
-theorem halting_reduces_to_gameValue_of :
+/-- **The headline in both values, conditionally**: from a `GapCompression`, one computable map
+from machines to game descriptions whose game has *synchronous* value `1` and quantum value
+`1` when the machine halts on the empty input, and both values at most `1/2` when it does not.
+`halting_reduces_to_gameValue_of` (blueprint `thm:main`) and `halting_reduction_quantum_of`
+(`cor:main-quantum`) are its two halves, on the same map. -/
+theorem halting_reduction_both_of :
     ∃ g : Nat.Partrec.Code → HaltingGameValue.GameData, Computable g ∧
       ∀ pc : Nat.Partrec.Code,
-        (HaltingGameValue.HaltsOnEmptyInput pc → HaltingGameValue.gameValue (g pc).toGame = 1) ∧
+        (HaltingGameValue.HaltsOnEmptyInput pc →
+          HaltingGameValue.gameValue (g pc).toGame = 1 ∧ quantumValue (g pc).game = 1) ∧
         (¬ HaltingGameValue.HaltsOnEmptyInput pc →
-          HaltingGameValue.gameValue (g pc).toGame ≤ 1 / 2) := by
+          HaltingGameValue.gameValue (g pc).toGame ≤ 1 / 2 ∧ quantumValue (g pc).game ≤ 1 / 2) := by
   obtain ⟨O⟩ := exists_obligations G U
   obtain ⟨nY, hyes⟩ := yYes_mem G U
   obtain ⟨nN, hno⟩ := yNo_mem G U
@@ -269,10 +270,39 @@ theorem halting_reduces_to_gameValue_of :
       ((PolyTimeFun.computable_comp g compile hc Data.primrec_decode_bitStr.to_comp).pair hlevel),
     fun pc => ⟨fun hdom => ?_, fun hdom => ?_⟩⟩
   · have hx := (hg (compile pc)).2.1 ((hspec pc).2 hdom)
-    exact gameValue_tab_eq_one G U _ _ hx.1 hx.2.2
+    refine ⟨gameValue_tab_eq_one G U _ _ hx.1 hx.2.2, ?_⟩
+    rw [tab_value G U _ _ hx.1, (Vof G U _).valStar_eq_one_of_hasPerfectPCC hx.2.2]
   · have hx := (hg (compile pc)).2.2 fun h => hdom ((hspec pc).1 h)
     obtain ⟨eX, eA, hμ, hD⟩ := tab_match G U _ _ hx.1
-    exact Verifier.gameValue_toGame_le_of_valStar_le_doubled _ _ _ _ eX eA hμ hD hx.2.2
+    exact ⟨Verifier.gameValue_toGame_le_of_valStar_le_doubled _ _ _ _ eX eA hμ hD hx.2.2,
+      (tab_value G U _ _ hx.1).le.trans hx.2.2⟩
+
+include G U in
+/-- **The headline, conditionally** (blueprint `thm:main` from `thm:compression`): from a
+`GapCompression`, a computable map from machines to game descriptions whose *synchronous* game
+value is `1` when the machine halts on the empty input and at most `1/2` when it does not.
+This is `HaltingGameValue.halting_reduces_to_gameValue` with the compression theorem as a
+hypothesis; the unconditional statement keeps its `sorry` as the target of chapter 6. -/
+theorem halting_reduces_to_gameValue_of :
+    ∃ g : Nat.Partrec.Code → HaltingGameValue.GameData, Computable g ∧
+      ∀ pc : Nat.Partrec.Code,
+        (HaltingGameValue.HaltsOnEmptyInput pc → HaltingGameValue.gameValue (g pc).toGame = 1) ∧
+        (¬ HaltingGameValue.HaltsOnEmptyInput pc →
+          HaltingGameValue.gameValue (g pc).toGame ≤ 1 / 2) :=
+  let ⟨g, hg, h⟩ := halting_reduction_both_of G U
+  ⟨g, hg, fun pc => ⟨fun hd => ((h pc).1 hd).1, fun hd => ((h pc).2 hd).1⟩⟩
+
+include G U in
+/-- **Halting reduces to the quantum value** (blueprint `cor:main-quantum`), on the same map
+as `thm:main`: the *quantum* value of the game is `1` when the machine halts and at most
+`1/2` when it does not. -/
+theorem halting_reduction_quantum_of :
+    ∃ g : Nat.Partrec.Code → HaltingGameValue.GameData, Computable g ∧
+      ∀ pc : Nat.Partrec.Code,
+        (HaltingGameValue.HaltsOnEmptyInput pc → quantumValue (g pc).game = 1) ∧
+        (¬ HaltingGameValue.HaltsOnEmptyInput pc → quantumValue (g pc).game ≤ 1 / 2) :=
+  let ⟨g, hg, h⟩ := halting_reduction_both_of G U
+  ⟨g, hg, fun pc => ⟨fun hd => ((h pc).1 hd).2, fun hd => ((h pc).2 hd).2⟩⟩
 
 end Halting
 
