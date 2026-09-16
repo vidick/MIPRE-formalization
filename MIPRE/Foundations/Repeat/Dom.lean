@@ -42,6 +42,13 @@ theorem ofAffine {a b v : ℕ} (h : v ≤ a * W + b) : Dom W X K (a + b) 1 0 v :
   simp only [Dom, pow_one, zero_mul, pow_zero, mul_one]
   nlinarith
 
+/-- An affine function of `X` is dominated by `(a + b) X^{K+1}`. -/
+theorem ofAffineX (hX : 1 ≤ X) {a b v : ℕ} (h : v ≤ a * X + b) : Dom W X K (a + b) 0 1 v := by
+  simp only [Dom, pow_zero, mul_one, one_mul]
+  have h1 : X ≤ X ^ (K + 1) := Nat.le_self_pow (by omega) X
+  have h2 : b ≤ b * X := Nat.le_mul_of_pos_right b hX
+  nlinarith
+
 theorem ofLeX (hX : 1 ≤ X) {v : ℕ} (h : v ≤ X) : Dom W X K 1 0 1 v := by
   simp only [Dom, one_mul, pow_zero, one_mul]
   exact h.trans (Nat.le_self_pow (by omega) X)
