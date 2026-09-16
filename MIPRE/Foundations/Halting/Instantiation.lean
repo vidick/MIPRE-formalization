@@ -712,7 +712,24 @@ structure Obligations (G : GapCompression) (U : UniversalMachine) where
   `ansBound G x (2n+1) ≤ G.bound.eval (2n+1 + 2^(n+1)) ≤ (2 ^ n) ^ λ` already for
   `λ ≥ 2 · deg(G.bound) + 1` and `n` above a threshold read off `G.bound` too, and
   `hasPerfectPCC_of_le` carries the hypothesis across. `exists_ansBound_le` above is that step,
-  checked; note the threshold is set by the polynomial `G.bound`, not by `G.deg`. -/
+  checked; note the threshold is set by the polynomial `G.bound`, not by `G.deg`.
+
+  **Open, and the field is expected to need one more hypothesis.** That argument settles the
+  `classA` direction, where `hasPerfectPCC_of_le` raises the answer bound. The `classB`
+  direction runs the other way and does not close with these hypotheses: `G.soundness` wants
+  `valStar (2 ^ n) ((2 ^ n) ^ λ) ≤ 1/2`, membership in `classB G U (2n+1)` gives it at
+  `ansBound G x (2n+1)`, and `valStar_le_of_le` only *raises* the value with the bound — so the
+  `ansBound ≤ (2 ^ n) ^ λ` that the `classA` direction needs is exactly the wrong direction
+  here, and the two cannot be met by one `λ` (the same `λ` is written into the output, so it is
+  the same in both). The escape is `valStar_eq_of_rejects`: if `x`'s decider rejects every
+  answer longer than `ansBound G x (2n+1)` at index `2n + 1`, raising the bound does not move
+  the value and both directions go through the one inequality. `ansBound` is *defined* to be
+  that rejection threshold for a compressed decider of parameter `descLam x`
+  (`GapCompression.output_rejects_long`), and in the criterion's recursion every string is the
+  compressor's own output one level up, so the criterion can supply it — but it is not supplied
+  now, and an arbitrary `descDec x` does not reject. Settle the shape of the hypothesis when
+  the construction is built, not before; `planning/h4-assembly.md` §4 item 4 has the argument
+  and issue #53 tracks it. -/
   compr_spec : ∀ (c : Prog) (x : BitStr) (n : ℕ), n₀ ≤ n → 2 * esize c ≤ n →
     IsSuccinctDesc c n x → x.length ≤ n + 1 →
       (x ∈ classA G U (2 * n + 1) → compr (c, n) ∈ classA G U n) ∧

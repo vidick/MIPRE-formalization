@@ -430,6 +430,34 @@ takes none.
    monotonicity step that looked free. The `2 ^ n` of `def:succinct` is the right bound for the
    *notion*; it is the wrong bound to hand a *consumer*.
 
+   **A second gap, in the other direction, found while checking the first and *not* repaired.**
+   The length bound settles the `classA` direction. The `classB` direction does not close with
+   the field's hypotheses, and the reason is that it needs the answer-bound inequality the
+   other way round. `G.soundness` wants `valStar (2^n) ((2^n)^λ) ≤ 1/2`; membership in
+   `classB (2n+1)` gives it at `ansBound G x (2n+1)`; and `valStar_le_of_le` only *raises* the
+   value with the bound, so `ansBound ≤ (2^n)^λ` — what `classA` needs, and what
+   `exists_ansBound_le` proves — is exactly wrong here. One `λ` cannot satisfy both: the same
+   `λ` is the parameter written into the output, so it is the same in the two conjuncts of
+   `compr_spec`.
+
+   The escape is `Verifier.valStar_eq_of_rejects`: if `x`'s decider rejects every answer longer
+   than `ansBound G x (2n+1)` at index `2n+1`, then raising the bound does not move the value,
+   and both directions go through the one inequality. That is not an accident — `ansBound` is
+   *defined* to be the length beyond which a compressed decider of parameter `descLam x`
+   rejects (`GapCompression.output_rejects_long`; the module docstring of `Instantiation.lean`
+   says so), and in `compressibility_criterion_levels`'s recursion every level's string is the
+   compressor's own output one level up, which the `hd` rewrite in the `hA`/`hB` branches makes
+   explicit. So the criterion can supply it. It is not supplied now, and an arbitrary
+   `descDec x` does not reject.
+
+   This is recorded rather than repaired, and deliberately: unlike the length bound, the right
+   *form* of the hypothesis is a design choice — "`x`'s verifier rejects beyond
+   `ansBound G x (2n+1)`", or "`x = Compr (c', 2n+1)` for some `c'`", or a change to `ansBound`
+   that takes the string out of it — and which one is cheapest is visible only once the
+   construction exists. Settle it there. The confidence here is lower than for the length
+   bound: that one was verified twice against a proof that already had the missing fact, this
+   one is an argument about a construction that does not exist yet.
+
    **What is left** is the construction itself, and it is the larger half: the ambient program
    for the output decider (read `x` out of the succinct description by bit queries, parse it,
    freeze the verifier at `2n+1`, run `Compress`, run the compressed decider), the proof that

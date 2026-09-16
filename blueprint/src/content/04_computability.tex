@@ -398,6 +398,16 @@ $2^{O(n)}$ against $(2^n)^\lambda$, which $\lambda \geq 2\deg(\mathrm{bound}) + 
 dominates for $n$ above a threshold read off $\mathrm{bound}$ as well; the Lean says so and
 checks it (\texttt{MIPRE.Halting.exists\_ansBound\_le}).
 
+That settles the class $A$ direction. The class $B$ direction needs the same inequality read
+the other way --- the soundness clause of Theorem~\ref{thm:compression} wants the value
+bounded at $(2^n)^\lambda$, and enlarging the answer bound can only raise a value --- so a
+single $\lambda$ serves both only once the described string's own decider is known to reject
+answers longer than its answer bound, which is what $\mathrm{poly}(n, \lambda_x)$ was chosen
+to be. In the recursion of this lemma every level's string is the compressor's own output one
+level up, so that is available; it is not among the hypotheses as stated. Recorded here and in
+\texttt{planning/h4-assembly.md} rather than repaired, because the cheapest form of the extra
+hypothesis is visible only once O4's construction exists.
+
 \effortEasy
 
 \begin{lemma}[Halting form of the two reduction lemmas]
