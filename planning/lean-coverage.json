@@ -719,6 +719,9 @@
   "MIPRE.Repetition": [
    "thm:parallel-repetition"
   ],
+  "MIPRE.Repetition.card_answers_le": [
+   "lem:repetition-sound-bound"
+  ],
   "MIPRE.Repetition.commutingOperatorValue_repeat_le": [
    "thm:direct-repetition-co"
   ],
@@ -727,6 +730,12 @@
   ],
   "MIPRE.Repetition.quantumValue_repeat_le": [
    "thm:direct-repetition-q"
+  ],
+  "MIPRE.Repetition.quantumValue_repeat_le_soundBound": [
+   "lem:repetition-sound-bound"
+  ],
+  "MIPRE.Repetition.repConst": [
+   "lem:repetition-sound-bound"
   ],
   "MIPRE.Repetition.soundBound": [
    "thm:parallel-repetition"
@@ -749,14 +758,26 @@
   "MIPRE.SyncStrategy.isPCC_relabel": [
    "rem:compression-abstract"
   ],
+  "MIPRE.SyncStrategy.isPCC_tensorPow": [
+   "lem:tensor-power-pcc"
+  ],
   "MIPRE.SyncStrategy.relabel": [
    "rem:compression-abstract"
+  ],
+  "MIPRE.SyncStrategy.tensorPow": [
+   "lem:tensor-power-pcc"
+  ],
+  "MIPRE.SyncStrategy.tensorPowDoubled": [
+   "lem:tensor-power-pcc"
   ],
   "MIPRE.SyncStrategy.value": [
    "def:sync-value"
   ],
   "MIPRE.SyncStrategy.value_relabel": [
    "rem:compression-abstract"
+  ],
+  "MIPRE.SyncStrategy.value_tensorPow": [
+   "lem:tensor-power-pcc"
   ],
   "MIPRE.SynchronousGame": [
    "def:sync-game"
@@ -1067,6 +1088,9 @@
   "MIPRE.entRequirement": [
    "def:ent"
   ],
+  "MIPRE.exists_perfectPCC_repeat_doubled": [
+   "lem:tensor-power-pcc"
+  ],
   "MIPRE.exists_semidecider_lt_quantumValue": [
    "lem:value-lower-approx"
   ],
@@ -1120,6 +1144,9 @@
   ],
   "MIPRE.syncValue_le_quantumValue": [
    "lem:sync-le-valstar"
+  ],
+  "MIPRE.tensorFamily": [
+   "lem:tensor-power-pcc"
   ],
   "Turing.Code": [
    "def:machine-code"
@@ -1399,9 +1426,12 @@
   "MIPRE.REPred.of_computable_exists",
   "MIPRE.REPred.or",
   "MIPRE.Repetition",
+  "MIPRE.Repetition.card_answers_le",
   "MIPRE.Repetition.commutingOperatorValue_repeat_le",
   "MIPRE.Repetition.quantumValue_eq_entangledValue",
   "MIPRE.Repetition.quantumValue_repeat_le",
+  "MIPRE.Repetition.quantumValue_repeat_le_soundBound",
+  "MIPRE.Repetition.repConst",
   "MIPRE.Repetition.soundBound",
   "MIPRE.Repetition.tracialDensity",
   "MIPRE.SyncStrategy",
@@ -1409,9 +1439,13 @@
   "MIPRE.SyncStrategy.double",
   "MIPRE.SyncStrategy.isPCC_double",
   "MIPRE.SyncStrategy.isPCC_relabel",
+  "MIPRE.SyncStrategy.isPCC_tensorPow",
   "MIPRE.SyncStrategy.relabel",
+  "MIPRE.SyncStrategy.tensorPow",
+  "MIPRE.SyncStrategy.tensorPowDoubled",
   "MIPRE.SyncStrategy.value",
   "MIPRE.SyncStrategy.value_relabel",
+  "MIPRE.SyncStrategy.value_tensorPow",
   "MIPRE.SynchronousGame",
   "MIPRE.SynchronousGame.repeat",
   "MIPRE.SynchronousGame.toGame",
@@ -1515,6 +1549,7 @@
   "MIPRE.commValue",
   "MIPRE.commutingOperatorValue",
   "MIPRE.entRequirement",
+  "MIPRE.exists_perfectPCC_repeat_doubled",
   "MIPRE.exists_semidecider_lt_quantumValue",
   "MIPRE.gowers_hatami",
   "MIPRE.halting_re",
@@ -1533,6 +1568,7 @@
   "MIPRE.syncValue_eq_of_equiv",
   "MIPRE.syncValue_le_commValue",
   "MIPRE.syncValue_le_quantumValue",
+  "MIPRE.tensorFamily",
   "Turing.Code",
   "Turing.Code.Produces",
   "Turing.Code.evalWithin",
@@ -1572,6 +1608,18 @@
   "MIPRE/Background/Repetition/Entangled.lean": [
    "MIPRE.Repetition.quantumValue_eq_entangledValue",
    "MIPRE.Repetition.quantumValue_repeat_le"
+  ],
+  "MIPRE/Background/Repetition/Soundness.lean": [
+   "MIPRE.Repetition.card_answers_le",
+   "MIPRE.Repetition.quantumValue_repeat_le_soundBound",
+   "MIPRE.Repetition.repConst"
+  ],
+  "MIPRE/Background/Repetition/TensorPower.lean": [
+   "MIPRE.SyncStrategy.isPCC_tensorPow",
+   "MIPRE.SyncStrategy.tensorPow",
+   "MIPRE.SyncStrategy.tensorPowDoubled",
+   "MIPRE.SyncStrategy.value_tensorPow",
+   "MIPRE.exists_perfectPCC_repeat_doubled"
   ],
   "MIPRE/Background/Repetition/TracialDensity.lean": [
    "MIPRE.Repetition.tracialDensity"
@@ -1961,6 +2009,9 @@
    "MIPRE.Verifier.quantumValue_toGame_eq_valStar_doubled",
    "MIPRE.Verifier.syncValue_syncGame_eq_one_doubled"
   ],
+  "MIPRE/Foundations/TensorFamily.lean": [
+   "MIPRE.tensorFamily"
+  ],
   "MIPRE/Foundations/ValueApprox.lean": [
    "MIPRE.ValueApprox.dotProduct_kronecker_perturb",
    "MIPRE.ValueApprox.dotProduct_mulVec_perturb",
@@ -2112,7 +2163,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 91,
+ "lean_tags": 93,
  "module_sizes": {
   "MIPRE/Axioms.lean": 0,
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
@@ -2133,6 +2184,8 @@
   "MIPRE/Background/Repetition/Commuting.lean": 8,
   "MIPRE/Background/Repetition/Direct.lean": 3,
   "MIPRE/Background/Repetition/Entangled.lean": 29,
+  "MIPRE/Background/Repetition/Soundness.lean": 9,
+  "MIPRE/Background/Repetition/TensorPower.lean": 20,
   "MIPRE/Background/Repetition/TracialDensity.lean": 1,
   "MIPRE/Cslib/Computability/Machines/Turing/MultiTape/Deterministic.lean": 44,
   "MIPRE/Cslib/Computability/Machines/Turing/MultiTape/TapeLemmas.lean": 12,
@@ -2208,6 +2261,7 @@
   "MIPRE/Foundations/Pipeline/Oracularization.lean": 3,
   "MIPRE/Foundations/Pipeline/Repetition.lean": 7,
   "MIPRE/Foundations/SyncTransport.lean": 6,
+  "MIPRE/Foundations/TensorFamily.lean": 9,
   "MIPRE/Foundations/ValueApprox.lean": 8,
   "MIPRE/Foundations/ValueApprox/Cayley.lean": 16,
   "MIPRE/Foundations/ValueApprox/Dense.lean": 2,
@@ -2262,10 +2316,10 @@
   "bibitems": 33,
   "cites": 154,
   "commands_defined": 99,
-  "commands_used": 206,
-  "labels": 227,
-  "leanok_claimed": 180,
-  "leanok_guarded": 180,
-  "refs": 1052
+  "commands_used": 207,
+  "labels": 229,
+  "leanok_claimed": 189,
+  "leanok_guarded": 189,
+  "refs": 1062
  }
 }

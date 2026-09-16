@@ -512,7 +512,9 @@ import MIPRE.Background.Repetition.CommutingRepetition.VN.TensorPower
 import MIPRE.Background.Repetition.CommutingRepetition.VN.TensorStep
 import MIPRE.Background.Repetition.Direct
 import MIPRE.Background.Repetition.Entangled
+import MIPRE.Background.Repetition.Soundness
 import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition
+import MIPRE.Background.Repetition.TensorPower
 import MIPRE.Background.Repetition.TracialDensity
 import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
 import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
@@ -588,6 +590,7 @@ import MIPRE.Foundations.Pipeline.Margin
 import MIPRE.Foundations.Pipeline.Oracularization
 import MIPRE.Foundations.Pipeline.Repetition
 import MIPRE.Foundations.SyncTransport
+import MIPRE.Foundations.TensorFamily
 import MIPRE.Foundations.ValueApprox
 import MIPRE.Foundations.ValueApprox.Cayley
 import MIPRE.Foundations.ValueApprox.Dense
