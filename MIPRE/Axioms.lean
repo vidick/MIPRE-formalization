@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import MIPRE.Foundations.CL.Basic
 import MIPRE.Foundations.CL.Closure
 import MIPRE.Foundations.CL.Downsize
+import MIPRE.Foundations.CL.Repeat
 import MIPRE.Foundations.ClassMIPStar
 import MIPRE.Foundations.Compression
 import MIPRE.Foundations.Cost.Kleene
@@ -147,6 +148,16 @@ elab "#guard_sorry_free " ids:ident,* : command => do
 -- blueprint `lem:halting-form`
 #guard_sorry_free MIPRE.Cost.compressibility_criterion_halting,
   MIPRE.Cost.recursive_compression_halting
+
+-- blueprint `lem:cl-famsum`
+#guard_sorry_free MIPRE.CL.CLFun.famSum,
+  MIPRE.CL.IsCLFun.famSum,
+  MIPRE.CL.CLFun.exactlyOn_famSum,
+  MIPRE.CL.CLFun.eval_famSum,
+  MIPRE.CL.CLFun.eval_truncate_famSum,
+  MIPRE.CL.CLFun.factorOfPrefix_famSum,
+  MIPRE.CL.CLFun.mapOfPrefix_famSum,
+  MIPRE.CL.clDist_famSum
 
 -- blueprint `thm:compression` (proof: the composition of the three stages)
 #guard_sorry_free MIPRE.GapCompression,
@@ -333,3 +344,9 @@ elab "#guard_sorry_free " ids:ident,* : command => do
 -- blueprint `thm:gowers-hatami`. Under `MIPRE/Background/` but with no vendored guard
 -- of its own, its module importing only `Foundations.Distances` and Mathlib.
 #guard_sorry_free MIPRE.gowers_hatami
+
+-- blueprint `thm:parallel-repetition`: the statement's structure and its soundness bound,
+-- guarded here with the Foundations; the instance `MIPRE.repetition` is guarded in
+-- `MIPRE/Background/Repetition/Axioms.lean`, beside the vendored theorem it consumes.
+#guard_sorry_free MIPRE.Repetition,
+  MIPRE.Repetition.soundBound

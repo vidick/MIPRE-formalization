@@ -31,7 +31,8 @@ The reading of the paper's statement in the vocabulary of `MIPRE.Verifier`:
   `(λ, τ, β)` (`compute`); the repeated sampler depends only on the input sampler and `(λ, τ)`
   (`sampler`).
 * The complexity clause bounds the output at index `n` by a polynomial in `k(n)`, the parse
-  length, the input's budget at `n` and the input's description length (the paper's
+  length, the input's budget at `n`, the input's description length, the raw parameters and the
+  input's cost on the dimension query (`Repetition.arg`; the paper's
   `poly(k(n), TIME_𝒮(n))` and `poly(k(n), B_𝒟(n))`), at a degree affine in the input's — the
   repeated decider runs the input decider through the universal machine, whose overhead is
   polynomial — and the answers it accepts by a polynomial in `k(n)` and the parse length alone.
@@ -59,9 +60,16 @@ abbrev reps (lam tau n : ℕ) : ℕ := 2 ^ (tau * (Nat.size lam + Nat.size n))
 least `(λn + 1)^β` and at most `(λn + 1)^{6β}` for `λ, n ≥ 1`. -/
 abbrev parseBound (lam beta n : ℕ) : ℕ := 2 ^ (beta * (Nat.size lam + Nat.size n))
 
-/-- The argument of the polynomial bounding the running times of the output at index `n`. -/
+/-- The argument of the polynomial bounding the running times of the output at index `n`: the
+repetition count, the parse length, the input's budget and description length, the raw
+parameters `λ, τ, β, n` (the paper's `poly(k(n), TIME_𝒮(n))` dominates them when `τ ≥ 1`; here
+they are added, since `τ = 0` is allowed), and `10^{R.k}`, the input's time on the dimension
+query — an input of fixed size `9`, which the output asks on every input of its own,
+including the empty one, and whose cost at degree `R.k` no polynomial in the other quantities
+dominates. -/
 abbrev arg (lam tau beta n : ℕ) (R : Budget) (s : ℕ) : ℕ :=
-  reps lam tau n + parseBound lam beta n + R.S + R.d + R.D + R.B + s
+  reps lam tau n + parseBound lam beta n + R.S + R.d + R.D + R.B + s + lam + tau + beta + n +
+    10 ^ R.k
 
 /-- The argument of the polynomial bounding the answers of the output at index `n`. -/
 abbrev ansArg (lam tau beta n : ℕ) : ℕ := reps lam tau n + parseBound lam beta n

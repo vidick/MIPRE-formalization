@@ -359,7 +359,7 @@ theorem timeB_mono {lam n lam' n' : ℕ} (hl : lam ≤ lam') (hn : n ≤ n') :
     timeB I A R lam n ≤ timeB I A R lam' n' := by
   unfold timeB Repetition.arg Repetition.reps Repetition.parseBound arBound
     AnswerReduction.arg wSize pArg s₁ sigma
-  simp only [Budget.uniform_S, Budget.uniform_d, Budget.uniform_D, Budget.uniform_B]
+  simp only [Budget.uniform_S, Budget.uniform_d, Budget.uniform_D, Budget.uniform_B, Budget.uniform_k]
   gcongr <;> norm_num
 
 theorem ansB_mono {lam n lam' n' : ℕ} (hl : lam ≤ lam') (hn : n ≤ n') :
@@ -395,9 +395,11 @@ theorem polyBounded_G : PolyBounded (G I A R) := by
     PolyBounded.eval _ ((hz.pow _).add hsig)
   have ht : PolyBounded fun z : ℕ => timeB I A R z z := by
     unfold timeB Repetition.arg
-    simp only [Budget.uniform_S, Budget.uniform_d, Budget.uniform_D, Budget.uniform_B]
+    simp only [Budget.uniform_S, Budget.uniform_d, Budget.uniform_D, Budget.uniform_B,
+      Budget.uniform_k]
     exact PolyBounded.eval _ ((((((hpow2 _).add (hpow2 _)).add har).add har).add har).add har
-      |>.add hw)
+      |>.add hw |>.add PolyBounded.id |>.add (PolyBounded.const _) |>.add (PolyBounded.const _)
+      |>.add PolyBounded.id |>.add (PolyBounded.const _))
   have ha : PolyBounded fun z : ℕ => ansB I A R z z := by
     unfold ansB Repetition.ansArg
     exact PolyBounded.eval _ ((hpow2 _).add (hpow2 _))
@@ -443,7 +445,10 @@ theorem output_within (V : Prog × Prog) (lam n : ℕ) :
   refine h.mono ⟨?_, ?_, ?_, le_rfl, le_rfl⟩ <;>
   · show R.bound.eval _ ≤ timeB I A R lam n
     unfold timeB
-    exact polynomial_eval_mono _ (Nat.add_le_add_left (arOutput_size_le I A V lam) _)
+    exact polynomial_eval_mono _ (by
+      unfold Repetition.arg
+      have := arOutput_size_le I A V lam
+      omega)
 
 /-- The answer bound of the answer-reduced verifier is below the parse length handed to
 repetition, for `λ ≥ 1` and `n ≥ 1`. -/

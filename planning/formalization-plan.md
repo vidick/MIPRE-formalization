@@ -618,10 +618,12 @@ inhabited will consume it. Writing the consumer changed two blueprint statements
 parameters (it had coupled them through `TIME_𝒟(n) ≤ (λn)^τ` and a vestigial `κ`), and
 `thm:answer-reduction` regained the paper's threshold `C_ar`. The mathematics is now three
 independent structures to inhabit, each with a paper section and a ledger stage, each
-validated by its consumer. Order by distance to done: repetition (the game-level theorem is
-vendored; the verifier-level packaging is what is missing), oracularization (one theorem, an
-input to answer reduction's proof), answer reduction (needs H2 and `thm:succinct-sat`),
-introspection last and deepest.
+validated by its consumer. **Repetition is supplied**: `MIPRE.repetition`
+(`Background/Repetition/Verifier.lean`, `planning/repetition-verifier.md`) inhabits
+`Repetition ℓ` with the repeated sampler and decider written as programs of the ambient model
+and their running times accounted for explicitly. Order by distance to done for the rest:
+oracularization (one theorem, an input to answer reduction's proof), answer reduction (needs
+H2 and `thm:succinct-sat`), introspection last and deepest.
 
 **The standing risk** is the one `planning/h4-assembly.md` §4 item 4 names: `GapCompression`
 has been consumed five times and supplied never — `TimeBoundAt` was refuted three times and
@@ -630,8 +632,9 @@ from the supply side. H5 multiplies that by four. The rule that has held — wri
 first, then a witness, even a trivial one — is the mitigation, and the reason H5's statement
 work came before another three thousand lines of proof. `GapCompression` has now been
 *supplied* once, by `ofPipeline`, which is the first check from the supply side that its
-shape is right; the four structures have been consumed once (by `ofPipeline`) and supplied
-never. A cheap partial check is available
+shape is right; of the four structures, consumed once (by `ofPipeline`), `Repetition` has
+been supplied — and supplying it changed its statement once more (`Repetition.arg`), the
+sixth refutation of a time bound by the other side. A cheap partial check is available
 now: a witness for the non-theorem clauses of `GapCompression` alone (`output_*`,
 `sampler_time`, `decider_time`, `sampler_dim`, `output_rejects_long`), to confirm the shape is
 inhabitable; a full trivial instance is impossible, the structure asserting a genuine theorem.

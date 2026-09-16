@@ -228,6 +228,57 @@ arbitrary types in the lowest universe, and the bridge reindexes them.
 
 \effortHard\ \qlib
 
+\begin{lemma}[Tensor powers of synchronous strategies]
+\label{lem:tensor-power-pcc}
+\uses{def:direct-repetition,def:sync-strategy,def:pcc,def:sync-value}
+\lean{MIPRE.tensorFamily, MIPRE.SyncStrategy.tensorPow, MIPRE.SyncStrategy.value_tensorPow,
+  MIPRE.SyncStrategy.isPCC_tensorPow, MIPRE.SyncStrategy.tensorPowDoubled,
+  MIPRE.exists_perfectPCC_repeat_doubled}
+\leanok
+Let $\game$ be a synchronous game and $\strategy = (d, M)$ a synchronous strategy for it.
+The $k$-fold tensor power $\strategy^{\ot k} = (d^k, M^{\ot k})$, with $M^{\bar{x}}_{\bar{a}}
+= \bigotimes_{i=1}^{k} M^{x_i}_{a_i}$, is a synchronous strategy for the direct repetition
+$\game^{k}$ whose value is the $k$-th power of the value of $\strategy$, and it is PCC if
+$\strategy$ is. In particular a value-$1$ PCC strategy for the doubled game of a game
+$\game$ gives one for the doubled game of $\game^{k}$, for every $k$, the tag being read on
+every coordinate.
+\end{lemma}
+\begin{proof}
+\leanok
+The normalized trace on $\C^{d^k}$ of a tensor product is the product of the normalized
+traces on $\C^d$ (the trace of a product of two projections being real), and the
+distribution and predicate of $\game^{k}$ are products, so each summand of the value of
+$\strategy^{\ot k}$ is the product over the coordinates of the corresponding summands of the
+value of $\strategy$, and the sum over $k$-tuples of questions and answers is the $k$-th power
+of the sum. Commutation is coordinatewise, on the support of the product distribution, which
+is the product of the supports. For the doubled reading, the strategy on the doubled
+repetition is the tensor power relabeled along $(t, \bar{x}) \mapsto ((t, x_i))_i$, which is
+injective and covers the support of the doubled repeated distribution.
+\end{proof}
+
+\begin{lemma}[The repetition bound for answers of bounded length]
+\label{lem:repetition-sound-bound}
+\uses{thm:direct-repetition-q,def:normal-verifier}
+\lean{MIPRE.Repetition.repConst, MIPRE.Repetition.card_answers_le,
+  MIPRE.Repetition.quantumValue_repeat_le_soundBound}
+\leanok
+There is a universal constant $c' > 0$ such that for every game $\game$ whose answer
+alphabets are the strings of length at most $B$, every $\eps > 0$ with $\valstar(\game) \leq
+1 - \eps$ and every $k \geq 1$,
+\begin{equation*}
+  \valstar\bigl( \game^{k} \bigr) \;\leq\; \exp\Bigl( - \frac{c'\, \eps^{13}\, k}{B + 1} \Bigr)\;.
+\end{equation*}
+\end{lemma}
+\begin{proof}
+\leanok
+Theorem~\ref{thm:direct-repetition-q} at $\eps' = 1 - \valstar(\game) \geq \eps$: there are at
+most $3^{B+1}$ strings of length at most $B$, so $\log(\abs{\mA}\abs{\mB}) \leq 2(B + 1)
+\log 3$, and $\eps' \leq 1 \leq B + 1$, so the denominator is at most $(B + 1)(1 + 2 \log 3)$;
+the exponent is monotone in the gap, so the bound at $\eps'$ implies the one at $\eps$. Take
+$c' = c / (1 + 2 \log 3)$. This is the form in which the soundness clause of
+Theorem~\ref{thm:parallel-repetition} consumes the theorem.
+\end{proof}
+
 \begin{theorem}[Lin's tracial density theorem]
 \label{thm:tracial-density}
 \uses{def:co-strategy-bipartite}
