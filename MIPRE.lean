@@ -595,6 +595,7 @@ import MIPRE.Foundations.Repeat.DecLoop
 import MIPRE.Foundations.Repeat.DecMain
 import MIPRE.Foundations.Repeat.MapLoop
 import MIPRE.Foundations.Repeat.Prims
+import MIPRE.Foundations.Repeat.RepDecider
 import MIPRE.Foundations.Repeat.RepSampler
 import MIPRE.Foundations.Repeat.Sampler
 import MIPRE.Foundations.SyncTransport

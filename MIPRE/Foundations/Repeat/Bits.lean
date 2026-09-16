@@ -86,6 +86,13 @@ theorem chunk_map {α β : Type*} (f : α → β) (i : ℕ) (l : List α) :
     chunk s i (l.map f) = (chunk s i l).map f := by
   simp [chunk, List.map_take, List.map_drop]
 
+@[simp] theorem chunk_zero {α : Type*} (l : List α) : chunk s 0 l = l.take s := by simp [chunk]
+
+theorem chunk_succ {α : Type*} (i : ℕ) (l : List α) : chunk s (i + 1) l = chunk s i (l.drop s) := by
+  simp only [chunk, List.drop_drop]
+  congr 2
+  ring
+
 theorem length_chunk {α : Type*} {l : List α} (hl : l.length = k * s) (i : Fin k) :
     (chunk s i l).length = s := by
   have hi : (i + 1) * s ≤ k * s := Nat.mul_le_mul_right s i.isLt
