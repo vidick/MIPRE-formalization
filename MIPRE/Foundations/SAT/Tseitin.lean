@@ -154,6 +154,30 @@ theorem eval_of_tseitin_sat (C : Circuit) (hC : C.RefsLt) (hin : C.InputsLt) (hn
   simp only [eval, hne, ite_false]
   rw [← this, hout]
 
+/-- Completeness, for a given assignment: one that carries the gate values on the gate
+variables satisfies the formula when the circuit accepts the bits it reads on the inputs. -/
+theorem tseitin_sat_of_values (C : Circuit) (hC : C.RefsLt) (inp gv : ℕ → V) (w : V → Bool)
+    (hwg : ∀ g < C.gates.length, w (gv g) = C.valueAt (fun i => w (inp i)) g)
+    (hx : C.eval (fun i => w (inp i)) = true) : (C.tseitin inp gv).Sat w := by
+  intro c hc
+  rcases hc with ⟨g, hg⟩ | rfl
+  · refine (gateClauses_iff inp gv (gv g) C.gates[g] w
+      (List.ofFn fun k : Fin g => C.valueAt (fun i => w (inp i)) k) ?_).mpr ?_ c hg
+    · intro u hu
+      have hlt := hC g g.isLt u hu
+      rw [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem (by simpa using hlt), Option.getD_some,
+        List.getElem_ofFn, hwg u (by omega)]
+    · rw [hwg g g.isLt, valueAt_eq, List.getD_eq_getElem?_getD,
+        List.getElem?_eq_getElem g.isLt, Option.getD_some]
+      rfl
+  · have hne : C.gates ≠ [] := by
+      intro h
+      simp [eval, h] at hx
+    have hlen : 0 < C.gates.length := List.length_pos_iff.mpr hne
+    simp only [Clause3.eval, cl, Lit.eval, ite_true, Bool.or_self]
+    rw [hwg (C.gates.length - 1) (by omega)]
+    simpa [eval, hne] using hx
+
 /-- Completeness: if `C(x) = 1`, the assignment reading `x` on the inputs and the gate values
 on the gate variables satisfies the formula. -/
 theorem tseitin_sat_of_eval (C : Circuit) (hC : C.RefsLt) (hin : C.InputsLt) (inp gv : ℕ → V)
@@ -181,25 +205,9 @@ theorem tseitin_sat_of_eval (C : Circuit) (hC : C.RefsLt) (hin : C.InputsLt) (in
     exact hgv _ _ h'.choose_spec.1 hg h'.choose_spec.2.symm
   have hval : ∀ g, C.valueAt (fun i => w (inp i)) g = C.valueAt x g :=
     valueAt_congr C hin _ x hwi
-  refine ⟨w, hwi, ?_⟩
-  intro c hc
-  rcases hc with ⟨g, hg⟩ | rfl
-  · refine (gateClauses_iff inp gv (gv g) C.gates[g] w
-      (List.ofFn fun k : Fin g => C.valueAt (fun i => w (inp i)) k) ?_).mpr ?_ c hg
-    · intro u hu
-      have hlt := hC g g.isLt u hu
-      rw [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem (by simpa using hlt), Option.getD_some,
-        List.getElem_ofFn, hwg u (by omega), hval]
-    · rw [hwg g g.isLt, ← hval, valueAt_eq, List.getD_eq_getElem?_getD,
-        List.getElem?_eq_getElem g.isLt, Option.getD_some]
-      rfl
-  · have hne : C.gates ≠ [] := by
-      intro h
-      simp [eval, h] at hx
-    have hlen : 0 < C.gates.length := List.length_pos_iff.mpr hne
-    simp only [Clause3.eval, cl, Lit.eval, ite_true, Bool.or_self]
-    rw [hwg (C.gates.length - 1) (by omega)]
-    simpa [eval, hne] using hx
+  refine ⟨w, hwi, tseitin_sat_of_values C hC inp gv w (fun g hg => by rw [hwg g hg, hval]) ?_⟩
+  rw [eval_congr C hin _ x hwi]
+  exact hx
 
 /-- **The circuit-to-3SAT reduction**: `C(x) = 1` iff some assignment agreeing with `x` on
 the inputs satisfies the Tseitin formula. -/

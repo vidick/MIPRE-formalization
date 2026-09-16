@@ -9,7 +9,7 @@ import MIPRE.Foundations.SAT.Tseitin
 /-!
 # The Cook–Levin tableau of a multi-input machine
 
-The 3SAT formula `tableau M acc s₀ s₁ S chk fixed` of a run of `S` steps of the machine `M`
+The 3SAT formula `tableau M s₀ s₁ S fixed chk` of a run of `S` steps of the machine `M`
 (`planning/succinct-cook-levin.md`, S1; `answer_reduction.tex` `prop:standard-succinct-sat`):
 
 * **Variables** (`TabVar`): for each time `t ≤ S`, tape and cell position, the one-hot cell
@@ -32,9 +32,9 @@ The 3SAT formula `tableau M acc s₀ s₁ S chk fixed` of a run of `S` steps of 
 * **The assignment of a run** (`runAssign`): the encodings of the configurations of the
   machine and the gate values of the check circuit on every window.
 
-The check circuit is a parameter with its specification `chk.evalBits (winBits win) =
-decide (checkPred M acc win)`; the correctness of the tableau (`Correct.lean`) is proved
-against the specification, and `S3` supplies the circuit.
+The check circuit is a parameter with its specification `IsCheckCircuit`: `chk.evalBits
+(winBits win) = true ↔ checkPred M acc win`; the correctness of the tableau (`Correct.lean`)
+is proved against the specification, and `S3` supplies the circuit.
 -/
 
 namespace MIPRE.TM.CookLevin
@@ -120,6 +120,11 @@ abbrev winCard (i w : ℕ) (Symbol State : Type*) [Fintype Symbol] [DecidableEq 
 noncomputable def winBits (win : WinVar i w Symbol State → Bool) : List Bool :=
   List.ofFn fun n : Fin (winCard i w Symbol State) => win ((Fintype.equivFin _).symm n)
 
+/-- `chk` computes local consistency of a window: its specification, the hypothesis of the
+correctness of the tableau (`Correct.lean`); `S3` supplies the circuit. -/
+def IsCheckCircuit (M : MultiInputTM i w Symbol State) (acc : Symbol) (chk : Circuit) : Prop :=
+  ∀ win : WinVar i w Symbol State → Bool, chk.evalBits (winBits win) = true ↔ checkPred M acc win
+
 /-- The input variables of the check circuit at a window: the `n`-th window variable. -/
 noncomputable def inpOf (t : Fin S) (js : Tape i w → Center S) (n : ℕ) : TabVar i w Symbol State S G :=
   if h : n < winCard i w Symbol State then winVarOf t js ((Fintype.equivFin _).symm ⟨n, h⟩)
@@ -193,7 +198,9 @@ noncomputable def windowClauses (chk : Circuit) : Cnf3 (TabVar i w Symbol State 
   {c | ∃ (t : Fin S) (js : Tape i w → Center S), c ∈ chk.tseitin (inpOf t js) (auxOf t js)}
 
 /-- **The tableau formula.** -/
-noncomputable def tableau (chk : Circuit) : Cnf3 (TabVar i w Symbol State S chk.gates.length) :=
+noncomputable def tableau (M : MultiInputTM i w Symbol State) (s₀ s₁ : Symbol) (S : ℕ)
+    (fixed : Fin i → Option (List Symbol)) (chk : Circuit) :
+    Cnf3 (TabVar i w Symbol State S chk.gates.length) :=
   startClauses (S := S) (G := chk.gates.length) M fixed ∪
     freeClauses (S := S) (G := chk.gates.length) s₀ s₁ fixed ∪
     bdryClauses (S := S) (G := chk.gates.length) ∪ emitClauses (S := S) (G := chk.gates.length) ∪

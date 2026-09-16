@@ -251,9 +251,10 @@ theorem cellValAt_inr (c : Cfg i w Symbol State input) (j : Fin w) (p : Pos S) (
 
 /-! ## Head positions -/
 
-/-- The bounds under which every head is on an interior cell. -/
+/-- The bounds under which every head is on an interior cell; they hold at every time
+`t ≤ S` of a run (`headsIn_cfgAt`), since a head moves at most one position per step. -/
 structure HeadsIn (c : Cfg i w Symbol State input) (S : ℕ) : Prop where
-  input_len : ∀ j, (input j).length ≤ 2 * S + 1
+  input_pos : ∀ j, (c.inputPos j : ℕ) ≤ 2 * S + 2
   work_pos : ∀ j, -(S : ℤ) ≤ c.workTapePos j ∧ c.workTapePos j ≤ S
 
 omit [Fintype Symbol] [Fintype State] [DecidableEq State] in
@@ -262,8 +263,7 @@ theorem HeadsIn.headCell_bounds {c : Cfg i w Symbol State input} (h : HeadsIn c 
   have hnc : numCells S = 2 * S + 7 := rfl
   cases d with
   | inl j =>
-    have := (c.inputPos j).isLt
-    have := h.input_len j
+    have := h.input_pos j
     simp only [headCell]; omega
   | inr j =>
     have := h.work_pos j
@@ -381,7 +381,7 @@ theorem fullStep_localCfgOf (c : Cfg i w Symbol State input) (js : Tape i w → 
       have hh := hhead (.inl j)
       simp only [headCell] at hh
       have hlt := (c.inputPos j).isLt
-      have hlen := hin.input_len j
+      have hlen := hin.input_pos j
       have h1 := (hδ (.inl j)).1
       have h3 := (hδ (.inl j)).2.1
       simp only [headCell, step_inputPos M c hst, center_val, newOffset, Tape.isInput, true_and]
