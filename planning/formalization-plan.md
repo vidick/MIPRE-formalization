@@ -604,23 +604,34 @@ of 37 statements with `\lean{}` (the CL foundations and the two hypothesis struc
 with a proof; chapter 3 has 10 of 44, and everything introspection needs — `thm:qld` and its
 fifteen lemmas, `thm:ms-rigidity`, the `lem:lidt-*` transfers — is at zero, as are
 `thm:succinct-sat` and the two universal-machine specifications (#17, #18) that answer
-reduction's Cook–Levin step rests on. Put **one step before introspection: H5, the assembly of
-`thm:compression` from four hypothesis structures** — `Introspection`, `Oracularization`,
-`AnswerReduction`, `Repetition`, each a `structure` in the vocabulary of `MIPRE.Verifier` with
-its time bounds, and `GapCompression` derived from them by the margin arithmetic
-(`lem:compress-margin`, `lem:compress-tau`). It is what H4 did for the halting reduction, and
-it worked: the mathematics becomes four independent structures, each with a paper section and
-a ledger stage, each writable by a separate session, and each validated by its consumer before
-anyone proves it. Order after that by distance to done: repetition (the game-level theorem is
-vendored; the verifier-level packaging is what is missing), oracularization (one theorem),
-answer reduction (needs H2 and `thm:succinct-sat`), introspection last and deepest.
+reduction's Cook–Levin step rests on. **H5, the assembly of `thm:compression` from the
+hypothesis structures, is done** (`MIPRE/Foundations/Pipeline/`): `Introspection ℓ`,
+`Oracularization ℓ`, `AnswerReduction ℓ`, `Repetition ℓ`, each a `structure` in the vocabulary
+of `MIPRE.Verifier` with its time bounds stated as resource budgets (`Budget`,
+`Verifier.Within`), and `GapCompression.ofPipeline : Introspection 7 → AnswerReduction 5 →
+Repetition 7 → GapCompression` by the margin arithmetic (`Pipeline/Margin.lean`:
+`lem:compress-margin`, `lem:compress-tau`, both proved). Oracularization is stated but not
+consumed by the assembly, because the paper's `Compress` has three steps and oracularization
+is the first step of the *proof* of answer reduction; a proof that `AnswerReduction` is
+inhabited will consume it. Writing the consumer changed two blueprint statements:
+`thm:parallel-repetition` needed the repetition count and the answer length as independent
+parameters (it had coupled them through `TIME_𝒟(n) ≤ (λn)^τ` and a vestigial `κ`), and
+`thm:answer-reduction` regained the paper's threshold `C_ar`. The mathematics is now three
+independent structures to inhabit, each with a paper section and a ledger stage, each
+validated by its consumer. Order by distance to done: repetition (the game-level theorem is
+vendored; the verifier-level packaging is what is missing), oracularization (one theorem, an
+input to answer reduction's proof), answer reduction (needs H2 and `thm:succinct-sat`),
+introspection last and deepest.
 
 **The standing risk** is the one `planning/h4-assembly.md` §4 item 4 names: `GapCompression`
 has been consumed five times and supplied never — `TimeBoundAt` was refuted three times and
 `IsSynchronousAt` once (#77), each time by a consumer — and chapter 6 will read the structure
 from the supply side. H5 multiplies that by four. The rule that has held — write the consumer
-first, then a witness, even a trivial one — is the mitigation, and the reason to prefer H5's
-statement work over another three thousand lines of proof. A cheap partial check is available
+first, then a witness, even a trivial one — is the mitigation, and the reason H5's statement
+work came before another three thousand lines of proof. `GapCompression` has now been
+*supplied* once, by `ofPipeline`, which is the first check from the supply side that its
+shape is right; the four structures have been consumed once (by `ofPipeline`) and supplied
+never. A cheap partial check is available
 now: a witness for the non-theorem clauses of `GapCompression` alone (`output_*`,
 `sampler_time`, `decider_time`, `sampler_dim`, `output_rejects_long`), to confirm the shape is
 inhabitable; a full trivial instance is impossible, the structure asserting a genuine theorem.
