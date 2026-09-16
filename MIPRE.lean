@@ -593,6 +593,7 @@ import MIPRE.Foundations.Pipeline.Repetition
 import MIPRE.Foundations.Repeat.Bits
 import MIPRE.Foundations.Repeat.DecLoop
 import MIPRE.Foundations.Repeat.DecMain
+import MIPRE.Foundations.Repeat.Dom
 import MIPRE.Foundations.Repeat.MapLoop
 import MIPRE.Foundations.Repeat.Prims
 import MIPRE.Foundations.Repeat.RepDecider
