@@ -1583,6 +1583,7 @@ The ingredients, with provenance to the companion repository's ledger nodes.
   MIPRE.Halting.haltProg_accepts_iff, MIPRE.Halting.comprStr, MIPRE.Halting.comprStr_accepts,
   MIPRE.Cost.Prog.readProg, MIPRE.Cost.Prog.readProg_runs, MIPRE.Cost.Prog.wrapBuildProg,
   MIPRE.Cost.Prog.freezeBuildProg}
+\leanok
 There is a Turing machine $F$ and a decider $\dhalt = F$ carrying its own description,
 with a timeout bound $B_{\dhalt}(n)$, such that $\dhalt$ is total within its timeout and
 $\vhalt = (\mathtt{ComputeSampler}(\lambda), \dhalt)$ is a normal form verifier. The
@@ -1590,6 +1591,16 @@ self-reference is by direct construction rather than by the recursion theorem, t
 input-length check precedes the $n$-step simulation of $\machine$, and the
 halting-freeze convention makes the decider total.
 \end{lemma}
+
+\begin{proof}
+\leanok
+By construction: the decider is the program \texttt{MIPRE.Halting.haltProg}, closed
+(\texttt{haltProg\_wellScoped}), and the verifier the compressor's output denotes is a normal
+form verifier because every string denotes one (\texttt{Vof\_comprStr},
+\texttt{Verifier.ofSamplerDecider}). Totality on succinct descriptions is
+\texttt{haltProg\_runs} with \texttt{haltProg\_runs\_inv}; the time bound that replaces the
+timeout counter is Lemma~\ref{lem:lambda}.
+\end{proof}
 
 \paragraph{Comments.} The Lean decider is $F$ with the self-reference removed, along the
 route of Remark~\ref{rem:compression-abstract}: \texttt{MIPRE.Halting.haltProg} takes
@@ -1654,10 +1665,20 @@ exponential in it.
   MIPRE.Halting.ansBound_le_lamOf, MIPRE.Halting.exists_compressorSpec,
   MIPRE.Halting.comprPoly, MIPRE.Cost.PolyBounded.absorb, MIPRE.Cost.PolyBounded.absorb_log,
   MIPRE.Cost.Prog.wrapCoreCost, MIPRE.Cost.Prog.wrapCore_cost'}
+\leanok
 There is a $\lambda$, computable from the description of $\machine$ in polynomial time and
 of size $\poly(\abs{\machine})$, such that $\vhalt$ is $\lambda$-bounded and
 $\TIME_{\dhalt}(n), \TIME_{\shalt}(n) = \poly(n, \abs{\machine})$.
 \end{lemma}
+
+\begin{proof}
+\leanok
+\texttt{MIPRE.Halting.isBounded\_comprStr}: the sampler clauses from the compression
+theorem's own bounds at $\lambda(n)$, the size clause from the criterion's slack
+$2\abs{c} \leq n$ and \texttt{PolyBounded.absorb\_log}, the decider clause from the explicit
+wrapper cost \texttt{Prog.wrapCore\_cost'} around \texttt{innerBound} and
+\texttt{PolyBounded.absorb}; the parameter is computed in binary by \texttt{comprPoly}.
+\end{proof}
 
 \paragraph{Comments.} In the Lean route of Remark~\ref{rem:compression-abstract} the parameter
 is a function of the \emph{level}, $\lambda(n) = 2^{2 \log n}$
@@ -1691,6 +1712,7 @@ $\TIME_{\dhalt}$ to compute: totality within a bound is the accounting itself.
 \uses{lem:halt-construction,lem:lambda,lem:compress-sampler-indep,def:pcc,def:q-value}
 \lean{MIPRE.Halting.comprStr_accepts, MIPRE.Halting.haltProg_accepts_iff,
   MIPRE.Halting.CompressorSpec.toObligations}
+\leanok
 For every $n$:
 \begin{enumerate}
 \item if $\machine$ halts within $n$ steps then $\valstar(\vhalt_n) = 1$, witnessed by a
@@ -1702,6 +1724,7 @@ For every $n$:
 \end{enumerate}
 \end{lemma}
 \begin{proof}
+\leanok
 Item 1 is the fixed-answer strategy: when $\machine$ halts within $n$ steps, $\dhalt$
 accepts every answer pair on every question pair in the support, so any strategy has value
 $1$ and the constant-$0$ strategy is PCC. For item 2, $\dhalt$ at index $n$ performs the
@@ -1747,6 +1770,7 @@ revision of this chapter did state item 2 as the bound, and because the ledger n
 \uses{thm:compression,rem:compression-abstract,lem:compressible-criterion,lem:value-lower-approx,lem:kleene,def:mipstar,def:game-description,lem:sync-le-valstar,lem:dhalt-values,lem:lambda}
 \lean{MIPRE.Halting.halting_reduction, MIPRE.Halting.halting_reduction_of,
   MIPRE.Halting.exists_obligations, MIPRE.Halting.halting_reduces_to_gameValue_of}
+\leanok
 There is a computable (indeed polynomial-time) map $\machine \mapsto
 \game_{\machine}$ from Turing machines to synchronous game descriptions, with games
 given by normal form verifiers satisfying the efficiency requirements of
@@ -1759,6 +1783,16 @@ Definition~\ref{def:mipstar}, such that:
   $\synval(\game_\machine) \leq \tfrac12$ (Lemma~\ref{lem:sync-le-valstar}).
 \end{enumerate}
 \end{theorem}
+
+\begin{proof}
+\leanok
+\texttt{MIPRE.Halting.halting\_reduction\_of} in $\valstar$ and
+\texttt{halting\_reduces\_to\_gameValue\_of} in $\synval$, from
+Theorem~\ref{thm:compression} as a \texttt{GapCompression}: Lemma~\ref{lem:compressible-criterion}
+at the classes of Remark~\ref{rem:compression-abstract}, whose four obligations are the
+theorems named below, the last through \texttt{exists\_obligations}. The map is computable;
+its polynomial-time computability is not formalized (Section~\ref{sec:departures}).
+\end{proof}
 
 The proof is Lemma~\ref{lem:compressible-criterion} applied to the instantiation of
 Remark~\ref{rem:compression-abstract}; the semidecidability hypothesis of the lemma is the
