@@ -418,7 +418,9 @@ takes none.
    `x.length ≤ esize x ≤ t ≤ n + 1` — and then `isSuccinctDesc_hardcode` launders it into
    `x.length ≤ 2 ^ n` through `n + 1 ≤ 2 ^ n`. Carrying it over instead gives `hCompr`, and so
    `compr_spec`, the fourth hypothesis `x.length ≤ n + 1`; then `descLam x < 2 ^ (n+1)`, the
-   answer bound is `2 ^ O(n)` against `(2 ^ n) ^ λ`, and `λ ≥ 2 deg` already dominates. The
+   answer bound is `2 ^ O(n)` against `(2 ^ n) ^ λ`, which `λ ≥ 2 deg(bound) + 1` dominates for
+   `n` above a threshold read off `bound` as well — `exists_ansBound_le` is that step, checked,
+   and the threshold is set by the polynomial `bound`, not by `G.deg`. The
    change is four lines of `Compression.lean` and one clause in three signatures; the classes,
    `ansBound` and O1–O3 are untouched.
 

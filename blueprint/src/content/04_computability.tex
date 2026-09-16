@@ -394,7 +394,9 @@ constrains $\lambda_x$ --- for a compression procedure whose compressed sampler 
 with $\lambda$, membership in either class is insensitive to it --- so with only
 $\abs{x} \leq 2^n$ the two bounds cannot be related by any single choice of $\lambda$. With
 $\abs{x} \leq n + 1$ we get $\lambda_x < 2^{n+1}$, hence an answer bound of
-$2^{O(n)}$ against $(2^n)^\lambda$, which $\lambda \geq 2\,\mathrm{deg}$ already dominates.
+$2^{O(n)}$ against $(2^n)^\lambda$, which $\lambda \geq 2\deg(\mathrm{bound}) + 1$ already
+dominates for $n$ above a threshold read off $\mathrm{bound}$ as well; the Lean says so and
+checks it (\texttt{MIPRE.Halting.exists\_ansBound\_le}).
 
 \effortEasy
 
