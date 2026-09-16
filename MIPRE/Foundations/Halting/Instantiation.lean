@@ -84,7 +84,11 @@ is open can be enumerated rather than searched for:
   file; removing them is a module move rather than mathematics.
 * **O4** (`compr`, `compr_spec`) — the compressor: the decider that reads its description by
   bit queries, freezes the verifier at index `2n + 1` (`Verifier.freeze`), runs `Compress`,
-  and its time accounting.
+  and its time accounting. Its `λ` is chosen by `lem:lambda-bound`
+  (`MIPRE.Halting.lambda_bound`), which turns the output's `poly(n, λ)` running times into the
+  `n ^ λ` that `IsBounded` asks for. The field's fourth hypothesis, `x.length ≤ n + 1`, is what
+  makes it satisfiable at all; its docstring says why, and
+  `Cost.compressibility_criterion_levels` supplies it from a bound its own proof already had.
 
 O4 is the substance that is left, and `planning/h4-assembly.md` has the order of work. O3 was
 recorded there as "O2 plus a disjunction"; it is not, and the reason is worth naming.
@@ -623,10 +627,24 @@ structure Obligations (G : GapCompression) (U : UniversalMachine) where
   sem_spec : ∀ (x : BitStr) (n : ℕ), Halts sem (encode (x, n)) ↔ x ∉ classB G U n
   /-- **O4.** The compressor: a polynomial-time map on `(description, level)` pairs. -/
   compr : PolyTimeFun (Prog × ℕ) BitStr
-  /-- **O4.** On a succinct description of a string at level `2n + 1`, with the size slack the
-  criterion provides, the compressor preserves both classes down to level `n`. -/
+  /-- **O4.** On a succinct description of a string at level `2n + 1`, with the size slack and
+  the length bound the criterion provides, the compressor preserves both classes down to level
+  `n`.
+
+  The clause `x.length ≤ n + 1` is not slack either, and it is what makes the field
+  *satisfiable*. `classA G U (2n+1)` asks for a value-`1` PCC strategy at the answer bound
+  `ansBound G x (2n+1) = G.bound.eval (2n+1 + descLam x)`, while the only source of such a
+  strategy for a compressed verifier is `GapCompression.completeness`, which takes its input at
+  the bound `(2 ^ n) ^ λ` with `λ` the parameter the compressor writes into its output — so `λ`
+  is bounded by the compressor's own output size and cannot be made arbitrarily large. Without a
+  bound on `descLam x` the two cannot be related: nothing in `IsBounded` constrains a string's
+  compression parameter (for a `G` whose compressed sampler does not vary with `λ`, membership
+  in either class is insensitive to it), while `ansBound` grows with it. With
+  `x.length ≤ n + 1` we get `descLam x < 2 ^ (n+1)`, hence
+  `ansBound G x (2n+1) ≤ G.bound.eval (2n+1 + 2^(n+1)) ≤ (2 ^ n) ^ λ` already for
+  `λ ≥ 2 · G.deg`, and `hasPerfectPCC_of_le` carries the hypothesis across. -/
   compr_spec : ∀ (c : Prog) (x : BitStr) (n : ℕ), n₀ ≤ n → 2 * esize c ≤ n →
-    IsSuccinctDesc c n x →
+    IsSuccinctDesc c n x → x.length ≤ n + 1 →
       (x ∈ classA G U (2 * n + 1) → compr (c, n) ∈ classA G U n) ∧
       (x ∈ classB G U (2 * n + 1) → compr (c, n) ∈ classB G U n)
 

@@ -297,7 +297,8 @@ $y_{\mathrm{yes}} \in A$ and $y_{\mathrm{no}} \in B$, and suppose that the compl
 $B$ is recursively enumerable: there is a program $S$ that halts on input $x$ if and only
 if $x \notin B$. Suppose there is a polynomial-time computable function $\compr : \{0,1\}^*
 \times \N \to \{0,1\}^*$ such that whenever $\hat{x}$ is a succinct description
-(Definition~\ref{def:succinct}) of a string $x$ and $y = \compr(\hat{x}, n)$:
+(Definition~\ref{def:succinct}) of a string $x$ with $\abs{x} \leq n + 1$ and
+$y = \compr(\hat{x}, n)$:
 \begin{enumerate}
 \item if $x \in A$ then $y \in A$, and
 \item if $x \in B$ then $y \in B$.
@@ -376,6 +377,24 @@ embed $\hat x$ into its output, for a reader whose budget is polynomial in $n$ -
 decider of a game at index $n$. The size slack $2\abs{\hat x} \leq n$ keeps that output
 short, and the levels are what let the class of the output be judged at the index where
 it is played.
+
+The hypothesis $\abs{x} \leq n + 1$ is not an extra demand on $\compr$ but a \emph{weakening} of
+what it must cover, and it was added because obligation O4 cannot be met without it. The
+proof already has it: the described string is the output of a run whose cost the threshold
+constant bounds by $n + 1$, so $\abs{x} \leq \abs{\mathrm{encode}(x)} \leq t \leq n + 1$,
+and until this was carried over the proof discarded it into
+Definition~\ref{def:succinct}'s $\abs{x} \leq 2^n$ through $n + 1 \leq 2^n$. Why O4 needs
+it: the class $A$ of the halting reduction asks for a value-$1$ PCC strategy at the answer
+bound $\poly(n, \lambda_x)$ read off the described string's own compression parameter
+$\lambda_x$, while the only source of such a strategy for a compressed verifier is the
+completeness clause of Theorem~\ref{thm:compression}, which takes its input at the bound
+$(2^n)^\lambda$ with $\lambda$ the parameter the compressor \emph{writes into its output} and so
+bounded by the compressor's own output size. Nothing in Definition~\ref{def:lambda-bounded}
+constrains $\lambda_x$ --- for a compression procedure whose compressed sampler does not vary
+with $\lambda$, membership in either class is insensitive to it --- so with only
+$\abs{x} \leq 2^n$ the two bounds cannot be related by any single choice of $\lambda$. With
+$\abs{x} \leq n + 1$ we get $\lambda_x < 2^{n+1}$, hence an answer bound of
+$2^{O(n)}$ against $(2^n)^\lambda$, which $\lambda \geq 2\,\mathrm{deg}$ already dominates.
 
 \effortEasy
 

@@ -389,9 +389,56 @@ takes none.
      `MIPRE.Cost.Data.primrec_encode_nat` (`Cost/Codable.lean`, written for the tabulation in
      #73), and it is what `computablyPresented_Vof` and every budgeted run in
      `Halting/Tabulate.lean` are built on.
-4. **O4.** The largest piece left and the only obligation with mathematics still in it, and the
-   only one where the paper's construction is followed closely; read `recursive.tex` `sec:halt`
-   and nodes `1.6.1`, `1.6.5` again before starting.
+4. **O4.** *Started 2026-09-16; not finished.* Two pieces landed, and one finding changed the
+   shape of the rest.
+
+   **`lem:lambda-bound` is in Lean** (`Halting/LambdaBound.lean`, `MIPRE.Halting.lambda_bound`):
+   `C · (C' λ n)^C ≤ n^λ` for `λ ≥ 4 max((4C)^(8C), C log₂ C')` and `n ≥ 2`. This is what turns
+   the output verifier's `poly(n, λ)` running times — the shape `GapCompression.decider_time`
+   and `sampler_time` state — into the `n^λ` that `Verifier.IsBounded` asks for, and it is the
+   first thing the boundedness half of O4 needs. Two deviations from the blueprint, both
+   recorded there: `log` is `Nat.log 2`, and `C' ≥ 1` is dropped because the proof does not use
+   it.
+
+   **`compr_spec` was not satisfiable as stated, and the repair was local.** The field asks the
+   compressor to carry `classA (2n+1)` down to `classA n`. `classA (2n+1)` supplies a value-`1`
+   PCC strategy at the answer bound `ansBound G x (2n+1) = G.bound.eval (2n+1 + descLam x)`,
+   while the only source of such a strategy for a compressed verifier is
+   `GapCompression.completeness`, which takes its input at `(2 ^ n) ^ λ` — and `λ` is the
+   parameter the compressor *writes into its output*, so it is bounded by the compressor's own
+   output size and cannot be made arbitrarily large. Nothing in `IsBounded` bounds
+   `descLam x`: for a `G` whose compressed sampler does not vary with `λ`, membership in either
+   class is completely insensitive to it, while `ansBound` grows with it. With
+   `IsSuccinctDesc`'s `x.length ≤ 2 ^ n` as the only handle, `descLam x < 2 ^ (2 ^ n)` and no
+   single `λ(n)` relates the two bounds.
+
+   What makes it work is a bound the criterion's own proof already had and threw away.
+   `compressibility_criterion_levels`'s `key` (`Compression.lean`) establishes
+   `t ≤ (Q₁ + Q₂ + Q₃).eval (…) ≤ n + 1` for the cost `t` of the run producing `x`, hence
+   `x.length ≤ esize x ≤ t ≤ n + 1` — and then `isSuccinctDesc_hardcode` launders it into
+   `x.length ≤ 2 ^ n` through `n + 1 ≤ 2 ^ n`. Carrying it over instead gives `hCompr`, and so
+   `compr_spec`, the fourth hypothesis `x.length ≤ n + 1`; then `descLam x < 2 ^ (n+1)`, the
+   answer bound is `2 ^ O(n)` against `(2 ^ n) ^ λ`, and `λ ≥ 2 deg` already dominates. The
+   change is four lines of `Compression.lean` and one clause in three signatures; the classes,
+   `ansBound` and O1–O3 are untouched.
+
+   Worth keeping as a second instance of §1's rule, and a sharper one than the first: this
+   hypothesis structure was not merely *unsatisfiable* as written — it was unsatisfiable while
+   the information that fixes it sat two lines up in its own consumer's proof, discarded by a
+   monotonicity step that looked free. The `2 ^ n` of `def:succinct` is the right bound for the
+   *notion*; it is the wrong bound to hand a *consumer*.
+
+   **What is left** is the construction itself, and it is the larger half: the ambient program
+   for the output decider (read `x` out of the succinct description by bit queries, parse it,
+   freeze the verifier at `2n+1`, run `Compress`, run the compressed decider), the proof that
+   its acceptance agrees with `G.output`'s so that `valStar_congr`/`hasPerfectPCC_congr` bridge
+   the values, and its cost accounting against `IsBounded n`. Compare #57 and #64 for the scale
+   of the program-plus-accounting work; this is bigger than either. The class transfer on top of
+   it is short — `freeze_hasPerfectPCC` and `freeze_valStar` for the level bridge, `completeness`
+   and `soundness` for the compression step, `hasPerfectPCC_of_le` for the answer bound,
+   `freeze_isBounded` and `lambda_bound` for the boundedness — and none of it is blocked any
+   more. Read `recursive.tex` `sec:halt` and nodes `1.6.1`, `1.6.5` again before starting it:
+   this is the one obligation where the paper's construction is followed closely.
 5. **The module move.** Numbered last because it was found last; it comes *before* O4 in the
    doing, being what turns O3's discharge into a smaller `Obligations`. The structure and
    `halting_reduction` are at the end of `MIPRE/Foundations/Halting/Instantiation.lean`, and
