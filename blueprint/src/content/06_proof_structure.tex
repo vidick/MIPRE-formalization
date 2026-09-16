@@ -915,7 +915,7 @@ anchoring; the anchored, entanglement-form theorem used in~\cite{JNVWY20}
 \label{thm:parallel-repetition}
 \ledgernode{1.4, 1.4.3, 1.4.3.1}
 \uses{def:normal-verifier,def:pcc,def:direct-repetition,thm:direct-repetition-q,def:mipstar,lem:tensor-power-pcc,lem:repetition-sound-bound}
-\lean{MIPRE.Repetition, MIPRE.Repetition.soundBound}
+\lean{MIPRE.Repetition, MIPRE.Repetition.soundBound, MIPRE.repetition}
 \leanok
 There are a universal constant $c > 0$ and a polynomial-time Turing machine
 $\ComputeParrepVerifier$ that on input $(\verifier, \ell, \lambda, \tau, \beta)$, for
@@ -939,7 +939,9 @@ $\TIME_{\srep}(n) = \poly\bigl(k(n),
   \end{equation*}
 \end{enumerate}
 \end{theorem}
-
+\begin{proof}
+\leanok
+\uses{def:direct-repetition,thm:direct-repetition-q,lem:tensor-power-pcc,lem:repetition-sound-bound,lem:cl-famsum}
 The game $\vrep_n$ is $\verifier_n^{k(n)}$ at the truncated alphabet: its sampler runs
 $k(n)$ independent copies of $\sampler$ (a product of conditionally linear functions of the
 same level) and its decider runs $\decider$ on every coordinate. Completeness: the
@@ -965,6 +967,8 @@ down by a walk over the bits of $\lambda$ and $n$, where $(\lambda n)^\tau$ woul
 multiplication; $(\lambda n + 1)^\tau \leq 2^{\tau(|\lambda| + |n|)} \leq (\lambda n +
 1)^{6\tau}$ for $\lambda, n \geq 1$, so nothing downstream can tell the difference.
 
+\end{proof}
+
 \paragraph{Lean statement.} The theorem is the structure \texttt{MIPRE.Repetition},
 parametrized by $\ell$: the repeated sampler as a function of the input sampler and
 $(\lambda, \tau)$ with its program computable in polynomial time, the repeated decider's
@@ -978,9 +982,21 @@ statement of this theorem coupled the answer length to a hypothesis $\TIME_\deci
 (\lambda n)^\tau$ and took $k(n) = (\lambda n)^{(1 + c')\tau}$ for a constant $c'$ depending
 on a parameter $\kappa$ left over from the transport through $\synval$; writing the consumer
 showed that the repetition count and the answer length have to be independent parameters,
-and the constant $c'$ is now the choice of $\tau$ in Lemma~\ref{lem:compress-tau}. Its
-inhabitation, from \texttt{MIPRE.Repetition.quantumValue\_repeat\_le}, is the next piece of
-work.
+and the constant $c'$ is now the choice of $\tau$ in Lemma~\ref{lem:compress-tau}. It is
+inhabited by \texttt{MIPRE.repetition} (\texttt{MIPRE/Background/Repetition/Verifier.lean}):
+the repeated sampler runs $k(n)$ copies of $\sampler$ through the universal machine, its CL
+functions the direct sums of the input's (\texttt{MIPRE.Repeat.repSampler}); the repeated
+decider sanitizes its input, parses the two answers as self-delimiting tuples and runs
+$\decider$ on every coordinate (\texttt{MIPRE.Repeat.repDecider}); both are the s-m-n
+construction on a fixed core, so their programs are polynomial-time functions of the inputs.
+The game of the output at index $n$ is the direct repetition of $\verifier_n$ up to a
+relabeling of the questions into blocks and the embedding of encoded answer tuples
+(\texttt{valStar\_repVerifier}, by \texttt{quantumValue\_extendAnswers}); completeness is the
+tensor power carried across that relabeling, soundness is
+Theorem~\ref{thm:direct-repetition-q} on the repeated game, and the complexity clause is
+the explicit running-time accounting of the two programs (\texttt{repSampler\_timeBound},
+\texttt{repDecider\_timeBound}), each dominated by $c (W + 1)^m (|d| + 1)^{e (k + 1)}$ for
+constants produced by the accounting itself, $W$ the argument of the polynomial.
 
 \subsection{The compression theorem}
 \label{sec:ps-compression}

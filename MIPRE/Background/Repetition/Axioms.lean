@@ -8,6 +8,7 @@ import MIPRE.Background.Repetition.Entangled
 import MIPRE.Background.Repetition.TracialDensity
 import MIPRE.Background.Repetition.TensorPower
 import MIPRE.Background.Repetition.Soundness
+import MIPRE.Background.Repetition.Verifier
 
 /-!
 # Axiom audit for the direct parallel repetition theorems
@@ -99,3 +100,10 @@ info: 'MIPRE.Repetition.quantumValue_repeat_le_soundBound' depends on axioms: [p
 #guard_msgs in
 #print axioms MIPRE.Repetition.quantumValue_repeat_le_soundBound
 
+
+-- Blueprint `thm:parallel-repetition`, inhabited (`MIPRE/Background/Repetition/Verifier.lean`).
+/--
+info: 'MIPRE.repetition' depends on axioms: [propext, Classical.choice, Quot.sound]
+-/
+#guard_msgs in
+#print axioms MIPRE.repetition

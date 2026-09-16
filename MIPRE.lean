@@ -516,6 +516,7 @@ import MIPRE.Background.Repetition.Soundness
 import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition
 import MIPRE.Background.Repetition.TensorPower
 import MIPRE.Background.Repetition.TracialDensity
+import MIPRE.Background.Repetition.Verifier
 import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
 import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
 import MIPRE.Cslib.Foundations.Data.RelatesInSteps

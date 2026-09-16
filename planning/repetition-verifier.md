@@ -1,5 +1,17 @@
 # Inhabiting `Repetition ℓ`: the plan
 
+**Done** (branch `claude/repetition-verifier`, 2026-09-16): R1 (`Background/Repetition/TensorPower.lean`,
+`Soundness.lean`), R2 (`Foundations/CL/Repeat.lean`), R3 (`Foundations/Repeat/`: `Prims`, `MapLoop`,
+`Bits`, `Sampler`, `RepSampler`, `DecLoop`, `DecMain`, `RepDecider`, and the costs `Dom`,
+`SamplerCost`, `DeciderCost`) and R4 (`Background/Repetition/Verifier.lean`, `MIPRE.repetition`).
+The rest of this file is the plan as written before the work, kept as its record; two things
+changed on the way. `Repetition.arg` gained the raw parameters and `10^{R.k}`: `within` was
+unsatisfiable as stated, since the output asks the input its dimension on every input of its own,
+a query of fixed size whose cost at degree `R.k` no polynomial in the other quantities bounds.
+And the decider does not run the input decider on the raw answers but on sanitized copies, so
+that the input decider is called on data no larger than the output's input and its bound needs
+no factor `c^{R.k}` (`DeciderCost.size_encode_bitsOf_le`).
+
 Status 2026-09-16, written when `MIPRE.Repetition ℓ` (`Foundations/Pipeline/Repetition.lean`)
 was stated and consumed by `GapCompression.ofPipeline` (#85), before anything supplied it.
 The supply is `thm:parallel-repetition`: the game-level direct repetition theorem

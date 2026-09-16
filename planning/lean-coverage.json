@@ -1157,6 +1157,9 @@
   "MIPRE.rePred_lt_quantumValue_comp": [
    "lem:value-lower-approx"
   ],
+  "MIPRE.repetition": [
+   "thm:parallel-repetition"
+  ],
   "MIPRE.syncValue": [
    "def:sync-value"
   ],
@@ -1596,6 +1599,7 @@
   "MIPRE.quantumValue_eq_of_equiv",
   "MIPRE.quantumValue_extendAnswers",
   "MIPRE.rePred_lt_quantumValue_comp",
+  "MIPRE.repetition",
   "MIPRE.syncValue",
   "MIPRE.syncValue_eq_of_equiv",
   "MIPRE.syncValue_le_commValue",
@@ -1655,6 +1659,9 @@
   ],
   "MIPRE/Background/Repetition/TracialDensity.lean": [
    "MIPRE.Repetition.tracialDensity"
+  ],
+  "MIPRE/Background/Repetition/Verifier.lean": [
+   "MIPRE.repetition"
   ],
   "MIPRE/Foundations/CL/Basic.lean": [
    "MIPRE.CL.CLFun",
@@ -2229,6 +2236,7 @@
   "MIPRE/Background/Repetition/Soundness.lean": 9,
   "MIPRE/Background/Repetition/TensorPower.lean": 20,
   "MIPRE/Background/Repetition/TracialDensity.lean": 1,
+  "MIPRE/Background/Repetition/Verifier.lean": 32,
   "MIPRE/Cslib/Computability/Machines/Turing/MultiTape/Deterministic.lean": 44,
   "MIPRE/Cslib/Computability/Machines/Turing/MultiTape/TapeLemmas.lean": 12,
   "MIPRE/Cslib/Foundations/Data/RelatesInSteps.lean": 25,
@@ -2303,6 +2311,17 @@
   "MIPRE/Foundations/Pipeline/Margin.lean": 14,
   "MIPRE/Foundations/Pipeline/Oracularization.lean": 3,
   "MIPRE/Foundations/Pipeline/Repetition.lean": 7,
+  "MIPRE/Foundations/Repeat/Bits.lean": 17,
+  "MIPRE/Foundations/Repeat/DecLoop.lean": 35,
+  "MIPRE/Foundations/Repeat/DecMain.lean": 42,
+  "MIPRE/Foundations/Repeat/DeciderCost.lean": 23,
+  "MIPRE/Foundations/Repeat/Dom.lean": 14,
+  "MIPRE/Foundations/Repeat/MapLoop.lean": 19,
+  "MIPRE/Foundations/Repeat/Prims.lean": 45,
+  "MIPRE/Foundations/Repeat/RepDecider.lean": 15,
+  "MIPRE/Foundations/Repeat/RepSampler.lean": 35,
+  "MIPRE/Foundations/Repeat/Sampler.lean": 26,
+  "MIPRE/Foundations/Repeat/SamplerCost.lean": 22,
   "MIPRE/Foundations/SyncTransport.lean": 6,
   "MIPRE/Foundations/TensorFamily.lean": 9,
   "MIPRE/Foundations/ValueApprox.lean": 8,
@@ -2361,8 +2380,8 @@
   "commands_defined": 99,
   "commands_used": 207,
   "labels": 230,
-  "leanok_claimed": 197,
-  "leanok_guarded": 197,
-  "refs": 1065
+  "leanok_claimed": 200,
+  "leanok_guarded": 200,
+  "refs": 1071
  }
 }

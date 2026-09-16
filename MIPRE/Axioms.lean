@@ -344,3 +344,9 @@ elab "#guard_sorry_free " ids:ident,* : command => do
 -- blueprint `thm:gowers-hatami`. Under `MIPRE/Background/` but with no vendored guard
 -- of its own, its module importing only `Foundations.Distances` and Mathlib.
 #guard_sorry_free MIPRE.gowers_hatami
+
+-- blueprint `thm:parallel-repetition`: the statement's structure and its soundness bound,
+-- guarded here with the Foundations; the instance `MIPRE.repetition` is guarded in
+-- `MIPRE/Background/Repetition/Axioms.lean`, beside the vendored theorem it consumes.
+#guard_sorry_free MIPRE.Repetition,
+  MIPRE.Repetition.soundBound
