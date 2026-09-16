@@ -2202,7 +2202,7 @@
   "MIPRE/Foundations/Halting/WrapperCost.lean": 23,
   "MIPRE/Foundations/Pipeline/AnswerReduction.lean": 5,
   "MIPRE/Foundations/Pipeline/Budget.lean": 18,
-  "MIPRE/Foundations/Pipeline/Compress.lean": 68,
+  "MIPRE/Foundations/Pipeline/Compress.lean": 71,
   "MIPRE/Foundations/Pipeline/Introspection.lean": 4,
   "MIPRE/Foundations/Pipeline/Margin.lean": 14,
   "MIPRE/Foundations/Pipeline/Oracularization.lean": 3,

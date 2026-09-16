@@ -22,10 +22,12 @@ instance at `ℓ = 7`.
 The reading of the paper's statement in the vocabulary of `MIPRE.Verifier`:
 
 * `ComputeParrepVerifier` takes `(𝒱, ℓ, λ, τ)`; the number of repetitions is
-  `k(n) = (λn)^τ`, read as `(λn + 1)^τ` so that it is at least `1` at every index. The
-  repeated decider parses each coordinate of an answer against a length `(λn + 1)^β` — the
-  paper's `B_𝒟(n)`, read from the timeout-counter form of the decider there, and a further
-  parameter `β` here — so the procedure is a polynomial-time function of the input programs and
+  `k(n) = (λn)^τ`, read as `2^{τ(|λ| + |n|)}` with `|·|` the bit length — the power of two just
+  above `(λn)^τ` (`Nat.size`), which a program of the ambient model writes down by a walk over
+  the bits of `λ` and `n`, where the paper's expression would need multiplication. The repeated
+  decider parses each coordinate of an answer against a length `2^{β(|λ| + |n|)}` — the paper's
+  `B_𝒟(n)`, read from the timeout-counter form of the decider there, and a further parameter
+  `β` here — so the procedure is a polynomial-time function of the input programs and
   `(λ, τ, β)` (`compute`); the repeated sampler depends only on the input sampler and `(λ, τ)`
   (`sampler`).
 * The complexity clause bounds the output at index `n` by a polynomial in `k(n)`, the parse
@@ -35,7 +37,7 @@ The reading of the paper's statement in the vocabulary of `MIPRE.Verifier`:
   polynomial — and the answers it accepts by a polynomial in `k(n)` and the parse length alone.
 * Completeness: a value-`1` PCC strategy for `𝒱_n` gives one for `𝒱^rep_n`.
 * Soundness: `val*(𝒱_n) ≤ 1 - ε` gives `val*(𝒱^rep_n) ≤ exp(-c ε^13 k(n) / (B + 1))`, with
-  `B = (λn + 1)^β` the parse length: `thm:direct-repetition-q` with `log(|𝒜||ℬ|) ≤ 2(B + 1)`
+  `B = 2^{β(|λ| + |n|)}` the parse length: `thm:direct-repetition-q` with `log(|𝒜||ℬ|) ≤ 2(B + 1)`
   for answer alphabets of strings of length at most `B`, the constant `c` absorbing the
   factor `3`. The exponent `13` is the vendored theorem's.
 
@@ -50,11 +52,12 @@ open Cost
 
 namespace Repetition
 
-/-- The number of repetitions `k(n) = (λn + 1)^τ`. -/
-abbrev reps (lam tau n : ℕ) : ℕ := (lam * n + 1) ^ tau
+/-- The number of repetitions `k(n) = 2^{τ(|λ| + |n|)}`, at least `(λn + 1)^τ`. -/
+abbrev reps (lam tau n : ℕ) : ℕ := 2 ^ (tau * (Nat.size lam + Nat.size n))
 
-/-- The length against which each coordinate of an answer is parsed: `(λn + 1)^β`. -/
-abbrev parseBound (lam beta n : ℕ) : ℕ := (lam * n + 1) ^ beta
+/-- The length against which each coordinate of an answer is parsed: `2^{β(|λ| + |n|)}`, at
+least `(λn + 1)^β` and at most `(λn + 1)^{6β}` for `λ, n ≥ 1`. -/
+abbrev parseBound (lam beta n : ℕ) : ℕ := 2 ^ (beta * (Nat.size lam + Nat.size n))
 
 /-- The argument of the polynomial bounding the running times of the output at index `n`. -/
 abbrev arg (lam tau beta n : ℕ) (R : Budget) (s : ℕ) : ℕ :=

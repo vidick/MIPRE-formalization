@@ -31,7 +31,7 @@ The parameters, all determined by the three structures:
 * `β`: an exponent with `poly((λn + 1)^μ + σ(λ)) ≤ (λn + 1)^β`, the parse length handed to
   repetition, dominating the answer bound of the answer-reduced verifier.
 * `τ`: the repetition exponent `exists_tau`, from the lower bound `ε₂ ≥ x^{-P}` of
-  `exists_eps2_lower`.
+  `exists_eps2_lower`, against the parse length `2^{β(|λ| + |n|)} ≤ (λn + 1)^{6β}`.
 * `C₀`: the largest of the thresholds — `2`, the introspection margin's, the margin claim's,
   the lower bound's, answer reduction's own `C_ar`, and `τ`.
 
@@ -161,12 +161,54 @@ theorem eps2_lower_spec : ∀ x : ℝ, (N₂ I A : ℝ) ≤ x → ∀ s : ℝ, 1
     x ^ (-(P I A : ℝ)) ≤ eps2 I.a I.b A.a A.b (mu I A) s x :=
   (exists_eps2_lower I.one_le_a I.b_pos A.one_le_a A.b_pos (mu I A) (K I)).choose_spec.choose_spec
 
-/-- `τ`, the repetition exponent. -/
-noncomputable def tau : ℕ := (exists_tau R.c_pos (P I A) (beta I A)).choose
+/-- `τ`, the repetition exponent, against the parse length `2^{β(|λ| + |n|)} ≤ (λn + 1)^{6β}`. -/
+noncomputable def tau : ℕ := (exists_tau R.c_pos (P I A) (6 * beta I A)).choose
 
-theorem tau_spec : ∀ z : ℝ, (tau I A R : ℝ) ≤ z → ∀ ε : ℝ, 0 < ε → z ^ (-(P I A : ℝ)) ≤ ε →
-    Real.exp (-(R.c * ε ^ 13 * z ^ tau I A R / (z ^ beta I A + 1))) ≤ 1 / 2 :=
-  (exists_tau R.c_pos (P I A) (beta I A)).choose_spec
+theorem tau_spec : ∀ z : ℝ, (tau I A R : ℝ) ≤ z → ∀ k : ℝ, z ^ tau I A R ≤ k →
+    ∀ B : ℝ, 0 ≤ B → B ≤ z ^ (6 * beta I A) → ∀ ε : ℝ, 0 < ε → z ^ (-(P I A : ℝ)) ≤ ε →
+    Real.exp (-(R.c * ε ^ 13 * k / (B + 1))) ≤ 1 / 2 :=
+  (exists_tau R.c_pos (P I A) (6 * beta I A)).choose_spec
+
+/-- `|λn + 1| ≤ |λ| + |n|` for `λ ≥ 1`. -/
+theorem size_mul_add_one_le {lam n : ℕ} (hl : 1 ≤ lam) :
+    Nat.size (lam * n + 1) ≤ Nat.size lam + Nat.size n := by
+  rw [Nat.size_le, pow_add]
+  have h1 : lam + 1 ≤ 2 ^ Nat.size lam := Nat.lt_size_self lam
+  have h2 : n + 1 ≤ 2 ^ Nat.size n := Nat.lt_size_self n
+  have := Nat.mul_le_mul h1 h2
+  nlinarith
+
+/-- `(λn + 1)^τ ≤ k(n)`. -/
+theorem pow_le_reps {lam n : ℕ} (hl : 1 ≤ lam) (tau : ℕ) :
+    (lam * n + 1) ^ tau ≤ Repetition.reps lam tau n := by
+  calc (lam * n + 1) ^ tau ≤ (2 ^ Nat.size (lam * n + 1)) ^ tau :=
+        Nat.pow_le_pow_left (Nat.lt_size_self _).le _
+    _ = 2 ^ (tau * Nat.size (lam * n + 1)) := by rw [← pow_mul, Nat.mul_comm]
+    _ ≤ Repetition.reps lam tau n :=
+        Nat.pow_le_pow_right (by norm_num) (Nat.mul_le_mul_left _ (size_mul_add_one_le hl))
+
+/-- `B(n) ≤ (λn + 1)^{6β}` for `λ, n ≥ 1`. -/
+theorem parseBound_le {lam n : ℕ} (hl : 1 ≤ lam) (hn : 1 ≤ n) (beta : ℕ) :
+    Repetition.parseBound lam beta n ≤ (lam * n + 1) ^ (6 * beta) := by
+  have h1 : 2 ^ Nat.size lam ≤ 3 * (lam * n + 1) := by
+    have := two_pow_size_le lam; nlinarith
+  have h2 : 2 ^ Nat.size n ≤ 3 * (lam * n + 1) := by
+    have := two_pow_size_le n; nlinarith
+  have h9 : 9 ≤ (lam * n + 1) ^ 4 := by
+    have : 2 ≤ lam * n + 1 := by nlinarith
+    calc 9 ≤ 2 ^ 4 := by norm_num
+      _ ≤ (lam * n + 1) ^ 4 := Nat.pow_le_pow_left this 4
+  calc Repetition.parseBound lam beta n = (2 ^ Nat.size lam) ^ beta * (2 ^ Nat.size n) ^ beta := by
+        rw [Repetition.parseBound, ← pow_mul, ← pow_mul, ← pow_add, Nat.mul_add, Nat.mul_comm beta,
+          Nat.mul_comm beta]
+    _ ≤ (3 * (lam * n + 1)) ^ beta * (3 * (lam * n + 1)) ^ beta :=
+        Nat.mul_le_mul (Nat.pow_le_pow_left h1 _) (Nat.pow_le_pow_left h2 _)
+    _ = 9 ^ beta * (lam * n + 1) ^ (2 * beta) := by
+        rw [← mul_pow, show 3 * (lam * n + 1) * (3 * (lam * n + 1)) =
+          9 * (lam * n + 1) ^ 2 by ring, mul_pow, ← pow_mul]
+    _ ≤ ((lam * n + 1) ^ 4) ^ beta * (lam * n + 1) ^ (2 * beta) :=
+        Nat.mul_le_mul_right _ (Nat.pow_le_pow_left h9 _)
+    _ = (lam * n + 1) ^ (6 * beta) := by rw [← pow_mul, ← pow_add]; congr 1; ring
 
 /-- The threshold of the introspection margin, `⌈(4a)^{1/b}⌉`. -/
 noncomputable def C₁ : ℕ := ⌈(4 * I.a) ^ (1 / I.b)⌉₊
@@ -318,12 +360,12 @@ theorem timeB_mono {lam n lam' n' : ℕ} (hl : lam ≤ lam') (hn : n ≤ n') :
   unfold timeB Repetition.arg Repetition.reps Repetition.parseBound arBound
     AnswerReduction.arg wSize pArg s₁ sigma
   simp only [Budget.uniform_S, Budget.uniform_d, Budget.uniform_D, Budget.uniform_B]
-  gcongr
+  gcongr <;> norm_num
 
 theorem ansB_mono {lam n lam' n' : ℕ} (hl : lam ≤ lam') (hn : n ≤ n') :
     ansB I A R lam n ≤ ansB I A R lam' n' := by
   unfold ansB Repetition.ansArg Repetition.reps Repetition.parseBound
-  gcongr
+  gcongr <;> norm_num
 
 theorem timeB_le_G (lam n : ℕ) : timeB I A R lam n ≤ G I A R (n + lam) :=
   (timeB_mono I A R (by omega) (by omega)).trans (Nat.le_add_right _ _)
@@ -333,6 +375,8 @@ theorem ansB_le_G (lam n : ℕ) : ansB I A R lam n ≤ G I A R (n + lam) :=
 
 theorem polyBounded_G : PolyBounded (G I A R) := by
   have hz : PolyBounded fun z : ℕ => z * z + 1 := (PolyBounded.id.mul PolyBounded.id).add_const 1
+  have hpow2 : ∀ e : ℕ, PolyBounded fun z : ℕ => 2 ^ (e * (Nat.size z + Nat.size z)) := fun e =>
+    (PolyBounded.two_pow_size 0 (2 * e)).mono fun z => le_of_eq (by ring_nf)
   have hsig : PolyBounded fun z : ℕ => sigma I z := polyBounded_sigmaFun I.C
   have hs₁ : PolyBounded fun z : ℕ => s₁ I z :=
     PolyBounded.eval _ ((PolyBounded.size.const_mul 4).add_const 1)
@@ -352,11 +396,11 @@ theorem polyBounded_G : PolyBounded (G I A R) := by
   have ht : PolyBounded fun z : ℕ => timeB I A R z z := by
     unfold timeB Repetition.arg
     simp only [Budget.uniform_S, Budget.uniform_d, Budget.uniform_D, Budget.uniform_B]
-    exact PolyBounded.eval _ ((((((hz.pow _).add (hz.pow _)).add har).add har).add har).add har
+    exact PolyBounded.eval _ ((((((hpow2 _).add (hpow2 _)).add har).add har).add har).add har
       |>.add hw)
   have ha : PolyBounded fun z : ℕ => ansB I A R z z := by
     unfold ansB Repetition.ansArg
-    exact PolyBounded.eval _ ((hz.pow _).add (hz.pow _))
+    exact PolyBounded.eval _ ((hpow2 _).add (hpow2 _))
   exact ht.add ha
 
 /-- The polynomial `poly(n, λ)` of the compression theorem. -/
@@ -409,7 +453,8 @@ theorem arBound_le_parseBound {lam n : ℕ} (hl : 1 ≤ lam) (hn : 1 ≤ n) :
   have hs : sigma I lam ≤ sigma I (lam * n + 1) := sigma_mono I (by nlinarith)
   calc arBound I A lam n ≤ A.bound.eval ((lam * n + 1) ^ mu I A + sigma I (lam * n + 1)) :=
         polynomial_eval_mono _ (by unfold AnswerReduction.arg; omega)
-    _ ≤ _ := arBound_le_pow I A _ hz
+    _ ≤ (lam * n + 1) ^ beta I A := arBound_le_pow I A _ hz
+    _ ≤ _ := pow_le_reps hl _
 
 /-! ## The value chain -/
 
@@ -500,9 +545,12 @@ theorem output_valStar_le (V : Verifier 7) (lam n : ℕ) (hB : V.IsBounded lam)
     refine le_trans ?_ (eps2_lower_spec I A x (le_trans (by exact_mod_cast hN₂) hnx) s hs1 hsx)
     rw [Real.rpow_neg hx0.le, Real.rpow_neg (by positivity)]
     exact inv_anti₀ (Real.rpow_pos_of_pos hx0 _) (Real.rpow_le_rpow hx0.le hxz (by positivity))
-  have := tau_spec I A R _ hz ε₂ hε₂0 hlow
-  simp only [Repetition.soundBound, Repetition.reps, Repetition.parseBound, Nat.cast_pow]
-  exact this
+  have hk : ((lam * n + 1 : ℕ) : ℝ) ^ tau I A R ≤ (Repetition.reps lam (tau I A R) n : ℝ) := by
+    exact_mod_cast pow_le_reps hlam (tau I A R)
+  have hBle : (Repetition.parseBound lam (beta I A) n : ℝ) ≤
+      ((lam * n + 1 : ℕ) : ℝ) ^ (6 * beta I A) := by
+    exact_mod_cast parseBound_le hlam (by omega) (beta I A)
+  exact tau_spec I A R _ hz _ hk _ (by positivity) hBle ε₂ hε₂0 hlow
 
 end MIPRE.Pipeline
 

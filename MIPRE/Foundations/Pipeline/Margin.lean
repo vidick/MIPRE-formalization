@@ -30,8 +30,8 @@ answer reduction (`a₁, a₂ ≥ 1`, `0 < b₁, b₂ ≤ 1`).
   threshold on `x`. The paper fixes `μ = ⌈max{C_intro, (9a₁ + 2a₂ C_intro)/(b₁ b₂)}⌉` and
   `n ≥ 2`; the threshold here is absorbed by `C₀`.
 * `1/ε₂` is bounded by a fixed power of `x` (`exists_eps2_lower`), so a universal repetition
-  exponent `τ` brings the repetition bound `exp(-c ε₂^{13} k / (B + 1))` below `1/2` with
-  `k = z^τ` and `B = z^β`, `z = λn + 1`, for `n ≥ τ` (`exists_tau`).
+  exponent `τ` brings the repetition bound `exp(-c ε₂^{13} k / (B + 1))` below `1/2` for any
+  `k ≥ z^τ` and `B ≤ z^β`, `z = λn + 1`, for `n ≥ τ` (`exists_tau`).
 
 Everything is real arithmetic with `Real.rpow`; nothing depends on the verifiers.
 -/
@@ -264,11 +264,13 @@ theorem exists_eps2_lower {a₁ b₁ a₂ b₂ : ℝ} (ha₁ : 1 ≤ a₁) (hb�
 
 /-- **A universal repetition exponent** (blueprint `lem:compress-tau`). For the constant `c`
 of repetition, a bound `ε ≥ z^{-P}` on the gap and an exponent `β` on the parse length, there
-is `τ` such that `exp(-c ε^{13} z^τ / (z^β + 1)) ≤ 1/2` for all `z ≥ τ`. -/
+is `τ` such that `exp(-c ε^{13} k / (B + 1)) ≤ 1/2` for all `z ≥ τ`, `k ≥ z^τ` and
+`0 ≤ B ≤ z^β`. -/
 theorem exists_tau {c : ℝ} (hc : 0 < c) (P beta : ℕ) :
-    ∃ tau : ℕ, ∀ z : ℝ, (tau : ℝ) ≤ z → ∀ ε : ℝ, 0 < ε → z ^ (-(P : ℝ)) ≤ ε →
-      Real.exp (-(c * ε ^ 13 * z ^ tau / (z ^ beta + 1))) ≤ 1 / 2 := by
-  refine ⟨13 * P + beta + 1 + ⌈2 / c⌉₊, fun z hz ε hε hεz => ?_⟩
+    ∃ tau : ℕ, ∀ z : ℝ, (tau : ℝ) ≤ z → ∀ k : ℝ, z ^ tau ≤ k → ∀ B : ℝ, 0 ≤ B → B ≤ z ^ beta →
+      ∀ ε : ℝ, 0 < ε → z ^ (-(P : ℝ)) ≤ ε →
+      Real.exp (-(c * ε ^ 13 * k / (B + 1))) ≤ 1 / 2 := by
+  refine ⟨13 * P + beta + 1 + ⌈2 / c⌉₊, fun z hz k hk B hB0 hB ε hε hεz => ?_⟩
   have hz2 : 2 / c ≤ z := by
     have := Nat.le_ceil (2 / c); push_cast at hz; linarith
   have hz1 : 1 ≤ z := by
@@ -288,9 +290,9 @@ theorem exists_tau {c : ℝ} (hc : 0 < c) (P beta : ℕ) :
     have : 1 ≤ z ^ beta := one_le_pow₀ hz1
     linarith
   -- the exponent is at least `log 2`
-  have hexp : Real.log 2 ≤ c * ε ^ 13 * z ^ (13 * P + beta + 1 + ⌈2 / c⌉₊) / (z ^ beta + 1) := by
+  have hexp : Real.log 2 ≤ c * ε ^ 13 * k / (B + 1) := by
     have hpb : 0 < z ^ beta := pow_pos hz0 _
-    have hkey : c * z / 2 ≤ c * ε ^ 13 * z ^ (13 * P + beta + 1 + ⌈2 / c⌉₊) / (z ^ beta + 1) := by
+    have hkey : c * z / 2 ≤ c * ε ^ 13 * k / (B + 1) := by
       rw [le_div_iff₀ (by positivity)]
       have e1 : z ^ (13 * P + beta + 1) = z ^ (13 * P) * z ^ beta * z := by
         rw [pow_add, pow_add, pow_one]
@@ -299,7 +301,8 @@ theorem exists_tau {c : ℝ} (hc : 0 < c) (P beta : ℕ) :
       have h13' : 1 ≤ ε ^ 13 * z ^ (13 * P) := by
         have := mul_le_mul_of_nonneg_right h13 (pow_nonneg hz0.le (13 * P))
         rwa [e2] at this
-      calc c * z / 2 * (z ^ beta + 1) ≤ c * z / 2 * (2 * z ^ beta) := by gcongr
+      calc c * z / 2 * (B + 1) ≤ c * z / 2 * (z ^ beta + 1) := by gcongr
+        _ ≤ c * z / 2 * (2 * z ^ beta) := by gcongr
         _ = c * (z ^ beta * z) := by ring
         _ ≤ c * (ε ^ 13 * z ^ (13 * P) * (z ^ beta * z)) := by
             refine mul_le_mul_of_nonneg_left ?_ hc.le
@@ -307,6 +310,7 @@ theorem exists_tau {c : ℝ} (hc : 0 < c) (P beta : ℕ) :
             linarith
         _ = c * ε ^ 13 * z ^ (13 * P + beta + 1) := by rw [e1]; ring
         _ ≤ c * ε ^ 13 * z ^ (13 * P + beta + 1 + ⌈2 / c⌉₊) := by gcongr
+        _ ≤ c * ε ^ 13 * k := by gcongr
     have hlog : Real.log 2 ≤ 1 := by
       have := Real.log_le_sub_one_of_pos (by norm_num : (0:ℝ) < 2); linarith
     have hcz : 1 ≤ c * z / 2 := by

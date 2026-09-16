@@ -895,9 +895,10 @@ $\ComputeParrepVerifier$ that on input $(\verifier, \ell, \lambda, \tau, \beta)$
 $\verifier$ an $\ell$-level normal form verifier, outputs an $\ell$-level normal form
 verifier $\vrep$ whose game $\vrep_n$ is the $k(n)$-fold direct repetition
 (Definition~\ref{def:direct-repetition}) of $\verifier_n$ with answers of length at most
-$B(n) = (\lambda n)^\beta$ --- up to the encoding of answer tuples as strings, the decider
-parsing a self-delimiting $k(n)$-tuple, each coordinate against $B(n)$, and rejecting
-malformed answers --- with $k(n) = (\lambda n)^\tau$, $\TIME_{\srep}(n) = \poly\bigl(k(n),
+$B(n) = 2^{\beta(|\lambda| + |n|)}$, with $|\cdot|$ the bit length --- up to the encoding of
+answer tuples as strings, the decider parsing a self-delimiting $k(n)$-tuple, each coordinate
+against $B(n)$, and rejecting malformed answers --- with $k(n) = 2^{\tau(|\lambda| + |n|)}$,
+$\TIME_{\srep}(n) = \poly\bigl(k(n),
 \TIME_\sampler(n)\bigr)$ and $\TIME_{\drep}(n) = \poly\bigl(k(n), B(n), \TIME_\decider(n),
 \abs{\verifier}\bigr)$, the sampler of $\vrep$ depending only on $(\sampler, \lambda, \ell,
 \tau)$, and for all $n$:
@@ -931,7 +932,11 @@ because nothing in the chain ever leaves $\valstar$ (Remark~\ref{rem:bipartite-r
 In~\cite{JNVWY20} the answer length is the timeout bound $B_\decider(n)$ read off the
 decider and $\tau$ is chosen against it; the ambient model has no timeout-counter form, so
 the parse length is the explicit parameter $\beta$, and the choice of $\tau$ against it is
-Lemma~\ref{lem:compress-tau}.
+Lemma~\ref{lem:compress-tau}. The counts are powers of two rather than the paper's
+$(\lambda n)^\tau$ because a program of the ambient model writes $2^{\tau(|\lambda| + |n|)}$
+down by a walk over the bits of $\lambda$ and $n$, where $(\lambda n)^\tau$ would need
+multiplication; $(\lambda n + 1)^\tau \leq 2^{\tau(|\lambda| + |n|)} \leq (\lambda n +
+1)^{6\tau}$ for $\lambda, n \geq 1$, so nothing downstream can tell the difference.
 
 \paragraph{Lean statement.} The theorem is the structure \texttt{MIPRE.Repetition},
 parametrized by $\ell$: the repeated sampler as a function of the input sampler and
@@ -1133,10 +1138,11 @@ universal $K$, and a threshold on $n$ that $C_0$ absorbs.
 \leanok
 With $\eps_2$ as in Lemma~\ref{lem:compress-margin}, $1 / \eps_2 \leq x^P$ for a universal
 $P$ and all $x$ past a threshold. Consequently, for every $c > 0$ and every $\beta$ there is
-a universal integer $\tau$ such that, with $z = \lambda n + 1$, $k(n) = z^\tau$ and $B(n) =
-z^\beta$, the repetition bound $\exp\bigl( -c\, \eps^{13} k(n) / (B(n) + 1) \bigr)$ of
-Theorem~\ref{thm:parallel-repetition} is at most $\frac12$ for all $n \geq \tau$, all
-integers $\lambda \geq 1$ and all $\eps \geq z^{-P}$.
+a universal integer $\tau$ such that, with $z = \lambda n + 1$, for every $k \geq z^\tau$ and
+every $0 \leq B \leq z^\beta$, the repetition bound $\exp\bigl( -c\, \eps^{13} k / (B + 1)
+\bigr)$ of Theorem~\ref{thm:parallel-repetition} is at most $\frac12$ for all $n \geq \tau$,
+all integers $\lambda \geq 1$ and all $\eps \geq z^{-P}$; the counts $k(n) \geq z^\tau$ and
+$B(n) \leq z^{6\beta}$ of that theorem qualify.
 \end{lemma}
 \begin{proof}
 \leanok
