@@ -585,6 +585,24 @@ takes none.
    and the fallback leave the instantiation; the tabulation's `decProgData` is `dWrapCore` on
    the datum, one primitive recursive step shorter. Then **PR-2b** is `Halting/Compressor.lean`
    proper, whose decider copies a datum into a syntax tree where it could not have decoded one.
+
+   **PR-2 done 2026-09-16**, both halves in one pull request. `Halting/Compressor.lean` has
+   the decider `haltProg` — `readProg` (the bit-query loop, by `Eval.loop_of_invariant` with
+   the index as measure), `parseProg`/`normBinProg`, the sampler program, `wrapBuildProg` and
+   `freezeBuildProg` (the descriptions of the wrapped and frozen programs built with
+   `cons`/`const`, mirrors `pK`/`pC`/`pL`/`pE` of `ProgD`), `G.compress.code`, then the
+   universal machine on the decider's own input — and `comprStr c n lam := descOf lam
+   (hardcode haltProg (encode (c, n, lam)))`. `comprStr_accepts` is the field
+   `accepts_compr` verbatim; `Vof_comprStr` says the output denotes
+   `ofSamplerDecider U (G.sampler lam) (hardcode …)`. Two things worth knowing for PR-3.
+   (i) The preparation `prepProg` is one closed program with an unconditional forward run,
+   so the inversion of `haltProg` is three `cases` and determinism — no loop inversion
+   anywhere. (ii) Every run lemma carries an explicit cost: `readIter`/`readProg_runs`,
+   `prepBound` with the size bounds `sampBound`, `wBound`, `kBound`, `fBound`, and
+   `haltProg_runs` (`3 · prepBound + esize (c, n, lam) + 2|d| + t + 12`, `t` the compressed
+   decider's own cost). PR-3 is therefore arithmetic on top of `wrapCore`'s cost
+   (`WrapperCost.lean`, redone with explicit constants rather than `HasPolyCost`),
+   `G.decider_time` for `t`, `U.bound` for the simulation, and `lambda_bound`.
 5. **PR-0, the module move.** Numbered last because it was found last; it comes *before* the
    rest of O4 in the doing, being what turns O1's and O3's discharges into a smaller
    `Obligations`. The structure and `halting_reduction` are at the end of

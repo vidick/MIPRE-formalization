@@ -1097,6 +1097,9 @@ lower bound has to be tracked anywhere in this chapter.
   MIPRE.Halting.descLam, MIPRE.Halting.descDecD, MIPRE.Halting.Vof,
   MIPRE.Halting.classA, MIPRE.Halting.classB, MIPRE.Halting.Obligations,
   MIPRE.Halting.CompressorSpec, MIPRE.Halting.CompressorSpec.toObligations,
+  MIPRE.Cost.Prog.readProg, MIPRE.Cost.Prog.readProg_runs, MIPRE.Halting.prepProg,
+  MIPRE.Halting.prepProg_runs, MIPRE.Halting.haltProg, MIPRE.Halting.haltProg_accepts_iff,
+  MIPRE.Halting.comprStr, MIPRE.Halting.comprStr_accepts,
   MIPRE.Cost.Prog.HasPolyCost, MIPRE.Verifier.IsBounded.mono,
   MIPRE.Verifier.exists_isBounded, MIPRE.Cost.Prog.wrapCore_hasPolyCost,
   MIPRE.Verifier.ofSamplerDecider_isBounded, MIPRE.Halting.yYes, MIPRE.Halting.yNo,
@@ -1213,7 +1216,18 @@ of the recursion.
   that \texttt{freeze\_isBounded} consumes, and the answer-budget comparison of
   \texttt{exists\_ansBound\_le} --- and \texttt{CompressorSpec.toObligations} is the class
   transfer, in both directions, from those fields alone. What the construction owes is
-  exactly the fields of that structure.
+  exactly the fields of that structure. The program half is done: \texttt{MIPRE.Halting.haltProg}
+  is the decider of the output --- it reads $x$ from its succinct description by bit queries
+  (\texttt{Cost.Prog.readProg}), rebuilds the description of the wrapped decider of $x$ and
+  freezes it at $2n + 1$ in the ambient model, runs $\Compress$, and runs the result on its own
+  input through the universal machine (\texttt{prepProg}, \texttt{prepProg\_runs}) ---, the
+  output string \texttt{comprStr} is $\lambda(n)$ together with that decider with $(c, n,
+  \lambda(n))$ hardcoded, and \texttt{comprStr\_accepts} is the field
+  \texttt{accepts\_compr} verbatim, from the forward runs and the inversion
+  \texttt{haltProg\_accepts\_iff}. Every stage carries an explicit cost
+  (\texttt{prepBound}), so that what remains is the accounting: the field
+  \texttt{isBounded\_compr}, the choice $\lambda(n) = 2^{K + D \log n}$, and the compressor as a
+  polynomial-time function.
 \item \emph{Junk inputs.} Nothing is demanded of the compressor off strings in $A_{2n+1}
   \cup B_{2n+1}$, every string names a verifier, and $\lambda$-boundedness is decided
   nowhere. What the lemma does demand is that the complement of $B_n$ be semidecidable:
@@ -1563,6 +1577,11 @@ The ingredients, with provenance to the companion repository's ledger nodes.
 \label{lem:halt-construction}
 \ledgernode{1.6.1}
 \uses{def:normal-verifier,lem:compress-sampler-indep,lem:kleene}
+\lean{MIPRE.Halting.haltProg, MIPRE.Halting.prepProg, MIPRE.Halting.prepProg_runs,
+  MIPRE.Halting.haltProg_runs, MIPRE.Halting.haltProg_runs_inv,
+  MIPRE.Halting.haltProg_accepts_iff, MIPRE.Halting.comprStr, MIPRE.Halting.comprStr_accepts,
+  MIPRE.Cost.Prog.readProg, MIPRE.Cost.Prog.readProg_runs, MIPRE.Cost.Prog.wrapBuildProg,
+  MIPRE.Cost.Prog.freezeBuildProg}
 There is a Turing machine $F$ and a decider $\dhalt = F$ carrying its own description,
 with a timeout bound $B_{\dhalt}(n)$, such that $\dhalt$ is total within its timeout and
 $\vhalt = (\mathtt{ComputeSampler}(\lambda), \dhalt)$ is a normal form verifier. The
@@ -1570,6 +1589,22 @@ self-reference is by direct construction rather than by the recursion theorem, t
 input-length check precedes the $n$-step simulation of $\machine$, and the
 halting-freeze convention makes the decider total.
 \end{lemma}
+
+\paragraph{Comments.} The Lean decider is $F$ with the self-reference removed, along the
+route of Remark~\ref{rem:compression-abstract}: \texttt{MIPRE.Halting.haltProg} takes
+$(c, n, \lambda)$ in front of its input, \emph{reads} the string $x$ that $(c, n)$ succinctly
+describes by bit queries through the universal machine (\texttt{Cost.Prog.readProg}), rebuilds
+in the ambient model the description of the verifier $x$ denotes --- the wrapped decider,
+\texttt{wrapBuildProg}, then both programs frozen at index $2n + 1$,
+\texttt{freezeBuildProg} ---, runs $\Compress$ on it at $\lambda$, and runs the compressed
+decider on its own input (\texttt{prepProg}, \texttt{prepProg\_runs}). The compressor's output
+is the string \texttt{comprStr}: $\lambda$ and this decider with $(c, n, \lambda)$ hardcoded,
+a normal form verifier by construction since every string denotes one. The paper's Step~2,
+the $n$-step simulation of $\machine$, is the compressibility criterion's business
+(Lemma~\ref{lem:compressible-criterion}) and does not appear, and there is no timeout
+counter: the decider is total on succinct descriptions because every stage halts
+(\texttt{haltProg\_runs}, \texttt{haltProg\_runs\_inv}), and its running time is the
+accounting of Lemma~\ref{lem:lambda}, which is what is still open.
 
 \effortMedium
 
