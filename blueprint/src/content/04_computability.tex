@@ -403,10 +403,16 @@ the other way --- the soundness clause of Theorem~\ref{thm:compression} wants th
 bounded at $(2^n)^\lambda$, and enlarging the answer bound can only raise a value --- so a
 single $\lambda$ serves both only once the described string's own decider is known to reject
 answers longer than its answer bound, which is what $\mathrm{poly}(n, \lambda_x)$ was chosen
-to be. In the recursion of this lemma every level's string is the compressor's own output one
-level up, so that is available; it is not among the hypotheses as stated. Recorded here and in
-\texttt{planning/h4-assembly.md} rather than repaired, because the cheapest form of the extra
-hypothesis is visible only once O4's construction exists.
+to be. The paper's $\vhalt$ has that by construction --- Step~6 of its decider is an explicit
+length check, spent in the amended proof of Lemma~\ref{lem:dhalt-values} --- and the
+instantiation asks for it as a clause of membership in $A_n$ and $B_n$
+(Remark~\ref{rem:compression-abstract}, item 1; \texttt{Verifier.RejectsLong}): the two
+distinguished strings have it, the compressor's output has it by the length check of
+Theorem~\ref{thm:compression}'s decider (\texttt{output\_rejects\_long}), and its violation is
+enumerable (Lemma~\ref{lem:halting-semidecider}). The alternative, a well-formedness predicate
+threaded through this lemma and instantiated to the same clause, would have left the classes
+alone and touched this lemma's proof instead; the classes were chosen so that this lemma stays
+as stated. Nothing more is asked of it.
 
 \effortEasy
 

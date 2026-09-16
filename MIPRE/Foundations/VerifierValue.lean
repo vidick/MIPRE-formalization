@@ -24,7 +24,11 @@ criterion (blueprint `rem:compression-abstract`), all consequences of the transp
   answer bounds `N ^ λ` and `poly(n, λ)` of `GapCompression` and the bound a class of
   descriptions is defined with.
 * A perfect PCC strategy gives `val* = 1` (`valStar_eq_one_of_hasPerfectPCC`), through
-  `syncValue_le_quantumValue`.
+  `syncValue_le_quantumValue` on the doubled game and `quantumValue_doubledGame`.
+
+`Verifier.HasPerfectPCC` is a PCC strategy of value `1` on the *doubled* game
+(`Verifier.doubledGame`, `Foundations/GapCompression.lean`), so none of the lemmas here asks
+the decider to be synchronous at `n`.
 -/
 
 namespace MIPRE
@@ -83,16 +87,17 @@ theorem hasPerfectPCC_of_accepts_iff {V W : Verifier ℓ} {n T : ℕ} (hS : W.sa
   obtain ⟨SV, DV, hV'⟩ := V
   simp only at hS
   subst hS
-  obtain ⟨hsync, S, hpcc, hval⟩ := hV
-  have hsync' : IsSynchronousAt ⟨SW, DW, hW⟩ n := fun x a b hab hacc =>
-    hsync x a b hab ((h _ _ _ _).2 hacc)
-  have hD : ∀ x y a b, ((⟨SW, DW, hW⟩ : Verifier ℓ).syncGame n T hsync').D x y a b =
-      ((⟨SW, DV, hV'⟩ : Verifier ℓ).syncGame n T hsync).D x y a b := by
-    intro x y a b
+  obtain ⟨S, hpcc, hval⟩ := hV
+  have hD : ∀ p q a b, ((⟨SW, DW, hW⟩ : Verifier ℓ).doubledGame n T).D p q a b =
+      ((⟨SW, DV, hV'⟩ : Verifier ℓ).doubledGame n T).D p q a b := by
+    intro p q a b
     classical
-    exact decide_eq_decide.2 (h _ _ _ _).symm
-  refine ⟨hsync', S.copy _, S.isPCC_copy hpcc _ (fun _ _ => rfl), ?_⟩
-  rw [S.value_copy (Verifier.syncGame ⟨SW, DW, hW⟩ n T hsync') (fun _ _ => rfl) hD, hval]
+    simp only [doubledGame, Game.doubled_D]
+    split_ifs
+    · exact decide_eq_decide.2 (h _ _ _ _).symm
+    · rfl
+  refine ⟨S.copy _, S.isPCC_copy hpcc _ (fun _ _ => rfl), ?_⟩
+  rw [S.value_copy (Verifier.doubledGame ⟨SW, DW, hW⟩ n T) (fun _ _ => rfl) hD, hval]
 
 theorem hasPerfectPCC_congr {V W : Verifier ℓ} {n T : ℕ} (hS : W.sampler = V.sampler)
     (h : ∀ x y a b, V.decider.Accepts n x y a b ↔ W.decider.Accepts n x y a b) :
@@ -109,10 +114,19 @@ theorem valStar_le_of_le {n T T' : ℕ} (hT : T ≤ T') : V.valStar n T ≤ V.va
     (fun _ _ => rfl) (fun _ _ _ _ => rfl)]
   exact le_ciSup (TensorProductStrategy.bddAbove_range_value _) _
 
+/-- **The decider rejects every answer longer than `T` at index `n`.** The property a compressed
+decider has beyond its time bound (`GapCompression.output_rejects_long`), and the third clause
+of membership in the classes of the halting reduction (`Verifier.InClassA`, `InClassB`): it is
+what lets the answer bound a class is read with be raised without moving the value
+(`valStar_eq_of_rejects`), which the soundness direction of the compressor's obligation needs.
+The paper's `V^halt` has it by construction, Step 6 of its decider `F` being an explicit length
+check; the classes here range over arbitrary strings and have to ask for it. -/
+def RejectsLong (n T : ℕ) : Prop :=
+  ∀ x y a b, T < a.length ∨ T < b.length → ¬ V.decider.Accepts n x y a b
+
 /-- When the decider rejects every answer longer than `T` at index `n`, enlarging the
 answer-length bound does not change `val*`. -/
-theorem valStar_eq_of_rejects {n T T' : ℕ} (hT : T ≤ T')
-    (hrej : ∀ x y a b, T < a.length ∨ T < b.length → ¬ V.decider.Accepts n x y a b) :
+theorem valStar_eq_of_rejects {n T T' : ℕ} (hT : T ≤ T') (hrej : V.RejectsLong n T) :
     V.valStar n T' = V.valStar n T := by
   refine quantumValue_extendAnswers (V.game n T) (V.game n T') (Answers.castLE hT)
     (Answers.castLE hT) (fun _ _ => rfl) (fun _ _ _ _ => rfl) ?_
@@ -126,10 +140,10 @@ theorem valStar_eq_of_rejects {n T T' : ℕ} (hT : T ≤ T')
 /-- Enlarging the answer-length bound preserves perfect PCC strategies. -/
 theorem hasPerfectPCC_of_le {n T T' : ℕ} (hT : T ≤ T') (h : V.HasPerfectPCC n T) :
     V.HasPerfectPCC n T' := by
-  obtain ⟨hs, S, hpcc, hval⟩ := h
-  refine ⟨hs, S.extend (V.syncGame n T' hs) (Answers.castLE hT),
+  obtain ⟨S, hpcc, hval⟩ := h
+  refine ⟨S.extend (V.doubledGame n T') (Answers.castLE hT),
     S.isPCC_extend hpcc _ _ (fun _ _ => rfl), ?_⟩
-  rw [S.value_extend (V.syncGame n T' hs) (Answers.castLE hT) (fun _ _ => rfl)
+  rw [S.value_extend (V.doubledGame n T') (Answers.castLE hT) (fun _ _ => rfl)
     (fun _ _ _ _ => rfl), hval]
 
 /-! ## Perfect PCC strategies and the quantum value -/
@@ -137,11 +151,12 @@ theorem hasPerfectPCC_of_le {n T T' : ℕ} (hT : T ≤ T') (h : V.HasPerfectPCC 
 /-- A perfect PCC strategy gives quantum value `1`. -/
 theorem valStar_eq_one_of_hasPerfectPCC {n T : ℕ} (h : V.HasPerfectPCC n T) :
     V.valStar n T = 1 := by
-  obtain ⟨hs, S, -, hval⟩ := h
+  obtain ⟨S, -, hval⟩ := h
   refine le_antisymm (quantumValue_le_one _) ?_
   have h1 := le_ciSup (TensorProductStrategy.bddAbove_range_value
-    (V.syncGame n T hs).toGame) S.toTensorProductStrategy
+    (V.doubledGame n T).toGame) S.toTensorProductStrategy
   rw [SyncStrategy.value_toTensorProductStrategy, hval] at h1
+  rw [← V.quantumValue_doubledGame n T]
   exact h1
 
 end Verifier
