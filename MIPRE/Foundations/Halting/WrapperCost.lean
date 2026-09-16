@@ -94,53 +94,67 @@ def wrapHeadEnv (n : ℕ) (d : Data) : Env :=
     .cons (encode S.prog) (.cons (encode n) (encode CL.Sampler.Query.dimension)),
     encode n, d, .cons (encode n) d]
 
-/-- **The head.** Its cost depends on the index only: the dimension query runs on a fixed
-input, and the conversion to unary on the dimension. -/
-theorem wrapHead_cost (hS : S.prog.HasPolyCost) (hdim : PolyBounded S.dim) :
-    ∃ H : ℕ → ℕ, PolyBounded H ∧ ∀ (c : Prog) (n : ℕ) (d r : Data) (t : ℕ),
-      Eval (wrapHeadEnv S n d) c r t →
-        ∃ t', t' ≤ t + H n ∧ Eval [.cons (encode n) d] (wrapHead U.univ S.prog c) r t' := by
-  obtain ⟨Cf, kf, hCf, hf⟩ := hS
+/-- The quantity whose square bounds the head's cost at index `n`, for a sampler running
+within `Cf n · (|d| + 1) ^ kf`: the sizes and running times of the dimension query, its
+simulation, and the conversion of the dimension to unary. Explicit, so that the accounting of
+the compressor's output can be uniform in its parameters. -/
+noncomputable def wrapHeadZ (Cf : ℕ → ℕ) (kf n : ℕ) : ℕ :=
+  esize S.prog + esize n + (encode CL.Sampler.Query.dimension : Data).size + esize (S.dim n) +
+    Cf n * ((encode CL.Sampler.Query.dimension : Data).size + 1) ^ kf +
+    U.bound.eval (esize S.prog + (esize n + (encode CL.Sampler.Query.dimension : Data).size + 1) +
+      Cf n * ((encode CL.Sampler.Query.dimension : Data).size + 1) ^ kf) +
+    (Nat.size (S.dim n) + 2) * ((S.dim n + 1) * (4 * S.dim n + 14) + 7 * esize (S.dim n) +
+      8 * S.dim n + 90) + 10
+
+/-- `wrapHeadZ` is polynomially bounded in the index when the sampler's cost and dimension
+are. -/
+theorem polyBounded_wrapHeadZ {Cf : ℕ → ℕ} (hCf : PolyBounded Cf) (kf : ℕ)
+    (hdim : PolyBounded S.dim) : PolyBounded fun n => wrapHeadZ U S Cf kf n := by
   set q : Data := encode CL.Sampler.Query.dimension with hq
+  have h1 : PolyBounded fun _ : ℕ => esize S.prog := PolyBounded.const _
+  have h2 : PolyBounded fun n : ℕ => esize n := polyBounded_esize_nat
+  have h3 : PolyBounded fun _ : ℕ => q.size := PolyBounded.const _
+  have h4 : PolyBounded fun n : ℕ => esize (S.dim n) := polyBounded_esize_nat.comp hdim
+  have h5 : PolyBounded fun n : ℕ => Cf n * (q.size + 1) ^ kf :=
+    hCf.mul (PolyBounded.const _)
+  have h6 : PolyBounded fun n : ℕ =>
+      U.bound.eval (esize S.prog + (esize n + q.size + 1) + Cf n * (q.size + 1) ^ kf) :=
+    PolyBounded.eval _ (((h1.add (h2.add_const (q.size + 1))).add h5))
+  have h7 : PolyBounded fun n : ℕ => (Nat.size (S.dim n) + 2) *
+      ((S.dim n + 1) * (4 * S.dim n + 14) + 7 * esize (S.dim n) + 8 * S.dim n + 90) :=
+    ((PolyBounded.size.comp hdim).add_const 2).mul
+      ((((hdim.add_const 1).mul ((hdim.const_mul 4).add_const 14)).add
+        (h4.const_mul 7)).add ((hdim.const_mul 8).add_const 90))
+  exact ((((((h1.add h2).add h3).add h4).add h5).add h6).add h7).add_const 10
+
+/-- **The head, with explicit constants.** For a sampler running within
+`Cf n · (|d| + 1) ^ kf`, the head costs at most `60 · wrapHeadZ n ^ 2` beyond its continuation:
+the dimension query runs on a fixed input, and the conversion to unary on the dimension. -/
+theorem wrapHead_cost' (Cf : ℕ → ℕ) (kf : ℕ)
+    (hf : ∀ (n : ℕ) (d : Data), ∃ r t, t ≤ Cf n * (d.size + 1) ^ kf ∧
+      S.prog.Runs (.cons (encode n) d) r t) :
+    ∀ (c : Prog) (n : ℕ) (d r : Data) (t : ℕ),
+      Eval (wrapHeadEnv S n d) c r t →
+        ∃ t', t' ≤ t + 60 * wrapHeadZ U S Cf kf n ^ 2 ∧
+          Eval [.cons (encode n) d] (wrapHead U.univ S.prog c) r t' := by
   -- the sampler's own run on the dimension query, bounded uniformly in `n`
-  have hdimrun : ∀ n : ℕ, ∃ t ≤ Cf n * (q.size + 1) ^ kf,
-      S.prog.Runs (.cons (encode n) q) (encode (S.dim n)) t := by
+  have hdimrun : ∀ n : ℕ,
+      ∃ t ≤ Cf n * ((encode CL.Sampler.Query.dimension : Data).size + 1) ^ kf,
+      S.prog.Runs (.cons (encode n) (encode CL.Sampler.Query.dimension)) (encode (S.dim n)) t := by
     intro n
-    obtain ⟨r, t, ht, hrun⟩ := hf n q
+    obtain ⟨r, t, ht, hrun⟩ := hf n (encode CL.Sampler.Query.dimension)
     obtain ⟨t₀, h₀⟩ := S.runs_dimension n
     obtain ⟨rfl, rfl⟩ := Eval.deterministic hrun h₀
     exact ⟨t, ht, hrun⟩
   -- the unary conversion
   have htu : ∀ m : ℕ, ∃ t ≤ (Nat.size m + 2) * ((m + 1) * (4 * m + 14) + 7 * esize m + 8 * m + 90),
       toUnaryProg.Runs (encode m) (Data.ofNat m) t := fun m => toUnaryProg_runs m
-  set Z : ℕ → ℕ := fun n => esize S.prog + esize n + q.size + esize (S.dim n) +
-      Cf n * (q.size + 1) ^ kf +
-      U.bound.eval (esize S.prog + (esize n + q.size + 1) + Cf n * (q.size + 1) ^ kf) +
-      (Nat.size (S.dim n) + 2) * ((S.dim n + 1) * (4 * S.dim n + 14) + 7 * esize (S.dim n) +
-        8 * S.dim n + 90) + 10 with hZ
-  have hZpoly : PolyBounded Z := by
-    have h1 : PolyBounded fun _ : ℕ => esize S.prog := PolyBounded.const _
-    have h2 : PolyBounded fun n : ℕ => esize n := polyBounded_esize_nat
-    have h3 : PolyBounded fun _ : ℕ => q.size := PolyBounded.const _
-    have h4 : PolyBounded fun n : ℕ => esize (S.dim n) := polyBounded_esize_nat.comp hdim
-    have h5 : PolyBounded fun n : ℕ => Cf n * (q.size + 1) ^ kf :=
-      hCf.mul (PolyBounded.const _)
-    have h6 : PolyBounded fun n : ℕ =>
-        U.bound.eval (esize S.prog + (esize n + q.size + 1) + Cf n * (q.size + 1) ^ kf) :=
-      PolyBounded.eval _ (((h1.add (h2.add_const (q.size + 1))).add h5))
-    have h7 : PolyBounded fun n : ℕ => (Nat.size (S.dim n) + 2) *
-        ((S.dim n + 1) * (4 * S.dim n + 14) + 7 * esize (S.dim n) + 8 * S.dim n + 90) :=
-      ((PolyBounded.size.comp hdim).add_const 2).mul
-        ((((hdim.add_const 1).mul ((hdim.const_mul 4).add_const 14)).add
-          (h4.const_mul 7)).add ((hdim.const_mul 8).add_const 90))
-    exact ((((((h1.add h2).add h3).add h4).add h5).add h6).add h7).add_const 10
-  refine ⟨fun n => 60 * Z n ^ 2, hZpoly.pow 2 |>.const_mul 60, fun c n d r t hc => ?_⟩
+  intro c n d r t hc
+  set Z : ℕ := wrapHeadZ U S Cf kf n with hZ
   obtain ⟨t₁, ht₁, h₁⟩ := hdimrun n
   obtain ⟨t₂, ht₂, h₂⟩ := htu (S.dim n)
-  obtain ⟨t₃, ht₃, h₃⟩ := U.time_le S.prog (.cons (encode n) q) (encode (S.dim n)) t₁ h₁
-  -- `q` is an abbreviation for the bounds; the program carries the literal, so the runs that
-  -- the term below is assembled from have to carry it too
-  rw [hq] at h₁ h₃
+  obtain ⟨t₃, ht₃, h₃⟩ := U.time_le S.prog (.cons (encode n) (encode CL.Sampler.Query.dimension))
+    (encode (S.dim n)) t₁ h₁
   refine ⟨_, ?_, Eval.elim_cons (env := [.cons (encode n) d]) (i := 0) (a := encode n) (b := d)
     (by simp)
     (Eval.let_ (Eval.cons (Eval.const _ _)
@@ -150,28 +164,40 @@ theorem wrapHead_cost (hS : S.prog.HasPolyCost) (hdim : PolyBounded S.dim) :
           (by simp) h₃)
         (Eval.let_ (callVar_eval toUnaryProg_wellScoped (i := 0) (v := encode (S.dim n))
             (by simp) h₂) hc)))⟩
-  -- the arithmetic: every piece is at most `Z n`, and there are fewer than sixty of them
-  have hZ1 : 1 ≤ Z n := by simp only [hZ]; omega
-  have hZsq : Z n ≤ Z n ^ 2 := Nat.le_self_pow (by norm_num) _
-  have e0 : t₁ ≤ Z n := ht₁.trans (by simp only [hZ]; omega)
-  have e1 : esize S.prog ≤ Z n := by simp only [hZ]; omega
-  have e2 : esize n ≤ Z n := by simp only [hZ]; omega
-  have e3 : q.size ≤ Z n := by simp only [hZ]; omega
-  have e4 : esize (S.dim n) ≤ Z n := by simp only [hZ]; omega
-  have e5 : t₂ ≤ Z n := ht₂.trans (by simp only [hZ]; omega)
-  have e6 : t₃ ≤ Z n := by
+  -- the arithmetic: every piece is at most `Z`, and there are fewer than sixty of them
+  have hZ1 : 1 ≤ Z := by simp only [hZ, wrapHeadZ]; omega
+  have hZsq : Z ≤ Z ^ 2 := Nat.le_self_pow (by norm_num) _
+  have e0 : t₁ ≤ Z := ht₁.trans (by simp only [hZ, wrapHeadZ]; omega)
+  have e1 : esize S.prog ≤ Z := by simp only [hZ, wrapHeadZ]; omega
+  have e2 : esize n ≤ Z := by simp only [hZ, wrapHeadZ]; omega
+  have e3 : (encode CL.Sampler.Query.dimension : Data).size ≤ Z := by
+    simp only [hZ, wrapHeadZ]; omega
+  have e4 : esize (S.dim n) ≤ Z := by simp only [hZ, wrapHeadZ]; omega
+  have e5 : t₂ ≤ Z := ht₂.trans (by simp only [hZ, wrapHeadZ]; omega)
+  have e6 : t₃ ≤ Z := by
     refine ht₃.trans ?_
-    have : esize S.prog + (Data.cons (encode n) q).size + t₁ ≤
-        esize S.prog + (esize n + q.size + 1) + Cf n * (q.size + 1) ^ kf := by
-      have : (Data.cons (encode n) q).size = esize n + q.size + 1 := rfl
+    have : esize S.prog + (Data.cons (encode n) (encode CL.Sampler.Query.dimension)).size + t₁ ≤
+        esize S.prog + (esize n + (encode CL.Sampler.Query.dimension : Data).size + 1) +
+          Cf n * ((encode CL.Sampler.Query.dimension : Data).size + 1) ^ kf := by
+      have : (Data.cons (encode n) (encode CL.Sampler.Query.dimension)).size =
+          esize n + (encode CL.Sampler.Query.dimension : Data).size + 1 := rfl
       omega
-    exact (polynomial_eval_mono U.bound this).trans (by simp only [hZ]; omega)
-  have hqs : (encode CL.Sampler.Query.dimension : Data).size = q.size := by rw [hq]
+    exact (polynomial_eval_mono U.bound this).trans (by simp only [hZ, wrapHeadZ]; omega)
   have hsz : (encode n : Data).size = esize n := rfl
   have hszS : (encode S.prog : Data).size = esize S.prog := rfl
   have hszD : (encode (S.dim n) : Data).size = esize (S.dim n) := rfl
   simp only [Data.size_cons, hsz, hszS, hszD]
   omega
+
+/-- **The head.** Its cost depends on the index only: the dimension query runs on a fixed
+input, and the conversion to unary on the dimension. -/
+theorem wrapHead_cost (hS : S.prog.HasPolyCost) (hdim : PolyBounded S.dim) :
+    ∃ H : ℕ → ℕ, PolyBounded H ∧ ∀ (c : Prog) (n : ℕ) (d r : Data) (t : ℕ),
+      Eval (wrapHeadEnv S n d) c r t →
+        ∃ t', t' ≤ t + H n ∧ Eval [.cons (encode n) d] (wrapHead U.univ S.prog c) r t' := by
+  obtain ⟨Cf, kf, hCf, hf⟩ := hS
+  exact ⟨fun n => 60 * wrapHeadZ U S Cf kf n ^ 2,
+    ((polyBounded_wrapHeadZ U S hCf kf hdim).pow 2).const_mul 60, wrapHead_cost' U S Cf kf hf⟩
 
 end Stages
 
@@ -273,24 +299,25 @@ theorem wrapPreEnvD_eq (n : ℕ) (x y a b : BitStr) :
     wrapPreEnv S n x y a b
       = wrapPreEnvD S n (encode x) (encode y) (.cons (encode a) (encode b)) := rfl
 
-/-- **The prefix, on every input.** On a tail of the shape `cons A (cons B C)` it hands the
-environment `wrapPreEnvD` to its continuation; on a shorter tail it rejects outright. Both
-cost `H n` beyond the continuation, `H` polynomially bounded. -/
-theorem wrapPre_cost (hS : S.prog.HasPolyCost) (hdim : PolyBounded S.dim) :
-    ∃ H : ℕ → ℕ, PolyBounded H ∧
-      (∀ (c : Prog) (n : ℕ) (A B C r : Data) (t : ℕ),
+/-- **The prefix, on every input, with explicit constants.** On a tail of the shape
+`cons A (cons B C)` it hands the environment `wrapPreEnvD` to its continuation; on a shorter
+tail it rejects outright. Both cost `60 · wrapHeadZ n ^ 2 + 4` beyond the continuation. -/
+theorem wrapPre_cost' (Cf : ℕ → ℕ) (kf : ℕ)
+    (hf : ∀ (n : ℕ) (d : Data), ∃ r t, t ≤ Cf n * (d.size + 1) ^ kf ∧
+      S.prog.Runs (.cons (encode n) d) r t) :
+    (∀ (c : Prog) (n : ℕ) (A B C r : Data) (t : ℕ),
         Eval (wrapPreEnvD S n A B C) c r t →
-          ∃ t' ≤ t + H n, Eval [.cons (encode n) (.cons A (.cons B C))]
+          ∃ t' ≤ t + (60 * wrapHeadZ U S Cf kf n ^ 2 + 4), Eval [.cons (encode n) (.cons A (.cons B C))]
             (wrapPre U.univ S.prog c) r t') ∧
       (∀ (c : Prog) (n : ℕ) (d : Data), d.spine ≤ 1 →
-        ∃ t ≤ H n, Eval [.cons (encode n) d] (wrapPre U.univ S.prog c) .nil t) := by
-  obtain ⟨H, hH, hhead⟩ := wrapHead_cost U S hS hdim
-  refine ⟨fun n => H n + 4, hH.add_const 4, fun c n A B C r t hc => ?_, fun c n d hd => ?_⟩
+        ∃ t ≤ 60 * wrapHeadZ U S Cf kf n ^ 2 + 4, Eval [.cons (encode n) d] (wrapPre U.univ S.prog c) .nil t) := by
+  have hhead := wrapHead_cost' U S Cf kf hf
+  refine ⟨fun c n A B C r t hc => ?_, fun c n d hd => ?_⟩
   · obtain ⟨t', ht', h'⟩ := hhead (.elim 4 .nil (.elim 1 .nil c)) n
       (.cons A (.cons B C)) r (t + 1 + 1)
       (Eval.elim_cons (i := 4) (a := A) (b := .cons B C) (by simp [wrapHeadEnv])
         (Eval.elim_cons (i := 1) (a := B) (b := C) (by simp) hc))
-    exact ⟨t', by show t' ≤ t + (H n + 4); omega, h'⟩
+    exact ⟨t', by omega, h'⟩
   · -- a tail of spine at most one: the first `elim` finds `nil` at index 4, or the second at 1
     have hrej : ∃ u ≤ 3, Eval (wrapHeadEnv S n d) (.elim 4 .nil (.elim 1 .nil c)) .nil u := by
       match d, hd with
@@ -304,7 +331,23 @@ theorem wrapPre_cost (hS : S.prog.HasPolyCost) (hdim : PolyBounded S.dim) :
       | .cons A (.cons B C), h => exact absurd h (by simp)
     obtain ⟨u, hu, hrun⟩ := hrej
     obtain ⟨t', ht', h'⟩ := hhead (.elim 4 .nil (.elim 1 .nil c)) n d .nil u hrun
-    exact ⟨t', by show t' ≤ H n + 4; omega, h'⟩
+    exact ⟨t', by omega, h'⟩
+
+/-- **The prefix, on every input.** On a tail of the shape `cons A (cons B C)` it hands the
+environment `wrapPreEnvD` to its continuation; on a shorter tail it rejects outright. Both
+cost `H n` beyond the continuation, `H` polynomially bounded. -/
+theorem wrapPre_cost (hS : S.prog.HasPolyCost) (hdim : PolyBounded S.dim) :
+    ∃ H : ℕ → ℕ, PolyBounded H ∧
+      (∀ (c : Prog) (n : ℕ) (A B C r : Data) (t : ℕ),
+        Eval (wrapPreEnvD S n A B C) c r t →
+          ∃ t' ≤ t + H n, Eval [.cons (encode n) (.cons A (.cons B C))]
+            (wrapPre U.univ S.prog c) r t') ∧
+      (∀ (c : Prog) (n : ℕ) (d : Data), d.spine ≤ 1 →
+        ∃ t ≤ H n, Eval [.cons (encode n) d] (wrapPre U.univ S.prog c) .nil t) := by
+  obtain ⟨Cf, kf, hCf, hf⟩ := hS
+  exact ⟨fun n => 60 * wrapHeadZ U S Cf kf n ^ 2 + 4,
+    (((polyBounded_wrapHeadZ U S hCf kf hdim).pow 2).const_mul 60).add_const 4,
+    wrapPre_cost' U S Cf kf hf⟩
 
 end Pre
 
@@ -317,111 +360,130 @@ section Core
 
 variable {ℓ : ℕ} (U : UniversalMachine) (S : CL.Sampler ℓ) (dec : Prog)
 
+/-- The wrapper's cost at index `n` on an input of size `s`, when the string's decider runs
+within `T` on it: the prefix, the two checks, the copies, and the universal machine on the
+string's decider. -/
+noncomputable def wrapCoreCost (Cf : ℕ → ℕ) (kf n T s : ℕ) : ℕ :=
+  (60 * wrapHeadZ U S Cf kf n ^ 2 + 4) + 2 * checkCost s (S.dim n) +
+    (2 * (esize dec + esize n + s + 2) + U.bound.eval (esize dec + (esize n + s + 1) + T)) + 20
+
+/-- **The wrapper halts within an explicit cost on every input**, well formed or not, at an
+index `n` at which the string's decider runs within `Td |d|` on every input `d`. -/
+theorem wrapCore_cost' (Cf : ℕ → ℕ) (kf : ℕ)
+    (hf : ∀ (n : ℕ) (d : Data), ∃ r t, t ≤ Cf n * (d.size + 1) ^ kf ∧
+      S.prog.Runs (.cons (encode n) d) r t)
+    (n : ℕ) (Td : ℕ → ℕ)
+    (hdec : ∀ d : Data, ∃ r t, t ≤ Td d.size ∧ dec.Runs (.cons (encode n) d) r t) (d : Data) :
+    ∃ r t, t ≤ wrapCoreCost U S dec Cf kf n (Td d.size) d.size ∧
+      (wrapCore U.univ S.prog (encode dec)).Runs (.cons (encode n) d) r t := by
+  obtain ⟨hpre, hrej⟩ := wrapPre_cost' U S Cf kf hf
+  rcases Nat.lt_or_ge d.spine 2 with hd | hd
+  · -- a tail too short for two questions: the prefix rejects
+    obtain ⟨t, ht, hrun⟩ := hrej _ n d (by omega)
+    exact ⟨.nil, t, by simp only [wrapCoreCost]; omega, hrun⟩
+  · -- `d = cons A (cons B C)`
+    match d, hd with
+    | .cons A (.cons B C), _ =>
+      set d : Data := Data.cons A (Data.cons B C) with hdef
+      have hA : A.size ≤ d.size := by rw [hdef]; simp; omega
+      have hB : B.size ≤ d.size := by rw [hdef]; simp; omega
+      by_cases hxa : A.spine = S.dim n
+      · by_cases hyb : B.spine = S.dim n
+        · -- both checks pass: the string's decider runs, through the universal machine
+          obtain ⟨r, td, htd, hdr⟩ := hdec d
+          obtain ⟨t₇, ht₇, h₇⟩ := U.time_le dec (.cons (encode n) d) r td hdr
+          have htail : Eval (wrapCheckEnvN (S.dim n) (S.dim n)
+              (wrapCheckEnvN (S.dim n) (S.dim n) (wrapPreEnvD S n A B C)))
+              (wrapTail U.univ (encode dec)) r _ :=
+            Eval.let_ (Eval.cons (Eval.const _ _)
+              (Eval.var_of_get (i := 19) (v := .cons (encode n) d)
+                (by simp [wrapCheckEnvN, wrapPreEnvD, wrapHeadEnv, hdef])))
+              (callVar_eval U.closed (i := 0)
+                (v := .cons (encode dec) (.cons (encode n) d)) (by simp) h₇)
+          obtain ⟨t₂, ht₂, h₂⟩ := wrapCheckD_cost_of_eq (i := 5) (j := 9)
+            (env := wrapCheckEnvN (S.dim n) (S.dim n) (wrapPreEnvD S n A B C))
+            (v := B) (m := S.dim n)
+            rfl rfl
+            hyb htail
+          obtain ⟨t₁, ht₁, h₁⟩ := wrapCheckD_cost_of_eq (i := 2) (j := 4)
+            (env := wrapPreEnvD S n A B C) (v := A) (m := S.dim n)
+            rfl rfl
+            hxa h₂
+          obtain ⟨t₀, ht₀, h₀⟩ := hpre _ n A B C r t₁ h₁
+          refine ⟨r, t₀, ?_, hdef ▸ h₀⟩
+          have hc1 : checkCost A.size (S.dim n) ≤ checkCost d.size (S.dim n) :=
+            checkCost_mono hA
+          have hc2 : checkCost B.size (S.dim n) ≤ checkCost d.size (S.dim n) :=
+            checkCost_mono hB
+          have hUb : t₇ ≤ U.bound.eval (esize dec + (esize n + d.size + 1) + Td d.size) :=
+            ht₇.trans (polynomial_eval_mono U.bound (by
+              have : (Data.cons (encode n) d).size = esize n + d.size + 1 := rfl
+              omega))
+          have hsz1 : (encode dec : Data).size = esize dec := rfl
+          have hsz2 : (Data.cons (encode n) d).size = esize n + d.size + 1 := rfl
+          simp only [Data.size_cons, hsz1, hsz2] at ht₂
+          simp only [wrapCoreCost]
+          omega
+        · -- the second check fails
+          obtain ⟨t₂, ht₂, h₂⟩ := wrapCheckD_cost_of_ne (i := 5) (j := 9)
+            (env := wrapCheckEnvN (S.dim n) (S.dim n) (wrapPreEnvD S n A B C))
+            (v := B) (m := S.dim n) (c := wrapTail U.univ (encode dec))
+            rfl rfl hyb
+          obtain ⟨t₁, ht₁, h₁⟩ := wrapCheckD_cost_of_eq (i := 2) (j := 4)
+            (env := wrapPreEnvD S n A B C) (v := A) (m := S.dim n)
+            rfl rfl hxa h₂
+          obtain ⟨t₀, ht₀, h₀⟩ := hpre _ n A B C .nil t₁ h₁
+          refine ⟨.nil, t₀, ?_, hdef ▸ h₀⟩
+          have hc1 : checkCost A.size (S.dim n) ≤ checkCost d.size (S.dim n) :=
+            checkCost_mono hA
+          have hc2 : checkCost B.size (S.dim n) ≤ checkCost d.size (S.dim n) :=
+            checkCost_mono hB
+          simp only [wrapCoreCost]
+          omega
+      · -- the first check fails
+        obtain ⟨t₁, ht₁, h₁⟩ := wrapCheckD_cost_of_ne (i := 2) (j := 4)
+          (env := wrapPreEnvD S n A B C) (v := A) (m := S.dim n)
+          (c := wrapCheck 5 9 (wrapTail U.univ (encode dec)))
+          rfl rfl hxa
+        obtain ⟨t₀, ht₀, h₀⟩ := hpre _ n A B C .nil t₁ h₁
+        refine ⟨.nil, t₀, ?_, hdef ▸ h₀⟩
+        have hc1 : checkCost A.size (S.dim n) ≤ checkCost d.size (S.dim n) :=
+          checkCost_mono hA
+        simp only [wrapCoreCost]
+        omega
+
 /-- **The wrapper halts within a polynomially bounded cost on every input**, well formed or
 not, provided the sampler and the string's own decider do. This is what inhabits
 `Verifier.IsBounded` for the verifier a string denotes. -/
 theorem wrapCore_hasPolyCost (hS : S.prog.HasPolyCost) (hdim : PolyBounded S.dim)
     (hdec : dec.HasPolyCost) : (wrapCore U.univ S.prog (encode dec)).HasPolyCost := by
-  obtain ⟨H, hH, hpre, hrej⟩ := wrapPre_cost U S hS hdim
+  obtain ⟨Cf, kf, hCf, hf⟩ := hS
   obtain ⟨Cd, kd, hCd, hdrun⟩ := hdec
-  -- the bound: the prefix, the two checks, and the universal machine on the string's decider
-  refine Prog.hasPolyCost_of_polyCost (B := fun n d => H n + 2 * checkCost d.size (S.dim n) +
-      (2 * (esize dec + esize n + d.size + 2) +
-        U.bound.eval (esize dec + (esize n + d.size + 1) + Cd n * (d.size + 1) ^ kd)) + 20)
-    ?_ ?_
-  · -- the bound is polynomial in the index and the input size
-    have hsz : PolyCost fun (_ : ℕ) (d : Data) => d.size := PolyCost.size
-    have hn : PolyCost fun (n : ℕ) (_ : Data) => esize n :=
-      PolyCost.ofIndex polyBounded_esize_nat
-    have hdm : PolyCost fun (n : ℕ) (_ : Data) => S.dim n := PolyCost.ofIndex hdim
-    have hchk : PolyCost fun (n : ℕ) (d : Data) => checkCost d.size (S.dim n) := by
-      have hb : PolyCost fun (n : ℕ) (d : Data) => d.size + S.dim n + 30 :=
-        ((hsz.add hdm).add (PolyCost.const 30))
-      exact ((PolyCost.const 60).mul (hb.mul hb)).mono fun n d => by
-        simp only [checkCost]; nlinarith [sq_nonneg (d.size + S.dim n + 30)]
-    have hpow : PolyCost fun (_ : ℕ) (d : Data) => (d.size + 1) ^ kd :=
-      (PolyCost.poly ((Polynomial.X + Polynomial.C 1) ^ kd) hsz).mono fun n d => by simp
-    have hU : PolyCost fun (n : ℕ) (d : Data) =>
-        U.bound.eval (esize dec + (esize n + d.size + 1) + Cd n * (d.size + 1) ^ kd) :=
-      PolyCost.poly U.bound
-        (((PolyCost.const (esize dec)).add ((hn.add hsz).add (PolyCost.const 1))).add
-          ((PolyCost.ofIndex hCd).mul hpow))
-    exact ((((PolyCost.ofIndex hH).add ((PolyCost.const 2).mul hchk)).add
-      (((PolyCost.const 2).mul ((((PolyCost.const (esize dec)).add hn).add hsz).add
-        (PolyCost.const 2))).add hU)).add (PolyCost.const 20))
-  · intro n d
-    rcases Nat.lt_or_ge d.spine 2 with hd | hd
-    · -- a tail too short for two questions: the prefix rejects
-      obtain ⟨t, ht, hrun⟩ := hrej _ n d (by omega)
-      exact ⟨.nil, t, by omega, hrun⟩
-    · -- `d = cons A (cons B C)`
-      match d, hd with
-      | .cons A (.cons B C), _ =>
-        set d : Data := Data.cons A (Data.cons B C) with hdef
-        have hA : A.size ≤ d.size := by rw [hdef]; simp; omega
-        have hB : B.size ≤ d.size := by rw [hdef]; simp; omega
-        by_cases hxa : A.spine = S.dim n
-        · by_cases hyb : B.spine = S.dim n
-          · -- both checks pass: the string's decider runs, through the universal machine
-            obtain ⟨r, td, htd, hdr⟩ := hdrun n d
-            obtain ⟨t₇, ht₇, h₇⟩ := U.time_le dec (.cons (encode n) d) r td hdr
-            have htail : Eval (wrapCheckEnvN (S.dim n) (S.dim n)
-                (wrapCheckEnvN (S.dim n) (S.dim n) (wrapPreEnvD S n A B C)))
-                (wrapTail U.univ (encode dec)) r _ :=
-              Eval.let_ (Eval.cons (Eval.const _ _)
-                (Eval.var_of_get (i := 19) (v := .cons (encode n) d)
-                  (by simp [wrapCheckEnvN, wrapPreEnvD, wrapHeadEnv, hdef])))
-                (callVar_eval U.closed (i := 0)
-                  (v := .cons (encode dec) (.cons (encode n) d)) (by simp) h₇)
-            obtain ⟨t₂, ht₂, h₂⟩ := wrapCheckD_cost_of_eq (i := 5) (j := 9)
-              (env := wrapCheckEnvN (S.dim n) (S.dim n) (wrapPreEnvD S n A B C))
-              (v := B) (m := S.dim n)
-              rfl rfl
-              hyb htail
-            obtain ⟨t₁, ht₁, h₁⟩ := wrapCheckD_cost_of_eq (i := 2) (j := 4)
-              (env := wrapPreEnvD S n A B C) (v := A) (m := S.dim n)
-              rfl rfl
-              hxa h₂
-            obtain ⟨t₀, ht₀, h₀⟩ := hpre _ n A B C r t₁ h₁
-            refine ⟨r, t₀, ?_, hdef ▸ h₀⟩
-            have hc1 : checkCost A.size (S.dim n) ≤ checkCost d.size (S.dim n) :=
-              checkCost_mono hA
-            have hc2 : checkCost B.size (S.dim n) ≤ checkCost d.size (S.dim n) :=
-              checkCost_mono hB
-            have hUb : t₇ ≤ U.bound.eval (esize dec + (esize n + d.size + 1) +
-                Cd n * (d.size + 1) ^ kd) :=
-              ht₇.trans (polynomial_eval_mono U.bound (by
-                have : (Data.cons (encode n) d).size = esize n + d.size + 1 := rfl
-                omega))
-            have hsz1 : (encode dec : Data).size = esize dec := rfl
-            have hsz2 : (Data.cons (encode n) d).size = esize n + d.size + 1 := rfl
-            simp only [Data.size_cons, hsz1, hsz2] at ht₂
-            omega
-          · -- the second check fails
-            obtain ⟨t₂, ht₂, h₂⟩ := wrapCheckD_cost_of_ne (i := 5) (j := 9)
-              (env := wrapCheckEnvN (S.dim n) (S.dim n) (wrapPreEnvD S n A B C))
-              (v := B) (m := S.dim n) (c := wrapTail U.univ (encode dec))
-              rfl rfl hyb
-            obtain ⟨t₁, ht₁, h₁⟩ := wrapCheckD_cost_of_eq (i := 2) (j := 4)
-              (env := wrapPreEnvD S n A B C) (v := A) (m := S.dim n)
-              rfl rfl hxa h₂
-            obtain ⟨t₀, ht₀, h₀⟩ := hpre _ n A B C .nil t₁ h₁
-            refine ⟨.nil, t₀, ?_, hdef ▸ h₀⟩
-            have hc1 : checkCost A.size (S.dim n) ≤ checkCost d.size (S.dim n) :=
-              checkCost_mono hA
-            have hc2 : checkCost B.size (S.dim n) ≤ checkCost d.size (S.dim n) :=
-              checkCost_mono hB
-            omega
-        · -- the first check fails
-          obtain ⟨t₁, ht₁, h₁⟩ := wrapCheckD_cost_of_ne (i := 2) (j := 4)
-            (env := wrapPreEnvD S n A B C) (v := A) (m := S.dim n)
-            (c := wrapCheck 5 9 (wrapTail U.univ (encode dec)))
-            rfl rfl hxa
-          obtain ⟨t₀, ht₀, h₀⟩ := hpre _ n A B C .nil t₁ h₁
-          refine ⟨.nil, t₀, ?_, hdef ▸ h₀⟩
-          have hc1 : checkCost A.size (S.dim n) ≤ checkCost d.size (S.dim n) :=
-            checkCost_mono hA
-          omega
+  refine Prog.hasPolyCost_of_polyCost
+    (B := fun n d => wrapCoreCost U S dec Cf kf n (Cd n * (d.size + 1) ^ kd) d.size) ?_
+    (fun n d => wrapCore_cost' U S dec Cf kf hf n (fun s => Cd n * (s + 1) ^ kd) (hdrun n) d)
+  -- the bound is polynomial in the index and the input size
+  have hH : PolyBounded fun n => 60 * wrapHeadZ U S Cf kf n ^ 2 + 4 :=
+    (((polyBounded_wrapHeadZ U S hCf kf hdim).pow 2).const_mul 60).add_const 4
+  have hsz : PolyCost fun (_ : ℕ) (d : Data) => d.size := PolyCost.size
+  have hn : PolyCost fun (n : ℕ) (_ : Data) => esize n :=
+    PolyCost.ofIndex polyBounded_esize_nat
+  have hdm : PolyCost fun (n : ℕ) (_ : Data) => S.dim n := PolyCost.ofIndex hdim
+  have hchk : PolyCost fun (n : ℕ) (d : Data) => checkCost d.size (S.dim n) := by
+    have hb : PolyCost fun (n : ℕ) (d : Data) => d.size + S.dim n + 30 :=
+      ((hsz.add hdm).add (PolyCost.const 30))
+    exact ((PolyCost.const 60).mul (hb.mul hb)).mono fun n d => by
+      simp only [checkCost]; nlinarith [sq_nonneg (d.size + S.dim n + 30)]
+  have hpow : PolyCost fun (_ : ℕ) (d : Data) => (d.size + 1) ^ kd :=
+    (PolyCost.poly ((Polynomial.X + Polynomial.C 1) ^ kd) hsz).mono fun n d => by simp
+  have hU : PolyCost fun (n : ℕ) (d : Data) =>
+      U.bound.eval (esize dec + (esize n + d.size + 1) + Cd n * (d.size + 1) ^ kd) :=
+    PolyCost.poly U.bound
+      (((PolyCost.const (esize dec)).add ((hn.add hsz).add (PolyCost.const 1))).add
+        ((PolyCost.ofIndex hCd).mul hpow))
+  exact ((((PolyCost.ofIndex hH).add ((PolyCost.const 2).mul hchk)).add
+    (((PolyCost.const 2).mul ((((PolyCost.const (esize dec)).add hn).add hsz).add
+      (PolyCost.const 2))).add hU)).add (PolyCost.const 20))
 
 end Core
 

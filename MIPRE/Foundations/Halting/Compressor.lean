@@ -577,6 +577,49 @@ def kBound (n : ℕ) : ℕ := 4 * Nat.size n + 5
 noncomputable def fBound (L n : ℕ) : ℕ :=
   sampBound G L + kBound n + 53 + (wBound G U L + kBound n + 53)
 
+/-- The parameter a string of length `L` denotes has an encoding of size at most `L + 1`. -/
+theorem esize_descLam_le (x : BitStr) : esize (descLam x) ≤ x.length + 1 := by
+  have hdl : esize (descLam x) = (Data.parse x).left.normBin.size := by
+    show (encode (Data.natOf (Data.parse x).left) : Data).size = _
+    rw [Data.encode_natOf]
+  have hp : (Data.parse x).size ≤ x.length + 1 := (Data.size_parse_le x).trans (by omega)
+  have hpl : (Data.parse x).left.size ≤ (Data.parse x).size := Machine.size_left_le _
+  have hnb : (Data.parse x).left.normBin.size ≤ (Data.parse x).left.size := Data.size_normBin_le _
+  omega
+
+/-- The sizes of the stages' values, against their bounds. -/
+theorem size_sampD_le (x : BitStr) : (sampD G x).size ≤ sampBound G x.length :=
+  (G.samplerProg.esize_apply_le (descLam x)).trans
+    (polynomial_eval_mono _ (esize_descLam_le x))
+
+theorem size_wD_le (x : BitStr) : (wD G U x).size ≤ wBound G U x.length := by
+  have hp : (Data.parse x).size ≤ x.length + 1 := (Data.size_parse_le x).trans (by omega)
+  have hpr : (Data.parse x).right.size ≤ (Data.parse x).size := Machine.size_right_le _
+  have hsamp := size_sampD_le G x
+  have hu : (encode U.univ : Data).size = esize U.univ := rfl
+  rw [wD, size_dWrapCore, hu, wBound]; omega
+
+theorem size_kD_le (n : ℕ) : (kD n).size ≤ kBound n := by
+  have hn : (encode n : Data).size ≤ 4 * Nat.size n + 1 := esize_nat_le n
+  show (Data.cons (Data.cons .nil .nil) (encode n)).size ≤ _
+  simp only [Data.size_cons, Data.size_nil, kBound]; omega
+
+/-- **The two frozen programs fit under `fBound`.** -/
+theorem esize_frozen_le (x : BitStr) (n : ℕ) :
+    esize (frozen G U x n).sampler.prog + esize (frozen G U x n).decider.prog ≤
+      fBound G U x.length n := by
+  have e1 : esize (frozen G U x n).sampler.prog = (dFreeze (kD n) (sampD G x)).size := by
+    show (encode _ : Data).size = _
+    rw [encode_frozen_sampler]
+  have e2 : esize (frozen G U x n).decider.prog = (dFreeze (kD n) (wD G U x)).size := by
+    show (encode _ : Data).size = _
+    rw [encode_frozen_decider]
+  rw [e1, e2, size_dFreeze, size_dFreeze, fBound]
+  have := size_sampD_le G x
+  have := size_wD_le G U x
+  have := size_kD_le n
+  omega
+
 /-- The cost of the preparation, in the description's size `s`, the level `n`, a bound `L` on
 the described string's length, and the size `l` of the parameter. -/
 noncomputable def prepBound (s n L l : ℕ) : ℕ :=
