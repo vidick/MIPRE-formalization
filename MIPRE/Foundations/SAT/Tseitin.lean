@@ -104,69 +104,113 @@ theorem tseitin_values (C : Circuit) (hC : C.RefsLt) (inp gv : ℕ → V) (w : V
       simp only [List.getElem_ofFn]
       exact (ih u hlt (by omega)).symm
 
+/-- Every input gate reads an existing input. -/
+def InputsLt (C : Circuit) : Prop := ∀ i, Gate.input i ∈ C.gates → i < C.inputs
+
+theorem WellFormed.inputsLt {C : Circuit} (h : C.WellFormed) : C.InputsLt := h.inputs_lt
+
+/-- The gate values depend only on the inputs the circuit reads. -/
+theorem valueAt_congr (C : Circuit) (hin : C.InputsLt) (x x' : ℕ → Bool)
+    (hx : ∀ i < C.inputs, x i = x' i) : ∀ g, C.valueAt x g = C.valueAt x' g := by
+  intro g
+  induction g using Nat.strong_induction_on with
+  | _ g ih =>
+    rw [valueAt_eq, valueAt_eq]
+    have hl : (List.ofFn fun k : Fin g => C.valueAt x k) = List.ofFn fun k : Fin g => C.valueAt x' k := by
+      congr 1
+      funext k
+      exact ih k k.isLt
+    rw [hl]
+    by_cases hg : g < C.gates.length
+    · rw [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hg, Option.getD_some]
+      cases hgate : C.gates[g] with
+      | input i =>
+        simp only [Gate.eval]
+        exact hx i (hin i (hgate ▸ List.getElem_mem hg))
+      | const b => rfl
+      | and u v => rfl
+      | or u v => rfl
+      | not u => rfl
+    · rw [List.getD_eq_getElem?_getD, List.getElem?_eq_none (by omega)]
+      rfl
+
+theorem eval_congr (C : Circuit) (hin : C.InputsLt) (x x' : ℕ → Bool)
+    (hx : ∀ i < C.inputs, x i = x' i) : C.eval x = C.eval x' := by
+  unfold eval
+  split_ifs
+  · rfl
+  · exact valueAt_congr C hin x x' hx _
+
 /-- Soundness: a satisfying assignment of the formula agreeing with `x` on the inputs
 witnesses `C(x) = 1`. -/
-theorem eval_of_tseitin_sat (C : Circuit) (hC : C.RefsLt) (hne : C.gates ≠ []) (inp gv : ℕ → V)
-    (x : ℕ → Bool) (w : V → Bool) (hx : ∀ i, w (inp i) = x i)
+theorem eval_of_tseitin_sat (C : Circuit) (hC : C.RefsLt) (hin : C.InputsLt) (hne : C.gates ≠ [])
+    (inp gv : ℕ → V) (x : ℕ → Bool) (w : V → Bool) (hx : ∀ i < C.inputs, w (inp i) = x i)
     (hSat : (C.tseitin inp gv).Sat w) : C.eval x = true := by
   have hout := hSat _ (Or.inr rfl)
   simp only [Clause3.eval, cl, Lit.eval, ite_true, Bool.or_self] at hout
   have hlen : 0 < C.gates.length := List.length_pos_iff.mpr hne
   have := tseitin_values C hC inp gv w hSat (C.gates.length - 1) (by omega)
+  rw [eval_congr C hin x (fun i => w (inp i)) (fun i hi => (hx i hi).symm)]
   simp only [eval, hne, ite_false]
-  have hfun : (fun i => w (inp i)) = x := funext hx
-  rw [← hfun, ← this, hout]
+  rw [← this, hout]
 
 /-- Completeness: if `C(x) = 1`, the assignment reading `x` on the inputs and the gate values
 on the gate variables satisfies the formula. -/
-theorem tseitin_sat_of_eval (C : Circuit) (hC : C.RefsLt) (inp gv : ℕ → V)
-    (hinp : Function.Injective inp) (hgv : Function.Injective gv) (hdisj : ∀ i g, inp i ≠ gv g)
+theorem tseitin_sat_of_eval (C : Circuit) (hC : C.RefsLt) (hin : C.InputsLt) (inp gv : ℕ → V)
+    (hinp : ∀ i j, i < C.inputs → j < C.inputs → inp i = inp j → i = j)
+    (hgv : ∀ g g', g < C.gates.length → g' < C.gates.length → gv g = gv g' → g = g')
+    (hdisj : ∀ i g, i < C.inputs → inp i ≠ gv g)
     (x : ℕ → Bool) (hx : C.eval x = true) :
-    ∃ w : V → Bool, (∀ i, w (inp i) = x i) ∧ (C.tseitin inp gv).Sat w := by
+    ∃ w : V → Bool, (∀ i < C.inputs, w (inp i) = x i) ∧ (C.tseitin inp gv).Sat w := by
   classical
   let w : V → Bool := fun v =>
-    if h : ∃ i, v = inp i then x h.choose
-    else if h' : ∃ g, v = gv g then C.valueAt x h'.choose else false
-  have hwi : ∀ i, w (inp i) = x i := by
-    intro i
-    have h : ∃ i', inp i = inp i' := ⟨i, rfl⟩
+    if h : ∃ i, i < C.inputs ∧ v = inp i then x h.choose
+    else if h' : ∃ g, g < C.gates.length ∧ v = gv g then C.valueAt x h'.choose else false
+  have hwi : ∀ i < C.inputs, w (inp i) = x i := by
+    intro i hi
+    have h : ∃ i', i' < C.inputs ∧ inp i = inp i' := ⟨i, hi, rfl⟩
     simp only [w, dif_pos h]
     congr 1
-    exact hinp h.choose_spec.symm
-  have hwg : ∀ g, w (gv g) = C.valueAt x g := by
-    intro g
-    have h : ¬ ∃ i, gv g = inp i := fun ⟨i, hi⟩ => hdisj i g hi.symm
-    have h' : ∃ g', gv g = gv g' := ⟨g, rfl⟩
+    exact hinp _ _ h.choose_spec.1 hi h.choose_spec.2.symm
+  have hwg : ∀ g < C.gates.length, w (gv g) = C.valueAt x g := by
+    intro g hg
+    have h : ¬ ∃ i, i < C.inputs ∧ gv g = inp i := fun ⟨i, hi, h⟩ => hdisj i g hi h.symm
+    have h' : ∃ g', g' < C.gates.length ∧ gv g = gv g' := ⟨g, hg, rfl⟩
     simp only [w, dif_neg h, dif_pos h']
     congr 1
-    exact hgv h'.choose_spec.symm
-  have hfun : (fun i => w (inp i)) = x := funext hwi
+    exact hgv _ _ h'.choose_spec.1 hg h'.choose_spec.2.symm
+  have hval : ∀ g, C.valueAt (fun i => w (inp i)) g = C.valueAt x g :=
+    valueAt_congr C hin _ x hwi
   refine ⟨w, hwi, ?_⟩
   intro c hc
   rcases hc with ⟨g, hg⟩ | rfl
-  · refine (gateClauses_iff inp gv (gv g) C.gates[g] w (List.ofFn fun k : Fin g => C.valueAt x k)
-      ?_).mpr ?_ c hg
+  · refine (gateClauses_iff inp gv (gv g) C.gates[g] w
+      (List.ofFn fun k : Fin g => C.valueAt (fun i => w (inp i)) k) ?_).mpr ?_ c hg
     · intro u hu
       have hlt := hC g g.isLt u hu
       rw [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem (by simpa using hlt), Option.getD_some,
-        List.getElem_ofFn, hwg]
-    · rw [hwg, hfun, valueAt_eq, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem g.isLt,
-        Option.getD_some]
+        List.getElem_ofFn, hwg u (by omega), hval]
+    · rw [hwg g g.isLt, ← hval, valueAt_eq, List.getD_eq_getElem?_getD,
+        List.getElem?_eq_getElem g.isLt, Option.getD_some]
       rfl
   · have hne : C.gates ≠ [] := by
       intro h
       simp [eval, h] at hx
-    simp only [Clause3.eval, cl, Lit.eval, ite_true, Bool.or_self, hwg]
+    have hlen : 0 < C.gates.length := List.length_pos_iff.mpr hne
+    simp only [Clause3.eval, cl, Lit.eval, ite_true, Bool.or_self]
+    rw [hwg (C.gates.length - 1) (by omega)]
     simpa [eval, hne] using hx
 
 /-- **The circuit-to-3SAT reduction**: `C(x) = 1` iff some assignment agreeing with `x` on
 the inputs satisfies the Tseitin formula. -/
-theorem tseitin_sat_iff (C : Circuit) (hC : C.RefsLt) (hne : C.gates ≠ []) (inp gv : ℕ → V)
-    (hinp : Function.Injective inp) (hgv : Function.Injective gv) (hdisj : ∀ i g, inp i ≠ gv g)
-    (x : ℕ → Bool) :
-    (∃ w : V → Bool, (∀ i, w (inp i) = x i) ∧ (C.tseitin inp gv).Sat w) ↔ C.eval x = true :=
-  ⟨fun ⟨w, hx, hSat⟩ => eval_of_tseitin_sat C hC hne inp gv x w hx hSat,
-    tseitin_sat_of_eval C hC inp gv hinp hgv hdisj x⟩
+theorem tseitin_sat_iff (C : Circuit) (hC : C.RefsLt) (hin : C.InputsLt) (hne : C.gates ≠ [])
+    (inp gv : ℕ → V) (hinp : ∀ i j, i < C.inputs → j < C.inputs → inp i = inp j → i = j)
+    (hgv : ∀ g g', g < C.gates.length → g' < C.gates.length → gv g = gv g' → g = g')
+    (hdisj : ∀ i g, i < C.inputs → inp i ≠ gv g) (x : ℕ → Bool) :
+    (∃ w : V → Bool, (∀ i < C.inputs, w (inp i) = x i) ∧ (C.tseitin inp gv).Sat w) ↔
+      C.eval x = true :=
+  ⟨fun ⟨w, hx, hSat⟩ => eval_of_tseitin_sat C hC hin hne inp gv x w hx hSat,
+    tseitin_sat_of_eval C hC hin inp gv hinp hgv hdisj x⟩
 
 end Circuit
 

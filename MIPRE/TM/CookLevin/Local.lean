@@ -144,8 +144,9 @@ def newOffset {Symbol : Type*} [DecidableEq Symbol] (isInput : Bool)
     (cells : Fin 5 → CellVal Symbol) (δ : Fin 5) (m : SignType) : ℕ :=
   match m with
   | .zero => δ
-  | .neg => if isInput ∧ cells (δ - 1) = .bdry then δ else δ - 1
-  | .pos => if isInput ∧ cells δ = .blank ∧ cells (δ - 1) ≠ .bdry then δ else δ + 1
+  | .neg => if isInput ∧ cells ⟨(δ : ℕ) - 1, by omega⟩ = .bdry then δ else (δ : ℕ) - 1
+  | .pos =>
+    if isInput ∧ cells δ = .blank ∧ cells ⟨(δ : ℕ) - 1, by omega⟩ ≠ .bdry then δ else δ + 1
 
 section Consistent
 
