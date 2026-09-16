@@ -166,7 +166,7 @@ def execInstr (ins : Instr) (ph : Phase) (as : IT → Option Sym) (bs : WT → O
       | none => base (.stay p6)
       | some _ =>
         match bs C with
-        | some .one => (base (.stay p2)).mw C 1
+        | some .one => (base (.stay p2)).mw C 1 |>.mw E (-1)
         | some .zero => (base (.stay p4)).mw C 1 |>.mw E (-1)
         | _ => base .halt
     -- `p2`: past the unit's `0`.

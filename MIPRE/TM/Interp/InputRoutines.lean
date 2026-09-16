@@ -219,9 +219,8 @@ theorem exec_checkLen_fail {k : ProgId} {pc : Fin maxPc} {j ref : IT}
       simp only [hc₁, applyAct_inputPos, Act.mi_inMoves, Function.update_self]
       rw [moveInputPos_val_one (c.inputPos ref) (by omega), hpr]
     have := ih c₁ (q + 1) (by simp [hc₁]) hpj₁ hpr₁ (by omega) (by omega)
-    unfold HaltsIn at this ⊢
-    rw [show m + 1 + 1 = 1 + (m + 1) by omega, configs_add, h.1]
-    exact this
+    rw [show m + 1 + 1 = 1 + (m + 1) by omega]
+    exact HaltsIn.after (h.cast_out (List.nil_append _)) this
 
 /-! ## `buildAnswer` -/
 

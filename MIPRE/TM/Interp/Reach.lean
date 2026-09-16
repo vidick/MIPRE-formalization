@@ -102,18 +102,32 @@ theorem step_trans {c c'' : Cfg input} {q : Ctl} (hq : c.state = some q)
 
 end Reach
 
-/-- Halting: the state is `none` after `n` steps. -/
-def HaltsIn (c : Cfg input) (n : ℕ) : Prop := (U.configs c n).state = none
+/-- Halting silently: the state is `none` after `n` steps, and nothing was emitted. -/
+def HaltsIn (c : Cfg input) (n : ℕ) : Prop :=
+  (U.configs c n).state = none ∧ U.outputString c n = []
 
-theorem HaltsIn.of_reach {c c' : Cfg input} {n : ℕ} {out : List Sym} (h : Reach c n c' out)
+theorem HaltsIn.of_reach {c c' : Cfg input} {n : ℕ} (h : Reach c n c' [])
     (h' : c'.state = none) : HaltsIn c n := by
-  unfold HaltsIn; rw [h.1]; exact h'
+  unfold HaltsIn; rw [h.1]; exact ⟨h', h.2⟩
 
 theorem HaltsIn.mono {c : Cfg input} {n m : ℕ} (h : HaltsIn c n) (hnm : n ≤ m) : HaltsIn c m := by
   unfold HaltsIn at *
   obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hnm
-  rw [configs_add, configs_of_halts _ h]
-  exact h
+  rw [configs_add, configs_of_halts _ h.1, outputString_add_eq_append, h.2,
+    outputString_halt _ _ h.1]
+  exact ⟨h.1, rfl⟩
+
+/-- A silent run followed by a silent halt. -/
+theorem HaltsIn.after {c c' : Cfg input} {n m : ℕ} (h : Reach c n c' []) (h' : HaltsIn c' m) :
+    HaltsIn c (n + m) := by
+  unfold HaltsIn at *
+  rw [configs_add, outputString_add_eq_append, h.1, h.2, h'.2]
+  exact ⟨h'.1, rfl⟩
+
+/-- The state stays `none` and nothing more is emitted: a silent halt is final. -/
+theorem HaltsIn.configs_state {c : Cfg input} {n : ℕ} (h : HaltsIn c n) (m : ℕ) :
+    (U.configs c (n + m)).state = none ∧ U.outputString c (n + m) = [] :=
+  h.mono (Nat.le_add_right n m)
 
 /-! ## Reading and writing under `applyAct` -/
 
