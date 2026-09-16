@@ -86,6 +86,16 @@ theorem chunk_map {α β : Type*} (f : α → β) (i : ℕ) (l : List α) :
     chunk s i (l.map f) = (chunk s i l).map f := by
   simp [chunk, List.map_take, List.map_drop]
 
+theorem length_chunk {α : Type*} {l : List α} (hl : l.length = k * s) (i : Fin k) :
+    (chunk s i l).length = s := by
+  have hi : (i + 1) * s ≤ k * s := Nat.mul_le_mul_right s i.isLt
+  rw [Nat.add_mul, one_mul] at hi
+  simp only [chunk, List.length_take, List.length_drop, hl]
+  omega
+
+@[simp] theorem chunk_nil {α : Type*} (i : ℕ) : chunk s i ([] : List α) = [] := by
+  simp [chunk]
+
 end MIPRE.CL
 
 namespace MIPRE.Cost
@@ -97,10 +107,6 @@ def bitsOf (l : List Data) : BitStr := l.map bitOf
 
 @[simp] theorem bitsOf_map_ofBool (x : BitStr) : bitsOf (x.map ofBool) = x := by
   simp [bitsOf, List.map_map, Function.comp_def]
-
-/-- A bit string encodes as the list of its bits' data. -/
-theorem encode_bitStr_eq_list (x : BitStr) : (encode x : Data) = list (x.map ofBool) :=
-  ofList_eq_list ofBool x
 
 theorem toList_encode_bitStr (x : BitStr) : toList (encode x) = x.map ofBool := by
   rw [encode_bitStr_eq_list, toList_list]
