@@ -523,6 +523,7 @@ import MIPRE.Foundations.CL.Basic
 import MIPRE.Foundations.CL.Closure
 import MIPRE.Foundations.CL.Downsize
 import MIPRE.Foundations.CL.Register
+import MIPRE.Foundations.CL.Repeat
 import MIPRE.Foundations.CL.Sampler
 import MIPRE.Foundations.ClassMIPStar
 import MIPRE.Foundations.CommutingOperator

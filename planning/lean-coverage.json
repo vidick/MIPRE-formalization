@@ -84,8 +84,17 @@
   "MIPRE.CL.CLFun.eval_downsize": [
    "lem:cl-downsize"
   ],
+  "MIPRE.CL.CLFun.eval_famSum": [
+   "lem:cl-famsum"
+  ],
   "MIPRE.CL.CLFun.eval_truncate_downsize": [
    "lem:cl-downsize"
+  ],
+  "MIPRE.CL.CLFun.eval_truncate_famSum": [
+   "lem:cl-famsum"
+  ],
+  "MIPRE.CL.CLFun.exactlyOn_famSum": [
+   "lem:cl-famsum"
   ],
   "MIPRE.CL.CLFun.factorAt": [
    "lem:cl-structure"
@@ -96,6 +105,12 @@
   "MIPRE.CL.CLFun.factorOfPrefix_downsize": [
    "lem:cl-downsize"
   ],
+  "MIPRE.CL.CLFun.factorOfPrefix_famSum": [
+   "lem:cl-famsum"
+  ],
+  "MIPRE.CL.CLFun.famSum": [
+   "lem:cl-famsum"
+  ],
   "MIPRE.CL.CLFun.mapAt": [
    "lem:cl-structure"
   ],
@@ -104,6 +119,9 @@
   ],
   "MIPRE.CL.CLFun.mapOfPrefix_downsize": [
    "lem:cl-downsize"
+  ],
+  "MIPRE.CL.CLFun.mapOfPrefix_famSum": [
+   "lem:cl-famsum"
   ],
   "MIPRE.CL.CLFun.reindex": [
    "lem:cl-downsize"
@@ -125,6 +143,9 @@
   ],
   "MIPRE.CL.IsCLFun.downsize": [
    "lem:cl-downsize"
+  ],
+  "MIPRE.CL.IsCLFun.famSum": [
+   "lem:cl-famsum"
   ],
   "MIPRE.CL.IsCLFun.reindex": [
    "lem:cl-downsize"
@@ -158,6 +179,9 @@
   ],
   "MIPRE.CL.clDist_downsize": [
    "lem:cl-downsize"
+  ],
+  "MIPRE.CL.clDist_famSum": [
+   "lem:cl-famsum"
   ],
   "MIPRE.CL.downsizeEquiv": [
    "lem:cl-downsize"
@@ -1219,13 +1243,19 @@
   "MIPRE.CL.CLFun.downsize",
   "MIPRE.CL.CLFun.eval",
   "MIPRE.CL.CLFun.eval_downsize",
+  "MIPRE.CL.CLFun.eval_famSum",
   "MIPRE.CL.CLFun.eval_truncate_downsize",
+  "MIPRE.CL.CLFun.eval_truncate_famSum",
+  "MIPRE.CL.CLFun.exactlyOn_famSum",
   "MIPRE.CL.CLFun.factorAt",
   "MIPRE.CL.CLFun.factorOfPrefix",
   "MIPRE.CL.CLFun.factorOfPrefix_downsize",
+  "MIPRE.CL.CLFun.factorOfPrefix_famSum",
+  "MIPRE.CL.CLFun.famSum",
   "MIPRE.CL.CLFun.mapAt",
   "MIPRE.CL.CLFun.mapOfPrefix",
   "MIPRE.CL.CLFun.mapOfPrefix_downsize",
+  "MIPRE.CL.CLFun.mapOfPrefix_famSum",
   "MIPRE.CL.CLFun.reindex",
   "MIPRE.CL.CLFun.truncate",
   "MIPRE.CL.IsCLFun",
@@ -1233,6 +1263,7 @@
   "MIPRE.CL.IsCLFun.directSum",
   "MIPRE.CL.IsCLFun.directSum'",
   "MIPRE.CL.IsCLFun.downsize",
+  "MIPRE.CL.IsCLFun.famSum",
   "MIPRE.CL.IsCLFun.reindex",
   "MIPRE.CL.IsCLFun.succ",
   "MIPRE.CL.Sampler",
@@ -1244,6 +1275,7 @@
   "MIPRE.CL.Sampler.queryUnder_marginal",
   "MIPRE.CL.clDist",
   "MIPRE.CL.clDist_downsize",
+  "MIPRE.CL.clDist_famSum",
   "MIPRE.CL.downsizeEquiv",
   "MIPRE.CommutingOperatorStrategy",
   "MIPRE.CommutingOperatorStrategy.value",
@@ -1663,6 +1695,16 @@
    "MIPRE.CL.IsCLFun.reindex",
    "MIPRE.CL.clDist_downsize",
    "MIPRE.CL.downsizeEquiv"
+  ],
+  "MIPRE/Foundations/CL/Repeat.lean": [
+   "MIPRE.CL.CLFun.eval_famSum",
+   "MIPRE.CL.CLFun.eval_truncate_famSum",
+   "MIPRE.CL.CLFun.exactlyOn_famSum",
+   "MIPRE.CL.CLFun.factorOfPrefix_famSum",
+   "MIPRE.CL.CLFun.famSum",
+   "MIPRE.CL.CLFun.mapOfPrefix_famSum",
+   "MIPRE.CL.IsCLFun.famSum",
+   "MIPRE.CL.clDist_famSum"
   ],
   "MIPRE/Foundations/CL/Sampler.lean": [
    "MIPRE.CL.Sampler",
@@ -2163,7 +2205,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 93,
+ "lean_tags": 94,
  "module_sizes": {
   "MIPRE/Axioms.lean": 0,
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
@@ -2194,6 +2236,7 @@
   "MIPRE/Foundations/CL/Closure.lean": 18,
   "MIPRE/Foundations/CL/Downsize.lean": 45,
   "MIPRE/Foundations/CL/Register.lean": 42,
+  "MIPRE/Foundations/CL/Repeat.lean": 36,
   "MIPRE/Foundations/CL/Sampler.lean": 23,
   "MIPRE/Foundations/ClassMIPStar.lean": 8,
   "MIPRE/Foundations/CommutingOperator.lean": 4,
@@ -2317,9 +2360,9 @@
   "cites": 154,
   "commands_defined": 99,
   "commands_used": 207,
-  "labels": 229,
-  "leanok_claimed": 189,
-  "leanok_guarded": 189,
-  "refs": 1062
+  "labels": 230,
+  "leanok_claimed": 197,
+  "leanok_guarded": 197,
+  "refs": 1065
  }
 }
