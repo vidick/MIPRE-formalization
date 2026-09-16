@@ -30,34 +30,87 @@ open Data
 
 namespace Data
 
+/-- The elements of a datum read as a list: every datum is a `cons`-chain ending in `nil`. -/
+def toList : Data → List Data
+  | nil => []
+  | cons a b => a :: toList b
+
+@[simp] theorem list_toList : ∀ d : Data, list (toList d) = d
+  | nil => rfl
+  | cons a b => by simp [toList, list_toList b]
+
+@[simp] theorem toList_list : ∀ l : List Data, toList (list l) = l
+  | [] => rfl
+  | a :: l => by simp [toList, toList_list l]
+
+theorem size_list_append (l₁ l₂ : List Data) :
+    (list (l₁ ++ l₂)).size + 1 = (list l₁).size + (list l₂).size := by
+  induction l₁ with
+  | nil => simp only [List.nil_append, list_nil, size_nil]; omega
+  | cons a l ih => simp only [List.cons_append, size_list_cons] at ih ⊢; omega
+
+theorem size_list_reverse (l : List Data) : (list l.reverse).size = (list l).size := by
+  induction l with
+  | nil => rfl
+  | cons a l ih =>
+    have := size_list_append l.reverse [a]
+    simp only [List.reverse_cons, size_list_cons, list_nil, size_nil] at this ⊢
+    omega
+
+theorem size_list_take_le (s : ℕ) (l : List Data) : (list (l.take s)).size ≤ (list l).size := by
+  induction l generalizing s with
+  | nil => simp
+  | cons a l ih =>
+    cases s with
+    | zero => simp only [List.take_zero, list_nil, size_nil, size_list_cons]; omega
+    | succ s => simp only [List.take_succ_cons, size_list_cons]; have := ih s; omega
+
+theorem size_list_drop_le (s : ℕ) (l : List Data) : (list (l.drop s)).size ≤ (list l).size := by
+  induction l generalizing s with
+  | nil => simp
+  | cons a l ih =>
+    cases s with
+    | zero => exact le_rfl
+    | succ s => simp only [List.drop_succ_cons, size_list_cons]; have := ih s; omega
+
+theorem length_le_size_list' (l : List Data) : l.length + 1 ≤ (list l).size := by
+  induction l with
+  | nil => simp
+  | cons a l ih => simp only [List.length_cons, size_list_cons]; have := size_pos a; omega
+
 /-- The pieces of `s` consecutive elements of a list, the last one possibly shorter
 (`s > 0`). -/
-def chunks (s : ℕ) (hs : 0 < s) : List Data → List (List Data)
+def chunks {α : Type*} (s : ℕ) (hs : 0 < s) : List α → List (List α)
   | [] => []
   | h :: l => (h :: l).take s :: chunks s hs ((h :: l).drop s)
 termination_by l => l.length
 decreasing_by simp; omega
 
-theorem chunks_nil (s : ℕ) (hs : 0 < s) : chunks s hs [] = [] := by rw [chunks]
+theorem chunks_nil {α : Type*} (s : ℕ) (hs : 0 < s) : chunks s hs ([] : List α) = [] := by
+  rw [chunks]
 
-theorem chunks_cons (s : ℕ) (hs : 0 < s) (h : Data) (l : List Data) :
+theorem chunks_cons {α : Type*} (s : ℕ) (hs : 0 < s) (h : α) (l : List α) :
     chunks s hs (h :: l) = (h :: l).take s :: chunks s hs ((h :: l).drop s) := by rw [chunks]
 
-theorem chunks_of_ne_nil (s : ℕ) (hs : 0 < s) {l : List Data} (hl : l ≠ []) :
+theorem chunks_of_ne_nil {α : Type*} (s : ℕ) (hs : 0 < s) {l : List α} (hl : l ≠ []) :
     chunks s hs l = l.take s :: chunks s hs (l.drop s) := by
   cases l with
   | nil => exact absurd rfl hl
   | cons h l => exact chunks_cons s hs h l
 
 /-- The pieces reassemble the list. -/
-theorem flatten_chunks (s : ℕ) (hs : 0 < s) (l : List Data) : (chunks s hs l).flatten = l := by
+theorem flatten_chunks {α : Type*} (s : ℕ) (hs : 0 < s) (l : List α) :
+    (chunks s hs l).flatten = l := by
   induction l using chunks.induct s hs with
   | case1 => simp [chunks_nil]
   | case2 h l ih => rw [chunks_cons, List.flatten_cons, ih, List.take_append_drop]
 
-/-- A list of length `k · s` cuts into `k` pieces of length `s`. -/
-theorem chunks_of_length_mul (s : ℕ) (hs : 0 < s) : ∀ (k : ℕ) (l : List Data),
-    l.length = k * s → (chunks s hs l).length = k ∧ ∀ p ∈ chunks s hs l, p.length = s
+/-- The `i`-th piece of `s` elements of a list. -/
+def chunk {α : Type*} (s i : ℕ) (l : List α) : List α := (l.drop (i * s)).take s
+
+/-- A list of length `k · s` cuts into the `k` pieces `chunk s i l`. -/
+theorem chunks_eq_ofFn {α : Type*} (s : ℕ) (hs : 0 < s) : ∀ (k : ℕ) (l : List α),
+    l.length = k * s → chunks s hs l = List.ofFn fun i : Fin k => chunk s i l
   | 0, l, hl => by
     have : l = [] := List.eq_nil_of_length_eq_zero (by simpa using hl)
     subst this
@@ -65,15 +118,102 @@ theorem chunks_of_length_mul (s : ℕ) (hs : 0 < s) : ∀ (k : ℕ) (l : List Da
   | k + 1, l, hl => by
     have hne : l ≠ [] := by
       intro h; subst h; simp at hl; nlinarith
-    rw [chunks_of_ne_nil s hs hne]
+    rw [chunks_of_ne_nil s hs hne, List.ofFn_succ]
     have hlen : (l.drop s).length = k * s := by
       rw [List.length_drop, hl]; rw [Nat.succ_mul]; omega
-    obtain ⟨h1, h2⟩ := chunks_of_length_mul s hs k (l.drop s) hlen
-    refine ⟨by simp [h1], fun p hp => ?_⟩
-    rw [List.mem_cons] at hp
+    rw [chunks_eq_ofFn s hs k (l.drop s) hlen]
+    congr 1
+    · simp [chunk]
+    · congr 1
+      funext i
+      simp only [chunk, Fin.val_succ, List.drop_drop]
+      congr 2
+      ring
+
+theorem chunks_of_length_mul {α : Type*} (s : ℕ) (hs : 0 < s) (k : ℕ) (l : List α)
+    (hl : l.length = k * s) : (chunks s hs l).length = k ∧ ∀ p ∈ chunks s hs l, p.length = s := by
+  rw [chunks_eq_ofFn s hs k l hl]
+  refine ⟨by simp, fun p hp => ?_⟩
+  rw [List.mem_ofFn] at hp
+  obtain ⟨i, rfl⟩ := hp
+  simp only [chunk, List.length_take, List.length_drop, hl]
+  have hi : (i + 1) * s ≤ k * s := Nat.mul_le_mul_right s i.isLt
+  rw [Nat.add_mul, one_mul] at hi
+  rw [min_eq_left (by omega)]
+
+theorem chunks_map {α β : Type*} (s : ℕ) (hs : 0 < s) (f : α → β) (l : List α) :
+    chunks s hs (l.map f) = (chunks s hs l).map (List.map f) := by
+  induction l using chunks.induct s hs with
+  | case1 => simp [chunks_nil]
+  | case2 h l ih =>
+    have e : (h :: l).map f = f h :: l.map f := rfl
+    rw [e, chunks_cons, chunks_cons, List.map_cons, ← e, ← List.map_take, ← List.map_drop, ih]
+
+/-- The pieces of `s` elements of two lists, in lockstep: as many as the first list has, the
+second one's possibly shorter or empty. -/
+def chunkPairs (s : ℕ) (hs : 0 < s) : List Data → List Data → List (List Data × List Data)
+  | [], _ => []
+  | h :: l, y => ((h :: l).take s, y.take s) :: chunkPairs s hs ((h :: l).drop s) (y.drop s)
+termination_by l => l.length
+decreasing_by simp; omega
+
+theorem chunkPairs_nil (s : ℕ) (hs : 0 < s) (y : List Data) : chunkPairs s hs [] y = [] := by
+  rw [chunkPairs]
+
+theorem chunkPairs_cons (s : ℕ) (hs : 0 < s) (h : Data) (l y : List Data) :
+    chunkPairs s hs (h :: l) y =
+      ((h :: l).take s, y.take s) :: chunkPairs s hs ((h :: l).drop s) (y.drop s) := by
+  rw [chunkPairs]
+
+theorem chunkPairs_of_ne_nil (s : ℕ) (hs : 0 < s) {l : List Data} (hl : l ≠ []) (y : List Data) :
+    chunkPairs s hs l y = (l.take s, y.take s) :: chunkPairs s hs (l.drop s) (y.drop s) := by
+  cases l with
+  | nil => exact absurd rfl hl
+  | cons h l => exact chunkPairs_cons s hs h l y
+
+/-- With the first list of length `k · s`, the pairs are the `k` pairs of pieces. -/
+theorem chunkPairs_eq_ofFn (s : ℕ) (hs : 0 < s) : ∀ (k : ℕ) (l y : List Data),
+    l.length = k * s → chunkPairs s hs l y = List.ofFn fun i : Fin k => (chunk s i l, chunk s i y)
+  | 0, l, y, hl => by
+    have : l = [] := List.eq_nil_of_length_eq_zero (by simpa using hl)
+    subst this
+    simp [chunkPairs_nil]
+  | k + 1, l, y, hl => by
+    have hne : l ≠ [] := by
+      intro h; subst h; simp at hl; nlinarith
+    rw [chunkPairs_of_ne_nil s hs hne, List.ofFn_succ]
+    have hlen : (l.drop s).length = k * s := by
+      rw [List.length_drop, hl]; rw [Nat.succ_mul]; omega
+    rw [chunkPairs_eq_ofFn s hs k (l.drop s) (y.drop s) hlen]
+    congr 1
+    · simp [chunk]
+    · congr 1
+      funext i
+      simp only [chunk, Fin.val_succ, List.drop_drop]
+      congr 3 <;> ring
+
+/-- Every piece is a piece of the list it came from: the sizes are bounded. -/
+theorem size_le_of_mem_chunkPairs (s : ℕ) (hs : 0 < s) (l y : List Data) :
+    ∀ p ∈ chunkPairs s hs l y, (list p.1).size ≤ (list l).size ∧ (list p.2).size ≤ (list y).size := by
+  induction l, y using chunkPairs.induct s hs with
+  | case1 y => simp [chunkPairs_nil]
+  | case2 h l y ih =>
+    intro p hp
+    rw [chunkPairs_cons, List.mem_cons] at hp
     rcases hp with rfl | hp
-    · rw [List.length_take, hl]; rw [Nat.succ_mul]; omega
-    · exact h2 p hp
+    · exact ⟨size_list_take_le _ _, size_list_take_le _ _⟩
+    · obtain ⟨h1, h2⟩ := ih p hp
+      exact ⟨h1.trans (size_list_drop_le _ _), h2.trans (size_list_drop_le _ _)⟩
+
+/-- The binary digits of `2^m · s`, for `s ≠ 0`: `m` zeros then those of `s`. -/
+theorem _root_.Nat.bits_two_pow_mul (m : ℕ) {s : ℕ} (hs : s ≠ 0) :
+    (2 ^ m * s).bits = List.replicate m false ++ s.bits := by
+  induction m with
+  | zero => simp
+  | succ m ih =>
+    have hne : 2 ^ m * s ≠ 0 := by positivity
+    rw [pow_succ, mul_comm (2 ^ m) 2, mul_assoc, Nat.bit0_bits _ hne, ih, List.replicate_succ,
+      List.cons_append]
 
 end Data
 
