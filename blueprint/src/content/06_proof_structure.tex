@@ -1540,12 +1540,37 @@ halting-freeze convention makes the decider total.
 \begin{lemma}[A uniform bound on the verifier's parameter]
 \label{lem:lambda-bound}
 \ledgernode{1.6.4}
+\lean{MIPRE.Halting.lambda_bound, MIPRE.Halting.log_lt_div,
+  MIPRE.Halting.sq_le_two_pow_of_four_le, MIPRE.Halting.four_mul_succ_lt_two_pow}
+\leanok
 For all integers $C, C' \geq 1$, all $\lambda \geq 4 \max\{ (4C)^{8C},\ C \log C' \}$
 and all $n \geq 2$,
 \begin{equation*}
   C\, (C' \lambda n)^{C} \;\leq\; n^{\lambda} .
 \end{equation*}
 \end{lemma}
+
+\begin{proof}
+\leanok
+Bound each factor of the left-hand side by a power of $n$ --- $C' \leq 2^{\log C' + 1}$,
+$\lambda \leq 2^{\log \lambda + 1}$, $C \leq 2^{C}$, and $2 \leq n$ --- so that the claim
+reduces to the \emph{linear} inequality
+$4C + C \log C' + C \log \lambda \leq \lambda$. Two of its three terms are a quarter of
+$\lambda$ by hypothesis outright. The third, $C \log \lambda \leq \lambda/4$, is the only
+one with content, and it is $\lambda < 2^{\lambda / 4C}$: writing $q = \lambda / 4C$, the
+hypothesis $\lambda \geq 4(4C)^{8C}$ gives $q \geq 8C + 4$, and there
+$4C(q+1) < q^2 \leq 2^q$, the second inequality holding from $q = 4$ on.
+\end{proof}
+
+\paragraph{Comments.} In Lean $\log$ is $\mathtt{Nat.log\ 2}$, which makes the threshold no
+larger, and the hypothesis $C' \geq 1$ is dropped: $C' < 2^{\log_2 C' + 1}$ holds at $C' = 0$
+as well, so the Lean statement is the stronger one. What consumes this in the halting
+reduction is the boundedness of a \emph{compressed} verifier: its running times are
+$\poly(n, \lambda)$ (\texttt{GapCompression.decider\_time}, \texttt{sampler\_time}) while
+Definition~\ref{def:lambda-bounded} asks for $n^\lambda$, and this is the inequality that
+turns the first into the second once $\lambda$ is past a threshold depending on the degree
+alone --- which is what keeps $\lambda$ polynomial in the description length rather than
+exponential in it.
 
 \effortEasy
 
