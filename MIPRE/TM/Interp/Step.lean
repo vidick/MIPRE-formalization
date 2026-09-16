@@ -202,7 +202,7 @@ macro "norm_ds" "at" hs:(ppSpace colGt ident)+ : tactic =>
       overwrite_append', List.cons_append, List.nil_append, List.append_nil,
       List.drop_succ_cons, List.drop_zero, List.length_cons, List.length_append, List.length_nil,
       List.length_singleton, length_S, length_S_ofNat, Nat.add_zero, Nat.zero_add,
-      List.drop_left', Nat.add_sub_cancel, ctrlRepr_var, ctrlRepr_nil, ctrlRepr_cons, ctrlRepr_elim,
+      List.drop_left', Nat.add_sub_cancel, Data.size_nil, Data.size_cons, Data.size_ofNat, ctrlRepr_var, ctrlRepr_nil, ctrlRepr_cons, ctrlRepr_elim,
       ctrlRepr_let, ctrlRepr_loop, ctrlRepr_const, ctrlRepr_ret] at $hs*)
 
 macro "norm_ds_goal" : tactic =>
@@ -212,7 +212,7 @@ macro "norm_ds_goal" : tactic =>
       overwrite_append', List.cons_append, List.nil_append, List.append_nil,
       List.drop_succ_cons, List.drop_zero, List.length_cons, List.length_append, List.length_nil,
       List.length_singleton, length_S, length_S_ofNat, Nat.add_zero, Nat.zero_add,
-      List.drop_left', Nat.add_sub_cancel, ctrlRepr_var, ctrlRepr_nil, ctrlRepr_cons, ctrlRepr_elim,
+      List.drop_left', Nat.add_sub_cancel, Data.size_nil, Data.size_cons, Data.size_ofNat, ctrlRepr_var, ctrlRepr_nil, ctrlRepr_cons, ctrlRepr_elim,
       ctrlRepr_let, ctrlRepr_loop, ctrlRepr_const, ctrlRepr_ret])
 
 /-! ## The dispatcher on `ev` -/
@@ -395,12 +395,12 @@ theorem case_evNil {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evNil
   norm_ds at hr₁ hd₁
   obtain ⟨c₂, hr₂, hd₂⟩ := D_write rfl (by decide) hd₁ (by simp <;> omega)
   norm_ds at hd₂
-  obtain ⟨c₃, hr₃, hd₃⟩ := D_write rfl (by decide) hd₂ (by simp)
+  obtain ⟨c₃, hr₃, hd₃⟩ := D_write rfl (by decide) hd₂ (by simp <;> omega)
   norm_ds at hd₃
   obtain ⟨c₄, hr₄, hd₄⟩ := D_charge rfl (by decide) hd₃ (r := r) (by simp <;> omega)
   norm_ds at hd₄
   obtain ⟨c₅, hr₅, hd₅⟩ := D_jump rfl hd₄
-  refine ⟨_, ?_, c₅, _, ((((hr₁.trans hr₂).trans hr₃).trans hr₄).trans hr₅).cast_out (by simp), hd₅,
+  refine ⟨_, ?_, c₅, _, ((((hr₁.trans hr₂).trans hr₃).trans hr₄).trans hr₅).cast_out (by simp <;> omega), hd₅,
     ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
   · simp only [caseBound]; omega
   · simp [ctrlRepr_ret] <;> omega
@@ -423,10 +423,10 @@ theorem case_evNil_fail {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .
   norm_ds at hr₁ hd₁
   obtain ⟨c₂, hr₂, hd₂⟩ := D_write rfl (by decide) hd₁ (by simp <;> omega)
   norm_ds at hd₂
-  obtain ⟨c₃, hr₃, hd₃⟩ := D_write rfl (by decide) hd₂ (by simp)
+  obtain ⟨c₃, hr₃, hd₃⟩ := D_write rfl (by decide) hd₂ (by simp <;> omega)
   norm_ds at hd₃
   have h4 := D_charge_fail rfl hd₃ (by simp <;> omega)
-  exact (HaltsIn.after (((hr₁.trans hr₂).trans hr₃).cast_out (by simp)) h4).mono
+  exact (HaltsIn.after (((hr₁.trans hr₂).trans hr₃).cast_out (by simp <;> omega)) h4).mono
     (by simp only [caseBound]; omega)
 
 theorem case_evVar {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evVar 0) ds)
@@ -444,9 +444,9 @@ theorem case_evVar {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evVar
   obtain ⟨c₂, hr₂, hd₂⟩ := D_rewind rfl (by decide) hd₁ (by simp <;> omega)
   norm_ds at hr₂ hd₂
   obtain ⟨n₃, hn₃, c₃, hr₃, hd₃⟩ := D_getEnv rfl (by decide) hd₂ (env := env) (by simp <;> omega) (i := i)
-    (l₁ := [.zero, .one, .zero]) (l₂ := g) (by simp <;> omega) (by simp <;> omega) (by simp)
+    (l₁ := [.zero, .one, .zero]) (l₂ := g) (by simp <;> omega) (by simp <;> omega) (by simp <;> omega)
   norm_ds at hd₃
-  obtain ⟨c₄, hr₄, hd₄⟩ := D_rewind rfl (by decide) hd₃ (by simp)
+  obtain ⟨c₄, hr₄, hd₄⟩ := D_rewind rfl (by decide) hd₃ (by simp <;> omega)
   norm_ds at hr₄ hd₄
   obtain ⟨c₅, hr₅, hd₅⟩ := D_rewind rfl (by decide) hd₄ (by simp <;> omega)
   norm_ds at hr₅ hd₅
@@ -454,7 +454,7 @@ theorem case_evVar {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evVar
   norm_ds at hd₆
   obtain ⟨n₇, hn₇, c₇, hr₇, hd₇⟩ := D_copyTree_charge rfl (by decide) (by decide) (by decide) (by decide)
     (by decide) (by decide) hd₆ (by simp <;> omega) (r := r + ((Env.get env i).size + 1)) (by simp <;> omega)
-    (v := Env.get env i) (l₁ := []) (l₂ := (ds X).l.drop (S (Env.get env i)).length) (by simp) (by simp)
+    (v := Env.get env i) (l₁ := []) (l₂ := (ds X).l.drop (S (Env.get env i)).length) (by simp <;> omega) (by simp <;> omega)
     (by simp <;> omega) (by omega)
   norm_ds at hd₇
   obtain ⟨c₈, hr₈, hd₈⟩ := D_charge rfl (by decide) hd₇ (r := r)
@@ -463,7 +463,7 @@ theorem case_evVar {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evVar
   obtain ⟨c₉, hr₉, hd₉⟩ := D_jump rfl hd₈
   refine ⟨_, ?_, c₉, _,
     ((((((((hr₁.trans hr₂).trans hr₃).trans hr₄).trans hr₅).trans hr₆).trans hr₇).trans hr₈).trans
-      hr₉).cast_out (by simp), hd₉, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
+      hr₉).cast_out (by simp <;> omega), hd₉, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
   · simp only [caseBound, sz, ctrlRepr_var, List.length_cons, List.length_append, length_S_ofNat]
     omega
   · simp [ctrlRepr_ret] <;> omega
@@ -492,20 +492,20 @@ theorem case_evVar_fail {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .
   obtain ⟨c₂, hr₂, hd₂⟩ := D_rewind rfl (by decide) hd₁ (by simp <;> omega)
   norm_ds at hr₂ hd₂
   obtain ⟨n₃, hn₃, c₃, hr₃, hd₃⟩ := D_getEnv rfl (by decide) hd₂ (env := env) (by simp <;> omega) (i := i)
-    (l₁ := [.zero, .one, .zero]) (l₂ := g) (by simp <;> omega) (by simp <;> omega) (by simp)
+    (l₁ := [.zero, .one, .zero]) (l₂ := g) (by simp <;> omega) (by simp <;> omega) (by simp <;> omega)
   norm_ds at hd₃
-  obtain ⟨c₄, hr₄, hd₄⟩ := D_rewind rfl (by decide) hd₃ (by simp)
+  obtain ⟨c₄, hr₄, hd₄⟩ := D_rewind rfl (by decide) hd₃ (by simp <;> omega)
   norm_ds at hr₄ hd₄
   obtain ⟨c₅, hr₅, hd₅⟩ := D_rewind rfl (by decide) hd₄ (by simp <;> omega)
   norm_ds at hr₅ hd₅
   obtain ⟨c₆, hr₆, hd₆⟩ := D_write rfl (by decide) hd₅ (by simp <;> omega)
   norm_ds at hd₆
   have hR : Reach c _ c₆ [] :=
-    (((((hr₁.trans hr₂).trans hr₃).trans hr₄).trans hr₅).trans hr₆).cast_out (by simp)
+    (((((hr₁.trans hr₂).trans hr₃).trans hr₄).trans hr₅).trans hr₆).cast_out (by simp <;> omega)
   rcases Nat.lt_or_ge r (Env.get env i).size with hr' | hr'
   · have h7 := D_copyTree_charge_fail rfl (by decide) (by decide) (by decide) (by decide) (by decide)
       (by decide) hd₆ (by simp <;> omega) (r := r) (by simp <;> omega) (v := Env.get env i) (l₁ := [])
-      (l₂ := (ds X).l.drop (S (Env.get env i)).length) (by simp) (by simp) hr'
+      (l₂ := (ds X).l.drop (S (Env.get env i)).length) (by simp <;> omega) (by simp <;> omega) hr'
     refine (HaltsIn.after hR h7).mono ?_
     simp only [caseBound, sz, ctrlRepr_var, List.length_cons, List.length_append, length_S_ofNat]
     omega
@@ -513,11 +513,11 @@ theorem case_evVar_fail {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .
     subst hr0
     obtain ⟨n₇, hn₇, c₇, hr₇, hd₇⟩ := D_copyTree_charge rfl (by decide) (by decide) (by decide) (by decide)
       (by decide) (by decide) hd₆ (by simp <;> omega) (r := (Env.get env i).size) (by simp <;> omega)
-      (v := Env.get env i) (l₁ := []) (l₂ := (ds X).l.drop (S (Env.get env i)).length) (by simp) (by simp)
+      (v := Env.get env i) (l₁ := []) (l₂ := (ds X).l.drop (S (Env.get env i)).length) (by simp <;> omega) (by simp <;> omega)
       (by simp <;> omega) le_rfl
     norm_ds at hd₇
-    have h8 := D_charge_fail rfl hd₇ (by simp)
-    refine (HaltsIn.after (hR.trans hr₇ |>.cast_out (by simp)) h8).mono ?_
+    have h8 := D_charge_fail rfl hd₇ (by simp <;> omega)
+    refine (HaltsIn.after (hR.trans hr₇ |>.cast_out (by simp <;> omega)) h8).mono ?_
     simp only [caseBound, sz, ctrlRepr_var, List.length_cons, List.length_append, length_S_ofNat]
     omega
 
@@ -537,22 +537,22 @@ theorem case_evConst {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evC
   obtain ⟨n₃, hn₃, c₃, hr₃, hd₃⟩ := D_copyTree_charge rfl (by decide) (by decide) (by decide) (by decide)
     (by decide) (by decide) hd₂ (by simp <;> omega) (r := r + d.size) (by simp <;> omega) (v := d)
     (l₁ := [.zero, .one, .one, .zero, .one, .zero, .one, .zero, .one, .zero, .one, .zero, .one, .zero,
-      .zero]) (l₂ := g) (by simp <;> omega) (by simp <;> omega) (by simp) (by omega)
+      .zero]) (l₂ := g) (by simp <;> omega) (by simp <;> omega) (by simp <;> omega) (by omega)
   norm_ds at hd₃
   obtain ⟨c₄, hr₄, hd₄⟩ := D_rewind rfl (by decide) hd₃ (by simp <;> omega)
   norm_ds at hr₄ hd₄
   obtain ⟨c₅, hr₅, hd₅⟩ := D_write rfl (by decide) hd₄ (by simp <;> omega)
   norm_ds at hd₅
-  obtain ⟨c₆, hr₆, hd₆⟩ := D_rewind rfl (by decide) hd₅ (by simp)
+  obtain ⟨c₆, hr₆, hd₆⟩ := D_rewind rfl (by decide) hd₅ (by simp <;> omega)
   norm_ds at hr₆ hd₆
   obtain ⟨n₇, hn₇, c₇, hr₇, hd₇⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide) hd₆
-    (by simp <;> omega) (v := d) (l₁ := []) (l₂ := (ds X).l.drop (S d).length) (by simp) (by simp)
+    (by simp <;> omega) (v := d) (l₁ := []) (l₂ := (ds X).l.drop (S d).length) (by simp <;> omega) (by simp <;> omega)
     (by simp <;> omega)
   norm_ds at hd₇
   obtain ⟨c₈, hr₈, hd₈⟩ := D_jump rfl hd₇
   refine ⟨_, ?_, c₈, _,
     (((((((hr₁.trans hr₂).trans hr₃).trans hr₄).trans hr₅).trans hr₆).trans hr₇).trans hr₈).cast_out
-      (by simp), hd₈, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
+      (by simp <;> omega), hd₈, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
   · simp only [caseBound, sz, ctrlRepr_const, List.length_cons, List.length_append, length_S]
     omega
   · simp [ctrlRepr_ret] <;> omega
@@ -581,7 +581,7 @@ theorem case_evConst_fail {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_
     (by decide) hd₂ (by simp <;> omega) (r := r) (by simp <;> omega) (v := d)
     (l₁ := [.zero, .one, .one, .zero, .one, .zero, .one, .zero, .one, .zero, .one, .zero, .one, .zero,
       .zero]) (l₂ := g) (by simp <;> omega) (by simp <;> omega) hlt
-  refine (HaltsIn.after ((hr₁.trans hr₂).cast_out (by simp)) h3).mono ?_
+  refine (HaltsIn.after ((hr₁.trans hr₂).cast_out (by simp <;> omega)) h3).mono ?_
   simp only [caseBound, sz, ctrlRepr_const, List.length_cons, List.length_append, length_S]
   omega
 
@@ -606,7 +606,7 @@ theorem case_evCons {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evCo
   obtain ⟨n₄, hn₄, c₄, hr₄, hd₄⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide) hd₃
     (by simp <;> omega) (v := h.toData)
     (l₁ := [.zero, .one, .one, .zero, .one, .zero, .zero, .one]) (l₂ := S t.toData ++ g)
-    (by simp <;> omega) (by simp <;> omega) (by simp)
+    (by simp <;> omega) (by simp <;> omega) (by simp <;> omega)
   norm_ds at hd₄
   obtain ⟨c₅, hr₅, hd₅⟩ := D_write rfl (by decide) hd₄ (by simp <;> omega)
   norm_ds at hd₅
@@ -630,16 +630,16 @@ theorem case_evCons {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evCo
   norm_ds at hr₁₂ hd₁₂
   obtain ⟨c₁₃, hr₁₃, hd₁₃⟩ := D_write rfl (by decide) hd₁₂ (by simp <;> omega)
   norm_ds at hd₁₃
-  obtain ⟨c₁₄, hr₁₄, hd₁₄⟩ := D_rewind rfl (by decide) hd₁₃ (by simp)
+  obtain ⟨c₁₄, hr₁₄, hd₁₄⟩ := D_rewind rfl (by decide) hd₁₃ (by simp <;> omega)
   norm_ds at hr₁₄ hd₁₄
   obtain ⟨n₁₅, hn₁₅, c₁₅, hr₁₅, hd₁₅⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide)
-    hd₁₄ (by simp <;> omega) (v := h.toData) (l₁ := []) (l₂ := (ds X).l.drop (S h.toData).length) (by simp)
-    (by simp) (by simp <;> omega)
+    hd₁₄ (by simp <;> omega) (v := h.toData) (l₁ := []) (l₂ := (ds X).l.drop (S h.toData).length) (by simp <;> omega)
+    (by simp <;> omega) (by simp <;> omega)
   norm_ds at hd₁₅
   refine ⟨_, ?_, c₁₅, _,
     ((((((((((((((hr₁.trans hr₂).trans hr₃).trans hr₄).trans hr₅).trans hr₆).trans hr₇).trans
       hr₈).trans hr₉).trans hr₁₀).trans hr₁₁).trans hr₁₂).trans hr₁₃).trans hr₁₄).trans
-      hr₁₅).cast_out (by simp), hd₁₅, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
+      hr₁₅).cast_out (by simp <;> omega), hd₁₅, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
   · simp only [caseBound, sz, ctrlRepr_cons, List.length_cons, List.length_append, length_S]
     omega
   · simp [ctrlRepr] <;> omega
@@ -650,6 +650,334 @@ theorem case_evCons {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evCo
   · simp [hX]
   · norm_ds_goal
     simp only [sz, ctrlRepr_cons, List.length_cons, List.length_append, length_S, List.length_drop]
+    omega
+
+
+/-! ## Finishing a case: the charge and the jump -/
+
+theorem PreTo.charge_jump {c : Cfg input} {B : ℕ} {k : ProgId} {pc : Fin maxPc} {m' : Machine.Cfg}
+    {r xl : ℕ} (h : PreTo c B (at_ k pc) m' (r + 1) (ctrlRepr m'.ctrl).length
+      (kontRepr m'.kont).length xl)
+    (hins : instrAt k pc = .charge false) (hpc : pc.val + 1 < maxPc)
+    (hins' : instrAt k ⟨pc.val + 1, hpc⟩ = .jump .dispatch) : StepTo c (B + 3) m' r xl := by
+  obtain ⟨n, hn, c', ds', hr, hd, hrep, hxl⟩ := h
+  obtain ⟨c₁, hr₁, hd₁⟩ := D_charge hins hpc hd (r := r) hrep.bud
+  obtain ⟨c₂, hr₂, hd₂⟩ := D_jump hins' hd₁
+  refine ⟨n + 2 + 1, by omega, c₂, _, ((hr.trans hr₁).trans hr₂).cast_out (by simp <;> omega), hd₂,
+    ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
+  · obtain ⟨g, hg⟩ := hrep.ctrl
+    exact ⟨g, by simp [hg]⟩
+  · simp [hrep.env]
+  · simp [hrep.kont]
+  · simpa using hrep.scratch
+  · simp [hrep.cnt]
+  · simp
+  · simpa using hxl
+
+theorem PreTo.charge_fail {c : Cfg input} {B : ℕ} {k : ProgId} {pc : Fin maxPc} {m' : Machine.Cfg}
+    {pC pK xl : ℕ} (h : PreTo c B (at_ k pc) m' 0 pC pK xl) (hins : instrAt k pc = .charge false) :
+    HaltsIn c (B + 2) := by
+  obtain ⟨n, hn, c', ds', hr, hd, hrep, hxl⟩ := h
+  exact (HaltsIn.after hr (D_charge_fail hins hd (by simpa using hrep.bud))).mono (by omega)
+
+theorem PreTo.jump {c : Cfg input} {B : ℕ} {k : ProgId} {pc : Fin maxPc} {m' : Machine.Cfg}
+    {r xl : ℕ} (h : PreTo c B (at_ k pc) m' r (ctrlRepr m'.ctrl).length (kontRepr m'.kont).length xl)
+    (hins : instrAt k pc = .jump .dispatch) : StepTo c (B + 1) m' r xl := by
+  obtain ⟨n, hn, c', ds', hr, hd, hrep, hxl⟩ := h
+  obtain ⟨c₁, hr₁, hd₁⟩ := D_jump hins hd
+  exact ⟨n + 1, by omega, c₁, _, (hr.trans hr₁).cast_out (by simp <;> omega), hd₁, hrep, hxl⟩
+
+/-! ## `ev elim` -/
+
+/-- `elim` when the value is `nil`: evaluate `n`. -/
+theorem case_evElim_nil {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evElim 0) ds)
+    {i : ℕ} {n cc : Prog} {env : Env} {k : List Frame} {r : ℕ}
+    (hr : RepOf ds ⟨.ev (.elim i n cc), env, k⟩ r 8 (kontRepr k).length)
+    (hv : Env.get env i = .nil) :
+    PreTo c (caseBound ⟨.ev (.elim i n cc), env, k⟩ (ds X).l.length) (at_ .evElimNil 6)
+      ⟨.ev n, env, k⟩ r (ctrlRepr (.ev n)).length (kontRepr k).length
+      ((ds X).l.length + sz ⟨.ev (.elim i n cc), env, k⟩) := by
+  obtain ⟨g, hds⟩ := hr.eq
+  have hX := hr.scratch
+  rw [hds] at hd
+  norm_ds at hd
+  obtain ⟨c₁, hr₁, hd₁⟩ := D_move_right rfl (by decide) hd
+  norm_ds at hd₁
+  obtain ⟨c₂, hr₂, hd₂⟩ := D_move_right rfl (by decide) hd₁
+  norm_ds at hd₂
+  obtain ⟨c₃, hr₃, hd₃⟩ := D_rewind rfl (by decide) hd₂ (by simp <;> omega)
+  norm_ds at hr₃ hd₃
+  obtain ⟨n₄, hn₄, c₄, hr₄, hd₄⟩ := D_getEnv rfl (by decide) hd₃ (env := env) (by simp <;> omega) (i := i)
+    (l₁ := [.zero, .one, .one, .zero, .one, .zero, .one, .zero, .zero, .one])
+    (l₂ := .one :: (S n.toData ++ S cc.toData) ++ g) (by simp <;> omega) (by simp <;> omega) (by simp <;> omega)
+  rw [hv] at hd₄
+  norm_ds at hd₄
+  obtain ⟨c₅, hr₅, hd₅⟩ := D_move_right rfl (by decide) hd₄
+  norm_ds at hd₅
+  obtain ⟨c₆, hr₆, hd₆⟩ := D_rewind rfl (by decide) hd₅ (by simp <;> omega)
+  norm_ds at hr₆ hd₆
+  obtain ⟨c₇, hr₇, hd₇⟩ := D_branch_taken rfl hd₆ (by simp <;> omega)
+  -- `evElimNil`
+  obtain ⟨c₈, hr₈, hd₈⟩ := D_rewind rfl (by decide) hd₇ (by simp <;> omega)
+  norm_ds at hr₈ hd₈
+  obtain ⟨n₉, hn₉, c₉, hr₉, hd₉⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide) hd₈
+    (by simp <;> omega) (v := n.toData)
+    (l₁ := [.zero, .one, .one, .zero, .one, .zero, .one, .zero, .zero, .one] ++ S (Data.ofNat i) ++ [.one])
+    (l₂ := S cc.toData ++ g) (by simp <;> omega) (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₉
+  obtain ⟨c₁₀, hr₁₀, hd₁₀⟩ := D_rewind rfl (by decide) hd₉ (by simp <;> omega)
+  norm_ds at hr₁₀ hd₁₀
+  obtain ⟨c₁₁, hr₁₁, hd₁₁⟩ := D_write rfl (by decide) hd₁₀ (by simp <;> omega)
+  norm_ds at hd₁₁
+  obtain ⟨c₁₂, hr₁₂, hd₁₂⟩ := D_rewind rfl (by decide) hd₁₁ (by simp <;> omega)
+  norm_ds at hr₁₂ hd₁₂
+  obtain ⟨n₁₃, hn₁₃, c₁₃, hr₁₃, hd₁₃⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide)
+    hd₁₂ (by simp <;> omega) (v := n.toData) (l₁ := [])
+    (l₂ := (S .nil ++ (ds X).l.drop (S Data.nil).length).drop (S n.toData).length) (by simp <;> omega) (by simp <;> omega)
+    (by simp <;> omega)
+  norm_ds at hd₁₃
+  refine ⟨_, ?_, c₁₃, _,
+    ((((((((((((hr₁.trans hr₂).trans hr₃).trans hr₄).trans hr₅).trans hr₆).trans hr₇).trans
+      hr₈).trans hr₉).trans hr₁₀).trans hr₁₁).trans hr₁₂).trans hr₁₃).cast_out (by simp <;> omega), hd₁₃,
+    ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
+  · simp only [caseBound, sz, ctrlRepr_elim, List.length_cons, List.length_append, length_S,
+      length_S_ofNat, Data.size_ofNat, Data.size_nil, Data.size_cons]
+    omega
+  · simp [ctrlRepr] <;> omega
+  · simp [hX]
+  · simp [hX]
+  · simp [hX]
+  · simp [hX]
+  · simp [hX]
+  · norm_ds_goal
+    simp only [sz, ctrlRepr_elim, List.length_cons, List.length_append, length_S, length_S_ofNat,
+      List.length_drop, Data.size_ofNat, Data.size_nil, Data.size_cons]
+    omega
+
+/-- `elim` when the value is a pair: push its components, evaluate `cc`. -/
+theorem case_evElim_cons {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evElim 0) ds)
+    {i : ℕ} {n cc : Prog} {env : Env} {k : List Frame} {r : ℕ}
+    (hr : RepOf ds ⟨.ev (.elim i n cc), env, k⟩ r 8 (kontRepr k).length)
+    {a b : Data} (hv : Env.get env i = .cons a b) :
+    PreTo c (caseBound ⟨.ev (.elim i n cc), env, k⟩ (ds X).l.length) (at_ .evElimCons 15)
+      ⟨.ev cc, a :: b :: env, k⟩ r (ctrlRepr (.ev cc)).length (kontRepr k).length
+      ((ds X).l.length + sz ⟨.ev (.elim i n cc), env, k⟩) := by
+  obtain ⟨g, hds⟩ := hr.eq
+  have hX := hr.scratch
+  have hab := size_get_le env i
+  rw [hv, Data.size_cons] at hab
+  rw [hds] at hd
+  norm_ds at hd
+  obtain ⟨c₁, hr₁, hd₁⟩ := D_move_right rfl (by decide) hd
+  norm_ds at hd₁
+  obtain ⟨c₂, hr₂, hd₂⟩ := D_move_right rfl (by decide) hd₁
+  norm_ds at hd₂
+  obtain ⟨c₃, hr₃, hd₃⟩ := D_rewind rfl (by decide) hd₂ (by simp <;> omega)
+  norm_ds at hr₃ hd₃
+  obtain ⟨n₄, hn₄, c₄, hr₄, hd₄⟩ := D_getEnv rfl (by decide) hd₃ (env := env) (by simp <;> omega) (i := i)
+    (l₁ := [.zero, .one, .one, .zero, .one, .zero, .one, .zero, .zero, .one])
+    (l₂ := .one :: (S n.toData ++ S cc.toData) ++ g) (by simp <;> omega) (by simp <;> omega) (by simp <;> omega)
+  rw [hv, S_cons] at hd₄
+  norm_ds at hd₄
+  obtain ⟨c₅, hr₅, hd₅⟩ := D_move_right rfl (by decide) hd₄
+  norm_ds at hd₅
+  obtain ⟨c₆, hr₆, hd₆⟩ := D_rewind rfl (by decide) hd₅ (by simp <;> omega)
+  norm_ds at hr₆ hd₆
+  obtain ⟨c₇, hr₇, hd₇⟩ := D_branch_not rfl (by decide) hd₆ (by simp <;> omega)
+  obtain ⟨c₈, hr₈, hd₈⟩ := D_jump rfl hd₇
+  -- `evElimCons`
+  obtain ⟨c₉, hr₉, hd₉⟩ := D_move_right rfl (by decide) hd₈
+  norm_ds at hd₉
+  obtain ⟨n₁₀, hn₁₀, c₁₀, hr₁₀, hd₁₀⟩ := D_skipTree rfl (by decide) (by decide) hd₉ (by simp <;> omega) (v := a)
+    (l₁ := [.one]) (l₂ := S b ++ (ds X).l.drop (S a ++ S b).length.succ) (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₁₀
+  obtain ⟨n₁₁, hn₁₁, c₁₁, hr₁₁, hd₁₁⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide)
+    hd₁₀ (by simp <;> omega) (v := b) (l₁ := [.one] ++ S a) (l₂ := (ds X).l.drop (S a ++ S b).length.succ)
+    (by simp <;> omega) (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₁₁
+  obtain ⟨c₁₂, hr₁₂, hd₁₂⟩ := D_write rfl (by decide) hd₁₁ (by simp <;> omega)
+  norm_ds at hd₁₂
+  obtain ⟨c₁₃, hr₁₃, hd₁₃⟩ := D_rewind rfl (by decide) hd₁₂ (by simp <;> omega)
+  norm_ds at hr₁₃ hd₁₃
+  obtain ⟨c₁₄, hr₁₄, hd₁₄⟩ := D_move_right rfl (by decide) hd₁₃
+  norm_ds at hd₁₄
+  obtain ⟨n₁₅, hn₁₅, c₁₅, hr₁₅, hd₁₅⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide)
+    hd₁₄ (by simp <;> omega) (v := a) (l₁ := [.one]) (l₂ := S b ++ (ds X).l.drop (S a ++ S b).length.succ)
+    (by simp <;> omega) (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₁₅
+  obtain ⟨c₁₆, hr₁₆, hd₁₆⟩ := D_write rfl (by decide) hd₁₅ (by simp <;> omega)
+  norm_ds at hd₁₆
+  obtain ⟨n₁₇, hn₁₇, c₁₇, hr₁₇, hd₁₇⟩ := D_skipTree rfl (by decide) (by decide) hd₁₆ (by simp <;> omega)
+    (v := n.toData)
+    (l₁ := [.zero, .one, .one, .zero, .one, .zero, .one, .zero, .zero, .one] ++ S (Data.ofNat i) ++ [.one])
+    (l₂ := S cc.toData ++ g) (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₁₇
+  obtain ⟨c₁₈, hr₁₈, hd₁₈⟩ := D_rewind rfl (by decide) hd₁₇ (by simp <;> omega)
+  norm_ds at hr₁₈ hd₁₈
+  obtain ⟨n₁₉, hn₁₉, c₁₉, hr₁₉, hd₁₉⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide)
+    hd₁₈ (by simp <;> omega) (v := cc.toData)
+    (l₁ := [.zero, .one, .one, .zero, .one, .zero, .one, .zero, .zero, .one] ++ S (Data.ofNat i) ++ [.one]
+      ++ S n.toData) (l₂ := g) (by simp <;> omega) (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₁₉
+  obtain ⟨c₂₀, hr₂₀, hd₂₀⟩ := D_rewind rfl (by decide) hd₁₉ (by simp <;> omega)
+  norm_ds at hr₂₀ hd₂₀
+  obtain ⟨c₂₁, hr₂₁, hd₂₁⟩ := D_write rfl (by decide) hd₂₀ (by simp <;> omega)
+  norm_ds at hd₂₁
+  obtain ⟨c₂₂, hr₂₂, hd₂₂⟩ := D_rewind rfl (by decide) hd₂₁ (by simp <;> omega)
+  norm_ds at hr₂₂ hd₂₂
+  obtain ⟨n₂₃, hn₂₃, c₂₃, hr₂₃, hd₂₃⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide)
+    hd₂₂ (by simp <;> omega) (v := cc.toData) (l₁ := [])
+    (l₂ := (Sym.one :: (S a ++ (S b ++ (ds X).l.drop (a.size + b.size + 1)))).drop cc.toData.size)
+    (by simp <;> omega) (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₂₃
+  refine ⟨_, ?_, c₂₃, _,
+    ((((((((((((((((((((((hr₁.trans hr₂).trans hr₃).trans hr₄).trans hr₅).trans hr₆).trans
+      hr₇).trans hr₈).trans hr₉).trans hr₁₀).trans hr₁₁).trans hr₁₂).trans hr₁₃).trans hr₁₄).trans
+      hr₁₅).trans hr₁₆).trans hr₁₇).trans hr₁₈).trans hr₁₉).trans hr₂₀).trans hr₂₁).trans
+      hr₂₂).trans hr₂₃).cast_out (by simp <;> omega), hd₂₃, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
+  · simp only [caseBound, sz, ctrlRepr_elim, List.length_cons, List.length_append, length_S,
+      length_S_ofNat, Data.size_ofNat, Data.size_nil, Data.size_cons]
+    omega
+  · simp [ctrlRepr] <;> omega
+  · simp [List.append_assoc] <;> omega
+  · simp [hX]
+  · simp [hX]
+  · simp [hX]
+  · simp [hX]
+  · norm_ds_goal
+    simp only [sz, ctrlRepr_elim, List.length_cons, List.length_append, length_S, length_S_ofNat,
+      List.length_drop, Data.size_ofNat, Data.size_nil, Data.size_cons]
+    omega
+
+/-! ## `ev let` and `ev loop` -/
+
+theorem case_evLet {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evLet 0) ds)
+    {e b : Prog} {env : Env} {k : List Frame} {r : ℕ}
+    (hr : RepOf ds ⟨.ev (.let_ e b), env, k⟩ r 10 (kontRepr k).length) :
+    PreTo c (caseBound ⟨.ev (.let_ e b), env, k⟩ (ds X).l.length) (at_ .evLet 15)
+      ⟨.ev e, env, .let1 b env :: k⟩ r (ctrlRepr (.ev e)).length
+      (kontRepr (.let1 b env :: k)).length ((ds X).l.length + sz ⟨.ev (.let_ e b), env, k⟩) := by
+  obtain ⟨g, hds⟩ := hr.eq
+  have hX := hr.scratch
+  rw [hds] at hd
+  norm_ds at hd
+  obtain ⟨c₁, hr₁, hd₁⟩ := D_move_right rfl (by decide) hd
+  norm_ds at hd₁
+  obtain ⟨c₂, hr₂, hd₂⟩ := D_move_right rfl (by decide) hd₁
+  norm_ds at hd₂
+  obtain ⟨c₃, hr₃, hd₃⟩ := D_rewind rfl (by decide) hd₂ (by simp <;> omega)
+  norm_ds at hr₃ hd₃
+  obtain ⟨n₄, hn₄, c₄, hr₄, hd₄⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide) hd₃
+    (by simp <;> omega) (v := e.toData)
+    (l₁ := [.zero, .one, .one, .zero, .one, .zero, .one, .zero, .one, .zero, .zero, .one])
+    (l₂ := S b.toData ++ g) (by simp <;> omega) (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₄
+  obtain ⟨c₅, hr₅, hd₅⟩ := D_write rfl (by decide) hd₄ (by simp <;> omega)
+  norm_ds at hd₅
+  obtain ⟨c₆, hr₆, hd₆⟩ := D_write rfl (by decide) hd₅ (by simp <;> omega)
+  norm_ds at hd₆
+  obtain ⟨n₇, hn₇, c₇, hr₇, hd₇⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide) hd₆
+    (by simp <;> omega) (v := b.toData)
+    (l₁ := [.zero, .one, .one, .zero, .one, .zero, .one, .zero, .one, .zero, .zero, .one] ++ S e.toData)
+    (l₂ := g) (by simp <;> omega) (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₇
+  obtain ⟨c₈, hr₈, hd₈⟩ := D_write rfl (by decide) hd₇ (by simp <;> omega)
+  norm_ds at hd₈
+  obtain ⟨c₉, hr₉, hd₉⟩ := D_rewind rfl (by decide) hd₈ (by simp <;> omega)
+  norm_ds at hr₉ hd₉
+  obtain ⟨c₁₀, hr₁₀, hd₁₀⟩ := D_copyUntil rfl (by decide) (by decide) hd₉ (l₁ := []) (w := envRepr env)
+    (l₂ := []) (by simp <;> omega) (by simp <;> omega) (mem_envRepr_ne_none env) rfl (by simp <;> omega)
+  norm_ds at hd₁₀
+  obtain ⟨c₁₁, hr₁₁, hd₁₁⟩ := D_write rfl (by decide) hd₁₀ (by simp <;> omega)
+  norm_ds at hd₁₁
+  obtain ⟨c₁₂, hr₁₂, hd₁₂⟩ := D_rewind rfl (by decide) hd₁₁ (by simp <;> omega)
+  norm_ds at hr₁₂ hd₁₂
+  obtain ⟨c₁₃, hr₁₃, hd₁₃⟩ := D_write rfl (by decide) hd₁₂ (by simp <;> omega)
+  norm_ds at hd₁₃
+  obtain ⟨c₁₄, hr₁₄, hd₁₄⟩ := D_rewind rfl (by decide) hd₁₃ (by simp <;> omega)
+  norm_ds at hr₁₄ hd₁₄
+  obtain ⟨n₁₅, hn₁₅, c₁₅, hr₁₅, hd₁₅⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide)
+    hd₁₄ (by simp <;> omega) (v := e.toData) (l₁ := []) (l₂ := (ds X).l.drop (S e.toData).length) (by simp <;> omega)
+    (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₁₅
+  refine ⟨_, ?_, c₁₅, _,
+    ((((((((((((((hr₁.trans hr₂).trans hr₃).trans hr₄).trans hr₅).trans hr₆).trans hr₇).trans
+      hr₈).trans hr₉).trans hr₁₀).trans hr₁₁).trans hr₁₂).trans hr₁₃).trans hr₁₄).trans
+      hr₁₅).cast_out (by simp <;> omega), hd₁₅, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
+  · simp only [caseBound, sz, ctrlRepr_let, List.length_cons, List.length_append, length_S]
+    omega
+  · simp [ctrlRepr] <;> omega
+  · simp [hX]
+  · simp [frameRepr, List.append_assoc] <;> omega
+  · simp [hX]
+  · simp [hX]
+  · simp [hX]
+  · norm_ds_goal
+    simp only [sz, ctrlRepr_let, List.length_cons, List.length_append, length_S, List.length_drop]
+    omega
+
+theorem case_evLoop {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evLoop 0) ds)
+    {b : Prog} {env : Env} {k : List Frame} {r : ℕ}
+    (hr : RepOf ds ⟨.ev (.loop b), env, k⟩ r 12 (kontRepr k).length) :
+    StepTo c (caseBound ⟨.ev (.loop b), env, k⟩ (ds X).l.length) ⟨.ev b, env, .loop1 b env :: k⟩ r
+      ((ds X).l.length + sz ⟨.ev (.loop b), env, k⟩) := by
+  obtain ⟨g, hds⟩ := hr.eq
+  have hX := hr.scratch
+  rw [hds] at hd
+  norm_ds at hd
+  obtain ⟨c₁, hr₁, hd₁⟩ := D_move_right rfl (by decide) hd
+  norm_ds at hd₁
+  obtain ⟨c₂, hr₂, hd₂⟩ := D_rewind rfl (by decide) hd₁ (by simp <;> omega)
+  norm_ds at hr₂ hd₂
+  obtain ⟨n₃, hn₃, c₃, hr₃, hd₃⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide) hd₂
+    (by simp <;> omega) (v := b.toData)
+    (l₁ := [.zero, .one, .one, .zero, .one, .zero, .one, .zero, .one, .zero, .one, .zero, .zero])
+    (l₂ := g) (by simp <;> omega) (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₃
+  obtain ⟨c₄, hr₄, hd₄⟩ := D_write rfl (by decide) hd₃ (by simp <;> omega)
+  norm_ds at hd₄
+  obtain ⟨c₅, hr₅, hd₅⟩ := D_write rfl (by decide) hd₄ (by simp <;> omega)
+  norm_ds at hd₅
+  obtain ⟨c₆, hr₆, hd₆⟩ := D_rewind rfl (by decide) hd₅ (by simp <;> omega)
+  norm_ds at hr₆ hd₆
+  obtain ⟨n₇, hn₇, c₇, hr₇, hd₇⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide) hd₆
+    (by simp <;> omega) (v := b.toData) (l₁ := []) (l₂ := (ds X).l.drop (S b.toData).length) (by simp <;> omega) (by simp <;> omega)
+    (by simp <;> omega)
+  norm_ds at hd₇
+  obtain ⟨c₈, hr₈, hd₈⟩ := D_write rfl (by decide) hd₇ (by simp <;> omega)
+  norm_ds at hd₈
+  obtain ⟨c₉, hr₉, hd₉⟩ := D_rewind rfl (by decide) hd₈ (by simp <;> omega)
+  norm_ds at hr₉ hd₉
+  obtain ⟨c₁₀, hr₁₀, hd₁₀⟩ := D_copyUntil rfl (by decide) (by decide) hd₉ (l₁ := []) (w := envRepr env)
+    (l₂ := []) (by simp <;> omega) (by simp <;> omega) (mem_envRepr_ne_none env) rfl (by simp <;> omega)
+  norm_ds at hd₁₀
+  obtain ⟨c₁₁, hr₁₁, hd₁₁⟩ := D_write rfl (by decide) hd₁₀ (by simp <;> omega)
+  norm_ds at hd₁₁
+  obtain ⟨c₁₂, hr₁₂, hd₁₂⟩ := D_rewind rfl (by decide) hd₁₁ (by simp <;> omega)
+  norm_ds at hr₁₂ hd₁₂
+  obtain ⟨c₁₃, hr₁₃, hd₁₃⟩ := D_write rfl (by decide) hd₁₂ (by simp <;> omega)
+  norm_ds at hd₁₃
+  obtain ⟨c₁₄, hr₁₄, hd₁₄⟩ := D_rewind rfl (by decide) hd₁₃ (by simp <;> omega)
+  norm_ds at hr₁₄ hd₁₄
+  obtain ⟨n₁₅, hn₁₅, c₁₅, hr₁₅, hd₁₅⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide)
+    hd₁₄ (by simp <;> omega) (v := b.toData) (l₁ := []) (l₂ := (ds X).l.drop (S b.toData).length) (by simp <;> omega)
+    (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₁₅
+  obtain ⟨c₁₆, hr₁₆, hd₁₆⟩ := D_jump rfl hd₁₅
+  refine ⟨_, ?_, c₁₆, _,
+    (((((((((((((((hr₁.trans hr₂).trans hr₃).trans hr₄).trans hr₅).trans hr₆).trans hr₇).trans
+      hr₈).trans hr₉).trans hr₁₀).trans hr₁₁).trans hr₁₂).trans hr₁₃).trans hr₁₄).trans
+      hr₁₅).trans hr₁₆).cast_out (by simp <;> omega), hd₁₆, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
+  · simp only [caseBound, sz, ctrlRepr_loop, List.length_cons, List.length_append, length_S]
+    omega
+  · simp [ctrlRepr] <;> omega
+  · simp [hX]
+  · simp [frameRepr, List.append_assoc] <;> omega
+  · simp [hX]
+  · simp [hX]
+  · simp [hX]
+  · norm_ds_goal
+    simp only [sz, ctrlRepr_loop, List.length_cons, List.length_append, length_S, List.length_drop]
     omega
 
 end MIPRE.TM.Interp
