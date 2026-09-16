@@ -26,7 +26,7 @@ versions.
   `Data.parse_toBitsPost`.
 * `Data.normBin`: a total normalization of the parameter, the identity on canonical binary
   numerals (`encode n` for `n : ℕ`) and `nil` (`encode 0`) elsewhere; `Data.natOf` reads it.
-  Every string thereby names a parameter and a decider (`descLam`, `descDec`), and the
+  Every string thereby names a parameter and a decider (`descLam`, `descDecD`), and the
   wrapper decider of `Halting/Wrapper.lean` interprets the raw data the same way, so that no
   validity condition on strings is needed anywhere.
 

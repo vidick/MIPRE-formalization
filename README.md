@@ -11,6 +11,13 @@ A candidate Mathlib-only statement of the main theorem is in
 from Turing machines to nonlocal games sending halting machines to games of synchronous
 value 1 and non-halting machines to games of value at most 1/2.
 
+**Status.** That statement is proved in Lean *conditionally on gap-preserving compression*
+(`MIPRE.GapCompression`, the blueprint's `thm:compression`, the theorem the pipeline of
+introspection, oracularization, answer reduction and parallel repetition is to establish):
+`MIPRE.Halting.halting_reduces_to_gameValue_of` takes that one structure and concludes the
+statement above with no `sorry`. The unconditional `halting_reduces_to_gameValue` keeps its
+`sorry` as the target, and the difference between the two is exactly that structure.
+
 ## Project links
 
 - [Project website](https://vidick.github.io/MIPRE-formalization/)

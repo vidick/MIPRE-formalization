@@ -1083,8 +1083,9 @@ lower bound has to be tracked anywhere in this chapter.
   MIPRE.Cost.Prog.serProg_runs, MIPRE.Cost.PolyBounded, MIPRE.Verifier.InClassA,
   MIPRE.Verifier.InClassB, MIPRE.Verifier.not_inClassB_of_inClassA,
   MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal,
-  MIPRE.Verifier.valStar_eq_zero_of_rejects_all, MIPRE.Verifier.ofSamplerDecider,
-  MIPRE.Verifier.ofSamplerDecider_accepts, MIPRE.Decider.wrap,
+  MIPRE.Verifier.valStar_eq_zero_of_rejects_all, MIPRE.Verifier.ofSamplerDeciderD,
+  MIPRE.Verifier.ofSamplerDeciderD_accepts, MIPRE.Verifier.ofSamplerDecider,
+  MIPRE.Verifier.ofSamplerDecider_accepts, MIPRE.Decider.wrap, MIPRE.Decider.wrap_accepts_prog,
   MIPRE.Verifier.answerEquiv, MIPRE.Verifier.questionEquiv,
   MIPRE.Verifier.quantumValue_toGame_eq_valStar, MIPRE.Verifier.not_inClassB_iff,
   MIPRE.SyncStrategy.relabel, MIPRE.SyncStrategy.value_relabel,
@@ -1093,9 +1094,12 @@ lower bound has to be tracked anywhere in this chapter.
   HaltingGameValue.GameData.toSyncStrategy, HaltingGameValue.GameData.ofSyncStrategy,
   HaltingGameValue.GameData.gameValue_eq_syncValue,
   HaltingGameValue.GameData.gameValue_le_quantumValue,
-  MIPRE.Halting.descLam, MIPRE.Halting.descDec, MIPRE.Halting.Vof,
+  MIPRE.Halting.descLam, MIPRE.Halting.descDecD, MIPRE.Halting.Vof,
   MIPRE.Halting.classA, MIPRE.Halting.classB, MIPRE.Halting.Obligations,
   MIPRE.Halting.CompressorSpec, MIPRE.Halting.CompressorSpec.toObligations,
+  MIPRE.Cost.Prog.readProg, MIPRE.Cost.Prog.readProg_runs, MIPRE.Halting.prepProg,
+  MIPRE.Halting.prepProg_runs, MIPRE.Halting.haltProg, MIPRE.Halting.haltProg_accepts_iff,
+  MIPRE.Halting.comprStr, MIPRE.Halting.comprStr_accepts,
   MIPRE.Cost.Prog.HasPolyCost, MIPRE.Verifier.IsBounded.mono,
   MIPRE.Verifier.exists_isBounded, MIPRE.Cost.Prog.wrapCore_hasPolyCost,
   MIPRE.Verifier.ofSamplerDecider_isBounded, MIPRE.Halting.yYes, MIPRE.Halting.yNo,
@@ -1108,8 +1112,7 @@ lower bound has to be tracked anywhere in this chapter.
   MIPRE.Verifier.questionWeight_weightList, MIPRE.Verifier.totalWeight_weightList,
   MIPRE.Verifier.accList, MIPRE.Verifier.mem_accList_iff, MIPRE.Halting.dimOf,
   MIPRE.Halting.margOf, MIPRE.Halting.accOf, MIPRE.Halting.tabOf,
-  MIPRE.Halting.primrec_tabOf, MIPRE.Cost.progOk, MIPRE.Cost.progNorm,
-  MIPRE.Cost.progNorm_eq, MIPRE.Cost.Prog.ProgD.dWrapCore,
+  MIPRE.Halting.primrec_tabOf, MIPRE.Cost.Prog.ProgD.dWrapCore,
   MIPRE.Cost.Prog.ProgD.dWrapCore_eq, MIPRE.Cost.PolyTimeFun.computable_encode_comp,
   MIPRE.Halting.sampData, MIPRE.Halting.decProgData, MIPRE.Halting.sampData_eq,
   MIPRE.Halting.decProgData_eq, MIPRE.Halting.tab, MIPRE.Halting.tab_computable,
@@ -1157,7 +1160,14 @@ of the recursion.
   of Lemma~\ref{lem:compress-sampler-indep}, the length check of
   Definition~\ref{def:normal-verifier} being enforced by a wrapper around $\decider$; so
   every string names a normal form verifier, and the interpretation sits outside every
-  time bound. $A_n$ is the set of strings whose verifier is $n$-bounded and whose $n$-th
+  time bound. In Lean the decider component is the \emph{datum} the string carries, run by
+  the universal machine (\texttt{Verifier.ofSamplerDeciderD}): a datum that is not the
+  encoding of any program still names a verifier, whatever the interpreter does with it, and
+  on the encoding of a program the reading is the program's own run
+  (\texttt{Decider.wrap\_accepts\_prog}). Decoding the datum to a program with a fallback,
+  the earlier reading, would have obliged the compressor's decider of item 2 to reimplement
+  the decoder --- a tree-grammar check --- in the ambient model, to reproduce a fallback
+  nobody wanted. $A_n$ is the set of strings whose verifier is $n$-bounded and whose $n$-th
   game has a value-$1$ PCC strategy and whose decider rejects every answer longer than the
   answer bound at index $n$; $B_n$ the set of those that are $n$-bounded, reject long
   answers, and have $\valstar \leq \frac12$ at index $n$ (\texttt{Verifier.InClassA},
@@ -1206,7 +1216,19 @@ of the recursion.
   that \texttt{freeze\_isBounded} consumes, and the answer-budget comparison of
   \texttt{exists\_ansBound\_le} --- and \texttt{CompressorSpec.toObligations} is the class
   transfer, in both directions, from those fields alone. What the construction owes is
-  exactly the fields of that structure.
+  exactly the fields of that structure. The program half is done: \texttt{MIPRE.Halting.haltProg}
+  is the decider of the output --- it reads $x$ from its succinct description by bit queries
+  (\texttt{Cost.Prog.readProg}), rebuilds the description of the wrapped decider of $x$ and
+  freezes it at $2n + 1$ in the ambient model, runs $\Compress$, and runs the result on its own
+  input through the universal machine (\texttt{prepProg}, \texttt{prepProg\_runs}) ---, the
+  output string \texttt{comprStr} is $\lambda(n)$ together with that decider with $(c, n,
+  \lambda(n))$ hardcoded, and \texttt{comprStr\_accepts} is the field
+  \texttt{accepts\_compr} verbatim, from the forward runs and the inversion
+  \texttt{haltProg\_accepts\_iff}. The accounting is done too, with $\lambda(n) = 2^{2 \log n}$
+  (Lemma~\ref{lem:lambda}: \texttt{isBounded\_comprStr}, \texttt{lamOf\_ge},
+  \texttt{ansBound\_le\_lamOf}), the compressor is a polynomial-time function
+  (\texttt{comprPoly}), and \texttt{exists\_obligations} inhabits the structure: obligation
+  (d) is discharged.
 \item \emph{Junk inputs.} Nothing is demanded of the compressor off strings in $A_{2n+1}
   \cup B_{2n+1}$, every string names a verifier, and $\lambda$-boundedness is decided
   nowhere. What the lemma does demand is that the complement of $B_n$ be semidecidable:
@@ -1310,7 +1332,7 @@ format checks and budgets are the bounded walks \texttt{Prog.bitWalkProg},
 $T \cdot (\abs{\text{input}} + 1)$ that Definition~\ref{def:decider} asks for. Costs compose
 through \texttt{Cost.PolyBounded}, which also gives the threshold above which a polynomial
 bound falls under $2^n$. The dictionary itself is now in Lean: \texttt{MIPRE.Halting.descLam}
-and \texttt{descDec} read a string as a parameter and a decider, \texttt{Vof} is the verifier
+and \texttt{descDecD} read a string as a parameter and a decider, \texttt{Vof} is the verifier
 it denotes, and \texttt{classA}, \texttt{classB} are $A_n, B_n$, with answers cut at the
 length beyond which a compressed decider with that parameter rejects. What remains is
 collected as the fields of \texttt{MIPRE.Halting.Obligations}, the structure
@@ -1383,11 +1405,11 @@ the tabulation runs that function on an encoded input
 (\texttt{Cost.PolyTimeFun.computable\_encode\_comp}); the decider is the \emph{wrapper} around
 the string's own, that being what $\lambda$-boundedness bounds, so the wrapper's syntax tree
 is rebuilt in \texttt{Data} (\texttt{Cost.Prog.ProgD.dWrapCore}, the encoding of
-\texttt{wrapCore} by \texttt{rfl}), and the string's own decider is normalized by
-\texttt{Cost.progNorm}, which decides program-hood (\texttt{Cost.progOk}) so that the
-tabulation falls back on \texttt{nil} exactly where \texttt{descDec} does --- getting that
-wrong would not leave a gap but make the tabulation \emph{wrong}, the verifier accepting
-nothing on junk data while a tabulation that ran the junk could accept. \emph{The two clauses
+\texttt{wrapCore} by \texttt{rfl}) around the string's own decider, which enters as the datum
+it is. (An earlier reading decoded the datum to a program with a fallback on \texttt{nil}, and
+the tabulation had to decide program-hood to make the same fallback; the reading changed when
+the compressor's decider of obligation O4 turned out to need that decoder in the ambient model,
+see item 1.) \emph{The two clauses
 are separate arguments}: the $\mu$ clause is a count, \texttt{Verifier.weightList} placing one
 unit of weight at the index pair on which the two marginals of a point of $\F_2^{s(n)}$ land,
 so that its question weight is the number of points landing on a given pair and its total
@@ -1556,6 +1578,11 @@ The ingredients, with provenance to the companion repository's ledger nodes.
 \label{lem:halt-construction}
 \ledgernode{1.6.1}
 \uses{def:normal-verifier,lem:compress-sampler-indep,lem:kleene}
+\lean{MIPRE.Halting.haltProg, MIPRE.Halting.prepProg, MIPRE.Halting.prepProg_runs,
+  MIPRE.Halting.haltProg_runs, MIPRE.Halting.haltProg_runs_inv,
+  MIPRE.Halting.haltProg_accepts_iff, MIPRE.Halting.comprStr, MIPRE.Halting.comprStr_accepts,
+  MIPRE.Cost.Prog.readProg, MIPRE.Cost.Prog.readProg_runs, MIPRE.Cost.Prog.wrapBuildProg,
+  MIPRE.Cost.Prog.freezeBuildProg}
 There is a Turing machine $F$ and a decider $\dhalt = F$ carrying its own description,
 with a timeout bound $B_{\dhalt}(n)$, such that $\dhalt$ is total within its timeout and
 $\vhalt = (\mathtt{ComputeSampler}(\lambda), \dhalt)$ is a normal form verifier. The
@@ -1563,6 +1590,22 @@ self-reference is by direct construction rather than by the recursion theorem, t
 input-length check precedes the $n$-step simulation of $\machine$, and the
 halting-freeze convention makes the decider total.
 \end{lemma}
+
+\paragraph{Comments.} The Lean decider is $F$ with the self-reference removed, along the
+route of Remark~\ref{rem:compression-abstract}: \texttt{MIPRE.Halting.haltProg} takes
+$(c, n, \lambda)$ in front of its input, \emph{reads} the string $x$ that $(c, n)$ succinctly
+describes by bit queries through the universal machine (\texttt{Cost.Prog.readProg}), rebuilds
+in the ambient model the description of the verifier $x$ denotes --- the wrapped decider,
+\texttt{wrapBuildProg}, then both programs frozen at index $2n + 1$,
+\texttt{freezeBuildProg} ---, runs $\Compress$ on it at $\lambda$, and runs the compressed
+decider on its own input (\texttt{prepProg}, \texttt{prepProg\_runs}). The compressor's output
+is the string \texttt{comprStr}: $\lambda$ and this decider with $(c, n, \lambda)$ hardcoded,
+a normal form verifier by construction since every string denotes one. The paper's Step~2,
+the $n$-step simulation of $\machine$, is the compressibility criterion's business
+(Lemma~\ref{lem:compressible-criterion}) and does not appear, and there is no timeout
+counter: the decider is total on succinct descriptions because every stage halts
+(\texttt{haltProg\_runs}, \texttt{haltProg\_runs\_inv}), and its running time is the
+accounting of Lemma~\ref{lem:lambda}, which is what is still open.
 
 \effortMedium
 
@@ -1607,10 +1650,38 @@ exponential in it.
 \label{lem:lambda}
 \ledgernode{1.6.5}
 \uses{lem:halt-construction,lem:lambda-bound,def:lambda-bounded}
+\lean{MIPRE.Halting.lamOf, MIPRE.Halting.isBounded_comprStr, MIPRE.Halting.lamOf_ge,
+  MIPRE.Halting.ansBound_le_lamOf, MIPRE.Halting.exists_compressorSpec,
+  MIPRE.Halting.comprPoly, MIPRE.Cost.PolyBounded.absorb, MIPRE.Cost.PolyBounded.absorb_log,
+  MIPRE.Cost.Prog.wrapCoreCost, MIPRE.Cost.Prog.wrapCore_cost'}
 There is a $\lambda$, computable from the description of $\machine$ in polynomial time and
 of size $\poly(\abs{\machine})$, such that $\vhalt$ is $\lambda$-bounded and
 $\TIME_{\dhalt}(n), \TIME_{\shalt}(n) = \poly(n, \abs{\machine})$.
 \end{lemma}
+
+\paragraph{Comments.} In the Lean route of Remark~\ref{rem:compression-abstract} the parameter
+is a function of the \emph{level}, $\lambda(n) = 2^{2 \log n}$
+(\texttt{MIPRE.Halting.lamOf}, at least $(n+1)^2$ and written in binary by the compressor in
+time $O(\log n)$), and the boundedness claim is the field
+\texttt{CompressorSpec.isBounded\_compr}: the verifier the output denotes is $n$-bounded,
+uniformly in the description $(c, n)$, for every $n$ past a threshold depending on
+$\Compress$ and the universal machine alone (\texttt{isBounded\_comprStr},
+\texttt{Halting/CompressorCost.lean}). Its three clauses are the sampler's
+(\texttt{GapCompression.sampler\_dim}, \texttt{sampler\_time} at $\lambda(n)$), the size's
+(the compressed sampler's program is $\poly(\log n)$ and the wrapper carries $c$, which the
+slack $2\abs{c} \leq n$ of Lemma~\ref{lem:compressible-criterion} leaves room for), and the
+decider's: the wrapper's cost with explicit constants (\texttt{Prog.wrapCoreCost},
+\texttt{Halting/WrapperCost.lean}) around the preparation, the universal machine and the
+compressed decider's own time (\texttt{GapCompression.decider\_time}). Each is absorbed into
+$m^n \cdot (\abs{d}+1)^n$ by \texttt{PolyBounded.absorb} (\texttt{Halting/Absorb.lean}): a
+polynomially bounded function of the largest of the index, the level and the input size is
+below $m^n \cdot y^n$ once $n$ is past a threshold set by the polynomial, which is
+Lemma~\ref{lem:lambda-bound} in a coarser form. The growth conditions that freezing at
+$2n + 1$ needs are \texttt{lamOf\_ge} and \texttt{ansBound\_le\_lamOf}, and
+\texttt{exists\_compressorSpec} assembles the specification from a polynomial-time program
+computing the output string, which \texttt{comprPoly}
+(\texttt{Halting/CompressorProgram.lean}) is. There is no timeout counter and no
+$\TIME_{\dhalt}$ to compute: totality within a bound is the accounting itself.
 
 \effortMedium
 
@@ -1618,6 +1689,8 @@ $\TIME_{\dhalt}(n), \TIME_{\shalt}(n) = \poly(n, \abs{\machine})$.
 \label{lem:dhalt-values}
 \ledgernode{1.6.2, 1.6.3}
 \uses{lem:halt-construction,lem:lambda,lem:compress-sampler-indep,def:pcc,def:q-value}
+\lean{MIPRE.Halting.comprStr_accepts, MIPRE.Halting.haltProg_accepts_iff,
+  MIPRE.Halting.CompressorSpec.toObligations}
 For every $n$:
 \begin{enumerate}
 \item if $\machine$ halts within $n$ steps then $\valstar(\vhalt_n) = 1$, witnessed by a
@@ -1641,6 +1714,16 @@ interfere: its bound is chosen in Lemma~\ref{lem:lambda} so that the computation
 finish first.
 \end{proof}
 
+\paragraph{Comments.} Item 2 is, in the Lean route, the acceptance agreement
+\texttt{MIPRE.Halting.comprStr\_accepts}: the decider of the verifier the compressor's output
+denotes accepts, at every index, exactly what the compressed decider of the described
+verifier frozen at $2n + 1$ accepts, with the same sampler (\texttt{Vof\_comprStr}); the
+transfer of values and of value-$1$ PCC strategies along it, in both directions, is
+\texttt{CompressorSpec.toObligations}. Item 1 does not appear at this point of the route: the
+halting case is the criterion's, through the distinguished string \texttt{yYes} of
+Lemma~\ref{lem:compressible-criterion}, and the $n$-step simulation of $\machine$ is the
+criterion's recursion, not the decider's.
+
 \begin{remark}[Item 2 is a transfer, not a bound]
 \label{rem:dhalt-transfer}
 \uses{lem:dhalt-values,thm:halting,thm:compression}
@@ -1662,7 +1745,8 @@ revision of this chapter did state item 2 as the bound, and because the ledger n
 \label{thm:halting}
 \ledgernode{1.6, 1.6.6}
 \uses{thm:compression,rem:compression-abstract,lem:compressible-criterion,lem:value-lower-approx,lem:kleene,def:mipstar,def:game-description,lem:sync-le-valstar,lem:dhalt-values,lem:lambda}
-\lean{MIPRE.Halting.halting_reduction}
+\lean{MIPRE.Halting.halting_reduction, MIPRE.Halting.halting_reduction_of,
+  MIPRE.Halting.exists_obligations, MIPRE.Halting.halting_reduces_to_gameValue_of}
 There is a computable (indeed polynomial-time) map $\machine \mapsto
 \game_{\machine}$ from Turing machines to synchronous game descriptions, with games
 given by normal form verifiers satisfying the efficiency requirements of
@@ -1679,28 +1763,31 @@ Definition~\ref{def:mipstar}, such that:
 The proof is Lemma~\ref{lem:compressible-criterion} applied to the instantiation of
 Remark~\ref{rem:compression-abstract}; the semidecidability hypothesis of the lemma is the
 $\valstar$ half of Lemma~\ref{lem:value-lower-approx}. The obligations of that
-instantiation are inherited here, and of the four listed in
-Remark~\ref{rem:compression-abstract} only the compressor is still to be found: the
-tabulation is formalized (\texttt{MIPRE.Halting.tab}, with \texttt{tab\_match},
-\texttt{tab\_value} and \texttt{gameValue\_tab\_eq\_one}), the semidecider is formalized on
-top of it (\texttt{MIPRE.Halting.exists\_sem}, Lemma~\ref{lem:halting-semidecider}, which
-takes no hypotheses), and the two distinguished strings are
-\texttt{MIPRE.Halting.yYes\_mem} and \texttt{yNo\_mem}. The synchronization invariant that an earlier
-revision also required of the games produced inside $\Compress$ is no longer among them
-(Remark~\ref{rem:bipartite-route}).
+instantiation are inherited here, and all four listed in
+Remark~\ref{rem:compression-abstract} are formalized: the tabulation
+(\texttt{MIPRE.Halting.tab}, with \texttt{tab\_match}, \texttt{tab\_value} and
+\texttt{gameValue\_tab\_eq\_one}), the semidecider on top of it
+(\texttt{MIPRE.Halting.exists\_sem}, Lemma~\ref{lem:halting-semidecider}, which takes no
+hypotheses), the two distinguished strings \texttt{MIPRE.Halting.yYes\_mem} and
+\texttt{yNo\_mem}, and the compressor (Lemmas~\ref{lem:halt-construction},
+\ref{lem:lambda} and~\ref{lem:dhalt-values}: \texttt{MIPRE.Halting.comprPoly}, its
+specification \texttt{exists\_compressorSpec}, and \texttt{exists\_obligations}). The
+synchronization invariant that an earlier revision also required of the games produced
+inside $\Compress$ is no longer among them (Remark~\ref{rem:bipartite-route}).
 
 In Lean the assembly is \texttt{MIPRE.Halting.halting\_reduction}
-(\texttt{Halting/Reduction.lean}). It is complete and free of \texttt{sorry}, and it takes
-three hypotheses: a \texttt{MIPRE.GapCompression} (which is Theorem~\ref{thm:compression}), a
-universal machine, and an inhabitant of \texttt{MIPRE.Halting.Obligations}, whose content is
-exactly the compressor --- \texttt{compr}, \texttt{compr\_spec}, and the threshold above which
-its guarantee holds. The other three obligations of Remark~\ref{rem:compression-abstract} are
-theorems that the proof applies directly: the two distinguished strings, \texttt{yYes\_mem}
-and \texttt{yNo\_mem}; the tabulation with its value agreement, \texttt{tab},
-\texttt{tab\_computable}, \texttt{tab\_match}, \texttt{tab\_value} and
-\texttt{gameValue\_tab\_eq\_one}; and the semidecider, \texttt{MIPRE.Halting.exists\_sem},
-which takes no hypotheses. So what is open is a structure to be inhabited rather than an
-argument to be found, and \texttt{\#print axioms} cannot hide any of it.
+(\texttt{Halting/Reduction.lean}), which takes three hypotheses: a
+\texttt{MIPRE.GapCompression} (which is Theorem~\ref{thm:compression}), a universal machine,
+and an inhabitant of \texttt{MIPRE.Halting.Obligations}, whose content is exactly the
+compressor --- \texttt{compr}, \texttt{compr\_spec}, and the threshold above which its
+guarantee holds. The other three obligations of Remark~\ref{rem:compression-abstract} are
+theorems that the proof applies directly, and the fourth is now a theorem too:
+\texttt{MIPRE.Halting.exists\_obligations} (\texttt{Halting/CompressorProgram.lean})
+inhabits the structure, so \texttt{MIPRE.Halting.halting\_reduction\_of} takes only a
+\texttt{GapCompression} and a universal machine --- of which
+\texttt{Cost.exists\_efficient\_universal} provides one --- and is free of \texttt{sorry}.
+So the reduction is machine-checked from Theorem~\ref{thm:compression} alone, and
+\texttt{\#print axioms} shows nothing else.
 That assembly concludes in $\valstar$ only, and item 1 claims more: the witness is a
 \emph{PCC} strategy, so $\synval = \valstar = 1$. The two steps that carry it there are now in
 Lean, neither of them part of the instantiation. First, a synchronous strategy transports along

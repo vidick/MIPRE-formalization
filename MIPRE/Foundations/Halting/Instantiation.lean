@@ -23,15 +23,19 @@ along the dictionary of blueprint `rem:compression-abstract`.
 
 A string is a *description*, never a game: a pair `(λ, 𝒟)` of a compression parameter and a
 decider program, serialized by `Data.toBitsPost` and read back by `Data.parse`. Every string
-names such a pair — `descLam` normalizes the parameter (`Data.natOf`), `descDec` reads the
-decider and falls back on the program `nil` — so no validity condition on strings appears
-anywhere. The verifier it denotes is
+names such a pair — `descLam` normalizes the parameter (`Data.natOf`), `descDecD` is the
+decider as the datum it is — so no validity condition on strings appears anywhere. The
+verifier it denotes is
 
-  `Vof x = (S^compr_{descLam x}, wrap (descDec x))`   (`Verifier.ofSamplerDecider`),
+  `Vof x = (S^compr_{descLam x}, wrap (descDecD x))`   (`Verifier.ofSamplerDeciderD`),
 
 the compressed sampler at the string's own parameter (which depends on `λ` alone, blueprint
 `lem:compress-sampler-indep`, the field `GapCompression.sampler`) together with the string's
-decider wrapped in the question-length check of `def:normal-verifier` (`Decider.wrap`). The
+decider, run by the universal machine, wrapped in the question-length check of
+`def:normal-verifier` (`Decider.wrap`). That the decider is a datum and not a decoded program
+is deliberate: a datum that is not an encoding still names a verifier, whatever the interpreter
+does with it, and the compressor's decider of O4 can copy a datum into a syntax tree where it
+could not decode one. The
 two classes of the criterion are then
 
   `classA n = {x | Vof x is n-bounded, rejects long answers, and 𝒱_n has a value-1 PCC strategy}`,
@@ -96,10 +100,10 @@ open HaltingGameValue (GameData)
 normalized to a canonical binary numeral (`Data.natOf`), so that every string names one. -/
 def descLam (x : BitStr) : ℕ := Data.natOf (Data.parse x).left
 
-/-- The decider program a string denotes: the right component of the data it parses to, or the
-program `nil` when that is not the encoding of a program. Every string names one. -/
-def descDec (x : BitStr) : Prog :=
-  ((SizedEncoding.decode (Data.parse x).right : Option Prog)).getD .nil
+/-- The decider a string denotes: the right component of the data it parses to, a datum that
+the universal machine runs (`Verifier.ofSamplerDeciderD`). It need not be the encoding of a
+program; every string names one. -/
+def descDecD (x : BitStr) : Data := (Data.parse x).right
 
 /-- The string denoting a parameter and a decider: the postorder serialization of the pair. -/
 def descOf (lam : ℕ) (dec : Prog) : BitStr :=
@@ -108,18 +112,19 @@ def descOf (lam : ℕ) (dec : Prog) : BitStr :=
 @[simp] theorem descLam_descOf (lam : ℕ) (dec : Prog) : descLam (descOf lam dec) = lam := by
   simp [descLam, descOf]
 
-@[simp] theorem descDec_descOf (lam : ℕ) (dec : Prog) : descDec (descOf lam dec) = dec := by
-  simp [descDec, descOf, SizedEncoding.decode_encode]
+@[simp] theorem descDecD_descOf (lam : ℕ) (dec : Prog) :
+    descDecD (descOf lam dec) = encode dec := by
+  simp [descDecD, descOf]
 
 /-! ## The verifier a string denotes, and the two classes -/
 
 variable (G : GapCompression) (U : UniversalMachine)
 
 /-- **The verifier a string denotes**: the compressed sampler at the string's own parameter,
-and the string's decider wrapped in the question-length check. Every string denotes one,
-well formed or not. -/
+and the string's decider — a datum, run by the universal machine — wrapped in the
+question-length check. Every string denotes one, well formed or not. -/
 def Vof (x : BitStr) : Verifier 7 :=
-  Verifier.ofSamplerDecider U (G.sampler (descLam x)) (descDec x)
+  Verifier.ofSamplerDeciderD U (G.sampler (descLam x)) (descDecD x)
 
 /-- The answer-length budget the classes are read with at level `n`: the bound a compressed
 decider with the string's parameter obeys at index `n`. -/
@@ -224,8 +229,7 @@ Two of the seven take work:
   decider (`Decider.wrap`, through `Verifier.ofSamplerDecider`). Encoding it means building
   `Cost.Prog.wrapCore`'s syntax tree directly in `Data` (`Cost.Prog.ProgD.dWrapCore`), because
   `Prog` is not a `Primcodable` and so no `Primrec` statement can mention it. The string's
-  decider arrives through `Cost.progNorm`, which is `descDec` read off the data and re-encoded
-  — the same program, in the normal form a `Primrec` proof can reach.
+  decider is the datum `descDecD x` and enters as it is.
 
 The three bridges at the end — `accOf_iff`, `dimOf_eq`, `margOf_eq` — are what the rest of O2
 rests on: the tabulated numbers *are* the verifier's own sampler and decider. `dimOf_eq` and
@@ -239,8 +243,8 @@ def sampData (x : BitStr) : Data := encode (G.samplerProg (descLam x))
 
 /-- The encoded decider program of the verifier a string denotes: the question-length wrapper
 around the string's decider, built in `Data` rather than in `Prog`. -/
-noncomputable def decProgData (x : BitStr) : Data :=
-  Prog.ProgD.dWrapCore (encode U.univ) (sampData G x) (progNorm (Data.parse x).right)
+def decProgData (x : BitStr) : Data :=
+  Prog.ProgD.dWrapCore (encode U.univ) (sampData G x) (descDecD x)
 
 /-! The two concrete instantiations of `Tabulate`'s generic `Primrec` statements. `s` and `B`
 are paired so that `n` stays at the depth it has in the tuple today: that is what keeps this
@@ -279,7 +283,7 @@ theorem computable_sampData : Computable fun x : BitStr => sampData G x :=
 
 theorem computable_decProgData : Computable fun x : BitStr => decProgData G U x :=
   (Prog.ProgD.primrec_dWrapCore (encode U.univ)).to_comp.comp (computable_sampData G)
-    (primrec_progNorm.comp (Data.primrec_right.comp Data.primrec_parse)).to_comp
+    (Data.primrec_right.comp Data.primrec_parse).to_comp
 
 theorem computable_ansBound : Computable fun p : BitStr × ℕ => ansBound G p.1 p.2 :=
   ((primrec_poly_eval G.bound).comp
@@ -328,7 +332,7 @@ theorem sampData_eq (x : BitStr) : sampData G x = encode ((G.sampler (descLam x)
   rw [sampData, G.samplerProg_eq]
 
 theorem decProgData_eq (x : BitStr) : decProgData G U x = encode ((Vof G U x).decider.prog) := by
-  rw [decProgData, sampData_eq, progNorm_eq, Prog.ProgD.dWrapCore_eq]
+  rw [decProgData, sampData_eq, Prog.ProgD.dWrapCore_eq]
   rfl
 
 /-- The tabulated acceptance test **is** the verifier's acceptance, on an `n`-bounded

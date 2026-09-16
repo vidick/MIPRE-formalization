@@ -209,7 +209,7 @@ theorem frozen_isBounded {x : BitStr} {n : ℕ} (hn : S.n₀ ≤ n)
 output does. -/
 theorem sampler_eq (c : Prog) (n : ℕ) (V : Prog × Prog) :
     (G.output V (S.lam n)).sampler = (Vof G U (S.compr (c, n))).sampler := by
-  rw [G.output_sampler, Vof, Verifier.ofSamplerDecider_sampler, S.descLam_compr]
+  rw [G.output_sampler, Vof, Verifier.ofSamplerDeciderD_sampler, S.descLam_compr]
 
 /-- The answer budget the output's class is read with is the one the compression theorem's
 output is judged at. -/
@@ -266,12 +266,12 @@ end CompressorSpec
 
 /-- `2 ^ ·` is primitive recursive: the level at which the recursion of the criterion runs is
 `2 ^ (K + 1 + esize e)`, and the reduction has to compute it. -/
-private theorem two_pow_iterate (n : ℕ) : (fun b : ℕ => 2 * b)^[n] 1 = 2 ^ n := by
+theorem two_pow_iterate (n : ℕ) : (fun b : ℕ => 2 * b)^[n] 1 = 2 ^ n := by
   induction n with
   | zero => rfl
   | succ n ih => rw [Function.iterate_succ_apply', ih, pow_succ]; ring
 
-private theorem primrec_two_pow : Primrec fun n : ℕ => 2 ^ n :=
+theorem primrec_two_pow : Primrec fun n : ℕ => 2 ^ n :=
   (Primrec.nat_iterate Primrec.id (Primrec.const 1)
     (Primrec.nat_mul.comp (Primrec.const 2) Primrec.snd).to₂).of_eq fun n => two_pow_iterate n
 

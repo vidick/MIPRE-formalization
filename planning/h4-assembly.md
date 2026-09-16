@@ -561,6 +561,70 @@ takes none.
    Compare #57 and #64 for the scale of PR-2 and PR-3; together they are bigger than either.
    Read `recursive.tex` `sec:halt` and nodes `1.6.1`, `1.6.5` again before PR-2: this is the
    one obligation where the paper's construction is followed closely.
+
+   **PR-0 and PR-1 done 2026-09-16** (#80, #81). The two decisions went: #77 as recommended,
+   `HasPerfectPCC` restated on the doubled game, the three un-doubled PCC bridges of
+   `SyncTransport.lean` removed with it; finding 2 **in the classes**, not through the
+   criterion — `Verifier.RejectsLong` is the third clause of `InClassA`/`InClassB`, O1's two
+   strings prove it, O3 enumerates its violation as a third `Σ₁` disjunct
+   (`Verifier.rePred_not_rejectsLong`), and `compressibility_criterion_levels` is untouched.
+   The consumer is `MIPRE.Halting.CompressorSpec` (`Halting/Reduction.lean`), five fields, and
+   `CompressorSpec.toObligations` is the class transfer from them, sorry-free; PR-2 and PR-3
+   owe exactly those fields.
+
+   **PR-2 split in two, on a finding of the consumer-first kind.** The compressor's decider has
+   to rebuild, in the ambient model, the frozen verifier of the string `x` it reads — and
+   `Vof x`'s decider was `descDec x = (decode (parse x).right).getD nil`, a decode with a
+   fallback, i.e. the tree-grammar check `Cost.progOk` (a `Data.recD` over four simultaneous
+   predicates). Reproducing that as a worklist program with a cost proof would have been a
+   module of the size of `Serial.lean`, to reproduce a fallback nobody wanted. `wrapCore` only
+   ever used the decider as `Prog.const (encode dec)` fed to `univ`, so **PR-2a** lets a string
+   denote the *datum* `(parse x).right`, run by the universal machine
+   (`Verifier.ofSamplerDeciderD`; `ofSamplerDecider` on a program is the special case, by
+   `UniversalMachine.time_le`/`halts_of`, and is what O1 still uses). `descDec`, `progNorm`
+   and the fallback leave the instantiation; the tabulation's `decProgData` is `dWrapCore` on
+   the datum, one primitive recursive step shorter. Then **PR-2b** is `Halting/Compressor.lean`
+   proper, whose decider copies a datum into a syntax tree where it could not have decoded one.
+
+   **PR-2 done 2026-09-16**, both halves in one pull request. `Halting/Compressor.lean` has
+   the decider `haltProg` — `readProg` (the bit-query loop, by `Eval.loop_of_invariant` with
+   the index as measure), `parseProg`/`normBinProg`, the sampler program, `wrapBuildProg` and
+   `freezeBuildProg` (the descriptions of the wrapped and frozen programs built with
+   `cons`/`const`, mirrors `pK`/`pC`/`pL`/`pE` of `ProgD`), `G.compress.code`, then the
+   universal machine on the decider's own input — and `comprStr c n lam := descOf lam
+   (hardcode haltProg (encode (c, n, lam)))`. `comprStr_accepts` is the field
+   `accepts_compr` verbatim; `Vof_comprStr` says the output denotes
+   `ofSamplerDecider U (G.sampler lam) (hardcode …)`. Two things worth knowing for PR-3.
+   (i) The preparation `prepProg` is one closed program with an unconditional forward run,
+   so the inversion of `haltProg` is three `cases` and determinism — no loop inversion
+   anywhere. (ii) Every run lemma carries an explicit cost: `readIter`/`readProg_runs`,
+   `prepBound` with the size bounds `sampBound`, `wBound`, `kBound`, `fBound`, and
+   `haltProg_runs` (`3 · prepBound + esize (c, n, lam) + 2|d| + t + 12`, `t` the compressed
+   decider's own cost). PR-3 is therefore arithmetic on top of `wrapCore`'s cost
+   (`WrapperCost.lean`, redone with explicit constants rather than `HasPolyCost`),
+   `G.decider_time` for `t`, `U.bound` for the simulation, and `lambda_bound`.
+
+   **PR-3, PR-4 and PR-5 done 2026-09-16, in the same pull request (#82). O4 is discharged.**
+   `Halting/Absorb.lean`: `PolyBounded.absorb` (a polynomially bounded function of
+   `(m + n + 1) · y` is below `m^n · y^n` past a threshold) and `absorb_log` (a polynomial in
+   `log n` is below `n / 2`), the two arithmetic facts the accounting reduces to;
+   `lambda_bound` was not needed in the end, `log_lt_div` from its proof was.
+   `WrapperCost.lean` restated with explicit constants (`wrapHeadZ`, `wrapCoreCost`,
+   `wrapCore_cost'`), the `HasPolyCost` versions as corollaries. `Halting/CompressorCost.lean`:
+   `lamOf n = 2^(2 · size n)` (no `K`, `D`: the absorb lemma supplies the threshold, so the
+   parameter only has to be `≥ (n+1)^2` for `lamOf_ge` and computable in binary), the three
+   clauses of `IsBounded n` — sampler, size, decider, the last through `innerBound` and the
+   master bound `decZ` with `gcongr` for the monotonicity and the `PolyBounded` closure lemmas
+   — `isBounded_comprStr`, `lamOf_ge`, `ansBound_le_lamOf`, `exists_compressorSpec`.
+   `Halting/CompressorProgram.lean`: `lamProg` (two `lenBody` walks), `comprProg`
+   (`smnProg`, `serProg`), `comprPoly : PolyTimeFun (Prog × ℕ) BitStr`, `exists_obligations`,
+   `halting_reduction_of` (a `GapCompression` and a `UniversalMachine` only) and
+   `halting_reduces_to_gameValue_of` (the headline in `gameValue`). Blueprint: `\lean{}` on
+   `lem:halt-construction`, `lem:lambda`, `lem:dhalt-values`, `thm:halting`, `thm:main`, with
+   Comments on the route; no proof-level `\leanok` was added, since the blueprint statements
+   are about the self-referential `V^halt` and say "polynomial-time" where the Lean says
+   computable — whether to mark them is the maintainer's call, and the axiom guard is ready
+   for it. The honest headline is now *MIP\* = RE ⟸ `thm:compression`, machine-checked*.
 5. **PR-0, the module move.** Numbered last because it was found last; it comes *before* the
    rest of O4 in the doing, being what turns O1's and O3's discharges into a smaller
    `Obligations`. The structure and `halting_reduction` are at the end of

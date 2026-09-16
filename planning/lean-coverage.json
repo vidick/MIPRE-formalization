@@ -228,6 +228,12 @@
   "MIPRE.Cost.PolyBounded": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Cost.PolyBounded.absorb": [
+   "lem:lambda"
+  ],
+  "MIPRE.Cost.PolyBounded.absorb_log": [
+   "lem:lambda"
+  ],
   "MIPRE.Cost.PolyTimeFun.computable_encode_comp": [
    "rem:compression-abstract"
   ],
@@ -240,7 +246,18 @@
   "MIPRE.Cost.Prog.ProgD.dWrapCore_eq": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Cost.Prog.freezeBuildProg": [
+   "lem:halt-construction"
+  ],
   "MIPRE.Cost.Prog.parseProg_runs": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.Prog.readProg": [
+   "lem:halt-construction",
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.Prog.readProg_runs": [
+   "lem:halt-construction",
    "rem:compression-abstract"
   ],
   "MIPRE.Cost.Prog.serProg_runs": [
@@ -248,6 +265,15 @@
   ],
   "MIPRE.Cost.Prog.two_le_esize": [
    "rem:compression-abstract"
+  ],
+  "MIPRE.Cost.Prog.wrapBuildProg": [
+   "lem:halt-construction"
+  ],
+  "MIPRE.Cost.Prog.wrapCoreCost": [
+   "lem:lambda"
+  ],
+  "MIPRE.Cost.Prog.wrapCore_cost'": [
+   "lem:lambda"
   ],
   "MIPRE.Cost.Prog.wrapCore_hasPolyCost": [
    "rem:compression-abstract"
@@ -297,15 +323,6 @@
   "MIPRE.Cost.primrec_natLeB": [
    "lem:bounded-violation-re"
   ],
-  "MIPRE.Cost.progNorm": [
-   "rem:compression-abstract"
-  ],
-  "MIPRE.Cost.progNorm_eq": [
-   "rem:compression-abstract"
-  ],
-  "MIPRE.Cost.progOk": [
-   "rem:compression-abstract"
-  ],
   "MIPRE.Cost.recursive_compression": [
    "lem:recursive-compression"
   ],
@@ -330,6 +347,9 @@
   "MIPRE.Decider.wrap": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Decider.wrap_accepts_prog": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Game": [
    "def:game"
   ],
@@ -347,6 +367,7 @@
    "rem:compression-abstract"
   ],
   "MIPRE.Halting.CompressorSpec.toObligations": [
+   "lem:dhalt-values",
    "rem:compression-abstract"
   ],
   "MIPRE.Halting.Obligations": [
@@ -364,10 +385,25 @@
   "MIPRE.Halting.acc_mem_iff": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Halting.ansBound_le_lamOf": [
+   "lem:lambda"
+  ],
   "MIPRE.Halting.classA": [
    "rem:compression-abstract"
   ],
   "MIPRE.Halting.classB": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.comprPoly": [
+   "lem:lambda"
+  ],
+  "MIPRE.Halting.comprStr": [
+   "lem:halt-construction",
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.comprStr_accepts": [
+   "lem:dhalt-values",
+   "lem:halt-construction",
    "rem:compression-abstract"
   ],
   "MIPRE.Halting.computablyPresented_Vof": [
@@ -379,7 +415,7 @@
   "MIPRE.Halting.decProgData_eq": [
    "rem:compression-abstract"
   ],
-  "MIPRE.Halting.descDec": [
+  "MIPRE.Halting.descDecD": [
    "rem:compression-abstract"
   ],
   "MIPRE.Halting.descLam": [
@@ -397,6 +433,12 @@
   "MIPRE.Halting.eXof": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Halting.exists_compressorSpec": [
+   "lem:lambda"
+  ],
+  "MIPRE.Halting.exists_obligations": [
+   "thm:halting"
+  ],
   "MIPRE.Halting.exists_sem": [
    "rem:compression-abstract"
   ],
@@ -409,8 +451,39 @@
   "MIPRE.Halting.gameValue_tab_eq_one": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Halting.haltProg": [
+   "lem:halt-construction",
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.haltProg_accepts_iff": [
+   "lem:dhalt-values",
+   "lem:halt-construction",
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.haltProg_runs": [
+   "lem:halt-construction"
+  ],
+  "MIPRE.Halting.haltProg_runs_inv": [
+   "lem:halt-construction"
+  ],
+  "MIPRE.Halting.halting_reduces_to_gameValue_of": [
+   "thm:halting",
+   "thm:main"
+  ],
   "MIPRE.Halting.halting_reduction": [
    "thm:halting"
+  ],
+  "MIPRE.Halting.halting_reduction_of": [
+   "thm:halting"
+  ],
+  "MIPRE.Halting.isBounded_comprStr": [
+   "lem:lambda"
+  ],
+  "MIPRE.Halting.lamOf": [
+   "lem:lambda"
+  ],
+  "MIPRE.Halting.lamOf_ge": [
+   "lem:lambda"
   ],
   "MIPRE.Halting.lambda_bound": [
    "lem:lambda-bound"
@@ -425,6 +498,14 @@
    "rem:compression-abstract"
   ],
   "MIPRE.Halting.mu_clause": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.prepProg": [
+   "lem:halt-construction",
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Halting.prepProg_runs": [
+   "lem:halt-construction",
    "rem:compression-abstract"
   ],
   "MIPRE.Halting.primrec_tabOf": [
@@ -838,6 +919,12 @@
   "MIPRE.Verifier.ofSamplerDecider": [
    "rem:compression-abstract"
   ],
+  "MIPRE.Verifier.ofSamplerDeciderD": [
+   "rem:compression-abstract"
+  ],
+  "MIPRE.Verifier.ofSamplerDeciderD_accepts": [
+   "rem:compression-abstract"
+  ],
   "MIPRE.Verifier.ofSamplerDecider_accepts": [
    "rem:compression-abstract"
   ],
@@ -1071,13 +1158,21 @@
   "MIPRE.Cost.Machine.stepCostD",
   "MIPRE.Cost.Machine.stepCostD_toData",
   "MIPRE.Cost.PolyBounded",
+  "MIPRE.Cost.PolyBounded.absorb",
+  "MIPRE.Cost.PolyBounded.absorb_log",
   "MIPRE.Cost.PolyTimeFun.computable_encode_comp",
   "MIPRE.Cost.Prog.HasPolyCost",
   "MIPRE.Cost.Prog.ProgD.dWrapCore",
   "MIPRE.Cost.Prog.ProgD.dWrapCore_eq",
+  "MIPRE.Cost.Prog.freezeBuildProg",
   "MIPRE.Cost.Prog.parseProg_runs",
+  "MIPRE.Cost.Prog.readProg",
+  "MIPRE.Cost.Prog.readProg_runs",
   "MIPRE.Cost.Prog.serProg_runs",
   "MIPRE.Cost.Prog.two_le_esize",
+  "MIPRE.Cost.Prog.wrapBuildProg",
+  "MIPRE.Cost.Prog.wrapCoreCost",
+  "MIPRE.Cost.Prog.wrapCore_cost'",
   "MIPRE.Cost.Prog.wrapCore_hasPolyCost",
   "MIPRE.Cost.bitQueryAnswer",
   "MIPRE.Cost.compressibility_criterion",
@@ -1094,9 +1189,6 @@
   "MIPRE.Cost.hardcode_time",
   "MIPRE.Cost.hardcode_time_rev",
   "MIPRE.Cost.primrec_natLeB",
-  "MIPRE.Cost.progNorm",
-  "MIPRE.Cost.progNorm_eq",
-  "MIPRE.Cost.progOk",
   "MIPRE.Cost.recursive_compression",
   "MIPRE.Cost.recursive_compression_halting",
   "MIPRE.Cost.smn_polyTime",
@@ -1105,6 +1197,7 @@
   "MIPRE.Decider.TimeBound",
   "MIPRE.Decider.acceptBudget",
   "MIPRE.Decider.wrap",
+  "MIPRE.Decider.wrap_accepts_prog",
   "MIPRE.Game",
   "MIPRE.Game.doubled",
   "MIPRE.Game.repeat",
@@ -1116,27 +1209,44 @@
   "MIPRE.Halting.accOf",
   "MIPRE.Halting.accOf_iff",
   "MIPRE.Halting.acc_mem_iff",
+  "MIPRE.Halting.ansBound_le_lamOf",
   "MIPRE.Halting.classA",
   "MIPRE.Halting.classB",
+  "MIPRE.Halting.comprPoly",
+  "MIPRE.Halting.comprStr",
+  "MIPRE.Halting.comprStr_accepts",
   "MIPRE.Halting.computablyPresented_Vof",
   "MIPRE.Halting.decProgData",
   "MIPRE.Halting.decProgData_eq",
-  "MIPRE.Halting.descDec",
+  "MIPRE.Halting.descDecD",
   "MIPRE.Halting.descLam",
   "MIPRE.Halting.dimOf",
   "MIPRE.Halting.dimOf_eq",
   "MIPRE.Halting.eAof",
   "MIPRE.Halting.eXof",
+  "MIPRE.Halting.exists_compressorSpec",
+  "MIPRE.Halting.exists_obligations",
   "MIPRE.Halting.exists_sem",
   "MIPRE.Halting.exists_sem_of_tab",
   "MIPRE.Halting.four_mul_succ_lt_two_pow",
   "MIPRE.Halting.gameValue_tab_eq_one",
+  "MIPRE.Halting.haltProg",
+  "MIPRE.Halting.haltProg_accepts_iff",
+  "MIPRE.Halting.haltProg_runs",
+  "MIPRE.Halting.haltProg_runs_inv",
+  "MIPRE.Halting.halting_reduces_to_gameValue_of",
   "MIPRE.Halting.halting_reduction",
+  "MIPRE.Halting.halting_reduction_of",
+  "MIPRE.Halting.isBounded_comprStr",
+  "MIPRE.Halting.lamOf",
+  "MIPRE.Halting.lamOf_ge",
   "MIPRE.Halting.lambda_bound",
   "MIPRE.Halting.log_lt_div",
   "MIPRE.Halting.margOf",
   "MIPRE.Halting.margOf_eq",
   "MIPRE.Halting.mu_clause",
+  "MIPRE.Halting.prepProg",
+  "MIPRE.Halting.prepProg_runs",
   "MIPRE.Halting.primrec_tabOf",
   "MIPRE.Halting.sampData",
   "MIPRE.Halting.sampData_eq",
@@ -1274,6 +1384,8 @@
   "MIPRE.Verifier.not_isBounded_iff_exists",
   "MIPRE.Verifier.not_rejectsLong_iff_exists",
   "MIPRE.Verifier.ofSamplerDecider",
+  "MIPRE.Verifier.ofSamplerDeciderD",
+  "MIPRE.Verifier.ofSamplerDeciderD_accepts",
   "MIPRE.Verifier.ofSamplerDecider_accepts",
   "MIPRE.Verifier.ofSamplerDecider_isBounded",
   "MIPRE.Verifier.quantumValue_doubledGame",
@@ -1438,11 +1550,6 @@
   "MIPRE/Foundations/Cost/Partrec.lean": [
    "MIPRE.Cost.PolyTimeFun.computable_encode_comp"
   ],
-  "MIPRE/Foundations/Cost/ProgData.lean": [
-   "MIPRE.Cost.progNorm",
-   "MIPRE.Cost.progNorm_eq",
-   "MIPRE.Cost.progOk"
-  ],
   "MIPRE/Foundations/Cost/Semidecide.lean": [
    "MIPRE.Cost.exists_semidecider"
   ],
@@ -1511,6 +1618,10 @@
    "MIPRE.Verifier.doubledGame",
    "MIPRE.Verifier.quantumValue_doubledGame"
   ],
+  "MIPRE/Foundations/Halting/Absorb.lean": [
+   "MIPRE.Cost.PolyBounded.absorb",
+   "MIPRE.Cost.PolyBounded.absorb_log"
+  ],
   "MIPRE/Foundations/Halting/Bounded.lean": [
    "MIPRE.Verifier.IsBounded.mono",
    "MIPRE.Verifier.exists_isBounded"
@@ -1521,6 +1632,33 @@
    "MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal",
    "MIPRE.Verifier.not_inClassB_of_inClassA",
    "MIPRE.Verifier.valStar_eq_zero_of_rejects_all"
+  ],
+  "MIPRE/Foundations/Halting/Compressor.lean": [
+   "MIPRE.Cost.Prog.freezeBuildProg",
+   "MIPRE.Cost.Prog.readProg",
+   "MIPRE.Cost.Prog.readProg_runs",
+   "MIPRE.Cost.Prog.wrapBuildProg",
+   "MIPRE.Halting.comprStr",
+   "MIPRE.Halting.comprStr_accepts",
+   "MIPRE.Halting.haltProg",
+   "MIPRE.Halting.haltProg_accepts_iff",
+   "MIPRE.Halting.haltProg_runs",
+   "MIPRE.Halting.haltProg_runs_inv",
+   "MIPRE.Halting.prepProg",
+   "MIPRE.Halting.prepProg_runs"
+  ],
+  "MIPRE/Foundations/Halting/CompressorCost.lean": [
+   "MIPRE.Halting.ansBound_le_lamOf",
+   "MIPRE.Halting.exists_compressorSpec",
+   "MIPRE.Halting.isBounded_comprStr",
+   "MIPRE.Halting.lamOf",
+   "MIPRE.Halting.lamOf_ge"
+  ],
+  "MIPRE/Foundations/Halting/CompressorProgram.lean": [
+   "MIPRE.Halting.comprPoly",
+   "MIPRE.Halting.exists_obligations",
+   "MIPRE.Halting.halting_reduces_to_gameValue_of",
+   "MIPRE.Halting.halting_reduction_of"
   ],
   "MIPRE/Foundations/Halting/CostBudget.lean": [
    "MIPRE.Cost.Machine.costStep",
@@ -1562,7 +1700,7 @@
    "MIPRE.Halting.classB",
    "MIPRE.Halting.decProgData",
    "MIPRE.Halting.decProgData_eq",
-   "MIPRE.Halting.descDec",
+   "MIPRE.Halting.descDecD",
    "MIPRE.Halting.descLam",
    "MIPRE.Halting.dimOf_eq",
    "MIPRE.Halting.eAof",
@@ -1653,10 +1791,15 @@
    "MIPRE.Cost.Prog.ProgD.dWrapCore",
    "MIPRE.Cost.Prog.ProgD.dWrapCore_eq",
    "MIPRE.Decider.wrap",
+   "MIPRE.Decider.wrap_accepts_prog",
    "MIPRE.Verifier.ofSamplerDecider",
+   "MIPRE.Verifier.ofSamplerDeciderD",
+   "MIPRE.Verifier.ofSamplerDeciderD_accepts",
    "MIPRE.Verifier.ofSamplerDecider_accepts"
   ],
   "MIPRE/Foundations/Halting/WrapperCost.lean": [
+   "MIPRE.Cost.Prog.wrapCoreCost",
+   "MIPRE.Cost.Prog.wrapCore_cost'",
    "MIPRE.Cost.Prog.wrapCore_hasPolyCost",
    "MIPRE.Verifier.ofSamplerDecider_isBounded"
   ],
@@ -1819,7 +1962,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 77,
+ "lean_tags": 80,
  "module_sizes": {
   "MIPRE/Axioms.lean": 0,
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
@@ -1883,9 +2026,13 @@
   "MIPRE/Foundations/GameTransport.lean": 39,
   "MIPRE/Foundations/Games.lean": 61,
   "MIPRE/Foundations/GapCompression.lean": 4,
+  "MIPRE/Foundations/Halting/Absorb.lean": 5,
   "MIPRE/Foundations/Halting/Arith.lean": 50,
   "MIPRE/Foundations/Halting/Bounded.lean": 9,
   "MIPRE/Foundations/Halting/Classes.lean": 10,
+  "MIPRE/Foundations/Halting/Compressor.lean": 77,
+  "MIPRE/Foundations/Halting/CompressorCost.lean": 53,
+  "MIPRE/Foundations/Halting/CompressorProgram.lean": 15,
   "MIPRE/Foundations/Halting/CostBudget.lean": 22,
   "MIPRE/Foundations/Halting/Descriptions.lean": 39,
   "MIPRE/Foundations/Halting/Enumerate.lean": 22,
@@ -1894,14 +2041,14 @@
   "MIPRE/Foundations/Halting/LambdaBound.lean": 4,
   "MIPRE/Foundations/Halting/Lists.lean": 42,
   "MIPRE/Foundations/Halting/PolyBounded.lean": 28,
-  "MIPRE/Foundations/Halting/Reduction.lean": 7,
+  "MIPRE/Foundations/Halting/Reduction.lean": 9,
   "MIPRE/Foundations/Halting/Semidecide.lean": 4,
   "MIPRE/Foundations/Halting/Semidecider.lean": 19,
   "MIPRE/Foundations/Halting/Serial.lean": 26,
   "MIPRE/Foundations/Halting/Strings.lean": 16,
   "MIPRE/Foundations/Halting/Tabulate.lean": 54,
-  "MIPRE/Foundations/Halting/Wrapper.lean": 53,
-  "MIPRE/Foundations/Halting/WrapperCost.lean": 17,
+  "MIPRE/Foundations/Halting/Wrapper.lean": 58,
+  "MIPRE/Foundations/Halting/WrapperCost.lean": 23,
   "MIPRE/Foundations/SyncTransport.lean": 6,
   "MIPRE/Foundations/ValueApprox.lean": 8,
   "MIPRE/Foundations/ValueApprox/Cayley.lean": 16,
@@ -1961,6 +2108,6 @@
   "labels": 227,
   "leanok_claimed": 132,
   "leanok_guarded": 132,
-  "refs": 1002
+  "refs": 1016
  }
 }

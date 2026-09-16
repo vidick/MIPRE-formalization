@@ -147,10 +147,10 @@ def yNo : BitStr := descOf 0 decNo
 def yYes : BitStr := descOf 0 decYes
 
 @[simp] theorem Vof_yNo : Vof G U yNo = Verifier.ofSamplerDecider U (G.sampler 0) decNo := by
-  simp [Vof, yNo]
+  simp [Vof, yNo, Verifier.ofSamplerDecider]
 
 @[simp] theorem Vof_yYes : Vof G U yYes = Verifier.ofSamplerDecider U (G.sampler 0) decYes := by
-  simp [Vof, yYes]
+  simp [Vof, yYes, Verifier.ofSamplerDecider]
 
 /-- **O1, the rejecting side.** `yNo` lies in the class `B` at every level from some `n₀` on:
 its verifier accepts nothing, hence is synchronous and has `val* = 0`, and it is `n`-bounded
