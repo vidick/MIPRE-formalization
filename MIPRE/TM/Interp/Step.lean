@@ -14,6 +14,10 @@ representation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or 
 silently when the budget is short.
 -/
 
+set_option linter.unusedSimpArgs false
+set_option linter.unnecessarySeqFocus false
+set_option linter.unnecessarySimpa false
+
 namespace MIPRE.TM.Interp
 
 open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine

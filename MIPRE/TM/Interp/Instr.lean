@@ -58,32 +58,32 @@ abbrev WT := Fin 6
 abbrev IT := Fin 7
 
 /-- The control tape. -/
-def C : WT := 0
+abbrev C : WT := 0
 /-- The environment tape. -/
-def E : WT := 1
+abbrev E : WT := 1
 /-- The stack tape. -/
-def K : WT := 2
+abbrev K : WT := 2
 /-- The scratch tape. -/
-def X : WT := 3
+abbrev X : WT := 3
 /-- The depth counter. -/
-def CNT : WT := 4
+abbrev CNT : WT := 4
 /-- The budget. -/
-def BUD : WT := 5
+abbrev BUD : WT := 5
 
 /-- The program `𝒟`. -/
-def PROG : IT := 0
+abbrev PROG : IT := 0
 /-- `encode n`. -/
-def N : IT := 1
+abbrev N : IT := 1
 /-- `T` in unary. -/
-def T : IT := 2
+abbrev T : IT := 2
 /-- `encode x`. -/
-def XS : IT := 3
+abbrev XS : IT := 3
 /-- `encode y`. -/
-def YS : IT := 4
+abbrev YS : IT := 4
 /-- The answer `a'`. -/
-def A : IT := 5
+abbrev A : IT := 5
 /-- The answer `b'`. -/
-def B : IT := 6
+abbrev B : IT := 6
 
 /-- The programs: one per case of the evaluation step, the dispatcher, the initialization
 and the final check. -/

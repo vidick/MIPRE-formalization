@@ -1463,7 +1463,12 @@ Cook~\cite{Coo71}; the companion paper's \texttt{answer\_reduction.tex} (its
 \paragraph{Comments.} The lemma is Cook--Levin for one fixed machine; the theorem applies
 it to a fixed interpreter machine for the decider's program, and the succinct description
 is a circuit for the clauses of this formula --- pieces S2 and S3 of
-\texttt{planning/succinct-cook-levin.md}. The local check circuit is a parameter of the
+\texttt{planning/succinct-cook-levin.md}. The interpreter machine (S2) is formalized:
+\texttt{MIPRE.TM.Interp.U}, with \texttt{accepts\_of\_acceptsWithin} and
+\texttt{acceptsWithin\_of\_accepts} (\texttt{MIPRE/TM/Interp/Run.lean}) --- on the inputs
+$(\decider, n, T, x, y, a, b)$ with $\abs{a}, \abs{b} \leq T$, it halts having output
+exactly $1$, within an explicit polynomial number of steps, if and only if $\decider$
+accepts $(n, x, y, a, b)$ within cost $T$. The local check circuit is a parameter of the
 formula, with its specification a hypothesis of the lemma, so that the lemma is proved once
 and the circuit supplied with the describer. The windows are five cells wide: a head at one
 of the middle three cells then sees, in the window, both the cell it leaves and the cell it

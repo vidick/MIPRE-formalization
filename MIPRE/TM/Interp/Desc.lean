@@ -62,6 +62,11 @@ theorem length_overwrite {l : List Sym} {p : ℕ} (hp : p ≤ l.length) (w : Lis
 theorem overwrite_nil (l : List Sym) (p : ℕ) : overwrite l p [] = l := by
   simp [overwrite]
 
+@[simp] theorem overwrite_cons_succ (a : Sym) (l : List Sym) (p : ℕ) (w : List Sym) :
+    overwrite (a :: l) (p + 1) w = a :: overwrite l p w := by
+  simp only [overwrite, List.take_succ_cons, List.cons_append, List.cons.injEq, true_and]
+  rw [show p + 1 + w.length = (p + w.length) + 1 by omega, List.drop_succ_cons]
+
 namespace TapeIs
 
 variable {τ : Tape} {pos : ℤ} {s : TapeSt}

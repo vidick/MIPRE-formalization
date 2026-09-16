@@ -658,6 +658,7 @@ import MIPRE.TM.CookLevin.Sound
 import MIPRE.TM.CookLevin.Tableau
 import MIPRE.TM.Interp.CopyTree
 import MIPRE.TM.Interp.CopyTreeCharge
+import MIPRE.TM.Interp.Desc
 import MIPRE.TM.Interp.GetEnv
 import MIPRE.TM.Interp.InputRoutines
 import MIPRE.TM.Interp.Instr
@@ -665,6 +666,8 @@ import MIPRE.TM.Interp.Machine
 import MIPRE.TM.Interp.Reach
 import MIPRE.TM.Interp.Repr
 import MIPRE.TM.Interp.Routines
+import MIPRE.TM.Interp.Run
+import MIPRE.TM.Interp.Step
 import MIPRE.TM.Interp.Tape
 import MIPRE.TM.MultiInput.Complexity
 import MIPRE.TM.MultiInput.Congr

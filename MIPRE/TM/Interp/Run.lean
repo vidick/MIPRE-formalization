@@ -5,7 +5,7 @@ Authors: Thomas Vidick
 -/
 import MIPRE.TM.Interp.Step
 import MIPRE.TM.Interp.InputRoutines
-import MIPRE.Foundations.Verifier
+import MIPRE.Foundations.SAT.Succinct
 
 /-!
 # The run of the interpreter
@@ -16,6 +16,10 @@ evaluation machine (`sim_run`), and the acceptance theorem: on the inputs
 accepts `(n, x, y, a, b)` within cost `T`, and then within an explicit polynomial number of
 steps.
 -/
+
+set_option linter.unusedSimpArgs false
+set_option linter.unnecessarySeqFocus false
+set_option linter.unnecessarySimpa false
 
 namespace MIPRE.TM.Interp
 
@@ -351,5 +355,311 @@ theorem init_run (D : Prog) (n : ℕ) (x y a b : BitStr) (Tb : ℕ) (ha : a.leng
   · simp
   · simp
   · simp
+
+
+/-! ## The size of a bounded representation -/
+
+/-- A bound on `sz` from `CfgBound V L P K`. -/
+def szBound (V L P K : ℕ) : ℕ := (V + P + 2) + (L * V + L) + K * (V + P + L * V + L + 4) + 1
+
+theorem length_envRepr_le {V L : ℕ} (env : Env) (hL : env.length ≤ L) (hV : ∀ v ∈ env, v.size ≤ V) :
+    (envRepr env).length ≤ L * V + L := by
+  rw [length_envRepr]
+  have hsum : (env.map Data.size).sum ≤ L * V := by
+    calc (env.map Data.size).sum ≤ (env.map fun _ => V).sum := List.sum_le_sum (fun v hv => hV v hv)
+      _ = env.length * V := by simp [List.map_const', List.sum_replicate]
+      _ ≤ L * V := Nat.mul_le_mul_right V hL
+  omega
+
+theorem length_kontRepr_le {V L P K : ℕ} (k : List Frame) (hK : k.length ≤ K)
+    (hf : ∀ f ∈ k, FrameBound V L P f) :
+    (kontRepr k).length ≤ K * (V + P + L * V + L + 4) := by
+  induction k generalizing K with
+  | nil => simp
+  | cons f k ih =>
+    simp only [List.length_cons] at hK
+    have := ih (K := K - 1) (by omega) (fun f' hf' => hf f' (List.mem_cons_of_mem _ hf'))
+    have hfr := length_frameRepr_le (hf f List.mem_cons_self)
+    rw [kontRepr_cons, List.length_append]
+    calc (kontRepr k).length + (frameRepr f).length
+        ≤ (K - 1) * (V + P + L * V + L + 4) + (V + P + L * V + L + 4) := by omega
+      _ = (K - 1 + 1) * (V + P + L * V + L + 4) := by ring
+      _ ≤ K * (V + P + L * V + L + 4) := Nat.mul_le_mul_right _ (by omega)
+
+theorem sz_le {V L P K : ℕ} {m : Machine.Cfg} (h : CfgBound V L P K m) : sz m ≤ szBound V L P K := by
+  have hc : (ctrlRepr m.ctrl).length ≤ V + P + 2 := by
+    cases hm : m.ctrl with
+    | ev p =>
+      have := h.ctrl_prog p hm
+      rw [Prog.esize_eq_size_toData] at this
+      simp [ctrlRepr]; omega
+    | ret v =>
+      have := h.ctrl_val v hm
+      simp [ctrlRepr]; omega
+  have he := length_envRepr_le m.env h.env_len h.env_val
+  have hk := length_kontRepr_le m.kont h.kont_len h.frames
+  simp only [sz, szBound]
+  omega
+
+/-! ## The simulation of a run -/
+
+/-- The bound on the steps of `U` for one step of the machine, from representations of size at
+most `Z` with a scratch tape of length at most `xl`. -/
+def stepB (Z xl : ℕ) : ℕ := 100 * (Z + xl + 1) + Z + 30
+
+theorem stepBound_le {m : Machine.Cfg} {Z xl xl' : ℕ} (hZ : sz m ≤ Z) (hx : xl ≤ xl') :
+    stepBound m xl ≤ stepB Z xl' := by
+  simp only [stepBound, caseBound, stepB]; omega
+
+theorem stepB_mono (Z : ℕ) {xl xl' : ℕ} (hx : xl ≤ xl') : stepB Z xl ≤ stepB Z xl' := by
+  simp only [stepB]; omega
+
+theorem costSum_succ (m : Machine.Cfg) (N : ℕ) :
+    costSum m (N + 1) = costSum m N + stepCost (Machine.step^[N] m) := by
+  rw [costSum_add]; simp [costSum]
+
+theorem costSum_mono (m : Machine.Cfg) {a b : ℕ} (h : a ≤ b) : costSum m a ≤ costSum m b := by
+  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h
+  rw [costSum_add]; omega
+
+/-- **The simulation**: `N` steps of the machine, none of them from a final configuration, with
+their total cost covered by the budget, are simulated by at least `N` and at most
+`N · stepB Z (xl + N Z)` steps of `U`. -/
+theorem sim_run (Z : ℕ) : ∀ (N : ℕ) (m : Machine.Cfg) (c : Cfg input) (ds : WT → TapeSt) (r : ℕ),
+    Desc c (at_ .dispatch 0) ds → RepOf ds m r (ctrlRepr m.ctrl).length (kontRepr m.kont).length →
+    (∀ i < N, sz (Machine.step^[i] m) ≤ Z) →
+    (∀ i < N, ∀ v, (Machine.step^[i] m).ctrl = .ret v → (Machine.step^[i] m).kont ≠ []) →
+    costSum m N ≤ r →
+    ∃ n, N ≤ n ∧ n ≤ N * stepB Z ((ds X).l.length + N * Z) ∧ ∃ (c' : Cfg input) (ds' : WT → TapeSt),
+      Reach c n c' [] ∧ Desc c' (at_ .dispatch 0) ds' ∧
+      RepOf ds' (Machine.step^[N] m) (r - costSum m N) (ctrlRepr (Machine.step^[N] m).ctrl).length
+        (kontRepr (Machine.step^[N] m).kont).length ∧
+      (ds' X).l.length ≤ (ds X).l.length + N * Z := by
+  intro N
+  induction N with
+  | zero =>
+    intro m c ds r hd hr _ _ _
+    exact ⟨0, le_rfl, by simp, c, ds, Reach.refl c, hd, by simpa [costSum] using hr, by simp⟩
+  | succ N ih =>
+    intro m c ds r hd hr hZ hnf hcost
+    have hZ0 := hZ 0 (by omega)
+    simp only [Function.iterate_zero, id_eq] at hZ0
+    have hsucc : costSum m (N + 1) = stepCost m + costSum (Machine.step m) N := rfl
+    have hc1 : stepCost m ≤ r := by omega
+    obtain ⟨n₁, h1, hn₁, c₁, ds₁, hr₁, hd₁, hrep₁, hxl₁⟩ :=
+      step_run hd hr (hnf 0 (by omega)) hc1
+    obtain ⟨n₂, hN₂, hn₂, c₂, ds₂, hr₂, hd₂, hrep₂, hxl₂⟩ := ih (Machine.step m) c₁ ds₁
+      (r - stepCost m) hd₁ hrep₁
+      (fun i hi => by simpa [Function.iterate_succ_apply] using hZ (i + 1) (by omega))
+      (fun i hi => by simpa [Function.iterate_succ_apply] using hnf (i + 1) (by omega))
+      (by omega)
+    refine ⟨n₁ + n₂, by omega, ?_, c₂, ds₂, (hr₁.trans hr₂).cast_out (by simp), hd₂, ?_, ?_⟩
+    · have hxb : (ds₁ X).l.length + N * Z ≤ (ds X).l.length + (N + 1) * Z := by
+        rw [Nat.succ_mul]; omega
+      have hb₁ : n₁ ≤ stepB Z ((ds X).l.length + (N + 1) * Z) :=
+        hn₁.trans (stepBound_le hZ0 (by rw [Nat.succ_mul]; omega))
+      have hb₂ : n₂ ≤ N * stepB Z ((ds X).l.length + (N + 1) * Z) :=
+        hn₂.trans (Nat.mul_le_mul_left _ (stepB_mono Z hxb))
+      calc n₁ + n₂ ≤ stepB Z ((ds X).l.length + (N + 1) * Z) +
+            N * stepB Z ((ds X).l.length + (N + 1) * Z) := by omega
+        _ = (N + 1) * stepB Z ((ds X).l.length + (N + 1) * Z) := by ring
+    · rw [Function.iterate_succ_apply, hsucc, ← Nat.sub_sub]
+      exact hrep₂
+    · rw [Nat.succ_mul]; omega
+
+/-! ## Acceptance -/
+
+theorem no_accept_of_haltsIn {c : Cfg input} {n : ℕ} (h : HaltsIn c n) (S : ℕ) :
+    U.outputString c S ≠ [.one] := by
+  rcases Nat.lt_or_ge S n with hS | hS
+  · intro hout
+    have := outputString_add_eq_append U c S (n - S)
+    rw [Nat.add_sub_cancel' hS.le, h.2, hout] at this
+    simp at this
+  · rw [outputString_eq_of_halt U c hS h.1, h.2]
+    simp
+
+theorem AcceptsFrom.acceptsIn {c : Cfg input} {n : ℕ} (h : AcceptsFrom c n) {S : ℕ} (hS : n ≤ S) :
+    (U.configs c S).state = none ∧ U.outputString c S = [.one] := by
+  obtain ⟨c', hr, hs⟩ := h
+  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hS
+  rw [configs_add, hr.1, configs_of_halts _ hs, outputString_add_eq_append, hr.1, hr.2,
+    outputString_halt _ _ hs]
+  exact ⟨hs, by simp⟩
+
+/-- The value of the encoded input. -/
+abbrev vSize (n : ℕ) (x y a b : BitStr) : ℕ := (encode (n, x, y, a, b)).size
+
+/-- The size bound on the machine's values along the run. -/
+abbrev V0 (n : ℕ) (x y a b : BitStr) (Tb : ℕ) : ℕ := max (vSize n x y a b) Tb
+
+/-- The size bound on the representations along the run. -/
+abbrev Z0 (D : Prog) (n : ℕ) (x y a b : BitStr) (Tb : ℕ) : ℕ :=
+  szBound (V0 n x y a b Tb) (1 + 2 * Tb) (esize D) Tb
+
+/-- The bound on the accepting run of `U`. -/
+def runBound (D : Prog) (n : ℕ) (x y a b : BitStr) (Tb : ℕ) : ℕ :=
+  initBound D n x y a b Tb + 3 * Tb * stepB (Z0 D n x y a b Tb) (3 * Tb * Z0 D n x y a b Tb) +
+    V0 n x y a b Tb + 16
+
+theorem cfgBound_init (D : Prog) (n : ℕ) (x y a b : BitStr) (Tb : ℕ) :
+    CfgBound (V0 n x y a b Tb) 1 (esize D) 0 ⟨.ev D, [encode (n, x, y, a, b)], []⟩ where
+  ctrl_val v hv := by simp at hv
+  ctrl_prog p hp := by simp only [Ctrl.ev.injEq] at hp; subst hp; exact le_rfl
+  env_len := by simp
+  env_val v hv := by simp at hv; subst hv; exact le_max_left _ _
+  kont_len := by simp
+  frames f hf := by simp at hf
+
+/-- Final configurations are fixed by `step`. -/
+theorem step_fixed_of_final {r : Data} {e : Env} (n : ℕ) :
+    Machine.step^[n] (⟨.ret r, e, []⟩ : Machine.Cfg) = ⟨.ret r, e, []⟩ :=
+  Function.iterate_fixed rfl n
+
+/-- **Completeness**: if `𝒟` accepts `(n, x, y, a, b)` within cost `T` (and `|a|, |b| ≤ T`),
+`U` accepts the inputs `(𝒟, n, T, x, y, a, b)` within `runBound` steps. -/
+theorem accepts_of_acceptsWithin (D : Decider) (n : ℕ) (x y a b : BitStr) (Tb : ℕ)
+    (ha : a.length ≤ Tb) (hb : b.length ≤ Tb) (h : D.AcceptsWithin n x y a b Tb) :
+    ∃ m ≤ runBound D.prog n x y a b Tb, AcceptsFrom (U.initCfg (uInput D.prog n Tb x y a b)) m := by
+  classical
+  obtain ⟨t, ht, hev⟩ := h
+  set v := encode (n, x, y, a, b) with hv
+  set m₀ : Machine.Cfg := ⟨.ev D.prog, [v], []⟩ with hm₀
+  obtain ⟨N, e, hsteps, hN⟩ := eval_steps_count hev []
+  obtain ⟨N', e', hsteps', hbnd⟩ := eval_steps_bound hev [] (V0 n x y a b Tb) 1 (esize D.prog) 0
+    (cfgBound_init D.prog n x y a b Tb) (le_max_of_le_right ht)
+  -- the first final configuration
+  have hex : ∃ i, IsFinal (Machine.step^[i] m₀) := ⟨N, hsteps.1 ▸ ⟨_, _, rfl⟩⟩
+  obtain ⟨N₀, hfin, hmin, hN₀N, hN₀N'⟩ : ∃ N₀, IsFinal (Machine.step^[N₀] m₀) ∧
+      (∀ i < N₀, ¬ IsFinal (Machine.step^[i] m₀)) ∧ N₀ ≤ N ∧ N₀ ≤ N' :=
+    ⟨Nat.find hex, Nat.find_spec hex, fun i hi => Nat.find_min hex hi,
+      Nat.find_min' hex (hsteps.1 ▸ ⟨_, _, rfl⟩), Nat.find_min' hex (hsteps'.1 ▸ ⟨_, _, rfl⟩)⟩
+  obtain ⟨r₀, e₀, hfin'⟩ := hfin
+  -- the final value is `encode true`
+  have hr₀ : r₀ = encode true := by
+    have := hsteps.1
+    rw [show N = N₀ + (N - N₀) by omega, Nat.add_comm, Function.iterate_add_apply, hfin',
+      step_fixed_of_final] at this
+    exact Ctrl.ret.inj (Machine.Cfg.mk.inj this).1
+  -- the cost up to `N₀`
+  have hcost : costSum m₀ N₀ ≤ Tb := (costSum_mono m₀ hN₀N).trans (hsteps.2 ▸ ht)
+  -- the sizes along the run
+  have hZ : ∀ i < N₀, sz (Machine.step^[i] m₀) ≤ Z0 D.prog n x y a b Tb := fun i hi =>
+    sz_le ((hbnd i (by omega)).mono le_rfl (by omega) le_rfl (by omega))
+  have hnf : ∀ i < N₀, ∀ w, (Machine.step^[i] m₀).ctrl = .ret w → (Machine.step^[i] m₀).kont ≠ [] := by
+    intro i hi w hw hk
+    exact hmin i hi ⟨w, (Machine.step^[i] m₀).env, by
+      rcases hc : Machine.step^[i] m₀ with ⟨ctrl, env, kont⟩
+      simp only [hc] at hw hk
+      subst hw hk; rfl⟩
+  -- the run of `U`
+  obtain ⟨m₁, hm₁, c₁, ds₁, hr₁, hd₁, hrep₁, hx₁⟩ := init_run D.prog n x y a b Tb ha hb
+  obtain ⟨n₂, hN₂, hn₂, c₂, ds₂, hr₂, hd₂, hrep₂, hx₂⟩ :=
+    sim_run (Z0 D.prog n x y a b Tb) N₀ m₀ c₁ ds₁ Tb hd₁ hrep₁ hZ hnf hcost
+  rw [hfin'] at hrep₂
+  obtain ⟨n₃, hn₃, hacc⟩ := (final_run hd₂ hrep₂).1 (by rw [hr₀]; rfl)
+  have hr₀V : r₀.size ≤ V0 n x y a b Tb := by
+    have := (hbnd N₀ hN₀N').ctrl_val r₀ (by rw [hfin'])
+    exact this
+  refine ⟨m₁ + n₂ + n₃, ?_, ?_⟩
+  · have hZ0 : 1 ≤ Z0 D.prog n x y a b Tb := by simp [szBound]
+    have hn₂' : n₂ ≤ 3 * Tb * stepB (Z0 D.prog n x y a b Tb) (3 * Tb * Z0 D.prog n x y a b Tb) := by
+      refine hn₂.trans ?_
+      have hN₀T : N₀ ≤ 3 * Tb := by omega
+      refine Nat.mul_le_mul hN₀T ?_
+      simp only [stepB]
+      have : (ds₁ X).l.length + N₀ * Z0 D.prog n x y a b Tb ≤ 3 * Tb * Z0 D.prog n x y a b Tb := by
+        rw [hx₁]; nlinarith
+      omega
+    simp only [runBound]; omega
+  · obtain ⟨c₃, hr₃, hs₃⟩ := hacc
+    exact ⟨c₃, ((hr₁.trans hr₂).trans hr₃).cast_out (by simp), hs₃⟩
+
+/-- **Soundness**: if `U` accepts the inputs `(𝒟, n, T, x, y, a, b)` (with `|a|, |b| ≤ T`) at some
+time `S`, `𝒟` accepts `(n, x, y, a, b)` within cost `T`. -/
+theorem acceptsWithin_of_accepts (D : Decider) (n : ℕ) (x y a b : BitStr) (Tb : ℕ)
+    (ha : a.length ≤ Tb) (hb : b.length ≤ Tb) (S : ℕ)
+    (hS : (U.configs (U.initCfg (uInput D.prog n Tb x y a b)) S).state = none ∧
+      U.outputString (U.initCfg (uInput D.prog n Tb x y a b)) S = [.one]) :
+    D.AcceptsWithin n x y a b Tb := by
+  classical
+  set v := encode (n, x, y, a, b) with hv
+  set m₀ : Machine.Cfg := ⟨.ev D.prog, [v], []⟩ with hm₀
+  set c₀ := U.initCfg (uInput D.prog n Tb x y a b) with hc₀
+  obtain ⟨m₁, hm₁, c₁, ds₁, hr₁, hd₁, hrep₁, hx₁⟩ := init_run D.prog n x y a b Tb ha hb
+  -- the first step that is final, over budget, or the `S`-th
+  have hex : ∃ i, IsFinal (Machine.step^[i] m₀) ∨ Tb < costSum m₀ (i + 1) ∨ S ≤ i :=
+    ⟨S, Or.inr (Or.inr le_rfl)⟩
+  obtain ⟨N, hspec, hmin'⟩ : ∃ N, (IsFinal (Machine.step^[N] m₀) ∨ Tb < costSum m₀ (N + 1) ∨ S ≤ N) ∧
+      ∀ i < N, ¬ (IsFinal (Machine.step^[i] m₀) ∨ Tb < costSum m₀ (i + 1) ∨ S ≤ i) :=
+    ⟨Nat.find hex, Nat.find_spec hex, fun i hi => Nat.find_min hex hi⟩
+  have hmin : ∀ i < N, ¬ IsFinal (Machine.step^[i] m₀) ∧ costSum m₀ (i + 1) ≤ Tb ∧ i < S := by
+    intro i hi
+    have := hmin' i hi
+    push Not at this
+    exact this
+  have hcost : costSum m₀ N ≤ Tb := by
+    rcases Nat.eq_zero_or_pos N with h0 | hpos
+    · rw [h0]; simp [costSum]
+    · have := (hmin (N - 1) (by omega)).2.1
+      rwa [Nat.sub_add_cancel hpos] at this
+  have hnf : ∀ i < N, ∀ w, (Machine.step^[i] m₀).ctrl = .ret w → (Machine.step^[i] m₀).kont ≠ [] := by
+    intro i hi w hw hk
+    exact (hmin i hi).1 ⟨w, (Machine.step^[i] m₀).env, by
+      rcases hc : Machine.step^[i] m₀ with ⟨ctrl, env, kont⟩
+      simp only [hc] at hw hk
+      subst hw hk; rfl⟩
+  -- a size bound along these steps
+  set Z := ((List.range N).map fun i => sz (Machine.step^[i] m₀)).sum with hZdef
+  have hZ : ∀ i < N, sz (Machine.step^[i] m₀) ≤ Z := fun i hi =>
+    List.le_sum_of_mem (List.mem_map.mpr ⟨i, List.mem_range.mpr hi, rfl⟩)
+  obtain ⟨n₂, hN₂, hn₂, c₂, ds₂, hr₂, hd₂, hrep₂, hx₂⟩ :=
+    sim_run Z N m₀ c₁ ds₁ Tb hd₁ hrep₁ hZ hnf hcost
+  have hR : Reach c₀ (m₁ + n₂) c₂ [] := (hr₁.trans hr₂).cast_out (by simp)
+  -- no silent halt is compatible with acceptance
+  have hno : ∀ k, ¬ HaltsIn c₂ k := fun k hk =>
+    no_accept_of_haltsIn (HaltsIn.after hR hk) S hS.2
+  rcases hspec with hfin | hover | hSN
+  · -- final: the value must be `encode true`, and the derivation has cost at most `T`
+    obtain ⟨r₀, e₀, hfin'⟩ := hfin
+    rw [hfin'] at hrep₂
+    by_cases hr₀ : r₀ = Data.ofBool true
+    · obtain ⟨r', t, M, e', N', hNM, hev, hst⟩ := eval_of_steps N D.prog [v] [] r₀ e₀ hfin'
+      have hr' : r' = r₀ := by
+        have := hfin'
+        rw [hNM, Nat.add_comm, Function.iterate_add_apply, hst.1, step_fixed_of_final] at this
+        exact (Ctrl.ret.inj (Machine.Cfg.mk.inj this).1)
+      refine ⟨t, ?_, ?_⟩
+      · have := costSum_mono m₀ (show M ≤ N by omega)
+        rw [hst.2] at this
+        exact this.trans hcost
+      · rw [hr', hr₀] at hev
+        exact hev
+    · exact absurd ((final_run hd₂ hrep₂).2 hr₀) (hno _)
+  · -- over budget: `U` halts silently
+    exfalso
+    have hnf' : ∀ w, (Machine.step^[N] m₀).ctrl = .ret w → (Machine.step^[N] m₀).kont ≠ [] := by
+      intro w hw hk
+      apply hno 0
+      exfalso
+      -- a final configuration is fixed and costs nothing; then the budget is not exceeded
+      have hfin : IsFinal (Machine.step^[N] m₀) := ⟨w, (Machine.step^[N] m₀).env, by
+        rcases hc : Machine.step^[N] m₀ with ⟨ctrl, env, kont⟩
+        simp only [hc] at hw hk
+        subst hw hk; rfl⟩
+      obtain ⟨r₀, e₀, hfin'⟩ := hfin
+      rw [costSum_succ, hfin'] at hover
+      simp [stepCost] at hover
+      omega
+    rw [costSum_succ] at hover
+    exact hno _ (step_fail hd₂ hrep₂ hnf' (by omega))
+  · -- the `S`-th step: `U` is still running at time `S`
+    exfalso
+    have hstate : (U.configs c₀ (m₁ + n₂)).state ≠ none := by
+      rw [hR.1, hd₂.state]; simp
+    apply hstate
+    obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le (show S ≤ m₁ + n₂ by omega)
+    rw [hd, configs_add, configs_of_halts _ hS.1]
+    exact hS.1
 
 end MIPRE.TM.Interp

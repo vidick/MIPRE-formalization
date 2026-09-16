@@ -240,5 +240,38 @@ all deliberate:
   what the padding to `2^m` needs, and the exact figure is only meaningful once the
   numbering is fixed.
 
-**S2** — in progress (design above). **S3, S4** — not started.
+**S2 — done** (`MIPRE/TM/Interp/`: `Instr`, `Machine`, `Tape`, `Reach`, `Routines`,
+`CopyTree`, `CopyTreeCharge`, `InputRoutines`, `GetEnv`, `Repr`, `Desc`, `Step`, `Run`). The
+machine `U : MultiInputTM 7 6 Sym Ctl` (`Machine.lean`; `Sym` has five symbols, `Ctl` is
+`ProgId × Fin 32 × Phase`, both `Fintype` with `DecidableEq`, and `U.step` is a Lean
+function on them), its inputs `uInput 𝒟 n T x y a b` (the bits of `𝒟.toData`, of
+`encode n`, of `encode x` and `encode y`; `T` in unary; `a`, `b` as raw bit strings over
+`0 1 = s₀ s₁`), and the acceptance theorem in two halves (`Run.lean`):
+`accepts_of_acceptsWithin` — if `𝒟` accepts `(n, x, y, a, b)` within cost `T` and
+`|a|, |b| ≤ T`, then `U` halts having output exactly `[1]` within
+`runBound 𝒟 n x y a b T` steps, an explicit polynomial in `T`, `|𝒟|` and
+`|encode (n, x, y, a, b)|` (`AcceptsFrom`, and `AcceptsFrom.acceptsIn` puts it in the form
+`lem:correct-tableau` uses: halted at time `S` with output string `[1]`, for every
+`S ≥ runBound`) — and `acceptsWithin_of_accepts` — if `U` halts with output `[1]` at any
+time, `𝒟` accepts within cost `T`. Both depend on the standard axioms only. Departures from
+the design above, all deliberate: routine instructions with phases (`Instr`, `execInstr`)
+rather than a `Code`; `rewind` first moves left, because the case programs leave a head on
+the blank after the content; `eraseRight` marks its start with `$` and returns to it; the
+dispatcher on `ret` locates the top frame with `leftToMarker` from its `$`; the control tape
+may carry garbage after the control word, the scratch tape holds an arbitrary word with its
+head inside it. The proof is layered: routine specifications as reachability triples with
+step counts (`Routines.lean` and the three routine files), a description layer
+(`Desc.lean`: each work tape as an exact list with a head position, each routine a
+transformation of descriptions), the fifteen case programs and the dispatcher
+(`Step.lean`: `step_run` — from the dispatcher representing `m` with a budget `r ≥ stepCost m`,
+`U` reaches the dispatcher representing `step m` with budget `r - stepCost m`, in at least one
+and at most `stepBound m` steps; `step_fail` — with `r < stepCost m` it halts silently;
+`final_run` — on `ret v` with an empty stack it accepts iff `v = encode true`), and the run
+(`Run.lean`: `init_run`, `sim_run` by induction on the number of machine steps with
+`CfgBound` giving the size bound `szBound`, and the two halves, the soundness half by taking
+the first machine step that is final, over budget, or the `S`-th). What S3 needs from it: the
+check circuit for `checkPred U .one`, from its truth table, and the counts
+`Fintype.card Sym = 5`, `Fintype.card Ctl = 24 · 32 · 10`.
+
+**S3, S4** — not started.
 
