@@ -589,9 +589,9 @@ theorem case_evConst_fail {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_
 from the scratch tape and charge. Stated inline in each case. -/
 theorem case_evCons {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evCons 0) ds)
     {h t : Prog} {env : Env} {k : List Frame} {r : ℕ}
-    (hr : RepOf ds ⟨.ev (.cons h t), env, k⟩ (r + 1) 6 (kontRepr k).length) :
+    (hr : RepOf ds ⟨.ev (.cons h t), env, k⟩ r 6 (kontRepr k).length) :
     PreTo c (caseBound ⟨.ev (.cons h t), env, k⟩ (ds X).l.length) (at_ .evCons 15)
-      ⟨.ev h, env, .cons1 t env :: k⟩ (r + 1) (ctrlRepr (.ev h)).length
+      ⟨.ev h, env, .cons1 t env :: k⟩ r (ctrlRepr (.ev h)).length
       (kontRepr (.cons1 t env :: k)).length ((ds X).l.length + sz ⟨.ev (.cons h t), env, k⟩) := by
   obtain ⟨g, hds⟩ := hr.eq
   have hX := hr.scratch
@@ -1708,5 +1708,306 @@ theorem case_retLoopCont {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ 
       length_S, List.length_singleton, List.length_drop, List.length_nil, Data.size_cons, Data.size_nil,
       S_cons, S_nil]
     omega
+
+
+/-! ## The final check -/
+
+/-- The control and the tape `C` alone (the stack head may sit before the tape). -/
+def CDesc (c : Cfg input) (q : Option Ctl) (s : TapeSt) : Prop :=
+  c.state = q ∧ TapeIs (c.workTapes C) (c.workTapePos C) s
+
+theorem F_move_right {k : ProgId} {pc : Fin maxPc} {c : Cfg input} {l : List Sym} {p : ℕ}
+    (hins : instrAt k pc = .move C true) (hpc : pc.val + 1 < maxPc) (h : CDesc c (at_ k pc) ⟨l, p⟩) :
+    ∃ c', Reach c 1 c' [] ∧ CDesc c' (next_ k pc hpc) ⟨l, p + 1⟩ := by
+  obtain ⟨c', hr, hs, hu, htape, hpos⟩ := exec_move hins hpc c h.1
+  exact ⟨c', hr, hs, h.2.of_same htape (by rw [hpos, h.2.pos_eq]; simp)⟩
+
+theorem F_branch_taken {k : ProgId} {pc : Fin maxPc} {c : Cfg input} {l : List Sym} {p : ℕ}
+    {s : Option Sym} {target : ProgId} (hins : instrAt k pc = .branch C s target)
+    (h : CDesc c (at_ k pc) ⟨l, p⟩) (hs : l[p]? = s) :
+    ∃ c', Reach c 1 c' [] ∧ CDesc c' (at_ target ⟨0, by decide⟩) ⟨l, p⟩ := by
+  obtain ⟨c', hr, hst, hu, hall⟩ := exec_branch_taken hins c h.1 (by rw [h.2.read_pos]; exact hs)
+  exact ⟨c', hr, hst, h.2.of_same (hall C).1 ((hall C).2.trans h.2.pos_eq)⟩
+
+theorem F_branch_not {k : ProgId} {pc : Fin maxPc} {c : Cfg input} {l : List Sym} {p : ℕ}
+    {s : Option Sym} {target : ProgId} (hins : instrAt k pc = .branch C s target)
+    (hpc : pc.val + 1 < maxPc) (h : CDesc c (at_ k pc) ⟨l, p⟩) (hs : l[p]? ≠ s) :
+    ∃ c', Reach c 1 c' [] ∧ CDesc c' (next_ k pc hpc) ⟨l, p⟩ := by
+  obtain ⟨c', hr, hst, hu, hall⟩ := exec_branch_not hins hpc c h.1 (by rw [h.2.read_pos]; exact hs)
+  exact ⟨c', hr, hst, h.2.of_same (hall C).1 ((hall C).2.trans h.2.pos_eq)⟩
+
+theorem F_emit {k : ProgId} {pc : Fin maxPc} {c : Cfg input} {l : List Sym} {p : ℕ} {s : Sym}
+    (hins : instrAt k pc = .emit s) (hpc : pc.val + 1 < maxPc) (h : CDesc c (at_ k pc) ⟨l, p⟩) :
+    ∃ c', Reach c 1 c' [s] ∧ CDesc c' (next_ k pc hpc) ⟨l, p⟩ := by
+  obtain ⟨c', hr, hst, hu, hall⟩ := exec_emit hins hpc c h.1
+  exact ⟨c', hr, hst, h.2.of_same (hall C).1 ((hall C).2.trans h.2.pos_eq)⟩
+
+theorem F_halt {k : ProgId} {pc : Fin maxPc} {c : Cfg input} {s : TapeSt}
+    (hins : instrAt k pc = .halt) (h : CDesc c (at_ k pc) s) :
+    ∃ c', Reach c 1 c' [] ∧ c'.state = none :=
+  have := exec_halt hins c h.1
+  ⟨_, ⟨rfl, this.2⟩, this.1⟩
+
+/-- `U` accepts from `c` within `n` silent steps followed by the output `1`. -/
+def AcceptsFrom (c : Cfg input) (n : ℕ) : Prop := ∃ c', Reach c n c' [.one] ∧ c'.state = none
+
+/-- The final check on `ret v` with an empty stack: accept iff `v = encode true`. -/
+theorem final_run {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispatch 0) ds)
+    {v : Data} {env : Env} {r : ℕ}
+    (hr : RepOf ds ⟨.ret v, env, []⟩ r (ctrlRepr (.ret v)).length (kontRepr []).length) :
+    (v = Data.ofBool true → ∃ n ≤ v.size + 16, AcceptsFrom c n) ∧
+    (v ≠ Data.ofBool true → HaltsIn c (v.size + 16)) := by
+  obtain ⟨g, hds⟩ := hr.eq
+  rw [hds] at hd
+  norm_ds at hd
+  obtain ⟨c₁, hr₁, hd₁⟩ := D_rewind rfl (by decide) hd (by simp <;> omega)
+  norm_ds at hr₁ hd₁
+  obtain ⟨c₂, hr₂, hd₂⟩ := D_branch_not rfl (by decide) hd₁ (by simp)
+  obtain ⟨c₃, hr₃, hd₃⟩ := D_move_right rfl (by decide) hd₂
+  norm_ds at hd₃
+  -- the stack is empty: the head of `K` moves before the tape and the branch to `final` is taken
+  obtain ⟨c₄, hr₄, hs₄, hu₄, hK₄, hKp₄⟩ := exec_move (t := K) (dir := false) rfl (by decide) c₃ hd₃.state
+  have hread : c₄.workTapes K (c₄.workTapePos K) = none := by
+    rw [hK₄, hKp₄, hd₃.pos K]
+    exact (hd₃.tape K).before _ (by simp)
+  obtain ⟨c₅, hr₅, hs₅, hu₅, hall₅⟩ := exec_branch_taken (t := K) (s := none) (target := .final) rfl c₄
+    hs₄ hread
+  have hC₅ : CDesc c₅ (at_ .final 0) ⟨.one :: (S v ++ g), 1⟩ := by
+    refine ⟨hs₅, ?_⟩
+    have := hd₃.tape C
+    simp only [Function.update_self] at this
+    exact this.of_same ((hall₅ C).1.trans (hu₄.tapes (d := C) (by decide)))
+      (((hall₅ C).2.trans (hu₄.pos (d := C) (by decide))).trans (by rw [hd₃.pos C]; rfl))
+  have hR := hr₁.trans hr₂
+  have hR := hR.trans hr₃
+  have hR := hR.trans hr₄
+  have hR := hR.trans hr₅
+  have hR : Reach c _ c₅ [] := hR.cast_out (by simp)
+  -- the final program reads the bits of `v`
+  cases v with
+  | nil =>
+    refine ⟨fun h => by simp [Data.ofBool] at h, fun _ => ?_⟩
+    obtain ⟨c₆, hr₆, hd₆⟩ := F_branch_not rfl (by decide) hC₅ (by simp)
+    obtain ⟨c₇, hr₇, hs₇⟩ := F_halt rfl hd₆
+    exact (HaltsIn.of_reach ((hR.trans hr₆).trans hr₇ |>.cast_out (by simp)) hs₇).mono (by simp)
+  | cons a b =>
+    obtain ⟨c₆, hr₆, hd₆⟩ := F_branch_taken rfl hC₅ (by simp [S_cons])
+    obtain ⟨c₇, hr₇, hd₇⟩ := F_move_right rfl (by decide) hd₆
+    cases a with
+    | cons a₁ a₂ =>
+      refine ⟨fun h => by simp [Data.ofBool] at h, fun _ => ?_⟩
+      obtain ⟨c₈, hr₈, hd₈⟩ := F_branch_not rfl (by decide) hd₇ (by simp [S_cons])
+      obtain ⟨c₉, hr₉, hs₉⟩ := F_halt rfl hd₈
+      exact (HaltsIn.of_reach ((((hR.trans hr₆).trans hr₇).trans hr₈).trans hr₉ |>.cast_out (by simp))
+        hs₉).mono (by simp [Data.size_cons] <;> omega)
+    | nil =>
+      obtain ⟨c₈, hr₈, hd₈⟩ := F_branch_taken rfl hd₇ (by simp [S_cons])
+      obtain ⟨c₉, hr₉, hd₉⟩ := F_move_right rfl (by decide) hd₈
+      cases b with
+      | cons b₁ b₂ =>
+        refine ⟨fun h => by simp [Data.ofBool] at h, fun _ => ?_⟩
+        obtain ⟨c₁₀, hr₁₀, hd₁₀⟩ := F_branch_not rfl (by decide) hd₉ (by simp [S_cons])
+        obtain ⟨c₁₁, hr₁₁, hs₁₁⟩ := F_halt rfl hd₁₀
+        exact (HaltsIn.of_reach ((((((hR.trans hr₆).trans hr₇).trans hr₈).trans hr₉).trans hr₁₀).trans
+          hr₁₁ |>.cast_out (by simp)) hs₁₁).mono (by simp [Data.size_cons] <;> omega)
+      | nil =>
+        refine ⟨fun _ => ?_, fun h => absurd rfl h⟩
+        obtain ⟨c₁₀, hr₁₀, hd₁₀⟩ := F_branch_taken rfl hd₉ (by simp [S_cons])
+        obtain ⟨c₁₁, hr₁₁, hd₁₁⟩ := F_emit rfl (by decide) hd₁₀
+        obtain ⟨c₁₂, hr₁₂, hs₁₂⟩ := F_halt rfl hd₁₁
+        refine ⟨_, ?_, c₁₂, ((((((hR.trans hr₆).trans hr₇).trans hr₈).trans hr₉).trans
+          hr₁₀).trans hr₁₁).trans hr₁₂ |>.cast_out (by simp), hs₁₂⟩
+        simp [Data.size_cons] <;> omega
+
+/-! ## The step -/
+
+/-- The bound on the steps of `U` simulating one step of the machine from a representation with
+a scratch tape of length `xl`. -/
+def stepBound (m : Machine.Cfg) (xl : ℕ) : ℕ := caseBound m xl + sz m + 30
+
+theorem PreTo.after_dispatch {c c₁ : Cfg input} {n₁ B₁ : ℕ} (hr₁ : Reach c n₁ c₁ []) (hn₁ : n₁ ≤ B₁)
+    {B q m' r pC pK xl} (h : PreTo c₁ B q m' r pC pK xl) : PreTo c (B₁ + B) q m' r pC pK xl := by
+  obtain ⟨n, hn, c', ds', hr, hd, hrep, hxl⟩ := h
+  exact ⟨n₁ + n, by omega, c', ds', (hr₁.trans hr).cast_out (by simp), hd, hrep, hxl⟩
+
+/-- **One step of the machine**, when the budget covers its cost: from the dispatcher
+representing `m`, `U` reaches the dispatcher representing `step m` with the cost charged. -/
+theorem step_run {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispatch 0) ds)
+    {m : Machine.Cfg} {r : ℕ}
+    (hr : RepOf ds m r (ctrlRepr m.ctrl).length (kontRepr m.kont).length)
+    (hnf : ∀ v, m.ctrl = .ret v → m.kont ≠ []) (hcost : stepCost m ≤ r) :
+    StepTo c (stepBound m (ds X).l.length) (Machine.step m) (r - stepCost m) ((ds X).l.length + sz m) := by
+  obtain ⟨ctrl, env, k⟩ := m
+  cases ctrl with
+  | ev p =>
+    obtain ⟨n₁, hn₁, c₁, ds₁, hr₁, hd₁, hrep₁, hxl₁⟩ := dispatch_ev hd hr
+    have hmono : caseBound ⟨.ev p, env, k⟩ (ds₁ X).l.length ≤ caseBound ⟨.ev p, env, k⟩ (ds X).l.length := by
+      simp only [caseBound]; omega
+    cases p with
+    | var i =>
+      simp only [stepCost] at hcost ⊢
+      simp only [Machine.step]
+      rw [show r = r - ((Env.get env i).size + 1) + ((Env.get env i).size + 1) by omega] at hrep₁
+      refine (PreTo.after_dispatch hr₁ hn₁ (case_evVar hd₁ hrep₁)).mono ?_ ?_
+      · simp only [stepBound, sz]; omega
+      · simp only [sz]; omega
+    | nil =>
+      simp only [stepCost] at hcost ⊢
+      simp only [Machine.step]
+      rw [show r = r - 1 + 1 by omega] at hrep₁
+      refine (PreTo.after_dispatch hr₁ hn₁ (case_evNil hd₁ hrep₁)).mono ?_ ?_
+      · simp only [stepBound, sz]; omega
+      · simp only [sz]; omega
+    | const d =>
+      simp only [stepCost] at hcost ⊢
+      simp only [Machine.step]
+      rw [show r = r - d.size + d.size by omega] at hrep₁
+      refine (PreTo.after_dispatch hr₁ hn₁ (case_evConst hd₁ hrep₁)).mono ?_ ?_
+      · simp only [stepBound, sz]; omega
+      · simp only [sz]; omega
+    | cons h t =>
+      simp only [stepCost] at hcost ⊢
+      simp only [Machine.step]
+      rw [show r = r - 1 + 1 by omega] at hrep₁
+      refine (PreTo.after_dispatch hr₁ hn₁ ((case_evCons hd₁ hrep₁).charge_jump rfl (by decide) rfl)).mono ?_ ?_
+      · simp only [stepBound, sz]; omega
+      · simp only [sz]; omega
+    | elim i n cc =>
+      simp only [stepCost] at hcost ⊢
+      simp only [Machine.step]
+      rw [show r = r - 1 + 1 by omega] at hrep₁
+      rcases hv : Env.get env i with _ | ⟨a, b⟩
+      · refine (PreTo.after_dispatch hr₁ hn₁ ((case_evElim_nil hd₁ hrep₁ hv).charge_jump rfl (by decide) rfl)).mono ?_ ?_
+        · simp only [stepBound, sz]; omega
+        · simp only [sz]; omega
+      · refine (PreTo.after_dispatch hr₁ hn₁ ((case_evElim_cons hd₁ hrep₁ hv).charge_jump rfl (by decide) rfl)).mono ?_ ?_
+        · simp only [stepBound, sz]; omega
+        · simp only [sz]; omega
+    | let_ e b =>
+      simp only [stepCost] at hcost ⊢
+      simp only [Machine.step]
+      rw [show r = r - 1 + 1 by omega] at hrep₁
+      refine (PreTo.after_dispatch hr₁ hn₁ ((case_evLet hd₁ hrep₁).charge_jump rfl (by decide) rfl)).mono ?_ ?_
+      · simp only [stepBound, sz]; omega
+      · simp only [sz]; omega
+    | loop b =>
+      simp only [stepCost] at hcost ⊢
+      simp only [Machine.step]
+      refine (PreTo.after_dispatch hr₁ hn₁ (case_evLoop hd₁ hrep₁)).mono ?_ ?_
+      · simp only [stepBound, sz]; omega
+      · simp only [sz]; omega
+  | ret v =>
+    cases k with
+    | nil => exact absurd rfl (hnf v rfl)
+    | cons f k =>
+      obtain ⟨n₁, hn₁, c₁, ds₁, hr₁, hd₁, hrep₁, hxl₁⟩ := dispatch_ret hd hr
+      have hmono : caseBound ⟨.ret v, env, f :: k⟩ (ds₁ X).l.length ≤
+          caseBound ⟨.ret v, env, f :: k⟩ (ds X).l.length := by
+        simp only [caseBound]; omega
+      have hfb : (frameBody f).length ≤ (kontRepr (f :: k)).length := by
+        rw [kontRepr_cons', List.length_append, List.length_append]; omega
+      cases f with
+      | cons1 t env' =>
+        simp only [stepCost, Nat.sub_zero] at hcost ⊢
+        simp only [Machine.step]
+        refine (PreTo.after_dispatch hr₁ hn₁ (case_retCons1 hd₁ hrep₁)).mono ?_ ?_
+        · simp only [stepBound, sz, ctrlRepr_ret, List.length_cons, length_S] at hfb ⊢; omega
+        · simp only [sz]; omega
+      | cons2 a =>
+        simp only [stepCost, Nat.sub_zero] at hcost ⊢
+        simp only [Machine.step]
+        refine (PreTo.after_dispatch hr₁ hn₁ (case_retCons2 hd₁ hrep₁)).mono ?_ ?_
+        · simp only [stepBound, sz, ctrlRepr_ret, List.length_cons, length_S] at hfb ⊢; omega
+        · simp only [sz]; omega
+      | let1 b env' =>
+        simp only [stepCost, Nat.sub_zero] at hcost ⊢
+        simp only [Machine.step]
+        refine (PreTo.after_dispatch hr₁ hn₁ (case_retLet1 hd₁ hrep₁)).mono ?_ ?_
+        · simp only [stepBound, sz, ctrlRepr_ret, List.length_cons, length_S] at hfb ⊢; omega
+        · simp only [sz]; omega
+      | loop1 b env' =>
+        simp only [stepCost] at hcost ⊢
+        simp only [Machine.step]
+        rw [show r = r - 1 + 1 by omega] at hrep₁
+        rcases v with _ | ⟨_ | ⟨y, z⟩, v'⟩
+        · refine (PreTo.after_dispatch hr₁ hn₁ ((case_retLoopNil hd₁ hrep₁).charge_jump rfl (by decide) rfl)).mono ?_ ?_
+          · simp only [stepBound, sz, ctrlRepr_ret, List.length_cons, length_S] at hfb ⊢; omega
+          · simp only [sz]; omega
+        · refine (PreTo.after_dispatch hr₁ hn₁ ((case_retLoopStop hd₁ hrep₁).charge_jump rfl (by decide) rfl)).mono ?_ ?_
+          · simp only [stepBound, sz, ctrlRepr_ret, List.length_cons, length_S] at hfb ⊢; omega
+          · simp only [sz]; omega
+        · refine (PreTo.after_dispatch hr₁ hn₁ ((case_retLoopCont hd₁ hrep₁).charge_jump rfl (by decide) rfl)).mono ?_ ?_
+          · simp only [stepBound, sz, ctrlRepr_ret, List.length_cons, length_S] at hfb ⊢; omega
+          · simp only [sz]; omega
+
+/-- **One step of the machine**, when the budget is short: `U` halts silently. -/
+theorem step_fail {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispatch 0) ds)
+    {m : Machine.Cfg} {r : ℕ}
+    (hr : RepOf ds m r (ctrlRepr m.ctrl).length (kontRepr m.kont).length)
+    (hnf : ∀ v, m.ctrl = .ret v → m.kont ≠ []) (hcost : r < stepCost m) :
+    HaltsIn c (stepBound m (ds X).l.length) := by
+  obtain ⟨ctrl, env, k⟩ := m
+  cases ctrl with
+  | ev p =>
+    obtain ⟨n₁, hn₁, c₁, ds₁, hr₁, hd₁, hrep₁, hxl₁⟩ := dispatch_ev hd hr
+    have hmono : caseBound ⟨.ev p, env, k⟩ (ds₁ X).l.length ≤ caseBound ⟨.ev p, env, k⟩ (ds X).l.length := by
+      simp only [caseBound]; omega
+    cases p with
+    | var i =>
+      simp only [stepCost] at hcost
+      refine (HaltsIn.after hr₁ (case_evVar_fail hd₁ hrep₁ hcost)).mono ?_
+      simp only [stepBound, sz]; omega
+    | nil =>
+      simp only [stepCost] at hcost
+      obtain rfl : r = 0 := by omega
+      refine (HaltsIn.after hr₁ (case_evNil_fail hd₁ hrep₁)).mono ?_
+      simp only [stepBound, sz]; omega
+    | const d =>
+      simp only [stepCost] at hcost
+      refine (HaltsIn.after hr₁ (case_evConst_fail hd₁ hrep₁ hcost)).mono ?_
+      simp only [stepBound, sz]; omega
+    | cons h t =>
+      simp only [stepCost] at hcost
+      obtain rfl : r = 0 := by omega
+      refine (HaltsIn.after hr₁ ((case_evCons hd₁ hrep₁).charge_fail rfl)).mono ?_
+      simp only [stepBound, sz]; omega
+    | elim i n cc =>
+      simp only [stepCost] at hcost
+      obtain rfl : r = 0 := by omega
+      rcases hv : Env.get env i with _ | ⟨a, b⟩
+      · refine (HaltsIn.after hr₁ ((case_evElim_nil hd₁ hrep₁ hv).charge_fail rfl)).mono ?_
+        simp only [stepBound, sz]; omega
+      · refine (HaltsIn.after hr₁ ((case_evElim_cons hd₁ hrep₁ hv).charge_fail rfl)).mono ?_
+        simp only [stepBound, sz]; omega
+    | let_ e b =>
+      simp only [stepCost] at hcost
+      obtain rfl : r = 0 := by omega
+      refine (HaltsIn.after hr₁ ((case_evLet hd₁ hrep₁).charge_fail rfl)).mono ?_
+      simp only [stepBound, sz]; omega
+    | loop b => simp [stepCost] at hcost
+  | ret v =>
+    cases k with
+    | nil => exact absurd rfl (hnf v rfl)
+    | cons f k =>
+      obtain ⟨n₁, hn₁, c₁, ds₁, hr₁, hd₁, hrep₁, hxl₁⟩ := dispatch_ret hd hr
+      have hmono : caseBound ⟨.ret v, env, f :: k⟩ (ds₁ X).l.length ≤
+          caseBound ⟨.ret v, env, f :: k⟩ (ds X).l.length := by
+        simp only [caseBound]; omega
+      have hfb : (frameBody f).length ≤ (kontRepr (f :: k)).length := by
+        rw [kontRepr_cons', List.length_append, List.length_append]; omega
+      cases f with
+      | cons1 t env' => simp [stepCost] at hcost
+      | cons2 a => simp [stepCost] at hcost
+      | let1 b env' => simp [stepCost] at hcost
+      | loop1 b env' =>
+        simp only [stepCost] at hcost
+        obtain rfl : r = 0 := by omega
+        rcases v with _ | ⟨_ | ⟨y, z⟩, v'⟩
+        · refine (HaltsIn.after hr₁ ((case_retLoopNil hd₁ hrep₁).charge_fail rfl)).mono ?_
+          simp only [stepBound, sz, ctrlRepr_ret, List.length_cons, length_S] at hfb ⊢; omega
+        · refine (HaltsIn.after hr₁ ((case_retLoopStop hd₁ hrep₁).charge_fail rfl)).mono ?_
+          simp only [stepBound, sz, ctrlRepr_ret, List.length_cons, length_S] at hfb ⊢; omega
+        · refine (HaltsIn.after hr₁ ((case_retLoopCont hd₁ hrep₁).charge_fail rfl)).mono ?_
+          simp only [stepBound, sz, ctrlRepr_ret, List.length_cons, length_S] at hfb ⊢; omega
 
 end MIPRE.TM.Interp
