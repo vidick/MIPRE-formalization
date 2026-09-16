@@ -202,7 +202,7 @@ macro "norm_ds" "at" hs:(ppSpace colGt ident)+ : tactic =>
       overwrite_append', List.cons_append, List.nil_append, List.append_nil,
       List.drop_succ_cons, List.drop_zero, List.length_cons, List.length_append, List.length_nil,
       List.length_singleton, length_S, length_S_ofNat, Nat.add_zero, Nat.zero_add,
-      List.drop_left', Nat.add_sub_cancel, Data.size_nil, Data.size_cons, Data.size_ofNat, ctrlRepr_var, ctrlRepr_nil, ctrlRepr_cons, ctrlRepr_elim,
+      List.drop_left', Nat.add_sub_cancel, Data.size_nil, Data.size_cons, Data.size_ofNat, S_cons, S_nil, ctrlRepr_var, ctrlRepr_nil, ctrlRepr_cons, ctrlRepr_elim,
       ctrlRepr_let, ctrlRepr_loop, ctrlRepr_const, ctrlRepr_ret] at $hs*)
 
 macro "norm_ds_goal" : tactic =>
@@ -212,7 +212,7 @@ macro "norm_ds_goal" : tactic =>
       overwrite_append', List.cons_append, List.nil_append, List.append_nil,
       List.drop_succ_cons, List.drop_zero, List.length_cons, List.length_append, List.length_nil,
       List.length_singleton, length_S, length_S_ofNat, Nat.add_zero, Nat.zero_add,
-      List.drop_left', Nat.add_sub_cancel, Data.size_nil, Data.size_cons, Data.size_ofNat, ctrlRepr_var, ctrlRepr_nil, ctrlRepr_cons, ctrlRepr_elim,
+      List.drop_left', Nat.add_sub_cancel, Data.size_nil, Data.size_cons, Data.size_ofNat, S_cons, S_nil, ctrlRepr_var, ctrlRepr_nil, ctrlRepr_cons, ctrlRepr_elim,
       ctrlRepr_let, ctrlRepr_loop, ctrlRepr_const, ctrlRepr_ret])
 
 /-! ## The dispatcher on `ev` -/
@@ -978,6 +978,735 @@ theorem case_evLoop {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evLo
   · simp [hX]
   · norm_ds_goal
     simp only [sz, ctrlRepr_loop, List.length_cons, List.length_append, length_S, List.length_drop]
+    omega
+
+
+/-! ## The dispatcher on `ret` -/
+
+/-- The case program of a return to a frame. -/
+def retTarget : Frame → ProgId
+  | .cons1 _ _ => .retCons1
+  | .cons2 _ => .retCons2
+  | .let1 _ _ => .retLet1
+  | .loop1 _ _ => .retLoop1
+
+theorem frameBody_cons1 (t : Prog) (env : Env) :
+    frameBody (.cons1 t env) = .zero :: .zero :: (S t.toData ++ [.en] ++ envRepr env) := by
+  simp [frameBody]
+
+theorem frameBody_cons2 (a : Data) : frameBody (.cons2 a) = .zero :: .one :: S a := by
+  simp [frameBody]
+
+theorem frameBody_let1 (b : Prog) (env : Env) :
+    frameBody (.let1 b env) = .one :: .zero :: (S b.toData ++ [.en] ++ envRepr env) := by
+  simp [frameBody]
+
+theorem frameBody_loop1 (b : Prog) (env : Env) :
+    frameBody (.loop1 b env) = .one :: .one :: (S b.toData ++ [.en] ++ envRepr env) := by
+  simp [frameBody]
+
+theorem kontRepr_cons' (f : Frame) (k : List Frame) :
+    kontRepr (f :: k) = kontRepr k ++ frameBody f ++ [.fr] := by
+  simp [frameRepr_eq]
+
+theorem getElem?_append_right' (l₁ l₂ : List Sym) {i j : ℕ} (h : i = l₁.length + j) :
+    (l₁ ++ l₂)[i]? = l₂[j]? := by
+  subst h; rw [List.getElem?_append_right (by omega), Nat.add_sub_cancel_left]
+
+/-- The two tag bits of a frame, read off the stack. -/
+theorem read_tag (k : List Frame) (f : Frame) (j : ℕ) (hj : j < 2) :
+    (kontRepr k ++ frameBody f ++ [Sym.fr])[(kontRepr k).length + j]? = (frameTag f)[j]? := by
+  have h2 : (frameTag f).length = 2 := by cases f <;> rfl
+  have hb : frameBody f = frameTag f ++ (frameBody f).drop 2 := by
+    cases f <;> simp [frameBody, frameTag]
+  rw [List.append_assoc, getElem?_append_right' _ _ rfl, hb, List.append_assoc,
+    List.getElem?_append_left (by omega)]
+
+theorem read_tag0 (k : List Frame) (f : Frame) :
+    (kontRepr k ++ frameBody f ++ [Sym.fr])[(kontRepr k).length]? = (frameTag f)[0]? := by
+  simpa using read_tag k f 0 (by norm_num)
+
+theorem read_tag1 (k : List Frame) (f : Frame) :
+    (kontRepr k ++ frameBody f ++ [Sym.fr])[(kontRepr k).length + 1]? = (frameTag f)[1]? :=
+  read_tag k f 1 (by norm_num)
+
+theorem read_end (k : List Frame) (f : Frame) :
+    (kontRepr k ++ frameBody f ++ [Sym.fr])[(kontRepr k).length + (frameBody f).length]? = some .fr := by
+  rw [List.append_assoc, getElem?_append_right' _ _ rfl, List.getElem?_concat_length]
+
+/-- From the dispatcher, a return to a frame reaches its case program with the head of `C`
+on the value and the head of `K` on the second tag bit. -/
+theorem dispatch_ret {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispatch 0) ds)
+    {v : Data} {env : Env} {f : Frame} {k : List Frame} {r : ℕ}
+    (hr : RepOf ds ⟨.ret v, env, f :: k⟩ r (ctrlRepr (.ret v)).length (kontRepr (f :: k)).length) :
+    PreTo c (v.size + (frameBody f).length + 20) (at_ (retTarget f) 0) ⟨.ret v, env, f :: k⟩ r 1
+      ((kontRepr k).length + 1) (ds X).l.length := by
+  obtain ⟨g, hds⟩ := hr.eq
+  have hX := hr.scratch
+  rw [hds] at hd
+  simp only [kontRepr_cons'] at hd
+  norm_ds at hd
+  obtain ⟨c₁, hr₁, hd₁⟩ := D_rewind rfl (by decide) hd (by simp <;> omega)
+  norm_ds at hr₁ hd₁
+  obtain ⟨c₂, hr₂, hd₂⟩ := D_branch_not rfl (by decide) hd₁ (by simp)
+  obtain ⟨c₃, hr₃, hd₃⟩ := D_move_right rfl (by decide) hd₂
+  norm_ds at hd₃
+  obtain ⟨c₄, hr₄, hd₄⟩ := D_move_left rfl (by decide) hd₃ (by simp <;> omega)
+  norm_ds at hd₄
+  obtain ⟨c₅, hr₅, hd₅⟩ := D_branch_not rfl (by decide) hd₄ (by simp [read_end])
+  obtain ⟨c₆, hr₆, hd₆⟩ := D_leftToMarker rfl (by decide) hd₅ (l₁ := kontRepr k) (w := frameBody f)
+    (l₂ := [.fr]) (by simp) (by simp <;> omega) (frameBody_ne_fr f) (kontRepr_nil_or_fr k)
+  norm_ds at hd₆
+  have hR := hr₁.trans hr₂
+  have hR := hR.trans hr₃
+  have hR := hR.trans hr₄
+  have hR := hR.trans hr₅
+  have hR := hR.trans hr₆
+  have hR : Reach c _ c₆ [] := hR.cast_out (by simp)
+  -- the tag
+  have fin : ∀ (m : ℕ) (c' : Cfg input) (ds' : WT → TapeSt), Reach c₆ m c' [] → m ≤ 4 →
+      Desc c' (at_ (retTarget f) 0) ds' →
+      RepOf ds' ⟨.ret v, env, f :: k⟩ r 1 ((kontRepr k).length + 1) →
+      (ds' X).l.length ≤ (ds X).l.length →
+      PreTo c (v.size + (frameBody f).length + 20) (at_ (retTarget f) 0) ⟨.ret v, env, f :: k⟩ r 1
+        ((kontRepr k).length + 1) (ds X).l.length := by
+    intro m c' ds' hr' hm hd' hrep hxl
+    exact ⟨_, by omega, c', ds', (hR.trans hr').cast_out (by simp), hd', hrep, hxl⟩
+  cases f with
+  | cons1 t env' =>
+    obtain ⟨c₇, hr₇, hd₇⟩ := D_branch_taken rfl hd₆ (by norm_ds_goal; rw [read_tag0]; rfl)
+    obtain ⟨c₈, hr₈, hd₈⟩ := D_move_right rfl (by decide) hd₇
+    norm_ds at hd₈
+    obtain ⟨c₉, hr₉, hd₉⟩ := D_branch_taken rfl hd₈ (by norm_ds_goal; rw [read_tag1]; rfl)
+    refine fin 3 c₉ _ (((hr₇.trans hr₈).trans hr₉).cast_out (by simp)) (by norm_num) hd₉
+      ⟨⟨g, by simp [ctrlRepr_ret]⟩, by simp, by simp [kontRepr_cons', frameRepr_eq], by simp [hX], by simp,
+        by simp⟩
+      (by simp)
+  | cons2 a =>
+    obtain ⟨c₇, hr₇, hd₇⟩ := D_branch_taken rfl hd₆ (by norm_ds_goal; rw [read_tag0]; rfl)
+    obtain ⟨c₈, hr₈, hd₈⟩ := D_move_right rfl (by decide) hd₇
+    norm_ds at hd₈
+    obtain ⟨c₉, hr₉, hd₉⟩ := D_branch_not rfl (by decide) hd₈ (by norm_ds_goal; rw [read_tag1]; simp [frameTag])
+    obtain ⟨c₁₀, hr₁₀, hd₁₀⟩ := D_jump rfl hd₉
+    refine fin 4 c₁₀ _ ((((hr₇.trans hr₈).trans hr₉).trans hr₁₀).cast_out (by simp)) (by norm_num) hd₁₀
+      ⟨⟨g, by simp [ctrlRepr_ret]⟩, by simp, by simp [kontRepr_cons', frameRepr_eq], by simp [hX], by simp,
+        by simp⟩
+      (by simp)
+  | let1 b env' =>
+    obtain ⟨c₇, hr₇, hd₇⟩ := D_branch_not rfl (by decide) hd₆ (by norm_ds_goal; rw [read_tag0]; simp [frameTag])
+    obtain ⟨c₈, hr₈, hd₈⟩ := D_move_right rfl (by decide) hd₇
+    norm_ds at hd₈
+    obtain ⟨c₉, hr₉, hd₉⟩ := D_branch_taken rfl hd₈ (by norm_ds_goal; rw [read_tag1]; rfl)
+    refine fin 3 c₉ _ (((hr₇.trans hr₈).trans hr₉).cast_out (by simp)) (by norm_num) hd₉
+      ⟨⟨g, by simp [ctrlRepr_ret]⟩, by simp, by simp [kontRepr_cons', frameRepr_eq], by simp [hX], by simp,
+        by simp⟩
+      (by simp)
+  | loop1 b env' =>
+    obtain ⟨c₇, hr₇, hd₇⟩ := D_branch_not rfl (by decide) hd₆ (by norm_ds_goal; rw [read_tag0]; simp [frameTag])
+    obtain ⟨c₈, hr₈, hd₈⟩ := D_move_right rfl (by decide) hd₇
+    norm_ds at hd₈
+    obtain ⟨c₉, hr₉, hd₉⟩ := D_branch_not rfl (by decide) hd₈ (by norm_ds_goal; rw [read_tag1]; simp [frameTag])
+    obtain ⟨c₁₀, hr₁₀, hd₁₀⟩ := D_jump rfl hd₉
+    refine fin 4 c₁₀ _ ((((hr₇.trans hr₈).trans hr₉).trans hr₁₀).cast_out (by simp)) (by norm_num) hd₁₀
+      ⟨⟨g, by simp [ctrlRepr_ret]⟩, by simp, by simp [kontRepr_cons', frameRepr_eq], by simp [hX], by simp,
+        by simp⟩
+      (by simp)
+
+/-! ## Popping the innermost environment entry -/
+
+theorem D_popEnv {k : ProgId} {pc : Fin maxPc} {c : Cfg input} {ds : WT → TapeSt}
+    (hins : instrAt k pc = .popBack .sep E) (hpc : pc.val + 1 < maxPc) (hd : Desc c (at_ k pc) ds)
+    {env' : Env} (hE : ds E = ⟨envRepr env', (envRepr env').length⟩) :
+    ∃ n ≤ (envRepr env').length + 3, ∃ c', Reach c n c' [] ∧
+      Desc c' (next_ k pc hpc)
+        (Function.update ds E ⟨envRepr env'.tail, (envRepr env'.tail).length⟩) := by
+  cases env' with
+  | nil =>
+    obtain ⟨c', hr, hd'⟩ := D_popBack_empty hins hpc hd (by simp [hE]) (by simp [hE])
+    refine ⟨2, by simp, c', hr, hd'.cast rfl ?_⟩
+    rw [show (⟨envRepr [].tail, (envRepr [].tail).length⟩ : TapeSt) = ds E by simp [hE]]
+    exact (Function.update_eq_self E ds).symm
+  | cons e₁ rest =>
+    obtain ⟨c', hr, hd'⟩ := D_popBack hins hpc hd (l₁ := envRepr rest) (w := S e₁) (a := .sep)
+      (by simp [hE]) (by simp [hE])
+      (fun s hs h => by subst h; rcases mem_S e₁ _ hs with h | h <;> simp at h)
+      (envRepr_nil_or_sep rest)
+    exact ⟨_, by simp; omega, c', hr, hd'⟩
+
+theorem drop_env_ne_fr (env : Env) (n : ℕ) : ∀ s ∈ (envRepr env).drop n, s ≠ Sym.fr :=
+  fun s hs => (mem_envRepr env s (List.mem_of_mem_drop hs)).1
+
+/-! ## The cases: `ret` -/
+
+theorem case_retCons1 {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .retCons1 0) ds)
+    {v : Data} {t : Prog} {env env' : Env} {k : List Frame} {r : ℕ}
+    (hr : RepOf ds ⟨.ret v, env, .cons1 t env' :: k⟩ r 1 ((kontRepr k).length + 1)) :
+    StepTo c (caseBound ⟨.ret v, env, .cons1 t env' :: k⟩ (ds X).l.length)
+      ⟨.ev t, env', .cons2 v :: k⟩ r ((ds X).l.length + sz ⟨.ret v, env, .cons1 t env' :: k⟩) := by
+  obtain ⟨g, hds⟩ := hr.eq
+  have hX := hr.scratch
+  rw [hds] at hd
+  simp only [kontRepr_cons', frameBody_cons1] at hd
+  norm_ds at hd
+  obtain ⟨c₁, hr₁, hd₁⟩ := D_move_right rfl (by decide) hd
+  norm_ds at hd₁
+  obtain ⟨c₂, hr₂, hd₂⟩ := D_rewind rfl (by decide) hd₁ (by simp <;> omega)
+  norm_ds at hr₂ hd₂
+  obtain ⟨n₃, hn₃, c₃, hr₃, hd₃⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide) hd₂
+    (by simp <;> omega) (v := t.toData) (l₁ := kontRepr k ++ [.zero, .zero])
+    (l₂ := [.en] ++ envRepr env' ++ [.fr]) (by simp [List.append_assoc]) (by simp <;> omega)
+    (by simp <;> omega)
+  norm_ds at hd₃
+  obtain ⟨c₄, hr₄, hd₄⟩ := D_move_right rfl (by decide) hd₃
+  norm_ds at hd₄
+  obtain ⟨c₅, hr₅, hd₅⟩ := D_rewind rfl (by decide) hd₄ (by simp <;> omega)
+  norm_ds at hr₅ hd₅
+  obtain ⟨c₆, hr₆, hd₆⟩ := D_copyUntil rfl (by decide) (by decide) hd₅
+    (l₁ := kontRepr k ++ [.zero, .zero] ++ S t.toData ++ [.en]) (w := envRepr env') (l₂ := [.fr])
+    (by simp [List.append_assoc]) (by simp <;> omega) (mem_envRepr_ne_fr env') rfl (by simp <;> omega)
+  norm_ds at hd₆
+  obtain ⟨c₇, hr₇, hd₇⟩ := D_eraseRight rfl (by decide) hd₆ (by simp <;> omega)
+    (by simp only [Function.update_self, List.drop_left']; exact drop_env_ne_fr env _)
+  norm_ds at hr₇ hd₇
+  simp only [List.take_left'] at hd₇
+  obtain ⟨c₈, hr₈, hd₈⟩ := D_move_right rfl (by decide) hd₇
+  norm_ds at hd₈
+  obtain ⟨c₉, hr₉, hd₉⟩ := D_popBack rfl (by decide) hd₈ (l₁ := kontRepr k)
+    (w := .zero :: .zero :: (S t.toData ++ [.en] ++ envRepr env')) (a := .fr)
+    (by simp [List.append_assoc]) (by simp <;> omega)
+    (by simpa [frameBody_cons1] using frameBody_ne_fr (.cons1 t env')) (kontRepr_nil_or_fr k)
+  norm_ds at hd₉
+  obtain ⟨c₁₀, hr₁₀, hd₁₀⟩ := D_write rfl (by decide) hd₉ (by simp <;> omega)
+  norm_ds at hd₁₀
+  obtain ⟨c₁₁, hr₁₁, hd₁₁⟩ := D_write rfl (by decide) hd₁₀ (by simp <;> omega)
+  norm_ds at hd₁₁
+  obtain ⟨n₁₂, hn₁₂, c₁₂, hr₁₂, hd₁₂⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide)
+    hd₁₁ (by simp <;> omega) (v := v) (l₁ := [.one]) (l₂ := g) (by simp <;> omega) (by simp <;> omega)
+    (by simp <;> omega)
+  norm_ds at hd₁₂
+  obtain ⟨c₁₃, hr₁₃, hd₁₃⟩ := D_write rfl (by decide) hd₁₂ (by simp <;> omega)
+  norm_ds at hd₁₃
+  obtain ⟨c₁₄, hr₁₄, hd₁₄⟩ := D_rewind rfl (by decide) hd₁₃ (by simp <;> omega)
+  norm_ds at hr₁₄ hd₁₄
+  obtain ⟨c₁₅, hr₁₅, hd₁₅⟩ := D_write rfl (by decide) hd₁₄ (by simp <;> omega)
+  norm_ds at hd₁₅
+  obtain ⟨c₁₆, hr₁₆, hd₁₆⟩ := D_rewind rfl (by decide) hd₁₅ (by simp <;> omega)
+  norm_ds at hr₁₆ hd₁₆
+  obtain ⟨n₁₇, hn₁₇, c₁₇, hr₁₇, hd₁₇⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide)
+    hd₁₆ (by simp <;> omega) (v := t.toData) (l₁ := []) (l₂ := (ds X).l.drop (S t.toData).length)
+    (by simp <;> omega) (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₁₇
+  obtain ⟨c₁₈, hr₁₈, hd₁₈⟩ := D_jump rfl hd₁₇
+  have hR := hr₁.trans hr₂
+  have hR := hR.trans hr₃
+  have hR := hR.trans hr₄
+  have hR := hR.trans hr₅
+  have hR := hR.trans hr₆
+  have hR := hR.trans hr₇
+  have hR := hR.trans hr₈
+  have hR := hR.trans hr₉
+  have hR := hR.trans hr₁₀
+  have hR := hR.trans hr₁₁
+  have hR := hR.trans hr₁₂
+  have hR := hR.trans hr₁₃
+  have hR := hR.trans hr₁₄
+  have hR := hR.trans hr₁₅
+  have hR := hR.trans hr₁₆
+  have hR := hR.trans hr₁₇
+  have hR := hR.trans hr₁₈
+  refine ⟨_, ?_, c₁₈, _, hR.cast_out (by simp), hd₁₈, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
+  · simp only [caseBound, sz, ctrlRepr_ret, kontRepr_cons', frameBody_cons1, List.length_cons,
+      List.length_append, length_S, List.length_singleton, List.length_nil, List.length_drop,
+      Data.size_cons, Data.size_nil]
+    omega
+  · simp [ctrlRepr] <;> omega
+  · simp
+  · simp [kontRepr_cons, frameRepr, List.append_assoc] <;> omega
+  · simp [hX]
+  · simp [hX]
+  · simp [hX]
+  · norm_ds_goal
+    simp only [sz, ctrlRepr_ret, kontRepr_cons', frameBody_cons1, List.length_cons, List.length_append,
+      length_S, List.length_singleton, List.length_drop, List.length_nil, Data.size_cons, Data.size_nil]
+    omega
+
+theorem case_retCons2 {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .retCons2 0) ds)
+    {v a : Data} {env : Env} {k : List Frame} {r : ℕ}
+    (hr : RepOf ds ⟨.ret v, env, .cons2 a :: k⟩ r 1 ((kontRepr k).length + 1)) :
+    StepTo c (caseBound ⟨.ret v, env, .cons2 a :: k⟩ (ds X).l.length)
+      ⟨.ret (.cons a v), env, k⟩ r ((ds X).l.length + sz ⟨.ret v, env, .cons2 a :: k⟩) := by
+  obtain ⟨g, hds⟩ := hr.eq
+  have hX := hr.scratch
+  rw [hds] at hd
+  simp only [kontRepr_cons', frameBody_cons2] at hd
+  norm_ds at hd
+  obtain ⟨c₁, hr₁, hd₁⟩ := D_move_right rfl (by decide) hd
+  norm_ds at hd₁
+  obtain ⟨c₂, hr₂, hd₂⟩ := D_rewind rfl (by decide) hd₁ (by simp <;> omega)
+  norm_ds at hr₂ hd₂
+  obtain ⟨c₃, hr₃, hd₃⟩ := D_write rfl (by decide) hd₂ (by simp <;> omega)
+  norm_ds at hd₃
+  obtain ⟨n₄, hn₄, c₄, hr₄, hd₄⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide) hd₃
+    (by simp <;> omega) (v := a) (l₁ := kontRepr k ++ [.zero, .one]) (l₂ := [.fr])
+    (by simp [List.append_assoc]) (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₄
+  obtain ⟨n₅, hn₅, c₅, hr₅, hd₅⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide) hd₄
+    (by simp <;> omega) (v := v) (l₁ := [.one]) (l₂ := g) (by simp <;> omega) (by simp <;> omega)
+    (by simp <;> omega)
+  norm_ds at hd₅
+  obtain ⟨c₆, hr₆, hd₆⟩ := D_move_right rfl (by decide) hd₅
+  norm_ds at hd₆
+  obtain ⟨c₇, hr₇, hd₇⟩ := D_popBack rfl (by decide) hd₆ (l₁ := kontRepr k)
+    (w := .zero :: .one :: S a) (a := .fr) (by simp [List.append_assoc]) (by simp <;> omega)
+    (by simpa [frameBody_cons2] using frameBody_ne_fr (.cons2 a)) (kontRepr_nil_or_fr k)
+  norm_ds at hd₇
+  obtain ⟨c₈, hr₈, hd₈⟩ := D_rewind rfl (by decide) hd₇ (by simp <;> omega)
+  norm_ds at hr₈ hd₈
+  obtain ⟨c₉, hr₉, hd₉⟩ := D_write rfl (by decide) hd₈ (by simp <;> omega)
+  norm_ds at hd₉
+  obtain ⟨c₁₀, hr₁₀, hd₁₀⟩ := D_rewind rfl (by decide) hd₉ (by simp <;> omega)
+  norm_ds at hr₁₀ hd₁₀
+  obtain ⟨n₁₁, hn₁₁, c₁₁, hr₁₁, hd₁₁⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide)
+    hd₁₀ (by simp <;> omega) (v := .cons a v) (l₁ := [])
+    (l₂ := (((ds X).l.drop 1).drop a.size).drop v.size) (by simp [S_cons, List.append_assoc])
+    (by simp <;> omega) (by simp <;> omega)
+  simp only [Data.size_cons] at hn₁₁
+  norm_ds at hd₁₁
+  obtain ⟨c₁₂, hr₁₂, hd₁₂⟩ := D_jump rfl hd₁₁
+  have hR := hr₁.trans hr₂
+  have hR := hR.trans hr₃
+  have hR := hR.trans hr₄
+  have hR := hR.trans hr₅
+  have hR := hR.trans hr₆
+  have hR := hR.trans hr₇
+  have hR := hR.trans hr₈
+  have hR := hR.trans hr₉
+  have hR := hR.trans hr₁₀
+  have hR := hR.trans hr₁₁
+  have hR := hR.trans hr₁₂
+  refine ⟨_, ?_, c₁₂, _, hR.cast_out (by simp), hd₁₂, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
+  · simp only [caseBound, sz, ctrlRepr_ret, kontRepr_cons', frameBody_cons2, List.length_cons,
+      List.length_append, length_S, List.length_singleton, List.length_nil, List.length_drop,
+      Data.size_cons, Data.size_nil]
+    omega
+  · simp [ctrlRepr_ret, S_cons] <;> omega
+  · simp
+  · simp
+  · simp [hX]
+  · simp [hX]
+  · simp [hX]
+  · norm_ds_goal
+    simp only [sz, ctrlRepr_ret, kontRepr_cons', frameBody_cons2, List.length_cons, List.length_append,
+      length_S, List.length_singleton, List.length_drop, S_cons, Data.size_cons, List.length_nil,
+      Data.size_nil]
+    omega
+
+theorem case_retLet1 {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .retLet1 0) ds)
+    {v : Data} {b : Prog} {env env' : Env} {k : List Frame} {r : ℕ}
+    (hr : RepOf ds ⟨.ret v, env, .let1 b env' :: k⟩ r 1 ((kontRepr k).length + 1)) :
+    StepTo c (caseBound ⟨.ret v, env, .let1 b env' :: k⟩ (ds X).l.length)
+      ⟨.ev b, v :: env', k⟩ r ((ds X).l.length + sz ⟨.ret v, env, .let1 b env' :: k⟩) := by
+  obtain ⟨g, hds⟩ := hr.eq
+  have hX := hr.scratch
+  rw [hds] at hd
+  simp only [kontRepr_cons', frameBody_let1] at hd
+  norm_ds at hd
+  obtain ⟨c₁, hr₁, hd₁⟩ := D_move_right rfl (by decide) hd
+  norm_ds at hd₁
+  obtain ⟨c₂, hr₂, hd₂⟩ := D_rewind rfl (by decide) hd₁ (by simp <;> omega)
+  norm_ds at hr₂ hd₂
+  obtain ⟨n₃, hn₃, c₃, hr₃, hd₃⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide) hd₂
+    (by simp <;> omega) (v := b.toData) (l₁ := kontRepr k ++ [.one, .zero])
+    (l₂ := [.en] ++ envRepr env' ++ [.fr]) (by simp [List.append_assoc]) (by simp <;> omega)
+    (by simp <;> omega)
+  norm_ds at hd₃
+  obtain ⟨c₄, hr₄, hd₄⟩ := D_move_right rfl (by decide) hd₃
+  norm_ds at hd₄
+  obtain ⟨c₅, hr₅, hd₅⟩ := D_rewind rfl (by decide) hd₄ (by simp <;> omega)
+  norm_ds at hr₅ hd₅
+  obtain ⟨c₆, hr₆, hd₆⟩ := D_copyUntil rfl (by decide) (by decide) hd₅
+    (l₁ := kontRepr k ++ [.one, .zero] ++ S b.toData ++ [.en]) (w := envRepr env') (l₂ := [.fr])
+    (by simp [List.append_assoc]) (by simp <;> omega) (mem_envRepr_ne_fr env') rfl (by simp <;> omega)
+  norm_ds at hd₆
+  obtain ⟨c₇, hr₇, hd₇⟩ := D_eraseRight rfl (by decide) hd₆ (by simp <;> omega)
+    (by simp only [Function.update_self, List.drop_left']; exact drop_env_ne_fr env _)
+  norm_ds at hr₇ hd₇
+  simp only [List.take_left'] at hd₇
+  obtain ⟨n₈, hn₈, c₈, hr₈, hd₈⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide) hd₇
+    (by simp <;> omega) (v := v) (l₁ := [.one]) (l₂ := g) (by simp <;> omega) (by simp <;> omega)
+    (by simp <;> omega)
+  norm_ds at hd₈
+  obtain ⟨c₉, hr₉, hd₉⟩ := D_write rfl (by decide) hd₈ (by simp <;> omega)
+  norm_ds at hd₉
+  obtain ⟨c₁₀, hr₁₀, hd₁₀⟩ := D_move_right rfl (by decide) hd₉
+  norm_ds at hd₁₀
+  obtain ⟨c₁₁, hr₁₁, hd₁₁⟩ := D_popBack rfl (by decide) hd₁₀ (l₁ := kontRepr k)
+    (w := .one :: .zero :: (S b.toData ++ [.en] ++ envRepr env')) (a := .fr)
+    (by simp [List.append_assoc]) (by simp <;> omega)
+    (by simpa [frameBody_let1] using frameBody_ne_fr (.let1 b env')) (kontRepr_nil_or_fr k)
+  norm_ds at hd₁₁
+  obtain ⟨c₁₂, hr₁₂, hd₁₂⟩ := D_rewind rfl (by decide) hd₁₁ (by simp <;> omega)
+  norm_ds at hr₁₂ hd₁₂
+  obtain ⟨c₁₃, hr₁₃, hd₁₃⟩ := D_write rfl (by decide) hd₁₂ (by simp <;> omega)
+  norm_ds at hd₁₃
+  obtain ⟨c₁₄, hr₁₄, hd₁₄⟩ := D_rewind rfl (by decide) hd₁₃ (by simp <;> omega)
+  norm_ds at hr₁₄ hd₁₄
+  obtain ⟨n₁₅, hn₁₅, c₁₅, hr₁₅, hd₁₅⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide)
+    hd₁₄ (by simp <;> omega) (v := b.toData) (l₁ := []) (l₂ := (ds X).l.drop (S b.toData).length)
+    (by simp <;> omega) (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₁₅
+  obtain ⟨c₁₆, hr₁₆, hd₁₆⟩ := D_jump rfl hd₁₅
+  have hR := hr₁.trans hr₂
+  have hR := hR.trans hr₃
+  have hR := hR.trans hr₄
+  have hR := hR.trans hr₅
+  have hR := hR.trans hr₆
+  have hR := hR.trans hr₇
+  have hR := hR.trans hr₈
+  have hR := hR.trans hr₉
+  have hR := hR.trans hr₁₀
+  have hR := hR.trans hr₁₁
+  have hR := hR.trans hr₁₂
+  have hR := hR.trans hr₁₃
+  have hR := hR.trans hr₁₄
+  have hR := hR.trans hr₁₅
+  have hR := hR.trans hr₁₆
+  refine ⟨_, ?_, c₁₆, _, hR.cast_out (by simp), hd₁₆, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
+  · simp only [caseBound, sz, ctrlRepr_ret, kontRepr_cons', frameBody_let1, List.length_cons,
+      List.length_append, length_S, List.length_singleton, List.length_nil, List.length_drop,
+      Data.size_cons, Data.size_nil]
+    omega
+  · simp [ctrlRepr] <;> omega
+  · simp [List.append_assoc] <;> omega
+  · simp
+  · simp [hX]
+  · simp [hX]
+  · simp [hX]
+  · norm_ds_goal
+    simp only [sz, ctrlRepr_ret, kontRepr_cons', frameBody_let1, List.length_cons, List.length_append,
+      length_S, List.length_singleton, List.length_drop, List.length_nil, Data.size_cons, Data.size_nil]
+    omega
+
+
+/-! ## `ret` to a `loop1` frame -/
+
+theorem case_retLoopNil {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .retLoop1 0) ds)
+    {b : Prog} {env env' : Env} {k : List Frame} {r : ℕ}
+    (hr : RepOf ds ⟨.ret .nil, env, .loop1 b env' :: k⟩ r 1 ((kontRepr k).length + 1)) :
+    PreTo c (caseBound ⟨.ret .nil, env, .loop1 b env' :: k⟩ (ds X).l.length) (at_ .retLoopNil 11)
+      ⟨.ret .nil, env', k⟩ r (ctrlRepr (.ret .nil)).length (kontRepr k).length
+      ((ds X).l.length + sz ⟨.ret .nil, env, .loop1 b env' :: k⟩) := by
+  obtain ⟨g, hds⟩ := hr.eq
+  have hX := hr.scratch
+  rw [hds] at hd
+  simp only [kontRepr_cons', frameBody_loop1] at hd
+  norm_ds at hd
+  obtain ⟨c₁, hr₁, hd₁⟩ := D_branch_taken rfl hd (by simp)
+  obtain ⟨c₂, hr₂, hd₂⟩ := D_move_right rfl (by decide) hd₁
+  norm_ds at hd₂
+  obtain ⟨n₃, hn₃, c₃, hr₃, hd₃⟩ := D_skipTree rfl (by decide) (by decide) hd₂ (by simp <;> omega)
+    (v := b.toData) (l₁ := kontRepr k ++ [.one, .one]) (l₂ := [.en] ++ envRepr env' ++ [.fr])
+    (by simp [List.append_assoc]) (by simp <;> omega)
+  norm_ds at hd₃
+  obtain ⟨c₄, hr₄, hd₄⟩ := D_move_right rfl (by decide) hd₃
+  norm_ds at hd₄
+  obtain ⟨c₅, hr₅, hd₅⟩ := D_rewind rfl (by decide) hd₄ (by simp <;> omega)
+  norm_ds at hr₅ hd₅
+  obtain ⟨c₆, hr₆, hd₆⟩ := D_copyUntil rfl (by decide) (by decide) hd₅
+    (l₁ := kontRepr k ++ [.one, .one] ++ S b.toData ++ [.en]) (w := envRepr env') (l₂ := [.fr])
+    (by simp [List.append_assoc]) (by simp <;> omega) (mem_envRepr_ne_fr env') rfl (by simp <;> omega)
+  norm_ds at hd₆
+  obtain ⟨c₇, hr₇, hd₇⟩ := D_eraseRight rfl (by decide) hd₆ (by simp <;> omega)
+    (by simp only [Function.update_self, List.drop_left']; exact drop_env_ne_fr env _)
+  norm_ds at hr₇ hd₇
+  simp only [List.take_left'] at hd₇
+  obtain ⟨c₈, hr₈, hd₈⟩ := D_move_right rfl (by decide) hd₇
+  norm_ds at hd₈
+  obtain ⟨c₉, hr₉, hd₉⟩ := D_popBack rfl (by decide) hd₈ (l₁ := kontRepr k)
+    (w := .one :: .one :: (S b.toData ++ [.en] ++ envRepr env')) (a := .fr)
+    (by simp [List.append_assoc]) (by simp <;> omega)
+    (by simpa [frameBody_loop1] using frameBody_ne_fr (.loop1 b env')) (kontRepr_nil_or_fr k)
+  norm_ds at hd₉
+  obtain ⟨c₁₀, hr₁₀, hd₁₀⟩ := D_rewind rfl (by decide) hd₉ (by simp <;> omega)
+  norm_ds at hr₁₀ hd₁₀
+  obtain ⟨c₁₁, hr₁₁, hd₁₁⟩ := D_write rfl (by decide) hd₁₀ (by simp <;> omega)
+  norm_ds at hd₁₁
+  obtain ⟨c₁₂, hr₁₂, hd₁₂⟩ := D_write rfl (by decide) hd₁₁ (by simp <;> omega)
+  norm_ds at hd₁₂
+  have hR := hr₁.trans hr₂
+  have hR := hR.trans hr₃
+  have hR := hR.trans hr₄
+  have hR := hR.trans hr₅
+  have hR := hR.trans hr₆
+  have hR := hR.trans hr₇
+  have hR := hR.trans hr₈
+  have hR := hR.trans hr₉
+  have hR := hR.trans hr₁₀
+  have hR := hR.trans hr₁₁
+  have hR := hR.trans hr₁₂
+  refine ⟨_, ?_, c₁₂, _, hR.cast_out (by simp), hd₁₂, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
+  · simp only [caseBound, sz, ctrlRepr_ret, kontRepr_cons', frameBody_loop1, List.length_cons,
+      List.length_append, length_S, List.length_singleton, List.length_nil, List.length_drop,
+      Data.size_cons, Data.size_nil, S_nil]
+    omega
+  · simp [ctrlRepr_ret] <;> omega
+  · simp
+  · simp
+  · simp [hX]
+  · simp [hX]
+  · simp [hX]
+  · norm_ds_goal
+    simp only [sz, ctrlRepr_ret, kontRepr_cons', frameBody_loop1, List.length_cons, List.length_append,
+      length_S, List.length_singleton, List.length_drop, List.length_nil, Data.size_cons, Data.size_nil]
+    omega
+
+theorem case_retLoopStop {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .retLoop1 0) ds)
+    {r' : Data} {b : Prog} {env env' : Env} {k : List Frame} {r : ℕ}
+    (hr : RepOf ds ⟨.ret (.cons .nil r'), env, .loop1 b env' :: k⟩ r 1 ((kontRepr k).length + 1)) :
+    PreTo c (caseBound ⟨.ret (.cons .nil r'), env, .loop1 b env' :: k⟩ (ds X).l.length)
+      (at_ .retLoopStop 15) ⟨.ret r', env', k⟩ r (ctrlRepr (.ret r')).length (kontRepr k).length
+      ((ds X).l.length + sz ⟨.ret (.cons .nil r'), env, .loop1 b env' :: k⟩) := by
+  obtain ⟨g, hds⟩ := hr.eq
+  have hX := hr.scratch
+  rw [hds] at hd
+  simp only [kontRepr_cons', frameBody_loop1] at hd
+  norm_ds at hd
+  obtain ⟨c₁, hr₁, hd₁⟩ := D_branch_not rfl (by decide) hd (by simp)
+  obtain ⟨c₂, hr₂, hd₂⟩ := D_move_right rfl (by decide) hd₁
+  norm_ds at hd₂
+  obtain ⟨c₃, hr₃, hd₃⟩ := D_branch_taken rfl hd₂ (by simp)
+  -- `retLoopStop`
+  obtain ⟨c₄, hr₄, hd₄⟩ := D_move_right rfl (by decide) hd₃
+  norm_ds at hd₄
+  obtain ⟨c₅, hr₅, hd₅⟩ := D_rewind rfl (by decide) hd₄ (by simp <;> omega)
+  norm_ds at hr₅ hd₅
+  obtain ⟨n₆, hn₆, c₆, hr₆, hd₆⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide) hd₅
+    (by simp <;> omega) (v := r') (l₁ := [.one, .one, .zero]) (l₂ := g) (by simp <;> omega)
+    (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₆
+  obtain ⟨c₇, hr₇, hd₇⟩ := D_move_right rfl (by decide) hd₆
+  norm_ds at hd₇
+  obtain ⟨n₈, hn₈, c₈, hr₈, hd₈⟩ := D_skipTree rfl (by decide) (by decide) hd₇ (by simp <;> omega)
+    (v := b.toData) (l₁ := kontRepr k ++ [.one, .one]) (l₂ := [.en] ++ envRepr env' ++ [.fr])
+    (by simp [List.append_assoc]) (by simp <;> omega)
+  norm_ds at hd₈
+  obtain ⟨c₉, hr₉, hd₉⟩ := D_move_right rfl (by decide) hd₈
+  norm_ds at hd₉
+  obtain ⟨c₁₀, hr₁₀, hd₁₀⟩ := D_rewind rfl (by decide) hd₉ (by simp <;> omega)
+  norm_ds at hr₁₀ hd₁₀
+  obtain ⟨c₁₁, hr₁₁, hd₁₁⟩ := D_copyUntil rfl (by decide) (by decide) hd₁₀
+    (l₁ := kontRepr k ++ [.one, .one] ++ S b.toData ++ [.en]) (w := envRepr env') (l₂ := [.fr])
+    (by simp [List.append_assoc]) (by simp <;> omega) (mem_envRepr_ne_fr env') rfl (by simp <;> omega)
+  norm_ds at hd₁₁
+  obtain ⟨c₁₂, hr₁₂, hd₁₂⟩ := D_eraseRight rfl (by decide) hd₁₁ (by simp <;> omega)
+    (by simp only [Function.update_self, List.drop_left']; exact drop_env_ne_fr env _)
+  norm_ds at hr₁₂ hd₁₂
+  simp only [List.take_left'] at hd₁₂
+  obtain ⟨c₁₃, hr₁₃, hd₁₃⟩ := D_move_right rfl (by decide) hd₁₂
+  norm_ds at hd₁₃
+  obtain ⟨c₁₄, hr₁₄, hd₁₄⟩ := D_popBack rfl (by decide) hd₁₃ (l₁ := kontRepr k)
+    (w := .one :: .one :: (S b.toData ++ [.en] ++ envRepr env')) (a := .fr)
+    (by simp [List.append_assoc]) (by simp <;> omega)
+    (by simpa [frameBody_loop1] using frameBody_ne_fr (.loop1 b env')) (kontRepr_nil_or_fr k)
+  norm_ds at hd₁₄
+  obtain ⟨c₁₅, hr₁₅, hd₁₅⟩ := D_rewind rfl (by decide) hd₁₄ (by simp <;> omega)
+  norm_ds at hr₁₅ hd₁₅
+  obtain ⟨c₁₆, hr₁₆, hd₁₆⟩ := D_write rfl (by decide) hd₁₅ (by simp <;> omega)
+  norm_ds at hd₁₆
+  obtain ⟨c₁₇, hr₁₇, hd₁₇⟩ := D_rewind rfl (by decide) hd₁₆ (by simp <;> omega)
+  norm_ds at hr₁₇ hd₁₇
+  obtain ⟨n₁₈, hn₁₈, c₁₈, hr₁₈, hd₁₈⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide)
+    hd₁₇ (by simp <;> omega) (v := r') (l₁ := []) (l₂ := (ds X).l.drop (S r').length)
+    (by simp <;> omega) (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₁₈
+  have hR := hr₁.trans hr₂
+  have hR := hR.trans hr₃
+  have hR := hR.trans hr₄
+  have hR := hR.trans hr₅
+  have hR := hR.trans hr₆
+  have hR := hR.trans hr₇
+  have hR := hR.trans hr₈
+  have hR := hR.trans hr₉
+  have hR := hR.trans hr₁₀
+  have hR := hR.trans hr₁₁
+  have hR := hR.trans hr₁₂
+  have hR := hR.trans hr₁₃
+  have hR := hR.trans hr₁₄
+  have hR := hR.trans hr₁₅
+  have hR := hR.trans hr₁₆
+  have hR := hR.trans hr₁₇
+  have hR := hR.trans hr₁₈
+  refine ⟨_, ?_, c₁₈, _, hR.cast_out (by simp), hd₁₈, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
+  · simp only [caseBound, sz, ctrlRepr_ret, kontRepr_cons', frameBody_loop1, List.length_cons,
+      List.length_append, length_S, List.length_singleton, List.length_nil, List.length_drop,
+      Data.size_cons, Data.size_nil, S_cons, S_nil]
+    omega
+  · simp [ctrlRepr_ret] <;> omega
+  · simp
+  · simp
+  · simp [hX]
+  · simp [hX]
+  · simp [hX]
+  · norm_ds_goal
+    simp only [sz, ctrlRepr_ret, kontRepr_cons', frameBody_loop1, List.length_cons, List.length_append,
+      length_S, List.length_singleton, List.length_drop, List.length_nil, Data.size_cons, Data.size_nil,
+      S_cons, S_nil]
+    omega
+
+theorem case_retLoopCont {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .retLoop1 0) ds)
+    {y z v' : Data} {b : Prog} {env env' : Env} {k : List Frame} {r : ℕ}
+    (hr : RepOf ds ⟨.ret (.cons (.cons y z) v'), env, .loop1 b env' :: k⟩ r 1
+      ((kontRepr k).length + 1)) :
+    PreTo c (caseBound ⟨.ret (.cons (.cons y z) v'), env, .loop1 b env' :: k⟩ (ds X).l.length)
+      (at_ .retLoopCont 29) ⟨.ev b, v' :: env'.tail, .loop1 b (v' :: env'.tail) :: k⟩ r
+      (ctrlRepr (.ev b)).length (kontRepr (.loop1 b (v' :: env'.tail) :: k)).length
+      ((ds X).l.length + sz ⟨.ret (.cons (.cons y z) v'), env, .loop1 b env' :: k⟩) := by
+  obtain ⟨g, hds⟩ := hr.eq
+  have hX := hr.scratch
+  rw [hds] at hd
+  simp only [kontRepr_cons', frameBody_loop1] at hd
+  norm_ds at hd
+  obtain ⟨c₁, hr₁, hd₁⟩ := D_branch_not rfl (by decide) hd (by simp)
+  obtain ⟨c₂, hr₂, hd₂⟩ := D_move_right rfl (by decide) hd₁
+  norm_ds at hd₂
+  obtain ⟨c₃, hr₃, hd₃⟩ := D_branch_not rfl (by decide) hd₂ (by simp)
+  obtain ⟨c₄, hr₄, hd₄⟩ := D_jump rfl hd₃
+  -- `retLoopCont`
+  obtain ⟨n₅, hn₅, c₅, hr₅, hd₅⟩ := D_skipTree rfl (by decide) (by decide) hd₄ (by simp <;> omega)
+    (v := .cons y z) (l₁ := [.one, .one]) (l₂ := S v' ++ g) (by simp [S_cons, List.append_assoc])
+    (by simp <;> omega)
+  simp only [Data.size_cons] at hn₅
+  norm_ds at hd₅
+  obtain ⟨c₆, hr₆, hd₆⟩ := D_rewind rfl (by decide) hd₅ (by simp <;> omega)
+  norm_ds at hr₆ hd₆
+  obtain ⟨n₇, hn₇, c₇, hr₇, hd₇⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide) hd₆
+    (by simp <;> omega) (v := v') (l₁ := [.one, .one] ++ S (.cons y z)) (l₂ := g)
+    (by simp [S_cons, List.append_assoc]) (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₇
+  obtain ⟨c₈, hr₈, hd₈⟩ := D_move_right rfl (by decide) hd₇
+  norm_ds at hd₈
+  obtain ⟨n₉, hn₉, c₉, hr₉, hd₉⟩ := D_skipTree rfl (by decide) (by decide) hd₈ (by simp <;> omega)
+    (v := b.toData) (l₁ := kontRepr k ++ [.one, .one]) (l₂ := [.en] ++ envRepr env' ++ [.fr])
+    (by simp [List.append_assoc]) (by simp <;> omega)
+  norm_ds at hd₉
+  obtain ⟨c₁₀, hr₁₀, hd₁₀⟩ := D_move_right rfl (by decide) hd₉
+  norm_ds at hd₁₀
+  obtain ⟨c₁₁, hr₁₁, hd₁₁⟩ := D_rewind rfl (by decide) hd₁₀ (by simp <;> omega)
+  norm_ds at hr₁₁ hd₁₁
+  obtain ⟨c₁₂, hr₁₂, hd₁₂⟩ := D_copyUntil rfl (by decide) (by decide) hd₁₁
+    (l₁ := kontRepr k ++ [.one, .one] ++ S b.toData ++ [.en]) (w := envRepr env') (l₂ := [.fr])
+    (by simp [List.append_assoc]) (by simp <;> omega) (mem_envRepr_ne_fr env') rfl (by simp <;> omega)
+  norm_ds at hd₁₂
+  obtain ⟨c₁₃, hr₁₃, hd₁₃⟩ := D_eraseRight rfl (by decide) hd₁₂ (by simp <;> omega)
+    (by simp only [Function.update_self, List.drop_left']; exact drop_env_ne_fr env _)
+  norm_ds at hr₁₃ hd₁₃
+  simp only [List.take_left'] at hd₁₃
+  obtain ⟨n₁₄, hn₁₄, c₁₄, hr₁₄, hd₁₄⟩ := D_popEnv rfl (by decide) hd₁₃ (env' := env') (by simp)
+  norm_ds at hd₁₄
+  obtain ⟨c₁₅, hr₁₅, hd₁₅⟩ := D_rewind rfl (by decide) hd₁₄ (by simp <;> omega)
+  norm_ds at hr₁₅ hd₁₅
+  obtain ⟨n₁₆, hn₁₆, c₁₆, hr₁₆, hd₁₆⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide)
+    hd₁₅ (by simp <;> omega) (v := v') (l₁ := []) (l₂ := (ds X).l.drop v'.size) (by simp <;> omega)
+    (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₁₆
+  obtain ⟨c₁₇, hr₁₇, hd₁₇⟩ := D_write rfl (by decide) hd₁₆ (by simp <;> omega)
+  norm_ds at hd₁₇
+  obtain ⟨c₁₈, hr₁₈, hd₁₈⟩ := D_move_right rfl (by decide) hd₁₇
+  norm_ds at hd₁₈
+  obtain ⟨c₁₉, hr₁₉, hd₁₉⟩ := D_popBack rfl (by decide) hd₁₈
+    (l₁ := kontRepr k ++ [.one, .one] ++ S b.toData ++ [.en]) (w := envRepr env') (a := .fr)
+    (by simp [List.append_assoc]) (by simp <;> omega) (mem_envRepr_ne_en env')
+    (Or.inr ⟨kontRepr k ++ [.one, .one] ++ S b.toData, by simp⟩)
+  norm_ds at hd₁₉
+  obtain ⟨c₂₀, hr₂₀, hd₂₀⟩ := D_rewind rfl (by decide) hd₁₉ (by simp <;> omega)
+  norm_ds at hr₂₀ hd₂₀
+  obtain ⟨c₂₁, hr₂₁, hd₂₁⟩ := D_copyUntil rfl (by decide) (by decide) hd₂₀ (l₁ := [])
+    (w := envRepr env'.tail ++ S v' ++ [.sep]) (l₂ := []) (by simp [List.append_assoc])
+    (by simp <;> omega) (fun _ _ => Option.some_ne_none _) rfl (by simp <;> omega)
+  norm_ds at hd₂₁
+  obtain ⟨c₂₂, hr₂₂, hd₂₂⟩ := D_write rfl (by decide) hd₂₁ (by simp <;> omega)
+  norm_ds at hd₂₂
+  obtain ⟨c₂₃, hr₂₃, hd₂₃⟩ := D_move_left rfl (by decide) hd₂₂ (by simp <;> omega)
+  norm_ds at hd₂₃
+  obtain ⟨c₂₄, hr₂₄, hd₂₄⟩ := D_leftToMarker rfl (by decide) hd₂₃ (l₁ := kontRepr k)
+    (w := .one :: .one :: (S b.toData ++ [.en] ++ envRepr (v' :: env'.tail))) (l₂ := [.fr])
+    (by simp [List.append_assoc]) (by simp <;> omega)
+    (by simpa [frameBody_loop1] using frameBody_ne_fr (.loop1 b (v' :: env'.tail)))
+    (kontRepr_nil_or_fr k)
+  norm_ds at hd₂₄
+  obtain ⟨c₂₅, hr₂₅, hd₂₅⟩ := D_move_right rfl (by decide) hd₂₄
+  norm_ds at hd₂₅
+  obtain ⟨c₂₆, hr₂₆, hd₂₆⟩ := D_move_right rfl (by decide) hd₂₅
+  norm_ds at hd₂₆
+  obtain ⟨c₂₇, hr₂₇, hd₂₇⟩ := D_rewind rfl (by decide) hd₂₆ (by simp <;> omega)
+  norm_ds at hr₂₇ hd₂₇
+  obtain ⟨n₂₈, hn₂₈, c₂₈, hr₂₈, hd₂₈⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide)
+    hd₂₇ (by simp <;> omega) (v := b.toData) (l₁ := kontRepr k ++ [.one, .one])
+    (l₂ := [.en] ++ (envRepr env'.tail ++ S v' ++ [.sep]) ++ [.fr]) (by simp [List.append_assoc])
+    (by simp <;> omega) (by simp <;> omega)
+  norm_ds at hd₂₈
+  obtain ⟨c₂₉, hr₂₉, hd₂₉⟩ := D_rewind rfl (by decide) hd₂₈ (by simp <;> omega)
+  norm_ds at hr₂₉ hd₂₉
+  obtain ⟨c₃₀, hr₃₀, hd₃₀⟩ := D_write rfl (by decide) hd₂₉ (by simp <;> omega)
+  norm_ds at hd₃₀
+  obtain ⟨c₃₁, hr₃₁, hd₃₁⟩ := D_rewind rfl (by decide) hd₃₀ (by simp <;> omega)
+  norm_ds at hr₃₁ hd₃₁
+  obtain ⟨n₃₂, hn₃₂, c₃₂, hr₃₂, hd₃₂⟩ := D_copyTree rfl (by decide) (by decide) (by decide) (by decide)
+    hd₃₁ (by simp <;> omega) (v := b.toData) (l₁ := [])
+    (l₂ := (S v' ++ (ds X).l.drop v'.size).drop b.toData.size) (by simp <;> omega) (by simp <;> omega)
+    (by simp <;> omega)
+  norm_ds at hd₃₂
+  obtain ⟨c₃₃, hr₃₃, hd₃₃⟩ := D_toEnd rfl (by decide) hd₃₂ (by simp <;> omega)
+  norm_ds at hr₃₃ hd₃₃
+  have htail : (envRepr env'.tail).length ≤ (envRepr env').length := by
+    cases env' <;> simp
+  have hR := hr₁.trans hr₂
+  have hR := hR.trans hr₃
+  have hR := hR.trans hr₄
+  have hR := hR.trans hr₅
+  have hR := hR.trans hr₆
+  have hR := hR.trans hr₇
+  have hR := hR.trans hr₈
+  have hR := hR.trans hr₉
+  have hR := hR.trans hr₁₀
+  have hR := hR.trans hr₁₁
+  have hR := hR.trans hr₁₂
+  have hR := hR.trans hr₁₃
+  have hR := hR.trans hr₁₄
+  have hR := hR.trans hr₁₅
+  have hR := hR.trans hr₁₆
+  have hR := hR.trans hr₁₇
+  have hR := hR.trans hr₁₈
+  have hR := hR.trans hr₁₉
+  have hR := hR.trans hr₂₀
+  have hR := hR.trans hr₂₁
+  have hR := hR.trans hr₂₂
+  have hR := hR.trans hr₂₃
+  have hR := hR.trans hr₂₄
+  have hR := hR.trans hr₂₅
+  have hR := hR.trans hr₂₆
+  have hR := hR.trans hr₂₇
+  have hR := hR.trans hr₂₈
+  have hR := hR.trans hr₂₉
+  have hR := hR.trans hr₃₀
+  have hR := hR.trans hr₃₁
+  have hR := hR.trans hr₃₂
+  have hR := hR.trans hr₃₃
+  refine ⟨_, ?_, c₃₃, _, hR.cast_out (by simp), hd₃₃, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
+  · simp only [caseBound, sz, ctrlRepr_ret, kontRepr_cons', frameBody_loop1, List.length_cons,
+      List.length_append, length_S, List.length_singleton, List.length_nil, List.length_drop,
+      Data.size_cons, Data.size_nil, S_cons, S_nil, envRepr_cons]
+    omega
+  · simp [ctrlRepr] <;> omega
+  · simp [List.append_assoc] <;> omega
+  · simp [kontRepr_cons, frameRepr, List.append_assoc] <;> omega
+  · simp [hX]
+  · simp [hX]
+  · simp [hX]
+  · norm_ds_goal
+    simp only [sz, ctrlRepr_ret, kontRepr_cons', frameBody_loop1, List.length_cons, List.length_append,
+      length_S, List.length_singleton, List.length_drop, List.length_nil, Data.size_cons, Data.size_nil,
+      S_cons, S_nil]
     omega
 
 end MIPRE.TM.Interp
