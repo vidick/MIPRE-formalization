@@ -767,6 +767,21 @@
   "MIPRE.Repetition.tracialDensity": [
    "thm:tracial-density"
   ],
+  "MIPRE.SAT.Circuit.DescribesDecider": [
+   "def:succinct-3sat"
+  ],
+  "MIPRE.SAT.Circuit.formula3": [
+   "def:succinct-3sat"
+  ],
+  "MIPRE.SAT.Circuit.formula5": [
+   "def:succinct-3sat"
+  ],
+  "MIPRE.SAT.DecoupledDescriber": [
+   "lem:decoupled-5sat"
+  ],
+  "MIPRE.SAT.SuccinctCookLevin": [
+   "thm:succinct-sat"
+  ],
   "MIPRE.SyncStrategy": [
    "def:sync-strategy"
   ],
@@ -1469,6 +1484,11 @@
   "MIPRE.Repetition.repConst",
   "MIPRE.Repetition.soundBound",
   "MIPRE.Repetition.tracialDensity",
+  "MIPRE.SAT.Circuit.DescribesDecider",
+  "MIPRE.SAT.Circuit.formula3",
+  "MIPRE.SAT.Circuit.formula5",
+  "MIPRE.SAT.DecoupledDescriber",
+  "MIPRE.SAT.SuccinctCookLevin",
   "MIPRE.SyncStrategy",
   "MIPRE.SyncStrategy.IsPCC",
   "MIPRE.SyncStrategy.double",
@@ -2050,6 +2070,15 @@
    "MIPRE.Repetition",
    "MIPRE.Repetition.soundBound"
   ],
+  "MIPRE/Foundations/SAT/Decoupled.lean": [
+   "MIPRE.SAT.Circuit.DescribesDecider",
+   "MIPRE.SAT.Circuit.formula5",
+   "MIPRE.SAT.DecoupledDescriber"
+  ],
+  "MIPRE/Foundations/SAT/Succinct.lean": [
+   "MIPRE.SAT.Circuit.formula3",
+   "MIPRE.SAT.SuccinctCookLevin"
+  ],
   "MIPRE/Foundations/SyncTransport.lean": [
    "MIPRE.Verifier.exists_perfectPCC_syncGame_doubled",
    "MIPRE.Verifier.gameValue_toGame_eq_one_doubled",
@@ -2212,7 +2241,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 94,
+ "lean_tags": 97,
  "module_sizes": {
   "MIPRE/Axioms.lean": 0,
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
@@ -2322,6 +2351,10 @@
   "MIPRE/Foundations/Repeat/RepSampler.lean": 35,
   "MIPRE/Foundations/Repeat/Sampler.lean": 26,
   "MIPRE/Foundations/Repeat/SamplerCost.lean": 22,
+  "MIPRE/Foundations/SAT/Circuit.lean": 17,
+  "MIPRE/Foundations/SAT/Cnf.lean": 10,
+  "MIPRE/Foundations/SAT/Decoupled.lean": 5,
+  "MIPRE/Foundations/SAT/Succinct.lean": 12,
   "MIPRE/Foundations/SyncTransport.lean": 6,
   "MIPRE/Foundations/TensorFamily.lean": 9,
   "MIPRE/Foundations/ValueApprox.lean": 8,
@@ -2378,10 +2411,10 @@
   "bibitems": 33,
   "cites": 154,
   "commands_defined": 99,
-  "commands_used": 207,
-  "labels": 230,
+  "commands_used": 208,
+  "labels": 231,
   "leanok_claimed": 200,
   "leanok_guarded": 200,
-  "refs": 1071
+  "refs": 1076
  }
 }

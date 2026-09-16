@@ -602,6 +602,10 @@ import MIPRE.Foundations.Repeat.RepDecider
 import MIPRE.Foundations.Repeat.RepSampler
 import MIPRE.Foundations.Repeat.Sampler
 import MIPRE.Foundations.Repeat.SamplerCost
+import MIPRE.Foundations.SAT.Circuit
+import MIPRE.Foundations.SAT.Cnf
+import MIPRE.Foundations.SAT.Decoupled
+import MIPRE.Foundations.SAT.Succinct
 import MIPRE.Foundations.SyncTransport
 import MIPRE.Foundations.TensorFamily
 import MIPRE.Foundations.ValueApprox

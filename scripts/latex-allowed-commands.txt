@@ -13,7 +13,7 @@
 # Adding a name here asserts it is provided by LaTeX or a loaded package. If the
 # command is this project's, define it in blueprint/src/macros/ instead.
 Bigl Bigr Delta Gamma Omega Phi Pi Pr Psi Sigma Theta Xi alpha approx ast bar
-begin beta bibitem bigcap bigl bigoplus bigotimes bigr bigwedge cdot checkmark chi circ
+begin beta bibitem bigcap bigl bigoplus bigotimes bigr bigwedge vee cdot checkmark chi circ
 cite cong cup dagger deg delta det dots ell emph end eta exp frac gamma geq
 hat hline href in infty iota item kappa ker label lambda langle lceil ldots
 le leftarrow leq log mapsto mathbb mathrm mathsf mathtt max mid min mu neq
