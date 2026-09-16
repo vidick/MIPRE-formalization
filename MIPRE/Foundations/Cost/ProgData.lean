@@ -12,11 +12,13 @@ import MIPRE.Foundations.Cost.Codable
 programs are their own descriptions, and nothing in the development needed to *decide* whether
 an arbitrary datum is one. The tabulation of obligation O2 does.
 
-A string names a decider through `MIPRE.Halting.descDec x = ((decode (parse x).right)).getD nil`,
-which falls back on the program `nil` when the data is not an encoding. A computable tabulation
-has to make that same fallback, so it has to decide program-hood — and getting it wrong would
-not merely leave a gap, it would make the tabulation *wrong*: on junk data the verifier uses
-`Prog.nil`, which accepts nothing, while a tabulation that ran the junk could accept.
+A string once named a decider through `(decode (parse x).right).getD nil`, falling back on the
+program `nil` when the data is not an encoding, and a computable tabulation had to make the same
+fallback, hence decide program-hood. That reading is gone: a string's decider is now the datum
+itself, run by the universal machine (`MIPRE.Verifier.ofSamplerDeciderD`), so nothing in the
+instantiation of the halting reduction decides program-hood any more. `progOk` and `progNorm`
+stay as the decision procedure they are — primitive recursive, and correct against the
+encoding — for whatever needs one.
 
 `progNorm` is that normalization, as a primitive recursive function of data:
 `progNorm d = encode ((decode d : Option Prog)).getD nil`. Its correctness (`progNorm_eq`) is

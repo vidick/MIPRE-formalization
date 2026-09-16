@@ -1083,8 +1083,9 @@ lower bound has to be tracked anywhere in this chapter.
   MIPRE.Cost.Prog.serProg_runs, MIPRE.Cost.PolyBounded, MIPRE.Verifier.InClassA,
   MIPRE.Verifier.InClassB, MIPRE.Verifier.not_inClassB_of_inClassA,
   MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal,
-  MIPRE.Verifier.valStar_eq_zero_of_rejects_all, MIPRE.Verifier.ofSamplerDecider,
-  MIPRE.Verifier.ofSamplerDecider_accepts, MIPRE.Decider.wrap,
+  MIPRE.Verifier.valStar_eq_zero_of_rejects_all, MIPRE.Verifier.ofSamplerDeciderD,
+  MIPRE.Verifier.ofSamplerDeciderD_accepts, MIPRE.Verifier.ofSamplerDecider,
+  MIPRE.Verifier.ofSamplerDecider_accepts, MIPRE.Decider.wrap, MIPRE.Decider.wrap_accepts_prog,
   MIPRE.Verifier.answerEquiv, MIPRE.Verifier.questionEquiv,
   MIPRE.Verifier.quantumValue_toGame_eq_valStar, MIPRE.Verifier.not_inClassB_iff,
   MIPRE.SyncStrategy.relabel, MIPRE.SyncStrategy.value_relabel,
@@ -1093,7 +1094,7 @@ lower bound has to be tracked anywhere in this chapter.
   HaltingGameValue.GameData.toSyncStrategy, HaltingGameValue.GameData.ofSyncStrategy,
   HaltingGameValue.GameData.gameValue_eq_syncValue,
   HaltingGameValue.GameData.gameValue_le_quantumValue,
-  MIPRE.Halting.descLam, MIPRE.Halting.descDec, MIPRE.Halting.Vof,
+  MIPRE.Halting.descLam, MIPRE.Halting.descDecD, MIPRE.Halting.Vof,
   MIPRE.Halting.classA, MIPRE.Halting.classB, MIPRE.Halting.Obligations,
   MIPRE.Halting.CompressorSpec, MIPRE.Halting.CompressorSpec.toObligations,
   MIPRE.Cost.Prog.HasPolyCost, MIPRE.Verifier.IsBounded.mono,
@@ -1108,8 +1109,7 @@ lower bound has to be tracked anywhere in this chapter.
   MIPRE.Verifier.questionWeight_weightList, MIPRE.Verifier.totalWeight_weightList,
   MIPRE.Verifier.accList, MIPRE.Verifier.mem_accList_iff, MIPRE.Halting.dimOf,
   MIPRE.Halting.margOf, MIPRE.Halting.accOf, MIPRE.Halting.tabOf,
-  MIPRE.Halting.primrec_tabOf, MIPRE.Cost.progOk, MIPRE.Cost.progNorm,
-  MIPRE.Cost.progNorm_eq, MIPRE.Cost.Prog.ProgD.dWrapCore,
+  MIPRE.Halting.primrec_tabOf, MIPRE.Cost.Prog.ProgD.dWrapCore,
   MIPRE.Cost.Prog.ProgD.dWrapCore_eq, MIPRE.Cost.PolyTimeFun.computable_encode_comp,
   MIPRE.Halting.sampData, MIPRE.Halting.decProgData, MIPRE.Halting.sampData_eq,
   MIPRE.Halting.decProgData_eq, MIPRE.Halting.tab, MIPRE.Halting.tab_computable,
@@ -1157,7 +1157,14 @@ of the recursion.
   of Lemma~\ref{lem:compress-sampler-indep}, the length check of
   Definition~\ref{def:normal-verifier} being enforced by a wrapper around $\decider$; so
   every string names a normal form verifier, and the interpretation sits outside every
-  time bound. $A_n$ is the set of strings whose verifier is $n$-bounded and whose $n$-th
+  time bound. In Lean the decider component is the \emph{datum} the string carries, run by
+  the universal machine (\texttt{Verifier.ofSamplerDeciderD}): a datum that is not the
+  encoding of any program still names a verifier, whatever the interpreter does with it, and
+  on the encoding of a program the reading is the program's own run
+  (\texttt{Decider.wrap\_accepts\_prog}). Decoding the datum to a program with a fallback,
+  the earlier reading, would have obliged the compressor's decider of item 2 to reimplement
+  the decoder --- a tree-grammar check --- in the ambient model, to reproduce a fallback
+  nobody wanted. $A_n$ is the set of strings whose verifier is $n$-bounded and whose $n$-th
   game has a value-$1$ PCC strategy and whose decider rejects every answer longer than the
   answer bound at index $n$; $B_n$ the set of those that are $n$-bounded, reject long
   answers, and have $\valstar \leq \frac12$ at index $n$ (\texttt{Verifier.InClassA},
@@ -1310,7 +1317,7 @@ format checks and budgets are the bounded walks \texttt{Prog.bitWalkProg},
 $T \cdot (\abs{\text{input}} + 1)$ that Definition~\ref{def:decider} asks for. Costs compose
 through \texttt{Cost.PolyBounded}, which also gives the threshold above which a polynomial
 bound falls under $2^n$. The dictionary itself is now in Lean: \texttt{MIPRE.Halting.descLam}
-and \texttt{descDec} read a string as a parameter and a decider, \texttt{Vof} is the verifier
+and \texttt{descDecD} read a string as a parameter and a decider, \texttt{Vof} is the verifier
 it denotes, and \texttt{classA}, \texttt{classB} are $A_n, B_n$, with answers cut at the
 length beyond which a compressed decider with that parameter rejects. What remains is
 collected as the fields of \texttt{MIPRE.Halting.Obligations}, the structure
@@ -1383,11 +1390,11 @@ the tabulation runs that function on an encoded input
 (\texttt{Cost.PolyTimeFun.computable\_encode\_comp}); the decider is the \emph{wrapper} around
 the string's own, that being what $\lambda$-boundedness bounds, so the wrapper's syntax tree
 is rebuilt in \texttt{Data} (\texttt{Cost.Prog.ProgD.dWrapCore}, the encoding of
-\texttt{wrapCore} by \texttt{rfl}), and the string's own decider is normalized by
-\texttt{Cost.progNorm}, which decides program-hood (\texttt{Cost.progOk}) so that the
-tabulation falls back on \texttt{nil} exactly where \texttt{descDec} does --- getting that
-wrong would not leave a gap but make the tabulation \emph{wrong}, the verifier accepting
-nothing on junk data while a tabulation that ran the junk could accept. \emph{The two clauses
+\texttt{wrapCore} by \texttt{rfl}) around the string's own decider, which enters as the datum
+it is. (An earlier reading decoded the datum to a program with a fallback on \texttt{nil}, and
+the tabulation had to decide program-hood to make the same fallback; the reading changed when
+the compressor's decider of obligation O4 turned out to need that decoder in the ambient model,
+see item 1.) \emph{The two clauses
 are separate arguments}: the $\mu$ clause is a count, \texttt{Verifier.weightList} placing one
 unit of weight at the index pair on which the two marginals of a point of $\F_2^{s(n)}$ land,
 so that its question weight is the number of points landing on a given pair and its total

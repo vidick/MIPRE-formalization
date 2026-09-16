@@ -30,8 +30,15 @@ counter is likewise not needed here, since a decider that fails to halt simply f
 * The three forward runs (`wrapCore_runs_of_eq`, `wrapCore_runs_of_ne_left`,
   `wrapCore_runs_of_ne_right`) and the inversion `wrapCore_halts_of`, which is what turns them
   into the characterization of acceptance.
-* `Decider.wrap`, `Decider.wrap_accepts`, and `Verifier.ofSamplerDecider`, the normal form
-  verifier a pair denotes.
+* `Decider.wrap`, `Decider.wrap_accepts`, and `Verifier.ofSamplerDeciderD`, the normal form
+  verifier a pair denotes. The decider component is a *datum* run by the universal machine,
+  not a program: a string carries data, a datum that is not the encoding of any program still
+  has to name a verifier, and reading it as a program would need a decoder with a fallback
+  (`Cost.progNorm`) that the compressor's decider of obligation O4 would then have to
+  reimplement in the ambient model — the tree-grammar check of `Cost.progOk` as a worklist
+  program — only to reproduce a fallback nobody wanted. On the encoding of a program the two
+  readings agree (`wrap_accepts_prog`, by `UniversalMachine.time_le` and `halts_of`), and
+  `Verifier.ofSamplerDecider` is that special case, which the two distinguished strings use.
 -/
 
 namespace MIPRE
@@ -58,10 +65,11 @@ def wrapCheckEnv (l : BitStr) (m : ℕ) (env : Env) : Env :=
   .nil :: .nil :: encode true :: .cons (Data.ofNat l.length) (Data.ofNat m) ::
     Data.ofNat l.length :: env
 
-/-- The last step: run the string's decider `dec` on the whole input, through `univ`. At this
+/-- The last step: run the string's decider — the datum `decD`, which the string carries and
+which need not be the encoding of any program — on the whole input, through `univ`. At this
 point the input sits at index `19`. -/
-def wrapTail (univ dec : Prog) : Prog :=
-  .let_ (.cons (.const (encode dec)) (.var 19)) (callVar 0 univ)
+def wrapTail (univ : Prog) (decD : Data) : Prog :=
+  .let_ (.cons (.const decD) (.var 19)) (callVar 0 univ)
 
 /-- The head: compute the sampler's dimension at the input index, in unary. -/
 def wrapHead (univ sampProg c : Prog) : Prog :=
@@ -76,8 +84,8 @@ def wrapPre (univ sampProg c : Prog) : Prog :=
   wrapHead univ sampProg (.elim 4 .nil (.elim 1 .nil c))
 
 /-- The wrapper's program. Input: `encode (N, x, y, a, b)`. -/
-def wrapCore (univ sampProg dec : Prog) : Prog :=
-  wrapPre univ sampProg (wrapCheck 2 4 (wrapCheck 5 9 (wrapTail univ dec)))
+def wrapCore (univ sampProg : Prog) (decD : Data) : Prog :=
+  wrapPre univ sampProg (wrapCheck 2 4 (wrapCheck 5 9 (wrapTail univ decD)))
 
 theorem wrapCheck_wellScoped {i j n : ℕ} (hi : i < n) (hj : j < n) {c : Prog}
     (hc : c.WellScoped (n + 5)) : (wrapCheck i j c).WellScoped n :=
@@ -86,8 +94,8 @@ theorem wrapCheck_wellScoped {i j n : ℕ} (hi : i < n) (hj : j < n) {c : Prog}
       ⟨callVar_wellScoped (by omega) eqBitsProg_wellScoped,
         ⟨by simp, trivial, by simpa [show n + 1 + 1 + 1 + 2 = n + 5 by omega] using hc⟩⟩⟩⟩
 
-theorem wrapTail_wellScoped {univ : Prog} (hU : univ.WellScoped 1) (dec : Prog) :
-    (wrapTail univ dec).WellScoped 20 :=
+theorem wrapTail_wellScoped {univ : Prog} (hU : univ.WellScoped 1) (decD : Data) :
+    (wrapTail univ decD).WellScoped 20 :=
   ⟨⟨trivial, by simp [WellScoped]⟩, callVar_wellScoped (by simp) hU⟩
 
 theorem wrapHead_wellScoped {univ : Prog} (hU : univ.WellScoped 1) (sampProg : Prog) {c : Prog}
@@ -101,11 +109,11 @@ theorem wrapPre_wellScoped {univ : Prog} (hU : univ.WellScoped 1) (sampProg : Pr
     (hc : c.WellScoped 10) : (wrapPre univ sampProg c).WellScoped 1 :=
   wrapHead_wellScoped hU sampProg ⟨by simp, trivial, ⟨by simp, trivial, hc⟩⟩
 
-theorem wrapCore_wellScoped {univ : Prog} (hU : univ.WellScoped 1) (sampProg dec : Prog) :
-    (wrapCore univ sampProg dec).WellScoped 1 :=
+theorem wrapCore_wellScoped {univ : Prog} (hU : univ.WellScoped 1) (sampProg : Prog)
+    (decD : Data) : (wrapCore univ sampProg decD).WellScoped 1 :=
   wrapPre_wellScoped hU sampProg
     (wrapCheck_wellScoped (by omega) (by omega)
-      (wrapCheck_wellScoped (by omega) (by omega) (wrapTail_wellScoped hU dec)))
+      (wrapCheck_wellScoped (by omega) (by omega) (wrapTail_wellScoped hU decD)))
 
 /-! ## The length check -/
 
@@ -204,7 +212,7 @@ end Check
 
 section Runs
 
-variable {ℓ : ℕ} (U : UniversalMachine) (S : CL.Sampler ℓ) (dec : Prog)
+variable {ℓ : ℕ} (U : UniversalMachine) (S : CL.Sampler ℓ) (decD : Data)
   (n : ℕ) (x y a b : BitStr)
 
 /-- The environment the prefix hands to the first length check. -/
@@ -286,40 +294,39 @@ theorem wrapPre_inv {c : Prog} {r : Data} {t : ℕ}
 /-! ### The three outcomes -/
 
 theorem wrapCore_runs_of_ne_left (hx : x.length ≠ S.dim n) :
-    ∃ t, (wrapCore U.univ S.prog dec).Runs (encode (n, x, y, a, b)) .nil t := by
+    ∃ t, (wrapCore U.univ S.prog decD).Runs (encode (n, x, y, a, b)) .nil t := by
   obtain ⟨t, h⟩ := wrapCheck_runs_of_ne (i := 2) (j := 4) (env := wrapPreEnv S n x y a b)
-    (c := wrapCheck 5 9 (wrapTail U.univ dec)) rfl rfl hx
+    (c := wrapCheck 5 9 (wrapTail U.univ decD)) rfl rfl hx
   exact wrapPre_runs U S n x y a b h
 
 theorem wrapCore_runs_of_ne_right (hx : x.length = S.dim n) (hy : y.length ≠ S.dim n) :
-    ∃ t, (wrapCore U.univ S.prog dec).Runs (encode (n, x, y, a, b)) .nil t := by
+    ∃ t, (wrapCore U.univ S.prog decD).Runs (encode (n, x, y, a, b)) .nil t := by
   obtain ⟨t, h⟩ := wrapCheck_runs_of_ne (i := 5) (j := 9)
     (env := wrapCheckEnv x (S.dim n) (wrapPreEnv S n x y a b))
-    (c := wrapTail U.univ dec) rfl rfl hy
+    (c := wrapTail U.univ decD) rfl rfl hy
   obtain ⟨t', h'⟩ := wrapCheck_runs_of_eq (i := 2) (j := 4) (env := wrapPreEnv S n x y a b)
     rfl rfl hx h
   exact wrapPre_runs U S n x y a b h'
 
 theorem wrapCore_runs_of_eq (hx : x.length = S.dim n) (hy : y.length = S.dim n)
-    {r : Data} {td : ℕ} (hd : dec.Runs (encode (n, x, y, a, b)) r td) :
-    ∃ t, (wrapCore U.univ S.prog dec).Runs (encode (n, x, y, a, b)) r t := by
-  obtain ⟨t₇, -, h₇⟩ := U.time_le dec _ _ td hd
+    {r : Data} {t₇ : ℕ} (h₇ : U.univ.Runs (.cons decD (encode (n, x, y, a, b))) r t₇) :
+    ∃ t, (wrapCore U.univ S.prog decD).Runs (encode (n, x, y, a, b)) r t := by
   have htail : Eval (wrapCheckEnv y (S.dim n) (wrapCheckEnv x (S.dim n)
-      (wrapPreEnv S n x y a b))) (wrapTail U.univ dec) r _ :=
+      (wrapPreEnv S n x y a b))) (wrapTail U.univ decD) r _ :=
     Eval.let_ (Eval.cons (Eval.const _ _)
       (Eval.var_of_get (i := 19) (v := encode (n, x, y, a, b)) (by simp [wrapCheckEnv,
         wrapPreEnv]))) (callVar_eval U.closed (i := 0)
-      (v := .cons (encode dec) (encode (n, x, y, a, b))) (by simp) h₇)
+      (v := .cons decD (encode (n, x, y, a, b))) (by simp) h₇)
   obtain ⟨t, h⟩ := wrapCheck_runs_of_eq (i := 5) (j := 9)
     (env := wrapCheckEnv x (S.dim n) (wrapPreEnv S n x y a b)) rfl rfl hy htail
   obtain ⟨t', h'⟩ := wrapCheck_runs_of_eq (i := 2) (j := 4) (env := wrapPreEnv S n x y a b)
     rfl rfl hx h
   exact wrapPre_runs U S n x y a b h'
 
-/-- **The wrapper halts only if the string's decider does.** -/
+/-- **The wrapper halts only if the universal machine does on the string's decider.** -/
 theorem wrapCore_halts_inv {r : Data} {t : ℕ}
-    (h : (wrapCore U.univ S.prog dec).Runs (encode (n, x, y, a, b)) r t) :
-    r = .nil ∨ ∃ t', dec.Runs (encode (n, x, y, a, b)) r t' := by
+    (h : (wrapCore U.univ S.prog decD).Runs (encode (n, x, y, a, b)) r t) :
+    r = .nil ∨ ∃ t', U.univ.Runs (.cons decD (encode (n, x, y, a, b))) r t' := by
   obtain ⟨t₁, h₁⟩ := wrapPre_inv U S n x y a b h
   rcases wrapCheck_inv (i := 2) (j := 4) (env := wrapPreEnv S n x y a b) rfl rfl h₁ with
     ⟨-, hr⟩ | ⟨-, t₂, h₂⟩
@@ -337,7 +344,7 @@ theorem wrapCore_halts_inv {r : Data} {t : ℕ}
         (by simp [wrapCheckEnv, wrapPreEnv])))
     obtain ⟨t₄, -, h₄⟩ := callVar_runs_rev U.closed hB
     simp only [Env.get_cons_zero] at h₄
-    exact U.halts_of dec _ _ _ h₄
+    exact ⟨_, h₄⟩
 
 end Runs
 
@@ -349,43 +356,57 @@ namespace Decider
 
 open Cost Cost.Prog
 
-variable {ℓ : ℕ} (U : UniversalMachine) (S : CL.Sampler ℓ) (dec : Prog)
+variable {ℓ : ℕ} (U : UniversalMachine) (S : CL.Sampler ℓ) (decD : Data)
 
-/-- The decider a string denotes: the string's own decider `dec`, wrapped in the
-question-length check against the sampler `S`. -/
+/-- The decider a string denotes: the datum `decD` the string carries, run by the universal
+machine, wrapped in the question-length check against the sampler `S`. The datum need not be
+the encoding of a program; when it is, `encode dec`, the run is a run of `dec`
+(`wrap_accepts_prog`). -/
 def wrap : Decider :=
-  ⟨wrapCore U.univ S.prog dec, wrapCore_wellScoped U.closed _ _⟩
+  ⟨wrapCore U.univ S.prog decD, wrapCore_wellScoped U.closed _ _⟩
 
-@[simp] theorem wrap_prog : (wrap U S dec).prog = wrapCore U.univ S.prog dec := rfl
+@[simp] theorem wrap_prog : (wrap U S decD).prog = wrapCore U.univ S.prog decD := rfl
 
 /-- **Acceptance of the wrapped decider**: the two questions have the sampler's dimension and
-the string's own decider accepts. -/
+the universal machine, run on the string's decider and the input, returns `true`. -/
 theorem wrap_accepts (n : ℕ) (x y a b : BitStr) :
-    (wrap U S dec).Accepts n x y a b ↔
+    (wrap U S decD).Accepts n x y a b ↔
       (x.length = S.dim n ∧ y.length = S.dim n ∧
-        ∃ t, dec.Runs (encode (n, x, y, a, b)) (encode true) t) := by
+        ∃ t, U.univ.Runs (.cons decD (encode (n, x, y, a, b))) (encode true) t) := by
   constructor
   · rintro ⟨t, ht⟩
     have hne : (encode true : Data) ≠ .nil := by simp [encode_bool, Data.ofBool]
     have hx : x.length = S.dim n := by
       by_contra hx
-      obtain ⟨t', h'⟩ := wrapCore_runs_of_ne_left U S dec n x y a b hx
+      obtain ⟨t', h'⟩ := wrapCore_runs_of_ne_left U S decD n x y a b hx
       exact hne (Eval.deterministic ht h').1
     have hy : y.length = S.dim n := by
       by_contra hy
-      obtain ⟨t', h'⟩ := wrapCore_runs_of_ne_right U S dec n x y a b hx hy
+      obtain ⟨t', h'⟩ := wrapCore_runs_of_ne_right U S decD n x y a b hx hy
       exact hne (Eval.deterministic ht h').1
-    rcases wrapCore_halts_inv U S dec n x y a b ht with hr | hd
+    rcases wrapCore_halts_inv U S decD n x y a b ht with hr | hd
     · exact absurd hr hne
     · exact ⟨hx, hy, hd⟩
   · rintro ⟨hx, hy, td, hd⟩
-    exact wrapCore_runs_of_eq U S dec n x y a b hx hy hd
+    exact wrapCore_runs_of_eq U S decD n x y a b hx hy hd
+
+/-- Acceptance when the datum is the encoding of a program `dec`: the universal machine's run
+is a run of `dec` (`UniversalMachine.time_le`, `halts_of`). -/
+theorem wrap_accepts_prog (dec : Prog) (n : ℕ) (x y a b : BitStr) :
+    (wrap U S (encode dec)).Accepts n x y a b ↔
+      (x.length = S.dim n ∧ y.length = S.dim n ∧
+        ∃ t, dec.Runs (encode (n, x, y, a, b)) (encode true) t) := by
+  rw [wrap_accepts]
+  refine and_congr_right fun _ => and_congr_right fun _ => ⟨fun ⟨t, h⟩ => ?_, fun ⟨t, h⟩ => ?_⟩
+  · exact U.halts_of dec _ _ _ h
+  · obtain ⟨t', -, h'⟩ := U.time_le dec _ _ t h
+    exact ⟨t', h'⟩
 
 /-- The wrapped decider accepts only questions of the sampler's dimension: the one structural
 requirement of `def:normal-verifier`. -/
 theorem wrap_accepts_length (n : ℕ) (x y a b : BitStr)
-    (h : (wrap U S dec).Accepts n x y a b) : x.length = S.dim n ∧ y.length = S.dim n :=
-  ⟨((wrap_accepts U S dec n x y a b).1 h).1, ((wrap_accepts U S dec n x y a b).1 h).2.1⟩
+    (h : (wrap U S decD).Accepts n x y a b) : x.length = S.dim n ∧ y.length = S.dim n :=
+  ⟨((wrap_accepts U S decD n x y a b).1 h).1, ((wrap_accepts U S decD n x y a b).1 h).2.1⟩
 
 end Decider
 
@@ -393,26 +414,50 @@ namespace Verifier
 
 open Cost
 
-/-- **The verifier a pair `(S, 𝒟)` denotes**: the sampler `S`, and the string's decider wrapped
-in the question-length check. Every pair denotes one, well formed or not. -/
-def ofSamplerDecider {ℓ : ℕ} (U : UniversalMachine) (S : CL.Sampler ℓ) (dec : Prog) :
+/-- **The verifier a pair `(S, d)` denotes**: the sampler `S`, and the datum `d` — the string's
+decider, run by the universal machine — wrapped in the question-length check. Every pair
+denotes one, well formed or not. -/
+def ofSamplerDeciderD {ℓ : ℕ} (U : UniversalMachine) (S : CL.Sampler ℓ) (decD : Data) :
     Verifier ℓ where
   sampler := S
-  decider := Decider.wrap U S dec
-  accepts_length n x y a b h := Decider.wrap_accepts_length U S dec n x y a b h
+  decider := Decider.wrap U S decD
+  accepts_length n x y a b h := Decider.wrap_accepts_length U S decD n x y a b h
 
-variable {ℓ : ℕ} (U : UniversalMachine) (S : CL.Sampler ℓ) (dec : Prog)
+/-- The verifier a pair `(S, 𝒟)` of a sampler and a decider *program* denotes:
+`ofSamplerDeciderD` at the program's encoding. -/
+def ofSamplerDecider {ℓ : ℕ} (U : UniversalMachine) (S : CL.Sampler ℓ) (dec : Prog) :
+    Verifier ℓ :=
+  ofSamplerDeciderD U S (encode dec)
+
+variable {ℓ : ℕ} (U : UniversalMachine) (S : CL.Sampler ℓ) (decD : Data) (dec : Prog)
+
+@[simp] theorem ofSamplerDeciderD_sampler : (ofSamplerDeciderD U S decD).sampler = S := rfl
 
 @[simp] theorem ofSamplerDecider_sampler : (ofSamplerDecider U S dec).sampler = S := rfl
+
+theorem ofSamplerDeciderD_accepts (n : ℕ) (x y a b : BitStr) :
+    (ofSamplerDeciderD U S decD).decider.Accepts n x y a b ↔
+      (x.length = S.dim n ∧ y.length = S.dim n ∧
+        ∃ t, U.univ.Runs (.cons decD (encode (n, x, y, a, b))) (encode true) t) :=
+  Decider.wrap_accepts U S decD n x y a b
 
 theorem ofSamplerDecider_accepts (n : ℕ) (x y a b : BitStr) :
     (ofSamplerDecider U S dec).decider.Accepts n x y a b ↔
       (x.length = S.dim n ∧ y.length = S.dim n ∧
         ∃ t, dec.Runs (encode (n, x, y, a, b)) (encode true) t) :=
-  Decider.wrap_accepts U S dec n x y a b
+  Decider.wrap_accepts_prog U S dec n x y a b
 
 /-- Two strings with the same sampler whose deciders agree at index `n` denote verifiers with
 the same `val*` and the same perfect PCC strategies there. -/
+theorem ofSamplerDeciderD_congr {decD decD' : Data} {n T : ℕ}
+    (h : ∀ x y a b : BitStr,
+      (∃ t, U.univ.Runs (.cons decD (encode (n, x, y, a, b))) (encode true) t) ↔
+        ∃ t, U.univ.Runs (.cons decD' (encode (n, x, y, a, b))) (encode true) t) :
+    (ofSamplerDeciderD U S decD).valStar n T = (ofSamplerDeciderD U S decD').valStar n T :=
+  valStar_congr rfl fun x y a b => by
+    rw [ofSamplerDeciderD_accepts, ofSamplerDeciderD_accepts]
+    exact and_congr_right fun _ => and_congr_right fun _ => h x y a b
+
 theorem ofSamplerDecider_congr {dec dec' : Prog} {n T : ℕ}
     (h : ∀ x y a b : BitStr, (∃ t, dec.Runs (encode (n, x, y, a, b)) (encode true) t) ↔
       ∃ t, dec'.Runs (encode (n, x, y, a, b)) (encode true) t) :
@@ -430,11 +475,11 @@ open Cost Data
 /-! ## The wrapper at the level of data
 
 `Decider.wrap` is what `Verifier.IsBounded` bounds, and it is therefore what a tabulation has
-to run: the bound says nothing about the *inner* decider `descDec x`, since
+to run: the bound says nothing about the *inner* decider, the datum the string carries, since
 `UniversalMachine.halts_of` produces a run with no bound on its cost. So the tabulation needs
-`encode (wrapCore univ sampProg dec)` as a primitive recursive function of the two encoded
-programs — which it can be, because `wrapCore` mentions its program arguments only under
-`Prog.const (encode ·)`.
+`encode (wrapCore univ sampProg decD)` as a primitive recursive function of the encoded
+sampler program and the datum — which it can be, because `wrapCore` mentions the sampler
+program only under `Prog.const (encode ·)` and the datum only under `Prog.const`.
 
 `ProgD` is that mirror: the constructors of `Prog` at the level of `Data`, and the wrapper
 rebuilt from them. Every `_eq` lemma is `rfl`, `Prog.toData` being structural, and
@@ -494,9 +539,9 @@ def dWrapCore (univ sampD decD : Data) : Data :=
   dWrapHead univ sampD (dE 4 dNil (dE 1 dNil
     (dWrapCheck 2 4 (dWrapCheck 5 9 (dWrapTail univ decD)))))
 
-theorem dWrapCore_eq (univ sampProg dec : Prog) :
-    dWrapCore (encode univ) (encode sampProg) (encode dec)
-      = encode (Prog.wrapCore univ sampProg dec) := rfl
+theorem dWrapCore_eq (univ sampProg : Prog) (decD : Data) :
+    dWrapCore (encode univ) (encode sampProg) decD
+      = encode (Prog.wrapCore univ sampProg decD) := rfl
 
 
 theorem primrec_dWrapCheck (i j : ℕ) : Primrec (dWrapCheck i j) :=

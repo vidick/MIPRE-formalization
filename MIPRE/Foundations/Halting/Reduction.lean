@@ -209,7 +209,7 @@ theorem frozen_isBounded {x : BitStr} {n : ℕ} (hn : S.n₀ ≤ n)
 output does. -/
 theorem sampler_eq (c : Prog) (n : ℕ) (V : Prog × Prog) :
     (G.output V (S.lam n)).sampler = (Vof G U (S.compr (c, n))).sampler := by
-  rw [G.output_sampler, Vof, Verifier.ofSamplerDecider_sampler, S.descLam_compr]
+  rw [G.output_sampler, Vof, Verifier.ofSamplerDeciderD_sampler, S.descLam_compr]
 
 /-- The answer budget the output's class is read with is the one the compression theorem's
 output is judged at. -/

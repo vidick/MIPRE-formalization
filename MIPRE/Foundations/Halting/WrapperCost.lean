@@ -321,7 +321,7 @@ variable {ℓ : ℕ} (U : UniversalMachine) (S : CL.Sampler ℓ) (dec : Prog)
 not, provided the sampler and the string's own decider do. This is what inhabits
 `Verifier.IsBounded` for the verifier a string denotes. -/
 theorem wrapCore_hasPolyCost (hS : S.prog.HasPolyCost) (hdim : PolyBounded S.dim)
-    (hdec : dec.HasPolyCost) : (wrapCore U.univ S.prog dec).HasPolyCost := by
+    (hdec : dec.HasPolyCost) : (wrapCore U.univ S.prog (encode dec)).HasPolyCost := by
   obtain ⟨H, hH, hpre, hrej⟩ := wrapPre_cost U S hS hdim
   obtain ⟨Cd, kd, hCd, hdrun⟩ := hdec
   -- the bound: the prefix, the two checks, and the universal machine on the string's decider
@@ -367,7 +367,7 @@ theorem wrapCore_hasPolyCost (hS : S.prog.HasPolyCost) (hdim : PolyBounded S.dim
             obtain ⟨t₇, ht₇, h₇⟩ := U.time_le dec (.cons (encode n) d) r td hdr
             have htail : Eval (wrapCheckEnvN (S.dim n) (S.dim n)
                 (wrapCheckEnvN (S.dim n) (S.dim n) (wrapPreEnvD S n A B C)))
-                (wrapTail U.univ dec) r _ :=
+                (wrapTail U.univ (encode dec)) r _ :=
               Eval.let_ (Eval.cons (Eval.const _ _)
                 (Eval.var_of_get (i := 19) (v := .cons (encode n) d)
                   (by simp [wrapCheckEnvN, wrapPreEnvD, wrapHeadEnv, hdef])))
@@ -400,7 +400,7 @@ theorem wrapCore_hasPolyCost (hS : S.prog.HasPolyCost) (hdim : PolyBounded S.dim
           · -- the second check fails
             obtain ⟨t₂, ht₂, h₂⟩ := wrapCheckD_cost_of_ne (i := 5) (j := 9)
               (env := wrapCheckEnvN (S.dim n) (S.dim n) (wrapPreEnvD S n A B C))
-              (v := B) (m := S.dim n) (c := wrapTail U.univ dec)
+              (v := B) (m := S.dim n) (c := wrapTail U.univ (encode dec))
               rfl rfl hyb
             obtain ⟨t₁, ht₁, h₁⟩ := wrapCheckD_cost_of_eq (i := 2) (j := 4)
               (env := wrapPreEnvD S n A B C) (v := A) (m := S.dim n)
@@ -415,7 +415,7 @@ theorem wrapCore_hasPolyCost (hS : S.prog.HasPolyCost) (hdim : PolyBounded S.dim
         · -- the first check fails
           obtain ⟨t₁, ht₁, h₁⟩ := wrapCheckD_cost_of_ne (i := 2) (j := 4)
             (env := wrapPreEnvD S n A B C) (v := A) (m := S.dim n)
-            (c := wrapCheck 5 9 (wrapTail U.univ dec))
+            (c := wrapCheck 5 9 (wrapTail U.univ (encode dec)))
             rfl rfl hxa
           obtain ⟨t₀, ht₀, h₀⟩ := hpre _ n A B C .nil t₁ h₁
           refine ⟨.nil, t₀, ?_, hdef ▸ h₀⟩

@@ -561,6 +561,30 @@ takes none.
    Compare #57 and #64 for the scale of PR-2 and PR-3; together they are bigger than either.
    Read `recursive.tex` `sec:halt` and nodes `1.6.1`, `1.6.5` again before PR-2: this is the
    one obligation where the paper's construction is followed closely.
+
+   **PR-0 and PR-1 done 2026-09-16** (#80, #81). The two decisions went: #77 as recommended,
+   `HasPerfectPCC` restated on the doubled game, the three un-doubled PCC bridges of
+   `SyncTransport.lean` removed with it; finding 2 **in the classes**, not through the
+   criterion — `Verifier.RejectsLong` is the third clause of `InClassA`/`InClassB`, O1's two
+   strings prove it, O3 enumerates its violation as a third `Σ₁` disjunct
+   (`Verifier.rePred_not_rejectsLong`), and `compressibility_criterion_levels` is untouched.
+   The consumer is `MIPRE.Halting.CompressorSpec` (`Halting/Reduction.lean`), five fields, and
+   `CompressorSpec.toObligations` is the class transfer from them, sorry-free; PR-2 and PR-3
+   owe exactly those fields.
+
+   **PR-2 split in two, on a finding of the consumer-first kind.** The compressor's decider has
+   to rebuild, in the ambient model, the frozen verifier of the string `x` it reads — and
+   `Vof x`'s decider was `descDec x = (decode (parse x).right).getD nil`, a decode with a
+   fallback, i.e. the tree-grammar check `Cost.progOk` (a `Data.recD` over four simultaneous
+   predicates). Reproducing that as a worklist program with a cost proof would have been a
+   module of the size of `Serial.lean`, to reproduce a fallback nobody wanted. `wrapCore` only
+   ever used the decider as `Prog.const (encode dec)` fed to `univ`, so **PR-2a** lets a string
+   denote the *datum* `(parse x).right`, run by the universal machine
+   (`Verifier.ofSamplerDeciderD`; `ofSamplerDecider` on a program is the special case, by
+   `UniversalMachine.time_le`/`halts_of`, and is what O1 still uses). `descDec`, `progNorm`
+   and the fallback leave the instantiation; the tabulation's `decProgData` is `dWrapCore` on
+   the datum, one primitive recursive step shorter. Then **PR-2b** is `Halting/Compressor.lean`
+   proper, whose decider copies a datum into a syntax tree where it could not have decoded one.
 5. **PR-0, the module move.** Numbered last because it was found last; it comes *before* the
    rest of O4 in the doing, being what turns O1's and O3's discharges into a smaller
    `Obligations`. The structure and `halting_reduction` are at the end of
