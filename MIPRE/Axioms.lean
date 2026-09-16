@@ -12,6 +12,7 @@ import MIPRE.Foundations.Cost.Semidecide
 import MIPRE.Foundations.Cost.Toolkit
 import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Games
+import MIPRE.Foundations.Halting.CompressorProgram
 import MIPRE.Foundations.Halting.LambdaBound
 import MIPRE.Foundations.Halting.Semidecider
 import MIPRE.Foundations.ValueApprox
@@ -146,6 +147,20 @@ elab "#guard_sorry_free " ids:ident,* : command => do
 #guard_sorry_free MIPRE.Cost.compressibility_criterion_halting,
   MIPRE.Cost.recursive_compression_halting
 
+-- blueprint `lem:halt-construction`
+#guard_sorry_free MIPRE.Cost.Prog.freezeBuildProg,
+  MIPRE.Cost.Prog.readProg,
+  MIPRE.Cost.Prog.readProg_runs,
+  MIPRE.Cost.Prog.wrapBuildProg,
+  MIPRE.Halting.comprStr,
+  MIPRE.Halting.comprStr_accepts,
+  MIPRE.Halting.haltProg,
+  MIPRE.Halting.haltProg_accepts_iff,
+  MIPRE.Halting.haltProg_runs,
+  MIPRE.Halting.haltProg_runs_inv,
+  MIPRE.Halting.prepProg,
+  MIPRE.Halting.prepProg_runs
+
 -- blueprint `lem:halting-semidecider`
 #guard_sorry_free MIPRE.Halting.exists_sem_of_tab,
   MIPRE.REPred.or,
@@ -157,6 +172,29 @@ elab "#guard_sorry_free " ids:ident,* : command => do
 
 -- blueprint `lem:kleene`
 #guard_sorry_free MIPRE.Cost.efficient_fixed_point
+
+-- blueprint `lem:lambda`
+#guard_sorry_free MIPRE.Cost.PolyBounded.absorb,
+  MIPRE.Cost.PolyBounded.absorb_log,
+  MIPRE.Cost.Prog.wrapCoreCost,
+  MIPRE.Cost.Prog.wrapCore_cost',
+  MIPRE.Halting.ansBound_le_lamOf,
+  MIPRE.Halting.comprPoly,
+  MIPRE.Halting.exists_compressorSpec,
+  MIPRE.Halting.isBounded_comprStr,
+  MIPRE.Halting.lamOf,
+  MIPRE.Halting.lamOf_ge
+
+-- blueprint `lem:dhalt-values`
+#guard_sorry_free MIPRE.Halting.CompressorSpec.toObligations,
+  MIPRE.Halting.comprStr_accepts,
+  MIPRE.Halting.haltProg_accepts_iff
+
+-- blueprint `thm:halting`
+#guard_sorry_free MIPRE.Halting.exists_obligations,
+  MIPRE.Halting.halting_reduces_to_gameValue_of,
+  MIPRE.Halting.halting_reduction,
+  MIPRE.Halting.halting_reduction_of
 
 -- blueprint `lem:lambda-bound`
 #guard_sorry_free MIPRE.Halting.four_mul_succ_lt_two_pow,
