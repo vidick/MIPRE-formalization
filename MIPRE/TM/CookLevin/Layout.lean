@@ -234,7 +234,7 @@ def fieldsOf (e G T : ℕ) (ib : BitStr) : Fields :=
   else
     let j := bitField ib 0 (flagOff e G)
     let r := if j < 2 * T then j else j - 2 * T
-    { flag := false, tag := 0, t := 0, d := if j < 2 * T then 5 else 6, p := r / 2 + 3,
+    { flag := false, tag := 0, t := 0, d := if j < 2 * T then 5 else 6, p := (r / 2 + 3) % 2 ^ W e,
       v := if r % 2 = 1 then 1 else 5, q := 0, js := fun _ => 0, g := 0, ansOk := decide (j < 4 * T) }
 
 /-! ## Decoding -/
