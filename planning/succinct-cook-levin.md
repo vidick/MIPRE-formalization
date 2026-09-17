@@ -1,5 +1,10 @@
 # The succinct Cook–Levin theorem (`thm:succinct-sat`): the plan
 
+**Done 2026-09-17**: `MIPRE.SAT.succinctCookLevin` inhabits the structure, the blueprint
+carries the proof and the proof-level `\leanok`, and the declaration is guarded in
+`MIPRE/Axioms.lean`. What follows is the route as it was planned, then a record, piece by
+piece, of what the formalization actually found.
+
 Status 2026-09-16, written after `Repetition ℓ` was inhabited (#86) and before anything of
 this item existed. `thm:succinct-sat` (ledger node 1.3.1, `answer_reduction.tex`
 `prop:standard-succinct-sat`) is the classical core of answer reduction: the statement "the
@@ -396,20 +401,35 @@ So `describeP` is the describer in the theorem's own parameters — `((T, σ), (
 to a circuit — with `describeM` the index width and `describeSize` the gate bound
 (`describe_size_le`).
 
-**S4** — not started. What is left:
+**S4 — done** (2026-09-17). `MIPRE.SAT.succinctCookLevin` (`Assemble.lean`) inhabits the
+structure, so `thm:succinct-sat` is proved; the blueprint carries the proof and the
+proof-level `\leanok`, guarded in `MIPRE/Axioms.lean`.
 
-* item 2: `mOf (eOf T σ) Gc ≤ c (⌈log T⌉ + ⌈log σ⌉ + 1)`, which is arithmetic on `mOf` and
-  `eOf` with `c = 435 + Qb + Gb Gc`, and `4T ≤ 2 ^ mOf (eOf T σ) Gc`, which is
-  `four_T_le_flag` and `flag_lt_m` once `T ≤ Sof (eOf T σ)` is in hand;
-* discharging the two hypotheses S3 carries, `T ≤ Sof e` and `FixedLen e 𝒟.prog n T x y`, from
-  the validity hypotheses `max{Q, 2⌈log n⌉} ≤ T`, `|𝒟| ≤ σ`, `|x|, |y| ≤ Q` — this is what
-  `runBound_le_two_pow` was proved for;
-* bounding `esize` of `describeP`'s input by a polynomial in `n, T, Q, σ`, which turns
-  `describeSize` into the `s` of item 3 and, with `describeM`, gives item 5;
-* the field `describe` wants `((𝒟, n, T, Q, σ), x, y)` while `describeP` takes
-  `((T, σ), (𝒟, n), (x, y))`, so a reordering program (`pair`, `fst`, `snd`) sits between
-  them;
-* assembling `MIPRE.SAT.SuccinctCookLevin` from `extendsAnswers_iff`, `mem_formula3_iff`,
-  `describeP` and `describe_size_le`, with the proof-level `\leanok` and the
-  `MIPRE/Axioms.lean` guard.
+What the assembly had to supply:
 
+* the side conditions the describer's theorems carry, at `e = eOf T σ`: `T ≤ Sof e`,
+  `T + 3 < 2 ^ W e`, `FixedLen` (the five fixed tapes are shorter than the tableau, from
+  `|𝒟| ≤ σ < 2 ^ ⌈log σ⌉`, `2⌈log n⌉ ≤ T` and `|x|, |y| ≤ Q ≤ T`) and
+  `runBound ≤ Sof e`, which is `runBound_le_two_pow`;
+* item 2: `mOf (eOf T σ) Gc = 431 + Qb + Gb Gc + 75 ⌈log T⌉ + 75 ⌈log σ⌉`, so `c` is that
+  constant plus `75`; and `4T ≤ 2 ^ m` from `four_T_le_flag` and `flagOff < mOf`;
+* the size of the describer's input: `esize ≤ 21 L + 10` with
+  `L = ⌈log n⌉ + ⌈log T⌉ + Q + σ`, which turns the program's time bound into the `s` of
+  item 3;
+* **the one real design question of S4**: item 5 asks for `s` *computable from the
+  parameters in time polynomial in their bit lengths*, while item 3 lets `s` grow
+  polynomially in `Q` and `σ` themselves. So `s` is a number of about `log Q + log σ` bits
+  that depends polynomially on `Q`, and computing it looks as though it needs binary
+  multiplication, which the ambient model does not have (`Cost/Unary.lean` has arithmetic on
+  *unary* numerals only, and a unary `Q` is exponential in `log Q`). The way out is to round
+  `s` up to a power of two whose exponent is a multiple of the bit lengths:
+  `s = 2 ^ (k · r + c)` with `r = ⌈log ⌈log n⌉⌉ + ⌈log ⌈log T⌉⌉ + ⌈log Q⌉ + ⌈log σ⌉`. Then `r`
+  in unary is four `Nat.size`s appended, `s` is `pow2P` on it, and no arithmetic on numbers
+  is needed at all. It is squeezed on both sides: `2 ^ r > max(⌈log n⌉, ⌈log T⌉, Q, σ)` gives
+  `L + 1 ≤ 5 · 2 ^ r`, so `s` dominates the gate count with `k` the degree of the time bound
+  and `c = ⌈log(A · 5 ^ k)⌉`; and `2 ^ r ≤ (2L + 1) ^ 4` by `two_pow_size_le` on each factor,
+  so `s ≤ 2 ^ c (2L + 1) ^ {4k}`, a polynomial in `L`.
+
+`two_pow_size_le` moved from `Halting/Absorb.lean` to `Cost/Growth.lean`, where the rest of
+the polynomial-versus-exponential arithmetic lives, so that `MIPRE/TM/` can reach it without
+importing the halting tree.

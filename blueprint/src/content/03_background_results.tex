@@ -42,7 +42,7 @@ Recursive compression lemma & Lem.~\ref{lem:recursive-compression} & \cite{MNY} 
 Compressibility criterion & Lem.~\ref{lem:compressible-criterion} & \cite{Lin25} & \checkmark \\
 Efficient computability toolkit & Lems.~\ref{lem:universal-tm}--\ref{lem:kleene} & \cite{MNY} & hard \\
 Halting undecidability & Thm.~\ref{thm:halting-undecidable} & Mathlib & \checkmark \\
-Succinct Cook--Levin & Thm.~\ref{thm:succinct-sat} & \cite{Coo71,PY86} & hard \\
+Succinct Cook--Levin & Thm.~\ref{thm:succinct-sat} & \cite{Coo71,PY86} & \checkmark \\
 Self-dual normal bases & Lem.~\ref{lem:self-dual-basis} & \cite{Sho90,Len91} & medium \\
 Schwartz--Zippel & Lem.~\ref{lem:schwartz-zippel} & \cite{Sch80,Zip79} & \checkmark \\
 Value approximable from below & Lem.~\ref{lem:value-lower-approx} & folklore & medium \\
@@ -1452,7 +1452,7 @@ two and a terminal output gate, and their size is the number of gates.
 \label{thm:succinct-sat}
 \ledgernode{1.3.1}
 \uses{def:succinct-3sat,def:decider,lem:correct-tableau}
-\lean{MIPRE.SAT.SuccinctCookLevin}
+\lean{MIPRE.SAT.SuccinctCookLevin, MIPRE.SAT.succinctCookLevin}
 \leanok
 There is a polynomial-time algorithm that, given a decider $\decider$, an index $n$, a
 time bound $T$ (in binary), a question length $Q$, a bound $\sigma$ and strings $x, y$, with
@@ -1472,6 +1472,45 @@ $\max\{Q, 2\lceil \log n \rceil\} \leq T$, $\abs{\decider} \leq \sigma$ and $\ab
 \end{enumerate}
 \end{theorem}
 
+\begin{proof}
+\leanok
+\uses{lem:correct-tableau,def:succinct-3sat}
+Fix one interpreter machine $U$, a multi-input Turing machine that runs the small-step
+semantics of the ambient model on a serialized configuration, and put the five parameters
+$n, x, y$ and the two answers on its input tapes, the answers on the two tapes left free.
+Then the decider is *data* on an input tape and never becomes a machine, so the local check
+circuit of $U$ is a constant; and the answer blocks are the contents of two tapes at time
+$0$, which is item 1's block structure for free. The time bound $T$ in the cost of the
+ambient model becomes a tableau length $S = 2^e$ with $e = 5\lceil \log T \rceil +
+5 \lceil \log \sigma \rceil + 24$, because a run of the decider of cost $T$ is a run of
+$U$ of at most $400000 (T + \sigma + 1)^5$ steps.
+
+Apply Lemma~\ref{lem:correct-tableau} to $U$ at that length. Index its variables by bit
+strings of width $m = 11 + 15 W + Q_b + G_b$, where $W = e + 4$ is the width of a time, a
+position or a window offset: the top bit says whether the index is structured or is one of
+the first $4T$ answer indices, and the remaining fields are a kind tag, a time, a tape, a
+position, a value, a state, the thirteen window offsets and a gate number. Each clause
+family of the tableau is then a predicate on those decoded fields, and each such predicate
+is computed by a formula over the $3m + 3$ input bits of the describer, built from equality
+and comparison with a constant, equality of two fields, and a ripple-carry increment. The
+describer is the flattening of the disjunction of those formulas to a circuit, together with
+two clauses forcing the cell at position $T + 3$ of each free tape to hold the blank, which
+is what bounds the answers read off a satisfying assignment by $T$ rather than by $2S$.
+
+Item 1 is the correctness of the tableau in both directions, transported along the indexing:
+an assignment of the tableau gives one of the formula by decoding, and an assignment of the
+formula gives one of the tableau by the canonical index, where an answer cell of a free tape
+inside the answer block is sent to its answer index, so that the extension hypothesis on the
+first $4T$ variables is exactly the time-$0$ row of that tape. Item 2 is arithmetic on $m$
+and $e$. For items 3 and 4, every builder of the formula is a polynomial-time function of the
+parameters, since the encoding of a formula is the encoding of its post-order list and each
+builder is therefore a concatenation, a map or a fold over lists, with the widths and offsets
+carried in unary; and then item 3 needs no separate argument, because the output of a
+polynomial-time function is no larger than its running time and a circuit has at most as
+many gates as its encoding has nodes. Item 5 follows by rounding $s$ up to a power of two
+whose exponent is a multiple of the bit lengths of the parameters.
+\end{proof}
+
 \paragraph{Lean statement.} The theorem is the structure
 \texttt{MIPRE.SAT.SuccinctCookLevin}: the algorithm a polynomial-time function of the
 ambient model (\texttt{PolyTimeFun}) from $((\decider, n, T, Q, \sigma), x, y)$ to circuits
@@ -1484,29 +1523,28 @@ PCP parameters depend on. The statement is validated by its consumer
 (\texttt{MIPRE.SAT.DecoupledDescriber}, Lemma~\ref{lem:decoupled-5sat}) before its proof;
 the route to the proof is \texttt{planning/succinct-cook-levin.md}.
 
-\paragraph{Formalization status.} The mathematics of the describer is formalized
-(\texttt{MIPRE/TM/CookLevin/}): the check circuit of the interpreter machine, from the truth
-table of its local check predicate (\texttt{chk\_isCheckCircuit}); the describer circuit
-\texttt{descCirc}, the flattening of a formula on its $3m + 3$ inputs, with its input count
-and well-formedness; what it describes, \texttt{mem\_formula3\_iff} --- a clause is accepted
-exactly when its three indices decode to the literals of a clause of the tableau of
-Lemma~\ref{lem:correct-tableau} on the interpreter machine (together with two clauses
-bounding the answers by $T$); and item 1, \texttt{extendsAnswers\_iff}.
+\paragraph{Formalization status.} Complete: statement and proof, the structure inhabited by
+\texttt{MIPRE.SAT.succinctCookLevin} (\texttt{MIPRE/TM/CookLevin/}). Three things the
+formalization settled against the first design, all recorded in
+\texttt{planning/succinct-cook-levin.md}. The index width has $W = e + 4$, not $e + 2$,
+because a position field must hold $2S + 7$; the state field is $\lceil \log |Q| \rceil$
+bits rather than a fixed four. Two clauses beyond the tableau are needed: soundness needs
+answers of length at most $T$, and the tableau alone admits answers of length up to $2S$.
+And the canonical index of an answer cell of a free tape is its answer index, not its
+structured index --- that is what ties the extension hypothesis on the first $4T$ variables
+to the time-$0$ row of the tape, and getting it wrong makes the soundness direction
+unprovable rather than merely awkward.
 
-The describer is also formalized as a polynomial-time function of the ambient model
-(\texttt{descCircP}, item 4), on four conventions that keep the program layer close to the
-mathematics: a formula's encoding is the encoding of its post-order list, so each builder is
-an \texttt{append}, a \texttt{map} or a \texttt{foldl} on lists; a program is read as a
-\emph{reader} of the shared input, so it transcribes its definition line for line rather
-than point-free; a field record is a record of readers whose evaluation is a structure
-literal of their own values, which makes every family formula match its program
-definitionally; and widths and offsets are unary while a field constant is a resize of a bit
-string, so no arithmetic on numbers is needed. Item 3 then needs no separate argument: a
-program's output is no larger than its running time and a circuit's gate count is at most
-the size of its encoding, so the gate bound \emph{is} the time bound of the program that
-writes the circuit (\texttt{descCirc\_size\_le}). What is left is $e$ as a program of the
-parameters, the substitution of the validity hypotheses into that bound (item 5), and the
-assembly of the structure.
+Two notes on the Lean, both about scale. The check circuit of the interpreter machine is the
+truth-table circuit of a fixed Boolean function on the window variables, so its gate count is
+$7 \cdot 2^{|\mathrm{window}|}$ --- an enormous constant, exactly as the paper's
+\texttt{lem:pack-check-size} carries one. Nothing unfolds it, and nothing may: the defining
+terms of the state count and of the check circuit mention a cardinality and a truth table
+whose evaluation does not terminate in practice, so they are kept opaque (the state width is
+\texttt{irreducible} and the circuit is taken from an existential). And the program layer is
+written so that each of the fifty-odd family formulas costs one \texttt{simp}: a field record
+is a record of \emph{readers} of the describer's input whose evaluation is a structure literal
+of those programs' own values, which makes every formula match its program definitionally.
 
 \paragraph{Source.} Cook~\cite{Coo71} and Levin for the tableau reduction; Papadimitriou
 and Yannakakis~\cite{PY86} for succinct representations and their complexity;
