@@ -15,7 +15,7 @@
 Bigl Bigr Delta Gamma Longrightarrow Omega Phi Pi Pr Psi Rightarrow Sigma Theta Xi alpha approx ast bar
 begin beta bibitem bigcap bigl bigoplus bigotimes bigr bigwedge vee cdot checkmark chi circ
 cite cong cup dagger deg delta det dots ell emph end eta exp frac gamma geq
-hat hline href in infty iota item kappa ker label lambda langle lceil ldots
+hat hline href in infty iota item kappa ker label lambda land langle lceil ldots
 le leftarrow leq log mapsto mathbb mathrm mathsf mathtt max mid min mu neq
 newblock noindent notin nu omega oplus otimes overline paragraph perp phi pi
 pm prod propto psi qquad rangle rceil ref rho section sigma sim small sqrt

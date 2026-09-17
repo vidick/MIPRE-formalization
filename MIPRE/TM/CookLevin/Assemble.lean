@@ -327,15 +327,21 @@ noncomputable def rProg : PolyTimeFun (ℕ × ℕ × ℕ × ℕ) Unary :=
   simp [rProg, rParam]
   omega
 
-/-- `sParam`, as a program: a power of two whose exponent is unary, so no arithmetic on
-numbers is needed. -/
-noncomputable def sProg : PolyTimeFun (ℕ × ℕ × ℕ × ℕ) ℕ :=
-  ap₁ pow2P (ap₂ addU (ap₁ (nsmulU (roundK gatePoly)) rProg)
-    (const (unary (roundC gatePoly))))
+/-- **A rounded bound, as a program**: a power of two whose exponent is unary, so no
+arithmetic on numbers is needed. -/
+noncomputable def roundUpProg (P : Polynomial ℕ) : PolyTimeFun (ℕ × ℕ × ℕ × ℕ) ℕ :=
+  ap₁ pow2P (ap₂ addU (ap₁ (nsmulU (roundK P)) rProg) (const (unary (roundC P))))
 
-theorem sProg_apply (p : ℕ × ℕ × ℕ × ℕ) : sProg p = sParam p.1 p.2.1 p.2.2.1 p.2.2.2 := by
-  rw [sProg, ap₁_apply, pow2P_apply, ap₂_apply, length_addU, ap₁_apply, length_nsmulU,
-    length_rProg, const_apply, length_unary, sParam, roundUp]
+theorem roundUpProg_apply (P : Polynomial ℕ) (p : ℕ × ℕ × ℕ × ℕ) :
+    roundUpProg P p = roundUp P p.1 p.2.1 p.2.2.1 p.2.2.2 := by
+  rw [roundUpProg, ap₁_apply, pow2P_apply, ap₂_apply, length_addU, ap₁_apply, length_nsmulU,
+    length_rProg, const_apply, length_unary, roundUp]
+
+/-- `sParam`, as a program. -/
+noncomputable def sProg : PolyTimeFun (ℕ × ℕ × ℕ × ℕ) ℕ := roundUpProg gatePoly
+
+theorem sProg_apply (p : ℕ × ℕ × ℕ × ℕ) : sProg p = sParam p.1 p.2.1 p.2.2.1 p.2.2.2 :=
+  roundUpProg_apply gatePoly p
 
 end MIPRE.TM.CookLevin.Desc
 
