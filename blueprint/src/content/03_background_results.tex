@@ -537,7 +537,13 @@ and its theorem are in the pinned paper snapshot~\cite{AuditSync26},
 
 \begin{definition}[Seeded CL low individual degree test]
 \label{def:lidt-cl}
-\uses{def:game}
+\uses{def:game,def:cl-canonical}
+\lean{MIPRE.LIDT.CL.chi, MIPRE.LIDT.CL.zeroBelow, MIPRE.LIDT.CL.rep,
+  MIPRE.LIDT.CL.lineParam, MIPRE.LIDT.CL.Ty, MIPRE.LIDT.CL.Question,
+  MIPRE.LIDT.CL.Answer, MIPRE.LIDT.CL.Sample, MIPRE.LIDT.CL.Sample.question,
+  MIPRE.LIDT.CL.lineVsPoint, MIPRE.LIDT.CL.accepts, MIPRE.LIDT.CL.clGame,
+  MIPRE.LIDT.CL.aline_question_ne}
+\leanok
 For admissible $q$, positive integers $m,d,\mathrm{ldc}$ and $m\mid q$, the
 \emph{seeded CL test} is the paper's typed low-degree game with parameters
 $(q,m,d,\mathrm{ldc})$. Each ordered pair of types from
@@ -552,6 +558,36 @@ same-type questions, and evaluation agreement for either line type against a poi
 the other type pairs impose no further check. In particular, different seed
 descriptions of the same geometric line remain different questions.
 \end{definition}
+
+\paragraph{Comments.} The formalization is \texttt{MIPRE.LIDT.CL.clGame}
+(\texttt{MIPRE/Background/LIDT/CLGame.lean}), beside the canonical-line game
+\texttt{MIPRE.LIDT.lidtGame} of Definition~\ref{def:lidt} whose soundness is proved; keeping
+both in one vocabulary is what makes Remark~\ref{rem:lidt-cl-adapter}'s adapter expressible at
+all. Three points.
+
+The base point of a line question is the canonical representative $L^{\mathrm{Ln}}_w(u)$ of
+Definition~\ref{def:cl-canonical} --- the canonical linear map with kernel
+$\mathrm{span}\{w\}$ --- which is why that vocabulary had to come first. The seed function
+$\chi$ is the paper's \texttt{eq:chi-func}, $0$-indexed: under the fixed bijection
+$\F_q \cong \{0, \ldots, q-1\}$, $\chi(s)$ is the block of $q/m$ elements that $s$ falls into,
+and $m \mid q$ is where it is used.
+
+The seeding is not cosmetic, and \texttt{aline\_question\_ne} records it: two seeds in the same
+block give the same base point and the same direction, hence the same geometric line, and yet
+are \emph{different questions}. A strategy may answer them differently, which is exactly the
+obligation Lemma~\ref{lem:lidt-reduction-setup} discharges by choosing a seed in each fibre.
+
+Where \texttt{fig:ld-decider} says ``$t \in \F_q$ is such that $x = u_0 + tw$'', the point may
+fail to lie on the line and the condition is then vacuous. The formalization requires
+membership, as the canonical-line game already does: the two readings agree on the support of
+the question distribution, and following the convention of the test whose soundness is proved
+is what keeps the two comparable. The distribution itself is uniform over the nine ordered type
+pairs and the ambient $(u, s, v)$, so normalization is a single division rather than the
+per-subtest bookkeeping Definition~\ref{def:lidt} needs.
+
+Not yet formalized, and the next thing this definition needs: that each $\chi$-fibre has
+exactly $q/m$ seeds, which is what makes the induced axis-parallel line distribution uniform
+and is consumed by Lemma~\ref{lem:lidt-test-transfer}.
 
 \begin{theorem}[Quantum soundness of the seeded CL test]
 \label{thm:lidt-cl-soundness}

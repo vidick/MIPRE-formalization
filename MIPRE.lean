@@ -9,6 +9,7 @@ import MIPRE.Background.LIDT.Bridge.Measurement
 import MIPRE.Background.LIDT.Bridge.Polynomial
 import MIPRE.Background.LIDT.Bridge.Strategy
 import MIPRE.Background.LIDT.Bridge.Value
+import MIPRE.Background.LIDT.CLGame
 import MIPRE.Background.LIDT.Game
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.AxisParallelLine
 import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DiagonalLine
