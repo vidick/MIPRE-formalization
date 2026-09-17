@@ -608,6 +608,7 @@ import MIPRE.Foundations.Repeat.SamplerCost
 import MIPRE.Foundations.SAT.Circuit
 import MIPRE.Foundations.SAT.Cnf
 import MIPRE.Foundations.SAT.Decoupled
+import MIPRE.Foundations.SAT.Flatten
 import MIPRE.Foundations.SAT.Formula
 import MIPRE.Foundations.SAT.Succinct
 import MIPRE.Foundations.SAT.Tseitin
