@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 import MIPRE.TM.CookLevin.Assemble
-import MIPRE.Foundations.SAT.Remap
 import MIPRE.Foundations.SAT.Decoupled
 
 /-!

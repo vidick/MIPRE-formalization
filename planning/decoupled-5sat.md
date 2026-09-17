@@ -55,21 +55,30 @@ literals are. That is the argument the paper makes once and uses for the whole c
 The obvious reading — take `C₃` as a black box and OR it with a circuit for rows 2–9 — needs
 circuit-level composition: relabelling inputs, concatenating gate lists with index shifts, and
 re-proving `WellFormed` (fan-out at most two, terminal output) through both. That is a few
-hundred lines of index arithmetic for no mathematical content.
+hundred lines of index arithmetic for no mathematical content. So the describer stays in the
+formula layer, which S3 already built: `descCirc` is by definition the flattening of the
+formula `descFml`, and the decoupled describer is `or` of a tableau formula and `linkFml`,
+flattened once. Its well-formedness and input count then come from the flattener, as they did
+in S3, and its gate bound from the program's time bound, as it did in S4.
 
-Instead, stay in the formula layer, which S3 already built. `descCirc` is by definition the
-flattening of the formula `descFml`, so:
+**A finding, and the reason the route changed mid-way.** The first attempt embedded the 3SAT
+describer by *renaming* its input variables, `Fml.remap ρ` with
+`ρ k = k + 2ℓ` for `k < 3r` and `k + 2ℓ + 2` above — the offset jumps by two because the two
+answer signs come before the three auxiliary ones in `clauseInput5`. The mathematics works,
+but **the renaming is not programmable**: deciding `k < 3r` is a comparison of two binary
+numbers, and the ambient cost model has no such program. `Cost/Unary.lean` has addition and
+multiplication on *unary* numerals only, and a node index cannot be carried in unary, since a
+`PolyTimeFun` must be polynomial on every input, not only on the small indices this formula
+happens to name. Writing a comparator would mean padding two bit strings to a common length
+and a big-endian scan with its correctness proof, for one conditional.
 
-* **`Fml.remap f`** renames input variables, a `map` over the post-order list, with
-  `eval (remap f φ) x = eval φ (x ∘ f)`. The 3SAT describer's inputs `0 .. 3r₀ + 2` sit in the
-  five-block layout at `ρ k = k + 2ℓ₀` for `k < 3r₀` and `k + 2ℓ₀ + 2` above, because the two
-  answer indices come first and the two answer signs are the first two of the five.
-* **`linkFml`** is rows 2–9 in the existing bit-vector vocabulary: `ltConst` for `i < 2T`,
-  `eqFields` on zero-padded indices for `i₁ = i₃`, `addConstRel` for `i₃ = i₂ + 2T`, the head
-  bit for parity, and `xor` for `o ≠ o'`.
-* The describer is `or (remap ρ descFml) linkFml`, flattened once with `toCircuitF`. Its
-  well-formedness and input count come from the flattener, as they did in S3, and its gate
-  bound comes from the program's time bound, as it did in S4.
+The route instead **rebuilds the describer on the shifted layout**: the candidate reads its
+three field records at the bases `2ℓ`, `2ℓ + r`, `2ℓ + 2r` and its three signs at
+`2ℓ + 3r + 2, 3, 4` (`candOf5`). Every offset is then unary, so the program is the one S3
+already has, and the correctness is *shorter*, going straight through `eval_tableauPlusF`
+rather than through the renaming. The only bit-level fact needed is `ibOf_shift`: a slice of
+the five-block input at a shifted base is the 3SAT describer's own slice. `Fml.remap` was
+written for the abandoned route and then deleted.
 
 ## `ℓ₀` is the one new arithmetic
 

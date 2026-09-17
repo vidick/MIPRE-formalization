@@ -83,12 +83,101 @@ theorem getD_rho {ℓ r : ℕ}
     rw [hL, h5, show 3 * r + t = pre.length + t from by rw [hlen], getD_append_right]
     interval_cases t <;> rfl
 
+/-! ## The shifted candidate
+
+The 3SAT describer's inputs cannot be *renamed* into the five-block layout by a program: the
+renaming is `k ↦ k + 2ℓ` below `3r` and `k ↦ k + 2ℓ + 2` above, and deciding which needs a
+comparison of two binary numbers, which the ambient model does not have. So the describer is
+rebuilt on the shifted layout instead — the candidate reads its three field records at the
+bases `2ℓ`, `2ℓ + r`, `2ℓ + 2r` and its three signs at `2ℓ + 3r + 2, 3, 4`. That is cheaper
+in both directions: every offset is unary, so the program is the one S3 already has, and the
+correctness goes straight through `eval_tableauPlusF` instead of through the renaming. -/
+
+/-- A slice of the five-block input at a shifted base is the 3SAT describer's own slice. -/
+theorem ibOf_shift {ℓ m b : ℕ}
+    (c : Clause5 (Fin (2 ^ ℓ)) (Fin (2 ^ ℓ)) (Fin (2 ^ m)) (Fin (2 ^ m)) (Fin (2 ^ m)))
+    (h : b + m ≤ 3 * m) :
+    ibOf (2 * ℓ + b) m (fun i => (clauseInput5 ℓ m c).getD i false) =
+      ibOf b m (fun i => (clauseInput m (lastThree c)).getD i false) := by
+  refine List.ext_getElem (by simp) fun i h1 h2 => ?_
+  have hi : i < m := by simpa using h1
+  have hr := getD_rho c (k := b + i) (by omega)
+  rw [rho, if_pos (by omega)] at hr
+  simp only [ibOf, List.getElem_map, List.getElem_range']
+  rw [show 2 * ℓ + b + 1 * i = b + i + 2 * ℓ from by omega, hr]
+  congr 1
+  omega
+
+/-- The candidate of the decoupled describer: the three field records at the shifted bases and
+the three auxiliary signs. -/
+noncomputable def candOf5 (ℓ e T : ℕ) : CandF :=
+  ⟨litFields e Gc T (2 * ℓ), inp (2 * ℓ + 3 * mOf e Gc + 2),
+    litFields e Gc T (2 * ℓ + mOf e Gc), inp (2 * ℓ + 3 * mOf e Gc + 3),
+    litFields e Gc T (2 * ℓ + 2 * mOf e Gc), inp (2 * ℓ + 3 * mOf e Gc + 4)⟩
+
+theorem candOf5_lengths (ℓ e T : ℕ) : (candOf5 ℓ e T).Lengths e Gc :=
+  ⟨litFields_lengths e Gc T _, litFields_lengths e Gc T _, litFields_lengths e Gc T _⟩
+
+theorem candOf5_inputsLt (ℓ e T : ℕ) :
+    (candOf5 ℓ e T).InputsLt (2 * ℓ + 3 * mOf e Gc + 5) where
+  A₁ := litFields_inputsLt e Gc T _ _ (by omega)
+  σ₁ := by show 2 * ℓ + 3 * mOf e Gc + 2 < 2 * ℓ + 3 * mOf e Gc + 5; omega
+  A₂ := litFields_inputsLt e Gc T _ _ (by omega)
+  σ₂ := by show 2 * ℓ + 3 * mOf e Gc + 3 < 2 * ℓ + 3 * mOf e Gc + 5; omega
+  A₃ := litFields_inputsLt e Gc T _ _ (by omega)
+  σ₃ := by show 2 * ℓ + 3 * mOf e Gc + 4 < 2 * ℓ + 3 * mOf e Gc + 5; omega
+
+/-- **The shifted candidate reads the 3SAT describer's clause.** -/
+theorem evalCand_candOf5 (ℓ e T : ℕ)
+    (c : Clause5 (Fin (2 ^ ℓ)) (Fin (2 ^ ℓ)) (Fin (2 ^ mOf e Gc)) (Fin (2 ^ mOf e Gc))
+      (Fin (2 ^ mOf e Gc))) (hT : T ≤ Sof e) :
+    evalCand (candOf5 ℓ e T) (fun i => (clauseInput5 ℓ (mOf e Gc) c).getD i false) =
+      candOfClause e T (lastThree c) := by
+  have hlf : ∀ b, b + mOf e Gc ≤ 3 * mOf e Gc →
+      evalFields (litFields e Gc T (2 * ℓ + b))
+          (fun i => (clauseInput5 ℓ (mOf e Gc) c).getD i false) =
+        fieldsOf e Gc T (bitsOfNat (mOf e Gc) (lastThree c).l₁.var) ∨ True := fun _ _ => Or.inr trivial
+  clear hlf
+  have key : ∀ b, b + mOf e Gc ≤ 3 * mOf e Gc →
+      evalFields (litFields e Gc T (2 * ℓ + b))
+          (fun i => (clauseInput5 ℓ (mOf e Gc) c).getD i false) =
+        fieldsOf e Gc T (ibOf b (mOf e Gc)
+          (fun i => (clauseInput (mOf e Gc) (lastThree c)).getD i false)) := by
+    intro b hb
+    rw [evalFields_litFields e Gc T (2 * ℓ + b) _ hT, ibOf_shift c hb]
+  have hs : ∀ t : ℕ, t < 3 →
+      (Fml.inp (2 * ℓ + 3 * mOf e Gc + (t + 2))).eval
+          (fun i => (clauseInput5 ℓ (mOf e Gc) c).getD i false) =
+        (sgList c).getD (t + 2) false := by
+    intro t _
+    have := eval_sgF c (t + 2)
+    rwa [show sgOff ℓ (mOf e Gc) + (t + 2) = 2 * ℓ + 3 * mOf e Gc + (t + 2) from by
+      unfold sgOff; omega] at this
+  have h0 := key 0 (by omega)
+  have h1 := key (mOf e Gc) (by omega)
+  have h2 := key (2 * mOf e Gc) (by omega)
+  have g0 := hs 0 (by omega)
+  have g1 := hs 1 (by omega)
+  have g2 := hs 2 (by omega)
+  simp only [evalCand, candOf5, candOfClause, lastThree]
+  rw [show 2 * ℓ + 0 = 2 * ℓ from by omega] at h0
+  rw [show 2 * ℓ + 3 * mOf e Gc + 2 = 2 * ℓ + 3 * mOf e Gc + (0 + 2) from by omega]
+  rw [show 2 * ℓ + 3 * mOf e Gc + 3 = 2 * ℓ + 3 * mOf e Gc + (1 + 2) from by omega]
+  rw [show 2 * ℓ + 3 * mOf e Gc + 4 = 2 * ℓ + 3 * mOf e Gc + (2 + 2) from by omega]
+  rw [h0, h1, h2, g0, g1, g2, ibOf_clauseInput_zero, ibOf_clauseInput_one,
+    ibOf_clauseInput_two]
+  rfl
+
 /-! ## The describer -/
 
-/-- The formula of the decoupled describer: the 3SAT describer's formula, its inputs renamed
-into the five-block layout, in disjunction with the link formula. -/
+/-- The tableau half of the describer's formula, on the shifted candidate. -/
+noncomputable def descBody5 (ℓ T e : ℕ) (D : Prog) (n : ℕ) (x y : BitStr) : Fml :=
+  tableauPlusF e Gc T (tabsOf e T D n x y (litFields e Gc T (2 * ℓ))) [5, 6]
+    (tplsOf Gc chk) (candOf5 ℓ e T)
+
+/-- The formula of the decoupled describer. -/
 noncomputable def descFml5 (ℓ T e : ℕ) (D : Prog) (n : ℕ) (x y : BitStr) : Fml :=
-  or (Fml.remap (rho ℓ (mOf e Gc)) (descFml e T D n x y)) (linkFml ℓ (mOf e Gc) T)
+  or (descBody5 ℓ T e D n x y) (linkFml ℓ (mOf e Gc) T)
 
 /-- **The decoupled describer circuit**: the flattening of `descFml5` on `2ℓ + 3r + 5`
 inputs. -/
@@ -102,8 +191,8 @@ theorem descFml5_inputsLt (ℓ T e : ℕ) (D : Prog) (n : ℕ) (x y : BitStr)
     (hℓr : ℓ ≤ mOf e Gc) :
     (descFml5 ℓ T e D n x y).InputsLt (2 * ℓ + 3 * mOf e Gc + 5) :=
   InputsLt.or'
-    (Fml.InputsLt.remap (rho ℓ (mOf e Gc)) (fun _ hk => rho_lt hk) _
-      (descFml_inputsLt e T D n x y))
+    (InputsLt.tableauPlusF e Gc T _
+      (tabsOf_inputsLt e T D n x y (candOf5_inputsLt ℓ e T).A₁) _ _ (candOf5_inputsLt ℓ e T))
     (InputsLt.linkFml ℓ (mOf e Gc) T hℓr)
 
 theorem descCirc5_wellFormed (ℓ T e : ℕ) (D : Prog) (n : ℕ) (x y : BitStr)
@@ -118,31 +207,23 @@ theorem descCirc5_size (ℓ T e : ℕ) (D : Prog) (n : ℕ) (x y : BitStr) :
 of its last three literals is accepted by the 3SAT describer, or the clause satisfies one of
 the eight link conditions. -/
 theorem mem_formula5_iff (ℓ T e : ℕ) (D : Prog) (n : ℕ) (x y : BitStr)
-    (hℓr : ℓ ≤ mOf e Gc) (hr : 1 ≤ mOf e Gc) (hT : 2 * T < 2 ^ mOf e Gc)
+    (hℓr : ℓ ≤ mOf e Gc) (hr : 1 ≤ mOf e Gc) (hT2 : 2 * T < 2 ^ mOf e Gc)
+    (hT : T ≤ Sof e) (hlen : FixedLen e D n T x y) (hTm : T + 3 < 2 ^ W e)
     (c : Clause5 (Fin (2 ^ ℓ)) (Fin (2 ^ ℓ)) (Fin (2 ^ mOf e Gc)) (Fin (2 ^ mOf e Gc))
       (Fin (2 ^ mOf e Gc))) :
     c ∈ (descCirc5 ℓ T e D n x y).formula5 ℓ (mOf e Gc) ↔
       lastThree c ∈ (descCirc e T D n x y).formula3 (mOf e Gc) ∨
         Link ℓ (mOf e Gc) T c := by
-  have h3 : (descFml e T D n x y).eval
-        (fun k => (clauseInput5 ℓ (mOf e Gc) c).getD (rho ℓ (mOf e Gc) k) false) =
-      (descFml e T D n x y).eval
-        (fun k => (clauseInput (mOf e Gc) (lastThree c)).getD k false) :=
-    Fml.eval_congr_of_lt (fun k hk => getD_rho c hk) _ (descFml_inputsLt e T D n x y)
+  have hbody := eval_tableauPlusF e T (candOf5_lengths ℓ e T)
+    (fun i => (clauseInput5 ℓ (mOf e Gc) c).getD i false)
+    (tapeSpec e T D n x y Gc (litFields_lengths e Gc T (2 * ℓ)) hT hlen) (freeSpec D n T x y)
+    hTm
+  rw [evalCand_candOf5 ℓ e T c hT] at hbody
+  have h3 := mem_formula3_iff e T (lastThree c) D n x y hT hlen hTm
   show (descCirc5 ℓ T e D n x y).evalBits (clauseInput5 ℓ (mOf e Gc) c) = true ↔ _
-  rw [descCirc5, Fml.evalBits_toCircuit, descFml5, eval_or_iff, Fml.eval_remap, h3,
-    eval_linkFml hℓr hr hT c]
-  constructor
-  · rintro (h | h)
-    · exact Or.inl (by
-        show (descCirc e T D n x y).evalBits (clauseInput (mOf e Gc) (lastThree c)) = true
-        rw [descCirc, Fml.evalBits_toCircuit]; exact h)
-    · exact Or.inr h
-  · rintro (h | h)
-    · refine Or.inl ?_
-      have : (descCirc e T D n x y).evalBits (clauseInput (mOf e Gc) (lastThree c)) = true := h
-      rwa [descCirc, Fml.evalBits_toCircuit] at this
-    · exact Or.inr h
+  rw [descCirc5, Fml.evalBits_toCircuit, descFml5, eval_or_iff,
+    eval_linkFml hℓr hr hT2 c, h3]
+  exact or_congr hbody Iff.rfl
 
 /-! ## What a satisfying five-tuple is
 
@@ -197,7 +278,8 @@ structure LinkSat (ℓ r T : ℕ) (a b : Fin (2 ^ ℓ) → Bool) (w₁ w₂ w₃
 
 /-- **The two halves of satisfaction.** -/
 theorem sat_formula5_iff (ℓ T e : ℕ) (D : Prog) (n : ℕ) (x y : BitStr)
-    (hℓr : ℓ ≤ mOf e Gc) (hr : 1 ≤ mOf e Gc) (hT : 2 * T < 2 ^ mOf e Gc)
+    (hℓr : ℓ ≤ mOf e Gc) (hr : 1 ≤ mOf e Gc) (hT2 : 2 * T < 2 ^ mOf e Gc)
+    (hT : T ≤ Sof e) (hlen : FixedLen e D n T x y) (hTm : T + 3 < 2 ^ W e)
     (a b : Fin (2 ^ ℓ) → Bool) (w₁ w₂ w₃ : Fin (2 ^ mOf e Gc) → Bool) :
     ((descCirc5 ℓ T e D n x y).formula5 ℓ (mOf e Gc)).Sat a b w₁ w₂ w₃ ↔
       Tri ((descCirc e T D n x y).formula3 (mOf e Gc)) w₁ w₂ w₃ ∧
@@ -206,7 +288,7 @@ theorem sat_formula5_iff (ℓ T e : ℕ) (D : Prog) (n : ℕ) (x y : BitStr)
   · intro hsat
     have key : ∀ c, (lastThree c ∈ (descCirc e T D n x y).formula3 (mOf e Gc) ∨
         Link ℓ (mOf e Gc) T c) → Clause5.eval a b w₁ w₂ w₃ c = true := fun c hc =>
-      hsat c ((mem_formula5_iff ℓ T e D n x y hℓr hr hT c).mpr hc)
+      hsat c ((mem_formula5_iff ℓ T e D n x y hℓr hr hT2 hT hlen hTm c).mpr hc)
     refine ⟨?_, ?_⟩
     · intro c₃ hc₃
       have h := key ⟨offLit a, offLit b, c₃.l₁, c₃.l₂, c₃.l₃⟩ (Or.inl hc₃)
@@ -257,7 +339,7 @@ theorem sat_formula5_iff (ℓ T e : ℕ) (D : Prog) (n : ℕ) (x y : BitStr)
           (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨hij, by simp⟩))))))))
         simpa [Clause5.eval] using h
   · rintro ⟨htri, hlink⟩ c hc
-    rcases (mem_formula5_iff ℓ T e D n x y hℓr hr hT c).mp hc with h3 | hlk
+    rcases (mem_formula5_iff ℓ T e D n x y hℓr hr hT2 hT hlen hTm c).mp hc with h3 | hlk
     · have h := htri (lastThree c) h3
       simp only [lastThree, Bool.or_eq_true] at h
       simp only [Clause5.eval, Bool.or_eq_true]
@@ -323,7 +405,7 @@ theorem describes5 (𝒟 : Decider) (ℓ T e : ℕ) (n : ℕ) (x y : BitStr)
   constructor
   · rintro ⟨w₁, w₂, w₃, hsat⟩
     obtain ⟨htri, hlink⟩ :=
-      (sat_formula5_iff ℓ T e 𝒟.prog n x y hℓr hr hT a b w₁ w₂ w₃).mp hsat
+      (sat_formula5_iff ℓ T e 𝒟.prog n x y hℓr hr hT hTle hlen hTm a b w₁ w₂ w₃).mp hsat
     have h12 : ∀ i, w₁ i = w₂ i := fun i => hlink.w12 i i rfl
     have h23 : ∀ i, w₂ i = w₃ i := fun i => hlink.w23 i i rfl
     have e12 : w₁ = w₂ := funext h12
@@ -352,7 +434,7 @@ theorem describes5 (𝒟 : Decider) (ℓ T e : ℕ) (n : ℕ) (x y : BitStr)
       ⟨ap, bp, hap, hbp, fun j => by simpa using ha ⟨j, by omega⟩,
         fun j => by simpa using hb ⟨j, by omega⟩, hacc⟩
     refine ⟨w, w, w, ?_⟩
-    rw [sat_formula5_iff ℓ T e 𝒟.prog n x y hℓr hr hT a b w w w]
+    rw [sat_formula5_iff ℓ T e 𝒟.prog n x y hℓr hr hT hTle hlen hTm a b w w w]
     refine ⟨fun c₃ hc₃ => hsat3 c₃ hc₃, ⟨?_, ?_, ?_, ?_, fun i j hij => ?_, fun i j hij => ?_⟩⟩
     · intro i j hi hij
       have h := hw1 ⟨(i : ℕ), hi⟩

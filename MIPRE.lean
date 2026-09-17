@@ -613,7 +613,6 @@ import MIPRE.Foundations.SAT.Flatten
 import MIPRE.Foundations.SAT.FmlLib
 import MIPRE.Foundations.SAT.FmlProg
 import MIPRE.Foundations.SAT.Formula
-import MIPRE.Foundations.SAT.Remap
 import MIPRE.Foundations.SAT.Succinct
 import MIPRE.Foundations.SAT.Table
 import MIPRE.Foundations.SAT.Tseitin
