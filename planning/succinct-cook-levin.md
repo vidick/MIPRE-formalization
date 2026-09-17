@@ -355,13 +355,45 @@ inputs, well-formedness and the description `mem_formula3_iff` (`Describer.lean`
 the two answer blocks iff they are the tape encodings of strings of length at most `T` that the
 decider accepts within `T`.
 
-**S3, the program — not started.** What is left: the describer as a `PolyTimeFun` (items 4
-and 5) and the gate bound (item 3). The route: the encoding of a `Fml` *is* the encoding of
-its post-order list (`SizedEncoding Fml` through `rpn`), so a program that outputs the
-post-order list of the formula outputs the formula (`PolyTimeFun.cast`), and the post-order
-list of a formula built by these builders is a concatenation of the post-order lists of its
-pieces — so the program is `append`, `map`, `zip` and `foldl` on lists, with no tree surgery.
-The widths and offsets are computed in unary, where arithmetic is concatenation.
+**S3, the program — done** (2026-09-17). `descCircP` (`DescProg.lean`) is the describer
+circuit as a `PolyTimeFun` of `((e in unary, T), (𝒟, n), (x, y))`, and `descCircP_apply` says
+it is `descCirc` — item 4. Four things made it cheap:
 
-**S4** — not started.
+* *A formula's encoding is the encoding of its post-order list* (`SizedEncoding Fml` through
+  `rpn`), so every builder of `FmlLib.lean` is `append`, `map`, `zip` or `foldl` on lists and
+  its Cobham condition is the additivity of `esize` under the constructors (`FmlProg.lean`).
+  Two of the folds are scan-like, so `foldlAdd` does not apply and they carry a hand-written
+  `FoldBounded` proof: building a range, and the carry chain of the adder.
+* *Programs are read as readers of a shared input* (`Cost/Reader.lean`): `ap₁`, `ap₂`, `ap₃`
+  and `listOf` apply a program to readers, so a program transcribes its mathematical
+  definition line for line instead of being a point-free term, and its `toFun` stays
+  definitionally the function it transcribes.
+* *`FieldsR` and `CandR` are records of readers*, and `FieldsR.ev`/`CandR.ev` are structure
+  literals of those programs' own values (`FieldProg.lean`). So the shape of every family
+  formula matches definitionally and all fifty-odd exactness proofs (`FamilyProg.lean`) are
+  `simp` over the constants of the layout alone. The only non-definitional proof in the
+  program layer is `litFieldsR_ev`.
+* *Widths and offsets are unary, and a field constant is a resize* (`LayoutProg.lean`):
+  `resize w bs` keeps the low `w` bits of `bs`, and `resize_eq_nbits` identifies it with
+  `nbits w k` for any `bs` whose bits are those of `k`. So `nbits w (2 * T)` is a resize of
+  `false :: T.bits`, `nbits w (T + 3)` one of an iterated `incBits`, and `2 ^ e` comes from
+  its bit string being `e` zeros and a one (`pow2P`), with `2 * Sof e + k = 2 ^ (e + 1) + k`.
+  No arithmetic on numbers is needed anywhere.
+
+The templates of the check circuit stay a Lean-level constant: `Gc` is fixed, so the window
+program maps over `tplsOf Gc chk` at the Lean level and a window descriptor never has to be
+encoded — each becomes a `const` reader, and `WDesc` needs no `SizedEncoding`.
+
+*Item 3 came free.* A program's output is no larger than its running time
+(`PolyTimeFun.esize_apply_le`) and a circuit's gate count is at most the size of its encoding
+(`size_le_esize`), so the gate bound of the describer **is** the time bound of the program
+that writes it: `descSize := descCircP.timeBound`, an explicit `Polynomial ℕ`
+(`descCirc_size_le`). No per-builder `Fml.size` induction was written, and none is needed.
+
+**S4** — not started. What is left: `eOf T σ` in unary as a program (`e` is affine in
+`Nat.size T` and `Nat.size σ`, so this is `unaryToBin`'s inverse on two `Nat.size`s);
+bounding `esize` of the describer's input by a polynomial in `n, T, Q, σ` under the validity
+hypotheses, which turns `descSize` into the `s` of item 3 and gives item 5; and assembling
+`MIPRE.SAT.SuccinctCookLevin` from `extendsAnswers_iff`, `mem_formula3_iff`, `descCircP` and
+`descCirc_size_le`, with the proof-level `\leanok` and the `MIPRE/Axioms.lean` guard.
 

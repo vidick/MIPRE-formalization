@@ -144,4 +144,36 @@ theorem descCircP_apply (p : DInp) :
     ap₂_apply, length_addU, ap₁_apply, length_nsmulU, length_mU, const_apply, length_unary,
     descCirc, euI_apply]
 
+/-! ## The gate bound (item 3)
+
+Item 3 needs no separate induction over the builders: a program's output is no larger than
+its running time (`PolyTimeFun.esize_apply_le`), and a circuit's gate count is at most the
+size of its encoding, so the gate bound of the describer *is* the time bound of the program
+that writes it, which is an explicit polynomial. -/
+
+theorem size_le_esize (C : Circuit) : C.size ≤ esize C := by
+  have h1 : C.size ≤ esize C.gates := length_le_esize_list _
+  have h2 : esize C = esize (C.inputs, C.gates) := rfl
+  rw [h2, esize_prod]
+  omega
+
+/-- The gate-count bound of the describer: the time bound of the program that writes it. -/
+noncomputable def descSize : Polynomial ℕ := descCircP.timeBound
+
+/-- **The describer circuit is small** (item 3 of `thm:succinct-sat`): its gate count is at
+most an explicit polynomial in the size of the parameters. -/
+theorem descCirc_size_le (p : DInp) :
+    (descCirc p.1.1.length p.1.2 p.2.1.1 p.2.1.2 p.2.2.1 p.2.2.2).size ≤
+      descSize.eval (esize p) := by
+  rw [← descCircP_apply]
+  exact (size_le_esize _).trans (descCircP.esize_apply_le p)
+
+/-! ## The index width (item 5) -/
+
+/-- The index width `m`, as a program: it is affine in `e`, so it is an `append` in unary. -/
+noncomputable def mP : PolyTimeFun Unary ℕ := ap₁ unaryToBin (mU (PolyTimeFun.id _))
+
+@[simp] theorem mP_apply (u : Unary) : mP u = mOf u.length Gc := by
+  rw [mP, ap₁_apply, unaryToBin_apply, length_mU, PolyTimeFun.id_apply]
+
 end MIPRE.TM.CookLevin.Desc
