@@ -10,8 +10,8 @@ independent value.
 
 \subsection{Uncomputability of the value}
 
-Corollary~\ref{cor:value-uncomputable} is already a headline consequence requiring
-nothing further: no algorithm can approximate the (synchronous or quantum) value of a
+Corollary~\ref{cor:value-uncomputable} is already a headline consequence under the main
+theorem's compression premise: no algorithm can approximate the (synchronous or quantum) value of a
 nonlocal game to within an additive constant $c < \frac14$, since an estimate of additive
 error $c$ separates value $1$ from value $\frac12$ exactly when $c < \frac14$ (at
 $c = \frac14$ the estimate $\frac34$ is consistent with both). The threshold rises to the
@@ -125,8 +125,9 @@ strict inequalities over $\R$.
 
 \paragraph{Source.} Tarski; the effective form used here is Basu, Pollack and
 Roy~\cite{BPR06}. This is an import: the companion ledger records it as \emph{admitted}, one
-of only three assumptions in the campaign (Remark~\ref{rem:admitted-nodes}), and it is the
-only one that this chapter, rather than the main theorem, is responsible for.
+of only three assumptions in the campaign (Remark~\ref{rem:admitted-nodes}), and one of the
+two imports carried by this chapter rather than by the main theorem. The other is
+Lemma~\ref{lem:kirchberg-forward}.
 
 \effortMedium
 
@@ -158,11 +159,39 @@ consume the correlation sets rather than the tracial value.
 
 \subsection{Separation of quantum and commuting values}
 
+\begin{remark}[Additional premises for the source separation route]
+\label{rem:separation-premises}
+\uses{rem:entanglement-form,lem:valco-upper-re,rem:pcc-representation-bridge,
+  rem:runtime-contract-bridge}
+The explicit construction below follows the companion paper's
+\texttt{recursive.tex}, \texttt{thm:separation}~\cite{AuditSync26}. It requires the
+\emph{bipartite Schmidt-rank entanglement variant} of compression as an additional
+premise, together with its effective bounded self-reference construction. Write
+$\Ent_{\mathrm{bi}}(\game,\nu)$ for the least Schmidt rank of a finite-dimensional
+tensor-product strategy attaining value at least $\nu$, or $\infty$ if there is none.
+This is the paper's measure; it is distinct from the synchronous dimension requirement
+$\Ent$ of Definition~\ref{def:ent}. The extra compression clauses must force
+$\Ent_{\mathrm{bi}}$ to diverge along the recursive levels, and the construction must
+identify the game at a fixed $C_0\geq2$ with the game supplied to the upper semidecider,
+with all specialization and timeout bounds justified.
+
+These are pending formalization obligations. The value-form
+Theorem~\ref{thm:compression} and its current Lean interface do not supply the
+Schmidt-rank clauses. If the source completeness steps are implemented through the
+synchronous PCC interface, the relevant representation transfers from
+Remark~\ref{rem:pcc-representation-bridge} must also be supplied. An implementation
+through the ambient verifier interfaces additionally requires the runtime and answer-cut
+normalization of Remark~\ref{rem:runtime-contract-bridge}; the source construction's
+absolute bounds cannot simply be read as relative cost coefficients. The argument below
+records the resulting source proof plan, not an additional completed Lean result.
+\end{remark}
+
 \begin{theorem}[Separation]
 \label{thm:separation}
 \ledgernode{1.8.8, 1.8.9, 1.8.10, 1.8.11}
-\uses{thm:halting,def:co-value-bipartite,def:q-value,lem:valco-upper-re,thm:compression}
-There is an explicit synchronous game $\game^{\sep}$ with
+\uses{rem:separation-premises,def:co-value-bipartite,def:q-value,lem:valco-upper-re}
+Under the additional source-route premises of Remark~\ref{rem:separation-premises},
+there is an explicit finite bipartite game $\game^{\sep}$ with
 $\valstar(\game^{\sep}) \leq \frac12$ and $\omegaco(\game^{\sep}) = 1$.
 \end{theorem}
 
@@ -174,42 +203,36 @@ $\omegaco$ (Definition~\ref{def:co-value-bipartite}), not for the tracial $\valc
 (Definition~\ref{def:commuting-value}) that this blueprint otherwise carries. That is not a
 slip, and the distinction is forced by the proof rather than cosmetic.
 
-The argument is a dichotomy against the semidecider of
-Lemma~\ref{lem:valco-upper-re}. If the commuting value is $1$ the semidecider never halts, the
-early-accept branch is absent, and compression drives $\Ent(\verifier^{\sep}_n, \frac12)$ above
-every bound, giving $\valstar \leq \frac12$; if it is less than $1$ the semidecider halts, the
-early-accept branch supplies a value-$1$ PCC strategy at every level, and $\valstar = 1$
-contradicts $\valstar \leq \omegaco < 1$. So the value proved equal to $1$ is exactly the value
-the semidecider is complete for --- and that semidecider is the NPA hierarchy, whose limit is
-the bipartite set $C_{qc}$. Nothing in the argument exhibits a strategy: as the source puts it,
-the proof does not produce an explicit value-$1$ commuting-operator strategy.
+With the premises of Remark~\ref{rem:separation-premises}, the argument is a dichotomy
+against the semidecider of Lemma~\ref{lem:valco-upper-re}. If the commuting value is $1$,
+the semidecider never halts, the early-accept branch is absent, and the source entanglement
+clauses drive $\Ent_{\mathrm{bi}}(\verifier^{\sep}_n,\frac12)$ above every finite bound.
+This excludes every finite-dimensional tensor-product strategy attaining $\frac12$ and
+gives $\valstar\leq\frac12$. Divergence of the synchronous $\Ent$ would not suffice.
+If the commuting value is less than $1$, the semidecider halts. The early-accept branch
+then supplies a finite-dimensional value-$1$ PCC strategy at every sufficiently large
+level; ordinary PCC completeness propagates these strategies back to $C_0$. Thus
+$\valstar=1$, contradicting $\valstar\leq\omegaco<1$. The semidecision event is that
+the commuting value of this very game is below $1$. No search for a proof of non-halting,
+and no preservation theorem for arbitrary commuting-operator strategies, is used.
+This argument does not construct an explicit perfect commuting-operator strategy.
 
-Since $\valco \leq \omegaco$ with the reverse comparison false in general
-(Lemma~\ref{lem:tracial-le-co}), $\valco(\game^{\sep}) = 1$ would be a \emph{stronger}
-statement, and this route does not prove it: it would need a hierarchy converging to the tracial
-value from above, which is a separate question and not what the source uses. Earlier drafts of
-this chapter stated the theorem with $\valco$, which overclaimed. Everything downstream is
-unaffected --- Corollary~\ref{cor:tsirelson} separates the correlation sets $C_{qa}$ and
-$C_{qc}$, which is a statement about $\omegaco$'s model --- so the repair is to the statement,
-not to the consequences.
+The source theorem supplies a general bipartite verifier game; no synchronous decision
+predicate is asserted here. Even for synchronous games, Lemma~\ref{lem:tracial-le-co}
+only gives $\valco\leq\omegaco$, with the reverse comparison false in general. Thus this
+route provides neither a synchronous perfect correlation nor a tracial value-$1$ witness.
+Any such formulation would require additional representation and value-transport results.
+Corollary~\ref{cor:tsirelson} uses the resulting separation of the bipartite correlation
+sets $C_{qa}$ and $C_{qc}$ and does not need these stronger assertions.
 \end{remark}
 
-Sketch: the bound on $\valstar$ is the soundness clause of Theorem~\ref{thm:halting}
-verbatim, now that the clause is stated in $\valstar$; it does not follow from a $\synval$
-bound. Apply that reduction to a machine that searches
-for a proof of its own non-halting (or any non-halting machine whose game retains a
-perfect commuting-operator strategy), and track through the pipeline that
-completeness holds not just for PCC strategies but for
-commuting-operator (equivalently, tracial) strategies. This \emph{commuting
-completeness} property is an additional obligation on
-Sections~\ref{sec:ps-introspection}--\ref{sec:ps-compression} that the blueprint
-should make explicit when those sections are worked out; it is the only new
-ingredient beyond the main theorem. An alternative route: if $\valstar =
-\omegaco$ for all games, then combining Lemma~\ref{lem:value-lower-approx} (value
-approximable from below) with the NPA hierarchy~\cite{NPA08} (commuting value
-approximable from above) would make the value computable, contradicting
-Corollary~\ref{cor:value-uncomputable}; this gives a non-explicit separation with
-much less work, and is the recommended first target.
+A separate, non-explicit route to a correlation-set separation uses only the value-form
+reduction: if $C_{qa}=C_{qc}$ in every finite scenario, the lower semidecision procedure
+of Lemma~\ref{lem:value-lower-approx} and the upper procedure of
+Lemma~\ref{lem:valco-upper-re} would decide the value-$1$ versus value-at-most-$\frac12$
+promise, contradicting Corollary~\ref{cor:value-uncomputable}. This does not identify the
+source's explicit game or discharge the extra premises of
+Remark~\ref{rem:separation-premises}.
 
 \subsection{Failure of Tsirelson's problem}
 
@@ -308,28 +331,24 @@ Consequently exhibiting one finite-scenario separation of $C_{qa}$ from $C_{qc}$
 \label{cor:cep}
 \ledgernode{1.8.7}
 \uses{cor:tsirelson,lem:cep-implies-equal}
-There is a separable II$_1$ factor (indeed, a tracial von Neumann algebra generated by
-finitely many projections) that does not embed into an ultrapower
+There is a separable II$_1$ factor that does not embed into an ultrapower
 $\cal{R}^{\omega}$ of the hyperfinite II$_1$ factor.
 \end{corollary}
 
-\paragraph{Source for the implication.} Tsirelson's problem is equivalent to CEP by
-Fritz~\cite{Fri12} and Junge et al.~\cite{JNPPSW11}, with the converse direction
-completed by Ozawa~\cite{Oza13}. In the synchronous framework the implication is
-particularly direct: a synchronous correlation is precisely given by projections in a
-tracial von Neumann algebra summing to $1$~\cite{PSSTW16,KPS18}, and $C_{qa}$-type
-correlations are exactly those arising from $\cal{R}^\omega$-embeddable algebras, so
-Corollary~\ref{cor:tsirelson} for synchronous correlations yields a non-embeddable
-algebra.
+\paragraph{Source for the implication.} The correlation-set connection is developed by
+Fritz~\cite{Fri12}, Junge et al.~\cite{JNPPSW11} and Ozawa~\cite{Oza13}. The route here
+uses only the forward implication in Lemma~\ref{lem:cep-implies-equal}: under CEP the
+two bipartite correlation sets coincide, contradicting Corollary~\ref{cor:tsirelson}.
+It does not require a converse equivalence, a synchronous perfect correlation for the
+separating game, or a tracial value-$1$ strategy for that game.
 
-\paragraph{Comments.} This is the deepest formalization challenge on the list: it
-needs tracial von Neumann algebras, ultraproducts, and the synchronous-correlation
-correspondence. The synchronous framework adopted in this blueprint
-(Section~\ref{sec:departures}) was chosen partly because it makes this bridge as
-short as it can be. A reasonable staging: (i) define $C_{qa}, C_{qc}$ and synchronous
-correlations; (ii) prove the synchronous correlation--tracial algebra correspondence;
-(iii) formalize the ultraproduct $\cal{R}^\omega$ and the equivalence. Step (iii)
-alone is a landmark for operator algebras in Lean.
+\paragraph{Comments.} The formalization plan is the forward chain displayed above:
+formulate CEP for separable II$_1$ factors and the ultrapower $\cal{R}^\omega$, then
+combine the admitted Kirchberg implication with the finite-generator, Bell-algebra and
+state-approximation lemmas to obtain $C_{qc}\subseteq C_{qa}$. The non-embeddable factor
+follows by contraposition. A synchronous-correlation construction or a witness generated
+by finitely many projections would require additional results and is not a conclusion of
+this dependency chain.
 
 \subsection{Failure of Kirchberg's QWEP conjecture}
 
@@ -383,14 +402,16 @@ they are assumptions of the \emph{corollaries}, which is the right place for the
 Remark~\ref{rem:admitted-nodes} keeps the main theorem's own surface to a single classical
 algorithmic result.
 
-Second, the separating game is more delicate than Theorem~\ref{thm:separation}'s statement
-suggests, and the nodes say where. The construction needs effective bounded self-reference at a
+Second, the additional source-route premises of Remark~\ref{rem:separation-premises}
+are essential. The construction needs effective bounded self-reference at a
 fixed $C_0 \geq 2$ through one canonical specialization-and-timeout compiler (node $1.8.8$);
-the commuting value is $1$ because if the upper semidecider ever halted, an early-accept branch
-would supply a genuine one-dimensional perfect commuting strategy (node $1.8.9$); and
-$\valstar \leq \frac12$ is an entanglement-cost divergence argument along $n_{j+1} = 2^{n_j}$
---- \emph{not} an unattained-supremum argument (node $1.8.10$). Only the last of these is
-visible in the sketch above, and a formalization will meet all three.
+the commuting value is $1$ because halting of the upper semidecider would supply
+one-dimensional perfect PCC strategies at sufficiently large levels, and ordinary
+completeness would propagate perfect finite-dimensional strategies to the initial level
+(node $1.8.9$); and $\valstar\leq\frac12$ uses divergence of the \emph{bipartite
+Schmidt-rank} requirement along $n_{j+1}=2^{n_j}$ (node $1.8.10$). This is not a
+consequence of the synchronous $\Ent$ or of the current value-form compression interface.
+A formalization of the explicit source separator must discharge all three obligations.
 
 Third, and this is the part to be honest about: these nodes have had far less adversarial
 scrutiny than the rest of the ledger. Two of the twenty-seven carry a challenge, against $85\%$

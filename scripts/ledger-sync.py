@@ -214,12 +214,10 @@ def check(snap, cited):
             print("   %-12s cited by %s" % (n, ", ".join(cited[n])))
 
     print("\ncoverage by stage, counting only nodes an annotation names, archived nodes excluded.")
-    print("The blueprint accounts for all 123 nodes of the 2026-09-13 campaign state. The rounds")
-    print("of 2026-09-13/14 then refined that to 316 by decomposing statements already accounted")
-    print("for -- so a stage below 100% here is finer grain upstream, not a lost annotation, with")
-    print("one exception: stage 1.8 is new material (the downstream corollaries), and 0/27 there")
-    print("is a real gap. A stage that *falls* between runs is the case to look at. See")
-    print("planning/ledger-informed-plan.md for what each stage is accounted for by.")
+    print("These counts measure explicit annotations, not theorem equivalence or Lean proofs.")
+    print("A stage below 100% can reflect finer-grained source decomposition or a different")
+    print("proof route; a falling count needs review. See planning/paper-correspondence.md")
+    print("for current adapters and planning/ledger-informed-plan.md for historical accounting.")
     by_stage = {}
     for nid in nodes:
         by_stage.setdefault(stage_of(nid), [0, 0])[0] += 1

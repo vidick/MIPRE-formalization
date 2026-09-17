@@ -8,17 +8,16 @@ axioms; discharging them are independent sub-projects. Three of these results ar
 larger sub-projects and are developed in their own sections: the computability
 results in Section~\ref{ch:computability} and parallel repetition in
 Section~\ref{ch:parallel-repetition}; they are included in the summary table below
-for completeness. Statements are given in the
-form closest to how they will be used; where the source states a bipartite version and
-the project needs a synchronous one (see Section~\ref{sec:departures}), the translation
-is part of the formalization task and is noted in the comments.
+for completeness. Statements are given in the form closest to how they will be used.
+The compression pipeline carries bipartite soundness in $\valstar$; synchronous and
+tracial results appear as internal ingredients with their own transfer obligations.
 
 Each entry carries an estimate of the formalization effort:
 \effortEasy{} for self-contained arguments of at most a few pages,
 \effortMedium{} for substantial but well-delimited developments, and
 \effortHard{} for results whose formalization is a project in itself;
 \effortMathlib{} marks statements essentially available in Mathlib. The estimates
-are for the statement as it will be used (including any synchronous translation) and
+are for the statement as it will be used (including any required interface translation) and
 are of course provisional. Independently of the effort estimate, the \qlib{} badge
 (introduced in Section~\ref{ch:foundations}) marks results of general
 quantum-information interest that are intended to be upstreamed to QuantumLib.
@@ -33,8 +32,9 @@ Gowers--Hatami & Thm.~\ref{thm:gowers-hatami} & \cite{GH17,dlS21} & \checkmark \
 Almost-synchronous correlations & Thm.~\ref{thm:almost-sync} & \cite{Vid22} & hard \\
 Orthonormalization & Thm.~\ref{thm:orthonormalization} & \cite{dlS21} & \checkmark \\
 Magic Square rigidity & Thm.~\ref{thm:ms-rigidity} & \cite{WBMS16} & easy \\
-Low individual degree test (classical) & Thm.~\ref{thm:lidt-soundness} & \cite{JNVWY21qld} & \checkmark \\
-Low individual degree test (Pauli) & Thm.~\ref{thm:qld} & \cite{JNVWY21qld} & hard \\
+Low individual degree test (canonical lines) & Thm.~\ref{thm:lidt-soundness} & \cite{JNVWY21qld} & \checkmark \\
+Low individual degree test (seeded CL) & Thm.~\ref{thm:lidt-cl-soundness} & \cite{AuditSync26} & hard \\
+Low individual degree test (Pauli) & Thm.~\ref{thm:qld} & \cite{AuditSync26} & hard \\
 Direct parallel repetition (commuting-operator) & Thm.~\ref{thm:direct-repetition-co} & \cite{Vid26} & \checkmark \\
 Direct parallel repetition (entangled) & Thm.~\ref{thm:direct-repetition-q} & \cite{OpenAI26} & \checkmark \\
 Tracial density & Thm.~\ref{thm:tracial-density} & \cite{Lin23,Vid26} & \checkmark \\
@@ -138,37 +138,40 @@ needed for the synchronous framework~\cite{dlS21,Vid22}.
 \ledgernode{1.2.1.7.2, 1.2.1.7.2.1, 1.2.1.7.2.2}
 \uses{def:sync-game,def:sync-value,def:q-value,def:inconsistency}
 There are universal constants $C > 0$ and $0 < c \leq 1$ such that the following holds.
-Let $\game$ be a synchronous game whose question distribution gives the diagonal
-pointwise proportional weight: for some $\kappa \in (0, 1]$,
+Let $\game$ be a synchronous game whose question distribution has the same marginal
+$\nu$ on both coordinates and gives the diagonal pointwise proportional weight:
+for some $\kappa \in (0, 1]$,
 \begin{equation*}
-  \mu(x,x) \;\geq\; \kappa \sum_{y \in \mX} \mu(x,y) \qquad \text{for all } x \in \mX\;.
+  \mu(x,x) \;\geq\; \kappa\nu(x) \qquad \text{for all } x \in \mX\;.
 \end{equation*}
 Then, writing $\eps = 1 - \valstar(\game)$,
 \begin{equation*}
   1 - \synval(\game) \;\leq\; C \bigl( \eps / \kappa \bigr)^{c}\;.
 \end{equation*}
-More precisely, every tensor-product strategy for $\game$ with value $1 - \eps$ is,
-up to local isometries, well-approximated on average by a convex combination of
-synchronous strategies each of value at least $1 - C(\eps/\kappa)^{c}$.
+More precisely, the correlation of every tensor-product strategy of value $1 - \eps$
+is approximated, on average over the game's questions, by a mixture of synchronous
+correlations. The mixture has average game value at least $1 - C(\eps/\kappa)^c$,
+so at least one component attains that bound; the bound is not asserted for every component.
 \end{theorem}
 
 \paragraph{Source.} Vidick~\cite{Vid22}, building on~\cite{KPS18,PSSTW16}; the
 statement above is the corollary needed here, with constants independent of the game's
 size. What the source controls is not the game's value directly but the
 \emph{synchronicity defect} of a strategy --- its inconsistency
-(Definition~\ref{def:inconsistency}) at equal questions, taken against the marginal of
-$\mu$ on $\mX$; the diagonal-weight hypothesis is what turns the game's rejection
+(Definition~\ref{def:inconsistency}) at equal questions, taken against the common
+marginal $\nu$; the two-sided correlation replacement uses that common marginal.
+The diagonal-weight hypothesis is what turns the game's rejection
 probability $\eps$ into the bound $\eps/\kappa$ on that defect, the pairs $(x,x)$ carrying
 at least a $\kappa$ fraction of the weight of $x$. Without it the two values are unrelated
 (Remark~\ref{rem:almost-sync-hypothesis}).
 
 \paragraph{Comments.} The proof uses the orthonormalization
 lemma (Section~\ref{sec:rr-orthonormalization}) and a rounding argument. Used
-contrapositively, as Theorem~\ref{thm:parallel-repetition} uses it, the theorem turns a
+contrapositively, the theorem turns a
 bound $\synval(\game) \leq 1 - \delta$ into $\valstar(\game) \leq 1 - \Omega(\kappa
 \delta^{1/c})$: the diagonal weight multiplies the gap recovered, so a small $\kappa$ is a
-loss. The hypothesis is also not preserved by repetition, which is why the soundness of
-the pipeline is carried in $\valstar$ from Theorem~\ref{thm:parallel-repetition} onwards.
+loss. The hypothesis is also not preserved by repetition. The pipeline instead carries
+soundness in $\valstar$ throughout and uses direct bipartite repetition.
 
 \begin{remark}[The diagonal-weight hypothesis cannot be dropped]
 \label{rem:almost-sync-hypothesis}
@@ -216,12 +219,12 @@ printed inequality, and the $\kappa$ of the corrected one cannot be absorbed int
 
 Nor does the hypothesis survive repetition: if $\mu(x,x) = \kappa \sum_y \mu(x,y)$ for
 every $x$, the $k$-fold product distribution satisfies the same inequality with $\kappa^k$
-and no better. A bound on the synchronous value of a $k$-fold repetition therefore says
-nothing about its quantum value once $k$ grows with the instance size. For that reason
-Theorem~\ref{thm:almost-sync} is used in this blueprint only on the game being repeated,
-inside the proof of Theorem~\ref{thm:parallel-repetition}, never on a repeated game, and
-the soundness of the pipeline is stated in $\valstar$ from that point onwards. The
-invariant that supplies the hypothesis there is Remark~\ref{rem:sync-invariant}.
+and no better. A bound on the synchronous value of a $k$-fold repetition therefore
+does not supply a uniform quantum gap once $k$ grows with the instance size. The
+pipeline's repetition theorem therefore uses direct bipartite repetition, with no
+application of Theorem~\ref{thm:almost-sync} to either the input or repeated game.
+The separate role of almost-synchronicity in the paper's tensor-code proof is explained
+in Remark~\ref{rem:almost-sync-transitive}.
 
 Even with the hypothesis, the transport cannot by itself reach the threshold
 $\frac12$ that Definition~\ref{def:mipstar} demands. Take $\mX = \{1,2\}$, a singleton
@@ -231,8 +234,7 @@ values are $\frac12$ and $\kappa = 1$, so the corrected inequality forces $C \ge
 concludes at best $\valstar(\game) \leq 1 - \kappa (2C)^{-1/c}$, and that bound is never
 better than $\frac12$. The threshold must therefore come from
 Theorem~\ref{thm:direct-repetition-q}, which is a $\valstar$ theorem, and carrying
-soundness in $\valstar$ from the repetition step outwards is not a convenience but the
-only available route.
+soundness in $\valstar$ throughout avoids this transport loss.
 \end{remark}
 
 \subsection{The orthonormalization lemma}
@@ -322,11 +324,13 @@ vendored in this repository. The campaign also offers a consistency-to-projectiv
 giving $O(\delta)$ in place of $O(\delta^{1/4})$, which would sharpen the proof of
 Theorem~\ref{thm:almost-sync}.
 
-One difference from the statement this blueprint carried before: the hypothesis and the
-conclusion are both strict, and the near-projectivity hypothesis is written
-$\varphi(\sum_a M_a^2) > 1 - \eps$ rather than $\sum_a \tau(M_a - M_a^2) \leq \eps$. For a
-POVM the two agree, since $\sum_a M_a = 1$; converting the strict form to a non-strict one
-costs the constant, $9$ becoming $10$.
+The formalized hypothesis and conclusion are both strict. For a POVM, completeness
+identifies the defect with $1-\varphi(\sum_a M_a^2)$, but does not turn a non-strict
+bound into a strict one. In finite dimension a separate compactness argument retains
+the constant $9$: apply the theorem at every larger error, then pass to a convergent
+subsequence of projective measurements and use continuity. This also covers zero
+defect; Corollary~\ref{cor:ortho-from-consistency} spells out the limiting step needed
+by its application. That corollary has no Lean proof mark here.
 
 \subsection{Magic Square rigidity}
 \label{sec:rr-magic-square}
@@ -363,7 +367,7 @@ Mermin--Peres magic square. The form above is~\cite[Section 8]{JNVWY20}.
 \begin{lemma}[Direct Magic Square anticommutation --- what the pipeline actually needs]
 \label{lem:ms-direct-anticomm}
 \ledgernode{1.2.2.4.1, 1.2.2.4.1.6, 1.2.2.4.1.7, 1.2.2.4.1.9}
-\uses{thm:ms-rigidity,def:q-value,def:magic-square}
+\uses{def:q-value,def:magic-square}
 Let $\strategy = (\ket{\psi}, A, B)$ be any finite-dimensional strategy, with arbitrary
 POVMs, that fails the Magic Square game with probability $\eps$, and let $B_j$ denote the
 $\pm 1$-observable (the POVM difference) of Bob's answer to variable $\Variable_j$. Then
@@ -425,19 +429,17 @@ better target than Theorem~\ref{thm:ms-rigidity}: the ingredients are a Naimark 
 telescoping substitution bound, and one six-step word identity in a group generated by nine
 reflections with six relations.
 
-\paragraph{Comments.} This is the elementary seed of all rigidity in the proof: it
-certifies a single pair of anticommuting observables, which the low individual degree
-test then amplifies to many qubits. The game is constant-sized, the proof is a page of
-algebra, and it is an excellent first self-testing target. The synchronous restatement
-(one measurement family, tracial state) should be derived once and reused as a template
-for the other rigidity statements.
+\paragraph{Comments.} The direct bound is the elementary anticommutation input that
+the Pauli test amplifies to many qubits. Its bipartite form already matches the
+soundness proof's use; a tracial specialization is optional and is not an additional
+pipeline prerequisite.
 
 \subsection{The classical low individual degree test}
 \label{sec:rr-lidt}
 
 \effortHard
 
-\begin{definition}[Low individual degree test]
+\begin{definition}[Canonical-line low individual degree test]
 \label{def:lidt}
 \uses{def:game}
 \lean{MIPRE.LIDT.lidtGame}
@@ -470,9 +472,8 @@ corresponding coordinate vanishes), so that the same line asked by two sub-tests
 same question; a line answer is a polynomial in the parameter of that canonical
 parametrization.
 
-\begin{theorem}[Quantum soundness of the classical low individual degree test]
+\begin{theorem}[Quantum soundness of the canonical-line low individual degree test]
 \label{thm:lidt-soundness}
-\ledgernode{1.2.1}
 \uses{def:lidt,def:tensor-strategy,def:inconsistency}
 \lean{MIPRE.LIDT.lowIndividualDegree_soundness}
 \leanok
@@ -522,29 +523,86 @@ this project's own, and is connected to theirs by an explicit bridge.
 that formalization: the sampling parameter satisfies $k \geq 400md$ where the paper
 prints $k \geq md$, and $k$ must be positive, since the printed error vanishes at
 $k = 0$. The parameter $k$ remains free: the error carries both a factor $k^2$ and a
-term $e^{-k/(2560000m^2)}$, so no single choice of $k$ reduces it to a function of
-$(\eps, m, d, q)$; a corollary in the shape of $\delta_{qld}$ below is a separate
-derivation.
+term $e^{-k/(2560000m^2)}$. A chosen-$k$ corollary in the shape of $\delta_{qld}$ below
+is a separate quantitative derivation; it is not part of the displayed Lean theorem.
 
 
-\subsubsection{How Theorem~\ref{thm:lidt-soundness} is proved}
+\subsubsection{The paper's seeded CL test and its tensor-code route}
 
-The proof is a reduction to a \emph{two-prover tensor code test}, and the reduction is the
-paper's own, and the tensor code theorem it reduces to is no longer an import either: the
-companion campaign has decomposed that theorem's own proof (see
-Remark~\ref{rem:lidt-formalized}). This matters for reading the Lean
-development, whose proof of Theorem~\ref{thm:lidt-soundness} follows the same shape
-(Remark~\ref{rem:lidt-formalized}).
+The following is the paper's route to a different game interface. Its tensor-code
+reduction and reviewed intermediate statements are not the proof of
+Theorem~\ref{thm:lidt-soundness}, and have no Lean proof marks here. The seeded game
+and its theorem are in the pinned paper snapshot~\cite{AuditSync26},
+\texttt{ldt.tex}, Definition of the game and Theorem \texttt{lem:ld-soundness}.
+
+\begin{definition}[Seeded CL low individual degree test]
+\label{def:lidt-cl}
+\uses{def:game}
+For admissible $q$, positive integers $m,d,\mathrm{ldc}$ and $m\mid q$, the
+\emph{seeded CL test} is the paper's typed low-degree game with parameters
+$(q,m,d,\mathrm{ldc})$. Each ordered pair of types from
+$\{\mathtt{Point},\mathtt{ALine},\mathtt{DLine}\}$ has weight $1/9$, with question
+contents sampled from the corresponding CL distribution. Point questions ask for
+an element of $\F_q^{\mathrm{ldc}}$. Axis-line questions retain a seed-labelled
+description $(u_0,s)$ and ask for $\mathrm{ldc}$ degree-$d$ polynomials; diagonal-line
+questions retain $(u_0,s,v)$ and ask for $\mathrm{ldc}$ degree-$md$ polynomials.
+The seed selects the direction class, with leading coordinates of the diagonal
+direction set to zero. The verifier checks the answer format, equality on identical
+same-type questions, and evaluation agreement for either line type against a point;
+the other type pairs impose no further check. In particular, different seed
+descriptions of the same geometric line remain different questions.
+\end{definition}
+
+\begin{theorem}[Quantum soundness of the seeded CL test]
+\label{thm:lidt-cl-soundness}
+\ledgernode{1.2.1}
+\uses{def:lidt-cl,lem:lidt-derandomize,lem:lidt-ldc,def:inconsistency}
+There are universal constants $a\geq 1$ and $0<b<1$ such that every projective
+strategy passing the seeded CL test with probability at least $1-\eps$, for
+$\eps>0$, admits projective measurements $G^\alice,G^\bob$ on the respective
+players' spaces with outcomes tuples $(g_1,\ldots,g_{\mathrm{ldc}})$ of polynomials
+of individual degree at most $d$. Their evaluations are consistent with the other
+player's point measurement on average over uniform $u\in\F_q^m$, and the two
+full tuple measurements are consistent with each other, all with error at most
+\[
+  \delta_{\mathrm{CL}}(\eps,q,m,d,\mathrm{ldc})
+  = a(dm\,\mathrm{ldc})^a\bigl(\eps^b+q^{-b}+2^{-bmd}\bigr).
+\]
+The full tuple consistency has no question average. This paper theorem remains a
+formalization target, including for $\mathrm{ldc}=1$.
+\end{theorem}
+
+\begin{remark}[Planned CL-to-canonical adapter and parameter corollary]
+\label{rem:lidt-cl-adapter}
+\uses{def:lidt-cl,def:lidt,thm:lidt-soundness,thm:lidt-cl-soundness}
+Reusing Theorem~\ref{thm:lidt-soundness} to prove the single-codeword case of
+Theorem~\ref{thm:lidt-cl-soundness} requires an explicit strategy adapter. It must
+control the question distributions and subtest weights, reverse coordinate order,
+remove the seed labels with a proved choice or averaging argument, and transport
+line answers under canonicalization and rebasing. It must also preserve the degree
+bounds and projectivity, or account for their repair, and recover the two original
+point-consistency conclusions and full-codeword consistency. A seeded strategy need
+not assign the same measurement to different descriptions of the same line.
+
+A separate quantitative obligation is to choose an integer $k\geq400md$, $k>0$,
+and bound the canonical theorem's error, together with every adapter loss, by the
+single-codeword $\delta_{\mathrm{CL}}$ above. The simultaneous extension and the
+padded Pauli use must then propagate the changed dimension and any ancillas. Neither
+the adapter nor this parameter corollary is supplied by the existing Lean theorem.
+Formalizing the paper's tensor-code route below is an alternative way to establish
+the seeded CL theorem; a proof by either route would not certify the intermediate
+claims of the other.
+\end{remark}
 
 \effortMedium
 
 \begin{lemma}[Setup, and the two tests are not the same test]
 \label{lem:lidt-reduction-setup}
 \ledgernode{1.2.1.1, 1.2.1.2}
-\uses{def:lidt,def:tensor-strategy}
-Let $C$ be the Reed--Solomon code of degree $d$ over $\F_q$. The codewords of $C^{\ot m}$ are
+\uses{def:lidt-cl,def:tensor-strategy}
+Let $C$ be the Reed--Solomon code of degree $d<q$ over $\F_q$. The codewords of $C^{\ot m}$ are
 exactly the evaluation tables of $m$-variate polynomials of individual degree at most $d$. The
-low individual degree test is \emph{not} the two-prover tensor code test --- the two differ in
+seeded CL test with $\mathrm{ldc}=1$ is \emph{not} the two-prover tensor code test --- the two differ in
 which lines they sample and how they label answers --- so a strategy for the former must be
 converted, and the converted strategy $\strategy'$ is well defined and projective: points by
 reversing the coordinate order, lines by choosing a seed in the fibre of size $q/m$ with
@@ -556,13 +614,13 @@ answers relabelled through the parametrization of the line, pairs by restriction
 \begin{lemma}[Transfer of the line and pair tests]
 \label{lem:lidt-test-transfer}
 \ledgernode{1.2.1.3, 1.2.1.4}
-\uses{lem:lidt-reduction-setup,def:lidt}
+\uses{lem:lidt-reduction-setup,def:lidt-cl}
 Assume $m \mid q$. Then a uniform axis-parallel line of $[q]^m$ together with a uniform seed
 from its fibre and a uniform point on it induces exactly the axis-parallel-line distribution
 the tensor code test uses; and for two independent uniform points of a subcube fixing the last
 $j - 1$ coordinates, the pair (point, difference) is distributed as the diagonal-line test
 requires, the seed law $\Pr[\chi(s) = i] \propto q^{i-1}$ matching the conditional law of the
-low individual degree test.
+seeded CL test.
 \end{lemma}
 
 \begin{proof}
@@ -578,7 +636,8 @@ Remark~\ref{rem:pcp-power-of-two} for the same reason.
 \label{lem:lidt-sync-transfer}
 \ledgernode{1.2.1.5}
 \uses{lem:lidt-reduction-setup,def:inconsistency,lem:schwartz-zippel}
-Points synchronicity of $\strategy'$ fails with probability at most $9\eps$, and lines
+If the original seeded CL strategy fails with probability at most $\eps$, points
+synchronicity of $\strategy'$ fails with probability at most $9\eps$, and lines
 synchronicity with probability at most $81\eps + d/q$.
 \end{lemma}
 
@@ -594,7 +653,7 @@ which is Lemma~\ref{lem:schwartz-zippel} in one variable.
 \begin{lemma}[Summation, derandomization, and the parameter choice]
 \label{lem:lidt-derandomize}
 \ledgernode{1.2.1.6, 1.2.1.8}
-\uses{lem:lidt-test-transfer,lem:lidt-sync-transfer,thm:tensor-codes}
+\uses{lem:lidt-test-transfer,lem:lidt-sync-transfer,lem:tensor-codes-bipartite}
 Summing the per-subtest bounds with the tensor code test's weights gives expected total failure
 at most $\eps' = C(\eps + md/q)$ over the independent uniform choices of seeds, so some
 deterministic choice achieves $\eps'$. Restrict to $d < q$, so that Reed--Solomon of degree $d$
@@ -608,22 +667,30 @@ of the field size $q = 2^k$.)
 
 \effortHard
 
-\begin{theorem}[Two-prover tensor code test]
+\begin{theorem}[Synchronous tensor code test]
 \label{thm:tensor-codes}
 \ledgernode{1.2.1.7, 1.2.1.7.3}
-\uses{def:tensor-strategy,def:inconsistency,thm:orthonormalization,thm:almost-sync}
-A two-prover strategy passing the two-prover tensor code test for $C^{\ot m}$ with probability
-$1 - \eps'$, with the free parameter $k \geq 12mt$, is close to one measuring codewords of
-$C^{\ot m}$, with error
-$\eta = \poly(m, t, k) \cdot \poly\bigl( \eps', n^{-1}, e^{-\Omega(k/m^2)} \bigr)$.
+\uses{def:sync-value,def:inconsistency,thm:orthonormalization}
+Let $C\subseteq\Sigma^n$ be a nonempty linear code over a finite field, of blocklength
+$n$ and distance $\Delta$, and set $t=n-\Delta+1$. Assume $C$ is interpolable:
+arbitrary symbols prescribed at any $t$ distinct coordinates extend to a codeword.
+Let $m\geq1$, and let a synchronous tracial strategy $(\tau,A,B,P)$ in an algebra
+$\cal M$ pass the augmented tensor code test for $C^{\ot m}$ with probability at
+least $1-\eps'$. For every integer $k\geq12mt$ there is a projective measurement
+$\{G_c\}_{c\in C^{\ot m}}$ in the same algebra with
+\[
+  \E_{u\sim[n]^m}\sum_{c\in C^{\ot m}}\tau\bigl(G_c A^u_{c(u)}\bigr)
+  \geq 1-\eta,\qquad
+  \eta=\poly(m,t,k)\cdot\poly\bigl(\eps',n^{-1},e^{-\Omega(k/m^2)}\bigr).
+\]
 \end{theorem}
 
 \begin{proof}
-From~\cite{JNVWY21tensor}, in the published form. The source is vendored and was audited in
-full, and its internal derivation is now decomposed in the ledger rather than taken on trust
---- which is why the statements below carry their own sub-nodes. The statement above is the
-synchronous form instantiated at the free parameter, and
-Lemma~\ref{lem:tensor-codes-bipartite} is the two-prover form the reduction actually consumes.
+This is the synchronous theorem of~\cite{JNVWY21tensor}, with its free parameter
+written $k$ here. The induction includes the base case $m=1$. Its reviewed
+decomposition is recorded below; no Lean proof of this tensor-code theorem is
+claimed. Lemma~\ref{lem:tensor-codes-bipartite} supplies the separate two-prover
+contract that the seeded CL reduction consumes.
 \end{proof}
 
 \effortHard
@@ -668,9 +735,9 @@ $R \geq 1$ satisfy
 For each $(x,y)$ let the sets $g_{xy}(a) \subseteq \mB$, $a \in \mA$, be pairwise disjoint
 (not necessarily exhaustive), and for a POVM $N^y$ write
 $N^y_{g_{xy}(a)} = \sum_{b \in g_{xy}(a)} N^y_b$. Let $\kappa : [0,1] \to \R_{\geq 0}$ be
-convex and non-decreasing, and suppose that every symmetric projective-measurement strategy
-$T = (\ket{\Phi}, Q)$ for $\game$, of value $\omega(T)$, admits complete auxiliary POVMs
-$N^y$ with
+convex and non-decreasing, and suppose that every symmetric projective maximally
+entangled (PME) strategy $T = (\ket{\Phi}, Q)$ for $\game$ (so $\ket{\Phi}$ is
+maximally entangled), of value $\omega(T)$, admits complete auxiliary POVMs $N^y$ with
 \begin{equation*}
   F_p(T, N) \;:=\; \E_{(x,y) \sim p} \sum_{a \in \mA}
     \bra{\Phi} Q^x_a \ot N^y_{g_{xy}(a)} \ket{\Phi} \;\geq\; \kappa\bigl( \omega(T) \bigr)\;.
@@ -701,8 +768,10 @@ book-keeping. Corollary 4.1 of~\cite{Vid22} is stated for an arbitrary auxiliary
 $p$, and in that unrestricted form it is false; the source applies an estimate averaged over
 $\nu$ to $p_{\mX}$ without justification. The counterexample is two questions wide. Let
 $\game$ ask only question $0$ and check equality, let $p$ be supported on question $1$ alone,
-let $g(a) = \{a\}$, and let $\kappa = 1$. Every symmetric projective-measurement strategy
-meets the auxiliary hypothesis, using the transpose of its question-$1$ measurement. But the
+let $g(a) = \{a\}$, and let $\kappa = 1$. Every symmetric PME strategy meets the
+auxiliary hypothesis, using the transpose of its question-$1$ measurement: on a
+maximally entangled state, agreement is the normalized trace of
+$\sum_a (Q^1_a)^2=\Id$. But the
 symmetric projective strategy $\ket{00}$ measuring $\sigma^Z$ at question $0$ and $\sigma^X$
 at question $1$ has game value $1$ and synchronicity defect $0$, while every Bob POVM achieves
 auxiliary agreement exactly $\tfrac12$ --- so the conclusion would force
@@ -722,37 +791,51 @@ given above rather than by repairing the source).
 \begin{lemma}[From the synchronous to the two-prover form]
 \label{lem:tensor-codes-bipartite}
 \ledgernode{1.2.1.7.8}
-\uses{thm:tensor-codes,cor:sync-transfer,rem:sync-transfer-marginal}
-The two-prover form of Theorem~\ref{thm:tensor-codes} follows from the synchronous form by
-symmetrizing the strategy and then applying Corollary~\ref{cor:sync-transfer} with a
-concavified error function, at $R = \tfrac94$ as
+\uses{thm:tensor-codes,cor:sync-transfer,rem:sync-transfer-marginal,thm:orthonormalization}
+With the same code hypotheses and $t=n-\Delta+1$, let a finite-dimensional two-prover
+projective strategy pass the two-prover tensor code test with probability at least
+$1-\eps'$, and let $k\geq12mt$. There are projective measurements
+$G^\alice,G^\bob$, with outcomes in $C^{\ot m}$, on the players' respective original
+spaces. With error
+$\eta'=\poly(m,t,k)\cdot\poly(\eps',n^{-1},e^{-\Omega(k/m^2)})$, Alice's point
+measurement is consistent with $G^\bob$ evaluated at a uniform point; the restriction
+of $G^\alice$ to a uniform axis-parallel line is consistent with Bob's line
+measurement; and $G^\alice,G^\bob$ are consistent as full codeword measurements.
+The last conclusion has no question average. The reverse point consistency follows
+from the first and third conclusions and the test's point self-consistency, with a
+change of universal constants.
+\end{lemma}
+
+\begin{proof}
+For symmetric PME strategies, the normalized trace realizes their correlations, so
+Theorem~\ref{thm:tensor-codes} supplies the PME premise of
+Corollary~\ref{cor:sync-transfer}. For a general strategy, symmetrize and apply the
+corrected transfer with a concavified error function, at $R = \tfrac94$ as
 Remark~\ref{rem:sync-transfer-marginal} records. Symmetrization is where care is needed: the
 swap construction preserves the passing probability, but what the corollary consumes is the
 Schmidt-basis form with Bob's operators the transposes of Alice's, which swap symmetry alone
 does not provide --- the approximate Takagi bridge of Remark~\ref{rem:lidt-formalized} is what
-supplies it. Since the corollary returns a POVM, the codeword measurement is projectivized
-afterwards, in the ambient algebra, by Theorem~\ref{thm:orthonormalization}.
-\end{lemma}
+supplies it. The auxiliary measurements are compressed back to the original spaces
+and projectivized there, using Theorem~\ref{thm:orthonormalization}; projectivity is
+not a conclusion of the transfer corollary itself. The consistency estimates then
+give the point, line and full-codeword conclusions. These are steps of the paper's
+reviewed proof, not consequences already checked by the canonical-line Lean theorem.
+\end{proof}
 
-\begin{remark}[Almost-synchronicity is off the pipeline but inside an import]
+\begin{remark}[Almost-synchronicity belongs to the paper's tensor-code route]
 \label{rem:almost-sync-transitive}
-\uses{thm:almost-sync,lem:tensor-codes-bipartite,thm:lidt-soundness,rem:almost-sync-hypothesis}
-This is worth stating plainly, because the blueprint elsewhere says
-Theorem~\ref{thm:almost-sync} is not needed, and that is only true of the pipeline. The
-pipeline does not invoke it: soundness is carried in $\valstar$ from end to end, so no
-transport from $\synval$ is required (Remark~\ref{rem:almost-sync-hypothesis} explains why its
-hypothesis would not even be available at the outer end). But
-Lemma~\ref{lem:tensor-codes-bipartite} consumes it, and
-Theorem~\ref{thm:lidt-soundness} reduces to that lemma --- so the blueprint depends on
-almost-synchronicity \emph{transitively, through an import}, and cannot simply drop it.
+\uses{thm:almost-sync,lem:tensor-codes-bipartite,thm:lidt-cl-soundness,thm:lidt-soundness,rem:lidt-cl-adapter}
+The outer pipeline carries soundness in $\valstar$ and needs no conversion of a
+synchronous value bound. The paper's proof of Theorem~\ref{thm:lidt-cl-soundness}
+nevertheless uses almost-synchronicity internally, through the corrected transfer
+in Lemma~\ref{lem:tensor-codes-bipartite}.
 
-What makes this benign rather than alarming is that the dependency is already discharged in
-Lean. The proof of \texttt{MIPRE.LIDT.lowIndividualDegree\_soundness} is sorry-free
-(Remark~\ref{rem:lidt-formalized}), so everything its chain needs --- this included --- is
-proved from Mathlib in the vendored development. The practical consequence is for planning
-rather than for soundness: issues on the synchronous transport are about the
-\emph{pipeline's} use of Theorem~\ref{thm:almost-sync}, which is genuinely optional, and not
-about this one, which is not.
+The sorry-free Lean proof of \texttt{MIPRE.LIDT.lowIndividualDegree\_soundness}
+establishes the canonical-line theorem by another route. It does not prove this
+tensor-code transfer, the Vidick corollary, or the Takagi bridge. They remain
+separate formalization targets on the paper's route. Reusing the existing Lean
+theorem instead requires Remark~\ref{rem:lidt-cl-adapter}'s open adapter and
+quantitative corollary.
 \end{remark}
 
 \effortHard
@@ -760,13 +843,15 @@ about this one, which is not.
 \begin{lemma}[Several codewords: the simultaneity reduction]
 \label{lem:lidt-ldc}
 \ledgernode{1.2.1.9, 1.2.1.9.1, 1.2.1.9.2, 1.2.1.9.3}
-\uses{lem:lidt-derandomize,def:lidt}
-The general case of Theorem~\ref{thm:lidt-soundness}, with several codewords tested at once,
+\uses{lem:lidt-derandomize,def:lidt-cl}
+The general case of Theorem~\ref{thm:lidt-cl-soundness}, with several codewords tested at once,
 reduces to the single-codeword case \emph{in the paper}, importing nothing further. The
 reduction replaces the parameters $(q, m, d, \mathrm{ldc})$ by $(q, M, d, 1)$ where $M$ is the
-least power of two with $M \geq m + \mathrm{ldc}$ --- forced by the divisibility $M \mid q$, and
-satisfying $M \leq 4m\,\mathrm{ldc}$ --- leaving the degree unchanged. The resulting error is
-$\delta_{lidt}(\eps, q, m, d, \mathrm{ldc}) = a (dm\,\mathrm{ldc})^a \bigl( \eps^b + q^{-b} +
+least power of two with $M \geq m + \mathrm{ldc}$ in the nontrivial regime
+$m+\mathrm{ldc}\leq q$. Then $M\mid q$ and $M \leq 4m\,\mathrm{ldc}$, and the
+degree is unchanged. The complementary parameter regime is handled by the trivial
+error bound. The resulting error is
+$\delta_{\mathrm{CL}}(\eps, q, m, d, \mathrm{ldc}) = a (dm\,\mathrm{ldc})^a \bigl( \eps^b + q^{-b} +
 2^{-bmd} \bigr)$, the $\mathrm{ldc}^a$ factor and the substitution $m \mapsto M$ being the only
 changes.
 \end{lemma}
@@ -782,34 +867,23 @@ it would have imported is not the one needed here.
 
 \effortHard\ \qlib
 
-\begin{remark}[The one background result that is already formalized]
+\begin{remark}[Scope of the formalized classical theorem]
 \label{rem:lidt-formalized}
-\ledgernode{1.2.1, 1.2.1.7.2.4}
-\uses{thm:lidt-soundness,def:lidt}
-Theorem~\ref{thm:lidt-soundness} is the only statement of this section whose Lean proof is
-complete, and the way it got there is worth recording, because the ledger and the
-formalization disagree about what kind of statement it is.
+\ledgernode{1.2.1.7.2.4}
+\uses{thm:lidt-soundness,def:lidt,thm:lidt-cl-soundness,rem:lidt-cl-adapter}
+Theorem~\ref{thm:lidt-soundness} is proved from Mathlib through the vendored
+formalization of~\cite{JNVWY21qld}. The bridge modules in
+\texttt{MIPRE/Background/LIDT/Bridge/} translate the canonical-line game, strategies
+and consistency relation to that development and back. Its axiom guard checks the
+Lean proof, with the corrected hypotheses $k\geq400md$ and $k>0$.
 
-The paper proves node $1.2.1$ by an explicit reduction --- nodes $1.2.1.1$ to $1.2.1.8$ ---
-to the two-prover tensor-code test of~\cite{JNVWY21tensor}, and the general case of several
-codewords is proved in the paper too, importing nothing. So the assumption was narrower than the
-statement: one node, $1.2.1.7$, carried the tensor-code theorem itself. As of September 2026
-not even that is an import --- the node has been restated as audited soundness with its
-internal derivation decomposed in the ledger, which is what
-Lemmas~\ref{lem:tensor-codes-induction} to~\ref{lem:tensor-codes-bipartite} and
-Corollary~\ref{cor:sync-transfer} account for. The Lean statement is not an axiom, and
-its \texttt{\#print axioms} guard fails the build if it ever becomes one: it is proved
-from Mathlib alone through the vendored formalization of~\cite{JNVWY21qld}, with the
-bridge modules of \texttt{MIPRE/Background/LIDT/Bridge/} translating this development's
-games, strategies and consistency relation into that one's and back. So on this node the
-formalization is strictly stronger than the paper, and the $28$ nodes of the subtree are
-accounted for as the internal structure of a proof that is finished.
-
-It also corrected the statement. The printed parameter constraint is $md \leq k$; the
-formalization establishes it only for $400\,md \leq k$, and additionally needs $k > 0$.
-Both corrections are in the statement above, and they cost nothing downstream because $k$
-is free --- the error carries a factor $k^2$ against a term $e^{-k/(2560000 m^2)}$, so it
-is minimized at some finite $k$ either way.
+The paper's node $1.2.1$ is Theorem~\ref{thm:lidt-cl-soundness}: a seeded CL game,
+simultaneous outputs and a collapsed error. Its reduction to the two-prover
+tensor-code theorem and the reviewed decomposition of that theorem are mathematical
+source material~\cite{AuditSync26}, not Lean certificates. The existing canonical-line
+proof therefore does not discharge that node or its tensor-code subtree. Its reuse
+requires the adapter and chosen-$k$ estimate in Remark~\ref{rem:lidt-cl-adapter}; the
+growth in $k^2$ and decay in $e^{-k/(2560000m^2)}$ must be accounted for quantitatively.
 
 One node of the subtree is worth reading before reusing anything from it. Node
 $1.2.1.7.2.4$ records that the interface between the product-basis transposes
@@ -828,7 +902,7 @@ bridge is the thing to state, not the exact identity it replaces.
 \begin{theorem}[Pauli basis test / quantum low individual degree test]
 \label{thm:qld}
 \ledgernode{1.2.2, 1.2.2.17}
-\uses{def:q-value,def:distance,thm:ms-rigidity,thm:lidt-soundness}
+\uses{def:q-value,def:distance,lem:ms-direct-anticomm,thm:lidt-cl-soundness}
 There exists a function
 \begin{equation*}
   \delta_{qld}(\eps, m, d, q) = a (md)^a \bigl( \eps^b + q^{-b} + 2^{-bmd} \bigr)
@@ -845,27 +919,21 @@ $(\pauli, W)$ are $\delta_{qld}$-close to the Pauli basis measurements $\tau^W_u
 \in \F_q^M$, acting on $\ket{\EPR_q}^{\ot M}$.
 \end{theorem}
 
-\paragraph{Source.} Ji, Natarajan, Vidick, Wright and Yuen~\cite{JNVWY21qld}, which
-proves quantum soundness of the classical low individual degree test and derives the
-Pauli basis test; this corrects the analysis of the total degree test relied on in
-early versions of~\cite{JNVWY20}. The reduction from the Pauli test to the low
-individual degree test follows~\cite[Section 7]{JNVWY20}, with the Magic Square
-theorem (Theorem~\ref{thm:ms-rigidity}) providing the base anticommutation.
+\paragraph{Source.} The pinned paper~\cite{AuditSync26}, \texttt{qld-appendix.tex}
+and its five proof files, states this Pauli theorem and its reduction to the seeded
+CL test. The reduction follows the architecture of~\cite[Section 7]{JNVWY20};
+the canonical-line soundness theorem of~\cite{JNVWY21qld} is related background.
+Lemma~\ref{lem:ms-direct-anticomm} supplies the base anticommutation directly.
 
-\paragraph{Comments.} This is the largest and hardest imported result: its proof is an
-induction on the number of variables with a delicate self-improvement argument. It is
-the workhorse of question reduction (introspection certifies the players' sampling of
-their own questions against Pauli basis measurements). Its classical ingredient is now
-available as Theorem~\ref{thm:lidt-soundness}; what remains is the reduction from the
-Pauli basis test, which uses Theorem~\ref{thm:ms-rigidity} for the base anticommutation
-and Theorem~\ref{thm:gowers-hatami} and Theorem~\ref{thm:orthonormalization} as black
-boxes, together with a corollary of Theorem~\ref{thm:lidt-soundness} collapsing the
-sampling parameter $k$ into a single error function.
+\paragraph{Comments.} This is a substantial remaining formalization target and the
+workhorse of question reduction: introspection certifies the players' sampling of
+their own questions against Pauli basis measurements. The reduction uses direct
+Magic Square anticommutation, linearity and orthonormalization, together with the
+seeded CL theorem. The available canonical-line theorem can replace the paper's
+classical route only after the obligations in Remark~\ref{rem:lidt-cl-adapter} are met.
 
-The statement is bipartite, so every use of it inside the synchronous pipeline costs one
-application of the transport of Theorem~\ref{thm:almost-sync}, with its hypothesis and its
-loss $\eps \mapsto \eps^{c}$; restating the rigidity lemmas tracially once, rather than
-transporting at each use, is the cheaper route and is not yet done. The verification
+The theorem's bipartite statement matches the pipeline's $\valstar$ soundness
+interface, so its uses require no additional synchronous-value transport. The verification
 campaign~\cite{Audit26} further reports three corrections in the tensor-code material the
 proof passes through --- $\kappa$-convexity requires $c_1 \leq 1$, the synchronicity
 defect obeys $\delta_{\mathrm{sync}} \leq 4\eps$ rather than $3\eps$, and one corner block
@@ -877,9 +945,9 @@ relevant to whoever writes its proof.
 
 \begin{remark}[How the soundness proof of Theorem~\ref{thm:qld} is organized]
 \label{rem:qld-architecture}
-\uses{thm:qld,thm:lidt-soundness,thm:orthonormalization,thm:ms-rigidity}
-The soundness half of Theorem~\ref{thm:qld} is not proved in the main text of~\cite{JNVWY21qld};
-it is a five-file appendix, and it is the largest single proof the pipeline imports. Its
+\uses{thm:qld,thm:lidt-cl-soundness,rem:lidt-cl-adapter,thm:orthonormalization,lem:ms-direct-anticomm}
+The soundness half of Theorem~\ref{thm:qld} is developed in the five-file appendix of
+the pinned paper~\cite{AuditSync26}. Its
 architecture is worth stating before its pieces, because the pieces are unreadable without it.
 There are five stages.
 \begin{enumerate}
@@ -888,24 +956,22 @@ There are five stages.
 \item \textbf{Win implications}: unpack ``succeeds with probability $1 - \eps$'' into one
   consistency or commutation statement per subtest (Lemma~\ref{lem:qld-win}).
 \item \textbf{Expansion}: adjoin EPR ancillas and replace the strategy's measurements by ones
-  on the enlarged space that exactly commute across the two bases
+  on the enlarged space that approximately commute across the two bases
   (Lemmas~\ref{lem:qld-expanded-points} and~\ref{lem:qld-expanded-lines}).
 \item \textbf{Combining}: build a \emph{single} measurement returning both the $X$- and the
-  $Z$-polynomial, by padding the ambient space and applying the classical low individual
-  degree test to the padded points (Lemma~\ref{lem:qld-simultaneous}).
+  $Z$-polynomial, by padding the ambient space and applying seeded CL soundness to
+  the padded strategy (Lemma~\ref{lem:qld-simultaneous}).
 \item \textbf{Separation and the swap isometry}: extract exact Pauli operators from that
   single measurement and rotate them onto honest EPR pairs
   (Lemmas~\ref{lem:qld-exact-paulis} and~\ref{lem:qld-swap}).
 \end{enumerate}
-Two features of this decomposition matter for a formalization. Stage 4 \emph{consumes}
-Theorem~\ref{thm:lidt-soundness}: the simultaneous measurement is obtained by applying the
-classical test's quantum soundness to the padded point measurements with parameters
-$(q, 4m, d)$ and a single codeword. So the one background result whose Lean proof is already
-finished and sorry-free (Remark~\ref{rem:lidt-formalized}) is an input to the one that is the
-largest remaining gap --- which is the right way round, and means the hard analytic core of
-stage 4 is done. And stage 5, not stage 4, is where the exactness comes from: the Pauli group
-relations are recovered \emph{exactly}, not approximately, which is what lets the swap
-isometry be the standard one.
+Stage 4 consumes Theorem~\ref{thm:lidt-cl-soundness} at $(q,4m,d,1)$, after
+constructing a strategy for the seeded CL game and projectivizing its line POVMs.
+Theorem~\ref{thm:lidt-soundness} provides reusable checked analysis, but does not yet
+justify this application: the game adapter and error corollary in
+Remark~\ref{rem:lidt-cl-adapter} remain open. Stage 5 recovers the Pauli group
+relations exactly, which permits the standard swap isometry; the expanded
+measurements in stage 3 satisfy only approximate commutation.
 \end{remark}
 
 \subsubsection{Preliminaries}
@@ -951,16 +1017,22 @@ $P_a \ot \Id \approx_{\eta(\delta)} Q_a \ot \Id$ on $\ket{\psi}$.
 
 \begin{proof}
 \uses{thm:orthonormalization}
-This is not Theorem~\ref{thm:orthonormalization} restated: that theorem's hypothesis is
-near-projectivity, $\sum_a \tau(Q_a - Q_a^2) \leq \eps$, while what the appendix has is
+This is not Theorem~\ref{thm:orthonormalization} restated: that theorem requires strict
+near-projectivity in a normal state, while what the appendix has is
 bipartite consistency. The bridge is a Cauchy--Schwarz step. Write
 $\gamma = \sum_{a \neq b} \bra{\psi} Q_a \ot R_b \ket{\psi}$, so that
 $\sum_a \bra{\psi} Q_a \ot R_a \ket{\psi} = 1 - \gamma$. Since
 $\sum_a R_a^2 \leq \sum_a R_a = \Id$, Cauchy--Schwarz over $a$ gives
 $\sum_a \bra{\psi} Q_a^2 \ot \Id \ket{\psi} \geq (1 - \gamma)^2 \geq 1 - 2\gamma$, which is
-near-projectivity with $\eps = 2\gamma$. Theorem~\ref{thm:orthonormalization}, applied to the
-von Neumann algebra $\cal{L}(\mH_\alice) \ot \Id$ with the normal vector state of
-$\ket{\psi}$, then returns the projective family, necessarily of the form $P_a \ot \Id$.
+non-strict near-projectivity at $2\gamma$. For every $\eps>2\gamma$, apply
+Theorem~\ref{thm:orthonormalization} to the algebra
+$\cal{L}(\mH_\alice)\ot\Id$ with the normal vector state of $\ket{\psi}$. It gives a
+projective family of the form $P_a^{\eps}\ot\Id$ with squared-distance sum less than
+$9\eps$. In finite dimension, projective measurements with the fixed finite outcome
+set form a compact set. Letting $\eps$ decrease to $2\gamma$ along a sequence,
+extract a convergent subsequence and use continuity to obtain
+$\sum_a\norm{((Q_a-P_a)\ot\Id)\ket{\psi}}^2\leq18\gamma=O(\delta)$.
+This argument includes $\gamma=0$.
 \end{proof}
 
 \subsubsection{What winning implies}
@@ -970,7 +1042,7 @@ $\ket{\psi}$, then returns the projective family, necessarily of the form $P_a \
 \begin{lemma}[Win implications]
 \label{lem:qld-win}
 \ledgernode{1.2.2.4, 1.2.2.4.2}
-\uses{thm:qld,thm:ms-rigidity,def:inconsistency,def:distance}
+\uses{lem:ms-direct-anticomm,def:inconsistency,def:distance}
 Assume $6md \leq q$. A strategy succeeding with probability $1 - \eps$ in the Pauli basis test
 satisfies, with the conditional weight of each subtest carried explicitly, a list of
 consistency and commutation relations: self-consistency of the point measurements; the
@@ -981,14 +1053,16 @@ commutation-consistency.
 \end{lemma}
 
 \begin{proof}
-\uses{thm:ms-rigidity}
+\uses{lem:ms-direct-anticomm}
 Each item is the definition of the value of the corresponding subtest, divided by the
-probability that the subtest is selected. The only non-elementary input is the
-anticommutation item, which is where Theorem~\ref{thm:ms-rigidity} --- the admitted node --- is
-consumed, and it is consumed exactly once.
+probability that the subtest is selected. For the Magic Square item, apply
+Lemma~\ref{lem:ms-direct-anticomm} to the conditional strategy, average its
+$186624\eps_\omega$ squared-error bound, and transfer it to the point observables
+using the cross-party consistency estimates. This uses the original observables
+and requires no invocation of full Magic Square rigidity.
 \end{proof}
 
-\subsubsection{Expansion: making the two bases commute exactly}
+\subsubsection{Expansion: approximate commutation of the two bases}
 
 \effortHard
 
@@ -1037,8 +1111,8 @@ Lemma~\ref{lem:qld-expanded-points} together with the line subtest's relations.
 The point of this stage is a single measurement that returns the $X$-polynomial and the
 $Z$-polynomial at once. It is reached by padding the ambient space from $\F_q^m$ to
 $\F_q^{4m}$, so that a point of the padded space encodes a point in each basis together with
-a pair of coefficients, and then applying the classical low individual degree test to the
-padded points.
+a pair of coefficients, and then applying the seeded CL theorem to the padded
+strategy.
 
 \effortHard
 
@@ -1107,7 +1181,7 @@ onto the fibres $\{\alpha a + \beta b = c\}$ is justified by character orthogona
 \begin{lemma}[The sublines distribution]
 \label{lem:qld-sublines}
 \ledgernode{1.2.2.11}
-\uses{def:lidt}
+\uses{def:lidt-cl}
 There is a distribution over triples $(\ell, \ell_X, \ell_Z)$ --- a line in the padded space
 together with a line in each unpadded copy --- whose $\ell$-marginal is the line marginal of
 the padded space's line--point distribution, whose $(\ell_X, \ell_Z)$-marginals are mixtures
@@ -1138,7 +1212,7 @@ measurement evaluated at a point of $\ell$.
 \begin{lemma}[The simultaneous global measurement]
 \label{lem:qld-simultaneous}
 \ledgernode{1.2.2.13}
-\uses{lem:qld-padded-lines,lem:qld-padded-points,thm:lidt-soundness}
+\uses{lem:qld-padded-lines,lem:qld-padded-points,thm:lidt-cl-soundness}
 There is
 $\delta_S(\eps, m, d, q) = a (md)^a \bigl( \eps^b + q^{-b} + 2^{-bmd} \bigr)$ and a projective
 measurement $\widehat{S}_{g_X, g_Z}$ with outcomes pairs of polynomials of individual degree
@@ -1148,12 +1222,17 @@ form $\widehat{M}^X \widehat{M}^Z \widehat{M}^X$ and its mirror.
 \end{lemma}
 
 \begin{proof}
-\uses{thm:lidt-soundness}
-Apply Theorem~\ref{thm:lidt-soundness} --- the quantum soundness of the \emph{classical} test
---- to the padded point and line measurements, with parameters $(q, 4m, d)$ and a single
-codeword. This is the step at which the finished Lean proof of that theorem becomes an input
-to this one (Remark~\ref{rem:qld-architecture}), and it is why $\delta_S$ has the shape of
-$\delta_{lidt}$ rather than of the errors above it.
+\uses{thm:lidt-cl-soundness,lem:schwartz-zippel}
+Construct a seeded CL strategy at $(q,4m,d,1)$. Besides line--point consistency,
+check the identical-point and identical-line subtests; the latter uses the
+Schwartz--Zippel bound for distinct line polynomials. Dilate the line POVMs with
+fresh local product ancillas and extend the point measurements by identity, preserving
+all tested cross-party probabilities. Theorem~\ref{thm:lidt-cl-soundness} then gives
+the projective global polynomial measurement and its collapsed error. Recovering
+the pair $(g_X,g_Z)$ gives the stated simultaneous measurement.
+This is the paper's application~\cite{AuditSync26}, \texttt{qld-combining.tex}; using
+the canonical-line Lean theorem in its place requires
+Remark~\ref{rem:lidt-cl-adapter}.
 \end{proof}
 
 \subsubsection{Separation and the swap isometry}
@@ -1251,7 +1330,7 @@ game value, and $\RE$-completeness gives $\RE \subseteq \MIPstar$.
 
 \begin{remark}[What stage 1.2 leaves open, and where its weight is]
 \label{rem:qld-admitted}
-\uses{thm:qld,thm:ms-rigidity,lem:ms-direct-anticomm,thm:lidt-soundness,def:distance}
+\uses{thm:qld,lem:ms-direct-anticomm,thm:lidt-cl-soundness,def:distance}
 Stage $1.2$ of the ledger is by far its heaviest: after the refinement rounds of September
 2026 it holds $149$ of the $316$ live nodes, and $169$ of the campaign's $309$ challenges
 were raised against its original $62$, against $46$ for answer reduction and $19$ for
@@ -1300,7 +1379,7 @@ with $n$ back into the constant $\frac12$ the recursion needs.
 
 \begin{remark}[What is still admitted, after the discharges of September 2026]
 \label{rem:admitted-nodes}
-\uses{thm:ms-rigidity,lem:ms-direct-anticomm,lem:self-dual-basis,thm:direct-repetition-q,rem:direct-vs-anchored}
+\uses{lem:ms-direct-anticomm,lem:self-dual-basis,thm:direct-repetition-q,rem:direct-vs-anchored}
 With the ledger accounted for, the assumptions are countable. Of its $316$ live nodes,
 $313$ are validated and exactly three are \emph{admitted} --- asserted on the strength of a
 cited source rather than proved. The interesting fact is that these are not the three that
@@ -1334,9 +1413,11 @@ What was discharged, and how, is the useful part:
   that disclaims the variants it does \emph{not} assert.
 \end{enumerate}
 
-So the honest summary of what this blueprint assumes beyond Mathlib is now one classical
-algorithmic result: a deterministic polynomial-time construction of irreducible polynomials
-over $\F_2$. Nothing quantum, and no rigidity theorem. The mechanical figure is in
+Thus the paper ledger's remaining admitted input to this route is the classical
+deterministic polynomial-time construction of irreducible polynomials over $\F_2$.
+This is a statement about the paper's proof dependencies, not the current Lean frontier:
+the seeded CL and Pauli theorems and their unfinished bridges above still require
+formalization. The mechanical ledger figure is in
 \texttt{scripts/ledger-sync.py}, which walks declared dependencies as well as decomposition
 and reports node $1.1.6.1.1$ as reached from $24$ of this blueprint's statements.
 
