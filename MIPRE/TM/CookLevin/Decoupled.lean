@@ -144,4 +144,148 @@ theorem mem_formula5_iff (ℓ T e : ℕ) (D : Prog) (n : ℕ) (x y : BitStr)
       rwa [descCirc, Fml.evalBits_toCircuit] at this
     · exact Or.inr h
 
+/-! ## What a satisfying five-tuple is
+
+Following the paper: for a fixed triple of indices the three signs of the *other* blocks
+range over all of `{0,1}³`, so a decoupled clause is satisfied exactly when the literals of
+the blocks the condition constrains are. Rows 8 and 9 therefore read as equalities of whole
+blocks, and rows 2 and 3 as equalities of single bits. -/
+
+/-- The index `0` of a block. -/
+def zeroIdx (k : ℕ) : Fin (2 ^ k) := ⟨0, Nat.two_pow_pos k⟩
+
+/-- A literal of a block that the given assignment falsifies. -/
+def offLit {k : ℕ} (w : Fin (2 ^ k) → Bool) : Lit (Fin (2 ^ k)) :=
+  ⟨zeroIdx k, !w (zeroIdx k)⟩
+
+@[simp] theorem offLit_eval {k : ℕ} (w : Fin (2 ^ k) → Bool) : (offLit w).eval w = false := by
+  cases hw : w (zeroIdx k) <;> simp [offLit, Lit.eval, hw]
+
+/-- Two literals of opposite sign force the two bits to agree. -/
+theorem eq_of_lit_or {V W : Type*} (u : V → Bool) (v : W → Bool) (i : V) (j : W)
+    (h : ∀ o : Bool, ((Lit.mk i o).eval u || (Lit.mk j (!o)).eval v) = true) : u i = v j := by
+  have h1 := h true
+  have h2 := h false
+  cases hu : u i
+  · cases hv : v j
+    · rfl
+    · simp [Lit.eval, hu, hv] at h1
+  · cases hv : v j
+    · simp [Lit.eval, hu, hv] at h2
+    · rfl
+
+/-- One literal forced true. -/
+theorem eq_of_lit {V : Type*} (u : V → Bool) (i : V) (o : Bool)
+    (h : (Lit.mk i o).eval u = true) : u i = o := by
+  cases o <;> cases hu : u i <;> simp [Lit.eval, hu] at h ⊢
+
+/-- The three-block half: the described 3SAT formula on the three auxiliary blocks. -/
+def Tri {r : ℕ} (φ : Cnf3 (Fin (2 ^ r))) (w₁ w₂ w₃ : Fin (2 ^ r) → Bool) : Prop :=
+  ∀ c ∈ φ, (c.l₁.eval w₁ || c.l₂.eval w₂ || c.l₃.eval w₃) = true
+
+/-- The link half: what rows 2 to 9 force. -/
+structure LinkSat (ℓ r T : ℕ) (a b : Fin (2 ^ ℓ) → Bool) (w₁ w₂ w₃ : Fin (2 ^ r) → Bool) :
+    Prop where
+  aLow : ∀ (i : Fin (2 ^ ℓ)) (j : Fin (2 ^ r)), (i : ℕ) < 2 * T → (i : ℕ) = (j : ℕ) →
+    a i = w₁ j
+  bLow : ∀ (i : Fin (2 ^ ℓ)) (j : Fin (2 ^ r)), (i : ℕ) < 2 * T → (j : ℕ) = (i : ℕ) + 2 * T →
+    b i = w₁ j
+  aPad : ∀ i : Fin (2 ^ ℓ), ¬ (i : ℕ) < 2 * T → a i = decide ((i : ℕ) % 2 = 0)
+  bPad : ∀ i : Fin (2 ^ ℓ), ¬ (i : ℕ) < 2 * T → b i = decide ((i : ℕ) % 2 = 0)
+  w12 : ∀ i j : Fin (2 ^ r), (i : ℕ) = (j : ℕ) → w₁ i = w₂ j
+  w23 : ∀ i j : Fin (2 ^ r), (i : ℕ) = (j : ℕ) → w₂ i = w₃ j
+
+/-- **The two halves of satisfaction.** -/
+theorem sat_formula5_iff (ℓ T e : ℕ) (D : Prog) (n : ℕ) (x y : BitStr)
+    (hℓr : ℓ ≤ mOf e Gc) (hr : 1 ≤ mOf e Gc) (hT : 2 * T < 2 ^ mOf e Gc)
+    (a b : Fin (2 ^ ℓ) → Bool) (w₁ w₂ w₃ : Fin (2 ^ mOf e Gc) → Bool) :
+    ((descCirc5 ℓ T e D n x y).formula5 ℓ (mOf e Gc)).Sat a b w₁ w₂ w₃ ↔
+      Tri ((descCirc e T D n x y).formula3 (mOf e Gc)) w₁ w₂ w₃ ∧
+        LinkSat ℓ (mOf e Gc) T a b w₁ w₂ w₃ := by
+  constructor
+  · intro hsat
+    have key : ∀ c, (lastThree c ∈ (descCirc e T D n x y).formula3 (mOf e Gc) ∨
+        Link ℓ (mOf e Gc) T c) → Clause5.eval a b w₁ w₂ w₃ c = true := fun c hc =>
+      hsat c ((mem_formula5_iff ℓ T e D n x y hℓr hr hT c).mpr hc)
+    refine ⟨?_, ?_⟩
+    · intro c₃ hc₃
+      have h := key ⟨offLit a, offLit b, c₃.l₁, c₃.l₂, c₃.l₃⟩ (Or.inl hc₃)
+      simpa [Clause5.eval] using h
+    · refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+      · intro i j hi hij
+        refine eq_of_lit_or a w₁ i j fun o => ?_
+        have h := key ⟨⟨i, o⟩, offLit b, ⟨j, !o⟩, offLit w₂, offLit w₃⟩
+          (Or.inr (Or.inl ⟨hi, hij, by simp⟩))
+        simpa [Clause5.eval] using h
+      · intro i j hi hij
+        refine eq_of_lit_or b w₁ i j fun o => ?_
+        have h := key ⟨offLit a, ⟨i, o⟩, ⟨j, !o⟩, offLit w₂, offLit w₃⟩
+          (Or.inr (Or.inr (Or.inl ⟨hi, hij, by simp⟩)))
+        simpa [Clause5.eval] using h
+      · intro i hi
+        rcases Nat.eq_zero_or_pos ((i : ℕ) % 2) with hp | hp
+        · have h := key ⟨⟨i, true⟩, offLit b, offLit w₁, offLit w₂, offLit w₃⟩
+            (Or.inr (Or.inr (Or.inr (Or.inl ⟨hi, hp, rfl⟩))))
+          have := eq_of_lit a i true (by simpa [Clause5.eval] using h)
+          rw [this, hp]
+          rfl
+        · have hp' : ¬ (i : ℕ) % 2 = 0 := by omega
+          have h := key ⟨⟨i, false⟩, offLit b, offLit w₁, offLit w₂, offLit w₃⟩
+            (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hi, hp', rfl⟩)))))
+          have := eq_of_lit a i false (by simpa [Clause5.eval] using h)
+          rw [this, decide_eq_false hp']
+      · intro i hi
+        rcases Nat.eq_zero_or_pos ((i : ℕ) % 2) with hp | hp
+        · have h := key ⟨offLit a, ⟨i, true⟩, offLit w₁, offLit w₂, offLit w₃⟩
+            (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hi, hp, rfl⟩))))))
+          have := eq_of_lit b i true (by simpa [Clause5.eval] using h)
+          rw [this, hp]
+          rfl
+        · have hp' : ¬ (i : ℕ) % 2 = 0 := by omega
+          have h := key ⟨offLit a, ⟨i, false⟩, offLit w₁, offLit w₂, offLit w₃⟩
+            (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hi, hp', rfl⟩)))))))
+          have := eq_of_lit b i false (by simpa [Clause5.eval] using h)
+          rw [this, decide_eq_false hp']
+      · intro i j hij
+        refine eq_of_lit_or w₁ w₂ i j fun o => ?_
+        have h := key ⟨offLit a, offLit b, ⟨i, o⟩, ⟨j, !o⟩, offLit w₃⟩
+          (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hij, by simp⟩))))))))
+        simpa [Clause5.eval] using h
+      · intro i j hij
+        refine eq_of_lit_or w₂ w₃ i j fun o => ?_
+        have h := key ⟨offLit a, offLit b, offLit w₁, ⟨i, o⟩, ⟨j, !o⟩⟩
+          (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨hij, by simp⟩))))))))
+        simpa [Clause5.eval] using h
+  · rintro ⟨htri, hlink⟩ c hc
+    rcases (mem_formula5_iff ℓ T e D n x y hℓr hr hT c).mp hc with h3 | hlk
+    · have h := htri (lastThree c) h3
+      simp only [lastThree, Bool.or_eq_true] at h
+      simp only [Clause5.eval, Bool.or_eq_true]
+      rcases h with (hc | hd) | he
+      · exact Or.inl (Or.inl (Or.inr hc))
+      · exact Or.inl (Or.inr hd)
+      · exact Or.inr he
+    · rcases hlk with ⟨hi, hij, ho⟩ | ⟨hi, hij, ho⟩ | ⟨hi, hp, ho⟩ | ⟨hi, hp, ho⟩ |
+        ⟨hi, hp, ho⟩ | ⟨hi, hp, ho⟩ | ⟨hij, ho⟩ | ⟨hij, ho⟩
+      · have h := hlink.aLow c.l₁.var c.l₃.var hi hij
+        cases hp1 : c.l₁.pos <;> cases hp3 : c.l₃.pos <;> cases hv : w₁ c.l₃.var <;>
+          simp_all [Clause5.eval, Lit.eval]
+      · have h := hlink.bLow c.l₂.var c.l₃.var hi hij
+        cases hp2 : c.l₂.pos <;> cases hp3 : c.l₃.pos <;> cases hv : w₁ c.l₃.var <;>
+          simp_all [Clause5.eval, Lit.eval]
+      · have h := hlink.aPad c.l₁.var hi
+        simp_all [Clause5.eval, Lit.eval]
+      · have h := hlink.aPad c.l₁.var hi
+        simp_all [Clause5.eval, Lit.eval]
+      · have h := hlink.bPad c.l₂.var hi
+        simp_all [Clause5.eval, Lit.eval]
+      · have h := hlink.bPad c.l₂.var hi
+        simp_all [Clause5.eval, Lit.eval]
+      · have h := hlink.w12 c.l₃.var c.l₄.var hij
+        cases hp3 : c.l₃.pos <;> cases hp4 : c.l₄.pos <;> cases hv : w₂ c.l₄.var <;>
+          simp_all [Clause5.eval, Lit.eval]
+      · have h := hlink.w23 c.l₄.var c.l₅.var hij
+        cases hp4 : c.l₄.pos <;> cases hp5 : c.l₅.pos <;> cases hv : w₃ c.l₅.var <;>
+          simp_all [Clause5.eval, Lit.eval]
+
 end MIPRE.TM.CookLevin.Desc
