@@ -664,6 +664,7 @@ import MIPRE.TM.CookLevin.AnsEnd
 import MIPRE.TM.CookLevin.Assemble
 import MIPRE.TM.CookLevin.Correct
 import MIPRE.TM.CookLevin.Decoupled
+import MIPRE.TM.CookLevin.DecoupledProg
 import MIPRE.TM.CookLevin.DescProg
 import MIPRE.TM.CookLevin.Describer
 import MIPRE.TM.CookLevin.Families
