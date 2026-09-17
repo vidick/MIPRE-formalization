@@ -74,4 +74,79 @@ theorem lOf_spec (T : ℕ) (hT : 1 ≤ T) : 2 * T ≤ 2 ^ lOf T ∧ 2 ^ lOf T < 
     rw [if_neg hany, hk1, pow_succ, pow_succ]
     omega
 
+/-! ## `ℓ₀` as a program -/
+
+noncomputable def orBoolP : PolyTimeFun (Bool × Bool) Bool :=
+  PolyTimeFun.ite fst (const true) snd
+
+@[simp] theorem orBoolP_apply (p : Bool × Bool) : orBoolP p = (p.1 || p.2) := by
+  cases hp : p.1 <;> simp [orBoolP, hp]
+
+theorem foldl_or_eq_any : ∀ (l : BitStr) (s : Bool),
+    l.foldl (fun x a => x || a) s = (s || l.any id)
+  | [], s => by simp
+  | a :: l, s => by
+    rw [List.foldl_cons, foldl_or_eq_any l, List.any_cons]
+    cases s <;> cases a <;> simp
+
+/-- Whether a bit string has a set bit. -/
+noncomputable def anyTrueP : PolyTimeFun BitStr Bool :=
+  PolyTimeFun.congr ((foldlAdd orBoolP (Polynomial.C 3) (by
+      intro s a
+      cases s <;> cases a <;> simp)).comp ((PolyTimeFun.id _).pair (const false)))
+    (fun l => l.any id) (by
+      intro l
+      simp only [comp_apply, foldlAdd_apply, pair_apply, PolyTimeFun.id_apply, const_apply,
+        orBoolP_apply]
+      rw [foldl_or_eq_any l false]
+      simp)
+
+@[simp] theorem anyTrueP_apply (l : BitStr) : anyTrueP l = l.any id := rfl
+
+theorem length_tail_unary (n : ℕ) : ((unary n).tail).length = n - 1 := by
+  rw [List.length_tail, length_unary]
+
+/-- Dropping the last entry of a list. -/
+noncomputable def dropLastP {α : Type*} [SizedEncoding α] : PolyTimeFun (List α) (List α) :=
+  PolyTimeFun.congr (ap₂ take (PolyTimeFun.id _) (ap₁ tail length)) List.dropLast (by
+    intro l
+    simp only [ap₂_apply, take_apply, PolyTimeFun.id_apply, ap₁_apply, tail_apply, length_apply,
+      length_tail_unary]
+    rw [List.dropLast_eq_take])
+
+@[simp] theorem dropLastP_apply {α : Type*} [SizedEncoding α] (l : List α) :
+    dropLastP l = l.dropLast := rfl
+
+/-- `ℓ₀`, in unary. -/
+noncomputable def lOfU : PolyTimeFun ℕ Unary :=
+  PolyTimeFun.ite (anyTrueP.comp (dropLastP.comp PolyTimeFun.natBits))
+    (ap₂ addU sizeU (const (unary 1))) sizeU
+
+@[simp] theorem length_lOfU (T : ℕ) : (lOfU T).length = lOf T := by
+  rw [lOfU, PolyTimeFun.ite_apply, lOf]
+  have hc : (anyTrueP.comp (dropLastP.comp PolyTimeFun.natBits)) T = T.bits.dropLast.any id :=
+    rfl
+  rw [hc]
+  cases h : T.bits.dropLast.any id
+  · simp
+  · simp
+
+/-- `ℓ₀`. -/
+noncomputable def lOfN : PolyTimeFun ℕ ℕ := ap₁ unaryToBin lOfU
+
+@[simp] theorem lOfN_apply (T : ℕ) : lOfN T = lOf T := by
+  rw [lOfN, ap₁_apply, unaryToBin_apply, length_lOfU]
+
+/-! ## Padding a field, as a program -/
+
+noncomputable def padToP : PolyTimeFun (Unary × List Fml) (List Fml) :=
+  PolyTimeFun.congr (ap₂ append snd (ap₂ replicate (ap₂ drop fst (ap₁ length snd))
+      (const (Fml.const false))))
+    (fun p => Fml.padTo p.1.length p.2) (by
+      rintro ⟨u, fs⟩
+      simp only [ap₂_apply, ap₁_apply, append_apply, replicate_apply, drop_apply, snd_apply,
+        fst_apply, length_apply, length_unary, List.length_drop, Fml.padTo, const_apply])
+
+@[simp] theorem padToP_apply (p : Unary × List Fml) : padToP p = Fml.padTo p.1.length p.2 := rfl
+
 end MIPRE.TM.CookLevin.Desc

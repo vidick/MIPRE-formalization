@@ -80,9 +80,9 @@ noncomputable def bitsData : PolyTimeFun BitStr Data :=
 
 /-- `tabsOf`: the value formulas of the five fixed tapes. -/
 noncomputable def tabsR (eu : PolyTimeFun ι Unary) (TR : PolyTimeFun ι ℕ)
-    (DR : PolyTimeFun ι Prog) (nR : PolyTimeFun ι ℕ) (xR yR : PolyTimeFun ι BitStr) :
-    PolyTimeFun ι (List (ℕ × Fml)) :=
-  let A := litFieldsR eu TR (const [])
+    (b : PolyTimeFun ι Unary) (DR : PolyTimeFun ι Prog) (nR : PolyTimeFun ι ℕ)
+    (xR yR : PolyTimeFun ι BitStr) : PolyTimeFun ι (List (ℕ × Fml)) :=
+  let A := litFieldsR eu TR b
   listOf [
     (const 0).pair (cellValR eu A (ap₁ codesP (ap₁ PolyTimeFun.progData DR))),
     (const 1).pair (cellValR eu A (ap₁ codesP (ap₁ PolyTimeFun.natData nR))),
@@ -91,14 +91,13 @@ noncomputable def tabsR (eu : PolyTimeFun ι Unary) (TR : PolyTimeFun ι ℕ)
     (const 4).pair (cellValR eu A (ap₁ codesP (ap₁ bitsData yR)))]
 
 theorem tabsR_apply (eu : PolyTimeFun ι Unary) (TR : PolyTimeFun ι ℕ)
-    (DR : PolyTimeFun ι Prog) (nR : PolyTimeFun ι ℕ) (xR yR : PolyTimeFun ι BitStr) (i : ι) :
-    tabsR eu TR DR nR xR yR i =
+    (b : PolyTimeFun ι Unary) (DR : PolyTimeFun ι Prog) (nR : PolyTimeFun ι ℕ)
+    (xR yR : PolyTimeFun ι BitStr) (i : ι) :
+    tabsR eu TR b DR nR xR yR i =
       tabsOf (eu i).length (TR i) (DR i) (nR i) (xR i) (yR i)
-        (litFields (eu i).length Gc (TR i) 0) := by
-  have hA : (litFieldsR eu TR (const []) : FieldsR ι).ev i =
-      litFields (eu i).length Gc (TR i) 0 := by
-    rw [litFieldsR_ev]
-    rfl
+        (litFields (eu i).length Gc (TR i) (b i).length) := by
+  have hA : (litFieldsR eu TR b : FieldsR ι).ev i =
+      litFields (eu i).length Gc (TR i) (b i).length := litFieldsR_ev eu TR b i
   simp only [tabsR, listOf_apply, List.map_cons, List.map_nil, pair_apply, const_apply,
     ap₁_apply, cellValR_apply, unaryValR_apply, codesP_apply, bitsData_apply, hA, tabsOf]
   rfl
@@ -125,7 +124,7 @@ noncomputable def yI : PolyTimeFun DInp BitStr := ap₁ snd (ap₁ snd snd)
 
 /-- `descFml`, as a program. -/
 noncomputable def descFmlP : PolyTimeFun DInp Fml :=
-  tableauPlusR euI TI (candR euI TI) (tabsR euI TI DI nI xI yI) (const [5, 6])
+  tableauPlusR euI TI (candR euI TI) (tabsR euI TI (const []) DI nI xI yI) (const [5, 6])
 
 theorem descFmlP_apply (p : DInp) :
     descFmlP p = descFml p.1.1.length p.1.2 p.2.1.1 p.2.1.2 p.2.2.1 p.2.2.2 := by

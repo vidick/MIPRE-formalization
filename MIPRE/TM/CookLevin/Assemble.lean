@@ -178,16 +178,30 @@ which is why the bound is computable without any arithmetic on numbers. -/
 def rParam (n T Q σ : ℕ) : ℕ :=
   Nat.size (Nat.size n) + Nat.size (Nat.size T) + Nat.size Q + Nat.size σ
 
-/-- The time bound of the describer at a linear majorant of the size of its input. -/
-noncomputable def gatePoly : Polynomial ℕ :=
-  describeSize.comp (Polynomial.C 21 * Polynomial.X + Polynomial.C 10)
+/-! ### Rounding a polynomial bound up to a power of two
 
-noncomputable def gateK : ℕ := gatePoly.natDegree
-noncomputable def gateA : ℕ := ∑ i ∈ Finset.range (gateK + 1), gatePoly.coeff i
-noncomputable def gateC : ℕ := Nat.size (gateA * 5 ^ gateK)
+Item 5 asks for the gate bound to be computable in time polynomial in the *bit lengths* of
+the parameters, while item 3 lets it grow polynomially in `Q` and `σ` themselves. So the
+bound is a number of about `log Q + log σ` bits that depends polynomially on `Q`, and
+computing it looks as though it needs binary multiplication, which the ambient model does not
+have. `roundUp P` is the way out: a power of two whose exponent is a multiple of `rParam`, so
+that the exponent is unary and the value is `pow2P` on it. It is squeezed between `P` and a
+polynomial, which is `le_roundUp` and `roundUp_le`. -/
 
-/-- The gate bound `s(n, T, Q, σ)`, rounded up to a power of two. -/
-noncomputable def sParam (n T Q σ : ℕ) : ℕ := 2 ^ (gateK * rParam n T Q σ + gateC)
+/-- The degree of a polynomial bound. -/
+noncomputable def roundK (P : Polynomial ℕ) : ℕ := P.natDegree
+
+/-- The coefficient sum of a polynomial bound. -/
+noncomputable def roundA (P : Polynomial ℕ) : ℕ :=
+  ∑ i ∈ Finset.range (P.natDegree + 1), P.coeff i
+
+/-- The additive constant of the rounded bound. -/
+noncomputable def roundC (P : Polynomial ℕ) : ℕ := Nat.size (roundA P * 5 ^ roundK P)
+
+/-- **A polynomial bound, rounded up to a power of two** whose exponent is a multiple of the
+bit lengths of the parameters. -/
+noncomputable def roundUp (P : Polynomial ℕ) (n T Q σ : ℕ) : ℕ :=
+  2 ^ (roundK P * rParam n T Q σ + roundC P)
 
 theorem L_lt (n T Q σ : ℕ) : LOf n T Q σ + 1 ≤ 5 * 2 ^ rParam n T Q σ := by
   have h0 : 0 < (2 : ℕ) ^ rParam n T Q σ := Nat.two_pow_pos _
@@ -202,25 +216,25 @@ theorem L_lt (n T Q σ : ℕ) : LOf n T Q σ + 1 ≤ 5 * 2 ^ rParam n T Q σ := 
   unfold LOf
   omega
 
-/-- **The gate bound dominates the time bound**: this is what makes `s` an upper bound on the
-number of gates. -/
-theorem gatePoly_le (n T Q σ : ℕ) : gatePoly.eval (LOf n T Q σ) ≤ sParam n T Q σ := by
-  have h1 : gatePoly.eval (LOf n T Q σ) ≤ gatePoly.eval (LOf n T Q σ + 1) :=
+/-- **The rounded bound dominates the polynomial.** -/
+theorem le_roundUp (P : Polynomial ℕ) (n T Q σ : ℕ) :
+    P.eval (LOf n T Q σ) ≤ roundUp P n T Q σ := by
+  have h1 : P.eval (LOf n T Q σ) ≤ P.eval (LOf n T Q σ + 1) :=
     polynomial_eval_mono _ (by omega)
-  have h2 : gatePoly.eval (LOf n T Q σ + 1) ≤ gateA * (LOf n T Q σ + 1) ^ gateK :=
-    polynomial_eval_le_sum_coeff_mul_pow gatePoly (by omega)
-  have h3 : (LOf n T Q σ + 1) ^ gateK ≤ (5 * 2 ^ rParam n T Q σ) ^ gateK :=
+  have h2 : P.eval (LOf n T Q σ + 1) ≤ roundA P * (LOf n T Q σ + 1) ^ roundK P :=
+    polynomial_eval_le_sum_coeff_mul_pow P (by omega)
+  have h3 : (LOf n T Q σ + 1) ^ roundK P ≤ (5 * 2 ^ rParam n T Q σ) ^ roundK P :=
     Nat.pow_le_pow_left (L_lt n T Q σ) _
-  have h4 : ((5 * 2 ^ rParam n T Q σ) ^ gateK : ℕ) =
-      5 ^ gateK * 2 ^ (gateK * rParam n T Q σ) := by
-    rw [mul_pow, ← pow_mul, Nat.mul_comm gateK]
-  have h5 : gateA * 5 ^ gateK < 2 ^ gateC := Nat.lt_size_self _
-  calc gatePoly.eval (LOf n T Q σ) ≤ gateA * (LOf n T Q σ + 1) ^ gateK := h1.trans h2
-    _ ≤ gateA * (5 ^ gateK * 2 ^ (gateK * rParam n T Q σ)) := by
+  have h4 : ((5 * 2 ^ rParam n T Q σ) ^ roundK P : ℕ) =
+      5 ^ roundK P * 2 ^ (roundK P * rParam n T Q σ) := by
+    rw [mul_pow, ← pow_mul, Nat.mul_comm (roundK P)]
+  have h5 : roundA P * 5 ^ roundK P < 2 ^ roundC P := Nat.lt_size_self _
+  calc P.eval (LOf n T Q σ) ≤ roundA P * (LOf n T Q σ + 1) ^ roundK P := h1.trans h2
+    _ ≤ roundA P * (5 ^ roundK P * 2 ^ (roundK P * rParam n T Q σ)) := by
         rw [← h4]; exact Nat.mul_le_mul_left _ h3
-    _ = gateA * 5 ^ gateK * 2 ^ (gateK * rParam n T Q σ) := by ring
-    _ ≤ 2 ^ gateC * 2 ^ (gateK * rParam n T Q σ) := Nat.mul_le_mul_right _ h5.le
-    _ = sParam n T Q σ := by rw [sParam, pow_add, Nat.mul_comm]
+    _ = roundA P * 5 ^ roundK P * 2 ^ (roundK P * rParam n T Q σ) := by ring
+    _ ≤ 2 ^ roundC P * 2 ^ (roundK P * rParam n T Q σ) := Nat.mul_le_mul_right _ h5.le
+    _ = roundUp P n T Q σ := by rw [roundUp, pow_add, Nat.mul_comm]
 
 theorem two_pow_rParam_le (n T Q σ : ℕ) :
     2 ^ rParam n T Q σ ≤ (2 * LOf n T Q σ + 1) ^ 4 := by
@@ -247,25 +261,39 @@ theorem two_pow_rParam_le (n T Q σ : ℕ) :
       (2 * LOf n T Q σ + 1) * (2 * LOf n T Q σ + 1) by ring]
   exact Nat.mul_le_mul (Nat.mul_le_mul (Nat.mul_le_mul b1 b2) b3) b4
 
-/-- The polynomial of item 3: `s` is at most a polynomial in `⌈log n⌉ + ⌈log T⌉ + Q + σ`. -/
-noncomputable def sPoly : Polynomial ℕ :=
-  Polynomial.C (2 ^ gateC) *
-    (Polynomial.C 2 * Polynomial.X + Polynomial.C 1) ^ (4 * gateK)
+/-- The polynomial the rounded bound stays inside. -/
+noncomputable def roundPoly (P : Polynomial ℕ) : Polynomial ℕ :=
+  Polynomial.C (2 ^ roundC P) *
+    (Polynomial.C 2 * Polynomial.X + Polynomial.C 1) ^ (4 * roundK P)
 
-theorem sParam_le (n T Q σ : ℕ) : sParam n T Q σ ≤ sPoly.eval (LOf n T Q σ) := by
-  have h2 : (2 : ℕ) ^ (gateK * rParam n T Q σ) = (2 ^ rParam n T Q σ) ^ gateK := by
+/-- **The rounded bound is still polynomial.** -/
+theorem roundUp_le (P : Polynomial ℕ) (n T Q σ : ℕ) :
+    roundUp P n T Q σ ≤ (roundPoly P).eval (LOf n T Q σ) := by
+  have h2 : (2 : ℕ) ^ (roundK P * rParam n T Q σ) = (2 ^ rParam n T Q σ) ^ roundK P := by
     rw [← pow_mul, Nat.mul_comm]
-  have h3 : ((2 ^ rParam n T Q σ) ^ gateK : ℕ) ≤ ((2 * LOf n T Q σ + 1) ^ 4) ^ gateK :=
+  have h3 : ((2 ^ rParam n T Q σ) ^ roundK P : ℕ) ≤ ((2 * LOf n T Q σ + 1) ^ 4) ^ roundK P :=
     Nat.pow_le_pow_left (two_pow_rParam_le n T Q σ) _
-  have h4 : (((2 * LOf n T Q σ + 1) ^ 4) ^ gateK : ℕ) = (2 * LOf n T Q σ + 1) ^ (4 * gateK) := by
-    rw [← pow_mul]
-  have heval : sPoly.eval (LOf n T Q σ) =
-      2 ^ gateC * (2 * LOf n T Q σ + 1) ^ (4 * gateK) := by
-    rw [sPoly]
+  have h4 : (((2 * LOf n T Q σ + 1) ^ 4) ^ roundK P : ℕ) =
+      (2 * LOf n T Q σ + 1) ^ (4 * roundK P) := by rw [← pow_mul]
+  have heval : (roundPoly P).eval (LOf n T Q σ) =
+      2 ^ roundC P * (2 * LOf n T Q σ + 1) ^ (4 * roundK P) := by
+    rw [roundPoly]
     simp only [Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_add,
       Polynomial.eval_X]
-  rw [heval, sParam, pow_add, Nat.mul_comm (2 ^ (gateK * rParam n T Q σ))]
+  rw [heval, roundUp, pow_add, Nat.mul_comm (2 ^ (roundK P * rParam n T Q σ))]
   exact Nat.mul_le_mul_left _ (by rw [h2, ← h4]; exact h3)
+
+/-! ### The gate bound of the describer -/
+
+/-- The time bound of the describer at a linear majorant of the size of its input. -/
+noncomputable def gatePoly : Polynomial ℕ :=
+  describeSize.comp (Polynomial.C 21 * Polynomial.X + Polynomial.C 10)
+
+/-- The gate bound `s(n, T, Q, σ)`, rounded up to a power of two. -/
+noncomputable def sParam (n T Q σ : ℕ) : ℕ := roundUp gatePoly n T Q σ
+
+theorem sParam_le (n T Q σ : ℕ) :
+    sParam n T Q σ ≤ (roundPoly gatePoly).eval (LOf n T Q σ) := roundUp_le gatePoly n T Q σ
 
 /-- **The describer has at most `s` gates** (item 3). -/
 theorem describeCirc_size_le (D : Prog) (n T Q σ : ℕ) (x y : BitStr)
@@ -279,7 +307,7 @@ theorem describeCirc_size_le (D : Prog) (n T Q σ : ℕ) (x y : BitStr)
   have h3 : describeSize.eval (21 * LOf n T Q σ + 10) = gatePoly.eval (LOf n T Q σ) := by
     rw [gatePoly, Polynomial.eval_comp]
     simp
-  exact ((h1.trans h2).trans (le_of_eq h3)).trans (gatePoly_le n T Q σ)
+  exact ((h1.trans h2).trans (le_of_eq h3)).trans (le_roundUp gatePoly n T Q σ)
 
 /-! ## The parameters as programs (item 5) -/
 
@@ -302,11 +330,12 @@ noncomputable def rProg : PolyTimeFun (ℕ × ℕ × ℕ × ℕ) Unary :=
 /-- `sParam`, as a program: a power of two whose exponent is unary, so no arithmetic on
 numbers is needed. -/
 noncomputable def sProg : PolyTimeFun (ℕ × ℕ × ℕ × ℕ) ℕ :=
-  ap₁ pow2P (ap₂ addU (ap₁ (nsmulU gateK) rProg) (const (unary gateC)))
+  ap₁ pow2P (ap₂ addU (ap₁ (nsmulU (roundK gatePoly)) rProg)
+    (const (unary (roundC gatePoly))))
 
 theorem sProg_apply (p : ℕ × ℕ × ℕ × ℕ) : sProg p = sParam p.1 p.2.1 p.2.2.1 p.2.2.2 := by
   rw [sProg, ap₁_apply, pow2P_apply, ap₂_apply, length_addU, ap₁_apply, length_nsmulU,
-    length_rProg, const_apply, length_unary, sParam]
+    length_rProg, const_apply, length_unary, sParam, roundUp]
 
 end MIPRE.TM.CookLevin.Desc
 
@@ -326,7 +355,7 @@ noncomputable def succinctCookLevin : SuccinctCookLevin where
   sProg_eq n T Q σ := sProg_apply (n, T, Q, σ)
   m_le := ⟨431 + Qb + Gb Gc + 75, mParam_le⟩
   four_mul_le T σ := four_T_le_m T σ
-  s_le := ⟨sPoly, fun n T Q σ => sParam_le n T Q σ⟩
+  s_le := ⟨roundPoly gatePoly, fun n T Q σ => sParam_le n T Q σ⟩
   inputs_eq D n T Q σ x y := by
     rw [describeCirc_apply]
     exact descCirc_inputs _ _ _ _ _ _
