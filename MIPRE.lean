@@ -665,6 +665,7 @@ import MIPRE.TM.CookLevin.FieldFml
 import MIPRE.TM.CookLevin.Kinds
 import MIPRE.TM.CookLevin.Layout
 import MIPRE.TM.CookLevin.Local
+import MIPRE.TM.CookLevin.Params
 import MIPRE.TM.CookLevin.Semantics
 import MIPRE.TM.CookLevin.Sound
 import MIPRE.TM.CookLevin.Tableau
