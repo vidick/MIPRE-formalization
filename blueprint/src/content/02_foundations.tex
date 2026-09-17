@@ -211,6 +211,41 @@ and the \emph{commuting value} of $\game$ is $\valco(\game) = \sup_\strategy
 \end{definition}
 
 
+\begin{lemma}[A perfect strategy rejects nothing on the support]
+\label{lem:perfect-rejects-nothing}
+\uses{def:commuting-value,def:sync-value}
+\lean{MIPRE.sum_re_tracial, MIPRE.re_nonneg_tracial,
+  MIPRE.re_eq_zero_of_tracialValue_eq_one, MIPRE.SyncStrategy.value_eq_tracialValue,
+  MIPRE.SyncStrategy.re_eq_zero_of_value_eq_one}
+\leanok
+Let $\game$ be a synchronous game, $\tau$ a tracial state and $M$ a family of projective
+measurements with $\valco(\game, M) = 1$. Then $\tau(M^x_a M^y_b) = 0$ whenever
+$\mu(x,y) > 0$ and $D(x,y,a,b) = 0$. In particular a value-$1$ synchronous strategy has
+$\mathrm{Tr}(M^x_a M^y_b) = 0$ at every rejected answer pair of every question pair the verifier asks.
+\end{lemma}
+
+\begin{proof}
+\leanok
+At a fixed question pair the outcome probabilities sum to one, $\sum_{a,b} \tau(M^x_a M^y_b)
+= \tau(1) = 1$, and each is nonnegative; this is why the value is at most one. The value is
+the same sum with the rejected terms deleted, so equality with $1$ forces each deleted term to
+vanish, and $\mu(x,y) > 0$ cancels.
+\end{proof}
+
+\paragraph{Comments.} Every completeness argument in the pipeline needs this step --- a
+strategy of value $1$ does not merely win on average, it assigns probability zero to each
+rejected answer at each question actually asked --- and it was used implicitly inside the proof
+that the value is at most one, without being available as a lemma. It is stated at the generic
+tracial level, so it serves synchronous and commuting strategies alike.
+
+Two formalization notes. The instance set of the ambient algebra must be exactly the
+$[\mathrm{Ring}]\,[\mathrm{StarRing}]\,[\mathrm{Module}\ \mathbb{C}]$ of
+Definition~\ref{def:commuting-strategy}: demanding a normed algebra instead sends the
+elaborator looking for a normed-algebra instance on matrices at every application, which is a
+\texttt{whnf} timeout. And the application to a synchronous strategy goes through the named
+\texttt{value\_eq\_tracialValue} rather than letting the unifier see through
+\texttt{SyncStrategy.value}, for the same reason.
+
 \begin{definition}[Entanglement requirement]
 \label{def:ent}
 \uses{def:sync-value}
