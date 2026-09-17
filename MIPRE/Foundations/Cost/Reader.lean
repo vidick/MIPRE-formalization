@@ -1,0 +1,125 @@
+/-
+Copyright (c) 2026 Thomas Vidick. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Thomas Vidick
+-/
+import MIPRE.Foundations.Cost.Fold
+
+/-!
+# Programs as readers of a shared input
+
+A program built by composition out of `comp`, `pair`, `fst` and `snd` is written point-free,
+and a point-free term for a formula of forty conjuncts is unreadable. This file gives the
+applicative reading instead: a `PolyTimeFun ι α` is a *reader* of the shared input `ι`, and
+`ap₁`, `ap₂`, `ap₃` and `listOf` apply a program to readers. In that style a program
+transcribes its mathematical definition line for line, and its `toFun` is definitionally the
+function it transcribes, so the `congr` that names it closes by `rfl`.
+
+Also here, because they are the list operations the describer's programs need and they are
+generic: `take`, `tail`, `headD` and `nthD` (`planning/succinct-cook-levin.md`, S3).
+-/
+
+namespace MIPRE.Cost.PolyTimeFun
+
+variable {ι α β γ δ : Type*} [SizedEncoding ι] [SizedEncoding α] [SizedEncoding β]
+  [SizedEncoding γ] [SizedEncoding δ]
+
+/-! ## Applying a program to readers -/
+
+/-- Apply a one-argument program to a reader. -/
+noncomputable def ap₁ (F : PolyTimeFun α β) (f : PolyTimeFun ι α) : PolyTimeFun ι β := F.comp f
+
+@[simp] theorem ap₁_apply (F : PolyTimeFun α β) (f : PolyTimeFun ι α) (i : ι) :
+    ap₁ F f i = F (f i) := rfl
+
+/-- Apply a two-argument program to two readers. -/
+noncomputable def ap₂ (F : PolyTimeFun (α × β) γ) (f : PolyTimeFun ι α) (g : PolyTimeFun ι β) :
+    PolyTimeFun ι γ := F.comp (f.pair g)
+
+@[simp] theorem ap₂_apply (F : PolyTimeFun (α × β) γ) (f : PolyTimeFun ι α)
+    (g : PolyTimeFun ι β) (i : ι) : ap₂ F f g i = F (f i, g i) := rfl
+
+/-- Apply a three-argument program to three readers. -/
+noncomputable def ap₃ (F : PolyTimeFun (α × β × γ) δ) (f : PolyTimeFun ι α)
+    (g : PolyTimeFun ι β) (h : PolyTimeFun ι γ) : PolyTimeFun ι δ :=
+  F.comp (f.pair (g.pair h))
+
+@[simp] theorem ap₃_apply (F : PolyTimeFun (α × β × γ) δ) (f : PolyTimeFun ι α)
+    (g : PolyTimeFun ι β) (h : PolyTimeFun ι γ) (i : ι) : ap₃ F f g h i = F (f i, g i, h i) := rfl
+
+/-- A two-argument program with its left argument curried away: the reader `f` of the shared
+input supplies it. -/
+noncomputable def ap₂' (F : PolyTimeFun (α × β) γ) (f : PolyTimeFun ι α) :
+    PolyTimeFun (ι × β) γ :=
+  F.comp ((f.comp fst).pair snd)
+
+@[simp] theorem ap₂'_apply (F : PolyTimeFun (α × β) γ) (f : PolyTimeFun ι α) (p : ι × β) :
+    ap₂' F f p = F (f p.1, p.2) := rfl
+
+/-- A list of readers as a reader of the list of their values. -/
+noncomputable def listOf : List (PolyTimeFun ι α) → PolyTimeFun ι (List α)
+  | [] => const []
+  | f :: fs => f.cons (listOf fs)
+
+@[simp] theorem listOf_apply : ∀ (fs : List (PolyTimeFun ι α)) (i : ι),
+    listOf fs i = fs.map fun f => f i
+  | [], _ => rfl
+  | f :: fs, i => by rw [listOf, cons_apply, listOf_apply fs i, List.map_cons]
+
+/-! ## Prefixes, tails and heads -/
+
+omit [SizedEncoding α] in
+theorem map_fst_zip : ∀ (l : List α) (u : Unary), (l.zip u).map Prod.fst = l.take u.length
+  | [], u => by simp
+  | _ :: _, [] => by simp
+  | a :: l, () :: u => by
+    rw [List.zip_cons_cons, List.map_cons, map_fst_zip l u, List.length_cons, List.take_succ_cons]
+
+/-- Taking a prefix, the length in unary. -/
+noncomputable def take : PolyTimeFun (List α × Unary) (List α) :=
+  congr ((map fst).comp zip) (fun p => p.1.take p.2.length) (by
+    intro p
+    simp only [comp_apply, map_apply, zip_apply]
+    exact map_fst_zip p.1 p.2)
+
+@[simp] theorem take_apply (p : List α × Unary) :
+    (take : PolyTimeFun (List α × Unary) (List α)) p = p.1.take p.2.length := rfl
+
+/-- The tail of a list. -/
+noncomputable def tail : PolyTimeFun (List α) (List α) :=
+  congr ((casesList (const []) (snd.comp snd)).comp ((const ()).pair (PolyTimeFun.id _)))
+    List.tail (by
+      intro l
+      cases l with
+      | nil => rfl
+      | cons _ _ => rfl)
+
+@[simp] theorem tail_apply (l : List α) : (tail : PolyTimeFun (List α) (List α)) l = l.tail := rfl
+
+/-- The head of a list, or a default. -/
+noncomputable def headD (d : α) : PolyTimeFun (List α) α :=
+  congr ((casesList (const d) (fst.comp snd)).comp ((const ()).pair (PolyTimeFun.id _)))
+    (fun l => l.headD d) (by
+      intro l
+      cases l with
+      | nil => rfl
+      | cons _ _ => rfl)
+
+@[simp] theorem headD_apply (d : α) (l : List α) : headD d l = l.headD d := rfl
+
+/-- The `k`-th entry of a list, or a default. -/
+noncomputable def nthD (d : α) : ℕ → PolyTimeFun (List α) α
+  | 0 => headD d
+  | k + 1 => (nthD d k).comp tail
+
+@[simp] theorem nthD_apply : ∀ (d : α) (k : ℕ) (l : List α), nthD d k l = l.getD k d
+  | d, 0, [] => rfl
+  | d, 0, _ :: _ => rfl
+  | d, k + 1, [] => by
+    rw [nthD, comp_apply, tail_apply, List.tail_nil, nthD_apply d k []]
+    simp
+  | d, k + 1, a :: l => by
+    rw [nthD, comp_apply, tail_apply, List.tail_cons, nthD_apply d k l]
+    simp [List.getD_eq_getElem?_getD]
+
+end MIPRE.Cost.PolyTimeFun

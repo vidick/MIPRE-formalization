@@ -6,6 +6,7 @@ Authors: Thomas Vidick
 import MIPRE.Foundations.SAT.FmlLib
 import MIPRE.Foundations.SAT.Flatten
 import MIPRE.Foundations.Cost.Fold
+import MIPRE.Foundations.Cost.Reader
 
 /-!
 # The formula builders as programs
@@ -535,48 +536,6 @@ noncomputable def addConstRelP : PolyTimeFun ((List Fml × List Fml) × BitStr) 
 @[simp] theorem addConstRelP_apply (p : (List Fml × List Fml) × BitStr) :
     addConstRelP p = Fml.addConstRel p.1.1 p.1.2 p.2 := rfl
 
-/-! ## Prefixes, tails and heads -/
-
-theorem map_fst_zip {α : Type*} : ∀ (l : List α) (u : Unary),
-    (l.zip u).map Prod.fst = l.take u.length
-  | [], u => by simp
-  | a :: l, [] => by simp
-  | a :: l, () :: u => by
-    rw [List.zip_cons_cons, List.map_cons, map_fst_zip l u, List.length_cons, List.take_succ_cons]
-
-/-- Taking a prefix, the length in unary. -/
-noncomputable def takeP {α : Type*} [SizedEncoding α] : PolyTimeFun (List α × Unary) (List α) :=
-  congr ((map fst).comp zip) (fun p => p.1.take p.2.length) (by
-    intro p
-    simp only [comp_apply, map_apply, zip_apply]
-    exact map_fst_zip p.1 p.2)
-
-@[simp] theorem takeP_apply {α : Type*} [SizedEncoding α] (p : List α × Unary) :
-    takeP p = p.1.take p.2.length := rfl
-
-/-- The tail of a list. -/
-noncomputable def tailP {α : Type*} [SizedEncoding α] : PolyTimeFun (List α) (List α) :=
-  congr ((casesList (const []) (snd.comp snd)).comp ((const ()).pair (PolyTimeFun.id _)))
-    List.tail (by
-      intro l
-      cases l with
-      | nil => rfl
-      | cons a l => rfl)
-
-@[simp] theorem tailP_apply {α : Type*} [SizedEncoding α] (l : List α) : tailP l = l.tail := rfl
-
-/-- The head of a list of formulas, or the constant `false`. -/
-noncomputable def headDP : PolyTimeFun (List Fml) Fml :=
-  congr ((casesList (const (Fml.const false)) (fst.comp snd)).comp
-      ((const ()).pair (PolyTimeFun.id _)))
-    (fun l => l.headD (Fml.const false)) (by
-      intro l
-      cases l with
-      | nil => rfl
-      | cons a l => rfl)
-
-@[simp] theorem headDP_apply (l : List Fml) : headDP l = l.headD (Fml.const false) := rfl
-
 /-! ## The two's complement -/
 
 /-- The successor on bit strings. -/
@@ -605,9 +564,9 @@ noncomputable def notBoolP : PolyTimeFun Bool Bool :=
 
 /-- `twosComp`. -/
 noncomputable def twosCompP : PolyTimeFun BitStr BitStr :=
-  congr (takeP.comp ((incBitsP.comp (map notBoolP)).pair length)) twosComp (by
+  congr (take.comp ((incBitsP.comp (map notBoolP)).pair length)) twosComp (by
     intro c
-    simp only [comp_apply, takeP_apply, pair_apply, incBitsP_apply, map_apply, length_apply,
+    simp only [comp_apply, take_apply, pair_apply, incBitsP_apply, map_apply, length_apply,
       length_unary]
     rfl)
 
