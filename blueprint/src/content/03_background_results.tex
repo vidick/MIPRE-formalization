@@ -1662,16 +1662,34 @@ elements --- which is the shape a Lean \texttt{axiom} for it should take.
 
 \begin{lemma}[Schwartz--Zippel]
 \label{lem:schwartz-zippel}
+\lean{MIPRE.LowDegree.agree, MIPRE.LowDegree.prob_agree_le_totalDegree,
+  MIPRE.LowDegree.prob_agree_le_individualDegree,
+  MIPRE.LowDegree.card_agree_le_of_natDegree}
+\leanok
 Let $f \neq g : \F_q^m \to \F_q$ be polynomials of total degree at most $d$. Then
 $\Pr_{x \sim \F_q^m}[ f(x) = g(x) ] \leq d/q$.
 \end{lemma}
+
+\begin{proof}
+\leanok
+Mathlib's \texttt{MvPolynomial.schwartz\_zippel\_totalDegree} is the statement for one
+nonzero polynomial and a product of arbitrary finite subsets; apply it to $f - g$ with
+every subset all of $\F_q$.
+\end{proof}
 
 \paragraph{Source.} \cite{Sch80,Zip79}. A version is available in Mathlib
 (multivariate polynomials over finite fields).
 
 \paragraph{Comments.} Used throughout the low-degree machinery (distance of the
-Reed--Muller code, soundness of arithmetization). The variant for individual degree
-should be derived alongside it.
+Reed--Muller code, soundness of arithmetization). Three shapes are formalized, because
+three consumers want three different ones: the probability bound $d/q$ above; the
+individual-degree variant $m d / q$, derived from Mathlib's
+\texttt{schwartz\_zippel\_sum\_degreeOf} rather than through the lossy
+$\text{total degree} \leq m d$; and the univariate case as a count rather than a
+probability --- two distinct polynomials of degree at most $d$ agree at no more than $d$
+points --- which is the form Lemma~\ref{lem:lidt-sync-transfer} uses. The probabilities
+are stated over $\R$, which is where the low-degree machinery's error terms live, rather
+than over Mathlib's $\mathbb{Q}_{\geq 0}$.
 
 \subsection{Approximating the value from below ($\MIPstar \subseteq \RE$)}
 \label{sec:rr-value-approx}
