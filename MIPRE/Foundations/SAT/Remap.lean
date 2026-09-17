@@ -60,6 +60,16 @@ theorem InputsLt.remap {n m : ℕ} (ρ : ℕ → ℕ) (hρ : ∀ i, i < n → ρ
   | or a b, hf => ⟨InputsLt.remap ρ hρ a hf.1, InputsLt.remap ρ hρ b hf.2⟩
   | not a, hf => InputsLt.remap ρ hρ a hf
 
+/-- **A formula reads only the inputs it names**: two assignments agreeing below `n` give it
+the same value. -/
+theorem eval_congr_of_lt {n : ℕ} {x y : ℕ → Bool} (h : ∀ i, i < n → x i = y i) :
+    ∀ f : Fml, f.InputsLt n → f.eval x = f.eval y
+  | inp i, hf => h i hf
+  | const _, _ => rfl
+  | and a b, hf => by rw [eval, eval, eval_congr_of_lt h a hf.1, eval_congr_of_lt h b hf.2]
+  | or a b, hf => by rw [eval, eval, eval_congr_of_lt h a hf.1, eval_congr_of_lt h b hf.2]
+  | not a, hf => by rw [eval, eval, eval_congr_of_lt h a hf]
+
 /-! ## On the post-order list -/
 
 /-- A renaming on nodes: only an input node changes. -/
