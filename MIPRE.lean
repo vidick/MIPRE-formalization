@@ -530,12 +530,14 @@ import MIPRE.Foundations.ClassMIPStar
 import MIPRE.Foundations.CommutingOperator
 import MIPRE.Foundations.Compression
 import MIPRE.Foundations.Cost.Basic
+import MIPRE.Foundations.Cost.Binary
 import MIPRE.Foundations.Cost.BitQuery
 import MIPRE.Foundations.Cost.BoundedEval
 import MIPRE.Foundations.Cost.Clocked
 import MIPRE.Foundations.Cost.Closure
 import MIPRE.Foundations.Cost.Codable
 import MIPRE.Foundations.Cost.Encoding
+import MIPRE.Foundations.Cost.Fold
 import MIPRE.Foundations.Cost.FromPartrec
 import MIPRE.Foundations.Cost.Growth
 import MIPRE.Foundations.Cost.Interpreter
@@ -552,6 +554,7 @@ import MIPRE.Foundations.Cost.Semidecide
 import MIPRE.Foundations.Cost.Succinct
 import MIPRE.Foundations.Cost.Threshold
 import MIPRE.Foundations.Cost.Toolkit
+import MIPRE.Foundations.Cost.TreeBits
 import MIPRE.Foundations.Cost.Unary
 import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Distances
@@ -605,6 +608,7 @@ import MIPRE.Foundations.Repeat.SamplerCost
 import MIPRE.Foundations.SAT.Circuit
 import MIPRE.Foundations.SAT.Cnf
 import MIPRE.Foundations.SAT.Decoupled
+import MIPRE.Foundations.SAT.Formula
 import MIPRE.Foundations.SAT.Succinct
 import MIPRE.Foundations.SAT.Tseitin
 import MIPRE.Foundations.SyncTransport

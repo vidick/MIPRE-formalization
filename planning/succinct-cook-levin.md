@@ -273,5 +273,51 @@ the first machine step that is final, over budget, or the `S`-th). What S3 needs
 check circuit for `checkPred U .one`, from its truth table, and the counts
 `Fintype.card Sym = 5`, `Fintype.card Ctl = 24 · 32 · 10`.
 
-**S3, S4** — not started.
+**S3 — in progress** (design 2026-09-17, after S2). Three decisions, each taken to keep the
+Lean *proof* about plain functions and the *program* generic:
+
+* *The circuit is a formula.* The describer's output is the post-order flattening of a
+  Boolean formula tree (`Fml`: input bits, constants, `and`, `or`, `not`) over the `3m + 3`
+  input bits. A tree has fan-out one at every gate (input bits are read through fresh
+  `input` gates, which `WellFormed` does not count), references only earlier gates, and a
+  terminal output — so well-formedness is a property of the flattener, proved once, and
+  never of the circuit being generated. The price is duplication: a field decoded from an
+  index is recomputed at each use, and a carry chain unrolled into a tree is quadratic in
+  the width. All of it is polynomial in `m`, which is all item 3 asks.
+* *Programs are combinators.* The program layer gets the missing closure combinators —
+  `foldl` over a list with the additive Cobham condition `esize (F (s, a)) ≤ esize s + B (esize a)`
+  (from which `map`, `zip`, `append`, `replicate` and the rest derive), the binary successor,
+  unary-to-binary conversion and the preorder serialization of a tree — and the describer is
+  a combinator expression whose `toFun` *is* the mathematical definition (`List.foldl`,
+  `List.map`, …), so the time bound is automatic and the semantics is proved about the
+  `toFun` only. Two stack-driven programs are written by hand, after `sizeProg`: the
+  flattener (post-order with a value stack of gate indices) and the tree serializer.
+* *The check circuit is a constant, and a large one.* `chk` for `checkPred U 1` is obtained
+  from the existence of a circuit for every Boolean function (a mux tree on the truth
+  table), and its Tseitin clause templates are hardcoded by the program. It has about
+  `2^{winCard}` gates for `winCard ≈ 16000` window bits: an enormous constant, exactly as
+  the paper's `2^{84} · 4^{κ'}` (`lem:pack-check-size`) is, and formally harmless — it
+  enters the gate bound `s` and the running time as constants.
+
+The variable format (`Describer.lean`): index width `m = 24 + 15W + Gb` with `W = e + 2`
+the field width, `S = 2^e` the tableau length for `e = c₁ (⌈log T⌉ + ⌈log σ⌉) + c₂`
+chosen so that `runBound ≤ 2^e` under `Valid` and `|a|, |b| ≤ T`, and `Gb` the width of
+the gate-index field. An index with top bit `1` is *structured*: fields tag (3 bits),
+`t` (W), tape `d` (4), position `p` (W), cell value `v` (3), state `q` (13), the thirteen
+window centers (13 W), gate `g` (Gb); tags `0..6` are cell, head, state, emitOne, emitBad,
+emitted, aux. An index with top bit `0` and value `j < 4T` is an *answer* variable: tape
+`A` for `j < 2T`, else `B`; `r = j mod 2T`; position `r / 2 + 3`; value blank for `r` even,
+`1` for `r` odd — so that the first `4T` variables are `tapeBits` of the two answers, as
+item 1 needs. Decoding is a partial function `decode : Fin (2^m) → Option TabVar`; unused
+fields are not checked, so a tableau variable may have several indices (its canonical one
+`ρ v`, and aliases), which is harmless: the described formula is the union of the images of
+the tableau under all decodings, and an assignment of the tableau extends to the aliases by
+copying. The circuit accepts a clause iff its three literals decode and the decoded clause
+is in `tableau U 0 1 S fixed chk`: the start, free, boundary, emission and final families are
+comparisons of decoded fields with constants (`S`, `2S + 7`, `2S + 5`, `S + 3`, `T + 3`,
+the fixed strings by a lookup table of size `|string| · W`), and the window family is a
+disjunction over the Tseitin templates of `chk`, each instantiated from the `t` and centers
+of the clause's aux literal (every window clause has one).
+
+**S4** — not started.
 
