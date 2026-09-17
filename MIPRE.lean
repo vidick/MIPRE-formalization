@@ -588,6 +588,7 @@ import MIPRE.Foundations.Halting.Strings
 import MIPRE.Foundations.Halting.Tabulate
 import MIPRE.Foundations.Halting.Wrapper
 import MIPRE.Foundations.Halting.WrapperCost
+import MIPRE.Foundations.LowDegree.SchwartzZippel
 import MIPRE.Foundations.Pipeline.AnswerReduction
 import MIPRE.Foundations.Pipeline.Budget
 import MIPRE.Foundations.Pipeline.Compress

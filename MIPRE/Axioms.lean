@@ -3,6 +3,7 @@ Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import MIPRE.Foundations.CL.Basic
+import MIPRE.Foundations.LowDegree.SchwartzZippel
 import MIPRE.Foundations.CL.Closure
 import MIPRE.Foundations.CL.Downsize
 import MIPRE.Foundations.CL.Repeat
@@ -362,3 +363,10 @@ elab "#guard_sorry_free " ids:ident,* : command => do
 -- blueprint `lem:decoupled-5sat`, likewise.
 #guard_sorry_free MIPRE.SAT.DecoupledDescriber,
   MIPRE.SAT.decoupledDescriber
+
+-- blueprint `lem:schwartz-zippel`: the three shapes the low-degree machinery consumes,
+-- all of them Mathlib's lemma specialized.
+#guard_sorry_free MIPRE.LowDegree.agree,
+  MIPRE.LowDegree.prob_agree_le_totalDegree,
+  MIPRE.LowDegree.prob_agree_le_individualDegree,
+  MIPRE.LowDegree.card_agree_le_of_natDegree
