@@ -288,4 +288,87 @@ theorem sat_formula5_iff (ℓ T e : ℕ) (D : Prog) (n : ℕ) (x y : BitStr)
         cases hp4 : c.l₄.pos <;> cases hp5 : c.l₅.pos <;> cases hv : w₃ c.l₅.var <;>
           simp_all [Clause5.eval, Lit.eval]
 
+/-! ## The padding of an answer block -/
+
+/-- Past twice the length of the string, a tape block is the blank cell `10`: `true` at even
+positions and `false` at odd ones. This is the parity the audit campaign repaired, and it is
+what rows 4 to 7 assert. -/
+theorem tapeBits_of_ge {s : BitStr} {T p : ℕ} (hs : s.length ≤ T) (hp : 2 * T ≤ p) :
+    tapeBits s p = decide (p % 2 = 0) := by
+  have hnone : s[p / 2]? = none := List.getElem?_eq_none (by omega)
+  rw [tapeBits, hnone]
+  rcases Nat.eq_zero_or_pos (p % 2) with h | h
+  · rw [if_pos h, decide_eq_true h]
+    rfl
+  · rw [if_neg (by omega), decide_eq_false (by omega)]
+    rfl
+
+/-! ## The describer describes the decider -/
+
+/-- **The decoupled describer describes the decider** (`lem:decoupled-5sat`, the description
+clause). -/
+theorem describes5 (𝒟 : Decider) (ℓ T e : ℕ) (n : ℕ) (x y : BitStr)
+    (hℓ : 2 * T ≤ 2 ^ ℓ) (hℓr : ℓ ≤ mOf e Gc) (hr : 1 ≤ mOf e Gc)
+    (h4T : 4 * T ≤ 2 ^ mOf e Gc) (hTle : T ≤ Sof e)
+    (hlen : FixedLen e 𝒟.prog n T x y) (hTm : T + 3 < 2 ^ W e)
+    (hrb : ∀ ap bp : BitStr, ap.length ≤ T → bp.length ≤ T →
+      runBound 𝒟.prog n x y ap bp T ≤ Sof e) :
+    (descCirc5 ℓ T e 𝒟.prog n x y).DescribesDecider ℓ (mOf e Gc) 𝒟 n x y T := by
+  have hT : 2 * T < 2 ^ mOf e Gc := by
+    rcases Nat.eq_zero_or_pos T with rfl | hTpos
+    · simp
+    · omega
+  have hiff := extendsAnswers_iff 𝒟 n T x y e hTle hlen hTm hrb h4T
+  intro a b
+  constructor
+  · rintro ⟨w₁, w₂, w₃, hsat⟩
+    obtain ⟨htri, hlink⟩ :=
+      (sat_formula5_iff ℓ T e 𝒟.prog n x y hℓr hr hT a b w₁ w₂ w₃).mp hsat
+    have h12 : ∀ i, w₁ i = w₂ i := fun i => hlink.w12 i i rfl
+    have h23 : ∀ i, w₂ i = w₃ i := fun i => hlink.w23 i i rfl
+    have e12 : w₁ = w₂ := funext h12
+    have e23 : w₂ = w₃ := funext h23
+    have hsat3 : ((descCirc e T 𝒟.prog n x y).formula3 (mOf e Gc)).Sat w₁ := by
+      intro c₃ hc₃
+      have h := htri c₃ hc₃
+      rw [← e23, ← e12] at h
+      exact h
+    have hext : ExtendsAnswers h4T ((descCirc e T 𝒟.prog n x y).formula3 (mOf e Gc))
+        (fun j : Fin (2 * T) => a ⟨j, by omega⟩) (fun j : Fin (2 * T) => b ⟨j, by omega⟩) := by
+      refine ⟨w₁, fun j => ?_, fun j => ?_, hsat3⟩
+      · exact (hlink.aLow ⟨j, by omega⟩ ⟨j, by omega⟩ j.isLt rfl).symm
+      · exact (hlink.bLow ⟨j, by omega⟩ ⟨2 * T + j, by omega⟩ j.isLt (by simp; omega)).symm
+    obtain ⟨ap, bp, hap, hbp, ha, hb, hacc⟩ := hiff _ _ |>.mp hext
+    refine ⟨ap, bp, hap, hbp, fun j => ?_, fun j => ?_, hacc⟩
+    · rcases lt_or_ge (j : ℕ) (2 * T) with hj | hj
+      · exact ha ⟨j, hj⟩
+      · rw [hlink.aPad j (by omega), tapeBits_of_ge hap hj]
+    · rcases lt_or_ge (j : ℕ) (2 * T) with hj | hj
+      · exact hb ⟨j, hj⟩
+      · rw [hlink.bPad j (by omega), tapeBits_of_ge hbp hj]
+  · rintro ⟨ap, bp, hap, hbp, ha, hb, hacc⟩
+    obtain ⟨w, hw1, hw2, hsat3⟩ := hiff (fun j : Fin (2 * T) => a ⟨j, by omega⟩)
+      (fun j : Fin (2 * T) => b ⟨j, by omega⟩) |>.mpr
+      ⟨ap, bp, hap, hbp, fun j => by simpa using ha ⟨j, by omega⟩,
+        fun j => by simpa using hb ⟨j, by omega⟩, hacc⟩
+    refine ⟨w, w, w, ?_⟩
+    rw [sat_formula5_iff ℓ T e 𝒟.prog n x y hℓr hr hT a b w w w]
+    refine ⟨fun c₃ hc₃ => hsat3 c₃ hc₃, ⟨?_, ?_, ?_, ?_, fun i j hij => ?_, fun i j hij => ?_⟩⟩
+    · intro i j hi hij
+      have h := hw1 ⟨(i : ℕ), hi⟩
+      calc a i = a ⟨(i : ℕ), by omega⟩ := rfl
+        _ = w ⟨(i : ℕ), by omega⟩ := h.symm
+        _ = w j := congrArg w (Fin.ext hij)
+    · intro i j hi hij
+      have h := hw2 ⟨(i : ℕ), hi⟩
+      calc b i = b ⟨(i : ℕ), by omega⟩ := rfl
+        _ = w ⟨2 * T + (i : ℕ), by omega⟩ := h.symm
+        _ = w j := congrArg w (Fin.ext (by simp; omega))
+    · intro i hi
+      rw [ha i, tapeBits_of_ge hap (by omega)]
+    · intro i hi
+      rw [hb i, tapeBits_of_ge hbp (by omega)]
+    · exact congrArg w (Fin.ext hij)
+    · exact congrArg w (Fin.ext hij)
+
 end MIPRE.TM.CookLevin.Desc
