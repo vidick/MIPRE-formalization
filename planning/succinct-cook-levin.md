@@ -396,9 +396,20 @@ So `describeP` is the describer in the theorem's own parameters — `((T, σ), (
 to a circuit — with `describeM` the index width and `describeSize` the gate bound
 (`describe_size_le`).
 
-**S4** — not started. What is left: bounding `esize` of `describeP`'s input by a polynomial
-in `n, T, Q, σ` under the validity hypotheses, which turns `describeSize` into the `s` of
-item 3 and, with `describeM`, gives item 5; and assembling `MIPRE.SAT.SuccinctCookLevin` from
-`extendsAnswers_iff`, `mem_formula3_iff`, `describeP` and `describe_size_le`, with the
-proof-level `\leanok` and the `MIPRE/Axioms.lean` guard.
+**S4** — not started. What is left:
+
+* item 2: `mOf (eOf T σ) Gc ≤ c (⌈log T⌉ + ⌈log σ⌉ + 1)`, which is arithmetic on `mOf` and
+  `eOf` with `c = 435 + Qb + Gb Gc`, and `4T ≤ 2 ^ mOf (eOf T σ) Gc`, which is
+  `four_T_le_flag` and `flag_lt_m` once `T ≤ Sof (eOf T σ)` is in hand;
+* discharging the two hypotheses S3 carries, `T ≤ Sof e` and `FixedLen e 𝒟.prog n T x y`, from
+  the validity hypotheses `max{Q, 2⌈log n⌉} ≤ T`, `|𝒟| ≤ σ`, `|x|, |y| ≤ Q` — this is what
+  `runBound_le_two_pow` was proved for;
+* bounding `esize` of `describeP`'s input by a polynomial in `n, T, Q, σ`, which turns
+  `describeSize` into the `s` of item 3 and, with `describeM`, gives item 5;
+* the field `describe` wants `((𝒟, n, T, Q, σ), x, y)` while `describeP` takes
+  `((T, σ), (𝒟, n), (x, y))`, so a reordering program (`pair`, `fst`, `snd`) sits between
+  them;
+* assembling `MIPRE.SAT.SuccinctCookLevin` from `extendsAnswers_iff`, `mem_formula3_iff`,
+  `describeP` and `describe_size_le`, with the proof-level `\leanok` and the
+  `MIPRE/Axioms.lean` guard.
 
