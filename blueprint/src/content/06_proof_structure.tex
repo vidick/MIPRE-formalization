@@ -71,6 +71,81 @@ complement of $V_1$ inside $V_T$. The continuations $L_{>1,v}$ are indexed by al
 than by the range of $L_1$; the extra ones are never evaluated. The distribution is
 \texttt{clDist}, in the real-valued format of Definition~\ref{def:game}.
 
+\begin{definition}[Orthogonal and canonical complements]
+\label{def:cl-canonical}
+\lean{MIPRE.CL.coordSub, MIPRE.CL.dotForm, MIPRE.CL.perp, MIPRE.CL.mem_perp,
+  MIPRE.CL.tail, MIPRE.CL.dimTail, MIPRE.CL.pivots, MIPRE.CL.mem_pivots,
+  MIPRE.CL.canonCompl, MIPRE.CL.canonLin, MIPRE.CL.lperp}
+\leanok
+Let $V = \F^n$ with its standard basis. Two complements of a subspace $S \leq V$ are needed,
+and they are different.
+
+The \emph{orthogonal complement} $S^\perp = \{u : u \cdot v = 0 \text{ for all } v \in S\}$
+for the standard dot product. Over a finite field it need \emph{not} be a complement of $S$:
+$\mathrm{span}\{(1,1)\}$ over $\F_2$ is orthogonal to itself.
+
+The \emph{canonical complement}, which is one. Write $u_j = \dim\bigl(S \cap
+\mathrm{span}\{\hat e_i : i \geq j\}\bigr)$; the \emph{pivot set} of $S$ is
+$J = \{j : u_{j+1} < u_j\}$, and the canonical complement of $S$ is
+$\mathrm{span}\{\hat e_j : j \notin J\}$. The \emph{canonical linear map with kernel $S$}
+is the projector onto the canonical complement parallel to $S$. Finally, for a linear map $L$,
+$L^\perp$ is the canonical linear map with kernel $(\ker L)^\perp$.
+\end{definition}
+
+\paragraph{Source.} \texttt{preliminaries.tex}: the orthogonal complement and
+\texttt{lem:perp\_perp}; \texttt{def:canonical-complement} with \texttt{rk:cancomp};
+\texttt{def:cl-canonical}; \texttt{def:Lperp} with \texttt{lem:L\_perp\_perp}. Among the
+facts ledger node $1.1.6$ lists as ``subfield/trace facts as used''.
+
+\paragraph{Comments.} The paper defines the canonical complement through a canonical Gaussian
+elimination: reduce the matrix whose rows are a basis of $S$ to reduced row echelon form and
+take the standard basis vectors off the pivot columns. The formalization uses instead the
+equivalent characterization \texttt{rk:cancomp} credits to a referee --- the dimension
+sequence $u_j$ above --- and that choice is what makes the construction usable. It needs no
+echelon form, and, more importantly, it is manifestly a function of the \emph{subspace} $S$:
+the paper has to argue that the echelon form does not depend on the chosen basis or on the
+order of its vectors, which is exactly what \texttt{rk:cancomp} spends its length on, whereas
+here there is nothing to argue. That the two agree is \texttt{card\_pivots}: the pivot set
+has $\dim S$ elements.
+
+This vocabulary is needed for the \emph{lines} of the low-degree test, not for CL functions as
+such: a line $\ell(u_0, v)$ is presented by the canonical representative
+$u_0 = L^{\mathrm{Ln}}_v(u)$ of Definition~\ref{def:lidt-cl}, $L^{\mathrm{Ln}}_v$ being the
+canonical linear map with kernel $\mathrm{span}\{v\}$.
+
+\begin{lemma}[The two complements]
+\label{lem:cl-canonical}
+\uses{def:cl-canonical}
+\lean{MIPRE.CL.finrank_perp, MIPRE.CL.perp_perp, MIPRE.CL.isCompl_canonCompl,
+  MIPRE.CL.card_pivots, MIPRE.CL.ker_canonLin, MIPRE.CL.range_canonLin,
+  MIPRE.CL.ker_lperp}
+\leanok
+With the notation of Definition~\ref{def:cl-canonical}:
+\begin{enumerate}
+\item ($\texttt{lem:perp\_perp}$) $\dim S + \dim S^\perp = \dim V$ and
+  $(S^\perp)^\perp = S$, over every field;
+\item ($\texttt{lem:canonical-complement}$) $S$ and its canonical complement are
+  complementary subspaces, and the pivot set has $\dim S$ elements;
+\item the canonical linear map with kernel $S$ has kernel exactly $S$ and range the canonical
+  complement;
+\item ($\texttt{lem:L\_perp\_perp}$) $\ker(L^\perp) = (\ker L)^\perp$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\leanok
+\uses{def:cl-canonical}
+Item 1 is Mathlib's, for a nondegenerate reflexive bilinear form, once the dot product is shown
+to be one. For item 2, let $0 \neq x \in S$ lie in the canonical complement and let $j$ be the
+least index with $x_j \neq 0$; then $x$ witnesses $S \cap \mathrm{span}\{\hat e_i : i \geq
+j+1\} < S \cap \mathrm{span}\{\hat e_i : i \geq j\}$, so $j$ is a pivot, so $x_j = 0$ --- a
+contradiction. The pivot count is an induction on $j$ along $u_j + \#\{\text{pivots} < j\} =
+\dim S$, using that $u_j \leq u_{j+1} + 1$ because the $j$-th coordinate is a linear functional
+on $S \cap \mathrm{span}\{\hat e_i : i \geq j\}$ with kernel the next term. Codisjointness
+then follows by counting dimensions, the complement having $n - \#J$. Items 3 and 4 are then
+Mathlib's projector along a direct sum decomposition.
+\end{proof}
+
 \begin{lemma}[Structure of a CL function]
 \label{lem:cl-structure}
 \uses{def:cl-function}

@@ -6,6 +6,7 @@ import MIPRE.Foundations.CL.Basic
 import MIPRE.Foundations.LowDegree.SchwartzZippel
 import MIPRE.Foundations.LowDegree.Shoup
 import MIPRE.Foundations.LowDegree.SelfDual
+import MIPRE.Foundations.CL.Canonical
 import MIPRE.Foundations.CL.Closure
 import MIPRE.Foundations.CL.Downsize
 import MIPRE.Foundations.CL.Repeat
@@ -376,6 +377,16 @@ elab "#guard_sorry_free " ids:ident,* : command => do
 -- blueprint `lem:downsize-field`: items 1 and 2 of the paper's `lem:downsize_field`.
 #guard_sorry_free MIPRE.LowDegree.coord_eq_trace,
   MIPRE.LowDegree.trace_mul_eq_dot
+
+-- blueprint `lem:cl-canonical`: the two complements of a subspace, and the canonical linear
+-- map the low-degree test's line representatives are computed by.
+#guard_sorry_free MIPRE.CL.finrank_perp,
+  MIPRE.CL.perp_perp,
+  MIPRE.CL.isCompl_canonCompl,
+  MIPRE.CL.card_pivots,
+  MIPRE.CL.ker_canonLin,
+  MIPRE.CL.range_canonLin,
+  MIPRE.CL.ker_lperp
 
 /-!
 ## The one axiom
