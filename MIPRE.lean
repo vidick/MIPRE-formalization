@@ -666,6 +666,7 @@ import MIPRE.TM.CookLevin.Describer
 import MIPRE.TM.CookLevin.Families
 import MIPRE.TM.CookLevin.FamilyFml
 import MIPRE.TM.CookLevin.FieldFml
+import MIPRE.TM.CookLevin.FieldProg
 import MIPRE.TM.CookLevin.Index
 import MIPRE.TM.CookLevin.Kinds
 import MIPRE.TM.CookLevin.Layout

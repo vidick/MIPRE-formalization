@@ -116,6 +116,14 @@ theorem getD_replicate_false_append (e : ℕ) :
       List.getElem?_eq_none (by simp; omega), Option.getD_none,
       Nat.testBit_two_pow_of_ne (by omega)]
 
+/-! ### Powers of two -/
+
+theorem bits_two_pow : ∀ e : ℕ, (2 ^ e).bits = List.replicate e false ++ [true]
+  | 0 => by rw [pow_zero, Nat.one_bits, List.replicate_zero, List.nil_append]
+  | e + 1 => by
+    rw [pow_succ, mul_comm, Nat.bit0_bits _ (Nat.two_pow_pos e).ne', bits_two_pow e,
+      List.replicate_succ, List.cons_append]
+
 /-! ## Resizing, as a program -/
 
 /-- `resize`, the width in unary. -/
@@ -129,6 +137,26 @@ noncomputable def resizeP : PolyTimeFun (Unary × BitStr) BitStr :=
 noncomputable def dblP : PolyTimeFun BitStr BitStr := cons (const false) (PolyTimeFun.id _)
 
 @[simp] theorem dblP_apply (bs : BitStr) : dblP bs = false :: bs := rfl
+
+/-- `2 ^ e`, from `e` in unary: its bit string is `e` zeros and a one. -/
+noncomputable def pow2P : PolyTimeFun Unary ℕ :=
+  PolyTimeFun.cast (ap₂ append (ap₂ replicate (PolyTimeFun.id _) (const false)) (const [true]))
+    (fun u => 2 ^ u.length) (by
+      intro u
+      show (encode (2 ^ u.length) : Data) = encode (List.replicate u.length false ++ [true])
+      rw [show (encode (2 ^ u.length) : Data) = encode ((2 ^ u.length).bits) from rfl,
+        bits_two_pow])
+
+@[simp] theorem pow2P_apply (u : Unary) : pow2P u = 2 ^ u.length := rfl
+
+/-- Adding a constant to a number. -/
+noncomputable def incN : ℕ → PolyTimeFun ℕ ℕ
+  | 0 => PolyTimeFun.id _
+  | k + 1 => PolyTimeFun.inc.comp (incN k)
+
+@[simp] theorem incN_apply : ∀ (k n : ℕ), incN k n = n + k
+  | 0, n => rfl
+  | k + 1, n => by rw [incN, comp_apply, PolyTimeFun.inc_apply, incN_apply k n, Nat.add_assoc]
 
 /-! ## Readers of the layout -/
 
@@ -151,6 +179,15 @@ noncomputable def cstR (w : PolyTimeFun ι Unary) (bs : PolyTimeFun ι BitStr) :
 theorem cstR_apply {w : PolyTimeFun ι Unary} {bs : PolyTimeFun ι BitStr} {i : ι} (k : ℕ)
     (h : ∀ j, (bs i).getD j false = k.testBit j) : cstR w bs i = cst (w i).length k := by
   rw [cstR, ap₁_apply, nbitsR_apply k h, constBitsP_apply, cst, nbits]
+
+/-- The constant read off a width in unary and a reader of the number itself. -/
+theorem nbitsR_num (w : PolyTimeFun ι Unary) (kR : PolyTimeFun ι ℕ) (i : ι) :
+    nbitsR w (ap₁ natBits kR) i = nbits (w i).length (kR i) :=
+  nbitsR_apply _ (getD_bits (kR i))
+
+theorem cstR_num (w : PolyTimeFun ι Unary) (kR : PolyTimeFun ι ℕ) (i : ι) :
+    cstR w (ap₁ natBits kR) i = cst (w i).length (kR i) :=
+  cstR_apply _ (getD_bits (kR i))
 
 /-- The bits of a numeral, as a reader. -/
 noncomputable def bitsR (k : ℕ) : PolyTimeFun ι BitStr := const k.bits
