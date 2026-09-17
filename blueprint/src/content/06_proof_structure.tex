@@ -771,6 +771,46 @@ answers failing the parse are grouped into one distinguished outcome, so the ora
 families are projective measurements and not sub-measurements.
 \end{theorem}
 
+\begin{definition}[The oracularized game]
+\label{def:oracular-game}
+\uses{def:game,def:sync-game}
+\lean{MIPRE.Role, MIPRE.SeededGame, MIPRE.SeededGame.toGame, MIPRE.OAns,
+  MIPRE.SeededGame.oquestion, MIPRE.SeededGame.shapeOk, MIPRE.SeededGame.gameCheck,
+  MIPRE.SeededGame.oracleVsPlayer, MIPRE.SeededGame.oaccepts, MIPRE.SeededGame.oDist,
+  MIPRE.SeededGame.oracular}
+\leanok
+A \emph{seeded game} is a finite seed space $V$, two question maps $L^\alice, L^\bob : V \to
+V$ and a decision predicate $D$; the game it presents is the law of $(L^\alice(z),
+L^\bob(z))$ for a uniform seed $z$, with predicate $D$. Its \emph{oracularization} is the
+synchronous game on questions $\type^\ora \times V$, $\type^\ora = \{\oracle, \alice, \bob\}$,
+and answers either a pair (from an oracle) or a single answer (from an isolated player), in
+which the verifier draws the ordered pair of roles and the seed uniformly, gives an oracle the
+seed $z$ itself and an isolated player of role $v$ the question $L^v(z)$, and accepts when:
+each answer's shape matches its player's role; each oracle's pair of answers is accepted by
+$D$ at the pair of questions its seed determines; equal roles carry equal answers; and each
+oracle's component for the other player's role agrees with that player's answer.
+\end{definition}
+
+\paragraph{Source.} \texttt{oracularization.tex}, \texttt{sec:orac-def} and
+\texttt{fig:oracle-decider}, with the samplers, deciders and typed question strings stripped
+away: all oracularization uses of a sampler is the pair of maps $L^\alice, L^\bob$ on the seed
+space.
+
+\paragraph{Comments.} The oracularized game is synchronous with no extra hypothesis, which is
+what makes the PCC vocabulary of Definition~\ref{def:pcc} available on it: equal questions
+carry equal roles, and the third check then rejects unequal answers.
+
+Two of the four repairs of Remark~\ref{rem:oracularization-repairs} are about the verifier and
+are \emph{not} addressed here, and it is worth being explicit rather than appearing to have
+discharged them. Grouping the decider's failed bounded parses into one distinguished outcome
+(repair 3) has no content at a finite game-level answer alphabet, where there is no parse to
+fail; what survives of it is the shape check, which rejects an answer whose shape does not
+match its role. The truncation of answers to $B_\decider(n)$ symbols (repair 4) is a statement
+about a decider and does not appear at this level at all. Repair 2, that the completeness
+witness has identical measurement operators rather than a symmetric state, and repair 1, the
+single square root in the soundness loss, belong to the two clauses, which are separate
+obligations.
+
 \begin{definition}[Ambient oracularization contract]
 \label{def:oracularization-contract}
 \uses{def:normal-verifier,def:pcc}

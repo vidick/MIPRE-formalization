@@ -594,6 +594,7 @@ import MIPRE.Foundations.LowDegree.Encoding
 import MIPRE.Foundations.LowDegree.SchwartzZippel
 import MIPRE.Foundations.LowDegree.SelfDual
 import MIPRE.Foundations.LowDegree.Shoup
+import MIPRE.Foundations.OracularGame
 import MIPRE.Foundations.Pipeline.AnswerReduction
 import MIPRE.Foundations.Pipeline.Budget
 import MIPRE.Foundations.Pipeline.Compress
