@@ -76,6 +76,67 @@ def chi [NeZero m] (hm : m ∣ Fintype.card F) (s : F) : Fin m :=
     exact Nat.div_lt_of_lt_mul (by rw [mul_comm]; simpa [hc, mul_comm] using
       (Fintype.equivFin F s).isLt)⟩
 
+omit [DecidableEq F] in
+/-- The block size `q / m`, positive and with `m * (q/m) = q`. -/
+theorem card_div_pos [NeZero m] (hm : m ∣ Fintype.card F) : 0 < Fintype.card F / m := by
+  have hq : 0 < Fintype.card F := Fintype.card_pos
+  exact Nat.div_pos (Nat.le_of_dvd hq hm) (Nat.pos_of_ne_zero (NeZero.ne m))
+
+omit [DecidableEq F] in
+theorem chi_val [NeZero m] (hm : m ∣ Fintype.card F) (s : F) :
+    (chi hm s : ℕ) = (Fintype.equivFin F s).val / (Fintype.card F / m) := rfl
+
+omit [DecidableEq F] in
+/-- **Each seed block has exactly `q / m` elements.** This is what makes the axis-parallel
+line distribution the seeded test induces uniform over lines, and it is the input
+`lem:lidt-test-transfer` consumes: `q/m` seeds describe each line, so a uniform seed gives a
+uniform direction index. It is where `m ∣ q` earns its place among the hypotheses. -/
+theorem card_chi_fiber [NeZero m] (hm : m ∣ Fintype.card F) (i : Fin m) :
+    #{s : F | chi hm s = i} = Fintype.card F / m := by
+  classical
+  have hc0 : 0 < Fintype.card F / m := card_div_pos hm
+  have hmc : m * (Fintype.card F / m) = Fintype.card F := Nat.mul_div_cancel' hm
+  rw [← Fintype.card_subtype]
+  refine (Fintype.card_congr ?_).trans (Fintype.card_fin _)
+  refine
+    { toFun := fun s => ⟨(Fintype.equivFin F s).val % (Fintype.card F / m),
+        Nat.mod_lt _ hc0⟩
+      invFun := fun r => ⟨(Fintype.equivFin F).symm
+        ⟨(i : ℕ) * (Fintype.card F / m) + (r : ℕ), ?_⟩, ?_⟩
+      left_inv := ?_
+      right_inv := ?_ }
+  · -- the index is below `q`
+    have : (i : ℕ) + 1 ≤ m := i.isLt
+    calc (i : ℕ) * (Fintype.card F / m) + (r : ℕ)
+        < (i : ℕ) * (Fintype.card F / m) + (Fintype.card F / m) := by omega
+      _ = ((i : ℕ) + 1) * (Fintype.card F / m) := by ring
+      _ ≤ m * (Fintype.card F / m) := Nat.mul_le_mul_right _ this
+      _ = Fintype.card F := hmc
+  · -- it lands in the `i`-th block
+    apply Fin.ext
+    rw [chi_val]
+    simp only [Equiv.apply_symm_apply]
+    rw [mul_comm ((i : ℕ)) (Fintype.card F / m), Nat.mul_add_div hc0,
+      Nat.div_eq_of_lt r.isLt, add_zero]
+  · -- left inverse
+    intro s
+    obtain ⟨s, hs⟩ := s
+    apply Subtype.ext
+    apply (Fintype.equivFin F).injective
+    simp only [Equiv.apply_symm_apply]
+    apply Fin.ext
+    have hdiv : (Fintype.equivFin F s).val / (Fintype.card F / m) = (i : ℕ) := by
+      rw [← chi_val hm s, hs]
+    have hdam := Nat.div_add_mod (Fintype.equivFin F s).val (Fintype.card F / m)
+    rw [hdiv, mul_comm] at hdam
+    exact hdam
+  · -- right inverse
+    intro r
+    apply Fin.ext
+    simp only [Equiv.apply_symm_apply]
+    rw [mul_comm ((i : ℕ)) (Fintype.card F / m), Nat.mul_add_mod,
+      Nat.mod_eq_of_lt r.isLt]
+
 /-- `π_i(v)`: `v` with its first `i` coordinates zeroed (the paper's `π_{i-1}` at a `0`-indexed
 `i`). -/
 def zeroBelow (i : Fin m) (v : Point F m) : Point F m :=
