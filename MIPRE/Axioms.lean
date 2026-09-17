@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import MIPRE.Foundations.CL.Basic
 import MIPRE.Foundations.LowDegree.SchwartzZippel
+import MIPRE.Foundations.LowDegree.Shoup
+import MIPRE.Foundations.LowDegree.SelfDual
 import MIPRE.Foundations.CL.Closure
 import MIPRE.Foundations.CL.Downsize
 import MIPRE.Foundations.CL.Repeat
@@ -370,3 +372,28 @@ elab "#guard_sorry_free " ids:ident,* : command => do
   MIPRE.LowDegree.prob_agree_le_totalDegree,
   MIPRE.LowDegree.prob_agree_le_individualDegree,
   MIPRE.LowDegree.card_agree_le_of_natDegree
+
+-- blueprint `lem:downsize-field`: items 1 and 2 of the paper's `lem:downsize_field`.
+#guard_sorry_free MIPRE.LowDegree.coord_eq_trace,
+  MIPRE.LowDegree.trace_mul_eq_dot
+
+/-!
+## The one axiom
+
+`#guard_sorry_free` catches `sorryAx` and nothing else, so an `axiom` would otherwise enter
+the dependency graph unnoticed. There is exactly one, and it is the one the blueprint says
+this project assumes beyond Mathlib: `MIPRE.LowDegree.exists_shoup_irreducible`, Shoup's
+deterministic irreducible-polynomial construction at `p = 2`, the single admitted node
+(`1.1.6.1.1`) under `lem:self-dual-basis`. `MIPRE/Foundations/LowDegree/Shoup.lean` carries
+its contract, including the five things it deliberately does not claim.
+
+The pin itself lives beside the axiom, in `Shoup.lean`: a `#guard_msgs in #print axioms`
+on the one declaration that uses it, which fails the build if another axiom appears, if the
+dependency disappears (the axiom having been proved, which is worth noticing), or if the name
+changes. It is not written here because `#print axioms` in *this* file is how the guard files
+claim a blueprint proof is formalized, and pinning an axiom is not such a claim --- Shoup's
+theorem is assumed, not proved. `scripts/lean-coverage.py` closes the loop from the other
+side: it fails if any `axiom` declared outside the vendored trees is not named in this file.
+-/
+
+

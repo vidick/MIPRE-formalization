@@ -1625,24 +1625,76 @@ the window alone.
 
 \tnote{Is this needed?}
 
+\begin{definition}[Self-dual and normal bases]
+\label{def:self-dual-basis}
+\lean{MIPRE.LowDegree.IsSelfDualBasis, MIPRE.LowDegree.IsNormalBasis}
+\leanok
+Let $K / \F$ be a finite extension of finite fields, $q = \abs{\F}$. A basis $(e_i)$ of $K$
+over $\F$ is \emph{self-dual} when its Gram matrix for the trace form is the identity,
+$\mathrm{tr}_{K / \F}(e_i e_j) = \delta_{ij}$, and \emph{normal} when its vectors are the
+Frobenius orbit $\alpha, \alpha^q, \alpha^{q^2}, \ldots$ of a single element $\alpha \in K$.
+\end{definition}
+
+\begin{lemma}[Self-dual coordinates are trace pairings]
+\label{lem:downsize-field}
+\uses{def:self-dual-basis}
+\lean{MIPRE.LowDegree.coord_eq_trace, MIPRE.LowDegree.trace_mul_eq_dot}
+\leanok
+Let $(e_i)$ be a self-dual basis of $K / \F$ and $\downsize(x)$ the coordinate vector of
+$x \in K$. Then
+\begin{enumerate}
+\item $\downsize(x)_i = \mathrm{tr}_{K/\F}(x e_i)$, and
+\item $\mathrm{tr}_{K/\F}(xy) = \downsize(x) \cdot \downsize(y)$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\leanok
+\uses{def:self-dual-basis}
+For the first, expand $x = \sum_j \downsize(x)_j e_j$, multiply by $e_i$ and take the trace:
+self-duality kills every term but $j = i$. The second follows from the first by the same
+expansion, $\mathrm{tr}(xy) = \sum_j \downsize(x)_j \mathrm{tr}(e_j y) = \sum_j \downsize(x)_j
+\downsize(y)_j$.
+\end{proof}
+
+\paragraph{Source.} Items 1 and 2 of the paper's \texttt{lem:downsize\_field}
+(\texttt{preliminaries.tex}); ledger node \texttt{1.1.6.1.11}, which also records that neither
+item needs normality or odd $k$. The paper's third item, compatibility of the downsized matrix
+map with $\downsize$ ($\downsize_{\mathrm{m}}(M)\downsize(v) = \downsize(Mv)$), is not
+formalized here: it is wanted by the conditionally linear downsizing of
+Lemma~\ref{lem:cl-downsize}, which is stated over $\F_2$ and so has not needed it.
+
+\paragraph{Comments.} These two identities are why the pipeline insists on self-duality rather
+than on an arbitrary basis: they make $\downsize$ computable by the trace form, with no matrix
+inversion, and turn the trace form into the standard inner product on coordinates. They are
+also what collapses the Pauli phase index $G_E \downsize(b)$ to $\downsize(b)$ at $G_E = I$
+(ledger node \texttt{1.1.6.1.13}).
+
 \begin{lemma}[Deterministic self-dual normal basis]
 \label{lem:self-dual-basis}
+\uses{def:self-dual-basis}
 \ledgernode{1.1.6, 1.1.6.1, 1.1.6.1.1}
 There is a deterministic algorithm that, given an odd integer $k > 0$, outputs in time
 $\poly(k)$ a self-dual normal basis of $\F_{2^k}$ over $\F_2$ together with its
 multiplication tables.
 \end{lemma}
 
-\paragraph{Source.} Combines Shoup's deterministic irreducible-polynomial
-construction~\cite{Sho90}, Lenstra's isomorphism algorithm~\cite{Len91}, and the
-classical existence and construction of self-dual normal bases in characteristic $2$
-for odd $k$; see the discussion in~\cite[Section 3]{JNVWY20}.
+\paragraph{Source.} Shoup's deterministic irreducible-polynomial
+construction~\cite{Sho90}, and then the companion campaign's own constructions. The
+attribution here used to name Lenstra's isomorphism algorithm~\cite{Len91} and the classical
+characteristic-$2$ existence results, following the discussion
+in~\cite[Section 3]{JNVWY20}; the campaign has since \emph{proved} both steps --- ledger node
+$1.1.6.1.6$ discharges the normal-basis construction contract ``formerly attributed to
+Lenstra'' and node $1.1.6.1.8$ the self-dualization contract ``formerly attributed to Wang''
+--- so only Shoup remains imported.
 
 \paragraph{Comments.} Needed so that verifiers can do field arithmetic over
 $\F_{2^k}$ using only $\F_2$-data (the ``downsize'' maps), uniformly and
 deterministically. This is why field sizes are restricted to $q = 2^k$, $k$ odd
 (``admissible''). Self-contained algebra/algorithmics; independent of everything
-quantum.
+quantum. Two consumers now name it: the admissible field with a bit representation that
+Theorem~\ref{thm:pcp-decider} takes as a parameter (\texttt{MIPRE.SAT.BinField}), and the
+downsized samplers of Lemma~\ref{lem:cl-downsize} once they move past field size $2$.
 
 This lemma is the whole of what this blueprint assumes beyond Mathlib, and it is worth being
 precise about which part. The companion campaign has proved the normal-basis construction and
@@ -1654,6 +1706,25 @@ theorem specialized to $p = 2$. The ledger records it with an explicit contract 
 \emph{not} claimed --- no $\poly(\log k)$ output time, no variable-characteristic
 $\poly(\log p, k)$ form, no randomization, no advice tables, no enumeration of all $2^k$ field
 elements --- which is the shape a Lean \texttt{axiom} for it should take.
+
+That axiom now exists, in that shape: \texttt{MIPRE.LowDegree.exists\_shoup\_irreducible}
+(\texttt{MIPRE/Foundations/LowDegree/Shoup.lean}), whose module docstring carries the contract
+including the five disclaimers, and which is recorded in \texttt{MIPRE/Axioms.lean}. Its input
+is $k$ in \emph{unary}, which is what makes \texttt{PolyTimeFun}'s bound the $\poly(k)$ the
+contract claims: had the input been $k$ in binary the same structure would have asserted the
+$\poly(\log k)$ bound the contract disclaims. It is an \texttt{axiom} rather than a tracked
+\texttt{sorry} because it is an imported construction this project does not intend to
+formalize, and because an axiom appears by name in \texttt{\#print axioms} of everything that
+rests on it, making the dependency machine-checkable rather than a matter of reading prose.
+
+The rest of the lemma --- the $\F_2[T]/(f)$ model, the normal basis, the self-dualization, the
+coordinate matrix and the multiplication tables, all in $\poly(k)$ --- is not yet formalized.
+Node $1.1.6.1.10$ is the interface to aim at, and its sixteen siblings are a step-by-step
+route: binary squarefree factorization ($1.1.6.1.4$), the minimal polynomial $X^k - 1$ of
+Frobenius and its squarefreeness for odd $k$ ($1.1.6.1.5$), the normal element ($1.1.6.1.6$),
+the circulant Gram self-dualization ($1.1.6.1.7$, $1.1.6.1.8$) and table transport
+($1.1.6.1.9$). Mathlib's normal basis theorem \texttt{IsGalois.normalBasis} gives the
+existence half of the normal element, though not the construction.
 
 \subsection{The Schwartz--Zippel lemma}
 \label{sec:rr-schwartz-zippel}
