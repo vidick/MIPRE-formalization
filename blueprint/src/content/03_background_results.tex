@@ -1484,6 +1484,30 @@ PCP parameters depend on. The statement is validated by its consumer
 (\texttt{MIPRE.SAT.DecoupledDescriber}, Lemma~\ref{lem:decoupled-5sat}) before its proof;
 the route to the proof is \texttt{planning/succinct-cook-levin.md}.
 
+\paragraph{Formalization status.} The mathematics of the describer is formalized
+(\texttt{MIPRE/TM/CookLevin/}): the check circuit of the interpreter machine, from the truth
+table of its local check predicate (\texttt{chk\_isCheckCircuit}); the describer circuit
+\texttt{descCirc}, the flattening of a formula on its $3m + 3$ inputs, with its input count
+and well-formedness; what it describes, \texttt{mem\_formula3\_iff} --- a clause is accepted
+exactly when its three indices decode to the literals of a clause of the tableau of
+Lemma~\ref{lem:correct-tableau} on the interpreter machine (together with two clauses
+bounding the answers by $T$); and item 1, \texttt{extendsAnswers\_iff}.
+
+The describer is also formalized as a polynomial-time function of the ambient model
+(\texttt{descCircP}, item 4), on four conventions that keep the program layer close to the
+mathematics: a formula's encoding is the encoding of its post-order list, so each builder is
+an \texttt{append}, a \texttt{map} or a \texttt{foldl} on lists; a program is read as a
+\emph{reader} of the shared input, so it transcribes its definition line for line rather
+than point-free; a field record is a record of readers whose evaluation is a structure
+literal of their own values, which makes every family formula match its program
+definitionally; and widths and offsets are unary while a field constant is a resize of a bit
+string, so no arithmetic on numbers is needed. Item 3 then needs no separate argument: a
+program's output is no larger than its running time and a circuit's gate count is at most
+the size of its encoding, so the gate bound \emph{is} the time bound of the program that
+writes the circuit (\texttt{descCirc\_size\_le}). What is left is $e$ as a program of the
+parameters, the substitution of the validity hypotheses into that bound (item 5), and the
+assembly of the structure.
+
 \paragraph{Source.} Cook~\cite{Coo71} and Levin for the tableau reduction; Papadimitriou
 and Yannakakis~\cite{PY86} for succinct representations and their complexity;
 the explicit form needed here is~\cite[Section 10]{JNVWY20}.

@@ -273,5 +273,143 @@ the first machine step that is final, over budget, or the `S`-th). What S3 needs
 check circuit for `checkPred U .one`, from its truth table, and the counts
 `Fintype.card Sym = 5`, `Fintype.card Ctl = 24 · 32 · 10`.
 
-**S3, S4** — not started.
+**S3 — in progress** (design 2026-09-17, after S2). Three decisions, each taken to keep the
+Lean *proof* about plain functions and the *program* generic:
+
+* *The circuit is a formula.* The describer's output is the post-order flattening of a
+  Boolean formula tree (`Fml`: input bits, constants, `and`, `or`, `not`) over the `3m + 3`
+  input bits. A tree has fan-out one at every gate (input bits are read through fresh
+  `input` gates, which `WellFormed` does not count), references only earlier gates, and a
+  terminal output — so well-formedness is a property of the flattener, proved once, and
+  never of the circuit being generated. The price is duplication: a field decoded from an
+  index is recomputed at each use, and a carry chain unrolled into a tree is quadratic in
+  the width. All of it is polynomial in `m`, which is all item 3 asks.
+* *Programs are combinators.* The program layer gets the missing closure combinators —
+  `foldl` over a list with the additive Cobham condition `esize (F (s, a)) ≤ esize s + B (esize a)`
+  (from which `map`, `zip`, `append`, `replicate` and the rest derive), the binary successor,
+  unary-to-binary conversion and the preorder serialization of a tree — and the describer is
+  a combinator expression whose `toFun` *is* the mathematical definition (`List.foldl`,
+  `List.map`, …), so the time bound is automatic and the semantics is proved about the
+  `toFun` only. Two stack-driven programs are written by hand, after `sizeProg`: the
+  flattener (post-order with a value stack of gate indices) and the tree serializer.
+* *The check circuit is a constant, and a large one.* `chk` for `checkPred U 1` is obtained
+  from the existence of a circuit for every Boolean function (a mux tree on the truth
+  table), and its Tseitin clause templates are hardcoded by the program. It has about
+  `2^{winCard}` gates for `winCard ≈ 16000` window bits: an enormous constant, exactly as
+  the paper's `2^{84} · 4^{κ'}` (`lem:pack-check-size`) is, and formally harmless — it
+  enters the gate bound `s` and the running time as constants.
+
+The variable format (`Describer.lean`): index width `m = 24 + 15W + Gb` with `W = e + 2`
+the field width, `S = 2^e` the tableau length for `e = c₁ (⌈log T⌉ + ⌈log σ⌉) + c₂`
+chosen so that `runBound ≤ 2^e` under `Valid` and `|a|, |b| ≤ T`, and `Gb` the width of
+the gate-index field. An index with top bit `1` is *structured*: fields tag (3 bits),
+`t` (W), tape `d` (4), position `p` (W), cell value `v` (3), state `q` (13), the thirteen
+window centers (13 W), gate `g` (Gb); tags `0..6` are cell, head, state, emitOne, emitBad,
+emitted, aux. An index with top bit `0` and value `j < 4T` is an *answer* variable: tape
+`A` for `j < 2T`, else `B`; `r = j mod 2T`; position `r / 2 + 3`; value blank for `r` even,
+`1` for `r` odd — so that the first `4T` variables are `tapeBits` of the two answers, as
+item 1 needs. Decoding is a partial function `decode : Fin (2^m) → Option TabVar`; unused
+fields are not checked, so a tableau variable may have several indices (its canonical one
+`ρ v`, and aliases), which is harmless: the described formula is the union of the images of
+the tableau under all decodings, and an assignment of the tableau extends to the aliases by
+copying. The circuit accepts a clause iff its three literals decode and the decoded clause
+is in `tableau U 0 1 S fixed chk`: the start, free, boundary, emission and final families are
+comparisons of decoded fields with constants (`S`, `2S + 7`, `2S + 5`, `S + 3`, `T + 3`,
+the fixed strings by a lookup table of size `|string| · W`), and the window family is a
+disjunction over the Tseitin templates of `chk`, each instantiated from the `t` and centers
+of the clause's aux literal (every window clause has one).
+
+**S3, the mathematics — done** (2026-09-17). Departures from the design above, all
+deliberate:
+
+* *The index width is `m = 11 + 15W + Qb + Gb` with `W = e + 4`* (`mOf`, `Layout.lean`):
+  `W = e + 2` is too narrow, because a position field must hold `2S + 7 > 4S` for `S = 2^e`,
+  and the state field is `Qb = ⌈log |Option Ctl|⌉` rather than `13`. `e = eOf T σ =
+  5(⌈log T⌉ + ⌈log σ⌉) + 24` (`Params.lean`), from an explicit fifth-power majorant of
+  `runBound` under the validity hypotheses (`runBound_le`, `runBound_le_two_pow`).
+* *Two clauses beyond the tableau* (`AnsEnd.lean`): the cell at position `T + 3` of each
+  free tape holds the blank. Without them a satisfying assignment gives answers of length up
+  to `2S`, and the soundness direction needs `|a|, |b| ≤ T` — both for `EncodesAccepted` and
+  for S2's `acceptsWithin_of_accepts`. The free-tape clauses already force blanks to be
+  trailing, so one blank at `T + 3` bounds the string by `T` (`freeLen`), and an accepting
+  run on short answers satisfies them.
+* *The canonical index is not `encodeVar` on the answer cells* (`idxOf`, `Index.lean`): an
+  answer cell of a free tape inside the answer block goes to its *answer index* `j < 4T`,
+  every other variable to its structured index. This is what ties the two directions
+  together: the soundness direction reads the answer blocks off `w ∘ idxOf`, and
+  `w ⟨j⟩ = a j` is the extension hypothesis, so the answer cell must have index exactly `j`.
+* *`QC`, `Qb` and the check circuit are never unfolded*: their defining terms mention
+  `Fintype.card (Option Ctl)` and `Fml.table (winCard …)`, whose evaluation does not
+  terminate in practice, and any `rfl`, `decide` or definitional check that reaches them
+  hangs the elaborator. `QC` and `Qb` are `@[irreducible]`, and `chk` is taken from the
+  existential `Fml.exists_circuit` rather than built (`Params.lean`).
+* *The window family takes the check circuit's Tseitin templates as data*
+  (`WDesc`, `LDesc`, `NTpl`, `tplsOf`): the formula never inspects a `Gate` or a `WinVar`,
+  so the describer program can fold over a constant list of descriptors.
+
+What is formalized: the clause families of the tableau as predicates on decoded fields and as
+formulas, each exact (`Families.lean`, `Window.lean`, `FamilyFml.lean`, `eval_tableauPlusF`);
+the check circuit with `IsCheckCircuit` (`Params.lean`); the describer circuit with its
+inputs, well-formedness and the description `mem_formula3_iff` (`Describer.lean`); and item 1,
+`extendsAnswers_iff` (`Sat.lean`) — the described formula has a satisfying assignment extending
+the two answer blocks iff they are the tape encodings of strings of length at most `T` that the
+decider accepts within `T`.
+
+**S3, the program — done** (2026-09-17). `descCircP` (`DescProg.lean`) is the describer
+circuit as a `PolyTimeFun` of `((e in unary, T), (𝒟, n), (x, y))`, and `descCircP_apply` says
+it is `descCirc` — item 4. Four things made it cheap:
+
+* *A formula's encoding is the encoding of its post-order list* (`SizedEncoding Fml` through
+  `rpn`), so every builder of `FmlLib.lean` is `append`, `map`, `zip` or `foldl` on lists and
+  its Cobham condition is the additivity of `esize` under the constructors (`FmlProg.lean`).
+  Two of the folds are scan-like, so `foldlAdd` does not apply and they carry a hand-written
+  `FoldBounded` proof: building a range, and the carry chain of the adder.
+* *Programs are read as readers of a shared input* (`Cost/Reader.lean`): `ap₁`, `ap₂`, `ap₃`
+  and `listOf` apply a program to readers, so a program transcribes its mathematical
+  definition line for line instead of being a point-free term, and its `toFun` stays
+  definitionally the function it transcribes.
+* *`FieldsR` and `CandR` are records of readers*, and `FieldsR.ev`/`CandR.ev` are structure
+  literals of those programs' own values (`FieldProg.lean`). So the shape of every family
+  formula matches definitionally and all fifty-odd exactness proofs (`FamilyProg.lean`) are
+  `simp` over the constants of the layout alone. The only non-definitional proof in the
+  program layer is `litFieldsR_ev`.
+* *Widths and offsets are unary, and a field constant is a resize* (`LayoutProg.lean`):
+  `resize w bs` keeps the low `w` bits of `bs`, and `resize_eq_nbits` identifies it with
+  `nbits w k` for any `bs` whose bits are those of `k`. So `nbits w (2 * T)` is a resize of
+  `false :: T.bits`, `nbits w (T + 3)` one of an iterated `incBits`, and `2 ^ e` comes from
+  its bit string being `e` zeros and a one (`pow2P`), with `2 * Sof e + k = 2 ^ (e + 1) + k`.
+  No arithmetic on numbers is needed anywhere.
+
+The templates of the check circuit stay a Lean-level constant: `Gc` is fixed, so the window
+program maps over `tplsOf Gc chk` at the Lean level and a window descriptor never has to be
+encoded — each becomes a `const` reader, and `WDesc` needs no `SizedEncoding`.
+
+*Item 3 came free.* A program's output is no larger than its running time
+(`PolyTimeFun.esize_apply_le`) and a circuit's gate count is at most the size of its encoding
+(`size_le_esize`), so the gate bound of the describer **is** the time bound of the program
+that writes it: `descSize := descCircP.timeBound`, an explicit `Polynomial ℕ`
+(`descCirc_size_le`). No per-builder `Fml.size` induction was written, and none is needed.
+
+`eOf T σ` is a program too (`eP`, `length_eP`): `e` is affine in `Nat.size T` and
+`Nat.size σ`, and `Nat.size k = k.bits.length`, so in unary it is one unit per bit of each.
+So `describeP` is the describer in the theorem's own parameters — `((T, σ), (𝒟, n), (x, y))`
+to a circuit — with `describeM` the index width and `describeSize` the gate bound
+(`describe_size_le`).
+
+**S4** — not started. What is left:
+
+* item 2: `mOf (eOf T σ) Gc ≤ c (⌈log T⌉ + ⌈log σ⌉ + 1)`, which is arithmetic on `mOf` and
+  `eOf` with `c = 435 + Qb + Gb Gc`, and `4T ≤ 2 ^ mOf (eOf T σ) Gc`, which is
+  `four_T_le_flag` and `flag_lt_m` once `T ≤ Sof (eOf T σ)` is in hand;
+* discharging the two hypotheses S3 carries, `T ≤ Sof e` and `FixedLen e 𝒟.prog n T x y`, from
+  the validity hypotheses `max{Q, 2⌈log n⌉} ≤ T`, `|𝒟| ≤ σ`, `|x|, |y| ≤ Q` — this is what
+  `runBound_le_two_pow` was proved for;
+* bounding `esize` of `describeP`'s input by a polynomial in `n, T, Q, σ`, which turns
+  `describeSize` into the `s` of item 3 and, with `describeM`, gives item 5;
+* the field `describe` wants `((𝒟, n, T, Q, σ), x, y)` while `describeP` takes
+  `((T, σ), (𝒟, n), (x, y))`, so a reordering program (`pair`, `fst`, `snd`) sits between
+  them;
+* assembling `MIPRE.SAT.SuccinctCookLevin` from `extendsAnswers_iff`, `mem_formula3_iff`,
+  `describeP` and `describe_size_le`, with the proof-level `\leanok` and the
+  `MIPRE/Axioms.lean` guard.
 
