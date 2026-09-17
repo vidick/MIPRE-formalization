@@ -667,6 +667,7 @@ import MIPRE.TM.CookLevin.Local
 import MIPRE.TM.CookLevin.Semantics
 import MIPRE.TM.CookLevin.Sound
 import MIPRE.TM.CookLevin.Tableau
+import MIPRE.TM.CookLevin.Window
 import MIPRE.TM.Interp.CopyTree
 import MIPRE.TM.Interp.CopyTreeCharge
 import MIPRE.TM.Interp.Desc
