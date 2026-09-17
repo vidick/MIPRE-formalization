@@ -226,8 +226,7 @@ literals of a clause of `tableauPlus`. -/
 theorem mem_formula3_iff (D : Prog) (n : ℕ) (x y : BitStr) (hT : T ≤ Sof e)
     (hlen : FixedLen e D n T x y) (hTm : T + 3 < 2 ^ W e) :
     c ∈ (descCirc e T D n x y).formula3 (mOf e Gc) ↔
-      ∃ cl ∈ tableauPlus e T (fixedOf D n T x y) chk,
-        (candOfClause e T c).Dec e chk.gates.length cl := by
+      ∃ cl ∈ tableauPlus e T (fixedOf D n T x y) chk, (candOfClause e T c).Dec e Gc cl := by
   have h1 : (descCirc e T D n x y).evalBits (clauseInput (mOf e Gc) c) =
       (descFml e T D n x y).eval (fun i => (clauseInput (mOf e Gc) c).getD i false) :=
     Fml.evalBits_toCircuit _ _ _
