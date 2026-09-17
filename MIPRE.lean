@@ -675,6 +675,7 @@ import MIPRE.TM.CookLevin.Index
 import MIPRE.TM.CookLevin.Kinds
 import MIPRE.TM.CookLevin.Layout
 import MIPRE.TM.CookLevin.LayoutProg
+import MIPRE.TM.CookLevin.Link
 import MIPRE.TM.CookLevin.Local
 import MIPRE.TM.CookLevin.Params
 import MIPRE.TM.CookLevin.Sat
