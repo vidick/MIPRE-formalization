@@ -835,26 +835,64 @@ agrees with the repaired parity, so nothing had to be adapted --- but nothing wa
 trust either.
 \end{remark}
 
+\effortMathlib
+
+\begin{definition}[The low-degree code]
+\label{def:ld-encoding}
+\lean{MIPRE.LowDegree.ofBool, MIPRE.LowDegree.pt, MIPRE.LowDegree.ind,
+  MIPRE.LowDegree.eval_ind, MIPRE.LowDegree.degreeOf_ind_le, MIPRE.LowDegree.ldEnc,
+  MIPRE.LowDegree.eval_ldEnc, MIPRE.LowDegree.degreeOf_ldEnc_le, MIPRE.LowDegree.codedOn,
+  MIPRE.LowDegree.codedOn_ldEnc, MIPRE.LowDegree.coded, MIPRE.LowDegree.coded_eq}
+\leanok
+For $y \in \{0,1\}^m$ let $\ind_{m,y}(x) = \prod_{i : y_i = 1} x_i \prod_{i : y_i = 0}
+(1 - x_i)$, a multilinear polynomial over $\F_q$ which on the subcube $\{0,1\}^m$ is $1$ at
+$y$ and $0$ elsewhere. For $a \in \F_q^M$, $M = 2^m$, with coordinates indexed by
+$\{0,1\}^m$, the \emph{low-degree encoding} of $a$ is $g_a = \sum_y a_y \ind_{m,y}$; it is
+multilinear and $g_a(y) = a_y$. For $H \subseteq \F_q$ the \emph{decoding} map $\coded_H$
+sends a polynomial $g$ to the vector with $y$-coordinate $g(y)$ if $g(y) \in H$ and $0$
+otherwise, so that $\coded_H(g_a) = a$ for $a \in H^M$; $\coded = \coded_{\{0,1\}}$ is the
+Boolean decoding map, and $\coded(g) \in \{0,1\}^M$ for every $g$.
+\end{definition}
+
+\paragraph{Source.} The paper states this in \texttt{preliminaries.tex},
+Section~\texttt{sec:ld-encoding}, alongside Lemma~\ref{lem:schwartz-zippel}; it is recorded
+here, with its consumer, because Theorem~\ref{thm:pcp-decider} is the only place the blueprint
+uses it.
+
+\paragraph{Comments.} The identification of $\{0,1\}^m$ with $\{1, \ldots, M\}$ is any fixed
+bijection --- the paper says ``lexicographic''; the formalization uses the repository's
+existing little-endian \texttt{bitsVal} convention, so that the encoding of an answer block
+agrees with the tape indexing of Theorem~\ref{thm:succinct-sat}. The choice is invisible to
+the statements below, the same bijection appearing in the encoding and in the decoding.
+
 \effortHard
 
 \begin{theorem}[The bespoke PCP for deciders]
 \label{thm:pcp-decider}
 \ledgernode{1.3.3}
-\uses{lem:decoupled-5sat,lem:schwartz-zippel,thm:qld,def:decider}
+\uses{lem:decoupled-5sat,lem:schwartz-zippel,thm:qld,def:decider,def:ld-encoding}
+\lean{MIPRE.SAT.BinField, MIPRE.SAT.PcpParams, MIPRE.SAT.PcpProof, MIPRE.SAT.PcpProof.ev,
+  MIPRE.SAT.ViewFormat, MIPRE.SAT.PcpDecider}
+\leanok
 There is a verifier $\pcpverifier$ which, given a valid decider specification $(\decider,
 n, T, Q, \sigma, x, y)$ --- validity requiring $\abs{\decider} \leq \sigma$, $\max\{Q,
 2\lceil \log n \rceil\} \leq T$ \emph{and} $\abs{x}, \abs{y} \leq Q$, as exact inequalities
---- together with a PCP view $(z, \Xi)$, runs in time $\poly(\log T, \log n, Q, \sigma)$
-and satisfies:
+--- together with a PCP view $(z, \Xi)$, rejects any invalid specification or misformatted
+view, runs in time $\poly(\log T, \log n, Q, \sigma)$ and satisfies:
 \begin{enumerate}
 \item (\textbf{Completeness}) if $\abs{a},\abs{b}\leq T$ and $\decider$ accepts
   $(n, x, y, a, b)$ within $T$ steps,
-  then the low-degree proof with $g_1, g_2$ the low-degree encodings of the padded answers
+  then the low-degree proof with $g_1, g_2$ the low-degree encodings
+  (Definition~\ref{def:ld-encoding}) of the padded answers
   is accepted with probability $1$ over uniform $z$;
 \item (\textbf{Soundness}) any low-degree proof accepted with probability greater than
-  $\frac12$ decodes to strings whose prefixes $\decider$ accepts within $T$ steps.
+  $\frac12$ has $\coded(g_1), \coded(g_2)$ equal to the padded encodings of two strings whose
+  prefixes, of length at most $T$, $\decider$ accepts within $T$ steps.
 \end{enumerate}
-Here the number of variables $m$ of the arithmetization must be a power of two.
+Here the parameters are $(q, m, d, m', s) = \pcpparams(n, T, Q, \sigma)$ with $q = 2^k$ for an
+odd $k$, $d = 7$, $m' = 5m + 5 + s$ and $2T \leq 2^m$, computable in time polynomial in the
+bit lengths of $(n, T, Q, \sigma)$; and \emph{both} variable counts $m$ and $m'$ of the
+arithmetization must be powers of two dividing $q$ (Remark~\ref{rem:pcp-power-of-two}).
 \end{theorem}
 
 \begin{proof}
