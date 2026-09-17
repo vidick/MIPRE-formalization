@@ -588,6 +588,7 @@ import MIPRE.Foundations.Halting.Strings
 import MIPRE.Foundations.Halting.Tabulate
 import MIPRE.Foundations.Halting.Wrapper
 import MIPRE.Foundations.Halting.WrapperCost
+import MIPRE.Foundations.LowDegree.Encoding
 import MIPRE.Foundations.LowDegree.SchwartzZippel
 import MIPRE.Foundations.Pipeline.AnswerReduction
 import MIPRE.Foundations.Pipeline.Budget
@@ -614,6 +615,7 @@ import MIPRE.Foundations.SAT.Flatten
 import MIPRE.Foundations.SAT.FmlLib
 import MIPRE.Foundations.SAT.FmlProg
 import MIPRE.Foundations.SAT.Formula
+import MIPRE.Foundations.SAT.Pcp
 import MIPRE.Foundations.SAT.Succinct
 import MIPRE.Foundations.SAT.Table
 import MIPRE.Foundations.SAT.Tseitin
