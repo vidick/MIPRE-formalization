@@ -1484,6 +1484,17 @@ PCP parameters depend on. The statement is validated by its consumer
 (\texttt{MIPRE.SAT.DecoupledDescriber}, Lemma~\ref{lem:decoupled-5sat}) before its proof;
 the route to the proof is \texttt{planning/succinct-cook-levin.md}.
 
+\paragraph{Formalization status.} The mathematics of the describer is formalized
+(\texttt{MIPRE/TM/CookLevin/}): the check circuit of the interpreter machine, from the truth
+table of its local check predicate (\texttt{chk\_isCheckCircuit}); the describer circuit
+\texttt{descCirc}, the flattening of a formula on its $3m + 3$ inputs, with its input count
+and well-formedness; what it describes, \texttt{mem\_formula3\_iff} --- a clause is accepted
+exactly when its three indices decode to the literals of a clause of the tableau of
+Lemma~\ref{lem:correct-tableau} on the interpreter machine (together with two clauses
+bounding the answers by $T$); and item 1, \texttt{extendsAnswers\_iff}. What is left is the
+describer as a polynomial-time function of the ambient model (items 4 and 5) and the gate
+bound (item 3), and then the assembly of the structure.
+
 \paragraph{Source.} Cook~\cite{Coo71} and Levin for the tableau reduction; Papadimitriou
 and Yannakakis~\cite{PY86} for succinct representations and their complexity;
 the explicit form needed here is~\cite[Section 10]{JNVWY20}.

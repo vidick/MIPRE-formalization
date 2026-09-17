@@ -319,5 +319,49 @@ the fixed strings by a lookup table of size `|string| · W`), and the window fam
 disjunction over the Tseitin templates of `chk`, each instantiated from the `t` and centers
 of the clause's aux literal (every window clause has one).
 
+**S3, the mathematics — done** (2026-09-17). Departures from the design above, all
+deliberate:
+
+* *The index width is `m = 11 + 15W + Qb + Gb` with `W = e + 4`* (`mOf`, `Layout.lean`):
+  `W = e + 2` is too narrow, because a position field must hold `2S + 7 > 4S` for `S = 2^e`,
+  and the state field is `Qb = ⌈log |Option Ctl|⌉` rather than `13`. `e = eOf T σ =
+  5(⌈log T⌉ + ⌈log σ⌉) + 24` (`Params.lean`), from an explicit fifth-power majorant of
+  `runBound` under the validity hypotheses (`runBound_le`, `runBound_le_two_pow`).
+* *Two clauses beyond the tableau* (`AnsEnd.lean`): the cell at position `T + 3` of each
+  free tape holds the blank. Without them a satisfying assignment gives answers of length up
+  to `2S`, and the soundness direction needs `|a|, |b| ≤ T` — both for `EncodesAccepted` and
+  for S2's `acceptsWithin_of_accepts`. The free-tape clauses already force blanks to be
+  trailing, so one blank at `T + 3` bounds the string by `T` (`freeLen`), and an accepting
+  run on short answers satisfies them.
+* *The canonical index is not `encodeVar` on the answer cells* (`idxOf`, `Index.lean`): an
+  answer cell of a free tape inside the answer block goes to its *answer index* `j < 4T`,
+  every other variable to its structured index. This is what ties the two directions
+  together: the soundness direction reads the answer blocks off `w ∘ idxOf`, and
+  `w ⟨j⟩ = a j` is the extension hypothesis, so the answer cell must have index exactly `j`.
+* *`QC`, `Qb` and the check circuit are never unfolded*: their defining terms mention
+  `Fintype.card (Option Ctl)` and `Fml.table (winCard …)`, whose evaluation does not
+  terminate in practice, and any `rfl`, `decide` or definitional check that reaches them
+  hangs the elaborator. `QC` and `Qb` are `@[irreducible]`, and `chk` is taken from the
+  existential `Fml.exists_circuit` rather than built (`Params.lean`).
+* *The window family takes the check circuit's Tseitin templates as data*
+  (`WDesc`, `LDesc`, `NTpl`, `tplsOf`): the formula never inspects a `Gate` or a `WinVar`,
+  so the describer program can fold over a constant list of descriptors.
+
+What is formalized: the clause families of the tableau as predicates on decoded fields and as
+formulas, each exact (`Families.lean`, `Window.lean`, `FamilyFml.lean`, `eval_tableauPlusF`);
+the check circuit with `IsCheckCircuit` (`Params.lean`); the describer circuit with its
+inputs, well-formedness and the description `mem_formula3_iff` (`Describer.lean`); and item 1,
+`extendsAnswers_iff` (`Sat.lean`) — the described formula has a satisfying assignment extending
+the two answer blocks iff they are the tape encodings of strings of length at most `T` that the
+decider accepts within `T`.
+
+**S3, the program — not started.** What is left: the describer as a `PolyTimeFun` (items 4
+and 5) and the gate bound (item 3). The route: the encoding of a `Fml` *is* the encoding of
+its post-order list (`SizedEncoding Fml` through `rpn`), so a program that outputs the
+post-order list of the formula outputs the formula (`PolyTimeFun.cast`), and the post-order
+list of a formula built by these builders is a concatenation of the post-order lists of its
+pieces — so the program is `append`, `map`, `zip` and `foldl` on lists, with no tree surgery.
+The widths and offsets are computed in unary, where arithmetic is concatenation.
+
 **S4** — not started.
 

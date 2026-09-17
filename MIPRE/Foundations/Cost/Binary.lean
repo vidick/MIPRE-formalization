@@ -9,7 +9,7 @@ import MIPRE.Foundations.Cost.Numeric
 /-!
 # The closure library, part V: the binary successor, and unary to binary
 
-The successor on binary numerals (`incProg`, `PolyTimeFun.inc`: flip the leading `1`s and the
+The successor on binary numerals (`incBitsProg`, `PolyTimeFun.inc`: flip the leading `1`s and the
 first `0`, in two passes as `decProg`), the conversion of a unary numeral to binary
 (`PolyTimeFun.unaryToBin`, a fold of the successor), data as its own encoding, the bits of a
 number, and the tagging combinator (`PolyTimeFun.tagged`) for constructors of encoded
@@ -146,56 +146,56 @@ namespace Prog
 /-- Body of the successor loop: on `cons xs acc`, if `xs` is empty stop with `(acc, [1])`; if
 its head is `0` stop with `(acc, 1 · tail)`; if its head is `1` continue with
 `(tail, 0 · acc)`. Reversing the first component onto the second then gives the successor. -/
-def incStop1 : Prog := .cons .nil (.cons (.var 1) (.const (.cons (.cons .nil .nil) .nil)))
+def incBitsStop1 : Prog := .cons .nil (.cons (.var 1) (.const (.cons (.cons .nil .nil) .nil)))
 
 /-- The stop on a head `0`: `(acc, 1 · tail)`. -/
-def incStop2 : Prog := .cons .nil (.cons (.var 3) (.cons (.const (.cons .nil .nil)) (.var 1)))
+def incBitsStop2 : Prog := .cons .nil (.cons (.var 3) (.cons (.const (.cons .nil .nil)) (.var 1)))
 
 /-- The continuation on a head `1`: `(tail, 0 · acc)`. -/
-def incCont : Prog := .cons (.cons .nil .nil) (.cons (.var 3) (.cons .nil (.var 5)))
+def incBitsCont : Prog := .cons (.cons .nil .nil) (.cons (.var 3) (.cons .nil (.var 5)))
 
 /-- The body of the successor loop. -/
-def incBody : Prog := .elim 0 .nil (.elim 0 incStop1 (.elim 0 incStop2 incCont))
+def incBitsBody : Prog := .elim 0 .nil (.elim 0 incBitsStop1 (.elim 0 incBitsStop2 incBitsCont))
 
-theorem incBody_wellScoped : incBody.WellScoped 1 := by
-  simp [incBody, incStop1, incStop2, incCont, WellScoped]
+theorem incBitsBody_wellScoped : incBitsBody.WellScoped 1 := by
+  simp [incBitsBody, incBitsStop1, incBitsStop2, incBitsCont, WellScoped]
 
-theorem incBody_empty (acc : BitStr) :
-    Eval [.cons (encode ([] : BitStr)) (encode acc)] incBody
+theorem incBitsBody_empty (acc : BitStr) :
+    Eval [.cons (encode ([] : BitStr)) (encode acc)] incBitsBody
       (.cons .nil (.cons (encode acc) (encode [true]))) (esize acc + 11) := by
   have e := Eval.elim_cons (env := [Data.cons (encode ([] : BitStr)) (encode acc)]) (i := 0)
     (n := .nil) (a := encode ([] : BitStr)) (b := encode acc) (by simp)
-    (Eval.elim_nil (i := 0) (c := .elim 0 incStop2 incCont) (by simp [encode_bitStr_nil])
-      (show Eval _ incStop1 _ _ from
+    (Eval.elim_nil (i := 0) (c := .elim 0 incBitsStop2 incBitsCont) (by simp [encode_bitStr_nil])
+      (show Eval _ incBitsStop1 _ _ from
         Eval.cons (Eval.nil _) (Eval.cons (Eval.var_of_get (i := 1) (v := encode acc) (by simp))
           (Eval.const _ (.cons (.cons .nil .nil) .nil)))))
   exact e.cast_cost (by simp only [esize, Data.size_cons, Data.size_nil]; omega)
 
-theorem incBody_false (rest acc : BitStr) :
-    Eval [.cons (encode (false :: rest)) (encode acc)] incBody
+theorem incBitsBody_false (rest acc : BitStr) :
+    Eval [.cons (encode (false :: rest)) (encode acc)] incBitsBody
       (.cons .nil (.cons (encode acc) (encode (true :: rest)))) (esize acc + esize rest + 12) := by
   have e := Eval.elim_cons (env := [Data.cons (encode (false :: rest)) (encode acc)]) (i := 0)
     (n := .nil) (a := encode (false :: rest)) (b := encode acc) (by simp)
-    (Eval.elim_cons (i := 0) (n := incStop1) (a := Data.ofBool false) (b := encode rest)
+    (Eval.elim_cons (i := 0) (n := incBitsStop1) (a := Data.ofBool false) (b := encode rest)
       (by simp [encode_bitStr_cons])
-      (Eval.elim_nil (i := 0) (c := incCont) (by simp [Data.ofBool])
-        (show Eval _ incStop2 _ _ from
+      (Eval.elim_nil (i := 0) (c := incBitsCont) (by simp [Data.ofBool])
+        (show Eval _ incBitsStop2 _ _ from
           Eval.cons (Eval.nil _)
             (Eval.cons (Eval.var_of_get (i := 3) (v := encode acc) (by simp))
               (Eval.cons (Eval.const _ (.cons .nil .nil))
                 (Eval.var_of_get (i := 1) (v := encode rest) (by simp)))))))
   exact e.cast_cost (by simp only [esize, Data.size_cons, Data.size_nil]; omega)
 
-theorem incBody_true (rest acc : BitStr) :
-    Eval [.cons (encode (true :: rest)) (encode acc)] incBody
+theorem incBitsBody_true (rest acc : BitStr) :
+    Eval [.cons (encode (true :: rest)) (encode acc)] incBitsBody
       (.cons (.cons .nil .nil) (.cons (encode rest) (encode (false :: acc))))
       (esize acc + esize rest + 12) := by
   have e := Eval.elim_cons (env := [Data.cons (encode (true :: rest)) (encode acc)]) (i := 0)
     (n := .nil) (a := encode (true :: rest)) (b := encode acc) (by simp)
-    (Eval.elim_cons (i := 0) (n := incStop1) (a := Data.ofBool true) (b := encode rest)
+    (Eval.elim_cons (i := 0) (n := incBitsStop1) (a := Data.ofBool true) (b := encode rest)
       (by simp [encode_bitStr_cons])
-      (Eval.elim_cons (i := 0) (n := incStop2) (a := .nil) (b := .nil) (by simp [Data.ofBool])
-        (show Eval _ incCont _ _ from
+      (Eval.elim_cons (i := 0) (n := incBitsStop2) (a := .nil) (b := .nil) (by simp [Data.ofBool])
+        (show Eval _ incBitsCont _ _ from
           Eval.cons (Eval.cons (Eval.nil _) (Eval.nil _))
             (Eval.cons (Eval.var_of_get (i := 3) (v := encode rest) (by simp))
               (Eval.cons (Eval.nil _) (Eval.var_of_get (i := 5) (v := encode acc) (by simp)))))))
@@ -204,19 +204,19 @@ theorem incBody_true (rest acc : BitStr) :
 
 /-- The successor loop on `1^j · rest` (with `rest` empty or starting with `0`) from the
 accumulator `acc` stops with `(0^j · acc, incTail rest)`. -/
-theorem incLoop_runs (j : ℕ) (rest : BitStr) (hrest : rest = [] ∨ ∃ r, rest = false :: r)
+theorem incBitsLoop_runs (j : ℕ) (rest : BitStr) (hrest : rest = [] ∨ ∃ r, rest = false :: r)
     (acc : BitStr) (env : Env) (S : ℕ) (hS : esize rest + esize acc + 4 * j ≤ S) :
     ∃ t ≤ (j + 1) * (S + 13),
-      Eval (.cons (encode (List.replicate j true ++ rest)) (encode acc) :: env) (.loop incBody)
+      Eval (.cons (encode (List.replicate j true ++ rest)) (encode acc) :: env) (.loop incBitsBody)
         (.cons (encode (List.replicate j false ++ acc)) (encode (incTail rest))) t := by
   induction j generalizing acc with
   | zero =>
     rcases hrest with rfl | ⟨r, rfl⟩
     · refine ⟨esize acc + 11 + 1, by rw [Nat.zero_add, Nat.one_mul]; omega, ?_⟩
-      exact Eval.loop_stop (Eval.append_of_wellScoped (incBody_empty acc) incBody_wellScoped env)
+      exact Eval.loop_stop (Eval.append_of_wellScoped (incBitsBody_empty acc) incBitsBody_wellScoped env)
     · refine ⟨esize acc + esize r + 12 + 1, ?_, ?_⟩
       · rw [esize_false_cons] at hS; rw [Nat.zero_add, Nat.one_mul]; omega
-      · exact Eval.loop_stop (Eval.append_of_wellScoped (incBody_false r acc) incBody_wellScoped env)
+      · exact Eval.loop_stop (Eval.append_of_wellScoped (incBitsBody_false r acc) incBitsBody_wellScoped env)
   | succ j ih =>
     obtain ⟨t, ht, hrun⟩ := ih (false :: acc) (by rw [esize_false_cons]; omega)
     refine ⟨esize acc + esize (List.replicate j true ++ rest) + 12 + t + 1, ?_, ?_⟩
@@ -225,28 +225,28 @@ theorem incLoop_runs (j : ℕ) (rest : BitStr) (hrest : rest = [] ∨ ∃ r, res
       have h3 : (j + 1 + 1) * (S + 13) = (j + 1) * (S + 13) + (S + 13) := Nat.succ_mul _ _
       omega
     · have hstep := Eval.append_of_wellScoped
-        (incBody_true (List.replicate j true ++ rest) acc) incBody_wellScoped env
+        (incBitsBody_true (List.replicate j true ++ rest) acc) incBitsBody_wellScoped env
       rw [List.replicate_succ, List.cons_append]
       refine Eval.loop_step hstep ?_
       rw [List.replicate_succ', List.append_assoc, List.singleton_append]
       exact hrun
 
-/-- The successor of a binary numeral: `incProg` on `encode l` computes `encode (incBits l)`. -/
-def incProg : Prog := .let_ (.cons (.var 0) .nil) (.let_ (.loop incBody) revOntoProg)
+/-- The successor of a binary numeral: `incBitsProg` on `encode l` computes `encode (incBits l)`. -/
+def incBitsProg : Prog := .let_ (.cons (.var 0) .nil) (.let_ (.loop incBitsBody) revOntoProg)
 
-theorem incProg_wellScoped : incProg.WellScoped 1 :=
-  ⟨⟨Nat.zero_lt_one, trivial⟩, ⟨⟨Nat.zero_lt_succ 1, incBody_wellScoped.mono (by omega) _⟩,
+theorem incBitsProg_wellScoped : incBitsProg.WellScoped 1 :=
+  ⟨⟨Nat.zero_lt_one, trivial⟩, ⟨⟨Nat.zero_lt_succ 1, incBitsBody_wellScoped.mono (by omega) _⟩,
     revOntoProg_wellScoped.mono (by omega) _⟩⟩
 
-theorem incProg_runs (l : BitStr) :
-    ∃ t ≤ (l.length + 2) * (3 * esize l + 32), incProg.Runs (encode l) (encode (incBits l)) t := by
+theorem incBitsProg_runs (l : BitStr) :
+    ∃ t ≤ (l.length + 2) * (3 * esize l + 32), incBitsProg.Runs (encode l) (encode (incBits l)) t := by
   obtain ⟨j, rest, rfl, hrest⟩ := exists_leading_trues l
   have hL : esize (List.replicate j true ++ rest) = 4 * j + esize rest := by
     have := esize_bitStr_append (List.replicate j true) rest
     rw [esize_replicate_true] at this; omega
   have hlen : (List.replicate j true ++ rest).length = j + rest.length := by simp
   have hrl := length_le_esize_bitStr rest
-  obtain ⟨t₁, ht₁, h₁⟩ := incLoop_runs j rest hrest [] [encode (List.replicate j true ++ rest)]
+  obtain ⟨t₁, ht₁, h₁⟩ := incBitsLoop_runs j rest hrest [] [encode (List.replicate j true ++ rest)]
     (esize (List.replicate j true ++ rest) + 1) (by rw [hL]; simp only [esize_bitStr_nil]; omega)
   have htail : esize (incTail rest) ≤ esize rest + 4 := by
     rcases hrest with rfl | ⟨r, rfl⟩
@@ -296,11 +296,11 @@ end Prog
 /-- The successor on binary numerals, in polynomial time. -/
 noncomputable def PolyTimeFun.inc : PolyTimeFun ℕ ℕ where
   toFun n := n + 1
-  code := Prog.incProg
-  closed := Prog.incProg_wellScoped
+  code := Prog.incBitsProg
+  closed := Prog.incBitsProg_wellScoped
   timeBound := (X + 2) * (3 * X + 32)
   computes n := by
-    obtain ⟨t, ht, hrun⟩ := Prog.incProg_runs n.bits
+    obtain ⟨t, ht, hrun⟩ := Prog.incBitsProg_runs n.bits
     refine ⟨t, ?_, ?_⟩
     · refine ht.trans ?_
       have h1 : n.bits.length ≤ esize n := length_le_esize_bitStr _
