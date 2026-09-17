@@ -206,9 +206,43 @@ AXIOM_GUARDS = [ROOT / "MIPRE" / "Axioms.lean",
                 ROOT / "MIPRE" / "Background" / "LIDT" / "Axioms.lean",
                 ROOT / "MIPRE" / "Background" / "Repetition" / "Axioms.lean"]
 
+AXIOM_DECL_RE = re.compile(r"^(?:public\s+)?axiom\s+([A-Za-z_][A-Za-z0-9_.']*)", re.M)
+NAMESPACE_RE = re.compile(r"^namespace\s+([A-Za-z_][A-Za-z0-9_.']*)", re.M)
+
 PROOF_ENV_RE = re.compile(r"\\begin\{proof\}(.*?)\\end\{proof\}", re.S)
 PRINT_AX_RE = re.compile(r"^#print axioms\s+([A-Za-z0-9_.']+)", re.M)
 NAME_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_.']*")
+
+
+def axiom_problems():
+    """Every `axiom` this project declares must be recorded in `MIPRE/Axioms.lean`.
+
+    `#guard_sorry_free` catches `sorryAx` and nothing else, so an `axiom` would otherwise
+    enter the dependency graph with nothing to notice it -- and an axiom is a stronger claim
+    than a `sorry`, because everything resting on it builds. The blueprint says the project
+    assumes exactly one thing beyond Mathlib (Shoup's construction, `lem:self-dual-basis`);
+    this check is what keeps that sentence true. The vendored trees are excluded: they are
+    read-only and carry their own guard files.
+    """
+    recorded = AXIOM_GUARDS[0].read_text(encoding="utf-8") if AXIOM_GUARDS[0].exists() else ""
+    problems, found = [], []
+    for f in sorted((ROOT / "MIPRE").rglob("*.lean")):
+        rel = f.relative_to(ROOT).as_posix()
+        if rel.startswith("MIPRE/Background/"):
+            continue
+        text = f.read_text(encoding="utf-8")
+        names = AXIOM_DECL_RE.findall(text)
+        if not names:
+            continue
+        ns = NAMESPACE_RE.findall(text)
+        prefix = (ns[-1] + ".") if ns else ""
+        for n in names:
+            full = n if "." in n else prefix + n
+            found.append(full)
+            if full not in recorded:
+                problems.append(f"{rel} declares `axiom {n}` but MIPRE/Axioms.lean does not "
+                                f"name {full}; record it there with its contract")
+    return problems, found
 
 
 def proof_level_leanok():
@@ -284,6 +318,9 @@ def build():
     xref_problems, xref_counts = cross_references()
     guard_problems, n_claimed, n_guarded = leanok_guard_problems()
     xref_problems.extend(guard_problems)
+    ax_problems, ax_found = axiom_problems()
+    xref_problems.extend(ax_problems)
+    xref_counts["axioms_declared"] = len(ax_found)
     xref_counts["leanok_claimed"] = n_claimed
     xref_counts["leanok_guarded"] = n_guarded
     undef, used_cmds, defined_cmds = undefined_macros()
@@ -321,6 +358,8 @@ def report(state):
     print(f"commands used {xc['commands_used']}   defined in macros/ {xc['commands_defined']}")
     print(f"proof-level \\leanok declarations {xc['leanok_claimed']}   "
           f"axiom-guarded {xc['leanok_guarded']}")
+    print(f"axioms declared outside the vendored trees {xc['axioms_declared']}   "
+          f"(each must be recorded in MIPRE/Axioms.lean)")
     if state["xref_problems"]:
         print("\nCROSS-REFERENCE PROBLEMS:")
         for q in state["xref_problems"]:
