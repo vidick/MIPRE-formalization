@@ -302,18 +302,26 @@ theorem rangeStepF_bounded : FoldBounded rangeStepF (C 30 * (X + 1) * (X + 1)) :
   rw [hexp]
   omega
 
-/-- `Fml.field`, the width in unary. -/
-noncomputable def fieldP : PolyTimeFun (ℕ × Unary) (List Fml) :=
-  congr ((map Fml.inpF).comp (reverse.comp (snd.comp
+/-- `List.range'`, the length in unary. -/
+noncomputable def range'P : PolyTimeFun (ℕ × Unary) (List ℕ) :=
+  congr (reverse.comp (snd.comp
       ((foldl rangeStepF (C 30 * (X + 1) * (X + 1)) rangeStepF_bounded).comp
-        (snd.pair (fst.pair (const [])))))))
-    (fun p => Fml.field p.1 p.2.length) (by
+        (snd.pair (fst.pair (const []))))))
+    (fun p => List.range' p.1 p.2.length) (by
       rintro ⟨a, u⟩
-      simp only [comp_apply, map_apply, reverse_apply, snd_apply, foldl_apply, pair_apply,
+      simp only [comp_apply, reverse_apply, snd_apply, foldl_apply, pair_apply,
         fst_apply, const_apply, rangeStepF_apply]
       rw [foldl_rangeStep u a []]
-      simp only [List.append_nil, List.reverse_reverse]
-      rfl)
+      simp only [List.append_nil, List.reverse_reverse])
+
+@[simp] theorem range'P_apply (p : ℕ × Unary) : range'P p = List.range' p.1 p.2.length := rfl
+
+/-- `Fml.field`, the width in unary. -/
+noncomputable def fieldP : PolyTimeFun (ℕ × Unary) (List Fml) :=
+  congr ((map Fml.inpF).comp range'P) (fun p => Fml.field p.1 p.2.length) (by
+    rintro ⟨a, u⟩
+    simp only [comp_apply, map_apply, range'P_apply]
+    rfl)
 
 @[simp] theorem fieldP_apply (p : ℕ × Unary) : fieldP p = Fml.field p.1 p.2.length := rfl
 
@@ -535,6 +543,18 @@ noncomputable def addConstRelP : PolyTimeFun ((List Fml × List Fml) × BitStr) 
 
 @[simp] theorem addConstRelP_apply (p : (List Fml × List Fml) × BitStr) :
     addConstRelP p = Fml.addConstRel p.1.1 p.1.2 p.2 := rfl
+
+/-! ## Padding -/
+
+/-- `padBits`, the width in unary. -/
+noncomputable def padP : PolyTimeFun (Unary × BitStr) BitStr :=
+  congr (ap₂ append snd (ap₂ replicate (ap₂ drop fst (ap₁ length snd)) (const false)))
+    (fun p => padBits p.1.length p.2) (by
+      rintro ⟨u, l⟩
+      simp only [ap₂_apply, ap₁_apply, append_apply, replicate_apply, drop_apply, snd_apply,
+        fst_apply, length_apply, length_unary, List.length_drop, padBits, const_apply])
+
+@[simp] theorem padP_apply (p : Unary × BitStr) : padP p = padBits p.1.length p.2 := rfl
 
 /-! ## The two's complement -/
 

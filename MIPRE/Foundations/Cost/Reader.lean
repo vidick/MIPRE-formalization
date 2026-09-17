@@ -107,6 +107,48 @@ noncomputable def headD (d : α) : PolyTimeFun (List α) α :=
 
 @[simp] theorem headD_apply (d : α) (l : List α) : headD d l = l.headD d := rfl
 
+/-- Dropping a prefix, the length in unary: iterated `tail`. -/
+theorem esize_tail_le (l : List α) : esize l.tail ≤ esize l := by
+  cases l with
+  | nil => exact le_rfl
+  | cons a l => rw [List.tail_cons, esize_list_cons]; omega
+
+noncomputable def tailStep : PolyTimeFun (List α × Unit) (List α) := tail.comp fst
+
+@[simp] theorem tailStep_apply (p : List α × Unit) :
+    (tailStep : PolyTimeFun (List α × Unit) (List α)) p = p.1.tail := rfl
+
+theorem esize_foldl_tailStep : ∀ (pre : Unary) (s : List α),
+    esize (pre.foldl (tailStep : PolyTimeFun (List α × Unit) (List α)).step s) ≤ esize s
+  | [], _ => le_rfl
+  | _ :: p, s => (esize_foldl_tailStep p _).trans (esize_tail_le s)
+
+theorem tailStep_bounded :
+    FoldBounded (tailStep : PolyTimeFun (List α × Unit) (List α)) Polynomial.X := by
+  intro l s₀ pre _ _
+  have h := esize_foldl_tailStep pre s₀
+  rw [Polynomial.eval_X, esize_prod]
+  omega
+
+theorem foldl_tailStep : ∀ (u : Unary) (l : List α),
+    u.foldl (tailStep : PolyTimeFun (List α × Unit) (List α)).step l = l.drop u.length
+  | [], l => by rw [List.foldl_nil, List.length_nil, List.drop_zero]
+  | () :: u, l => by
+    rw [List.foldl_cons, foldl_tailStep u _, List.length_cons]
+    show l.tail.drop u.length = _
+    rw [← List.drop_one, List.drop_drop, Nat.add_comm]
+
+/-- Dropping a prefix, the length in unary. -/
+noncomputable def drop : PolyTimeFun (List α × Unary) (List α) :=
+  congr ((foldl tailStep Polynomial.X tailStep_bounded).comp (snd.pair fst))
+    (fun p => p.1.drop p.2.length) (by
+      rintro ⟨l, u⟩
+      simp only [comp_apply, pair_apply, fst_apply, snd_apply, foldl_apply]
+      exact foldl_tailStep u l)
+
+@[simp] theorem drop_apply (p : List α × Unary) :
+    (drop : PolyTimeFun (List α × Unary) (List α)) p = p.1.drop p.2.length := rfl
+
 /-- The `k`-th entry of a list, or a default. -/
 noncomputable def nthD (d : α) : ℕ → PolyTimeFun (List α) α
   | 0 => headD d
