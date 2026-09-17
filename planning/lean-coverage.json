@@ -37,7 +37,7 @@
    "thm:main"
   ],
   "MIPRE.AnswerReduction": [
-   "thm:answer-reduction"
+   "def:answer-reduction-contract"
   ],
   "MIPRE.CL.CLFun": [
    "def:cl-function"
@@ -603,7 +603,7 @@
    "rem:compression-abstract"
   ],
   "MIPRE.Introspection": [
-   "thm:introspection"
+   "def:introspection-contract"
   ],
   "MIPRE.IsApproxRepresentation": [
    "def:approx-rep"
@@ -693,7 +693,7 @@
    "lem:mipstar-sub-re"
   ],
   "MIPRE.Oracularization": [
-   "thm:oracularization"
+   "def:oracularization-contract"
   ],
   "MIPRE.Orthonormalization.povm_orthogonalization_finDim": [
    "thm:orthonormalization"
@@ -2434,13 +2434,13 @@
  },
  "unresolved": [],
  "xref_counts": {
-  "bibitems": 33,
-  "cites": 155,
+  "bibitems": 34,
+  "cites": 160,
   "commands_defined": 99,
-  "commands_used": 209,
-  "labels": 232,
+  "commands_used": 210,
+  "labels": 249,
   "leanok_claimed": 201,
   "leanok_guarded": 201,
-  "refs": 1079
+  "refs": 1110
  }
 }

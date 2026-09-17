@@ -230,19 +230,17 @@ annotation while their own nodes sat bulk-listed under `thm:lidt-soundness`. The
 annotation created that mis-homing and then hid it. This is the clearest evidence that
 counting nodes was the wrong metric.
 
-**`thm:almost-sync` is off the pipeline but inside an import.** The blueprint says it is not
-needed, and that is true of the pipeline: soundness runs in `val*` end to end. But
-`lem:tensor-codes-bipartite` (node `1.2.1.7.8`) consumes it, and `thm:lidt-soundness` reduces
-to that — so the dependency is real, transitively, through an import. It is benign because
-the Lean proof of `lowIndividualDegree_soundness` is sorry-free, so the chain already
-discharges it. The planning consequence: issues #22/#23 are about the *pipeline's* optional
-use of it, not about this one. `rem:almost-sync-transitive` states this.
+**Corrected 2026-09-16: almost-synchronicity belongs to the paper's tensor route.**
+The pipeline carries `val*` throughout. The paper's `lem:tensor-codes-bipartite`
+consumes the corrected transfer, but the alternate canonical-line Lean theorem
+does not certify that route's intermediate lemmas. The earlier inference here
+from a sorry-free endpoint to all of the paper's intermediates was invalid.
+`rem:almost-sync-transitive` now distinguishes the two routes.
 
-**`thm:lidt-soundness` is an input to `thm:qld`**, at node `1.2.2.13`: the simultaneous global
-measurement comes from applying the classical test's quantum soundness to padded points with
-parameters `(q, 4m, d)`. The one background result whose Lean proof is finished feeds the one
-that was the largest gap, which is the right way round and means that stage's analytic core is
-done. `rem:qld-architecture`.
+**The padded Pauli consumer needs the seeded CL theorem**, at node `1.2.2.13`, with
+parameters `(q, 4m, d)`. The formalized canonical-line `thm:lidt-soundness` is reusable
+analysis, but a game/strategy translation and a parameter corollary are still needed
+before it supplies `thm:lidt-cl-soundness`. `rem:lidt-cl-adapter` records that work.
 
 **Node `1.2.2.3` is not `thm:orthonormalization`.** That theorem assumes near-projectivity;
 the qld appendix needs bipartite consistency, and node `1.2.2.3.1` is the Cauchy–Schwarz
@@ -278,9 +276,11 @@ The distinction is large. Of 126 citations across 40 sites, **66 sit on four umb
 blueprint asserts the umbrella statement and says nothing about their substructure. 59 have
 a statement written for them or for a small group containing them.
 
-Only one of the umbrellas is defensible. `thm:lidt-soundness` has a *complete, sorry-free*
-Lean proof, so its 28 sub-nodes genuinely are the internals of something finished
-(`rem:lidt-formalized`). `thm:qld` and `thm:introspection` are unproved statements whose
+The original accounting treated `thm:lidt-soundness`'s 28 cited sub-nodes as
+internals of its finished Lean proof. **That inference is retracted (2026-09-16):**
+the Lean proof concerns an alternate test and does not formalize those intermediates.
+`rem:lidt-formalized` and `paper-correspondence.md` give the current boundary.
+In this historical snapshot, `thm:qld` and `thm:introspection` were unproved statements whose
 substructure the blueprint does not describe at all — 33 nodes on two umbrellas, and this is
 the real remaining gap in the chapter-6 accounting. Nothing about the question-reduction
 pipeline's internals is written down: the 3-level typed verifier, the Hide types, the
@@ -334,7 +334,12 @@ blueprint was already the more careful of the two.
 annotations and three new remarks, plus five new chapter-2 statements that give the `LCS/`
 Lean development something to be named by. Three findings.
 
-**The formalization is stronger than the paper on node `1.2.1`.** The ledger marks it
+**Historical claim, superseded 2026-09-16.** The following comparison originally
+called the formalization stronger on node `1.2.1`; it conflated two low-degree
+tests and did not justify the required adapter. The current correspondence is
+`thm:lidt-cl-soundness` / `rem:lidt-cl-adapter`, and no tensor/Vid21 intermediate
+is certified merely by the alternate endpoint proof. The historical text said:
+the ledger marks it
 *imported*: the paper obtains quantum soundness of the simultaneous low-degree test by
 reducing to the tensor-codes theorem, which it does not reprove. But
 `MIPRE.LIDT.lowIndividualDegree_soundness` is proved from Mathlib alone through the

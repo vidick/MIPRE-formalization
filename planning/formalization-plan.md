@@ -8,6 +8,14 @@ as `planning/ledger-informed-plan.md` stays as the record of the ledger accounti
 
 ## Three artifacts, and what each is authoritative for
 
+**Synchronization update, 2026-09-16.** The current paper-to-blueprint contracts
+and remaining adapters are tracked in [paper-correspondence.md](paper-correspondence.md).
+In particular, the formalized canonical-line LIDT theorem does not by itself
+discharge the seeded CL game or the paper's tensor/Vid21 intermediates, and the
+ambient runtime/PCC interfaces need their stated bridges. Earlier dated coverage
+counts and route descriptions below are historical snapshots; the H5 and repetition
+progress at the end remains valid with those supply-side obligations.
+
 This is the thing to get right before any of the rest, because the three drift silently.
 
 | artifact | authoritative for |

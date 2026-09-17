@@ -3,11 +3,12 @@
 
 This chapter records the main transformations of~\cite{JNVWY20} at headline level: for
 each, what it does, what it relies on, and one theorem statement so that the dependency
-graph reflects the architecture. Working out each section --- restating it in the
-synchronous framework, decomposing it into lemmas, and setting the constants --- is a
-main task of the project. The paper factors several of these transformations through
-\emph{typed} verifiers and a detyping step; that machinery is not
-reproduced here and should be introduced locally where needed.
+graph reflects the architecture. The conditional assembly and its parameter arithmetic
+are formalized; supplying the introspection and answer-reduction constructions remains
+a main task of the project. Their soundness analyses use the bipartite framework.
+The paper factors these transformations through \emph{typed} verifiers and detypes at
+specified boundaries (Remark~\ref{rem:typed-detyping}); the ambient Lean hypotheses
+also require the runtime adaptation of Remark~\ref{rem:runtime-normalization}.
 
 Following Lin~\cite{Lin25}, every soundness statement below is in \emph{value form}: a
 transformation preserves the property ``value at most $1 - \eps$'' up to a quantitative
@@ -214,28 +215,14 @@ downsized CL functions directly, this lemma supplying their decomposition data.
 \label{rem:bipartite-route}
 \uses{def:q-value,def:sync-value,thm:almost-sync,rem:almost-sync-hypothesis,rem:sync-invariant,lem:sync-le-valstar}
 Every soundness clause of this chapter is stated in $\valstar$ and none in $\synval$. The
-choice is deliberate and rests on two things.
-
-First, it is forced at the outer end. Applied to a game supported on the diagonal the
-corrected transport (Theorem~\ref{thm:almost-sync}) forces its constant to satisfy $C \geq
-2^{c-1}$, so the best it can conclude from $\synval \leq \frac12$ is $\valstar \leq 1 -
-\kappa (2C)^{-1/c}$, which is never better than $\frac12$; and its diagonal-weight
-hypothesis is in any case unavailable on a $k$-fold product, whose diagonal weight decays
-as $\kappa^{k}$ (Remark~\ref{rem:almost-sync-hypothesis}). So the threshold has to come
-from a $\valstar$ theorem, which Theorem~\ref{thm:direct-repetition-q} is.
-
-Second, the inner end does not need $\synval$ either. The adversarially verified
-decomposition of the proof recorded in the companion repository
-\texttt{vidick/mipre-proof} --- 123 nodes, 291 challenges all resolved --- states every
-node in the bipartite tensor-product value, from the top claim to the conclusion; not one
-of its nodes mentions the synchronous value. Stating this chapter's clauses in $\synval$
-therefore buys nothing the sources provide and costs three things: the transport itself
-(Theorem~\ref{thm:almost-sync}, whose printed form was false), its polynomial loss and the
-factor $\kappa^{13}$ it contributed to
-Theorem~\ref{thm:parallel-repetition}, and the invariant of
-Remark~\ref{rem:sync-invariant}, which had to be established for three transformations and
-never was. All three are now off the path. Lemma~\ref{lem:sync-le-valstar} survives as the
-free comparison it always was, used only to read a $\valstar$ conclusion in $\synval$ when
+choice follows the source transformation contracts and the direct repetition theorem
+(Theorem~\ref{thm:direct-repetition-q}), all of which already concern $\valstar$.
+No scalar transport from a synchronous value bound is needed. In particular, neither
+the synchronization statement of Theorem~\ref{thm:almost-sync} nor the additional
+hypotheses discussed in Remark~\ref{rem:almost-sync-hypothesis} enter the composition.
+The source rigidity analyses can therefore be formalized in their bipartite setting,
+without the synchronization invariant of Remark~\ref{rem:sync-invariant}.
+Lemma~\ref{lem:sync-le-valstar} is used only to read a $\valstar$ conclusion in $\synval$ when
 a synchronous statement is wanted (Theorem~\ref{thm:halting}, Theorem~\ref{thm:main}),
 never in the other direction.
 
@@ -256,38 +243,39 @@ what makes commitment to each stage of the sampled question enforceable (the ``h
 directions of the CL decomposition). The result is a verifier whose questions are
 exponentially smaller, at the price of a fixed number of levels.
 
-\begin{remark}[Typed verifiers, and why this blueprint has none]
+\begin{remark}[Typed verifiers and the exterior transformation boundaries]
 \label{rem:typed-detyping}
 \ledgernode{1.1.4}
-\uses{def:normal-verifier,def:pcc,thm:oracularization,thm:answer-reduction}
-The transformations of this chapter are performed in~\cite{JNVWY20} on \emph{typed}
-verifiers --- a type graph whose vertices label the roles a question can play, with the
-sampler producing a pair of types and then a pair of questions --- and converted back by a
-detyping lemma at the end of each. This blueprint states the untyped forms throughout,
-which is why no type graph appears in Theorem~\ref{thm:oracularization} or
-Theorem~\ref{thm:answer-reduction}.
+\uses{def:normal-verifier,def:tensor-strategy}
+The source constructions of~\cite{JNVWY20} use \emph{typed} verifiers: a type graph
+labels question roles, and the sampler first selects types and then questions.
+Introspection is detyped at its exterior boundary. Oracularization stays typed inside
+answer reduction, and only the final answer-reduced verifier is detyped. Thus the
+exterior chain is introspection, full answer reduction, then direct repetition, with
+levels $5 \to 7 \to 7$. There is no separate untyped oracle step in that count.
 
-That is a presentational choice with two costs a formalization will have to pay, both
-recorded on ledger node $1.1.4$ so they are not forgotten. Detyping preserves the value
+Detyping has two costs a formalization must retain. It preserves the value
 only up to a factor $16^{-\abs{T}}$ in the type graph's size, which is where the
 ``constant-factor loss'' in the soundness chains comes from; and it adds $2$ to the level
 count, which is part of why the level budget is what it is. The lemma also needs the type
 graph to have at least one edge --- a hypothesis every instantiation in the paper satisfies
-but which the source leaves unstated --- and its soundness argument truncates over-long
+and which the source now states explicitly after its repair --- and its soundness argument truncates over-long
 answers, justified by the same answer-truncation lemma that the anchoring
 construction of~\cite{BVY17} uses.
 \end{remark}
 
-\begin{remark}[Turing machine conventions, and the cost model that replaces them]
+\begin{remark}[Turing machine conventions and the ambient cost model]
 \label{rem:tm-conventions}
 \ledgernode{1.1.5, 1.1.5.1, 1.1.5.2, 1.1.5.3}
 \uses{def:decider,def:lambda-bounded,lem:universal-tm}
 The paper fixes a concrete Turing machine formalism and a \emph{timeout-counter} normal form
 $B(n) = c_0 (c_1 n)^{c_2}$: a machine is wrapped so that it always halts within its bound,
 and the wrapped description is canonical enough that the parameters can be read back off
-it. Four ledger nodes are about that machinery, and this blueprint replaces all of it with
-the cost model of Section~\ref{sec:rr-computability}
-(Section~\ref{sec:departures} records the departure).
+it. The ambient Lean model instead uses input-size-dependent resource budgets
+(Section~\ref{sec:rr-computability}). This changes the transformation hypotheses;
+it does not establish the source's timeout or answer-truncation properties.
+Remark~\ref{rem:runtime-normalization} records the required adaptation, and
+Section~\ref{sec:departures} records the departure.
 
 Three things in those nodes are worth keeping even so, because they are the kind of detail a
 formalization rediscovers the hard way. The canonical form has to be genuinely injective in
@@ -300,6 +288,42 @@ because the constants are positive integers. None of the three is deep; all thre
 sort of thing that stops a formalization dead.
 \end{remark}
 
+\begin{remark}[Runtime normalization obligation]
+\label{rem:runtime-normalization}
+\uses{def:lambda-bounded,def:decider,rem:tm-conventions,rem:runtime-contract-bridge}
+The model distinction is recorded in Remark~\ref{rem:runtime-contract-bridge}; here
+are its consequences for the transformations.
+The source introspection theorem uses an absolute bound $N^\lambda$ at index $N$;
+its simulator rejects after that many steps. Definition~\ref{def:lambda-bounded}
+instead bounds ambient cost on data $d$ by $N^\lambda(\abs{d}+1)^\lambda$.
+Even on questions and answers of length at most $N^\lambda$, this supplies a bound
+of order $N^{O(\lambda^2)}$, before simulation overhead, rather than $N^\lambda$.
+It also gives no answer-prefix invariance for arbitrary longer strings.
+
+To derive the ambient transformation hypotheses from the source, a normalization
+construction must restrict the valid input formats, preserve the original answer cut,
+and prove preservation of values and perfect PCC witnesses. It must provide the
+absolute simulation budgets and the truncation properties required by the source,
+including bounded checks on malformed inputs. If this requires a reparameterization
+$\lambda' = p(\lambda)$, its effect on the introspection bound
+$\poly(2^{p(\lambda)n},\ell)$ and on the soundness margins must be propagated.
+Enlarging the answer alphabet to $N^{\lambda'}$ without rejecting answers beyond the
+original cut can change the game. A direct proof in the ambient model is another route.
+
+This is an open obligation, not a normalization theorem established here.
+\texttt{Budget} and \texttt{Verifier.Within} record coefficients, degrees, question
+dimensions and explicit rejection bounds; \texttt{GapCompression.output\_rejects\_long}
+constrains the output. None of these supplies normalization for arbitrary
+$\lambda$-bounded inputs. The introspection, oracularization and answer-reduction
+source displays below use the paper's absolute-time convention and its bipartite PCC
+notion. Separate ambient contract definitions carry the Lean tags and statement marks;
+their inhabitants require the supply targets stated below. In particular, identifying
+source PCC witnesses with ambient completeness witnesses requires the two directions
+of Remark~\ref{rem:pcc-representation-bridge}. The comparison is with \texttt{introspection.tex},
+\texttt{oracularization.tex} and \texttt{ld\_compiler.tex} in the companion paper
+pinned by~\cite{AuditSync26}.
+\end{remark}
+
 
 \subsubsection{The introspective verifier}
 
@@ -307,7 +331,8 @@ sort of thing that stops a formalization dead.
 \label{def:intro-verifier}
 \ledgernode{1.2.3}
 \uses{def:normal-verifier,def:cl-function,rem:typed-detyping,thm:qld}
-Fix $\ell$ and a $\lambda$-bounded $\ell$-level verifier $\verifier$. The
+Fix $\ell$ and an $\ell$-level verifier $\verifier$ satisfying the paper's absolute
+$\lambda$-bound, as distinguished in Remark~\ref{rem:runtime-normalization}. The
 \emph{introspective verifier} $\vint$ is the typed verifier whose players sample the
 conditionally linear question distribution of $\verifier_{2^n}$ \emph{themselves}: the
 question $y \in V = \F_q^s$ is not sent to them, but obtained by each player measuring its
@@ -575,14 +600,14 @@ twirl toolkit and the final constant arithmetic.
 \label{thm:introspection}
 \ledgernode{1.2, 1.2.3.8}
 \uses{def:normal-verifier,def:lambda-bounded,def:pcc,thm:qld,def:cl-function,def:intro-verifier,lem:intro-complexity,lem:intro-completeness,lem:intro-induction}
-\lean{MIPRE.Introspection}
-\leanok
-There is a polynomial-time Turing machine $\ComputeIntroVerifier$ that on input
-$(\verifier, \lambda, \ell)$ returns a $5$-level normal form verifier $\vint =
+In the source model, a Turing machine $\ComputeIntroVerifier$ runs in time
+$\poly(\abs{\verifier},\log\lambda,\ell)$, polynomial in its input length for each
+fixed $\ell$. On input $(\verifier, \lambda, \ell)$ it returns a $5$-level normal form verifier $\vint =
 (\sint, \dint)$ with
 $\TIME_{\sint}(n) = \poly(n, \lambda, \ell)$,
 $\TIME_{\dint}(n) = \poly(2^{\lambda n}, \ell)$ and $\abs{\dint} = \poly(\lambda,
-\ell)$, such that for every $\lambda$-bounded $\ell$-level verifier $\verifier$ there
+\ell)$, with its decider in standard timeout-counter form, such that for every
+$\ell$-level verifier $\verifier$ satisfying the source absolute $\lambda$-bound there
 is a function $\delta(\eps, n) = a\bigl( (\lambda n)^a \eps^b + (\lambda n)^{-b}
 \bigr)$ (constants $a, b$ depending only on $\ell$) with, for all $n$:
 \begin{enumerate}
@@ -593,21 +618,47 @@ is a function $\delta(\eps, n) = a\bigl( (\lambda n)^a \eps^b + (\lambda n)^{-b}
 \end{enumerate}
 \end{theorem}
 
-\paragraph{Lean statement.} The theorem is the structure \texttt{MIPRE.Introspection},
+\begin{definition}[Ambient introspection contract]
+\label{def:introspection-contract}
+\uses{def:normal-verifier,def:lambda-bounded,def:pcc}
+\lean{MIPRE.Introspection}
+\leanok
+The structure \texttt{MIPRE.Introspection} is an ambient contract,
 parametrized by $\ell$: the introspective sampler as a function of $\lambda$ alone with its
 program computable in polynomial time, the introspective decider's program as a
 polynomial-time function of the input programs and $\lambda$, the packaging as a $5$-level
 normal form verifier on every input, the complexity clauses for every input and index ---
-$\TIME_{\sint}(n) \leq (\lambda n + 1)^C$, $\TIME_{\dint}(n) \leq 2^{C(\lambda n + 1)}$ and
-$\abs{\dint} \leq C(\lambda + 1)^C$ for a constant $C$, the paper's $C_{\mathrm{intro}}$, with
-the decider rejecting answers longer than its time bound --- and the two value clauses for
-$\lambda$-bounded $\ell$-level inputs, with $a \geq 1$ (the paper's $a > 0$, normalized as
-the proof of Theorem~\ref{thm:compression} does). The complexity clauses are stated in the
+sampler and decider runtime coefficients at most $(\lambda n + 1)^C$ and
+$2^{C(\lambda n + 1)}$, respectively, both at input-size degree $C$, and
+$\abs{\dint} \leq C(\lambda + 1)^C$ for a constant $C$, the ambient analogue of
+$C_{\mathrm{intro}}$, with
+the decider rejecting answers longer than $2^{C(\lambda n+1)}$. For ambient
+$\lambda$-bounded inputs, completeness transfers \texttt{HasPerfectPCC} from index
+$2^n$ at answer cut $(2^n)^\lambda$ to index $n$ at cut $2^{C(\lambda n+1)}$.
+Soundness transfers a value greater than $1-\eps$, for $\eps>0$, at the output cut
+to a value at least $1-\delta(\eps,n)$ at the input cut, where
+$\delta(\eps,n)=a((\lambda n)^a\eps^b+(\lambda n)^{-b})$, $a\geq1$ and $0<b\leq1$.
+The complexity clauses are stated in the
 vocabulary of resource budgets (\texttt{MIPRE.Budget}, \texttt{Verifier.Within}: the running-time
 coefficients of sampler and decider and their degree, the question dimension, and the answer
-length beyond which the decider rejects), which is what lets the four transformations be
+length beyond which the decider rejects), which lets the exterior transformations be
 chained. The composition \texttt{MIPRE.GapCompression.ofPipeline} consumes an instance at
-$\ell = 7$.
+$\ell = 7$. Here $\lambda$-boundedness is the ambient definition, not the source
+absolute-time hypothesis. This definition specifies the contract, without constructing
+an inhabitant. Since $\ell$ is fixed by the structure, its polynomial-time construction
+field does not assert a bound polynomial in binary $\ell$.
+\end{definition}
+
+\begin{lemma}[Supplying ambient introspection]
+\label{lem:introspection-supply}
+\uses{thm:introspection,def:introspection-contract,rem:runtime-normalization,rem:pcc-representation-bridge}
+The ambient contract \texttt{MIPRE.Introspection 7} is inhabited.
+\emph{Open target.} A derivation from the source must normalize the input runtimes
+and answer cuts, transfer ambient perfect PCC inputs to source PCC inputs, and
+transfer the source completeness outputs back to \texttt{HasPerfectPCC}. It must
+also establish the stated ambient budgets and soundness parameters. Neither the
+contract definition nor the conditional composition proves these obligations.
+\end{lemma}
 
 The soundness analysis is a long rigidity argument~\cite[Section 8]{JNVWY20}. It builds on techniques introduced in~\cite{NW19}, and it may be advisable to formalize some of the key lemmas there first. These include the Pauli basis test together with a toolkit of approximate-measurement lemmas
 (twirling, commutation, sandwiching). For this project, those lemmas should be stated and proved in the bipartite setting, as in the sources: the pipeline carries $\valstar$ throughout, so no tracial restatement is needed and none should be attempted (Remark~\ref{rem:bipartite-route}).
@@ -625,10 +676,9 @@ reduction. This is probably the easiest transformation in the paper and could be
 \label{thm:oracularization}
 \ledgernode{1.3.5}
 \uses{def:normal-verifier,def:pcc,def:sync-strategy}
-\lean{MIPRE.Oracularization}
-\leanok
-There is a polynomial-time Turing machine $\ComputeOracleVerifier$ mapping a normal
-form verifier $\verifier = (\sampler, \decider)$ to a normal form verifier $\vora$
+The source theorem supplies a polynomial-time Turing machine $\ComputeOracleVerifier$
+mapping an $\ell$-level normal form verifier $\verifier = (\sampler, \decider)$,
+whose decider is in standard timeout-counter form, to a \emph{typed} verifier $\vora$
 such that, for some $\delta(\eps) = O(\sqrt{\eps})$ and all $n$:
 \begin{enumerate}
 \item (\textbf{Completeness}) If $\verifier_n$ has a value-$1$ PCC strategy then
@@ -637,7 +687,8 @@ such that, for some $\delta(\eps) = O(\sqrt{\eps})$ and all $n$:
 \item (\textbf{Soundness}) If $\valstar(\vora_n) > 1 - \eps$ then
   $\valstar(\verifier_n) \geq 1 - \delta(\eps)$.
 \item (\textbf{Complexity}) The sampler of $\vora$ depends only on $\sampler$, with
-  $\TIME$ within a constant factor and the same number of levels.
+  $\TIME_{\sampler^{\mathrm{ora}}}(n) = \poly(\TIME_\sampler(n))$ and $\ell$ typed levels.
+  The decider has time $\poly(\TIME_\sampler(n),B_\decider(n))$.
 \end{enumerate}
 The oracularized decider's preamble performs a type check, a question-length check, and a
 bounded parse of each answer component against the decider's timeout bound $B_\decider(n)$;
@@ -645,16 +696,37 @@ answers failing the parse are grouped into one distinguished outcome, so the ora
 families are projective measurements and not sub-measurements.
 \end{theorem}
 
-\paragraph{Lean statement.} The theorem is the structure \texttt{MIPRE.Oracularization},
-stated in the same vocabulary as the other three transformations. It is not a stage of
-$\Compress$: in the paper $\Compress$ has three steps, and oracularization is the first step
-of the \emph{proof} of Theorem~\ref{thm:answer-reduction}, whose $\ComputeAnsVerifier$ begins
-by computing the oracularized verifier. So \texttt{MIPRE.GapCompression.ofPipeline} does not
-consume it; a proof that \texttt{MIPRE.AnswerReduction} is inhabited will. The length
-$B_\decider(n)$ against which the decider parses each answer component is an explicit
-parameter $(\lambda n)^\beta$, the ambient model having no timeout-counter form; the decider's
-complexity, absent from the statement above, is a polynomial in that length, the input's
-bounds and $\abs{\verifier}$, at a degree affine in the input's.
+\begin{definition}[Ambient oracularization contract]
+\label{def:oracularization-contract}
+\uses{def:normal-verifier,def:pcc}
+\lean{MIPRE.Oracularization}
+\leanok
+The structure \texttt{MIPRE.Oracularization}, parametrized by $\ell$, is an ambient hypothesis
+structure with \emph{untyped}, level-preserving output. It takes an explicit parse
+bound $(\lambda n+1)^\beta$; its sampler depends only on the input sampler, and its
+sampler and decider descriptions are computable in polynomial time. Completeness
+transfers \texttt{HasPerfectPCC} at that input cut to the declared output answer bound,
+a fixed polynomial in the parse bound. Soundness, for $\eps>0$, transfers output value
+greater than $1-\eps$ to input value at least $1-c\sqrt{\eps}$, for a fixed $c>0$.
+Its resource clause is polynomial in the parse bound, the input budget and the input
+description size, at a degree affine in the input's degree. These are specified fields;
+the declaration does not construct such a verifier.
+\end{definition}
+
+\begin{remark}[Typed oracle interface obligation]
+\label{rem:oracularization-contract}
+\uses{thm:oracularization,def:oracularization-contract,rem:typed-detyping,rem:runtime-normalization,rem:pcc-representation-bridge}
+The source typed theorem does not directly inhabit this structure. Generic detyping
+adds two levels, so a level-preserving untyped implementation or a suitable typed
+interface remains an obligation, together with the runtime adaptation of
+Remark~\ref{rem:runtime-normalization}. In the paper, oracularization is internal to
+the proof of Theorem~\ref{thm:answer-reduction}; its analysis uses the typed verifier
+and detypes only the final answer-reduced verifier. The checked composition
+\texttt{MIPRE.GapCompression.ofPipeline} therefore does not consume
+\texttt{MIPRE.Oracularization}. Inhabiting the existing untyped oracle structure
+would require a separate justification before using it in the source answer-reduction
+proof; it is not a fourth exterior stage or an additional soundness loss in compression.
+\end{remark}
 
 \begin{remark}[What the audit changed in oracularization]
 \label{rem:oracularization-repairs}
@@ -675,8 +747,9 @@ statement above has been written to respect.
   symmetric ``by construction'' unjustified --- the hypothesis supplies a value-$1$ PCC
   strategy whose state is reused unchanged, and no lemma in the paper symmetrizes such a
   strategy while preserving projectivity, consistency and value $1$. SPCC was withdrawn
-  from the completeness clause in consequence. In the synchronous framework this is exactly
-  what is free (Remark~\ref{rem:identical-operators}).
+  from the completeness clause in consequence. The ambient interface starts from a
+  different strategy representation; transferring this source witness requires
+  Remark~\ref{rem:pcc-representation-bridge}.
 \item The oracle families are genuine projective measurements. Outcomes failing the
   decider's bounded parse are grouped into a distinguished outcome; leaving that implicit
   made them sub-measurements, which the later sandwiching argument may not use.
@@ -740,7 +813,8 @@ n, T, Q, \sigma, x, y)$ --- validity requiring $\abs{\decider} \leq \sigma$, $\m
 --- together with a PCP view $(z, \Xi)$, runs in time $\poly(\log T, \log n, Q, \sigma)$
 and satisfies:
 \begin{enumerate}
-\item (\textbf{Completeness}) if $\decider$ accepts $(n, x, y, a, b)$ within $T$ steps,
+\item (\textbf{Completeness}) if $\abs{a},\abs{b}\leq T$ and $\decider$ accepts
+  $(n, x, y, a, b)$ within $T$ steps,
   then the low-degree proof with $g_1, g_2$ the low-degree encodings of the padded answers
   is accepted with probability $1$ over uniform $z$;
 \item (\textbf{Soundness}) any low-degree proof accepted with probability greater than
@@ -778,7 +852,8 @@ decision rule are determined by them.
 \label{lem:pcp-completeness}
 \ledgernode{1.3.3.2}
 \uses{lem:pcp-format,thm:succinct-sat}
-If the decider accepts $(n, x, y, a, b)$ within $T$ steps, then the honestly generated proof
+If $\abs{a},\abs{b}\leq T$ and the decider accepts $(n, x, y, a, b)$ within $T$ steps,
+then the honestly generated proof
 $\Pi$ --- the low-degree encodings of the actual answers, with the auxiliary polynomials
 computed from them --- makes $\pcpverifier$ accept with certainty.
 \end{lemma}
@@ -833,13 +908,13 @@ Theorem~\ref{thm:pcp-decider} does.
 \label{thm:answer-reduction}
 \ledgernode{1.3, 1.3.4}
 \uses{def:normal-verifier,def:pcc,thm:succinct-sat,lem:decoupled-5sat,thm:pcp-decider,lem:schwartz-zippel,thm:qld,lem:self-dual-basis,thm:oracularization}
-\lean{MIPRE.AnswerReduction}
-\leanok
-There is a polynomial-time Turing machine $\ComputeAnsVerifier$ that on input
+In the source model there is a polynomial-time Turing machine $\ComputeAnsVerifier$ that on input
 $(\verifier, \lambda, \ell, \mu, \sigma)$, for $\verifier$ an $\ell$-level normal form
-verifier with $\abs{\decider} \leq \sigma$, $\TIME_\sampler(n) \leq (\lambda n)^\mu$
+verifier whose decider is in standard timeout-counter form, with
+$\abs{\decider} \leq \sigma$, $\TIME_\sampler(n) \leq (\lambda n)^\mu$
 and $\TIME_\decider(n) \leq (2^{\lambda n})^\mu$ for $n \geq 2$, outputs a
-$\max\{\ell + 2, 5\}$-level normal form verifier $\vans$ with
+$\max\{\ell + 2, 5\}$-level normal form verifier $\vans$ whose decider is in standard
+timeout-counter form with $B_{\dans}(n)=\poly(\sigma,(\lambda n)^\mu)$, with
 $\TIME_{\sans}(n), \TIME_{\dans}(n) = \poly\bigl( (\lambda n)^\mu, \sigma \bigr)$,
 whose sampler depends only on $(\sampler, \lambda, \ell, \mu, \sigma)$, and such that for
 some $\delta(\eps, n) = \sigma^a \bigl( (\lambda n)^{\mu a} \eps^b + (\lambda
@@ -853,15 +928,42 @@ $C_{\mathrm{ar}}$, for all $n \geq C_{\mathrm{ar}}$:
 \end{enumerate}
 \end{theorem}
 
-\paragraph{Lean statement.} The theorem is the structure \texttt{MIPRE.AnswerReduction},
+\begin{definition}[Ambient answer-reduction contract]
+\label{def:answer-reduction-contract}
+\uses{def:normal-verifier,def:pcc}
+\lean{MIPRE.AnswerReduction}
+\leanok
+The structure \texttt{MIPRE.AnswerReduction} is an ambient contract,
 parametrized by $\ell$, its output at $\max\{\ell + 2, 5\}$ levels. The hypotheses on the
-input are the budget \texttt{AnswerReduction.inBudget}: sampler within $(\lambda n + 1)^\mu$,
-decider within $2^{\mu(\lambda n + 1)}$, both at degree $\mu$, questions of dimension at most
+input are the budget \texttt{AnswerReduction.inBudget}: sampler and decider runtime
+coefficients at most $(\lambda n + 1)^\mu$ and $2^{\mu(\lambda n + 1)}$, respectively,
+both at input-size degree $\mu$, questions of dimension at most
 the sampler's bound and answers rejected beyond the decider's, together with $\abs{\decider}
 \leq \sigma$; the output is then within a universal polynomial of $(\lambda n + 1)^\mu +
-\sigma$ at a universal degree, and rejects longer answers. The threshold $C_{\mathrm{ar}}$ is
-the paper's (\texttt{thm:ar} in \texttt{ld\_compiler.tex}); an earlier statement here had the
-value clauses for all $n$. The composition consumes an instance at $\ell = 5$.
+\sigma$ at a universal degree, and rejects longer answers. Its threshold $C_{\mathrm{ar}}$
+plays the role of the source threshold (\texttt{thm:ar} in \texttt{ld\_compiler.tex}); an earlier statement here had the
+value clauses for all $n$. Its soundness field also explicitly requires $n\geq2$,
+$\lambda\geq1$ and $\eps>0$. Completeness transfers ambient \texttt{HasPerfectPCC}
+from input answer cut $2^{\mu(\lambda n+1)}$ to the output budget's answer cut.
+Soundness transfers output value greater than $1-\eps$ to input value at least
+$1-\delta(\eps,n)$ at those cuts, with
+$\delta(\eps,n)=\sigma^a((\lambda n)^{\mu a}\eps^b+(\lambda n)^{-\mu b})$,
+$a\geq1$ and $0<b\leq1$. Sampler and decider descriptions are computable in
+polynomial time; the sampler depends only on the input sampler and the parameters.
+The composition consumes an instance at $\ell=5$. Defining this contract does not
+construct an inhabitant or prove its correspondence with the source.
+\end{definition}
+
+\begin{lemma}[Supplying ambient answer reduction]
+\label{lem:answer-reduction-supply}
+\uses{thm:answer-reduction,def:answer-reduction-contract,rem:runtime-normalization,rem:pcc-representation-bridge,rem:oracularization-contract}
+The ambient contract \texttt{MIPRE.AnswerReduction 5} is inhabited.
+\emph{Open target.} A source-based proof must supply runtime and answer-cut
+normalization, both directions of the PCC representation bridge, and a typed oracle
+interface within answer reduction. It must recover the ambient budget and parameter
+clauses. This does not require a separate exterior application of the untyped oracle
+contract; its present definition is not a proof of the needed typed interface.
+\end{lemma}
 
 This is the most technically heterogeneous section of the paper
 (\cite[Section 10]{JNVWY20}): half classical (tableaux, Tseitin encoding,
@@ -1007,22 +1109,26 @@ constants produced by the accounting itself, $W$ the argument of the polynomial.
 \subsection{The compression theorem}
 \label{sec:ps-compression}
 
-Composing the four transformations --- introspection, oracularization, answer
-reduction, repetition --- yields gap-preserving compression: the paper-level form of
+The three exterior stages are introspection, full answer reduction (with its typed
+oracle step), and repetition. Their ambient contracts yield gap-preserving compression,
 the compression hypothesis of Lemma~\ref{lem:compressible-criterion}. The soundness
 clause is the value-form clause that~\cite{JNVWY20} state first and then strengthen to
 an entanglement bound (Remark~\ref{rem:entanglement-form}).
 
-\begin{theorem}[Gap-preserving compression]
+\begin{theorem}[Gap-preserving compression from ambient stage contracts]
 \label{thm:compression}
 \ledgernode{1.5, 1.5.7}
-\uses{thm:introspection,thm:oracularization,thm:answer-reduction,thm:parallel-repetition,def:lambda-bounded,def:pcc,def:normal-verifier}
+\uses{def:introspection-contract,def:answer-reduction-contract,thm:parallel-repetition,def:lambda-bounded,def:pcc,def:normal-verifier}
 \lean{MIPRE.GapCompression, MIPRE.GapCompression.ofPipeline}
 \leanok
-There is a universal constant $C_0 > 0$ and a polynomial-time Turing machine
-$\Compress$ that on input $(\verifier, \lambda)$ outputs a $7$-level normal form
-verifier $\vcompr = (\scompr, \dcompr)$ with $\TIME_{\scompr}(n),
-\TIME_{\dcompr}(n) = \poly(n, \lambda)$, where $\scompr$ is independent of
+Assume $I : \texttt{MIPRE.Introspection 7}$ and
+$A : \texttt{MIPRE.AnswerReduction 5}$, the contracts of
+Definitions~\ref{def:introspection-contract} and~\ref{def:answer-reduction-contract}.
+Using the supplied repetition construction of Theorem~\ref{thm:parallel-repetition},
+there is a universal constant $C_0 > 0$ and a polynomial-time
+procedure $\Compress$ that on input $(\verifier, \lambda)$ outputs a $7$-level normal
+form verifier $\vcompr = (\scompr, \dcompr)$ with runtime coefficients bounded by
+$\poly(n,\lambda)$ at a fixed input-size degree, where $\scompr$ is independent of
 $\verifier$ and computable from $\lambda$ in time $\polylog(\lambda)$. If moreover
 $\verifier$ is a $\lambda$-bounded $7$-level normal form verifier, then for all $n
 \geq C_0$ and $N = 2^n$:
@@ -1036,14 +1142,18 @@ $\verifier$ is a $\lambda$-bounded $7$-level normal form verifier, then for all 
 \end{theorem}
 \begin{proof}
 \leanok
-\uses{thm:introspection,thm:answer-reduction,thm:parallel-repetition,lem:compress-margin,lem:compress-tau,rem:compression-chain}
+\uses{def:introspection-contract,def:answer-reduction-contract,thm:parallel-repetition,lem:compress-margin,lem:compress-tau,rem:compression-chain}
+Let $\ComputeIntroVerifier$ and $\ComputeAnsVerifier$ denote the procedures provided
+by $I$ and $A$, respectively. These are assumed ambient procedures in this proof.
 $\Compress(\verifier, \lambda)$ is $\ComputeIntroVerifier(\verifier, \lambda, 7)$, then
 $\ComputeAnsVerifier(\cdot, \lambda, \mu, \sigma(\lambda))$, then
 $\ComputeParrepVerifier(\cdot, 7, \lambda, \tau, \beta)$, with $\mu$ from
 Lemma~\ref{lem:compress-margin}, $\sigma(\lambda)$ a polynomial in $\lambda$ dominating
 $C_{\mathrm{intro}} (\lambda + 1)^{C_{\mathrm{intro}}}$, $\beta$ an exponent with
 $\poly\bigl((\lambda n + 1)^\mu + \sigma(\lambda)\bigr) \leq (\lambda n + 1)^\beta$, and
-$\tau$ from Lemma~\ref{lem:compress-tau}; $C_0$ is the largest of the thresholds. The
+$\tau$ from Lemma~\ref{lem:compress-tau}; $C_0$ dominates $2$, $C_{\mathrm{ar}}$,
+the introspection and answer-reduction margin thresholds, the threshold for the lower
+bound on $\eps_2$, and $\tau$, as recorded in \texttt{Pipeline/Compress.lean}. The
 complexity clauses chain the three complexity clauses through the budgets: every bound is a
 monotone polynomial expression in $n$, $\lambda$, $\sigma(\lambda)$ and the sizes of the
 programs along the chain, hence at most a polynomial in $n + \lambda$. The value clauses are
@@ -1057,10 +1167,9 @@ dominated. Oracularization is not a stage: it is the first step of the proof of
 Theorem~\ref{thm:answer-reduction}.
 \end{proof}
 
-The level count is forced by the chain rather than chosen: introspection outputs a
-$5$-level verifier whatever the level of its input (Theorem~\ref{thm:introspection}),
-oracularization preserves the level (Theorem~\ref{thm:oracularization}), answer reduction
-takes $\ell$ to $\max\{\ell + 2, 5\}$, here $7$ (Theorem~\ref{thm:answer-reduction}), and
+The assumed ambient introspection contract outputs a $5$-level verifier, and the
+answer-reduction contract takes $\ell$ to $\max\{\ell+2,5\}$, here $7$; these match
+the exterior levels of the source constructions. Then
 direct repetition preserves it (Theorem~\ref{thm:parallel-repetition}); so $\Compress$
 outputs a $7$-level verifier on every input, and $7$ is consequently the level at which
 the recursion closes. A verifier of fewer levels is presented at that level by padding its
@@ -1068,7 +1177,8 @@ decomposition with trivial factors, which an $\ell$-level conditionally linear f
 (Definition~\ref{def:cl-function}) admits. In~\cite{JNVWY20} the count is $9$, anchored
 repetition adding two levels (Remark~\ref{rem:direct-vs-anchored}).
 
-\paragraph{Lean statement.} The theorem is the structure \texttt{MIPRE.GapCompression}: a
+\paragraph{The output contract.} The conditional theorem constructs a
+\texttt{MIPRE.GapCompression}: a
 record of the constant $C_0$; the compressed sampler $\lambda \mapsto \scompr_\lambda$, a
 valid $7$-level sampler for every $\lambda$, with a polynomial-time program computing its
 description from the binary representation of $\lambda$ (Lemma~\ref{lem:compress-sampler-indep});
@@ -1083,11 +1193,13 @@ decider accepts only after fully parsing the answers, so an answer longer than i
 forces a timeout, the property the amended proof of Lemma~\ref{lem:dhalt-values} relies on;
 in the ambient model, where running times scale with the input, it is a demand on the
 construction, an explicit length check); and the completeness and soundness clauses for
-$\lambda$-bounded $7$-level inputs at $n \geq C_0$. An instance of the structure is the
-theorem; the pipeline of this chapter is its proof, and the halting reduction consumes an
-instance (Remark~\ref{rem:compression-abstract}). Two readings are fixed there.
-$\verifier_N$ is taken with answers of length at most $N^\lambda$, the bound that
-$\lambda$-boundedness puts on the running time of its decider, and $\vcompr_n$ with answers
+$\lambda$-bounded $7$-level inputs at $n \geq C_0$. The checked pipeline constructs
+an instance from the stated transformation hypotheses;
+it does not inhabit introspection or answer reduction, nor discharge their source-model
+adaptations. The halting reduction consumes an instance
+(Remark~\ref{rem:compression-abstract}). Two readings are fixed there.
+$\verifier_N$ is taken with answers of length at most $N^\lambda$, the explicitly
+chosen input answer cut (also the ambient runtime coefficient), and $\vcompr_n$ with answers
 of length at most the stated running-time bound --- beyond which its decider rejects, so
 that its value is the same with any larger alphabet
 (\texttt{Verifier.valStar\_eq\_of\_rejects}) --- since the exact running times of
@@ -1099,11 +1211,26 @@ pair of weight zero and rejected), which is a synchronous game for every verifie
 is presupposed of the decider. An earlier reading took $\vcompr_n$ itself as the synchronous
 game, which asks its decider to reject unequal answers to equal questions --- a property of
 the decider that the paper never states, \emph{synchronous} there being a property of
-strategies, and one the paper's completeness clause does not supply. What that clause does
-supply --- identical measurement operators for the two players, commuting on the support of
-the question distribution --- is exactly a PCC strategy of the doubled game.
+strategies, and one the paper's completeness clause does not supply. The doubled game
+is the precise ambient completeness interface. The source's identical operators and
+support commutation do not by themselves put its state in the ambient normalized
+tracial representation. Applying source completeness requires the ambient-to-source
+direction of Remark~\ref{rem:pcc-representation-bridge} for its input and the
+source-to-ambient direction for its output; those are supply obligations, not
+definitional identifications.
 
-The four stages are chained through a parameter budget rather than composed blindly:
+\begin{theorem}[Ambient compression inhabitation target]
+\label{thm:compression-target}
+\uses{lem:introspection-supply,lem:answer-reduction-supply,thm:compression}
+The type \texttt{MIPRE.GapCompression} is inhabited.
+\emph{Open target.} Theorem~\ref{thm:compression} proves the assembly once
+Lemmas~\ref{lem:introspection-supply} and~\ref{lem:answer-reduction-supply} supply
+its two remaining inputs. The proved repetition construction supplies its third
+input. This target records unconditional inhabitation separately from that checked
+conditional theorem.
+\end{theorem}
+
+The three exterior stages are chained through a parameter budget:
 each stage's soundness clause is applied contrapositively, and each application needs a
 strict margin between the loss it suffers and the gap it is handed. Those margins are
 arithmetic facts about the imported constants, isolated here as
@@ -1145,12 +1272,13 @@ claim for every input.
 \begin{lemma}[The margin claim]
 \label{lem:compress-margin}
 \ledgernode{1.5.3}
-\uses{thm:introspection,thm:answer-reduction}
+\uses{def:introspection-contract,def:answer-reduction-contract}
 \lean{MIPRE.Pipeline.eps1, MIPRE.Pipeline.intro_margin, MIPRE.Pipeline.exists_mu,
   MIPRE.Pipeline.eps2, MIPRE.Pipeline.ar_margin}
 \leanok
-Write $(a_1, b_1)$ for the constants of Theorem~\ref{thm:introspection} and $(a_2, b_2)$
-for those of Theorem~\ref{thm:answer-reduction}, normalized so that $a_1, a_2 \geq 1$, and
+Given the ambient contracts of Definitions~\ref{def:introspection-contract}
+and~\ref{def:answer-reduction-contract}, write $(a_1,b_1)$ and $(a_2,b_2)$ for
+their respective soundness constants, with $a_1,a_2\geq1$, and
 $x = \lambda n$. Put $\eps_1 = \bigl( 8 a_1 x^{a_1} \bigr)^{-1/b_1}$.
 \begin{enumerate}
 \item $\delta_1(\eps_1, n) < \frac12$ for all $x \geq (4 a_1)^{1/b_1}$.
@@ -1182,7 +1310,7 @@ universal $K$, and a threshold on $n$ that $C_0$ absorbs.
 \begin{lemma}[A universal repetition exponent]
 \label{lem:compress-tau}
 \ledgernode{1.5.5}
-\uses{thm:parallel-repetition,thm:answer-reduction,lem:compress-margin}
+\uses{thm:parallel-repetition,def:answer-reduction-contract,lem:compress-margin}
 \lean{MIPRE.Pipeline.exists_eps2_lower, MIPRE.Pipeline.exists_tau}
 \leanok
 With $\eps_2$ as in Lemma~\ref{lem:compress-margin}, $1 / \eps_2 \leq x^P$ for a universal
@@ -1207,21 +1335,20 @@ arithmetic, and computationally testable --- the companion repository tests it.
 \begin{remark}[How the value chain composes, and what it avoids]
 \label{rem:compression-chain}
 \ledgernode{1.5.8, 1.5.2, 1.5.4, 1.5.6}
-\uses{thm:compression,thm:introspection,thm:oracularization,thm:answer-reduction,thm:parallel-repetition,def:ent,lem:compress-margin,lem:compress-tau}
+\uses{def:introspection-contract,def:answer-reduction-contract,thm:parallel-repetition,lem:compress-margin,lem:compress-tau}
 \lean{MIPRE.Pipeline.output_valStar_le, MIPRE.Pipeline.output_hasPerfectPCC}
 The soundness clause of Theorem~\ref{thm:compression} is obtained by applying each
 transformation's soundness clause contrapositively, with a margin at every step. From
 $\valstar(\verifier_N) \leq \frac12$ and $\delta_1(\eps_1, n) < \frac12$: were
-$\valstar(\verifier^{(1)}_n) > 1 - \eps_1$, Theorem~\ref{thm:introspection} would give
+$\valstar(\verifier^{(1)}_n) > 1 - \eps_1$, the assumed ambient introspection contract would give
 $\valstar(\verifier_N) \geq 1 - \delta_1 > \frac12$, so
 $\valstar(\verifier^{(1)}_n) \leq 1 - \eps_1$. The same step through
-Theorem~\ref{thm:answer-reduction} --- whose proof is oracularization followed by the PCP
-composition, so that Theorem~\ref{thm:oracularization} is not a separate step of the chain,
-as an earlier version of this remark had it --- using $\delta_2(\eps_2, n) < \eps_1$
+the assumed ambient answer-reduction contract, using $\delta_2(\eps_2, n) < \eps_1$
 (Lemma~\ref{lem:compress-margin}), gives
 $\valstar(\verifier^{(2)}_n) \leq 1 - \eps_2$; and
 Theorem~\ref{thm:parallel-repetition} with Lemma~\ref{lem:compress-tau} brings that below
-$\frac12$.
+$\frac12$. Oracularization is internal to the proposed source proof of answer
+reduction; it is not a separate premise of this conditional value chain.
 
 Every step of that chain is an implication between $\valstar$ bounds, which is worth
 recording because the route of~\cite{JNVWY20} cannot take it. There the repetition step's
@@ -1309,9 +1436,8 @@ $\verifier_{2^n}$ played by a $\lambda$-bounded verifier. Completeness of compre
 the preservation of $A$; preservation of $B$ is the soundness clause of
 Theorem~\ref{thm:compression} verbatim, hypothesis and conclusion being in the same value.
 Taking $B$ in $\valstar$ throughout is what keeps Theorem~\ref{thm:almost-sync} out of the
-pipeline altogether --- at the outer end its hypothesis is unavailable
-(Remark~\ref{rem:almost-sync-hypothesis}) and at the inner end it is simply not needed
-(Remark~\ref{rem:bipartite-route}); it is also the form in which the semidecision
+pipeline altogether: the source transformations and direct repetition already use
+that value (Remark~\ref{rem:bipartite-route}). It is also the form in which the semidecision
 procedure is available, the rounding argument for the $\synval$ half not being the same
 one. Making this dictionary precise is a
 formalization task of this section. The four obligations recorded here from the referee
@@ -1712,14 +1838,13 @@ compressor's obligation (Remark~\ref{rem:compression-abstract}, item 1).
 \label{rem:entanglement-form}
 \uses{def:ent,lem:recursive-compression}
 The paper states the soundness of each transformation with an additional entanglement
-clause, obtained from the same proofs by tracking the dimension of the extracted
+clause, obtained from the same proofs by tracking the Schmidt rank of the extracted
 strategies: $\Ent(\vint_n, 1 - \eps) \geq \max\{\Ent(\verifier_{2^n}, 1 -
 \delta(\eps, n)),\ (1 - \delta(\eps, n))\, 2^{2^{\lambda n}}\}$ for introspection;
 $\Ent(\vora_n, 1 - \eps) \geq \Ent(\verifier_n, 1 - \delta(\eps))$ for
 oracularization; $\Ent(\vans_n, 1 - \eps) \geq \frac12 \Ent(\verifier_n, 1 - \delta(\eps, n))$
 for answer reduction, the factor $\frac12$ being the Schmidt-rank doubling of the
-symmetrization step, which the synchronous framework of this blueprint does not perform
-(symmetry being definitional there) and therefore does not pay; the anchored repetition theorem of~\cite{BVY17}; and, composed,
+symmetrization step; the anchored repetition theorem of~\cite{BVY17}; and, composed,
 $\Ent(\vcompr_n, \frac12) \geq \frac12 \max\{\Ent(\verifier_N, \frac12),\
 2^{N^\lambda - 1}\}$ for compression. Fed into the variant of
 Lemma~\ref{lem:recursive-compression} tolerating the factor $\frac12$ (harmless, since
@@ -1730,12 +1855,12 @@ value form adopted here needs none of it; the entanglement clauses remain of int
 the corollaries of Remark~\ref{rem:further}.
 
 One proviso on the measure: the clauses above are transcribed from~\cite{JNVWY20}, where
-the quantity is the least local dimension of a \emph{bipartite} tensor-product strategy,
+the quantity is the least Schmidt rank of a \emph{bipartite} tensor-product strategy,
 whereas $\Ent$ of Definition~\ref{def:ent} is the least dimension of a \emph{synchronous}
-one. Relating the two is the same transport as
-Theorem~\ref{thm:almost-sync} and carries its hypothesis
-(Remark~\ref{rem:almost-sync-hypothesis}), so the clauses should be read in the paper's
-measure until that is done.
+one. Identifying these measures would require a separate strategy and dimension
+comparison; no such comparison follows merely from the synchronization statement of
+Theorem~\ref{thm:almost-sync}. These clauses are recorded in the paper's measure and
+are not consumed by the value-form Lean pipeline.
 \end{remark}
 
 \subsection{The halting reduction}
@@ -1940,10 +2065,10 @@ revision of this chapter did state item 2 as the bound, and because the ledger n
 \lean{MIPRE.Halting.halting_reduction, MIPRE.Halting.halting_reduction_of,
   MIPRE.Halting.exists_obligations, MIPRE.Halting.halting_reduces_to_gameValue_of}
 \leanok
-There is a computable (indeed polynomial-time) map $\machine \mapsto
-\game_{\machine}$ from Turing machines to synchronous game descriptions, with games
-given by normal form verifiers satisfying the efficiency requirements of
-Definition~\ref{def:mipstar}, such that:
+Assume an ambient \texttt{MIPRE.GapCompression}. There is a computable map
+$\machine \mapsto \game_{\machine}$ from Turing machines
+to explicit synchronous game descriptions (Definition~\ref{def:game-description}),
+such that:
 \begin{enumerate}
 \item if $\machine$ halts on the empty input then $\game_\machine$ has a value-$1$ PCC
   strategy, so $\synval(\game_\machine) = \valstar(\game_\machine) = 1$;
@@ -1959,9 +2084,20 @@ Definition~\ref{def:mipstar}, such that:
 \texttt{halting\_reduces\_to\_gameValue\_of} in $\synval$, from
 Theorem~\ref{thm:compression} as a \texttt{GapCompression}: Lemma~\ref{lem:compressible-criterion}
 at the classes of Remark~\ref{rem:compression-abstract}, whose four obligations are the
-theorems named below, the last through \texttt{exists\_obligations}. The map is computable;
-its polynomial-time computability is not formalized (Section~\ref{sec:departures}).
+theorems named below, the last through \texttt{exists\_obligations}. This proves
+computability of the explicit tabulation. It does not assert polynomial-time
+enumeration of that table.
 \end{proof}
+
+\paragraph{The efficient source presentation.}
+The polynomial-time reduction in the source \texttt{recursive.tex},
+\texttt{thm:halting}~\cite{AuditSync26}, returns sampler and decider program
+descriptions for a game at a fixed index; those programs run in time polynomial in
+$\abs{\machine}$. This is the source efficiency claim. Enumerating their finite
+question distribution and accepted answer tuples yields the computable explicit
+description used here, but the number of entries can exceed a polynomial in the
+program size. The efficient verifier presentation and the explicit table are
+different codomains; the latter has no polynomial-time construction claim here.
 
 The proof is Lemma~\ref{lem:compressible-criterion} applied to the instantiation of
 Remark~\ref{rem:compression-abstract}; the semidecidability hypothesis of the lemma is the
@@ -1989,8 +2125,9 @@ theorems that the proof applies directly, and the fourth is now a theorem too:
 inhabits the structure, so \texttt{MIPRE.Halting.halting\_reduction\_of} takes only a
 \texttt{GapCompression} and a universal machine --- of which
 \texttt{Cost.exists\_efficient\_universal} provides one --- and is free of \texttt{sorry}.
-So the reduction is machine-checked from Theorem~\ref{thm:compression} alone, and
-\texttt{\#print axioms} shows nothing else.
+So the reduction is machine-checked from an inhabitant of the compression contract
+alone; supplying that inhabitant is Theorem~\ref{thm:compression-target}. The
+\texttt{\#print axioms} check shows no further unproved assumption.
 That assembly concludes in $\valstar$ only, and item 1 claims more: the witness is a
 \emph{PCC} strategy, so $\synval = \valstar = 1$. The two steps that carry it there are now in
 Lean, neither of them part of the instantiation. First, a synchronous strategy transports along
@@ -2026,17 +2163,15 @@ statement cost nothing.
 \label{rem:identical-operators}
 \ledgernode{1.6.7}
 \uses{thm:halting,def:sync-strategy,def:pcc,thm:separation}
-One property the synchronous framework gets for nothing is worth recording. The value-$1$
-witness of item 1 is a PCC, hence synchronous, strategy: a \emph{single} family of
-measurements used by both players. In the bipartite framework of~\cite{JNVWY20} that the
-two players measure identically is an extra property, established by tracking it through
-oracularization, answer reduction, detyping and repetition, and the verification
-campaign~\cite{Audit26} reports that the chain is delicate, since the completeness clause
-of compression carries only PCC and the property has to be read off the last application
-rather than carried by the induction. Here it holds by definition
-(Definition~\ref{def:sync-strategy}), so no such chain is needed --- which is also what
-makes the commuting completeness of Theorem~\ref{thm:separation} a question about one
-transformation at a time rather than about a provenance argument. The entanglement form of the statement, with the
+The conditional ambient halting construction yields a witness in
+\texttt{SyncStrategy}, represented by a single projective measurement family and
+normalized trace probabilities. Within that representation the common family is
+part of the definition (Definition~\ref{def:sync-strategy}). The source instead
+tracks identical operators on a bipartite state through its transformations. These
+are distinct representations: identical operators alone do not supply either
+direction of Remark~\ref{rem:pcc-representation-bridge}. The checked downstream
+halting and tabulation proofs start with the ambient interface and therefore do
+not discharge that source-to-ambient obligation. The entanglement form, with the
 stronger conclusion $\Ent(\game_\machine, \frac12) = \infty$ for non-halting
 $\machine$, is discussed in Remark~\ref{rem:entanglement-form}.
 \end{remark}
