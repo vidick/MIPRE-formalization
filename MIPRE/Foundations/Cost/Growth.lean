@@ -22,6 +22,17 @@ namespace MIPRE.Cost
 
 open Polynomial
 
+/-- `2 ^ size n ≤ 2n + 1`. -/
+theorem two_pow_size_le (n : ℕ) : 2 ^ Nat.size n ≤ 2 * n + 1 := by
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · simp
+  · have h : Nat.size n - 1 < Nat.size n := by
+      have := Nat.size_pos.2 hn; omega
+    have h2 : 2 ^ (Nat.size n - 1) ≤ n := Nat.lt_size.1 h
+    have h3 : 2 ^ Nat.size n = 2 * 2 ^ (Nat.size n - 1) := by
+      rw [← pow_succ']; congr 1; have := Nat.size_pos.2 hn; omega
+    omega
+
 /-- A polynomial over `ℕ` is bounded by its coefficient sum times the top power. -/
 theorem polynomial_eval_le_sum_coeff_mul_pow (Q : Polynomial ℕ) {y : ℕ} (hy : 1 ≤ y) :
     Q.eval y ≤ (∑ i ∈ Finset.range (Q.natDegree + 1), Q.coeff i) * y ^ Q.natDegree := by

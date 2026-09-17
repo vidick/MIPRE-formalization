@@ -29,7 +29,7 @@ import MIPRE.Foundations.ValueApprox.RawPrimrec
 import MIPRE.Foundations.ValueApprox.RawSemantics
 import MIPRE.Foundations.ValueApprox.RawStrategy
 import MIPRE.Foundations.ValueApprox.Strategy
-import MIPRE.TM.CookLevin.Sound
+import MIPRE.TM.CookLevin.Assemble
 import MIPRE.LCS.MagicSquare.Strategy
 import MIPRE.LCS.Strategy.Equivalence
 import MIPRE.LCS.Strategy.ObservableToProjector
@@ -354,3 +354,7 @@ elab "#guard_sorry_free " ids:ident,* : command => do
 -- `MIPRE/Background/Repetition/Axioms.lean`, beside the vendored theorem it consumes.
 #guard_sorry_free MIPRE.Repetition,
   MIPRE.Repetition.soundBound
+
+-- blueprint `thm:succinct-sat`: the statement's structure and the instance that inhabits it.
+#guard_sorry_free MIPRE.SAT.SuccinctCookLevin,
+  MIPRE.SAT.succinctCookLevin

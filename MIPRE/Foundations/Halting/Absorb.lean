@@ -31,16 +31,6 @@ namespace MIPRE.Cost
 
 open Polynomial
 
-/-- `2 ^ size n ≤ 2n + 1`. -/
-theorem two_pow_size_le (n : ℕ) : 2 ^ Nat.size n ≤ 2 * n + 1 := by
-  rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simp
-  · have h : Nat.size n - 1 < Nat.size n := by
-      have := Nat.size_pos.2 hn; omega
-    have h2 : 2 ^ (Nat.size n - 1) ≤ n := Nat.lt_size.1 h
-    have h3 : 2 ^ Nat.size n = 2 * 2 ^ (Nat.size n - 1) := by
-      rw [← pow_succ']; congr 1; have := Nat.size_pos.2 hn; omega
-    omega
 
 /-- `size n ≤ log₂ n + 1`. -/
 theorem size_le_log_add_one (n : ℕ) : Nat.size n ≤ Nat.log 2 n + 1 :=
