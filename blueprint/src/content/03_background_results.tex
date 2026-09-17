@@ -542,7 +542,7 @@ and its theorem are in the pinned paper snapshot~\cite{AuditSync26},
   MIPRE.LIDT.CL.lineParam, MIPRE.LIDT.CL.Ty, MIPRE.LIDT.CL.Question,
   MIPRE.LIDT.CL.Answer, MIPRE.LIDT.CL.Sample, MIPRE.LIDT.CL.Sample.question,
   MIPRE.LIDT.CL.lineVsPoint, MIPRE.LIDT.CL.accepts, MIPRE.LIDT.CL.clGame,
-  MIPRE.LIDT.CL.aline_question_ne}
+  MIPRE.LIDT.CL.aline_question_ne, MIPRE.LIDT.CL.card_chi_fiber}
 \leanok
 For admissible $q$, positive integers $m,d,\mathrm{ldc}$ and $m\mid q$, the
 \emph{seeded CL test} is the paper's typed low-degree game with parameters
@@ -585,9 +585,10 @@ is what keeps the two comparable. The distribution itself is uniform over the ni
 pairs and the ambient $(u, s, v)$, so normalization is a single division rather than the
 per-subtest bookkeeping Definition~\ref{def:lidt} needs.
 
-Not yet formalized, and the next thing this definition needs: that each $\chi$-fibre has
-exactly $q/m$ seeds, which is what makes the induced axis-parallel line distribution uniform
-and is consumed by Lemma~\ref{lem:lidt-test-transfer}.
+Each $\chi$-fibre has exactly $q/m$ seeds (\texttt{card\_chi\_fiber}), so a uniform seed gives
+a uniform direction index and the induced axis-parallel line distribution is uniform over
+lines. This is the hypothesis $m \mid q$ earning its place, and it is the input
+Lemma~\ref{lem:lidt-test-transfer} consumes.
 
 \begin{theorem}[Quantum soundness of the seeded CL test]
 \label{thm:lidt-cl-soundness}
