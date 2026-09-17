@@ -609,8 +609,10 @@ import MIPRE.Foundations.SAT.Circuit
 import MIPRE.Foundations.SAT.Cnf
 import MIPRE.Foundations.SAT.Decoupled
 import MIPRE.Foundations.SAT.Flatten
+import MIPRE.Foundations.SAT.FmlLib
 import MIPRE.Foundations.SAT.Formula
 import MIPRE.Foundations.SAT.Succinct
+import MIPRE.Foundations.SAT.Table
 import MIPRE.Foundations.SAT.Tseitin
 import MIPRE.Foundations.SyncTransport
 import MIPRE.Foundations.TensorFamily
