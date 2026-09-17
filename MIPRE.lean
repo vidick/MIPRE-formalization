@@ -521,6 +521,7 @@ import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
 import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
 import MIPRE.Cslib.Foundations.Data.RelatesInSteps
 import MIPRE.Foundations.CL.Basic
+import MIPRE.Foundations.CL.Canonical
 import MIPRE.Foundations.CL.Closure
 import MIPRE.Foundations.CL.Downsize
 import MIPRE.Foundations.CL.Register
