@@ -610,6 +610,7 @@ import MIPRE.Foundations.SAT.Cnf
 import MIPRE.Foundations.SAT.Decoupled
 import MIPRE.Foundations.SAT.Flatten
 import MIPRE.Foundations.SAT.FmlLib
+import MIPRE.Foundations.SAT.FmlProg
 import MIPRE.Foundations.SAT.Formula
 import MIPRE.Foundations.SAT.Succinct
 import MIPRE.Foundations.SAT.Table
