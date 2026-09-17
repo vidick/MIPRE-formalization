@@ -29,7 +29,7 @@ import MIPRE.Foundations.ValueApprox.RawPrimrec
 import MIPRE.Foundations.ValueApprox.RawSemantics
 import MIPRE.Foundations.ValueApprox.RawStrategy
 import MIPRE.Foundations.ValueApprox.Strategy
-import MIPRE.TM.CookLevin.Assemble
+import MIPRE.TM.CookLevin.DecoupledProg
 import MIPRE.LCS.MagicSquare.Strategy
 import MIPRE.LCS.Strategy.Equivalence
 import MIPRE.LCS.Strategy.ObservableToProjector
@@ -358,3 +358,7 @@ elab "#guard_sorry_free " ids:ident,* : command => do
 -- blueprint `thm:succinct-sat`: the statement's structure and the instance that inhabits it.
 #guard_sorry_free MIPRE.SAT.SuccinctCookLevin,
   MIPRE.SAT.succinctCookLevin
+
+-- blueprint `lem:decoupled-5sat`, likewise.
+#guard_sorry_free MIPRE.SAT.DecoupledDescriber,
+  MIPRE.SAT.decoupledDescriber
