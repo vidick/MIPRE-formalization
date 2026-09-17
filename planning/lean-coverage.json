@@ -767,6 +767,21 @@
   "MIPRE.Repetition.tracialDensity": [
    "thm:tracial-density"
   ],
+  "MIPRE.SAT.Circuit.DescribesDecider": [
+   "def:succinct-3sat"
+  ],
+  "MIPRE.SAT.Circuit.formula3": [
+   "def:succinct-3sat"
+  ],
+  "MIPRE.SAT.Circuit.formula5": [
+   "def:succinct-3sat"
+  ],
+  "MIPRE.SAT.DecoupledDescriber": [
+   "lem:decoupled-5sat"
+  ],
+  "MIPRE.SAT.SuccinctCookLevin": [
+   "thm:succinct-sat"
+  ],
   "MIPRE.SyncStrategy": [
    "def:sync-strategy"
   ],
@@ -811,6 +826,9 @@
   ],
   "MIPRE.SynchronousGame.toGame": [
    "def:sync-game"
+  ],
+  "MIPRE.TM.CookLevin.tableau_sat_iff": [
+   "lem:correct-tableau"
   ],
   "MIPRE.TensorProductStrategy": [
    "def:tensor-strategy"
@@ -1469,6 +1487,11 @@
   "MIPRE.Repetition.repConst",
   "MIPRE.Repetition.soundBound",
   "MIPRE.Repetition.tracialDensity",
+  "MIPRE.SAT.Circuit.DescribesDecider",
+  "MIPRE.SAT.Circuit.formula3",
+  "MIPRE.SAT.Circuit.formula5",
+  "MIPRE.SAT.DecoupledDescriber",
+  "MIPRE.SAT.SuccinctCookLevin",
   "MIPRE.SyncStrategy",
   "MIPRE.SyncStrategy.IsPCC",
   "MIPRE.SyncStrategy.double",
@@ -1484,6 +1507,7 @@
   "MIPRE.SynchronousGame",
   "MIPRE.SynchronousGame.repeat",
   "MIPRE.SynchronousGame.toGame",
+  "MIPRE.TM.CookLevin.tableau_sat_iff",
   "MIPRE.TensorProductStrategy",
   "MIPRE.TensorProductStrategy.value",
   "MIPRE.ValueApprox.Check",
@@ -2050,6 +2074,15 @@
    "MIPRE.Repetition",
    "MIPRE.Repetition.soundBound"
   ],
+  "MIPRE/Foundations/SAT/Decoupled.lean": [
+   "MIPRE.SAT.Circuit.DescribesDecider",
+   "MIPRE.SAT.Circuit.formula5",
+   "MIPRE.SAT.DecoupledDescriber"
+  ],
+  "MIPRE/Foundations/SAT/Succinct.lean": [
+   "MIPRE.SAT.Circuit.formula3",
+   "MIPRE.SAT.SuccinctCookLevin"
+  ],
   "MIPRE/Foundations/SyncTransport.lean": [
    "MIPRE.Verifier.exists_perfectPCC_syncGame_doubled",
    "MIPRE.Verifier.gameValue_toGame_eq_one_doubled",
@@ -2201,6 +2234,9 @@
   "MIPRE/TM/Code/WellFormed.lean": [
    "Turing.Code"
   ],
+  "MIPRE/TM/CookLevin/Sound.lean": [
+   "MIPRE.TM.CookLevin.tableau_sat_iff"
+  ],
   "MIPRE/TM/MultiInput/Complexity.lean": [
    "Turing.MultiInputTM.ComputesInTimeAndSpace"
   ],
@@ -2212,7 +2248,7 @@
    "Turing.exists_universalCode"
   ]
  },
- "lean_tags": 94,
+ "lean_tags": 98,
  "module_sizes": {
   "MIPRE/Axioms.lean": 0,
   "MIPRE/Background/GowersHatami/Basic.lean": 44,
@@ -2322,6 +2358,11 @@
   "MIPRE/Foundations/Repeat/RepSampler.lean": 35,
   "MIPRE/Foundations/Repeat/Sampler.lean": 26,
   "MIPRE/Foundations/Repeat/SamplerCost.lean": 22,
+  "MIPRE/Foundations/SAT/Circuit.lean": 18,
+  "MIPRE/Foundations/SAT/Cnf.lean": 10,
+  "MIPRE/Foundations/SAT/Decoupled.lean": 5,
+  "MIPRE/Foundations/SAT/Succinct.lean": 12,
+  "MIPRE/Foundations/SAT/Tseitin.lean": 15,
   "MIPRE/Foundations/SyncTransport.lean": 6,
   "MIPRE/Foundations/TensorFamily.lean": 9,
   "MIPRE/Foundations/ValueApprox.lean": 8,
@@ -2366,6 +2407,24 @@
   "MIPRE/TM/Code/Raw.lean": 6,
   "MIPRE/TM/Code/Semantics.lean": 16,
   "MIPRE/TM/Code/WellFormed.lean": 27,
+  "MIPRE/TM/CookLevin/Correct.lean": 42,
+  "MIPRE/TM/CookLevin/Local.lean": 16,
+  "MIPRE/TM/CookLevin/Semantics.lean": 28,
+  "MIPRE/TM/CookLevin/Sound.lean": 49,
+  "MIPRE/TM/CookLevin/Tableau.lean": 31,
+  "MIPRE/TM/Interp/CopyTree.lean": 11,
+  "MIPRE/TM/Interp/CopyTreeCharge.lean": 4,
+  "MIPRE/TM/Interp/Desc.lean": 58,
+  "MIPRE/TM/Interp/GetEnv.lean": 17,
+  "MIPRE/TM/Interp/InputRoutines.lean": 16,
+  "MIPRE/TM/Interp/Instr.lean": 46,
+  "MIPRE/TM/Interp/Machine.lean": 13,
+  "MIPRE/TM/Interp/Reach.lean": 46,
+  "MIPRE/TM/Interp/Repr.lean": 21,
+  "MIPRE/TM/Interp/Routines.lean": 55,
+  "MIPRE/TM/Interp/Run.lean": 93,
+  "MIPRE/TM/Interp/Step.lean": 109,
+  "MIPRE/TM/Interp/Tape.lean": 27,
   "MIPRE/TM/MultiInput/Complexity.lean": 2,
   "MIPRE/TM/MultiInput/Congr.lean": 31,
   "MIPRE/TM/MultiInput/Deterministic.lean": 35,
@@ -2376,12 +2435,12 @@
  "unresolved": [],
  "xref_counts": {
   "bibitems": 34,
-  "cites": 159,
+  "cites": 160,
   "commands_defined": 99,
-  "commands_used": 209,
-  "labels": 247,
-  "leanok_claimed": 200,
-  "leanok_guarded": 200,
-  "refs": 1102
+  "commands_used": 210,
+  "labels": 249,
+  "leanok_claimed": 201,
+  "leanok_guarded": 201,
+  "refs": 1110
  }
 }

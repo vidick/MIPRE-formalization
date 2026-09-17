@@ -777,13 +777,19 @@ become polylogarithmic in the original.
 \begin{lemma}[Succinct decoupled 5SAT]
 \label{lem:decoupled-5sat}
 \ledgernode{1.3.2, 1.3.2.1, 1.3.2.2, 1.3.2.3}
-\uses{thm:succinct-sat,def:succinct,def:decider}
-The succinct 3SAT instance of Theorem~\ref{thm:succinct-sat} can be converted, in time
-polynomial in $n$, $\log T$, $Q$ and $\sigma$, into a \emph{decoupled} 5SAT instance: the
-variables are partitioned into five blocks, two of which are the players' answer strings
-$a$ and $b$, and every clause touches each block at most once. The conversion preserves
-satisfiability in both directions, and both the explicit and the padded succinct
-descriptions of the result are computable within the same bound.
+\uses{thm:succinct-sat,def:succinct-3sat,def:decider}
+\lean{MIPRE.SAT.DecoupledDescriber}
+\leanok
+There is a polynomial-time algorithm that, on the inputs of
+Theorem~\ref{thm:succinct-sat} under the same hypotheses, outputs a circuit with two inputs
+of length $\ell_0 = \lceil \log 2T \rceil$, three of length $r_0 = O(\log T + \log
+\sigma)$ and five single-bit inputs, with at most $s_0 = \poly(\log T, \log n, Q, \sigma)$
+gates, which describes the decider $\decider$ on $(n, x, y)$ at time $T$ in the sense of
+Definition~\ref{def:succinct-3sat}: the variables of the decoupled 5SAT formula fall into
+five blocks, the first two being the players' answer strings, and every clause touches
+each block once. The parameters $\ell_0, r_0, s_0$ are computable in time polynomial in
+the bit lengths of $n, T, Q, \sigma$. (The padded description, with the outer variable
+count a power of two, is the padding step of the PCP, Remark~\ref{rem:pcp-power-of-two}.)
 \end{lemma}
 
 \begin{proof}
