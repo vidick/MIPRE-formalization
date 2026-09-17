@@ -99,22 +99,26 @@ theorem tapeOfCode_eq_some {k : ℕ} {d : Tape 7 6} (h : tapeOfCode k = some d) 
     · cases h; simp [tapeCode]; omega
     · cases h
 
-/-- The number of states, including the halting state. -/
-def QC : ℕ := Fintype.card (Option Ctl)
+/-- The number of states, including the halting state. Irreducible: a definitional
+unfolding evaluates `Fintype.card (Option Ctl)`, which does not terminate in practice. -/
+@[irreducible] def QC : ℕ := Fintype.card (Option Ctl)
 
 /-- The code of a state. -/
 noncomputable def qCode (q : Option Ctl) : ℕ := Fintype.equivFin (Option Ctl) q
 
 /-- The state of a code. -/
 noncomputable def qOfCode (k : ℕ) : Option (Option Ctl) :=
-  if h : k < QC then some ((Fintype.equivFin (Option Ctl)).symm ⟨k, h⟩) else none
+  if h : k < QC then some ((Fintype.equivFin (Option Ctl)).symm ⟨k, by unfold QC at h; exact h⟩) else none
 
 theorem qOfCode_qCode (q : Option Ctl) : qOfCode (qCode q) = some q := by
   unfold qOfCode qCode
-  rw [dif_pos (show ((Fintype.equivFin (Option Ctl)) q : ℕ) < QC from (Fintype.equivFin (Option Ctl) q).isLt)]
-  simp
+  rw [dif_pos (show ((Fintype.equivFin (Option Ctl)) q : ℕ) < QC from
+    (by unfold QC; exact (Fintype.equivFin (Option Ctl) q).isLt))]
+  congr 1
+  exact (Fintype.equivFin (Option Ctl)).symm_apply_apply q
 
-theorem qCode_lt (q : Option Ctl) : qCode q < QC := (Fintype.equivFin (Option Ctl) q).isLt
+theorem qCode_lt (q : Option Ctl) : qCode q < QC := by
+  unfold QC; exact (Fintype.equivFin (Option Ctl) q).isLt
 
 theorem qOfCode_eq_some {k : ℕ} {q : Option Ctl} (h : qOfCode k = some q) : qCode q = k := by
   unfold qOfCode at h
@@ -125,7 +129,7 @@ theorem qOfCode_eq_some {k : ℕ} {q : Option Ctl} (h : qOfCode k = some q) : qC
 /-! ## Widths and offsets -/
 
 /-- The width of the state field. -/
-def Qb : ℕ := Nat.size QC
+@[irreducible] def Qb : ℕ := Nat.size QC
 
 theorem QC_lt_two_pow_Qb : QC < 2 ^ Qb := by
   rw [Qb]
@@ -278,7 +282,7 @@ noncomputable def decodeVar (F : Fields) : Option (TabVar 7 6 Sym Ctl S G) :=
       else none
     else none
   else
-    if F.ansOk then
+    if F.ansOk ∧ F.tag = 0 ∧ F.t = 0 then
       if h : F.d < 7 ∧ F.p < numCells S then
         match symOfCode F.v with
         | some v => some (.cell 0 (.inl ⟨F.d, h.1⟩) ⟨F.p, h.2⟩ v)

@@ -527,6 +527,8 @@ def FreeTape (F : Fields) : Prop := ∃ j : Fin 7, fixed j = none ∧ F.d = j
 /-- `p` is a boundary cell. -/
 def Bdry (S p : ℕ) : Prop := p < 2 ∨ 2 * S + 5 ≤ p
 
+instance (S p : ℕ) : Decidable (Bdry S p) := by unfold Bdry; infer_instance
+
 /-- `unit (cell 0 (inl j) p v) (decide (v = bdry))` for `p` a boundary cell. -/
 def FreeBdry (c : Cand) : Prop :=
   UnitCell e c ∧ SameSigns c ∧ c.F₁.t = 0 ∧ FreeTape fixed c.F₁ ∧ Bdry (Sof e) c.F₁.p ∧
