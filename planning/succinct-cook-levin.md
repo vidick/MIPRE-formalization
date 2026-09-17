@@ -390,10 +390,15 @@ encoded — each becomes a `const` reader, and `WDesc` needs no `SizedEncoding`.
 that writes it: `descSize := descCircP.timeBound`, an explicit `Polynomial ℕ`
 (`descCirc_size_le`). No per-builder `Fml.size` induction was written, and none is needed.
 
-**S4** — not started. What is left: `eOf T σ` in unary as a program (`e` is affine in
-`Nat.size T` and `Nat.size σ`, so this is `unaryToBin`'s inverse on two `Nat.size`s);
-bounding `esize` of the describer's input by a polynomial in `n, T, Q, σ` under the validity
-hypotheses, which turns `descSize` into the `s` of item 3 and gives item 5; and assembling
-`MIPRE.SAT.SuccinctCookLevin` from `extendsAnswers_iff`, `mem_formula3_iff`, `descCircP` and
-`descCirc_size_le`, with the proof-level `\leanok` and the `MIPRE/Axioms.lean` guard.
+`eOf T σ` is a program too (`eP`, `length_eP`): `e` is affine in `Nat.size T` and
+`Nat.size σ`, and `Nat.size k = k.bits.length`, so in unary it is one unit per bit of each.
+So `describeP` is the describer in the theorem's own parameters — `((T, σ), (𝒟, n), (x, y))`
+to a circuit — with `describeM` the index width and `describeSize` the gate bound
+(`describe_size_le`).
+
+**S4** — not started. What is left: bounding `esize` of `describeP`'s input by a polynomial
+in `n, T, Q, σ` under the validity hypotheses, which turns `describeSize` into the `s` of
+item 3 and, with `describeM`, gives item 5; and assembling `MIPRE.SAT.SuccinctCookLevin` from
+`extendsAnswers_iff`, `mem_formula3_iff`, `describeP` and `describe_size_le`, with the
+proof-level `\leanok` and the `MIPRE/Axioms.lean` guard.
 

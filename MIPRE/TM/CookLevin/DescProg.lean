@@ -168,12 +168,59 @@ theorem descCirc_size_le (p : DInp) :
   rw [← descCircP_apply]
   exact (size_le_esize _).trans (descCircP.esize_apply_le p)
 
-/-! ## The index width (item 5) -/
+/-! ## The width `e` and the index width (item 5) -/
+
+/-- `Nat.size`, in unary: one unit per bit. -/
+noncomputable def sizeU : PolyTimeFun ℕ Unary :=
+  (map (const ())).comp PolyTimeFun.natBits
+
+@[simp] theorem length_sizeU (k : ℕ) : (sizeU k).length = Nat.size k := by
+  rw [sizeU, comp_apply, map_apply, PolyTimeFun.natBits_apply, List.length_map,
+    Nat.size_eq_bits_len]
+
+/-- `eOf`, in unary: it is affine in `Nat.size T` and `Nat.size σ`. -/
+noncomputable def eP : PolyTimeFun (ℕ × ℕ) Unary :=
+  ap₂ addU (ap₂ addU (ap₁ (nsmulU 5) (ap₁ sizeU fst)) (ap₁ (nsmulU 5) (ap₁ sizeU snd)))
+    (const (unary 24))
+
+@[simp] theorem length_eP (p : ℕ × ℕ) : (eP p).length = eOf p.1 p.2 := by
+  rw [eP, ap₂_apply, length_addU, ap₂_apply, length_addU, ap₁_apply, length_nsmulU, ap₁_apply,
+    length_sizeU, ap₁_apply, length_nsmulU, ap₁_apply, length_sizeU, const_apply, length_unary,
+    fst_apply, snd_apply, eOf]
+
+
 
 /-- The index width `m`, as a program: it is affine in `e`, so it is an `append` in unary. -/
 noncomputable def mP : PolyTimeFun Unary ℕ := ap₁ unaryToBin (mU (PolyTimeFun.id _))
 
 @[simp] theorem mP_apply (u : Unary) : mP u = mOf u.length Gc := by
   rw [mP, ap₁_apply, unaryToBin_apply, length_mU, PolyTimeFun.id_apply]
+
+/-! ## The describer in the theorem's own parameters -/
+
+/-- The input of the theorem's algorithm: the time bound and the size bound, the decider and
+the index, the two questions. `e` is computed from `T` and `σ`. -/
+abbrev PInp := (ℕ × ℕ) × (Prog × ℕ) × (BitStr × BitStr)
+
+/-- **The describer, in the theorem's own parameters.** -/
+noncomputable def describeP : PolyTimeFun PInp Circuit :=
+  descCircP.comp (((ap₁ eP fst).pair (ap₁ fst fst)).pair snd)
+
+theorem describeP_apply (p : PInp) :
+    describeP p = descCirc (eOf p.1.1 p.1.2) p.1.1 p.2.1.1 p.2.1.2 p.2.2.1 p.2.2.2 := by
+  rw [describeP, comp_apply, descCircP_apply]
+  simp
+
+/-- The gate-count bound of the describer, in the theorem's own parameters. -/
+noncomputable def describeSize : Polynomial ℕ := describeP.timeBound
+
+theorem describe_size_le (p : PInp) : (describeP p).size ≤ describeSize.eval (esize p) :=
+  (size_le_esize _).trans (describeP.esize_apply_le p)
+
+/-- The index width, in the theorem's own parameters. -/
+noncomputable def describeM : PolyTimeFun (ℕ × ℕ) ℕ := mP.comp eP
+
+@[simp] theorem describeM_apply (p : ℕ × ℕ) : describeM p = mOf (eOf p.1 p.2) Gc := by
+  rw [describeM, comp_apply, mP_apply, length_eP]
 
 end MIPRE.TM.CookLevin.Desc
