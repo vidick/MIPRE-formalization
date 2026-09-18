@@ -1763,11 +1763,14 @@ the circulant Gram self-dualization ($1.1.6.1.7$, $1.1.6.1.8$) and table transpo
 ($1.1.6.1.9$). Mathlib's normal basis theorem \texttt{IsGalois.normalBasis} gives the
 existence half of the normal element, though not the construction.
 
-Two of those pieces are now formalized, and \texttt{planning/self-dual-basis.md} records the
-route for the rest: Lemma~\ref{lem:group-algebra-selfdualization}, the self-dualization step,
-and Lemma~\ref{lem:admissible-field-exists}, which inhabits the field interface
-\texttt{thm:pcp-decider} takes as a parameter. Neither is the lemma: the first is existence
-and not construction, and the second is deliberately weaker, as its comments say.
+Three lemmas below stand beside it, and \texttt{planning/self-dual-basis.md} records the
+route for the rest: Lemma~\ref{lem:group-algebra-selfdualization}, the self-dualization step;
+Lemma~\ref{lem:self-dual-basis-exists}, which assembles it into the statement that a self-dual
+normal basis \emph{exists} for odd $k$; and Lemma~\ref{lem:admissible-field-exists}, which
+inhabits the field interface \texttt{thm:pcp-decider} takes as a parameter. None of them is the
+lemma: the first two are existence and not construction, and the third is deliberately weaker,
+as its comments say. Everything left is the algorithmics --- the $\F_2[T]/(f)$ cost model, the
+constructive normal element, the square root in $\poly(k)$, and table transport.
 
 \begin{lemma}[Self-dualization in the group algebra]
 \label{lem:group-algebra-selfdualization}
@@ -1810,8 +1813,60 @@ computation in the factors.
 
 What the lemma does \emph{not} do is assemble a basis: the group algebra must be made to act on
 $\F_{2^k}$, the Gram identity must be proved, and $c$ must be shown to be a unit. Those three
-are bookkeeping, and \texttt{planning/self-dual-basis.md} spells them out; the algorithm is a
-separate matter again.
+are bookkeeping, and Lemma~\ref{lem:self-dual-basis-exists} now carries them out; the algorithm
+is a separate matter again.
+
+\begin{lemma}[Existence of a self-dual normal basis]
+\label{lem:self-dual-basis-exists}
+\uses{def:self-dual-basis,lem:group-algebra-selfdualization}
+\lean{MIPRE.LowDegree.gramPair, MIPRE.LowDegree.gramPair_ofAlg,
+  MIPRE.LowDegree.isUnit_gram, MIPRE.LowDegree.exists_gramPair_eq_one,
+  MIPRE.LowDegree.exists_isSelfDualBasis_isNormalBasis,
+  MIPRE.LowDegree.exists_selfDualNormalBasis_two}
+\leanok
+Let $K / \F$ be a Galois extension of finite fields of characteristic two whose degree is odd.
+Then $K$ has a basis over $\F$ that is at once normal and self-dual. In particular
+$\F_{2^k}$ has a self-dual normal basis over $\F_2$ for every odd $k \geq 1$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:group-algebra-selfdualization}
+Let $G = \mathrm{Gal}(K/\F)$, which is cyclic, hence abelian, so $\F[G]$ is a commutative ring, and
+$\abs{G} = [K : \F]$ is odd. Let $\alpha$ be the normal element Mathlib's normal basis theorem
+supplies, write $\mathrm{ofAlg}(a)$ for the element of $K$ with normal-basis coordinates
+$a \in \F[G]$, and let
+\[
+  c(x, y) \in \F[G], \qquad c(x, y)_g = \mathrm{tr}(x \cdot g y), \qquad c = c(\alpha, \alpha).
+\]
+Because $\mathrm{tr} \circ g = \mathrm{tr}$, the pairing of two members of one orbit depends
+only on their ratio, and expanding both coordinate sums gives the transformation law
+\[
+  c(\mathrm{ofAlg}(a), \mathrm{ofAlg}(b)) = a \cdot \tau(b) \cdot c,
+\]
+where $\tau$ is the involution of $\F[G]$ induced by $g \mapsto g^{-1}$. The element $c$ is
+fixed by $\tau$, because $\mathrm{tr}(\alpha \cdot g^{-1}\alpha) =
+\mathrm{tr}(g\alpha \cdot \alpha)$, and it is a unit: if $c \cdot z = 0$ then the
+transformation law with $b = \tau(z)$ makes $\mathrm{tr}(\mathrm{ofAlg}(\tau z) \cdot x)$
+vanish for every $x \in K$, so $\mathrm{ofAlg}(\tau z) = 0$ by nondegeneracy of the trace form,
+so $z = 0$; a non-zero-divisor in a finite commutative ring is a unit. Then $c^{-1}$ is also
+$\tau$-fixed, and Lemma~\ref{lem:group-algebra-selfdualization} --- squaring is bijective on
+$\F[G]$ in characteristic two with $\abs{G}$ odd --- gives $a$ with $a \cdot \tau(a) = c^{-1}$.
+For $\beta = \mathrm{ofAlg}(a)$ the transformation law reads $c(\beta, \beta) = 1$, which says
+exactly that the Frobenius orbit of $\beta$ is orthonormal for the trace form. It is in
+particular linearly independent, so it is a basis, and it is normal by construction.
+\end{proof}
+
+\paragraph{Comments.} This is existence, not construction, so it is not
+Lemma~\ref{lem:self-dual-basis} and does not discharge any ledger node: the normal element
+comes from Mathlib's \texttt{IsGalois.normalBasis}, which is a theorem and not an algorithm,
+and nothing here is claimed to run in $\poly(k)$. What it does settle is that the three
+bookkeeping items left open by Lemma~\ref{lem:group-algebra-selfdualization} --- making the
+group algebra act, the Gram identity, and unitness of $c$ --- are genuinely bookkeeping, and
+that the short self-dualization argument assembles. The formalization indexes the group algebra
+by $G$ itself rather than by $\mathbb{Z}/k$, which is what makes $\mathrm{ofAlg}$ the inverse of
+Mathlib's \texttt{normalBasis.repr} on the nose; the \texttt{CommGroup} instance comes from
+cyclicity, supplied locally.
 
 \begin{lemma}[An admissible field with a bit representation]
 \label{lem:admissible-field-exists}
