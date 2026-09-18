@@ -175,6 +175,70 @@ is careful.
    through the point-answer relabelling (`Answer.toValue` on one side, `values a ↦ a 0` on the
    other).
 
+## The assembly, worked out on paper
+
+This section is the part that is designed but not yet in Lean. It is written out because the
+choices in it are not forced by the types, and rediscovering them costs more than reading them.
+
+### The question map
+
+Index the averaging family by `σ : Fin m → Fin (q/m)`, a fibre position per direction index, and
+write `s i = seedOf hm i (σ i)` (`Adapter/Seeds.lean`). Then
+
+* `point u ↦ .point (ρ u)`;
+* `axisLine ℓ ↦ .aline (ρ ℓ.1) (s (rev i))`, where `ℓ.2 = eᵢ`. The base point needs no `rep`:
+  the two agree exactly on axis-parallel lines (`rep_single_eq_through`).
+* `diagLine ℓ ↦ .dline (ρ ℓ.1 - sh(ℓ) • ρ ℓ.2) (s (p ℓ)) (ρ ℓ.2)`, where `p ℓ` is the first
+  nonzero coordinate of `ρ ℓ.2` and `sh(ℓ) = (ρ ℓ.1)_{p} / (ρ ℓ.2)_{p}` is the shift of the
+  correction above; the base point is `rep (ρ ℓ.2) (ρ ℓ.1)` written out through `rep_eq`.
+
+The direction carried is **exactly** `ρ ℓ.2`, not a rescaling of it, which is legitimate because
+the seeded test's `DLine` questions carry the raw direction: choosing the unrescaled one makes
+the scale factor `1` and leaves only the shift. So `reparam 1 (sh ℓ)` is the whole answer
+conversion, and `rescaleEquiv` is not needed after all --- `lineParam_smul` stays as the lemma
+that justifies the choice.
+
+### The answer coarse-graining
+
+Source answers are `clGame`'s, target answers `lidtGame`'s, question-dependent (hence
+`mergeAt`):
+
+* at `point _`: `values a ↦ value (a 0)`;
+* at `axisLine _`: `apolys f ↦ axisPoly (f 0)`;
+* at `diagLine ℓ`: `dpolys f ↦ diagPoly (reparam 1 (sh ℓ) (f 0))`;
+* anything else to a fixed answer. Those cases are unreachable in `hD`: a source answer of the
+  wrong format for its question is *rejected* by `clGame` (the repair of #108), so the
+  implication is vacuous there. Before that repair this would have been a real gap.
+
+### `hD`, case by case
+
+`lidtGame.μ x' y' ≠ 0` gives a `Sample` with `s.questions = (x', y')`, so there are three cases
+and their swaps. In each, `clGame`'s acceptance first gives both answer formats, then:
+
+* **`selfConsistency u`.** Both questions are `point (ρ u)`; the source checks `α = β` and the
+  target `u = u ∧ α 0 = β 0`. Immediate.
+* **`axis false u i`.** The source accepts iff `ρ u = ρ ℓ.1 + t • e_{rev i}` for some `t` and
+  `(f 0).eval (lineParam (ρ ℓ.1) e_{rev i} (ρ u)) = α 0`. Applying `ρ` to the first gives
+  `u = ℓ.1 + t • ℓ.2`, which is `ℓ.Mem u`; `lineParam_eq_of_mem` and
+  `param_through_eq_of_mem` then both evaluate to the *same* `t`, so the target's
+  `(f 0).eval (ℓ.param u) = α 0` is the same equation.
+* **`diag false u j v`.** The same, with the base point shifted: `ρ u = u₀ + (t + sh) • ρ ℓ.2`, so
+  `lineParam` returns `t + sh`, and the target wants
+  `(reparam 1 (sh ℓ) (f 0)).eval t = (f 0).eval (t + sh)` --- which is `eval_reparam`. This is
+  the case the affine rebasing exists for.
+
+The two swapped cases are the same with the roles exchanged.
+
+### The weight domination
+
+Still the hard row, and the reason a fixed seed choice is not merely lossy: the push-forward of
+a fixed choice is concentrated on `m` of the `q` seeds, so it exceeds `μ` by `q/m` there.
+Averaging over `σ` spreads it over each fibre, and `seedOf_injective` is what makes that count.
+For the axis subtest the resulting constant is `3/2`: `lidtGame` puts `1/(6 m q^m)` on
+`(axisLine ℓ, point u)`, each seed is chosen with probability `m/q`, and
+`clGame` puts `1/(9 q^{m+1})` on the corresponding pair. The diagonal subtest is the same
+computation with the `q^{χ s}` against `q^{j+1}` matching described above.
+
 ## What this route does *not* give
 
 No ledger node. The paper's route and its reviewed intermediate statements
