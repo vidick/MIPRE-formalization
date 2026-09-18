@@ -1,6 +1,7 @@
 import MIPRE.Axioms
 import MIPRE.Background.GowersHatami.Basic
 import MIPRE.Background.LIDT.Adapter.Geometry
+import MIPRE.Background.LIDT.Adapter.Parameters
 import MIPRE.Background.LIDT.Adapter.Reduction
 import MIPRE.Background.LIDT.Adapter.Reparam
 import MIPRE.Background.LIDT.Adapter.Seeds

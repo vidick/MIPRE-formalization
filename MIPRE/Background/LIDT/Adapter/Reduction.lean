@@ -3,6 +3,7 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
+import MIPRE.Background.LIDT.Adapter.Parameters
 import MIPRE.Background.LIDT.Adapter.Weights
 import MIPRE.Background.LIDT.Soundness
 
@@ -30,9 +31,11 @@ The shape of the argument:
   `uniform` being uniform --- and on the outcomes by `revPoly`, the same reversal of a
   polynomial's exponent vectors.
 
-What is *not* here: the `ldc > 1` case (`lem:lidt-ldc`, the paper's Steps 1--5), and the
-translation of `lidtError m d q k (3m ε)` into the `δ_CL` of `thm:lidt-cl-soundness`, which is a
-separate arithmetic obligation and gets its own statement.
+`clSoundness_ldc_one` states the conclusion with the canonical-line error; combining it with
+`Adapter/Parameters.lean`'s choice of `k` gives `clSoundness_ldc_one_deltaCL`, the `ldc = 1` case
+of `thm:lidt-cl-soundness` with the blueprint's own `δ_CL`.
+
+What is *not* here: the `ldc > 1` case (`lem:lidt-ldc`, the paper's Steps 1--5).
 -/
 
 namespace MIPRE.LIDT.Adapter
@@ -270,5 +273,30 @@ theorem clSoundness_ldc_one
         (fun _ => (revMeas GA).toPOVM ()) (fun _ => (revMeas GB).toPOVM ())
         (Equiv.refl Unit) revPolyEquiv (fun _ => rfl) (fun _ _ => rfl) (fun _ _ => rfl)
     exact le_of_eq_of_le heq h3
+
+/-- **The `ldc = 1` case of `thm:lidt-cl-soundness`.** The same conclusion as
+`clSoundness_ldc_one`, with the blueprint's own error
+`δ_CL = a (dm)^a (ε^b + q^{-b} + 2^{-bmd})` in place of the canonical-line one --- the
+sampling parameter is `clK m d = 400 m³ d + 400 m` and the constants are
+`a = 2·10^11`, `b = 1/40000` (`lidtError_le_deltaCL`).
+
+`1 ≤ d` is needed and is not cosmetic: at `d = 0` the blueprint's `δ_CL` is identically zero. -/
+theorem clSoundness_ldc_one_deltaCL
+    (S : TensorProductStrategy (clGame (d := d) (ldc := 1) hm)) (ε : ℝ) (hε : 0 ≤ ε)
+    (hS : 1 - ε ≤ S.value) (hm1 : 1 ≤ m) (hd : 1 ≤ d) :
+    ∃ GA : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := m) (d := d))
+        (Matrix (Fin S.dA) (Fin S.dA) ℂ),
+    ∃ GB : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := m) (d := d))
+        (Matrix (Fin S.dB) (Fin S.dB) ℂ),
+      inconsistency (uniform (Point F m)) S.ψ (CL.pointPOVMA S) (evalPOVM GB)
+          ≤ deltaCL (Fintype.card F) m d ε ∧
+        inconsistency (uniform (Point F m)) S.ψ (evalPOVM GA) (CL.pointPOVMB S)
+          ≤ deltaCL (Fintype.card F) m d ε ∧
+        inconsistency (uniform Unit) S.ψ (fun _ => GA.toPOVM ()) (fun _ => GB.toPOVM ())
+          ≤ deltaCL (Fintype.card F) m d ε := by
+  obtain ⟨GA, GB, h1, h2, h3⟩ :=
+    clSoundness_ldc_one S ε hS (clK m d) (le_clK m d hm1) (clK_pos m d hm1)
+  have hle := lidtError_le_deltaCL m d (Fintype.card F) hm1 hd ε hε
+  exact ⟨GA, GB, h1.trans hle, h2.trans hle, h3.trans hle⟩
 
 end MIPRE.LIDT.Adapter
