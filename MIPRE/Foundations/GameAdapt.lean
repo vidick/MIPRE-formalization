@@ -100,6 +100,42 @@ def mergeAt {X X' A A' : Type*} [Fintype A] [Fintype A'] [DecidableEq A'] {n : T
 
 end ProjectiveMeasurement
 
+omit [Fintype X] [Fintype Y] in
+/-- **The push-forward of a distribution over a family of question maps, counted the other way
+round.** Summing over the family and then over the fibres is the same as summing over the target
+pairs weighted by *how many members of the family* send them where they need to go.
+
+This is the form in which the push-forward bound of `exists_one_sub_value_adapt_le` is checked in
+practice: the count is usually easy, because a member of the family typically constrains only a
+small part of the question, while the fibres of the maps themselves are awkward to describe. -/
+theorem sum_sum_fibre_eq_sum_card {Seed : Type*} [Fintype Seed] [DecidableEq X] [DecidableEq Y]
+    (qA : Seed → X' → X) (qB : Seed → Y' → Y) (w : X' → Y' → ℝ) (x : X) (y : Y) :
+    (∑ σ : Seed, ∑ x' ∈ Finset.univ.filter (fun x' => qA σ x' = x),
+        ∑ y' ∈ Finset.univ.filter (fun y' => qB σ y' = y), w x' y')
+      = ∑ x', ∑ y', w x' y' *
+          (Finset.univ.filter (fun σ : Seed => qA σ x' = x ∧ qB σ y' = y)).card := by
+  classical
+  have hstep : ∀ σ : Seed, (∑ x' ∈ Finset.univ.filter (fun x' => qA σ x' = x),
+      ∑ y' ∈ Finset.univ.filter (fun y' => qB σ y' = y), w x' y')
+      = ∑ x', ∑ y', (if qA σ x' = x ∧ qB σ y' = y then w x' y' else 0) := by
+    intro σ
+    rw [Finset.sum_filter]
+    refine Finset.sum_congr rfl fun x' _ => ?_
+    rw [Finset.sum_filter]
+    by_cases hx : qA σ x' = x
+    · rw [if_pos hx]
+      exact Finset.sum_congr rfl fun y' _ => by
+        by_cases hy : qB σ y' = y
+        · rw [if_pos hy, if_pos ⟨hx, hy⟩]
+        · rw [if_neg hy, if_neg (fun hc => hy hc.2)]
+    · rw [if_neg hx, Finset.sum_eq_zero fun y' _ => if_neg (fun hc => hx hc.1)]
+  rw [Finset.sum_congr rfl fun σ (_ : σ ∈ Finset.univ) => hstep σ]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun x' _ => ?_
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun y' _ => ?_
+  rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul, mul_comm]
+
 namespace TensorProductStrategy
 
 variable {G : Game X Y A B}
