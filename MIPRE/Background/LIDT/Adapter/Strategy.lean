@@ -277,4 +277,85 @@ theorem hD_axis (u : Point F m) (i : Fin m) (a b : CL.Answer F m d 1)
   rw [hpt, ← hparam]
   exact heval
 
+/-- The diagonal case, and the one the affine rebasing exists for: the two tests' base points
+differ by `shiftOf ℓ` times the direction, so the two parameters of a point differ by that
+shift, and `reparam 1 (shiftOf ℓ)` is exactly what undoes it. -/
+theorem hD_diag (u : Point F m) (j : Fin m) (v : Fin ((j : ℕ) + 1) → F)
+    (a b : CL.Answer F m d 1)
+    (hacc : (clGame (d := d) (ldc := 1) hm).D
+      (qmap hm σ (.diagLine (Line.through u (Sample.extend v)))) (qmap hm σ (.point u)) a b
+      = true) :
+    (lidtGame F m d).D (.diagLine (Line.through u (Sample.extend v))) (.point u)
+      (amap (.diagLine (Line.through u (Sample.extend v))) a) (amap (.point u) b) = true := by
+  classical
+  set ℓ : Line F m := Line.through u (Sample.extend v) with hℓdef
+  set sh : F := shiftOf ℓ with hsh
+  set u₀ : Point F m := revPoint ℓ.1 - sh • revPoint ℓ.2 with hu₀
+  have hqA : qmap hm σ (Question.diagLine ℓ)
+      = CL.Question.dline u₀ (seedOf hm (diagIdx ℓ) (σ (diagIdx ℓ))) (revPoint ℓ.2) := rfl
+  have hqB : qmap hm σ (Question.point u) = CL.Question.point (revPoint u) := rfl
+  rw [hqA, hqB] at hacc
+  obtain ⟨f, rfl⟩ := eq_dpolys_of_fmtOk (fmtOk_of_accepts_left hacc)
+  obtain ⟨α, rfl⟩ := eq_values_of_fmtOk (fmtOk_of_accepts_right hacc)
+  have hsub : CL.lineVsPoint u₀ (revPoint ℓ.2) (revPoint u) f α = true := by
+    have h := hacc
+    rw [show (clGame (d := d) (ldc := 1) hm).D = CL.accepts hm from rfl, CL.accepts] at h
+    simpa [CL.Question.fmtOk, CL.subtests] using h
+  obtain ⟨⟨t', ht'⟩, heval⟩ := of_decide_eq_true (by simpa [CL.lineVsPoint] using hsub)
+  -- the point, in the target's presentation
+  have hrev : revPoint u = revPoint ℓ.1 + (t' - sh) • revPoint ℓ.2 := by
+    rw [ht', hu₀]
+    module
+  have hmem : u = ℓ.1 + (t' - sh) • ℓ.2 := eq_add_smul_of_rev hrev
+  show LIDT.accepts F m d (.diagLine ℓ) (.point u)
+    (.diagPoly (reparam 1 sh (f 0))) (.value (α 0)) = true
+  rw [show LIDT.accepts F m d (.diagLine ℓ) (.point u)
+    (.diagPoly (reparam 1 sh (f 0))) (.value (α 0))
+    = decide (ℓ.Mem u ∧ (reparam 1 sh (f 0)).eval (Line.param ℓ u) = α 0) from rfl]
+  refine decide_eq_true ⟨⟨t' - sh, hmem⟩, ?_⟩
+  by_cases hz : ∃ k, ℓ.2 k ≠ 0
+  · -- a genuine line: both parameters are defined, and they differ by the shift
+    have hzr : ∃ k, (revPoint ℓ.2) k ≠ 0 := by
+      obtain ⟨k, hk⟩ := hz
+      exact ⟨Fin.rev k, by rwa [revPoint_apply, Fin.rev_rev]⟩
+    have hv : ∃ k, (Sample.extend v : Point F m) k ≠ 0 := by
+      by_contra hc
+      have h0 : (Sample.extend v : Point F m) = 0 :=
+        funext fun k => not_not.mp fun hk => hc ⟨k, hk⟩
+      obtain ⟨k, hk⟩ := hz
+      rw [hℓdef, h0, Line.through, dif_neg (by simp)] at hk
+      exact hk rfl
+    have hparam : CL.lineParam u₀ (revPoint ℓ.2) (revPoint u) = t' := by
+      rw [ht']
+      exact lineParam_eq_of_mem hzr _ t'
+    have hpt : Line.param ℓ u = t' - sh := by
+      have := param_through_eq_of_mem hv u (t' - sh)
+      rw [← hℓdef] at this
+      rw [hmem]
+      exact this
+    rw [hpt, eval_reparam, one_mul, sub_add_cancel, ← hparam]
+    exact heval
+  · -- a singleton line: both parameters are `0` and the shift vanishes
+    have h0 : (ℓ.2 : Point F m) = 0 := funext fun k => not_not.mp fun hc => hz ⟨k, hc⟩
+    have hsh0 : sh = 0 := by
+      rw [hsh, shiftOf, dif_neg]
+      intro hc
+      obtain ⟨k, hk⟩ := hc
+      rw [h0] at hk
+      exact hk (by simp)
+    have hpt : Line.param ℓ u = 0 := by
+      rw [Line.param, dif_neg]
+      intro hc
+      obtain ⟨k, hk⟩ := hc
+      rw [h0] at hk
+      exact hk rfl
+    have hcl : CL.lineParam u₀ (revPoint ℓ.2) (revPoint u) = 0 := by
+      rw [CL.lineParam, dif_neg]
+      intro hc
+      obtain ⟨k, hk⟩ := hc
+      rw [h0] at hk
+      exact hk (by simp)
+    rw [hpt, eval_reparam, hsh0, mul_zero, add_zero, ← hcl]
+    exact heval
+
 end MIPRE.LIDT.Adapter
