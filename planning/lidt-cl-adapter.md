@@ -135,12 +135,12 @@ The adapter's **ingredients are proved**; the **assembly is not**.
 | `rep` in closed form, constant along the line | same | done |
 | affine reparametrization of an answer | `Adapter/Reparam.lean` | done |
 | choosing a seed in a `χ`-fibre | `Adapter/Seeds.lean` | done |
-| the question maps and the answer coarse-graining | --- | **open** |
-| `hD`: the three subtests' decision predicates | --- | **open** |
+| the question maps and the answer coarse-graining | `Adapter/Strategy.lean` | done (`qmap`, `amap`) |
+| `hD`: all five support cases, assembled | same (`hD_qmap`) | done |
 | the weight domination, with the seed averaging | --- | **open** |
 | the final theorem, and the `k = poly(m,d)` corollary | --- | **open** |
 
-The three open Lean rows are the reduction proper. The hardest is the weight domination, and it
+The one open Lean row is the reduction's arithmetic; its decision-predicate half is done. The hardest is the weight domination, and it
 is worth saying why: both `clGame.μ` and `lidtGame.μ` are defined as sums over a `Sample` type
 against an indicator, so dominating one push-forward by the other means *counting* the samples
 that produce a given question pair. On the diagonal subtest that is a count of solutions of

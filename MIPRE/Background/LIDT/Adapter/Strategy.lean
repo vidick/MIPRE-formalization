@@ -358,4 +358,188 @@ theorem hD_diag (u : Point F m) (j : Fin m) (v : Fin ((j : ℕ) + 1) → F)
     rw [hpt, eval_reparam, hsh0, mul_zero, add_zero, ← hcl]
     exact heval
 
+/-! ### The swapped cases
+
+Each test hands the line to either player, so the two mirrored cases have to be done too. The
+proofs are the previous two with the roles exchanged; both games' predicates carry the mirrored
+clause explicitly. -/
+
+/-- `hD_axis` with the players exchanged. -/
+theorem hD_axis' (u : Point F m) (i : Fin m) (a b : CL.Answer F m d 1)
+    (hacc : (clGame (d := d) (ldc := 1) hm).D (qmap hm σ (.point u))
+      (qmap hm σ (.axisLine (Line.through u (Pi.single i 1)))) a b = true) :
+    (lidtGame F m d).D (.point u) (.axisLine (Line.through u (Pi.single i 1)))
+      (amap (.point u) a) (amap (.axisLine (Line.through u (Pi.single i 1))) b) = true := by
+  classical
+  set ℓ : Line F m := Line.through u (Pi.single i 1) with hℓdef
+  have hthr : ℓ = (u - u i • (Pi.single i 1 : Point F m), (Pi.single i 1 : Point F m)) :=
+    through_single i u
+  have hd2 : ℓ.2 = (Pi.single i 1 : Point F m) := by rw [hthr]
+  have hidx : axisIdx ℓ = i := by rw [hthr]; exact axisIdx_eq _ i
+  set s : F := seedOf hm (Fin.rev i) (σ (Fin.rev i)) with hs
+  have hchi : chi hm s = Fin.rev i := chi_seedOf hm _ _
+  have hqB : qmap hm σ (Question.axisLine ℓ) = CL.Question.aline (revPoint ℓ.1) s := by
+    rw [qmap, hidx]
+  have hqA : qmap hm σ (Question.point u) = CL.Question.point (revPoint u) := rfl
+  rw [hqA, hqB] at hacc
+  obtain ⟨α, rfl⟩ := eq_values_of_fmtOk (fmtOk_of_accepts_left hacc)
+  obtain ⟨f, rfl⟩ := eq_apolys_of_fmtOk (fmtOk_of_accepts_right hacc)
+  have hdir : (Pi.single (chi hm s) 1 : Point F m) = revPoint ℓ.2 := by
+    rw [hchi, hd2, revPoint_single]
+  have hsub : CL.lineVsPoint (revPoint ℓ.1) (revPoint ℓ.2) (revPoint u) f α = true := by
+    have h := hacc
+    rw [show (clGame (d := d) (ldc := 1) hm).D = CL.accepts hm from rfl, CL.accepts] at h
+    rw [← hdir]
+    simpa [CL.Question.fmtOk, CL.subtests] using h
+  obtain ⟨⟨t, ht⟩, heval⟩ := of_decide_eq_true (by simpa [CL.lineVsPoint] using hsub)
+  have hmem : u = ℓ.1 + t • ℓ.2 := eq_add_smul_of_rev ht
+  have hex : ∃ k, (revPoint ℓ.2) k ≠ 0 := by
+    refine ⟨Fin.rev i, ?_⟩
+    rw [hd2, revPoint_single]
+    simp
+  have hparam : CL.lineParam (revPoint ℓ.1) (revPoint ℓ.2) (revPoint u) = t := by
+    rw [ht]
+    exact lineParam_eq_of_mem hex _ t
+  have hpt : Line.param ℓ u = t := by
+    have hv : ∃ k, (Pi.single i 1 : Point F m) k ≠ 0 := ⟨i, by simp⟩
+    have := param_through_eq_of_mem hv u t
+    rw [← hℓdef] at this
+    rw [hmem]
+    exact this
+  show LIDT.accepts F m d (.point u) (.axisLine ℓ) (.value (α 0)) (.axisPoly (f 0)) = true
+  rw [show LIDT.accepts F m d (.point u) (.axisLine ℓ) (.value (α 0)) (.axisPoly (f 0))
+    = decide (ℓ.Mem u ∧ (f 0).eval (Line.param ℓ u) = α 0) from rfl]
+  refine decide_eq_true ⟨⟨t, hmem⟩, ?_⟩
+  rw [hpt, ← hparam]
+  exact heval
+
+/-- `hD_diag` with the players exchanged. -/
+theorem hD_diag' (u : Point F m) (j : Fin m) (v : Fin ((j : ℕ) + 1) → F)
+    (a b : CL.Answer F m d 1)
+    (hacc : (clGame (d := d) (ldc := 1) hm).D (qmap hm σ (.point u))
+      (qmap hm σ (.diagLine (Line.through u (Sample.extend v)))) a b = true) :
+    (lidtGame F m d).D (.point u) (.diagLine (Line.through u (Sample.extend v)))
+      (amap (.point u) a) (amap (.diagLine (Line.through u (Sample.extend v))) b) = true := by
+  classical
+  set ℓ : Line F m := Line.through u (Sample.extend v) with hℓdef
+  set sh : F := shiftOf ℓ with hsh
+  set u₀ : Point F m := revPoint ℓ.1 - sh • revPoint ℓ.2 with hu₀
+  have hqB : qmap hm σ (Question.diagLine ℓ)
+      = CL.Question.dline u₀ (seedOf hm (diagIdx ℓ) (σ (diagIdx ℓ))) (revPoint ℓ.2) := rfl
+  have hqA : qmap hm σ (Question.point u) = CL.Question.point (revPoint u) := rfl
+  rw [hqA, hqB] at hacc
+  obtain ⟨α, rfl⟩ := eq_values_of_fmtOk (fmtOk_of_accepts_left hacc)
+  obtain ⟨f, rfl⟩ := eq_dpolys_of_fmtOk (fmtOk_of_accepts_right hacc)
+  have hsub : CL.lineVsPoint u₀ (revPoint ℓ.2) (revPoint u) f α = true := by
+    have h := hacc
+    rw [show (clGame (d := d) (ldc := 1) hm).D = CL.accepts hm from rfl, CL.accepts] at h
+    simpa [CL.Question.fmtOk, CL.subtests] using h
+  obtain ⟨⟨t', ht'⟩, heval⟩ := of_decide_eq_true (by simpa [CL.lineVsPoint] using hsub)
+  have hrev : revPoint u = revPoint ℓ.1 + (t' - sh) • revPoint ℓ.2 := by
+    rw [ht', hu₀]
+    module
+  have hmem : u = ℓ.1 + (t' - sh) • ℓ.2 := eq_add_smul_of_rev hrev
+  show LIDT.accepts F m d (.point u) (.diagLine ℓ)
+    (.value (α 0)) (.diagPoly (reparam 1 sh (f 0))) = true
+  rw [show LIDT.accepts F m d (.point u) (.diagLine ℓ)
+    (.value (α 0)) (.diagPoly (reparam 1 sh (f 0)))
+    = decide (ℓ.Mem u ∧ (reparam 1 sh (f 0)).eval (Line.param ℓ u) = α 0) from rfl]
+  refine decide_eq_true ⟨⟨t' - sh, hmem⟩, ?_⟩
+  by_cases hz : ∃ k, ℓ.2 k ≠ 0
+  · have hzr : ∃ k, (revPoint ℓ.2) k ≠ 0 := by
+      obtain ⟨k, hk⟩ := hz
+      exact ⟨Fin.rev k, by rwa [revPoint_apply, Fin.rev_rev]⟩
+    have hv : ∃ k, (Sample.extend v : Point F m) k ≠ 0 := by
+      by_contra hc
+      have h0 : (Sample.extend v : Point F m) = 0 :=
+        funext fun k => not_not.mp fun hk => hc ⟨k, hk⟩
+      obtain ⟨k, hk⟩ := hz
+      rw [hℓdef, h0, Line.through, dif_neg (by simp)] at hk
+      exact hk rfl
+    have hparam : CL.lineParam u₀ (revPoint ℓ.2) (revPoint u) = t' := by
+      rw [ht']
+      exact lineParam_eq_of_mem hzr _ t'
+    have hpt : Line.param ℓ u = t' - sh := by
+      have := param_through_eq_of_mem hv u (t' - sh)
+      rw [← hℓdef] at this
+      rw [hmem]
+      exact this
+    rw [hpt, eval_reparam, one_mul, sub_add_cancel, ← hparam]
+    exact heval
+  · have h0 : (ℓ.2 : Point F m) = 0 := funext fun k => not_not.mp fun hc => hz ⟨k, hc⟩
+    have hsh0 : sh = 0 := by
+      rw [hsh, shiftOf, dif_neg]
+      intro hc
+      obtain ⟨k, hk⟩ := hc
+      rw [h0] at hk
+      exact hk (by simp)
+    have hpt : Line.param ℓ u = 0 := by
+      rw [Line.param, dif_neg]
+      intro hc
+      obtain ⟨k, hk⟩ := hc
+      rw [h0] at hk
+      exact hk rfl
+    have hcl : CL.lineParam u₀ (revPoint ℓ.2) (revPoint u) = 0 := by
+      rw [CL.lineParam, dif_neg]
+      intro hc
+      obtain ⟨k, hk⟩ := hc
+      rw [h0] at hk
+      exact hk (by simp)
+    rw [hpt, eval_reparam, hsh0, mul_zero, add_zero, ← hcl]
+    exact heval
+
+/-! ### `hD`, assembled
+
+The five cases above are exactly the five shapes a question pair of positive weight can have, so
+this is the hypothesis `MIPRE.TensorProductStrategy.one_sub_value_adapt_le` asks for. Note it is
+asked *only* on the support: off it the claim is false, since a pair of two line questions is a
+real question pair of the seeded test and the canonical-line test has no subtest for it. -/
+
+theorem hD_qmap (x' y' : Question F m) (hμ : (lidtGame F m d).μ x' y' ≠ 0)
+    (a b : CL.Answer F m d 1)
+    (hacc : (clGame (d := d) (ldc := 1) hm).D (qmap hm σ x') (qmap hm σ y') a b = true) :
+    (lidtGame F m d).D x' y' (amap x' a) (amap y' b) = true := by
+  obtain ⟨sm, hsm⟩ := exists_sample_of_μ_ne_zero hμ
+  match sm, hsm with
+  | Sample.selfConsistency u, hsm =>
+      have hq : Sample.questions (Sample.selfConsistency u)
+          = (Question.point u, Question.point (F := F) u) := rfl
+      rw [hq] at hsm
+      injection hsm with h1 h2
+      subst h1
+      subst h2
+      exact hD_selfCons hm σ u a b hacc
+  | Sample.axis false u i, hsm =>
+      have hq : Sample.questions (Sample.axis false u i)
+          = (Question.axisLine (Line.through u (Pi.single i 1)), Question.point u) := rfl
+      rw [hq] at hsm
+      injection hsm with h1 h2
+      subst h1
+      subst h2
+      exact hD_axis hm σ u i a b hacc
+  | Sample.axis true u i, hsm =>
+      have hq : Sample.questions (Sample.axis true u i)
+          = (Question.point u, Question.axisLine (Line.through u (Pi.single i 1))) := rfl
+      rw [hq] at hsm
+      injection hsm with h1 h2
+      subst h1
+      subst h2
+      exact hD_axis' hm σ u i a b hacc
+  | Sample.diag false u j v, hsm =>
+      have hq : Sample.questions (Sample.diag false u j v)
+          = (Question.diagLine (Line.through u (Sample.extend v)), Question.point u) := rfl
+      rw [hq] at hsm
+      injection hsm with h1 h2
+      subst h1
+      subst h2
+      exact hD_diag hm σ u j v a b hacc
+  | Sample.diag true u j v, hsm =>
+      have hq : Sample.questions (Sample.diag true u j v)
+          = (Question.point u, Question.diagLine (Line.through u (Sample.extend v))) := rfl
+      rw [hq] at hsm
+      injection hsm with h1 h2
+      subst h1
+      subst h2
+      exact hD_diag' hm σ u j v a b hacc
+
 end MIPRE.LIDT.Adapter
