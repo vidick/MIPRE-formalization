@@ -286,6 +286,30 @@ theorem card_filter_diag_le {ℓ : Line F m} (hℓ : ∃ k, ℓ.2 k ≠ 0) (u : 
     rw [← extend_apply_coe v₁ i, ← extend_apply_coe v₂ i, hext]
   rw [hv]
 
+/-- **Every sample producing a given diagonal line against a point has weight at most
+`1/(6 m q^m q^{rev (diagIdx ℓ) + 1})`.** This is where the `q`-exponent of the bound is fixed:
+`le_rev_diagIdx_of_questions` says a contributing sample's `j` is at least `rev (diagIdx ℓ)`. -/
+theorem weight_le_of_questions_diag {ℓ : Line F m} (hℓ : ∃ k, ℓ.2 k ≠ 0) {u : Point F m}
+    {s : Sample F m} (hsq : s.questions = ((Question.diagLine ℓ : Question F m),
+      Question.point u)) :
+    s.weight ≤ 1 / (6 * m * Fintype.card (Point F m) *
+      (Fintype.card F : ℝ) ^ ((Fin.rev (diagIdx ℓ) : ℕ) + 1)) := by
+  classical
+  have hq : (0 : ℝ) < Fintype.card F := by exact_mod_cast Fintype.card_pos
+  have hq1 : (1 : ℝ) ≤ Fintype.card F := by exact_mod_cast Fintype.card_pos
+  have hmR : (0 : ℝ) < m := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne m)
+  have hP : (0 : ℝ) < Fintype.card (Point F m) := by exact_mod_cast Fintype.card_pos
+  have hA : (0 : ℝ) < 6 * m * Fintype.card (Point F m) := by positivity
+  have hden : (0 : ℝ) < 6 * m * Fintype.card (Point F m) *
+      (Fintype.card F : ℝ) ^ ((Fin.rev (diagIdx ℓ) : ℕ) + 1) := mul_pos hA (pow_pos hq _)
+  obtain ⟨j, v, hsj, _, _, _⟩ := of_questions_diag hℓ hsq
+  subst hsj
+  have hjge : ((Fin.rev (diagIdx ℓ) : ℕ)) ≤ (j : ℕ) := le_rev_diagIdx_of_questions hℓ hsq
+  show 1 / (6 * m * Fintype.card (Point F m) * (Fintype.card F : ℝ) ^ ((j : ℕ) + 1)) ≤ _
+  refine one_div_le_one_div_of_le hden ?_
+  refine mul_le_mul_of_nonneg_left ?_ hA.le
+  exact pow_le_pow_right₀ hq1 (by omega)
+
 /-- **The diagonal weight, bounded.** The sum over the contributing samples is at most their
 number times the largest of them, and `le_rev_diagIdx_of_questions` says every one of them has
 `j` at least `rev (diagIdx ℓ)`, which fixes the `q`-exponent. -/
@@ -314,16 +338,8 @@ theorem lidtGame_μ_diag_le {ℓ : Line F m} (hℓ : ∃ k, ℓ.2 k ≠ 0) (u : 
   have hBpos : 0 < B := by rw [hB]; exact div_pos one_pos hden
   have hterm : ∀ s ∈ S, s.weight ≤ B := by
     intro s hs
-    have hsq := (Finset.mem_filter.mp (hS ▸ hs)).2
-    obtain ⟨j, v, hsj, _, _, _⟩ := of_questions_diag hℓ hsq
-    subst hsj
-    have hjge : ((Fin.rev (diagIdx ℓ) : ℕ)) ≤ (j : ℕ) :=
-      le_rev_diagIdx_of_questions hℓ hsq
-    show 1 / (6 * m * Fintype.card (Point F m) * (Fintype.card F : ℝ) ^ ((j : ℕ) + 1)) ≤ B
-    rw [hB]
-    refine one_div_le_one_div_of_le hden ?_
-    refine mul_le_mul_of_nonneg_left ?_ hA.le
-    exact pow_le_pow_right₀ hq1 (by omega)
+    rw [hS, Finset.mem_filter] at hs
+    exact weight_le_of_questions_diag hℓ hs.2
   calc ∑ s ∈ S, s.weight
       ≤ S.card • B := Finset.sum_le_card_nsmul _ _ _ hterm
     _ = (S.card : ℝ) * B := by rw [nsmul_eq_mul]
@@ -1124,5 +1140,99 @@ theorem hμ_point (hm : m ∣ Fintype.card F) (xp yp : Point F m) :
     rw [Finset.sum_congr rfl fun σc (_ : σc ∈ Finset.univ) => hzero σc, Finset.sum_const_zero]
     refine mul_nonneg (Nat.cast_nonneg _) (mul_nonneg (by positivity) ?_)
     exact (clGame (d := d) (ldc := ldc) hm).μ_nonneg _ _
+
+/-! ### The diagonal shape
+
+Two cases, and they are genuinely different. A *nondegenerate* diagonal question determines the
+line, the scale and the seed index, so the family is pinned twice over and only `(q/m)^{m-1}` of
+its members contribute. A *singleton* question (direction zero) pins the seed index but not the
+scale --- scaling the zero direction does nothing --- and is paid for instead by `diagIdx`
+sending singleton lines to `χ = m - 1`, where the seeded test has `q^{m-1}` samples rather
+than one. -/
+
+omit [Fintype F] [DecidableEq F] [NeZero m] in
+@[simp] theorem revPoint_zero : (revPoint (0 : Point F m) : Point F m) = 0 := by
+  funext k; rfl
+
+omit [Fintype F] [DecidableEq F] [NeZero m] in
+@[simp] theorem extend_zero (j : Fin m) :
+    (Sample.extend (0 : Fin ((j : ℕ) + 1) → F) : Point F m) = 0 := by
+  funext k
+  rw [Sample.extend]
+  by_cases h : (k : ℕ) ≤ (j : ℕ)
+  · rw [dif_pos h]; rfl
+  · rw [dif_neg h]; rfl
+
+omit [Fintype F] [NeZero m] in
+@[simp] theorem through_zero (u : Point F m) :
+    Line.through u (0 : Point F m) = (u, 0) := by
+  rw [Line.through, dif_neg]
+  rintro ⟨j, hj⟩
+  exact hj rfl
+
+/-- **Only a diagonal sample with the line on the left maps to a `DLine` question against a
+point**, and the point pins its point. -/
+theorem exists_diag_of_qmapS_dline (hm : m ∣ Fintype.card F) (σc : Seed F m)
+    {u₀ : Point F m} {s₀ : F} {w yp : Point F m} {s : Sample F m}
+    (h1 : qmapS hm σc s.questions.1 = CL.Question.dline u₀ s₀ w)
+    (h2 : qmapS hm σc s.questions.2 = CL.Question.point yp) :
+    ∃ (j : Fin m) (v : Fin ((j : ℕ) + 1) → F), s = Sample.diag false (revPoint yp) j v := by
+  classical
+  match s, h1, h2 with
+  | Sample.diag false u j v, h1, h2 =>
+      refine ⟨j, v, ?_⟩
+      have hu : revPoint u = yp := by
+        have h : CL.Question.point (revPoint u) = CL.Question.point yp := h2
+        injection h
+      rw [← hu, revPoint_revPoint]
+  | Sample.axis false u i, h1, _ => exact absurd h1 (by simp [Sample.questions, qmapS, qmap])
+  | Sample.axis true u i, h1, _ => exact absurd h1 (by simp [Sample.questions, qmapS, qmap])
+  | Sample.selfConsistency u, h1, _ => exact absurd h1 (by simp [Sample.questions, qmapS, qmap])
+  | Sample.diag true u j v, h1, _ => exact absurd h1 (by simp [Sample.questions, qmapS, qmap])
+
+/-- **A singleton `DLine` question comes only from a sample with zero direction.** -/
+theorem eq_diag_zero_of_qmapS (hm : m ∣ Fintype.card F) (σc : Seed F m)
+    {u₀ : Point F m} {s₀ : F} {yp : Point F m} {s : Sample F m}
+    (h1 : qmapS hm σc s.questions.1 = CL.Question.dline u₀ s₀ 0)
+    (h2 : qmapS hm σc s.questions.2 = CL.Question.point yp) :
+    ∃ j : Fin m, s = Sample.diag false (revPoint yp) j (0 : Fin ((j : ℕ) + 1) → F) := by
+  classical
+  obtain ⟨j, v, rfl⟩ := exists_diag_of_qmapS_dline hm σc h1 h2
+  refine ⟨j, ?_⟩
+  -- the scale is nonzero, so the reversed direction vanishes, so the direction does
+  set ℓ : Line F m := Line.through (revPoint yp) (Sample.extend v) with hℓ
+  have h1' : (CL.Question.dline (revPoint ℓ.1 - shiftOf ℓ • revPoint ℓ.2)
+      (seedOf hm (diagIdx ℓ) (σc.1 (diagIdx ℓ))) ((σc.2 : F) • revPoint ℓ.2)
+      : CL.Question F m) = CL.Question.dline u₀ s₀ 0 := h1
+  have hdir : (σc.2 : F) • (revPoint ℓ.2 : Point F m) = 0 := (CL.Question.dline.inj h1').2.2
+  have hrev : (revPoint ℓ.2 : Point F m) = 0 :=
+    (smul_eq_zero.mp hdir).resolve_left σc.2.2
+  have hℓ2 : (ℓ.2 : Point F m) = 0 := by
+    have := congrArg revPoint hrev
+    rwa [revPoint_revPoint, revPoint_zero] at this
+  -- a canonical presentation has zero direction only for a zero input direction
+  have hext : (Sample.extend v : Point F m) = 0 := by
+    by_contra hne
+    obtain ⟨k, hk⟩ : ∃ k, (Sample.extend v : Point F m) k ≠ 0 := by
+      by_contra hall
+      exact hne (funext fun k => not_not.mp fun hc => hall ⟨k, hc⟩)
+    have hex : ∃ k, (Sample.extend v : Point F m) k ≠ 0 := ⟨k, hk⟩
+    have hp : (Sample.extend v : Point F m)
+        (Fin.find (fun k => (Sample.extend v : Point F m) k ≠ 0) hex) ≠ 0 := Fin.find_spec hex
+    have h2' : (ℓ.2 : Point F m)
+        = ((Sample.extend v : Point F m)
+            (Fin.find (fun k => (Sample.extend v : Point F m) k ≠ 0) hex))⁻¹
+          • (Sample.extend v : Point F m) := by
+      rw [hℓ, through_eq hex]
+    rw [hℓ2] at h2'
+    have := congrFun h2' (Fin.find (fun k => (Sample.extend v : Point F m) k ≠ 0) hex)
+    simp only [Pi.zero_apply, Pi.smul_apply, smul_eq_mul, inv_mul_cancel₀ hp] at this
+    exact zero_ne_one this
+  have hv : v = 0 := by
+    funext i
+    have hi := congrFun hext ⟨(i : ℕ), lt_of_le_of_lt (Nat.le_of_lt_succ i.isLt) j.isLt⟩
+    rw [extend_apply_coe] at hi
+    exact hi
+  rw [hv]
 
 end MIPRE.LIDT.Adapter

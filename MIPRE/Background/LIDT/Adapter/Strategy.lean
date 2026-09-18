@@ -65,9 +65,30 @@ omit [Fintype F] in
   exact (single_inj h.choose_spec).symm
 
 /-- The `χ`-index the adapter uses for a diagonal line: the first nonzero coordinate of the
-reversed direction, which is the pivot of its span and so the coordinate `rep` zeroes. -/
+reversed direction, which is the pivot of its span and so the coordinate `rep` zeroes.
+
+The fallback for a *singleton* line (direction zero) is `rev idx0 = m - 1`, not `idx0`, and the
+choice is forced by the weight bookkeeping rather than free. The seeded test's `DLine` samples
+with `zeroBelow (χ s) V = 0` number `q^{χ s}`, so its mass on `(u₀, s, 0)` grows with `χ s`;
+the canonical-line test puts mass `≈ 1/(6 m q^m q)` on a singleton line, which only the largest
+`χ` can dominate. Sending singleton lines to `χ = 0` costs a factor `q^{m-1}`, which the error
+term of `thm:lidt-cl-soundness` does not allow. See `planning/lidt-cl-adapter.md`. -/
 noncomputable def diagIdx (ℓ : Line F m) : Fin m :=
-  if h : ∃ j, (revPoint ℓ.2) j ≠ 0 then Fin.find (fun j => (revPoint ℓ.2) j ≠ 0) h else idx0
+  if h : ∃ j, (revPoint ℓ.2) j ≠ 0 then Fin.find (fun j => (revPoint ℓ.2) j ≠ 0) h
+  else Fin.rev idx0
+
+omit [Fintype F] in
+/-- The fallback, named. -/
+theorem diagIdx_of_dir_eq_zero {ℓ : Line F m} (h : (revPoint ℓ.2 : Point F m) = 0) :
+    diagIdx ℓ = Fin.rev idx0 := by
+  refine dif_neg fun hc => ?_
+  obtain ⟨j, hj⟩ := hc
+  exact hj (by rw [h]; rfl)
+
+omit [Fintype F] in
+/-- On a nondegenerate line `diagIdx` is the pivot. -/
+theorem diagIdx_eq_find {ℓ : Line F m} (h : ∃ j, (revPoint ℓ.2) j ≠ 0) :
+    diagIdx ℓ = Fin.find (fun j => (revPoint ℓ.2) j ≠ 0) h := dif_pos h
 
 /-- The shift between the two presentations of a line. -/
 noncomputable def shiftOf (ℓ : Line F m) : F :=
