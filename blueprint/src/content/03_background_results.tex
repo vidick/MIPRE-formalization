@@ -1763,6 +1763,79 @@ the circulant Gram self-dualization ($1.1.6.1.7$, $1.1.6.1.8$) and table transpo
 ($1.1.6.1.9$). Mathlib's normal basis theorem \texttt{IsGalois.normalBasis} gives the
 existence half of the normal element, though not the construction.
 
+Two of those pieces are now formalized, and \texttt{planning/self-dual-basis.md} records the
+route for the rest: Lemma~\ref{lem:group-algebra-selfdualization}, the self-dualization step,
+and Lemma~\ref{lem:admissible-field-exists}, which inhabits the field interface
+\texttt{thm:pcp-decider} takes as a parameter. Neither is the lemma: the first is existence
+and not construction, and the second is deliberately weaker, as its comments say.
+
+\begin{lemma}[Self-dualization in the group algebra]
+\label{lem:group-algebra-selfdualization}
+\ledgernode{1.1.6.1.7, 1.1.6.1.8}
+\uses{def:self-dual-basis}
+\lean{MIPRE.LowDegree.exists_mul_involute_eq, MIPRE.LowDegree.mul_self_bijective,
+  MIPRE.LowDegree.exists_mul_involute_eq_of_charTwo}
+\leanok
+Let $R$ be a commutative ring on which $x \mapsto x^2$ is a bijection and let $\tau$ be a ring
+automorphism of $R$. Then every $u \in R$ with $\tau(u) = u$ is of the form $a \cdot \tau(a)$.
+
+Squaring \emph{is} a bijection of the group algebra $\F[G]$ when $\F$ is a finite field of
+characteristic two and $G$ is a finite abelian group of odd order.
+\end{lemma}
+
+\begin{proof}
+\leanok
+For the first statement, let $b$ be the square root of $u$. Then $\tau(b)^2 = \tau(b^2) =
+\tau(u) = u = b^2$, so $\tau(b) = b$ by injectivity of squaring, and $b \cdot \tau(b) = b^2 = u$.
+
+For the second, squaring is additive in characteristic two, and on a single generator
+$\delta_g r$ it is $\delta_{g + g} r^2$. Doubling is injective on $G$: if $(a - b) + (a - b) =
+0$ then the additive order of $a - b$ divides both $2$ and $\abs{G}$, which are coprime because
+$\abs{G}$ is odd. So the coefficient of $x^2$ at $g + g$ is the square of the coefficient of $x$
+at $g$, and $x^2 = 0$ forces $x = 0$. Squaring is then injective, because $(x - y)^2 = x^2 -
+y^2$ in characteristic two, and injective implies bijective on a finite set.
+\end{proof}
+
+\paragraph{Comments.} This is the self-dualization step of Lemma~\ref{lem:self-dual-basis}, and
+it is where oddness of $k$ is used. If $\alpha$ is a normal element of $\F_{2^k}/\F_2$ with
+Galois group $G$, the trace-form Gram matrix of its orbit is the circulant determined by
+$c \in \F_2[G]$, $c(g) = \mathrm{tr}(\alpha \cdot g\alpha)$: it is a unit, because the Gram
+matrix of a basis under the nondegenerate trace form is invertible, and it is fixed by the
+involution $\tau$ induced by $g \mapsto g^{-1}$, because that Gram matrix is symmetric.
+Replacing $\alpha$ by $a \cdot \alpha$ replaces $c$ by $a \cdot \tau(a) \cdot c$, so a self-dual
+normal basis is exactly a solution of $a \cdot \tau(a) = c^{-1}$, which is what the lemma
+supplies. Nodes $1.1.6.1.7$ and $1.1.6.1.8$ carry an explicit circulant Gram manipulation
+instead; the argument above replaces it, and needs no factorization of $X^k - 1$ and no norm
+computation in the factors.
+
+What the lemma does \emph{not} do is assemble a basis: the group algebra must be made to act on
+$\F_{2^k}$, the Gram identity must be proved, and $c$ must be shown to be a unit. Those three
+are bookkeeping, and \texttt{planning/self-dual-basis.md} spells them out; the algorithm is a
+separate matter again.
+
+\begin{lemma}[An admissible field with a bit representation]
+\label{lem:admissible-field-exists}
+\uses{thm:pcp-decider}
+\lean{MIPRE.SAT.binFieldGalois, MIPRE.SAT.nonempty_binField}
+\leanok
+For every $k \geq 1$ there is a field of size $2^k$ together with a $k$-bit representation of
+its elements admitting a left inverse; that is, \texttt{MIPRE.SAT.BinField} $k$ is inhabited.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Mathlib's \texttt{GaloisField 2 k} has $2^k$ elements and dimension $k$ over $\F_2$; take the
+coordinate vector in any basis.
+\end{proof}
+
+\paragraph{Comments.} This removes the field parameter of Theorem~\ref{thm:pcp-decider} from the
+list of things this project assumes. It is deliberately weaker than
+Lemma~\ref{lem:self-dual-basis}: the basis is whatever Mathlib returns, so it is neither normal
+nor self-dual, there are no multiplication tables, and nothing is claimed about time. A consumer
+that needs $\downsize$ to be computed by the trace form (Lemma~\ref{lem:downsize-field}) needs
+the self-dual normal basis, and \texttt{MIPRE.SAT.BinField} will have to carry more fields
+before it can be served; shaping that interface should wait until such a consumer exists.
+
 \subsection{The Schwartz--Zippel lemma}
 \label{sec:rr-schwartz-zippel}
 

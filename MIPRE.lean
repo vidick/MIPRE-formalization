@@ -594,6 +594,7 @@ import MIPRE.Foundations.Halting.WrapperCost
 import MIPRE.Foundations.LowDegree.Encoding
 import MIPRE.Foundations.LowDegree.SchwartzZippel
 import MIPRE.Foundations.LowDegree.SelfDual
+import MIPRE.Foundations.LowDegree.SelfDualize
 import MIPRE.Foundations.LowDegree.Shoup
 import MIPRE.Foundations.OracularComplete
 import MIPRE.Foundations.OracularGame
