@@ -20,6 +20,8 @@ import MIPRE.Foundations.Games
 import MIPRE.Foundations.PerfectStrategy
 import MIPRE.Foundations.OracularComplete
 import MIPRE.Foundations.OracularSound
+import MIPRE.Foundations.LowDegree.SelfDualize
+import MIPRE.Foundations.SAT.AdmissibleField
 import MIPRE.Foundations.Halting.Corollaries
 import MIPRE.Foundations.Pipeline.Compress
 import MIPRE.Foundations.Halting.LambdaBound
@@ -412,6 +414,17 @@ elab "#guard_sorry_free " ids:ident,* : command => do
   MIPRE.SeededGame.oracleStrategy_value_eq_one,
   MIPRE.SeededGame.soundStrategy,
   MIPRE.SeededGame.soundStrategy_value_ge
+
+-- blueprint `lem:group-algebra-selfdualization`: the self-dualization step of
+-- `lem:self-dual-basis`, in the group algebra.
+#guard_sorry_free MIPRE.LowDegree.exists_mul_involute_eq,
+  MIPRE.LowDegree.mul_self_bijective,
+  MIPRE.LowDegree.exists_mul_involute_eq_of_charTwo
+
+-- blueprint `lem:admissible-field-exists`: the field interface `thm:pcp-decider` takes as a
+-- parameter is inhabited.
+#guard_sorry_free MIPRE.SAT.binFieldGalois,
+  MIPRE.SAT.nonempty_binField
 
 /-!
 ## The one axiom

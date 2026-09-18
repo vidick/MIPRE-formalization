@@ -594,6 +594,7 @@ import MIPRE.Foundations.Halting.WrapperCost
 import MIPRE.Foundations.LowDegree.Encoding
 import MIPRE.Foundations.LowDegree.SchwartzZippel
 import MIPRE.Foundations.LowDegree.SelfDual
+import MIPRE.Foundations.LowDegree.SelfDualize
 import MIPRE.Foundations.LowDegree.Shoup
 import MIPRE.Foundations.OracularComplete
 import MIPRE.Foundations.OracularGame
@@ -617,6 +618,7 @@ import MIPRE.Foundations.Repeat.RepDecider
 import MIPRE.Foundations.Repeat.RepSampler
 import MIPRE.Foundations.Repeat.Sampler
 import MIPRE.Foundations.Repeat.SamplerCost
+import MIPRE.Foundations.SAT.AdmissibleField
 import MIPRE.Foundations.SAT.Circuit
 import MIPRE.Foundations.SAT.Cnf
 import MIPRE.Foundations.SAT.Decoupled
