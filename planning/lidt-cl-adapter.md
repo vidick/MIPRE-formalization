@@ -229,6 +229,42 @@ and their swaps. In each, `clGame`'s acceptance first gives both answer formats,
 
 The two swapped cases are the same with the roles exchanged.
 
+### The weight domination, with the axis case computed
+
+The push-forward hypothesis is
+
+```
+∀ x y, (∑ σ, ∑ x' ∈ fib(qmap σ, x), ∑ y' ∈ fib(qmap σ, y), μ' x' y') ≤ |Seed| * (C * μ x y)
+```
+
+with `Seed = Fin m → Fin (q/m)`, so `|Seed| = (q/m)^m`. The useful reformulation swaps the
+orders: for fixed `(x, y)`,
+
+```
+LHS = ∑_{x'} ∑_{y'} μ'(x', y') * #{σ : qmap σ x' = x ∧ qmap σ y' = y}
+```
+
+and that count is easy, because on the support one of the two questions is a *point*, whose
+image does not depend on `σ` at all, and the other is a line, whose image depends on `σ` at
+exactly **one** index. So the count is `(q/m)^{m-1}` when the one constraint is satisfiable and
+`0` otherwise.
+
+The axis-parallel case, in full, as the pattern for the others. Take
+`x = .aline u₀ s`, `y = .point xₚ`.
+
+* **`μ x y`.** The seeded samples producing it have `tyA = aline`, `tyB = point`, `U = xₚ`,
+  seed `s`, and `V` free; the base point matches iff `rep e_{χ s} xₚ = u₀`. So there are `q^m`
+  of them out of `9 q^{2m+1}`, giving `μ = 1/(9 q^{m+1})` when consistent and `0` otherwise.
+* **The push-forward.** `qmap σ y' = .point xₚ` forces `y' = point (ρ xₚ)`. For `x'`, matching the
+  seed forces `χ s = rev (axisIdx ℓ)` by `chi_seedOf`, so the direction index is `rev (χ s)` and
+  `ℓ.2 = e_{rev (χ s)}`; matching the base point forces `ℓ.1 = ρ u₀`. So `ℓ` is *determined*, and
+  the surviving constraint on `σ` is at the single index `χ s`, where exactly one of the `q/m`
+  fibre positions works (`seedOf_injective`). Count `(q/m)^{m-1}`.
+* **`μ'`** at that one pair is `1/(6 m q^m)`, the weight of the single sample `axis false u i`.
+* **The inequality.** `(q/m)^{m-1} / (6 m q^m) ≤ (q/m)^m * C / (9 q^{m+1})` reduces to
+  `9 q ≤ 6 q C`, i.e. **`C ≥ 3/2`**, with no `q` or `m` left in it. That is the factor `q/m` a
+  fixed choice would have cost, paid back exactly by the averaging.
+
 ### The weight domination
 
 Still the hard row, and the reason a fixed seed choice is not merely lossy: the push-forward of
