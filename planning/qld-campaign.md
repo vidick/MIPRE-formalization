@@ -104,6 +104,35 @@ and the blueprint takes a limit over a compact set of projective measurements to
 `∀ η > 2γ, ∃ projective P, dist ≤ 9η` — and the blueprint should be repaired to it rather than
 the Lean contorted to match. Decide inside PR A and record the decision either way.
 
+#### What the orthonormalization bridge actually costs (reconnaissance, 2026-09-18)
+
+Nothing in the repository consumes `povm_orthogonalization_finDim` yet, so
+`cor:ortho-from-consistency` is its first caller and the bridge from `MIPRE.POVM` (matrices) to
+the vendored statement (continuous linear maps on a Hilbert space) is new work. Three findings,
+two of them good news:
+
+* **No normality to prove.** `MIPRE/Background/Orthonormalization/Statement.lean`'s version wants
+  a `NormalState` on a `VonNeumannAlgebra`, and there is no `⊤ : VonNeumannAlgebra H` instance in
+  Mathlib. But `Orthogonalization/FinDim/Main.lean`'s `povm_orthogonalization_finDim` takes only a
+  linear functional `φ : (H →L[ℂ] H) →ₗ[ℂ] ℂ` with `0 ≤ φ (star x * x)` and `φ 1 = 1`, and a
+  family `a` with `0 ≤ a i` and `∑ a i = 1`. Call *that* one: no algebra, no normal state, no
+  weak-* continuity.
+* **Use Alice's space, not the tensor product.** The blueprint says to apply the theorem to the
+  algebra `L(H_A) ⊗ Id`; the equivalent move that needs no algebra is `H := EuclideanSpace ℂ dA`
+  with the *reduced* functional `x ↦ ⟨ψ| x ⊗ Id |ψ⟩`. The projections then come out on Alice's
+  space directly, which is what the conclusion `P_a ⊗ Id ≈ Q_a ⊗ Id` wants. `quadForm_eq` in
+  `StateDistance.lean` is the identity that makes `0 ≤ φ (star x * x)` immediate, since it says
+  the value *is* `stateSqNorm ψ M` as a complex number.
+* **Positivity transfer is the one real gap.** `Matrix.toEuclideanCLM` is a `StarAlgEquiv`, so
+  `map_add`, `map_smul`, `map_one` and `map_mul` are free and `map_star'` is a field; and
+  `Mathlib/Analysis/CStarAlgebra/Matrix.lean` gives `ofLp (toEuclideanCLM A x) = A *ᵥ ofLp x` by
+  `rfl`. What Mathlib does **not** have is `M.PosSemidef → (toEuclideanCLM M).IsPositive`, nor the
+  complex `⟪x, toEuclideanCLM A y⟫ = star x ⬝ᵥ A *ᵥ y` (only the `ℝ` case, `inner_toEuclideanCLM`).
+  Both have to be written, and they are what the POVM hypothesis `0 ≤ a i` needs.
+
+So the cost estimate stands at a couple of hundred lines, and the shape is settled; what it is
+*not* is a two-line application of a vendored theorem.
+
 `lem:ms-direct-anticomm` is the campaign's best-specified target: the blueprint writes the whole
 proof out with explicit constants (Naimark dilation of each constraint POVM, a telescoping
 substitution bound `γ² ≤ 144ε`, one six-step word identity through the six constraints, final

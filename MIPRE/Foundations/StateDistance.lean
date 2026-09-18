@@ -94,27 +94,35 @@ noncomputable def stateNorm (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) : ℝ
 /-- `⟨ψ| M† M ⊗ Id |ψ⟩`, the squared state-dependent norm. -/
 noncomputable def stateSqNorm (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) : ℝ := stateNorm ψ M ^ 2
 
-/-- **The squared norm is the blueprint's quadratic form**: `⟨ψ| M† M ⊗ Id |ψ⟩`. This is the
-only place the Kronecker adjoint is needed, and it is what makes the Lean definition and
-`def:state-distance`'s spelling the same object rather than informally the same. -/
-theorem stateSqNorm_eq (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) :
-    stateSqNorm ψ M
-      = (star ψ ⬝ᵥ ((((Mᴴ * M) ⊗ₖ (1 : Matrix dB dB ℂ))) *ᵥ ψ)).re := by
+/-- **The squared norm is the blueprint's quadratic form**, as a complex number:
+`⟨ψ| M† M ⊗ Id |ψ⟩` is real and equal to `stateSqNorm ψ M`. This is the only place the Kronecker
+adjoint is needed, and it is what makes the Lean definition and `def:state-distance`'s spelling
+the same object rather than informally the same. The complex form is what a positivity
+hypothesis on a linear functional wants. -/
+theorem quadForm_eq (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) :
+    star ψ ⬝ᵥ ((((Mᴴ * M) ⊗ₖ (1 : Matrix dB dB ℂ))) *ᵥ ψ) = (stateSqNorm ψ M : ℂ) := by
   classical
   set A : Matrix (dA × dB) (dA × dB) ℂ := M ⊗ₖ (1 : Matrix dB dB ℂ) with hA
   have hAdj : Aᴴ * A = (Mᴴ * M) ⊗ₖ (1 : Matrix dB dB ℂ) := by
     rw [hA, Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one,
       ← Matrix.mul_kronecker_mul, Matrix.one_mul]
-  rw [← hAdj]
   have h1 : star (A *ᵥ ψ) ⬝ᵥ (A *ᵥ ψ) = star ψ ⬝ᵥ ((Aᴴ * A) *ᵥ ψ) := by
     rw [Matrix.star_mulVec, ← Matrix.mulVec_mulVec, ← Matrix.dotProduct_mulVec]
-  rw [← h1, dotProduct, Complex.re_sum]
-  show ‖stateVec ψ M‖ ^ 2 = _
+  rw [← hAdj, ← h1, dotProduct]
+  have hentry : ∀ i, star (A *ᵥ ψ) i * (A *ᵥ ψ) i = ((‖(A *ᵥ ψ) i‖ ^ 2 : ℝ) : ℂ) := by
+    intro i
+    rw [Pi.star_apply, RCLike.star_def, RCLike.conj_mul]
+    norm_cast
+  rw [Finset.sum_congr rfl fun i (_ : i ∈ Finset.univ) => hentry i, ← Complex.ofReal_sum]
+  show _ = ((‖stateVec ψ M‖ ^ 2 : ℝ) : ℂ)
   rw [EuclideanSpace.norm_eq, Real.sq_sqrt (Finset.sum_nonneg fun _ _ => sq_nonneg _)]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  show ‖(A *ᵥ ψ) i‖ ^ 2 = _
-  rw [Pi.star_apply, RCLike.star_def, RCLike.conj_mul]
-  norm_cast
+  rfl
+
+/-- The real form of `quadForm_eq`, which is how `def:state-distance` is written. -/
+theorem stateSqNorm_eq (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) :
+    stateSqNorm ψ M
+      = (star ψ ⬝ᵥ ((((Mᴴ * M) ⊗ₖ (1 : Matrix dB dB ℂ))) *ᵥ ψ)).re := by
+  rw [quadForm_eq, Complex.ofReal_re]
 
 theorem stateNorm_nonneg (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) : 0 ≤ stateNorm ψ M :=
   norm_nonneg _
