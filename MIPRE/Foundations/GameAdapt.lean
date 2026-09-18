@@ -29,7 +29,10 @@ probabilities, each weighted by its own game's distribution.
 
 `failAt_adapt_le` says the adapted strategy fails no more often at `(x', y')` than `S` does at
 `(qA x', qB y')`, provided every tuple `G` accepts is still accepted after coarse-graining
-(`hD`). Summing, the price is entirely in the distributions: `one_sub_value_adapt_le` asks that
+(`hD`). The summed statements ask `hD` only where `G'.μ` is nonzero, and that is not a
+convenience: a question pair outside the target's support may well be one the target *rejects*
+and the source accepts --- for the seeded CL test, a pair of two line questions, which the
+canonical-line test has no subtest for --- so the unrestricted hypothesis would be false. Summing, the price is entirely in the distributions: `one_sub_value_adapt_le` asks that
 the push-forward of `G'`'s distribution along `(qA, qB)` be dominated by `C` times `G`'s, and
 concludes `1 - (S.adapt …).value ≤ C * (1 - S.value)`.
 
@@ -250,7 +253,8 @@ variable [DecidableEq X] [DecidableEq Y]
 of `G'`'s distribution. -/
 theorem one_sub_value_adapt_le_sum (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
     (qA : X' → X) (qB : Y' → Y) (rA : X' → A → A') (rB : Y' → B → B')
-    (hD : ∀ x' y' a b, G.D (qA x') (qB y') a b = true → G'.D x' y' (rA x' a) (rB y' b) = true) :
+    (hD : ∀ x' y' a b, G'.μ x' y' ≠ 0 →
+      G.D (qA x') (qB y') a b = true → G'.D x' y' (rA x' a) (rB y' b) = true) :
     1 - (S.adapt G' qA qB rA rB).value
       ≤ ∑ x, ∑ y, (∑ x' ∈ Finset.univ.filter (fun x' => qA x' = x),
           ∑ y' ∈ Finset.univ.filter (fun y' => qB y' = y), G'.μ x' y') * S.failAt x y := by
@@ -258,8 +262,11 @@ theorem one_sub_value_adapt_le_sum (S : TensorProductStrategy G) (G' : Game X' Y
   calc ∑ x', ∑ y', G'.μ x' y' * (S.adapt G' qA qB rA rB).failAt x' y'
       ≤ ∑ x', ∑ y', G'.μ x' y' * S.failAt (qA x') (qB y') := by
         refine Finset.sum_le_sum fun x' _ => Finset.sum_le_sum fun y' _ => ?_
-        exact mul_le_mul_of_nonneg_left
-          (failAt_adapt_le S G' qA qB rA rB x' y' (hD x' y')) (G'.μ_nonneg x' y')
+        by_cases hz : G'.μ x' y' = 0
+        · rw [hz, zero_mul, zero_mul]
+        · exact mul_le_mul_of_nonneg_left
+            (failAt_adapt_le S G' qA qB rA rB x' y' (fun a b => hD x' y' a b hz))
+            (G'.μ_nonneg x' y')
     _ = ∑ x, ∑ y, (∑ x' ∈ Finset.univ.filter (fun x' => qA x' = x),
           ∑ y' ∈ Finset.univ.filter (fun y' => qB y' = y), G'.μ x' y') * S.failAt x y := by
         rw [← sum_sum_fiberwise₂ qA qB (fun x' y' => G'.μ x' y' * S.failAt (qA x') (qB y'))]
@@ -275,7 +282,8 @@ theorem one_sub_value_adapt_le_sum (S : TensorProductStrategy G) (G' : Game X' Y
 `S`'s. -/
 theorem one_sub_value_adapt_le (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
     (qA : X' → X) (qB : Y' → Y) (rA : X' → A → A') (rB : Y' → B → B') (C : ℝ)
-    (hD : ∀ x' y' a b, G.D (qA x') (qB y') a b = true → G'.D x' y' (rA x' a) (rB y' b) = true)
+    (hD : ∀ x' y' a b, G'.μ x' y' ≠ 0 →
+      G.D (qA x') (qB y') a b = true → G'.D x' y' (rA x' a) (rB y' b) = true)
     (hμ : ∀ x y, (∑ x' ∈ Finset.univ.filter (fun x' => qA x' = x),
         ∑ y' ∈ Finset.univ.filter (fun y' => qB y' = y), G'.μ x' y') ≤ C * G.μ x y) :
     1 - (S.adapt G' qA qB rA rB).value ≤ C * (1 - S.value) := by
@@ -297,7 +305,7 @@ theorem exists_one_sub_value_adapt_le {Seed : Type*} [Fintype Seed] [Nonempty Se
     (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
     (qA : Seed → X' → X) (qB : Seed → Y' → Y) (rA : Seed → X' → A → A')
     (rB : Seed → Y' → B → B') (C : ℝ)
-    (hD : ∀ σ x' y' a b,
+    (hD : ∀ σ x' y' a b, G'.μ x' y' ≠ 0 →
       G.D (qA σ x') (qB σ y') a b = true → G'.D x' y' (rA σ x' a) (rB σ y' b) = true)
     (hμ : ∀ x y, (∑ σ, ∑ x' ∈ Finset.univ.filter (fun x' => qA σ x' = x),
         ∑ y' ∈ Finset.univ.filter (fun y' => qB σ y' = y), G'.μ x' y')
