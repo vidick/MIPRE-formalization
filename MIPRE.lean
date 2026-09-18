@@ -529,6 +529,7 @@ import MIPRE.Foundations.CL.Register
 import MIPRE.Foundations.CL.Repeat
 import MIPRE.Foundations.CL.Sampler
 import MIPRE.Foundations.ClassMIPStar
+import MIPRE.Foundations.Closeness
 import MIPRE.Foundations.CommutingOperator
 import MIPRE.Foundations.Compression
 import MIPRE.Foundations.Cost.Basic
@@ -596,6 +597,7 @@ import MIPRE.Foundations.LowDegree.SelfDual
 import MIPRE.Foundations.LowDegree.Shoup
 import MIPRE.Foundations.OracularComplete
 import MIPRE.Foundations.OracularGame
+import MIPRE.Foundations.OracularSound
 import MIPRE.Foundations.PerfectStrategy
 import MIPRE.Foundations.Pipeline.AnswerReduction
 import MIPRE.Foundations.Pipeline.Budget

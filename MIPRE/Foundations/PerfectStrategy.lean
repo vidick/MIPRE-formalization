@@ -3,7 +3,7 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Games
+import MIPRE.Foundations.Closeness
 
 /-!
 # Perfect strategies reject nothing on the support
@@ -214,6 +214,63 @@ theorem orthogonal (S : SyncStrategy G) (x : X) {a b : A} (hab : a ≠ b) :
     rw [Matrix.conjTranspose_mul, ← Matrix.star_eq_conjTranspose,
       ← Matrix.star_eq_conjTranspose, S.P.selfAdjoint, S.P.selfAdjoint]
   rw [hconj, hzero, Matrix.conjTranspose_zero]
+
+/-! ## The value through `MIPRE.ntr`
+
+`MIPRE.ntr` is the real part of the normalized trace, the form in which the closeness calculus
+of `MIPRE/Foundations/Closeness.lean` manipulates outcome probabilities. These four lemmas are
+the bridge. -/
+
+theorem normalizedTrace_re_eq_ntr (S : SyncStrategy G) (M : Matrix (Fin S.d) (Fin S.d) ℂ) :
+    ((normalizedTrace (Fin S.d) (hn := Fin.pos_iff_nonempty.mp S.d_pos)) M).re = ntr M := by
+  rw [normalizedTrace_re, ntr_fin]
+
+/-- Outcome probabilities are nonnegative. -/
+theorem ntr_mul_nonneg (S : SyncStrategy G) (x y : X) (a b : A) :
+    0 ≤ ntr (S.P.M x a * S.P.M y b) := by
+  rw [← normalizedTrace_re_eq_ntr]
+  exact re_nonneg_tracial _ S.P x y a b
+
+/-- At a fixed question pair the outcome probabilities sum to one. -/
+theorem sum_ntr_eq_one (S : SyncStrategy G) (x y : X) :
+    ∑ a, ∑ b, ntr (S.P.M x a * S.P.M y b) = 1 := by
+  simp only [← normalizedTrace_re_eq_ntr]
+  exact sum_re_tracial _ S.P x y
+
+theorem value_eq_ntr (S : SyncStrategy G) :
+    S.value = ∑ x, ∑ y, ∑ a, ∑ b, G.μ x y * (if G.D x y a b then 1 else 0) *
+      ntr (S.P.M x a * S.P.M y b) := by
+  rw [value_eq]
+  simp only [ntr_fin]
+
+/-! ## Pushing a measurement forward along a map of outcome sets
+
+Soundness arguments need to *relabel* outcomes: to group the answers that fail a parse into
+one distinguished outcome, or to read an oracle's pair-valued answer as one of its components.
+A sum over a fibre is again a projection precisely because distinct outcomes are orthogonal,
+which is `SyncStrategy.orthogonal` above and is unavailable at the generic tracial level. -/
+
+/-- The projective measurement obtained by relabelling outcomes along `f`: the operator for
+`a'` is the sum over the fibre of `f` above `a'`. -/
+noncomputable def push (S : SyncStrategy G) {A' : Type*} [Fintype A'] [DecidableEq A']
+    (f : A → A') : ProjectiveMeasurement X A' (Matrix (Fin S.d) (Fin S.d) ℂ) where
+  M x a' := ∑ u ∈ univ.filter fun u => f u = a', S.P.M x u
+  selfAdjoint x a' := by
+    rw [star_sum]
+    exact Finset.sum_congr rfl fun u _ => S.P.selfAdjoint x u
+  projective x a' := by
+    rw [Finset.sum_mul_sum]
+    refine Finset.sum_congr rfl fun u hu => ?_
+    refine Finset.sum_eq_single_of_mem u hu ?_ |>.trans (S.P.projective x u)
+    intro v _ hvu
+    exact S.orthogonal x (Ne.symm hvu)
+  normalized x := by
+    rw [Finset.sum_fiberwise_of_maps_to (fun u _ => mem_univ (f u))]
+    exact S.P.normalized x
+
+@[simp] theorem push_apply (S : SyncStrategy G) {A' : Type*} [Fintype A'] [DecidableEq A']
+    (f : A → A') (x : X) (a' : A') :
+    (S.push f).M x a' = ∑ u ∈ univ.filter fun u => f u = a', S.P.M x u := rfl
 
 end SyncStrategy
 
