@@ -89,6 +89,38 @@ distribution (`hμ : ∀ x y, G.μ x y = G'.μ x y`), which is exactly what fail
 combination lemma is the adapter's core and has to be written from the definition of `value`,
 summing over `lidtGame`'s `Sample`.
 
+## Correction (2026-09-18, found while proving the geometry): the rebasing is affine
+
+The list below originally said the answer polynomial needs *rescaling*. That is right on
+axis-parallel lines and wrong on diagonal ones, and the reason is that **the two tests pick
+different canonical base points**.
+
+`rep w x` zeroes the coordinate of `x` at the *first* nonzero coordinate of `w` (`rep_eq`,
+from `pivots_span_singleton`). `Line.through u v` zeroes the coordinate at the first nonzero
+coordinate of `v`. But the adapter applies `rep` to the *reversed* direction, and the first
+nonzero coordinate of `ρ dir` is the reversal of the **last** nonzero coordinate of `dir`. On an
+axis-parallel line the first and last nonzero coordinates coincide, the two base points agree
+exactly (`rep_single_eq_through`) and there is nothing to do. On a diagonal line they differ by
+a multiple of the direction, so the two parameters differ by a *shift*:
+
+`x = base + t·dir` on the canonical-line side is `ρ x = u₀ + (t + base_J/dir_J)·ρ dir` on the
+seeded side, `J` the last nonzero coordinate of `dir`.
+
+There is no freedom to avoid this: the seeded question's base point is whatever `rep` returns,
+and `rep` is constant along the line (`rep_add_smul`), so every seeded description of the line
+carries the same base point. The reparametrization of the answer is therefore affine,
+`g(t) = f(a t + b)`, which is exactly the "canonicalization and **rebasing**" that
+`rem:lidt-cl-adapter` lists among the adapter's obligations --- the remark had it right and this
+note did not.
+
+Consequence for the work: `rescaleEquiv` is not enough. What is needed is an affine
+reparametrization of `LinePoly F k` that preserves the degree bound and is a bijection. The
+clean route is through `Polynomial F`: send a coefficient vector to `∑ C (f i) * X ^ i`, compose
+with `C a * X + C b`, and read the coefficients back, using `natDegree_comp` to see that the
+degree bound survives and `Polynomial.taylor`/`comp` algebra for the inverse. A Taylor shift
+written directly on coefficient vectors would need the binomial theorem by hand; going through
+`Polynomial` does not.
+
 ## The bridging lemmas, smallest first
 
 1. `pivots (span {Pi.single i 1}) = {i}`, whence
@@ -97,8 +129,10 @@ summing over `lidtGame`'s `Sample`.
    representative of `def:cl-canonical` has to be computed rather than used abstractly.
 2. Coordinate reversal as an equivalence of `Point F m`, with `ρ (Pi.single i 1) = Pi.single (rev i) 1`
    and `ρ (zeroBelow i v) = extend (…)` — the third row of the table.
-3. Rescaling of `LinePoly F n`: `rescale c f` with `(rescale c f).eval t = f.eval (t / c)` for
-   `c ≠ 0`, an equivalence, with `lineParam u₀ (c • w) x = c⁻¹ * lineParam u₀ w x`.
+3. Rescaling of `LinePoly F n`: `rescale c f` with `(rescale c f).eval t = f.eval (c * t)`, an
+   equivalence for `c ≠ 0` (`rescaleEquiv`), with
+   `lineParam u₀ (c • w) x = c⁻¹ * lineParam u₀ w x` (`lineParam_smul`). **Done**, but see the
+   correction above: the diagonal case additionally needs the affine shift.
 4. `lineParam u₀ w x = Line.param (Line.through u w) x` when `x` is on the line and the
    direction is normalized — reconciling the two parameter conventions.
 5. The weight bookkeeping: each of `clGame`'s nine ordered type pairs has mass `1/9`, and each
