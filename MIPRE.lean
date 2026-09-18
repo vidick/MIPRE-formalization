@@ -1,5 +1,6 @@
 import MIPRE.Axioms
 import MIPRE.Background.GowersHatami.Basic
+import MIPRE.Background.LIDT.Adapter.Geometry
 import MIPRE.Background.LIDT.Axioms
 import MIPRE.Background.LIDT.Bridge.Consistency
 import MIPRE.Background.LIDT.Bridge.Defect
