@@ -1753,4 +1753,107 @@ theorem hμ_diag_ne (hm : m ∣ Fintype.card F) (u₀ : Point F m) (s₀ : F) {w
     refine mul_nonneg (Nat.cast_nonneg _) (mul_nonneg (by positivity) ?_)
     exact (clGame (d := d) (ldc := ldc) hm).μ_nonneg _ _
 
+/-! ### The pairs of lines, and the assembly
+
+`lidtGame`'s only same-type subtest is point self-consistency, so no sample asks two lines and
+the four remaining shapes carry no weight at all. That is the piece of luck this route runs on:
+it needs no line-synchronicity transfer, hence no Schwartz--Zippel and no `d/q` term. -/
+
+/-- **No sample of the canonical-line test asks two lines.** -/
+theorem filter_qmapS_line_line_eq_empty (hm : m ∣ Fintype.card F) (σc : Seed F m)
+    (x y : CL.Question F m) (hx : ∀ u, x ≠ CL.Question.point u)
+    (hy : ∀ u, y ≠ CL.Question.point u) :
+    Finset.univ.filter (fun s : Sample F m =>
+        qmapS hm σc s.questions.1 = x ∧ qmapS hm σc s.questions.2 = y) = ∅ := by
+  classical
+  refine Finset.eq_empty_iff_forall_notMem.mpr fun s hs => ?_
+  obtain ⟨h1, h2⟩ := (Finset.mem_filter.mp hs).2
+  match s, h1, h2 with
+  | Sample.selfConsistency u, h1, _ =>
+      exact hx _ (h1.symm : x = CL.Question.point (revPoint u))
+  | Sample.axis false u i, _, h2 =>
+      exact hy _ (h2.symm : y = CL.Question.point (revPoint u))
+  | Sample.axis true u i, h1, _ =>
+      exact hx _ (h1.symm : x = CL.Question.point (revPoint u))
+  | Sample.diag false u j v, _, h2 =>
+      exact hy _ (h2.symm : y = CL.Question.point (revPoint u))
+  | Sample.diag true u j v, h1, _ =>
+      exact hx _ (h1.symm : x = CL.Question.point (revPoint u))
+
+/-- **The shapes with a line on both sides carry no weight.** -/
+theorem hμ_line_line (hm : m ∣ Fintype.card F) (x y : CL.Question F m)
+    (hx : ∀ u, x ≠ CL.Question.point u) (hy : ∀ u, y ≠ CL.Question.point u) :
+    (∑ σc : Seed F m, ∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = x),
+        ∑ y' ∈ Finset.univ.filter (fun y' => qmapS hm σc y' = y), (lidtGame F m d).μ x' y')
+      ≤ (Fintype.card (Seed F m) : ℝ) *
+          (3 * m * (clGame (d := d) (ldc := ldc) hm).μ x y) := by
+  classical
+  have hsamples : ∀ σc : Seed F m,
+      (∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = x),
+        ∑ y' ∈ Finset.univ.filter (fun y' => qmapS hm σc y' = y), (lidtGame F m d).μ x' y')
+      = ∑ s ∈ Finset.univ.filter (fun s : Sample F m =>
+          qmapS hm σc s.questions.1 = x ∧ qmapS hm σc s.questions.2 = y), s.weight := fun σc =>
+    sum_fibre_μ_eq_sum_samples (d := d) (qmapS hm σc) (qmapS hm σc) _ _
+  rw [Finset.sum_congr rfl fun σc (_ : σc ∈ Finset.univ) => hsamples σc]
+  have hzero : ∀ σc : Seed F m,
+      (∑ s ∈ Finset.univ.filter (fun s : Sample F m =>
+        qmapS hm σc s.questions.1 = x ∧ qmapS hm σc s.questions.2 = y), s.weight) = 0 := by
+    intro σc
+    rw [filter_qmapS_line_line_eq_empty hm σc x y hx hy, Finset.sum_empty]
+  rw [Finset.sum_congr rfl fun σc (_ : σc ∈ Finset.univ) => hzero σc, Finset.sum_const_zero]
+  have hmR : (0 : ℝ) < m := m_pos_real
+  refine mul_nonneg (Nat.cast_nonneg _) (mul_nonneg (by positivity) ?_)
+  exact (clGame (d := d) (ldc := ldc) hm).μ_nonneg _ _
+
+/-- **The bound for `(x, y)` is the bound for `(y, x)`**, both tests being symmetric under
+exchanging the players. -/
+theorem hμ_swap (hm : m ∣ Fintype.card F) (x y : CL.Question F m)
+    (h : (∑ σc : Seed F m, ∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = y),
+        ∑ y' ∈ Finset.univ.filter (fun y' => qmapS hm σc y' = x), (lidtGame F m d).μ x' y')
+      ≤ (Fintype.card (Seed F m) : ℝ) * (3 * m * (clGame (d := d) (ldc := ldc) hm).μ y x)) :
+    (∑ σc : Seed F m, ∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = x),
+        ∑ y' ∈ Finset.univ.filter (fun y' => qmapS hm σc y' = y), (lidtGame F m d).μ x' y')
+      ≤ (Fintype.card (Seed F m) : ℝ) *
+          (3 * m * (clGame (d := d) (ldc := ldc) hm).μ x y) := by
+  classical
+  rw [clGame_μ_symm hm x y]
+  refine le_trans (le_of_eq ?_) h
+  refine Finset.sum_congr rfl fun σc _ => ?_
+  rw [sum_fibre_μ_eq_sum_samples (d := d) (qmapS hm σc) (qmapS hm σc) x y,
+    sum_fibre_μ_eq_sum_samples (d := d) (qmapS hm σc) (qmapS hm σc) y x]
+  exact sum_filter_swap (qmapS hm σc) x y
+
+/-- **The push-forward bound, assembled.** The average over the family of the canonical-line
+test's mass on the fibre of a seeded question pair is at most `3m` times the seeded test's mass
+on it. This is the hypothesis `exists_one_sub_value_adapt_le` asks for, and `3m` is the constant
+`thm:lidt-cl-soundness` multiplies its `ε` by --- polynomial in `m`, as `δ_CL` allows, and free
+of `q`, which it does not. -/
+theorem hμ_qmapS (hm : m ∣ Fintype.card F) (x y : CL.Question F m) :
+    (∑ σc : Seed F m, ∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = x),
+        ∑ y' ∈ Finset.univ.filter (fun y' => qmapS hm σc y' = y), (lidtGame F m d).μ x' y')
+      ≤ (Fintype.card (Seed F m) : ℝ) *
+          (3 * m * (clGame (d := d) (ldc := ldc) hm).μ x y) := by
+  classical
+  match x, y with
+  | .point xp, .point yp => exact hμ_point hm xp yp
+  | .aline u₀ s₀, .point yp => exact hμ_axis hm u₀ s₀ yp
+  | .dline u₀ s₀ w, .point yp =>
+      by_cases hw : w = 0
+      · subst hw; exact hμ_diag_zero hm u₀ s₀ yp
+      · exact hμ_diag_ne hm u₀ s₀ hw yp
+  | .point xp, .aline u₀ s₀ => exact hμ_swap hm _ _ (hμ_axis hm u₀ s₀ xp)
+  | .point xp, .dline u₀ s₀ w =>
+      refine hμ_swap hm _ _ ?_
+      by_cases hw : w = 0
+      · subst hw; exact hμ_diag_zero hm u₀ s₀ xp
+      · exact hμ_diag_ne hm u₀ s₀ hw xp
+  | .aline _ _, .aline _ _ =>
+      exact hμ_line_line hm _ _ (fun u => by simp) (fun u => by simp)
+  | .aline _ _, .dline _ _ _ =>
+      exact hμ_line_line hm _ _ (fun u => by simp) (fun u => by simp)
+  | .dline _ _ _, .aline _ _ =>
+      exact hμ_line_line hm _ _ (fun u => by simp) (fun u => by simp)
+  | .dline _ _ _, .dline _ _ _ =>
+      exact hμ_line_line hm _ _ (fun u => by simp) (fun u => by simp)
+
 end MIPRE.LIDT.Adapter
