@@ -137,7 +137,11 @@ The adapter's **ingredients are proved**; the **assembly is not**.
 | choosing a seed in a `χ`-fibre | `Adapter/Seeds.lean` | done |
 | the question maps and the answer coarse-graining | `Adapter/Strategy.lean` | done (`qmap`, `amap`) |
 | `hD`: all five support cases, assembled | same (`hD_qmap`) | done |
-| the weight domination, with the seed averaging | --- | **open** |
+| both distributions as counts | `Adapter/Weights.lean` | done |
+| the two singleton weight shapes (point, axis) | same | done |
+| two lines coincide iff directions proportional | `Adapter/Geometry.lean` | done |
+| the diagonal weight, and the seeded side's counts | --- | **open** (bounds suffice, see below) |
+| assembling the push-forward bound | --- | **open** |
 | the final theorem, and the `k = poly(m,d)` corollary | --- | **open** |
 
 The one open Lean row is the reduction's arithmetic; its decision-predicate half is done. The hardest is the weight domination, and it
@@ -261,6 +265,33 @@ will each need the scale threaded through. `hD_selfCons`, `hD_axis` and `hD_axis
 Status of this correction: the *structural* reason is certain --- the image misses `q - 2` of
 every `q - 1` scalings while `μ` does not --- and it is enough to rule the design out. The exact
 constants below are a hand derivation and have not been machine-checked.
+
+### The exact diagonal sum is not needed: bounds suffice, at a factor `m`
+
+The diagonal weight of the canonical-line test is a sum over the admissible `j`, because the
+samples producing a given line are exactly those whose `extend v` is a nonzero multiple of its
+direction (`through_eq_through_iff`) --- `q - 1` of them for each `j` from `lnz(dir)` up, at
+weights `1/(6 m q^m q^{j+1})` that differ with `j`. Summing that geometric series over a
+dependent sigma type is the most expensive thing left on the route as first planned.
+
+It is not necessary. In the push-forward bound `push-forward ≤ |Seed| · C · μ`, the
+canonical-line weight `μ'` appears only on the **left**, so an *upper* bound on it suffices, and
+the seeded weight `μ` only on the right, so a *lower* bound suffices. The crude upper bound
+`μ' ≤ (number of contributing samples) × (largest weight among them)` gives
+
+```
+μ' ≤ m (q-1) · 1/(6 m q^m q^{J+1}) = (q-1)/(6 q^m q^{J+1}) ≈ 1/(6 q^m q^J)
+```
+
+against the exact `≈ 1/(6 m q^m q^J)`. So the crude bound loses exactly a factor `m`, and `C`
+becomes `O(m)` instead of `3/2`.
+
+**That is acceptable**, and it is worth being explicit about why: `δ_CL` is
+`a (dm·ldc)^a (ε^b + q^{-b} + 2^{-bmd})`, so a prefactor polynomial in `m` and `d` is exactly what
+it allows --- what it does not allow is a factor growing with `q`, which is what the unrescaled
+design produced and the scale averaging fixed. So the remaining work is "bound a sum by count
+times maximum", not "evaluate a geometric series", and the count itself need only be bounded
+above (by `m q`, say) rather than computed.
 
 ### The weight domination, with the axis case computed
 
