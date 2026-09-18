@@ -333,4 +333,87 @@ theorem lidtGame_μ_diag_le {ℓ : Line F m} (hℓ : ∃ k, ℓ.2 k ≠ 0) (u : 
         rw [← hS] at h
         exact_mod_cast h
 
+/-! ## The seeded test, shape by shape
+
+Only **lower** bounds are needed here, since the seeded weight sits on the smaller side of the
+push-forward bound, and a lower bound on a count is an injection *into* the set of contributing
+samples. That is much cheaper than an exact count, and it is why this section is short. -/
+
+/-- The samples of the seeded test that ask the same point twice include one for every seed and
+every raw direction, so there are at least `q · q^m` of them. -/
+theorem card_filter_clPoint_ge (hm : m ∣ Fintype.card F) (xp : Point F m) :
+    Fintype.card F * Fintype.card (Point F m)
+      ≤ (Finset.univ.filter (fun sm : CL.Sample F m =>
+          (sm.question hm sm.tyA, sm.question hm sm.tyB)
+            = ((CL.Question.point xp : CL.Question F m), CL.Question.point xp))).card := by
+  classical
+  have hcard : Fintype.card F * Fintype.card (Point F m)
+      = (Finset.univ : Finset (F × Point F m)).card := by simp [Fintype.card_prod]
+  rw [hcard]
+  refine Finset.card_le_card_of_injOn
+    (fun sv => ({tyA := .point, tyB := .point, u := xp, s := sv.1, v := sv.2} : CL.Sample F m))
+    (fun sv _ => Finset.mem_filter.mpr ⟨Finset.mem_univ _, rfl⟩) ?_
+  intro a _ b _ hab
+  have h1 := congrArg CL.Sample.s hab
+  have h2 := congrArg CL.Sample.v hab
+  exact Prod.ext h1 h2
+
+/-- Likewise for an axis-parallel line against a point: one sample for every raw direction. -/
+theorem card_filter_clAxis_ge (hm : m ∣ Fintype.card F) (xp : Point F m) (s₀ : F) :
+    Fintype.card (Point F m)
+      ≤ (Finset.univ.filter (fun sm : CL.Sample F m =>
+          (sm.question hm sm.tyA, sm.question hm sm.tyB)
+            = ((CL.Question.aline (rep (Pi.single (chi hm s₀) 1) xp) s₀ : CL.Question F m),
+                CL.Question.point xp))).card := by
+  classical
+  have hcard : Fintype.card (Point F m) = (Finset.univ : Finset (Point F m)).card := by simp
+  rw [hcard]
+  refine Finset.card_le_card_of_injOn
+    (fun v => ({tyA := .aline, tyB := .point, u := xp, s := s₀, v := v} : CL.Sample F m))
+    (fun v _ => Finset.mem_filter.mpr ⟨Finset.mem_univ _, rfl⟩) ?_
+  intro a _ b _ hab
+  exact congrArg CL.Sample.v hab
+
+/-- And for a diagonal line against a point, provided the direction really does vanish below the
+seed's block --- which it must, for the question to be in the seeded test's support. There is one
+sample for every completion of the direction *below* that block, hence at least `q^{χ s}`. -/
+theorem card_filter_clDiag_ge (hm : m ∣ Fintype.card F) (xp : Point F m) (s₀ : F)
+    (w : Point F m) (hw : ∀ k : Fin m, (k : ℕ) < ((chi hm s₀ : ℕ)) → w k = 0) :
+    Fintype.card F ^ ((chi hm s₀ : ℕ))
+      ≤ (Finset.univ.filter (fun sm : CL.Sample F m =>
+          (sm.question hm sm.tyA, sm.question hm sm.tyB)
+            = ((CL.Question.dline (rep w xp) s₀ w : CL.Question F m),
+                CL.Question.point xp))).card := by
+  classical
+  have hcard : Fintype.card F ^ ((chi hm s₀ : ℕ))
+      = (Finset.univ : Finset (Fin ((chi hm s₀ : ℕ)) → F)).card := by simp
+  rw [hcard]
+  refine Finset.card_le_card_of_injOn
+    (fun g : Fin ((chi hm s₀ : ℕ)) → F =>
+      ({ tyA := .dline, tyB := .point, u := xp, s := s₀,
+         v := (fun k : Fin m =>
+           if h : (k : ℕ) < ((chi hm s₀ : ℕ)) then g ⟨(k : ℕ), h⟩ else w k) }
+        : CL.Sample F m)) ?_ ?_
+  · intro g _
+    refine Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩
+    have hz : CL.zeroBelow (chi hm s₀)
+        (fun k : Fin m =>
+          if h : (k : ℕ) < ((chi hm s₀ : ℕ)) then g ⟨(k : ℕ), h⟩ else w k) = w := by
+      funext k
+      rw [CL.zeroBelow]
+      by_cases h : (k : ℕ) < ((chi hm s₀ : ℕ))
+      · rw [if_pos h]
+        exact (hw k h).symm
+      · rw [if_neg h, dif_neg h]
+    show ((CL.Sample.question hm _ CL.Ty.dline), (CL.Sample.question hm _ CL.Ty.point)) = _
+    simp only [CL.Sample.question, hz]
+  · intro a _ b _ hab
+    have hv := congrArg CL.Sample.v hab
+    funext i
+    have h := congrFun hv (⟨(i : ℕ), lt_trans i.isLt (chi hm s₀).isLt⟩ : Fin m)
+    dsimp only at h
+    have hi : (⟨(i : ℕ), i.isLt⟩ : Fin ((chi hm s₀ : ℕ))) = i := Fin.ext rfl
+    rw [dif_pos i.isLt, dif_pos i.isLt, hi] at h
+    exact h
+
 end MIPRE.LIDT.Adapter
