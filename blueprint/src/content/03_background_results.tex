@@ -541,7 +541,10 @@ and its theorem are in the pinned paper snapshot~\cite{AuditSync26},
 \lean{MIPRE.LIDT.CL.chi, MIPRE.LIDT.CL.zeroBelow, MIPRE.LIDT.CL.rep,
   MIPRE.LIDT.CL.lineParam, MIPRE.LIDT.CL.Ty, MIPRE.LIDT.CL.Question,
   MIPRE.LIDT.CL.Answer, MIPRE.LIDT.CL.Sample, MIPRE.LIDT.CL.Sample.question,
-  MIPRE.LIDT.CL.lineVsPoint, MIPRE.LIDT.CL.accepts, MIPRE.LIDT.CL.clGame,
+  MIPRE.LIDT.CL.lineVsPoint, MIPRE.LIDT.CL.Question.fmtOk, MIPRE.LIDT.CL.subtests,
+  MIPRE.LIDT.CL.accepts, MIPRE.LIDT.CL.clGame,
+  MIPRE.LIDT.CL.accepts_aline_values_eq_false,
+  MIPRE.LIDT.CL.accepts_point_apolys_eq_false, MIPRE.LIDT.CL.accepts_aline_dline,
   MIPRE.LIDT.CL.aline_question_ne, MIPRE.LIDT.CL.card_chi_fiber}
 \leanok
 For admissible $q$, positive integers $m,d,\mathrm{ldc}$ and $m\mid q$, the
@@ -576,6 +579,20 @@ The seeding is not cosmetic, and \texttt{aline\_question\_ne} records it: two se
 block give the same base point and the same direction, hence the same geometric line, and yet
 are \emph{different questions}. A strategy may answer them differently, which is exactly the
 obligation Lemma~\ref{lem:lidt-reduction-setup} discharges by choosing a seed in each fibre.
+
+The format check is not decoration, and the formalization now separates it from the subtests
+(\texttt{Question.fmtOk} and \texttt{subtests}, with \texttt{accepts} their conjunction). Two
+clauses of \texttt{fig:ld-decider} look alike and are opposite: an answer whose format does not
+match its question's type is \emph{rejected} (``If the answers returned by the players do not
+fit this format the decision procedure rejects''), whereas a well-formatted answer on one of
+the two cross type pairs is \emph{accepted} (``in all cases where no action is indicated,
+accept''). An earlier version of \texttt{clGame} collapsed both into one catch-all that
+accepted, which made the test vacuous: the constant strategy answering a point-format answer to
+\emph{every} question, the two line types included, passes every subtest, so the game has a
+value-$1$ strategy whose point measurements are an arbitrary function of the point, and
+Theorem~\ref{thm:lidt-cl-soundness} is false for it. That defect and its repair are recorded in
+\texttt{reports/clgame-format-check-missing.md}; the statement of this definition was correct
+throughout, which is why the repair changes only the Lean and this paragraph.
 
 Where \texttt{fig:ld-decider} says ``$t \in \F_q$ is such that $x = u_0 + tw$'', the point may
 fail to lie on the line and the condition is then vacuous. The formalization requires
