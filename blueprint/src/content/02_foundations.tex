@@ -479,6 +479,42 @@ difference $M^x_a - N^x_a$ is Hermitian, the summand equals
 $\tau((M^x_a - N^x_a)^2)$.
 \end{definition}
 
+\begin{definition}[State-dependent POVM distance]
+\label{def:state-distance}
+\uses{def:game}
+\lean{MIPRE.stateVec, MIPRE.stateNorm, MIPRE.stateSqNorm, MIPRE.stateDist,
+  MIPRE.IsStateClose, MIPRE.povmStateDist, MIPRE.IsPOVMStateClose,
+  MIPRE.stateSqNorm_eq}
+\leanok
+Let $\mu$ be a distribution on a finite set $\mX$, let
+$\ket{\psi} \in \C^{d_\alice} \ot \C^{d_\bob}$, and let $\{A^x\}$, $\{B^x\}$ be families of
+operators on $\C^{d_\alice}$. We say $A$ and $B$ are \emph{$\delta$-close on $\ket{\psi}$},
+written $A^x \approx_\delta B^x$ when $\mu$ and $\ket{\psi}$ are clear from context, if
+\begin{equation*}
+  \E_{x \sim \mu} \bra{\psi} \bigl( (A^x - B^x) \ot \Id_\bob \bigr)^\dagger
+    \bigl( (A^x - B^x) \ot \Id_\bob \bigr) \ket{\psi} \;\leq\; \delta\;,
+\end{equation*}
+equivalently if $\E_{x\sim\mu} \norm{((A^x - B^x) \ot \Id_\bob)\ket{\psi}}^2 \leq \delta$. For
+families indexed by answers as well, $\{A^x_a\}$ and $\{B^x_a\}$, the outcome sum sits inside the
+question average.
+\end{definition}
+
+\paragraph{Comments.} This is \emph{not} Definition~\ref{def:distance}, and the difference is
+not presentational. Definition~\ref{def:distance} is the normalized Hilbert--Schmidt distance,
+which is the distance of a \emph{synchronous} strategy --- there the state is the normalized
+trace itself, which is why \texttt{MIPRE/Foundations/Closeness.lean} is the calculus of that one.
+The appendix of the Pauli basis test (Section~\ref{sec:rr-qld}) works throughout with the
+state-dependent distance above, on a bipartite state that is fixed by context, and every
+$\approx_\delta$ in that section is this one.
+
+Two departures from the paper's own definition (\cite{AuditSync26}, \texttt{qld-prelim.tex}),
+both in the direction of a stronger statement. The paper writes $\leq O(\delta)$ \emph{inside}
+the relation; here the relation is an inequality against $\delta$ and the constants appear in
+the lemmas that produce them, so Lemma~\ref{lem:qld-averaging} preserves $\delta$ exactly and
+Lemma~\ref{lem:qld-povm-to-obs} gives exactly $\abs{\mA}\delta$. And the paper defines
+$\approx_\delta$ only for question-indexed operators, using the answer-indexed form without
+comment; both are defined here.
+
 \begin{definition}[Inconsistency]
 \label{def:inconsistency}
 \uses{def:game}

@@ -1205,14 +1205,21 @@ measurements in stage 3 satisfy only approximate commutation.
 \begin{lemma}[Averaging preserves closeness]
 \label{lem:qld-averaging}
 \ledgernode{1.2.2.1}
-\uses{def:distance}
+\uses{def:state-distance}
+\lean{MIPRE.stateSqNorm_avg_le}
+\leanok
 Let $A^x \approx_\delta B^x$ on average over $x \sim \mu$, and let $\alpha_x$ be coefficients
 with $\abs{\alpha_x} \leq 1$. Then $\E_x \alpha_x A^x \approx_\delta \E_x \alpha_x B^x$.
 \end{lemma}
 
 \begin{proof}
+\leanok
 Triangle inequality and Jensen. Note the hypothesis is $\abs{\alpha_x} \leq 1$, not
-$\abs{\alpha_x} = 1$: the lemma is used with genuinely contractive coefficients.
+$\abs{\alpha_x} = 1$: the lemma is used with genuinely contractive coefficients. The
+$\delta$ is preserved exactly, with no constant: the triangle inequality gives
+$\norm{\E_x \alpha_x (A^x - B^x)\ket{\psi}} \leq \E_x \norm{(A^x - B^x)\ket{\psi}}$ and Jensen
+for the square root gives $\E_x \sqrt{f(x)} \leq \sqrt{\E_x f(x)}$, which is the
+$\mu$-probability case of \texttt{MIPRE.sum\_mul\_sqrt\_le}.
 \end{proof}
 
 \effortEasy
@@ -1220,12 +1227,22 @@ $\abs{\alpha_x} = 1$: the lemma is used with genuinely contractive coefficients.
 \begin{lemma}[From POVM elements to generalized observables]
 \label{lem:qld-povm-to-obs}
 \ledgernode{1.2.2.2}
-\uses{def:distance,lem:qld-averaging}
+\uses{def:state-distance,lem:qld-averaging}
+\lean{MIPRE.obsOf, MIPRE.stateDist_obsOf_le}
+\leanok
 Let $\{A^x_a\}$ and $\{B^x_a\}$ be POVMs with a common outcome set $\mA$, and let $\alpha_a$
 be coefficients of unit modulus. If $A^x_a \approx_\delta B^x_a$ then the generalized
 observables $A^x = \sum_a \alpha_a A^x_a$ and $B^x = \sum_a \alpha_a B^x_a$ satisfy
 $A^x \approx_{\abs{\mA} \delta} B^x$.
 \end{lemma}
+
+\begin{proof}
+\leanok
+Triangle inequality over the outcomes, then Cauchy--Schwarz against the constant $1$:
+$(\sum_a t_a)^2 \leq \abs{\mA} \sum_a t_a^2$. Unit modulus is more than the proof uses; the
+formalized hypothesis is $\abs{\alpha_a} \leq 1$, and the constant $\abs{\mA}$ is exact rather
+than an $O(\cdot)$.
+\end{proof}
 
 \effortMedium
 

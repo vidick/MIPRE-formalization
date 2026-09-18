@@ -17,6 +17,7 @@ import MIPRE.Foundations.Cost.Semidecide
 import MIPRE.Foundations.Cost.Toolkit
 import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Games
+import MIPRE.Foundations.StateDistance
 import MIPRE.Foundations.PerfectStrategy
 import MIPRE.Foundations.OracularComplete
 import MIPRE.Foundations.OracularSound
@@ -98,6 +99,13 @@ elab "#guard_sorry_free " ids:ident,* : command => do
   MIPRE.Verifier.boundViolationB_iff,
   MIPRE.Verifier.not_isBounded_iff_exists,
   MIPRE.Verifier.rePred_not_isBounded
+
+-- blueprint `lem:qld-averaging`
+#guard_sorry_free MIPRE.stateSqNorm_avg_le
+
+-- blueprint `lem:qld-povm-to-obs`
+#guard_sorry_free MIPRE.obsOf,
+  MIPRE.stateDist_obsOf_le
 
 -- blueprint `lem:cl-closure`
 #guard_sorry_free MIPRE.CL.CLFun.concat,
