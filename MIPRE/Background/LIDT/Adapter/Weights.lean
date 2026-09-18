@@ -3,7 +3,7 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.CLGame
+import MIPRE.Background.LIDT.Adapter.Strategy
 
 /-!
 # The seeded-CL adapter, part 5: both tests' distributions, as counts
@@ -97,6 +97,46 @@ theorem lidtGame_μ_point (u : Point F m) :
     (lidtGame F m d).μ (.point u) (.point u)
       = 1 / (3 * Fintype.card (Point F m)) := by
   rw [lidtGame_μ_eq, filter_questions_point, Finset.sum_singleton]
+  rfl
+
+omit [NeZero m] in
+/-- **Only one sample asks a given axis-parallel line against a given point.** The point pins the
+sample's point, and the line pins its direction index, `Pi.single` being injective. -/
+theorem filter_questions_axis (u : Point F m) (i : Fin m) :
+    Finset.univ.filter (fun s : Sample F m =>
+        s.questions
+          = ((Question.axisLine (Line.through u (Pi.single i 1)) : Question F m),
+              Question.point u))
+      = {Sample.axis false u i} := by
+  classical
+  refine Finset.eq_singleton_iff_unique_mem.mpr ⟨?_, ?_⟩
+  · exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, rfl⟩
+  · intro s hs
+    have hq := (Finset.mem_filter.mp hs).2
+    match s, hq with
+    | Sample.axis false u' i', hq =>
+        have hq' : ((Question.axisLine (Line.through u' (Pi.single i' 1)) : Question F m),
+            Question.point u') = (Question.axisLine (Line.through u (Pi.single i 1)),
+              Question.point u) := hq
+        injection hq' with h1 h2
+        injection h2 with hu
+        subst hu
+        injection h1 with hℓ
+        have hdir : (Pi.single i' 1 : Point F m) = Pi.single i 1 := by
+          simpa [through_single] using congrArg Prod.snd hℓ
+        rw [single_inj hdir]
+    | Sample.axis true u' i', hq => exact absurd hq (by simp [Sample.questions])
+    | Sample.selfConsistency u', hq => exact absurd hq (by simp [Sample.questions])
+    | Sample.diag false u' j v, hq => exact absurd hq (by simp [Sample.questions])
+    | Sample.diag true u' j v, hq => exact absurd hq (by simp [Sample.questions])
+
+/-- **The canonical-line test's weight on an axis-parallel line against a point.** The subtest has
+probability `1/3`, the roles are swapped with probability `1/2`, and the point and direction index
+are uniform. -/
+theorem lidtGame_μ_axis (u : Point F m) (i : Fin m) :
+    (lidtGame F m d).μ (.axisLine (Line.through u (Pi.single i 1))) (.point u)
+      = 1 / (6 * m * Fintype.card (Point F m)) := by
+  rw [lidtGame_μ_eq, filter_questions_axis, Finset.sum_singleton]
   rfl
 
 end MIPRE.LIDT.Adapter
