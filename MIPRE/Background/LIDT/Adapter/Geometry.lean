@@ -193,6 +193,17 @@ omit [Field F] in
 @[simp] theorem revPoint_revPoint (x : Fin n → F) : revPoint (revPoint x) = x :=
   revPoint.left_inv x
 
+@[simp] theorem revPoint_add (x y : Fin n → F) :
+    revPoint (x + y) = revPoint x + revPoint y := rfl
+
+@[simp] theorem revPoint_smul (c : F) (x : Fin n → F) :
+    revPoint (c • x) = c • revPoint x := rfl
+
+omit [Field F] in
+/-- Reversal is injective, so membership of a line transports through it. -/
+theorem revPoint_eq_iff {x y : Fin n → F} : revPoint x = revPoint y ↔ x = y :=
+  revPoint.apply_eq_iff_eq
+
 /-- Reversal sends the `i`-th coordinate direction to the `rev i`-th. -/
 theorem revPoint_single [DecidableEq F] (i : Fin n) :
     revPoint (Pi.single i 1 : Fin n → F) = Pi.single (Fin.rev i) 1 := by
