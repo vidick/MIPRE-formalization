@@ -121,6 +121,36 @@ degree bound survives and `Polynomial.taylor`/`comp` algebra for the inverse. A 
 written directly on coefficient vectors would need the binomial theorem by hand; going through
 `Polynomial` does not.
 
+## Status (2026-09-18)
+
+The adapter's **ingredients are proved**; the **assembly is not**.
+
+| piece | where | state |
+|---|---|---|
+| general reduction: `succAt`/`failAt`, `adapt`, the cost in the distributions | `MIPRE/Foundations/GameAdapt.lean` | done |
+| derandomization over a family of question maps | same (`exists_one_sub_value_adapt_le`) | done |
+| axis-parallel lines: the two tests agree exactly | `Adapter/Geometry.lean` | done |
+| coordinate reversal, the two diagonal conventions | same | done |
+| the direction scale, and the two parameter conventions | same | done |
+| `rep` in closed form, constant along the line | same | done |
+| affine reparametrization of an answer | `Adapter/Reparam.lean` | done |
+| choosing a seed in a `χ`-fibre | `Adapter/Seeds.lean` | done |
+| the question maps and the answer coarse-graining | --- | **open** |
+| `hD`: the three subtests' decision predicates | --- | **open** |
+| the weight domination, with the seed averaging | --- | **open** |
+| the final theorem, and the `k = poly(m,d)` corollary | --- | **open** |
+
+The three open Lean rows are the reduction proper. The hardest is the weight domination, and it
+is worth saying why: both `clGame.μ` and `lidtGame.μ` are defined as sums over a `Sample` type
+against an indicator, so dominating one push-forward by the other means *counting* the samples
+that produce a given question pair. On the diagonal subtest that is a count of solutions of
+`zeroBelow (χ s) V = w` together with `rep w u = u₀`, which comes to `q^{χ s}` samples, against
+the canonical-line test's `q^{j+1}` for the direction supported on the first `j+1` coordinates.
+Those match under the reversal `j + 1 = m - χ s` — that correspondence is the arithmetic content
+of `lem:lidt-test-transfer` for this target — but both sides also range over the admissible
+`χ s` and `j`, and the singleton line `v = 0` is a separate case. None of it is deep; all of it
+is careful.
+
 ## The bridging lemmas, smallest first
 
 1. `pivots (span {Pi.single i 1}) = {i}`, whence
