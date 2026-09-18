@@ -811,6 +811,105 @@ witness has identical measurement operators rather than a symmetric state, and r
 single square root in the soundness loss, belong to the two clauses, which are separate
 obligations.
 
+\begin{lemma}[Completeness of oracularization, at the level of games]
+\label{lem:oracular-completeness}
+\uses{def:oracular-game,def:pcc,def:sync-strategy,def:sync-value,rem:identical-operators}
+\lean{MIPRE.SeededGame.oracleStrategy, MIPRE.SeededGame.isPCC_oracleStrategy,
+  MIPRE.SeededGame.oracleStrategy_value_eq_one}
+\leanok
+Let $S = (L^\alice, L^\bob, D)$ be a seeded game and let $T$ be a PCC synchronous strategy for
+the doubled game of $S$, whose questions are $(\mathsf{false}, x)$ for Alice and
+$(\mathsf{true}, y)$ for Bob. Define a synchronous strategy $\Sigma^\ora(T)$ for the
+oracularization of $S$, on the same Hilbert space, by
+\begin{equation*}
+  N^{(\oracle,\, z)}_{(a,b)} = M^{(\mathsf{false},\, L^\alice(z))}_a \cdot
+    M^{(\mathsf{true},\, L^\bob(z))}_b, \qquad
+  N^{(\alice,\, x)}_{a} = M^{(\mathsf{false},\, x)}_a, \qquad
+  N^{(\bob,\, y)}_{b} = M^{(\mathsf{true},\, y)}_b,
+\end{equation*}
+and $N^{(v,\, x)}_u = 0$ when the shape of $u$ does not match the role $v$. Then
+$\Sigma^\ora(T)$ is a synchronous strategy, it is PCC, and if $T$ has value $1$ then so does
+$\Sigma^\ora(T)$. Both players measure with this one family of operators.
+\end{lemma}
+\begin{proof}
+\leanok
+That the oracle's operators are projections is where PCC is used: the seed $z$ always lands on
+a question pair of positive weight, so $M^{(\mathsf{false}, L^\alice(z))}_a$ and
+$M^{(\mathsf{true}, L^\bob(z))}_b$ commute, and a product of two commuting projections is a
+projection. Their sum over $(a,b)$ is the product of the two sums, hence the identity. The
+family is PCC because the four operators
+$M^{(\mathsf{false}, L^\alice(z))}_a, M^{(\mathsf{true}, L^\bob(z))}_b$ at one seed commute
+pairwise --- two at one question because distinct outcomes of a projective measurement are
+orthogonal, one of each by the hypothesis --- so every product of them commutes with every
+other.
+
+For value $1$ it suffices, by Lemma~\ref{lem:perfect-rejects-nothing} read in the converse
+direction, that every rejected outcome pair at a question pair of positive weight has
+probability zero, and in fact each of the decider's checks that can fail makes one of the two
+operators, or their product, vanish. A shape mismatch gives the zero operator by definition. A
+pair the input predicate rejects gives the zero operator as well: its probability is zero by
+Lemma~\ref{lem:perfect-rejects-nothing}, and the normalized trace on matrices is faithful, so
+a self-adjoint idempotent of vanishing trace is $0$. Check~2(a) is orthogonality of distinct
+outcomes at a repeated question, which is available because two questions of positive weight
+with equal roles are equal. Check~2(b) is orthogonality again, after the oracle's other factor
+has been commuted out of the way.
+\end{proof}
+
+\begin{lemma}[Soundness of oracularization, at the level of games]
+\label{lem:oracular-soundness}
+\uses{def:oracular-game,def:sync-strategy,def:sync-value,def:distance,lem:hs-closeness,%
+lem:close-measurements-close-values}
+\lean{MIPRE.SeededGame.soundStrategy, MIPRE.SeededGame.soundStrategy_value_ge}
+\leanok
+Let $S$ be a seeded game with nonempty seed space and nonempty answer alphabet, let
+$0 \leq \eps \leq 1$, and let $N$ be a synchronous strategy for the oracularization of $S$ with
+value at least $1 - \eps$. Let $\Sigma(N)$ be the strategy for the doubled game of $S$ in which
+Alice measures $\{N^{(\alice,\, x)}_a\}$ and Bob measures $\{N^{(\bob,\, y)}_b\}$, each
+relabelled so that the oracle-shaped answers are grouped into one fixed answer. Then
+$\Sigma(N)$ has value at least $1 - 24\sqrt{\eps}$.
+\end{lemma}
+\begin{proof}
+\leanok
+Fix a seed $z$ and write $O_{(a,b)}$ for the oracle's measurement at $(\oracle, z)$ relabelled
+onto answer pairs, and $C_a$, $D_b$ for Alice's and Bob's at $(\alice, L^\alice(z))$ and
+$(\bob, L^\bob(z))$; the relabellings group the shape failures into one distinguished outcome,
+so all three are measurements and not sub-measurements. Each of the nine ordered role pairs
+carries a ninth of the question weight, so at any one of them a set of outcome pairs the
+decider rejects carries mass at most $9\eps$ on average over the seed. Applying this at
+$(\oracle, \oracle)$, $(\oracle, \alice)$ and $(\oracle, \bob)$ gives, on average over $z$,
+\begin{equation*}
+  \gamma = \sum_{(a,b) \text{ rejected}} \tau(O_{(a,b)}) \leq 9\eps, \quad
+  \beta = \sum_{(a,b)} \tau\bigl(O_{(a,b)}(1 - C_a)\bigr) \leq 9\eps, \quad
+  \alpha = \sum_{(a,b)} \tau\bigl(O_{(a,b)}(1 - D_b)\bigr) \leq 9\eps.
+\end{equation*}
+By Lemma~\ref{lem:hs-closeness}, $\sum_{(a,b)} \norm{C_aD_b - O_{(a,b)}}_{hs}^2 \leq
+3(\alpha + \beta)$ at each seed, so on average at most $54\eps$. By
+Lemma~\ref{lem:close-measurements-close-values} applied at each seed with $\mathrm{acc}$ the
+accepted pairs, the value of $\Sigma(N)$ at that seed is at least $1 - \gamma$ minus twice the
+square root of that closeness; averaging and using Cauchy--Schwarz once more to take the
+average inside the square root gives
+$\valstar \geq 1 - 9\eps - 2\sqrt{54\eps} \geq 1 - 24\sqrt{\eps}$, the last step because
+$\eps \leq \sqrt\eps$ for $\eps \leq 1$ and $2\sqrt{54} < 15$.
+\end{proof}
+
+\begin{remark}[What the game-level clauses leave to the verifier level]
+\label{rem:oracular-game-level}
+\uses{thm:oracularization,lem:oracular-completeness,lem:oracular-soundness,%
+def:oracularization-contract,rem:oracularization-repairs}
+Lemmas~\ref{lem:oracular-completeness} and~\ref{lem:oracular-soundness} are the two clauses of
+Theorem~\ref{thm:oracularization} with the samplers, deciders and typed question strings
+stripped away, and they settle the two repairs that are about the strategies: repair~2, the
+identical measurement operators, is structural, because a synchronous strategy is one family
+played by both players; and repair~1, the single square root, is where the constant $24$ comes
+from. What they do \emph{not} do is inhabit
+Definition~\ref{def:oracularization-contract}: the complexity clause, the bounded parse and its
+grouping (repair~3), the truncation to $B_\decider(n)$ (repair~4) and the level accounting of
+Remark~\ref{rem:oracularization-contract} are all statements about a verifier and none of them
+appears at this level. The soundness constant here is $24$ rather than an unspecified $c$; the
+ambient contract asks only for some fixed $c>0$, so the game-level lemma is stronger than the
+contract needs on that point and silent on every other.
+\end{remark}
+
 \begin{definition}[Ambient oracularization contract]
 \label{def:oracularization-contract}
 \uses{def:normal-verifier,def:pcc}

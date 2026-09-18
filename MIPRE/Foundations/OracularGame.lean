@@ -111,6 +111,12 @@ noncomputable def toGame [Nonempty V] : Game V V A A where
   μ_sum_one := S.sum_dist
   D := S.D
 
+omit [DecidableEq A] in
+@[simp] theorem toGame_μ [Nonempty V] : S.toGame.μ = S.dist := rfl
+
+omit [DecidableEq A] in
+@[simp] theorem toGame_D [Nonempty V] : S.toGame.D = S.D := rfl
+
 end SeededGame
 
 /-! ## The oracularized alphabets -/
@@ -122,12 +128,27 @@ inductive OAns (A : Type*)
   | single (a : A)
   deriving DecidableEq
 
-instance : Fintype (OAns A) where
-  elems := (univ.image fun p : A × A => OAns.pair p.1 p.2) ∪ univ.image OAns.single
-  complete u := by
-    cases u with
-    | pair a b => exact mem_union_left _ (mem_image.mpr ⟨(a, b), mem_univ _, rfl⟩)
-    | single a => exact mem_union_right _ (mem_image.mpr ⟨a, mem_univ _, rfl⟩)
+/-- `OAns A` as a sum type. The `Fintype` instance goes through this rather than through a
+union of images, so that a sum over `OAns A` splits into the two blocks (`OAns.sum_eq`), which
+is what the measurement's normalization needs. -/
+def OAns.equivSum : OAns A ≃ (A × A) ⊕ A where
+  toFun
+    | .pair a b => .inl (a, b)
+    | .single a => .inr a
+  invFun
+    | .inl (a, b) => .pair a b
+    | .inr a => .single a
+  left_inv u := by cases u <;> rfl
+  right_inv x := by rcases x with ⟨a, b⟩ | a <;> rfl
+
+instance : Fintype (OAns A) := Fintype.ofEquiv _ (OAns.equivSum (A := A)).symm
+
+omit [DecidableEq A] in
+/-- A sum over `OAns A` splits into the pairs and the singles. -/
+theorem OAns.sum_eq {M : Type*} [AddCommMonoid M] (f : OAns A → M) :
+    ∑ u, f u = (∑ p : A × A, f (.pair p.1 p.2)) + ∑ a, f (.single a) := by
+  rw [← (OAns.equivSum (A := A)).symm.sum_comp f]
+  simp [Fintype.sum_sum_type, OAns.equivSum]
 
 instance [Inhabited A] : Inhabited (OAns A) := ⟨OAns.single default⟩
 
@@ -145,6 +166,15 @@ def oquestion : Role → V → Role × V
 omit [Fintype V] [DecidableEq V] [Fintype A] [DecidableEq A] in
 @[simp] theorem oquestion_fst (r : Role) (z : V) : (S.oquestion r z).1 = r := by
   cases r <;> rfl
+
+omit [Fintype V] [DecidableEq V] [Fintype A] [DecidableEq A] in
+@[simp] theorem oquestion_oracle (z : V) : S.oquestion .oracle z = (.oracle, z) := rfl
+
+omit [Fintype V] [DecidableEq V] [Fintype A] [DecidableEq A] in
+@[simp] theorem oquestion_alice (z : V) : S.oquestion .alice z = (.alice, S.LA z) := rfl
+
+omit [Fintype V] [DecidableEq V] [Fintype A] [DecidableEq A] in
+@[simp] theorem oquestion_bob (z : V) : S.oquestion .bob z = (.bob, S.LB z) := rfl
 
 /-! ## The decision predicate of `fig:oracle-decider` -/
 
@@ -212,6 +242,10 @@ noncomputable def oracular [Nonempty V] : SynchronousGame (Role × V) (OAns A) w
   μ_sum_one := S.sum_oDist
   D := S.oaccepts
   synchronous _ _ _ h := S.oaccepts_eq_false_of_ne h
+
+@[simp] theorem oracular_μ [Nonempty V] : S.oracular.μ = S.oDist := rfl
+
+@[simp] theorem oracular_D [Nonempty V] : S.oracular.D = S.oaccepts := rfl
 
 end SeededGame
 

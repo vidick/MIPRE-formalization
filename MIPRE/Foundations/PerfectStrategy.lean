@@ -3,7 +3,7 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Games
+import MIPRE.Foundations.Closeness
 
 /-!
 # Perfect strategies reject nothing on the support
@@ -27,6 +27,7 @@ normalized trace written out as `Tr(M^x_a M^y_b)/d`.
 namespace MIPRE
 
 open Finset
+open scoped ComplexOrder
 
 variable {X A : Type*} [Fintype X] [Fintype A] [DecidableEq A]
 variable {𝒜 : Type*} [Ring 𝒜] [StarRing 𝒜] [Module ℂ 𝒜]
@@ -90,6 +91,43 @@ theorem re_eq_zero_of_tracialValue_eq_one (G : SynchronousGame X A) (τ : Tracia
   simp only [Bool.false_eq_true, if_false, mul_zero, zero_mul] at hp
   exact (mul_eq_zero.mp hp.symm).resolve_left hxy.ne'
 
+/-- The converse: if every rejected answer pair has probability zero at every question pair
+of positive weight, the value is `1`. Completeness arguments go this way -- one builds a
+strategy, checks it never produces a rejected outcome, and concludes. -/
+theorem tracialValue_eq_one_of_re_eq_zero (G : SynchronousGame X A) (τ : TracialState 𝒜)
+    (P : ProjectiveMeasurement X A 𝒜)
+    (h : ∀ x y, 0 < G.μ x y → ∀ a b, G.D x y a b = false →
+      (τ (P.M x a * P.M y b)).re = 0) :
+    tracialValue G τ P = 1 := by
+  classical
+  have hterm : ∀ p : X × X × A × A,
+      G.μ p.1 p.2.1 * (if G.D p.1 p.2.1 p.2.2.1 p.2.2.2 then 1 else 0) *
+          (τ (P.M p.1 p.2.2.1 * P.M p.2.1 p.2.2.2)).re
+        = G.μ p.1 p.2.1 * (τ (P.M p.1 p.2.2.1 * P.M p.2.1 p.2.2.2)).re := by
+    intro p
+    cases hD : G.D p.1 p.2.1 p.2.2.1 p.2.2.2 with
+    | true => simp
+    | false =>
+        rcases (G.μ_nonneg p.1 p.2.1).lt_or_eq with hμ | hμ
+        · rw [h _ _ hμ _ _ hD]; simp
+        · rw [← hμ]; simp
+  calc tracialValue G τ P
+      = ∑ p : X × X × A × A, G.μ p.1 p.2.1 *
+          (if G.D p.1 p.2.1 p.2.2.1 p.2.2.2 then 1 else 0) *
+          (τ (P.M p.1 p.2.2.1 * P.M p.2.1 p.2.2.2)).re := by
+        rw [← sum_flat (fun x y a b => G.μ x y * (if G.D x y a b then 1 else 0) *
+          (τ (P.M x a * P.M y b)).re)]
+        rfl
+    _ = ∑ p : X × X × A × A, G.μ p.1 p.2.1 *
+          (τ (P.M p.1 p.2.2.1 * P.M p.2.1 p.2.2.2)).re :=
+        Finset.sum_congr rfl fun p _ => hterm p
+    _ = 1 := by
+        rw [← sum_flat (fun x y a b => G.μ x y * (τ (P.M x a * P.M y b)).re)]
+        refine (Finset.sum_congr rfl fun x _ =>
+          Finset.sum_congr rfl fun y _ => ?_).trans G.μ_sum_one
+        simp_rw [← Finset.mul_sum]
+        rw [sum_re_tracial τ P x y, mul_one]
+
 namespace SyncStrategy
 
 variable {G : SynchronousGame X A}
@@ -101,6 +139,16 @@ theorem value_eq_tracialValue (S : SyncStrategy G) :
     S.value = tracialValue G
       (normalizedTrace (Fin S.d) (hn := Fin.pos_iff_nonempty.mp S.d_pos)) S.P := rfl
 
+open scoped Matrix in
+/-- The real part of the normalized trace, written out. Stated once because both the value-one
+characterization and the faithfulness lemmas below need it. -/
+theorem normalizedTrace_re (S : SyncStrategy G) (M : Matrix (Fin S.d) (Fin S.d) ℂ) :
+    ((normalizedTrace (Fin S.d) (hn := Fin.pos_iff_nonempty.mp S.d_pos)) M).re
+      = M.trace.re / (S.d : ℝ) := by
+  show ((Fintype.card (Fin S.d) : ℂ)⁻¹ * M.trace).re = _
+  rw [Fintype.card_fin, ← Complex.ofReal_natCast, ← Complex.ofReal_inv,
+    Complex.re_ofReal_mul, inv_mul_eq_div]
+
 /-- The synchronous spelling: a value-`1` synchronous strategy has `Tr(M^x_a M^y_b) = 0` for
 every rejected answer pair at every question pair of positive weight. -/
 theorem re_eq_zero_of_value_eq_one (S : SyncStrategy G) (h : S.value = 1)
@@ -109,14 +157,120 @@ theorem re_eq_zero_of_value_eq_one (S : SyncStrategy G) (h : S.value = 1)
   have h' : tracialValue G
       (normalizedTrace (Fin S.d) (hn := Fin.pos_iff_nonempty.mp S.d_pos)) S.P = 1 := by
     rw [← value_eq_tracialValue]; exact h
-  have hz := re_eq_zero_of_tracialValue_eq_one G _ S.P h' hxy hD
-  have : ((normalizedTrace (Fin S.d) (hn := Fin.pos_iff_nonempty.mp S.d_pos))
-      (S.P.M x a * S.P.M y b)).re = (S.P.M x a * S.P.M y b).trace.re / (S.d : ℝ) := by
-    show ((Fintype.card (Fin S.d) : ℂ)⁻¹ * (S.P.M x a * S.P.M y b).trace).re = _
-    rw [Fintype.card_fin, ← Complex.ofReal_natCast, ← Complex.ofReal_inv,
-      Complex.re_ofReal_mul, inv_mul_eq_div]
-  rw [← this]
-  exact hz
+  rw [← normalizedTrace_re]
+  exact re_eq_zero_of_tracialValue_eq_one G _ S.P h' hxy hD
+
+/-! ## Faithfulness, and orthogonality of a projective measurement
+
+The normalized trace on matrices is *faithful*, which the generic tracial level cannot see.
+Two consequences that completeness arguments need at the operator level rather than the state
+level, and which the paper uses without comment: a rejected outcome of a value-one strategy is
+not merely improbable but the zero operator, and distinct outcomes at one question are exactly
+orthogonal. -/
+
+open scoped Matrix in
+/-- A self-adjoint idempotent whose normalized trace vanishes is the zero operator. -/
+theorem eq_zero_of_trace_re_eq_zero (S : SyncStrategy G) {M : Matrix (Fin S.d) (Fin S.d) ℂ}
+    (hsa : star M = M) (hidem : M * M = M) (h : M.trace.re / (S.d : ℝ) = 0) : M = 0 := by
+  have hd : (S.d : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr S.d_pos.ne'
+  have hre : M.trace.re = 0 := (div_eq_zero_iff.mp h).resolve_right hd
+  have him : M.trace.im = 0 := by
+    refine Complex.conj_eq_iff_im.mp ?_
+    rw [starRingEnd_apply, ← Matrix.trace_conjTranspose, ← Matrix.star_eq_conjTranspose, hsa]
+  have htr : M.trace = 0 := Complex.ext hre him
+  have hH : Mᴴ * M = M := by rw [← Matrix.star_eq_conjTranspose, hsa, hidem]
+  exact Matrix.trace_conjTranspose_mul_self_eq_zero_iff.mp (by rw [hH, htr])
+
+open scoped Matrix in
+/-- **Distinct outcomes of a projective measurement are orthogonal.** The tracial statement
+`ProjectiveMeasurement.consistency` says the *probability* is zero; on matrices, faithfulness
+of the trace upgrades that to the operator identity, which is what a commutation obligation at
+a repeated question needs. -/
+theorem orthogonal (S : SyncStrategy G) (x : X) {a b : A} (hab : a ≠ b) :
+    S.P.M x a * S.P.M x b = 0 := by
+  have hd : ((Fintype.card (Fin S.d) : ℂ))⁻¹ ≠ 0 := by
+    simp [Fintype.card_fin, S.d_pos.ne']
+  have hτ := ProjectiveMeasurement.consistency S.P
+    (normalizedTrace (Fin S.d) (hn := Fin.pos_iff_nonempty.mp S.d_pos)) x hab
+  rw [normalizedTrace_apply] at hτ
+  have htr : (S.P.M x a * S.P.M x b).trace = 0 := (mul_eq_zero.mp hτ).resolve_left hd
+  -- `(M^x_b M^x_a)ᴴ (M^x_b M^x_a) = M^x_a M^x_b M^x_a`, whose trace is that of `M^x_a M^x_b`
+  have hzero : S.P.M x b * S.P.M x a = 0 := by
+    refine Matrix.trace_conjTranspose_mul_self_eq_zero_iff.mp ?_
+    have hH : (S.P.M x b * S.P.M x a)ᴴ * (S.P.M x b * S.P.M x a)
+        = S.P.M x a * S.P.M x b * S.P.M x a := by
+      rw [Matrix.conjTranspose_mul, ← Matrix.star_eq_conjTranspose,
+        ← Matrix.star_eq_conjTranspose, S.P.selfAdjoint, S.P.selfAdjoint]
+      calc S.P.M x a * S.P.M x b * (S.P.M x b * S.P.M x a)
+          = S.P.M x a * (S.P.M x b * S.P.M x b) * S.P.M x a := by noncomm_ring
+        _ = S.P.M x a * S.P.M x b * S.P.M x a := by rw [S.P.projective]
+    rw [hH]
+    have e1 : S.P.M x a * S.P.M x b * S.P.M x a
+        = S.P.M x a * (S.P.M x b * S.P.M x a) := by noncomm_ring
+    have e2 : S.P.M x b * S.P.M x a * S.P.M x a = S.P.M x b * S.P.M x a := by
+      rw [Matrix.mul_assoc, S.P.projective]
+    rw [e1, Matrix.trace_mul_comm, e2, Matrix.trace_mul_comm, htr]
+  have hconj : S.P.M x a * S.P.M x b = (S.P.M x b * S.P.M x a)ᴴ := by
+    rw [Matrix.conjTranspose_mul, ← Matrix.star_eq_conjTranspose,
+      ← Matrix.star_eq_conjTranspose, S.P.selfAdjoint, S.P.selfAdjoint]
+  rw [hconj, hzero, Matrix.conjTranspose_zero]
+
+/-! ## The value through `MIPRE.ntr`
+
+`MIPRE.ntr` is the real part of the normalized trace, the form in which the closeness calculus
+of `MIPRE/Foundations/Closeness.lean` manipulates outcome probabilities. These four lemmas are
+the bridge. -/
+
+theorem normalizedTrace_re_eq_ntr (S : SyncStrategy G) (M : Matrix (Fin S.d) (Fin S.d) ℂ) :
+    ((normalizedTrace (Fin S.d) (hn := Fin.pos_iff_nonempty.mp S.d_pos)) M).re = ntr M := by
+  rw [normalizedTrace_re, ntr_fin]
+
+/-- Outcome probabilities are nonnegative. -/
+theorem ntr_mul_nonneg (S : SyncStrategy G) (x y : X) (a b : A) :
+    0 ≤ ntr (S.P.M x a * S.P.M y b) := by
+  rw [← normalizedTrace_re_eq_ntr]
+  exact re_nonneg_tracial _ S.P x y a b
+
+/-- At a fixed question pair the outcome probabilities sum to one. -/
+theorem sum_ntr_eq_one (S : SyncStrategy G) (x y : X) :
+    ∑ a, ∑ b, ntr (S.P.M x a * S.P.M y b) = 1 := by
+  simp only [← normalizedTrace_re_eq_ntr]
+  exact sum_re_tracial _ S.P x y
+
+theorem value_eq_ntr (S : SyncStrategy G) :
+    S.value = ∑ x, ∑ y, ∑ a, ∑ b, G.μ x y * (if G.D x y a b then 1 else 0) *
+      ntr (S.P.M x a * S.P.M y b) := by
+  rw [value_eq]
+  simp only [ntr_fin]
+
+/-! ## Pushing a measurement forward along a map of outcome sets
+
+Soundness arguments need to *relabel* outcomes: to group the answers that fail a parse into
+one distinguished outcome, or to read an oracle's pair-valued answer as one of its components.
+A sum over a fibre is again a projection precisely because distinct outcomes are orthogonal,
+which is `SyncStrategy.orthogonal` above and is unavailable at the generic tracial level. -/
+
+/-- The projective measurement obtained by relabelling outcomes along `f`: the operator for
+`a'` is the sum over the fibre of `f` above `a'`. -/
+noncomputable def push (S : SyncStrategy G) {A' : Type*} [Fintype A'] [DecidableEq A']
+    (f : A → A') : ProjectiveMeasurement X A' (Matrix (Fin S.d) (Fin S.d) ℂ) where
+  M x a' := ∑ u ∈ univ.filter fun u => f u = a', S.P.M x u
+  selfAdjoint x a' := by
+    rw [star_sum]
+    exact Finset.sum_congr rfl fun u _ => S.P.selfAdjoint x u
+  projective x a' := by
+    rw [Finset.sum_mul_sum]
+    refine Finset.sum_congr rfl fun u hu => ?_
+    refine Finset.sum_eq_single_of_mem u hu ?_ |>.trans (S.P.projective x u)
+    intro v _ hvu
+    exact S.orthogonal x (Ne.symm hvu)
+  normalized x := by
+    rw [Finset.sum_fiberwise_of_maps_to (fun u _ => mem_univ (f u))]
+    exact S.P.normalized x
+
+@[simp] theorem push_apply (S : SyncStrategy G) {A' : Type*} [Fintype A'] [DecidableEq A']
+    (f : A → A') (x : X) (a' : A') :
+    (S.push f).M x a' = ∑ u ∈ univ.filter fun u => f u = a', S.P.M x u := rfl
 
 end SyncStrategy
 

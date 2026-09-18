@@ -18,6 +18,8 @@ import MIPRE.Foundations.Cost.Toolkit
 import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Games
 import MIPRE.Foundations.PerfectStrategy
+import MIPRE.Foundations.OracularComplete
+import MIPRE.Foundations.OracularSound
 import MIPRE.Foundations.Halting.Corollaries
 import MIPRE.Foundations.Pipeline.Compress
 import MIPRE.Foundations.Halting.LambdaBound
@@ -396,6 +398,20 @@ elab "#guard_sorry_free " ids:ident,* : command => do
   MIPRE.CL.ker_canonLin,
   MIPRE.CL.range_canonLin,
   MIPRE.CL.ker_lperp
+
+-- blueprint `lem:hs-closeness` and `lem:close-measurements-close-values`: the two estimates
+-- the soundness of oracularization rests on. The square root is spent in the second and
+-- nowhere else.
+#guard_sorry_free MIPRE.sum_hsNormSq_sub_le,
+  MIPRE.sum_ntr_mul_ge
+
+-- blueprint `lem:oracular-completeness` and `lem:oracular-soundness`: the two clauses of
+-- `thm:oracularization` at the level of games.
+#guard_sorry_free MIPRE.SeededGame.oracleStrategy,
+  MIPRE.SeededGame.isPCC_oracleStrategy,
+  MIPRE.SeededGame.oracleStrategy_value_eq_one,
+  MIPRE.SeededGame.soundStrategy,
+  MIPRE.SeededGame.soundStrategy_value_ge
 
 /-!
 ## The one axiom
