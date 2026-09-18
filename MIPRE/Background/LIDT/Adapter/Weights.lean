@@ -484,4 +484,83 @@ theorem sum_fibre_μ_eq_sum_samples (f g : Question F m → CL.Question F m)
       rw [if_neg (fun hc => hx' (congrArg Prod.fst hc).symm), mul_zero]
   rw [Finset.sum_congr rfl fun s (_ : s ∈ Finset.univ) => hinner s, Finset.sum_filter]
 
+/-! ## Counting the seed choices
+
+With the push-forward on samples, the average over the family becomes a weight times a *count of
+family members*, and that is what the shapes differ in: a point question's image does not depend
+on the family member at all, while a line question's pins the seed at one index (and, for a
+diagonal, the scale). -/
+
+/-- Averaging over a family, as a weight times a count of family members. -/
+theorem sum_sum_filter_eq_sum_card {Seed ι : Type*} [Fintype Seed] [Fintype ι] [DecidableEq ι]
+    (w : ι → ℝ) (cond : Seed → ι → Prop) [∀ σ i, Decidable (cond σ i)] :
+    (∑ σ : Seed, ∑ i ∈ Finset.univ.filter (fun i => cond σ i), w i)
+      = ∑ i : ι, w i * (Finset.univ.filter (fun σ : Seed => cond σ i)).card := by
+  classical
+  simp only [Finset.sum_filter]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul, mul_comm]
+
+/-- The averaging family: a fibre position for each direction index, and one global nonzero
+direction scale. The scale is there because of the second correction in
+`planning/lidt-cl-adapter.md`. -/
+abbrev Seed (F : Type*) [Field F] [Fintype F] (m : ℕ) : Type _ :=
+  (Fin m → Fin (Fintype.card F / m)) × {c : F // c ≠ 0}
+
+/-- The seeded question a canonical-line question is played through, for a family member. -/
+noncomputable def qmapS (hm : m ∣ Fintype.card F) (σc : Seed F m) :
+    Question F m → CL.Question F m :=
+  qmap hm σc.1 σc.2.1
+
+@[simp] theorem qmapS_point (hm : m ∣ Fintype.card F) (σc : Seed F m) (u : Point F m) :
+    qmapS hm σc (.point u) = .point (revPoint u) := rfl
+
+/-! ### The point shape
+
+Only the self-consistency sample can contribute, and its image does not depend on the family
+member, so averaging neither helps nor hurts here: the requirement is the unaveraged
+`1/(3 q^m) ≤ C · 1/(9 q^m)`, i.e. `C ≥ 3`. -/
+
+/-- The samples whose images are a pair of point questions: at most the self-consistency sample at
+the reversed point. -/
+theorem filter_qmapS_point_subset (hm : m ∣ Fintype.card F) (σc : Seed F m)
+    (xp yp : Point F m) :
+    Finset.univ.filter (fun s : Sample F m =>
+        qmapS hm σc s.questions.1 = CL.Question.point xp ∧
+          qmapS hm σc s.questions.2 = CL.Question.point yp)
+      ⊆ {Sample.selfConsistency (revPoint xp)} := by
+  classical
+  intro s hs
+  obtain ⟨h1, h2⟩ := (Finset.mem_filter.mp hs).2
+  refine Finset.mem_singleton.mpr ?_
+  match s, h1, h2 with
+  | Sample.selfConsistency u, h1, _ =>
+      have h : CL.Question.point (revPoint u) = CL.Question.point xp := h1
+      injection h with h'
+      rw [← h', revPoint_revPoint]
+  | Sample.axis false u i, h1, _ => exact absurd h1 (by simp [Sample.questions, qmapS, qmap])
+  | Sample.axis true u i, _, h2 => exact absurd h2 (by simp [Sample.questions, qmapS, qmap])
+  | Sample.diag false u j v, h1, _ => exact absurd h1 (by simp [Sample.questions, qmapS, qmap])
+  | Sample.diag true u j v, _, h2 => exact absurd h2 (by simp [Sample.questions, qmapS, qmap])
+
+/-- And if the two points differ, nothing contributes: the one candidate fails the second
+condition. -/
+theorem filter_qmapS_point_eq_empty (hm : m ∣ Fintype.card F) (σc : Seed F m)
+    {xp yp : Point F m} (hxy : xp ≠ yp) :
+    Finset.univ.filter (fun s : Sample F m =>
+        qmapS hm σc s.questions.1 = CL.Question.point xp ∧
+          qmapS hm σc s.questions.2 = CL.Question.point yp)
+      = ∅ := by
+  classical
+  refine Finset.eq_empty_iff_forall_notMem.mpr fun s hs => ?_
+  have hmem := filter_qmapS_point_subset hm σc xp yp hs
+  rw [Finset.mem_singleton] at hmem
+  subst hmem
+  obtain ⟨_, h2⟩ := (Finset.mem_filter.mp hs).2
+  have h : CL.Question.point (revPoint (revPoint xp)) = CL.Question.point yp := h2
+  rw [revPoint_revPoint] at h
+  injection h with h'
+  exact hxy h'
+
 end MIPRE.LIDT.Adapter
