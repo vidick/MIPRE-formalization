@@ -429,6 +429,53 @@ theorem rep_add_smul (w x : Fin n → F) (t : F) :
     exact Submodule.smul_mem _ _ (Submodule.mem_span_singleton_self w)
   rw [map_add, (LinearMap.mem_ker).mp hker, add_zero]
 
+/-! ## When two lines through a point coincide
+
+The diagonal weight count needs this: the canonical-line test's diagonal samples `(j, v)` that
+produce a given line are exactly those whose direction is *proportional* to it, which is why
+several of them contribute and the weight is a sum rather than a single term. -/
+
+/-- The canonical presentation, unfolded. -/
+theorem through_eq {u z : Fin n → F} (hz : ∃ k, z k ≠ 0) :
+    Line.through u z
+      = (u - u (Fin.find (fun k => z k ≠ 0) hz) •
+            ((z (Fin.find (fun k => z k ≠ 0) hz))⁻¹ • z),
+          (z (Fin.find (fun k => z k ≠ 0) hz))⁻¹ • z) := by
+  rw [Line.through, dif_pos hz]
+
+/-- **Two lines through the same point coincide exactly when their directions are
+proportional.** -/
+theorem through_eq_through_iff {u w z : Fin n → F} (hw : ∃ k, w k ≠ 0) (hz : ∃ k, z k ≠ 0) :
+    Line.through u z = Line.through u w ↔ ∃ c : F, c ≠ 0 ∧ z = c • w := by
+  classical
+  constructor
+  · intro h
+    set pz := Fin.find (fun k => z k ≠ 0) hz with hpz
+    set pw := Fin.find (fun k => w k ≠ 0) hw with hpw
+    have hzp : z pz ≠ 0 := Fin.find_spec hz
+    have hwp : w pw ≠ 0 := Fin.find_spec hw
+    have hdir : (z pz)⁻¹ • z = (w pw)⁻¹ • w := by
+      have h2 := congrArg Prod.snd h
+      rwa [through_eq hz, through_eq hw] at h2
+    refine ⟨z pz * (w pw)⁻¹, mul_ne_zero hzp (inv_ne_zero hwp), ?_⟩
+    have h4 : (z pz) • ((z pz)⁻¹ • z) = (z pz) • ((w pw)⁻¹ • w) := by rw [hdir]
+    rw [smul_smul, mul_inv_cancel₀ hzp, one_smul, smul_smul] at h4
+    exact h4
+  · rintro ⟨c, hc, rfl⟩
+    have hcw : ∃ k, (c • w) k ≠ 0 := by
+      obtain ⟨k, hk⟩ := hw
+      exact ⟨k, by simpa using mul_ne_zero hc hk⟩
+    have hfind : Fin.find (fun k => (c • w) k ≠ 0) hcw
+        = Fin.find (fun k => w k ≠ 0) hw := find_smul hc hw hcw
+    have hwp : w (Fin.find (fun k => w k ≠ 0) hw) ≠ 0 := Fin.find_spec hw
+    have hsame : ((c • w) (Fin.find (fun k => (c • w) k ≠ 0) hcw))⁻¹ • (c • w)
+        = (w (Fin.find (fun k => w k ≠ 0) hw))⁻¹ • w := by
+      rw [hfind]
+      simp only [Pi.smul_apply, smul_eq_mul, smul_smul, mul_inv_rev]
+      congr 1
+      field_simp
+    rw [through_eq hcw, through_eq hw, hsame, hfind]
+
 end Scale
 
 end MIPRE.LIDT.Adapter
