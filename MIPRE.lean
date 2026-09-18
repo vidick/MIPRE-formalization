@@ -1,5 +1,10 @@
 import MIPRE.Axioms
 import MIPRE.Background.GowersHatami.Basic
+import MIPRE.Background.LIDT.Adapter.Geometry
+import MIPRE.Background.LIDT.Adapter.Reparam
+import MIPRE.Background.LIDT.Adapter.Seeds
+import MIPRE.Background.LIDT.Adapter.Strategy
+import MIPRE.Background.LIDT.Adapter.Weights
 import MIPRE.Background.LIDT.Axioms
 import MIPRE.Background.LIDT.Bridge.Consistency
 import MIPRE.Background.LIDT.Bridge.Defect
@@ -562,6 +567,7 @@ import MIPRE.Foundations.Cost.TreeBits
 import MIPRE.Foundations.Cost.Unary
 import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Distances
+import MIPRE.Foundations.GameAdapt
 import MIPRE.Foundations.GameDescription
 import MIPRE.Foundations.GameDouble
 import MIPRE.Foundations.GameTransport
