@@ -563,4 +563,205 @@ theorem filter_qmapS_point_eq_empty (hm : m ∣ Fintype.card F) (σc : Seed F m)
   injection h with h'
   exact hxy h'
 
+
+/-! ### Cardinalities
+
+Three counts enter the arithmetic: the point space, the seeded test's sample space and the
+averaging family. Only the first has to be known as a power of `q`; the other two enter as
+symbols that cancel. -/
+
+omit [Field F] [DecidableEq F] [NeZero m] in
+theorem card_point_eq : Fintype.card (Point F m) = Fintype.card F ^ m := by
+  simp
+
+omit [DecidableEq F] [NeZero m] in
+theorem card_clTy : Fintype.card CL.Ty = 3 := rfl
+
+omit [Field F] [DecidableEq F] [NeZero m] in
+/-- **The seeded test's sample space**: nine ordered type pairs against `(u, s, v)`. -/
+theorem card_clSample_eq :
+    Fintype.card (CL.Sample F m)
+      = 9 * (Fintype.card (Point F m) * (Fintype.card F * Fintype.card (Point F m))) := by
+  have e : CL.Sample F m ≃ (CL.Ty × CL.Ty) × (Point F m × F × Point F m) :=
+    { toFun := fun sm => ((sm.tyA, sm.tyB), (sm.u, sm.s, sm.v))
+      invFun := fun p => ⟨p.1.1, p.1.2, p.2.1, p.2.2.1, p.2.2.2⟩
+      left_inv := fun _ => rfl
+      right_inv := fun _ => rfl }
+  rw [Fintype.card_congr e, Fintype.card_prod, Fintype.card_prod, Fintype.card_prod,
+    Fintype.card_prod, card_clTy]
+
+omit [NeZero m] in
+/-- **The averaging family**: a fibre position per direction index, and one nonzero scale. -/
+theorem card_seed_eq :
+    Fintype.card (Seed F m)
+      = (Fintype.card F / m) ^ m * (Fintype.card F - 1) := by
+  rw [Fintype.card_prod, Fintype.card_fun, Fintype.card_fin, Fintype.card_fin]
+  congr 1
+  have h : Fintype.card {c : F // c ≠ 0} = Fintype.card F - Fintype.card {c : F // c = 0} :=
+    Fintype.card_subtype_compl _
+  rw [h, Fintype.card_subtype_eq]
+
+omit [DecidableEq F] in
+/-- The family is nonempty, which the derandomization needs. -/
+theorem nonempty_seed (hm : m ∣ Fintype.card F) : Nonempty (Seed F m) :=
+  ⟨⟨fun _ => ⟨0, card_div_pos hm⟩, ⟨1, one_ne_zero⟩⟩⟩
+
+/-! ### The shape of every one of the bounds
+
+All four nonzero shapes are bounded the same way: the contributing samples lie in one finite set
+`T` that does not depend on the family member, each of them has weight at most `B`, and each is
+picked out by at most `M` family members. -/
+
+/-- **Count times weight times count.** -/
+theorem sum_sum_le_card_mul {S ι : Type*} [Fintype S] [Fintype ι] [DecidableEq ι]
+    (w : ι → ℝ) (hw : ∀ i, 0 ≤ w i) (cond : S → ι → Prop) [∀ σ i, Decidable (cond σ i)]
+    (T : Finset ι) (B : ℝ) (M : ℕ)
+    (hsub : ∀ σ i, cond σ i → i ∈ T) (hB : ∀ i ∈ T, w i ≤ B)
+    (hM : ∀ i ∈ T, (Finset.univ.filter (fun σ : S => cond σ i)).card ≤ M) :
+    (∑ σ : S, ∑ i ∈ Finset.univ.filter (fun i => cond σ i), w i)
+      ≤ (T.card : ℝ) * (B * M) := by
+  classical
+  rw [sum_sum_filter_eq_sum_card]
+  rw [← Finset.sum_subset (Finset.subset_univ T) (fun i _ hi => ?_)]
+  · refine (Finset.sum_le_card_nsmul T _ (B * M) ?_).trans ?_
+    · intro i hi
+      refine mul_le_mul (hB i hi) ?_ (Nat.cast_nonneg _) (le_trans (hw i) (hB i hi))
+      exact_mod_cast hM i hi
+    · rw [nsmul_eq_mul]
+  · have he : (Finset.univ.filter (fun σ : S => cond σ i)) = ∅ :=
+      Finset.eq_empty_iff_forall_notMem.mpr fun σ hσ =>
+        hi (hsub σ i (Finset.mem_filter.mp hσ).2)
+    rw [he]
+    simp
+
+/-! ### The mirrored shapes come for free
+
+Both tests are symmetric under exchanging the two players --- `lidtGame`'s swap bit and
+`clGame`'s ordered type pair --- so a bound for `(x, y)` is a bound for `(y, x)`, and only the
+shapes with the *line* on the left have to be done by hand. -/
+
+/-- Flipping a sample's swap bit. -/
+def swapSample : Sample F m → Sample F m
+  | .axis b u i => .axis (!b) u i
+  | .selfConsistency u => .selfConsistency u
+  | .diag b u j v => .diag (!b) u j v
+
+omit [Fintype F] [NeZero m] in
+@[simp] theorem swapSample_questions (s : Sample F m) :
+    (swapSample s).questions = s.questions.swap := by
+  cases s with
+  | axis b u i => cases b <;> rfl
+  | selfConsistency u => rfl
+  | diag b u j v => cases b <;> rfl
+
+omit [Field F] [DecidableEq F] [NeZero m] in
+@[simp] theorem swapSample_weight (s : Sample F m) : (swapSample s).weight = s.weight := by
+  cases s <;> rfl
+
+omit [Field F] [Fintype F] [DecidableEq F] [NeZero m] in
+@[simp] theorem swapSample_swapSample (s : Sample F m) : swapSample (swapSample s) = s := by
+  cases s with
+  | axis b u i => cases b <;> rfl
+  | selfConsistency u => rfl
+  | diag b u j v => cases b <;> rfl
+
+/-- The swap as an equivalence of samples. -/
+def swapEquiv : Sample F m ≃ Sample F m :=
+  ⟨swapSample, swapSample, swapSample_swapSample, swapSample_swapSample⟩
+
+omit [NeZero m] in
+/-- **The canonical-line side is symmetric.** -/
+theorem sum_filter_swap (f : Question F m → CL.Question F m) (x y : CL.Question F m) :
+    (∑ s ∈ Finset.univ.filter (fun s : Sample F m =>
+        f s.questions.1 = x ∧ f s.questions.2 = y), s.weight)
+      = ∑ s ∈ Finset.univ.filter (fun s : Sample F m =>
+        f s.questions.1 = y ∧ f s.questions.2 = x), s.weight := by
+  classical
+  refine Finset.sum_equiv swapEquiv (fun s => ?_) (fun s _ => (swapSample_weight s).symm)
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and, swapEquiv, Equiv.coe_fn_mk,
+    swapSample_questions, Prod.fst_swap, Prod.snd_swap]
+  exact ⟨fun h => ⟨h.2, h.1⟩, fun h => ⟨h.2, h.1⟩⟩
+
+/-- Exchanging the two players' types in a seeded sample. -/
+def clSwap (sm : CL.Sample F m) : CL.Sample F m := {sm with tyA := sm.tyB, tyB := sm.tyA}
+
+omit [Field F] [Fintype F] [DecidableEq F] [NeZero m] in
+@[simp] theorem clSwap_clSwap (sm : CL.Sample F m) : clSwap (clSwap sm) = sm := rfl
+
+/-- The type exchange as an equivalence of seeded samples. -/
+def clSwapEquiv : CL.Sample F m ≃ CL.Sample F m := ⟨clSwap, clSwap, clSwap_clSwap, clSwap_clSwap⟩
+
+/-- **The seeded side is symmetric too**, the nine ordered type pairs being equally likely. -/
+theorem clGame_μ_symm (hm : m ∣ Fintype.card F) (x y : CL.Question F m) :
+    (clGame (d := d) (ldc := ldc) hm).μ x y = (clGame (d := d) (ldc := ldc) hm).μ y x := by
+  classical
+  rw [clGame_μ_eq, clGame_μ_eq]
+  congr 1
+  refine congrArg _ (Finset.card_equiv clSwapEquiv fun sm => ?_)
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and, clSwapEquiv, Equiv.coe_fn_mk, clSwap,
+    Prod.mk.injEq]
+  exact ⟨fun h => ⟨h.2, h.1⟩, fun h => ⟨h.2, h.1⟩⟩
+
+/-! ### The seed counts
+
+A line question's image pins the family's fibre position at exactly one index --- and, for a
+diagonal, the scale as well. That is the whole content of the averaging: the family has
+`(q/m)^m (q-1)` members and only `(q/m)^{m-1} (q-1)` or `(q/m)^{m-1}` of them can contribute. -/
+
+omit [Field F] [DecidableEq F] [NeZero m] in
+theorem card_ne_singleton (i : Fin m) : Fintype.card {j : Fin m // j ≠ i} = m - 1 := by
+  simp
+
+omit [NeZero m] in
+theorem card_ne_zero_eq : Fintype.card {c : F // c ≠ 0} = Fintype.card F - 1 := by
+  simp
+
+omit [NeZero m] in
+/-- **A pinned seed index costs a factor `q/m`.** -/
+theorem card_filter_seed_le (hm : m ∣ Fintype.card F) (i : Fin m) (s₀ : F)
+    (P : Seed F m → Prop) [DecidablePred P]
+    (hP : ∀ σc, P σc → seedOf hm i (σc.1 i) = s₀) :
+    (Finset.univ.filter P).card
+      ≤ (Fintype.card F / m) ^ (m - 1) * (Fintype.card F - 1) := by
+  classical
+  have hcard : (Fintype.card F / m) ^ (m - 1) * (Fintype.card F - 1)
+      = (Finset.univ : Finset (({j : Fin m // j ≠ i} → Fin (Fintype.card F / m))
+          × {c : F // c ≠ 0})).card := by
+    rw [Finset.card_univ, Fintype.card_prod, Fintype.card_fun, Fintype.card_fin,
+      card_ne_singleton, card_ne_zero_eq]
+  rw [hcard]
+  refine Finset.card_le_card_of_injOn
+    (fun σc => (fun j => σc.1 j.1, σc.2)) (fun _ _ => Finset.mem_univ _) ?_
+  intro a ha b hb hab
+  have h1 := congrArg Prod.fst hab
+  have h2 := congrArg Prod.snd hab
+  refine Prod.ext (funext fun j => ?_) h2
+  by_cases hj : j = i
+  · subst hj
+    exact seedOf_injective hm j ((hP a (Finset.mem_filter.mp ha).2).trans
+      (hP b (Finset.mem_filter.mp hb).2).symm)
+  · exact congrFun h1 ⟨j, hj⟩
+
+omit [NeZero m] in
+/-- **A pinned seed index and a pinned scale cost a factor `(q/m)(q-1)`.** -/
+theorem card_filter_seed_scale_le (hm : m ∣ Fintype.card F) (i : Fin m) (s₀ c₀ : F)
+    (P : Seed F m → Prop) [DecidablePred P]
+    (hP : ∀ σc, P σc → seedOf hm i (σc.1 i) = s₀ ∧ (σc.2 : F) = c₀) :
+    (Finset.univ.filter P).card ≤ (Fintype.card F / m) ^ (m - 1) := by
+  classical
+  have hcard : (Fintype.card F / m) ^ (m - 1)
+      = (Finset.univ : Finset ({j : Fin m // j ≠ i} → Fin (Fintype.card F / m))).card := by
+    rw [Finset.card_univ, Fintype.card_fun, Fintype.card_fin, card_ne_singleton]
+  rw [hcard]
+  refine Finset.card_le_card_of_injOn
+    (fun σc => fun j => σc.1 j.1) (fun _ _ => Finset.mem_univ _) ?_
+  intro a ha b hb hab
+  obtain ⟨hsa, hca⟩ := hP a (Finset.mem_filter.mp ha).2
+  obtain ⟨hsb, hcb⟩ := hP b (Finset.mem_filter.mp hb).2
+  refine Prod.ext (funext fun j => ?_) (Subtype.ext (hca.trans hcb.symm))
+  by_cases hj : j = i
+  · subst hj
+    exact seedOf_injective hm j (hsa.trans hsb.symm)
+  · exact congrFun hab ⟨j, hj⟩
+
 end MIPRE.LIDT.Adapter
