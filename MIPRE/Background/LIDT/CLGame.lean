@@ -36,16 +36,37 @@ The verifier samples the ordered type pair uniformly from the nine possibilities
 prescribes. Every sample has the same weight, so normalization is one division rather than the
 subtest bookkeeping the canonical-line game needs.
 
-## The decision predicate, and the one place it is stricter than the paper
+## The decision predicate
 
-`fig:ld-decider` reads: equal types, accept iff the answers agree; a line type against
-`Point`, accept iff every one of the `ldc` polynomials evaluated at the parameter of the point
-gives the corresponding coordinate of the point answer; otherwise accept. Where the paper
-writes "`t ∈ F` is such that `x = u₀ + t w`", the point may fail to lie on the line, and the
-condition is then vacuous. This file requires membership, as `MIPRE.LIDT.lidtGame` already
-does for the canonical-line test: the two agree on the support of the question distribution,
-where the point is always on the line, and keeping the convention of the test whose soundness
-is proved is what makes the two comparable at all.
+`fig:ld-decider` is a format check and then three numbered subtests. The check is the table at
+the top of the figure, and the text around it is explicit that it *rejects*: "If the answers
+returned by the players do not fit this format the decision procedure rejects." The subtests
+are: equal types, accept iff the answers agree; a line type against `Point`, accept iff every
+one of the `ldc` polynomials evaluated at the parameter of the point gives the corresponding
+coordinate of the point answer; and "in all cases where no action is indicated, accept".
+
+`Question.fmtOk` is the check and `subtests` the rest, with `accepts` their conjunction. The
+separation matters because the two clauses that look alike are not: an answer of the wrong
+format for its question type is *rejected*, while a well-formatted answer to one of the two
+cross type pairs `(ALine, DLine)` and `(DLine, ALine)` is *accepted* --- that is the `2/9` of
+the question mass on which this test checks nothing.
+
+Leaving the format check out makes the test vacuous, and an earlier version of this file did
+leave it out. The constant strategy answering `values 0` to *every* question, the two line
+types included, then passes every subtest through the catch-all, so the game has a value-`1`
+strategy whose point measurements are an arbitrary function of the point --- and
+`thm:lidt-cl-soundness`, which concludes that those measurements are consistent with
+evaluations of a low-individual-degree polynomial measurement, is false for it.
+`accepts_aline_values_eq_false` and `accepts_point_apolys_eq_false` pin the two rejections, and
+`accepts_aline_dline` pins the acceptance that must survive.
+
+## The one place this file is stricter than the paper
+
+Where the paper writes "`t ∈ F` is such that `x = u₀ + t w`", the point may fail to lie on the
+line, and the condition is then vacuous. This file requires membership, as
+`MIPRE.LIDT.lidtGame` already does for the canonical-line test: the two agree on the support of
+the question distribution, where the point is always on the line, and keeping the convention of
+the test whose soundness is proved is what makes the two comparable at all.
 -/
 
 noncomputable section
@@ -244,8 +265,23 @@ def lineVsPoint (u₀ w x : Point F m) {n : ℕ} (f : Fin ldc → LinePoly F n)
     (a : Fin ldc → F) : Bool :=
   decide ((∃ t : F, x = u₀ + t • w) ∧ ∀ j, (f j).eval (lineParam u₀ w x) = a j)
 
-/-- The decision predicate of `fig:ld-decider`. -/
-def accepts [NeZero m] (hm : m ∣ Fintype.card F) :
+/-- Whether an answer has the format the question's type prescribes, which is the table at the
+top of `fig:ld-decider`: a `Point` question is answered by `ldc` field elements, an `ALine`
+question by `ldc` polynomials of degree `≤ d`, a `DLine` question by `ldc` polynomials of
+degree `≤ m·d`. The decider's first step checks this and **rejects** if it fails ("If the
+answers returned by the players do not fit this format the decision procedure rejects"). -/
+def Question.fmtOk : Question F m → Answer F m d ldc → Bool
+  | .point _, .values _ => true
+  | .aline _ _, .apolys _ => true
+  | .dline _ _ _, .dpolys _ => true
+  | _, _ => false
+
+/-- The three numbered subtests of `fig:ld-decider`, on correctly formatted answers: equal
+types accept iff the answers agree, a line type against `Point` accepts iff each polynomial
+evaluated at the parameter of the point gives the corresponding coordinate, and "in all cases
+where no action is indicated, accept" --- which after the format check of `accepts` means
+exactly the two cross type pairs `(ALine, DLine)` and `(DLine, ALine)`. -/
+def subtests [NeZero m] (hm : m ∣ Fintype.card F) :
     Question F m → Question F m → Answer F m d ldc → Answer F m d ldc → Bool
   | .point _, .point _, .values a, .values b => decide (a = b)
   | .aline _ _, .aline _ _, .apolys f, .apolys g => decide (f = g)
@@ -257,6 +293,51 @@ def accepts [NeZero m] (hm : m ∣ Fintype.card F) :
   | .dline u₀ _ v, .point x, .dpolys f, .values a => lineVsPoint u₀ v x f a
   | .point x, .dline u₀ _ v, .values a, .dpolys f => lineVsPoint u₀ v x f a
   | _, _, _, _ => true
+
+/-- The decision predicate of `fig:ld-decider`: the format check, then the subtests. -/
+def accepts [NeZero m] (hm : m ∣ Fintype.card F)
+    (x y : Question F m) (a b : Answer F m d ldc) : Bool :=
+  x.fmtOk a && y.fmtOk b && subtests hm x y a b
+
+/-! ### The format check rejects
+
+These are the cases the catch-all of `subtests` would otherwise accept, and they are why the
+check cannot be left out: without it the constant strategy answering `values 0` to *every*
+question --- including the two line types, for which that is the wrong format --- passes every
+subtest, so the test has a value-`1` strategy whose point measurements are an arbitrary
+function of the point, and `thm:lidt-cl-soundness` is false for the game. -/
+
+@[simp] theorem accepts_eq_false_left [NeZero m] (hm : m ∣ Fintype.card F)
+    {x y : Question F m} {a b : Answer F m d ldc} (h : x.fmtOk a = false) :
+    accepts hm x y a b = false := by
+  simp [accepts, h]
+
+@[simp] theorem accepts_eq_false_right [NeZero m] (hm : m ∣ Fintype.card F)
+    {x y : Question F m} {a b : Answer F m d ldc} (h : y.fmtOk b = false) :
+    accepts hm x y a b = false := by
+  simp [accepts, h]
+
+/-- A line question answered in the point format is rejected --- the case that made the test
+vacuous before the format check was added. -/
+theorem accepts_aline_values_eq_false [NeZero m] (hm : m ∣ Fintype.card F)
+    (u₀ : Point F m) (s : F) (y : Question F m) (a : Fin ldc → F) (b : Answer F m d ldc) :
+    accepts hm (.aline u₀ s) y (.values a) b = false :=
+  accepts_eq_false_left hm rfl
+
+/-- A point question answered in a line format is rejected. -/
+theorem accepts_point_apolys_eq_false [NeZero m] (hm : m ∣ Fintype.card F)
+    (u : Point F m) (y : Question F m) (f : Fin ldc → LinePoly F d)
+    (b : Answer F m d ldc) :
+    accepts hm (.point u) y (.apolys f) b = false :=
+  accepts_eq_false_left hm rfl
+
+/-- The two cross type pairs are still accepted on well-formatted answers, as
+`fig:ld-decider`'s "in all cases where no action is indicated, accept" prescribes. This is the
+`2/9` of the question mass on which the test checks nothing. -/
+theorem accepts_aline_dline [NeZero m] (hm : m ∣ Fintype.card F)
+    (u₀ : Point F m) (s : F) (u₀' : Point F m) (s' : F) (v : Point F m)
+    (f : Fin ldc → LinePoly F d) (g : Fin ldc → LinePoly F (m * d)) :
+    accepts hm (.aline u₀ s) (.dline u₀' s' v) (.apolys f) (.dpolys g) = true := rfl
 
 /-! ## The game -/
 
