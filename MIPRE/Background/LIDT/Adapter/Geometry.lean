@@ -457,6 +457,23 @@ theorem through_eq {u z : Fin n → F} (hz : ∃ k, z k ≠ 0) :
           (z (Fin.find (fun k => z k ≠ 0) hz))⁻¹ • z) := by
   rw [Line.through, dif_pos hz]
 
+/-- The canonical direction, projected out. -/
+theorem through_snd {u z : Fin n → F} (hz : ∃ k, z k ≠ 0) :
+    (Line.through u z).2 = (z (Fin.find (fun k => z k ≠ 0) hz))⁻¹ • z := by
+  rw [through_eq hz]
+
+/-- The canonical base point, projected out. -/
+theorem through_fst {u z : Fin n → F} (hz : ∃ k, z k ≠ 0) :
+    (Line.through u z).1 = u - u (Fin.find (fun k => z k ≠ 0) hz) •
+      ((z (Fin.find (fun k => z k ≠ 0) hz))⁻¹ • z) := by
+  rw [through_eq hz]
+
+/-- The point a canonical presentation was built from lies on the line it presents. -/
+theorem through_mem {u z : Fin n → F} (hz : ∃ k, z k ≠ 0) :
+    u = (Line.through u z).1
+      + (u (Fin.find (fun k => z k ≠ 0) hz)) • (Line.through u z).2 := by
+  rw [through_fst hz, through_snd hz, sub_add_cancel]
+
 /-- **Two lines through the same point coincide exactly when their directions are
 proportional.** -/
 theorem through_eq_through_iff {u w z : Fin n → F} (hw : ∃ k, w k ≠ 0) (hz : ∃ k, z k ≠ 0) :
