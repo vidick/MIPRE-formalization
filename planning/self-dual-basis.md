@@ -17,11 +17,12 @@ rest is formalized, and the route for what is not.
 | the two `lem:downsize-field` identities | same | done (`coord_eq_trace`, `trace_mul_eq_dot`) |
 | a field of size `2^k` with a bit representation | `MIPRE/Foundations/SAT/AdmissibleField.lean` | done (`binFieldGalois`) |
 | self-dualization in the group algebra | `MIPRE/Foundations/LowDegree/SelfDualize.lean` | done |
-| a self-dual normal basis exists, `k` odd | --- | **open** |
+| a self-dual normal basis exists, `k` odd | `MIPRE/Foundations/LowDegree/NormalBasis.lean` | done (`exists_selfDualNormalBasis_two`) |
 | the `poly(k)` algorithm | --- | **open** |
 
-The two open rows are very different in size, and the blueprint's `\leanok` waits on the
-second, because the lemma asserts an algorithm and not an existence.
+The blueprint's `\leanok` on `lem:self-dual-basis` waits on the one open row, because the
+lemma asserts an algorithm and not an existence. The existence half is
+`lem:self-dual-basis-exists`.
 
 ## The self-dualization step, and why it is short
 
@@ -53,9 +54,9 @@ factorization of `X^k - 1`, no norm computation in the CRT factors.
 The abstract half, `exists_mul_involute_eq`, holds in any commutative ring on which squaring
 is bijective, and is four lines.
 
-## What the existence half still needs
+## How the existence half was assembled
 
-Three pieces of bookkeeping, none of them deep:
+Three pieces of bookkeeping, none of them deep, all now in `NormalBasis.lean`:
 
 1. **The group algebra acts.** `K` is a module over `F[G]` with `single g r` acting as
    `x ↦ r • g x`, and `a ↦ a • α` is an `F`-linear isomorphism `F[G] → K` precisely because
@@ -74,6 +75,20 @@ finite fields it is cyclic; the friction is that `Gal(K/F)` carries no `CommGrou
 so either the development is written over `AddMonoidAlgebra F (ZMod k)` and transported, or a
 local `CommGroup` instance is supplied from cyclicity. `SelfDualize.lean` takes the first
 route, which is why it is stated for an additive `G`.
+
+`NormalBasis.lean` takes the second: `attribute [local instance] IsCyclic.commGroup`, and the
+group algebra is `MonoidAlgebra F Gal(K/F)`, indexed by the Galois group itself. That is what
+makes `ofAlg` --- the map sending coordinates to the element they name --- literally
+`(IsGalois.normalBasis F K).repr.symm`, with no transport, and it is why the file repeats the
+three `SelfDualize.lean` lemmas about squaring in their multiplicative form
+(`mul_self_injective`, `coeff_mul_self'`, `mul_self_bijective'`). The Gram identity is
+`gramPair_ofAlg`, unitness is `isUnit_gram`, the self-dual element is
+`exists_gramPair_eq_one`, and the basis is read off the Frobenius orbit through
+`FiniteField.bijective_frobeniusAlgEquivOfAlgebraic_pow`.
+
+What it does **not** give is any node of the ledger: the normal element is Mathlib's
+`IsGalois.normalBasis`, a theorem and not an algorithm, so node `1.1.6.1.6` is untouched, and
+nothing here runs in `poly(k)`.
 
 ## What the algorithm still needs
 

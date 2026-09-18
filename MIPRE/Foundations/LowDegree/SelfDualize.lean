@@ -83,7 +83,8 @@ private theorem two_eq_zero (hF : CharP F 2) : (2 : AddMonoidAlgebra F G) = 0 :=
   rw [show (2 : AddMonoidAlgebra F G) = AddMonoidAlgebra.single 0 (2 : F) from rfl,
     show (2 : F) = ((2 : ℕ) : F) from by norm_num, this, AddMonoidAlgebra.single_zero]
 
-private theorem add_mul_self_char_two {R : Type*} [CommRing R] (h2 : (2 : R) = 0) (x y : R) :
+/-- In characteristic two, squaring is additive. -/
+theorem add_mul_self_char_two {R : Type*} [CommRing R] (h2 : (2 : R) = 0) (x y : R) :
     (x + y) * (x + y) = x * x + y * y := by
   have e : (x + y) * (x + y) = x * x + y * y + 2 * (x * y) := by ring
   rw [e, h2, zero_mul, add_zero]

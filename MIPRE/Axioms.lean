@@ -21,6 +21,7 @@ import MIPRE.Foundations.PerfectStrategy
 import MIPRE.Foundations.OracularComplete
 import MIPRE.Foundations.OracularSound
 import MIPRE.Foundations.LowDegree.SelfDualize
+import MIPRE.Foundations.LowDegree.NormalBasis
 import MIPRE.Foundations.SAT.AdmissibleField
 import MIPRE.Foundations.Halting.Corollaries
 import MIPRE.Foundations.Pipeline.Compress
@@ -420,6 +421,16 @@ elab "#guard_sorry_free " ids:ident,* : command => do
 #guard_sorry_free MIPRE.LowDegree.exists_mul_involute_eq,
   MIPRE.LowDegree.mul_self_bijective,
   MIPRE.LowDegree.exists_mul_involute_eq_of_charTwo
+
+-- blueprint `lem:self-dual-basis-exists`: in characteristic two and odd degree a self-dual
+-- normal basis exists. Existence, not construction: `lem:self-dual-basis` still asserts an
+-- algorithm, and that half is open.
+#guard_sorry_free MIPRE.LowDegree.gramPair,
+  MIPRE.LowDegree.gramPair_ofAlg,
+  MIPRE.LowDegree.isUnit_gram,
+  MIPRE.LowDegree.exists_gramPair_eq_one,
+  MIPRE.LowDegree.exists_isSelfDualBasis_isNormalBasis,
+  MIPRE.LowDegree.exists_selfDualNormalBasis_two
 
 -- blueprint `lem:admissible-field-exists`: the field interface `thm:pcp-decider` takes as a
 -- parameter is inhabited.

@@ -592,6 +592,7 @@ import MIPRE.Foundations.Halting.Tabulate
 import MIPRE.Foundations.Halting.Wrapper
 import MIPRE.Foundations.Halting.WrapperCost
 import MIPRE.Foundations.LowDegree.Encoding
+import MIPRE.Foundations.LowDegree.NormalBasis
 import MIPRE.Foundations.LowDegree.SchwartzZippel
 import MIPRE.Foundations.LowDegree.SelfDual
 import MIPRE.Foundations.LowDegree.SelfDualize
