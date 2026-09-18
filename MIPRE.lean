@@ -639,6 +639,7 @@ import MIPRE.Foundations.SAT.Pcp
 import MIPRE.Foundations.SAT.Succinct
 import MIPRE.Foundations.SAT.Table
 import MIPRE.Foundations.SAT.Tseitin
+import MIPRE.Foundations.StateDistance
 import MIPRE.Foundations.SyncTransport
 import MIPRE.Foundations.TensorFamily
 import MIPRE.Foundations.ValueApprox
