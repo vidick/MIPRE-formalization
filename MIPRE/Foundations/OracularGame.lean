@@ -111,8 +111,10 @@ noncomputable def toGame [Nonempty V] : Game V V A A where
   μ_sum_one := S.sum_dist
   D := S.D
 
+omit [DecidableEq A] in
 @[simp] theorem toGame_μ [Nonempty V] : S.toGame.μ = S.dist := rfl
 
+omit [DecidableEq A] in
 @[simp] theorem toGame_D [Nonempty V] : S.toGame.D = S.D := rfl
 
 end SeededGame
@@ -231,6 +233,10 @@ noncomputable def oracular [Nonempty V] : SynchronousGame (Role × V) (OAns A) w
   μ_sum_one := S.sum_oDist
   D := S.oaccepts
   synchronous _ _ _ h := S.oaccepts_eq_false_of_ne h
+
+@[simp] theorem oracular_μ [Nonempty V] : S.oracular.μ = S.oDist := rfl
+
+@[simp] theorem oracular_D [Nonempty V] : S.oracular.D = S.oaccepts := rfl
 
 end SeededGame
 
