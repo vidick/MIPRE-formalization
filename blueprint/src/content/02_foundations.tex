@@ -500,7 +500,88 @@ form used by Theorem~\ref{thm:lidt-soundness}. It is a different notion from the
 distance of Definition~\ref{def:distance}: consistency compares two families across the
 two factors of the state, whereas $\approx_\delta$ compares them as operator families.
 
+\begin{remark}[The POVM distance and the state]
+\label{rem:distance-state}
+\uses{def:distance,def:sync-strategy,def:sync-value}
+Definition~\ref{def:distance} is \emph{state-independent}, whereas the companion paper's
+$\approx_\delta$ (\texttt{games.tex}) is the state-dependent quantity $\E_{x \sim \mu}
+\sum_a \norm{(M^x_a - N^x_a)\ket{\psi}}^2$. For a \emph{synchronous} strategy the two agree.
+The state is then the maximally entangled state on $\C^d \ot \C^d$, and for it
+$\bra{\psi} (A^\dagger A) \ot I \ket{\psi} = \tr(A^\dagger A)/d = \norm{A}_{hs}^2$, so
+Definition~\ref{def:distance} \emph{is} the state-dependent distance at the tracial state.
+Every formalized consumer of Definition~\ref{def:distance} is synchronous, and the soundness
+of oracularization (Lemma~\ref{lem:oracular-soundness}) reads it that way. For a general
+bipartite strategy the two notions differ, so a chapter~3 consumer that is not synchronous
+will need the state-dependent notion added rather than this one reused.
+\end{remark}
 
+\begin{lemma}[Closeness from two disagreements]
+\label{lem:hs-closeness}
+\uses{def:hs-norm,def:distance}
+\lean{MIPRE.sum_hsNormSq_sub_le}
+\leanok
+Let $\{O_i\}_{i \in I}$, $\{C_i\}_{i \in I}$, $\{D_i\}_{i \in I}$ be finite families of
+projections on $\C^{d \times d}$ with $\sum_i \tau(O_i) = 1$ and $\sum_i \tau(C_i D_i) = 1$.
+Then
+\begin{equation*}
+  \sum_i \norm{C_i D_i - O_i}_{hs}^2 \;\leq\; 3 \Bigl( \sum_i \tau\bigl(O_i (1 - D_i)\bigr)
+    + \sum_i \tau\bigl(O_i (1 - C_i)\bigr) \Bigr).
+\end{equation*}
+\end{lemma}
+\begin{proof}
+\leanok
+Write $X_i = (1 - C_i) O_i$ and $Y_i = (1 - D_i) O_i$, so that $C_i O_i = O_i - X_i$ and
+$D_i O_i = O_i - Y_i$. Since $1 - C_i$ and $1 - D_i$ are projections,
+$\norm{X_i}_{hs}^2 = \tau(O_i (1 - C_i))$ and $\norm{Y_i}_{hs}^2 = \tau(O_i (1 - D_i))$; write
+$\beta$ and $\alpha$ for the two sums, which are therefore nonnegative. Expanding the
+left-hand side and using $\sum_i \tau(C_i D_i) = \sum_i \tau(O_i) = 1$,
+\begin{equation*}
+  \sum_i \norm{C_i D_i - O_i}_{hs}^2 \;=\; 2 - 2 \sum_i \tau(O_i D_i C_i).
+\end{equation*}
+Since $O_i$ is a projection, $\tau(O_i D_i C_i) = \langle D_i O_i, C_i O_i \rangle_{hs} =
+\langle O_i - Y_i, O_i - X_i \rangle_{hs}$, which expands to $\tau(O_i) -
+\tau(O_i(1 - C_i)) - \tau(O_i(1 - D_i)) + \langle Y_i, X_i \rangle_{hs}$. Summing over $i$,
+$\sum_i \tau(O_i D_i C_i) = 1 - \alpha - \beta + \sum_i \langle Y_i, X_i \rangle_{hs}$, and
+Cauchy--Schwarz followed by the arithmetic--geometric mean inequality gives
+$\bigl| \sum_i \langle Y_i, X_i \rangle_{hs} \bigr| \leq \sqrt{\alpha}\sqrt{\beta} \leq
+(\alpha + \beta)/2$. Hence $\sum_i \norm{C_i D_i - O_i}_{hs}^2 \leq 2(\alpha + \beta) +
+(\alpha + \beta)$.
+\end{proof}
+
+\begin{lemma}[Close measurements have close values]
+\label{lem:close-measurements-close-values}
+\uses{def:hs-norm,def:distance}
+\lean{MIPRE.sum_ntr_mul_ge}
+\leanok
+Let $\{O_i\}_{i \in I}$, $\{C_i\}_{i \in I}$, $\{D_i\}_{i \in I}$ be finite families of
+projections on $\C^{d \times d}$ with $\sum_i \tau(O_i) = 1$, and let
+$\mathrm{acc} \subseteq I$. Then
+\begin{equation*}
+  \sum_{i \in \mathrm{acc}} \tau(O_i)
+    \;-\; 2 \sqrt{\sum_i \norm{C_i D_i - O_i}_{hs}^2}
+    \;\leq\; \sum_{i \in \mathrm{acc}} \tau(C_i D_i).
+\end{equation*}
+\end{lemma}
+\begin{proof}
+\leanok
+This is the measurement-level form of \cite[Fact 4.31]{NW19}, in the one direction a soundness
+argument needs and in the synchronous setting, where $\tau((C_iD_i)^\dagger C_iD_i) =
+\tau(C_iD_i)$ makes the products a measurement on the nose. Put $w_i = C_iD_i - O_i$. Then
+$\tau(C_iD_i) = \norm{C_iD_i}_{hs}^2 = \norm{O_i + w_i}_{hs}^2 = \tau(O_i) +
+2\langle O_i, w_i\rangle_{hs} + \norm{w_i}_{hs}^2$. Summing over $\mathrm{acc}$ and dropping
+the last term, which is nonnegative,
+\begin{equation*}
+  \sum_{i \in \mathrm{acc}} \tau(C_iD_i) \;\geq\; \sum_{i \in \mathrm{acc}} \tau(O_i)
+    - 2 \Bigl| \sum_{i \in \mathrm{acc}} \langle O_i, w_i \rangle_{hs} \Bigr|,
+\end{equation*}
+and Cauchy--Schwarz over the index bounds the last modulus by
+$\sqrt{\sum_{i \in \mathrm{acc}} \tau(O_i)} \cdot \sqrt{\sum_{i \in \mathrm{acc}}
+\norm{w_i}_{hs}^2} \leq 1 \cdot \sqrt{\sum_i \norm{w_i}_{hs}^2}$.
+\end{proof}
+
+\paragraph{Comments.} The square root is spent here and nowhere else in the soundness of
+oracularization; everything before it, including Lemma~\ref{lem:hs-closeness}, is linear.
+That is what repair~1 of Remark~\ref{rem:oracularization-repairs} is about.
 
 \subsection{Computability conventions}
 \label{sec:computability-conventions}

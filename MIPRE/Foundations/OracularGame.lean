@@ -167,6 +167,15 @@ omit [Fintype V] [DecidableEq V] [Fintype A] [DecidableEq A] in
 @[simp] theorem oquestion_fst (r : Role) (z : V) : (S.oquestion r z).1 = r := by
   cases r <;> rfl
 
+omit [Fintype V] [DecidableEq V] [Fintype A] [DecidableEq A] in
+@[simp] theorem oquestion_oracle (z : V) : S.oquestion .oracle z = (.oracle, z) := rfl
+
+omit [Fintype V] [DecidableEq V] [Fintype A] [DecidableEq A] in
+@[simp] theorem oquestion_alice (z : V) : S.oquestion .alice z = (.alice, S.LA z) := rfl
+
+omit [Fintype V] [DecidableEq V] [Fintype A] [DecidableEq A] in
+@[simp] theorem oquestion_bob (z : V) : S.oquestion .bob z = (.bob, S.LB z) := rfl
+
 /-! ## The decision predicate of `fig:oracle-decider` -/
 
 /-- The shape check: an oracle answers a pair, an isolated player a single answer. -/

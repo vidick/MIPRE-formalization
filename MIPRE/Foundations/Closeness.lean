@@ -103,6 +103,26 @@ theorem re_hsInner_neg_left (A B : Matrix n n ℂ) :
     (hsInner (-A) B).re = -(hsInner A B).re := by
   rw [← re_hsInner_comm (-A) B, re_hsInner_neg_right B A, re_hsInner_comm A B]
 
+theorem re_hsInner_add_left (A B C : Matrix n n ℂ) :
+    (hsInner (A + B) C).re = (hsInner A C).re + (hsInner B C).re := by
+  rw [re_hsInner_eq, re_hsInner_eq, re_hsInner_eq, Matrix.conjTranspose_add, Matrix.add_mul,
+    ntr_add]
+
+theorem re_hsInner_add_right (A B C : Matrix n n ℂ) :
+    (hsInner A (B + C)).re = (hsInner A B).re + (hsInner A C).re := by
+  rw [re_hsInner_eq, re_hsInner_eq, re_hsInner_eq, Matrix.mul_add, ntr_add]
+
+theorem re_hsInner_sub_left (A B C : Matrix n n ℂ) :
+    (hsInner (A - B) C).re = (hsInner A C).re - (hsInner B C).re := by
+  rw [re_hsInner_eq, re_hsInner_eq, re_hsInner_eq, Matrix.conjTranspose_sub, Matrix.sub_mul,
+    ntr_sub]
+
+theorem re_hsInner_sub_right (A B C : Matrix n n ℂ) :
+    (hsInner A (B - C)).re = (hsInner A B).re - (hsInner A C).re := by
+  rw [re_hsInner_eq, re_hsInner_eq, re_hsInner_eq, Matrix.mul_sub, ntr_sub]
+
+theorem hsNormSq_eq_re_hsInner_self (A : Matrix n n ℂ) : hsNormSq A = (hsInner A A).re := rfl
+
 /-- The parallelogram expansion: the cross term is what Cauchy--Schwarz then bounds. -/
 theorem hsNormSq_add (A B : Matrix n n ℂ) :
     hsNormSq (A + B) = hsNormSq A + 2 * (hsInner A B).re + hsNormSq B := by
@@ -235,6 +255,169 @@ theorem re_hsInner_mul_self_of_proj {E P : Matrix n n ℂ} (hE : star E = E) (hE
   rw [re_hsInner_eq, ← Matrix.star_eq_conjTranspose, star_mul, hE, hP,
     show E * P * E = E * P * E from rfl, ntr_mul_comm,
     show E * (E * P) = E * E * P from by noncomm_ring, hEid]
+
+/-- `⟨P Q, E⟩ = τ(E Q P)` for self-adjoint `P` and `Q`. -/
+theorem re_hsInner_mul_of_proj {P Q E : Matrix n n ℂ} (hP : star P = P) (hQ : star Q = Q) :
+    (hsInner (P * Q) E).re = ntr (E * Q * P) := by
+  rw [re_hsInner_eq, ← Matrix.star_eq_conjTranspose, star_mul, hP, hQ, ntr_mul_comm,
+    show E * (Q * P) = E * Q * P from by noncomm_ring]
+
+section OneSub
+
+variable [DecidableEq n]
+
+theorem star_one_sub {P : Matrix n n ℂ} (hP : star P = P) : star (1 - P) = 1 - P := by
+  rw [star_sub, star_one, hP]
+
+theorem one_sub_mul_one_sub {P : Matrix n n ℂ} (hPid : P * P = P) :
+    (1 - P) * (1 - P) = 1 - P := by
+  rw [show (1 - P) * (1 - P) = 1 - P - P + P * P from by noncomm_ring, hPid]
+  abel
+
+end OneSub
+
+/-! ## The closeness estimate
+
+The one inequality the soundness argument needs, and the only place a Cauchy--Schwarz is
+spent before the value comparison. Three families of projections: `O` a measurement, and `C`,
+`D` such that the products `C D` are a measurement too. Then the squared distance between
+`C_i D_i` and `O_i` is bounded by three times the two *disagreements* `τ(O_i(1 - D_i))` and
+`τ(O_i(1 - C_i))` --- linearly, with no square root. Writing `C_i O_i = O_i - X_i` and
+`D_i O_i = O_i - Y_i`, the two disagreements are exactly `∑ ‖X_i‖²` and `∑ ‖Y_i‖²`, and the
+only term that is not one of them is `∑ ⟨Y_i, X_i⟩`, which Cauchy--Schwarz and the
+arithmetic-geometric mean inequality bound by half their sum. -/
+
+section Estimate
+
+variable [DecidableEq n]
+
+theorem sum_hsNormSq_sub_le {ι : Type*} [Fintype ι] (O C D : ι → Matrix n n ℂ)
+    (hO : ∀ i, star (O i) = O i) (hOid : ∀ i, O i * O i = O i)
+    (hC : ∀ i, star (C i) = C i) (hCid : ∀ i, C i * C i = C i)
+    (hD : ∀ i, star (D i) = D i) (hDid : ∀ i, D i * D i = D i)
+    (hOsum : ∑ i, ntr (O i) = 1) (hCDsum : ∑ i, ntr (C i * D i) = 1) :
+    ∑ i, hsNormSq (C i * D i - O i)
+      ≤ 3 * ((∑ i, ntr (O i * (1 - D i))) + ∑ i, ntr (O i * (1 - C i))) := by
+  -- the two error families, and their squared norms
+  have hX : ∀ i, hsNormSq ((1 - C i) * O i) = ntr (O i * (1 - C i)) := fun i => by
+    rw [hsNormSq_mul_of_proj (star_one_sub (hC i)) (one_sub_mul_one_sub (hCid i)) (hO i) (hOid i),
+      ntr_mul_comm]
+  have hY : ∀ i, hsNormSq ((1 - D i) * O i) = ntr (O i * (1 - D i)) := fun i => by
+    rw [hsNormSq_mul_of_proj (star_one_sub (hD i)) (one_sub_mul_one_sub (hDid i)) (hO i) (hOid i),
+      ntr_mul_comm]
+  have hαnn : 0 ≤ ∑ i, ntr (O i * (1 - D i)) := by
+    rw [Finset.sum_congr rfl fun i _ => (hY i).symm]
+    exact Finset.sum_nonneg fun i _ => hsNormSq_nonneg _
+  have hβnn : 0 ≤ ∑ i, ntr (O i * (1 - C i)) := by
+    rw [Finset.sum_congr rfl fun i _ => (hX i).symm]
+    exact Finset.sum_nonneg fun i _ => hsNormSq_nonneg _
+  -- the left-hand side, term by term
+  have hlhs : ∑ i, hsNormSq (C i * D i - O i)
+      = 2 - 2 * ∑ i, ntr (O i * D i * C i) := by
+    have hterm : ∀ i, hsNormSq (C i * D i - O i)
+        = ntr (C i * D i) - 2 * ntr (O i * D i * C i) + ntr (O i) := fun i => by
+      rw [hsNormSq_sub, hsNormSq_mul_of_proj (hC i) (hCid i) (hD i) (hDid i),
+        re_hsInner_mul_of_proj (hC i) (hD i), hsNormSq_of_proj (hO i) (hOid i)]
+    rw [Finset.sum_congr rfl fun i _ => hterm i]
+    rw [show (∑ i, (ntr (C i * D i) - 2 * ntr (O i * D i * C i) + ntr (O i)))
+        = ((∑ i, ntr (C i * D i)) - ∑ i, 2 * ntr (O i * D i * C i)) + ∑ i, ntr (O i) from by
+      rw [Finset.sum_add_distrib, Finset.sum_sub_distrib], hOsum, hCDsum,
+      ← Finset.mul_sum]
+    ring
+  -- the triple trace, expanded through the two error families
+  have hmid : ∑ i, ntr (O i * D i * C i)
+      = 1 - (∑ i, ntr (O i * (1 - C i))) - (∑ i, ntr (O i * (1 - D i)))
+        + ∑ i, (hsInner ((1 - D i) * O i) ((1 - C i) * O i)).re := by
+    have hsplit : ∀ i, ntr (O i * D i * C i)
+        = ntr (O i) - ntr (O i * (1 - C i)) - ntr (O i * (1 - D i))
+          + (hsInner ((1 - D i) * O i) ((1 - C i) * O i)).re := fun i => by
+      rw [← re_hsInner_mul_mul_of_proj (hO i) (hOid i) (hD i),
+        show D i * O i = O i - (1 - D i) * O i from by noncomm_ring,
+        show C i * O i = O i - (1 - C i) * O i from by noncomm_ring,
+        re_hsInner_sub_left, re_hsInner_sub_right, re_hsInner_sub_right,
+        ← hsNormSq_eq_re_hsInner_self, hsNormSq_of_proj (hO i) (hOid i),
+        re_hsInner_self_mul_of_proj (hO i) (hOid i),
+        re_hsInner_mul_self_of_proj (hO i) (hOid i) (star_one_sub (hD i))]
+      ring
+    rw [Finset.sum_congr rfl fun i _ => hsplit i]
+    rw [show (∑ i, (ntr (O i) - ntr (O i * (1 - C i)) - ntr (O i * (1 - D i))
+          + (hsInner ((1 - D i) * O i) ((1 - C i) * O i)).re))
+        = (((∑ i, ntr (O i)) - ∑ i, ntr (O i * (1 - C i))) - ∑ i, ntr (O i * (1 - D i)))
+          + ∑ i, (hsInner ((1 - D i) * O i) ((1 - C i) * O i)).re from by
+      rw [Finset.sum_add_distrib, Finset.sum_sub_distrib, Finset.sum_sub_distrib], hOsum]
+  -- Cauchy--Schwarz on the one remaining term
+  have hcs : |∑ i, (hsInner ((1 - D i) * O i) ((1 - C i) * O i)).re|
+      ≤ √(∑ i, ntr (O i * (1 - D i))) * √(∑ i, ntr (O i * (1 - C i))) := by
+    refine (sum_abs_re_hsInner_le univ (fun i => (1 - D i) * O i)
+      (fun i => (1 - C i) * O i)).trans (le_of_eq ?_)
+    rw [Finset.sum_congr rfl fun i _ => hY i, Finset.sum_congr rfl fun i _ => hX i]
+  -- and the arithmetic-geometric mean inequality
+  have hamgm : √(∑ i, ntr (O i * (1 - D i))) * √(∑ i, ntr (O i * (1 - C i)))
+      ≤ ((∑ i, ntr (O i * (1 - D i))) + ∑ i, ntr (O i * (1 - C i))) / 2 := by
+    rw [← Real.sqrt_mul hαnn]
+    calc √((∑ i, ntr (O i * (1 - D i))) * ∑ i, ntr (O i * (1 - C i)))
+        ≤ √((((∑ i, ntr (O i * (1 - D i))) + ∑ i, ntr (O i * (1 - C i))) / 2) ^ 2) :=
+          Real.sqrt_le_sqrt (by nlinarith [sq_nonneg ((∑ i, ntr (O i * (1 - D i)))
+            - ∑ i, ntr (O i * (1 - C i)))])
+      _ = ((∑ i, ntr (O i * (1 - D i))) + ∑ i, ntr (O i * (1 - C i))) / 2 :=
+          Real.sqrt_sq (by positivity)
+  rw [hlhs, hmid]
+  have := abs_le.mp hcs
+  linarith [this.1, this.2]
+
+
+omit [DecidableEq n] in
+/-- **Close measurements have close values**: the measurement-level statement of
+`fact:approx-implies-close-value` (from [NW19, Fact 4.31]), in the one direction the soundness
+argument needs and in the synchronous setting, where the products `C_i D_i` are automatically a
+measurement. **The square root is spent here, and only here.** -/
+theorem sum_ntr_mul_ge {ι : Type*} [Fintype ι] (O C D : ι → Matrix n n ℂ) (acc : Finset ι)
+    (hO : ∀ i, star (O i) = O i) (hOid : ∀ i, O i * O i = O i)
+    (hC : ∀ i, star (C i) = C i) (hCid : ∀ i, C i * C i = C i)
+    (hD : ∀ i, star (D i) = D i) (hDid : ∀ i, D i * D i = D i)
+    (hOsum : ∑ i, ntr (O i) = 1) :
+    (∑ i ∈ acc, ntr (O i)) - 2 * √(∑ i, hsNormSq (C i * D i - O i))
+      ≤ ∑ i ∈ acc, ntr (C i * D i) := by
+  have hOnn : ∀ i, 0 ≤ ntr (O i) := fun i => by
+    rw [← hsNormSq_of_proj (hO i) (hOid i)]
+    exact hsNormSq_nonneg _
+  have hterm : ∀ i, ntr (C i * D i)
+      = ntr (O i) + 2 * (hsInner (O i) (C i * D i - O i)).re
+        + hsNormSq (C i * D i - O i) := fun i => by
+    have h1 : hsNormSq (O i + (C i * D i - O i))
+        = hsNormSq (O i) + 2 * (hsInner (O i) (C i * D i - O i)).re
+          + hsNormSq (C i * D i - O i) := hsNormSq_add _ _
+    rw [show O i + (C i * D i - O i) = C i * D i from by abel] at h1
+    rw [← hsNormSq_mul_of_proj (hC i) (hCid i) (hD i) (hDid i), h1,
+      hsNormSq_of_proj (hO i) (hOid i)]
+  have hsum : ∑ i ∈ acc, ntr (C i * D i)
+      = (∑ i ∈ acc, ntr (O i)) + 2 * (∑ i ∈ acc, (hsInner (O i) (C i * D i - O i)).re)
+        + ∑ i ∈ acc, hsNormSq (C i * D i - O i) := by
+    rw [Finset.sum_congr rfl fun i _ => hterm i, Finset.sum_add_distrib, Finset.sum_add_distrib,
+      ← Finset.mul_sum]
+  have hEnn : 0 ≤ ∑ i ∈ acc, hsNormSq (C i * D i - O i) :=
+    Finset.sum_nonneg fun i _ => hsNormSq_nonneg _
+  have hcs : |∑ i ∈ acc, (hsInner (O i) (C i * D i - O i)).re|
+      ≤ √(∑ i ∈ acc, hsNormSq (O i)) * √(∑ i ∈ acc, hsNormSq (C i * D i - O i)) :=
+    sum_abs_re_hsInner_le acc _ _
+  have h3 : √(∑ i ∈ acc, hsNormSq (O i)) ≤ 1 := by
+    rw [Finset.sum_congr rfl fun i _ => hsNormSq_of_proj (hO i) (hOid i), ← Real.sqrt_one]
+    refine Real.sqrt_le_sqrt ?_
+    rw [← hOsum]
+    exact Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _) fun i _ _ => hOnn i
+  have h4 : √(∑ i ∈ acc, hsNormSq (C i * D i - O i))
+      ≤ √(∑ i, hsNormSq (C i * D i - O i)) :=
+    Real.sqrt_le_sqrt (Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
+      fun i _ _ => hsNormSq_nonneg _)
+  have hmul : √(∑ i ∈ acc, hsNormSq (O i)) * √(∑ i ∈ acc, hsNormSq (C i * D i - O i))
+      ≤ 1 * √(∑ i, hsNormSq (C i * D i - O i)) :=
+    mul_le_mul h3 h4 (Real.sqrt_nonneg _) zero_le_one
+  rw [hsum]
+  have hb := abs_le.mp hcs
+  rw [one_mul] at hmul
+  linarith [hb.1, hb.2]
+
+end Estimate
 
 /-! ## The averaging step -/
 
