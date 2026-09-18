@@ -21,7 +21,7 @@ The shape of the argument:
 * a strategy `S` for `clGame` with `ldc = 1` is turned into one for `lidtGame` by reindexing the
   questions along `qmapS` (a canonical line becomes a seeded description of its reversal) and
   coarse-graining the answers along `amap` (the diagonal answer is affinely reparametrized);
-* `hD_qmap` says the adapted strategy is accepted wherever `S` is, and `hμ_qmapS` says the
+* `hD_qmap` says the adapted strategy is accepted wherever `S` is, and `pushforward_le` says the
   push-forward of the question distribution costs a factor `3m`, so
   `exists_one_sub_value_adapt_le` produces one member of the averaging family whose adapted
   strategy has `1 - value ≤ 3m ε`;
@@ -211,7 +211,7 @@ theorem val_mats_evalPOVM_revMeas {n : Type*} [Fintype n] [DecidableEq n]
 A strategy for `clGame` passing with probability at least `1 - ε` has point measurements
 consistent, up to `lidtError m d q k (3m·ε)`, with the evaluations of a single measurement with
 low-individual-degree outcomes --- one per player, the two consistent with each other. The
-factor `3m` is the push-forward cost of the adapter (`hμ_qmapS`); the `k` is free subject to
+factor `3m` is the push-forward cost of the adapter (`pushforward_le`); the `k` is free subject to
 `k ≥ 400md`, exactly as in the canonical-line theorem.
 
 This is the `ldc = 1` case of `thm:lidt-cl-soundness` *with the error in the canonical-line
@@ -240,7 +240,7 @@ theorem clSoundness_ldc_one
     (rB := fun (σc : Seed F m) (y' : Question F m) => amap (σc.2 : F) y')
     (C := 3 * m)
     (fun σc x' y' a b hμ0 hacc => hD_qmap hm σc.1 σc.2.2 x' y' hμ0 a b hacc)
-    (fun x y => hμ_qmapS (d := d) (ldc := 1) hm x y)
+    (fun x y => pushforward_le (d := d) (ldc := 1) hm x y)
   -- the adapted strategy is good
   have hval' : 1 - (adapted σc S).value ≤ 3 * (m : ℝ) * (1 - S.value) := hval
   have hS'val : 1 - 3 * (m : ℝ) * ε ≤ (adapted σc S).value := by

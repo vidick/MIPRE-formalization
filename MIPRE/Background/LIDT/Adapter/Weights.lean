@@ -952,7 +952,7 @@ theorem cast_card_clSample :
 /-- **The axis-parallel shape of the push-forward bound.** The one contributing sample has weight
 `1/(6 m q^m)`, the family pins one seed index, and the seeded test puts at least `1/(9 q^{m+1})`
 on the pair; the three combine with room to spare at `C = 3m` (`3/2` would do). -/
-theorem hμ_axis (hm : m ∣ Fintype.card F) (u₀ : Point F m) (s₀ : F) (yp : Point F m) :
+theorem pushforward_axis (hm : m ∣ Fintype.card F) (u₀ : Point F m) (s₀ : F) (yp : Point F m) :
     (∑ σc : Seed F m,
         ∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = CL.Question.aline u₀ s₀),
         ∑ y' ∈ Finset.univ.filter (fun y' => qmapS hm σc y' = CL.Question.point yp),
@@ -1063,7 +1063,7 @@ member, so both sides carry the same factor `|Seed|` and the requirement is the 
 `1/(3 q^m) ≤ C/(9 q^m)`. -/
 
 /-- **The point shape of the push-forward bound.** -/
-theorem hμ_point (hm : m ∣ Fintype.card F) (xp yp : Point F m) :
+theorem pushforward_point (hm : m ∣ Fintype.card F) (xp yp : Point F m) :
     (∑ σc : Seed F m,
         ∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = CL.Question.point xp),
         ∑ y' ∈ Finset.univ.filter (fun y' => qmapS hm σc y' = CL.Question.point yp),
@@ -1275,7 +1275,7 @@ theorem val_rev_idx0 : ((Fin.rev (idx0 : Fin m) : Fin m) : ℕ) = m - 1 := by
 weight at most `1/(6 m q^m q)`, the family pins the seed index but *not* the scale, and the seeded
 test has `q^{m-1}` samples for this question --- which is why `diagIdx` sends singleton lines to
 the last block. The three combine at `C = 3m` with a factor `2` to spare. -/
-theorem hμ_diag_zero (hm : m ∣ Fintype.card F) (u₀ : Point F m) (s₀ : F) (yp : Point F m) :
+theorem pushforward_diag_zero (hm : m ∣ Fintype.card F) (u₀ : Point F m) (s₀ : F) (yp : Point F m) :
     (∑ σc : Seed F m,
         ∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = CL.Question.dline u₀ s₀ 0),
         ∑ y' ∈ Finset.univ.filter (fun y' => qmapS hm σc y' = CL.Question.point yp),
@@ -1592,7 +1592,7 @@ contribute, each of weight at most `1/(6 m q^m q^{J+1})`, and the family is pinn
 seed index and on the scale, so only `(q/m)^{m-1}` of its members can contribute. Against the
 seeded test's `q^{χ}` samples, with `J + 1 + χ = m`, the constant comes out `3q/(2(q-1))`, which
 `C = 3m` covers for every `q ≥ 2`. -/
-theorem hμ_diag_ne (hm : m ∣ Fintype.card F) (u₀ : Point F m) (s₀ : F) {w : Point F m}
+theorem pushforward_diag_ne (hm : m ∣ Fintype.card F) (u₀ : Point F m) (s₀ : F) {w : Point F m}
     (hw : w ≠ 0) (yp : Point F m) :
     (∑ σc : Seed F m,
         ∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = CL.Question.dline u₀ s₀ w),
@@ -1781,7 +1781,7 @@ theorem filter_qmapS_line_line_eq_empty (hm : m ∣ Fintype.card F) (σc : Seed 
       exact hx _ (h1.symm : x = CL.Question.point (revPoint u))
 
 /-- **The shapes with a line on both sides carry no weight.** -/
-theorem hμ_line_line (hm : m ∣ Fintype.card F) (x y : CL.Question F m)
+theorem pushforward_line_line (hm : m ∣ Fintype.card F) (x y : CL.Question F m)
     (hx : ∀ u, x ≠ CL.Question.point u) (hy : ∀ u, y ≠ CL.Question.point u) :
     (∑ σc : Seed F m, ∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = x),
         ∑ y' ∈ Finset.univ.filter (fun y' => qmapS hm σc y' = y), (lidtGame F m d).μ x' y')
@@ -1807,7 +1807,7 @@ theorem hμ_line_line (hm : m ∣ Fintype.card F) (x y : CL.Question F m)
 
 /-- **The bound for `(x, y)` is the bound for `(y, x)`**, both tests being symmetric under
 exchanging the players. -/
-theorem hμ_swap (hm : m ∣ Fintype.card F) (x y : CL.Question F m)
+theorem pushforward_swap (hm : m ∣ Fintype.card F) (x y : CL.Question F m)
     (h : (∑ σc : Seed F m, ∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = y),
         ∑ y' ∈ Finset.univ.filter (fun y' => qmapS hm σc y' = x), (lidtGame F m d).μ x' y')
       ≤ (Fintype.card (Seed F m) : ℝ) * (3 * m * (clGame (d := d) (ldc := ldc) hm).μ y x)) :
@@ -1828,32 +1828,32 @@ test's mass on the fibre of a seeded question pair is at most `3m` times the see
 on it. This is the hypothesis `exists_one_sub_value_adapt_le` asks for, and `3m` is the constant
 `thm:lidt-cl-soundness` multiplies its `ε` by --- polynomial in `m`, as `δ_CL` allows, and free
 of `q`, which it does not. -/
-theorem hμ_qmapS (hm : m ∣ Fintype.card F) (x y : CL.Question F m) :
+theorem pushforward_le (hm : m ∣ Fintype.card F) (x y : CL.Question F m) :
     (∑ σc : Seed F m, ∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = x),
         ∑ y' ∈ Finset.univ.filter (fun y' => qmapS hm σc y' = y), (lidtGame F m d).μ x' y')
       ≤ (Fintype.card (Seed F m) : ℝ) *
           (3 * m * (clGame (d := d) (ldc := ldc) hm).μ x y) := by
   classical
   match x, y with
-  | .point xp, .point yp => exact hμ_point hm xp yp
-  | .aline u₀ s₀, .point yp => exact hμ_axis hm u₀ s₀ yp
+  | .point xp, .point yp => exact pushforward_point hm xp yp
+  | .aline u₀ s₀, .point yp => exact pushforward_axis hm u₀ s₀ yp
   | .dline u₀ s₀ w, .point yp =>
       by_cases hw : w = 0
-      · subst hw; exact hμ_diag_zero hm u₀ s₀ yp
-      · exact hμ_diag_ne hm u₀ s₀ hw yp
-  | .point xp, .aline u₀ s₀ => exact hμ_swap hm _ _ (hμ_axis hm u₀ s₀ xp)
+      · subst hw; exact pushforward_diag_zero hm u₀ s₀ yp
+      · exact pushforward_diag_ne hm u₀ s₀ hw yp
+  | .point xp, .aline u₀ s₀ => exact pushforward_swap hm _ _ (pushforward_axis hm u₀ s₀ xp)
   | .point xp, .dline u₀ s₀ w =>
-      refine hμ_swap hm _ _ ?_
+      refine pushforward_swap hm _ _ ?_
       by_cases hw : w = 0
-      · subst hw; exact hμ_diag_zero hm u₀ s₀ xp
-      · exact hμ_diag_ne hm u₀ s₀ hw xp
+      · subst hw; exact pushforward_diag_zero hm u₀ s₀ xp
+      · exact pushforward_diag_ne hm u₀ s₀ hw xp
   | .aline _ _, .aline _ _ =>
-      exact hμ_line_line hm _ _ (fun u => by simp) (fun u => by simp)
+      exact pushforward_line_line hm _ _ (fun u => by simp) (fun u => by simp)
   | .aline _ _, .dline _ _ _ =>
-      exact hμ_line_line hm _ _ (fun u => by simp) (fun u => by simp)
+      exact pushforward_line_line hm _ _ (fun u => by simp) (fun u => by simp)
   | .dline _ _ _, .aline _ _ =>
-      exact hμ_line_line hm _ _ (fun u => by simp) (fun u => by simp)
+      exact pushforward_line_line hm _ _ (fun u => by simp) (fun u => by simp)
   | .dline _ _ _, .dline _ _ _ =>
-      exact hμ_line_line hm _ _ (fun u => by simp) (fun u => by simp)
+      exact pushforward_line_line hm _ _ (fun u => by simp) (fun u => by simp)
 
 end MIPRE.LIDT.Adapter

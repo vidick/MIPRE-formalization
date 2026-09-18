@@ -97,18 +97,41 @@ Done when `lem:self-dual-basis` carries statement and proof `\leanok` modulo the
 makes the chunk worth its length: `thm:pcp-decider` currently *takes* a field representation
 as a parameter, and would then have one.
 
-## Chunk 3 — `thm:lidt-cl-soundness` and the CL adapter
+## Chunk 3 — `thm:lidt-cl-soundness` and the CL adapter — **done for `ldc = 1`**
 
-The gate to the whole of chapter 3's quantum half. State the seeded CL soundness theorem as
-an interface with its `δ_CL`, then prove it from the vendored canonical-line theorem through
-`lem:lidt-reduction-setup`, `lem:lidt-test-transfer`, `lem:lidt-sync-transfer` and
-`lem:lidt-derandomize`. `def:lidt-cl` and `card_chi_fiber` landed in #98 and #99, the latter
-being exactly `test-transfer`'s input.
+The gate to the whole of chapter 3's quantum half. It was scoped as: state the seeded CL
+soundness theorem as an interface with its `δ_CL`, then prove it from the vendored
+canonical-line theorem through `lem:lidt-reduction-setup`, `lem:lidt-test-transfer`,
+`lem:lidt-sync-transfer` and `lem:lidt-derandomize`. `def:lidt-cl` and `card_chi_fiber` landed
+in #98 and #99.
 
-The honest risk: `rem:lidt-cl-adapter` lists five obligations in the adapter, one of them a
-quantitative choice of the free sampling parameter, and the route passes through
-`thm:tensor-codes`. Scope it to the distribution and synchronicity lemmas and the parameter
-corollary, declaring `thm:tensor-codes` an input rather than absorbing it silently.
+**It was done by a different route, and that is worth knowing before reading the blueprint.**
+Those four lemmas are steps of the *paper's* tensor-code reduction, which is conditional on
+`thm:tensor-codes` — no Lean proof, and none coming soon. The canonical-line theorem this
+repository has proved is about `lidtGame`, and `rem:lidt-cl-adapter` already identified reducing
+to *it* as a separate, unconditional route. That route was taken (maintainer decision,
+2026-09-18), and the result is **`MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL`**, the
+`ldc = 1` case of `thm:lidt-cl-soundness` with the blueprint's own `δ_CL`, resting on
+`propext`, `Classical.choice` and `Quot.sound` and nothing else.
+
+`planning/lidt-cl-adapter.md` is the full record: the route change and its reason, two
+corrections found while proving it, and the design of the adapter. Blueprint:
+`lem:lidt-cl-adapter-maps`, `lem:lidt-cl-adapter-weights`, `lem:lidt-cl-adapter-params` and
+`thm:lidt-cl-soundness-one`, all with proof-level `\leanok` and guards in
+`MIPRE/Background/LIDT/Axioms.lean`.
+
+What is still open here, and is not small:
+
+* **`ldc > 1`**, which is `lem:lidt-ldc` and the paper's Steps 1–5. Every use of the seeded
+  theorem in chapter 3 is at `ldc = 1`, so this is not on the critical path, but
+  `thm:lidt-cl-soundness` as stated is not proved without it.
+* **The four lemmas of the paper's route**, which this route certifies and does not touch. They
+  remain formalization targets for anyone who wants the tensor-code route, and
+  `rem:lidt-cl-adapter` says the implication fails in both directions. In particular
+  `lem:lidt-sync-transfer` has no counterpart on the canonical-line route at all: `lidtGame`'s
+  only same-type subtest is point self-consistency, so there is no line synchronicity to
+  transfer. That is why this route needs no Schwartz–Zippel and picks up no `d/q` term of its
+  own.
 
 ## Chunk 4 — `thm:qld`
 
