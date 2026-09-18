@@ -63,6 +63,40 @@ theorem sum_sum_fiberwise₂ {M : Type*} [AddCommMonoid M] [DecidableEq A'] [Dec
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [← Finset.sum_fiberwise (Finset.univ : Finset B) rB (fun b => f a b)]
 
+/-! ## Question-dependent merging of outcomes -/
+
+namespace ProjectiveMeasurement
+
+/-- Merge the outcomes of `P` along a coarse-graining that may depend on the question, while
+reindexing the questions. `GameTransport`'s `merge` is the case of a coarse-graining that does
+not depend on the question; a reduction generally needs the dependence, because how an answer
+must be converted can depend on which question was asked --- the reparametrization of a line
+answer depends on the line. -/
+def mergeAt {X X' A A' : Type*} [Fintype A] [Fintype A'] [DecidableEq A'] {n : Type*}
+    [Fintype n] [DecidableEq n] (P : ProjectiveMeasurement X A (Matrix n n ℂ)) (qX : X' → X)
+    (r : X' → A → A') : ProjectiveMeasurement X' A' (Matrix n n ℂ) where
+  M x' a' := ∑ a ∈ Finset.univ.filter (fun a => r x' a = a'), P.M (qX x') a
+  selfAdjoint x' a' := by
+    rw [star_sum]
+    exact Finset.sum_congr rfl fun a _ => P.selfAdjoint _ a
+  projective x' a' := by
+    rw [Finset.sum_mul_sum]
+    refine Finset.sum_congr rfl fun a ha => ?_
+    rw [Finset.sum_eq_single a (fun b _ hb => P.mul_eq_zero_of_ne _ (Ne.symm hb))
+      (fun h => absurd ha h)]
+    exact P.projective _ a
+  normalized x' := by
+    rw [Finset.sum_fiberwise]
+    exact P.normalized _
+
+@[simp] theorem mergeAt_M {X X' A A' : Type*} [Fintype A] [Fintype A'] [DecidableEq A']
+    {n : Type*} [Fintype n] [DecidableEq n] (P : ProjectiveMeasurement X A (Matrix n n ℂ))
+    (qX : X' → X) (r : X' → A → A') (x' : X') (a' : A') :
+    (P.mergeAt qX r).M x' a'
+      = ∑ a ∈ Finset.univ.filter (fun a => r x' a = a'), P.M (qX x') a := rfl
+
+end ProjectiveMeasurement
+
 namespace TensorProductStrategy
 
 variable {G : Game X Y A B}
@@ -136,45 +170,47 @@ section Adapt
 variable [DecidableEq A'] [DecidableEq B']
 
 /-- **Play `S` on `G'`**, through a map `qA`, `qB` of `G'`'s questions into `G`'s and a
-coarse-graining `rA`, `rB` of `G`'s answers into `G'`'s: the measurement at a question `x'` of
-`G'` is the one `S` uses at `qA x'`, with its outcomes merged along `rA`. -/
+coarse-graining `rA`, `rB` of `G`'s answers into `G'`'s that may depend on the question: the
+measurement at a question `x'` of `G'` is the one `S` uses at `qA x'`, with its outcomes merged
+along `rA x'`. -/
 noncomputable def adapt (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
-    (qA : X' → X) (qB : Y' → Y) (rA : A → A') (rB : B → B') : TensorProductStrategy G' :=
-  ⟨S.dA, S.dB, S.ψ, S.ψ_unit, (S.PA.merge rA).reindex qA (Equiv.refl A'),
-    (S.PB.merge rB).reindex qB (Equiv.refl B')⟩
+    (qA : X' → X) (qB : Y' → Y) (rA : X' → A → A') (rB : Y' → B → B') :
+    TensorProductStrategy G' :=
+  ⟨S.dA, S.dB, S.ψ, S.ψ_unit, S.PA.mergeAt qA rA, S.PB.mergeAt qB rB⟩
 
 /-- The adapted Born-rule probability is the sum over the fibres of the coarse-graining. -/
 theorem born_adapt (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
-    (qA : X' → X) (qB : Y' → Y) (rA : A → A') (rB : B → B') (x' : X') (y' : Y')
+    (qA : X' → X) (qB : Y' → Y) (rA : X' → A → A') (rB : Y' → B → B') (x' : X') (y' : Y')
     (a' : A') (b' : B') :
     (S.adapt G' qA qB rA rB).born x' y' a' b'
-      = ∑ a ∈ Finset.univ.filter (fun a => rA a = a'),
-          ∑ b ∈ Finset.univ.filter (fun b => rB b = b'), S.born (qA x') (qB y') a b := by
-  have hsplit : ((S.PA.merge rA).M (qA x') a' ⊗ₖ (S.PB.merge rB).M (qB y') b')
-      = ∑ a ∈ Finset.univ.filter (fun a => rA a = a'),
-          ∑ b ∈ Finset.univ.filter (fun b => rB b = b'),
+      = ∑ a ∈ Finset.univ.filter (fun a => rA x' a = a'),
+          ∑ b ∈ Finset.univ.filter (fun b => rB y' b = b'), S.born (qA x') (qB y') a b := by
+  have hsplit : ((S.PA.mergeAt qA rA).M x' a' ⊗ₖ (S.PB.mergeAt qB rB).M y' b')
+      = ∑ a ∈ Finset.univ.filter (fun a => rA x' a = a'),
+          ∑ b ∈ Finset.univ.filter (fun b => rB y' b = b'),
             S.PA.M (qA x') a ⊗ₖ S.PB.M (qB y') b := by
     ext p q
-    simp only [ProjectiveMeasurement.merge_M, Matrix.sum_apply, kroneckerMap_apply,
+    simp only [ProjectiveMeasurement.mergeAt_M, Matrix.sum_apply, kroneckerMap_apply,
       Finset.sum_mul_sum]
-  show (star S.ψ ⬝ᵥ (((S.PA.merge rA).M (qA x') a' ⊗ₖ
-    (S.PB.merge rB).M (qB y') b') *ᵥ S.ψ)).re = _
+  show (star S.ψ ⬝ᵥ (((S.PA.mergeAt qA rA).M x' a' ⊗ₖ
+    (S.PB.mergeAt qB rB).M y' b') *ᵥ S.ψ)).re = _
   rw [hsplit, Matrix.sum_mulVec, dotProduct_sum, Complex.re_sum]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [Matrix.sum_mulVec, dotProduct_sum, Complex.re_sum]
   rfl
 
-/-- The adapted conditional success probability, as a sum over `G`'s answers: the coarse-graining
-disappears into the decision predicate. -/
+/-- The adapted conditional success probability, as a sum over `G`'s answers: the
+coarse-graining disappears into the decision predicate. -/
 theorem succAt_adapt_eq (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
-    (qA : X' → X) (qB : Y' → Y) (rA : A → A') (rB : B → B') (x' : X') (y' : Y') :
+    (qA : X' → X) (qB : Y' → Y) (rA : X' → A → A') (rB : Y' → B → B') (x' : X') (y' : Y') :
     (S.adapt G' qA qB rA rB).succAt x' y'
-      = ∑ a, ∑ b, (if G'.D x' y' (rA a) (rB b) then 1 else 0)
+      = ∑ a, ∑ b, (if G'.D x' y' (rA x' a) (rB y' b) then 1 else 0)
           * S.born (qA x') (qB y') a b := by
   unfold succAt
   simp_rw [born_adapt]
-  rw [← sum_sum_fiberwise₂ rA rB (fun a b => (if G'.D x' y' (rA a) (rB b) then 1 else 0)
-    * S.born (qA x') (qB y') a b)]
+  rw [← sum_sum_fiberwise₂ (rA x') (rB y')
+    (fun a b => (if G'.D x' y' (rA x' a) (rB y' b) then 1 else 0)
+      * S.born (qA x') (qB y') a b)]
   refine Finset.sum_congr rfl fun a' _ => Finset.sum_congr rfl fun b' _ => ?_
   rw [Finset.mul_sum]
   refine Finset.sum_congr rfl fun a ha => ?_
@@ -186,8 +222,8 @@ theorem succAt_adapt_eq (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
 still accepted by `G'` at `(x', y')` after coarse-graining, the adapted strategy succeeds at
 least as often there. -/
 theorem succAt_le_succAt_adapt (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
-    (qA : X' → X) (qB : Y' → Y) (rA : A → A') (rB : B → B') (x' : X') (y' : Y')
-    (hD : ∀ a b, G.D (qA x') (qB y') a b = true → G'.D x' y' (rA a) (rB b) = true) :
+    (qA : X' → X) (qB : Y' → Y) (rA : X' → A → A') (rB : Y' → B → B') (x' : X') (y' : Y')
+    (hD : ∀ a b, G.D (qA x') (qB y') a b = true → G'.D x' y' (rA x' a) (rB y' b) = true) :
     S.succAt (qA x') (qB y') ≤ (S.adapt G' qA qB rA rB).succAt x' y' := by
   rw [succAt_adapt_eq]
   unfold succAt
@@ -200,8 +236,8 @@ theorem succAt_le_succAt_adapt (S : TensorProductStrategy G) (G' : Game X' Y' A'
 
 /-- Equivalently: the adapted strategy fails no more often. -/
 theorem failAt_adapt_le (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
-    (qA : X' → X) (qB : Y' → Y) (rA : A → A') (rB : B → B') (x' : X') (y' : Y')
-    (hD : ∀ a b, G.D (qA x') (qB y') a b = true → G'.D x' y' (rA a) (rB b) = true) :
+    (qA : X' → X) (qB : Y' → Y) (rA : X' → A → A') (rB : Y' → B → B') (x' : X') (y' : Y')
+    (hD : ∀ a b, G.D (qA x') (qB y') a b = true → G'.D x' y' (rA x' a) (rB y' b) = true) :
     (S.adapt G' qA qB rA rB).failAt x' y' ≤ S.failAt (qA x') (qB y') := by
   simp only [failAt]
   linarith [succAt_le_succAt_adapt S G' qA qB rA rB x' y' hD]
@@ -213,8 +249,8 @@ variable [DecidableEq X] [DecidableEq Y]
 /-- The failure of the adapted strategy, bounded by `G`'s failure weighted by the push-forward
 of `G'`'s distribution. -/
 theorem one_sub_value_adapt_le_sum (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
-    (qA : X' → X) (qB : Y' → Y) (rA : A → A') (rB : B → B')
-    (hD : ∀ x' y' a b, G.D (qA x') (qB y') a b = true → G'.D x' y' (rA a) (rB b) = true) :
+    (qA : X' → X) (qB : Y' → Y) (rA : X' → A → A') (rB : Y' → B → B')
+    (hD : ∀ x' y' a b, G.D (qA x') (qB y') a b = true → G'.D x' y' (rA x' a) (rB y' b) = true) :
     1 - (S.adapt G' qA qB rA rB).value
       ≤ ∑ x, ∑ y, (∑ x' ∈ Finset.univ.filter (fun x' => qA x' = x),
           ∑ y' ∈ Finset.univ.filter (fun y' => qB y' = y), G'.μ x' y') * S.failAt x y := by
@@ -235,11 +271,11 @@ theorem one_sub_value_adapt_le_sum (S : TensorProductStrategy G) (G' : Game X' Y
         rw [(Finset.mem_filter.1 hx').2, (Finset.mem_filter.1 hy').2]
 
 /-- **The cost of the adapter.** If the push-forward of `G'`'s question distribution along
-`(qA, qB)` is dominated by `C` times `G`'s, the adapted strategy's failure is at most `C`
-times `S`'s. -/
+`(qA, qB)` is dominated by `C` times `G`'s, the adapted strategy's failure is at most `C` times
+`S`'s. -/
 theorem one_sub_value_adapt_le (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
-    (qA : X' → X) (qB : Y' → Y) (rA : A → A') (rB : B → B') (C : ℝ)
-    (hD : ∀ x' y' a b, G.D (qA x') (qB y') a b = true → G'.D x' y' (rA a) (rB b) = true)
+    (qA : X' → X) (qB : Y' → Y) (rA : X' → A → A') (rB : Y' → B → B') (C : ℝ)
+    (hD : ∀ x' y' a b, G.D (qA x') (qB y') a b = true → G'.D x' y' (rA x' a) (rB y' b) = true)
     (hμ : ∀ x y, (∑ x' ∈ Finset.univ.filter (fun x' => qA x' = x),
         ∑ y' ∈ Finset.univ.filter (fun y' => qB y' = y), G'.μ x' y') ≤ C * G.μ x y) :
     1 - (S.adapt G' qA qB rA rB).value ≤ C * (1 - S.value) := by
@@ -259,22 +295,23 @@ conclusion. This is how a reduction that must *choose* a preimage of each target
 back the size of the fibre. -/
 theorem exists_one_sub_value_adapt_le {Seed : Type*} [Fintype Seed] [Nonempty Seed]
     (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
-    (qA : Seed → X' → X) (qB : Seed → Y' → Y) (rA : A → A') (rB : B → B') (C : ℝ)
+    (qA : Seed → X' → X) (qB : Seed → Y' → Y) (rA : Seed → X' → A → A')
+    (rB : Seed → Y' → B → B') (C : ℝ)
     (hD : ∀ σ x' y' a b,
-      G.D (qA σ x') (qB σ y') a b = true → G'.D x' y' (rA a) (rB b) = true)
+      G.D (qA σ x') (qB σ y') a b = true → G'.D x' y' (rA σ x' a) (rB σ y' b) = true)
     (hμ : ∀ x y, (∑ σ, ∑ x' ∈ Finset.univ.filter (fun x' => qA σ x' = x),
         ∑ y' ∈ Finset.univ.filter (fun y' => qB σ y' = y), G'.μ x' y')
       ≤ (Fintype.card Seed : ℝ) * (C * G.μ x y)) :
-    ∃ σ : Seed, 1 - (S.adapt G' (qA σ) (qB σ) rA rB).value ≤ C * (1 - S.value) := by
+    ∃ σ : Seed,
+      1 - (S.adapt G' (qA σ) (qB σ) (rA σ) (rB σ)).value ≤ C * (1 - S.value) := by
   classical
-  -- the sum over the family of the adapted failures is at most `|Seed| * C * (1 - S.value)`
-  have hsum : ∑ σ : Seed, (1 - (S.adapt G' (qA σ) (qB σ) rA rB).value)
+  have hsum : ∑ σ : Seed, (1 - (S.adapt G' (qA σ) (qB σ) (rA σ) (rB σ)).value)
       ≤ ∑ _σ : Seed, C * (1 - S.value) := by
-    calc ∑ σ : Seed, (1 - (S.adapt G' (qA σ) (qB σ) rA rB).value)
+    calc ∑ σ : Seed, (1 - (S.adapt G' (qA σ) (qB σ) (rA σ) (rB σ)).value)
         ≤ ∑ σ : Seed, ∑ x, ∑ y, (∑ x' ∈ Finset.univ.filter (fun x' => qA σ x' = x),
             ∑ y' ∈ Finset.univ.filter (fun y' => qB σ y' = y), G'.μ x' y') * S.failAt x y :=
           Finset.sum_le_sum fun σ _ =>
-            one_sub_value_adapt_le_sum S G' (qA σ) (qB σ) rA rB (hD σ)
+            one_sub_value_adapt_le_sum S G' (qA σ) (qB σ) (rA σ) (rB σ) (hD σ)
       _ = ∑ x, ∑ y, (∑ σ : Seed, ∑ x' ∈ Finset.univ.filter (fun x' => qA σ x' = x),
             ∑ y' ∈ Finset.univ.filter (fun y' => qB σ y' = y), G'.μ x' y') * S.failAt x y := by
           rw [Finset.sum_comm]
