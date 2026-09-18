@@ -192,11 +192,10 @@ write `s i = seedOf hm i (σ i)` (`Adapter/Seeds.lean`). Then
   nonzero coordinate of `ρ ℓ.2` and `sh(ℓ) = (ρ ℓ.1)_{p} / (ρ ℓ.2)_{p}` is the shift of the
   correction above; the base point is `rep (ρ ℓ.2) (ρ ℓ.1)` written out through `rep_eq`.
 
-The direction carried is **exactly** `ρ ℓ.2`, not a rescaling of it, which is legitimate because
-the seeded test's `DLine` questions carry the raw direction: choosing the unrescaled one makes
-the scale factor `1` and leaves only the shift. So `reparam 1 (sh ℓ)` is the whole answer
-conversion, and `rescaleEquiv` is not needed after all --- `lineParam_smul` stays as the lemma
-that justifies the choice.
+The direction carried was **exactly** `ρ ℓ.2`, not a rescaling of it, making the scale factor `1`
+and leaving only the shift, so that `reparam 1 (sh ℓ)` was the whole answer conversion. **See the
+second correction below: that is wrong**, and the scale has to be averaged over too, so the
+conversion is `reparam c (sh ℓ)`.
 
 ### The answer coarse-graining
 
@@ -228,6 +227,40 @@ and their swaps. In each, `clGame`'s acceptance first gives both answer formats,
   the case the affine rebasing exists for.
 
 The two swapped cases are the same with the roles exchanged.
+
+### Correction (2026-09-18, second): carrying the direction unrescaled breaks the weight bound
+
+The design above chooses the seeded question that carries the direction **exactly** `ρ ℓ.2`, so
+that the answer conversion is a pure shift. That choice is wrong, and the weight arithmetic is
+what shows it.
+
+The seeded test's `DLine` questions carry the raw direction, so for one geometric line there are
+`q - 1` questions differing only by the scale of the direction, and `μ` spreads over all of them.
+The unrescaled adapter maps into exactly **one** of them: the one whose reversal is normalized.
+So its push-forward is concentrated on a `1/(q-1)` fraction of the seeded questions it could
+have used, and at those questions it exceeds `μ` by a factor that grows with `q` --- even though
+the *aggregate* masses differ only by a constant (`1/3` against `1/9`). A per-pair bound
+`push-forward ≤ C · μ` therefore forces `C` to grow with `q`, and `C` must be `poly(m, d)`: the
+error it multiplies is the `ε` of `δ_CL`. Concretely the diagonal shape comes out needing
+`C ≥ 3q/2` where the point-point shape needs only `C ≥ 3`.
+
+**The fix is to average over the scale as well as the seed.** One *global* nonzero scale
+parameter suffices: for a given seeded question exactly one value of it makes the fibre
+nonempty, so the family grows by `q - 1` while the push-forward does not, and the ratio comes
+back to a constant. The axis subtest is unaffected, its questions carrying no direction at all
+(the direction is determined by `χ s`), so the extra parameter multiplies both sides equally
+there.
+
+Two consequences for the work. The averaging family becomes
+`(σ : Fin m → Fin (q/m)) × {c : F // c ≠ 0}`. And `amap` needs `reparam c (sh ℓ)` rather than
+`reparam 1 (sh ℓ)`, so the **general two-parameter** `reparam` is on the critical path after all,
+together with `lineParam_smul` --- which the previous correction had written off. `Reparam.lean`
+was built with general `a` and `b`, so nothing has to be rewritten, but `hD_diag` and `hD_diag'`
+will each need the scale threaded through. `hD_selfCons`, `hD_axis` and `hD_axis'` are unaffected.
+
+Status of this correction: the *structural* reason is certain --- the image misses `q - 2` of
+every `q - 1` scalings while `μ` does not --- and it is enough to rule the design out. The exact
+constants below are a hand derivation and have not been machine-checked.
 
 ### The weight domination, with the axis case computed
 
