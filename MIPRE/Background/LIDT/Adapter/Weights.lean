@@ -58,4 +58,45 @@ omit [DecidableEq F] [NeZero m] in
 theorem card_clSample_pos : 0 < Fintype.card (CL.Sample F m) :=
   Fintype.card_pos_iff.mpr ⟨⟨.point, .point, 0, 0, 0⟩⟩
 
+/-! ## The canonical-line test, shape by shape
+
+Each shape needs the set of samples producing a given question pair. For the point and
+axis-parallel shapes it is a singleton and the weight is read off directly; the diagonal shape is
+the one where several samples contribute. -/
+
+omit [NeZero m] in
+/-- **Only the self-consistency sample asks the same point twice.** -/
+theorem filter_questions_point (u : Point F m) :
+    Finset.univ.filter (fun s : Sample F m =>
+        s.questions = ((Question.point u : Question F m), Question.point u))
+      = {Sample.selfConsistency u} := by
+  classical
+  refine Finset.eq_singleton_iff_unique_mem.mpr ⟨?_, ?_⟩
+  · exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, rfl⟩
+  · intro s hs
+    have hq := (Finset.mem_filter.mp hs).2
+    match s, hq with
+    | Sample.selfConsistency u', hq =>
+        have hq' : (Question.point u', Question.point (F := F) u')
+            = (Question.point u, Question.point u) := hq
+        injection hq' with h1 _
+        injection h1 with h2
+        rw [h2]
+    | Sample.axis false u' i, hq =>
+        exact absurd hq (by simp [Sample.questions])
+    | Sample.axis true u' i, hq =>
+        exact absurd hq (by simp [Sample.questions])
+    | Sample.diag false u' j v, hq =>
+        exact absurd hq (by simp [Sample.questions])
+    | Sample.diag true u' j v, hq =>
+        exact absurd hq (by simp [Sample.questions])
+
+/-- **The canonical-line test's weight on a repeated point question**: the self-consistency
+subtest has probability `1/3` and its point is uniform. -/
+theorem lidtGame_μ_point (u : Point F m) :
+    (lidtGame F m d).μ (.point u) (.point u)
+      = 1 / (3 * Fintype.card (Point F m)) := by
+  rw [lidtGame_μ_eq, filter_questions_point, Finset.sum_singleton]
+  rfl
+
 end MIPRE.LIDT.Adapter
