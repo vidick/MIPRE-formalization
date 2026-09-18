@@ -139,4 +139,100 @@ theorem lidtGame_μ_axis (u : Point F m) (i : Fin m) :
   rw [lidtGame_μ_eq, filter_questions_axis, Finset.sum_singleton]
   rfl
 
+/-! ## The diagonal shape
+
+Here several samples contribute, so the weight is a sum. It does **not** have to be evaluated:
+in the push-forward bound the canonical-line weight appears only on the larger side, so an upper
+bound suffices, and bounding the sum by `count × largest term` costs only a factor `m` in the
+constant --- which `δ_CL` absorbs, being allowed a prefactor polynomial in `m` and `d`. What it
+may *not* absorb is a factor growing with `q`, so the `q`-exponent has to be right, and that is
+what `le_rev_diagIdx_of_questions` pins down. -/
+
+omit [Fintype F] [NeZero m] in
+/-- A sample producing a given diagonal line against a given point is a `diag` sample at that
+point whose direction is a **nonzero multiple** of the line's. -/
+theorem of_questions_diag {ℓ : Line F m} {u : Point F m} {s : Sample F m}
+    (hℓ : ∃ k, ℓ.2 k ≠ 0)
+    (hs : s.questions = ((Question.diagLine ℓ : Question F m), Question.point u)) :
+    ∃ (j : Fin m) (v : Fin ((j : ℕ) + 1) → F), s = Sample.diag false u j v ∧
+      ∃ c : F, c ≠ 0 ∧ (Sample.extend v : Point F m) = c • ℓ.2 := by
+  classical
+  match s, hs with
+  | Sample.diag false u' j v, hs =>
+      have hs' : ((Question.diagLine (Line.through u' (Sample.extend v)) : Question F m),
+          Question.point u') = (Question.diagLine ℓ, Question.point u) := hs
+      injection hs' with h1 h2
+      injection h2 with hu
+      subst hu
+      injection h1 with hthr
+      -- the direction cannot vanish, or the line's would too
+      have hz : ∃ k, (Sample.extend v : Point F m) k ≠ 0 := by
+        by_contra hcon
+        have h0 : (Sample.extend v : Point F m) = 0 :=
+          funext fun k => not_not.mp fun hk => hcon ⟨k, hk⟩
+        obtain ⟨k, hk⟩ := hℓ
+        rw [h0, Line.through, dif_neg (by simp)] at hthr
+        exact hk (by rw [← hthr]; simp)
+      set p := Fin.find (fun k => (Sample.extend v : Point F m) k ≠ 0) hz with hp
+      have hzp : (Sample.extend v : Point F m) p ≠ 0 := Fin.find_spec hz
+      refine ⟨j, v, rfl, (Sample.extend v : Point F m) p, hzp, ?_⟩
+      have hd : ℓ.2 = ((Sample.extend v : Point F m) p)⁻¹ • Sample.extend v := by
+        rw [← hthr, through_eq hz]
+      rw [hd, smul_smul, mul_inv_cancel₀ hzp, one_smul]
+  | Sample.diag true u' j v, hs => exact absurd hs (by simp [Sample.questions])
+  | Sample.axis false u' i, hs => exact absurd hs (by simp [Sample.questions])
+  | Sample.axis true u' i, hs => exact absurd hs (by simp [Sample.questions])
+  | Sample.selfConsistency u', hs => exact absurd hs (by simp [Sample.questions])
+
+omit [Fintype F] in
+/-- **The direction pins the `q`-exponent.** A sample producing the line has `j` at least the
+reversal of `diagIdx ℓ`: its direction vanishes above `j`, hence so does the line's, hence the
+*reversed* direction vanishes below `rev j`, so its first nonzero coordinate is at least
+`rev j`. -/
+theorem le_rev_diagIdx_of_questions {ℓ : Line F m} {u : Point F m} {j : Fin m}
+    {v : Fin ((j : ℕ) + 1) → F} (hℓ : ∃ k, ℓ.2 k ≠ 0)
+    (hs : (Sample.diag false u j v).questions
+      = ((Question.diagLine ℓ : Question F m), Question.point u)) :
+    ((Fin.rev (diagIdx ℓ) : ℕ)) ≤ (j : ℕ) := by
+  classical
+  obtain ⟨j', v', hjv, c, hc, hcv⟩ := of_questions_diag hℓ hs
+  injection hjv with _ _ hj hv
+  subst hj
+  -- the line's direction vanishes above `j`
+  have hvan : ∀ k : Fin m, (j : ℕ) < (k : ℕ) → ℓ.2 k = 0 := by
+    intro k hk
+    have hext : (Sample.extend v' : Point F m) k = 0 := by
+      rw [Sample.extend, dif_neg (by omega)]
+    have hprod : c * ℓ.2 k = 0 := by
+      have h := congrFun hcv k
+      rw [hext] at h
+      simpa using h.symm
+    rcases mul_eq_zero.mp hprod with h | h
+    · exact absurd h hc
+    · exact h
+  -- so the reversed direction vanishes below `rev j`, and `diagIdx` is its first nonzero index
+  have hex : ∃ k, (revPoint ℓ.2) k ≠ 0 := by
+    obtain ⟨k, hk⟩ := hℓ
+    exact ⟨Fin.rev k, by rwa [revPoint_apply, Fin.rev_rev]⟩
+  have hmin : ∀ k : Fin m, (k : ℕ) < (Fin.rev j : ℕ) → (revPoint ℓ.2) k = 0 := by
+    intro k hk
+    rw [revPoint_apply]
+    refine hvan _ ?_
+    have h1 : (Fin.rev j : ℕ) = m - ((j : ℕ) + 1) := Fin.val_rev j
+    have h2 : (Fin.rev k : ℕ) = m - ((k : ℕ) + 1) := Fin.val_rev k
+    have := k.isLt
+    have := j.isLt
+    omega
+  have hdi : diagIdx ℓ = Fin.find (fun k => (revPoint ℓ.2) k ≠ 0) hex := by
+    rw [diagIdx, dif_pos hex]
+  rw [hdi]
+  set P := Fin.find (fun k => (revPoint ℓ.2) k ≠ 0) hex with hPdef
+  by_contra hcon
+  have hcon' : (j : ℕ) < ((Fin.rev P : Fin m) : ℕ) := Nat.lt_of_not_le hcon
+  have h1 : ((Fin.rev P : Fin m) : ℕ) = m - ((P : ℕ) + 1) := Fin.val_rev P
+  have h2 : ((Fin.rev j : Fin m) : ℕ) = m - ((j : ℕ) + 1) := Fin.val_rev j
+  have h3 : (P : ℕ) < m := P.isLt
+  have h4 : (j : ℕ) < m := j.isLt
+  exact (Fin.find_spec hex) (hmin P (by omega))
+
 end MIPRE.LIDT.Adapter
