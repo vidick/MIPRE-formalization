@@ -34,6 +34,7 @@ Orthonormalization & Thm.~\ref{thm:orthonormalization} & \cite{dlS21} & \checkma
 Magic Square rigidity & Thm.~\ref{thm:ms-rigidity} & \cite{WBMS16} & easy \\
 Low individual degree test (canonical lines) & Thm.~\ref{thm:lidt-soundness} & \cite{JNVWY21qld} & \checkmark \\
 Low individual degree test (seeded CL) & Thm.~\ref{thm:lidt-cl-soundness} & \cite{AuditSync26} & hard \\
+Low individual degree test (seeded CL, one codeword) & Thm.~\ref{thm:lidt-cl-soundness-one} & \cite{JNVWY21qld} & \checkmark \\
 Low individual degree test (Pauli) & Thm.~\ref{thm:qld} & \cite{AuditSync26} & hard \\
 Direct parallel repetition (commuting-operator) & Thm.~\ref{thm:direct-repetition-co} & \cite{Vid26} & \checkmark \\
 Direct parallel repetition (entangled) & Thm.~\ref{thm:direct-repetition-q} & \cite{OpenAI26} & \checkmark \\
@@ -535,6 +536,10 @@ Theorem~\ref{thm:lidt-soundness}, and have no Lean proof marks here. The seeded 
 and its theorem are in the pinned paper snapshot~\cite{AuditSync26},
 \texttt{ldt.tex}, Definition of the game and Theorem \texttt{lem:ld-soundness}.
 
+The single-codeword case of the seeded theorem \emph{is} proved here, by a different route:
+an explicit adapter to the canonical-line test, Theorem~\ref{thm:lidt-cl-soundness-one} below.
+It certifies none of the paper's intermediate statements, and they certify none of it.
+
 \begin{definition}[Seeded CL low individual degree test]
 \label{def:lidt-cl}
 \uses{def:game,def:cl-canonical}
@@ -545,7 +550,8 @@ and its theorem are in the pinned paper snapshot~\cite{AuditSync26},
   MIPRE.LIDT.CL.accepts, MIPRE.LIDT.CL.clGame,
   MIPRE.LIDT.CL.accepts_aline_values_eq_false,
   MIPRE.LIDT.CL.accepts_point_apolys_eq_false, MIPRE.LIDT.CL.accepts_aline_dline,
-  MIPRE.LIDT.CL.aline_question_ne, MIPRE.LIDT.CL.card_chi_fiber}
+  MIPRE.LIDT.CL.aline_question_ne, MIPRE.LIDT.CL.card_chi_fiber,
+  MIPRE.LIDT.CL.Answer.toValue, MIPRE.LIDT.CL.pointPOVMA, MIPRE.LIDT.CL.pointPOVMB}
 \leanok
 For admissible $q$, positive integers $m,d,\mathrm{ldc}$ and $m\mid q$, the
 \emph{seeded CL test} is the paper's typed low-degree game with parameters
@@ -626,7 +632,7 @@ The full tuple consistency has no question average. This paper theorem remains a
 formalization target, including for $\mathrm{ldc}=1$.
 \end{theorem}
 
-\begin{remark}[Planned CL-to-canonical adapter and parameter corollary]
+\begin{remark}[The CL-to-canonical adapter and parameter corollary]
 \label{rem:lidt-cl-adapter}
 \uses{def:lidt-cl,def:lidt,thm:lidt-soundness,thm:lidt-cl-soundness}
 Reusing Theorem~\ref{thm:lidt-soundness} to prove the single-codeword case of
@@ -641,12 +647,171 @@ not assign the same measurement to different descriptions of the same line.
 A separate quantitative obligation is to choose an integer $k\geq400md$, $k>0$,
 and bound the canonical theorem's error, together with every adapter loss, by the
 single-codeword $\delta_{\mathrm{CL}}$ above. The simultaneous extension and the
-padded Pauli use must then propagate the changed dimension and any ancillas. Neither
-the adapter nor this parameter corollary is supplied by the existing Lean theorem.
+padded Pauli use must then propagate the changed dimension and any ancillas.
 Formalizing the paper's tensor-code route below is an alternative way to establish
 the seeded CL theorem; a proof by either route would not certify the intermediate
 claims of the other.
+
+\emph{Both obligations are now met for $\mathrm{ldc}=1$}, which is the case every use in
+this chapter needs: Lemmas~\ref{lem:lidt-cl-adapter-maps}--\ref{lem:lidt-cl-adapter-params}
+and Theorem~\ref{thm:lidt-cl-soundness-one}. What the adapter does \emph{not} supply is the
+simultaneous extension of Lemma~\ref{lem:lidt-ldc}, and it certifies none of
+Lemmas~\ref{lem:lidt-reduction-setup}--\ref{lem:lidt-derandomize}.
 \end{remark}
+
+\paragraph{The canonical-line route, and what it certifies.} The adapter and the parameter
+corollary the remark calls for are built, and the single-codeword case of
+Theorem~\ref{thm:lidt-cl-soundness} follows from Theorem~\ref{thm:lidt-soundness} --- which
+this project has --- rather than from the tensor code test, which it does not.
+\texttt{planning/lidt-cl-adapter.md} records the design, including two corrections found while
+proving it.
+
+One structural remark before the statements. The canonical-line test's only same-type subtest is
+point self-consistency, so a pair of two line questions carries no weight on that side and
+\emph{no line-synchronicity transfer is needed}: no Lemma~\ref{lem:lidt-sync-transfer}, no
+Schwartz--Zippel, and no $d/q$ term from that source. The paper's route needs them because the
+tensor code test has a line synchronicity condition. A $d/q$ term still appears in
+$\delta_{\mathrm{CL}}$, from the canonical-line theorem's own error.
+
+\begin{lemma}[The adapter's two maps, and acceptance]
+\label{lem:lidt-cl-adapter-maps}
+\uses{def:lidt-cl,def:lidt,def:tensor-strategy,def:cl-canonical}
+\lean{MIPRE.LIDT.Adapter.qmap, MIPRE.LIDT.Adapter.amap, MIPRE.LIDT.Adapter.hD_qmap}
+\leanok
+Assume $m\mid q$ and fix a family member: a seed position $\sigma(i)$ in each $\chi$-fibre, and a
+scale $c\neq0$. Let $\rho$ be coordinate reversal on $\F_q^m$. Map a canonical-line question to a
+seeded one by
+\[
+  \mathtt{point}\ u \mapsto \mathtt{Point}\ \rho u,\qquad
+  \ell \mapsto (L^{\mathrm{Ln}}_{\rho w}(\rho u_0),\ s_{\sigma},\ c\cdot\rho w),
+\]
+$w$ the direction of $\ell$ and $u_0$ its base point, with $s_\sigma$ the seed $\sigma$ selects in
+the fibre of the $\chi$-index of $\rho w$, and the third component omitted for an axis-parallel
+line. Map a seeded answer back by reading its single component, reparametrizing a diagonal-line
+polynomial affinely by $t\mapsto c^{-1}t+c^{-1}\mathrm{sh}(\ell)$, where $\mathrm{sh}(\ell)$ is the
+shift between the two tests' base points for $\ell$, and sending an answer whose format does not
+match its question to a fixed answer.
+
+Then on every question pair the canonical-line test gives positive weight, every answer pair the
+seeded test accepts at the images is accepted by the canonical-line test at the originals.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Five cases, one per shape of a canonical-line sample: point self-consistency, an axis-parallel
+line against a point, a diagonal line against a point, and the last two with the roles swapped.
+The format branches are unreachable, because the seeded test \emph{rejects} an answer whose
+format does not match its question.
+
+On axis-parallel lines the two tests' base points agree exactly, so the reparametrization is the
+identity there. On diagonal lines they do not: the seeded base point zeroes the coordinate at the
+first nonzero entry of $\rho w$, which is the reversal of the \emph{last} nonzero entry of $w$,
+while the canonical presentation zeroes it at the first. The two parameters of a point of the line
+therefore differ by the shift $\mathrm{sh}(\ell)$, and by the scale $c$; the affine
+reparametrization undoes both, and preserves the degree bound because composing with a degree-one
+polynomial does.
+
+The restriction to the support is not cosmetic: off it the claim is false, a pair of two line
+questions being a real question pair of the seeded test that the canonical-line test has no
+subtest for.
+\end{proof}
+
+\begin{lemma}[The adapter's cost in the question distributions]
+\label{lem:lidt-cl-adapter-weights}
+\uses{lem:lidt-cl-adapter-maps,def:lidt-cl,def:lidt}
+\lean{MIPRE.LIDT.Adapter.pushforward_le}
+\leanok
+Average the family of Lemma~\ref{lem:lidt-cl-adapter-maps} over the seed positions and the scale,
+uniformly and independently. Then for every seeded question pair $(x,y)$ the average
+canonical-line mass of its preimage is at most $3m$ times the seeded mass of $(x,y)$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Both distributions are sums over a sample type against an indicator, so the bound is a count of
+samples. Reordering the average puts it as a weight times a count of \emph{family members}, and
+that is what the shapes differ in: the image of a point question does not depend on the family
+member at all, while a line question's pins the seed position at one index and, for a diagonal
+line, the scale as well.
+
+Four of the nine shapes carry no weight, by the structural remark above. For a pair of points the
+averaging is neutral and the requirement is $1/(3q^m)\leq C/(9q^m)$. For an axis-parallel line
+against a point the single contributing sample has weight $1/(6mq^m)$, the family is pinned at one
+of $m$ indices, and the seeded test puts at least $1/(9q^{m+1})$ on the pair, so $C\geq3/2$
+suffices --- the factor $q/m$ a fixed seed choice would have cost, paid back exactly by the
+averaging. For a diagonal line the crude bound ``number of contributing samples times the largest
+of their weights'' replaces the geometric series over the admissible $j$, which costs a factor
+$m$ and nothing in $q$; with the scale pinned as well the constant is $3q/(2(q-1))$, which $3m$
+covers for every $q\geq2$.
+
+Two points where the design is forced rather than free. Carrying the direction unrescaled would
+concentrate the push-forward on a $1/(q-1)$ fraction of the seeded questions describing the same
+line, and force $C$ to grow with $q$; averaging over one global scale fixes it. And a
+\emph{singleton} line --- direction zero --- must be sent to a seed with $\chi=m-1$, not $\chi=0$:
+the seeded test has $q^{\chi}$ samples for such a question, so only the largest $\chi$ dominates
+the canonical-line mass, and the wrong choice costs a factor $q^{m-1}$.
+\end{proof}
+
+\begin{lemma}[The parameter choice]
+\label{lem:lidt-cl-adapter-params}
+\uses{thm:lidt-soundness,thm:lidt-cl-soundness}
+\lean{MIPRE.LIDT.clK, MIPRE.LIDT.deltaCL, MIPRE.LIDT.lidtError_le_deltaCL}
+\leanok
+Take $a=2\cdot10^{11}$, $b=1/40000$ and $k=400m^3d+400m$. Then for all $m,d\geq1$, all $q$ and all
+$\eps\geq0$,
+\[
+  100000\,k^2m^4\Bigl((3m\eps)^{b}+(d/q)^{b}+e^{-k/(2560000m^2)}\Bigr)
+  \ \leq\ a(dm)^{a}\bigl(\eps^{b}+q^{-b}+2^{-bmd}\bigr),
+\]
+the left side being the error of Theorem~\ref{thm:lidt-soundness} at $k$ on failure $3m\eps$ and
+the right side $\delta_{\mathrm{CL}}$ at $\mathrm{ldc}=1$. Moreover $k\geq400md$ and $k>0$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Term by term. $(3m\eps)^b=(3m)^b\eps^b\leq 3m\,\eps^b$ and $(d/q)^b=d^b q^{-b}\leq d\,q^{-b}$,
+since $x^b\leq x$ for $x\geq1$ and $b\leq1$. The exponential is where $k$ is chosen:
+$e^{-k/(2560000m^2)}\leq2^{-bmd}$ asks for $k\geq 2560000\,b\,m^3d\ln2=64(\ln2)m^3d$, about
+$44.4\,m^3d$, and $400m^3d$ clears it; the $400m$ summand is there only so that $k>0$ and
+$k\geq400md$ hold for every $m,d\geq1$. The prefactor is then
+$100000k^2m^4\cdot3md\leq1.92\cdot10^{11}(dm)^{11}\leq a(dm)^a$, using $k\leq800m^3d$.
+
+$d\geq1$ is needed and is not cosmetic: at $d=0$ the right side is identically zero, so no
+positive error could be bounded by it.
+\end{proof}
+
+\begin{theorem}[Quantum soundness of the seeded CL test, one codeword]
+\label{thm:lidt-cl-soundness-one}
+\uses{def:lidt-cl,def:inconsistency,thm:lidt-soundness,lem:lidt-cl-adapter-maps,
+  lem:lidt-cl-adapter-weights,lem:lidt-cl-adapter-params}
+\lean{MIPRE.LIDT.Adapter.clSoundness_ldc_one, MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL}
+\leanok
+Let $m,d\geq1$, $m\mid q$ and $\eps\geq0$. Every projective strategy passing the seeded CL test at
+$(q,m,d,1)$ with probability at least $1-\eps$ admits projective measurements
+$G^\alice,G^\bob$ on the respective players' spaces with outcomes polynomials of individual degree
+at most $d$, such that A's point measurement is consistent with $G^\bob$ evaluated at the point on
+average over uniform $u\in\F_q^m$, $G^\alice$ evaluated at the point is consistent with B's point
+measurement, and $G^\alice$ and $G^\bob$ are consistent with each other, all with error at most
+$\delta_{\mathrm{CL}}(\eps,q,m,d,1)=a(dm)^a(\eps^b+q^{-b}+2^{-bmd})$ for the constants of
+Lemma~\ref{lem:lidt-cl-adapter-params}.
+\end{theorem}
+
+\begin{proof}
+\leanok
+Lemma~\ref{lem:lidt-cl-adapter-maps} gives, for each family member, a strategy for the
+canonical-line test built from the seeded one by reindexing the questions and coarse-graining the
+answers --- same spaces, same state, so projectivity and the dimensions are untouched.
+Lemma~\ref{lem:lidt-cl-adapter-weights} bounds the failure of the adapted strategy by $3m$ times
+the failure of the original, on average over the family, so some member achieves it; that is the
+choice of seed the seeding makes necessary. Theorem~\ref{thm:lidt-soundness} applies to it at the
+$k$ of Lemma~\ref{lem:lidt-cl-adapter-params}, and that lemma converts its error.
+
+The three conclusions come back through the coordinate reversal. It relabels the questions by a
+bijection that preserves the uniform distribution, and the outcomes by the same reversal of a
+polynomial's exponent vectors --- a bijection of the polynomials of individual degree at most $d$,
+the bound being symmetric in the variables --- under which evaluation at $u$ becomes evaluation at
+$\rho u$. Consistency is invariant under both.
+\end{proof}
 
 \effortMedium
 
@@ -888,8 +1053,9 @@ The sorry-free Lean proof of \texttt{MIPRE.LIDT.lowIndividualDegree\_soundness}
 establishes the canonical-line theorem by another route. It does not prove this
 tensor-code transfer, the Vidick corollary, or the Takagi bridge. They remain
 separate formalization targets on the paper's route. Reusing the existing Lean
-theorem instead requires Remark~\ref{rem:lidt-cl-adapter}'s open adapter and
-quantitative corollary.
+theorem instead goes through Remark~\ref{rem:lidt-cl-adapter}'s adapter, which is built
+for $\mathrm{ldc}=1$ (Theorem~\ref{thm:lidt-cl-soundness-one}) and needs no
+almost-synchronicity at all.
 \end{remark}
 
 \effortHard
@@ -935,9 +1101,12 @@ The paper's node $1.2.1$ is Theorem~\ref{thm:lidt-cl-soundness}: a seeded CL gam
 simultaneous outputs and a collapsed error. Its reduction to the two-prover
 tensor-code theorem and the reviewed decomposition of that theorem are mathematical
 source material~\cite{AuditSync26}, not Lean certificates. The existing canonical-line
-proof therefore does not discharge that node or its tensor-code subtree. Its reuse
-requires the adapter and chosen-$k$ estimate in Remark~\ref{rem:lidt-cl-adapter}; the
-growth in $k^2$ and decay in $e^{-k/(2560000m^2)}$ must be accounted for quantitatively.
+proof therefore does not discharge that node or its tensor-code subtree. Its reuse goes
+through the adapter and chosen-$k$ estimate of Remark~\ref{rem:lidt-cl-adapter}, both now
+supplied for $\mathrm{ldc}=1$: Theorem~\ref{thm:lidt-cl-soundness-one} discharges the
+single-codeword content of node $1.2.1$, by a route that certifies nothing in the subtree, and
+Lemma~\ref{lem:lidt-cl-adapter-params} is where the growth in $k^2$ and the decay in
+$e^{-k/(2560000m^2)}$ are accounted for.
 
 One node of the subtree is worth reading before reusing anything from it. Node
 $1.2.1.7.2.4$ records that the interface between the product-basis transposes
@@ -984,7 +1153,8 @@ workhorse of question reduction: introspection certifies the players' sampling o
 their own questions against Pauli basis measurements. The reduction uses direct
 Magic Square anticommutation, linearity and orthonormalization, together with the
 seeded CL theorem. The available canonical-line theorem can replace the paper's
-classical route only after the obligations in Remark~\ref{rem:lidt-cl-adapter} are met.
+classical route through Remark~\ref{rem:lidt-cl-adapter}'s adapter, which supplies the
+$\mathrm{ldc}=1$ case this reduction uses (Theorem~\ref{thm:lidt-cl-soundness-one}).
 
 The theorem's bipartite statement matches the pipeline's $\valstar$ soundness
 interface, so its uses require no additional synchronous-value transport. The verification
@@ -1021,9 +1191,9 @@ There are five stages.
 \end{enumerate}
 Stage 4 consumes Theorem~\ref{thm:lidt-cl-soundness} at $(q,4m,d,1)$, after
 constructing a strategy for the seeded CL game and projectivizing its line POVMs.
-Theorem~\ref{thm:lidt-soundness} provides reusable checked analysis, but does not yet
-justify this application: the game adapter and error corollary in
-Remark~\ref{rem:lidt-cl-adapter} remain open. Stage 5 recovers the Pauli group
+Theorem~\ref{thm:lidt-soundness} justifies this application through
+Theorem~\ref{thm:lidt-cl-soundness-one}, the $\mathrm{ldc}=1$ case being exactly what stage 4
+consumes; what stage 4 must still supply is the padding itself. Stage 5 recovers the Pauli group
 relations exactly, which permits the standard swap isometry; the expanded
 measurements in stage 3 satisfy only approximate commutation.
 \end{remark}
@@ -1284,9 +1454,9 @@ fresh local product ancillas and extend the point measurements by identity, pres
 all tested cross-party probabilities. Theorem~\ref{thm:lidt-cl-soundness} then gives
 the projective global polynomial measurement and its collapsed error. Recovering
 the pair $(g_X,g_Z)$ gives the stated simultaneous measurement.
-This is the paper's application~\cite{AuditSync26}, \texttt{qld-combining.tex}; using
-the canonical-line Lean theorem in its place requires
-Remark~\ref{rem:lidt-cl-adapter}.
+This is the paper's application~\cite{AuditSync26}, \texttt{qld-combining.tex}; the
+canonical-line Lean theorem can be used in its place through
+Theorem~\ref{thm:lidt-cl-soundness-one}, which is at $\mathrm{ldc}=1$.
 \end{proof}
 
 \subsubsection{Separation and the swap isometry}

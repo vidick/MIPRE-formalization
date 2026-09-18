@@ -204,6 +204,9 @@ omit [Field F] in
 theorem revPoint_eq_iff {x y : Fin n → F} : revPoint x = revPoint y ↔ x = y :=
   revPoint.apply_eq_iff_eq
 
+@[simp] theorem revPoint_sub (x y : Fin n → F) :
+    revPoint (x - y) = revPoint x - revPoint y := rfl
+
 /-- Reversal sends the `i`-th coordinate direction to the `rev i`-th. -/
 theorem revPoint_single [DecidableEq F] (i : Fin n) :
     revPoint (Pi.single i 1 : Fin n → F) = Pi.single (Fin.rev i) 1 := by
@@ -212,6 +215,17 @@ theorem revPoint_single [DecidableEq F] (i : Fin n) :
   by_cases h : j = Fin.rev i
   · rw [if_pos h, if_pos (by rw [h, Fin.rev_rev])]
   · rw [if_neg h, if_neg (fun hc : Fin.rev j = i => h (by rw [← hc, Fin.rev_rev]))]
+
+/-- **Reversal exchanges the two tests' base points on an axis-parallel line.** The adapter sends
+the canonical line through `u` in direction `eᵢ` to a seeded question with base point
+`rep e_{rev i} (ρ u)`; reversing that back gives exactly the base point the *seeded* test
+produces for the unreversed data. This is the form the weight bookkeeping needs, since the
+seeded test's own samples carry the unreversed point. -/
+theorem revPoint_rep_single [DecidableEq F] (i : Fin n) (u : Fin n → F) :
+    revPoint (canonLin (span F {(Pi.single (Fin.rev i) 1 : Fin n → F)}) (revPoint u))
+      = canonLin (span F {(Pi.single i 1 : Fin n → F)}) u := by
+  rw [rep_single, rep_single, revPoint_sub, revPoint_revPoint, revPoint_smul, revPoint_single,
+    Fin.rev_rev, revPoint_apply, Fin.rev_rev]
 
 /-- **Reversal exchanges the two diagonal conventions.** A direction whose first `i`
 coordinates vanish becomes one whose coordinates past `rev i` vanish, which is the shape
@@ -442,6 +456,23 @@ theorem through_eq {u z : Fin n → F} (hz : ∃ k, z k ≠ 0) :
             ((z (Fin.find (fun k => z k ≠ 0) hz))⁻¹ • z),
           (z (Fin.find (fun k => z k ≠ 0) hz))⁻¹ • z) := by
   rw [Line.through, dif_pos hz]
+
+/-- The canonical direction, projected out. -/
+theorem through_snd {u z : Fin n → F} (hz : ∃ k, z k ≠ 0) :
+    (Line.through u z).2 = (z (Fin.find (fun k => z k ≠ 0) hz))⁻¹ • z := by
+  rw [through_eq hz]
+
+/-- The canonical base point, projected out. -/
+theorem through_fst {u z : Fin n → F} (hz : ∃ k, z k ≠ 0) :
+    (Line.through u z).1 = u - u (Fin.find (fun k => z k ≠ 0) hz) •
+      ((z (Fin.find (fun k => z k ≠ 0) hz))⁻¹ • z) := by
+  rw [through_eq hz]
+
+/-- The point a canonical presentation was built from lies on the line it presents. -/
+theorem through_mem {u z : Fin n → F} (hz : ∃ k, z k ≠ 0) :
+    u = (Line.through u z).1
+      + (u (Fin.find (fun k => z k ≠ 0) hz)) • (Line.through u z).2 := by
+  rw [through_fst hz, through_snd hz, sub_add_cancel]
 
 /-- **Two lines through the same point coincide exactly when their directions are
 proportional.** -/

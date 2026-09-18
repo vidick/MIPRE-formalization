@@ -358,6 +358,32 @@ def clGame [NeZero m] (hm : m ∣ Fintype.card F) :
         0 < Fintype.card (Sample F m)).ne')
   D := accepts hm
 
+/-! ## Vocabulary for the soundness statement
+
+The reduction to the canonical-line test (`MIPRE.LIDT.Adapter`) concludes about the players'
+*point* measurements, so those need a name on this side too. `MIPRE.LIDT.Answer.toValue` is the
+same reading for the canonical-line test. -/
+
+/-- The field element a point answer carries, for `ldc = 1`; answers of the wrong format are
+read as `0`, which only helps the strategy since the test rejects them (`Question.fmtOk`). -/
+def Answer.toValue : Answer F m d 1 → F
+  | .values a => a 0
+  | _ => 0
+
+/-- The point measurements of player A in a strategy for the seeded test, as POVMs with
+outcomes in `F`. -/
+noncomputable def pointPOVMA [NeZero m] {hm : m ∣ Fintype.card F}
+    (S : TensorProductStrategy (clGame (d := d) (ldc := 1) hm)) (u : Point F m) :
+    POVM F (Fin S.dA) :=
+  (S.PA.toPOVM (.point u)).map Answer.toValue
+
+/-- The point measurements of player B in a strategy for the seeded test, as POVMs with
+outcomes in `F`. -/
+noncomputable def pointPOVMB [NeZero m] {hm : m ∣ Fintype.card F}
+    (S : TensorProductStrategy (clGame (d := d) (ldc := 1) hm)) (u : Point F m) :
+    POVM F (Fin S.dB) :=
+  (S.PB.toPOVM (.point u)).map Answer.toValue
+
 end MIPRE.LIDT.CL
 
 end

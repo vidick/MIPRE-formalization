@@ -139,4 +139,31 @@ noncomputable def inconsistency {dA dB : Type*} [Fintype dA] [DecidableEq dA]
   ∑ x, μ x * ∑ a, ∑ b, if a = b then 0 else
     (star ψ ⬝ᵥ ((((M x).mats a).val ⊗ₖ ((N x).mats b).val) *ᵥ ψ)).re
 
+open Kronecker in
+/-- **`inconsistency` is invariant under relabelling.** The questions may be relabelled by a
+bijection matching the two distributions, and the outcomes by a bijection --- the *same* one on
+both sides, since what is measured is whether the two agree. The state is untouched.
+
+A reduction between two tests needs exactly this to carry a consistency conclusion back: the
+question alphabets differ by a bijection (here coordinate reversal) and the outcome alphabets by
+a relabelling of the low-degree polynomials. -/
+theorem inconsistency_congr {X X' A A' dA dB : Type*} [Fintype X] [Fintype X'] [Fintype A]
+    [Fintype A'] [DecidableEq A] [DecidableEq A'] [Fintype dA] [DecidableEq dA] [Fintype dB]
+    [DecidableEq dB] (μ : X → ℝ) (μ' : X' → ℝ) (ψ : dA × dB → ℂ)
+    (M : X → POVM A dA) (N : X → POVM A dB) (M' : X' → POVM A' dA) (N' : X' → POVM A' dB)
+    (eX : X' ≃ X) (eA : A' ≃ A) (hμ : ∀ x', μ' x' = μ (eX x'))
+    (hM : ∀ x' a', ((M' x').mats a').val = ((M (eX x')).mats (eA a')).val)
+    (hN : ∀ x' b', ((N' x').mats b').val = ((N (eX x')).mats (eA b')).val) :
+    inconsistency μ' ψ M' N' = inconsistency μ ψ M N := by
+  classical
+  unfold inconsistency
+  refine Finset.sum_equiv eX (fun x' => by simp) (fun x' _ => ?_)
+  rw [hμ x']
+  refine congrArg (fun z : ℝ => μ (eX x') * z) ?_
+  refine Finset.sum_equiv eA (fun a' => by simp) (fun a' _ => ?_)
+  refine Finset.sum_equiv eA (fun b' => by simp) (fun b' _ => ?_)
+  by_cases h : a' = b'
+  · rw [if_pos h, if_pos (congrArg eA h)]
+  · rw [if_neg h, if_neg (fun hc => h (eA.injective hc)), hM, hN]
+
 end MIPRE

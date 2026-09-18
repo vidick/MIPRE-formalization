@@ -121,7 +121,19 @@ degree bound survives and `Polynomial.taylor`/`comp` algebra for the inverse. A 
 written directly on coefficient vectors would need the binomial theorem by hand; going through
 `Polynomial` does not.
 
-## Status (2026-09-18)
+## Status (2026-09-18, end of day): done
+
+`MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL` is the `ldc = 1` case of
+`thm:lidt-cl-soundness` with the blueprint's own `δ_CL`, and its axioms are `propext`,
+`Classical.choice` and `Quot.sound`. The table below is kept as written and then closed out
+underneath, because the two entries that were open changed the design rather than merely being
+filled in.
+
+The constant is **`C = 3m`**, and the `k` is **`400 m³ d + 400 m`**. Blueprint:
+`lem:lidt-cl-adapter-maps`, `lem:lidt-cl-adapter-weights`, `lem:lidt-cl-adapter-params`,
+`thm:lidt-cl-soundness-one`.
+
+### The original table
 
 The adapter's **ingredients are proved**; the **assembly is not**.
 
@@ -338,6 +350,39 @@ For the axis subtest the resulting constant is `3/2`: `lidtGame` puts `1/(6 m q^
 `(axisLine ℓ, point u)`, each seed is chosen with probability `m/q`, and
 `clGame` puts `1/(9 q^{m+1})` on the corresponding pair. The diagonal subtest is the same
 computation with the `q^{χ s}` against `q^{j+1}` matching described above.
+
+### Closing the two open rows
+
+**The weight domination** came out at `C = 3m`, by the crude route below (count times maximum
+rather than the geometric series), and needed one design change that the plan had not
+anticipated: a *singleton* diagonal line — direction zero — must be sent to a seed with
+`χ = m − 1`, not `χ = 0`. The seeded test's `DLine` samples with `zeroBelow (χ s) V = 0` number
+`q^{χ s}`, so its mass on `(u₀, s, 0)` grows with `χ s`, while the canonical-line test puts
+`≈ 1/(6 m q^m q)` on a singleton line; only the largest `χ` dominates that, and `χ = 0` costs a
+factor `q^{m−1}`, which `δ_CL` does not allow. `diagIdx`'s fallback was `idx0` and is now
+`rev idx0`. The aggregate masses always matched (`1/(6mq)` against `1/(9mq)`); what the wrong
+fallback got wrong was their distribution across the seeds.
+
+So the diagonal shape splits in two, and the two are genuinely different arguments. A
+nondegenerate `DLine` question determines the line, the scale *and* the seed index, so the
+family is pinned twice and only `(q/m)^{m−1}` of its members contribute — that second pinning
+is what averaging over the scale bought — and the constant is `3q/(2(q−1))`. A singleton
+question pins the seed index but not the scale, since scaling the zero direction does nothing,
+and is paid for by the `χ = m − 1` choice instead; there the constant is `3/2` with a factor
+two to spare.
+
+**The reduction** needed one piece of general infrastructure that did not exist:
+`MIPRE.inconsistency_congr` (`MIPRE/Foundations/Distances.lean`), which says `inconsistency` is
+invariant under relabelling the questions by a distribution-preserving bijection and the
+outcomes by a bijection applied to *both* sides. That is exactly what carries the three
+conclusions back through the coordinate reversal: `revPoint` on the questions (and `uniform` is
+uniform), `revPoly` — reversal of a polynomial's exponent vectors — on the outcomes.
+
+**The parameter corollary** is `MIPRE/Background/LIDT/Adapter/Parameters.lean`, stated
+separately from the reduction exactly as planned. One term forces the choice of `k`:
+`exp(−k/(2560000 m²)) ≤ 2^{−bmd}` asks for `k ≥ 64 (ln 2) m³ d ≈ 44.4 m³ d`. The `400 m`
+summand is there only so that `k > 0` and `k ≥ 400 m d` hold for every `m, d ≥ 1`. And `d ≥ 1`
+is a real hypothesis, not bookkeeping: at `d = 0` the blueprint's `δ_CL` is identically zero.
 
 ## What this route does *not* give
 
