@@ -17,6 +17,7 @@ import MIPRE.Foundations.Cost.Semidecide
 import MIPRE.Foundations.Cost.Toolkit
 import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Games
+import MIPRE.Foundations.PerfectStrategy
 import MIPRE.Foundations.Halting.Corollaries
 import MIPRE.Foundations.Pipeline.Compress
 import MIPRE.Foundations.Halting.LambdaBound
@@ -377,6 +378,14 @@ elab "#guard_sorry_free " ids:ident,* : command => do
 -- blueprint `lem:downsize-field`: items 1 and 2 of the paper's `lem:downsize_field`.
 #guard_sorry_free MIPRE.LowDegree.coord_eq_trace,
   MIPRE.LowDegree.trace_mul_eq_dot
+
+-- blueprint `lem:perfect-rejects-nothing`: the value-one characterization every completeness
+-- argument in the pipeline needs.
+#guard_sorry_free MIPRE.sum_re_tracial,
+  MIPRE.re_nonneg_tracial,
+  MIPRE.re_eq_zero_of_tracialValue_eq_one,
+  MIPRE.SyncStrategy.value_eq_tracialValue,
+  MIPRE.SyncStrategy.re_eq_zero_of_value_eq_one
 
 -- blueprint `lem:cl-canonical`: the two complements of a subspace, and the canonical linear
 -- map the low-degree test's line representatives are computed by.
