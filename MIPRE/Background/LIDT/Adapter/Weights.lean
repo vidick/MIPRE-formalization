@@ -235,4 +235,102 @@ theorem le_rev_diagIdx_of_questions {ℓ : Line F m} {u : Point F m} {j : Fin m}
   have h4 : (j : ℕ) < m := j.isLt
   exact (Fin.find_spec hex) (hmin P (by omega))
 
+omit [Fintype F] [DecidableEq F] [NeZero m] in
+/-- `Sample.extend` is the extension by zero, so it recovers `v` on `v`'s own indices. -/
+theorem extend_apply_coe {j : Fin m} (v : Fin ((j : ℕ) + 1) → F) (i : Fin ((j : ℕ) + 1)) :
+    (Sample.extend v : Point F m)
+        ⟨(i : ℕ), lt_of_le_of_lt (Nat.le_of_lt_succ i.isLt) j.isLt⟩ = v i := by
+  rw [Sample.extend, dif_pos (Nat.le_of_lt_succ i.isLt)]
+
+/-- The key `(j, c)` of a diagonal sample, read at a coordinate `p`. Two samples producing the
+same line with the same key are equal, which is what bounds the count. -/
+noncomputable def diagKey (p : Fin m) : Sample F m → Fin m × F
+  | .diag _ _ j v => (j, (Sample.extend v : Point F m) p)
+  | _ => (idx0, 0)
+
+/-- **At most `m q` samples produce a given diagonal line against a given point.** A sample is
+pinned by its `j` together with the scalar relating its direction to the line's, and there are
+`m` values of the first and `q` of the second. -/
+theorem card_filter_diag_le {ℓ : Line F m} (hℓ : ∃ k, ℓ.2 k ≠ 0) (u : Point F m) :
+    (Finset.univ.filter (fun s : Sample F m =>
+        s.questions = ((Question.diagLine ℓ : Question F m), Question.point u))).card
+      ≤ m * Fintype.card F := by
+  classical
+  set p := Fin.find (fun k => ℓ.2 k ≠ 0) hℓ with hp
+  have hlp : ℓ.2 p ≠ 0 := Fin.find_spec hℓ
+  have hcard : (Finset.univ : Finset (Fin m × F)).card = m * Fintype.card F := by simp
+  rw [← hcard]
+  refine Finset.card_le_card_of_injOn (diagKey p) (fun _ _ => Finset.mem_univ _) ?_
+  intro s₁ h₁ s₂ h₂ hkey
+  obtain ⟨j₁, v₁, hs₁, c₁, hc₁, hcv₁⟩ :=
+    of_questions_diag hℓ (Finset.mem_filter.mp h₁).2
+  obtain ⟨j₂, v₂, hs₂, c₂, hc₂, hcv₂⟩ :=
+    of_questions_diag hℓ (Finset.mem_filter.mp h₂).2
+  subst hs₁
+  subst hs₂
+  obtain ⟨hj, hval⟩ := (Prod.mk.injEq _ _ _ _).mp hkey
+  -- the scalars agree
+  have hc : c₁ = c₂ := by
+    have e₁ : (Sample.extend v₁ : Point F m) p = c₁ * ℓ.2 p := by
+      rw [hcv₁]; simp
+    have e₂ : (Sample.extend v₂ : Point F m) p = c₂ * ℓ.2 p := by
+      rw [hcv₂]; simp
+    rw [e₁, e₂] at hval
+    exact mul_right_cancel₀ hlp hval
+  subst hj
+  subst hc
+  -- hence the directions, hence `v`
+  have hext : (Sample.extend v₁ : Point F m) = Sample.extend v₂ := by rw [hcv₁, hcv₂]
+  have hv : v₁ = v₂ := by
+    funext i
+    rw [← extend_apply_coe v₁ i, ← extend_apply_coe v₂ i, hext]
+  rw [hv]
+
+/-- **The diagonal weight, bounded.** The sum over the contributing samples is at most their
+number times the largest of them, and `le_rev_diagIdx_of_questions` says every one of them has
+`j` at least `rev (diagIdx ℓ)`, which fixes the `q`-exponent. -/
+theorem lidtGame_μ_diag_le {ℓ : Line F m} (hℓ : ∃ k, ℓ.2 k ≠ 0) (u : Point F m) :
+    (lidtGame F m d).μ (.diagLine ℓ) (.point u)
+      ≤ (m * Fintype.card F : ℝ) *
+          (1 / (6 * m * Fintype.card (Point F m) *
+            (Fintype.card F : ℝ) ^ ((Fin.rev (diagIdx ℓ) : ℕ) + 1))) := by
+  classical
+  rw [lidtGame_μ_eq]
+  have hq : (0 : ℝ) < Fintype.card F := by exact_mod_cast Fintype.card_pos
+  have hq1 : (1 : ℝ) ≤ Fintype.card F := by
+    have h : 1 ≤ Fintype.card F := Fintype.card_pos
+    exact_mod_cast h
+  have hm : (0 : ℝ) < m := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne m)
+  have hP : (0 : ℝ) < Fintype.card (Point F m) := by exact_mod_cast Fintype.card_pos
+  have hA : (0 : ℝ) < 6 * m * Fintype.card (Point F m) := by
+    have h6 : (0 : ℝ) < 6 * m := by linarith
+    exact mul_pos h6 hP
+  set S : Finset (Sample F m) := Finset.univ.filter (fun s : Sample F m =>
+    s.questions = ((Question.diagLine ℓ : Question F m), Question.point u)) with hS
+  set B : ℝ := 1 / (6 * m * Fintype.card (Point F m) *
+    (Fintype.card F : ℝ) ^ ((Fin.rev (diagIdx ℓ) : ℕ) + 1)) with hB
+  have hden : (0 : ℝ) < 6 * m * Fintype.card (Point F m) *
+      (Fintype.card F : ℝ) ^ ((Fin.rev (diagIdx ℓ) : ℕ) + 1) := mul_pos hA (pow_pos hq _)
+  have hBpos : 0 < B := by rw [hB]; exact div_pos one_pos hden
+  have hterm : ∀ s ∈ S, s.weight ≤ B := by
+    intro s hs
+    have hsq := (Finset.mem_filter.mp (hS ▸ hs)).2
+    obtain ⟨j, v, hsj, _, _, _⟩ := of_questions_diag hℓ hsq
+    subst hsj
+    have hjge : ((Fin.rev (diagIdx ℓ) : ℕ)) ≤ (j : ℕ) :=
+      le_rev_diagIdx_of_questions hℓ hsq
+    show 1 / (6 * m * Fintype.card (Point F m) * (Fintype.card F : ℝ) ^ ((j : ℕ) + 1)) ≤ B
+    rw [hB]
+    refine one_div_le_one_div_of_le hden ?_
+    refine mul_le_mul_of_nonneg_left ?_ hA.le
+    exact pow_le_pow_right₀ hq1 (by omega)
+  calc ∑ s ∈ S, s.weight
+      ≤ S.card • B := Finset.sum_le_card_nsmul _ _ _ hterm
+    _ = (S.card : ℝ) * B := by rw [nsmul_eq_mul]
+    _ ≤ (m * Fintype.card F : ℝ) * B := by
+        refine mul_le_mul_of_nonneg_right ?_ hBpos.le
+        have h := card_filter_diag_le hℓ u
+        rw [← hS] at h
+        exact_mod_cast h
+
 end MIPRE.LIDT.Adapter
