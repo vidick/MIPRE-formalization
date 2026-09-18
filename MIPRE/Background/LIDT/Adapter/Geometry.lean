@@ -30,6 +30,25 @@ Getting `rep` to compute means computing the pivot set: `pivots (span {eᵢ}) = 
 `projection_eq_of` is the uniqueness of a complementary decomposition, stated as a rewriting
 rule because that is how `canonLin` is pinned down: `canonLin S u` is *the* element of the
 canonical complement congruent to `u` modulo `S`.
+
+Two further discrepancies are settled here, both of them differences of presentation rather
+than of content.
+
+**The diagonal convention.** The seeded test's diagonal directions have their *first* `i`
+coordinates zero (`CL.zeroBelow`), the canonical-line test's have their coordinates *past* `j`
+zero (`Sample.extend`). Coordinate reversal exchanges them (`revPoint_zeroBelow`), and is the
+`ρ` of the paper's own reduction, there for the same reason against the tensor code test.
+
+**The direction scale.** A `DLine` question of the seeded test carries the direction itself,
+scale included, while the canonical-line test normalizes it. So the seeded questions
+`(u₀, s, c • w)`, `c ≠ 0`, all describe one canonical line, and an answer in the parameter of
+`u₀ + t (c • w)` has to be reparametrized. The parameter scales inversely
+(`lineParam_smul`) and the polynomial follows by `rescale`, which is a bijection of the
+coefficient vectors preserving the degree bound (`rescaleEquiv`) --- so no answer alphabet
+changes and no degree is lost.
+
+What is *not* here is the reconciliation of `CL.lineParam` with `Line.param`, the last of the
+geometric discrepancies, nor anything about strategies or values.
 -/
 
 namespace MIPRE.LIDT.Adapter
@@ -150,5 +169,130 @@ theorem rep_single_eq_through [DecidableEq F] (i : Fin n) (u : Fin n → F) :
     (canonLin (span F {(Pi.single i 1 : Fin n → F)}) u, (Pi.single i 1 : Fin n → F))
       = Line.through u (Pi.single i 1) := by
   rw [through_single, rep_single]
+
+/-! ## Coordinate reversal, and the two diagonal conventions
+
+The seeded test's diagonal directions have their *first* `i` coordinates zero
+(`CL.zeroBelow`); the canonical-line test's have their coordinates *past* `j` zero
+(`Sample.extend`). Coordinate reversal exchanges the two, and is the `ρ` of the paper's own
+reduction (there it exchanges the seeded test's convention with the tensor code test's, for the
+same reason). -/
+
+/-- Coordinate reversal of `F^n`, an involution. -/
+def revPoint : (Fin n → F) ≃ (Fin n → F) where
+  toFun x := fun j => x (Fin.rev j)
+  invFun x := fun j => x (Fin.rev j)
+  left_inv x := by funext j; simp [Fin.rev_rev]
+  right_inv x := by funext j; simp [Fin.rev_rev]
+
+omit [Field F] in
+@[simp] theorem revPoint_apply (x : Fin n → F) (j : Fin n) :
+    revPoint x j = x (Fin.rev j) := rfl
+
+omit [Field F] in
+@[simp] theorem revPoint_revPoint (x : Fin n → F) : revPoint (revPoint x) = x :=
+  revPoint.left_inv x
+
+/-- Reversal sends the `i`-th coordinate direction to the `rev i`-th. -/
+theorem revPoint_single [DecidableEq F] (i : Fin n) :
+    revPoint (Pi.single i 1 : Fin n → F) = Pi.single (Fin.rev i) 1 := by
+  funext j
+  rw [revPoint_apply, Pi.single_apply, Pi.single_apply]
+  by_cases h : j = Fin.rev i
+  · rw [if_pos h, if_pos (by rw [h, Fin.rev_rev])]
+  · rw [if_neg h, if_neg (fun hc : Fin.rev j = i => h (by rw [← hc, Fin.rev_rev]))]
+
+/-- **Reversal exchanges the two diagonal conventions.** A direction whose first `i`
+coordinates vanish becomes one whose coordinates past `rev i` vanish, which is the shape
+`Sample.extend` produces. -/
+theorem revPoint_zeroBelow [NeZero n] (i : Fin n) (v : Fin n → F) :
+    revPoint (CL.zeroBelow i v)
+      = Sample.extend (j := Fin.rev i)
+          (fun k : Fin ((Fin.rev i).val + 1) =>
+            revPoint v ⟨k.val, lt_of_le_of_lt (Nat.le_of_lt_succ k.isLt) (Fin.rev i).isLt⟩) := by
+  funext j
+  rw [revPoint_apply, CL.zeroBelow, Sample.extend]
+  have hrev : (Fin.rev j).val = n - (j.val + 1) := Fin.val_rev j
+  have hrevi : (Fin.rev i).val = n - (i.val + 1) := Fin.val_rev i
+  by_cases h : j.val ≤ (Fin.rev i).val
+  · -- `j` is within the free range, and the reversed coordinate is at or above `i`
+    rw [dif_pos h]
+    have hge : ¬ ((Fin.rev j).val < i.val) := by omega
+    rw [if_neg hge]
+    exact congrArg v (Fin.ext (by simp))
+  · -- `j` is past the free range, and the reversed coordinate is below `i`
+    rw [dif_neg h]
+    have hlt : (Fin.rev j).val < i.val := by omega
+    rw [if_pos hlt]
+
+/-! ## The direction scale
+
+A `DLine` question of the seeded test carries the direction `v'` itself, scale included, while
+the canonical-line test normalizes the direction. So one canonical diagonal line is described
+by the seeded questions `(u₀, s, c • w)` for every `c ≠ 0`, and an answer given in the
+parameter of `u₀ + t (c • w)` has to be reparametrized into that of `u₀ + t w`. Both halves are
+here: `lineParam_smul` for the parameter and `rescale` for the polynomial. -/
+
+/-- Rescaling the variable of a polynomial: `rescale c f` is `t ↦ f (c t)`, on coefficients. -/
+def rescale (c : F) {k : ℕ} (f : LinePoly F k) : LinePoly F k :=
+  fun i => f i * c ^ (i : ℕ)
+
+@[simp] theorem eval_rescale (c : F) {k : ℕ} (f : LinePoly F k) (t : F) :
+    (rescale c f).eval t = f.eval (c * t) := by
+  simp only [LinePoly.eval, rescale, mul_pow]
+  exact Finset.sum_congr rfl fun i _ => by ring
+
+/-- Rescaling by `c` then by `c⁻¹` is the identity, so `rescale` is a bijection of the
+coefficient vectors for `c ≠ 0` --- the degree bound is preserved on the nose, which is what
+the answer alphabets need. -/
+theorem rescale_rescale_inv (c : F) (hc : c ≠ 0) {k : ℕ} (f : LinePoly F k) :
+    rescale c⁻¹ (rescale c f) = f := by
+  funext i
+  simp only [rescale]
+  rw [mul_assoc, ← mul_pow, mul_inv_cancel₀ hc, one_pow, mul_one]
+
+/-- Rescaling as an equivalence of the answer alphabet. -/
+def rescaleEquiv (c : F) (hc : c ≠ 0) {k : ℕ} : LinePoly F k ≃ LinePoly F k where
+  toFun := rescale c
+  invFun := rescale c⁻¹
+  left_inv f := rescale_rescale_inv c hc f
+  right_inv f := by
+    have := rescale_rescale_inv c⁻¹ (inv_ne_zero hc) f
+    rwa [inv_inv] at this
+
+section Scale
+
+variable [DecidableEq F]
+
+/-- Scaling the direction does not move the first nonzero coordinate. -/
+theorem find_smul {c : F} (hc : c ≠ 0) {w : Fin n → F}
+    (hex : ∃ j, w j ≠ 0) (hex' : ∃ j, (c • w) j ≠ 0) :
+    Fin.find (fun j => (c • w) j ≠ 0) hex' = Fin.find (fun j => w j ≠ 0) hex := by
+  rw [Fin.find_eq_iff]
+  refine ⟨?_, fun j hj => ?_⟩
+  · simp only [Pi.smul_apply, smul_eq_mul, ne_eq, mul_eq_zero, not_or]
+    exact ⟨hc, Fin.find_spec hex⟩
+  · have h0 : w j = 0 := not_not.mp (Fin.find_min hex hj)
+    simp [h0]
+
+/-- **The parameter scales inversely to the direction.** A point at parameter `t` on
+`u₀ + t w` sits at parameter `c⁻¹ t` on `u₀ + t (c • w)`. -/
+theorem lineParam_smul {c : F} (hc : c ≠ 0) (u₀ w x : Fin n → F) :
+    CL.lineParam u₀ (c • w) x = c⁻¹ * CL.lineParam u₀ w x := by
+  by_cases hex : ∃ j, w j ≠ 0
+  · have hex' : ∃ j, (c • w) j ≠ 0 := by
+      obtain ⟨j, hj⟩ := hex
+      exact ⟨j, by simpa [hc] using mul_ne_zero hc hj⟩
+    simp only [CL.lineParam]
+    rw [dif_pos hex, dif_pos hex', find_smul hc hex hex']
+    rw [Pi.smul_apply, smul_eq_mul]
+    field_simp
+  · have hex' : ¬ ∃ j, (c • w) j ≠ 0 := by
+      rintro ⟨j, hj⟩
+      exact hex ⟨j, fun h0 => hj (by simp [h0])⟩
+    simp only [CL.lineParam]
+    rw [dif_neg hex, dif_neg hex', mul_zero]
+
+end Scale
 
 end MIPRE.LIDT.Adapter
