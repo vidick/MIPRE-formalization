@@ -416,4 +416,72 @@ theorem card_filter_clDiag_ge (hm : m ∣ Fintype.card F) (xp : Point F m) (s₀
     rw [dif_pos i.isLt, dif_pos i.isLt, hi] at h
     exact h
 
+/-! ## From fibres of the question map to samples
+
+The push-forward bound is stated over *fibres* of the question map, but the canonical-line test's
+weight lives on *samples*, and only five shapes of question pair carry any weight at all. This
+lemma moves the whole thing onto samples, where the case analysis is a case analysis on a
+constructor. -/
+
+theorem sum_fibre_μ_eq_sum_samples (f g : Question F m → CL.Question F m)
+    (x y : CL.Question F m) :
+    (∑ x' ∈ Finset.univ.filter (fun x' => f x' = x),
+        ∑ y' ∈ Finset.univ.filter (fun y' => g y' = y), (lidtGame F m d).μ x' y')
+      = ∑ s ∈ Finset.univ.filter (fun s : Sample F m =>
+          f s.questions.1 = x ∧ g s.questions.2 = y), s.weight := by
+  classical
+  -- write every indicator out, so both sides are sums of products
+  have hμ : ∀ x' y' : Question F m, (lidtGame F m d).μ x' y'
+      = ∑ s : Sample F m, (if s.questions = (x', y') then s.weight else 0) := by
+    intro x' y'
+    rw [lidtGame_μ_eq, Finset.sum_filter]
+  have hLHS : (∑ x' ∈ Finset.univ.filter (fun x' => f x' = x),
+      ∑ y' ∈ Finset.univ.filter (fun y' => g y' = y), (lidtGame F m d).μ x' y')
+      = ∑ x' : Question F m, ∑ y' : Question F m, ∑ s : Sample F m,
+          (if f x' = x then (1 : ℝ) else 0) * (if g y' = y then (1 : ℝ) else 0) *
+            (if s.questions = (x', y') then s.weight else 0) := by
+    rw [Finset.sum_filter]
+    refine Finset.sum_congr rfl fun x' _ => ?_
+    by_cases hx : f x' = x
+    · rw [if_pos hx, Finset.sum_filter]
+      refine Finset.sum_congr rfl fun y' _ => ?_
+      by_cases hy : g y' = y
+      · rw [if_pos hy, hμ]
+        refine Finset.sum_congr rfl fun s _ => ?_
+        rw [if_pos hx, if_pos hy, one_mul, one_mul]
+      · rw [if_neg hy, if_pos hx, if_neg hy]
+        simp
+    · rw [if_neg hx]
+      refine (Finset.sum_eq_zero fun y' _ => ?_).symm
+      rw [if_neg hx]
+      simp
+  have hswap : ∀ x' : Question F m,
+      (∑ y' : Question F m, ∑ s : Sample F m,
+        (if f x' = x then (1 : ℝ) else 0) * (if g y' = y then (1 : ℝ) else 0) *
+          (if s.questions = (x', y') then s.weight else 0))
+      = ∑ s : Sample F m, ∑ y' : Question F m,
+        (if f x' = x then (1 : ℝ) else 0) * (if g y' = y then (1 : ℝ) else 0) *
+          (if s.questions = (x', y') then s.weight else 0) := fun _ => Finset.sum_comm
+  rw [hLHS, Finset.sum_congr rfl (fun x' (_ : x' ∈ Finset.univ) => hswap x'), Finset.sum_comm]
+  -- for each sample only one `(x', y')` survives
+  have hinner : ∀ s : Sample F m,
+      (∑ x' : Question F m, ∑ y' : Question F m,
+        (if f x' = x then (1 : ℝ) else 0) * (if g y' = y then (1 : ℝ) else 0) *
+          (if s.questions = (x', y') then s.weight else 0))
+      = (if f s.questions.1 = x ∧ g s.questions.2 = y then s.weight else 0) := by
+    intro s
+    rw [Finset.sum_eq_single s.questions.1 (fun x' _ hx' => ?_) (fun h => absurd
+      (Finset.mem_univ _) h)]
+    · rw [Finset.sum_eq_single s.questions.2 (fun y' _ hy' => ?_) (fun h => absurd
+        (Finset.mem_univ _) h)]
+      · by_cases hx : f s.questions.1 = x
+        · by_cases hy : g s.questions.2 = y
+          · simp [hx, hy]
+          · simp [hx, hy]
+        · simp [hx]
+      · rw [if_neg (fun hc => hy' (congrArg Prod.snd hc).symm), mul_zero]
+    · refine Finset.sum_eq_zero fun y' _ => ?_
+      rw [if_neg (fun hc => hx' (congrArg Prod.fst hc).symm), mul_zero]
+  rw [Finset.sum_congr rfl fun s (_ : s ∈ Finset.univ) => hinner s, Finset.sum_filter]
+
 end MIPRE.LIDT.Adapter
