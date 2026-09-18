@@ -133,19 +133,29 @@ What is still open here, and is not small:
   transfer. That is why this route needs no Schwartz–Zippel and picks up no `d/q` term of its
   own.
 
-## Chunk 4 — `thm:qld`
+## Chunk 4 — `thm:qld` — **planned, in progress**
 
-A campaign, not a chunk, and not to be opened before Chunk 3 lands. Eighteen statements over
-roughly three thousand lines of source. Split it along the ledger's challenge counts, which
-say exactly where the transcription is delicate:
+A campaign, not a chunk. Seventeen statements over roughly three thousand lines of source, and
+Chunk 3 landing is what opened it: `thm:qld`'s stage 4 consumes the seeded CL theorem at
+`(q, 4m, d, 1)`, which is the `ldc = 1` case now proved unconditionally.
 
-* the base, all reachable from proved material: `lem:qld-averaging` (0 challenges),
-  `lem:qld-povm-to-obs` (0), `cor:ortho-from-consistency` (3, and it is
-  `thm:orthonormalization` — proved — plus consistency bookkeeping), `lem:qld-win` (3),
-  `thm:linearity` (2, off the proved Gowers–Hatami);
-* the delicate middle: `lem:qld-combined-points` (8), `lem:qld-pairs-of-lines` (7),
-  `lem:qld-sublines` (7), `lem:qld-simultaneous` (6), then the padded points and lines, the
-  exact Paulis and the swap isometry.
+**The plan is `planning/qld-campaign.md`**, and it fixes four pull requests for the whole
+campaign. Read it before starting anything here; two things it records are not visible from this
+file and change what the work is:
+
+* the `≈_δ` of the qld appendix is the **state-dependent** distance on a bipartite state, and
+  the repository has only the tracial one (`povmDistance`, `Closeness.lean`). It needs building,
+  and its own blueprint definition beside `def:distance`;
+* **the game `game^pauli` is not in the blueprint at all.** `thm:qld` and `lem:qld-win` are
+  statements about it. Defining it — twenty-five question types, a type graph, a decider — is
+  the campaign's largest definitional job, and `clGame`'s missing format check is the warning
+  for how it can go wrong.
+
+The four pull requests, in order: **A** the state-dependent distance, stage 1
+(`lem:qld-averaging`, `lem:qld-povm-to-obs`, `cor:ortho-from-consistency`) and
+`lem:ms-direct-anticomm`, all of which need no game; **B** `def:qld-game`, `lem:qld-win` and the
+expansion; **C** `thm:linearity` and the combining stage; **D** separation, the swap isometry and
+`thm:qld`.
 
 ## Not in the four
 
