@@ -90,6 +90,43 @@ theorem re_eq_zero_of_tracialValue_eq_one (G : SynchronousGame X A) (τ : Tracia
   simp only [Bool.false_eq_true, if_false, mul_zero, zero_mul] at hp
   exact (mul_eq_zero.mp hp.symm).resolve_left hxy.ne'
 
+/-- The converse: if every rejected answer pair has probability zero at every question pair
+of positive weight, the value is `1`. Completeness arguments go this way -- one builds a
+strategy, checks it never produces a rejected outcome, and concludes. -/
+theorem tracialValue_eq_one_of_re_eq_zero (G : SynchronousGame X A) (τ : TracialState 𝒜)
+    (P : ProjectiveMeasurement X A 𝒜)
+    (h : ∀ x y, 0 < G.μ x y → ∀ a b, G.D x y a b = false →
+      (τ (P.M x a * P.M y b)).re = 0) :
+    tracialValue G τ P = 1 := by
+  classical
+  have hterm : ∀ p : X × X × A × A,
+      G.μ p.1 p.2.1 * (if G.D p.1 p.2.1 p.2.2.1 p.2.2.2 then 1 else 0) *
+          (τ (P.M p.1 p.2.2.1 * P.M p.2.1 p.2.2.2)).re
+        = G.μ p.1 p.2.1 * (τ (P.M p.1 p.2.2.1 * P.M p.2.1 p.2.2.2)).re := by
+    intro p
+    cases hD : G.D p.1 p.2.1 p.2.2.1 p.2.2.2 with
+    | true => simp
+    | false =>
+        rcases (G.μ_nonneg p.1 p.2.1).lt_or_eq with hμ | hμ
+        · rw [h _ _ hμ _ _ hD]; simp
+        · rw [← hμ]; simp
+  calc tracialValue G τ P
+      = ∑ p : X × X × A × A, G.μ p.1 p.2.1 *
+          (if G.D p.1 p.2.1 p.2.2.1 p.2.2.2 then 1 else 0) *
+          (τ (P.M p.1 p.2.2.1 * P.M p.2.1 p.2.2.2)).re := by
+        rw [← sum_flat (fun x y a b => G.μ x y * (if G.D x y a b then 1 else 0) *
+          (τ (P.M x a * P.M y b)).re)]
+        rfl
+    _ = ∑ p : X × X × A × A, G.μ p.1 p.2.1 *
+          (τ (P.M p.1 p.2.2.1 * P.M p.2.1 p.2.2.2)).re :=
+        Finset.sum_congr rfl fun p _ => hterm p
+    _ = 1 := by
+        rw [← sum_flat (fun x y a b => G.μ x y * (τ (P.M x a * P.M y b)).re)]
+        refine (Finset.sum_congr rfl fun x _ =>
+          Finset.sum_congr rfl fun y _ => ?_).trans G.μ_sum_one
+        simp_rw [← Finset.mul_sum]
+        rw [sum_re_tracial τ P x y, mul_one]
+
 namespace SyncStrategy
 
 variable {G : SynchronousGame X A}

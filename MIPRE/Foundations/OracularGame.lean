@@ -111,6 +111,10 @@ noncomputable def toGame [Nonempty V] : Game V V A A where
   μ_sum_one := S.sum_dist
   D := S.D
 
+@[simp] theorem toGame_μ [Nonempty V] : S.toGame.μ = S.dist := rfl
+
+@[simp] theorem toGame_D [Nonempty V] : S.toGame.D = S.D := rfl
+
 end SeededGame
 
 /-! ## The oracularized alphabets -/
@@ -122,12 +126,27 @@ inductive OAns (A : Type*)
   | single (a : A)
   deriving DecidableEq
 
-instance : Fintype (OAns A) where
-  elems := (univ.image fun p : A × A => OAns.pair p.1 p.2) ∪ univ.image OAns.single
-  complete u := by
-    cases u with
-    | pair a b => exact mem_union_left _ (mem_image.mpr ⟨(a, b), mem_univ _, rfl⟩)
-    | single a => exact mem_union_right _ (mem_image.mpr ⟨a, mem_univ _, rfl⟩)
+/-- `OAns A` as a sum type. The `Fintype` instance goes through this rather than through a
+union of images, so that a sum over `OAns A` splits into the two blocks (`OAns.sum_eq`), which
+is what the measurement's normalization needs. -/
+def OAns.equivSum : OAns A ≃ (A × A) ⊕ A where
+  toFun
+    | .pair a b => .inl (a, b)
+    | .single a => .inr a
+  invFun
+    | .inl (a, b) => .pair a b
+    | .inr a => .single a
+  left_inv u := by cases u <;> rfl
+  right_inv x := by rcases x with ⟨a, b⟩ | a <;> rfl
+
+instance : Fintype (OAns A) := Fintype.ofEquiv _ (OAns.equivSum (A := A)).symm
+
+omit [DecidableEq A] in
+/-- A sum over `OAns A` splits into the pairs and the singles. -/
+theorem OAns.sum_eq {M : Type*} [AddCommMonoid M] (f : OAns A → M) :
+    ∑ u, f u = (∑ p : A × A, f (.pair p.1 p.2)) + ∑ a, f (.single a) := by
+  rw [← (OAns.equivSum (A := A)).symm.sum_comp f]
+  simp [Fintype.sum_sum_type, OAns.equivSum]
 
 instance [Inhabited A] : Inhabited (OAns A) := ⟨OAns.single default⟩
 
