@@ -764,4 +764,365 @@ theorem card_filter_seed_scale_le (hm : m ∣ Fintype.card F) (i : Fin m) (s₀ 
     exact seedOf_injective hm j (hsa.trans hsb.symm)
   · exact congrFun hab ⟨j, hj⟩
 
+@[simp] theorem qmapS_axis (hm : m ∣ Fintype.card F) (σc : Seed F m) (ℓ : Line F m) :
+    qmapS hm σc (.axisLine ℓ)
+      = .aline (revPoint ℓ.1)
+          (seedOf hm (Fin.rev (axisIdx ℓ)) (σc.1 (Fin.rev (axisIdx ℓ)))) := rfl
+
+@[simp] theorem qmapS_diag (hm : m ∣ Fintype.card F) (σc : Seed F m) (ℓ : Line F m) :
+    qmapS hm σc (.diagLine ℓ)
+      = .dline (revPoint ℓ.1 - shiftOf ℓ • revPoint ℓ.2)
+          (seedOf hm (diagIdx ℓ) (σc.1 (diagIdx ℓ))) ((σc.2 : F) • revPoint ℓ.2) := rfl
+
+/-! ### The axis-parallel shape
+
+The seed determines the direction index, so the contributing sample is unique and the constraint
+on the family is at one index. -/
+
+/-- **At most one sample maps to an axis-parallel question against a point.** -/
+theorem filter_qmapS_axis_subset (hm : m ∣ Fintype.card F) (σc : Seed F m)
+    (u₀ : Point F m) (s₀ : F) (yp : Point F m) :
+    Finset.univ.filter (fun s : Sample F m =>
+        qmapS hm σc s.questions.1 = CL.Question.aline u₀ s₀ ∧
+          qmapS hm σc s.questions.2 = CL.Question.point yp)
+      ⊆ {Sample.axis false (revPoint yp) (Fin.rev (chi hm s₀))} := by
+  classical
+  intro s hs
+  obtain ⟨h1, h2⟩ := (Finset.mem_filter.mp hs).2
+  refine Finset.mem_singleton.mpr ?_
+  match s, h1, h2 with
+  | Sample.axis false u i, h1, h2 =>
+      have hu : revPoint u = yp := by
+        have h : CL.Question.point (revPoint u) = CL.Question.point yp := h2
+        injection h
+      have hidx : axisIdx (Line.through u (Pi.single i 1) : Line F m) = i := by
+        rw [through_single]; exact axisIdx_eq _ i
+      have h1' : (CL.Question.aline (revPoint (Line.through u (Pi.single i 1) : Line F m).1)
+          (seedOf hm (Fin.rev (axisIdx (Line.through u (Pi.single i 1) : Line F m)))
+            (σc.1 (Fin.rev (axisIdx (Line.through u (Pi.single i 1) : Line F m)))))
+          : CL.Question F m) = CL.Question.aline u₀ s₀ := h1
+      rw [hidx] at h1'
+      injection h1' with _ hs'
+      have hchi : Fin.rev i = chi hm s₀ := by rw [← hs', chi_seedOf]
+      have hi : i = Fin.rev (chi hm s₀) := by rw [← hchi, Fin.rev_rev]
+      rw [hi, ← hu, revPoint_revPoint]
+  | Sample.axis true u i, h1, _ => exact absurd h1 (by simp [Sample.questions, qmapS, qmap])
+  | Sample.selfConsistency u, h1, _ => exact absurd h1 (by simp [Sample.questions, qmapS, qmap])
+  | Sample.diag false u j v, h1, _ => exact absurd h1 (by simp [Sample.questions, qmapS, qmap])
+  | Sample.diag true u j v, h1, _ => exact absurd h1 (by simp [Sample.questions, qmapS, qmap])
+
+omit [Fintype F] [NeZero m] in
+/-- The adapter's axis-parallel base point, unreversed: exactly the seeded test's own. -/
+theorem revPoint_through_single_eq_rep (i : Fin m) (u : Point F m) :
+    revPoint (Line.through (revPoint u) (Pi.single (Fin.rev i) 1) : Line F m).1
+      = CL.rep (Pi.single i 1) u := by
+  have hthr : (Line.through (revPoint u) (Pi.single (Fin.rev i) 1) : Line F m).1
+      = revPoint u - (revPoint u) (Fin.rev i) • (Pi.single (Fin.rev i) 1 : Point F m) := by
+    rw [through_single]
+  show revPoint (Line.through (revPoint u) (Pi.single (Fin.rev i) 1) : Line F m).1
+      = MIPRE.CL.canonLin (Submodule.span F {(Pi.single i 1 : Point F m)}) u
+  rw [hthr, ← rep_single]
+  exact revPoint_rep_single i u
+
+/-- **The base point the contributing sample forces.** If anything contributes to an
+axis-parallel question against a point, the question is the one the *seeded* test itself would
+have asked at that point and seed: `revPoint_rep_single` unreverses the adapter's base point. -/
+theorem base_of_qmapS_axis (hm : m ∣ Fintype.card F) (σc : Seed F m)
+    {u₀ : Point F m} {s₀ : F} {yp : Point F m} {s : Sample F m}
+    (h1 : qmapS hm σc s.questions.1 = CL.Question.aline u₀ s₀)
+    (h2 : qmapS hm σc s.questions.2 = CL.Question.point yp) :
+    u₀ = CL.rep (Pi.single (chi hm s₀) 1) yp := by
+  classical
+  have hmem := filter_qmapS_axis_subset hm σc u₀ s₀ yp
+    (Finset.mem_filter.mpr ⟨Finset.mem_univ _, h1, h2⟩)
+  rw [Finset.mem_singleton] at hmem
+  subst hmem
+  have h1' : (CL.Question.aline
+      (revPoint (Line.through (revPoint yp)
+        (Pi.single (Fin.rev (chi hm s₀)) 1) : Line F m).1)
+      (seedOf hm (Fin.rev (axisIdx (Line.through (revPoint yp)
+          (Pi.single (Fin.rev (chi hm s₀)) 1) : Line F m)))
+        (σc.1 (Fin.rev (axisIdx (Line.through (revPoint yp)
+          (Pi.single (Fin.rev (chi hm s₀)) 1) : Line F m))))) : CL.Question F m)
+      = CL.Question.aline u₀ s₀ := h1
+  rw [← (CL.Question.aline.inj h1').1]
+  exact revPoint_through_single_eq_rep (chi hm s₀) yp
+
+/-- **The family members that can contribute to an axis-parallel question**: the seed index is
+pinned, so there are at most `(q/m)^{m-1} (q-1)` of them. -/
+theorem card_filter_axis_le (hm : m ∣ Fintype.card F)
+    (u₀ : Point F m) (s₀ : F) (yp : Point F m) (s : Sample F m)
+    (hs : s ∈ ({Sample.axis false (revPoint yp) (Fin.rev (chi hm s₀))} : Finset (Sample F m))) :
+    (Finset.univ.filter (fun σc : Seed F m =>
+        qmapS hm σc s.questions.1 = CL.Question.aline u₀ s₀ ∧
+          qmapS hm σc s.questions.2 = CL.Question.point yp)).card
+      ≤ (Fintype.card F / m) ^ (m - 1) * (Fintype.card F - 1) := by
+  classical
+  rw [Finset.mem_singleton] at hs
+  subst hs
+  refine card_filter_seed_le hm (chi hm s₀) s₀ _ ?_
+  intro σc hσc
+  have h1' : (CL.Question.aline
+      (revPoint (Line.through (revPoint yp)
+        (Pi.single (Fin.rev (chi hm s₀)) 1) : Line F m).1)
+      (seedOf hm (Fin.rev (axisIdx (Line.through (revPoint yp)
+          (Pi.single (Fin.rev (chi hm s₀)) 1) : Line F m)))
+        (σc.1 (Fin.rev (axisIdx (Line.through (revPoint yp)
+          (Pi.single (Fin.rev (chi hm s₀)) 1) : Line F m))))) : CL.Question F m)
+      = CL.Question.aline u₀ s₀ := hσc.1
+  have hidx : axisIdx (Line.through (revPoint yp)
+      (Pi.single (Fin.rev (chi hm s₀)) 1) : Line F m) = Fin.rev (chi hm s₀) := by
+    rw [through_single]; exact axisIdx_eq _ _
+  rw [hidx, Fin.rev_rev] at h1'
+  exact (CL.Question.aline.inj h1').2
+
+/-! ### The arithmetic facts
+
+Each shape ends in an inequality between two explicit rationals in `q`, `m` and `q/m`. These are
+the casts and positivity facts they all need. -/
+
+/-- The block size, as a real. -/
+noncomputable abbrev blk (F : Type*) [Fintype F] (m : ℕ) : ℝ := ((Fintype.card F / m : ℕ) : ℝ)
+
+omit [DecidableEq F] in
+theorem blk_pos (hm : m ∣ Fintype.card F) : (0 : ℝ) < blk F m := by
+  exact_mod_cast card_div_pos hm
+
+omit [Field F] [DecidableEq F] [NeZero m] in
+theorem m_mul_blk (hm : m ∣ Fintype.card F) :
+    (m : ℝ) * blk F m = (Fintype.card F : ℝ) := by
+  exact_mod_cast Nat.mul_div_cancel' hm
+
+omit [DecidableEq F] [NeZero m] in
+theorem cast_card_sub_one :
+    ((Fintype.card F - 1 : ℕ) : ℝ) = (Fintype.card F : ℝ) - 1 := by
+  rw [Nat.cast_sub Fintype.card_pos, Nat.cast_one]
+
+omit [DecidableEq F] [NeZero m] in
+theorem card_pos_real : (0 : ℝ) < Fintype.card F := by exact_mod_cast Fintype.card_pos
+
+omit [DecidableEq F] [NeZero m] in
+theorem card_point_pos_real : (0 : ℝ) < Fintype.card (Point F m) := by
+  exact_mod_cast Fintype.card_pos
+
+omit [Field F] [Fintype F] [DecidableEq F] in
+theorem m_pos_real : (0 : ℝ) < m := by
+  exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne m)
+
+omit [Field F] [Fintype F] [DecidableEq F] in
+theorem one_le_m_real : (1 : ℝ) ≤ m := by
+  exact_mod_cast Nat.one_le_iff_ne_zero.mpr (NeZero.ne m)
+
+omit [NeZero m] in
+/-- The averaging family's size, as a real. -/
+theorem card_seed_real :
+    (Fintype.card (Seed F m) : ℝ) = blk F m ^ m * ((Fintype.card F : ℝ) - 1) := by
+  rw [card_seed_eq]
+  push_cast [cast_card_sub_one]
+  ring
+
+omit [Field F] [DecidableEq F] [NeZero m] in
+/-- The seeded test's sample space, as a real. -/
+theorem cast_card_clSample :
+    (Fintype.card (CL.Sample F m) : ℝ)
+      = 9 * ((Fintype.card (Point F m) : ℝ) *
+          ((Fintype.card F : ℝ) * (Fintype.card (Point F m) : ℝ))) := by
+  rw [card_clSample_eq]
+  push_cast
+  ring
+
+/-! ### The axis-parallel bound -/
+
+/-- **The axis-parallel shape of the push-forward bound.** The one contributing sample has weight
+`1/(6 m q^m)`, the family pins one seed index, and the seeded test puts at least `1/(9 q^{m+1})`
+on the pair; the three combine with room to spare at `C = 3m` (`3/2` would do). -/
+theorem hμ_axis (hm : m ∣ Fintype.card F) (u₀ : Point F m) (s₀ : F) (yp : Point F m) :
+    (∑ σc : Seed F m,
+        ∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = CL.Question.aline u₀ s₀),
+        ∑ y' ∈ Finset.univ.filter (fun y' => qmapS hm σc y' = CL.Question.point yp),
+          (lidtGame F m d).μ x' y')
+      ≤ (Fintype.card (Seed F m) : ℝ) *
+          (3 * m * (clGame (d := d) (ldc := ldc) hm).μ
+            (CL.Question.aline u₀ s₀) (CL.Question.point yp)) := by
+  classical
+  have hsamples : ∀ σc : Seed F m,
+      (∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = CL.Question.aline u₀ s₀),
+        ∑ y' ∈ Finset.univ.filter (fun y' => qmapS hm σc y' = CL.Question.point yp),
+          (lidtGame F m d).μ x' y')
+      = ∑ s ∈ Finset.univ.filter (fun s : Sample F m =>
+          qmapS hm σc s.questions.1 = CL.Question.aline u₀ s₀ ∧
+            qmapS hm σc s.questions.2 = CL.Question.point yp), s.weight := fun σc =>
+    sum_fibre_μ_eq_sum_samples (d := d) (qmapS hm σc) (qmapS hm σc) _ _
+  rw [Finset.sum_congr rfl fun σc (_ : σc ∈ Finset.univ) => hsamples σc]
+  by_cases hbase : u₀ = CL.rep (Pi.single (chi hm s₀) 1) yp
+  · subst hbase
+    -- the three ingredients
+    have hle := sum_sum_le_card_mul (S := Seed F m) (ι := Sample F m)
+      (fun s => s.weight) (fun s => s.weight_nonneg)
+      (fun σc s => qmapS hm σc s.questions.1
+            = CL.Question.aline (CL.rep (Pi.single (chi hm s₀) 1) yp) s₀ ∧
+          qmapS hm σc s.questions.2 = CL.Question.point yp)
+      {Sample.axis false (revPoint yp) (Fin.rev (chi hm s₀))}
+      (1 / (6 * m * Fintype.card (Point F m)))
+      ((Fintype.card F / m) ^ (m - 1) * (Fintype.card F - 1))
+      (fun σc s hc => filter_qmapS_axis_subset hm σc _ s₀ yp
+        (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hc⟩))
+      (fun s hs => by rw [Finset.mem_singleton] at hs; subst hs; exact le_of_eq rfl)
+      (fun s hs => card_filter_axis_le hm _ s₀ yp s hs)
+    refine hle.trans ?_
+    rw [Finset.card_singleton, Nat.cast_one, clGame_μ_eq, cast_card_clSample, card_seed_real]
+    -- the seeded test's count, from below
+    have hcnt : (Fintype.card (Point F m) : ℝ)
+        ≤ ((Finset.univ.filter (fun sm : CL.Sample F m =>
+            (sm.question hm sm.tyA, sm.question hm sm.tyB)
+              = ((CL.Question.aline (CL.rep (Pi.single (chi hm s₀) 1) yp) s₀
+                    : CL.Question F m), CL.Question.point yp))).card : ℝ) := by
+      exact_mod_cast card_filter_clAxis_ge hm yp s₀
+    -- notation
+    set q : ℝ := (Fintype.card F : ℝ) with hqdef
+    set P : ℝ := (Fintype.card (Point F m) : ℝ) with hPdef
+    set N : ℝ := blk F m with hNdef
+    have hq : (0 : ℝ) < q := card_pos_real
+    have hq1 : (1 : ℝ) ≤ q := by rw [hqdef]; exact_mod_cast Fintype.card_pos
+    have hP : (0 : ℝ) < P := card_point_pos_real
+    have hmR : (0 : ℝ) < m := m_pos_real
+    have hm1 : (1 : ℝ) ≤ m := one_le_m_real
+    have hN : (0 : ℝ) < N := blk_pos hm
+    have hmN : (m : ℝ) * N = q := m_mul_blk hm
+    have hden : (0 : ℝ) < 9 * (P * (q * P)) := by positivity
+    have hA : (0 : ℝ) ≤ N ^ (m - 1) * (q - 1) := by
+      refine mul_nonneg (by positivity) (by linarith)
+    have hM : ((((Fintype.card F / m) ^ (m - 1) * (Fintype.card F - 1) : ℕ)) : ℝ)
+        = N ^ (m - 1) * (q - 1) := by
+      rw [hNdef, hqdef]
+      push_cast [cast_card_sub_one]
+      ring
+    have hpow : N ^ m = N ^ (m - 1) * N := by
+      rw [← pow_succ]
+      congr 1
+      have : 1 ≤ m := Nat.one_le_iff_ne_zero.mpr (NeZero.ne m)
+      omega
+    calc (1 : ℝ) * (1 / (6 * m * P) *
+            ((((Fintype.card F / m) ^ (m - 1) * (Fintype.card F - 1) : ℕ)) : ℝ))
+        = 1 / (6 * m * P) * (N ^ (m - 1) * (q - 1)) := by rw [hM, one_mul]
+      _ ≤ (N * (3 * m * (P / (9 * (P * (q * P)))))) * (N ^ (m - 1) * (q - 1)) := by
+          refine mul_le_mul_of_nonneg_right ?_ hA
+          have hval : N * (3 * m * (P / (9 * (P * (q * P))))) = 1 / (3 * P) := by
+            rw [← hmN]
+            field_simp
+            ring
+          rw [hval]
+          refine one_div_le_one_div_of_le (by positivity) ?_
+          nlinarith
+      _ = N ^ m * (q - 1) * (3 * m * (P / (9 * (P * (q * P))))) := by rw [hpow]; ring
+      _ ≤ N ^ m * (q - 1) * (3 * m *
+            (((Finset.univ.filter (fun sm : CL.Sample F m =>
+              (sm.question hm sm.tyA, sm.question hm sm.tyB)
+                = ((CL.Question.aline (CL.rep (Pi.single (chi hm s₀) 1) yp) s₀
+                      : CL.Question F m), CL.Question.point yp))).card : ℝ)
+              / (9 * (P * (q * P))))) := by
+          have hfac : (0 : ℝ) ≤ N ^ m * (q - 1) :=
+            mul_nonneg (by positivity) (by linarith)
+          refine mul_le_mul_of_nonneg_left ?_ hfac
+          refine mul_le_mul_of_nonneg_left ?_ (by positivity : (0:ℝ) ≤ 3 * (m:ℝ))
+          rw [div_eq_mul_inv, div_eq_mul_inv]
+          exact mul_le_mul_of_nonneg_right hcnt (le_of_lt (inv_pos.mpr hden))
+  · -- nothing contributes, and the right-hand side is nonnegative
+    have hzero : ∀ σc : Seed F m,
+        (∑ s ∈ Finset.univ.filter (fun s : Sample F m =>
+          qmapS hm σc s.questions.1 = CL.Question.aline u₀ s₀ ∧
+            qmapS hm σc s.questions.2 = CL.Question.point yp), s.weight) = 0 := by
+      intro σc
+      refine Finset.sum_eq_zero fun s hs => ?_
+      obtain ⟨h1, h2⟩ := (Finset.mem_filter.mp hs).2
+      exact absurd (base_of_qmapS_axis hm σc h1 h2) hbase
+    rw [Finset.sum_congr rfl fun σc (_ : σc ∈ Finset.univ) => hzero σc, Finset.sum_const_zero]
+    refine mul_nonneg (Nat.cast_nonneg _) (mul_nonneg (by positivity) ?_)
+    exact (clGame (d := d) (ldc := ldc) hm).μ_nonneg _ _
+
+/-! ### The point bound
+
+Here the averaging is neutral: the image of a point question does not depend on the family
+member, so both sides carry the same factor `|Seed|` and the requirement is the unaveraged
+`1/(3 q^m) ≤ C/(9 q^m)`. -/
+
+/-- **The point shape of the push-forward bound.** -/
+theorem hμ_point (hm : m ∣ Fintype.card F) (xp yp : Point F m) :
+    (∑ σc : Seed F m,
+        ∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = CL.Question.point xp),
+        ∑ y' ∈ Finset.univ.filter (fun y' => qmapS hm σc y' = CL.Question.point yp),
+          (lidtGame F m d).μ x' y')
+      ≤ (Fintype.card (Seed F m) : ℝ) *
+          (3 * m * (clGame (d := d) (ldc := ldc) hm).μ
+            (CL.Question.point xp) (CL.Question.point yp)) := by
+  classical
+  have hsamples : ∀ σc : Seed F m,
+      (∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = CL.Question.point xp),
+        ∑ y' ∈ Finset.univ.filter (fun y' => qmapS hm σc y' = CL.Question.point yp),
+          (lidtGame F m d).μ x' y')
+      = ∑ s ∈ Finset.univ.filter (fun s : Sample F m =>
+          qmapS hm σc s.questions.1 = CL.Question.point xp ∧
+            qmapS hm σc s.questions.2 = CL.Question.point yp), s.weight := fun σc =>
+    sum_fibre_μ_eq_sum_samples (d := d) (qmapS hm σc) (qmapS hm σc) _ _
+  rw [Finset.sum_congr rfl fun σc (_ : σc ∈ Finset.univ) => hsamples σc]
+  by_cases hxy : xp = yp
+  · subst hxy
+    have hle := sum_sum_le_card_mul (S := Seed F m) (ι := Sample F m)
+      (fun s => s.weight) (fun s => s.weight_nonneg)
+      (fun σc s => qmapS hm σc s.questions.1 = CL.Question.point xp ∧
+          qmapS hm σc s.questions.2 = CL.Question.point xp)
+      {Sample.selfConsistency (revPoint xp)}
+      (1 / (3 * Fintype.card (Point F m))) (Fintype.card (Seed F m))
+      (fun σc s hc => filter_qmapS_point_subset hm σc xp xp
+        (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hc⟩))
+      (fun s hs => by rw [Finset.mem_singleton] at hs; subst hs; exact le_of_eq rfl)
+      (fun s _ => Finset.card_le_univ _)
+    refine hle.trans ?_
+    rw [Finset.card_singleton, Nat.cast_one, clGame_μ_eq, cast_card_clSample, card_seed_real]
+    have hcnt : (Fintype.card F : ℝ) * (Fintype.card (Point F m) : ℝ)
+        ≤ ((Finset.univ.filter (fun sm : CL.Sample F m =>
+            (sm.question hm sm.tyA, sm.question hm sm.tyB)
+              = ((CL.Question.point xp : CL.Question F m), CL.Question.point xp))).card : ℝ) := by
+      exact_mod_cast card_filter_clPoint_ge hm xp
+    set q : ℝ := (Fintype.card F : ℝ) with hqdef
+    set P : ℝ := (Fintype.card (Point F m) : ℝ) with hPdef
+    set N : ℝ := blk F m with hNdef
+    have hq : (0 : ℝ) < q := card_pos_real
+    have hq1 : (1 : ℝ) ≤ q := by rw [hqdef]; exact_mod_cast Fintype.card_pos
+    have hP : (0 : ℝ) < P := card_point_pos_real
+    have hmR : (0 : ℝ) < m := m_pos_real
+    have hm1 : (1 : ℝ) ≤ m := one_le_m_real
+    have hN : (0 : ℝ) < N := blk_pos hm
+    have hden : (0 : ℝ) < 9 * (P * (q * P)) := by positivity
+    have h3P : (0 : ℝ) < 3 * P := by positivity
+    have hA : (0 : ℝ) ≤ N ^ m * (q - 1) := mul_nonneg (by positivity) (by linarith)
+    have hval : 3 * (m : ℝ) * ((q * P) / (9 * (P * (q * P)))) = (m : ℝ) / (3 * P) := by
+      field_simp
+      ring
+    calc (1 : ℝ) * (1 / (3 * P) * (N ^ m * (q - 1)))
+        = 1 / (3 * P) * (N ^ m * (q - 1)) := one_mul _
+      _ ≤ (3 * m * ((q * P) / (9 * (P * (q * P))))) * (N ^ m * (q - 1)) := by
+          refine mul_le_mul_of_nonneg_right ?_ hA
+          rw [hval, div_eq_mul_inv, div_eq_mul_inv]
+          exact mul_le_mul_of_nonneg_right hm1 (le_of_lt (inv_pos.mpr h3P))
+      _ = N ^ m * (q - 1) * (3 * m * ((q * P) / (9 * (P * (q * P))))) := by ring
+      _ ≤ N ^ m * (q - 1) * (3 * m *
+            (((Finset.univ.filter (fun sm : CL.Sample F m =>
+              (sm.question hm sm.tyA, sm.question hm sm.tyB)
+                = ((CL.Question.point xp : CL.Question F m),
+                    CL.Question.point xp))).card : ℝ) / (9 * (P * (q * P))))) := by
+          refine mul_le_mul_of_nonneg_left ?_ hA
+          refine mul_le_mul_of_nonneg_left ?_ (by positivity : (0:ℝ) ≤ 3 * (m:ℝ))
+          rw [div_eq_mul_inv, div_eq_mul_inv]
+          exact mul_le_mul_of_nonneg_right hcnt (le_of_lt (inv_pos.mpr hden))
+  · have hzero : ∀ σc : Seed F m,
+        (∑ s ∈ Finset.univ.filter (fun s : Sample F m =>
+          qmapS hm σc s.questions.1 = CL.Question.point xp ∧
+            qmapS hm σc s.questions.2 = CL.Question.point yp), s.weight) = 0 := by
+      intro σc
+      rw [filter_qmapS_point_eq_empty hm σc hxy, Finset.sum_empty]
+    rw [Finset.sum_congr rfl fun σc (_ : σc ∈ Finset.univ) => hzero σc, Finset.sum_const_zero]
+    refine mul_nonneg (Nat.cast_nonneg _) (mul_nonneg (by positivity) ?_)
+    exact (clGame (d := d) (ldc := ldc) hm).μ_nonneg _ _
+
 end MIPRE.LIDT.Adapter
