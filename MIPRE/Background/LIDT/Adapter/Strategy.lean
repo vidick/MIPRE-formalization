@@ -190,4 +190,91 @@ theorem eq_dpolys_of_fmtOk {u₀ : Point F m} {s : F} {v : Point F m} {a : CL.An
   | apolys f => exact absurd h (by simp [CL.Question.fmtOk])
   | dpolys f => exact ⟨f, rfl⟩
 
+/-! ## `hD`: acceptance survives the two maps
+
+One lemma per case of `Sample`, since the source's acceptance says something different in each.
+-/
+
+variable (hm : m ∣ Fintype.card F) (σ : Fin m → Fin (Fintype.card F / m))
+
+/-- The self-consistency case: both players are asked the same point, and both tests check that
+the two answers agree. -/
+theorem hD_selfCons (u : Point F m) (a b : CL.Answer F m d 1)
+    (hacc : (clGame (d := d) (ldc := 1) hm).D (qmap hm σ (.point u)) (qmap hm σ (.point u)) a b = true) :
+    (lidtGame F m d).D (.point u) (.point u) (amap (.point u) a) (amap (.point u) b) = true := by
+  have hq : qmap hm σ (Question.point u) = CL.Question.point (revPoint u) := rfl
+  rw [hq] at hacc
+  obtain ⟨α, rfl⟩ := eq_values_of_fmtOk (fmtOk_of_accepts_left hacc)
+  obtain ⟨β, rfl⟩ := eq_values_of_fmtOk (fmtOk_of_accepts_right hacc)
+  have hab : α = β := by
+    have h : CL.subtests (d := d) hm (CL.Question.point (revPoint u))
+        (CL.Question.point (revPoint u)) (.values α : CL.Answer F m d 1)
+        (.values β : CL.Answer F m d 1) = true := by
+      have := hacc
+      rw [show (clGame (d := d) (ldc := 1) hm).D = CL.accepts hm from rfl, CL.accepts] at this
+      simpa [CL.Question.fmtOk] using this
+    exact of_decide_eq_true (by simpa [CL.subtests] using h)
+  show LIDT.accepts F m d (.point u) (.point u) (.value (α 0)) (.value (β 0)) = true
+  simp [LIDT.accepts, hab]
+
+/-- The axis-parallel case: the source checks the point is on the seeded line and the answer
+evaluates correctly there, and after reversal that is the same equation the target checks. -/
+theorem hD_axis (u : Point F m) (i : Fin m) (a b : CL.Answer F m d 1)
+    (hacc : (clGame (d := d) (ldc := 1) hm).D (qmap hm σ (.axisLine (Line.through u (Pi.single i 1))))
+      (qmap hm σ (.point u)) a b = true) :
+    (lidtGame F m d).D (.axisLine (Line.through u (Pi.single i 1))) (.point u)
+      (amap (.axisLine (Line.through u (Pi.single i 1))) a) (amap (.point u) b) = true := by
+  classical
+  set ℓ : Line F m := Line.through u (Pi.single i 1) with hℓdef
+  have hthr : ℓ = (u - u i • (Pi.single i 1 : Point F m), (Pi.single i 1 : Point F m)) :=
+    through_single i u
+  have hd2 : ℓ.2 = (Pi.single i 1 : Point F m) := by rw [hthr]
+  have hidx : axisIdx ℓ = i := by rw [hthr]; exact axisIdx_eq _ i
+  set s : F := seedOf hm (Fin.rev i) (σ (Fin.rev i)) with hs
+  have hchi : chi hm s = Fin.rev i := chi_seedOf hm _ _
+  have hqA : qmap hm σ (Question.axisLine ℓ) = CL.Question.aline (revPoint ℓ.1) s := by
+    rw [qmap, hidx]
+  have hqB : qmap hm σ (Question.point u) = CL.Question.point (revPoint u) := rfl
+  rw [hqA, hqB] at hacc
+  obtain ⟨f, rfl⟩ := eq_apolys_of_fmtOk (fmtOk_of_accepts_left hacc)
+  obtain ⟨α, rfl⟩ := eq_values_of_fmtOk (fmtOk_of_accepts_right hacc)
+  -- the source's subtest, with the direction rewritten as the reversal of the target's
+  have hdir : (Pi.single (chi hm s) 1 : Point F m) = revPoint ℓ.2 := by
+    rw [hchi, hd2, revPoint_single]
+  have hsub : CL.lineVsPoint (revPoint ℓ.1) (revPoint ℓ.2) (revPoint u) f α = true := by
+    have h : CL.subtests (d := d) hm (CL.Question.aline (revPoint ℓ.1) s)
+        (CL.Question.point (revPoint u)) (.apolys f : CL.Answer F m d 1)
+        (.values α : CL.Answer F m d 1) = true := by
+      have := hacc
+      rw [show (clGame (d := d) (ldc := 1) hm).D = CL.accepts hm from rfl, CL.accepts] at this
+      simpa [CL.Question.fmtOk] using this
+    rw [show CL.subtests (d := d) hm (CL.Question.aline (revPoint ℓ.1) s)
+      (CL.Question.point (revPoint u)) (.apolys f : CL.Answer F m d 1)
+      (.values α : CL.Answer F m d 1)
+      = CL.lineVsPoint (revPoint ℓ.1) (Pi.single (chi hm s) 1) (revPoint u) f α from rfl,
+      hdir] at h
+    exact h
+  obtain ⟨⟨t, ht⟩, heval⟩ := of_decide_eq_true (by simpa [CL.lineVsPoint] using hsub)
+  -- transport membership and the parameter
+  have hmem : u = ℓ.1 + t • ℓ.2 := eq_add_smul_of_rev ht
+  have hex : ∃ j, (revPoint ℓ.2) j ≠ 0 := by
+    refine ⟨Fin.rev i, ?_⟩
+    rw [hd2, revPoint_single]
+    simp
+  have hparam : CL.lineParam (revPoint ℓ.1) (revPoint ℓ.2) (revPoint u) = t := by
+    rw [ht]
+    exact lineParam_eq_of_mem hex _ t
+  have hpt : Line.param ℓ u = t := by
+    have hv : ∃ j, (Pi.single i 1 : Point F m) j ≠ 0 := ⟨i, by simp⟩
+    have := param_through_eq_of_mem hv u t
+    rw [← hℓdef] at this
+    rw [hmem]
+    exact this
+  show LIDT.accepts F m d (.axisLine ℓ) (.point u) (.axisPoly (f 0)) (.value (α 0)) = true
+  rw [show LIDT.accepts F m d (.axisLine ℓ) (.point u) (.axisPoly (f 0)) (.value (α 0))
+    = decide (ℓ.Mem u ∧ (f 0).eval (Line.param ℓ u) = α 0) from rfl]
+  refine decide_eq_true ⟨⟨t, hmem⟩, ?_⟩
+  rw [hpt, ← hparam]
+  exact heval
+
 end MIPRE.LIDT.Adapter
