@@ -527,10 +527,56 @@ forced -- `approx_delta` has no data-processing inequality (NW19's own counterex
 coarse-graining can only be taken at the Born level. `sum_bornProb_le_map` is stated there for that
 reason, and the blueprint says so under `def:expanded-state`.
 
-**Still to do in stage 3**: `lem:qld-expanded-lines` -- the line measurements, whose projectivity
-comes from an orthogonality property of the convolution rather than from
-`cor:ortho-from-consistency`, and whose consistency with the point measurements is
-`lem:qld-expanded-points` plus the line subtest's relations.
+### Stage 3, the line measurements (2026-09-19, done)
+
+`lem:qld-expanded-lines`, the paper's `lem:qld-comm-line-cons`. Same convolution one level up: the
+strategy's line measurement against an ancilla measurement that reports the **restriction to the
+line** of the low-degree encoding of its outcome. Four things are worth recording, because three of
+them made the proof shorter than the paper's and the fourth is a correction to this file's own
+earlier note above.
+
+**The missing infrastructure was the restriction itself.** `MIPRE/Foundations/LowDegree/`
+had `lineParam` and `LinePoly.eval` but no way to restrict a multivariate polynomial to a line.
+`LineRestrict.lean` is that: `lineRestrict u0 w p = p(u0 + t w)` by substitution
+(`MvPolynomial.aeval` into `Polynomial F` -- which needs
+`import Mathlib.Algebra.Polynomial.AlgebraMap` for the `Algebra F (Polynomial F)` instance, whose
+absence was the first hour), with `eval_lineRestrict`, a degree bound `natDegree <= totalDegree`
+monomial by monomial, and `sum_coeff_lineRestrict` reading the coefficients as a `LinePoly F n` for
+any `n` the degree does not exceed. Plus `totalDegree_ldEnc_le : totalDegree (ldEnc a) <= m`.
+
+**The ancilla's line and point measurements are literally the same family, relabelled.** This is
+what replaces the paper's step "by the exact consistency between the `tau^{W,line}` and `tau^{W,u}`
+measurements". Generalize the syndrome projector to a coarse-graining of the eigenbasis measurement
+along an *arbitrary* label -- `synOf w phi o = sum_{e : phi e = o} proj w e`, with `syn w v` the
+case `phi e = <e, v>` -- and the three facts it needs (`IsPVM`, EPR transport, and that
+coarse-graining again gives the composite label's family) generalize verbatim. Then
+`synLinePOVM_map_eval` is a **POVM equality**: relabelling the line measurement by evaluation at
+the point *is* the point measurement, because `eval_lineCoeffs` says the labels agree. So the
+ancilla's contribution to the line-against-point estimate is the same exact `1` as in the point
+case, and no new estimate is needed.
+
+**Projectivity is two closure properties, not an orthogonality computation.** A coarse-graining of a
+projective measurement is projective (`IsPVM.coarse`, from `IsPVM.orthogonal`), and so is a product
+(`isPVM_kron`). The convolution is a coarse-graining of a product, so `isPVM_hatLinePOVM` is three
+lemma applications -- *given* that the strategy's own line measurement is projective, which the
+paper takes for granted and which is WLOG by Naimark. The Lean statement carries it as a hypothesis
+instead of hiding it. The note above, that projectivity "comes from an orthogonality property of the
+convolution", was the paper's framing of the same fact; the closure route is shorter and says
+where the hypothesis is.
+
+**The constant is linear in `eps`, and the blueprint's `O(sqrt eps)` was wrong.** Both items come
+out at `172 eps` -- item 1 of `lem:qld-win` with no further loss. The paper says `poly(eps)`; the
+square root was this blueprint's own and had no source, like the one in `lem:qld-obs-commutation`
+before it. Nothing in the proof takes a square root because nothing in it converts an operator
+inequality into a norm. The blueprint statement is repaired in the same pull request.
+
+**One thing deliberately not proved.** For an axis-parallel line the honest restriction is affine,
+hence of degree at most `d` rather than `md`; `lem:qld-pairs-of-lines` will need that to keep padded
+answers in the degree-`d` format, and it needs the *individual*-degree bound along the line's own
+direction, which `natDegree_lineRestrict_le` (a total-degree bound) does not give. The convolution
+is stated at degree `md` for both line types with the axis-parallel answers padded, which is what
+the paper's printed definition does too; the refinement is the paper's `cnote` in
+`qld-combining.tex` and is PR C's problem.
 
 ### PR C — combining the two bases
 

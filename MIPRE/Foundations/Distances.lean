@@ -103,6 +103,42 @@ noncomputable def POVM.map {B : Type*} [Fintype B] [DecidableEq B] (f : A → B)
     exact Subtype.coe_le_coe.mp h
   normalized := (Finset.sum_fiberwise Finset.univ f M.mats).trans M.normalized
 
+/-- **A POVM is determined by its operators.** The remaining fields are propositions. -/
+theorem POVM.ext' {M N : POVM A d} (h : ∀ a, (((M.mats a)).val) = (((N.mats a)).val)) : M = N := by
+  have hm : M.mats = N.mats := funext fun a => Subtype.ext (h a)
+  obtain ⟨mM, hM1, hM2⟩ := M
+  obtain ⟨mN, hN1, hN2⟩ := N
+  simp only at hm
+  subst hm
+  rfl
+
+@[simp] theorem POVM.map_mats {B : Type*} [Fintype B] [DecidableEq B] (f : A → B) (M : POVM A d)
+    (b : B) : (((M.map f).mats b).val)
+      = ∑ a ∈ Finset.univ.filter fun a => f a = b, ((M.mats a).val) :=
+  AddSubmonoidClass.coe_finsetSum _ _
+
+/-- **Relabelling twice is relabelling once**: the level sets of `g ∘ f` are the unions of the
+level sets of `f` along the level sets of `g`. -/
+theorem POVM.map_map {B C : Type*} [Fintype B] [DecidableEq B] [Fintype C] [DecidableEq C]
+    (M : POVM A d) (f : A → B) (g : B → C) :
+    (M.map f).map g = M.map fun a => g (f a) := by
+  classical
+  refine POVM.ext' fun c => ?_
+  have hmaps : ∀ a ∈ Finset.univ.filter fun a => g (f a) = c,
+      f a ∈ Finset.univ.filter fun b => g b = c := fun a ha =>
+    Finset.mem_filter.mpr ⟨Finset.mem_univ _, (Finset.mem_filter.mp ha).2⟩
+  have hfil : ∀ b ∈ Finset.univ.filter fun b => g b = c,
+      (Finset.univ.filter fun a => g (f a) = c).filter (fun a => f a = b)
+        = Finset.univ.filter fun a => f a = b := by
+    intro b hb
+    rw [Finset.filter_filter]
+    refine Finset.filter_congr fun a _ => ⟨fun h => h.2, fun h => ⟨?_, h⟩⟩
+    rw [h]
+    exact (Finset.mem_filter.mp hb).2
+  rw [POVM.map_mats, POVM.map_mats,
+    ← Finset.sum_fiberwise_of_maps_to hmaps fun a => ((M.mats a).val)]
+  exact Finset.sum_congr rfl fun b hb => by rw [POVM.map_mats, ← hfil b hb]
+
 open scoped MatrixOrder in
 /-- The measurement for the question `x` of a projective measurement family on the matrix
 algebra `ℂ^{d×d}`, as a POVM (positivity follows from projectivity). -/

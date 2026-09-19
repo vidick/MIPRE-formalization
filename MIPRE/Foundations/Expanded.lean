@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 import MIPRE.Foundations.CrossConsistency
+import MIPRE.Foundations.PVM
 
 /-!
 # The expanded state, and an inert ancilla
@@ -265,6 +266,61 @@ def POVM.kron {ι κ : Type*} [Fintype ι] [Fintype κ] (P : POVM ι dA) (Q : PO
 @[simp] theorem POVM.kron_mats {ι κ : Type*} [Fintype ι] [Fintype κ] (P : POVM ι dA)
     (Q : POVM κ anc) (p : ι × κ) :
     (((P.kron Q).mats p).val) = ((P.mats p.1).val) ⊗ₖ ((Q.mats p.2).val) := rfl
+
+/-- **Relabelling the two factors is relabelling the product.** -/
+theorem POVM.kron_map {ι κ ι' κ' : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
+    [Fintype ι'] [DecidableEq ι'] [Fintype κ'] [DecidableEq κ']
+    (P : POVM ι dA) (Q : POVM κ anc) (f : ι → ι') (g : κ → κ') :
+    (P.map f).kron (Q.map g) = (P.kron Q).map (fun p => (f p.1, g p.2)) := by
+  classical
+  refine POVM.ext' fun b => ?_
+  have hfil : (Finset.univ.filter fun p : ι × κ => (f p.1, g p.2) = b)
+      = (Finset.univ.filter fun i => f i = b.1) ×ˢ (Finset.univ.filter fun j => g j = b.2) := by
+    ext p
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_product, Prod.ext_iff]
+  rw [POVM.kron_mats, POVM.map_mats, POVM.map_mats, POVM.map_mats, hfil, Finset.sum_product,
+    sum_kronecker_left]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  simp only [POVM.kron_mats]
+  exact kronecker_sum_right _ _ _
+
+/-! ## Projectivity of the constructions
+
+The expansion stage's measurements are products of a strategy measurement with an ancilla
+measurement, coarse-grained by adding the two outcomes, and the arguments downstream need them to
+be **projective**. Two closures give that: a product of projective measurements is projective, and
+so is any coarse-graining of one (`IsPVM.coarse`). -/
+
+/-- **A product of projective measurements is projective.** -/
+theorem isPVM_kron {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
+    {P : ι → Matrix dA dA ℂ} {Q : κ → Matrix anc anc ℂ} (hP : IsPVM P) (hQ : IsPVM Q) :
+    IsPVM (fun p : ι × κ => P p.1 ⊗ₖ Q p.2) where
+  isSelfAdjoint p := by
+    rw [Matrix.conjTranspose_kronecker, hP.isSelfAdjoint, hQ.isSelfAdjoint]
+  idem p := by
+    rw [← Matrix.mul_kronecker_mul, hP.idem, hQ.idem]
+  sum_eq_one := by
+    rw [Fintype.sum_prod_type,
+      show (∑ i : ι, ∑ j : κ, P i ⊗ₖ Q j) = ∑ i : ι, P i ⊗ₖ (∑ j : κ, Q j) from
+        Finset.sum_congr rfl fun i _ => (kronecker_sum_right _ _ _).symm,
+      hQ.sum_eq_one, ← sum_kronecker_left, hP.sum_eq_one, Matrix.one_kronecker_one]
+
+/-- **A coarse-graining of a projective POVM is projective**, in the `POVM.map` form the games
+use. -/
+theorem isPVM_povm_map {A B : Type*} [Fintype A] [DecidableEq A] [Fintype B] [DecidableEq B]
+    (M : POVM A dA) (h : IsPVM fun a => ((M.mats a).val)) (f : A → B) :
+    IsPVM fun b => (((M.map f).mats b).val) := by
+  have hval : ∀ b : B, (((M.map f).mats b).val)
+      = ∑ a ∈ Finset.univ.filter fun a => f a = b, ((M.mats a).val) := fun b =>
+    AddSubmonoidClass.coe_finsetSum _ _
+  simpa only [hval] using h.coarse f
+
+/-- **A product of projective POVMs is projective**, in the `POVM.kron` form the expansion uses. -/
+theorem isPVM_povm_kron {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
+    (P : POVM ι dA) (Q : POVM κ anc) (hP : IsPVM fun i => ((P.mats i).val))
+    (hQ : IsPVM fun j => ((Q.mats j).val)) :
+    IsPVM fun p => (((P.kron Q).mats p).val) :=
+  isPVM_kron hP hQ
 
 end MIPRE
 

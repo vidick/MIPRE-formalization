@@ -106,6 +106,30 @@ theorem degreeOf_ldEnc_le [Nontrivial F] (a : (Fin m → Bool) → F) (i : Fin m
   refine Finset.sup_le fun y _ => ?_
   exact (MvPolynomial.degreeOf_mul_le i _ _).trans (by simpa using degreeOf_ind_le (F := F) y i)
 
+theorem totalDegree_ind_le [Nontrivial F] (y : Fin m → Bool) :
+    (ind y : MvPolynomial (Fin m) F).totalDegree ≤ m := by
+  have hfac : ∀ j : Fin m,
+      (if y j then (X j : MvPolynomial (Fin m) F) else 1 - X j).totalDegree ≤ 1 := by
+    intro j
+    cases hy : y j
+    · simp only [Bool.false_eq_true, if_false]
+      exact le_trans (MvPolynomial.totalDegree_sub 1 (X j)) (by simp)
+    · simp
+  rw [ind]
+  refine le_trans (MvPolynomial.totalDegree_finsetProd _ _) ?_
+  refine le_trans (Finset.sum_le_sum fun j _ => hfac j) ?_
+  simp
+
+/-- **The encoding is multilinear, hence of total degree at most `m`.** This is the bound that
+makes the restriction of `g_a` to a line a polynomial of degree at most `m`. -/
+theorem totalDegree_ldEnc_le [Nontrivial F] (a : (Fin m → Bool) → F) :
+    (ldEnc a).totalDegree ≤ m := by
+  rw [ldEnc]
+  refine MvPolynomial.totalDegree_finsetSum_le fun y _ => ?_
+  refine le_trans (MvPolynomial.totalDegree_mul _ _) ?_
+  rw [MvPolynomial.totalDegree_C, zero_add]
+  exact totalDegree_ind_le y
+
 /-! ## The decoding map -/
 
 variable [DecidableEq F]

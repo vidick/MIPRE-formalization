@@ -613,11 +613,46 @@ theorem sum_sgn_trMul_zero :
   rw [Finset.sum_congr rfl fun r (_ : r ∈ univ) => by rw [mul_zero, map_zero, sgn_zero],
     Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one]
 
+/-- **A coarse-graining of the eigenbasis measurement**: the sum of the spectral projectors over
+a level set of an arbitrary label `φ`. The syndrome projector below is this at
+`φ = ⟨·, v⟩`, and the expansion stage's line measurements are this at the label ``restriction of
+the low-degree encoding to the line''. -/
+def synOf {C : Type*} [DecidableEq C] (w : (n → F) → Matrix (n → F) (n → F) ℂ)
+    (φ : (n → F) → C) (o : C) : Matrix (n → F) (n → F) ℂ :=
+  ∑ e ∈ univ.filter fun e => φ e = o, proj w e
+
 /-- **The syndrome projector**: onto the eigenvectors whose pairing with `v` is `a`. The paper's
 `eq:qld-point-obs-def`. -/
 def syn (w : (n → F) → Matrix (n → F) (n → F) ℂ) (v : n → F) (a : F) :
     Matrix (n → F) (n → F) ℂ :=
   ∑ e ∈ univ.filter fun e => dotF e v = a, proj w e
+
+/-- The syndrome projector is the coarse-graining along the pairing. -/
+theorem syn_eq_synOf (w : (n → F) → Matrix (n → F) (n → F) ℂ) (v : n → F) :
+    syn w v = synOf w (fun e => dotF e v) := rfl
+
+/-- **Coarse-graining a level-set family again is the level-set family of the composite label.**
+The level sets of `g ∘ φ` are the unions of the level sets of `φ` along the level sets of `g`, so
+relabelling a coarse-grained eigenbasis measurement never leaves the family. -/
+theorem sum_synOf {C D : Type*} [Fintype C] [DecidableEq C] [DecidableEq D]
+    (w : (n → F) → Matrix (n → F) (n → F) ℂ) (φ : (n → F) → C) (g : C → D) (c : D) :
+    ∑ o ∈ univ.filter fun o => g o = c, synOf w φ o = synOf w (fun e => g (φ e)) c := by
+  classical
+  have hmaps : ∀ e ∈ univ.filter fun e => g (φ e) = c, φ e ∈ univ.filter fun o => g o = c :=
+    fun e he => Finset.mem_filter.mpr ⟨mem_univ _, (Finset.mem_filter.mp he).2⟩
+  have hfil : ∀ o ∈ univ.filter fun o => g o = c,
+      (univ.filter fun e => g (φ e) = c).filter (fun e => φ e = o)
+        = univ.filter fun e => φ e = o := by
+    intro o ho
+    rw [Finset.filter_filter]
+    refine Finset.filter_congr fun e _ => ?_
+    refine ⟨fun h => h.2, fun h => ⟨?_, h⟩⟩
+    rw [h]
+    exact (Finset.mem_filter.mp ho).2
+  rw [show synOf w (fun e => g (φ e)) c
+      = ∑ e ∈ univ.filter fun e => g (φ e) = c, proj w e from rfl,
+    ← Finset.sum_fiberwise_of_maps_to hmaps (proj w)]
+  exact Finset.sum_congr rfl fun o ho => by rw [synOf, ← hfil o ho]
 
 /-- **The identity the expansion stage calls.** Averaging the family along the line `r ↦ r · v`
 against the character of `a` gives the syndrome projector: the paper's

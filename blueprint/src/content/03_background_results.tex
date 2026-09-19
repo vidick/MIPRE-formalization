@@ -580,7 +580,8 @@ It certifies none of the paper's intermediate statements, and they certify none 
   MIPRE.LIDT.CL.accepts_aline_values_eq_false,
   MIPRE.LIDT.CL.accepts_point_apolys_eq_false, MIPRE.LIDT.CL.accepts_aline_dline,
   MIPRE.LIDT.CL.aline_question_ne, MIPRE.LIDT.CL.card_chi_fiber,
-  MIPRE.LIDT.CL.Answer.toValue, MIPRE.LIDT.CL.pointPOVMA, MIPRE.LIDT.CL.pointPOVMB}
+  MIPRE.LIDT.CL.Answer.toValue, MIPRE.LIDT.CL.pointPOVMA, MIPRE.LIDT.CL.pointPOVMB,
+  MIPRE.LIDT.LinePoly.eval_add}
 \leanok
 For admissible $q$, positive integers $m,d,\mathrm{ldc}$ and $m\mid q$, the
 \emph{seeded CL test} is the paper's typed low-degree game with parameters
@@ -1977,20 +1978,109 @@ anything, which is also why it is stated there rather than here.
 \begin{lemma}[Expanded line measurements]
 \label{lem:qld-expanded-lines}
 \ledgernode{1.2.2.6}
-\uses{lem:qld-expanded-points,cor:ortho-from-consistency}
-For each $W \in \{X, Z\}$ and each line $\ell$ there is a \emph{projective} measurement
-$\widehat{M}^{(\mathtt{Line}, W), \ell}_f$, with outcomes the degree-$md$ polynomials on
-$\ell$, such that with $\delta_{\mathrm{Line}}(\eps) = O(\sqrt{\eps})$ it is self-consistent
-over the line--point distribution and consistent with the expanded point measurements of
-Lemma~\ref{lem:qld-expanded-points}, in both the form that compares a line outcome with a
-point outcome and the form that compares the evaluation of the line polynomial at the point.
+\uses{lem:qld-win,lem:qld-expanded-points,def:weyl-epr,def:expanded-state,def:line-restriction,
+  def:lidt-cl}
+\lean{MIPRE.QLD.lineCoeffs, MIPRE.QLD.eval_lineCoeffs, MIPRE.QLD.dotF_indVec,
+  MIPRE.QLD.padLine, MIPRE.QLD.linePoly_eval_eq_range, MIPRE.QLD.eval_padLine,
+  MIPRE.QLD.rdLine, MIPRE.QLD.synLinePOVM, MIPRE.QLD.synLinePOVM_map_eval,
+  MIPRE.QLD.lineAnsPOVM, MIPRE.QLD.hatLinePOVM, MIPRE.QLD.isPVM_hatLinePOVM,
+  MIPRE.QLD.hatLinePOVM_map_eval, MIPRE.QLD.sum_xSqNorm_hatLinePOVM_le,
+  MIPRE.QLD.hatLinePOVM_consistency, MIPRE.QLD.Content.omega_pt,
+  MIPRE.QLD.sum_xSqNorm_hatLine_point_le, MIPRE.QLD.rep_add_lineParam_smul,
+  MIPRE.QLD.abaseOf, MIPRE.QLD.ddirOf, MIPRE.QLD.dbaseOf, MIPRE.QLD.d_le_mul,
+  MIPRE.QLD.m_le_mul, MIPRE.QLD.hsub_aline, MIPRE.QLD.hsub_dline,
+  MIPRE.QLD.hatLinePOVM_point_consistency, MIPRE.QLD.expanded_lines_aline,
+  MIPRE.QLD.expanded_lines_dline}
+\leanok
+Let $d \geq 1$ and let $\ket{\hat\psi}$ be as in Lemma~\ref{lem:qld-expanded-commutation}. For
+each $W \in \{X, Z\}$ and each line type --- axis-parallel or diagonal --- write $\ell$ for the
+line the verifier's content presents on the $W$ side, and let
+\begin{equation*}
+  \widehat{M}^{(\mathtt{Line}, W), \ell}_f
+    \;=\; \sum_{f' + f'' = f} M^{(\mathtt{Line}, W), \ell}_{f'} \ot \qp^{W, \ell}_{f''}
+\end{equation*}
+be the convolution of the strategy's line measurement with the ancilla measurement that reports
+the restriction to $\ell$ of the low-degree encoding of its outcome
+(Definition~\ref{def:line-restriction}), the outcomes being the polynomials of degree at most
+$md$ on $\ell$. Then, on average over the verifier's content --- which is the line--point
+distribution, the line and the point being read off the same sample:
+\begin{enumerate}
+\item (\textbf{Self-consistency})
+  $\widehat{M}^{(\mathtt{Line}, W), \ell}_f \ot \Id \;\simeq_{172\eps}\;
+    \Id \ot \widehat{M}^{(\mathtt{Line}, W), \ell}_f$;
+\item (\textbf{Consistency with the expanded point measurements})
+  $\widehat{M}^{(\mathtt{Point}, W), u}_a \ot \Id \;\simeq_{172\eps}\;
+    \Id \ot \widehat{M}^{(\mathtt{Line}, W), \ell}_{[\mathrm{eval}_u(\cdot) = a]}$,
+  where $u$ is the point of the same content and $\mathrm{eval}_u$ evaluates a polynomial on
+  $\ell$ at the parameter of $u$.
+\end{enumerate}
+Moreover $\{\widehat{M}^{(\mathtt{Line}, W), \ell}_f\}_f$ is \emph{projective} whenever the
+strategy's own line measurement is, which is without loss of generality by Naimark dilation.
 \end{lemma}
 
 \begin{proof}
-Projectivity comes from an orthogonality property of the convolution defining the family,
-not from Corollary~\ref{cor:ortho-from-consistency}; consistency in both forms is
-Lemma~\ref{lem:qld-expanded-points} together with the line subtest's relations.
+\leanok
+\uses{lem:qld-win,lem:qld-expanded-points,def:weyl-epr,def:expanded-state,def:line-restriction}
+Everything is exact except the strategy's own error, and the two items come out of the same
+three inputs as Lemma~\ref{lem:qld-expanded-consistency}.
+
+Projectivity is two closure properties and no computation: a product of projective measurements is
+projective, and so is any coarse-graining of one --- because the elements of a projective
+measurement are mutually orthogonal, a sum of them over a level set is idempotent. The convolution
+is a coarse-graining of a product, so it is projective.
+
+For item 1, the agreement probability of the product measurement on the expanded state factorizes
+(Definition~\ref{def:expanded-state}); the ancilla factor is \emph{exactly one}, the level-set
+projectors of the basis measurement being perfectly self-consistent across the two halves of
+$\ket{\EPR_q}^{\ot M}$ (Definition~\ref{def:weyl-epr}); the convolution can only increase
+agreement; and what remains is item 1 of Lemma~\ref{lem:qld-win} at the line type's self-loop. One
+conversion from agreement to distance gives $2 \cdot 86\eps$.
+
+For item 2 the ancilla contributes an identity rather than an estimate: relabelling a line outcome
+of the ancilla by its value at the point \emph{is} the ancilla's point measurement at that point.
+Both are coarse-grainings of the same eigenbasis measurement, and the two labels agree because
+evaluating the restriction of $g_h$ to $\ell$ at the parameter of $u$ is evaluating $g_h$ at $u$
+(Definition~\ref{def:line-restriction}), $u$ lying on $\ell$ at that parameter. So the two
+players' measurements are convolutions of their own factors with \emph{one} ancilla measurement,
+the factorization applies again, the ancilla factor is again exactly one, and what remains is item
+2a or 2b of Lemma~\ref{lem:qld-win} --- the line answer evaluated at the sampled point against the
+point answer --- at $2 \cdot 86 \eps$.
 \end{proof}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Background/QLD/Expanded.lean}, with the
+restriction operation in \texttt{MIPRE/Foundations/LowDegree/LineRestrict.lean} and the two
+closure properties of projectivity in \texttt{MIPRE/Foundations/PVM.lean} and
+\texttt{MIPRE/Foundations/Expanded.lean}.
+
+Three things about the statement have changed against the version this replaces, and all three are
+improvements rather than paraphrases.
+
+$\delta_{\mathrm{Line}}$ is \emph{linear} in $\eps$, at the constant $172\eps$ of item 1 of
+Lemma~\ref{lem:qld-win}, not $O(\sqrt\eps)$ as this lemma previously claimed. The paper says
+$\poly(\eps)$ and is consistent with either; the square root was this blueprint's own and had no
+source. Nothing in the proof takes a square root, because nothing in it converts an operator
+inequality into a norm.
+
+Projectivity does not come from Corollary~\ref{cor:ortho-from-consistency}, and that reference is
+gone from the \texttt{uses} list. It comes from projectivity of the strategy's own line
+measurement, which the paper takes for granted and which is without loss of generality; the
+formalized statement carries it as a hypothesis rather than hiding it.
+
+The paper's two forms of item 2 --- comparing a line outcome with a point outcome, and comparing
+the \emph{evaluation} of the line polynomial at the point --- are one statement here. The paper
+needs a direct calculation to pass between them, because it works with $\approx$ and
+Fact~\texttt{fact:data-processing} is a statement about $\simeq$ (a defect it flags itself). At the
+Born level the passage is free: summing the line outcomes over a fibre of $\mathrm{eval}_u$ is a
+coarse-graining, which increases agreement, so the estimate proved is the stronger one and the
+weaker follows without a separate argument.
+
+One thing is deliberately \emph{not} claimed. For an axis-parallel line the honest restriction is
+affine, hence of degree at most $d$ rather than $md$; that refinement is what
+Lemma~\ref{lem:qld-pairs-of-lines} will need in order to keep the padded answers in the
+degree-$d$ format, and it needs the individual-degree bound along the line's own direction, not
+the total-degree bound proved here. The convolution above is stated at degree $md$ for both line
+types, with the axis-parallel answers padded, which is what the paper's printed definition does
+too.
 
 \subsubsection{Combining the two bases}
 

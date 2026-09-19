@@ -119,6 +119,41 @@ carries are the same sign, and they cancel identically. -/
   MIPRE.QLD.hatPOVM_consistency,
   MIPRE.QLD.expanded_points
 
+/-! ## The expansion stage: the hatted line measurements
+
+Blueprint `lem:qld-expanded-lines`. The convolution of the strategy's line measurement with the
+ancilla measurement that reports the restriction of the encoding to the line; its projectivity, its
+self-consistency, and its consistency with the hatted point measurements. -/
+
+#guard_sorry_free MIPRE.QLD.lineCoeffs,
+  MIPRE.QLD.eval_lineCoeffs,
+  MIPRE.QLD.dotF_indVec,
+  MIPRE.QLD.padLine,
+  MIPRE.QLD.linePoly_eval_eq_range,
+  MIPRE.QLD.eval_padLine,
+  MIPRE.QLD.rdLine,
+  MIPRE.QLD.synLinePOVM,
+  MIPRE.QLD.synLinePOVM_map_eval,
+  MIPRE.QLD.lineAnsPOVM,
+  MIPRE.QLD.hatLinePOVM,
+  MIPRE.QLD.isPVM_hatLinePOVM,
+  MIPRE.QLD.hatLinePOVM_map_eval,
+  MIPRE.QLD.sum_xSqNorm_hatLinePOVM_le,
+  MIPRE.QLD.hatLinePOVM_consistency,
+  MIPRE.QLD.Content.omega_pt,
+  MIPRE.QLD.sum_xSqNorm_hatLine_point_le,
+  MIPRE.QLD.rep_add_lineParam_smul,
+  MIPRE.QLD.abaseOf,
+  MIPRE.QLD.ddirOf,
+  MIPRE.QLD.dbaseOf,
+  MIPRE.QLD.d_le_mul,
+  MIPRE.QLD.m_le_mul,
+  MIPRE.QLD.hsub_aline,
+  MIPRE.QLD.hsub_dline,
+  MIPRE.QLD.hatLinePOVM_point_consistency,
+  MIPRE.QLD.expanded_lines_aline,
+  MIPRE.QLD.expanded_lines_dline
+
 /-! ## Signed commutation: both halves
 
 Blueprint `lem:qld-obs-commutation`, `lem:qld-obs-commutation-comm` and

@@ -97,6 +97,25 @@ theorem orthogonal (h : IsPVM P) {a b : Λ} (hab : a ≠ b) : P a * P b = 0 := b
   rwa [Matrix.conjTranspose_mul, h.isSelfAdjoint, h.isSelfAdjoint,
     Matrix.conjTranspose_zero] at this
 
+/-- **Coarse-graining a projective measurement gives a projective measurement.** Summing the
+elements over a level set of `f` preserves self-adjointness, and mutual orthogonality
+(`IsPVM.orthogonal`) makes the sum idempotent; the level sets partition the outcomes, so the sums
+still add to one. This is what makes the expansion stage's convolutions projective. -/
+theorem coarse {Λ' : Type*} [Fintype Λ'] [DecidableEq Λ'] (h : IsPVM P) (f : Λ → Λ') :
+    IsPVM (fun c => ∑ a ∈ univ.filter fun a => f a = c, P a) where
+  isSelfAdjoint c := by
+    rw [Matrix.conjTranspose_sum]
+    exact Finset.sum_congr rfl fun a _ => h.isSelfAdjoint a
+  idem c := by
+    rw [Finset.sum_mul]
+    refine Finset.sum_congr rfl fun a ha => ?_
+    rw [Finset.mul_sum, Finset.sum_eq_single_of_mem a ha
+      (fun a' _ ha' => h.orthogonal ha'.symm)]
+    exact h.idem a
+  sum_eq_one := by
+    rw [Finset.sum_fiberwise (univ : Finset Λ) f P]
+    exact h.sum_eq_one
+
 /-- `P a * P b` is `P a` on the diagonal and zero off it. -/
 theorem mul_eq_ite (h : IsPVM P) (a b : Λ) :
     P a * P b = if a = b then P a else 0 := by
