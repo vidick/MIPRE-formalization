@@ -188,6 +188,42 @@ theorem snorm_mul_swap [DecidableEq N] {W WD Z : Matrix N N ℂ} {δ K : ℝ}
 
 end SNorm
 
+/-! ## The quadratic form -/
+
+section QForm
+
+variable (v : N → ℂ)
+
+/-- `⟨v| M |v⟩`, as a real. -/
+def qform (M : Matrix N N ℂ) : ℝ := (star v ⬝ᵥ (M *ᵥ v)).re
+
+theorem qform_add (M M' : Matrix N N ℂ) : qform v (M + M') = qform v M + qform v M' := by
+  rw [qform, qform, qform, Matrix.add_mulVec, dotProduct_add, Complex.add_re]
+
+theorem qform_sub (M M' : Matrix N N ℂ) : qform v (M - M') = qform v M - qform v M' := by
+  rw [qform, qform, qform, Matrix.sub_mulVec, dotProduct_sub, Complex.sub_re]
+
+theorem qform_smul_real (r : ℝ) (M : Matrix N N ℂ) :
+    qform v ((r : ℂ) • M) = r * qform v M := by
+  rw [qform, qform, Matrix.smul_mulVec, dotProduct_smul]
+  simp [Complex.ofReal_re]
+
+theorem qform_sum {ι : Type*} (s : Finset ι) (f : ι → Matrix N N ℂ) :
+    qform v (∑ i ∈ s, f i) = ∑ i ∈ s, qform v (f i) := by
+  classical
+  induction s using Finset.induction with
+  | empty => simp [qform]
+  | insert i s hi ih => rw [Finset.sum_insert hi, qform_add, ih, Finset.sum_insert hi]
+
+theorem qform_one [DecidableEq N] (hv : ‖evec v‖ = 1) : qform v (1 : Matrix N N ℂ) = 1 := by
+  rw [qform, Matrix.one_mulVec, ← norm_evec_sq, hv, one_pow]
+
+/-- **The squared state norm is the quadratic form of `M† M`.** -/
+theorem snorm_sq_eq_qform (M : Matrix N N ℂ) : snorm v M ^ 2 = qform v (Mᴴ * M) := by
+  rw [snorm, norm_evec_mulVec_sq, qform]
+
+end QForm
+
 variable [DecidableEq N]
 
 theorem bnd_one : Bnd (1 : Matrix N N ℂ) 1 := fun v => by

@@ -3,6 +3,7 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
+import MIPRE.Background.QLD.Anticomm
 import MIPRE.Background.QLD.Consistency
 
 /-!
@@ -26,3 +27,32 @@ info: 'MIPRE.QLD.exists_projective_of_consistent' depends on axioms: [propext, C
 -/
 #guard_msgs in
 #print axioms MIPRE.QLD.exists_projective_of_consistent
+
+/-! ## The Magic Square's anticommutation input
+
+Blueprint `lem:ms-direct-anticomm`. Both halves and the averaged form; `anti` is the
+anticommutator the statement is about. -/
+
+/--
+info: 'MIPRE.QLD.MS.anti' depends on axioms: [propext, Classical.choice, Quot.sound]
+-/
+#guard_msgs in
+#print axioms MIPRE.QLD.MS.anti
+
+/--
+info: 'MIPRE.QLD.MS.ms_direct_anticomm' depends on axioms: [propext, Classical.choice, Quot.sound]
+-/
+#guard_msgs in
+#print axioms MIPRE.QLD.MS.ms_direct_anticomm
+
+/--
+info: 'MIPRE.QLD.MS.ms_direct_anticomm'' depends on axioms: [propext, Classical.choice, Quot.sound]
+-/
+#guard_msgs in
+#print axioms MIPRE.QLD.MS.ms_direct_anticomm'
+
+/--
+info: 'MIPRE.QLD.MS.ms_direct_anticomm_avg' depends on axioms: [propext, Classical.choice, Quot.sound]
+-/
+#guard_msgs in
+#print axioms MIPRE.QLD.MS.ms_direct_anticomm_avg

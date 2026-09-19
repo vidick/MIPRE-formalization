@@ -183,6 +183,21 @@ theorem Game.accepts_eq_false_of_not_mem (game : Game G) {i : Fin G.r} {j : Fin 
     game.accepts (.inl i) (.inr j) (.inl a) (.inr v) = false := by
   simp [Game.accepts, h]
 
+/-! ## The symmetry between the players
+
+The orientation is sampled uniformly and the decider reads the two sides symmetrically, so
+exchanging the players is an automorphism of the game. This is what lets a one-sided soundness
+statement be applied twice --- as blueprint `lem:ms-direct-anticomm` does, whose Alice half is
+its Bob half for the swapped strategy. -/
+
+theorem Layout.questionDist_symm (G : Layout) (x y : G.Question) :
+    G.questionDist x y = G.questionDist y x := by
+  cases x <;> cases y <;> rfl
+
+theorem Game.accepts_symm (game : Game G) (x y : G.Question) (c d : G.Answer) :
+    game.accepts x y c d = game.accepts y x d c := by
+  cases x <;> cases y <;> cases c <;> cases d <;> rfl
+
 /-! ## The game -/
 
 /-- **The nonlocal game of an LCS instance.** The referee samples an incidence `(i, j)` with

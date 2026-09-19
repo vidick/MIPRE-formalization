@@ -370,24 +370,31 @@ Mermin--Peres magic square. The form above is~\cite[Section 8]{JNVWY20}.
 \begin{lemma}[Direct Magic Square anticommutation --- what the pipeline actually needs]
 \label{lem:ms-direct-anticomm}
 \ledgernode{1.2.2.4.1, 1.2.2.4.1.6, 1.2.2.4.1.7, 1.2.2.4.1.9}
-\uses{def:q-value,def:magic-square}
-Let $\strategy = (\ket{\psi}, A, B)$ be any finite-dimensional strategy, with arbitrary
-POVMs, that fails the Magic Square game with probability $\eps$, and let $B_j$ denote the
-$\pm 1$-observable (the POVM difference) of Bob's answer to variable $\Variable_j$. Then
+\uses{def:q-value,def:magic-square,def:lcs-game,def:state-distance}
+\lean{MIPRE.QLD.MS.anti, MIPRE.QLD.MS.ms_direct_anticomm,
+MIPRE.QLD.MS.ms_direct_anticomm', MIPRE.QLD.MS.ms_direct_anticomm_avg}
+\leanok
+Let $\ket{\psi}$ be a unit vector on $\C^{d_\alice} \ot \C^{d_\bob}$ and let $A, B$ be
+arbitrary POVM families for the Magic Square game (Definition~\ref{def:lcs-game} at the
+magic square's layout), failing it with probability at most $\eps \geq 0$. Write $B_j$ for the
+$\pm 1$-observable of the player who receives variable $\Variable_j$ --- the difference of the
+two \emph{bit} outcomes, every other answer contributing zero --- and $A_j$ for the other
+player's. Then
 \begin{equation*}
-  \norm{ \{ B_1, B_5 \} \ket{\psi} }^2 \;\leq\; 186624\, \eps\;,
+  \norm{ (\{ B_1, B_5 \} \ot \Id) \ket{\psi} }^2 \;\leq\; 186624\, \eps\;,
+  \qquad
+  \norm{ (\{ A_1, A_5 \} \ot \Id) \ket{\psi} }^2 \;\leq\; 186624\, \eps\;,
 \end{equation*}
-and symmetrically for Alice, where $\{X, Y\} = XY + YX$. The bound holds on the
-\emph{original} observables: no isometry, no projectivity, no full Schmidt rank and no
-extracted EPR pairs are required. It averages without loss --- for any family indexed by
-$\omega$ with distribution $\nu$,
-$\E_\nu \norm{\{B_{1,\omega}, B_{5,\omega}\} \ket{\psi_\omega}}^2
-\leq 186624\, \E_\nu \eps_\omega$ --- and transfers to the point observables of the Pauli
-game: if $P, Q$ have cross-party consistency errors $s_X, s_Z$ against $B_1, B_5$, then
-$\norm{\{P,Q\}\ket{\psi}} \leq 2 s_X + 2 s_Z + \norm{\{B_1,B_5\}\ket{\psi}}$.
+where $\{X, Y\} = XY + YX$. The bound holds on the \emph{original} observables: no isometry,
+no projectivity, no full Schmidt rank and no extracted EPR pairs are required. It averages
+without loss: for a family indexed by $\omega$ on the same pair of spaces, with weights
+$\nu_\omega \geq 0$,
+$\sum_\omega \nu_\omega \norm{(\{B_{1,\omega}, B_{5,\omega}\} \ot \Id)\ket{\psi_\omega}}^2
+\leq 186624 \sum_\omega \nu_\omega \eps_\omega$.
 \end{lemma}
 
 \begin{proof}
+\leanok
 \uses{thm:orthonormalization}
 Dilate each constraint POVM, after repairing invalid outcomes to a fixed parity-valid triple,
 to a projective measurement on one ancilla; its outcome PVM gives commuting reflections
@@ -418,8 +425,7 @@ Finally Alice's reflection for variable $2$ commutes with the Bob operator $R$, 
 $\Id$, and approximates $b$ on $\ket{\psi}$ to within $\gamma$, which removes the trailing
 factor: $\norm{R \ket{\psi}} \leq 34\gamma + 2\gamma = 36\gamma$. Squaring and substituting
 $\gamma^2 \leq 144\eps$ gives $1296 \cdot 144 = 186624$. Exchanging the parties gives Alice's
-bound. The averaged form is the pointwise bound averaged, with no Jensen step, and the
-point-observable transfer is two triangle inequalities across the parties.
+bound. The averaged form is the pointwise bound averaged, with no Jensen step.
 \end{proof}
 
 \paragraph{Comments.} This lemma is why Theorem~\ref{thm:ms-rigidity} is no longer an
@@ -436,6 +442,16 @@ reflections with six relations.
 the Pauli test amplifies to many qubits. Its bipartite form already matches the
 soundness proof's use; a tracial specialization is optional and is not an additional
 pipeline prerequisite.
+
+One clause moved out of the statement. An earlier revision also asserted the \emph{transfer}
+to the point observables of the Pauli basis test: if $P, Q$ have cross-party consistency errors
+$s_X, s_Z$ against $B_1, B_5$ then
+$\norm{\{P,Q\}\ket{\psi}} \leq 2 s_X + 2 s_Z + \norm{\{B_1,B_5\}\ket{\psi}}$. That is not a
+statement about the Magic Square game at all --- $P$ and $Q$ are the \emph{Pauli} test's
+observables --- so it belongs to Lemma~\ref{lem:qld-win}, which is where it is used, and it is
+stated there. The argument is two substitutions across the parties: $P$ and $Q$ sit on one
+factor and $B_1, B_5$ on the other, so $PQ\ket{\psi} \approx_{s_Z} P B_5 \ket{\psi}
+= B_5 P \ket{\psi} \approx_{s_X} B_5 B_1 \ket{\psi}$, and symmetrically for $QP$.
 
 The game this lemma is about is the one of Definition~\ref{def:lcs-game} at the magic square's
 layout, and that definition is \emph{symmetric in the players}: an equation, a variable of it,

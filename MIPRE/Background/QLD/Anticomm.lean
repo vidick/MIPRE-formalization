@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 import MIPRE.Foundations.Dilation
+import MIPRE.Foundations.StateDistance
 import MIPRE.Foundations.PVM
 import MIPRE.Foundations.POVMValue
 import MIPRE.Foundations.OpBound
@@ -193,6 +194,12 @@ theorem sum_repPOVM (MA : layout.Question → POVM layout.Answer dA) (c : Fin la
       fun d => ((MA (Sum.inl c)).mats d).val]
   exact POVM.sum_val _
 
+/-- The fixed ancilla embedding of Alice's space. -/
+def emb (dA : Type) [DecidableEq dA] : Matrix (dA × PV) dA ℂ := ancillaEmbed dA ((0, 0) : PV)
+
+theorem emb_isometry (dA : Type) [Fintype dA] [DecidableEq dA] :
+    (emb dA)ᴴ * emb dA = (1 : Matrix dA dA ℂ) := ancillaEmbed_isometry _
+
 /-- **The dilated Alice measurement.** For each constraint, a projective measurement on
 `dA × PV` whose compression by the *fixed* ancilla embedding is the repaired POVM. The
 embedding not depending on the constraint is what lets all six act on one state, and it is why
@@ -203,8 +210,7 @@ structure Dilated (MA : layout.Question → POVM layout.Answer dA) where
   /-- Each is a projective measurement. -/
   isPVM : ∀ c, IsPVM (P c)
   /-- Each compresses to the repaired POVM, along the same embedding. -/
-  compress : ∀ c k, (ancillaEmbed dA ((0, 0) : PV))ᴴ
-      * (P c k * ancillaEmbed dA ((0, 0) : PV)) = repPOVM MA c k
+  compress : ∀ c k, (emb dA)ᴴ * (P c k * emb dA) = repPOVM MA c k
 
 theorem nonempty_dilated (MA : layout.Question → POVM layout.Answer dA) :
     Nonempty (Dilated MA) := by
@@ -250,12 +256,6 @@ def var (k : ℕ) (h : k < layout.s := by decide) : Fin layout.s := ⟨k, h⟩
 def con (c : ℕ) (h : c < layout.r := by decide) : Fin layout.r := ⟨c, h⟩
 
 /-! ## The dilated state -/
-
-/-- The fixed ancilla embedding of Alice's space. -/
-def emb (dA : Type) [DecidableEq dA] : Matrix (dA × PV) dA ℂ := ancillaEmbed dA ((0, 0) : PV)
-
-theorem emb_isometry (dA : Type) [Fintype dA] [DecidableEq dA] :
-    (emb dA)ᴴ * emb dA = (1 : Matrix dA dA ℂ) := ancillaEmbed_isometry _
 
 /-- The state, with Alice's ancilla adjoined in its initial state. -/
 def dst (ψ : dA × dB → ℂ) : (dA × PV) × dB → ℂ :=
@@ -794,6 +794,404 @@ theorem snorm_anti
   linarith
 
 end Final
+
+/-! ## From the game's value to the closeness hypothesis
+
+The correlation `⟨ψ'| C_{c,j} ⊗ B_j |ψ'⟩` is agreement minus disagreement between Alice's
+repaired outcome bit and Bob's answer bit, and every *winning* answer pair agrees --- that is
+what the repair preserves. So the correlation is at least `1 - 2 ℓ_{c,j}`, and since
+`δ²_{c,j} = 2 - 2⟨ψ'| C B |ψ'⟩ - (1 - ⟨ψ'| B² |ψ'⟩) ≤ 2 - 2⟨ψ'| C B |ψ'⟩`, the reflection is
+within `2√ℓ` of the observable. -/
+
+section Correlation
+
+/-- `(-1)^x` for a bit, as a real. -/
+def rsgn (x : ZMod 2) : ℝ := if x.val = 1 then -1 else 1
+
+theorem sgn_eq_rsgn (x : ZMod 2) : sgn x = ((rsgn x : ℝ) : ℂ) := by
+  rw [sgn, rsgn]; split_ifs <;> norm_num
+
+theorem val_inj (x y : ZMod 2) (h : x.val = y.val) : x = y := by
+  revert x y
+  decide
+
+theorem rsgn_mul_eq (x y : ZMod 2) :
+    rsgn x * rsgn y = 2 * (if x = y then (1 : ℝ) else 0) - 1 := by
+  have hx : x.val < 2 := ZMod.val_lt x
+  have hy : y.val < 2 := ZMod.val_lt y
+  have hiff : (x = y) ↔ (x.val = y.val) :=
+    ⟨fun h => by rw [h], fun h => val_inj x y h⟩
+  rw [rsgn, rsgn, show (if x = y then (1 : ℝ) else 0)
+      = (if x.val = y.val then (1 : ℝ) else 0) from by
+    by_cases h : x = y
+    · rw [if_pos h, if_pos (hiff.mp h)]
+    · rw [if_neg h, if_neg (fun hc => h (hiff.mpr hc))]]
+  interval_cases h1 : x.val <;> interval_cases h2 : y.val <;> norm_num
+
+variable {ψ : dA × dB → ℂ} {MA : layout.Question → POVM layout.Answer dA}
+  {MB : layout.Question → POVM layout.Answer dB}
+
+/-- The signed Born mass at an incidence: Alice's repaired outcome bit against Bob's answer
+bit, agreement counting `+1` and disagreement `-1`. -/
+def corr (ψ : dA × dB → ℂ) (MA : layout.Question → POVM layout.Answer dA)
+    (MB : layout.Question → POVM layout.Answer dB) (c : Fin layout.r) (j : Fin 3) : ℝ :=
+  ∑ d : layout.Answer, ∑ w : ZMod 2,
+    rsgn (pvBit c (rep c d) j) * rsgn w
+      * bornProb ψ (((MA (Sum.inl c)).mats d).val)
+          (((MB (Sum.inr (cell c j))).mats (Sum.inr w)).val)
+
+/-- The total Born mass on Bob's *bit* answers is at most one. -/
+theorem sum_bornProb_inr_le (hψ : star ψ ⬝ᵥ ψ = 1) (c : Fin layout.r) (k : Fin layout.s) :
+    ∑ d : layout.Answer, ∑ w : ZMod 2,
+      bornProb ψ (((MA (Sum.inl c)).mats d).val) (((MB (Sum.inr k)).mats (Sum.inr w)).val)
+      ≤ 1 := by
+  rw [← sum_bornProb hψ (MA (Sum.inl c)) (MB (Sum.inr k))]
+  refine Finset.sum_le_sum fun d _ => ?_
+  rw [Fintype.sum_sum_type]
+  have h : (0 : ℝ) ≤ ∑ a' : Fin layout.s → ZMod 2,
+      bornProb ψ (((MA (Sum.inl c)).mats d).val) (((MB (Sum.inr k)).mats (Sum.inl a')).val) :=
+    Finset.sum_nonneg fun a' _ =>
+      bornProb_nonneg ψ ((MA (Sum.inl c)).posSemidef d) ((MB (Sum.inr k)).posSemidef _)
+  linarith
+
+/-- **Every winning answer pair agrees**, so the accepted mass is at most the agreeing mass. -/
+theorem condWin_le_agree (c : Fin layout.r) (j : Fin 3) :
+    condWin nonlocalGame ψ MA MB (Sum.inl c) (Sum.inr (cell c j))
+      ≤ ∑ d : layout.Answer, ∑ w : ZMod 2,
+          (if pvBit c (rep c d) j = w then (1 : ℝ) else 0)
+            * bornProb ψ (((MA (Sum.inl c)).mats d).val)
+                (((MB (Sum.inr (cell c j))).mats (Sum.inr w)).val) := by
+  rw [condWin]
+  refine Finset.sum_le_sum fun d _ => ?_
+  rw [Fintype.sum_sum_type]
+  have hzero : ∀ a' : Fin layout.s → ZMod 2,
+      (if nonlocalGame.D (Sum.inl c) (Sum.inr (cell c j)) d (Sum.inl a') then (1 : ℝ) else 0)
+        * bornProb ψ (((MA (Sum.inl c)).mats d).val)
+            (((MB (Sum.inr (cell c j))).mats (Sum.inl a')).val) = 0 := by
+    intro a'
+    have : nonlocalGame.D (Sum.inl c) (Sum.inr (cell c j)) d (Sum.inl a') = false := by
+      cases d <;> rfl
+    rw [this, if_neg (by simp), zero_mul]
+  rw [Finset.sum_congr rfl fun a' (_ : a' ∈ univ) => hzero a', Finset.sum_const_zero, zero_add]
+  refine Finset.sum_le_sum fun w _ => ?_
+  refine mul_le_mul_of_nonneg_right ?_
+    (bornProb_nonneg ψ ((MA (Sum.inl c)).posSemidef d) ((MB _).posSemidef _))
+  by_cases hacc : nonlocalGame.D (Sum.inl c) (Sum.inr (cell c j)) d (Sum.inr w)
+  · rw [if_pos hacc]
+    -- an accepted pair has Alice's answer parity-valid and agreeing with Bob's bit
+    have hd : ∃ a : Fin layout.s → ZMod 2, d = Sum.inl a := by
+      cases d with
+      | inl a => exact ⟨a, rfl⟩
+      | inr x => exact absurd hacc (by simp [nonlocalGame, Game.toNonlocalGame, Game.accepts])
+    obtain ⟨a, rfl⟩ := hd
+    have hacc' : (decide ((cell c j) ∈ layout.V c)
+        && decide ((∑ k ∈ layout.V c, a k) = game.b c) && decide (a (cell c j) = w)) = true := by
+      simpa [nonlocalGame, Game.toNonlocalGame, Game.accepts] using hacc
+    have hpar : (∑ k ∈ layout.V c, a k) = game.b c := by
+      simpa using (Bool.and_eq_true _ _ |>.mp (Bool.and_eq_true _ _ |>.mp hacc').1).2
+    have hval : a (cell c j) = w := by
+      simpa using (Bool.and_eq_true _ _ |>.mp hacc').2
+    rw [if_pos (by rw [pvBit_rep c hpar j, hval])]
+  · rw [if_neg hacc]
+    split_ifs <;> norm_num
+
+/-- **The correlation is at least `1 - 2 ℓ`.** -/
+theorem one_sub_two_mul_condFail_le_corr (hψ : star ψ ⬝ᵥ ψ = 1) (c : Fin layout.r) (j : Fin 3) :
+    1 - 2 * condFail nonlocalGame ψ MA MB (Sum.inl c) (Sum.inr (cell c j))
+      ≤ corr ψ MA MB c j := by
+  set q : layout.Answer → ZMod 2 → ℝ := fun d w =>
+    bornProb ψ (((MA (Sum.inl c)).mats d).val)
+      (((MB (Sum.inr (cell c j))).mats (Sum.inr w)).val) with hq
+  have hexp : corr ψ MA MB c j
+      = 2 * (∑ d : layout.Answer, ∑ w : ZMod 2,
+            (if pvBit c (rep c d) j = w then (1 : ℝ) else 0) * q d w)
+        - ∑ d : layout.Answer, ∑ w : ZMod 2, q d w := by
+    rw [corr, Finset.mul_sum, ← Finset.sum_sub_distrib]
+    refine Finset.sum_congr rfl fun d _ => ?_
+    rw [Finset.mul_sum, ← Finset.sum_sub_distrib]
+    refine Finset.sum_congr rfl fun w _ => ?_
+    rw [rsgn_mul_eq]
+    ring
+  have hS := sum_bornProb_inr_le (MA := MA) (MB := MB) hψ c (cell c j)
+  have hQ := condWin_le_agree (ψ := ψ) (MA := MA) (MB := MB) c j
+  rw [hexp, condFail]
+  linarith
+
+end Correlation
+
+/-! ## The correlation is the quadratic form -/
+
+section Assemble
+
+variable {ψ : dA × dB → ℂ} {MA : layout.Question → POVM layout.Answer dA}
+  {MB : layout.Question → POVM layout.Answer dB}
+
+theorem sum_zmod2 {M : Type*} [AddCommMonoid M] (f : ZMod 2 → M) :
+    ∑ w : ZMod 2, f w = f 0 + f 1 := by
+  show ∑ w : Fin 2, f w = f 0 + f 1
+  exact Fin.sum_univ_two f
+
+theorem aOp_mul_bOp_eq (X : Matrix (dA × PV) (dA × PV) ℂ) (Y : Matrix dB dB ℂ) :
+    (aOp X : Matrix ((dA × PV) × dB) ((dA × PV) × dB) ℂ) * bOp Y = X ⊗ₖ Y := by
+  rw [aOp, bOp, ← Matrix.mul_kronecker_mul, Matrix.mul_one, Matrix.one_mul]
+
+/-- The quadratic form on the dilated state compresses the Alice factor. -/
+theorem qform_dst (X : Matrix (dA × PV) (dA × PV) ℂ) (Y : Matrix dB dB ℂ) :
+    qform (dst ψ) (X ⊗ₖ Y) = qform ψ (((emb dA)ᴴ * (X * emb dA)) ⊗ₖ Y) := by
+  have hmat : (((emb dA) ⊗ₖ (1 : Matrix dB dB ℂ)))ᴴ
+      * ((X ⊗ₖ Y) * ((emb dA) ⊗ₖ (1 : Matrix dB dB ℂ)))
+      = ((emb dA)ᴴ * (X * emb dA)) ⊗ₖ Y := by
+    rw [Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one,
+      ← Matrix.mul_kronecker_mul, ← Matrix.mul_kronecker_mul, Matrix.mul_one, Matrix.one_mul]
+  rw [qform, qform, dst, Matrix.mulVec_mulVec, star_mulVec_dotProduct, hmat]
+
+/-- **The compression of Alice's reflection is her repaired POVM, signed.** -/
+theorem emb_compress_refl (D : Dilated MA) (c : Fin layout.r) (j : Fin 3) :
+    (emb dA)ᴴ * (refl D c j * emb dA)
+      = ∑ d : layout.Answer, csgn c j (rep c d) • ((MA (Sum.inl c)).mats d).val := by
+  classical
+  have hstep : (emb dA)ᴴ * (refl D c j * emb dA)
+      = ∑ k : PV, csgn c j k • repPOVM MA c k := by
+    rw [refl, pvmObs, Matrix.sum_mul, Matrix.mul_sum]
+    refine Finset.sum_congr rfl fun k _ => ?_
+    rw [Matrix.smul_mul, Matrix.mul_smul, D.compress c k]
+  rw [hstep]
+  have hfib : ∀ k : PV, csgn c j k • repPOVM MA c k
+      = ∑ d ∈ {d ∈ (univ : Finset layout.Answer) | rep c d = k},
+          csgn c j (rep c d) • ((MA (Sum.inl c)).mats d).val := by
+    intro k
+    rw [repPOVM_eq, Finset.smul_sum]
+    refine Finset.sum_congr rfl fun d hd => ?_
+    rw [(Finset.mem_filter.mp hd).2]
+  rw [Finset.sum_congr rfl fun k (_ : k ∈ univ) => hfib k]
+  exact Finset.sum_fiberwise (univ : Finset layout.Answer) (rep c)
+    fun d => csgn c j (rep c d) • ((MA (Sum.inl c)).mats d).val
+
+/-- **The correlation is the quadratic form of `C_{c,j} ⊗ B_j`.** -/
+theorem qform_eq_corr (D : Dilated MA) (c : Fin layout.r) (j : Fin 3) :
+    qform (dst ψ) (aOp (refl D c j) * bOp (bobs MB (cell c j))) = corr ψ MA MB c j := by
+  classical
+  rw [aOp_mul_bOp_eq, qform_dst, emb_compress_refl]
+  -- expand the Alice sum
+  rw [sum_kronecker_left, qform_sum]
+  rw [corr]
+  refine Finset.sum_congr rfl fun d _ => ?_
+  -- pull out the sign
+  rw [show (csgn c j (rep c d) • ((MA (Sum.inl c)).mats d).val) ⊗ₖ bobs MB (cell c j)
+      = ((rsgn (pvBit c (rep c d) j) : ℝ) : ℂ)
+        • (((MA (Sum.inl c)).mats d).val ⊗ₖ bobs MB (cell c j)) from by
+    rw [Matrix.smul_kronecker, csgn, sgn_eq_rsgn], qform_smul_real]
+  -- expand Bob's observable
+  rw [sum_zmod2 (fun w => rsgn (pvBit c (rep c d) j) * rsgn w
+    * bornProb ψ (((MA (Sum.inl c)).mats d).val)
+        (((MB (Sum.inr (cell c j))).mats (Sum.inr w)).val))]
+  rw [show (((MA (Sum.inl c)).mats d).val ⊗ₖ bobs MB (cell c j))
+      = (((MA (Sum.inl c)).mats d).val ⊗ₖ ((MB (Sum.inr (cell c j))).mats (Sum.inr 0)).val)
+        + (((-1 : ℝ) : ℂ)) • (((MA (Sum.inl c)).mats d).val
+            ⊗ₖ ((MB (Sum.inr (cell c j))).mats (Sum.inr 1)).val) from by
+    rw [← Matrix.kronecker_smul, ← Matrix.kronecker_add, bobs]
+    congr 1
+    module, qform_add, qform_smul_real]
+  have h0 : rsgn (0 : ZMod 2) = 1 := by rw [rsgn]; norm_num
+  have h1 : rsgn (1 : ZMod 2) = -1 := by rw [rsgn]; norm_num
+  rw [h0, h1, bornProb, bornProb, qform, qform]
+  ring
+
+/-! ## The closeness hypothesis, from the game's value -/
+
+theorem snorm_sq_le_condFail (hψ : star ψ ⬝ᵥ ψ = 1) (D : Dilated MA) (c : Fin layout.r)
+    (j : Fin 3) :
+    snorm (dst ψ) (aOp (refl D c j) - bOp (bobs MB (cell c j))) ^ 2
+      ≤ 4 * condFail nonlocalGame ψ MA MB (Sum.inl c) (Sum.inr (cell c j)) := by
+  have hv : ‖evec (dst ψ)‖ = 1 := norm_dst_eq_one hψ
+  set A : Matrix ((dA × PV) × dB) ((dA × PV) × dB) ℂ := aOp (refl D c j) with hA
+  set B : Matrix ((dA × PV) × dB) ((dA × PV) × dB) ℂ := bOp (bobs MB (cell c j)) with hB
+  have hAsa : Aᴴ = A := by rw [hA, aOp_conjTranspose, refl_conjTranspose]
+  have hBsa : Bᴴ = B := by rw [hB, bOp_conjTranspose, bobs_conjTranspose]
+  have hAA : A * A = 1 := by rw [hA, ← aOp_mul, refl_mul_self, aOp_one]
+  have hcomm : A * B = B * A := by rw [hA, hB, aOp_mul_bOp]
+  have hexp : (A - B)ᴴ * (A - B) = 1 - (((2 : ℝ) : ℂ)) • (A * B) + B * B := by
+    rw [Matrix.conjTranspose_sub, hAsa, hBsa]
+    have h : (A - B) * (A - B) = A * A - A * B - B * A + B * B := by noncomm_ring
+    rw [h, hAA, ← hcomm]
+    module
+  rw [snorm_sq_eq_qform, hexp, qform_add, qform_sub, qform_one _ hv, qform_smul_real]
+  have hBB : qform (dst ψ) (B * B) ≤ 1 := by
+    have h : qform (dst ψ) (B * B) = snorm (dst ψ) B ^ 2 := by
+      rw [snorm_sq_eq_qform, hBsa]
+    rw [h]
+    have hb : snorm (dst ψ) B ≤ 1 := by
+      have := bnd_bobs (dA := dA) (MB := MB) (cell c j) (dst ψ)
+      rw [one_mul, hv] at this
+      exact this
+    nlinarith [snorm_nonneg (dst ψ) B, hb]
+  have hcorr := one_sub_two_mul_condFail_le_corr (MA := MA) (MB := MB) hψ c j
+  rw [qform_eq_corr]
+  linarith
+
+/-- **The closeness hypothesis, with `γ = 12 √ε`.** -/
+theorem close_of_fail (hψ : star ψ ⬝ᵥ ψ = 1) (D : Dilated MA) {ε : ℝ} (hε : 0 ≤ ε)
+    (hfail : 1 - povmValue nonlocalGame ψ MA MB ≤ ε) :
+    ∀ c j, snorm (dst ψ) (aOp (refl D c j) - bOp (bobs MB (cell c j)))
+      ≤ 12 * Real.sqrt ε := by
+  intro c j
+  have hμ : nonlocalGame.μ (Sum.inl c) (Sum.inr (cell c j)) = 1 / 36 := by
+    have hmem : cell c j ∈ layout.V c := cell_mem c j
+    have hcard : (layout.V c).card = 3 := by fin_cases c <;> decide
+    rw [nonlocalGame, Game.toNonlocalGame_μ]
+    show (if cell c j ∈ layout.V c then 1 / (2 * (layout.r : ℝ) * ((layout.V c).card : ℝ))
+      else 0) = 1 / 36
+    rw [if_pos hmem, hcard, show ((layout.r : ℕ) : ℝ) = 6 from by norm_num [layout]]
+    norm_num
+  have hℓ := condFail_le_div (G := nonlocalGame) (MA := MA) (MB := MB) hψ hfail
+    (x := Sum.inl c) (y := Sum.inr (cell c j)) (by rw [hμ]; norm_num)
+  rw [hμ] at hℓ
+  have hsq := snorm_sq_le_condFail (MA := MA) (MB := MB) hψ D c j
+  have hsq' : snorm (dst ψ) (aOp (refl D c j) - bOp (bobs MB (cell c j))) ^ 2 ≤ 144 * ε := by
+    have : (4 : ℝ) * (ε / (1/36)) = 144 * ε := by ring
+    linarith [hsq, hℓ, this]
+  have hnn := snorm_nonneg (dst ψ) (aOp (refl D c j) - bOp (bobs MB (cell c j)))
+  have hs : Real.sqrt ε * Real.sqrt ε = ε := Real.mul_self_sqrt hε
+  nlinarith [hsq', hnn, Real.sqrt_nonneg ε, hs]
+
+end Assemble
+
+/-! ## The lemma, for the player who receives the variables -/
+
+/-- The dilated state's norm of a Bob operator is the original state's. -/
+theorem snorm_bOp_eq (ψ : dA × dB → ℂ) (R : Matrix dB dB ℂ) :
+    snorm (dst ψ) (bOp R : Matrix ((dA × PV) × dB) ((dA × PV) × dB) ℂ)
+      = ‖stateVecB ψ R‖ := by
+  have hiso : (((emb dA) ⊗ₖ (1 : Matrix dB dB ℂ)))ᴴ * ((emb dA) ⊗ₖ (1 : Matrix dB dB ℂ))
+      = (1 : Matrix (dA × dB) (dA × dB) ℂ) := by
+    rw [Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one, ← Matrix.mul_kronecker_mul,
+      emb_isometry, Matrix.one_mul, Matrix.one_kronecker_one]
+  have hmat : (bOp R : Matrix ((dA × PV) × dB) ((dA × PV) × dB) ℂ)
+        * ((emb dA) ⊗ₖ (1 : Matrix dB dB ℂ))
+      = ((emb dA) ⊗ₖ (1 : Matrix dB dB ℂ)) * ((1 : Matrix dA dA ℂ) ⊗ₖ R) := by
+    rw [bOp, ← Matrix.mul_kronecker_mul, ← Matrix.mul_kronecker_mul, Matrix.mul_one,
+      Matrix.one_mul, Matrix.mul_one, Matrix.one_mul]
+  rw [snorm, dst, Matrix.mulVec_mulVec, hmat, ← Matrix.mulVec_mulVec,
+    norm_evec_mulVec_eq hiso]
+  rfl
+
+/-- **Direct Magic Square anticommutation** (blueprint `lem:ms-direct-anticomm`), for the player
+who receives the variable questions. No projectivity, no isometry, no extracted EPR pairs: the
+bound is on the original observables and the original state. -/
+theorem ms_direct_anticomm {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)
+    (MA : layout.Question → POVM layout.Answer dA)
+    (MB : layout.Question → POVM layout.Answer dB)
+    {ε : ℝ} (hε : 0 ≤ ε) (hfail : 1 - povmValue nonlocalGame ψ MA MB ≤ ε) :
+    ‖stateVecB ψ (anti MB)‖ ^ 2 ≤ 186624 * ε := by
+  obtain ⟨D⟩ := nonempty_dilated MA
+  have h36 := snorm_anti (MB := MB) (close_of_fail (MB := MB) hψ D hε hfail)
+  rw [snorm_bOp_eq] at h36
+  have hs : Real.sqrt ε * Real.sqrt ε = ε := Real.mul_self_sqrt hε
+  have hb : ‖stateVecB ψ (anti MB)‖ ≤ 432 * Real.sqrt ε := by
+    calc ‖stateVecB ψ (anti MB)‖ ≤ 36 * (12 * Real.sqrt ε) := h36
+      _ = 432 * Real.sqrt ε := by ring
+  nlinarith [norm_nonneg (stateVecB ψ (anti MB)), Real.sqrt_nonneg ε, hb, hs]
+
+/-! ## The other player, by the symmetry of the game
+
+Exchanging the players is an automorphism of the Magic Square game
+(`MIPRE.LCS.Layout.questionDist_symm`, `MIPRE.LCS.Game.accepts_symm`), so Alice's half of the
+lemma is Bob's half applied to the swapped strategy. -/
+
+section Swap
+
+omit [DecidableEq dA] [DecidableEq dB] in
+theorem bornProb_swapVec (ψ : dA × dB → ℂ) (EA : Matrix dA dA ℂ) (EB : Matrix dB dB ℂ) :
+    bornProb (swapVec ψ) EB EA = bornProb ψ EA EB := by
+  classical
+  have inner : ∀ (i : dA) (j : dB),
+      (((EB ⊗ₖ EA) *ᵥ swapVec ψ) (j, i)) = (((EA ⊗ₖ EB) *ᵥ ψ) (i, j)) := by
+    intro i j
+    rw [Matrix.mulVec, Matrix.mulVec, dotProduct, dotProduct]
+    refine Fintype.sum_equiv (Equiv.prodComm dB dA) _ _ fun q => ?_
+    obtain ⟨l, k⟩ := q
+    show (EB ⊗ₖ EA) (j, i) (l, k) * (swapVec ψ) (l, k)
+        = (EA ⊗ₖ EB) (i, j) (k, l) * ψ (k, l)
+    show EB j l * EA i k * ψ (k, l) = EA i k * EB j l * ψ (k, l)
+    ring
+  have key : star (swapVec ψ) ⬝ᵥ ((EB ⊗ₖ EA) *ᵥ swapVec ψ)
+      = star ψ ⬝ᵥ ((EA ⊗ₖ EB) *ᵥ ψ) := by
+    rw [dotProduct, dotProduct]
+    refine Fintype.sum_equiv (Equiv.prodComm dB dA) _ _ fun p => ?_
+    obtain ⟨j, i⟩ := p
+    show star (swapVec ψ) (j, i) * (((EB ⊗ₖ EA) *ᵥ swapVec ψ) (j, i))
+        = star ψ (i, j) * (((EA ⊗ₖ EB) *ᵥ ψ) (i, j))
+    rw [inner i j]
+    rfl
+  rw [bornProb, bornProb, key]
+
+theorem povmValue_swapVec (ψ : dA × dB → ℂ)
+    (MA : layout.Question → POVM layout.Answer dA)
+    (MB : layout.Question → POVM layout.Answer dB) :
+    povmValue nonlocalGame (swapVec ψ) MB MA = povmValue nonlocalGame ψ MA MB := by
+  classical
+  have hterm : ∀ x y : layout.Question,
+      nonlocalGame.μ x y * condWin nonlocalGame (swapVec ψ) MB MA x y
+        = nonlocalGame.μ y x * condWin nonlocalGame ψ MA MB y x := by
+    intro x y
+    have hμ : nonlocalGame.μ x y = nonlocalGame.μ y x := by
+      rw [nonlocalGame, Game.toNonlocalGame_μ, Game.toNonlocalGame_μ]
+      exact Layout.questionDist_symm _ x y
+    have hcw : condWin nonlocalGame (swapVec ψ) MB MA x y
+        = condWin nonlocalGame ψ MA MB y x := by
+      have h : ∀ a b : layout.Answer,
+          (if nonlocalGame.D x y a b then (1 : ℝ) else 0)
+              * bornProb (swapVec ψ) (((MB x).mats a).val) (((MA y).mats b).val)
+            = (if nonlocalGame.D y x b a then (1 : ℝ) else 0)
+              * bornProb ψ (((MA y).mats b).val) (((MB x).mats a).val) := by
+        intro a b
+        rw [bornProb_swapVec]
+        congr 2
+        rw [nonlocalGame, Game.toNonlocalGame_D, Game.toNonlocalGame_D,
+          Game.accepts_symm game x y a b]
+      rw [condWin, condWin, Finset.sum_congr rfl fun a (_ : a ∈ univ) =>
+        Finset.sum_congr rfl fun b (_ : b ∈ univ) => h a b]
+      exact Finset.sum_comm
+    rw [hμ, hcw]
+  rw [povmValue, povmValue, Finset.sum_congr rfl fun x (_ : x ∈ univ) =>
+    Finset.sum_congr rfl fun y (_ : y ∈ univ) => hterm x y]
+  exact Finset.sum_comm
+
+omit [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB] in
+theorem swapVec_swapVec (ψ : dA × dB → ℂ) : swapVec (swapVec ψ) = ψ := rfl
+
+/-- **Direct Magic Square anticommutation for the other player.** The game is symmetric in the
+players, so this is `ms_direct_anticomm` for the swapped strategy. -/
+theorem ms_direct_anticomm' {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)
+    (MA : layout.Question → POVM layout.Answer dA)
+    (MB : layout.Question → POVM layout.Answer dB)
+    {ε : ℝ} (hε : 0 ≤ ε) (hfail : 1 - povmValue nonlocalGame ψ MA MB ≤ ε) :
+    ‖stateVec ψ (anti MA)‖ ^ 2 ≤ 186624 * ε := by
+  have hψ' : star (swapVec ψ) ⬝ᵥ swapVec ψ = 1 := by rw [swapVec_dotProduct]; exact hψ
+  have hfail' : 1 - povmValue nonlocalGame (swapVec ψ) MB MA ≤ ε := by
+    rw [povmValue_swapVec]
+    exact hfail
+  have h := ms_direct_anticomm hψ' MB MA hε hfail'
+  rw [norm_stateVecB, swapVec_swapVec] at h
+  exact h
+
+/-- **The averaged form.** The bound is pointwise, so averaging it over a family of strategies
+on the same pair of spaces costs nothing --- no Jensen step, and the same constant. -/
+theorem ms_direct_anticomm_avg {Ω : Type*} [Fintype Ω] (ν : Ω → ℝ) (hν : ∀ ω, 0 ≤ ν ω)
+    (ψ : Ω → dA × dB → ℂ) (hψ : ∀ ω, star (ψ ω) ⬝ᵥ ψ ω = 1)
+    (MA : Ω → layout.Question → POVM layout.Answer dA)
+    (MB : Ω → layout.Question → POVM layout.Answer dB)
+    (ε : Ω → ℝ) (hε : ∀ ω, 0 ≤ ε ω)
+    (hfail : ∀ ω, 1 - povmValue nonlocalGame (ψ ω) (MA ω) (MB ω) ≤ ε ω) :
+    ∑ ω, ν ω * ‖stateVecB (ψ ω) (anti (MB ω))‖ ^ 2 ≤ 186624 * ∑ ω, ν ω * ε ω := by
+  rw [Finset.mul_sum]
+  refine Finset.sum_le_sum fun ω _ => ?_
+  have h := ms_direct_anticomm (hψ ω) (MA ω) (MB ω) (hε ω) (hfail ω)
+  calc ν ω * ‖stateVecB (ψ ω) (anti (MB ω))‖ ^ 2 ≤ ν ω * (186624 * ε ω) :=
+        mul_le_mul_of_nonneg_left h (hν ω)
+    _ = 186624 * (ν ω * ε ω) := by ring
+
+end Swap
 
 end MIPRE.QLD.MS
 

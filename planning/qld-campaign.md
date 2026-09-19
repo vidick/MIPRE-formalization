@@ -216,6 +216,61 @@ non-projectivity bound `‖(Id - B_j²) W ψ'‖ ≤ (2 + t) γ`, the six-step w
 `24 γ`, and the two end-removals. Roughly twenty operator-norm steps over a 9-variable,
 6-constraint structure.
 
+#### How it was proved (2026-09-19): the operator calculus, and why it is matrix-level
+
+**Done**, sorry-free, in `MIPRE/Background/QLD/Anticomm.lean` (namespace `MIPRE.QLD.MS`):
+`ms_direct_anticomm` (Bob's half), `ms_direct_anticomm'` (Alice's), and
+`ms_direct_anticomm_avg` (the averaged form the expansion stage will actually call), each
+bounding `‖anti‖²` by `186624 ε`. The lemma lives under `MIPRE/Background/` because
+`MIPRE/Background/` may import `MIPRE/LCS/` but not conversely, and because it exists to feed
+the Pauli basis test; its guards are in `MIPRE/Background/QLD/Axioms.lean`, and all four names
+print `[propext, Classical.choice, Quot.sound]`.
+
+**The one design decision worth recording: the proof does not use the operator norm.** The
+natural route — push each matrix through `Matrix.toEuclideanCLM` and reason with `‖T‖` — dies at
+the first step. `T * T ≤ 1 → ‖T‖ ≤ 1` on
+`EuclideanSpace ℂ n →L[ℂ] EuclideanSpace ℂ n` exhausted 200000 heartbeats in `whnf`: the
+Loewner order on continuous linear maps unfolds through the CLM structure and the elaborator
+cannot see through it. What replaced it is three definitions in
+`MIPRE/Foundations/OpBound.lean`, all stated on matrices acting on vectors and none of them a
+norm:
+
+* `Bnd M K` := `∀ v, ‖M v‖ ≤ K ‖v‖` — the operator bound as a *relation*, closed under
+  `add`, `sub`, `mul`, `smul` and `mono`, with `bnd_one_of_isometry` and
+  `bnd_one_of_conjTranspose_mul_self_le` as the two ways to get `K = 1`;
+* `snorm v M` := `‖M v‖` — the state-dependent seminorm, with the triangle inequalities and
+  the suffix-insertion bound `snorm_mul_swap`, which is the `‖R W ψ'‖ ≤ ‖R ψ'‖ + ‖R‖ t γ` of the
+  blueprint's proof;
+* `qform v M` := `re ⟨v|M|v⟩`, additive and real-linear, with `snorm_sq_eq_qform` tying the two
+  together.
+
+`aOp X = X ⊗ₖ 1` and `bOp Y = 1 ⊗ₖ Y` are ring homomorphisms into the product space, so the
+commutation of the two players' operators is `aOp_mul_bOp` and needs no per-case work. The
+reflections come from `MIPRE/Foundations/PVM.lean`: `pvmObs P ε = ∑ a, ε a • P a` is
+*multiplicative in* `ε` (`pvmObs_mul`) because a PVM's elements are mutually orthogonal, which
+delivers self-adjointness, squaring to one, within-constraint commutation and — the step the
+word argument runs on — the exact product equal to the constraint's sign, all from one fact
+instead of six cases. `MIPRE/Foundations/POVMValue.lean` carries the value side:
+`condFail_le_div` turns `1 - ω ≤ ε` into a per-incidence bound, and with `μ = 1/36` at each of
+the 36 oriented incidences that is `condFail ≤ 36 ε` — which is where the paper's constant
+comes from, as item 3 above says.
+
+The six-step path is `d a e b → g e b → g h → i → −f c → −d e c → −d e a b`, costing
+`7+3+3+3+5+3 = 24γ`; the two end-removals take it to `34γ` and then `36γ`, and `γ = 12√ε`
+gives `(36 · 12)² = 186624`. The path's Lean text was emitted by a generator rather than typed:
+18 cell conversions, 6 `game.b` values, 6 relations, 6 steps and 5 triangle inequalities is
+past the length where transcription is reliable.
+
+Alice's half is not a re-proof. `MIPRE/LCS/NonlocalGame.lean` gained `questionDist_symm` and
+`accepts_symm` (both `cases <;> rfl`), and `StateDistance.lean`'s swap section gives
+`povmValue_swapVec`, so `ms_direct_anticomm'` is `ms_direct_anticomm` applied to the swapped
+state — which is the dividend of symmetrizing the game rather than stating a second lemma.
+
+**One blueprint repair.** `lem:ms-direct-anticomm` also asserted that the bound transfers to the
+point observables of `game^pauli`. That is a statement about `game^pauli`, not about the Magic
+Square, and it cannot be stated where this lemma lives; it moved into a Comments paragraph
+belonging to `lem:qld-win`, which is where the transfer is actually performed.
+
 ### PR B — the game, what winning implies, the Magic Square lemma, and the expansion
 
 `def:qld-game` (see above), then `lem:ms-direct-anticomm`, `lem:qld-win`,
