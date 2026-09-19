@@ -391,6 +391,7 @@ import MIPRE.Background.QLD.Axioms
 import MIPRE.Background.QLD.Consistency
 import MIPRE.Background.QLD.Game
 import MIPRE.Background.QLD.Ortho
+import MIPRE.Background.QLD.Win
 import MIPRE.Background.Repetition.Axioms
 import MIPRE.Background.Repetition.Commuting
 import MIPRE.Background.Repetition.CommutingRepetition.Game.Basic
@@ -573,6 +574,7 @@ import MIPRE.Foundations.Cost.Toolkit
 import MIPRE.Foundations.Cost.TreeBits
 import MIPRE.Foundations.Cost.Unary
 import MIPRE.Foundations.Cost.Universal
+import MIPRE.Foundations.CrossConsistency
 import MIPRE.Foundations.Dilation
 import MIPRE.Foundations.Distances
 import MIPRE.Foundations.GameAdapt
