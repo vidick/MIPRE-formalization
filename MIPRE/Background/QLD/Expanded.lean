@@ -6,6 +6,7 @@ Authors: Thomas Vidick
 import MIPRE.Background.QLD.Commutation
 import MIPRE.Foundations.Expanded
 import MIPRE.Foundations.WeylEPR
+import MIPRE.Foundations.Expanded
 
 /-!
 # The expansion stage: the hatted point observables
@@ -44,13 +45,15 @@ noncomputable section
 
 namespace MIPRE.QLD
 
-open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree
+open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT
 open scoped Kronecker ComplexOrder MatrixOrder
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
   [NeZero m] {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
 
 set_option linter.unusedSectionVars false
+
+section Expansion
 
 /-! ## The ancilla -/
 
@@ -169,6 +172,193 @@ theorem hatObs_commutation {ψ : dA × dB → ℂ} {hm : m ∣ Fintype.card F}
   refine le_trans (le_of_eq (Finset.sum_congr rfl fun c _ => ?_))
     (signed_commutation (MB := MB) hψ hfail)
   rw [norm_hatVec_hatObs_comm]
+
+/-! ## The hatted measurements, and their self-consistency
+
+The other item of `lem:qld-expanded-points`. The hatted measurement is the **convolution** of the
+strategy's point measurement with the ancilla's syndrome measurement: the product measurement,
+coarse-grained by addition of the two field elements. Its self-consistency across the
+re-bipartitioned parties comes from three things, and nothing else:
+
+* item 1 of `lem:qld-win` for the strategy's factor;
+* **perfect** self-consistency of the syndrome projectors across the two ancilla halves, which is
+  the EPR stabilizer relation of `def:weyl-epr`;
+* data processing for the convolution --- taken at the **Born level**, because the
+  state-dependent distance has no data-processing inequality (NW19's own remark gives a
+  counterexample; the paper's `fact:data-processing` is the consistency form).
+
+So the whole estimate runs through Born probabilities and is converted to the distance exactly
+once, at the end, by `xSqNorm_sum_le_two_mul`.
+-/
+
+/-- The syndrome measurement of the ancilla at a point question, as a POVM. -/
+def synPOVM (W : Bas) (u : Point F m) : POVM F (Anc F m) :=
+  (isPVM_syn (w := weylOf W) (by cases W; exacts [isWeylFamily_wX, isWeylFamily_wZ])
+    (indVec u)).toPOVM
+
+theorem synPOVM_mats (W : Bas) (u : Point F m) (a : F) :
+    (((synPOVM W u).mats a).val) = syn (weylOf W) (indVec u) a := rfl
+
+theorem weylOf_transpose (W : Bas) (a : Anc F m) : (weylOf W a)ᵀ = weylOf W a := by
+  cases W
+  · exact wX_transpose a
+  · exact wZ_transpose a
+
+/-- **The syndrome measurement is perfectly self-consistent on the maximally entangled state.**
+This is the EPR stabilizer relation at the Born level, and it is the `1` that the expansion
+contributes to the agreement probability. -/
+theorem sum_bornProb_epr_synPOVM (W : Bas) (u : Point F m) :
+    ∑ a : F, bornProb (epr (F := F) (n := Fin m → Bool)) (((synPOVM W u).mats a).val)
+      (((synPOVM W u).mats a).val) = 1 := by
+  classical
+  have hsa : ∀ a : F, ((((synPOVM W u).mats a).val))ᴴ = (((synPOVM W u).mats a).val) := fun a => by
+    rw [← Matrix.star_eq_conjTranspose, ((synPOVM W u).mats a).2]
+  have hterm : ∀ a : F, bornProb (epr (F := F) (n := Fin m → Bool))
+      (((synPOVM W u).mats a).val) (((synPOVM W u).mats a).val)
+      = qform (epr (F := F) (n := Fin m → Bool))
+          (aOp (((synPOVM W u).mats a).val) : Matrix ((Anc F m) × (Anc F m)) _ ℂ) := by
+    intro a
+    have htr : stateVec (epr (F := F) (n := Fin m → Bool)) (((synPOVM W u).mats a).val)
+        = stateVecB epr (((synPOVM W u).mats a).val) := by
+      rw [synPOVM_mats]
+      exact stateVec_epr_syn (weylOf_transpose W) (indVec u) a
+    have hinner := inner_stateVec_stateVecB (epr (F := F) (n := Fin m → Bool)) (hsa a)
+      (((synPOVM W u).mats a).val)
+    rw [← htr] at hinner
+    rw [bornProb, ← hinner,
+      show (inner ℂ (stateVec (epr (F := F) (n := Fin m → Bool)) (((synPOVM W u).mats a).val))
+            (stateVec epr (((synPOVM W u).mats a).val)) : ℂ).re
+          = ‖stateVec (epr (F := F) (n := Fin m → Bool)) (((synPOVM W u).mats a).val)‖ ^ 2 from by
+        rw [← RCLike.re_to_complex]
+        exact inner_self_eq_norm_sq _,
+      norm_stateVec_eq_snorm, snorm_sq_eq_qform]
+    congr 1
+    rw [aOp_conjTranspose, ← aOp_mul, hsa a, synPOVM_mats,
+      (isPVM_syn (w := weylOf W) (by cases W; exacts [isWeylFamily_wX, isWeylFamily_wZ])
+        (indVec u)).idem a]
+  rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) => hterm a, ← qform_sum]
+  rw [show (∑ a : F, (aOp (((synPOVM W u).mats a).val)
+      : Matrix ((Anc F m) × (Anc F m)) ((Anc F m) × (Anc F m)) ℂ)) = 1 from by
+    rw [← aOp_sum, show (∑ a : F, (((synPOVM W u).mats a).val)) = 1 from by
+      rw [← AddSubmonoidClass.coe_finsetSum, (synPOVM W u).normalized]
+      rfl]
+    exact aOp_one]
+  exact qform_one _ norm_evec_epr
+
+/-! ### The hatted measurement -/
+
+/-- The point measurement read as a field element --- the same definition for either player. -/
+def ptValPOVM {d' : Type} [Fintype d'] [DecidableEq d'] (hm : m ∣ Fintype.card F)
+    (M : Question F m → POVM (Answer F m d) d') (W : Bas) (c : Content F m) : POVM F d' :=
+  (M (c.question hm (.point W))).map rdVal
+
+/-- **The hatted point measurement**: the product of the strategy's point measurement with the
+ancilla's syndrome measurement, coarse-grained by adding the two field elements. That convolution
+is the paper's `M-hat^{(Point,W),u}_a = sum_{a' + a'' = a} M_{a'} (x) tau^{W,u}_{a''}`. -/
+def hatPOVM {d' : Type} [Fintype d'] [DecidableEq d'] (hm : m ∣ Fintype.card F)
+    (M : Question F m → POVM (Answer F m d) d') (W : Bas) (c : Content F m) :
+    POVM F (d' × Anc F m) :=
+  ((ptValPOVM hm M W c).kron (synPOVM W (c.omega.pt W))).map fun p => p.1 + p.2
+
+/-- **The hatted measurements are cross-party consistent**, at one content: twice the conditional
+failure of the `(Point, W)` subtest, and nothing for the ancilla. The three inputs meet here --- the
+strategy's consistency, the ancilla's *perfect* consistency, and Born-level data processing for the
+convolution. -/
+theorem sum_xSqNorm_hatPOVM_le {ψ : dA × dB → ℂ} {hm : m ∣ Fintype.card F}
+    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
+    (hψ : star ψ ⬝ᵥ ψ = 1) (W : Bas) (c : Content F m) :
+    ∑ a : F, xSqNorm (hatVec (F := F) (m := m) ψ) (((hatPOVM hm MA W c).mats a).val)
+        (((hatPOVM hm MB W c).mats a).val)
+      ≤ 2 * condFail (qldGame hm) ψ MA MB (c.question hm (.point W))
+          (c.question hm (.point W)) := by
+  classical
+  -- the agreement of the product measurement factorizes, and the ancilla factor is one
+  have hfac : ∀ p : F × F, bornProb (hatVec (F := F) (m := m) ψ)
+      ((((ptValPOVM hm MA W c).kron (synPOVM W (c.omega.pt W))).mats p).val)
+      ((((ptValPOVM hm MB W c).kron (synPOVM W (c.omega.pt W))).mats p).val)
+      = bornProb ψ (((ptValPOVM hm MA W c).mats p.1).val)
+          (((ptValPOVM hm MB W c).mats p.1).val)
+        * bornProb (epr (F := F) (n := Fin m → Bool))
+          (((synPOVM W (c.omega.pt W)).mats p.2).val)
+          (((synPOVM W (c.omega.pt W)).mats p.2).val) := by
+    intro p
+    rw [POVM.kron_mats, POVM.kron_mats, hatVec]
+    exact bornProb_expVec_kron _ _ ((synPOVM W (c.omega.pt W)).posSemidef p.2)
+      ((synPOVM W (c.omega.pt W)).posSemidef p.2)
+  have hprod : ∑ p : F × F, bornProb (hatVec (F := F) (m := m) ψ)
+      ((((ptValPOVM hm MA W c).kron (synPOVM W (c.omega.pt W))).mats p).val)
+      ((((ptValPOVM hm MB W c).kron (synPOVM W (c.omega.pt W))).mats p).val)
+      = ∑ a : F, bornProb ψ (((ptValPOVM hm MA W c).mats a).val)
+          (((ptValPOVM hm MB W c).mats a).val) := by
+    rw [Finset.sum_congr rfl fun p (_ : p ∈ univ) => hfac p,
+      sum_prod_mul
+        (fun a : F => bornProb ψ (((ptValPOVM hm MA W c).mats a).val)
+          (((ptValPOVM hm MB W c).mats a).val))
+        (fun a : F => bornProb (epr (F := F) (n := Fin m → Bool))
+          (((synPOVM W (c.omega.pt W)).mats a).val)
+          (((synPOVM W (c.omega.pt W)).mats a).val)),
+      sum_bornProb_epr_synPOVM, mul_one]
+  -- data processing for the convolution
+  have hdp := sum_bornProb_le_map (hatVec (F := F) (m := m) ψ)
+    ((ptValPOVM hm MA W c).kron (synPOVM W (c.omega.pt W)))
+    ((ptValPOVM hm MB W c).kron (synPOVM W (c.omega.pt W))) (fun p : F × F => p.1 + p.2)
+  rw [hprod] at hdp
+  -- the strategy's own consistency, at the Born level
+  have hcons : 1 - ∑ a : F, bornProb ψ (((ptValPOVM hm MA W c).mats a).val)
+      (((ptValPOVM hm MB W c).mats a).val)
+      ≤ condFail (qldGame hm) ψ MA MB (c.question hm (.point W))
+          (c.question hm (.point W)) := by
+    refine one_sub_sum_bornProb_le_condFail (G := qldGame hm) (ψ := ψ) (MA := MA) (MB := MB)
+      rdVal rdVal fun a b h => ?_
+    have hs := (of_accepts h).2.2
+    rw [subtests, if_pos rfl] at hs
+    exact congrArg rdVal (of_decide_eq_true hs)
+  refine le_trans (xSqNorm_sum_le_two_mul (hatVec_unit hψ) _ _) ?_
+  have h2 : (0 : ℝ) ≤ 2 := by norm_num
+  rw [hatPOVM, hatPOVM]
+  linarith
+
+/-- **The self-consistency half of `lem:qld-expanded-points`.** On average over the verifier's
+content, the two players' hatted point measurements agree across the re-bipartitioned parties at
+`172 eps` --- the constant of item 1 of `lem:qld-win`, with the expansion contributing nothing. -/
+theorem hatPOVM_consistency {ψ : dA × dB → ℂ} {hm : m ∣ Fintype.card F}
+    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
+    {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :
+    ∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *
+        ∑ a : F, xSqNorm (hatVec (F := F) (m := m) ψ) (((hatPOVM hm MA W c).mats a).val)
+          (((hatPOVM hm MB W c).mats a).val)
+      ≤ 172 * ε := by
+  classical
+  refine le_trans (Finset.sum_le_sum fun c (_ : c ∈ univ) =>
+    mul_le_mul_of_nonneg_left (sum_xSqNorm_hatPOVM_le (MB := MB) hψ W c) (by positivity)) ?_
+  have heq : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *
+        (2 * condFail (qldGame hm) ψ MA MB
+          (c.question hm (.point W)) (c.question hm (.point W)))
+      = 2 * ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *
+          condFail (qldGame hm) ψ MA MB
+            (c.question hm (.point W)) (c.question hm (.point W)) := by
+    rw [Finset.mul_sum]
+    exact Finset.sum_congr rfl fun c _ => by ring
+  rw [heq, show (172 : ℝ) * ε = 2 * (86 * ε) from by ring]
+  exact mul_le_mul_of_nonneg_left (subtest_le hψ hfail (adj_self' (.point W)) univ) (by norm_num)
+
+/-- **`lem:qld-expanded-points`**: both items, on the expanded state. The measurements are the
+hatted ones; they are cross-party consistent at `172 eps`, and their `X`-side and `Z`-side
+observables commute at `57676416 eps` with no sign. -/
+theorem expanded_points {ψ : dA × dB → ℂ} {hm : m ∣ Fintype.card F}
+    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
+    {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
+    (∀ W : Bas, ∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *
+        ∑ a : F, xSqNorm (hatVec (F := F) (m := m) ψ) (((hatPOVM hm MA W c).mats a).val)
+          (((hatPOVM hm MB W c).mats a).val) ≤ 172 * ε)
+      ∧ ∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *
+          ‖stateVec (hatVec (F := F) (m := m) ψ) (hatObs hm MA .X c * hatObs hm MA .Z c
+            - hatObs hm MA .Z c * hatObs hm MA .X c)‖ ^ 2 ≤ 57676416 * ε :=
+  ⟨fun W => hatPOVM_consistency (MB := MB) hψ hfail W, hatObs_commutation (MB := MB) hψ hfail⟩
+
+end Expansion
 
 end MIPRE.QLD
 

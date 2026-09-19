@@ -5,6 +5,7 @@ Authors: Thomas Vidick
 -/
 import MIPRE.Foundations.Weyl
 import MIPRE.Foundations.StateDistance
+import MIPRE.Foundations.PVM
 
 /-!
 # The maximally entangled state of the Weyl system
@@ -145,6 +146,40 @@ theorem stateVec_epr_proj {w : (n → F) → Matrix (n → F) (n → F) ℂ}
   rw [proj_def, Matrix.transpose_smul, Matrix.transpose_sum]
   congr 1
   exact Finset.sum_congr rfl fun a _ => by rw [Matrix.transpose_smul, hw a]
+
+/-! ## The syndrome projectors
+
+`syn w v a` collects the spectral projectors along a level set of the pairing. Two facts the
+expansion stage needs: it is a projective measurement, and it transports across the maximally
+entangled state like each projector does. -/
+
+variable {w : (n → F) → Matrix (n → F) (n → F) ℂ}
+
+/-- **The syndrome projectors form a projective measurement**, indexed by the value of the
+pairing. Orthogonality of the spectral projectors makes each one idempotent, and the level sets
+partition the index group. -/
+theorem isPVM_syn (hw : IsWeylFamily w) (v : n → F) : IsPVM (syn w v) where
+  isSelfAdjoint a := by
+    rw [syn, Matrix.conjTranspose_sum]
+    exact Finset.sum_congr rfl fun e _ => proj_conjTranspose hw e
+  idem a := by
+    rw [syn, Finset.sum_mul]
+    refine Finset.sum_congr rfl fun e he => ?_
+    rw [Finset.mul_sum, Finset.sum_eq_single e (fun e' _ he' => ?_) fun hmem => absurd he hmem]
+    · rw [proj_mul_proj hw, if_pos rfl]
+    · rw [proj_mul_proj hw, if_neg fun hh => he' hh.symm]
+  sum_eq_one := by
+    rw [show (∑ a : F, syn w v a)
+        = ∑ a : F, ∑ e ∈ univ.filter fun e => dotF e v = a, proj w e from rfl,
+      Finset.sum_fiberwise (univ : Finset (n → F)) (fun e => dotF e v) (proj w)]
+    exact sum_proj hw
+
+/-- **The syndrome projectors transport across the maximally entangled state**, exactly: each
+spectral projector does (`stateVec_epr_proj`) and the syndrome is a sum of them. -/
+theorem stateVec_epr_syn (hw : ∀ a, (w a)ᵀ = w a) (v : n → F) (a : F) :
+    stateVec (epr (F := F) (n := n)) (syn w v a) = stateVecB epr (syn w v a) := by
+  rw [syn, stateVec_sum, stateVecB_sum]
+  exact Finset.sum_congr rfl fun e _ => stateVec_epr_proj hw e
 
 end MIPRE.Weyl
 

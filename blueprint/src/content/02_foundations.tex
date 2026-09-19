@@ -657,7 +657,10 @@ observables and carried back; that swap is the bridge.
 \uses{def:cross-distance,def:state-distance}
 \lean{MIPRE.expVec, MIPRE.expEquiv, MIPRE.sum_prod_mul, MIPRE.norm_evec_expVec,
   MIPRE.expVec_dotProduct, MIPRE.expVec_unit, MIPRE.mulVec_kron_expVec,
-  MIPRE.norm_stateVec_kron_unitary, MIPRE.norm_stateVec_expVec_kron_one}
+  MIPRE.norm_stateVec_kron_unitary, MIPRE.norm_stateVec_expVec_kron_one,
+  MIPRE.expVec_dotProduct_of_pair, MIPRE.mulVec_kron_kron_expVec, MIPRE.bornProb_expVec_kron,
+  MIPRE.POVM.kron, MIPRE.POVM.kron_mats, MIPRE.bornProb_sum_sum, MIPRE.sum_bornProb_le_map,
+  MIPRE.IsPVM.toPOVM, MIPRE.IsPVM.toPOVM_mats}
 \leanok
 Let $\ket{\psi}$ be a state on $\C^{d_\alice} \ot \C^{d_\bob}$ and $\ket{e}$ one on
 $\C^{a} \ot \C^{a'}$. The \emph{expanded state} is $\ket{\psi} \ot \ket{e}$, \textbf{re-bipartitioned}
@@ -684,6 +687,23 @@ expansion stage costs exactly the constant of Lemma~\ref{lem:qld-obs-commutation
 The re-bipartition is the point --- the ancilla halves are split between the parties, which is what
 makes the ancilla observables tied together --- and it is why the statements are about
 $\ket{\psi} \ot \ket{e}$ rather than about a tensor power.
+
+\textbf{Born probabilities factorize, and that is where data processing lives.} The consistency
+half of the expansion stage is about a measurement of \emph{product} form, and what it needs is
+that its Born probabilities split: $\bra{\hat\psi} (M \ot N) \ot (M' \ot N') \ket{\hat\psi} =
+\bra{\psi} M \ot M' \ket{\psi} \cdot \bra{e} N \ot N' \ket{e}$
+(\texttt{bornProb\_expVec\_kron}; only the ancilla's two operators need be positive, which is what
+makes their quadratic form real so the real part of the product splits). \texttt{POVM.kron} is the
+product measurement, and \texttt{sum\_bornProb\_le\_map} is the data-processing inequality that
+holds: coarse-graining \emph{both} players the same way can only increase the probability that they
+agree.
+
+That last one is stated at the Born level deliberately. The state-dependent distance has
+\textbf{no} data-processing inequality --- NW19 states theirs for $\simeq_\delta$ and the remark
+following it gives a counterexample for $\approx_\delta$ --- so every coarse-graining in the
+appendix is taken on Born probabilities and converted once, at the end, by
+\eqref{eq:cross-from-agreement}. A formalization that reached for the $\approx$ form would be
+proving something false.
 
 \subsection{The commutation analysis}
 
@@ -883,7 +903,7 @@ to, at $v = \ind_m(u)$.
   MIPRE.Weyl.eprScale_sq, MIPRE.Weyl.epr_unit, MIPRE.Weyl.stateVec_entry,
   MIPRE.Weyl.stateVec_epr, MIPRE.Weyl.wX_transpose, MIPRE.Weyl.wZ_transpose,
   MIPRE.Weyl.stateVec_epr_wX, MIPRE.Weyl.stateVec_epr_wZ, MIPRE.Weyl.stateVec_epr_proj,
-  MIPRE.sgn_sum}
+  MIPRE.sgn_sum, MIPRE.Weyl.isPVM_syn, MIPRE.Weyl.stateVec_epr_syn}
 \leanok
 On two copies of $(\C^q)^{\ot n}$,
 \begin{equation*}

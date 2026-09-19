@@ -1854,7 +1854,10 @@ Lemma~\ref{lem:qld-expanded-points} cancels against the ancillas.
 \begin{lemma}[Expanded point measurements]
 \label{lem:qld-expanded-points}
 \ledgernode{1.2.2.5}
-\uses{lem:qld-win,cor:ortho-from-consistency,def:distance}
+\uses{lem:qld-win,cor:ortho-from-consistency,def:distance,def:expanded-state,
+  lem:qld-expanded-commutation,lem:qld-expanded-consistency}
+\lean{MIPRE.QLD.expanded_points}
+\leanok
 Adjoin EPR ancilla registers to $\ket{\psi}$. There are measurements
 $\widehat{M}^{(\mathtt{Point}, W), u}$ on each player's space together with its ancilla such
 that, with $\delta_{\mathrm{acom}}(\eps) = O(\sqrt{\eps})$: they are self-consistent across
@@ -1863,26 +1866,62 @@ the two sides at error $\eps$, and the $X$-side and $Z$-side coarse observables
 \end{lemma}
 
 \begin{proof}
-\uses{lem:qld-win,lem:qld-expanded-commutation}
-The pivotal step is an exact cancellation of a sign $(-1)^\gamma$ between the strategy's own
-observables, supplied by the anticommutation relations of Lemma~\ref{lem:qld-win}, and the
-ancilla observables. Without the ancillas the two bases only commute up to an error that does
-not improve; with them the sign cancels identically and what is left is the stated
-$\sqrt{\eps}$. That half is Lemma~\ref{lem:qld-expanded-commutation}.
+\leanok
+\uses{lem:qld-win,lem:qld-expanded-commutation,lem:qld-expanded-consistency}
+Two items, one lemma each. The pivotal one is an exact cancellation of a sign $(-1)^\gamma$ between
+the strategy's own observables, supplied by the anticommutation relations of
+Lemma~\ref{lem:qld-win}, and the ancilla observables: Lemma~\ref{lem:qld-expanded-commutation}.
+Without the ancillas the two bases only commute up to an error carrying that sign, which does not
+improve with $\eps$; with them the sign cancels identically. Self-consistency is
+Lemma~\ref{lem:qld-expanded-consistency}.
 \end{proof}
 
-\paragraph{Comments.} The \emph{commutation} half is formalized
-(Lemma~\ref{lem:qld-expanded-commutation}); the self-consistency half is not, and what it needs is
-worth naming. The hatted measurement is a \emph{convolution},
-$\widehat{M}^{(\mathtt{Point},W),u}_a = \sum_{a' + a'' = a} M^{(\mathtt{Point},W),u}_{a'} \ot
-\qp^{W,u}_{a''}$, whose two factors are the strategy's point measurement and the syndrome projector
-$\qp^{W}_{[\,\cdot\, \ind_m(u) = a'']}$ of Definition~\ref{def:generalized-pauli}. Its
-self-consistency across the re-bipartitioned parties comes from three things: item 1 of
-Lemma~\ref{lem:qld-win} for the strategy's factor, \emph{perfect} self-consistency of the syndrome
-projectors across the two ancilla halves --- which is Definition~\ref{def:weyl-epr}'s
-\texttt{stateVec\_epr\_proj} --- and data processing for the convolution, at the Born level, since
-$\approx_\delta$ has none. All three ingredients are formalized; what is missing is the
-construction of the convolved POVM and the Born-level product computation that combines them.
+\paragraph{Comments.} Both items are formalized, at $172\eps$ and $57676416\eps$; the
+$\delta_{\mathrm{acom}} = O(\sqrt{\eps})$ of the statement is a weakening, as it is one step
+earlier (see Lemma~\ref{lem:qld-obs-commutation-acomm}'s comments). The expansion contributes
+\emph{nothing} to either constant, which is the point of
+Definition~\ref{def:expanded-state}'s items 3 and 4.
+
+\begin{lemma}[Expanded point measurements are self-consistent]
+\label{lem:qld-expanded-consistency}
+\uses{lem:qld-win,def:generalized-pauli,def:weyl-epr,def:expanded-state}
+\lean{MIPRE.QLD.synPOVM, MIPRE.QLD.synPOVM_mats, MIPRE.QLD.weylOf_transpose,
+  MIPRE.QLD.sum_bornProb_epr_synPOVM, MIPRE.QLD.ptValPOVM, MIPRE.QLD.hatPOVM,
+  MIPRE.QLD.sum_xSqNorm_hatPOVM_le, MIPRE.QLD.hatPOVM_consistency}
+\leanok
+With $\ket{\hat\psi}$ as in Lemma~\ref{lem:qld-expanded-commutation}, let
+\begin{equation*}
+  \widehat{M}^{(\mathtt{Point},W),u}_a
+    \;=\; \sum_{a' + a'' = a} M^{(\mathtt{Point},W),u}_{a'} \ot \qp^{W}_{[\,\cdot\, \ind_m(u) = a'']}
+\end{equation*}
+be the convolution of the strategy's point measurement with the ancilla's syndrome measurement.
+Then, on average over the verifier's content,
+\begin{equation*}
+  \widehat{M}^{(\mathtt{Point},W),u}_a \ot \Id \;\simeq_{172\eps}\;
+    \Id \ot \widehat{M}^{(\mathtt{Point},W),u}_a\;.
+\end{equation*}
+\end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:qld-win,def:weyl-epr,def:expanded-state}
+Three inputs and no loss. The agreement probability of a product measurement on the expanded state
+factorizes (Definition~\ref{def:expanded-state}); the ancilla factor is \emph{exactly one}, because
+the syndrome projectors are perfectly self-consistent across the two halves of
+$\ket{\EPR_q}^{\ot M}$ --- that is Definition~\ref{def:weyl-epr}'s stabilizer relation, summed over
+the level set, and it is $1$ rather than $1 - O(\eps)$; and the convolution is a coarse-graining, so
+it can only \emph{increase} agreement. What is left is the disagreement of the strategy's own point
+measurements, which item 1 of Lemma~\ref{lem:qld-win} bounds by the conditional failure of the
+$(\mathtt{Point}, W)$ subtest. One conversion from agreement to distance
+(\eqref{eq:cross-from-agreement}) gives $2 \cdot 86 \eps$.
+\end{proof}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Background/QLD/Expanded.lean}. The whole estimate
+runs on Born probabilities and is converted to the state-dependent distance exactly once, at the
+end. That is not a stylistic choice: the convolution is a coarse-graining, and
+$\approx_\delta$ has no data-processing inequality (Definition~\ref{def:expanded-state}'s comments).
+So the route through agreement probabilities is the only correct one, and it is also the one that
+makes the ancilla's contribution visible as an exact $1$.
 
 \begin{lemma}[Expanded point observables commute]
 \label{lem:qld-expanded-commutation}

@@ -503,15 +503,34 @@ The bookkeeping is isolated in `MIPRE/Foundations/Expanded.lean` (blueprint
 by factor, the norm of a product state, an inert ancilla, and a unitary ancilla. None of it mentions
 the Pauli test.
 
-**What the self-consistency half needs.** The hatted *measurement* is a convolution,
-`M-hat^{(Point,W),u}_a = sum_{a' + a'' = a} M_{a'} (x) tau^{W,u}_{a''}`, with `tau^{W,u}` the
-syndrome projector `syn` of `Weyl.lean`. Its self-consistency across the re-bipartitioned parties
-needs three things, all of which exist: item 1 of `lem:qld-win` for the strategy's factor,
-*perfect* self-consistency of the syndrome projectors across the two ancilla halves
-(`stateVec_epr_proj`), and data processing for the convolution -- at the Born level, since
-`approx_delta` has none. What is missing is the construction of the convolved POVM and the
-Born-level product computation that combines them. That is the next piece of stage 3, followed by
-`lem:qld-expanded-lines`.
+**The self-consistency half (2026-09-19, done).** The hatted measurement is the *convolution*
+`M-hat^{(Point,W),u}_a = sum_{a'+a''=a} M_{a'} (x) tau^{W,u}_{a''}` -- in Lean, the product
+measurement `POVM.kron` coarse-grained by addition. Its consistency is three facts and no loss:
+
+* the agreement probability of a product measurement on the expanded state **factorizes**
+  (`bornProb_expVec_kron`; only the ancilla's operators need to be positive, which is what makes
+  their quadratic form real so the real part of the product splits);
+* the ancilla factor is **exactly one** -- the syndrome projectors are perfectly self-consistent
+  across the two halves of the EPR ancilla. That is `stateVec_epr_syn` (the stabilizer relation
+  summed over a level set) turned into a Born probability, and the sum is `1` rather than
+  `1 - O(eps)`;
+* the convolution is a coarse-graining, so it can only **increase** agreement
+  (`sum_bornProb_le_map`).
+
+What is left is the strategy's own disagreement, which item 1 bounds by the subtest's conditional
+failure; one conversion to the distance gives `172 eps`. So the expansion contributes nothing to
+either item's constant.
+
+**And the one thing to keep in mind about all of it**: the whole estimate runs on Born
+probabilities and converts to the state-dependent distance exactly once, at the end. That is
+forced -- `approx_delta` has no data-processing inequality (NW19's own counterexample), so a
+coarse-graining can only be taken at the Born level. `sum_bornProb_le_map` is stated there for that
+reason, and the blueprint says so under `def:expanded-state`.
+
+**Still to do in stage 3**: `lem:qld-expanded-lines` -- the line measurements, whose projectivity
+comes from an orthogonality property of the convolution rather than from
+`cor:ortho-from-consistency`, and whose consistency with the point measurements is
+`lem:qld-expanded-points` plus the line subtest's relations.
 
 ### PR C — combining the two bases
 

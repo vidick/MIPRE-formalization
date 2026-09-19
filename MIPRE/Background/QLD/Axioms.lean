@@ -108,7 +108,16 @@ carries are the same sign, and they cancel identically. -/
   MIPRE.QLD.hatVec_unit,
   MIPRE.QLD.hatObs_comm_eq,
   MIPRE.QLD.norm_hatVec_hatObs_comm,
-  MIPRE.QLD.hatObs_commutation
+  MIPRE.QLD.hatObs_commutation,
+  MIPRE.QLD.synPOVM,
+  MIPRE.QLD.synPOVM_mats,
+  MIPRE.QLD.weylOf_transpose,
+  MIPRE.QLD.sum_bornProb_epr_synPOVM,
+  MIPRE.QLD.ptValPOVM,
+  MIPRE.QLD.hatPOVM,
+  MIPRE.QLD.sum_xSqNorm_hatPOVM_le,
+  MIPRE.QLD.hatPOVM_consistency,
+  MIPRE.QLD.expanded_points
 
 /-! ## Signed commutation: both halves
 
