@@ -388,6 +388,7 @@ import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
 import MIPRE.Background.Orthonormalization.Statement
 import MIPRE.Background.QLD.Anticomm
 import MIPRE.Background.QLD.Axioms
+import MIPRE.Background.QLD.Commutation
 import MIPRE.Background.QLD.Consistency
 import MIPRE.Background.QLD.Game
 import MIPRE.Background.QLD.Ortho
@@ -653,6 +654,7 @@ import MIPRE.Foundations.SAT.Pcp
 import MIPRE.Foundations.SAT.Succinct
 import MIPRE.Foundations.SAT.Table
 import MIPRE.Foundations.SAT.Tseitin
+import MIPRE.Foundations.Sign
 import MIPRE.Foundations.StateDistance
 import MIPRE.Foundations.SyncTransport
 import MIPRE.Foundations.TensorFamily
@@ -671,6 +673,9 @@ import MIPRE.Foundations.ValueApprox.RawStrategy
 import MIPRE.Foundations.ValueApprox.Strategy
 import MIPRE.Foundations.Verifier
 import MIPRE.Foundations.VerifierValue
+import MIPRE.Foundations.Weyl
+import MIPRE.Foundations.WeylBinary
+import MIPRE.Foundations.WeylEPR
 import MIPRE.HaltingGameValue
 import MIPRE.LCS.Basic
 import MIPRE.LCS.Common

@@ -546,7 +546,11 @@ comment; both are defined here.
   MIPRE.one_sub_sum_bornProb_le_condFail, MIPRE.xSqNorm_sum_le_condFail,
   MIPRE.sum_mul_condFail_le, MIPRE.sum_condFail_le_of_pushforward,
   MIPRE.sum_condFail_le_of_le, MIPRE.xStateDist, MIPRE.xStateDist_obsOf_le,
-  MIPRE.stateVecB_smul, MIPRE.stateVecB_sum}
+  MIPRE.stateVecB_smul, MIPRE.stateVecB_sum, MIPRE.xNorm, MIPRE.xNorm_nonneg,
+  MIPRE.xSqNorm_eq_sq, MIPRE.xNorm_eq_snorm, MIPRE.norm_stateVec_eq_snorm,
+  MIPRE.norm_stateVecB_eq_snorm, MIPRE.xNorm_mul_le, MIPRE.xNorm_mul_le_one,
+  MIPRE.xSqNorm_mul_le_one, MIPRE.norm_stateVec_anticomm_le, MIPRE.obs2,
+  MIPRE.obsOf_sgn_eq_obs2, MIPRE.obs2_conjTranspose, MIPRE.obs2_mul_self_le_one}
 \leanok
 Let $\mu$ be a distribution on a finite set $\mX$, let
 $\ket{\psi} \in \C^{d_\alice} \ot \C^{d_\bob}$, and let $\{M^x_a\}$ and $\{N^x_a\}$ be families
@@ -598,6 +602,268 @@ question reading none of it, so the hypothesis is a condition on the push-forwar
 the same proof and the same factor $\abs{\mA}$: the appendix needs it to pass from a two-outcome
 coarse-graining of a point measurement to the $\pm 1$-observable it defines, and
 Definition~\ref{def:state-distance}'s version compares the wrong pair.
+
+\textbf{The order reversal, and where the sign comes from.} One algebraic rule is proved here
+rather than inlined at its two uses, because the paper's own correction note on
+Lemma~\ref{lem:qld-obs-commutation} records two displays that had it backwards. If
+$A \ot \Id \simeq \Id \ot A'$ and $B \ot \Id \simeq \Id \ot B'$ then
+\begin{equation}
+  \label{eq:order-reversal-bp}
+  AB \ot \Id \;\simeq\; \Id \ot B'A'\;,
+\end{equation}
+Bob's factors in the \emph{reverse} order, at the sum of the two deviations
+(\texttt{xNorm\_mul\_le\_one}; \texttt{xNorm\_mul\_le} carries operator-norm bounds $K$ and $L$ in
+front of them). The proof is the split
+$AB \ot \Id - \Id \ot B'A' = (A \ot \Id)(B \ot \Id - \Id \ot B') + (\Id \ot B')(A \ot \Id - \Id
+\ot A')$, and the reversal is exactly the step that commutes $A \ot \Id$ past $\Id \ot B'$ to
+factor the second summand: it puts $B'$ to the \emph{left} of $A'$. Applying it in both orders
+and cancelling Bob's two products gives the form the anticommuting case of
+Lemma~\ref{lem:qld-obs-commutation} consumes,
+\begin{equation}
+  \label{eq:anticomm-transfer-bp}
+  \norm{(AB + BA) \ot \Id \ket{\psi}} \;\leq\; 2 \norm{(A \ot \Id - \Id \ot A')\ket{\psi}}
+    + 2 \norm{(B \ot \Id - \Id \ot B')\ket{\psi}}
+    + \norm{\Id \ot (A'B' + B'A') \ket{\psi}}\;,
+\end{equation}
+\texttt{norm\_stateVec\_anticomm\_le}: an anticommutation on Bob's side transfers to Alice's. The
+two reversals do not cancel each other, because what sits between them is a \emph{sum}. Both
+statements are on the unsquared deviation, since the triangle inequality is what the argument
+uses; \texttt{xSqNorm\_mul\_le\_one} squares the first at the usual cost of a factor two.
+
+Each operator in sight has to be a contraction, and for the $\pm 1$-observable of a two-outcome
+POVM that is \texttt{POVM.sub\_mul\_self\_le\_one}, which needs the observable written as a
+\emph{difference} of two POVM elements rather than as the weighted sum $\sum_a (-1)^a M_a$ that
+\texttt{obsOf} produces. \texttt{obs2} is that difference and \texttt{obsOf\_sgn\_eq\_obs2}
+identifies the two, so a consumer can quote whichever form its input is stated in.
+
+\subsection{Generalized Pauli observables}
+
+\begin{definition}[Generalized Pauli observables in characteristic two]
+\label{def:generalized-pauli}
+\lean{MIPRE.sgn, MIPRE.sgn_add, MIPRE.star_sgn, MIPRE.norm_sgn, MIPRE.sum_sgn,
+  MIPRE.Weyl.two_eq_zero, MIPRE.Weyl.add_self, MIPRE.Weyl.add_eq_zero_iff,
+  MIPRE.Weyl.trDot, MIPRE.Weyl.trDot_comm, MIPRE.Weyl.trDot_add_left,
+  MIPRE.Weyl.trDot_add_right, MIPRE.Weyl.trDotL, MIPRE.Weyl.wX, MIPRE.Weyl.wZ,
+  MIPRE.Weyl.wX_mul_wX, MIPRE.Weyl.wZ_mul_wZ, MIPRE.Weyl.wX_mul_self,
+  MIPRE.Weyl.wZ_mul_self, MIPRE.Weyl.wX_conjTranspose, MIPRE.Weyl.wZ_conjTranspose,
+  MIPRE.Weyl.wX_isUnitary, MIPRE.Weyl.wZ_isUnitary, MIPRE.Weyl.wX_comm,
+  MIPRE.Weyl.wZ_comm, MIPRE.Weyl.wX_mul_wZ, MIPRE.Weyl.wX_mul_wZ_of_ne,
+  MIPRE.Weyl.wX_mul_wZ_of_eq, MIPRE.Weyl.trDotL_ne_zero, MIPRE.Weyl.sum_sgn_trDot,
+  MIPRE.Weyl.sum_sgn_trDot_zero, MIPRE.Weyl.zProj, MIPRE.Weyl.sum_zProj,
+  MIPRE.Weyl.wZ_eq_sum_zProj, MIPRE.Weyl.sum_sgn_smul_wZ,
+  MIPRE.LowDegree.card_filter_ker_mul', MIPRE.Weyl.IsWeylFamily,
+  MIPRE.Weyl.isWeylFamily_wZ, MIPRE.Weyl.isWeylFamily_wX, MIPRE.Weyl.proj,
+  MIPRE.Weyl.proj_wZ, MIPRE.Weyl.proj_mul, MIPRE.Weyl.proj_mul_proj, MIPRE.Weyl.sum_proj,
+  MIPRE.Weyl.eq_sum_proj, MIPRE.Weyl.proj_conjTranspose, MIPRE.Weyl.xProj,
+  MIPRE.Weyl.sum_xProj, MIPRE.Weyl.wX_eq_sum_xProj, MIPRE.Weyl.xProj_mul_xProj,
+  MIPRE.Weyl.xProj_conjTranspose, MIPRE.Weyl.dotF, MIPRE.Weyl.trDot_smul,
+  MIPRE.Weyl.trMulL, MIPRE.Weyl.sum_sgn_linear, MIPRE.Weyl.sum_sgn_trMul,
+  MIPRE.Weyl.syn, MIPRE.Weyl.sum_sgn_smul_line}
+\leanok
+Let $q = 2^k$ be an admissible field size and let $n$ be a
+finite index set, so that $\F_q^n$ indexes a basis of $(\C^q)^{\ot n}$. Write
+$\fieldtr : \F_q \to \F_2$ for the field trace and, for $a, b \in \F_q^n$,
+\begin{equation*}
+  \langle a, b \rangle \;=\; \fieldtr\Bigl(\sum_{l \in n} a_l b_l\Bigr) \;\in\; \F_2\;.
+\end{equation*}
+The \emph{generalized Pauli}, or \emph{Weyl}, \emph{observables} are
+\begin{equation*}
+  \qp^X(a) \;=\; \sum_{i \in \F_q^n} \ket{i + a}\bra{i}\;, \qquad
+  \qp^Z(b) \;=\; \sum_{i \in \F_q^n} (-1)^{\langle b, i \rangle}\, \ket{i}\bra{i}\;.
+\end{equation*}
+They satisfy, for all $a, a', b, b' \in \F_q^n$:
+\begin{enumerate}
+\item $\qp^W(a) \qp^W(a') = \qp^W(a + a')$, so $\qp^W(0) = \Id$ and each family commutes;
+\item $\qp^W(a)^\dagger = \qp^W(a)$ and $\qp^W(a)^2 = \Id$: each is a self-adjoint involution,
+  hence a $\pm 1$-observable and a unitary;
+\item (\emph{twisted commutation})
+  $\qp^X(a)\, \qp^Z(b) = (-1)^{\langle a, b \rangle}\, \qp^Z(b)\, \qp^X(a)$; so the two commute
+  when $\langle a, b\rangle = 0$ and anticommute when it is $1$.
+\end{enumerate}
+For $W \in \{X, Z\}$ define the \emph{spectral projectors} of the family by Fourier averaging,
+\begin{equation}
+  \label{eq:pauli-inversion-bp}
+  \qp^W_e \;=\; \E_{a \in \F_q^n} (-1)^{\langle a, e \rangle}\, \qp^W(a)\;.
+\end{equation}
+For $W = Z$ these are the projectors onto the computational basis vectors. They form a projective
+measurement and invert~\eqref{eq:pauli-inversion-bp}:
+\begin{equation}
+  \label{eq:pauli-obs-proj-bp}
+  \qp^W_e \qp^W_{e'} = \delta_{e, e'}\, \qp^W_e\;, \qquad
+  \sum_e \qp^W_e = \Id\;, \qquad
+  \qp^W(a) \;=\; \sum_{e} (-1)^{\langle a, e\rangle}\, \qp^W_e\;.
+\end{equation}
+Finally, for $v \in \F_q^n$ and $a \in \F_q$ write $v \cdot e = \sum_l v_l e_l \in \F_q$ for the
+pairing before the trace, and define the \emph{syndrome projector}
+$\qp^W_{[\,\cdot\, v = a]} = \sum_{e \,:\, e \cdot v = a} \qp^W_e$. Averaging the family along the
+line $r \mapsto r v$ recovers it:
+\begin{equation}
+  \label{eq:pauli-line-bp}
+  \E_{r \in \F_q} (-1)^{\fieldtr(a r)}\, \qp^W(r v) \;=\; \qp^W_{[\,\cdot\, v = a]}\;.
+\end{equation}
+\end{definition}
+
+\paragraph{Source.} The pinned paper~\cite{AuditSync26}, \texttt{preliminaries.tex},
+\texttt{sec:generalized-pauli}: \texttt{eq:pauli-fp} and its $\F_q$ analogue,
+\texttt{eq:twisted-fq}, \texttt{eq:pauli-product-power}, \texttt{eq:pauli-obs-proj} and
+\texttt{eq:pauli-inversion-0}. The cancellation behind the inversion is the paper's
+\texttt{lem:cancellation} (Fact 3.2 of~\cite{NW19}).
+
+\paragraph{Comments.} The formalization is \texttt{MIPRE/Foundations/Weyl.lean}. It is the half of
+the Pauli basis test's infrastructure that was missing: \texttt{MIPRE/LCS/Pauli.lean} is the
+$2 \times 2$ Pauli matrices for the Magic Square, and what the expansion stage of
+Remark~\ref{rem:qld-architecture} and its swap isometry both run on is this $\F_q$ Weyl system.
+Three points, two of them restrictions stated so that no later statement is read as more general
+than it is.
+
+\textbf{Characteristic two only.} The paper gives the construction over $\F_p$ with phases
+$\omega = e^{2\pi i/p}$ and then specializes; this is the $p = 2$ case throughout, where
+$\omega = -1$ and every phase is the real sign \texttt{MIPRE.sgn}. Nothing is lost here: the test's
+parameters are admissible by hypothesis, which means $q = 2^k$, and no consumer instantiates it
+elsewhere. What it buys is that the operators are self-adjoint \emph{involutions} rather than
+order-$p$ unitaries --- so they are genuine $\pm 1$-observables, and item 2 above is where the
+paper needs $(\qp^W(a))^p = \Id$.
+
+\textbf{One matrix, not an iterated Kronecker product.} $(\C^q)^{\ot n}$ is presented as matrices
+indexed by the functions $n \to \F_q$, which \emph{is} $\F_q^n$, so $\qp^W(a)$ is a single matrix
+and the $n$-register statements are the one-register statements with no associativity
+bookkeeping. The index set $n$ is an arbitrary finite type rather than $\{1, \ldots, n\}$, which is
+what lets the test use it at $n = \{0,1\}^m$ --- the indexing of $\F_q^M$, $M = 2^m$, that
+Definition~\ref{def:ld-encoding} already uses.
+
+\textbf{The cancellation lemma needed a generalization, not a port.} The identity behind the
+inversion in~\eqref{eq:pauli-obs-proj-bp} is that a nontrivial sign character of $\F_q^n$ sums to
+zero, and that is the index-two kernel of a nonzero $\F_2$-linear functional. The repository had
+that count only for a functional on a field \emph{extension}
+(\texttt{card\_filter\_ker\_mul}); the proof uses nothing but the module structure and a vector
+off the kernel, so it is now stated for any finite $\F$-vector space
+(\texttt{card\_filter\_ker\_mul'}), with the field-extension form as the instance. The paper's own
+correction note on \texttt{lem:cancellation} warns that the ambient space must be a subspace over the
+\emph{base} field and that the statement is false over a subfield; here the space is all of
+$\F_q^n$ over $\F_2$, so there is nothing to check.
+
+\textbf{The spectral theory is proved once, for both families.} The only properties of a family
+that~\eqref{eq:pauli-obs-proj-bp} and~\eqref{eq:pauli-line-bp} use are the three of
+\texttt{IsWeylFamily}: it represents the additive group, its operators are self-adjoint, and the
+identity sits at $0$. So the projectors are built by~\eqref{eq:pauli-inversion-bp} from any such
+family and the statements hold for both, which means the paper's Fourier transform
+(\texttt{eq:fourier-f}) conjugating $\qp^Z$ into $\qp^X$ is \emph{not needed} to reach the
+$X$-side projectors. That is worth avoiding: the transform carries a $q^{-1/2}$, and a square root
+in matrix entries costs far more in Lean than it does on paper.
+
+Two of the identities turn out to need even less. The expansion of an operator in its own
+projectors, and the line average~\eqref{eq:pauli-line-bp}, use \emph{no} group law at all --- they
+are Fourier inversion on the index group and hold for an arbitrary family. What the group law buys
+is that the projectors are mutually \emph{orthogonal}, which is what makes them a measurement
+rather than a resolution.
+
+Equation~\eqref{eq:pauli-line-bp} is the identity Lemma~\ref{lem:qld-expanded-points} averages
+to, at $v = \ind_m(u)$.
+
+\begin{definition}[The maximally entangled state of the Weyl system]
+\label{def:weyl-epr}
+\uses{def:generalized-pauli,def:state-distance}
+\lean{MIPRE.Weyl.eprScale, MIPRE.Weyl.epr, MIPRE.Weyl.epr_same, MIPRE.Weyl.epr_ne,
+  MIPRE.Weyl.eprScale_sq, MIPRE.Weyl.epr_unit, MIPRE.Weyl.stateVec_entry,
+  MIPRE.Weyl.stateVec_epr, MIPRE.Weyl.wX_transpose, MIPRE.Weyl.wZ_transpose,
+  MIPRE.Weyl.stateVec_epr_wX, MIPRE.Weyl.stateVec_epr_wZ, MIPRE.Weyl.stateVec_epr_proj,
+  MIPRE.sgn_sum}
+\leanok
+On two copies of $(\C^q)^{\ot n}$,
+\begin{equation*}
+  \ket{\EPR_q}^{\ot n} \;=\; \frac{1}{\sqrt{q^n}} \sum_{a \in \F_q^n} \ket{a} \ot \ket{a}\;,
+\end{equation*}
+a unit vector. For any operator $M$ on one copy,
+\begin{equation}
+  \label{eq:epr-transport-bp}
+  (M \ot \Id) \ket{\EPR_q}^{\ot n} \;=\; (\Id \ot M^{\mathsf T}) \ket{\EPR_q}^{\ot n}\;,
+\end{equation}
+and the Weyl operators and their spectral projectors are \emph{symmetric}, so for them the
+transpose is invisible: the two parties' operators act identically on the state.
+\end{definition}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Foundations/WeylEPR.lean}. The stabilizer
+relation of~\eqref{eq:epr-transport-bp} at $M = \qp^W(a)$ is what the expansion stage of
+Remark~\ref{rem:qld-architecture} runs on: its expanded state adjoins $\ket{\EPR_q}^{\ot M}$ to
+each player, and the sign $(-1)^{\gamma(\omega)}$ that the strategy's own observables carry is
+cancelled against one the \emph{ancilla} observables carry, for which the two ancilla halves must
+be tied together.
+
+This is the second dividend of characteristic two, after the operators being involutions. Over
+$\F_p$ for odd $p$ the transpose of $\qp^Z(b)$ is $\qp^Z(b)$ but its conjugate is $\qp^Z(-b)$, and
+the bookkeeping reappears; here every entry is real and the transpose is the identity map on the
+whole family, projectors included (\texttt{stateVec\_epr\_proj}, which needs only that the family
+is symmetric).
+
+\effortEasy
+
+\begin{lemma}[Qudits are qubits, in characteristic two]
+\label{lem:pauli-binary}
+\uses{def:generalized-pauli,def:weyl-epr,lem:self-dual-basis}
+\lean{MIPRE.Weyl.binEquiv, MIPRE.Weyl.binEquiv_apply, MIPRE.Weyl.binEquiv_add,
+  MIPRE.Weyl.binEquiv_injective, MIPRE.Weyl.binEquiv_eq_iff, MIPRE.Weyl.trDot_binEquiv,
+  MIPRE.Weyl.wX_binEquiv, MIPRE.Weyl.wZ_binEquiv, MIPRE.Weyl.card_binEquiv,
+  MIPRE.Weyl.proj_binEquiv, MIPRE.Weyl.proj_wZ_binEquiv, MIPRE.Weyl.proj_wX_binEquiv,
+  MIPRE.Weyl.eprScale_binEquiv, MIPRE.Weyl.epr_binEquiv, MIPRE.Weyl.pauli_binary,
+  MIPRE.Weyl.exists_binEquiv_pauli_binary, MIPRE.Weyl.trDot_two, MIPRE.Weyl.sgn_trDot_two,
+  MIPRE.Weyl.wZ_two_diag, MIPRE.Weyl.wX_two_apply}
+\leanok
+Let $q = 2^k$ be an admissible field size, let $L$ be a finite index set, and let
+$\{e_1, \ldots, e_k\}$ be a self-dual basis of $\F_q$ over $\F_2$, with coordinate map
+$\kappa$. Then the relabelling
+\begin{equation*}
+  \phi : \F_q^L \to \F_2^{L \times k}\;, \qquad \phi(u)_{i j} \;=\; \kappa(u_i)_j\;,
+\end{equation*}
+is a bijection, and conjugating by it carries the whole Weyl system over $\F_q$ on $L$ registers
+to the Weyl system over $\F_2$ on $L k$ registers: the form $\langle \cdot, \cdot \rangle$, the
+two operator families $\qp^X$ and $\qp^Z$, their spectral projectors, and
+$\ket{\EPR_q}^{\ot L} \mapsto \ket{\EPR_2}^{\ot L k}$. Such a basis exists whenever $k$ is odd.
+\end{lemma}
+
+\begin{proof}
+\leanok
+\uses{def:generalized-pauli,def:weyl-epr,lem:self-dual-basis}
+Four steps, one per piece, and only the first uses self-duality. The form transports because
+$\fieldtr(x y) = \kappa(x) \cdot \kappa(y)$, which is item 2 of the paper's
+\texttt{lem:downsize\_field} and is exactly self-duality
+(\texttt{MIPRE.LowDegree.trace\_mul\_eq\_dot}); summing over the $L$ registers is
+\texttt{trDot\_binEquiv}. $\qp^Z$ transports because its entries are the characters of the form,
+so it transports as soon as the form does. $\qp^X$ transports because $\phi$ is
+\emph{additive}, which is all a shift knows about --- no self-duality. The projectors transport
+because the Fourier average of~\eqref{eq:pauli-inversion-bp} reindexes along $\phi$ and the
+normalization is one cardinality counted on either side. The state transports because both sides
+are the normalized diagonal and a relabelling preserves the diagonal. Existence of the basis is
+the existence half of Lemma~\ref{lem:self-dual-basis}.
+\end{proof}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Foundations/WeylBinary.lean}; this is the
+paper's \texttt{lem:pauli-binary} (\texttt{preliminaries.tex}), which is what makes the Pauli
+basis test a self-test for \emph{qubit} Pauli observables and $\ket{\EPR_2}$, as its
+\texttt{cor:pauli-binary} states.
+
+\textbf{A relabelling, not an isometry.} The paper builds an isometry
+$\theta : \C^q \to (\C^2)^{\ot k}$ and states the conclusion as
+$\qp^W_u = \phi^\dagger (\bigotimes_{i,j} \sigma^W_{u_{ij}}) \phi$. Here both systems are
+matrices indexed by a finite set --- $\F_q^L$ on one side, $\F_2^{L \times k}$ on the other ---
+and $\phi$ is a bijection \emph{of those index sets}, so conjugating by the corresponding
+permutation unitary is \texttt{Matrix.submatrix} along $\phi$ and no unitary has to be
+constructed. That is the same simplification as presenting $(\C^q)^{\ot n}$ as one matrix rather
+than an iterated Kronecker product, and it is why the four items are four short calculations.
+
+\textbf{What ``these are qubit Paulis'' means here.} The target is the Weyl system at
+$\F = \F_2$ and index set $L \times k$, whose matrices are indexed by
+$\F_2^{L \times k}$ --- the computational basis of $(\C^2)^{\ot L k}$. That the operators really
+are the tensor products of single-qubit Paulis is then a statement \emph{inside} that system, and
+it is checked rather than read off the encoding: the form is the plain dot product
+(\texttt{trDot\_two}, the field trace of a one-dimensional extension being the identity), its
+character is a product over the qubits (\texttt{sgn\_trDot\_two}), and each operator's entries
+factor accordingly (\texttt{wZ\_two\_diag} on the diagonal, \texttt{wX\_two\_apply} everywhere).
+The paper's $\bigotimes_{i=1}^L \bigotimes_{j=1}^k \sigma^W_{u_{ij}}$ is that factorization.
+
+\textbf{The oddness of $k$ is inherited, not needed.} Every statement above holds for any
+self-dual basis, given as a hypothesis; only the existence clause asks $k$ to be odd, and that is
+the restriction of Lemma~\ref{lem:self-dual-basis}'s formalized half, not of this lemma. The
+paper's admissible sizes satisfy it.
 
 \begin{definition}[Inconsistency]
 \label{def:inconsistency}

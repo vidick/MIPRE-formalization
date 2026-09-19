@@ -5,7 +5,7 @@ Authors: Thomas Vidick
 -/
 import MIPRE.Background.QLD.Anticomm
 import MIPRE.Background.QLD.Consistency
-import MIPRE.Background.QLD.WinMS
+import MIPRE.Background.QLD.Commutation
 import MIPRE.Foundations.GuardSorryFree
 
 /-!
@@ -84,3 +84,25 @@ with theorems, and their axiom lists differ. -/
 
 -- blueprint `lem:qld-obs-consistency`
 #guard_sorry_free MIPRE.QLD.pts_obs_consistency
+
+/-! ## Signed commutation, the anticommuting case
+
+Blueprint `lem:qld-obs-commutation-acomm`. The two point observables and the two variable
+observables they are tied to, the sub-probability weight the items carry, item 7 in observable
+form, the identification of item 6's anticommutator, and the lemma. -/
+
+#guard_sorry_free MIPRE.QLD.ptObs,
+  MIPRE.QLD.varObs,
+  MIPRE.QLD.ptObs_mul_self_le_one,
+  MIPRE.QLD.varObs_mul_self_le_one,
+  MIPRE.QLD.acommWeight,
+  MIPRE.QLD.acommWeight_nonneg,
+  MIPRE.QLD.sum_acommWeight_mul,
+  MIPRE.QLD.xStateDist_ptObs_varObs_X,
+  MIPRE.QLD.xStateDist_ptObs_varObs_Z,
+  MIPRE.QLD.question_var,
+  MIPRE.QLD.mats_msPOVM_var,
+  MIPRE.QLD.bobs_msPOVM,
+  MIPRE.QLD.anti_eq_varObs,
+  MIPRE.QLD.sq_norm_ptObs_anticomm_le,
+  MIPRE.QLD.acomm_signed_commutation

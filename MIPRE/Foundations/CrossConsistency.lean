@@ -5,6 +5,7 @@ Authors: Thomas Vidick
 -/
 import MIPRE.Foundations.StateDistance
 import MIPRE.Foundations.POVMValue
+import MIPRE.Foundations.Sign
 
 /-!
 # Cross-party consistency, and what winning a subtest buys
@@ -462,6 +463,168 @@ theorem sum_condFail_le_of_le {ι : Type*} [Fintype ι]
           mul_le_mul_of_nonneg_right (hνμ i) h0
   · rw [himg]
     exact sum_mul_condFail_le hψ hfail _
+
+/-! ## Products, and the order reversal
+
+`lem:qld-obs-commutation` needs one algebraic rule on top of the estimate above: if each of two of
+Alice's operators is cross-close to one of Bob's, then their *product* is cross-close to the
+product of Bob's **in the reverse order**. The reversal is not an accident of bookkeeping; it is
+where it comes from. Split
+
+```
+AB ⊗ Id - Id ⊗ B'A' = (A ⊗ Id)(B ⊗ Id - Id ⊗ B') + (Id ⊗ B')(A ⊗ Id - Id ⊗ A')
+```
+
+--- the second step is legitimate because `A ⊗ Id` and `Id ⊗ B'` commute, and it is that commuting
+step that puts `B'` on the *left* of `A'`. Each summand then loses its front factor to a bound on
+its operator norm.
+
+This is stated on the unsquared deviation, because the triangle inequality is what the argument
+uses; `xSqNorm_mul_le` squares it at the cost of the usual factor two.
+-/
+
+section Reversal
+
+variable {ψ : dA × dB → ℂ}
+
+/-- `‖(A ⊗ Id - Id ⊗ B)|ψ⟩‖`, the unsquared cross-party deviation. -/
+def xNorm (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B : Matrix dB dB ℂ) : ℝ :=
+  ‖stateVec ψ A - stateVecB ψ B‖
+
+theorem xNorm_nonneg (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B : Matrix dB dB ℂ) :
+    0 ≤ xNorm ψ A B := norm_nonneg _
+
+theorem xSqNorm_eq_sq (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B : Matrix dB dB ℂ) :
+    xSqNorm ψ A B = xNorm ψ A B ^ 2 := rfl
+
+/-- The deviation is the state-norm of the single operator `A ⊗ Id - Id ⊗ B` on the product
+space, which is what the operator-norm calculus of `MIPRE/Foundations/OpBound.lean` consumes. -/
+theorem xNorm_eq_snorm (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B : Matrix dB dB ℂ) :
+    xNorm ψ A B = snorm ψ ((aOp A : Matrix (dA × dB) _ ℂ) - bOp B) := by
+  rw [xNorm, snorm, Matrix.sub_mulVec, evec_sub]
+  rfl
+
+omit [DecidableEq dA] in
+theorem norm_stateVec_eq_snorm (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) :
+    ‖stateVec ψ A‖ = snorm ψ (aOp A : Matrix (dA × dB) _ ℂ) := rfl
+
+omit [DecidableEq dB] in
+theorem norm_stateVecB_eq_snorm (ψ : dA × dB → ℂ) (B : Matrix dB dB ℂ) :
+    ‖stateVecB ψ B‖ = snorm ψ (bOp B : Matrix (dA × dB) _ ℂ) := rfl
+
+/-- **The order-reversal rule.** If `A ⊗ Id` is `K`-boundedly close to `Id ⊗ A'` and `B ⊗ Id` to
+`Id ⊗ B'`, then `AB ⊗ Id` is close to `Id ⊗ B'A'`: Bob's factors appear in the opposite order,
+and each deviation is paid for by the operator norm of the factor in front of it. -/
+theorem xNorm_mul_le {K L : ℝ} (A B : Matrix dA dA ℂ) (A' B' : Matrix dB dB ℂ)
+    (hA : Bnd (aOp A : Matrix (dA × dB) _ ℂ) K) (hB' : Bnd (bOp B' : Matrix (dA × dB) _ ℂ) L) :
+    xNorm ψ (A * B) (B' * A') ≤ K * xNorm ψ B B' + L * xNorm ψ A A' := by
+  have hsplit : (aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A')
+      = (aOp A : Matrix (dA × dB) _ ℂ) * ((aOp B : Matrix (dA × dB) _ ℂ) - bOp B')
+        + (bOp B' : Matrix (dA × dB) _ ℂ) * ((aOp A : Matrix (dA × dB) _ ℂ) - bOp A') := by
+    rw [aOp_mul, bOp_mul, Matrix.mul_sub, Matrix.mul_sub, aOp_mul_bOp A B']
+    abel
+  rw [xNorm_eq_snorm, xNorm_eq_snorm, xNorm_eq_snorm, hsplit]
+  refine le_trans (snorm_add_le ψ _ _) (add_le_add ?_ ?_)
+  · exact snorm_mul_le ψ hA _
+  · exact snorm_mul_le ψ hB' _
+
+/-- The order reversal for contractions, which is how every consumer uses it: POVM elements and
+generalized observables are bounded by one on either factor. -/
+theorem xNorm_mul_le_one (A B : Matrix dA dA ℂ) (A' B' : Matrix dB dB ℂ)
+    (hA : Aᴴ * A ≤ (1 : Matrix dA dA ℂ)) (hB' : B'ᴴ * B' ≤ (1 : Matrix dB dB ℂ)) :
+    xNorm ψ (A * B) (B' * A') ≤ xNorm ψ B B' + xNorm ψ A A' := by
+  have h := xNorm_mul_le (ψ := ψ) A B A' B' (bnd_aOp hA) (bnd_bOp hB')
+  rwa [one_mul, one_mul] at h
+
+/-- The squared form of the order reversal, at the usual cost of a factor two. -/
+theorem xSqNorm_mul_le_one (A B : Matrix dA dA ℂ) (A' B' : Matrix dB dB ℂ)
+    (hA : Aᴴ * A ≤ (1 : Matrix dA dA ℂ)) (hB' : B'ᴴ * B' ≤ (1 : Matrix dB dB ℂ)) :
+    xSqNorm ψ (A * B) (B' * A') ≤ 2 * xSqNorm ψ B B' + 2 * xSqNorm ψ A A' := by
+  have h := xNorm_mul_le_one (ψ := ψ) A B A' B' hA hB'
+  have h0 : 0 ≤ xNorm ψ B B' + xNorm ψ A A' :=
+    add_nonneg (xNorm_nonneg _ _ _) (xNorm_nonneg _ _ _)
+  rw [xSqNorm_eq_sq, xSqNorm_eq_sq, xSqNorm_eq_sq]
+  nlinarith [sq_nonneg (xNorm ψ B B' - xNorm ψ A A'), xNorm_nonneg ψ (A * B) (B' * A')]
+
+/-! ### Transferring an anticommutation across the two factors
+
+This is the shape the anticommuting case of `lem:qld-obs-commutation` needs, and it is where the
+sign comes from. Suppose `A ⊗ Id ~ Id ⊗ A'` and `B ⊗ Id ~ Id ⊗ B'`. Then
+
+```
+AB + BA ⊗ Id = [AB ⊗ Id - Id ⊗ B'A'] + [Id ⊗ (A'B' + B'A')] + [BA ⊗ Id - Id ⊗ A'B']
+```
+
+is an identity --- Bob's two products cancel --- and its three summands are, in order: an order
+reversal, Bob's own anticommutator, and the other order reversal. So if Bob's two operators
+anticommute on the state then Alice's two *anti*commute on it as well: the product picked up a
+reversal on the way across and a second one on the way back, and the two reversals do not cancel
+because the anticommutator in the middle is a sum, not a difference. -/
+
+/-- **An anticommutation on Bob's side transfers to Alice's**, at the cost of the two cross-party
+deviations counted twice each. Every operator in sight is assumed to be a contraction, which is
+what a `±1`-observable coming from a two-outcome POVM is. -/
+theorem norm_stateVec_anticomm_le (A B : Matrix dA dA ℂ) (A' B' : Matrix dB dB ℂ)
+    (hA : Aᴴ * A ≤ (1 : Matrix dA dA ℂ)) (hB : Bᴴ * B ≤ (1 : Matrix dA dA ℂ))
+    (hA' : A'ᴴ * A' ≤ (1 : Matrix dB dB ℂ)) (hB' : B'ᴴ * B' ≤ (1 : Matrix dB dB ℂ)) :
+    ‖stateVec ψ (A * B + B * A)‖
+      ≤ 2 * xNorm ψ A A' + 2 * xNorm ψ B B' + ‖stateVecB ψ (A' * B' + B' * A')‖ := by
+  have hsplit : (aOp (A * B + B * A) : Matrix (dA × dB) _ ℂ)
+      = ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A'))
+        + (bOp (A' * B' + B' * A') : Matrix (dA × dB) _ ℂ)
+        + ((aOp (B * A) : Matrix (dA × dB) _ ℂ) - bOp (A' * B')) := by
+    rw [aOp_add, bOp_add]
+    abel
+  have e1 : snorm ψ (((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A')
+        + bOp (A' * B' + B' * A')) + ((aOp (B * A) : Matrix (dA × dB) _ ℂ) - bOp (A' * B')))
+      ≤ snorm ψ ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A')
+          + bOp (A' * B' + B' * A'))
+        + snorm ψ ((aOp (B * A) : Matrix (dA × dB) _ ℂ) - bOp (A' * B')) :=
+    snorm_add_le ψ _ _
+  have e2 : snorm ψ ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A')
+        + bOp (A' * B' + B' * A'))
+      ≤ snorm ψ ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A'))
+        + snorm ψ (bOp (A' * B' + B' * A') : Matrix (dA × dB) _ ℂ) :=
+    snorm_add_le ψ _ _
+  have e3 : snorm ψ ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A'))
+      = xNorm ψ (A * B) (B' * A') := (xNorm_eq_snorm ψ _ _).symm
+  have e4 : snorm ψ ((aOp (B * A) : Matrix (dA × dB) _ ℂ) - bOp (A' * B'))
+      = xNorm ψ (B * A) (A' * B') := (xNorm_eq_snorm ψ _ _).symm
+  have e5 : snorm ψ (bOp (A' * B' + B' * A') : Matrix (dA × dB) _ ℂ)
+      = ‖stateVecB ψ (A' * B' + B' * A')‖ := (norm_stateVecB_eq_snorm ψ _).symm
+  have h1 : xNorm ψ (A * B) (B' * A') ≤ xNorm ψ B B' + xNorm ψ A A' :=
+    xNorm_mul_le_one A B A' B' hA hB'
+  have h2 : xNorm ψ (B * A) (A' * B') ≤ xNorm ψ A A' + xNorm ψ B B' :=
+    xNorm_mul_le_one B A B' A' hB hA'
+  rw [norm_stateVec_eq_snorm, hsplit]
+  linarith
+
+/-! ### Two-outcome observables
+
+A two-outcome POVM's `±1`-observable is the difference of its two elements, which is what
+`obsOf sgn` computes; stating it as a difference is what makes the contraction bound of
+`POVM.sub_mul_self_le_one` available, and every consumer of the order reversal needs that. -/
+
+/-- The `±1`-observable of a POVM with outcomes in `F_2`. -/
+def obs2 {d : Type*} [Fintype d] [DecidableEq d] (P : POVM (ZMod 2) d) : Matrix d d ℂ :=
+  ((P.mats 0).val) - ((P.mats 1).val)
+
+omit [Fintype X] in
+theorem obsOf_sgn_eq_obs2 (M : X → POVM (ZMod 2) dA) (x : X) :
+    obsOf sgn M x = obs2 (M x) := by
+  rw [obsOf, obs2, show (univ : Finset (ZMod 2)) = {0, 1} from by decide,
+    Finset.sum_insert (by decide), Finset.sum_singleton, sgn_zero, sgn_one]
+  module
+
+theorem obs2_conjTranspose {d : Type*} [Fintype d] [DecidableEq d] (P : POVM (ZMod 2) d) :
+    (obs2 P)ᴴ = obs2 P := POVM.sub_conjTranspose P 0 1
+
+theorem obs2_mul_self_le_one {d : Type*} [Fintype d] [DecidableEq d] (P : POVM (ZMod 2) d) :
+    (obs2 P)ᴴ * obs2 P ≤ (1 : Matrix d d ℂ) := by
+  rw [obs2_conjTranspose]
+  exact POVM.sub_mul_self_le_one P 0 1
+
+end Reversal
 
 end MIPRE
 

@@ -348,6 +348,84 @@ it now does: the game, the win implications, and the observable consistency. Tha
 boundary --- everything up to it is checked, and the next thing is a new development rather than
 a continuation.
 
+### PR B' — the Weyl chunk, and the anticommuting half of the commutation lemma
+
+Written 2026-09-19, on finishing it. This is the chunk the paragraph above said had to come
+first, plus the one prerequisite of stage 3 that turned out to be cheap once the rule was stated.
+
+**The `F_q` Weyl system** (`MIPRE/Foundations/Weyl.lean`, `WeylEPR.lean`, `WeylBinary.lean`;
+blueprint `def:generalized-pauli`, `def:weyl-epr`, `lem:pauli-binary`). Three decisions did most
+of the work:
+
+* **characteristic two throughout.** The paper builds the system over `F_p` with phases
+  `omega = e^{2 pi i / p}` and then specializes. Admissible field sizes are `q = 2^k`, so
+  `omega = -1`, every phase is the real sign `MIPRE.sgn`, and the operators are self-adjoint
+  *involutions* rather than order-`p` unitaries — genuine `±1`-observables. A second dividend
+  showed up in `WeylEPR.lean`: `(M ⊗ Id)|EPR> = (Id ⊗ M^T)|EPR>` costs a transpose in general, and
+  the Weyl matrices here are real symmetric, so for them the transpose is the identity and the two
+  parties' operators act identically on the state. Over odd `p` that bookkeeping reappears.
+* **one matrix, not an iterated Kronecker product.** `(C^q)^{⊗ n}` is `Matrix (n → F) (n → F) C`,
+  indexed by the functions `n → F_q`, which *is* `F_q^n`. So the `n`-register statements are the
+  one-register statements with no associativity bookkeeping, and `n` is an arbitrary finite type,
+  which is what lets the test use it at `n = {0,1}^m`.
+* **`IsWeylFamily` rather than two developments.** The spectral theory of
+  `eq:pauli-obs-proj-bp` uses only three properties — the family represents the additive group,
+  its operators are self-adjoint, `w 0 = 1` — so the projectors are built once and the statements
+  hold for both families. The paper's Fourier transform conjugating `tau^Z` into `tau^X` is then
+  not needed, which is worth avoiding: it carries a `q^{-1/2}`, and a square root in matrix
+  entries costs far more in Lean than on paper. Two of the identities need even less: the
+  expansion of an operator in its own projectors and the line average
+  `eq:pauli-line-bp` use *no* group law at all.
+
+`lem:pauli-binary` is a relabelling, not an isometry: both systems are matrices indexed by a
+finite set, `phi` is a bijection of those index sets, and conjugating by it is
+`Matrix.submatrix`. Only the form's transport uses self-duality (it *is*
+`trace_mul_eq_dot`); `tau^X` transports because `phi` is additive, the projectors because the
+Fourier average reindexes, the state because a relabelling preserves the diagonal. That the
+target really is qubits is checked rather than read off the encoding — `trDot_two`,
+`sgn_trDot_two`, `wZ_two_diag`, `wX_two_apply` are the paper's tensor-product form, entry by
+entry.
+
+One generalization went back into an existing file: the cancellation count
+`card_filter_ker_mul` existed only for a functional on a field *extension*, and the proof uses
+nothing but the module structure, so it is now `card_filter_ker_mul'` for any finite `F`-vector
+space, with the field-extension form as the instance.
+
+**The order-reversal rule** (`MIPRE/Foundations/CrossConsistency.lean`, blueprint
+`eq:order-reversal-bp` and `eq:anticomm-transfer-bp`). `AB ⊗ Id ~ Id ⊗ B'A'` at the sum of the two
+deviations, from the split
+`AB ⊗ Id - Id ⊗ B'A' = (A ⊗ Id)(B ⊗ Id - Id ⊗ B') + (Id ⊗ B')(A ⊗ Id - Id ⊗ A')`. The reversal
+*is* the step that commutes `A ⊗ Id` past `Id ⊗ B'`. Applying it in both orders and cancelling
+Bob's two products transfers an anticommutation from one side to the other, which is the shape
+the commutation lemma wants. Stating it needed one small thing: the `±1`-observable of a
+two-outcome POVM has to be written as a *difference* of POVM elements for
+`POVM.sub_mul_self_le_one` to apply, not as the weighted sum `obsOf` produces — hence `obs2` and
+`obsOf_sgn_eq_obs2`.
+
+**The anticommuting half of `lem:qld-obs-commutation`**
+(`MIPRE/Background/QLD/Commutation.lean`, blueprint `lem:qld-obs-commutation-acomm`). Item 7 to
+observables (two outcomes, so `344 eps` each), item 6's anticommutator, and the transfer rule.
+Two bookkeeping points were the only real work: the items carry a *sub-probability* weight
+— uniform on all contents, supported on the anticommuting ones — so `sum_acommWeight_mul`
+converts between that and the `∑ over acommSet` form; and item 6 is stated for the conditional
+Magic Square strategy's observables, which are the same operators as the `Variable` observables
+here because relabelling along `Sum.inr` leaves a coarse-grained POVM element alone
+(`bobs_msPOVM`).
+
+**This half costs `eps`, not `sqrt(eps)`, and that should not be rounded away.** Every input is a
+squared-norm bound linear in `eps` and the only inequalities used are the triangle inequality and
+`(a+b+c)^2 <= 3(a^2+b^2+c^2)`; the constant is `12*344 + 12*344 + 3*16049664 = 48157248`. The
+`O(sqrt(eps))` of `lem:qld-obs-commutation` belongs to the *commuting* case alone, where the
+`Pair` measurement's projectivity comes from `cor:ortho-from-consistency` at the cost of a square
+root. So the two halves will not combine by adding constants, and when the commuting case lands
+the square root will be attributable to exactly one of them.
+
+**What stage 3 still needs**, with this chunk in place: the commuting case (the projectivity
+bookkeeping through `cor:ortho-from-consistency`), the expanded six-fold state with its ancilla
+registers, and the hatted measurements `M-hat^{(Point,W),u}` as Fourier averages of
+`W-hat^r(u) = W^r(u) ⊗ tau^W(r · ind_m(u))`. The Weyl half of that is now all present, including
+the stabilizer relation the sign cancellation runs on.
+
 ### PR C — combining the two bases
 
 `thm:linearity`, then `lem:qld-combined-points`, `lem:qld-pairs-of-lines`,
