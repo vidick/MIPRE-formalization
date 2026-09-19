@@ -388,6 +388,7 @@ import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
 import MIPRE.Background.Orthonormalization.Statement
 import MIPRE.Background.QLD.Anticomm
 import MIPRE.Background.QLD.Axioms
+import MIPRE.Background.QLD.Commutation
 import MIPRE.Background.QLD.Consistency
 import MIPRE.Background.QLD.Game
 import MIPRE.Background.QLD.Ortho
@@ -673,6 +674,8 @@ import MIPRE.Foundations.ValueApprox.Strategy
 import MIPRE.Foundations.Verifier
 import MIPRE.Foundations.VerifierValue
 import MIPRE.Foundations.Weyl
+import MIPRE.Foundations.WeylBinary
+import MIPRE.Foundations.WeylEPR
 import MIPRE.HaltingGameValue
 import MIPRE.LCS.Basic
 import MIPRE.LCS.Common

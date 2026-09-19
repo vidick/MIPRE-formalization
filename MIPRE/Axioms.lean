@@ -47,6 +47,7 @@ import MIPRE.LCS.MagicSquare.Strategy
 import MIPRE.LCS.Strategy.Equivalence
 import MIPRE.LCS.Strategy.ObservableToProjector
 import MIPRE.TM.Code.Encoding.MachineCode
+import MIPRE.Foundations.WeylBinary
 import MIPRE.Background.GowersHatami.Basic
 
 /-!
@@ -450,6 +451,29 @@ tell you the guard is missing.
 -- parameter is inhabited.
 #guard_sorry_free MIPRE.SAT.binFieldGalois,
   MIPRE.SAT.nonempty_binField
+
+-- blueprint `lem:pauli-binary`: the coordinate relabelling of a self-dual basis carries the
+-- Weyl system over `F_q` to the Weyl system over `F_2`, and the target really is qubits.
+#guard_sorry_free MIPRE.Weyl.binEquiv,
+  MIPRE.Weyl.binEquiv_apply,
+  MIPRE.Weyl.binEquiv_add,
+  MIPRE.Weyl.binEquiv_injective,
+  MIPRE.Weyl.binEquiv_eq_iff,
+  MIPRE.Weyl.trDot_binEquiv,
+  MIPRE.Weyl.wX_binEquiv,
+  MIPRE.Weyl.wZ_binEquiv,
+  MIPRE.Weyl.card_binEquiv,
+  MIPRE.Weyl.proj_binEquiv,
+  MIPRE.Weyl.proj_wZ_binEquiv,
+  MIPRE.Weyl.proj_wX_binEquiv,
+  MIPRE.Weyl.eprScale_binEquiv,
+  MIPRE.Weyl.epr_binEquiv,
+  MIPRE.Weyl.pauli_binary,
+  MIPRE.Weyl.exists_binEquiv_pauli_binary,
+  MIPRE.Weyl.trDot_two,
+  MIPRE.Weyl.sgn_trDot_two,
+  MIPRE.Weyl.wZ_two_diag,
+  MIPRE.Weyl.wX_two_apply
 
 /-!
 ## The one axiom

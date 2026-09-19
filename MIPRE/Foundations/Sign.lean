@@ -46,6 +46,15 @@ theorem star_sgn (x : ZMod 2) : star (sgn x) = sgn x := by
 
 theorem sgn_mul_self_eq_one (x : ZMod 2) : sgn x * sgn x = 1 := sgn_mul_self x
 
+/-- `sgn` turns a sum of bits into a product of signs: it is a character of `𝔽₂`. -/
+theorem sgn_sum {α : Type*} (s : Finset α) (f : α → ZMod 2) :
+    sgn (∑ i ∈ s, f i) = ∏ i ∈ s, sgn (f i) := by
+  classical
+  induction s using Finset.induction with
+  | empty => simp
+  | insert a s ha ih =>
+      rw [Finset.sum_insert ha, Finset.prod_insert ha, sgn_add, ih]
+
 /-- `sgn` takes values `±1`, hence modulus one. -/
 theorem norm_sgn (x : ZMod 2) : ‖sgn x‖ = 1 := by
   rw [sgn]; split_ifs <;> norm_num

@@ -1710,19 +1710,85 @@ $\sqrt{\eps}$, and transferring a product across the tensor factors reverses its
 is what supplies the sign.
 \end{proof}
 
-\paragraph{Comments.} The first lemma is formalized; the second is not, and the two obstacles are
-worth naming because they are the same two the expansion stage faces.
+\paragraph{Comments.} The first lemma is formalized, and so is the \emph{anticommuting case} of
+the second (Lemma~\ref{lem:qld-obs-commutation-acomm} below). What remains of the second is its
+commuting case, and the obstacle there is the one the expansion stage faces too.
 
 The commuting case needs the paper's commutation-analysis lemma, whose hypothesis is that the
 $\mathtt{Pair}$ measurement is \emph{projective}. A general POVM strategy's is not, so the step
 consumes Corollary~\ref{cor:ortho-from-consistency} first; that corollary is formalized, and
 what is missing is the bookkeeping that applies it here and tracks the resulting error.
 
-The anticommuting case needs the order-reversal rule for transferring a product of operators
-across the two tensor factors, $AB \ot \Id \approx \Id \ot B'A'$. That rule is elementary but it
-is not in this repository, and the paper's own correction note on this proof records the two displays
-that had it backwards --- so it is exactly the kind of step to state once and prove rather than
-inline.
+The anticommuting case needed the order-reversal rule for transferring a product of operators
+across the two tensor factors, $AB \ot \Id \simeq \Id \ot B'A'$ --- elementary, but the paper's own
+correction note on this proof records two displays that had it backwards, so it is exactly the kind
+of step to state once and prove rather than inline. It now is:
+Definition~\ref{def:cross-distance}'s~\eqref{eq:order-reversal-bp}
+and~\eqref{eq:anticomm-transfer-bp}.
+
+\effortMedium
+
+\begin{lemma}[Signed commutation, the anticommuting case]
+\label{lem:qld-obs-commutation-acomm}
+\uses{lem:qld-win,lem:qld-obs-consistency,fact:omega-anticomm-prob,def:cross-distance}
+\lean{MIPRE.QLD.ptObs, MIPRE.QLD.varObs, MIPRE.QLD.ptObs_mul_self_le_one,
+  MIPRE.QLD.varObs_mul_self_le_one, MIPRE.QLD.acommWeight, MIPRE.QLD.acommWeight_nonneg,
+  MIPRE.QLD.sum_acommWeight_mul, MIPRE.QLD.xStateDist_ptObs_varObs_X,
+  MIPRE.QLD.xStateDist_ptObs_varObs_Z, MIPRE.QLD.question_var, MIPRE.QLD.mats_msPOVM_var,
+  MIPRE.QLD.bobs_msPOVM, MIPRE.QLD.anti_eq_varObs, MIPRE.QLD.sq_norm_ptObs_anticomm_le,
+  MIPRE.QLD.acomm_signed_commutation}
+\leanok
+Under the hypotheses of Lemma~\ref{lem:qld-win}, summed over the \emph{anticommuting} tuples with
+the uniform weight $\abs{\mC}^{-1}$ on the verifier's content,
+\begin{equation*}
+  \sum_{\omega \,:\, \gamma(\omega) = 1} \frac{1}{\abs{\mC}}
+    \norm{\bigl( X^{r_X}(u_X)\, Z^{r_Z}(u_Z) + Z^{r_Z}(u_Z)\, X^{r_X}(u_X) \bigr) \ot \Id_\bob
+      \ket{\psi}}^2
+  \;\leq\; 16049664\, \eps + 8256\, \eps \;=\; 48157248\, \eps\;,
+\end{equation*}
+which is Lemma~\ref{lem:qld-obs-commutation} at $(-1)^{\gamma(\omega)} = -1$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:qld-win,def:cross-distance}
+Item 7 of Lemma~\ref{lem:qld-win} says that on an anticommuting tuple each point probe agrees
+with one of the two distinguished $\mathtt{Variable}$ bits on the other side. At the level of
+observables that is $X^{r_X}(u_X) \ot \Id \simeq_{344\eps} \Id \ot V_1$ and
+$Z^{r_Z}(u_Z) \ot \Id \simeq_{344\eps} \Id \ot V_5$ --- item 7 at the two-outcome probe, then
+\texttt{xStateDist\_obsOf\_le}, whose cost is the number of outcomes of the probe, two. Item 6
+says $V_1$ and $V_5$ anticommute on the state at $16049664\,\eps$. Feed the three
+into~\eqref{eq:anticomm-transfer-bp} and square with
+$(a+b+c)^2 \leq 3(a^2+b^2+c^2)$: the constant is
+$12 \cdot 344 + 12 \cdot 344 + 3 \cdot 16049664$.
+
+Two bookkeeping points. The weight is uniform on all contents but supported on the anticommuting
+ones, which is how every item of Lemma~\ref{lem:qld-win} is stated, so it is a sub-probability and
+not a distribution; \texttt{sum\_acommWeight\_mul} is the one lemma that converts between the two
+forms. And item 6 is stated for the anticommutator of the \emph{conditional Magic Square
+strategy}'s observables, which are the same operators as the $\mathtt{Variable}$ observables here:
+the conditional strategy at a $\mathtt{Variable}$ question is the Pauli test's measurement at the
+corresponding question with its answer relabelled to the bit it reports, and relabelling along the
+injection $\mathtt{Sum.inr}$ leaves a coarse-grained POVM element alone
+(\texttt{bobs\_msPOVM}).
+\end{proof}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Background/QLD/Commutation.lean}.
+
+\textbf{This half costs $\eps$, not $\sqrt{\eps}$}, and the asymmetry is worth recording rather
+than rounding away. Every input above is a squared-norm bound linear in $\eps$, and the only
+inequalities used are the triangle inequality and $(a+b+c)^2 \leq 3(a^2+b^2+c^2)$, so nothing
+introduces a square root. The $O(\sqrt{\eps})$ of Lemma~\ref{lem:qld-obs-commutation} belongs to
+the \emph{commuting} case alone, where the projectivity of the $\mathtt{Pair}$ measurement is
+obtained from Corollary~\ref{cor:ortho-from-consistency} at the cost of one. When that case is
+formalized the two halves will therefore not combine by adding constants, and the square root will
+be attributable to exactly one of them.
+
+\textbf{The sign is the double reversal.} Both order reversals run in the same direction --- a
+product transferred across the tensor factors comes back reversed --- and what sits between them
+is Bob's \emph{anti}commutator, a sum. So the two reversals do not cancel: Alice's two observables
+anticommute because Bob's do, and that is the $(-1)^{\gamma}$ the expansion stage of
+Lemma~\ref{lem:qld-expanded-points} cancels against the ancillas.
 
 \subsubsection{Expansion: approximate commutation of the two bases}
 

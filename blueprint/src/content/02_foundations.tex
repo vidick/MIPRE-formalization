@@ -546,7 +546,11 @@ comment; both are defined here.
   MIPRE.one_sub_sum_bornProb_le_condFail, MIPRE.xSqNorm_sum_le_condFail,
   MIPRE.sum_mul_condFail_le, MIPRE.sum_condFail_le_of_pushforward,
   MIPRE.sum_condFail_le_of_le, MIPRE.xStateDist, MIPRE.xStateDist_obsOf_le,
-  MIPRE.stateVecB_smul, MIPRE.stateVecB_sum}
+  MIPRE.stateVecB_smul, MIPRE.stateVecB_sum, MIPRE.xNorm, MIPRE.xNorm_nonneg,
+  MIPRE.xSqNorm_eq_sq, MIPRE.xNorm_eq_snorm, MIPRE.norm_stateVec_eq_snorm,
+  MIPRE.norm_stateVecB_eq_snorm, MIPRE.xNorm_mul_le, MIPRE.xNorm_mul_le_one,
+  MIPRE.xSqNorm_mul_le_one, MIPRE.norm_stateVec_anticomm_le, MIPRE.obs2,
+  MIPRE.obsOf_sgn_eq_obs2, MIPRE.obs2_conjTranspose, MIPRE.obs2_mul_self_le_one}
 \leanok
 Let $\mu$ be a distribution on a finite set $\mX$, let
 $\ket{\psi} \in \C^{d_\alice} \ot \C^{d_\bob}$, and let $\{M^x_a\}$ and $\{N^x_a\}$ be families
@@ -598,6 +602,39 @@ question reading none of it, so the hypothesis is a condition on the push-forwar
 the same proof and the same factor $\abs{\mA}$: the appendix needs it to pass from a two-outcome
 coarse-graining of a point measurement to the $\pm 1$-observable it defines, and
 Definition~\ref{def:state-distance}'s version compares the wrong pair.
+
+\textbf{The order reversal, and where the sign comes from.} One algebraic rule is proved here
+rather than inlined at its two uses, because the paper's own correction note on
+Lemma~\ref{lem:qld-obs-commutation} records two displays that had it backwards. If
+$A \ot \Id \simeq \Id \ot A'$ and $B \ot \Id \simeq \Id \ot B'$ then
+\begin{equation}
+  \label{eq:order-reversal-bp}
+  AB \ot \Id \;\simeq\; \Id \ot B'A'\;,
+\end{equation}
+Bob's factors in the \emph{reverse} order, at the sum of the two deviations
+(\texttt{xNorm\_mul\_le\_one}; \texttt{xNorm\_mul\_le} carries operator-norm bounds $K$ and $L$ in
+front of them). The proof is the split
+$AB \ot \Id - \Id \ot B'A' = (A \ot \Id)(B \ot \Id - \Id \ot B') + (\Id \ot B')(A \ot \Id - \Id
+\ot A')$, and the reversal is exactly the step that commutes $A \ot \Id$ past $\Id \ot B'$ to
+factor the second summand: it puts $B'$ to the \emph{left} of $A'$. Applying it in both orders
+and cancelling Bob's two products gives the form the anticommuting case of
+Lemma~\ref{lem:qld-obs-commutation} consumes,
+\begin{equation}
+  \label{eq:anticomm-transfer-bp}
+  \norm{(AB + BA) \ot \Id \ket{\psi}} \;\leq\; 2 \norm{(A \ot \Id - \Id \ot A')\ket{\psi}}
+    + 2 \norm{(B \ot \Id - \Id \ot B')\ket{\psi}}
+    + \norm{\Id \ot (A'B' + B'A') \ket{\psi}}\;,
+\end{equation}
+\texttt{norm\_stateVec\_anticomm\_le}: an anticommutation on Bob's side transfers to Alice's. The
+two reversals do not cancel each other, because what sits between them is a \emph{sum}. Both
+statements are on the unsquared deviation, since the triangle inequality is what the argument
+uses; \texttt{xSqNorm\_mul\_le\_one} squares the first at the usual cost of a factor two.
+
+Each operator in sight has to be a contraction, and for the $\pm 1$-observable of a two-outcome
+POVM that is \texttt{POVM.sub\_mul\_self\_le\_one}, which needs the observable written as a
+\emph{difference} of two POVM elements rather than as the weighted sum $\sum_a (-1)^a M_a$ that
+\texttt{obsOf} produces. \texttt{obs2} is that difference and \texttt{obsOf\_sgn\_eq\_obs2}
+identifies the two, so a consumer can quote whichever form its input is stated in.
 
 \subsection{Generalized Pauli observables}
 
@@ -720,10 +757,113 @@ are Fourier inversion on the index group and hold for an arbitrary family. What 
 is that the projectors are mutually \emph{orthogonal}, which is what makes them a measurement
 rather than a resolution.
 
-What is not yet here: $\ket{\EPR_q}^{\ot M}$ with its stabilizer relations, and
-Lemma~\texttt{lem:pauli-binary}, the isomorphism carrying the qudit system to $Lk$ qubits.
-Equation~\eqref{eq:pauli-line-bp} is the identity
-Lemma~\ref{lem:qld-expanded-points} averages to, at $v = \ind_m(u)$.
+Equation~\eqref{eq:pauli-line-bp} is the identity Lemma~\ref{lem:qld-expanded-points} averages
+to, at $v = \ind_m(u)$.
+
+\begin{definition}[The maximally entangled state of the Weyl system]
+\label{def:weyl-epr}
+\uses{def:generalized-pauli,def:state-distance}
+\lean{MIPRE.Weyl.eprScale, MIPRE.Weyl.epr, MIPRE.Weyl.epr_same, MIPRE.Weyl.epr_ne,
+  MIPRE.Weyl.eprScale_sq, MIPRE.Weyl.epr_unit, MIPRE.Weyl.stateVec_entry,
+  MIPRE.Weyl.stateVec_epr, MIPRE.Weyl.wX_transpose, MIPRE.Weyl.wZ_transpose,
+  MIPRE.Weyl.stateVec_epr_wX, MIPRE.Weyl.stateVec_epr_wZ, MIPRE.Weyl.stateVec_epr_proj,
+  MIPRE.sgn_sum}
+\leanok
+On two copies of $(\C^q)^{\ot n}$,
+\begin{equation*}
+  \ket{\EPR_q}^{\ot n} \;=\; \frac{1}{\sqrt{q^n}} \sum_{a \in \F_q^n} \ket{a} \ot \ket{a}\;,
+\end{equation*}
+a unit vector. For any operator $M$ on one copy,
+\begin{equation}
+  \label{eq:epr-transport-bp}
+  (M \ot \Id) \ket{\EPR_q}^{\ot n} \;=\; (\Id \ot M^{\mathsf T}) \ket{\EPR_q}^{\ot n}\;,
+\end{equation}
+and the Weyl operators and their spectral projectors are \emph{symmetric}, so for them the
+transpose is invisible: the two parties' operators act identically on the state.
+\end{definition}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Foundations/WeylEPR.lean}. The stabilizer
+relation of~\eqref{eq:epr-transport-bp} at $M = \qp^W(a)$ is what the expansion stage of
+Remark~\ref{rem:qld-architecture} runs on: its expanded state adjoins $\ket{\EPR_q}^{\ot M}$ to
+each player, and the sign $(-1)^{\gamma(\omega)}$ that the strategy's own observables carry is
+cancelled against one the \emph{ancilla} observables carry, for which the two ancilla halves must
+be tied together.
+
+This is the second dividend of characteristic two, after the operators being involutions. Over
+$\F_p$ for odd $p$ the transpose of $\qp^Z(b)$ is $\qp^Z(b)$ but its conjugate is $\qp^Z(-b)$, and
+the bookkeeping reappears; here every entry is real and the transpose is the identity map on the
+whole family, projectors included (\texttt{stateVec\_epr\_proj}, which needs only that the family
+is symmetric).
+
+\effortEasy
+
+\begin{lemma}[Qudits are qubits, in characteristic two]
+\label{lem:pauli-binary}
+\uses{def:generalized-pauli,def:weyl-epr,lem:self-dual-basis}
+\lean{MIPRE.Weyl.binEquiv, MIPRE.Weyl.binEquiv_apply, MIPRE.Weyl.binEquiv_add,
+  MIPRE.Weyl.binEquiv_injective, MIPRE.Weyl.binEquiv_eq_iff, MIPRE.Weyl.trDot_binEquiv,
+  MIPRE.Weyl.wX_binEquiv, MIPRE.Weyl.wZ_binEquiv, MIPRE.Weyl.card_binEquiv,
+  MIPRE.Weyl.proj_binEquiv, MIPRE.Weyl.proj_wZ_binEquiv, MIPRE.Weyl.proj_wX_binEquiv,
+  MIPRE.Weyl.eprScale_binEquiv, MIPRE.Weyl.epr_binEquiv, MIPRE.Weyl.pauli_binary,
+  MIPRE.Weyl.exists_binEquiv_pauli_binary, MIPRE.Weyl.trDot_two, MIPRE.Weyl.sgn_trDot_two,
+  MIPRE.Weyl.wZ_two_diag, MIPRE.Weyl.wX_two_apply}
+\leanok
+Let $q = 2^k$ be an admissible field size, let $L$ be a finite index set, and let
+$\{e_1, \ldots, e_k\}$ be a self-dual basis of $\F_q$ over $\F_2$, with coordinate map
+$\kappa$. Then the relabelling
+\begin{equation*}
+  \phi : \F_q^L \to \F_2^{L \times k}\;, \qquad \phi(u)_{i j} \;=\; \kappa(u_i)_j\;,
+\end{equation*}
+is a bijection, and conjugating by it carries the whole Weyl system over $\F_q$ on $L$ registers
+to the Weyl system over $\F_2$ on $L k$ registers: the form $\langle \cdot, \cdot \rangle$, the
+two operator families $\qp^X$ and $\qp^Z$, their spectral projectors, and
+$\ket{\EPR_q}^{\ot L} \mapsto \ket{\EPR_2}^{\ot L k}$. Such a basis exists whenever $k$ is odd.
+\end{lemma}
+
+\begin{proof}
+\leanok
+\uses{def:generalized-pauli,def:weyl-epr,lem:self-dual-basis}
+Four steps, one per piece, and only the first uses self-duality. The form transports because
+$\fieldtr(x y) = \kappa(x) \cdot \kappa(y)$, which is item 2 of the paper's
+\texttt{lem:downsize\_field} and is exactly self-duality
+(\texttt{MIPRE.LowDegree.trace\_mul\_eq\_dot}); summing over the $L$ registers is
+\texttt{trDot\_binEquiv}. $\qp^Z$ transports because its entries are the characters of the form,
+so it transports as soon as the form does. $\qp^X$ transports because $\phi$ is
+\emph{additive}, which is all a shift knows about --- no self-duality. The projectors transport
+because the Fourier average of~\eqref{eq:pauli-inversion-bp} reindexes along $\phi$ and the
+normalization is one cardinality counted on either side. The state transports because both sides
+are the normalized diagonal and a relabelling preserves the diagonal. Existence of the basis is
+the existence half of Lemma~\ref{lem:self-dual-basis}.
+\end{proof}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Foundations/WeylBinary.lean}; this is the
+paper's \texttt{lem:pauli-binary} (\texttt{preliminaries.tex}), which is what makes the Pauli
+basis test a self-test for \emph{qubit} Pauli observables and $\ket{\EPR_2}$, as its
+\texttt{cor:pauli-binary} states.
+
+\textbf{A relabelling, not an isometry.} The paper builds an isometry
+$\theta : \C^q \to (\C^2)^{\ot k}$ and states the conclusion as
+$\qp^W_u = \phi^\dagger (\bigotimes_{i,j} \sigma^W_{u_{ij}}) \phi$. Here both systems are
+matrices indexed by a finite set --- $\F_q^L$ on one side, $\F_2^{L \times k}$ on the other ---
+and $\phi$ is a bijection \emph{of those index sets}, so conjugating by the corresponding
+permutation unitary is \texttt{Matrix.submatrix} along $\phi$ and no unitary has to be
+constructed. That is the same simplification as presenting $(\C^q)^{\ot n}$ as one matrix rather
+than an iterated Kronecker product, and it is why the four items are four short calculations.
+
+\textbf{What ``these are qubit Paulis'' means here.} The target is the Weyl system at
+$\F = \F_2$ and index set $L \times k$, whose matrices are indexed by
+$\F_2^{L \times k}$ --- the computational basis of $(\C^2)^{\ot L k}$. That the operators really
+are the tensor products of single-qubit Paulis is then a statement \emph{inside} that system, and
+it is checked rather than read off the encoding: the form is the plain dot product
+(\texttt{trDot\_two}, the field trace of a one-dimensional extension being the identity), its
+character is a product over the qubits (\texttt{sgn\_trDot\_two}), and each operator's entries
+factor accordingly (\texttt{wZ\_two\_diag} on the diagonal, \texttt{wX\_two\_apply} everywhere).
+The paper's $\bigotimes_{i=1}^L \bigotimes_{j=1}^k \sigma^W_{u_{ij}}$ is that factorization.
+
+\textbf{The oddness of $k$ is inherited, not needed.} Every statement above holds for any
+self-dual basis, given as a hypothesis; only the existence clause asks $k$ to be odd, and that is
+the restriction of Lemma~\ref{lem:self-dual-basis}'s formalized half, not of this lemma. The
+paper's admissible sizes satisfy it.
 
 \begin{definition}[Inconsistency]
 \label{def:inconsistency}
