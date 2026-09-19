@@ -2,6 +2,7 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
+import MIPRE.Foundations.GuardSorryFree
 import MIPRE.Foundations.CL.Basic
 import MIPRE.Foundations.LowDegree.SchwartzZippel
 import MIPRE.Foundations.LowDegree.Anticomm
@@ -60,7 +61,8 @@ now it was maintained by hand. The evidence behind all 27 marks was one audit,
 2467, so two thirds of the named surface postdates it, and it is already wrong in one
 direction, listing `MIPRE.syncValue_le_quantumValue` as carrying `sorryAx` when it is proved.
 
-`#guard_sorry_free` below fails the build if any name it is given depends on `sorryAx`, and
+`#guard_sorry_free` (`MIPRE/Foundations/GuardSorryFree.lean`) fails the build if any name it
+is given depends on `sorryAx`, and
 `scripts/lean-coverage.py` checks that the set of names guarded here and in the vendored guard
 files is exactly the set the blueprint marks with a proof-level `\leanok`. A mark without a
 guard is an unchecked assertion about this project's own mathematics; a guard without a mark is
@@ -77,18 +79,6 @@ imports are already paid for -- except `MIPRE.gowers_hatami`, whose module impor
 Adding a declaration here is not how to claim it: mark the blueprint proof, and the check will
 tell you the guard is missing.
 -/
-
-open Lean Elab Command in
-/-- `#guard_sorry_free a, b, c` fails the build if any of the named constants depends on
-`sorryAx`. Used rather than `#guard_msgs in #print axioms` because it is insensitive to how
-the axiom list is line-wrapped and to which of the standard axioms a proof happens to use:
-three of the names below use only `propext` and `Quot.sound`, and one is axiom-free. -/
-elab "#guard_sorry_free " ids:ident,* : command => do
-  for id in ids.getElems do
-    let n ← liftCoreM <| realizeGlobalConstNoOverload id
-    let ax ← liftCoreM <| collectAxioms n
-    if ax.contains ``sorryAx then
-      throwErrorAt id "{n} depends on sorryAx, but the blueprint marks its proof \\leanok"
 
 -- blueprint `lem:bounded-violation-re`
 #guard_sorry_free MIPRE.Cost.primrec_natLeB,

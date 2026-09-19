@@ -227,6 +227,71 @@ theorem sum_bornProb_map {x : X} {y : Y} (f : A → C) (g : B → C) :
   · rw [if_pos h.symm, if_pos h, one_mul]
   · rw [if_neg fun hh : g b = f a => h hh.symm, if_neg h, zero_mul]
 
+omit [Fintype X] [Fintype Y] [DecidableEq C] [DecidableEq dA] in
+/-- Relabelling Bob's outcomes is data processing: a weighted sum over the relabelled outcomes is
+the same weighted sum over the original ones, with the weight pulled back. -/
+theorem sum_bornProb_mapB {B' : Type*} [Fintype B'] [DecidableEq B'] (EA : Matrix dA dA ℂ)
+    (NB : POVM B dB) (φB : B → B') (w : B' → ℝ) :
+    ∑ b', w b' * bornProb ψ EA (((NB.map φB).mats b').val)
+      = ∑ b, w (φB b) * bornProb ψ EA ((NB.mats b).val) := by
+  classical
+  have hval : ∀ b', (((NB.map φB).mats b').val)
+      = ∑ b ∈ univ.filter fun b => φB b = b', ((NB.mats b).val) := fun b' => by
+    rw [show ((NB.map φB).mats b') = ∑ b ∈ univ.filter fun b => φB b = b', NB.mats b from rfl]
+    exact AddSubmonoidClass.coe_finsetSum _ _
+  have hborn : ∀ b', bornProb ψ EA (((NB.map φB).mats b').val)
+      = ∑ b ∈ univ.filter fun b => φB b = b', bornProb ψ EA ((NB.mats b).val) := by
+    intro b'
+    simp only [bornProb]
+    rw [hval b', kronecker_sum_right, sum_quadForm ψ _ _, Complex.re_sum]
+  rw [Finset.sum_congr rfl fun b' (_ : b' ∈ univ) => by rw [hborn b', Finset.mul_sum]]
+  simp only [Finset.sum_filter]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun b _ => ?_
+  rw [Finset.sum_ite_eq univ (φB b) _]
+  simp only [mem_univ, if_true]
+
+omit [Fintype X] [Fintype Y] [DecidableEq C] [DecidableEq dB] in
+/-- Relabelling Alice's outcomes is data processing. -/
+theorem sum_bornProb_mapA {A' : Type*} [Fintype A'] [DecidableEq A'] (NA : POVM A dA)
+    (φA : A → A') (EB : Matrix dB dB ℂ) (w : A' → ℝ) :
+    ∑ a', w a' * bornProb ψ (((NA.map φA).mats a').val) EB
+      = ∑ a, w (φA a) * bornProb ψ ((NA.mats a).val) EB := by
+  classical
+  have hval : ∀ a', (((NA.map φA).mats a').val)
+      = ∑ a ∈ univ.filter fun a => φA a = a', ((NA.mats a).val) := fun a' => by
+    rw [show ((NA.map φA).mats a') = ∑ a ∈ univ.filter fun a => φA a = a', NA.mats a from rfl]
+    exact AddSubmonoidClass.coe_finsetSum _ _
+  have hborn : ∀ a', bornProb ψ (((NA.map φA).mats a').val) EB
+      = ∑ a ∈ univ.filter fun a => φA a = a', bornProb ψ ((NA.mats a).val) EB := by
+    intro a'
+    simp only [bornProb]
+    rw [hval a', sum_kronecker_left, sum_quadForm ψ _ _, Complex.re_sum]
+  rw [Finset.sum_congr rfl fun a' (_ : a' ∈ univ) => by rw [hborn a', Finset.mul_sum]]
+  simp only [Finset.sum_filter]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun a _ => ?_
+  rw [Finset.sum_ite_eq univ (φA a) _]
+  simp only [mem_univ, if_true]
+
+omit [Fintype X] [Fintype Y] [DecidableEq C] in
+/-- **Relabelling both players' outcomes is data processing on the Born distribution.** A
+weighted sum over the relabelled outcome pairs is the same weighted sum over the original pairs,
+with the weights pulled back. This is what says the *value* of a relabelled strategy is at least
+the value of the original one whenever the relabelled decider is more permissive. -/
+theorem sum_weight_bornProb_map {A' B' : Type*} [Fintype A'] [DecidableEq A'] [Fintype B']
+    [DecidableEq B'] (NA : POVM A dA) (NB : POVM B dB) (φA : A → A') (φB : B → B')
+    (w : A' → B' → ℝ) :
+    ∑ a', ∑ b', w a' b' * bornProb ψ (((NA.map φA).mats a').val) (((NB.map φB).mats b').val)
+      = ∑ a, ∑ b, w (φA a) (φB b) * bornProb ψ ((NA.mats a).val) ((NB.mats b).val) := by
+  classical
+  rw [Finset.sum_congr rfl fun a' (_ : a' ∈ univ) =>
+    sum_bornProb_mapB (ψ := ψ) (((NA.map φA).mats a').val) NB φB (w a')]
+  rw [Finset.sum_comm]
+  rw [Finset.sum_congr rfl fun b (_ : b ∈ univ) =>
+    sum_bornProb_mapA (ψ := ψ) NA φA ((NB.mats b).val) fun a' => w a' (φB b)]
+  exact Finset.sum_comm
+
 /-- **Accept implies agree bounds the disagreement of the coarse-grained POVMs by the
 conditional failure.** -/
 theorem one_sub_sum_bornProb_le_condFail {x : X} {y : Y} (f : A → C) (g : B → C)

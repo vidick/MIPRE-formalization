@@ -5,6 +5,8 @@ Authors: Thomas Vidick
 -/
 import MIPRE.Background.QLD.Anticomm
 import MIPRE.Background.QLD.Consistency
+import MIPRE.Background.QLD.WinMS
+import MIPRE.Foundations.GuardSorryFree
 
 /-!
 # Axiom audit for the Pauli basis test's orthonormalization step
@@ -56,3 +58,26 @@ info: 'MIPRE.QLD.MS.ms_direct_anticomm_avg' depends on axioms: [propext, Classic
 -/
 #guard_msgs in
 #print axioms MIPRE.QLD.MS.ms_direct_anticomm_avg
+
+/-! ## What winning the Pauli basis test implies
+
+Blueprint `lem:qld-win`. The seven items, and the supporting vocabulary the proof of each one
+runs through. `#guard_sorry_free` rather than `#print axioms` here: the list mixes definitions
+with theorems, and their axiom lists differ. -/
+
+#guard_sorry_free MIPRE.QLD.subtest_le,
+  MIPRE.QLD.agree_subtest_le,
+  MIPRE.QLD.item_consistency,
+  MIPRE.QLD.item_lowDeg_aline,
+  MIPRE.QLD.item_lowDeg_dline,
+  MIPRE.QLD.item_pauli_consistency,
+  MIPRE.QLD.item_commutation,
+  MIPRE.QLD.item_commutation_consistency,
+  MIPRE.QLD.item_ms_consistency_X,
+  MIPRE.QLD.item_ms_consistency_Z,
+  MIPRE.QLD.msPOVM,
+  MIPRE.QLD.msEps,
+  MIPRE.QLD.condFail_ms_le,
+  MIPRE.QLD.one_sub_povmValue_ms_le,
+  MIPRE.QLD.sum_msEps_le,
+  MIPRE.QLD.item_magicSquare

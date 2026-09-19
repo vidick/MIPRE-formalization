@@ -536,6 +536,63 @@ Lemma~\ref{lem:qld-povm-to-obs} gives exactly $\abs{\mA}\delta$. And the paper d
 $\approx_\delta$ only for question-indexed operators, using the answer-indexed form without
 comment; both are defined here.
 
+\begin{definition}[Cross-party state-dependent distance]
+\label{def:cross-distance}
+\uses{def:game,def:state-distance}
+\lean{MIPRE.xSqNorm, MIPRE.xPovmDist, MIPRE.IsXPOVMClose, MIPRE.POVM.mul_self_le_self,
+  MIPRE.sum_stateSqNorm_le_one, MIPRE.sum_stateSqNormB_le_one, MIPRE.sub_kronecker_right,
+  MIPRE.xSqNorm_sum_le_two_mul, MIPRE.sum_bornProb_mapA, MIPRE.sum_bornProb_mapB,
+  MIPRE.sum_weight_bornProb_map, MIPRE.sum_bornProb_map,
+  MIPRE.one_sub_sum_bornProb_le_condFail, MIPRE.xSqNorm_sum_le_condFail,
+  MIPRE.sum_mul_condFail_le, MIPRE.sum_condFail_le_of_pushforward,
+  MIPRE.sum_condFail_le_of_le}
+\leanok
+Let $\mu$ be a distribution on a finite set $\mX$, let
+$\ket{\psi} \in \C^{d_\alice} \ot \C^{d_\bob}$, and let $\{M^x_a\}$ and $\{N^x_a\}$ be families
+of POVMs with a common question set $\mX$ and a common answer set, the first on
+$\C^{d_\alice}$ and the second on $\C^{d_\bob}$. We say they are \emph{$\delta$-close across the
+two parties}, written $M^x_a \ot \Id \simeq_\delta \Id \ot N^x_a$, if
+\begin{equation*}
+  \E_{x \sim \mu} \sum_a \norm{\bigl( M^x_a \ot \Id_\bob - \Id_\alice \ot N^x_a \bigr)
+    \ket{\psi}}^2 \;\leq\; \delta\;.
+\end{equation*}
+Then, for any two POVMs $M$ and $N$ with a common answer set and $\ket{\psi}$ a unit vector,
+\begin{equation}
+  \label{eq:cross-from-agreement}
+  \sum_a \norm{\bigl( M_a \ot \Id - \Id \ot N_a \bigr)\ket{\psi}}^2
+    \;\leq\; 2 \Bigl( 1 - \sum_a \bra{\psi} M_a \ot N_a \ket{\psi} \Bigr)\;,
+\end{equation}
+twice the probability that the two measurements disagree.
+\end{definition}
+
+\paragraph{Comments.} This is the $\simeq_\delta$ of the Pauli appendix, and it is not
+Definition~\ref{def:state-distance}: that one compares two families of operators on the
+\emph{same} factor, which is what the orthonormalization step of
+Corollary~\ref{cor:ortho-from-consistency} needs, whereas every consistency statement of
+Lemma~\ref{lem:qld-win} compares one player's operator with the \emph{other} player's. The paper
+uses both symbols and says the two are interchangeable up to
+Fact~\texttt{fact:agreement}; the formalization keeps them apart, because the conversion is the
+factor $2$ of~\eqref{eq:cross-from-agreement} and it is better spent once than assumed
+throughout.
+
+Inequality~\eqref{eq:cross-from-agreement} is the whole analytic content of the file
+(\texttt{MIPRE/Foundations/CrossConsistency.lean}): expand each square, and the two diagonal
+sums are at most one because a POVM element satisfies $A^\dagger A = A^2 \leq A$
+(\texttt{POVM.mul\_self\_le\_self}) and the elements sum to the identity. \textbf{No projectivity
+is used}, which matters --- the strategies it is applied to are arbitrary POVM strategies, and
+projectivity arrives only later, through Corollary~\ref{cor:ortho-from-consistency}.
+
+Two things the formalization needs that the paper leaves implicit. First, what a subtest buys is
+not that its decider \emph{equals} an agreement predicate but that \emph{accepting implies
+agreeing}: a real decider checks the answer formats first and rejects an ill-formatted pair even
+when the post-processings agree. So the readings that coarse-grain the answers may send an
+ill-formatted answer anywhere --- $0$, here --- and the implication is all
+\texttt{one\_sub\_sum\_bornProb\_le\_condFail} asks. Second, ``divided by the probability that
+the subtest is selected'' needs no injectivity: the subtests of the Pauli basis test are indexed
+by the verifier's content and several contents give the same question pair, a $(\pauli, W)$
+question reading none of it, so the hypothesis is a condition on the push-forward
+(\texttt{sum\_condFail\_le\_of\_pushforward}).
+
 \begin{definition}[Inconsistency]
 \label{def:inconsistency}
 \uses{def:game}

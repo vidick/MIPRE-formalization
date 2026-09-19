@@ -392,6 +392,7 @@ import MIPRE.Background.QLD.Consistency
 import MIPRE.Background.QLD.Game
 import MIPRE.Background.QLD.Ortho
 import MIPRE.Background.QLD.Win
+import MIPRE.Background.QLD.WinMS
 import MIPRE.Background.Repetition.Axioms
 import MIPRE.Background.Repetition.Commuting
 import MIPRE.Background.Repetition.CommutingRepetition.Game.Basic
@@ -583,6 +584,7 @@ import MIPRE.Foundations.GameDouble
 import MIPRE.Foundations.GameTransport
 import MIPRE.Foundations.Games
 import MIPRE.Foundations.GapCompression
+import MIPRE.Foundations.GuardSorryFree
 import MIPRE.Foundations.Halting.Absorb
 import MIPRE.Foundations.Halting.Arith
 import MIPRE.Foundations.Halting.Bounded
