@@ -550,7 +550,11 @@ comment; both are defined here.
   MIPRE.xSqNorm_eq_sq, MIPRE.xNorm_eq_snorm, MIPRE.norm_stateVec_eq_snorm,
   MIPRE.norm_stateVecB_eq_snorm, MIPRE.xNorm_mul_le, MIPRE.xNorm_mul_le_one,
   MIPRE.xSqNorm_mul_le_one, MIPRE.norm_stateVec_anticomm_le, MIPRE.obs2,
-  MIPRE.obsOf_sgn_eq_obs2, MIPRE.obs2_conjTranspose, MIPRE.obs2_mul_self_le_one}
+  MIPRE.obsOf_sgn_eq_obs2, MIPRE.obs2_conjTranspose, MIPRE.obs2_mul_self_le_one,
+  MIPRE.norm_stateVec_comm_le, MIPRE.xSqNorm_eq_snorm_sq, MIPRE.sum_weighted_xSqNorm_eq,
+  MIPRE.sum_weighted_xSqNorm_eq', MIPRE.stateSqNorm_sum_le, MIPRE.stateSqNorm_sub_comm,
+  MIPRE.norm_stateVecB_sub_comm, MIPRE.mulVec_kronecker_swapVec, MIPRE.swapVec_sub,
+  MIPRE.norm_swapVec, MIPRE.snorm_swapVec_aOp_sub_bOp, MIPRE.snorm_swapVec_aOp}
 \leanok
 Let $\mu$ be a distribution on a finite set $\mX$, let
 $\ket{\psi} \in \C^{d_\alice} \ot \C^{d_\bob}$, and let $\{M^x_a\}$ and $\{N^x_a\}$ be families
@@ -635,6 +639,118 @@ POVM that is \texttt{POVM.sub\_mul\_self\_le\_one}, which needs the observable w
 \emph{difference} of two POVM elements rather than as the weighted sum $\sum_a (-1)^a M_a$ that
 \texttt{obsOf} produces. \texttt{obs2} is that difference and \texttt{obsOf\_sgn\_eq\_obs2}
 identifies the two, so a consumer can quote whichever form its input is stated in.
+
+\textbf{The swap, and the commutator form.} Two more entries serve the appendix's commutation
+step. `norm_stateVec_comm_le` is~\eqref{eq:anticomm-transfer-bp} with a commutator in the middle
+instead of an anticommutator --- the same split, Bob's two products cancelling either way. And
+`snorm_swapVec_aOp_sub_bOp` exchanges the two sides of a cross-party deviation, which is what lets
+a lemma proved for Alice's factor be applied to Bob's: the clean statement is at the level of
+vectors, $(X \ot Y)\,\mathrm{swap}\ket{\psi} = \mathrm{swap}\,(Y \ot X)\ket{\psi}$, and everything
+else follows by linearity. Corollary~\ref{cor:ortho-from-consistency} produces a projective
+measurement on \emph{Alice's} factor only, so the commutation analysis below is run on Bob's
+observables and carried back; that swap is the bridge.
+
+\subsection{The expanded state}
+
+\begin{definition}[The expanded state, and an inert ancilla]
+\label{def:expanded-state}
+\uses{def:cross-distance,def:state-distance}
+\lean{MIPRE.expVec, MIPRE.expEquiv, MIPRE.sum_prod_mul, MIPRE.norm_evec_expVec,
+  MIPRE.expVec_dotProduct, MIPRE.expVec_unit, MIPRE.mulVec_kron_expVec,
+  MIPRE.norm_stateVec_kron_unitary, MIPRE.norm_stateVec_expVec_kron_one}
+\leanok
+Let $\ket{\psi}$ be a state on $\C^{d_\alice} \ot \C^{d_\bob}$ and $\ket{e}$ one on
+$\C^{a} \ot \C^{a'}$. The \emph{expanded state} is $\ket{\psi} \ot \ket{e}$, \textbf{re-bipartitioned}
+so that the first party holds $\C^{d_\alice} \ot \C^{a}$ and the second $\C^{d_\bob} \ot \C^{a'}$:
+one half of the ancilla goes to each. Then
+\begin{enumerate}
+\item an operator of product form acts factor by factor,
+  $\bigl((M \ot N) \ot \Id\bigr)(\ket{\psi} \ot \ket{e})
+   = \bigl((M \ot \Id)\ket{\psi}\bigr) \ot \bigl((N \ot \Id)\ket{e}\bigr)$;
+\item the norm of a product state is the product of the norms, so the expanded state is a unit
+  vector when both factors are;
+\item consequently an operator with an \emph{inert} ancilla has the same state-norm on the expanded
+  state as on the original one: $\norm{(M \ot \Id_a) \ot \Id \,\ket{\hat\psi}} =
+  \norm{(M \ot \Id_\bob)\ket{\psi}}$ when $\ket{e}$ is a unit vector;
+\item and a \emph{unitary} on the ancilla is invisible:
+  $\norm{(M \ot U) \ot \Id \ket{\hat\psi}} = \norm{(M \ot \Id_a) \ot \Id \ket{\hat\psi}}$.
+\end{enumerate}
+\end{definition}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Foundations/Expanded.lean}. This is the
+bookkeeping of the appendix's \texttt{sec:expanding}, isolated from the Pauli test: items 3 and 4 are
+what let a bound proved \emph{before} the expansion be used \emph{after} it, and they are why the
+expansion stage costs exactly the constant of Lemma~\ref{lem:qld-obs-commutation} and nothing more.
+The re-bipartition is the point --- the ancilla halves are split between the parties, which is what
+makes the ancilla observables tied together --- and it is why the statements are about
+$\ket{\psi} \ot \ket{e}$ rather than about a tensor power.
+
+\subsection{The commutation analysis}
+
+\begin{lemma}[Commutation analysis]
+\label{lem:commutation-analysis}
+\uses{def:cross-distance,def:game}
+\lean{MIPRE.qform_nonneg_of_nonneg, MIPRE.qform_le_of_le, MIPRE.sum_snorm_sq_mul_le,
+  MIPRE.sum_snorm_sq_triangle', MIPRE.sum_snorm_sq_triangle3,
+  MIPRE.sum_weighted_snorm_sq_triangle3, MIPRE.POVM.sum_mats_map_prod,
+  MIPRE.POVM.sum_mats_map_prod', MIPRE.sum_xSqNorm_le_of_two_step, MIPRE.aOp_mono,
+  MIPRE.bOp_mono, MIPRE.bOp_sum, MIPRE.sum_aOp_conjTranspose_mul_self_le_one,
+  MIPRE.sum_bOp_conjTranspose_mul_self_le_one, MIPRE.sum_bOp_conjTranspose_mul_self_of_isPVM,
+  MIPRE.IsPVM.marg_mul_marg, MIPRE.IsPVM.marg_mul_marg', MIPRE.IsPVM.sum_marg_left,
+  MIPRE.IsPVM.sum_marg_right, MIPRE.IsPVM.marg_left, MIPRE.IsPVM.marg_right,
+  MIPRE.sum_prod_snorm_sq_mul_le_fst, MIPRE.sum_prod_snorm_sq_mul_le_snd,
+  MIPRE.commutation_analysis_abstract, MIPRE.commutation_analysis,
+  MIPRE.commutation_analysis_aOp, MIPRE.obs2_commutator_eq}
+\leanok
+Let $\{A_b\}$ and $\{C_c\}$ be POVMs on $\C^{d_\alice}$ and let $\{B_{b,c}\}$ be a
+\emph{projective} measurement on $\C^{d_\bob}$ with outcomes the pairs, with marginals
+$B_b = \sum_c B_{b,c}$ and $B_c = \sum_b B_{b,c}$. If
+\begin{equation*}
+  A_b \ot \Id \simeq_\delta \Id \ot B_b \qquad\text{and}\qquad
+  C_c \ot \Id \simeq_\delta \Id \ot B_c\;,
+\end{equation*}
+then Alice's two POVMs approximately commute on the state:
+\begin{equation}
+  \label{eq:commutation-analysis-bp}
+  \sum_{b, c} \norm{\bigl( [A_b, C_c] \ot \Id \bigr) \ket{\psi}}^2 \;\leq\; 16\, \delta\;.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+\leanok
+\uses{def:cross-distance}
+Both products reach the \emph{same} operator on Bob's factor, $\Id \ot B_{b,c}$. For
+$A_b C_c \ot \Id$: put $A_b \ot \Id$ in front of $C$'s relation, and put $\Id \ot B_c$ in front of
+$A$'s; the two meet at $A_b \ot B_c$, and the second step lands on
+$\Id \ot B_c B_b = \Id \ot B_{b,c}$ --- which is where projectivity is used, and the only place
+(\texttt{IsPVM.marg\_mul\_marg}). For $C_c A_b \ot \Id$, the same two steps in the other order,
+using $B_b B_c = B_{b,c}$. Each side is therefore within $4\delta$ after one triangle inequality,
+and~\eqref{eq:commutation-analysis-bp} is one more.
+
+Putting an operator in front costs nothing and \emph{adds} its index to the sum, which is the
+paper's \texttt{fact:add-a-proj}: if $\sum_i F_i^\dagger F_i \leq \Id$ then
+$\sum_i \norm{F_i v}^2 \leq \norm{v}^2$. For a POVM that hypothesis is $A_b^2 \leq A_b$ with
+$\sum_b A_b = \Id$, so it needs no projectivity of Alice's measurements
+(\texttt{sum\_aOp\_conjTranspose\_mul\_self\_le\_one}).
+\end{proof}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Foundations/Commutation.lean}. This is the
+paper's \texttt{lem:commutation-analysis} (\texttt{games.tex}), and it is the only step of the
+Pauli appendix that genuinely uses projectivity of a measurement.
+
+\textbf{Proved for abstract families in one algebra.} The two parties enter only through four
+hypotheses --- the two factors commute, and Bob's two marginals multiply to the joint element in
+either order --- so \texttt{commutation\_analysis\_abstract} is stated for families in a single
+matrix algebra and the bipartite version is its instance. That is not tidiness: stating it with
+$\ot$ in the hypotheses made the unifier's work quadratic in the number of rewrites and the proof
+timed out; in one algebra it elaborates in seconds.
+
+\textbf{No square root, and the constant is exact.} Every step is a triangle inequality or an
+operator-norm bound, so $16\delta$ is what the argument gives. The last step of the appendix's
+commuting case is also exact: expanding a two-outcome observable as $\Id - 2 M_1$, the commutator
+of two of them is \emph{four times} the commutator of the two $M_1$'s
+(\texttt{obs2\_commutator\_eq}), because the identity commutes with everything --- a factor $16$ in
+the squared norm and no approximation.
 
 \subsection{Generalized Pauli observables}
 

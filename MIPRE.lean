@@ -390,6 +390,7 @@ import MIPRE.Background.QLD.Anticomm
 import MIPRE.Background.QLD.Axioms
 import MIPRE.Background.QLD.Commutation
 import MIPRE.Background.QLD.Consistency
+import MIPRE.Background.QLD.Expanded
 import MIPRE.Background.QLD.Game
 import MIPRE.Background.QLD.Ortho
 import MIPRE.Background.QLD.Win
@@ -545,6 +546,7 @@ import MIPRE.Foundations.CL.Repeat
 import MIPRE.Foundations.CL.Sampler
 import MIPRE.Foundations.ClassMIPStar
 import MIPRE.Foundations.Closeness
+import MIPRE.Foundations.Commutation
 import MIPRE.Foundations.CommutingOperator
 import MIPRE.Foundations.Compression
 import MIPRE.Foundations.Cost.Basic
@@ -579,6 +581,7 @@ import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.CrossConsistency
 import MIPRE.Foundations.Dilation
 import MIPRE.Foundations.Distances
+import MIPRE.Foundations.Expanded
 import MIPRE.Foundations.GameAdapt
 import MIPRE.Foundations.GameDescription
 import MIPRE.Foundations.GameDouble

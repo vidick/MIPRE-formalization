@@ -56,6 +56,13 @@ noncomputable def pairInconsistency (ψ : dA × dB → ℂ) (Q : POVM A dA) (R :
   ∑ a, ∑ b, if a = b then 0 else
     (star ψ ⬝ᵥ ((((Q.mats a).val ⊗ₖ ((R.mats b).val))) *ᵥ ψ)).re
 
+theorem pairInconsistency_nonneg (ψ : dA × dB → ℂ) (Q : POVM A dA) (R : POVM A dB) :
+    0 ≤ pairInconsistency ψ Q R := by
+  refine Finset.sum_nonneg fun a _ => Finset.sum_nonneg fun b _ => ?_
+  split_ifs with h
+  · exact le_refl 0
+  · exact bornProb_nonneg ψ (Q.posSemidef a) (R.posSemidef b)
+
 theorem inconsistency_eq_sum_pairInconsistency {X : Type*} [Fintype X] (μ : X → ℝ)
     (ψ : dA × dB → ℂ) (M : X → POVM A dA) (N : X → POVM A dB) :
     inconsistency μ ψ M N = ∑ x, μ x * pairInconsistency ψ (M x) (N x) := rfl

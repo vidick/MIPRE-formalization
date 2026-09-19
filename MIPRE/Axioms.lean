@@ -48,6 +48,7 @@ import MIPRE.LCS.Strategy.Equivalence
 import MIPRE.LCS.Strategy.ObservableToProjector
 import MIPRE.TM.Code.Encoding.MachineCode
 import MIPRE.Foundations.WeylBinary
+import MIPRE.Foundations.Commutation
 import MIPRE.Background.GowersHatami.Basic
 
 /-!
@@ -474,6 +475,36 @@ tell you the guard is missing.
   MIPRE.Weyl.sgn_trDot_two,
   MIPRE.Weyl.wZ_two_diag,
   MIPRE.Weyl.wX_two_apply
+
+-- blueprint `lem:commutation-analysis`: consistency with a joint projective measurement on the
+-- other side gives approximate commutation on this one, and the two facts that run it.
+#guard_sorry_free MIPRE.qform_nonneg_of_nonneg,
+  MIPRE.qform_le_of_le,
+  MIPRE.sum_snorm_sq_mul_le,
+  MIPRE.sum_snorm_sq_triangle',
+  MIPRE.sum_snorm_sq_triangle3,
+  MIPRE.sum_weighted_snorm_sq_triangle3,
+  MIPRE.POVM.sum_mats_map_prod,
+  MIPRE.POVM.sum_mats_map_prod',
+  MIPRE.sum_xSqNorm_le_of_two_step,
+  MIPRE.aOp_mono,
+  MIPRE.bOp_mono,
+  MIPRE.bOp_sum,
+  MIPRE.sum_aOp_conjTranspose_mul_self_le_one,
+  MIPRE.sum_bOp_conjTranspose_mul_self_le_one,
+  MIPRE.sum_bOp_conjTranspose_mul_self_of_isPVM,
+  MIPRE.IsPVM.marg_mul_marg,
+  MIPRE.IsPVM.marg_mul_marg',
+  MIPRE.IsPVM.sum_marg_left,
+  MIPRE.IsPVM.sum_marg_right,
+  MIPRE.IsPVM.marg_left,
+  MIPRE.IsPVM.marg_right,
+  MIPRE.sum_prod_snorm_sq_mul_le_fst,
+  MIPRE.sum_prod_snorm_sq_mul_le_snd,
+  MIPRE.commutation_analysis_abstract,
+  MIPRE.commutation_analysis,
+  MIPRE.commutation_analysis_aOp,
+  MIPRE.obs2_commutator_eq
 
 /-!
 ## The one axiom

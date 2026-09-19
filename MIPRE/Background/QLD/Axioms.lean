@@ -5,7 +5,7 @@ Authors: Thomas Vidick
 -/
 import MIPRE.Background.QLD.Anticomm
 import MIPRE.Background.QLD.Consistency
-import MIPRE.Background.QLD.Commutation
+import MIPRE.Background.QLD.Expanded
 import MIPRE.Foundations.GuardSorryFree
 
 /-!
@@ -90,6 +90,62 @@ with theorems, and their axiom lists differ. -/
 Blueprint `lem:qld-obs-commutation-acomm`. The two point observables and the two variable
 observables they are tied to, the sub-probability weight the items carry, item 7 in observable
 form, the identification of item 6's anticommutator, and the lemma. -/
+
+/-! ## The expansion stage's commutation
+
+Blueprint `lem:qld-expanded-commutation`. The sign the strategy carries and the sign the ancilla
+carries are the same sign, and they cancel identically. -/
+
+#guard_sorry_free MIPRE.QLD.Anc,
+  MIPRE.QLD.weylOf,
+  MIPRE.QLD.ancVec,
+  MIPRE.QLD.gam_eq_trDot,
+  MIPRE.QLD.weylOf_isUnitary,
+  MIPRE.QLD.weylOf_prod_isUnitary,
+  MIPRE.QLD.hatObs,
+  MIPRE.QLD.hatVec,
+  MIPRE.QLD.norm_evec_epr,
+  MIPRE.QLD.hatVec_unit,
+  MIPRE.QLD.hatObs_comm_eq,
+  MIPRE.QLD.norm_hatVec_hatObs_comm,
+  MIPRE.QLD.hatObs_commutation
+
+/-! ## Signed commutation: both halves
+
+Blueprint `lem:qld-obs-commutation`, `lem:qld-obs-commutation-comm` and
+`lem:qld-obs-commutation-acomm`. The commuting half runs the chain through the `Pair` measurement,
+projectivizes it, and applies the commutation analysis; the anticommuting half is the Magic
+Square's anticommutator carried across the tensor factors. -/
+
+#guard_sorry_free MIPRE.QLD.pairPOVM,
+  MIPRE.QLD.pairPOVMB,
+  MIPRE.QLD.ptPOVM,
+  MIPRE.QLD.ptPOVMB,
+  MIPRE.QLD.ptObsB,
+  MIPRE.QLD.ptObs_eq_obs2,
+  MIPRE.QLD.ptObsB_mul_self_le_one,
+  MIPRE.QLD.sum_pairPOVM_X,
+  MIPRE.QLD.sum_pairPOVM_Z,
+  MIPRE.QLD.adj_pairB_point,
+  MIPRE.QLD.link_pairB_point,
+  MIPRE.QLD.link_pair_pair,
+  MIPRE.QLD.chain_pair_point,
+  MIPRE.QLD.chainQty,
+  MIPRE.QLD.incQty,
+  MIPRE.QLD.chainQty_nonneg,
+  MIPRE.QLD.incQty_nonneg,
+  MIPRE.QLD.commWeight,
+  MIPRE.QLD.commWeight_nonneg,
+  MIPRE.QLD.sum_commWeight_mul,
+  MIPRE.QLD.sum_commWeight_le_one,
+  MIPRE.QLD.xStateDist_ptObs_ptObsB,
+  MIPRE.QLD.pairInconsistency_nonneg,
+  MIPRE.QLD.incQty_le_condFail,
+  MIPRE.QLD.sum_incQty_le,
+  MIPRE.QLD.sq_norm_ptObs_comm_le_of_content,
+  MIPRE.QLD.sum_chainQty_le,
+  MIPRE.QLD.comm_signed_commutation,
+  MIPRE.QLD.signed_commutation
 
 #guard_sorry_free MIPRE.QLD.ptObs,
   MIPRE.QLD.varObs,
