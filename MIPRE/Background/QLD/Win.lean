@@ -294,20 +294,21 @@ theorem of_accepts {x y : Question F m} {a b : Answer F m d}
   exact ⟨h.1.1, h.1.2, h.2⟩
 
 /-- **Item 1, the consistency check.** At equal types the two players' measurements are
-cross-party consistent at error `172 ε`. -/
+cross-party consistent at error `172 ε`, and so is any *common* reading of their answers: the
+rule accepts only when the answers are equal, and equal answers have equal readings. That is the
+data-processing inequality, and it comes for free from `agree_subtest_le` rather than as a
+separate fact. -/
 theorem item_consistency (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (t : Ty) :
-    ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *
-        ∑ o : Answer F m d,
-          xSqNorm ψ ((((MA (c.question hm t)).map (fun a => a)).mats o).val)
-            ((((MB (c.question hm t)).map (fun a => a)).mats o).val)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (t : Ty)
+    {C : Type*} [Fintype C] [DecidableEq C] (φ : Answer F m d → C) :
+    xPovmDist (fun _ : Content F m => (Fintype.card (Content F m) : ℝ)⁻¹) ψ
+        (fun c => (MA (c.question hm t)).map φ) (fun c => (MB (c.question hm t)).map φ)
       ≤ 172 * ε :=
-  agree_subtest_le hψ hfail (adj_self t) univ (fun _ a => a) (fun _ b => b)
+  agree_subtest_le hψ hfail (adj_self t) univ (fun _ => φ) (fun _ => φ)
     fun c _ a b h => by
       have hs := (of_accepts h).2.2
       rw [subtests, if_pos rfl] at hs
-      exact of_decide_eq_true hs
-
+      exact congrArg φ (of_decide_eq_true hs)
 
 /-! ### Inverting the format check
 

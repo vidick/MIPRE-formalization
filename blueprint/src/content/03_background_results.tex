@@ -1647,6 +1647,83 @@ anticommutation to the \emph{point} observables. That is the paper's separate
 the sign $(-1)^{\gamma}$ first appears; it belongs with the expansion stage that consumes it and
 is not part of this lemma.
 
+\subsubsection{The point observables}
+
+The stage that follows works with the $\pm 1$-observables of the two-outcome probes rather than
+with the measurements themselves, and needs two statements about them: they are cross-party
+consistent, and they commute up to the sign $(-1)^{\gamma}$. The first is
+Lemma~\ref{lem:qld-win} item 1 and costs one factor of two; the second is the synthesis of items
+4 to 7 and is where the sign that Lemma~\ref{lem:qld-expanded-points} cancels first appears.
+
+\effortEasy
+
+\begin{lemma}[Consistency of the point observables]
+\label{lem:qld-obs-consistency}
+\uses{lem:qld-win,def:cross-distance}
+\lean{MIPRE.QLD.pts_obs_consistency}
+\leanok
+For $W \in \{X, Z\}$ and $r \in \F_q$ write
+$W^r(u) = M^{(\mathtt{Point}, W), u}_{[\fieldtr(\cdot\, r) = 0]}
+  - M^{(\mathtt{Point}, W), u}_{[\fieldtr(\cdot\, r) = 1]}$
+for the $\pm 1$-observable of the probe. Under the hypotheses of Lemma~\ref{lem:qld-win}, on
+average over the verifier's content,
+\begin{equation*}
+  W^r(u) \ot \Id_\bob \;\approx_{344\eps}\; \Id_\alice \ot W^r(u)\;.
+\end{equation*}
+\end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:qld-win,def:cross-distance}
+Item 1 of Lemma~\ref{lem:qld-win} holds for any \emph{common} reading of the two answers, the
+rule at equal types accepting only when the answers are equal and equal answers having equal
+readings --- so the data-processing step the paper cites separately is already in the item. Take
+the reading to be the probe $a \mapsto \fieldtr(a\,r)$ and apply
+\texttt{xStateDist\_obsOf\_le}, the cross-party form of Lemma~\ref{lem:qld-povm-to-obs}, with
+the two signs $\pm 1$: the factor is the number of outcomes of the probe, which is two, giving
+$2 \cdot 172\eps$.
+\end{proof}
+
+\effortHard
+
+\begin{lemma}[Signed commutation of the point observables]
+\label{lem:qld-obs-commutation}
+\uses{lem:qld-win,lem:qld-obs-consistency,fact:omega-anticomm-prob,cor:ortho-from-consistency}
+Under the hypotheses of Lemma~\ref{lem:qld-win}, on average over uniformly random
+$\omega = (u_X, u_Z, r_X, r_Z)$,
+\begin{equation*}
+  X^{r_X}(u_X)\, Z^{r_Z}(u_Z) \ot \Id_\bob
+    \;\approx_{O(\sqrt{\eps})}\;
+  (-1)^{\gamma(\omega)}\; Z^{r_Z}(u_Z)\, X^{r_X}(u_X) \ot \Id_\bob\;.
+\end{equation*}
+\end{lemma}
+
+\begin{proof}
+\uses{lem:qld-win,lem:qld-obs-consistency}
+Two cases, both from Lemma~\ref{lem:qld-win}. On a commuting $\omega$, items 5, 4 and 1 chain
+the probe of the point measurement to the $\mathtt{Pair}$ measurement on the other side; that
+measurement is projective, so the paper's commutation analysis turns the chain into commutation
+of the two probes, and expanding the two observables as $\Id - 2M_1$ transfers it to them. On an
+anticommuting $\omega$, item 7 identifies each probe with one of the two distinguished
+$\mathtt{Variable}$ observables on the other side, item 6 says those two anticommute up to
+$\sqrt{\eps}$, and transferring a product across the tensor factors reverses its order --- which
+is what supplies the sign.
+\end{proof}
+
+\paragraph{Comments.} The first lemma is formalized; the second is not, and the two obstacles are
+worth naming because they are the same two the expansion stage faces.
+
+The commuting case needs the paper's commutation-analysis lemma, whose hypothesis is that the
+$\mathtt{Pair}$ measurement is \emph{projective}. A general POVM strategy's is not, so the step
+consumes Corollary~\ref{cor:ortho-from-consistency} first; that corollary is formalized, and
+what is missing is the bookkeeping that applies it here and tracks the resulting error.
+
+The anticommuting case needs the order-reversal rule for transferring a product of operators
+across the two tensor factors, $AB \ot \Id \approx \Id \ot B'A'$. That rule is elementary but it
+is not in this repository, and the paper's own correction note on this proof records the two displays
+that had it backwards --- so it is exactly the kind of step to state once and prove rather than
+inline.
+
 \subsubsection{Expansion: approximate commutation of the two bases}
 
 \effortHard

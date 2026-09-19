@@ -545,7 +545,8 @@ comment; both are defined here.
   MIPRE.sum_weight_bornProb_map, MIPRE.sum_bornProb_map,
   MIPRE.one_sub_sum_bornProb_le_condFail, MIPRE.xSqNorm_sum_le_condFail,
   MIPRE.sum_mul_condFail_le, MIPRE.sum_condFail_le_of_pushforward,
-  MIPRE.sum_condFail_le_of_le}
+  MIPRE.sum_condFail_le_of_le, MIPRE.xStateDist, MIPRE.xStateDist_obsOf_le,
+  MIPRE.stateVecB_smul, MIPRE.stateVecB_sum}
 \leanok
 Let $\mu$ be a distribution on a finite set $\mX$, let
 $\ket{\psi} \in \C^{d_\alice} \ot \C^{d_\bob}$, and let $\{M^x_a\}$ and $\{N^x_a\}$ be families
@@ -592,6 +593,11 @@ the subtest is selected'' needs no injectivity: the subtests of the Pauli basis 
 by the verifier's content and several contents give the same question pair, a $(\pauli, W)$
 question reading none of it, so the hypothesis is a condition on the push-forward
 (\texttt{sum\_condFail\_le\_of\_pushforward}).
+
+\texttt{xStateDist\_obsOf\_le} is Lemma~\ref{lem:qld-povm-to-obs} across the two parties, with
+the same proof and the same factor $\abs{\mA}$: the appendix needs it to pass from a two-outcome
+coarse-graining of a point measurement to the $\pm 1$-observable it defines, and
+Definition~\ref{def:state-distance}'s version compares the wrong pair.
 
 \begin{definition}[Inconsistency]
 \label{def:inconsistency}

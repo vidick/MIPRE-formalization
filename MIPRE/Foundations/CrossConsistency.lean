@@ -82,6 +82,67 @@ theorem xPovmDist_nonneg {μ : X → ℝ} (hμ : ∀ x, 0 ≤ μ x) (ψ : dA × 
   Finset.sum_nonneg fun x _ =>
     mul_nonneg (hμ x) (Finset.sum_nonneg fun _ _ => xSqNorm_nonneg _ _ _)
 
+/-! ## The cross-party distance of generalized observables
+
+`stateDist_obsOf_le` is the same-side statement (blueprint `lem:qld-povm-to-obs`); the appendix
+needs it across the two parties as well, to pass from a two-outcome coarse-graining of a point
+measurement to the `±1`-observable it defines. -/
+
+omit [DecidableEq C] [DecidableEq dB] in
+@[simp] theorem stateVecB_smul (ψ : dA × dB → ℂ) (c : ℂ) (N : Matrix dB dB ℂ) :
+    stateVecB ψ (c • N) = c • stateVecB ψ N := by
+  show WithLp.toLp 2 _ = c • WithLp.toLp 2 _
+  rw [Matrix.kronecker_smul, Matrix.smul_mulVec]
+  rfl
+
+omit [DecidableEq C] [DecidableEq dB] in
+theorem stateVecB_sum {ι : Type*} (ψ : dA × dB → ℂ) (t : Finset ι) (f : ι → Matrix dB dB ℂ) :
+    stateVecB ψ (∑ i ∈ t, f i) = ∑ i ∈ t, stateVecB ψ (f i) := by
+  classical
+  induction t using Finset.induction with
+  | empty => simp [stateVecB]
+  | insert i t hi ih =>
+      rw [Finset.sum_insert hi, Finset.sum_insert hi, ← ih, stateVecB, stateVecB, stateVecB,
+        Matrix.kronecker_add, Matrix.add_mulVec]
+      rfl
+
+/-- **The cross-party distance** of two families of operators, one on each side. -/
+def xStateDist (μ : X → ℝ) (ψ : dA × dB → ℂ) (A : X → Matrix dA dA ℂ)
+    (B : X → Matrix dB dB ℂ) : ℝ :=
+  ∑ x, μ x * xSqNorm ψ (A x) (B x)
+
+omit [DecidableEq C] in
+/-- **From POVM elements to generalized observables, across the two parties**: the cross-party
+analogue of `stateDist_obsOf_le`. Same proof --- the triangle inequality, then Cauchy--Schwarz
+over the outcome set --- and the same factor `|𝒜|`. -/
+theorem xStateDist_obsOf_le {μ : X → ℝ} (hμ0 : ∀ x, 0 ≤ μ x) (ψ : dA × dB → ℂ)
+    (M : X → POVM C dA) (N : X → POVM C dB) (α : C → ℂ) (hα : ∀ a, ‖α a‖ ≤ 1) :
+    xStateDist μ ψ (obsOf α M) (obsOf α N)
+      ≤ (Fintype.card C : ℝ) * xPovmDist μ ψ M N := by
+  classical
+  rw [xPovmDist, Finset.mul_sum, xStateDist]
+  refine Finset.sum_le_sum fun x _ => ?_
+  rw [← mul_assoc, mul_comm ((Fintype.card C : ℝ)) (μ x), mul_assoc]
+  refine mul_le_mul_of_nonneg_left ?_ (hμ0 x)
+  have hsub : stateVec ψ (obsOf α M x) - stateVecB ψ (obsOf α N x)
+      = ∑ a, α a • (stateVec ψ (((M x).mats a).val) - stateVecB ψ (((N x).mats a).val)) := by
+    rw [obsOf, obsOf, stateVec_sum, stateVecB_sum, ← Finset.sum_sub_distrib]
+    exact Finset.sum_congr rfl fun a _ => by
+      rw [stateVec_smul, stateVecB_smul, smul_sub]
+  have htri : ‖stateVec ψ (obsOf α M x) - stateVecB ψ (obsOf α N x)‖
+      ≤ ∑ a, ‖stateVec ψ (((M x).mats a).val) - stateVecB ψ (((N x).mats a).val)‖ := by
+    rw [hsub]
+    refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun a _ => ?_)
+    rw [norm_smul]
+    exact mul_le_of_le_one_left (norm_nonneg _) (hα a)
+  calc xSqNorm ψ (obsOf α M x) (obsOf α N x)
+      ≤ (∑ a, ‖stateVec ψ (((M x).mats a).val) - stateVecB ψ (((N x).mats a).val)‖) ^ 2 :=
+        pow_le_pow_left₀ (norm_nonneg _) htri 2
+    _ ≤ (Fintype.card C : ℝ)
+          * ∑ a, ‖stateVec ψ (((M x).mats a).val) - stateVecB ψ (((N x).mats a).val)‖ ^ 2 :=
+        sq_sum_le_card_mul_sum_sq _ fun a => norm_nonneg _
+    _ = (Fintype.card C : ℝ) * ∑ a, xSqNorm ψ (((M x).mats a).val) (((N x).mats a).val) := rfl
+
 /-! ## A POVM element is a contraction on the state
 
 `A† A = A² ≤ A` for `0 ≤ A ≤ 1`, so the diagonal terms of the expansion below sum to at most

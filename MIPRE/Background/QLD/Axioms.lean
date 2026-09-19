@@ -81,3 +81,6 @@ with theorems, and their axiom lists differ. -/
   MIPRE.QLD.one_sub_povmValue_ms_le,
   MIPRE.QLD.sum_msEps_le,
   MIPRE.QLD.item_magicSquare
+
+-- blueprint `lem:qld-obs-consistency`
+#guard_sorry_free MIPRE.QLD.pts_obs_consistency

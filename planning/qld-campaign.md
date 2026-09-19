@@ -280,6 +280,74 @@ of a subtest divided by its selection probability — plus one real step, transf
 come in and where the sign `(−1)^γ` cancels exactly; the blueprint flags that cancellation as
 the pivotal step, so it is the thing to get right first.
 
+#### PR B as it stands (2026-09-19), and the one thing it is blocked on
+
+**Done, sorry-free**: `def:qld-game` (`MIPRE/Background/QLD/Game.lean`), `lem:qld-win` in all
+seven items (`Win.lean`, `WinMS.lean`), `lem:ms-direct-anticomm`, and
+`lem:qld-obs-consistency`. The supporting calculus is
+`MIPRE/Foundations/CrossConsistency.lean`, which is the appendix's *cross-party* `≃_δ` --- one
+player's operator against the other's --- and had to be written because
+`MIPRE.stateDist` of `def:state-distance` compares two families on the *same* side. That is the
+distance the orthonormalization step wants; every consistency statement of `lem:qld-win` wants
+the other one.
+
+**Two things the paper leaves implicit, both of which the formalization needed.** First, a
+subtest's decider does not *equal* an agreement predicate: it checks the answer formats and
+rejects an ill-formatted pair even when the post-processings agree. What holds is **accept
+implies agree**, and that is all `xSqNorm_sum_le_condFail` asks --- which in turn lets the
+readings send an ill-formatted answer to `0`. Second, "divided by the probability that the
+subtest is selected" needs no injectivity: the subtests are indexed by the verifier's content
+and several contents give the same question pair, a `(Pauli, W)` question reading none of it, so
+the hypothesis is a condition on the *push-forward*.
+
+**One hypothesis of the paper's `lem:qld-win-implications` is not needed.** `6md ≤ q` is there to
+turn the four `γ`-gated items into averages *conditioned* on `γ`; via
+`fact:omega-anticomm-prob` each gate then has probability at least `1/4`. The Lean states those
+items unconditionally with the gate's indicator inside the average, which is what the machinery
+produces and needs no lower bound at all. Whoever wants the conditional form divides and pays
+`6md ≤ q` there. The blueprint records this.
+
+**The constants are named, and one of them is loose.** `172 = 2 · 86` for the consistency items
+(the factor `2` of the agreement inequality, the selection probability `1/86`), and
+`16049664 = 186624 · 86` for the anticommutator. The `86` in the second is a factor `36` looser
+than it needs to be: it bounds each of the thirty-six Magic Square incidences against the whole
+`ε` budget, where the paper instead budgets them jointly and gets `86/36`. Sharpening means a
+multi-edge form of `subtest_le` --- `sum_condFail_le_of_pushforward` with the index set ranging
+over edges as well as contents --- and nothing downstream needs it, `thm:qld` asking only for
+`O(ε)`.
+
+**What PR B is blocked on: the generalized Pauli operators over `F_q`.** Stage 3
+(`lem:qld-expanded-points`, `lem:qld-expanded-lines`) is not a matter of more bookkeeping. Its
+expanded observable is
+
+```
+  Ŵ^r(u) = W^r(u) ⊗ τ^W(r · ind_m(u))
+```
+
+where `τ^W` is the generalized Pauli observable on `(C^q)^{⊗ M}`, `M = 2^m` (the paper's
+`sec:generalized-pauli`), and the projections are Fourier transforms
+`M̂^{(Point,W),u}_a = E_r (-1)^{tr(ar)} Ŵ^r(u)`. **None of that exists in this repository.**
+`MIPRE/LCS/Pauli.lean` is the `2 × 2` Pauli matrices for the Magic Square, not the `F_q` Weyl
+system: what is needed is `X`- and `Z`-type Weyl operators on `C^q`, their commutation relation
+`X^a Z^b = χ(ab) Z^b X^a`, the `M`-fold tensor families `τ^W_h` for `h ∈ F_q^M`, the projections
+`τ^{W,u}_a` of `eq:qld-point-obs-def`, the Fourier identities over `F_q` that turn the average
+over `r` into a sum of projectors, and `|EPR_q⟩^{⊗ M}` with its stabilizer relations. That is a
+development on the scale of one of this campaign's chunks, and it is also what stage 5's swap
+isometry runs on --- so it is not stage-3 overhead, it is the missing half of the campaign's
+infrastructure.
+
+Two smaller prerequisites, both named in the comments on `lem:qld-obs-commutation`: the paper's
+commutation-analysis lemma (whose projectivity hypothesis a general POVM strategy meets only
+after `cor:ortho-from-consistency`), and the order-reversal rule `AB ⊗ Id ≈ Id ⊗ B'A'` for
+transferring a product across the tensor factors --- elementary, absent here, and the thing the
+paper's own correction note on that proof got backwards in two displays.
+
+**So the campaign's shape has changed.** The plan had four pull requests with stage 3 inside
+PR B. Stage 3 should instead be preceded by a **generalized-Pauli chunk**, and PR B ends where
+it now does: the game, the win implications, and the observable consistency. That is the honest
+boundary --- everything up to it is checked, and the next thing is a new development rather than
+a continuation.
+
 ### PR C — combining the two bases
 
 `thm:linearity`, then `lem:qld-combined-points`, `lem:qld-pairs-of-lines`,
