@@ -2095,22 +2095,102 @@ strategy.
 \begin{theorem}[Exact linearity from approximate linearity]
 \label{thm:linearity}
 \ledgernode{1.2.2.7, 1.2.2.7.1, 1.2.2.7.2, 1.2.2.7.3}
-\uses{def:distance,thm:gowers-hatami}
-Let $\{O^u\}_{u \in \F_2^t}$ be observables satisfying approximate linearity on average,
-$O^u O^{u'} \approx_\delta O^{u + u'}$. Then on an extended space there are \emph{exactly}
-linear observables $\{L^u\}$ --- a representation of $\F_2^t$, with $L^0 = \Id$ --- such that
-$L^u \approx_\delta O^u$ on average over $u$. The error is linear in $\delta$, with no loss in
-the exponent.
+\uses{def:state-distance,def:generalized-pauli,lem:naimark-dilation}
+\lean{MIPRE.fourierOf, MIPRE.fourierOf_conjTranspose, MIPRE.fourierOf_posSemidef,
+  MIPRE.sum_sgn_smul_fourierOf_sq, MIPRE.sum_fourierOf_sq, MIPRE.exists_exactly_linear,
+  MIPRE.extVecA, MIPRE.ancillaEmbed_kron_isometry, MIPRE.norm_evec_extVecA,
+  MIPRE.kron_one_mul_ancillaEmbed, MIPRE.ancillaEmbed_conjTranspose_mul_kron_one,
+  MIPRE.compress_mul_kron_one, MIPRE.compress_kron_one_mul, MIPRE.qform_extVecA,
+  MIPRE.stateSqNorm_sub_of_isometry, MIPRE.conjTranspose_mul_self_of_involution,
+  MIPRE.exists_exactly_linear_close}
+\leanok
+Let $\{O^u\}_{u \in V}$, $V = \F_q^n$, be observables on the first party's space --- self-adjoint
+involutions --- and let $\ket{\psi}$ be a state. Then, on the space extended by an ancilla register
+$\C^V$ on the \emph{first party only}, with the extended state
+$\ket{\psi'} = \ket{\psi} \ot \ket{0}$, there are observables $\{L^u\}$ that are \emph{exactly}
+linear,
+\begin{equation*}
+  L^u L^{u'} \;=\; L^{u + u'}\;, \qquad L^0 \;=\; \Id\;,
+\end{equation*}
+such that the average squared distance to the original family is \emph{equal} to the average
+linearity defect:
+\begin{equation*}
+  \E_{u \in V} \norm{\bigl(L^u - O^u \ot \Id\bigr) \ket{\psi'}}^2
+    \;=\; \E_{a, b \in V} \norm{\bigl(O^a O^b - O^{a + b}\bigr) \ket{\psi}}^2\;.
+\end{equation*}
+In particular, if the family is $\delta$-approximately linear on average then
+$L^u \approx_\delta O^u$ on average over $u$: the error is linear in $\delta$, with no loss in the
+exponent and no change of constant.
 \end{theorem}
 
 \begin{proof}
-Imported from Natarajan and Vidick~\cite{NV17}, whose proof is the Fourier argument: the
-operators $\widehat{A}^u = \E_a (-1)^{a \cdot u} A(a)$ have squares forming a POVM by
-Parseval, Naimark dilates that POVM to a projective family on an extended space, and the
-exactly linear observables are recovered from it by inverting the transform. The source is
-vendored and was audited line by line, including its state-dependent distance toolkit; the
-only facts it needs beyond that are Parseval and Naimark.
+\leanok
+\uses{def:generalized-pauli,lem:naimark-dilation}
+The Fourier argument, in three exact steps and one identity.
+
+\textbf{Parseval.} Let $A_e = \abs{V}^{-1} \sum_a (-1)^{\fieldtr(a \cdot e)} O^a$ be the Fourier
+transform of the family against the characters of the trace form
+(Definition~\ref{def:generalized-pauli}). Merging the characters and summing over $e$ collapses the
+double sum, because $\sum_e (-1)^{\fieldtr(c \cdot e)}$ is $\abs{V}$ at $c = 0$ and $0$ otherwise:
+\begin{equation}
+  \label{eq:linearity-character-sum}
+  \sum_e (-1)^{\fieldtr(u \cdot e)} A_e^2 \;=\; \abs{V}^{-1} \sum_a O^a O^{a + u}\;.
+\end{equation}
+At $u = 0$ the right-hand side is $\abs{V}^{-1} \sum_a (O^a)^2 = \Id$, so $\{A_e^2\}$ is a POVM ---
+\emph{exactly}, with no appeal to the approximate linearity. That is the only place the involution
+property is used.
+
+\textbf{Naimark.} Dilate that POVM to a projective measurement $\{P_e\}$ on
+$\C^{d} \ot \C^{V}$, compressed back by the isometry $\ket{v} \mapsto \ket{v} \ot \ket{0}$
+(Lemma~\ref{lem:naimark-dilation}). One isometry serves the whole family of families, which is what
+lets the estimate be taken against the single state $\ket{\psi'}$.
+
+\textbf{Inversion.} Put $L^u = \sum_e (-1)^{\fieldtr(u \cdot e)} P_e$. Mutual orthogonality of the
+$P_e$ gives $L^u L^{u'} = L^{u + u'}$ and $L^0 = \sum_e P_e = \Id$, and the compression of $L^u$ is
+the left-hand side of~\eqref{eq:linearity-character-sum}, hence $\abs{V}^{-1} \sum_a O^a O^{a+u}$.
+
+\textbf{The identity.} Expanding both squared distances --- each is $2$ minus the two orders of an
+overlap, the operators involved being unitary --- and compressing, the $u$-th term on the left is
+the average over $a$ of the $(a, a+u)$-th term on the right, after reindexing that average by
+$a \mapsto a + u$. Summing over $u$ and reindexing once more, by $u \mapsto a + u$ for each fixed
+$a$, gives the stated equality. No inequality is used anywhere, which is why the constant is
+exactly $1$.
 \end{proof}
+
+\paragraph{Source and correction.} The paper imports this from Natarajan and
+Vidick~\cite{NV17} (Theorem~10 of the arXiv version) and proves nothing about it; the source is
+vendored in the \emph{paper} repository, not in this one. An earlier version of this proof text said
+``the source is vendored and was audited line by line'', which is true of
+\texttt{paper/external/nv17/} and false of \texttt{MIPRE/Background/}, whose vendored trees are
+GowersHatami, LIDT, Orthonormalization and Repetition. A reader would have planned the wrong work.
+The theorem is therefore \textbf{proved here}, from Parseval and Lemma~\ref{lem:naimark-dilation};
+it is formalized in \texttt{MIPRE/Foundations/Linearity.lean}.
+
+The ledger node this statement accounts for records the \emph{paper}'s status --- imported from
+NV17, with the import audited in its three children: the statement match, the source's
+state-dependent-distance toolkit, and the Fourier proof line by line. The mark here records the
+\emph{Lean}'s status, which is a proof. The two are consistent claims about different artifacts, and
+the Lean proof is the argument the third child audits: the same transform, the same Parseval step,
+the same dilation, the same inversion.
+
+\paragraph{Comments.} Three things are worth separating from the proof.
+
+Theorem~\ref{thm:gowers-hatami} is \emph{not} used, and has left this theorem's \texttt{uses} list.
+Gowers--Hatami is a statement about the Hilbert--Schmidt distance and approximate
+\emph{representations}; the hypothesis here is in the state-dependent distance, and the
+exact-POVM step above replaces the stability machinery entirely. The two results are about
+different things and neither implies the other in the form stated.
+
+The conclusion is an \textbf{equality}, which is more than the paper's statement and more than the
+application needs. The paper's own audit note reconciles its $\delta$ against NV17's convention and
+concludes ``the closeness exponent is $1$, with the identical $\delta$''; the equality above says
+where that comes from --- the linearity defect is transported term by term, not estimated.
+
+The ancilla is adjoined to \textbf{one} party. That is the asymmetric extension
+$\ket{\psi} \ot \ket{0}_{\alice'}$ of the source statement, not the two-sided
+$\ket{\EPR_q}^{\ot M}$ of Definition~\ref{def:expanded-state}; the exactly linear observables act
+on $\alice \alice'$ and the second party is untouched. Its formalization is \texttt{extVecA}, with
+the compression identity \texttt{qform\_extVecA} the only fact about it the proof needs.
 
 \effortHard
 

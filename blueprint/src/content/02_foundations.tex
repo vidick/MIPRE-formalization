@@ -707,6 +707,42 @@ appendix is taken on Born probabilities and converted once, at the end, by
 \eqref{eq:cross-from-agreement}. A formalization that reached for the $\approx$ form would be
 proving something false.
 
+\subsection{Naimark dilation against a fixed state}
+
+\begin{lemma}[Naimark dilation of a question-indexed family]
+\label{lem:naimark-dilation}
+\uses{def:game}
+\lean{MIPRE.ancillaProj, MIPRE.ancillaProj_conjTranspose, MIPRE.ancillaProj_mul_self,
+  MIPRE.sum_ancillaProj, MIPRE.exists_isometry_of_povm, MIPRE.ancillaEmbed,
+  MIPRE.ancillaEmbed_isometry, MIPRE.exists_unitary_extending,
+  MIPRE.exists_projective_dilation, MIPRE.dotProduct_mulVec_submatrix,
+  MIPRE.dotProduct_comp_equiv, MIPRE.dotProduct_mulVec_conj}
+\leanok
+Let $\{E^x_a\}$ be a family of POVMs on $\C^d$, indexed by questions $x$ and outcomes
+$a \in \mA$. Then there is a family of \emph{projective} measurements $\{P^x_a\}$ on
+$\C^d \ot \C^{\mA}$ and a \emph{single}, question-independent isometry
+$V : \C^d \to \C^d \ot \C^{\mA}$, $\ket{v} \mapsto \ket{v} \ot \ket{a_0}$, such that
+$V^\dagger P^x_a V = E^x_a$ for every $x$ and $a$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The columns of the matrix $V^x$ whose $(q, j)$ entry is $\sqrt{E^x}$-like --- concretely, the
+square root of $E^x_a$ read off in the $a$-th block --- form an isometry $\C^d \to \C^d \ot
+\C^{\mA}$ compressing the block-diagonal projectors $\Pi_a = \Id \ot \ket{a}\bra{a}$
+back to $E^x_a$. Extending each $V^x$ to a unitary $U^x$ of the larger space that agrees with it on
+the $a_0$-slice --- the completion of an orthonormal family to an orthonormal basis --- makes
+$P^x_a = (U^x)^\dagger \Pi_a U^x$ projective with the compression along the
+\emph{fixed} isometry $\ket{v} \mapsto \ket{v} \ot \ket{a_0}$. The question-independence of that
+isometry is the whole point: the expectations are taken against a shared state, which must not
+depend on the question.
+\end{proof}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Foundations/Dilation.lean}, extracted from the
+repetition development where it was written for \texttt{lem:povm-value-eq}. Its other consumers are
+Lemma~\ref{lem:ms-direct-anticomm}, which dilates the Magic Square's six constraint POVMs against
+one shared ancilla, and Theorem~\ref{thm:linearity}.
+
 \subsection{The commutation analysis}
 
 \begin{lemma}[Commutation analysis]

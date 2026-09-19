@@ -583,12 +583,41 @@ the paper's printed definition does too; the refinement is the paper's `cnote` i
 `thm:linearity`, then `lem:qld-combined-points`, `lem:qld-pairs-of-lines`,
 `lem:qld-padded-points`, `lem:qld-sublines`, `lem:qld-padded-lines`, `lem:qld-simultaneous`.
 
-**A correction to the blueprint's proof text of `thm:linearity` to make before relying on it.**
-It says "the source is vendored and was audited line by line". That is true of the *paper* —
-`paper/external/nv17/` — and false of this repository: `MIPRE/Background/` holds only
-GowersHatami, LIDT, Orthonormalization and Repetition. So `thm:linearity` must be **proved**
-here, from Parseval and Naimark with `thm:gowers-hatami` (which is proved) available, not
-imported. A reader of the current text would plan the wrong work.
+### `thm:linearity`, proved here (2026-09-19, done)
+
+The correction this file flagged -- the blueprint said "the source is vendored and was audited line
+by line", which is true of the *paper*'s `paper/external/nv17/` and false of `MIPRE/Background/` --
+is now moot, because the theorem is **proved**: `MIPRE/Foundations/Linearity.lean`, 440 lines.
+
+Three things are worth keeping.
+
+**`thm:gowers-hatami` is not the tool.** It is about the Hilbert--Schmidt distance and approximate
+*representations*; the hypothesis here is in the state-dependent distance. The blueprint's
+`\uses{thm:gowers-hatami}` was a guess and is gone. What replaces it is one *exact* step: the
+Fourier transform `A_e = |V|^{-1} sum_a sgn(<a,e>) O^a` of a family of **involutions** has
+`sum_e A_e^2 = |V|^{-1} sum_a (O^a)^2 = Id`, so `{A_e^2}` is a POVM with no approximation anywhere.
+Then `exists_projective_dilation` -- now a blueprint node, `lem:naimark-dilation`, having been
+silent infrastructure before -- and Fourier inversion give the exactly linear family, and the
+character-sum identity `sum_e sgn(<u,e>) A_e^2 = |V|^{-1} sum_a O^a O^{a+u}` connects it back.
+
+**The conclusion is an equality.** `E_u ||(L^u - O^u)psi'||^2 = E_{a,b} ||(O^a O^b - O^{a+b})psi||^2`
+-- the linearity defect is *transported*, not estimated. The paper's own audit note concludes "the
+closeness exponent is 1, with the identical delta", and the ledger's child node 1.2.2.7.3 records
+the same; the equality says where it comes from. Nothing in the proof is an inequality, so there is
+no constant to lose.
+
+**The ancilla is one-sided.** `extVecA psi a0 = (ancillaEmbed (x) 1) *v psi` adjoins `|0>` to the
+*first* party only -- the source's `|psi> (x) |0>_{A'}`, not `def:expanded-state`'s two-sided EPR
+ancilla. The only fact needed about it is `qform_extVecA`: a quadratic form on the extended state is
+the quadratic form of the compressed operator on the original one, which is
+`dotProduct_mulVec_conj` plus one Kronecker identity. `Dilation.lean`'s universe variables had to be
+relaxed from `Type` to `Type*` for the index group `n -> F` to serve as the ancilla.
+
+**Still to do in PR C**: `lem:qld-combined-points` -- the three-step construction that *applies*
+this theorem, whose first two steps are the work: combining the two bases' binary measurements
+through their approximate commutation, and proving the combined family approximately linear -- then
+`lem:qld-pairs-of-lines`, `lem:qld-padded-points`, `lem:qld-sublines`, `lem:qld-padded-lines`,
+`lem:qld-simultaneous`.
 
 `lem:qld-sublines` is purely combinatorial and the blueprint says it is "a reasonable place to
 start formalizing"; it is the natural first commit of PR C. `lem:qld-simultaneous` is the one
