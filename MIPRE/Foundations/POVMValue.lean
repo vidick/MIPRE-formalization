@@ -82,6 +82,45 @@ theorem POVM.posSemidef {A d : Type*} [Fintype A] [Fintype d] [DecidableEq d] (M
     (a : A) : ((M.mats a).val).PosSemidef :=
   Matrix.nonneg_iff_posSemidef.mp (Subtype.coe_le_coe.mpr (M.nonneg a))
 
+/-- Each POVM element is at most the identity. -/
+theorem POVM.le_one {A d : Type*} [Fintype A] [Fintype d] [DecidableEq d] (M : POVM A d)
+    (p : A) : ((M.mats p).val) ≤ (1 : Matrix d d ℂ) := by
+  rw [← POVM.sum_val M]
+  exact Finset.single_le_sum (fun a _ => Subtype.coe_le_coe.mpr (M.nonneg a)) (Finset.mem_univ p)
+
+/-- **The difference of two POVM elements is a self-adjoint contraction.** This is what makes a
+two-outcome coarse-graining of a POVM a `±1`-observable in every estimate: `X† = X` and
+`X† X ≤ 1`, with no projectivity. Outcomes other than the two chosen contribute nothing. -/
+theorem POVM.sub_mul_self_le_one {A d : Type*} [Fintype A] [Fintype d] [DecidableEq d]
+    (M : POVM A d) (p q : A) :
+    (((M.mats p).val - (M.mats q).val) * ((M.mats p).val - (M.mats q).val))
+      ≤ (1 : Matrix d d ℂ) := by
+  set X := ((M.mats p).val - (M.mats q).val) with hX
+  have h1 : (0 : Matrix d d ℂ) ≤ 1 - X := by
+    have hsplit : (1 : Matrix d d ℂ) - X = (1 - (M.mats p).val) + (M.mats q).val := by
+      rw [hX]; abel
+    rw [hsplit]
+    exact add_nonneg (sub_nonneg.mpr (M.le_one p)) (Subtype.coe_le_coe.mpr (M.nonneg q))
+  have h2 : (0 : Matrix d d ℂ) ≤ 1 + X := by
+    have hsplit : (1 : Matrix d d ℂ) + X = (1 - (M.mats q).val) + (M.mats p).val := by
+      rw [hX]; abel
+    rw [hsplit]
+    exact add_nonneg (sub_nonneg.mpr (M.le_one q)) (Subtype.coe_le_coe.mpr (M.nonneg p))
+  have hc : Commute ((1 : Matrix d d ℂ) - X) (1 + X) := by
+    show ((1 : Matrix d d ℂ) - X) * (1 + X) = (1 + X) * (1 - X)
+    noncomm_ring
+  have hprod : (0 : Matrix d d ℂ) ≤ ((1 : Matrix d d ℂ) - X) * (1 + X) := hc.mul_nonneg h1 h2
+  have heq : ((1 : Matrix d d ℂ) - X) * (1 + X) = 1 - X * X := by noncomm_ring
+  rw [heq] at hprod
+  exact sub_nonneg.mp hprod
+
+/-- The difference of two POVM elements is self-adjoint. -/
+theorem POVM.sub_conjTranspose {A d : Type*} [Fintype A] [Fintype d] [DecidableEq d]
+    (M : POVM A d) (p q : A) :
+    (((M.mats p).val - (M.mats q).val))ᴴ = ((M.mats p).val - (M.mats q).val) := by
+  rw [Matrix.conjTranspose_sub, ← Matrix.star_eq_conjTranspose, ← Matrix.star_eq_conjTranspose,
+    (M.mats p).2, (M.mats q).2]
+
 /-! ## Born probabilities -/
 
 variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]

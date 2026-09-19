@@ -59,7 +59,7 @@ theorem evec_sum {ι : Type*} (s : Finset ι) (f : ι → N → ℂ) :
 
 /-- The sesquilinear form of two matrices applied to the same vector, moved onto one side:
 `⟨A v, B v⟩ = ⟨v, A† B v⟩`. -/
-theorem star_mulVec_dotProduct (A B : Matrix N N ℂ) (v : N → ℂ) :
+theorem star_mulVec_dotProduct {M : Type*} [Fintype M] (A B : Matrix M N ℂ) (v : N → ℂ) :
     star (A *ᵥ v) ⬝ᵥ (B *ᵥ v) = star v ⬝ᵥ ((Aᴴ * B) *ᵥ v) := by
   rw [Matrix.star_mulVec, ← Matrix.mulVec_mulVec, ← Matrix.dotProduct_mulVec]
 
@@ -73,9 +73,16 @@ theorem norm_evec_sq (v : N → ℂ) : ‖evec v‖ ^ 2 = (star v ⬝ᵥ v).re :
     norm_cast
   rw [h, Complex.ofReal_re]
 
-theorem norm_evec_mulVec_sq (M : Matrix N N ℂ) (v : N → ℂ) :
-    ‖evec (M *ᵥ v)‖ ^ 2 = (star v ⬝ᵥ ((Mᴴ * M) *ᵥ v)).re := by
+theorem norm_evec_mulVec_sq {M : Type*} [Fintype M] (A : Matrix M N ℂ) (v : N → ℂ) :
+    ‖evec (A *ᵥ v)‖ ^ 2 = (star v ⬝ᵥ ((Aᴴ * A) *ᵥ v)).re := by
   rw [norm_evec_sq, star_mulVec_dotProduct]
+
+/-- **A rectangular isometry preserves the norm.** -/
+theorem norm_evec_mulVec_eq {M : Type*} [Fintype M] {A : Matrix M N ℂ} [DecidableEq N]
+    (h : Aᴴ * A = 1) (v : N → ℂ) : ‖evec (A *ᵥ v)‖ = ‖evec v‖ := by
+  have hsq : ‖evec (A *ᵥ v)‖ ^ 2 = ‖evec v‖ ^ 2 := by
+    rw [norm_evec_mulVec_sq, h, Matrix.one_mulVec, norm_evec_sq]
+  nlinarith [norm_nonneg (evec (A *ᵥ v)), norm_nonneg (evec v), hsq]
 
 /-! ## The bound -/
 
@@ -115,6 +122,72 @@ theorem bnd_zero (K : ℝ) (hK : 0 ≤ K) : Bnd (0 : Matrix N N ℂ) K := fun v 
   rw [Matrix.zero_mulVec, evec_zero, norm_zero]
   positivity
 
+/-! ## The norm on a fixed state
+
+`snorm v M = ‖M v‖`. Every estimate in a rigidity argument is a statement about this, and the
+four rules below --- the triangle inequality, scalars, a bound in front, an isometry in front ---
+are all of them. -/
+
+section SNorm
+
+variable (v : N → ℂ)
+
+/-- `‖M v‖`, for a fixed state `v`. -/
+def snorm (M : Matrix N N ℂ) : ℝ := ‖evec (M *ᵥ v)‖
+
+theorem snorm_nonneg (M : Matrix N N ℂ) : 0 ≤ snorm v M := norm_nonneg _
+
+theorem snorm_add_le (M M' : Matrix N N ℂ) : snorm v (M + M') ≤ snorm v M + snorm v M' := by
+  rw [snorm, snorm, snorm, Matrix.add_mulVec, evec_add]
+  exact norm_add_le _ _
+
+theorem snorm_sub_le (M M' : Matrix N N ℂ) : snorm v (M - M') ≤ snorm v M + snorm v M' := by
+  rw [snorm, snorm, snorm, Matrix.sub_mulVec, evec_sub]
+  exact norm_sub_le _ _
+
+theorem snorm_sub_comm (M M' : Matrix N N ℂ) : snorm v (M - M') = snorm v (M' - M) := by
+  rw [snorm, snorm, Matrix.sub_mulVec, Matrix.sub_mulVec, evec_sub, evec_sub, norm_sub_rev]
+
+theorem snorm_smul (c : ℂ) (M : Matrix N N ℂ) : snorm v (c • M) = ‖c‖ * snorm v M := by
+  rw [snorm, snorm, Matrix.smul_mulVec, evec_smul, norm_smul]
+
+theorem snorm_one [DecidableEq N] (hv : ‖evec v‖ = 1) :
+    snorm v (1 : Matrix N N ℂ) = 1 := by
+  rw [snorm, Matrix.one_mulVec, hv]
+
+/-- A bound in front of anything. -/
+theorem snorm_mul_le {M : Matrix N N ℂ} {K : ℝ} (h : Bnd M K) (M' : Matrix N N ℂ) :
+    snorm v (M * M') ≤ K * snorm v M' := by
+  rw [snorm, snorm, ← Matrix.mulVec_mulVec]
+  exact h (M' *ᵥ v)
+
+/-- An isometry in front changes nothing. -/
+theorem snorm_mul_of_isometry [DecidableEq N] {M : Matrix N N ℂ} (h : Mᴴ * M = 1)
+    (M' : Matrix N N ℂ) :
+    snorm v (M * M') = snorm v M' := by
+  rw [snorm, snorm, ← Matrix.mulVec_mulVec, norm_evec_mulVec_eq h]
+
+/-- **Replacing an operator by an isometry it is close to, in front of anything.** If `W` and
+the isometry `WD` agree on the state to within `δ`, and `WD` commutes with `Z`, then `Z W` is
+within `K δ` of `Z`, where `K` bounds `Z`. This is the suffix-insertion bound of the Magic
+Square argument, and it is the only place the commutation of the two parties is used. -/
+theorem snorm_mul_swap [DecidableEq N] {W WD Z : Matrix N N ℂ} {δ K : ℝ}
+    (hWD : WDᴴ * WD = 1) (hcomm : WD * Z = Z * WD) (hZ : Bnd Z K) (hK : 0 ≤ K)
+    (hd : snorm v (W - WD) ≤ δ) :
+    snorm v (Z * W) ≤ snorm v Z + K * δ := by
+  have hsplit : Z * W = Z * (W - WD) + WD * Z := by
+    have h : Z * (W - WD) + WD * Z = Z * (W - WD) + Z * WD := by rw [hcomm]
+    rw [h]
+    noncomm_ring
+  calc snorm v (Z * W) ≤ snorm v (Z * (W - WD)) + snorm v (WD * Z) := by
+        rw [hsplit]; exact snorm_add_le v _ _
+    _ ≤ K * δ + snorm v Z := by
+        refine add_le_add ?_ (le_of_eq (snorm_mul_of_isometry v hWD Z))
+        exact le_trans (snorm_mul_le v hZ _) (mul_le_mul_of_nonneg_left hd hK)
+    _ = snorm v Z + K * δ := by ring
+
+end SNorm
+
 variable [DecidableEq N]
 
 theorem bnd_one : Bnd (1 : Matrix N N ℂ) 1 := fun v => by
@@ -139,6 +212,18 @@ theorem bnd_one_of_conjTranspose_mul_self_le {M : Matrix N N ℂ}
     linarith
   rw [one_mul]
   nlinarith [norm_nonneg (evec (M *ᵥ v)), norm_nonneg (evec v), hsq]
+
+/-- **`X² ≤ X` for `0 ≤ X ≤ 1`**: `X - X² = X (1 - X)` is a product of commuting positive
+matrices. -/
+theorem mul_self_le_of_le_one {X : Matrix N N ℂ} (h0 : (0 : Matrix N N ℂ) ≤ X)
+    (h1 : X ≤ (1 : Matrix N N ℂ)) : X * X ≤ X := by
+  have hc : Commute X ((1 : Matrix N N ℂ) - X) := by
+    show X * (1 - X) = (1 - X) * X
+    noncomm_ring
+  have hprod : (0 : Matrix N N ℂ) ≤ X * (1 - X) := hc.mul_nonneg h0 (sub_nonneg.mpr h1)
+  have heq : X * ((1 : Matrix N N ℂ) - X) = X - X * X := by noncomm_ring
+  rw [heq] at hprod
+  exact sub_nonneg.mp hprod
 
 /-- An isometry preserves the norm exactly. -/
 theorem norm_evec_mulVec_of_isometry {M : Matrix N N ℂ} (h : Mᴴ * M = 1) (v : N → ℂ) :
