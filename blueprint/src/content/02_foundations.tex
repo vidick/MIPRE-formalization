@@ -614,7 +614,14 @@ Definition~\ref{def:state-distance}'s version compares the wrong pair.
   MIPRE.Weyl.wX_mul_wZ_of_eq, MIPRE.Weyl.trDotL_ne_zero, MIPRE.Weyl.sum_sgn_trDot,
   MIPRE.Weyl.sum_sgn_trDot_zero, MIPRE.Weyl.zProj, MIPRE.Weyl.sum_zProj,
   MIPRE.Weyl.wZ_eq_sum_zProj, MIPRE.Weyl.sum_sgn_smul_wZ,
-  MIPRE.LowDegree.card_filter_ker_mul'}
+  MIPRE.LowDegree.card_filter_ker_mul', MIPRE.Weyl.IsWeylFamily,
+  MIPRE.Weyl.isWeylFamily_wZ, MIPRE.Weyl.isWeylFamily_wX, MIPRE.Weyl.proj,
+  MIPRE.Weyl.proj_wZ, MIPRE.Weyl.proj_mul, MIPRE.Weyl.proj_mul_proj, MIPRE.Weyl.sum_proj,
+  MIPRE.Weyl.eq_sum_proj, MIPRE.Weyl.proj_conjTranspose, MIPRE.Weyl.xProj,
+  MIPRE.Weyl.sum_xProj, MIPRE.Weyl.wX_eq_sum_xProj, MIPRE.Weyl.xProj_mul_xProj,
+  MIPRE.Weyl.xProj_conjTranspose, MIPRE.Weyl.dotF, MIPRE.Weyl.trDot_smul,
+  MIPRE.Weyl.trMulL, MIPRE.Weyl.sum_sgn_linear, MIPRE.Weyl.sum_sgn_trMul,
+  MIPRE.Weyl.syn, MIPRE.Weyl.sum_sgn_smul_line}
 \leanok
 Let $q = 2^k$ be an admissible field size and let $n$ be a
 finite index set, so that $\F_q^n$ indexes a basis of $(\C^q)^{\ot n}$. Write
@@ -636,12 +643,26 @@ They satisfy, for all $a, a', b, b' \in \F_q^n$:
   $\qp^X(a)\, \qp^Z(b) = (-1)^{\langle a, b \rangle}\, \qp^Z(b)\, \qp^X(a)$; so the two commute
   when $\langle a, b\rangle = 0$ and anticommute when it is $1$.
 \end{enumerate}
-Writing $\qp^Z_c$ for the projector onto the computational basis vector $c \in \F_q^n$, the
-$\qp^Z(b)$ expand in them and are inverted by Fourier averaging:
+For $W \in \{X, Z\}$ define the \emph{spectral projectors} of the family by Fourier averaging,
+\begin{equation}
+  \label{eq:pauli-inversion-bp}
+  \qp^W_e \;=\; \E_{a \in \F_q^n} (-1)^{\langle a, e \rangle}\, \qp^W(a)\;.
+\end{equation}
+For $W = Z$ these are the projectors onto the computational basis vectors. They form a projective
+measurement and invert~\eqref{eq:pauli-inversion-bp}:
 \begin{equation}
   \label{eq:pauli-obs-proj-bp}
-  \qp^Z(b) \;=\; \sum_{c} (-1)^{\langle b, c\rangle}\, \qp^Z_c\;, \qquad
-  \E_{b \in \F_q^n} (-1)^{\langle b, c \rangle}\, \qp^Z(b) \;=\; \qp^Z_c\;.
+  \qp^W_e \qp^W_{e'} = \delta_{e, e'}\, \qp^W_e\;, \qquad
+  \sum_e \qp^W_e = \Id\;, \qquad
+  \qp^W(a) \;=\; \sum_{e} (-1)^{\langle a, e\rangle}\, \qp^W_e\;.
+\end{equation}
+Finally, for $v \in \F_q^n$ and $a \in \F_q$ write $v \cdot e = \sum_l v_l e_l \in \F_q$ for the
+pairing before the trace, and define the \emph{syndrome projector}
+$\qp^W_{[\,\cdot\, v = a]} = \sum_{e \,:\, e \cdot v = a} \qp^W_e$. Averaging the family along the
+line $r \mapsto r v$ recovers it:
+\begin{equation}
+  \label{eq:pauli-line-bp}
+  \E_{r \in \F_q} (-1)^{\fieldtr(a r)}\, \qp^W(r v) \;=\; \qp^W_{[\,\cdot\, v = a]}\;.
 \end{equation}
 \end{definition}
 
@@ -684,10 +705,25 @@ correction note on \texttt{lem:cancellation} warns that the ambient space must b
 \emph{base} field and that the statement is false over a subfield; here the space is all of
 $\F_q^n$ over $\F_2$, so there is nothing to check.
 
-What is not yet here: the Fourier transform conjugating the $\qp^Z$ family into the $\qp^X$ one
-and hence the $X$-side projectors, the syndrome projectors
-$\qp^W_{[\cdot\, v = a]}$ that Lemma~\ref{lem:qld-expanded-points} averages to, and
-$\ket{\EPR_q}^{\ot M}$ with its stabilizer relations.
+\textbf{The spectral theory is proved once, for both families.} The only properties of a family
+that~\eqref{eq:pauli-obs-proj-bp} and~\eqref{eq:pauli-line-bp} use are the three of
+\texttt{IsWeylFamily}: it represents the additive group, its operators are self-adjoint, and the
+identity sits at $0$. So the projectors are built by~\eqref{eq:pauli-inversion-bp} from any such
+family and the statements hold for both, which means the paper's Fourier transform
+(\texttt{eq:fourier-f}) conjugating $\qp^Z$ into $\qp^X$ is \emph{not needed} to reach the
+$X$-side projectors. That is worth avoiding: the transform carries a $q^{-1/2}$, and a square root
+in matrix entries costs far more in Lean than it does on paper.
+
+Two of the identities turn out to need even less. The expansion of an operator in its own
+projectors, and the line average~\eqref{eq:pauli-line-bp}, use \emph{no} group law at all --- they
+are Fourier inversion on the index group and hold for an arbitrary family. What the group law buys
+is that the projectors are mutually \emph{orthogonal}, which is what makes them a measurement
+rather than a resolution.
+
+What is not yet here: $\ket{\EPR_q}^{\ot M}$ with its stabilizer relations, and
+Lemma~\texttt{lem:pauli-binary}, the isomorphism carrying the qudit system to $Lk$ qubits.
+Equation~\eqref{eq:pauli-line-bp} is the identity
+Lemma~\ref{lem:qld-expanded-points} averages to, at $v = \ind_m(u)$.
 
 \begin{definition}[Inconsistency]
 \label{def:inconsistency}

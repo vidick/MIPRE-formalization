@@ -391,6 +391,267 @@ theorem sum_sgn_smul_wZ (c : n → F) :
     fun hmem => absurd (Finset.mem_univ c) hmem]
   rw [add_self_vec, sum_sgn_trDot_zero, smul_smul, inv_mul_cancel₀ hcard, one_smul]
 
+/-! ## The spectral projectors, once for both families
+
+Everything the appendix does with the eigenbasis projectors of one family uses only three facts
+about it: it represents the additive group of `F_q^n`, its operators are self-adjoint, and the
+identity sits at `0`. `IsWeylFamily` is those three, `proj` is the Fourier average that builds the
+projectors out of them, and the spectral statements are then proved once. `wZ` is one instance and
+`wX` the other, so the paper's Fourier transform conjugating one family into the other is not
+needed to reach the `X`-side projectors --- worth avoiding, since that transform carries a
+`q^{-1/2}` and would put a square root into matrix entries. -/
+
+/-- A family of self-adjoint operators indexed by `F_q^n` representing its additive group. The
+two Weyl families are the instances, and the spectral theory needs nothing else. -/
+structure IsWeylFamily (w : (n → F) → Matrix (n → F) (n → F) ℂ) : Prop where
+  /-- The family is a homomorphism from the additive group. -/
+  map_add : ∀ a a', w (a + a') = w a * w a'
+  /-- The identity sits at `0`. -/
+  map_zero : w 0 = 1
+  /-- Every operator is self-adjoint. -/
+  selfAdjoint : ∀ a, (w a)ᴴ = w a
+
+theorem isWeylFamily_wZ : IsWeylFamily (wZ (F := F) (n := n)) where
+  map_add a a' := (wZ_mul_wZ a a').symm
+  map_zero := wZ_zero
+  selfAdjoint := wZ_conjTranspose
+
+theorem isWeylFamily_wX : IsWeylFamily (wX (F := F) (n := n)) where
+  map_add a a' := (wX_mul_wX a a').symm
+  map_zero := wX_zero
+  selfAdjoint := wX_conjTranspose
+
+theorem card_ne_zero : (Fintype.card (n → F) : ℂ) ≠ 0 := by
+  have : 0 < Fintype.card (n → F) := Fintype.card_pos
+  exact_mod_cast this.ne'
+
+/-- **The spectral projector** of a Weyl family at the eigenvalue pattern `e`: the Fourier average
+of the family against the character of `e`. For `wZ` it is `zProj e` (`proj_wZ`); for `wX` it is
+the projector onto the `X`-eigenbasis vector the paper writes `|e_X⟩`. -/
+def proj (w : (n → F) → Matrix (n → F) (n → F) ℂ) (e : n → F) :
+    Matrix (n → F) (n → F) ℂ :=
+  (Fintype.card (n → F) : ℂ)⁻¹ • ∑ a : n → F, sgn (trDot a e) • w a
+
+/-- The defining Fourier average, as a rewrite. -/
+theorem proj_def (w : (n → F) → Matrix (n → F) (n → F) ℂ) (e : n → F) :
+    proj w e = (Fintype.card (n → F) : ℂ)⁻¹ • ∑ a : n → F, sgn (trDot a e) • w a := rfl
+
+/-- The `Z`-family's spectral projectors are the computational-basis ones. -/
+theorem proj_wZ (c : n → F) : proj (wZ (F := F) (n := n)) c = zProj c :=
+  sum_sgn_smul_wZ c
+
+variable {w : (n → F) → Matrix (n → F) (n → F) ℂ}
+
+/-- **A projector absorbs its own family's operators**, up to the sign: one reindexing. -/
+theorem proj_mul (hw : IsWeylFamily w) (e a : n → F) :
+    proj w e * w a = sgn (trDot a e) • proj w e := by
+  classical
+  rw [proj_def w e, Matrix.smul_mul, Finset.sum_mul,
+    Finset.sum_congr rfl fun b (_ : b ∈ univ) => by rw [Matrix.smul_mul, ← hw.map_add],
+    Fintype.sum_equiv (Equiv.addRight a) _ (fun c => sgn (trDot (c + a) e) • w c) fun b => by
+      rw [Equiv.coe_addRight, add_add_cancel_vec],
+    Finset.sum_congr rfl fun c (_ : c ∈ univ) => by
+      rw [trDot_add_left, sgn_add, mul_comm, ← smul_smul],
+    ← Finset.smul_sum, smul_comm, ← proj_def w e]
+
+/-- **The projectors are mutually orthogonal idempotents.** -/
+theorem proj_mul_proj (hw : IsWeylFamily w) (e e' : n → F) :
+    proj w e * proj w e' = if e = e' then proj w e else 0 := by
+  classical
+  rw [proj_def w e', Matrix.mul_smul, Finset.mul_sum,
+    Finset.sum_congr rfl fun a (_ : a ∈ univ) => by
+      rw [Matrix.mul_smul, proj_mul hw e a, smul_smul, ← sgn_add, ← trDot_add_right],
+    ← Finset.sum_smul]
+  by_cases h : e = e'
+  · subst h
+    rw [if_pos rfl, add_self_vec,
+      Finset.sum_congr rfl fun a (_ : a ∈ univ) => by rw [trDot_zero_right, sgn_zero],
+      Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one, smul_smul,
+      inv_mul_cancel₀ card_ne_zero, one_smul]
+  · rw [if_neg h, sum_sgn_trDot (c := e' + e) fun hh =>
+      h (((add_eq_zero_iff_vec e' e).mp hh).symm), zero_smul, smul_zero]
+
+/-- **The projectors of a Weyl family sum to the identity.** -/
+theorem sum_proj (hw : IsWeylFamily w) : ∑ e : n → F, proj w e = 1 := by
+  classical
+  simp only [proj_def]
+  rw [← Finset.smul_sum, Finset.sum_comm,
+    Finset.sum_eq_single (0 : n → F) (fun a _ ha => by
+      rw [← Finset.sum_smul, Finset.sum_congr rfl fun e (_ : e ∈ univ) => by
+        rw [trDot_comm a e], sum_sgn_trDot ha, zero_smul])
+      fun hmem => absurd (Finset.mem_univ (0 : n → F)) hmem,
+    hw.map_zero, ← Finset.sum_smul,
+    Finset.sum_congr rfl fun e (_ : e ∈ univ) => by rw [trDot_zero_left, sgn_zero],
+    Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one, smul_smul,
+    inv_mul_cancel₀ card_ne_zero, one_smul]
+
+/-- **A Weyl operator expands in its own projectors** with the sign coefficients: the paper's
+`eq:pauli-obs-proj` for either family.
+
+The group law is *not* used: this is pure Fourier inversion on the index group, and holds for any
+family at all. What the group law buys is that the projectors are then mutually orthogonal
+(`proj_mul_proj`), which is what makes them a measurement. -/
+theorem eq_sum_proj (a : n → F) :
+    w a = ∑ e : n → F, sgn (trDot a e) • proj w e := by
+  classical
+  simp only [proj_def]
+  rw [Finset.sum_congr rfl fun e (_ : e ∈ univ) => by
+      rw [smul_comm, Finset.smul_sum,
+        Finset.sum_congr rfl fun b (_ : b ∈ univ) => by
+          rw [smul_smul, ← sgn_add, ← trDot_add_left]],
+    ← Finset.smul_sum, Finset.sum_comm,
+    Finset.sum_eq_single a (fun b _ hb => by
+      rw [← Finset.sum_smul,
+        Finset.sum_congr rfl fun e (_ : e ∈ univ) => by rw [trDot_comm (a + b) e],
+        sum_sgn_trDot (c := a + b) fun hh => hb (((add_eq_zero_iff_vec a b).mp hh).symm),
+        zero_smul])
+      fun hmem => absurd (Finset.mem_univ a) hmem,
+    add_self_vec, ← Finset.sum_smul,
+    Finset.sum_congr rfl fun e (_ : e ∈ univ) => by rw [trDot_zero_left, sgn_zero],
+    Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one, smul_smul,
+    inv_mul_cancel₀ card_ne_zero, one_smul]
+
+/-- The projectors are self-adjoint. -/
+theorem proj_conjTranspose (hw : IsWeylFamily w) (e : n → F) : (proj w e)ᴴ = proj w e := by
+  classical
+  rw [proj_def w e, Matrix.conjTranspose_smul, Matrix.conjTranspose_sum,
+    Finset.sum_congr rfl fun a (_ : a ∈ univ) => by
+      rw [Matrix.conjTranspose_smul, hw.selfAdjoint a, star_sgn]]
+  congr 1
+  simp
+
+/-- **The `X`-side projectors**, the paper's `|e_X⟩⟨e_X|`. -/
+def xProj (e : n → F) : Matrix (n → F) (n → F) ℂ := proj (wX (F := F) (n := n)) e
+
+theorem sum_xProj : ∑ e : n → F, xProj (F := F) e = 1 := sum_proj isWeylFamily_wX
+
+theorem wX_eq_sum_xProj (a : n → F) :
+    wX a = ∑ e : n → F, sgn (trDot a e) • xProj (F := F) e :=
+  eq_sum_proj a
+
+theorem xProj_mul_xProj (e e' : n → F) :
+    xProj (F := F) e * xProj e' = if e = e' then xProj e else 0 :=
+  proj_mul_proj isWeylFamily_wX e e'
+
+theorem xProj_conjTranspose (e : n → F) : (xProj (F := F) e)ᴴ = xProj e :=
+  proj_conjTranspose isWeylFamily_wX e
+
+/-! ## The syndrome projectors
+
+The expansion stage does not average the Weyl family over the whole of `F_q^n`: it averages over
+the *line* `r ↦ r · v` for a fixed `v ∈ F_q^n`, against the character of a field element `a`. What
+comes out is the projector onto the eigenvectors whose `F_q`-valued pairing with `v` is `a` --- the
+paper's `τ^{W,u}_a = τ^W_{[g_·(u) = a]}` of `eq:qld-point-obs-def`, at `v = ind_m(u)`. -/
+
+/-- The `F_q`-valued pairing, before the trace. -/
+def dotF (a b : n → F) : F := ∑ l, a l * b l
+
+theorem dotF_comm (a b : n → F) : dotF a b = dotF b a :=
+  Finset.sum_congr rfl fun l _ => mul_comm (a l) (b l)
+
+theorem trDot_eq_trace_dotF (a b : n → F) :
+    trDot a b = Algebra.trace (ZMod 2) F (dotF a b) := rfl
+
+/-- Scaling one argument of the pairing pulls the scalar out. -/
+theorem trDot_smul (r : F) (v e : n → F) :
+    trDot (r • v) e = Algebra.trace (ZMod 2) F (r * dotF v e) := by
+  rw [trDot, dotF, Finset.mul_sum]
+  congr 1
+  exact Finset.sum_congr rfl fun l _ => by rw [Pi.smul_apply, smul_eq_mul, mul_assoc]
+
+/-- The trace against a fixed field element, as an `F_2`-linear functional on `F_q`. -/
+def trMulL (x : F) : F →ₗ[ZMod 2] ZMod 2 where
+  toFun r := Algebra.trace (ZMod 2) F (r * x)
+  map_add' r r' := by rw [add_mul, map_add]
+  map_smul' c r := by
+    rcases (show c = 0 ∨ c = 1 from by revert c; decide) with rfl | rfl
+    · simp
+    · simp
+
+theorem trMulL_ne_zero {x : F} (hx : x ≠ 0) : trMulL x ≠ 0 := by
+  obtain ⟨y, hy⟩ := Algebra.trace_surjective (ZMod 2) F 1
+  intro h
+  have h0 : Algebra.trace (ZMod 2) F ((y / x) * x) = 0 := by
+    have := congrFun (congrArg (fun t : F →ₗ[ZMod 2] ZMod 2 => t.toFun) h) (y / x)
+    simpa [trMulL] using this
+  rw [div_mul_cancel₀ _ hx, hy] at h0
+  exact one_ne_zero h0
+
+/-- **A nonzero sign character of a finite `F_2`-space sums to zero.** `sum_sgn_trDot` and
+`sum_sgn_trMul` are its two instances; the content is the index-two kernel of
+`card_filter_ker_mul'`. -/
+theorem sum_sgn_linear {V : Type*} [AddCommGroup V] [Module (ZMod 2) V] [Fintype V]
+    [DecidableEq V] (τ : V →ₗ[ZMod 2] ZMod 2) (hτ : τ ≠ 0) : ∑ v : V, sgn (τ v) = 0 := by
+  classical
+  have hker := MIPRE.LowDegree.card_filter_ker_mul' τ hτ
+  rw [ZMod.card] at hker
+  have hsplit : #{v ∈ (univ : Finset V) | τ v = 0} + #{v ∈ (univ : Finset V) | ¬ τ v = 0}
+      = Fintype.card V := by
+    rw [← Finset.card_univ]
+    exact Finset.card_filter_add_card_filter_not _
+  have hcompl : #{v ∈ (univ : Finset V) | ¬ τ v = 0} = #{v ∈ (univ : Finset V) | τ v = 0} := by
+    omega
+  have hone : ∀ x : ZMod 2, ¬ x = 0 → x = 1 := by decide
+  have h0 : ∑ v ∈ {v ∈ (univ : Finset V) | τ v = 0}, sgn (τ v)
+      = (#{v ∈ (univ : Finset V) | τ v = 0} : ℂ) := by
+    rw [Finset.sum_congr rfl fun v hv => by rw [(Finset.mem_filter.mp hv).2, sgn_zero],
+      Finset.sum_const, nsmul_eq_mul, mul_one]
+  have h1 : ∑ v ∈ {v ∈ (univ : Finset V) | ¬ τ v = 0}, sgn (τ v)
+      = -(#{v ∈ (univ : Finset V) | τ v = 0} : ℂ) := by
+    rw [Finset.sum_congr rfl fun v hv => by rw [hone _ (Finset.mem_filter.mp hv).2, sgn_one],
+      Finset.sum_const, nsmul_eq_mul, mul_neg, mul_one, hcompl]
+  rw [← Finset.sum_filter_add_sum_filter_not (univ : Finset V) fun v => τ v = 0, h0, h1]
+  ring
+
+/-- The one-field cancellation: the `r`-average of the sign of `tr(r x)` vanishes unless `x = 0`. -/
+theorem sum_sgn_trMul {x : F} (hx : x ≠ 0) :
+    ∑ r : F, sgn (Algebra.trace (ZMod 2) F (r * x)) = 0 :=
+  sum_sgn_linear (trMulL x) (trMulL_ne_zero hx)
+
+theorem sum_sgn_trMul_zero :
+    ∑ r : F, sgn (Algebra.trace (ZMod 2) F (r * (0 : F))) = (Fintype.card F : ℂ) := by
+  rw [Finset.sum_congr rfl fun r (_ : r ∈ univ) => by rw [mul_zero, map_zero, sgn_zero],
+    Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one]
+
+/-- **The syndrome projector**: onto the eigenvectors whose pairing with `v` is `a`. The paper's
+`eq:qld-point-obs-def`. -/
+def syn (w : (n → F) → Matrix (n → F) (n → F) ℂ) (v : n → F) (a : F) :
+    Matrix (n → F) (n → F) ℂ :=
+  ∑ e ∈ univ.filter fun e => dotF e v = a, proj w e
+
+/-- **The identity the expansion stage calls.** Averaging the family along the line `r ↦ r · v`
+against the character of `a` gives the syndrome projector: the paper's
+`E_r (-1)^{tr(ar)} \qp^W(r \cdot v) = \qp^W_{[\cdot v = a]}`. As with `eq_sum_proj`, the group law
+is not used. -/
+theorem sum_sgn_smul_line (v : n → F) (a : F) :
+    (Fintype.card F : ℂ)⁻¹ • ∑ r : F, sgn (Algebra.trace (ZMod 2) F (a * r)) • w (r • v)
+      = syn w v a := by
+  classical
+  have hcardF : (Fintype.card F : ℂ) ≠ 0 := by
+    have : 0 < Fintype.card F := Fintype.card_pos
+    exact_mod_cast this.ne'
+  -- expand each operator on the line in the projectors, then exchange the two sums
+  rw [Finset.sum_congr rfl fun r (_ : r ∈ univ) => by
+      rw [eq_sum_proj (w := w) (r • v), Finset.smul_sum,
+        Finset.sum_congr rfl fun e (_ : e ∈ univ) => by
+          rw [smul_smul, ← sgn_add, trDot_smul, ← map_add, mul_comm a r, ← mul_add,
+            dotF_comm v e]],
+    Finset.sum_comm, Finset.smul_sum]
+  -- each `e` contributes only when its syndrome is `a`
+  rw [syn, ← Finset.sum_filter_add_sum_filter_not (univ : Finset (n → F))
+    fun e => dotF e v = a]
+  rw [show ∑ e ∈ {e ∈ (univ : Finset (n → F)) | ¬ dotF e v = a},
+        (Fintype.card F : ℂ)⁻¹ • ∑ r : F, sgn (Algebra.trace (ZMod 2) F (r * (a + dotF e v)))
+          • proj w e = 0 from
+      Finset.sum_eq_zero fun e he => by
+        rw [← Finset.sum_smul, sum_sgn_trMul (x := a + dotF e v) fun hh =>
+          (Finset.mem_filter.mp he).2 (((add_eq_zero_iff a (dotF e v)).mp hh).symm),
+          zero_smul, smul_zero], add_zero]
+  refine Finset.sum_congr rfl fun e he => ?_
+  rw [show a + dotF e v = 0 from by
+      rw [(Finset.mem_filter.mp he).2, add_self],
+    ← Finset.sum_smul, sum_sgn_trMul_zero, smul_smul, inv_mul_cancel₀ hcardF, one_smul]
+
 end Operators
 
 end MIPRE.Weyl
