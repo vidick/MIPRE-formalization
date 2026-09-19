@@ -177,27 +177,35 @@ lines, it is worth doing on its own merits — generic mathematics this project 
 reachable only through the most expensive import in the repository — and it should be the first
 commit of PR B rather than a detour inside a lemma.
 
-**2. `Game.toNonlocalGame` is one-directional, and the lemma's Alice half is not statable on
-it.** `MIPRE.LCS.Game.toNonlocalGame` samples an equation `i` for **Alice** and a variable
+**2. `Game.toNonlocalGame` was one-directional, and the lemma's Alice half was not statable on
+it.** *(Settled 2026-09-19: the game is now symmetrized. What follows is the finding as it
+stood, kept because it is why the definition changed and where the constant comes from.)*
+
+The old `MIPRE.LCS.Game.toNonlocalGame` sampled an equation `i` for **Alice** and a variable
 `j ∈ V i` for **Bob**, always in that direction: 18 equiprobable incidences, and Alice never
 receives a variable question. The paper's `game^MS` samples one of **36 oriented** incidences,
 so both players answer both kinds of question, and `lem:ms-direct-anticomm` asserts a bound for
-each player — `A^{Variable_j}` on Alice's side does not exist in the current game. Nothing in
-`MIPRE/LCS/` or `MIPRE/Foundations/` symmetrizes an LCS nonlocal game (the `Bool` role of
+each player — `A^{Variable_j}` on Alice's side did not exist in that game. Nothing in
+`MIPRE/LCS/` or `MIPRE/Foundations/` symmetrized an LCS nonlocal game (the `Bool` role of
 `def:lidt` and `def:lidt-cl` is the precedent for how it would be done).
 
-So PR B must either symmetrize `Game.toNonlocalGame` — the honest fix, and the one that makes
+So PR B had to either symmetrize `Game.toNonlocalGame` — the honest fix, and the one that makes
 the Lean game the paper's game — or state the lemma for a separately defined symmetrized Magic
-Square game. Until that is settled the statement cannot be written down, which is the real
-reason this could not be finished inside PR A.
+Square game. **The maintainer chose to symmetrize it**, and that is the first commit of PR B:
+both players now draw questions from `Fin G.r ⊕ Fin G.s` and answer in
+`(Fin G.s → ZMod 2) ⊕ ZMod 2`, the referee samples an incidence and a uniform orientation, and
+the decider rejects a mismatched answer shape and an off-support pair. Nothing in the repository
+depended on the old direction, so this is a replacement rather than an addition;
+`MIPRE/LCS/MagicSquare/Game.lean` pins each accept/reject outcome with `decide`-checked
+witnesses, which is the `clGame` lesson applied.
 
-**3. The constant differs between the two games, in the Lean's favour.** The paper's `186624`
+**3. The constant follows the game, and with the symmetrization it is the paper's.** The paper's `186624`
 is `36² · 144` where `γ² ≤ 144 ε` comes from `δ²_{c,j} ≤ 4 ℓ_{c,j}` and `∑ ℓ_{c,j} ≤ 36 ε`, the
 last factor being the 36 oriented incidences. On the *one-directional* game there are 18
 equiprobable incidences, so `∑ ℓ_{c,j} ≤ 18 ε`, `γ² ≤ 72 ε`, and the bound is `36² · 72 =
-93312 ε`. On a symmetrized game the paper's counting applies verbatim and the constant is the
-paper's. Either is fine downstream — `lem:qld-win` only needs `O(ε)` — but the two must not be
-mixed up, and whichever game is chosen the blueprint should carry that game's constant.
+93312 ε`. On the symmetrized game the paper's counting applies verbatim and the constant is
+the paper's, which is the one the blueprint now carries. Either is fine downstream —
+`lem:qld-win` only needs `O(ε)` — but the two must not be mixed up.
 
 What remains after those three is the work the blueprint describes and it is substantial on its
 own: the reflections `C_{c,j} = ∑_β (-1)^{β_j} P_c(β)` and their within-constraint product

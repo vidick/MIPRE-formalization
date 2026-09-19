@@ -665,6 +665,7 @@ import MIPRE.HaltingGameValue
 import MIPRE.LCS.Basic
 import MIPRE.LCS.Common
 import MIPRE.LCS.EPR
+import MIPRE.LCS.MagicSquare.Game
 import MIPRE.LCS.MagicSquare.SolutionGroup
 import MIPRE.LCS.MagicSquare.Strategy
 import MIPRE.LCS.MatrixSOS
