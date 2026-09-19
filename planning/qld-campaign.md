@@ -89,7 +89,10 @@ Everything that needs no Pauli-test game. This is the piece the maintainer asked
 | averaging preserves closeness | `lem:qld-averaging` | same |
 | POVM elements to generalized observables | `lem:qld-povm-to-obs` | same |
 | orthonormalization from consistency | `cor:ortho-from-consistency` | `MIPRE/Background/QLD/Ortho.lean` |
-| direct Magic Square anticommutation | `lem:ms-direct-anticomm` | `MIPRE/LCS/MagicSquare/Anticomm.lean` |
+| anticommuting question tuples | `fact:omega-anticomm-prob` | `MIPRE/Foundations/LowDegree/Anticomm.lean` |
+
+`lem:ms-direct-anticomm` was planned for PR A and **moved to PR B** while it was being scoped;
+"What the Magic Square lemma actually costs" below says why.
 
 The first three are short once the distance exists: triangle inequality and Jensen, then
 Cauchy--Schwarz over the outcome set, both already available for the tracial distance in
@@ -147,10 +150,67 @@ One paper statement the blueprint is missing and PR A should add:
 this repository has — plus the trace-is-balanced fact. Its `\cnote` records that two false
 auxiliary claims were removed from an earlier revision, so read the live text, not the original.
 
-### PR B — the game, what winning implies, and the expansion
+#### What the Magic Square lemma actually costs (reconnaissance, 2026-09-19)
 
-`def:qld-game` (see above), then `lem:qld-win`, `lem:qld-expanded-points`,
-`lem:qld-expanded-lines`. `lem:qld-win` is bookkeeping *given* the game — each item is the value
+`lem:ms-direct-anticomm` was scoped inside PR A and moved to PR B. It is still the
+best-specified target in the campaign — the blueprint and `paper/ldt.tex` write the whole proof
+out with explicit constants — but it is not a tail item, for three reasons, two of them
+structural and one of them a finding about the repository rather than about the lemma.
+
+**1. The Naimark dilation the proof needs already exists, behind a 71k-line import.**
+The proof dilates each of Alice's six constraint POVMs to a projective measurement on *one
+shared* initialized ancilla, which is what lets all six families act on a single state
+`|ψ'⟩ = (J ⊗ Id)|ψ⟩`; that is why the paper needs the unitary extension `U_c J = V_c` rather
+than the one-line isometry `V_c`. `MIPRE.Repetition.exists_projective_dilation` in
+`MIPRE/Background/Repetition/Entangled.lean` is exactly that theorem, with exactly that
+question-independent embedding (`ancillaEmbed d a₀`), together with
+`exists_isometry_of_povm`, `exists_unitary_extending`, `ancillaProj` and the Born-rule
+transport lemmas. None of it touches the vendored trees.
+
+But `Entangled.lean` is one of the nine bridge modules: it imports
+`MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition`, the 71k-line vendored
+module that costs 25 CPU-minutes on its own. `MIPRE/LCS/` may not import `MIPRE/Background/`
+at all (the one-way import graph in `CLAUDE.md`), so the dilation has to be **extracted first**
+into something like `MIPRE/Foundations/Dilation.lean`, with `Entangled.lean` importing it and
+its namespace changing from `MIPRE.Repetition` to `MIPRE`. That is a pure refactor of about 190
+lines, it is worth doing on its own merits — generic mathematics this project wrote, currently
+reachable only through the most expensive import in the repository — and it should be the first
+commit of PR B rather than a detour inside a lemma.
+
+**2. `Game.toNonlocalGame` is one-directional, and the lemma's Alice half is not statable on
+it.** `MIPRE.LCS.Game.toNonlocalGame` samples an equation `i` for **Alice** and a variable
+`j ∈ V i` for **Bob**, always in that direction: 18 equiprobable incidences, and Alice never
+receives a variable question. The paper's `game^MS` samples one of **36 oriented** incidences,
+so both players answer both kinds of question, and `lem:ms-direct-anticomm` asserts a bound for
+each player — `A^{Variable_j}` on Alice's side does not exist in the current game. Nothing in
+`MIPRE/LCS/` or `MIPRE/Foundations/` symmetrizes an LCS nonlocal game (the `Bool` role of
+`def:lidt` and `def:lidt-cl` is the precedent for how it would be done).
+
+So PR B must either symmetrize `Game.toNonlocalGame` — the honest fix, and the one that makes
+the Lean game the paper's game — or state the lemma for a separately defined symmetrized Magic
+Square game. Until that is settled the statement cannot be written down, which is the real
+reason this could not be finished inside PR A.
+
+**3. The constant differs between the two games, in the Lean's favour.** The paper's `186624`
+is `36² · 144` where `γ² ≤ 144 ε` comes from `δ²_{c,j} ≤ 4 ℓ_{c,j}` and `∑ ℓ_{c,j} ≤ 36 ε`, the
+last factor being the 36 oriented incidences. On the *one-directional* game there are 18
+equiprobable incidences, so `∑ ℓ_{c,j} ≤ 18 ε`, `γ² ≤ 72 ε`, and the bound is `36² · 72 =
+93312 ε`. On a symmetrized game the paper's counting applies verbatim and the constant is the
+paper's. Either is fine downstream — `lem:qld-win` only needs `O(ε)` — but the two must not be
+mixed up, and whichever game is chosen the blueprint should carry that game's constant.
+
+What remains after those three is the work the blueprint describes and it is substantial on its
+own: the reflections `C_{c,j} = ∑_β (-1)^{β_j} P_c(β)` and their within-constraint product
+relations, `⟨ψ'|C_{c,j} B_j|ψ'⟩ ≥ 1 - 2 ℓ_{c,j}` from the winning condition with rejected
+answers valued zero, the suffix-insertion bound `‖R W ψ'‖ ≤ ‖R ψ'‖ + ‖R‖ t γ`, the
+non-projectivity bound `‖(Id - B_j²) W ψ'‖ ≤ (2 + t) γ`, the six-step word path with its
+`24 γ`, and the two end-removals. Roughly twenty operator-norm steps over a 9-variable,
+6-constraint structure.
+
+### PR B — the game, what winning implies, the Magic Square lemma, and the expansion
+
+`def:qld-game` (see above), then `lem:ms-direct-anticomm`, `lem:qld-win`,
+`lem:qld-expanded-points`, `lem:qld-expanded-lines`. `lem:qld-win` is bookkeeping *given* the game — each item is the value
 of a subtest divided by its selection probability — plus one real step, transferring
 `lem:ms-direct-anticomm` to the point observables. The expansion stage is where the ancillas
 come in and where the sign `(−1)^γ` cancels exactly; the blueprint flags that cancellation as

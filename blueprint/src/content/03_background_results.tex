@@ -437,6 +437,19 @@ the Pauli test amplifies to many qubits. Its bipartite form already matches the
 soundness proof's use; a tracial specialization is optional and is not an additional
 pipeline prerequisite.
 
+One thing to settle before formalizing it, found while scoping: the constant depends on which
+Magic Square game is meant. The paper's $\game^{\MS}$ samples one of \emph{36 oriented}
+incidences, so both players answer both kinds of question and
+$\sum_{c,j} \ell_{c,j} \leq 36 \eps$, giving $\gamma^2 \leq 144\eps$ and
+$36^2 \cdot 144 = 186624$. The nonlocal game this repository builds from an LCS instance
+(\texttt{MIPRE.LCS.Game.toNonlocalGame}) is \emph{one-directional} --- Alice always receives
+the equation, Bob always the variable, 18 equiprobable incidences --- so there
+$\sum_{c,j} \ell_{c,j} \leq 18\eps$ and the bound is $36^2 \cdot 72 = 93312\,\eps$; and the
+statement's Alice half is not expressible at all, since Alice never receives a variable
+question. Either constant serves Lemma~\ref{lem:qld-win}, which needs only $O(\eps)$, but the
+game and the constant must match. \texttt{planning/qld-campaign.md} records this with the rest
+of the lemma's cost.
+
 \subsection{The classical low individual degree test}
 \label{sec:rr-lidt}
 
