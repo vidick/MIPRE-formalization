@@ -386,6 +386,9 @@ import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.WOTCompact
 import MIPRE.Background.Orthonormalization.Orthogonalization.PhiNorm
 import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
 import MIPRE.Background.Orthonormalization.Statement
+import MIPRE.Background.QLD.Axioms
+import MIPRE.Background.QLD.Consistency
+import MIPRE.Background.QLD.Ortho
 import MIPRE.Background.Repetition.Axioms
 import MIPRE.Background.Repetition.Commuting
 import MIPRE.Background.Repetition.CommutingRepetition.Game.Basic
@@ -599,6 +602,7 @@ import MIPRE.Foundations.Halting.Strings
 import MIPRE.Foundations.Halting.Tabulate
 import MIPRE.Foundations.Halting.Wrapper
 import MIPRE.Foundations.Halting.WrapperCost
+import MIPRE.Foundations.LowDegree.Anticomm
 import MIPRE.Foundations.LowDegree.Encoding
 import MIPRE.Foundations.LowDegree.NormalBasis
 import MIPRE.Foundations.LowDegree.SchwartzZippel
@@ -639,6 +643,7 @@ import MIPRE.Foundations.SAT.Pcp
 import MIPRE.Foundations.SAT.Succinct
 import MIPRE.Foundations.SAT.Table
 import MIPRE.Foundations.SAT.Tseitin
+import MIPRE.Foundations.StateDistance
 import MIPRE.Foundations.SyncTransport
 import MIPRE.Foundations.TensorFamily
 import MIPRE.Foundations.ValueApprox

@@ -204,6 +204,7 @@ def undefined_macros():
 
 AXIOM_GUARDS = [ROOT / "MIPRE" / "Axioms.lean",
                 ROOT / "MIPRE" / "Background" / "LIDT" / "Axioms.lean",
+                ROOT / "MIPRE" / "Background" / "QLD" / "Axioms.lean",
                 ROOT / "MIPRE" / "Background" / "Repetition" / "Axioms.lean"]
 
 AXIOM_DECL_RE = re.compile(r"^(?:public\s+)?axiom\s+([A-Za-z_][A-Za-z0-9_.']*)", re.M)

@@ -327,11 +327,13 @@ Theorem~\ref{thm:almost-sync}.
 
 The formalized hypothesis and conclusion are both strict. For a POVM, completeness
 identifies the defect with $1-\varphi(\sum_a M_a^2)$, but does not turn a non-strict
-bound into a strict one. In finite dimension a separate compactness argument retains
-the constant $9$: apply the theorem at every larger error, then pass to a convergent
-subsequence of projective measurements and use continuity. This also covers zero
-defect; Corollary~\ref{cor:ortho-from-consistency} spells out the limiting step needed
-by its application. That corollary has no Lean proof mark here.
+bound into a strict one. A compactness argument in finite dimension would retain the
+constant $9$ at the non-strict bound --- apply the theorem at every larger error, then
+pass to a convergent subsequence of projective measurements and use continuity --- and
+would also cover zero defect. Corollary~\ref{cor:ortho-from-consistency}, the one
+application in this project, does not need it: its Cauchy--Schwarz step produces slack
+$\gamma^2$ over the bound it has to clear, so the strict hypothesis holds as stated. The
+comments after that corollary record the repair.
 
 \subsection{Magic Square rigidity}
 \label{sec:rr-magic-square}
@@ -434,6 +436,19 @@ reflections with six relations.
 the Pauli test amplifies to many qubits. Its bipartite form already matches the
 soundness proof's use; a tracial specialization is optional and is not an additional
 pipeline prerequisite.
+
+One thing to settle before formalizing it, found while scoping: the constant depends on which
+Magic Square game is meant. The paper's $\game^{\MS}$ samples one of \emph{36 oriented}
+incidences, so both players answer both kinds of question and
+$\sum_{c,j} \ell_{c,j} \leq 36 \eps$, giving $\gamma^2 \leq 144\eps$ and
+$36^2 \cdot 144 = 186624$. The nonlocal game this repository builds from an LCS instance
+(\texttt{MIPRE.LCS.Game.toNonlocalGame}) is \emph{one-directional} --- Alice always receives
+the equation, Bob always the variable, 18 equiprobable incidences --- so there
+$\sum_{c,j} \ell_{c,j} \leq 18\eps$ and the bound is $36^2 \cdot 72 = 93312\,\eps$; and the
+statement's Alice half is not expressible at all, since Alice never receives a variable
+question. Either constant serves Lemma~\ref{lem:qld-win}, which needs only $O(\eps)$, but the
+game and the constant must match. \texttt{planning/qld-campaign.md} records this with the rest
+of the lemma's cost.
 
 \subsection{The classical low individual degree test}
 \label{sec:rr-lidt}
@@ -1200,19 +1215,82 @@ measurements in stage 3 satisfy only approximate commutation.
 
 \subsubsection{Preliminaries}
 
+\effortMedium
+
+\begin{lemma}[Anticommuting question tuples]
+\label{fact:omega-anticomm-prob}
+\uses{def:ld-encoding,lem:schwartz-zippel}
+\lean{MIPRE.LowDegree.indVec, MIPRE.LowDegree.indPair, MIPRE.LowDegree.indPair_eq_eval,
+  MIPRE.LowDegree.acGamma, MIPRE.LowDegree.acTuples, MIPRE.LowDegree.cTuples,
+  MIPRE.LowDegree.card_acTuples_add_card_cTuples,
+  MIPRE.LowDegree.prob_anticommuting_ge, MIPRE.LowDegree.prob_commuting_ge}
+\leanok
+Let $\ind_m(x) \in \F_q^M$, $M = 2^m$, be the vector $(\ind_{m,y}(x))_y$ of the indicator
+polynomials of Definition~\ref{def:ld-encoding} evaluated at a point $x \in \F_q^m$, and call
+a tuple $\omega = (u_X, u_Z, r_X, r_Z) \in (\F_q^m)^2 \times \F_q^2$ \emph{anticommuting} if
+\begin{equation*}
+  \gamma(\omega) \;=\; \fieldtr_{q \to 2}\bigl( (r_X \cdot \ind_m(u_X)) \cdot
+    (r_Z \cdot \ind_m(u_Z)) \bigr) \;\neq\; 0\;,
+\end{equation*}
+the inner product being the one of $\F_q^M$, and \emph{commuting} otherwise. The two cases
+partition the sample space. If $m \geq 1$ and $d \geq 1$ then a uniformly random $\omega$ is
+anticommuting with probability at least $(1 - 3md/q)/2$, and commuting with probability at
+least $(1 - 3md/q)/2$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:schwartz-zippel}
+Because $\ind_m(x) \cdot \ind_m(z) = g_{\ind_m(x)}(z)$ --- one low-degree encoding evaluated at
+the other point --- $\gamma(\omega) = \fieldtr_{q \to 2}(r_X r_Z \cdot g_{\ind_m(u_X)}(u_Z))$.
+The vector $\ind_m(x)$ has coordinate sum $\prod_i (x_i + (1 - x_i)) = 1$, so it is never zero
+and $g_{\ind_m(u_X)}$ is a nonzero multilinear polynomial; by
+Lemma~\ref{lem:schwartz-zippel} it vanishes at no more than an $m/q$ fraction of the $u_Z$.
+Fix $u_X, u_Z$ with $g_{\ind_m(u_X)}(u_Z) \neq 0$ and $r_X \neq 0$, and put
+$c = r_X\, g_{\ind_m(u_X)}(u_Z) \neq 0$. Then $r \mapsto \fieldtr_{q \to 2}(c r)$ is a nonzero
+$\F_2$-linear functional on $\F_q$, so its kernel is a hyperplane and exactly $q/2$ of the
+$r_Z$ give $\gamma \neq 0$, the other $q/2$ giving $\gamma = 0$. Multiplying the three
+independent estimates gives $(1 - 1/q)(1 - m/q)/2 \geq (1 - (m+1)/q)/2$ for the anticommuting
+case; the commuting case gains the whole $r_X = 0$ slice and the whole $g_{\ind_m(u_X)}(u_Z) =
+0$ slice, so $(1 - 1/q)/2$ holds for it with no $m$ at all. Finally $m + 1 \leq 3md$ and
+$1 \leq 3md$ when $m, d \geq 1$.
+\end{proof}
+
+\paragraph{Comments.} Two departures from the paper's statement and proof, both recorded in
+the formalization's own docstring. First, the paper states the bound as
+$(1 - q^{-m})(1 - q^{-1})(1 - md/q)/2$; its own correction note removes the case distinction on
+$u_X = 0$ that produced the first factor, observing that $\ind_m(u_X)$ is never the zero
+vector, and keeps the factor only because it remains a valid lower bound. It is dropped here.
+Second, the low-degree encoding is \emph{multilinear}, so Schwartz--Zippel costs $m/q$ and not
+$md/q$; the formalized bounds are $(1 - (m+1)/q)/2$ and $(1 - 1/q)/2$, and the paper's
+$(1 - 3md/q)/2$ is derived from them for $m, d \geq 1$. The `$d$' in this fact is therefore
+inert: it is the individual-degree parameter of the surrounding test, and the bound does not
+depend on it.
+
+The complementarity statement is not decoration. Each of the two bounds is a lower bound on a
+probability, so either alone would be implied by the wrong definition of its event; that they
+hold for complementary events, and add to one, is what pins them down.
+
 \effortEasy
 
 \begin{lemma}[Averaging preserves closeness]
 \label{lem:qld-averaging}
 \ledgernode{1.2.2.1}
-\uses{def:distance}
+\uses{def:state-distance}
+\lean{MIPRE.stateSqNorm_avg_le}
+\leanok
 Let $A^x \approx_\delta B^x$ on average over $x \sim \mu$, and let $\alpha_x$ be coefficients
 with $\abs{\alpha_x} \leq 1$. Then $\E_x \alpha_x A^x \approx_\delta \E_x \alpha_x B^x$.
 \end{lemma}
 
 \begin{proof}
+\leanok
 Triangle inequality and Jensen. Note the hypothesis is $\abs{\alpha_x} \leq 1$, not
-$\abs{\alpha_x} = 1$: the lemma is used with genuinely contractive coefficients.
+$\abs{\alpha_x} = 1$: the lemma is used with genuinely contractive coefficients. The
+$\delta$ is preserved exactly, with no constant: the triangle inequality gives
+$\norm{\E_x \alpha_x (A^x - B^x)\ket{\psi}} \leq \E_x \norm{(A^x - B^x)\ket{\psi}}$ and Jensen
+for the square root gives $\E_x \sqrt{f(x)} \leq \sqrt{\E_x f(x)}$, which is the
+$\mu$-probability case of \texttt{MIPRE.sum\_mul\_sqrt\_le}.
 \end{proof}
 
 \effortEasy
@@ -1220,44 +1298,81 @@ $\abs{\alpha_x} = 1$: the lemma is used with genuinely contractive coefficients.
 \begin{lemma}[From POVM elements to generalized observables]
 \label{lem:qld-povm-to-obs}
 \ledgernode{1.2.2.2}
-\uses{def:distance,lem:qld-averaging}
+\uses{def:state-distance,lem:qld-averaging}
+\lean{MIPRE.obsOf, MIPRE.stateDist_obsOf_le}
+\leanok
 Let $\{A^x_a\}$ and $\{B^x_a\}$ be POVMs with a common outcome set $\mA$, and let $\alpha_a$
 be coefficients of unit modulus. If $A^x_a \approx_\delta B^x_a$ then the generalized
 observables $A^x = \sum_a \alpha_a A^x_a$ and $B^x = \sum_a \alpha_a B^x_a$ satisfy
 $A^x \approx_{\abs{\mA} \delta} B^x$.
 \end{lemma}
 
+\begin{proof}
+\leanok
+Triangle inequality over the outcomes, then Cauchy--Schwarz against the constant $1$:
+$(\sum_a t_a)^2 \leq \abs{\mA} \sum_a t_a^2$. Unit modulus is more than the proof uses; the
+formalized hypothesis is $\abs{\alpha_a} \leq 1$, and the constant $\abs{\mA}$ is exact rather
+than an $O(\cdot)$.
+\end{proof}
+
 \effortMedium
 
 \begin{corollary}[Orthonormalization from consistency]
 \label{cor:ortho-from-consistency}
 \ledgernode{1.2.2.3, 1.2.2.3.1}
-\uses{thm:orthonormalization,def:inconsistency,def:distance}
-There is $\eta(\delta) = O(\delta)$ such that the following holds. Let $\{Q_a\}$ be a POVM on
-$\mH_\alice$ and $\{R_a\}$ a POVM on $\mH_\bob$ that are $\delta$-consistent on
-$\ket{\psi}$. Then there is a \emph{projective} measurement $\{P_a\}$ on $\mH_\alice$ with
-$P_a \ot \Id \approx_{\eta(\delta)} Q_a \ot \Id$ on $\ket{\psi}$.
+\uses{thm:orthonormalization,def:inconsistency,def:state-distance}
+\lean{MIPRE.QLD.exists_projective_of_consistent}
+\leanok
+Let $\delta > 0$, let $\{Q_a\}$ be a POVM on $\mH_\alice$ and $\{R_a\}$ a POVM on $\mH_\bob$
+whose inconsistency on the unit vector $\ket{\psi}$ is at most $\delta$. Then there is a
+\emph{projective} measurement $\{P_a\}$ on $\mH_\alice$ with
+\begin{equation*}
+  \sum_a \norm{\bigl((Q_a - P_a) \ot \Id_\bob\bigr)\ket{\psi}}^2 \;<\; 18\,\delta\;,
+\end{equation*}
+that is, $P_a \ot \Id \approx_{\eta_{ortho}(\delta)} Q_a \ot \Id$ on $\ket{\psi}$ with
+$\eta_{ortho}(\delta) = 18\delta$, linear in $\delta$ as
+Theorem~\ref{thm:orthonormalization} permits.
 \end{corollary}
 
 \begin{proof}
+\leanok
 \uses{thm:orthonormalization}
 This is not Theorem~\ref{thm:orthonormalization} restated: that theorem requires strict
 near-projectivity in a normal state, while what the appendix has is
 bipartite consistency. The bridge is a Cauchy--Schwarz step. Write
 $\gamma = \sum_{a \neq b} \bra{\psi} Q_a \ot R_b \ket{\psi}$, so that
-$\sum_a \bra{\psi} Q_a \ot R_a \ket{\psi} = 1 - \gamma$. Since
-$\sum_a R_a^2 \leq \sum_a R_a = \Id$, Cauchy--Schwarz over $a$ gives
-$\sum_a \bra{\psi} Q_a^2 \ot \Id \ket{\psi} \geq (1 - \gamma)^2 \geq 1 - 2\gamma$, which is
-non-strict near-projectivity at $2\gamma$. For every $\eps>2\gamma$, apply
-Theorem~\ref{thm:orthonormalization} to the algebra
-$\cal{L}(\mH_\alice)\ot\Id$ with the normal vector state of $\ket{\psi}$. It gives a
-projective family of the form $P_a^{\eps}\ot\Id$ with squared-distance sum less than
-$9\eps$. In finite dimension, projective measurements with the fixed finite outcome
-set form a compact set. Letting $\eps$ decrease to $2\gamma$ along a sequence,
-extract a convergent subsequence and use continuity to obtain
-$\sum_a\norm{((Q_a-P_a)\ot\Id)\ket{\psi}}^2\leq18\gamma=O(\delta)$.
-This argument includes $\gamma=0$.
+$\sum_a \bra{\psi} Q_a \ot R_a \ket{\psi} = 1 - \gamma$ because
+$\sum_{a,b} Q_a \ot R_b = \Id$. Since $\sum_a R_a^2 \leq \sum_a R_a = \Id$, Cauchy--Schwarz
+over $a$ gives
+\begin{equation*}
+  1 - \gamma \;=\; \sum_a \bigl\langle (Q_a \ot \Id)\ket{\psi},\,
+    (\Id \ot R_a)\ket{\psi} \bigr\rangle
+  \;\leq\; \Bigl(\sum_a \bra{\psi} Q_a^2 \ot \Id \ket{\psi}\Bigr)^{1/2}\;,
+\end{equation*}
+hence $\sum_a \bra{\psi} Q_a^2 \ot \Id \ket{\psi} \geq (1 - \gamma)^2 = 1 - 2\gamma + \gamma^2$.
+Now $2\gamma - \gamma^2 < 2\delta$ for every $\gamma \leq \delta$ with $\delta > 0$ --- at
+$\gamma = \delta$ because $\gamma^2 > 0$, and at $\gamma < \delta$ because $\gamma^2 \geq 0$ ---
+and if $\gamma \geq 1$ the hypothesis holds vacuously, so near-projectivity at $\eps = 2\delta$
+holds \emph{strictly}. Apply Theorem~\ref{thm:orthonormalization} to
+$\cal{L}(\mH_\alice)\ot\Id$ with the vector state of $\ket{\psi}$: it gives a projective family
+$P_a \ot \Id$ with squared-distance sum less than $9\eps = 18\delta$.
 \end{proof}
+
+\paragraph{Comments.} The paper closes this proof differently, and the difference is a
+\textbf{repair}. It derives near-projectivity at $2\gamma$ for the \emph{actual} inconsistency
+$\gamma$, which is non-strict, so Theorem~\ref{thm:orthonormalization} applies only at each
+$\eps > 2\gamma$; it then takes $\eps \downarrow 2\gamma$ inside the (compact) set of projective
+measurements with a fixed finite outcome set and extracts a convergent subsequence to reach
+$18\gamma$ itself. That limit is not needed. The slack $\gamma^2$ in
+$(1-\gamma)^2 = 1 - 2\gamma + \gamma^2$ already makes the hypothesis strict at $\eps = 2\delta$
+for any \emph{bound} $\delta > 0$ on the inconsistency, which is the form in which every
+application supplies it and the form stated above; the compactness argument, and with it the
+continuity of $\{P_a\} \mapsto \sum_a \norm{((Q_a - P_a)\ot\Id)\ket{\psi}}^2$ and the
+sequential extraction, disappears. What the paper's version additionally gives is the exact
+case $\delta = 0$, where the limit produces a projective measurement agreeing with $\{Q_a\}$ on
+$\ket{\psi}$ exactly. Nothing downstream uses it: every invocation carries a positive error
+bound. The statement above is therefore weaker only at $\delta = 0$ and stronger elsewhere,
+both in being strict and in naming the constant.
 
 \subsubsection{What winning implies}
 

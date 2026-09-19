@@ -432,4 +432,20 @@ theorem sum_mul_sqrt_le {ι : Type*} (s : Finset ι) (μ f : ι → ℝ)
   rw [Finset.sum_congr rfl fun i _ => key i]
   exact Real.sum_sqrt_mul_sqrt_le _ hμ (fun i => mul_nonneg (hμ i) (hf i))
 
+/-- `(∑ t)² ≤ n ∑ t²`, Cauchy--Schwarz against the constant `1`. This is the form the
+outcome-set steps use: a sum over the answers costs a factor `|𝒜|` when squared. -/
+theorem sq_sum_le_card_mul_sum_sq {ι : Type*} [Fintype ι] (t : ι → ℝ) (ht : ∀ i, 0 ≤ t i) :
+    (∑ i, t i) ^ 2 ≤ (Fintype.card ι : ℝ) * ∑ i, t i ^ 2 := by
+  have h1 : ∑ i, t i = ∑ i, √(1 : ℝ) * √(t i ^ 2) :=
+    Finset.sum_congr rfl fun i _ => by rw [Real.sqrt_one, one_mul, Real.sqrt_sq (ht i)]
+  have h2 := Real.sum_sqrt_mul_sqrt_le (Finset.univ : Finset ι) (f := fun _ => (1 : ℝ))
+    (g := fun i => t i ^ 2) (fun _ => zero_le_one) (fun i => sq_nonneg _)
+  rw [← h1, Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one] at h2
+  have hs : (0 : ℝ) ≤ ∑ i, t i ^ 2 := Finset.sum_nonneg fun i _ => sq_nonneg _
+  calc (∑ i, t i) ^ 2
+      ≤ (√(Fintype.card ι : ℝ) * √(∑ i, t i ^ 2)) ^ 2 :=
+        pow_le_pow_left₀ (Finset.sum_nonneg fun i _ => ht i) h2 2
+    _ = (Fintype.card ι : ℝ) * ∑ i, t i ^ 2 := by
+        rw [mul_pow, Real.sq_sqrt (Nat.cast_nonneg _), Real.sq_sqrt hs]
+
 end MIPRE
