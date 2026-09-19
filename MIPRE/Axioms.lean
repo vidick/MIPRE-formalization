@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import MIPRE.Foundations.CL.Basic
 import MIPRE.Foundations.LowDegree.SchwartzZippel
+import MIPRE.Foundations.LowDegree.Anticomm
 import MIPRE.Foundations.LowDegree.Shoup
 import MIPRE.Foundations.LowDegree.SelfDual
 import MIPRE.Foundations.CL.Canonical
@@ -439,6 +440,21 @@ elab "#guard_sorry_free " ids:ident,* : command => do
   MIPRE.LowDegree.exists_gramPair_eq_one,
   MIPRE.LowDegree.exists_isSelfDualBasis_isNormalBasis,
   MIPRE.LowDegree.exists_selfDualNormalBasis_two
+
+-- blueprint `fact:omega-anticomm-prob`: the probability that a Pauli-test question tuple is
+-- anticommuting, and that it is commuting. The definitions are guarded with the theorems
+-- because the statement is about them: `acTuples` and `cTuples` are the two events, and
+-- `card_acTuples_add_card_cTuples` is what says they partition the sample space, so that
+-- neither bound could hold for a mis-defined event.
+#guard_sorry_free MIPRE.LowDegree.indVec,
+  MIPRE.LowDegree.indPair,
+  MIPRE.LowDegree.indPair_eq_eval,
+  MIPRE.LowDegree.acGamma,
+  MIPRE.LowDegree.acTuples,
+  MIPRE.LowDegree.cTuples,
+  MIPRE.LowDegree.card_acTuples_add_card_cTuples,
+  MIPRE.LowDegree.prob_anticommuting_ge,
+  MIPRE.LowDegree.prob_commuting_ge
 
 -- blueprint `lem:admissible-field-exists`: the field interface `thm:pcp-decider` takes as a
 -- parameter is inhabited.

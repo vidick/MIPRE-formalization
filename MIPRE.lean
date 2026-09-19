@@ -602,6 +602,7 @@ import MIPRE.Foundations.Halting.Strings
 import MIPRE.Foundations.Halting.Tabulate
 import MIPRE.Foundations.Halting.Wrapper
 import MIPRE.Foundations.Halting.WrapperCost
+import MIPRE.Foundations.LowDegree.Anticomm
 import MIPRE.Foundations.LowDegree.Encoding
 import MIPRE.Foundations.LowDegree.NormalBasis
 import MIPRE.Foundations.LowDegree.SchwartzZippel
