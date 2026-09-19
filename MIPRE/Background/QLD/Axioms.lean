@@ -5,7 +5,7 @@ Authors: Thomas Vidick
 -/
 import MIPRE.Background.QLD.Anticomm
 import MIPRE.Background.QLD.Consistency
-import MIPRE.Background.QLD.Commutation
+import MIPRE.Background.QLD.Expanded
 import MIPRE.Foundations.GuardSorryFree
 
 /-!
@@ -90,6 +90,25 @@ with theorems, and their axiom lists differ. -/
 Blueprint `lem:qld-obs-commutation-acomm`. The two point observables and the two variable
 observables they are tied to, the sub-probability weight the items carry, item 7 in observable
 form, the identification of item 6's anticommutator, and the lemma. -/
+
+/-! ## The expansion stage's commutation
+
+Blueprint `lem:qld-expanded-commutation`. The sign the strategy carries and the sign the ancilla
+carries are the same sign, and they cancel identically. -/
+
+#guard_sorry_free MIPRE.QLD.Anc,
+  MIPRE.QLD.weylOf,
+  MIPRE.QLD.ancVec,
+  MIPRE.QLD.gam_eq_trDot,
+  MIPRE.QLD.weylOf_isUnitary,
+  MIPRE.QLD.weylOf_prod_isUnitary,
+  MIPRE.QLD.hatObs,
+  MIPRE.QLD.hatVec,
+  MIPRE.QLD.norm_evec_epr,
+  MIPRE.QLD.hatVec_unit,
+  MIPRE.QLD.hatObs_comm_eq,
+  MIPRE.QLD.norm_hatVec_hatObs_comm,
+  MIPRE.QLD.hatObs_commutation
 
 /-! ## Signed commutation: both halves
 

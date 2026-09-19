@@ -1863,13 +1863,75 @@ the two sides at error $\eps$, and the $X$-side and $Z$-side coarse observables
 \end{lemma}
 
 \begin{proof}
-\uses{lem:qld-win}
+\uses{lem:qld-win,lem:qld-expanded-commutation}
 The pivotal step is an exact cancellation of a sign $(-1)^\gamma$ between the strategy's own
 observables, supplied by the anticommutation relations of Lemma~\ref{lem:qld-win}, and the
 ancilla observables. Without the ancillas the two bases only commute up to an error that does
 not improve; with them the sign cancels identically and what is left is the stated
-$\sqrt{\eps}$.
+$\sqrt{\eps}$. That half is Lemma~\ref{lem:qld-expanded-commutation}.
 \end{proof}
+
+\paragraph{Comments.} The \emph{commutation} half is formalized
+(Lemma~\ref{lem:qld-expanded-commutation}); the self-consistency half is not, and what it needs is
+worth naming. The hatted measurement is a \emph{convolution},
+$\widehat{M}^{(\mathtt{Point},W),u}_a = \sum_{a' + a'' = a} M^{(\mathtt{Point},W),u}_{a'} \ot
+\qp^{W,u}_{a''}$, whose two factors are the strategy's point measurement and the syndrome projector
+$\qp^{W}_{[\,\cdot\, \ind_m(u) = a'']}$ of Definition~\ref{def:generalized-pauli}. Its
+self-consistency across the re-bipartitioned parties comes from three things: item 1 of
+Lemma~\ref{lem:qld-win} for the strategy's factor, \emph{perfect} self-consistency of the syndrome
+projectors across the two ancilla halves --- which is Definition~\ref{def:weyl-epr}'s
+\texttt{stateVec\_epr\_proj} --- and data processing for the convolution, at the Born level, since
+$\approx_\delta$ has none. All three ingredients are formalized; what is missing is the
+construction of the convolved POVM and the Born-level product computation that combines them.
+
+\begin{lemma}[Expanded point observables commute]
+\label{lem:qld-expanded-commutation}
+\uses{lem:qld-obs-commutation,def:generalized-pauli,def:weyl-epr,def:expanded-state}
+\lean{MIPRE.QLD.Anc, MIPRE.QLD.weylOf, MIPRE.QLD.ancVec, MIPRE.QLD.gam_eq_trDot,
+  MIPRE.QLD.weylOf_isUnitary, MIPRE.QLD.weylOf_prod_isUnitary, MIPRE.QLD.hatObs,
+  MIPRE.QLD.hatVec, MIPRE.QLD.norm_evec_epr, MIPRE.QLD.hatVec_unit,
+  MIPRE.QLD.hatObs_comm_eq, MIPRE.QLD.norm_hatVec_hatObs_comm,
+  MIPRE.QLD.hatObs_commutation}
+\leanok
+Let $\ket{\hat\psi} = \ket{\psi} \ot \ket{\EPR_q}^{\ot M}$ with the ancilla halves split between
+the two parties, and let
+$\widehat{W}^{r}(u) = W^{r}(u) \ot \qp^W(r \cdot \ind_m(u))$. Then, on average over the verifier's
+content and with \emph{no sign},
+\begin{equation*}
+  \sum_\omega \frac{1}{\abs{\mC}}
+    \norm{\bigl[ \widehat{X}^{r_X}(u_X),\, \widehat{Z}^{r_Z}(u_Z) \bigr]
+      \ot \Id \ket{\hat\psi}}^2 \;\leq\; 57676416\, \eps\;.
+\end{equation*}
+\end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:qld-obs-commutation,def:generalized-pauli,def:weyl-epr,def:expanded-state}
+One identity and two bookkeeping facts. The identity is
+\begin{equation*}
+  \bigl[ \widehat{X}^{r_X}(u_X),\, \widehat{Z}^{r_Z}(u_Z) \bigr]
+  \;=\; \Bigl( X^{r_X}(u_X) Z^{r_Z}(u_Z) - (-1)^{\gamma(\omega)} Z^{r_Z}(u_Z) X^{r_X}(u_X) \Bigr)
+    \ot \Bigl( \qp^X(r_X \cdot \ind_m(u_X))\, \qp^Z(r_Z \cdot \ind_m(u_Z)) \Bigr)\;,
+\end{equation*}
+because the two ancilla operators commute up to \emph{exactly} the sign $(-1)^{\gamma(\omega)}$ ---
+the twisted commutation relation of Definition~\ref{def:generalized-pauli}, whose sign is the form
+$\fieldtr\bigl( (r_X \ind_m(u_X)) \cdot (r_Z \ind_m(u_Z)) \bigr)$, and that form \emph{is}
+$\gamma(\omega)$ (\texttt{gam\_eq\_trDot}). Then the surviving ancilla operator is unitary, hence
+invisible to the state-norm, and what is left has an inert ancilla, hence the same norm on
+$\ket{\hat\psi}$ as on $\ket{\psi}$ (Definition~\ref{def:expanded-state}, items 3 and 4). So the
+bound is exactly Lemma~\ref{lem:qld-obs-commutation}'s, with the sign removed.
+\end{proof}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Background/QLD/Expanded.lean}. This is what the
+expansion exists for, and it is worth saying precisely what is bought: \emph{the sign is gone, not
+smaller}. Without the ancillas the two bases commute only up to an error carrying
+$(-1)^{\gamma(\omega)}$, which no amount of soundness improves, because $\gamma$ is a property of
+the question and not of the strategy. With them the two signs multiply to one identically, and the
+error that remains is the strategy's own.
+
+The constant carries over unchanged. That is the content of items 3 and 4 of
+Definition~\ref{def:expanded-state}: the expansion is free, in the sense that no step of it loses
+anything, which is also why it is stated there rather than here.
 
 \effortHard
 

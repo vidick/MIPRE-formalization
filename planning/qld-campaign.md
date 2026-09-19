@@ -476,6 +476,43 @@ paper's `fact:data-processing` is the `simeq` form, correctly. So every coarse-g
 is taken at the Born level and only then converted, and a formalization that reached for the
 `approx` form would be proving something false.
 
+### Stage 3, the commutation half (2026-09-19)
+
+`lem:qld-expanded-points` has two items. The **commutation** half is done
+(`MIPRE/Background/QLD/Expanded.lean`, blueprint `lem:qld-expanded-commutation`); the
+**self-consistency** half is not.
+
+**What the expansion buys, precisely.** The sign is *gone*, not smaller. The hatted observable is
+`W-hat^r(u) = W^r(u) (x) tau^W(r . ind_m(u))`, and
+
+```
+  [X-hat, Z-hat] = (X Z - (-1)^gamma Z X) (x) (tau^X(a) tau^Z(b)) ,
+```
+
+because the two ancilla operators commute up to *exactly* the sign the strategy's carry -- the
+twisted commutation relation, whose sign is the form `tr((r_X ind(u_X)) . (r_Z ind(u_Z)))`, and that
+form **is** `gamma(omega)` (`gam_eq_trDot`, a four-line computation that is the linchpin of the
+whole stage). Then the surviving ancilla operator is unitary, so invisible to the state-norm, and
+what is left has an inert ancilla, so its norm on the expanded state is its norm on the original
+one. The expansion therefore costs *nothing*: the constant is `lem:qld-obs-commutation`'s, with the
+sign removed. Without the ancillas the error carries `(-1)^gamma`, which no amount of soundness
+improves, `gamma` being a property of the question and not of the strategy.
+
+The bookkeeping is isolated in `MIPRE/Foundations/Expanded.lean` (blueprint
+`def:expanded-state`): the re-bipartitioned product state, an operator of product form acting factor
+by factor, the norm of a product state, an inert ancilla, and a unitary ancilla. None of it mentions
+the Pauli test.
+
+**What the self-consistency half needs.** The hatted *measurement* is a convolution,
+`M-hat^{(Point,W),u}_a = sum_{a' + a'' = a} M_{a'} (x) tau^{W,u}_{a''}`, with `tau^{W,u}` the
+syndrome projector `syn` of `Weyl.lean`. Its self-consistency across the re-bipartitioned parties
+needs three things, all of which exist: item 1 of `lem:qld-win` for the strategy's factor,
+*perfect* self-consistency of the syndrome projectors across the two ancilla halves
+(`stateVec_epr_proj`), and data processing for the convolution -- at the Born level, since
+`approx_delta` has none. What is missing is the construction of the convolved POVM and the
+Born-level product computation that combines them. That is the next piece of stage 3, followed by
+`lem:qld-expanded-lines`.
+
 ### PR C — combining the two bases
 
 `thm:linearity`, then `lem:qld-combined-points`, `lem:qld-pairs-of-lines`,

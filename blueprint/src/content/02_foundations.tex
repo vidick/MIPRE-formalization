@@ -650,6 +650,41 @@ else follows by linearity. Corollary~\ref{cor:ortho-from-consistency} produces a
 measurement on \emph{Alice's} factor only, so the commutation analysis below is run on Bob's
 observables and carried back; that swap is the bridge.
 
+\subsection{The expanded state}
+
+\begin{definition}[The expanded state, and an inert ancilla]
+\label{def:expanded-state}
+\uses{def:cross-distance,def:state-distance}
+\lean{MIPRE.expVec, MIPRE.expEquiv, MIPRE.sum_prod_mul, MIPRE.norm_evec_expVec,
+  MIPRE.expVec_dotProduct, MIPRE.expVec_unit, MIPRE.mulVec_kron_expVec,
+  MIPRE.norm_stateVec_kron_unitary, MIPRE.norm_stateVec_expVec_kron_one}
+\leanok
+Let $\ket{\psi}$ be a state on $\C^{d_\alice} \ot \C^{d_\bob}$ and $\ket{e}$ one on
+$\C^{a} \ot \C^{a'}$. The \emph{expanded state} is $\ket{\psi} \ot \ket{e}$, \textbf{re-bipartitioned}
+so that the first party holds $\C^{d_\alice} \ot \C^{a}$ and the second $\C^{d_\bob} \ot \C^{a'}$:
+one half of the ancilla goes to each. Then
+\begin{enumerate}
+\item an operator of product form acts factor by factor,
+  $\bigl((M \ot N) \ot \Id\bigr)(\ket{\psi} \ot \ket{e})
+   = \bigl((M \ot \Id)\ket{\psi}\bigr) \ot \bigl((N \ot \Id)\ket{e}\bigr)$;
+\item the norm of a product state is the product of the norms, so the expanded state is a unit
+  vector when both factors are;
+\item consequently an operator with an \emph{inert} ancilla has the same state-norm on the expanded
+  state as on the original one: $\norm{(M \ot \Id_a) \ot \Id \,\ket{\hat\psi}} =
+  \norm{(M \ot \Id_\bob)\ket{\psi}}$ when $\ket{e}$ is a unit vector;
+\item and a \emph{unitary} on the ancilla is invisible:
+  $\norm{(M \ot U) \ot \Id \ket{\hat\psi}} = \norm{(M \ot \Id_a) \ot \Id \ket{\hat\psi}}$.
+\end{enumerate}
+\end{definition}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Foundations/Expanded.lean}. This is the
+bookkeeping of the appendix's \texttt{sec:expanding}, isolated from the Pauli test: items 3 and 4 are
+what let a bound proved \emph{before} the expansion be used \emph{after} it, and they are why the
+expansion stage costs exactly the constant of Lemma~\ref{lem:qld-obs-commutation} and nothing more.
+The re-bipartition is the point --- the ancilla halves are split between the parties, which is what
+makes the ancilla observables tied together --- and it is why the statements are about
+$\ket{\psi} \ot \ket{e}$ rather than about a tensor power.
+
 \subsection{The commutation analysis}
 
 \begin{lemma}[Commutation analysis]
