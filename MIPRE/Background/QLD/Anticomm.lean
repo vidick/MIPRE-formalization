@@ -69,42 +69,6 @@ theorem sgn_mul_self_eq_one (x : ZMod 2) : sgn x * sgn x = 1 := sgn_mul_self x
 theorem norm_sgn (x : ZMod 2) : ‖sgn x‖ = 1 := by
   rw [sgn]; split_ifs <;> norm_num
 
-/-! ## The cells of a constraint
-
-The magic square's six equations are the three rows and the three columns, in that order, so
-the `j`-th cell of equation `c` is `3c + j` for a row and `3j + (c - 3)` for a column. -/
-
-/-- The index of the `j`-th cell of the `c`-th equation. -/
-def cellNat (c j : ℕ) : ℕ := if c < 3 then 3 * c + j else 3 * j + (c - 3)
-
-/-- The `j`-th cell of constraint `c`. -/
-def cell (c : Fin layout.r) (j : Fin 3) : Fin layout.s :=
-  ⟨cellNat c.val j.val, by
-    have hc := c.isLt
-    have hj := j.isLt
-    simp only [layout] at hc ⊢
-    simp only [cellNat]
-    split_ifs <;> omega⟩
-
-theorem V_eq_cells (c : Fin layout.r) : layout.V c = {cell c 0, cell c 1, cell c 2} := by
-  fin_cases c <;> decide
-
-theorem cell_ne_01 (c : Fin layout.r) : cell c 0 ≠ cell c 1 := by fin_cases c <;> decide
-
-theorem cell_ne_02 (c : Fin layout.r) : cell c 0 ≠ cell c 2 := by fin_cases c <;> decide
-
-theorem cell_ne_12 (c : Fin layout.r) : cell c 1 ≠ cell c 2 := by fin_cases c <;> decide
-
-theorem cell_mem (c : Fin layout.r) (j : Fin 3) : cell c j ∈ layout.V c := by
-  rw [V_eq_cells]
-  fin_cases j <;> simp
-
-/-- A sum over a constraint's support is the sum over its three cells. -/
-theorem sum_cells (c : Fin layout.r) (a : Fin layout.s → ZMod 2) :
-    ∑ k ∈ layout.V c, a k = a (cell c 0) + a (cell c 1) + a (cell c 2) := by
-  classical
-  rw [V_eq_cells, Finset.sum_insert (by simp [cell_ne_01 c, cell_ne_02 c]),
-    Finset.sum_insert (by simp [cell_ne_12 c]), Finset.sum_singleton, add_assoc]
 
 /-! ## Alice's repaired outcomes
 

@@ -389,6 +389,7 @@ import MIPRE.Background.Orthonormalization.Statement
 import MIPRE.Background.QLD.Anticomm
 import MIPRE.Background.QLD.Axioms
 import MIPRE.Background.QLD.Consistency
+import MIPRE.Background.QLD.Game
 import MIPRE.Background.QLD.Ortho
 import MIPRE.Background.Repetition.Axioms
 import MIPRE.Background.Repetition.Commuting

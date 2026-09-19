@@ -1151,10 +1151,146 @@ Lemma~\ref{lem:tensor-codes-bipartite} needs. The lesson for a formalization is 
 bridge is the thing to state, not the exact identity it replaces.
 \end{remark}
 
+\subsubsection{The game}
+
+\begin{definition}[Pauli basis test]
+\label{def:qld-game}
+\uses{def:game,def:lidt-cl,def:ld-encoding,def:magic-square,def:lcs-game,
+  fact:omega-anticomm-prob}
+\lean{MIPRE.QLD.Bas, MIPRE.QLD.Ty, MIPRE.QLD.adjRaw, MIPRE.QLD.adj,
+  MIPRE.QLD.card_adj, MIPRE.QLD.adj_symm, MIPRE.QLD.Omega, MIPRE.QLD.Question,
+  MIPRE.QLD.Answer, MIPRE.QLD.Question.ty, MIPRE.QLD.Content, MIPRE.QLD.TyEdge,
+  MIPRE.QLD.Sample, MIPRE.QLD.Content.question, MIPRE.QLD.Question.fmtOk,
+  MIPRE.QLD.gam, MIPRE.QLD.prb, MIPRE.QLD.lowDeg, MIPRE.QLD.pairTest,
+  MIPRE.QLD.subtests, MIPRE.QLD.accepts, MIPRE.QLD.qldGame,
+  MIPRE.QLD.handled, MIPRE.QLD.handled_of_adj, MIPRE.QLD.lowDeg_eq_cl,
+  MIPRE.QLD.lowDeg_eq_cl_dline, MIPRE.QLD.rejects_point_apoly,
+  MIPRE.QLD.rejects_pauli_val, MIPRE.QLD.rejects_con_bit,
+  MIPRE.QLD.rejects_var_bitTriple, MIPRE.QLD.rejects_disagree,
+  MIPRE.QLD.rejects_lowDeg_aline, MIPRE.QLD.rejects_lowDeg_dline,
+  MIPRE.QLD.rejects_pauli_consistency, MIPRE.QLD.accepts_pauli_consistency,
+  MIPRE.QLD.rejects_commutation, MIPRE.QLD.accepts_commutation,
+  MIPRE.QLD.rejects_commutation_consistency, MIPRE.QLD.rejects_magicSquare_bit,
+  MIPRE.QLD.rejects_magicSquare_parity, MIPRE.QLD.rejects_magicSquare_off_support,
+  MIPRE.QLD.accepts_magicSquare, MIPRE.QLD.rejects_magicSquare_consistency,
+  MIPRE.QLD.accepts_aline_dline}
+\leanok
+Let $\qldparams = (q, m, d)$ be admissible: $q$ an admissible field size and $m \mid q$. Write
+$M = 2^m$ and let $\omega = (u_X, u_Z, r_X, r_Z) \in (\F_q^m)^2 \times \F_q^2$. The
+\emph{Pauli basis test} $\game^\pauli_\qldparams$ is the two-player game with the following
+twenty-six question types,
+\begin{equation*}
+  \type^\pauli = \bigl( \{\mathtt{Point}, \mathtt{ALine}, \mathtt{DLine}, \pauli,
+    \mathtt{Pair}\} \times \{X, Z\} \bigr) \cup \type^\MS \cup \{\mathtt{Pair}\}\;,
+\end{equation*}
+where $\type^\MS$ is the six constraints and nine variables of the Magic Square
+(Definition~\ref{def:magic-square}).
+
+\emph{Question distribution.} The verifier draws an ordered pair of types uniformly among
+those adjacent in the type graph $G^\pauli$ --- each non-loop edge contributing two ordered
+pairs and each self-loop one --- and independently $u_X, u_Z, v \in \F_q^m$, $s \in \F_q$ and
+$r_X, r_Z \in \F_q$ uniformly. The edges of $G^\pauli$ are: a self-loop at every type;
+$(\mathtt{ALine}, W)$ and $(\mathtt{DLine}, W)$ each to $(\mathtt{Point}, W)$;
+$(\mathtt{Point}, W)$ to $(\pauli, W)$; $(\mathtt{Point}, W)$ to $(\mathtt{Pair}, W)$ to
+$\mathtt{Pair}$; $(\mathtt{Point}, X)$ to $\mathtt{Variable}_1$ and $(\mathtt{Point}, Z)$ to
+$\mathtt{Variable}_5$; and the eighteen incidences of the Magic Square, $\mathtt{Constraint}_i$
+to $\mathtt{Variable}_j$ for $j$ in the support of equation $i$. So there are thirty non-loop
+edges and eighty-six ordered pairs, each of weight $1/86$.
+
+\emph{Question content.} A type $(\mathtt{Point}, W)$ receives $u_W$; $(\mathtt{ALine}, W)$
+receives $(u_0, s)$ with $u_0 = L^{\mathrm{Ln}}_{e_i}(u_W)$ and $i = \chi(s)$;
+$(\mathtt{DLine}, W)$ receives $(u_0, s, v')$ with $v' = \pi_{i-1}(v)$ and
+$u_0 = L^{\mathrm{Ln}}_{v'}(u_W)$ --- all three exactly as in Definition~\ref{def:lidt-cl};
+$(\pauli, W)$ receives nothing; and each of $\mathtt{Pair}$, $(\mathtt{Pair}, W)$,
+$\mathtt{Constraint}_i$ and $\mathtt{Variable}_j$ receives $\omega$.
+
+\emph{Answer format.} An element of $\F_q$ for $(\mathtt{Point}, W)$; a polynomial of degree at
+most $d$ for $(\mathtt{ALine}, W)$ and at most $md$ for $(\mathtt{DLine}, W)$; an element of
+$\F_q^M$ for $(\pauli, W)$; a pair $(\beta_X, \beta_Z) \in \F_2^2$ for $\mathtt{Pair}$; a
+single bit for $(\mathtt{Pair}, W)$ and for $\mathtt{Variable}_j$; and a triple
+$(\alpha_{v_1}, \alpha_{v_2}, \alpha_{v_3}) \in \F_2^3$, indexed by the three variables of the
+equation in order, for $\mathtt{Constraint}_i$.
+
+\emph{Decision.} The verifier first checks that both answers have the format their question's
+type prescribes, and rejects if not. It then applies, with $\gamma(\omega)$ as in
+Lemma~\ref{fact:omega-anticomm-prob} and $g_h$ the low-degree encoding of
+Definition~\ref{def:ld-encoding}:
+\begin{enumerate}
+\item equal types: accept iff the two answers agree;
+\item $(\mathtt{Point}, W)$ against $(\mathtt{ALine}, W)$ or $(\mathtt{DLine}, W)$: accept iff
+  the seeded CL decider of Definition~\ref{def:lidt-cl} at $(q, m, d, 1)$ accepts;
+\item $(\mathtt{Point}, W)$ against $(\pauli, W)$: accept iff $g_{a_{\bar w}}(x_w) = a_w$;
+\item $(\mathtt{Pair}, W)$ against $\mathtt{Pair}$: accept iff $a_w = \beta_W$ or
+  $\gamma(\omega) \neq 0$;
+\item $(\mathtt{Point}, W)$ against $(\mathtt{Pair}, W)$: accept iff
+  $\fieldtr(a_w r_W) = a_{\bar w}$ or $\gamma(\omega) \neq 0$;
+\item $\mathtt{Constraint}_i$ against $\mathtt{Variable}_j$: accept iff $\gamma(\omega) = 0$,
+  or $j$ occurs in equation $i$, the triple $a_w$ satisfies that equation, and its entry at
+  $j$ is $a_{\bar w}$;
+\item $(\mathtt{Point}, W)$ against $\mathtt{Variable}_j$: accept iff $\gamma(\omega) = 0$, or
+  $j = 1$, $W = X$ and $\fieldtr(a_w r_X) = a_{\bar w}$, or $j = 5$, $W = Z$ and
+  $\fieldtr(a_w r_Z) = a_{\bar w}$;
+\end{enumerate}
+each in both orientations, and accepts on any type pair no rule names.
+\end{definition}
+
+\paragraph{Source.} The pinned paper~\cite{AuditSync26}, \texttt{ldt.tex}: the type set is
+\texttt{eq:pauli-type}, the sampling procedure and type graph \texttt{sec:qld-game} and
+\texttt{fig:type-graph-pauli}, and the decision procedure \texttt{fig:decider\_pauli}. No
+definition of this game appeared in this blueprint before; Theorem~\ref{thm:qld} and
+Lemma~\ref{lem:qld-win} were statements about an undefined object, which is why this is the
+campaign's first definitional obligation.
+
+\paragraph{Comments.} The formalization is \texttt{MIPRE.QLD.qldGame}
+(\texttt{MIPRE/Background/QLD/Game.lean}). Five points, four of them the consequences of
+having a second twenty-six-type game in the same vocabulary as Definition~\ref{def:lidt-cl}
+rather than a fresh one.
+
+The line and point content is read off the sample by the \emph{same} functions as the seeded CL
+test --- $\chi$, $\pi$, $L^{\mathrm{Ln}}$, all from Definition~\ref{def:lidt-cl} --- and rule 2
+calls that test's decider rather than restating it: \texttt{lowDeg\_eq\_cl} and
+\texttt{lowDeg\_eq\_cl\_dline} are the two identities, and they hold by \texttt{rfl}. This is
+what stage 4 of Remark~\ref{rem:qld-architecture} needs in order to feed
+Theorem~\ref{thm:lidt-cl-soundness} at all, and getting it by sharing definitions rather than
+by a translation lemma is the reason Definition~\ref{def:lidt-cl} was written first.
+
+The Magic Square indices are the layout's own, $0$-indexed
+(\texttt{MIPRE.LCS.MagicSquare.layout}), against the paper's $1$-indexed
+$\mathtt{Constraint}_1, \ldots, \mathtt{Constraint}_6$ and
+$\mathtt{Variable}_1, \ldots, \mathtt{Variable}_9$. The paper's distinguished pairs
+$(\mathtt{Point}, X)$--$\mathtt{Variable}_1$ and $(\mathtt{Point}, Z)$--$\mathtt{Variable}_5$
+are therefore variables $0$ and $4$ in the Lean, which are also the two the anticommutator of
+Lemma~\ref{lem:ms-direct-anticomm} is taken between --- the same two cells, and they have to
+be, since rule 7 is what transfers that lemma's conclusion to the point observables.
+
+The format check is separated from the rules for the reason recorded at
+Definition~\ref{def:lidt-cl}: leaving it out made that test vacuous
+(\texttt{reports/clgame-format-check-missing.md}), and the same error is available here with
+twenty-six types instead of three. Each of the eight rules accordingly carries an explicit pair
+of formatted answers it rejects (\texttt{rejects\_*}). The four rules gated on $\gamma$ take
+the gate as a hypothesis, since each of them by design checks nothing on the other value of
+$\gamma$ --- that division of labour between the commutation check and the Magic Square is what
+the gate is for.
+
+The remaining vacuity risk is a rule that is simply \emph{missing}, so that an edge of
+$G^\pauli$ falls through to the catch-all. \texttt{handled\_of\_adj} closes it by
+\texttt{decide}: every non-loop edge of the type graph has a rule. Together with the rejection
+witnesses --- one per rule --- that says no question pair the distribution asks is accepted
+regardless of the answers. The converse fails harmlessly: some rules also reject pairs the
+graph does not contain, such as $(\mathtt{Point}, X)$ against $\mathtt{Variable}_j$ for
+$j \neq 1$.
+
+Finally, the answer alphabet for $\mathtt{Constraint}_i$ is $\F_2^3$ and not the full
+assignment $\F_2^9$ of Definition~\ref{def:lcs-game}. The two give the same value, the decider
+reading only the three support coordinates either way, and the full assignment would have been
+markedly easier to work with; the paper's format is kept because answer lengths are what the
+introspection of the compression chapter accounts for, and a game whose answers are six
+bits too long is a statement about a different verifier.
+
 \begin{theorem}[Pauli basis test / quantum low individual degree test]
 \label{thm:qld}
 \ledgernode{1.2.2, 1.2.2.17}
-\uses{def:q-value,def:distance,lem:ms-direct-anticomm,thm:lidt-cl-soundness}
+\uses{def:qld-game,def:q-value,def:distance,lem:ms-direct-anticomm,thm:lidt-cl-soundness}
 There exists a function
 \begin{equation*}
   \delta_{qld}(\eps, m, d, q) = a (md)^a \bigl( \eps^b + q^{-b} + 2^{-bmd} \bigr)
@@ -1395,7 +1531,7 @@ both in being strict and in naming the constant.
 \begin{lemma}[Win implications]
 \label{lem:qld-win}
 \ledgernode{1.2.2.4, 1.2.2.4.2}
-\uses{lem:ms-direct-anticomm,def:inconsistency,def:distance}
+\uses{def:qld-game,lem:ms-direct-anticomm,def:inconsistency,def:distance}
 Assume $6md \leq q$. A strategy succeeding with probability $1 - \eps$ in the Pauli basis test
 satisfies, with the conditional weight of each subtest carried explicitly, a list of
 consistency and commutation relations: self-consistency of the point measurements; the
