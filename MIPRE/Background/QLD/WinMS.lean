@@ -292,11 +292,11 @@ the `2` being the two outcomes of the probe. Item 1 at the reading `φ = tr(· r
 theorem pts_obs_consistency (hψ : star ψ ⬝ᵥ ψ = 1) {ε : ℝ}
     (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) (r : F) :
     xStateDist (fun _ : Content F m => (Fintype.card (Content F m) : ℝ)⁻¹) ψ
-        (obsOf MS.sgn fun c => (MA (c.question hm (.point W))).map (fun a => prb (rdVal a) r))
-        (obsOf MS.sgn fun c => (MB (c.question hm (.point W))).map (fun a => prb (rdVal a) r))
+        (obsOf sgn fun c => (MA (c.question hm (.point W))).map (fun a => prb (rdVal a) r))
+        (obsOf sgn fun c => (MB (c.question hm (.point W))).map (fun a => prb (rdVal a) r))
       ≤ 344 * ε := by
-  refine le_trans (xStateDist_obsOf_le (fun _ => by positivity) ψ _ _ MS.sgn
-    fun a => le_of_eq (MS.norm_sgn a)) ?_
+  refine le_trans (xStateDist_obsOf_le (fun _ => by positivity) ψ _ _ sgn
+    fun a => le_of_eq (norm_sgn a)) ?_
   rw [show (344 : ℝ) * ε = (Fintype.card (ZMod 2) : ℝ) * (172 * ε) from by
     rw [ZMod.card]; push_cast; ring]
   exact mul_le_mul_of_nonneg_left

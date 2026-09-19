@@ -3,6 +3,7 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
+import MIPRE.Foundations.Sign
 import MIPRE.Foundations.Dilation
 import MIPRE.Foundations.StateDistance
 import MIPRE.Foundations.PVM
@@ -41,34 +42,6 @@ namespace MIPRE.QLD.MS
 
 open Finset Matrix Kronecker MIPRE MIPRE.LCS MIPRE.LCS.MagicSquare
 open scoped ComplexOrder MatrixOrder
-
-/-! ## Signs of bits -/
-
-/-- `(-1)^x` for a bit `x`. -/
-def sgn (x : ZMod 2) : ℂ := if x.val = 1 then -1 else 1
-
-theorem sgn_add (x y : ZMod 2) : sgn (x + y) = sgn x * sgn y := by
-  have hx : x.val < 2 := ZMod.val_lt x
-  have hy : y.val < 2 := ZMod.val_lt y
-  rw [sgn, sgn, sgn, ZMod.val_add]
-  interval_cases h : x.val <;> interval_cases h2 : y.val <;> norm_num
-
-theorem sgn_mul_self (x : ZMod 2) : sgn x * sgn x = 1 := by
-  rw [sgn]; split_ifs <;> norm_num
-
-theorem star_sgn (x : ZMod 2) : star (sgn x) = sgn x := by
-  rw [sgn]; split_ifs <;> norm_num
-
-@[simp] theorem sgn_zero : sgn 0 = 1 := by rw [sgn]; norm_num
-
-@[simp] theorem sgn_one : sgn 1 = -1 := by rw [sgn]; norm_num
-
-theorem sgn_mul_self_eq_one (x : ZMod 2) : sgn x * sgn x = 1 := sgn_mul_self x
-
-/-- `sgn` takes values `±1`, hence modulus one. -/
-theorem norm_sgn (x : ZMod 2) : ‖sgn x‖ = 1 := by
-  rw [sgn]; split_ifs <;> norm_num
-
 
 /-! ## Alice's repaired outcomes
 

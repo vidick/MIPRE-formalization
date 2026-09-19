@@ -599,6 +599,96 @@ the same proof and the same factor $\abs{\mA}$: the appendix needs it to pass fr
 coarse-graining of a point measurement to the $\pm 1$-observable it defines, and
 Definition~\ref{def:state-distance}'s version compares the wrong pair.
 
+\subsection{Generalized Pauli observables}
+
+\begin{definition}[Generalized Pauli observables in characteristic two]
+\label{def:generalized-pauli}
+\lean{MIPRE.sgn, MIPRE.sgn_add, MIPRE.star_sgn, MIPRE.norm_sgn, MIPRE.sum_sgn,
+  MIPRE.Weyl.two_eq_zero, MIPRE.Weyl.add_self, MIPRE.Weyl.add_eq_zero_iff,
+  MIPRE.Weyl.trDot, MIPRE.Weyl.trDot_comm, MIPRE.Weyl.trDot_add_left,
+  MIPRE.Weyl.trDot_add_right, MIPRE.Weyl.trDotL, MIPRE.Weyl.wX, MIPRE.Weyl.wZ,
+  MIPRE.Weyl.wX_mul_wX, MIPRE.Weyl.wZ_mul_wZ, MIPRE.Weyl.wX_mul_self,
+  MIPRE.Weyl.wZ_mul_self, MIPRE.Weyl.wX_conjTranspose, MIPRE.Weyl.wZ_conjTranspose,
+  MIPRE.Weyl.wX_isUnitary, MIPRE.Weyl.wZ_isUnitary, MIPRE.Weyl.wX_comm,
+  MIPRE.Weyl.wZ_comm, MIPRE.Weyl.wX_mul_wZ, MIPRE.Weyl.wX_mul_wZ_of_ne,
+  MIPRE.Weyl.wX_mul_wZ_of_eq, MIPRE.Weyl.trDotL_ne_zero, MIPRE.Weyl.sum_sgn_trDot,
+  MIPRE.Weyl.sum_sgn_trDot_zero, MIPRE.Weyl.zProj, MIPRE.Weyl.sum_zProj,
+  MIPRE.Weyl.wZ_eq_sum_zProj, MIPRE.Weyl.sum_sgn_smul_wZ,
+  MIPRE.LowDegree.card_filter_ker_mul'}
+\leanok
+Let $q = 2^k$ be an admissible field size and let $n$ be a
+finite index set, so that $\F_q^n$ indexes a basis of $(\C^q)^{\ot n}$. Write
+$\fieldtr : \F_q \to \F_2$ for the field trace and, for $a, b \in \F_q^n$,
+\begin{equation*}
+  \langle a, b \rangle \;=\; \fieldtr\Bigl(\sum_{l \in n} a_l b_l\Bigr) \;\in\; \F_2\;.
+\end{equation*}
+The \emph{generalized Pauli}, or \emph{Weyl}, \emph{observables} are
+\begin{equation*}
+  \qp^X(a) \;=\; \sum_{i \in \F_q^n} \ket{i + a}\bra{i}\;, \qquad
+  \qp^Z(b) \;=\; \sum_{i \in \F_q^n} (-1)^{\langle b, i \rangle}\, \ket{i}\bra{i}\;.
+\end{equation*}
+They satisfy, for all $a, a', b, b' \in \F_q^n$:
+\begin{enumerate}
+\item $\qp^W(a) \qp^W(a') = \qp^W(a + a')$, so $\qp^W(0) = \Id$ and each family commutes;
+\item $\qp^W(a)^\dagger = \qp^W(a)$ and $\qp^W(a)^2 = \Id$: each is a self-adjoint involution,
+  hence a $\pm 1$-observable and a unitary;
+\item (\emph{twisted commutation})
+  $\qp^X(a)\, \qp^Z(b) = (-1)^{\langle a, b \rangle}\, \qp^Z(b)\, \qp^X(a)$; so the two commute
+  when $\langle a, b\rangle = 0$ and anticommute when it is $1$.
+\end{enumerate}
+Writing $\qp^Z_c$ for the projector onto the computational basis vector $c \in \F_q^n$, the
+$\qp^Z(b)$ expand in them and are inverted by Fourier averaging:
+\begin{equation}
+  \label{eq:pauli-obs-proj-bp}
+  \qp^Z(b) \;=\; \sum_{c} (-1)^{\langle b, c\rangle}\, \qp^Z_c\;, \qquad
+  \E_{b \in \F_q^n} (-1)^{\langle b, c \rangle}\, \qp^Z(b) \;=\; \qp^Z_c\;.
+\end{equation}
+\end{definition}
+
+\paragraph{Source.} The pinned paper~\cite{AuditSync26}, \texttt{preliminaries.tex},
+\texttt{sec:generalized-pauli}: \texttt{eq:pauli-fp} and its $\F_q$ analogue,
+\texttt{eq:twisted-fq}, \texttt{eq:pauli-product-power}, \texttt{eq:pauli-obs-proj} and
+\texttt{eq:pauli-inversion-0}. The cancellation behind the inversion is the paper's
+\texttt{lem:cancellation} (Fact 3.2 of~\cite{NW19}).
+
+\paragraph{Comments.} The formalization is \texttt{MIPRE/Foundations/Weyl.lean}. It is the half of
+the Pauli basis test's infrastructure that was missing: \texttt{MIPRE/LCS/Pauli.lean} is the
+$2 \times 2$ Pauli matrices for the Magic Square, and what the expansion stage of
+Remark~\ref{rem:qld-architecture} and its swap isometry both run on is this $\F_q$ Weyl system.
+Three points, two of them restrictions stated so that no later statement is read as more general
+than it is.
+
+\textbf{Characteristic two only.} The paper gives the construction over $\F_p$ with phases
+$\omega = e^{2\pi i/p}$ and then specializes; this is the $p = 2$ case throughout, where
+$\omega = -1$ and every phase is the real sign \texttt{MIPRE.sgn}. Nothing is lost here: the test's
+parameters are admissible by hypothesis, which means $q = 2^k$, and no consumer instantiates it
+elsewhere. What it buys is that the operators are self-adjoint \emph{involutions} rather than
+order-$p$ unitaries --- so they are genuine $\pm 1$-observables, and item 2 above is where the
+paper needs $(\qp^W(a))^p = \Id$.
+
+\textbf{One matrix, not an iterated Kronecker product.} $(\C^q)^{\ot n}$ is presented as matrices
+indexed by the functions $n \to \F_q$, which \emph{is} $\F_q^n$, so $\qp^W(a)$ is a single matrix
+and the $n$-register statements are the one-register statements with no associativity
+bookkeeping. The index set $n$ is an arbitrary finite type rather than $\{1, \ldots, n\}$, which is
+what lets the test use it at $n = \{0,1\}^m$ --- the indexing of $\F_q^M$, $M = 2^m$, that
+Definition~\ref{def:ld-encoding} already uses.
+
+\textbf{The cancellation lemma needed a generalization, not a port.} The identity behind the
+inversion in~\eqref{eq:pauli-obs-proj-bp} is that a nontrivial sign character of $\F_q^n$ sums to
+zero, and that is the index-two kernel of a nonzero $\F_2$-linear functional. The repository had
+that count only for a functional on a field \emph{extension}
+(\texttt{card\_filter\_ker\_mul}); the proof uses nothing but the module structure and a vector
+off the kernel, so it is now stated for any finite $\F$-vector space
+(\texttt{card\_filter\_ker\_mul'}), with the field-extension form as the instance. The paper's own
+correction note on \texttt{lem:cancellation} warns that the ambient space must be a subspace over the
+\emph{base} field and that the statement is false over a subfield; here the space is all of
+$\F_q^n$ over $\F_2$, so there is nothing to check.
+
+What is not yet here: the Fourier transform conjugating the $\qp^Z$ family into the $\qp^X$ one
+and hence the $X$-side projectors, the syndrome projectors
+$\qp^W_{[\cdot\, v = a]}$ that Lemma~\ref{lem:qld-expanded-points} averages to, and
+$\ket{\EPR_q}^{\ot M}$ with its stabilizer relations.
+
 \begin{definition}[Inconsistency]
 \label{def:inconsistency}
 \uses{def:game}

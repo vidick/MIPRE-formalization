@@ -653,6 +653,7 @@ import MIPRE.Foundations.SAT.Pcp
 import MIPRE.Foundations.SAT.Succinct
 import MIPRE.Foundations.SAT.Table
 import MIPRE.Foundations.SAT.Tseitin
+import MIPRE.Foundations.Sign
 import MIPRE.Foundations.StateDistance
 import MIPRE.Foundations.SyncTransport
 import MIPRE.Foundations.TensorFamily
@@ -671,6 +672,7 @@ import MIPRE.Foundations.ValueApprox.RawStrategy
 import MIPRE.Foundations.ValueApprox.Strategy
 import MIPRE.Foundations.Verifier
 import MIPRE.Foundations.VerifierValue
+import MIPRE.Foundations.Weyl
 import MIPRE.HaltingGameValue
 import MIPRE.LCS.Basic
 import MIPRE.LCS.Common

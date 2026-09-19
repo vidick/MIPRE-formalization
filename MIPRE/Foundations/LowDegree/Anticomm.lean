@@ -102,6 +102,44 @@ end IndVec
 
 section Ker
 
+/-! The kernel-index count is about a finite `𝔽`-vector space, not about a field extension: the
+proof uses only the module structure and a vector off the kernel. It is stated that way because
+the Weyl operators of `MIPRE/Foundations/Weyl.lean` need it on `n → 𝔽`, where the phase
+`(-1)^{tr(a · b)}` is summed over a whole register rather than over a single field element. The
+field-extension form below is the instance `V = K`. -/
+
+section Module
+
+variable {F V : Type*} [Field F] [Fintype F] [DecidableEq F] [AddCommGroup V] [Module F V]
+  [Fintype V] [DecidableEq V]
+
+omit [DecidableEq V] in
+/-- **A nonzero `𝔽`-linear functional on a finite `𝔽`-vector space has kernel of index `|𝔽|`.**
+Every fibre is a translate of the kernel, and there are `|𝔽|` of them. -/
+theorem card_filter_ker_mul' (τ : V →ₗ[F] F) (hτ : τ ≠ 0) :
+    #{r ∈ (univ : Finset V) | τ r = 0} * Fintype.card F = Fintype.card V := by
+  classical
+  obtain ⟨v, hv⟩ : ∃ v : V, τ v ≠ 0 := by
+    by_contra h
+    exact hτ (LinearMap.ext fun r => not_ne_iff.mp (fun hr => h ⟨r, hr⟩))
+  -- every fibre has the same cardinality as the kernel
+  have hfib : ∀ a : F, #{r ∈ (univ : Finset V) | τ r = a} = #{r ∈ (univ : Finset V) | τ r = 0} := by
+    intro a
+    refine Finset.card_bij' (fun r _ => r - (a / τ v) • v) (fun r _ => r + (a / τ v) • v)
+      ?_ ?_ ?_ ?_ <;> intro r hr <;> simp only [Finset.mem_filter, Finset.mem_univ,
+        true_and, map_sub, map_add, map_smul] at hr ⊢
+    · rw [hr, smul_eq_mul, div_mul_cancel₀ _ hv, sub_self]
+    · rw [hr, smul_eq_mul, div_mul_cancel₀ _ hv, zero_add]
+    · rw [sub_add_cancel]
+    · rw [add_sub_cancel_right]
+  have hcard : Fintype.card V = ∑ a : F, #{r ∈ (univ : Finset V) | τ r = a} := by
+    rw [← Finset.card_univ]
+    exact Finset.card_eq_sum_card_fiberwise fun r _ => Finset.mem_univ (τ r)
+  rw [hcard, Finset.sum_congr rfl fun a (_ : a ∈ univ) => hfib a, Finset.sum_const,
+    Finset.card_univ, mul_comm, smul_eq_mul]
+
+end Module
+
 variable {F K : Type*} [Field F] [Fintype F] [DecidableEq F] [Field K] [Fintype K]
   [DecidableEq K] [Algebra F K]
 
