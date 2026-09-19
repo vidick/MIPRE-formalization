@@ -327,11 +327,13 @@ Theorem~\ref{thm:almost-sync}.
 
 The formalized hypothesis and conclusion are both strict. For a POVM, completeness
 identifies the defect with $1-\varphi(\sum_a M_a^2)$, but does not turn a non-strict
-bound into a strict one. In finite dimension a separate compactness argument retains
-the constant $9$: apply the theorem at every larger error, then pass to a convergent
-subsequence of projective measurements and use continuity. This also covers zero
-defect; Corollary~\ref{cor:ortho-from-consistency} spells out the limiting step needed
-by its application. That corollary has no Lean proof mark here.
+bound into a strict one. A compactness argument in finite dimension would retain the
+constant $9$ at the non-strict bound --- apply the theorem at every larger error, then
+pass to a convergent subsequence of projective measurements and use continuity --- and
+would also cover zero defect. Corollary~\ref{cor:ortho-from-consistency}, the one
+application in this project, does not need it: its Cauchy--Schwarz step produces slack
+$\gamma^2$ over the bound it has to clear, so the strict hypothesis holds as stated. The
+comments after that corollary record the repair.
 
 \subsection{Magic Square rigidity}
 \label{sec:rr-magic-square}
@@ -1249,32 +1251,59 @@ than an $O(\cdot)$.
 \begin{corollary}[Orthonormalization from consistency]
 \label{cor:ortho-from-consistency}
 \ledgernode{1.2.2.3, 1.2.2.3.1}
-\uses{thm:orthonormalization,def:inconsistency,def:distance}
-There is $\eta(\delta) = O(\delta)$ such that the following holds. Let $\{Q_a\}$ be a POVM on
-$\mH_\alice$ and $\{R_a\}$ a POVM on $\mH_\bob$ that are $\delta$-consistent on
-$\ket{\psi}$. Then there is a \emph{projective} measurement $\{P_a\}$ on $\mH_\alice$ with
-$P_a \ot \Id \approx_{\eta(\delta)} Q_a \ot \Id$ on $\ket{\psi}$.
+\uses{thm:orthonormalization,def:inconsistency,def:state-distance}
+\lean{MIPRE.QLD.exists_projective_of_consistent}
+\leanok
+Let $\delta > 0$, let $\{Q_a\}$ be a POVM on $\mH_\alice$ and $\{R_a\}$ a POVM on $\mH_\bob$
+whose inconsistency on the unit vector $\ket{\psi}$ is at most $\delta$. Then there is a
+\emph{projective} measurement $\{P_a\}$ on $\mH_\alice$ with
+\begin{equation*}
+  \sum_a \norm{\bigl((Q_a - P_a) \ot \Id_\bob\bigr)\ket{\psi}}^2 \;<\; 18\,\delta\;,
+\end{equation*}
+that is, $P_a \ot \Id \approx_{\eta_{ortho}(\delta)} Q_a \ot \Id$ on $\ket{\psi}$ with
+$\eta_{ortho}(\delta) = 18\delta$, linear in $\delta$ as
+Theorem~\ref{thm:orthonormalization} permits.
 \end{corollary}
 
 \begin{proof}
+\leanok
 \uses{thm:orthonormalization}
 This is not Theorem~\ref{thm:orthonormalization} restated: that theorem requires strict
 near-projectivity in a normal state, while what the appendix has is
 bipartite consistency. The bridge is a Cauchy--Schwarz step. Write
 $\gamma = \sum_{a \neq b} \bra{\psi} Q_a \ot R_b \ket{\psi}$, so that
-$\sum_a \bra{\psi} Q_a \ot R_a \ket{\psi} = 1 - \gamma$. Since
-$\sum_a R_a^2 \leq \sum_a R_a = \Id$, Cauchy--Schwarz over $a$ gives
-$\sum_a \bra{\psi} Q_a^2 \ot \Id \ket{\psi} \geq (1 - \gamma)^2 \geq 1 - 2\gamma$, which is
-non-strict near-projectivity at $2\gamma$. For every $\eps>2\gamma$, apply
-Theorem~\ref{thm:orthonormalization} to the algebra
-$\cal{L}(\mH_\alice)\ot\Id$ with the normal vector state of $\ket{\psi}$. It gives a
-projective family of the form $P_a^{\eps}\ot\Id$ with squared-distance sum less than
-$9\eps$. In finite dimension, projective measurements with the fixed finite outcome
-set form a compact set. Letting $\eps$ decrease to $2\gamma$ along a sequence,
-extract a convergent subsequence and use continuity to obtain
-$\sum_a\norm{((Q_a-P_a)\ot\Id)\ket{\psi}}^2\leq18\gamma=O(\delta)$.
-This argument includes $\gamma=0$.
+$\sum_a \bra{\psi} Q_a \ot R_a \ket{\psi} = 1 - \gamma$ because
+$\sum_{a,b} Q_a \ot R_b = \Id$. Since $\sum_a R_a^2 \leq \sum_a R_a = \Id$, Cauchy--Schwarz
+over $a$ gives
+\begin{equation*}
+  1 - \gamma \;=\; \sum_a \bigl\langle (Q_a \ot \Id)\ket{\psi},\,
+    (\Id \ot R_a)\ket{\psi} \bigr\rangle
+  \;\leq\; \Bigl(\sum_a \bra{\psi} Q_a^2 \ot \Id \ket{\psi}\Bigr)^{1/2}\;,
+\end{equation*}
+hence $\sum_a \bra{\psi} Q_a^2 \ot \Id \ket{\psi} \geq (1 - \gamma)^2 = 1 - 2\gamma + \gamma^2$.
+Now $2\gamma - \gamma^2 < 2\delta$ for every $\gamma \leq \delta$ with $\delta > 0$ --- at
+$\gamma = \delta$ because $\gamma^2 > 0$, and at $\gamma < \delta$ because $\gamma^2 \geq 0$ ---
+and if $\gamma \geq 1$ the hypothesis holds vacuously, so near-projectivity at $\eps = 2\delta$
+holds \emph{strictly}. Apply Theorem~\ref{thm:orthonormalization} to
+$\cal{L}(\mH_\alice)\ot\Id$ with the vector state of $\ket{\psi}$: it gives a projective family
+$P_a \ot \Id$ with squared-distance sum less than $9\eps = 18\delta$.
 \end{proof}
+
+\paragraph{Comments.} The paper closes this proof differently, and the difference is a
+\textbf{repair}. It derives near-projectivity at $2\gamma$ for the \emph{actual} inconsistency
+$\gamma$, which is non-strict, so Theorem~\ref{thm:orthonormalization} applies only at each
+$\eps > 2\gamma$; it then takes $\eps \downarrow 2\gamma$ inside the (compact) set of projective
+measurements with a fixed finite outcome set and extracts a convergent subsequence to reach
+$18\gamma$ itself. That limit is not needed. The slack $\gamma^2$ in
+$(1-\gamma)^2 = 1 - 2\gamma + \gamma^2$ already makes the hypothesis strict at $\eps = 2\delta$
+for any \emph{bound} $\delta > 0$ on the inconsistency, which is the form in which every
+application supplies it and the form stated above; the compactness argument, and with it the
+continuity of $\{P_a\} \mapsto \sum_a \norm{((Q_a - P_a)\ot\Id)\ket{\psi}}^2$ and the
+sequential extraction, disappears. What the paper's version additionally gives is the exact
+case $\delta = 0$, where the limit produces a projective measurement agreeing with $\{Q_a\}$ on
+$\ket{\psi}$ exactly. Nothing downstream uses it: every invocation carries a positive error
+bound. The statement above is therefore weaker only at $\delta = 0$ and stronger elsewhere,
+both in being strict and in naming the constant.
 
 \subsubsection{What winning implies}
 

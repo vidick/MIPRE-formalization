@@ -94,6 +94,12 @@ noncomputable def stateNorm (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) : ℝ
 /-- `⟨ψ| M† M ⊗ Id |ψ⟩`, the squared state-dependent norm. -/
 noncomputable def stateSqNorm (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) : ℝ := stateNorm ψ M ^ 2
 
+/-- The sesquilinear form of two matrices applied to the same vector, moved onto one side:
+`⟨A ψ, B ψ⟩ = ⟨ψ, A† B ψ⟩`. -/
+theorem star_mulVec_dotProduct {n : Type*} [Fintype n] (A B : Matrix n n ℂ) (ψ : n → ℂ) :
+    star (A *ᵥ ψ) ⬝ᵥ (B *ᵥ ψ) = star ψ ⬝ᵥ ((Aᴴ * B) *ᵥ ψ) := by
+  rw [Matrix.star_mulVec, ← Matrix.mulVec_mulVec, ← Matrix.dotProduct_mulVec]
+
 /-- **The squared norm is the blueprint's quadratic form**, as a complex number:
 `⟨ψ| M† M ⊗ Id |ψ⟩` is real and equal to `stateSqNorm ψ M`. This is the only place the Kronecker
 adjoint is needed, and it is what makes the Lean definition and `def:state-distance`'s spelling
@@ -106,8 +112,8 @@ theorem quadForm_eq (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) :
   have hAdj : Aᴴ * A = (Mᴴ * M) ⊗ₖ (1 : Matrix dB dB ℂ) := by
     rw [hA, Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one,
       ← Matrix.mul_kronecker_mul, Matrix.one_mul]
-  have h1 : star (A *ᵥ ψ) ⬝ᵥ (A *ᵥ ψ) = star ψ ⬝ᵥ ((Aᴴ * A) *ᵥ ψ) := by
-    rw [Matrix.star_mulVec, ← Matrix.mulVec_mulVec, ← Matrix.dotProduct_mulVec]
+  have h1 : star (A *ᵥ ψ) ⬝ᵥ (A *ᵥ ψ) = star ψ ⬝ᵥ ((Aᴴ * A) *ᵥ ψ) :=
+    star_mulVec_dotProduct A A ψ
   rw [← hAdj, ← h1, dotProduct]
   have hentry : ∀ i, star (A *ᵥ ψ) i * (A *ᵥ ψ) i = ((‖(A *ᵥ ψ) i‖ ^ 2 : ℝ) : ℂ) := by
     intro i
@@ -219,6 +225,75 @@ theorem stateDist_obsOf_le {μ : X → ℝ} (hμ0 : ∀ x, 0 ≤ μ x) (ψ : dA 
           * ∑ a, stateSqNorm ψ (((M x).mats a).val - ((N x).mats a).val) := rfl
 
 end POVMs
+
+/-! ## Bob's factor, by the swap
+
+`cor:ortho-from-consistency` compares `(Q_a ⊗ Id)|ψ⟩` against `(Id ⊗ R_a)|ψ⟩`, so it needs the
+vectors of the *other* factor too. Rather than duplicate the calculus above, observe that Bob's
+factor is Alice's factor of the swapped state: `swapVec` exchanges the two tensor factors, and
+`norm_stateVecB` identifies the two norms. Every lemma proved above then applies on Bob's side
+with `dA` and `dB` exchanged. -/
+
+section Swap
+
+variable [DecidableEq dA]
+
+/-- `|ψ⟩` with its two tensor factors exchanged. -/
+def swapVec (ψ : dA × dB → ℂ) : dB × dA → ℂ := fun p => ψ p.swap
+
+/-- `(Id ⊗ N)|ψ⟩`, as a vector of `EuclideanSpace ℂ (dA × dB)`: the `stateVec` of Bob's
+factor. -/
+noncomputable def stateVecB (ψ : dA × dB → ℂ) (N : Matrix dB dB ℂ) :
+    EuclideanSpace ℂ (dA × dB) :=
+  WithLp.toLp 2 (((1 : Matrix dA dA ℂ) ⊗ₖ N) *ᵥ ψ)
+
+omit [DecidableEq dB] in
+theorem stateVecB_entry (ψ : dA × dB → ℂ) (N : Matrix dB dB ℂ) (i : dA) (j : dB) :
+    (((1 : Matrix dA dA ℂ) ⊗ₖ N) *ᵥ ψ) (i, j) = ∑ l, N j l * ψ (i, l) := by
+  classical
+  simp [Matrix.mulVec, dotProduct, Fintype.sum_prod_type, Matrix.one_apply,
+    Finset.sum_ite_eq, mul_comm]
+
+omit [DecidableEq dB] in
+theorem stateVec_swapVec_entry (ψ : dA × dB → ℂ) (N : Matrix dB dB ℂ) (i : dA) (j : dB) :
+    ((N ⊗ₖ (1 : Matrix dA dA ℂ)) *ᵥ swapVec ψ) (j, i) = ∑ l, N j l * ψ (i, l) := by
+  classical
+  simp [Matrix.mulVec, dotProduct, Fintype.sum_prod_type, Matrix.one_apply, swapVec, mul_ite,
+    Finset.sum_ite_eq]
+
+omit [DecidableEq dB] in
+/-- **Bob's norm is Alice's norm of the swapped state.** -/
+theorem norm_stateVecB (ψ : dA × dB → ℂ) (N : Matrix dB dB ℂ) :
+    ‖stateVecB ψ N‖ = stateNorm (swapVec ψ) N := by
+  classical
+  rw [stateNorm, stateVecB, stateVec, EuclideanSpace.norm_eq, EuclideanSpace.norm_eq]
+  congr 1
+  refine Fintype.sum_equiv (Equiv.prodComm dA dB) _ _ fun p => ?_
+  obtain ⟨i, j⟩ := p
+  show ‖(((1 : Matrix dA dA ℂ) ⊗ₖ N) *ᵥ ψ) (i, j)‖ ^ 2
+      = ‖((N ⊗ₖ (1 : Matrix dA dA ℂ)) *ᵥ swapVec ψ) (j, i)‖ ^ 2
+  rw [stateVecB_entry, stateVec_swapVec_entry]
+
+/-- The inner product of the two factors' vectors is the blueprint's `⟨ψ| Q ⊗ R |ψ⟩`, for
+self-adjoint `Q`. -/
+theorem inner_stateVec_stateVecB (ψ : dA × dB → ℂ) {Q : Matrix dA dA ℂ} (hQ : Qᴴ = Q)
+    (R : Matrix dB dB ℂ) :
+    inner ℂ (stateVec ψ Q) (stateVecB ψ R) = star ψ ⬝ᵥ ((Q ⊗ₖ R) *ᵥ ψ) := by
+  classical
+  have hadj : (Q ⊗ₖ (1 : Matrix dB dB ℂ))ᴴ * ((1 : Matrix dA dA ℂ) ⊗ₖ R) = Q ⊗ₖ R := by
+    rw [Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one, ← Matrix.mul_kronecker_mul,
+      Matrix.mul_one, Matrix.one_mul, hQ]
+  rw [EuclideanSpace.inner_eq_star_dotProduct]
+  show ((1 : Matrix dA dA ℂ) ⊗ₖ R) *ᵥ ψ ⬝ᵥ star ((Q ⊗ₖ (1 : Matrix dB dB ℂ)) *ᵥ ψ) = _
+  rw [dotProduct_comm, star_mulVec_dotProduct, hadj]
+
+omit [DecidableEq dB] [DecidableEq dA] in
+/-- The swap is a reindexing, so it preserves the norm of the state. -/
+theorem swapVec_dotProduct (ψ : dA × dB → ℂ) :
+    star (swapVec ψ) ⬝ᵥ swapVec ψ = star ψ ⬝ᵥ ψ :=
+  (Fintype.sum_equiv (Equiv.prodComm dA dB) _ _ fun _ => rfl).symm
+
+end Swap
 
 /-- **Averaging preserves closeness**, blueprint `lem:qld-averaging`: a weighted average with
 weights of modulus at most one is no further apart than the families are. Triangle inequality,

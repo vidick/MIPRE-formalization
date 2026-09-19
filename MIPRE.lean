@@ -386,6 +386,9 @@ import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.WOTCompact
 import MIPRE.Background.Orthonormalization.Orthogonalization.PhiNorm
 import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
 import MIPRE.Background.Orthonormalization.Statement
+import MIPRE.Background.QLD.Axioms
+import MIPRE.Background.QLD.Consistency
+import MIPRE.Background.QLD.Ortho
 import MIPRE.Background.Repetition.Axioms
 import MIPRE.Background.Repetition.Commuting
 import MIPRE.Background.Repetition.CommutingRepetition.Game.Basic
