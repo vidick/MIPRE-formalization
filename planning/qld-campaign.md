@@ -157,12 +157,13 @@ best-specified target in the campaign — the blueprint and `paper/ldt.tex` writ
 out with explicit constants — but it is not a tail item, for three reasons, two of them
 structural and one of them a finding about the repository rather than about the lemma.
 
-**1. The Naimark dilation the proof needs already exists, behind a 71k-line import.**
+**1. The Naimark dilation the proof needs already existed, behind a 71k-line import.**
+*(Extracted 2026-09-19; see the end of this item.)*
 The proof dilates each of Alice's six constraint POVMs to a projective measurement on *one
 shared* initialized ancilla, which is what lets all six families act on a single state
 `|ψ'⟩ = (J ⊗ Id)|ψ⟩`; that is why the paper needs the unitary extension `U_c J = V_c` rather
-than the one-line isometry `V_c`. `MIPRE.Repetition.exists_projective_dilation` in
-`MIPRE/Background/Repetition/Entangled.lean` is exactly that theorem, with exactly that
+than the one-line isometry `V_c`. `exists_projective_dilation`, then in
+`MIPRE/Background/Repetition/Entangled.lean`, is exactly that theorem, with exactly that
 question-independent embedding (`ancillaEmbed d a₀`), together with
 `exists_isometry_of_povm`, `exists_unitary_extending`, `ancillaProj` and the Born-rule
 transport lemmas. None of it touches the vendored trees.
@@ -170,12 +171,12 @@ transport lemmas. None of it touches the vendored trees.
 But `Entangled.lean` is one of the nine bridge modules: it imports
 `MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition`, the 71k-line vendored
 module that costs 25 CPU-minutes on its own. `MIPRE/LCS/` may not import `MIPRE/Background/`
-at all (the one-way import graph in `CLAUDE.md`), so the dilation has to be **extracted first**
-into something like `MIPRE/Foundations/Dilation.lean`, with `Entangled.lean` importing it and
-its namespace changing from `MIPRE.Repetition` to `MIPRE`. That is a pure refactor of about 190
-lines, it is worth doing on its own merits — generic mathematics this project wrote, currently
-reachable only through the most expensive import in the repository — and it should be the first
-commit of PR B rather than a detour inside a lemma.
+at all (the one-way import graph in `CLAUDE.md`), so the dilation had to be **extracted first**
+into `MIPRE/Foundations/Dilation.lean`, with `Entangled.lean` importing it and its namespace
+changing from `MIPRE.Repetition` to `MIPRE`. **Done**: a pure refactor of 220 lines, with the
+imports narrowed from a wholesale `import Mathlib` to four Mathlib modules on the way (8706
+build jobs down to 2708). `planning/next-steps.md` had predicted this move and said to make it
+when a second consumer appeared; this is that consumer.
 
 **2. `Game.toNonlocalGame` was one-directional, and the lemma's Alice half was not statable on
 it.** *(Settled 2026-09-19: the game is now symmetrized. What follows is the finding as it
