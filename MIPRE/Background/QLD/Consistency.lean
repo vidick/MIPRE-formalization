@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 import MIPRE.Background.QLD.Ortho
+import MIPRE.Foundations.POVMValue
 
 /-!
 # From bipartite consistency to near-projectivity
@@ -45,46 +46,6 @@ open scoped ComplexOrder MatrixOrder
 
 variable {A : Type*} [Fintype A] [DecidableEq A]
 variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-
-/-! ## Linearity of the two bilinear gadgets
-
-The quadratic form `T ↦ ⟨ψ| T |ψ⟩` and the Kronecker product are linear in each argument, but
-Mathlib states neither over a `Finset` sum, so both are recorded here. -/
-
-omit [DecidableEq A] [DecidableEq dA] [DecidableEq dB] in
-theorem sum_quadForm {ι : Type*} (ψ : dA × dB → ℂ) (s : Finset ι)
-    (f : ι → Matrix (dA × dB) (dA × dB) ℂ) :
-    star ψ ⬝ᵥ ((∑ i ∈ s, f i) *ᵥ ψ) = ∑ i ∈ s, star ψ ⬝ᵥ ((f i) *ᵥ ψ) := by
-  classical
-  induction s using Finset.induction with
-  | empty => simp
-  | insert i s hi ih =>
-      rw [Finset.sum_insert hi, Matrix.add_mulVec, dotProduct_add, ih, Finset.sum_insert hi]
-
-omit [DecidableEq A] [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB] in
-theorem kronecker_sum_right {ι : Type*} (M : Matrix dA dA ℂ) (s : Finset ι)
-    (f : ι → Matrix dB dB ℂ) : M ⊗ₖ (∑ i ∈ s, f i) = ∑ i ∈ s, M ⊗ₖ f i := by
-  classical
-  induction s using Finset.induction with
-  | empty => simp
-  | insert i s hi ih =>
-      rw [Finset.sum_insert hi, Matrix.kronecker_add, ih, Finset.sum_insert hi]
-
-omit [DecidableEq A] [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB] in
-theorem sum_kronecker_left {ι : Type*} (s : Finset ι) (f : ι → Matrix dA dA ℂ)
-    (N : Matrix dB dB ℂ) : (∑ i ∈ s, f i) ⊗ₖ N = ∑ i ∈ s, f i ⊗ₖ N := by
-  classical
-  induction s using Finset.induction with
-  | empty => simp
-  | insert i s hi ih =>
-      rw [Finset.sum_insert hi, Matrix.add_kronecker, ih, Finset.sum_insert hi]
-
-omit [DecidableEq A] in
-/-- A POVM's elements sum to the identity matrix (its own `normalized` lives in the self-adjoint
-subalgebra). -/
-theorem POVM.sum_val (Q : POVM A dA) : ∑ a, ((Q.mats a).val) = (1 : Matrix dA dA ℂ) := by
-  rw [← AddSubmonoidClass.coe_finsetSum, Q.normalized]
-  rfl
 
 /-! ## The inconsistency of a single pair of POVMs -/
 

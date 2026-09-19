@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 import MIPRE.Foundations.Closeness
+import MIPRE.Foundations.OpBound
 
 /-!
 # The state-dependent distance on a bipartite state
@@ -93,12 +94,6 @@ noncomputable def stateNorm (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) : ℝ
 
 /-- `⟨ψ| M† M ⊗ Id |ψ⟩`, the squared state-dependent norm. -/
 noncomputable def stateSqNorm (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) : ℝ := stateNorm ψ M ^ 2
-
-/-- The sesquilinear form of two matrices applied to the same vector, moved onto one side:
-`⟨A ψ, B ψ⟩ = ⟨ψ, A† B ψ⟩`. -/
-theorem star_mulVec_dotProduct {n : Type*} [Fintype n] (A B : Matrix n n ℂ) (ψ : n → ℂ) :
-    star (A *ᵥ ψ) ⬝ᵥ (B *ᵥ ψ) = star ψ ⬝ᵥ ((Aᴴ * B) *ᵥ ψ) := by
-  rw [Matrix.star_mulVec, ← Matrix.mulVec_mulVec, ← Matrix.dotProduct_mulVec]
 
 /-- **The squared norm is the blueprint's quadratic form**, as a complex number:
 `⟨ψ| M† M ⊗ Id |ψ⟩` is real and equal to `stateSqNorm ψ M`. This is the only place the Kronecker
