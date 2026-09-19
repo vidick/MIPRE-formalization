@@ -426,6 +426,56 @@ registers, and the hatted measurements `M-hat^{(Point,W),u}` as Fourier averages
 `W-hat^r(u) = W^r(u) ⊗ tau^W(r · ind_m(u))`. The Weyl half of that is now all present, including
 the stabilizer relation the sign cancellation runs on.
 
+### PR B'' — the commutation lemma, both halves
+
+Written 2026-09-19. `lem:qld-obs-commutation` is now proved in full, at an explicit `57676416 eps`.
+
+**The commutation analysis** (`MIPRE/Foundations/Commutation.lean`, blueprint
+`lem:commutation-analysis`). Two POVMs on one side, each cross-party close to a marginal of one
+**projective** measurement on the other, commute on the state at `16 delta`. Both products are
+moved to the same operator `Id (x) P_{b,c}` on the other side, and that is the only use of
+projectivity in the whole appendix (`IsPVM.marg_mul_marg`). The step that makes it work is the
+paper's `fact:add-a-proj`: a family with `sum_i F_i^dag F_i <= Id` in front of a deviation costs
+nothing and *adds* its index to the sum.
+
+Stated for abstract families in **one** matrix algebra, with the two parties entering only through
+four hypotheses. That is not tidiness: the first version, stated with `aOp`/`bOp` in the
+hypotheses, timed out at 200000 heartbeats in three places; in one algebra it elaborates in
+seconds and the bipartite version is a one-line instance.
+
+**The commuting half** (`MIPRE/Background/QLD/Commutation.lean`, blueprint
+`lem:qld-obs-commutation-comm`), at `9519168 eps`. Three things had to be arranged:
+
+* **the analysis runs on Bob's observables.** `cor:ortho-from-consistency` produces a projective
+  measurement on *Alice's* factor, and the analysis needs the joint projective measurement on the
+  side *opposite* the commuting pair. So it is applied to Bob's point measurements against Alice's
+  projectivized `Pair` measurement, and the conclusion is carried back by the order-reversal rule
+  with `pts_obs_consistency`. The bridge is a swap lemma for *mixed* operators,
+  `snorm_swapVec_aOp_sub_bOp`; `norm_stateVecB` only covers an operator on one factor. The
+  alternative --- a Bob-side orthonormalization corollary --- would duplicate `Ortho.lean`.
+* **the chain runs mirrored.** Items 5 and 1 with the players exchanged (every rule of
+  `fig:decider_pauli` is stated in both orientations) and item 4 as it stands: three links at
+  `172 eps`, so `1548 eps` after one three-term triangle inequality.
+* **the corollary's strict slack is discharged by a limit.** It needs `0 < delta`; it is applied at
+  `delta = inconsistency + eta` for arbitrary `eta > 0`, which survives averaging as an additive
+  constant and is sent to zero with `le_of_forall_pos_le_add`. No compactness.
+
+**A correction to what the last PR said about the square root.** PR B' recorded that the
+anticommuting half costs `eps` and attributed the `O(sqrt(eps))` of the blueprint's statement to
+the commuting half. That was wrong: the commuting half is `O(eps)` as well --- the analysis is
+linear in its hypothesis and `cor:ortho-from-consistency` is linear in the inconsistency. The
+paper's `sqrt(eps)` is a uniform *weakening*, and the paper's own text says so where the
+anticommuting case is proved ("in particular it implies the following weaker bound, retained in the
+form used below"). Nothing downstream needs the sharper form, so this is a note about where a
+square root is not spent rather than a repair. The blueprint carries the correction at
+`lem:qld-obs-commutation-acomm`.
+
+**One finding worth keeping.** Data processing is a **consistency**-level fact: NW19's Fact 4.26 is
+stated for `simeq_delta` and the remark following it gives a counterexample for `approx_delta`. The
+paper's `fact:data-processing` is the `simeq` form, correctly. So every coarse-graining in the chain
+is taken at the Born level and only then converted, and a formalization that reached for the
+`approx` form would be proving something false.
+
 ### PR C — combining the two bases
 
 `thm:linearity`, then `lem:qld-combined-points`, `lem:qld-pairs-of-lines`,

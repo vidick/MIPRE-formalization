@@ -91,6 +91,43 @@ Blueprint `lem:qld-obs-commutation-acomm`. The two point observables and the two
 observables they are tied to, the sub-probability weight the items carry, item 7 in observable
 form, the identification of item 6's anticommutator, and the lemma. -/
 
+/-! ## Signed commutation: both halves
+
+Blueprint `lem:qld-obs-commutation`, `lem:qld-obs-commutation-comm` and
+`lem:qld-obs-commutation-acomm`. The commuting half runs the chain through the `Pair` measurement,
+projectivizes it, and applies the commutation analysis; the anticommuting half is the Magic
+Square's anticommutator carried across the tensor factors. -/
+
+#guard_sorry_free MIPRE.QLD.pairPOVM,
+  MIPRE.QLD.pairPOVMB,
+  MIPRE.QLD.ptPOVM,
+  MIPRE.QLD.ptPOVMB,
+  MIPRE.QLD.ptObsB,
+  MIPRE.QLD.ptObs_eq_obs2,
+  MIPRE.QLD.ptObsB_mul_self_le_one,
+  MIPRE.QLD.sum_pairPOVM_X,
+  MIPRE.QLD.sum_pairPOVM_Z,
+  MIPRE.QLD.adj_pairB_point,
+  MIPRE.QLD.link_pairB_point,
+  MIPRE.QLD.link_pair_pair,
+  MIPRE.QLD.chain_pair_point,
+  MIPRE.QLD.chainQty,
+  MIPRE.QLD.incQty,
+  MIPRE.QLD.chainQty_nonneg,
+  MIPRE.QLD.incQty_nonneg,
+  MIPRE.QLD.commWeight,
+  MIPRE.QLD.commWeight_nonneg,
+  MIPRE.QLD.sum_commWeight_mul,
+  MIPRE.QLD.sum_commWeight_le_one,
+  MIPRE.QLD.xStateDist_ptObs_ptObsB,
+  MIPRE.QLD.pairInconsistency_nonneg,
+  MIPRE.QLD.incQty_le_condFail,
+  MIPRE.QLD.sum_incQty_le,
+  MIPRE.QLD.sq_norm_ptObs_comm_le_of_content,
+  MIPRE.QLD.sum_chainQty_le,
+  MIPRE.QLD.comm_signed_commutation,
+  MIPRE.QLD.signed_commutation
+
 #guard_sorry_free MIPRE.QLD.ptObs,
   MIPRE.QLD.varObs,
   MIPRE.QLD.ptObs_mul_self_le_one,

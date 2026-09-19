@@ -1688,43 +1688,96 @@ $2 \cdot 172\eps$.
 
 \begin{lemma}[Signed commutation of the point observables]
 \label{lem:qld-obs-commutation}
-\uses{lem:qld-win,lem:qld-obs-consistency,fact:omega-anticomm-prob,cor:ortho-from-consistency}
+\uses{lem:qld-win,lem:qld-obs-consistency,fact:omega-anticomm-prob,cor:ortho-from-consistency,
+  lem:commutation-analysis,def:cross-distance}
+\lean{MIPRE.QLD.signed_commutation}
+\leanok
 Under the hypotheses of Lemma~\ref{lem:qld-win}, on average over uniformly random
 $\omega = (u_X, u_Z, r_X, r_Z)$,
-\begin{equation*}
+\begin{equation}
+  \label{eq:qld-obs-commutation-bp}
   X^{r_X}(u_X)\, Z^{r_Z}(u_Z) \ot \Id_\bob
-    \;\approx_{O(\sqrt{\eps})}\;
+    \;\approx_{57676416\,\eps}\;
   (-1)^{\gamma(\omega)}\; Z^{r_Z}(u_Z)\, X^{r_X}(u_X) \ot \Id_\bob\;.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:qld-win,lem:qld-obs-consistency,lem:commutation-analysis,def:cross-distance,
+  cor:ortho-from-consistency}
+Two cases, and the sign is the branch. The content distribution is uniform and the two cases
+partition it, so the statement is the sum of the two restricted ones:
+Lemma~\ref{lem:qld-obs-commutation-comm} at $9519168\,\eps$ and
+Lemma~\ref{lem:qld-obs-commutation-acomm} at $48157248\,\eps$.
+\end{proof}
+
+\effortMedium
+
+\begin{lemma}[Signed commutation, the commuting case]
+\label{lem:qld-obs-commutation-comm}
+\uses{lem:qld-win,cor:ortho-from-consistency,lem:commutation-analysis,def:cross-distance}
+\lean{MIPRE.QLD.pairPOVM, MIPRE.QLD.pairPOVMB, MIPRE.QLD.ptPOVM, MIPRE.QLD.ptPOVMB,
+  MIPRE.QLD.ptObsB, MIPRE.QLD.ptObs_eq_obs2, MIPRE.QLD.ptObsB_mul_self_le_one,
+  MIPRE.QLD.sum_pairPOVM_X, MIPRE.QLD.sum_pairPOVM_Z, MIPRE.QLD.adj_pairB_point,
+  MIPRE.QLD.link_pairB_point, MIPRE.QLD.link_pair_pair, MIPRE.QLD.chain_pair_point,
+  MIPRE.QLD.chainQty, MIPRE.QLD.incQty, MIPRE.QLD.chainQty_nonneg, MIPRE.QLD.incQty_nonneg,
+  MIPRE.QLD.commWeight, MIPRE.QLD.commWeight_nonneg, MIPRE.QLD.sum_commWeight_mul,
+  MIPRE.QLD.sum_commWeight_le_one, MIPRE.QLD.xStateDist_ptObs_ptObsB,
+  MIPRE.QLD.pairInconsistency_nonneg, MIPRE.QLD.incQty_le_condFail, MIPRE.QLD.sum_incQty_le,
+  MIPRE.QLD.sq_norm_ptObs_comm_le_of_content, MIPRE.QLD.sum_chainQty_le,
+  MIPRE.QLD.comm_signed_commutation}
+\leanok
+Under the hypotheses of Lemma~\ref{lem:qld-win}, summed over the \emph{commuting} tuples with the
+uniform weight $\abs{\mC}^{-1}$,
+\begin{equation*}
+  \sum_{\omega \,:\, \gamma(\omega) = 0} \frac{1}{\abs{\mC}}
+    \norm{\bigl( [X^{r_X}(u_X),\, Z^{r_Z}(u_Z)] \bigr) \ot \Id_\bob \ket{\psi}}^2
+  \;\leq\; 9519168\, \eps\;.
 \end{equation*}
 \end{lemma}
 
 \begin{proof}
-\uses{lem:qld-win,lem:qld-obs-consistency}
-Two cases, both from Lemma~\ref{lem:qld-win}. On a commuting $\omega$, items 5, 4 and 1 chain
-the probe of the point measurement to the $\mathtt{Pair}$ measurement on the other side; that
-measurement is projective, so the paper's commutation analysis turns the chain into commutation
-of the two probes, and expanding the two observables as $\Id - 2M_1$ transfers it to them. On an
-anticommuting $\omega$, item 7 identifies each probe with one of the two distinguished
-$\mathtt{Variable}$ observables on the other side, item 6 says those two anticommute up to
-$\sqrt{\eps}$, and transferring a product across the tensor factors reverses its order --- which
-is what supplies the sign.
+\leanok
+\uses{lem:qld-win,cor:ortho-from-consistency,lem:commutation-analysis,def:cross-distance}
+Items 5, 4 and 1 chain each point probe to a \emph{marginal} of the $\mathtt{Pair}$ measurement on
+the other side: three links at $172\eps$ each, so $1548\eps$ after a three-term triangle
+inequality. Corollary~\ref{cor:ortho-from-consistency} replaces that measurement by a projective
+one at $18$ times the inconsistency of the two players' $\mathtt{Pair}$ measurements, which item 1
+bounds at the Born level by $86\eps$; marginalizing costs a factor two per marginal. Then
+Lemma~\ref{lem:commutation-analysis} applies, and \eqref{eq:anticomm-transfer-bp}'s commutator form
+with Lemma~\ref{lem:qld-obs-consistency}'s probe carries the conclusion to the observables. The
+constant is $12 \cdot 344 + 12 \cdot 344 + 768 \cdot (2 \cdot 1548 + 2 \cdot 1548 + 72 \cdot 86)$.
 \end{proof}
 
-\paragraph{Comments.} The first lemma is formalized, and so is the \emph{anticommuting case} of
-the second (Lemma~\ref{lem:qld-obs-commutation-acomm} below). What remains of the second is its
-commuting case, and the obstacle there is the one the expansion stage faces too.
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Background/QLD/Commutation.lean}. Two departures
+from the paper's bookkeeping, both forced by which side an object lives on.
 
-The commuting case needs the paper's commutation-analysis lemma, whose hypothesis is that the
-$\mathtt{Pair}$ measurement is \emph{projective}. A general POVM strategy's is not, so the step
-consumes Corollary~\ref{cor:ortho-from-consistency} first; that corollary is formalized, and
-what is missing is the bookkeeping that applies it here and tracks the resulting error.
+\textbf{The analysis is run on Bob's observables and carried back.}
+Lemma~\ref{lem:commutation-analysis} wants the two commuting families on one side and the joint
+projective measurement on the \emph{other}, and Corollary~\ref{cor:ortho-from-consistency} produces
+a projective measurement on \emph{Alice's} factor. So the analysis is applied to Bob's point
+measurements against Alice's projectivized $\mathtt{Pair}$ measurement, and the conclusion is
+carried to Alice's observables by the order-reversal rule. The alternative --- a Bob-side
+orthonormalization corollary --- would duplicate \texttt{Ortho.lean} through the swap.
 
-The anticommuting case needed the order-reversal rule for transferring a product of operators
-across the two tensor factors, $AB \ot \Id \simeq \Id \ot B'A'$ --- elementary, but the paper's own
-correction note on this proof records two displays that had it backwards, so it is exactly the kind
-of step to state once and prove rather than inline. It now is:
-Definition~\ref{def:cross-distance}'s~\eqref{eq:order-reversal-bp}
-and~\eqref{eq:anticomm-transfer-bp}.
+\textbf{The chain is run in the mirrored orientation.} Every rule of \texttt{fig:decider\_pauli} is
+stated in both orientations, so items 5 and 1 are available with the players exchanged and item 4 is
+used as it stands.
+
+\textbf{Data processing is a consistency-level fact.} The chain's links are converted to the
+state-dependent distance only after the coarse-grainings are taken, because $\approx_\delta$
+\emph{has no data-processing inequality}: NW19's Fact 4.26 is stated for $\simeq_\delta$, and the
+remark following it gives a counterexample for $\approx_\delta$. The paper's
+\texttt{fact:data-processing} is the $\simeq$ form, correctly; a formalization that reached for the
+$\approx$ form would be proving something false.
+
+\textbf{The slack in Corollary~\ref{cor:ortho-from-consistency} is discharged by a limit.} That
+corollary needs a \emph{strictly positive} bound $\delta$ on the inconsistency. Here it is applied
+at $\delta = \text{(the inconsistency)} + \eta$ for arbitrary $\eta > 0$; $\eta$ survives the
+averaging as an additive constant and is sent to zero at the end
+(\texttt{le\_of\_forall\_pos\_le\_add}). No compactness is needed, which is the same observation the
+corollary's own file records.
 
 \effortMedium
 
@@ -1775,14 +1828,18 @@ injection $\mathtt{Sum.inr}$ leaves a coarse-grained POVM element alone
 
 \paragraph{Comments.} Formalized in \texttt{MIPRE/Background/QLD/Commutation.lean}.
 
-\textbf{This half costs $\eps$, not $\sqrt{\eps}$}, and the asymmetry is worth recording rather
-than rounding away. Every input above is a squared-norm bound linear in $\eps$, and the only
-inequalities used are the triangle inequality and $(a+b+c)^2 \leq 3(a^2+b^2+c^2)$, so nothing
-introduces a square root. The $O(\sqrt{\eps})$ of Lemma~\ref{lem:qld-obs-commutation} belongs to
-the \emph{commuting} case alone, where the projectivity of the $\mathtt{Pair}$ measurement is
-obtained from Corollary~\ref{cor:ortho-from-consistency} at the cost of one. When that case is
-formalized the two halves will therefore not combine by adding constants, and the square root will
-be attributable to exactly one of them.
+\textbf{This half costs $\eps$, not $\sqrt{\eps}$.} Every input above is a squared-norm bound
+linear in $\eps$, and the only inequalities used are the triangle inequality and
+$(a+b+c)^2 \leq 3(a^2+b^2+c^2)$, so nothing introduces a square root. \emph{Correction to an
+earlier reading of this:} the square root in~\eqref{eq:qld-obs-commutation-bp} as the paper writes
+it does \emph{not} belong to the commuting case either --- that case is $O(\eps)$ too
+(Lemma~\ref{lem:qld-obs-commutation-comm}), since \eqref{eq:commutation-analysis-bp} is linear in
+its hypothesis and Corollary~\ref{cor:ortho-from-consistency} is linear in the inconsistency. The
+paper's $\sqrt{\eps}$ is a uniform \emph{weakening}, and its own text says so where the
+anticommuting case is proved: ``direct averaging proves the anticommutation relation with squared
+error $O(\eps)$. In particular it implies the following weaker bound, retained in the form used
+below''. Nothing downstream needs the sharper form --- \texttt{lem:qld-comm-cons} asks only for
+$\poly(\eps)$ --- so this is a note about where a square root is \emph{not} spent, not a repair.
 
 \textbf{The sign is the double reversal.} Both order reversals run in the same direction --- a
 product transferred across the tensor factors comes back reversed --- and what sits between them

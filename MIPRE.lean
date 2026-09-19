@@ -545,6 +545,7 @@ import MIPRE.Foundations.CL.Repeat
 import MIPRE.Foundations.CL.Sampler
 import MIPRE.Foundations.ClassMIPStar
 import MIPRE.Foundations.Closeness
+import MIPRE.Foundations.Commutation
 import MIPRE.Foundations.CommutingOperator
 import MIPRE.Foundations.Compression
 import MIPRE.Foundations.Cost.Basic

@@ -504,6 +504,32 @@ theorem xNorm_eq_snorm (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B : Matri
   rw [xNorm, snorm, Matrix.sub_mulVec, evec_sub]
   rfl
 
+/-- The squared cross-party deviation as a `snorm` on the joint space, which is the form the
+chains of the appendix are run in. -/
+theorem xSqNorm_eq_snorm_sq (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B : Matrix dB dB ℂ) :
+    xSqNorm ψ A B = snorm ψ ((aOp A : Matrix (dA × dB) (dA × dB) ℂ) - bOp B) ^ 2 := by
+  rw [xSqNorm_eq_sq, xNorm_eq_snorm]
+
+/-- The weighted, doubly indexed form of `xSqNorm_eq_snorm_sq`: the shape every item of
+`lem:qld-win` is stated in, rewritten for the triangle inequalities on the joint space. -/
+theorem sum_weighted_xSqNorm_eq {ι κ : Type*} [Fintype κ] (ψ : dA × dB → ℂ) (w : ι → ℝ)
+    (S : Finset ι) (Q : ι → κ → Matrix dA dA ℂ) (R : ι → κ → Matrix dB dB ℂ) :
+    ∑ i ∈ S, w i * ∑ o, xSqNorm ψ (Q i o) (R i o)
+      = ∑ i ∈ S, w i * ∑ o,
+          snorm ψ ((aOp (Q i o) : Matrix (dA × dB) (dA × dB) ℂ) - bOp (R i o)) ^ 2 :=
+  Finset.sum_congr rfl fun i _ => by
+    rw [Finset.sum_congr rfl fun o (_ : o ∈ Finset.univ) => xSqNorm_eq_snorm_sq ψ (Q i o) (R i o)]
+
+/-- The same with the two sides exchanged, for a link the chain traverses backwards. -/
+theorem sum_weighted_xSqNorm_eq' {ι κ : Type*} [Fintype κ] (ψ : dA × dB → ℂ) (w : ι → ℝ)
+    (S : Finset ι) (Q : ι → κ → Matrix dA dA ℂ) (R : ι → κ → Matrix dB dB ℂ) :
+    ∑ i ∈ S, w i * ∑ o, xSqNorm ψ (Q i o) (R i o)
+      = ∑ i ∈ S, w i * ∑ o,
+          snorm ψ ((bOp (R i o) : Matrix (dA × dB) (dA × dB) ℂ) - aOp (Q i o)) ^ 2 :=
+  Finset.sum_congr rfl fun i _ => by
+    refine congrArg _ (Finset.sum_congr rfl fun o (_ : o ∈ Finset.univ) => ?_)
+    rw [xSqNorm_eq_snorm_sq ψ (Q i o) (R i o), snorm_sub_comm]
+
 omit [DecidableEq dA] in
 theorem norm_stateVec_eq_snorm (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) :
     ‖stateVec ψ A‖ = snorm ψ (aOp A : Matrix (dA × dB) _ ℂ) := rfl
@@ -545,6 +571,33 @@ theorem xSqNorm_mul_le_one (A B : Matrix dA dA ℂ) (A' B' : Matrix dB dB ℂ)
     add_nonneg (xNorm_nonneg _ _ _) (xNorm_nonneg _ _ _)
   rw [xSqNorm_eq_sq, xSqNorm_eq_sq, xSqNorm_eq_sq]
   nlinarith [sq_nonneg (xNorm ψ B B' - xNorm ψ A A'), xNorm_nonneg ψ (A * B) (B' * A')]
+
+/-! ### A sum inside a deviation
+
+Pushing a sum inside a deviation costs the number of terms; the appendix's chains need it when a
+marginal of a joint measurement replaces the measurement itself. -/
+
+theorem stateSqNorm_sub_comm (ψ : dA × dB → ℂ) (M N : Matrix dA dA ℂ) :
+    stateSqNorm ψ (M - N) = stateSqNorm ψ (N - M) := by
+  rw [stateSqNorm, stateSqNorm, stateNorm, stateNorm, norm_stateVec_eq_snorm,
+    norm_stateVec_eq_snorm, aOp_sub, aOp_sub, snorm_sub_comm]
+
+theorem norm_stateVecB_sub_comm (ψ : dA × dB → ℂ) (M N : Matrix dB dB ℂ) :
+    ‖stateVecB ψ (M - N)‖ = ‖stateVecB ψ (N - M)‖ := by
+  rw [norm_stateVecB_eq_snorm, norm_stateVecB_eq_snorm, bOp_sub, bOp_sub, snorm_sub_comm]
+
+omit [DecidableEq dA] in
+/-- Pushing a sum inside a deviation costs the number of terms. -/
+theorem stateSqNorm_sum_le {κ : Type*} [Fintype κ] (ψ : dA × dB → ℂ) (f : κ → Matrix dA dA ℂ) :
+    stateSqNorm ψ (∑ k, f k) ≤ (Fintype.card κ : ℝ) * ∑ k, stateSqNorm ψ (f k) := by
+  have h1 : stateNorm ψ (∑ k, f k) ≤ ∑ k, stateNorm ψ (f k) := by
+    rw [stateNorm, stateVec_sum]
+    exact le_trans (norm_sum_le _ _) (le_of_eq rfl)
+  calc stateSqNorm ψ (∑ k, f k) = stateNorm ψ (∑ k, f k) ^ 2 := rfl
+    _ ≤ (∑ k, stateNorm ψ (f k)) ^ 2 := pow_le_pow_left₀ (stateNorm_nonneg ψ _) h1 2
+    _ ≤ (Fintype.card κ : ℝ) * ∑ k, stateNorm ψ (f k) ^ 2 :=
+        sq_sum_le_card_mul_sum_sq _ fun k => stateNorm_nonneg ψ _
+    _ = (Fintype.card κ : ℝ) * ∑ k, stateSqNorm ψ (f k) := rfl
 
 /-! ### Transferring an anticommutation across the two factors
 
@@ -623,6 +676,95 @@ theorem obs2_mul_self_le_one {d : Type*} [Fintype d] [DecidableEq d] (P : POVM (
     (obs2 P)ᴴ * obs2 P ≤ (1 : Matrix d d ℂ) := by
   rw [obs2_conjTranspose]
   exact POVM.sub_mul_self_le_one P 0 1
+
+/-! ### The swap, for mixed operators
+
+`norm_stateVecB` says Bob's norm is Alice's norm of the swapped state, but only for an operator
+sitting on one factor. The chain below needs it for a *difference* of one operator on each factor,
+and the clean statement is at the level of vectors: a Kronecker product applied to the swapped
+state is the swap of the exchanged product applied to the state. Everything else follows by
+linearity. -/
+
+omit [DecidableEq dA] [DecidableEq dB] in
+theorem mulVec_kronecker_swapVec (X : Matrix dB dB ℂ) (Y : Matrix dA dA ℂ)
+    (ψ : dA × dB → ℂ) :
+    (X ⊗ₖ Y) *ᵥ swapVec ψ = swapVec ((Y ⊗ₖ X) *ᵥ ψ) := by
+  classical
+  funext p
+  obtain ⟨j, i⟩ := p
+  show ∑ q : dB × dA, (X ⊗ₖ Y) (j, i) q * swapVec ψ q
+      = ∑ q : dA × dB, (Y ⊗ₖ X) (i, j) q * ψ q
+  rw [Fintype.sum_prod_type, Fintype.sum_prod_type, Finset.sum_comm]
+  refine Finset.sum_congr rfl fun i' _ => Finset.sum_congr rfl fun j' _ => ?_
+  show X j j' * Y i i' * ψ (i', j') = Y i i' * X j j' * ψ (i', j')
+  ring
+
+omit [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB] in
+theorem swapVec_sub (u v : dA × dB → ℂ) :
+    swapVec (u - v) = swapVec u - swapVec v := rfl
+
+omit [DecidableEq dA] [DecidableEq dB] in
+theorem norm_swapVec (v : dA × dB → ℂ) : ‖evec (swapVec v)‖ = ‖evec v‖ := by
+  classical
+  rw [evec, evec, EuclideanSpace.norm_eq, EuclideanSpace.norm_eq]
+  congr 1
+  exact Fintype.sum_equiv (Equiv.prodComm dB dA) _ _ fun _ => rfl
+
+/-- **The swap exchanges the two sides of a cross-party deviation.** -/
+theorem snorm_swapVec_aOp_sub_bOp (ψ : dA × dB → ℂ) (X : Matrix dB dB ℂ)
+    (Y : Matrix dA dA ℂ) :
+    snorm (swapVec ψ) ((aOp X : Matrix (dB × dA) (dB × dA) ℂ) - bOp Y) = xNorm ψ Y X := by
+  rw [snorm, Matrix.sub_mulVec, aOp, bOp, mulVec_kronecker_swapVec, mulVec_kronecker_swapVec,
+    ← swapVec_sub, norm_swapVec, xNorm_eq_snorm, snorm, Matrix.sub_mulVec, aOp, bOp,
+    evec_sub, evec_sub, norm_sub_rev]
+
+omit [DecidableEq dB] in
+/-- The same for a single operator on Bob's factor. -/
+theorem snorm_swapVec_aOp (ψ : dA × dB → ℂ) (X : Matrix dB dB ℂ) :
+    snorm (swapVec ψ) (aOp X : Matrix (dB × dA) (dB × dA) ℂ) = ‖stateVecB ψ X‖ := by
+  rw [snorm, aOp, mulVec_kronecker_swapVec, norm_swapVec, norm_stateVecB_eq_snorm, snorm, bOp]
+
+/-! ### The commutator form of the transfer
+
+The same split as `norm_stateVec_anticomm_le`, with the middle term a commutator rather than an
+anticommutator: Bob's two products cancel either way. -/
+
+theorem norm_stateVec_comm_le (A B : Matrix dA dA ℂ) (A' B' : Matrix dB dB ℂ)
+    (hA : Aᴴ * A ≤ (1 : Matrix dA dA ℂ)) (hB : Bᴴ * B ≤ (1 : Matrix dA dA ℂ))
+    (hA' : A'ᴴ * A' ≤ (1 : Matrix dB dB ℂ)) (hB' : B'ᴴ * B' ≤ (1 : Matrix dB dB ℂ)) :
+    ‖stateVec ψ (A * B - B * A)‖
+      ≤ 2 * xNorm ψ A A' + 2 * xNorm ψ B B' + ‖stateVecB ψ (B' * A' - A' * B')‖ := by
+  have hsplit : (aOp (A * B - B * A) : Matrix (dA × dB) _ ℂ)
+      = ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A'))
+        + (bOp (B' * A' - A' * B') : Matrix (dA × dB) _ ℂ)
+        + (bOp (A' * B') - (aOp (B * A) : Matrix (dA × dB) _ ℂ)) := by
+    rw [aOp_sub, bOp_sub]
+    abel
+  have e1 : snorm ψ (((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A')
+        + bOp (B' * A' - A' * B')) + ((bOp (A' * B') : Matrix (dA × dB) _ ℂ)
+          - aOp (B * A)))
+      ≤ snorm ψ ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A')
+          + bOp (B' * A' - A' * B'))
+        + snorm ψ ((bOp (A' * B') : Matrix (dA × dB) _ ℂ) - aOp (B * A)) :=
+    snorm_add_le ψ _ _
+  have e2 : snorm ψ ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A')
+        + bOp (B' * A' - A' * B'))
+      ≤ snorm ψ ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A'))
+        + snorm ψ (bOp (B' * A' - A' * B') : Matrix (dA × dB) _ ℂ) :=
+    snorm_add_le ψ _ _
+  have e3 : snorm ψ ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A'))
+      = xNorm ψ (A * B) (B' * A') := (xNorm_eq_snorm ψ _ _).symm
+  have e4 : snorm ψ ((bOp (A' * B') : Matrix (dA × dB) _ ℂ) - aOp (B * A))
+      = xNorm ψ (B * A) (A' * B') := by
+    rw [xNorm_eq_snorm, snorm_sub_comm]
+  have e5 : snorm ψ (bOp (B' * A' - A' * B') : Matrix (dA × dB) _ ℂ)
+      = ‖stateVecB ψ (B' * A' - A' * B')‖ := (norm_stateVecB_eq_snorm ψ _).symm
+  have h1 : xNorm ψ (A * B) (B' * A') ≤ xNorm ψ B B' + xNorm ψ A A' :=
+    xNorm_mul_le_one A B A' B' hA hB'
+  have h2 : xNorm ψ (B * A) (A' * B') ≤ xNorm ψ A A' + xNorm ψ B B' :=
+    xNorm_mul_le_one B A B' A' hB hA'
+  rw [norm_stateVec_eq_snorm, hsplit]
+  linarith
 
 end Reversal
 
