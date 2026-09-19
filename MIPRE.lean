@@ -386,9 +386,13 @@ import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.WOTCompact
 import MIPRE.Background.Orthonormalization.Orthogonalization.PhiNorm
 import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
 import MIPRE.Background.Orthonormalization.Statement
+import MIPRE.Background.QLD.Anticomm
 import MIPRE.Background.QLD.Axioms
 import MIPRE.Background.QLD.Consistency
+import MIPRE.Background.QLD.Game
 import MIPRE.Background.QLD.Ortho
+import MIPRE.Background.QLD.Win
+import MIPRE.Background.QLD.WinMS
 import MIPRE.Background.Repetition.Axioms
 import MIPRE.Background.Repetition.Commuting
 import MIPRE.Background.Repetition.CommutingRepetition.Game.Basic
@@ -571,6 +575,8 @@ import MIPRE.Foundations.Cost.Toolkit
 import MIPRE.Foundations.Cost.TreeBits
 import MIPRE.Foundations.Cost.Unary
 import MIPRE.Foundations.Cost.Universal
+import MIPRE.Foundations.CrossConsistency
+import MIPRE.Foundations.Dilation
 import MIPRE.Foundations.Distances
 import MIPRE.Foundations.GameAdapt
 import MIPRE.Foundations.GameDescription
@@ -578,6 +584,7 @@ import MIPRE.Foundations.GameDouble
 import MIPRE.Foundations.GameTransport
 import MIPRE.Foundations.Games
 import MIPRE.Foundations.GapCompression
+import MIPRE.Foundations.GuardSorryFree
 import MIPRE.Foundations.Halting.Absorb
 import MIPRE.Foundations.Halting.Arith
 import MIPRE.Foundations.Halting.Bounded
@@ -609,9 +616,12 @@ import MIPRE.Foundations.LowDegree.SchwartzZippel
 import MIPRE.Foundations.LowDegree.SelfDual
 import MIPRE.Foundations.LowDegree.SelfDualize
 import MIPRE.Foundations.LowDegree.Shoup
+import MIPRE.Foundations.OpBound
 import MIPRE.Foundations.OracularComplete
 import MIPRE.Foundations.OracularGame
 import MIPRE.Foundations.OracularSound
+import MIPRE.Foundations.POVMValue
+import MIPRE.Foundations.PVM
 import MIPRE.Foundations.PerfectStrategy
 import MIPRE.Foundations.Pipeline.AnswerReduction
 import MIPRE.Foundations.Pipeline.Budget
@@ -665,6 +675,7 @@ import MIPRE.HaltingGameValue
 import MIPRE.LCS.Basic
 import MIPRE.LCS.Common
 import MIPRE.LCS.EPR
+import MIPRE.LCS.MagicSquare.Game
 import MIPRE.LCS.MagicSquare.SolutionGroup
 import MIPRE.LCS.MagicSquare.Strategy
 import MIPRE.LCS.MatrixSOS

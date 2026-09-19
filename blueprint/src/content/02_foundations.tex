@@ -333,13 +333,34 @@ $b \in \F_2^r$; equation $i$ reads $\sum_{j \in V_i} x_j = b_i$.
 \begin{definition}[LCS game]
 \label{def:lcs-game}
 \uses{def:lcs-instance,def:game}
-\lean{MIPRE.LCS.Game.toNonlocalGame}
+\lean{MIPRE.LCS.Layout.Question, MIPRE.LCS.Layout.Answer,
+MIPRE.LCS.Layout.questionDist, MIPRE.LCS.Game.accepts,
+MIPRE.LCS.Game.toNonlocalGame}
 \leanok
-The \emph{nonlocal game} of an LCS instance: the referee samples an equation $i$
-uniformly at random, then a uniformly random variable $j \in V_i$; Alice answers an
-assignment to the variables, Bob answers a value for $x_j$, and they win if Alice's
-assignment satisfies equation $i$ and agrees with Bob's answer on $x_j$.
+The \emph{nonlocal game} of an LCS instance. Both players receive questions from the same
+alphabet --- an equation or a variable --- and answer in the same alphabet --- an assignment
+to all the variables, or a single bit. The referee samples an equation $i$ uniformly at
+random, a uniformly random variable $j \in V_i$, and a uniform \emph{orientation}: one
+player is asked $i$ and the other $j$. The player asked the equation answers an assignment
+$a$ (only its restriction to $V_i$ is read), the player asked the variable answers a bit $c$,
+and they win if $\sum_{k \in V_i} a_k = b_i$ and $a_j = c$. An answer whose shape does not
+match its question loses, as does an off-support pair $j \notin V_i$.
 \end{definition}
+
+\paragraph{Comments.} The orientation is what makes the game \emph{symmetric in the players},
+and it is not cosmetic. A one-directional version --- the equation always to Alice, the
+variable always to Bob --- cannot express a statement about both players' variable
+observables, which is exactly what the Pauli basis test consumes from the Magic Square
+(Lemma~\ref{lem:ms-direct-anticomm}): Alice would never receive a variable question, so
+$A^{\Variable_j}$ would not exist. It also fixes that lemma's constant, the conditional
+failures being summed over $2 \sum_i \abs{V_i}$ oriented incidences rather than
+$\sum_i \abs{V_i}$ unoriented ones.
+
+The shape and support checks in the decider are the discipline
+Definition~\ref{def:lidt-cl} learned the hard way: a missing format check made the seeded CL
+game vacuous and a soundness theorem about it false. The formalization pins each outcome with
+explicit answers --- an accepted pair in each orientation, and one rejected for disagreement,
+one for parity, one for shape, one for being off support.
 
 \begin{definition}[Solution group]
 \label{def:solution-group}
@@ -514,6 +535,69 @@ the lemmas that produce them, so Lemma~\ref{lem:qld-averaging} preserves $\delta
 Lemma~\ref{lem:qld-povm-to-obs} gives exactly $\abs{\mA}\delta$. And the paper defines
 $\approx_\delta$ only for question-indexed operators, using the answer-indexed form without
 comment; both are defined here.
+
+\begin{definition}[Cross-party state-dependent distance]
+\label{def:cross-distance}
+\uses{def:game,def:state-distance}
+\lean{MIPRE.xSqNorm, MIPRE.xPovmDist, MIPRE.IsXPOVMClose, MIPRE.POVM.mul_self_le_self,
+  MIPRE.sum_stateSqNorm_le_one, MIPRE.sum_stateSqNormB_le_one, MIPRE.sub_kronecker_right,
+  MIPRE.xSqNorm_sum_le_two_mul, MIPRE.sum_bornProb_mapA, MIPRE.sum_bornProb_mapB,
+  MIPRE.sum_weight_bornProb_map, MIPRE.sum_bornProb_map,
+  MIPRE.one_sub_sum_bornProb_le_condFail, MIPRE.xSqNorm_sum_le_condFail,
+  MIPRE.sum_mul_condFail_le, MIPRE.sum_condFail_le_of_pushforward,
+  MIPRE.sum_condFail_le_of_le, MIPRE.xStateDist, MIPRE.xStateDist_obsOf_le,
+  MIPRE.stateVecB_smul, MIPRE.stateVecB_sum}
+\leanok
+Let $\mu$ be a distribution on a finite set $\mX$, let
+$\ket{\psi} \in \C^{d_\alice} \ot \C^{d_\bob}$, and let $\{M^x_a\}$ and $\{N^x_a\}$ be families
+of POVMs with a common question set $\mX$ and a common answer set, the first on
+$\C^{d_\alice}$ and the second on $\C^{d_\bob}$. We say they are \emph{$\delta$-close across the
+two parties}, written $M^x_a \ot \Id \simeq_\delta \Id \ot N^x_a$, if
+\begin{equation*}
+  \E_{x \sim \mu} \sum_a \norm{\bigl( M^x_a \ot \Id_\bob - \Id_\alice \ot N^x_a \bigr)
+    \ket{\psi}}^2 \;\leq\; \delta\;.
+\end{equation*}
+Then, for any two POVMs $M$ and $N$ with a common answer set and $\ket{\psi}$ a unit vector,
+\begin{equation}
+  \label{eq:cross-from-agreement}
+  \sum_a \norm{\bigl( M_a \ot \Id - \Id \ot N_a \bigr)\ket{\psi}}^2
+    \;\leq\; 2 \Bigl( 1 - \sum_a \bra{\psi} M_a \ot N_a \ket{\psi} \Bigr)\;,
+\end{equation}
+twice the probability that the two measurements disagree.
+\end{definition}
+
+\paragraph{Comments.} This is the $\simeq_\delta$ of the Pauli appendix, and it is not
+Definition~\ref{def:state-distance}: that one compares two families of operators on the
+\emph{same} factor, which is what the orthonormalization step of
+Corollary~\ref{cor:ortho-from-consistency} needs, whereas every consistency statement of
+Lemma~\ref{lem:qld-win} compares one player's operator with the \emph{other} player's. The paper
+uses both symbols and says the two are interchangeable up to
+Fact~\texttt{fact:agreement}; the formalization keeps them apart, because the conversion is the
+factor $2$ of~\eqref{eq:cross-from-agreement} and it is better spent once than assumed
+throughout.
+
+Inequality~\eqref{eq:cross-from-agreement} is the whole analytic content of the file
+(\texttt{MIPRE/Foundations/CrossConsistency.lean}): expand each square, and the two diagonal
+sums are at most one because a POVM element satisfies $A^\dagger A = A^2 \leq A$
+(\texttt{POVM.mul\_self\_le\_self}) and the elements sum to the identity. \textbf{No projectivity
+is used}, which matters --- the strategies it is applied to are arbitrary POVM strategies, and
+projectivity arrives only later, through Corollary~\ref{cor:ortho-from-consistency}.
+
+Two things the formalization needs that the paper leaves implicit. First, what a subtest buys is
+not that its decider \emph{equals} an agreement predicate but that \emph{accepting implies
+agreeing}: a real decider checks the answer formats first and rejects an ill-formatted pair even
+when the post-processings agree. So the readings that coarse-grain the answers may send an
+ill-formatted answer anywhere --- $0$, here --- and the implication is all
+\texttt{one\_sub\_sum\_bornProb\_le\_condFail} asks. Second, ``divided by the probability that
+the subtest is selected'' needs no injectivity: the subtests of the Pauli basis test are indexed
+by the verifier's content and several contents give the same question pair, a $(\pauli, W)$
+question reading none of it, so the hypothesis is a condition on the push-forward
+(\texttt{sum\_condFail\_le\_of\_pushforward}).
+
+\texttt{xStateDist\_obsOf\_le} is Lemma~\ref{lem:qld-povm-to-obs} across the two parties, with
+the same proof and the same factor $\abs{\mA}$: the appendix needs it to pass from a two-outcome
+coarse-graining of a point measurement to the $\pm 1$-observable it defines, and
+Definition~\ref{def:state-distance}'s version compares the wrong pair.
 
 \begin{definition}[Inconsistency]
 \label{def:inconsistency}

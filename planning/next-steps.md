@@ -121,6 +121,14 @@ decisions, items with a done criterion, risks. Update the status column as items
   vendored namespace, so the move is available at any time and costs nothing; it is worth
   doing only when a second consumer appears. `exists_purification`,
   `exists_projective_dilation` and the transport lemmas are the candidates.
+  **Done for the dilation, 2026-09-19** (Chunk 4, PR B): the second consumer appeared ---
+  `lem:ms-direct-anticomm` dilates the Magic Square's six constraint POVMs against one
+  shared ancilla, and it lives in `MIPRE/LCS/`, which may not import `MIPRE/Background/`.
+  `ancillaProj`, `exists_isometry_of_povm`, `ancillaEmbed`, `exists_unitary_extending`,
+  `exists_projective_dilation` and the three transport lemmas are now
+  `MIPRE/Foundations/Dilation.lean`, in namespace `MIPRE` rather than `MIPRE.Repetition`,
+  with `Entangled.lean` importing it. `exists_purification` stays put: no second consumer
+  yet.
 - Consequences already applied: `\leanok` on the proofs of `lem:povm-value-eq` and
   `thm:direct-repetition-q`, the dagger dropped from the chapter-3 table, and the
   blueprint proof of `lem:povm-value-eq` rewritten to describe the construction that was

@@ -370,24 +370,31 @@ Mermin--Peres magic square. The form above is~\cite[Section 8]{JNVWY20}.
 \begin{lemma}[Direct Magic Square anticommutation --- what the pipeline actually needs]
 \label{lem:ms-direct-anticomm}
 \ledgernode{1.2.2.4.1, 1.2.2.4.1.6, 1.2.2.4.1.7, 1.2.2.4.1.9}
-\uses{def:q-value,def:magic-square}
-Let $\strategy = (\ket{\psi}, A, B)$ be any finite-dimensional strategy, with arbitrary
-POVMs, that fails the Magic Square game with probability $\eps$, and let $B_j$ denote the
-$\pm 1$-observable (the POVM difference) of Bob's answer to variable $\Variable_j$. Then
+\uses{def:q-value,def:magic-square,def:lcs-game,def:state-distance}
+\lean{MIPRE.QLD.MS.anti, MIPRE.QLD.MS.ms_direct_anticomm,
+MIPRE.QLD.MS.ms_direct_anticomm', MIPRE.QLD.MS.ms_direct_anticomm_avg}
+\leanok
+Let $\ket{\psi}$ be a unit vector on $\C^{d_\alice} \ot \C^{d_\bob}$ and let $A, B$ be
+arbitrary POVM families for the Magic Square game (Definition~\ref{def:lcs-game} at the
+magic square's layout), failing it with probability at most $\eps \geq 0$. Write $B_j$ for the
+$\pm 1$-observable of the player who receives variable $\Variable_j$ --- the difference of the
+two \emph{bit} outcomes, every other answer contributing zero --- and $A_j$ for the other
+player's. Then
 \begin{equation*}
-  \norm{ \{ B_1, B_5 \} \ket{\psi} }^2 \;\leq\; 186624\, \eps\;,
+  \norm{ (\{ B_1, B_5 \} \ot \Id) \ket{\psi} }^2 \;\leq\; 186624\, \eps\;,
+  \qquad
+  \norm{ (\{ A_1, A_5 \} \ot \Id) \ket{\psi} }^2 \;\leq\; 186624\, \eps\;,
 \end{equation*}
-and symmetrically for Alice, where $\{X, Y\} = XY + YX$. The bound holds on the
-\emph{original} observables: no isometry, no projectivity, no full Schmidt rank and no
-extracted EPR pairs are required. It averages without loss --- for any family indexed by
-$\omega$ with distribution $\nu$,
-$\E_\nu \norm{\{B_{1,\omega}, B_{5,\omega}\} \ket{\psi_\omega}}^2
-\leq 186624\, \E_\nu \eps_\omega$ --- and transfers to the point observables of the Pauli
-game: if $P, Q$ have cross-party consistency errors $s_X, s_Z$ against $B_1, B_5$, then
-$\norm{\{P,Q\}\ket{\psi}} \leq 2 s_X + 2 s_Z + \norm{\{B_1,B_5\}\ket{\psi}}$.
+where $\{X, Y\} = XY + YX$. The bound holds on the \emph{original} observables: no isometry,
+no projectivity, no full Schmidt rank and no extracted EPR pairs are required. It averages
+without loss: for a family indexed by $\omega$ on the same pair of spaces, with weights
+$\nu_\omega \geq 0$,
+$\sum_\omega \nu_\omega \norm{(\{B_{1,\omega}, B_{5,\omega}\} \ot \Id)\ket{\psi_\omega}}^2
+\leq 186624 \sum_\omega \nu_\omega \eps_\omega$.
 \end{lemma}
 
 \begin{proof}
+\leanok
 \uses{thm:orthonormalization}
 Dilate each constraint POVM, after repairing invalid outcomes to a fixed parity-valid triple,
 to a projective measurement on one ancilla; its outcome PVM gives commuting reflections
@@ -418,8 +425,7 @@ Finally Alice's reflection for variable $2$ commutes with the Bob operator $R$, 
 $\Id$, and approximates $b$ on $\ket{\psi}$ to within $\gamma$, which removes the trailing
 factor: $\norm{R \ket{\psi}} \leq 34\gamma + 2\gamma = 36\gamma$. Squaring and substituting
 $\gamma^2 \leq 144\eps$ gives $1296 \cdot 144 = 186624$. Exchanging the parties gives Alice's
-bound. The averaged form is the pointwise bound averaged, with no Jensen step, and the
-point-observable transfer is two triangle inequalities across the parties.
+bound. The averaged form is the pointwise bound averaged, with no Jensen step.
 \end{proof}
 
 \paragraph{Comments.} This lemma is why Theorem~\ref{thm:ms-rigidity} is no longer an
@@ -437,18 +443,26 @@ the Pauli test amplifies to many qubits. Its bipartite form already matches the
 soundness proof's use; a tracial specialization is optional and is not an additional
 pipeline prerequisite.
 
-One thing to settle before formalizing it, found while scoping: the constant depends on which
-Magic Square game is meant. The paper's $\game^{\MS}$ samples one of \emph{36 oriented}
-incidences, so both players answer both kinds of question and
-$\sum_{c,j} \ell_{c,j} \leq 36 \eps$, giving $\gamma^2 \leq 144\eps$ and
-$36^2 \cdot 144 = 186624$. The nonlocal game this repository builds from an LCS instance
-(\texttt{MIPRE.LCS.Game.toNonlocalGame}) is \emph{one-directional} --- Alice always receives
-the equation, Bob always the variable, 18 equiprobable incidences --- so there
-$\sum_{c,j} \ell_{c,j} \leq 18\eps$ and the bound is $36^2 \cdot 72 = 93312\,\eps$; and the
-statement's Alice half is not expressible at all, since Alice never receives a variable
-question. Either constant serves Lemma~\ref{lem:qld-win}, which needs only $O(\eps)$, but the
-game and the constant must match. \texttt{planning/qld-campaign.md} records this with the rest
-of the lemma's cost.
+One clause moved out of the statement. An earlier revision also asserted the \emph{transfer}
+to the point observables of the Pauli basis test: if $P, Q$ have cross-party consistency errors
+$s_X, s_Z$ against $B_1, B_5$ then
+$\norm{\{P,Q\}\ket{\psi}} \leq 2 s_X + 2 s_Z + \norm{\{B_1,B_5\}\ket{\psi}}$. That is not a
+statement about the Magic Square game at all --- $P$ and $Q$ are the \emph{Pauli} test's
+observables --- so it belongs to Lemma~\ref{lem:qld-win}, which is where it is used, and it is
+stated there. The argument is two substitutions across the parties: $P$ and $Q$ sit on one
+factor and $B_1, B_5$ on the other, so $PQ\ket{\psi} \approx_{s_Z} P B_5 \ket{\psi}
+= B_5 P \ket{\psi} \approx_{s_X} B_5 B_1 \ket{\psi}$, and symmetrically for $QP$.
+
+The game this lemma is about is the one of Definition~\ref{def:lcs-game} at the magic square's
+layout, and that definition is \emph{symmetric in the players}: an equation, a variable of it,
+and a uniform orientation, so $36$ equiprobable oriented incidences. That is what makes the
+statement's Alice half expressible at all --- a one-directional game would never send Alice a
+variable, so $A^{\Variable_j}$ would not exist --- and it is where the constant comes from:
+$\sum_{c,j} \ell_{c,j} \leq 36\eps$ gives $\gamma^2 \leq 144\eps$ and
+$36^2 \cdot 144 = 186624$, the paper's constant. An earlier revision of the formalization had
+the one-directional game, where the same argument gives $18\eps$, $\gamma^2 \leq 72\eps$ and
+$36^2 \cdot 72 = 93312\,\eps$; either serves Lemma~\ref{lem:qld-win}, which needs only
+$O(\eps)$, but the game and the constant must match.
 
 \subsection{The classical low individual degree test}
 \label{sec:rr-lidt}
@@ -1137,10 +1151,154 @@ Lemma~\ref{lem:tensor-codes-bipartite} needs. The lesson for a formalization is 
 bridge is the thing to state, not the exact identity it replaces.
 \end{remark}
 
+\subsubsection{The game}
+
+\begin{definition}[Pauli basis test]
+\label{def:qld-game}
+\uses{def:game,def:lidt-cl,def:ld-encoding,def:magic-square,def:lcs-game,
+  fact:omega-anticomm-prob}
+\lean{MIPRE.QLD.Bas, MIPRE.QLD.Ty, MIPRE.QLD.adjRaw, MIPRE.QLD.adj,
+  MIPRE.QLD.card_adj, MIPRE.QLD.adj_symm, MIPRE.QLD.Omega, MIPRE.QLD.Question,
+  MIPRE.QLD.Answer, MIPRE.QLD.Question.ty, MIPRE.QLD.Content, MIPRE.QLD.TyEdge,
+  MIPRE.QLD.Sample, MIPRE.QLD.Content.question, MIPRE.QLD.Question.fmtOk,
+  MIPRE.QLD.gam, MIPRE.QLD.prb, MIPRE.QLD.lowDeg, MIPRE.QLD.pairTest,
+  MIPRE.QLD.subtests, MIPRE.QLD.accepts, MIPRE.QLD.qldGame,
+  MIPRE.QLD.handled, MIPRE.QLD.handled_of_adj, MIPRE.QLD.lowDeg_eq_cl,
+  MIPRE.QLD.lowDeg_eq_cl_dline, MIPRE.QLD.rejects_point_apoly,
+  MIPRE.QLD.rejects_pauli_val, MIPRE.QLD.rejects_con_bit,
+  MIPRE.QLD.rejects_var_bitTriple, MIPRE.QLD.rejects_disagree,
+  MIPRE.QLD.rejects_lowDeg_aline, MIPRE.QLD.rejects_lowDeg_dline,
+  MIPRE.QLD.rejects_pauli_consistency, MIPRE.QLD.accepts_pauli_consistency,
+  MIPRE.QLD.rejects_commutation, MIPRE.QLD.accepts_commutation,
+  MIPRE.QLD.rejects_commutation_consistency, MIPRE.QLD.rejects_magicSquare_bit,
+  MIPRE.QLD.rejects_magicSquare_parity, MIPRE.QLD.rejects_magicSquare_off_support,
+  MIPRE.QLD.accepts_magicSquare, MIPRE.QLD.rejects_magicSquare_consistency,
+  MIPRE.QLD.accepts_aline_dline, MIPRE.QLD.card_TyEdge, MIPRE.QLD.card_Sample,
+  MIPRE.QLD.qldGame_mu_eq, MIPRE.QLD.le_qldGame_mu, MIPRE.QLD.of_accepts,
+  MIPRE.QLD.eq_val_of_fmtOk, MIPRE.QLD.eq_apoly_of_fmtOk, MIPRE.QLD.eq_dpoly_of_fmtOk,
+  MIPRE.QLD.eq_pauliAns_of_fmtOk, MIPRE.QLD.eq_bit_of_fmtOk_pairB,
+  MIPRE.QLD.eq_bitPair_of_fmtOk, MIPRE.QLD.eq_bit_of_fmtOk_var,
+  MIPRE.QLD.eq_bitTriple_of_fmtOk, MIPRE.QLD.rdVal, MIPRE.QLD.rdAPoly, MIPRE.QLD.rdDPoly,
+  MIPRE.QLD.rdPauli, MIPRE.QLD.rdBit, MIPRE.QLD.rdBitPair, MIPRE.QLD.rdProbe,
+  MIPRE.QLD.dirOf, MIPRE.QLD.rdALineAt, MIPRE.QLD.rdDLineAt, MIPRE.QLD.rdProbeAt,
+  MIPRE.QLD.commSet, MIPRE.QLD.acommSet}
+\leanok
+Let $\qldparams = (q, m, d)$ be admissible: $q$ an admissible field size and $m \mid q$. Write
+$M = 2^m$ and let $\omega = (u_X, u_Z, r_X, r_Z) \in (\F_q^m)^2 \times \F_q^2$. The
+\emph{Pauli basis test} $\game^\pauli_\qldparams$ is the two-player game with the following
+twenty-six question types,
+\begin{equation*}
+  \type^\pauli = \bigl( \{\mathtt{Point}, \mathtt{ALine}, \mathtt{DLine}, \pauli,
+    \mathtt{Pair}\} \times \{X, Z\} \bigr) \cup \type^\MS \cup \{\mathtt{Pair}\}\;,
+\end{equation*}
+where $\type^\MS$ is the six constraints and nine variables of the Magic Square
+(Definition~\ref{def:magic-square}).
+
+\emph{Question distribution.} The verifier draws an ordered pair of types uniformly among
+those adjacent in the type graph $G^\pauli$ --- each non-loop edge contributing two ordered
+pairs and each self-loop one --- and independently $u_X, u_Z, v \in \F_q^m$, $s \in \F_q$ and
+$r_X, r_Z \in \F_q$ uniformly. The edges of $G^\pauli$ are: a self-loop at every type;
+$(\mathtt{ALine}, W)$ and $(\mathtt{DLine}, W)$ each to $(\mathtt{Point}, W)$;
+$(\mathtt{Point}, W)$ to $(\pauli, W)$; $(\mathtt{Point}, W)$ to $(\mathtt{Pair}, W)$ to
+$\mathtt{Pair}$; $(\mathtt{Point}, X)$ to $\mathtt{Variable}_1$ and $(\mathtt{Point}, Z)$ to
+$\mathtt{Variable}_5$; and the eighteen incidences of the Magic Square, $\mathtt{Constraint}_i$
+to $\mathtt{Variable}_j$ for $j$ in the support of equation $i$. So there are thirty non-loop
+edges and eighty-six ordered pairs, each of weight $1/86$.
+
+\emph{Question content.} A type $(\mathtt{Point}, W)$ receives $u_W$; $(\mathtt{ALine}, W)$
+receives $(u_0, s)$ with $u_0 = L^{\mathrm{Ln}}_{e_i}(u_W)$ and $i = \chi(s)$;
+$(\mathtt{DLine}, W)$ receives $(u_0, s, v')$ with $v' = \pi_{i-1}(v)$ and
+$u_0 = L^{\mathrm{Ln}}_{v'}(u_W)$ --- all three exactly as in Definition~\ref{def:lidt-cl};
+$(\pauli, W)$ receives nothing; and each of $\mathtt{Pair}$, $(\mathtt{Pair}, W)$,
+$\mathtt{Constraint}_i$ and $\mathtt{Variable}_j$ receives $\omega$.
+
+\emph{Answer format.} An element of $\F_q$ for $(\mathtt{Point}, W)$; a polynomial of degree at
+most $d$ for $(\mathtt{ALine}, W)$ and at most $md$ for $(\mathtt{DLine}, W)$; an element of
+$\F_q^M$ for $(\pauli, W)$; a pair $(\beta_X, \beta_Z) \in \F_2^2$ for $\mathtt{Pair}$; a
+single bit for $(\mathtt{Pair}, W)$ and for $\mathtt{Variable}_j$; and a triple
+$(\alpha_{v_1}, \alpha_{v_2}, \alpha_{v_3}) \in \F_2^3$, indexed by the three variables of the
+equation in order, for $\mathtt{Constraint}_i$.
+
+\emph{Decision.} The verifier first checks that both answers have the format their question's
+type prescribes, and rejects if not. It then applies, with $\gamma(\omega)$ as in
+Lemma~\ref{fact:omega-anticomm-prob} and $g_h$ the low-degree encoding of
+Definition~\ref{def:ld-encoding}:
+\begin{enumerate}
+\item equal types: accept iff the two answers agree;
+\item $(\mathtt{Point}, W)$ against $(\mathtt{ALine}, W)$ or $(\mathtt{DLine}, W)$: accept iff
+  the seeded CL decider of Definition~\ref{def:lidt-cl} at $(q, m, d, 1)$ accepts;
+\item $(\mathtt{Point}, W)$ against $(\pauli, W)$: accept iff $g_{a_{\bar w}}(x_w) = a_w$;
+\item $(\mathtt{Pair}, W)$ against $\mathtt{Pair}$: accept iff $a_w = \beta_W$ or
+  $\gamma(\omega) \neq 0$;
+\item $(\mathtt{Point}, W)$ against $(\mathtt{Pair}, W)$: accept iff
+  $\fieldtr(a_w r_W) = a_{\bar w}$ or $\gamma(\omega) \neq 0$;
+\item $\mathtt{Constraint}_i$ against $\mathtt{Variable}_j$: accept iff $\gamma(\omega) = 0$,
+  or $j$ occurs in equation $i$, the triple $a_w$ satisfies that equation, and its entry at
+  $j$ is $a_{\bar w}$;
+\item $(\mathtt{Point}, W)$ against $\mathtt{Variable}_j$: accept iff $\gamma(\omega) = 0$, or
+  $j = 1$, $W = X$ and $\fieldtr(a_w r_X) = a_{\bar w}$, or $j = 5$, $W = Z$ and
+  $\fieldtr(a_w r_Z) = a_{\bar w}$;
+\end{enumerate}
+each in both orientations, and accepts on any type pair no rule names.
+\end{definition}
+
+\paragraph{Source.} The pinned paper~\cite{AuditSync26}, \texttt{ldt.tex}: the type set is
+\texttt{eq:pauli-type}, the sampling procedure and type graph \texttt{sec:qld-game} and
+\texttt{fig:type-graph-pauli}, and the decision procedure \texttt{fig:decider\_pauli}. No
+definition of this game appeared in this blueprint before; Theorem~\ref{thm:qld} and
+Lemma~\ref{lem:qld-win} were statements about an undefined object, which is why this is the
+campaign's first definitional obligation.
+
+\paragraph{Comments.} The formalization is \texttt{MIPRE.QLD.qldGame}
+(\texttt{MIPRE/Background/QLD/Game.lean}). Five points, four of them the consequences of
+having a second twenty-six-type game in the same vocabulary as Definition~\ref{def:lidt-cl}
+rather than a fresh one.
+
+The line and point content is read off the sample by the \emph{same} functions as the seeded CL
+test --- $\chi$, $\pi$, $L^{\mathrm{Ln}}$, all from Definition~\ref{def:lidt-cl} --- and rule 2
+calls that test's decider rather than restating it: \texttt{lowDeg\_eq\_cl} and
+\texttt{lowDeg\_eq\_cl\_dline} are the two identities, and they hold by \texttt{rfl}. This is
+what stage 4 of Remark~\ref{rem:qld-architecture} needs in order to feed
+Theorem~\ref{thm:lidt-cl-soundness} at all, and getting it by sharing definitions rather than
+by a translation lemma is the reason Definition~\ref{def:lidt-cl} was written first.
+
+The Magic Square indices are the layout's own, $0$-indexed
+(\texttt{MIPRE.LCS.MagicSquare.layout}), against the paper's $1$-indexed
+$\mathtt{Constraint}_1, \ldots, \mathtt{Constraint}_6$ and
+$\mathtt{Variable}_1, \ldots, \mathtt{Variable}_9$. The paper's distinguished pairs
+$(\mathtt{Point}, X)$--$\mathtt{Variable}_1$ and $(\mathtt{Point}, Z)$--$\mathtt{Variable}_5$
+are therefore variables $0$ and $4$ in the Lean, which are also the two the anticommutator of
+Lemma~\ref{lem:ms-direct-anticomm} is taken between --- the same two cells, and they have to
+be, since rule 7 is what transfers that lemma's conclusion to the point observables.
+
+The format check is separated from the rules for the reason recorded at
+Definition~\ref{def:lidt-cl}: leaving it out made that test vacuous
+(\texttt{reports/clgame-format-check-missing.md}), and the same error is available here with
+twenty-six types instead of three. Each of the eight rules accordingly carries an explicit pair
+of formatted answers it rejects (\texttt{rejects\_*}). The four rules gated on $\gamma$ take
+the gate as a hypothesis, since each of them by design checks nothing on the other value of
+$\gamma$ --- that division of labour between the commutation check and the Magic Square is what
+the gate is for.
+
+The remaining vacuity risk is a rule that is simply \emph{missing}, so that an edge of
+$G^\pauli$ falls through to the catch-all. \texttt{handled\_of\_adj} closes it by
+\texttt{decide}: every non-loop edge of the type graph has a rule. Together with the rejection
+witnesses --- one per rule --- that says no question pair the distribution asks is accepted
+regardless of the answers. The converse fails harmlessly: some rules also reject pairs the
+graph does not contain, such as $(\mathtt{Point}, X)$ against $\mathtt{Variable}_j$ for
+$j \neq 1$.
+
+Finally, the answer alphabet for $\mathtt{Constraint}_i$ is $\F_2^3$ and not the full
+assignment $\F_2^9$ of Definition~\ref{def:lcs-game}. The two give the same value, the decider
+reading only the three support coordinates either way, and the full assignment would have been
+markedly easier to work with; the paper's format is kept because answer lengths are what the
+introspection of the compression chapter accounts for, and a game whose answers are six
+bits too long is a statement about a different verifier.
+
 \begin{theorem}[Pauli basis test / quantum low individual degree test]
 \label{thm:qld}
 \ledgernode{1.2.2, 1.2.2.17}
-\uses{def:q-value,def:distance,lem:ms-direct-anticomm,thm:lidt-cl-soundness}
+\uses{def:qld-game,def:q-value,def:distance,lem:ms-direct-anticomm,thm:lidt-cl-soundness}
 There exists a function
 \begin{equation*}
   \delta_{qld}(\eps, m, d, q) = a (md)^a \bigl( \eps^b + q^{-b} + 2^{-bmd} \bigr)
@@ -1381,25 +1539,190 @@ both in being strict and in naming the constant.
 \begin{lemma}[Win implications]
 \label{lem:qld-win}
 \ledgernode{1.2.2.4, 1.2.2.4.2}
-\uses{lem:ms-direct-anticomm,def:inconsistency,def:distance}
-Assume $6md \leq q$. A strategy succeeding with probability $1 - \eps$ in the Pauli basis test
-satisfies, with the conditional weight of each subtest carried explicitly, a list of
-consistency and commutation relations: self-consistency of the point measurements; the
-low-degree subtest's relations; the anticommutation relations coming from the Magic Square
-subtest; the relations tying the $(\mathtt{Point}, W)$ measurements to the
-$(\mathtt{Line}, W)$ ones; and Pauli-basis consistency, commutation, and
-commutation-consistency.
+\uses{def:qld-game,def:cross-distance,fact:omega-anticomm-prob,lem:ms-direct-anticomm,
+  def:magic-square,def:ld-encoding,def:lidt-cl}
+\lean{MIPRE.QLD.subtest_le, MIPRE.QLD.agree_subtest_le, MIPRE.QLD.item_consistency,
+  MIPRE.QLD.item_lowDeg_aline, MIPRE.QLD.item_lowDeg_dline,
+  MIPRE.QLD.item_pauli_consistency, MIPRE.QLD.item_commutation,
+  MIPRE.QLD.item_commutation_consistency, MIPRE.QLD.item_ms_consistency_X,
+  MIPRE.QLD.item_ms_consistency_Z, MIPRE.QLD.msPOVM, MIPRE.QLD.msEps,
+  MIPRE.QLD.condFail_ms_le, MIPRE.QLD.one_sub_povmValue_ms_le, MIPRE.QLD.sum_msEps_le,
+  MIPRE.QLD.item_magicSquare}
+\leanok
+Let $\strategy = (\ket{\psi}, M)$ be a POVM strategy succeeding with probability at least
+$1 - \eps$ in the Pauli basis test $\game^\pauli_\qldparams$ of
+Definition~\ref{def:qld-game}. Let $\gamma(\omega)$ be as in
+Lemma~\ref{fact:omega-anticomm-prob}, write $g_h$ for the low-degree encoding of
+Definition~\ref{def:ld-encoding}, and let every average below be over the verifier's content,
+each content carrying the same weight, restricted where indicated to the contents whose tuple
+$\omega$ is commuting ($\gamma(\omega) = 0$) or anticommuting ($\gamma(\omega) \neq 0$). Then,
+with $\simeq_\delta$ the cross-party distance of Definition~\ref{def:cross-distance}:
+\begin{enumerate}
+\item (\textbf{Consistency}) for every question type $t$,
+  $M^{t,x}_a \ot \Id \simeq_{172\eps} \Id \ot M^{t,x}_a$;
+\item (\textbf{Low degree}) for each $W \in \{X, Z\}$ and each of the two line types, the line
+  answer evaluated at the sampled point agrees with the point answer:
+  $M^{(\mathtt{Point}, W), u_W}_a \ot \Id \simeq_{172\eps}
+    \Id \ot M^{(\mathtt{Line}, W), \ell}_{[\,f(t) = a\,]}$, where $f$ is the polynomial
+  answered and $t$ the parameter of $u_W$ on the line $\ell$;
+\item (\textbf{Pauli basis consistency}) for each $W$,
+  $M^{(\mathtt{Point}, W), u_W}_a \ot \Id \simeq_{172\eps}
+    \Id \ot M^{(\pauli, W)}_{[g_h(u_W) = a]}$;
+\item (\textbf{Commutation}) for each $W$, on average over \emph{commuting} $\omega$,
+  $M^{(\mathtt{Pair}, W), \omega}_b \ot \Id \simeq_{172\eps}
+    \Id \ot M^{\mathtt{Pair}, \omega}_{[\beta_W = b]}$;
+\item (\textbf{Commutation consistency}) for each $W$, on average over commuting $\omega$,
+  $M^{(\mathtt{Point}, W), u_W}_{[\fieldtr(\cdot\, r_W) = b]} \ot \Id \simeq_{172\eps}
+    \Id \ot M^{(\mathtt{Pair}, W), \omega}_b$;
+\item (\textbf{Magic square}) on average over \emph{anticommuting} $\omega$, the
+  $\mathtt{Constraint}$ and $\mathtt{Variable}$ measurements at $\omega$ form a strategy for the
+  Magic Square game of value $1 - O(\eps)$; consequently, by
+  Lemma~\ref{lem:ms-direct-anticomm},
+  \begin{equation*}
+    \E_{\omega \,:\, \gamma(\omega) \neq 0}
+      \norm{\bigl(\Id \ot \{B^{\mathtt{Variable}_1, \omega},
+        B^{\mathtt{Variable}_5, \omega}\}\bigr) \ket{\psi}}^2 \;\leq\; 16049664\,\eps\;;
+  \end{equation*}
+\item (\textbf{Magic square consistency}) on average over anticommuting $\omega$,
+  $M^{(\mathtt{Point}, X), u_X}_{[\fieldtr(\cdot\, r_X) = b]} \ot \Id \simeq_{172\eps}
+    \Id \ot M^{\mathtt{Variable}_1, \omega}_b$, and the same with $Z$, $r_Z$ and
+  $\mathtt{Variable}_5$.
+\end{enumerate}
 \end{lemma}
 
 \begin{proof}
-\uses{lem:ms-direct-anticomm}
-Each item is the definition of the value of the corresponding subtest, divided by the
-probability that the subtest is selected. For the Magic Square item, apply
-Lemma~\ref{lem:ms-direct-anticomm} to the conditional strategy, average its
-$186624\eps_\omega$ squared-error bound, and transfer it to the point observables
-using the cross-party consistency estimates. This uses the original observables
-and requires no invocation of full Magic Square rigidity.
+\leanok
+\uses{lem:ms-direct-anticomm,def:cross-distance}
+Items 1--5 and 7 are one lemma applied seven times. The question distribution factors as an
+ordered type edge times the content, both uniform, so a question pair arising from a fixed edge
+of the type graph carries at least $1/86$ of the mass --- $86$ being the ordered pairs counted in
+Definition~\ref{def:qld-game} --- and the conditional failure of any subtest is therefore at
+most $86\eps$. Each rule of $\decider^\pauli$ accepts only when two named readings of the two
+answers agree, so~\eqref{eq:cross-from-agreement} converts that into $172\eps$ of cross-party
+distance for the measurements coarse-grained along those readings. The four rules gated on
+$\gamma$ check nothing on the other value of $\gamma$, which is why their averages are
+restricted.
+
+Item 6 is not of that shape. Relabelling the $\mathtt{Constraint}_i$ and $\mathtt{Variable}_j$
+answers at a fixed $\omega$ into the Magic Square game's alphabet --- the three bits placed at
+the constraint's cells, the bit passed through --- gives a strategy for $\game^\MS$, and
+relabelling outcomes is data processing, so that strategy wins whenever the Pauli test's own rule
+would have accepted. Its failure is therefore at most the Magic Square game's own
+question-weighted sum of the Pauli test's conditional failures at the corresponding question
+pairs, which is $86\eps$ on average over anticommuting $\omega$ --- one factor of $86$ and not
+thirty-six, because $\game^\MS$'s distribution is itself normalized. Lemma~\ref{lem:ms-direct-anticomm}
+applied to each such conditional strategy and averaged gives $186624 \cdot 86 = 16049664$. This
+uses the strategy's own observables and invokes no Magic Square rigidity.
 \end{proof}
+
+\paragraph{Comments.} Three departures from the paper's statement
+(\cite{AuditSync26}, \texttt{qld-commutation.tex}, \texttt{lem:qld-win-implications}), and one
+from this blueprint's own earlier text.
+
+The paper's hypothesis $6md \leq q$ is \textbf{not needed} and is dropped. It is there to turn
+the gated items into averages \emph{conditioned} on $\gamma$: by
+Lemma~\ref{fact:omega-anticomm-prob} each of the two events has probability at least
+$(1 - 3md/q)/2 \geq 1/4$ under it, so dividing by that probability costs a factor $4$. The
+formalization states the gated items in the \emph{unconditional} form, with the gate's indicator
+inside the average, which needs no lower bound on the gate's probability and is what the
+machinery produces directly. Whoever needs the conditional form divides, and pays $6md \leq q$
+there.
+
+The constants are named rather than hidden in $O(\eps)$. They are $172 = 2 \cdot 86$ for the
+consistency items --- the factor $2$ of~\eqref{eq:cross-from-agreement} and the selection
+probability $1/86$ --- and $16049664 = 186624 \cdot 86$ for the anticommutator. Item 6 in the
+paper reads $\E \Lambda_\omega = 1 - O(\eps)$; that intermediate form is
+\texttt{one\_sub\_povmValue\_ms\_le} together with \texttt{sum\_msEps\_le}, and the item above
+states the composition with Lemma~\ref{lem:ms-direct-anticomm} because that is what the
+expansion stage consumes.
+
+The paper's item 2 quantifies over the line--point distribution of a separate definition; here it
+is the two line types of Definition~\ref{def:qld-game} separately, at the questions the content
+actually produces, which is the form Definition~\ref{def:lidt-cl}'s own decider is stated in and
+avoids a second distribution.
+
+Finally, this blueprint's earlier statement of this lemma bundled into it the transfer of the
+anticommutation to the \emph{point} observables. That is the paper's separate
+\texttt{lem:qld-win-implications-obs}, it needs items 4, 5, 6 and 7 together, and it is where
+the sign $(-1)^{\gamma}$ first appears; it belongs with the expansion stage that consumes it and
+is not part of this lemma.
+
+\subsubsection{The point observables}
+
+The stage that follows works with the $\pm 1$-observables of the two-outcome probes rather than
+with the measurements themselves, and needs two statements about them: they are cross-party
+consistent, and they commute up to the sign $(-1)^{\gamma}$. The first is
+Lemma~\ref{lem:qld-win} item 1 and costs one factor of two; the second is the synthesis of items
+4 to 7 and is where the sign that Lemma~\ref{lem:qld-expanded-points} cancels first appears.
+
+\effortEasy
+
+\begin{lemma}[Consistency of the point observables]
+\label{lem:qld-obs-consistency}
+\uses{lem:qld-win,def:cross-distance}
+\lean{MIPRE.QLD.pts_obs_consistency}
+\leanok
+For $W \in \{X, Z\}$ and $r \in \F_q$ write
+$W^r(u) = M^{(\mathtt{Point}, W), u}_{[\fieldtr(\cdot\, r) = 0]}
+  - M^{(\mathtt{Point}, W), u}_{[\fieldtr(\cdot\, r) = 1]}$
+for the $\pm 1$-observable of the probe. Under the hypotheses of Lemma~\ref{lem:qld-win}, on
+average over the verifier's content,
+\begin{equation*}
+  W^r(u) \ot \Id_\bob \;\approx_{344\eps}\; \Id_\alice \ot W^r(u)\;.
+\end{equation*}
+\end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:qld-win,def:cross-distance}
+Item 1 of Lemma~\ref{lem:qld-win} holds for any \emph{common} reading of the two answers, the
+rule at equal types accepting only when the answers are equal and equal answers having equal
+readings --- so the data-processing step the paper cites separately is already in the item. Take
+the reading to be the probe $a \mapsto \fieldtr(a\,r)$ and apply
+\texttt{xStateDist\_obsOf\_le}, the cross-party form of Lemma~\ref{lem:qld-povm-to-obs}, with
+the two signs $\pm 1$: the factor is the number of outcomes of the probe, which is two, giving
+$2 \cdot 172\eps$.
+\end{proof}
+
+\effortHard
+
+\begin{lemma}[Signed commutation of the point observables]
+\label{lem:qld-obs-commutation}
+\uses{lem:qld-win,lem:qld-obs-consistency,fact:omega-anticomm-prob,cor:ortho-from-consistency}
+Under the hypotheses of Lemma~\ref{lem:qld-win}, on average over uniformly random
+$\omega = (u_X, u_Z, r_X, r_Z)$,
+\begin{equation*}
+  X^{r_X}(u_X)\, Z^{r_Z}(u_Z) \ot \Id_\bob
+    \;\approx_{O(\sqrt{\eps})}\;
+  (-1)^{\gamma(\omega)}\; Z^{r_Z}(u_Z)\, X^{r_X}(u_X) \ot \Id_\bob\;.
+\end{equation*}
+\end{lemma}
+
+\begin{proof}
+\uses{lem:qld-win,lem:qld-obs-consistency}
+Two cases, both from Lemma~\ref{lem:qld-win}. On a commuting $\omega$, items 5, 4 and 1 chain
+the probe of the point measurement to the $\mathtt{Pair}$ measurement on the other side; that
+measurement is projective, so the paper's commutation analysis turns the chain into commutation
+of the two probes, and expanding the two observables as $\Id - 2M_1$ transfers it to them. On an
+anticommuting $\omega$, item 7 identifies each probe with one of the two distinguished
+$\mathtt{Variable}$ observables on the other side, item 6 says those two anticommute up to
+$\sqrt{\eps}$, and transferring a product across the tensor factors reverses its order --- which
+is what supplies the sign.
+\end{proof}
+
+\paragraph{Comments.} The first lemma is formalized; the second is not, and the two obstacles are
+worth naming because they are the same two the expansion stage faces.
+
+The commuting case needs the paper's commutation-analysis lemma, whose hypothesis is that the
+$\mathtt{Pair}$ measurement is \emph{projective}. A general POVM strategy's is not, so the step
+consumes Corollary~\ref{cor:ortho-from-consistency} first; that corollary is formalized, and
+what is missing is the bookkeeping that applies it here and tracks the resulting error.
+
+The anticommuting case needs the order-reversal rule for transferring a product of operators
+across the two tensor factors, $AB \ot \Id \approx \Id \ot B'A'$. That rule is elementary but it
+is not in this repository, and the paper's own correction note on this proof records the two displays
+that had it backwards --- so it is exactly the kind of step to state once and prove rather than
+inline.
 
 \subsubsection{Expansion: approximate commutation of the two bases}
 

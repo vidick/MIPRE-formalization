@@ -157,12 +157,13 @@ best-specified target in the campaign — the blueprint and `paper/ldt.tex` writ
 out with explicit constants — but it is not a tail item, for three reasons, two of them
 structural and one of them a finding about the repository rather than about the lemma.
 
-**1. The Naimark dilation the proof needs already exists, behind a 71k-line import.**
+**1. The Naimark dilation the proof needs already existed, behind a 71k-line import.**
+*(Extracted 2026-09-19; see the end of this item.)*
 The proof dilates each of Alice's six constraint POVMs to a projective measurement on *one
 shared* initialized ancilla, which is what lets all six families act on a single state
 `|ψ'⟩ = (J ⊗ Id)|ψ⟩`; that is why the paper needs the unitary extension `U_c J = V_c` rather
-than the one-line isometry `V_c`. `MIPRE.Repetition.exists_projective_dilation` in
-`MIPRE/Background/Repetition/Entangled.lean` is exactly that theorem, with exactly that
+than the one-line isometry `V_c`. `exists_projective_dilation`, then in
+`MIPRE/Background/Repetition/Entangled.lean`, is exactly that theorem, with exactly that
 question-independent embedding (`ancillaEmbed d a₀`), together with
 `exists_isometry_of_povm`, `exists_unitary_extending`, `ancillaProj` and the Born-rule
 transport lemmas. None of it touches the vendored trees.
@@ -170,34 +171,42 @@ transport lemmas. None of it touches the vendored trees.
 But `Entangled.lean` is one of the nine bridge modules: it imports
 `MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition`, the 71k-line vendored
 module that costs 25 CPU-minutes on its own. `MIPRE/LCS/` may not import `MIPRE/Background/`
-at all (the one-way import graph in `CLAUDE.md`), so the dilation has to be **extracted first**
-into something like `MIPRE/Foundations/Dilation.lean`, with `Entangled.lean` importing it and
-its namespace changing from `MIPRE.Repetition` to `MIPRE`. That is a pure refactor of about 190
-lines, it is worth doing on its own merits — generic mathematics this project wrote, currently
-reachable only through the most expensive import in the repository — and it should be the first
-commit of PR B rather than a detour inside a lemma.
+at all (the one-way import graph in `CLAUDE.md`), so the dilation had to be **extracted first**
+into `MIPRE/Foundations/Dilation.lean`, with `Entangled.lean` importing it and its namespace
+changing from `MIPRE.Repetition` to `MIPRE`. **Done**: a pure refactor of 220 lines, with the
+imports narrowed from a wholesale `import Mathlib` to four Mathlib modules on the way (8706
+build jobs down to 2708). `planning/next-steps.md` had predicted this move and said to make it
+when a second consumer appeared; this is that consumer.
 
-**2. `Game.toNonlocalGame` is one-directional, and the lemma's Alice half is not statable on
-it.** `MIPRE.LCS.Game.toNonlocalGame` samples an equation `i` for **Alice** and a variable
+**2. `Game.toNonlocalGame` was one-directional, and the lemma's Alice half was not statable on
+it.** *(Settled 2026-09-19: the game is now symmetrized. What follows is the finding as it
+stood, kept because it is why the definition changed and where the constant comes from.)*
+
+The old `MIPRE.LCS.Game.toNonlocalGame` sampled an equation `i` for **Alice** and a variable
 `j ∈ V i` for **Bob**, always in that direction: 18 equiprobable incidences, and Alice never
 receives a variable question. The paper's `game^MS` samples one of **36 oriented** incidences,
 so both players answer both kinds of question, and `lem:ms-direct-anticomm` asserts a bound for
-each player — `A^{Variable_j}` on Alice's side does not exist in the current game. Nothing in
-`MIPRE/LCS/` or `MIPRE/Foundations/` symmetrizes an LCS nonlocal game (the `Bool` role of
+each player — `A^{Variable_j}` on Alice's side did not exist in that game. Nothing in
+`MIPRE/LCS/` or `MIPRE/Foundations/` symmetrized an LCS nonlocal game (the `Bool` role of
 `def:lidt` and `def:lidt-cl` is the precedent for how it would be done).
 
-So PR B must either symmetrize `Game.toNonlocalGame` — the honest fix, and the one that makes
+So PR B had to either symmetrize `Game.toNonlocalGame` — the honest fix, and the one that makes
 the Lean game the paper's game — or state the lemma for a separately defined symmetrized Magic
-Square game. Until that is settled the statement cannot be written down, which is the real
-reason this could not be finished inside PR A.
+Square game. **The maintainer chose to symmetrize it**, and that is the first commit of PR B:
+both players now draw questions from `Fin G.r ⊕ Fin G.s` and answer in
+`(Fin G.s → ZMod 2) ⊕ ZMod 2`, the referee samples an incidence and a uniform orientation, and
+the decider rejects a mismatched answer shape and an off-support pair. Nothing in the repository
+depended on the old direction, so this is a replacement rather than an addition;
+`MIPRE/LCS/MagicSquare/Game.lean` pins each accept/reject outcome with `decide`-checked
+witnesses, which is the `clGame` lesson applied.
 
-**3. The constant differs between the two games, in the Lean's favour.** The paper's `186624`
+**3. The constant follows the game, and with the symmetrization it is the paper's.** The paper's `186624`
 is `36² · 144` where `γ² ≤ 144 ε` comes from `δ²_{c,j} ≤ 4 ℓ_{c,j}` and `∑ ℓ_{c,j} ≤ 36 ε`, the
 last factor being the 36 oriented incidences. On the *one-directional* game there are 18
 equiprobable incidences, so `∑ ℓ_{c,j} ≤ 18 ε`, `γ² ≤ 72 ε`, and the bound is `36² · 72 =
-93312 ε`. On a symmetrized game the paper's counting applies verbatim and the constant is the
-paper's. Either is fine downstream — `lem:qld-win` only needs `O(ε)` — but the two must not be
-mixed up, and whichever game is chosen the blueprint should carry that game's constant.
+93312 ε`. On the symmetrized game the paper's counting applies verbatim and the constant is
+the paper's, which is the one the blueprint now carries. Either is fine downstream —
+`lem:qld-win` only needs `O(ε)` — but the two must not be mixed up.
 
 What remains after those three is the work the blueprint describes and it is substantial on its
 own: the reflections `C_{c,j} = ∑_β (-1)^{β_j} P_c(β)` and their within-constraint product
@@ -207,6 +216,61 @@ non-projectivity bound `‖(Id - B_j²) W ψ'‖ ≤ (2 + t) γ`, the six-step w
 `24 γ`, and the two end-removals. Roughly twenty operator-norm steps over a 9-variable,
 6-constraint structure.
 
+#### How it was proved (2026-09-19): the operator calculus, and why it is matrix-level
+
+**Done**, sorry-free, in `MIPRE/Background/QLD/Anticomm.lean` (namespace `MIPRE.QLD.MS`):
+`ms_direct_anticomm` (Bob's half), `ms_direct_anticomm'` (Alice's), and
+`ms_direct_anticomm_avg` (the averaged form the expansion stage will actually call), each
+bounding `‖anti‖²` by `186624 ε`. The lemma lives under `MIPRE/Background/` because
+`MIPRE/Background/` may import `MIPRE/LCS/` but not conversely, and because it exists to feed
+the Pauli basis test; its guards are in `MIPRE/Background/QLD/Axioms.lean`, and all four names
+print `[propext, Classical.choice, Quot.sound]`.
+
+**The one design decision worth recording: the proof does not use the operator norm.** The
+natural route — push each matrix through `Matrix.toEuclideanCLM` and reason with `‖T‖` — dies at
+the first step. `T * T ≤ 1 → ‖T‖ ≤ 1` on
+`EuclideanSpace ℂ n →L[ℂ] EuclideanSpace ℂ n` exhausted 200000 heartbeats in `whnf`: the
+Loewner order on continuous linear maps unfolds through the CLM structure and the elaborator
+cannot see through it. What replaced it is three definitions in
+`MIPRE/Foundations/OpBound.lean`, all stated on matrices acting on vectors and none of them a
+norm:
+
+* `Bnd M K` := `∀ v, ‖M v‖ ≤ K ‖v‖` — the operator bound as a *relation*, closed under
+  `add`, `sub`, `mul`, `smul` and `mono`, with `bnd_one_of_isometry` and
+  `bnd_one_of_conjTranspose_mul_self_le` as the two ways to get `K = 1`;
+* `snorm v M` := `‖M v‖` — the state-dependent seminorm, with the triangle inequalities and
+  the suffix-insertion bound `snorm_mul_swap`, which is the `‖R W ψ'‖ ≤ ‖R ψ'‖ + ‖R‖ t γ` of the
+  blueprint's proof;
+* `qform v M` := `re ⟨v|M|v⟩`, additive and real-linear, with `snorm_sq_eq_qform` tying the two
+  together.
+
+`aOp X = X ⊗ₖ 1` and `bOp Y = 1 ⊗ₖ Y` are ring homomorphisms into the product space, so the
+commutation of the two players' operators is `aOp_mul_bOp` and needs no per-case work. The
+reflections come from `MIPRE/Foundations/PVM.lean`: `pvmObs P ε = ∑ a, ε a • P a` is
+*multiplicative in* `ε` (`pvmObs_mul`) because a PVM's elements are mutually orthogonal, which
+delivers self-adjointness, squaring to one, within-constraint commutation and — the step the
+word argument runs on — the exact product equal to the constraint's sign, all from one fact
+instead of six cases. `MIPRE/Foundations/POVMValue.lean` carries the value side:
+`condFail_le_div` turns `1 - ω ≤ ε` into a per-incidence bound, and with `μ = 1/36` at each of
+the 36 oriented incidences that is `condFail ≤ 36 ε` — which is where the paper's constant
+comes from, as item 3 above says.
+
+The six-step path is `d a e b → g e b → g h → i → −f c → −d e c → −d e a b`, costing
+`7+3+3+3+5+3 = 24γ`; the two end-removals take it to `34γ` and then `36γ`, and `γ = 12√ε`
+gives `(36 · 12)² = 186624`. The path's Lean text was emitted by a generator rather than typed:
+18 cell conversions, 6 `game.b` values, 6 relations, 6 steps and 5 triangle inequalities is
+past the length where transcription is reliable.
+
+Alice's half is not a re-proof. `MIPRE/LCS/NonlocalGame.lean` gained `questionDist_symm` and
+`accepts_symm` (both `cases <;> rfl`), and `StateDistance.lean`'s swap section gives
+`povmValue_swapVec`, so `ms_direct_anticomm'` is `ms_direct_anticomm` applied to the swapped
+state — which is the dividend of symmetrizing the game rather than stating a second lemma.
+
+**One blueprint repair.** `lem:ms-direct-anticomm` also asserted that the bound transfers to the
+point observables of `game^pauli`. That is a statement about `game^pauli`, not about the Magic
+Square, and it cannot be stated where this lemma lives; it moved into a Comments paragraph
+belonging to `lem:qld-win`, which is where the transfer is actually performed.
+
 ### PR B — the game, what winning implies, the Magic Square lemma, and the expansion
 
 `def:qld-game` (see above), then `lem:ms-direct-anticomm`, `lem:qld-win`,
@@ -215,6 +279,74 @@ of a subtest divided by its selection probability — plus one real step, transf
 `lem:ms-direct-anticomm` to the point observables. The expansion stage is where the ancillas
 come in and where the sign `(−1)^γ` cancels exactly; the blueprint flags that cancellation as
 the pivotal step, so it is the thing to get right first.
+
+#### PR B as it stands (2026-09-19), and the one thing it is blocked on
+
+**Done, sorry-free**: `def:qld-game` (`MIPRE/Background/QLD/Game.lean`), `lem:qld-win` in all
+seven items (`Win.lean`, `WinMS.lean`), `lem:ms-direct-anticomm`, and
+`lem:qld-obs-consistency`. The supporting calculus is
+`MIPRE/Foundations/CrossConsistency.lean`, which is the appendix's *cross-party* `≃_δ` --- one
+player's operator against the other's --- and had to be written because
+`MIPRE.stateDist` of `def:state-distance` compares two families on the *same* side. That is the
+distance the orthonormalization step wants; every consistency statement of `lem:qld-win` wants
+the other one.
+
+**Two things the paper leaves implicit, both of which the formalization needed.** First, a
+subtest's decider does not *equal* an agreement predicate: it checks the answer formats and
+rejects an ill-formatted pair even when the post-processings agree. What holds is **accept
+implies agree**, and that is all `xSqNorm_sum_le_condFail` asks --- which in turn lets the
+readings send an ill-formatted answer to `0`. Second, "divided by the probability that the
+subtest is selected" needs no injectivity: the subtests are indexed by the verifier's content
+and several contents give the same question pair, a `(Pauli, W)` question reading none of it, so
+the hypothesis is a condition on the *push-forward*.
+
+**One hypothesis of the paper's `lem:qld-win-implications` is not needed.** `6md ≤ q` is there to
+turn the four `γ`-gated items into averages *conditioned* on `γ`; via
+`fact:omega-anticomm-prob` each gate then has probability at least `1/4`. The Lean states those
+items unconditionally with the gate's indicator inside the average, which is what the machinery
+produces and needs no lower bound at all. Whoever wants the conditional form divides and pays
+`6md ≤ q` there. The blueprint records this.
+
+**The constants are named, and one of them is loose.** `172 = 2 · 86` for the consistency items
+(the factor `2` of the agreement inequality, the selection probability `1/86`), and
+`16049664 = 186624 · 86` for the anticommutator. The `86` in the second is a factor `36` looser
+than it needs to be: it bounds each of the thirty-six Magic Square incidences against the whole
+`ε` budget, where the paper instead budgets them jointly and gets `86/36`. Sharpening means a
+multi-edge form of `subtest_le` --- `sum_condFail_le_of_pushforward` with the index set ranging
+over edges as well as contents --- and nothing downstream needs it, `thm:qld` asking only for
+`O(ε)`.
+
+**What PR B is blocked on: the generalized Pauli operators over `F_q`.** Stage 3
+(`lem:qld-expanded-points`, `lem:qld-expanded-lines`) is not a matter of more bookkeeping. Its
+expanded observable is
+
+```
+  Ŵ^r(u) = W^r(u) ⊗ τ^W(r · ind_m(u))
+```
+
+where `τ^W` is the generalized Pauli observable on `(C^q)^{⊗ M}`, `M = 2^m` (the paper's
+`sec:generalized-pauli`), and the projections are Fourier transforms
+`M̂^{(Point,W),u}_a = E_r (-1)^{tr(ar)} Ŵ^r(u)`. **None of that exists in this repository.**
+`MIPRE/LCS/Pauli.lean` is the `2 × 2` Pauli matrices for the Magic Square, not the `F_q` Weyl
+system: what is needed is `X`- and `Z`-type Weyl operators on `C^q`, their commutation relation
+`X^a Z^b = χ(ab) Z^b X^a`, the `M`-fold tensor families `τ^W_h` for `h ∈ F_q^M`, the projections
+`τ^{W,u}_a` of `eq:qld-point-obs-def`, the Fourier identities over `F_q` that turn the average
+over `r` into a sum of projectors, and `|EPR_q⟩^{⊗ M}` with its stabilizer relations. That is a
+development on the scale of one of this campaign's chunks, and it is also what stage 5's swap
+isometry runs on --- so it is not stage-3 overhead, it is the missing half of the campaign's
+infrastructure.
+
+Two smaller prerequisites, both named in the comments on `lem:qld-obs-commutation`: the paper's
+commutation-analysis lemma (whose projectivity hypothesis a general POVM strategy meets only
+after `cor:ortho-from-consistency`), and the order-reversal rule `AB ⊗ Id ≈ Id ⊗ B'A'` for
+transferring a product across the tensor factors --- elementary, absent here, and the thing the
+paper's own correction note on that proof got backwards in two displays.
+
+**So the campaign's shape has changed.** The plan had four pull requests with stage 3 inside
+PR B. Stage 3 should instead be preceded by a **generalized-Pauli chunk**, and PR B ends where
+it now does: the game, the win implications, and the observable consistency. That is the honest
+boundary --- everything up to it is checked, and the next thing is a new development rather than
+a continuation.
 
 ### PR C — combining the two bases
 
