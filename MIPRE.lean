@@ -631,6 +631,7 @@ import MIPRE.Foundations.OracularSound
 import MIPRE.Foundations.POVMValue
 import MIPRE.Foundations.PVM
 import MIPRE.Foundations.Parseval
+import MIPRE.Foundations.Pasting
 import MIPRE.Foundations.PerfectStrategy
 import MIPRE.Foundations.Pipeline.AnswerReduction
 import MIPRE.Foundations.Pipeline.Budget

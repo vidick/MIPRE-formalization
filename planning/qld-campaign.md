@@ -718,6 +718,65 @@ the `n -> F` proof with `sum_sgn_trMul` in place of `sum_sgn_trDot`), `sum_norm_
 `sum_xSqNorm_map_le`, and the vector bridge `xSqNorm_eq_norm_evec_sq` / `sum_fibre_dev` that lets
 a fibre sum of deviation *vectors* be read back as the deviation of the coarse-grained operators.
 
+### The pasting lemma, cheaper than the paper's (2026-09-20, done)
+
+`lem:qld-pairs-of-lines` rests on NW19's Fact 4.35 (the paper's `lem:pasting-updated`), which the
+blueprint did not have. It is now in `MIPRE/Foundations/Pasting.lean`, at `k = 2` — the paper's
+reduction of general `k` to `k = 2` is an induction that adds nothing and the consumer needs
+`k = 2` only — together with `lem:cool-closeness-fact` in `MIPRE/Foundations/Commutation.lean`.
+
+**Two hypotheses of the paper's statement are not needed, and the reason is the same both times:
+what the consumer has is stronger than what the paper's proof assumes.**
+
+* The paper allows the inner family `G_1` to be a POVM. Then the two diagonal terms of the
+  commutator expansion are only approximately one, and repairing that is exactly what its appeal
+  to NW19's Fact 4.31 does. Our `G_1` is a line measurement, hence **projective**, and then the
+  two diagonal sums are *exactly* one: `sum_snorm_sq_comm_eq` computes the commutator sum as
+  `2 - 2 Sigma` with no error term at all. Fact 4.31 is not needed anywhere, and task Q-C5a's
+  original scope — "NW19 Fact 4.31 and `lem:cool-closeness-fact`" — shrank by half.
+* The paper derives the cross-party self-consistency of `G_2` from the backwards consistency and
+  Alice's self-consistency, and pays a further `eps` for the passage from the fibres of the
+  outcome map to the fine family. Item 1 of `lem:qld-expanded-lines` gives the fine-level relation
+  directly, at `172 eps`. So it is a hypothesis of the abstract lemma rather than a derivation.
+
+Neither change touches the conclusion; both are recorded in the blueprint's Comments.
+
+**What the chain actually is.** With `R` the coarse-grained inner family and `G` the outer one:
+
+* step (i), `sum_bornProb_ord_ge`: the *ordered* product `G_g R_b` carries all but
+  `delta/2 + sqrt(delta/2)`. The outer factor sums away against Alice's second marginal, and what
+  is left is Alice's first marginal against `Id - R_b` — whose square is `Id - R_b` again, `R`
+  being projective, so no `M^2 <= M` estimate is needed;
+* step (ii), `abs_sand_sub_ord_le`: from the ordered product to the sandwich, one Cauchy--Schwarz
+  against Bob's commutator, the front factor `A_{b, e(g)} (x) G_g` being a mutually orthogonal
+  family of projections and so a contraction (`sum_snorm_sq_prod_le_one`);
+* the fine-grained commutator against the coarse-grained one, `sum_snorm_sq_comm_fine_le`: the
+  coarse one is `16(delta_1 + delta_2)` by `commutation_analysis_abstract` read **in the mirror**
+  — both families on Bob, Alice's joint measurement supplying the operator both products reach —
+  and the two overlaps differ by the cloud, the strife and the collision term.
+
+**The one estimate that had to be got right.** In the cloud step (`abs_sigma_sub_cloud_le`) the
+deviation `G'_g (x) Id - Id (x) G_g` is summed over `g` only, while the term being bounded is
+summed over `(b, g)`. Splitting the Cauchy--Schwarz as
+`[R_b G_g R_b] . [R_b . deviation]` — legal because `R_b G_g R_b . R_b = R_b G_g R_b` — keeps one
+`R_b` in front of the deviation, and `sum_snorm_sq_mul_le` then absorbs the `b`-sum instead of
+repeating it. Dropping that factor multiplies the bound by `|R1| = q`.
+
+**The collision term is a hypothesis of the core and a lemma of its own.** `collisionTerm` names
+the off-diagonal cloud mass — pairs `g != g'` the outcome map cannot tell apart — and
+`strife_sub_cloud_eq` says the strife minus the cloud *is* that term, exactly.
+`sum_collisionTerm_le` is the bridge for a product question distribution: with the probe uniform
+and independent, the Born probabilities do not depend on it, so the probe average acts on the
+collision indicator alone and what multiplies it is a POVM's total mass. That split keeps the
+analytic core free of the question distribution, which matters because the consumer's distribution
+is the line--point distribution rather than a product on the nose — the product structure there
+comes from shifting the point along its line, which is the next piece of work.
+
+Constants: `delta/2 + sqrt(delta/2) + sqrt(32 delta + 4 sqrt(eta) + 2 eps)`. The `32` rather than
+`16` is because the commutation analysis takes a single `delta` for both marginal hypotheses, here
+instantiated at their sum. Nothing in the chain is a per-outcome estimate, so no constant depends
+on `q`.
+
 ### PR D — separation, the swap isometry, and the theorem
 
 `lem:qld-helper`, `lem:qld-exact-paulis`, `lem:qld-swap`, `thm:qld`. Two things to hold on to:

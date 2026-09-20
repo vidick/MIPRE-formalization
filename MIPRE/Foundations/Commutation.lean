@@ -106,6 +106,81 @@ theorem sum_snorm_sq_mul_le {ι : Type*} [Fintype ι] (v : N → ℂ)
   rw [hsplit] at hpsd
   exact sub_nonneg.mp hpsd
 
+/-- **A contraction in front costs nothing.** The one-operator case of `sum_snorm_sq_mul_le`. -/
+theorem snorm_sq_mul_le_of_contraction (v : N → ℂ) {P : Matrix N N ℂ}
+    (hP : Pᴴ * P ≤ (1 : Matrix N N ℂ)) (M : Matrix N N ℂ) :
+    snorm v (P * M) ^ 2 ≤ snorm v M ^ 2 := by
+  rw [snorm_sq_eq_qform, snorm_sq_eq_qform, Matrix.conjTranspose_mul,
+    show Mᴴ * Pᴴ * (P * M) = Mᴴ * (Pᴴ * P) * M from by noncomm_ring]
+  refine qform_le_of_le v ?_
+  have hpsd : (0 : Matrix N N ℂ) ≤ Mᴴ * ((1 : Matrix N N ℂ) - Pᴴ * P) * M :=
+    Matrix.nonneg_iff_posSemidef.mpr
+      ((Matrix.nonneg_iff_posSemidef.mp (sub_nonneg.mpr hP)).conjTranspose_mul_mul_same M)
+  rw [show Mᴴ * ((1 : Matrix N N ℂ) - Pᴴ * P) * M = Mᴴ * M - Mᴴ * (Pᴴ * P) * M from by
+    noncomm_ring] at hpsd
+  exact sub_nonneg.mp hpsd
+
+/-- **A sum of mutually orthogonal projections times arbitrary operators has orthogonal terms.**
+The cross terms carry `P i * P j = 0`, so the squared state norm is additive --- exactly, and with
+no appeal to the size of the index set. -/
+theorem snorm_sq_sum_proj_mul {ι : Type*} [Fintype ι] [DecidableEq ι] (v : N → ℂ)
+    {P : ι → Matrix N N ℂ} (hPsa : ∀ i, (P i)ᴴ = P i)
+    (horth : ∀ i j, i ≠ j → P i * P j = 0) (W : ι → Matrix N N ℂ) (s : Finset ι) :
+    snorm v (∑ i ∈ s, P i * W i) ^ 2 = ∑ i ∈ s, snorm v (P i * W i) ^ 2 := by
+  classical
+  rw [snorm_sq_eq_qform, Matrix.conjTranspose_sum, Finset.sum_mul, qform_sum]
+  refine Finset.sum_congr rfl fun i hi => ?_
+  rw [Matrix.mul_sum, qform_sum, Finset.sum_eq_single_of_mem i hi fun j _ hji => ?_,
+    snorm_sq_eq_qform]
+  rw [Matrix.conjTranspose_mul, hPsa,
+    show (W i)ᴴ * P i * (P j * W j) = (W i)ᴴ * (P i * P j) * W j from by noncomm_ring,
+    horth i j (Ne.symm hji), Matrix.mul_zero, Matrix.zero_mul]
+  show qform v 0 = 0
+  rw [qform, Matrix.zero_mulVec]
+  simp
+
+/-- **`lem:cool-closeness-fact`, in its partition form.** A projective measurement `A` that is
+`delta`-close to a family `B` stays `delta`-close to it after multiplying each element by `A`'s own
+element and summing over the fibres of an outcome map --- *simultaneously* over all the fibres,
+which is what the consumers need: the single-subset form applied to the `q` fibres of an outcome
+map one at a time would cost a factor `q`.
+
+The two facts are that projectivity kills the cross terms inside a fibre, and that each `A i` is a
+contraction. The fibres being disjoint is what lets the outer sum be absorbed. -/
+theorem sum_snorm_sq_cool {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
+    (v : N → ℂ) {A : ι → Matrix N N ℂ} (hA : IsPVM A) (B : ι → Matrix N N ℂ) (f : ι → κ) :
+    ∑ k : κ, snorm v (∑ i ∈ univ.filter fun i => f i = k, (A i - A i * B i)) ^ 2
+      ≤ ∑ i, snorm v (A i - B i) ^ 2 := by
+  classical
+  have hterm : ∀ i, A i - A i * B i = A i * (A i - B i) := fun i => by
+    rw [Matrix.mul_sub, hA.idem]
+  have horth : ∀ i j : ι, i ≠ j →
+      (A i * (A i - B i))ᴴ * (A j * (A j - B j)) = 0 := by
+    intro i j hij
+    rw [Matrix.conjTranspose_mul, hA.isSelfAdjoint,
+      show (A i - B i)ᴴ * A i * (A j * (A j - B j))
+          = (A i - B i)ᴴ * (A i * A j) * (A j - B j) from by noncomm_ring,
+      hA.orthogonal hij, Matrix.mul_zero, Matrix.zero_mul]
+  have hfib : ∀ k : κ, snorm v (∑ i ∈ univ.filter fun i => f i = k, (A i - A i * B i)) ^ 2
+      = ∑ i ∈ univ.filter fun i => f i = k, snorm v (A i * (A i - B i)) ^ 2 := by
+    intro k
+    rw [Finset.sum_congr rfl fun i (_ : i ∈ univ.filter fun i => f i = k) => hterm i,
+      snorm_sq_eq_qform, Matrix.conjTranspose_sum, Finset.sum_mul, qform_sum]
+    refine Finset.sum_congr rfl fun i hi => ?_
+    rw [Matrix.mul_sum, qform_sum, Finset.sum_eq_single_of_mem i hi fun j _ hji => ?_,
+      snorm_sq_eq_qform]
+    rw [horth i j (Ne.symm hji)]
+    show qform v 0 = 0
+    rw [qform, Matrix.zero_mulVec]
+    simp
+  rw [Finset.sum_congr rfl fun k (_ : k ∈ univ) => hfib k]
+  refine le_trans (le_of_eq (Finset.sum_fiberwise (univ : Finset ι) f
+    fun i => snorm v (A i * (A i - B i)) ^ 2)) (Finset.sum_le_sum fun i _ => ?_)
+  refine snorm_sq_mul_le_of_contraction v ?_ _
+  rw [hA.isSelfAdjoint, hA.idem]
+  exact le_trans (Finset.single_le_sum (fun j _ => hA.nonneg j) (mem_univ i))
+    (le_of_eq hA.sum_eq_one)
+
 /-- The triangle inequality for a family of deviations, at the usual cost of a factor two. -/
 theorem sum_snorm_sq_triangle' {ι : Type*} [Fintype ι] (v : N → ℂ)
     (P Q R : ι → Matrix N N ℂ) :
