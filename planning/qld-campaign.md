@@ -954,6 +954,53 @@ a `show ... from` that lets unification do the reduction (which is what the cont
 did), and the collision bound's shift sits under the binder of a filtered set, where `rw` cannot
 reach and `simp only` can.
 
+### The combining map and the padded line measurement (2026-09-20, done)
+
+`lem:qld-padded-lines` asserts two things: that there *is* a POVM on the padded line with outcomes of
+degree at most `md+1`, and that it is consistent with the padded point measurement at
+`delta_combine`. The first is now formalized, in `MIPRE/Background/QLD/Combine.lean`; the second is
+not.
+
+**The combining map is a product of degrees, once the substitutions are seen to be affine.**
+`combine` is `alpha(t) f_X(x(t)) + beta(t) f_Z(z(t))` built through Mathlib's `Polynomial` and
+truncated back to a coefficient vector by `ofPoly`. All four substitutions are affine in the padded
+parameter, so `md+1` is `1 + md` and nothing subtler. `eval_padCombine` is the paper's
+parametrization-free defining property, and it is what a consumer should cite.
+
+**The geometry is one disjunction, proved once.** `xBlk_dir_sub` (from the sublines work) says the `X`
+block of the padded direction is *either* the `X` subline's direction *or* zero. In the first case
+the subline parameter moves by exactly the padded shift; in the second it does not move. So it is
+`p0 + c t` with `c` one or zero, and `subAff` is that pair. The paper instead walks the six branches
+of its subline construction; here the branches were already absorbed into `xBlk_dir_sub`, so the
+affine substitution costs two lines (`on_line_affEval`, `lineParam_affEval`) and the branch analysis
+never reappears. Two small facts make the chain close: `rep_xBlk_padShift` (the subline's base point
+does not move, by the same disjunction) and `subX_padShift` (the subline data is unchanged but in its
+point, because the seed and the raw direction it reads are).
+
+**The axis bound is `padCase`'s own case distinction.** A padded direction in the `X` or `Z` block
+leaves `alpha` and `beta` constant along the line, so the combined polynomial inherits the degree of
+the inputs --- which is `d` exactly when `lem:qld-axis-degree` supplies it, so
+`degLE_padCombine_aline` takes that as a hypothesis rather than pretending to it. A direction at
+`alpha`, `beta` or a dummy coordinate leaves *both* blocks constant, and then the polynomial is
+affine and only `d >= 1` is used. `DegLE` is a predicate on coefficient vectors rather than a
+change of type, because the answer alphabet is `LinePoly F (m*d)` throughout.
+
+**Conditioning on the padded line is averaging over the fresh randomness.** `padLineMats` is
+`Q-hat^l`: the uniform average over `SubRand` --- a seed and a raw direction per side --- of
+`pasteLine` coarse-grained by `padCombine`. The paper writes a conditional expectation
+`E_{(l_X,l_Z) ~ D|l}`; since `D` is *defined* by the sampling procedure, conditioning on `l` leaves
+exactly that randomness, so no conditional distribution has to be formed. `sum_padLineMats` and
+`posSemidef_padLineMats` are the POVM property, and `sum_filter_padLineMats` is the data-processing
+step the paper's proof ends with, stated in the form `pairs_of_lines_prod` applies to.
+
+**What remains, and why it is a separate piece of work.** The consistency bound chains three
+Cauchy--Schwarz claims, and each consumes an input averaged over a *different* distribution: the
+combined point measurement's self-consistency, `lem:qld-pairs-of-lines` on the product, and item 3 of
+the expanded-line lemma on the `i`-th *restricted* line-point distributions `D_{Ty,i}`. That last
+transfer --- an approximation at error `delta` over `D_Line` holds over each `D_{Ty,i}` at `2m delta`
+--- is what produces the factors of `m` in `delta_combine = m poly(eps, md/q)`, and it is not
+formalized at all. It is the natural next task.
+
 ### PR D — separation, the swap isometry, and the theorem
 
 `lem:qld-helper`, `lem:qld-exact-paulis`, `lem:qld-swap`, `thm:qld`. Two things to hold on to:

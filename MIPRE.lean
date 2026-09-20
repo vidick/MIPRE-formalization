@@ -388,6 +388,7 @@ import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
 import MIPRE.Background.Orthonormalization.Statement
 import MIPRE.Background.QLD.Anticomm
 import MIPRE.Background.QLD.Axioms
+import MIPRE.Background.QLD.Combine
 import MIPRE.Background.QLD.Combined
 import MIPRE.Background.QLD.Commutation
 import MIPRE.Background.QLD.Consistency
