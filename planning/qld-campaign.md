@@ -767,7 +767,11 @@ the off-diagonal cloud mass — pairs `g != g'` the outcome map cannot tell apar
 `strife_sub_cloud_eq` says the strife minus the cloud *is* that term, exactly.
 `sum_collisionTerm_le` is the bridge for a product question distribution: with the probe uniform
 and independent, the Born probabilities do not depend on it, so the probe average acts on the
-collision indicator alone and what multiplies it is a POVM's total mass. That split keeps the
+collision indicator alone and what multiplies it is a POVM's total mass. The collision probability
+there is a *function of the question*, and the conclusion is its average — because the seeded
+test's diagonal branch samples a zero direction with probability at most `1/q`, and on such a
+degenerate line the outcome map separates nothing; what makes the average small is the rarity, not
+a bound holding everywhere. That split keeps the
 analytic core free of the question distribution, which matters because the consumer's distribution
 is the line--point distribution rather than a product on the nose — the product structure there
 comes from shifting the point along its line, which is the next piece of work.

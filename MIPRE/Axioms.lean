@@ -617,7 +617,9 @@ tell you the guard is missing.
   MIPRE.sum_snorm_sq_cool_prod,
   MIPRE.IsPVM.aOp,
   MIPRE.IsPVM.bOp,
-  MIPRE.sum_xSqNorm_marg_le
+  MIPRE.sum_xSqNorm_marg_le,
+  MIPRE.sum_snorm_sq_mul_proj_le,
+  MIPRE.sum_xSqNorm_marg_le'
 
 -- blueprint `lem:pasting-updated`, the `k = 2` case: Alice's joint projective measurement against
 -- the sandwich of Bob's two families, coarse-grained by evaluation. The collision term is a

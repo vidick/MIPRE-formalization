@@ -393,6 +393,7 @@ import MIPRE.Background.QLD.Commutation
 import MIPRE.Background.QLD.Consistency
 import MIPRE.Background.QLD.Expanded
 import MIPRE.Background.QLD.Game
+import MIPRE.Background.QLD.Lines
 import MIPRE.Background.QLD.Ortho
 import MIPRE.Background.QLD.Swap
 import MIPRE.Background.QLD.Win

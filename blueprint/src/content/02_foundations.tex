@@ -817,7 +817,8 @@ the squared norm and no approximation.
 \uses{def:state-distance,def:cross-distance}
 \lean{MIPRE.snorm_sq_mul_le_of_contraction, MIPRE.snorm_sq_sum_proj_mul,
   MIPRE.sum_snorm_sq_cool, MIPRE.sum_fibre_fst, MIPRE.sum_snorm_sq_cool_prod,
-  MIPRE.IsPVM.aOp, MIPRE.IsPVM.bOp, MIPRE.sum_xSqNorm_marg_le}
+  MIPRE.IsPVM.aOp, MIPRE.IsPVM.bOp, MIPRE.sum_xSqNorm_marg_le,
+  MIPRE.sum_snorm_sq_mul_proj_le, MIPRE.sum_xSqNorm_marg_le'}
 \leanok
 Let $\{A_i\}_{i \in \mA}$ be a projective measurement and $\{B_i\}$ any family of
 operators on the same space, with
@@ -916,8 +917,11 @@ $\delta_{\mathrm{pasting}}$ twice the right-hand side of~\eqref{eq:pasting-concl
 
 Finally, if the question is a pair $(z, y)$ with $y$ uniform and independent of $z$, every family
 above depending on $z$ alone and only $e$ on $y$, and if any two distinct $g, g'$ satisfy
-$e_z(y)(g) = e_z(y)(g')$ for at most an $\eps$ fraction of the probes $y$, then the collision term
-is at most $\eps$.
+$e_z(y)(g) = e_z(y)(g')$ for at most an $\eps(z)$ fraction of the probes $y$, then the collision
+term is at most the average of $\eps(z)$. The dependence on $z$ is what the consumer needs: for a
+\emph{degenerate} line --- a direction that is zero, which the seeded test's diagonal branch does
+sample --- the outcome map separates nothing at all, and what makes the average small is that such
+lines are rare, not that the bound holds at every question.
 \end{lemma}
 
 \begin{proof}

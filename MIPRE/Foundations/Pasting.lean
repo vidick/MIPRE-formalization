@@ -235,6 +235,11 @@ theorem sum_weighted_add (w f g : ι → ℝ) :
   rw [← Finset.sum_add_distrib]
   exact Finset.sum_congr rfl fun i _ => mul_add _ _ _
 
+theorem sum_weighted_const_mul (c : ℝ) (w f : ι → ℝ) :
+    ∑ i, w i * (c * f i) = c * ∑ i, w i * f i := by
+  rw [Finset.mul_sum]
+  exact Finset.sum_congr rfl fun i _ => by ring
+
 theorem sum_weighted_div (w f : ι → ℝ) (c : ℝ) :
     ∑ i, w i * (f i / c) = (∑ i, w i * f i) / c := by
   rw [Finset.sum_div]
@@ -1062,7 +1067,108 @@ theorem sum_xSqNorm_marg_le {ψ : dA × dB → ℂ} {Q : R1 × R2 → Matrix dA 
     (fun a => ∑ b : R2, (aOp (Q (a, b)) : Matrix (dA × dB) _ ℂ) * bOp (Z b)) _) ?_
   linarith
 
+/-- **A projective family stays projective under a relabelling of its outcomes by a bijection.** -/
+theorem IsPVM.comp_equiv {N ι κ : Type*} [Fintype N] [DecidableEq N] [Fintype ι] [Fintype κ]
+    {P : ι → Matrix N N ℂ} (h : IsPVM P) (e : κ ≃ ι) : IsPVM fun k => P (e k) where
+  isSelfAdjoint k := h.isSelfAdjoint (e k)
+  idem k := h.idem (e k)
+  sum_eq_one := by
+    rw [← h.sum_eq_one]
+    exact Fintype.sum_bijective e e.bijective _ _ fun k => rfl
+
+/-- **Bob's own deviation, through Alice's operator.** The three-term triangle inequality in the
+one shape the consumer needs: a same-side deviation bounded by two cross-party ones. -/
+theorem normSq_stateVecB_sub_le (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B₁ B₂ : Matrix dB dB ℂ) :
+    ‖stateVecB ψ (B₁ - B₂)‖ ^ 2 ≤ 2 * xSqNorm ψ A B₁ + 2 * xSqNorm ψ A B₂ := by
+  have htri : ‖stateVecB ψ (B₁ - B₂)‖ ≤ xNorm ψ A B₁ + xNorm ψ A B₂ := by
+    rw [stateVecB_sub', xNorm, xNorm,
+      show stateVecB ψ B₁ - stateVecB ψ B₂
+          = (stateVecB ψ B₁ - stateVec ψ A) + (stateVec ψ A - stateVecB ψ B₂) from by abel]
+    refine le_trans (norm_add_le _ _) (add_le_add (le_of_eq ?_) (le_of_eq rfl))
+    rw [norm_sub_rev]
+  rw [xSqNorm_eq_sq, xSqNorm_eq_sq]
+  nlinarith [norm_nonneg (stateVecB ψ (B₁ - B₂)), xNorm_nonneg ψ A B₁, xNorm_nonneg ψ A B₂,
+    sq_nonneg (xNorm ψ A B₁ - xNorm ψ A B₂)]
+
+/-- **Attaching the other party's projection to a consistent joint measurement costs nothing.**
+The relation the marginal step's first term needs, from the consistency with the ordered product
+alone. -/
+theorem sum_snorm_sq_mul_proj_le {ψ : dA × dB → ℂ} (Q : R1 × R2 → Matrix dA dA ℂ)
+    {Z : R2 → Matrix dB dB ℂ} (X : R1 → Matrix dB dB ℂ) (hZ : IsPVM Z) :
+    ∑ p : R1 × R2, snorm ψ ((aOp (Q p) : Matrix (dA × dB) _ ℂ) * bOp (Z p.2)
+        - aOp (Q p)) ^ 2
+      ≤ 4 * ∑ p : R1 × R2, xSqNorm ψ (Q p) (Z p.2 * X p.1) := by
+  classical
+  rw [Finset.mul_sum]
+  refine Finset.sum_le_sum fun p _ => ?_
+  have h1 : snorm ψ ((aOp (Q p) : Matrix (dA × dB) _ ℂ) * bOp (Z p.2)
+      - bOp (Z p.2 * X p.1)) ^ 2 ≤ xSqNorm ψ (Q p) (Z p.2 * X p.1) := by
+    rw [xSqNorm_eq_snorm_sq]
+    have hcon : ((bOp (Z p.2) : Matrix (dA × dB) _ ℂ))ᴴ * bOp (Z p.2)
+        ≤ (1 : Matrix (dA × dB) (dA × dB) ℂ) := by
+      rw [hZ.bOp.isSelfAdjoint, hZ.bOp.idem]
+      exact proj_le_one (hZ.bOp.isSelfAdjoint p.2) (hZ.bOp.idem p.2)
+    refine le_trans (le_of_eq (congrArg (fun M => snorm ψ M ^ 2) ?_))
+      (snorm_sq_mul_le_of_contraction ψ hcon _)
+    rw [Matrix.mul_sub, ← bOp_mul,
+      show Z p.2 * (Z p.2 * X p.1) = Z p.2 * X p.1 from by
+        rw [show Z p.2 * (Z p.2 * X p.1) = Z p.2 * Z p.2 * X p.1 from by noncomm_ring, hZ.idem],
+      ← aOp_mul_bOp]
+  have h2 : snorm ψ ((bOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) - aOp (Q p)) ^ 2
+      = xSqNorm ψ (Q p) (Z p.2 * X p.1) := by
+    rw [xSqNorm_eq_snorm_sq, snorm_sub_comm]
+  have htri : snorm ψ ((aOp (Q p) : Matrix (dA × dB) _ ℂ) * bOp (Z p.2) - aOp (Q p))
+      ≤ snorm ψ ((aOp (Q p) : Matrix (dA × dB) _ ℂ) * bOp (Z p.2) - bOp (Z p.2 * X p.1))
+        + snorm ψ ((bOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) - aOp (Q p)) := by
+    refine le_trans (le_of_eq (congrArg (snorm ψ) ?_)) (snorm_add_le ψ _ _)
+    abel
+  nlinarith [snorm_nonneg ψ ((aOp (Q p) : Matrix (dA × dB) _ ℂ) * bOp (Z p.2) - aOp (Q p)),
+    snorm_nonneg ψ ((aOp (Q p) : Matrix (dA × dB) _ ℂ) * bOp (Z p.2) - bOp (Z p.2 * X p.1)),
+    snorm_nonneg ψ ((bOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) - aOp (Q p)),
+    sq_nonneg (snorm ψ ((aOp (Q p) : Matrix (dA × dB) _ ℂ) * bOp (Z p.2) - bOp (Z p.2 * X p.1))
+      - snorm ψ ((bOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) - aOp (Q p)))]
+
+/-- **The marginal step, packaged.** A joint projective measurement consistent with the other
+party's ordered product `Z_b X_a` has its `R2`-marginal consistent with `X_a` alone, at ten times
+the input. -/
+theorem sum_xSqNorm_marg_le' {ψ : dA × dB → ℂ} {Q : R1 × R2 → Matrix dA dA ℂ}
+    {Z : R2 → Matrix dB dB ℂ} (X : R1 → Matrix dB dB ℂ) (hQ : IsPVM Q) (hZ : IsPVM Z) :
+    ∑ a : R1, xSqNorm ψ (∑ b : R2, Q (a, b)) (X a)
+      ≤ 10 * ∑ p : R1 × R2, xSqNorm ψ (Q p) (Z p.2 * X p.1) := by
+  have h1 := sum_xSqNorm_marg_le (ψ := ψ) X hQ hZ
+  have h2 := sum_snorm_sq_mul_proj_le (ψ := ψ) Q X hZ
+  linarith
+
 end Marginal
+
+/-! ## Transport to a twice-extended state
+
+The consumer's two inputs live on different spaces: the joint measurement on each party's space
+enlarged by one register (the Naimark dilation of `lem:qld-combined-points`), the line measurements
+on the unenlarged ones. An operator with an inert ancilla has the same cross-party deviation on the
+extended state as the operator itself. -/
+
+section Transport
+
+variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+variable {Anc Bnc : Type*} [Fintype Anc] [DecidableEq Anc] [Fintype Bnc] [DecidableEq Bnc]
+
+theorem xSqNorm_extVec2_aOp (ψ : dA × dB → ℂ) (a₀ : Anc) (b₀ : Bnc) {P : Matrix dA dA ℂ}
+    (hP : Pᴴ = P) (Q : Matrix dB dB ℂ) :
+    xSqNorm (extVec2 ψ a₀ b₀) (aOp P : Matrix (dA × Anc) _ ℂ) (aOp Q : Matrix (dB × Bnc) _ ℂ)
+      = xSqNorm ψ P Q := by
+  rw [xSqNorm_eq_expand _ (by rw [aOp_conjTranspose, hP] :
+      (aOp P : Matrix (dA × Anc) _ ℂ)ᴴ = aOp P) _,
+    xSqNorm_eq_expand ψ hP Q, normSq_stateVecB_extVec2_aOp,
+    show stateSqNorm (extVec2 ψ a₀ b₀) (aOp P : Matrix (dA × Anc) _ ℂ) = stateSqNorm ψ P from by
+      rw [stateSqNorm_eq_qform, aOp_conjTranspose, ← aOp_mul, qform_aOp_extVec2, compress_aOp,
+        ← stateSqNorm_eq_qform],
+    show bornProb (extVec2 ψ a₀ b₀) (aOp P : Matrix (dA × Anc) _ ℂ)
+          (aOp Q : Matrix (dB × Bnc) _ ℂ) = bornProb ψ P Q from by
+      rw [bornProb_extVec2, compress_aOp, compress_aOp]]
+
+end Transport
+
 
 /-! ## The pasting lemma
 
@@ -1185,19 +1291,23 @@ variable {Z Y R1 R2 K : Type*} [Fintype Z] [DecidableEq Z] [Fintype Y] [Decidabl
   [Nonempty Y] [Fintype R1] [DecidableEq R1] [Fintype R2] [DecidableEq R2]
   [Fintype K] [DecidableEq K]
 
-/-- **The collision term is at most the collision probability.** The question is a pair: a part
-`z` that all the measurements see, and a probe `y`, uniform and independent of `z`, that only the
-outcome map sees. The Born probabilities do not depend on `y`, so the probe average acts on the
-indicator alone; what is left is a POVM's total mass, which is one. -/
+/-- **The collision term is at most the average collision probability.** The question is a pair: a
+part `z` that all the measurements see, and a probe `y`, uniform and independent of `z`, that only
+the outcome map sees. The Born probabilities do not depend on `y`, so the probe average acts on the
+indicator alone; what is left is a POVM's total mass, which is one.
+
+The collision probability is allowed to depend on `z`, and the conclusion is its average. The
+consumer needs that: for a degenerate line the outcome map separates nothing, and what makes the
+average small is that such lines are rare rather than that the bound holds everywhere. -/
 theorem sum_collisionTerm_le {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖ = 1) {ν : Z → ℝ}
-    (hν0 : ∀ z, 0 ≤ ν z) (hν1 : ∑ z, ν z = 1)
+    (hν0 : ∀ z, 0 ≤ ν z)
     {R : Z → R1 → Matrix dB dB ℂ} {G : Z → K → Matrix dB dB ℂ} {Ga : Z → K → Matrix dA dA ℂ}
     (hR : ∀ z, IsPVM (R z)) (hG : ∀ z, IsPVM (G z)) (hGa : ∀ z, IsPVM (Ga z))
-    (e : Z → Y → K → R2) {ε : ℝ} (hε : 0 ≤ ε)
+    (e : Z → Y → K → R2) {εz : Z → ℝ} (hε : ∀ z, 0 ≤ εz z)
     (hsep : ∀ (z : Z) (g g' : K), g' ≠ g →
-      ((univ.filter fun y : Y => e z y g' = e z y g).card : ℝ) ≤ ε * (Fintype.card Y : ℝ)) :
+      ((univ.filter fun y : Y => e z y g' = e z y g).card : ℝ) ≤ εz z * (Fintype.card Y : ℝ)) :
     ∑ i : Z × Y, (ν i.1 * (Fintype.card Y : ℝ)⁻¹)
-        * collisionTerm ψ (R i.1) (G i.1) (Ga i.1) (e i.1 i.2) ≤ ε := by
+        * collisionTerm ψ (R i.1) (G i.1) (Ga i.1) (e i.1 i.2) ≤ ∑ z : Z, ν z * εz z := by
   classical
   have hcardpos : (0 : ℝ) < (Fintype.card Y : ℝ) := by
     exact_mod_cast Fintype.card_pos
@@ -1217,7 +1327,7 @@ theorem sum_collisionTerm_le {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖ = 1) {
       Matrix.one_mul, qform_one _ hψ]
   -- the probe average of the collision term, at one `z`
   have hstep : ∀ z : Z, ∑ y : Y, collisionTerm ψ (R z) (G z) (Ga z) (e z y)
-      ≤ ε * (Fintype.card Y : ℝ) := by
+      ≤ εz z * (Fintype.card Y : ℝ) := by
     intro z
     have hcol : ∀ y : Y, collisionTerm ψ (R z) (G z) (Ga z) (e z y)
         = ∑ a : R1, ∑ g : K, ∑ g' : K,
@@ -1230,13 +1340,13 @@ theorem sum_collisionTerm_le {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖ = 1) {
     have hinner : ∀ (a : R1) (g g' : K),
         (∑ y : Y, (if g' ≠ g ∧ e z y g' = e z y g then
             bornProb ψ (Ga z g') (R z a * G z g * R z a) else 0))
-          ≤ (ε * (Fintype.card Y : ℝ)) * bornProb ψ (Ga z g') (R z a * G z g * R z a) := by
+          ≤ (εz z * (Fintype.card Y : ℝ)) * bornProb ψ (Ga z g') (R z a * G z g * R z a) := by
       intro a g g'
       rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul]
       by_cases hne : g' = g
       · rw [show (univ.filter fun y : Y => g' ≠ g ∧ e z y g' = e z y g) = ∅ from by
           ext y; simp [hne], Finset.card_empty, Nat.cast_zero, zero_mul]
-        exact mul_nonneg (mul_nonneg hε (le_of_lt hcardpos)) (hFnn z a g g')
+        exact mul_nonneg (mul_nonneg (hε z) (le_of_lt hcardpos)) (hFnn z a g g')
       · rw [show (univ.filter fun y : Y => g' ≠ g ∧ e z y g' = e z y g)
             = univ.filter fun y : Y => e z y g' = e z y g from by ext y; simp [hne]]
         exact mul_le_mul_of_nonneg_right (hsep z g g' hne) (hFnn z a g g')
@@ -1245,28 +1355,24 @@ theorem sum_collisionTerm_le {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖ = 1) {
             (if g' ≠ g ∧ e z y g' = e z y g then
               bornProb ψ (Ga z g') (R z a * G z g * R z a) else 0)
         ≤ ∑ a : R1, ∑ g : K, ∑ g' : K,
-            (ε * (Fintype.card Y : ℝ)) * bornProb ψ (Ga z g') (R z a * G z g * R z a) :=
+            (εz z * (Fintype.card Y : ℝ)) * bornProb ψ (Ga z g') (R z a * G z g * R z a) :=
           Finset.sum_le_sum fun a _ => Finset.sum_le_sum fun g _ =>
             Finset.sum_le_sum fun g' _ => hinner a g g'
-      _ = (ε * (Fintype.card Y : ℝ)) * ∑ a : R1, ∑ g : K, ∑ g' : K,
+      _ = (εz z * (Fintype.card Y : ℝ)) * ∑ a : R1, ∑ g : K, ∑ g' : K,
             bornProb ψ (Ga z g') (R z a * G z g * R z a) := by
           simp only [Finset.mul_sum]
-      _ = ε * (Fintype.card Y : ℝ) := by rw [hmass z, mul_one]
+      _ = εz z * (Fintype.card Y : ℝ) := by rw [hmass z, mul_one]
   -- the weighted sum over the product
   rw [← sum_prod_eq fun (z : Z) (y : Y) => (ν z * (Fintype.card Y : ℝ)⁻¹)
     * collisionTerm ψ (R z) (G z) (Ga z) (e z y)]
-  have hz : ∀ z : Z, ∑ y : Y, (ν z * (Fintype.card Y : ℝ)⁻¹)
-        * collisionTerm ψ (R z) (G z) (Ga z) (e z y) ≤ ν z * ε := by
-    intro z
-    have hne : (Fintype.card Y : ℝ) ≠ 0 := ne_of_gt hcardpos
-    rw [← Finset.mul_sum]
-    calc (ν z * (Fintype.card Y : ℝ)⁻¹) * ∑ y : Y, collisionTerm ψ (R z) (G z) (Ga z) (e z y)
-        ≤ (ν z * (Fintype.card Y : ℝ)⁻¹) * (ε * (Fintype.card Y : ℝ)) :=
-          mul_le_mul_of_nonneg_left (hstep z)
-            (mul_nonneg (hν0 z) (le_of_lt (inv_pos.mpr hcardpos)))
-      _ = ν z * ε := by field_simp
-  refine le_trans (Finset.sum_le_sum fun z _ => hz z) (le_of_eq ?_)
-  rw [← Finset.sum_mul, hν1, one_mul]
+  refine Finset.sum_le_sum fun z _ => ?_
+  have hne : (Fintype.card Y : ℝ) ≠ 0 := ne_of_gt hcardpos
+  rw [← Finset.mul_sum]
+  calc (ν z * (Fintype.card Y : ℝ)⁻¹) * ∑ y : Y, collisionTerm ψ (R z) (G z) (Ga z) (e z y)
+      ≤ (ν z * (Fintype.card Y : ℝ)⁻¹) * (εz z * (Fintype.card Y : ℝ)) :=
+        mul_le_mul_of_nonneg_left (hstep z)
+          (mul_nonneg (hν0 z) (le_of_lt (inv_pos.mpr hcardpos)))
+    _ = ν z * εz z := by field_simp
 
 end Collision
 
