@@ -613,15 +613,71 @@ the quadratic form of the compressed operator on the original one, which is
 `dotProduct_mulVec_conj` plus one Kronecker identity. `Dilation.lean`'s universe variables had to be
 relaxed from `Type` to `Type*` for the index group `n -> F` to serve as the ancilla.
 
-**Still to do in PR C**: `lem:qld-combined-points` -- the three-step construction that *applies*
-this theorem, whose first two steps are the work: combining the two bases' binary measurements
-through their approximate commutation, and proving the combined family approximately linear -- then
-`lem:qld-pairs-of-lines`, `lem:qld-padded-points`, `lem:qld-sublines`, `lem:qld-padded-lines`,
-`lem:qld-simultaneous`.
+**Still to do in PR C**: `lem:qld-pairs-of-lines`, `lem:qld-padded-points`, `lem:qld-sublines`,
+`lem:qld-padded-lines`, `lem:qld-simultaneous`.
 
 `lem:qld-sublines` is purely combinatorial and the blueprint says it is "a reasonable place to
-start formalizing"; it is the natural first commit of PR C. `lem:qld-simultaneous` is the one
+start formalizing"; it is the natural next commit of PR C. `lem:qld-simultaneous` is the one
 that cites Chunk 3.
+
+### `lem:qld-combined-points`, by the sandwich rather than the linearity test (2026-09-20, done)
+
+`MIPRE/Foundations/Sandwich.lean` (generic), `MIPRE/Foundations/Parseval.lean`,
+`MIPRE/Foundations/Swap.lean`, `MIPRE/Background/QLD/Swap.lean`,
+`MIPRE/Background/QLD/Combined.lean` (the instantiation). Statement and proof marked, sixty-seven
+declarations guarded.
+
+**`thm:linearity` is not used, and neither is `cor:ortho-from-consistency`.** The paper's route is
+three steps -- sandwich, orthonormalize, linearity test. Two of them drop out once the strategy is
+taken projective, which the paper also assumes and which `lem:naimark-dilation` supplies:
+
+* `R-hat^{x,z}_{a,b} = M-hat^Z_b M-hat^X_a M-hat^Z_b` is **already a POVM**, exactly --
+  `sum_{a,b} R-hat = sum_b M-hat^Z_b (sum_a M-hat^X_a) M-hat^Z_b = sum_b M-hat^Z_b = Id` uses only
+  projectivity of the `Z` side, and each term is a Gram operator, hence positive. So no
+  orthonormalization.
+* its **Naimark dilation** is the projective joint measurement the lemma wants, on one extra
+  `F_q x F_q` register per party, and the dilation's compression identity carries every Born-rule
+  estimate unchanged. So no linearity test, and no Fourier inversion of an exactly linear family.
+
+This leaves exactly the analytic content, and it is one chain. Written with `P_b = M-hat^Z_b (x)
+M-hat^Z_b` and `Delta = sum_a (Id - M-hat^X_a) (x) M-hat^X_a`, the five links are: two players'
+commutators (each a `M-hat^Z_b` times a commutator, front factor a contraction, one
+Cauchy--Schwarz over *all* outcome pairs), the `X`-consistency as the single product
+`(sum_b P_b) Delta` of two projections, the exact collapse `sum_a M-hat^X_a = Id`, and the
+`Z`-consistency.
+
+**The third link is the one that must not be broken up.** Bounding the `q^2` outcome pairs one at a
+time costs a factor `q` and the conclusion has to be `q`-independent -- which is precisely the
+defect the paper's round-11 `\cnote` on node 1.2.2.8 repairs, and the reason it introduces its own
+Parseval identity there. Here the whole double sum is one operator product, both factors are
+projections because their summands are mutually orthogonal projections, and Cauchy--Schwarz gives
+`sqrt(<Delta>) = sqrt(half the X-consistency defect)` once.
+
+**Parseval is the dictionary, and the probe average is free.** `lem:qld-expanded-points` bounds the
+commutator of the *observables*, one pair per probe `(r,s)`; the sandwich needs the commutator of
+the *elements*, one pair per outcome `(a,b)`. The elements are the two-variable Fourier transform of
+the observables (`hatComm_eq_fourierOf`), so `sum_norm_fourierVec_sq` exchanges the two at no cost
+-- and the verifier's content already averages over `(r_X, r_Z)` uniformly and independently of
+everything else it carries, so `sum_content_avg_probe` turns the average the transform introduces
+into the one the hypothesis already has.
+
+**Both players' commutation bounds are needed, and the game's symmetry supplies the second.**
+Every rule of `fig:decider_pauli` is written in both orientations and the sampler draws an ordered
+edge of a symmetric type graph, so `accepts_symm` (a `cases`-and-`simp` bash over the question and
+answer constructors, 27 s) and `qldGame_mu_symm` (the edge-swap bijection) give
+`povmValue_qldGame_swapVec`, and `hatObs_commutation` applied to `(MB, MA)` on `swapVec psi` is
+Bob's half. `hatVec_swapVec` is what makes that readable back: it needs the maximally entangled
+ancilla to be symmetric, `MIPRE.Weyl.swapVec_epr`.
+
+**Constants.** `delta_Q(eps) = 2 sqrt(57676416 eps) + sqrt(86 eps) + 86 eps`; self-consistency at
+`2 delta_Q`, consistency with `M-hat^Z_b M-hat^X_a` at `4 delta_Q + 115352832 eps` and with the
+other order at `4 delta_Q + 461411328 eps`. The square roots are the three Cauchy--Schwarz links;
+nothing depends on `q`.
+
+**The generic half is in `Foundations/`** and says nothing about the Pauli basis test: two
+approximately commuting projective measurements per party, four error hypotheses, and
+`exists_projective_joint` returns the dilated pair with its three estimates. That is what
+`Combined.lean` instantiates at `A := F_q`, `iota := Content F m`, uniform weights.
 
 ### PR D — separation, the swap isometry, and the theorem
 

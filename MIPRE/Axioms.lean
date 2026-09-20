@@ -50,6 +50,10 @@ import MIPRE.TM.Code.Encoding.MachineCode
 import MIPRE.Foundations.WeylBinary
 import MIPRE.Foundations.Commutation
 import MIPRE.Foundations.Linearity
+import MIPRE.Foundations.Sandwich
+import MIPRE.Foundations.Expanded
+import MIPRE.Foundations.WeylEPR
+import MIPRE.Foundations.Swap
 import MIPRE.Background.GowersHatami.Basic
 
 /-!
@@ -541,6 +545,53 @@ tell you the guard is missing.
   MIPRE.stateSqNorm_sub_of_isometry,
   MIPRE.conjTranspose_mul_self_of_involution,
   MIPRE.exists_exactly_linear_close
+
+-- blueprint `lem:qld-combined-points`, the generic half: the Fourier dictionary between an
+-- `F_q`-valued measurement and its binary observables, the sandwich of two projective
+-- measurements, the five-link chain that makes it self-consistent, the two-sided extension, and
+-- the dilated joint measurement.
+#guard_sorry_free MIPRE.fourierVec,
+  MIPRE.sum_norm_fourierVec_sq,
+  MIPRE.trObs,
+  MIPRE.trFourier,
+  MIPRE.trFourier_trObs,
+  MIPRE.trObs_map,
+  MIPRE.pairVec,
+  MIPRE.sum_prod_eq_sum_pairVec,
+  MIPRE.fourierOf_pair_mul,
+  MIPRE.sum_stateSqNorm_fourierOf,
+  MIPRE.obs2_map,
+  MIPRE.swapVec_expVec,
+  MIPRE.Weyl.swapVec_epr,
+  MIPRE.bornProb_swapVec,
+  MIPRE.povmValue_swapVec_of_symm,
+  MIPRE.sum_weighted_mul_le_sqrt,
+  MIPRE.sum_weighted_sqrt_le,
+  MIPRE.abs_qform_conjTranspose_mul_le,
+  MIPRE.proj_le_one,
+  MIPRE.snorm_le_one_of_proj,
+  MIPRE.bornProb_eq_qform,
+  MIPRE.abs_qform_aOp_mul_bOp_le,
+  MIPRE.stateNorm_mul_le,
+  MIPRE.norm_stateVecB_mul_le,
+  MIPRE.xSqNorm_eq_expand,
+  MIPRE.one_sub_sum_bornProb_eq,
+  MIPRE.sand,
+  MIPRE.sum_sand,
+  MIPRE.sandPOVM,
+  MIPRE.sum_stateSqNorm_ord,
+  MIPRE.abs_link1_le,
+  MIPRE.abs_link2_le,
+  MIPRE.abs_link3_le,
+  MIPRE.link4_eq,
+  MIPRE.link5_eq,
+  MIPRE.one_sub_sum_bornProb_sand_le,
+  MIPRE.extVec2,
+  MIPRE.extVec2_unit,
+  MIPRE.bornProb_extVec2,
+  MIPRE.sum_xSqNorm_dilated_eq,
+  MIPRE.sum_xSqNorm_dilated_aOp_le,
+  MIPRE.exists_projective_joint
 
 /-!
 ## The one axiom

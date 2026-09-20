@@ -651,6 +651,28 @@ theorem obsOf_sgn_eq_obs2 (M : X → POVM (ZMod 2) dA) (x : X) :
     Finset.sum_insert (by decide), Finset.sum_singleton, sgn_zero, sgn_one]
   module
 
+/-- **The observable of a coarse-grained POVM**, in terms of the original one. -/
+theorem obs2_map (P : POVM A dA) (f : A → ZMod 2) :
+    obs2 (P.map f) = ∑ x : A, sgn (f x) • ((P.mats x).val) := by
+  classical
+  have hsplit : ∀ b : ZMod 2, (((P.map f).mats b).val)
+      = ∑ x ∈ univ.filter fun x => f x = b, ((P.mats x).val) := fun b =>
+    AddSubmonoidClass.coe_finsetSum _ _
+  rw [obs2, hsplit, hsplit,
+    ← Finset.sum_fiberwise (univ : Finset A) f fun x => sgn (f x) • ((P.mats x).val)]
+  rw [show (univ : Finset (ZMod 2)) = {0, 1} from by decide, Finset.sum_insert (by decide),
+    Finset.sum_singleton]
+  have h0 : (∑ x ∈ univ.filter fun x => f x = 0, sgn (f x) • ((P.mats x).val))
+      = ∑ x ∈ univ.filter fun x => f x = 0, ((P.mats x).val) :=
+    Finset.sum_congr rfl fun x hx => by
+      rw [(Finset.mem_filter.mp hx).2, sgn_zero, one_smul]
+  have h1 : (∑ x ∈ univ.filter fun x => f x = 1, sgn (f x) • ((P.mats x).val))
+      = -∑ x ∈ univ.filter fun x => f x = 1, ((P.mats x).val) := by
+    rw [← Finset.sum_neg_distrib]
+    exact Finset.sum_congr rfl fun x hx => by
+      rw [(Finset.mem_filter.mp hx).2, sgn_one, neg_one_smul]
+  rw [h0, h1, sub_eq_add_neg]
+
 theorem obs2_conjTranspose {d : Type*} [Fintype d] [DecidableEq d] (P : POVM (ZMod 2) d) :
     (obs2 P)ᴴ = obs2 P := POVM.sub_conjTranspose P 0 1
 

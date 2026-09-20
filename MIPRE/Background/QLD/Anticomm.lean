@@ -6,6 +6,7 @@ Authors: Thomas Vidick
 import MIPRE.Foundations.Sign
 import MIPRE.Foundations.Dilation
 import MIPRE.Foundations.StateDistance
+import MIPRE.Foundations.Swap
 import MIPRE.Foundations.PVM
 import MIPRE.Foundations.POVMValue
 import MIPRE.Foundations.OpBound
@@ -1037,31 +1038,6 @@ lemma is Bob's half applied to the swapped strategy. -/
 
 section Swap
 
-omit [DecidableEq dA] [DecidableEq dB] in
-theorem bornProb_swapVec (ψ : dA × dB → ℂ) (EA : Matrix dA dA ℂ) (EB : Matrix dB dB ℂ) :
-    bornProb (swapVec ψ) EB EA = bornProb ψ EA EB := by
-  classical
-  have inner : ∀ (i : dA) (j : dB),
-      (((EB ⊗ₖ EA) *ᵥ swapVec ψ) (j, i)) = (((EA ⊗ₖ EB) *ᵥ ψ) (i, j)) := by
-    intro i j
-    rw [Matrix.mulVec, Matrix.mulVec, dotProduct, dotProduct]
-    refine Fintype.sum_equiv (Equiv.prodComm dB dA) _ _ fun q => ?_
-    obtain ⟨l, k⟩ := q
-    show (EB ⊗ₖ EA) (j, i) (l, k) * (swapVec ψ) (l, k)
-        = (EA ⊗ₖ EB) (i, j) (k, l) * ψ (k, l)
-    show EB j l * EA i k * ψ (k, l) = EA i k * EB j l * ψ (k, l)
-    ring
-  have key : star (swapVec ψ) ⬝ᵥ ((EB ⊗ₖ EA) *ᵥ swapVec ψ)
-      = star ψ ⬝ᵥ ((EA ⊗ₖ EB) *ᵥ ψ) := by
-    rw [dotProduct, dotProduct]
-    refine Fintype.sum_equiv (Equiv.prodComm dB dA) _ _ fun p => ?_
-    obtain ⟨j, i⟩ := p
-    show star (swapVec ψ) (j, i) * (((EB ⊗ₖ EA) *ᵥ swapVec ψ) (j, i))
-        = star ψ (i, j) * (((EA ⊗ₖ EB) *ᵥ ψ) (i, j))
-    rw [inner i j]
-    rfl
-  rw [bornProb, bornProb, key]
-
 theorem povmValue_swapVec (ψ : dA × dB → ℂ)
     (MA : layout.Question → POVM layout.Answer dA)
     (MB : layout.Question → POVM layout.Answer dB) :
@@ -1093,9 +1069,6 @@ theorem povmValue_swapVec (ψ : dA × dB → ℂ)
   rw [povmValue, povmValue, Finset.sum_congr rfl fun x (_ : x ∈ univ) =>
     Finset.sum_congr rfl fun y (_ : y ∈ univ) => hterm x y]
   exact Finset.sum_comm
-
-omit [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB] in
-theorem swapVec_swapVec (ψ : dA × dB → ℂ) : swapVec (swapVec ψ) = ψ := rfl
 
 /-- **Direct Magic Square anticommutation for the other player.** The game is symmetric in the
 players, so this is `ms_direct_anticomm` for the swapped strategy. -/
