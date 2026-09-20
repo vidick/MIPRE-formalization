@@ -14,8 +14,9 @@ and its private audit material remain outside this repository.
 actual `MIPRE.TM.CookLevin.Pad.classicalPcpDecider` and the complete effective
 self-dual normal-basis and multiplication-table constructor. Both have passed
 native Lean builds; Shoup is their only nonstandard axiom. Introspection is in
-progress, with a checked linear-readout and twirling toolkit. There is
-still no inhabitant of `Introspection 7`.
+progress, with checked Pauli mixing in question-dependent coordinate presentations,
+conditioning identities, and the semantic two-level graph sampler used by detyping.
+There is still no inhabitant of `Introspection 7`.
 
 ## Completion criteria
 
@@ -286,8 +287,9 @@ consumer checked successfully with the new positive-index hypothesis.
 
 The next substantial deliverables remain:
 
-1. Prove the commutator Parseval identity, the two-sided commutation estimate and
-   the retained-fibre mixing theorem, consuming this exact twirling toolkit.
+1. The commutator Parseval identity, two-sided commutation estimate and
+   retained-fibre mixing theorem in tensor coordinate presentations are now proved.
+   Transport the ambient CL register subspaces into those presentations.
 2. Construct the typed introspective sampler and decider and their detyping, with
    actual ambient programs. Resolve the documented runtime normalization before
    claiming the existing budget: input-size degree `lambda` and answer length
@@ -313,3 +315,45 @@ The classical campaign is complete. The introspection checkpoint consists of
 the positive-index contract repair and the seven proved modules under
 `MIPRE/Foundations/Introspection/`; the final transformation remains open as
 described above.
+
+## Continuation after merging PR #127
+
+The previous checkpoint was pushed, passed CI and merged as `82726d6` in PR #127.
+This continuation starts from that main commit, including the QLD distributional
+inputs merged in PR #128. The paper snapshot is still `a459dee`. The upstream
+QLD campaign has advanced, but `thm:qld` is not yet an assembled theorem.
+
+Thirteen further modules have passed the pinned Lean checker:
+
+* `CommutatorParseval` proves the exact readout/observable identity, including
+  outcome sums and question averages.
+* `TwoSidedCommutation` and `ComposedTwirl` give explicit coefficients `4,4,8`
+  for two commutators and a mirror error, and the resulting composed twirl bound.
+* `SubmeasurementCompletion`, `RetainedFibre`, and `BlockRetention` retain a
+  matching fibre and complete it to actual ancillary POVMs, with bound
+  `2 delta + 4 sqrt(delta)`. No outcome-count factor is introduced.
+* `EPR` and `PauliTwirlDistance` establish the exact mirrors and transfer the
+  readout hypotheses into the twirl estimate.
+* `PauliMixing` and `VaryingPauliMixing` assemble the result for fixed or
+  question-dependent register dimensions and ancillary spaces. With each of the
+  three averaged input errors at most `eps <= 1`, the output distance is at most
+  `56 sqrt(eps)`. The source's ambient coordinate embeddings remain to be supplied;
+  the blueprint therefore gives this proved core its own node.
+* `Conditioning` gives exact conditional squared-norm and commutator identities
+  with varying tensor decompositions. `ConditionalConsistency` proves the
+  agreement-to-conditioned-measurement bound with coefficient two.
+* `CL/Graph` constructs the semantic two-level graph sampler. Its factors partition
+  all four binary blocks. Valid seeds are in bijection with ordered graph edges,
+  including loops; their probability is exactly `|ordered edges| / 16^|types|`.
+  Conditioning gives the uniform ordered-edge law. Each rejected seed gives at
+  least one player an invalid local view and a zero opposite-neighbor block.
+  This is not yet the ambient sampler program of `lem:detype-sampler`.
+
+The blueprint has 51 matching new headline axiom guards. No new axiom or admitted
+proof was used. Repository-wide integration and structural checks are the final
+validation for this continuation.
+
+The remaining construction still includes typed sampler/decider programs and their
+detyping, runtime normalization through the compression interfaces, PCC completeness,
+the QLD extraction, and the sampling/hiding induction. Assuming a completed QLD
+theorem discharges only the QLD dependency. It does not supply those other proofs.

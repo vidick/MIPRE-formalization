@@ -22,6 +22,10 @@ import MIPRE.Foundations.Introspection.Twirl
 import MIPRE.Foundations.Introspection.Measurements
 import MIPRE.Foundations.Introspection.BlockPOVM
 import MIPRE.Foundations.Introspection.TwirlDistance
+import MIPRE.Foundations.Introspection.VaryingPauliMixing
+import MIPRE.Foundations.Introspection.Conditioning
+import MIPRE.Foundations.Introspection.ConditionalConsistency
+import MIPRE.Foundations.CL.Graph
 import MIPRE.Foundations.SAT.Arithmetization
 import MIPRE.Foundations.SAT.FiniteCircuitArithmetization
 import MIPRE.Foundations.SAT.CircuitFieldCorrect
@@ -1000,6 +1004,60 @@ tell you the guard is missing.
   MIPRE.one_sub_sum_bornProb_pasteJ_le,
   MIPRE.sum_xSqNorm_pasteJ_le,
   MIPRE.sum_collisionTerm_le
+
+/-! ## Introspection mixing, conditioning, and graph rejection sampling -/
+
+#guard_sorry_free MIPRE.Introspection.sum_norm_linearFourier_sq,
+  MIPRE.Introspection.linear_measurement_parseval,
+  MIPRE.Introspection.linear_measurement_commutator_parseval,
+  MIPRE.Introspection.linear_measurement_commutator_parseval_avg,
+  MIPRE.Introspection.commutator_product_bound,
+  MIPRE.Introspection.two_sided_commutation,
+  MIPRE.Introspection.two_sided_commutation_avg,
+  MIPRE.Introspection.unitaryTwirl_comp,
+  MIPRE.Introspection.composed_twirl_dist_le,
+  MIPRE.Introspection.submeasurement_completion_mass,
+  MIPRE.Introspection.submeasurement_completion_dist,
+  MIPRE.Introspection.submeasurement_completion_dist_avg,
+  MIPRE.Introspection.snorm_right_projector_le,
+  MIPRE.Introspection.retained_fibre_dist,
+  MIPRE.Introspection.controlledPOVM,
+  MIPRE.Introspection.retained_block_le_completion,
+  MIPRE.Introspection.block_retention_precompletion,
+  MIPRE.Introspection.block_retention_dist_avg,
+  MIPRE.Introspection.mirror_expVec,
+  MIPRE.Introspection.eprWithAux_norm,
+  MIPRE.Introspection.eprWithAux_wX_mirror,
+  MIPRE.Introspection.eprWithAux_readout_mirror,
+  MIPRE.Introspection.pauli_twirl_dist_le,
+  MIPRE.Introspection.fine_commutator_parseval,
+  MIPRE.Introspection.kernel_commutator_parseval,
+  MIPRE.Introspection.pauli_twirl_readout_dist_le,
+  MIPRE.Introspection.exists_pauli_mixing,
+  MIPRE.Introspection.exists_pauli_mixing_avg,
+  MIPRE.Introspection.exists_pauli_mixing_varying,
+  MIPRE.Introspection.mixing_error_sqrt_bound,
+  MIPRE.Introspection.exists_pauli_mixing_sqrt,
+  MIPRE.Introspection.stateSqNorm_expVec_kron,
+  MIPRE.Introspection.conditional_sqNorm,
+  MIPRE.Introspection.conditional_commutator,
+  MIPRE.Introspection.conditional_sqNorm_sum,
+  MIPRE.Introspection.conditional_commutator_sum,
+  MIPRE.Introspection.submeasurement_agreement_dist,
+  MIPRE.Introspection.conditional_consistency,
+  MIPRE.CL.Graph.presentation,
+  MIPRE.CL.Graph.presentation_exactlyOn,
+  MIPRE.CL.Graph.presentation_eval,
+  MIPRE.CL.Graph.localValid_output_iff,
+  MIPRE.CL.Graph.localValid_both_iff,
+  MIPRE.CL.Graph.card_validSeeds,
+  MIPRE.CL.Graph.mem_validSeeds_iff,
+  MIPRE.CL.Graph.invalid_seed_locally_detected,
+  MIPRE.CL.Graph.opposite_output_zero_of_invalid,
+  MIPRE.CL.Graph.card_seeds,
+  MIPRE.CL.Graph.validProbability_eq,
+  MIPRE.CL.Graph.inv_pow_le_validProbability,
+  MIPRE.CL.Graph.conditional_average
 
 /-!
 ## The one axiom

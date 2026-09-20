@@ -385,6 +385,20 @@ premise within their budgets; the binary case uses the constant routine.
 \label{lem:detype-graph}
 \ledgernode{1.1.4.4}
 \uses{def:typed-sampler-interface}
+\lean{MIPRE.CL.Graph.presentation,
+  MIPRE.CL.Graph.presentation_exactlyOn,
+  MIPRE.CL.Graph.presentation_eval,
+  MIPRE.CL.Graph.localValid_output_iff,
+  MIPRE.CL.Graph.localValid_both_iff,
+  MIPRE.CL.Graph.card_validSeeds,
+  MIPRE.CL.Graph.mem_validSeeds_iff,
+  MIPRE.CL.Graph.invalid_seed_locally_detected,
+  MIPRE.CL.Graph.opposite_output_zero_of_invalid,
+  MIPRE.CL.Graph.card_seeds,
+  MIPRE.CL.Graph.validProbability_eq,
+  MIPRE.CL.Graph.inv_pow_le_validProbability,
+  MIPRE.CL.Graph.conditional_average}
+\leanok
 Put $t=|T|$. Two independent $2t$-bit blocks encode a vertex indicator and
 its neighbor indicator. A two-level CL graph sampler has a valid-edge event
 $E_G$ with
@@ -394,6 +408,19 @@ $E_G$ the types have the specified graph law, with loops counted once.
 On its support, an invalid edge exposes a zero opposite-neighbor block to
 at least one player, enabling a trivial local measurement on that branch.
 \end{lemma}
+\begin{proof}
+\leanok
+The first CL factor reads the player's two indicator blocks. The second
+factor is the whole complementary pair of blocks, with a linear map keeping
+only the opposite neighbor bit selected by a successful first-block decode.
+The one-hot indicator makes vertex encodings injective. Thus each ordered
+edge has exactly one valid seed, out of $16^{|T|}$ seeds. Reindexing the
+valid-seed sum by ordered edges proves the conditional law. The sampled
+question preserves the own block and the selected bit; a failed local
+validity test has zero opposite block. This proves the semantic sampler
+and its law. The ambient program is the separate obligation of
+Lemma~\ref{lem:detype-sampler}.
+\end{proof}
 
 \begin{lemma}[Detyped conditionally linear functions]
 \label{lem:detype-cl}
@@ -780,6 +807,11 @@ family. This constructs the ancillary POVMs directly.
 \label{lem:pauli-commutator-transfer}
 \ledgernode{1.2.3.3.3}
 \uses{lem:pauli-linear-fourier,def:state-distance}
+\lean{MIPRE.Introspection.sum_norm_linearFourier_sq,
+  MIPRE.Introspection.linear_measurement_parseval,
+  MIPRE.Introspection.linear_measurement_commutator_parseval,
+  MIPRE.Introspection.linear_measurement_commutator_parseval_avg}
+\leanok
 For the fibre projections $P_y^W$ of $L$ and every operator $M$,
 \[
  \sum_y\|([M,P_y^W]\otimes\Id)\psi\|^2
@@ -789,6 +821,14 @@ For the fibre projections $P_y^W$ of $L$ and every operator $M$,
 The identity remains true after averaging questions and summing measurement
 outcomes. It introduces no dimension or alphabet factor.
 \end{lemma}
+\begin{proof}
+\leanok
+Distinct nonempty fibres give orthogonal characters on $(\ker L)^\perp$.
+Apply Parseval to the complex-linear action that takes a register operator
+to its amplified commutator applied to the state. Empty fibre projectors
+vanish. Summing outcomes and averaging questions preserves the identity.
+The checked field specialization is characteristic two.
+\end{proof}
 
 \begin{lemma}[Approximate commutation controls unitary mixing]
 \label{lem:pauli-unitary-mixing}
@@ -821,6 +861,12 @@ arbitrary operator families and arbitrary state vectors.
 \label{lem:pauli-two-sided-commutation}
 \ledgernode{1.2.3.3.5}
 \uses{def:state-distance}
+\lean{MIPRE.Introspection.commutator_product_bound,
+  MIPRE.Introspection.two_sided_commutation,
+  MIPRE.Introspection.two_sided_commutation_avg,
+  MIPRE.Introspection.unitaryTwirl_comp,
+  MIPRE.Introspection.composed_twirl_dist_le}
+\leanok
 Conditionally on $x$, draw $U_1,U_2$ independently. Suppose both
 commutators $[M_a^x,U_i^\dagger]$ have average outcome-summed squared state
 norm $O(\eps)$ and
@@ -829,6 +875,16 @@ Then $[M_a^x,U_1^\dagger U_2^\dagger]$ has the same type of bound.
 Transfer $U_2$ across the bipartition and back; $\sum_a(M_a^x)^2\leq\Id$
 controls the summed transfer errors without an outcome-count factor.
 \end{lemma}
+\begin{proof}
+\leanok
+Transfer the second unitary to its commuting mirror on Bob's side, move
+the first unitary past the measurement, and transfer back. The four-link
+squared triangle inequality gives coefficients $4,4,8$ for the two
+commutator errors and the mirror error. The POVM contraction identity
+controls the outcome sum. Independent conditional averages preserve these
+coefficients. With an exact mirror, the composed twirl costs at most four
+times the sum of the two averaged commutator errors.
+\end{proof}
 
 \effortMedium
 
@@ -836,6 +892,10 @@ controls the summed transfer errors without an outcome-count factor.
 \label{lem:close-submeasurement}
 \ledgernode{1.2.3.3.6}
 \uses{def:state-distance}
+\lean{MIPRE.Introspection.submeasurement_completion_mass,
+  MIPRE.Introspection.submeasurement_completion_dist,
+  MIPRE.Introspection.submeasurement_completion_dist_avg}
+\leanok
 Let $A_a^x$ be a PVM, $B_a^x\geq0$ with $\sum_aB_a^x\leq\Id$, and
 $C_a^x$ a POVM satisfying $C_a^x\geq B_a^x$ pointwise. For a unit
 bipartite state and an arbitrary question distribution, define
@@ -850,6 +910,7 @@ asserted for this literal squared-distance convention.
 \end{lemma}
 
 \begin{proof}
+\leanok
 Using real parts and Cauchy--Schwarz in the outcome-summed state norm,
 $\mathbb E_x\langle\Id-\sum_aB_a^x\rangle\leq2\sqrt\delta$;
 here $\sum_a(B_a^x)^2\leq\sum_aB_a^x$ and $\sum_a(A_a^x)^2=\Id$.
@@ -858,10 +919,55 @@ $(C_a^x-B_a^x)^2\leq C_a^x-B_a^x$, so $D_\psi(B,C)\leq2\sqrt\delta$.
 The squared triangle bound gives $D_\psi(A,C)\leq2D_\psi(A,B)+2D_\psi(B,C)$.
 \end{proof}
 
+\begin{lemma}[Retained-fibre mixing in coordinate presentations]
+\label{lem:pauli-mixing-coordinates}
+\uses{lem:pauli-linear-mixing,lem:pauli-commutator-transfer,lem:pauli-two-sided-commutation,lem:close-submeasurement}
+\lean{MIPRE.Introspection.snorm_right_projector_le,
+  MIPRE.Introspection.retained_fibre_dist,
+  MIPRE.Introspection.controlledPOVM,
+  MIPRE.Introspection.retained_block_le_completion,
+  MIPRE.Introspection.block_retention_precompletion,
+  MIPRE.Introspection.block_retention_dist_avg,
+  MIPRE.Introspection.mirror_expVec,
+  MIPRE.Introspection.eprWithAux_norm,
+  MIPRE.Introspection.eprWithAux_wX_mirror,
+  MIPRE.Introspection.eprWithAux_readout_mirror,
+  MIPRE.Introspection.pauli_twirl_dist_le,
+  MIPRE.Introspection.fine_commutator_parseval,
+  MIPRE.Introspection.kernel_commutator_parseval,
+  MIPRE.Introspection.pauli_twirl_readout_dist_le,
+  MIPRE.Introspection.exists_pauli_mixing,
+  MIPRE.Introspection.exists_pauli_mixing_avg,
+  MIPRE.Introspection.exists_pauli_mixing_varying,
+  MIPRE.Introspection.mixing_error_sqrt_bound,
+  MIPRE.Introspection.exists_pauli_mixing_sqrt}
+\leanok
+Over a finite characteristic-two field, write the retained register as
+$\F^{n_x}$ and the state in each question's coordinates as
+$\mathrm{EPR}_{\F^{n_x}}\otimes\xi_x$, with $\xi_x$ normalized.
+Let $e_0,e_Z,e_X$ be the marginal, fine-$Z$ commutator and coarse-$X$
+commutator errors of a joint PVM. There are actual normalized POVMs on
+the complementary Alice space at every retained fibre, whose averaged
+squared distance from the joint PVM is at most
+$2\delta+4\sqrt\delta$, where
+$\delta=\mathbb E_x(2e_0+8e_Z+8e_X)$.
+If the three averaged errors are at most $0\leq\eps\leq1$, the bound is
+$56\sqrt\eps$. Register dimensions and auxiliary spaces may vary with $x$.
+\end{lemma}
+\begin{proof}
+\leanok
+Twirl into ancillary POVM blocks, keep the matching fibre using the exact
+EPR mirror, and complete its submeasurement by summing over the discarded
+output. Average the pointwise estimates using concavity of the square root.
+This includes empty fibres. Transport from the paper's ambient coordinate
+subregisters to these tensor presentations is still required for the full
+statement below.
+\end{proof}
+
 \begin{lemma}[Pauli mixing with a retained classical fibre]
 \label{lem:pauli-mixing}
 \ledgernode{1.2.3.3,1.2.3.3.7}
-\uses{lem:pauli-linear-mixing,lem:pauli-commutator-transfer,lem:pauli-unitary-mixing,lem:pauli-two-sided-commutation,lem:close-submeasurement}
+\uses{lem:pauli-linear-mixing,lem:pauli-commutator-transfer,lem:pauli-unitary-mixing,lem:pauli-two-sided-commutation,lem:close-submeasurement,lem:pauli-mixing-coordinates}
 Let $U_x\subseteq V_x\subseteq V$ be coordinate registers, $L_x:U_x\to U_x$
 linear, and the state be $\mathrm{EPR}_V\otimes\mathrm{aux}$.
 Let $M^x_{y,a}$ be a PVM on Alice's $V_x$ register and auxiliary space.
@@ -898,6 +1004,14 @@ is presumed.
 \label{lem:conditional-measurement}
 \ledgernode{1.2.3.4}
 \uses{def:distance,def:inconsistency}
+\lean{MIPRE.Introspection.stateSqNorm_expVec_kron,
+  MIPRE.Introspection.conditional_sqNorm,
+  MIPRE.Introspection.conditional_commutator,
+  MIPRE.Introspection.conditional_sqNorm_sum,
+  MIPRE.Introspection.conditional_commutator_sum,
+  MIPRE.Introspection.submeasurement_agreement_dist,
+  MIPRE.Introspection.conditional_consistency}
+\leanok
 On a state that factors as a question part times an answer part, a projective measurement of
 the question part induces a distribution on it, and consistency or commutation statements
 about the unconditioned measurements transfer to the measurements conditioned on the sampled
@@ -906,6 +1020,17 @@ $\sum_{x, y, z} \bra{\psi} A^y_{x, z} \ot B_{x, y, z} \ket{\psi} \geq 1 - \delta
 $\{B_{x,y,z}\}$ projective, then
 $\Id \ot B_{x, y, z} \approx_\delta A^y_{x, z} \ot B_{x, y}$.
 \end{lemma}
+\begin{proof}
+\leanok
+On a product state, the squared norm of a tensor-product operator factors.
+The question factor is exactly the probability weight. This gives exact
+conditioning and commutator identities, also for outcome-dependent tensor
+decompositions. For conditional consistency, the operators
+$A^y_{x,z}\ot B_{x,y}$ form a positive submeasurement. Expand its distance
+from $\Id\ot B_{x,y,z}$, use projectivity to identify the cross term with
+the agreement probability, and bound each diagonal sum by one. The literal
+summed squared-distance bound is $2\delta$.
+\end{proof}
 
 \subsubsection{Soundness}
 
