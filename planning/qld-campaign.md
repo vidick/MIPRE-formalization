@@ -1001,6 +1001,47 @@ transfer --- an approximation at error `delta` over `D_Line` holds over each `D_
 --- is what produces the factors of `m` in `delta_combine = m poly(eps, md/q)`, and it is not
 formalized at all. It is the natural next task.
 
+### The distributional inputs of `delta_combine` (2026-09-20, done)
+
+Three things the consistency chain of `lem:qld-padded-lines` needs, none of which is the chain itself.
+
+**The restricted laws cost a factor of `m`, and that is all the `m` in `delta_combine` is.**
+`avgRestr hm i` was already the paper's `D_{ty,i}` --- the law restricted to axis index `i`. What was
+missing is one line: the `m` restricted laws are nonnegative and average to the unrestricted one
+(`sum_avgRestr`), so each is at most `m` times it (`avgRestr_le_mul_avgAll`), and a product of two at
+most `m^2` times the product (`avgRestr_prod_le_mul_avgAll`). The paper's factor is `2m` because it
+mixes over the two line types; here the type is a parameter, so it is `m`.
+
+**The combined point measurement must be indexed by the pair of points, not by the content.** This
+was the real obstacle to using `pairs_of_lines_prod`, and it is worth recording why. Its hypotheses
+are averages over pairs of line-point data of quantities involving `QA`; the content-level `QA` of
+`lem:qld-combined-points` is an arbitrary function of the content, and `pairCX p` always has zeroed
+probe registers, so *no* identity transfers a content average of it to a pair average. The fix is not
+a transfer but a re-indexing: all four inputs of the joint-measurement construction
+(`exists_projective_joint`) see the content only through its two points, so the construction runs at
+`Point x Point` directly (`combined_points_pts`), and the resulting measurement is usable at any
+sample space carrying two points. `avg_content_eq_pts` carries the four inputs there, and carries the
+two ordered-product conclusions back to contents when the content-level derivations need them.
+
+**A line presentation reads only its own side's line-point data.** `FactorsX` / `FactorsZ` say so;
+both presentations satisfy them by `rfl`, because `dirOf` and `ddirOf` read the seed and the raw
+direction, the base point is the canonical representative of the side's own point, and
+`Content.question` at a line type reads nothing else. From it, `lineMats`, `param`, `lineEvalMats` and
+`collProb` all factor through `Content.lpX`, which is the shape `avg_content_eq_pair_X` needs --- so
+each content-level bound becomes a bound on the product (`avg_pair_eq_content_X` and its three
+companions).
+
+**The result.** `pairs_of_lines_prod_of_items`: `lem:qld-pairs-of-lines` on a product of two
+independent line-point laws, from game-level hypotheses only, at the same `deltaPairs eps eps_c` as
+the content version. That is the input the paper's Claim 17-3 consumes.
+
+**What remains of `lem:qld-padded-lines`.** The chain itself: Claims 17-1, 17-2 and 17-3 of
+`qld-combining.tex`. Three Cauchy--Schwarz steps --- replace `Q-hat^{x,z}` by the ordered product,
+drop the `X` factor, bound the rest by `1` --- each of them a bound of the size of
+`sum_content_marg_line_le`. The last additionally needs the padded line-point law written as a mixture
+of products of subline laws, i.e. `avgSub_free` and its three companions carried from reals to
+operators. That is the next task, and it is one piece of work rather than four.
+
 ### PR D — separation, the swap isometry, and the theorem
 
 `lem:qld-helper`, `lem:qld-exact-paulis`, `lem:qld-swap`, `thm:qld`. Two things to hold on to:

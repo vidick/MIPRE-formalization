@@ -1158,6 +1158,73 @@ theorem avgSub_xc_dline (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.car
   field_simp
   ring
 
+/-! ### The restricted law is the unrestricted one up to a factor of `m`
+
+The paper's `def:ith-restricted-line` splits the line-point distribution by axis index and observes
+that an approximation holding at error `delta` on average holds on each restricted law at
+`2m * delta` --- the `2` being the mixture over the two line types, which here is a parameter rather
+than something mixed over, so the factor is `m`. This is where every factor of `m` in
+`delta_combine = m * poly(eps, md/q)` comes from, and it is one line on top of
+`sumAll_eq_sum_sumRestr`: the `m` restricted laws are nonnegative and average to the unrestricted
+one, so each of them is at most `m` times it. -/
+
+theorem sumAll_nonneg {h : LPData F m → ℝ} (hpos : ∀ c, 0 ≤ h c) : 0 ≤ sumAll h :=
+  Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ => hpos _
+
+theorem sumAll_mono {h h' : LPData F m → ℝ} (hle : ∀ c, h c ≤ h' c) : sumAll h ≤ sumAll h' :=
+  Finset.sum_le_sum fun _ _ => Finset.sum_le_sum fun _ _ =>
+    Finset.sum_le_sum fun _ _ => hle _
+
+theorem sumRestr_nonneg (hm : m ∣ Fintype.card F) (i : Fin m) {h : LPData F m → ℝ}
+    (hpos : ∀ c, 0 ≤ h c) : 0 ≤ sumRestr hm i h :=
+  Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ => hpos _
+
+theorem avgAll_nonneg {h : LPData F m → ℝ} (hpos : ∀ c, 0 ≤ h c) : 0 ≤ avgAll h :=
+  mul_nonneg (by positivity) (sumAll_nonneg hpos)
+
+theorem avgAll_mono {h h' : LPData F m → ℝ} (hle : ∀ c, h c ≤ h' c) : avgAll h ≤ avgAll h' :=
+  mul_le_mul_of_nonneg_left (sumAll_mono hle) (by positivity)
+
+theorem avgRestr_nonneg (hm : m ∣ Fintype.card F) (i : Fin m) {h : LPData F m → ℝ}
+    (hpos : ∀ c, 0 ≤ h c) : 0 ≤ avgRestr hm i h :=
+  mul_nonneg (by positivity) (sumRestr_nonneg hm i hpos)
+
+theorem avgAll_const_mul (k : ℝ) (h : LPData F m → ℝ) :
+    avgAll (fun c => k * h c) = k * avgAll h := by
+  rw [avgAll, avgAll, sumAll_const_mul]
+  ring
+
+/-- **The restricted laws average to the unrestricted one.** -/
+theorem sum_avgRestr (hm : m ∣ Fintype.card F) (h : LPData F m → ℝ) :
+    ∑ i : Fin m, avgRestr hm i h = (m : ℝ) * avgAll h := by
+  have hq : (Fintype.card F : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
+  have hm0 : (m : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (NeZero.ne m)
+  simp only [avgRestr, avgAll]
+  rw [← Finset.mul_sum, ← sumAll_eq_sum_sumRestr hm h, cast_card_div hm]
+  field_simp
+  ring
+
+/-- **A bound on the unrestricted law bounds each restricted one, at `m` times the error.** -/
+theorem avgRestr_le_mul_avgAll (hm : m ∣ Fintype.card F) (i : Fin m) {h : LPData F m → ℝ}
+    (hpos : ∀ c, 0 ≤ h c) : avgRestr hm i h ≤ (m : ℝ) * avgAll h := by
+  rw [← sum_avgRestr hm h]
+  exact Finset.single_le_sum (f := fun j : Fin m => avgRestr hm j h)
+    (fun j _ => avgRestr_nonneg hm j hpos) (mem_univ i)
+
+/-- **The product form**, at `m^2` times the error: the shape the pasting lemma's hypotheses are in,
+each side's line drawn from its own restricted law. -/
+theorem avgRestr_prod_le_mul_avgAll (hm : m ∣ Fintype.card F) {g : LPData F m → LPData F m → ℝ}
+    (hpos : ∀ cX cZ, 0 ≤ g cX cZ) (i j : Fin m) :
+    avgRestr hm i (fun cX => avgRestr hm j (fun cZ => g cX cZ))
+      ≤ (m : ℝ) * (m : ℝ) * avgAll (fun cX => avgAll (fun cZ => g cX cZ)) := by
+  refine le_trans (avgRestr_le_mul_avgAll hm i
+    (fun cX => avgRestr_nonneg hm j (hpos cX))) ?_
+  refine le_trans (mul_le_mul_of_nonneg_left (avgAll_mono
+    (fun cX => avgRestr_le_mul_avgAll hm j (hpos cX))) (Nat.cast_nonneg m)) ?_
+  rw [avgAll_const_mul]
+  ring_nf
+  exact le_refl _
+
 end Average
 
 end MIPRE.QLD
