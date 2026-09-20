@@ -1276,6 +1276,36 @@ theorem avgAll_prod_one :
     avgAll (fun _ : LPData F m => avgAll (fun _ : LPData F m => (1 : ℝ))) = 1 := by
   rw [avgAll_one, avgAll_one]
 
+/-! ### Linearity and monotonicity of the averages -/
+
+theorem avgAll_sub (f g : LPData F m → ℝ) :
+    avgAll (fun c => f c - g c) = avgAll f - avgAll g := by
+  rw [avgAll, avgAll, avgAll, sumAll_eq_sum, sumAll_eq_sum, sumAll_eq_sum,
+    Finset.sum_sub_distrib, mul_sub]
+
+theorem sumSub_mono (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) (s : F)
+    {g g' : LPData F m → LPData F m → ℝ} (hle : ∀ cX cZ, g cX cZ ≤ g' cX cZ) :
+    sumSub hm4 hm t s g ≤ sumSub hm4 hm t s g' :=
+  Finset.sum_le_sum fun _ _ => Finset.sum_le_sum fun _ _ => Finset.sum_le_sum fun _ _ =>
+    Finset.sum_le_sum fun _ _ => hle _ _
+
+theorem avgSub_mono (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) (s : F)
+    {g g' : LPData F m → LPData F m → ℝ} (hle : ∀ cX cZ, g cX cZ ≤ g' cX cZ) :
+    avgSub hm4 hm t s g ≤ avgSub hm4 hm t s g' :=
+  mul_le_mul_of_nonneg_left (sumSub_mono hm4 hm t s hle) (by positivity)
+
+theorem sumSub_one (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) (s : F) :
+    sumSub hm4 hm t s (fun _ _ => (1 : ℝ)) = (Fintype.card F : ℝ) ^ (10 * m + 2) := by
+  simp only [sumSub, Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one]
+  rw [Fintype.card_prod, Fintype.card_pi_const, Fintype.card_pi_const]
+  push_cast
+  ring
+
+theorem avgSub_one (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) (s : F) :
+    avgSub hm4 hm t s (fun _ _ => (1 : ℝ)) = 1 := by
+  rw [avgSub, sumSub_one, inv_mul_cancel₀ (pow_ne_zero _ (Nat.cast_ne_zero.mpr
+    Fintype.card_ne_zero))]
+
 /-! ### The padded law is dominated by the product law
 
 This is the distributional content of the paper's Claims 17-1 to 17-3, and it is stronger than what
@@ -1468,6 +1498,41 @@ theorem sumSubAB_eq (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F)
         Finset.sum_comm
     _ = ∑ p : F × F, sumSub hm4 hm t s (g p.1 p.2) :=
         Finset.sum_congr rfl fun p _ => (sumSub_eq_sum_sumSubAt hm4 hm t s (g p.1 p.2)).symm
+
+theorem sumSubAt_sub (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty)
+    (s : F) (pt : Point F (4 * m)) (h h' : LPData F m → LPData F m → ℝ) :
+    sumSubAt hm4 hm t s pt (fun cX cZ => h cX cZ - h' cX cZ)
+      = sumSubAt hm4 hm t s pt h - sumSubAt hm4 hm t s pt h' := by
+  simp only [sumSubAt]
+  rw [← Finset.sum_sub_distrib]
+  refine Finset.sum_congr rfl fun raw _ => ?_
+  rw [← Finset.sum_sub_distrib]
+  refine Finset.sum_congr rfl fun eX _ => ?_
+  rw [← Finset.sum_sub_distrib]
+
+theorem sumSubAB_sub (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) (s : F)
+    (g g' : F → F → LPData F m → LPData F m → ℝ) :
+    sumSubAB hm4 hm t s (fun a b cX cZ => g a b cX cZ - g' a b cX cZ)
+      = sumSubAB hm4 hm t s g - sumSubAB hm4 hm t s g' := by
+  simp only [sumSubAB]
+  rw [← Finset.sum_sub_distrib]
+  exact Finset.sum_congr rfl fun pt _ => sumSubAt_sub hm4 hm t s pt _ _
+
+theorem avgSubAB_sub (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) (s : F)
+    (g g' : F → F → LPData F m → LPData F m → ℝ) :
+    avgSubAB hm4 hm t s (fun a b cX cZ => g a b cX cZ - g' a b cX cZ)
+      = avgSubAB hm4 hm t s g - avgSubAB hm4 hm t s g' := by
+  rw [avgSubAB, avgSubAB, avgSubAB, sumSubAB_sub, mul_sub]
+
+theorem avgSubAB_one (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) (s : F) :
+    avgSubAB hm4 hm t s (fun _ _ _ _ => (1 : ℝ)) = 1 := by
+  have hcard : (Fintype.card (F × F) : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
+  have hpow : ((Fintype.card F : ℝ) ^ (10 * m + 2)) ≠ 0 :=
+    pow_ne_zero _ (Nat.cast_ne_zero.mpr Fintype.card_ne_zero)
+  have h := sumSubAB_eq hm4 hm t s (fun _ _ _ _ => (1 : ℝ))
+  rw [Finset.sum_congr rfl fun p (_ : p ∈ (univ : Finset (F × F))) =>
+    sumSub_one hm4 hm t s, Finset.sum_const, Finset.card_univ, nsmul_eq_mul] at h
+  rw [avgSubAB, mul_left_cancel₀ hcard h, inv_mul_cancel₀ hpow]
 
 /-- **A bound that holds for every fixed `(alpha, beta)` holds for the padded law.** -/
 theorem avgSubAB_le_of_forall (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F)

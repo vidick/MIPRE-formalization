@@ -1083,6 +1083,45 @@ here are bare matrix families, so the step needs them presented as `POVM`s first
 prefactor, and for small `delta_P` the new bound is the stronger one. Recorded, with the suggested
 upstream action, in `reports/padded-lines-product-law.md`.
 
+### The coarse-graining step, and `delta_combine` (2026-09-20, done)
+
+`padded_lines_consistency` in `MIPRE/Background/QLD/PaddedLines.lean`: on the padded line-point law,
+at every padded seed and line type, the combined point measurement read along `(alpha, beta)` at the
+sampled point agrees with the pasted line measurement coarse-grained by the combining map, up to
+`m^2 * delta_P`. That is the analytic half of `lem:qld-padded-lines`.
+
+The proof is short because the distributional work was done: coarse-graining only increases agreement
+(`sum_bornProb_le_fibre`, stated for bare matrix families rather than `POVM` structures --- the
+pasted measurement is one), then `avgSub_le_mul_avgAll` and `avgSubAB_le_of_forall`.
+`lineComb_eq_sum_pasteFib` is the one identification that makes the two sides comparable: the line
+side's coarse-graining by the combining map *is* the coarse-graining, along the same linear form, of
+its own outcome-pair fibres.
+
+**Two hours went to a universe.** The Born-probability helpers were written in a section with
+`variable {dA dB : Type}`, copying the convention of the strategy dimensions. But the index type here
+is `(dA x Anc F m) x (F x F)`, which lives in `F`'s universe, not `Type 0`. Lean did not report a
+universe error: it reported a `whnf` heartbeat timeout in the middle of the proof, and bisecting the
+proof showed every individual piece fast and the assembly slow. The fix is `Type*` in that section.
+Worth remembering: a `whnf` timeout in an application whose pieces all elaborate quickly is a
+universe mismatch until proved otherwise.
+
+**What still stands between this and a proof-level mark on `lem:qld-padded-lines`.** Three things,
+all recorded in the blueprint Comments and in `reports/padded-lines-product-law.md`:
+
+1. the error is `m^2 * delta_P`, of the form `poly(m) * poly(eps, md/q)` rather than the
+   `m * poly(eps, md/q)` the statement advertises --- `lem:qld-4-7` absorbs it, and in the regime it
+   is applied in the new bound is stronger by a fourth power in `eps`, but the *statement* should be
+   corrected before it is claimed;
+2. only one register version is proved; the symmetric one goes by the game's player symmetry, as
+   `sum_content_hatComm_le_B` does it, but is not written;
+3. the axis-parallel degree bound `d` is conditional on `lem:qld-axis-degree`, an additional target.
+
+**And how big is `delta_P`?** Unfolded, `delta_P = deltaPairs eps eps_c ~ 7*10^3 * eps^{1/4}
++ 1.5 sqrt(md/q)`. It exceeds `1` --- says nothing --- unless `eps <= 4*10^{-16}`. The `eps^{1/4}` is
+the two nested Cauchy-Schwarz chains, the constant is `lem:qld-obs-commutation`'s `57676416` and
+`lem:qld-combined-points`' `461411328`. That is a property of the whole appendix, not of this step,
+but it is worth writing down once.
+
 ### PR D — separation, the swap isometry, and the theorem
 
 `lem:qld-helper`, `lem:qld-exact-paulis`, `lem:qld-swap`, `thm:qld`. Two things to hold on to:
