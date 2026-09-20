@@ -321,23 +321,170 @@ exponentially smaller, at the price of a fixed number of levels.
 \begin{remark}[Typed verifiers and the exterior transformation boundaries]
 \label{rem:typed-detyping}
 \ledgernode{1.1.4}
-\uses{def:normal-verifier,def:tensor-strategy}
-The source constructions of~\cite{JNVWY20} use \emph{typed} verifiers: a type graph
-labels question roles, and the sampler first selects types and then questions.
-Introspection is detyped at its exterior boundary. Oracularization stays typed inside
-answer reduction, and only the final answer-reduced verifier is detyped. Thus the
-exterior chain is introspection, full answer reduction, then direct repetition, with
-levels $5 \to 7 \to 7$. There is no separate untyped oracle step in that count.
-
-Detyping has two costs a formalization must retain. It preserves the value
-only up to a factor $16^{-\abs{T}}$ in the type graph's size, which is where the
-``constant-factor loss'' in the soundness chains comes from; and it adds $2$ to the level
-count, which is part of why the level budget is what it is. The lemma also needs the type
-graph to have at least one edge --- a hypothesis every instantiation in the paper satisfies
-and which the source now states explicitly after its repair --- and its soundness argument truncates over-long
-answers, justified by the same answer-truncation lemma that the anchoring
-construction of~\cite{BVY17} uses.
+\uses{lem:detype-compiler}
+Introspection is detyped at its exterior boundary. Oracularization stays typed
+inside answer reduction; the final answer-reduced verifier is then detyped.
+The exterior levels are $5\to7\to7$ for introspection, answer reduction and
+repetition. Detyping adds two levels and gives
+$\mathrm{failure}_{\mathrm{typed}}\leq16^{|T|}
+\mathrm{failure}_{\mathrm{detyped}}$ via a same-state strategy conversion.
+This is a bound on failure, not a multiplicative comparison of values.
+The graph must have an edge. The following interfaces retain the effective
+and timeout hypotheses of the current source~\cite{AuditSync26}.
 \end{remark}
+
+\begin{definition}[Typed sampler and its distribution]
+\label{def:typed-sampler-interface}
+\ledgernode{1.1.4.1}
+\uses{def:normal-verifier}
+Let $G=(T,E)$ be a finite undirected type graph with $m_G\geq1$ edges and
+$k_G$ loops. Sample an ordered adjacent type pair uniformly from its
+$2m_G-k_G$ possibilities, and independently a common uniform
+$z\in\F_{q(n)}^{s(n)}$. Output
+$((t,L_t^\alice(z)),(u,L_u^\bob(z)))$.
+A typed sampler exposes dimension, marginal, level-linear and factor-support
+queries for each type. It computes the prescribed bounds before parsing
+auxiliary inputs, inspects at most the bound plus one symbol per component,
+and halts with a fixed default on malformed input. Computing the bounds is
+charged in its runtime. Linear and factor-query correctness is required only
+on valid prefix images; image membership is not a parsing obligation.
+No field-size query is implicit in this interface.
+\end{definition}
+
+\begin{definition}[Typed decider and normal verifier]
+\label{def:typed-normal-interface}
+\ledgernode{1.1.4.2}
+\uses{def:typed-sampler-interface,def:normal-verifier}
+A typed decider receives $(n,t,x,u,y,a,b)$; a timeout rejects regardless of
+the output tape. A typed normal verifier is over $\F_2$ and first uses the
+sampler's dimension query to check $t,u\in T$ and $|x|=|y|=s(n)$.
+In timeout-counter form, its bound dominates this preliminary computation.
+For finite decider runtime the answer alphabet consists of strings of length
+at most $\TIME_D(n)$, and the decision predicate is total.
+\end{definition}
+
+\begin{lemma}[Effective typed downsizing]
+\label{lem:typed-downsize}
+\ledgernode{1.1.4.3}
+\uses{def:typed-sampler-interface,lem:self-dual-basis}
+Given an admissible-field typed sampler $S$ and a supplied total machine
+$R_{\mathrm{field}}(n)=q(n)$, one can construct its coordinate downsizing
+over $\F_2$, with dimension $s(n)\log_2q(n)$ and unchanged levels and types.
+Runtime is polynomial in $\TIME_S(n),T_{\mathrm{field}}(n),s(n),\log q(n),|T|$;
+description size and compilation cost are polynomial in
+$|S|,|R_{\mathrm{field}}|,|T|$.
+The wrapper calls the field routine and dimension query before bounded-prefix
+parsing. A factor-support bit expands to a whole block of ones or zeros,
+not to the coordinate representation of a field element.
+There is no assertion that $q(n)$ can be recovered from arbitrary sampler
+code. The introspection and PCP parameter routines separately supply this
+premise within their budgets; the binary case uses the constant routine.
+\end{lemma}
+
+\begin{lemma}[Graph rejection sampling]
+\label{lem:detype-graph}
+\ledgernode{1.1.4.4}
+\uses{def:typed-sampler-interface}
+Put $t=|T|$. Two independent $2t$-bit blocks encode a vertex indicator and
+its neighbor indicator. A two-level CL graph sampler has a valid-edge event
+$E_G$ with
+$p=\Pr(E_G)=(2m_G-k_G)/16^t\geq16^{-t}>0$.
+Each ordered adjacent pair has exactly one seed preimage; conditionally on
+$E_G$ the types have the specified graph law, with loops counted once.
+On its support, an invalid edge exposes a zero opposite-neighbor block to
+at least one player, enabling a trivial local measurement on that branch.
+\end{lemma}
+
+\begin{lemma}[Detyped conditionally linear functions]
+\label{lem:detype-cl}
+\ledgernode{1.1.4.5}
+\uses{lem:detype-graph,def:typed-normal-interface}
+Concatenate the two graph levels with the selected type's $\ell$ levels on
+an independent binary seed block. On an unselected branch use the zero CL
+function. The result has $\ell+2$ levels and dimension $4|T|+s(n)$.
+Conditionally on $E_G$, the contents are exactly the typed distribution
+generated by one shared seed; the two question contents need not be independent.
+\end{lemma}
+
+\begin{lemma}[Implementing the detyped sampler]
+\label{lem:detype-sampler}
+\ledgernode{1.1.4.6}
+\uses{lem:detype-cl}
+For $\ell\geq1$, the concatenation is implemented with runtime
+$\poly(|T|,\TIME_S(n))$, retaining bounded-prefix checks and valid-prefix
+query semantics. On a zero-tail branch its first factor receives the whole
+remaining seed block and later factors are zero, so factors still partition
+the ambient space. Valid factor output gives $s(n)=O(\TIME_S(n))$.
+The implementation depends only on $S,G$.
+\end{lemma}
+
+\begin{lemma}[Implementing the detyped decider]
+\label{lem:detype-decider}
+\ledgernode{1.1.4.7}
+\uses{def:typed-normal-interface,lem:detype-graph}
+Given the full verifier $(S,D)$ and $G$, compile the dimension query from
+$S$ and identify $D$'s timeout counter once at construction time.
+Let $B=B_D(n)$ and choose a universal $c$ with $K=(cB)^c\geq\TIME_D(n)$.
+After bounded question checks, accept a non-edge view without scanning its
+answers. On an edge, inspect at most $K+1$ symbols of each answer, reject
+overflow or malformed strings, then simulate the typed decider.
+An outer timeout $(C(|T|+1)B)^C$ for a sufficiently large universal $C$
+dominates every branch. Its binary coefficients are computed from the
+original counter; no runtime supremum is computed.
+All original legal answers have length at most $K$. A valid edge and a
+length-$K+1$ answer force that scan before rejection, ensuring the new game's
+runtime-defined alphabet contains all original legal answers.
+\end{lemma}
+
+\begin{lemma}[Detyping PCC completeness]
+\label{lem:detype-completeness}
+\ledgernode{1.1.4.8}
+\uses{lem:detype-sampler,lem:detype-decider,def:pcc}
+A perfect PCC typed witness lifts on the same state to a perfect PCC detyped
+witness. Both players use the same combined rule: on an Alice-view pattern
+use the original Alice operator, on a Bob-view pattern use the original Bob
+operator, and otherwise use the identity measurement. The view patterns are
+disjoint. On valid edges this reproduces the typed strategy; on invalid
+edges one local measurement is trivial. Projectivity, consistency and the
+required commutation follow, as does the identical-operator property.
+This does not assert symmetry of the detyped question distribution.
+\end{lemma}
+
+\begin{lemma}[Same-state detyping soundness]
+\label{lem:detype-soundness}
+\ledgernode{1.1.4.9}
+\uses{lem:detype-decider,lem:detype-graph}
+Restrict any detyped strategy of success at least $1-\eps$ to the fixed
+graph views for typed questions and coarse-grain answers to length
+$\TIME_D(n)$. Answer truncation leaves the typed computation unchanged.
+Conditional detyped acceptance is no larger than acceptance of this legal
+typed strategy on the same state. Hence its failure is at most
+$\eps/p\leq16^{|T|}\eps$. Taking suprema uses near-optimal strategies and
+does not assume attainment of the value.
+\end{lemma}
+
+\begin{lemma}[Optional entanglement consequence of detyping]
+\label{lem:detype-entanglement}
+\ledgernode{1.1.4.10}
+\uses{lem:detype-soundness,def:ent}
+For $0\leq\eps\leq16^{-|T|}$,
+$\Ent(\mathrm{detype}(V)_n,1-\eps)\geq
+\Ent(V_n,1-16^{|T|}\eps)$, since the conversion keeps the state and its
+Schmidt rank. Outside that range use the ordinary value bound; no negative
+threshold is supplied to $\Ent$. This clause is separate from the value route.
+\end{lemma}
+
+\begin{lemma}[Effective detyping compiler]
+\label{lem:detype-compiler}
+\ledgernode{1.1.4.11}
+\uses{lem:detype-sampler,lem:detype-decider,lem:detype-completeness,lem:detype-soundness}
+The descriptions of $(S,D)$ and the nonempty graph $G$ suffice to construct
+the detyped verifier in polynomial description time. It has $\ell+2$ levels,
+polynomial sampler and timeout costs, PCC completeness, and same-state
+soundness loss $16^{|T|}$. The sampler depends only on $S,G$.
+Effective field access for any preceding nonbinary downsizing is the separate
+hypothesis of Lemma~\ref{lem:typed-downsize}.
+\end{lemma}
 
 \begin{remark}[Turing machine conventions and the ambient cost model]
 \label{rem:tm-conventions}
@@ -405,7 +552,7 @@ pinned by~\cite{AuditSync26}.
 \begin{definition}[The introspective verifier]
 \label{def:intro-verifier}
 \ledgernode{1.2.3}
-\uses{def:normal-verifier,def:cl-function,rem:typed-detyping,thm:qld}
+\uses{def:normal-verifier,def:cl-function,rem:typed-detyping,lem:typed-downsize,thm:qld}
 Fix $\ell$ and an $\ell$-level verifier $\verifier$ satisfying the paper's absolute
 $\lambda$-bound, as distinguished in Remark~\ref{rem:runtime-normalization}. The
 \emph{introspective verifier} $\vint$ is the typed verifier whose players sample the
@@ -545,34 +692,131 @@ question.
 
 \effortHard
 
-\begin{lemma}[The Pauli twirl]
+\begin{lemma}[Exact Pauli twirling]
 \label{lem:pauli-twirl}
-\ledgernode{1.2.3.3}
-\uses{def:distance,def:q-value}
-Averaging a measurement against a Pauli operator, on a state that contains EPR pairs,
-replaces it by one that commutes with the Pauli basis, at a controlled cost. The group of
-statements comprises: commuting with the Pauli basis implies commuting with the Pauli
-observables; a mixing lemma for a linear map and one for a unitary; and a lemma combining
-the two sides. The error accumulates additively through the group.
+\ledgernode{1.2.3.3.1}
+\uses{lem:pauli-linear-fourier}
+For a subspace $K\leq\F^k$, twirl by the uniform distribution on
+$\tau^W(K)$, where $W\in\{X,Z\}$ and $W'$ is the other basis.
+The twirl fixes $\tau^{W'}(u)$ if $u\in K^\perp$ and is zero otherwise.
+Here the annihilator uses the field-valued dot product. Character
+orthogonality on the field-linear space proves the assertion in every
+characteristic.
+\end{lemma}
+
+\begin{lemma}[Linear-map blocks of the twirl]
+\label{lem:pauli-linear-mixing}
+\ledgernode{1.2.3.3.2}
+\uses{lem:pauli-twirl}
+For a linear $L:V\to V$, twirling an operator on $\mathbb C^V\otimes H$
+first by all $Z$ Paulis and then by $X(\ker L)$ gives
+$\sum_{y\in L(V)}P_y^Z\otimes B^y$, where $P_y^Z$ projects onto the
+fibre $L(v)=y$. If the original operators form a POVM, the blocks form a
+POVM for each nonempty fibre. Empty fibres impose no condition on $B^y$.
+\end{lemma}
+
+\begin{lemma}[Commutator Parseval identity]
+\label{lem:pauli-commutator-transfer}
+\ledgernode{1.2.3.3.3}
+\uses{lem:pauli-linear-fourier,def:state-distance}
+For the fibre projections $P_y^W$ of $L$ and every operator $M$,
+\[
+ \sum_y\|([M,P_y^W]\otimes\Id)\psi\|^2
+ =\mathbb E_{v\in(\ker L)^\perp}
+       \|([M,\tau^W(v)]\otimes\Id)\psi\|^2.
+\]
+The identity remains true after averaging questions and summing measurement
+outcomes. It introduces no dimension or alphabet factor.
+\end{lemma}
+
+\begin{lemma}[Approximate commutation controls unitary mixing]
+\label{lem:pauli-unitary-mixing}
+\ledgernode{1.2.3.3.4}
+\uses{def:state-distance}
+Let $M_a^x$ be POVMs, $\psi$ a unit bipartite vector and $\mu_x$ a
+conditional unitary distribution. For
+$\mathrm T_{\mu_x}(M)=\mathbb E_U UMU^\dagger$, put
+$\delta=\mathbb E_x\mathbb E_U\sum_a
+\|([M_a^x,U^\dagger]\otimes\Id)\psi\|^2$.
+Then $\mathbb E_x\sum_a
+\|((\mathrm T_{\mu_x}(M_a^x)-M_a^x)\otimes\Id)\psi\|^2\leq\delta$.
+Jensen and left-unitary invariance of the norm suffice; invariance of the
+state under $U$ is not a hypothesis.
+\end{lemma}
+
+\begin{lemma}[Combining two approximate commutations]
+\label{lem:pauli-two-sided-commutation}
+\ledgernode{1.2.3.3.5}
+\uses{def:state-distance}
+Conditionally on $x$, draw $U_1,U_2$ independently. Suppose both
+commutators $[M_a^x,U_i^\dagger]$ have average outcome-summed squared state
+norm $O(\eps)$ and
+$\mathbb E\|((U_2^\dagger\otimes\Id)-(\Id\otimes U_2))\psi\|^2=O(\eps)$.
+Then $[M_a^x,U_1^\dagger U_2^\dagger]$ has the same type of bound.
+Transfer $U_2$ across the bipartition and back; $\sum_a(M_a^x)^2\leq\Id$
+controls the summed transfer errors without an outcome-count factor.
 \end{lemma}
 
 \effortMedium
 
-\begin{lemma}[Close to a sub-measurement implies close to a measurement]
+\begin{lemma}[Completing a nearby submeasurement]
 \label{lem:close-submeasurement}
-\ledgernode{1.2.3.3}
-\uses{def:distance}
-Let $\{A^x_a\}$ be a projective measurement, let each $B^x_a$ be positive semidefinite with
-$\sum_a B^x_a \leq \Id$, and let $\{C^x_a\}$ be a POVM with $C^x_a \geq B^x_a$ for all $x$
-and $a$. If $A^x_a \approx_\eps B^x_a$ on average over $x$, then
-$A^x_a \approx_{\sqrt{\eps}} C^x_a$.
+\ledgernode{1.2.3.3.6}
+\uses{def:state-distance}
+Let $A_a^x$ be a PVM, $B_a^x\geq0$ with $\sum_aB_a^x\leq\Id$, and
+$C_a^x$ a POVM satisfying $C_a^x\geq B_a^x$ pointwise. For a unit
+bipartite state and an arbitrary question distribution, define
+\[
+ D_\psi(A,B)=\mathbb E_x\sum_a
+       \|((A_a^x-B_a^x)\otimes\Id)\psi\|^2=\delta.
+\]
+Then $D_\psi(A,C)\leq2\delta+4\sqrt\delta$.
+In particular, if $D_\psi(A,B)\leq\eps\leq1$, the conclusion is
+$D_\psi(A,C)\leq6\sqrt\eps$. A coefficient-one square-root bound is not
+asserted for this literal squared-distance convention.
 \end{lemma}
 
 \begin{proof}
-The gap $\sum_a (C^x_a - B^x_a)$ is a positive operator of small expectation, because
-$\{A^x_a\}$ sums to $\Id$ and is $\eps$-close to $B$; Cauchy--Schwarz turns that bound on the
-expectation into a bound on the Hilbert--Schmidt distance, which is where the square root
-comes from.
+Using real parts and Cauchy--Schwarz in the outcome-summed state norm,
+$\mathbb E_x\langle\Id-\sum_aB_a^x\rangle\leq2\sqrt\delta$;
+here $\sum_a(B_a^x)^2\leq\sum_aB_a^x$ and $\sum_a(A_a^x)^2=\Id$.
+Since $0\leq C_a^x-B_a^x\leq\Id$,
+$(C_a^x-B_a^x)^2\leq C_a^x-B_a^x$, so $D_\psi(B,C)\leq2\sqrt\delta$.
+The squared triangle bound gives $D_\psi(A,C)\leq2D_\psi(A,B)+2D_\psi(B,C)$.
+\end{proof}
+
+\begin{lemma}[Pauli mixing with a retained classical fibre]
+\label{lem:pauli-mixing}
+\ledgernode{1.2.3.3,1.2.3.3.7}
+\uses{lem:pauli-linear-mixing,lem:pauli-commutator-transfer,lem:pauli-unitary-mixing,lem:pauli-two-sided-commutation,lem:close-submeasurement}
+Let $U_x\subseteq V_x\subseteq V$ be coordinate registers, $L_x:U_x\to U_x$
+linear, and the state be $\mathrm{EPR}_V\otimes\mathrm{aux}$.
+Let $M^x_{y,a}$ be a PVM on Alice's $V_x$ register and auxiliary space.
+Assume its $y$ marginal is $O(\eps)$-close to $P_y^Z(L_x)$ in the
+averaged squared state norm, and that its commutators with the fine $Z$
+projectors on $U_x$ and coarse $X$ fibre projectors for a map with kernel
+$(\ker L_x)^\perp$ have total outcome-summed squared norm $O(\eps)$.
+For $0\leq\eps\leq1$ there are POVMs $N_a^{x,y}$ on the complementary
+register outside $U_x$ in $V_x$ and Alice auxiliary space with
+\[
+ \mathbb E_x\sum_{y,a}
+ \|((M^x_{y,a}-P_y^Z\otimes N_a^{x,y})\otimes\Id)\psi\|^2
+ \leq C\sqrt\eps
+\]
+for a universal $C$ (once the hypothesis constants are fixed).
+The sums in the commutator hypotheses include both projector and measurement
+outcomes. Empty fibres allow any $N$; their left-hand mass is controlled by
+consistency, not identically zero.
+\end{lemma}
+
+\begin{proof}
+\ledgernode{1.2.3.3.7.1,1.2.3.3.7.2,1.2.3.3.7.3}
+Twirl to blocks $B^z_{y,a}$, retain the matching blocks $B^y_{y,a}$ using
+projectivity and EPR consistency, then complete with
+$N_a^{x,y}=\sum_z B^y_{z,a}$. Lemma~\ref{lem:close-submeasurement}
+accounts for the square-root loss. Transfers across EPR use matrix transpose,
+in particular $X(v)^T=X(-v)$; no odd-characteristic identity $X(v)^T=X(v)$
+is presumed.
 \end{proof}
 
 \effortHard
@@ -597,7 +841,7 @@ $\Id \ot B_{x, y, z} \approx_\delta A^y_{x, z} \ot B_{x, y}$.
 \begin{lemma}[Extracting a Pauli strategy]
 \label{lem:intro-pauli-extract}
 \ledgernode{1.2.3.5}
-\uses{def:intro-verifier,thm:qld,lem:pauli-twirl,def:distance}
+\uses{def:intro-verifier,thm:qld,lem:pauli-mixing,def:state-distance}
 There is $\delta_1(\eps, R) = a\bigl( (\log R)^a \eps^b + (\log R)^{-b} \bigr)$, with $a > 1$
 and $0 < b < 1$ depending only on $\ell$, such that any strategy for $\vint_n$ of value
 $1 - \eps$ is within $\delta_1$ of a projective strategy whose state is
@@ -606,9 +850,9 @@ operators $\sigma^W_x$ on those $Q$ qubits, for both players.
 \end{lemma}
 
 \begin{proof}
-\uses{thm:qld,lem:pauli-twirl}
+\uses{thm:qld,lem:pauli-mixing}
 This is Theorem~\ref{thm:qld} applied to the Pauli-test part of the decider, followed by the
-twirl of Lemma~\ref{lem:pauli-twirl} to replace the strategy's own measurements by ones that
+mixing estimate of Lemma~\ref{lem:pauli-mixing} to replace the strategy's own measurements by ones that
 commute with the Pauli basis.
 \end{proof}
 
@@ -630,7 +874,7 @@ conditionally linear distribution of $\verifier_{2^n}$, up to $\delta$.
 \begin{lemma}[The hiding test]
 \label{lem:intro-hiding-test}
 \ledgernode{1.2.3.6}
-\uses{lem:intro-sampling-test,lem:conditional-measurement,def:distance}
+\uses{lem:intro-sampling-test,lem:conditional-measurement,lem:pauli-mixing,def:state-distance}
 For each level $k$, a player's answer on the $\mathtt{Hide}_k$ type is $\delta$-close to one
 computed from the level-$k$ complement alone, and the chain of these relations across levels
 $j \leq k$ is stable: knowing the answer at level $j$ tells a player nothing about the
@@ -1208,10 +1452,258 @@ Theorem~\ref{thm:pcp-decider} does.
 
 \effortHard
 
+\begin{lemma}[Low-degree sandwich support]
+\label{lem:ar-sandwich-support}
+\ledgernode{1.1.1.3}
+\uses{def:cross-distance,lem:schwartz-zippel}
+Let $k\geq1$, $x\sim\mu$, and let $y$ be uniform on a finite set $Y$, independently
+of $x$. For each $i\leq k$, let $\cal{G}_i$ be a finite family of
+functions on $Y$ whose distinct elements agree with probability at most $\eta$.
+Let $A^x_{g_1,\ldots,g_k}$ and $G^{i,x}_{g_i}$ be projective measurements.
+Suppose the evaluated $i$th marginal of $A$ on Alice and evaluated $G^{i,x}$
+on Bob are at cross-party squared distance at most $\delta$, averaged over $x,y$.
+Define the POVM
+$C^x_{g_1,\ldots,g_k}=G^{k,x}_{g_k}\ldots G^{2,x}_{g_2}G^{1,x}_{g_1}
+G^{2,x}_{g_2}\ldots G^{k,x}_{g_k}$.
+The complete evaluated tuple of $A$ is at cross-party squared distance
+$O(k\sqrt{\delta+\eta})$ from that of $C$, on the same distribution.
+This is an unformalized support theorem with audited source provenance
+\cite{AuditSync26}; the dependence on $x$ is handled by conditioning and
+averaging. Retain the universal constant in this estimate.
+\end{lemma}
+
+\begin{lemma}[Truncation at the timeout counter]
+\label{lem:timeout-truncation-interface}
+\ledgernode{1.4.1.4}
+\uses{rem:tm-conventions}
+For a source decider in standard timeout-counter form with $B=B_D(n)$,
+simultaneously replacing its two answers by their length-$B$ prefixes
+preserves the result: accept, reject, or timeout. The counter depends only
+on $n$ and the underlying machine is simulated for at most $B$ steps, so
+none of the changed cells can be read. This is not the false assertion
+$\TIME_D(n)\leq B$; wrapper runtime may be polynomial in $B$.
+\end{lemma}
+
+\begin{lemma}[Effective typed oracle construction]
+\label{lem:oracle-effective-interface}
+\ledgernode{1.3.5.1}
+\uses{thm:oracularization}
+The typed oracle verifier is compiled in time polynomial in the input
+description. Its sampler preserves $\ell$ levels, depends only on the
+input sampler, and runs in $\poly(\TIME_S(n))$. Its decider runs in
+$\poly(\TIME_S(n),B_D(n))$, including the bounded format checks.
+This is the typed construction used inside answer reduction.
+\end{lemma}
+
+\begin{lemma}[Timeout-compatible oracle PCC completeness]
+\label{lem:oracle-timeout-pcc}
+\ledgernode{1.3.5.2}
+\uses{lem:timeout-truncation-interface,thm:oracularization,def:pcc}
+Coarse-grain a perfect input PCC witness by length-$B_D(n)$ prefix
+truncation. Orthogonal projector sums preserve completeness and projectivity;
+commutation and consistency are preserved by the common deterministic map.
+The preceding truncation lemma preserves value one on the same state.
+These measurements supply the honest isolated-player and joint-oracle
+measurements with legal answer lengths and the same combined operator rule
+for both players.
+\end{lemma}
+
+The following answer-reduction obligations use the parameter routine and
+input hypotheses of Theorem~\ref{thm:answer-reduction}. In measurement
+relations, ``consistent'' means close in the cross-party squared distance
+of Definition~\ref{def:cross-distance}; bounds on game failure are stated
+separately. Put $\theta=16^{|T^{\mathrm{ar}}|}\eps_{\mathrm{out}}$,
+$E=\delta_{\mathrm{CL}}(\theta,q,m',d,m'+6)$ and $\rho=m'd/q$.
+The common upper bound $\kappa$ below absorbs both the individual and
+simultaneous errors; it is not a renaming of the source's individual
+$\delta_1$ or simultaneous $\delta_2$.
+
+\begin{lemma}[Answer-reduction construction]
+\label{lem:ar-construction}
+\ledgernode{1.3.4.1}
+\uses{lem:oracle-effective-interface,thm:pcp-decider,lem:typed-downsize,lem:detype-compiler,lem:lidt-effective}
+With the parameter and timeout hypotheses of Theorem~\ref{thm:answer-reduction},
+construct the typed oracle verifier and the PCP verifier. Downsize the PCP
+sampler using its explicit field routine before taking the direct sum with
+the binary oracle sampler. This yields a common binary ambient space and
+$\max\{\ell,3\}$ typed levels, hence $\max\{\ell+2,5\}$ levels after detyping.
+The compiled timeout and actual runtimes have the claimed polynomial bounds.
+Format checks include all proof coefficients and answer components.
+\end{lemma}
+
+\begin{lemma}[Answer-reduction completeness]
+\label{lem:ar-completeness}
+\ledgernode{1.3.4.2}
+\uses{lem:ar-construction,lem:oracle-timeout-pcc,lem:detype-completeness}
+A perfect PCC input witness gives a perfect typed answer-reduction witness,
+using the complete honest proof tuple and one combined measurement rule on
+both players. All queried formats are satisfied; mismatched proof branches
+use a whole legal zero tuple. Apply detyping completeness, including its
+identical-operator property, to obtain the exterior PCC witness.
+\end{lemma}
+
+\begin{lemma}[Typed soundness setup]
+\label{lem:ar-soundness-setup}
+\ledgernode{1.3.4.3}
+\uses{lem:ar-construction,lem:detype-soundness}
+An exterior strategy with deficit $\eps_{\mathrm{out}}$ gives a typed strategy
+with deficit $\theta=16^{|T^{\mathrm{ar}}|}\eps_{\mathrm{out}}$ on the same
+state. Symmetrize the typed strategy for its symmetric game; do not assume
+the detyped question law is symmetric. The soundness proof then works with
+projective, well-formatted measurements and a swap-invariant state.
+All type-pair conditioning costs are constants since $T^{\mathrm{ar}}$ is fixed.
+\end{lemma}
+
+\begin{definition}[Full-seed indexing for answer reduction]
+\label{def:ar-seed-index}
+\ledgernode{1.3.4.3.1}
+\uses{lem:ar-soundness-setup}
+The common index $\xi$ is the full uniform oracle seed. Both questions
+$(x_A,x_B)$ and every auxiliary oracle coordinate are functions of $\xi$.
+Indexed measurements and all subsequent averages retain $\xi$.
+The image pair $(x_A,x_B)$ is not substituted as an index without proving
+injectivity or specifying its conditional seed distribution.
+\end{definition}
+
+\begin{lemma}[Global PCP consistency tests]
+\label{lem:ar-global-tests}
+\ledgernode{1.3.4.4}
+\uses{def:ar-seed-index,def:cross-distance}
+Conditioning the typed success estimate on each checked type pair gives the
+global PCP subtests with $O(\theta)$ failure, averaged over uniform $\xi$
+and the prescribed PCP seed. Retain the joint proof-tuple format, individual
+proof-line formats, and all identical-question equality subtests. No
+low-degree theorem is applied to line--point success alone.
+\end{lemma}
+
+\begin{lemma}[Input-codeword consistency tests]
+\label{lem:ar-input-tests}
+\ledgernode{1.3.4.5}
+\uses{lem:ar-global-tests}
+The two input-codeword tests, conditioned on their respective typed questions,
+have $O(\theta)$ failure on the required seeded point/line laws. The
+distributions are conditioned before averaging over $\xi$, and include
+answer formats and equality tests. These supply both input evaluation
+relations consumed by the individual-polynomial extraction.
+\end{lemma}
+
+\begin{lemma}[Common individual polynomial measurements]
+\label{lem:ar-common-polynomials}
+\ledgernode{1.3.4.6}
+\uses{lem:ar-input-tests,thm:lidt-cl-soundness-one,lem:schwartz-zippel}
+For each seed, extract the input and proof polynomial PVMs, averaged with
+the source's conditional question laws. One common family $G_i$ can be used
+on both copies, for $i=1,\ldots,5$. To derive this, choose one side's LDT
+output, use swap invariance of the state to transport its point relation,
+then point self-consistency and polynomial separation to obtain cross-copy
+consistency; average the resulting errors using Jensen. Identical point
+operators alone do not make the two existential LDT outputs identical.
+The resulting evaluation and full-polynomial consistency error is denoted
+$\kappa=O(\sqrt E+\rho)$ with $E,\rho$ as below.
+\end{lemma}
+
+\begin{lemma}[A simultaneous complete proof tuple]
+\label{lem:ar-simultaneous-proof}
+\ledgernode{1.3.4.7}
+\uses{lem:ar-common-polynomials,thm:lidt-cl-soundness}
+Use the simultaneous theorem at $(q,m',d,m'+6)$ to obtain a projective
+measurement $J$ of the entire tuple $(f_1,\ldots,f_5,c_0,\ldots,c_{m'})$.
+Write $M_i$ for individual point measurements, and $M_6$ for the complete
+proof-tuple point measurement. With seed averaging understood, retain all
+five relations: $M_i(y_i)$ is cross-party consistent with the $i$th
+evaluation coordinate of $M_6(z)$ for $i=3,4,5$ with error $O(\theta)$;
+$M_i(y)$ is consistent with $G_i$ evaluated at $y$; the two copies of $G_i$
+are consistent; $M_6(z)$ is consistent with $J$ evaluated at $z$; and the
+two copies of the complete $J$ are consistent. The last four errors are
+$O(\kappa)$. Include player mirrors of the first, second and fourth.
+Individual evaluations without a projective complete-tuple output do not
+suffice for the next lemma.
+\end{lemma}
+
+\begin{lemma}[The answer-reduction giant sandwich]
+\label{lem:ar-giant-sandwich}
+\ledgernode{1.3.4.8}
+\uses{lem:ar-simultaneous-proof,lem:ar-sandwich-support}
+Embed each of the five scalar polynomial alphabets into the full
+individual-degree-$d$ alphabet on $m'$ variables by zero-projector extension.
+Use the $(m'+1)$-tuple of constraint polynomials as a sixth alphabet; the
+complete $J$ now has literally the product of the six alphabets as outcomes.
+For either scalars or tuples, unequal outcomes agree at a uniform point
+with probability at most $\rho=m'd/q$: one unequal component witnesses
+the tuple bound, with no tuple-length factor.
+Apply Lemma~\ref{lem:ar-sandwich-support} with the full seed as index and
+the evaluation point uniform independently of it. Reverse the six-index
+order so the constraint-tuple marginal of $J$ is innermost. The resulting
+giant sandwich has error
+$\delta_3=O(\sqrt{\kappa+\rho})=O((\sqrt E+\rho)^{1/2})$.
+\end{lemma}
+
+\begin{lemma}[Transferring to the polynomial strategy]
+\label{lem:ar-polynomial-strategy}
+\ledgernode{1.3.4.9}
+\uses{lem:ar-giant-sandwich}
+The sandwiched polynomial measurements define the intermediate strategy on
+the same state. Transfer acceptance through the complete tuple $J$,
+including its constraint polynomials and tested formats, to obtain success
+$1-O(\sqrt{\delta_3})$. The proof uses the full-tuple relations of
+Lemma~\ref{lem:ar-simultaneous-proof}, not independently chosen evaluations.
+\end{lemma}
+
+\begin{lemma}[Decoding with the original answer cutoff]
+\label{lem:ar-decoding}
+\ledgernode{1.3.4.10}
+\uses{lem:ar-polynomial-strategy,lem:timeout-truncation-interface,thm:oracularization}
+Decode the polynomial strategy to the oracle strategy, applying the
+length-$B_D(n)$ prefix cutoff to each original answer. It preserves the
+simulated decider's output both before and after the oracle construction,
+and makes every decoded answer pass its bounded parser. Check all three
+oracle subtests. Group malformed or failed decodings into fixed legal
+outcomes so measurements remain complete. The final conversion to the
+input game yields deficit $O(\delta_3^{1/4})$.
+\end{lemma}
+
+\begin{lemma}[Answer-reduction quantitative assembly]
+\label{lem:ar-error-assembly}
+\ledgernode{1.3.4.11}
+\uses{lem:ar-decoding,lem:ar-soundness-setup,lem:ar-common-polynomials}
+Put $L=(\lambda n)^\mu$, $\rho=m'd/q$ and
+$E=\delta_{\mathrm{CL}}(\theta,q,m',d,m'+6)$ for the source parameter
+routine. The comparison with the smaller-$m$ LDT error uses its field-error
+floor $E>4^{-b'}/L$ and the bound
+$a'(dm)^{a'}2^{-b'md}\leq C/L$ for sufficiently large $n$, with
+$m\geq\lambda\mu n$ and $d=7$. Here $a',b'$ are the fixed seeded-LDT
+constants; the polynomial prefactor is absorbed into the exponential.
+It does not reverse the exponential inequality when $m'\geq m$.
+The quantitative chain is
+\[
+ \kappa=O(\sqrt E+\rho),\qquad
+ \delta_3=O((\sqrt E+\rho)^{1/2}),\qquad
+ \mathrm{deficit}_{\mathrm{in}}=O(E^{1/16}+\rho^{1/8}).
+\]
+Choose a universal final exponent strictly below $\min\{b'/16,1/16\}$
+and enlarge the polynomial coefficient and threshold to absorb every
+constant. This gives the displayed error of Theorem~\ref{thm:answer-reduction}.
+When that error is at least one the value conclusion is trivial; the
+nontrivial regime also justifies the small-error inequalities above.
+\end{lemma}
+
+\begin{lemma}[Answer-reduction sampler independence]
+\label{lem:ar-sampler-independence}
+\ledgernode{1.3.4.12}
+\uses{lem:ar-construction,lem:oracle-effective-interface,lem:detype-compiler}
+The output sampler is determined by $(S,\lambda,\ell,\mu,\sigma)$, independent
+of the input decider's code. The typed oracle sampler uses only $S$; PCP
+parameters use only the supplied numerical bounds; downsizing uses their
+explicit field routine; and detyping's sampler uses only its sampler and
+fixed graph. This supplies the source premise used by compression's
+sampler-independence argument (ledger node $1.5.1$). The already checked
+conditional compression theorem keeps its existing Lean proof and premises.
+\end{lemma}
+
 \begin{theorem}[Answer reduction]
 \label{thm:answer-reduction}
 \ledgernode{1.3, 1.3.4}
-\uses{def:normal-verifier,def:pcc,thm:succinct-sat,lem:decoupled-5sat,thm:pcp-decider,lem:schwartz-zippel,thm:qld,lem:self-dual-basis,thm:oracularization}
+\uses{def:normal-verifier,def:pcc,lem:ar-construction,lem:ar-completeness,lem:ar-error-assembly,lem:ar-sampler-independence}
 In the source model there is a polynomial-time Turing machine $\ComputeAnsVerifier$ that on input
 $(\verifier, \lambda, \ell, \mu, \sigma)$, for $\verifier$ an $\ell$-level normal form
 verifier whose decider is in standard timeout-counter form, with
@@ -1274,43 +1766,19 @@ This is the most technically heterogeneous section of the paper
 arithmetization --- see Section~\ref{sec:rr-cook-levin}) and half quantum (a
 low-degree ``sandwiching'' argument recombining the players' committed polynomials). It may also be the hardest. 
 
-\begin{remark}[The composition, and what the value form does not inherit]
+\begin{remark}[Answer-reduction correspondence and optional rank bounds]
 \label{rem:ar-composition}
 \ledgernode{1.3.4}
-\uses{thm:answer-reduction,thm:oracularization,thm:pcp-decider,def:ent,rem:compression-chain}
-The composition of the oracularized verifier with $\pcpverifier$ --- questions append
-conditionally-linearly sampled PCP evaluation points to the oracularized questions, so the
-sampler stays conditionally linear, and answers are PCP evaluations --- is ledger node
-$1.3.4$, which carries $29$ challenges, more than any other node of the campaign. Most are
-local: misnamed objects, a wrong exponent, an averaging omitted from a display, an
-undefined sampler symbol. Four are structural, and one of those does not reach this
-blueprint at all.
-\begin{enumerate}
-\item The ambient space of the answer-reduced sampler is declared as a direct sum of the
-  oracularized and PCP spaces, but the summands are over different fields: a normal form
-  verifier's sampler has field size $2$, while the PCP space is an $\Fq$-space. The
-  conditionally linear functions are $\Fq$-linear, so the decomposition needs stating over
-  a common field.
-\item The success probability fed into low-degree soundness omits the consistency subtest,
-  so the lemma's hypothesis is not verified as written.
-\item Claim ar-4 omits the word \emph{projective} for the simultaneous family, and the
-  sandwiching lemma uses projectivity of that family in its proof.
-\item The decoded answers have length up to $T$, while the oracle decider rejects any
-  answer component longer than $B_\decider(n)$, and nothing forces $B_\decider(n) \geq T$.
-  This is the truncation of Remark~\ref{rem:oracularization-repairs}, item 4.
-\end{enumerate}
-The one that does not reach us is the \emph{entanglement} clause. In~\cite{JNVWY20} answer
-reduction carries $\Ent(\vans_n, 1 - \eps) \geq \frac12 \Ent(\verifier_n, 1 -
-\delta(\eps, n))$, and the recursion consumes exactly that $\frac12$. The campaign found
-the factor unaccounted for --- the symmetrization the argument begins with doubles the
-Schmidt rank and carried no dimension clause --- and it is now attributed to exactly that
-doubling, so the clause stands with its constant explained rather than assumed.
-Theorem~\ref{thm:answer-reduction} above has no entanglement clause at all: the pipeline is
-carried in $\valstar$ throughout, and no entanglement lower bound is tracked anywhere in
-this chapter (Remark~\ref{rem:compression-chain}). So the whole question --- whether the
-$\frac12$ is earned, and whether a second factor of $2$ hides behind it --- is one this
-route never has to ask. That is the fourth place where the value form is strictly cheaper
-rather than merely equivalent.
+\uses{thm:answer-reduction,def:ent,rem:compression-chain}
+The decomposition above records the current repaired source~\cite{AuditSync26}:
+common-field downsizing precedes the direct sum; conditioned test success
+includes equality and formats; the simultaneous measurement is projective on
+complete tuples; and decoding preserves the original timeout answer cutoff.
+These are open formalization obligations, not unresolved source claims.
+The source additionally tracks an entanglement factor $1/2$ from doubling
+Schmidt rank during typed symmetrization. The value-only ambient contract
+does not include that clause. None of the new obligations is marked as
+proved merely because the source ledger validates it.
 \end{remark}
 
 \subsection{Gap amplification: parallel repetition}
