@@ -6,6 +6,32 @@ import MIPRE.Foundations.GuardSorryFree
 import MIPRE.Foundations.Blocks
 import MIPRE.Foundations.CL.Basic
 import MIPRE.Foundations.LowDegree.SchwartzZippel
+import MIPRE.Foundations.LowDegree.ZeroBasis
+import MIPRE.Foundations.LowDegree.BinarySquareRoot
+import MIPRE.Foundations.LowDegree.BinaryInverse
+import MIPRE.Foundations.LowDegree.BinaryMatrixInverse
+import MIPRE.Foundations.LowDegree.BinaryKernel
+import MIPRE.Foundations.SAT.FieldTrace
+import MIPRE.Foundations.SAT.FrobeniusMatrix
+import MIPRE.Foundations.SAT.TraceGram
+import MIPRE.Foundations.SAT.BasisTransport
+import MIPRE.Foundations.SAT.EffectiveSelfDual
+import MIPRE.Foundations.SAT.EffectiveNormalBasis
+import MIPRE.Foundations.Introspection.Commutation
+import MIPRE.Foundations.Introspection.Twirl
+import MIPRE.Foundations.Introspection.Measurements
+import MIPRE.Foundations.Introspection.BlockPOVM
+import MIPRE.Foundations.Introspection.TwirlDistance
+import MIPRE.Foundations.SAT.Arithmetization
+import MIPRE.Foundations.SAT.FiniteCircuitArithmetization
+import MIPRE.Foundations.SAT.CircuitFieldCorrect
+import MIPRE.TM.CookLevin.PcpCircuit
+import MIPRE.TM.CookLevin.PcpViewSize
+import MIPRE.TM.CookLevin.ClassicalPcp
+import MIPRE.Foundations.SAT.Padding
+import MIPRE.Foundations.SAT.PcpAlgebra
+import MIPRE.Foundations.SAT.PcpBlocks
+import MIPRE.Foundations.SAT.QuotientField
 import MIPRE.Foundations.LowDegree.Anticomm
 import MIPRE.Foundations.LowDegree.Shoup
 import MIPRE.Foundations.LowDegree.SelfDual
@@ -44,6 +70,8 @@ import MIPRE.Foundations.ValueApprox.RawSemantics
 import MIPRE.Foundations.ValueApprox.RawStrategy
 import MIPRE.Foundations.ValueApprox.Strategy
 import MIPRE.TM.CookLevin.DecoupledProg
+import MIPRE.TM.CookLevin.PaddingParams
+import MIPRE.TM.CookLevin.PcpParameters
 import MIPRE.LCS.MagicSquare.Strategy
 import MIPRE.LCS.Strategy.Equivalence
 import MIPRE.LCS.Strategy.ObservableToProjector
@@ -424,11 +452,148 @@ tell you the guard is missing.
   MIPRE.SeededGame.soundStrategy,
   MIPRE.SeededGame.soundStrategy_value_ge
 
+-- blueprint `lem:pcp-zero-basis`: preserve the individual-degree bounds needed by the PCP.
+#guard_sorry_free MIPRE.SAT.ArrayProg.eqBits,
+  MIPRE.SAT.ArrayProg.eqNat,
+  MIPRE.SAT.ArrayProg.getD,
+  MIPRE.SAT.Fml.renameBy,
+  MIPRE.SAT.Fml.eval_rename,
+  MIPRE.SAT.ceilPowerProg,
+  MIPRE.SAT.le_ceilPower,
+  MIPRE.SAT.ceilPower_le_twice,
+  MIPRE.Cost.PolyTimeFun.bitsValue,
+  MIPRE.Cost.PolyTimeFun.predN,
+  MIPRE.Cost.PolyTimeFun.addUnary,
+  MIPRE.Cost.PolyTimeFun.subUnary
+
+#guard_sorry_free MIPRE.SAT.cubeIndexEquiv,
+  MIPRE.SAT.clauseInput5_injective,
+  MIPRE.SAT.PcpParams.clauseInput5_pointClause,
+  MIPRE.SAT.PcpParams.pointClause_pointFromClause,
+  MIPRE.SAT.PcpParams.degreeOf_circuitArith,
+  MIPRE.SAT.PcpParams.eval_circuitArith_bool,
+  MIPRE.SAT.PcpParams.eval_iff_exists_circuitArith,
+  MIPRE.SAT.PcpParams.exists_proof_of_formula5_sat,
+  MIPRE.SAT.PcpParams.formula5_sat_of_majority,
+  MIPRE.SAT.PcpParams.completeness_of_describes,
+  MIPRE.SAT.PcpParams.soundness_of_describes,
+  MIPRE.TM.CookLevin.Pad.esize_bitBlocks_le,
+  MIPRE.TM.CookLevin.Pad.esize_view_le,
+  MIPRE.TM.CookLevin.Pad.pcpInput_size_polynomial,
+  MIPRE.TM.CookLevin.Pad.pcpProgram_time_le
+
+#guard_sorry_free MIPRE.SAT.PolyTimeFun.casesGate,
+  MIPRE.SAT.Circuit.lastInputValueProg,
+  MIPRE.SAT.Circuit.lastInputValue_range,
+  MIPRE.SAT.Circuit.gateBitsProg,
+  MIPRE.SAT.Circuit.evalBits_gateBits,
+  MIPRE.SAT.Circuit.circuitBitsProg,
+  MIPRE.SAT.Circuit.circuitBitsProg_apply,
+  MIPRE.SAT.Circuit.length_circuitBits,
+  MIPRE.SAT.Circuit.evalBits_circuitBits,
+  MIPRE.SAT.Circuit.evalBits_circuitBits_finite,
+  MIPRE.SAT.shoupBinField_charP,
+  MIPRE.SAT.shoupBinField_toBits_ofBits
+
+#guard_sorry_free MIPRE.LowDegree.eval_killCompl,
+  MIPRE.LowDegree.degreeOf_killCompl_le,
+  MIPRE.SAT.Circuit.inputRef_injective,
+  MIPRE.SAT.Circuit.routedConsistent_iff,
+  MIPRE.SAT.Circuit.eval_iff_routedConsistent,
+  MIPRE.SAT.Circuit.degreeOf_routedArith_le,
+  MIPRE.SAT.Circuit.eval_routedArith_iff,
+  MIPRE.SAT.Circuit.eval_routedArith_bool,
+  MIPRE.SAT.Circuit.degreeOf_finiteArith_le,
+  MIPRE.SAT.Circuit.eval_finiteArith_bool,
+  MIPRE.SAT.Circuit.eval_iff_exists_finiteArith
+
+#guard_sorry_free MIPRE.TM.CookLevin.Pad.formula5_circuit,
+  MIPRE.TM.CookLevin.Pad.describe,
+  MIPRE.TM.CookLevin.Pad.describe_wellFormed,
+  MIPRE.TM.CookLevin.Pad.describe_describes,
+  MIPRE.TM.CookLevin.Pad.innerDim_isPow,
+  MIPRE.TM.CookLevin.Pad.innerDim_le,
+  MIPRE.TM.CookLevin.Pad.two_mul_le_innerDim,
+  MIPRE.SAT.Circuit.padGatesProg,
+  MIPRE.SAT.Circuit.wellFormed_padGates,
+  MIPRE.SAT.Circuit.eval_padGates,
+  MIPRE.TM.CookLevin.Pad.describeExact,
+  MIPRE.TM.CookLevin.Pad.describeExact_wellFormed,
+  MIPRE.TM.CookLevin.Pad.describeExact_describes,
+  MIPRE.TM.CookLevin.Pad.describeExact_gateCount,
+  MIPRE.TM.CookLevin.Pad.describeExact_variables,
+  MIPRE.TM.CookLevin.Pad.outerDim_isPow,
+  MIPRE.TM.CookLevin.Pad.outerDim_polynomial,
+  MIPRE.TM.CookLevin.Pad.innerDim_add_bound_le_gateCount,
+  MIPRE.TM.CookLevin.Pad.paddingParams,
+  MIPRE.TM.CookLevin.Pad.paddingParams_apply
+
+#guard_sorry_free MIPRE.TM.CookLevin.Pad.pcpParamsProg,
+  MIPRE.TM.CookLevin.Pad.pcpParamsProg_apply,
+  MIPRE.TM.CookLevin.Pad.pcpParams_odd,
+  MIPRE.TM.CookLevin.Pad.pcpParams_field_large,
+  MIPRE.TM.CookLevin.Pad.pcpParams_inner_dvd,
+  MIPRE.TM.CookLevin.Pad.pcpParams_outer_dvd
+
+#guard_sorry_free MIPRE.LowDegree.exists_cubeZero_division,
+  MIPRE.LowDegree.exists_zero_basis
+
+-- Formula arithmetization and the two classical PCP polynomial tests.
+#guard_sorry_free MIPRE.SAT.Cnf5.sat_pad_iff,
+  MIPRE.SAT.Circuit.DescribesDecider.of_pad
+
+#guard_sorry_free MIPRE.SAT.Fml.eval_arith,
+  MIPRE.SAT.Fml.degreeOf_arith_le
+
+#guard_sorry_free MIPRE.SAT.PcpAlgebra.completeness,
+  MIPRE.SAT.PcpAlgebra.degreeOf_constraint_le,
+  MIPRE.SAT.PcpAlgebra.degreeOf_zeroCombination_le,
+  MIPRE.SAT.PcpAlgebra.identities_of_majority,
+  MIPRE.SAT.PcpAlgebra.clause_satisfied_of_identities,
+  MIPRE.SAT.PcpAlgebra.clause_decoded_of_identities,
+  MIPRE.LowDegree.eq_of_majority_agree,
+  MIPRE.LowDegree.eq_of_majority_subset
+
+#guard_sorry_free MIPRE.SAT.PcpAlgebra.degreeOf_liftAnswer_le,
+  MIPRE.SAT.PcpAlgebra.literal_product_degree_le,
+  MIPRE.SAT.PcpAlgebra.honest_constraint_degree_le,
+  MIPRE.SAT.PcpAlgebra.typedAccepts_ev_iff,
+  MIPRE.SAT.PcpAlgebra.exists_proof_of_satisfying_assignment,
+  MIPRE.SAT.PcpAlgebra.decoded_clause_of_majority
+
 -- blueprint `lem:group-algebra-selfdualization`: the self-dualization step of
 -- `lem:self-dual-basis`, in the group algebra.
 #guard_sorry_free MIPRE.LowDegree.exists_mul_involute_eq,
   MIPRE.LowDegree.mul_self_bijective,
-  MIPRE.LowDegree.exists_mul_involute_eq_of_charTwo
+  MIPRE.LowDegree.exists_mul_involute_eq_of_charTwo,
+  MIPRE.LowDegree.binarySquareRoot,
+  MIPRE.LowDegree.coeff_binarySquareRoot,
+  MIPRE.LowDegree.binarySquareRoot_mul_self,
+  MIPRE.LowDegree.binarySquareRoot_mul_involute
+
+-- The coefficient permutation is an actual polynomial-time program.
+#guard_sorry_free MIPRE.LowDegree.rootBitsProg,
+  MIPRE.LowDegree.rootBitsProg_time_le,
+  MIPRE.LowDegree.groupOfBits_rootBits,
+  MIPRE.LowDegree.rootBitsProg_square
+
+-- Effective polynomial-basis arithmetic, modulo only the existing Shoup axiom.
+#guard_sorry_free MIPRE.LowDegree.BinaryPolynomial.normalize_monic,
+  MIPRE.LowDegree.BinaryPolynomial.evalBits_xor,
+  MIPRE.LowDegree.BinaryPolynomial.evalBits_mulReduce,
+  MIPRE.LowDegree.BinaryPolynomial.xorBitsProg,
+  MIPRE.LowDegree.BinaryPolynomial.mulReduceProg,
+  MIPRE.LowDegree.BinaryPolynomial.shoupLowerCoeffs_length,
+  MIPRE.LowDegree.BinaryPolynomial.shoupLowerCoeffs_poly,
+  MIPRE.SAT.quotientBinField,
+  MIPRE.SAT.quotientBinField_toBits_ofBits,
+  MIPRE.SAT.quotientBinField_ofBits,
+  MIPRE.SAT.quotientBinField_add,
+  MIPRE.SAT.quotientBinField_mul,
+  MIPRE.SAT.shoupBinField,
+  MIPRE.SAT.shoupAdmissibleField,
+  MIPRE.SAT.shoupMulProg_time_le,
+  MIPRE.SAT.shoupMulProg_correct
 
 -- blueprint `lem:self-dual-basis-exists`: in characteristic two and odd degree a self-dual
 -- normal basis exists. Existence, not construction: `lem:self-dual-basis` still asserts an
@@ -547,6 +712,174 @@ tell you the guard is missing.
   MIPRE.stateSqNorm_sub_of_isometry,
   MIPRE.conjTranspose_mul_self_of_involution,
   MIPRE.exists_exactly_linear_close
+
+-- The complete classical PCP and its executable field tests.
+#guard_sorry_free MIPRE.SAT.BinField,
+  MIPRE.SAT.PcpParams,
+  MIPRE.SAT.PcpProof,
+  MIPRE.SAT.PcpProof.ev,
+  MIPRE.SAT.ViewFormat,
+  MIPRE.SAT.PcpDecider,
+  MIPRE.SAT.validProg_true_iff,
+  MIPRE.SAT.viewFormatProg_true_iff,
+  MIPRE.SAT.shoupRoot_equation,
+  MIPRE.SAT.shoupRoot_eval_toBits,
+  MIPRE.SAT.shoupRoot_eval_eq_iff,
+  MIPRE.SAT.PcpFieldTests.checksProg_true_iff,
+  MIPRE.SAT.PcpViewTests.checks_typed_iff,
+  MIPRE.TM.CookLevin.Pad.verifyPcp_reject_invalid,
+  MIPRE.TM.CookLevin.Pad.verifyPcp_time_le,
+  MIPRE.TM.CookLevin.Pad.verifyPcp_rawView_iff,
+  MIPRE.TM.CookLevin.Pad.classicalPcp_completeness,
+  MIPRE.TM.CookLevin.Pad.classicalPcp_soundness,
+  MIPRE.TM.CookLevin.Pad.classicalPcpDecider
+
+-- Effective inversion, Frobenius iteration, and trace.
+#guard_sorry_free MIPRE.LowDegree.BinaryPolynomial.powerBitsProg,
+  MIPRE.LowDegree.BinaryPolynomial.evalBits_powerBits,
+  MIPRE.LowDegree.BinaryPolynomial.evalBits_inverseBits,
+  MIPRE.SAT.shoupInvProg_correct,
+  MIPRE.SAT.shoupInvProg_time_le,
+  MIPRE.LowDegree.BinaryPolynomial.frobeniusTraceProg,
+  MIPRE.LowDegree.BinaryPolynomial.evalBits_frobeniusTrace,
+  MIPRE.LowDegree.BinaryPolynomial.evalBits_frobeniusTrace_trace,
+  MIPRE.SAT.shoupBinField_finrank,
+  MIPRE.SAT.shoupFrobeniusTraceProg_frobenius,
+  MIPRE.SAT.shoupFrobeniusTraceProg_period,
+  MIPRE.SAT.shoupTraceProg_correct,
+  MIPRE.SAT.shoupTraceProg_time_le
+
+-- Effective binary linear algebra and matrix inversion.
+#guard_sorry_free MIPRE.LowDegree.BinaryLinear.dotBits_vectorBits,
+  MIPRE.LowDegree.BinaryLinear.applyBits_matrixBits,
+  MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits,
+  MIPRE.LowDegree.BinaryLinear.transposeBits_matrixBits,
+  MIPRE.LowDegree.BinaryLinear.mulBits_matrixBits,
+  MIPRE.LowDegree.BinaryLinear.dotBitsProg,
+  MIPRE.LowDegree.BinaryLinear.applyBitsProg,
+  MIPRE.LowDegree.BinaryLinear.transposeBitsProg,
+  MIPRE.LowDegree.BinaryLinear.mulBitsProg,
+  MIPRE.LowDegree.BinaryLinear.reduceRowsProg,
+  MIPRE.LowDegree.BinaryLinear.reduceRows_rowBits,
+  MIPRE.LowDegree.BinaryLinear.represents_typedReduce,
+  MIPRE.LowDegree.BinaryLinear.basisRowsProg,
+  MIPRE.LowDegree.BinaryLinear.basisRowsProg_correct,
+  MIPRE.LowDegree.BinaryLinear.typedBasis_linearIndependent,
+  MIPRE.LowDegree.BinaryLinear.typedBasis_span,
+  MIPRE.LowDegree.BinaryLinear.typedBasis_length_le,
+  MIPRE.LowDegree.BinaryLinear.basisSolveProg_correct,
+  MIPRE.LowDegree.BinaryLinear.matrixSolveProg_correct,
+  MIPRE.LowDegree.BinaryLinear.matrixSolveProg_encoding,
+  MIPRE.LowDegree.BinaryLinear.inverseMatrixProg,
+  MIPRE.LowDegree.BinaryLinear.inverseMatrixProg_encoding,
+  MIPRE.LowDegree.BinaryLinear.inverseMatrixProg_correct,
+  MIPRE.LowDegree.BinaryLinear.mul_inverseMatrix,
+  MIPRE.LowDegree.BinaryLinear.inverseMatrix_mul
+
+-- Effective generators of binary matrix kernels.
+#guard_sorry_free MIPRE.LowDegree.BinaryLinear.kernelMap_range,
+  MIPRE.LowDegree.BinaryLinear.kernel_generators_span,
+  MIPRE.LowDegree.BinaryLinear.kernelGeneratorsProg,
+  MIPRE.LowDegree.BinaryLinear.kernelGeneratorsProg_encoding,
+  MIPRE.LowDegree.BinaryLinear.kernelGeneratorsProg_correct
+
+-- Effective field matrices and multiplication-table transport.
+#guard_sorry_free MIPRE.LowDegree.BinaryLinear.vectorBits_vectorValue,
+  MIPRE.SAT.shoupCoordinateEquiv_encoding,
+  MIPRE.SAT.shoupPowerBasis_encoding,
+  MIPRE.SAT.shoupMulProg_encoding,
+  MIPRE.SAT.fieldMapMatrixProg_correct,
+  MIPRE.SAT.shoupFrobeniusMatrixProg,
+  MIPRE.SAT.shoupFrobeniusMatrixProg_correct,
+  MIPRE.SAT.shoupFrobeniusMatrix_minpoly,
+  MIPRE.SAT.shoupFrobeniusMatrix_period,
+  MIPRE.SAT.shoupFrobeniusMatrix_squarefree,
+  MIPRE.SAT.shoupFrobeniusMatrixProg_time_le,
+  MIPRE.SAT.shoupTraceBitProg_correct,
+  MIPRE.SAT.shoupTraceGramProg,
+  MIPRE.SAT.shoupTraceGramProg_correct,
+  MIPRE.SAT.shoupTraceGram_surjective,
+  MIPRE.SAT.shoupInverseGramProg,
+  MIPRE.SAT.shoupInverseGramProg_correct,
+  MIPRE.SAT.shoupInBasisProg,
+  MIPRE.SAT.shoupInBasisProg_correct,
+  MIPRE.SAT.shoupMultiplicationTableProg,
+  MIPRE.SAT.shoupMultiplicationTableProg_correct,
+  MIPRE.SAT.shoupMultiplicationTableProg_time_le
+
+-- Effective self-dualization of a supplied normal basis.
+#guard_sorry_free MIPRE.Cost.recordIteratesProg,
+  MIPRE.Cost.recordIteratesProg_apply,
+  MIPRE.LowDegree.BinaryLinear.groupMatrixHom,
+  MIPRE.LowDegree.BinaryLinear.inverseMatrix_groupMatrix,
+  MIPRE.LowDegree.BinaryLinear.inverseRootMatrix_square,
+  MIPRE.LowDegree.BinaryLinear.inverseRootMatrix_gram,
+  MIPRE.LowDegree.BinaryLinear.circulantBitsProg_correct,
+  MIPRE.LowDegree.BinaryLinear.rootBitsProg_vectorBits,
+  MIPRE.LowDegree.BinaryLinear.inverseRootMatrixProg,
+  MIPRE.LowDegree.BinaryLinear.inverseRootMatrixProg_correct,
+  MIPRE.SAT.shoupTraceGram_normal_circulant,
+  MIPRE.SAT.shoupNormalGram_selfDualize,
+  MIPRE.SAT.shoupChangedVectors_normal,
+  MIPRE.SAT.shoupSelfDualBasis_selfDual,
+  MIPRE.SAT.shoupSelfDualBasis_normal,
+  MIPRE.SAT.shoupSelfDualizeProg,
+  MIPRE.SAT.shoupSelfDualizeProg_correct,
+  MIPRE.SAT.shoupSelfDualizeProg_time_le
+
+-- Effective normal element and complete self-dual normal basis algorithm.
+#guard_sorry_free MIPRE.LowDegree.PrimitiveBinaryComponent.exists_mul_eq,
+  MIPRE.LowDegree.splitAllComponents_primitive,
+  MIPRE.LowDegree.ComponentFamily.length_le_finrank,
+  MIPRE.LowDegree.BinaryLinear.groupFixedGeneratorsProg_correct,
+  MIPRE.LowDegree.BinaryLinear.groupComponents_primitive,
+  MIPRE.LowDegree.BinaryLinear.groupComponents_length_le,
+  MIPRE.LowDegree.BinaryLinear.groupComponentsProg,
+  MIPRE.LowDegree.BinaryLinear.groupComponentsProg_correct,
+  MIPRE.SAT.shoupFrobeniusAction_injective,
+  MIPRE.SAT.shoupProjectedVector_ne_zero,
+  MIPRE.SAT.shoupNormalElement_projection,
+  MIPRE.SAT.shoupNormalOrbitMap_injective,
+  MIPRE.SAT.shoupNormalBasis_normal,
+  MIPRE.SAT.shoupOrbitProg_correct,
+  MIPRE.SAT.shoupActionProg_correct,
+  MIPRE.SAT.shoupNormalElementProg_correct,
+  MIPRE.SAT.shoupNormalBasisProg,
+  MIPRE.SAT.shoupNormalBasisProg_correct
+#guard_sorry_free MIPRE.SAT.shoupSelfDualNormalBasis_selfDual,
+  MIPRE.SAT.shoupSelfDualNormalBasis_normal,
+  MIPRE.SAT.shoupSelfDualNormalBasisProg,
+  MIPRE.SAT.shoupSelfDualNormalBasisProg_correct,
+  MIPRE.SAT.shoupSelfDualNormalDataProg,
+  MIPRE.SAT.shoupSelfDualNormalDataProg_correct,
+  MIPRE.SAT.shoupSelfDualNormalDataProg_time_le,
+  MIPRE.SAT.effective_selfDualNormalBasis
+
+-- Introspection's linear-map Fourier formulas, commutation, twirl, and positive index.
+#guard_sorry_free MIPRE.Introspection.subspaceTrace_eq_zero_iff,
+  MIPRE.Introspection.sum_subspace_sign,
+  MIPRE.Introspection.linear_measurement_fourier,
+  MIPRE.Introspection.linear_measurement_fourier_inverse,
+  MIPRE.Introspection.linear_measurements_commute,
+  MIPRE.Introspection.twirlX_wZ,
+  MIPRE.Introspection.twirlZ_wX,
+  MIPRE.Introspection.delta_zero_index,
+  MIPRE.Introspection.two_le_exp_index_iff
+
+#guard_sorry_free MIPRE.Introspection.weyl_projectors_isPVM,
+  MIPRE.Introspection.linear_measurement_isPVM,
+  MIPRE.Introspection.joint_measurement_isPVM,
+  MIPRE.Introspection.sampling_hiding_isPVM
+
+#guard_sorry_free MIPRE.Introspection.linear_twirl_blocks,
+  MIPRE.Introspection.averagedBlock_posSemidef,
+  MIPRE.Introspection.sum_averagedBlock_eq_one,
+  MIPRE.Introspection.blockPOVM,
+  MIPRE.Introspection.linear_twirl_povm
+
+#guard_sorry_free MIPRE.Introspection.stateSqNorm_mul_of_isometry,
+  MIPRE.Introspection.unitaryTwirl_dist_le,
+  MIPRE.Introspection.unitaryTwirl_outcome_dist_le
 
 -- blueprint `lem:qld-combined-points`, the generic half: the Fourier dictionary between an
 -- `F_q`-valued measurement and its binary observables, the sandwich of two projective

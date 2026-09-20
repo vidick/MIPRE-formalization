@@ -508,7 +508,7 @@ theorem output_valStar_le (V : Verifier 7) (lam n : ℕ) (hB : V.IsBounded lam)
       (Introspection.ansBound I.C lam n) ≤ 1 - ε₁ := by
     by_contra hc
     push Not at hc
-    have hsound := I.soundness V lam n ε₁ hB hε₁0 hc
+    have hsound := I.soundness V lam n ε₁ hB (by omega) hε₁0 hc
     have hC₁' : (4 * I.a) ^ (1 / I.b) ≤ x := by
       have := Nat.le_ceil ((4 * I.a) ^ (1 / I.b))
       have : ((C₁ I : ℕ) : ℝ) ≤ n := by exact_mod_cast hC₁

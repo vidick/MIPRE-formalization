@@ -16,13 +16,22 @@ rest is formalized, and the route for what is not.
 | `IsSelfDualBasis`, `IsNormalBasis` | `MIPRE/Foundations/LowDegree/SelfDual.lean` | done |
 | the two `lem:downsize-field` identities | same | done (`coord_eq_trace`, `trace_mul_eq_dot`) |
 | a field of size `2^k` with a bit representation | `MIPRE/Foundations/SAT/AdmissibleField.lean` | done (`binFieldGalois`) |
+| canonical polynomial-basis fields, addition and multiplication | `LowDegree/BinaryPolynomial.lean`, `SAT/QuotientField.lean` | done, uniformly in `poly(k)`, modulo Shoup |
+| nonzero inversion, Frobenius iteration and trace | `LowDegree/Binary{Power,Inverse,Trace}.lean`, `SAT/FieldTrace.lean` | done, uniformly in `poly(k)`, modulo Shoup |
+| binary matrix operations, bases, consistent-system solves, inversion and kernel generators | `LowDegree/Binary{Linear,Elimination,Echelon,BasisProg,Basis,Solve,MatrixSolve,MatrixInverse,Kernel}.lean` | done, uniformly polynomial-time |
+| canonical linear coordinates, Frobenius matrix and squarefree minimal polynomial | `SAT/FieldCoordinates.lean`, `SAT/FrobeniusMatrix.lean` | done, with a polynomial-time matrix program |
+| trace Gram matrices, their inverses, and table transport in a supplied basis | `SAT/TraceGram.lean`, `SAT/BasisTransport.lean` | done, uniformly polynomial-time |
 | self-dualization in the group algebra | `MIPRE/Foundations/LowDegree/SelfDualize.lean` | done |
+| the binary cyclic group-algebra square-root program | `MIPRE/Foundations/LowDegree/BinarySquareRoot.lean` | done, with polynomial cost |
+| effective self-dualization of any supplied normal basis | `LowDegree/BinaryCirculant{,Prog}.lean`, `SAT/NormalGram.lean`, `SAT/EffectiveSelfDual.lean` | done, with exact output and polynomial cost |
 | a self-dual normal basis exists, `k` odd | `MIPRE/Foundations/LowDegree/NormalBasis.lean` | done (`exists_selfDualNormalBasis_two`) |
-| the `poly(k)` algorithm | --- | **open** |
+| primitive fixed-space projections and the normal element | `LowDegree/BinaryComponents{,Prog}.lean`, `SAT/NormalElement{,Prog}.lean` | done, deterministic and uniformly polynomial-time |
+| the complete `poly(k)` algorithm, including multiplication tables | `SAT/EffectiveNormalBasis.lean` | **done**, modulo Shoup |
 
-The blueprint's `\leanok` on `lem:self-dual-basis` waits on the one open row, because the
-lemma asserts an algorithm and not an existence. The existence half is
-`lem:self-dual-basis-exists`.
+The blueprint's `lem:self-dual-basis` now carries statement and proof `\leanok`.
+`effective_selfDualNormalBasis` identifies the exact encoded basis and multiplication
+tables printed by a fixed ambient program and bounds its runtime by a polynomial in
+the unary degree. The independent existence theorem remains available.
 
 ## The self-dualization step, and why it is short
 
@@ -90,29 +99,48 @@ What it does **not** give is any node of the ledger: the normal element is Mathl
 `IsGalois.normalBasis`, a theorem and not an algorithm, so node `1.1.6.1.6` is untouched, and
 nothing here runs in `poly(k)`.
 
-## What the algorithm still needs
+## Algorithmic stages
 
-This is the larger half, and it is the one the blueprint's `\leanok` waits on: everything
-above is existence, and `lem:self-dual-basis` asserts a `poly(k)` *algorithm* in the ambient
-cost model of `MIPRE/Foundations/Cost/`. The ledger's route, node by node:
+The complete algorithm now exists in the ambient cost model of
+`MIPRE/Foundations/Cost/`. Its implementation follows these ledger stages, using direct
+fixed-space projections in place of an explicit factorization output:
 
-* `1.1.6.1.2` --- the `𝔽₂[T]/(f)` model with addition, multiplication, inversion and the
-  Frobenius matrix, as `PolyTimeFun`s, on top of Shoup's `f`;
-* `1.1.6.1.3` --- the trace form, `F^k = I`, and `tr(1) = 1` for odd `k`;
-* `1.1.6.1.4` --- binary squarefree factorization;
-* `1.1.6.1.5` --- the minimal polynomial `X^k - 1` of Frobenius, and its squarefreeness for
-  odd `k`;
-* `1.1.6.1.6` --- the normal element, constructively (Mathlib's normal basis theorem gives
-  existence, not construction);
-* `1.1.6.1.7`, `1.1.6.1.8` --- self-dualization, whose *mathematics* is now done; what
-  remains is computing the square root of `c⁻¹` in `poly(k)`, which is a power in the odd
-  order of `F[G]^×` and needs the order, hence the factorization of `X^k - 1`;
-* `1.1.6.1.9` --- table transport;
-* `1.1.6.1.10` --- the interface to aim at.
+* `1.1.6.1.2` --- the `𝔽₂[T]/(f)` model now has canonical coefficient bits and uniform
+  addition/multiplication programs, including Shoup's modulus construction. Binary
+  exponentiation and nonzero inversion are now implemented with correctness and
+  polynomial bounds. Frobenius iteration and trace computation are also implemented;
+  the canonical binary linear coordinates and Frobenius matrix are now implemented;
+* `1.1.6.1.3` --- the trace form and its effective Gram matrix and inverse are done;
+  `F^k = I` is proved. The specialized odd-degree `tr(1) = 1` statement is not yet exposed;
+* `1.1.6.1.4` --- no standalone factorization program is supplied. Fixed-space splitting
+  directly constructs primitive cyclic-algebra projections, which suffice for the consumer;
+* `1.1.6.1.5` --- done: the effective Frobenius matrix has minimal polynomial
+  `X^k - 1`, using Mathlib's Frobenius theorem, and it is squarefree for odd `k`;
+* `1.1.6.1.6` --- done: the first nonzero polynomial-basis image under each primitive
+  projection is selected and their sum is proved normal. Faithfulness uses independence
+  of the Frobenius automorphisms; the program does not choose an abstract normal basis;
+* `1.1.6.1.7`, `1.1.6.1.8` --- self-dualization. The square-root step over the binary
+  group algebra is the coefficient permutation `b(g) = u(g + g)` for `u = c⁻¹`.
+  The implementation and correctness statements are `binarySquareRoot` and
+  `binarySquareRoot_mul_self` in `SelfDualize.lean` (added in the classical PCP campaign).
+  `BinarySquareRoot.lean` now implements this permutation as `rootBitsProg`, with
+  correctness (`rootBitsProg_square`) and a polynomial bound in vector length
+  (`rootBitsProg_time_le`). The trace Gram inverse is now computed by
+  `shoupInverseGramProg`. The first-column square root is connected to the matrix
+  inverse in `BinaryCirculant{,Prog}.lean`. `shoupSelfDualizeProg` now computes the
+  complete change of basis: its exact output is proved self-dual and normal, and
+  its runtime is polynomial in `k`. This whole step is done for a supplied normal basis;
+* `1.1.6.1.9` --- done for any supplied basis: `shoupInBasisProg` computes its exact
+  coordinates and `shoupMultiplicationTableProg` prints all `k³` table bits with a
+  polynomial runtime bound in `k`;
+* `1.1.6.1.10` --- done: `shoupSelfDualNormalDataProg` and
+  `effective_selfDualNormalBasis` compose the unary-degree constructor and table output.
 
-Note that the short existence argument does **not** shorten the algorithm by as much: the
-square root is unique and cheap to characterize but is computed by exponentiation, and
-bounding that by `poly(k)` still wants the structure of `F[G]`.
+Correction, 2026-09-20: the earlier version proposed exponentiation using the order of
+the unit group to compute this square root. The binary coefficient formula makes that
+unnecessary: squaring fixes each coefficient and doubles its index. Factorization may
+still be used in the normal-element construction; it is not needed for this square-root
+step. This does not remove the remaining effective-field and normal-element obligations.
 
 ## Deliberately not attempted
 

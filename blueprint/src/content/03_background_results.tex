@@ -3530,10 +3530,27 @@ also what collapses the Pauli phase index $G_E \downsize(b)$ to $\downsize(b)$ a
 \label{lem:self-dual-basis}
 \uses{def:self-dual-basis}
 \ledgernode{1.1.6, 1.1.6.1, 1.1.6.1.1}
+\lean{MIPRE.SAT.shoupSelfDualNormalBasis_selfDual,
+  MIPRE.SAT.shoupSelfDualNormalBasis_normal,
+  MIPRE.SAT.shoupSelfDualNormalBasisProg,
+  MIPRE.SAT.shoupSelfDualNormalBasisProg_correct,
+  MIPRE.SAT.shoupSelfDualNormalDataProg,
+  MIPRE.SAT.shoupSelfDualNormalDataProg_correct,
+  MIPRE.SAT.shoupSelfDualNormalDataProg_time_le,
+  MIPRE.SAT.effective_selfDualNormalBasis}
+\leanok
 There is a deterministic algorithm that, given an odd integer $k > 0$, outputs in time
 $\poly(k)$ a self-dual normal basis of $\F_{2^k}$ over $\F_2$ together with its
 multiplication tables.
 \end{lemma}
+\begin{proof}
+\leanok
+Construct the normal basis by Lemma~\ref{lem:effective-normal-element}, apply
+Lemma~\ref{lem:effective-normal-selfdualization}, and transport the multiplication
+table by Lemma~\ref{lem:effective-field-matrices}. The composed ambient program
+has unary degree as its only input and prints both the basis vectors and all
+table coefficients. Its source runtime is bounded by a fixed polynomial in $k$.
+\end{proof}
 
 \paragraph{Source.} Shoup's deterministic irreducible-polynomial
 construction~\cite{Sho90}, and then the companion campaign's own constructions. The
@@ -3573,36 +3590,30 @@ $\poly(\log k)$ bound the contract disclaims. It is an \texttt{axiom} rather tha
 formalize, and because an axiom appears by name in \texttt{\#print axioms} of everything that
 rests on it, making the dependency machine-checkable rather than a matter of reading prose.
 
-The rest of the lemma --- the $\F_2[T]/(f)$ model, the normal basis, the self-dualization, the
-coordinate matrix and the multiplication tables, all in $\poly(k)$ --- is not yet formalized.
-Node $1.1.6.1.10$ is the interface to aim at, and its sixteen siblings are a step-by-step
-route: binary squarefree factorization ($1.1.6.1.4$), the minimal polynomial $X^k - 1$ of
-Frobenius and its squarefreeness for odd $k$ ($1.1.6.1.5$), the normal element ($1.1.6.1.6$),
-the circulant Gram self-dualization ($1.1.6.1.7$, $1.1.6.1.8$) and table transport
-($1.1.6.1.9$). Mathlib's normal basis theorem \texttt{IsGalois.normalBasis} gives the
-existence half of the normal element, though not the construction.
-
-Three lemmas below stand beside it, and \texttt{planning/self-dual-basis.md} records the
-route for the rest: Lemma~\ref{lem:group-algebra-selfdualization}, the self-dualization step;
-Lemma~\ref{lem:self-dual-basis-exists}, which assembles it into the statement that a self-dual
-normal basis \emph{exists} for odd $k$; and Lemma~\ref{lem:admissible-field-exists}, which
-inhabits the field interface \texttt{thm:pcp-decider} takes as a parameter. None of them is the
-lemma: the first two are existence and not construction, and the third is deliberately weaker,
-as its comments say. Everything left is the algorithmics --- the $\F_2[T]/(f)$ cost model, the
-constructive normal element, the square root in $\poly(k)$, and table transport.
+The complete effective construction is now formalized in
+\texttt{SAT/EffectiveNormalBasis.lean}. It composes the verified normal-element,
+inverse-Gram self-dualization and multiplication-table programs. Fixed-space
+separation is performed directly in the cyclic algebra, as detailed in
+Lemma~\ref{lem:effective-normal-element}; this avoids materializing polynomial
+factors while implementing the same primitive-projection argument. The existing
+Shoup axiom remains the only nonstandard assumption.
 
 \begin{lemma}[Self-dualization in the group algebra]
 \label{lem:group-algebra-selfdualization}
 \ledgernode{1.1.6.1.7, 1.1.6.1.8}
 \uses{def:self-dual-basis}
 \lean{MIPRE.LowDegree.exists_mul_involute_eq, MIPRE.LowDegree.mul_self_bijective,
-  MIPRE.LowDegree.exists_mul_involute_eq_of_charTwo}
+  MIPRE.LowDegree.exists_mul_involute_eq_of_charTwo,
+  MIPRE.LowDegree.binarySquareRoot, MIPRE.LowDegree.coeff_binarySquareRoot,
+  MIPRE.LowDegree.binarySquareRoot_mul_self, MIPRE.LowDegree.binarySquareRoot_mul_involute}
 \leanok
 Let $R$ be a commutative ring on which $x \mapsto x^2$ is a bijection and let $\tau$ be a ring
 automorphism of $R$. Then every $u \in R$ with $\tau(u) = u$ is of the form $a \cdot \tau(a)$.
 
 Squaring \emph{is} a bijection of the group algebra $\F[G]$ when $\F$ is a finite field of
 characteristic two and $G$ is a finite abelian group of odd order.
+For $\F=\F_2$, its inverse has the explicit coefficient formula $b(g)=u(g+g)$.
+This $b$ satisfies $b^2=u$, and $b\tau(b)=u$ whenever $\tau(u)=u$.
 \end{lemma}
 
 \begin{proof}
@@ -3616,6 +3627,9 @@ $\delta_g r$ it is $\delta_{g + g} r^2$. Doubling is injective on $G$: if $(a - 
 $\abs{G}$ is odd. So the coefficient of $x^2$ at $g + g$ is the square of the coefficient of $x$
 at $g$, and $x^2 = 0$ forces $x = 0$. Squaring is then injective, because $(x - y)^2 = x^2 -
 y^2$ in characteristic two, and injective implies bijective on a finite set.
+Over $\F_2$ the coefficients are fixed by squaring, so the displayed coefficient
+permutation gives the square root directly. The following lemma implements that
+permutation in the ambient cost model.
 \end{proof}
 
 \paragraph{Comments.} This is the self-dualization step of Lemma~\ref{lem:self-dual-basis}, and
@@ -3634,6 +3648,30 @@ What the lemma does \emph{not} do is assemble a basis: the group algebra must be
 $\F_{2^k}$, the Gram identity must be proved, and $c$ must be shown to be a unit. Those three
 are bookkeeping, and Lemma~\ref{lem:self-dual-basis-exists} now carries them out; the algorithm
 is a separate matter again.
+
+\begin{lemma}[The binary square-root program]
+\label{lem:binary-square-root-program}
+\ledgernode{1.1.6.1.7,1.1.6.1.8}
+\uses{lem:group-algebra-selfdualization}
+\lean{MIPRE.LowDegree.rootBitsProg, MIPRE.LowDegree.rootBitsProg_time_le,
+  MIPRE.LowDegree.groupOfBits_rootBits, MIPRE.LowDegree.rootBitsProg_square}
+\leanok
+For odd $k$, the square-root permutation on the coefficient vector of
+$\F_2[\mathbb{Z}/k\mathbb{Z}]$ is computed by one uniform ambient program in
+time polynomial in $k$. The output vector has length $k$ and represents a
+square root of the input group-algebra element.
+\end{lemma}
+\begin{proof}
+\leanok
+Split the list into coefficients in even positions and coefficients in odd
+positions, then append those lists. At position $i$ this reads the coefficient
+at $2i$ modulo $k$. A size-bounded fold implements the split. The input encoding
+has size at most $4k+1$, giving the stated polynomial bound. The preceding
+lemma supplies the algebraic identity.
+\end{proof}
+\paragraph{Scope.} This completes the square-root operation only. Computing
+the normal element, the inverse Gram element and the transported field tables
+remains part of Lemma~\ref{lem:self-dual-basis}.
 
 \begin{lemma}[Existence of a self-dual normal basis]
 \label{lem:self-dual-basis-exists}
@@ -3686,6 +3724,294 @@ that the short self-dualization argument assembles. The formalization indexes th
 by $G$ itself rather than by $\mathbb{Z}/k$, which is what makes $\mathrm{ofAlg}$ the inverse of
 Mathlib's \texttt{normalBasis.repr} on the nose; the \texttt{CommGroup} instance comes from
 cyclicity, supplied locally.
+
+\begin{lemma}[Effective polynomial-basis field arithmetic]
+\label{lem:effective-binary-field-arithmetic}
+\ledgernode{1.1.6.1.2}
+\lean{MIPRE.LowDegree.BinaryPolynomial.normalize_monic,
+  MIPRE.LowDegree.BinaryPolynomial.evalBits_xor,
+  MIPRE.LowDegree.BinaryPolynomial.evalBits_mulReduce,
+  MIPRE.LowDegree.BinaryPolynomial.xorBitsProg,
+  MIPRE.LowDegree.BinaryPolynomial.mulReduceProg,
+  MIPRE.LowDegree.BinaryPolynomial.shoupLowerCoeffs_length,
+  MIPRE.LowDegree.BinaryPolynomial.shoupLowerCoeffs_poly,
+  MIPRE.SAT.quotientBinField,
+  MIPRE.SAT.quotientBinField_toBits_ofBits,
+  MIPRE.SAT.quotientBinField_ofBits,
+  MIPRE.SAT.quotientBinField_add, MIPRE.SAT.quotientBinField_mul,
+  MIPRE.SAT.shoupBinField, MIPRE.SAT.shoupAdmissibleField,
+  MIPRE.SAT.shoupMulProg_time_le, MIPRE.SAT.shoupMulProg_correct}
+\leanok
+For a monic irreducible binary polynomial $f$ of degree $k$, its quotient field
+has a canonical $k$-bit power-basis representation. Uniform ambient programs on
+coefficient lists implement addition and multiplication in that field.
+Assuming the declared Shoup construction, one uniform multiplication program
+also constructs the modulus from unary $k$, and runs in time polynomial in $k$
+on $k$-bit operands. This supplies a field family for every admissible odd $k$.
+\end{lemma}
+\begin{proof}
+\leanok
+XOR implements addition. Shift a coefficient vector and, when its highest bit
+is one, XOR the lower coefficients of the monic modulus. Horner multiplication
+uses this reduction after each shift. The accumulator length never increases,
+so the ambient fold has a polynomial size and time bound. Horner evaluation
+at a root of $f$ proves correctness, and the quotient's power basis proves
+that correctly sized bit vectors are canonical. Normalize Shoup's output by
+taking its first $k$ coefficients and treating the leading monic coefficient
+implicitly. Compose the programs; the encoded input has size at most $10k+5$.
+\end{proof}
+\paragraph{Scope.} This is the addition and multiplication part of the
+effective-field node. Lemma~\ref{lem:effective-field-inverse-trace} supplies element
+inversion and trace computation. Matrix algorithms, the normal-element construction
+and transport to a self-dual normal basis remain open.
+The Shoup assumption is exactly the existing named axiom; no new axiom is added.
+
+\begin{lemma}[Effective inversion, Frobenius iteration and trace]
+\label{lem:effective-field-inverse-trace}
+\ledgernode{1.1.6.1.2,1.1.6.1.3}
+\uses{lem:effective-binary-field-arithmetic}
+\lean{MIPRE.LowDegree.BinaryPolynomial.powerBitsProg,
+  MIPRE.LowDegree.BinaryPolynomial.evalBits_powerBits,
+  MIPRE.LowDegree.BinaryPolynomial.evalBits_inverseBits,
+  MIPRE.SAT.shoupInvProg_correct,
+  MIPRE.SAT.shoupInvProg_time_le,
+  MIPRE.LowDegree.BinaryPolynomial.frobeniusTraceProg,
+  MIPRE.LowDegree.BinaryPolynomial.evalBits_frobeniusTrace,
+  MIPRE.LowDegree.BinaryPolynomial.evalBits_frobeniusTrace_trace,
+  MIPRE.SAT.shoupBinField_finrank,
+  MIPRE.SAT.shoupFrobeniusTraceProg_frobenius,
+  MIPRE.SAT.shoupFrobeniusTraceProg_period,
+  MIPRE.SAT.shoupTraceProg_correct,
+  MIPRE.SAT.shoupTraceProg_time_le}
+\leanok
+Uniform ambient programs compute binary exponentiation, inversion of nonzero
+field elements, iterated Frobenius, and the trace in the Shoup polynomial-basis
+field. Inversion and trace computation, including construction of the modulus,
+take polynomial time in the unary extension degree $k$ on $k$-bit operands.
+After $k$ squarings an element returns to itself, and the sum of its first $k$
+Frobenius iterates is its algebraic trace embedded in the extension field.
+\end{lemma}
+\begin{proof}
+\leanok
+Binary exponentiation reads the exponent bit by bit, squaring the current power
+and multiplying the accumulator when the bit is one. For a nonzero operand use
+the exponent $2^k-2$, constructed directly as a $k$-bit string. Fixed-width
+accumulators give a polynomial bound even on malformed inputs. A second loop
+squares its current element and XORs it into an accumulator. Induction identifies
+the accumulated sum, and the finite-field trace formula identifies it with the
+algebraic trace. The concrete programs preserve the canonical quotient encoding.
+\end{proof}
+\paragraph{Scope.} These are element operations. Effective matrix construction,
+Lemma~\ref{lem:effective-normal-element} constructs the normal element, and
+Lemma~\ref{lem:effective-normal-selfdualization} supplies the effective self-dualizing
+basis change. They are composed in Lemma~\ref{lem:self-dual-basis}. Lemma~\ref{lem:effective-field-matrices} supplies the Frobenius matrix,
+inverse Gram computation and multiplication-table transport in any supplied basis. Lemma~\ref{lem:effective-binary-linear-algebra}
+supplies the binary matrix operations, elimination and solves.
+
+\begin{lemma}[Effective binary matrix arithmetic and elimination]
+\label{lem:effective-binary-linear-algebra}
+\ledgernode{1.1.6.1.2,1.1.6.1.9}
+\lean{MIPRE.LowDegree.BinaryLinear.dotBits_vectorBits,
+  MIPRE.LowDegree.BinaryLinear.applyBits_matrixBits,
+  MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits,
+  MIPRE.LowDegree.BinaryLinear.transposeBits_matrixBits,
+  MIPRE.LowDegree.BinaryLinear.mulBits_matrixBits,
+  MIPRE.LowDegree.BinaryLinear.dotBitsProg,
+  MIPRE.LowDegree.BinaryLinear.applyBitsProg,
+  MIPRE.LowDegree.BinaryLinear.transposeBitsProg,
+  MIPRE.LowDegree.BinaryLinear.mulBitsProg,
+  MIPRE.LowDegree.BinaryLinear.reduceRowsProg,
+  MIPRE.LowDegree.BinaryLinear.reduceRows_rowBits,
+  MIPRE.LowDegree.BinaryLinear.represents_typedReduce,
+  MIPRE.LowDegree.BinaryLinear.basisRowsProg,
+  MIPRE.LowDegree.BinaryLinear.basisRowsProg_correct,
+  MIPRE.LowDegree.BinaryLinear.typedBasis_linearIndependent,
+  MIPRE.LowDegree.BinaryLinear.typedBasis_span,
+  MIPRE.LowDegree.BinaryLinear.typedBasis_length_le,
+  MIPRE.LowDegree.BinaryLinear.basisSolveProg_correct,
+  MIPRE.LowDegree.BinaryLinear.matrixSolveProg_correct,
+  MIPRE.LowDegree.BinaryLinear.matrixSolveProg_encoding,
+  MIPRE.LowDegree.BinaryLinear.inverseMatrixProg,
+  MIPRE.LowDegree.BinaryLinear.inverseMatrixProg_encoding,
+  MIPRE.LowDegree.BinaryLinear.inverseMatrixProg_correct,
+  MIPRE.LowDegree.BinaryLinear.mul_inverseMatrix,
+  MIPRE.LowDegree.BinaryLinear.inverseMatrix_mul,
+  MIPRE.LowDegree.BinaryLinear.kernelMap_range,
+  MIPRE.LowDegree.BinaryLinear.kernel_generators_span,
+  MIPRE.LowDegree.BinaryLinear.kernelGeneratorsProg,
+  MIPRE.LowDegree.BinaryLinear.kernelGeneratorsProg_encoding,
+  MIPRE.LowDegree.BinaryLinear.kernelGeneratorsProg_correct}
+\leanok
+Uniform polynomial-time ambient programs compute binary vector addition and dot
+products, matrix application, transposition and multiplication, a basis of the
+span of a supplied family, solutions of consistent binary linear systems,
+inverses of nonsingular binary matrices, and generators of matrix kernels. Explicit output dimensions are supplied
+in unary. Basis rows retain coefficient certificates in the original family;
+the returned vectors are independent, span exactly that family, and number at
+most the ambient dimension. Inverse output uses canonical binary coordinates
+and satisfies both multiplication identities.
+\end{lemma}
+\begin{proof}
+\leanok
+Reduce each candidate against the stored pivots, XORing its coefficient certificate
+at every step, and append a nonzero remainder at its first nonzero coordinate.
+Later rows vanish at every earlier pivot. This triangular invariant proves
+independence; reduction preserves membership in every subspace containing the
+stored rows, which proves equality of spans. Reducing a target with an initially
+zero certificate gives its coefficients in the original generating family.
+Apply this solver to the columns of a matrix and to each standard basis vector
+to construct an inverse. Each reduction preserves or shrinks both row widths,
+and insertion adds a row of size bounded by the candidate's size. These bounds
+prove polynomial runtime on all raw inputs, including malformed ones.
+\end{proof}
+Reducing the graph of the original matrix map and retaining the certificate
+component gives a linear projection onto its kernel. Its images of the standard
+basis are the computed kernel generators; they number exactly the input dimension
+and may include zero or dependent vectors.
+\paragraph{Scope.} The normal-element construction remains separate. These programs
+supply the kernels, solves and matrix inverse needed by that construction.
+The field-matrix applications are assembled in Lemma~\ref{lem:effective-field-matrices}.
+
+\begin{lemma}[Effective Frobenius, trace Gram matrices and table transport]
+\label{lem:effective-field-matrices}
+\ledgernode{1.1.6.1.2,1.1.6.1.3,1.1.6.1.5,1.1.6.1.7,1.1.6.1.9}
+\lean{MIPRE.LowDegree.BinaryLinear.vectorBits_vectorValue,
+  MIPRE.SAT.shoupCoordinateEquiv_encoding,
+  MIPRE.SAT.shoupPowerBasis_encoding,
+  MIPRE.SAT.shoupMulProg_encoding,
+  MIPRE.SAT.fieldMapMatrixProg_correct,
+  MIPRE.SAT.shoupFrobeniusMatrixProg,
+  MIPRE.SAT.shoupFrobeniusMatrixProg_correct,
+  MIPRE.SAT.shoupFrobeniusMatrix_minpoly,
+  MIPRE.SAT.shoupFrobeniusMatrix_period,
+  MIPRE.SAT.shoupFrobeniusMatrix_squarefree,
+  MIPRE.SAT.shoupFrobeniusMatrixProg_time_le,
+  MIPRE.SAT.shoupTraceBitProg_correct,
+  MIPRE.SAT.shoupTraceGramProg,
+  MIPRE.SAT.shoupTraceGramProg_correct,
+  MIPRE.SAT.shoupTraceGram_surjective,
+  MIPRE.SAT.shoupInverseGramProg,
+  MIPRE.SAT.shoupInverseGramProg_correct,
+  MIPRE.SAT.shoupInBasisProg,
+  MIPRE.SAT.shoupInBasisProg_correct,
+  MIPRE.SAT.shoupMultiplicationTableProg,
+  MIPRE.SAT.shoupMultiplicationTableProg_correct,
+  MIPRE.SAT.shoupMultiplicationTableProg_time_le}
+\leanok
+The canonical Shoup-field coordinates form a binary linear equivalence. Uniform
+polynomial-time ambient programs construct the binary Frobenius matrix, the trace
+Gram matrix of a supplied family, its inverse when that family is a basis,
+and coordinates and multiplication tables in any supplied basis. The Frobenius
+matrix has minimal polynomial $X^k-1$, has $k$th power equal to the identity, and
+has squarefree minimal polynomial when $k$ is odd. Constructing the Frobenius
+matrix and printing all $k^3$ multiplication-table bits take polynomial time in $k$.
+\end{lemma}
+\begin{proof}
+\leanok
+Canonical encoding and decoding identify field vectors with binary coordinates.
+Evaluate a linear map on the standard coordinate vectors to compute its matrix;
+apply this to squaring. Transport Mathlib's Frobenius minimal-polynomial theorem
+through the basis matrix equivalence. Extract the binary trace from its field
+encoding, then evaluate it on each pairwise product. Nondegeneracy of the finite
+field trace form makes the Gram matrix of a basis nonsingular. Binary elimination
+computes its inverse and the coordinates of every basis-vector product. The
+encoded size of a supplied basis is quadratic in $k$, so the ambient polynomial
+bounds give the stated source bounds.
+\end{proof}
+\paragraph{Scope.} These programs consume a supplied basis. The self-dualizing
+basis change is assembled in Lemma~\ref{lem:effective-normal-selfdualization};
+Lemma~\ref{lem:effective-normal-element} constructs the initial normal element.
+
+\begin{lemma}[Effective normal element by fixed-space projections]
+\label{lem:effective-normal-element}
+\ledgernode{1.1.6.1.6}
+\lean{MIPRE.LowDegree.PrimitiveBinaryComponent.exists_mul_eq,
+  MIPRE.LowDegree.splitAllComponents_primitive,
+  MIPRE.LowDegree.ComponentFamily.length_le_finrank,
+  MIPRE.LowDegree.BinaryLinear.groupFixedGeneratorsProg_correct,
+  MIPRE.LowDegree.BinaryLinear.groupComponents_primitive,
+  MIPRE.LowDegree.BinaryLinear.groupComponents_length_le,
+  MIPRE.LowDegree.BinaryLinear.groupComponentsProg,
+  MIPRE.LowDegree.BinaryLinear.groupComponentsProg_correct,
+  MIPRE.SAT.shoupFrobeniusAction_injective,
+  MIPRE.SAT.shoupProjectedVector_ne_zero,
+  MIPRE.SAT.shoupNormalElement_projection,
+  MIPRE.SAT.shoupNormalOrbitMap_injective,
+  MIPRE.SAT.shoupNormalBasis_normal,
+  MIPRE.SAT.shoupOrbitProg_correct,
+  MIPRE.SAT.shoupActionProg_correct,
+  MIPRE.SAT.shoupNormalElementProg_correct,
+  MIPRE.SAT.shoupNormalBasisProg,
+  MIPRE.SAT.shoupNormalBasisProg_correct}
+\leanok
+For odd $k>0$, a deterministic ambient program, with unary degree as its only
+input, outputs the polynomial-basis encodings of a normal basis of the Shoup field.
+Its runtime is polynomial in $k$.
+\end{lemma}
+\begin{proof}
+\leanok
+In $\F_2[C_k]$, compute generators of the fixed space of squaring by binary
+elimination. Starting from $1$, split each component by a fixed generator $b$
+into $eb$ and $e(1-b)$, omitting zeros. The remaining components are nonzero
+orthogonal idempotents summing to $1$, so there are at most $k$. Spanning the
+fixed space makes them primitive. Odd $k$ makes squaring bijective, and every
+nonzero element supported on a primitive component has an inverse there.
+
+Let the cyclic algebra act on the quotient field by Frobenius. Independence of
+distinct field automorphisms makes this action faithful. For each component,
+scan the polynomial basis and select its first nonzero projected vector. Their
+sum has trivial annihilator: applying a component and its inverse would otherwise
+kill its selected nonzero vector. Its Frobenius orbit is therefore a basis.
+All scans, kernel computations, cyclic products and orbit computations are
+implemented by polynomial-time programs. A dimension cap bounds component lists
+also on malformed inputs and is proved inert on valid component families.
+\end{proof}
+\paragraph{Implementation.} This performs the paper's fixed-space separation
+directly in the cyclic algebra. It constructs the CRT projections without
+printing polynomial factors or calling polynomial gcd; no standalone binary
+squarefree-factorization algorithm is claimed.
+
+\begin{lemma}[Effective self-dualization of a supplied normal basis]
+\label{lem:effective-normal-selfdualization}
+\ledgernode{1.1.6.1.7,1.1.6.1.8}
+\lean{MIPRE.Cost.recordIteratesProg,
+  MIPRE.Cost.recordIteratesProg_apply,
+  MIPRE.LowDegree.BinaryLinear.groupMatrixHom,
+  MIPRE.LowDegree.BinaryLinear.inverseMatrix_groupMatrix,
+  MIPRE.LowDegree.BinaryLinear.inverseRootMatrix_square,
+  MIPRE.LowDegree.BinaryLinear.inverseRootMatrix_gram,
+  MIPRE.LowDegree.BinaryLinear.circulantBitsProg_correct,
+  MIPRE.LowDegree.BinaryLinear.rootBitsProg_vectorBits,
+  MIPRE.LowDegree.BinaryLinear.inverseRootMatrixProg,
+  MIPRE.LowDegree.BinaryLinear.inverseRootMatrixProg_correct,
+  MIPRE.SAT.shoupTraceGram_normal_circulant,
+  MIPRE.SAT.shoupNormalGram_selfDualize,
+  MIPRE.SAT.shoupChangedVectors_normal,
+  MIPRE.SAT.shoupSelfDualBasis_selfDual,
+  MIPRE.SAT.shoupSelfDualBasis_normal,
+  MIPRE.SAT.shoupSelfDualizeProg,
+  MIPRE.SAT.shoupSelfDualizeProg_correct,
+  MIPRE.SAT.shoupSelfDualizeProg_time_le}
+\leanok
+Given the polynomial-basis encodings of any normal basis in the degree-$k$ Shoup
+field, for odd $k$, a uniform deterministic polynomial-time ambient program
+outputs the canonical encodings of a self-dual normal basis.
+\end{lemma}
+\begin{proof}
+\leanok
+The normal Gram matrix is the circulant determined by its first column. The
+regular representation embeds the binary cyclic group algebra into matrices,
+and the inverse of a nonsingular circulant remains circulant. Read the computed
+inverse's first column at doubled indices, then print its circulant matrix $H$.
+The coefficient square-root identity gives $H^2=G^{-1}$; symmetry and commutation
+give $H^{\mathsf T}GH=I$. Apply $H$ to the supplied basis columns. The identity
+Gram matrix proves independence, and a circulant change of coordinates preserves
+the Frobenius orbit. All matrix constructions and the final change of basis are
+implemented with polynomial runtime in $k$.
+\end{proof}
+\paragraph{Scope.} This constructs a self-dual normal basis from a supplied normal
+basis. Lemma~\ref{lem:effective-normal-element} supplies that basis from unary $k$,
+and Lemma~\ref{lem:self-dual-basis} composes the complete algorithm.
 
 \begin{lemma}[An admissible field with a bit representation]
 \label{lem:admissible-field-exists}

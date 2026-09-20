@@ -154,6 +154,11 @@ theorem coded_eq (g : MvPolynomial (Fin m) F) (y : Fin m → Bool) :
     simpa only [coded, codedOn, if_pos h] using hv
   · exact Or.inl (by simp [coded, codedOn, h])
 
+/-- Decoding preserves a polynomial evaluation that already equals a Boolean value. -/
+theorem coded_eq_of_eval_eq_ofBool (g : MvPolynomial (Fin m) F) (y : Fin m → Bool)
+    (b : Bool) (h : eval (pt y) g = ofBool b) : coded g y = ofBool b := by
+  cases b <;> simp [coded, codedOn, h, ofBool]
+
 theorem coded_ldEnc_ofBool (a : (Fin m → Bool) → Bool) :
     coded (ldEnc fun y => (ofBool (a y) : F)) = fun y => ofBool (a y) :=
   codedOn_ldEnc fun y => by cases h : a y <;> simp [ofBool]
