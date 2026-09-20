@@ -122,8 +122,9 @@ corrections found while proving it, and the design of the adapter. Blueprint:
 
 What is still open here, and is not small:
 
-* **`ldc > 1`**, which is `lem:lidt-ldc` and the paper's Steps 1–5. Every use of the seeded
-  theorem in chapter 3 is at `ldc = 1`, so this is not on the critical path, but
+* **`ldc > 1`**, which is `lem:lidt-ldc` and the paper's Steps 1–5. QLD uses only `ldc = 1`, so this is not on its critical path.
+  Answer reduction requires `(q,m′,d,m′+6)`, so its supply path does require
+  this extension. In particular,
   `thm:lidt-cl-soundness` as stated is not proved without it.
 * **The four lemmas of the paper's route**, which this route certifies and does not touch. They
   remain formalization targets for anyone who wants the tensor-code route, and

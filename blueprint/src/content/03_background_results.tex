@@ -646,7 +646,7 @@ Lemma~\ref{lem:lidt-test-transfer} consumes.
 \begin{theorem}[Quantum soundness of the seeded CL test]
 \label{thm:lidt-cl-soundness}
 \ledgernode{1.2.1}
-\uses{def:lidt-cl,lem:lidt-derandomize,lem:lidt-ldc,def:inconsistency}
+\uses{def:lidt-cl,lem:lidt-ldc,def:inconsistency}
 There are universal constants $a\geq 1$ and $0<b<1$ such that every projective
 strategy passing the seeded CL test with probability at least $1-\eps$, for
 $\eps>0$, admits projective measurements $G^\alice,G^\bob$ on the respective
@@ -658,8 +658,10 @@ full tuple measurements are consistent with each other, all with error at most
   \delta_{\mathrm{CL}}(\eps,q,m,d,\mathrm{ldc})
   = a(dm\,\mathrm{ldc})^a\bigl(\eps^b+q^{-b}+2^{-bmd}\bigr).
 \]
-The full tuple consistency has no question average. This paper theorem remains a
-formalization target, including for $\mathrm{ldc}=1$.
+The full tuple consistency has no question average. The general simultaneous theorem
+remains open. Its single-codeword case is proved in
+Theorem~\ref{thm:lidt-cl-soundness-one}; the remaining extension is
+Lemma~\ref{lem:lidt-ldc}. The tensor-code intermediates below remain separate targets.
 \end{theorem}
 
 \begin{remark}[The CL-to-canonical adapter and parameter corollary]
@@ -682,8 +684,7 @@ Formalizing the paper's tensor-code route below is an alternative way to establi
 the seeded CL theorem; a proof by either route would not certify the intermediate
 claims of the other.
 
-\emph{Both obligations are now met for $\mathrm{ldc}=1$}, which is the case every use in
-this chapter needs: Lemmas~\ref{lem:lidt-cl-adapter-maps}--\ref{lem:lidt-cl-adapter-params}
+\emph{Both obligations are now met for $\mathrm{ldc}=1$}, which suffices for the padded QLD application: Lemmas~\ref{lem:lidt-cl-adapter-maps}--\ref{lem:lidt-cl-adapter-params}
 and Theorem~\ref{thm:lidt-cl-soundness-one}. What the adapter does \emph{not} supply is the
 simultaneous extension of Lemma~\ref{lem:lidt-ldc}, and it certifies none of
 Lemmas~\ref{lem:lidt-reduction-setup}--\ref{lem:lidt-derandomize}.
@@ -784,7 +785,7 @@ the canonical-line mass, and the wrong choice costs a factor $q^{m-1}$.
 
 \begin{lemma}[The parameter choice]
 \label{lem:lidt-cl-adapter-params}
-\uses{thm:lidt-soundness,thm:lidt-cl-soundness}
+\uses{thm:lidt-soundness,def:lidt-cl}
 \lean{MIPRE.LIDT.clK, MIPRE.LIDT.deltaCL, MIPRE.LIDT.lidtError_le_deltaCL}
 \leanok
 Take $a=2\cdot10^{11}$, $b=1/40000$ and $k=400m^3d+400m$. Then for all $m,d\geq1$, all $q$ and all
@@ -1092,25 +1093,80 @@ almost-synchronicity at all.
 
 \begin{lemma}[Several codewords: the simultaneity reduction]
 \label{lem:lidt-ldc}
-\ledgernode{1.2.1.9, 1.2.1.9.1, 1.2.1.9.2, 1.2.1.9.3}
-\uses{lem:lidt-derandomize,def:lidt-cl}
-The general case of Theorem~\ref{thm:lidt-cl-soundness}, with several codewords tested at once,
-reduces to the single-codeword case \emph{in the paper}, importing nothing further. The
-reduction replaces the parameters $(q, m, d, \mathrm{ldc})$ by $(q, M, d, 1)$ where $M$ is the
-least power of two with $M \geq m + \mathrm{ldc}$ in the nontrivial regime
-$m+\mathrm{ldc}\leq q$. Then $M\mid q$ and $M \leq 4m\,\mathrm{ldc}$, and the
-degree is unchanged. The complementary parameter regime is handled by the trivial
-error bound. The resulting error is
-$\delta_{\mathrm{CL}}(\eps, q, m, d, \mathrm{ldc}) = a (dm\,\mathrm{ldc})^a \bigl( \eps^b + q^{-b} +
-2^{-bmd} \bigr)$, the $\mathrm{ldc}^a$ factor and the substitution $m \mapsto M$ being the only
-changes.
+\ledgernode{1.2.1.9,1.2.1.9.1}
+\uses{lem:lidt-ldc-adapter,lem:lidt-ldc-extraction,lem:lidt-ldc-error}
+For admissible $q$, $m,d,r\geq1$, $m\mid q$, and $r=\mathrm{ldc}$, the
+single-codeword seeded CL contract implies the simultaneous contract of
+Theorem~\ref{thm:lidt-cl-soundness}, including a projective measurement of
+complete $r$-tuples on each player's original space and full-tuple consistency.
+The chosen input contract is the proved Theorem~\ref{thm:lidt-cl-soundness-one}.
+This extension is needed at $(q,m',d,m'+6)$ in answer reduction; QLD uses only
+$(q,4m,d,1)$. The separate tensor-code route is alternative provenance.
 \end{lemma}
 
-\begin{proof}
-The construction is modelled on the corresponding derivation in~\cite{NW19}, but is written out
-for this test rather than cited: the vendored audit of that source confirmed that the theorem
-it would have imported is not the one needed here.
-\end{proof}
+\begin{lemma}[The padded multi-codeword game adapter]
+\label{lem:lidt-ldc-adapter}
+\ledgernode{1.2.1.9.2}
+\uses{def:lidt-cl}
+Suppose $m+r\leq q$. Let $M$ be the least power of two at least $m+r$ and
+put $K=M-m$. Then $M\mid q$ and $M\leq4mr$. A projective strategy of failure
+at most $\eps$ at $(q,m,d,r)$ induces, on the same state and spaces, one at
+$(q,M,d,1)$ with failure at most $27M(\eps+d/q)$.
+At $(x,y)\in\F_q^K\times\F_q^m$, its point answer is
+$\sum_{j=1}^r x_jb_j$, where $(b_1,\ldots,b_r)$ is the original answer.
+All measurements are deterministic coarse-grainings after seed choices are fixed.
+Axis answers have degree at most $d$, diagonal answers at most $md+1\leq Md$.
+The adapter rebases projected lines, treats zero projected directions by point
+queries, and uses the conditional seed law of the projected diagonal distribution.
+For a nonzero projected direction with $z_0$ leading zero coordinates, the
+direction index $j\leq z_0+1$ has weights proportional to $q^{j-1}$, with
+uniform seed within each fibre. Independent choices for both players and both
+line types are fixed by averaging the complete game failure, including equality
+subtests. Choosing an arbitrary representative seed is not justified.
+\end{lemma}
+
+\begin{lemma}[Extracting exactly linear combined codewords]
+\label{lem:lidt-ldc-extraction}
+\ledgernode{1.2.1.9.2}
+\uses{lem:lidt-ldc-adapter,thm:lidt-cl-soundness-one,lem:schwartz-zippel}
+Apply the single-codeword contract to the padded strategy. Restrict its global
+polynomial measurements to outcomes of the form
+$g(x,y)=\sum_{j=1}^r x_jg_j(y)$, with zero coefficients on unused combining
+coordinates, and complete the resulting projective submeasurements at a fixed
+legal tuple. This gives projective measurements of the complete tuple
+$(g_1,\ldots,g_r)$, each of individual degree at most $d$.
+The discarded mass, both point-consistency defects, and full-tuple consistency
+are bounded by a universal polynomial loss in the padded soundness error and
+$dm/q$. The exclusion uses polynomial separation: for an outcome not exactly
+linear in $x$, the chance over $y$ that its restriction is exactly linear is
+at most $dm/q$. It does not select independent single-codeword measurements.
+\end{lemma}
+
+\begin{lemma}[Absorbing the simultaneous reduction's error]
+\label{lem:lidt-ldc-error}
+\ledgernode{1.2.1.9.3}
+\uses{lem:lidt-ldc-extraction}
+There are universal $a\geq1$ and $0<b<1$ for which the preceding losses are
+bounded by $a(dmr)^a(\eps^b+q^{-b}+2^{-bmd})$.
+Use $M\leq4mr$, concavity of powers, and $M\geq m$ in the exponential term.
+When $m+r>q$, enlarge $a$ so the bound is at least one and use arbitrary
+complete projective measurements. This separates the trivial regime from the
+padding argument that requires $M\mid q$.
+\end{lemma}
+
+\begin{lemma}[Effective seeded low-degree test]
+\label{lem:lidt-effective}
+\ledgernode{1.2.1.10}
+\uses{def:lidt-cl}
+The seeded test has a sampler running in $\poly(m,\log q)$ and a decider
+running in $\poly(m,d,r,\log q)$, with bounded-prefix checks on every input.
+Question parsing costs $O(m\log q)$; the answer-format checks must also scan
+up to $O(r(md+1)\log q)$ symbols, with one extra symbol to detect overflow.
+Thus the full parsing bound is $O((m+r(md+1))\log q)$.
+The sampler and decider descriptions are constructed in time polynomial in
+the binary parameter lengths; runtime dependence on parameter values is a
+separate assertion. No question-length-only bound is asserted for the decider.
+\end{lemma}
 
 \subsection{The quantum low individual degree test}
 \label{sec:rr-qld}
@@ -2194,62 +2250,24 @@ the compression identity \texttt{qform\_extVecA} the only fact about it the proo
 
 \effortHard
 
+In the remaining combining and separating obligations, cross-party
+consistency estimates use the outcome-summed squared distance of
+Definition~\ref{def:cross-distance}. When a proof instead bounds the
+probability of unequal outcomes, convert using
+Equation~\ref{eq:cross-from-agreement} and retain the resulting constant.
+Same-side operator comparisons use Definition~\ref{def:state-distance}.
+
 \begin{lemma}[Combined $XZ$ point measurements]
 \label{lem:qld-combined-points}
 \ledgernode{1.2.2.8}
-\uses{lem:qld-expanded-points,lem:naimark-dilation,def:expanded-state,def:distance}
-\lean{MIPRE.fourierVec, MIPRE.sum_norm_fourierVec_sq, MIPRE.trObs, MIPRE.trFourier,
-  MIPRE.trFourier_trObs, MIPRE.trObs_map, MIPRE.pairVec, MIPRE.sum_prod_eq_sum_pairVec,
-  MIPRE.fourierOf_pair_mul, MIPRE.sum_stateSqNorm_fourierOf, MIPRE.obs2_map,
-  MIPRE.swapVec_expVec, MIPRE.Weyl.swapVec_epr, MIPRE.bornProb_swapVec,
-  MIPRE.povmValue_swapVec_of_symm, MIPRE.sum_weighted_mul_le_sqrt,
-  MIPRE.sum_weighted_sqrt_le, MIPRE.abs_qform_conjTranspose_mul_le, MIPRE.proj_le_one,
-  MIPRE.snorm_le_one_of_proj, MIPRE.bornProb_eq_qform, MIPRE.abs_qform_aOp_mul_bOp_le,
-  MIPRE.stateNorm_mul_le, MIPRE.norm_stateVecB_mul_le, MIPRE.xSqNorm_eq_expand,
-  MIPRE.one_sub_sum_bornProb_eq, MIPRE.sand, MIPRE.sum_sand, MIPRE.sandPOVM,
-  MIPRE.sum_stateSqNorm_ord, MIPRE.abs_link1_le, MIPRE.abs_link2_le, MIPRE.abs_link3_le,
-  MIPRE.link4_eq, MIPRE.link5_eq, MIPRE.one_sub_sum_bornProb_sand_le, MIPRE.extVec2,
-  MIPRE.extVec2_unit, MIPRE.bornProb_extVec2, MIPRE.sum_xSqNorm_dilated_eq,
-  MIPRE.sum_xSqNorm_dilated_aOp_le, MIPRE.exists_projective_joint,
-  MIPRE.QLD.pairTest_symm, MIPRE.QLD.accepts_symm, MIPRE.QLD.qldGame_mu_symm,
-  MIPRE.QLD.povmValue_qldGame_swapVec, MIPRE.QLD.hatVec_swapVec, MIPRE.QLD.hatPtPOVM,
-  MIPRE.QLD.hatPOVM_eq, MIPRE.QLD.hatMats, MIPRE.QLD.hatObsAt, MIPRE.QLD.hatObsAt_eq,
-  MIPRE.QLD.trObs_ptVal, MIPRE.QLD.trObs_synPOVM, MIPRE.QLD.hatObsAt_self,
-  MIPRE.QLD.hatComm, MIPRE.QLD.hatComm_eq_fourierOf, MIPRE.QLD.sum_stateSqNorm_hatComm,
-  MIPRE.QLD.isPVM_hatMats, MIPRE.QLD.sum_content_split, MIPRE.QLD.sum_content_avg_probe,
-  MIPRE.QLD.sum_content_hatComm_le, MIPRE.QLD.sum_content_hatComm_le_B,
-  MIPRE.QLD.sum_content_hatMats_consistency, MIPRE.QLD.deltaQ, MIPRE.QLD.combined_points}
-\leanok
-Let $\ket{\hat\psi}$ be as in Lemma~\ref{lem:qld-expanded-points}, and suppose both players'
-measurements are projective --- without loss of generality, by
-Lemma~\ref{lem:naimark-dilation}. Put
-\begin{equation*}
-  \delta_Q(\eps) \;=\; 2\sqrt{57676416\,\eps} \;+\; \sqrt{86\,\eps} \;+\; 86\,\eps
-  \;=\; \poly(\eps)\;.
-\end{equation*}
-Then for every pair $(x, z) \in \F_q^m \times \F_q^m$ and each player there is a
-\emph{projective} measurement $\{\widehat{Q}^{x, z}_{a, b}\}_{a, b \in \F_q}$, acting on that
-player's expanded space enlarged by one $\F_q \times \F_q$ ancilla register held in the state
-$\ket{0, 0}$, which jointly returns the $X$-value at $x$ and the $Z$-value at $z$ and satisfies,
-on average over the verifier's content:
-\begin{enumerate}
-\item (\textbf{Self-consistency})
-  $\widehat{Q}^{x, z}_{a, b} \ot \Id \;\simeq_{2 \delta_Q}\; \Id \ot \widehat{Q}^{x, z}_{a, b}$;
-\item (\textbf{Consistency with the ordered products})
-  \begin{gather*}
-    \widehat{Q}^{x, z}_{a, b} \ot \Id \;\simeq_{4 \delta_Q + 115352832 \eps}\;
-      \Id \ot \widehat{M}^{(\mathtt{Point}, Z), z}_b \widehat{M}^{(\mathtt{Point}, X), x}_a\;, \\
-    \widehat{Q}^{x, z}_{a, b} \ot \Id \;\simeq_{4 \delta_Q + 461411328 \eps}\;
-      \Id \ot \widehat{M}^{(\mathtt{Point}, X), x}_a \widehat{M}^{(\mathtt{Point}, Z), z}_b\;.
-  \end{gather*}
-\end{enumerate}
-Moreover $\widehat{Q}^{x, z}$ compresses, along the isometry that adjoins $\ket{0, 0}$, to the
-\textbf{sandwich}
-$\widehat{R}^{x, z}_{a, b} = \widehat{M}^{(\mathtt{Point}, Z), z}_b
-\widehat{M}^{(\mathtt{Point}, X), x}_a \widehat{M}^{(\mathtt{Point}, Z), z}_b$. The conclusions
-depend on the content only through $(x, z)$, whose marginal is uniform, so ``on average over the
-content'' is ``on average over uniform $(x, z)$''. The marginals of $\widehat{Q}^{x,z}$ are not
-claimed here; they are obtained in Lemma~\ref{lem:qld-pairs-of-lines}.
+\uses{thm:linearity,lem:qld-expanded-points,def:state-distance}
+There is $\delta_Q(\eps) = \poly(\eps)$ and, for every pair $(x, z) \in \F_q^m \times \F_q^m$,
+a projective measurement $\widehat{Q}^{x, z}_{a, b}$ jointly returning the $X$-value at $x$
+and the $Z$-value at $z$, self-consistent on average over uniform $(x, z)$ and consistent
+with \emph{both} ordered products $\widehat{M}^Z_b \widehat{M}^X_a$ and
+$\widehat{M}^X_a \widehat{M}^Z_b$ of the expanded point measurements. It is built as a Fourier
+transform of the exactly linear family supplied by Theorem~\ref{thm:linearity}. Its marginals
+are not claimed here; they are obtained in Lemma~\ref{lem:qld-pairs-of-lines}.
 \end{lemma}
 
 \begin{proof}
@@ -2351,14 +2369,34 @@ projectivity. Nothing in the chain is a per-outcome estimate, so no constant dep
 
 \effortHard
 
+\begin{lemma}[Axis degree for expanded line measurements]
+\label{lem:qld-axis-degree}
+\ledgernode{1.2.2.6,1.2.2.9}
+\uses{lem:qld-expanded-lines}
+For an axis-parallel line, the expanded line measurement can be supported on
+polynomials of degree at most $d$, with the same register versions and
+consistency estimates as Lemma~\ref{lem:qld-expanded-lines}.
+The original strategy's axis-line answers have degree at most $d$ by their
+legal format. Expansion convolves that outcome with the restriction of a
+multilinear Pauli encoding. The latter has degree at most one on an axis
+line, so addition preserves the bound for $d\geq1$.
+This is an additional target; the proved expanded-line theorem states the
+weaker general bound $md$.
+\end{lemma}
+
 \begin{lemma}[Pairs of lines]
 \label{lem:qld-pairs-of-lines}
 \ledgernode{1.2.2.9}
-\uses{lem:qld-combined-points,lem:qld-expanded-lines}
-There is $\delta_P(\eps, m, d, q) = \poly(\eps, md/q)$ and, for every pair of lines
-$(\ell_X, \ell_Z)$, a POVM with outcomes pairs of degree-$md$ polynomials, consistent on
-average over the pair-of-lines distribution with the combined point measurements evaluated at
-points of the respective lines.
+\uses{lem:qld-combined-points,lem:qld-expanded-lines,lem:qld-axis-degree,def:cross-distance}
+There is $\delta_P=\poly(\eps,md/q)$ and a POVM $T^{\ell_X,\ell_Z}_{f_X,f_Z}$
+for each pair of lines. Its outcomes have degree at most $md$ on each line,
+and degree at most $d$ on any axis-parallel component. Independently draw
+$(\ell_X,x)$ and $(\ell_Z,z)$ from the unpadded line--point distribution.
+On this product distribution, evaluation of $T$ at $(x,z)$ is consistent with
+the opposite side's combined point measurement, with error at most a universal
+constant times $\delta_P$. Both register versions and their player mirrors
+are required. Restriction to specified line types and direction indices costs
+the reciprocal probability of those choices, at most $4m^2$.
 \end{lemma}
 
 \effortMedium
@@ -2463,17 +2501,28 @@ r\beta)$.
 \label{lem:qld-sublines}
 \ledgernode{1.2.2.11}
 \uses{def:lidt-cl}
-There is a distribution over triples $(\ell, \ell_X, \ell_Z)$ --- a line in the padded space
-together with a line in each unpadded copy --- whose $\ell$-marginal is the line marginal of
-the padded space's line--point distribution, whose $(\ell_X, \ell_Z)$-marginals are mixtures
-of the restricted line--point distributions, and for which the evaluation constraints tying
-$f|_\ell$ to the pair $(f_X, f_Z)$ hold pointwise.
+For the seeded padded line distribution on $\F_q^{4m}$ there is a distribution
+of $(\ell,\ell_X,\ell_Z)$ with the following properties. Its $\ell$-marginal
+is the padded line marginal. Every $u=(u_X,u_Z,\alpha,\beta,w)\in\ell$
+satisfies $u_X\in\ell_X$ and $u_Z\in\ell_Z$. For uniform $u\in\ell$, the
+law of $(\ell_X,\ell_Z)$ is a mixture of products of restricted unpadded
+line marginals; conditional on this pair, each of $u_X,u_Z$ is uniform on
+its respective line. Joint independence of these two points is not asserted.
+Here a restricted axis distribution fixes direction $e_i$; a restricted
+diagonal distribution fixes the seed index $i$ and has direction with its
+first $i-1$ coordinates zero. These are restrictions of the seeded laws,
+including degenerate lines, not new uniform laws on distinct geometric lines.
+Finally, if $\ell$ is axis-parallel, both $\ell_X$ and $\ell_Z$ are
+axis-parallel. This last clause is needed for the legal degree-$d$ answers.
 \end{lemma}
 
 \begin{proof}
-Purely combinatorial: the three constraints are checked separately, and nothing quantum
-enters. This is the most self-contained statement in the appendix and a reasonable place to
-start formalizing it.
+Construct the three lines from the padded seed, completing a constant projected
+block by an independently sampled restricted line through its point.
+Check the line marginal, conditional point uniformity, and axis preservation
+separately. The mixture concerns the pair of line marginals; these precise
+conditionings are what permits application of the product-distribution estimate
+of Lemma~\ref{lem:qld-pairs-of-lines}.
 \end{proof}
 
 \effortHard
@@ -2481,11 +2530,17 @@ start formalizing it.
 \begin{lemma}[Padded line POVM]
 \label{lem:qld-padded-lines}
 \ledgernode{1.2.2.12}
-\uses{lem:qld-pairs-of-lines,lem:qld-sublines,lem:qld-padded-points}
-There is $\delta_{\mathrm{combine}}(\eps, m, d, q) = m \cdot \poly(\eps, md/q)$ and, for every
-line $\ell$ in the padded space, a POVM with outcomes the degree-$(md + 1)$ polynomials on
-$\ell$, consistent on average over the padded line--point distribution with the padded point
-measurement evaluated at a point of $\ell$.
+\uses{lem:qld-pairs-of-lines,lem:qld-sublines,lem:qld-padded-points,def:cross-distance}
+For every padded line $\ell$, there is a POVM with polynomial outcomes of
+degree at most $md+1$, and at most $d$ when $\ell$ is axis-parallel.
+On the padded line--point distribution it is consistent with the opposite
+padded point measurement, with error
+$\delta_{\mathrm{combine}}=m\cdot\poly(\eps,md/q)$, in both register versions.
+The answer is the restriction of $\alpha f_X(x)+\beta f_Z(z)$.
+On an axis line, either an $x$ or $z$ coordinate varies with constant
+$\alpha,\beta$, or only one coefficient varies, giving degree at most $d$
+for $d\geq1$. The general bound $md+1\leq4md$ and the separate axis bound
+make these legal answers for the seeded test at $(q,4m,d,1)$.
 \end{lemma}
 
 \effortHard
@@ -2493,28 +2548,129 @@ measurement evaluated at a point of $\ell$.
 \begin{lemma}[The simultaneous global measurement]
 \label{lem:qld-simultaneous}
 \ledgernode{1.2.2.13}
-\uses{lem:qld-padded-lines,lem:qld-padded-points,thm:lidt-cl-soundness}
-There is
-$\delta_S(\eps, m, d, q) = a (md)^a \bigl( \eps^b + q^{-b} + 2^{-bmd} \bigr)$ and a projective
-measurement $\widehat{S}_{g_X, g_Z}$ with outcomes pairs of polynomials of individual degree
-at most $d$ on $\F_q^m$, such that for each $W \in \{X, Z\}$ the $W$-marginal evaluated at a
-point is consistent with the expanded $(\mathtt{Point}, W)$ measurement, in the sandwiched
-form $\widehat{M}^X \widehat{M}^Z \widehat{M}^X$ and its mirror.
+\uses{lem:qld-global-robustness}
+There are universal $a>1$, $0<b<1$ and, on each relevant padded local space,
+a complete projective measurement $\widehat S_{g_X,g_Z}$ of pairs of
+individual-degree-$d$ polynomials on $\F_q^m$. Its evaluated $X$ and $Z$
+marginals are consistent with the opposite expanded point measurements,
+with error at most
+$\delta_S=a(md)^a(\eps^b+q^{-b}+2^{-bmd})$.
+The same measurement satisfies the sandwiched joint estimate below.
+Both register versions are required; no symmetric-strategy hypothesis is added.
 \end{lemma}
 
-\begin{proof}
-\uses{thm:lidt-cl-soundness,lem:schwartz-zippel}
-Construct a seeded CL strategy at $(q,4m,d,1)$. Besides line--point consistency,
-check the identical-point and identical-line subtests; the latter uses the
-Schwartz--Zippel bound for distinct line polynomials. Dilate the line POVMs with
-fresh local product ancillas and extend the point measurements by identity, preserving
-all tested cross-party probabilities. Theorem~\ref{thm:lidt-cl-soundness} then gives
-the projective global polynomial measurement and its collapsed error. Recovering
-the pair $(g_X,g_Z)$ gives the stated simultaneous measurement.
-This is the paper's application~\cite{AuditSync26}, \texttt{qld-combining.tex}; the
-canonical-line Lean theorem can be used in its place through
-Theorem~\ref{thm:lidt-cl-soundness-one}, which is at $\mathrm{ldc}=1$.
-\end{proof}
+\begin{lemma}[Admissible padded setup]
+\label{lem:qld-global-setup}
+\ledgernode{1.2.2.13.1}
+\uses{lem:qld-padded-lines,lem:qld-padded-points,lem:naimark-dilation}
+Assume $m,d\geq1$, admissible $q$, and $m\mid q$. In the regime $16md\leq q$,
+$d<q$ and $4m\mid q$. Write $u=(x,z,\alpha,\beta,w)$, with $2m-2$ dummy
+coordinates. The padded point measurement ignores $w$. Dilate the line POVMs
+using fresh local product ancillas and extend point PVMs by identity; all
+tested cross-party probabilities are preserved. The resulting spaces include
+these ancillas. For $16md>q$, enlarge the final universal constant and use a
+trivial consistency bound instead of applying the padded theorem.
+\end{lemma}
+
+\begin{lemma}[All padded subtests succeed]
+\label{lem:qld-global-success}
+\ledgernode{1.2.2.13.2}
+\uses{lem:qld-global-setup,lem:schwartz-zippel}
+The padded strategy has failure at most
+$\delta'=C(\delta_{\mathrm{combine}}+\delta_Q+md/q)$ for a universal $C$.
+This bounds line--point, identical-point, and identical-line tests under
+their actual seeded distributions. Line equality uses polynomial separation;
+line--point consistency alone is not the full game hypothesis.
+\end{lemma}
+
+\begin{lemma}[A global padded polynomial PVM]
+\label{lem:qld-global-pvm}
+\ledgernode{1.2.2.13.3}
+\uses{lem:qld-global-success,thm:lidt-cl-soundness-one}
+The single-codeword theorem at $(q,4m,d,1)$ supplies projective global
+polynomial measurements on both sides, with both point-consistency estimates
+and full-polynomial consistency. Write their common error bound as
+$\delta_{\mathrm{ld}}\leq A(md)^A((\delta')^b+q^{-b}+2^{-bmd})$ for
+universal $A,b$. No further dilation of these projective outputs is required.
+\end{lemma}
+
+\begin{lemma}[Removing dummy-coordinate dependence]
+\label{lem:qld-global-dummy}
+\ledgernode{1.2.2.13.4}
+\uses{lem:qld-global-pvm,lem:schwartz-zippel}
+The state weight of outcomes depending nontrivially on $w$ is
+$O(\delta_{\mathrm{ld}})$. This bad set is empty for $m=1$.
+Retaining the other outcomes gives a projective submeasurement.
+\end{lemma}
+
+\begin{lemma}[Ordered products with global outcome multipliers]
+\label{lem:qld-global-products}
+\ledgernode{1.2.2.13.5}
+\uses{lem:qld-global-dummy,lem:qld-combined-points,def:state-distance}
+For $w$-independent $g$, put $v_g=(S_g\otimes\Id)\widehat\psi$ and let
+$B_g$ sum $\widehat M^X_a\widehat M^Z_b$ over
+$\alpha a+\beta b=g(x,z,\alpha,\beta)$. With the local factors placed on
+the opposite side from $S_g$,
+$\sum_g\mathbb E\|v_g-B_gv_g\|^2\leq\Delta$
+where $\Delta=C(\delta_{\mathrm{ld}}+\delta_Q)$.
+The average is uniform over $x,z,\alpha,\beta$. The estimate holds with
+the product order reversed and with any subset of outcomes retained.
+These ordered products need not be POVMs.
+\end{lemma}
+
+\begin{lemma}[Linearity in the two combining coefficients]
+\label{lem:qld-global-linear}
+\ledgernode{1.2.2.13.6}
+\uses{lem:qld-global-products,lem:schwartz-zippel}
+Among $w$-independent outcomes, those not expressible as
+$g=\alpha g_1(x,z)+\beta g_2(x,z)$ have total state weight $O(\Delta)$.
+The outcome-summed estimate introduces no factor $q^2$.
+\end{lemma}
+
+\begin{lemma}[Separating the two point variables]
+\label{lem:qld-global-separate}
+\ledgernode{1.2.2.13.7}
+\uses{lem:qld-global-linear,lem:qld-global-products}
+Except for weight $O(\Delta)$, a retained linear outcome has $g_1$ depending
+only on $x$ and $g_2$ only on $z$. The total excluded weight is bounded by
+$\delta_G=C(\sqrt{\delta_{\mathrm{ld}}+\delta_Q}+md/q)$.
+Thus retained outcomes are precisely of the form
+$\alpha g_X(x)+\beta g_Z(z)$ with individual degree at most $d$.
+\end{lemma}
+
+\begin{lemma}[Completing the pair measurement projectively]
+\label{lem:qld-global-complete}
+\ledgernode{1.2.2.13.8}
+\uses{lem:qld-global-separate}
+Relabel the retained projectors by $(g_X,g_Z)$ and add their orthogonal
+complement $R$ to one fixed legal outcome. This is a complete PVM, with
+$\langle R\rangle\leq\delta_G$. Each cross-party inconsistency increases
+by at most $\delta_G$.
+\end{lemma}
+
+\begin{lemma}[Sandwich estimates and the two marginals]
+\label{lem:qld-global-sandwich}
+\ledgernode{1.2.2.13.9}
+\uses{lem:qld-global-complete,lem:qld-global-products,def:cross-distance}
+The completed pair measurement, evaluated at uniform $x,z$, is consistent
+with the positive joint POVM $\widehat M^X_a\widehat M^Z_b\widehat M^X_a$
+with error $O(\delta_G+\sqrt{\delta_{\mathrm{ld}}+\delta_Q}+1/q)$.
+Summation gives its $X$ marginal. Reversing the ordered-product argument gives
+the $Z$ marginal for the same completed measurement. Intermediate
+unsandwiched scalars may be complex; take real parts when estimating them.
+\end{lemma}
+
+\begin{lemma}[Global robustness and register transport]
+\label{lem:qld-global-robustness}
+\ledgernode{1.2.2.13.10}
+\uses{lem:qld-global-sandwich,lem:qld-global-setup}
+All preceding losses are absorbed by
+$a(md)^a(\eps^b+q^{-b}+2^{-bmd})$ after increasing $a$ and decreasing $b$.
+Repeat the construction on each of the two relevant register cuts to obtain
+both evaluated marginal estimates without a symmetry assumption.
+Constants in the intermediate $O$ bounds are absorbed into the displayed
+error; they are not silently set to one in the state-distance relation.
+\end{lemma}
 
 \subsubsection{Separation and the swap isometry}
 
@@ -2523,7 +2679,7 @@ Theorem~\ref{thm:lidt-cl-soundness-one}, which is at $\mathrm{ldc}=1$.
 \begin{lemma}[The marginals track the point measurements]
 \label{lem:qld-helper}
 \ledgernode{1.2.2.14}
-\uses{lem:qld-simultaneous,def:distance}
+\uses{lem:qld-simultaneous,def:state-distance,def:inconsistency}
 For $W \in \{X, Z\}$ and on average over $u \in \F_q^m$, the $W$-marginal
 $\widehat{S}^W_g$ of the simultaneous measurement satisfies
 $\sum_g \widehat{S}^W_g \ot \widehat{M}^{(\mathtt{Point}, W), u}_{g(u)} \approx_{\delta_S} \Id$
@@ -2560,7 +2716,7 @@ so it is the agreement and not the disagreement that the bound controls
 \begin{lemma}[The swap isometry]
 \label{lem:qld-swap}
 \ledgernode{1.2.2.16}
-\uses{lem:qld-exact-paulis,def:distance}
+\uses{lem:qld-exact-paulis,def:state-distance}
 There is $\delta_{qld} = O\bigl( \delta_S^{1/4} + md/q \bigr)$ and local unitaries $V_\alice$,
 $V_\bob$ on the expanded spaces such that $V_\alice \ot V_\bob$ maps the expanded state within
 $\delta_{qld}$ of $\ket{\aux} \ot \ket{\EPR_q}^{\ot M}$, and conjugation by them carries the
@@ -2613,9 +2769,11 @@ game value, and $\RE$-completeness gives $\RE \subseteq \MIPstar$.
 \label{rem:qld-admitted}
 \uses{thm:qld,lem:ms-direct-anticomm,thm:lidt-cl-soundness,def:distance}
 Stage $1.2$ of the ledger is by far its heaviest: after the refinement rounds of September
-2026 it holds $149$ of the $316$ live nodes, and $169$ of the campaign's $309$ challenges
+2026 the earlier snapshot held $149$ of $316$ live nodes and $169$ of $309$ challenges
 were raised against its original $62$, against $46$ for answer reduction and $19$ for
-repetition. Three facts about it bear on how this section should be formalized.
+repetition. At the September 20 pin, stage $1.2$ has $150$ active nodes
+inside the $347$-node active ledger. Three facts about it bear on how this
+section should be formalized.
 
 First, the Magic Square input is no longer an assumption. It was: node $1.2.2.4.1$ was an
 import of~\cite[Theorem 6.9]{CS17}, neither vendored nor reproved, carrying two adaptations
@@ -2661,8 +2819,8 @@ with $n$ back into the constant $\frac12$ the recursion needs.
 \begin{remark}[What is still admitted, after the discharges of September 2026]
 \label{rem:admitted-nodes}
 \uses{lem:ms-direct-anticomm,lem:self-dual-basis,thm:direct-repetition-q,rem:direct-vs-anchored}
-With the ledger accounted for, the assumptions are countable. Of its $316$ live nodes,
-$313$ are validated and exactly three are \emph{admitted} --- asserted on the strength of a
+At the September 20 source pin, the ledger has $347$ active nodes:
+$344$ are validated and exactly three are \emph{admitted} --- asserted on the strength of a
 cited source rather than proved. The interesting fact is that these are not the three that
 were admitted when this section was first written: all of those were discharged, and two of
 the present three are in new territory.
@@ -2697,8 +2855,8 @@ What was discharged, and how, is the useful part:
 Thus the paper ledger's remaining admitted input to this route is the classical
 deterministic polynomial-time construction of irreducible polynomials over $\F_2$.
 This is a statement about the paper's proof dependencies, not the current Lean frontier:
-the seeded CL and Pauli theorems and their unfinished bridges above still require
-formalization. The mechanical ledger figure is in
+the simultaneous seeded CL extension and unfinished Pauli steps still require
+formalization; the single-codeword seeded theorem is already proved. The mechanical ledger figure is in
 \texttt{scripts/ledger-sync.py}, which walks declared dependencies as well as decomposition
 and reports node $1.1.6.1.1$ as reached from $24$ of this blueprint's statements.
 
