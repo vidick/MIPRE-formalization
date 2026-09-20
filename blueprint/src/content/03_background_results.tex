@@ -2366,13 +2366,96 @@ points of the respective lines.
 \begin{lemma}[Padded point measurements]
 \label{lem:qld-padded-points}
 \ledgernode{1.2.2.10}
-\uses{lem:qld-combined-points}
-Write a point of the padded space $\F_q^{4m}$ as $u = (x, z, \alpha, \beta, w)$. The
-measurement $\widehat{Q}^u$ returning the combined value $\alpha g_X(x) + \beta g_Z(z)$ is
-well defined --- independent of the dummy coordinates $w$ --- projective, self-consistent, and
-consistent with both ordered products of the expanded point measurements. The coarse-graining
-onto the fibres $\{\alpha a + \beta b = c\}$ is justified by character orthogonality.
+\uses{lem:qld-combined-points,def:generalized-pauli,def:distance}
+\lean{MIPRE.sum_norm_fourierVecRaw_sq, MIPRE.trVecRaw, MIPRE.sum_norm_trVecRaw_sq,
+  MIPRE.sum_norm_char_two_sq, MIPRE.sum_avg_norm_fibre_sq, MIPRE.sum_xSqNorm_map_le,
+  MIPRE.sum_mulVec', MIPRE.xSqNorm_eq_norm_evec_sq, MIPRE.sum_fibre_dev,
+  MIPRE.QLD.hatOrdZX, MIPRE.QLD.hatOrdXZ, MIPRE.QLD.sum_hatOrdZX, MIPRE.QLD.sum_hatOrdXZ,
+  MIPRE.QLD.sum_avg_xSqNorm_fibre_eq, MIPRE.QLD.padded_points}
+\leanok
+Write a point of the padded space $\F_q^{4m}$ as $u = (x, z, \alpha, \beta, w)$ with
+$x, z \in \F_q^m$, $\alpha, \beta \in \F_q$ and $w \in \F_q^{2m - 2}$ the dummy coordinates.
+With $\delta_Q$ as in Lemma~\ref{lem:qld-combined-points}, put
+\begin{equation*}
+  \widehat{Q}^u_c \;=\; \widehat{Q}^{x, z, \alpha, \beta}_c
+    \;=\; \sum_{\substack{a, b \,:\\ \alpha a + \beta b = c}} \widehat{Q}^{x, z}_{a, b}\;,
+\end{equation*}
+which returns the combined value $\alpha g_X(x) + \beta g_Z(z)$ and depends on $u$ only through
+$(x, z, \alpha, \beta)$ --- that is what ``independent of the dummy coordinates'' means. Then
+$\{\widehat{Q}^{u}_c\}_{c \in \F_q}$ is \emph{projective}, and
+\begin{enumerate}
+\item (\textbf{Self-consistency}) for \emph{every} $(\alpha, \beta)$, on average over the
+  content, $\widehat{Q}^{u}_c \ot \Id \simeq_{2\delta_Q} \Id \ot \widehat{Q}^{u}_c$;
+\item (\textbf{Consistency with $\widehat{M}$}) on average over the content \emph{and} over
+  uniform $(\alpha, \beta)$,
+  \begin{gather*}
+    \widehat{Q}^{u}_c \ot \Id \;\simeq_{4\delta_Q + 115352832\eps}\;
+      \Id \ot \sum_{\alpha a + \beta b = c} \widehat{M}^{(\mathtt{Point}, Z), z}_b
+        \widehat{M}^{(\mathtt{Point}, X), x}_a\;, \\
+    \widehat{Q}^{u}_c \ot \Id \;\simeq_{4\delta_Q + 461411328\eps}\;
+      \Id \ot \sum_{\alpha a + \beta b = c} \widehat{M}^{(\mathtt{Point}, X), x}_a
+        \widehat{M}^{(\mathtt{Point}, Z), z}_b\;.
+  \end{gather*}
+\end{enumerate}
 \end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:qld-combined-points,def:generalized-pauli,def:distance}
+Both items are about the same coarse-graining and they are free for opposite reasons.
+
+\textbf{Item 1 is free because both families are projective.} The fibres
+$\{(a, b) : \alpha a + \beta b = c\}$ partition $\F_q^2$, so the coarse-grained families are
+projective too --- a sum of mutually orthogonal projections is a projection. For projective
+families the summed cross-party deviation and the agreement probability determine each other
+exactly, $1 - \sum_c \bra{\psi} A_c \ot B_c \ket{\psi} = \tfrac12 \sum_c \norm{(A_c \ot \Id -
+\Id \ot B_c)\ket{\psi}}^2$, and agreement can only increase under a coarse-graining applied to
+both sides. So the error is unchanged, for each $(\alpha, \beta)$ separately. Note that the
+state-dependent distance has \emph{no} data-processing inequality of its own; projectivity is
+what buys the two conversions.
+
+\textbf{Item 2 is not free, and Parseval is what pays for it.} The right-hand families are
+\emph{not} POVMs --- they are products of two measurements --- so the argument above does not
+apply, and a per-fibre triangle inequality would cost the fibre size $q$, which the conclusion
+cannot afford. Instead, write
+\begin{equation*}
+  U_{a, b} \;=\; \bigl(\widehat{Q}^{x,z}_{a,b}\bigr)_{\alice\alice'}
+    - \bigl(\widehat{M}^{Z, z}_b \widehat{M}^{X, x}_a\bigr)_{\bob\alice''}\;,
+  \qquad
+  D_c \;=\; \sum_{\alpha a + \beta b = c} U_{a, b}\;,
+\end{equation*}
+so that item 2's deviation is $\norm{D_c \ket{\hat\psi}}$. Parseval over $\F_q$ turns the sum
+over fibres into an average over one probe,
+$\sum_c \norm{D_c\ket{\hat\psi}}^2 = \E_r \norm{\sum_{a,b} (-1)^{\fieldtr(r(\alpha a + \beta
+b))} U_{a,b} \ket{\hat\psi}}^2$, and two things then happen. The $r = 0$ term vanishes
+\emph{identically}, because $\sum_{a,b} U_{a,b} = \Id - (\sum_a \widehat{M}^X_a)(\sum_b
+\widehat{M}^Z_b) = 0$ --- completeness of all three families, and the only place the zero-sum
+property is used. For $r \neq 0$ the pair $(r\alpha, r\beta)$ is uniform on $\F_q^2$ when
+$(\alpha, \beta)$ is, so averaging over $(\alpha, \beta)$ and applying Parseval over $\F_q^2$
+(Definition~\ref{def:generalized-pauli}) returns $\sum_{a,b}
+\norm{U_{a,b}\ket{\hat\psi}}^2$ exactly. Summing the $q - 1$ nonzero probes gives
+$\tfrac{q-1}{q} \sum_{a,b} \norm{U_{a,b}\ket{\hat\psi}}^2$, which is item 2 of
+Lemma~\ref{lem:qld-combined-points} with a factor below one.
+
+The second relation is the same argument with the two orders exchanged, using
+$\sum_{a,b} \widehat{M}^{X, x}_a \widehat{M}^{Z, z}_b = \Id$ in place of the other order.
+\end{proof}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Background/QLD/Combined.lean}, with Parseval
+over one and two copies of the field and the coarse-graining identity in
+\texttt{MIPRE/Foundations/Parseval.lean} and \texttt{MIPRE/Foundations/Sandwich.lean}.
+
+The error is \textbf{improved, not merely preserved}: item 2 comes out at $\tfrac{q-1}{q}$ times
+the input, so the factor is below one and there is no $md/q$ term. That is the paper's
+round-12 repair of this step, and the ledger node records it: an earlier
+orthogonality-and-Cauchy--Schwarz route claimed $O(\delta_Q^{1/2})$ and was retracted, every
+direct route paying the fibre multiplicity $q$. The Lean statement keeps the factor visible
+rather than absorbing it.
+
+Item 1 holds for \textbf{every} $(\alpha, \beta)$, not only on average, because nothing in its
+proof averages over the probes --- the coarse-graining is free pointwise. Only item 2 needs the
+$(\alpha,\beta)$-average, and it needs it for the bijection $(\alpha, \beta) \mapsto (r\alpha,
+r\beta)$.
 
 \effortMedium
 

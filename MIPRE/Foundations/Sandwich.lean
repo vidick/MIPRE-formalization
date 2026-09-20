@@ -6,6 +6,7 @@ Authors: Thomas Vidick
 import MIPRE.Foundations.Commutation
 import MIPRE.Foundations.CrossConsistency
 import MIPRE.Foundations.Dilation
+import MIPRE.Foundations.Expanded
 import MIPRE.Foundations.Linearity
 
 /-!
@@ -1068,6 +1069,63 @@ theorem exists_projective_joint {ι : Type*} [Fintype ι] {w : ι → ℝ}
     linarith
 
 end Main
+
+/-! ## Coarse-graining -/
+
+section Coarse
+
+variable {A C : Type*} [Fintype A] [DecidableEq A] [Fintype C] [DecidableEq C]
+  {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+
+/-- **Coarse-graining two projective measurements the same way costs nothing.** The
+state-dependent distance has no data-processing inequality, and a per-fibre triangle inequality
+would cost the fibre size; what makes this free is that for *projective* families the summed
+deviation and the agreement probability determine each other exactly
+(`one_sub_sum_bornProb_eq`), and agreement can only increase under a coarse-graining. -/
+theorem sum_xSqNorm_map_le {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)
+    (Q : POVM A dA) (Q' : POVM A dB)
+    (hQ : IsPVM fun a => ((Q.mats a).val)) (hQ' : IsPVM fun a => ((Q'.mats a).val))
+    (f : A → C) :
+    ∑ v : C, xSqNorm ψ (((Q.map f).mats v).val) (((Q'.map f).mats v).val)
+      ≤ ∑ a : A, xSqNorm ψ ((Q.mats a).val) ((Q'.mats a).val) := by
+  have hψ' : ‖evec ψ‖ = 1 := norm_evec_eq_one_of_unit hψ
+  have e1 := one_sub_sum_bornProb_eq (dA := dA) (dB := dB) (A := C) hψ'
+    (isPVM_povm_map Q hQ f) (isPVM_povm_map Q' hQ' f)
+  have e2 := one_sub_sum_bornProb_eq (dA := dA) (dB := dB) (A := A) hψ' hQ hQ'
+  have e3 := sum_bornProb_le_map ψ Q Q' f
+  linarith
+
+end Coarse
+
+/-! ## A deviation as the norm of one vector
+
+`sum_avg_norm_fibre_sq` is a statement about *vectors*; this is the bridge to the cross-party
+deviation, and the linearity that lets a fibre sum of vectors be read as the deviation of the
+coarse-grained operators. -/
+
+section Vector
+
+variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+
+theorem sum_mulVec' {ι N M : Type*} [Fintype N] (s : Finset ι) (A : ι → Matrix M N ℂ)
+    (v : N → ℂ) : (∑ i ∈ s, A i) *ᵥ v = ∑ i ∈ s, (A i *ᵥ v) := by
+  classical
+  induction s using Finset.induction with
+  | empty => simp
+  | insert i s hi ih => rw [Finset.sum_insert hi, Finset.sum_insert hi, Matrix.add_mulVec, ih]
+
+theorem xSqNorm_eq_norm_evec_sq (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B : Matrix dB dB ℂ) :
+    xSqNorm ψ A B = ‖evec (((aOp A : Matrix (dA × dB) _ ℂ) - bOp B) *ᵥ ψ)‖ ^ 2 := by
+  rw [xSqNorm_eq_snorm_sq, snorm]
+
+/-- The fibre sum of the deviation vectors is the deviation of the coarse-grained operators. -/
+theorem sum_fibre_dev {ι : Type*} (ψ : dA × dB → ℂ) (s : Finset ι) (A : ι → Matrix dA dA ℂ)
+    (B : ι → Matrix dB dB ℂ) :
+    (∑ i ∈ s, (((aOp (A i) : Matrix (dA × dB) _ ℂ) - bOp (B i)) *ᵥ ψ))
+      = ((aOp (∑ i ∈ s, A i) : Matrix (dA × dB) _ ℂ) - bOp (∑ i ∈ s, B i)) *ᵥ ψ := by
+  rw [aOp_sum, bOp_sum, ← Finset.sum_sub_distrib, sum_mulVec']
+
+end Vector
 
 end MIPRE
 

@@ -418,6 +418,189 @@ theorem combined_points (hψ : star ψ ⬝ᵥ ψ = 1)
   · rw [← hΓ, show (115352832 : ℝ) * ε = 2 * (57676416 * ε) from by ring]; exact h2
   · rw [← hΓ, show (461411328 : ℝ) * ε = 8 * (57676416 * ε) from by ring]; exact h3
 
+/-! ## The padded point measurement
+
+Blueprint `lem:qld-padded-points`. A point of the padded space `F_q^{4m}` is
+`u = (x, z, alpha, beta, w)`, and the measurement returns the *combined* value
+`alpha g_X(x) + beta g_Z(z)`: the combined point measurement of
+`lem:qld-combined-points`, coarse-grained along the linear form `(a, b) |-> alpha a + beta b`.
+It depends on `u` only through `(x, z, alpha, beta)`, which is what ``independent of the dummy
+coordinates'' means, and it is indexed by those here.
+
+The two conclusions are free for opposite reasons. Self-consistency survives the coarse-graining
+at no cost because both families are *projective*, so the deviation and the agreement determine
+each other and agreement only increases (`sum_xSqNorm_map_le`). Consistency with the ordered
+products does *not* survive it unaided --- the fibres have `q` elements and a triangle inequality
+would cost exactly that factor --- and what saves it is Parseval over `F_q`
+(`sum_avg_norm_fibre_sq`), whose zero-probe term vanishes because the deviation family sums to
+zero: both `sum_{a,b} Q-hat_{a,b}` and `sum_{a,b} M-hat^Z_b M-hat^X_a` are the identity. -/
+
+/-- Bob's ordered product, `Z` then `X`. -/
+def hatOrdZX {d' : Type} [Fintype d'] [DecidableEq d']
+    (M : Question F m → POVM (Answer F m d) d') (x z : Point F m) (p : F × F) :
+    Matrix (d' × Anc F m) (d' × Anc F m) ℂ :=
+  hatMats M .Z z p.2 * hatMats M .X x p.1
+
+/-- Bob's ordered product, `X` then `Z`. -/
+def hatOrdXZ {d' : Type} [Fintype d'] [DecidableEq d']
+    (M : Question F m → POVM (Answer F m d) d') (x z : Point F m) (p : F × F) :
+    Matrix (d' × Anc F m) (d' × Anc F m) ℂ :=
+  hatMats M .X x p.1 * hatMats M .Z z p.2
+
+theorem sum_hatOrdZX {d' : Type} [Fintype d'] [DecidableEq d']
+    {M : Question F m → POVM (Answer F m d) d'}
+    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) (x z : Point F m) :
+    ∑ p : F × F, hatOrdZX M x z p = 1 := by
+  classical
+  rw [sum_prod_swap (fun p : F × F => hatOrdZX M x z p)]
+  rw [Finset.sum_congr rfl fun b (_ : b ∈ univ) => show
+      (∑ a : F, hatOrdZX M x z (a, b)) = hatMats M .Z z b from by
+    rw [show (∑ a : F, hatOrdZX M x z (a, b))
+        = hatMats M .Z z b * ∑ a : F, hatMats M .X x a from by
+      rw [Matrix.mul_sum]
+      rfl, (isPVM_hatMats hM .X x).sum_eq_one, Matrix.mul_one]]
+  exact (isPVM_hatMats hM .Z z).sum_eq_one
+
+theorem sum_hatOrdXZ {d' : Type} [Fintype d'] [DecidableEq d']
+    {M : Question F m → POVM (Answer F m d) d'}
+    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) (x z : Point F m) :
+    ∑ p : F × F, hatOrdXZ M x z p = 1 := by
+  classical
+  rw [sum_prod_id (fun p : F × F => hatOrdXZ M x z p)]
+  rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) => show
+      (∑ b : F, hatOrdXZ M x z (a, b)) = hatMats M .X x a from by
+    rw [show (∑ b : F, hatOrdXZ M x z (a, b))
+        = hatMats M .X x a * ∑ b : F, hatMats M .Z z b from by
+      rw [Matrix.mul_sum]
+      rfl, (isPVM_hatMats hM .Z z).sum_eq_one, Matrix.mul_one]]
+  exact (isPVM_hatMats hM .X x).sum_eq_one
+
+/-- **Parseval for the padded coarse-graining.** On average over `(alpha, beta)` the summed
+deviation of the two families coarse-grained along `(a, b) |-> alpha a + beta b` is `1 - 1/q`
+times the families' own --- in particular no worse, although the fibres have `q` elements. The
+two normalizations are what make the zero probe drop out. -/
+theorem sum_avg_xSqNorm_fibre_eq {d1 d2 : Type*} [Fintype d1] [DecidableEq d1]
+    [Fintype d2] [DecidableEq d2] (Ψ : d1 × d2 → ℂ)
+    {Q : F × F → Matrix d1 d1 ℂ} {B : F × F → Matrix d2 d2 ℂ}
+    (hQ : ∑ p : F × F, Q p = 1) (hB : ∑ p : F × F, B p = 1) :
+    ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) *
+        ∑ v : F, xSqNorm Ψ
+          (∑ p ∈ univ.filter fun p : F × F => ab.1 * p.1 + ab.2 * p.2 = v, Q p)
+          (∑ p ∈ univ.filter fun p : F × F => ab.1 * p.1 + ab.2 * p.2 = v, B p)
+      = (1 - (Fintype.card F : ℝ)⁻¹) * ∑ p : F × F, xSqNorm Ψ (Q p) (B p) := by
+  classical
+  set U : F × F → ((d1 × d2) → ℂ) := fun p =>
+    ((aOp (Q p) : Matrix (d1 × d2) _ ℂ) - bOp (B p)) *ᵥ Ψ with hUdef
+  have hU0 : ∑ p : F × F, U p = 0 := by
+    rw [hUdef,
+      show (∑ p : F × F, (((aOp (Q p) : Matrix (d1 × d2) _ ℂ) - bOp (B p)) *ᵥ Ψ))
+        = ((aOp (∑ p : F × F, Q p) : Matrix (d1 × d2) _ ℂ) - bOp (∑ p : F × F, B p)) *ᵥ Ψ from
+        sum_fibre_dev Ψ univ Q B, hQ, hB, aOp_one, bOp_one, sub_self, Matrix.zero_mulVec]
+  have hfib := sum_avg_norm_fibre_sq U hU0
+  have hcoarse : ∀ (ab : F × F) (v : F),
+      ‖evec (∑ p ∈ univ.filter fun p : F × F => ab.1 * p.1 + ab.2 * p.2 = v, U p)‖ ^ 2
+        = xSqNorm Ψ (∑ p ∈ univ.filter fun p : F × F => ab.1 * p.1 + ab.2 * p.2 = v, Q p)
+            (∑ p ∈ univ.filter fun p : F × F => ab.1 * p.1 + ab.2 * p.2 = v, B p) := by
+    intro ab v
+    rw [xSqNorm_eq_norm_evec_sq, hUdef]
+    exact congrArg (fun w => ‖evec w‖ ^ 2) (sum_fibre_dev Ψ _ Q B)
+  have hfine : ∀ p : F × F, ‖evec (U p)‖ ^ 2 = xSqNorm Ψ (Q p) (B p) := fun p => by
+    rw [xSqNorm_eq_norm_evec_sq, hUdef]
+  rw [Finset.sum_congr rfl fun p (_ : p ∈ univ) => hfine p,
+    Finset.sum_congr rfl fun ab (_ : ab ∈ univ) =>
+      congrArg (fun t : ℝ => ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) * t)
+        (Finset.sum_congr rfl fun v (_ : v ∈ univ) => hcoarse ab v)] at hfib
+  exact hfib
+
+set_option maxHeartbeats 1600000 in
+/-- **`lem:qld-padded-points`.** The padded space's point measurement: the combined `XZ`
+measurement coarse-grained along `(a, b) |-> alpha a + beta b`, so that it returns the single
+field element `alpha g_X(x) + beta g_Z(z)`. It is indexed by `(x, z, alpha, beta)` --- which is
+what ``independent of the dummy coordinates'' means --- projective, self-consistent, and
+consistent with both ordered products of the expanded point measurements, coarse-grained the same
+way. -/
+theorem padded_points (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
+    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) :
+    ∃ (QA : Content F m → F × F → F →
+        Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ)
+      (QB : Content F m → F × F → F →
+        Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ),
+      (∀ c ab, IsPVM (QA c ab)) ∧ (∀ c ab, IsPVM (QB c ab))
+      ∧ (∀ ab : F × F, ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *
+            ∑ v : F, xSqNorm (extVec2 (hatVec (F := F) (m := m) ψ) ((0 : F), (0 : F))
+              ((0 : F), (0 : F))) (QA c ab v) (QB c ab v)
+          ≤ 2 * deltaQ ε)
+      ∧ (∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *
+            ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) *
+              ∑ v : F, xSqNorm (extVec2 (hatVec (F := F) (m := m) ψ) ((0 : F), (0 : F))
+                  ((0 : F), (0 : F))) (QA c ab v)
+                (∑ p ∈ univ.filter fun p : F × F => ab.1 * p.1 + ab.2 * p.2 = v,
+                  aOp (hatOrdZX MB c.uX c.uZ p))
+          ≤ 4 * deltaQ ε + 115352832 * ε)
+      ∧ (∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *
+            ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) *
+              ∑ v : F, xSqNorm (extVec2 (hatVec (F := F) (m := m) ψ) ((0 : F), (0 : F))
+                  ((0 : F), (0 : F))) (QA c ab v)
+                (∑ p ∈ univ.filter fun p : F × F => ab.1 * p.1 + ab.2 * p.2 = v,
+                  aOp (hatOrdXZ MB c.uX c.uZ p))
+          ≤ 4 * deltaQ ε + 461411328 * ε) := by
+  classical
+  obtain ⟨QA0, QB0, hPA, hPB, hkA, hkB, h1, h2, h3⟩ :=
+    combined_points (MB := MB) hψ hfail hprojA hprojB
+  set Φ := extVec2 (hatVec (F := F) (m := m) ψ) ((0 : F), (0 : F)) ((0 : F), (0 : F)) with hΦ
+  have hΦ1 : star Φ ⬝ᵥ Φ = 1 := extVec2_unit (hatVec_unit hψ) _ _
+  have hq1 : (0 : ℝ) ≤ 1 - (Fintype.card F : ℝ)⁻¹ := by
+    have h : (1 : ℝ) ≤ (Fintype.card F : ℝ) := by
+      have : 1 ≤ Fintype.card F := Fintype.card_pos
+      exact_mod_cast this
+    have h0 : (0 : ℝ) < (Fintype.card F : ℝ) := by linarith
+    rw [sub_nonneg, inv_le_one_iff₀]
+    right
+    exact h
+  have hq2 : (1 : ℝ) - (Fintype.card F : ℝ)⁻¹ ≤ 1 := by
+    have : (0 : ℝ) ≤ (Fintype.card F : ℝ)⁻¹ := by positivity
+    linarith
+  -- Bob's ordered products sum to the identity, which is what kills the zero probe
+  have hZX : ∀ c : Content F m, ∑ p : F × F,
+      (aOp (hatOrdZX MB c.uX c.uZ p) : Matrix ((dB × Anc F m) × (F × F)) _ ℂ) = 1 := by
+    intro c
+    rw [← aOp_sum, sum_hatOrdZX hprojB, aOp_one]
+  have hXZ : ∀ c : Content F m, ∑ p : F × F,
+      (aOp (hatOrdXZ MB c.uX c.uZ p) : Matrix ((dB × Anc F m) × (F × F)) _ ℂ) = 1 := by
+    intro c
+    rw [← aOp_sum, sum_hatOrdXZ hprojB, aOp_one]
+  refine ⟨fun c ab v => ∑ p ∈ univ.filter fun p : F × F => ab.1 * p.1 + ab.2 * p.2 = v, QA0 c p,
+    fun c ab v => ∑ p ∈ univ.filter fun p : F × F => ab.1 * p.1 + ab.2 * p.2 = v, QB0 c p,
+    fun c ab => (hPA c).coarse _, fun c ab => (hPB c).coarse _, ?_, ?_, ?_⟩
+  · -- item 1: coarse-graining costs nothing, both families being projective
+    intro ab
+    refine le_trans (Finset.sum_le_sum fun c _ =>
+      mul_le_mul_of_nonneg_left ?_ (by positivity)) h1
+    have hmap := sum_xSqNorm_map_le (A := F × F) (C := F) hΦ1
+      (hPA c).toPOVM (hPB c).toPOVM (by simpa using hPA c) (by simpa using hPB c)
+      (fun p : F × F => ab.1 * p.1 + ab.2 * p.2)
+    refine le_trans (le_of_eq (Finset.sum_congr rfl fun v _ => ?_)) hmap
+    rw [show (((((hPA c).toPOVM).map fun p : F × F => ab.1 * p.1 + ab.2 * p.2).mats v).val)
+        = ∑ p ∈ univ.filter fun p : F × F => ab.1 * p.1 + ab.2 * p.2 = v, QA0 c p from
+      AddSubmonoidClass.coe_finsetSum _ _,
+      show (((((hPB c).toPOVM).map fun p : F × F => ab.1 * p.1 + ab.2 * p.2).mats v).val)
+        = ∑ p ∈ univ.filter fun p : F × F => ab.1 * p.1 + ab.2 * p.2 = v, QB0 c p from
+      AddSubmonoidClass.coe_finsetSum _ _]
+  · -- item 2: Parseval, and the zero probe drops out
+    refine le_trans (Finset.sum_le_sum fun c _ =>
+      mul_le_mul_of_nonneg_left ?_ (by positivity)) h2
+    rw [sum_avg_xSqNorm_fibre_eq Φ (hPA c).sum_eq_one (hZX c)]
+    refine le_trans (mul_le_mul_of_nonneg_right hq2 (Finset.sum_nonneg fun p _ =>
+      xSqNorm_nonneg _ _ _)) (le_of_eq (one_mul _))
+  · -- item 3: the same, at the other order
+    refine le_trans (Finset.sum_le_sum fun c _ =>
+      mul_le_mul_of_nonneg_left ?_ (by positivity)) h3
+    rw [sum_avg_xSqNorm_fibre_eq Φ (hPA c).sum_eq_one (hXZ c)]
+    refine le_trans (mul_le_mul_of_nonneg_right hq2 (Finset.sum_nonneg fun p _ =>
+      xSqNorm_nonneg _ _ _)) (le_of_eq (one_mul _))
+
 end Combined
 
 end MIPRE.QLD

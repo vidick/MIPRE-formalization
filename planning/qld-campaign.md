@@ -613,7 +613,7 @@ the quadratic form of the compressed operator on the original one, which is
 `dotProduct_mulVec_conj` plus one Kronecker identity. `Dilation.lean`'s universe variables had to be
 relaxed from `Type` to `Type*` for the index group `n -> F` to serve as the ancilla.
 
-**Still to do in PR C**: `lem:qld-pairs-of-lines`, `lem:qld-padded-points`, `lem:qld-sublines`,
+**Still to do in PR C**: `lem:qld-pairs-of-lines`, `lem:qld-sublines`,
 `lem:qld-padded-lines`, `lem:qld-simultaneous`.
 
 `lem:qld-sublines` is purely combinatorial and the blueprint says it is "a reasonable place to
@@ -678,6 +678,45 @@ nothing depends on `q`.
 approximately commuting projective measurements per party, four error hypotheses, and
 `exists_projective_joint` returns the dilated pair with its three estimates. That is what
 `Combined.lean` instantiates at `A := F_q`, `iota := Content F m`, uniform weights.
+
+### `lem:qld-padded-points`, and why its two items are free for opposite reasons (2026-09-20, done)
+
+The combined measurement coarse-grained along `(a,b) |-> alpha a + beta b`, so that it returns
+the single field element `alpha g_X(x) + beta g_Z(z)`. Indexed by `(x, z, alpha, beta)`, which is
+what the paper's "independent of the dummy coordinates `w`" means; the padded space `F_q^{4m}`
+itself is not needed until the line--point distribution over it is, in `lem:qld-padded-lines`.
+
+**Item 1 (self-consistency) is free because both families are projective.** The state-dependent
+distance has no data-processing inequality -- `Expanded.lean`'s docstring records NW19's own
+counterexample -- so a coarse-graining is not free in general. What makes it free here is that
+for *projective* families the summed deviation and the agreement probability determine each other
+exactly (`one_sub_sum_bornProb_eq`, proved for the sandwich chain and reused verbatim), and
+agreement can only increase under a coarse-graining applied to both sides
+(`sum_bornProb_le_map`). Three lines: `sum_xSqNorm_map_le`. And it holds for *every*
+`(alpha,beta)`, not just on average.
+
+**Item 2 (consistency with the ordered products) is not free, and Parseval pays for it.** The
+right-hand families are products of two measurements, not POVMs, so item 1's route is
+unavailable, and a per-fibre triangle inequality costs the fibre size `q`. The paper's round-12
+`\cnote` on node 1.2.2.10 records that an earlier orthogonality-and-Cauchy--Schwarz route claimed
+`O(delta_Q^{1/2})` and was retracted for exactly this reason. The argument that works, and is
+what is formalized (`sum_avg_norm_fibre_sq`):
+
+* Parseval over `F_q` turns the sum over fibres into an average over one probe `r`;
+* the `r = 0` term vanishes **identically**, because the deviation family sums to zero --
+  `sum_{a,b} Q-hat_{a,b} = Id` and `sum_{a,b} M-hat^Z_b M-hat^X_a = Id`. This is the only place
+  the zero-sum hypothesis is used, and without it the identity is false;
+* for `r != 0` the pair `(r alpha, r beta)` is uniform on `F_q^2` when `(alpha,beta)` is, so
+  averaging and applying Parseval over `F_q^2` returns the outcome-pair sum exactly.
+
+So the error comes out at `(q-1)/q` times the input -- **better** than preserved, and with no
+`md/q` term. The Lean keeps the factor visible.
+
+New Foundations pieces: `sum_norm_trVecRaw_sq` (Parseval over one copy of the field, a copy of
+the `n -> F` proof with `sum_sgn_trMul` in place of `sum_sgn_trDot`), `sum_norm_char_two_sq`
+(over two copies, transported from `n := Fin 2` through `pairVec`), `sum_avg_norm_fibre_sq`,
+`sum_xSqNorm_map_le`, and the vector bridge `xSqNorm_eq_norm_evec_sq` / `sum_fibre_dev` that lets
+a fibre sum of deviation *vectors* be read back as the deviation of the coarse-grained operators.
 
 ### PR D — separation, the swap isometry, and the theorem
 

@@ -238,3 +238,16 @@ that makes the probe average free, the two players' commutation inputs, and the 
   MIPRE.QLD.sum_content_hatMats_consistency,
   MIPRE.QLD.deltaQ,
   MIPRE.QLD.combined_points
+
+/-! ## The padded point measurement
+
+Blueprint `lem:qld-padded-points`. The combined measurement coarse-grained along
+`(a, b) |-> alpha a + beta b`, Bob's two ordered products and their completeness, the Parseval
+identity for the coarse-graining, and the lemma. -/
+
+#guard_sorry_free MIPRE.QLD.hatOrdZX,
+  MIPRE.QLD.hatOrdXZ,
+  MIPRE.QLD.sum_hatOrdZX,
+  MIPRE.QLD.sum_hatOrdXZ,
+  MIPRE.QLD.sum_avg_xSqNorm_fibre_eq,
+  MIPRE.QLD.padded_points

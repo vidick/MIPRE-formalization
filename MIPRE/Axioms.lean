@@ -593,6 +593,19 @@ tell you the guard is missing.
   MIPRE.sum_xSqNorm_dilated_aOp_le,
   MIPRE.exists_projective_joint
 
+-- blueprint `lem:qld-padded-points`, the generic half: Parseval over one and two copies of the
+-- field, the coarse-graining by a linear form whose zero probe drops out, and the two ways a
+-- coarse-graining is paid for -- free for projective families, Parseval otherwise.
+#guard_sorry_free MIPRE.sum_norm_fourierVecRaw_sq,
+  MIPRE.trVecRaw,
+  MIPRE.sum_norm_trVecRaw_sq,
+  MIPRE.sum_norm_char_two_sq,
+  MIPRE.sum_avg_norm_fibre_sq,
+  MIPRE.sum_xSqNorm_map_le,
+  MIPRE.sum_mulVec',
+  MIPRE.xSqNorm_eq_norm_evec_sq,
+  MIPRE.sum_fibre_dev
+
 /-!
 ## The one axiom
 
