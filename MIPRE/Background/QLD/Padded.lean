@@ -1225,6 +1225,267 @@ theorem avgRestr_prod_le_mul_avgAll (hm : m ∣ Fintype.card F) {g : LPData F m 
   ring_nf
   exact le_refl _
 
+/-! ### The unrestricted law is the uniform average over the data
+
+`pairs_of_lines_prod` is stated as a uniform average over `LPData F m x LPData F m`; `avgAll` is the
+same average written as nested sums. One equiv identifies them. -/
+
+instance : Nonempty (LPData F m) := ⟨⟨0, 0, 0⟩⟩
+
+/-- The data of a line-point pair, as a triple. -/
+def lpEquiv (F : Type*) (m : ℕ) : LPData F m ≃ Point F m × F × Point F m where
+  toFun c := (c.pt, c.s, c.raw)
+  invFun p := ⟨p.1, p.2.1, p.2.2⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+theorem sumAll_eq_sum (h : LPData F m → ℝ) : sumAll h = ∑ c : LPData F m, h c := by
+  rw [← Equiv.sum_comp (lpEquiv F m).symm h, Fintype.sum_prod_type]
+  exact Finset.sum_congr rfl fun pt _ => by rw [Fintype.sum_prod_type]; rfl
+
+theorem card_lpData : Fintype.card (LPData F m) = Fintype.card F ^ (2 * m + 1) := by
+  rw [Fintype.card_congr (lpEquiv F m), Fintype.card_prod, Fintype.card_prod,
+    Fintype.card_pi_const]
+  ring
+
+/-- **`avgAll` is the uniform average over the data**, which is the form
+`pairs_of_lines_prod` is stated in. -/
+theorem avgAll_eq_uniform (h : LPData F m → ℝ) :
+    avgAll h = ∑ c : LPData F m, (Fintype.card (LPData F m) : ℝ)⁻¹ * h c := by
+  rw [avgAll, sumAll_eq_sum, card_lpData, Finset.mul_sum]
+  exact Finset.sum_congr rfl fun c _ => by push_cast; ring
+
+/-- The product form. -/
+theorem avgAll_prod_eq_uniform (g : LPData F m → LPData F m → ℝ) :
+    avgAll (fun cX => avgAll (fun cZ => g cX cZ))
+      = ∑ p : LPData F m × LPData F m, (Fintype.card (LPData F m × LPData F m) : ℝ)⁻¹
+          * g p.1 p.2 := by
+  rw [avgAll_eq_uniform, Fintype.sum_prod_type, Fintype.card_prod]
+  refine Finset.sum_congr rfl fun cX _ => ?_
+  rw [avgAll_eq_uniform, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun cZ _ => ?_
+  push_cast
+  ring
+
+/-- The constant `1` averages to `1`. -/
+theorem avgAll_one : avgAll (fun _ : LPData F m => (1 : ℝ)) = 1 := by
+  rw [avgAll_eq_uniform, Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one,
+    mul_inv_cancel₀ (Nat.cast_ne_zero.mpr Fintype.card_ne_zero)]
+
+theorem avgAll_prod_one :
+    avgAll (fun _ : LPData F m => avgAll (fun _ : LPData F m => (1 : ℝ))) = 1 := by
+  rw [avgAll_one, avgAll_one]
+
+/-! ### The padded law is dominated by the product law
+
+This is the distributional content of the paper's Claims 17-1 to 17-3, and it is stronger than what
+those claims extract. The paper's `\cnote` on the conclusion of `lem:qld-4-13` says the joint law of
+the two sublines-with-points is **not** a product, because "for diagonal lines both coordinates share
+the line parameter", and the three claims are written to use only the marginals. That is right about
+conditioning on the *padded* line: given it, the two blocks of a uniform point on it move with one
+parameter. But the quantity to be bounded conditions only on the two *sublines*, which know each
+block's coset in its own space and not the relative offset --- and `avgSub_free` and its three
+companions say that at a fixed padded seed the joint law is exactly a product of the two marginals,
+each of them restricted or not according to `padCase`. Combining that with the restricted-law
+transfer bounds the padded law by `m^2` times the product of the two unrestricted laws, uniformly in
+the padded seed and the line type. -/
+
+theorem avgAll_prod_nonneg {g : LPData F m → LPData F m → ℝ} (hpos : ∀ cX cZ, 0 ≤ g cX cZ) :
+    0 ≤ avgAll (fun cX => avgAll (fun cZ => g cX cZ)) :=
+  avgAll_nonneg fun cX => avgAll_nonneg (hpos cX)
+
+/-- The `Z` side restricted, the `X` side free. -/
+theorem avgAll_avgRestr_le (hm : m ∣ Fintype.card F) {g : LPData F m → LPData F m → ℝ}
+    (hpos : ∀ cX cZ, 0 ≤ g cX cZ) (j : Fin m) :
+    avgAll (fun cX => avgRestr hm j (fun cZ => g cX cZ))
+      ≤ (m : ℝ) * avgAll (fun cX => avgAll (fun cZ => g cX cZ)) := by
+  refine le_trans (avgAll_mono fun cX => avgRestr_le_mul_avgAll hm j (hpos cX)) ?_
+  rw [avgAll_const_mul]
+
+/-- The `X` side restricted, the `Z` side free. -/
+theorem avgRestr_avgAll_le (hm : m ∣ Fintype.card F) {g : LPData F m → LPData F m → ℝ}
+    (hpos : ∀ cX cZ, 0 ≤ g cX cZ) (i : Fin m) :
+    avgRestr hm i (fun cX => avgAll (fun cZ => g cX cZ))
+      ≤ (m : ℝ) * avgAll (fun cX => avgAll (fun cZ => g cX cZ)) :=
+  avgRestr_le_mul_avgAll hm i fun cX => avgAll_nonneg (hpos cX)
+
+/-- **The padded line-point law is at most `m^2` times the product of the two unrestricted subline
+laws**, whatever the padded seed and the line type. -/
+theorem avgSub_le_mul_avgAll (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty)
+    (s : F) {g : LPData F m → LPData F m → ℝ} (hpos : ∀ cX cZ, 0 ≤ g cX cZ) :
+    avgSub hm4 hm t s g
+      ≤ (m : ℝ) * (m : ℝ) * avgAll (fun cX => avgAll (fun cZ => g cX cZ)) := by
+  have hm1 : (1 : ℝ) ≤ (m : ℝ) := by
+    exact_mod_cast Nat.one_le_iff_ne_zero.mpr (NeZero.ne m)
+  have hprod := avgAll_prod_nonneg hpos
+  have hmm : (m : ℝ) ≤ (m : ℝ) * (m : ℝ) := by nlinarith [hm1]
+  have h1mm : (1 : ℝ) ≤ (m : ℝ) * (m : ℝ) := le_trans hm1 hmm
+  rcases h : padCase (chi hm4 s) with i | i | _ | _
+  · -- the `X` block: the `X` side is restricted, and on a diagonal line so is the `Z` side
+    cases t with
+    | dline =>
+        rw [avgSub_xc_dline hm4 hm h g]
+        exact avgRestr_prod_le_mul_avgAll hm hpos i 0
+    | point =>
+        rw [avgSub_xc hm4 hm h (by simp) g]
+        exact le_trans (avgRestr_avgAll_le hm hpos i) (mul_le_mul_of_nonneg_right hmm hprod)
+    | aline =>
+        rw [avgSub_xc hm4 hm h (by simp) g]
+        exact le_trans (avgRestr_avgAll_le hm hpos i) (mul_le_mul_of_nonneg_right hmm hprod)
+  · -- the `Z` block: only the `Z` side is restricted
+    rw [avgSub_zc hm4 hm t h g]
+    exact le_trans (avgAll_avgRestr_le hm hpos i) (mul_le_mul_of_nonneg_right hmm hprod)
+  all_goals
+    -- `alpha`, `beta` or a dummy coordinate: neither side is restricted
+    rw [avgSub_free hm4 hm t (by simp [h]) g]
+    exact le_mul_of_one_le_left hprod h1mm
+
 end Average
+
+/-! ## The `alpha` and `beta` coordinates of the padded point
+
+The measurement of `lem:qld-padded-lines` reads `alpha` and `beta` at the sampled padded point, which
+`avgSub` does not carry. They are coordinates of the padded point outside the `X` and `Z` blocks, so
+translating the point in those two coordinates alone leaves both sublines untouched --- which makes
+the `(alpha, beta)` average *uniform and independent of everything else*, and a bound that holds for
+every fixed `(alpha, beta)` therefore holds for the joint law. No refinement of the block
+decomposition is needed. -/
+
+section AlphaBeta
+
+variable [NeZero m]
+
+/-- Translating the padded point in its `alpha` and `beta` coordinates only. -/
+def shiftAB (c d : F) (u : Point F (4 * m)) : Point F (4 * m) :=
+  u + (Pi.single (aIdx m) c + Pi.single (bIdx m) d)
+
+@[simp] theorem xBlk_shiftAB (c d : F) (u : Point F (4 * m)) :
+    xBlk (shiftAB c d u) = xBlk u := by
+  funext i
+  simp [shiftAB, xBlk, Pi.single_eq_of_ne (xIdx_ne_aIdx i), Pi.single_eq_of_ne (xIdx_ne_bIdx i)]
+
+@[simp] theorem zBlk_shiftAB (c d : F) (u : Point F (4 * m)) :
+    zBlk (shiftAB c d u) = zBlk u := by
+  funext i
+  simp [shiftAB, zBlk, Pi.single_eq_of_ne (zIdx_ne_aIdx i), Pi.single_eq_of_ne (zIdx_ne_bIdx i)]
+
+@[simp] theorem alph_shiftAB (c d : F) (u : Point F (4 * m)) :
+    alph (shiftAB c d u) = alph u + c := by
+  simp only [shiftAB, alph, Pi.add_apply, Pi.single_eq_same,
+    Pi.single_eq_of_ne aIdx_ne_bIdx, add_zero]
+
+@[simp] theorem bet_shiftAB (c d : F) (u : Point F (4 * m)) :
+    bet (shiftAB c d u) = bet u + d := by
+  simp only [shiftAB, bet, Pi.add_apply, Pi.single_eq_same,
+    Pi.single_eq_of_ne (Ne.symm aIdx_ne_bIdx), zero_add]
+
+theorem shiftAB_shiftAB (c d c' d' : F) (u : Point F (4 * m)) :
+    shiftAB c' d' (shiftAB c d u) = shiftAB (c + c') (d + d') u := by
+  simp only [shiftAB, Pi.single_add]
+  abel
+
+@[simp] theorem shiftAB_zero (u : Point F (4 * m)) : shiftAB (0 : F) 0 u = u := by
+  simp only [shiftAB, Pi.single_zero, add_zero]
+
+theorem bijective_shiftAB (c d : F) : Function.Bijective (shiftAB (F := F) (m := m) c d) :=
+  Function.bijective_iff_has_inverse.mpr
+    ⟨shiftAB (-c) (-d),
+      fun u => by rw [shiftAB_shiftAB]; simp,
+      fun u => by rw [shiftAB_shiftAB]; simp⟩
+
+theorem subX_shiftAB (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (c d s : F)
+    (pt raw : Point F (4 * m)) (e : F × Point F m) :
+    subX hm4 hm ⟨shiftAB c d pt, s, raw⟩ e = subX hm4 hm ⟨pt, s, raw⟩ e := by
+  simp only [subX]
+  rcases h : padCase (chi hm4 s) with i | i | _ | _ <;>
+    simp only [subXof_xc, subXof_zc, subXof_ab, subXof_dum, xBlk_shiftAB]
+
+theorem subZ_shiftAB (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty)
+    (c d s : F) (pt raw : Point F (4 * m)) (e : F × Point F m) :
+    subZ hm4 hm t ⟨shiftAB c d pt, s, raw⟩ e = subZ hm4 hm t ⟨pt, s, raw⟩ e := by
+  simp only [subZ]
+  rcases h : padCase (chi hm4 s) with i | i | _ | _ <;> cases t <;>
+    simp only [subZof_dline_xc, subZof_point_xc, subZof_aline_xc, subZof_zc, subZof_ab,
+      subZof_dum, zBlk_shiftAB]
+
+/-- The inner average of the subline sampling space, at a fixed padded point. -/
+def sumSubAt (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) (s : F)
+    (pt : Point F (4 * m)) (h : LPData F m → LPData F m → ℝ) : ℝ :=
+  ∑ raw : Point F (4 * m), ∑ eX : F × Point F m, ∑ eZ : F × Point F m,
+    h (subX hm4 hm ⟨pt, s, raw⟩ eX) (subZ hm4 hm t ⟨pt, s, raw⟩ eZ)
+
+theorem sumSub_eq_sum_sumSubAt (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F)
+    (t : CL.Ty) (s : F) (h : LPData F m → LPData F m → ℝ) :
+    sumSub hm4 hm t s h = ∑ pt : Point F (4 * m), sumSubAt hm4 hm t s pt h := rfl
+
+theorem sumSubAt_shiftAB (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty)
+    (s : F) (c d : F) (pt : Point F (4 * m)) (h : LPData F m → LPData F m → ℝ) :
+    sumSubAt hm4 hm t s (shiftAB c d pt) h = sumSubAt hm4 hm t s pt h := by
+  refine Finset.sum_congr rfl fun raw _ => Finset.sum_congr rfl fun eX _ =>
+    Finset.sum_congr rfl fun eZ _ => ?_
+  rw [subX_shiftAB, subZ_shiftAB]
+
+/-- The padded average with `alpha` and `beta` carried. -/
+def sumSubAB (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) (s : F)
+    (g : F → F → LPData F m → LPData F m → ℝ) : ℝ :=
+  ∑ pt : Point F (4 * m), sumSubAt hm4 hm t s pt (g (alph pt) (bet pt))
+
+/-- The normalized version. -/
+def avgSubAB (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) (s : F)
+    (g : F → F → LPData F m → LPData F m → ℝ) : ℝ :=
+  ((Fintype.card F : ℝ) ^ (10 * m + 2))⁻¹ * sumSubAB hm4 hm t s g
+
+/-- **`(alpha, beta)` is uniform and independent of the two sublines**, because translating the
+padded point in those two coordinates alone is a bijection that leaves both sublines fixed. -/
+theorem sumSubAB_eq (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) (s : F)
+    (g : F → F → LPData F m → LPData F m → ℝ) :
+    (Fintype.card (F × F) : ℝ) * sumSubAB hm4 hm t s g
+      = ∑ p : F × F, sumSub hm4 hm t s (g p.1 p.2) := by
+  classical
+  have hshift : ∀ p : F × F,
+      ∑ pt : Point F (4 * m), sumSubAt hm4 hm t s pt (g (alph pt + p.1) (bet pt + p.2))
+        = sumSubAB hm4 hm t s g := by
+    intro p
+    refine Fintype.sum_bijective (shiftAB (F := F) (m := m) p.1 p.2)
+      (bijective_shiftAB p.1 p.2) _ _ fun pt => ?_
+    rw [sumSubAt_shiftAB, alph_shiftAB, bet_shiftAB]
+  have e3 : ∀ pt : Point F (4 * m),
+      ∑ p : F × F, sumSubAt hm4 hm t s pt (g (alph pt + p.1) (bet pt + p.2))
+        = ∑ p : F × F, sumSubAt hm4 hm t s pt (g p.1 p.2) := fun pt =>
+    Equiv.sum_comp ((Equiv.addLeft (alph pt)).prodCongr (Equiv.addLeft (bet pt)))
+      (fun p : F × F => sumSubAt hm4 hm t s pt (g p.1 p.2))
+  calc (Fintype.card (F × F) : ℝ) * sumSubAB hm4 hm t s g
+      = ∑ _p : F × F, sumSubAB hm4 hm t s g := by
+        rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+    _ = ∑ p : F × F, ∑ pt : Point F (4 * m),
+          sumSubAt hm4 hm t s pt (g (alph pt + p.1) (bet pt + p.2)) :=
+        Finset.sum_congr rfl fun p _ => (hshift p).symm
+    _ = ∑ pt : Point F (4 * m), ∑ p : F × F,
+          sumSubAt hm4 hm t s pt (g (alph pt + p.1) (bet pt + p.2)) := Finset.sum_comm
+    _ = ∑ pt : Point F (4 * m), ∑ p : F × F, sumSubAt hm4 hm t s pt (g p.1 p.2) :=
+        Finset.sum_congr rfl fun pt _ => e3 pt
+    _ = ∑ p : F × F, ∑ pt : Point F (4 * m), sumSubAt hm4 hm t s pt (g p.1 p.2) :=
+        Finset.sum_comm
+    _ = ∑ p : F × F, sumSub hm4 hm t s (g p.1 p.2) :=
+        Finset.sum_congr rfl fun p _ => (sumSub_eq_sum_sumSubAt hm4 hm t s (g p.1 p.2)).symm
+
+/-- **A bound that holds for every fixed `(alpha, beta)` holds for the padded law.** -/
+theorem avgSubAB_le_of_forall (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F)
+    (t : CL.Ty) (s : F) {g : F → F → LPData F m → LPData F m → ℝ} {delta : ℝ}
+    (h : ∀ a b : F, avgSub hm4 hm t s (g a b) ≤ delta) :
+    avgSubAB hm4 hm t s g ≤ delta := by
+  have hcard : (0 : ℝ) < (Fintype.card (F × F) : ℝ) :=
+    Nat.cast_pos.mpr Fintype.card_pos
+  have hkey : (Fintype.card (F × F) : ℝ) * avgSubAB hm4 hm t s g
+      = ∑ p : F × F, avgSub hm4 hm t s (g p.1 p.2) := by
+    rw [avgSubAB, ← mul_assoc, mul_comm (Fintype.card (F × F) : ℝ), mul_assoc,
+      sumSubAB_eq hm4 hm t s g, Finset.mul_sum]
+    exact Finset.sum_congr rfl fun p _ => rfl
+  refine le_of_mul_le_mul_left ?_ hcard
+  rw [hkey]
+  refine le_trans (Finset.sum_le_sum fun p _ => h p.1 p.2) ?_
+  rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+
+end AlphaBeta
 
 end MIPRE.QLD

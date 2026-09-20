@@ -1042,6 +1042,47 @@ drop the `X` factor, bound the rest by `1` --- each of them a bound of the size 
 of products of subline laws, i.e. `avgSub_free` and its three companions carried from reals to
 operators. That is the next task, and it is one piece of work rather than four.
 
+### The three claims are avoidable: the padded law is a mixture of products (2026-09-20)
+
+Sent to do the paper's Claims 17-1, 17-2 and 17-3. They are not needed for this construction, and the
+reason is worth recording carefully, because it looks at first like the paper rules it out.
+
+The paper's concluding `\cnote` on `lem:qld-4-13` says the three claims exist because "under the
+distribution `D` the pair is correlated (for diagonal lines both coordinates share the line
+parameter), so that decomposition is not available". That is true *given the padded line*: a uniform
+point of it moves both blocks with one parameter. But the quantity to be bounded conditions on the two
+**sublines**, not on the padded line. `(l_X, l_Z)` knows each block's coset in its own space; it does
+not know the relative offset of the two blocks, which is exactly what `l` adds. Marginalize that out
+and independence is restored --- and `avgSub_free` and its three companions (the Q-C5e work) already
+prove the joint law to be *exactly* a product of the two marginals at a fixed padded seed.
+
+So the chain collapses. Two new lemmas finish the distributional side:
+
+* `avgSub_le_mul_avgAll`: the padded line-point law is at most `m^2` times the product of the two
+  unrestricted subline laws, uniformly in the padded seed and the line type. Four cases by `padCase`,
+  each an `avgSub_*` rewrite followed by the restricted-law transfer.
+* `avgSubAB_le_of_forall`: `alpha` and `beta` at the sampled padded point are uniform and independent
+  of both sublines. The proof is a change of variables, not a refinement of the block decomposition:
+  translating the padded point in the `alpha` and `beta` coordinates alone is a bijection that leaves
+  both sublines fixed (`shiftAB`, `subX_shiftAB`, `subZ_shiftAB`), so a bound holding for every fixed
+  `(alpha, beta)` holds for the joint law. This is the trick that avoided splitting `padEquiv` into
+  four blocks and reproving the four factorization theorems.
+
+Plus the bridge `avgAll_eq_uniform` / `avgAll_prod_eq_uniform`, which identifies `avgAll` with the
+uniform average over `LPData` that `pairs_of_lines_prod` is stated in.
+
+**What remains is one data-processing step.** Coarse-grain the outcome pair `(f_X(x), f_Z(z))` along
+`(r_1,r_2) |-> alpha r_1 + beta r_2`; coarse-graining only increases agreement, so the bound survives.
+`sum_bornProb_le_map` is that inequality, but it is stated for `POVM` structures and the two families
+here are bare matrix families, so the step needs them presented as `POVM`s first. Then
+`avgSub_le_mul_avgAll` and `avgSubAB_le_of_forall` finish.
+
+**The error.** This route gives `m^2 * delta_P`-shaped rather than the paper's
+`m * (eps^{1/4} + delta_P^{1/4} + delta_Q^{1/4} + delta_Line^{1/2})`. That is not literally
+`m * poly(eps, md/q)`, but `lem:qld-4-7` absorbs any polynomial factor in `m` into its `a(md)^a`
+prefactor, and for small `delta_P` the new bound is the stronger one. Recorded, with the suggested
+upstream action, in `reports/padded-lines-product-law.md`.
+
 ### PR D — separation, the swap isometry, and the theorem
 
 `lem:qld-helper`, `lem:qld-exact-paulis`, `lem:qld-swap`, `thm:qld`. Two things to hold on to:
