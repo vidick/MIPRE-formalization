@@ -1968,8 +1968,11 @@ bounds, and the complexity bound the composition consumes.
 The Lean field family is indexed by odd extension degrees, as required by the parameter
 choice. Requiring a field of cardinality $2^k$ for every natural $k$ would include $k=0$
 and make the contract uninhabitable. The constructed verifier uses the canonical
-polynomial-basis representation and uniform field programs, modulo the existing Shoup
-axiom. Effective self-dual normal coordinates remain a separate obligation for downsizing.
+polynomial-basis representation and uniform field programs from the proved binary
+irreducible-polynomial constructor (Lemma~\ref{lem:binary-uniform-irreducible}).
+Its exact axiom guard contains only Lean's standard axioms. Effective self-dual
+normal coordinates are supplied by Lemma~\ref{lem:self-dual-basis}; integrating
+those coordinates into the downsizing consumers remains a separate obligation.
 
 The theorem has four obligations, and they are separate in the source because they fail
 separately.

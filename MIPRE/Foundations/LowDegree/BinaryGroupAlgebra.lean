@@ -123,20 +123,6 @@ theorem groupFixedMatrix_ker (k : ℕ) [NeZero k]
   rw [hs, ← map_add, ← (groupCoordinates k).map_zero, (groupCoordinates k).injective.eq_iff]
   exact CharTwo.add_eq_zero
 
-/-- Coordinatewise addition of binary matrices. -/
-def addMatrixBitsProg : PolyTimeFun (List BitStr × List BitStr) (List BitStr) :=
-  (map BinaryPolynomial.xorBitsProg).comp zip
-
-theorem addMatrixBitsProg_correct {m n : ℕ}
-    (A B : Matrix (Fin m) (Fin n) (ZMod 2)) :
-    addMatrixBitsProg (matrixBits A, matrixBits B) = matrixBits (A + B) := by
-  change ((matrixBits A).zip (matrixBits B)).map (fun p => BinaryPolynomial.xorBits p.1 p.2) = _
-  apply List.ext_getElem
-  · simp [matrixBits]
-  · intro i hi hj
-    simp only [matrixBits, List.getElem_map, List.getElem_zip, List.getElem_ofFn]
-    exact xorBits_vectorBits _ _
-
 /-- Construct the binary fixed-space equation. -/
 def groupFixedMatrixProg : PolyTimeFun Unary (List BitStr) :=
   addMatrixBitsProg.comp (groupSquareMatrixProg.pair identityBitsProg)

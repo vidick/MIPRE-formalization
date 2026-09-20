@@ -9,6 +9,19 @@ import MIPRE.Foundations.LowDegree.SchwartzZippel
 import MIPRE.Foundations.LowDegree.ZeroBasis
 import MIPRE.Foundations.LowDegree.BinarySquareRoot
 import MIPRE.Foundations.LowDegree.BinaryInverse
+import MIPRE.Foundations.LowDegree.BinaryNormalize
+import MIPRE.Foundations.LowDegree.BinaryDivision
+import MIPRE.Foundations.LowDegree.BinaryQuotient
+import MIPRE.Foundations.LowDegree.BinaryExactDivision
+import MIPRE.Foundations.LowDegree.BinaryQuotientReduced
+import MIPRE.Foundations.LowDegree.BinaryFactorization
+import MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop
+import MIPRE.Foundations.LowDegree.BinaryOrbitDescent
+import MIPRE.Foundations.LowDegree.BinaryNonresidueCorrectness
+import MIPRE.Foundations.LowDegree.BinaryOddPrimeConstructor
+import MIPRE.Foundations.LowDegree.BinaryComposedSum
+import MIPRE.Foundations.LowDegree.BinaryDegreeDecomposition
+import MIPRE.Foundations.LowDegree.Shoup
 import MIPRE.Foundations.LowDegree.BinaryMatrixInverse
 import MIPRE.Foundations.LowDegree.BinaryKernel
 import MIPRE.Foundations.SAT.FieldTrace
@@ -581,7 +594,146 @@ tell you the guard is missing.
   MIPRE.LowDegree.groupOfBits_rootBits,
   MIPRE.LowDegree.rootBitsProg_square
 
--- Effective polynomial-basis arithmetic, modulo only the existing Shoup axiom.
+-- Generic normalization, independent of the Shoup construction.
+#guard_sorry_free MIPRE.LowDegree.BinaryPolynomial.normalizeBitsProg_apply,
+  MIPRE.LowDegree.BinaryPolynomial.length_normalizeBits_le,
+  MIPRE.LowDegree.BinaryPolynomial.evalBits_normalizeBits,
+  MIPRE.LowDegree.BinaryPolynomial.normalizeBits_getLast
+
+/-- info: 'MIPRE.LowDegree.BinaryPolynomial.normalizeBitsProg' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.LowDegree.BinaryPolynomial.normalizeBitsProg
+
+/-- info: 'MIPRE.LowDegree.BinaryPolynomial.polyOfBits_normalizeBits' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.LowDegree.BinaryPolynomial.polyOfBits_normalizeBits
+
+-- Monic division and quotient coordinates precede irreducibility.
+#guard_sorry_free MIPRE.LowDegree.BinaryPolynomial.divModBitsProg_apply,
+  MIPRE.LowDegree.BinaryPolynomial.divModBits_width,
+  MIPRE.LowDegree.BinaryPolynomial.degree_divModBits_remainder_lt,
+  MIPRE.LowDegree.BinaryQuotient.length_toBits,
+  MIPRE.LowDegree.BinaryQuotient.ofBits_toBits,
+  MIPRE.LowDegree.BinaryQuotient.toBits_ofBits,
+  MIPRE.LowDegree.BinaryQuotient.evalBits_eq_iff,
+  MIPRE.LowDegree.BinaryQuotient.ofBits_xor,
+  MIPRE.LowDegree.BinaryQuotient.ofBits_mulReduce
+
+/-- info: 'MIPRE.LowDegree.BinaryPolynomial.divModBitsProg' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.LowDegree.BinaryPolynomial.divModBitsProg
+
+/-- info: 'MIPRE.LowDegree.BinaryPolynomial.polyOfBits_divModBits' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.LowDegree.BinaryPolynomial.polyOfBits_divModBits
+
+-- Canonical Euclidean algorithms and the complete quotient fixed space.
+#guard_sorry_free MIPRE.LowDegree.BinaryPolynomial.normalizeBits_eq_nil_iff,
+  MIPRE.LowDegree.BinaryPolynomial.length_normalizeBits,
+  MIPRE.LowDegree.BinaryPolynomial.divModBits_eq_div_modByMonic,
+  MIPRE.LowDegree.BinaryPolynomial.gcdBitsProg,
+  MIPRE.LowDegree.BinaryPolynomial.polyOfBits_gcdBits,
+  MIPRE.LowDegree.BinaryPolynomial.gcdBits_width,
+  MIPRE.LowDegree.BinaryPolynomial.quotientBitsProg,
+  MIPRE.LowDegree.BinaryPolynomial.polyOfBits_quotientBits,
+  MIPRE.LowDegree.BinaryPolynomial.polyOfBits_quotientBits_mul,
+  MIPRE.LowDegree.BinaryPolynomial.quotientBits_width,
+  MIPRE.LowDegree.BinaryQuotient.frobeniusMatrixProg,
+  MIPRE.LowDegree.BinaryQuotient.frobeniusMatrixProg_correct,
+  MIPRE.LowDegree.BinaryQuotient.fixedGeneratorsProg,
+  MIPRE.LowDegree.BinaryQuotient.fixedGeneratorsProg_correct,
+  MIPRE.LowDegree.BinaryQuotient.fixedGenerator_idempotent,
+  MIPRE.LowDegree.BinaryQuotient.fixedGenerator_spans,
+  MIPRE.LowDegree.BinaryQuotient.square_bijective
+
+-- Supplied-modulus squarefree factorization has no irreducible-construction dependency.
+#guard_sorry_free MIPRE.LowDegree.BinaryQuotient.factorBitsProg,
+  MIPRE.LowDegree.BinaryQuotient.factorBitsProg_factors,
+  MIPRE.LowDegree.BinaryQuotient.factorBitsProg_prod
+
+-- Effective Frobenius orbit products and certified constructors for every prime power.
+#guard_sorry_free MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBitsProg,
+  MIPRE.LowDegree.BinaryQuotient.map_orbitPolynomialBits,
+  MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBits_monic_natDegree,
+  MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBits_eq_minpoly,
+  MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBits_irreducible,
+  MIPRE.LowDegree.BinaryPolynomial.nonresidueLiftBitsProg,
+  MIPRE.LowDegree.BinaryPolynomial.nonresidueLiftBitsProg_correct,
+  MIPRE.LowDegree.BinaryPolynomial.nonresidueLiftBits_order,
+  MIPRE.LowDegree.BinaryPolynomial.nonresidueLiftBits_degree_coprime,
+  MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBitsProg,
+  MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBits_correct,
+  MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBits_length,
+  MIPRE.LowDegree.BinaryQuotient.traceBitsProg,
+  MIPRE.LowDegree.BinaryQuotient.evalBits_traceBits,
+  MIPRE.LowDegree.BinaryPrimePowerTrace.flat_trace_natDegree,
+  MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBitsProg,
+  MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBits_correct,
+  MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBits_length,
+  MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBits_width_le
+
+-- Coprime-degree assembly and its proof-only decomposition have no Shoup dependency.
+#guard_sorry_free MIPRE.LowDegree.BinaryQuotient.composedSumBitsProg,
+  MIPRE.LowDegree.BinaryQuotient.composedSumBits_correct,
+  MIPRE.LowDegree.BinaryDegreeFactors.degreeFactors_prod,
+  MIPRE.LowDegree.BinaryDegreeFactors.degreeFactors_pairwise,
+  MIPRE.LowDegree.BinaryDegreeFactors.degreeFactors_dvd,
+  MIPRE.LowDegree.BinaryDegreeFactors.degreeFactors_pos,
+  MIPRE.LowDegree.BinaryDegreeFactors.degreeFactors_le,
+  MIPRE.LowDegree.BinaryDegreeFactors.prefix_prod_dvd
+
+/-- info: 'MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBitsProg' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBitsProg
+
+/-- info: 'MIPRE.LowDegree.BinaryPolynomial.nonresidueLiftBitsProg_correct' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.LowDegree.BinaryPolynomial.nonresidueLiftBitsProg_correct
+
+/-- info: 'MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBitsProg' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBitsProg
+
+/-- info: 'MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBits_correct' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBits_correct
+
+/-- info: 'MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBitsProg' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBitsProg
+
+/-- info: 'MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBits_correct' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBits_correct
+
+/-- info: 'MIPRE.LowDegree.BinaryQuotient.composedSumBitsProg' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.LowDegree.BinaryQuotient.composedSumBitsProg
+
+/-- info: 'MIPRE.LowDegree.BinaryQuotient.composedSumBits_correct' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.LowDegree.BinaryQuotient.composedSumBits_correct
+
+-- The executable unary decomposition agrees with the proof-only factorization list.
+#guard_sorry_free MIPRE.LowDegree.DegreeArithmetic.modUnaryProg,
+  MIPRE.LowDegree.DegreeArithmetic.dvdUnaryProg,
+  MIPRE.LowDegree.DegreeArithmetic.mulUnaryProg,
+  MIPRE.LowDegree.DegreeArithmetic.primeUnaryProg,
+  MIPRE.LowDegree.DegreeArithmetic.primeUnary_eq,
+  MIPRE.LowDegree.DegreeArithmetic.primePowerUnaryProg,
+  MIPRE.LowDegree.DegreeArithmetic.primePowerUnary_correct,
+  MIPRE.LowDegree.DegreeArithmetic.primePowerPairsProg,
+  MIPRE.LowDegree.DegreeArithmetic.primePowerPairs_eq,
+  MIPRE.LowDegree.DegreeArithmetic.primePowerPairs_prod,
+  MIPRE.LowDegree.DegreeArithmetic.primePowerPairs_pairwise
+
+/-- info: 'MIPRE.LowDegree.DegreeArithmetic.primePowerPairsProg' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.LowDegree.DegreeArithmetic.primePowerPairsProg
+
+-- Effective polynomial-basis arithmetic using the proved uniform constructor.
 #guard_sorry_free MIPRE.LowDegree.BinaryPolynomial.normalize_monic,
   MIPRE.LowDegree.BinaryPolynomial.evalBits_xor,
   MIPRE.LowDegree.BinaryPolynomial.evalBits_mulReduce,
@@ -1060,23 +1212,55 @@ tell you the guard is missing.
   MIPRE.CL.Graph.conditional_average
 
 /-!
-## The one axiom
+## The proved Shoup construction and its consumers
 
-`#guard_sorry_free` catches `sorryAx` and nothing else, so an `axiom` would otherwise enter
-the dependency graph unnoticed. There is exactly one, and it is the one the blueprint says
-this project assumes beyond Mathlib: `MIPRE.LowDegree.exists_shoup_irreducible`, Shoup's
-deterministic irreducible-polynomial construction at `p = 2`, the single admitted node
-(`1.1.6.1.1`) under `lem:self-dual-basis`. `MIPRE/Foundations/LowDegree/Shoup.lean` carries
-its contract, including the five things it deliberately does not claim.
-
-The pin itself lives beside the axiom, in `Shoup.lean`: a `#guard_msgs in #print axioms`
-on the one declaration that uses it, which fails the build if another axiom appears, if the
-dependency disappears (the axiom having been proved, which is worth noticing), or if the name
-changes. It is not written here because `#print axioms` in *this* file is how the guard files
-claim a blueprint proof is formalized, and pinning an axiom is not such a claim --- Shoup's
-theorem is assumed, not proved. `scripts/lean-coverage.py` closes the loop from the other
-side: it fails if any `axiom` declared outside the vendored trees is not named in this file.
+`#guard_sorry_free` excludes `sorryAx`; exact guards additionally exclude any
+replacement unproved assumption. The former imported construction is now the
+proved theorem `MIPRE.LowDegree.exists_shoup_irreducible`, witnessed directly by
+the specified ambient program. The public constructor and both effective
+consumers below depend only on Lean's standard axioms. The companion ledger's
+historical admission remains unchanged; these guards describe the Lean proof.
 -/
+
+#guard_sorry_free MIPRE.LowDegree.BinaryPolynomial.irreducibleBitsProg,
+  MIPRE.LowDegree.BinaryPolynomial.irreducibleBits_correct,
+  MIPRE.LowDegree.BinaryPolynomial.irreducibleBits_length,
+  MIPRE.LowDegree.BinaryPolynomial.irreducibleBitsProg_time_le,
+  MIPRE.LowDegree.exists_shoup_irreducible,
+  MIPRE.LowDegree.shoupIrreducible,
+  MIPRE.LowDegree.shoupIrreducible_monic,
+  MIPRE.LowDegree.shoupIrreducible_irreducible,
+  MIPRE.LowDegree.shoupIrreducible_natDegree
+
+/-- info: 'MIPRE.LowDegree.BinaryPolynomial.irreducibleBitsProg' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.LowDegree.BinaryPolynomial.irreducibleBitsProg
+
+/-- info: 'MIPRE.LowDegree.BinaryPolynomial.irreducibleBits_correct' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.LowDegree.BinaryPolynomial.irreducibleBits_correct
+
+/-- info: 'MIPRE.LowDegree.BinaryPolynomial.irreducibleBitsProg_time_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.LowDegree.BinaryPolynomial.irreducibleBitsProg_time_le
+
+/-- info: 'MIPRE.LowDegree.exists_shoup_irreducible' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.LowDegree.exists_shoup_irreducible
+
+/-- info: 'MIPRE.LowDegree.shoupIrreducible' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.LowDegree.shoupIrreducible
+
+/-- info: 'MIPRE.TM.CookLevin.Pad.classicalPcpDecider' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.TM.CookLevin.Pad.classicalPcpDecider
+
+/-- info: 'MIPRE.SAT.effective_selfDualNormalBasis' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MIPRE.SAT.effective_selfDualNormalBasis
 
 /-! ## Blocks of an index type
 

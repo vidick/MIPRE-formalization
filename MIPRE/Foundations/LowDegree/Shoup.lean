@@ -3,41 +3,21 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Fold
-import Mathlib.Algebra.Polynomial.Monic
-import Mathlib.Data.ZMod.Basic
+import MIPRE.Foundations.LowDegree.BinaryIrreducibleConstructor
 
 /-!
-# The one imported construction: Shoup's irreducible polynomials over `𝔽₂`
+# Deterministic irreducible polynomials over the binary field
 
-`lem:self-dual-basis` is, as the blueprint says, the whole of what this project assumes beyond
-Mathlib, and the assumption is narrower than the lemma: the adversarial-verification campaign
-proved the normal-basis construction and the self-dualization over sixteen sub-nodes, and left
-exactly one admitted, node `1.1.6.1.1` --- Shoup's deterministic irreducible-polynomial
-construction, specialized to characteristic `2`.
+This file exposes the proved fixed-characteristic construction of Shoup 1990,
+Theorem 3.2. The specified program factors squarefree binary polynomials, constructs
+odd-prime auxiliary nonresidues and trace generators, builds the characteristic-two
+Artin–Schreier tower, and combines coprime prime-power degrees by composed sums.
 
-That node carries an explicit contract, and this file is that contract as a Lean `axiom`.
-
-**What is asserted.** A *fixed uniform deterministic* algorithm which, given `k ≥ 1`, outputs
-a monic irreducible `f ∈ 𝔽₂[T]` of degree `k` in `poly(k)` bit operations. This is the `p = 2`
-specialization of Shoup 1990, Theorem 3.2.
-
-**What is not.** No claim of `poly(log k)` output time; no variable-characteristic
-`poly(log p, k)` form; no randomized success; no advice tables; no enumeration of all `2^k`
-field elements.
-
-The `poly(k)` rather than `poly(log k)` is not a detail, and it is what fixes the shape of the
-statement: the input is `Unary k`, whose encoding size is `2k + 1` (`Cost.esize_unary`), so
-`PolyTimeFun`'s bound is a polynomial in `k`. Had the input been `k` in binary, `PolyTimeFun`
-would assert the `poly(log k)` bound the contract explicitly disclaims.
-
-**Why an `axiom` and not a `sorry`.** `CONTRIBUTING.md` allows a merged `sorry` only for a
-blueprint node tracked by an open issue, which is right for work this project intends to do.
-This is not that: it is an imported construction that the project does not intend to
-formalize, and the blueprint says so ("which is the shape a Lean `axiom` for it should take").
-As an axiom it also appears by name in `#print axioms` of everything that rests on it, so the
-dependency is visible and machine-checkable rather than a matter of reading docstrings;
-`MIPRE/Axioms.lean` records it.
+The input is the unary requested degree. Every arithmetic operation and bounded loop
+is compiled into the ambient cost model, including coefficient printing and a fixed
+constant output at degree zero. `BinaryPolynomial.irreducibleBitsProg_time_le` gives
+the resulting polynomial runtime bound in the degree. The public names below retain
+the interfaces used by the quotient-field and self-dual-normal-basis consumers.
 -/
 
 noncomputable section
@@ -46,46 +26,37 @@ namespace MIPRE.LowDegree
 
 open Cost
 
-/-- The polynomial over `𝔽₂` whose coefficient of `Tⁱ` is bit `i` of `l`, least significant
-first --- the repository's little-endian bit convention (`Cost.bitsVal`, `bitsOfNat`). -/
-def polyOfBits (l : List Bool) : Polynomial (ZMod 2) :=
-  ∑ i ∈ Finset.range l.length, Polynomial.monomial i (if l.getD i false then 1 else 0)
+/-- The specified deterministic polynomial-time irreducible-polynomial constructor. -/
+def shoupIrreducible : PolyTimeFun Unary (List Bool) :=
+  BinaryPolynomial.irreducibleBitsProg
 
-/-- **Shoup's deterministic irreducible-polynomial construction, `p = 2`** (Shoup 1990,
-Theorem 3.2; ledger node `1.1.6.1.1`, the one admitted node under `lem:self-dual-basis`).
-
-The module docstring states the contract in full, including what is deliberately *not*
-claimed. In particular the `Unary` input is what makes the time bound `poly(k)` rather than
-the `poly(log k)` the contract disclaims. -/
-axiom exists_shoup_irreducible :
+/-- Shoup's deterministic irreducible-polynomial construction over `𝔽₂`
+(Shoup 1990, Theorem 3.2; ledger node `1.1.6.1.1`), proved by the explicit program. -/
+theorem exists_shoup_irreducible :
     ∃ F : PolyTimeFun Unary (List Bool), ∀ k : ℕ, 1 ≤ k →
       (polyOfBits (F (unary k))).Monic ∧
         Irreducible (polyOfBits (F (unary k))) ∧
-        (polyOfBits (F (unary k))).natDegree = k
+        (polyOfBits (F (unary k))).natDegree = k :=
+  ⟨shoupIrreducible, fun k hk => BinaryPolynomial.irreducibleBits_correct k hk⟩
 
-/-- The construction the axiom provides, named so that consumers do not each `choose`. -/
-def shoupIrreducible : PolyTimeFun Unary (List Bool) :=
-  exists_shoup_irreducible.choose
-
-/- The axiom dependency, pinned. This fails the build if another axiom creeps in, if the
-dependency disappears (the axiom having been proved, which is worth noticing), or if the name
-changes; `MIPRE/Axioms.lean` records the axiom itself, and `scripts/lean-coverage.py` fails
-if it stops doing so. -/
-/-- info: 'MIPRE.LowDegree.shoupIrreducible' depends on axioms: [propext, Classical.choice, Quot.sound, exists_shoup_irreducible] -/
+/-- info: 'MIPRE.LowDegree.shoupIrreducible' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
 #print axioms MIPRE.LowDegree.shoupIrreducible
 
+/-- The constructed polynomial is monic at every positive degree. -/
 theorem shoupIrreducible_monic (k : ℕ) (hk : 1 ≤ k) :
     (polyOfBits (shoupIrreducible (unary k))).Monic :=
-  (exists_shoup_irreducible.choose_spec k hk).1
+  (BinaryPolynomial.irreducibleBits_correct k hk).1
 
+/-- The constructed polynomial is irreducible at every positive degree. -/
 theorem shoupIrreducible_irreducible (k : ℕ) (hk : 1 ≤ k) :
     Irreducible (polyOfBits (shoupIrreducible (unary k))) :=
-  (exists_shoup_irreducible.choose_spec k hk).2.1
+  (BinaryPolynomial.irreducibleBits_correct k hk).2.1
 
+/-- The constructed polynomial has exactly the requested positive degree. -/
 theorem shoupIrreducible_natDegree (k : ℕ) (hk : 1 ≤ k) :
     (polyOfBits (shoupIrreducible (unary k))).natDegree = k :=
-  (exists_shoup_irreducible.choose_spec k hk).2.2
+  (BinaryPolynomial.irreducibleBits_correct k hk).2.2
 
 end MIPRE.LowDegree
 

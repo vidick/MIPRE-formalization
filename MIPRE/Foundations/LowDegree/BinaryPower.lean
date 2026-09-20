@@ -2,7 +2,8 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.GateFieldEval
+import MIPRE.Foundations.Cost.Numeric
+import MIPRE.Foundations.LowDegree.BinaryConstants
 
 /-!
 # Binary exponentiation in a polynomial-basis field
@@ -14,7 +15,7 @@ Its polynomial bound also holds for malformed inputs.
 
 namespace MIPRE.LowDegree.BinaryPolynomial
 
-open Cost Cost.PolyTimeFun SAT.Circuit Polynomial
+open Cost Cost.PolyTimeFun Polynomial
 
 abbrev PowerState := BitStr × BitStr × BitStr
 
