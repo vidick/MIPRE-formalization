@@ -621,15 +621,385 @@ the quadratic form of the compressed operator on the original one, which is
 `dotProduct_mulVec_conj` plus one Kronecker identity. `Dilation.lean`'s universe variables had to be
 relaxed from `Type` to `Type*` for the index group `n -> F` to serve as the ancilla.
 
-**Still to do in PR C**: `lem:qld-combined-points` -- the three-step construction that *applies*
-this theorem, whose first two steps are the work: combining the two bases' binary measurements
-through their approximate commutation, and proving the combined family approximately linear -- then
-`lem:qld-pairs-of-lines`, `lem:qld-padded-points`, `lem:qld-sublines`, `lem:qld-padded-lines`,
-`lem:qld-simultaneous`.
+**Still to do in PR C**: `lem:qld-pairs-of-lines`, `lem:qld-sublines`,
+`lem:qld-padded-lines`, `lem:qld-simultaneous`.
 
 `lem:qld-sublines` is purely combinatorial and the blueprint says it is "a reasonable place to
-start formalizing"; it is the natural first commit of PR C. `lem:qld-simultaneous` is the one
+start formalizing"; it is the natural next commit of PR C. `lem:qld-simultaneous` is the one
 that cites Chunk 3.
+
+### `lem:qld-combined-points`, by the sandwich rather than the linearity test (2026-09-20, done)
+
+`MIPRE/Foundations/Sandwich.lean` (generic), `MIPRE/Foundations/Parseval.lean`,
+`MIPRE/Foundations/Swap.lean`, `MIPRE/Background/QLD/Swap.lean`,
+`MIPRE/Background/QLD/Combined.lean` (the instantiation). Statement and proof marked, sixty-seven
+declarations guarded.
+
+**`thm:linearity` is not used, and neither is `cor:ortho-from-consistency`.** The paper's route is
+three steps -- sandwich, orthonormalize, linearity test. Two of them drop out once the strategy is
+taken projective, which the paper also assumes and which `lem:naimark-dilation` supplies:
+
+* `R-hat^{x,z}_{a,b} = M-hat^Z_b M-hat^X_a M-hat^Z_b` is **already a POVM**, exactly --
+  `sum_{a,b} R-hat = sum_b M-hat^Z_b (sum_a M-hat^X_a) M-hat^Z_b = sum_b M-hat^Z_b = Id` uses only
+  projectivity of the `Z` side, and each term is a Gram operator, hence positive. So no
+  orthonormalization.
+* its **Naimark dilation** is the projective joint measurement the lemma wants, on one extra
+  `F_q x F_q` register per party, and the dilation's compression identity carries every Born-rule
+  estimate unchanged. So no linearity test, and no Fourier inversion of an exactly linear family.
+
+This leaves exactly the analytic content, and it is one chain. Written with `P_b = M-hat^Z_b (x)
+M-hat^Z_b` and `Delta = sum_a (Id - M-hat^X_a) (x) M-hat^X_a`, the five links are: two players'
+commutators (each a `M-hat^Z_b` times a commutator, front factor a contraction, one
+Cauchy--Schwarz over *all* outcome pairs), the `X`-consistency as the single product
+`(sum_b P_b) Delta` of two projections, the exact collapse `sum_a M-hat^X_a = Id`, and the
+`Z`-consistency.
+
+**The third link is the one that must not be broken up.** Bounding the `q^2` outcome pairs one at a
+time costs a factor `q` and the conclusion has to be `q`-independent -- which is precisely the
+defect the paper's round-11 `\cnote` on node 1.2.2.8 repairs, and the reason it introduces its own
+Parseval identity there. Here the whole double sum is one operator product, both factors are
+projections because their summands are mutually orthogonal projections, and Cauchy--Schwarz gives
+`sqrt(<Delta>) = sqrt(half the X-consistency defect)` once.
+
+**Parseval is the dictionary, and the probe average is free.** `lem:qld-expanded-points` bounds the
+commutator of the *observables*, one pair per probe `(r,s)`; the sandwich needs the commutator of
+the *elements*, one pair per outcome `(a,b)`. The elements are the two-variable Fourier transform of
+the observables (`hatComm_eq_fourierOf`), so `sum_norm_fourierVec_sq` exchanges the two at no cost
+-- and the verifier's content already averages over `(r_X, r_Z)` uniformly and independently of
+everything else it carries, so `sum_content_avg_probe` turns the average the transform introduces
+into the one the hypothesis already has.
+
+**Both players' commutation bounds are needed, and the game's symmetry supplies the second.**
+Every rule of `fig:decider_pauli` is written in both orientations and the sampler draws an ordered
+edge of a symmetric type graph, so `accepts_symm` (a `cases`-and-`simp` bash over the question and
+answer constructors, 27 s) and `qldGame_mu_symm` (the edge-swap bijection) give
+`povmValue_qldGame_swapVec`, and `hatObs_commutation` applied to `(MB, MA)` on `swapVec psi` is
+Bob's half. `hatVec_swapVec` is what makes that readable back: it needs the maximally entangled
+ancilla to be symmetric, `MIPRE.Weyl.swapVec_epr`.
+
+**Constants.** `delta_Q(eps) = 2 sqrt(57676416 eps) + sqrt(86 eps) + 86 eps`; self-consistency at
+`2 delta_Q`, consistency with `M-hat^Z_b M-hat^X_a` at `4 delta_Q + 115352832 eps` and with the
+other order at `4 delta_Q + 461411328 eps`. The square roots are the three Cauchy--Schwarz links;
+nothing depends on `q`.
+
+**The generic half is in `Foundations/`** and says nothing about the Pauli basis test: two
+approximately commuting projective measurements per party, four error hypotheses, and
+`exists_projective_joint` returns the dilated pair with its three estimates. That is what
+`Combined.lean` instantiates at `A := F_q`, `iota := Content F m`, uniform weights.
+
+### `lem:qld-padded-points`, and why its two items are free for opposite reasons (2026-09-20, done)
+
+The combined measurement coarse-grained along `(a,b) |-> alpha a + beta b`, so that it returns
+the single field element `alpha g_X(x) + beta g_Z(z)`. Indexed by `(x, z, alpha, beta)`, which is
+what the paper's "independent of the dummy coordinates `w`" means; the padded space `F_q^{4m}`
+itself is not needed until the line--point distribution over it is, in `lem:qld-padded-lines`.
+
+**Item 1 (self-consistency) is free because both families are projective.** The state-dependent
+distance has no data-processing inequality -- `Expanded.lean`'s docstring records NW19's own
+counterexample -- so a coarse-graining is not free in general. What makes it free here is that
+for *projective* families the summed deviation and the agreement probability determine each other
+exactly (`one_sub_sum_bornProb_eq`, proved for the sandwich chain and reused verbatim), and
+agreement can only increase under a coarse-graining applied to both sides
+(`sum_bornProb_le_map`). Three lines: `sum_xSqNorm_map_le`. And it holds for *every*
+`(alpha,beta)`, not just on average.
+
+**Item 2 (consistency with the ordered products) is not free, and Parseval pays for it.** The
+right-hand families are products of two measurements, not POVMs, so item 1's route is
+unavailable, and a per-fibre triangle inequality costs the fibre size `q`. The paper's round-12
+`\cnote` on node 1.2.2.10 records that an earlier orthogonality-and-Cauchy--Schwarz route claimed
+`O(delta_Q^{1/2})` and was retracted for exactly this reason. The argument that works, and is
+what is formalized (`sum_avg_norm_fibre_sq`):
+
+* Parseval over `F_q` turns the sum over fibres into an average over one probe `r`;
+* the `r = 0` term vanishes **identically**, because the deviation family sums to zero --
+  `sum_{a,b} Q-hat_{a,b} = Id` and `sum_{a,b} M-hat^Z_b M-hat^X_a = Id`. This is the only place
+  the zero-sum hypothesis is used, and without it the identity is false;
+* for `r != 0` the pair `(r alpha, r beta)` is uniform on `F_q^2` when `(alpha,beta)` is, so
+  averaging and applying Parseval over `F_q^2` returns the outcome-pair sum exactly.
+
+So the error comes out at `(q-1)/q` times the input -- **better** than preserved, and with no
+`md/q` term. The Lean keeps the factor visible.
+
+New Foundations pieces: `sum_norm_trVecRaw_sq` (Parseval over one copy of the field, a copy of
+the `n -> F` proof with `sum_sgn_trMul` in place of `sum_sgn_trDot`), `sum_norm_char_two_sq`
+(over two copies, transported from `n := Fin 2` through `pairVec`), `sum_avg_norm_fibre_sq`,
+`sum_xSqNorm_map_le`, and the vector bridge `xSqNorm_eq_norm_evec_sq` / `sum_fibre_dev` that lets
+a fibre sum of deviation *vectors* be read back as the deviation of the coarse-grained operators.
+
+### The pasting lemma, cheaper than the paper's (2026-09-20, done)
+
+`lem:qld-pairs-of-lines` rests on NW19's Fact 4.35 (the paper's `lem:pasting-updated`), which the
+blueprint did not have. It is now in `MIPRE/Foundations/Pasting.lean`, at `k = 2` — the paper's
+reduction of general `k` to `k = 2` is an induction that adds nothing and the consumer needs
+`k = 2` only — together with `lem:cool-closeness-fact` in `MIPRE/Foundations/Commutation.lean`.
+
+**Two hypotheses of the paper's statement are not needed, and the reason is the same both times:
+what the consumer has is stronger than what the paper's proof assumes.**
+
+* The paper allows the inner family `G_1` to be a POVM. Then the two diagonal terms of the
+  commutator expansion are only approximately one, and repairing that is exactly what its appeal
+  to NW19's Fact 4.31 does. Our `G_1` is a line measurement, hence **projective**, and then the
+  two diagonal sums are *exactly* one: `sum_snorm_sq_comm_eq` computes the commutator sum as
+  `2 - 2 Sigma` with no error term at all. Fact 4.31 is not needed anywhere, and task Q-C5a's
+  original scope — "NW19 Fact 4.31 and `lem:cool-closeness-fact`" — shrank by half.
+* The paper derives the cross-party self-consistency of `G_2` from the backwards consistency and
+  Alice's self-consistency, and pays a further `eps` for the passage from the fibres of the
+  outcome map to the fine family. Item 1 of `lem:qld-expanded-lines` gives the fine-level relation
+  directly, at `172 eps`. So it is a hypothesis of the abstract lemma rather than a derivation.
+
+Neither change touches the conclusion; both are recorded in the blueprint's Comments.
+
+**What the chain actually is.** With `R` the coarse-grained inner family and `G` the outer one:
+
+* step (i), `sum_bornProb_ord_ge`: the *ordered* product `G_g R_b` carries all but
+  `delta/2 + sqrt(delta/2)`. The outer factor sums away against Alice's second marginal, and what
+  is left is Alice's first marginal against `Id - R_b` — whose square is `Id - R_b` again, `R`
+  being projective, so no `M^2 <= M` estimate is needed;
+* step (ii), `abs_sand_sub_ord_le`: from the ordered product to the sandwich, one Cauchy--Schwarz
+  against Bob's commutator, the front factor `A_{b, e(g)} (x) G_g` being a mutually orthogonal
+  family of projections and so a contraction (`sum_snorm_sq_prod_le_one`);
+* the fine-grained commutator against the coarse-grained one, `sum_snorm_sq_comm_fine_le`: the
+  coarse one is `16(delta_1 + delta_2)` by `commutation_analysis_abstract` read **in the mirror**
+  — both families on Bob, Alice's joint measurement supplying the operator both products reach —
+  and the two overlaps differ by the cloud, the strife and the collision term.
+
+**The one estimate that had to be got right.** In the cloud step (`abs_sigma_sub_cloud_le`) the
+deviation `G'_g (x) Id - Id (x) G_g` is summed over `g` only, while the term being bounded is
+summed over `(b, g)`. Splitting the Cauchy--Schwarz as
+`[R_b G_g R_b] . [R_b . deviation]` — legal because `R_b G_g R_b . R_b = R_b G_g R_b` — keeps one
+`R_b` in front of the deviation, and `sum_snorm_sq_mul_le` then absorbs the `b`-sum instead of
+repeating it. Dropping that factor multiplies the bound by `|R1| = q`.
+
+**The collision term is a hypothesis of the core and a lemma of its own.** `collisionTerm` names
+the off-diagonal cloud mass — pairs `g != g'` the outcome map cannot tell apart — and
+`strife_sub_cloud_eq` says the strife minus the cloud *is* that term, exactly.
+`sum_collisionTerm_le` is the bridge for a product question distribution: with the probe uniform
+and independent, the Born probabilities do not depend on it, so the probe average acts on the
+collision indicator alone and what multiplies it is a POVM's total mass. The collision probability
+there is a *function of the question*, and the conclusion is its average — because the seeded
+test's diagonal branch samples a zero direction with probability at most `1/q`, and on such a
+degenerate line the outcome map separates nothing; what makes the average small is the rarity, not
+a bound holding everywhere. That split keeps the
+analytic core free of the question distribution, which matters because the consumer's distribution
+is the line--point distribution rather than a product on the nose — the product structure there
+comes from shifting the point along its line, which is the next piece of work.
+
+Constants: `delta/2 + sqrt(delta/2) + sqrt(32 delta + 4 sqrt(eta) + 2 eps)`. The `32` rather than
+`16` is because the commutation analysis takes a single `delta` for both marginal hypotheses, here
+instantiated at their sum. Nothing in the chain is a per-outcome estimate, so no constant depends
+on `q`.
+
+### `lem:qld-pairs-of-lines`, and the shift that makes the point uniform (2026-09-20, done)
+
+With the pasting lemma in hand the remaining work was its four hypotheses at the QLD line
+measurements. Three pieces of bookkeeping, and one of them is the interesting one.
+
+**The marginal step.** `lem:qld-combined-points` gives the joint measurement against the *ordered
+product* `M-hat^Z_b M-hat^X_a`; the pasting lemma wants each marginal against a *single* line
+measurement. `lem:cool-closeness-fact` (partition form) plus the orthogonality of the other
+family's fibres takes the first step at a factor 10 and no factor `q`; a triangle inequality
+through *Bob's own* point measurement --- its two legs being item 1 of `lem:qld-expanded-points`
+and item 2 of `lem:qld-expanded-lines` --- takes the second.
+
+**The extended space.** The joint measurement is the Naimark dilation and lives on each party's
+space enlarged by one `F_q x F_q` register; the line measurements do not. `xSqNorm_extVec2_aOp`
+says an operator with an inert ancilla has the same cross-party deviation on the extended state as
+the operator itself, which transports both inputs.
+
+**The probe, which is where the paper's `lem:alnf`/`lem:dlnf` would be used.** The pasting lemma's
+collision term needs the point to be uniform on its line once the line is fixed. The content
+determines both, and rather than form the conditional distribution the formalization *shifts*: for
+each fixed `t` the map `u_W |-> u_W + t . w_W` is a bijection of contents (`bijective_shift_gen`),
+so the content average and the (content, shift) average agree (`sum_content_shift_gen`); the line's
+question, base point and direction are invariant under it (`rep_add_smul` is why); and the point's
+parameter moves by exactly `t` (`lineParam_add_smul`). That is the whole content of "conditioned on
+the line the point is uniform on it", with no quotient formed and no measure-theoretic detour.
+
+The same device, applied to the raw direction `v` instead of the point, bounds the probability that
+the *diagonal* direction `zeroBelow(chi(s), v)` vanishes --- and it has to be bounded, because on
+such a content the "line" is a single point and the outcome map separates nothing. The paper's
+`eps = md/q` does not account for that; see `reports/pasting-degenerate-diagonal-line.md`. The
+collision average is `md/q` on an axis-parallel line and at most `md/q + 1/q` on a diagonal one,
+and `delta_P` is still `poly(eps, md/q)`.
+
+**Stated per pair of line types, which is stronger than the paper's mixture.** The line type is a
+parameter (`LinePres`, with the six invariances the shift argument needs, and its four instances
+`aPres`/`dPres` on each side), so the lemma is proved for each of the four pairs; the paper's
+average over the line--point distribution is a convex combination of them.
+
+**One methodological note, learned the hard way.** `lake env lean FILE` does **not** pick up the
+lakefile's `leanOptions`, and this project sets `autoImplicit false`. A `W` that had fallen out of
+scope was silently auto-bound under `lake env lean` --- the file "compiled" --- and `lake build`
+then reported six errors and two `sorry`s. Use `lake build MIPRE.<Module>` to confirm a module, as
+`CLAUDE.md` says; `lake env lean` is for fast iteration only.
+
+#### 2026-09-20, part 3: the padded space and the sublines (`lem:qld-sublines`, partly)
+
+`MIPRE/Background/QLD/Padded.lean`. The padding geometry and the paper's sampling procedure, with
+the containment proved and the distributional half of Property 2 left open. The blueprint carries
+the `\lean{}` list and no `\leanok` at either level, and the Comments there say exactly which half
+is which; there are no new axiom guards, which is the correct state for a statement whose proof is
+not claimed.
+
+**What the seed block equivalence buys.** `seedEquiv : F ~ Fin m x Fin (q/m)` names the bijection
+whose first component is `chi`, and `seedIn hm i s` is "the seed in block `i` with `s`'s offset".
+Three facts follow, and the construction needs all three: `chi_seedIn` (the retargeted seed has the
+prescribed index), `seedIn_self` (retargeting to the seed's own block is the identity, which is how
+a branch that keeps the padded seed is written), and `sum_seedIn` (a uniform seed retargeted to a
+fixed block is uniform on that block, which is the paper's "choose `s_X` uniformly at random
+subject to `chi(s_X) = i`"). That last one is the only piece of the distributional half that is
+proved.
+
+**The construction is forced, and the forcing is not symmetric.** Moving along the padded line moves
+the `X` block along the `X` block of the padded direction, so when that block is nonzero the
+subline's direction *must* be it and the only freedom is which seed presents it. `padCase`
+classifies a coordinate position into the `X` block, the `Z` block, `alpha`/`beta`, and the dummy
+block, and the four cases say which blocks vanish --- differently for the two line types. An
+axis-parallel padded line has a single-coordinate direction, so at most one of the two blocks is
+nonzero. A diagonal one has `v` truncated below the axis index, so an index in the `X` block leaves
+the whole `Z` block intact: both blocks are then nonzero and the `Z` subline is forced too, at axis
+index `0` since nothing of its direction is truncated. That is the only place `subZ` looks at the
+line type, and it is what the paper's round-12 note on this lemma repairs (the missing primes on
+`w_X, w_Z` and the unspecified law of `s_X, s_Z`).
+
+**Property 3 is definitional here.** The paper must check that an axis-parallel padded line has
+axis-parallel sublines because its procedure chooses the types; here the type is a parameter handed
+to both sides. What the paper actually uses its Property 3 for --- that the directions match --- is
+`xBlk_dir_sub` and `zBlk_dir_sub`.
+
+**The mixture-of-products law, done in the same session.** The general lemma turned out to be
+cheaper in the `Equiv`-free form: an assignment to a sum index type *is* a pair of assignments to the
+summands (`MIPRE/Foundations/Blocks.lean`, `sum_arrow_pair` and `sum_arrow_inl`), so no `Set.range`
+subtype and no fibre-cardinality computation is needed. `padEquiv : (Fin m + Fin m) + Fin (2m) ~ Fin
+(4m)` names the block decomposition -- `finSumFinEquiv` twice puts the `X` block on positions
+`0..m-1` and the `Z` block on `m..2m-1`, which is exactly `xIdx` and `zIdx`, so the two computation
+lemmas are `Fin.ext` plus `simp` -- and `sum_point_pad` is the product identity for a uniform padded
+point.
+
+The law is then four identities, one per case, and they are identities of *averages*: `avgSub_free`,
+`avgSub_zc`, `avgSub_xc` and `avgSub_xc_dline` each say the average over the sampling space **equals**
+the average over a product of two line-point laws. Stating them normalized is what makes them usable
+and is also what hides an awkwardness: the multiplicities differ from case to case (`q^{6m}` when
+neither side is forced, `m q^{6m}` when one is, `m^2 q^{6m}` when both are), because a forced side
+reads a block of the padded raw direction and pays a `seedIn` factor while a free side reads its own
+fresh randomness instead. Normalization divides all of that out. `field_simp` plus `ring` closes each
+one once `((q/m : N) : R)` is rewritten as `q/m` over the reals, which is where `m | q` is used.
+
+**The bookkeeping is worth naming.** A block decomposition turns one sum into two *where the old one
+was*, so every step afterwards is: rewrite a sum sitting under others, move one sum past its
+neighbours, pull a constant out. `sum_congr1..4`, `sum_nsmul1..4`, `sum_comm_four_in`,
+`sum_comm_four_mid`, `sum_comm_six`, `sum_comm_six_swap` and `sum_prod_fst` are those three moves at
+the arities this needs. With them each branch proof is one `rw` chain whose steps name what they do;
+without them it is a tower of `Finset.sum_congr` whose shape has to be rebuilt every time. The reason
+descent lemmas are needed at all is that `rw` cannot instantiate a pattern like `?g (zBlk u)` whose
+metavariable would have to mention variables bound outside the rewrite -- so the rewrite has to
+happen at the depth where the function is closed, and the `sum_congr` family is what gets it there.
+
+#### 2026-09-20, part 5: the product-law transfer (`MIPRE/Background/QLD/Product.lean`)
+
+`pairs_of_lines_of_items` is proved on the *single content* of the Pauli basis test, whose seed and
+raw direction are shared by the two sides; `lem:qld-padded-lines` wants it on a product of two
+independent line-point laws, which is what `lem:qld-sublines` delivers. The two distributions are
+genuinely different, and the reason the transfer exists is worth stating before any machinery: **no
+hypothesis of the pasting lemma involves both lines.** Each marginal consistency involves one line and
+the two points; the fine self-consistency and the collision term involve one line only. So the only
+laws that have to agree are
+
+* one side's line-point data on its own,
+* one side's data together with the *other side's point*,
+* the two points,
+
+and each has the same law under a content as under a product, because a content's two points and its
+seed and raw direction are independent and uniform. `avg_content_eq_pair_X`,
+`avg_content_eq_pair_Z` and `avg_content_eq_pair_pts` are those three identities, and each is **one
+line** on top of a single general lemma (`MIPRE.avg_comp_equiv_fst`: a uniform average of a function
+of one factor of a product is the uniform average over that factor). All the content is in choosing
+the splitting of each sample space that isolates the part the quantity depends on --- `contentSplitX`
+against `pairSplitX`, and so on --- after which the marginals match by construction.
+
+**The change of variables generalizes for free.** `sum_content_shift_gen` is stated about contents but
+uses nothing about them: a finite nonempty sample space, a shift action, and a direction the shift
+does not move. `bijective_shift` and `sum_shift_gen` are the general statements and `sum_pair_shift`
+is the instance at a pair with the shift acting on the `X` side only, which is what the product form
+of the collision term needs.
+
+### `lem:qld-pairs-of-lines` with the question distribution as a parameter (2026-09-20, done)
+
+The transfer above says the two distributions agree on everything the pasting lemma looks at. Using it
+needed the lemma itself to stop naming a distribution, and that is `pairs_of_lines_gen`: an arbitrary
+finite nonempty `iota`, a content per side (`kX` presenting the `X` line, `kZ` the `Z` line), and a
+shift `sh` with `kX (sh w a) = Content.shiftPt .X w (kX a)` and the same for `kZ`. `pairs_of_lines` is
+the instance `kX = kZ = id`, `sh = Content.shiftPt .X`; `pairs_of_lines_prod`, in `Product.lean`, is
+the instance `kX = pairCX`, `kZ = pairCZ`, `sh = pairShift`, and its two hypotheses are `rfl`.
+
+Three things are worth recording, because none of them was visible from the plan.
+
+**It is not a re-instantiation, it is a generalization, and `pasteLine` had to move first.**
+`pasteLine` and `pasteJ_eq_pasteLine` read both lines off one content; they now take two. That is
+three call sites and no mathematics, but it has to be done before the statement of the lemma can
+mention two contents at all.
+
+**The generalization belongs in `Lines.lean`, not `Product.lean`.** `Lines.lean` cannot import
+`Product.lean`, so proving the general form on the product side would have meant duplicating a
+170-line proof. `bijective_shift` and `sum_shift_gen` moved the same way, out of `Product.lean` and
+into `Lines.lean`, with `bijective_shift_gen` and `sum_content_shift_gen` left as thin instances.
+
+**Higher-order unification does not find `dir`.** `sum_shift_gen` takes `{dir : alpha -> V}` implicit
+and infers it from `hdir : forall a w, dir (sh w a) = dir a`. At `dir = fun a => PX.dir (kX a)` the
+pattern `?dir (sh w a)` against `PX.dir (kX (sh w a))` is not a Miller pattern and the elaborator
+reports an application type mismatch with `?m` still in the expected type; naming `(dir := ...)` at
+the three call sites is the whole fix. Two further failures were the same class of thing in reverse:
+`Bas.Z.other` is not syntactically `Bas.X`, so `lineEvalMats_shiftPt_other` has to be applied through
+a `show ... from` that lets unification do the reduction (which is what the content proof already
+did), and the collision bound's shift sits under the binder of a filtered set, where `rw` cannot
+reach and `simp only` can.
+
+### The combining map and the padded line measurement (2026-09-20, done)
+
+`lem:qld-padded-lines` asserts two things: that there *is* a POVM on the padded line with outcomes of
+degree at most `md+1`, and that it is consistent with the padded point measurement at
+`delta_combine`. The first is now formalized, in `MIPRE/Background/QLD/Combine.lean`; the second is
+not.
+
+**The combining map is a product of degrees, once the substitutions are seen to be affine.**
+`combine` is `alpha(t) f_X(x(t)) + beta(t) f_Z(z(t))` built through Mathlib's `Polynomial` and
+truncated back to a coefficient vector by `ofPoly`. All four substitutions are affine in the padded
+parameter, so `md+1` is `1 + md` and nothing subtler. `eval_padCombine` is the paper's
+parametrization-free defining property, and it is what a consumer should cite.
+
+**The geometry is one disjunction, proved once.** `xBlk_dir_sub` (from the sublines work) says the `X`
+block of the padded direction is *either* the `X` subline's direction *or* zero. In the first case
+the subline parameter moves by exactly the padded shift; in the second it does not move. So it is
+`p0 + c t` with `c` one or zero, and `subAff` is that pair. The paper instead walks the six branches
+of its subline construction; here the branches were already absorbed into `xBlk_dir_sub`, so the
+affine substitution costs two lines (`on_line_affEval`, `lineParam_affEval`) and the branch analysis
+never reappears. Two small facts make the chain close: `rep_xBlk_padShift` (the subline's base point
+does not move, by the same disjunction) and `subX_padShift` (the subline data is unchanged but in its
+point, because the seed and the raw direction it reads are).
+
+**The axis bound is `padCase`'s own case distinction.** A padded direction in the `X` or `Z` block
+leaves `alpha` and `beta` constant along the line, so the combined polynomial inherits the degree of
+the inputs --- which is `d` exactly when `lem:qld-axis-degree` supplies it, so
+`degLE_padCombine_aline` takes that as a hypothesis rather than pretending to it. A direction at
+`alpha`, `beta` or a dummy coordinate leaves *both* blocks constant, and then the polynomial is
+affine and only `d >= 1` is used. `DegLE` is a predicate on coefficient vectors rather than a
+change of type, because the answer alphabet is `LinePoly F (m*d)` throughout.
+
+**Conditioning on the padded line is averaging over the fresh randomness.** `padLineMats` is
+`Q-hat^l`: the uniform average over `SubRand` --- a seed and a raw direction per side --- of
+`pasteLine` coarse-grained by `padCombine`. The paper writes a conditional expectation
+`E_{(l_X,l_Z) ~ D|l}`; since `D` is *defined* by the sampling procedure, conditioning on `l` leaves
+exactly that randomness, so no conditional distribution has to be formed. `sum_padLineMats` and
+`posSemidef_padLineMats` are the POVM property, and `sum_filter_padLineMats` is the data-processing
+step the paper's proof ends with, stated in the form `pairs_of_lines_prod` applies to.
+
+**What remains, and why it is a separate piece of work.** The consistency bound chains three
+Cauchy--Schwarz claims, and each consumes an input averaged over a *different* distribution: the
+combined point measurement's self-consistency, `lem:qld-pairs-of-lines` on the product, and item 3 of
+the expanded-line lemma on the `i`-th *restricted* line-point distributions `D_{Ty,i}`. That last
+transfer --- an approximation at error `delta` over `D_Line` holds over each `D_{Ty,i}` at `2m delta`
+--- is what produces the factors of `m` in `delta_combine = m poly(eps, md/q)`, and it is not
+formalized at all. It is the natural next task.
 
 ### PR D — separation, the swap isometry, and the theorem
 

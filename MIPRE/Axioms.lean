@@ -3,6 +3,7 @@ Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import MIPRE.Foundations.GuardSorryFree
+import MIPRE.Foundations.Blocks
 import MIPRE.Foundations.CL.Basic
 import MIPRE.Foundations.LowDegree.SchwartzZippel
 import MIPRE.Foundations.LowDegree.ZeroBasis
@@ -78,6 +79,11 @@ import MIPRE.TM.Code.Encoding.MachineCode
 import MIPRE.Foundations.WeylBinary
 import MIPRE.Foundations.Commutation
 import MIPRE.Foundations.Linearity
+import MIPRE.Foundations.Sandwich
+import MIPRE.Foundations.Pasting
+import MIPRE.Foundations.Expanded
+import MIPRE.Foundations.WeylEPR
+import MIPRE.Foundations.Swap
 import MIPRE.Background.GowersHatami.Basic
 
 /-!
@@ -875,6 +881,126 @@ tell you the guard is missing.
   MIPRE.Introspection.unitaryTwirl_dist_le,
   MIPRE.Introspection.unitaryTwirl_outcome_dist_le
 
+-- blueprint `lem:qld-combined-points`, the generic half: the Fourier dictionary between an
+-- `F_q`-valued measurement and its binary observables, the sandwich of two projective
+-- measurements, the five-link chain that makes it self-consistent, the two-sided extension, and
+-- the dilated joint measurement.
+#guard_sorry_free MIPRE.fourierVec,
+  MIPRE.sum_norm_fourierVec_sq,
+  MIPRE.trObs,
+  MIPRE.trFourier,
+  MIPRE.trFourier_trObs,
+  MIPRE.trObs_map,
+  MIPRE.pairVec,
+  MIPRE.sum_prod_eq_sum_pairVec,
+  MIPRE.fourierOf_pair_mul,
+  MIPRE.sum_stateSqNorm_fourierOf,
+  MIPRE.obs2_map,
+  MIPRE.swapVec_expVec,
+  MIPRE.Weyl.swapVec_epr,
+  MIPRE.bornProb_swapVec,
+  MIPRE.povmValue_swapVec_of_symm,
+  MIPRE.sum_weighted_mul_le_sqrt,
+  MIPRE.sum_weighted_sqrt_le,
+  MIPRE.abs_qform_conjTranspose_mul_le,
+  MIPRE.proj_le_one,
+  MIPRE.snorm_le_one_of_proj,
+  MIPRE.bornProb_eq_qform,
+  MIPRE.abs_qform_aOp_mul_bOp_le,
+  MIPRE.stateNorm_mul_le,
+  MIPRE.norm_stateVecB_mul_le,
+  MIPRE.xSqNorm_eq_expand,
+  MIPRE.one_sub_sum_bornProb_eq,
+  MIPRE.sand,
+  MIPRE.sum_sand,
+  MIPRE.sandPOVM,
+  MIPRE.sum_stateSqNorm_ord,
+  MIPRE.abs_link1_le,
+  MIPRE.abs_link2_le,
+  MIPRE.abs_link3_le,
+  MIPRE.link4_eq,
+  MIPRE.link5_eq,
+  MIPRE.one_sub_sum_bornProb_sand_le,
+  MIPRE.extVec2,
+  MIPRE.extVec2_unit,
+  MIPRE.bornProb_extVec2,
+  MIPRE.sum_xSqNorm_dilated_eq,
+  MIPRE.sum_xSqNorm_dilated_aOp_le,
+  MIPRE.exists_projective_joint
+
+-- blueprint `lem:qld-padded-points`, the generic half: Parseval over one and two copies of the
+-- field, the coarse-graining by a linear form whose zero probe drops out, and the two ways a
+-- coarse-graining is paid for -- free for projective families, Parseval otherwise.
+#guard_sorry_free MIPRE.sum_norm_fourierVecRaw_sq,
+  MIPRE.trVecRaw,
+  MIPRE.sum_norm_trVecRaw_sq,
+  MIPRE.sum_norm_char_two_sq,
+  MIPRE.sum_avg_norm_fibre_sq,
+  MIPRE.sum_xSqNorm_map_le,
+  MIPRE.sum_mulVec',
+  MIPRE.xSqNorm_eq_norm_evec_sq,
+  MIPRE.sum_fibre_dev
+
+-- blueprint `lem:cool-closeness-fact`: attaching a family's own element and summing along the
+-- fibres of an outcome map costs nothing, simultaneously over all the fibres; and the marginal
+-- step that consumes it.
+#guard_sorry_free MIPRE.snorm_sq_mul_le_of_contraction,
+  MIPRE.snorm_sq_sum_proj_mul,
+  MIPRE.sum_snorm_sq_cool,
+  MIPRE.sum_fibre_fst,
+  MIPRE.sum_snorm_sq_cool_prod,
+  MIPRE.IsPVM.aOp,
+  MIPRE.IsPVM.bOp,
+  MIPRE.sum_xSqNorm_marg_le,
+  MIPRE.sum_snorm_sq_mul_proj_le,
+  MIPRE.sum_xSqNorm_marg_le',
+  MIPRE.IsPVM.comp_equiv,
+  MIPRE.normSq_stateVecB_sub_le,
+  MIPRE.sum_weighted_const_mul,
+  MIPRE.xSqNorm_extVec2_aOp
+
+-- blueprint `lem:pasting-updated`, the `k = 2` case: Alice's joint projective measurement against
+-- the sandwich of Bob's two families, coarse-grained by evaluation. The collision term is a
+-- hypothesis of the analytic core and a lemma of its own for a product question distribution.
+#guard_sorry_free MIPRE.fibSum,
+  MIPRE.isPVM_fibSum,
+  MIPRE.sum_fiber,
+  MIPRE.abs_sum_sum_le_sqrt,
+  MIPRE.sum_comm4,
+  MIPRE.sum_prod_eq,
+  MIPRE.sum_prod_uniform,
+  MIPRE.sum_prod_uniform_one,
+  MIPRE.sum_weighted_add,
+  MIPRE.sum_weighted_div,
+  MIPRE.qform_conjTranspose,
+  MIPRE.sum_sq_le_one_of_sum_eq_one,
+  MIPRE.sum_snorm_sq_orth_le_one,
+  MIPRE.sum_snorm_sq_povm_le_one,
+  MIPRE.sum_snorm_sq_prod_le_one,
+  MIPRE.sum_bornProb_le_fibSum,
+  MIPRE.sum_xSqNorm_fibSum_le,
+  MIPRE.sum_snorm_sq_comm_eq,
+  MIPRE.pasteJ,
+  MIPRE.sandOp_posSemidef,
+  MIPRE.sum_sandOp,
+  MIPRE.sum_snorm_sq_sandOp_le_one,
+  MIPRE.sandOpG_posSemidef,
+  MIPRE.sum_sandOpG,
+  MIPRE.pasteJ_posSemidef,
+  MIPRE.sum_pasteJ,
+  MIPRE.abs_sigma_sub_cloud_le,
+  MIPRE.abs_sand_sub_ord_le,
+  MIPRE.sum_bornProb_ord_ge,
+  MIPRE.sum_snorm_sq_comm_coarse_le,
+  MIPRE.collisionTerm,
+  MIPRE.collisionTerm_nonneg,
+  MIPRE.strife_sub_cloud_eq,
+  MIPRE.sum_snorm_sq_comm_fine_le,
+  MIPRE.one_sub_sum_bornProb_pasteJ_le',
+  MIPRE.one_sub_sum_bornProb_pasteJ_le,
+  MIPRE.sum_xSqNorm_pasteJ_le,
+  MIPRE.sum_collisionTerm_le
+
 /-!
 ## The one axiom
 
@@ -894,4 +1020,26 @@ theorem is assumed, not proved. `scripts/lean-coverage.py` closes the loop from 
 side: it fails if any `axiom` declared outside the vendored trees is not named in this file.
 -/
 
+/-! ## Blocks of an index type
 
+Blueprint `lem:qld-sublines`, the measure-preserving half of a block decomposition: an assignment to
+a sum index type is a pair of assignments to the summands, uniform and independent, together with the
+bookkeeping -- rewriting under nested sums, reordering them, and pulling a constant out -- that a
+block decomposition then needs. -/
+
+#guard_sorry_free MIPRE.sumArrow,
+  MIPRE.sum_arrow_pair,
+  MIPRE.sum_arrow_inl,
+  MIPRE.sum_congr1,
+  MIPRE.sum_congr2,
+  MIPRE.sum_congr3,
+  MIPRE.sum_congr4,
+  MIPRE.sum_nsmul1,
+  MIPRE.sum_nsmul2,
+  MIPRE.sum_nsmul3,
+  MIPRE.sum_nsmul4,
+  MIPRE.sum_comm_four_in,
+  MIPRE.sum_comm_four_mid,
+  MIPRE.sum_comm_six,
+  MIPRE.sum_comm_six_swap,
+  MIPRE.sum_prod_fst

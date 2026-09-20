@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 import MIPRE.Foundations.Dilation
+import MIPRE.Foundations.Parseval
 import MIPRE.Foundations.PVM
 import MIPRE.Foundations.StateDistance
 import MIPRE.Foundations.Weyl
@@ -141,6 +142,74 @@ theorem sum_fourierOf_sq (O : (n → F) → Matrix d d ℂ) (hinv : ∀ a, O a *
   simp only [trDot_zero_left, sgn_zero, one_smul, add_zero] at h
   rw [h, Finset.sum_congr rfl fun a (_ : a ∈ univ) => hinv a, Finset.sum_const, Finset.card_univ,
     ← Nat.cast_smul_eq_nsmul ℂ, smul_smul, inv_mul_cancel₀ card_ne_zero, one_smul]
+
+omit [DecidableEq F] [DecidableEq d] in
+theorem fourierOf_sub (A B : (n → F) → Matrix d d ℂ) (e : n → F) :
+    fourierOf (fun v => A v - B v) e = fourierOf A e - fourierOf B e := by
+  rw [fourierOf, fourierOf, fourierOf, ← smul_sub, ← Finset.sum_sub_distrib]
+  congr 1
+  exact Finset.sum_congr rfl fun v _ => by rw [smul_sub]
+
+/-- **The two-field transform of a product family factorizes.** The combined measurement of a
+pair of parameters is the product of the two one-parameter measurements --- with no hypothesis, the
+double average simply splitting. -/
+theorem fourierOf_pair_mul (A B : F → Matrix d d ℂ) (a b : F) :
+    fourierOf (fun v : Fin 2 → F => A (v 0) * B (v 1)) (pairVec a b)
+      = trFourier A a * trFourier B b := by
+  classical
+  have hcard : (Fintype.card (Fin 2 → F) : ℂ) = (Fintype.card F : ℂ) * (Fintype.card F : ℂ) := by
+    rw [Fintype.card_fun, Fintype.card_fin]
+    push_cast
+    ring
+  rw [fourierOf, sum_pairVec, hcard, trFourier, trFourier, Matrix.smul_mul, Matrix.mul_smul,
+    smul_smul, Finset.sum_mul]
+  rw [mul_inv]
+  refine congrArg _ ?_
+  refine Finset.sum_congr rfl fun r _ => ?_
+  rw [Matrix.smul_mul, Finset.mul_sum, Finset.smul_sum]
+  refine Finset.sum_congr rfl fun s _ => ?_
+  rw [Matrix.mul_smul, smul_smul, trDot_pairVec, sgn_add, pairVec_zero, pairVec_one]
+
+/-- The same with the two factors in the other order. -/
+theorem fourierOf_pair_mul' (A B : F → Matrix d d ℂ) (a b : F) :
+    fourierOf (fun v : Fin 2 → F => B (v 1) * A (v 0)) (pairVec a b)
+      = trFourier B b * trFourier A a := by
+  classical
+  have hcard : (Fintype.card (Fin 2 → F) : ℂ) = (Fintype.card F : ℂ) * (Fintype.card F : ℂ) := by
+    rw [Fintype.card_fun, Fintype.card_fin]
+    push_cast
+    ring
+  rw [fourierOf, sum_pairVec, hcard, trFourier, trFourier, Matrix.smul_mul, Matrix.mul_smul,
+    smul_smul, mul_inv, mul_comm ((Fintype.card F : ℂ))⁻¹ ((Fintype.card F : ℂ))⁻¹,
+    Finset.sum_mul]
+  refine congrArg _ ?_
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun s _ => ?_
+  rw [Matrix.smul_mul, Finset.mul_sum, Finset.smul_sum]
+  refine Finset.sum_congr rfl fun r _ => ?_
+  rw [Matrix.mul_smul, smul_smul, trDot_pairVec, sgn_add, pairVec_zero, pairVec_one, mul_comm]
+
+/-- **Parseval for a family of operators against a state.** The transform is an isometry up to
+the normalization, so an average bound on the family is a summed bound on the transform and
+conversely. This is the dictionary between an `F_q`-valued measurement and its binary
+observables. -/
+theorem sum_stateSqNorm_fourierOf {dB : Type*} [Fintype dB] [DecidableEq dB]
+    (ψ : d × dB → ℂ) (M : (n → F) → Matrix d d ℂ) :
+    ∑ e : n → F, stateSqNorm ψ (fourierOf M e)
+      = (Fintype.card (n → F) : ℝ)⁻¹ * ∑ a : n → F, stateSqNorm ψ (M a) := by
+  classical
+  have hvec : ∀ e : n → F, (aOp (fourierOf M e) : Matrix (d × dB) _ ℂ) *ᵥ ψ
+      = fourierVec (fun a => (aOp (M a) : Matrix (d × dB) _ ℂ) *ᵥ ψ) e := by
+    intro e
+    rw [fourierOf, aOp_smul, aOp_sum, Matrix.smul_mulVec, fourierVec]
+    congr 1
+    rw [Matrix.sum_mulVec]
+    exact Finset.sum_congr rfl fun a _ => by rw [aOp_smul, Matrix.smul_mulVec]
+  have hnorm : ∀ (v : Matrix d d ℂ), stateSqNorm ψ v
+      = ‖evec ((aOp v : Matrix (d × dB) _ ℂ) *ᵥ ψ)‖ ^ 2 := fun v => rfl
+  rw [Finset.sum_congr rfl fun e (_ : e ∈ univ) => by rw [hnorm, hvec e],
+    Finset.sum_congr rfl fun a (_ : a ∈ univ) => hnorm (M a)]
+  exact sum_norm_fourierVec_sq (fun a => (aOp (M a) : Matrix (d × dB) _ ℂ) *ᵥ ψ)
 
 /-! ## The exactly linear family -/
 

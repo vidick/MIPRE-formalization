@@ -641,9 +641,9 @@ POVM that is \texttt{POVM.sub\_mul\_self\_le\_one}, which needs the observable w
 identifies the two, so a consumer can quote whichever form its input is stated in.
 
 \textbf{The swap, and the commutator form.} Two more entries serve the appendix's commutation
-step. `norm_stateVec_comm_le` is~\eqref{eq:anticomm-transfer-bp} with a commutator in the middle
+step. \texttt{norm\_stateVec\_comm\_le} is~\eqref{eq:anticomm-transfer-bp} with a commutator in the middle
 instead of an anticommutator --- the same split, Bob's two products cancelling either way. And
-`snorm_swapVec_aOp_sub_bOp` exchanges the two sides of a cross-party deviation, which is what lets
+\texttt{snorm\_swapVec\_aOp\_sub\_bOp} exchanges the two sides of a cross-party deviation, which is what lets
 a lemma proved for Alice's factor be applied to Bob's: the clean statement is at the level of
 vectors, $(X \ot Y)\,\mathrm{swap}\ket{\psi} = \mathrm{swap}\,(Y \ot X)\ket{\psi}$, and everything
 else follows by linearity. Corollary~\ref{cor:ortho-from-consistency} produces a projective
@@ -809,6 +809,176 @@ commuting case is also exact: expanding a two-outcome observable as $\Id - 2 M_1
 of two of them is \emph{four times} the commutator of the two $M_1$'s
 (\texttt{obs2\_commutator\_eq}), because the identity commutes with everything --- a factor $16$ in
 the squared norm and no approximation.
+
+\subsection{Attaching a projection, and the pasting lemma}
+
+\begin{lemma}[Cool closeness fact, and the marginal step]
+\label{lem:cool-closeness-fact}
+\uses{def:state-distance,def:cross-distance}
+\lean{MIPRE.snorm_sq_mul_le_of_contraction, MIPRE.snorm_sq_sum_proj_mul,
+  MIPRE.sum_snorm_sq_cool, MIPRE.sum_fibre_fst, MIPRE.sum_snorm_sq_cool_prod,
+  MIPRE.IsPVM.aOp, MIPRE.IsPVM.bOp, MIPRE.sum_xSqNorm_marg_le,
+  MIPRE.sum_snorm_sq_mul_proj_le, MIPRE.sum_xSqNorm_marg_le'}
+\leanok
+Let $\{A_i\}_{i \in \mA}$ be a projective measurement and $\{B_i\}$ any family of
+operators on the same space, with
+$\sum_i \norm{(A_i - B_i)\ket{\psi}}^2 \leq \delta$. Then for any map $f : \mA \to \mB$,
+\begin{equation}
+  \label{eq:cool-closeness-bp}
+  \sum_{k} \Bigl\| \sum_{i \,:\, f(i) = k} \bigl( A_i - A_i B_i \bigr) \ket{\psi} \Bigr\|^2
+    \;\leq\; \delta\;,
+\end{equation}
+\emph{simultaneously} over all the fibres of $f$ --- multiplying each element by $A$'s own element
+costs nothing, and neither does summing along a fibre.
+
+Consequently, if $\{Q_{a,b}\}$ is a projective measurement on $\C^{d_\alice}$ with outcomes pairs,
+$\{Z_b\}$ is a projective measurement on $\C^{d_\bob}$, and $\{X_a\}$ is any family on
+$\C^{d_\bob}$, then the $b$-marginal of $Q$ inherits $Q$'s consistency with the ordered product:
+\begin{equation}
+  \label{eq:marginal-step-bp}
+  \sum_a \norm{\Bigl( \bigl(\sum_b Q_{a,b}\bigr) \ot \Id - \Id \ot X_a \Bigr)
+      \ket{\psi}}^2
+    \;\leq\; 2 \sum_{a, b} \norm{\bigl( Q_{a,b} \ot Z_b - Q_{a,b} \ot \Id \bigr)\ket{\psi}}^2
+      + 2 \sum_{a, b} \norm{\bigl( Q_{a,b} \ot \Id - \Id \ot Z_b X_a \bigr)\ket{\psi}}^2\;.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+\leanok
+\uses{def:state-distance}
+For~\eqref{eq:cool-closeness-bp}: projectivity gives $A_i - A_i B_i = A_i (A_i - B_i)$, and the
+cross terms of one fibre vanish because $A_i A_{i'} = 0$ for $i \neq i'$, so the fibre's squared
+norm is the sum of its terms' squared norms. Each term loses only $A_i \leq \Id$, and the fibres
+are disjoint, so the outer sum is absorbed rather than repeated.
+
+For~\eqref{eq:marginal-step-bp}, the intermediate operator is
+$\sum_b Q_{a,b} \ot Z_b$. Reaching it from $\sum_b Q_{a,b} \ot \Id$ is exactly the first part,
+applied along the fibres of the first projection. Reaching $\Id \ot X_a$ from it uses
+$\sum_b Z_b = \Id$ to write the difference as
+$\sum_b (\Id \ot Z_b)\bigl( Q_{a,b} \ot \Id - \Id \ot Z_b X_a \bigr)$, whose terms are again
+mutually orthogonal --- which is what makes the sum over the summed-out outcome free rather than a
+factor $|\mB|$. One triangle inequality joins the two.
+\end{proof}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Foundations/Commutation.lean} (the fact) and
+\texttt{MIPRE/Foundations/Pasting.lean} (the marginal step). This is the paper's
+\texttt{lem:cool-closeness-fact} in the partition form its round-11 repair gives it, and the
+partition form is the point: the consumer applies it to the $q$ fibres of an outcome map at once,
+and the single-subset form would cost a factor $q$ there.
+
+\begin{lemma}[Pasting, the two-measurement case]
+\label{lem:pasting-updated}
+\uses{def:cross-distance,lem:commutation-analysis,lem:cool-closeness-fact}
+\lean{MIPRE.fibSum, MIPRE.isPVM_fibSum, MIPRE.sum_fiber, MIPRE.abs_sum_sum_le_sqrt,
+  MIPRE.sum_comm4, MIPRE.sum_prod_eq, MIPRE.sum_prod_uniform, MIPRE.sum_prod_uniform_one,
+  MIPRE.sum_weighted_add, MIPRE.sum_weighted_div, MIPRE.sum_weighted_const_mul,
+  MIPRE.IsPVM.comp_equiv, MIPRE.qform_conjTranspose,
+  MIPRE.sum_sq_le_one_of_sum_eq_one, MIPRE.sum_snorm_sq_orth_le_one,
+  MIPRE.sum_snorm_sq_povm_le_one, MIPRE.sum_snorm_sq_prod_le_one,
+  MIPRE.sum_bornProb_le_fibSum, MIPRE.sum_xSqNorm_fibSum_le, MIPRE.sum_snorm_sq_comm_eq,
+  MIPRE.pasteJ, MIPRE.sandOp_posSemidef, MIPRE.sum_sandOp, MIPRE.sum_snorm_sq_sandOp_le_one,
+  MIPRE.sandOpG_posSemidef, MIPRE.sum_sandOpG, MIPRE.pasteJ_posSemidef, MIPRE.sum_pasteJ,
+  MIPRE.abs_sigma_sub_cloud_le, MIPRE.abs_sand_sub_ord_le, MIPRE.sum_bornProb_ord_ge,
+  MIPRE.sum_snorm_sq_comm_coarse_le, MIPRE.collisionTerm, MIPRE.collisionTerm_nonneg,
+  MIPRE.strife_sub_cloud_eq, MIPRE.sum_snorm_sq_comm_fine_le,
+  MIPRE.one_sub_sum_bornProb_pasteJ_le', MIPRE.one_sub_sum_bornProb_pasteJ_le,
+  MIPRE.sum_xSqNorm_pasteJ_le, MIPRE.sum_collisionTerm_le}
+\leanok
+Let $\mu$ be a distribution on questions, $\ket{\psi}$ a unit vector, and suppose given, for each
+question:
+\begin{itemize}
+\item a \emph{projective} measurement $\{A_{b,a}\}$ on $\C^{d_\alice}$ with outcomes pairs in
+  $\mA \times \mB$;
+\item a \emph{projective} measurement $\{R_b\}_{b \in \mA}$ on $\C^{d_\bob}$ --- in the
+  application already the coarse-graining of the first family along its own outcome map, which is
+  why only its projectivity appears;
+\item a \emph{projective} measurement $\{G_g\}_{g \in \mC}$ on $\C^{d_\bob}$, a copy
+  $\{G'_g\}$ of it on $\C^{d_\alice}$, and an outcome map $e : \mC \to \mB$.
+\end{itemize}
+Write $J_{b, a} = \sum_{g \,:\, e(g) = a} G_g R_b G_g$ for the pasted family, which is a POVM.
+Suppose that
+\begin{equation}
+  \label{eq:pasting-hyp-bp}
+  \bigl(\sum_a A_{b,a}\bigr) \ot \Id \simeq_\delta \Id \ot R_b\;, \qquad
+  \bigl(\sum_b A_{b,a}\bigr) \ot \Id \simeq_\delta
+    \Id \ot \sum_{g \,:\, e(g) = a} G_g\;, \qquad
+  G'_g \ot \Id \simeq_\eta \Id \ot G_g\;,
+\end{equation}
+and that the \emph{collision term}
+$\E \sum_b \sum_{g \neq g' \,:\, e(g) = e(g')}
+  \bra{\psi} G'_{g'} \ot G_g R_b G_g \ket{\psi}$ is at most $\eps$. Then
+\begin{equation}
+  \label{eq:pasting-conclusion-bp}
+  1 - \E \sum_{b, a} \bra{\psi} A_{b,a} \ot J_{b,a} \ket{\psi}
+    \;\leq\; \frac{\delta}{2} + \sqrt{\frac{\delta}{2}}
+      + \sqrt{32 \delta + 4\sqrt{\eta} + 2 \eps}\;,
+\end{equation}
+and hence $A_{b,a} \ot \Id \simeq_{\delta_{\mathrm{pasting}}} \Id \ot J_{b,a}$ with
+$\delta_{\mathrm{pasting}}$ twice the right-hand side of~\eqref{eq:pasting-conclusion-bp}.
+
+Finally, if the question is a pair $(z, y)$ with $y$ uniform and independent of $z$, every family
+above depending on $z$ alone and only $e$ on $y$, and if any two distinct $g, g'$ satisfy
+$e_z(y)(g) = e_z(y)(g')$ for at most an $\eps(z)$ fraction of the probes $y$, then the collision
+term is at most the average of $\eps(z)$. The dependence on $z$ is what the consumer needs: for a
+\emph{degenerate} line --- a direction that is zero, which the seeded test's diagonal branch does
+sample --- the outcome map separates nothing at all, and what makes the average small is that such
+lines are rare, not that the bound holds at every question.
+\end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:commutation-analysis,lem:cool-closeness-fact,def:cross-distance}
+The target is the agreement of $A$ with the sandwich. Two steps reach it. The ordered product
+$G_g R_b$ carries all but $\delta/2 + \sqrt{\delta/2}$: its outer factor sums away against
+Alice's second marginal by the second hypothesis, and what is left is Alice's first marginal
+against $\Id - R_b$, whose Cauchy--Schwarz costs the square root of the first hypothesis. Passing
+from the ordered product to the sandwich costs one more Cauchy--Schwarz against Bob's commutator
+$[R_b, G_g]$, the front factor $A_{b, e(g)} \ot G_g$ being a mutually orthogonal family and so a
+contraction.
+
+So everything reduces to the \emph{fine-grained} commutator $\sum_{b, g} \norm{[R_b, G_g]
+\ket{\psi}}^2$. Its coarse-grained counterpart, with $G$ replaced by its fibre sums, is at most
+$16(\delta + \delta)$ by Lemma~\ref{lem:commutation-analysis} --- read in the mirror, with both
+families on Bob's factor and Alice's joint measurement supplying the operator both products reach.
+Expanding either commutator, the two diagonal terms are \emph{exactly one} because $R$ and $G$ are
+projective, so each equals $2 - 2\Sigma$ for its own overlap $\Sigma$, and the two off-diagonal
+terms are complex conjugates. Comparing the two overlaps is the only remaining work, and it passes
+through the paper's cloud and strife: replacing Bob's outer factor by Alice's copy of it costs
+$\sqrt\eta$ on each side --- and nothing depending on $|\mC|$, because one factor $R_b$
+stays in front of the deviation, so the sum over $b$ is absorbed --- while the cloud and the strife
+differ by exactly the collision term.
+
+For the last part, the Born probabilities do not depend on the probe, so the probe average acts on
+the collision indicator alone; what multiplies it is a POVM's total mass, which is one.
+\end{proof}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Foundations/Pasting.lean}. This is NW19's
+Fact 4.35, the paper's \texttt{lem:pasting-updated} (\texttt{games.tex}), at $k = 2$; the paper's
+reduction of general $k$ to $k = 2$ is an induction that adds nothing, and the consumer
+(Lemma~\ref{lem:qld-pairs-of-lines}) needs $k = 2$ only.
+
+\textbf{Two hypotheses of the paper's statement are absent, and both are absences rather than
+gaps.} First, the inner family is assumed \emph{projective}; the paper allows a POVM there, and
+then the two diagonal sums of the commutator expansion are only approximately one, which is what
+its appeal to Fact 4.31 of~\cite{NW19} repairs. With projectivity they are exactly one and that
+fact is not needed at all --- the consumer's inner family is a line measurement, which is
+projective. Second, the cross-party self-consistency of $G$ at the \emph{fine} level is a
+hypothesis here, where the paper derives it from the backwards consistency and Alice's
+self-consistency and pays a further $\eps$ for the passage from the fibres to the fine family. The
+consumer has the fine-level relation directly, as item 1 of
+Lemma~\ref{lem:qld-expanded-lines}, so the derivation would be work spent to weaken a hypothesis
+that is already met. Neither change touches the conclusion.
+
+\textbf{The collision term is a hypothesis of the abstract lemma and a lemma of its own for the
+product case.} That split is what keeps the analytic core free of the question distribution: the
+core needs only that the off-diagonal cloud terms are small in total, and the product-distribution
+bridge (\texttt{sum\_collisionTerm\_le}) is where uniformity of the probe and the separating
+property of the outcome map are used.
+
+\textbf{Constants.} $32\delta$ rather than the $16\delta$ of
+Lemma~\ref{lem:commutation-analysis} because the two marginal hypotheses enter that lemma as a
+single $\delta$, here instantiated at their sum. Nothing in the chain is a per-outcome estimate,
+so no constant depends on $|\mC|$ or on $|\mB|$.
 
 \subsection{Generalized Pauli observables}
 
