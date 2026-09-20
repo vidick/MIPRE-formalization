@@ -923,15 +923,36 @@ does not move. `bijective_shift` and `sum_shift_gen` are the general statements 
 is the instance at a pair with the shift acting on the `X` side only, which is what the product form
 of the collision term needs.
 
-**What remains, and it is shape rather than mathematics.** Three generalizations from one content to
-two: `pasteLine` and `pasteJ_eq_pasteLine` take both lines from the same content and must take them
-from two; and `pairs_of_lines` must be restated over an arbitrary finite sample space carrying a
-content for each side (`kX`, `kZ`) together with a shift satisfying
-`kX (sh w a) = Content.shiftPt .X w (kX a)` and the same for `kZ` --- after which the content version
-is the instance `kX = kZ = id`, `sh = Content.shiftPt .X`, and the product version the instance
-`kX = fun p => ofLPX p.1 p.2.pt`, `kZ = fun p => ofLPZ p.2 p.1.pt`, `sh = pairShift`. The
-generalization belongs in `Lines.lean` next to `pairs_of_lines`, not in `Product.lean`, since
-`Lines.lean` cannot import `Product.lean`; doing it the other way would duplicate a 170-line proof.
+### `lem:qld-pairs-of-lines` with the question distribution as a parameter (2026-09-20, done)
+
+The transfer above says the two distributions agree on everything the pasting lemma looks at. Using it
+needed the lemma itself to stop naming a distribution, and that is `pairs_of_lines_gen`: an arbitrary
+finite nonempty `iota`, a content per side (`kX` presenting the `X` line, `kZ` the `Z` line), and a
+shift `sh` with `kX (sh w a) = Content.shiftPt .X w (kX a)` and the same for `kZ`. `pairs_of_lines` is
+the instance `kX = kZ = id`, `sh = Content.shiftPt .X`; `pairs_of_lines_prod`, in `Product.lean`, is
+the instance `kX = pairCX`, `kZ = pairCZ`, `sh = pairShift`, and its two hypotheses are `rfl`.
+
+Three things are worth recording, because none of them was visible from the plan.
+
+**It is not a re-instantiation, it is a generalization, and `pasteLine` had to move first.**
+`pasteLine` and `pasteJ_eq_pasteLine` read both lines off one content; they now take two. That is
+three call sites and no mathematics, but it has to be done before the statement of the lemma can
+mention two contents at all.
+
+**The generalization belongs in `Lines.lean`, not `Product.lean`.** `Lines.lean` cannot import
+`Product.lean`, so proving the general form on the product side would have meant duplicating a
+170-line proof. `bijective_shift` and `sum_shift_gen` moved the same way, out of `Product.lean` and
+into `Lines.lean`, with `bijective_shift_gen` and `sum_content_shift_gen` left as thin instances.
+
+**Higher-order unification does not find `dir`.** `sum_shift_gen` takes `{dir : alpha -> V}` implicit
+and infers it from `hdir : forall a w, dir (sh w a) = dir a`. At `dir = fun a => PX.dir (kX a)` the
+pattern `?dir (sh w a)` against `PX.dir (kX (sh w a))` is not a Miller pattern and the elaborator
+reports an application type mismatch with `?m` still in the expected type; naming `(dir := ...)` at
+the three call sites is the whole fix. Two further failures were the same class of thing in reverse:
+`Bas.Z.other` is not syntactically `Bas.X`, so `lineEvalMats_shiftPt_other` has to be applied through
+a `show ... from` that lets unification do the reduction (which is what the content proof already
+did), and the collision bound's shift sits under the binder of a filtered set, where `rw` cannot
+reach and `simp only` can.
 
 ### PR D — separation, the swap isometry, and the theorem
 

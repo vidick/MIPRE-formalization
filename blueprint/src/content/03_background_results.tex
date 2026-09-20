@@ -2437,7 +2437,8 @@ weaker general bound $md$.
 \lean{MIPRE.QLD.toPoly, MIPRE.QLD.natDegree_toPoly_le, MIPRE.QLD.eval_toPoly,
   MIPRE.QLD.coeff_toPoly, MIPRE.QLD.toPoly_injective, MIPRE.QLD.card_agree_linePoly_le,
   MIPRE.QLD.lineParam_add_smul, MIPRE.QLD.rep_add_smul, MIPRE.QLD.Content.shiftPt,
-  MIPRE.QLD.Content.shiftAlong, MIPRE.QLD.Content.shiftV, MIPRE.QLD.bijective_shift_gen,
+  MIPRE.QLD.Content.shiftAlong, MIPRE.QLD.Content.shiftV, MIPRE.QLD.bijective_shift,
+  MIPRE.QLD.sum_shift_gen, MIPRE.QLD.bijective_shift_gen,
   MIPRE.QLD.sum_content_shift_gen, MIPRE.QLD.sum_content_shiftAlong,
   MIPRE.QLD.dirOf_shiftPt, MIPRE.QLD.ddirOf_shiftPt, MIPRE.QLD.abaseOf_shiftAlong,
   MIPRE.QLD.dbaseOf_shiftAlong, MIPRE.QLD.question_aline_shiftAlong,
@@ -2453,7 +2454,8 @@ weaker general bound $md$.
   MIPRE.QLD.extHat, MIPRE.QLD.sum_content_normSq_point_line_le,
   MIPRE.QLD.sum_xSqNorm_marg_point_le, MIPRE.QLD.sum_xSqNorm_marg_line_le_aux,
   MIPRE.QLD.sum_content_marg_line_le, MIPRE.QLD.pasteLine, MIPRE.QLD.fibSum_aOp,
-  MIPRE.QLD.pasteJ_eq_pasteLine, MIPRE.QLD.pairs_of_lines, MIPRE.QLD.kappaPairs,
+  MIPRE.QLD.pasteJ_eq_pasteLine, MIPRE.QLD.pairs_of_lines_gen, MIPRE.QLD.pairs_of_lines,
+  MIPRE.QLD.kappaPairs,
   MIPRE.QLD.deltaPairsD, MIPRE.QLD.deltaPairs, MIPRE.QLD.pairs_of_lines_of_items,
   MIPRE.QLD.aPres_items, MIPRE.QLD.dPres_items, MIPRE.QLD.qld_pairs_of_lines,
   MIPRE.xSqNorm_extVec2_aOp, MIPRE.normSq_stateVecB_sub_le}
@@ -2522,6 +2524,17 @@ with~\eqref{eq:qld-pairs-of-lines-bp} at the axis-parallel line of each side;
 \texttt{aPres\_items}, \texttt{dPres\_items} and \texttt{sum\_content\_collProb\_dPres} are what
 the other three pairs of line types need.
 
+\textbf{The question distribution is a parameter.} \texttt{pairs\_of\_lines\_gen} proves the lemma
+over any finite nonempty sample space carrying a content per side --- $k_X$ presenting the $X$ line,
+$k_Z$ the $Z$ line --- together with a shift of the $X$ point that both contents see as such; the
+two contents need share nothing, because no hypothesis of Lemma~\ref{lem:pasting-updated} involves
+both lines. \texttt{pairs\_of\_lines} is its instance at one content per sample, the same one on
+both sides, where the two lines are therefore dependent;
+\texttt{pairs\_of\_lines\_prod} (Lemma~\ref{lem:qld-padded-lines}) is its instance at a pair of
+line--point data, where they are independent. \texttt{pasteLine} and
+\texttt{pasteJ\_eq\_pasteLine} accordingly take the $X$ line and the $Z$ line from two contents
+rather than one.
+
 \textbf{Per pair of line types, not for the mixture.} The paper states the lemma on average over
 the line--point distribution, which is an equal mixture of the axis-parallel and diagonal
 branches. Here the line type is a parameter and the statement is proved for each of the four
@@ -2545,11 +2558,11 @@ the point, is what bounds the probability of a degenerate diagonal line.
 \textbf{What the refined contract still asks for.} Three items of the contract recorded for this
 lemma are not part of what is proved above, and are wanted by the lemmas that consume it: that the
 outcome polynomials have degree at most $d$ on an axis-parallel component, which is
-Lemma~\ref{lem:qld-axis-degree} and an additional target there; that the two lines be drawn
-\emph{independently}, which needs the padded line--point distribution of
-Lemma~\ref{lem:qld-padded-lines} rather than the single content used here; and the restriction to
+Lemma~\ref{lem:qld-axis-degree} and an additional target there; and the restriction to
 specified line types and direction indices, which costs the reciprocal probability of those
-choices, at most $4m^2$. The version above fixes the line type on each side as a parameter and is
+choices, at most $4m^2$. That the two lines be drawn \emph{independently} is no longer one of them:
+\texttt{pairs\_of\_lines\_gen} leaves the question distribution free, so the padded line--point
+distribution of Lemma~\ref{lem:qld-padded-lines} is an instance rather than a gap. The version above fixes the line type on each side as a parameter and is
 proved for each of the four pairs, so the restriction factor is not incurred; the reciprocal cost
 appears only when a caller wants the statement for the mixture.
 
@@ -2796,8 +2809,10 @@ primes on $w_X, w_Z$, and the unspecified law of the coordinate registers $s_X, 
   MIPRE.QLD.avg_content_eq_pair_pts, MIPRE.QLD.avg_content_eq_pair_X',
   MIPRE.QLD.avg_content_eq_pair_Z', MIPRE.QLD.bijective_shift, MIPRE.QLD.sum_shift_gen,
   MIPRE.QLD.pairShift, MIPRE.QLD.pairDirX, MIPRE.QLD.ofLPX_pairShift,
-  MIPRE.QLD.ofLPZ_pairShift, MIPRE.QLD.pairShift_add, MIPRE.QLD.pairDirX_shift,
-  MIPRE.QLD.sum_pair_shift}
+  MIPRE.QLD.ofLPZ_pairShift, MIPRE.QLD.pairShift_zero, MIPRE.QLD.pairShift_add,
+  MIPRE.QLD.pairDirX_shift, MIPRE.QLD.sum_pair_shift, MIPRE.QLD.pairCX, MIPRE.QLD.pairCZ,
+  MIPRE.QLD.pairDirX_eq, MIPRE.QLD.pairCX_pairShift, MIPRE.QLD.pairCZ_pairShift,
+  MIPRE.QLD.pairs_of_lines_prod}
 For every padded line $\ell$, there is a POVM with polynomial outcomes of
 degree at most $md+1$, and at most $d$ when $\ell$ is axis-parallel.
 On the padded line--point distribution it is consistent with the opposite
@@ -2811,9 +2826,10 @@ make these legal answers for the seeded test at $(q,4m,d,1)$.
 \end{lemma}
 
 \paragraph{Comments.} Not formalized. What is formalized, in
-\texttt{MIPRE/Background/QLD/Product.lean}, is the one transfer its proof has to begin with, and it
-is worth separating from the rest because it is where an apparent obstruction turns out not to be
-one.
+\texttt{MIPRE/Background/QLD/Product.lean}, is everything up to the combining map: the transfer its
+proof has to begin with, and Lemma~\ref{lem:qld-pairs-of-lines} on the product distribution. The
+transfer is worth separating from the rest because it is where an apparent obstruction turns out not
+to be one.
 
 \textbf{The obstruction, and why it is not one.} Lemma~\ref{lem:qld-pairs-of-lines} is proved on the
 Pauli basis test's own question distribution: one content, carrying both sides' points but a
@@ -2836,13 +2852,18 @@ and a direction the shift does not move --- nothing about contents. \texttt{bije
 \texttt{sum\_shift\_gen} are that statement, and \texttt{sum\_pair\_shift} is its instance at a pair
 with the shift acting on the $X$ side only.
 
-\textbf{What remains.} Three generalizations from one content to two, all mechanical in shape and
-none of them mathematics: \texttt{pasteLine} and \texttt{pasteJ\_eq\_pasteLine} take the $X$ line and
-the $Z$ line from the same content and must take them from two; and
-\texttt{pairs\_of\_lines} must be restated over an arbitrary finite sample space carrying a content
-for each side, after which the content version is one instance and the product version the other.
-Then the combining map on line polynomials, its degree bound ($md+1$ in general, $d$ on an
-axis-parallel line for $d \geq 1$), and the POVM itself.
+\textbf{Lemma~\ref{lem:qld-pairs-of-lines}, on the product.}
+\texttt{pairs\_of\_lines\_prod} is that lemma at $k_X = \mathtt{pairCX}$,
+$k_Z = \mathtt{pairCZ}$ and \texttt{pairShift} as the shift: each side's content is its own point,
+seed and raw direction, with the \emph{other} side's point filled in as the content's other point,
+which no quantity of that side's line depends on. The two $\mathtt{rfl}$s
+\texttt{pairCX\_pairShift} and \texttt{pairCZ\_pairShift} are the whole of the instantiation ---
+the generalization it instantiates is recorded under
+Lemma~\ref{lem:qld-pairs-of-lines}, since that is the lemma it proves.
+
+\textbf{What remains.} The combining map on line polynomials, its degree bound ($md+1$ in general,
+$d$ on an axis-parallel line for $d \geq 1$), the POVM $\widehat Q^\ell$ as the conditional average
+of $T^{\ell_X,\ell_Z}$, and its consistency at $\delta_{\mathrm{combine}}$.
 
 \effortHard
 

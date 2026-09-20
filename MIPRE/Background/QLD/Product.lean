@@ -42,7 +42,6 @@ set_option linter.unusedSectionVars false
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ} [NeZero m]
 
-instance : Nonempty (Content F m) := ⟨⟨0, 0, 0, 0, 0, 0⟩⟩
 instance : Nonempty (LPData F m) := ⟨⟨0, 0, 0⟩⟩
 
 /-! ## Reading a content as line-point data, and back -/
@@ -163,54 +162,13 @@ theorem avg_content_eq_pair_Z' (H : LPData F m → ℝ) :
 
 /-! ## The change of variables, at the product
 
-`sum_content_shift_gen` is the device that makes the point uniform on its line without forming a
-conditional distribution, and nothing in it is about contents: it needs a finite nonempty sample
-space, a shift action on it, and a direction the shift does not move. Stated that way it applies to a
+`MIPRE.QLD.sum_shift_gen` (in `Lines.lean`, where the content instance of it lives) needs only a
+finite sample space, a shift action on it, and a direction the shift does not move. So it applies to a
 *pair* of line-point data with the shift acting on the `X` side only, which is what the product form
-of the pasting lemma's collision term needs.
+of the pasting lemma's collision term needs; all that is required here is the action and its three
+properties.
 -/
 
-section Shift
-
-variable {α : Type*} [Fintype α] [Nonempty α] {V : Type*} [AddCommGroup V] [Module F V]
-
-/-- **Shifting along a direction the shift does not move is a bijection**, with the opposite shift
-as inverse. -/
-theorem bijective_shift {sh : V → α → α} (hzero : ∀ a, sh 0 a = a)
-    (hadd : ∀ (w w' : V) (a : α), sh w' (sh w a) = sh (w + w') a)
-    {dir : α → V} (hdir : ∀ (a : α) (w : V), dir (sh w a) = dir a) (t : F) :
-    Function.Bijective fun a => sh (t • dir a) a := by
-  refine Function.bijective_iff_has_inverse.mpr
-    ⟨fun a => sh ((-t) • dir a) a, fun a => ?_, fun a => ?_⟩
-  · show sh ((-t) • dir (sh (t • dir a) a)) (sh (t • dir a) a) = a
-    rw [hdir, hadd, show t • dir a + (-t) • dir a = 0 from by module, hzero]
-  · show sh (t • dir (sh ((-t) • dir a) a)) (sh ((-t) • dir a) a) = a
-    rw [hdir, hadd, show (-t) • dir a + t • dir a = 0 from by module, hzero]
-
-/-- **The change of variables**, for an arbitrary finite sample space: averaging a quantity is
-averaging it over (sample, shift) pairs with the shift applied. -/
-theorem sum_shift_gen {sh : V → α → α} (hzero : ∀ a, sh 0 a = a)
-    (hadd : ∀ (w w' : V) (a : α), sh w' (sh w a) = sh (w + w') a)
-    {dir : α → V} (hdir : ∀ (a : α) (w : V), dir (sh w a) = dir a) (g : α → ℝ) :
-    ∑ i : α × F, ((Fintype.card α : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)
-        * g (sh (i.2 • dir i.1) i.1)
-      = ∑ a : α, (Fintype.card α : ℝ)⁻¹ * g a := by
-  classical
-  have hF : (Fintype.card F : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
-  rw [← sum_prod_eq fun (a : α) (t : F) =>
-    ((Fintype.card α : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) * g (sh (t • dir a) a), Finset.sum_comm]
-  have hstep : ∀ t : F, ∑ a : α, ((Fintype.card α : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)
-        * g (sh (t • dir a) a)
-      = (Fintype.card F : ℝ)⁻¹ * ∑ a : α, (Fintype.card α : ℝ)⁻¹ * g a := by
-    intro t
-    rw [Finset.mul_sum]
-    refine Fintype.sum_bijective (fun a => sh (t • dir a) a)
-      (bijective_shift hzero hadd hdir t) _ _ fun a => ?_
-    ring
-  rw [Finset.sum_congr rfl fun t (_ : t ∈ univ) => hstep t, ← Finset.sum_mul,
-    Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_inv_cancel₀ hF, one_mul]
-
-end Shift
 
 /-! ### The shift on a pair, and what it leaves alone -/
 
@@ -256,5 +214,69 @@ theorem sum_pair_shift (PX : LinePres F m hm .X) (g : LPData F m × LPData F m �
       = ∑ p : LPData F m × LPData F m,
           (Fintype.card (LPData F m × LPData F m) : ℝ)⁻¹ * g p :=
   sum_shift_gen pairShift_zero pairShift_add (fun p w => pairDirX_shift PX p w) g
+
+/-! ## `lem:qld-pairs-of-lines`, at a product of two independent line-point pairs
+
+`pairs_of_lines_gen` asks for a content per side and a shift both sides see as a shift of the `X`
+point. A pair of line-point data supplies exactly that: each side's content is its own point, seed
+and raw direction, with the *other* side's point filled in as the content's other point --- which no
+quantity of that side's line depends on --- and `pairShift` moves the `X` point. So the product form
+is an instance, with nothing to prove beyond the two `rfl`s below.
+-/
+
+/-- The `X`-side content a pair of line-point data presents: the `X` side's own line-point data, with
+the `Z` side's point as the content's other point. -/
+def pairCX (p : LPData F m × LPData F m) : Content F m := ofLPX p.1 p.2.pt
+
+/-- The `Z`-side content. Its seed and raw direction are the `Z` side's own, independent of the `X`
+side's --- which is the whole difference from a single content. -/
+def pairCZ (p : LPData F m × LPData F m) : Content F m := ofLPZ p.2 p.1.pt
+
+@[simp] theorem pairDirX_eq (PX : LinePres F m hm .X) (p : LPData F m × LPData F m) :
+    pairDirX PX p = PX.dir (pairCX p) := rfl
+
+@[simp] theorem pairCX_pairShift (w : Point F m) (p : LPData F m × LPData F m) :
+    pairCX (pairShift w p) = Content.shiftPt .X w (pairCX p) := rfl
+
+@[simp] theorem pairCZ_pairShift (w : Point F m) (p : LPData F m × LPData F m) :
+    pairCZ (pairShift w p) = Content.shiftPt .X w (pairCZ p) := rfl
+
+variable {d : ℕ} {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+  {ψ : dA × dB → ℂ} {MA : Question F m → POVM (Answer F m d) dA}
+  {MB : Question F m → POVM (Answer F m d) dB}
+
+/-- **`lem:qld-pairs-of-lines`, on a product of two independent line-point laws.** The instance of
+`pairs_of_lines_gen` at `kX = pairCX`, `kZ = pairCZ`, `sh = pairShift`: this is the form
+`lem:qld-padded-lines` needs, where the `X` line and the `Z` line are drawn independently. -/
+theorem pairs_of_lines_prod (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z)
+    {QA : LPData F m × LPData F m → F × F →
+      Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ}
+    (hQA : ∀ p, IsPVM (QA p)) (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) {δ η εc : ℝ}
+    (hmargX : ∑ p : LPData F m × LPData F m,
+        (Fintype.card (LPData F m × LPData F m) : ℝ)⁻¹ * ∑ x : F,
+          xSqNorm (extHat (m := m) ψ) (∑ q : F, QA p (x, q))
+            (aOp (PX.lineEvalMats d MB (pairCX p) x)) ≤ δ)
+    (hmargZ : ∑ p : LPData F m × LPData F m,
+        (Fintype.card (LPData F m × LPData F m) : ℝ)⁻¹ * ∑ b : F,
+          xSqNorm (extHat (m := m) ψ) (∑ q : F, QA p (q, b))
+            (aOp (PZ.lineEvalMats d MB (pairCZ p) b)) ≤ δ)
+    (hselfX : ∑ p : LPData F m × LPData F m,
+        (Fintype.card (LPData F m × LPData F m) : ℝ)⁻¹ *
+          ∑ f : LinePoly F (m * d), xSqNorm (extHat (m := m) ψ)
+            (aOp (PX.lineMats d MA (pairCX p) f)) (aOp (PX.lineMats d MB (pairCX p) f)) ≤ η)
+    (hcoll : ∑ p : LPData F m × LPData F m,
+        (Fintype.card (LPData F m × LPData F m) : ℝ)⁻¹ * collProb PX d (pairCX p) ≤ εc) :
+    1 - ∑ p : LPData F m × LPData F m,
+        (Fintype.card (LPData F m × LPData F m) : ℝ)⁻¹ * ∑ r : F × F,
+          bornProb (extHat (m := m) ψ) (QA p r)
+            (∑ q ∈ univ.filter fun q : LinePoly F (m * d) × LinePoly F (m * d) =>
+                LinePoly.eval q.1 (PX.param (pairCX p)) = r.1
+                  ∧ LinePoly.eval q.2 (PZ.param (pairCZ p)) = r.2,
+              pasteLine PX PZ d MB (pairCX p) (pairCZ p) q)
+      ≤ δ / 2 + Real.sqrt (δ / 2) + Real.sqrt (32 * δ + 4 * Real.sqrt η + 2 * εc) :=
+  pairs_of_lines_gen PX PZ pairCX pairCZ (sh := pairShift) pairShift_zero pairShift_add
+    pairCX_pairShift pairCZ_pairShift hQA hψ hprojA hprojB hmargX hmargZ hselfX hcoll
 
 end MIPRE.QLD
