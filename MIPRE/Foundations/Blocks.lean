@@ -8,6 +8,9 @@ import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Fintype.Sum
+import Mathlib.Data.Real.Basic
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Ring
 import Mathlib.Logic.Equiv.Basic
 
 /-!
@@ -150,5 +153,38 @@ theorem sum_prod_fst [DecidableEq A] (h : A → M) :
     (by rw [Finset.card_univ, sum_nsmul1])
 
 end Bookkeeping
+
+/-! ## Marginals of a uniform average
+
+A uniform average of a quantity that depends on only part of the sample is the uniform average over
+that part. Stated once, for an arbitrary splitting of the sample space given as an equivalence with a
+product, it is what relates the Pauli basis test's single content --- which carries both sides' points
+but *one* seed and *one* raw direction --- to a product of two independent line-point laws: each
+side's own data has the same marginal under both.
+-/
+
+section Marginal
+
+variable {α β γ : Type*} [Fintype α] [Fintype β] [Fintype γ] [Nonempty α] [Nonempty γ]
+
+/-- **A uniform average of a function of one factor is the uniform average over that factor.** -/
+theorem avg_comp_equiv_fst (e : α ≃ β × γ) (f : β → ℝ) :
+    ∑ a : α, (Fintype.card α : ℝ)⁻¹ * f (e a).1 = ∑ b : β, (Fintype.card β : ℝ)⁻¹ * f b := by
+  classical
+  have : Nonempty β := ⟨(e (Classical.arbitrary α)).1⟩
+  have hcard : Fintype.card α = Fintype.card β * Fintype.card γ := by
+    rw [Fintype.card_congr e, Fintype.card_prod]
+  have hγ : (Fintype.card γ : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
+  have hβ : (Fintype.card β : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
+  rw [Equiv.sum_comp e (fun p : β × γ => (Fintype.card α : ℝ)⁻¹ * f p.1),
+    Fintype.sum_prod_type]
+  refine sum_congr1 fun b => ?_
+  have hb : ∀ c : γ, (Fintype.card α : ℝ)⁻¹ * f ((b, c) : β × γ).1
+      = (Fintype.card α : ℝ)⁻¹ * f b := fun _ => rfl
+  rw [sum_congr1 hb, Finset.sum_const, Finset.card_univ, nsmul_eq_mul, hcard, Nat.cast_mul]
+  field_simp
+
+
+end Marginal
 
 end MIPRE

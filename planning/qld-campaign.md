@@ -895,14 +895,43 @@ descent lemmas are needed at all is that `rw` cannot instantiate a pattern like 
 metavariable would have to mention variables bound outside the rewrite -- so the rewrite has to
 happen at the depth where the function is closed, and the `sum_congr` family is what gets it there.
 
-**And one thing the consumer will need that is not in this lemma.** `pairs_of_lines_of_items` is
-proved on the *single content* of the Pauli basis test, whose seed and raw direction are shared by
-the two sides; `lem:qld-padded-lines` wants it on the product of two independent line--point laws.
-That transfer is available and is not hard, because each of the pasting lemma's four hypotheses
-involves only one of the two lines, and the relevant marginal of the product law coincides with the
-relevant marginal of the content --- the other side's point is uniform and independent in both. It
-is a re-instantiation of `one_sub_sum_bornProb_pasteJ_le` at pairs of contents with product weights,
-not a new argument.
+#### 2026-09-20, part 5: the product-law transfer (`MIPRE/Background/QLD/Product.lean`)
+
+`pairs_of_lines_of_items` is proved on the *single content* of the Pauli basis test, whose seed and
+raw direction are shared by the two sides; `lem:qld-padded-lines` wants it on a product of two
+independent line-point laws, which is what `lem:qld-sublines` delivers. The two distributions are
+genuinely different, and the reason the transfer exists is worth stating before any machinery: **no
+hypothesis of the pasting lemma involves both lines.** Each marginal consistency involves one line and
+the two points; the fine self-consistency and the collision term involve one line only. So the only
+laws that have to agree are
+
+* one side's line-point data on its own,
+* one side's data together with the *other side's point*,
+* the two points,
+
+and each has the same law under a content as under a product, because a content's two points and its
+seed and raw direction are independent and uniform. `avg_content_eq_pair_X`,
+`avg_content_eq_pair_Z` and `avg_content_eq_pair_pts` are those three identities, and each is **one
+line** on top of a single general lemma (`MIPRE.avg_comp_equiv_fst`: a uniform average of a function
+of one factor of a product is the uniform average over that factor). All the content is in choosing
+the splitting of each sample space that isolates the part the quantity depends on --- `contentSplitX`
+against `pairSplitX`, and so on --- after which the marginals match by construction.
+
+**The change of variables generalizes for free.** `sum_content_shift_gen` is stated about contents but
+uses nothing about them: a finite nonempty sample space, a shift action, and a direction the shift
+does not move. `bijective_shift` and `sum_shift_gen` are the general statements and `sum_pair_shift`
+is the instance at a pair with the shift acting on the `X` side only, which is what the product form
+of the collision term needs.
+
+**What remains, and it is shape rather than mathematics.** Three generalizations from one content to
+two: `pasteLine` and `pasteJ_eq_pasteLine` take both lines from the same content and must take them
+from two; and `pairs_of_lines` must be restated over an arbitrary finite sample space carrying a
+content for each side (`kX`, `kZ`) together with a shift satisfying
+`kX (sh w a) = Content.shiftPt .X w (kX a)` and the same for `kZ` --- after which the content version
+is the instance `kX = kZ = id`, `sh = Content.shiftPt .X`, and the product version the instance
+`kX = fun p => ofLPX p.1 p.2.pt`, `kZ = fun p => ofLPZ p.2 p.1.pt`, `sh = pairShift`. The
+generalization belongs in `Lines.lean` next to `pairs_of_lines`, not in `Product.lean`, since
+`Lines.lean` cannot import `Product.lean`; doing it the other way would duplicate a 170-line proof.
 
 ### PR D — separation, the swap isometry, and the theorem
 

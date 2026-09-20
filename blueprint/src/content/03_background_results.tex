@@ -2789,6 +2789,15 @@ primes on $w_X, w_Z$, and the unspecified law of the coordinate registers $s_X, 
 \label{lem:qld-padded-lines}
 \ledgernode{1.2.2.12}
 \uses{lem:qld-pairs-of-lines,lem:qld-sublines,lem:qld-padded-points,def:cross-distance}
+\lean{MIPRE.avg_comp_equiv_fst, MIPRE.QLD.Content.lpX, MIPRE.QLD.Content.lpZ, MIPRE.QLD.ofLPX,
+  MIPRE.QLD.ofLPZ, MIPRE.QLD.contentSplitX, MIPRE.QLD.pairSplitX, MIPRE.QLD.contentSplitZ,
+  MIPRE.QLD.pairSplitZ, MIPRE.QLD.contentSplitPts, MIPRE.QLD.pairSplitPts,
+  MIPRE.QLD.avg_content_eq_pair_X, MIPRE.QLD.avg_content_eq_pair_Z,
+  MIPRE.QLD.avg_content_eq_pair_pts, MIPRE.QLD.avg_content_eq_pair_X',
+  MIPRE.QLD.avg_content_eq_pair_Z', MIPRE.QLD.bijective_shift, MIPRE.QLD.sum_shift_gen,
+  MIPRE.QLD.pairShift, MIPRE.QLD.pairDirX, MIPRE.QLD.ofLPX_pairShift,
+  MIPRE.QLD.ofLPZ_pairShift, MIPRE.QLD.pairShift_add, MIPRE.QLD.pairDirX_shift,
+  MIPRE.QLD.sum_pair_shift}
 For every padded line $\ell$, there is a POVM with polynomial outcomes of
 degree at most $md+1$, and at most $d$ when $\ell$ is axis-parallel.
 On the padded line--point distribution it is consistent with the opposite
@@ -2800,6 +2809,40 @@ $\alpha,\beta$, or only one coefficient varies, giving degree at most $d$
 for $d\geq1$. The general bound $md+1\leq4md$ and the separate axis bound
 make these legal answers for the seeded test at $(q,4m,d,1)$.
 \end{lemma}
+
+\paragraph{Comments.} Not formalized. What is formalized, in
+\texttt{MIPRE/Background/QLD/Product.lean}, is the one transfer its proof has to begin with, and it
+is worth separating from the rest because it is where an apparent obstruction turns out not to be
+one.
+
+\textbf{The obstruction, and why it is not one.} Lemma~\ref{lem:qld-pairs-of-lines} is proved on the
+Pauli basis test's own question distribution: one content, carrying both sides' points but a
+\emph{single} seed and a \emph{single} raw direction, so the $X$ line and the $Z$ line it presents
+are not independent. This lemma needs the same conclusion on a \emph{product} of two independent
+line--point laws, which is what Lemma~\ref{lem:qld-sublines} delivers. The two distributions are
+genuinely different --- but \textbf{no hypothesis of the pasting lemma involves both lines}. Each
+marginal consistency involves one line and the two points; the fine self-consistency and the
+collision term involve one line only. So the only laws that have to agree are one side's line--point
+data on its own, one side's data together with the \emph{other side's point}, and the two points; and
+each of those has the same law under a content as under a product, because a content's two points and
+its seed and raw direction are independent and uniform. \texttt{avg\_content\_eq\_pair\_X},
+\texttt{avg\_content\_eq\_pair\_Z} and \texttt{avg\_content\_eq\_pair\_pts} are those three
+identities, each one line on top of \texttt{avg\_comp\_equiv\_fst}: exhibit the splitting of each
+sample space that isolates the part the quantity depends on, and the marginals match.
+
+\textbf{The change of variables generalizes for free.} The device that makes the point uniform on its
+line without forming a conditional distribution needs a finite nonempty sample space, a shift action,
+and a direction the shift does not move --- nothing about contents. \texttt{bijective\_shift} and
+\texttt{sum\_shift\_gen} are that statement, and \texttt{sum\_pair\_shift} is its instance at a pair
+with the shift acting on the $X$ side only.
+
+\textbf{What remains.} Three generalizations from one content to two, all mechanical in shape and
+none of them mathematics: \texttt{pasteLine} and \texttt{pasteJ\_eq\_pasteLine} take the $X$ line and
+the $Z$ line from the same content and must take them from two; and
+\texttt{pairs\_of\_lines} must be restated over an arbitrary finite sample space carrying a content
+for each side, after which the content version is one instance and the product version the other.
+Then the combining map on line polynomials, its degree bound ($md+1$ in general, $d$ on an
+axis-parallel line for $d \geq 1$), and the POVM itself.
 
 \effortHard
 
