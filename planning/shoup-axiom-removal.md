@@ -2,7 +2,7 @@
 
 Recorded 2026-09-20 at the maintainer's request.
 
-**Status: S0–S4 complete; S5 consumer and full-library validation in progress.** Tracking issue:
+**Status: S0–S5 complete; final integration passed 2026-09-21.** Tracking issue:
 [#130](https://github.com/vidick/MIPRE-formalization/issues/130).
 This is a separate campaign
 from introspection and QLD. It extends the completed classical PCP and effective
@@ -36,8 +36,13 @@ fixed `[true]` output at degree zero.
 
 `Shoup.lean` now defines `shoupIrreducible` directly as `irreducibleBitsProg` and
 proves `exists_shoup_irreducible` with its original type. Its exact axiom guard
-passes with `[propext, Classical.choice, Quot.sound]`. Final consumer guards,
-blueprint synchronization, and the full library build remain the S5 exit gate.
+passes with `[propext, Classical.choice, Quot.sound]`. The exact guards also pass for
+`MIPRE.TM.CookLevin.Pad.classicalPcpDecider` and
+`MIPRE.SAT.effective_selfDualNormalBasis`, after rebuilding their dependency
+closure. The native consumer build passed all 3,864 jobs; the full-library build
+passed all 9,616 jobs on Linux with Lean 4.33.0, including `MIPRE.Axioms`. Root
+imports were regenerated, and blueprint coverage, ledger synchronization, and
+whitespace checks passed.
 
 ## Exact target
 
@@ -91,8 +96,8 @@ Private source and audit material remain outside this public repository; the
 companion ledger's admitted status is historical provenance, not a Lean assumption.
 
 The old description of Shoup as deliberately outside the formalization is
-historical context. The implementation now proves the construction; completion
-of this campaign still requires the S5 integration checks below.
+historical context. The implementation now proves the construction, and all S5
+integration checks below have passed.
 
 ## Existing work to reuse
 
@@ -238,8 +243,8 @@ not discharge other unfinished pipeline theorems.
 Use substantial deliverables: prerequisite separation and arithmetic; binary
 factorization; the complete constructor and removal of the axiom. Split further
 only where a coherent theorem or algorithm forms a useful review boundary.
-Arrange tracking issues when implementation starts; this planning task creates
-no issue and starts no proof work.
+Implementation is tracked by [#130](https://github.com/vidick/MIPRE-formalization/issues/130).
+The pull request is submitted only after every milestone and integration check passes.
 
 ## Original implementation risks
 

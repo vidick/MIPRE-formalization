@@ -191,7 +191,7 @@ valid inputs and bounds arbitrary fold states, so polynomial-time composition
 and bounded-fold compilation produce the global runtime theorem. Degree zero
 returns the fixed constant before executing these loops.
 
-## Reused Mathlib proof tools and remaining validation
+## Reused Mathlib proof tools and completed validation
 
 The pinned proof dependencies include the odd-prime-power Kummer criterion,
 cyclotomic-factor degree and primitive-root results, finite-field Frobenius
@@ -201,7 +201,10 @@ programs; none is substituted for an executable search or costed algorithm.
 
 The blueprint records the arithmetic, factorization, orbit, nonresidue,
 prime-power, coprime, decomposition, and uniform-constructor deliverables with
-proof marks and matching guards. The complete S5 integration still requires
-the plan's full-library and downstream-consumer builds and repository checks.
+proof marks and matching guards. S5 integration passed on 2026-09-21: the
+full library and both downstream consumers build with the pinned Lean 4.33.0
+toolchain; exact axiom guards contain only `propext`, `Classical.choice`, and
+`Quot.sound`; generated imports, blueprint coverage, ledger synchronization,
+and whitespace checks pass.
 The ledger history is preserved, and unrelated unfinished pipeline theorems
 remain outside this construction's scope.
