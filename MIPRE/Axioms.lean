@@ -1060,6 +1060,58 @@ tell you the guard is missing.
   MIPRE.CL.Graph.conditional_average
 
 /-!
+## Detyped presentations, query routing, and finite-game soundness
+
+The finite-game result uses the same answer alphabets. It does not discharge
+the ambient wrapper, answer-cutoff, or runtime obligations.
+-/
+
+#guard_sorry_free MIPRE.CL.Detyping.presentation,
+  MIPRE.CL.Detyping.presentation_exactlyOn,
+  MIPRE.CL.Detyping.presentation_eval,
+  MIPRE.CL.Detyping.card_coord,
+  MIPRE.CL.Detyping.select_eq_some_iff,
+  MIPRE.CL.Detyping.select_output,
+  MIPRE.CL.Detyping.select_eq_none_iff,
+  MIPRE.CL.Detyping.graph_output_of_select,
+  MIPRE.CL.Detyping.presentation_eval_valid,
+  MIPRE.CL.Detyping.presentation_eval_invalid,
+  MIPRE.CL.Detyping.sum_valid_questions,
+  MIPRE.CL.Detyping.conditional_average,
+  MIPRE.CL.CLFun.embed,
+  MIPRE.CL.CLFun.ExactlyOn.embed,
+  MIPRE.CL.CLFun.eval_embed,
+  MIPRE.CL.CLFun.eval_truncate_embed,
+  MIPRE.CL.CLFun.factorOfPrefix_embed,
+  MIPRE.CL.CLFun.mapOfPrefix_embed,
+  MIPRE.CL.CLFun.zeroOn_exactlyOn,
+  MIPRE.CL.CLFun.eval_truncate_zeroOn,
+  MIPRE.CL.CLFun.mapOfPrefix_zeroOn,
+  MIPRE.CL.CLFun.factorOfPrefix_zeroOn,
+  MIPRE.CL.Detyping.marginal_graph,
+  MIPRE.CL.Detyping.marginal_content,
+  MIPRE.CL.Detyping.factor_first,
+  MIPRE.CL.Detyping.factor_second,
+  MIPRE.CL.Detyping.factor_content,
+  MIPRE.CL.Detyping.linear_first,
+  MIPRE.CL.Detyping.linear_second,
+  MIPRE.CL.Detyping.linear_content,
+  MIPRE.SampledGame.game,
+  MIPRE.SampledGame.sum_dist_mul,
+  MIPRE.SampledGame.one_sub_value,
+  MIPRE.CL.Detyping.typedGame,
+  MIPRE.CL.Detyping.game,
+  MIPRE.CL.Detyping.game_mu_eq_clDist,
+  MIPRE.CL.Detyping.view_disjoint,
+  MIPRE.CL.Detyping.restrict,
+  MIPRE.CL.Detyping.restrict_state,
+  MIPRE.CL.Detyping.restrict_failAt,
+  MIPRE.CL.Detyping.valid_average_le,
+  MIPRE.CL.Detyping.restrict_failure_eq,
+  MIPRE.CL.Detyping.restrict_failure_le,
+  MIPRE.CL.Detyping.restrict_value_ge
+
+/-!
 ## The one axiom
 
 `#guard_sorry_free` catches `sorryAx` and nothing else, so an `axiom` would otherwise enter
