@@ -185,18 +185,55 @@ theorem Content.shiftV_shiftV (w w' : Point F m) (c : Content F m) :
 
 /-- **For each fixed shift, shifting is a bijection of contents.** Its inverse shifts by `-t`,
 which is where the invariance of the direction is used. -/
+theorem bijective_shift {α : Type*} {V : Type*} [AddCommGroup V] [Module F V]
+    {sh : V → α → α} (hzero : ∀ a, sh 0 a = a)
+    (hadd : ∀ (w w' : V) (a : α), sh w' (sh w a) = sh (w + w') a)
+    {dir : α → V} (hdir : ∀ (a : α) (w : V), dir (sh w a) = dir a) (t : F) :
+    Function.Bijective fun a => sh (t • dir a) a := by
+  refine Function.bijective_iff_has_inverse.mpr
+    ⟨fun a => sh ((-t) • dir a) a, fun a => ?_, fun a => ?_⟩
+  · show sh ((-t) • dir (sh (t • dir a) a)) (sh (t • dir a) a) = a
+    rw [hdir, hadd, show t • dir a + (-t) • dir a = 0 from by module, hzero]
+  · show sh (t • dir (sh ((-t) • dir a) a)) (sh ((-t) • dir a) a) = a
+    rw [hdir, hadd, show (-t) • dir a + t • dir a = 0 from by module, hzero]
+
+/-- **The change of variables**, for an arbitrary finite sample space: averaging a quantity is
+averaging it over (sample, shift) pairs with the shift applied. Nothing here is about contents --- a
+finite sample space, a shift action on it, and a direction the shift does not move --- which is what
+lets the same device serve a product of two independent line-point laws. -/
+theorem sum_shift_gen {α : Type*} [Fintype α] {V : Type*} [AddCommGroup V] [Module F V]
+    {sh : V → α → α} (hzero : ∀ a, sh 0 a = a)
+    (hadd : ∀ (w w' : V) (a : α), sh w' (sh w a) = sh (w + w') a)
+    {dir : α → V} (hdir : ∀ (a : α) (w : V), dir (sh w a) = dir a) (g : α → ℝ) :
+    ∑ i : α × F, ((Fintype.card α : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)
+        * g (sh (i.2 • dir i.1) i.1)
+      = ∑ a : α, (Fintype.card α : ℝ)⁻¹ * g a := by
+  classical
+  have hF : (Fintype.card F : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
+  rw [← sum_prod_eq fun (a : α) (t : F) =>
+    ((Fintype.card α : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) * g (sh (t • dir a) a), Finset.sum_comm]
+  have hstep : ∀ t : F, ∑ a : α, ((Fintype.card α : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)
+        * g (sh (t • dir a) a)
+      = (Fintype.card F : ℝ)⁻¹ * ∑ a : α, (Fintype.card α : ℝ)⁻¹ * g a := by
+    intro t
+    rw [Finset.mul_sum]
+    refine Fintype.sum_bijective (fun a => sh (t • dir a) a)
+      (bijective_shift hzero hadd hdir t) _ _ fun a => ?_
+    ring
+  rw [Finset.sum_congr rfl fun t (_ : t ∈ univ) => hstep t, ← Finset.sum_mul,
+    Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_inv_cancel₀ hF, one_mul]
+
+/-- The change of variables at the content distribution: the instance of `sum_shift_gen` the Pauli
+basis test's own question distribution gives. -/
 theorem bijective_shift_gen {sh : Point F m → Content F m → Content F m}
     (hzero : ∀ c, sh 0 c = c)
     (hadd : ∀ (w w' : Point F m) (c : Content F m), sh w' (sh w c) = sh (w + w') c)
     {dir : Content F m → Point F m}
     (hdir : ∀ (c : Content F m) (w : Point F m), dir (sh w c) = dir c) (t : F) :
-    Function.Bijective fun c => sh (t • dir c) c := by
-  refine Function.bijective_iff_has_inverse.mpr
-    ⟨fun c => sh ((-t) • dir c) c, fun c => ?_, fun c => ?_⟩
-  · show sh ((-t) • dir (sh (t • dir c) c)) (sh (t • dir c) c) = c
-    rw [hdir, hadd, show t • dir c + (-t) • dir c = 0 from by module, hzero]
-  · show sh (t • dir (sh ((-t) • dir c) c)) (sh ((-t) • dir c) c) = c
-    rw [hdir, hadd, show (-t) • dir c + t • dir c = 0 from by module, hzero]
+    Function.Bijective fun c => sh (t • dir c) c :=
+  bijective_shift hzero hadd hdir t
+
+instance : Nonempty (Content F m) := ⟨⟨0, 0, 0, 0, 0, 0⟩⟩
 
 theorem card_content_pos : 0 < Fintype.card (Content F m) :=
   Fintype.card_pos_iff.mpr ⟨⟨0, 0, 0, 0, 0, 0⟩⟩
@@ -211,24 +248,8 @@ theorem sum_content_shift_gen {sh : Point F m → Content F m → Content F m}
     (hdir : ∀ (c : Content F m) (w : Point F m), dir (sh w c) = dir c) (g : Content F m → ℝ) :
     ∑ i : Content F m × F, ((Fintype.card (Content F m) : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)
         * g (sh (i.2 • dir i.1) i.1)
-      = ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * g c := by
-  classical
-  have hF : (Fintype.card F : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
-  rw [← sum_prod_eq fun (c : Content F m) (t : F) =>
-    ((Fintype.card (Content F m) : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)
-      * g (sh (t • dir c) c), Finset.sum_comm]
-  have hstep : ∀ t : F, ∑ c : Content F m,
-      ((Fintype.card (Content F m) : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)
-        * g (sh (t • dir c) c)
-      = (Fintype.card F : ℝ)⁻¹ * ∑ c : Content F m,
-          (Fintype.card (Content F m) : ℝ)⁻¹ * g c := by
-    intro t
-    rw [Finset.mul_sum]
-    refine Fintype.sum_bijective (fun c => sh (t • dir c) c)
-      (bijective_shift_gen hzero hadd hdir t) _ _ fun c => ?_
-    ring
-  rw [Finset.sum_congr rfl fun t (_ : t ∈ univ) => hstep t, ← Finset.sum_mul,
-    Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_inv_cancel₀ hF, one_mul]
+      = ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * g c :=
+  sum_shift_gen hzero hadd hdir g
 
 /-- The change of variables for a shift of the `W`-point. -/
 theorem sum_content_shiftAlong (W : Bas) {dir : Content F m → Point F m}
@@ -714,12 +735,18 @@ theorem sum_content_marg_line_le (W : Bas) (P : LinePres F m hm W) {κ η : ℝ}
 /-! ## The pasted line measurement -/
 
 /-- **The pasted line measurement** `T^{l_X, l_Z}_{f_X, f_Z}`: Bob's `X`-line measurement
-sandwiching his `Z`-line measurement, carried to his enlarged space. -/
+sandwiching his `Z`-line measurement, carried to his enlarged space.
+
+The two lines are read off **two** contents, one per side. On the Pauli basis test's own question
+distribution they are the same content, which is how `lem:qld-pairs-of-lines` uses this; the
+combining stage needs them independent, and then they are not. Nothing in the pasting lemma forces
+them to agree --- none of its hypotheses involves both lines --- which is why one definition serves
+both. -/
 def pasteLine (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z) (d : ℕ)
-    (M : Question F m → POVM (Answer F m d) dB) (c : Content F m)
+    (M : Question F m → POVM (Answer F m d) dB) (cX cZ : Content F m)
     (q : LinePoly F (m * d) × LinePoly F (m * d)) :
     Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ :=
-  aOp (PX.lineMats d M c q.1 * PZ.lineMats d M c q.2 * PX.lineMats d M c q.1)
+  aOp (PX.lineMats d M cX q.1 * PZ.lineMats d M cZ q.2 * PX.lineMats d M cX q.1)
 
 theorem fibSum_aOp {ι κ N N' : Type*} [Fintype ι] [DecidableEq κ] [Fintype N] [DecidableEq N]
     [Fintype N'] [DecidableEq N'] (M : ι → Matrix N N ℂ) (e : ι → κ) (k : κ) :
@@ -731,21 +758,21 @@ theorem fibSum_aOp {ι κ N N' : Type*} [Fintype ι] [DecidableEq κ] [Fintype N
 Only the distributivity of the sandwich over the inner family's fibre, and the regrouping of a pair
 of fibres into a fibre of pairs. -/
 theorem pasteJ_eq_pasteLine (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z) (d : ℕ)
-    (M : Question F m → POVM (Answer F m d) dB) (c : Content F m) (p : F × F) :
-    pasteJ (fun b : F => (aOp (PZ.lineEvalMats d M c b)
+    (M : Question F m → POVM (Answer F m d) dB) (cX cZ : Content F m) (p : F × F) :
+    pasteJ (fun b : F => (aOp (PZ.lineEvalMats d M cZ b)
         : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
-        (fun f => (aOp (PX.lineMats d M c f)
+        (fun f => (aOp (PX.lineMats d M cX f)
           : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
-        (fun f => LinePoly.eval f (PX.param c)) p
+        (fun f => LinePoly.eval f (PX.param cX)) p
       = ∑ q ∈ univ.filter fun q : LinePoly F (m * d) × LinePoly F (m * d) =>
-            LinePoly.eval q.1 (PX.param c) = p.2 ∧ LinePoly.eval q.2 (PZ.param c) = p.1,
-          pasteLine PX PZ d M c q := by
+            LinePoly.eval q.1 (PX.param cX) = p.2 ∧ LinePoly.eval q.2 (PZ.param cZ) = p.1,
+          pasteLine PX PZ d M cX cZ q := by
   classical
   rw [pasteJ]
   rw [show (univ.filter fun q : LinePoly F (m * d) × LinePoly F (m * d) =>
-        LinePoly.eval q.1 (PX.param c) = p.2 ∧ LinePoly.eval q.2 (PZ.param c) = p.1)
-      = (univ.filter fun f : LinePoly F (m * d) => LinePoly.eval f (PX.param c) = p.2)
-        ×ˢ (univ.filter fun g : LinePoly F (m * d) => LinePoly.eval g (PZ.param c) = p.1) from by
+        LinePoly.eval q.1 (PX.param cX) = p.2 ∧ LinePoly.eval q.2 (PZ.param cZ) = p.1)
+      = (univ.filter fun f : LinePoly F (m * d) => LinePoly.eval f (PX.param cX) = p.2)
+        ×ˢ (univ.filter fun g : LinePoly F (m * d) => LinePoly.eval g (PZ.param cZ) = p.1) from by
     ext q
     simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_product],
     Finset.sum_product]
@@ -757,15 +784,216 @@ theorem pasteJ_eq_pasteLine (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z) 
 /-! ## The lemma -/
 
 set_option maxHeartbeats 1600000 in
-/-- **`lem:qld-pairs-of-lines`**, for one pair of line presentations. Alice's joint point
-measurement agrees with the pasted line measurement, coarse-grained by evaluating each line
-polynomial at the parameter of the point of its own side, up to
+/-- **`lem:qld-pairs-of-lines`, over an arbitrary question distribution.** The sample space is any
+finite nonempty `iota` carrying a content for each side --- `kX` presenting the `X` line, `kZ` the
+`Z` line --- together with a shift that moves the `X` point and that both contents see as such.
+Alice's joint point measurement agrees with the pasted line measurement, coarse-grained by
+evaluating each line polynomial at the parameter of the point of its own side, up to
 `delta/2 + sqrt(delta/2) + sqrt(32 delta + 4 sqrt(eta) + 2 eps_c)`.
 
 The three inputs are the two marginal consistencies, the `X`-line measurement's cross-party
 self-consistency at the fine level, and the average collision probability of the `X`-side outcome
-map --- and `Content.shiftAlong` is what turns the content distribution into the product the
-collision bound needs. -/
+map --- and the shift is what turns the question distribution into the product the collision bound
+needs.
+
+**Why two contents, and why nothing forces them to agree.** Each of the pasting lemma's hypotheses
+involves *one* line and the two points; none involves both lines. So the `X` line may be read off
+one content and the `Z` line off another, and the two need share nothing. At `kX = kZ = id` this is
+`pairs_of_lines`, on the Pauli basis test's own distribution, where they are the same content and the
+two lines are therefore dependent; at a pair of line-point data it is the product form
+`lem:qld-padded-lines` needs, where they are independent. -/
+theorem pairs_of_lines_gen {ι : Type*} [Fintype ι] [Nonempty ι]
+    (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z) (kX kZ : ι → Content F m)
+    {sh : Point F m → ι → ι} (hzero : ∀ a, sh 0 a = a)
+    (hadd : ∀ (w w' : Point F m) (a : ι), sh w' (sh w a) = sh (w + w') a)
+    (hkX : ∀ (w : Point F m) (a : ι), kX (sh w a) = Content.shiftPt .X w (kX a))
+    (hkZ : ∀ (w : Point F m) (a : ι), kZ (sh w a) = Content.shiftPt .X w (kZ a))
+    {QA : ι → F × F → Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ}
+    (hQA : ∀ a, IsPVM (QA a)) (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) {δ η εc : ℝ}
+    (hmargX : ∑ a : ι, (Fintype.card ι : ℝ)⁻¹ * ∑ x : F,
+        xSqNorm (extHat (m := m) ψ) (∑ q : F, QA a (x, q))
+          (aOp (PX.lineEvalMats d MB (kX a) x)) ≤ δ)
+    (hmargZ : ∑ a : ι, (Fintype.card ι : ℝ)⁻¹ * ∑ b : F,
+        xSqNorm (extHat (m := m) ψ) (∑ q : F, QA a (q, b))
+          (aOp (PZ.lineEvalMats d MB (kZ a) b)) ≤ δ)
+    (hselfX : ∑ a : ι, (Fintype.card ι : ℝ)⁻¹ *
+        ∑ f : LinePoly F (m * d), xSqNorm (extHat (m := m) ψ) (aOp (PX.lineMats d MA (kX a) f))
+          (aOp (PX.lineMats d MB (kX a) f)) ≤ η)
+    (hcoll : ∑ a : ι, (Fintype.card ι : ℝ)⁻¹ * collProb PX d (kX a) ≤ εc) :
+    1 - ∑ a : ι, (Fintype.card ι : ℝ)⁻¹ * ∑ p : F × F,
+        bornProb (extHat (m := m) ψ) (QA a p)
+          (∑ q ∈ univ.filter fun q : LinePoly F (m * d) × LinePoly F (m * d) =>
+              LinePoly.eval q.1 (PX.param (kX a)) = p.1
+                ∧ LinePoly.eval q.2 (PZ.param (kZ a)) = p.2,
+            pasteLine PX PZ d MB (kX a) (kZ a) q)
+      ≤ δ / 2 + Real.sqrt (δ / 2) + Real.sqrt (32 * δ + 4 * Real.sqrt η + 2 * εc) := by
+  classical
+  have hunit : ‖evec (extHat (m := m) ψ)‖ = 1 :=
+    norm_evec_eq_one_of_unit
+      (extVec2_unit (hatVec_unit hψ) ((0 : F), (0 : F)) ((0 : F), (0 : F)))
+  have hι1 : ∑ _a : ι, (Fintype.card ι : ℝ)⁻¹ = 1 := by
+    rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul,
+      mul_inv_cancel₀ (Nat.cast_ne_zero.mpr Fintype.card_ne_zero)]
+  have hw0 : ∀ _i : ι × F, (0 : ℝ) ≤ (Fintype.card ι : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹ :=
+    fun _ => by positivity
+  have hw1 : ∑ _i : ι × F, (Fintype.card ι : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹ = 1 :=
+    sum_prod_uniform_one (Y := F) hι1
+  -- the shift, as the two contents see it
+  have hdirI : ∀ (a : ι) (w : Point F m), PX.dir (kX (sh w a)) = PX.dir (kX a) := fun a w => by
+    rw [hkX, PX.dir_shift]
+  have hshX : ∀ (a : ι) (t : F),
+      kX (sh (t • PX.dir (kX a)) a) = Content.shiftAlong .X PX.dir t (kX a) := fun a t => by
+    rw [hkX, Content.shiftAlong_eq]
+  -- the four families, and their projectivity
+  have hA : ∀ i : ι × F, IsPVM fun r : F × F =>
+      QA (sh (i.2 • PX.dir (kX i.1)) i.1) (r.2, r.1) := fun i =>
+    (hQA _).comp_equiv (Equiv.prodComm F F)
+  have hR : ∀ i : ι × F, IsPVM fun b : F =>
+      (aOp (PZ.lineEvalMats d MB (kZ i.1) b)
+        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ) := fun i =>
+    IsPVM.aOp (PZ.isPVM_lineEvalMats d hprojB (kZ i.1))
+  have hG : ∀ i : ι × F, IsPVM fun f : LinePoly F (m * d) =>
+      (aOp (PX.lineMats d MB (kX i.1) f)
+        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ) := fun i =>
+    IsPVM.aOp (PX.isPVM_lineMats d hprojB (kX i.1))
+  have hGa : ∀ i : ι × F, IsPVM fun f : LinePoly F (m * d) =>
+      (aOp (PX.lineMats d MA (kX i.1) f)
+        : Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ) := fun i =>
+    IsPVM.aOp (PX.isPVM_lineMats d hprojA (kX i.1))
+  -- the `Z`-side marginal hypothesis
+  have hP1 : ∑ i : ι × F,
+        ((Fintype.card ι : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) * ∑ b : F,
+          xSqNorm (extHat (m := m) ψ)
+            (∑ x : F, QA (sh (i.2 • PX.dir (kX i.1)) i.1) (x, b))
+            (aOp (PZ.lineEvalMats d MB (kZ i.1) b)) ≤ δ := by
+    refine le_trans (le_of_eq ?_) hmargZ
+    refine Eq.trans (Finset.sum_congr rfl fun i _ => ?_)
+      (sum_shift_gen (dir := fun a => PX.dir (kX a)) hzero hadd hdirI fun a => ∑ b : F,
+        xSqNorm (extHat (m := m) ψ) (∑ x : F, QA a (x, b))
+          (aOp (PZ.lineEvalMats d MB (kZ a) b)))
+    refine congrArg (fun t : ℝ => ((Fintype.card ι : ℝ)⁻¹
+      * (Fintype.card F : ℝ)⁻¹) * t) (Finset.sum_congr rfl fun b _ => ?_)
+    rw [hkZ,
+      show PZ.lineEvalMats d MB (Content.shiftPt .X (i.2 • PX.dir (kX i.1)) (kZ i.1))
+          = PZ.lineEvalMats d MB (kZ i.1) from
+        PZ.lineEvalMats_shiftPt_other d MB (kZ i.1) (i.2 • PX.dir (kX i.1))]
+  -- the `X`-side marginal hypothesis
+  have hP2 : ∑ i : ι × F,
+        ((Fintype.card ι : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) * ∑ x : F,
+          xSqNorm (extHat (m := m) ψ)
+            (∑ b : F, QA (sh (i.2 • PX.dir (kX i.1)) i.1) (x, b))
+            (fibSum (fun f : LinePoly F (m * d) =>
+              (aOp (PX.lineMats d MB (kX i.1) f)
+                : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
+              (fun f => LinePoly.eval f
+                (PX.param (kX (sh (i.2 • PX.dir (kX i.1)) i.1)))) x) ≤ δ := by
+    refine le_trans (le_of_eq ?_) hmargX
+    refine Eq.trans (Finset.sum_congr rfl fun i _ => ?_)
+      (sum_shift_gen (dir := fun a => PX.dir (kX a)) hzero hadd hdirI fun a => ∑ x : F,
+        xSqNorm (extHat (m := m) ψ) (∑ q : F, QA a (x, q))
+          (aOp (PX.lineEvalMats d MB (kX a) x)))
+    refine congrArg (fun t : ℝ => ((Fintype.card ι : ℝ)⁻¹
+      * (Fintype.card F : ℝ)⁻¹) * t) (Finset.sum_congr rfl fun x _ => ?_)
+    rw [fibSum_aOp, hshX i.1 i.2, ← PX.lineMats_shiftAlong d MB (kX i.1) i.2,
+      ← PX.lineEvalMats_eq_fibSum d MB (Content.shiftAlong .X PX.dir i.2 (kX i.1)) x]
+  -- the fine self-consistency
+  have hP4 : ∑ i : ι × F,
+        ((Fintype.card ι : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) *
+          ∑ f : LinePoly F (m * d), xSqNorm (extHat (m := m) ψ)
+            (aOp (PX.lineMats d MA (kX i.1) f)) (aOp (PX.lineMats d MB (kX i.1) f)) ≤ η := by
+    refine le_trans (le_of_eq ?_) hselfX
+    exact sum_prod_uniform (Y := F) (fun _ => (Fintype.card ι : ℝ)⁻¹)
+      fun a => ∑ f : LinePoly F (m * d), xSqNorm (extHat (m := m) ψ)
+        (aOp (PX.lineMats d MA (kX a) f)) (aOp (PX.lineMats d MB (kX a) f))
+  have hR' : ∀ a : ι, IsPVM fun b : F =>
+      (aOp (PZ.lineEvalMats d MB (kZ a) b)
+        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ) := fun a =>
+    IsPVM.aOp (PZ.isPVM_lineEvalMats d hprojB (kZ a))
+  have hG' : ∀ a : ι, IsPVM fun f : LinePoly F (m * d) =>
+      (aOp (PX.lineMats d MB (kX a) f)
+        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ) := fun a =>
+    IsPVM.aOp (PX.isPVM_lineMats d hprojB (kX a))
+  have hGa' : ∀ a : ι, IsPVM fun f : LinePoly F (m * d) =>
+      (aOp (PX.lineMats d MA (kX a) f)
+        : Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ) := fun a =>
+    IsPVM.aOp (PX.isPVM_lineMats d hprojA (kX a))
+  have hCT : ∑ i : ι × F,
+        ((Fintype.card ι : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) *
+          collisionTerm (extHat (m := m) ψ)
+            (fun b : F => (aOp (PZ.lineEvalMats d MB (kZ i.1) b)
+              : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
+            (fun f : LinePoly F (m * d) => (aOp (PX.lineMats d MB (kX i.1) f)
+              : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
+            (fun f : LinePoly F (m * d) => (aOp (PX.lineMats d MA (kX i.1) f)
+              : Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ))
+            (fun f => LinePoly.eval f
+              (PX.param (kX (sh (i.2 • PX.dir (kX i.1)) i.1)))) ≤ εc := by
+    refine le_trans (sum_collisionTerm_le (Y := F) (Z := ι)
+      (ν := fun _ : ι => (Fintype.card ι : ℝ)⁻¹)
+      (R := fun a : ι => fun b : F => (aOp (PZ.lineEvalMats d MB (kZ a) b)
+        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
+      (G := fun a : ι => fun f : LinePoly F (m * d) => (aOp (PX.lineMats d MB (kX a) f)
+        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
+      (Ga := fun a : ι => fun f : LinePoly F (m * d) => (aOp (PX.lineMats d MA (kX a) f)
+        : Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ))
+      (εz := fun a : ι => collProb PX d (kX a)) hunit (fun _ => by positivity) hR' hG' hGa'
+      (fun (a : ι) (t : F) (f : LinePoly F (m * d)) =>
+        LinePoly.eval f (PX.param (kX (sh (t • PX.dir (kX a)) a))))
+      (fun a => collProb_nonneg PX d (kX a))
+      (fun a f f' hne => by
+        simp only [hshX]
+        exact card_collide_le PX d (kX a) hne)) hcoll
+  -- the pasting lemma
+  have key := one_sub_sum_bornProb_pasteJ_le (ψ := extHat (m := m) ψ) hunit hw0 hw1
+    (A := fun i : ι × F => fun r : F × F =>
+      QA (sh (i.2 • PX.dir (kX i.1)) i.1) (r.2, r.1))
+    (R := fun i : ι × F => fun b : F =>
+      (aOp (PZ.lineEvalMats d MB (kZ i.1) b)
+        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
+    (G := fun i : ι × F => fun f : LinePoly F (m * d) =>
+      (aOp (PX.lineMats d MB (kX i.1) f)
+        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
+    (Ga := fun i : ι × F => fun f : LinePoly F (m * d) =>
+      (aOp (PX.lineMats d MA (kX i.1) f)
+        : Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ))
+    (fun i => fun f => LinePoly.eval f (PX.param (kX (sh (i.2 • PX.dir (kX i.1)) i.1))))
+    hA hR hG hGa hP1 hP2 hP4 hCT
+  -- and the conclusion, read back at the question distribution
+  refine le_trans (le_of_eq (congrArg (fun t : ℝ => 1 - t) ?_)) key
+  refine Eq.trans (sum_shift_gen (dir := fun a => PX.dir (kX a))
+      hzero hadd hdirI (fun a => ∑ p : F × F,
+      bornProb (extHat (m := m) ψ) (QA a p)
+        (∑ q ∈ univ.filter fun q : LinePoly F (m * d) × LinePoly F (m * d) =>
+            LinePoly.eval q.1 (PX.param (kX a)) = p.1
+              ∧ LinePoly.eval q.2 (PZ.param (kZ a)) = p.2,
+          pasteLine PX PZ d MB (kX a) (kZ a) q))).symm
+    (Finset.sum_congr rfl fun i _ => congrArg (fun t : ℝ => ((Fintype.card ι : ℝ)⁻¹
+      * (Fintype.card F : ℝ)⁻¹) * t) ?_)
+  refine (Fintype.sum_equiv (Equiv.prodComm F F) _ _ fun p => ?_).symm
+  rw [show (fun b : F => (aOp (PZ.lineEvalMats d MB (kZ i.1) b)
+        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
+      = (fun b : F => (aOp (PZ.lineEvalMats d MB
+          (kZ (sh (i.2 • PX.dir (kX i.1)) i.1)) b)
+        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ)) from by
+    funext b
+    rw [hkZ,
+      show PZ.lineEvalMats d MB (Content.shiftPt .X (i.2 • PX.dir (kX i.1)) (kZ i.1))
+          = PZ.lineEvalMats d MB (kZ i.1) from
+        PZ.lineEvalMats_shiftPt_other d MB (kZ i.1) (i.2 • PX.dir (kX i.1))],
+    show (fun f : LinePoly F (m * d) => (aOp (PX.lineMats d MB (kX i.1) f)
+        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
+      = (fun f : LinePoly F (m * d) => (aOp (PX.lineMats d MB
+          (kX (sh (i.2 • PX.dir (kX i.1)) i.1)) f)
+        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ)) from by
+    funext f
+    rw [hshX i.1 i.2, PX.lineMats_shiftAlong d MB (kX i.1) i.2],
+    pasteJ_eq_pasteLine]
+  rfl
+
+/-- **`lem:qld-pairs-of-lines`**, on the Pauli basis test's own question distribution: the instance
+of `pairs_of_lines_gen` at one content per sample, the same one on both sides. -/
 theorem pairs_of_lines (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z)
     {QA : Content F m → F × F → Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ}
     (hQA : ∀ c, IsPVM (QA c)) (hψ : star ψ ⬝ᵥ ψ = 1)
@@ -785,158 +1013,10 @@ theorem pairs_of_lines (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z)
         bornProb (extHat (m := m) ψ) (QA c p)
           (∑ q ∈ univ.filter fun q : LinePoly F (m * d) × LinePoly F (m * d) =>
               LinePoly.eval q.1 (PX.param c) = p.1 ∧ LinePoly.eval q.2 (PZ.param c) = p.2,
-            pasteLine PX PZ d MB c q)
-      ≤ δ / 2 + Real.sqrt (δ / 2) + Real.sqrt (32 * δ + 4 * Real.sqrt η + 2 * εc) := by
-  classical
-  have hunit : ‖evec (extHat (m := m) ψ)‖ = 1 :=
-    norm_evec_eq_one_of_unit
-      (extVec2_unit (hatVec_unit hψ) ((0 : F), (0 : F)) ((0 : F), (0 : F)))
-  have hw0 : ∀ _i : Content F m × F,
-      (0 : ℝ) ≤ (Fintype.card (Content F m) : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹ := fun _ => by
-    positivity
-  have hw1 : ∑ _i : Content F m × F,
-      (Fintype.card (Content F m) : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹ = 1 :=
-    sum_prod_uniform_one (Y := F) sum_uniform_content
-  -- the four families, and their projectivity
-  have hA : ∀ i : Content F m × F, IsPVM fun r : F × F =>
-      QA (Content.shiftAlong .X PX.dir i.2 i.1) (r.2, r.1) := fun i =>
-    (hQA _).comp_equiv (Equiv.prodComm F F)
-  have hR : ∀ i : Content F m × F, IsPVM fun b : F =>
-      (aOp (PZ.lineEvalMats d MB i.1 b)
-        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ) := fun i =>
-    IsPVM.aOp (PZ.isPVM_lineEvalMats d hprojB i.1)
-  have hG : ∀ i : Content F m × F, IsPVM fun f : LinePoly F (m * d) =>
-      (aOp (PX.lineMats d MB i.1 f)
-        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ) := fun i =>
-    IsPVM.aOp (PX.isPVM_lineMats d hprojB i.1)
-  have hGa : ∀ i : Content F m × F, IsPVM fun f : LinePoly F (m * d) =>
-      (aOp (PX.lineMats d MA i.1 f)
-        : Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ) := fun i =>
-    IsPVM.aOp (PX.isPVM_lineMats d hprojA i.1)
-  -- the `Z`-side marginal hypothesis
-  have hP1 : ∑ i : Content F m × F,
-        ((Fintype.card (Content F m) : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) * ∑ b : F,
-          xSqNorm (extHat (m := m) ψ)
-            (∑ a : F, QA (Content.shiftAlong .X PX.dir i.2 i.1) (a, b))
-            (aOp (PZ.lineEvalMats d MB i.1 b)) ≤ δ := by
-    refine le_trans (le_of_eq ?_) hmargZ
-    refine Eq.trans (Finset.sum_congr rfl fun i _ => ?_)
-      (sum_content_shiftAlong .X (fun c w => PX.dir_shift c w) fun c => ∑ b : F,
-        xSqNorm (extHat (m := m) ψ) (∑ a : F, QA c (a, b)) (aOp (PZ.lineEvalMats d MB c b)))
-    refine congrArg (fun t : ℝ => ((Fintype.card (Content F m) : ℝ)⁻¹
-      * (Fintype.card F : ℝ)⁻¹) * t) (Finset.sum_congr rfl fun b _ => ?_)
-    rw [Content.shiftAlong_eq,
-      show PZ.lineEvalMats d MB (Content.shiftPt .X (i.2 • PX.dir i.1) i.1)
-          = PZ.lineEvalMats d MB i.1 from
-        PZ.lineEvalMats_shiftPt_other d MB i.1 (i.2 • PX.dir i.1)]
-  -- the `X`-side marginal hypothesis
-  have hP2 : ∑ i : Content F m × F,
-        ((Fintype.card (Content F m) : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) * ∑ a : F,
-          xSqNorm (extHat (m := m) ψ)
-            (∑ b : F, QA (Content.shiftAlong .X PX.dir i.2 i.1) (a, b))
-            (fibSum (fun f : LinePoly F (m * d) =>
-              (aOp (PX.lineMats d MB i.1 f)
-                : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
-              (fun f => LinePoly.eval f
-                (PX.param (Content.shiftAlong .X PX.dir i.2 i.1))) a) ≤ δ := by
-    refine le_trans (le_of_eq ?_) hmargX
-    refine Eq.trans (Finset.sum_congr rfl fun i _ => ?_)
-      (sum_content_shiftAlong .X (fun c w => PX.dir_shift c w) fun c => ∑ a : F,
-        xSqNorm (extHat (m := m) ψ) (∑ q : F, QA c (a, q)) (aOp (PX.lineEvalMats d MB c a)))
-    refine congrArg (fun t : ℝ => ((Fintype.card (Content F m) : ℝ)⁻¹
-      * (Fintype.card F : ℝ)⁻¹) * t) (Finset.sum_congr rfl fun a _ => ?_)
-    rw [fibSum_aOp, ← PX.lineMats_shiftAlong d MB i.1 i.2,
-      ← PX.lineEvalMats_eq_fibSum d MB (Content.shiftAlong .X PX.dir i.2 i.1) a]
-  -- the fine self-consistency
-  have hP4 : ∑ i : Content F m × F,
-        ((Fintype.card (Content F m) : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) *
-          ∑ f : LinePoly F (m * d), xSqNorm (extHat (m := m) ψ)
-            (aOp (PX.lineMats d MA i.1 f)) (aOp (PX.lineMats d MB i.1 f)) ≤ η := by
-    refine le_trans (le_of_eq ?_) hselfX
-    exact sum_prod_uniform (Y := F) (fun _ => (Fintype.card (Content F m) : ℝ)⁻¹)
-      fun c => ∑ f : LinePoly F (m * d), xSqNorm (extHat (m := m) ψ)
-        (aOp (PX.lineMats d MA c f)) (aOp (PX.lineMats d MB c f))
-  -- the collision term
-  have hR' : ∀ z : Content F m, IsPVM fun b : F =>
-      (aOp (PZ.lineEvalMats d MB z b)
-        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ) := fun z =>
-    IsPVM.aOp (PZ.isPVM_lineEvalMats d hprojB z)
-  have hG' : ∀ z : Content F m, IsPVM fun f : LinePoly F (m * d) =>
-      (aOp (PX.lineMats d MB z f)
-        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ) := fun z =>
-    IsPVM.aOp (PX.isPVM_lineMats d hprojB z)
-  have hGa' : ∀ z : Content F m, IsPVM fun f : LinePoly F (m * d) =>
-      (aOp (PX.lineMats d MA z f)
-        : Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ) := fun z =>
-    IsPVM.aOp (PX.isPVM_lineMats d hprojA z)
-  have hCT : ∑ i : Content F m × F,
-        ((Fintype.card (Content F m) : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) *
-          collisionTerm (extHat (m := m) ψ)
-            (fun b : F => (aOp (PZ.lineEvalMats d MB i.1 b)
-              : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
-            (fun f : LinePoly F (m * d) => (aOp (PX.lineMats d MB i.1 f)
-              : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
-            (fun f : LinePoly F (m * d) => (aOp (PX.lineMats d MA i.1 f)
-              : Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ))
-            (fun f => LinePoly.eval f
-              (PX.param (Content.shiftAlong .X PX.dir i.2 i.1))) ≤ εc := by
-    refine le_trans (sum_collisionTerm_le (Y := F) (Z := Content F m)
-      (ν := fun _ : Content F m => (Fintype.card (Content F m) : ℝ)⁻¹)
-      (R := fun z : Content F m => fun b : F => (aOp (PZ.lineEvalMats d MB z b)
-        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
-      (G := fun z : Content F m => fun f : LinePoly F (m * d) => (aOp (PX.lineMats d MB z f)
-        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
-      (Ga := fun z : Content F m => fun f : LinePoly F (m * d) => (aOp (PX.lineMats d MA z f)
-        : Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ))
-      (εz := collProb PX d) hunit (fun _ => by positivity) hR' hG' hGa'
-      (fun (z : Content F m) (t : F) (f : LinePoly F (m * d)) =>
-        LinePoly.eval f (PX.param (Content.shiftAlong .X PX.dir t z)))
-      (fun z => collProb_nonneg PX d z)
-      (fun z f f' hne => card_collide_le PX d z hne)) hcoll
-  -- the pasting lemma
-  have key := one_sub_sum_bornProb_pasteJ_le (ψ := extHat (m := m) ψ) hunit hw0 hw1
-    (A := fun i : Content F m × F => fun r : F × F =>
-      QA (Content.shiftAlong .X PX.dir i.2 i.1) (r.2, r.1))
-    (R := fun i : Content F m × F => fun b : F =>
-      (aOp (PZ.lineEvalMats d MB i.1 b)
-        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
-    (G := fun i : Content F m × F => fun f : LinePoly F (m * d) =>
-      (aOp (PX.lineMats d MB i.1 f)
-        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
-    (Ga := fun i : Content F m × F => fun f : LinePoly F (m * d) =>
-      (aOp (PX.lineMats d MA i.1 f)
-        : Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ))
-    (fun i => fun f => LinePoly.eval f (PX.param (Content.shiftAlong .X PX.dir i.2 i.1)))
-    hA hR hG hGa hP1 hP2 hP4 hCT
-  -- and the conclusion, read back at the content average
-  refine le_trans (le_of_eq (congrArg (fun t : ℝ => 1 - t) ?_)) key
-  refine Eq.trans (sum_content_shiftAlong .X (fun c w => PX.dir_shift c w) (fun c => ∑ p : F × F,
-      bornProb (extHat (m := m) ψ) (QA c p)
-        (∑ q ∈ univ.filter fun q : LinePoly F (m * d) × LinePoly F (m * d) =>
-            LinePoly.eval q.1 (PX.param c) = p.1 ∧ LinePoly.eval q.2 (PZ.param c) = p.2,
-          pasteLine PX PZ d MB c q))).symm
-    (Finset.sum_congr rfl fun i _ => congrArg (fun t : ℝ => ((Fintype.card (Content F m) : ℝ)⁻¹
-      * (Fintype.card F : ℝ)⁻¹) * t) ?_)
-  refine (Fintype.sum_equiv (Equiv.prodComm F F) _ _ fun p => ?_).symm
-  rw [show (fun b : F => (aOp (PZ.lineEvalMats d MB i.1 b)
-        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
-      = (fun b : F => (aOp (PZ.lineEvalMats d MB
-          (Content.shiftAlong .X PX.dir i.2 i.1) b)
-        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ)) from by
-    funext b
-    rw [Content.shiftAlong_eq,
-      show PZ.lineEvalMats d MB (Content.shiftPt .X (i.2 • PX.dir i.1) i.1)
-          = PZ.lineEvalMats d MB i.1 from
-        PZ.lineEvalMats_shiftPt_other d MB i.1 (i.2 • PX.dir i.1)],
-    show (fun f : LinePoly F (m * d) => (aOp (PX.lineMats d MB i.1 f)
-        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))
-      = (fun f : LinePoly F (m * d) => (aOp (PX.lineMats d MB
-          (Content.shiftAlong .X PX.dir i.2 i.1) f)
-        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ)) from by
-    funext f
-    rw [PX.lineMats_shiftAlong d MB i.1 i.2],
-    pasteJ_eq_pasteLine]
-  rfl
+            pasteLine PX PZ d MB c c q)
+      ≤ δ / 2 + Real.sqrt (δ / 2) + Real.sqrt (32 * δ + 4 * Real.sqrt η + 2 * εc) :=
+  pairs_of_lines_gen PX PZ id id (Content.shiftPt_zero .X) (Content.shiftPt_shiftPt .X)
+    (fun _ _ => rfl) (fun _ _ => rfl) hQA hψ hprojA hprojB hmargX hmargZ hselfX hcoll
 
 /-! ## The lemma, from the game -/
 
@@ -985,7 +1065,7 @@ theorem pairs_of_lines_of_items (hψ : star ψ ⬝ᵥ ψ = 1)
           bornProb (extHat (m := m) ψ) (QA c p)
             (∑ q ∈ univ.filter fun q : LinePoly F (m * d) × LinePoly F (m * d) =>
                 LinePoly.eval q.1 (PX.param c) = p.1 ∧ LinePoly.eval q.2 (PZ.param c) = p.2,
-              pasteLine PX PZ d MB c q)
+              pasteLine PX PZ d MB c c q)
         ≤ deltaPairs ε εc := by
   classical
   have hε0 : 0 ≤ ε := le_trans (by
@@ -1171,7 +1251,7 @@ theorem qld_pairs_of_lines (hd : 1 ≤ d) (hψ : star ψ ⬝ᵥ ψ = 1)
             (∑ q ∈ univ.filter fun q : LinePoly F (m * d) × LinePoly F (m * d) =>
                 LinePoly.eval q.1 ((aPres hm .X).param c) = p.1
                   ∧ LinePoly.eval q.2 ((aPres hm .Z).param c) = p.2,
-              pasteLine (aPres hm .X) (aPres hm .Z) d MB c q)
+              pasteLine (aPres hm .X) (aPres hm .Z) d MB c c q)
         ≤ deltaPairs ε ((m * d : ℝ) / (Fintype.card F : ℝ)) :=
   pairs_of_lines_of_items hψ hfail hprojA hprojB (aPres hm .X) (aPres hm .Z)
     (aPres_items (MB := MB) hd hψ hfail .X).1 (aPres_items (MB := MB) hd hψ hfail .X).2
