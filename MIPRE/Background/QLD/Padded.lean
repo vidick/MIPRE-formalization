@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 import MIPRE.Background.QLD.Lines
+import MIPRE.Foundations.Blocks
 
 /-!
 # The padded space, and the sublines of a padded line
@@ -686,5 +687,477 @@ theorem subZ_question_aline (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype
 end Containment
 
 end Sub
+
+/-! ## The padded space as a product of its blocks
+
+`lem:qld-sublines`' second property is distributional: under a uniform point of a padded line the
+two sublines are drawn from a mixture of *products* of restricted laws, with each side's point
+conditionally uniform on its line. What makes that true is that the `X` and `Z` blocks of a uniform
+padded point are uniform and independent, and that is a statement about the index type: `Fin (4m)`
+is the disjoint union of the `X` block, the `Z` block, and the `2m` positions above them. `padEquiv`
+names that decomposition and `sum_point_pad` is the resulting product identity.
+-/
+
+section Product
+
+variable [NeZero m]
+
+/-- The padded index type as a disjoint union of blocks: the `X` block, the `Z` block, and the `2m`
+positions holding `alpha`, `beta` and the dummy coordinates. -/
+abbrev PadSum (m : ℕ) := (Fin m ⊕ Fin m) ⊕ Fin (2 * m)
+
+/-- The block decomposition of the padded index type. The `X` block lands on positions
+`0, ..., m-1` and the `Z` block on `m, ..., 2m-1`, which is exactly `xIdx` and `zIdx`. -/
+def padEquiv (m : ℕ) : PadSum m ≃ Fin (4 * m) :=
+  ((Equiv.sumCongr (finSumFinEquiv (m := m) (n := m)) (Equiv.refl (Fin (2 * m)))).trans
+    finSumFinEquiv).trans (finCongr (by ring))
+
+@[simp] theorem padEquiv_inl_inl (i : Fin m) : padEquiv m (.inl (.inl i)) = xIdx m i := by
+  apply Fin.ext
+  simp [padEquiv, finSumFinEquiv, Fin.castAdd, Fin.castLE, xIdx]
+
+@[simp] theorem padEquiv_inl_inr (i : Fin m) : padEquiv m (.inl (.inr i)) = zIdx m i := by
+  apply Fin.ext
+  simp [padEquiv, finSumFinEquiv, Fin.castAdd, Fin.castLE, Fin.natAdd, zIdx]
+
+theorem padEquiv_symm_xIdx (i : Fin m) : (padEquiv m).symm (xIdx m i) = .inl (.inl i) := by
+  rw [Equiv.symm_apply_eq, padEquiv_inl_inl]
+
+theorem padEquiv_symm_zIdx (i : Fin m) : (padEquiv m).symm (zIdx m i) = .inl (.inr i) := by
+  rw [Equiv.symm_apply_eq, padEquiv_inl_inr]
+
+/-- **The `X` and `Z` blocks of a uniform padded point are uniform and independent.** The remaining
+`2m` coordinates -- `alpha`, `beta` and the dummy block -- contribute the multiplicity. -/
+theorem sum_point_pad {M : Type*} [AddCommMonoid M] (g : Point F m → Point F m → M) :
+    ∑ u : Point F (4 * m), g (xBlk u) (zBlk u)
+      = Fintype.card (Fin (2 * m) → F)
+        • ∑ pX : Point F m, ∑ pZ : Point F m, g pX pZ := by
+  classical
+  rw [← Equiv.sum_comp (Equiv.arrowCongr (padEquiv m) (Equiv.refl F))
+    (fun u : Point F (4 * m) => g (xBlk u) (zBlk u))]
+  have hstep : ∀ U : PadSum m → F,
+      g (xBlk ((Equiv.arrowCongr (padEquiv m) (Equiv.refl F)) U))
+          (zBlk ((Equiv.arrowCongr (padEquiv m) (Equiv.refl F)) U))
+        = (fun w : (Fin m ⊕ Fin m) → F =>
+            g (fun i => w (.inl i)) (fun i => w (.inr i))) (fun a => U (.inl a)) := by
+    intro U
+    congr 1 <;> funext i <;>
+      simp [Equiv.arrowCongr, xBlk, zBlk, padEquiv_symm_xIdx, padEquiv_symm_zIdx]
+  rw [Finset.sum_congr rfl fun U _ => hstep U,
+    sum_arrow_inl (fun w : (Fin m ⊕ Fin m) → F =>
+      g (fun i => w (.inl i)) (fun i => w (.inr i))),
+    sum_arrow_pair g]
+
+/-- Only the `X` block of the padded point is read. -/
+theorem sum_point_pad_x {M : Type*} [AddCommMonoid M] (g : Point F m → M) :
+    ∑ u : Point F (4 * m), g (xBlk u)
+      = (Fintype.card (Fin (2 * m) → F) * Fintype.card (Point F m)) • ∑ pX : Point F m, g pX := by
+  rw [show (∑ u : Point F (4 * m), g (xBlk u))
+      = ∑ u : Point F (4 * m), (fun pX (_ : Point F m) => g pX) (xBlk u) (zBlk u) from rfl,
+    sum_point_pad (fun pX (_ : Point F m) => g pX),
+    Finset.sum_congr rfl fun pX _ => Finset.sum_const (g pX), Finset.card_univ,
+    Finset.sum_nsmul, smul_smul]
+
+/-- Only the `Z` block of the padded point is read. -/
+theorem sum_point_pad_z {M : Type*} [AddCommMonoid M] (g : Point F m → M) :
+    ∑ u : Point F (4 * m), g (zBlk u)
+      = (Fintype.card (Fin (2 * m) → F) * Fintype.card (Point F m)) • ∑ pZ : Point F m, g pZ := by
+  rw [show (∑ u : Point F (4 * m), g (zBlk u))
+      = ∑ u : Point F (4 * m), (fun (_ : Point F m) pZ => g pZ) (xBlk u) (zBlk u) from rfl,
+    sum_point_pad (fun (_ : Point F m) pZ => g pZ), Finset.sum_const, Finset.card_univ,
+    smul_smul]
+
+end Product
+
+/-! ## The law of the sublines
+
+`lem:qld-sublines`' second property is that under a uniform point of a padded line the pair of
+sublines is drawn from a mixture of *products* of restricted line-point laws, each side's point
+conditionally uniform on its own line. `sumRestr` and `sumAll` are the two laws, unnormalized, and
+`sumSub` is the sum over the sampling space; the four branch identities below say which product each
+branch of the construction gives, and with what multiplicity.
+-/
+
+section Law
+
+variable [NeZero m]
+
+/-- The sum of `h` over the data of a line-point pair whose axis index is `i`: the restricted law
+`D_{ty,i}` of `def:ith-restricted-line`, unnormalized. The seed ranges over the fibre of `chi` above
+`i`, written through `seedEquiv` as an offset. -/
+def sumRestr (hm : m ∣ Fintype.card F) (i : Fin m) {M : Type*} [AddCommMonoid M]
+    (h : LPData F m → M) : M :=
+  ∑ pt : Point F m, ∑ o : Fin (Fintype.card F / m), ∑ raw : Point F m,
+    h ⟨pt, (seedEquiv hm).symm (i, o), raw⟩
+
+/-- The sum of `h` over all the data of a line-point pair: the unrestricted seeded law,
+unnormalized. -/
+def sumAll {M : Type*} [AddCommMonoid M] (h : LPData F m → M) : M :=
+  ∑ pt : Point F m, ∑ s : F, ∑ raw : Point F m, h ⟨pt, s, raw⟩
+
+/-- **The unrestricted law is the sum of the `m` restricted ones.** This is the "mixture" of
+`lem:qld-sublines`' second property: a branch that leaves a side free gives that side the
+unrestricted law, which is the uniform mixture of the `D_{ty,i}`. -/
+theorem sumAll_eq_sum_sumRestr (hm : m ∣ Fintype.card F) {M : Type*} [AddCommMonoid M]
+    (h : LPData F m → M) : sumAll h = ∑ i : Fin m, sumRestr hm i h := by
+  rw [sumAll, show (∑ i : Fin m, sumRestr hm i h)
+      = ∑ pt : Point F m, ∑ i : Fin m, ∑ o : Fin (Fintype.card F / m), ∑ raw : Point F m,
+          h ⟨pt, (seedEquiv hm).symm (i, o), raw⟩ from Finset.sum_comm]
+  refine Finset.sum_congr rfl fun pt _ => ?_
+  rw [← Equiv.sum_comp (seedEquiv hm).symm (fun s : F => ∑ raw : Point F m, h ⟨pt, s, raw⟩)]
+  exact (MIPRE.sum_prod_eq (fun (i : Fin m) (o : Fin (Fintype.card F / m)) =>
+    ∑ raw : Point F m, h ⟨pt, (seedEquiv hm).symm (i, o), raw⟩)).symm
+
+/-- The sum over the subline sampling space at a fixed padded seed: the padded point and the padded
+raw direction, and a fresh seed and raw direction for each side. -/
+def sumSub (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) (s : F)
+    {M : Type*} [AddCommMonoid M] (g : LPData F m → LPData F m → M) : M :=
+  ∑ pt : Point F (4 * m), ∑ raw : Point F (4 * m), ∑ eX : F × Point F m, ∑ eZ : F × Point F m,
+    g (subX hm4 hm ⟨pt, s, raw⟩ eX) (subZ hm4 hm t ⟨pt, s, raw⟩ eZ)
+
+/-- **Neither side is forced**: the axis index of the padded line lies in the `alpha`/`beta` block
+or among the dummy coordinates, so the padded direction moves neither the `X` nor the `Z` block and
+both sublines are sampled fresh. Both sides get the unrestricted law. -/
+theorem sumSub_free (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) {s : F}
+    (h : padCase (chi hm4 s) = .ab ∨ padCase (chi hm4 s) = .dum) {M : Type*} [AddCommMonoid M]
+    (g : LPData F m → LPData F m → M) :
+    sumSub hm4 hm t s g
+      = (Fintype.card (Point F (4 * m)) * Fintype.card (Fin (2 * m) → F))
+        • sumAll (fun cX => sumAll (fun cZ => g cX cZ)) := by
+  have hX : ∀ (pt raw : Point F (4 * m)) (e : F × Point F m),
+      subX hm4 hm ⟨pt, s, raw⟩ e = ⟨xBlk pt, e.1, e.2⟩ := by
+    intro pt raw e
+    show subXof hm (padCase (chi hm4 s)) _ e = _
+    rcases h with h | h <;> rw [h] <;> rfl
+  have hZ : ∀ (pt raw : Point F (4 * m)) (e : F × Point F m),
+      subZ hm4 hm t ⟨pt, s, raw⟩ e = ⟨zBlk pt, e.1, e.2⟩ := by
+    intro pt raw e
+    show subZof hm t (padCase (chi hm4 s)) _ e = _
+    rcases h with h | h <;> rw [h] <;> cases t <;> rfl
+  rw [sumSub, Finset.sum_congr rfl fun pt _ => Finset.sum_congr rfl fun raw _ =>
+    Finset.sum_congr rfl fun eX _ => Finset.sum_congr rfl fun eZ _ => by
+      rw [hX pt raw eX, hZ pt raw eZ]]
+  -- the padded raw direction is not read
+  rw [Finset.sum_congr rfl fun pt _ => Finset.sum_const _, Finset.card_univ, Finset.sum_nsmul,
+    show (∑ pt : Point F (4 * m), ∑ eX : F × Point F m, ∑ eZ : F × Point F m,
+        g ⟨xBlk pt, eX.1, eX.2⟩ ⟨zBlk pt, eZ.1, eZ.2⟩)
+      = ∑ pt : Point F (4 * m), (fun pX pZ => ∑ eX : F × Point F m, ∑ eZ : F × Point F m,
+          g ⟨pX, eX.1, eX.2⟩ ⟨pZ, eZ.1, eZ.2⟩) (xBlk pt) (zBlk pt) from rfl,
+    sum_point_pad (fun pX pZ => ∑ eX : F × Point F m, ∑ eZ : F × Point F m,
+      g ⟨pX, eX.1, eX.2⟩ ⟨pZ, eZ.1, eZ.2⟩), smul_smul]
+  congr 1
+  have hstep : ∀ pX pZ : Point F m,
+      (∑ eX : F × Point F m, ∑ eZ : F × Point F m, g ⟨pX, eX.1, eX.2⟩ ⟨pZ, eZ.1, eZ.2⟩)
+        = ∑ sX : F, ∑ vX : Point F m, ∑ sZ : F, ∑ vZ : Point F m,
+            g ⟨pX, sX, vX⟩ ⟨pZ, sZ, vZ⟩ := by
+    intro pX pZ
+    rw [← MIPRE.sum_prod_eq (fun (sX : F) (vX : Point F m) => ∑ eZ : F × Point F m,
+      g ⟨pX, sX, vX⟩ ⟨pZ, eZ.1, eZ.2⟩)]
+    exact Finset.sum_congr rfl fun sX _ => Finset.sum_congr rfl fun vX _ =>
+      (MIPRE.sum_prod_eq (fun (sZ : F) (vZ : Point F m) => g ⟨pX, sX, vX⟩ ⟨pZ, sZ, vZ⟩)).symm
+  rw [Finset.sum_congr rfl fun pX _ => Finset.sum_congr rfl fun pZ _ => hstep pX pZ,
+    sum_comm_six (fun (pX pZ : Point F m) (sX : F) (vX : Point F m) (sZ : F) (vZ : Point F m) =>
+      g ⟨pX, sX, vX⟩ ⟨pZ, sZ, vZ⟩)]
+  rfl
+
+/-- **The `Z` side is forced**: the padded axis index lies in the `Z` block, so the `Z` subline's
+direction is the `Z` block of the padded direction and its axis index is `i`, while the `X` block of
+the padded direction vanishes and the `X` subline is sampled fresh. The `Z` side gets the restricted
+law `D_{ty,i}`, the `X` side the unrestricted one. -/
+theorem sumSub_zc (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) {s : F}
+    {i : Fin m} (h : padCase (chi hm4 s) = .zc i) {M : Type*} [AddCommMonoid M]
+    (g : LPData F m → LPData F m → M) :
+    sumSub hm4 hm t s g
+      = (Fintype.card (Fin (2 * m) → F) * Fintype.card (Point F m)
+            * Fintype.card (Fin (2 * m) → F) * Fintype.card (Point F m) * m)
+        • sumAll (fun cX => sumRestr hm i (fun cZ => g cX cZ)) := by
+  have hX : ∀ (pt raw : Point F (4 * m)) (e : F × Point F m),
+      subX hm4 hm ⟨pt, s, raw⟩ e = ⟨xBlk pt, e.1, e.2⟩ := fun pt raw e => by
+    show subXof hm (padCase (chi hm4 s)) _ e = _
+    rw [h]
+    rfl
+  have hZ : ∀ (pt raw : Point F (4 * m)) (e : F × Point F m),
+      subZ hm4 hm t ⟨pt, s, raw⟩ e = ⟨zBlk pt, seedIn hm i e.1, zBlk raw⟩ := fun pt raw e => by
+    show subZof hm t (padCase (chi hm4 s)) _ e = _
+    rw [h, subZof_zc]
+  rw [sumSub, sum_congr4 (fun (pt raw : Point F (4 * m)) (eX eZ : F × Point F m) => by
+      rw [hX pt raw eX, hZ pt raw eZ]),
+    sum_comm_four_in (fun (pt raw : Point F (4 * m)) (eX eZ : F × Point F m) =>
+      g ⟨xBlk pt, eX.1, eX.2⟩ ⟨zBlk pt, seedIn hm i eZ.1, zBlk raw⟩),
+    sum_congr3 (fun (pt : Point F (4 * m)) (eX eZ : F × Point F m) =>
+      sum_point_pad_z fun vZ => g ⟨xBlk pt, eX.1, eX.2⟩ ⟨zBlk pt, seedIn hm i eZ.1, vZ⟩),
+    sum_nsmul3 (Fintype.card (Fin (2 * m) → F) * Fintype.card (Point F m))
+      (fun (pt : Point F (4 * m)) (eX eZ : F × Point F m) =>
+        ∑ vZ : Point F m, g ⟨xBlk pt, eX.1, eX.2⟩ ⟨zBlk pt, seedIn hm i eZ.1, vZ⟩),
+    show (∑ pt : Point F (4 * m), ∑ eX : F × Point F m, ∑ eZ : F × Point F m, ∑ vZ : Point F m,
+          g ⟨xBlk pt, eX.1, eX.2⟩ ⟨zBlk pt, seedIn hm i eZ.1, vZ⟩)
+        = ∑ pt : Point F (4 * m), (fun pX pZ => ∑ eX : F × Point F m, ∑ eZ : F × Point F m,
+            ∑ vZ : Point F m, g ⟨pX, eX.1, eX.2⟩ ⟨pZ, seedIn hm i eZ.1, vZ⟩) (xBlk pt) (zBlk pt)
+      from rfl,
+    sum_point_pad (fun pX pZ => ∑ eX : F × Point F m, ∑ eZ : F × Point F m, ∑ vZ : Point F m,
+      g ⟨pX, eX.1, eX.2⟩ ⟨pZ, seedIn hm i eZ.1, vZ⟩), smul_smul,
+    sum_congr2 (fun pX pZ : Point F m => (MIPRE.sum_prod_eq
+      (fun (sX : F) (vX : Point F m) => ∑ eZ : F × Point F m, ∑ vZ : Point F m,
+        g ⟨pX, sX, vX⟩ ⟨pZ, seedIn hm i eZ.1, vZ⟩)).symm),
+    sum_congr4 (fun (pX pZ : Point F m) (sX : F) (vX : Point F m) =>
+      sum_prod_fst fun sZ : F => ∑ vZ : Point F m, g ⟨pX, sX, vX⟩ ⟨pZ, seedIn hm i sZ, vZ⟩),
+    sum_nsmul4 (Fintype.card (Point F m))
+      (fun (pX pZ : Point F m) (sX : F) (vX : Point F m) =>
+        ∑ sZ : F, ∑ vZ : Point F m, g ⟨pX, sX, vX⟩ ⟨pZ, seedIn hm i sZ, vZ⟩),
+    smul_smul,
+    sum_congr4 (fun (pX pZ : Point F m) (sX : F) (vX : Point F m) =>
+      sum_seedIn hm i fun sZ : F => ∑ vZ : Point F m, g ⟨pX, sX, vX⟩ ⟨pZ, sZ, vZ⟩),
+    sum_nsmul4 m (fun (pX pZ : Point F m) (sX : F) (vX : Point F m) =>
+      ∑ o : Fin (Fintype.card F / m), ∑ vZ : Point F m,
+        g ⟨pX, sX, vX⟩ ⟨pZ, (seedEquiv hm).symm (i, o), vZ⟩),
+    smul_smul,
+    sum_comm_six (fun (pX pZ : Point F m) (sX : F) (vX : Point F m)
+      (o : Fin (Fintype.card F / m)) (vZ : Point F m) =>
+        g ⟨pX, sX, vX⟩ ⟨pZ, (seedEquiv hm).symm (i, o), vZ⟩)]
+  rfl
+
+/-- **The `X` side is forced and the `Z` side is not**: the padded axis index lies in the `X` block
+and the padded line is axis-parallel (or the question is a point), so the `Z` block of its direction
+vanishes. The `X` side gets the restricted law `D_{ty,i}`, the `Z` side the unrestricted one. -/
+theorem sumSub_xc (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) {t : CL.Ty} {s : F}
+    {i : Fin m} (h : padCase (chi hm4 s) = .xc i) (ht : t ≠ .dline) {M : Type*} [AddCommMonoid M]
+    (g : LPData F m → LPData F m → M) :
+    sumSub hm4 hm t s g
+      = (Fintype.card (Fin (2 * m) → F) * Fintype.card (Point F m)
+            * Fintype.card (Fin (2 * m) → F) * Fintype.card (Point F m) * m)
+        • sumRestr hm i (fun cX => sumAll (fun cZ => g cX cZ)) := by
+  have hX : ∀ (pt raw : Point F (4 * m)) (e : F × Point F m),
+      subX hm4 hm ⟨pt, s, raw⟩ e = ⟨xBlk pt, seedIn hm i e.1, xBlk raw⟩ := fun pt raw e => by
+    show subXof hm (padCase (chi hm4 s)) _ e = _
+    rw [h]
+    rfl
+  have hZ : ∀ (pt raw : Point F (4 * m)) (e : F × Point F m),
+      subZ hm4 hm t ⟨pt, s, raw⟩ e = ⟨zBlk pt, e.1, e.2⟩ := fun pt raw e => by
+    show subZof hm t (padCase (chi hm4 s)) _ e = _
+    rw [h]
+    cases t
+    · rfl
+    · rfl
+    · exact absurd rfl ht
+  rw [sumSub, sum_congr4 (fun (pt raw : Point F (4 * m)) (eX eZ : F × Point F m) => by
+      rw [hX pt raw eX, hZ pt raw eZ]),
+    sum_comm_four_mid (fun (pt raw : Point F (4 * m)) (eX eZ : F × Point F m) =>
+      g ⟨xBlk pt, seedIn hm i eX.1, xBlk raw⟩ ⟨zBlk pt, eZ.1, eZ.2⟩),
+    sum_congr2 (fun (pt : Point F (4 * m)) (eX : F × Point F m) =>
+      sum_point_pad_x fun vX => ∑ eZ : F × Point F m,
+        g ⟨xBlk pt, seedIn hm i eX.1, vX⟩ ⟨zBlk pt, eZ.1, eZ.2⟩),
+    sum_nsmul2 (Fintype.card (Fin (2 * m) → F) * Fintype.card (Point F m))
+      (fun (pt : Point F (4 * m)) (eX : F × Point F m) =>
+        ∑ vX : Point F m, ∑ eZ : F × Point F m,
+          g ⟨xBlk pt, seedIn hm i eX.1, vX⟩ ⟨zBlk pt, eZ.1, eZ.2⟩),
+    show (∑ pt : Point F (4 * m), ∑ eX : F × Point F m, ∑ vX : Point F m, ∑ eZ : F × Point F m,
+          g ⟨xBlk pt, seedIn hm i eX.1, vX⟩ ⟨zBlk pt, eZ.1, eZ.2⟩)
+        = ∑ pt : Point F (4 * m), (fun pX pZ => ∑ eX : F × Point F m, ∑ vX : Point F m,
+            ∑ eZ : F × Point F m, g ⟨pX, seedIn hm i eX.1, vX⟩ ⟨pZ, eZ.1, eZ.2⟩)
+              (xBlk pt) (zBlk pt) from rfl,
+    sum_point_pad (fun pX pZ => ∑ eX : F × Point F m, ∑ vX : Point F m, ∑ eZ : F × Point F m,
+      g ⟨pX, seedIn hm i eX.1, vX⟩ ⟨pZ, eZ.1, eZ.2⟩), smul_smul,
+    sum_congr2 (fun pX pZ : Point F m =>
+      sum_prod_fst fun sX : F => ∑ vX : Point F m, ∑ eZ : F × Point F m,
+        g ⟨pX, seedIn hm i sX, vX⟩ ⟨pZ, eZ.1, eZ.2⟩),
+    sum_nsmul2 (Fintype.card (Point F m)) (fun pX pZ : Point F m =>
+      ∑ sX : F, ∑ vX : Point F m, ∑ eZ : F × Point F m,
+        g ⟨pX, seedIn hm i sX, vX⟩ ⟨pZ, eZ.1, eZ.2⟩),
+    smul_smul,
+    sum_congr2 (fun pX pZ : Point F m =>
+      sum_seedIn hm i fun sX : F => ∑ vX : Point F m, ∑ eZ : F × Point F m,
+        g ⟨pX, sX, vX⟩ ⟨pZ, eZ.1, eZ.2⟩),
+    sum_nsmul2 m (fun pX pZ : Point F m =>
+      ∑ o : Fin (Fintype.card F / m), ∑ vX : Point F m, ∑ eZ : F × Point F m,
+        g ⟨pX, (seedEquiv hm).symm (i, o), vX⟩ ⟨pZ, eZ.1, eZ.2⟩),
+    smul_smul,
+    sum_congr4 (fun (pX pZ : Point F m) (o : Fin (Fintype.card F / m)) (vX : Point F m) =>
+      (MIPRE.sum_prod_eq (fun (sZ : F) (vZ : Point F m) =>
+        g ⟨pX, (seedEquiv hm).symm (i, o), vX⟩ ⟨pZ, sZ, vZ⟩)).symm),
+    sum_comm_six (fun (pX pZ : Point F m) (o : Fin (Fintype.card F / m)) (vX : Point F m)
+      (sZ : F) (vZ : Point F m) =>
+        g ⟨pX, (seedEquiv hm).symm (i, o), vX⟩ ⟨pZ, sZ, vZ⟩)]
+  rfl
+
+/-- **Both sides are forced**: the padded axis index lies in the `X` block and the padded line is
+diagonal, so its direction truncates nothing of the `Z` block and the `Z` subline is forced as well,
+at axis index `0`. Both sides get restricted laws. This is the branch whose repair the paper's
+round-12 note on `lem:qld-sublines` records. -/
+theorem sumSub_xc_dline (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) {s : F}
+    {i : Fin m} (h : padCase (chi hm4 s) = .xc i) {M : Type*} [AddCommMonoid M]
+    (g : LPData F m → LPData F m → M) :
+    sumSub hm4 hm .dline s g
+      = (Fintype.card (Fin (2 * m) → F) * Fintype.card (Fin (2 * m) → F)
+            * Fintype.card (Point F m) * m * Fintype.card (Point F m) * m)
+        • sumRestr hm i (fun cX => sumRestr hm 0 (fun cZ => g cX cZ)) := by
+  have hX : ∀ (pt raw : Point F (4 * m)) (e : F × Point F m),
+      subX hm4 hm ⟨pt, s, raw⟩ e = ⟨xBlk pt, seedIn hm i e.1, xBlk raw⟩ := fun pt raw e => by
+    show subXof hm (padCase (chi hm4 s)) _ e = _
+    rw [h]
+    rfl
+  have hZ : ∀ (pt raw : Point F (4 * m)) (e : F × Point F m),
+      subZ hm4 hm .dline ⟨pt, s, raw⟩ e = ⟨zBlk pt, seedIn hm 0 e.1, zBlk raw⟩ :=
+    fun pt raw e => by
+      show subZof hm .dline (padCase (chi hm4 s)) _ e = _
+      rw [h]
+      rfl
+  rw [sumSub, sum_congr4 (fun (pt raw : Point F (4 * m)) (eX eZ : F × Point F m) => by
+      rw [hX pt raw eX, hZ pt raw eZ]),
+    sum_comm_four_in (fun (pt raw : Point F (4 * m)) (eX eZ : F × Point F m) =>
+      g ⟨xBlk pt, seedIn hm i eX.1, xBlk raw⟩ ⟨zBlk pt, seedIn hm 0 eZ.1, zBlk raw⟩),
+    sum_congr3 (fun (pt : Point F (4 * m)) (eX eZ : F × Point F m) =>
+      sum_point_pad (fun vX vZ =>
+        g ⟨xBlk pt, seedIn hm i eX.1, vX⟩ ⟨zBlk pt, seedIn hm 0 eZ.1, vZ⟩)),
+    sum_nsmul3 (Fintype.card (Fin (2 * m) → F))
+      (fun (pt : Point F (4 * m)) (eX eZ : F × Point F m) =>
+        ∑ vX : Point F m, ∑ vZ : Point F m,
+          g ⟨xBlk pt, seedIn hm i eX.1, vX⟩ ⟨zBlk pt, seedIn hm 0 eZ.1, vZ⟩),
+    show (∑ pt : Point F (4 * m), ∑ eX : F × Point F m, ∑ eZ : F × Point F m, ∑ vX : Point F m,
+          ∑ vZ : Point F m,
+            g ⟨xBlk pt, seedIn hm i eX.1, vX⟩ ⟨zBlk pt, seedIn hm 0 eZ.1, vZ⟩)
+        = ∑ pt : Point F (4 * m), (fun pX pZ => ∑ eX : F × Point F m, ∑ eZ : F × Point F m,
+            ∑ vX : Point F m, ∑ vZ : Point F m,
+              g ⟨pX, seedIn hm i eX.1, vX⟩ ⟨pZ, seedIn hm 0 eZ.1, vZ⟩) (xBlk pt) (zBlk pt)
+      from rfl,
+    sum_point_pad (fun pX pZ => ∑ eX : F × Point F m, ∑ eZ : F × Point F m, ∑ vX : Point F m,
+      ∑ vZ : Point F m, g ⟨pX, seedIn hm i eX.1, vX⟩ ⟨pZ, seedIn hm 0 eZ.1, vZ⟩), smul_smul,
+    sum_congr2 (fun pX pZ : Point F m =>
+      sum_prod_fst fun sX : F => ∑ eZ : F × Point F m, ∑ vX : Point F m, ∑ vZ : Point F m,
+        g ⟨pX, seedIn hm i sX, vX⟩ ⟨pZ, seedIn hm 0 eZ.1, vZ⟩),
+    sum_nsmul2 (Fintype.card (Point F m)) (fun pX pZ : Point F m =>
+      ∑ sX : F, ∑ eZ : F × Point F m, ∑ vX : Point F m, ∑ vZ : Point F m,
+        g ⟨pX, seedIn hm i sX, vX⟩ ⟨pZ, seedIn hm 0 eZ.1, vZ⟩),
+    smul_smul,
+    sum_congr2 (fun pX pZ : Point F m =>
+      sum_seedIn hm i fun sX : F => ∑ eZ : F × Point F m, ∑ vX : Point F m, ∑ vZ : Point F m,
+        g ⟨pX, sX, vX⟩ ⟨pZ, seedIn hm 0 eZ.1, vZ⟩),
+    sum_nsmul2 m (fun pX pZ : Point F m =>
+      ∑ o : Fin (Fintype.card F / m), ∑ eZ : F × Point F m, ∑ vX : Point F m, ∑ vZ : Point F m,
+        g ⟨pX, (seedEquiv hm).symm (i, o), vX⟩ ⟨pZ, seedIn hm 0 eZ.1, vZ⟩),
+    smul_smul,
+    sum_congr3 (fun (pX pZ : Point F m) (o : Fin (Fintype.card F / m)) =>
+      sum_prod_fst fun sZ : F => ∑ vX : Point F m, ∑ vZ : Point F m,
+        g ⟨pX, (seedEquiv hm).symm (i, o), vX⟩ ⟨pZ, seedIn hm 0 sZ, vZ⟩),
+    sum_nsmul3 (Fintype.card (Point F m))
+      (fun (pX pZ : Point F m) (o : Fin (Fintype.card F / m)) =>
+        ∑ sZ : F, ∑ vX : Point F m, ∑ vZ : Point F m,
+          g ⟨pX, (seedEquiv hm).symm (i, o), vX⟩ ⟨pZ, seedIn hm 0 sZ, vZ⟩),
+    smul_smul,
+    sum_congr3 (fun (pX pZ : Point F m) (o : Fin (Fintype.card F / m)) =>
+      sum_seedIn hm 0 fun sZ : F => ∑ vX : Point F m, ∑ vZ : Point F m,
+        g ⟨pX, (seedEquiv hm).symm (i, o), vX⟩ ⟨pZ, sZ, vZ⟩),
+    sum_nsmul3 m (fun (pX pZ : Point F m) (o : Fin (Fintype.card F / m)) =>
+      ∑ o' : Fin (Fintype.card F / m), ∑ vX : Point F m, ∑ vZ : Point F m,
+        g ⟨pX, (seedEquiv hm).symm (i, o), vX⟩ ⟨pZ, (seedEquiv hm).symm (0, o'), vZ⟩),
+    smul_smul,
+    sum_comm_six_swap (fun (pX pZ : Point F m) (o o' : Fin (Fintype.card F / m))
+      (vX vZ : Point F m) =>
+        g ⟨pX, (seedEquiv hm).symm (i, o), vX⟩ ⟨pZ, (seedEquiv hm).symm (0, o'), vZ⟩),
+    sum_comm_six (fun (pX pZ : Point F m) (o : Fin (Fintype.card F / m)) (vX : Point F m)
+      (o' : Fin (Fintype.card F / m)) (vZ : Point F m) =>
+        g ⟨pX, (seedEquiv hm).symm (i, o), vX⟩ ⟨pZ, (seedEquiv hm).symm (0, o'), vZ⟩)]
+  rfl
+
+end Law
+
+/-! ## From sums to averages
+
+The four branch identities are sum identities with an explicit multiplicity: the assignments to the
+coordinates and to the fresh randomness that the construction does not read. Dividing by the number
+of terms turns them into the statement `lem:qld-sublines` makes --- an identity of *laws*, with no
+constant left over. The average over the subline sampling space is exactly the average over a
+product of two line-point laws, restricted on a side exactly when the padded direction forces that
+side's subline.
+-/
+
+section Average
+
+variable [NeZero m]
+
+/-- The average of `h` over all the data of a line-point pair: `q^m` points, `q` seeds, `q^m` raw
+directions. -/
+def avgAll (h : LPData F m → ℝ) : ℝ := ((Fintype.card F : ℝ) ^ (2 * m + 1))⁻¹ * sumAll h
+
+/-- The average of `h` over the data of a line-point pair with axis index `i`: the restricted law
+`D_{ty,i}`, whose seed ranges over one block of `q/m` elements. -/
+def avgRestr (hm : m ∣ Fintype.card F) (i : Fin m) (h : LPData F m → ℝ) : ℝ :=
+  ((Fintype.card F : ℝ) ^ (2 * m) * ((Fintype.card F / m : ℕ) : ℝ))⁻¹ * sumRestr hm i h
+
+/-- The average of `g` over the subline sampling space at a fixed padded seed: two padded points and
+two fresh seed-and-direction pairs. -/
+def avgSub (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) (s : F)
+    (g : LPData F m → LPData F m → ℝ) : ℝ :=
+  ((Fintype.card F : ℝ) ^ (10 * m + 2))⁻¹ * sumSub hm4 hm t s g
+
+theorem sumAll_const_mul (c : ℝ) (h : LPData F m → ℝ) :
+    sumAll (fun cX => c * h cX) = c * sumAll h := by
+  simp only [sumAll, Finset.mul_sum]
+
+theorem sumRestr_const_mul (hm : m ∣ Fintype.card F) (i : Fin m) (c : ℝ)
+    (h : LPData F m → ℝ) : sumRestr hm i (fun cZ => c * h cZ) = c * sumRestr hm i h := by
+  simp only [sumRestr, Finset.mul_sum]
+
+/-- The block size as a real division, which is what clearing the denominators needs. -/
+theorem cast_card_div (hm : m ∣ Fintype.card F) :
+    ((Fintype.card F / m : ℕ) : ℝ) = (Fintype.card F : ℝ) / (m : ℝ) :=
+  eq_div_of_mul_eq (Nat.cast_ne_zero.mpr (NeZero.ne m))
+    (by rw [← Nat.cast_mul, mul_comm, mul_card_div hm])
+
+/-- **Neither side forced**: the padded average is the product of the two unrestricted averages. -/
+theorem avgSub_free (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) {s : F}
+    (h : padCase (chi hm4 s) = .ab ∨ padCase (chi hm4 s) = .dum)
+    (g : LPData F m → LPData F m → ℝ) :
+    avgSub hm4 hm t s g = avgAll (fun cX => avgAll (fun cZ => g cX cZ)) := by
+  have hq : (Fintype.card F : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
+  simp only [avgSub, avgAll]
+  rw [sumSub_free hm4 hm t h g, sumAll_const_mul, nsmul_eq_mul, Fintype.card_pi_const,
+    Fintype.card_pi_const]
+  push_cast
+  field_simp
+  ring
+
+/-- **The `Z` side forced**: the padded average is the product of the unrestricted `X` average and
+the restricted `Z` average at index `i`. -/
+theorem avgSub_zc (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) {s : F}
+    {i : Fin m} (h : padCase (chi hm4 s) = .zc i) (g : LPData F m → LPData F m → ℝ) :
+    avgSub hm4 hm t s g = avgAll (fun cX => avgRestr hm i (fun cZ => g cX cZ)) := by
+  have hq : (Fintype.card F : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
+  have hm0 : (m : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (NeZero.ne m)
+  simp only [avgSub, avgAll, avgRestr]
+  rw [sumSub_zc hm4 hm t h g, sumAll_const_mul, nsmul_eq_mul, Fintype.card_pi_const,
+    Fintype.card_pi_const, cast_card_div hm]
+  push_cast
+  field_simp
+  ring
+
+/-- **The `X` side forced, the `Z` side free.** -/
+theorem avgSub_xc (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) {t : CL.Ty} {s : F}
+    {i : Fin m} (h : padCase (chi hm4 s) = .xc i) (ht : t ≠ .dline)
+    (g : LPData F m → LPData F m → ℝ) :
+    avgSub hm4 hm t s g = avgRestr hm i (fun cX => avgAll (fun cZ => g cX cZ)) := by
+  have hq : (Fintype.card F : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
+  have hm0 : (m : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (NeZero.ne m)
+  simp only [avgSub, avgAll, avgRestr]
+  rw [sumSub_xc hm4 hm h ht g, sumRestr_const_mul, nsmul_eq_mul, Fintype.card_pi_const,
+    Fintype.card_pi_const, cast_card_div hm]
+  push_cast
+  field_simp
+  ring
+
+/-- **Both sides forced**, the `Z` side at index `0`. -/
+theorem avgSub_xc_dline (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) {s : F}
+    {i : Fin m} (h : padCase (chi hm4 s) = .xc i) (g : LPData F m → LPData F m → ℝ) :
+    avgSub hm4 hm .dline s g
+      = avgRestr hm i (fun cX => avgRestr hm 0 (fun cZ => g cX cZ)) := by
+  have hq : (Fintype.card F : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
+  have hm0 : (m : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (NeZero.ne m)
+  simp only [avgSub, avgAll, avgRestr]
+  rw [sumSub_xc_dline hm4 hm h g, sumRestr_const_mul, nsmul_eq_mul, Fintype.card_pi_const,
+    Fintype.card_pi_const, cast_card_div hm]
+  push_cast
+  field_simp
+  ring
+
+end Average
 
 end MIPRE.QLD

@@ -2655,22 +2655,45 @@ r\beta)$.
 \label{lem:qld-sublines}
 \ledgernode{1.2.2.11}
 \uses{def:lidt-cl}
-\lean{MIPRE.QLD.seedEquiv, MIPRE.QLD.seedIn, MIPRE.QLD.chi_seedIn, MIPRE.QLD.seedIn_self,
-  MIPRE.QLD.sum_seedIn, MIPRE.QLD.xIdx, MIPRE.QLD.zIdx, MIPRE.QLD.aIdx, MIPRE.QLD.bIdx,
-  MIPRE.QLD.xBlk, MIPRE.QLD.zBlk, MIPRE.QLD.alph, MIPRE.QLD.bet, MIPRE.QLD.xBlk_add_smul,
-  MIPRE.QLD.zBlk_add_smul, MIPRE.QLD.PadCase, MIPRE.QLD.padCase, MIPRE.QLD.padCase_eq_xc,
-  MIPRE.QLD.padCase_eq_zc, MIPRE.QLD.xBlk_single_xIdx, MIPRE.QLD.xBlk_single_of_le,
-  MIPRE.QLD.zBlk_single_zIdx, MIPRE.QLD.zBlk_single_of_lt, MIPRE.QLD.zBlk_single_of_ge,
-  MIPRE.QLD.xBlk_zeroBelow_of_le, MIPRE.QLD.xBlk_zeroBelow_xIdx,
-  MIPRE.QLD.zBlk_zeroBelow_of_le, MIPRE.QLD.zBlk_zeroBelow_zIdx,
-  MIPRE.QLD.zBlk_zeroBelow_of_ge, MIPRE.QLD.LPData, MIPRE.QLD.LPData.question,
-  MIPRE.QLD.LPData.dir, MIPRE.QLD.LPData.base_aline, MIPRE.QLD.LPData.base_dline,
-  MIPRE.QLD.subXof, MIPRE.QLD.subX, MIPRE.QLD.subZof, MIPRE.QLD.subZ, MIPRE.QLD.subX_pt,
-  MIPRE.QLD.subZ_pt, MIPRE.QLD.xBlk_dir_sub, MIPRE.QLD.zBlk_dir_sub,
+\lean{MIPRE.QLD.mul_card_div, MIPRE.QLD.seedEquiv, MIPRE.QLD.seedEquiv_fst, MIPRE.QLD.seedIn,
+  MIPRE.QLD.chi_seedIn, MIPRE.QLD.seedIn_self, MIPRE.QLD.sum_seedIn, MIPRE.QLD.xIdx,
+  MIPRE.QLD.zIdx, MIPRE.QLD.aIdx, MIPRE.QLD.bIdx, MIPRE.QLD.xIdx_val, MIPRE.QLD.zIdx_val,
+  MIPRE.QLD.aIdx_val, MIPRE.QLD.bIdx_val, MIPRE.QLD.xIdx_injective, MIPRE.QLD.zIdx_injective,
+  MIPRE.QLD.xIdx_ne_zIdx, MIPRE.QLD.xIdx_ne_aIdx, MIPRE.QLD.xIdx_ne_bIdx, MIPRE.QLD.zIdx_ne_aIdx,
+  MIPRE.QLD.zIdx_ne_bIdx, MIPRE.QLD.aIdx_ne_bIdx, MIPRE.QLD.xBlk, MIPRE.QLD.zBlk, MIPRE.QLD.alph,
+  MIPRE.QLD.bet, MIPRE.QLD.xBlk_apply, MIPRE.QLD.zBlk_apply, MIPRE.QLD.xBlk_zero,
+  MIPRE.QLD.zBlk_zero, MIPRE.QLD.xBlk_add, MIPRE.QLD.zBlk_add, MIPRE.QLD.xBlk_smul,
+  MIPRE.QLD.zBlk_smul, MIPRE.QLD.alph_add, MIPRE.QLD.bet_add, MIPRE.QLD.alph_smul,
+  MIPRE.QLD.bet_smul, MIPRE.QLD.xBlk_add_smul, MIPRE.QLD.zBlk_add_smul, MIPRE.QLD.PadCase,
+  MIPRE.QLD.padCase, MIPRE.QLD.padCase_eq_xc, MIPRE.QLD.padCase_eq_zc, MIPRE.QLD.padCase_xIdx,
+  MIPRE.QLD.padCase_zIdx, MIPRE.QLD.padCase_aIdx, MIPRE.QLD.padCase_bIdx,
+  MIPRE.QLD.le_of_padCase_zc, MIPRE.QLD.le_of_padCase_ab, MIPRE.QLD.le_of_padCase_dum,
+  MIPRE.QLD.xBlk_single_xIdx, MIPRE.QLD.xBlk_single_of_le, MIPRE.QLD.zBlk_single_zIdx,
+  MIPRE.QLD.zBlk_single_of_lt, MIPRE.QLD.zBlk_single_of_ge, MIPRE.QLD.xBlk_zeroBelow_of_le,
+  MIPRE.QLD.xBlk_zeroBelow_xIdx, MIPRE.QLD.zBlk_zeroBelow_of_le, MIPRE.QLD.zBlk_zeroBelow_zIdx,
+  MIPRE.QLD.zBlk_zeroBelow_of_ge, MIPRE.QLD.LPData, MIPRE.QLD.zeroBelow_zero,
+  MIPRE.QLD.LPData.toSample, MIPRE.QLD.LPData.question, MIPRE.QLD.LPData.dir,
+  MIPRE.QLD.LPData.dir_point, MIPRE.QLD.LPData.dir_aline, MIPRE.QLD.LPData.dir_dline,
+  MIPRE.QLD.LPData.base_aline, MIPRE.QLD.LPData.base_dline, MIPRE.QLD.subXof, MIPRE.QLD.subX,
+  MIPRE.QLD.subZof, MIPRE.QLD.subZ, MIPRE.QLD.subXof_xc, MIPRE.QLD.subXof_zc, MIPRE.QLD.subXof_ab,
+  MIPRE.QLD.subXof_dum, MIPRE.QLD.subZof_dline_xc, MIPRE.QLD.subZof_point_xc,
+  MIPRE.QLD.subZof_aline_xc, MIPRE.QLD.subZof_zc, MIPRE.QLD.subZof_ab, MIPRE.QLD.subZof_dum,
+  MIPRE.QLD.subX_pt, MIPRE.QLD.subZ_pt, MIPRE.QLD.xBlk_dir_sub, MIPRE.QLD.zBlk_dir_sub,
   MIPRE.QLD.on_line_of_eq_or_zero, MIPRE.QLD.xBlk_on_subX, MIPRE.QLD.zBlk_on_subZ,
-  MIPRE.QLD.xBlk_on_subX_aline, MIPRE.QLD.xBlk_on_subX_dline,
-  MIPRE.QLD.zBlk_on_subZ_aline, MIPRE.QLD.zBlk_on_subZ_dline,
-  MIPRE.QLD.subX_question_aline, MIPRE.QLD.subZ_question_aline}
+  MIPRE.QLD.xBlk_on_subX_aline, MIPRE.QLD.xBlk_on_subX_dline, MIPRE.QLD.zBlk_on_subZ_aline,
+  MIPRE.QLD.zBlk_on_subZ_dline, MIPRE.QLD.subX_question_aline, MIPRE.QLD.subZ_question_aline,
+  MIPRE.QLD.PadSum, MIPRE.QLD.padEquiv, MIPRE.QLD.padEquiv_inl_inl, MIPRE.QLD.padEquiv_inl_inr,
+  MIPRE.QLD.padEquiv_symm_xIdx, MIPRE.QLD.padEquiv_symm_zIdx, MIPRE.QLD.sum_point_pad,
+  MIPRE.QLD.sum_point_pad_x, MIPRE.QLD.sum_point_pad_z, MIPRE.QLD.sumRestr, MIPRE.QLD.sumAll,
+  MIPRE.QLD.sumAll_eq_sum_sumRestr, MIPRE.QLD.sumSub, MIPRE.QLD.sumSub_free, MIPRE.QLD.sumSub_zc,
+  MIPRE.QLD.sumSub_xc, MIPRE.QLD.sumSub_xc_dline, MIPRE.QLD.avgAll, MIPRE.QLD.avgRestr,
+  MIPRE.QLD.avgSub, MIPRE.QLD.sumAll_const_mul, MIPRE.QLD.sumRestr_const_mul,
+  MIPRE.QLD.cast_card_div, MIPRE.QLD.avgSub_free, MIPRE.QLD.avgSub_zc, MIPRE.QLD.avgSub_xc,
+  MIPRE.QLD.avgSub_xc_dline, MIPRE.sumArrow, MIPRE.sum_arrow_pair, MIPRE.sum_arrow_inl,
+  MIPRE.sum_congr1, MIPRE.sum_congr2, MIPRE.sum_congr3, MIPRE.sum_congr4, MIPRE.sum_nsmul1,
+  MIPRE.sum_nsmul2, MIPRE.sum_nsmul3, MIPRE.sum_nsmul4, MIPRE.sum_comm_four_in,
+  MIPRE.sum_comm_four_mid, MIPRE.sum_comm_six, MIPRE.sum_comm_six_swap, MIPRE.sum_prod_fst}
+\leanok
 For the seeded padded line distribution on $\F_q^{4m}$ there is a distribution
 of $(\ell,\ell_X,\ell_Z)$ with the following properties. Its $\ell$-marginal
 is the padded line marginal. Every $u=(u_X,u_Z,\alpha,\beta,w)\in\ell$
@@ -2687,54 +2710,78 @@ axis-parallel. This last clause is needed for the legal degree-$d$ answers.
 \end{lemma}
 
 \begin{proof}
-Construct the three lines from the padded seed, completing a constant projected
-block by an independently sampled restricted line through its point.
-Check the line marginal, conditional point uniformity, and axis preservation
-separately. The mixture concerns the pair of line marginals; these precise
-conditionings are what permits application of the product-distribution estimate
-of Lemma~\ref{lem:qld-pairs-of-lines}.
+\leanok
+\uses{def:lidt-cl}
+The distribution is a sampling procedure, and the procedure is forced by the first property it
+has to satisfy.
+
+\textbf{What the containment forces.} Moving along the padded line moves the $X$ block of a point
+along the $X$ block of the padded direction. So where that block is nonzero the $X$ subline has no
+choice: its direction must be exactly that block, and the only freedom left is \emph{which seed}
+presents it --- a seed of the prescribed axis index, drawn uniformly from that index's block of
+$q/m$ elements. Where the block vanishes the $X$ block of a point is constant along the padded
+line, the containment is free, and the subline is sampled fresh. Same for $Z$.
+
+\textbf{The four cases, and why the two sides differ.} A coordinate position of
+$\F_q^{4m}$ lies in the $X$ block, in the $Z$ block, at $\alpha$ or $\beta$, or among the dummy
+coordinates, and which blocks of the padded direction vanish depends on the case \emph{and} on the
+line type. For an axis-parallel padded line the direction is a single coordinate, so at most one of
+the two blocks is nonzero. For a diagonal one it is $v$ truncated below the axis index, so an index
+in the $X$ block leaves the whole $Z$ block untouched: both blocks are nonzero and the $Z$ subline
+is forced as well, at axis index $0$ since nothing of its direction is truncated. That is the only
+place the construction looks at the line type.
+
+\textbf{The law.} The $X$ and $Z$ blocks of a uniform padded point are uniform and independent,
+because $\F_q^{4m}$ is the disjoint union of the two blocks and the $2m$ positions above them, and
+precomposition with an injection of index types carries the uniform measure to the uniform measure.
+The two sides' data are therefore functions of disjoint parts of the randomness: the point and the
+raw direction contribute one block each, and each side's fresh seed is its own. Averaging over the
+sampling space is then exactly averaging over a product of two line-point laws, restricted on a side
+precisely when that side is forced, with no constant left over --- the multiplicities are the
+assignments the construction does not read, and they divide out. A side that is not forced gets the
+unrestricted law, which is the uniform mixture of the $m$ restricted ones; that is the mixture in
+the second property.
+
+\textbf{The third property is definitional here}, the line type being a parameter handed to both
+sides rather than something the construction chooses. What the paper draws from its Property~3 ---
+that the directions agree --- is the four-case statement above.
 \end{proof}
 
-\paragraph{Comments.} Partly formalized, in
-\texttt{MIPRE/Background/QLD/Padded.lean}. What is there is the padding geometry and the
-construction; what is not is the distributional half of the second property. Neither mark is
-set, and the split is worth stating precisely because the two halves are independent pieces of
-work.
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Background/QLD/Padded.lean}, on the block
+identities of \texttt{MIPRE/Foundations/Blocks.lean}.
 
-\textbf{Formalized: the construction and the containment.} \texttt{LPData} is the triple
-$(u, s, v)$ a seeded line--point pair is generated from, in either dimension; \texttt{subX} and
-\texttt{subZ} are the paper's sampling procedure, reading the two $m$-dimensional pairs off a
-padded one together with a fresh seed and raw direction per side. \texttt{xBlk\_dir\_sub} and
-\texttt{zBlk\_dir\_sub} are its geometric content: in each of the four cases of
-\texttt{padCase}, the relevant block of the padded direction either \emph{is} the subline's
-direction or vanishes. \texttt{xBlk\_on\_subX} and \texttt{zBlk\_on\_subZ} turn that into the
-containment $u_X \in \ell_X$, $u_Z \in \ell_Z$: a block that moves, moves along the subline, and
-a block that does not move stays at the point, which is on the subline already.
+\textbf{The construction.} \texttt{LPData} is the triple $(u, s, v)$ a seeded line--point pair is
+generated from, in either dimension; \texttt{subX} and \texttt{subZ} are the sampling procedure,
+reading the two $m$-dimensional pairs off a padded one together with a fresh seed and raw direction
+per side. \texttt{padCase} is the four-way case distinction, and \texttt{seedIn} is the retargeting
+of a seed to a prescribed block keeping its offset --- the paper's ``choose $s_X$ uniformly at
+random subject to $\chi(s_X) = i$'', made a function so that the construction is a function of its
+randomness rather than a conditional distribution.
 
-\textbf{Not formalized: the mixture of products.} That the law of $(\ell_X, \ell_Z)$ under a
-uniform point of a padded line is a mixture of products of restricted marginals, with the point
-of each side conditionally uniform on its line, is a pushforward identity for the sampling map.
-It needs the block decomposition of $\F_q^{4m}$ as a measure-preserving product --- that
-precomposition with an injection of index sets sends the uniform measure to the uniform measure
---- which the file does not yet have. \texttt{sum\_seedIn} is the one piece of it that is proved:
-a uniform seed retargeted to a fixed block is uniform on that block's fibre, which is the
-paper's ``choose $s_X$ uniformly at random subject to $\chi(s_X) = i$''.
+\textbf{The containment} is \texttt{xBlk\_dir\_sub} and \texttt{zBlk\_dir\_sub}, which say that in
+each case the relevant block of the padded direction either \emph{is} the subline's direction or
+vanishes, and \texttt{xBlk\_on\_subX} / \texttt{zBlk\_on\_subZ}, which turn that into
+$u_X \in \ell_X$ and $u_Z \in \ell_Z$.
 
-\textbf{The third property is definitional here, and that is not a shortcut.} The paper must
-check that an axis-parallel padded line has axis-parallel sublines because its construction
-chooses the subline types; here the line type is a parameter handed to both sides, so
-\texttt{subX\_question\_aline} is immediate. The content the paper draws from its Property~3 ---
-that the directions then match --- is \texttt{xBlk\_dir\_sub} and \texttt{zBlk\_dir\_sub}
-instead.
+\textbf{The law is stated as four identities, one per case}, and they are identities of averages
+rather than of sums: \texttt{avgSub\_free}, \texttt{avgSub\_zc}, \texttt{avgSub\_xc} and
+\texttt{avgSub\_xc\_dline} each say that the average over the sampling space \emph{equals} the
+average over a product of two line--point laws, restricted on a side exactly when that side is
+forced. No constant survives; the multiplicities --- the assignments to the coordinates and the
+fresh randomness the construction does not read --- are what the normalization divides out, and
+they differ from case to case, which is why the four are separate statements.
+\texttt{sumAll\_eq\_sum\_sumRestr} is the mixture: the unrestricted law is the sum of the $m$
+restricted ones, so a side that is not forced contributes a uniform mixture.
 
-\textbf{Why $4m$ and where the asymmetry comes from.} $\alpha$ and $\beta$ sit at positions
-$2m$ and $2m+1$, so the dummy block is the $2m-2$ positions above them and every index bound
-needs only $m \geq 1$. The two sides are not symmetric: for an axis-parallel padded line the
-direction is one coordinate, so at most one of the $X$ and $Z$ blocks is nonzero, whereas for a
-diagonal one the direction is $v$ truncated below the axis index, so an index in the $X$ block
-leaves the whole $Z$ block intact and the $Z$ subline is forced too, at axis index $0$. That is
-the only place \texttt{subZ} looks at the line type, and it is the repair the paper's round-12
-note on this lemma records.
+\textbf{Property 1 is definitional and Property 3 is definitional}, for the same reason: the padded
+line--point pair is an input the construction does not modify, and the line type is a parameter
+handed to both sides. \texttt{subX\_question\_aline} and \texttt{subZ\_question\_aline} record the
+second of these.
+
+\textbf{Why $4m$.} $\alpha$ and $\beta$ sit at positions $2m$ and $2m+1$, so the dummy block is the
+$2m-2$ positions above them and every index bound needs only $m \geq 1$. The asymmetry between the
+two sides in the diagonal case is what the paper's round-12 note on this lemma repairs: the missing
+primes on $w_X, w_Z$, and the unspecified law of the coordinate registers $s_X, s_Z$.
 
 \effortHard
 

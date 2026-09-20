@@ -867,12 +867,33 @@ axis-parallel sublines because its procedure chooses the types; here the type is
 to both sides. What the paper actually uses its Property 3 for --- that the directions match --- is
 `xBlk_dir_sub` and `zBlk_dir_sub`.
 
-**What is left, and it is a self-contained piece.** The mixture-of-products law needs one general
-lemma: precomposition with an injection of index sets pushes the uniform measure on `beta -> F`
-forward to the uniform measure on `alpha -> F`, with all fibres of size `q^(card beta - card
-alpha)`. With that, the block decomposition of `F_q^{4m}` factors the sampling space and each branch
-of `subX`/`subZ` reads off as a product of two restricted laws, since the two sides are functions of
-disjoint blocks of the randomness. Worth proving as a `Foundations` lemma rather than inline.
+**The mixture-of-products law, done in the same session.** The general lemma turned out to be
+cheaper in the `Equiv`-free form: an assignment to a sum index type *is* a pair of assignments to the
+summands (`MIPRE/Foundations/Blocks.lean`, `sum_arrow_pair` and `sum_arrow_inl`), so no `Set.range`
+subtype and no fibre-cardinality computation is needed. `padEquiv : (Fin m + Fin m) + Fin (2m) ~ Fin
+(4m)` names the block decomposition -- `finSumFinEquiv` twice puts the `X` block on positions
+`0..m-1` and the `Z` block on `m..2m-1`, which is exactly `xIdx` and `zIdx`, so the two computation
+lemmas are `Fin.ext` plus `simp` -- and `sum_point_pad` is the product identity for a uniform padded
+point.
+
+The law is then four identities, one per case, and they are identities of *averages*: `avgSub_free`,
+`avgSub_zc`, `avgSub_xc` and `avgSub_xc_dline` each say the average over the sampling space **equals**
+the average over a product of two line-point laws. Stating them normalized is what makes them usable
+and is also what hides an awkwardness: the multiplicities differ from case to case (`q^{6m}` when
+neither side is forced, `m q^{6m}` when one is, `m^2 q^{6m}` when both are), because a forced side
+reads a block of the padded raw direction and pays a `seedIn` factor while a free side reads its own
+fresh randomness instead. Normalization divides all of that out. `field_simp` plus `ring` closes each
+one once `((q/m : N) : R)` is rewritten as `q/m` over the reals, which is where `m | q` is used.
+
+**The bookkeeping is worth naming.** A block decomposition turns one sum into two *where the old one
+was*, so every step afterwards is: rewrite a sum sitting under others, move one sum past its
+neighbours, pull a constant out. `sum_congr1..4`, `sum_nsmul1..4`, `sum_comm_four_in`,
+`sum_comm_four_mid`, `sum_comm_six`, `sum_comm_six_swap` and `sum_prod_fst` are those three moves at
+the arities this needs. With them each branch proof is one `rw` chain whose steps name what they do;
+without them it is a tower of `Finset.sum_congr` whose shape has to be rebuilt every time. The reason
+descent lemmas are needed at all is that `rw` cannot instantiate a pattern like `?g (zBlk u)` whose
+metavariable would have to mention variables bound outside the rewrite -- so the rewrite has to
+happen at the depth where the function is closed, and the `sum_congr` family is what gets it there.
 
 **And one thing the consumer will need that is not in this lemma.** `pairs_of_lines_of_items` is
 proved on the *single content* of the Pauli basis test, whose seed and raw direction are shared by

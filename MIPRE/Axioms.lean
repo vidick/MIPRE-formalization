@@ -3,6 +3,7 @@ Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import MIPRE.Foundations.GuardSorryFree
+import MIPRE.Foundations.Blocks
 import MIPRE.Foundations.CL.Basic
 import MIPRE.Foundations.LowDegree.SchwartzZippel
 import MIPRE.Foundations.LowDegree.Anticomm
@@ -686,4 +687,26 @@ theorem is assumed, not proved. `scripts/lean-coverage.py` closes the loop from 
 side: it fails if any `axiom` declared outside the vendored trees is not named in this file.
 -/
 
+/-! ## Blocks of an index type
 
+Blueprint `lem:qld-sublines`, the measure-preserving half of a block decomposition: an assignment to
+a sum index type is a pair of assignments to the summands, uniform and independent, together with the
+bookkeeping -- rewriting under nested sums, reordering them, and pulling a constant out -- that a
+block decomposition then needs. -/
+
+#guard_sorry_free MIPRE.sumArrow,
+  MIPRE.sum_arrow_pair,
+  MIPRE.sum_arrow_inl,
+  MIPRE.sum_congr1,
+  MIPRE.sum_congr2,
+  MIPRE.sum_congr3,
+  MIPRE.sum_congr4,
+  MIPRE.sum_nsmul1,
+  MIPRE.sum_nsmul2,
+  MIPRE.sum_nsmul3,
+  MIPRE.sum_nsmul4,
+  MIPRE.sum_comm_four_in,
+  MIPRE.sum_comm_four_mid,
+  MIPRE.sum_comm_six,
+  MIPRE.sum_comm_six_swap,
+  MIPRE.sum_prod_fst
