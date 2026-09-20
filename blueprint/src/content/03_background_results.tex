@@ -2833,7 +2833,20 @@ primes on $w_X, w_Z$, and the unspecified law of the coordinate registers $s_X, 
   MIPRE.QLD.param_subZ_padShift, MIPRE.QLD.padCombine, MIPRE.QLD.eval_padCombine,
   MIPRE.QLD.degLE_padCombine_aline, MIPRE.QLD.sum_pasteLine, MIPRE.QLD.posSemidef_pasteLine,
   MIPRE.QLD.SubRand, MIPRE.QLD.subPair, MIPRE.QLD.padLineMats, MIPRE.QLD.sum_padLineMats,
-  MIPRE.QLD.posSemidef_padLineMats, MIPRE.QLD.sum_filter_fiber, MIPRE.QLD.sum_filter_padLineMats}
+  MIPRE.QLD.posSemidef_padLineMats, MIPRE.QLD.sum_filter_fiber,
+  MIPRE.QLD.sum_filter_padLineMats,
+  MIPRE.QLD.sumAll_nonneg, MIPRE.QLD.sumAll_mono, MIPRE.QLD.sumRestr_nonneg,
+  MIPRE.QLD.avgAll_nonneg, MIPRE.QLD.avgAll_mono, MIPRE.QLD.avgRestr_nonneg,
+  MIPRE.QLD.avgAll_const_mul, MIPRE.QLD.sum_avgRestr, MIPRE.QLD.avgRestr_le_mul_avgAll,
+  MIPRE.QLD.avgRestr_prod_le_mul_avgAll, MIPRE.QLD.sum_uniform_pts,
+  MIPRE.QLD.avg_content_eq_pts, MIPRE.QLD.combined_points_pts, MIPRE.QLD.FactorsX,
+  MIPRE.QLD.FactorsZ, MIPRE.QLD.factorsX_aPres, MIPRE.QLD.factorsX_dPres,
+  MIPRE.QLD.factorsZ_aPres, MIPRE.QLD.factorsZ_dPres, MIPRE.QLD.lineMats_ofLPX,
+  MIPRE.QLD.param_ofLPX, MIPRE.QLD.lineEvalMats_ofLPX, MIPRE.QLD.collProb_ofLPX,
+  MIPRE.QLD.lineMats_ofLPZ, MIPRE.QLD.param_ofLPZ, MIPRE.QLD.lineEvalMats_ofLPZ,
+  MIPRE.QLD.avg_pair_eq_content_X, MIPRE.QLD.avg_pair_eq_content_Z,
+  MIPRE.QLD.avg_pair_eq_content_X_self, MIPRE.QLD.avg_pair_eq_content_X_collProb,
+  MIPRE.QLD.pairs_of_lines_prod_of_items}
 For every padded line $\ell$, there is a POVM with polynomial outcomes of
 degree at most $md+1$, and at most $d$ when $\ell$ is axis-parallel.
 On the padded line--point distribution it is consistent with the opposite
@@ -2915,13 +2928,37 @@ which no quantity of that side's line depends on. The two $\mathtt{rfl}$s
 the generalization it instantiates is recorded under
 Lemma~\ref{lem:qld-pairs-of-lines}, since that is the lemma it proves.
 
-\textbf{What remains: the consistency bound.} The paper proves it by chaining three
-Cauchy--Schwarz claims, and each needs an input averaged over a \emph{different} distribution: the
-combined point measurement's self-consistency, Lemma~\ref{lem:qld-pairs-of-lines} on the product ---
-which is why \texttt{pairs\_of\_lines\_prod} had to come first --- and item 3 of the expanded-line
-lemma on the $i$-th restricted line-point distributions, whose transfer from the unrestricted one
-costs the factors of $m$ that make $\delta_{\mathrm{combine}} = m \cdot \poly(\eps, md/q)$ rather than
-$\poly$. None of that is formalized.
+\textbf{And from the game.} \texttt{pairs\_of\_lines\_prod\_of\_items} takes only game-level
+hypotheses and delivers the product form, which is what the consistency chain consumes. Two things
+had to be arranged for it. First, the combined point measurement is re-indexed by the \emph{pair of
+points} (\texttt{combined\_points\_pts}) rather than by the content: all four inputs of the
+joint-measurement construction see the content only through its two points, so the same construction
+runs at the pair, and the resulting measurement is usable at any sample space carrying two points ---
+whereas the content-indexed one would have to be fed contents with zeroed probes, whose average is
+not the content average. Second, \texttt{FactorsX} and \texttt{FactorsZ} say that a line
+presentation reads the content only through that side's line-point data; both presentations satisfy
+them by $\mathtt{rfl}$, and that is what lets \texttt{avg\_content\_eq\_pair\_X} carry each
+content-level bound to the product (\texttt{avg\_pair\_eq\_content\_X} and its three
+companions).
+
+\textbf{The restricted laws, and where the factors of $m$ come from.} \texttt{avgRestr} was already
+the paper's $D_{\mathrm{ty},i}$. \texttt{sum\_avgRestr} says the $m$ restricted laws average to the
+unrestricted one, so each is at most $m$ times it (\texttt{avgRestr\_le\_mul\_avgAll}) and a
+product of two is at most $m^2$ times the product
+(\texttt{avgRestr\_prod\_le\_mul\_avgAll}). The paper's factor is $2m$ because it mixes over the
+two line types; here the type is a parameter, so it is $m$. This is the whole source of the leading
+$m$ in $\delta_{\mathrm{combine}}$.
+
+\textbf{What remains: the three Cauchy--Schwarz claims.} All three inputs the paper's chain
+consumes are now available on the distributions it needs them on --- the combined point measurement's
+self-consistency, Lemma~\ref{lem:qld-pairs-of-lines} on the product, and the restricted-law transfer
+that turns an average bound into a bound on each $D_{\mathrm{ty},i}$. What is not formalized is the chain
+itself: the paper's Claims 17-1, 17-2 and 17-3, three Cauchy--Schwarz steps that replace
+$\widehat Q^{x,z}$ by the ordered product, drop the $X$ factor, and bound the remaining term by $1$.
+Each is a bound of the size of \texttt{sum\_content\_marg\_line\_le}, and the last of them also
+needs the padded line-point law written as a mixture of products of subline laws --- which is
+\texttt{avgSub\_free} and its three companions (Lemma~\ref{lem:qld-sublines}) carried from reals to
+operators.
 
 \effortHard
 
