@@ -833,6 +833,56 @@ scope was silently auto-bound under `lake env lean` --- the file "compiled" --- 
 then reported six errors and two `sorry`s. Use `lake build MIPRE.<Module>` to confirm a module, as
 `CLAUDE.md` says; `lake env lean` is for fast iteration only.
 
+#### 2026-09-20, part 3: the padded space and the sublines (`lem:qld-sublines`, partly)
+
+`MIPRE/Background/QLD/Padded.lean`. The padding geometry and the paper's sampling procedure, with
+the containment proved and the distributional half of Property 2 left open. The blueprint carries
+the `\lean{}` list and no `\leanok` at either level, and the Comments there say exactly which half
+is which; there are no new axiom guards, which is the correct state for a statement whose proof is
+not claimed.
+
+**What the seed block equivalence buys.** `seedEquiv : F ~ Fin m x Fin (q/m)` names the bijection
+whose first component is `chi`, and `seedIn hm i s` is "the seed in block `i` with `s`'s offset".
+Three facts follow, and the construction needs all three: `chi_seedIn` (the retargeted seed has the
+prescribed index), `seedIn_self` (retargeting to the seed's own block is the identity, which is how
+a branch that keeps the padded seed is written), and `sum_seedIn` (a uniform seed retargeted to a
+fixed block is uniform on that block, which is the paper's "choose `s_X` uniformly at random
+subject to `chi(s_X) = i`"). That last one is the only piece of the distributional half that is
+proved.
+
+**The construction is forced, and the forcing is not symmetric.** Moving along the padded line moves
+the `X` block along the `X` block of the padded direction, so when that block is nonzero the
+subline's direction *must* be it and the only freedom is which seed presents it. `padCase`
+classifies a coordinate position into the `X` block, the `Z` block, `alpha`/`beta`, and the dummy
+block, and the four cases say which blocks vanish --- differently for the two line types. An
+axis-parallel padded line has a single-coordinate direction, so at most one of the two blocks is
+nonzero. A diagonal one has `v` truncated below the axis index, so an index in the `X` block leaves
+the whole `Z` block intact: both blocks are then nonzero and the `Z` subline is forced too, at axis
+index `0` since nothing of its direction is truncated. That is the only place `subZ` looks at the
+line type, and it is what the paper's round-12 note on this lemma repairs (the missing primes on
+`w_X, w_Z` and the unspecified law of `s_X, s_Z`).
+
+**Property 3 is definitional here.** The paper must check that an axis-parallel padded line has
+axis-parallel sublines because its procedure chooses the types; here the type is a parameter handed
+to both sides. What the paper actually uses its Property 3 for --- that the directions match --- is
+`xBlk_dir_sub` and `zBlk_dir_sub`.
+
+**What is left, and it is a self-contained piece.** The mixture-of-products law needs one general
+lemma: precomposition with an injection of index sets pushes the uniform measure on `beta -> F`
+forward to the uniform measure on `alpha -> F`, with all fibres of size `q^(card beta - card
+alpha)`. With that, the block decomposition of `F_q^{4m}` factors the sampling space and each branch
+of `subX`/`subZ` reads off as a product of two restricted laws, since the two sides are functions of
+disjoint blocks of the randomness. Worth proving as a `Foundations` lemma rather than inline.
+
+**And one thing the consumer will need that is not in this lemma.** `pairs_of_lines_of_items` is
+proved on the *single content* of the Pauli basis test, whose seed and raw direction are shared by
+the two sides; `lem:qld-padded-lines` wants it on the product of two independent line--point laws.
+That transfer is available and is not hard, because each of the pasting lemma's four hypotheses
+involves only one of the two lines, and the relevant marginal of the product law coincides with the
+relevant marginal of the content --- the other side's point is uniform and independent in both. It
+is a re-instantiation of `one_sub_sum_bornProb_pasteJ_le` at pairs of contents with product weights,
+not a new argument.
+
 ### PR D — separation, the swap isometry, and the theorem
 
 `lem:qld-helper`, `lem:qld-exact-paulis`, `lem:qld-swap`, `thm:qld`. Two things to hold on to:

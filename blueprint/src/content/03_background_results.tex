@@ -2655,6 +2655,22 @@ r\beta)$.
 \label{lem:qld-sublines}
 \ledgernode{1.2.2.11}
 \uses{def:lidt-cl}
+\lean{MIPRE.QLD.seedEquiv, MIPRE.QLD.seedIn, MIPRE.QLD.chi_seedIn, MIPRE.QLD.seedIn_self,
+  MIPRE.QLD.sum_seedIn, MIPRE.QLD.xIdx, MIPRE.QLD.zIdx, MIPRE.QLD.aIdx, MIPRE.QLD.bIdx,
+  MIPRE.QLD.xBlk, MIPRE.QLD.zBlk, MIPRE.QLD.alph, MIPRE.QLD.bet, MIPRE.QLD.xBlk_add_smul,
+  MIPRE.QLD.zBlk_add_smul, MIPRE.QLD.PadCase, MIPRE.QLD.padCase, MIPRE.QLD.padCase_eq_xc,
+  MIPRE.QLD.padCase_eq_zc, MIPRE.QLD.xBlk_single_xIdx, MIPRE.QLD.xBlk_single_of_le,
+  MIPRE.QLD.zBlk_single_zIdx, MIPRE.QLD.zBlk_single_of_lt, MIPRE.QLD.zBlk_single_of_ge,
+  MIPRE.QLD.xBlk_zeroBelow_of_le, MIPRE.QLD.xBlk_zeroBelow_xIdx,
+  MIPRE.QLD.zBlk_zeroBelow_of_le, MIPRE.QLD.zBlk_zeroBelow_zIdx,
+  MIPRE.QLD.zBlk_zeroBelow_of_ge, MIPRE.QLD.LPData, MIPRE.QLD.LPData.question,
+  MIPRE.QLD.LPData.dir, MIPRE.QLD.LPData.base_aline, MIPRE.QLD.LPData.base_dline,
+  MIPRE.QLD.subXof, MIPRE.QLD.subX, MIPRE.QLD.subZof, MIPRE.QLD.subZ, MIPRE.QLD.subX_pt,
+  MIPRE.QLD.subZ_pt, MIPRE.QLD.xBlk_dir_sub, MIPRE.QLD.zBlk_dir_sub,
+  MIPRE.QLD.on_line_of_eq_or_zero, MIPRE.QLD.xBlk_on_subX, MIPRE.QLD.zBlk_on_subZ,
+  MIPRE.QLD.xBlk_on_subX_aline, MIPRE.QLD.xBlk_on_subX_dline,
+  MIPRE.QLD.zBlk_on_subZ_aline, MIPRE.QLD.zBlk_on_subZ_dline,
+  MIPRE.QLD.subX_question_aline, MIPRE.QLD.subZ_question_aline}
 For the seeded padded line distribution on $\F_q^{4m}$ there is a distribution
 of $(\ell,\ell_X,\ell_Z)$ with the following properties. Its $\ell$-marginal
 is the padded line marginal. Every $u=(u_X,u_Z,\alpha,\beta,w)\in\ell$
@@ -2678,6 +2694,47 @@ separately. The mixture concerns the pair of line marginals; these precise
 conditionings are what permits application of the product-distribution estimate
 of Lemma~\ref{lem:qld-pairs-of-lines}.
 \end{proof}
+
+\paragraph{Comments.} Partly formalized, in
+\texttt{MIPRE/Background/QLD/Padded.lean}. What is there is the padding geometry and the
+construction; what is not is the distributional half of the second property. Neither mark is
+set, and the split is worth stating precisely because the two halves are independent pieces of
+work.
+
+\textbf{Formalized: the construction and the containment.} \texttt{LPData} is the triple
+$(u, s, v)$ a seeded line--point pair is generated from, in either dimension; \texttt{subX} and
+\texttt{subZ} are the paper's sampling procedure, reading the two $m$-dimensional pairs off a
+padded one together with a fresh seed and raw direction per side. \texttt{xBlk\_dir\_sub} and
+\texttt{zBlk\_dir\_sub} are its geometric content: in each of the four cases of
+\texttt{padCase}, the relevant block of the padded direction either \emph{is} the subline's
+direction or vanishes. \texttt{xBlk\_on\_subX} and \texttt{zBlk\_on\_subZ} turn that into the
+containment $u_X \in \ell_X$, $u_Z \in \ell_Z$: a block that moves, moves along the subline, and
+a block that does not move stays at the point, which is on the subline already.
+
+\textbf{Not formalized: the mixture of products.} That the law of $(\ell_X, \ell_Z)$ under a
+uniform point of a padded line is a mixture of products of restricted marginals, with the point
+of each side conditionally uniform on its line, is a pushforward identity for the sampling map.
+It needs the block decomposition of $\F_q^{4m}$ as a measure-preserving product --- that
+precomposition with an injection of index sets sends the uniform measure to the uniform measure
+--- which the file does not yet have. \texttt{sum\_seedIn} is the one piece of it that is proved:
+a uniform seed retargeted to a fixed block is uniform on that block's fibre, which is the
+paper's ``choose $s_X$ uniformly at random subject to $\chi(s_X) = i$''.
+
+\textbf{The third property is definitional here, and that is not a shortcut.} The paper must
+check that an axis-parallel padded line has axis-parallel sublines because its construction
+chooses the subline types; here the line type is a parameter handed to both sides, so
+\texttt{subX\_question\_aline} is immediate. The content the paper draws from its Property~3 ---
+that the directions then match --- is \texttt{xBlk\_dir\_sub} and \texttt{zBlk\_dir\_sub}
+instead.
+
+\textbf{Why $4m$ and where the asymmetry comes from.} $\alpha$ and $\beta$ sit at positions
+$2m$ and $2m+1$, so the dummy block is the $2m-2$ positions above them and every index bound
+needs only $m \geq 1$. The two sides are not symmetric: for an axis-parallel padded line the
+direction is one coordinate, so at most one of the $X$ and $Z$ blocks is nonzero, whereas for a
+diagonal one the direction is $v$ truncated below the axis index, so an index in the $X$ block
+leaves the whole $Z$ block intact and the $Z$ subline is forced too, at axis index $0$. That is
+the only place \texttt{subZ} looks at the line type, and it is the repair the paper's round-12
+note on this lemma records.
 
 \effortHard
 
