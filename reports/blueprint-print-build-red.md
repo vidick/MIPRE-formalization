@@ -1,8 +1,11 @@
-# The blueprint's print build has been red on `main` since #118, with the error invisible
+# The blueprint's print build was red on `main` from #118, with the error invisible
 
-**Status**: open. Not caused by, and not fixable from, any pull request: `blueprint.yml` runs
-only on `main`. This report records the diagnosis, what it rules out, and the one change made
-to make the next failure legible.
+**Status**: found and fixed. Two Lean identifiers were quoted with backticks instead of
+`\texttt{}` in `02_foundations.tex`, so their underscores were in text mode; the fix is those
+two lines, and `scripts/lean-coverage.py` now refuses that class of error outright. This report
+keeps the diagnosis because the *shape* of the failure is the reusable part: it is the second
+time an invisible LaTeX error has kept `main`'s blueprint red for a day or more, and the first
+time it has been caught mechanically.
 
 ## What fails
 
@@ -68,15 +71,46 @@ Every label reported as undefined in the log (`cor:tsirelson`, `lem:cep-implies-
 `thm:separation`, `rem:admitted-nodes`, ...) does exist in the content; they are undefined
 only because pass 1's `.aux` was never completed.
 
-## What was changed
+## What was changed, and what the change found
 
 `blueprint/src/latexmkrc` now passes `-halt-on-error` alongside `nonstopmode`. pdflatex then
 stops at the first error, so the error and its context are the **last** thing in the CI log
 rather than being buried under a full document's worth of reference warnings. A build with no
 errors behaves exactly as before.
 
-## Next step
+The very next `main` build (run 159, `663fd72`) then ended with
 
-Read the next `main` build's log tail; it will name the file and line. If more is needed, have
-the workflow upload `blueprint/print/print.log` as an artifact --- there is no pdflatex in a
-cloud session, so the log is the only way to see the error from here.
+```
+! Missing $ inserted.
+<inserted text>
+                $
+l.644 step. `norm_
+                  stateVec_comm_le` is~\eqref{eq:anticomm-transfer-bp} with ...
+!  ==> Fatal error occurred, no output PDF file produced!
+```
+
+`02_foundations.tex` line 644 and line 646 each quoted a Lean identifier with **backticks**
+instead of `\texttt{}`, so `norm_stateVec_comm_le` and `snorm_swapVec_aOp_sub_bOp` put their
+underscores in text mode. Both were introduced by #118, which is exactly where the run table
+puts the regression. The fix is those two lines.
+
+Note what the list of ruled-out causes above got wrong: it checked that every *command* used is
+defined and that every environment is balanced, and both were true. The error was not a command
+at all --- it was a character, in the wrong mode. That is why the check added here is about
+characters.
+
+## The check that makes it not happen again
+
+`scripts/lean-coverage.py` gained `text_mode_specials()`, which walks the content character by
+character tracking `$`, `\[`/`\]`, `\(`/`\)` and the math environments, skipping comments,
+escapes and the braced arguments of commands whose argument is not typeset (`\label`, `\ref`,
+`\uses`, `\lean`, `\cite`, ...), and reports
+
+* any `_` or `^` reached in text mode --- the thing that stops pdflatex;
+* any single backtick before a letter --- never what this blueprint means, since code is
+  `\texttt{}` and quotation marks are doubled, and it is how the underscores got in;
+* unbalanced math mode at end of file.
+
+Reintroducing either of the two original lines makes it report four failures naming line 644.
+CI runs it before the Lean build, so this class of error now costs one script run rather than a
+day of a red `main` and a log that does not say why.

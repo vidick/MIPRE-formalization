@@ -641,9 +641,9 @@ POVM that is \texttt{POVM.sub\_mul\_self\_le\_one}, which needs the observable w
 identifies the two, so a consumer can quote whichever form its input is stated in.
 
 \textbf{The swap, and the commutator form.} Two more entries serve the appendix's commutation
-step. `norm_stateVec_comm_le` is~\eqref{eq:anticomm-transfer-bp} with a commutator in the middle
+step. \texttt{norm\_stateVec\_comm\_le} is~\eqref{eq:anticomm-transfer-bp} with a commutator in the middle
 instead of an anticommutator --- the same split, Bob's two products cancelling either way. And
-`snorm_swapVec_aOp_sub_bOp` exchanges the two sides of a cross-party deviation, which is what lets
+\texttt{snorm\_swapVec\_aOp\_sub\_bOp} exchanges the two sides of a cross-party deviation, which is what lets
 a lemma proved for Alice's factor be applied to Bob's: the clean statement is at the level of
 vectors, $(X \ot Y)\,\mathrm{swap}\ket{\psi} = \mathrm{swap}\,(Y \ot X)\ket{\psi}$, and everything
 else follows by linearity. Corollary~\ref{cor:ortho-from-consistency} produces a projective

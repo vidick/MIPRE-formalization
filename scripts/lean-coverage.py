@@ -202,6 +202,110 @@ def undefined_macros():
     return sorted(used - defined - allowed), len(used), len(defined)
 
 
+MATH_ENVS = {"equation", "equation*", "align", "align*", "gather", "gather*", "multline",
+             "multline*", "displaymath", "eqnarray", "eqnarray*", "alignat", "alignat*"}
+
+# Commands whose braced argument is not typeset, so an underscore inside it is harmless.
+NAME_ARG_CMDS = {"label", "ref", "eqref", "cref", "Cref", "uses", "lean", "proves", "cite",
+                 "ledgernode", "input", "discussion", "href", "url", "verb"}
+
+
+def text_mode_specials():
+    """`_` and `^` outside math mode, which stop pdflatex.
+
+    They stop it the *invisible* way: under nonstopmode pdflatex prints `! Missing $
+    inserted.`, carries on, writes the PDF and returns 1 only at the end, after which
+    latexmk refuses to rerun and reports every reference in the document as unresolved.
+    The tail of the CI log is then hundreds of undefined-reference warnings with no `!`
+    line near it. That kept the blueprint red on `main` from #118 until the error was
+    finally surfaced by adding `-halt-on-error` to `blueprint/src/latexmkrc`; the cause
+    was two Lean identifiers quoted with backticks instead of `\texttt{}`, in
+    `02_foundations.tex`. This check is what makes that class of failure cheap to find,
+    since there is no pdflatex in a session.
+
+    A single backtick before a letter is flagged too: it is never what this blueprint
+    means (code is `\texttt{}`, quotation marks are doubled), and it is how the
+    underscores got in.
+    """
+    problems = []
+    for f in sorted(CONTENT.glob("*.tex")):
+        src = f.read_text(encoding="utf-8")
+        i, n, line = 0, len(src), 1
+        math = 0          # `$` nesting, 0 or 1
+        envs = []         # open math environments
+        while i < n:
+            c = src[i]
+            if c == "\n":
+                line += 1
+                i += 1
+                continue
+            if c == "%":
+                while i < n and src[i] != "\n":
+                    i += 1
+                continue
+            if c == "\\":
+                j = i + 1
+                while j < n and src[j].isalpha():
+                    j += 1
+                name = src[i + 1:j]
+                if name == "":                      # \_, \$, \&, \% ... and \[ \] \( \)
+                    if i + 1 < n and src[i + 1] in "[(":
+                        math = 1
+                    elif i + 1 < n and src[i + 1] in "])":
+                        math = 0
+                    i += 2
+                    continue
+                if name == "begin" or name == "end":
+                    k = src.find("{", j)
+                    if k != -1 and k < n:
+                        e = src.find("}", k)
+                        env = src[k + 1:e]
+                        if env in MATH_ENVS:
+                            if name == "begin":
+                                envs.append(env)
+                            elif envs:
+                                envs.pop()
+                        i = e + 1
+                        continue
+                if name in NAME_ARG_CMDS:
+                    k = j
+                    while k < n and src[k] in " \n":
+                        if src[k] == "\n":
+                            line += 1
+                        k += 1
+                    if k < n and src[k] == "{":
+                        depth, k = 1, k + 1
+                        while k < n and depth:
+                            if src[k] == "{":
+                                depth += 1
+                            elif src[k] == "}":
+                                depth -= 1
+                            elif src[k] == "\n":
+                                line += 1
+                            k += 1
+                        i = k
+                        continue
+                i = j
+                continue
+            if c == "$":
+                math = 1 - math
+                i += 1
+                continue
+            if c in "_^" and not math and not envs:
+                problems.append(f"{f.name}:{line}: {c!r} in text mode "
+                                f"(escape it, or put it in math or \\texttt{{}})")
+            if c == "`" and i + 1 < n and src[i + 1] == "`":
+                i += 2                              # ``opening quotation marks''
+                continue
+            if c == "`" and i + 1 < n and src[i + 1].isalpha():
+                problems.append(f"{f.name}:{line}: single backtick before a letter "
+                                f"(code is \\texttt{{}} here, quotation marks are doubled)")
+            i += 1
+        if math or envs:
+            problems.append(f"{f.name}: unbalanced math mode at end of file")
+    return problems
+
+
 AXIOM_GUARDS = [ROOT / "MIPRE" / "Axioms.lean",
                 ROOT / "MIPRE" / "Background" / "LIDT" / "Axioms.lean",
                 ROOT / "MIPRE" / "Background" / "QLD" / "Axioms.lean",
@@ -324,6 +428,7 @@ def build():
     xref_counts["axioms_declared"] = len(ax_found)
     xref_counts["leanok_claimed"] = n_claimed
     xref_counts["leanok_guarded"] = n_guarded
+    xref_problems.extend(text_mode_specials())
     undef, used_cmds, defined_cmds = undefined_macros()
     xref_counts["commands_used"] = used_cmds
     xref_counts["commands_defined"] = defined_cmds
