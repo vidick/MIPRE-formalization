@@ -1122,6 +1122,45 @@ the two nested Cauchy-Schwarz chains, the constant is `lem:qld-obs-commutation`'
 `lem:qld-combined-points`' `461411328`. That is a property of the whole appendix, not of this step,
 but it is worth writing down once.
 
+### `lem:qld-padded-lines` closed (2026-09-20)
+
+The three items that stood between the consistency bound and a proof-level mark, in order of size.
+
+**The error's functional form.** The statement said `delta_combine = m * poly(eps, md/q)`; the route
+taken gives `m^2 * delta_P`. Repaired in the blueprint to `poly(m) * poly(eps, md/q)`, which is what
+is proved and what `lem:qld-4-7` consumes (its `a(md)^a` prefactor absorbs any polynomial factor in
+`m`). This is a blueprint repair rather than a weakening of the Lean: the paper's own bound is
+`m * (eps^{1/4} + delta_P^{1/4} + ...)`, and neither dominates the other everywhere.
+
+**The other register version.** `padded_lines_consistency_swap`: the first version applied to the
+swapped strategy on the swapped state, read back through `extHat_swapVec` and `bornProb_swapVec` --
+the route `Swap.lean` already takes for the expansion stage's point items. Two new Foundations-level
+facts were needed: `extVec2_swapVec` (swapping the state swaps the twice-extended state, exchanging
+the two ancilla labels with it) and `xSqNorm_swapVec`. They sit in `PaddedLines.lean` because
+`Foundations/Sandwich.lean` (`extVec2`) and `Foundations/StateDistance.lean` (`swapVec`) do not import
+each other. A pleasant surprise: the first of the three mirrored inputs is the *original* `hX1`,
+because `xSqNorm_swapVec` exchanges its two arguments and `hX1` is already in that orientation.
+
+**The axis-parallel degree bound.** Half of `lem:qld-axis-degree` is now formalized and half is not,
+and the split is worth stating precisely because it is not where one would guess.
+
+* Formalized: `natDegree_lineRestrict_single_le` --- the restriction of a polynomial to `u_0 + t e_j`
+  has degree at most its individual degree in `X_j`, since every other substitution is a constant. So
+  a multilinear encoding restricts to an affine function of the line parameter, and
+  `degLE_hatLine_outcome` adds that to a legal axis answer (degree `d` by the answer *type* here) for
+  degree `d` when `d >= 1`.
+* Not formalized: the phrase "can be supported". The strategy's line measurement is indexed by *all*
+  answers, and a `dpoly` answer to an axis-parallel question --- rejected by the decider, but still an
+  element of the measurement --- gives an outcome of degree up to `md`. Making the measurement
+  supported on degree `d` means coarse-graining those into a default outcome and re-deriving
+  `lem:qld-expanded-lines`' two items for the modified measurement at the cost of the format-failure
+  probability. That is a piece of work in its own right.
+
+So `lem:qld-padded-lines` states its degree-`d` clause *conditionally* on `lem:qld-axis-degree`, which
+is how `degLE_padCombine_aline` has taken it all along, and is now marked formalized --- statement and
+proof --- with its 178 axiom guards. `lem:qld-axis-degree` remains an additional target, with the
+remaining half characterized in its Comments.
+
 ### PR D — separation, the swap isometry, and the theorem
 
 `lem:qld-helper`, `lem:qld-exact-paulis`, `lem:qld-swap`, `thm:qld`. Two things to hold on to:

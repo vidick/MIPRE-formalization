@@ -1027,7 +1027,8 @@ a sum index type is a pair of assignments to the summands, uniform and independe
 bookkeeping -- rewriting under nested sums, reordering them, and pulling a constant out -- that a
 block decomposition then needs. -/
 
-#guard_sorry_free MIPRE.sumArrow,
+#guard_sorry_free MIPRE.avg_comp_equiv_fst,
+  MIPRE.sumArrow,
   MIPRE.sum_arrow_pair,
   MIPRE.sum_arrow_inl,
   MIPRE.sum_congr1,
