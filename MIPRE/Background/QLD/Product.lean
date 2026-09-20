@@ -43,8 +43,6 @@ set_option linter.unusedSectionVars false
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ} [NeZero m]
 
-instance : Nonempty (LPData F m) := ⟨⟨0, 0, 0⟩⟩
-
 /-! ## Reading a content as line-point data, and back -/
 
 /-- The `X`-side line-point data a content carries: its `X` point, its seed, its raw direction. -/
