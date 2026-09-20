@@ -74,12 +74,44 @@ With those, `lem:qld-4-13` follows from `pairs_of_lines_prod_of_items` by
 
 Claims 17-1, 17-2 and 17-3 are not used. Step 1 is the only part not yet formalized.
 
-The error obtained this way is `m^2 * delta_P`-shaped rather than the paper's
-`O(m(eps^{1/4} + delta_P^{1/4} + delta_Q^{1/4} + delta_Line^{1/2}))`. That is **not** of the form
-`m * poly(eps, md/q)` that the statement of `lem:qld-4-13` advertises, but it is of the form
-`poly(m) * poly(eps, md/q)`, and `lem:qld-4-7` --- the only consumer --- absorbs any polynomial
-factor in `m` into its `a(md)^a` prefactor. For small `delta_P` the new bound is also the stronger
-one.
+Claims 17-1, 17-2 and 17-3 are not used. **Update: all of this is now formalized**, in
+`MIPRE/Background/QLD/PaddedLines.lean`; `padded_lines_consistency` is the bound.
+
+## How big is `delta_P`, and how do the two errors compare?
+
+`delta_P` is `deltaPairs eps eps_c`, the error of `lem:qld-pairs-of-lines`. Unfolded
+(`Lines.lean`, `Combined.lean`):
+
+    deltaQ eps       = 2 sqrt(57676416 eps) + sqrt(86 eps) + 86 eps
+    kappaPairs eps   = 4 deltaQ eps + 461411328 eps
+    deltaPairsD eps  = 20 kappaPairs eps + 1376 eps
+    deltaPairs eps e = deltaPairsD eps / 2 + sqrt(deltaPairsD eps / 2)
+                         + sqrt(32 deltaPairsD eps + 4 sqrt(172 eps) + 2 e)
+
+so for small `eps` and `eps_c`
+
+    delta_P  ~  7 * 10^3 * eps^{1/4}  +  1.5 * sqrt(eps_c),        eps_c = md/q (+ 1/q diagonal).
+
+Two things follow, and neither is specific to this route --- they are properties of the chain as a
+whole.
+
+* **`delta_P` is not small in any absolute sense.** It exceeds `1` --- i.e. says nothing --- unless
+  `eps <~ 4 * 10^{-16}` and `md/q <~ 0.2`. The `eps^{1/4}` comes from the two nested square roots
+  (the sandwich's Cauchy--Schwarz chain inside `deltaQ`, then the pasting lemma's), and the constant
+  from `lem:qld-obs-commutation`'s `57676416` and `lem:qld-combined-points`' `461411328`. Every
+  stage of the appendix multiplies constants this way; `thm:qld` is an asymptotic statement and its
+  consumers take `eps` polynomially small.
+* **The comparison with the paper's bound is not uniform.** The paper gets
+  `O(m(eps^{1/4} + delta_P^{1/4} + ...))`, which contains `delta_P^{1/4} ~ eps^{1/16}`; this route
+  gets `m^2 delta_P ~ m^2 eps^{1/4}`. So `m^2 delta_P <= m delta_P^{1/4}` exactly when
+  `delta_P <= m^{-4/3}`, i.e. when `eps <~ 4 * 10^{-16} m^{-16/3}`. In that regime --- the regime
+  `lem:qld-4-7` is applied in --- this route is very much the better bound, by a fourth power in
+  `eps`; outside it the paper's is better. Neither dominates everywhere.
+
+The functional form is `poly(m) * poly(eps, md/q)` rather than the `m * poly(eps, md/q)` the
+statement of `lem:qld-4-13` advertises. `lem:qld-4-7` --- the only consumer --- absorbs any
+polynomial factor in `m` into its `a(md)^a` prefactor, so the difference is harmless there, but the
+statement of `lem:qld-4-13` should be corrected to say `poly(m)` if this route is adopted.
 
 ## Suggested upstream action
 

@@ -2855,7 +2855,13 @@ primes on $w_X, w_Z$, and the unspecified law of the coordinate registers $s_X, 
   MIPRE.QLD.shiftAB_shiftAB, MIPRE.QLD.shiftAB_zero, MIPRE.QLD.bijective_shiftAB,
   MIPRE.QLD.subX_shiftAB, MIPRE.QLD.subZ_shiftAB, MIPRE.QLD.sumSubAt,
   MIPRE.QLD.sumSub_eq_sum_sumSubAt, MIPRE.QLD.sumSubAt_shiftAB, MIPRE.QLD.sumSubAB,
-  MIPRE.QLD.avgSubAB, MIPRE.QLD.sumSubAB_eq, MIPRE.QLD.avgSubAB_le_of_forall}
+  MIPRE.QLD.avgSubAB, MIPRE.QLD.sumSubAB_eq, MIPRE.QLD.avgSubAB_le_of_forall,
+  MIPRE.QLD.avgAll_sub, MIPRE.QLD.sumSub_mono, MIPRE.QLD.avgSub_mono, MIPRE.QLD.sumSub_one,
+  MIPRE.QLD.avgSub_one, MIPRE.QLD.sumSubAt_sub, MIPRE.QLD.sumSubAB_sub, MIPRE.QLD.avgSubAB_sub,
+  MIPRE.QLD.avgSubAB_one, MIPRE.QLD.sum_bornProb_le_fibre, MIPRE.QLD.sum_bornProb_diag_le_one,
+  MIPRE.QLD.pasteEval, MIPRE.QLD.pasteFib, MIPRE.QLD.pasteFib_eq, MIPRE.QLD.posSemidef_pasteFib,
+  MIPRE.QLD.sum_pasteFib, MIPRE.QLD.ptComb, MIPRE.QLD.lineComb,
+  MIPRE.QLD.lineComb_eq_sum_pasteFib, MIPRE.QLD.padded_lines_consistency}
 For every padded line $\ell$, there is a POVM with polynomial outcomes of
 degree at most $md+1$, and at most $d$ when $\ell$ is axis-parallel.
 On the padded line--point distribution it is consistent with the opposite
@@ -2976,14 +2982,29 @@ fixed, so they are uniform and independent of everything else and a bound holdin
 $(\alpha,\beta)$ holds for the joint law. No refinement of the block decomposition is needed. The
 report is \texttt{reports/padded-lines-product-law.md}.
 
-\textbf{What remains: one data-processing step.} With the above, the lemma follows from
-\texttt{pairs\_of\_lines\_prod\_of\_items} by coarse-graining the outcome pair
-$(f_X(x), f_Z(z))$ along $(r_1,r_2) \mapsto \alpha r_1 + \beta r_2$, which only increases agreement,
-and then applying the two domination lemmas. That coarse-graining is the only piece not formalized;
-it needs the two families presented as \texttt{POVM} structures so that
-\texttt{sum\_bornProb\_le\_map} applies. The error it yields is $m^2 \cdot \delta_P$-shaped
-rather than the paper's $m \cdot \poly$; see the report for why
-Lemma~\ref{lem:qld-simultaneous}'s prefactor absorbs the difference.
+\textbf{The consistency bound is proved}, in
+\texttt{MIPRE/Background/QLD/PaddedLines.lean}. \texttt{padded\_lines\_consistency} is it: on the
+padded line--point law, at every padded seed and line type, the combined point measurement read along
+$(\alpha,\beta)$ at the sampled point agrees with the pasted line measurement coarse-grained by the
+combining map, up to $m^2 \cdot \delta_P$. The proof is the coarse-graining step
+(\texttt{sum\_bornProb\_le\_fibre}: agreement only increases under a common coarse-graining, for
+bare matrix families rather than \texttt{POVM} structures, which is what the pasted measurement is)
+followed by the two domination lemmas.
+
+\textbf{Why the lemma is not yet marked as formalized.} Three things the statement above
+asserts are not proved. \emph{(i)} The error is $m^2 \cdot \delta_P$, of the form
+$\poly(m)\cdot\poly(\eps, md/q)$ rather than the $m \cdot \poly(\eps,md/q)$ written here ---
+Lemma~\ref{lem:qld-simultaneous}'s $a(md)^a$ prefactor absorbs the difference, and in the regime it
+is applied in the new bound is the stronger of the two by a fourth power in $\eps$, but the statement
+should be corrected to $\poly(m)$ before it is claimed. \emph{(ii)} Only one register version is
+proved; the symmetric one follows by the game's player symmetry, as
+\texttt{sum\_content\_hatComm\_le\_B} does it elsewhere, but it is not written. \emph{(iii)} The
+degree bound $d$ on an axis-parallel line is conditional on
+Lemma~\ref{lem:qld-axis-degree}, which is an additional target there.
+\texttt{reports/padded-lines-product-law.md} records all three, together with the size of
+$\delta_P$ itself: $\delta_P \approx 7\cdot10^3\,\eps^{1/4} + 1.5\sqrt{md/q}$, so the bound is
+vacuous unless $\eps \leq 4\cdot 10^{-16}$ --- a property of the whole chain's constants, not of
+this step.
 
 \effortHard
 
