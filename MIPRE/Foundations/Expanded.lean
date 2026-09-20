@@ -90,6 +90,10 @@ theorem expVec_unit {ψ : dA × dB → ℂ} {e : anc × anc' → ℂ} (hψ : sta
     (he : star e ⬝ᵥ e = 1) : star (expVec ψ e) ⬝ᵥ expVec ψ e = 1 := by
   rw [expVec_dotProduct, hψ, he, mul_one]
 
+/-- **Exchanging the two parties of the expanded state exchanges both factors.** -/
+theorem swapVec_expVec (ψ : dA × dB → ℂ) (e : anc × anc' → ℂ) :
+    swapVec (expVec ψ e) = expVec (swapVec ψ) (swapVec e) := rfl
+
 /-- **An operator of product form acts on the expanded state factor by factor.** -/
 theorem mulVec_kron_expVec (ψ : dA × dB → ℂ) (e : anc × anc' → ℂ) (M : Matrix dA dA ℂ)
     (N : Matrix anc anc ℂ) :
