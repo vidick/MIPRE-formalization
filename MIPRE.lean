@@ -393,7 +393,9 @@ import MIPRE.Background.QLD.Commutation
 import MIPRE.Background.QLD.Consistency
 import MIPRE.Background.QLD.Expanded
 import MIPRE.Background.QLD.Game
+import MIPRE.Background.QLD.Lines
 import MIPRE.Background.QLD.Ortho
+import MIPRE.Background.QLD.Padded
 import MIPRE.Background.QLD.Swap
 import MIPRE.Background.QLD.Win
 import MIPRE.Background.QLD.WinMS
@@ -631,6 +633,7 @@ import MIPRE.Foundations.OracularSound
 import MIPRE.Foundations.POVMValue
 import MIPRE.Foundations.PVM
 import MIPRE.Foundations.Parseval
+import MIPRE.Foundations.Pasting
 import MIPRE.Foundations.PerfectStrategy
 import MIPRE.Foundations.Pipeline.AnswerReduction
 import MIPRE.Foundations.Pipeline.Budget

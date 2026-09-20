@@ -1,4 +1,13 @@
 # Configures the latexmk command used by `leanblueprint pdf`.
+#
+# -halt-on-error is deliberate, and it is a diagnostic rather than a policy. Under plain
+# nonstopmode pdflatex prints an error, carries on to the end of the document, writes the
+# PDF, and only then exits 1; latexmk therefore refuses to rerun, reports thousands of
+# unresolved references, and the CI log has no `!` line anywhere near its tail. The
+# blueprint on `main` has been red that way before (see CLAUDE.md on \downsize), and is red
+# again since #118 with the error invisible -- reports/blueprint-print-build-red.md. Halting
+# at the first error puts that error at the end of the log, where the CI log viewer shows
+# it. A build with no errors is unaffected.
 $pdf_mode = 1;
-$pdflatex = 'pdflatex -synctex=1 -interaction=nonstopmode';
+$pdflatex = 'pdflatex -synctex=1 -interaction=nonstopmode -halt-on-error';
 @default_files = ('print.tex');

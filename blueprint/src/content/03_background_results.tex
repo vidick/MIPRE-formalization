@@ -2260,14 +2260,59 @@ Same-side operator comparisons use Definition~\ref{def:state-distance}.
 \begin{lemma}[Combined $XZ$ point measurements]
 \label{lem:qld-combined-points}
 \ledgernode{1.2.2.8}
-\uses{thm:linearity,lem:qld-expanded-points,def:state-distance}
-There is $\delta_Q(\eps) = \poly(\eps)$ and, for every pair $(x, z) \in \F_q^m \times \F_q^m$,
-a projective measurement $\widehat{Q}^{x, z}_{a, b}$ jointly returning the $X$-value at $x$
-and the $Z$-value at $z$, self-consistent on average over uniform $(x, z)$ and consistent
-with \emph{both} ordered products $\widehat{M}^Z_b \widehat{M}^X_a$ and
-$\widehat{M}^X_a \widehat{M}^Z_b$ of the expanded point measurements. It is built as a Fourier
-transform of the exactly linear family supplied by Theorem~\ref{thm:linearity}. Its marginals
-are not claimed here; they are obtained in Lemma~\ref{lem:qld-pairs-of-lines}.
+\uses{lem:qld-expanded-points,lem:naimark-dilation,def:expanded-state,def:distance}
+\lean{MIPRE.fourierVec, MIPRE.sum_norm_fourierVec_sq, MIPRE.trObs, MIPRE.trFourier,
+  MIPRE.trFourier_trObs, MIPRE.trObs_map, MIPRE.pairVec, MIPRE.sum_prod_eq_sum_pairVec,
+  MIPRE.fourierOf_pair_mul, MIPRE.sum_stateSqNorm_fourierOf, MIPRE.obs2_map,
+  MIPRE.swapVec_expVec, MIPRE.Weyl.swapVec_epr, MIPRE.bornProb_swapVec,
+  MIPRE.povmValue_swapVec_of_symm, MIPRE.sum_weighted_mul_le_sqrt,
+  MIPRE.sum_weighted_sqrt_le, MIPRE.abs_qform_conjTranspose_mul_le, MIPRE.proj_le_one,
+  MIPRE.snorm_le_one_of_proj, MIPRE.bornProb_eq_qform, MIPRE.abs_qform_aOp_mul_bOp_le,
+  MIPRE.stateNorm_mul_le, MIPRE.norm_stateVecB_mul_le, MIPRE.xSqNorm_eq_expand,
+  MIPRE.one_sub_sum_bornProb_eq, MIPRE.sand, MIPRE.sum_sand, MIPRE.sandPOVM,
+  MIPRE.sum_stateSqNorm_ord, MIPRE.abs_link1_le, MIPRE.abs_link2_le, MIPRE.abs_link3_le,
+  MIPRE.link4_eq, MIPRE.link5_eq, MIPRE.one_sub_sum_bornProb_sand_le, MIPRE.extVec2,
+  MIPRE.extVec2_unit, MIPRE.bornProb_extVec2, MIPRE.sum_xSqNorm_dilated_eq,
+  MIPRE.sum_xSqNorm_dilated_aOp_le, MIPRE.exists_projective_joint,
+  MIPRE.QLD.pairTest_symm, MIPRE.QLD.accepts_symm, MIPRE.QLD.qldGame_mu_symm,
+  MIPRE.QLD.povmValue_qldGame_swapVec, MIPRE.QLD.hatVec_swapVec, MIPRE.QLD.hatPtPOVM,
+  MIPRE.QLD.hatPOVM_eq, MIPRE.QLD.hatMats, MIPRE.QLD.hatObsAt, MIPRE.QLD.hatObsAt_eq,
+  MIPRE.QLD.trObs_ptVal, MIPRE.QLD.trObs_synPOVM, MIPRE.QLD.hatObsAt_self,
+  MIPRE.QLD.hatComm, MIPRE.QLD.hatComm_eq_fourierOf, MIPRE.QLD.sum_stateSqNorm_hatComm,
+  MIPRE.QLD.isPVM_hatMats, MIPRE.QLD.sum_content_split, MIPRE.QLD.sum_content_avg_probe,
+  MIPRE.QLD.sum_content_hatComm_le, MIPRE.QLD.sum_content_hatComm_le_B,
+  MIPRE.QLD.sum_content_hatMats_consistency, MIPRE.QLD.deltaQ, MIPRE.QLD.combined_points}
+\leanok
+Let $\ket{\hat\psi}$ be as in Lemma~\ref{lem:qld-expanded-points}, and suppose both players'
+measurements are projective --- without loss of generality, by
+Lemma~\ref{lem:naimark-dilation}. Put
+\begin{equation*}
+  \delta_Q(\eps) \;=\; 2\sqrt{57676416\,\eps} \;+\; \sqrt{86\,\eps} \;+\; 86\,\eps
+  \;=\; \poly(\eps)\;.
+\end{equation*}
+Then for every pair $(x, z) \in \F_q^m \times \F_q^m$ and each player there is a
+\emph{projective} measurement $\{\widehat{Q}^{x, z}_{a, b}\}_{a, b \in \F_q}$, acting on that
+player's expanded space enlarged by one $\F_q \times \F_q$ ancilla register held in the state
+$\ket{0, 0}$, which jointly returns the $X$-value at $x$ and the $Z$-value at $z$ and satisfies,
+on average over the verifier's content:
+\begin{enumerate}
+\item (\textbf{Self-consistency})
+  $\widehat{Q}^{x, z}_{a, b} \ot \Id \;\simeq_{2 \delta_Q}\; \Id \ot \widehat{Q}^{x, z}_{a, b}$;
+\item (\textbf{Consistency with the ordered products})
+  \begin{gather*}
+    \widehat{Q}^{x, z}_{a, b} \ot \Id \;\simeq_{4 \delta_Q + 115352832 \eps}\;
+      \Id \ot \widehat{M}^{(\mathtt{Point}, Z), z}_b \widehat{M}^{(\mathtt{Point}, X), x}_a\;, \\
+    \widehat{Q}^{x, z}_{a, b} \ot \Id \;\simeq_{4 \delta_Q + 461411328 \eps}\;
+      \Id \ot \widehat{M}^{(\mathtt{Point}, X), x}_a \widehat{M}^{(\mathtt{Point}, Z), z}_b\;.
+  \end{gather*}
+\end{enumerate}
+Moreover $\widehat{Q}^{x, z}$ compresses, along the isometry that adjoins $\ket{0, 0}$, to the
+\textbf{sandwich}
+$\widehat{R}^{x, z}_{a, b} = \widehat{M}^{(\mathtt{Point}, Z), z}_b
+\widehat{M}^{(\mathtt{Point}, X), x}_a \widehat{M}^{(\mathtt{Point}, Z), z}_b$. The conclusions
+depend on the content only through $(x, z)$, whose marginal is uniform, so ``on average over the
+content'' is ``on average over uniform $(x, z)$''. The marginals of $\widehat{Q}^{x,z}$ are not
+claimed here; they are obtained in Lemma~\ref{lem:qld-pairs-of-lines}.
 \end{lemma}
 
 \begin{proof}
@@ -2387,17 +2432,126 @@ weaker general bound $md$.
 \begin{lemma}[Pairs of lines]
 \label{lem:qld-pairs-of-lines}
 \ledgernode{1.2.2.9}
-\uses{lem:qld-combined-points,lem:qld-expanded-lines,lem:qld-axis-degree,def:cross-distance}
-There is $\delta_P=\poly(\eps,md/q)$ and a POVM $T^{\ell_X,\ell_Z}_{f_X,f_Z}$
-for each pair of lines. Its outcomes have degree at most $md$ on each line,
-and degree at most $d$ on any axis-parallel component. Independently draw
-$(\ell_X,x)$ and $(\ell_Z,z)$ from the unpadded line--point distribution.
-On this product distribution, evaluation of $T$ at $(x,z)$ is consistent with
-the opposite side's combined point measurement, with error at most a universal
-constant times $\delta_P$. Both register versions and their player mirrors
-are required. Restriction to specified line types and direction indices costs
-the reciprocal probability of those choices, at most $4m^2$.
+\uses{lem:qld-combined-points,lem:qld-expanded-lines,lem:pasting-updated,
+  lem:cool-closeness-fact,lem:schwartz-zippel}
+\lean{MIPRE.QLD.toPoly, MIPRE.QLD.natDegree_toPoly_le, MIPRE.QLD.eval_toPoly,
+  MIPRE.QLD.coeff_toPoly, MIPRE.QLD.toPoly_injective, MIPRE.QLD.card_agree_linePoly_le,
+  MIPRE.QLD.lineParam_add_smul, MIPRE.QLD.rep_add_smul, MIPRE.QLD.Content.shiftPt,
+  MIPRE.QLD.Content.shiftAlong, MIPRE.QLD.Content.shiftV, MIPRE.QLD.bijective_shift_gen,
+  MIPRE.QLD.sum_content_shift_gen, MIPRE.QLD.sum_content_shiftAlong,
+  MIPRE.QLD.dirOf_shiftPt, MIPRE.QLD.ddirOf_shiftPt, MIPRE.QLD.abaseOf_shiftAlong,
+  MIPRE.QLD.dbaseOf_shiftAlong, MIPRE.QLD.question_aline_shiftAlong,
+  MIPRE.QLD.question_dline_shiftAlong, MIPRE.QLD.hatLinePOVM_congr, MIPRE.QLD.LinePres,
+  MIPRE.QLD.LinePres.param, MIPRE.QLD.LinePres.param_shiftAlong,
+  MIPRE.QLD.LinePres.lineMats, MIPRE.QLD.LinePres.lineEvalMats,
+  MIPRE.QLD.LinePres.isPVM_lineMats, MIPRE.QLD.LinePres.isPVM_lineEvalMats,
+  MIPRE.QLD.LinePres.lineEvalMats_eq_fibSum, MIPRE.QLD.LinePres.lineMats_shiftAlong,
+  MIPRE.QLD.LinePres.lineEvalMats_shiftPt_other, MIPRE.QLD.aPres, MIPRE.QLD.dPres,
+  MIPRE.QLD.aPres_dir_ne_zero, MIPRE.QLD.collProb, MIPRE.QLD.card_collide_le,
+  MIPRE.QLD.sum_content_degenerate_le, MIPRE.QLD.sum_content_collProb_aPres,
+  MIPRE.QLD.sum_content_collProb_dPres, MIPRE.QLD.valOf, MIPRE.QLD.pairEquiv,
+  MIPRE.QLD.extHat, MIPRE.QLD.sum_content_normSq_point_line_le,
+  MIPRE.QLD.sum_xSqNorm_marg_point_le, MIPRE.QLD.sum_xSqNorm_marg_line_le_aux,
+  MIPRE.QLD.sum_content_marg_line_le, MIPRE.QLD.pasteLine, MIPRE.QLD.fibSum_aOp,
+  MIPRE.QLD.pasteJ_eq_pasteLine, MIPRE.QLD.pairs_of_lines, MIPRE.QLD.kappaPairs,
+  MIPRE.QLD.deltaPairsD, MIPRE.QLD.deltaPairs, MIPRE.QLD.pairs_of_lines_of_items,
+  MIPRE.QLD.aPres_items, MIPRE.QLD.dPres_items, MIPRE.QLD.qld_pairs_of_lines,
+  MIPRE.xSqNorm_extVec2_aOp, MIPRE.normSq_stateVecB_sub_le}
+\leanok
+Let $\ket{\hat\psi}$ and $\{\widehat{Q}^{x,z}_{a,b}\}$ be as in
+Lemma~\ref{lem:qld-combined-points}. Fix a \emph{line presentation} on each side --- a line type,
+axis-parallel or diagonal, so that each content presents a line $\ell_W$ with a base point and a
+direction on side $W$, and the sampled point $u_W$ lies on it. For a pair of degree-$md$
+polynomials $(f_X, f_Z)$ on the two lines put
+\begin{equation*}
+  T^{\ell_X, \ell_Z}_{f_X, f_Z}
+    \;=\; \widehat{M}^{(\mathtt{Line}, X), \ell_X}_{f_X}\,
+      \widehat{M}^{(\mathtt{Line}, Z), \ell_Z}_{f_Z}\,
+      \widehat{M}^{(\mathtt{Line}, X), \ell_X}_{f_X}\;,
+\end{equation*}
+which is a POVM with outcomes pairs of degree-$md$ polynomials. Then, on average over the
+verifier's content,
+\begin{equation}
+  \label{eq:qld-pairs-of-lines-bp}
+  \widehat{Q}^{x,z}_{a,b} \ot \Id
+    \;\simeq_{2 \delta_P}\; \Id \ot T^{\ell_X, \ell_Z}_{[\mathrm{eval}_x(\cdot) = a,\,
+      \mathrm{eval}_z(\cdot) = b]}\;,
+\end{equation}
+with $\delta_P = \poly(\eps, \eps_c)$ where $\eps_c$ is the average collision probability of the
+$X$-side evaluation map: $md/q$ for an axis-parallel line and $md/q + 1/q$ for a diagonal one.
 \end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:qld-combined-points,lem:qld-expanded-lines,lem:pasting-updated,
+  lem:cool-closeness-fact,lem:schwartz-zippel}
+This is the pasting lemma (Lemma~\ref{lem:pasting-updated}) at
+$G_1 = \widehat{M}^{(\mathtt{Line}, Z), \ell_Z}$, $G_2 = \widehat{M}^{(\mathtt{Line}, X),
+\ell_X}$ and $A = \widehat{Q}^{x,z}$, and what has to be supplied is its four hypotheses.
+
+\textbf{The two marginal consistencies.} Lemma~\ref{lem:qld-combined-points} gives the joint
+measurement against the \emph{ordered product} of the two point measurements, in either order; the
+marginal step of Lemma~\ref{lem:cool-closeness-fact} turns each of those into the corresponding
+marginal against a single point measurement, at ten times the input. Replacing that point
+measurement by the line measurement evaluated at the point is one triangle inequality through
+Bob's own point measurement --- whose two legs are item 1 of Lemma~\ref{lem:qld-expanded-points}
+(Alice's copy against Bob's) and item 2 of Lemma~\ref{lem:qld-expanded-lines} (Alice's point
+against Bob's line).
+
+\textbf{The fine-grained self-consistency of the $X$-line measurement} is item 1 of
+Lemma~\ref{lem:qld-expanded-lines} verbatim. The joint measurement lives on each party's space
+enlarged by one $\F_q \times \F_q$ register and the line measurements do not, so both inputs are
+transported by the fact that an operator with an inert ancilla has the same cross-party deviation
+on the extended state as the operator itself.
+
+\textbf{The collision term} needs the point to be uniform on its line once the line is fixed. The
+content determines both, so the factorization is produced by \emph{shifting}: for a fixed
+$t \in \F_q$ the map that replaces $u_W$ by $u_W + t \cdot w_W$ is a bijection of contents, so
+averaging over contents and over (content, shift) pairs give the same thing; the line's question,
+base point and direction are invariant under it; and the point's parameter moves by exactly $t$.
+Two distinct degree-$md$ polynomials then agree at at most $md$ of the $q$ parameters, which is the
+univariate case of Lemma~\ref{lem:schwartz-zippel}.
+\end{proof}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Background/QLD/Lines.lean}, on top of
+Lemma~\ref{lem:pasting-updated} in \texttt{MIPRE/Foundations/Pasting.lean}. The headline
+declaration \texttt{qld\_pairs\_of\_lines} takes only game-level hypotheses --- a strategy, its
+projectivity, and $1 - \val \leq \eps$ --- and produces the joint measurement together
+with~\eqref{eq:qld-pairs-of-lines-bp} at the axis-parallel line of each side;
+\texttt{pairs\_of\_lines\_of\_items} is the same statement for any pair of presentations, and
+\texttt{aPres\_items}, \texttt{dPres\_items} and \texttt{sum\_content\_collProb\_dPres} are what
+the other three pairs of line types need.
+
+\textbf{Per pair of line types, not for the mixture.} The paper states the lemma on average over
+the line--point distribution, which is an equal mixture of the axis-parallel and diagonal
+branches. Here the line type is a parameter and the statement is proved for each of the four
+pairs, which is \emph{stronger}: the mixture is a convex combination of the four.
+
+\textbf{A degenerate diagonal line makes the collision probability one, and the paper's
+$\eps = md/q$ does not account for it.} The seeded test's diagonal direction is
+$\mathtt{zeroBelow}(\chi(s), v)$, which vanishes for a $1/q$ fraction of the contents at worst; on
+such a content the ``line'' is a single point, every polynomial is evaluated at the same parameter,
+and two distinct ones can agree with probability $1$. The bound above therefore carries
+$md/q + 1/q$ on the diagonal side, and $\delta_P$ is still $\poly(\eps, md/q)$. See
+\texttt{reports/pasting-degenerate-diagonal-line.md}.
+
+\textbf{The shift replaces the paper's appeal to \texttt{lem:alnf} and \texttt{lem:dlnf}.} Those
+say that conditioned on the line the point is uniform on it, which is what the collision bound
+uses. Rather than form the conditional distribution, the formalization shifts the point along the
+direction and uses that the shift is a bijection of contents for each fixed $t$
+(\texttt{sum\_content\_shift\_gen}); the same device, applied to the raw direction $v$ instead of
+the point, is what bounds the probability of a degenerate diagonal line.
+
+\textbf{What the refined contract still asks for.} Three items of the contract recorded for this
+lemma are not part of what is proved above, and are wanted by the lemmas that consume it: that the
+outcome polynomials have degree at most $d$ on an axis-parallel component, which is
+Lemma~\ref{lem:qld-axis-degree} and an additional target there; that the two lines be drawn
+\emph{independently}, which needs the padded line--point distribution of
+Lemma~\ref{lem:qld-padded-lines} rather than the single content used here; and the restriction to
+specified line types and direction indices, which costs the reciprocal probability of those
+choices, at most $4m^2$. The version above fixes the line type on each side as a parameter and is
+proved for each of the four pairs, so the restriction factor is not incurred; the reciprocal cost
+appears only when a caller wants the statement for the mixture.
 
 \effortMedium
 
@@ -2501,6 +2655,22 @@ r\beta)$.
 \label{lem:qld-sublines}
 \ledgernode{1.2.2.11}
 \uses{def:lidt-cl}
+\lean{MIPRE.QLD.seedEquiv, MIPRE.QLD.seedIn, MIPRE.QLD.chi_seedIn, MIPRE.QLD.seedIn_self,
+  MIPRE.QLD.sum_seedIn, MIPRE.QLD.xIdx, MIPRE.QLD.zIdx, MIPRE.QLD.aIdx, MIPRE.QLD.bIdx,
+  MIPRE.QLD.xBlk, MIPRE.QLD.zBlk, MIPRE.QLD.alph, MIPRE.QLD.bet, MIPRE.QLD.xBlk_add_smul,
+  MIPRE.QLD.zBlk_add_smul, MIPRE.QLD.PadCase, MIPRE.QLD.padCase, MIPRE.QLD.padCase_eq_xc,
+  MIPRE.QLD.padCase_eq_zc, MIPRE.QLD.xBlk_single_xIdx, MIPRE.QLD.xBlk_single_of_le,
+  MIPRE.QLD.zBlk_single_zIdx, MIPRE.QLD.zBlk_single_of_lt, MIPRE.QLD.zBlk_single_of_ge,
+  MIPRE.QLD.xBlk_zeroBelow_of_le, MIPRE.QLD.xBlk_zeroBelow_xIdx,
+  MIPRE.QLD.zBlk_zeroBelow_of_le, MIPRE.QLD.zBlk_zeroBelow_zIdx,
+  MIPRE.QLD.zBlk_zeroBelow_of_ge, MIPRE.QLD.LPData, MIPRE.QLD.LPData.question,
+  MIPRE.QLD.LPData.dir, MIPRE.QLD.LPData.base_aline, MIPRE.QLD.LPData.base_dline,
+  MIPRE.QLD.subXof, MIPRE.QLD.subX, MIPRE.QLD.subZof, MIPRE.QLD.subZ, MIPRE.QLD.subX_pt,
+  MIPRE.QLD.subZ_pt, MIPRE.QLD.xBlk_dir_sub, MIPRE.QLD.zBlk_dir_sub,
+  MIPRE.QLD.on_line_of_eq_or_zero, MIPRE.QLD.xBlk_on_subX, MIPRE.QLD.zBlk_on_subZ,
+  MIPRE.QLD.xBlk_on_subX_aline, MIPRE.QLD.xBlk_on_subX_dline,
+  MIPRE.QLD.zBlk_on_subZ_aline, MIPRE.QLD.zBlk_on_subZ_dline,
+  MIPRE.QLD.subX_question_aline, MIPRE.QLD.subZ_question_aline}
 For the seeded padded line distribution on $\F_q^{4m}$ there is a distribution
 of $(\ell,\ell_X,\ell_Z)$ with the following properties. Its $\ell$-marginal
 is the padded line marginal. Every $u=(u_X,u_Z,\alpha,\beta,w)\in\ell$
@@ -2524,6 +2694,47 @@ separately. The mixture concerns the pair of line marginals; these precise
 conditionings are what permits application of the product-distribution estimate
 of Lemma~\ref{lem:qld-pairs-of-lines}.
 \end{proof}
+
+\paragraph{Comments.} Partly formalized, in
+\texttt{MIPRE/Background/QLD/Padded.lean}. What is there is the padding geometry and the
+construction; what is not is the distributional half of the second property. Neither mark is
+set, and the split is worth stating precisely because the two halves are independent pieces of
+work.
+
+\textbf{Formalized: the construction and the containment.} \texttt{LPData} is the triple
+$(u, s, v)$ a seeded line--point pair is generated from, in either dimension; \texttt{subX} and
+\texttt{subZ} are the paper's sampling procedure, reading the two $m$-dimensional pairs off a
+padded one together with a fresh seed and raw direction per side. \texttt{xBlk\_dir\_sub} and
+\texttt{zBlk\_dir\_sub} are its geometric content: in each of the four cases of
+\texttt{padCase}, the relevant block of the padded direction either \emph{is} the subline's
+direction or vanishes. \texttt{xBlk\_on\_subX} and \texttt{zBlk\_on\_subZ} turn that into the
+containment $u_X \in \ell_X$, $u_Z \in \ell_Z$: a block that moves, moves along the subline, and
+a block that does not move stays at the point, which is on the subline already.
+
+\textbf{Not formalized: the mixture of products.} That the law of $(\ell_X, \ell_Z)$ under a
+uniform point of a padded line is a mixture of products of restricted marginals, with the point
+of each side conditionally uniform on its line, is a pushforward identity for the sampling map.
+It needs the block decomposition of $\F_q^{4m}$ as a measure-preserving product --- that
+precomposition with an injection of index sets sends the uniform measure to the uniform measure
+--- which the file does not yet have. \texttt{sum\_seedIn} is the one piece of it that is proved:
+a uniform seed retargeted to a fixed block is uniform on that block's fibre, which is the
+paper's ``choose $s_X$ uniformly at random subject to $\chi(s_X) = i$''.
+
+\textbf{The third property is definitional here, and that is not a shortcut.} The paper must
+check that an axis-parallel padded line has axis-parallel sublines because its construction
+chooses the subline types; here the line type is a parameter handed to both sides, so
+\texttt{subX\_question\_aline} is immediate. The content the paper draws from its Property~3 ---
+that the directions then match --- is \texttt{xBlk\_dir\_sub} and \texttt{zBlk\_dir\_sub}
+instead.
+
+\textbf{Why $4m$ and where the asymmetry comes from.} $\alpha$ and $\beta$ sit at positions
+$2m$ and $2m+1$, so the dummy block is the $2m-2$ positions above them and every index bound
+needs only $m \geq 1$. The two sides are not symmetric: for an axis-parallel padded line the
+direction is one coordinate, so at most one of the $X$ and $Z$ blocks is nonzero, whereas for a
+diagonal one the direction is $v$ truncated below the axis index, so an index in the $X$ block
+leaves the whole $Z$ block intact and the $Z$ subline is forced too, at axis index $0$. That is
+the only place \texttt{subZ} looks at the line type, and it is the repair the paper's round-12
+note on this lemma records.
 
 \effortHard
 

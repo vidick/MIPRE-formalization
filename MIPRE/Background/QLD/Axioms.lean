@@ -7,6 +7,7 @@ import MIPRE.Background.QLD.Anticomm
 import MIPRE.Background.QLD.Consistency
 import MIPRE.Background.QLD.Expanded
 import MIPRE.Background.QLD.Combined
+import MIPRE.Background.QLD.Lines
 import MIPRE.Foundations.GuardSorryFree
 
 /-!
@@ -251,3 +252,70 @@ identity for the coarse-graining, and the lemma. -/
   MIPRE.QLD.sum_hatOrdXZ,
   MIPRE.QLD.sum_avg_xSqNorm_fibre_eq,
   MIPRE.QLD.padded_points
+
+/-! ## Pairs of lines
+
+Blueprint `lem:qld-pairs-of-lines`. The bridge from coefficient vectors to Mathlib's polynomials
+and the collision count it gives; the content shift, which is what turns the content distribution
+into the product the pasting lemma's collision term needs, and the same device applied to the raw
+direction, which is what makes a degenerate diagonal line rare; the line presentations and their
+invariances; the marginal step at the QLD point measurements; and the lemma, both for an arbitrary
+pair of presentations and with every input discharged from the game. -/
+
+#guard_sorry_free MIPRE.QLD.toPoly,
+  MIPRE.QLD.natDegree_toPoly_le,
+  MIPRE.QLD.eval_toPoly,
+  MIPRE.QLD.coeff_toPoly,
+  MIPRE.QLD.toPoly_injective,
+  MIPRE.QLD.card_agree_linePoly_le,
+  MIPRE.QLD.lineParam_add_smul,
+  MIPRE.QLD.rep_add_smul,
+  MIPRE.QLD.Content.shiftPt,
+  MIPRE.QLD.Content.shiftAlong,
+  MIPRE.QLD.Content.shiftV,
+  MIPRE.QLD.bijective_shift_gen,
+  MIPRE.QLD.sum_content_shift_gen,
+  MIPRE.QLD.sum_content_shiftAlong,
+  MIPRE.QLD.dirOf_shiftPt,
+  MIPRE.QLD.ddirOf_shiftPt,
+  MIPRE.QLD.abaseOf_shiftAlong,
+  MIPRE.QLD.dbaseOf_shiftAlong,
+  MIPRE.QLD.question_aline_shiftAlong,
+  MIPRE.QLD.question_dline_shiftAlong,
+  MIPRE.QLD.hatLinePOVM_congr,
+  MIPRE.QLD.LinePres,
+  MIPRE.QLD.LinePres.param,
+  MIPRE.QLD.LinePres.param_shiftAlong,
+  MIPRE.QLD.LinePres.lineMats,
+  MIPRE.QLD.LinePres.lineEvalMats,
+  MIPRE.QLD.LinePres.isPVM_lineMats,
+  MIPRE.QLD.LinePres.isPVM_lineEvalMats,
+  MIPRE.QLD.LinePres.lineEvalMats_eq_fibSum,
+  MIPRE.QLD.LinePres.lineMats_shiftAlong,
+  MIPRE.QLD.LinePres.lineEvalMats_shiftPt_other,
+  MIPRE.QLD.aPres,
+  MIPRE.QLD.dPres,
+  MIPRE.QLD.aPres_dir_ne_zero,
+  MIPRE.QLD.collProb,
+  MIPRE.QLD.card_collide_le,
+  MIPRE.QLD.sum_content_degenerate_le,
+  MIPRE.QLD.sum_content_collProb_aPres,
+  MIPRE.QLD.sum_content_collProb_dPres,
+  MIPRE.QLD.valOf,
+  MIPRE.QLD.pairEquiv,
+  MIPRE.QLD.extHat,
+  MIPRE.QLD.sum_content_normSq_point_line_le,
+  MIPRE.QLD.sum_xSqNorm_marg_point_le,
+  MIPRE.QLD.sum_xSqNorm_marg_line_le_aux,
+  MIPRE.QLD.sum_content_marg_line_le,
+  MIPRE.QLD.pasteLine,
+  MIPRE.QLD.fibSum_aOp,
+  MIPRE.QLD.pasteJ_eq_pasteLine,
+  MIPRE.QLD.pairs_of_lines,
+  MIPRE.QLD.kappaPairs,
+  MIPRE.QLD.deltaPairsD,
+  MIPRE.QLD.deltaPairs,
+  MIPRE.QLD.pairs_of_lines_of_items,
+  MIPRE.QLD.aPres_items,
+  MIPRE.QLD.dPres_items,
+  MIPRE.QLD.qld_pairs_of_lines

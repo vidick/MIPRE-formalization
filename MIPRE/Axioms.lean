@@ -51,6 +51,7 @@ import MIPRE.Foundations.WeylBinary
 import MIPRE.Foundations.Commutation
 import MIPRE.Foundations.Linearity
 import MIPRE.Foundations.Sandwich
+import MIPRE.Foundations.Pasting
 import MIPRE.Foundations.Expanded
 import MIPRE.Foundations.WeylEPR
 import MIPRE.Foundations.Swap
@@ -605,6 +606,66 @@ tell you the guard is missing.
   MIPRE.sum_mulVec',
   MIPRE.xSqNorm_eq_norm_evec_sq,
   MIPRE.sum_fibre_dev
+
+-- blueprint `lem:cool-closeness-fact`: attaching a family's own element and summing along the
+-- fibres of an outcome map costs nothing, simultaneously over all the fibres; and the marginal
+-- step that consumes it.
+#guard_sorry_free MIPRE.snorm_sq_mul_le_of_contraction,
+  MIPRE.snorm_sq_sum_proj_mul,
+  MIPRE.sum_snorm_sq_cool,
+  MIPRE.sum_fibre_fst,
+  MIPRE.sum_snorm_sq_cool_prod,
+  MIPRE.IsPVM.aOp,
+  MIPRE.IsPVM.bOp,
+  MIPRE.sum_xSqNorm_marg_le,
+  MIPRE.sum_snorm_sq_mul_proj_le,
+  MIPRE.sum_xSqNorm_marg_le',
+  MIPRE.IsPVM.comp_equiv,
+  MIPRE.normSq_stateVecB_sub_le,
+  MIPRE.sum_weighted_const_mul,
+  MIPRE.xSqNorm_extVec2_aOp
+
+-- blueprint `lem:pasting-updated`, the `k = 2` case: Alice's joint projective measurement against
+-- the sandwich of Bob's two families, coarse-grained by evaluation. The collision term is a
+-- hypothesis of the analytic core and a lemma of its own for a product question distribution.
+#guard_sorry_free MIPRE.fibSum,
+  MIPRE.isPVM_fibSum,
+  MIPRE.sum_fiber,
+  MIPRE.abs_sum_sum_le_sqrt,
+  MIPRE.sum_comm4,
+  MIPRE.sum_prod_eq,
+  MIPRE.sum_prod_uniform,
+  MIPRE.sum_prod_uniform_one,
+  MIPRE.sum_weighted_add,
+  MIPRE.sum_weighted_div,
+  MIPRE.qform_conjTranspose,
+  MIPRE.sum_sq_le_one_of_sum_eq_one,
+  MIPRE.sum_snorm_sq_orth_le_one,
+  MIPRE.sum_snorm_sq_povm_le_one,
+  MIPRE.sum_snorm_sq_prod_le_one,
+  MIPRE.sum_bornProb_le_fibSum,
+  MIPRE.sum_xSqNorm_fibSum_le,
+  MIPRE.sum_snorm_sq_comm_eq,
+  MIPRE.pasteJ,
+  MIPRE.sandOp_posSemidef,
+  MIPRE.sum_sandOp,
+  MIPRE.sum_snorm_sq_sandOp_le_one,
+  MIPRE.sandOpG_posSemidef,
+  MIPRE.sum_sandOpG,
+  MIPRE.pasteJ_posSemidef,
+  MIPRE.sum_pasteJ,
+  MIPRE.abs_sigma_sub_cloud_le,
+  MIPRE.abs_sand_sub_ord_le,
+  MIPRE.sum_bornProb_ord_ge,
+  MIPRE.sum_snorm_sq_comm_coarse_le,
+  MIPRE.collisionTerm,
+  MIPRE.collisionTerm_nonneg,
+  MIPRE.strife_sub_cloud_eq,
+  MIPRE.sum_snorm_sq_comm_fine_le,
+  MIPRE.one_sub_sum_bornProb_pasteJ_le',
+  MIPRE.one_sub_sum_bornProb_pasteJ_le,
+  MIPRE.sum_xSqNorm_pasteJ_le,
+  MIPRE.sum_collisionTerm_le
 
 /-!
 ## The one axiom
