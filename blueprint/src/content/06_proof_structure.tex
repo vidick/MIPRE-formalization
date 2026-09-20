@@ -75,7 +75,7 @@ than by the range of $L_1$; the extra ones are never evaluated. The distribution
 \label{def:cl-canonical}
 \lean{MIPRE.CL.coordSub, MIPRE.CL.dotForm, MIPRE.CL.perp, MIPRE.CL.mem_perp,
   MIPRE.CL.tail, MIPRE.CL.dimTail, MIPRE.CL.pivots, MIPRE.CL.mem_pivots,
-  MIPRE.CL.canonCompl, MIPRE.CL.canonLin, MIPRE.CL.lperp}
+  MIPRE.CL.canonCompl, MIPRE.CL.canonLin, MIPRE.CL.lperp, MIPRE.CL.sub_canonLin_mem}
 \leanok
 Let $V = \F^n$ with its standard basis. Two complements of a subspace $S \leq V$ are needed,
 and they are different.
@@ -1056,7 +1056,8 @@ trust either.
 \lean{MIPRE.LowDegree.ofBool, MIPRE.LowDegree.pt, MIPRE.LowDegree.ind,
   MIPRE.LowDegree.eval_ind, MIPRE.LowDegree.degreeOf_ind_le, MIPRE.LowDegree.ldEnc,
   MIPRE.LowDegree.eval_ldEnc, MIPRE.LowDegree.degreeOf_ldEnc_le, MIPRE.LowDegree.codedOn,
-  MIPRE.LowDegree.codedOn_ldEnc, MIPRE.LowDegree.coded, MIPRE.LowDegree.coded_eq}
+  MIPRE.LowDegree.codedOn_ldEnc, MIPRE.LowDegree.coded, MIPRE.LowDegree.coded_eq,
+  MIPRE.LowDegree.totalDegree_ind_le, MIPRE.LowDegree.totalDegree_ldEnc_le}
 \leanok
 For $y \in \{0,1\}^m$ let $\ind_{m,y}(x) = \prod_{i : y_i = 1} x_i \prod_{i : y_i = 0}
 (1 - x_i)$, a multilinear polynomial over $\F_q$ which on the subcube $\{0,1\}^m$ is $1$ at
@@ -1065,7 +1066,8 @@ $\{0,1\}^m$, the \emph{low-degree encoding} of $a$ is $g_a = \sum_y a_y \ind_{m,
 multilinear and $g_a(y) = a_y$. For $H \subseteq \F_q$ the \emph{decoding} map $\coded_H$
 sends a polynomial $g$ to the vector with $y$-coordinate $g(y)$ if $g(y) \in H$ and $0$
 otherwise, so that $\coded_H(g_a) = a$ for $a \in H^M$; $\coded = \coded_{\{0,1\}}$ is the
-Boolean decoding map, and $\coded(g) \in \{0,1\}^M$ for every $g$.
+Boolean decoding map, and $\coded(g) \in \{0,1\}^M$ for every $g$. Being multilinear, $g_a$ has
+individual degree at most $1$ and total degree at most $m$.
 \end{definition}
 
 \paragraph{Source.} The paper states this in \texttt{preliminaries.tex},
@@ -1078,6 +1080,22 @@ bijection --- the paper says ``lexicographic''; the formalization uses the repos
 existing little-endian \texttt{bitsVal} convention, so that the encoding of an answer block
 agrees with the tape indexing of Theorem~\ref{thm:succinct-sat}. The choice is invisible to
 the statements below, the same bijection appearing in the encoding and in the decoding.
+
+\begin{definition}[Restriction to a line]
+\label{def:line-restriction}
+\uses{def:ld-encoding}
+\lean{MIPRE.LowDegree.lineRestrict, MIPRE.LowDegree.lineRestrict_zero,
+  MIPRE.LowDegree.eval_lineRestrict, MIPRE.LowDegree.natDegree_lineRestrict_le,
+  MIPRE.LowDegree.sum_coeff_lineRestrict}
+\leanok
+For $p \in \F_q[x_1, \ldots, x_m]$ and a line $t \mapsto u_0 + t w$, the \emph{restriction of $p$
+to the line} is the univariate polynomial $p|_\ell(t) = p(u_0 + t w)$, obtained by substituting the
+affine parametrization into $p$. Its degree is at most the total degree of $p$, and its
+coefficients, read at any degree bound $n$ that the degree does not exceed, evaluate back to
+$p(u_0 + t w)$. So the low-degree encoding $g_h$, being multilinear, restricts to a polynomial of
+degree at most $m$ on any line, which fits the degree-$md$ answer format of
+Definition~\ref{def:lidt-cl} whenever $d \geq 1$.
+\end{definition}
 
 \effortHard
 

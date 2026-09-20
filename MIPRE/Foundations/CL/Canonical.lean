@@ -318,6 +318,13 @@ kernel `S`" of `def:cl-canonical`. -/
     range (canonLin S) = canonCompl S :=
   Submodule.range_projection _
 
+/-- **A point differs from its canonical representative by an element of `S`.** For a line ---
+`S = span {w}` --- this is the statement that the base point the seeded test reports lies on the
+line through the sampled point, which is what lets a line answer be evaluated at the point. -/
+theorem sub_canonLin_mem (S : Submodule F (Fin n → F)) (x : Fin n → F) :
+    x - canonLin S x ∈ S :=
+  Submodule.sub_projection_mem _ x
+
 /-! ## The dot product and orthogonal complements
 
 The paper's other perp: the orthogonal complement for the standard dot product. Over a finite

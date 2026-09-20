@@ -613,8 +613,10 @@ import MIPRE.Foundations.Halting.Strings
 import MIPRE.Foundations.Halting.Tabulate
 import MIPRE.Foundations.Halting.Wrapper
 import MIPRE.Foundations.Halting.WrapperCost
+import MIPRE.Foundations.Linearity
 import MIPRE.Foundations.LowDegree.Anticomm
 import MIPRE.Foundations.LowDegree.Encoding
+import MIPRE.Foundations.LowDegree.LineRestrict
 import MIPRE.Foundations.LowDegree.NormalBasis
 import MIPRE.Foundations.LowDegree.SchwartzZippel
 import MIPRE.Foundations.LowDegree.SelfDual

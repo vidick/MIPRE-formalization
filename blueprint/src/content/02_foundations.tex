@@ -657,7 +657,12 @@ observables and carried back; that swap is the bridge.
 \uses{def:cross-distance,def:state-distance}
 \lean{MIPRE.expVec, MIPRE.expEquiv, MIPRE.sum_prod_mul, MIPRE.norm_evec_expVec,
   MIPRE.expVec_dotProduct, MIPRE.expVec_unit, MIPRE.mulVec_kron_expVec,
-  MIPRE.norm_stateVec_kron_unitary, MIPRE.norm_stateVec_expVec_kron_one}
+  MIPRE.norm_stateVec_kron_unitary, MIPRE.norm_stateVec_expVec_kron_one,
+  MIPRE.expVec_dotProduct_of_pair, MIPRE.mulVec_kron_kron_expVec, MIPRE.bornProb_expVec_kron,
+  MIPRE.POVM.kron, MIPRE.POVM.kron_mats, MIPRE.bornProb_sum_sum, MIPRE.sum_bornProb_le_map,
+  MIPRE.IsPVM.toPOVM, MIPRE.IsPVM.toPOVM_mats, MIPRE.POVM.ext', MIPRE.POVM.map_mats,
+  MIPRE.POVM.map_map, MIPRE.POVM.kron_map, MIPRE.IsPVM.coarse, MIPRE.isPVM_kron,
+  MIPRE.isPVM_povm_map, MIPRE.isPVM_povm_kron}
 \leanok
 Let $\ket{\psi}$ be a state on $\C^{d_\alice} \ot \C^{d_\bob}$ and $\ket{e}$ one on
 $\C^{a} \ot \C^{a'}$. The \emph{expanded state} is $\ket{\psi} \ot \ket{e}$, \textbf{re-bipartitioned}
@@ -684,6 +689,59 @@ expansion stage costs exactly the constant of Lemma~\ref{lem:qld-obs-commutation
 The re-bipartition is the point --- the ancilla halves are split between the parties, which is what
 makes the ancilla observables tied together --- and it is why the statements are about
 $\ket{\psi} \ot \ket{e}$ rather than about a tensor power.
+
+\textbf{Born probabilities factorize, and that is where data processing lives.} The consistency
+half of the expansion stage is about a measurement of \emph{product} form, and what it needs is
+that its Born probabilities split: $\bra{\hat\psi} (M \ot N) \ot (M' \ot N') \ket{\hat\psi} =
+\bra{\psi} M \ot M' \ket{\psi} \cdot \bra{e} N \ot N' \ket{e}$
+(\texttt{bornProb\_expVec\_kron}; only the ancilla's two operators need be positive, which is what
+makes their quadratic form real so the real part of the product splits). \texttt{POVM.kron} is the
+product measurement, and \texttt{sum\_bornProb\_le\_map} is the data-processing inequality that
+holds: coarse-graining \emph{both} players the same way can only increase the probability that they
+agree.
+
+That last one is stated at the Born level deliberately. The state-dependent distance has
+\textbf{no} data-processing inequality --- NW19 states theirs for $\simeq_\delta$ and the remark
+following it gives a counterexample for $\approx_\delta$ --- so every coarse-graining in the
+appendix is taken on Born probabilities and converted once, at the end, by
+\eqref{eq:cross-from-agreement}. A formalization that reached for the $\approx$ form would be
+proving something false.
+
+\subsection{Naimark dilation against a fixed state}
+
+\begin{lemma}[Naimark dilation of a question-indexed family]
+\label{lem:naimark-dilation}
+\uses{def:game}
+\lean{MIPRE.ancillaProj, MIPRE.ancillaProj_conjTranspose, MIPRE.ancillaProj_mul_self,
+  MIPRE.sum_ancillaProj, MIPRE.exists_isometry_of_povm, MIPRE.ancillaEmbed,
+  MIPRE.ancillaEmbed_isometry, MIPRE.exists_unitary_extending,
+  MIPRE.exists_projective_dilation, MIPRE.dotProduct_mulVec_submatrix,
+  MIPRE.dotProduct_comp_equiv, MIPRE.dotProduct_mulVec_conj}
+\leanok
+Let $\{E^x_a\}$ be a family of POVMs on $\C^d$, indexed by questions $x$ and outcomes
+$a \in \mA$. Then there is a family of \emph{projective} measurements $\{P^x_a\}$ on
+$\C^d \ot \C^{\mA}$ and a \emph{single}, question-independent isometry
+$V : \C^d \to \C^d \ot \C^{\mA}$, $\ket{v} \mapsto \ket{v} \ot \ket{a_0}$, such that
+$V^\dagger P^x_a V = E^x_a$ for every $x$ and $a$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The columns of the matrix $V^x$ whose $(q, j)$ entry is $\sqrt{E^x}$-like --- concretely, the
+square root of $E^x_a$ read off in the $a$-th block --- form an isometry $\C^d \to \C^d \ot
+\C^{\mA}$ compressing the block-diagonal projectors $\Pi_a = \Id \ot \ket{a}\bra{a}$
+back to $E^x_a$. Extending each $V^x$ to a unitary $U^x$ of the larger space that agrees with it on
+the $a_0$-slice --- the completion of an orthonormal family to an orthonormal basis --- makes
+$P^x_a = (U^x)^\dagger \Pi_a U^x$ projective with the compression along the
+\emph{fixed} isometry $\ket{v} \mapsto \ket{v} \ot \ket{a_0}$. The question-independence of that
+isometry is the whole point: the expectations are taken against a shared state, which must not
+depend on the question.
+\end{proof}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Foundations/Dilation.lean}, extracted from the
+repetition development where it was written for \texttt{lem:povm-value-eq}. Its other consumers are
+Lemma~\ref{lem:ms-direct-anticomm}, which dilates the Magic Square's six constraint POVMs against
+one shared ancilla, and Theorem~\ref{thm:linearity}.
 
 \subsection{The commutation analysis}
 
@@ -883,7 +941,9 @@ to, at $v = \ind_m(u)$.
   MIPRE.Weyl.eprScale_sq, MIPRE.Weyl.epr_unit, MIPRE.Weyl.stateVec_entry,
   MIPRE.Weyl.stateVec_epr, MIPRE.Weyl.wX_transpose, MIPRE.Weyl.wZ_transpose,
   MIPRE.Weyl.stateVec_epr_wX, MIPRE.Weyl.stateVec_epr_wZ, MIPRE.Weyl.stateVec_epr_proj,
-  MIPRE.sgn_sum}
+  MIPRE.sgn_sum, MIPRE.Weyl.isPVM_syn, MIPRE.Weyl.stateVec_epr_syn,
+  MIPRE.Weyl.synOf, MIPRE.Weyl.syn_eq_synOf, MIPRE.Weyl.sum_synOf,
+  MIPRE.Weyl.isPVM_synOf, MIPRE.Weyl.stateVec_epr_synOf}
 \leanok
 On two copies of $(\C^q)^{\ot n}$,
 \begin{equation*}
@@ -896,6 +956,12 @@ a unit vector. For any operator $M$ on one copy,
 \end{equation}
 and the Weyl operators and their spectral projectors are \emph{symmetric}, so for them the
 transpose is invisible: the two parties' operators act identically on the state.
+
+Both facts about the syndrome projectors $\qp^W_{[\,\cdot\, v = a]}$ --- that they are a projective
+measurement, and that they transport across the state --- hold for the coarse-graining of the
+eigenbasis measurement along a level set of an \emph{arbitrary} label, the syndrome being the case
+of the label $e \mapsto \langle e, v\rangle$; and coarse-graining such a family again gives the
+family of the composite label.
 \end{definition}
 
 \paragraph{Comments.} Formalized in \texttt{MIPRE/Foundations/WeylEPR.lean}. The stabilizer

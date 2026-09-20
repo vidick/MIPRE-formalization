@@ -48,6 +48,15 @@ abbrev LinePoly (n : ℕ) := Fin (n + 1) → F
 def LinePoly.eval {F : Type*} [Field F] {n : ℕ} (f : LinePoly F n) (t : F) : F :=
   ∑ i, f i * t ^ (i : ℕ)
 
+/-- Evaluation is additive in the coefficient vector. The expansion stage's line measurements are
+convolutions --- sums of polynomials --- and this is what lets them be evaluated term by term. -/
+theorem LinePoly.eval_add {F : Type*} [Field F] {n : ℕ} (f g : LinePoly F n) (t : F) :
+    (f + g).eval t = f.eval t + g.eval t := by
+  rw [LinePoly.eval, LinePoly.eval, LinePoly.eval, ← Finset.sum_add_distrib]
+  exact Finset.sum_congr rfl fun i _ => by
+    show (f i + g i) * t ^ (i : ℕ) = f i * t ^ (i : ℕ) + g i * t ^ (i : ℕ)
+    ring
+
 /-- A line in `F^m`, presented by a base point and a direction: `{base + t • direction}`. -/
 abbrev Line := Point F m × Point F m
 

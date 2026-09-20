@@ -250,6 +250,24 @@ theorem stateVecB_entry (ψ : dA × dB → ℂ) (N : Matrix dB dB ℂ) (i : dA) 
     Finset.sum_ite_eq, mul_comm]
 
 omit [DecidableEq dB] in
+@[simp] theorem stateVecB_smul (ψ : dA × dB → ℂ) (c : ℂ) (N : Matrix dB dB ℂ) :
+    stateVecB ψ (c • N) = c • stateVecB ψ N := by
+  show WithLp.toLp 2 _ = c • WithLp.toLp 2 _
+  rw [Matrix.kronecker_smul, Matrix.smul_mulVec]
+  rfl
+
+omit [DecidableEq dB] in
+theorem stateVecB_sum {ι : Type*} (ψ : dA × dB → ℂ) (t : Finset ι) (f : ι → Matrix dB dB ℂ) :
+    stateVecB ψ (∑ i ∈ t, f i) = ∑ i ∈ t, stateVecB ψ (f i) := by
+  classical
+  induction t using Finset.induction with
+  | empty => simp [stateVecB]
+  | insert i t hi ih =>
+      rw [Finset.sum_insert hi, Finset.sum_insert hi, ← ih, stateVecB, stateVecB, stateVecB,
+        Matrix.kronecker_add, Matrix.add_mulVec]
+      rfl
+
+omit [DecidableEq dB] in
 theorem stateVec_swapVec_entry (ψ : dA × dB → ℂ) (N : Matrix dB dB ℂ) (i : dA) (j : dB) :
     ((N ⊗ₖ (1 : Matrix dA dA ℂ)) *ᵥ swapVec ψ) (j, i) = ∑ l, N j l * ψ (i, l) := by
   classical

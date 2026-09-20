@@ -5,6 +5,7 @@ Authors: Thomas Vidick
 -/
 import MIPRE.Foundations.Weyl
 import MIPRE.Foundations.StateDistance
+import MIPRE.Foundations.PVM
 
 /-!
 # The maximally entangled state of the Weyl system
@@ -145,6 +146,53 @@ theorem stateVec_epr_proj {w : (n → F) → Matrix (n → F) (n → F) ℂ}
   rw [proj_def, Matrix.transpose_smul, Matrix.transpose_sum]
   congr 1
   exact Finset.sum_congr rfl fun a _ => by rw [Matrix.transpose_smul, hw a]
+
+/-! ## The syndrome projectors
+
+`syn w v a` collects the spectral projectors along a level set of the pairing. Two facts the
+expansion stage needs: it is a projective measurement, and it transports across the maximally
+entangled state like each projector does. -/
+
+variable {w : (n → F) → Matrix (n → F) (n → F) ℂ}
+
+/-- **A coarse-grained eigenbasis measurement is a projective measurement**, indexed by the values
+of the label. Orthogonality of the spectral projectors makes each element idempotent, and the level
+sets partition the index group. -/
+theorem isPVM_synOf {C : Type*} [Fintype C] [DecidableEq C] (hw : IsWeylFamily w)
+    (φ : (n → F) → C) : IsPVM (synOf w φ) where
+  isSelfAdjoint a := by
+    rw [synOf, Matrix.conjTranspose_sum]
+    exact Finset.sum_congr rfl fun e _ => proj_conjTranspose hw e
+  idem a := by
+    rw [synOf, Finset.sum_mul]
+    refine Finset.sum_congr rfl fun e he => ?_
+    rw [Finset.mul_sum, Finset.sum_eq_single e (fun e' _ he' => ?_) fun hmem => absurd he hmem]
+    · rw [proj_mul_proj hw, if_pos rfl]
+    · rw [proj_mul_proj hw, if_neg fun hh => he' hh.symm]
+  sum_eq_one := by
+    rw [show (∑ a : C, synOf w φ a)
+        = ∑ a : C, ∑ e ∈ univ.filter fun e => φ e = a, proj w e from rfl,
+      Finset.sum_fiberwise (univ : Finset (n → F)) φ (proj w)]
+    exact sum_proj hw
+
+/-- **The syndrome projectors form a projective measurement**, indexed by the value of the
+pairing. -/
+theorem isPVM_syn (hw : IsWeylFamily w) (v : n → F) : IsPVM (syn w v) := by
+  rw [syn_eq_synOf]; exact isPVM_synOf hw _
+
+/-- **Coarse-grained eigenbasis projectors transport across the maximally entangled state**,
+exactly: each spectral projector does (`stateVec_epr_proj`) and the level-set projector is a sum of
+them. -/
+theorem stateVec_epr_synOf {C : Type*} [DecidableEq C] (hw : ∀ a, (w a)ᵀ = w a)
+    (φ : (n → F) → C) (o : C) :
+    stateVec (epr (F := F) (n := n)) (synOf w φ o) = stateVecB epr (synOf w φ o) := by
+  rw [synOf, stateVec_sum, stateVecB_sum]
+  exact Finset.sum_congr rfl fun e _ => stateVec_epr_proj hw e
+
+/-- **The syndrome projectors transport across the maximally entangled state**, exactly. -/
+theorem stateVec_epr_syn (hw : ∀ a, (w a)ᵀ = w a) (v : n → F) (a : F) :
+    stateVec (epr (F := F) (n := n)) (syn w v a) = stateVecB epr (syn w v a) := by
+  rw [syn_eq_synOf]; exact stateVec_epr_synOf hw _ a
 
 end MIPRE.Weyl
 

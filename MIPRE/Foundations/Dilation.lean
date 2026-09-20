@@ -47,11 +47,11 @@ family at once: the isometry depends on the question, the state must not. -/
 /-- The ancilla projection `1 ⊗ |a⟩⟨a|` on `d × A`: the identity on the first factor and the
 rank-one projection onto `a` on the second. It is a diagonal matrix, and saying so is what
 makes the dilation computations below elementary. -/
-def ancillaProj (d : Type) [DecidableEq d] {A : Type} [DecidableEq A] (a : A) :
+def ancillaProj (d : Type*) [DecidableEq d] {A : Type*} [DecidableEq A] (a : A) :
     Matrix (d × A) (d × A) ℂ :=
   Matrix.diagonal fun p => if p.2 = a then 1 else 0
 
-theorem ancillaProj_conjTranspose {d A : Type} [DecidableEq d] [DecidableEq A] (a : A) :
+theorem ancillaProj_conjTranspose {d A : Type*} [DecidableEq d] [DecidableEq A] (a : A) :
     (ancillaProj d a)ᴴ = ancillaProj d a := by
   rw [ancillaProj, Matrix.diagonal_conjTranspose]
   congr 1
@@ -59,7 +59,7 @@ theorem ancillaProj_conjTranspose {d A : Type} [DecidableEq d] [DecidableEq A] (
   simp only [Pi.star_apply]
   split_ifs <;> simp
 
-theorem ancillaProj_mul_self {d A : Type} [Fintype d] [DecidableEq d] [Fintype A]
+theorem ancillaProj_mul_self {d A : Type*} [Fintype d] [DecidableEq d] [Fintype A]
     [DecidableEq A] (a : A) :
     ancillaProj d a * ancillaProj d a = ancillaProj d a := by
   rw [ancillaProj, Matrix.diagonal_mul_diagonal]
@@ -67,7 +67,7 @@ theorem ancillaProj_mul_self {d A : Type} [Fintype d] [DecidableEq d] [Fintype A
   funext p
   split_ifs <;> simp
 
-theorem sum_ancillaProj {d A : Type} [DecidableEq d] [Fintype A] [DecidableEq A] :
+theorem sum_ancillaProj {d A : Type*} [DecidableEq d] [Fintype A] [DecidableEq A] :
     ∑ a : A, ancillaProj d a = (1 : Matrix (d × A) (d × A) ℂ) := by
   ext p q
   rw [Matrix.sum_apply]
@@ -80,7 +80,7 @@ theorem sum_ancillaProj {d A : Type} [DecidableEq d] [Fintype A] [DecidableEq A]
 and `Vᴴ (1 ⊗ |a⟩⟨a|) V = E a`. Only the factorization of a positive semidefinite matrix is
 used, not a square root: with `E a = (K a)ᴴ (K a)`, the isometry is
 `V : v ↦ ∑ a, (K a v) ⊗ |a⟩`. -/
-theorem exists_isometry_of_povm {d A : Type} [Fintype d] [DecidableEq d]
+theorem exists_isometry_of_povm {d A : Type*} [Fintype d] [DecidableEq d]
     [Fintype A] [DecidableEq A] {E : A → Matrix d d ℂ}
     (hpos : ∀ a, (E a).PosSemidef) (hsum : ∑ a, E a = 1) :
     ∃ V : Matrix (d × A) d ℂ, Vᴴ * V = 1 ∧
@@ -116,11 +116,11 @@ theorem exists_isometry_of_povm {d A : Type} [Fintype d] [DecidableEq d]
     rw [h3, ← hKE a j k]
 
 /-- The isometry `d → d × A` that pads a vector with the fixed ancilla state `|a₀⟩`. -/
-def ancillaEmbed (d : Type) [DecidableEq d] {A : Type} [DecidableEq A] (a₀ : A) :
+def ancillaEmbed (d : Type*) [DecidableEq d] {A : Type*} [DecidableEq A] (a₀ : A) :
     Matrix (d × A) d ℂ :=
   Matrix.of fun p j => if p = (j, a₀) then 1 else 0
 
-theorem ancillaEmbed_isometry {d A : Type} [Fintype d] [DecidableEq d]
+theorem ancillaEmbed_isometry {d A : Type*} [Fintype d] [DecidableEq d]
     [Fintype A] [DecidableEq A] (a₀ : A) :
     (ancillaEmbed d a₀)ᴴ * ancillaEmbed d a₀ = (1 : Matrix d d ℂ) := by
   ext j k
@@ -138,7 +138,7 @@ theorem ancillaEmbed_isometry {d A : Type} [Fintype d] [DecidableEq d]
 an orthonormal basis, imported from Mathlib as
 `Orthonormal.exists_orthonormalBasis_extension_of_card_eq`; it is the step that lets a whole
 question-indexed family of POVMs be dilated against one fixed state. -/
-theorem exists_unitary_extending {d A : Type} [Fintype d] [DecidableEq d]
+theorem exists_unitary_extending {d A : Type*} [Fintype d] [DecidableEq d]
     [Fintype A] [DecidableEq A] (a₀ : A) {V : Matrix (d × A) d ℂ}
     (hV : Vᴴ * V = (1 : Matrix d d ℂ)) :
     ∃ U : Matrix (d × A) (d × A) ℂ, Uᴴ * U = 1 ∧ U * ancillaEmbed d a₀ = V := by
@@ -191,7 +191,7 @@ POVMs `{E^x_a}` on `d` is the compression, by the *single* question-independent 
 `ancillaEmbed d a₀`, of a family of genuinely *projective* measurements `{P^x_a}` on `d × A`.
 That the compression does not depend on the question is what lets the dilation be applied to a
 fixed shared state, and it is why the unitary extension of the previous step was needed. -/
-theorem exists_projective_dilation {d A X : Type} [Fintype d] [DecidableEq d]
+theorem exists_projective_dilation {d A X : Type*} [Fintype d] [DecidableEq d]
     [Fintype A] [DecidableEq A] (a₀ : A) {E : X → A → Matrix d d ℂ}
     (hpos : ∀ x a, (E x a).PosSemidef) (hsum : ∀ x, ∑ a, E x a = 1) :
     ∃ P : X → A → Matrix (d × A) (d × A) ℂ,
@@ -232,7 +232,7 @@ along an arbitrary linear map (which is how a dilation is compressed back), and 
 special case `M = 1` that transports unit vectors. -/
 
 /-- Reindexing the space by a bijection changes no Born-rule expectation. -/
-theorem dotProduct_mulVec_submatrix {ι κ : Type} [Fintype ι] [Fintype κ] (e : ι ≃ κ)
+theorem dotProduct_mulVec_submatrix {ι κ : Type*} [Fintype ι] [Fintype κ] (e : ι ≃ κ)
     (M : Matrix κ κ ℂ) (v : κ → ℂ) :
     star (v ∘ e) ⬝ᵥ ((M.submatrix e e) *ᵥ (v ∘ e)) = star v ⬝ᵥ (M *ᵥ v) := by
   simp only [dotProduct, Matrix.mulVec, Matrix.submatrix_apply, Function.comp_apply,
@@ -242,7 +242,7 @@ theorem dotProduct_mulVec_submatrix {ι κ : Type} [Fintype ι] [Fintype κ] (e 
     rw [Equiv.sum_comp e fun k' => M (e i) k' * v k']
 
 /-- Reindexing the space by a bijection preserves the norm. -/
-theorem dotProduct_comp_equiv {ι κ : Type} [Fintype ι] [Fintype κ] (e : ι ≃ κ) (v : κ → ℂ) :
+theorem dotProduct_comp_equiv {ι κ : Type*} [Fintype ι] [Fintype κ] (e : ι ≃ κ) (v : κ → ℂ) :
     star (v ∘ e) ⬝ᵥ (v ∘ e) = star v ⬝ᵥ v := by
   simp only [dotProduct, Function.comp_apply, Pi.star_apply]
   exact Equiv.sum_comp e fun k => star (v k) * v k
@@ -250,7 +250,7 @@ theorem dotProduct_comp_equiv {ι κ : Type} [Fintype ι] [Fintype κ] (e : ι �
 /-- Pulling a Born-rule expectation back along a linear map `W` conjugates the observable:
 `⟨Wv| M |Wv⟩ = ⟨v| Wᴴ M W |v⟩`. With `W` an isometry and `M` a projection this is how a
 dilated projective measurement compresses back to the POVM it came from. -/
-theorem dotProduct_mulVec_conj {ι κ : Type} [Fintype ι] [Fintype κ]
+theorem dotProduct_mulVec_conj {ι κ : Type*} [Fintype ι] [Fintype κ]
     (W : Matrix κ ι ℂ) (M : Matrix κ κ ℂ) (v : ι → ℂ) :
     star (W *ᵥ v) ⬝ᵥ (M *ᵥ (W *ᵥ v)) = star v ⬝ᵥ ((Wᴴ * (M * W)) *ᵥ v) := by
   rw [Matrix.mulVec_mulVec, Matrix.star_mulVec, ← Matrix.dotProduct_mulVec,

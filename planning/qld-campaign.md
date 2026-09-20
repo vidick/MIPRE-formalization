@@ -503,27 +503,121 @@ The bookkeeping is isolated in `MIPRE/Foundations/Expanded.lean` (blueprint
 by factor, the norm of a product state, an inert ancilla, and a unitary ancilla. None of it mentions
 the Pauli test.
 
-**What the self-consistency half needs.** The hatted *measurement* is a convolution,
-`M-hat^{(Point,W),u}_a = sum_{a' + a'' = a} M_{a'} (x) tau^{W,u}_{a''}`, with `tau^{W,u}` the
-syndrome projector `syn` of `Weyl.lean`. Its self-consistency across the re-bipartitioned parties
-needs three things, all of which exist: item 1 of `lem:qld-win` for the strategy's factor,
-*perfect* self-consistency of the syndrome projectors across the two ancilla halves
-(`stateVec_epr_proj`), and data processing for the convolution -- at the Born level, since
-`approx_delta` has none. What is missing is the construction of the convolved POVM and the
-Born-level product computation that combines them. That is the next piece of stage 3, followed by
-`lem:qld-expanded-lines`.
+**The self-consistency half (2026-09-19, done).** The hatted measurement is the *convolution*
+`M-hat^{(Point,W),u}_a = sum_{a'+a''=a} M_{a'} (x) tau^{W,u}_{a''}` -- in Lean, the product
+measurement `POVM.kron` coarse-grained by addition. Its consistency is three facts and no loss:
+
+* the agreement probability of a product measurement on the expanded state **factorizes**
+  (`bornProb_expVec_kron`; only the ancilla's operators need to be positive, which is what makes
+  their quadratic form real so the real part of the product splits);
+* the ancilla factor is **exactly one** -- the syndrome projectors are perfectly self-consistent
+  across the two halves of the EPR ancilla. That is `stateVec_epr_syn` (the stabilizer relation
+  summed over a level set) turned into a Born probability, and the sum is `1` rather than
+  `1 - O(eps)`;
+* the convolution is a coarse-graining, so it can only **increase** agreement
+  (`sum_bornProb_le_map`).
+
+What is left is the strategy's own disagreement, which item 1 bounds by the subtest's conditional
+failure; one conversion to the distance gives `172 eps`. So the expansion contributes nothing to
+either item's constant.
+
+**And the one thing to keep in mind about all of it**: the whole estimate runs on Born
+probabilities and converts to the state-dependent distance exactly once, at the end. That is
+forced -- `approx_delta` has no data-processing inequality (NW19's own counterexample), so a
+coarse-graining can only be taken at the Born level. `sum_bornProb_le_map` is stated there for that
+reason, and the blueprint says so under `def:expanded-state`.
+
+### Stage 3, the line measurements (2026-09-19, done)
+
+`lem:qld-expanded-lines`, the paper's `lem:qld-comm-line-cons`. Same convolution one level up: the
+strategy's line measurement against an ancilla measurement that reports the **restriction to the
+line** of the low-degree encoding of its outcome. Four things are worth recording, because three of
+them made the proof shorter than the paper's and the fourth is a correction to this file's own
+earlier note above.
+
+**The missing infrastructure was the restriction itself.** `MIPRE/Foundations/LowDegree/`
+had `lineParam` and `LinePoly.eval` but no way to restrict a multivariate polynomial to a line.
+`LineRestrict.lean` is that: `lineRestrict u0 w p = p(u0 + t w)` by substitution
+(`MvPolynomial.aeval` into `Polynomial F` -- which needs
+`import Mathlib.Algebra.Polynomial.AlgebraMap` for the `Algebra F (Polynomial F)` instance, whose
+absence was the first hour), with `eval_lineRestrict`, a degree bound `natDegree <= totalDegree`
+monomial by monomial, and `sum_coeff_lineRestrict` reading the coefficients as a `LinePoly F n` for
+any `n` the degree does not exceed. Plus `totalDegree_ldEnc_le : totalDegree (ldEnc a) <= m`.
+
+**The ancilla's line and point measurements are literally the same family, relabelled.** This is
+what replaces the paper's step "by the exact consistency between the `tau^{W,line}` and `tau^{W,u}`
+measurements". Generalize the syndrome projector to a coarse-graining of the eigenbasis measurement
+along an *arbitrary* label -- `synOf w phi o = sum_{e : phi e = o} proj w e`, with `syn w v` the
+case `phi e = <e, v>` -- and the three facts it needs (`IsPVM`, EPR transport, and that
+coarse-graining again gives the composite label's family) generalize verbatim. Then
+`synLinePOVM_map_eval` is a **POVM equality**: relabelling the line measurement by evaluation at
+the point *is* the point measurement, because `eval_lineCoeffs` says the labels agree. So the
+ancilla's contribution to the line-against-point estimate is the same exact `1` as in the point
+case, and no new estimate is needed.
+
+**Projectivity is two closure properties, not an orthogonality computation.** A coarse-graining of a
+projective measurement is projective (`IsPVM.coarse`, from `IsPVM.orthogonal`), and so is a product
+(`isPVM_kron`). The convolution is a coarse-graining of a product, so `isPVM_hatLinePOVM` is three
+lemma applications -- *given* that the strategy's own line measurement is projective, which the
+paper takes for granted and which is WLOG by Naimark. The Lean statement carries it as a hypothesis
+instead of hiding it. The note above, that projectivity "comes from an orthogonality property of the
+convolution", was the paper's framing of the same fact; the closure route is shorter and says
+where the hypothesis is.
+
+**The constant is linear in `eps`, and the blueprint's `O(sqrt eps)` was wrong.** Both items come
+out at `172 eps` -- item 1 of `lem:qld-win` with no further loss. The paper says `poly(eps)`; the
+square root was this blueprint's own and had no source, like the one in `lem:qld-obs-commutation`
+before it. Nothing in the proof takes a square root because nothing in it converts an operator
+inequality into a norm. The blueprint statement is repaired in the same pull request.
+
+**One thing deliberately not proved.** For an axis-parallel line the honest restriction is affine,
+hence of degree at most `d` rather than `md`; `lem:qld-pairs-of-lines` will need that to keep padded
+answers in the degree-`d` format, and it needs the *individual*-degree bound along the line's own
+direction, which `natDegree_lineRestrict_le` (a total-degree bound) does not give. The convolution
+is stated at degree `md` for both line types with the axis-parallel answers padded, which is what
+the paper's printed definition does too; the refinement is the paper's `cnote` in
+`qld-combining.tex` and is PR C's problem.
 
 ### PR C — combining the two bases
 
 `thm:linearity`, then `lem:qld-combined-points`, `lem:qld-pairs-of-lines`,
 `lem:qld-padded-points`, `lem:qld-sublines`, `lem:qld-padded-lines`, `lem:qld-simultaneous`.
 
-**A correction to the blueprint's proof text of `thm:linearity` to make before relying on it.**
-It says "the source is vendored and was audited line by line". That is true of the *paper* —
-`paper/external/nv17/` — and false of this repository: `MIPRE/Background/` holds only
-GowersHatami, LIDT, Orthonormalization and Repetition. So `thm:linearity` must be **proved**
-here, from Parseval and Naimark with `thm:gowers-hatami` (which is proved) available, not
-imported. A reader of the current text would plan the wrong work.
+### `thm:linearity`, proved here (2026-09-19, done)
+
+The correction this file flagged -- the blueprint said "the source is vendored and was audited line
+by line", which is true of the *paper*'s `paper/external/nv17/` and false of `MIPRE/Background/` --
+is now moot, because the theorem is **proved**: `MIPRE/Foundations/Linearity.lean`, 440 lines.
+
+Three things are worth keeping.
+
+**`thm:gowers-hatami` is not the tool.** It is about the Hilbert--Schmidt distance and approximate
+*representations*; the hypothesis here is in the state-dependent distance. The blueprint's
+`\uses{thm:gowers-hatami}` was a guess and is gone. What replaces it is one *exact* step: the
+Fourier transform `A_e = |V|^{-1} sum_a sgn(<a,e>) O^a` of a family of **involutions** has
+`sum_e A_e^2 = |V|^{-1} sum_a (O^a)^2 = Id`, so `{A_e^2}` is a POVM with no approximation anywhere.
+Then `exists_projective_dilation` -- now a blueprint node, `lem:naimark-dilation`, having been
+silent infrastructure before -- and Fourier inversion give the exactly linear family, and the
+character-sum identity `sum_e sgn(<u,e>) A_e^2 = |V|^{-1} sum_a O^a O^{a+u}` connects it back.
+
+**The conclusion is an equality.** `E_u ||(L^u - O^u)psi'||^2 = E_{a,b} ||(O^a O^b - O^{a+b})psi||^2`
+-- the linearity defect is *transported*, not estimated. The paper's own audit note concludes "the
+closeness exponent is 1, with the identical delta", and the ledger's child node 1.2.2.7.3 records
+the same; the equality says where it comes from. Nothing in the proof is an inequality, so there is
+no constant to lose.
+
+**The ancilla is one-sided.** `extVecA psi a0 = (ancillaEmbed (x) 1) *v psi` adjoins `|0>` to the
+*first* party only -- the source's `|psi> (x) |0>_{A'}`, not `def:expanded-state`'s two-sided EPR
+ancilla. The only fact needed about it is `qform_extVecA`: a quadratic form on the extended state is
+the quadratic form of the compressed operator on the original one, which is
+`dotProduct_mulVec_conj` plus one Kronecker identity. `Dilation.lean`'s universe variables had to be
+relaxed from `Type` to `Type*` for the index group `n -> F` to serve as the ancilla.
+
+**Still to do in PR C**: `lem:qld-combined-points` -- the three-step construction that *applies*
+this theorem, whose first two steps are the work: combining the two bases' binary measurements
+through their approximate commutation, and proving the combined family approximately linear -- then
+`lem:qld-pairs-of-lines`, `lem:qld-padded-points`, `lem:qld-sublines`, `lem:qld-padded-lines`,
+`lem:qld-simultaneous`.
 
 `lem:qld-sublines` is purely combinatorial and the blueprint says it is "a reasonable place to
 start formalizing"; it is the natural first commit of PR C. `lem:qld-simultaneous` is the one

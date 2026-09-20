@@ -161,6 +161,25 @@ theorem sum_weighted_snorm_sq_triangle3 {ι κ : Type*} [Fintype κ] (v : N → 
 
 end AddInFront
 
+/-! ## A projective measurement is a POVM -/
+
+/-- **A projective measurement, as a POVM.** The same bridge as
+`ProjectiveMeasurement.toPOVM`, for the bare-family form `IsPVM` that the rigidity arguments
+produce. -/
+def IsPVM.toPOVM {n Λ : Type*} [Fintype n] [DecidableEq n] [Fintype Λ] [DecidableEq Λ]
+    {P : Λ → Matrix n n ℂ} (h : IsPVM P) : POVM Λ n where
+  mats a := ⟨P a, by
+    rw [selfAdjoint.mem_iff, Matrix.star_eq_conjTranspose, h.isSelfAdjoint]⟩
+  nonneg a := Subtype.coe_le_coe.mp (h.nonneg a)
+  normalized := by
+    apply Subtype.ext
+    rw [AddSubmonoidClass.coe_finsetSum]
+    exact h.sum_eq_one
+
+@[simp] theorem IsPVM.toPOVM_mats {n Λ : Type*} [Fintype n] [DecidableEq n] [Fintype Λ]
+    [DecidableEq Λ] {P : Λ → Matrix n n ℂ} (h : IsPVM P) (a : Λ) :
+    ((h.toPOVM.mats a).val) = P a := rfl
+
 /-! ## Replacing one side of a cross-party deviation -/
 
 section TwoStep

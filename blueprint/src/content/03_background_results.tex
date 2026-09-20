@@ -580,7 +580,8 @@ It certifies none of the paper's intermediate statements, and they certify none 
   MIPRE.LIDT.CL.accepts_aline_values_eq_false,
   MIPRE.LIDT.CL.accepts_point_apolys_eq_false, MIPRE.LIDT.CL.accepts_aline_dline,
   MIPRE.LIDT.CL.aline_question_ne, MIPRE.LIDT.CL.card_chi_fiber,
-  MIPRE.LIDT.CL.Answer.toValue, MIPRE.LIDT.CL.pointPOVMA, MIPRE.LIDT.CL.pointPOVMB}
+  MIPRE.LIDT.CL.Answer.toValue, MIPRE.LIDT.CL.pointPOVMA, MIPRE.LIDT.CL.pointPOVMB,
+  MIPRE.LIDT.LinePoly.eval_add}
 \leanok
 For admissible $q$, positive integers $m,d,\mathrm{ldc}$ and $m\mid q$, the
 \emph{seeded CL test} is the paper's typed low-degree game with parameters
@@ -1854,7 +1855,10 @@ Lemma~\ref{lem:qld-expanded-points} cancels against the ancillas.
 \begin{lemma}[Expanded point measurements]
 \label{lem:qld-expanded-points}
 \ledgernode{1.2.2.5}
-\uses{lem:qld-win,cor:ortho-from-consistency,def:distance}
+\uses{lem:qld-win,cor:ortho-from-consistency,def:distance,def:expanded-state,
+  lem:qld-expanded-commutation,lem:qld-expanded-consistency}
+\lean{MIPRE.QLD.expanded_points}
+\leanok
 Adjoin EPR ancilla registers to $\ket{\psi}$. There are measurements
 $\widehat{M}^{(\mathtt{Point}, W), u}$ on each player's space together with its ancilla such
 that, with $\delta_{\mathrm{acom}}(\eps) = O(\sqrt{\eps})$: they are self-consistent across
@@ -1863,26 +1867,62 @@ the two sides at error $\eps$, and the $X$-side and $Z$-side coarse observables
 \end{lemma}
 
 \begin{proof}
-\uses{lem:qld-win,lem:qld-expanded-commutation}
-The pivotal step is an exact cancellation of a sign $(-1)^\gamma$ between the strategy's own
-observables, supplied by the anticommutation relations of Lemma~\ref{lem:qld-win}, and the
-ancilla observables. Without the ancillas the two bases only commute up to an error that does
-not improve; with them the sign cancels identically and what is left is the stated
-$\sqrt{\eps}$. That half is Lemma~\ref{lem:qld-expanded-commutation}.
+\leanok
+\uses{lem:qld-win,lem:qld-expanded-commutation,lem:qld-expanded-consistency}
+Two items, one lemma each. The pivotal one is an exact cancellation of a sign $(-1)^\gamma$ between
+the strategy's own observables, supplied by the anticommutation relations of
+Lemma~\ref{lem:qld-win}, and the ancilla observables: Lemma~\ref{lem:qld-expanded-commutation}.
+Without the ancillas the two bases only commute up to an error carrying that sign, which does not
+improve with $\eps$; with them the sign cancels identically. Self-consistency is
+Lemma~\ref{lem:qld-expanded-consistency}.
 \end{proof}
 
-\paragraph{Comments.} The \emph{commutation} half is formalized
-(Lemma~\ref{lem:qld-expanded-commutation}); the self-consistency half is not, and what it needs is
-worth naming. The hatted measurement is a \emph{convolution},
-$\widehat{M}^{(\mathtt{Point},W),u}_a = \sum_{a' + a'' = a} M^{(\mathtt{Point},W),u}_{a'} \ot
-\qp^{W,u}_{a''}$, whose two factors are the strategy's point measurement and the syndrome projector
-$\qp^{W}_{[\,\cdot\, \ind_m(u) = a'']}$ of Definition~\ref{def:generalized-pauli}. Its
-self-consistency across the re-bipartitioned parties comes from three things: item 1 of
-Lemma~\ref{lem:qld-win} for the strategy's factor, \emph{perfect} self-consistency of the syndrome
-projectors across the two ancilla halves --- which is Definition~\ref{def:weyl-epr}'s
-\texttt{stateVec\_epr\_proj} --- and data processing for the convolution, at the Born level, since
-$\approx_\delta$ has none. All three ingredients are formalized; what is missing is the
-construction of the convolved POVM and the Born-level product computation that combines them.
+\paragraph{Comments.} Both items are formalized, at $172\eps$ and $57676416\eps$; the
+$\delta_{\mathrm{acom}} = O(\sqrt{\eps})$ of the statement is a weakening, as it is one step
+earlier (see Lemma~\ref{lem:qld-obs-commutation-acomm}'s comments). The expansion contributes
+\emph{nothing} to either constant, which is the point of
+Definition~\ref{def:expanded-state}'s items 3 and 4.
+
+\begin{lemma}[Expanded point measurements are self-consistent]
+\label{lem:qld-expanded-consistency}
+\uses{lem:qld-win,def:generalized-pauli,def:weyl-epr,def:expanded-state}
+\lean{MIPRE.QLD.synPOVM, MIPRE.QLD.synPOVM_mats, MIPRE.QLD.weylOf_transpose,
+  MIPRE.QLD.sum_bornProb_epr_synPOVM, MIPRE.QLD.ptValPOVM, MIPRE.QLD.hatPOVM,
+  MIPRE.QLD.sum_xSqNorm_hatPOVM_le, MIPRE.QLD.hatPOVM_consistency}
+\leanok
+With $\ket{\hat\psi}$ as in Lemma~\ref{lem:qld-expanded-commutation}, let
+\begin{equation*}
+  \widehat{M}^{(\mathtt{Point},W),u}_a
+    \;=\; \sum_{a' + a'' = a} M^{(\mathtt{Point},W),u}_{a'} \ot \qp^{W}_{[\,\cdot\, \ind_m(u) = a'']}
+\end{equation*}
+be the convolution of the strategy's point measurement with the ancilla's syndrome measurement.
+Then, on average over the verifier's content,
+\begin{equation*}
+  \widehat{M}^{(\mathtt{Point},W),u}_a \ot \Id \;\simeq_{172\eps}\;
+    \Id \ot \widehat{M}^{(\mathtt{Point},W),u}_a\;.
+\end{equation*}
+\end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:qld-win,def:weyl-epr,def:expanded-state}
+Three inputs and no loss. The agreement probability of a product measurement on the expanded state
+factorizes (Definition~\ref{def:expanded-state}); the ancilla factor is \emph{exactly one}, because
+the syndrome projectors are perfectly self-consistent across the two halves of
+$\ket{\EPR_q}^{\ot M}$ --- that is Definition~\ref{def:weyl-epr}'s stabilizer relation, summed over
+the level set, and it is $1$ rather than $1 - O(\eps)$; and the convolution is a coarse-graining, so
+it can only \emph{increase} agreement. What is left is the disagreement of the strategy's own point
+measurements, which item 1 of Lemma~\ref{lem:qld-win} bounds by the conditional failure of the
+$(\mathtt{Point}, W)$ subtest. One conversion from agreement to distance
+(\eqref{eq:cross-from-agreement}) gives $2 \cdot 86 \eps$.
+\end{proof}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Background/QLD/Expanded.lean}. The whole estimate
+runs on Born probabilities and is converted to the state-dependent distance exactly once, at the
+end. That is not a stylistic choice: the convolution is a coarse-graining, and
+$\approx_\delta$ has no data-processing inequality (Definition~\ref{def:expanded-state}'s comments).
+So the route through agreement probabilities is the only correct one, and it is also the one that
+makes the ancilla's contribution visible as an exact $1$.
 
 \begin{lemma}[Expanded point observables commute]
 \label{lem:qld-expanded-commutation}
@@ -1938,20 +1978,109 @@ anything, which is also why it is stated there rather than here.
 \begin{lemma}[Expanded line measurements]
 \label{lem:qld-expanded-lines}
 \ledgernode{1.2.2.6}
-\uses{lem:qld-expanded-points,cor:ortho-from-consistency}
-For each $W \in \{X, Z\}$ and each line $\ell$ there is a \emph{projective} measurement
-$\widehat{M}^{(\mathtt{Line}, W), \ell}_f$, with outcomes the degree-$md$ polynomials on
-$\ell$, such that with $\delta_{\mathrm{Line}}(\eps) = O(\sqrt{\eps})$ it is self-consistent
-over the line--point distribution and consistent with the expanded point measurements of
-Lemma~\ref{lem:qld-expanded-points}, in both the form that compares a line outcome with a
-point outcome and the form that compares the evaluation of the line polynomial at the point.
+\uses{lem:qld-win,lem:qld-expanded-points,def:weyl-epr,def:expanded-state,def:line-restriction,
+  def:lidt-cl}
+\lean{MIPRE.QLD.lineCoeffs, MIPRE.QLD.eval_lineCoeffs, MIPRE.QLD.dotF_indVec,
+  MIPRE.QLD.padLine, MIPRE.QLD.linePoly_eval_eq_range, MIPRE.QLD.eval_padLine,
+  MIPRE.QLD.rdLine, MIPRE.QLD.synLinePOVM, MIPRE.QLD.synLinePOVM_map_eval,
+  MIPRE.QLD.lineAnsPOVM, MIPRE.QLD.hatLinePOVM, MIPRE.QLD.isPVM_hatLinePOVM,
+  MIPRE.QLD.hatLinePOVM_map_eval, MIPRE.QLD.sum_xSqNorm_hatLinePOVM_le,
+  MIPRE.QLD.hatLinePOVM_consistency, MIPRE.QLD.Content.omega_pt,
+  MIPRE.QLD.sum_xSqNorm_hatLine_point_le, MIPRE.QLD.rep_add_lineParam_smul,
+  MIPRE.QLD.abaseOf, MIPRE.QLD.ddirOf, MIPRE.QLD.dbaseOf, MIPRE.QLD.d_le_mul,
+  MIPRE.QLD.m_le_mul, MIPRE.QLD.hsub_aline, MIPRE.QLD.hsub_dline,
+  MIPRE.QLD.hatLinePOVM_point_consistency, MIPRE.QLD.expanded_lines_aline,
+  MIPRE.QLD.expanded_lines_dline}
+\leanok
+Let $d \geq 1$ and let $\ket{\hat\psi}$ be as in Lemma~\ref{lem:qld-expanded-commutation}. For
+each $W \in \{X, Z\}$ and each line type --- axis-parallel or diagonal --- write $\ell$ for the
+line the verifier's content presents on the $W$ side, and let
+\begin{equation*}
+  \widehat{M}^{(\mathtt{Line}, W), \ell}_f
+    \;=\; \sum_{f' + f'' = f} M^{(\mathtt{Line}, W), \ell}_{f'} \ot \qp^{W, \ell}_{f''}
+\end{equation*}
+be the convolution of the strategy's line measurement with the ancilla measurement that reports
+the restriction to $\ell$ of the low-degree encoding of its outcome
+(Definition~\ref{def:line-restriction}), the outcomes being the polynomials of degree at most
+$md$ on $\ell$. Then, on average over the verifier's content --- which is the line--point
+distribution, the line and the point being read off the same sample:
+\begin{enumerate}
+\item (\textbf{Self-consistency})
+  $\widehat{M}^{(\mathtt{Line}, W), \ell}_f \ot \Id \;\simeq_{172\eps}\;
+    \Id \ot \widehat{M}^{(\mathtt{Line}, W), \ell}_f$;
+\item (\textbf{Consistency with the expanded point measurements})
+  $\widehat{M}^{(\mathtt{Point}, W), u}_a \ot \Id \;\simeq_{172\eps}\;
+    \Id \ot \widehat{M}^{(\mathtt{Line}, W), \ell}_{[\mathrm{eval}_u(\cdot) = a]}$,
+  where $u$ is the point of the same content and $\mathrm{eval}_u$ evaluates a polynomial on
+  $\ell$ at the parameter of $u$.
+\end{enumerate}
+Moreover $\{\widehat{M}^{(\mathtt{Line}, W), \ell}_f\}_f$ is \emph{projective} whenever the
+strategy's own line measurement is, which is without loss of generality by Naimark dilation.
 \end{lemma}
 
 \begin{proof}
-Projectivity comes from an orthogonality property of the convolution defining the family,
-not from Corollary~\ref{cor:ortho-from-consistency}; consistency in both forms is
-Lemma~\ref{lem:qld-expanded-points} together with the line subtest's relations.
+\leanok
+\uses{lem:qld-win,lem:qld-expanded-points,def:weyl-epr,def:expanded-state,def:line-restriction}
+Everything is exact except the strategy's own error, and the two items come out of the same
+three inputs as Lemma~\ref{lem:qld-expanded-consistency}.
+
+Projectivity is two closure properties and no computation: a product of projective measurements is
+projective, and so is any coarse-graining of one --- because the elements of a projective
+measurement are mutually orthogonal, a sum of them over a level set is idempotent. The convolution
+is a coarse-graining of a product, so it is projective.
+
+For item 1, the agreement probability of the product measurement on the expanded state factorizes
+(Definition~\ref{def:expanded-state}); the ancilla factor is \emph{exactly one}, the level-set
+projectors of the basis measurement being perfectly self-consistent across the two halves of
+$\ket{\EPR_q}^{\ot M}$ (Definition~\ref{def:weyl-epr}); the convolution can only increase
+agreement; and what remains is item 1 of Lemma~\ref{lem:qld-win} at the line type's self-loop. One
+conversion from agreement to distance gives $2 \cdot 86\eps$.
+
+For item 2 the ancilla contributes an identity rather than an estimate: relabelling a line outcome
+of the ancilla by its value at the point \emph{is} the ancilla's point measurement at that point.
+Both are coarse-grainings of the same eigenbasis measurement, and the two labels agree because
+evaluating the restriction of $g_h$ to $\ell$ at the parameter of $u$ is evaluating $g_h$ at $u$
+(Definition~\ref{def:line-restriction}), $u$ lying on $\ell$ at that parameter. So the two
+players' measurements are convolutions of their own factors with \emph{one} ancilla measurement,
+the factorization applies again, the ancilla factor is again exactly one, and what remains is item
+2a or 2b of Lemma~\ref{lem:qld-win} --- the line answer evaluated at the sampled point against the
+point answer --- at $2 \cdot 86 \eps$.
 \end{proof}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Background/QLD/Expanded.lean}, with the
+restriction operation in \texttt{MIPRE/Foundations/LowDegree/LineRestrict.lean} and the two
+closure properties of projectivity in \texttt{MIPRE/Foundations/PVM.lean} and
+\texttt{MIPRE/Foundations/Expanded.lean}.
+
+Three things about the statement have changed against the version this replaces, and all three are
+improvements rather than paraphrases.
+
+$\delta_{\mathrm{Line}}$ is \emph{linear} in $\eps$, at the constant $172\eps$ of item 1 of
+Lemma~\ref{lem:qld-win}, not $O(\sqrt\eps)$ as this lemma previously claimed. The paper says
+$\poly(\eps)$ and is consistent with either; the square root was this blueprint's own and had no
+source. Nothing in the proof takes a square root, because nothing in it converts an operator
+inequality into a norm.
+
+Projectivity does not come from Corollary~\ref{cor:ortho-from-consistency}, and that reference is
+gone from the \texttt{uses} list. It comes from projectivity of the strategy's own line
+measurement, which the paper takes for granted and which is without loss of generality; the
+formalized statement carries it as a hypothesis rather than hiding it.
+
+The paper's two forms of item 2 --- comparing a line outcome with a point outcome, and comparing
+the \emph{evaluation} of the line polynomial at the point --- are one statement here. The paper
+needs a direct calculation to pass between them, because it works with $\approx$ and
+Fact~\texttt{fact:data-processing} is a statement about $\simeq$ (a defect it flags itself). At the
+Born level the passage is free: summing the line outcomes over a fibre of $\mathrm{eval}_u$ is a
+coarse-graining, which increases agreement, so the estimate proved is the stronger one and the
+weaker follows without a separate argument.
+
+One thing is deliberately \emph{not} claimed. For an axis-parallel line the honest restriction is
+affine, hence of degree at most $d$ rather than $md$; that refinement is what
+Lemma~\ref{lem:qld-pairs-of-lines} will need in order to keep the padded answers in the
+degree-$d$ format, and it needs the individual-degree bound along the line's own direction, not
+the total-degree bound proved here. The convolution above is stated at degree $md$ for both line
+types, with the axis-parallel answers padded, which is what the paper's printed definition does
+too.
 
 \subsubsection{Combining the two bases}
 
@@ -1966,22 +2095,102 @@ strategy.
 \begin{theorem}[Exact linearity from approximate linearity]
 \label{thm:linearity}
 \ledgernode{1.2.2.7, 1.2.2.7.1, 1.2.2.7.2, 1.2.2.7.3}
-\uses{def:distance,thm:gowers-hatami}
-Let $\{O^u\}_{u \in \F_2^t}$ be observables satisfying approximate linearity on average,
-$O^u O^{u'} \approx_\delta O^{u + u'}$. Then on an extended space there are \emph{exactly}
-linear observables $\{L^u\}$ --- a representation of $\F_2^t$, with $L^0 = \Id$ --- such that
-$L^u \approx_\delta O^u$ on average over $u$. The error is linear in $\delta$, with no loss in
-the exponent.
+\uses{def:state-distance,def:generalized-pauli,lem:naimark-dilation}
+\lean{MIPRE.fourierOf, MIPRE.fourierOf_conjTranspose, MIPRE.fourierOf_posSemidef,
+  MIPRE.sum_sgn_smul_fourierOf_sq, MIPRE.sum_fourierOf_sq, MIPRE.exists_exactly_linear,
+  MIPRE.extVecA, MIPRE.ancillaEmbed_kron_isometry, MIPRE.norm_evec_extVecA,
+  MIPRE.kron_one_mul_ancillaEmbed, MIPRE.ancillaEmbed_conjTranspose_mul_kron_one,
+  MIPRE.compress_mul_kron_one, MIPRE.compress_kron_one_mul, MIPRE.qform_extVecA,
+  MIPRE.stateSqNorm_sub_of_isometry, MIPRE.conjTranspose_mul_self_of_involution,
+  MIPRE.exists_exactly_linear_close}
+\leanok
+Let $\{O^u\}_{u \in V}$, $V = \F_q^n$, be observables on the first party's space --- self-adjoint
+involutions --- and let $\ket{\psi}$ be a state. Then, on the space extended by an ancilla register
+$\C^V$ on the \emph{first party only}, with the extended state
+$\ket{\psi'} = \ket{\psi} \ot \ket{0}$, there are observables $\{L^u\}$ that are \emph{exactly}
+linear,
+\begin{equation*}
+  L^u L^{u'} \;=\; L^{u + u'}\;, \qquad L^0 \;=\; \Id\;,
+\end{equation*}
+such that the average squared distance to the original family is \emph{equal} to the average
+linearity defect:
+\begin{equation*}
+  \E_{u \in V} \norm{\bigl(L^u - O^u \ot \Id\bigr) \ket{\psi'}}^2
+    \;=\; \E_{a, b \in V} \norm{\bigl(O^a O^b - O^{a + b}\bigr) \ket{\psi}}^2\;.
+\end{equation*}
+In particular, if the family is $\delta$-approximately linear on average then
+$L^u \approx_\delta O^u$ on average over $u$: the error is linear in $\delta$, with no loss in the
+exponent and no change of constant.
 \end{theorem}
 
 \begin{proof}
-Imported from Natarajan and Vidick~\cite{NV17}, whose proof is the Fourier argument: the
-operators $\widehat{A}^u = \E_a (-1)^{a \cdot u} A(a)$ have squares forming a POVM by
-Parseval, Naimark dilates that POVM to a projective family on an extended space, and the
-exactly linear observables are recovered from it by inverting the transform. The source is
-vendored and was audited line by line, including its state-dependent distance toolkit; the
-only facts it needs beyond that are Parseval and Naimark.
+\leanok
+\uses{def:generalized-pauli,lem:naimark-dilation}
+The Fourier argument, in three exact steps and one identity.
+
+\textbf{Parseval.} Let $A_e = \abs{V}^{-1} \sum_a (-1)^{\fieldtr(a \cdot e)} O^a$ be the Fourier
+transform of the family against the characters of the trace form
+(Definition~\ref{def:generalized-pauli}). Merging the characters and summing over $e$ collapses the
+double sum, because $\sum_e (-1)^{\fieldtr(c \cdot e)}$ is $\abs{V}$ at $c = 0$ and $0$ otherwise:
+\begin{equation}
+  \label{eq:linearity-character-sum}
+  \sum_e (-1)^{\fieldtr(u \cdot e)} A_e^2 \;=\; \abs{V}^{-1} \sum_a O^a O^{a + u}\;.
+\end{equation}
+At $u = 0$ the right-hand side is $\abs{V}^{-1} \sum_a (O^a)^2 = \Id$, so $\{A_e^2\}$ is a POVM ---
+\emph{exactly}, with no appeal to the approximate linearity. That is the only place the involution
+property is used.
+
+\textbf{Naimark.} Dilate that POVM to a projective measurement $\{P_e\}$ on
+$\C^{d} \ot \C^{V}$, compressed back by the isometry $\ket{v} \mapsto \ket{v} \ot \ket{0}$
+(Lemma~\ref{lem:naimark-dilation}). One isometry serves the whole family of families, which is what
+lets the estimate be taken against the single state $\ket{\psi'}$.
+
+\textbf{Inversion.} Put $L^u = \sum_e (-1)^{\fieldtr(u \cdot e)} P_e$. Mutual orthogonality of the
+$P_e$ gives $L^u L^{u'} = L^{u + u'}$ and $L^0 = \sum_e P_e = \Id$, and the compression of $L^u$ is
+the left-hand side of~\eqref{eq:linearity-character-sum}, hence $\abs{V}^{-1} \sum_a O^a O^{a+u}$.
+
+\textbf{The identity.} Expanding both squared distances --- each is $2$ minus the two orders of an
+overlap, the operators involved being unitary --- and compressing, the $u$-th term on the left is
+the average over $a$ of the $(a, a+u)$-th term on the right, after reindexing that average by
+$a \mapsto a + u$. Summing over $u$ and reindexing once more, by $u \mapsto a + u$ for each fixed
+$a$, gives the stated equality. No inequality is used anywhere, which is why the constant is
+exactly $1$.
 \end{proof}
+
+\paragraph{Source and correction.} The paper imports this from Natarajan and
+Vidick~\cite{NV17} (Theorem~10 of the arXiv version) and proves nothing about it; the source is
+vendored in the \emph{paper} repository, not in this one. An earlier version of this proof text said
+``the source is vendored and was audited line by line'', which is true of
+\texttt{paper/external/nv17/} and false of \texttt{MIPRE/Background/}, whose vendored trees are
+GowersHatami, LIDT, Orthonormalization and Repetition. A reader would have planned the wrong work.
+The theorem is therefore \textbf{proved here}, from Parseval and Lemma~\ref{lem:naimark-dilation};
+it is formalized in \texttt{MIPRE/Foundations/Linearity.lean}.
+
+The ledger node this statement accounts for records the \emph{paper}'s status --- imported from
+NV17, with the import audited in its three children: the statement match, the source's
+state-dependent-distance toolkit, and the Fourier proof line by line. The mark here records the
+\emph{Lean}'s status, which is a proof. The two are consistent claims about different artifacts, and
+the Lean proof is the argument the third child audits: the same transform, the same Parseval step,
+the same dilation, the same inversion.
+
+\paragraph{Comments.} Three things are worth separating from the proof.
+
+Theorem~\ref{thm:gowers-hatami} is \emph{not} used, and has left this theorem's \texttt{uses} list.
+Gowers--Hatami is a statement about the Hilbert--Schmidt distance and approximate
+\emph{representations}; the hypothesis here is in the state-dependent distance, and the
+exact-POVM step above replaces the stability machinery entirely. The two results are about
+different things and neither implies the other in the form stated.
+
+The conclusion is an \textbf{equality}, which is more than the paper's statement and more than the
+application needs. The paper's own audit note reconciles its $\delta$ against NV17's convention and
+concludes ``the closeness exponent is $1$, with the identical $\delta$''; the equality above says
+where that comes from --- the linearity defect is transported term by term, not estimated.
+
+The ancilla is adjoined to \textbf{one} party. That is the asymmetric extension
+$\ket{\psi} \ot \ket{0}_{\alice'}$ of the source statement, not the two-sided
+$\ket{\EPR_q}^{\ot M}$ of Definition~\ref{def:expanded-state}; the exactly linear observables act
+on $\alice \alice'$ and the second party is untouched. Its formalization is \texttt{extVecA}, with
+the compression identity \texttt{qform\_extVecA} the only fact about it the proof needs.
 
 \effortHard
 

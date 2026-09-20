@@ -49,6 +49,7 @@ import MIPRE.LCS.Strategy.ObservableToProjector
 import MIPRE.TM.Code.Encoding.MachineCode
 import MIPRE.Foundations.WeylBinary
 import MIPRE.Foundations.Commutation
+import MIPRE.Foundations.Linearity
 import MIPRE.Background.GowersHatami.Basic
 
 /-!
@@ -505,6 +506,41 @@ tell you the guard is missing.
   MIPRE.commutation_analysis,
   MIPRE.commutation_analysis_aOp,
   MIPRE.obs2_commutator_eq
+
+-- blueprint `lem:naimark-dilation`: a question-indexed family of POVMs is the compression, by one
+-- question-independent isometry, of a family of projective measurements.
+#guard_sorry_free MIPRE.ancillaProj,
+  MIPRE.ancillaProj_conjTranspose,
+  MIPRE.ancillaProj_mul_self,
+  MIPRE.sum_ancillaProj,
+  MIPRE.exists_isometry_of_povm,
+  MIPRE.ancillaEmbed,
+  MIPRE.ancillaEmbed_isometry,
+  MIPRE.exists_unitary_extending,
+  MIPRE.exists_projective_dilation,
+  MIPRE.dotProduct_mulVec_submatrix,
+  MIPRE.dotProduct_comp_equiv,
+  MIPRE.dotProduct_mulVec_conj
+
+-- blueprint `thm:linearity`: the Fourier transform of the family, Parseval making its squares a
+-- POVM, the dilation, and the exactly linear family with its transported error.
+#guard_sorry_free MIPRE.fourierOf,
+  MIPRE.fourierOf_conjTranspose,
+  MIPRE.fourierOf_posSemidef,
+  MIPRE.sum_sgn_smul_fourierOf_sq,
+  MIPRE.sum_fourierOf_sq,
+  MIPRE.exists_exactly_linear,
+  MIPRE.extVecA,
+  MIPRE.ancillaEmbed_kron_isometry,
+  MIPRE.norm_evec_extVecA,
+  MIPRE.kron_one_mul_ancillaEmbed,
+  MIPRE.ancillaEmbed_conjTranspose_mul_kron_one,
+  MIPRE.compress_mul_kron_one,
+  MIPRE.compress_kron_one_mul,
+  MIPRE.qform_extVecA,
+  MIPRE.stateSqNorm_sub_of_isometry,
+  MIPRE.conjTranspose_mul_self_of_involution,
+  MIPRE.exists_exactly_linear_close
 
 /-!
 ## The one axiom
