@@ -60,12 +60,12 @@ def shoupCoordinateEquiv (k : ℕ) (hk : 1 ≤ k) :
         rcases binary_eq_zero_or_one c with rfl | rfl
         · simp only [zero_smul, RingHom.id_apply]
           rw [shoupBinField_ofBits k hk (vectorBits 0) (by simp [vectorBits])]
-          have he : vectorBits (0 : Fin k → ZMod 2) = Circuit.zeroBits (vectorBits v) := by
+          have he : vectorBits (0 : Fin k → ZMod 2) = BinaryPolynomial.zeroBits (vectorBits v) := by
             apply List.ext_getElem
-            · simp [vectorBits, Circuit.length_zeroBits]
+            · simp [vectorBits, BinaryPolynomial.length_zeroBits]
             · intro i hi hj
-              simp [vectorBits, bit, Circuit.zeroBits]
-          rw [he, Circuit.evalBits_zeroBits]
+              simp [vectorBits, bit, BinaryPolynomial.zeroBits]
+          rw [he, BinaryPolynomial.evalBits_zeroBits]
         · simp }).symm
 
 @[simp] theorem shoupCoordinateEquiv_apply (k : ℕ) (hk : 1 ≤ k)

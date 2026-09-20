@@ -15,7 +15,7 @@ coordinates. The surrounding verifier supplies their prescribed lengths.
 
 namespace MIPRE.SAT.PcpFieldTests
 
-open Cost LowDegree LowDegree.BinaryPolynomial Circuit
+open Cost LowDegree LowDegree.BinaryPolynomial
 
 def literalProduct (p : BitStr) (l : List (BitStr × BitStr)) : BitStr :=
   arithmeticFold true p (oneBits p) (l.map (fun a => xorBits a.1 a.2))
