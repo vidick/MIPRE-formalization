@@ -55,6 +55,15 @@ def epr : (n → F) × (n → F) → ℂ :=
 
 theorem epr_ne {a b : n → F} (h : a ≠ b) : epr (F := F) (n := n) (a, b) = 0 := if_neg h
 
+/-- **The maximally entangled state is symmetric under exchanging the two halves.** -/
+@[simp] theorem swapVec_epr : swapVec (epr (F := F) (n := n)) = epr := by
+  funext p
+  obtain ⟨a, b⟩ := p
+  show epr (F := F) (n := n) (b, a) = epr (a, b)
+  by_cases h : a = b
+  · rw [h]
+  · rw [epr_ne (Ne.symm h), epr_ne h]
+
 theorem eprScale_sq : (eprScale (F := F) (n := n)) ^ 2 = (Fintype.card (n → F) : ℝ)⁻¹ := by
   have hpos : (0 : ℝ) < Fintype.card (n → F) := by
     exact_mod_cast Fintype.card_pos (α := n → F)

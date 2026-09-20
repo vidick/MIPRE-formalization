@@ -613,15 +613,110 @@ the quadratic form of the compressed operator on the original one, which is
 `dotProduct_mulVec_conj` plus one Kronecker identity. `Dilation.lean`'s universe variables had to be
 relaxed from `Type` to `Type*` for the index group `n -> F` to serve as the ancilla.
 
-**Still to do in PR C**: `lem:qld-combined-points` -- the three-step construction that *applies*
-this theorem, whose first two steps are the work: combining the two bases' binary measurements
-through their approximate commutation, and proving the combined family approximately linear -- then
-`lem:qld-pairs-of-lines`, `lem:qld-padded-points`, `lem:qld-sublines`, `lem:qld-padded-lines`,
-`lem:qld-simultaneous`.
+**Still to do in PR C**: `lem:qld-pairs-of-lines`, `lem:qld-sublines`,
+`lem:qld-padded-lines`, `lem:qld-simultaneous`.
 
 `lem:qld-sublines` is purely combinatorial and the blueprint says it is "a reasonable place to
-start formalizing"; it is the natural first commit of PR C. `lem:qld-simultaneous` is the one
+start formalizing"; it is the natural next commit of PR C. `lem:qld-simultaneous` is the one
 that cites Chunk 3.
+
+### `lem:qld-combined-points`, by the sandwich rather than the linearity test (2026-09-20, done)
+
+`MIPRE/Foundations/Sandwich.lean` (generic), `MIPRE/Foundations/Parseval.lean`,
+`MIPRE/Foundations/Swap.lean`, `MIPRE/Background/QLD/Swap.lean`,
+`MIPRE/Background/QLD/Combined.lean` (the instantiation). Statement and proof marked, sixty-seven
+declarations guarded.
+
+**`thm:linearity` is not used, and neither is `cor:ortho-from-consistency`.** The paper's route is
+three steps -- sandwich, orthonormalize, linearity test. Two of them drop out once the strategy is
+taken projective, which the paper also assumes and which `lem:naimark-dilation` supplies:
+
+* `R-hat^{x,z}_{a,b} = M-hat^Z_b M-hat^X_a M-hat^Z_b` is **already a POVM**, exactly --
+  `sum_{a,b} R-hat = sum_b M-hat^Z_b (sum_a M-hat^X_a) M-hat^Z_b = sum_b M-hat^Z_b = Id` uses only
+  projectivity of the `Z` side, and each term is a Gram operator, hence positive. So no
+  orthonormalization.
+* its **Naimark dilation** is the projective joint measurement the lemma wants, on one extra
+  `F_q x F_q` register per party, and the dilation's compression identity carries every Born-rule
+  estimate unchanged. So no linearity test, and no Fourier inversion of an exactly linear family.
+
+This leaves exactly the analytic content, and it is one chain. Written with `P_b = M-hat^Z_b (x)
+M-hat^Z_b` and `Delta = sum_a (Id - M-hat^X_a) (x) M-hat^X_a`, the five links are: two players'
+commutators (each a `M-hat^Z_b` times a commutator, front factor a contraction, one
+Cauchy--Schwarz over *all* outcome pairs), the `X`-consistency as the single product
+`(sum_b P_b) Delta` of two projections, the exact collapse `sum_a M-hat^X_a = Id`, and the
+`Z`-consistency.
+
+**The third link is the one that must not be broken up.** Bounding the `q^2` outcome pairs one at a
+time costs a factor `q` and the conclusion has to be `q`-independent -- which is precisely the
+defect the paper's round-11 `\cnote` on node 1.2.2.8 repairs, and the reason it introduces its own
+Parseval identity there. Here the whole double sum is one operator product, both factors are
+projections because their summands are mutually orthogonal projections, and Cauchy--Schwarz gives
+`sqrt(<Delta>) = sqrt(half the X-consistency defect)` once.
+
+**Parseval is the dictionary, and the probe average is free.** `lem:qld-expanded-points` bounds the
+commutator of the *observables*, one pair per probe `(r,s)`; the sandwich needs the commutator of
+the *elements*, one pair per outcome `(a,b)`. The elements are the two-variable Fourier transform of
+the observables (`hatComm_eq_fourierOf`), so `sum_norm_fourierVec_sq` exchanges the two at no cost
+-- and the verifier's content already averages over `(r_X, r_Z)` uniformly and independently of
+everything else it carries, so `sum_content_avg_probe` turns the average the transform introduces
+into the one the hypothesis already has.
+
+**Both players' commutation bounds are needed, and the game's symmetry supplies the second.**
+Every rule of `fig:decider_pauli` is written in both orientations and the sampler draws an ordered
+edge of a symmetric type graph, so `accepts_symm` (a `cases`-and-`simp` bash over the question and
+answer constructors, 27 s) and `qldGame_mu_symm` (the edge-swap bijection) give
+`povmValue_qldGame_swapVec`, and `hatObs_commutation` applied to `(MB, MA)` on `swapVec psi` is
+Bob's half. `hatVec_swapVec` is what makes that readable back: it needs the maximally entangled
+ancilla to be symmetric, `MIPRE.Weyl.swapVec_epr`.
+
+**Constants.** `delta_Q(eps) = 2 sqrt(57676416 eps) + sqrt(86 eps) + 86 eps`; self-consistency at
+`2 delta_Q`, consistency with `M-hat^Z_b M-hat^X_a` at `4 delta_Q + 115352832 eps` and with the
+other order at `4 delta_Q + 461411328 eps`. The square roots are the three Cauchy--Schwarz links;
+nothing depends on `q`.
+
+**The generic half is in `Foundations/`** and says nothing about the Pauli basis test: two
+approximately commuting projective measurements per party, four error hypotheses, and
+`exists_projective_joint` returns the dilated pair with its three estimates. That is what
+`Combined.lean` instantiates at `A := F_q`, `iota := Content F m`, uniform weights.
+
+### `lem:qld-padded-points`, and why its two items are free for opposite reasons (2026-09-20, done)
+
+The combined measurement coarse-grained along `(a,b) |-> alpha a + beta b`, so that it returns
+the single field element `alpha g_X(x) + beta g_Z(z)`. Indexed by `(x, z, alpha, beta)`, which is
+what the paper's "independent of the dummy coordinates `w`" means; the padded space `F_q^{4m}`
+itself is not needed until the line--point distribution over it is, in `lem:qld-padded-lines`.
+
+**Item 1 (self-consistency) is free because both families are projective.** The state-dependent
+distance has no data-processing inequality -- `Expanded.lean`'s docstring records NW19's own
+counterexample -- so a coarse-graining is not free in general. What makes it free here is that
+for *projective* families the summed deviation and the agreement probability determine each other
+exactly (`one_sub_sum_bornProb_eq`, proved for the sandwich chain and reused verbatim), and
+agreement can only increase under a coarse-graining applied to both sides
+(`sum_bornProb_le_map`). Three lines: `sum_xSqNorm_map_le`. And it holds for *every*
+`(alpha,beta)`, not just on average.
+
+**Item 2 (consistency with the ordered products) is not free, and Parseval pays for it.** The
+right-hand families are products of two measurements, not POVMs, so item 1's route is
+unavailable, and a per-fibre triangle inequality costs the fibre size `q`. The paper's round-12
+`\cnote` on node 1.2.2.10 records that an earlier orthogonality-and-Cauchy--Schwarz route claimed
+`O(delta_Q^{1/2})` and was retracted for exactly this reason. The argument that works, and is
+what is formalized (`sum_avg_norm_fibre_sq`):
+
+* Parseval over `F_q` turns the sum over fibres into an average over one probe `r`;
+* the `r = 0` term vanishes **identically**, because the deviation family sums to zero --
+  `sum_{a,b} Q-hat_{a,b} = Id` and `sum_{a,b} M-hat^Z_b M-hat^X_a = Id`. This is the only place
+  the zero-sum hypothesis is used, and without it the identity is false;
+* for `r != 0` the pair `(r alpha, r beta)` is uniform on `F_q^2` when `(alpha,beta)` is, so
+  averaging and applying Parseval over `F_q^2` returns the outcome-pair sum exactly.
+
+So the error comes out at `(q-1)/q` times the input -- **better** than preserved, and with no
+`md/q` term. The Lean keeps the factor visible.
+
+New Foundations pieces: `sum_norm_trVecRaw_sq` (Parseval over one copy of the field, a copy of
+the `n -> F` proof with `sum_sgn_trMul` in place of `sum_sgn_trDot`), `sum_norm_char_two_sq`
+(over two copies, transported from `n := Fin 2` through `pairVec`), `sum_avg_norm_fibre_sq`,
+`sum_xSqNorm_map_le`, and the vector bridge `xSqNorm_eq_norm_evec_sq` / `sum_fibre_dev` that lets
+a fibre sum of deviation *vectors* be read back as the deviation of the coarse-grained operators.
 
 ### PR D — separation, the swap isometry, and the theorem
 

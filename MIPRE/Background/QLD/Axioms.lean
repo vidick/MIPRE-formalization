@@ -6,6 +6,7 @@ Authors: Thomas Vidick
 import MIPRE.Background.QLD.Anticomm
 import MIPRE.Background.QLD.Consistency
 import MIPRE.Background.QLD.Expanded
+import MIPRE.Background.QLD.Combined
 import MIPRE.Foundations.GuardSorryFree
 
 /-!
@@ -206,3 +207,47 @@ Square's anticommutator carried across the tensor factors. -/
   MIPRE.QLD.anti_eq_varObs,
   MIPRE.QLD.sq_norm_ptObs_anticomm_le,
   MIPRE.QLD.acomm_signed_commutation
+
+/-! ## The combining stage: the joint `XZ` point measurement
+
+Blueprint `lem:qld-combined-points`. The hatted point measurement re-indexed by the point, its
+observable family and the transform between them, Parseval for the commutator, the content split
+that makes the probe average free, the two players' commutation inputs, and the lemma. -/
+
+#guard_sorry_free MIPRE.QLD.pairTest_symm,
+  MIPRE.QLD.accepts_symm,
+  MIPRE.QLD.qldGame_mu_symm,
+  MIPRE.QLD.povmValue_qldGame_swapVec,
+  MIPRE.QLD.hatVec_swapVec,
+  MIPRE.QLD.hatPtPOVM,
+  MIPRE.QLD.hatPOVM_eq,
+  MIPRE.QLD.hatMats,
+  MIPRE.QLD.hatObsAt,
+  MIPRE.QLD.hatObsAt_eq,
+  MIPRE.QLD.trObs_ptVal,
+  MIPRE.QLD.trObs_synPOVM,
+  MIPRE.QLD.hatObsAt_self,
+  MIPRE.QLD.hatComm,
+  MIPRE.QLD.hatComm_eq_fourierOf,
+  MIPRE.QLD.sum_stateSqNorm_hatComm,
+  MIPRE.QLD.isPVM_hatMats,
+  MIPRE.QLD.sum_content_split,
+  MIPRE.QLD.sum_content_avg_probe,
+  MIPRE.QLD.sum_content_hatComm_le,
+  MIPRE.QLD.sum_content_hatComm_le_B,
+  MIPRE.QLD.sum_content_hatMats_consistency,
+  MIPRE.QLD.deltaQ,
+  MIPRE.QLD.combined_points
+
+/-! ## The padded point measurement
+
+Blueprint `lem:qld-padded-points`. The combined measurement coarse-grained along
+`(a, b) |-> alpha a + beta b`, Bob's two ordered products and their completeness, the Parseval
+identity for the coarse-graining, and the lemma. -/
+
+#guard_sorry_free MIPRE.QLD.hatOrdZX,
+  MIPRE.QLD.hatOrdXZ,
+  MIPRE.QLD.sum_hatOrdZX,
+  MIPRE.QLD.sum_hatOrdXZ,
+  MIPRE.QLD.sum_avg_xSqNorm_fibre_eq,
+  MIPRE.QLD.padded_points

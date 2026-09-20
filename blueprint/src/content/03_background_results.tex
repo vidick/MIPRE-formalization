@@ -2197,15 +2197,157 @@ the compression identity \texttt{qform\_extVecA} the only fact about it the proo
 \begin{lemma}[Combined $XZ$ point measurements]
 \label{lem:qld-combined-points}
 \ledgernode{1.2.2.8}
-\uses{thm:linearity,lem:qld-expanded-points,def:distance}
-There is $\delta_Q(\eps) = \poly(\eps)$ and, for every pair $(x, z) \in \F_q^m \times \F_q^m$,
-a projective measurement $\widehat{Q}^{x, z}_{a, b}$ jointly returning the $X$-value at $x$
-and the $Z$-value at $z$, self-consistent on average over uniform $(x, z)$ and consistent
-with \emph{both} ordered products $\widehat{M}^Z_b \widehat{M}^X_a$ and
-$\widehat{M}^X_a \widehat{M}^Z_b$ of the expanded point measurements. It is built as a Fourier
-transform of the exactly linear family supplied by Theorem~\ref{thm:linearity}. Its marginals
-are not claimed here; they are obtained in Lemma~\ref{lem:qld-pairs-of-lines}.
+\uses{lem:qld-expanded-points,lem:naimark-dilation,def:expanded-state,def:distance}
+\lean{MIPRE.fourierVec, MIPRE.sum_norm_fourierVec_sq, MIPRE.trObs, MIPRE.trFourier,
+  MIPRE.trFourier_trObs, MIPRE.trObs_map, MIPRE.pairVec, MIPRE.sum_prod_eq_sum_pairVec,
+  MIPRE.fourierOf_pair_mul, MIPRE.sum_stateSqNorm_fourierOf, MIPRE.obs2_map,
+  MIPRE.swapVec_expVec, MIPRE.Weyl.swapVec_epr, MIPRE.bornProb_swapVec,
+  MIPRE.povmValue_swapVec_of_symm, MIPRE.sum_weighted_mul_le_sqrt,
+  MIPRE.sum_weighted_sqrt_le, MIPRE.abs_qform_conjTranspose_mul_le, MIPRE.proj_le_one,
+  MIPRE.snorm_le_one_of_proj, MIPRE.bornProb_eq_qform, MIPRE.abs_qform_aOp_mul_bOp_le,
+  MIPRE.stateNorm_mul_le, MIPRE.norm_stateVecB_mul_le, MIPRE.xSqNorm_eq_expand,
+  MIPRE.one_sub_sum_bornProb_eq, MIPRE.sand, MIPRE.sum_sand, MIPRE.sandPOVM,
+  MIPRE.sum_stateSqNorm_ord, MIPRE.abs_link1_le, MIPRE.abs_link2_le, MIPRE.abs_link3_le,
+  MIPRE.link4_eq, MIPRE.link5_eq, MIPRE.one_sub_sum_bornProb_sand_le, MIPRE.extVec2,
+  MIPRE.extVec2_unit, MIPRE.bornProb_extVec2, MIPRE.sum_xSqNorm_dilated_eq,
+  MIPRE.sum_xSqNorm_dilated_aOp_le, MIPRE.exists_projective_joint,
+  MIPRE.QLD.pairTest_symm, MIPRE.QLD.accepts_symm, MIPRE.QLD.qldGame_mu_symm,
+  MIPRE.QLD.povmValue_qldGame_swapVec, MIPRE.QLD.hatVec_swapVec, MIPRE.QLD.hatPtPOVM,
+  MIPRE.QLD.hatPOVM_eq, MIPRE.QLD.hatMats, MIPRE.QLD.hatObsAt, MIPRE.QLD.hatObsAt_eq,
+  MIPRE.QLD.trObs_ptVal, MIPRE.QLD.trObs_synPOVM, MIPRE.QLD.hatObsAt_self,
+  MIPRE.QLD.hatComm, MIPRE.QLD.hatComm_eq_fourierOf, MIPRE.QLD.sum_stateSqNorm_hatComm,
+  MIPRE.QLD.isPVM_hatMats, MIPRE.QLD.sum_content_split, MIPRE.QLD.sum_content_avg_probe,
+  MIPRE.QLD.sum_content_hatComm_le, MIPRE.QLD.sum_content_hatComm_le_B,
+  MIPRE.QLD.sum_content_hatMats_consistency, MIPRE.QLD.deltaQ, MIPRE.QLD.combined_points}
+\leanok
+Let $\ket{\hat\psi}$ be as in Lemma~\ref{lem:qld-expanded-points}, and suppose both players'
+measurements are projective --- without loss of generality, by
+Lemma~\ref{lem:naimark-dilation}. Put
+\begin{equation*}
+  \delta_Q(\eps) \;=\; 2\sqrt{57676416\,\eps} \;+\; \sqrt{86\,\eps} \;+\; 86\,\eps
+  \;=\; \poly(\eps)\;.
+\end{equation*}
+Then for every pair $(x, z) \in \F_q^m \times \F_q^m$ and each player there is a
+\emph{projective} measurement $\{\widehat{Q}^{x, z}_{a, b}\}_{a, b \in \F_q}$, acting on that
+player's expanded space enlarged by one $\F_q \times \F_q$ ancilla register held in the state
+$\ket{0, 0}$, which jointly returns the $X$-value at $x$ and the $Z$-value at $z$ and satisfies,
+on average over the verifier's content:
+\begin{enumerate}
+\item (\textbf{Self-consistency})
+  $\widehat{Q}^{x, z}_{a, b} \ot \Id \;\simeq_{2 \delta_Q}\; \Id \ot \widehat{Q}^{x, z}_{a, b}$;
+\item (\textbf{Consistency with the ordered products})
+  \begin{gather*}
+    \widehat{Q}^{x, z}_{a, b} \ot \Id \;\simeq_{4 \delta_Q + 115352832 \eps}\;
+      \Id \ot \widehat{M}^{(\mathtt{Point}, Z), z}_b \widehat{M}^{(\mathtt{Point}, X), x}_a\;, \\
+    \widehat{Q}^{x, z}_{a, b} \ot \Id \;\simeq_{4 \delta_Q + 461411328 \eps}\;
+      \Id \ot \widehat{M}^{(\mathtt{Point}, X), x}_a \widehat{M}^{(\mathtt{Point}, Z), z}_b\;.
+  \end{gather*}
+\end{enumerate}
+Moreover $\widehat{Q}^{x, z}$ compresses, along the isometry that adjoins $\ket{0, 0}$, to the
+\textbf{sandwich}
+$\widehat{R}^{x, z}_{a, b} = \widehat{M}^{(\mathtt{Point}, Z), z}_b
+\widehat{M}^{(\mathtt{Point}, X), x}_a \widehat{M}^{(\mathtt{Point}, Z), z}_b$. The conclusions
+depend on the content only through $(x, z)$, whose marginal is uniform, so ``on average over the
+content'' is ``on average over uniform $(x, z)$''. The marginals of $\widehat{Q}^{x,z}$ are not
+claimed here; they are obtained in Lemma~\ref{lem:qld-pairs-of-lines}.
 \end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:qld-expanded-points,lem:naimark-dilation,def:expanded-state,def:distance,
+  def:generalized-pauli}
+The sandwich, its Naimark dilation, and one five-link chain.
+
+\textbf{The sandwich is a POVM, exactly.} With $\{\widehat{M}^{(\mathtt{Point}, Z), z}_b\}$
+projective,
+\begin{equation*}
+  \sum_{a, b} \widehat{M}^{Z, z}_b \widehat{M}^{X, x}_a \widehat{M}^{Z, z}_b
+    \;=\; \sum_b \widehat{M}^{Z, z}_b \Bigl(\sum_a \widehat{M}^{X, x}_a\Bigr)
+      \widehat{M}^{Z, z}_b
+    \;=\; \sum_b \widehat{M}^{Z, z}_b \;=\; \Id\;,
+\end{equation*}
+and each term is $(\widehat{M}^{X, x}_a \widehat{M}^{Z, z}_b)^\dagger
+(\widehat{M}^{X, x}_a \widehat{M}^{Z, z}_b)$, hence positive. No approximate commutation is used
+here, and no orthonormalization is needed afterwards: Lemma~\ref{lem:naimark-dilation} dilates
+$\{\widehat{R}^{x, z}_{a, b}\}$ to a \emph{projective} measurement on one extra
+$\F_q \times \F_q$ register, compressed back by the isometry that adjoins $\ket{0, 0}$, and one
+isometry serves every $(x, z)$ at once. Projectivity of $\widehat{M}$ itself is two closure
+properties of projective measurements --- products and coarse-grainings --- applied to the
+convolution of Definition~\ref{def:expanded-state}.
+
+\textbf{Parseval moves the commutation input to the elements.} What
+Lemma~\ref{lem:qld-expanded-points} bounds is the commutator of the \emph{observables}
+$\widehat{W}^{r}(u)$, one pair per probe; what the sandwich needs is the commutator of the
+measurement \emph{elements}, one pair per outcome. The elements are the two-variable Fourier
+transform of the observables against the characters of the trace form
+(Definition~\ref{def:generalized-pauli}), so by Parseval the sum over outcomes of the one is the
+average over probes of the other --- and the content already averages over the probes uniformly
+and independently of everything else it carries, so that average is free.
+
+\textbf{The chain.} Write $P_b = \widehat{M}^{Z, z}_b \ot \widehat{M}^{Z, z}_b$ and
+$\Delta = \sum_a (\Id - \widehat{M}^{X, x}_a) \ot \widehat{M}^{X, x}_a$. Then
+\begin{align*}
+  \sum_{a, b} \bra{\hat\psi} \widehat{R}^{x, z}_{a, b} \ot \widehat{R}^{x, z}_{a, b}
+      \ket{\hat\psi}
+  &\approx \sum_{a, b} \bra{\hat\psi} \widehat{M}^{Z}_b \widehat{M}^{X}_a \ot
+      \widehat{R}^{x, z}_{a, b} \ket{\hat\psi}
+  \approx \sum_{a, b} \bra{\hat\psi} \widehat{M}^{Z}_b \widehat{M}^{X}_a \ot
+      \widehat{M}^{Z}_b \widehat{M}^{X}_a \ket{\hat\psi} \\
+  &\approx \sum_{a, b} \bra{\hat\psi} \widehat{M}^{Z}_b \ot
+      \widehat{M}^{Z}_b \widehat{M}^{X}_a \ket{\hat\psi}
+  = \sum_b \bra{\hat\psi} P_b \ket{\hat\psi}
+  \;=\; 1 - \tfrac12 \sum_b \delta^Z_b\;,
+\end{align*}
+where $\delta^Z_b$ is the $Z$-consistency defect. The first two steps are the two players'
+commutators: each difference is $\widehat{M}^Z_b$ times a commutator, the front factor is a
+contraction, and one Cauchy--Schwarz over \emph{all} outcome pairs pays for it --- against
+$\sum_{a,b} \norm{\widehat{R}_{a,b} \ket{\hat\psi}}^2 \leq 1$ for the first and
+$\sum_{a,b} \norm{\widehat{M}^X_a \widehat{M}^Z_b \ket{\hat\psi}}^2 = 1$ for the second. The
+third step is the one place the outcome sum must \emph{not} be broken up: the whole double sum is
+the single product $(\sum_b P_b) \Delta$, both factors are projections, and Cauchy--Schwarz gives
+$\sqrt{\bra{\hat\psi} \Delta \ket{\hat\psi}} = \sqrt{\tfrac12 \sum_a \delta^X_a}$. Breaking it up
+instead would cost a factor $q$, which is exactly the defect the paper's round-11 note repairs.
+Both parties' commutators are available because the game is symmetric in the players
+(\texttt{MIPRE.QLD.accepts\_symm}).
+
+\textbf{Transport.} The compression identity of the dilation turns every Born-rule expectation on
+the extended state into one on $\ket{\hat\psi}$, so the chain's bound is the dilated pair's
+self-consistency with no further loss, and the same expansion against
+$\widehat{R}^{x, z}_{a, b} \ot \Id$ gives item 2 after one triangle inequality replacing the
+sandwich by each ordered product --- the difference being $\widehat{M}^Z_b$ times a commutator
+again.
+\end{proof}
+
+\paragraph{Source and correction.} Formalized in \texttt{MIPRE/Background/QLD/Combined.lean},
+with the generic mathematics in \texttt{MIPRE/Foundations/Sandwich.lean}, the Fourier dictionary
+in \texttt{MIPRE/Foundations/Parseval.lean} and the player exchange in
+\texttt{MIPRE/Foundations/Swap.lean} and \texttt{MIPRE/Background/QLD/Swap.lean}.
+
+The \textbf{route differs from the paper's}, and the statement is the same. The paper builds
+$\widehat{Q}$ in three steps: the sandwich, then \emph{orthonormalization}
+(Corollary~\ref{cor:ortho-from-consistency}) to make it projective, then the quantum linearity
+test (Theorem~\ref{thm:linearity}) to turn the resulting binary observables into an $\F_q^2$-valued
+measurement. Given that the strategy may be taken projective --- which the paper also assumes ---
+the last two steps are unnecessary: the sandwich is already a POVM, so its Naimark dilation is
+already the projective joint measurement wanted, and the compression identity carries the
+estimates. So \texttt{thm:linearity} has left this lemma's \texttt{uses} list, together with
+\texttt{cor:ortho-from-consistency}, which was never in it. Theorem~\ref{thm:linearity} is
+consequently used nowhere in this blueprint --- Lemma~\ref{lem:qld-exact-paulis} says explicitly
+that it is not used there either --- and is kept because it is a statement of the paper's and is
+now proved rather than imported, not because anything downstream needs it.
+
+The \textbf{extra register is explicit}. The paper writes ``by assuming that $\ket{\hat\psi}$ has
+sufficiently many ancilla zero qubits, we do not need to extend the state further''; here the
+$\F_q \times \F_q$ register the dilation needs is adjoined to each party by name, which is the
+same device with the bookkeeping visible. It is adjoined to \emph{both} parties, unlike the
+one-sided extension of Theorem~\ref{thm:linearity}, because item 1 compares the two players'
+copies of the same construction.
+
+The \textbf{constants are explicit and linear in the inputs}. $\delta_Q$ has a square root because
+three of the chain's five links are Cauchy--Schwarz steps; the $57676416\eps$ under the first two
+is Lemma~\ref{lem:qld-obs-commutation}'s constant, unchanged by the expansion, and the $86\eps$
+under the third and in the linear term is item 1 of Lemma~\ref{lem:qld-win}'s, halved by
+projectivity. Nothing in the chain is a per-outcome estimate, so no constant depends on $q$.
 
 \effortHard
 
@@ -2224,13 +2366,96 @@ points of the respective lines.
 \begin{lemma}[Padded point measurements]
 \label{lem:qld-padded-points}
 \ledgernode{1.2.2.10}
-\uses{lem:qld-combined-points}
-Write a point of the padded space $\F_q^{4m}$ as $u = (x, z, \alpha, \beta, w)$. The
-measurement $\widehat{Q}^u$ returning the combined value $\alpha g_X(x) + \beta g_Z(z)$ is
-well defined --- independent of the dummy coordinates $w$ --- projective, self-consistent, and
-consistent with both ordered products of the expanded point measurements. The coarse-graining
-onto the fibres $\{\alpha a + \beta b = c\}$ is justified by character orthogonality.
+\uses{lem:qld-combined-points,def:generalized-pauli,def:distance}
+\lean{MIPRE.sum_norm_fourierVecRaw_sq, MIPRE.trVecRaw, MIPRE.sum_norm_trVecRaw_sq,
+  MIPRE.sum_norm_char_two_sq, MIPRE.sum_avg_norm_fibre_sq, MIPRE.sum_xSqNorm_map_le,
+  MIPRE.sum_mulVec', MIPRE.xSqNorm_eq_norm_evec_sq, MIPRE.sum_fibre_dev,
+  MIPRE.QLD.hatOrdZX, MIPRE.QLD.hatOrdXZ, MIPRE.QLD.sum_hatOrdZX, MIPRE.QLD.sum_hatOrdXZ,
+  MIPRE.QLD.sum_avg_xSqNorm_fibre_eq, MIPRE.QLD.padded_points}
+\leanok
+Write a point of the padded space $\F_q^{4m}$ as $u = (x, z, \alpha, \beta, w)$ with
+$x, z \in \F_q^m$, $\alpha, \beta \in \F_q$ and $w \in \F_q^{2m - 2}$ the dummy coordinates.
+With $\delta_Q$ as in Lemma~\ref{lem:qld-combined-points}, put
+\begin{equation*}
+  \widehat{Q}^u_c \;=\; \widehat{Q}^{x, z, \alpha, \beta}_c
+    \;=\; \sum_{\substack{a, b \,:\\ \alpha a + \beta b = c}} \widehat{Q}^{x, z}_{a, b}\;,
+\end{equation*}
+which returns the combined value $\alpha g_X(x) + \beta g_Z(z)$ and depends on $u$ only through
+$(x, z, \alpha, \beta)$ --- that is what ``independent of the dummy coordinates'' means. Then
+$\{\widehat{Q}^{u}_c\}_{c \in \F_q}$ is \emph{projective}, and
+\begin{enumerate}
+\item (\textbf{Self-consistency}) for \emph{every} $(\alpha, \beta)$, on average over the
+  content, $\widehat{Q}^{u}_c \ot \Id \simeq_{2\delta_Q} \Id \ot \widehat{Q}^{u}_c$;
+\item (\textbf{Consistency with $\widehat{M}$}) on average over the content \emph{and} over
+  uniform $(\alpha, \beta)$,
+  \begin{gather*}
+    \widehat{Q}^{u}_c \ot \Id \;\simeq_{4\delta_Q + 115352832\eps}\;
+      \Id \ot \sum_{\alpha a + \beta b = c} \widehat{M}^{(\mathtt{Point}, Z), z}_b
+        \widehat{M}^{(\mathtt{Point}, X), x}_a\;, \\
+    \widehat{Q}^{u}_c \ot \Id \;\simeq_{4\delta_Q + 461411328\eps}\;
+      \Id \ot \sum_{\alpha a + \beta b = c} \widehat{M}^{(\mathtt{Point}, X), x}_a
+        \widehat{M}^{(\mathtt{Point}, Z), z}_b\;.
+  \end{gather*}
+\end{enumerate}
 \end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:qld-combined-points,def:generalized-pauli,def:distance}
+Both items are about the same coarse-graining and they are free for opposite reasons.
+
+\textbf{Item 1 is free because both families are projective.} The fibres
+$\{(a, b) : \alpha a + \beta b = c\}$ partition $\F_q^2$, so the coarse-grained families are
+projective too --- a sum of mutually orthogonal projections is a projection. For projective
+families the summed cross-party deviation and the agreement probability determine each other
+exactly, $1 - \sum_c \bra{\psi} A_c \ot B_c \ket{\psi} = \tfrac12 \sum_c \norm{(A_c \ot \Id -
+\Id \ot B_c)\ket{\psi}}^2$, and agreement can only increase under a coarse-graining applied to
+both sides. So the error is unchanged, for each $(\alpha, \beta)$ separately. Note that the
+state-dependent distance has \emph{no} data-processing inequality of its own; projectivity is
+what buys the two conversions.
+
+\textbf{Item 2 is not free, and Parseval is what pays for it.} The right-hand families are
+\emph{not} POVMs --- they are products of two measurements --- so the argument above does not
+apply, and a per-fibre triangle inequality would cost the fibre size $q$, which the conclusion
+cannot afford. Instead, write
+\begin{equation*}
+  U_{a, b} \;=\; \bigl(\widehat{Q}^{x,z}_{a,b}\bigr)_{\alice\alice'}
+    - \bigl(\widehat{M}^{Z, z}_b \widehat{M}^{X, x}_a\bigr)_{\bob\alice''}\;,
+  \qquad
+  D_c \;=\; \sum_{\alpha a + \beta b = c} U_{a, b}\;,
+\end{equation*}
+so that item 2's deviation is $\norm{D_c \ket{\hat\psi}}$. Parseval over $\F_q$ turns the sum
+over fibres into an average over one probe,
+$\sum_c \norm{D_c\ket{\hat\psi}}^2 = \E_r \norm{\sum_{a,b} (-1)^{\fieldtr(r(\alpha a + \beta
+b))} U_{a,b} \ket{\hat\psi}}^2$, and two things then happen. The $r = 0$ term vanishes
+\emph{identically}, because $\sum_{a,b} U_{a,b} = \Id - (\sum_a \widehat{M}^X_a)(\sum_b
+\widehat{M}^Z_b) = 0$ --- completeness of all three families, and the only place the zero-sum
+property is used. For $r \neq 0$ the pair $(r\alpha, r\beta)$ is uniform on $\F_q^2$ when
+$(\alpha, \beta)$ is, so averaging over $(\alpha, \beta)$ and applying Parseval over $\F_q^2$
+(Definition~\ref{def:generalized-pauli}) returns $\sum_{a,b}
+\norm{U_{a,b}\ket{\hat\psi}}^2$ exactly. Summing the $q - 1$ nonzero probes gives
+$\tfrac{q-1}{q} \sum_{a,b} \norm{U_{a,b}\ket{\hat\psi}}^2$, which is item 2 of
+Lemma~\ref{lem:qld-combined-points} with a factor below one.
+
+The second relation is the same argument with the two orders exchanged, using
+$\sum_{a,b} \widehat{M}^{X, x}_a \widehat{M}^{Z, z}_b = \Id$ in place of the other order.
+\end{proof}
+
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Background/QLD/Combined.lean}, with Parseval
+over one and two copies of the field and the coarse-graining identity in
+\texttt{MIPRE/Foundations/Parseval.lean} and \texttt{MIPRE/Foundations/Sandwich.lean}.
+
+The error is \textbf{improved, not merely preserved}: item 2 comes out at $\tfrac{q-1}{q}$ times
+the input, so the factor is below one and there is no $md/q$ term. That is the paper's
+round-12 repair of this step, and the ledger node records it: an earlier
+orthogonality-and-Cauchy--Schwarz route claimed $O(\delta_Q^{1/2})$ and was retracted, every
+direct route paying the fibre multiplicity $q$. The Lean statement keeps the factor visible
+rather than absorbing it.
+
+Item 1 holds for \textbf{every} $(\alpha, \beta)$, not only on average, because nothing in its
+proof averages over the probes --- the coarse-graining is free pointwise. Only item 2 needs the
+$(\alpha,\beta)$-average, and it needs it for the bijection $(\alpha, \beta) \mapsto (r\alpha,
+r\beta)$.
 
 \effortMedium
 
