@@ -26,6 +26,8 @@ import MIPRE.Foundations.Introspection.VaryingPauliMixing
 import MIPRE.Foundations.Introspection.Conditioning
 import MIPRE.Foundations.Introspection.ConditionalConsistency
 import MIPRE.Foundations.CL.Graph
+import MIPRE.Foundations.CL.DetypingQueries
+import MIPRE.Foundations.CL.DetypingSoundness
 import MIPRE.Foundations.SAT.Arithmetization
 import MIPRE.Foundations.SAT.FiniteCircuitArithmetization
 import MIPRE.Foundations.SAT.CircuitFieldCorrect
