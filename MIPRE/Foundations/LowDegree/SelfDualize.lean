@@ -139,4 +139,37 @@ theorem exists_mul_involute_eq_of_charTwo (hF : CharP F 2) (hG : Odd (Fintype.ca
   exists_mul_involute_eq τ (fun _ _ h => (mul_self_bijective hF hG).injective h)
     (fun y => (mul_self_bijective hF hG).surjective y) hu
 
+/-! ## An explicit square root over the binary field -/
+
+/-- Square root in a binary group algebra: the coefficient at `g` is read from `g + g`.
+For an odd-order group this is a permutation of the coefficient vector. In particular,
+this step needs neither factorization nor exponentiation in the group of units. -/
+noncomputable def binarySquareRoot (z : AddMonoidAlgebra (ZMod 2) G) : AddMonoidAlgebra (ZMod 2) G :=
+  .ofCoeff (Finsupp.onFinset univ (fun g => z.coeff (g + g)) (fun g _ => mem_univ g))
+
+omit [DecidableEq G] in
+@[simp] theorem coeff_binarySquareRoot (z : AddMonoidAlgebra (ZMod 2) G) (g : G) :
+    (binarySquareRoot z).coeff g = z.coeff (g + g) := by
+  simp [binarySquareRoot]
+
+/-- The explicit coefficient permutation really is the square root. -/
+theorem binarySquareRoot_mul_self (hG : Odd (Fintype.card G))
+    (z : AddMonoidAlgebra (ZMod 2) G) : binarySquareRoot z * binarySquareRoot z = z := by
+  apply AddMonoidAlgebra.coeff_injective
+  ext h
+  obtain ⟨g, rfl⟩ := (add_self_bijective hG).surjective h
+  rw [coeff_mul_self inferInstance hG, coeff_binarySquareRoot]
+  have hsq : ∀ a : ZMod 2, a * a = a := by decide
+  exact hsq _
+
+/-- Explicit self-dualization once the inverse Gram element `u` has been computed. -/
+theorem binarySquareRoot_mul_involute (hG : Odd (Fintype.card G))
+    (τ : AddMonoidAlgebra (ZMod 2) G ≃+* AddMonoidAlgebra (ZMod 2) G)
+    {u : AddMonoidAlgebra (ZMod 2) G} (hu : τ u = u) :
+    binarySquareRoot u * τ (binarySquareRoot u) = u := by
+  have hτ : τ (binarySquareRoot u) = binarySquareRoot u :=
+    (mul_self_bijective inferInstance hG).injective (by
+      rw [← map_mul, binarySquareRoot_mul_self hG, hu])
+  rw [hτ, binarySquareRoot_mul_self hG]
+
 end MIPRE.LowDegree

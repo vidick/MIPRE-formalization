@@ -105,6 +105,41 @@ theorem prob_agree_le_individualDegree {f g : MvPolynomial (Fin m) F} (hfg : f �
   push_cast at h'
   exact h'
 
+/-- **The majority test used by the classical PCP.** If the field has at least
+`2 * m * d` elements, agreement at more than half the points forces polynomial equality.
+The strict acceptance threshold is essential when the field-size bound is an equality. -/
+theorem eq_of_majority_agree {f g : MvPolynomial (Fin m) F} {d : ℕ}
+    (hf : ∀ i, f.degreeOf i ≤ d) (hg : ∀ i, g.degreeOf i ≤ d)
+    (hsize : 2 * (m * d) ≤ Fintype.card F)
+    (hmajority : Fintype.card F ^ m < 2 * (agree f g).card) : f = g := by
+  by_contra hne
+  have hq : (0 : ℝ) < Fintype.card F := by exact_mod_cast Fintype.card_pos
+  have hpow : (0 : ℝ) < (Fintype.card F : ℝ) ^ m := pow_pos hq _
+  have hcount : (Fintype.card F : ℝ) ^ m < 2 * ((agree f g).card : ℝ) := by
+    exact_mod_cast hmajority
+  have hs : 2 * ((m : ℝ) * d) ≤ Fintype.card F := by exact_mod_cast hsize
+  have hlow : (1 / 2 : ℝ) < ((agree f g).card : ℝ) / (Fintype.card F : ℝ) ^ m := by
+    apply (lt_div_iff₀ hpow).mpr
+    linarith
+  have hupp : (m : ℝ) * d / Fintype.card F ≤ (1 / 2 : ℝ) := by
+    apply (div_le_iff₀ hq).mpr
+    linarith
+  exact (not_lt_of_ge ((prob_agree_le_individualDegree hne hf hg).trans hupp)) hlow
+
+/-- A verifier may impose other tests as well: agreement on any accepted set larger
+than half the field cube already forces the same identity. -/
+theorem eq_of_majority_subset {f g : MvPolynomial (Fin m) F} {d : ℕ}
+    (hf : ∀ i, f.degreeOf i ≤ d) (hg : ∀ i, g.degreeOf i ≤ d)
+    (hsize : 2 * (m * d) ≤ Fintype.card F) (S : Finset (Fin m → F))
+    (hS : ∀ x ∈ S, eval x f = eval x g)
+    (hmajority : Fintype.card F ^ m < 2 * S.card) : f = g := by
+  apply eq_of_majority_agree hf hg hsize
+  apply hmajority.trans_le
+  apply Nat.mul_le_mul_left
+  apply Finset.card_le_card
+  intro x hx
+  exact mem_agree.mpr (hS x hx)
+
 /-- The univariate case, as a count: two unequal polynomials of degree at most `d` over a
 field agree at no more than `d` points. This is the form `lem:lidt-sync-transfer` uses. -/
 theorem card_agree_le_of_natDegree {p q : Polynomial F} (hpq : p ≠ q) {d : ℕ}

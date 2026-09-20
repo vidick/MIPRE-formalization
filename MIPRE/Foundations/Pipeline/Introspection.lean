@@ -31,10 +31,12 @@ The reading of the paper's statement in the vocabulary of `MIPRE.Verifier`:
   than its time bound (`Budget.B`). The introspective decider keeps `𝒟` within its own
   description only up to `λ` bits (paper `lem:intro-decider-complexity`), which is why the
   size bound does not depend on the input.
-* For a `λ`-bounded `ℓ`-level input and every `n`: a value-`1` PCC strategy for `𝒱_{2^n}` gives
+* For a `λ`-bounded `ℓ`-level input: a value-`1` PCC strategy for `𝒱_{2^n}` gives
   one for `𝒱^intro_n` (completeness), and `val*(𝒱^intro_n) > 1 - ε` gives
   `val*(𝒱_{2^n}) ≥ 1 - δ(ε, n)` with `δ(ε, n) = a((λn)^a ε^b + (λn)^{-b})` (soundness), the
-  constants `a, b` depending on `ℓ` only. The paper has `a > 0`; `a ≥ 1` is assumed here,
+  constants `a, b` depending on `ℓ` only. Soundness requires `1 ≤ n`, as in the construction's
+  indexing convention: the original input is bounded only at `2 ≤ 2^n`. At zero the displayed
+  error would vanish and assert an unintended exact conclusion. The paper has `a > 0`; `a ≥ 1` is assumed here,
   which only weakens the clause and is what the proof of `thm:compression` uses.
 
 Answer alphabets follow `MIPRE.GapCompression`: `𝒱_{2^n}` is read with answers of length at
@@ -61,6 +63,21 @@ def budget (C lam n : ℕ) : Budget :=
 /-- The soundness loss `δ(ε, n) = a((λn)^a ε^b + (λn)^{-b})`. -/
 noncomputable def delta (a b : ℝ) (lam n : ℕ) (ε : ℝ) : ℝ :=
   a * (((lam : ℝ) * n) ^ a * ε ^ b + ((lam : ℝ) * n) ^ (-b))
+
+/-- At index zero the displayed error vanishes, so soundness cannot use this index. -/
+theorem delta_zero_index (a b : ℝ) (lam : ℕ) (ε : ℝ) (ha : a ≠ 0) (hb : b ≠ 0) :
+    delta a b lam 0 ε = 0 := by
+  simp [delta, Real.zero_rpow ha, Real.zero_rpow (neg_ne_zero.mpr hb)]
+
+/-- Positive introspection indices are exactly the range where the original budget applies. -/
+theorem two_le_exp_index_iff (n : ℕ) : 2 ≤ 2 ^ n ↔ 1 ≤ n := by
+  constructor
+  · intro h
+    by_contra hn
+    have : n = 0 := by omega
+    simp [this] at h
+  · intro hn
+    exact (Nat.pow_le_pow_right (by decide : 1 ≤ (2 : ℕ)) hn : 2 ^ 1 ≤ 2 ^ n)
 
 end Introspection
 
@@ -99,9 +116,9 @@ structure Introspection (ℓ : ℕ) where
   completeness : ∀ (V : Verifier ℓ) (lam n : ℕ), V.IsBounded lam →
     V.HasPerfectPCC (2 ^ n) ((2 ^ n) ^ lam) →
     (output (V.sampler.prog, V.decider.prog) lam).HasPerfectPCC n (Introspection.ansBound C lam n)
-  /-- **Soundness.** For a `λ`-bounded input: `val*(𝒱^intro_n) > 1 - ε` gives
+  /-- **Soundness.** For a `λ`-bounded input and `n ≥ 1`: `val*(𝒱^intro_n) > 1 - ε` gives
   `val*(𝒱_{2^n}) ≥ 1 - δ(ε, n)`. -/
-  soundness : ∀ (V : Verifier ℓ) (lam n : ℕ) (ε : ℝ), V.IsBounded lam → 0 < ε →
+  soundness : ∀ (V : Verifier ℓ) (lam n : ℕ) (ε : ℝ), V.IsBounded lam → 1 ≤ n → 0 < ε →
     1 - ε < (output (V.sampler.prog, V.decider.prog) lam).valStar n (Introspection.ansBound C lam n) →
     1 - Introspection.delta a b lam n ε ≤ V.valStar (2 ^ n) ((2 ^ n) ^ lam)
 

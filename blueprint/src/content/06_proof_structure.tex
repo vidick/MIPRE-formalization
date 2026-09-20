@@ -321,23 +321,170 @@ exponentially smaller, at the price of a fixed number of levels.
 \begin{remark}[Typed verifiers and the exterior transformation boundaries]
 \label{rem:typed-detyping}
 \ledgernode{1.1.4}
-\uses{def:normal-verifier,def:tensor-strategy}
-The source constructions of~\cite{JNVWY20} use \emph{typed} verifiers: a type graph
-labels question roles, and the sampler first selects types and then questions.
-Introspection is detyped at its exterior boundary. Oracularization stays typed inside
-answer reduction, and only the final answer-reduced verifier is detyped. Thus the
-exterior chain is introspection, full answer reduction, then direct repetition, with
-levels $5 \to 7 \to 7$. There is no separate untyped oracle step in that count.
-
-Detyping has two costs a formalization must retain. It preserves the value
-only up to a factor $16^{-\abs{T}}$ in the type graph's size, which is where the
-``constant-factor loss'' in the soundness chains comes from; and it adds $2$ to the level
-count, which is part of why the level budget is what it is. The lemma also needs the type
-graph to have at least one edge --- a hypothesis every instantiation in the paper satisfies
-and which the source now states explicitly after its repair --- and its soundness argument truncates over-long
-answers, justified by the same answer-truncation lemma that the anchoring
-construction of~\cite{BVY17} uses.
+\uses{lem:detype-compiler}
+Introspection is detyped at its exterior boundary. Oracularization stays typed
+inside answer reduction; the final answer-reduced verifier is then detyped.
+The exterior levels are $5\to7\to7$ for introspection, answer reduction and
+repetition. Detyping adds two levels and gives
+$\mathrm{failure}_{\mathrm{typed}}\leq16^{|T|}
+\mathrm{failure}_{\mathrm{detyped}}$ via a same-state strategy conversion.
+This is a bound on failure, not a multiplicative comparison of values.
+The graph must have an edge. The following interfaces retain the effective
+and timeout hypotheses of the current source~\cite{AuditSync26}.
 \end{remark}
+
+\begin{definition}[Typed sampler and its distribution]
+\label{def:typed-sampler-interface}
+\ledgernode{1.1.4.1}
+\uses{def:normal-verifier}
+Let $G=(T,E)$ be a finite undirected type graph with $m_G\geq1$ edges and
+$k_G$ loops. Sample an ordered adjacent type pair uniformly from its
+$2m_G-k_G$ possibilities, and independently a common uniform
+$z\in\F_{q(n)}^{s(n)}$. Output
+$((t,L_t^\alice(z)),(u,L_u^\bob(z)))$.
+A typed sampler exposes dimension, marginal, level-linear and factor-support
+queries for each type. It computes the prescribed bounds before parsing
+auxiliary inputs, inspects at most the bound plus one symbol per component,
+and halts with a fixed default on malformed input. Computing the bounds is
+charged in its runtime. Linear and factor-query correctness is required only
+on valid prefix images; image membership is not a parsing obligation.
+No field-size query is implicit in this interface.
+\end{definition}
+
+\begin{definition}[Typed decider and normal verifier]
+\label{def:typed-normal-interface}
+\ledgernode{1.1.4.2}
+\uses{def:typed-sampler-interface,def:normal-verifier}
+A typed decider receives $(n,t,x,u,y,a,b)$; a timeout rejects regardless of
+the output tape. A typed normal verifier is over $\F_2$ and first uses the
+sampler's dimension query to check $t,u\in T$ and $|x|=|y|=s(n)$.
+In timeout-counter form, its bound dominates this preliminary computation.
+For finite decider runtime the answer alphabet consists of strings of length
+at most $\TIME_D(n)$, and the decision predicate is total.
+\end{definition}
+
+\begin{lemma}[Effective typed downsizing]
+\label{lem:typed-downsize}
+\ledgernode{1.1.4.3}
+\uses{def:typed-sampler-interface,lem:self-dual-basis}
+Given an admissible-field typed sampler $S$ and a supplied total machine
+$R_{\mathrm{field}}(n)=q(n)$, one can construct its coordinate downsizing
+over $\F_2$, with dimension $s(n)\log_2q(n)$ and unchanged levels and types.
+Runtime is polynomial in $\TIME_S(n),T_{\mathrm{field}}(n),s(n),\log q(n),|T|$;
+description size and compilation cost are polynomial in
+$|S|,|R_{\mathrm{field}}|,|T|$.
+The wrapper calls the field routine and dimension query before bounded-prefix
+parsing. A factor-support bit expands to a whole block of ones or zeros,
+not to the coordinate representation of a field element.
+There is no assertion that $q(n)$ can be recovered from arbitrary sampler
+code. The introspection and PCP parameter routines separately supply this
+premise within their budgets; the binary case uses the constant routine.
+\end{lemma}
+
+\begin{lemma}[Graph rejection sampling]
+\label{lem:detype-graph}
+\ledgernode{1.1.4.4}
+\uses{def:typed-sampler-interface}
+Put $t=|T|$. Two independent $2t$-bit blocks encode a vertex indicator and
+its neighbor indicator. A two-level CL graph sampler has a valid-edge event
+$E_G$ with
+$p=\Pr(E_G)=(2m_G-k_G)/16^t\geq16^{-t}>0$.
+Each ordered adjacent pair has exactly one seed preimage; conditionally on
+$E_G$ the types have the specified graph law, with loops counted once.
+On its support, an invalid edge exposes a zero opposite-neighbor block to
+at least one player, enabling a trivial local measurement on that branch.
+\end{lemma}
+
+\begin{lemma}[Detyped conditionally linear functions]
+\label{lem:detype-cl}
+\ledgernode{1.1.4.5}
+\uses{lem:detype-graph,def:typed-normal-interface}
+Concatenate the two graph levels with the selected type's $\ell$ levels on
+an independent binary seed block. On an unselected branch use the zero CL
+function. The result has $\ell+2$ levels and dimension $4|T|+s(n)$.
+Conditionally on $E_G$, the contents are exactly the typed distribution
+generated by one shared seed; the two question contents need not be independent.
+\end{lemma}
+
+\begin{lemma}[Implementing the detyped sampler]
+\label{lem:detype-sampler}
+\ledgernode{1.1.4.6}
+\uses{lem:detype-cl}
+For $\ell\geq1$, the concatenation is implemented with runtime
+$\poly(|T|,\TIME_S(n))$, retaining bounded-prefix checks and valid-prefix
+query semantics. On a zero-tail branch its first factor receives the whole
+remaining seed block and later factors are zero, so factors still partition
+the ambient space. Valid factor output gives $s(n)=O(\TIME_S(n))$.
+The implementation depends only on $S,G$.
+\end{lemma}
+
+\begin{lemma}[Implementing the detyped decider]
+\label{lem:detype-decider}
+\ledgernode{1.1.4.7}
+\uses{def:typed-normal-interface,lem:detype-graph}
+Given the full verifier $(S,D)$ and $G$, compile the dimension query from
+$S$ and identify $D$'s timeout counter once at construction time.
+Let $B=B_D(n)$ and choose a universal $c$ with $K=(cB)^c\geq\TIME_D(n)$.
+After bounded question checks, accept a non-edge view without scanning its
+answers. On an edge, inspect at most $K+1$ symbols of each answer, reject
+overflow or malformed strings, then simulate the typed decider.
+An outer timeout $(C(|T|+1)B)^C$ for a sufficiently large universal $C$
+dominates every branch. Its binary coefficients are computed from the
+original counter; no runtime supremum is computed.
+All original legal answers have length at most $K$. A valid edge and a
+length-$K+1$ answer force that scan before rejection, ensuring the new game's
+runtime-defined alphabet contains all original legal answers.
+\end{lemma}
+
+\begin{lemma}[Detyping PCC completeness]
+\label{lem:detype-completeness}
+\ledgernode{1.1.4.8}
+\uses{lem:detype-sampler,lem:detype-decider,def:pcc}
+A perfect PCC typed witness lifts on the same state to a perfect PCC detyped
+witness. Both players use the same combined rule: on an Alice-view pattern
+use the original Alice operator, on a Bob-view pattern use the original Bob
+operator, and otherwise use the identity measurement. The view patterns are
+disjoint. On valid edges this reproduces the typed strategy; on invalid
+edges one local measurement is trivial. Projectivity, consistency and the
+required commutation follow, as does the identical-operator property.
+This does not assert symmetry of the detyped question distribution.
+\end{lemma}
+
+\begin{lemma}[Same-state detyping soundness]
+\label{lem:detype-soundness}
+\ledgernode{1.1.4.9}
+\uses{lem:detype-decider,lem:detype-graph}
+Restrict any detyped strategy of success at least $1-\eps$ to the fixed
+graph views for typed questions and coarse-grain answers to length
+$\TIME_D(n)$. Answer truncation leaves the typed computation unchanged.
+Conditional detyped acceptance is no larger than acceptance of this legal
+typed strategy on the same state. Hence its failure is at most
+$\eps/p\leq16^{|T|}\eps$. Taking suprema uses near-optimal strategies and
+does not assume attainment of the value.
+\end{lemma}
+
+\begin{lemma}[Optional entanglement consequence of detyping]
+\label{lem:detype-entanglement}
+\ledgernode{1.1.4.10}
+\uses{lem:detype-soundness,def:ent}
+For $0\leq\eps\leq16^{-|T|}$,
+$\Ent(\mathrm{detype}(V)_n,1-\eps)\geq
+\Ent(V_n,1-16^{|T|}\eps)$, since the conversion keeps the state and its
+Schmidt rank. Outside that range use the ordinary value bound; no negative
+threshold is supplied to $\Ent$. This clause is separate from the value route.
+\end{lemma}
+
+\begin{lemma}[Effective detyping compiler]
+\label{lem:detype-compiler}
+\ledgernode{1.1.4.11}
+\uses{lem:detype-sampler,lem:detype-decider,lem:detype-completeness,lem:detype-soundness}
+The descriptions of $(S,D)$ and the nonempty graph $G$ suffice to construct
+the detyped verifier in polynomial description time. It has $\ell+2$ levels,
+polynomial sampler and timeout costs, PCC completeness, and same-state
+soundness loss $16^{|T|}$. The sampler depends only on $S,G$.
+Effective field access for any preceding nonbinary downsizing is the separate
+hypothesis of Lemma~\ref{lem:typed-downsize}.
+\end{lemma}
 
 \begin{remark}[Turing machine conventions and the ambient cost model]
 \label{rem:tm-conventions}
@@ -405,7 +552,7 @@ pinned by~\cite{AuditSync26}.
 \begin{definition}[The introspective verifier]
 \label{def:intro-verifier}
 \ledgernode{1.2.3}
-\uses{def:normal-verifier,def:cl-function,rem:typed-detyping,thm:qld}
+\uses{def:normal-verifier,def:cl-function,rem:typed-detyping,lem:typed-downsize,thm:qld}
 Fix $\ell$ and an $\ell$-level verifier $\verifier$ satisfying the paper's absolute
 $\lambda$-bound, as distinguished in Remark~\ref{rem:runtime-normalization}. The
 \emph{introspective verifier} $\vint$ is the typed verifier whose players sample the
@@ -473,6 +620,12 @@ algebra, and both are plausible early Lean targets.
 \label{lem:pauli-linear-fourier}
 \ledgernode{1.2.3.2}
 \uses{def:cl-function}
+\lean{MIPRE.Introspection.subspaceTrace_eq_zero_iff,
+  MIPRE.Introspection.sum_subspace_sign,
+  MIPRE.Introspection.linear_measurement_fourier,
+  MIPRE.Introspection.linear_measurement_fourier_inverse}
+\leanok
+Let $\F$ be a finite field of characteristic two, with $\omega=-1$.
 Let $L : \F^k \to \F^k$ be linear, let $W \in \{X, Z\}$, and for $a$ in the range of $L$
 pick $u_a$ with $L(u_a) = a$. Write $\sigma^W_{[L(\cdot) = a]}$ for the projector onto the
 event that a $W$-basis measurement returns a preimage of $a$. Then for every
@@ -489,6 +642,7 @@ The choice of $u_a$ off the range of $L$ is immaterial, since there the projecto
 \end{lemma}
 
 \begin{proof}
+\leanok
 Each identity is the Fourier expansion of the other over the group $\ker(L)^\perp$: the
 character $v \mapsto \omega^{\fieldtr(u_a \cdot v)}$ depends only on $a = L(u_a)$, because two
 preimages of $a$ differ by an element of $\ker(L)$, which the trace pairing annihilates
@@ -501,11 +655,15 @@ against $\ker(L)^\perp$.
 \label{lem:pauli-commute-criterion}
 \ledgernode{1.2.3.2}
 \uses{lem:pauli-linear-fourier}
-Let $L, R : \F^k \to \F^k$ be linear with $\ker(R)^\perp \subseteq \ker(L)$. Then the
+\lean{MIPRE.Introspection.linear_measurements_commute}
+\leanok
+Over a finite field of characteristic two, let $L, R : \F^k \to \F^k$ be linear with
+$\ker(R)^\perp \subseteq \ker(L)$. Then the
 measurements $\{\sigma^Z_{[L(\cdot) = b]}\}_b$ and $\{\sigma^X_{[R(\cdot) = d]}\}_d$ commute.
 \end{lemma}
 
 \begin{proof}
+\leanok
 Expand both families by Lemma~\ref{lem:pauli-linear-fourier}. The $Z$-side expansion runs
 over $v \in \ker(L)^\perp$ and the $X$-side over $w \in \ker(R)^\perp$, and
 $\sigma^Z(v)$ and $\sigma^X(w)$ commute exactly when $\fieldtr(v \cdot w) = 0$. The
@@ -514,6 +672,29 @@ vanishes term by term.
 \end{proof}
 
 \effortHard
+
+\begin{lemma}[Projectivity of sampling and hiding readouts]
+\label{lem:intro-linear-readout-projectivity}
+\ledgernode{1.2.3.2}
+\uses{lem:pauli-linear-fourier,lem:pauli-commute-criterion}
+\lean{MIPRE.Introspection.weyl_projectors_isPVM,
+  MIPRE.Introspection.linear_measurement_isPVM,
+  MIPRE.Introspection.joint_measurement_isPVM,
+  MIPRE.Introspection.sampling_hiding_isPVM}
+\leanok
+Over a finite characteristic-two field, reading a linear map of either Weyl
+eigenbasis outcome is a projective measurement. If
+$\ker(R)^\perp\subseteq\ker(L)$, the joint readout with projectors
+$\sigma^Z_{[L(\cdot)=a]}\sigma^X_{[R(\cdot)=b]}$ is also projective.
+\end{lemma}
+\begin{proof}
+\leanok
+The Weyl spectral projectors are self-adjoint idempotents summing to identity,
+and coarse-graining preserves these properties. By
+Lemma~\ref{lem:pauli-commute-criterion}, the two coarse-grained families commute.
+Their products are therefore self-adjoint idempotents; summing over both
+readouts gives the identity.
+\end{proof}
 
 \begin{lemma}[Completeness of introspection]
 \label{lem:intro-completeness}
@@ -545,34 +726,170 @@ question.
 
 \effortHard
 
-\begin{lemma}[The Pauli twirl]
+\begin{lemma}[Exact Pauli twirling]
 \label{lem:pauli-twirl}
-\ledgernode{1.2.3.3}
-\uses{def:distance,def:q-value}
-Averaging a measurement against a Pauli operator, on a state that contains EPR pairs,
-replaces it by one that commutes with the Pauli basis, at a controlled cost. The group of
-statements comprises: commuting with the Pauli basis implies commuting with the Pauli
-observables; a mixing lemma for a linear map and one for a unitary; and a lemma combining
-the two sides. The error accumulates additively through the group.
+\ledgernode{1.2.3.3.1}
+\uses{lem:pauli-linear-fourier}
+\lean{MIPRE.Introspection.twirlX_wZ, MIPRE.Introspection.twirlZ_wX}
+\leanok
+Over a finite field of characteristic two, for a subspace $K\leq\F^k$, twirl by the uniform distribution on
+$\tau^W(K)$, where $W\in\{X,Z\}$ and $W'$ is the other basis.
+The twirl fixes $\tau^{W'}(u)$ if $u\in K^\perp$ and is zero otherwise.
+Here the annihilator uses the field-valued dot product. The source proves the
+general-characteristic statement; this formalization supplies its characteristic-two
+specialization used by the pipeline.
+\end{lemma}
+\begin{proof}
+\leanok
+Conjugation by the opposite Pauli family multiplies an operator by the sign of
+the trace pairing. Average these signs on $K$. The character is trivial exactly
+on $K^\perp$, by Lemma~\ref{lem:pauli-linear-fourier}; all other character sums vanish.
+\end{proof}
+
+\begin{lemma}[Linear-map blocks of the twirl]
+\label{lem:pauli-linear-mixing}
+\ledgernode{1.2.3.3.2}
+\uses{lem:pauli-twirl}
+\lean{MIPRE.Introspection.linear_twirl_blocks,
+  MIPRE.Introspection.averagedBlock_posSemidef,
+  MIPRE.Introspection.sum_averagedBlock_eq_one,
+  MIPRE.Introspection.blockPOVM,
+  MIPRE.Introspection.linear_twirl_povm}
+\leanok
+Over a finite field of characteristic two, for a linear $L:V\to V$, twirling an operator on $\mathbb C^V\otimes H$
+first by all $Z$ Paulis and then by $X(\ker L)$ gives
+$\sum_{y\in L(V)}P_y^Z\otimes B^y$, where $P_y^Z$ projects onto the
+fibre $L(v)=y$. If the original operators form a POVM, the blocks form a
+POVM for each nonempty fibre. Empty fibres impose no condition on $B^y$.
+The source proves the general-characteristic statement; the Lean theorem supplies
+the characteristic-two specialization. It sums over all $y\in V$, with zero
+projectors outside the image, and chooses valid POVMs even at empty fibres.
+\end{lemma}
+\begin{proof}
+\leanok
+The full $Z$ twirl removes off-diagonal blocks in the sampled register.
+The $X(\ker L)$ twirl averages the remaining diagonal blocks on cosets of
+$\ker L$. Define $B^y$ by this average at a chosen preimage of $y$ (or at
+zero when there is none). Translation permutes each coset, so the block
+depends only on $y$. Principal compressions and their averages preserve
+positivity, while linearity sends a normalized family to a normalized
+family. This constructs the ancillary POVMs directly.
+\end{proof}
+
+\begin{lemma}[Commutator Parseval identity]
+\label{lem:pauli-commutator-transfer}
+\ledgernode{1.2.3.3.3}
+\uses{lem:pauli-linear-fourier,def:state-distance}
+For the fibre projections $P_y^W$ of $L$ and every operator $M$,
+\[
+ \sum_y\|([M,P_y^W]\otimes\Id)\psi\|^2
+ =\mathbb E_{v\in(\ker L)^\perp}
+       \|([M,\tau^W(v)]\otimes\Id)\psi\|^2.
+\]
+The identity remains true after averaging questions and summing measurement
+outcomes. It introduces no dimension or alphabet factor.
+\end{lemma}
+
+\begin{lemma}[Approximate commutation controls unitary mixing]
+\label{lem:pauli-unitary-mixing}
+\ledgernode{1.2.3.3.4}
+\uses{def:state-distance}
+\lean{MIPRE.Introspection.stateSqNorm_mul_of_isometry,
+  MIPRE.Introspection.unitaryTwirl_dist_le,
+  MIPRE.Introspection.unitaryTwirl_outcome_dist_le}
+\leanok
+Let $M_a^x$ be POVMs, $\psi$ a unit bipartite vector and $\mu_x$ a
+conditional unitary distribution. For
+$\mathrm T_{\mu_x}(M)=\mathbb E_U UMU^\dagger$, put
+$\delta=\mathbb E_x\mathbb E_U\sum_a
+\|([M_a^x,U^\dagger]\otimes\Id)\psi\|^2$.
+Then $\mathbb E_x\sum_a
+\|((\mathrm T_{\mu_x}(M_a^x)-M_a^x)\otimes\Id)\psi\|^2\leq\delta$.
+Jensen and left-unitary invariance of the norm suffice; invariance of the
+state under $U$ is not a hypothesis.
+\end{lemma}
+\begin{proof}
+\leanok
+Write each conjugation error as $U[M,U^\dagger]$. Left multiplication by
+$U$ preserves the squared state norm, and convexity bounds the squared
+norm of the average by the average of the squared norms. Sum over outcomes
+and average questions. The Lean estimate has constant one and holds for
+arbitrary operator families and arbitrary state vectors.
+\end{proof}
+
+\begin{lemma}[Combining two approximate commutations]
+\label{lem:pauli-two-sided-commutation}
+\ledgernode{1.2.3.3.5}
+\uses{def:state-distance}
+Conditionally on $x$, draw $U_1,U_2$ independently. Suppose both
+commutators $[M_a^x,U_i^\dagger]$ have average outcome-summed squared state
+norm $O(\eps)$ and
+$\mathbb E\|((U_2^\dagger\otimes\Id)-(\Id\otimes U_2))\psi\|^2=O(\eps)$.
+Then $[M_a^x,U_1^\dagger U_2^\dagger]$ has the same type of bound.
+Transfer $U_2$ across the bipartition and back; $\sum_a(M_a^x)^2\leq\Id$
+controls the summed transfer errors without an outcome-count factor.
 \end{lemma}
 
 \effortMedium
 
-\begin{lemma}[Close to a sub-measurement implies close to a measurement]
+\begin{lemma}[Completing a nearby submeasurement]
 \label{lem:close-submeasurement}
-\ledgernode{1.2.3.3}
-\uses{def:distance}
-Let $\{A^x_a\}$ be a projective measurement, let each $B^x_a$ be positive semidefinite with
-$\sum_a B^x_a \leq \Id$, and let $\{C^x_a\}$ be a POVM with $C^x_a \geq B^x_a$ for all $x$
-and $a$. If $A^x_a \approx_\eps B^x_a$ on average over $x$, then
-$A^x_a \approx_{\sqrt{\eps}} C^x_a$.
+\ledgernode{1.2.3.3.6}
+\uses{def:state-distance}
+Let $A_a^x$ be a PVM, $B_a^x\geq0$ with $\sum_aB_a^x\leq\Id$, and
+$C_a^x$ a POVM satisfying $C_a^x\geq B_a^x$ pointwise. For a unit
+bipartite state and an arbitrary question distribution, define
+\[
+ D_\psi(A,B)=\mathbb E_x\sum_a
+       \|((A_a^x-B_a^x)\otimes\Id)\psi\|^2=\delta.
+\]
+Then $D_\psi(A,C)\leq2\delta+4\sqrt\delta$.
+In particular, if $D_\psi(A,B)\leq\eps\leq1$, the conclusion is
+$D_\psi(A,C)\leq6\sqrt\eps$. A coefficient-one square-root bound is not
+asserted for this literal squared-distance convention.
 \end{lemma}
 
 \begin{proof}
-The gap $\sum_a (C^x_a - B^x_a)$ is a positive operator of small expectation, because
-$\{A^x_a\}$ sums to $\Id$ and is $\eps$-close to $B$; Cauchy--Schwarz turns that bound on the
-expectation into a bound on the Hilbert--Schmidt distance, which is where the square root
-comes from.
+Using real parts and Cauchy--Schwarz in the outcome-summed state norm,
+$\mathbb E_x\langle\Id-\sum_aB_a^x\rangle\leq2\sqrt\delta$;
+here $\sum_a(B_a^x)^2\leq\sum_aB_a^x$ and $\sum_a(A_a^x)^2=\Id$.
+Since $0\leq C_a^x-B_a^x\leq\Id$,
+$(C_a^x-B_a^x)^2\leq C_a^x-B_a^x$, so $D_\psi(B,C)\leq2\sqrt\delta$.
+The squared triangle bound gives $D_\psi(A,C)\leq2D_\psi(A,B)+2D_\psi(B,C)$.
+\end{proof}
+
+\begin{lemma}[Pauli mixing with a retained classical fibre]
+\label{lem:pauli-mixing}
+\ledgernode{1.2.3.3,1.2.3.3.7}
+\uses{lem:pauli-linear-mixing,lem:pauli-commutator-transfer,lem:pauli-unitary-mixing,lem:pauli-two-sided-commutation,lem:close-submeasurement}
+Let $U_x\subseteq V_x\subseteq V$ be coordinate registers, $L_x:U_x\to U_x$
+linear, and the state be $\mathrm{EPR}_V\otimes\mathrm{aux}$.
+Let $M^x_{y,a}$ be a PVM on Alice's $V_x$ register and auxiliary space.
+Assume its $y$ marginal is $O(\eps)$-close to $P_y^Z(L_x)$ in the
+averaged squared state norm, and that its commutators with the fine $Z$
+projectors on $U_x$ and coarse $X$ fibre projectors for a map with kernel
+$(\ker L_x)^\perp$ have total outcome-summed squared norm $O(\eps)$.
+For $0\leq\eps\leq1$ there are POVMs $N_a^{x,y}$ on the complementary
+register outside $U_x$ in $V_x$ and Alice auxiliary space with
+\[
+ \mathbb E_x\sum_{y,a}
+ \|((M^x_{y,a}-P_y^Z\otimes N_a^{x,y})\otimes\Id)\psi\|^2
+ \leq C\sqrt\eps
+\]
+for a universal $C$ (once the hypothesis constants are fixed).
+The sums in the commutator hypotheses include both projector and measurement
+outcomes. Empty fibres allow any $N$; their left-hand mass is controlled by
+consistency, not identically zero.
+\end{lemma}
+
+\begin{proof}
+\ledgernode{1.2.3.3.7.1,1.2.3.3.7.2,1.2.3.3.7.3}
+Twirl to blocks $B^z_{y,a}$, retain the matching blocks $B^y_{y,a}$ using
+projectivity and EPR consistency, then complete with
+$N_a^{x,y}=\sum_z B^y_{z,a}$. Lemma~\ref{lem:close-submeasurement}
+accounts for the square-root loss. Transfers across EPR use matrix transpose,
+in particular $X(v)^T=X(-v)$; no odd-characteristic identity $X(v)^T=X(v)$
+is presumed.
 \end{proof}
 
 \effortHard
@@ -597,7 +914,7 @@ $\Id \ot B_{x, y, z} \approx_\delta A^y_{x, z} \ot B_{x, y}$.
 \begin{lemma}[Extracting a Pauli strategy]
 \label{lem:intro-pauli-extract}
 \ledgernode{1.2.3.5}
-\uses{def:intro-verifier,thm:qld,lem:pauli-twirl,def:distance}
+\uses{def:intro-verifier,thm:qld,lem:pauli-mixing,def:state-distance}
 There is $\delta_1(\eps, R) = a\bigl( (\log R)^a \eps^b + (\log R)^{-b} \bigr)$, with $a > 1$
 and $0 < b < 1$ depending only on $\ell$, such that any strategy for $\vint_n$ of value
 $1 - \eps$ is within $\delta_1$ of a projective strategy whose state is
@@ -606,9 +923,9 @@ operators $\sigma^W_x$ on those $Q$ qubits, for both players.
 \end{lemma}
 
 \begin{proof}
-\uses{thm:qld,lem:pauli-twirl}
+\uses{thm:qld,lem:pauli-mixing}
 This is Theorem~\ref{thm:qld} applied to the Pauli-test part of the decider, followed by the
-twirl of Lemma~\ref{lem:pauli-twirl} to replace the strategy's own measurements by ones that
+mixing estimate of Lemma~\ref{lem:pauli-mixing} to replace the strategy's own measurements by ones that
 commute with the Pauli basis.
 \end{proof}
 
@@ -630,7 +947,7 @@ conditionally linear distribution of $\verifier_{2^n}$, up to $\delta$.
 \begin{lemma}[The hiding test]
 \label{lem:intro-hiding-test}
 \ledgernode{1.2.3.6}
-\uses{lem:intro-sampling-test,lem:conditional-measurement,def:distance}
+\uses{lem:intro-sampling-test,lem:conditional-measurement,lem:pauli-mixing,def:state-distance}
 For each level $k$, a player's answer on the $\mathtt{Hide}_k$ type is $\delta$-close to one
 computed from the level-$k$ complement alone, and the chain of these relations across levels
 $j \leq k$ is stable: knowing the answer at level $j$ tells a player nothing about the
@@ -710,7 +1027,7 @@ $C_{\mathrm{intro}}$, with
 the decider rejecting answers longer than $2^{C(\lambda n+1)}$. For ambient
 $\lambda$-bounded inputs, completeness transfers \texttt{HasPerfectPCC} from index
 $2^n$ at answer cut $(2^n)^\lambda$ to index $n$ at cut $2^{C(\lambda n+1)}$.
-Soundness transfers a value greater than $1-\eps$, for $\eps>0$, at the output cut
+For $n\geq1$, soundness transfers a value greater than $1-\eps$, for $\eps>0$, at the output cut
 to a value at least $1-\delta(\eps,n)$ at the input cut, where
 $\delta(\eps,n)=a((\lambda n)^a\eps^b+(\lambda n)^{-b})$, $a\geq1$ and $0<b\leq1$.
 The complexity clauses are stated in the
@@ -723,6 +1040,24 @@ absolute-time hypothesis. This definition specifies the contract, without constr
 an inhabitant. Since $\ell$ is fixed by the structure, its polynomial-time construction
 field does not assert a bound polynomial in binary $\ell$.
 \end{definition}
+
+\begin{remark}[The positive-index soundness domain]
+\label{rem:introspection-positive-index}
+\uses{def:introspection-contract,def:lambda-bounded}
+\lean{MIPRE.Introspection.delta_zero_index, MIPRE.Introspection.two_le_exp_index_iff}
+\leanok
+The ambient soundness contract requires $n\geq1$. For nonzero $a,b$, Lean's real
+power convention makes $\delta(\eps,0)=0$; retaining soundness at zero would force
+an unintended exact conclusion at original index $1$. The paper's overview starts
+with $n\geq1$, although its later theorem display quantifies over all naturals.
+Moreover $2\leq2^n$ holds exactly when $n\geq1$, matching the bounded-input domain.
+The compression consumer already has $n\geq2$ and supplies this hypothesis.
+\end{remark}
+\begin{proof}
+\leanok
+Evaluate the two zero-base powers using their nonzero exponents. The index
+equivalence follows from monotonicity of $2^n$ and its value at zero.
+\end{proof}
 
 \begin{lemma}[Supplying ambient introspection]
 \label{lem:introspection-supply}
@@ -1099,12 +1434,379 @@ Definition~\ref{def:lidt-cl} whenever $d \geq 1$.
 
 \effortHard
 
+\begin{lemma}[Padding preserves the complete answer tapes]
+\label{lem:pcp-padding-semantics}
+\uses{lem:decoupled-5sat}
+\lean{MIPRE.SAT.Cnf5.sat_pad_iff, MIPRE.SAT.Circuit.DescribesDecider.of_pad}
+\leanok
+Embed the five blocks of a decoupled formula into larger blocks. Add every clause
+whose first or second literal is beyond its original answer block and has the
+blank-tape sign: positive at even indices, negative at odd indices. The enlarged
+formula is satisfied exactly when the restrictions satisfy the original formula
+and both complete answer tails equal the blank tape. Thus a circuit implementing
+this clause set still describes the same decider, provided the original answer
+block has length at least $2T$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Restriction proves the original clauses. To isolate an answer-tail bit, choose
+the signs in the other four blocks so that their literals are false. Conversely,
+each added clause contains a true blank-tail literal. Extend the three auxiliary
+assignments arbitrarily, and use that every accepted answer has length at most
+$T$, so its tape is blank beyond $2T$. This is the semantic part of the paper's
+\texttt{prop:exciting-padding-prop}; the circuit algorithm and its cost remain
+separate obligations.
+\end{proof}
+
+\begin{lemma}[Effective indexing and padding arithmetic]
+\label{lem:pcp-padding-programs}
+\lean{MIPRE.SAT.ArrayProg.eqBits, MIPRE.SAT.ArrayProg.eqNat,
+  MIPRE.SAT.ArrayProg.getD, MIPRE.SAT.Fml.renameBy, MIPRE.SAT.Fml.eval_rename,
+  MIPRE.SAT.ceilPowerProg, MIPRE.SAT.le_ceilPower, MIPRE.SAT.ceilPower_le_twice,
+  MIPRE.Cost.PolyTimeFun.bitsValue, MIPRE.Cost.PolyTimeFun.predN,
+  MIPRE.Cost.PolyTimeFun.addUnary, MIPRE.Cost.PolyTimeFun.subUnary}
+\leanok
+Binary equality, array lookup by a binary index, and formula renaming have
+ambient polynomial-time programs. The least power of two above a unary number
+can be produced in unary in polynomial time. Binary normalization, predecessor,
+and addition or subtraction of a unary offset are polynomial-time as well.
+\end{lemma}
+\begin{proof}
+\leanok
+Scan the supplied array instead of expanding its index. Rename the formula's
+postorder input nodes. For power-of-two rounding, double a unary accumulator
+once per binary digit, capping every intermediate state by twice the input
+length plus one. Normalize binary numbers by a fold of the binary constructor;
+the existing borrow machine gives predecessor, including a separate zero case.
+The offset loops have explicit bounds on every intermediate encoding.
+\end{proof}
+
+\begin{proposition}[Effective padded descriptions with an explicit output budget]
+\label{prop:pcp-padded-describer}
+\uses{lem:decoupled-5sat,lem:pcp-padding-semantics,lem:pcp-padding-programs}
+\lean{MIPRE.TM.CookLevin.Pad.formula5_circuit,
+  MIPRE.TM.CookLevin.Pad.describe, MIPRE.TM.CookLevin.Pad.describe_wellFormed,
+  MIPRE.TM.CookLevin.Pad.describe_describes, MIPRE.TM.CookLevin.Pad.innerDim_isPow,
+  MIPRE.TM.CookLevin.Pad.innerDim_le, MIPRE.TM.CookLevin.Pad.two_mul_le_innerDim,
+  MIPRE.SAT.Circuit.padGatesProg, MIPRE.SAT.Circuit.wellFormed_padGates,
+  MIPRE.SAT.Circuit.eval_padGates, MIPRE.TM.CookLevin.Pad.describeExact,
+  MIPRE.TM.CookLevin.Pad.describeExact_wellFormed,
+  MIPRE.TM.CookLevin.Pad.describeExact_describes,
+  MIPRE.TM.CookLevin.Pad.describeExact_gateCount,
+  MIPRE.TM.CookLevin.Pad.describeExact_variables,
+  MIPRE.TM.CookLevin.Pad.outerDim_isPow,
+  MIPRE.TM.CookLevin.Pad.outerDim_polynomial,
+  MIPRE.TM.CookLevin.Pad.innerDim_add_bound_le_gateCount,
+  MIPRE.TM.CookLevin.Pad.paddingParams, MIPRE.TM.CookLevin.Pad.paddingParams_apply}
+\leanok
+There are effectively computed parameters $m(T,\sigma)$ and $s(n,T,Q,\sigma)$,
+with $m$ a power of two, $m=O(\log T+\log\sigma)$, $2^m\geq 2T$, $s\geq m$,
+and $5m+5+s$ a power of two polynomially bounded in
+$\log n+\log T+Q+\sigma$. On a valid specification and a unary budget of
+length $s$, an ambient polynomial-time program constructs a well-formed circuit
+with five $m$-bit blocks, five signs, and exactly $s$ gates, describing exactly
+the same accepting answer prefixes. The parameter program is polynomial-time
+in the binary parameter lengths.
+\end{proposition}
+\begin{proof}
+\leanok
+Implement the padded clause predicate by a renamed formula and comparisons
+with the original block bounds. Round the common width up to a power of two.
+From the circuit program's proved output bound $s_1$, set
+$m'=2^{\lceil\log_2(6m+5+s_1)\rceil}$ and $s=m'-5m-5$.
+Append copying OR gates to reach exactly $s$ gates; this preserves the last-gate
+output convention and fan-out two. The unary budget prevents an invalid short
+input from demanding exponentially many output gates. In the PCP verifier the
+formatted view will supply this budget; connecting that caller remains part
+of Theorem~\ref{thm:pcp-decider}.
+\end{proof}
+
+\begin{lemma}[Effective classical PCP parameters]
+\label{lem:pcp-effective-parameters}
+\uses{prop:pcp-padded-describer}
+\lean{MIPRE.TM.CookLevin.Pad.pcpParamsProg,
+  MIPRE.TM.CookLevin.Pad.pcpParamsProg_apply,
+  MIPRE.TM.CookLevin.Pad.pcpParams_odd,
+  MIPRE.TM.CookLevin.Pad.pcpParams_field_large,
+  MIPRE.TM.CookLevin.Pad.pcpParams_inner_dvd,
+  MIPRE.TM.CookLevin.Pad.pcpParams_outer_dvd}
+\leanok
+The padded dimensions extend to ambient polynomial-time classical PCP parameters
+$(k,m,s)$ with $k$ odd, $q=2^k\geq 82m'$, and both $m\mid q$ and $m'\mid q$.
+\end{lemma}
+\begin{proof}
+\leanok
+Choose $k=2\mathrm{size}(m')+7$. Then
+$q=128(2^{\mathrm{size}(m')})^2\geq82m'$. Both dimensions are powers of
+two at most $q$, hence divide it. Compute the degree from the binary length of
+$m'$ and combine it with the already verified $(m,s)$ program. This supplies
+the field-size requirement for classical majority soundness; stronger
+low-degree-test field-size choices remain with their consumers.
+\end{proof}
+
+\begin{lemma}[Circuit arithmetization with bounded input use]
+\label{lem:pcp-circuit-arithmetization}
+\lean{MIPRE.LowDegree.eval_killCompl, MIPRE.LowDegree.degreeOf_killCompl_le,
+  MIPRE.SAT.Circuit.inputRef_injective, MIPRE.SAT.Circuit.routedConsistent_iff,
+  MIPRE.SAT.Circuit.eval_iff_routedConsistent,
+  MIPRE.SAT.Circuit.degreeOf_routedArith_le, MIPRE.SAT.Circuit.eval_routedArith_iff,
+  MIPRE.SAT.Circuit.eval_routedArith_bool, MIPRE.SAT.Circuit.degreeOf_finiteArith_le,
+  MIPRE.SAT.Circuit.eval_finiteArith_bool, MIPRE.SAT.Circuit.eval_iff_exists_finiteArith}
+\leanok
+Over a field of characteristic two, every well-formed circuit with $n$ inputs
+and $s$ gates has a Boolean-valued arithmetization on exactly $n+s$ coordinates,
+of individual degree at most five, hence at most six. An input is accepted
+exactly when it extends to a Boolean assignment at which this polynomial is one.
+\end{lemma}
+\begin{proof}
+\leanok
+The current circuit interface bounds gate fan-out, but permits repeated reads of
+one external input. Route the first read through the external variable and each
+later read through its preceding input gate. These copy links use each variable
+at most once and preserve all Boolean gate values. In characteristic two,
+$1+w_g+\mathrm{rhs}_g$ indicates gate consistency. Multiply these factors and
+the output literal. A variable contributes at most one degree from its own
+factor, two from ordinary fan-out, one from a copy link, and one from the output
+literal. Restrict to the exact input and gate coordinates by setting all other
+variables to zero; this preserves degree and evaluation. The polynomial-time
+field evaluator for this expression is supplied by Lemma~\ref{lem:pcp-circuit-evaluator}.
+\end{proof}
+
+\begin{lemma}[Effective circuit polynomial evaluation]
+\label{lem:pcp-circuit-evaluator}
+\uses{lem:pcp-circuit-arithmetization,lem:pcp-padding-programs}
+\lean{MIPRE.SAT.PolyTimeFun.casesGate,
+  MIPRE.SAT.Circuit.lastInputValueProg, MIPRE.SAT.Circuit.lastInputValue_range,
+  MIPRE.SAT.Circuit.gateBitsProg, MIPRE.SAT.Circuit.evalBits_gateBits,
+  MIPRE.SAT.Circuit.circuitBitsProg, MIPRE.SAT.Circuit.circuitBitsProg_apply,
+  MIPRE.SAT.Circuit.length_circuitBits,
+  MIPRE.SAT.Circuit.evalBits_circuitBits, MIPRE.SAT.Circuit.evalBits_circuitBits_finite,
+  MIPRE.SAT.shoupBinField_charP, MIPRE.SAT.shoupBinField_toBits_ofBits}
+\leanok
+There is an ambient polynomial-time evaluator for the routed circuit polynomial
+on binary coefficient vectors, uniform in the supplied monic binary modulus.
+Over a characteristic-two field containing a root of that modulus, correctly
+sized inputs evaluate to the circuit polynomial at the corresponding field point,
+including its restriction to the exact finite set of input and gate coordinates.
+\end{lemma}
+\begin{proof}
+\leanok
+Dispatch the five gate constructors, scan preceding input copies, and use the
+verified coefficient-vector addition and modular multiplication programs.
+Multiply the consistency factors and output coordinate directly. The scan stores
+only the supplied coordinates and preceding gate/value pairs; the accumulator
+width never grows, even on malformed inputs. Its ambient cost therefore has a
+global polynomial bound. Induction over the gate prefix identifies its accumulator
+with the product of the polynomial factors. The Shoup field uses the same quotient
+carrier and canonical coefficient representation after recording its exact degree.
+This proves circuit evaluation; assembling the PCP verifier and its prescribed
+runtime bound remains part of Theorem~\ref{thm:pcp-decider}.
+\end{proof}
+
+\begin{lemma}[PCP semantics for a circuit describer]
+\label{lem:pcp-circuit-semantics}
+\uses{lem:pcp-circuit-arithmetization,lem:pcp-proof-algebra,prop:pcp-padded-describer}
+\lean{MIPRE.SAT.cubeIndexEquiv, MIPRE.SAT.clauseInput5_injective,
+  MIPRE.SAT.PcpParams.clauseInput5_pointClause,
+  MIPRE.SAT.PcpParams.pointClause_pointFromClause,
+  MIPRE.SAT.PcpParams.degreeOf_circuitArith,
+  MIPRE.SAT.PcpParams.eval_circuitArith_bool,
+  MIPRE.SAT.PcpParams.eval_iff_exists_circuitArith,
+  MIPRE.SAT.PcpParams.exists_proof_of_formula5_sat,
+  MIPRE.SAT.PcpParams.formula5_sat_of_majority,
+  MIPRE.SAT.PcpParams.completeness_of_describes,
+  MIPRE.SAT.PcpParams.soundness_of_describes}
+\leanok
+For a well-formed circuit with $5m+5$ inputs and exactly $m'$ input and gate
+variables, the typed algebraic PCP is complete and majority-sound for the actual
+five-block formula. If the circuit describes a decider, completeness uses its
+accepted answer prefixes, and soundness recovers accepted prefixes and both
+entire decoded answer tapes.
+\end{lemma}
+\begin{proof}
+\leanok
+Identify little-endian indices with Boolean cube points by an explicit bijection.
+The circuit's input order is exactly the five PCP blocks followed by their signs,
+with inverse encodings preserving every literal. Transport the finite circuit
+polynomial to the advertised PCP dimension. Its Boolean witnesses correspond
+to precisely the circuit's clauses. Apply the honest-proof construction and
+majority decoding, then the describer's exact accepting-tape relation. These
+are typed algebraic tests; the raw verifier program is a separate obligation.
+\end{proof}
+
+\begin{lemma}[Encoded PCP view size and source runtime]
+\label{lem:pcp-view-size}
+\uses{lem:pcp-effective-parameters,prop:pcp-padded-describer}
+\lean{MIPRE.TM.CookLevin.Pad.esize_bitBlocks_le,
+  MIPRE.TM.CookLevin.Pad.esize_view_le,
+  MIPRE.TM.CookLevin.Pad.pcpInput_size_polynomial,
+  MIPRE.TM.CookLevin.Pad.pcpProgram_time_le}
+\leanok
+Valid formatted PCP inputs for the constructed parameters have encoded size
+polynomial in $L=\log n+\log T+Q+\sigma$. Consequently every ambient
+polynomial-time program on these inputs has runtime polynomial in $L$.
+\end{lemma}
+\begin{proof}
+\leanok
+A list of $r$ field blocks of width $k$ has encoded size at most $(4k+2)r+1$.
+The two view lists therefore have total size at most
+$(4k+2)(2m'+6)+3$. The padded outer dimension is polynomial in $L$, and
+$k=2\mathrm{size}(m')+7\leq 2m'+7$. Add the valid specification's size bound
+and compose the resulting polynomial with the program's ambient time bound.
+\end{proof}
+
+\begin{lemma}[The executable PCP tests]
+\label{lem:pcp-executable-tests}
+\uses{lem:pcp-circuit-evaluator,lem:pcp-circuit-semantics,lem:pcp-view-size,
+  lem:effective-binary-field-arithmetic}
+\lean{MIPRE.SAT.validProg_true_iff, MIPRE.SAT.viewFormatProg_true_iff,
+  MIPRE.SAT.shoupRoot_equation, MIPRE.SAT.shoupRoot_eval_toBits,
+  MIPRE.SAT.shoupRoot_eval_eq_iff,
+  MIPRE.SAT.PcpFieldTests.checksProg_true_iff,
+  MIPRE.SAT.PcpViewTests.checks_typed_iff,
+  MIPRE.TM.CookLevin.Pad.verifyPcp_reject_invalid,
+  MIPRE.TM.CookLevin.Pad.verifyPcp_time_le,
+  MIPRE.TM.CookLevin.Pad.verifyPcp_rawView_iff}
+\leanok
+A uniform ambient program checks specification validity and all view dimensions,
+constructs the padded circuit within the view's unary output budget, and performs
+both polynomial tests. On a represented low-degree proof it accepts exactly when
+the typed algebraic tests hold. Invalid specifications and malformed views are
+rejected. Its runtime on valid formatted inputs is polynomial in
+$\log n+\log T+Q+\sigma$.
+\end{lemma}
+\begin{proof}
+\leanok
+Use binary comparisons for the parameters and list scans for the shape checks.
+Evaluate the circuit and both field identities using coefficient-vector arithmetic.
+Fixed-width evaluation at the Shoup quotient's root is injective, so raw bit equality
+is field equality. The clause coordinates and answer blocks agree with the typed
+proof view. Apply Lemma~\ref{lem:pcp-view-size} to the assembled program.
+\end{proof}
+
+\begin{lemma}[Formula arithmetization and occurrence bounds]
+\label{lem:pcp-formula-arithmetization}
+\ledgernode{1.3.3}
+\lean{MIPRE.SAT.Fml.eval_arith, MIPRE.SAT.Fml.degreeOf_arith_le}
+\leanok
+A Boolean formula has a polynomial arithmetization over any nontrivial commutative
+ring, agreeing with its Boolean value on Boolean inputs. The degree in each variable
+is at most the number of occurrences of that variable, including identifications
+made by the assignment of formula inputs to polynomial variables.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Replace conjunction by multiplication, negation by subtraction from one, and
+disjunction of $f,g$ by $1-(1-f)(1-g)$. Induction on the formula proves both claims.
+The circuit application must bound external input occurrences as well as gate fan-out;
+the current circuit well-formedness predicate only bounds the latter.
+\end{proof}
+
+\begin{lemma}[Boolean-cube zero certificates]
+\label{lem:pcp-zero-basis}
+\ledgernode{1.3.3}
+\uses{def:ld-encoding}
+\lean{MIPRE.LowDegree.exists_cubeZero_division, MIPRE.LowDegree.exists_zero_basis}
+\leanok
+Let $f$ be a polynomial over a field, of individual degree at most $d$, vanishing
+on $\{0,1\}^m$. There are polynomials $c_i$, each of individual degree at most $d$,
+such that the polynomial identity $f=\sum_i c_i X_i(1-X_i)$ holds.
+Division in a single coordinate can be performed without increasing the degree in
+any coordinate, leaving degree at most one in the selected coordinate.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Repeatedly replace the part divisible by $X_i^2$ with the corresponding multiple
+of $X_i$. This decreases the degree in coordinate $i$ while preserving all other
+coordinate bounds. Eliminate each coordinate in turn. The remaining multilinear
+polynomial vanishes on the Boolean cube and is therefore zero. The general
+Nullstellensatz total-degree bound alone does not give the individual-degree
+bounds required here.
+\end{proof}
+
+\begin{lemma}[The algebraic PCP tests]
+\label{lem:pcp-algebra-tests}
+\ledgernode{1.3.3}
+\uses{lem:pcp-zero-basis,lem:schwartz-zippel}
+\lean{MIPRE.SAT.PcpAlgebra.completeness,
+  MIPRE.SAT.PcpAlgebra.degreeOf_constraint_le,
+  MIPRE.SAT.PcpAlgebra.degreeOf_zeroCombination_le,
+  MIPRE.SAT.PcpAlgebra.identities_of_majority,
+  MIPRE.SAT.PcpAlgebra.clause_satisfied_of_identities,
+  MIPRE.SAT.PcpAlgebra.clause_decoded_of_identities,
+  MIPRE.LowDegree.eq_of_majority_agree, MIPRE.LowDegree.eq_of_majority_subset}
+\leanok
+Write $p=\varphi\prod_{i=1}^5(g_i-X_{s_i})$ and
+$z_c=\sum_j c_jX_j(1-X_j)$. The algebraic verifier tests $c_0=p$ and $c_0=z_c$
+at its sampled point. If $p$ vanishes on the Boolean cube and has individual
+degree at most $d$, certificates of individual degree at most $d$ pass both tests
+everywhere. Conversely, if $\varphi$ has individual degree at most six, all
+$g_i,c_j,c_0$ have individual degree at most $d$, and
+$|\F|\geq 2m(6+5\max\{d,1\})$, acceptance on more than half of $\F^m$ forces
+both polynomial identities. On each Boolean point with $\varphi=1$, one of the
+five answer evaluations equals its sign.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Completeness uses Lemma~\ref{lem:pcp-zero-basis}. For soundness, the two tested
+polynomials have individual degree at most $6+5\max\{d,1\}$ and $d+2$,
+respectively. Schwartz--Zippel forces equality from strict majority agreement.
+Evaluation on the Boolean cube annihilates every zero-certificate term, so the
+product of the five literal factors is zero on a described clause.
+This is the algebraic component only: padding, answer-block embeddings, decoded
+answer strings and the ambient verifier program remain separate obligations.
+\end{proof}
+
+\begin{lemma}[PCP answer blocks, honest proof and decoded clauses]
+\label{lem:pcp-proof-algebra}
+\ledgernode{1.3.3}
+\uses{lem:pcp-algebra-tests,def:ld-encoding}
+\lean{MIPRE.SAT.PcpAlgebra.degreeOf_liftAnswer_le,
+  MIPRE.SAT.PcpAlgebra.literal_product_degree_le,
+  MIPRE.SAT.PcpAlgebra.honest_constraint_degree_le,
+  MIPRE.SAT.PcpAlgebra.typedAccepts_ev_iff,
+  MIPRE.SAT.PcpAlgebra.exists_proof_of_satisfying_assignment,
+  MIPRE.SAT.PcpAlgebra.decoded_clause_of_majority}
+\leanok
+Embed each of the five answer polynomials in its own coordinate block of the
+$m'$-variate point, with distinct sign coordinates outside those blocks.
+This preserves individual degree, and for multilinear answers the product of
+the five literal factors is multilinear. Consequently a degree-six Boolean
+clause-description polynomial and a satisfying five-tuple of Boolean assignments
+give a degree-seven PCP proof passing both algebraic tests at every point.
+Conversely, for $q\geq82m'$, strict majority acceptance of a degree-seven proof
+implies that the Boolean decoding satisfies every described Boolean clause.
+These are statements about the existing PCP proof type and its typed evaluations.
+\end{lemma}
+\begin{proof}
+\leanok
+Injectivity of each coordinate embedding preserves degrees; the images of
+different blocks, and their sign coordinates, are disjoint. A coordinate
+therefore contributes degree at most one to the literal product. Encode the
+five assignments multilinearly and apply the zero-basis decomposition to the
+degree-seven constraint. For soundness, transport the degree bounds to the
+ambient point and use Lemma~\ref{lem:pcp-algebra-tests}. Any answer evaluation
+equal to its Boolean sign survives the decoding map.
+\end{proof}
+\paragraph{Scope.} Lemma~\ref{lem:pcp-circuit-semantics} supplies the
+clause-description polynomial and its relation to the input decider.
+Lemma~\ref{lem:pcp-executable-tests} supplies the raw verifier and its runtime.
+
 \begin{theorem}[The bespoke PCP for deciders]
 \label{thm:pcp-decider}
 \ledgernode{1.3.3}
-\uses{lem:decoupled-5sat,lem:schwartz-zippel,thm:qld,def:decider,def:ld-encoding}
+\uses{lem:decoupled-5sat,lem:schwartz-zippel,def:decider,def:ld-encoding,
+  lem:pcp-formula-arithmetization,lem:pcp-circuit-arithmetization,lem:pcp-circuit-evaluator,
+  lem:pcp-zero-basis,lem:pcp-algebra-tests,
+  lem:pcp-proof-algebra,prop:pcp-padded-describer,lem:pcp-effective-parameters,
+  lem:pcp-circuit-semantics,lem:pcp-view-size,lem:pcp-executable-tests,
+  lem:effective-binary-field-arithmetic}
 \lean{MIPRE.SAT.BinField, MIPRE.SAT.PcpParams, MIPRE.SAT.PcpProof, MIPRE.SAT.PcpProof.ev,
-  MIPRE.SAT.ViewFormat, MIPRE.SAT.PcpDecider}
+  MIPRE.SAT.ViewFormat, MIPRE.SAT.PcpDecider, MIPRE.TM.CookLevin.Pad.classicalPcpDecider}
 \leanok
 There is a verifier $\pcpverifier$ which, given a valid decider specification $(\decider,
 n, T, Q, \sigma, x, y)$ --- validity requiring $\abs{\decider} \leq \sigma$, $\max\{Q,
@@ -1128,12 +1830,21 @@ arithmetization must be powers of two dividing $q$ (Remark~\ref{rem:pcp-power-of
 \end{theorem}
 
 \begin{proof}
-Low-degree tests on the committed polynomials, sum-check-style zero-testing of the
-constraint polynomial against a zero basis, and Lemma~\ref{lem:schwartz-zippel} for the
-arithmetization. Four obligations are separate in the source and stay separate here: the
+\leanok
+The verifier checks the arithmetized formula and a certificate that its constraint
+polynomial vanishes on the Boolean cube. Soundness against the low-degree proofs in the
+statement follows from Lemma~\ref{lem:schwartz-zippel}. The PCP theorem itself does not run
+a quantum low-degree test or consume Pauli-test soundness; those belong to its later
+composition with a nonlocal game. Four obligations are separate in the source and stay separate here: the
 proof format and query structure, completeness, the zero-testing argument with its error
 bounds, and the complexity bound the composition consumes.
 \end{proof}
+
+The Lean field family is indexed by odd extension degrees, as required by the parameter
+choice. Requiring a field of cardinality $2^k$ for every natural $k$ would include $k=0$
+and make the contract uninhabitable. The constructed verifier uses the canonical
+polynomial-basis representation and uniform field programs, modulo the existing Shoup
+axiom. Effective self-dual normal coordinates remain a separate obligation for downsizing.
 
 The theorem has four obligations, and they are separate in the source because they fail
 separately.
@@ -1156,23 +1867,35 @@ decision rule are determined by them.
 \label{lem:pcp-completeness}
 \ledgernode{1.3.3.2}
 \uses{lem:pcp-format,thm:succinct-sat}
+\lean{MIPRE.TM.CookLevin.Pad.classicalPcp_completeness}
+\leanok
 If $\abs{a},\abs{b}\leq T$ and the decider accepts $(n, x, y, a, b)$ within $T$ steps,
 then the honestly generated proof
 $\Pi$ --- the low-degree encodings of the actual answers, with the auxiliary polynomials
 computed from them --- makes $\pcpverifier$ accept with certainty.
 \end{lemma}
+\begin{proof}
+\leanok
+Combine the padded describer's accepting witness, the degree-seven zero certificate,
+and the equivalence of raw and typed tests.
+\end{proof}
 
 \effortHard
 
 \begin{lemma}[PCP soundness]
 \label{lem:pcp-soundness}
 \ledgernode{1.3.3.3}
-\uses{lem:pcp-format,lem:schwartz-zippel,thm:qld}
-If $\pcpverifier$ accepts with probability greater than $\tfrac12$ on views consistent with
-low-degree $g_1, g_2$, then the decider accepts the answers those two polynomials decode to.
+\uses{lem:pcp-format,lem:schwartz-zippel}
+\lean{MIPRE.TM.CookLevin.Pad.classicalPcp_soundness}
+\leanok
+If $\pcpverifier$ accepts with probability greater than $\tfrac12$ on views of a fixed
+proof whose answer and certificate polynomials all have individual degree at most seven,
+then the decider accepts the answers the first two polynomials decode to. The entire
+decoded answer vectors equal the padded tape encodings of the accepted prefixes.
 \end{lemma}
 
 \begin{proof}
+\leanok
 \uses{lem:schwartz-zippel}
 Zero-testing of the constraint polynomial against a zero basis, with
 Lemma~\ref{lem:schwartz-zippel} bounding the probability that a nonzero polynomial vanishes
@@ -1208,10 +1931,258 @@ Theorem~\ref{thm:pcp-decider} does.
 
 \effortHard
 
+\begin{lemma}[Low-degree sandwich support]
+\label{lem:ar-sandwich-support}
+\ledgernode{1.1.1.3}
+\uses{def:cross-distance,lem:schwartz-zippel}
+Let $k\geq1$, $x\sim\mu$, and let $y$ be uniform on a finite set $Y$, independently
+of $x$. For each $i\leq k$, let $\cal{G}_i$ be a finite family of
+functions on $Y$ whose distinct elements agree with probability at most $\eta$.
+Let $A^x_{g_1,\ldots,g_k}$ and $G^{i,x}_{g_i}$ be projective measurements.
+Suppose the evaluated $i$th marginal of $A$ on Alice and evaluated $G^{i,x}$
+on Bob are at cross-party squared distance at most $\delta$, averaged over $x,y$.
+Define the POVM
+$C^x_{g_1,\ldots,g_k}=G^{k,x}_{g_k}\ldots G^{2,x}_{g_2}G^{1,x}_{g_1}
+G^{2,x}_{g_2}\ldots G^{k,x}_{g_k}$.
+The complete evaluated tuple of $A$ is at cross-party squared distance
+$O(k\sqrt{\delta+\eta})$ from that of $C$, on the same distribution.
+This is an unformalized support theorem with audited source provenance
+\cite{AuditSync26}; the dependence on $x$ is handled by conditioning and
+averaging. Retain the universal constant in this estimate.
+\end{lemma}
+
+\begin{lemma}[Truncation at the timeout counter]
+\label{lem:timeout-truncation-interface}
+\ledgernode{1.4.1.4}
+\uses{rem:tm-conventions}
+For a source decider in standard timeout-counter form with $B=B_D(n)$,
+simultaneously replacing its two answers by their length-$B$ prefixes
+preserves the result: accept, reject, or timeout. The counter depends only
+on $n$ and the underlying machine is simulated for at most $B$ steps, so
+none of the changed cells can be read. This is not the false assertion
+$\TIME_D(n)\leq B$; wrapper runtime may be polynomial in $B$.
+\end{lemma}
+
+\begin{lemma}[Effective typed oracle construction]
+\label{lem:oracle-effective-interface}
+\ledgernode{1.3.5.1}
+\uses{thm:oracularization}
+The typed oracle verifier is compiled in time polynomial in the input
+description. Its sampler preserves $\ell$ levels, depends only on the
+input sampler, and runs in $\poly(\TIME_S(n))$. Its decider runs in
+$\poly(\TIME_S(n),B_D(n))$, including the bounded format checks.
+This is the typed construction used inside answer reduction.
+\end{lemma}
+
+\begin{lemma}[Timeout-compatible oracle PCC completeness]
+\label{lem:oracle-timeout-pcc}
+\ledgernode{1.3.5.2}
+\uses{lem:timeout-truncation-interface,thm:oracularization,def:pcc}
+Coarse-grain a perfect input PCC witness by length-$B_D(n)$ prefix
+truncation. Orthogonal projector sums preserve completeness and projectivity;
+commutation and consistency are preserved by the common deterministic map.
+The preceding truncation lemma preserves value one on the same state.
+These measurements supply the honest isolated-player and joint-oracle
+measurements with legal answer lengths and the same combined operator rule
+for both players.
+\end{lemma}
+
+The following answer-reduction obligations use the parameter routine and
+input hypotheses of Theorem~\ref{thm:answer-reduction}. In measurement
+relations, ``consistent'' means close in the cross-party squared distance
+of Definition~\ref{def:cross-distance}; bounds on game failure are stated
+separately. Put $\theta=16^{|T^{\mathrm{ar}}|}\eps_{\mathrm{out}}$,
+$E=\delta_{\mathrm{CL}}(\theta,q,m',d,m'+6)$ and $\rho=m'd/q$.
+The common upper bound $\kappa$ below absorbs both the individual and
+simultaneous errors; it is not a renaming of the source's individual
+$\delta_1$ or simultaneous $\delta_2$.
+
+\begin{lemma}[Answer-reduction construction]
+\label{lem:ar-construction}
+\ledgernode{1.3.4.1}
+\uses{lem:oracle-effective-interface,thm:pcp-decider,lem:typed-downsize,lem:detype-compiler,lem:lidt-effective}
+With the parameter and timeout hypotheses of Theorem~\ref{thm:answer-reduction},
+construct the typed oracle verifier and the PCP verifier. Downsize the PCP
+sampler using its explicit field routine before taking the direct sum with
+the binary oracle sampler. This yields a common binary ambient space and
+$\max\{\ell,3\}$ typed levels, hence $\max\{\ell+2,5\}$ levels after detyping.
+The compiled timeout and actual runtimes have the claimed polynomial bounds.
+Format checks include all proof coefficients and answer components.
+\end{lemma}
+
+\begin{lemma}[Answer-reduction completeness]
+\label{lem:ar-completeness}
+\ledgernode{1.3.4.2}
+\uses{lem:ar-construction,lem:oracle-timeout-pcc,lem:detype-completeness}
+A perfect PCC input witness gives a perfect typed answer-reduction witness,
+using the complete honest proof tuple and one combined measurement rule on
+both players. All queried formats are satisfied; mismatched proof branches
+use a whole legal zero tuple. Apply detyping completeness, including its
+identical-operator property, to obtain the exterior PCC witness.
+\end{lemma}
+
+\begin{lemma}[Typed soundness setup]
+\label{lem:ar-soundness-setup}
+\ledgernode{1.3.4.3}
+\uses{lem:ar-construction,lem:detype-soundness}
+An exterior strategy with deficit $\eps_{\mathrm{out}}$ gives a typed strategy
+with deficit $\theta=16^{|T^{\mathrm{ar}}|}\eps_{\mathrm{out}}$ on the same
+state. Symmetrize the typed strategy for its symmetric game; do not assume
+the detyped question law is symmetric. The soundness proof then works with
+projective, well-formatted measurements and a swap-invariant state.
+All type-pair conditioning costs are constants since $T^{\mathrm{ar}}$ is fixed.
+\end{lemma}
+
+\begin{definition}[Full-seed indexing for answer reduction]
+\label{def:ar-seed-index}
+\ledgernode{1.3.4.3.1}
+\uses{lem:ar-soundness-setup}
+The common index $\xi$ is the full uniform oracle seed. Both questions
+$(x_A,x_B)$ and every auxiliary oracle coordinate are functions of $\xi$.
+Indexed measurements and all subsequent averages retain $\xi$.
+The image pair $(x_A,x_B)$ is not substituted as an index without proving
+injectivity or specifying its conditional seed distribution.
+\end{definition}
+
+\begin{lemma}[Global PCP consistency tests]
+\label{lem:ar-global-tests}
+\ledgernode{1.3.4.4}
+\uses{def:ar-seed-index,def:cross-distance}
+Conditioning the typed success estimate on each checked type pair gives the
+global PCP subtests with $O(\theta)$ failure, averaged over uniform $\xi$
+and the prescribed PCP seed. Retain the joint proof-tuple format, individual
+proof-line formats, and all identical-question equality subtests. No
+low-degree theorem is applied to line--point success alone.
+\end{lemma}
+
+\begin{lemma}[Input-codeword consistency tests]
+\label{lem:ar-input-tests}
+\ledgernode{1.3.4.5}
+\uses{lem:ar-global-tests}
+The two input-codeword tests, conditioned on their respective typed questions,
+have $O(\theta)$ failure on the required seeded point/line laws. The
+distributions are conditioned before averaging over $\xi$, and include
+answer formats and equality tests. These supply both input evaluation
+relations consumed by the individual-polynomial extraction.
+\end{lemma}
+
+\begin{lemma}[Common individual polynomial measurements]
+\label{lem:ar-common-polynomials}
+\ledgernode{1.3.4.6}
+\uses{lem:ar-input-tests,thm:lidt-cl-soundness-one,lem:schwartz-zippel}
+For each seed, extract the input and proof polynomial PVMs, averaged with
+the source's conditional question laws. One common family $G_i$ can be used
+on both copies, for $i=1,\ldots,5$. To derive this, choose one side's LDT
+output, use swap invariance of the state to transport its point relation,
+then point self-consistency and polynomial separation to obtain cross-copy
+consistency; average the resulting errors using Jensen. Identical point
+operators alone do not make the two existential LDT outputs identical.
+The resulting evaluation and full-polynomial consistency error is denoted
+$\kappa=O(\sqrt E+\rho)$ with $E,\rho$ as below.
+\end{lemma}
+
+\begin{lemma}[A simultaneous complete proof tuple]
+\label{lem:ar-simultaneous-proof}
+\ledgernode{1.3.4.7}
+\uses{lem:ar-common-polynomials,thm:lidt-cl-soundness}
+Use the simultaneous theorem at $(q,m',d,m'+6)$ to obtain a projective
+measurement $J$ of the entire tuple $(f_1,\ldots,f_5,c_0,\ldots,c_{m'})$.
+Write $M_i$ for individual point measurements, and $M_6$ for the complete
+proof-tuple point measurement. With seed averaging understood, retain all
+five relations: $M_i(y_i)$ is cross-party consistent with the $i$th
+evaluation coordinate of $M_6(z)$ for $i=3,4,5$ with error $O(\theta)$;
+$M_i(y)$ is consistent with $G_i$ evaluated at $y$; the two copies of $G_i$
+are consistent; $M_6(z)$ is consistent with $J$ evaluated at $z$; and the
+two copies of the complete $J$ are consistent. The last four errors are
+$O(\kappa)$. Include player mirrors of the first, second and fourth.
+Individual evaluations without a projective complete-tuple output do not
+suffice for the next lemma.
+\end{lemma}
+
+\begin{lemma}[The answer-reduction giant sandwich]
+\label{lem:ar-giant-sandwich}
+\ledgernode{1.3.4.8}
+\uses{lem:ar-simultaneous-proof,lem:ar-sandwich-support}
+Embed each of the five scalar polynomial alphabets into the full
+individual-degree-$d$ alphabet on $m'$ variables by zero-projector extension.
+Use the $(m'+1)$-tuple of constraint polynomials as a sixth alphabet; the
+complete $J$ now has literally the product of the six alphabets as outcomes.
+For either scalars or tuples, unequal outcomes agree at a uniform point
+with probability at most $\rho=m'd/q$: one unequal component witnesses
+the tuple bound, with no tuple-length factor.
+Apply Lemma~\ref{lem:ar-sandwich-support} with the full seed as index and
+the evaluation point uniform independently of it. Reverse the six-index
+order so the constraint-tuple marginal of $J$ is innermost. The resulting
+giant sandwich has error
+$\delta_3=O(\sqrt{\kappa+\rho})=O((\sqrt E+\rho)^{1/2})$.
+\end{lemma}
+
+\begin{lemma}[Transferring to the polynomial strategy]
+\label{lem:ar-polynomial-strategy}
+\ledgernode{1.3.4.9}
+\uses{lem:ar-giant-sandwich}
+The sandwiched polynomial measurements define the intermediate strategy on
+the same state. Transfer acceptance through the complete tuple $J$,
+including its constraint polynomials and tested formats, to obtain success
+$1-O(\sqrt{\delta_3})$. The proof uses the full-tuple relations of
+Lemma~\ref{lem:ar-simultaneous-proof}, not independently chosen evaluations.
+\end{lemma}
+
+\begin{lemma}[Decoding with the original answer cutoff]
+\label{lem:ar-decoding}
+\ledgernode{1.3.4.10}
+\uses{lem:ar-polynomial-strategy,lem:timeout-truncation-interface,thm:oracularization}
+Decode the polynomial strategy to the oracle strategy, applying the
+length-$B_D(n)$ prefix cutoff to each original answer. It preserves the
+simulated decider's output both before and after the oracle construction,
+and makes every decoded answer pass its bounded parser. Check all three
+oracle subtests. Group malformed or failed decodings into fixed legal
+outcomes so measurements remain complete. The final conversion to the
+input game yields deficit $O(\delta_3^{1/4})$.
+\end{lemma}
+
+\begin{lemma}[Answer-reduction quantitative assembly]
+\label{lem:ar-error-assembly}
+\ledgernode{1.3.4.11}
+\uses{lem:ar-decoding,lem:ar-soundness-setup,lem:ar-common-polynomials}
+Put $L=(\lambda n)^\mu$, $\rho=m'd/q$ and
+$E=\delta_{\mathrm{CL}}(\theta,q,m',d,m'+6)$ for the source parameter
+routine. The comparison with the smaller-$m$ LDT error uses its field-error
+floor $E>4^{-b'}/L$ and the bound
+$a'(dm)^{a'}2^{-b'md}\leq C/L$ for sufficiently large $n$, with
+$m\geq\lambda\mu n$ and $d=7$. Here $a',b'$ are the fixed seeded-LDT
+constants; the polynomial prefactor is absorbed into the exponential.
+It does not reverse the exponential inequality when $m'\geq m$.
+The quantitative chain is
+\[
+ \kappa=O(\sqrt E+\rho),\qquad
+ \delta_3=O((\sqrt E+\rho)^{1/2}),\qquad
+ \mathrm{deficit}_{\mathrm{in}}=O(E^{1/16}+\rho^{1/8}).
+\]
+Choose a universal final exponent strictly below $\min\{b'/16,1/16\}$
+and enlarge the polynomial coefficient and threshold to absorb every
+constant. This gives the displayed error of Theorem~\ref{thm:answer-reduction}.
+When that error is at least one the value conclusion is trivial; the
+nontrivial regime also justifies the small-error inequalities above.
+\end{lemma}
+
+\begin{lemma}[Answer-reduction sampler independence]
+\label{lem:ar-sampler-independence}
+\ledgernode{1.3.4.12}
+\uses{lem:ar-construction,lem:oracle-effective-interface,lem:detype-compiler}
+The output sampler is determined by $(S,\lambda,\ell,\mu,\sigma)$, independent
+of the input decider's code. The typed oracle sampler uses only $S$; PCP
+parameters use only the supplied numerical bounds; downsizing uses their
+explicit field routine; and detyping's sampler uses only its sampler and
+fixed graph. This supplies the source premise used by compression's
+sampler-independence argument (ledger node $1.5.1$). The already checked
+conditional compression theorem keeps its existing Lean proof and premises.
+\end{lemma}
+
 \begin{theorem}[Answer reduction]
 \label{thm:answer-reduction}
 \ledgernode{1.3, 1.3.4}
-\uses{def:normal-verifier,def:pcc,thm:succinct-sat,lem:decoupled-5sat,thm:pcp-decider,lem:schwartz-zippel,thm:qld,lem:self-dual-basis,thm:oracularization}
+\uses{def:normal-verifier,def:pcc,lem:ar-construction,lem:ar-completeness,lem:ar-error-assembly,lem:ar-sampler-independence}
 In the source model there is a polynomial-time Turing machine $\ComputeAnsVerifier$ that on input
 $(\verifier, \lambda, \ell, \mu, \sigma)$, for $\verifier$ an $\ell$-level normal form
 verifier whose decider is in standard timeout-counter form, with
@@ -1274,43 +2245,19 @@ This is the most technically heterogeneous section of the paper
 arithmetization --- see Section~\ref{sec:rr-cook-levin}) and half quantum (a
 low-degree ``sandwiching'' argument recombining the players' committed polynomials). It may also be the hardest. 
 
-\begin{remark}[The composition, and what the value form does not inherit]
+\begin{remark}[Answer-reduction correspondence and optional rank bounds]
 \label{rem:ar-composition}
 \ledgernode{1.3.4}
-\uses{thm:answer-reduction,thm:oracularization,thm:pcp-decider,def:ent,rem:compression-chain}
-The composition of the oracularized verifier with $\pcpverifier$ --- questions append
-conditionally-linearly sampled PCP evaluation points to the oracularized questions, so the
-sampler stays conditionally linear, and answers are PCP evaluations --- is ledger node
-$1.3.4$, which carries $29$ challenges, more than any other node of the campaign. Most are
-local: misnamed objects, a wrong exponent, an averaging omitted from a display, an
-undefined sampler symbol. Four are structural, and one of those does not reach this
-blueprint at all.
-\begin{enumerate}
-\item The ambient space of the answer-reduced sampler is declared as a direct sum of the
-  oracularized and PCP spaces, but the summands are over different fields: a normal form
-  verifier's sampler has field size $2$, while the PCP space is an $\Fq$-space. The
-  conditionally linear functions are $\Fq$-linear, so the decomposition needs stating over
-  a common field.
-\item The success probability fed into low-degree soundness omits the consistency subtest,
-  so the lemma's hypothesis is not verified as written.
-\item Claim ar-4 omits the word \emph{projective} for the simultaneous family, and the
-  sandwiching lemma uses projectivity of that family in its proof.
-\item The decoded answers have length up to $T$, while the oracle decider rejects any
-  answer component longer than $B_\decider(n)$, and nothing forces $B_\decider(n) \geq T$.
-  This is the truncation of Remark~\ref{rem:oracularization-repairs}, item 4.
-\end{enumerate}
-The one that does not reach us is the \emph{entanglement} clause. In~\cite{JNVWY20} answer
-reduction carries $\Ent(\vans_n, 1 - \eps) \geq \frac12 \Ent(\verifier_n, 1 -
-\delta(\eps, n))$, and the recursion consumes exactly that $\frac12$. The campaign found
-the factor unaccounted for --- the symmetrization the argument begins with doubles the
-Schmidt rank and carried no dimension clause --- and it is now attributed to exactly that
-doubling, so the clause stands with its constant explained rather than assumed.
-Theorem~\ref{thm:answer-reduction} above has no entanglement clause at all: the pipeline is
-carried in $\valstar$ throughout, and no entanglement lower bound is tracked anywhere in
-this chapter (Remark~\ref{rem:compression-chain}). So the whole question --- whether the
-$\frac12$ is earned, and whether a second factor of $2$ hides behind it --- is one this
-route never has to ask. That is the fourth place where the value form is strictly cheaper
-rather than merely equivalent.
+\uses{thm:answer-reduction,def:ent,rem:compression-chain}
+The decomposition above records the current repaired source~\cite{AuditSync26}:
+common-field downsizing precedes the direct sum; conditioned test success
+includes equality and formats; the simultaneous measurement is projective on
+complete tuples; and decoding preserves the original timeout answer cutoff.
+These are open formalization obligations, not unresolved source claims.
+The source additionally tracks an entanglement factor $1/2$ from doubling
+Schmidt rank during typed symmetrization. The value-only ambient contract
+does not include that clause. None of the new obligations is marked as
+proved merely because the source ledger validates it.
 \end{remark}
 
 \subsection{Gap amplification: parallel repetition}

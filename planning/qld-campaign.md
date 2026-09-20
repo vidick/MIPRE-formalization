@@ -1,5 +1,13 @@
 # Chunk 4: `thm:qld`, the Pauli basis test — campaign plan
 
+Current blueprint synchronization (2026-09-20): the expansion and linearity
+proof marks remain intact. The additional axis-degree lemma and the ten
+`lem:qld-global-*` nodes are explicit unformalized combining obligations.
+They use the proved `thm:lidt-cl-soundness-one`; the general multi-codeword
+extension is needed by answer reduction, not this QLD application. The
+source pin and remaining adapters are in `paper-correspondence.md`.
+
+
 Written 2026-09-18, after Chunk 3 landed (`thm:lidt-cl-soundness-one`, PR #111). Scoped by
 reading the blueprint's five-stage appendix section, the paper's `qld-appendix.tex`,
 `qld-prelim.tex` and `ldt.tex` §"The Pauli basis test", and the Lean the repository already has.

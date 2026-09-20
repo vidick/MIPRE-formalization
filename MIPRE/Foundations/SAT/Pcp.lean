@@ -28,8 +28,9 @@ typed PCP sampler, and `thm:answer-reduction` through it) can be written against
 * `BinField k` — a field of size `2^k` with a fixed `k`-bit representation of its elements.
   The paper's admissible field size is `q = 2^k` with `k` odd and the representation is the one
   the self-dual normal basis of `lem:self-dual-basis` supplies; all the *statement* needs is the
-  size and the representation, so `PcpDecider` takes the representation as a parameter and
-  `lem:self-dual-basis` is what will inhabit it.
+  size and the representation. `SAT.QuotientField.shoupAdmissibleField` supplies this
+  interface in the polynomial power basis, with uniform addition and multiplication
+  programs. Consumers requiring a self-dual normal basis still need `lem:self-dual-basis`.
 * `PcpParams` — `def:pcpparams`. Only `k, m, s` are data: `d = 7` and `m' = 5m + 5 + s` are
   determined, and the paper's `q` is `2^k`.
 * `PcpProof` — `def:pcp-proof`: five `m`-variate polynomials and `m' + 1` `m'`-variate ones,
@@ -218,8 +219,10 @@ structure is the theorem. -/
 structure PcpDecider where
   /-- `pcpparams(n, T, Q, σ)`. -/
   params : ℕ → ℕ → ℕ → ℕ → PcpParams
-  /-- The field of size `q = 2^k` with its `k`-bit representation, one for each `k`. -/
-  fld : (k : ℕ) → BinField k
+  /-- The field of size `q = 2^k` with its `k`-bit representation, for each admissible
+  (odd) extension degree. In particular this excludes `k = 0`, for which `BinField k`
+  would require a one-element field. -/
+  fld : (k : ℕ) → Odd k → BinField k
   /-- The verifier. -/
   verify : PolyTimeFun PcpInput Bool
   /-- The parameters, in polynomial time from `(n, T, Q, σ)`. -/
@@ -256,22 +259,23 @@ structure PcpDecider where
   padded answers is accepted at every point. -/
   completeness : ∀ (D : Decider) n T Q σ x y, Valid D.prog n T Q σ x y →
     ∀ ap bp : Cost.BitStr, ap.length ≤ T → bp.length ≤ T → D.AcceptsWithin n x y ap bp T →
-      ∃ pf : PcpProof (params n T Q σ) (fld (params n T Q σ).k).carrier,
+      ∃ pf : PcpProof (params n T Q σ) (fld (params n T Q σ).k (odd_k n T Q σ)).carrier,
         pf.g 0 = ldEnc (answerVec _ (params n T Q σ).m ap) ∧
         pf.g 1 = ldEnc (answerVec _ (params n T Q σ).m bp) ∧
         ∀ z, verify (pcpInput D.prog n T Q σ x y
-          (pf.rawView (fld (params n T Q σ).k) z).1
-          (pf.rawView (fld (params n T Q σ).k) z).2) = true
+          (pf.rawView (fld (params n T Q σ).k (odd_k n T Q σ)) z).1
+          (pf.rawView (fld (params n T Q σ).k (odd_k n T Q σ)) z).2) = true
   /-- Item 4 (**soundness**): a low-degree proof accepted at more than half the points decodes
   to answers the decider accepts within `T`. -/
   soundness : ∀ (D : Decider) n T Q σ x y, Valid D.prog n T Q σ x y →
-    ∀ pf : PcpProof (params n T Q σ) (fld (params n T Q σ).k).carrier,
+    ∀ pf : PcpProof (params n T Q σ) (fld (params n T Q σ).k (odd_k n T Q σ)).carrier,
       (params n T Q σ).q ^ (params n T Q σ).m' <
           2 * (Finset.univ.filter
-            fun z : Fin (params n T Q σ).m' → (fld (params n T Q σ).k).carrier =>
+            fun z : Fin (params n T Q σ).m' →
+                (fld (params n T Q σ).k (odd_k n T Q σ)).carrier =>
               verify (pcpInput D.prog n T Q σ x y
-                (pf.rawView (fld (params n T Q σ).k) z).1
-                (pf.rawView (fld (params n T Q σ).k) z).2) = true).card →
+                (pf.rawView (fld (params n T Q σ).k (odd_k n T Q σ)) z).1
+                (pf.rawView (fld (params n T Q σ).k (odd_k n T Q σ)) z).2) = true).card →
         ∃ ap bp : Cost.BitStr, ap.length ≤ T ∧ bp.length ≤ T ∧
           D.AcceptsWithin n x y ap bp T ∧
           coded (pf.g 0) = answerVec _ (params n T Q σ).m ap ∧
