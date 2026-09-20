@@ -2846,7 +2846,16 @@ primes on $w_X, w_Z$, and the unspecified law of the coordinate registers $s_X, 
   MIPRE.QLD.lineMats_ofLPZ, MIPRE.QLD.param_ofLPZ, MIPRE.QLD.lineEvalMats_ofLPZ,
   MIPRE.QLD.avg_pair_eq_content_X, MIPRE.QLD.avg_pair_eq_content_Z,
   MIPRE.QLD.avg_pair_eq_content_X_self, MIPRE.QLD.avg_pair_eq_content_X_collProb,
-  MIPRE.QLD.pairs_of_lines_prod_of_items}
+  MIPRE.QLD.pairs_of_lines_prod_of_items,
+  MIPRE.QLD.lpEquiv, MIPRE.QLD.sumAll_eq_sum, MIPRE.QLD.card_lpData,
+  MIPRE.QLD.avgAll_eq_uniform, MIPRE.QLD.avgAll_prod_eq_uniform, MIPRE.QLD.avgAll_one,
+  MIPRE.QLD.avgAll_prod_one, MIPRE.QLD.avgAll_prod_nonneg, MIPRE.QLD.avgAll_avgRestr_le,
+  MIPRE.QLD.avgRestr_avgAll_le, MIPRE.QLD.avgSub_le_mul_avgAll, MIPRE.QLD.shiftAB,
+  MIPRE.QLD.xBlk_shiftAB, MIPRE.QLD.zBlk_shiftAB, MIPRE.QLD.alph_shiftAB, MIPRE.QLD.bet_shiftAB,
+  MIPRE.QLD.shiftAB_shiftAB, MIPRE.QLD.shiftAB_zero, MIPRE.QLD.bijective_shiftAB,
+  MIPRE.QLD.subX_shiftAB, MIPRE.QLD.subZ_shiftAB, MIPRE.QLD.sumSubAt,
+  MIPRE.QLD.sumSub_eq_sum_sumSubAt, MIPRE.QLD.sumSubAt_shiftAB, MIPRE.QLD.sumSubAB,
+  MIPRE.QLD.avgSubAB, MIPRE.QLD.sumSubAB_eq, MIPRE.QLD.avgSubAB_le_of_forall}
 For every padded line $\ell$, there is a POVM with polynomial outcomes of
 degree at most $md+1$, and at most $d$ when $\ell$ is axis-parallel.
 On the padded line--point distribution it is consistent with the opposite
@@ -2949,16 +2958,32 @@ product of two is at most $m^2$ times the product
 two line types; here the type is a parameter, so it is $m$. This is the whole source of the leading
 $m$ in $\delta_{\mathrm{combine}}$.
 
-\textbf{What remains: the three Cauchy--Schwarz claims.} All three inputs the paper's chain
-consumes are now available on the distributions it needs them on --- the combined point measurement's
-self-consistency, Lemma~\ref{lem:qld-pairs-of-lines} on the product, and the restricted-law transfer
-that turns an average bound into a bound on each $D_{\mathrm{ty},i}$. What is not formalized is the chain
-itself: the paper's Claims 17-1, 17-2 and 17-3, three Cauchy--Schwarz steps that replace
-$\widehat Q^{x,z}$ by the ordered product, drop the $X$ factor, and bound the remaining term by $1$.
-Each is a bound of the size of \texttt{sum\_content\_marg\_line\_le}, and the last of them also
-needs the padded line-point law written as a mixture of products of subline laws --- which is
-\texttt{avgSub\_free} and its three companions (Lemma~\ref{lem:qld-sublines}) carried from reals to
-operators.
+\textbf{The paper's three Cauchy--Schwarz claims are avoidable here, and this is a finding.} The
+paper proves the consistency by chaining Claims 17-1, 17-2 and 17-3, and says in a comment that the
+chain is needed because ``under the distribution $D$ the pair is correlated (for diagonal lines both
+coordinates share the line parameter), so that decomposition is not available''. The correlation is
+real \emph{given the padded line} --- a uniform point of it moves both blocks with one parameter ---
+but the quantity to be bounded conditions on the two \emph{sublines}, which know each block's coset
+in its own space and not the relative offset of the two blocks. Marginalizing that out restores
+independence, and \texttt{avgSub\_free} and its three companions
+(Lemma~\ref{lem:qld-sublines}) already prove the joint law to be \emph{exactly} a product of the two
+marginals at a fixed padded seed. \texttt{avgSub\_le\_mul\_avgAll} combines that with the
+restricted-law transfer: the padded line--point law is at most $m^2$ times the product of the two
+unrestricted subline laws, uniformly in the padded seed and the line type.
+\texttt{avgSubAB\_le\_of\_forall} does the same for $\alpha$ and $\beta$ at the sampled point:
+translating the padded point in those two coordinates alone is a bijection that leaves both sublines
+fixed, so they are uniform and independent of everything else and a bound holding for each fixed
+$(\alpha,\beta)$ holds for the joint law. No refinement of the block decomposition is needed. The
+report is \texttt{reports/padded-lines-product-law.md}.
+
+\textbf{What remains: one data-processing step.} With the above, the lemma follows from
+\texttt{pairs\_of\_lines\_prod\_of\_items} by coarse-graining the outcome pair
+$(f_X(x), f_Z(z))$ along $(r_1,r_2) \mapsto \alpha r_1 + \beta r_2$, which only increases agreement,
+and then applying the two domination lemmas. That coarse-graining is the only piece not formalized;
+it needs the two families presented as \texttt{POVM} structures so that
+\texttt{sum\_bornProb\_le\_map} applies. The error it yields is $m^2 \cdot \delta_P$-shaped
+rather than the paper's $m \cdot \poly$; see the report for why
+Lemma~\ref{lem:qld-simultaneous}'s prefactor absorbs the difference.
 
 \effortHard
 
