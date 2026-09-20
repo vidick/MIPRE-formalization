@@ -781,6 +781,50 @@ Constants: `delta/2 + sqrt(delta/2) + sqrt(32 delta + 4 sqrt(eta) + 2 eps)`. The
 instantiated at their sum. Nothing in the chain is a per-outcome estimate, so no constant depends
 on `q`.
 
+### `lem:qld-pairs-of-lines`, and the shift that makes the point uniform (2026-09-20, done)
+
+With the pasting lemma in hand the remaining work was its four hypotheses at the QLD line
+measurements. Three pieces of bookkeeping, and one of them is the interesting one.
+
+**The marginal step.** `lem:qld-combined-points` gives the joint measurement against the *ordered
+product* `M-hat^Z_b M-hat^X_a`; the pasting lemma wants each marginal against a *single* line
+measurement. `lem:cool-closeness-fact` (partition form) plus the orthogonality of the other
+family's fibres takes the first step at a factor 10 and no factor `q`; a triangle inequality
+through *Bob's own* point measurement --- its two legs being item 1 of `lem:qld-expanded-points`
+and item 2 of `lem:qld-expanded-lines` --- takes the second.
+
+**The extended space.** The joint measurement is the Naimark dilation and lives on each party's
+space enlarged by one `F_q x F_q` register; the line measurements do not. `xSqNorm_extVec2_aOp`
+says an operator with an inert ancilla has the same cross-party deviation on the extended state as
+the operator itself, which transports both inputs.
+
+**The probe, which is where the paper's `lem:alnf`/`lem:dlnf` would be used.** The pasting lemma's
+collision term needs the point to be uniform on its line once the line is fixed. The content
+determines both, and rather than form the conditional distribution the formalization *shifts*: for
+each fixed `t` the map `u_W |-> u_W + t . w_W` is a bijection of contents (`bijective_shift_gen`),
+so the content average and the (content, shift) average agree (`sum_content_shift_gen`); the line's
+question, base point and direction are invariant under it (`rep_add_smul` is why); and the point's
+parameter moves by exactly `t` (`lineParam_add_smul`). That is the whole content of "conditioned on
+the line the point is uniform on it", with no quotient formed and no measure-theoretic detour.
+
+The same device, applied to the raw direction `v` instead of the point, bounds the probability that
+the *diagonal* direction `zeroBelow(chi(s), v)` vanishes --- and it has to be bounded, because on
+such a content the "line" is a single point and the outcome map separates nothing. The paper's
+`eps = md/q` does not account for that; see `reports/pasting-degenerate-diagonal-line.md`. The
+collision average is `md/q` on an axis-parallel line and at most `md/q + 1/q` on a diagonal one,
+and `delta_P` is still `poly(eps, md/q)`.
+
+**Stated per pair of line types, which is stronger than the paper's mixture.** The line type is a
+parameter (`LinePres`, with the six invariances the shift argument needs, and its four instances
+`aPres`/`dPres` on each side), so the lemma is proved for each of the four pairs; the paper's
+average over the line--point distribution is a convex combination of them.
+
+**One methodological note, learned the hard way.** `lake env lean FILE` does **not** pick up the
+lakefile's `leanOptions`, and this project sets `autoImplicit false`. A `W` that had fallen out of
+scope was silently auto-bound under `lake env lean` --- the file "compiled" --- and `lake build`
+then reported six errors and two `sorry`s. Use `lake build MIPRE.<Module>` to confirm a module, as
+`CLAUDE.md` says; `lake env lean` is for fast iteration only.
+
 ### PR D — separation, the swap isometry, and the theorem
 
 `lem:qld-helper`, `lem:qld-exact-paulis`, `lem:qld-swap`, `thm:qld`. Two things to hold on to:
