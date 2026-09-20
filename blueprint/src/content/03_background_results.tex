@@ -2812,7 +2812,28 @@ primes on $w_X, w_Z$, and the unspecified law of the coordinate registers $s_X, 
   MIPRE.QLD.ofLPZ_pairShift, MIPRE.QLD.pairShift_zero, MIPRE.QLD.pairShift_add,
   MIPRE.QLD.pairDirX_shift, MIPRE.QLD.sum_pair_shift, MIPRE.QLD.pairCX, MIPRE.QLD.pairCZ,
   MIPRE.QLD.pairDirX_eq, MIPRE.QLD.pairCX_pairShift, MIPRE.QLD.pairCZ_pairShift,
-  MIPRE.QLD.pairs_of_lines_prod}
+  MIPRE.QLD.pairs_of_lines_prod,
+  MIPRE.QLD.affEval, MIPRE.QLD.affEval_of_snd_eq_zero, MIPRE.QLD.affPoly,
+  MIPRE.QLD.eval_affPoly, MIPRE.QLD.natDegree_affPoly_le, MIPRE.QLD.affPoly_of_snd_eq_zero,
+  MIPRE.QLD.natDegree_affPoly_eq_zero, MIPRE.QLD.ofPoly, MIPRE.QLD.eval_ofPoly, MIPRE.QLD.DegLE,
+  MIPRE.QLD.DegLE.mono, MIPRE.QLD.degLE_ofPoly, MIPRE.QLD.natDegree_toPoly_le_of_degLE,
+  MIPRE.QLD.combinePoly, MIPRE.QLD.natDegree_comp_affPoly_le,
+  MIPRE.QLD.natDegree_combinePoly_le, MIPRE.QLD.combine, MIPRE.QLD.eval_combine,
+  MIPRE.QLD.degLE_combine_of_blocks_const, MIPRE.QLD.degLE_combine_of_ab_const,
+  MIPRE.QLD.lineParam_dir_zero, MIPRE.QLD.lineParam_self, MIPRE.QLD.subAff,
+  MIPRE.QLD.subAff_snd_of_eq_zero, MIPRE.QLD.on_line_affEval, MIPRE.QLD.lineParam_affEval,
+  MIPRE.QLD.alph_single_of_ne, MIPRE.QLD.bet_single_of_ne, MIPRE.QLD.LPData.dir_congr,
+  MIPRE.QLD.padShift, MIPRE.QLD.padShift_pt, MIPRE.QLD.padShift_s, MIPRE.QLD.padShift_raw,
+  MIPRE.QLD.subX_padShift, MIPRE.QLD.subZ_padShift, MIPRE.QLD.subX_padShift_dir,
+  MIPRE.QLD.subZ_padShift_dir, MIPRE.QLD.rep_xBlk_padShift, MIPRE.QLD.rep_zBlk_padShift,
+  MIPRE.QLD.aAffOf, MIPRE.QLD.bAffOf, MIPRE.QLD.xAffOf, MIPRE.QLD.zAffOf,
+  MIPRE.QLD.affEval_aAffOf, MIPRE.QLD.affEval_bAffOf, MIPRE.QLD.aPres_base_eq,
+  MIPRE.QLD.dPres_base_eq, MIPRE.QLD.aPres_dir_ofLPX, MIPRE.QLD.aPres_dir_ofLPZ,
+  MIPRE.QLD.dPres_dir_ofLPX, MIPRE.QLD.dPres_dir_ofLPZ, MIPRE.QLD.param_subX_padShift,
+  MIPRE.QLD.param_subZ_padShift, MIPRE.QLD.padCombine, MIPRE.QLD.eval_padCombine,
+  MIPRE.QLD.degLE_padCombine_aline, MIPRE.QLD.sum_pasteLine, MIPRE.QLD.posSemidef_pasteLine,
+  MIPRE.QLD.SubRand, MIPRE.QLD.subPair, MIPRE.QLD.padLineMats, MIPRE.QLD.sum_padLineMats,
+  MIPRE.QLD.posSemidef_padLineMats, MIPRE.QLD.sum_filter_fiber, MIPRE.QLD.sum_filter_padLineMats}
 For every padded line $\ell$, there is a POVM with polynomial outcomes of
 degree at most $md+1$, and at most $d$ when $\ell$ is axis-parallel.
 On the padded line--point distribution it is consistent with the opposite
@@ -2825,11 +2846,13 @@ for $d\geq1$. The general bound $md+1\leq4md$ and the separate axis bound
 make these legal answers for the seeded test at $(q,4m,d,1)$.
 \end{lemma}
 
-\paragraph{Comments.} Not formalized. What is formalized, in
-\texttt{MIPRE/Background/QLD/Product.lean}, is everything up to the combining map: the transfer its
-proof has to begin with, and Lemma~\ref{lem:qld-pairs-of-lines} on the product distribution. The
-transfer is worth separating from the rest because it is where an apparent obstruction turns out not
-to be one.
+\paragraph{Comments.} The statement is not yet proved: what is missing is the consistency bound
+$\delta_{\mathrm{combine}}$. Everything the statement asserts \emph{about the measurement} is formalized ---
+the combining map, its two degree bounds, the POVM $\widehat Q^\ell$ itself and the
+coarse-graining that turns it into an $\F_q$-valued outcome --- in
+\texttt{MIPRE/Background/QLD/Combine.lean}, on top of the transfer in
+\texttt{MIPRE/Background/QLD/Product.lean}. The transfer is worth separating from the rest because it
+is where an apparent obstruction turns out not to be one.
 
 \textbf{The obstruction, and why it is not one.} Lemma~\ref{lem:qld-pairs-of-lines} is proved on the
 Pauli basis test's own question distribution: one content, carrying both sides' points but a
@@ -2852,6 +2875,37 @@ and a direction the shift does not move --- nothing about contents. \texttt{bije
 \texttt{sum\_shift\_gen} are that statement, and \texttt{sum\_pair\_shift} is its instance at a pair
 with the shift acting on the $X$ side only.
 
+\textbf{The combining map, and where its whole geometry sits.} \texttt{combine} is built through
+Mathlib's \texttt{Polynomial} and truncated back to a coefficient vector: it is
+$\alpha(t) f_X(x(t)) + \beta(t) f_Z(z(t))$ with all four substitutions \emph{affine} in the padded
+parameter $t$, so the degree bound $md+1$ is a product of degrees and nothing more.
+\texttt{eval\_padCombine} is the paper's parametrization-free defining property: at the padded
+parameter $t$ the combined polynomial takes the value $\alpha \cdot f_X(x) + \beta \cdot f_Z(z)$
+at the corresponding point, each side's polynomial read at the parameter of its \emph{own} subline.
+
+The only geometric input is \texttt{xBlk\_dir\_sub} and its $Z$ twin
+(Lemma~\ref{lem:qld-sublines}): the $X$ block of the padded direction is \emph{either} the $X$
+subline's own direction \emph{or} zero. In the first case the subline parameter moves by exactly the
+padded shift, in the second it does not move at all --- so in both it is $p_0 + c\,t$ with $c$ one or
+zero, and \texttt{subAff} is that pair. The paper's case analysis over the branches of the subline
+construction is not needed: the disjunction is proved once and used once.
+
+\textbf{The axis bound is the same case distinction \texttt{padCase} already makes.} A padded
+direction in the $X$ or $Z$ block leaves $\alpha$ and $\beta$ constant along the line, so the
+combined polynomial inherits the degree of $f_X$ and $f_Z$ --- degree $d$ exactly when
+Lemma~\ref{lem:qld-axis-degree} supplies it, which is why
+\texttt{degLE\_padCombine\_aline} takes that as a hypothesis. A direction at $\alpha$, $\beta$ or
+a dummy coordinate leaves \emph{both} blocks constant, so the combined polynomial is affine, and
+there $d \geq 1$ is all that is used.
+
+\textbf{The measurement.} \texttt{padLineMats} is $\widehat Q^\ell$: the uniform average, over
+the fresh randomness the subline construction draws, of the pasted line measurement
+$T^{\ell_X,\ell_Z}$ coarse-grained by \texttt{padCombine}. Conditioning on the padded line is
+exactly averaging over that randomness and nothing else, so the paper's conditional expectation is a
+plain uniform average. \texttt{sum\_padLineMats} and \texttt{posSemidef\_padLineMats} are that it
+is a POVM, and \texttt{sum\_filter\_padLineMats} is the data-processing step the paper's proof ends
+with, in the form \texttt{pairs\_of\_lines\_prod} applies to.
+
 \textbf{Lemma~\ref{lem:qld-pairs-of-lines}, on the product.}
 \texttt{pairs\_of\_lines\_prod} is that lemma at $k_X = \mathtt{pairCX}$,
 $k_Z = \mathtt{pairCZ}$ and \texttt{pairShift} as the shift: each side's content is its own point,
@@ -2861,9 +2915,13 @@ which no quantity of that side's line depends on. The two $\mathtt{rfl}$s
 the generalization it instantiates is recorded under
 Lemma~\ref{lem:qld-pairs-of-lines}, since that is the lemma it proves.
 
-\textbf{What remains.} The combining map on line polynomials, its degree bound ($md+1$ in general,
-$d$ on an axis-parallel line for $d \geq 1$), the POVM $\widehat Q^\ell$ as the conditional average
-of $T^{\ell_X,\ell_Z}$, and its consistency at $\delta_{\mathrm{combine}}$.
+\textbf{What remains: the consistency bound.} The paper proves it by chaining three
+Cauchy--Schwarz claims, and each needs an input averaged over a \emph{different} distribution: the
+combined point measurement's self-consistency, Lemma~\ref{lem:qld-pairs-of-lines} on the product ---
+which is why \texttt{pairs\_of\_lines\_prod} had to come first --- and item 3 of the expanded-line
+lemma on the $i$-th restricted line-point distributions, whose transfer from the unrestricted one
+costs the factors of $m$ that make $\delta_{\mathrm{combine}} = m \cdot \poly(\eps, md/q)$ rather than
+$\poly$. None of that is formalized.
 
 \effortHard
 
