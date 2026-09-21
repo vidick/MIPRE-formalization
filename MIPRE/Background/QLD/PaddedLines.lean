@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 import MIPRE.Background.QLD.Combine
+import MIPRE.Background.QLD.Legalize
 
 /-!
 # The padded line measurement's consistency
@@ -258,6 +259,91 @@ theorem degLE_hatLine_outcome {n : ℕ} (hd : 1 ≤ d) (u₀ : Point F m) (j : F
   DegLE.add (degLE_rdLine a hne) ((degLE_lineCoeffs_aline u₀ j hh).mono hd)
 
 end AxisDegree
+
+/-! ## The support half of `lem:qld-axis-degree`
+
+The degree computation above says what an outcome built from a *legal* axis answer looks like. The
+support claim is that the expanded axis-line measurement has no element anywhere else, and that is
+false for an arbitrary strategy: a `dpoly` answer to an axis question is rejected by the decider but
+still has a measurement element, whose outcome has degree up to `m d`. For a strategy with
+`LegalSupport` --- which `legalizeStrat` provides at no cost --- it is true and exact: every element
+of the strategy's factor sits on a legal `apoly` answer, of degree at most `d`, and every element of
+the ancilla's factor sits on a restriction of the multilinear encoding, of degree at most `1`. The
+padded line measurement inherits it through `degLE_padCombine_aline`. -/
+
+section AxisSupport
+
+variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
+  [NeZero m] {hm : m ∣ Fintype.card F} {d' : Type} [Fintype d'] [DecidableEq d']
+
+/-- **The strategy's axis-line reading of a legally supported strategy is supported on degree at
+most `d`.** -/
+theorem lineAnsPOVM_aline_eq_zero_of_not_degLE {n : ℕ} {M : Question F m → POVM (Answer F m d) d'}
+    (hleg : LegalSupport M) (W : Bas) (c : Content F m) {f : LinePoly F n} (hf : ¬ DegLE f d) :
+    ((lineAnsPOVM n hm M (.aline W) c).mats f).val = 0 := by
+  rw [lineAnsPOVM, POVM.map_mats]
+  refine Finset.sum_eq_zero fun a ha => ?_
+  have hfa : rdLine n a = f := (Finset.mem_filter.mp ha).2
+  by_cases hok : (c.question hm (.aline W)).fmtOk a = true
+  · exfalso
+    apply hf
+    obtain ⟨p, rfl⟩ := eq_apoly_of_fmtOk hok
+    rw [← hfa]
+    exact degLE_padLine p
+  · exact hleg _ _ (Bool.eq_false_iff.mpr hok)
+
+/-- **The support half of `lem:qld-axis-degree`, at the expanded measurement**: for `d ≥ 1` and a
+legally supported strategy, the expanded axis-parallel line measurement has no element off the
+polynomials of degree at most `d`. -/
+theorem hatLinePOVM_aline_eq_zero_of_not_degLE (hd : 1 ≤ d) {n : ℕ}
+    {M : Question F m → POVM (Answer F m d) d'} (hleg : LegalSupport M) (W : Bas)
+    (c : Content F m) {f : LinePoly F n} (hf : ¬ DegLE f d) :
+    ((hatLinePOVM n hm M W (.aline W) (abaseOf hm W) (dirOf hm) c).mats f).val = 0 := by
+  rw [hatLinePOVM, POVM.map_mats]
+  refine Finset.sum_eq_zero fun p hp => ?_
+  have hpf : p.1 + p.2 = f := (Finset.mem_filter.mp hp).2
+  rw [POVM.kron_mats]
+  by_cases h1 : DegLE p.1 d
+  · have h2 : ¬ DegLE p.2 1 := fun h2 => hf (hpf ▸ DegLE.add h1 (h2.mono hd))
+    have hanc : ((synLinePOVM n W (abaseOf hm W c) (dirOf hm c)).mats p.2).val = 0 := by
+      rw [synLinePOVM, synOfPOVM_mats, MIPRE.Weyl.synOf]
+      refine Finset.sum_eq_zero fun h hh => ?_
+      exfalso
+      apply h2
+      rw [← (Finset.mem_filter.mp hh).2]
+      exact degLE_lineCoeffs_aline (abaseOf hm W c) (MIPRE.LIDT.CL.chi hm c.s) h
+    rw [hanc, Matrix.kronecker_zero]
+  · rw [lineAnsPOVM_aline_eq_zero_of_not_degLE hleg W c h1, Matrix.zero_kronecker]
+
+/-- The same, for the axis-parallel presentation's line measurement. -/
+theorem lineMats_aPres_eq_zero_of_not_degLE (hd : 1 ≤ d)
+    {M : Question F m → POVM (Answer F m d) d'} (hleg : LegalSupport M) (W : Bas)
+    (c : Content F m) {f : LinePoly F (m * d)} (hf : ¬ DegLE f d) :
+    (aPres hm W).lineMats d M c f = 0 :=
+  hatLinePOVM_aline_eq_zero_of_not_degLE hd hleg W c hf
+
+variable {dB : Type} [Fintype dB] [DecidableEq dB]
+
+/-- **The support half of `lem:qld-axis-degree`, at the padded line measurement**: on an
+axis-parallel padded line, the padded line measurement of a legally supported strategy has no
+element off the polynomials of degree at most `d`. This is what makes its outcome a legal answer to
+an axis-parallel line question of the seeded test at `(q, 4m, d, 1)`. -/
+theorem padLineMats_aline_eq_zero_of_not_degLE (hm4 : 4 * m ∣ Fintype.card F) (hd : 1 ≤ d)
+    {M : Question F m → POVM (Answer F m d) dB} (hleg : LegalSupport M) (P : LPData F (4 * m))
+    {f : LinePoly F (m * d + 1)} (hf : ¬ DegLE f d) :
+    padLineMats hm4 .aline (aPres hm .X) (aPres hm .Z) M P f = 0 := by
+  rw [padLineMats]
+  refine smul_eq_zero_of_right _
+    (Finset.sum_eq_zero fun e _ => Finset.sum_eq_zero fun q hq => ?_)
+  have hqf : padCombine hm4 hm .aline d P e.1 e.2 q = f := (Finset.mem_filter.mp hq).2
+  rw [pasteLine]
+  by_cases hX : DegLE q.1 d
+  · have hZ : ¬ DegLE q.2 d := fun hZ =>
+      hf (hqf ▸ degLE_padCombine_aline hm4 hm hd P e.1 e.2 q hX hZ)
+    rw [lineMats_aPres_eq_zero_of_not_degLE hd hleg .Z _ hZ, mul_zero, zero_mul, aOp_zero]
+  · rw [lineMats_aPres_eq_zero_of_not_degLE hd hleg .X _ hX, zero_mul, zero_mul, aOp_zero]
+
+end AxisSupport
 
 /-! ## The consistency bound -/
 

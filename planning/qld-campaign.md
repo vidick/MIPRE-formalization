@@ -1315,3 +1315,47 @@ the introspection chapter, through `thm:pauli` of `ldt.tex` --- and not only the
 proves it. And the paper's stage 4 is written for `ψ-hat` on four registers where the Lean's has
 six from the start (the two `F × F` ancillas): the value claim `lem:qld-global-success` is to be
 made for the strategy as built, `ptComb` and `lineComb` on `extHat ψ`, not for a paraphrase of it.
+### PR F: `lem:qld-axis-degree`, closed by legalizing the strategy (2026-09-21)
+
+The plan above priced this as the hard blocker: coarse-grain the ill-formatted axis answers into a
+default outcome and re-derive both items of `lem:qld-expanded-lines` for the modified measurement,
+paying the format-failure probability and moving the constants. Reading the paper's own
+justification first (`qld-combining.tex`, the sentence proving `f_W ∈ deg_d(l_W)` for axis-parallel
+`l_W`) showed why that is one legalization too late: the paper's strategies are *valid* --- they
+answer each question in its prescribed format --- so a term of the convolution contributes only if
+the strategy's factor sits on a legal `apoly` answer. The Lean strategies are not valid in that
+sense, one `Answer F m d` serving every question; but they can be made so once, at the top, and it
+costs nothing.
+
+**`MIPRE/Background/QLD/Legalize.lean`.** `legalize q a` keeps a well-formatted answer and replaces
+any other by `Question.defaultAns q`, a legal answer reading as `0`; `legalizeStrat M` relabels
+every measurement along it. Four facts, each a few lines: projectivity is kept
+(`isPVM_legalizeStrat`, coarse-graining); no element sits on an ill-formatted answer
+(`LegalSupport`, `legalizeStrat_mats_eq_zero`); the value in `qldGame` does not decrease
+(`povmValue_le_legalizeStrat`), because the decider rejects an ill-formatted answer before any rule
+runs, so every accepted pair is untouched --- `sum_weight_bornProb_map` is the data processing that
+makes this a one-screen proof; and every reading of `Win.lean` is unchanged, since all of them send
+ill-formatted answers to `0` and the defaults read as `0` (`rdVal_legalize_point` and siblings,
+lifted by `legalizeStrat_map` to `ptPOVM_legalizeStrat`, `ptObs_legalizeStrat`,
+`hatPtPOVM_legalizeStrat`, `hatMats_legalizeStrat`). So every hypothesis of the appendix's chain
+transfers to `legalizeStrat MA`, `legalizeStrat MB`, and every conclusion about point or Pauli
+measurements transfers back, exactly.
+
+**The support half, in `PaddedLines.lean` next to the degree computation.** For a `LegalSupport`
+strategy and `d ≥ 1`: the strategy's axis reading has no element off `DegLE _ d`
+(`lineAnsPOVM_aline_eq_zero_of_not_degLE`, every surviving answer is an `apoly`); the ancilla's
+factor has none off `DegLE _ 1` (its elements sit on restrictions of `ldEnc h` to an axis line,
+`degLE_lineCoeffs_aline`); so the convolution has none off `DegLE _ d`
+(`hatLinePOVM_aline_eq_zero_of_not_degLE`), the presentation's `lineMats` at `aPres` likewise, and
+the padded line measurement inherits it by contraposing `degLE_padCombine_aline`
+(`padLineMats_aline_eq_zero_of_not_degLE`): `padLineMats` is an average of sandwiches of the two
+sides' axis elements, and an outcome of degree above `d` only arises from a pair with a factor of
+degree above `d`, which is zero. Zero mass, not `O(eps)`; no constant moves; `lem:qld-axis-degree`
+carries both marks with 35 guards.
+
+**What stage 4 gets from this.** The padded strategy is built from `legalizeStrat MA`,
+`legalizeStrat MB`; its `aline` answer map may send an outcome to `apolys` of its truncation when
+`DegLE f d` and to anything otherwise, and the "otherwise" branch has no mass. The blueprint
+statement was rewritten to say what is proved (the without-loss-of-generality clause and the exact
+support), its Comments to correct the earlier costing, and one stale sentence in
+`lem:qld-padded-lines`' Comments ("not yet proved") was repaired in passing.

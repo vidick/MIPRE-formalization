@@ -10,6 +10,7 @@ import MIPRE.Background.QLD.Combined
 import MIPRE.Background.QLD.Lines
 import MIPRE.Background.QLD.Padded
 import MIPRE.Background.QLD.PaddedLines
+import MIPRE.Background.QLD.Legalize
 import MIPRE.Foundations.GuardSorryFree
 
 /-!
@@ -642,3 +643,45 @@ both register versions. -/
   MIPRE.QLD.xSqNorm_swapVec,
   MIPRE.QLD.extHat_swapVec,
   MIPRE.QLD.padded_lines_consistency_swap
+
+/-! ## The axis-parallel degree bound
+
+Blueprint `lem:qld-axis-degree`: the degree computation, the legalization of a strategy that makes
+the paper's format convention available at no cost, and the exact support of the expanded and
+padded axis-line measurements on degree at most `d`. -/
+
+#guard_sorry_free MIPRE.LowDegree.natDegree_lineRestrict_single_le,
+  MIPRE.QLD.DegLE.add,
+  MIPRE.QLD.degLE_zero,
+  MIPRE.QLD.degLE_padLine,
+  MIPRE.QLD.degLE_rdLine,
+  MIPRE.QLD.degLE_lineCoeffs_aline,
+  MIPRE.QLD.degLE_hatLine_outcome,
+  MIPRE.QLD.Question.defaultAns,
+  MIPRE.QLD.fmtOk_defaultAns,
+  MIPRE.QLD.legalize,
+  MIPRE.QLD.legalize_of_fmtOk,
+  MIPRE.QLD.legalize_of_not_fmtOk,
+  MIPRE.QLD.fmtOk_legalize,
+  MIPRE.QLD.rdVal_legalize_point,
+  MIPRE.QLD.rdPauli_legalize_pauli,
+  MIPRE.QLD.rdBit_legalize_pairB,
+  MIPRE.QLD.rdBit_legalize_var,
+  MIPRE.QLD.rdBitPair_legalize_pair,
+  MIPRE.QLD.rdProbe_legalize_point,
+  MIPRE.QLD.LegalSupport,
+  MIPRE.QLD.legalizeStrat,
+  MIPRE.QLD.isPVM_legalizeStrat,
+  MIPRE.QLD.legalizeStrat_mats_eq_zero,
+  MIPRE.QLD.legalSupport_legalizeStrat,
+  MIPRE.QLD.legalizeStrat_map,
+  MIPRE.QLD.ptPOVM_legalizeStrat,
+  MIPRE.QLD.ptObs_legalizeStrat,
+  MIPRE.QLD.hatPtPOVM_legalizeStrat,
+  MIPRE.QLD.hatMats_legalizeStrat,
+  MIPRE.QLD.povmValue_le_legalizeStrat,
+  MIPRE.QLD.one_sub_povmValue_legalizeStrat_le,
+  MIPRE.QLD.lineAnsPOVM_aline_eq_zero_of_not_degLE,
+  MIPRE.QLD.hatLinePOVM_aline_eq_zero_of_not_degLE,
+  MIPRE.QLD.lineMats_aPres_eq_zero_of_not_degLE,
+  MIPRE.QLD.padLineMats_aline_eq_zero_of_not_degLE
