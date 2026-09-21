@@ -7,6 +7,7 @@ import MIPRE.Background.LIDT.Adapter.Registers
 import MIPRE.Background.LIDT.Adapter.Reparam
 import MIPRE.Background.LIDT.Adapter.Seeds
 import MIPRE.Background.LIDT.Adapter.Strategy
+import MIPRE.Background.LIDT.Adapter.Value
 import MIPRE.Background.LIDT.Adapter.Weights
 import MIPRE.Background.LIDT.Axioms
 import MIPRE.Background.LIDT.Bridge.Consistency
@@ -402,6 +403,8 @@ import MIPRE.Background.QLD.NonMultilinear
 import MIPRE.Background.QLD.Ortho
 import MIPRE.Background.QLD.Padded
 import MIPRE.Background.QLD.PaddedLines
+import MIPRE.Background.QLD.PaddedStrategy
+import MIPRE.Background.QLD.PaddedValue
 import MIPRE.Background.QLD.Product
 import MIPRE.Background.QLD.Swap
 import MIPRE.Background.QLD.SwapUnitary
@@ -786,6 +789,7 @@ import MIPRE.Foundations.OpBound
 import MIPRE.Foundations.OracularComplete
 import MIPRE.Foundations.OracularGame
 import MIPRE.Foundations.OracularSound
+import MIPRE.Foundations.POVMMix
 import MIPRE.Foundations.POVMValue
 import MIPRE.Foundations.PVM
 import MIPRE.Foundations.Parseval

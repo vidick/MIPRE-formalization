@@ -1361,3 +1361,57 @@ carries both marks with 35 guards.
 statement was rewritten to say what is proved (the without-loss-of-generality clause and the exact
 support), its Comments to correct the earlier costing, and one stale sentence in
 `lem:qld-padded-lines`' Comments ("not yet proved") was repaired in passing.
+
+### PR G-b: the padded strategy and `lem:qld-global-success` (2026-09-21)
+
+**What was proved.** `MIPRE/Background/QLD/PaddedStrategy.lean` defines the padded strategy for
+the seeded test at `(q, 4m, d, 1)` as a family of POVMs on the registers of `extHat ψ`
+(`padStrat`): the point measurement is the sandwich of the hatted point measurements coarse-grained
+along `(a, b) ↦ αa + βb` and extended by the identity to the coefficients' register (`padPt`); the
+line measurement at a question is the padded line POVM at the line's canonical base point, averaged
+over the raw directions that produce the question (`lineMeas`, `rawSet`), read into the seeded
+test's answer format (`lineAns`). `MIPRE/Background/QLD/PaddedValue.lean` proves
+`padStrat_value`: a legal projective strategy of value `1 - ε` gives a padded strategy of value at
+least `1 - 5 m² δ_P(ε, md/q + 1/q) - 4 δ_Q(ε) - (md + 1)/q`. Both `lem:qld-global-setup` and
+`lem:qld-global-success` carry both marks, with 172 guards.
+
+**The two facts the plan had not priced.** First, the strategy has to be a function of the
+*question*, while `lem:qld-padded-lines` is stated at the *data* a sample generates the question
+from, with the sample's point. The decider reads the answer polynomial at the parameter of the
+sampled point relative to the canonical base point; moving the padded point along the padded line
+does not change the pasted line measurement (`pasteLine_subPair_padShift`, from `xBlk_dir_sub`:
+each block either moves along its own subline or does not move), so the strategy's line measurement
+read at the sample's point is `padLineMats` at the sample's own data, coarse-grained by the
+combining map there (`lineMeas_map_eval_mats`), which is the quantity of `sum_filter_padLineMats`.
+Second, averaging the strategy's raw-fibre average against the sample's uniform raw direction gives
+the plain average (`sum_rawSet_fiber`), and the sample's normalization `q^{-(8m+1)}` composed with
+the fresh randomness is `avgSubAB`'s `q^{-(10m+2)}` (`inv_card_amb_eq`), so the line-point
+agreement is *equal* to the seed-average of the padded consistency quantity
+(`agreeSum_lineEvalFam_ptFam`), not merely bounded by it.
+
+**The identical-line subtest.** The paper compares `f_A(u)` and `f_B(u)` at a uniformly random
+point of the line. The formalization reads the sample's own point and makes its parameter uniform by
+a change of variables: translating the point along the line is a bijection of the sample space that
+fixes the line and shifts the parameter (`sum_shift_param`, with `lineParam_rep_add_smul`). This
+needs the direction to be nonzero; a degenerate diagonal direction has probability at most `1/q`
+(`sum_indicator_zeroBelow_eq_zero_le`) and is paid for in full. The evaluated disagreement is then
+bounded through the agreement triangle for POVMs (`agreeSum_triangle`, `11δ` in place of the
+paper's `9δ`), and polynomial separation costs `(md + 1)/q` (`one_sub_sum_bornProb_le_avg_eval`).
+
+**Foundations added.** `MIPRE/Foundations/POVMMix.lean`: mixtures and uniform averages of POVMs
+(`POVM.mix`, `POVM.avgOn`, extension by the identity `POVM.aOp`), the Born rule's linearity in them,
+the agreement triangle, and the support-aware conditional-failure bounds
+(`condFail_le_one_sub_sum_bornProb_map`, `_diag`) --- the decider's acceptance is implied by, not
+equal to, agreement of the relabelled answers, since an ill-formatted agreeing pair is rejected,
+and the implication is asked only of answers the strategy can produce.
+`MIPRE/Background/LIDT/Adapter/Value.lean`: the seeded test's failure probability sample by sample
+(`one_sub_povmValue_clGame`), the split into the nine type pairs (`sum_sample_eq`), and every point
+lies on its own seeded line at the parameter `lineParam` computes (`rep_add_lineParam_smul`).
+
+**Scope.** The plan gave G the four lemmas `-setup`, `-success`, `-pvm`, `-dummy`. G-a (dilation
+and the seeded soundness for POVM strategies) and G-b (this) close the first two. `-pvm` --- applying
+`clSoundness_ldc_one_deltaCL_of_povm` to `padStrat`, the one module of QLD that reaches the
+vendored MIPStarRE tree --- and `-dummy` --- the Schwartz--Zippel argument that the recovered
+polynomial does not read the dummy coordinates --- are a follow-up, G-c, together with the interface
+structure stage 5 is proved against. `lem:qld-global-pvm`'s `\uses` now names
+`lem:naimark-dilation`, which `-setup` no longer needs.
