@@ -24,7 +24,7 @@ variable {PauliType PauliAnswer F ι κ A H K : Type*}
   [Fintype PauliType] [DecidableEq PauliType] [Fintype PauliAnswer]
   [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
   [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
-  [Fintype A] [DecidableEq A] [Fintype H] [DecidableEq H]
+  [Fintype A] [Fintype H] [DecidableEq H]
   [Fintype K] [DecidableEq K] {ℓ : ℕ}
 
 /-- The actual question-indexed family after inserting the decoded
@@ -85,6 +85,7 @@ theorem introBobZError_extVecA (projectPauli : PauliAnswer → ι → F) (Z : Pa
       introBobZError projectPauli Z q ξ MB :=
   pauliBobError_registeredExtension ξ none projectPauli MB Z q (readout some)
 
+set_option maxHeartbeats 800000 in
 set_option backward.isDefEq.respectTransparency false in
 /-- The actual current tests produce a projective next family and its
 complete prefix invariant. No selected-measurement or mixing-error bound

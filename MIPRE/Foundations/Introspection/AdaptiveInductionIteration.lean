@@ -84,7 +84,7 @@ variable {PauliType PauliAnswer κ : Type*} {F ι A : Type u}
   [Fintype PauliType] [DecidableEq PauliType] [Fintype PauliAnswer]
   [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
   [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
-  [Fintype A] [DecidableEq A] {ℓ : ℕ}
+  [Fintype A] {ℓ : ℕ}
 
 /-- The primitive Bob-Z approximation is unchanged throughout the actual
 Alice iteration, on the original EPR register and extended auxiliary state. -/

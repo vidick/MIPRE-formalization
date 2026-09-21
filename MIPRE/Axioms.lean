@@ -102,6 +102,8 @@ import MIPRE.Foundations.Introspection.AdaptiveGameStage
 import MIPRE.Foundations.Introspection.AdaptiveNextStrategy
 import MIPRE.Foundations.Introspection.IntrospectCanonicalization
 import MIPRE.Foundations.Introspection.StrategyReplacementErrors
+import MIPRE.Foundations.Introspection.AdaptiveInductionIteration
+import MIPRE.Foundations.Introspection.AdaptiveTerminalInvariant
 import MIPRE.Foundations.SAT.Arithmetization
 import MIPRE.Foundations.SAT.FiniteCircuitArithmetization
 import MIPRE.Foundations.SAT.CircuitFieldCorrect
@@ -1901,6 +1903,33 @@ historical admission remains unchanged; these guards describe the Lean proof.
 #print axioms MIPRE.Introspection.exists_adaptive_next_strategy
 #print axioms MIPRE.Introspection.TypedEstimates.exists_game_adaptive_prefix_dilation
 #print axioms MIPRE.Introspection.TypedEstimates.canonicalizeIntro_value
+
+#guard_sorry_free MIPRE.Introspection.exists_initial_residual,
+  MIPRE.Introspection.initialIntroPrefixInvariant,
+  MIPRE.Introspection.nextPrefixDecodedPOVM_some_support,
+  MIPRE.Introspection.registeredReplacement_nextOption_mats,
+  MIPRE.Introspection.canonicalizeIntro_adaptive_selected,
+  MIPRE.Introspection.registeredReplacement_canonicalizeIntro,
+  MIPRE.Introspection.introSuccessorFamily_isPVM,
+  MIPRE.Introspection.introSuccessorInvariant,
+  MIPRE.Introspection.TypedEstimates.exists_intro_successor
+
+#guard_sorry_free MIPRE.Introspection.adaptiveStageBudget_mono_depth,
+  MIPRE.Introspection.adaptiveFailureBudget_nonneg,
+  MIPRE.Introspection.adaptiveSmallThreshold_pos,
+  MIPRE.Introspection.adaptiveFailureBudget_le_threshold,
+  MIPRE.Introspection.adaptiveStageBudget_le_one_of_threshold
+
+#guard_sorry_free MIPRE.Introspection.introIterationState_unit,
+  MIPRE.Introspection.TypedEstimates.introBobZError_introIterationState,
+  MIPRE.Introspection.TypedEstimates.exists_intro_iteration
+
+#print axioms MIPRE.Introspection.TypedEstimates.exists_intro_successor
+#print axioms MIPRE.Introspection.TypedEstimates.exists_intro_iteration
+
+#guard_sorry_free MIPRE.Introspection.terminalAuxPOVM_isPVM,
+  MIPRE.Introspection.IntroPrefixInvariant.terminal_some,
+  MIPRE.Introspection.IntroPrefixInvariant.terminal_none
 
 /-! ## Blocks of an index type
 

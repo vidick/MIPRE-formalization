@@ -694,6 +694,7 @@ import MIPRE.Foundations.Introspection.AdaptivePrefixStrategy
 import MIPRE.Foundations.Introspection.AdaptiveResidual
 import MIPRE.Foundations.Introspection.AdaptiveSelectedMeasurement
 import MIPRE.Foundations.Introspection.AdaptiveStageBudget
+import MIPRE.Foundations.Introspection.AdaptiveTerminalInvariant
 import MIPRE.Foundations.Introspection.AdaptiveXSplit
 import MIPRE.Foundations.Introspection.AdaptiveXTest
 import MIPRE.Foundations.Introspection.AdaptiveZFactor

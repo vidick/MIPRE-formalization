@@ -46,9 +46,15 @@ PVM and its actual selected strategy measurement are constructed explicitly.
 The parsed game supplies all three refined errors under one budget, including
 the proved factor-two cost for malformed marginal mass. Identity extension
 preserves the primitive Pauli, hiding, and Read errors exactly at unchanged
-questions. The remaining induction work is to initialize and package decoded
-answer support, carry the small-error condition along the explicit recurrence,
-and construct the sequence through every level on both players.
+questions. The initial residual measurement, decoded valid-answer support,
+and raw selected-measurement identity now give an actual successor constructor.
+An explicit positive threshold discharges smallness throughout the finite
+Alice iteration, with concrete auxiliary spaces and accumulated failure bounds.
+At the terminal level, exact register coverage gives conditional question
+readouts tensored with projective auxiliary measurements on the full option
+alphabet. Remaining soundness work is to construct and compose Bob's iteration,
+derive the paper's power error profile, and complete extraction while retaining
+the malformed-answer accounting.
 The full `Introspection 7` still requires the remaining verifier branches and
 uniform budget bound, the complete honest 26-type Pauli strategy, and the
 QLD extraction interface and product-strategy soundness iteration. See
