@@ -1264,3 +1264,54 @@ adapter with dimension reindexing to `Fin n`, which nothing in the repository do
 unique choke point for applying the vendored LIDT soundness from a `Foundations`-style strategy. That
 adapter is the cheapest next piece: `Foundations`-level, no QLD content, and it unblocks everything
 else in stage 4.
+
+## Finishing the campaign: stages 4 and 5 (plan, 2026-09-21)
+
+Where it stands after PR D, counted mechanically over the blueprint (tags and `\uses` wrap, so
+the scan is whole-file): twenty QLD statements carry both `\leanok` marks and are guarded; three
+have Lean without a proof-level mark --- `lem:qld-axis-degree` (the degree computation, not the
+support half), `lem:qld-exact-paulis` (the exact half), `lem:qld-swap` (item 1's exact parts);
+thirteen have no Lean at all --- `lem:qld-simultaneous` with its ten `lem:qld-global-*`
+sub-lemmas, `lem:qld-helper`, and `thm:qld`. The ledger's stage 1.2 is 86 of 150 nodes annotated.
+The Lean is 19 files and 11.5k lines under `MIPRE/Background/QLD/`, sorry-free, on about 2.3k
+lines of Foundations support.
+
+**The organising decision.** Stage 5 consumes stage 4 through one interface: the paper's
+`lem:qld-4-7`, a projective measurement `S-hat_{g_X, g_Z}` on the padded local space whose
+evaluated marginals are consistent with the opposite party's expanded point measurements, in both
+register versions. That interface is fixed *first*, as a Lean `structure` (data plus hypotheses),
+in the first stage-4 PR. Stage 5 is then proved against the structure while stage 4 fills it in,
+and no `sorry` enters the tree at any point --- the pattern `NonMultilinear.lean` already follows
+by taking multilinear uniqueness as a hypothesis.
+
+What the interface has to carry, learned from the code rather than the paper: the Lean padded
+strategy does not live on the paper's registers `A A' | B A''`. `lem:qld-padded-points` makes the
+sandwich `M^X_a M^Z_b M^X_a` projective by dilating with an `F × F` ancilla per party (the
+combining coefficients' register), so the padded state is `extHat ψ` on
+`((dA × Anc F m) × (F × F)) × ((dB × Anc F m) × (F × F))`, and the LIDT theorem returns `S-hat`
+on the *extended* Alice register. Stage 5 must therefore be stated for an arbitrary Alice
+register carrying a product ancilla, or the output compressed through `ancillaEmbed` first ---
+and compression loses projectivity, which the Pauli construction `∑_g (-1)^{...} S-hat_g` needs.
+So: carry the extended register, and state stage 5 over an abstract register type.
+
+**The seven pull requests.**
+
+| PR | closes | Lean-specific content |
+|---|---|---|
+| E | nothing; the prerequisite | `MIPRE/Foundations/RegisterReindex.lean`: `reindexStarAlgEquiv`, `POVM.reindex`, `reindexVec`, invariance of the Born rule, of `povmValue` and of `inconsistency`; `TensorProductStrategy.ofProjective` and `ofPVM` with `value_ofProjective`. `MIPRE/Background/LIDT/Adapter/Registers.lean`: `clSoundness_ldc_one_deltaCL_of_pvm`, the `ldc = 1` soundness for a strategy on arbitrary registers with a `povmValue` hypothesis. |
+| F | `lem:qld-axis-degree` | the support half: coarse-grain axis-line answers off the degree-`≤ d` format to a default outcome, keep projectivity, bound the default outcome's mass by the expanded-lines consistency, re-derive the padded-lines items it feeds. Read the paper's treatment before designing anything. |
+| G | `lem:qld-global-setup`, `-success`, `-pvm`, `-dummy` | the interface structure; the padded strategy as PVM families on `clGame (q, 4m, d, 1)` --- the seeded test's questions, answers in its format; the value bound, including the identical-line subtest by polynomial separation (`(md+1)/q`); `clSoundness_ldc_one_deltaCL_of_pvm`; `m ∣ 2^k → m = 2^j` (report note D); the LIDT import confined to this one module. |
+| H | `-products`, `-linear`, `-separate` | the good/bad triple counting of `qld-combining.tex` lines 1050--1180, with `-linear` repaired to carry `md/q` (note B). |
+| I | `-complete`, `-sandwich`, `-robustness`, `lem:qld-simultaneous` | the sandwich chain `Q_2 ≤ Q_3^{1/2}`; robustness is a repackaging, the LIDT theorem already returning both register versions (note C); the structure instance. |
+| J | `lem:qld-helper`, `lem:qld-exact-paulis` | the six-register state `A A' B'' \| B A'' B'` with two EPR pairs and transport of `stateDist` between the cuts; multilinear interpolation uniqueness (Mathlib's vanishing lemma, or induction on the variables); the approximate half; the stale dependencies fixed (note A). Proved against G's structure, so independent of H and I. |
+| K | `lem:qld-swap`, `thm:qld` | the ancilla embedding and item 2; the assembly: `16md > q` trivial with `a ≥ 64`, conjugation by the projector `P` against conjugation by `V`, Naimark descent in the consistency form, the square root halving `b`; marks and guards; `thm:qld`'s `\uses` corrected to `thm:lidt-cl-soundness-one`; #115 closed. |
+
+Order: E, F, G, H, I, J, K. E and F are independent; G needs both; J needs only G. Each is the
+size of PR C or PR D. G's module is the one place QLD reaches the vendored MIPStarRE tree, so it
+enters the slow build regime; nothing else in QLD should import it except the assembly.
+
+**Two things to settle in G, not later.** The Lean shape of `thm:qld` must match its consumer ---
+the introspection chapter, through `thm:pauli` of `ldt.tex` --- and not only the appendix that
+proves it. And the paper's stage 4 is written for `ψ-hat` on four registers where the Lean's has
+six from the start (the two `F × F` ancillas): the value claim `lem:qld-global-success` is to be
+made for the strategy as built, `ptComb` and `lineComb` on `extHat ψ`, not for a paraphrase of it.

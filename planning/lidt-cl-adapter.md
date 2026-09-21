@@ -133,6 +133,16 @@ The constant is **`C = 3m`**, and the `k` is **`400 m³ d + 400 m`**. Blueprint:
 `lem:lidt-cl-adapter-maps`, `lem:lidt-cl-adapter-weights`, `lem:lidt-cl-adapter-params`,
 `thm:lidt-cl-soundness-one`.
 
+**Part 7 (2026-09-21): arbitrary registers.** `clSoundness_ldc_one_deltaCL` takes a
+`TensorProductStrategy`, so its registers are `Fin dA` and `Fin dB`; the Pauli basis test's padded
+strategy (`planning/qld-campaign.md`, stage 4) is built on structured registers and has a
+`povmValue`. `MIPRE/Background/LIDT/Adapter/Registers.lean` restates the theorem for that form ---
+`clSoundness_ldc_one_deltaCL_of_projective` and `_of_pvm` --- by packaging the strategy with
+`TensorProductStrategy.ofProjective` (`MIPRE/Foundations/RegisterReindex.lean`) and reading the
+three conclusions back along `Fintype.equivFin` with `inconsistency_reindex`. Nothing about the
+test is used; it is the one choke point between a `Foundations`-style strategy and the vendored
+soundness, and it was the piece stage 4 could not start without.
+
 ### The original table
 
 The adapter's **ingredients are proved**; the **assembly is not**.
