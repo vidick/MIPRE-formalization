@@ -692,6 +692,9 @@ import MIPRE.Foundations.Introspection.DynamicParserSlice
 import MIPRE.Foundations.Introspection.EPR
 import MIPRE.Foundations.Introspection.ErrorBounds
 import MIPRE.Foundations.Introspection.FinalExtraction
+import MIPRE.Foundations.Introspection.HidingBaseOperators
+import MIPRE.Foundations.Introspection.HidingBaseRigidity
+import MIPRE.Foundations.Introspection.HidingBaseTests
 import MIPRE.Foundations.Introspection.HidingInduction
 import MIPRE.Foundations.Introspection.HidingInductionDilation
 import MIPRE.Foundations.Introspection.HidingMaps
@@ -699,6 +702,9 @@ import MIPRE.Foundations.Introspection.HidingNormalizer
 import MIPRE.Foundations.Introspection.HidingNormalizerPrefix
 import MIPRE.Foundations.Introspection.HidingPrefix
 import MIPRE.Foundations.Introspection.HidingRigidity
+import MIPRE.Foundations.Introspection.HidingRigidityGame
+import MIPRE.Foundations.Introspection.HidingRigidityIteration
+import MIPRE.Foundations.Introspection.HidingRigidityOrientation
 import MIPRE.Foundations.Introspection.HidingTests
 import MIPRE.Foundations.Introspection.HonestAdaptive
 import MIPRE.Foundations.Introspection.HonestCompleteAux
@@ -726,8 +732,15 @@ import MIPRE.Foundations.Introspection.Measurements
 import MIPRE.Foundations.Introspection.ParserAnswers
 import MIPRE.Foundations.Introspection.ParserBits
 import MIPRE.Foundations.Introspection.ParserGuard
+import MIPRE.Foundations.Introspection.PauliAuxEstimates
 import MIPRE.Foundations.Introspection.PauliMixing
 import MIPRE.Foundations.Introspection.PauliTwirlDistance
+import MIPRE.Foundations.Introspection.ProductStageReadTests
+import MIPRE.Foundations.Introspection.ProductStageZTests
+import MIPRE.Foundations.Introspection.ReadChainEstimate
+import MIPRE.Foundations.Introspection.ReadChainMaps
+import MIPRE.Foundations.Introspection.ReadRigidity
+import MIPRE.Foundations.Introspection.ReadRigidityGame
 import MIPRE.Foundations.Introspection.Readout
 import MIPRE.Foundations.Introspection.RegisterCoordinates
 import MIPRE.Foundations.Introspection.RegisterEPR
@@ -739,6 +752,8 @@ import MIPRE.Foundations.Introspection.Sampler
 import MIPRE.Foundations.Introspection.SamplerCost
 import MIPRE.Foundations.Introspection.SamplerProgram
 import MIPRE.Foundations.Introspection.SamplingPrefix
+import MIPRE.Foundations.Introspection.SamplingRegister
+import MIPRE.Foundations.Introspection.SamplingRigidity
 import MIPRE.Foundations.Introspection.SamplingTests
 import MIPRE.Foundations.Introspection.SourceCompiler
 import MIPRE.Foundations.Introspection.SourceCompilerBinary
