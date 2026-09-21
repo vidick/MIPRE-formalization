@@ -57,7 +57,9 @@ theorem check_canonicalIntroAnswer_left
     TypedPredicate.check L X Z projectPauli D DP (QuestionType.introspect w) t
       (canonicalIntroAnswer a) b =
       TypedPredicate.check L X Z projectPauli D DP (QuestionType.introspect w) t a b := by
-  cases a <;> simp [canonicalIntroAnswer, restoreIntroAnswer, TypedEstimates.introspectPair,
+  cases a
+  case pair => rfl
+  all_goals simp [canonicalIntroAnswer, restoreIntroAnswer, TypedEstimates.introspectPair,
     TypedPredicate.check, TypedPredicate.fits]
 
 theorem check_canonicalIntroAnswer_right
@@ -70,7 +72,9 @@ theorem check_canonicalIntroAnswer_right
     TypedPredicate.check L X Z projectPauli D DP t (QuestionType.introspect w)
       a (canonicalIntroAnswer b) =
       TypedPredicate.check L X Z projectPauli D DP t (QuestionType.introspect w) a b := by
-  cases b <;> simp [canonicalIntroAnswer, restoreIntroAnswer, TypedEstimates.introspectPair,
+  cases b
+  case pair => rfl
+  all_goals simp [canonicalIntroAnswer, restoreIntroAnswer, TypedEstimates.introspectPair,
     TypedPredicate.check, TypedPredicate.fits]
 
 end Answer
@@ -93,7 +97,7 @@ theorem canonicalizeIntro_at
       POVM (ParsedAnswer (ι → F) A PauliAnswer) H) (w : Bool) :
     canonicalizeIntro MA w (QuestionType.introspect w, 0) =
       (MA (QuestionType.introspect w, 0)).map canonicalIntroAnswer := by
-  simp only [canonicalizeIntro, if_pos rfl]
+  simp [canonicalizeIntro]
 
 theorem canonicalizeIntro_other
     (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →

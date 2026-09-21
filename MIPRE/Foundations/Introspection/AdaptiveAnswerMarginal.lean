@@ -62,32 +62,52 @@ theorem stageAnswerRefinement_coarse_marginal (P : CL.CLFun F ι ℓ)
     by_cases ha : P.outputPrefix k a.1 = y
     · rw [advancePrefix_coordinate_of_outputPrefix hP k y a.1 ha]
     · have hz : C y (some a) = 0 := by
-        rw [C, hsupport y a.1 a.2 ha, prefixResidualOp_zero]
+        change prefixResidualOp P k y (M y (some a)) = 0
+        rw [hsupport y a.1 a.2 ha, prefixResidualOp_zero]
       simp [hz]
+  have hreported : fibSum N (fullAnswerPrefix P (k + 1)) (some v) =
+      ∑ a : (ι → F) × A, if P.outputPrefix (k + 1) a.1 = v then N (some a) else 0 := by
+    unfold fibSum
+    simp only [Finset.sum_filter, Fintype.sum_option]
+    simp only [fullAnswerPrefix, Option.map_none, Option.map_some, Option.some.injEq,
+      reduceCtorEq, if_false, zero_add]
   calc
     _ = ∑ y, fibSum (graphRefinement (C y) (stageAnswerCoordinate P k y))
         (fun p => advancePrefix P k y p.1) v := by
-      simp only [fibSum, Finset.sum_filter, Fintype.sum_sigma, Fintype.sum_prod_type,
-        prefixResidualOp_sum, hlift, Finset.sum_ite_irrel, Finset.sum_const_zero]
+      unfold fibSum
+      simp only [Finset.sum_filter, Fintype.sum_sigma, Fintype.sum_prod_type,
+        prefixResidualOp_sum, hlift]
+      apply Finset.sum_congr rfl
+      intro y _
+      apply Finset.sum_congr rfl
+      intro z _
+      by_cases hz : advancePrefix P k y z = v
+      · simp only [if_pos hz]
+      · simp only [if_neg hz, Finset.sum_const_zero]
     _ = ∑ y, fibSum (C y)
         (fun a => advancePrefix P k y (stageAnswerCoordinate P k y a)) v := by
       simp only [graphRefinement_fibSum]
     _ = (∑ y, ∑ a : (ι → F) × A,
         if P.outputPrefix (k + 1) a.1 = v then C y (some a) else 0) + C v none := by
-      simp only [fibSum, Finset.sum_filter, Fintype.sum_option, stageAnswerCoordinate]
+      unfold fibSum
+      simp only [Finset.sum_filter, Fintype.sum_option]
+      simp only [stageAnswerCoordinate]
       simp_rw [hv]
       simp [advancePrefix, Finset.sum_add_distrib, add_comm]
     _ = _ := by
       congr 1
-      rw [Finset.sum_comm]
-      simp only [fibSum, fullAnswerPrefix, Finset.sum_filter, Fintype.sum_option,
-        Option.map_none, Option.map_some, Option.some.injEq, reduceCtorEq, if_false,
-        zero_add, Finset.sum_ite_irrel, Finset.sum_const_zero, C, ← hform]
+      rw [Finset.sum_comm, hreported]
+      apply Finset.sum_congr rfl
+      intro a _
+      by_cases ha : P.outputPrefix (k + 1) a.1 = v
+      · simp only [if_pos ha]
+        exact (hform (some a)).symm
+      · simp only [if_neg ha, Finset.sum_const_zero]
 
 theorem fullAnswerPrefix_none (P : CL.CLFun F ι ℓ) (k : ℕ)
     (N : Option ((ι → F) × A) → Matrix ((ι → F) × H) _ ℂ) :
     fibSum N (fullAnswerPrefix P k) none = N none := by
-  simp [fibSum, fullAnswerPrefix, Finset.sum_filter, Fintype.sum_option]
+  simp [fibSum, fullAnswerPrefix, Finset.sum_filter]
 
 /-- The true option-valued reported-prefix error controls the mixing
 marginal at cost two. The malformed mass is charged once, using exact

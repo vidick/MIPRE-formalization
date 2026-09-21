@@ -792,3 +792,63 @@ soundness induction. The next implementation should:
 The paper's product-form induction was reread at the pinned manuscript commit.
 New results have focused Lean checks, axiom guards and matching blueprint marks;
 the factorization and strategy interfaces received independent review.
+
+### Next-prefix invariant and actual game budgets, 2026-09-21
+
+The next-prefix residual measurement is now constructed explicitly from the
+old-prefix/current-coordinate dilation family. The proof identifies the exact
+remaining coordinate set at the advanced label, factors each operator there,
+and reassembles the full joint PVM. Unattainable next prefixes receive a fixed
+residual PVM behind a zero ambient prefix projector. Any answer decoder gives
+a projective residual family on the common decoded alphabet; its prefix sum
+is the actual selected measurement of the returned strategy. The previous
+quantitative value-loss bound is preserved by this identification.
+
+Actual full Introspect answers are refined along the deterministic graph of
+the selected coordinate. This preserves the old POVM and the weighted Z/X
+commutator sums exactly. The updating decoder overwrites the newly determined
+coordinates and retains the unvisited tail. It recovers the old answer under
+its exact old-prefix support invariant, and decoded valid answers report the
+advanced prefix. A separate exact canonicalization of malformed raw parsed
+constructors preserves the actual game's value and projectivity.
+
+Malformed answers are not assumed to have zero mass. Their refined coordinate
+is zero, so the stage marginal equals the valid reported-prefix marginal plus
+its old-prefix malformed block. Orthogonality charges all these blocks to the
+single reported dummy term. Thus the actual stage marginal is bounded by twice
+the full reported-prefix error. The actual Introspect consistency loop gives
+Alice's prefix error at most `8 etaZ + 28 |E| eps`, yielding the stage bound
+`16 etaZ + 56 |E| eps`.
+
+`introspect_refined_stage_bounds` combines this marginal estimate with the
+actual Sample-Z and Read-dual-X estimates. Writing `e = |E| eps`, `r = ell-j`,
+and `deltaH` for the fixed Alice hiding error, the common budget is
+`B = 64 etaZ + (512 r^2 + 224)e + 64 deltaH`.
+`exists_game_adaptive_prefix_dilation` constructs the residual projectors
+directly from those actual tests when `B <= 1`; none of the three mixing-error
+bounds is an extra premise. The value loss is at most `8 * B^(1/8)`.
+An explicit monotone numerical recurrence is available, but is not claimed to
+construct the sequence of strategies.
+
+The registered identity extension preserves arbitrary same-party and
+cross-party squared errors and Born probabilities exactly. Its specialization
+to the actual unchanged questions preserves primitive Pauli, hiding, and Read
+errors, including the full option-valued alphabets and the original EPR seed.
+
+Next work:
+
+1. Package the initial residual PVM and decoded answer-support invariant, then
+   compose canonicalization, graph recovery, the actual stage estimates, and
+   decoded next-prefix reassembly in one recursive strategy constructor.
+2. Prove the small-error regime along the numerical recurrence, construct the
+   replacements for all levels on Alice and Bob, and apply terminal extraction.
+3. Connect QLD to the primitive EPR/X/Z hypotheses. The remaining uniform
+   verifier branches, universal execution budget, and full honest 26-type
+   Pauli strategy are still needed for `Introspection 7`.
+
+This continuation is validated through the existing full repository CI:
+local Lean checks were interrupted by host memory exhaustion. The paper's
+adaptive induction was consulted at pinned commit `a459dee`; independent
+reviews cover answer/dummy accounting, remaining-register transport, and
+unchanged-error preservation. New blueprint proof marks and headline guards
+are maintained together. No new axiom or admitted proof is introduced.

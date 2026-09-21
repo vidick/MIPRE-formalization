@@ -98,6 +98,10 @@ import MIPRE.Foundations.Introspection.StrategyReplacementDilation
 import MIPRE.Foundations.Introspection.AdaptiveXTest
 import MIPRE.Foundations.Introspection.AdaptiveZTest
 import MIPRE.Foundations.Introspection.AdaptivePrefixMarginal
+import MIPRE.Foundations.Introspection.AdaptiveGameStage
+import MIPRE.Foundations.Introspection.AdaptiveNextStrategy
+import MIPRE.Foundations.Introspection.IntrospectCanonicalization
+import MIPRE.Foundations.Introspection.StrategyReplacementErrors
 import MIPRE.Foundations.SAT.Arithmetization
 import MIPRE.Foundations.SAT.FiniteCircuitArithmetization
 import MIPRE.Foundations.SAT.CircuitFieldCorrect
@@ -1856,6 +1860,43 @@ historical admission remains unchanged; these guards describe the Lean proof.
 
 #guard_sorry_free MIPRE.Introspection.advancePrefix_fibSum_sqNorm,
   MIPRE.Introspection.prefixStageMarginalError_reassembled
+
+#guard_sorry_free MIPRE.Introspection.graphRefinementPOVM_isPVM,
+  MIPRE.Introspection.graphRefinementPOVM_recover,
+  MIPRE.Introspection.stageAnswerRefinement_commutator,
+  MIPRE.Introspection.stageAnswerDecode_prefix,
+  MIPRE.Introspection.stageAnswerDecode_next,
+  MIPRE.Introspection.stageAnswerRefinementPOVM_decode_recover,
+  MIPRE.Introspection.canonicalizeIntro_isPVM,
+  MIPRE.Introspection.TypedEstimates.canonicalizeIntro_value
+
+#guard_sorry_free MIPRE.Introspection.adaptiveReplacementJointOp_next_factor,
+  MIPRE.Introspection.nextPrefixResidual_isPVM,
+  MIPRE.Introspection.adaptiveReplacementJointOp_next_reassembly,
+  MIPRE.Introspection.nextPrefixDecodedPOVM_isPVM,
+  MIPRE.Introspection.registeredReplacement_next_mats,
+  MIPRE.Introspection.exists_adaptive_next_strategy
+
+#guard_sorry_free MIPRE.Introspection.TypedEstimates.introspect_prefix_register_rigidity_alice,
+  MIPRE.Introspection.stageAnswerRefinement_coarse_marginal,
+  MIPRE.Introspection.stageAnswerRefinement_marginal_le_reported,
+  MIPRE.Introspection.TypedEstimates.introspect_adaptive_marginal,
+  MIPRE.Introspection.TypedEstimates.introspect_refined_stage_bounds,
+  MIPRE.Introspection.TypedEstimates.exists_game_adaptive_prefix_dilation,
+  MIPRE.Introspection.adaptiveStepLoss_le_root,
+  MIPRE.Introspection.adaptiveFailureBudget_mono
+
+#guard_sorry_free MIPRE.Introspection.stateSqNorm_registeredExtendOp,
+  MIPRE.Introspection.xSqNorm_registeredExtendOp,
+  MIPRE.Introspection.bornProb_registeredExtendOp,
+  MIPRE.Introspection.registeredReplacement_samePartyError_other,
+  MIPRE.Introspection.registeredReplacement_crossError_other,
+  MIPRE.Introspection.TypedEstimates.pauliAliceError_registeredReplacement,
+  MIPRE.Introspection.TypedEstimates.pauliBobError_registeredExtension,
+  MIPRE.Introspection.TypedEstimates.hidingAliceError_registeredReplacement,
+  MIPRE.Introspection.TypedEstimates.hidingBobError_registeredExtension,
+  MIPRE.Introspection.TypedEstimates.readAliceError_registeredReplacement,
+  MIPRE.Introspection.TypedEstimates.readBobError_registeredExtension
 
 /-! ## Blocks of an index type
 

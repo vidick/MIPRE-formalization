@@ -84,8 +84,14 @@ theorem prefixResidualOp_apply (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
     constructor
     · intro h i hi; exact congrFun h ⟨i, hi⟩
     · intro h; funext i; exact h i i.property
-  have hf := CLChecks.truncate_fibre_proj hP k y x
-  rw [← Honest.insertRegister_ambientSplit] at hf
+  have hf : (P.truncate k).eval
+      (Honest.insertRegister (CLChecks.prefixRegister P k y)
+        (fun i : CLChecks.prefixRegister P k y => x i)) = y ↔
+      (P.truncate k).eval x = y := by
+    change (P.truncate k).eval (Honest.insertRegister (CLChecks.prefixRegister P k y)
+      (ambientSplit (CLChecks.prefixRegister P k y) x).1) = y ↔ _
+    rw [Honest.insertRegister_ambientSplit]
+    exact (CLChecks.truncate_fibre_proj hP k y x).symm
   unfold prefixResidualOp Honest.prefixProjector
   simp only [registerOp_apply, registerParty, Equiv.trans_apply,
     Equiv.prodCongr_apply, Equiv.prodAssoc_apply, ambientSplit,
@@ -94,8 +100,9 @@ theorem prefixResidualOp_apply (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
     (fun i : CLChecks.prefixRegister P k y => x' i) then
     (if (P.truncate k).eval (Honest.insertRegister _ (fun i => x i)) = y then 1 else 0)
     else 0) * _ = _
-  simp only [he, ← hf]
-  split_ifs <;> simp_all
+  simp only [he, hf]
+  by_cases ha : ∀ i ∈ CLChecks.prefixRegister P k y, x i = x' i <;>
+    by_cases hb : (P.truncate k).eval x = y <;> simp [ha, hb]
 
 theorem adaptiveLinearOutcome_eq_iff (P : CL.CLFun F ι ℓ) (k : ℕ)
     (y : ι → F) (z : Fin (Fintype.card (P.factorOfPrefix k y)) → F) (x : ι → F) :

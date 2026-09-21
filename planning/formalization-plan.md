@@ -39,10 +39,16 @@ prefix law, Z and dual-X register factorizations, exact weighted conditioning,
 minimal continuation support, and next-prefix label/projector assembly are now
 checked. A complete single-stage construction applies mixing, constructs actual
 common-ancilla residual projectors, reassembles a global PVM, and returns a
-concrete strategy with a quantitative value-loss bound. The full induction
-still requires refining actual Introspect answers into the stage alphabet and
-supplying and propagating the three stage-error budgets through both parties'
-successive replacements.
+concrete strategy with a quantitative value-loss bound. Deterministic answer
+refinement and an updating decoder now connect the common full-answer alphabet
+to the stage alphabet, retaining malformed answers. The next-prefix residual
+PVM and its actual selected strategy measurement are constructed explicitly.
+The parsed game supplies all three refined errors under one budget, including
+the proved factor-two cost for malformed marginal mass. Identity extension
+preserves the primitive Pauli, hiding, and Read errors exactly at unchanged
+questions. The remaining induction work is to initialize and package decoded
+answer support, carry the small-error condition along the explicit recurrence,
+and construct the sequence through every level on both players.
 The full `Introspection 7` still requires the remaining verifier branches and
 uniform budget bound, the complete honest 26-type Pauli strategy, and the
 QLD extraction interface and product-strategy soundness iteration. See
