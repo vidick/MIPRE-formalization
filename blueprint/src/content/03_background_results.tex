@@ -3290,7 +3290,7 @@ variables rather than a conditioning.
   MIPRE.QLD.bornProb_padState_aOp_aOp, MIPRE.QLD.padPt_aOp_mats,
   MIPRE.QLD.inconsistency_padState_aOp_right, MIPRE.QLD.inconsistency_padState_aOp_left,
   MIPRE.QLD.deltaGS, MIPRE.QLD.deltaLD, MIPRE.QLD.deltaGS_nonneg, MIPRE.QLD.exists_global_pvm,
-  MIPRE.QLD.exists_global_pvm_hat}
+  MIPRE.QLD.exists_global_pvm_hat, MIPRE.QLD.GlobalPair, MIPRE.QLD.exists_globalPair}
 \leanok
 The single-codeword theorem at $(q,4m,d,1)$, applied to a projective dilation of the padded
 strategy of Lemma~\ref{lem:qld-global-setup}, supplies projective global polynomial measurements
@@ -3303,7 +3303,9 @@ bound of Lemma~\ref{lem:qld-global-success}; it has the form
 $A(md)^A((\delta_{\mathrm{GS}})^b+q^{-b}+2^{-bmd})$ for universal $A,b$. The point-consistency
 estimates hold against the padded point measurements of the \emph{original} strategy --- the
 expanded sandwich combinations, extended by the identity on both ancillas --- so no dilation
-appears in the conclusion, and no further dilation of the projective outputs is required.
+appears in the conclusion, and no further dilation of the projective outputs is required. The
+conclusion is packaged as the structure \texttt{GlobalPair}, which the rest of stage 4 is stated
+on.
 \end{lemma}
 
 \begin{proof}
@@ -3336,34 +3338,226 @@ not read the remaining dummy coordinates is Lemma~\ref{lem:qld-global-dummy}.
 \label{lem:qld-global-dummy}
 \ledgernode{1.2.2.13.4}
 \uses{lem:qld-global-pvm,lem:schwartz-zippel}
-The state weight of outcomes depending nontrivially on $w$ is
-$O(\delta_{\mathrm{ld}})$. This bad set is empty for $m=1$.
-Retaining the other outcomes gives a projective submeasurement.
+\lean{  MIPRE.LowDegree.agreeOn, MIPRE.LowDegree.mem_agreeOn,
+  MIPRE.LowDegree.prob_agreeOn_le_individualDegree, MIPRE.LIDT.expFinsupp,
+  MIPRE.LIDT.expFinsupp_apply, MIPRE.LIDT.expFinsupp_injective, MIPRE.LIDT.LowIndDegPoly.toMv,
+  MIPRE.LIDT.LowIndDegPoly.eval_toMv, MIPRE.LIDT.LowIndDegPoly.coeff_toMv,
+  MIPRE.LIDT.LowIndDegPoly.degreeOf_toMv_le, MIPRE.LIDT.degreeOf_rename_le,
+  MIPRE.bornProb_add_right, MIPRE.bornProb_mono_right, MIPRE.POVM.add_le_one,
+  MIPRE.inconsistency_swapVec, MIPRE.sum_uniform_eq_one, MIPRE.sum_ite_eq_zero_sub,
+  MIPRE.ProjectiveMeasurement.posSemidef_M, MIPRE.QLD.inconsistency_evalPOVM_eq,
+  MIPRE.QLD.sum_bornProb_M_one, MIPRE.QLD.IsDummy, MIPRE.QLD.not_isDummy_xIdx,
+  MIPRE.QLD.not_isDummy_zIdx, MIPRE.QLD.not_isDummy_aIdx, MIPRE.QLD.not_isDummy_bIdx,
+  MIPRE.QLD.not_isDummy_of_eq_one, MIPRE.QLD.mix, MIPRE.QLD.mix_apply_of_not,
+  MIPRE.QLD.mix_apply_of, MIPRE.QLD.xBlk_mix, MIPRE.QLD.zBlk_mix, MIPRE.QLD.alph_mix,
+  MIPRE.QLD.bet_mix, MIPRE.QLD.mix_mix, MIPRE.QLD.mixSwap, MIPRE.QLD.mixSwap_apply_fst,
+  MIPRE.QLD.padPt_mix, MIPRE.QLD.WIndep, MIPRE.QLD.wIndep_of_eq_one,
+  MIPRE.QLD.eval_mix_of_wIndep, MIPRE.QLD.dumSub, MIPRE.QLD.dumSub_injective,
+  MIPRE.QLD.comp_dumSub, MIPRE.QLD.rename_toMv_ne, MIPRE.QLD.mixAgree,
+  MIPRE.QLD.mixAgree_eq_univ_of_wIndep, MIPRE.QLD.card_mixAgree_le,
+  MIPRE.QLD.sum_mass_mixAgree_ge, MIPRE.QLD.sum_bad_mass_le, MIPRE.QLD.sum_bad_mass_le_of_le,
+  MIPRE.QLD.GlobalPair.sum_bad_mass_A_le, MIPRE.QLD.GlobalPair.sum_bad_mass_B_le}
+\leanok
+Call an outcome $g$ of a global measurement of Lemma~\ref{lem:qld-global-pvm} $w$-independent if
+no monomial of $g$ involves a dummy coordinate: one of the $2m - 2$ coordinates of $\F_q^{4m}$
+that the padded point measurements do not read. If the evaluated global measurement is
+$\delta$-consistent, on average over a uniform point, with a point measurement that does not read
+the dummy coordinates, then the state weight $W$ of the outcomes that are not $w$-independent
+satisfies $(1 - 8md/q)\,W \leq 2\delta$; under the standing assumption $16md \leq q$,
+$W \leq 4\delta$. For the measurements of Lemma~\ref{lem:qld-global-pvm}, on either side,
+$W \leq 4\delta_{\mathrm{ld}}$. The bad set is empty for $m = 1$. Retaining the other outcomes
+gives a projective submeasurement.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:qld-global-pvm,lem:schwartz-zippel}
+\leanok
+Resample the dummy coordinates: for independent uniform points $u, u'$ let $\mathrm{mix}(u, u')$
+be $u$ with its dummy coordinates replaced by those of $u'$. The point measurement is the same at
+$u$ and at $\mathrm{mix}(u, u')$, and $(u, u') \mapsto (\mathrm{mix}(u, u'), \mathrm{mix}(u', u))$
+is an involution of the pairs, so the consistency estimate holds at both points simultaneously.
+Adding the two, the operator $P_u(g(u)) + P_u(g(\mathrm{mix}(u, u')))$ is at most $2\,\Id$ when the
+two values agree and at most $\Id$ when they differ, because two distinct elements of a POVM sum
+to at most the identity; no projectivity of the point measurement is used. Hence
+$\sum_g \langle G_g \rangle \Pr[g(u) = g(\mathrm{mix}(u, u'))] \geq 1 - 2\delta$. For a
+$w$-independent outcome the probability is one. For an outcome that reads a dummy coordinate,
+$g(u) - g(\mathrm{mix}(u, u'))$ is a nonzero polynomial in the $8m$ coordinates of the pair, of
+individual degree at most $d$ --- its coefficient at a monomial of $g$ involving a dummy
+coordinate survives --- so by Lemma~\ref{lem:schwartz-zippel} the probability is at most $8md/q$.
+The two bounds give $(1 - 8md/q)\,W \leq 2\delta$.
+\end{proof}
+
+\paragraph{Comments.} The paper's orthogonality step uses that the point measurements are
+projective, which the dilation's are; the formalization works with the padded point measurements
+of the original strategy, which are POVMs, and replaces orthogonality by
+$P_b + P_{b'} \leq \Id$ for $b \neq b'$, valid for any POVM. Schwartz--Zippel is applied with
+individual degrees, on two copies of the $4m$ coordinates; the formalization states
+Lemma~\ref{lem:schwartz-zippel} for any finite variable type
+(\texttt{prob\_agreeOn\_le\_individualDegree}) and bridges the seeded test's coefficient vectors
+to \texttt{MvPolynomial} (\texttt{LowIndDegPoly.toMv}). The outcomes are not relabelled: the
+projective submeasurement is the restriction of the global measurement to the $w$-independent
+outcomes, and its complement's weight is the bound above.
 
 \begin{lemma}[Ordered products with global outcome multipliers]
 \label{lem:qld-global-products}
 \ledgernode{1.2.2.13.5}
-\uses{lem:qld-global-dummy,lem:qld-combined-points,def:state-distance}
-For $w$-independent $g$, put $v_g=(S_g\otimes\Id)\widehat\psi$ and let
-$B_g$ sum $\widehat M^X_a\widehat M^Z_b$ over
-$\alpha a+\beta b=g(x,z,\alpha,\beta)$. With the local factors placed on
-the opposite side from $S_g$,
-$\sum_g\mathbb E\|v_g-B_gv_g\|^2\leq\Delta$
-where $\Delta=C(\delta_{\mathrm{ld}}+\delta_Q)$.
-The average is uniform over $x,z,\alpha,\beta$. The estimate holds with
-the product order reversed and with any subset of outcomes retained.
+\uses{lem:qld-global-pvm,lem:qld-combined-points,def:state-distance}
+\lean{  MIPRE.mul_self_le_self_of_le_one, MIPRE.one_sub_proj_conjTranspose_mul_self_le_one,
+  MIPRE.snorm_sq_add_le, MIPRE.bornProb_mono_left, MIPRE.snorm_sq_aOp_mul_bOp,
+  MIPRE.bornProb_one_eq_normSq_stateVecB, MIPRE.sum_snorm_sq_aOp_mul_bOp_le,
+  MIPRE.stateSqNorm_extVec2_aOp, MIPRE.sum_avg_normSq_stateVecB_fibre_eq, MIPRE.QLD.ordZX,
+  MIPRE.QLD.ordXZ, MIPRE.QLD.comm, MIPRE.QLD.sum_ordZX, MIPRE.QLD.sum_ordXZ,
+  MIPRE.QLD.sand_sub_ordZX, MIPRE.QLD.sand_sub_ordXZ, MIPRE.QLD.norm_stateVecB_sand_sub_ordZX_le,
+  MIPRE.QLD.norm_stateVecB_sand_sub_ordXZ_le, MIPRE.QLD.sum_avg_fibre_sand_sub_ord_le,
+  MIPRE.QLD.setAB, MIPRE.QLD.xBlk_setAB, MIPRE.QLD.zBlk_setAB, MIPRE.QLD.alph_setAB,
+  MIPRE.QLD.bet_setAB, MIPRE.QLD.setAB_setAB, MIPRE.QLD.abSwap, MIPRE.QLD.sum_pad_ab,
+  MIPRE.QLD.sum_uniform_pad4, MIPRE.QLD.sum_content_blocks, MIPRE.QLD.sandComb,
+  MIPRE.QLD.ordComb, MIPRE.QLD.ptComb_posSemidef, MIPRE.QLD.ptComb_le_one,
+  MIPRE.QLD.ptComb_conjTranspose, MIPRE.QLD.sandComb_posSemidef, MIPRE.QLD.sandComb_le_one,
+  MIPRE.QLD.sandComb_conjTranspose, MIPRE.QLD.sandComb_sub_ordComb,
+  MIPRE.QLD.sum_snorm_sq_ordComb_le, MIPRE.QLD.sum_snorm_sq_ordZX_le,
+  MIPRE.QLD.sum_snorm_sq_ordXZ_le, MIPRE.QLD.liftOp, MIPRE.QLD.isPVM_liftOp,
+  MIPRE.QLD.sandComb_liftOp, MIPRE.QLD.comm_liftOp, MIPRE.QLD.normSq_stateVecB_padState_aOp_aOp,
+  MIPRE.QLD.stateSqNorm_padState_aOp_aOp, MIPRE.QLD.swapVec_padState_unit,
+  MIPRE.QLD.sum_comm_liftOp_B_le, MIPRE.QLD.sum_comm_liftOp_A_le,
+  MIPRE.QLD.GlobalPair.cons_sandComb_A, MIPRE.QLD.GlobalPair.cons_sandComb_B,
+  MIPRE.QLD.GlobalPair.products_ZX_A, MIPRE.QLD.GlobalPair.products_XZ_A,
+  MIPRE.QLD.GlobalPair.products_ZX_B, MIPRE.QLD.GlobalPair.products_XZ_B}
+\leanok
+Let $(G_A, G_B)$ be the global measurements of Lemma~\ref{lem:qld-global-pvm}, with error
+$\delta$, on the twice-padded state $\Phi$. For an outcome $g$ put
+$v_g = (G_{A,g} \otimes \Id)\Phi$, and for a padded point $u = (x, z, \alpha, \beta, w)$ let
+$B_u(c)$ sum Bob's expanded ordered products $\widehat M^Z_b \widehat M^X_a$, extended by the
+identity to the dilated register, over $\alpha a + \beta b = c$. Then, on average over a uniform
+padded point,
+$\sum_g \mathbb E_u \|v_g - (\Id \otimes B_u(g(u))) v_g\|^2 \leq 2\delta + 2\kappa$, where
+$\kappa = 57676416\,\eps$ is the commutator weight of Lemma~\ref{lem:qld-combined-points}. The
+estimate holds for every outcome, with the product order reversed
+($\widehat M^X_a \widehat M^Z_b$), and with the parties exchanged ($G_B$ against Alice's ordered
+products, on the swapped state); retaining a subset of outcomes only decreases the left-hand side.
 These ordered products need not be POVMs.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:qld-global-pvm,lem:qld-combined-points,def:state-distance}
+\leanok
+Write $P_u(c) = \sum_{\alpha a + \beta b = c} \widehat M^Z_b \widehat M^X_a \widehat M^Z_b$ for
+the sandwich combination the consistency of Lemma~\ref{lem:qld-global-pvm} is stated against,
+and split $\Id - B_u(c) = (\Id - P_u(c)) + (P_u(c) - B_u(c))$. Since $0 \leq P_u(c) \leq \Id$,
+$(\Id - P_u(c))^2 \leq \Id - P_u(c)$, so the first part is bounded by
+$\sum_g \mathbb E_u \langle G_{A,g} \otimes (\Id - P_u(g(u))) \rangle \leq \delta$. For the
+second, group the outcomes by their value $c = g(u)$ and drop the projector
+$\sum_{g(u) = c} G_{A,g} \leq \Id$: what remains is
+$\mathbb E_u \sum_c \|(\Id \otimes (P_u(c) - B_u(c)))\Phi\|^2$, the squared norms of the fibre
+sums, along $(a, b) \mapsto \alpha a + \beta b$, of the deviations
+$D(a, b) = \widehat M^Z_b \widehat M^X_a \widehat M^Z_b - \widehat M^Z_b \widehat M^X_a$, which
+sum to zero over $(a, b)$. Parseval over $\F_q$ turns the average over $(\alpha, \beta)$ of the
+fibre sums into $(1 - 1/q) \sum_{a,b} \|(\Id \otimes D(a, b))\Phi\|^2$, with no factor $q$, and
+each deviation is a contraction of a commutator:
+$D(a, b) = \widehat M^Z_b [\widehat M^X_a, \widehat M^Z_b]$ for this order and
+$-(\Id - \widehat M^Z_b)[\widehat M^X_a, \widehat M^Z_b]$ for the other. The commutator weight is
+the one of Lemma~\ref{lem:qld-combined-points}, read on the twice-padded state, where doubly
+extended operators have their expanded-state norms. Bob's version applies the same argument to
+the swapped state.
+\end{proof}
+
+\paragraph{Comments.} The paper restricts to $w$-independent outcomes and goes through the
+projective joint measurement of Lemma~\ref{lem:qld-combined-points}; the formalization works
+with the sandwich combination itself, which is a POVM and needs no projectivity, and proves the
+estimate for all outcomes, so Lemma~\ref{lem:qld-global-dummy} is not needed here. The two
+orders are one abstract theorem (\texttt{sum\_snorm\_sq\_ordComb\_le}), which takes the identity
+$\sum_{a, b} \mathrm{ord}(a, b) = \Id$ and the contraction bound as hypotheses. The error is
+$2\delta_{\mathrm{ld}} + 2 \cdot 57676416\,\eps$, linear in both.
 
 \begin{lemma}[Linearity in the two combining coefficients]
 \label{lem:qld-global-linear}
 \ledgernode{1.2.2.13.6}
-\uses{lem:qld-global-products,lem:schwartz-zippel}
-Among $w$-independent outcomes, those not expressible as
-$g=\alpha g_1(x,z)+\beta g_2(x,z)$ have total state weight $O(\Delta)$.
-The outcome-summed estimate introduces no factor $q^2$.
+\uses{lem:qld-global-pvm,lem:qld-global-products,lem:schwartz-zippel}
+\lean{  MIPRE.LIDT.patch, MIPRE.LIDT.maskOn, MIPRE.LIDT.maskOff, MIPRE.LIDT.patch_maskOn_maskOff,
+  MIPRE.LIDT.maskOn_patch, MIPRE.LIDT.maskOff_patch, MIPRE.LIDT.maskOn_eq_self,
+  MIPRE.LIDT.maskOff_eq_self, MIPRE.LIDT.maskOn_apply_of_not, MIPRE.LIDT.maskOff_apply_of,
+  MIPRE.LIDT.LowIndDegPoly.coef, MIPRE.LIDT.prod_pow_patch,
+  MIPRE.LIDT.LowIndDegPoly.eval_eq_sum_coef, MIPRE.LIDT.LowIndDegPoly.eval_coef_of_eq_off,
+  MIPRE.LIDT.LowIndDegPoly.coef_maskOff, MIPRE.LIDT.card_eval_eq_zero_le, MIPRE.posSemidef_of_proj,
+  MIPRE.uniform_nonneg, MIPRE.QLD.abSet, MIPRE.QLD.mem_abSet, MIPRE.QLD.xIdx_notMem_abSet,
+  MIPRE.QLD.zIdx_notMem_abSet, MIPRE.QLD.patAB, MIPRE.QLD.patAB_aIdx, MIPRE.QLD.patAB_bIdx,
+  MIPRE.QLD.patAB_of_notMem, MIPRE.QLD.patAB_injective, MIPRE.QLD.pAB,
+  MIPRE.QLD.eval_coef_abSet_setAB, MIPRE.QLD.eval_pAB, MIPRE.QLD.vec_two_eq, MIPRE.QLD.fin2Equiv,
+  MIPRE.QLD.e10, MIPRE.QLD.e01, MIPRE.QLD.e10_ne_e01, MIPRE.QLD.linAB, MIPRE.QLD.eval_linAB,
+  MIPRE.QLD.sum_agree_two_le, MIPRE.QLD.IsLinAB, MIPRE.QLD.patAB_eq_maskOn,
+  MIPRE.QLD.exists_bad_coef, MIPRE.QLD.pAB_ne_linAB, MIPRE.QLD.sum_uniform_eval_eq_zero_le,
+  MIPRE.QLD.bOp_mul_aOp_comm, MIPRE.QLD.sum_snorm_sq_ordXZ_eq, MIPRE.QLD.fibMap,
+  MIPRE.QLD.fibMap_injective, MIPRE.QLD.fiber_eq_image, MIPRE.QLD.snorm_sq_ordComb_ordXZ_of_ne,
+  MIPRE.QLD.ordComb_ordXZ_bet_zero, MIPRE.QLD.snorm_sq_ordComb_ordXZ_le,
+  MIPRE.QLD.card_filter_snd_eq_zero, MIPRE.QLD.sum_filter_snorm_sq_ordComb_eq, MIPRE.QLD.sum_setAB,
+  MIPRE.QLD.sum_uniform_setAB, MIPRE.QLD.sum_ab_snorm_sq_ordComb_le_of_good,
+  MIPRE.QLD.sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB, MIPRE.QLD.sum_bad_linear_mass_le,
+  MIPRE.QLD.GlobalPair.sum_bad_linear_mass_A_le, MIPRE.QLD.GlobalPair.sum_bad_linear_mass_B_le}
+\leanok
+Let $(G_A, G_B)$ be the global measurements of Lemma~\ref{lem:qld-global-pvm}, with error
+$\delta$, on the twice-padded state $\Phi$, and let $\Delta = 2\delta + 2 \cdot 57676416\,\eps$
+be the bound of Lemma~\ref{lem:qld-global-products} for the order
+$\widehat M^X_a \widehat M^Z_b$. Call an outcome $g$ linear in $(\alpha, \beta)$ if every
+monomial of $g$ has exponents $(1, 0)$ or $(0, 1)$ on the two combining coordinates, that is
+$g = \alpha g_1(x, z, w) + \beta g_2(x, z, w)$, and let $L$ be the set of such outcomes. Then,
+with $\eta = (1 + 2d + 4md)/q$,
+\[
+  (1 - 2\eta) \sum_{g \notin L} \langle G_{A,g} \otimes \Id \rangle_\Phi \leq 2\Delta ,
+\]
+and likewise for $G_B$. Under $16md \leq q$ this is $O(\Delta)$, linear in $\delta$ and in
+$\eps$; the sum over outcomes introduces no factor $q^2$.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:qld-global-pvm,lem:qld-global-products,lem:schwartz-zippel}
+\leanok
+Fix $g \notin L$, write $S = G_{A,g}$, and let $B_u(c)$ be the combination of the ordered
+products $\widehat M^X_a \widehat M^Z_b$ along $\alpha a + \beta b = c$, for the padded point
+$u = (x, z, \alpha, \beta, w)$. Since
+$(S \otimes \Id)\Phi = (S \otimes B_u(g(u)))\Phi + (S \otimes (\Id - B_u(g(u))))\Phi$,
+\[
+  \langle S \otimes \Id \rangle
+    \leq 2\,\|(S \otimes B_u(g(u)))\Phi\|^2 + 2\,\|(S \otimes (\Id - B_u(g(u))))\Phi\|^2
+\]
+for every $u$. Averaging over $u$ and summing over $g \notin L$, the second terms total at most
+$2\Delta$, so it suffices to show $\mathbb E_u \|(S \otimes B_u(g(u)))\Phi\|^2 \leq \eta
+\langle S \otimes \Id \rangle$ for each $g \notin L$.
+
+Read the uniform padded point as a uniform base point $u_0$ with a fresh uniform pair
+$(\alpha, \beta)$ substituted in the two combining coordinates. The blocks $x, z$ are those of
+$u_0$, and $g(u) = p_{u_0}(\alpha, \beta)$ for the bivariate polynomial
+$p_{u_0} = \sum_{i,j} g_{ij}(u_0)\,\alpha^i \beta^j$, whose coefficients $g_{ij}$ are polynomials
+of individual degree at most $d$ in the remaining coordinates. As $g \notin L$, some
+$g_{i_0 j_0}$ with $(i_0, j_0) \notin \{(1, 0), (0, 1)\}$ is a nonzero polynomial in $4m$
+variables, so by Schwartz--Zippel it vanishes at a uniform $u_0$ with probability at most
+$4md/q$; at such a base point the average over $(\alpha, \beta)$ is bounded by
+$\langle S \otimes \Id \rangle$, each $B_u(c)$ being a contraction. At every other base point,
+$p_{u_0}$ differs from every linear form $\alpha a + \beta b$. The pairs with $\beta = 0$
+contribute at most $\langle S \otimes \Id \rangle / q$. For $\beta \neq 0$ the fibre
+$\{\alpha a + \beta b = c\}$ has one $b$ per $a$, and the $\widehat M^X_a$ are orthogonal
+projectors, so
+$\|(S \otimes B_u(c))\Phi\|^2 = \sum_{\alpha a + \beta b = c} W(a, b)$ with
+$W(a, b) = \|(S \otimes \widehat M^X_a \widehat M^Z_b)\Phi\|^2$, weights that do not depend on
+$(\alpha, \beta)$ and sum to $\langle S \otimes \Id \rangle$. Exchanging the two sums, each
+$W(a, b)$ is counted with the probability that $p_{u_0}(\alpha, \beta) = \alpha a + \beta b$ at a
+uniform $(\alpha, \beta)$, which is at most $2d/q$ by Schwartz--Zippel in two variables.
+Altogether $\eta = 1/q + 2d/q + 4md/q$. Bob's version applies the same argument to the swapped
+state.
+\end{proof}
+
+\paragraph{Comments.} The paper (\texttt{eq:qld-g-prime-bound}) states the bound as
+$O((\delta_{\mathrm{ld}} + \delta_Q)^{1/2} + md/q)$ for the $w$-independent outcomes, and
+remarks that the quadratic expansion used here supports the linear bound; the formalization
+proves the linear bound, for all outcomes and with an explicit constant, so
+Lemma~\ref{lem:qld-global-dummy} is not needed here. The paper goes through the projective
+joint measurement of Lemma~\ref{lem:qld-combined-points} and drops the $\beta = 0$ pairs at a cost
+of $1/q$; here the products estimate is used directly and the $\beta = 0$ pairs are bounded by the
+contraction property. The two Schwartz--Zippel applications are
+\texttt{card\_eval\_eq\_zero\_le} (a nonzero coefficient vector in $4m$ variables, at $4md/q$)
+and \texttt{sum\_agree\_two\_le} (two distinct bivariate coefficient vectors, at $2d/q$), both
+through the bridge \texttt{LowIndDegPoly.toMv} of Lemma~\ref{lem:qld-global-dummy}. The
+coefficient vectors are \texttt{LowIndDegPoly.coef}, the coefficient of a monomial pattern on a
+set of coordinates as a polynomial in the others (\texttt{eval\_eq\_sum\_coef}).
 
 \begin{lemma}[Separating the two point variables]
 \label{lem:qld-global-separate}

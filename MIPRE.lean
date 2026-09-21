@@ -394,10 +394,12 @@ import MIPRE.Background.QLD.Combine
 import MIPRE.Background.QLD.Combined
 import MIPRE.Background.QLD.Commutation
 import MIPRE.Background.QLD.Consistency
+import MIPRE.Background.QLD.Dummy
 import MIPRE.Background.QLD.ExactPauli
 import MIPRE.Background.QLD.Expanded
 import MIPRE.Background.QLD.Game
 import MIPRE.Background.QLD.Legalize
+import MIPRE.Background.QLD.Linear
 import MIPRE.Background.QLD.Lines
 import MIPRE.Background.QLD.NonMultilinear
 import MIPRE.Background.QLD.Ortho
@@ -407,6 +409,7 @@ import MIPRE.Background.QLD.PaddedLines
 import MIPRE.Background.QLD.PaddedStrategy
 import MIPRE.Background.QLD.PaddedValue
 import MIPRE.Background.QLD.Product
+import MIPRE.Background.QLD.Products
 import MIPRE.Background.QLD.Simul
 import MIPRE.Background.QLD.Swap
 import MIPRE.Background.QLD.SwapUnitary
