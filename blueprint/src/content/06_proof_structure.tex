@@ -2895,6 +2895,571 @@ component; projectivity and normalization are preserved on the full
 option alphabet. Reassembling the residual effects gives both formulas.
 \end{proof}
 
+\begin{lemma}[Player exchange and the actual Bob iteration]
+\label{lem:intro-bob-iteration}
+\uses{lem:intro-actual-iteration}
+\lean{MIPRE.Introspection.swapVec_registerState,
+  MIPRE.Introspection.TypedPresentation.mu_swap,
+  MIPRE.Introspection.TypedEstimates.parsedGame_value_swap,
+  MIPRE.Introspection.introBobIterationState_unit,
+  MIPRE.Introspection.TypedEstimates.introAliceZError_of_iteration_other,
+  MIPRE.Introspection.TypedEstimates.hidingBobError_introIterationState,
+  MIPRE.Introspection.TypedEstimates.exists_intro_bob_iteration}
+\leanok
+Exchanging the players in the actual parsed game preserves its value after
+transposing the Pauli predicate. No symmetry of that predicate is required.
+The finite Alice construction therefore gives an actual Bob construction,
+with its prefix invariant, projectivity, untouched questions, and the same
+failure recurrence. The primitive errors required by the second player
+are preserved by the first player's ancillary extension.
+\end{lemma}
+\begin{proof}
+\leanok
+Swap the ordered type edge and the two seed coordinates. Check the actual
+directed predicates and transport the register state and state distances.
+Apply the proved Alice construction to the exchanged game and swap back.
+\end{proof}
+
+\begin{lemma}[Both actual terminal measurements]
+\label{lem:intro-two-sided-iteration}
+\uses{lem:intro-bob-iteration,lem:intro-iteration-threshold}
+\lean{MIPRE.Introspection.adaptiveFailureBudget_add,
+  MIPRE.Introspection.introTwoSidedState_unit,
+  MIPRE.Introspection.TypedEstimates.exists_intro_two_sided_iteration}
+\leanok
+If the initial failure, both primitive Z errors, and the required hiding
+errors are at most the explicit threshold for $2\ell$ replacements, there
+are concrete projective measurement families with Alice's false-role and
+Bob's true-role terminal invariants. The final state uses only fixed local
+ancillas, and failure is bounded by the single recurrence at $2\ell$.
+\end{lemma}
+\begin{proof}
+\leanok
+Run Alice's false-role block for $\ell$ steps. The threshold theorem supplies
+the admissible failure at the midpoint, and the unchanged-question identities
+supply Bob's primitive inputs. Run Bob's true-role block, retaining Alice's
+completed measurement. Restarting the numerical recurrence is exactly
+continuing it, so the two blocks have the stated combined bound.
+\end{proof}
+
+\begin{lemma}[Ordinary-answer extraction from actual terminal invariants]
+\label{lem:intro-terminal-option-extraction}
+\uses{lem:intro-terminal-invariant,lem:intro-typed-final-extraction}
+\lean{MIPRE.Introspection.completeOptionPOVM_isPVM,
+  MIPRE.Introspection.option_valid_acceptance_le_complete,
+  MIPRE.Introspection.readoutAcceptance_le_completedValue,
+  MIPRE.Introspection.IntroPrefixInvariant.terminal_parsed_pair,
+  MIPRE.Introspection.TypedExtraction.exists_strategy_of_terminal_invariants}
+\leanok
+For a nonempty ordinary answer alphabet, both actual terminal invariants
+construct an original-game strategy. If the final parsed-game failure is
+at most $e$, its value is at least $1-|E|e$. Each malformed auxiliary outcome
+is completed to a fixed ordinary answer; its mass need not vanish.
+\end{lemma}
+\begin{proof}
+\leanok
+The valid full-option outcome has a unique parsed-answer preimage. Its
+terminal effect is the actual conditional question readout. Map the malformed
+auxiliary outcome to a fixed answer; coarse-graining preserves projectivity,
+and newly accepted Born probabilities are nonnegative. The actual cross-edge
+mass and the exact common-seed question law give the value bound.
+\end{proof}
+
+\begin{lemma}[A power bound for the entire finite recurrence]
+\label{lem:intro-recurrence-power}
+\uses{lem:intro-iteration-threshold,lem:intro-error-absorption}
+\lean{MIPRE.Introspection.iteratedRoot_scale_le,
+  MIPRE.Introspection.adaptiveFailureBudget_le_power,
+  MIPRE.Introspection.adaptiveSoundness_power_cases,
+  MIPRE.Introspection.exists_adaptiveSoundness_errorProfile}
+\leanok
+For fixed depth and type graph, the failure after $N$ replacements is at
+most a fixed coefficient times the $3N$-fold square root of a common input
+error in the admissible regime. A second explicit coefficient makes the
+same bound at least one outside that regime. Consequently the combined
+bound has the paper's two-term error profile, with positive exponent at
+most one and constants independent of the register dimension.
+\end{lemma}
+\begin{proof}
+\leanok
+Bound each stage loss by a constant times an eighth root and induct over
+the actual recurrence. Add the reciprocal of the iterated root of the
+positive threshold to handle the large-error regime. Apply fixed-power
+absorption to the common input profile.
+\end{proof}
+
+\begin{lemma}[Finite-game soundness from the primitive Pauli guarantees]
+\label{lem:intro-primitive-soundness}
+\uses{lem:intro-two-sided-iteration,lem:intro-terminal-option-extraction,
+  lem:intro-recurrence-power,lem:hide-rigidity}
+\lean{MIPRE.Introspection.TypedEstimates.introAliceZError_le_of_bob,
+  MIPRE.Introspection.primitiveBudgetCoefficient_bounds,
+  MIPRE.Introspection.primitiveSoundnessCoefficient_one_le,
+  MIPRE.Introspection.primitiveSoundness_power_bounds,
+  MIPRE.Introspection.exists_primitiveSoundness_errorProfile,
+  MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_primitive_pauli,
+  MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_primitive_profile}
+\leanok
+Suppose the actual parsed-game strategy is projective on an EPR register
+tensored with a normalized auxiliary state. Assume its failure and only
+the primitive Alice-X and Bob-Z squared errors are at most $t\geq0$.
+For a source CL presentation covering the whole register exactly, the
+original game's quantum value is at least $1-Ct^{2^{-6\ell}}$, for an
+explicit coefficient depending only on depth and type-graph size.
+There is no assumed hiding estimate, future strategy, or smallness condition.
+If $t$ has the paper's two-term profile, the conclusion has that profile
+with uniform adjusted constants.
+\end{lemma}
+\begin{proof}
+\leanok
+The tested Pauli-Z loop transfers Bob's primitive estimate to Alice.
+Full hiding rigidity derives both required hiding families from the actual
+game and the original two primitive estimates. A fixed coefficient bounds
+all these inputs simultaneously. Apply the two-block construction and
+ordinary-answer extraction in the small-error regime. Outside it the same
+power bound is at least one, and quantum value is nonnegative. Absorb the
+fixed coefficients and roots into the required profile.
+\end{proof}
+
+\begin{lemma}[Soundness on the approximately extracted state]
+\label{lem:intro-extracted-state-soundness}
+\uses{lem:intro-primitive-soundness,lem:intro-value-stability}
+\lean{MIPRE.Introspection.sum_pvm_snorm_sq,
+  MIPRE.Introspection.sum_pvm_difference_snorm_sq_le,
+  MIPRE.Introspection.sum_stateSqNorm_state_transfer_le,
+  MIPRE.Introspection.sum_bob_snorm_state_transfer_le,
+  MIPRE.Introspection.extractedSoundnessCoefficient_one_le,
+  MIPRE.Introspection.extractedSoundness_power_bound,
+  MIPRE.Introspection.exists_extractedSoundness_errorProfile,
+  MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_extracted_state}
+\leanok
+The preceding soundness theorem also applies when the primitive X/Z
+guarantees hold on a normalized state at squared distance at most $t$ from
+the ideal EPR-register state. If those errors and actual game failure are
+at most $t\geq0$, the original-game loss is at most
+$20C t^{2^{-(6\ell+1)}}$. The constants again admit the paper's two-term
+profile uniformly in the register dimension.
+\end{lemma}
+\begin{proof}
+\leanok
+For two PVMs the summed squared difference on a nearby state is bounded
+by twice its old value plus eight times the squared vector distance.
+Projective normalization sums over all outcomes before estimating, so
+there is no answer-cardinality factor. Transfer game failure using value
+stability. For $t\leq1$, all three inputs are at most $20\sqrt t$;
+apply the primitive soundness theorem and absorb this extra root.
+For $t>1$ the bound follows from nonnegative quantum value.
+\end{proof}
+
+\begin{lemma}[Local-isometry transport and image-complement completion]
+\label{lem:intro-isometric-strategy}
+\uses{def:tensor-strategy,lem:intro-extracted-state-soundness}
+\lean{MIPRE.Introspection.isometricPOVM_isPVM,
+  MIPRE.Introspection.isometricEffect_intertwine,
+  MIPRE.Introspection.isometricState_unit,
+  MIPRE.Introspection.povmValue_isometricState,
+  MIPRE.Introspection.isometricState_map_alice_deviation,
+  MIPRE.Introspection.isometricState_map_bob_deviation,
+  MIPRE.Introspection.projector_mass_le_state_distance,
+  MIPRE.Introspection.isometricComplement_alice_mass,
+  MIPRE.Introspection.isometricComplement_bob_mass,
+  MIPRE.Introspection.isometricEffect_alice_error_le,
+  MIPRE.Introspection.isometricEffect_bob_error_le}
+\leanok
+Rectangular local isometries transport any projective strategy to an actual
+projective strategy on the target spaces. Assigning the orthogonal image
+complement to a fixed outcome normalizes the measurements and preserves
+every Born probability and the whole game value on the embedded state.
+The exact operator intertwining also holds after arbitrary answer maps.
+On a target state at squared distance at most $\eta$ from the embedded state,
+image-complement mass is at most $\eta$. Thus a summed image-measurement
+error $\delta$ becomes at most $2\delta+2\eta$ after completion, on either
+party and without an outcome-count factor.
+\end{lemma}
+\begin{proof}
+\leanok
+The image and its orthogonal complement are orthogonal projections.
+Complete one outcome, then use the isometry identity to prove compression
+and intertwining exactly. A complement projection annihilates the embedded
+state and is a contraction, so its mass on a nearby state is bounded by
+squared vector distance. Only the chosen outcome receives this complement;
+the two-term squared triangle inequality gives the error bound.
+\end{proof}
+
+\begin{lemma}[Honest Magic Square extension of an anticommuting pair]
+\label{lem:intro-honest-magic-square}
+\uses{def:magic-square,def:pcc}
+\lean{MIPRE.Introspection.HonestMagicSquare.grid_isObservable,
+  MIPRE.Introspection.HonestMagicSquare.cells_commute,
+  MIPRE.Introspection.HonestMagicSquare.row_product,
+  MIPRE.Introspection.HonestMagicSquare.variableOp_isPVM,
+  MIPRE.Introspection.HonestMagicSquare.constraintOp_isPVM,
+  MIPRE.Introspection.HonestMagicSquare.variable_constraint_commute,
+  MIPRE.Introspection.HonestMagicSquare.constraint_reject_zero,
+  MIPRE.Introspection.HonestMagicSquare.variableOp_embeds_first,
+  MIPRE.Introspection.HonestMagicSquare.variableOp_embeds_second,
+  MIPRE.Introspection.HonestMagicSquare.grid_transpose,
+  MIPRE.Introspection.HonestMagicSquare.constraintOp_transpose,
+  MIPRE.Introspection.HonestMagicSquare.questionOp_isPVM,
+  MIPRE.Introspection.HonestMagicSquare.questionOp_reject,
+  MIPRE.Introspection.HonestMagicSquare.strategy_isPCC,
+  MIPRE.Introspection.HonestMagicSquare.strategy_value,
+  MIPRE.Introspection.HonestMagicSquare.exists_perfectPCC}
+\leanok
+Any two anticommuting self-adjoint involutions on a nonzero finite carrier
+extend, with one extra qubit, to the actual Magic Square game. Explicit
+binary variable measurements and three-bit constraint measurements are
+projective, preserve the original binary measurements at cells zero and
+four, and give a value-one PCC strategy for the doubled game. Symmetric
+input matrices give symmetric grid and constraint matrices.
+\end{lemma}
+\begin{proof}
+\leanok
+Construct all nine observables by tensoring the original pair with the
+single-qubit Pauli pair. Verify the six commuting triples and their parity
+products. Their joint spectral projectors have zero effect for wrong
+parity and zero joint effect for inconsistent incidence answers. Evaluate
+these explicit projectors on the EPR state to prove perfect acceptance and
+cross-question commutation directly.
+\end{proof}
+
+\begin{lemma}[The actual three-level Pauli question sampler]
+\label{lem:intro-pauli-cl-content}
+\uses{def:cl-function}
+\lean{MIPRE.QLD.PauliCL.presentation_exactlyOn,
+  MIPRE.QLD.PauliCL.questionOfVector_presentation,
+  MIPRE.QLD.PauliCL.presentation_pauli_eval,
+  MIPRE.QLD.PauliCL.qldGame_mu_presentation,
+  MIPRE.QLD.PauliCL.binaryPresentation_exactlyOn,
+  MIPRE.QLD.PauliCL.binaryPresentation_pauli_eval,
+  MIPRE.QLD.PauliCL.qldGame_mu_binaryPresentation,
+  MIPRE.QLD.PauliCL.questionOfVector_canonical,
+  MIPRE.QLD.PauliCL.encode_decode_eval,
+  MIPRE.QLD.PauliCL.pullbackStrategy_value,
+  MIPRE.QLD.PauliCL.pullbackStrategy_pauli_A,
+  MIPRE.QLD.PauliCL.pullbackStrategy_pauli_B}
+\leanok
+All twenty-six actual Pauli question maps have explicit three-stage CL
+presentations: seed, truncated direction, and the remaining point and scale
+coordinates. The partition covers $3m+3$ field coordinates exactly. Both
+full-Pauli questions evaluate to zero. A supplied binary field basis gives
+three-stage binary presentations on $(3m+3)t$ bits with the exact Pauli-game
+question distribution. Canonical encoding is inverse on attained outputs,
+so arbitrary strategies for the binary game pull back to the actual Pauli
+game with the same state, dimensions, value, and full-Pauli measurements.
+This is mathematical sampler content; the uniform program and its runtime
+are additional obligations.
+\end{lemma}
+\begin{proof}
+\leanok
+Construct each register map explicitly and decode its full evaluation into
+the original sampled question, including canonical line representatives.
+Use the content-to-coordinate equivalence to identify the uniform laws.
+Downsize through the given binary basis and number the coordinates. Encode
+each attained question canonically and pull back measurements along this
+encoding; the pointwise sample identity proves exact value preservation.
+\end{proof}
+
+\begin{lemma}[All honest Pauli measurements and their tested edge identities]
+\label{lem:intro-honest-pauli-measurements}
+\uses{lem:intro-honest-magic-square}
+\lean{MIPRE.QLD.Honest.probe_observable,
+  MIPRE.QLD.Honest.probe_phase,
+  MIPRE.QLD.Honest.answerOp_isPVM,
+  MIPRE.QLD.Honest.answerOp_format_zero,
+  MIPRE.QLD.Honest.answerOp_pauli,
+  MIPRE.QLD.Honest.pvm_fibre_commute,
+  MIPRE.QLD.Honest.pvm_fibre_reject,
+  MIPRE.QLD.Honest.answerOp_aline_point_commute,
+  MIPRE.QLD.Honest.answerOp_dline_point_commute,
+  MIPRE.QLD.Honest.answerOp_pauli_point_commute,
+  MIPRE.QLD.Honest.answerOp_aline_point_reject,
+  MIPRE.QLD.Honest.answerOp_dline_point_reject,
+  MIPRE.QLD.Honest.answerOp_pauli_point_reject,
+  MIPRE.QLD.Honest.answerOp_point_pairB_commute,
+  MIPRE.QLD.Honest.answerOp_point_pairB_reject,
+  MIPRE.QLD.Honest.answerOp_point_var_commute,
+  MIPRE.QLD.Honest.answerOp_point_var_reject,
+  MIPRE.QLD.Honest.answerOp_con_var_commute,
+  MIPRE.QLD.Honest.answerOp_con_var_reject,
+  MIPRE.QLD.Honest.answerOp_pairB_pair_commute,
+  MIPRE.QLD.Honest.answerOp_pairB_pair_reject}
+\leanok
+The honest field-register Pauli strategy, with one extra qubit, has explicit
+PVMs for all twenty-six question types and zero effects for malformed
+answers. Its full-Pauli measurements are the required register readouts.
+The actual trace probes are exactly the corresponding Weyl observables,
+and the verifier phase is their commutation phase. For degree bound at
+least one, the sampled low-degree, Pauli-point, pair, Magic Square, and
+distinguished-variable edges have commuting effects and zero product on
+every rejected answer pair.
+\end{lemma}
+\begin{proof}
+\leanok
+Coarse-grain a common Pauli PVM for all same-basis questions. Its
+multilinear encoding restricts to an affine polynomial on an axis line and
+degree at most $m$ on any diagonal; evaluation at the sampled line parameter
+recovers the point value, even for zero direction. For zero phase use the
+commuting joint probe PVM, and for nonzero phase use the concrete Magic
+Square extension. Its distinguished cells preserve the original probes.
+Coarse-graining preserves commutation and zero rejected products.
+\end{proof}
+
+\begin{lemma}[Perfect PCC completeness of the full Pauli game]
+\label{lem:intro-honest-full-pauli}
+\uses{lem:intro-honest-pauli-measurements,def:pcc}
+\lean{MIPRE.QLD.Honest.qldGame_positive_content,
+  MIPRE.QLD.Honest.answerOp_commute,
+  MIPRE.QLD.Honest.answerOp_reject,
+  MIPRE.QLD.Honest.strategy_isPCC,
+  MIPRE.QLD.Honest.strategy_value,
+  MIPRE.QLD.Honest.exists_perfectPCC}
+\leanok
+For nonzero $m$, $m\mid|F|$, and $d\geq1$, the actual twenty-six-type
+Pauli game has a perfect PCC strategy in its doubled presentation, on local
+dimension twice the cardinality of the field register. All effects,
+commutation identities, and rejected-product identities are constructed
+for the actual question distribution and actual verifier predicate.
+\end{lemma}
+\begin{proof}
+\leanok
+Positive question mass yields one common content sample and an actual
+ordered graph edge. A finite graph classification reduces forward edges
+to the previously checked identities. Reverse edges follow by symmetry
+of the predicate and commutation; loops use orthogonality of the same PVM.
+Number the register basis and package the projective families as a
+synchronous strategy for the doubled game. Zero rejected products give
+value one under normalized trace, and the tested commutations give PCC.
+\end{proof}
+
+\begin{lemma}[Finite soundness from the valid-answer extraction interface]
+\label{lem:intro-valid-isometric-soundness}
+\uses{lem:intro-isometric-strategy,lem:intro-primitive-soundness}
+\lean{MIPRE.Introspection.isometricPOVM_map_mats_eq,
+  MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_isometric_images,
+  MIPRE.Introspection.submeasurement_extension_mass,
+  MIPRE.Introspection.submeasurement_extension_dist,
+  MIPRE.Introspection.valid_outcome_error_le,
+  MIPRE.Introspection.isometric_valid_outcome_alice_error_le,
+  MIPRE.Introspection.isometric_valid_outcome_bob_error_le,
+  MIPRE.Introspection.validSoundnessCoefficient_one_le,
+  MIPRE.Introspection.exists_validSoundness_errorProfile,
+  MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_valid_isometric_images}
+\leanok
+Suppose an actual projective parsed-game strategy has failure at most $t$,
+and supplied local isometries put its state within vector distance $t$ of
+the ideal register state. Suppose also that the image measurements have
+summed squared error at most $t$ on valid full-register Alice-X and Bob-Z
+answers. The original game has quantum value at least
+$1-C\,\mathrm{root}_{6\ell+2}(t)$, for an explicit coefficient depending
+only on depth and graph size. The estimate holds for every $t\geq0$ and
+retains all malformed answers and image-complement mass. Existence of the
+local isometries and their estimates is still an input from Pauli soundness.
+The final loss preserves the paper's two-term error profile with uniform
+constants and a positive exponent at most one.
+\end{lemma}
+\begin{proof}
+\leanok
+A positive submeasurement within squared distance $\delta$ of a PVM has
+missing mass at most $2\sqrt\delta$. Extending it inside the identity
+therefore changes the error to at most $2\delta+4\sqrt\delta$.
+Apply this to the valid raw effects inside the complete coarse images,
+including their malformed outcome. Complete the local isometry images,
+preserve the actual embedded game value, and apply finite soundness.
+For $t\leq1$ the common input is at most $6\sqrt t$; for $t>1$ use
+nonnegative quantum value. No outcome-cardinality factor appears.
+\end{proof}
+
+\begin{lemma}[Executable canonical lines and explicit binary coordinates]
+\label{lem:intro-executable-lines}
+\uses{lem:intro-pauli-cl-content}
+\lean{MIPRE.Introspection.LineProgram.lineRepresentativeProg_correct,
+  MIPRE.Introspection.LineProgram.lineRepresentativeProg_runs,
+  MIPRE.Introspection.LineProgram.lineRepresentativeProg_time_le,
+  MIPRE.QLD.PauliCL.coordNumbering_point_X,
+  MIPRE.QLD.PauliCL.coordNumbering_point_Z,
+  MIPRE.QLD.PauliCL.coordNumbering_seed,
+  MIPRE.QLD.PauliCL.coordNumbering_direction,
+  MIPRE.QLD.PauliCL.coordNumbering_scalar_X,
+  MIPRE.QLD.PauliCL.coordNumbering_scalar_Z,
+  MIPRE.QLD.PauliCL.binaryCoordEquiv_val,
+  MIPRE.QLD.PauliCL.binaryVectorEquiv_apply,
+  MIPRE.QLD.PauliCL.representative_eq_canonLin,
+  MIPRE.QLD.PauliCL.lineRepresentativeProg_canonLin}
+\leanok
+One uniform polynomial-time program computes the canonical base point of
+a line from its field-encoded point and direction, including zero direction.
+One polynomial in field width plus vector length bounds its runtime, and
+the program halts on every raw input. The Pauli CL coordinates are numbered
+explicitly in the order point-X, point-Z, seed, direction, scale-X, scale-Z,
+with each field coordinate followed by its basis bits.
+\end{lemma}
+\begin{proof}
+\leanok
+Scan for the first nonzero direction coordinate, compute the scalar with
+the checked Shoup inverse and multiplication programs, and subtract that
+multiple of the direction. Identify this expression with the existing
+canonical-line representative. Compose the polynomial runtime bounds.
+The coordinate numbering is a sum and product of explicit finite
+equivalences; its value equations identify every block and bit.
+\end{proof}
+
+\begin{lemma}[Concrete completeness for the full typed introspection game]
+\label{lem:intro-full-typed-completeness}
+\uses{lem:intro-honest-full-pauli,lem:intro-pauli-cl-content,def:pcc}
+\lean{MIPRE.Introspection.Complete.pauliOp_X,
+  MIPRE.Introspection.Complete.pauliOp_Z,
+  MIPRE.Introspection.Complete.sampleOp_commute,
+  MIPRE.Introspection.Complete.sampleOp_reject,
+  MIPRE.Introspection.Complete.strategy_isPCC,
+  MIPRE.Introspection.Complete.strategy_value,
+  MIPRE.Introspection.Complete.exists_perfectPCC,
+  MIPRE.Introspection.BinaryComplete.pauliOp_X,
+  MIPRE.Introspection.BinaryComplete.pauliOp_Z,
+  MIPRE.Introspection.BinaryComplete.strategy_isPCC,
+  MIPRE.Introspection.BinaryComplete.strategy_value,
+  MIPRE.Introspection.BinaryComplete.exists_perfectPCC}
+\leanok
+A perfect PCC source strategy gives a perfect PCC strategy for the actual
+full parsed introspection game, including all Pauli and auxiliary types.
+The field-register construction has local dimension $2|F|^{2^m}D$, where
+$D$ is the source dimension. A supplied self-dual binary basis transports
+the construction to arbitrary binary CL source functions on $2^m t$
+coordinates, with dimension $2\cdot2^{2^m t}D$. The binary source functions
+need not be linear over the larger field.
+\end{lemma}
+\begin{proof}
+\leanok
+Put the explicit Pauli PVMs, the auxiliary PVMs, the source strategy and
+one extra qubit on a common carrier. Check the X/Hide and Z/Sample anchor
+edges using the exact distinguished Pauli projectors. A positive question
+pair retains a common content sample; every graph edge then has commuting
+effects and zero product on rejected answers. Normalized trace gives
+perfect acceptance. For binary sources, conjugate the quantum register
+through the self-dual basis before composing the auxiliary measurements.
+\end{proof}
+
+\begin{lemma}[Restriction to the actual Pauli game]
+\label{lem:intro-pauli-restriction}
+\uses{lem:intro-pauli-cl-content,lem:intro-valid-isometric-soundness}
+\lean{MIPRE.Introspection.completePauliPOVM_isPVM,
+  MIPRE.Introspection.completePauliPOVM_mats_of_ne,
+  MIPRE.Introspection.TypedEstimates.check_pauli_completed,
+  MIPRE.Introspection.TypedEstimates.completed_pauli_condFail_le,
+  MIPRE.Introspection.TypedEstimates.typed_edge_mean_failure_le,
+  MIPRE.Introspection.PauliRestriction.strategy_state,
+  MIPRE.Introspection.PauliRestriction.strategy_failure_le,
+  MIPRE.Introspection.PauliRestriction.strategy_pauliAns_A,
+  MIPRE.Introspection.PauliRestriction.strategy_pauliAns_B}
+\leanok
+Any actual projective strategy for the full parsed game restricts to a
+strategy for the actual QLD game with the same state and dimensions.
+If the original failure is at most $\varepsilon$, the restricted failure
+is at most the full ordered-edge count times $\varepsilon$. Completing
+malformed outer constructors at a scalar answer leaves every valid
+full-Pauli answer operator exactly unchanged, for both parties.
+\end{lemma}
+\begin{proof}
+\leanok
+Accepted parsed Pauli answers already satisfy the actual Pauli predicate,
+including on loops. Coarse-grain malformed outer answers to a fixed
+scalar answer, preserving projectivity and accepted probability.
+Conditioning on a full-graph edge bounds its shared-seed mean failure;
+average over the Pauli edges, then pull back along canonical question
+encoding. A valid full-Pauli answer differs from the scalar completion
+answer, so its fibre contains only its original raw constructor.
+\end{proof}
+
+\begin{lemma}[An executable balanced seed selector and line stages]
+\label{lem:intro-executable-seeded-lines}
+\uses{lem:intro-executable-lines}
+\lean{MIPRE.Introspection.SeedProgram.selector_eq_bits,
+  MIPRE.Introspection.SeedProgram.card_selector_fiber,
+  MIPRE.Introspection.SeedProgram.selectorProg_correct,
+  MIPRE.Introspection.SeedProgram.selectorProg_runs,
+  MIPRE.Introspection.SeededLineProgram.axisRepresentativeProg_correct,
+  MIPRE.Introspection.SeededLineProgram.selectedDirectionProg_correct,
+  MIPRE.Introspection.SeededLineProgram.diagonalRepresentativeProg_correct,
+  MIPRE.Introspection.SeededLineProgram.axisRepresentativeProg_runs,
+  MIPRE.Introspection.SeededLineProgram.diagonalRepresentativeProg_runs,
+  MIPRE.QLD.PauliCL.ExplicitSeed.presentation_exactlyOn,
+  MIPRE.QLD.PauliCL.ExplicitSeed.binaryPresentation_exactlyOn,
+  MIPRE.QLD.PauliCL.ExplicitSeed.decode_presentation,
+  MIPRE.QLD.PauliCL.ExplicitSeed.chi_seedPermutation,
+  MIPRE.QLD.PauliCL.ExplicitSeed.qldGame_mu_selector_binary,
+  MIPRE.QLD.PauliCL.axisRepresentativeProg_legacy,
+  MIPRE.QLD.PauliCL.diagonalRepresentativeProg_legacy}
+\leanok
+For $m=2^j$ and a field of size $2^k$ with $j\leq k$, a uniform program
+computes the direction selector from canonical field bits; every index
+has exactly $2^{k-j}$ seeds. Uniform axis and diagonal programs compute
+the selected coordinate erasure, truncated direction, and canonical
+line point, and halt polynomially on all raw inputs. Replacing the old
+arbitrary field enumeration by this selector gives explicit three-level
+field and binary CL families. A proved seed permutation identifies their
+decoded question distribution exactly with the existing QLD game.
+\end{lemma}
+\begin{proof}
+\leanok
+Number field elements by their canonical bit value and select the high
+$j$ bits. Splitting the bit index into quotient and remainder gives the
+equal fibre sizes. Compose this program with coordinate masks and the
+canonical-line routine. Relabel only the seed in the uniform content
+space to compare with the old field enumeration; all decoded question
+fields then agree literally. Transport the uniform distribution through
+that permutation.
+\end{proof}
+
+\begin{lemma}[Arbitrary binary source registers and exact padding]
+\label{lem:intro-binary-source-padding}
+\uses{lem:intro-full-typed-completeness,def:cl-function}
+\lean{MIPRE.Introspection.SourcePadding.family_supported,
+  MIPRE.Introspection.SourcePadding.depthFamily_exactlyOn,
+  MIPRE.Introspection.SourcePadding.depthFamily_eval,
+  MIPRE.Introspection.SourcePadding.strategy_isPCC,
+  MIPRE.Introspection.SourcePadding.strategy_value,
+  MIPRE.Introspection.SourcePadding.average_pull,
+  MIPRE.Introspection.SourcePadding.restrictStrategy_state,
+  MIPRE.Introspection.SourcePadding.restrictStrategy_value,
+  MIPRE.Introspection.SourcePadding.quantumValue_le,
+  MIPRE.Introspection.SourcePadding.quantumValue_depthFamily_le,
+  MIPRE.Introspection.BinaryComplete.paddingEmbedding_number,
+  MIPRE.Introspection.BinaryComplete.card_seed,
+  MIPRE.Introspection.BinaryComplete.exists_padded_perfectPCC,
+  MIPRE.Introspection.BinaryComplete.exists_depthPadded_perfectPCC}
+\leanok
+For $s\leq2^m t$, explicitly embed an arbitrary $s$-bit source register
+into the Pauli qubit register. Padding preserves perfect PCC play and
+source dimension. Every strategy for the padded source game restricts
+to the original source game with exactly the same value and state.
+For positive depth and exact original partitions, unused coordinates
+can be consumed by a zero component of the first factor without changing
+depth or evaluation. The resulting full typed game has a perfect PCC
+strategy of dimension $2^{2^m t+1}D$.
+\end{lemma}
+\begin{proof}
+\leanok
+Number the Boolean cube and basis-bit coordinates explicitly. Pull source
+questions along the embedding and retain the original measurement rule.
+Positive padded question mass has a common source seed, proving PCC and
+perfect acceptance. Split a uniform padded seed into its original and
+unused coordinates to prove exact value preservation for arbitrary
+strategies. A direct sum with a zero map on the complement consumes every
+unused coordinate while preserving the CL evaluation. Apply the full
+binary completeness construction.
+\end{proof}
+
+\begin{remark}[Padding and the executable answer format]
+\label{rem:intro-padded-dual-format}
+\uses{lem:intro-binary-source-padding}
+The exact full-register padding preserves evaluation but changes factor
+and dual data. Its honest Read and Hide dual labels can carry unused
+coordinates. The executable checks must implement this variant or prove
+a format/coarsening bridge to checks requiring those labels to lie in
+the original source subspace. The finite-game completeness theorem does
+not assert that existing strict-subspace parser guards already do so.
+\end{remark}
+
 \begin{remark}[The coarse-operator repair and its remaining Lean assembly]
 \label{rem:intro-commutation-gap}
 \uses{lem:intro-induction,lem:conditional-measurement,lem:intro-coarse-product-stage}
@@ -2910,13 +3475,18 @@ strategy replacement are now checked. Answer refinement and updating,
 next-prefix residual reassembly, the actual three-error budget, and exact
 preservation of the unchanged measurements' errors are also proved.
 Initialization, decoded valid-answer support, the raw selected-measurement
-identity, an explicit small-error threshold, and finite iteration on Alice
-are now constructed. Terminal conditional readouts retain the malformed
-effect explicitly. Completing the Lean soundness argument still requires
-the corresponding Bob construction and their composition, the QLD-extraction
-adapter, and the terminal extraction with the full malformed-answer
-accounting and the paper's power error profile. The one-party iteration
-does not by itself prove Lemma~\ref{lem:intro-induction}.
+identity, an explicit small-error threshold, and finite iteration on both
+players are now constructed and composed. Terminal extraction completes
+malformed outcomes without additional loss. The complete finite-game
+soundness theorem derives hiding and the second Z estimate from just the
+primitive Alice-X/Bob-Z guarantees; it handles approximate extracted states,
+all error sizes, and the paper's power profile. Remaining assembly is the
+actual QLD extraction theorem, the uniform verifier construction and
+budgets, and the final connection to the verifier contract. The actual
+isometry, image-complement, and valid-answer adapters are now checked,
+as is the full honest typed strategy over field and binary source registers.
+These finite-game
+results do not yet inhabit the full introspection compiler contract.
 \end{remark}
 
 \subsubsection{The theorem}

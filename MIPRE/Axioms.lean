@@ -104,6 +104,15 @@ import MIPRE.Foundations.Introspection.IntrospectCanonicalization
 import MIPRE.Foundations.Introspection.StrategyReplacementErrors
 import MIPRE.Foundations.Introspection.AdaptiveInductionIteration
 import MIPRE.Foundations.Introspection.AdaptiveTerminalInvariant
+import MIPRE.Foundations.Introspection.PrimitiveSoundness
+import MIPRE.Foundations.Introspection.ExtractedStateSoundness
+import MIPRE.Foundations.Introspection.HonestMagicSquareGame
+import MIPRE.Foundations.Introspection.IsometricCompletionError
+import MIPRE.Foundations.Introspection.ValidPauliSoundness
+import MIPRE.Foundations.Introspection.LineRepresentativeProg
+import MIPRE.Foundations.Introspection.PauliRestriction
+import MIPRE.Foundations.Introspection.SeededLineProg
+import MIPRE.Foundations.Introspection.SourcePaddingValue
 import MIPRE.Foundations.SAT.Arithmetization
 import MIPRE.Foundations.SAT.FiniteCircuitArithmetization
 import MIPRE.Foundations.SAT.CircuitFieldCorrect
@@ -1930,6 +1939,125 @@ historical admission remains unchanged; these guards describe the Lean proof.
 #guard_sorry_free MIPRE.Introspection.terminalAuxPOVM_isPVM,
   MIPRE.Introspection.IntroPrefixInvariant.terminal_some,
   MIPRE.Introspection.IntroPrefixInvariant.terminal_none
+
+#guard_sorry_free MIPRE.Introspection.swapVec_registerState,
+  MIPRE.Introspection.TypedPresentation.mu_swap,
+  MIPRE.Introspection.TypedEstimates.parsedGame_value_swap,
+  MIPRE.Introspection.introBobIterationState_unit,
+  MIPRE.Introspection.TypedEstimates.introAliceZError_of_iteration_other,
+  MIPRE.Introspection.TypedEstimates.hidingBobError_introIterationState,
+  MIPRE.Introspection.TypedEstimates.exists_intro_bob_iteration
+
+#guard_sorry_free MIPRE.Introspection.adaptiveFailureBudget_add,
+  MIPRE.Introspection.introTwoSidedState_unit,
+  MIPRE.Introspection.TypedEstimates.exists_intro_two_sided_iteration
+
+#guard_sorry_free MIPRE.Introspection.completeOptionPOVM_isPVM,
+  MIPRE.Introspection.option_valid_acceptance_le_complete,
+  MIPRE.Introspection.readoutAcceptance_le_completedValue,
+  MIPRE.Introspection.IntroPrefixInvariant.terminal_parsed_pair,
+  MIPRE.Introspection.TypedExtraction.exists_strategy_of_terminal_invariants
+
+#guard_sorry_free MIPRE.Introspection.iteratedRoot_scale_le,
+  MIPRE.Introspection.adaptiveFailureBudget_le_power,
+  MIPRE.Introspection.adaptiveSoundness_power_cases,
+  MIPRE.Introspection.exists_adaptiveSoundness_errorProfile
+
+#guard_sorry_free MIPRE.Introspection.TypedEstimates.introAliceZError_le_of_bob,
+  MIPRE.Introspection.primitiveBudgetCoefficient_bounds,
+  MIPRE.Introspection.primitiveSoundnessCoefficient_one_le,
+  MIPRE.Introspection.primitiveSoundness_power_bounds,
+  MIPRE.Introspection.exists_primitiveSoundness_errorProfile,
+  MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_primitive_pauli,
+  MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_primitive_profile
+
+#print axioms MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_primitive_pauli
+#print axioms MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_primitive_profile
+
+#guard_sorry_free MIPRE.Introspection.sum_pvm_snorm_sq,
+  MIPRE.Introspection.sum_pvm_difference_snorm_sq_le,
+  MIPRE.Introspection.sum_stateSqNorm_state_transfer_le,
+  MIPRE.Introspection.sum_bob_snorm_state_transfer_le,
+  MIPRE.Introspection.extractedSoundnessCoefficient_one_le,
+  MIPRE.Introspection.extractedSoundness_power_bound,
+  MIPRE.Introspection.exists_extractedSoundness_errorProfile,
+  MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_extracted_state
+
+#guard_sorry_free MIPRE.Introspection.HonestMagicSquare.grid_isObservable,
+  MIPRE.Introspection.HonestMagicSquare.cells_commute,
+  MIPRE.Introspection.HonestMagicSquare.row_product,
+  MIPRE.Introspection.HonestMagicSquare.variableOp_isPVM,
+  MIPRE.Introspection.HonestMagicSquare.constraintOp_isPVM,
+  MIPRE.Introspection.HonestMagicSquare.variable_constraint_commute,
+  MIPRE.Introspection.HonestMagicSquare.constraint_reject_zero,
+  MIPRE.Introspection.HonestMagicSquare.variableOp_embeds_first,
+  MIPRE.Introspection.HonestMagicSquare.variableOp_embeds_second,
+  MIPRE.Introspection.HonestMagicSquare.grid_transpose,
+  MIPRE.Introspection.HonestMagicSquare.constraintOp_transpose,
+  MIPRE.Introspection.HonestMagicSquare.questionOp_isPVM,
+  MIPRE.Introspection.HonestMagicSquare.questionOp_reject,
+  MIPRE.Introspection.HonestMagicSquare.strategy_isPCC,
+  MIPRE.Introspection.HonestMagicSquare.strategy_value,
+  MIPRE.Introspection.HonestMagicSquare.exists_perfectPCC
+
+#print axioms MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_extracted_state
+#print axioms MIPRE.Introspection.HonestMagicSquare.exists_perfectPCC
+
+#guard_sorry_free MIPRE.Introspection.isometricPOVM_isPVM,
+  MIPRE.Introspection.isometricEffect_intertwine,
+  MIPRE.Introspection.isometricState_unit,
+  MIPRE.Introspection.povmValue_isometricState,
+  MIPRE.Introspection.isometricState_map_alice_deviation,
+  MIPRE.Introspection.isometricState_map_bob_deviation,
+  MIPRE.Introspection.projector_mass_le_state_distance,
+  MIPRE.Introspection.isometricComplement_alice_mass,
+  MIPRE.Introspection.isometricComplement_bob_mass,
+  MIPRE.Introspection.isometricEffect_alice_error_le,
+  MIPRE.Introspection.isometricEffect_bob_error_le
+
+#guard_sorry_free MIPRE.Introspection.isometricPOVM_map_mats_eq,
+  MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_isometric_images,
+  MIPRE.Introspection.submeasurement_extension_mass,
+  MIPRE.Introspection.submeasurement_extension_dist,
+  MIPRE.Introspection.valid_outcome_error_le,
+  MIPRE.Introspection.isometric_valid_outcome_alice_error_le,
+  MIPRE.Introspection.isometric_valid_outcome_bob_error_le,
+  MIPRE.Introspection.validSoundnessCoefficient_one_le,
+  MIPRE.Introspection.exists_validSoundness_errorProfile,
+  MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_valid_isometric_images
+
+#print axioms MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_valid_isometric_images
+
+#guard_sorry_free MIPRE.Introspection.LineProgram.lineRepresentativeProg_correct,
+  MIPRE.Introspection.LineProgram.lineRepresentativeProg_runs,
+  MIPRE.Introspection.LineProgram.lineRepresentativeProg_time_le
+
+#guard_sorry_free MIPRE.Introspection.completePauliPOVM_isPVM,
+  MIPRE.Introspection.completePauliPOVM_mats_of_ne,
+  MIPRE.Introspection.TypedEstimates.check_pauli_completed,
+  MIPRE.Introspection.TypedEstimates.completed_pauli_condFail_le,
+  MIPRE.Introspection.TypedEstimates.typed_edge_mean_failure_le
+
+#guard_sorry_free MIPRE.Introspection.SeedProgram.selector_eq_bits,
+  MIPRE.Introspection.SeedProgram.card_selector_fiber,
+  MIPRE.Introspection.SeedProgram.selectorProg_correct,
+  MIPRE.Introspection.SeedProgram.selectorProg_runs,
+  MIPRE.Introspection.SeededLineProgram.axisRepresentativeProg_correct,
+  MIPRE.Introspection.SeededLineProgram.selectedDirectionProg_correct,
+  MIPRE.Introspection.SeededLineProgram.diagonalRepresentativeProg_correct,
+  MIPRE.Introspection.SeededLineProgram.axisRepresentativeProg_runs,
+  MIPRE.Introspection.SeededLineProgram.diagonalRepresentativeProg_runs
+
+#guard_sorry_free MIPRE.Introspection.SourcePadding.family_supported,
+  MIPRE.Introspection.SourcePadding.depthFamily_exactlyOn,
+  MIPRE.Introspection.SourcePadding.depthFamily_eval,
+  MIPRE.Introspection.SourcePadding.strategy_isPCC,
+  MIPRE.Introspection.SourcePadding.strategy_value,
+  MIPRE.Introspection.SourcePadding.average_pull,
+  MIPRE.Introspection.SourcePadding.restrictStrategy_state,
+  MIPRE.Introspection.SourcePadding.restrictStrategy_value,
+  MIPRE.Introspection.SourcePadding.quantumValue_le,
+  MIPRE.Introspection.SourcePadding.quantumValue_depthFamily_le
 
 /-! ## Blocks of an index type
 
