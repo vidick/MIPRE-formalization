@@ -2,22 +2,23 @@
 
 Written 2026-09-18 while working issue #105 (Chunk 2 of `planning/next-chunks.md`).
 
-`lem:self-dual-basis` is the whole of what this blueprint assumes beyond Mathlib. The
-assumption is narrower than the lemma: the adversarial-verification campaign left exactly
-one node admitted --- `1.1.6.1.1`, Shoup's deterministic irreducible-polynomial construction
-at `p = 2` --- and proved the rest over sixteen sub-nodes. This file records what of that
-rest is formalized, and the route for what is not.
+The companion adversarial-verification campaign left node `1.1.6.1.1`, Shoup's
+deterministic irreducible-polynomial construction at `p = 2`, admitted and proved
+the rest of `lem:self-dual-basis` over sixteen sub-nodes. The separate
+[Shoup campaign](shoup-axiom-removal.md) now proves that construction in Lean.
+The companion ledger history remains unchanged; its admitted status no longer
+corresponds to a Lean axiom.
 
 ## Status
 
 | piece | where | state |
 |---|---|---|
-| the Shoup axiom, with its contract | `MIPRE/Foundations/LowDegree/Shoup.lean` | axiom, pinned by `#print axioms` |
+| the specified Shoup construction and its contract | `MIPRE/Foundations/LowDegree/Shoup.lean` | proved, with an exact standard-axiom guard |
 | `IsSelfDualBasis`, `IsNormalBasis` | `MIPRE/Foundations/LowDegree/SelfDual.lean` | done |
 | the two `lem:downsize-field` identities | same | done (`coord_eq_trace`, `trace_mul_eq_dot`) |
 | a field of size `2^k` with a bit representation | `MIPRE/Foundations/SAT/AdmissibleField.lean` | done (`binFieldGalois`) |
-| canonical polynomial-basis fields, addition and multiplication | `LowDegree/BinaryPolynomial.lean`, `SAT/QuotientField.lean` | done, uniformly in `poly(k)`, modulo Shoup |
-| nonzero inversion, Frobenius iteration and trace | `LowDegree/Binary{Power,Inverse,Trace}.lean`, `SAT/FieldTrace.lean` | done, uniformly in `poly(k)`, modulo Shoup |
+| canonical polynomial-basis fields, addition and multiplication | `LowDegree/BinaryPolynomial.lean`, `SAT/QuotientField.lean` | done, uniformly in `poly(k)`, using the proved constructor |
+| nonzero inversion, Frobenius iteration and trace | `LowDegree/Binary{Power,Inverse,Trace}.lean`, `SAT/FieldTrace.lean` | done, uniformly in `poly(k)`, using the proved constructor |
 | binary matrix operations, bases, consistent-system solves, inversion and kernel generators | `LowDegree/Binary{Linear,Elimination,Echelon,BasisProg,Basis,Solve,MatrixSolve,MatrixInverse,Kernel}.lean` | done, uniformly polynomial-time |
 | canonical linear coordinates, Frobenius matrix and squarefree minimal polynomial | `SAT/FieldCoordinates.lean`, `SAT/FrobeniusMatrix.lean` | done, with a polynomial-time matrix program |
 | trace Gram matrices, their inverses, and table transport in a supplied basis | `SAT/TraceGram.lean`, `SAT/BasisTransport.lean` | done, uniformly polynomial-time |
@@ -26,7 +27,7 @@ rest is formalized, and the route for what is not.
 | effective self-dualization of any supplied normal basis | `LowDegree/BinaryCirculant{,Prog}.lean`, `SAT/NormalGram.lean`, `SAT/EffectiveSelfDual.lean` | done, with exact output and polynomial cost |
 | a self-dual normal basis exists, `k` odd | `MIPRE/Foundations/LowDegree/NormalBasis.lean` | done (`exists_selfDualNormalBasis_two`) |
 | primitive fixed-space projections and the normal element | `LowDegree/BinaryComponents{,Prog}.lean`, `SAT/NormalElement{,Prog}.lean` | done, deterministic and uniformly polynomial-time |
-| the complete `poly(k)` algorithm, including multiplication tables | `SAT/EffectiveNormalBasis.lean` | **done**, modulo Shoup |
+| the complete `poly(k)` algorithm, including multiplication tables | `SAT/EffectiveNormalBasis.lean` | **done**, using the proved constructor |
 
 The blueprint's `lem:self-dual-basis` now carries statement and proof `\leanok`.
 `effective_selfDualNormalBasis` identifies the exact encoded basis and multiplication

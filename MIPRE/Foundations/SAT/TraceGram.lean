@@ -17,24 +17,24 @@ local instance : Fact (Nat.Prime 2) := ⟨by decide⟩
 
 /-- The actual coefficient-vector representation of the unit. -/
 theorem shoupBinField_oneBits (k : ℕ) (hk : 1 ≤ k) (v : BitStr) (hv : v.length = k) :
-    Circuit.oneBits v = (shoupBinField k hk).toBits 1 := by
+    BinaryPolynomial.oneBits v = (shoupBinField k hk).toBits 1 := by
   apply (shoupRoot_eval_eq_iff k hk _ _ (by simpa using hv)
     ((shoupBinField k hk).length_toBits _)).mp
-  rw [shoupRoot_eval_toBits, Circuit.evalBits_oneBits]
+  rw [shoupRoot_eval_toBits, BinaryPolynomial.evalBits_oneBits]
   intro he
   simp only [he, List.length_nil] at hv
   omega
 
 /-- Output the trace as one base-field bit, rather than an extension-field vector. -/
 def shoupTraceBitProg : PolyTimeFun (Unary × BitStr) Bool :=
-  ArrayProg.eqBits.comp (shoupTraceProg.pair (Circuit.oneBitsProg.comp PolyTimeFun.snd))
+  ArrayProg.eqBits.comp (shoupTraceProg.pair (BinaryPolynomial.oneBitsProg.comp PolyTimeFun.snd))
 
 theorem shoupTraceBitProg_correct (k : ℕ) (hk : 1 ≤ k)
     (a : (shoupBinField k hk).carrier) :
     shoupTraceBitProg (unary k, (shoupBinField k hk).toBits a) =
       bit (Algebra.trace (ZMod 2) (shoupBinField k hk).carrier a) := by
   change decide (shoupTraceProg (unary k, (shoupBinField k hk).toBits a) =
-    Circuit.oneBits ((shoupBinField k hk).toBits a)) = _
+    BinaryPolynomial.oneBits ((shoupBinField k hk).toBits a)) = _
   rw [shoupTraceProg_correct, shoupBinField_oneBits k hk _ ((shoupBinField k hk).length_toBits a)]
   have hi : Function.Injective (shoupBinField k hk).toBits := by
     intro x y h

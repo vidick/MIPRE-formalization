@@ -3,7 +3,7 @@ Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import MIPRE.Foundations.SAT.Pcp
-import MIPRE.Foundations.LowDegree.BinaryPolynomial
+import MIPRE.Foundations.LowDegree.ShoupCoefficients
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.Algebra.CharP.Algebra
 import Mathlib.RingTheory.AdjoinRoot

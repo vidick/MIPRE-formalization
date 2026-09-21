@@ -2,6 +2,7 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
+import MIPRE.Foundations.LowDegree.ShoupCoefficients
 import MIPRE.TM.CookLevin.PcpPrepare
 import MIPRE.TM.CookLevin.PcpViewSize
 import MIPRE.Foundations.SAT.PcpFieldTests

@@ -10,6 +10,10 @@ It supersedes nothing in `planning/formalization-plan.md`, which remains the acc
 the pipeline is the shape it is; this is the shorter question of what to do next and in what
 order.
 
+**2026-09-20 update:** the separate [Shoup campaign](shoup-axiom-removal.md)
+proves the irreducible-polynomial construction. References to a Shoup axiom in
+the dated baseline and original scope below record the previous state.
+
 ## Status, measured 2026-09-18 at `73a3d5f`
 
 | chapter | statements `\leanok` | proofs `\leanok` |
@@ -81,7 +85,8 @@ recorded and untouched.
 
 **Implemented 2026-09-20:** `MIPRE/Foundations/SAT/EffectiveNormalBasis.lean`
 now supplies the complete unary-degree algorithm, its exact basis and table output,
-and polynomial runtime, modulo the existing Shoup axiom. Primitive fixed-space
+and polynomial runtime. Its former Shoup assumption is now proved by the separate
+axiom-removal campaign. Primitive fixed-space
 projections replace explicit polynomial factorization. The final 26 axiom guards
 and both blueprint checks passed. The same campaign also constructs the actual
 `MIPRE.TM.CookLevin.Pad.classicalPcpDecider`; see

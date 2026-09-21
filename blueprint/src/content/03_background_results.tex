@@ -3360,11 +3360,12 @@ What was discharged, and how, is the useful part:
   invocation, and the completeness leg never used it at all
   (Lemma~\ref{lem:mermin-peres}).
 \item \textbf{Efficient self-dual normal bases} (node $1.1.6.1$,
-  Lemma~\ref{lem:self-dual-basis}) was narrowed rather than removed. Normal-basis
-  construction and self-dualization are now proved, over sixteen sub-nodes; what survives as
-  an admission is node $1.1.6.1.1$, a single deterministic construction of irreducible
-  polynomials over $\F_2$ (Shoup's theorem at $p = 2$), recorded with an explicit contract
-  that disclaims the variants it does \emph{not} assert.
+  Lemma~\ref{lem:self-dual-basis}) was narrowed to one imported construction in the
+  companion ledger. Normal-basis construction and self-dualization were proved over
+  sixteen sub-nodes; node $1.1.6.1.1$ retained the deterministic construction of
+  irreducible binary polynomials. That ledger history is unchanged. The Lean project
+  now also proves this construction, with the original uniform polynomial-time contract
+  (Lemma~\ref{lem:binary-uniform-irreducible}).
 \end{enumerate}
 
 Thus the paper ledger's remaining admitted input to this route is the classical
@@ -3657,7 +3658,7 @@ characteristic-$2$ existence results, following the discussion
 in~\cite[Section 3]{JNVWY20}; the campaign has since \emph{proved} both steps --- ledger node
 $1.1.6.1.6$ discharges the normal-basis construction contract ``formerly attributed to
 Lenstra'' and node $1.1.6.1.8$ the self-dualization contract ``formerly attributed to Wang''
---- so only Shoup remains imported.
+--- and the Lean development now proves the remaining Shoup construction as well.
 
 \paragraph{Comments.} Needed so that verifiers can do field arithmetic over
 $\F_{2^k}$ using only $\F_2$-data (the ``downsize'' maps), uniformly and
@@ -3667,34 +3668,24 @@ quantum. Two consumers now name it: the admissible field with a bit representati
 Theorem~\ref{thm:pcp-decider} takes as a parameter (\texttt{MIPRE.SAT.BinField}), and the
 downsized samplers of Lemma~\ref{lem:cl-downsize} once they move past field size $2$.
 
-This lemma is the whole of what this blueprint assumes beyond Mathlib, and it is worth being
-precise about which part. The companion campaign has proved the normal-basis construction and
-the self-dualization --- circulant Gram self-dualization, the cyclic Frobenius vector, table
-transport and the trace identities, over sixteen sub-nodes. One ingredient remains admitted,
-node $1.1.6.1.1$: a fixed uniform deterministic algorithm that on input $k \geq 1$ outputs a
-monic irreducible polynomial of degree $k$ over $\F_2$ in time $\poly(k)$, which is Shoup's
-theorem specialized to $p = 2$. The ledger records it with an explicit contract naming what is
-\emph{not} claimed --- no $\poly(\log k)$ output time, no variable-characteristic
-$\poly(\log p, k)$ form, no randomization, no advice tables, no enumeration of all $2^k$ field
-elements --- which is the shape a Lean \texttt{axiom} for it should take.
+The companion ledger retains its historical admission of Shoup's construction at
+node $1.1.6.1.1$. The Lean declaration
+\texttt{MIPRE.LowDegree.exists\_shoup\_irreducible} is now a theorem, proved by the
+explicit program of Lemma~\ref{lem:binary-uniform-irreducible}. Its input is the
+requested degree in unary, so the ambient bound is polynomial in the degree and
+includes printing all coefficient bits. The proof covers every positive degree
+in characteristic two, including powers of two, with fixed behavior at degree zero.
 
-That axiom now exists, in that shape: \texttt{MIPRE.LowDegree.exists\_shoup\_irreducible}
-(\texttt{MIPRE/Foundations/LowDegree/Shoup.lean}), whose module docstring carries the contract
-including the five disclaimers, and which is recorded in \texttt{MIPRE/Axioms.lean}. Its input
-is $k$ in \emph{unary}, which is what makes \texttt{PolyTimeFun}'s bound the $\poly(k)$ the
-contract claims: had the input been $k$ in binary the same structure would have asserted the
-$\poly(\log k)$ bound the contract disclaims. It is an \texttt{axiom} rather than a tracked
-\texttt{sorry} because it is an imported construction this project does not intend to
-formalize, and because an axiom appears by name in \texttt{\#print axioms} of everything that
-rests on it, making the dependency machine-checkable rather than a matter of reading prose.
-
-The complete effective construction is now formalized in
-\texttt{SAT/EffectiveNormalBasis.lean}. It composes the verified normal-element,
-inverse-Gram self-dualization and multiplication-table programs. Fixed-space
-separation is performed directly in the cyclic algebra, as detailed in
-Lemma~\ref{lem:effective-normal-element}; this avoids materializing polynomial
-factors while implementing the same primitive-projection argument. The existing
-Shoup axiom remains the only nonstandard assumption.
+The complete effective self-dual normal-basis construction in
+\texttt{SAT/EffectiveNormalBasis.lean} composes this proved field constructor with
+the verified normal-element, inverse-Gram self-dualization, and multiplication-table
+programs. Fixed-space separation is performed directly in the cyclic algebra,
+as detailed in Lemma~\ref{lem:effective-normal-element}; this avoids materializing
+polynomial factors while implementing the primitive-projection argument.
+Exact axiom guards in \texttt{MIPRE/Axioms.lean} check the field constructor, the
+classical PCP decider, and this effective basis theorem against Lean's standard
+axioms alone. This local proof does not rewrite the companion ledger's events or
+discharge unrelated unfinished pipeline theorems.
 
 \begin{lemma}[Self-dualization in the group algebra]
 \label{lem:group-algebra-selfdualization}
@@ -3823,6 +3814,396 @@ by $G$ itself rather than by $\mathbb{Z}/k$, which is what makes $\mathrm{ofAlg}
 Mathlib's \texttt{normalBasis.repr} on the nose; the \texttt{CommGroup} instance comes from
 cyclicity, supplied locally.
 
+\begin{lemma}[Effective normalization of binary polynomials]
+\label{lem:binary-polynomial-normalization}
+\lean{MIPRE.LowDegree.BinaryPolynomial.normalizeBitsProg,
+  MIPRE.LowDegree.BinaryPolynomial.normalizeBitsProg_apply,
+  MIPRE.LowDegree.BinaryPolynomial.length_normalizeBits_le,
+  MIPRE.LowDegree.BinaryPolynomial.evalBits_normalizeBits,
+  MIPRE.LowDegree.BinaryPolynomial.polyOfBits_normalizeBits,
+  MIPRE.LowDegree.BinaryPolynomial.normalizeBits_getLast}
+\leanok
+One fixed deterministic ambient program removes the trailing zero coefficients
+from any little-endian binary coefficient list in polynomial time. Its output
+is no longer than the input, is empty or ends in one, and represents the same
+polynomial over $\F_2$. More generally it preserves Horner evaluation at any
+element of any commutative ring. This program requires no irreducible-polynomial
+construction.
+\end{lemma}
+\begin{proof}
+\leanok
+Fold the coefficient list from its highest coefficient downwards. Ignore a zero
+while the accumulator is empty; otherwise prepend the current coefficient.
+Induction proves preservation of Horner evaluation and the leading-coefficient
+property. Each step adds at most one coefficient, so every intermediate encoded
+accumulator has size bounded by the input and the generic bounded-fold program
+gives the polynomial runtime bound.
+\end{proof}
+\paragraph{Scope.} This generic normalization result is used by the complete
+irreducible-polynomial constructor in Lemma~\ref{lem:binary-uniform-irreducible}.
+
+\begin{lemma}[Effective monic binary division]
+\label{lem:binary-monic-division}
+\uses{lem:binary-polynomial-normalization}
+\lean{MIPRE.LowDegree.BinaryPolynomial.divModBitsProg,
+  MIPRE.LowDegree.BinaryPolynomial.divModBitsProg_apply,
+  MIPRE.LowDegree.BinaryPolynomial.divModBits_width,
+  MIPRE.LowDegree.BinaryPolynomial.polyOfBits_divModBits,
+  MIPRE.LowDegree.BinaryPolynomial.degree_divModBits_remainder_lt}
+\leanok
+Given a binary coefficient list $a$ and the $d$ lower coefficients $p$ of a
+monic polynomial $f$, one deterministic ambient polynomial-time program returns
+coefficient lists $q,r$ satisfying $fq+r=a$ and $\deg r<d$. Their lengths are
+at most the length of $a$ and $d$, respectively. The case $d=0$ divides by one
+and returns zero remainder.
+\end{lemma}
+\begin{proof}
+\leanok
+Process the dividend by Horner's rule, keeping a remainder of width $d$ and
+recording its discarded high bit as the next quotient coefficient. Each shift
+subtracts the indicated multiple of the monic divisor; induction gives the
+reconstruction identity. The remainder width bounds its degree. Normalize both
+outputs. The quotient grows by one bit per iteration and the remainder cannot
+grow, even from malformed initial states, so the ambient bounded-fold theorem
+gives the global polynomial bound.
+\end{proof}
+
+\begin{lemma}[Canonical coordinates in monic binary quotients]
+\label{lem:binary-monic-quotient}
+\lean{MIPRE.LowDegree.BinaryQuotient.length_toBits,
+  MIPRE.LowDegree.BinaryQuotient.ofBits_toBits,
+  MIPRE.LowDegree.BinaryQuotient.toBits_ofBits,
+  MIPRE.LowDegree.BinaryQuotient.evalBits_eq_iff,
+  MIPRE.LowDegree.BinaryQuotient.ofBits_xor,
+  MIPRE.LowDegree.BinaryQuotient.ofBits_mulReduce}
+\leanok
+For every monic $f\in\F_2[X]$ of degree $d$, the quotient $\F_2[X]/(f)$ has
+canonical $d$-bit coordinates in its power basis. Encoding and decoding are
+inverse on correctly sized lists, and equality of their root evaluations is
+equivalent to equality of the lists. The uniform XOR and reduced-multiplication
+programs implement quotient addition and multiplication. Irreducibility and
+squarefreeness are not required.
+\end{lemma}
+\begin{proof}
+\leanok
+The monic power basis identifies each quotient element with its $d$ binary
+coefficients. The basis representation identities prove the two inverse laws.
+Evaluation at the canonical root equals decoding on fixed-width vectors.
+The root satisfies the monic reduction equation, so the generic XOR and Horner
+multiplication identities give the stated arithmetic. The constant-one modulus
+has a trivial quotient and empty coordinate vectors.
+\end{proof}
+\paragraph{Scope.} The coordinate maps describe the semantics of the explicit
+coefficient programs. They do not enumerate a quotient or supply an abstract
+field conversion as an executable primitive.
+
+\begin{lemma}[Canonical binary Euclidean algorithms]
+\label{lem:binary-euclidean-algorithms}
+\uses{lem:binary-monic-division}
+\lean{MIPRE.LowDegree.BinaryPolynomial.normalizeBits_eq_nil_iff,
+  MIPRE.LowDegree.BinaryPolynomial.length_normalizeBits,
+  MIPRE.LowDegree.BinaryPolynomial.divModBits_eq_div_modByMonic,
+  MIPRE.LowDegree.BinaryPolynomial.gcdBitsProg,
+  MIPRE.LowDegree.BinaryPolynomial.polyOfBits_gcdBits,
+  MIPRE.LowDegree.BinaryPolynomial.gcdBits_width,
+  MIPRE.LowDegree.BinaryPolynomial.quotientBitsProg,
+  MIPRE.LowDegree.BinaryPolynomial.polyOfBits_quotientBits,
+  MIPRE.LowDegree.BinaryPolynomial.polyOfBits_quotientBits_mul,
+  MIPRE.LowDegree.BinaryPolynomial.quotientBits_width}
+\leanok
+Normalization of a binary coefficient list is empty exactly when its polynomial
+is zero; otherwise its length is the degree plus one. List-based monic division
+agrees with polynomial division. Uniform deterministic polynomial-time programs
+compute the normalized polynomial gcd and polynomial quotient on all binary
+coefficient lists. The quotient by zero is zero. For a nonzero divisor which
+divides the dividend, the quotient reconstructs the dividend by multiplication.
+The gcd width is at most the larger input width, and quotient width is at most
+the dividend width.
+\end{lemma}
+\begin{proof}
+\leanok
+A nonempty normalized list ends in one, determining the degree and monicity.
+The reconstruction identity and strict remainder-degree bound uniquely identify
+monic quotient and remainder. Euclidean steps preserve the gcd and strictly
+decrease the normalized remainder length until it is zero, so the original
+divisor width bounds the iteration count. Intermediate widths never exceed the
+initial maximum, including malformed states of the ambient loop. Quotient
+computation normalizes the divisor and invokes monic division, with an explicit
+zero branch.
+\end{proof}
+
+\begin{lemma}[Effective Frobenius fixed spaces in binary quotients]
+\label{lem:binary-quotient-fixed-space}
+\uses{lem:binary-monic-quotient}
+\lean{MIPRE.LowDegree.BinaryQuotient.frobeniusMatrixProg,
+  MIPRE.LowDegree.BinaryQuotient.frobeniusMatrixProg_correct,
+  MIPRE.LowDegree.BinaryQuotient.fixedGeneratorsProg,
+  MIPRE.LowDegree.BinaryQuotient.fixedGeneratorsProg_correct,
+  MIPRE.LowDegree.BinaryQuotient.fixedGenerator_idempotent,
+  MIPRE.LowDegree.BinaryQuotient.fixedGenerator_spans,
+  MIPRE.LowDegree.BinaryQuotient.square_bijective}
+\leanok
+For a monic binary modulus of degree $d$, uniform deterministic polynomial-time
+programs compute the matrix of squaring and a family of $d$ vectors spanning its
+fixed space. Every decoded generator is idempotent, and every idempotent lies
+in their binary span. If the modulus is squarefree, squaring on the quotient is
+bijective.
+\end{lemma}
+\begin{proof}
+\leanok
+Square each power-basis vector using the supplied modulus and transpose the
+resulting columns. The fixed-space matrix is this matrix plus the identity;
+the verified binary kernel program prints a spanning family. The power-basis
+coordinate equivalence transports the kernel and its span back to quotient
+elements. For a squarefree modulus, equality of squares makes the square of
+the difference zero. A polynomial lift of that difference has its square
+divisible by the modulus; squarefreeness implies divisibility of the lift
+itself. Squaring is therefore injective, hence bijective on the finite quotient.
+\end{proof}
+\paragraph{Scope.} Computing a spanning family does not enumerate its binary
+linear combinations. The next lemma extracts and reconstructs the factors.
+
+\begin{lemma}[Deterministic squarefree binary factorization]
+\label{lem:binary-squarefree-factorization}
+\uses{lem:binary-quotient-fixed-space,lem:binary-euclidean-algorithms}
+\lean{MIPRE.LowDegree.BinaryQuotient.factorBitsProg,
+  MIPRE.LowDegree.BinaryQuotient.factorBitsProg_factors,
+  MIPRE.LowDegree.BinaryQuotient.factorBitsProg_prod}
+\leanok
+A fixed deterministic polynomial-time program factors every nonconstant monic
+squarefree polynomial over $\F_2$, given its lower coefficient bits. Every
+printed factor is monic and irreducible, and their product is the input.
+\end{lemma}
+\begin{proof}
+\leanok
+Start with the identity idempotent and split each retained component by each
+computed Frobenius-fixed generator, discarding zero components. Orthogonality
+bounds the number of nonzero components by the quotient dimension. A component
+that no generator splits is primitive, since the generators span all
+idempotents. For a primitive component represented by $E$, compute
+$\mathrm{gcd}(f,E-1)$ with the verified Euclidean program. Divisibility by this gcd is
+equivalent to annihilation by $E$ in the quotient. Bijectivity of squaring and
+primitivity make the corresponding quotient a field, proving irreducibility.
+Orthogonal components yield coprime factors, while their sum is the identity;
+the resulting factors therefore reconstruct $f$. The executable splitting loop
+caps intermediate lists at the input dimension, providing a polynomial bound
+on every raw input as well as on inputs satisfying the squarefree contract.
+\end{proof}
+
+\begin{lemma}[Effective closed Frobenius orbit polynomials]
+\label{lem:binary-orbit-polynomial}
+\uses{lem:binary-monic-quotient}
+\lean{MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBitsProg,
+  MIPRE.LowDegree.BinaryQuotient.map_orbitPolynomialBits,
+  MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBits_monic_natDegree,
+  MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBits_eq_minpoly,
+  MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBits_irreducible}
+\leanok
+Given a supplied monic irreducible binary modulus, a fixed-width representation
+of $a$ in its quotient field, and a unary integer $r$, a fixed polynomial-time
+program prints the binary coefficients of
+$\prod_{i=0}^{r-1}(X+a^{2^i})$ whenever $a^{2^r}=a$.
+The output polynomial is monic of degree $r$. If $r>0$ is the minimal-polynomial
+degree of $a$ over $\F_2$, the output is that minimal polynomial and is irreducible.
+\end{lemma}
+\begin{proof}
+\leanok
+Repeated modular squaring constructs the orbit, and polynomial multiplication
+in the supplied quotient constructs the product. Closing the orbit makes each
+coefficient fixed by squaring. In a field of characteristic two such a
+coefficient is zero or one; faithful power-basis coordinates therefore justify
+reading its constant bit. The resulting binary polynomial vanishes at $a$.
+Minimal-polynomial divisibility, monicity, and equal degrees identify it with
+the minimal polynomial when the exact-degree hypothesis holds. All loops are
+bounded by supplied unary lengths and coefficient widths.
+\end{proof}
+
+\begin{lemma}[Effective odd-prime nonresidues]
+\label{lem:binary-odd-prime-nonresidue}
+\uses{lem:binary-squarefree-factorization}
+\lean{MIPRE.LowDegree.BinaryPolynomial.nonresidueLiftBitsProg,
+  MIPRE.LowDegree.BinaryPolynomial.nonresidueLiftBitsProg_correct,
+  MIPRE.LowDegree.BinaryPolynomial.nonresidueLiftBits_order,
+  MIPRE.LowDegree.BinaryPolynomial.nonresidueLiftBits_degree_coprime}
+\leanok
+For every odd prime $q$, a fixed polynomial-time program on unary $q$ prints a
+canonical monic irreducible binary polynomial $f$ of degree
+$m=\mathrm{ord}_q(2)$, with $\mathrm{gcd}(q,m)=1$, such that the specified root of
+$f$ in $\F_2[X]/(f)$ has no $q$th root in that field.
+\end{lemma}
+\begin{proof}
+\leanok
+Choose the first irreducible factor of the squarefree cyclotomic polynomial
+$\Phi_q$. Repeatedly factor $f(X^q)$. A singleton factor list certifies that the
+current root is a nonresidue; retain the current polynomial and stop. Otherwise,
+every factor has the original degree $m$, and the first factor advances the
+primitive-root order from $q^j$ to $q^{j+1}$. The order of a nonzero element of a
+field of size $2^m$ bounds the number of advances by $m$, so $m$ iterations
+suffice. Every query is squarefree by its cyclotomic invariant. Clipping each
+nonterminal choice to the initial coefficient width bounds all raw executions;
+the exact-degree invariant shows that clipping preserves valid executions.
+\end{proof}
+
+\begin{lemma}[Effective irreducibles of every power-of-two degree]
+\label{lem:binary-power-two-irreducible}
+\uses{lem:binary-orbit-polynomial}
+\lean{MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBitsProg,
+  MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBits_correct,
+  MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBits_length}
+\leanok
+A fixed polynomial-time program, given the requested degree $2^e$ in unary,
+prints exactly $2^e+1$ coefficient bits of a monic irreducible polynomial of
+degree $2^e$ over $\F_2$, for every $e\geq 0$.
+\end{lemma}
+\begin{proof}
+\leanok
+Degree one uses $X$, and degree two starts from $X^2+X+1$. At each later stage,
+the current root $\alpha$ has the invariant that
+$Y^2+Y+(\alpha^3+\alpha^2)$ is irreducible. The quadratic-basis calculation
+preserves this invariant at the next root. Compute the closed orbit polynomial
+of $\alpha^3+\alpha^2$ over the current field and substitute $X^2+X$; the result
+is monic of twice the current degree. The new quadratic root lies outside the
+current field, and the power-of-two subfield divisibility argument proves its
+full doubled degree. The executable loop stops when the requested width is
+reached and caps intermediate coefficients by that width. Its fuel is the
+unary requested degree, so even malformed inputs satisfy one polynomial bound.
+\end{proof}
+
+\begin{lemma}[Effective irreducibles of every odd-prime-power degree]
+\label{lem:binary-odd-prime-power-irreducible}
+\uses{lem:binary-odd-prime-nonresidue,lem:binary-orbit-polynomial}
+\lean{MIPRE.LowDegree.BinaryQuotient.traceBitsProg,
+  MIPRE.LowDegree.BinaryQuotient.evalBits_traceBits,
+  MIPRE.LowDegree.BinaryPrimePowerTrace.flat_trace_natDegree,
+  MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBitsProg,
+  MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBits_correct,
+  MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBits_length,
+  MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBits_width_le}
+\leanok
+A fixed polynomial-time program takes unary $q$ and unary $r$. If $q$ is an odd
+prime and $r=q^{e+1}$ for $e\geq 0$, it prints exactly $r+1$ coefficient bits
+of a monic irreducible binary polynomial of degree $r$. On arbitrary inputs its
+output has at most $r+1$ bits, where $r$ denotes the second input length.
+\end{lemma}
+\begin{proof}
+\leanok
+Construct the nonresidue polynomial $f$ of degree $m=\mathrm{ord}_q(2)$.
+The odd-prime Kummer criterion makes $f(X^r)$ irreducible. In its explicitly
+represented quotient, with root $\beta$, compute
+$\gamma=\sum_{i=0}^{m-1}\beta^{2^{ri}}$ by repeated modular squaring and addition.
+Its Frobenius period divides $r$. To show its degree is exactly $r$, use the
+subfield generated by $\beta^q$: membership of $\gamma$ in that subfield would
+produce a nonzero polynomial of degree less than $q$ vanishing at $\beta$.
+The residues of $2^{ri}$ modulo $q$ are distinct because $\mathrm{gcd}(r,m)=1$, which gives a
+nonzero coefficient in that polynomial. The relative degree of $\beta$ is $q$,
+a contradiction. The closed orbit program therefore prints the minimal
+polynomial of $\gamma$. The flat extension has degree $mr$, and all arithmetic,
+trace, and orbit loops use the supplied unary parameters and fixed quotient
+widths, giving a global polynomial bound.
+\end{proof}
+
+\begin{lemma}[Effective combination of coprime degrees]
+\label{lem:binary-coprime-degree-combination}
+\uses{lem:binary-monic-quotient,lem:binary-orbit-polynomial}
+\lean{MIPRE.LowDegree.BinaryQuotient.composedSumBitsProg,
+  MIPRE.LowDegree.BinaryQuotient.composedSumBits_correct}
+\leanok
+A fixed polynomial-time program combines monic irreducible binary polynomials
+$f,g$ of coprime degrees $a,b$ into a monic irreducible binary polynomial of
+degree $ab$. Its inputs are the lower coefficient bits of $f$ and the full
+coefficient bits of $g$.
+\end{lemma}
+\begin{proof}
+\leanok
+In the supplied quotient for $f$, form
+$H(X)=\prod_{i=0}^{a-1}g(X+\alpha^{2^i})$, where $\alpha$ is its specified root.
+Frobenius permutes the factors, so the coefficients descend to binary bits.
+This polynomial is monic of degree $ab$ and vanishes at $\alpha+\beta$ for a
+root $\beta$ of $g$ in a common algebraic closure. Coprimality of the two
+Frobenius periods forces the degree of $\alpha+\beta$ to be $ab$; comparison
+with its minimal polynomial proves irreducibility. Polynomial translation,
+multiplication, and the length-$a$ product use bounded coefficient arrays.
+\end{proof}
+
+\begin{lemma}[Effective unary prime-power decomposition]
+\label{lem:binary-degree-decomposition}
+\lean{MIPRE.LowDegree.DegreeArithmetic.modUnaryProg,
+  MIPRE.LowDegree.DegreeArithmetic.dvdUnaryProg,
+  MIPRE.LowDegree.DegreeArithmetic.mulUnaryProg,
+  MIPRE.LowDegree.DegreeArithmetic.primeUnaryProg,
+  MIPRE.LowDegree.DegreeArithmetic.primeUnary_eq,
+  MIPRE.LowDegree.DegreeArithmetic.primePowerUnaryProg,
+  MIPRE.LowDegree.DegreeArithmetic.primePowerUnary_correct,
+  MIPRE.LowDegree.DegreeArithmetic.primePowerPairsProg,
+  MIPRE.LowDegree.DegreeArithmetic.primePowerPairs_eq,
+  MIPRE.LowDegree.DegreeArithmetic.primePowerPairs_prod,
+  MIPRE.LowDegree.DegreeArithmetic.primePowerPairs_pairwise,
+  MIPRE.LowDegree.BinaryDegreeFactors.degreeFactors_prod,
+  MIPRE.LowDegree.BinaryDegreeFactors.degreeFactors_pairwise,
+  MIPRE.LowDegree.BinaryDegreeFactors.degreeFactors_dvd,
+  MIPRE.LowDegree.BinaryDegreeFactors.degreeFactors_pos,
+  MIPRE.LowDegree.BinaryDegreeFactors.degreeFactors_le,
+  MIPRE.LowDegree.BinaryDegreeFactors.prefix_prod_dvd}
+\leanok
+A fixed polynomial-time program on unary $n$ prints, in ascending base order,
+the pairs $(q,q^{v_q(n)})$ for $0\leq q\leq n$, with exponent zero at nonprime
+indices. For $n>0$, the second coordinates are positive, pairwise coprime, and
+have product $n$. Each listed degree, and every prefix product, divides $n$.
+\end{lemma}
+\begin{proof}
+\leanok
+Enumerate the unary indices from zero through $n$, test primality by trial
+division, and compute the largest dividing prime power by bounded unary
+multiplication and divisibility tests. Each arithmetic routine has a polynomial
+bound on all inputs. The resulting list agrees with the proof-only list
+$q^{n.\mathrm{factorization}(q)}$. Unique factorization gives its product;
+distinct prime indices give coprime powers, and all other indices contribute
+one. Divisibility of entries and prefix products follows from the product
+identity. The mathematical factorization function appears only in correctness
+proofs, not in the executable program.
+\end{proof}
+
+\begin{lemma}[Uniform deterministic binary irreducible polynomials]
+\label{lem:binary-uniform-irreducible}
+\ledgernode{1.1.6.1.1}
+\uses{lem:binary-power-two-irreducible,lem:binary-odd-prime-power-irreducible,
+  lem:binary-coprime-degree-combination,lem:binary-degree-decomposition}
+\lean{MIPRE.LowDegree.BinaryPolynomial.irreducibleBitsProg,
+  MIPRE.LowDegree.BinaryPolynomial.irreducibleBits_correct,
+  MIPRE.LowDegree.BinaryPolynomial.irreducibleBits_length,
+  MIPRE.LowDegree.BinaryPolynomial.irreducibleBitsProg_time_le,
+  MIPRE.LowDegree.exists_shoup_irreducible,
+  MIPRE.LowDegree.shoupIrreducible,
+  MIPRE.LowDegree.shoupIrreducible_monic,
+  MIPRE.LowDegree.shoupIrreducible_irreducible,
+  MIPRE.LowDegree.shoupIrreducible_natDegree}
+\leanok
+There is one fixed deterministic ambient program and one polynomial $R$ such
+that, on unary input $n\geq1$, the program prints $n+1$ coefficient bits of a
+monic irreducible polynomial over $\F_2$ of degree $n$ within $R(n)$ steps.
+The same bound includes degree zero, where the program returns the constant
+polynomial one. The public constructor \texttt{shoupIrreducible} is this
+specified program, and \texttt{exists\_shoup\_irreducible} is a proved theorem.
+\end{lemma}
+\begin{proof}
+\leanok
+Compute the unary prime-power decomposition of $n$ and dispatch each contribution
+to the power-of-two or odd-prime-power constructor; neutral contributions use
+$X$. Starting from $X$, fold the coprime-degree combination over this ordered
+list. The degrees are pairwise coprime and have product $n$. Every intermediate
+degree is at most $n$, so clipping the lower coefficients to the original unary
+input length preserves each valid step and gives a global fold bound. Append
+the leading coefficient to obtain the exact $n+1$-bit output. The composite
+\texttt{PolyTimeFun} supplies a polynomial bound on actual encoded execution;
+substituting the unary encoding size $2n+1$ gives the displayed polynomial $R$.
+No existential choice is used to select the program.
+\end{proof}
+\paragraph{Source and audit.} This is the characteristic-two construction from
+Shoup~\cite{Sho90}, using the squarefree factorization oracle and the two
+prime-power branches before coprime assembly. Exact guards for the constructor
+and its effective consumers exclude the former Shoup axiom and any replacement
+nonstandard axiom. The companion ledger's historical admission is unchanged.
+
 \begin{lemma}[Effective polynomial-basis field arithmetic]
 \label{lem:effective-binary-field-arithmetic}
 \ledgernode{1.1.6.1.2}
@@ -3843,7 +4224,7 @@ cyclicity, supplied locally.
 For a monic irreducible binary polynomial $f$ of degree $k$, its quotient field
 has a canonical $k$-bit power-basis representation. Uniform ambient programs on
 coefficient lists implement addition and multiplication in that field.
-Assuming the declared Shoup construction, one uniform multiplication program
+Using the proved Shoup construction, one uniform multiplication program
 also constructs the modulus from unary $k$, and runs in time polynomial in $k$
 on $k$-bit operands. This supplies a field family for every admissible odd $k$.
 \end{lemma}
@@ -3862,7 +4243,7 @@ implicitly. Compose the programs; the encoded input has size at most $10k+5$.
 effective-field node. Lemma~\ref{lem:effective-field-inverse-trace} supplies element
 inversion and trace computation. Matrix algorithms, the normal-element construction
 and transport to a self-dual normal basis remain open.
-The Shoup assumption is exactly the existing named axiom; no new axiom is added.
+The supplied-modulus arithmetic and the uniform field constructor use only Lean's standard axioms.
 
 \begin{lemma}[Effective inversion, Frobenius iteration and trace]
 \label{lem:effective-field-inverse-trace}

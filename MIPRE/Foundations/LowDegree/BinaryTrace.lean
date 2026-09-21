@@ -15,7 +15,7 @@ time even though the represented exponent is `2^k`.
 
 namespace MIPRE.LowDegree.BinaryPolynomial
 
-open Cost Cost.PolyTimeFun SAT.Circuit Polynomial
+open Cost Cost.PolyTimeFun Polynomial
 
 def traceStep (s : PowerState) (_ : Unit) : PowerState :=
   (s.1, mulReduce s.1 s.2.1 s.2.1, xorBits s.2.2 s.2.1)

@@ -13,18 +13,24 @@ and its private audit material remain outside this repository.
 **Current status:** the classical campaign is complete. The repository now has an
 actual `MIPRE.TM.CookLevin.Pad.classicalPcpDecider` and the complete effective
 self-dual normal-basis and multiplication-table constructor. Both have passed
-native Lean builds; Shoup is their only nonstandard axiom. Introspection is in
+native Lean builds. The separate [Shoup campaign](shoup-axiom-removal.md) now
+proves their former irreducible-polynomial assumption. Introspection is in
 progress, with checked Pauli mixing in question-dependent coordinate presentations,
 conditioning identities, and the semantic two-level graph sampler used by detyping.
 There is still no inhabitant of `Introspection 7`.
+
+The dated implementation notes below record the assumptions present at each earlier
+checkpoint. Their references to the Shoup axiom are historical; current public guards
+track the proved construction.
 
 ## Completion criteria
 
 1. An actual inhabitant of `PcpDecider`, with honest polynomial bounds on parameter
    computation and verification, completeness and soundness against the stated
    low-degree proofs. No new axiom or `sorry` discharges any of these obligations.
-2. The effective field and self-dual-normal-basis construction, modulo the existing
-   explicitly declared Shoup axiom, with the polynomial bound in the extension degree.
+2. The effective field and self-dual-normal-basis construction, with the polynomial
+   bound in the extension degree. The separate Shoup campaign strengthens the original
+   criterion by proving its formerly declared irreducible-polynomial assumption.
    Abstract field/basis existence is not this algorithm.
 3. After the classical campaign: an actual `Introspection 7`, including its sampler,
    decider, PCC completeness, bipartite soundness and ambient resource budgets.

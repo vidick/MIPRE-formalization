@@ -2,6 +2,7 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
+import MIPRE.Foundations.Cost.Reader
 import MIPRE.Foundations.LowDegree.BinaryPower
 import MIPRE.Foundations.SAT.QuotientField
 import Mathlib.FieldTheory.Finite.Basic
@@ -10,7 +11,7 @@ import Mathlib.FieldTheory.Finite.Basic
 
 namespace MIPRE.LowDegree.BinaryPolynomial
 
-open Cost Cost.PolyTimeFun SAT.Circuit
+open Cost Cost.PolyTimeFun
 
 /-- The exponent `2^k - 2`, written directly in `k` bits rather than expanded in unary. -/
 def inverseExponent (p : BitStr) : BitStr := false :: p.tail.map (fun _ => true)

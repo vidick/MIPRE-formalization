@@ -120,4 +120,18 @@ theorem matrixSolveProg_correct {m n : ℕ}
   rw [rowSpan_columnRows, LinearMap.mem_range]
   exact hv
 
+/-- Coordinatewise addition of binary matrices. -/
+noncomputable def addMatrixBitsProg : PolyTimeFun (List BitStr × List BitStr) (List BitStr) :=
+  (map BinaryPolynomial.xorBitsProg).comp zip
+
+theorem addMatrixBitsProg_correct {m n : ℕ}
+    (A B : Matrix (Fin m) (Fin n) (ZMod 2)) :
+    addMatrixBitsProg (matrixBits A, matrixBits B) = matrixBits (A + B) := by
+  change ((matrixBits A).zip (matrixBits B)).map (fun p => BinaryPolynomial.xorBits p.1 p.2) = _
+  apply List.ext_getElem
+  · simp [matrixBits]
+  · intro i hi hj
+    simp only [matrixBits, List.getElem_map, List.getElem_zip, List.getElem_ofFn]
+    exact xorBits_vectorBits _ _
+
 end MIPRE.LowDegree.BinaryLinear

@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import MIPRE.Foundations.SAT.InputRoutingProg
 import MIPRE.Foundations.SAT.CircuitArithmetization
-import MIPRE.Foundations.LowDegree.BinaryPolynomial
+import MIPRE.Foundations.LowDegree.BinaryConstants
 
 /-!
 # Uniform field evaluation of a routed gate
@@ -17,26 +17,25 @@ namespace MIPRE.SAT.Circuit
 
 open Cost LowDegree LowDegree.BinaryPolynomial
 
-/-- Zero and one use the width of the supplied lower-coefficient vector. -/
-def zeroBits (p : BitStr) : BitStr := List.replicate p.length false
-
-def oneBits : BitStr → BitStr
-  | [] => []
-  | _ :: p => true :: List.replicate p.length false
-
-@[simp] theorem length_zeroBits (p : BitStr) : (zeroBits p).length = p.length := by
-  simp [zeroBits]
-
-@[simp] theorem length_oneBits (p : BitStr) : (oneBits p).length = p.length := by
-  cases p <;> simp [oneBits]
+-- Retain concrete circuit-facing declarations for downstream compiled consumers.
+/-- Circuit-facing zero coefficients, implemented by generic quotient arithmetic. -/
+abbrev zeroBits := BinaryPolynomial.zeroBits
+/-- Circuit-facing one coefficients, implemented by generic quotient arithmetic. -/
+abbrev oneBits := BinaryPolynomial.oneBits
+@[simp] theorem length_zeroBits (p : BitStr) : (zeroBits p).length = p.length :=
+  BinaryPolynomial.length_zeroBits p
+@[simp] theorem length_oneBits (p : BitStr) : (oneBits p).length = p.length :=
+  BinaryPolynomial.length_oneBits p
+@[simp] theorem evalBits_zeroBits {R : Type*} [CommRing R] (z : R) (p : BitStr) :
+    BinaryPolynomial.evalBits z (zeroBits p) = 0 := BinaryPolynomial.evalBits_zeroBits z p
+theorem evalBits_oneBits {R : Type*} [CommRing R] (z : R) (p : BitStr) (hp : p ≠ []) :
+    BinaryPolynomial.evalBits z (oneBits p) = 1 := BinaryPolynomial.evalBits_oneBits z p hp
+noncomputable abbrev zeroBitsProg : PolyTimeFun BitStr BitStr := BinaryPolynomial.zeroBitsProg
+noncomputable abbrev oneBitsProg : PolyTimeFun BitStr BitStr := BinaryPolynomial.oneBitsProg
+@[simp] theorem zeroBitsProg_apply (p : BitStr) : zeroBitsProg p = zeroBits p := rfl
+@[simp] theorem oneBitsProg_apply (p : BitStr) : oneBitsProg p = oneBits p := rfl
 
 variable {R : Type*} [CommRing R]
-
-@[simp] theorem evalBits_zeroBits (z : R) (p : BitStr) : BinaryPolynomial.evalBits z (zeroBits p) = 0 := by
-  simp [zeroBits]
-
-theorem evalBits_oneBits (z : R) (p : BitStr) (hp : p ≠ []) : BinaryPolynomial.evalBits z (oneBits p) = 1 := by
-  cases p <;> simp_all [oneBits, ofBool]
 
 /-- Gate arithmetic on coefficient vectors. The input reader is supplied
 separately so that the same arithmetic supports the routed copy links. -/
@@ -110,17 +109,6 @@ theorem gateValue_eq_eval_gateArith {F : Type*} [Field F] [CharP F 2]
 section Programs
 
 open Cost.PolyTimeFun
-
-noncomputable def zeroBitsProg : PolyTimeFun BitStr BitStr :=
-  congr (replicate.comp (length.pair (const false))) zeroBits (by intro p; simp [zeroBits])
-
-noncomputable def oneBitsProg : PolyTimeFun BitStr BitStr :=
-  congr ((casesList (const [])
-    (cons (const true) (zeroBitsProg.comp (snd.comp snd)))).comp
-      ((const ()).pair (PolyTimeFun.id _))) oneBits (by intro p; cases p <;> rfl)
-
-@[simp] theorem zeroBitsProg_apply (p : BitStr) : zeroBitsProg p = zeroBits p := rfl
-@[simp] theorem oneBitsProg_apply (p : BitStr) : oneBitsProg p = oneBits p := rfl
 
 /-- Modulus, external coordinates, gate coordinates, and preceding gate/value pairs. -/
 abbrev FieldEnv := BitStr × List BitStr × List BitStr × List (Gate × BitStr)

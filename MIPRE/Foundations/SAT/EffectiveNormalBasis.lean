@@ -11,7 +11,8 @@ import MIPRE.Foundations.SAT.EffectiveSelfDual
 Starting only with the unary odd degree, the program constructs Shoup's quotient
 field, a normal element by fixed-space projections, its self-dualized Frobenius
 orbit, and all multiplication-table bits. No abstract choice of a normal element
-occurs in the program. The existing Shoup axiom is the sole nonstandard assumption.
+occurs in the program. The underlying Shoup constructor is proved by a specified
+polynomial-time program, and the construction uses only the standard Lean axioms.
 -/
 
 noncomputable section
