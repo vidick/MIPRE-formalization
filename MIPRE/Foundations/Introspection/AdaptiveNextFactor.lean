@@ -38,8 +38,10 @@ theorem nextRemaining_eq (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
 /-- Pull the dilated remaining operator into the actual next-prefix carrier. -/
 def nextResidualOp (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
     (k : ℕ) (y : ι → F) (z : Fin (Fintype.card (P.factorOfPrefix k y)) → F)
-    (N : Matrix (((↥(stageRemaining P k y \ P.factorOfPrefix k y) → F) × H) × A) _ ℂ) :
-    Matrix ((stageRemaining P (k + 1) (advancePrefix P k y z) → F) × (H × A)) _ ℂ :=
+    (N : Matrix (((↥(stageRemaining P k y \ P.factorOfPrefix k y) → F) × H) × A)
+      (((↥(stageRemaining P k y \ P.factorOfPrefix k y) → F) × H) × A) ℂ) :
+    Matrix ((stageRemaining P (k + 1) (advancePrefix P k y z) → F) × (H × A))
+      ((stageRemaining P (k + 1) (advancePrefix P k y z) → F) × (H × A)) ℂ :=
   registerOp ((registerSetEquiv (F := F) (nextRemaining_eq P hP k y z)).prodCongr
     (Equiv.refl (H × A))) (registerOp (Equiv.prodAssoc _ H A).symm N)
 
@@ -68,6 +70,7 @@ theorem advancePrefix_fibre (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
   · intro hx
     rw [← advancePrefix_adaptiveLinearOutcome hP k x, hx]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem prefixResidualOp_apply (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
     (k : ℕ) (y : ι → F)
     (M : Matrix ((stageRemaining P k y → F) × H) _ ℂ)
@@ -87,10 +90,11 @@ theorem prefixResidualOp_apply (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
   simp only [registerOp_apply, registerParty, Equiv.trans_apply,
     Equiv.prodCongr_apply, Equiv.prodAssoc_apply, ambientSplit,
     Matrix.kroneckerMap_apply, readout, Matrix.diagonal_apply]
-  change (if (fun i : CLChecks.prefixRegister P k y => x i) = (fun i => x' i) then
+  change (if (fun i : CLChecks.prefixRegister P k y => x i) =
+    (fun i : CLChecks.prefixRegister P k y => x' i) then
     (if (P.truncate k).eval (Honest.insertRegister _ (fun i => x i)) = y then 1 else 0)
     else 0) * _ = _
-  rw [he, ← hf]
+  simp only [he, ← hf]
   split_ifs <;> simp_all
 
 theorem adaptiveLinearOutcome_eq_iff (P : CL.CLFun F ι ℓ) (k : ℕ)
@@ -116,6 +120,7 @@ theorem coordinateRestrict_eq_iff (S : Finset ι) (x x' : ι → F) :
   · intro h; funext j
     exact h _ ((Fintype.equivFin S).symm j).property
 
+set_option backward.isDefEq.respectTransparency false in
 theorem adaptiveReplacementJointOp_apply (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
     (k : ℕ) (D : AdaptiveDilationFamily P k H A)
     (y : ι → F) (z : Fin (Fintype.card (P.factorOfPrefix k y)) → F) (a : A)
@@ -135,9 +140,10 @@ theorem adaptiveReplacementJointOp_apply (P : CL.CLFun F ι ℓ) (hP : P.Support
       then (if coordinateLinear (CLChecks.stageLinear P k y)
         (coordinateRestrict (P.factorOfPrefix k y) x) = z then 1 else 0) else 0) *
       D y z a ((fun i => x i, b.1), b.2) ((fun i => x' i, b'.1), b'.2) else 0) = _
-  rw [coordinateRestrict_eq_iff]
+  simp only [coordinateRestrict_eq_iff]
   split_ifs <;> simp_all
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Every attainable old-prefix block is exactly a next-prefix residual
 block. The current coordinate outcome may be outside the linear image;
 both sides then vanish, without imposing a support hypothesis on `D`. -/
@@ -160,8 +166,7 @@ theorem adaptiveReplacementJointOp_next_factor (P : CL.CLFun F ι ℓ)
     rw [advancePrefix_register hP, CLChecks.prefixRegister_step,
       advancePrefix_fibre P hP k y hy, adaptiveLinearOutcome_eq_iff]
     simp only [mem_union, or_imp, forall_and]
-  rw [hc]
-  rfl
+  exact if_congr hc.symm rfl rfl
 
 end MIPRE.Introspection
 end

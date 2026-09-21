@@ -73,42 +73,14 @@ theorem introspect_prefix_register_rigidity_alice
     (fun y => (aOp (hidingPrefixOp (L w) j y) : Matrix ((ι → F) × H) _ ℂ))
     (fun y => (((MB (QuestionType.introspect w, 0)).map
       (reportedPrefix (L w) j .introspect)).mats y).val)
-  simp only [xSqNorm_eq_bOp_distance_of_mirror _ _ _ _
-    (coarseZ_registerState_mirror (fun z => some (((L w).truncate j).eval z)) _ ξ)] at ht
-  simp only [hidingPrefixOp] at hBob
+  have hmirror (y : Option (ι → F)) :
+      aOp (aOp (hidingPrefixOp (L w) j y) : Matrix ((ι → F) × H) _ ℂ) *ᵥ
+        registerState (ι → F) ξ =
+      bOp (aOp (hidingPrefixOp (L w) j y) : Matrix ((ι → F) × K) _ ℂ) *ᵥ
+        registerState (ι → F) ξ :=
+    coarseZ_registerState_mirror (fun z => some (((L w).truncate j).eval z)) y ξ
+  simp only [xSqNorm_eq_bOp_distance_of_mirror _ _ _ _ (hmirror _), ← bOp_sub] at ht
   linarith only [ht, hloop, hBob]
 
 end MIPRE.Introspection.TypedEstimates
-
-namespace MIPRE.Introspection
-
-open Finset Matrix Classical
-
-variable {F ι H K A : Type*} [Field F] [Fintype F] [DecidableEq F]
-  [Algebra (ZMod 2) F] [Fintype ι] [DecidableEq ι]
-  [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K]
-  [Fintype A] [DecidableEq A] {ℓ : ℕ}
-
-/-- Once the actual answer refinement identifies the valid reported
-prefixes, their marginal error is bounded by the full option-valued
-reported-prefix distance. The malformed term is retained on the right and
-is removed only by its nonnegativity. -/
-theorem prefixStageMarginalError_le_reported (P : CL.CLFun F ι ℓ)
-    (hP : P.SupportedOn univ) (k : ℕ) (ξ : H × K → ℂ)
-    (M : (y : ι → F) → (Fin (Fintype.card (P.factorOfPrefix k y)) → F) × A →
-      Matrix ((stageRemaining P k y → F) × H) _ ℂ)
-    (N : Option (ι → F) → Matrix ((ι → F) × H) _ ℂ)
-    (hreported : ∀ v, N (some v) =
-      fibSum
-        (fun p : (y : ι → F) × (Fin (Fintype.card (P.factorOfPrefix k y)) → F) =>
-          prefixResidualOp P k p.1 (∑ a, M p.1 (p.2, a)))
-        (fun p => advancePrefix P k p.1 p.2) v) :
-    prefixStageMarginalError P hP k ξ M ≤
-      ∑ v, stateSqNorm (registerState (ι → F) ξ)
-        (N v - aOp (Honest.hidingPrefixOp P (k + 1) v)) := by
-  rw [prefixStageMarginalError_reassembled, Fintype.sum_option]
-  simp only [← hreported]
-  exact le_add_of_nonneg_left (stateSqNorm_nonneg _ _)
-
-end MIPRE.Introspection
 end

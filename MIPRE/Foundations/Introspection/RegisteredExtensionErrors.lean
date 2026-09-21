@@ -32,8 +32,7 @@ theorem xSqNorm_registerOp (e : H' ≃ H) (f : K' ≃ K) (ψ : H × K → ℂ)
   have h : (aOp (registerOp e M) : Matrix (H' × K') _ ℂ) - bOp (registerOp f N) =
       registerOp (e.prodCongr f) (aOp M - bOp N) := by
     rw [registerOp_sub]
-    change registerOp e M ⊗ₖ 1 - 1 ⊗ₖ registerOp f N = _
-    rw [registerOp_kronecker, registerOp_kronecker, registerOp_one, registerOp_one]
+    simp only [aOp, bOp, registerOp_kronecker, registerOp_one]
   rw [h, registerOp_mulVec, norm_evec_comp_equiv]
 
 /-- The old deviation vector is extended by the same fixed isometry. -/
@@ -84,7 +83,7 @@ theorem registeredExtendOp_aOp (M : Matrix I I ℂ) :
   ext ⟨i, h, t⟩ ⟨j, h', t'⟩
   by_cases hh : h = h'
   · by_cases ht : t = t' <;>
-      simp [registeredExtendOp, aOp, Matrix.kroneckerMap_apply, Matrix.one_apply,
+      simp [registeredExtendOp, aOp, Matrix.kroneckerMap_apply,
         Prod.mk.injEq, hh, ht]
   · simp [registeredExtendOp, aOp, Matrix.kroneckerMap_apply, Matrix.one_apply,
       Prod.mk.injEq, hh]

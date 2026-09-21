@@ -668,9 +668,12 @@ import MIPRE.Foundations.Introspection.AdaptiveDilationTransport
 import MIPRE.Foundations.Introspection.AdaptiveDualFactor
 import MIPRE.Foundations.Introspection.AdaptiveDualLocal
 import MIPRE.Foundations.Introspection.AdaptiveDualMarginal
+import MIPRE.Foundations.Introspection.AdaptiveGameStage
+import MIPRE.Foundations.Introspection.AdaptiveMarginalGame
 import MIPRE.Foundations.Introspection.AdaptiveMarginalTest
 import MIPRE.Foundations.Introspection.AdaptiveNextFactor
 import MIPRE.Foundations.Introspection.AdaptiveNextInvariant
+import MIPRE.Foundations.Introspection.AdaptiveNextStrategy
 import MIPRE.Foundations.Introspection.AdaptivePrefixAdvance
 import MIPRE.Foundations.Introspection.AdaptivePrefixCommutator
 import MIPRE.Foundations.Introspection.AdaptivePrefixExtension
@@ -753,6 +756,7 @@ import MIPRE.Foundations.Introspection.HonestRead
 import MIPRE.Foundations.Introspection.HonestReading
 import MIPRE.Foundations.Introspection.HonestSampling
 import MIPRE.Foundations.Introspection.HonestXCoordinates
+import MIPRE.Foundations.Introspection.IntrospectCanonicalization
 import MIPRE.Foundations.Introspection.LinearMeasurement
 import MIPRE.Foundations.Introspection.Measurements
 import MIPRE.Foundations.Introspection.ParserAnswers

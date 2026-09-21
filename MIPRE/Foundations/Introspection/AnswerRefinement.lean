@@ -56,7 +56,7 @@ theorem graphRefinement_eq_fibSum (M : A → Matrix D D ℂ) (c : A → C) (p : 
   rcases p with ⟨z, a⟩
   simp only [fibSum, Finset.sum_filter, Prod.mk.injEq]
   rw [Finset.sum_eq_single a]
-  · simp [graphRefinement, Prod.mk.injEq, eq_comm]
+  · simp [graphRefinement, eq_comm]
   · intro b _ hba
     simp [hba]
   · simp
@@ -89,7 +89,8 @@ theorem graphRefinementPOVM_recover (M : POVM A D) (c : A → C) :
   rw [graphRefinementPOVM, POVM.map_map]
   apply POVM.ext'
   intro a
-  simp [POVM.map_mats]
+  simp only [POVM.map_mats, Finset.sum_filter]
+  simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
 
 theorem graphRefinementPOVM_isPVM (M : POVM A D) (c : A → C)
     (hM : IsPVM (fun a => (M.mats a).val)) :
@@ -121,7 +122,8 @@ theorem graphRefinement_commutator_sum (ψ : D × K → ℂ) (M : A → Matrix D
     (∑ p, ∑ b, stateSqNorm ψ
       (graphRefinement M c p * N b - N b * graphRefinement M c p)) =
       ∑ a, ∑ b, stateSqNorm ψ (M a * N b - N b * M a) := by
-  apply graphRefinement_sum_fun
+  refine graphRefinement_sum_fun M c
+    (fun Q => ∑ b, stateSqNorm ψ (Q * N b - N b * Q)) ?_
   simp [stateSqNorm, stateNorm, stateVec]
 
 end MIPRE.Introspection

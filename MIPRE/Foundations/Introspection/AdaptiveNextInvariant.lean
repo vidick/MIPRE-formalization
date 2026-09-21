@@ -45,8 +45,10 @@ theorem nextPrefixSource_advance (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn uni
 def nextResidualOpAt (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
     (k : ℕ) (y : ι → F) (z : Fin (Fintype.card (P.factorOfPrefix k y)) → F)
     (v : ι → F) (hv : advancePrefix P k y z = v)
-    (N : Matrix (((↥(stageRemaining P k y \ P.factorOfPrefix k y) → F) × H) × A) _ ℂ) :
-    Matrix ((stageRemaining P (k + 1) v → F) × (H × A)) _ ℂ :=
+    (N : Matrix (((↥(stageRemaining P k y \ P.factorOfPrefix k y) → F) × H) × A)
+      (((↥(stageRemaining P k y \ P.factorOfPrefix k y) → F) × H) × A) ℂ) :
+    Matrix ((stageRemaining P (k + 1) v → F) × (H × A))
+      ((stageRemaining P (k + 1) v → F) × (H × A)) ℂ :=
   hv ▸ nextResidualOp P hP k y z N
 
 theorem nextResidualOpAt_isPVM (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
@@ -69,7 +71,8 @@ theorem prefixResidualOp_nextResidualOpAt (P : CL.CLFun F ι ℓ) (hP : P.Suppor
 /-- The residual projectors after advancing to the next prefix. -/
 def nextPrefixResidual (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
     (k : ℕ) (a₀ : A) (D : AdaptiveDilationFamily P k H A) (v : ι → F) (a : A) :
-    Matrix ((stageRemaining P (k + 1) v → F) × (H × A)) _ ℂ :=
+    Matrix ((stageRemaining P (k + 1) v → F) × (H × A))
+      ((stageRemaining P (k + 1) v → F) × (H × A)) ℂ :=
   if hv : v ∈ prefixOutcomes P (k + 1) then
     let p := nextPrefixSource P hP k v hv
     nextResidualOpAt P hP k p.1 p.2 v (nextPrefixSource_advance P hP k v hv) (D p.1 p.2 a)

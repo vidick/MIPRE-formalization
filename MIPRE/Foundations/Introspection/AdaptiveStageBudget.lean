@@ -61,12 +61,16 @@ theorem adaptiveStepLoss_mono {δ η : ℝ} (h : δ ≤ η) :
 root of the common stage budget, with a universal coefficient. -/
 theorem adaptiveStepLoss_le_root (δ : ℝ) :
     adaptiveStepLoss δ ≤ 8 * iteratedRoot 3 δ := by
+  have h64 : Real.sqrt 64 = 8 := by
+    rw [show (64 : ℝ) = 8 ^ 2 by norm_num, Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 8)]
+  have h16 : Real.sqrt 16 = 4 := by
+    rw [show (16 : ℝ) = 4 ^ 2 by norm_num, Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 4)]
   have h₁ : Real.sqrt (56 * Real.sqrt δ) ≤ 8 * Real.sqrt (Real.sqrt δ) := by
     calc
       _ ≤ Real.sqrt (64 * Real.sqrt δ) := by
         apply Real.sqrt_le_sqrt
         nlinarith [Real.sqrt_nonneg δ]
-      _ = _ := by rw [Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 64)]; norm_num
+      _ = _ := by rw [Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 64), h64]
   unfold adaptiveStepLoss
   calc
     _ ≤ 2 * Real.sqrt (16 * Real.sqrt (Real.sqrt δ)) := by
@@ -74,8 +78,8 @@ theorem adaptiveStepLoss_le_root (δ : ℝ) :
       apply Real.sqrt_le_sqrt
       linarith
     _ = _ := by
-      rw [Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 16)]
-      norm_num [iteratedRoot]
+      rw [Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 16), h16]
+      simp only [iteratedRoot]
       ring
 
 /-- An explicit failure recurrence with fixed primitive errors. It records
