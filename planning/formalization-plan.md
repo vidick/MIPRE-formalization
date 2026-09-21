@@ -8,6 +8,19 @@ as `planning/ledger-informed-plan.md` stays as the record of the ledger accounti
 
 ## Three artifacts, and what each is authoritative for
 
+**Construction update, 2026-09-21.** The classical PCP and effective self-dual
+basis campaigns are complete, including the proved Shoup construction (#135).
+PR #134's semantic detyping is merged. Its continuation constructs executable
+detyping with polynomial sampler runtime, actual finite-game PCC completeness,
+ambient Pauli mixing, parsed introspection tests and final strategy extraction.
+The conditional compression theorem now accepts polynomial-exponent ambient
+decider budgets and retains the input sampler's degree in answer reduction.
+The full `Introspection 7` still requires the uniform verifier compiler, honest
+typed-game completeness and the QLD-to-hiding soundness induction. See
+[classical-pcp-introspection.md](classical-pcp-introspection.md) for the checked
+scope and remaining obligations. Neither a completed QLD theorem nor the new
+helper lemmas by themselves inhabit introspection or answer reduction.
+
 **Synchronization update, 2026-09-16.** The current paper-to-blueprint contracts
 and remaining adapters are tracked in [paper-correspondence.md](paper-correspondence.md).
 In particular, the formalized canonical-line LIDT theorem does not by itself

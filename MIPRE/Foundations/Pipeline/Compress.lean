@@ -28,8 +28,8 @@ The parameters, all determined by the three structures:
   toolkit to compute the paper's expression directly, and any dominating polynomial serves.
 * `μ`: the margin claim `exists_mu`, at least `C` so that the introspective verifier is within
   answer reduction's input budget.
-* `β`: an exponent with `poly((λn + 1)^μ + σ(λ)) ≤ (λn + 1)^β`, the parse length handed to
-  repetition, dominating the answer bound of the answer-reduced verifier.
+* `β`: an exponent with `poly((λn + 1)^μ + σ(λ))^(μ + 1) ≤ (λn + 1)^β`, the parse length
+  handed to repetition, dominating the ambient answer bound of the answer-reduced verifier.
 * `τ`: the repetition exponent `exists_tau`, from the lower bound `ε₂ ≥ x^{-P}` of
   `exists_eps2_lower`, against the parse length `2^{β(|λ| + |n|)} ≤ (λn + 1)^{6β}`.
 * `C₀`: the largest of the thresholds — `2`, the introspection margin's, the margin claim's,
@@ -140,13 +140,15 @@ theorem margin_spec : ∀ x : ℝ, (N₁ I A : ℝ) ≤ x → ∀ s : ℝ, 1 ≤
     s ^ A.a * x ^ (-((mu I A : ℝ) * A.b)) < eps1 I.a I.b x / 2 :=
   (exists_mu (b₁ := I.b) I.one_le_a A.one_le_a A.b_pos (K I) I.C).choose_spec.2.choose_spec
 
-theorem polyBounded_arBound : PolyBounded fun z => A.bound.eval (z ^ mu I A + sigma I z) :=
-  PolyBounded.eval A.bound ((PolyBounded.id.pow _).add (polyBounded_sigmaFun I.C))
+theorem polyBounded_arBound :
+    PolyBounded fun z => (A.bound.eval (z ^ mu I A + sigma I z)) ^ (mu I A + 1) :=
+  (PolyBounded.eval A.bound ((PolyBounded.id.pow _).add (polyBounded_sigmaFun I.C))).pow _
 
 /-- `β`, the parse-length exponent handed to repetition. -/
 noncomputable def beta : ℕ := (polyBounded_arBound I A).exists_le_pow.choose
 
-theorem arBound_le_pow : ∀ z, 2 ≤ z → A.bound.eval (z ^ mu I A + sigma I z) ≤ z ^ beta I A :=
+theorem arBound_le_pow :
+    ∀ z, 2 ≤ z → (A.bound.eval (z ^ mu I A + sigma I z)) ^ (mu I A + 1) ≤ z ^ beta I A :=
   (polyBounded_arBound I A).exists_le_pow.choose_spec
 
 /-- `P`, with `ε₂ ≥ x^{-P}`. -/
@@ -339,12 +341,16 @@ theorem arOutput_size_le (V : Prog × Prog) (lam : ℕ) :
 
 /-- The bound of the answer-reduced verifier at `(λ, n)`. -/
 noncomputable def arBound (lam n : ℕ) : ℕ :=
-  A.bound.eval (AnswerReduction.arg lam (mu I A) (sigma I lam) n)
+  AnswerReduction.outBound A.bound lam (mu I A) (sigma I lam) n
+
+/-- The answer-reduced verifier's input-size degree. The pipeline fixes `μ`, so this
+degree is independent of `λ`, `n`, and the input verifier. -/
+noncomputable def arDegree : ℕ := AnswerReduction.outDegree A.deg (mu I A)
 
 /-- The running-time bound of the compressed verifier at `(λ, n)`. -/
 noncomputable def timeB (lam n : ℕ) : ℕ :=
   R.bound.eval (Repetition.arg lam (tau I A R) (beta I A) n
-    (Budget.uniform (arBound I A lam n) A.deg) (wSize I A lam))
+    (Budget.uniform (arBound I A lam n) (arDegree I A)) (wSize I A lam))
 
 /-- The answer bound of the compressed verifier at `(λ, n)`. -/
 noncomputable def ansB (lam n : ℕ) : ℕ :=
@@ -358,7 +364,7 @@ attribute [local gcongr] polynomial_eval_mono Nat.size_le_size sigmaFun_mono
 theorem timeB_mono {lam n lam' n' : ℕ} (hl : lam ≤ lam') (hn : n ≤ n') :
     timeB I A R lam n ≤ timeB I A R lam' n' := by
   unfold timeB Repetition.arg Repetition.reps Repetition.parseBound arBound
-    AnswerReduction.arg wSize pArg s₁ sigma
+    AnswerReduction.outBound AnswerReduction.arg wSize pArg s₁ sigma
   simp only [Budget.uniform_S, Budget.uniform_d, Budget.uniform_D, Budget.uniform_B, Budget.uniform_k]
   gcongr <;> norm_num
 
@@ -392,7 +398,7 @@ theorem polyBounded_G : PolyBounded (G I A R) := by
       fun z => ?_
     exact max_le_add_of_nonneg (Nat.zero_le _) (Nat.zero_le _)
   have har : PolyBounded fun z : ℕ => arBound I A z z :=
-    PolyBounded.eval _ ((hz.pow _).add hsig)
+    (PolyBounded.eval _ ((hz.pow _).add hsig)).pow _
   have ht : PolyBounded fun z : ℕ => timeB I A R z z := by
     unfold timeB Repetition.arg
     simp only [Budget.uniform_S, Budget.uniform_d, Budget.uniform_D, Budget.uniform_B,
@@ -422,23 +428,24 @@ theorem introOutput_within (V : Prog × Prog) (lam n : ℕ) :
       AnswerReduction.inAns]
   · exact Nat.pow_le_pow_right (by omega) (C_le_mu I A)
   · exact Nat.pow_le_pow_right (by omega) (C_le_mu I A)
-  · exact Nat.pow_le_pow_right (by norm_num) (Nat.mul_le_mul_right _ (C_le_mu I A))
-  · exact Nat.pow_le_pow_right (by norm_num) (Nat.mul_le_mul_right _ (C_le_mu I A))
+  · exact Nat.pow_le_pow_right (by norm_num) (Nat.pow_le_pow_right (by omega) (C_le_mu I A))
+  · exact Nat.pow_le_pow_right (by norm_num) (Nat.pow_le_pow_right (by omega) (C_le_mu I A))
 
 theorem ansBound_le_inAns (lam n : ℕ) :
     Introspection.ansBound I.C lam n ≤ AnswerReduction.inAns lam (mu I A) n :=
-  Nat.pow_le_pow_right (by norm_num) (Nat.mul_le_mul_right _ (C_le_mu I A))
+  Nat.pow_le_pow_right (by norm_num) (Nat.pow_le_pow_right (by omega) (C_le_mu I A))
 
 /-- The answer-reduced verifier is within its bound. -/
 theorem arOutput_within (V : Prog × Prog) (lam n : ℕ) :
-    (arOutput I A (I.output V lam) lam).Within n (Budget.uniform (arBound I A lam n) A.deg) :=
+    (arOutput I A (I.output V lam) lam).Within n
+      (Budget.uniform (arBound I A lam n) (arDegree I A)) :=
   A.within (I.output V lam) lam (mu I A) (sigma I lam) n (introOutput_within I A V lam n)
     (decider_size_le_sigma I V lam)
 
 /-- The compressed verifier is within its bounds. -/
 theorem output_within (V : Prog × Prog) (lam n : ℕ) :
     (output I A R V lam).Within n
-      ⟨timeB I A R lam n, timeB I A R lam n, timeB I A R lam n, R.deg * (A.deg + 1),
+      ⟨timeB I A R lam n, timeB I A R lam n, timeB I A R lam n, R.deg * (arDegree I A + 1),
         ansB I A R lam n⟩ := by
   have h := R.within (arOutput I A (I.output V lam) lam) lam (tau I A R) (beta I A) n _
     (arOutput_within I A V lam n)
@@ -456,8 +463,9 @@ theorem arBound_le_parseBound {lam n : ℕ} (hl : 1 ≤ lam) (hn : 1 ≤ n) :
     arBound I A lam n ≤ Repetition.parseBound lam (beta I A) n := by
   have hz : 2 ≤ lam * n + 1 := by nlinarith
   have hs : sigma I lam ≤ sigma I (lam * n + 1) := sigma_mono I (by nlinarith)
-  calc arBound I A lam n ≤ A.bound.eval ((lam * n + 1) ^ mu I A + sigma I (lam * n + 1)) :=
-        polynomial_eval_mono _ (by unfold AnswerReduction.arg; omega)
+  calc arBound I A lam n ≤
+        (A.bound.eval ((lam * n + 1) ^ mu I A + sigma I (lam * n + 1))) ^ (mu I A + 1) :=
+        Nat.pow_le_pow_left (polynomial_eval_mono _ (by unfold AnswerReduction.arg; omega)) _
     _ ≤ (lam * n + 1) ^ beta I A := arBound_le_pow I A _ hz
     _ ≤ _ := pow_le_reps hl _
 
@@ -576,7 +584,7 @@ noncomputable def GapCompression.ofPipeline (I : Introspection 7) (A : AnswerRed
   output_sampler := Pipeline.output_sampler I A R
   output_decider := Pipeline.output_decider I A R
   bound := Pipeline.bound I A R
-  deg := R.deg * (A.deg + 1)
+  deg := R.deg * (Pipeline.arDegree I A + 1)
   sampler_time lam n := by
     have h := (Pipeline.output_within I A R (.nil, .nil) lam n).sampler_time
     rw [Pipeline.output_sampler] at h

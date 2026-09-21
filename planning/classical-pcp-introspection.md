@@ -15,8 +15,10 @@ actual `MIPRE.TM.CookLevin.Pad.classicalPcpDecider` and the complete effective
 self-dual normal-basis and multiplication-table constructor. Both have passed
 native Lean builds. The separate [Shoup campaign](shoup-axiom-removal.md) now
 proves their former irreducible-polynomial assumption. Introspection is in
-progress, with checked Pauli mixing in question-dependent coordinate presentations,
-conditioning identities, and the semantic two-level graph sampler used by detyping.
+progress, with checked ambient-register Pauli mixing, executable detyping with
+polynomial sampler runtime, finite-game PCC completeness, parsed introspection
+tests, and exact final strategy extraction. The main soundness induction and
+the complete uniform verifier compiler still need to be assembled.
 There is still no inhabitant of `Introspection 7`.
 
 The dated implementation notes below record the assumptions present at each earlier
@@ -412,3 +414,99 @@ same-state failure bound have exactly the standard axioms `propext`,
 `Classical.choice`, and `Quot.sound`. Root imports were regenerated with
 `lake exe mk_all`; blueprint coverage and ledger correspondence both report
 zero problems. Repository-wide CI is the final integration check.
+
+## Executable detyping and introspection continuation after PR #134
+
+PR #134 was merged as `f6484a8` on 21 September 2026. This branch also includes
+the completed padded-lines theorem (#133, `098aa20`) and Shoup construction
+(#135, `c2a51b0`), followed by the exact Pauli observables and swap-unitary
+identities (#136, `e34a22a`). The final QLD extraction theorem is still being
+assembled in that separate campaign. The manuscript remains pinned to `a459dee`.
+
+The continuation now constructs the actual ambient detyping sampler, rather
+than only its finite CL presentation. One closed program dispatches every
+dimension, marginal, linear and factor query and halts on malformed inputs.
+Its dimension is `4 * card T + S.dim n`; its polynomial query-runtime bound
+has one exponent independent of the index. The fixed finite graph contributes
+constants, so this is not a uniform polynomial graph-description compiler.
+An actual typed-sampler interface and specialization program prevent replacing
+the uniform program obligation by an arbitrary family of semantic maps.
+
+The actual detyping decider now validates raw encodings and dimensions, enforces
+an outer answer cut globally, and enforces the source typed-answer cut on valid
+edges before forwarding unchanged answers. Its distribution and predicate are
+exactly the finite detyping game under coordinate numbering. Actual compiled
+verifier strategies therefore satisfy same-state restriction soundness, and
+perfect PCC completeness preserves the local dimension. Both the premise and
+conclusion use the outer alphabet, with the inner rejection included in the
+typed predicate. Its cutoff routine is an actual
+index program, but runtime bounds and the comparison of the cuts are separate
+obligations. The source typed-answer cut is not the bound on the original
+answer component inside a parsed introspection answer.
+
+The finite-game detyping completeness proof now constructs an actual perfect
+PCC witness, with the same tracial state and one player-independent measurement
+rule. A separate answer-coarse-graining theorem supplies same-state soundness
+when the machine wrapper imposes the source typed-answer cut.
+
+For introspection itself, the checked construction now includes:
+
+* The full auxiliary type graph, its binary type encoding, the three-level
+  typed CL family, and exact auxiliary-edge probabilities. From an actual
+  three-level Pauli sampler, the executable extension and detyping now give
+  the actual five-level sampler with checked polynomial runtime transfer.
+* The parsed sampling, hiding, consistency and original-game predicate. It
+  reads prefixes from claimed CL outputs and uses the later hiding answer to
+  select both tail projections. Byte parsing, global length checks, and
+  clocked original-program calls remain separate obligations.
+* Pauli mixing on nested finite coordinate registers in one ambient EPR
+  state, producing actual POVMs on precisely the residual register. All
+  three error premises and the conclusion live on that same state.
+* Sampling and hiding consistency estimates, with coarse-graining before
+  distance conversion and no answer-fibre cardinality loss; actual typed
+  subtests instantiate the game probability rather than assume it. The
+  concrete sampling-prefix and terminal hiding/Read cross-party bounds are
+  `2 * |E| * epsilon`; the same-side terminal bound is `8 * |E| * epsilon`.
+* The exact final readout distribution and auxiliary-strategy value identity,
+  plus absorption of fixed roots and constants into the final error profile.
+  Final extraction assumes the tensor-product measurement form which the
+  remaining induction must produce.
+
+The ambient runtime mismatch is addressed explicitly. Legal original inputs
+still use answer cut `(2^n)^lambda`. Their original decider and any fixed
+universal simulator have absolute cost at most `2^((lambda*n+1)^C)` for a
+fixed `C`. Introspection and answer reduction now use this polynomial-exponent
+budget. Answer reduction also retains its input sampler's degree: the output
+bound is `(P.eval ((lambda*n+1)^mu + sigma))^(mu+1)` and its input-size degree
+is `d*(mu+1)`. The conditional compression theorem has been rechecked with
+these budgets and still produces a polynomial bound because it fixes `mu`.
+This is an ambient adaptation, not a proof that either final contract is
+inhabited. Constructing the absolute PCP clock and preserving answer cutoffs
+are still required for answer reduction.
+
+The outstanding introspection work is the complete uniform Pauli sampler and
+typed decider compiler, honest typed-game PCC completeness, application of the
+final QLD theorem, hiding product-form rigidity and the coarse-operator
+soundness induction, followed by assembly of `Introspection 7`. The semantic
+dual readout uses an explicit local coordinate convention; its effective
+ordered-register implementation must agree with that convention or provide a
+relabeling bridge. The typed introspection program must enforce the original
+answer component's `(2^n)^lambda` cut before the original decider call; the
+larger outer answer cut does not imply it. Runtime's universal simulation
+bound applies on those legal inputs, and arbitrary code still needs the
+appropriate total clock wrapper. A generic wrapper is now constructed from an
+executable unary index clock and the proved clocked self-interpreter: it halts
+for arbitrary source code, accepts precisely in-budget true results, and
+preserves known in-budget acceptance. The required growing clocks still need
+to be instantiated with their parameter and runtime bounds.
+The source's mathematical correction to the induction is
+still recorded in `rem:intro-commutation-gap` and must be carried out in Lean.
+These obligations are not hidden in newly introduced contracts or axioms.
+
+Validation of this continuation: all 42 new modules passed targeted Lean 4.33.0
+checks, the complete `MIPRE/Axioms.lean` passed with 166 new blueprint-matched
+headline guards, and the inspected headline axioms are exactly the standard
+`propext`, `Classical.choice`, and `Quot.sound` (or subsets). The root imports
+were regenerated, both blueprint checkers report zero problems, and independent
+reviews covered the parsed predicates, runtime budgets, program semantics,
+clocking and actual-game transport. Full repository CI is the final check.

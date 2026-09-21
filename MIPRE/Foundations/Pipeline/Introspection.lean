@@ -23,12 +23,15 @@ The reading of the paper's statement in the vocabulary of `MIPRE.Verifier`:
   (paper `lem:intro-sampler-complexity`), with its program computable from `λ`
   (`samplerProg`). On every input, well-formed or not, the output is a `5`-level normal form
   verifier (`output`).
-* The complexity clauses hold for every input and every index: `TIME_𝒮(n) ≤ (λn)^C`,
-  `TIME_𝒟(n) ≤ 2^{Cλn}` and `|𝒟^intro| ≤ Cλ^C` for a constant `C` (the paper's `C_intro`,
-  eq. `c_intro` of `recursive.tex`), read with `λn + 1` in place of `λn` so that the bounds
-  are meaningful at every index and level; the running times carry the degree `C` in the size
-  of the input that `Decider.TimeBoundAt` needs, and the decider rejects every answer longer
-  than its time bound (`Budget.B`). The introspective decider keeps `𝒟` within its own
+* The ambient complexity clauses hold for every input and every index:
+  `TIME_𝒮(n) ≤ (λn + 1)^C`, `TIME_𝒟(n) ≤ 2^{(λn + 1)^C}` and
+  `|𝒟^intro| ≤ C(λ+1)^C`. The polynomial exponent is an explicit adaptation of the
+  paper's absolute-time bound `2^{Cλn}`: `IsBounded λ` permits input-size degree `λ`,
+  which introduces a quadratic exponent in `λ` on legal answers of length `(2^n)^λ`.
+  The running times carry the fixed degree `C` in the size of the output verifier's
+  input, and the decider rejects every answer longer than its bound (`Budget.B`).
+  Answer reduction consumes the same polynomial-exponent budget, and the proved
+  compression composition still has polynomial output bounds. The introspective decider keeps `𝒟` within its own
   description only up to `λ` bits (paper `lem:intro-decider-complexity`), which is why the
   size bound does not depend on the input.
 * For a `λ`-bounded `ℓ`-level input: a value-`1` PCC strategy for `𝒱_{2^n}` gives
@@ -51,12 +54,12 @@ open Cost
 namespace Introspection
 
 /-- The answer bound of the introspective verifier at level `λ` and index `n`: its decider's
-running-time coefficient `2^{C(λn + 1)}`. -/
-abbrev ansBound (C lam n : ℕ) : ℕ := 2 ^ (C * (lam * n + 1))
+running-time coefficient `2^{(λn + 1)^C}`. -/
+abbrev ansBound (C lam n : ℕ) : ℕ := 2 ^ ((lam * n + 1) ^ C)
 
 /-- The budget of the introspective verifier at level `λ` and index `n`: sampler within
-`(λn + 1)^C`, questions of dimension at most `(λn + 1)^C`, decider within `2^{C(λn + 1)}`, both
-at degree `C`, and no answer longer than `2^{C(λn + 1)}` accepted. -/
+`(λn + 1)^C`, questions of dimension at most `(λn + 1)^C`, decider within `2^{(λn + 1)^C}`, both
+at degree `C`, and no answer longer than `2^{(λn + 1)^C}` accepted. -/
 def budget (C lam n : ℕ) : Budget :=
   ⟨(lam * n + 1) ^ C, (lam * n + 1) ^ C, ansBound C lam n, C, ansBound C lam n⟩
 

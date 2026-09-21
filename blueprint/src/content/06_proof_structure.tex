@@ -497,6 +497,120 @@ specified dispatch rules, including the zero fallback. They are the
 semantic correctness targets for the ambient sampler implementation.
 \end{proof}
 
+\begin{lemma}[Executable fixed CL samplers]
+\label{lem:fixed-cl-sampler}
+\uses{def:sampler,lem:detype-graph}
+\lean{MIPRE.CL.FixedSampler.sampler,
+  MIPRE.CL.FixedSampler.sampler_timeBound,
+  MIPRE.CL.Graph.sampler,
+  MIPRE.CL.Graph.sampler_dim,
+  MIPRE.CL.Graph.sampler_timeBound,
+  MIPRE.CL.TypedSampler.specialize,
+  MIPRE.CL.TypedSampler.specialize_timeBoundAt}
+\leanok
+Every fixed finite CL presentation with a full register partition has an actual
+ambient sampler program, with all marginal, linear and factor query clauses and
+halting on malformed inputs. In particular the fixed graph presentation has a
+two-level sampler of dimension $4|T|$. Its runtime is polynomial in the raw query
+size, uniformly in the index. A single executable typed sampler can also be
+specialized to any fixed type, with explicit runtime transfer.
+These fixed-table bounds may depend on the whole finite presentation; they do
+not assert polynomial compilation time in a variable graph's size.
+\end{lemma}
+\begin{proof}
+\leanok
+Compile a finite table of all legal queries and use a total fallback elsewhere.
+For type specialization, a total raw-data adapter inserts the fixed type tag
+before calling the original program; the original halting theorem applies to
+every adapted raw query. The program evaluations and cost bounds are checked.
+\end{proof}
+
+\begin{lemma}[Finite-game detyping PCC completeness]
+\label{lem:detype-game-completeness}
+\uses{lem:detype-game-soundness,def:pcc}
+\lean{MIPRE.CL.Detyping.decodeView_view,
+  MIPRE.CL.Detyping.decodeQuestion_output,
+  MIPRE.CL.Detyping.complete,
+  MIPRE.CL.Detyping.complete_state,
+  MIPRE.CL.Detyping.complete_player_independent,
+  MIPRE.CL.Detyping.complete_isPCC,
+  MIPRE.CL.Detyping.complete_value,
+  MIPRE.CL.Detyping.exists_perfectPCC}
+\leanok
+For positive-level partitioned typed CL presentations and a symmetric nonempty
+graph, every perfect PCC witness for the doubled typed finite game gives a
+perfect PCC witness for the doubled detyped finite game. The construction keeps
+the local dimension and tracial state and uses one player-independent measurement
+rule. This is a construction inside the ambient PCC representation.
+\end{lemma}
+\begin{proof}
+\leanok
+Decode the Alice-view pattern, then the disjoint Bob-view pattern, and use a
+fixed deterministic answer otherwise. On a common seed, either both decoded
+views identify an actual ordered edge or one side uses the deterministic
+measurement and the predicate accepts. On an edge the original measurements
+and predicate are recovered. Positive support transfers commutation and zero
+failure from the original perfect PCC witness.
+\end{proof}
+
+\begin{lemma}[Executable detyping sampler]
+\label{lem:detype-functional-sampler}
+\uses{lem:fixed-cl-sampler,lem:detype-cl}
+\lean{MIPRE.CL.Detyping.sampler,
+  MIPRE.CL.Detyping.sampler_dim,
+  MIPRE.CL.Detyping.samplerProg_closed,
+  MIPRE.CL.Detyping.samplerProg_halts,
+  MIPRE.CL.Detyping.samplerProg_dimension,
+  MIPRE.CL.Detyping.samplerProg_marginal,
+  MIPRE.CL.Detyping.samplerProg_linear,
+  MIPRE.CL.Detyping.samplerProg_factor,
+  MIPRE.CL.Detyping.sampler_haltsWithin,
+  MIPRE.CL.Detyping.sampler_timeBoundAt_uniform_degree,
+  MIPRE.CL.Detyping.sampler_timeBound}
+\leanok
+An actual ambient typed sampler with $\ell>0$ levels and a fixed finite type
+graph gives an actual ambient sampler with $\ell+2$ levels and dimension
+$4|T|+s(n)$. Its closed program answers the dimension, marginal, linear and
+factor queries of the detyped presentation, and halts on every malformed
+query. A polynomial runtime bound transfers from the given typed sampler,
+with an explicit coefficient and a query degree independent of the index.
+The constants depend on the fixed graph; uniform polynomial compilation time
+and description size in a variable graph are not asserted.
+\end{lemma}
+\begin{proof}
+\leanok
+Parse the raw query totally. The first two levels use the graph sampler;
+later levels either return the zero branch or forward one correctly typed
+query. The graph prefix supplies the selected type. A context-preserving
+one-call program reattaches the graph result. The proved query identities
+identify every returned bit string with the constructed CL presentation.
+The program's evaluation cost is bounded by a polynomial combining routing,
+the forwarded call, the returned data size and postprocessing. Bounding that
+polynomial's degree supplies the uniform query exponent.
+\end{proof}
+
+\begin{lemma}[Detyping with answer coarse-graining]
+\label{lem:detype-game-answers}
+\uses{lem:detype-game-soundness}
+\lean{MIPRE.CL.Detyping.restrictAnswers_state,
+  MIPRE.CL.Detyping.restrictAnswers_failAt_le,
+  MIPRE.CL.Detyping.restrictAnswers_failure_le,
+  MIPRE.CL.Detyping.restrictAnswers_value_ge}
+\leanok
+Allow different typed and detyped answer alphabets, with question-dependent
+coarse-graining maps. If acceptance on every valid edge implies acceptance
+after those maps, restriction and coarse-graining preserve the state and give
+failure at most $16^{|T|}$ times the detyped failure. Thus a decider may reject
+additional overlong answers. The program-level cutoff must still establish
+the stated acceptance implication.
+\end{lemma}
+\begin{proof}
+\leanok
+Adapt the strategy's questions and coarse-grain its answer measurements.
+The acceptance implication bounds conditional failure on each edge. Sum those
+bounds and apply the already proved detyping conditional-distribution identity.
+\end{proof}
+
 \begin{lemma}[Implementing the detyped sampler]
 \label{lem:detype-sampler}
 \ledgernode{1.1.4.6}
@@ -508,6 +622,110 @@ remaining seed block and later factors are zero, so factors still partition
 the ambient space. Valid factor output gives $s(n)=O(\TIME_S(n))$.
 The implementation depends only on $S,G$.
 \end{lemma}
+
+\begin{lemma}[Executable detyping decider with two answer cuts]
+\label{lem:detype-executable-decider}
+\uses{lem:detype-functional-sampler,def:normal-verifier}
+\lean{MIPRE.CL.Detyping.DeciderProgram.prog_closed,
+  MIPRE.CL.Detyping.DeciderProgram.prog_halts,
+  MIPRE.CL.Detyping.DeciderProgram.decider,
+  MIPRE.CL.Detyping.DeciderProgram.raw_accepts_iff,
+  MIPRE.CL.Detyping.DeciderProgram.accepts_iff,
+  MIPRE.CL.Detyping.DeciderProgram.verifier,
+  MIPRE.CL.Detyping.DeciderProgram.verifier_rejectsLong,
+  MIPRE.CL.Detyping.DeciderProgram.bounded_acceptance,
+  MIPRE.CL.Detyping.DeciderProgram.bounded_acceptance_edge,
+  MIPRE.CL.Detyping.DeciderProgram.verifier_game_D}
+\leanok
+Given an actual typed sampler, an all-input terminating typed decider and an
+executable index routine returning inner and outer answer cuts, construct an
+ambient detyped verifier. It rejects malformed raw encodings, wrong question
+lengths and answers beyond the outer cut. Within that cut, a nonedge accepts;
+a genuine edge additionally enforces the source typed-answer cut and calls
+the typed decider on the unchanged answers and content questions. On the
+outer finite answer alphabet its predicate is exactly the finite detyping
+predicate with the inner rejection included. The inner cut bounds the whole
+typed answer; an introspection implementation must separately check the
+original answer component before calling the original decider.
+\end{lemma}
+\begin{proof}
+\leanok
+Use actual dimension and cutoff calls followed by a total finite-graph router.
+Only the canonical Boolean true result accepts. Evaluation determinism gives
+the exact acceptance equivalence, and the coordinate-numbering identities
+give the finite predicate equality. These statements prove no runtime bound
+for the supplied cutoff routine and assume no implicit inequality between
+the two cuts. Such bounds and the appropriate cut comparison remain explicit
+requirements when constructing a bounded compiler and transferring completeness.
+\end{proof}
+
+\begin{lemma}[Strategy transfer for the executable detyping verifier]
+\label{lem:detype-program-strategies}
+\uses{lem:detype-executable-decider,lem:detype-game-completeness,lem:detype-game-soundness}
+\lean{MIPRE.CL.Detyping.DeciderProgram.numbered_clDist,
+  MIPRE.CL.Detyping.DeciderProgram.verifier_game_mu,
+  MIPRE.CL.Detyping.DeciderProgram.toFinite_state,
+  MIPRE.CL.Detyping.DeciderProgram.toFinite_value,
+  MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_state,
+  MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_failure_le,
+  MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_value_ge,
+  MIPRE.CL.Detyping.DeciderProgram.fromFiniteSync_isPCC,
+  MIPRE.CL.Detyping.DeciderProgram.exists_ambientPerfectPCC,
+  MIPRE.CL.Detyping.DeciderProgram.verifier_hasPerfectPCC}
+\leanok
+The actual program-defined detyped verifier has exactly the finite detyping
+distribution and predicate under the explicit coordinate-numbering equivalence.
+Every strategy for it restricts to a typed-game strategy on the same state
+with failure at most $16^{|T|}$ times its failure. Conversely, a perfect PCC
+strategy for the typed game gives an actual ambient perfect PCC strategy
+with the same local dimension. Both sides use the outer answer alphabet and
+the typed predicate includes rejection beyond the source typed-answer cut;
+there is no implicit comparison of two different answer alphabets.
+\end{lemma}
+\begin{proof}
+\leanok
+Transport the common seed and questions along the register equivalence.
+Finite-sum reindexing proves the distribution identity and exact strategy
+value preservation. Apply finite-game restriction and completeness, then
+transport the resulting strategies, including the doubling tags and PCC
+commutation clauses, to the actual verifier.
+\end{proof}
+
+\begin{lemma}[Total clocking of arbitrary typed decision programs]
+\label{lem:detype-total-clock}
+\uses{lem:universal-tm,lem:detype-executable-decider}
+\lean{MIPRE.CL.Detyping.ClockProgram.constant,
+  MIPRE.CL.Detyping.ClockProgram.ofPolyTimeFun,
+  MIPRE.CL.Detyping.ClockProgram.clockedResult_eq_iff,
+  MIPRE.CL.Detyping.ClockProgram.wrapProg_halts,
+  MIPRE.CL.Detyping.ClockProgram.wrapProg_accepts_iff,
+  MIPRE.CL.Detyping.ClockProgram.wrap,
+  MIPRE.CL.Detyping.ClockProgram.wrap_total,
+  MIPRE.CL.Detyping.ClockProgram.wrap_accepts_iff_of_bounded,
+  MIPRE.CL.Detyping.ClockProgram.decider,
+  MIPRE.CL.Detyping.ClockProgram.decider_total,
+  MIPRE.CL.Detyping.ClockProgram.decider_accepts_iff,
+  MIPRE.CL.Detyping.ClockProgram.wrapProg_haltsWithin}
+\leanok
+An executable index routine producing a unary cost budget gives a total
+typed decider from arbitrary source code, even if that code does not halt.
+The wrapper accepts exactly when the source returns the canonical Boolean
+true within the supplied budget. It preserves the acceptance predicate on
+inputs whose source evaluation is known to fit. The default construction uses
+the proved clocked self-interpreter. An explicit wrapper-cost bound combines
+the actual index-clock cost, interpreter polynomial and routing overhead.
+This supplies the totality mechanism;
+instantiating the appropriate growing clock and proving the final compiler's
+time, size and answer-format bounds remain separate obligations.
+\end{lemma}
+\begin{proof}
+\leanok
+Run the index clock, invoke the clocked universal interpreter on the complete
+original input, and inspect its success tag and Boolean result. The interpreter
+halts for every source program. Evaluation determinism identifies its tagged
+result with precisely an in-budget source evaluation, proving both directions
+of the acceptance law without a source-termination assumption.
+\end{proof}
 
 \begin{lemma}[Implementing the detyped decider]
 \label{lem:detype-decider}
@@ -667,7 +885,17 @@ $\poly(2^{p(\lambda)n},\ell)$ and on the soundness margins must be propagated.
 Enlarging the answer alphabet to $N^{\lambda'}$ without rejecting answers beyond the
 original cut can change the game. A direct proof in the ambient model is another route.
 
-This is an open obligation, not a normalization theorem established here.
+Lemma~\ref{lem:intro-ambient-runtime} proves the absolute legal-input bound and
+its universal-simulator overhead. The ambient introspection and answer-reduction
+contracts now allow the polynomial-exponent bounds $2^{(\lambda n+1)^C}$ and
+$2^{(\lambda n+1)^\mu}$. Answer reduction also retains the input sampler's
+degree in its output budget, as in Lemma~\ref{lem:ar-ambient-sampler-cost}.
+The full compression composition is checked with these revised contracts and
+still has polynomial output bounds. This is an explicit ambient adaptation;
+the paper's source-model
+theorem statements below retain their original time bounds.
+The absolute PCP clock, normalization construction and format-preservation
+clauses remain open.
 \texttt{Budget} and \texttt{Verifier.Within} record coefficients, degrees, question
 dimensions and explicit rejection bounds; \texttt{GapCompression.output\_rejects\_long}
 constrains the output. None of these supplies normalization for arbitrary
@@ -681,6 +909,48 @@ of Remark~\ref{rem:pcc-representation-bridge}. The comparison is with \texttt{in
 pinned by~\cite{AuditSync26}.
 \end{remark}
 
+
+\begin{lemma}[Absolute costs on the original legal answer cut]
+\label{lem:intro-ambient-runtime}
+\uses{def:lambda-bounded,rem:runtime-normalization}
+\lean{MIPRE.Introspection.legal_query_size_le,
+  MIPRE.Introspection.legal_query_cost_le,
+  MIPRE.Introspection.original_decider_haltsWithin,
+  MIPRE.Introspection.polynomial_ansBound,
+  MIPRE.Introspection.original_simulation_haltsWithin}
+\leanok
+For an ambient $\lambda$-bounded verifier, $n\geq1$, and questions and answers
+of length at most $(2^n)^\lambda$, the actual original decider halts within
+$2^{(\lambda n+1)^5}$ cost. Any fixed universal simulator also halts on those
+inputs within $2^{(\lambda n+1)^C}$ for a constant $C$ depending only on its
+overhead polynomial. The original answer cut is unchanged. Any fixed polynomial
+of a polynomial-exponent budget fits another such budget.
+\end{lemma}
+\begin{proof}
+\leanok
+The four encoded fields have size at most $16(2^n)^\lambda+7$.
+Insert that size into the actual boundedness clause and bound the resulting
+exponent by $(\lambda n+1)^5$. Bound program and input sizes by the same
+exponential, and absorb the universal machine's polynomial overhead. No
+answer-prefix invariance or malformed-input wrapper is asserted here.
+\end{proof}
+
+\begin{lemma}[Ambient sampler-cost absorption]
+\label{lem:ar-ambient-sampler-cost}
+\uses{def:answer-reduction-contract}
+\lean{MIPRE.AnswerReduction.sampler_cost_le_power}
+\leanok
+If $L\leq B$ and $s+1\leq B$, then $L(s+1)^\mu\leq B^{\mu+1}$.
+Consequently the ambient answer-reduction contract retains the input sampler's
+degree in its output budget: a universal base polynomial is raised to
+$\mu+1$, and the base output degree is multiplied by $\mu+1$. This arithmetic
+bound does not construct the answer-reduction program or its clock.
+\end{lemma}
+\begin{proof}
+\leanok
+Bound each factor by its corresponding power of $B$. Compression fixes
+$\mu$ before choosing its final bound, so that bound is still polynomial.
+\end{proof}
 
 \subsubsection{The introspective verifier}
 
@@ -711,6 +981,118 @@ It is a $3$-level \emph{typed} verifier, hence $5$-level once detyped
 \end{definition}
 
 \effortHard
+
+\begin{lemma}[Introspection type graph and typed CL family]
+\label{lem:intro-type-presentation}
+\uses{def:intro-verifier,lem:detype-game-soundness}
+\lean{MIPRE.Introspection.QuestionType.card,
+  MIPRE.Introspection.QuestionType.esize_aux_le,
+  MIPRE.Introspection.TypeGraph.symmetric,
+  MIPRE.Introspection.TypeGraph.adj_pauli,
+  MIPRE.Introspection.TypeGraph.adj_different_roles_iff,
+  MIPRE.Introspection.TypeGraph.adj_pauli_aux_iff,
+  MIPRE.Introspection.TypeGraph.adj_hide_hide_iff,
+  MIPRE.Introspection.TypeGraph.edges_nonempty,
+  MIPRE.Introspection.TypeGraph.detyping_factor_of_pauli_card,
+  MIPRE.Introspection.TypedPresentation.family_exactlyOn,
+  MIPRE.Introspection.TypedPresentation.marginal_aux,
+  MIPRE.Introspection.TypedPresentation.linear_aux,
+  MIPRE.Introspection.TypedPresentation.factor_aux,
+  MIPRE.Introspection.TypedPresentation.joint_aux_zero,
+  MIPRE.Introspection.TypedPresentation.mu_cross_introspect,
+  MIPRE.Introspection.TypedPresentation.failAt_cross_introspect_le}
+\leanok
+Given the finite Pauli type graph and its distinguished $X,Z$ vertices, construct
+the introspection graph with both hiding chains, the sampling and reading edges,
+the cross-introspection edge and all loops. It has $|T_{\mathrm{Pauli}}|+2\ell+6$
+vertices, hence $2\ell+32$ when the Pauli graph has $26$ vertices. Its type encoding
+uses binary hiding indices. Retain the supplied three-level Pauli CL family;
+every auxiliary type has the zero presentation with a full factor partition.
+The cross-introspection edge asks the two zero-content questions with probability
+exactly the inverse number of ordered edges. Its conditional failure is at most
+the edge count times the whole typed game's failure.
+\end{lemma}
+\begin{proof}
+\leanok
+The graph is the symmetric closure of the explicit oriented chains and Pauli
+edges. Constructor case analysis proves the edge classifications. Summing the
+uniform common-seed law over the zero auxiliary presentations gives the exact
+edge probability; nonnegativity bounds its contribution to the total failure.
+This supplies the graph and CL family, not the remaining uniform Pauli sampler
+implementation or the introspective decision program.
+\end{proof}
+
+\begin{lemma}[The parsed introspection decision predicate]
+\label{lem:intro-parsed-predicate}
+\uses{lem:intro-type-presentation,def:cl-function}
+\lean{MIPRE.Introspection.CLChecks.prefixRegister_subset,
+  MIPRE.Introspection.CLChecks.proj_prefixRegister,
+  MIPRE.Introspection.CLChecks.prefixRegister_full,
+  MIPRE.Introspection.CLChecks.sampling_prefix,
+  MIPRE.Introspection.CLChecks.hidingPauli_coarse,
+  MIPRE.Introspection.CLChecks.hidingNext_coarse,
+  MIPRE.Introspection.TypedPredicate.check,
+  MIPRE.Introspection.TypedPredicate.check_formats,
+  MIPRE.Introspection.TypedPredicate.check_consistency,
+  MIPRE.Introspection.TypedPredicate.check_sampling,
+  MIPRE.Introspection.TypedPredicate.check_sampling_prefix,
+  MIPRE.Introspection.TypedPredicate.check_reading,
+  MIPRE.Introspection.TypedPredicate.check_game,
+  MIPRE.Introspection.TypedPredicate.check_game_reversed}
+\leanok
+Construct the finite predicate on parsed answers, with format and consistency
+checks, both orientations of the sampling and hiding tests, and the original
+decision predicate on the cross-introspection edge. The original CL family,
+original predicate, Pauli predicate and projection of Pauli answers to the
+original register are explicit parameters. The Pauli predicate is instantiated
+at the actual Pauli question contents. Accepted sampling answers satisfy every
+prefix comparison on the whole answer alphabet. Hiding projections use the
+registers selected by the later answer, as required by the adaptive construction.
+For every claimed output, the prefix is exactly its projection onto the
+selected register; at full length, this register is the complete partition.
+The cross-introspection check retains the original Alice/Bob argument order
+in either orientation. This is the parsed semantic predicate; byte parsing,
+global cutoffs and clocked program calls remain separate construction work.
+\end{lemma}
+\begin{proof}
+\leanok
+Use a sum of the four answer formats. Dispatch by question constructors and
+check both orientations. Compute claimed-output prefixes by coordinate
+restriction, and dual readouts in the selected local register. Unfolding the
+checks gives the accepted-answer implications; the CL prefix theorem gives
+the marginal identity without assuming that a claimed answer is in the image.
+\end{proof}
+
+\begin{lemma}[The executable five-level introspection sampler]
+\label{lem:intro-executable-sampler}
+\uses{lem:intro-type-presentation,lem:detype-functional-sampler}
+\lean{MIPRE.Introspection.typedSampler,
+  MIPRE.Introspection.typedSampler_dim,
+  MIPRE.Introspection.typedSampler_cl,
+  MIPRE.Introspection.typedSampler_prog_independent,
+  MIPRE.Introspection.detypedSampler,
+  MIPRE.Introspection.detypedSampler_dim,
+  MIPRE.Introspection.detypedSampler_cl,
+  MIPRE.Introspection.typedSampler_haltsWithin,
+  MIPRE.Introspection.typedSampler_timeBoundAt,
+  MIPRE.Introspection.detypedSampler_timeBound}
+\leanok
+An actual three-level typed Pauli sampler extends to the complete typed
+introspection family and then to an actual five-level sampler. Its dimension
+is $4(|T_{\mathrm{Pauli}}|+2\ell+6)+s(n)$. Every marginal, linear and factor
+query agrees with the specified CL family, and malformed queries halt.
+The typed extension program is independent of $\ell$. Polynomial runtime
+transfers with an explicit index-dependent coefficient and an index-independent
+query degree. Instantiating the uniform Pauli sampler and its parameter/size
+bounds remains required for the full introspection contract.
+\end{lemma}
+\begin{proof}
+\leanok
+Strip the sum tag and forward Pauli queries. Auxiliary queries produce the
+zero vectors or first-factor indicators of the supplied vector length.
+Dimension queries call the Pauli sampler. Apply the executable graph detyping
+compiler and compose its checked cost bound with the extension's cost bound.
+\end{proof}
 
 \begin{lemma}[Complexity of the introspective verifier]
 \label{lem:intro-complexity}
@@ -1067,14 +1449,25 @@ $56\sqrt\eps$. Register dimensions and auxiliary spaces may vary with $x$.
 Twirl into ancillary POVM blocks, keep the matching fibre using the exact
 EPR mirror, and complete its submeasurement by summing over the discarded
 output. Average the pointwise estimates using concavity of the square root.
-This includes empty fibres. Transport from the paper's ambient coordinate
-subregisters to these tensor presentations is still required for the full
-statement below.
+This includes empty fibres. The ambient coordinate transport is proved in
+Lemma~\ref{lem:pauli-mixing}.
 \end{proof}
 
 \begin{lemma}[Pauli mixing with a retained classical fibre]
 \label{lem:pauli-mixing}
 \ledgernode{1.2.3.3,1.2.3.3.7}
+\lean{MIPRE.Introspection.registerPOVM,
+  MIPRE.Introspection.registerOp_isPVM,
+  MIPRE.Introspection.stateSqNorm_registerOp,
+  MIPRE.Introspection.registerEPR_norm,
+  MIPRE.Introspection.registerState_split,
+  MIPRE.Introspection.stateSqNorm_registerExtend,
+  MIPRE.Introspection.exists_register_mixing_sqrt,
+  MIPRE.Introspection.coordinateSplit,
+  MIPRE.Introspection.coordinateLinear_restrict,
+  MIPRE.Introspection.coordinateInsert_linear,
+  MIPRE.Introspection.exists_ambient_pauli_mixing}
+\leanok
 \uses{lem:pauli-linear-mixing,lem:pauli-commutator-transfer,lem:pauli-unitary-mixing,lem:pauli-two-sided-commutation,lem:close-submeasurement,lem:pauli-mixing-coordinates}
 Let $U_x\subseteq V_x\subseteq V$ be coordinate registers, $L_x:U_x\to U_x$
 linear, and the state be $\mathrm{EPR}_V\otimes\mathrm{aux}$.
@@ -1095,6 +1488,16 @@ The sums in the commutator hypotheses include both projector and measurement
 outcomes. Empty fibres allow any $N$; their left-hand mass is controlled by
 consistency, not identically zero.
 \end{lemma}
+
+\begin{proof}
+\leanok
+Split the actual finite coordinate registers by explicit basis equivalences.
+The ambient EPR state factors exactly, and adjoining or removing the untouched
+complement preserves every squared state norm. Pull back the local operators,
+apply Lemma~\ref{lem:pauli-mixing-coordinates}, and transport its actual POVMs
+back to the residual register. With each hypothesis bounded by $\eps$, the
+conclusion has the explicit constant $56$.
+\end{proof}
 
 \begin{proof}
 \ledgernode{1.2.3.3.7.1,1.2.3.3.7.2,1.2.3.3.7.3}
@@ -1164,6 +1567,84 @@ commute with the Pauli basis.
 
 \effortHard
 
+\begin{lemma}[Sampling and hiding subtest estimates]
+\label{lem:intro-subtest-estimates}
+\uses{def:inconsistency,def:state-distance,def:cl-function}
+\lean{MIPRE.CL.CLFun.SupportedOn.proj_eval_cons,
+  MIPRE.CL.CLFun.SupportedOn.outputPrefix_eval,
+  MIPRE.CL.CLFun.ExactlyOn.outputPrefix_self,
+  MIPRE.CL.CLFun.ExactlyOn.outputPrefix_univ,
+  MIPRE.Introspection.agreement_subtest_average,
+  MIPRE.Introspection.sampling_pauli_estimate,
+  MIPRE.Introspection.sampling_prefix_estimate,
+  MIPRE.Introspection.mapped_operator_zero_of_not_range,
+  MIPRE.Introspection.off_range_weight_le,
+  MIPRE.Introspection.same_side_via_common_other,
+  MIPRE.Introspection.hiding_same_side_estimate,
+  MIPRE.Introspection.operator_chain_telescope,
+  MIPRE.Introspection.stateSqNorm_hiding_chain,
+  MIPRE.Introspection.hiding_chain_average,
+  MIPRE.Introspection.hiding_chain_uniform}
+\leanok
+Construct a CL output-prefix map on every claimed full output; on honest outputs
+it agrees with the truncated CL evaluation. For any finite game, a subtest of
+weight $c>0$ whose accepted answers force equality of processed outcomes gives
+averaged squared cross-party distance at most $2\eps/c$, where the game's
+failure is at most $\eps$. The probability hypothesis is a pushforward bound,
+so the sampled question map need not be injective. Replacing one side by ideal
+Pauli readouts of squared error $\eta$ costs at most $2\eta+4\eps/c$.
+All output values, including impossible claims, are controlled. Two such tests
+with a common opposite-party measurement give a same-side bound
+$4\eps/c_1+4\eps/c_2$. A chain of $k$ squared edge errors bounded by $\delta$
+costs at most $k^2\delta$, without an outcome-cardinality factor.
+\end{lemma}
+\begin{proof}
+\leanok
+Coarse-grain the accepted-answer relations before converting consistency to
+distance. The opposite-party triangle inequality then gives the same-side
+estimate. Telescope the operator chain and use Cauchy--Schwarz. These are
+checked subtest lemmas; their acceptance implications and probability bounds
+must still be instantiated for the actual introspective decision procedure.
+\end{proof}
+
+\begin{lemma}[Concrete typed sampling and terminal hiding estimates]
+\label{lem:intro-typed-estimates}
+\uses{lem:intro-parsed-predicate,lem:intro-type-presentation,lem:intro-subtest-estimates}
+\lean{MIPRE.Introspection.TypedPredicate.check_directed,
+  MIPRE.Introspection.TypedPredicate.check_directed_reversed,
+  MIPRE.Introspection.TypedPredicate.check_hiding_read,
+  MIPRE.Introspection.TypedPredicate.check_hiding_read_reversed,
+  MIPRE.Introspection.TypedPredicate.check_hiding_next,
+  MIPRE.Introspection.TypedPredicate.check_hiding_next_reversed,
+  MIPRE.Introspection.TypedPredicate.check_hiding_pauli,
+  MIPRE.Introspection.TypedPredicate.check_hiding_pauli_reversed,
+  MIPRE.Introspection.TypedEstimates.questionCheck,
+  MIPRE.Introspection.TypedEstimates.parsedGame,
+  MIPRE.Introspection.TypedEstimates.aux_agreement_estimate,
+  MIPRE.Introspection.TypedEstimates.sampling_prefix_estimate,
+  MIPRE.Introspection.TypedEstimates.hiding_read_estimate,
+  MIPRE.Introspection.TypedEstimates.hiding_read_same_side_estimate}
+\leanok
+For the concrete parsed introspection game of failure at most $\eps$, the
+sampling-prefix and terminal hiding/Read cross-party squared distances are
+at most $2|E|\eps$, where $E$ is the set of ordered type edges. Comparing the
+terminal hiding and Read measurements on the same side costs at most
+$8|E|\eps$. The predicates, question distribution, and Read consistency loop
+are those of the constructed game; no separate acceptance or selection-weight
+premise is assumed. Wrong answer constructors have a distinct coarse outcome,
+so the estimates include the whole answer alphabet. The Pauli subpredicate
+receives the actual Pauli question contents. The adjacent hiding induction
+and product-form rigidity remain separate.
+\end{lemma}
+\begin{proof}
+\leanok
+Bound each fixed auxiliary edge's conditional failure using its exact mass
+$1/|E|$. The parsed acceptance checks imply the appropriate equality of
+coarse outcomes, so consistency gives the cross-party bounds. Use the Read
+consistency loop as the common opposite-party measurement for the same-side
+comparison. Both hiding orientations are proved directly from the predicate.
+\end{proof}
+
 \begin{lemma}[The sampling test forces the question distribution]
 \label{lem:intro-sampling-test}
 \ledgernode{1.2.3.5}
@@ -1203,6 +1684,68 @@ strategy for $\vint_n$ of value $1 - \eps$ into a strategy for $\verifier_{2^n}$
 $1 - \delta(\eps, n)$ on a state of comparable entanglement, which is the soundness and
 entanglement content of Theorem~\ref{thm:introspection}.
 \end{lemma}
+
+\begin{lemma}[Exact final strategy extraction]
+\label{lem:intro-final-extraction}
+\uses{def:cl-function,def:tensor-strategy}
+\lean{MIPRE.Introspection.readout_isPVM,
+  MIPRE.Introspection.bornProb_registerEPR_readout,
+  MIPRE.Introspection.readout_eq_synOf,
+  MIPRE.Introspection.sampled_dist_eq_clDist,
+  MIPRE.Introspection.conditionalReadout_isPVM,
+  MIPRE.Introspection.bornProb_conditionalReadout,
+  MIPRE.Introspection.readoutAcceptance_eq_value,
+  MIPRE.Introspection.quantumValue_ge_of_readoutAcceptance,
+  MIPRE.Introspection.exists_strategy_of_readoutAcceptance,
+  MIPRE.Introspection.verifier_readoutAcceptance_eq_value}
+\leanok
+For arbitrary finite question maps, computational readout of a shared EPR seed
+has exactly their common uniform-seed distribution. Tensor each question
+projector with a projective auxiliary measurement depending on that question.
+These form a joint PVM, and their accepted mass is exactly the value of the
+strategy using the auxiliary state and auxiliary measurements in the original
+game. Discarding the question EPR register incurs no further error or dimension
+factor. The identity is specialized to the actual CL distribution of a verifier.
+This assumes the terminal tensor-product measurement form; obtaining that form
+from arbitrary high-value introspection play remains the soundness induction.
+\end{lemma}
+\begin{proof}
+\leanok
+Evaluate the diagonal projectors on the normalized EPR state; the result is the
+normalized size of the common question fibre. Born probabilities factor over
+the EPR and auxiliary systems. Rearranging the finite acceptance sum gives
+the original strategy value. Package the auxiliary PVMs as a legal tensor
+strategy and compare with the supremum defining quantum value.
+\end{proof}
+
+\begin{lemma}[Absorbing fixed introspection error losses]
+\label{lem:intro-error-absorption}
+\uses{def:state-distance}
+\lean{MIPRE.Introspection.errorProfile_power,
+  MIPRE.Introspection.exists_errorProfile_power,
+  MIPRE.Introspection.iteratedRoot_eq_rpow,
+  MIPRE.Introspection.errorProfile_iteratedRoot,
+  MIPRE.Introspection.errorProfile_power_of_le,
+  MIPRE.Introspection.errorProfile_scale_input,
+  MIPRE.Introspection.errorProfile_scaled_power,
+  MIPRE.Introspection.state_transfer_loss_le_three_sqrt}
+\leanok
+Write $E(a,b,x,\eps)=a(x^a\eps^b+x^{-b})$. For $x\geq1$, $\eps\geq0$,
+$C,a\geq0$, $0<b\leq1$ and $0<r\leq1$, there are explicit $A\geq1$ and
+$0<B\leq1$ such that $C E(a,b,x,\eps)^r\leq E(A,B,x,\eps)$.
+One can take $A=\max\{1,Ca^r,ar\}$ and $B=br$. This also absorbs any fixed
+number of square roots and a fixed rescaling of $\eps$, including detyping's
+factor. For $0\leq\delta\leq1$, the state-transfer loss satisfies
+$\delta+2\sqrt\delta\leq3\sqrt\delta$.
+\end{lemma}
+\begin{proof}
+\leanok
+Use subadditivity of the $r$-power on nonnegative sums and monotonicity of powers
+with base at least one. Each square root multiplies the exponent by $1/2$.
+Absorb the fixed error rescaling into the coefficient before applying the
+power bound. These are quantitative closure results; they do not replace the
+soundness induction that must supply the error estimates.
+\end{proof}
 
 \begin{remark}[One step of the induction is documented rather than repaired]
 \label{rem:intro-commutation-gap}
@@ -1254,12 +1797,12 @@ program computable in polynomial time, the introspective decider's program as a
 polynomial-time function of the input programs and $\lambda$, the packaging as a $5$-level
 normal form verifier on every input, the complexity clauses for every input and index ---
 sampler and decider runtime coefficients at most $(\lambda n + 1)^C$ and
-$2^{C(\lambda n + 1)}$, respectively, both at input-size degree $C$, and
+$2^{(\lambda n + 1)^C}$, respectively, both at input-size degree $C$, and
 $\abs{\dint} \leq C(\lambda + 1)^C$ for a constant $C$, the ambient analogue of
 $C_{\mathrm{intro}}$, with
-the decider rejecting answers longer than $2^{C(\lambda n+1)}$. For ambient
+the decider rejecting answers longer than $2^{(\lambda n+1)^C}$. For ambient
 $\lambda$-bounded inputs, completeness transfers \texttt{HasPerfectPCC} from index
-$2^n$ at answer cut $(2^n)^\lambda$ to index $n$ at cut $2^{C(\lambda n+1)}$.
+$2^n$ at answer cut $(2^n)^\lambda$ to index $n$ at cut $2^{(\lambda n+1)^C}$.
 For $n\geq1$, soundness transfers a value greater than $1-\eps$, for $\eps>0$, at the output cut
 to a value at least $1-\delta(\eps,n)$ at the input cut, where
 $\delta(\eps,n)=a((\lambda n)^a\eps^b+(\lambda n)^{-b})$, $a\geq1$ and $0<b\leq1$.
@@ -2447,15 +2990,17 @@ $C_{\mathrm{ar}}$, for all $n \geq C_{\mathrm{ar}}$:
 The structure \texttt{MIPRE.AnswerReduction} is an ambient contract,
 parametrized by $\ell$, its output at $\max\{\ell + 2, 5\}$ levels. The hypotheses on the
 input are the budget \texttt{AnswerReduction.inBudget}: sampler and decider runtime
-coefficients at most $(\lambda n + 1)^\mu$ and $2^{\mu(\lambda n + 1)}$, respectively,
+coefficients at most $(\lambda n + 1)^\mu$ and $2^{(\lambda n + 1)^\mu}$, respectively,
 both at input-size degree $\mu$, questions of dimension at most
 the sampler's bound and answers rejected beyond the decider's, together with $\abs{\decider}
-\leq \sigma$; the output is then within a universal polynomial of $(\lambda n + 1)^\mu +
-\sigma$ at a universal degree, and rejects longer answers. Its threshold $C_{\mathrm{ar}}$
+\leq \sigma$. For a universal base polynomial $P$ and base degree $d$, the
+output is within $P((\lambda n+1)^\mu+\sigma)^{\mu+1}$ at input-size degree
+$d(\mu+1)$, and rejects longer answers. The extra power retains the input
+sampler's degree; fixing $\mu$ in compression leaves a polynomial bound. Its threshold $C_{\mathrm{ar}}$
 plays the role of the source threshold (\texttt{thm:ar} in \texttt{ld\_compiler.tex}); an earlier statement here had the
 value clauses for all $n$. Its soundness field also explicitly requires $n\geq2$,
 $\lambda\geq1$ and $\eps>0$. Completeness transfers ambient \texttt{HasPerfectPCC}
-from input answer cut $2^{\mu(\lambda n+1)}$ to the output budget's answer cut.
+from input answer cut $2^{(\lambda n+1)^\mu}$ to the output budget's answer cut.
 Soundness transfers output value greater than $1-\eps$ to input value at least
 $1-\delta(\eps,n)$ at those cuts, with
 $\delta(\eps,n)=\sigma^a((\lambda n)^{\mu a}\eps^b+(\lambda n)^{-\mu b})$,
