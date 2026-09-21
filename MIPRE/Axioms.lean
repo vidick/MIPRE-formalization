@@ -59,6 +59,23 @@ import MIPRE.Foundations.CL.DetypingDeciderTransport
 import MIPRE.Foundations.CL.DetypingClock
 import MIPRE.Foundations.Introspection.TypedEstimates
 import MIPRE.Foundations.Introspection.SamplerCost
+import MIPRE.Foundations.Introspection.ClockCost
+import MIPRE.Foundations.Introspection.ClockSimulation
+import MIPRE.Foundations.Introspection.ClockCompiler
+import MIPRE.Foundations.Introspection.ClockSimulationCost
+import MIPRE.Foundations.Introspection.ParserGuard
+import MIPRE.Foundations.Introspection.HonestCoreGame
+import MIPRE.Foundations.Introspection.HonestSampling
+import MIPRE.Foundations.Introspection.HonestFirstHide
+import MIPRE.Foundations.Introspection.HonestReading
+import MIPRE.Foundations.Introspection.HonestParsed
+import MIPRE.Foundations.Introspection.HonestParsedHiding
+import MIPRE.Foundations.Introspection.HonestHidingCommute
+import MIPRE.Foundations.Introspection.HonestHidingAcceptance
+import MIPRE.Foundations.Introspection.HidingInductionDilation
+import MIPRE.Foundations.Introspection.HidingInduction
+import MIPRE.Foundations.Introspection.HidingRigidity
+import MIPRE.Foundations.Introspection.TypedExtraction
 import MIPRE.Foundations.SAT.Arithmetization
 import MIPRE.Foundations.SAT.FiniteCircuitArithmetization
 import MIPRE.Foundations.SAT.CircuitFieldCorrect
@@ -1502,6 +1519,131 @@ historical admission remains unchanged; these guards describe the Lean proof.
 /-- info: 'MIPRE.SAT.effective_selfDualNormalBasis' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
 #print axioms MIPRE.SAT.effective_selfDualNormalBasis
+
+
+/-! ## Introspection construction, induction stages, and final extraction -/
+
+#guard_sorry_free MIPRE.Introspection.ClockArithmetic.uniformProg_closed,
+  MIPRE.Introspection.ClockArithmetic.uniformProg_runs,
+  MIPRE.Introspection.growingClock_budget,
+  MIPRE.Introspection.growingClock_runs,
+  MIPRE.Introspection.growingClock_size,
+  MIPRE.Introspection.growingClockCompiler_apply,
+  MIPRE.Introspection.growingClockCompiler_runs,
+  MIPRE.Introspection.growingClock_polynomial_time,
+  MIPRE.Introspection.growingClock_ansBound_time,
+  MIPRE.Introspection.ClockSimulation.prog_closed,
+  MIPRE.Introspection.ClockSimulation.prog_halts,
+  MIPRE.Introspection.ClockSimulation.decider_accepts_iff,
+  MIPRE.Introspection.ClockSimulation.original_decider_preserved,
+  MIPRE.Introspection.ClockSimulation.compiler_apply,
+  MIPRE.Introspection.ClockSimulation.compiler_binary_bounds,
+  MIPRE.Introspection.ClockSimulation.decider_haltsWithin,
+  MIPRE.Introspection.ClockSimulation.original_decider_ansBound_time
+
+#guard_sorry_free MIPRE.Introspection.Honest.coreOp_isPVM,
+  MIPRE.Introspection.Honest.coreOp_commute,
+  MIPRE.Introspection.Honest.coreStrategy_dimension,
+  MIPRE.Introspection.Honest.exists_corePerfectPCC,
+  MIPRE.Introspection.Honest.pauliZ_sample_commute,
+  MIPRE.Introspection.Honest.sample_typed_reject_zero,
+  MIPRE.Introspection.Honest.firstHideOp_isPVM,
+  MIPRE.Introspection.Honest.pauli_firstHide_commute,
+  MIPRE.Introspection.Honest.firstHide_typed_reject_zero
+
+#guard_sorry_free MIPRE.Introspection.coarse_joint_commutator_bound,
+  MIPRE.Introspection.productStage_mixing_premises,
+  MIPRE.Introspection.exists_product_stage_of_coarse_tests
+
+#guard_sorry_free MIPRE.Introspection.Honest.readRegister_isPVM,
+  MIPRE.Introspection.Honest.hideRegister_isPVM,
+  MIPRE.Introspection.Honest.readOp_marginal,
+  MIPRE.Introspection.Honest.fullReadOp_isPVM,
+  MIPRE.Introspection.Honest.fullReadOp_marginal,
+  MIPRE.Introspection.Honest.introspect_read_commute,
+  MIPRE.Introspection.Honest.read_typed_reject_zero
+
+#guard_sorry_free MIPRE.Introspection.Honest.hideRegister_marginal,
+  MIPRE.Introspection.Honest.hideOp_marginal,
+  MIPRE.Introspection.Honest.pauliX_coordinateSplit,
+  MIPRE.Introspection.Honest.stopHide_split,
+  MIPRE.Introspection.Honest.readRegister_entry_supported,
+  MIPRE.Introspection.Honest.hideRegister_entry_supported,
+  MIPRE.Introspection.Honest.hidingNext_stop_join,
+  MIPRE.Introspection.Honest.hidingNext_join,
+  MIPRE.Introspection.Honest.hidingRead_join,
+  MIPRE.Introspection.Honest.hideOp_commute_next,
+  MIPRE.Introspection.Honest.hideOp_commute_read,
+  MIPRE.Introspection.Honest.hideOp_reject_next_zero,
+  MIPRE.Introspection.Honest.hideOp_reject_read_zero
+
+#guard_sorry_free MIPRE.Introspection.Honest.parsedCoreOp_isPVM,
+  MIPRE.Introspection.Honest.parsedReadOp_isPVM,
+  MIPRE.Introspection.Honest.parsedHideOp_isPVM,
+  MIPRE.Introspection.Honest.parsedCore_read_commute,
+  MIPRE.Introspection.Honest.parsedRead_core_commute,
+  MIPRE.Introspection.Honest.parsedCore_read_reject_zero,
+  MIPRE.Introspection.Honest.parsedRead_core_reject_zero,
+  MIPRE.Introspection.Honest.parsedHide_next_commute,
+  MIPRE.Introspection.Honest.parsedHide_next_commute_reversed,
+  MIPRE.Introspection.Honest.parsedHide_read_commute,
+  MIPRE.Introspection.Honest.parsedRead_hide_commute,
+  MIPRE.Introspection.Honest.parsedHide_next_reject_zero,
+  MIPRE.Introspection.Honest.parsedHide_next_reject_zero_reversed,
+  MIPRE.Introspection.Honest.parsedHide_read_reject_zero,
+  MIPRE.Introspection.Honest.parsedRead_hide_reject_zero
+
+#guard_sorry_free MIPRE.Introspection.bornProb_extVecA,
+  MIPRE.Introspection.stateSqNorm_extVecA_aOp,
+  MIPRE.Introspection.dilated_pvm_distance,
+  MIPRE.Introspection.conditionalDilationOp_isPVM,
+  MIPRE.Introspection.conditionalDilationOp_compress,
+  MIPRE.Introspection.conditionalDilationOp_born,
+  MIPRE.Introspection.extVecA_registerState,
+  MIPRE.Introspection.exists_conditional_projective_dilation,
+  MIPRE.Introspection.exists_varying_conditional_projective_dilation
+
+#guard_sorry_free MIPRE.Introspection.conditional_coarse_consistency,
+  MIPRE.Introspection.CLChecks.prefixRegister_outputPrefix_succ,
+  MIPRE.Introspection.CLChecks.dualReadout_outputPrefix,
+  MIPRE.Introspection.TypedEstimates.hiding_next_accepts_conditional,
+  MIPRE.Introspection.TypedEstimates.hiding_next_conditional_estimate
+
+#guard_sorry_free MIPRE.Introspection.pvm_event_stability,
+  MIPRE.Introspection.joint_distance_left,
+  MIPRE.Introspection.testAcceptance_stability_left,
+  MIPRE.Introspection.testAcceptance_stability_right,
+  MIPRE.Introspection.testAcceptance_stability,
+  MIPRE.Introspection.qform_state_stability,
+  MIPRE.Introspection.povmValue_state_stability,
+  MIPRE.Introspection.povmValue_failure_transfer
+
+#guard_sorry_free MIPRE.Introspection.TypedExtraction.cross_check,
+  MIPRE.Introspection.TypedExtraction.condWin_cross_eq,
+  MIPRE.Introspection.TypedExtraction.cross_failure_le,
+  MIPRE.Introspection.TypedExtraction.pairReadout_isPVM,
+  MIPRE.Introspection.TypedExtraction.condWin_cross_readout,
+  MIPRE.Introspection.TypedExtraction.exists_strategy_of_terminal_form,
+  MIPRE.Introspection.TypedExtraction.exists_strategy_of_approx_terminal_form,
+  MIPRE.Introspection.TypedExtraction.exists_strategy_of_state_and_terminal_approx
+
+/-! ## Executable introspection answer parsing and guarded source calls -/
+#guard_sorry_free MIPRE.Introspection.AnswerParser.field_append_injective,
+  MIPRE.Introspection.AnswerParser.pairCheck_iff,
+  MIPRE.Introspection.AnswerParser.tripleCheck_iff,
+  MIPRE.Introspection.AnswerParser.pairCheck_pairBits,
+  MIPRE.Introspection.AnswerParser.tripleCheck_tripleBits,
+  MIPRE.Introspection.AnswerParser.pairBits_lt_outer,
+  MIPRE.Introspection.AnswerParser.readBits_lt_outer,
+  MIPRE.Introspection.AnswerParser.hideBits_lt_outer,
+  MIPRE.Introspection.AnswerParser.pairCheck_original_cutoff,
+  MIPRE.Introspection.AnswerParser.readCheck_original_cutoff,
+  MIPRE.Introspection.AnswerParser.guardedProg_closed,
+  MIPRE.Introspection.AnswerParser.guardedProg_reject,
+  MIPRE.Introspection.AnswerParser.guardedProg_halts,
+  MIPRE.Introspection.AnswerParser.guardedProg_haltsWithin,
+  MIPRE.Introspection.AnswerParser.callReady_fields,
+  MIPRE.Introspection.AnswerParser.guardedProg_accepts_iff
 
 /-! ## Blocks of an index type
 
