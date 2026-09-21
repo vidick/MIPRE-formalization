@@ -98,7 +98,8 @@ theorem introBobZError_introIterationState (projectPauli : PauliAnswer → ι �
   induction n with
   | zero => rfl
   | succ n ih =>
-      rw [introIterationState_succ, introBobZError_extVecA, ih]
+      exact (introBobZError_extVecA projectPauli Z q
+        (introIterationState ξ (none : Option ((ι → F) × A)) n) MB).trans ih
 
 set_option backward.isDefEq.respectTransparency false in
 /-- A concrete projective strategy family exists after every finite Alice
@@ -187,16 +188,12 @@ theorem exists_intro_iteration
         (introIterationState_unit ξ hξ none n) MN MB hMN hMB q hq w hL j IN
         hb hη0 hδ0 hfailN hZn hhn hsmall
       refine ⟨MS, IS, hMS, ?_, ?_, ?_⟩
-      · change 1 - povmValue (parsedGame E X Z P L projectPauli D DP)
-          (registerState (ι → F)
-            (extVecA (introIterationState ξ (none : Option ((ι → F) × A)) n) none))
-          MS MB ≤ _
-        rw [adaptiveFailureBudget_step]
-        exact hfailS.trans (add_le_add_left (adaptiveStepLoss_mono hdepth) _)
+      · exact hfailS.trans (by
+          rw [adaptiveFailureBudget_step]
+          exact add_le_add_left (adaptiveStepLoss_mono hdepth) _)
       · intro t ht
-        change MS t = registeredExtendPOVM
-          (introIterationExtend (Option ((ι → F) × A)) (MA t) n)
-        rw [hotherS t ht, hotherN t ht]
+        exact (hotherS t ht).trans (congrArg
+          (fun N => registeredExtendPOVM (T := Option ((ι → F) × A)) N) (hotherN t ht))
       · intro i
         exact (hhideS i).trans (hhideN i)
 

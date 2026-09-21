@@ -102,7 +102,7 @@ theorem initialResidualPOVM_block (P : CL.CLFun F ι ℓ)
   rw [prefixResidualOp_initial_apply]
   by_cases hy : y = 0
   · simp only [if_pos hy, initialResidualPOVM, registerPOVM_mats, registerOp_apply,
-      Equiv.prodCongr_apply, Equiv.refl_apply, initialRegisterEquiv]
+      Equiv.prodCongr_apply, initialRegisterEquiv]
     rfl
   · simp only [if_neg hy, Matrix.zero_apply]
 
