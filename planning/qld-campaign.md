@@ -1190,3 +1190,77 @@ the *agreement* direction — distinct degree-`md` polynomials agree on at most 
 `lem:lidt-ldc` (`ldc > 1` for the seeded CL theorem), `thm:almost-sync`, and the four lemmas of
 the paper's tensor-code route (`lem:lidt-reduction-setup` through `lem:lidt-derandomize`). None
 of them is on `thm:qld`'s path; see `planning/lidt-cl-adapter.md` for why the last four are not.
+
+### PR D, stage 5: the exact half of `lem:qld-exact-paulis` and `lem:qld-swap` (2026-09-21)
+
+Three new modules, all in the seconds-per-check regime (none reaches `MIPRE/Background/LIDT/`):
+`MIPRE/Background/QLD/ExactPauli.lean`, `SwapUnitary.lean`, `NonMultilinear.lean`.
+
+**The dividing line of this PR is the register count, and it is sharp.** Every statement of stage 5
+splits into an *exact* part that is an identity between matrices and an *approximate* part that needs
+the appendix's estimates on the expanded state. The exact parts are all formalizable now, and all of
+them turn out to rest on one identity; the approximate parts need a six-register state with two
+maximally entangled pairs and transport between two cuts, which the repository does not have and
+which is a PR of its own. So this PR proves the exact parts unconditionally, in `S`, and neither
+statement gets a `leanok` mark.
+
+**The identity.** `wTilde_eq`: the appendix's binary observable factorizes,
+
+```
+W~^e(u)  =  pvmObs S (p ↦ (-1)^{tr(e (cd (π p) · u))})  ⊗  w (e · u),
+```
+
+a signed sum of the *pair* measurement tensor a bare generalized Pauli. Everything else is two lines
+of the `pvmObs` calculus of `MIPRE/Foundations/PVM.lean` (which already had exactly the right
+lemmas: `pvmObs_mul`, `pvmObs_isSelfAdjoint`, `pvmObs_mul_self`, `pvmObs_comm`) plus
+`MIPRE.Weyl.wX_mul_wZ`. Self-adjointness, involutivity, the twisted commutation relation, unitarity
+of the swap map, and the conjugation identity are each three lines once it is in place. The
+`F_q`-valued syndrome label is what makes the factorization work: summing the syndrome projectors
+against the character of `a` reassembles the Weyl operator on the line `r ↦ r·u`
+(`MIPRE.Weyl.eq_sum_proj`), which needs no group law at all.
+
+`sTensor` is the abstraction the swap side wants: operators of the shape `∑_p S_p ⊗ T_p` compose
+factorwise when `S` is projective (`sTensor_mul`), and that is the *only* place projectivity is used
+on that side.
+
+**The twirl identity is cheaper here than in the paper.** `twirl_mul_twirl` says the product of the
+two Weyl twirls is the maximally entangled projector. The paper proves it by an induction over the
+`M` qudits, having presented the ancilla as an iterated tensor product. This repository presents
+`(C^q)^{⊗ M}` as *one* matrix algebra indexed by `F_q^M`, so the whole thing is a single entry
+computation: the `v`-average kills every off-diagonal pair of column indices by
+`MIPRE.Weyl.sum_sgn_trDot`, and the `u`-average then leaves exactly the diagonal pairs of row
+indices. This is the second dividend of that presentation choice, after the one `WeylEPR.lean`
+records.
+
+**The repaired arithmetic, and one addition to it.** `re_inner_ge_of_two_close` concludes exactly the
+paper's `1 - 2√δ_S - 2δ_S`, and it needed a case split the paper does not have: a statement with no
+hidden "for small enough `δ_S`" must handle `δ_S > 1`, where squaring `1 - √δ_S` reverses the
+inequality. There the trivial bound `Re⟨x,y⟩ ≥ -2δ_S`, from the triangle inequality and the
+nonnegativity of the two squared norms alone, is already stronger. `norm_sub_normalize_sq_le` is the
+extraction of the auxiliary state, and it is where the fourth root of `δ_qld` comes from: the overlap
+is the square root of the weight.
+
+**The critical finding at node 1.2.2.15 is discharged as far as it goes.**
+`prob_agree_ldEnc_le_of_not_multilinear` is Schwartz--Zippel in the agreement direction, and the
+useful part of the statement is that it is *uniform in the interpolated data*: non-multilinearity
+makes `g` distinct from every multilinear polynomial at once, so one application covers every `k`,
+which is what the consumer's sum over `F_q^M` needs. `nonMultilinear_mass_le` is the aggregation.
+One ingredient is still a hypothesis rather than a theorem: that a multilinear polynomial is the
+interpolant of its own values on the cube. That is uniqueness of multilinear interpolation, an
+independent `MvPolynomial` fact, and it is a follow-up.
+
+**Five blueprint repairs and four upstream notes** came out of the reading; the two that are
+mechanically verifiable are ledger dependency omissions at nodes `1.2.2.14` and `1.2.2.16`, both
+confirmed by replaying the ledger with `scripts/ledger-sync.py`'s own event handling rather than by
+reading node files. `reports/qld-stage5-blueprint-repairs.md` is the record. The sharpest of the
+others: `lem:qld-swap` as it stood was provable by a three-line exact computation and left
+`thm:qld`'s second item unreachable.
+
+**What stage 4 costs, from this scoping.** `lem:qld-simultaneous` and its ten sub-lemmas are three
+more PRs, not one, and there are two prerequisites the blueprint does not count against them: the
+unproved half of `lem:qld-axis-degree` (a hard blocker --- without it the padded strategy's answer to
+an axis-line question fails `clGame`'s format check) and a `povmValue → TensorProductStrategy.value`
+adapter with dimension reindexing to `Fin n`, which nothing in the repository does and which is the
+unique choke point for applying the vendored LIDT soundness from a `Foundations`-style strategy. That
+adapter is the cheapest next piece: `Foundations`-level, no QLD content, and it unblocks everything
+else in stage 4.

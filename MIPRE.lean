@@ -392,14 +392,17 @@ import MIPRE.Background.QLD.Combine
 import MIPRE.Background.QLD.Combined
 import MIPRE.Background.QLD.Commutation
 import MIPRE.Background.QLD.Consistency
+import MIPRE.Background.QLD.ExactPauli
 import MIPRE.Background.QLD.Expanded
 import MIPRE.Background.QLD.Game
 import MIPRE.Background.QLD.Lines
+import MIPRE.Background.QLD.NonMultilinear
 import MIPRE.Background.QLD.Ortho
 import MIPRE.Background.QLD.Padded
 import MIPRE.Background.QLD.PaddedLines
 import MIPRE.Background.QLD.Product
 import MIPRE.Background.QLD.Swap
+import MIPRE.Background.QLD.SwapUnitary
 import MIPRE.Background.QLD.Win
 import MIPRE.Background.QLD.WinMS
 import MIPRE.Background.Repetition.Axioms
