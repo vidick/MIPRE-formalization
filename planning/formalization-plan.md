@@ -10,20 +10,29 @@ as `planning/ledger-informed-plan.md` stays as the record of the ledger accounti
 
 **Construction update, 2026-09-21.** The classical PCP and effective self-dual
 basis campaigns are complete, including the proved Shoup construction (#135).
-PR #134's semantic detyping and PR #137's executable continuation are merged.
-The current continuation constructs growing clocks and their actual binary
+PR #134's semantic detyping, PR #137's executable continuation and PR #140's
+adaptive measurement/compiler components are merged.
+The continuation constructs growing clocks and their actual binary
 parameter compiler, a correctly reindexed clocked source decider with complete
 runtime bounds, adaptive honest Read/Hide register PVMs, a coarse-test
 product-form stage, common-ancilla quantitative dilation, and extraction from
-the actual typed game. Executable fixed-parameter answer parsers enforce the
-inner original-answer cutoff before the guarded source call.
+the actual typed game. Dynamic binary-parameter answer parsers enforce the
+inner original-answer cutoff. The actual uniform cross-introspection compiler
+computes parameters, queries the source dimension, checks zero padding,
+projects questions and makes the clocked source call; exact acceptance,
+all-input halting and a composed runtime bound are proved. The full auxiliary
+game has an explicit perfect PCC strategy, and the first Hide is identified
+with its Pauli-X readout. The actual next-Hide rigidity step on an extracted
+EPR seed with arbitrary auxiliary state now follows from the previous fine
+estimate and the Introspect-prefix estimate, with no answer-cardinality loss.
 The merged work constructs executable
 detyping with polynomial sampler runtime, actual finite-game PCC completeness,
 ambient Pauli mixing, parsed introspection tests and final strategy extraction.
 The conditional compression theorem now accepts polynomial-exponent ambient
 decider budgets and retains the input sampler's degree in answer reduction.
-The full `Introspection 7` still requires the uniform verifier compiler, honest
-typed-game completeness and the QLD-to-hiding soundness induction. See
+The full `Introspection 7` still requires the remaining verifier branches and
+uniform budget bound, the complete honest 26-type Pauli strategy, and the
+QLD-to-hiding/product-strategy soundness iteration. See
 [classical-pcp-introspection.md](classical-pcp-introspection.md) for the checked
 scope and remaining obligations. Neither a completed QLD theorem nor the new
 component proofs by themselves inhabit introspection or answer reduction.
