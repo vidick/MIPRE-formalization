@@ -357,3 +357,52 @@ The remaining construction still includes typed sampler/decider programs and the
 detyping, runtime normalization through the compression interfaces, PCC completeness,
 the QLD extraction, and the sampling/hiding induction. Assuming a completed QLD
 theorem discharges only the QLD dependency. It does not supply those other proofs.
+
+## Detyping continuation after PR #131
+
+PR #131 passed the full 9,564-job build and was merged as `73e4e96` on
+20 September 2026. This continuation also includes PR #132 (`ae2a13e`),
+the QLD padded-line consistency bound. The source paper remains pinned to
+`a459dee`; the detyping definitions and proof in `paper/types.tex` were read
+before implementation.
+
+The new construction comprises seven modules:
+
+* `CL/Embedding.lean` extends CL presentations along coordinate injections,
+  preserving exactness, evaluation, marginals, factors, and linear queries.
+* `CL/Detyping.lean` constructs the actual `ell + 2` presentation on the
+  graph-plus-content register. Rejected graph views select a zero presentation
+  that consumes the entire content register at the first content level.
+* `CL/DetypingLaw.lean` identifies valid local views and proves the full joint
+  conditional law: a uniform ordered edge and one shared content seed. It does
+  not replace the two correlated outputs by independent samples.
+* `CL/DetypingQueries.lean` proves every branch of the sampler's query dispatch:
+  two graph levels, then selected typed marginal/factor/linear queries. Factor
+  and linear identities hold even for prefixes outside the sampler's image.
+* `SampledGame.lean` supplies finite games with arbitrary uniform sample spaces
+  and the corresponding expectation and failure identities.
+* `CL/DetypingGame.lean` constructs the finite typed and detyped games, proves
+  that the latter uses the constructed CL distribution, and defines the
+  same-state restriction to fixed graph views.
+* `CL/DetypingSoundness.lean` identifies restricted failure with conditional
+  detyped failure and proves the explicit factor `16 ^ card T`.
+
+This closes `lem:detype-cl` for positive levels, including the three-level
+typed introspective sampler. Separate proved blueprint nodes record the query
+identities and finite-game soundness. The 44 matching headline guards check
+the construction as well as its proofs. The finite games use the same answer
+alphabets; no machine-level answer cutoff, truncation, or runtime is assumed
+by a newly introduced contract.
+
+Next construction work is to compile these query branches into the ambient
+sampler and decider wrappers and prove their malformed-input and time bounds.
+The existing pipeline runtime normalization issue, PCC representation and
+completeness, ambient-register mixing transport, and sampling/hiding induction
+remain open. In particular this continuation does not inhabit `Introspection 7`.
+
+Validation: all seven new modules and all 44 headline guards passed the pinned
+Lean 4.33.0 checker. The presentation exactness, linear-query dispatch, and
+same-state failure bound have exactly the standard axioms `propext`,
+`Classical.choice`, and `Quot.sound`. Root imports were regenerated with
+`lake exe mk_all`; blueprint coverage and ledger correspondence both report
+zero problems. Repository-wide CI is the final integration check.
