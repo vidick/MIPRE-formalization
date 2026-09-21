@@ -2417,37 +2417,76 @@ projectivity. Nothing in the chain is a per-outcome estimate, so no constant dep
 \begin{lemma}[Axis degree for expanded line measurements]
 \label{lem:qld-axis-degree}
 \ledgernode{1.2.2.6,1.2.2.9}
-\uses{lem:qld-expanded-lines}
+\uses{lem:qld-expanded-lines,lem:qld-win}
 \lean{MIPRE.LowDegree.natDegree_lineRestrict_single_le, MIPRE.QLD.DegLE.add,
   MIPRE.QLD.degLE_zero, MIPRE.QLD.degLE_padLine, MIPRE.QLD.degLE_rdLine,
-  MIPRE.QLD.degLE_lineCoeffs_aline, MIPRE.QLD.degLE_hatLine_outcome}
-For an axis-parallel line, the expanded line measurement can be supported on
-polynomials of degree at most $d$, with the same register versions and
-consistency estimates as Lemma~\ref{lem:qld-expanded-lines}.
-The original strategy's axis-line answers have degree at most $d$ by their
-legal format. Expansion convolves that outcome with the restriction of a
-multilinear Pauli encoding. The latter has degree at most one on an axis
-line, so addition preserves the bound for $d\geq1$.
-This is an additional target; the proved expanded-line theorem states the
-weaker general bound $md$.
+  MIPRE.QLD.degLE_lineCoeffs_aline, MIPRE.QLD.degLE_hatLine_outcome,
+  MIPRE.QLD.Question.defaultAns, MIPRE.QLD.fmtOk_defaultAns, MIPRE.QLD.legalize,
+  MIPRE.QLD.legalize_of_fmtOk, MIPRE.QLD.legalize_of_not_fmtOk, MIPRE.QLD.fmtOk_legalize,
+  MIPRE.QLD.rdVal_legalize_point, MIPRE.QLD.rdPauli_legalize_pauli,
+  MIPRE.QLD.rdBit_legalize_pairB, MIPRE.QLD.rdBit_legalize_var,
+  MIPRE.QLD.rdBitPair_legalize_pair, MIPRE.QLD.rdProbe_legalize_point,
+  MIPRE.QLD.LegalSupport, MIPRE.QLD.legalizeStrat, MIPRE.QLD.isPVM_legalizeStrat,
+  MIPRE.QLD.legalizeStrat_mats_eq_zero, MIPRE.QLD.legalSupport_legalizeStrat,
+  MIPRE.QLD.legalizeStrat_map, MIPRE.QLD.ptPOVM_legalizeStrat, MIPRE.QLD.ptObs_legalizeStrat,
+  MIPRE.QLD.hatPtPOVM_legalizeStrat, MIPRE.QLD.hatMats_legalizeStrat,
+  MIPRE.QLD.povmValue_le_legalizeStrat, MIPRE.QLD.one_sub_povmValue_legalizeStrat_le,
+  MIPRE.QLD.lineAnsPOVM_aline_eq_zero_of_not_degLE,
+  MIPRE.QLD.hatLinePOVM_aline_eq_zero_of_not_degLE,
+  MIPRE.QLD.lineMats_aPres_eq_zero_of_not_degLE,
+  MIPRE.QLD.padLineMats_aline_eq_zero_of_not_degLE}
+\leanok
+Without loss of generality the strategy answers every question in the format its type
+prescribes: replacing each answer of the wrong format by a fixed legal one keeps the
+measurements projective, does not decrease the success probability, and leaves every
+reading the rules and the conclusions use --- point values, trace probes, Pauli encodings,
+bits --- unchanged. For such a strategy and $d \geq 1$, the expanded line measurement of
+Lemma~\ref{lem:qld-expanded-lines} at an axis-parallel line is supported on polynomials of
+degree at most $d$: it has no element on any other outcome. The same holds for the padded
+line measurement of Lemma~\ref{lem:qld-padded-lines} at an axis-parallel padded line, so
+its outcomes are legal answers to the axis-parallel line questions of the seeded test at
+$(q,4m,d,1)$.
+The original strategy's axis-line answers have degree at most $d$ by their legal format.
+Expansion convolves that outcome with the restriction of a multilinear Pauli encoding. The
+latter has degree at most one on an axis line, so addition preserves the bound for $d\geq1$.
 \end{lemma}
 
-\paragraph{Comments.} \textbf{The degree computation is formalized; the support claim is not.}
-\texttt{natDegree\_lineRestrict\_single\_le} is the geometric half: the restriction of a polynomial
-to $u_0 + t e_j$ has degree at most its individual degree in $X_j$, because every other substitution
-is a constant. A multilinear encoding therefore restricts to an affine function of the line
-parameter, and \texttt{degLE\_hatLine\_outcome} adds that to a legal axis answer --- whose degree is
-at most $d$ by the answer \emph{type} in this formalization --- to get degree at most $d$ for
-$d\geq1$.
+\begin{proof}
+\uses{lem:qld-expanded-lines,lem:qld-win}
+\leanok
+Legalizing (\texttt{legalizeStrat}) relabels each measurement along the map that keeps a
+well-formatted answer and sends any other to a default legal answer reading as $0$. A
+relabelling of a projective measurement is projective. The decider rejects an answer of the wrong
+format before running any rule, so every accepted answer pair is left alone and the accepted
+mass can only grow (\texttt{povmValue\_le\_legalizeStrat}, by data processing on the Born
+distribution). Every reading of Lemma~\ref{lem:qld-win}'s rules sends ill-formatted answers to
+$0$, as the defaults do, so the point-probe, hatted point and Pauli readings of the two strategies
+coincide.
 
-What is missing is exactly the phrase ``can be supported''. The strategy's line measurement is indexed
-by \emph{all} answers, and a diagonal-line answer to an axis-parallel question --- which the decider
-rejects, but for which the measurement still has an element --- produces an outcome of degree up to
-$md$. Making the measurement supported on degree $d$ means coarse-graining those answers into a
-default outcome, and then re-deriving the two items of Lemma~\ref{lem:qld-expanded-lines} for the
-modified measurement at the cost of the format-failure probability, which is $O(\eps)$ but changes the
-constants. That is the remaining work, and it is why Lemma~\ref{lem:qld-padded-lines} states its
-degree-$d$ clause conditionally on this lemma rather than proving it.
+For a legally supported strategy the strategy's factor of the expanded axis-line measurement is
+supported on \texttt{apoly} answers, of degree at most $d$, and the ancilla's factor on
+restrictions of the multilinear encoding to the axis line, of degree at most $1$
+(\texttt{natDegree\_lineRestrict\_single\_le}); their convolution is supported on degree at most
+$d$ for $d \geq 1$ (\texttt{hatLinePOVM\_aline\_eq\_zero\_of\_not\_degLE}). The padded line
+measurement is an average of sandwiches of the two sides' axis-line elements, coarse-grained by
+the combining map, whose degree bound \texttt{degLE\_padCombine\_aline} contraposes: an outcome
+of degree above $d$ can only come from a pair with a factor of degree above $d$, and that factor
+vanishes.
+\end{proof}
+
+\paragraph{Comments.} \textbf{Proved, exactly and at no cost, by legalizing the strategy first.}
+An earlier version of this paragraph costed the support claim as ``coarse-grain the ill-formatted
+answers into a default outcome and re-derive the two items of Lemma~\ref{lem:qld-expanded-lines}
+for the modified measurement at the cost of the format-failure probability, which is $O(\eps)$ but
+changes the constants''. That is one legalization too late. Legalizing the \emph{strategy} rather
+than the expanded measurement is where the paper's own convention lives --- a ``valid strategy''
+answers in the prescribed format, which is how \texttt{qld-combining.tex} justifies the axis
+bound --- and it costs nothing: the value does not decrease, projectivity is kept, and the
+readings are unchanged, so every lemma of this appendix applies to the legalized strategy verbatim
+and its conclusions about point and Pauli measurements are conclusions about the original. The
+support claim is then exact --- zero mass, not $O(\eps)$ --- and no constant moves.
+\texttt{MIPRE/Background/QLD/Legalize.lean} is the legalization; the support half sits next to
+the degree computation in \texttt{MIPRE/Background/QLD/PaddedLines.lean}.
 
 \begin{lemma}[Pairs of lines]
 \label{lem:qld-pairs-of-lines}
@@ -2926,8 +2965,8 @@ correlated; that is so given the padded \emph{line}, but the quantity conditions
 \texttt{reports/padded-lines-product-law.md}.
 \end{proof}
 
-\paragraph{Comments.} The statement is not yet proved: what is missing is the consistency bound
-$\delta_{\mathrm{combine}}$. Everything the statement asserts \emph{about the measurement} is formalized ---
+\paragraph{Comments.} The statement and its proof are formalized; the consistency bound
+$\delta_{\mathrm{combine}}$ was the last piece to close. Everything the statement asserts \emph{about the measurement} is formalized ---
 the combining map, its two degree bounds, the POVM $\widehat Q^\ell$ itself and the
 coarse-graining that turns it into an $\F_q$-valued outcome --- in
 \texttt{MIPRE/Background/QLD/Combine.lean}, on top of the transfer in
