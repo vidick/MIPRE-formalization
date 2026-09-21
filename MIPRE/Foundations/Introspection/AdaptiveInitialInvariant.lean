@@ -56,12 +56,18 @@ theorem prefixResidualOp_initial_apply (P : CL.CLFun F ι ℓ) (y : ι → F)
     funext i
     have hi : i.val ∈ (∅ : Finset ι) := by
       simpa only [prefixRegister_initial] using i.property
-    exact False.elim (Finset.not_mem_empty i.val hi)
+    simp at hi
   unfold prefixResidualOp Honest.prefixProjector
   simp only [registerOp_apply, registerParty, Equiv.trans_apply,
     Equiv.prodCongr_apply, Equiv.prodAssoc_apply, ambientSplit,
     Matrix.kroneckerMap_apply, readout, Matrix.diagonal_apply,
-    he, if_true, CL.CLFun.truncate_zero, CL.CLFun.eval_zero]
+    CL.CLFun.truncate_zero, CL.CLFun.eval_zero]
+  change (if (fun i : CLChecks.prefixRegister P 0 y => x i) =
+      (fun i : CLChecks.prefixRegister P 0 y => x' i) then
+      (if (0 : ι → F) = y then (1 : ℂ) else 0) else 0) *
+      M (fun i => x i, a) (fun i => x' i, a') =
+    if y = 0 then M (fun i => x i, a) (fun i => x' i, a') else 0
+  simp only [he, if_true]
   by_cases hy : y = 0 <;> simp [hy, eq_comm]
 
 /-- The initial residual measurement retains the complete option-valued
@@ -97,6 +103,7 @@ theorem initialResidualPOVM_block (P : CL.CLFun F ι ℓ)
   by_cases hy : y = 0
   · simp only [if_pos hy, initialResidualPOVM, registerPOVM_mats, registerOp_apply,
       Equiv.prodCongr_apply, Equiv.refl_apply, initialRegisterEquiv]
+    rfl
   · simp only [if_neg hy, Matrix.zero_apply]
 
 /-- Exact initialization of the full option-valued prefix invariant. No

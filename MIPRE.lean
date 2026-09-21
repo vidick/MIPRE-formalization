@@ -673,8 +673,10 @@ import MIPRE.Foundations.Introspection.AdaptiveDualLocal
 import MIPRE.Foundations.Introspection.AdaptiveDualMarginal
 import MIPRE.Foundations.Introspection.AdaptiveGameStage
 import MIPRE.Foundations.Introspection.AdaptiveInductionInvariant
+import MIPRE.Foundations.Introspection.AdaptiveInductionIteration
 import MIPRE.Foundations.Introspection.AdaptiveInductionStep
 import MIPRE.Foundations.Introspection.AdaptiveInitialInvariant
+import MIPRE.Foundations.Introspection.AdaptiveIterationBudget
 import MIPRE.Foundations.Introspection.AdaptiveMarginalGame
 import MIPRE.Foundations.Introspection.AdaptiveMarginalTest
 import MIPRE.Foundations.Introspection.AdaptiveNextFactor

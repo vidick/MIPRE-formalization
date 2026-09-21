@@ -47,6 +47,7 @@ theorem adaptiveOldJointPOVM_map_mats (P : CL.CLFun F ι ℓ)
     ext i j
     simp [prefixResidualOp, registerOp_apply]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Decoding the refined actual joint measurement recovers the complete
 old option-valued POVM, including its malformed effect. -/
 theorem adaptiveRefinedJoint_decode (P : CL.CLFun F ι ℓ)
@@ -63,13 +64,19 @@ theorem adaptiveRefinedJoint_decode (P : CL.CLFun F ι ℓ)
         (fun p => stageAnswerDecode P k p.1 p.2.1 p.2.2) = N := by
   apply POVM.ext'
   intro a
-  rw [adaptiveOldJointPOVM_map_mats]
-  have hlocal (y : ι → F) :
-      (stageAnswerRefinementPOVM P k y (M y)).map
-        (fun p => stageAnswerDecode P k y p.1 p.2) = M y :=
-    stageAnswerRefinementPOVM_decode_recover hP k y (M y) (hsupport y)
-  simp only [hlocal]
-  exact (hform a).symm
+  trans ∑ y, prefixResidualOp P k y
+    (((stageAnswerRefinementPOVM P k y (M y)).map
+      (fun p => stageAnswerDecode P k y p.1 p.2)).mats a).val
+  · exact adaptiveOldJointPOVM_map_mats P hP k
+      (fun y => stageAnswerRefinementPOVM P k y (M y))
+      (fun y => stageAnswerRefinementPOVM_isPVM P k y (M y) (hM y))
+      (fun p => stageAnswerDecode P k p.1 p.2.1 p.2.2) a
+  · have hlocal (y : ι → F) :
+        (stageAnswerRefinementPOVM P k y (M y)).map
+          (fun p => stageAnswerDecode P k y p.1 p.2) = M y :=
+      stageAnswerRefinementPOVM_decode_recover hP k y (M y) (hsupport y)
+    simp only [hlocal]
+    exact (hform a).symm
 
 /-- The same exact recovery uses only the advanced prefix and the retained
 answer, which is the decoder interface of the next-strategy theorem. -/
