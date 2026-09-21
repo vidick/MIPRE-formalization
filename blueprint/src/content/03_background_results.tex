@@ -3114,31 +3114,161 @@ Both register versions are required; no symmetric-strategy hypothesis is added.
 \begin{lemma}[Admissible padded setup]
 \label{lem:qld-global-setup}
 \ledgernode{1.2.2.13.1}
-\uses{lem:qld-padded-lines,lem:qld-padded-points,lem:naimark-dilation}
-Assume $m,d\geq1$, admissible $q$, and $m\mid q$. In the regime $16md\leq q$,
-$d<q$ and $4m\mid q$. Write $u=(x,z,\alpha,\beta,w)$, with $2m-2$ dummy
-coordinates. The padded point measurement ignores $w$. Dilate the line POVMs
-using fresh local product ancillas and extend point PVMs by identity; all
-tested cross-party probabilities are preserved. The resulting spaces include
-these ancillas. For $16md>q$, enlarge the final universal constant and use a
-trivial consistency bound instead of applying the padded theorem.
+\uses{lem:qld-padded-lines,lem:qld-padded-points,lem:qld-axis-degree,def:lidt-cl}
+\lean{  MIPRE.POVM.aOp, MIPRE.POVM.aOp_mats, MIPRE.POVM.map_aOp, MIPRE.POVM.dirac, MIPRE.POVM.mix,
+  MIPRE.POVM.mix_mats, MIPRE.bornProb_smul_left, MIPRE.bornProb_smul_right,
+  MIPRE.bornProb_mix_left, MIPRE.bornProb_mix_right, MIPRE.POVM.ofPosSemidef,
+  MIPRE.POVM.ofPosSemidef_mats, MIPRE.unifOn, MIPRE.unifOn_nonneg, MIPRE.sum_unifOn,
+  MIPRE.POVM.avgOn, MIPRE.bornProb_avgOn_left, MIPRE.bornProb_avgOn_right,
+  MIPRE.POVM.avgOn_mats, MIPRE.POVM.map_mix, MIPRE.POVM.map_dirac, MIPRE.POVM.map_avgOn,
+  MIPRE.POVM.map_id, MIPRE.POVM.map_mats_eq_zero_of_forall_ne, MIPRE.POVM.map_congr_of_support,
+  MIPRE.bornProb_zero_left, MIPRE.bornProb_zero_right,
+  MIPRE.condFail_le_one_sub_sum_bornProb_map, MIPRE.condFail_le_one_sub_sum_bornProb_diag,
+  MIPRE.sum_bornProb_map', MIPRE.POVM.map_const_mats, MIPRE.bornProb_one_one,
+  MIPRE.LIDT.CL.sampleEquiv, MIPRE.LIDT.CL.card_ty, MIPRE.LIDT.CL.card_sample,
+  MIPRE.LIDT.CL.sum_sample_eq, MIPRE.LIDT.CL.rep_add_lineParam_smul,
+  MIPRE.LIDT.CL.lineParam_rep_add_smul, MIPRE.LIDT.CL.sum_indicator_apply_eq,
+  MIPRE.LIDT.CL.sum_indicator_apply_eq_zero, MIPRE.LIDT.CL.sum_indicator_zeroBelow_eq_zero_le,
+  MIPRE.LIDT.CL.one_sub_povmValue_clGame, MIPRE.QLD.padPtPair, MIPRE.QLD.padPtPair_mats,
+  MIPRE.QLD.padComb, MIPRE.QLD.padPt, MIPRE.QLD.padPt_mats, MIPRE.QLD.padLinePOVM,
+  MIPRE.QLD.padLinePOVM_mats, MIPRE.QLD.presOf, MIPRE.QLD.factorsX_presOf,
+  MIPRE.QLD.factorsZ_presOf, MIPRE.QLD.presOf_base_eq, MIPRE.QLD.presOf_dir_ofLPX,
+  MIPRE.QLD.presOf_dir_ofLPZ, MIPRE.QLD.lineMeas, MIPRE.QLD.lineMeas_mats, MIPRE.QLD.rawFiber,
+  MIPRE.QLD.mem_rawFiber, MIPRE.QLD.lineDir, MIPRE.QLD.LPData.dir_eq_lineDir, MIPRE.QLD.rawSet,
+  MIPRE.QLD.rawSet_nonempty, MIPRE.QLD.lineDir_of_mem_rawSet, MIPRE.QLD.lineQ,
+  MIPRE.QLD.lineQ_point, MIPRE.QLD.lineQ_aline, MIPRE.QLD.lineQ_dline, MIPRE.QLD.lineTau,
+  MIPRE.QLD.padShift_lineData, MIPRE.QLD.alineAns, MIPRE.QLD.dlineAns, MIPRE.QLD.lineAns,
+  MIPRE.QLD.rdEval, MIPRE.QLD.padStrat, MIPRE.QLD.padStrat_point, MIPRE.QLD.padStrat_lineQ,
+  MIPRE.QLD.exists_of_padStrat_point_mats_ne_zero,
+  MIPRE.QLD.exists_of_padStrat_lineQ_mats_ne_zero, MIPRE.QLD.eval_padLine_of_degLE,
+  MIPRE.QLD.lineMeas_aline_mats_eq_zero_of_not_degLE, MIPRE.QLD.padStrat_lineQ_map_rdEval,
+  MIPRE.QLD.padStrat_point_map_toValue, MIPRE.QLD.lineMats_pairCX_padShift,
+  MIPRE.QLD.lineMats_pairCZ_padShift, MIPRE.QLD.pasteLine_subPair_padShift,
+  MIPRE.QLD.sum_filter_padLineMats_eq_lineComb, MIPRE.QLD.lineMeas_map_eval_mats}
+\leanok
+Assume $m, d \geq 1$, $m \mid q$ and $4m \mid q$, and let $(\psi, M_A, M_B)$ be a projective
+strategy for the Pauli basis test whose answers are in the format its questions prescribe
+(Lemma~\ref{lem:qld-axis-degree} makes this a normalization). Write a point of the padded space
+$\F_q^{4m}$ as $u = (x, z, \alpha, \beta, w)$ with $2m - 2$ dummy coordinates $w$. The
+\emph{padded strategy} is a strategy for the seeded low individual degree test
+(Definition~\ref{def:lidt-cl}) at parameters $(q, 4m, d, 1)$, played on the padded state
+$\hat{\psi}$ of Lemma~\ref{lem:qld-padded-lines}. Each player answers a point question $u$ with
+the sandwich $\widehat{M}^{X, x}_a \widehat{M}^{Z, z}_b \widehat{M}^{X, x}_a$ of their expanded
+point measurements, coarse-grained along $(a, b) \mapsto \alpha a + \beta b$ and extended by the
+identity to the combining coefficients' register --- a measurement that ignores $w$ --- and a
+line question with the padded line measurement of Lemma~\ref{lem:qld-padded-lines} at the
+canonical base point of the line, averaged over the raw directions that produce the question, its
+polynomial outcome resized to the format of the question. Every answer has the format the decider
+expects, and on an axis-parallel line the resizing loses nothing. Both measurements are POVMs; the
+dilation to a projective strategy is performed once, when the soundness theorem is applied
+(Lemma~\ref{lem:qld-global-pvm}). Moving the base point of a line question to the sampled point
+along the line does not change the padded line measurement, so what the decider reads is the
+padded line measurement at the sample's own data, coarse-grained by evaluation at the parameter
+of the sample's point --- the quantity Lemma~\ref{lem:qld-padded-lines} controls.
 \end{lemma}
+\begin{proof}
+\uses{lem:qld-padded-lines,lem:qld-padded-points,lem:qld-axis-degree,lem:qld-sublines}
+\leanok
+Definitions, and two invariances. The pasted line measurement is unchanged by moving the padded
+point along the padded line, because each block of the point either moves along its own subline
+or does not move at all (Lemma~\ref{lem:qld-sublines}); and the resizing of an axis-line answer to
+degree $d$ is invisible on the support of a legally supported strategy
+(Lemma~\ref{lem:qld-axis-degree}), while the resizing of a diagonal answer to degree $4md$ is a
+genuine padding.
+\end{proof}
+
+\paragraph{Comments.} The ledger node dilates the line POVMs to projective measurements at this
+point, ``using fresh local product ancillas''. The formalization keeps the strategy as a family
+of POVMs and dilates once, at the application of the soundness theorem, through the seeded
+soundness for POVM strategies (\texttt{MIPRE.LIDT.CL.clSoundness\_ldc\_one\_deltaCL\_of\_povm}):
+on the twice-extended state the Born rule sees only compressions, so nothing has to be proved
+about the dilation beyond Naimark's theorem. The node's ``$16md > q$'' clause belongs to the
+assembly of Theorem~\ref{thm:qld}, where the trivial bound is used instead of the padded theorem.
 
 \begin{lemma}[All padded subtests succeed]
 \label{lem:qld-global-success}
 \ledgernode{1.2.2.13.2}
-\uses{lem:qld-global-setup,lem:schwartz-zippel}
-The padded strategy has failure at most
-$\delta'=C(\delta_{\mathrm{combine}}+\delta_Q+md/q)$ for a universal $C$.
-This bounds line--point, identical-point, and identical-line tests under
-their actual seeded distributions. Line equality uses polynomial separation;
-line--point consistency alone is not the full game hypothesis.
+\uses{lem:qld-global-setup,lem:qld-padded-lines,lem:qld-combined-points,lem:qld-axis-degree}
+\lean{  MIPRE.agreeSum, MIPRE.weightA, MIPRE.weightB, MIPRE.xDev, MIPRE.weightA_le_one,
+  MIPRE.weightB_le_one, MIPRE.weightA_nonneg, MIPRE.weightB_nonneg, MIPRE.xDev_eq,
+  MIPRE.bornProb_le_norm_mul_norm, MIPRE.agreeSum_le_sqrt_mul_sqrt, MIPRE.weightA_ge,
+  MIPRE.weightB_ge, MIPRE.xDev_le, MIPRE.xDev_triangle, MIPRE.agreeSum_triangle,
+  MIPRE.QLD.accepts_lineQ_point, MIPRE.QLD.accepts_point_lineQ, MIPRE.QLD.accepts_point_self,
+  MIPRE.QLD.accepts_lineQ_lineQ_self, MIPRE.QLD.condFail_lineQ_point_le,
+  MIPRE.QLD.condFail_point_lineQ_le, MIPRE.QLD.condFail_point_point_le,
+  MIPRE.QLD.condFail_lineQ_lineQ_le, MIPRE.QLD.condFail_aline_dline_le,
+  MIPRE.QLD.condFail_dline_aline_le, MIPRE.QLD.one_sub_sum_bornProb_le_avg_eval, MIPRE.QLD.Amb,
+  MIPRE.QLD.ptFam, MIPRE.QLD.lineFam, MIPRE.QLD.lineEvalFam, MIPRE.QLD.sum_inv_card_fiber_sum,
+  MIPRE.QLD.sum_rawSet_fiber, MIPRE.QLD.lineTermL, MIPRE.QLD.lineTermR, MIPRE.QLD.padGL,
+  MIPRE.QLD.padGR, MIPRE.QLD.sum_bornProb_lineEvalFam_ptFam,
+  MIPRE.QLD.sum_bornProb_ptFam_lineEvalFam, MIPRE.QLD.card_amb, MIPRE.QLD.card_subRand,
+  MIPRE.QLD.sum_padGL_eq, MIPRE.QLD.sum_padGR_eq, MIPRE.QLD.avgSubAB_padGL,
+  MIPRE.QLD.avgSubAB_padGR, MIPRE.QLD.inv_card_amb_eq, MIPRE.QLD.agreeSum_lineEvalFam_ptFam,
+  MIPRE.QLD.agreeSum_ptFam_lineEvalFam, MIPRE.QLD.bornProb_extHat_ptComb_right,
+  MIPRE.QLD.bornProb_extHat_ptComb_left, MIPRE.QLD.presOf_items, MIPRE.QLD.presOf_items_swap,
+  MIPRE.QLD.presOf_coll, MIPRE.QLD.one_sub_avgSubAB_padGL_le,
+  MIPRE.QLD.one_sub_avgSubAB_padGR_le, MIPRE.QLD.one_sub_inv_card_mul_sum_le,
+  MIPRE.QLD.one_sub_agreeSum_lineEval_pt_le, MIPRE.QLD.one_sub_agreeSum_pt_lineEval_le,
+  MIPRE.QLD.avg_amb_blocks, MIPRE.QLD.one_sub_agreeSum_pt_pt_le, MIPRE.QLD.sum_shift_param,
+  MIPRE.QLD.evDef, MIPRE.QLD.evDef_nonneg, MIPRE.QLD.evDef_le_one, MIPRE.QLD.evDef_lineTau,
+  MIPRE.QLD.sum_avg_evDef_le, MIPRE.QLD.sum_deg_le, MIPRE.QLD.sum_amb_eq,
+  MIPRE.QLD.uniform_amb_nonneg, MIPRE.QLD.sum_uniform_amb,
+  MIPRE.QLD.one_sub_agreeSum_uniform_eq, MIPRE.QLD.one_sub_agreeSum_lineEval_lineEval_le,
+  MIPRE.QLD.padW, MIPRE.QLD.padW_point_point_le, MIPRE.QLD.padW_line_point_le,
+  MIPRE.QLD.padW_point_line_le, MIPRE.QLD.padW_aline_dline_le, MIPRE.QLD.padW_dline_aline_le,
+  MIPRE.QLD.padW_line_line_le, MIPRE.QLD.Sample.question_fst_eq_lineQ,
+  MIPRE.QLD.Sample.question_snd_eq_lineQ, MIPRE.QLD.sum_ty,
+  MIPRE.QLD.one_sub_povmValue_padStrat_eq, MIPRE.QLD.padStrat_value}
+\leanok
+In the setting of Lemma~\ref{lem:qld-global-setup}, if the strategy wins the Pauli basis test
+with probability at least $1 - \eps$, $\eps \geq 0$, then the padded strategy fails the seeded
+test at $(q, 4m, d, 1)$ with probability at most
+\begin{equation*}
+  5\, m^2 \delta_P(\eps, md/q + 1/q) + 4\, \delta_Q(\eps) + \frac{md + 1}{q}\;,
+\end{equation*}
+with $\delta_P$ the error of Lemma~\ref{lem:qld-pairs-of-lines} and $\delta_Q$ that of
+Lemma~\ref{lem:qld-combined-points}; that is, $\delta' = C(\delta_{\mathrm{combine}} + \delta_Q
++ md/q)$ for a universal $C$, with $\delta_{\mathrm{combine}} = m^2 \delta_P$ as in
+Lemma~\ref{lem:qld-padded-lines}. The bound covers the line--point, identical-point and
+identical-line subtests under their actual seeded distributions; line equality uses polynomial
+separation.
 \end{lemma}
+\begin{proof}
+\uses{lem:qld-global-setup,lem:qld-padded-lines,lem:qld-combined-points,lem:qld-axis-degree}
+\leanok
+The failure probability is the average over the verifier's samples of the conditional failure at
+the two questions the sample generates, and the sample splits into the ordered pair of types and
+the ambient triple (point, seed, raw direction), uniform on its own. The two cross pairs are
+always accepted. Each other pair is bounded by an agreement defect of two families of POVMs
+indexed by the ambient triple, averaged uniformly: a line type against a point by the agreement
+of the line measurement read at the sample's point with the opposite party's padded point
+measurement, which is exactly the padded consistency quantity of Lemma~\ref{lem:qld-padded-lines}
+once the strategy's average over raw directions is composed with the sample's; two points by the
+agreement of the two padded point measurements, which is the self-consistency item of
+Lemma~\ref{lem:qld-combined-points} read through the compressions; and two identical lines by
+polynomial separation --- two distinct outcomes of degree at most $md + 1$ are told apart by
+reading both at a uniformly random parameter of the line, up to $(md + 1)/q$, and the parameter
+of the sample's point is uniform on the line once the raw direction is fixed and the line is not
+degenerate, because translating the point along the line is a bijection of the sample space that
+fixes the line and shifts the parameter. The evaluated disagreement of the two line measurements
+is then bounded through the agreement triangle (the POVM version of the paper's
+\texttt{fact:triangle-for-simeq}, with $11\delta$ in place of $9\delta$) by the line--point and
+point--point defects. A degenerate diagonal direction has probability at most $1/q$ and is paid
+for in full. Collecting the nine terms with weight $1/9$ gives the constants stated.
+\end{proof}
+
+\paragraph{Comments.} The decider's acceptance is only implied by, not equal to, agreement of the
+relabelled answers: an ill-formatted answer that happens to agree is still rejected. The
+formalization uses the implication in the one direction it holds and asks it only of answers the
+strategy can produce (\texttt{condFail\_le\_one\_sub\_sum\_bornProb\_map}). The paper's proof
+compares $f_A(u)$ with $f_B(u)$ at a uniformly random point $u$ of the line; the formalization
+reads the sample's own point instead, which makes the uniformity of the parameter a change of
+variables rather than a conditioning.
 
 \begin{lemma}[A global padded polynomial PVM]
 \label{lem:qld-global-pvm}
 \ledgernode{1.2.2.13.3}
-\uses{lem:qld-global-success,thm:lidt-cl-soundness-one}
+\uses{lem:qld-global-success,thm:lidt-cl-soundness-one,lem:naimark-dilation}
 The single-codeword theorem at $(q,4m,d,1)$ supplies projective global
 polynomial measurements on both sides, with both point-consistency estimates
 and full-polynomial consistency. Write their common error bound as

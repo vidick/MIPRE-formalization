@@ -5,6 +5,7 @@ Authors: Thomas Vidick
 -/
 import MIPRE.Background.LIDT.Adapter.Reduction
 import MIPRE.Foundations.RegisterReindex
+import MIPRE.Foundations.StrategyDilation
 
 /-!
 # The seeded-CL adapter, part 7: strategies on arbitrary registers
@@ -165,5 +166,59 @@ theorem clSoundness_ldc_one_deltaCL_of_pvm {dA dB : Type*} [Fintype dA] [Decidab
   rw [hptA] at h1
   rw [hptB] at h2
   exact ⟨GA, GB, h1, h2, h3⟩
+
+
+/-! ## Strategies given by POVMs
+
+The padded strategy of the Pauli basis test's analysis is a family of *POVMs* --- averages of
+sandwiches --- and `TensorProductStrategy` wants projective measurements. Naimark dilation
+(`exists_projective_dilation_povm`) supplies projective families on the registers extended by the
+answer type, whose compressions by the default answer are the given POVMs; on the twice-extended
+state the dilated strategy has the value of the original (`povmValue_extVec2`), so the theorem
+above applies to it. The conclusion is stated on the extended state, against the *dilated* point
+measurements, and the two dilations are returned with their compression identities, which is what
+a consumer needs to read the point clauses back on the original state
+(`inconsistency_extVec2`). -/
+
+/-- **The `ldc = 1` case of `thm:lidt-cl-soundness`, for a strategy given by POVMs.** The
+strategy is dilated to a projective one on `dA × Answer`, `dB × Answer`, with the default answer
+`values 0` as the ancilla state; the returned projective families `PA`, `PB` compress to `MA`, `MB`,
+and the low-degree measurements and the three bounds live on the twice-extended state. -/
+theorem clSoundness_ldc_one_deltaCL_of_povm {dA dB : Type*} [Fintype dA] [DecidableEq dA]
+    [Fintype dB] [DecidableEq dB] (ψ : dA × dB → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1)
+    (MA : CL.Question F m → POVM (CL.Answer F m d 1) dA)
+    (MB : CL.Question F m → POVM (CL.Answer F m d 1) dB)
+    (ε : ℝ) (hε : 0 ≤ ε) (hS : 1 - ε ≤ povmValue (clGame (d := d) (ldc := 1) hm) ψ MA MB)
+    (hm1 : 1 ≤ m) (hd : 1 ≤ d) :
+    ∃ (PA : ProjectiveMeasurement (CL.Question F m) (CL.Answer F m d 1)
+          (Matrix (dA × CL.Answer F m d 1) (dA × CL.Answer F m d 1) ℂ))
+      (PB : ProjectiveMeasurement (CL.Question F m) (CL.Answer F m d 1)
+          (Matrix (dB × CL.Answer F m d 1) (dB × CL.Answer F m d 1) ℂ))
+      (GA : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := m) (d := d))
+          (Matrix (dA × CL.Answer F m d 1) (dA × CL.Answer F m d 1) ℂ))
+      (GB : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := m) (d := d))
+          (Matrix (dB × CL.Answer F m d 1) (dB × CL.Answer F m d 1) ℂ)),
+      (∀ x, (PA.toPOVM x).compress (CL.Answer.values fun _ => (0 : F)) = MA x)
+      ∧ (∀ y, (PB.toPOVM y).compress (CL.Answer.values fun _ => (0 : F)) = MB y)
+      ∧ inconsistency (uniform (Point F m))
+          (extVec2 ψ (CL.Answer.values fun _ => (0 : F)) (CL.Answer.values fun _ => (0 : F)))
+          (pointPOVM PA) (evalPOVM GB) ≤ deltaCL (Fintype.card F) m d ε
+      ∧ inconsistency (uniform (Point F m))
+          (extVec2 ψ (CL.Answer.values fun _ => (0 : F)) (CL.Answer.values fun _ => (0 : F)))
+          (evalPOVM GA) (pointPOVM PB) ≤ deltaCL (Fintype.card F) m d ε
+      ∧ inconsistency (uniform Unit)
+          (extVec2 ψ (CL.Answer.values fun _ => (0 : F)) (CL.Answer.values fun _ => (0 : F)))
+          (fun _ => GA.toPOVM ()) (fun _ => GB.toPOVM ()) ≤ deltaCL (Fintype.card F) m d ε := by
+  set a₀ : CL.Answer F m d 1 := CL.Answer.values fun _ => (0 : F) with ha₀
+  obtain ⟨PA, hPA⟩ := exists_projective_dilation_povm MA a₀
+  obtain ⟨PB, hPB⟩ := exists_projective_dilation_povm MB a₀
+  have hval : 1 - ε ≤ povmValue (clGame (d := d) (ldc := 1) hm) (extVec2 ψ a₀ a₀)
+      (fun x => PA.toPOVM x) (fun y => PB.toPOVM y) := by
+    rw [povmValue_extVec2]
+    simp only [hPA, hPB]
+    exact hS
+  obtain ⟨GA, GB, h1, h2, h3⟩ := clSoundness_ldc_one_deltaCL_of_projective
+    (extVec2 ψ a₀ a₀) (extVec2_unit hψ a₀ a₀) PA PB ε hε hval hm1 hd
+  exact ⟨PA, PB, GA, GB, hPA, hPB, h1, h2, h3⟩
 
 end MIPRE.LIDT.Adapter
