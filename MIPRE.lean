@@ -402,10 +402,12 @@ import MIPRE.Background.QLD.Lines
 import MIPRE.Background.QLD.NonMultilinear
 import MIPRE.Background.QLD.Ortho
 import MIPRE.Background.QLD.Padded
+import MIPRE.Background.QLD.PaddedLIDT
 import MIPRE.Background.QLD.PaddedLines
 import MIPRE.Background.QLD.PaddedStrategy
 import MIPRE.Background.QLD.PaddedValue
 import MIPRE.Background.QLD.Product
+import MIPRE.Background.QLD.Simul
 import MIPRE.Background.QLD.Swap
 import MIPRE.Background.QLD.SwapUnitary
 import MIPRE.Background.QLD.Win

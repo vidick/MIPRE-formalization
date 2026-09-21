@@ -3101,6 +3101,9 @@ this step.
 \label{lem:qld-simultaneous}
 \ledgernode{1.2.2.13}
 \uses{lem:qld-global-robustness}
+\lean{  MIPRE.QLD.PolyPair, MIPRE.QLD.PolyPair.proj, MIPRE.QLD.evalMarg, MIPRE.QLD.evalMarg_mats,
+  MIPRE.QLD.isPVM_evalMarg, MIPRE.QLD.SimulPair, MIPRE.QLD.SimulPair.mono,
+  MIPRE.QLD.SimulPair.bornProb_aOp_aOp}
 There are universal $a>1$, $0<b<1$ and, on each relevant padded local space,
 a complete projective measurement $\widehat S_{g_X,g_Z}$ of pairs of
 individual-degree-$d$ polynomials on $\F_q^m$. Its evaluated $X$ and $Z$
@@ -3110,6 +3113,19 @@ $\delta_S=a(md)^a(\eps^b+q^{-b}+2^{-bmd})$.
 The same measurement satisfies the sandwiched joint estimate below.
 Both register versions are required; no symmetric-strategy hypothesis is added.
 \end{lemma}
+
+\paragraph{Comments.} The conclusion is formalized as the structure \texttt{SimulPair}
+(\texttt{MIPRE/Background/QLD/Simul.lean}): for a strategy $(\psi, M_A, M_B)$ and an error
+$\delta$, ancilla types $E_A$, $E_B$, a unit state $\Phi$ on
+$((d_A \times \mathrm{Anc}) \times E_A) \times ((d_B \times \mathrm{Anc}) \times E_B)$ that
+reduces to the expanded state on the two hat registers, projective pair measurements $S_A$, $S_B$
+with outcomes in pairs of individual-degree-$d$ polynomials, and the two evaluated-marginal
+consistencies. The lemma is then the existence of a \texttt{SimulPair} at error $\delta_S$, which
+Lemmas~\ref{lem:qld-global-pvm}--\ref{lem:qld-global-robustness} are to supply; stage 5 is proved
+against the structure. The padded state of Lemma~\ref{lem:qld-global-pvm} lives on the registers
+$((d_A \times \mathrm{Anc}) \times \F_q^2) \times \mathrm{Ans}$ with $\mathrm{Ans}$ the
+dilation's answer ancilla, and is carried to the structure's register shape by the associativity
+reindexing.
 
 \begin{lemma}[Admissible padded setup]
 \label{lem:qld-global-setup}
@@ -3269,12 +3285,52 @@ variables rather than a conditioning.
 \label{lem:qld-global-pvm}
 \ledgernode{1.2.2.13.3}
 \uses{lem:qld-global-success,thm:lidt-cl-soundness-one,lem:naimark-dilation}
-The single-codeword theorem at $(q,4m,d,1)$ supplies projective global
-polynomial measurements on both sides, with both point-consistency estimates
-and full-polynomial consistency. Write their common error bound as
-$\delta_{\mathrm{ld}}\leq A(md)^A((\delta')^b+q^{-b}+2^{-bmd})$ for
-universal $A,b$. No further dilation of these projective outputs is required.
+\lean{  MIPRE.POVM.compress_aOp, MIPRE.QLD.bornProb_extVec2_aOp_aOp, MIPRE.QLD.ansZero,
+  MIPRE.QLD.PadReg, MIPRE.QLD.padState, MIPRE.QLD.padState_unit,
+  MIPRE.QLD.bornProb_padState_aOp_aOp, MIPRE.QLD.padPt_aOp_mats,
+  MIPRE.QLD.inconsistency_padState_aOp_right, MIPRE.QLD.inconsistency_padState_aOp_left,
+  MIPRE.QLD.deltaGS, MIPRE.QLD.deltaLD, MIPRE.QLD.deltaGS_nonneg, MIPRE.QLD.exists_global_pvm,
+  MIPRE.QLD.exists_global_pvm_hat}
+\leanok
+The single-codeword theorem at $(q,4m,d,1)$, applied to a projective dilation of the padded
+strategy of Lemma~\ref{lem:qld-global-setup}, supplies projective global polynomial measurements
+$G_A$, $G_B$ on the two dilated registers, with both point-consistency estimates and the
+full-polynomial consistency, on the twice-padded state (the expanded state with the combining
+ancillas in $\ket{0,0}$ and the dilation's answer ancillas in the zero answer). Their common error
+is $\delta_{\mathrm{ld}} := \delta_{\mathrm{CL}}(q, 4m, d, \delta_{\mathrm{GS}})$, where
+$\delta_{\mathrm{GS}} = 5 m^2 \delta_P(\eps, md/q + 1/q) + 4 \delta_Q(\eps) + (md+1)/q$ is the
+bound of Lemma~\ref{lem:qld-global-success}; it has the form
+$A(md)^A((\delta_{\mathrm{GS}})^b+q^{-b}+2^{-bmd})$ for universal $A,b$. The point-consistency
+estimates hold against the padded point measurements of the \emph{original} strategy --- the
+expanded sandwich combinations, extended by the identity on both ancillas --- so no dilation
+appears in the conclusion, and no further dilation of the projective outputs is required.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:qld-global-success,thm:lidt-cl-soundness-one,lem:naimark-dilation}
+\leanok
+Lemma~\ref{lem:qld-global-success} is the value hypothesis of
+Theorem~\ref{thm:lidt-cl-soundness-one} for the padded strategy at $(q, 4m, d, 1)$. The theorem,
+in its form for POVM strategies, dilates the strategy projectively
+(Lemma~\ref{lem:naimark-dilation}), adjoining to each party an ancilla indexed by the test's
+answers and prepared in the zero answer, and returns projective low-degree measurements on the
+dilated registers together with the three consistency estimates against the dilation's own point
+measurements, on the twice-padded state. The dilation's point measurement compresses to the padded
+point measurement of Lemma~\ref{lem:qld-global-setup}. On a product state the Born probability of
+an operator on one party's dilated register depends on the operator only through its compression
+by the ancilla vector, so in each inconsistency the dilation's point measurement may be replaced,
+term by term, by the identity extension of the padded point measurement, and the number does not
+change. Expectations of doubly extended operators on the twice-padded state are their expectations
+on the expanded state, so the conclusions of Lemmas~\ref{lem:qld-expanded-points}
+and~\ref{lem:qld-combined-points} transfer to it.
+\end{proof}
+
+\paragraph{Comments.} The second Naimark dilation of the paper's proof, applied to the recovered
+polynomial measurement, is not needed: the soundness theorem already returns projective
+measurements (as the ledger's challenge history of node 1.2.2.13 records). The recovered
+polynomials are functions on $\F_q^{4m}$, while the padded point measurements read only the
+$2m+2$ coordinates $(x, z, \alpha, \beta)$; the Schwartz--Zippel argument that the polynomials do
+not read the remaining dummy coordinates is Lemma~\ref{lem:qld-global-dummy}.
 
 \begin{lemma}[Removing dummy-coordinate dependence]
 \label{lem:qld-global-dummy}

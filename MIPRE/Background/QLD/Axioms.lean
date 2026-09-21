@@ -12,6 +12,7 @@ import MIPRE.Background.QLD.Padded
 import MIPRE.Background.QLD.PaddedLines
 import MIPRE.Background.QLD.Legalize
 import MIPRE.Background.QLD.PaddedValue
+import MIPRE.Background.QLD.PaddedLIDT
 import MIPRE.Foundations.GuardSorryFree
 
 /-!
@@ -870,3 +871,21 @@ padded strategy at each of the nine ordered type pairs, and the value bound. -/
   MIPRE.QLD.sum_ty,
   MIPRE.QLD.one_sub_povmValue_padStrat_eq,
   MIPRE.QLD.padStrat_value
+
+/-! `lem:qld-global-pvm` (`MIPRE/Background/QLD/PaddedLIDT.lean`, with the reduced-state lemma of
+`MIPRE/Background/QLD/Simul.lean` it uses). -/
+#guard_sorry_free MIPRE.POVM.compress_aOp,
+  MIPRE.QLD.bornProb_extVec2_aOp_aOp,
+  MIPRE.QLD.ansZero,
+  MIPRE.QLD.PadReg,
+  MIPRE.QLD.padState,
+  MIPRE.QLD.padState_unit,
+  MIPRE.QLD.bornProb_padState_aOp_aOp,
+  MIPRE.QLD.padPt_aOp_mats,
+  MIPRE.QLD.inconsistency_padState_aOp_right,
+  MIPRE.QLD.inconsistency_padState_aOp_left,
+  MIPRE.QLD.deltaGS,
+  MIPRE.QLD.deltaLD,
+  MIPRE.QLD.deltaGS_nonneg,
+  MIPRE.QLD.exists_global_pvm,
+  MIPRE.QLD.exists_global_pvm_hat

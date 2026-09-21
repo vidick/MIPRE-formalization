@@ -1415,3 +1415,50 @@ vendored MIPStarRE tree --- and `-dummy` --- the Schwartz--Zippel argument that 
 polynomial does not read the dummy coordinates --- are a follow-up, G-c, together with the interface
 structure stage 5 is proved against. `lem:qld-global-pvm`'s `\uses` now names
 `lem:naimark-dilation`, which `-setup` no longer needs.
+
+### PR G-c: the interface structure and `lem:qld-global-pvm` (2026-09-21)
+
+**What closed.** `lem:qld-global-pvm`, with both marks. `MIPRE/Background/QLD/PaddedLIDT.lean`
+feeds `padStrat_value` to `clSoundness_ldc_one_deltaCL_of_povm` at `(q, 4m, d, 1)`
+(`exists_global_pvm`) and reads the conclusion back without the dilation (`exists_global_pvm_hat`):
+projective low-degree measurements `GA`, `GB` on the dilated registers
+`PadReg = ((dA × Anc) × (F × F)) × Ans`, consistent on the twice-padded state
+`padState ψ = extVec2 (extHat ψ) ansZero ansZero`, on average over a uniform point of `F^{4m}`,
+with the *original* strategy's padded point measurements `padPt` extended by the identity, and with
+each other, all with error `deltaLD q m d ε = deltaCL q (4m) d (deltaGS q m d ε)`. This is the one
+module of the QLD analysis that imports the vendored MIPStarRE tree (through
+`LIDT/Adapter/Registers`); everything else in `MIPRE/Background/QLD/` stays in the fast regime.
+
+**Why no further dilation is needed.** The dilation's point measurement compresses to `padPt`
+(`POVM.map_compress` with `padStrat_point_map_toValue`), and on a product state the Born
+probability of an operator on one party's dilated register depends on it only through its
+compression (`inconsistency_extVec2`); the identity extension of `padPt` has the same compression
+(`POVM.compress_aOp`), so each inconsistency against the dilation's point measurement *equals* the
+one against `padPt.aOp` (`inconsistency_padState_aOp_left/right`). Doubly extended operators have
+on `padState ψ` their `hatVec ψ` expectations (`bornProb_padState_aOp_aOp`, from the generic
+`bornProb_extVec2_aOp_aOp`), which is how stages 2 and 3 will transfer. The paper's second Naimark
+application to the recovered measurement is not needed, as the ledger's challenge history of node
+1.2.2.13 already records.
+
+**The interface.** `MIPRE/Background/QLD/Simul.lean` states `lem:qld-simultaneous`'s conclusion as
+the structure `SimulPair ψ MA MB δ`: ancilla types `EA`, `EB`, a unit state `Φ` on
+`((dA × Anc) × EA) × ((dB × Anc) × EB)` reducing to `hatVec ψ` on the hat registers
+(`Φ_reduced`), projective pair measurements `SA`, `SB` with outcomes `PolyPair` (pairs of
+individual-degree-`d` polynomials in `m` variables), and the two evaluated-marginal consistencies
+(`consA`, `consB`, through `evalMarg`). Stage 5 is proved against it; stage 4c supplies
+`Nonempty (SimulPair ψ MA MB δ_S)`. `lem:qld-simultaneous` carries `\lean{}` for the structure but
+no `\leanok`: there is no existence theorem yet. The padded state of `-pvm` has the register shape
+`((dA × Anc) × (F × F)) × Ans`, one associativity reindexing away from the structure's
+`(dA × Anc) × EA` with `EA = (F × F) × Ans`; `RegisterReindex.lean` has `reindexVec`,
+`POVM.reindex` and `inconsistency_reindex` for the transport, which is stage 4c's last step.
+
+**A Lean point.** `DecidableEq (PadReg F m d dA)` is not found by instance synthesis at the default
+`synthInstance.maxSize`: the five-fold product with the derived instance of the seeded answer type
+is too large a term. `instDecidableEqPadReg` assembles the two halves by hand.
+
+**Scope.** `lem:qld-global-dummy` moves to PR H (stage 4b), whose first step it is: it needs the
+bridge from `LowIndDegPoly F (4m) d` (a coefficient vector) to `MvPolynomial (Fin (4m)) F` for
+`prob_agree_le_individualDegree`, applied to `g(v, w) - g(v, w')` in `6m - 2` variables, and the
+mass argument that a `w`-dependent outcome cannot be consistent with a `w`-independent point
+measurement at two independent `w`, `w'`. The paper's `8md/q` and the standing `16md ≤ q` make
+the `w`-dependent mass at most `4 δ_ld`.
