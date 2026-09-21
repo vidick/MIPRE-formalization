@@ -3,6 +3,7 @@ import MIPRE.Background.GowersHatami.Basic
 import MIPRE.Background.LIDT.Adapter.Geometry
 import MIPRE.Background.LIDT.Adapter.Parameters
 import MIPRE.Background.LIDT.Adapter.Reduction
+import MIPRE.Background.LIDT.Adapter.Registers
 import MIPRE.Background.LIDT.Adapter.Reparam
 import MIPRE.Background.LIDT.Adapter.Seeds
 import MIPRE.Background.LIDT.Adapter.Strategy
@@ -754,6 +755,7 @@ import MIPRE.Foundations.Pipeline.Introspection
 import MIPRE.Foundations.Pipeline.Margin
 import MIPRE.Foundations.Pipeline.Oracularization
 import MIPRE.Foundations.Pipeline.Repetition
+import MIPRE.Foundations.RegisterReindex
 import MIPRE.Foundations.Repeat.Bits
 import MIPRE.Foundations.Repeat.DecLoop
 import MIPRE.Foundations.Repeat.DecMain
