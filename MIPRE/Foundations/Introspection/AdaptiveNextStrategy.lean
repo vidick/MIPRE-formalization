@@ -117,9 +117,9 @@ theorem registeredReplacement_next_mats (P : CL.CLFun F ι ℓ)
   rw [registeredReplacement_next_at P hP k a₀ D hD MA q g,
     nextPrefixJointPOVM_map_mats]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The same selected-measurement identity in the finite-dimensional
 `TensorProductStrategy` packaging, with its explicit basis equivalence. -/
-set_option backward.isDefEq.respectTransparency false in
 theorem adaptiveReplacementStrategy_next_at (P : CL.CLFun F ι ℓ)
     (hP : P.SupportedOn univ) (k : ℕ)
     (G : Game X Y Ans B) (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1) (a₀ : A)
