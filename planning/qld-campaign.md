@@ -1307,7 +1307,9 @@ So: carry the extended register, and state stage 5 over an abstract register typ
 | K | `lem:qld-swap`, `thm:qld` | the ancilla embedding and item 2; the assembly: `16md > q` trivial with `a ≥ 64`, conjugation by the projector `P` against conjugation by `V`, Naimark descent in the consistency form, the square root halving `b`; marks and guards; `thm:qld`'s `\uses` corrected to `thm:lidt-cl-soundness-one`; #115 closed. |
 
 Order: E, F, G, H, I, J, K. E and F are independent; G needs both; J needs only G. Each is the
-size of PR C or PR D. G's module is the one place QLD reaches the vendored MIPStarRE tree, so it
+size of PR C or PR D. (G is split: G-a is the Foundations half --- dilating a POVM strategy to a
+projective one, and the seeded soundness for POVM strategies that follows --- and G-b the padded
+strategy itself, its value bound, and the interface structure.) G's module is the one place QLD reaches the vendored MIPStarRE tree, so it
 enters the slow build regime; nothing else in QLD should import it except the assembly.
 
 **Two things to settle in G, not later.** The Lean shape of `thm:qld` must match its consumer ---

@@ -143,6 +143,16 @@ three conclusions back along `Fintype.equivFin` with `inconsistency_reindex`. No
 test is used; it is the one choke point between a `Foundations`-style strategy and the vendored
 soundness, and it was the piece stage 4 could not start without.
 
+**Part 7, continued: strategies given by POVMs.** The padded strategy is a family of POVMs (averages
+of sandwiches), and `TensorProductStrategy` wants projective measurements.
+`MIPRE/Foundations/StrategyDilation.lean` dilates a question-indexed POVM family to a projective one
+on `d × Answer` by Naimark (`exists_projective_dilation_povm`), with the compression by the default
+answer recovering the family, and shows that on the twice-extended state `extVec2 ψ a₀ b₀` both the
+value and the inconsistency are those of the compressions (`povmValue_extVec2`,
+`inconsistency_extVec2`). `clSoundness_ldc_one_deltaCL_of_povm` is the theorem for a POVM strategy:
+it returns the two dilations with their compression identities, and the low-degree measurements
+with the three bounds on the extended state.
+
 ### The original table
 
 The adapter's **ingredients are proved**; the **assembly is not**.

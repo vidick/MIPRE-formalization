@@ -859,6 +859,7 @@ import MIPRE.Foundations.SampledGame
 import MIPRE.Foundations.Sandwich
 import MIPRE.Foundations.Sign
 import MIPRE.Foundations.StateDistance
+import MIPRE.Foundations.StrategyDilation
 import MIPRE.Foundations.Swap
 import MIPRE.Foundations.SyncTransport
 import MIPRE.Foundations.TensorFamily
