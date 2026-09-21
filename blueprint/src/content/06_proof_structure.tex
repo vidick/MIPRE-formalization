@@ -2667,6 +2667,125 @@ the squared-error sum exactly. Identify its ideal term with the next-prefix
 projector assembly.
 \end{proof}
 
+\begin{lemma}[Refining and updating the actual Introspect answer]
+\label{lem:intro-answer-refinement}
+\uses{lem:intro-adaptive-advance,lem:intro-adaptive-reassembly}
+\lean{MIPRE.Introspection.graphRefinementPOVM_isPVM,
+  MIPRE.Introspection.graphRefinementPOVM_recover,
+  MIPRE.Introspection.stageAnswerRefinement_commutator,
+  MIPRE.Introspection.stageAnswerDecode_prefix,
+  MIPRE.Introspection.stageAnswerDecode_next,
+  MIPRE.Introspection.stageAnswerRefinementPOVM_decode_recover,
+  MIPRE.Introspection.canonicalizeIntro_isPVM,
+  MIPRE.Introspection.TypedEstimates.canonicalizeIntro_value}
+\leanok
+Adding the deterministically reported current coordinate to each full
+Introspect answer preserves projectivity and the total commutator errors
+exactly. The updating decoder overwrites the visited coordinates, reports
+the advanced prefix, and recovers the old measurement under its old-prefix
+support invariant. The malformed outcome remains explicit. Replacing all
+malformed raw Introspect constructors by one fixed malformed constructor
+preserves the actual parsed-game value and projectivity exactly.
+\end{lemma}
+\begin{proof}
+\leanok
+Embed outcomes in the graph of the selected-coordinate function. All
+off-graph operators are zero. The decoder identities follow from the
+disjoint visited, current, and remaining coordinates. Every malformed
+Introspect answer is rejected by the actual predicate's format check.
+\end{proof}
+
+\begin{lemma}[Constructing the next-prefix residual invariant]
+\label{lem:intro-next-invariant}
+\uses{lem:intro-adaptive-strategy,lem:intro-answer-refinement}
+\lean{MIPRE.Introspection.adaptiveReplacementJointOp_next_factor,
+  MIPRE.Introspection.nextPrefixResidual_isPVM,
+  MIPRE.Introspection.adaptiveReplacementJointOp_next_reassembly,
+  MIPRE.Introspection.nextPrefixDecodedPOVM_isPVM,
+  MIPRE.Introspection.registeredReplacement_next_mats,
+  MIPRE.Introspection.exists_adaptive_next_strategy}
+\leanok
+The old-prefix and current-Z replacement operators equal the next honest
+prefix tensored with constructed residual projectors on its actual remaining
+coordinates and the common enlarged auxiliary space. After any answer
+decoder, these residuals are PVMs and reassemble to the selected measurement
+of the returned strategy. Under the old measurement's refinement identity
+and the three stage-error bounds, its value loss is at most
+$2\sqrt{2\sqrt{56\sqrt{\delta}}}$.
+\end{lemma}
+\begin{proof}
+\leanok
+Recover the unique old prefix and current label on attainable branches,
+transport the residual register by the proved coordinate-set equality,
+and use zero ambient projectors on all other branches. Coarse-graining the
+residuals commutes with prefix reassembly. Apply the existing quantitative
+replacement theorem to this concrete construction.
+\end{proof}
+
+\begin{lemma}[One stage budget from the actual game tests]
+\label{lem:intro-game-stage}
+\uses{lem:intro-adaptive-read-error,lem:intro-adaptive-marginal,lem:intro-answer-refinement}
+\lean{MIPRE.Introspection.TypedEstimates.introspect_prefix_register_rigidity_alice,
+  MIPRE.Introspection.stageAnswerRefinement_coarse_marginal,
+  MIPRE.Introspection.stageAnswerRefinement_marginal_le_reported,
+  MIPRE.Introspection.TypedEstimates.introspect_adaptive_marginal,
+  MIPRE.Introspection.TypedEstimates.introspect_refined_stage_bounds,
+  MIPRE.Introspection.TypedEstimates.exists_game_adaptive_prefix_dilation,
+  MIPRE.Introspection.adaptiveStepLoss_le_root,
+  MIPRE.Introspection.adaptiveFailureBudget_mono}
+\leanok
+Write $e=|E|\eps$, let $\eta_Z$ be the primitive Bob-Z error and $\delta_H$
+the fixed Alice hiding error, and let $r$ be the remaining depth. For the
+current projective prefix product form with its valid-answer support, all three
+refined stage errors are at most
+\[
+  B_r(e,\eta_Z,\delta_H)
+   =64\eta_Z+(512r^2+224)e+64\delta_H.
+\]
+If this budget is at most one, the actual tests construct the common-ancilla
+residual projectors. The replacement value loss is at most $8B_r^{1/8}$.
+An explicit monotone numerical failure recurrence records this loss.
+\end{lemma}
+\begin{proof}
+\leanok
+The Introspect consistency loop transfers Bob's prefix rigidity to Alice
+with bound $8\eta_Z+28e$. Refining the dummy answer adds its old-prefix
+block to the valid reported marginal. Orthogonality charges the sum of
+these squared norms to the single dummy outcome, giving marginal error
+at most $16\eta_Z+56e$. Combine this with the actual Z and dual-X
+commutator estimates and apply mixing and dilation. Three square roots
+give the stated universal coefficient and exponent. The numerical
+recurrence does not itself construct a sequence of strategies.
+\end{proof}
+
+\begin{lemma}[Preserving the fixed errors under replacement]
+\label{lem:intro-fixed-errors}
+\uses{lem:intro-adaptive-strategy,lem:intro-read-rigidity}
+\lean{MIPRE.Introspection.stateSqNorm_registeredExtendOp,
+  MIPRE.Introspection.xSqNorm_registeredExtendOp,
+  MIPRE.Introspection.bornProb_registeredExtendOp,
+  MIPRE.Introspection.registeredReplacement_samePartyError_other,
+  MIPRE.Introspection.registeredReplacement_crossError_other,
+  MIPRE.Introspection.TypedEstimates.pauliAliceError_registeredReplacement,
+  MIPRE.Introspection.TypedEstimates.pauliBobError_registeredExtension,
+  MIPRE.Introspection.TypedEstimates.hidingAliceError_registeredReplacement,
+  MIPRE.Introspection.TypedEstimates.hidingBobError_registeredExtension,
+  MIPRE.Introspection.TypedEstimates.readAliceError_registeredReplacement,
+  MIPRE.Introspection.TypedEstimates.readBobError_registeredExtension}
+\leanok
+Extending by the fixed auxiliary vector and reassociating the register
+preserves same-party error, cross-party error, and Born probabilities
+exactly. At every unchanged question the actual replacement has precisely
+this extension. In particular the primitive Pauli, hiding, and Read errors
+are unchanged when an Alice Introspect question is replaced.
+\end{lemma}
+\begin{proof}
+\leanok
+The deviation vectors are extended by an isometry. Register reassociation
+preserves their norms, and register ideals remain tensored with the enlarged
+auxiliary identity. Specialize the actual unchanged-question formula.
+\end{proof}
+
 \begin{remark}[The coarse-operator repair and its remaining Lean assembly]
 \label{rem:intro-commutation-gap}
 \uses{lem:intro-induction,lem:conditional-measurement,lem:intro-coarse-product-stage}
@@ -2678,10 +2797,15 @@ Full hiding rigidity, its normalizer replacement, Read rigidity, and the
 common-ancilla dilation theorem are proved. The actual adaptive prefix law,
 Z and dual-X factorizations, weighted conditioning, minimal residual support,
 projective reassembly, next-prefix label assembly, and a concrete single-stage
-strategy replacement are now checked. Completing the Lean induction still
-requires refining actual Introspect answers into the stage alphabet, supplying
-and propagating all three stage-error budgets under replacements, and iterating
-the construction on both parties from the QLD-extracted strategy. Neither the repaired manuscript
+strategy replacement are now checked. Answer refinement and updating,
+next-prefix residual reassembly, the actual three-error budget, and exact
+preservation of the unchanged measurements' errors are also proved.
+Completing the Lean induction still requires connecting raw parsed-answer
+canonicalization to the refined selected measurement and recovering the next
+option-valued product form, establishing decoded answer support and the
+initial residual invariant, proving the small-error
+regime along the recurrence, and constructing the successive strategies on
+both parties from the QLD-extracted strategy. Neither the repaired manuscript
 argument nor the single-stage theorem alone proves Lemma~\ref{lem:intro-induction}.
 \end{remark}
 
