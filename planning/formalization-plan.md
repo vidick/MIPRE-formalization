@@ -30,9 +30,16 @@ detyping with polynomial sampler runtime, actual finite-game PCC completeness,
 ambient Pauli mixing, parsed introspection tests and final strategy extraction.
 The conditional compression theorem now accepts polynomial-exponent ambient
 decider budgets and retains the input sampler's degree in answer reduction.
+Full hiding rigidity is now proved from the extracted primitive X/Z bounds:
+the actual Pauli tests supply its base and prefix estimates, and the finite
+iteration covers every level on both parties. Read rigidity is also complete.
+The actual Sample and Read joint measurements now give the coarse Z and dual
+commutator estimates needed for product-form induction. That induction still
+requires the adaptive prefix-conditioned register identifications and weights,
+residual measurement construction, strategy reassembly and error iteration.
 The full `Introspection 7` still requires the remaining verifier branches and
 uniform budget bound, the complete honest 26-type Pauli strategy, and the
-QLD-to-hiding/product-strategy soundness iteration. See
+QLD extraction interface and product-strategy soundness iteration. See
 [classical-pcp-introspection.md](classical-pcp-introspection.md) for the checked
 scope and remaining obligations. Neither a completed QLD theorem nor the new
 component proofs by themselves inhabit introspection or answer reduction.

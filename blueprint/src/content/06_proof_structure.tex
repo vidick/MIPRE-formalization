@@ -2246,9 +2246,9 @@ at most
 \]
 The conclusion concerns the actual complete parsed measurement, including
 malformed outcomes. No conditional estimate, ideal commutation, mirror or
-next-level rigidity hypothesis is assumed. The initial estimates from
-QLD and sampling, party-orientation iteration, and the later product-strategy
-induction remain separate obligations.
+next-level rigidity hypothesis is assumed. Lemma~\ref{lem:hide-rigidity}
+below supplies the base, prefix estimates and iteration from the primitive
+extracted Pauli guarantees. The later product-strategy induction is separate.
 \end{lemma}
 \begin{proof}
 \leanok
@@ -2258,6 +2258,120 @@ conditional normalizer estimate and the actual prefix-chain bound. Transfer
 the paired ideal to the other party before coarse-graining cross-party
 consistency. The retained map on parsed answers and the concrete ideal
 product identity identify both sides with the next fine hiding families.
+\end{proof}
+
+\begin{lemma}[Initializing hiding from the actual Pauli tests]
+\label{lem:intro-hiding-initialization}
+\uses{lem:intro-parsed-predicate,lem:intro-type-presentation,lem:intro-concrete-ideal-step}
+\lean{MIPRE.Introspection.TypedPresentation.mu_constant_edge,
+  MIPRE.Introspection.TypedPresentation.mu_pauli_aux,
+  MIPRE.Introspection.TypedPresentation.mu_aux_pauli,
+  MIPRE.Introspection.TypedEstimates.pauli_aux_agreement_estimate,
+  MIPRE.Introspection.TypedEstimates.aux_pauli_agreement_estimate,
+  MIPRE.Introspection.Honest.pauliXReadout_firstHide,
+  MIPRE.Introspection.Honest.pauliXReadout_registerState_mirror,
+  MIPRE.Introspection.TypedEstimates.hiding_first_agreement_estimate,
+  MIPRE.Introspection.TypedEstimates.hiding_first_register_rigidity,
+  MIPRE.Introspection.TypedEstimates.idealZ_prefix_fibSum,
+  MIPRE.Introspection.TypedEstimates.introspect_prefix_register_rigidity_bob}
+\leanok
+Let $e=|E|\eps$ for the actual parsed game on an EPR seed and arbitrary
+normalized auxiliary state. Suppose the fixed Pauli-X and Pauli-Z questions
+have primitive extracted squared errors $\delta_X$ on Alice and $\eta_Z$ on
+Bob. The actual X/first-Hide test gives first-Hide Bob error at most
+$4e+2\delta_X$. The Z/Sample and Sample/Introspect tests give every
+Bob Introspect-prefix error at most $4\eta_Z+12e$. Projectivity is required
+where used for coarse-graining; malformed outcomes are included.
+Constancy of the two Pauli questions is stated explicitly.
+\end{lemma}
+\begin{proof}
+\leanok
+Compute the exact Pauli/auxiliary edge masses. Transfer primitive ideal
+operators across their exact EPR mirrors before coarse-graining. Identify
+the ideal first hiding family and every ideal prefix as the corresponding
+coarsened Pauli readouts, then use the actual accepted-answer comparisons.
+\end{proof}
+
+\begin{lemma}[Full hiding rigidity]
+\label{lem:hide-rigidity}
+\uses{lem:intro-hiding-initialization,lem:intro-actual-hiding-rigidity-step}
+\lean{MIPRE.Introspection.sum_xSqNorm_mirror_transfer,
+  MIPRE.Introspection.TypedEstimates.hiding_register_orientation,
+  MIPRE.Introspection.TypedEstimates.hiding_register_recurrence,
+  MIPRE.Introspection.TypedEstimates.hiding_register_iteration,
+  MIPRE.Introspection.TypedEstimates.hiding_register_iteration_uniform,
+  MIPRE.Introspection.TypedEstimates.hiding_register_rigidity_of_pauli}
+\leanok
+Under the primitive extracted Pauli guarantees and actual game-success
+hypothesis above, every hiding level is rigid on both parties. A uniform
+Bob bound is
+\[
+ B=6^\ell\bigl((94+48\ell^2)e+2\delta_X+24\eta_Z\bigr),
+\]
+and a uniform Alice bound is $4e+2B$. This completes the hiding-measurement
+induction without a base-case or prefix-rigidity conclusion among the
+assumptions. The constant depends on $\ell$, not on the answer alphabet.
+\end{lemma}
+\begin{proof}
+\leanok
+The actual consistency loop transfers Bob rigidity to Alice with cost
+$4e+2B_k$. The adjacent step gives
+$B_{k+1}\leq6B_k+(18+48\ell^2)e+6\delta$.
+Solve the finite recurrence and substitute the proved base and prefix bounds.
+No symmetry of the Pauli predicate is needed. Supplying the extracted state
+and primitive Pauli guarantees from the QLD theorem is a separate interface.
+\end{proof}
+
+\begin{lemma}[Full Read rigidity]
+\label{lem:intro-read-rigidity}
+\uses{lem:hide-rigidity,lem:intro-actual-prefix-chain}
+\lean{MIPRE.Introspection.CLChecks.factorOfPrefix_outputPrefix,
+  MIPRE.Introspection.CLChecks.factorOfPrefix_subset_prefixRegister,
+  MIPRE.Introspection.TypedEstimates.check_hiding_next_dual,
+  MIPRE.Introspection.TypedEstimates.check_hiding_read_dual,
+  MIPRE.Introspection.TypedEstimates.hiding_read_dual_chain_estimate,
+  MIPRE.Introspection.Honest.readDualOp_isPVM,
+  MIPRE.Introspection.Honest.readDualOp_registerState_mirror,
+  MIPRE.Introspection.TypedEstimates.read_register_rigidity_alice,
+  MIPRE.Introspection.TypedEstimates.read_register_rigidity_bob,
+  MIPRE.Introspection.TypedEstimates.read_register_rigidity_of_pauli}
+\leanok
+Read's marginal consisting of a stage's preceding claimed prefix and its
+dual answer is rigid at every stage on both parties. Its ideal family is
+the concrete honest hiding family with its unused X tail summed out.
+Uniform Alice and Bob squared-error bounds are $(16\ell^2+8)e+4B$ and
+$(32\ell^2+20)e+8B$, respectively.
+\end{lemma}
+\begin{proof}
+\leanok
+Every later hiding test preserves this fixed prefix/dual pair, including
+claimed outputs outside the CL image. Telescope the actual chain to Read
+at this coarse alphabet, with quadratic path loss. Discard the hiding tail
+through cross-party projective consistency, then use the Read consistency
+loop and exact ideal mirror for the other party.
+\end{proof}
+
+\begin{lemma}[Actual coarse commutators for product-form induction]
+\label{lem:intro-actual-product-commutators}
+\uses{lem:intro-read-rigidity,lem:intro-hiding-initialization,lem:intro-coarse-product-stage}
+\lean{MIPRE.Introspection.TypedEstimates.introspect_read_full_estimate,
+  MIPRE.Introspection.TypedEstimates.introspect_dual_commutator,
+  MIPRE.Introspection.TypedEstimates.introspect_coarseZ_commutator_bob,
+  MIPRE.Introspection.TypedEstimates.introspect_coarseZ_commutator_alice}
+\leanok
+The actual Read joint measurement yields a commutator bound for the full
+Introspect question/answer and each ideal prefix/dual family. The Sample
+joint measurement yields the corresponding bound with any finite coarsening
+of the computational readout, including adaptive prefix and selected-coordinate
+maps. Both follow from game success and the proved rigidity estimates.
+\end{lemma}
+\begin{proof}
+\leanok
+Choose the coarse joint outcome before applying commutation analysis.
+Its first marginal is tested against Introspect; its second is compared
+with the proved ideal Read or Sample readout. Removing prefix projectors
+and constructing the evolving residual strategy remain obligations of the
+product-form induction.
 \end{proof}
 
 \begin{lemma}[Product-form stage from coarse tests]
@@ -2406,11 +2520,14 @@ failure bound with the proved state and measurement replacement bounds.
 \uses{lem:intro-induction,lem:conditional-measurement,lem:intro-coarse-product-stage}
 The pinned manuscript already runs the $Z$ commutation analysis on the coarse
 operators. The earlier blueprint statement that this rewrite remained undone
-was stale. The checked product-form stage now derives commutators from actual
-coarse joint measurements. Completing the Lean induction still requires
-identifying the adaptive prefix-conditioned operators, proving the hiding
-normalizer replacement, dilating the residual POVMs on one common ancilla,
-and iterating with a uniform error bound. Neither the repaired manuscript
+was stale. The checked product-form stage derives commutators from coarse
+joint measurements, now instantiated by the actual Sample and Read tests.
+Full hiding rigidity, its normalizer replacement, Read rigidity, and the
+common-ancilla dilation theorem are proved. Completing the Lean induction
+still requires identifying the adaptive prefix-conditioned operators and
+their weights, applying mixing and dilation on evolving residual registers,
+reassembling each global strategy, and iterating its value and measurement
+error bounds. Neither the repaired manuscript
 argument nor the single-stage theorem alone proves Lemma~\ref{lem:intro-induction}.
 \end{remark}
 

@@ -644,8 +644,54 @@ Alice fine rigidity `epsFine`, Bob Introspect-prefix error `delta`, and actual
 parsed-game failure `eps`, it proves Bob next-Hide rigidity at error
 `(6 + 48*(ell-j+1)^2)*|E|*eps + 6*delta + 3*epsFine`.
 All accepted-answer, conditional, commutation, ideal-product and mirror
-facts are discharged internally. Initialization, party-orientation iteration,
-and the later adaptive residual-strategy construction remain open.
+facts are discharged internally. The continuation below completes
+initialization and party-orientation iteration; the later adaptive
+residual-strategy construction remains open.
+
+### Full hiding and Read rigidity, 2026-09-21
+
+`hiding_register_rigidity_of_pauli` proves the complete hiding-measurement
+induction, at every level and on both parties, from the primitive extracted
+Alice-X and Bob-Z estimates and actual parsed-game success. Neither the
+base case nor any prefix-rigidity conclusion is assumed. The generic Pauli
+family's X/Z questions are explicitly required to be constant; the actual
+Pauli/auxiliary edge masses are proved from that property.
+
+Writing `e = |E|*eps`, the actual X/first-Hide test gives base error
+`4*e + 2*deltaX`. The Z/Sample/Introspect tests give every Bob prefix error
+`4*etaZ + 12*e`. Actual consistency loops transfer the hiding estimate between
+parties. The resulting recurrence has ratio six; a uniform Bob bound is
+`B = 6^ell * ((94 + 48*ell^2)*e + 2*deltaX + 24*etaZ)` and Alice's is
+`4*e + 2*B`. Constants depend on the fixed CL depth, never the answer size.
+
+The fixed prefix/dual pair survives every later hiding test and the terminal
+Hide/Read test, including off-image claimed answers. Projective cross-party
+coarse-graining discards the unused X tail without an alphabet loss.
+`read_register_rigidity_of_pauli` then gives every Read marginal on both
+parties, with uniform errors `(16*ell^2+8)*e+4*B` and
+`(32*ell^2+20)*e+8*B`. No symmetry of the Pauli predicate is assumed.
+
+Beyond hiding, the actual Read joint measurement now supplies the dual
+commutator estimate for full Alice Introspect. The actual Sample joint
+measurement supplies coarse Z commutators on both parties for any finite
+seed-outcome map, including the adaptive prefix/selected-coordinate map.
+The Z bounds are `32*etaZ+96*e` on Bob and `64*etaZ+224*e` on Alice.
+The joint maps are chosen before commutation analysis, not by coarse-graining
+a previously proved fine commutator.
+
+These are full-carrier estimates. The next substantial step is to identify
+the ideal joint families with prefix projectors times local Z/dual readouts,
+prove their conditional weights agree with the CL prefix law, and apply
+the checked conditioning identities. Then mixing and the proved common-ancilla
+dilation must construct and reassemble the next actual strategy, preserving
+other measurements and tracking value and approximation errors across all
+levels. The hiding induction is complete; this product-form strategy induction
+is not. Connecting the separate QLD extraction theorem to the primitive
+register-state hypotheses remains an interface obligation.
+
+All fifteen new modules pass focused Lean checks. Headline results have
+only `propext`, `Classical.choice`, and `Quot.sound`; the central axiom guards
+and blueprint proof marks cover the new results together.
 
 To inhabit `Introspection 7`, the following substantive obligations remain:
 
@@ -660,11 +706,13 @@ To inhabit `Introspection 7`, the following substantive obligations remain:
    to the complete auxiliary strategy, and apply the checked ambient detyping
    transport. The adaptive auxiliary construction and first-Hide register
    identity are complete.
-3. Connect QLD extraction and the actual Pauli/sampling tests to the fine base
-   and Introspect-prefix estimates, iterate the checked hiding step in both
-   party orientations, and build the conditional residual strategy with
-   controlled dilation over all CL levels and one error profile. QLD supplies
-   the initial extraction, not this iteration or adaptive strategy assembly.
+3. Connect QLD extraction to the primitive register-state X/Z guarantees.
+   Full hiding and Read rigidity, and the actual coarse commutators, are
+   now proved from those guarantees. Build the conditional residual strategy
+   with controlled dilation over all CL levels and one error profile: prove
+   the prefix factorization and weighted local estimates, apply mixing,
+   reassemble the global strategy, and iterate. QLD does not supply this
+   adaptive strategy construction.
 4. Apply the quantitative terminal extraction and error absorption, and
    package the actual compiler and all guarantees in the pipeline structure.
 

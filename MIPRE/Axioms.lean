@@ -87,6 +87,9 @@ import MIPRE.Foundations.Introspection.SourceCompilerBinary
 import MIPRE.Foundations.Introspection.SourceCompilerCost
 import MIPRE.Foundations.Introspection.ConditionalNormalizerStepGame
 import MIPRE.Foundations.Introspection.ConditionalNormalizerStepSeed
+import MIPRE.Foundations.Introspection.ReadRigidityGame
+import MIPRE.Foundations.Introspection.ProductStageReadTests
+import MIPRE.Foundations.Introspection.ProductStageZTests
 import MIPRE.Foundations.SAT.Arithmetization
 import MIPRE.Foundations.SAT.FiniteCircuitArithmetization
 import MIPRE.Foundations.SAT.CircuitFieldCorrect
@@ -1752,6 +1755,41 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.SourceCompiler.crossCompiler_apply,
   MIPRE.Introspection.SourceCompiler.crossCompiler_binary_bounds,
   MIPRE.Introspection.SourceCompiler.crossProg_haltsWithin
+
+#guard_sorry_free MIPRE.Introspection.TypedPresentation.mu_constant_edge,
+  MIPRE.Introspection.TypedPresentation.mu_pauli_aux,
+  MIPRE.Introspection.TypedPresentation.mu_aux_pauli,
+  MIPRE.Introspection.TypedEstimates.pauli_aux_agreement_estimate,
+  MIPRE.Introspection.TypedEstimates.aux_pauli_agreement_estimate,
+  MIPRE.Introspection.Honest.pauliXReadout_firstHide,
+  MIPRE.Introspection.Honest.pauliXReadout_registerState_mirror,
+  MIPRE.Introspection.TypedEstimates.hiding_first_agreement_estimate,
+  MIPRE.Introspection.TypedEstimates.hiding_first_register_rigidity,
+  MIPRE.Introspection.TypedEstimates.idealZ_prefix_fibSum,
+  MIPRE.Introspection.TypedEstimates.introspect_prefix_register_rigidity_bob
+
+#guard_sorry_free MIPRE.Introspection.sum_xSqNorm_mirror_transfer,
+  MIPRE.Introspection.TypedEstimates.hiding_register_orientation,
+  MIPRE.Introspection.TypedEstimates.hiding_register_recurrence,
+  MIPRE.Introspection.TypedEstimates.hiding_register_iteration,
+  MIPRE.Introspection.TypedEstimates.hiding_register_iteration_uniform,
+  MIPRE.Introspection.TypedEstimates.hiding_register_rigidity_of_pauli
+
+#guard_sorry_free MIPRE.Introspection.CLChecks.factorOfPrefix_outputPrefix,
+  MIPRE.Introspection.CLChecks.factorOfPrefix_subset_prefixRegister,
+  MIPRE.Introspection.TypedEstimates.check_hiding_next_dual,
+  MIPRE.Introspection.TypedEstimates.check_hiding_read_dual,
+  MIPRE.Introspection.TypedEstimates.hiding_read_dual_chain_estimate,
+  MIPRE.Introspection.Honest.readDualOp_isPVM,
+  MIPRE.Introspection.Honest.readDualOp_registerState_mirror,
+  MIPRE.Introspection.TypedEstimates.read_register_rigidity_alice,
+  MIPRE.Introspection.TypedEstimates.read_register_rigidity_bob,
+  MIPRE.Introspection.TypedEstimates.read_register_rigidity_of_pauli
+
+#guard_sorry_free MIPRE.Introspection.TypedEstimates.introspect_read_full_estimate,
+  MIPRE.Introspection.TypedEstimates.introspect_dual_commutator,
+  MIPRE.Introspection.TypedEstimates.introspect_coarseZ_commutator_bob,
+  MIPRE.Introspection.TypedEstimates.introspect_coarseZ_commutator_alice
 
 /-! ## Blocks of an index type
 
