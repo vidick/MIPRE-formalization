@@ -669,11 +669,17 @@ import MIPRE.Foundations.Halting.WrapperCost
 import MIPRE.Foundations.Introspection.AdaptiveAnswerDecode
 import MIPRE.Foundations.Introspection.AdaptiveAnswerMarginal
 import MIPRE.Foundations.Introspection.AdaptiveAnswerRefinement
+import MIPRE.Foundations.Introspection.AdaptiveDecodedInvariant
 import MIPRE.Foundations.Introspection.AdaptiveDilationTransport
 import MIPRE.Foundations.Introspection.AdaptiveDualFactor
 import MIPRE.Foundations.Introspection.AdaptiveDualLocal
 import MIPRE.Foundations.Introspection.AdaptiveDualMarginal
 import MIPRE.Foundations.Introspection.AdaptiveGameStage
+import MIPRE.Foundations.Introspection.AdaptiveInductionInvariant
+import MIPRE.Foundations.Introspection.AdaptiveInductionIteration
+import MIPRE.Foundations.Introspection.AdaptiveInductionStep
+import MIPRE.Foundations.Introspection.AdaptiveInitialInvariant
+import MIPRE.Foundations.Introspection.AdaptiveIterationBudget
 import MIPRE.Foundations.Introspection.AdaptiveMarginalGame
 import MIPRE.Foundations.Introspection.AdaptiveMarginalTest
 import MIPRE.Foundations.Introspection.AdaptiveNextFactor
@@ -689,7 +695,9 @@ import MIPRE.Foundations.Introspection.AdaptivePrefixMixing
 import MIPRE.Foundations.Introspection.AdaptivePrefixReplacement
 import MIPRE.Foundations.Introspection.AdaptivePrefixStrategy
 import MIPRE.Foundations.Introspection.AdaptiveResidual
+import MIPRE.Foundations.Introspection.AdaptiveSelectedMeasurement
 import MIPRE.Foundations.Introspection.AdaptiveStageBudget
+import MIPRE.Foundations.Introspection.AdaptiveTerminalInvariant
 import MIPRE.Foundations.Introspection.AdaptiveXSplit
 import MIPRE.Foundations.Introspection.AdaptiveXTest
 import MIPRE.Foundations.Introspection.AdaptiveZFactor

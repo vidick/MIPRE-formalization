@@ -856,3 +856,117 @@ adaptive induction was consulted at pinned commit `a459dee`; independent
 reviews cover answer/dummy accounting, remaining-register transport, and
 unchanged-error preservation. New blueprint proof marks and headline guards
 are maintained together. No new axiom or admitted proof is introduced.
+
+### Actual Alice iteration and terminal conditional readout, 2026-09-21
+
+This continuation adds eight modules under `Foundations/Introspection`:
+`AdaptiveInitialInvariant`, `AdaptiveDecodedInvariant`,
+`AdaptiveSelectedMeasurement`, `AdaptiveInductionInvariant`,
+`AdaptiveInductionStep`, `AdaptiveIterationBudget`,
+`AdaptiveInductionIteration`, and `AdaptiveTerminalInvariant`.
+The earlier dated entries remain historical snapshots. The paper's adaptive
+induction and initialization were consulted at pinned commit `a459dee`.
+Validation uses the existing full repository CI and matching headline axiom
+guards. Local Lean checking is unavailable because of host memory exhaustion;
+final run results are recorded with the pull request.
+
+`initialResidualPOVM` constructs the zero-stage residual family directly
+from the original full `Option (seed × A)` POVM. At prefix zero it is the
+original measurement transported by actual coordinate restriction; at
+other prefixes it returns `none` deterministically. Exact reassembly
+recovers every original operator, including the malformed-answer operator.
+Projectivity and valid-answer prefix support are proved. This initialization
+adds no ancilla and needs no CL support assumption.
+
+`IntroPrefixInvariant` records the residual PVMs on the actual remaining
+coordinate sets, their exact ambient reassembly, and support of valid
+reported answers on their claimed prefix. `initialIntroPrefixInvariant`
+supplies the initial witness. `AdaptiveDecodedInvariant` proves the next
+valid-answer support from the actual updating decoder and attainable-prefix
+identities. Unattainable branches use the constant `none` residual; no
+claim about the coordinates of an arbitrary impossible prefix is required.
+
+`adaptiveRefinedJoint_decode` and `canonicalizeIntro_adaptive_selected`
+connect this option-valued invariant to the raw parsed measurement. Graph
+refinement and decoder recovery establish the selected-measurement equality
+needed by the replacement theorem. Raw canonicalization preserves the
+actual game value, and the selected replacement overwrites it. Thus a future
+selected-measurement equality is no longer an extra hypothesis of the
+successor theorem.
+
+`exists_intro_successor` derives the three mixing estimates from the current
+parsed game's tests, constructs the common-ancilla dilation, and returns a
+projective next family with its complete next `IntroPrefixInvariant`.
+Its inputs are the current invariant, the actual game-failure bound, the
+primitive Bob-Z approximation at the specified constant Pauli query, the
+current Alice hiding approximation, and the numerical condition `B <= 1`.
+It does not assume the next invariant or any of the three mixing estimates.
+The new state has one fixed local basis-state ancilla on Alice's side.
+Every other question is extended by identity; all Alice hiding errors for
+that branch and the primitive Bob-Z error are preserved exactly. The failure
+increases by the existing explicit loss `2*sqrt(2*sqrt(56*sqrt(B)))`.
+
+`AdaptiveIterationBudget` proves the monotonicity and nonnegativity needed
+to use one common recurrence. It also supplies a concrete positive threshold,
+not an assumption that later stages are small. For nonnegative ordered-edge
+count `m`, put `C = (512*r^2 + 224)*m + 128`,
+`tau_0 = 1/C`, and
+`tau_(n+1) = min(tau_n/2, (tau_n/16)^8/C)`.
+If the initial failure and both fixed error bounds are at most `tau_N`,
+then the failure after `n <= N` replacements is at most `tau_(N-n)`.
+Consequently every common stage budget is at most one. The eighth power
+inverts the proved three-square-root loss, with the coefficient eight and
+the denominator sixteen accounting for half of the next threshold.
+
+`exists_intro_iteration` now constructs the actual Alice measurement family
+after every `n <= ell` for one fixed branch `w`. It starts with the original
+projective measurements and uses the current parsed game's tests at each
+successor. The auxiliary carrier and state contain exactly one fixed local
+register per replacement. Under the explicit common smallness threshold,
+the theorem returns the structural invariant, projectivity, the accumulated
+`adaptiveFailureBudget`, the exact iterated identity extensions of every
+untouched question, and unchanged hiding errors. It assumes the primitive
+extracted Bob-Z bound and the all-level Alice hiding bounds; it does not
+assume a sequence of strategies or future stage bounds.
+
+At the terminal level, `AdaptiveTerminalInvariant` requires the source's
+full register-partition condition `ExactlyOn univ`. This is stronger than
+`SupportedOn univ` and is used explicitly to prove that no coordinates
+remain. `terminalAuxPOVM` is a normalized projective measurement on `Option A`
+on the actual auxiliary space. `IntroPrefixInvariant.terminal_some`
+identifies each valid full answer with the honest question readout tensored
+with its auxiliary effect; `terminal_none` identifies the entire malformed
+operator with the sum of its conditional auxiliary effects. Malformed mass
+is neither dropped nor assumed to vanish.
+
+The remaining soundness work is now more specific:
+
+1. Construct and compose the corresponding Bob iteration and the required
+   `w` branches. Prove the player-swap transport with the correctly transposed
+   Pauli predicate `DP`, without assuming that predicate is symmetric.
+   Preserve completed prefix invariants under identity extension and transfer
+   both the primitive Z and hiding bounds needed by the next iteration.
+   Then connect both terminal conditional readouts to the actual original-game
+   strategy.
+   The terminal measurements currently have alphabet `Option A`; completing
+   or accounting for `none` in the ordinary answer alphabet remains an
+   explicit part of that extraction.
+2. Bound the accumulated finite recurrence by the required power profile,
+   incorporate the primitive extraction/rigidity errors, and handle errors
+   outside the small regime. The positive inverse threshold proves stage
+   admissibility; it is not itself the final quantitative soundness profile.
+   The existing fixed-power absorption lemmas remain available for this step.
+3. Connect the actual QLD extraction and its state/isometry guarantees to the
+   primitive EPR-register X/Z hypotheses consumed by the proved hiding,
+   Read, and adaptive arguments. The current iteration starts from these
+   extracted guarantees rather than proving that connection.
+4. Assemble full introspection soundness and completeness for the actual
+   verifier, including the remaining uniform compiler branches, their
+   universal execution budget, and the full honest 26-type Pauli strategy.
+   An inhabitant of `Introspection 7` is still not supplied by this continuation.
+
+Independent source reviews cover initial and terminal register semantics,
+malformed-answer accounting, successor construction, and the inverse-threshold
+arithmetic. No new axiom, admitted proof, or contract assuming the missing
+induction conclusions has been added. Full repository CI and the matching
+headline guards provide the validation workflow for this continuation.
