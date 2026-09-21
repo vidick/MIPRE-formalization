@@ -1496,3 +1496,41 @@ registers live in `Type u`; applying it to `padState ψ` sends the unifier into 
 rather than a universe error. `swapVec_dotProduct` (Foundations, universe-polymorphic) is the
 lemma to use. And in a theorem named `LowIndDegPoly.eval_toMv`, the bare `eval` resolves to
 `LowIndDegPoly.eval`, not `MvPolynomial.eval`.
+
+### PR H-b: `lem:qld-global-products` (2026-09-21)
+
+**What closed.** `lem:qld-global-products`, with both marks, for every outcome, both product
+orders and both parties. `MIPRE/Background/QLD/Products.lean` (fast regime) proves the abstract
+statement `sum_snorm_sq_ordComb_le`: for a projective `G` with outcomes in `LowIndDegPoly F (4m) d`
+that is `δ`-consistent, on average over a uniform padded point, with the sandwich combination
+`sandComb X Z u c = ∑_{αa+βb=c} Z_b X_a Z_b` of two projective families on Bob's register whose
+average commutator weight is `κ`, and for an ordered product `ord` with `∑ ord = 1` deviating
+from the sandwich by a contraction of the commutator,
+`∑_u μ_u ∑_g ‖(G_g ⊗ (1 − ∑_{αa+βb=g(u)} ord(a,b))) Φ‖² ≤ 2δ + 2κ`. `ordZX` and `ordXZ` instantiate
+it. `PaddedLIDT.lean` specializes it to a `GlobalPair` (`GlobalPair.products_ZX_A`, `_XZ_A`, and
+the Bob versions `_ZX_B`, `_XZ_B` on the swapped state) with `κ = 57676416 ε` from
+`sum_content_hatComm_le(_B)`.
+
+**The route.** Split `1 − B = (1 − P) + (P − B)`. The first part is the consistency: `0 ≤ P ≤ 1`
+gives `(1 − P)² ≤ 1 − P` (`mul_self_le_self_of_le_one`, from `Commute.mul_nonneg`), so
+`∑_g E ‖(G_g ⊗ (1 − P))Φ‖² ≤ ∑_g E ⟨G_g ⊗ (1 − P)⟩ ≤ δ`. The second part: group by the value
+`c = g(u)` and drop Alice's projector `∑_{g(u)=c} G_g ≤ 1` (`sum_snorm_sq_aOp_mul_bOp_le`), leaving
+`E_u ∑_c ‖(1 ⊗ (P_u(c) − B_u(c)))Φ‖²`, the fibre sums of `D = sand − ord`, which sum to zero over
+`(a, b)`; Parseval over `F_q` (`sum_avg_norm_fibre_sq`, transferred to `stateVecB` by
+`sum_avg_normSq_stateVecB_fibre_eq`) gives `(1 − 1/q) ∑_{ab} ‖(1 ⊗ D(a,b))Φ‖²` with no factor `q`,
+and `D = Z[X, Z]` (order `Z X`) or `−(1 − Z)[X, Z]` (order `X Z`) is a contraction of the
+commutator. The uniform padded point is read as independent uniform `(x, z, α, β)` by the
+involution `abSwap` (`sum_uniform_pad4`), and the verifier's content as independent uniform `(x, z)`
+(`sum_content_blocks`).
+
+**The structure.** `GlobalPair ψ hprojA hprojB δ` (in `PaddedLIDT.lean`) bundles `-pvm`'s output:
+`GA`, `GB` and the three consistencies. `exists_globalPair` is `-pvm`; `-dummy`
+(`GlobalPair.sum_bad_mass_A_le`, `_B_le`) and `-products` are theorems on it, and so will be
+`-linear`, `-separate` and stage 4c. The earlier bundled existential `exists_global_pvm_wIndep` is
+gone.
+
+**Two remarks.** The paper's `-products` is for `w`-independent outcomes and goes through the
+dilated projective joint measurement of `lem:qld-4-12`; the sandwich POVM suffices and the
+estimate holds for all outcomes, so `-dummy` is not used here (its `\uses` no longer names it).
+The `X Z` order needs `‖(Z X Z − X Z) w‖ ≤ ‖[X, Z] w‖`, which is not obvious termwise but is the
+identity `Z X Z − X Z = −(1 − Z)(X Z − Z X)`, valid for a projector `Z`.

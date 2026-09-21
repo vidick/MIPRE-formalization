@@ -408,6 +408,7 @@ import MIPRE.Background.QLD.PaddedLines
 import MIPRE.Background.QLD.PaddedStrategy
 import MIPRE.Background.QLD.PaddedValue
 import MIPRE.Background.QLD.Product
+import MIPRE.Background.QLD.Products
 import MIPRE.Background.QLD.Simul
 import MIPRE.Background.QLD.Swap
 import MIPRE.Background.QLD.SwapUnitary

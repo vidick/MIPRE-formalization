@@ -6,6 +6,7 @@ Authors: Thomas Vidick
 import MIPRE.Background.QLD.PaddedValue
 import MIPRE.Background.QLD.Simul
 import MIPRE.Background.QLD.Dummy
+import MIPRE.Background.QLD.Products
 import MIPRE.Background.LIDT.Adapter.Registers
 
 /-!
@@ -255,57 +256,244 @@ theorem exists_global_pvm_hat (hψ : star ψ ⬝ᵥ ψ = 1)
   · rw [inconsistency_padState_aOp_right _ ψ _ _ (pointPOVM PB) hPB]
     exact h2
 
+/-! ## The output of the lemma, as a structure -/
+
+/-- **The output of `lem:qld-global-pvm`, as a structure**: the two projective low-degree
+measurements on the dilated registers, the two point consistencies against the opposite party's
+padded point measurements (extended by the identity), and their mutual consistency, all on the
+twice-padded state and with error `δ`. Stages 4b and 4c are theorems about a `GlobalPair`. -/
+structure GlobalPair (ψ : dA × dB → ℂ) (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (δ : ℝ) where
+  /-- Alice's global measurement. -/
+  GA : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
+    (Matrix (PadReg F m d dA) (PadReg F m d dA) ℂ)
+  /-- Bob's global measurement. -/
+  GB : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
+    (Matrix (PadReg F m d dB) (PadReg F m d dB) ℂ)
+  /-- Alice's padded points against Bob's evaluated global measurement. -/
+  consA : inconsistency (uniform (Point F (4 * m))) (padState (F := F) (m := m) (d := d) ψ)
+    (fun u => (padPt hprojA u).aOp (E := CL.Answer F (4 * m) d 1)) (evalPOVM GB) ≤ δ
+  /-- Alice's evaluated global measurement against Bob's padded points. -/
+  consB : inconsistency (uniform (Point F (4 * m))) (padState (F := F) (m := m) (d := d) ψ)
+    (evalPOVM GA) (fun u => (padPt hprojB u).aOp (E := CL.Answer F (4 * m) d 1)) ≤ δ
+  /-- The two global measurements against each other. -/
+  consAB : inconsistency (uniform Unit) (padState (F := F) (m := m) (d := d) ψ)
+    (fun _ => GA.toPOVM ()) (fun _ => GB.toPOVM ()) ≤ δ
+
 include hm4 in
-/-- **`lem:qld-global-dummy`, for the global measurements of `lem:qld-global-pvm`.** Under the
-standing assumption `16 m d ≤ q`, the measurements of `exists_global_pvm_hat` can be taken with
-the weight of the outcomes that read a dummy coordinate at most `4 δ_ld`, on each side. -/
-theorem exists_global_pvm_wIndep (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
+/-- **`lem:qld-global-pvm`**, packaged: a legal projective strategy of value `1 - ε` has a
+`GlobalPair` with error `δ_ld`. -/
+theorem exists_globalPair (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
     (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
     (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (hε : 0 ≤ ε)
-    (hlegA : LegalSupport MA) (hlegB : LegalSupport MB) (hd : 1 ≤ d)
-    (hq : 16 * m * d ≤ Fintype.card F) :
-    ∃ (GA : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
-          (Matrix (PadReg F m d dA) (PadReg F m d dA) ℂ))
-      (GB : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
-          (Matrix (PadReg F m d dB) (PadReg F m d dB) ℂ)),
-      inconsistency (uniform (Point F (4 * m))) (padState (F := F) (m := m) (d := d) ψ)
-          (fun u => (padPt hprojA u).aOp (E := CL.Answer F (4 * m) d 1)) (evalPOVM GB)
-        ≤ deltaLD (Fintype.card F) m d ε
-      ∧ inconsistency (uniform (Point F (4 * m))) (padState (F := F) (m := m) (d := d) ψ)
-          (evalPOVM GA) (fun u => (padPt hprojB u).aOp (E := CL.Answer F (4 * m) d 1))
-        ≤ deltaLD (Fintype.card F) m d ε
-      ∧ inconsistency (uniform Unit) (padState (F := F) (m := m) (d := d) ψ)
-          (fun _ => GA.toPOVM ()) (fun _ => GB.toPOVM ()) ≤ deltaLD (Fintype.card F) m d ε
-      ∧ ∑ g ∈ univ.filter (fun g => ¬ WIndep g),
-          bornProb (padState (F := F) (m := m) (d := d) ψ) (GA.M () g) 1
-        ≤ 4 * deltaLD (Fintype.card F) m d ε
-      ∧ ∑ g ∈ univ.filter (fun g => ¬ WIndep g),
-          bornProb (padState (F := F) (m := m) (d := d) ψ) 1 (GB.M () g)
-        ≤ 4 * deltaLD (Fintype.card F) m d ε := by
+    (hlegA : LegalSupport MA) (hlegB : LegalSupport MB) (hd : 1 ≤ d) :
+    Nonempty (GlobalPair ψ hprojA hprojB (deltaLD (Fintype.card F) m d ε)) := by
   obtain ⟨GA, GB, h1, h2, h3⟩ :=
     exists_global_pvm_hat hm hm4 hψ hfail hprojA hprojB hε hlegA hlegB hd
-  refine ⟨GA, GB, h1, h2, h3, ?_, ?_⟩
-  · have hP : ∀ u u' : Point F (4 * m),
-        (padPt hprojB (mix u u')).aOp (E := CL.Answer F (4 * m) d 1)
-          = (padPt hprojB u).aOp (E := CL.Answer F (4 * m) d 1) := fun u u' => by
-      rw [padPt_mix]
-    exact sum_bad_mass_le_of_le (padState_unit hψ) GA
-      (fun u => (padPt hprojB u).aOp (E := CL.Answer F (4 * m) d 1)) hP h2 hq
-  · have hP : ∀ u u' : Point F (4 * m),
-        (padPt hprojA (mix u u')).aOp (E := CL.Answer F (4 * m) d 1)
-          = (padPt hprojA u).aOp (E := CL.Answer F (4 * m) d 1) := fun u u' => by
-      rw [padPt_mix]
-    rw [← inconsistency_swapVec] at h1
-    have hΦ' : star (swapVec (padState (F := F) (m := m) (d := d) ψ))
-        ⬝ᵥ swapVec (padState (F := F) (m := m) (d := d) ψ) = 1 := by
-      rw [swapVec_dotProduct]
-      exact padState_unit hψ
-    have := sum_bad_mass_le_of_le hΦ' GB
-      (fun u => (padPt hprojA u).aOp (E := CL.Answer F (4 * m) d 1)) hP h1 hq
-    simpa only [bornProb_swapVec] using this
+  exact ⟨⟨GA, GB, h1, h2, h3⟩⟩
 
 end Global
+
+/-! ## The expanded point measurements on the dilated registers -/
+
+section Lift
+
+variable {d' : Type} [Fintype d'] [DecidableEq d']
+
+/-- A party's expanded point measurement, doubly extended to the dilated register. -/
+def liftOp (M : Question F m → POVM (Answer F m d) d') (W : Bas) (u : Point F m) (a : F) :
+    Matrix (PadReg F m d d') (PadReg F m d d') ℂ :=
+  aOp (aOp (hatMats M W u a))
+
+theorem isPVM_liftOp {M : Question F m → POVM (Answer F m d) d'}
+    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) (W : Bas) (u : Point F m) :
+    IsPVM (liftOp M W u) :=
+  (isPVM_hatMats hM W u).aOp.aOp
+
+/-- The sandwich combination of the lifted measurements is the lifted padded point measurement. -/
+theorem sandComb_liftOp (M : Question F m → POVM (Answer F m d) d') (u : Point F (4 * m)) (c : F) :
+    sandComb (liftOp M .X) (liftOp M .Z) u c
+      = aOp (aOp (ptComb (sand (hatMats M .X (xBlk u)) (hatMats M .Z (zBlk u))) (alph u) (bet u)
+          c)) := by
+  simp only [sandComb, ptComb, sand, liftOp, ← aOp_mul, ← aOp_sum]
+
+theorem comm_liftOp (M : Question F m → POVM (Answer F m d) d') (x z : Point F m) (p : F × F) :
+    comm (liftOp M .X x) (liftOp M .Z z) p = aOp (aOp (hatComm M x z p.1 p.2)) := by
+  simp only [comm, liftOp, hatComm, ← aOp_mul, ← aOp_sub]
+
+end Lift
+
+/-! ## Norms on the twice-padded state -/
+
+section Norms
+
+variable (ψ : dA × dB → ℂ)
+
+omit [Algebra (ZMod 2) F] [NeZero m] in
+theorem normSq_stateVecB_padState_aOp_aOp (C : Matrix (dB × Anc F m) (dB × Anc F m) ℂ) :
+    ‖stateVecB (padState (F := F) (m := m) (d := d) ψ) (aOp (aOp C))‖ ^ 2
+      = ‖stateVecB (hatVec (F := F) (m := m) ψ) C‖ ^ 2 := by
+  rw [padState, normSq_stateVecB_extVec2_aOp, extHat, normSq_stateVecB_extVec2_aOp]
+
+omit [Algebra (ZMod 2) F] [NeZero m] in
+theorem stateSqNorm_padState_aOp_aOp (C : Matrix (dA × Anc F m) (dA × Anc F m) ℂ) :
+    stateSqNorm (padState (F := F) (m := m) (d := d) ψ) (aOp (aOp C))
+      = stateSqNorm (hatVec (F := F) (m := m) ψ) C := by
+  rw [padState, stateSqNorm_extVec2_aOp, extHat, stateSqNorm_extVec2_aOp]
+
+theorem swapVec_padState_unit (hψ : star ψ ⬝ᵥ ψ = 1) :
+    star (swapVec (padState (F := F) (m := m) (d := d) ψ))
+      ⬝ᵥ swapVec (padState (F := F) (m := m) (d := d) ψ) = 1 := by
+  rw [swapVec_dotProduct]
+  exact padState_unit hψ
+
+end Norms
+
+/-! ## The commutator weights of the two strategies, on the twice-padded state -/
+
+section Comm
+
+variable (hm : m ∣ Fintype.card F) {MA : Question F m → POVM (Answer F m d) dA}
+  {MB : Question F m → POVM (Answer F m d) dB} {ψ : dA × dB → ℂ} {ε : ℝ}
+
+/-- Bob's commutator weight, from `lem:qld-combined-points`. -/
+theorem sum_comm_liftOp_B_le (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
+    ∑ x, ∑ z, (uniform (Point F m) x * uniform (Point F m) z) * ∑ p : F × F,
+        ‖stateVecB (padState (F := F) (m := m) (d := d) ψ)
+          (comm (liftOp MB .X x) (liftOp MB .Z z) p)‖ ^ 2
+      ≤ 57676416 * ε := by
+  have h := sum_content_hatComm_le_B (MA := MA) hψ hfail
+  rw [sum_content_blocks (fun x z => ∑ p : F × F,
+    ‖stateVecB (hatVec (F := F) (m := m) ψ) (hatComm MB x z p.1 p.2)‖ ^ 2)] at h
+  simpa only [comm_liftOp, normSq_stateVecB_padState_aOp_aOp] using h
+
+/-- Alice's commutator weight, read on the swapped padded state. -/
+theorem sum_comm_liftOp_A_le (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
+    ∑ x, ∑ z, (uniform (Point F m) x * uniform (Point F m) z) * ∑ p : F × F,
+        ‖stateVecB (swapVec (padState (F := F) (m := m) (d := d) ψ))
+          (comm (liftOp MA .X x) (liftOp MA .Z z) p)‖ ^ 2
+      ≤ 57676416 * ε := by
+  have h := sum_content_hatComm_le (MB := MB) hψ hfail
+  rw [sum_content_blocks (fun x z => ∑ p : F × F,
+    stateSqNorm (hatVec (F := F) (m := m) ψ) (hatComm MA x z p.1 p.2))] at h
+  have hn : ∀ (x z : Point F m) (p : F × F),
+      ‖stateVecB (swapVec (padState (F := F) (m := m) (d := d) ψ))
+        (comm (liftOp MA .X x) (liftOp MA .Z z) p)‖ ^ 2
+      = stateSqNorm (hatVec (F := F) (m := m) ψ) (hatComm MA x z p.1 p.2) := by
+    intro x z p
+    rw [norm_stateVecB, swapVec_swapVec, comm_liftOp, ← stateSqNorm, stateSqNorm_padState_aOp_aOp]
+  simpa only [hn] using h
+
+end Comm
+
+/-! ## Stage 4b, on a `GlobalPair` -/
+
+namespace GlobalPair
+
+variable {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
+  {ψ : dA × dB → ℂ} {hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val)}
+  {hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)} {δ : ℝ}
+  (P : GlobalPair ψ hprojA hprojB δ)
+
+/-- **`lem:qld-global-dummy` for Alice's global measurement**: under `16 m d ≤ q`, the outcomes
+that read a dummy coordinate weigh at most `4δ`. -/
+theorem sum_bad_mass_A_le (hψ : star ψ ⬝ᵥ ψ = 1) (hq : 16 * m * d ≤ Fintype.card F) :
+    ∑ g ∈ univ.filter (fun g => ¬ WIndep g),
+      bornProb (padState (F := F) (m := m) (d := d) ψ) (P.GA.M () g) 1 ≤ 4 * δ := by
+  have hP : ∀ u u' : Point F (4 * m),
+      (padPt hprojB (mix u u')).aOp (E := CL.Answer F (4 * m) d 1)
+        = (padPt hprojB u).aOp (E := CL.Answer F (4 * m) d 1) := fun u u' => by
+    rw [padPt_mix]
+  exact sum_bad_mass_le_of_le (padState_unit hψ) P.GA
+    (fun u => (padPt hprojB u).aOp (E := CL.Answer F (4 * m) d 1)) hP P.consB hq
+
+/-- **`lem:qld-global-dummy` for Bob's global measurement.** -/
+theorem sum_bad_mass_B_le (hψ : star ψ ⬝ᵥ ψ = 1) (hq : 16 * m * d ≤ Fintype.card F) :
+    ∑ g ∈ univ.filter (fun g => ¬ WIndep g),
+      bornProb (padState (F := F) (m := m) (d := d) ψ) 1 (P.GB.M () g) ≤ 4 * δ := by
+  have hP : ∀ u u' : Point F (4 * m),
+      (padPt hprojA (mix u u')).aOp (E := CL.Answer F (4 * m) d 1)
+        = (padPt hprojA u).aOp (E := CL.Answer F (4 * m) d 1) := fun u u' => by
+    rw [padPt_mix]
+  have h1 := P.consA
+  rw [← inconsistency_swapVec] at h1
+  have := sum_bad_mass_le_of_le (swapVec_padState_unit ψ hψ) P.GB
+    (fun u => (padPt hprojA u).aOp (E := CL.Answer F (4 * m) d 1)) hP h1 hq
+  simpa only [bornProb_swapVec] using this
+
+/-- Alice's global measurement is consistent with the sandwich combination of Bob's lifted
+point measurements: the form `lem:qld-global-products` consumes. -/
+theorem cons_sandComb_A (hψ : star ψ ⬝ᵥ ψ = 1) :
+    1 - δ ≤ ∑ u, uniform (Point F (4 * m)) u * ∑ g, bornProb
+      (padState (F := F) (m := m) (d := d) ψ) (P.GA.M () g)
+      (sandComb (liftOp MB .X) (liftOp MB .Z) u (g.eval u)) := by
+  have h := P.consB
+  rw [inconsistency_evalPOVM_eq _ (sum_uniform_eq_one _) (padState_unit hψ)] at h
+  have hmats : ∀ (u : Point F (4 * m)) (c : F),
+      (((padPt hprojB u).aOp (E := CL.Answer F (4 * m) d 1)).mats c).val
+        = sandComb (liftOp MB .X) (liftOp MB .Z) u c := fun u c => by
+    rw [padPt_aOp_mats, sandComb_liftOp]
+  simp only [hmats] at h
+  linarith
+
+/-- Bob's version, on the swapped padded state. -/
+theorem cons_sandComb_B (hψ : star ψ ⬝ᵥ ψ = 1) :
+    1 - δ ≤ ∑ u, uniform (Point F (4 * m)) u * ∑ g, bornProb
+      (swapVec (padState (F := F) (m := m) (d := d) ψ)) (P.GB.M () g)
+      (sandComb (liftOp MA .X) (liftOp MA .Z) u (g.eval u)) := by
+  have h := P.consA
+  rw [← inconsistency_swapVec,
+    inconsistency_evalPOVM_eq _ (sum_uniform_eq_one _) (swapVec_padState_unit ψ hψ)] at h
+  have hmats : ∀ (u : Point F (4 * m)) (c : F),
+      (((padPt hprojA u).aOp (E := CL.Answer F (4 * m) d 1)).mats c).val
+        = sandComb (liftOp MA .X) (liftOp MA .Z) u c := fun u c => by
+    rw [padPt_aOp_mats, sandComb_liftOp]
+  simp only [hmats] at h
+  linarith
+
+variable (hm : m ∣ Fintype.card F) {ε : ℝ}
+
+/-- **`lem:qld-global-products`, Alice's measurement against Bob's `Z_b X_a`.** -/
+theorem products_ZX_A (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
+    ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm (padState (F := F) (m := m) (d := d) ψ)
+        ((aOp (P.GA.M () g) : Matrix (PadReg F m d dA × PadReg F m d dB) _ ℂ)
+          * bOp (1 - ordComb ordZX (liftOp MB .X) (liftOp MB .Z) u (g.eval u))) ^ 2
+      ≤ 2 * δ + 2 * (57676416 * ε) :=
+  sum_snorm_sq_ordZX_le (padState_unit hψ) P.GA (isPVM_liftOp hprojB .X) (isPVM_liftOp hprojB .Z)
+    (P.cons_sandComb_A hψ) (sum_comm_liftOp_B_le hm hψ hfail)
+
+/-- **`lem:qld-global-products`, Alice's measurement against Bob's `X_a Z_b`.** -/
+theorem products_XZ_A (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
+    ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm (padState (F := F) (m := m) (d := d) ψ)
+        ((aOp (P.GA.M () g) : Matrix (PadReg F m d dA × PadReg F m d dB) _ ℂ)
+          * bOp (1 - ordComb ordXZ (liftOp MB .X) (liftOp MB .Z) u (g.eval u))) ^ 2
+      ≤ 2 * δ + 2 * (57676416 * ε) :=
+  sum_snorm_sq_ordXZ_le (padState_unit hψ) P.GA (isPVM_liftOp hprojB .X) (isPVM_liftOp hprojB .Z)
+    (P.cons_sandComb_A hψ) (sum_comm_liftOp_B_le hm hψ hfail)
+
+/-- **`lem:qld-global-products`, Bob's measurement against Alice's `Z_b X_a`**, on the swapped
+padded state. -/
+theorem products_ZX_B (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
+    ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm (swapVec (padState (F := F) (m := m) (d := d) ψ))
+        ((aOp (P.GB.M () g) : Matrix (PadReg F m d dB × PadReg F m d dA) _ ℂ)
+          * bOp (1 - ordComb ordZX (liftOp MA .X) (liftOp MA .Z) u (g.eval u))) ^ 2
+      ≤ 2 * δ + 2 * (57676416 * ε) :=
+  sum_snorm_sq_ordZX_le (swapVec_padState_unit ψ hψ) P.GB (isPVM_liftOp hprojA .X)
+    (isPVM_liftOp hprojA .Z) (P.cons_sandComb_B hψ) (sum_comm_liftOp_A_le hm hψ hfail)
+
+/-- **`lem:qld-global-products`, Bob's measurement against Alice's `X_a Z_b`.** -/
+theorem products_XZ_B (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
+    ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm (swapVec (padState (F := F) (m := m) (d := d) ψ))
+        ((aOp (P.GB.M () g) : Matrix (PadReg F m d dB × PadReg F m d dA) _ ℂ)
+          * bOp (1 - ordComb ordXZ (liftOp MA .X) (liftOp MA .Z) u (g.eval u))) ^ 2
+      ≤ 2 * δ + 2 * (57676416 * ε) :=
+  sum_snorm_sq_ordXZ_le (swapVec_padState_unit ψ hψ) P.GB (isPVM_liftOp hprojA .X)
+    (isPVM_liftOp hprojA .Z) (P.cons_sandComb_B hψ) (sum_comm_liftOp_A_le hm hψ hfail)
+
+end GlobalPair
+
 
 end MIPRE.QLD
 
