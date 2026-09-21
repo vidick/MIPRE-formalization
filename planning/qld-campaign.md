@@ -1462,3 +1462,37 @@ bridge from `LowIndDegPoly F (4m) d` (a coefficient vector) to `MvPolynomial (Fi
 mass argument that a `w`-dependent outcome cannot be consistent with a `w`-independent point
 measurement at two independent `w`, `w'`. The paper's `8md/q` and the standing `16md ≤ q` make
 the `w`-dependent mass at most `4 δ_ld`.
+
+### PR H-a: `lem:qld-global-dummy` (2026-09-21)
+
+**What closed.** `lem:qld-global-dummy`, with both marks. `MIPRE/Background/QLD/Dummy.lean` (fast
+regime) proves that an outcome of the global measurement which reads a dummy coordinate carries
+little weight: `sum_bad_mass_le` gives `(1 - 8md/q) · W ≤ 2δ` for any projective `G` with outcomes
+in `LowIndDegPoly F (4m) d` whose evaluation is `δ`-consistent with a point measurement that does
+not read the dummy coordinates, and `sum_bad_mass_le_of_le` gives `W ≤ 4δ` under `16md ≤ q`.
+`exists_global_pvm_wIndep` (in `PaddedLIDT.lean`) is the statement for the measurements of `-pvm`,
+on both sides, at `4 δ_ld`.
+
+**The route.** The paper's: resample the dummy coordinates (`mix u u'`), use the consistency at
+both points (the pair swap `mixSwap` is an involution, so the resampled point is uniform too), and
+bound the collision probability by Schwartz--Zippel. Two things are done differently. The paper's
+orthogonality step needs projective point measurements; the formalization works with the padded
+point measurements of the *original* strategy, which are POVMs, and uses `P_b + P_b' ≤ 1` for
+`b ≠ b'` instead (`POVM.add_le_one`), so no dilation enters. And Schwartz--Zippel is applied to
+`rename inl g − rename dumSub g` on the variable type `Fin (4m) ⊕ Fin (4m)`, with individual
+degrees, giving `8md/q`; the lemma in `Foundations` is for `Fin n`, so
+`prob_agreeOn_le_individualDegree` restates it for any finite variable type by transport along
+`Fintype.equivFin`. The coefficient at any monomial of `g` involving a dummy coordinate survives
+in the difference (`rename_toMv_ne`, by `coeff_rename_mapDomain` and `coeff_rename_eq_zero`).
+
+**The bridge.** `LowIndDegPoly F n d` is a coefficient vector indexed by exponent vectors with
+entries at most `d`; `LowIndDegPoly.toMv` is the `MvPolynomial` it denotes, with `eval_toMv`,
+`coeff_toMv` and `degreeOf_toMv_le`, and `degreeOf_rename_le` carries a degree bound along an
+injective renaming to every target variable. Stage 4b's linearity and separation analyses will
+use the same bridge.
+
+**Two Lean points.** `swapVec_unit` in `QLD/Swap.lean` has `dA dB : Type`, while the dilated
+registers live in `Type u`; applying it to `padState ψ` sends the unifier into a `whnf` timeout
+rather than a universe error. `swapVec_dotProduct` (Foundations, universe-polymorphic) is the
+lemma to use. And in a theorem named `LowIndDegPoly.eval_toMv`, the bare `eval` resolves to
+`LowIndDegPoly.eval`, not `MvPolynomial.eval`.

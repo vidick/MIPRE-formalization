@@ -5,6 +5,7 @@ Authors: Thomas Vidick
 -/
 import MIPRE.Background.QLD.PaddedValue
 import MIPRE.Background.QLD.Simul
+import MIPRE.Background.QLD.Dummy
 import MIPRE.Background.LIDT.Adapter.Registers
 
 /-!
@@ -50,8 +51,9 @@ extended operator on `padState ψ` is its expectation on `hatVec ψ`
 `2^{-4bmd} ≤ 2^{-bmd}`.
 
 The recovered polynomials live on `F^{4m}`, while the point measurements read only the `2m + 2`
-coordinates `xBlk`, `zBlk`, `alph`, `bet`. The Schwartz--Zippel argument that the polynomials do
-not read the remaining dummy coordinates, `lem:qld-global-dummy`, is the first step of stage 4b.
+coordinates `xBlk`, `zBlk`, `alph`, `bet`. The Schwartz--Zippel argument that the polynomials
+mostly do not read the remaining dummy coordinates is `MIPRE/Background/QLD/Dummy.lean`;
+`exists_global_pvm_wIndep` is `lem:qld-global-dummy` for the measurements produced here.
 -/
 
 noncomputable section
@@ -252,6 +254,56 @@ theorem exists_global_pvm_hat (hψ : star ψ ⬝ᵥ ψ = 1)
     exact h1
   · rw [inconsistency_padState_aOp_right _ ψ _ _ (pointPOVM PB) hPB]
     exact h2
+
+include hm4 in
+/-- **`lem:qld-global-dummy`, for the global measurements of `lem:qld-global-pvm`.** Under the
+standing assumption `16 m d ≤ q`, the measurements of `exists_global_pvm_hat` can be taken with
+the weight of the outcomes that read a dummy coordinate at most `4 δ_ld`, on each side. -/
+theorem exists_global_pvm_wIndep (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
+    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (hε : 0 ≤ ε)
+    (hlegA : LegalSupport MA) (hlegB : LegalSupport MB) (hd : 1 ≤ d)
+    (hq : 16 * m * d ≤ Fintype.card F) :
+    ∃ (GA : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
+          (Matrix (PadReg F m d dA) (PadReg F m d dA) ℂ))
+      (GB : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
+          (Matrix (PadReg F m d dB) (PadReg F m d dB) ℂ)),
+      inconsistency (uniform (Point F (4 * m))) (padState (F := F) (m := m) (d := d) ψ)
+          (fun u => (padPt hprojA u).aOp (E := CL.Answer F (4 * m) d 1)) (evalPOVM GB)
+        ≤ deltaLD (Fintype.card F) m d ε
+      ∧ inconsistency (uniform (Point F (4 * m))) (padState (F := F) (m := m) (d := d) ψ)
+          (evalPOVM GA) (fun u => (padPt hprojB u).aOp (E := CL.Answer F (4 * m) d 1))
+        ≤ deltaLD (Fintype.card F) m d ε
+      ∧ inconsistency (uniform Unit) (padState (F := F) (m := m) (d := d) ψ)
+          (fun _ => GA.toPOVM ()) (fun _ => GB.toPOVM ()) ≤ deltaLD (Fintype.card F) m d ε
+      ∧ ∑ g ∈ univ.filter (fun g => ¬ WIndep g),
+          bornProb (padState (F := F) (m := m) (d := d) ψ) (GA.M () g) 1
+        ≤ 4 * deltaLD (Fintype.card F) m d ε
+      ∧ ∑ g ∈ univ.filter (fun g => ¬ WIndep g),
+          bornProb (padState (F := F) (m := m) (d := d) ψ) 1 (GB.M () g)
+        ≤ 4 * deltaLD (Fintype.card F) m d ε := by
+  obtain ⟨GA, GB, h1, h2, h3⟩ :=
+    exists_global_pvm_hat hm hm4 hψ hfail hprojA hprojB hε hlegA hlegB hd
+  refine ⟨GA, GB, h1, h2, h3, ?_, ?_⟩
+  · have hP : ∀ u u' : Point F (4 * m),
+        (padPt hprojB (mix u u')).aOp (E := CL.Answer F (4 * m) d 1)
+          = (padPt hprojB u).aOp (E := CL.Answer F (4 * m) d 1) := fun u u' => by
+      rw [padPt_mix]
+    exact sum_bad_mass_le_of_le (padState_unit hψ) GA
+      (fun u => (padPt hprojB u).aOp (E := CL.Answer F (4 * m) d 1)) hP h2 hq
+  · have hP : ∀ u u' : Point F (4 * m),
+        (padPt hprojA (mix u u')).aOp (E := CL.Answer F (4 * m) d 1)
+          = (padPt hprojA u).aOp (E := CL.Answer F (4 * m) d 1) := fun u u' => by
+      rw [padPt_mix]
+    rw [← inconsistency_swapVec] at h1
+    have hΦ' : star (swapVec (padState (F := F) (m := m) (d := d) ψ))
+        ⬝ᵥ swapVec (padState (F := F) (m := m) (d := d) ψ) = 1 := by
+      rw [swapVec_dotProduct]
+      exact padState_unit hψ
+    have := sum_bad_mass_le_of_le hΦ' GB
+      (fun u => (padPt hprojA u).aOp (E := CL.Answer F (4 * m) d 1)) hP h1 hq
+    simpa only [bornProb_swapVec] using this
 
 end Global
 

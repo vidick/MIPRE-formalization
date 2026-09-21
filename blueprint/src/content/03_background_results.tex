@@ -3336,10 +3336,65 @@ not read the remaining dummy coordinates is Lemma~\ref{lem:qld-global-dummy}.
 \label{lem:qld-global-dummy}
 \ledgernode{1.2.2.13.4}
 \uses{lem:qld-global-pvm,lem:schwartz-zippel}
-The state weight of outcomes depending nontrivially on $w$ is
-$O(\delta_{\mathrm{ld}})$. This bad set is empty for $m=1$.
-Retaining the other outcomes gives a projective submeasurement.
+\lean{  MIPRE.LowDegree.agreeOn, MIPRE.LowDegree.mem_agreeOn,
+  MIPRE.LowDegree.prob_agreeOn_le_individualDegree, MIPRE.LIDT.expFinsupp,
+  MIPRE.LIDT.expFinsupp_apply, MIPRE.LIDT.expFinsupp_injective, MIPRE.LIDT.LowIndDegPoly.toMv,
+  MIPRE.LIDT.LowIndDegPoly.eval_toMv, MIPRE.LIDT.LowIndDegPoly.coeff_toMv,
+  MIPRE.LIDT.LowIndDegPoly.degreeOf_toMv_le, MIPRE.LIDT.degreeOf_rename_le,
+  MIPRE.bornProb_add_right, MIPRE.bornProb_mono_right, MIPRE.POVM.add_le_one,
+  MIPRE.inconsistency_swapVec, MIPRE.sum_uniform_eq_one, MIPRE.sum_ite_eq_zero_sub,
+  MIPRE.ProjectiveMeasurement.posSemidef_M, MIPRE.QLD.inconsistency_evalPOVM_eq,
+  MIPRE.QLD.sum_bornProb_M_one, MIPRE.QLD.IsDummy, MIPRE.QLD.not_isDummy_xIdx,
+  MIPRE.QLD.not_isDummy_zIdx, MIPRE.QLD.not_isDummy_aIdx, MIPRE.QLD.not_isDummy_bIdx,
+  MIPRE.QLD.not_isDummy_of_eq_one, MIPRE.QLD.mix, MIPRE.QLD.mix_apply_of_not,
+  MIPRE.QLD.mix_apply_of, MIPRE.QLD.xBlk_mix, MIPRE.QLD.zBlk_mix, MIPRE.QLD.alph_mix,
+  MIPRE.QLD.bet_mix, MIPRE.QLD.mix_mix, MIPRE.QLD.mixSwap, MIPRE.QLD.mixSwap_apply_fst,
+  MIPRE.QLD.padPt_mix, MIPRE.QLD.WIndep, MIPRE.QLD.wIndep_of_eq_one,
+  MIPRE.QLD.eval_mix_of_wIndep, MIPRE.QLD.dumSub, MIPRE.QLD.dumSub_injective,
+  MIPRE.QLD.comp_dumSub, MIPRE.QLD.rename_toMv_ne, MIPRE.QLD.mixAgree,
+  MIPRE.QLD.mixAgree_eq_univ_of_wIndep, MIPRE.QLD.card_mixAgree_le,
+  MIPRE.QLD.sum_mass_mixAgree_ge, MIPRE.QLD.sum_bad_mass_le, MIPRE.QLD.sum_bad_mass_le_of_le,
+  MIPRE.QLD.exists_global_pvm_wIndep}
+\leanok
+Call an outcome $g$ of a global measurement of Lemma~\ref{lem:qld-global-pvm} $w$-independent if
+no monomial of $g$ involves a dummy coordinate: one of the $2m - 2$ coordinates of $\F_q^{4m}$
+that the padded point measurements do not read. If the evaluated global measurement is
+$\delta$-consistent, on average over a uniform point, with a point measurement that does not read
+the dummy coordinates, then the state weight $W$ of the outcomes that are not $w$-independent
+satisfies $(1 - 8md/q)\,W \leq 2\delta$; under the standing assumption $16md \leq q$,
+$W \leq 4\delta$. For the measurements of Lemma~\ref{lem:qld-global-pvm}, on either side,
+$W \leq 4\delta_{\mathrm{ld}}$. The bad set is empty for $m = 1$. Retaining the other outcomes
+gives a projective submeasurement.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:qld-global-pvm,lem:schwartz-zippel}
+\leanok
+Resample the dummy coordinates: for independent uniform points $u, u'$ let $\mathrm{mix}(u, u')$
+be $u$ with its dummy coordinates replaced by those of $u'$. The point measurement is the same at
+$u$ and at $\mathrm{mix}(u, u')$, and $(u, u') \mapsto (\mathrm{mix}(u, u'), \mathrm{mix}(u', u))$
+is an involution of the pairs, so the consistency estimate holds at both points simultaneously.
+Adding the two, the operator $P_u(g(u)) + P_u(g(\mathrm{mix}(u, u')))$ is at most $2\,\Id$ when the
+two values agree and at most $\Id$ when they differ, because two distinct elements of a POVM sum
+to at most the identity; no projectivity of the point measurement is used. Hence
+$\sum_g \langle G_g \rangle \Pr[g(u) = g(\mathrm{mix}(u, u'))] \geq 1 - 2\delta$. For a
+$w$-independent outcome the probability is one. For an outcome that reads a dummy coordinate,
+$g(u) - g(\mathrm{mix}(u, u'))$ is a nonzero polynomial in the $8m$ coordinates of the pair, of
+individual degree at most $d$ --- its coefficient at a monomial of $g$ involving a dummy
+coordinate survives --- so by Lemma~\ref{lem:schwartz-zippel} the probability is at most $8md/q$.
+The two bounds give $(1 - 8md/q)\,W \leq 2\delta$.
+\end{proof}
+
+\paragraph{Comments.} The paper's orthogonality step uses that the point measurements are
+projective, which the dilation's are; the formalization works with the padded point measurements
+of the original strategy, which are POVMs, and replaces orthogonality by
+$P_b + P_{b'} \leq \Id$ for $b \neq b'$, valid for any POVM. Schwartz--Zippel is applied with
+individual degrees, on two copies of the $4m$ coordinates; the formalization states
+Lemma~\ref{lem:schwartz-zippel} for any finite variable type
+(\texttt{prob\_agreeOn\_le\_individualDegree}) and bridges the seeded test's coefficient vectors
+to \texttt{MvPolynomial} (\texttt{LowIndDegPoly.toMv}). The outcomes are not relabelled: the
+projective submeasurement is the restriction of the global measurement to the $w$-independent
+outcomes, and its complement's weight is the bound above.
 
 \begin{lemma}[Ordered products with global outcome multipliers]
 \label{lem:qld-global-products}
