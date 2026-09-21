@@ -80,6 +80,43 @@ theorem natDegree_lineRestrict_le (u₀ w : Fin m → F) (p : MvPolynomial (Fin 
     _ ≤ d i * 1 := Nat.mul_le_mul_left _ (hlin _ _)
     _ = d i := mul_one _
 
+/-- **On an axis-parallel line the restriction has degree at most the individual degree in that
+coordinate.** Along `u_0 + t e_j` only the `j`-th variable moves, so every other substitution is a
+constant and the degree in `t` is the degree of `p` in `X_j`. This is what makes a *multilinear*
+encoding restrict to an affine function of the line parameter. -/
+theorem natDegree_lineRestrict_single_le (u₀ : Fin m → F) (j : Fin m)
+    (p : MvPolynomial (Fin m) F) :
+    (lineRestrict u₀ (Pi.single j 1) p).natDegree ≤ p.degreeOf j := by
+  classical
+  rw [lineRestrict, MvPolynomial.aeval_def, MvPolynomial.eval₂_eq]
+  refine Polynomial.natDegree_sum_le_of_forall_le _ _ fun dd hdd => ?_
+  refine le_trans Polynomial.natDegree_mul_le ?_
+  have h0 : (algebraMap F (Polynomial F) (MvPolynomial.coeff dd p)).natDegree = 0 := by
+    simp [Polynomial.algebraMap_eq]
+  rw [h0, zero_add]
+  have hterm : ∀ i : Fin m,
+      (((Polynomial.C (u₀ i) + Polynomial.X
+          * Polynomial.C ((Pi.single j 1 : Fin m → F) i)) ^ dd i) : Polynomial F).natDegree
+        ≤ if i = j then dd i else 0 := by
+    intro i
+    by_cases hij : i = j
+    · subst hij
+      rw [if_pos rfl]
+      refine le_trans Polynomial.natDegree_pow_le ?_
+      refine le_trans (Nat.mul_le_mul_left _ ?_) (le_of_eq (mul_one _))
+      refine le_trans (Polynomial.natDegree_add_le _ _) (max_le (by simp) ?_)
+      exact le_trans Polynomial.natDegree_mul_le (by simp)
+    · rw [if_neg hij, Pi.single_eq_of_ne hij, map_zero, mul_zero, add_zero, ← Polynomial.C_pow,
+        Polynomial.natDegree_C]
+  refine le_trans (le_trans (Polynomial.natDegree_prod_le _ _)
+    (Finset.sum_le_sum fun i _ => hterm i)) ?_
+  rw [Finset.sum_ite_eq' dd.support j (fun i => dd i)]
+  by_cases hj : j ∈ dd.support
+  · rw [if_pos hj]
+    exact MvPolynomial.monomial_le_degreeOf j hdd
+  · rw [if_neg hj]
+    exact Nat.zero_le _
+
 /-- **The coefficient vector of the restriction, evaluated at `t`.** This is the form the games
 use: a polynomial of degree at most `n` is a vector of `n + 1` coefficients, and evaluating that
 vector at `t` is evaluating the polynomial along the line. -/

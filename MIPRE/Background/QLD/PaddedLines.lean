@@ -81,6 +81,41 @@ theorem sum_bornProb_diag_le_one {ι : Type*} [Fintype ι] {ψ : dA × dB → �
 
 end Born
 
+/-! ## Exchanging the two players
+
+`extVec2` lives in `Foundations/Sandwich.lean` and `swapVec` in `Foundations/StateDistance.lean`,
+and neither of those files imports the other, so the one fact relating them sits here. -/
+
+section Swap
+
+variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+
+/-- **Swapping the state swaps the twice-extended state**, the two ancilla labels being exchanged
+with it. -/
+theorem extVec2_swapVec {Anc Bnc : Type*} [Fintype Anc] [DecidableEq Anc] [Fintype Bnc]
+    [DecidableEq Bnc] (ψ : dA × dB → ℂ) (a₀ : Anc) (b₀ : Bnc) :
+    extVec2 (swapVec ψ) b₀ a₀ = swapVec (extVec2 ψ a₀ b₀) := by
+  classical
+  funext qp
+  obtain ⟨q, p⟩ := qp
+  show (((ancillaEmbed dB b₀) ⊗ₖ (ancillaEmbed dA a₀)) *ᵥ swapVec ψ) (q, p)
+    = (((ancillaEmbed dA a₀) ⊗ₖ (ancillaEmbed dB b₀)) *ᵥ ψ) (p, q)
+  rw [Matrix.mulVec, Matrix.mulVec, dotProduct, dotProduct]
+  refine (Fintype.sum_equiv (Equiv.prodComm dA dB) _ _ fun r => ?_).symm
+  obtain ⟨i, j⟩ := r
+  show ((ancillaEmbed dA a₀) ⊗ₖ (ancillaEmbed dB b₀)) (p, q) (i, j) * ψ (i, j)
+    = ((ancillaEmbed dB b₀) ⊗ₖ (ancillaEmbed dA a₀)) (q, p) (j, i) * swapVec ψ (j, i)
+  show (ancillaEmbed dA a₀) p i * (ancillaEmbed dB b₀) q j * ψ (i, j)
+    = (ancillaEmbed dB b₀) q j * (ancillaEmbed dA a₀) p i * ψ (i, j)
+  ring
+
+/-- **Swapping the state exchanges the two arguments of the cross-party deviation.** -/
+theorem xSqNorm_swapVec (ψ : dA × dB → ℂ) (X : Matrix dB dB ℂ) (Y : Matrix dA dA ℂ) :
+    xSqNorm (swapVec ψ) X Y = xSqNorm ψ Y X := by
+  rw [xSqNorm_eq_snorm_sq, snorm_swapVec_aOp_sub_bOp, xSqNorm_eq_sq]
+
+end Swap
+
 /-! ## The two coarse-grained families -/
 
 section Comb
@@ -161,6 +196,68 @@ theorem lineComb_eq_sum_pasteFib (PX : LinePres F m hm .X) (PZ : LinePres F m hm
   rfl
 
 end Comb
+
+/-! ## The axis-parallel degree bound
+
+The degree computation of `lem:qld-axis-degree`: on an axis-parallel line the expansion adds a
+polynomial of degree at most **one**, because the restriction of a multilinear polynomial to
+`u_0 + t e_j` is affine in `t` (`natDegree_lineRestrict_single_le`), so an outcome built from a legal
+axis answer has degree at most `d` as soon as `d >= 1`.
+
+What this does *not* give is the support claim of `lem:qld-axis-degree`. The strategy's line
+measurement is indexed by *all* answers, and a `dpoly` answer to an axis-parallel question --- which
+the decider rejects, but for which the measurement still has an element --- produces an outcome of
+degree up to `md`. Turning the computation below into the lemma means modifying the measurement to
+send those answers to a default outcome and paying the format-failure probability, which is not done
+here; that is why `lem:qld-padded-lines` states its degree-`d` clause conditionally on
+`lem:qld-axis-degree`. -/
+
+section AxisDegree
+
+variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]
+
+theorem DegLE.add {n k : ℕ} {f g : LinePoly F n} (hf : DegLE f k) (hg : DegLE g k) :
+    DegLE (f + g) k := fun i hi => by
+  show f i + g i = 0
+  rw [hf i hi, hg i hi, add_zero]
+
+theorem degLE_zero {n k : ℕ} : DegLE (0 : LinePoly F n) k := fun _ _ => rfl
+
+theorem degLE_padLine {k n : ℕ} (f : LinePoly F k) : DegLE (padLine n f) k := fun i hi => by
+  show (if h : (i : ℕ) < k + 1 then f ⟨i, h⟩ else 0) = 0
+  rw [dif_neg (by omega)]
+
+/-- A line outcome read off an answer that is not a diagonal-line answer has degree at most `d`. -/
+theorem degLE_rdLine {n : ℕ} (a : Answer F m d)
+    (hne : ∀ g : LinePoly F (m * d), a ≠ .dpoly g) : DegLE (rdLine n a) d := by
+  cases a with
+  | val x => exact degLE_zero
+  | apoly f => exact degLE_padLine f
+  | dpoly g => exact absurd rfl (hne g)
+  | pauliAns h => exact degLE_zero
+  | bit b => exact degLE_zero
+  | bitPair beta => exact degLE_zero
+  | bitTriple alpha => exact degLE_zero
+
+/-- **The expansion adds degree at most one on an axis-parallel line.** -/
+theorem degLE_lineCoeffs_aline {n : ℕ} (u₀ : Point F m) (j : Fin m) (h : Anc F m) :
+    DegLE (lineCoeffs n u₀ (Pi.single j 1 : Point F m) (MIPRE.LowDegree.ldEnc h)) 1 :=
+  fun i hi => by
+  show (MIPRE.LowDegree.lineRestrict u₀ (Pi.single j 1 : Point F m)
+    (MIPRE.LowDegree.ldEnc h)).coeff (i : ℕ) = 0
+  refine Polynomial.coeff_eq_zero_of_natDegree_lt (lt_of_le_of_lt ?_ hi)
+  exact le_trans (MIPRE.LowDegree.natDegree_lineRestrict_single_le u₀ j _)
+    (MIPRE.LowDegree.degreeOf_ldEnc_le h j)
+
+/-- **The degree computation of `lem:qld-axis-degree`**: a legal axis answer convolved with the
+expansion's line outcome has degree at most `d`, for `d >= 1`. -/
+theorem degLE_hatLine_outcome {n : ℕ} (hd : 1 ≤ d) (u₀ : Point F m) (j : Fin m) (hh : Anc F m)
+    (a : Answer F m d) (hne : ∀ g : LinePoly F (m * d), a ≠ .dpoly g) :
+    DegLE (rdLine n a
+      + lineCoeffs n u₀ (Pi.single j 1 : Point F m) (MIPRE.LowDegree.ldEnc hh)) d :=
+  DegLE.add (degLE_rdLine a hne) ((degLE_lineCoeffs_aline u₀ j hh).mono hd)
+
+end AxisDegree
 
 /-! ## The consistency bound -/
 
@@ -291,6 +388,80 @@ theorem padded_lines_consistency (hm4 : 4 * m ∣ Fintype.card F) (hψ : star ψ
   rw [avgSubAB_one] at hsub
   have hle := avgSubAB_le_of_forall hm4 hm ty s hstep
   linarith [hsub, hle]
+
+/-! ### The other register version
+
+The paper's `lem:qld-4-13` asserts the relation in both orientations. The second is the first applied
+to the swapped strategy on the swapped state, read back through `extHat_swapVec` and
+`bornProb_swapVec` --- the route `Swap.lean` takes for the expansion stage's point items. The two
+mirrored inputs are `lem:qld-expanded-lines`' second item with the players exchanged. -/
+
+theorem extHat_swapVec (ψ : dA × dB → ℂ) :
+    extHat (F := F) (m := m) (swapVec ψ) = swapVec (extHat (m := m) ψ) := by
+  rw [extHat, extHat, hatVec_swapVec, extVec2_swapVec]
+
+set_option maxHeartbeats 1600000 in
+/-- **`lem:qld-padded-lines`, the consistency bound in the other register version**: the line
+measurement on Alice's registers against the padded point measurement on Bob's. -/
+theorem padded_lines_consistency_swap (hm4 : 4 * m ∣ Fintype.card F) (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
+    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val))
+    (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z)
+    (hfacX : FactorsX PX) (hfacZ : FactorsZ PZ)
+    (hX1 : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ f : LinePoly F (m * d),
+        xSqNorm (hatVec (F := F) (m := m) ψ) (PX.lineMats d MA c f)
+          (PX.lineMats d MB c f) ≤ 172 * ε)
+    (hX2' : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ a : F,
+        xSqNorm (hatVec (F := F) (m := m) ψ) (PX.lineEvalMats d MA c a)
+          (hatMats MB .X (c.pt .X) a) ≤ 172 * ε)
+    (hZ2' : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ b : F,
+        xSqNorm (hatVec (F := F) (m := m) ψ) (PZ.lineEvalMats d MA c b)
+          (hatMats MB .Z (c.pt .Z) b) ≤ 172 * ε)
+    {εc : ℝ} (hcoll : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *
+      collProb PX d c ≤ εc) (ty : CL.Ty) (s : F) :
+    ∃ QB : LPData F m × LPData F m → F × F →
+        Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ,
+      (∀ p, IsPVM (QB p))
+      ∧ (∀ p r, (ancillaEmbed (dB × Anc F m) ((0 : F), (0 : F)))ᴴ
+            * (QB p r * ancillaEmbed (dB × Anc F m) ((0 : F), (0 : F)))
+          = sand (hatMats MB .X p.1.pt) (hatMats MB .Z p.2.pt) r)
+      ∧ 1 - avgSubAB hm4 hm ty s (fun a b cX cZ =>
+            ∑ v : F, bornProb (extHat (m := m) ψ)
+              (lineComb PX PZ d MA (pairCX (cX, cZ)) (pairCZ (cX, cZ)) a b v)
+              (ptComb (QB (cX, cZ)) a b v))
+        ≤ (m : ℝ) * (m : ℝ) * deltaPairs ε εc := by
+  classical
+  -- the three inputs, on the swapped state
+  have hX1sw : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ f : LinePoly F (m * d),
+      xSqNorm (hatVec (F := F) (m := m) (swapVec ψ)) (PX.lineMats d MB c f)
+        (PX.lineMats d MA c f) ≤ 172 * ε := by
+    refine le_trans (le_of_eq (Finset.sum_congr rfl fun c _ =>
+      congrArg (fun t : ℝ => (Fintype.card (Content F m) : ℝ)⁻¹ * t)
+        (Finset.sum_congr rfl fun f _ => ?_))) hX1
+    rw [hatVec_swapVec, xSqNorm_swapVec]
+  have hX2sw : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ a : F,
+      xSqNorm (hatVec (F := F) (m := m) (swapVec ψ)) (hatMats MB .X (c.pt .X) a)
+        (PX.lineEvalMats d MA c a) ≤ 172 * ε := by
+    refine le_trans (le_of_eq (Finset.sum_congr rfl fun c _ =>
+      congrArg (fun t : ℝ => (Fintype.card (Content F m) : ℝ)⁻¹ * t)
+        (Finset.sum_congr rfl fun a _ => ?_))) hX2'
+    rw [hatVec_swapVec, xSqNorm_swapVec]
+  have hZ2sw : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ b : F,
+      xSqNorm (hatVec (F := F) (m := m) (swapVec ψ)) (hatMats MB .Z (c.pt .Z) b)
+        (PZ.lineEvalMats d MA c b) ≤ 172 * ε := by
+    refine le_trans (le_of_eq (Finset.sum_congr rfl fun c _ =>
+      congrArg (fun t : ℝ => (Fintype.card (Content F m) : ℝ)⁻¹ * t)
+        (Finset.sum_congr rfl fun b _ => ?_))) hZ2'
+    rw [hatVec_swapVec, xSqNorm_swapVec]
+  obtain ⟨QB, hPB, hkB, hb⟩ := padded_lines_consistency (MA := MB) (MB := MA) (ψ := swapVec ψ)
+    hm4 (swapVec_unit hψ) (povmValue_swapped_le hfail) hprojB hprojA PX PZ hfacX hfacZ
+    hX1sw hX2sw hZ2sw hcoll ty s
+  refine ⟨QB, hPB, hkB, le_trans (le_of_eq (congrArg (fun t : ℝ => 1 - t) ?_)) hb⟩
+  refine congrArg (avgSubAB hm4 hm ty s) ?_
+  funext a b cX cZ
+  refine Finset.sum_congr rfl fun v _ => ?_
+  rw [extHat_swapVec, bornProb_swapVec]
 
 end Main
 
