@@ -119,6 +119,7 @@ theorem registeredReplacement_next_mats (P : CL.CLFun F ι ℓ)
 
 /-- The same selected-measurement identity in the finite-dimensional
 `TensorProductStrategy` packaging, with its explicit basis equivalence. -/
+set_option backward.isDefEq.respectTransparency false in
 theorem adaptiveReplacementStrategy_next_at (P : CL.CLFun F ι ℓ)
     (hP : P.SupportedOn univ) (k : ℕ)
     (G : Game X Y Ans B) (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1) (a₀ : A)
@@ -131,10 +132,16 @@ theorem adaptiveReplacementStrategy_next_at (P : CL.CLFun F ι ℓ)
       (fun p => g (advanceStageAnswer P k p)) hMA hMB D hD).PA.toPOVM q =
       ((nextPrefixJointPOVM P hP k a₀ D hD).map g).reindex
         (Fintype.equivFin ((ι → F) × (H × A))) := by
-  simp only [adaptiveReplacementStrategy, registeredReplacementStrategy,
-    TensorProductStrategy.ofPVM, TensorProductStrategy.ofProjective,
-    ProjectiveMeasurement.toPOVM_map_reindex, ProjectiveMeasurement.toPOVM_ofIsPVM,
-    registeredReplacement_next_at P hP k a₀ D hD MA q g]
+  apply POVM.ext'
+  intro a
+  change Matrix.reindex (Fintype.equivFin ((ι → F) × (H × A)))
+      (Fintype.equivFin ((ι → F) × (H × A)))
+      ((registeredReplacement MA q ((adaptiveReplacementPOVM P hP k D hD).map
+        (fun p => g (advanceStageAnswer P k p))) q).mats a).val =
+    Matrix.reindex (Fintype.equivFin ((ι → F) × (H × A)))
+      (Fintype.equivFin ((ι → F) × (H × A)))
+      (((nextPrefixJointPOVM P hP k a₀ D hD).map g).mats a).val
+  rw [registeredReplacement_next_at P hP k a₀ D hD MA q g]
 
 /-- One quantitative adaptive step returns the next-prefix residual PVMs
 and a legal strategy whose selected measurement has exactly that form.

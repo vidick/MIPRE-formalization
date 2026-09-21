@@ -88,11 +88,13 @@ theorem introspect_refined_stage_bounds :
   refine ⟨hm.trans ?_, ?_, ?_⟩
   · simpa only [mul_assoc] using marginal_le_adaptiveStageBudget (ℓ - j.val) he hη hδ
   · rw [stageAnswerRefinement_commutator]
-    exact hz.trans (by simpa only [mul_assoc] using Z_le_adaptiveStageBudget
-      (z := η) (ℓ - j.val) he hδ)
+    apply hz.trans
+    simpa only [mul_assoc] using
+      (Z_le_adaptiveStageBudget (z := η) (ℓ - j.val) he hδ)
   · rw [stageAnswerRefinement_commutator]
-    exact hx.trans (by simpa only [mul_assoc] using X_le_adaptiveStageBudget
-      (h := δ) (ℓ - j.val) he hη)
+    apply hx.trans
+    simpa only [mul_assoc] using
+      (X_le_adaptiveStageBudget (h := δ) (ℓ - j.val) he hη)
 
 set_option backward.isDefEq.respectTransparency false in
 /-- Actual game tests construct the common-ancilla adaptive projectors.
