@@ -1005,3 +1005,26 @@ padded state in `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
   MIPRE.QLD.GlobalPair.products_XZ_A,
   MIPRE.QLD.GlobalPair.products_ZX_B,
   MIPRE.QLD.GlobalPair.products_XZ_B
+
+/-! `lem:qld-global-linear` (`MIPRE/Background/QLD/Linear.lean`, and its specialization to the
+padded state in `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
+#guard_sorry_free MIPRE.LIDT.patch, MIPRE.LIDT.maskOn, MIPRE.LIDT.maskOff,
+  MIPRE.LIDT.patch_maskOn_maskOff, MIPRE.LIDT.maskOn_patch, MIPRE.LIDT.maskOff_patch,
+  MIPRE.LIDT.maskOn_eq_self, MIPRE.LIDT.maskOff_eq_self, MIPRE.LIDT.maskOn_apply_of_not,
+  MIPRE.LIDT.maskOff_apply_of, MIPRE.LIDT.LowIndDegPoly.coef, MIPRE.LIDT.prod_pow_patch,
+  MIPRE.LIDT.LowIndDegPoly.eval_eq_sum_coef, MIPRE.LIDT.LowIndDegPoly.eval_coef_of_eq_off,
+  MIPRE.LIDT.LowIndDegPoly.coef_maskOff, MIPRE.LIDT.card_eval_eq_zero_le, MIPRE.posSemidef_of_proj,
+  MIPRE.uniform_nonneg, MIPRE.QLD.abSet, MIPRE.QLD.mem_abSet, MIPRE.QLD.xIdx_notMem_abSet,
+  MIPRE.QLD.zIdx_notMem_abSet, MIPRE.QLD.patAB, MIPRE.QLD.patAB_aIdx, MIPRE.QLD.patAB_bIdx,
+  MIPRE.QLD.patAB_of_notMem, MIPRE.QLD.patAB_injective, MIPRE.QLD.pAB,
+  MIPRE.QLD.eval_coef_abSet_setAB, MIPRE.QLD.eval_pAB, MIPRE.QLD.vec_two_eq, MIPRE.QLD.fin2Equiv,
+  MIPRE.QLD.e10, MIPRE.QLD.e01, MIPRE.QLD.e10_ne_e01, MIPRE.QLD.linAB, MIPRE.QLD.eval_linAB,
+  MIPRE.QLD.sum_agree_two_le, MIPRE.QLD.IsLinAB, MIPRE.QLD.patAB_eq_maskOn,
+  MIPRE.QLD.exists_bad_coef, MIPRE.QLD.pAB_ne_linAB, MIPRE.QLD.sum_uniform_eval_eq_zero_le,
+  MIPRE.QLD.bOp_mul_aOp_comm, MIPRE.QLD.sum_snorm_sq_ordXZ_eq, MIPRE.QLD.fibMap,
+  MIPRE.QLD.fibMap_injective, MIPRE.QLD.fiber_eq_image, MIPRE.QLD.snorm_sq_ordComb_ordXZ_of_ne,
+  MIPRE.QLD.ordComb_ordXZ_bet_zero, MIPRE.QLD.snorm_sq_ordComb_ordXZ_le,
+  MIPRE.QLD.card_filter_snd_eq_zero, MIPRE.QLD.sum_filter_snorm_sq_ordComb_eq, MIPRE.QLD.sum_setAB,
+  MIPRE.QLD.sum_uniform_setAB, MIPRE.QLD.sum_ab_snorm_sq_ordComb_le_of_good,
+  MIPRE.QLD.sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB, MIPRE.QLD.sum_bad_linear_mass_le,
+  MIPRE.QLD.GlobalPair.sum_bad_linear_mass_A_le, MIPRE.QLD.GlobalPair.sum_bad_linear_mass_B_le

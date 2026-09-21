@@ -3472,11 +3472,92 @@ $2\delta_{\mathrm{ld}} + 2 \cdot 57676416\,\eps$, linear in both.
 \begin{lemma}[Linearity in the two combining coefficients]
 \label{lem:qld-global-linear}
 \ledgernode{1.2.2.13.6}
-\uses{lem:qld-global-products,lem:schwartz-zippel}
-Among $w$-independent outcomes, those not expressible as
-$g=\alpha g_1(x,z)+\beta g_2(x,z)$ have total state weight $O(\Delta)$.
-The outcome-summed estimate introduces no factor $q^2$.
+\uses{lem:qld-global-pvm,lem:qld-global-products,lem:schwartz-zippel}
+\lean{  MIPRE.LIDT.patch, MIPRE.LIDT.maskOn, MIPRE.LIDT.maskOff, MIPRE.LIDT.patch_maskOn_maskOff,
+  MIPRE.LIDT.maskOn_patch, MIPRE.LIDT.maskOff_patch, MIPRE.LIDT.maskOn_eq_self,
+  MIPRE.LIDT.maskOff_eq_self, MIPRE.LIDT.maskOn_apply_of_not, MIPRE.LIDT.maskOff_apply_of,
+  MIPRE.LIDT.LowIndDegPoly.coef, MIPRE.LIDT.prod_pow_patch,
+  MIPRE.LIDT.LowIndDegPoly.eval_eq_sum_coef, MIPRE.LIDT.LowIndDegPoly.eval_coef_of_eq_off,
+  MIPRE.LIDT.LowIndDegPoly.coef_maskOff, MIPRE.LIDT.card_eval_eq_zero_le, MIPRE.posSemidef_of_proj,
+  MIPRE.uniform_nonneg, MIPRE.QLD.abSet, MIPRE.QLD.mem_abSet, MIPRE.QLD.xIdx_notMem_abSet,
+  MIPRE.QLD.zIdx_notMem_abSet, MIPRE.QLD.patAB, MIPRE.QLD.patAB_aIdx, MIPRE.QLD.patAB_bIdx,
+  MIPRE.QLD.patAB_of_notMem, MIPRE.QLD.patAB_injective, MIPRE.QLD.pAB,
+  MIPRE.QLD.eval_coef_abSet_setAB, MIPRE.QLD.eval_pAB, MIPRE.QLD.vec_two_eq, MIPRE.QLD.fin2Equiv,
+  MIPRE.QLD.e10, MIPRE.QLD.e01, MIPRE.QLD.e10_ne_e01, MIPRE.QLD.linAB, MIPRE.QLD.eval_linAB,
+  MIPRE.QLD.sum_agree_two_le, MIPRE.QLD.IsLinAB, MIPRE.QLD.patAB_eq_maskOn,
+  MIPRE.QLD.exists_bad_coef, MIPRE.QLD.pAB_ne_linAB, MIPRE.QLD.sum_uniform_eval_eq_zero_le,
+  MIPRE.QLD.bOp_mul_aOp_comm, MIPRE.QLD.sum_snorm_sq_ordXZ_eq, MIPRE.QLD.fibMap,
+  MIPRE.QLD.fibMap_injective, MIPRE.QLD.fiber_eq_image, MIPRE.QLD.snorm_sq_ordComb_ordXZ_of_ne,
+  MIPRE.QLD.ordComb_ordXZ_bet_zero, MIPRE.QLD.snorm_sq_ordComb_ordXZ_le,
+  MIPRE.QLD.card_filter_snd_eq_zero, MIPRE.QLD.sum_filter_snorm_sq_ordComb_eq, MIPRE.QLD.sum_setAB,
+  MIPRE.QLD.sum_uniform_setAB, MIPRE.QLD.sum_ab_snorm_sq_ordComb_le_of_good,
+  MIPRE.QLD.sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB, MIPRE.QLD.sum_bad_linear_mass_le,
+  MIPRE.QLD.GlobalPair.sum_bad_linear_mass_A_le, MIPRE.QLD.GlobalPair.sum_bad_linear_mass_B_le}
+\leanok
+Let $(G_A, G_B)$ be the global measurements of Lemma~\ref{lem:qld-global-pvm}, with error
+$\delta$, on the twice-padded state $\Phi$, and let $\Delta = 2\delta + 2 \cdot 57676416\,\eps$
+be the bound of Lemma~\ref{lem:qld-global-products} for the order
+$\widehat M^X_a \widehat M^Z_b$. Call an outcome $g$ linear in $(\alpha, \beta)$ if every
+monomial of $g$ has exponents $(1, 0)$ or $(0, 1)$ on the two combining coordinates, that is
+$g = \alpha g_1(x, z, w) + \beta g_2(x, z, w)$, and let $L$ be the set of such outcomes. Then,
+with $\eta = (1 + 2d + 4md)/q$,
+\[
+  (1 - 2\eta) \sum_{g \notin L} \langle G_{A,g} \otimes \Id \rangle_\Phi \leq 2\Delta ,
+\]
+and likewise for $G_B$. Under $16md \leq q$ this is $O(\Delta)$, linear in $\delta$ and in
+$\eps$; the sum over outcomes introduces no factor $q^2$.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:qld-global-pvm,lem:qld-global-products,lem:schwartz-zippel}
+\leanok
+Fix $g \notin L$, write $S = G_{A,g}$, and let $B_u(c)$ be the combination of the ordered
+products $\widehat M^X_a \widehat M^Z_b$ along $\alpha a + \beta b = c$, for the padded point
+$u = (x, z, \alpha, \beta, w)$. Since
+$(S \otimes \Id)\Phi = (S \otimes B_u(g(u)))\Phi + (S \otimes (\Id - B_u(g(u))))\Phi$,
+\[
+  \langle S \otimes \Id \rangle
+    \leq 2\,\|(S \otimes B_u(g(u)))\Phi\|^2 + 2\,\|(S \otimes (\Id - B_u(g(u))))\Phi\|^2
+\]
+for every $u$. Averaging over $u$ and summing over $g \notin L$, the second terms total at most
+$2\Delta$, so it suffices to show $\mathbb E_u \|(S \otimes B_u(g(u)))\Phi\|^2 \leq \eta
+\langle S \otimes \Id \rangle$ for each $g \notin L$.
+
+Read the uniform padded point as a uniform base point $u_0$ with a fresh uniform pair
+$(\alpha, \beta)$ substituted in the two combining coordinates. The blocks $x, z$ are those of
+$u_0$, and $g(u) = p_{u_0}(\alpha, \beta)$ for the bivariate polynomial
+$p_{u_0} = \sum_{i,j} g_{ij}(u_0)\,\alpha^i \beta^j$, whose coefficients $g_{ij}$ are polynomials
+of individual degree at most $d$ in the remaining coordinates. As $g \notin L$, some
+$g_{i_0 j_0}$ with $(i_0, j_0) \notin \{(1, 0), (0, 1)\}$ is a nonzero polynomial in $4m$
+variables, so by Schwartz--Zippel it vanishes at a uniform $u_0$ with probability at most
+$4md/q$; at such a base point the average over $(\alpha, \beta)$ is bounded by
+$\langle S \otimes \Id \rangle$, each $B_u(c)$ being a contraction. At every other base point,
+$p_{u_0}$ differs from every linear form $\alpha a + \beta b$. The pairs with $\beta = 0$
+contribute at most $\langle S \otimes \Id \rangle / q$. For $\beta \neq 0$ the fibre
+$\{\alpha a + \beta b = c\}$ has one $b$ per $a$, and the $\widehat M^X_a$ are orthogonal
+projectors, so
+$\|(S \otimes B_u(c))\Phi\|^2 = \sum_{\alpha a + \beta b = c} W(a, b)$ with
+$W(a, b) = \|(S \otimes \widehat M^X_a \widehat M^Z_b)\Phi\|^2$, weights that do not depend on
+$(\alpha, \beta)$ and sum to $\langle S \otimes \Id \rangle$. Exchanging the two sums, each
+$W(a, b)$ is counted with the probability that $p_{u_0}(\alpha, \beta) = \alpha a + \beta b$ at a
+uniform $(\alpha, \beta)$, which is at most $2d/q$ by Schwartz--Zippel in two variables.
+Altogether $\eta = 1/q + 2d/q + 4md/q$. Bob's version applies the same argument to the swapped
+state.
+\end{proof}
+
+\paragraph{Comments.} The paper (\texttt{eq:qld-g-prime-bound}) states the bound as
+$O((\delta_{\mathrm{ld}} + \delta_Q)^{1/2} + md/q)$ for the $w$-independent outcomes, and
+remarks that the quadratic expansion used here supports the linear bound; the formalization
+proves the linear bound, for all outcomes and with an explicit constant, so
+Lemma~\ref{lem:qld-global-dummy} is not needed here. The paper goes through the projective
+joint measurement of Lemma~\ref{lem:qld-combined-points} and drops the $\beta = 0$ pairs at a cost
+of $1/q$; here the products estimate is used directly and the $\beta = 0$ pairs are bounded by the
+contraction property. The two Schwartz--Zippel applications are
+\texttt{card\_eval\_eq\_zero\_le} (a nonzero coefficient vector in $4m$ variables, at $4md/q$)
+and \texttt{sum\_agree\_two\_le} (two distinct bivariate coefficient vectors, at $2d/q$), both
+through the bridge \texttt{LowIndDegPoly.toMv} of Lemma~\ref{lem:qld-global-dummy}. The
+coefficient vectors are \texttt{LowIndDegPoly.coef}, the coefficient of a monomial pattern on a
+set of coordinates as a polynomial in the others (\texttt{eval\_eq\_sum\_coef}).
 
 \begin{lemma}[Separating the two point variables]
 \label{lem:qld-global-separate}

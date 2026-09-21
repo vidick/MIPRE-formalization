@@ -1534,3 +1534,41 @@ dilated projective joint measurement of `lem:qld-4-12`; the sandwich POVM suffic
 estimate holds for all outcomes, so `-dummy` is not used here (its `\uses` no longer names it).
 The `X Z` order needs `‖(Z X Z − X Z) w‖ ≤ ‖[X, Z] w‖`, which is not obvious termwise but is the
 identity `Z X Z − X Z = −(1 − Z)(X Z − Z X)`, valid for a projector `Z`.
+
+### PR H-c: `lem:qld-global-linear` (2026-09-21)
+
+**What closed.** `lem:qld-global-linear`, with both marks, for all outcomes and both parties.
+`MIPRE/Background/QLD/Linear.lean` (fast regime) proves the abstract statement
+`sum_bad_linear_mass_le`: if a projective `G` with outcomes in `LowIndDegPoly F (4m) d` satisfies
+the `X_a Z_b` products estimate `∑_g E_u ‖(G_g ⊗ (1 − B_u(g(u))))Φ‖² ≤ Δ`, then
+`(1 − 2η) · ∑_{g not linear in (α,β)} ⟨G_g ⊗ 1⟩ ≤ 2Δ` with `η = (1 + 2d + 4md)/q`. "Linear in
+`(α, β)`" is `IsLinAB g`: every monomial of `g` has exponents `(1, 0)` or `(0, 1)` on the two
+combining coordinates. `PaddedLIDT.lean` specializes it to a `GlobalPair`
+(`GlobalPair.sum_bad_linear_mass_A_le`, `_B_le`) with `Δ = 2δ + 2 · 57676416 ε` from
+`products_XZ_A`, `_B`.
+
+**The route.** Per bad outcome, `⟨G_g⟩ ≤ 2‖(G_g ⊗ B_u)Φ‖² + 2‖(G_g ⊗ (1 − B_u))Φ‖²` for every
+`u`; the second terms are the products estimate, so everything rests on
+`E_u ‖(G_g ⊗ B_u(g(u)))Φ‖² ≤ η ⟨G_g⟩` (`sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB`). The
+uniform padded point is read as a uniform base point `u₀` with a fresh uniform pair `(α, β)`
+written into the combining coordinates (`sum_uniform_setAB`, the map `setAB` being `q²`-to-one by
+the involution `abSwap`); `g(setAB u₀ α β)` is the bivariate polynomial `pAB g u₀` (`eval_pAB`),
+whose coefficients are the `coef`s of `g` — `LowIndDegPoly.coef g T t`, the coefficient vector of
+the monomial pattern `t` on the coordinates `T` as a polynomial in the others
+(`eval_eq_sum_coef`). A bad `g` has a nonzero non-linear coefficient (`exists_bad_coef`);
+Schwartz--Zippel in `4m` variables (`card_eval_eq_zero_le`) bounds the base points where it
+vanishes by `4md/q`, and there each `B` is a contraction (`snorm_sq_ordComb_ordXZ_le`). At the
+other base points `pAB g u₀` differs from every linear form (`pAB_ne_linAB`): the `β = 0` pairs
+cost `1/q`, and for `β ≠ 0` the fibre has one `b` per `a`, so Pythagoras over the orthogonal
+`X_a` (`snorm_sq_ordComb_ordXZ_of_ne`, from `snorm_sq_sum_proj_mul`) writes
+`‖(S ⊗ B)Φ‖² = ∑_{fibre} W(a, b)` with weights summing to `⟨S⟩` (`sum_snorm_sq_ordXZ_eq`);
+exchanging the sums, each weight is counted with the agreement probability of two distinct
+bivariate polynomials, `≤ 2d/q` (`sum_agree_two_le`).
+
+**Two remarks.** The paper displays `O((δ_ld + δ_Q)^{1/2} + md/q)` for the `w`-independent
+outcomes and notes in a `cnote` that the quadratic expansion gives the linear bound; the
+formalization proves the linear bound for all outcomes, so `-dummy` is not a dependency here
+either, and the constant is explicit. Lean points: `Fintype.card_ne_zero` needs `Nonempty F`,
+which `omit [Field F]` removes; `not_imp` is ambiguous between `_root_` and `Classical`
+(the former deprecated); and the `ᴴ` notation is scoped to `Matrix`, so a `namespace MIPRE` block
+needs `open Matrix`.

@@ -7,6 +7,7 @@ import MIPRE.Background.QLD.PaddedValue
 import MIPRE.Background.QLD.Simul
 import MIPRE.Background.QLD.Dummy
 import MIPRE.Background.QLD.Products
+import MIPRE.Background.QLD.Linear
 import MIPRE.Background.LIDT.Adapter.Registers
 
 /-!
@@ -491,6 +492,29 @@ theorem products_XZ_B (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldG
       ≤ 2 * δ + 2 * (57676416 * ε) :=
   sum_snorm_sq_ordXZ_le (swapVec_padState_unit ψ hψ) P.GB (isPVM_liftOp hprojA .X)
     (isPVM_liftOp hprojA .Z) (P.cons_sandComb_B hψ) (sum_comm_liftOp_A_le hm hψ hfail)
+
+/-- **`lem:qld-global-linear` for Alice's global measurement**: the outcomes that are not linear
+in the combining coordinates `(α, β)` weigh at most `2Δ / (1 - 2η)`, where
+`Δ = 2δ + 2 · 57676416 ε` is the `X_a Z_b` products bound and `η = (1 + 2d + 4md)/q`. -/
+theorem sum_bad_linear_mass_A_le (hd : 1 ≤ d) (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
+    (1 - 2 * ((1 + 2 * d + 4 * m * d) / Fintype.card F))
+        * ∑ g ∈ univ.filter (fun g => ¬ IsLinAB g),
+          bornProb (padState (F := F) (m := m) (d := d) ψ) (P.GA.M () g) 1
+      ≤ 2 * (2 * δ + 2 * (57676416 * ε)) :=
+  sum_bad_linear_mass_le hd _ P.GA (isPVM_liftOp hprojB .X) (isPVM_liftOp hprojB .Z)
+    (P.products_XZ_A hm hψ hfail)
+
+/-- **`lem:qld-global-linear` for Bob's global measurement.** -/
+theorem sum_bad_linear_mass_B_le (hd : 1 ≤ d) (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
+    (1 - 2 * ((1 + 2 * d + 4 * m * d) / Fintype.card F))
+        * ∑ g ∈ univ.filter (fun g => ¬ IsLinAB g),
+          bornProb (padState (F := F) (m := m) (d := d) ψ) 1 (P.GB.M () g)
+      ≤ 2 * (2 * δ + 2 * (57676416 * ε)) := by
+  have h := sum_bad_linear_mass_le hd _ P.GB (isPVM_liftOp hprojA .X) (isPVM_liftOp hprojA .Z)
+    (P.products_XZ_B hm hψ hfail)
+  simpa only [bornProb_swapVec] using h
 
 end GlobalPair
 
