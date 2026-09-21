@@ -3562,13 +3562,91 @@ set of coordinates as a polynomial in the others (\texttt{eval\_eq\_sum\_coef}).
 \begin{lemma}[Separating the two point variables]
 \label{lem:qld-global-separate}
 \ledgernode{1.2.2.13.7}
-\uses{lem:qld-global-linear,lem:qld-global-products}
-Except for weight $O(\Delta)$, a retained linear outcome has $g_1$ depending
-only on $x$ and $g_2$ only on $z$. The total excluded weight is bounded by
-$\delta_G=C(\sqrt{\delta_{\mathrm{ld}}+\delta_Q}+md/q)$.
-Thus retained outcomes are precisely of the form
-$\alpha g_X(x)+\beta g_Z(z)$ with individual degree at most $d$.
+\uses{lem:qld-global-pvm,lem:qld-global-products,lem:qld-global-linear,lem:schwartz-zippel}
+\lean{  MIPRE.LIDT.LowIndDegPoly.eval_zero, MIPRE.LIDT.LowIndDegPoly.eval_sub,
+  MIPRE.LIDT.LowIndDegPoly.const, MIPRE.LIDT.LowIndDegPoly.eval_const,
+  MIPRE.LIDT.LowIndDegPoly.coef_eq_zero_of_not, MIPRE.LIDT.LowIndDegPoly.restrictOff,
+  MIPRE.LIDT.LowIndDegPoly.restrictOff_apply_of, MIPRE.LIDT.LowIndDegPoly.eval_restrictOff,
+  MIPRE.LIDT.LowIndDegPoly.DepOutside, MIPRE.LIDT.LowIndDegPoly.exists_coef_ne_zero_of_depOutside,
+  MIPRE.QLD.mixOn, MIPRE.QLD.mixOn_mixOn, MIPRE.QLD.mixOnSwap, MIPRE.QLD.sum_mixOn,
+  MIPRE.QLD.sum_uniform_mixOn, MIPRE.QLD.eval_mixOn, MIPRE.QLD.zSet, MIPRE.QLD.xSet,
+  MIPRE.QLD.zIdx_mem_zSet, MIPRE.QLD.xIdx_mem_xSet, MIPRE.QLD.zBlk_mixOn_zSet,
+  MIPRE.QLD.xBlk_mixOn_xSet, MIPRE.QLD.oneD, MIPRE.QLD.gA, MIPRE.QLD.gB, MIPRE.QLD.patch_abSet_aIdx,
+  MIPRE.QLD.patch_abSet_bIdx, MIPRE.QLD.coef_patAB_eq_zero_of_isLinAB,
+  MIPRE.QLD.pAB_eq_linAB_of_isLinAB, MIPRE.QLD.eval_setAB_of_isLinAB, MIPRE.QLD.IsGood,
+  MIPRE.QLD.isGood_of, MIPRE.QLD.not_isGood_cases, MIPRE.QLD.card_filter_linear_le,
+  MIPRE.QLD.ptComb_ordZX_eq, MIPRE.QLD.snorm_sq_ordXZ_le_bornProb,
+  MIPRE.QLD.sum_ab_snorm_sq_ordComb_le_of_lin, MIPRE.QLD.sum_uniform_bornProb_readOn_le,
+  MIPRE.QLD.sum_uniform_snorm_sq_ordComb_XZ_le_of_depB,
+  MIPRE.QLD.sum_uniform_snorm_sq_ordComb_ZX_le_of_depA, MIPRE.QLD.sum_bad_mass_le_of_avg,
+  MIPRE.QLD.sum_not_isGood_mass_le, MIPRE.QLD.GlobalPair.sum_not_isGood_mass_A_le,
+  MIPRE.QLD.GlobalPair.sum_not_isGood_mass_B_le}
+\leanok
+Let $(G_A, G_B)$, $\Phi$ and $\Delta$ be as in Lemma~\ref{lem:qld-global-linear}, where now
+$\Delta$ bounds the estimate of Lemma~\ref{lem:qld-global-products} for both product orders. Call
+an outcome $g$ good if $g = \alpha g_X(x) + \beta g_Z(z)$ with $g_X$ reading only the $x$ block
+and $g_Z$ only the $z$ block: every monomial of $g$ has exponents $(1, 0)$ on $(\alpha, \beta)$
+and no other nonzero exponent outside the $x$ block, or exponents $(0, 1)$ and no other nonzero
+exponent outside the $z$ block. Let $\mathrm{Good}$ be the set of good outcomes. Then, with
+$\eta = (2 + 2d + 8md)/q$,
+\[
+  (1 - 2\eta) \sum_{g \notin \mathrm{Good}} \langle G_{A,g} \otimes \Id \rangle_\Phi
+    \leq 4\Delta ,
+\]
+and likewise for $G_B$. In particular a good outcome reads no dummy coordinate, and the good
+outcomes are in bijection with the pairs $(g_X, g_Z)$ of polynomials of individual degree at most
+$d$ on $\F_q^m$.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:qld-global-pvm,lem:qld-global-products,lem:qld-global-linear,lem:schwartz-zippel}
+\leanok
+An outcome that is not good is not linear in $(\alpha, \beta)$, or is linear,
+$g = \alpha g_1 + \beta g_2$, with $g_2$ reading a coordinate outside the $z$ block, or with
+$g_1$ reading a coordinate outside the $x$ block. The first two kinds are handled against the
+order $\widehat M^X_a \widehat M^Z_b$ and the third against $\widehat M^Z_b \widehat M^X_a$, each
+by the assembly of Lemma~\ref{lem:qld-global-linear}: it suffices to show
+$\mathbb E_u \|(S \otimes B_u(g(u)))\Phi\|^2 \leq \eta \langle S \otimes \Id \rangle$ for
+$S = G_{A,g}$ and each bad $g$, the non-linear ones being Lemma~\ref{lem:qld-global-linear}
+itself. Since $1 - 2\eta$ may be taken nonnegative, the three weights add.
+
+Fix $g = \alpha g_1 + \beta g_2$ linear with $g_2$ reading a coordinate outside the $z$ block,
+and a base point $u_0$; then $g(u_0[\alpha, \beta]) = \alpha g_1(u_0) + \beta g_2(u_0)$. The
+fibre $\{\alpha a + \beta b = \alpha g_1(u_0) + \beta g_2(u_0)\}$ always contains the diagonal
+pair $(g_1(u_0), g_2(u_0))$, and contains any other pair for at most $q$ of the $q^2$ values of
+$(\alpha, \beta)$, the equation being a nontrivial linear form in $(\alpha, \beta)$. With the
+Pythagoras and weight bookkeeping of Lemma~\ref{lem:qld-global-linear}, the average over
+$(\alpha, \beta)$ is at most $2/q \cdot \langle S \otimes \Id \rangle$ plus the diagonal weight
+$W(g_1(u_0), g_2(u_0)) = \langle S \otimes \widehat M^Z_{g_2} \widehat M^X_{g_1}
+\widehat M^Z_{g_2} \rangle \leq \langle S \otimes \widehat M^Z_{g_2(u_0)} \rangle$. Read the
+uniform $u_0$ as a uniform $z$ block with the other coordinates uniform and independent. For a
+fixed $z$ block, $u \mapsto g_2(u)$ is a polynomial in the other coordinates; as $g_2$ reads a
+coordinate outside the $z$ block, some coefficient of a non-constant monomial of this polynomial
+is a nonzero polynomial in the $z$ block, which vanishes for at most a $4md/q$ fraction of the
+$z$ blocks by Schwartz--Zippel, and where it does not vanish the polynomial is non-constant and
+takes each value $b$ with probability at most $4md/q$, again by Schwartz--Zippel. So
+$\mathbb E_{u_0} \langle S \otimes \widehat M^Z_{g_2(u_0)}(z) \rangle
+  \leq \sum_b \mathbb E_z \Pr[g_2 = b \mid z] \langle S \otimes \widehat M^Z_b(z) \rangle
+  \leq 8md/q \cdot \langle S \otimes \Id \rangle$,
+using $\sum_b \widehat M^Z_b(z) = \Id$. Altogether $\eta \geq 2/q + 8md/q$. For $g_1$ reading a
+coordinate outside the $x$ block, exchange the roles of $(\widehat M^X, a, \alpha)$ and
+$(\widehat M^Z, b, \beta)$: the order $\widehat M^Z_b \widehat M^X_a$ along $(\alpha, \beta)$ is
+the order $\widehat M^X_a \widehat M^Z_b$ along $(\beta, \alpha)$ with the two families exchanged,
+and the base point is read as a uniform $x$ block. Bob's version applies the same argument to the
+swapped state.
+\end{proof}
+
+\paragraph{Comments.} The paper states the excluded weight as
+$\delta_G = O((\delta_{\mathrm{ld}} + \delta_Q)^{1/2} + md/q)$; the formalization proves the
+linear bound, as for Lemma~\ref{lem:qld-global-linear}, and with its own constants: both
+Schwartz--Zippel applications are over all $4m$ coordinates (\texttt{card\_eval\_eq\_zero\_le}),
+where the paper counts $2m$ or $2m + 2$. The good outcomes exclude the dummy coordinates as well,
+so this lemma subsumes Lemma~\ref{lem:qld-global-dummy} for the purposes of stage 4c. The
+conditioning on a block is one generic statement (\texttt{sum\_uniform\_bornProb\_readOn\_le}),
+for an operator family reading only the coordinates in a set $T$ and a polynomial reading a
+coordinate outside $T$, with \texttt{LowIndDegPoly.restrictOff} the polynomial in the other
+coordinates obtained by fixing those in $T$; the assembly is one generic statement
+(\texttt{sum\_bad\_mass\_le\_of\_avg}), which Lemma~\ref{lem:qld-global-linear} could also use.
 
 \begin{lemma}[Completing the pair measurement projectively]
 \label{lem:qld-global-complete}

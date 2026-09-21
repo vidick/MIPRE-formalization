@@ -432,6 +432,7 @@ import MIPRE.Background.QLD.PaddedValue
 import MIPRE.Background.QLD.Product
 import MIPRE.Background.QLD.Products
 import MIPRE.Background.QLD.SeededLinePrograms
+import MIPRE.Background.QLD.Separate
 import MIPRE.Background.QLD.Simul
 import MIPRE.Background.QLD.Swap
 import MIPRE.Background.QLD.SwapUnitary

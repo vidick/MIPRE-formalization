@@ -1133,3 +1133,23 @@ padded state in `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
   MIPRE.Introspection.BinaryComplete.card_seed,
   MIPRE.Introspection.BinaryComplete.exists_padded_perfectPCC,
   MIPRE.Introspection.BinaryComplete.exists_depthPadded_perfectPCC
+/-! `lem:qld-global-separate` (`MIPRE/Background/QLD/Separate.lean`, and its specialization to the
+padded state in `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
+#guard_sorry_free MIPRE.LIDT.LowIndDegPoly.eval_zero, MIPRE.LIDT.LowIndDegPoly.eval_sub,
+  MIPRE.LIDT.LowIndDegPoly.const, MIPRE.LIDT.LowIndDegPoly.eval_const,
+  MIPRE.LIDT.LowIndDegPoly.coef_eq_zero_of_not, MIPRE.LIDT.LowIndDegPoly.restrictOff,
+  MIPRE.LIDT.LowIndDegPoly.restrictOff_apply_of, MIPRE.LIDT.LowIndDegPoly.eval_restrictOff,
+  MIPRE.LIDT.LowIndDegPoly.DepOutside, MIPRE.LIDT.LowIndDegPoly.exists_coef_ne_zero_of_depOutside,
+  MIPRE.QLD.mixOn, MIPRE.QLD.mixOn_mixOn, MIPRE.QLD.mixOnSwap, MIPRE.QLD.sum_mixOn,
+  MIPRE.QLD.sum_uniform_mixOn, MIPRE.QLD.eval_mixOn, MIPRE.QLD.zSet, MIPRE.QLD.xSet,
+  MIPRE.QLD.zIdx_mem_zSet, MIPRE.QLD.xIdx_mem_xSet, MIPRE.QLD.zBlk_mixOn_zSet,
+  MIPRE.QLD.xBlk_mixOn_xSet, MIPRE.QLD.oneD, MIPRE.QLD.gA, MIPRE.QLD.gB, MIPRE.QLD.patch_abSet_aIdx,
+  MIPRE.QLD.patch_abSet_bIdx, MIPRE.QLD.coef_patAB_eq_zero_of_isLinAB,
+  MIPRE.QLD.pAB_eq_linAB_of_isLinAB, MIPRE.QLD.eval_setAB_of_isLinAB, MIPRE.QLD.IsGood,
+  MIPRE.QLD.isGood_of, MIPRE.QLD.not_isGood_cases, MIPRE.QLD.card_filter_linear_le,
+  MIPRE.QLD.ptComb_ordZX_eq, MIPRE.QLD.snorm_sq_ordXZ_le_bornProb,
+  MIPRE.QLD.sum_ab_snorm_sq_ordComb_le_of_lin, MIPRE.QLD.sum_uniform_bornProb_readOn_le,
+  MIPRE.QLD.sum_uniform_snorm_sq_ordComb_XZ_le_of_depB,
+  MIPRE.QLD.sum_uniform_snorm_sq_ordComb_ZX_le_of_depA, MIPRE.QLD.sum_bad_mass_le_of_avg,
+  MIPRE.QLD.sum_not_isGood_mass_le, MIPRE.QLD.GlobalPair.sum_not_isGood_mass_A_le,
+  MIPRE.QLD.GlobalPair.sum_not_isGood_mass_B_le

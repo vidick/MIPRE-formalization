@@ -8,6 +8,7 @@ import MIPRE.Background.QLD.Simul
 import MIPRE.Background.QLD.Dummy
 import MIPRE.Background.QLD.Products
 import MIPRE.Background.QLD.Linear
+import MIPRE.Background.QLD.Separate
 import MIPRE.Background.LIDT.Adapter.Registers
 
 /-!
@@ -515,6 +516,31 @@ theorem sum_bad_linear_mass_B_le (hd : 1 ≤ d) (hψ : star ψ ⬝ᵥ ψ = 1)
   have h := sum_bad_linear_mass_le hd _ P.GB (isPVM_liftOp hprojA .X) (isPVM_liftOp hprojA .Z)
     (P.products_XZ_B hm hψ hfail)
   simpa only [bornProb_swapVec] using h
+
+/-- **`lem:qld-global-separate` for Alice's global measurement**: the outcomes that are not of the
+form `α g_X(x) + β g_Z(z)` weigh at most `4Δ / (1 - 2η)`, where `Δ = 2δ + 2 · 57676416 ε` is the
+bound of `lem:qld-global-products` for either order and `η = (2 + 2d + 8md)/q`. -/
+theorem sum_not_isGood_mass_A_le (hd : 1 ≤ d) (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
+    (1 - 2 * ((2 + 2 * d + 8 * m * d) / Fintype.card F))
+        * ∑ g ∈ univ.filter (fun g => ¬ IsGood g),
+          bornProb (padState (F := F) (m := m) (d := d) ψ) (P.GA.M () g) 1
+      ≤ 4 * (2 * δ + 2 * (57676416 * ε)) := by
+  have h := sum_not_isGood_mass_le hd _ P.GA (isPVM_liftOp hprojB .X) (isPVM_liftOp hprojB .Z)
+    (P.products_XZ_A hm hψ hfail) (P.products_ZX_A hm hψ hfail)
+  linarith
+
+/-- **`lem:qld-global-separate` for Bob's global measurement.** -/
+theorem sum_not_isGood_mass_B_le (hd : 1 ≤ d) (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
+    (1 - 2 * ((2 + 2 * d + 8 * m * d) / Fintype.card F))
+        * ∑ g ∈ univ.filter (fun g => ¬ IsGood g),
+          bornProb (padState (F := F) (m := m) (d := d) ψ) 1 (P.GB.M () g)
+      ≤ 4 * (2 * δ + 2 * (57676416 * ε)) := by
+  have h := sum_not_isGood_mass_le hd _ P.GB (isPVM_liftOp hprojA .X) (isPVM_liftOp hprojA .Z)
+    (P.products_XZ_B hm hψ hfail) (P.products_ZX_B hm hψ hfail)
+  simp only [bornProb_swapVec] at h
+  linarith
 
 end GlobalPair
 
