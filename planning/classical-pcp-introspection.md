@@ -826,7 +826,8 @@ and `deltaH` for the fixed Alice hiding error, the common budget is
 `B = 64 etaZ + (512 r^2 + 224)e + 64 deltaH`.
 `exists_game_adaptive_prefix_dilation` constructs the residual projectors
 directly from those actual tests when `B <= 1`; none of the three mixing-error
-bounds is an extra premise. The value loss is at most `8 * B^(1/8)`.
+bounds is an extra premise. The corresponding replacement loss normalizes
+to at most `8 * B^(1/8)`.
 An explicit monotone numerical recurrence is available, but is not claimed to
 construct the sequence of strategies.
 
@@ -837,9 +838,12 @@ errors, including the full option-valued alphabets and the original EPR seed.
 
 Next work:
 
-1. Package the initial residual PVM and decoded answer-support invariant, then
-   compose canonicalization, graph recovery, the actual stage estimates, and
-   decoded next-prefix reassembly in one recursive strategy constructor.
+1. Construct the initial residual PVM and prove decoded valid-answer support,
+   including the default `none` residual on unattainable prefixes. Connect raw
+   parsed-answer canonicalization to the refined selected measurement using
+   graph and decoder recovery; recover the next option-valued product form.
+   Combine these identities and the actual stage estimates into the recursive
+   strategy constructor.
 2. Prove the small-error regime along the numerical recurrence, construct the
    replacements for all levels on Alice and Bob, and apply terminal extraction.
 3. Connect QLD to the primitive EPR/X/Z hypotheses. The remaining uniform

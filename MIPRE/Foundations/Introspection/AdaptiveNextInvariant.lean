@@ -83,10 +83,19 @@ theorem nextPrefixResidual_isPVM (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn uni
     (hD : ∀ y z, IsPVM (D y z)) (v : ι → F) :
     IsPVM (nextPrefixResidual P hP k a₀ D v) := by
   by_cases hv : v ∈ prefixOutcomes P (k + 1)
-  · simp only [nextPrefixResidual, dif_pos hv]
-    exact nextResidualOpAt_isPVM P hP k _ _ v _ _ (hD _ _)
-  · simpa only [nextPrefixResidual, dif_neg hv] using
-      (readout_isPVM (fun _ : (stageRemaining P (k + 1) v → F) × (H × A) => a₀))
+  · let p := nextPrefixSource P hP k v hv
+    have he : nextPrefixResidual P hP k a₀ D v =
+        nextResidualOpAt P hP k p.1 p.2 v (nextPrefixSource_advance P hP k v hv) ∘ D p.1 p.2 := by
+      funext a
+      simp only [nextPrefixResidual, dif_pos hv, Function.comp_apply]
+    rw [he]
+    exact nextResidualOpAt_isPVM P hP k p.1 p.2 v _ _ (hD p.1 p.2)
+  · have he : nextPrefixResidual P hP k a₀ D v =
+        readout (fun _ : (stageRemaining P (k + 1) v → F) × (H × A) => a₀) := by
+      funext a
+      simp only [nextPrefixResidual, dif_neg hv]
+    rw [he]
+    exact readout_isPVM _
 
 /-- Retain the original residual answer and advance only the prefix label. -/
 def advanceStageAnswer (P : CL.CLFun F ι ℓ) (k : ℕ) (p : AdaptiveStageAnswer P k A) :

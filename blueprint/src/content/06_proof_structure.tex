@@ -2736,7 +2736,7 @@ replacement theorem to this concrete construction.
 \leanok
 Write $e=|E|\eps$, let $\eta_Z$ be the primitive Bob-Z error and $\delta_H$
 the fixed Alice hiding error, and let $r$ be the remaining depth. For the
-current prefix product form with its valid-answer support, all three
+current projective prefix product form with its valid-answer support, all three
 refined stage errors are at most
 \[
   B_r(e,\eta_Z,\delta_H)
@@ -2800,8 +2800,10 @@ projective reassembly, next-prefix label assembly, and a concrete single-stage
 strategy replacement are now checked. Answer refinement and updating,
 next-prefix residual reassembly, the actual three-error budget, and exact
 preservation of the unchanged measurements' errors are also proved.
-Completing the Lean induction still requires packaging the decoded answer
-support with the initialized residual invariant, proving the small-error
+Completing the Lean induction still requires connecting raw parsed-answer
+canonicalization to the refined selected measurement and recovering the next
+option-valued product form, establishing decoded answer support and the
+initial residual invariant, proving the small-error
 regime along the recurrence, and constructing the successive strategies on
 both parties from the QLD-extracted strategy. Neither the repaired manuscript
 argument nor the single-stage theorem alone proves Lemma~\ref{lem:intro-induction}.

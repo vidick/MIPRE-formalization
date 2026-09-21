@@ -1898,6 +1898,10 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.TypedEstimates.readAliceError_registeredReplacement,
   MIPRE.Introspection.TypedEstimates.readBobError_registeredExtension
 
+#print axioms MIPRE.Introspection.exists_adaptive_next_strategy
+#print axioms MIPRE.Introspection.TypedEstimates.exists_game_adaptive_prefix_dilation
+#print axioms MIPRE.Introspection.TypedEstimates.canonicalizeIntro_value
+
 /-! ## Blocks of an index type
 
 Blueprint `lem:qld-sublines`, the measure-preserving half of a block decomposition: an assignment to
