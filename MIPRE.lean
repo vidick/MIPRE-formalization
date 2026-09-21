@@ -661,10 +661,16 @@ import MIPRE.Foundations.Halting.Strings
 import MIPRE.Foundations.Halting.Tabulate
 import MIPRE.Foundations.Halting.Wrapper
 import MIPRE.Foundations.Halting.WrapperCost
+import MIPRE.Foundations.Introspection.AdaptiveAnswerDecode
+import MIPRE.Foundations.Introspection.AdaptiveAnswerMarginal
+import MIPRE.Foundations.Introspection.AdaptiveAnswerRefinement
 import MIPRE.Foundations.Introspection.AdaptiveDilationTransport
 import MIPRE.Foundations.Introspection.AdaptiveDualFactor
 import MIPRE.Foundations.Introspection.AdaptiveDualLocal
 import MIPRE.Foundations.Introspection.AdaptiveDualMarginal
+import MIPRE.Foundations.Introspection.AdaptiveMarginalTest
+import MIPRE.Foundations.Introspection.AdaptiveNextFactor
+import MIPRE.Foundations.Introspection.AdaptiveNextInvariant
 import MIPRE.Foundations.Introspection.AdaptivePrefixAdvance
 import MIPRE.Foundations.Introspection.AdaptivePrefixCommutator
 import MIPRE.Foundations.Introspection.AdaptivePrefixExtension
@@ -675,11 +681,13 @@ import MIPRE.Foundations.Introspection.AdaptivePrefixMixing
 import MIPRE.Foundations.Introspection.AdaptivePrefixReplacement
 import MIPRE.Foundations.Introspection.AdaptivePrefixStrategy
 import MIPRE.Foundations.Introspection.AdaptiveResidual
+import MIPRE.Foundations.Introspection.AdaptiveStageBudget
 import MIPRE.Foundations.Introspection.AdaptiveXSplit
 import MIPRE.Foundations.Introspection.AdaptiveXTest
 import MIPRE.Foundations.Introspection.AdaptiveZFactor
 import MIPRE.Foundations.Introspection.AdaptiveZTest
 import MIPRE.Foundations.Introspection.AmbientMixing
+import MIPRE.Foundations.Introspection.AnswerRefinement
 import MIPRE.Foundations.Introspection.AuxiliaryChecks
 import MIPRE.Foundations.Introspection.BlockPOVM
 import MIPRE.Foundations.Introspection.BlockRetention
@@ -766,6 +774,7 @@ import MIPRE.Foundations.Introspection.RegisterCoordinates
 import MIPRE.Foundations.Introspection.RegisterEPR
 import MIPRE.Foundations.Introspection.RegisterMixing
 import MIPRE.Foundations.Introspection.RegisterTransport
+import MIPRE.Foundations.Introspection.RegisteredExtensionErrors
 import MIPRE.Foundations.Introspection.RetainedFibre
 import MIPRE.Foundations.Introspection.Runtime
 import MIPRE.Foundations.Introspection.Sampler
@@ -785,6 +794,7 @@ import MIPRE.Foundations.Introspection.SourceCompilerParamsCost
 import MIPRE.Foundations.Introspection.StateStability
 import MIPRE.Foundations.Introspection.StrategyReplacement
 import MIPRE.Foundations.Introspection.StrategyReplacementDilation
+import MIPRE.Foundations.Introspection.StrategyReplacementErrors
 import MIPRE.Foundations.Introspection.StrategyReplacementRegister
 import MIPRE.Foundations.Introspection.StrategyReplacementValue
 import MIPRE.Foundations.Introspection.SubmeasurementCompletion
