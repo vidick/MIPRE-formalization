@@ -190,7 +190,7 @@ theorem exists_intro_iteration
       refine ⟨MS, IS, hMS, ?_, ?_, ?_⟩
       · exact hfailS.trans (by
           rw [adaptiveFailureBudget_step]
-          exact add_le_add_left (adaptiveStepLoss_mono hdepth) _)
+          exact add_le_add le_rfl (adaptiveStepLoss_mono hdepth))
       · intro t ht
         exact (hotherS t ht).trans (congrArg
           (fun N => registeredExtendPOVM (T := Option ((ι → F) × A)) N) (hotherN t ht))
