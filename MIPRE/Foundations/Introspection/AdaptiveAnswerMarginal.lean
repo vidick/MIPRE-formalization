@@ -91,10 +91,10 @@ theorem stageAnswerRefinement_coarse_marginal (P : CL.CLFun F ι ℓ)
         if P.outputPrefix (k + 1) a.1 = v then C y (some a) else 0) + C v none := by
       unfold fibSum
       simp only [Finset.sum_filter, Fintype.sum_option]
-      change (∑ y, (if advancePrefix P k y 0 = v then C y none else 0) +
+      change (∑ y, ((if advancePrefix P k y 0 = v then C y none else 0) +
         ∑ a : (ι → F) × A,
           if advancePrefix P k y (coordinateRestrict (P.factorOfPrefix k y) a.1) = v
-            then C y (some a) else 0) = _
+            then C y (some a) else 0)) = _
       simp_rw [hv]
       have hz (y : ι → F) : advancePrefix P k y 0 = y := by simp [advancePrefix]
       simp only [hz, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]

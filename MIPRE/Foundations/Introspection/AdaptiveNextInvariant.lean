@@ -87,7 +87,7 @@ theorem nextPrefixResidual_isPVM (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn uni
     have he : nextPrefixResidual P hP k a₀ D v =
         nextResidualOpAt P hP k p.1 p.2 v (nextPrefixSource_advance P hP k v hv) ∘ D p.1 p.2 := by
       funext a
-      simp only [nextPrefixResidual, dif_pos hv, Function.comp_apply]
+      simp only [nextPrefixResidual, dif_pos hv, Function.comp_apply, p]
     rw [he]
     exact nextResidualOpAt_isPVM P hP k p.1 p.2 v _ _ (hD p.1 p.2)
   · have he : nextPrefixResidual P hP k a₀ D v =
