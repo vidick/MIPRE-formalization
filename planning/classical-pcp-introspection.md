@@ -601,32 +601,76 @@ The old blueprint note about an unrepaired manuscript Z-commutation step was
 stale: the pinned manuscript already uses the coarse operators. The blueprint
 now distinguishes that repaired argument from the remaining Lean assembly.
 
+### Further continuation, 2026-09-21
+
+The cross-introspection source branch is now an actual uniform compiler.
+Dynamic pair/triple parsers take binary `Q,R`, cap offsets by the input length,
+and enforce the original-answer cutoff. Executable canonical-parameter
+generation computes `Q,R`; an actual clocked source-sampler dimension query
+at `2^n` determines the source question length. The guard checks the outer
+bound and exact zero padding before projecting the questions and making the
+clocked source-decider call. The complete program halts on every raw input
+for arbitrary source code. Under original boundedness and `n >= 1`, acceptance
+is exactly the guard and original-game acceptance on the projected questions.
+The source compiler has polynomial compilation time and description size in
+both source descriptions and binary lambda. Its explicit composed execution
+bound includes parameter generation; absorption into a single universal
+introspection budget is still open.
+
+All auxiliary types now belong to one explicit perfect PCC strategy for the
+actual induced auxiliary game, including every Read and Hide level, loops,
+and cross-introspection. Its dimension is the seed cardinality times the
+source dimension. The recursive first Hide is identified with the full-register
+Pauli-X coarse readout. Both orientations of the concrete parsed X/first-Hide
+and Z/Sample anchor edges have commutation and rejected-product guarantees.
+The complete 26-type honest Pauli strategy remains a separate construction.
+
+On soundness, the later-keyed map now factors through the preceding fine
+hiding label. Claimed prefixes nest outside the CL image, and the next dual
+readout and tail only use the retained tail. Malformed answers and prefix
+mismatches use a complete dummy outcome. The actual parsed edge gives
+conditional error `2*|E|*eps`. Positive keyed cross terms prove ideal-normalizer
+replacement with loss `3*alpha + 3*eta + 3*epsFine`, with no alphabet factor.
+Exact mirrors transfer the ideal family before retained coarse-graining.
+
+The concrete ideal prefix commutes with the previous honest Hide family,
+and its guarded conditional product is exactly the next honest measurement.
+The actual Hide-to-Read-to-Introspect prefix chain is proved on both parties,
+without Pauli-predicate symmetry, at error `8*|E|*(ell-j+1)^2*eps`.
+Its normalizer is exactly the later reported-prefix measurement.
+The final `hiding_next_register_rigidity` theorem works on the extracted EPR
+seed tensored with an arbitrary normalized auxiliary state. From previous
+Alice fine rigidity `epsFine`, Bob Introspect-prefix error `delta`, and actual
+parsed-game failure `eps`, it proves Bob next-Hide rigidity at error
+`(6 + 48*(ell-j+1)^2)*|E|*eps + 6*delta + 3*epsFine`.
+All accepted-answer, conditional, commutation, ideal-product and mirror
+facts are discharged internally. Initialization, party-orientation iteration,
+and the later adaptive residual-strategy construction remain open.
+
 To inhabit `Introspection 7`, the following substantive obligations remain:
 
 1. Build the uniform finite-field Pauli sampler and complete typed decider
-   compiler, including its parameter computation, effective ordered-register
-   dual maps, integration of the checked inner/outer cuts, and description bound
-   for arbitrary input programs. The source program must only be retained
-   when its size fits the parameter. The positive-index runtime results also
-   need the explicit zero-index and invalid-parameter branches of this compiler.
-2. Connect the honest Pauli strategy's full register and projected answers to
-   the auxiliary register measurements, and assemble the checked adaptive
-   measurements and edge proofs into full typed PCC completeness. This includes
-   identifying the recursive zero-stage Hide with the raw first-Hide Pauli
-   readout under the full-register reindexing. Then apply
-   the already checked ambient detyping transport.
-3. Connect QLD state extraction, sampling and hiding tests, ideal-normalizer
-   replacement, conditional product stages and controlled dilation; iterate
-   over all CL levels with one error profile. A completed QLD theorem supplies
-   the initial extraction, not this iteration.
+   compiler beyond the completed cross-Introspect branch: effective ordered
+   dual maps, finite-field/Pauli and auxiliary dispatch, canonical parameter
+   admissibility, source-size cutoff, and absorption of the execution cost
+   into one universal budget. Prove the pipeline's exact zero-index and
+   invalid-input contracts while preserving the checked totality.
+2. Construct the full 26-type honest Pauli strategy with the required register
+   and projected-answer identifications, attach the proved X/Z anchor edges
+   to the complete auxiliary strategy, and apply the checked ambient detyping
+   transport. The adaptive auxiliary construction and first-Hide register
+   identity are complete.
+3. Connect QLD extraction and the actual Pauli/sampling tests to the fine base
+   and Introspect-prefix estimates, iterate the checked hiding step in both
+   party orientations, and build the conditional residual strategy with
+   controlled dilation over all CL levels and one error profile. QLD supplies
+   the initial extraction, not this iteration or adaptive strategy assembly.
 4. Apply the quantitative terminal extraction and error absorption, and
    package the actual compiler and all guarantees in the pipeline structure.
 
 No new axiom, admitted proof, or contract assuming these missing obligations
-is used. All 32 new modules pass targeted Lean 4.33.0 checks, and the complete
-`MIPRE/Axioms.lean` passes with 110 new blueprint-matched headline guards.
-The inspected theorem axioms are only `propext`, `Classical.choice`, and
-`Quot.sound` (or subsets). Blueprint coverage and ledger checks report zero
-problems. Independent reviews covered the clock/parser semantics, adaptive
-measurement and hiding-edge proofs, quantitative dilation and actual-game
-extraction. Full repository CI is the final merge check.
+is used. The continuations are checked with Lean 4.33.0; blueprint proof marks
+and headline guards are updated together. Inspected theorem axioms are only
+`propext`, `Classical.choice`, and `Quot.sound` (or subsets). Independent reviews
+cover compiler semantics and the keyed-normalizer/hiding argument. Full
+repository CI remains the final merge check.

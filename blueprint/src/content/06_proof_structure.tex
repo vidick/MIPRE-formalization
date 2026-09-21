@@ -1824,8 +1824,9 @@ A guarded source-call program rejects invalid pairs before evaluating the
 source. On valid pairs, acceptance is exactly source acceptance on the parsed
 fields, with halting and polynomial runtime transfer for total bounded sources.
 This component retains the input index and the full register questions.
-Index-dependent parameter generation, projection to the original question
-space and the complete auxiliary-test dispatch remain separate obligations.
+Index-dependent parameter generation and projection to the original question
+space are supplied by Lemma~\ref{lem:intro-dynamic-source-compiler}.
+The complete auxiliary-test dispatch remains a separate obligation.
 \end{lemma}
 \begin{proof}
 \leanok
@@ -1835,6 +1836,59 @@ delimiter. The checked one-call routing program tests the format and inner
 cutoffs first, and calls the source only on its accepting route. Determinism
 gives the acceptance equivalence, and the routing cost theorem bounds the
 complete execution.
+\end{proof}
+
+\begin{lemma}[Uniform executable cross-introspection compiler]
+\label{lem:intro-dynamic-source-compiler}
+\uses{lem:intro-answer-parser,lem:intro-growing-clock}
+\lean{MIPRE.Introspection.DynamicParser.boundedOffset_length_le,
+  MIPRE.Introspection.DynamicParser.pairCheck_iff,
+  MIPRE.Introspection.DynamicParser.tripleCheck_iff,
+  MIPRE.Introspection.DynamicParser.pairCheck_original_cutoff,
+  MIPRE.Introspection.DynamicParser.readCheck_original_cutoff,
+  MIPRE.Introspection.SourceCompiler.boundsProg_closed,
+  MIPRE.Introspection.SourceCompiler.boundsProg_runs,
+  MIPRE.Introspection.SourceCompiler.boundsProg_runs_cost,
+  MIPRE.Introspection.SourceCompiler.sourceCheck_iff,
+  MIPRE.Introspection.SourceCompiler.guardCheck_iff,
+  MIPRE.Introspection.SourceCompiler.GuardReady_cutoffs,
+  MIPRE.Introspection.SourceCompiler.GuardReady_question_lengths,
+  MIPRE.Introspection.SourceCompiler.GuardReady_padding,
+  MIPRE.Introspection.SourceCompiler.projectedProg_reject,
+  MIPRE.Introspection.SourceCompiler.projectedProg_accepts_iff,
+  MIPRE.Introspection.SourceCompiler.crossProg_closed,
+  MIPRE.Introspection.SourceCompiler.crossProg_halts,
+  MIPRE.Introspection.SourceCompiler.bounded_dimensionResult,
+  MIPRE.Introspection.SourceCompiler.crossProg_original_iff,
+  MIPRE.Introspection.SourceCompiler.crossCompiler_apply,
+  MIPRE.Introspection.SourceCompiler.crossCompiler_binary_bounds,
+  MIPRE.Introspection.SourceCompiler.crossProg_haltsWithin}
+\leanok
+The pair and triple parsers now take binary $Q,R$ as inputs; requested slices
+are capped by the actual input length before unary scanning. A closed program
+computes the canonical bounds from binary $(\lambda,n)$, queries the source
+sampler's dimension at $2^n$, checks the outer and inner answer cuts and exact
+zero padding, projects both questions to the source dimension, and runs the
+source decider at $2^n$. Both source calls are clocked. The program halts on
+every raw input even for arbitrary source program texts. For a bounded source
+and $n\geq1$, its acceptance is exactly the guard conjunction with original
+source acceptance on the projected questions. The actual compiler has
+polynomial compilation time and description length in both source sizes and
+binary $\lambda$. A composed execution bound includes all parameter, query,
+parsing and simulation costs. Parameter admissibility, absorption of this
+bound into one universal introspection budget, and the other typed-test
+branches remain separate obligations.
+\end{lemma}
+\begin{proof}
+\leanok
+Compute bounded slices with binary counters and check exact re-encoding.
+The canonical arithmetic programs generate the actual register and answer
+bounds. A clocked ordinary sampler query supplies the dimension; boundedness
+proves that this query fits the exponent-five clock. The guard proves exact
+source-question lengths and zero-tail membership before the source call.
+Compose the routing and clocked simulation programs, use determinism for
+acceptance equivalence, and compose their cost bounds. The AST constructors
+and specialization compiler establish the binary description bound.
 \end{proof}
 
 \begin{lemma}[Honest sampling core and first hiding test]
@@ -1856,8 +1910,9 @@ sampling edges and cross-introspection edge. Its dimension is the source
 dimension times the seed alphabet size. Honest Pauli-$Z$/Sample and
 Pauli-$X$/first-Hide effects commute and their products vanish whenever the
 full parsed test rejects. All outcome labels are retained.
-This core does not yet assert perfect PCC completeness for all adaptive
-Read and later Hide types or the complete Pauli subgame.
+The extension to all adaptive Read and Hide types is proved in
+Lemma~\ref{lem:intro-honest-full-auxiliary}. The complete Pauli subgame
+remains a separate construction.
 \end{lemma}
 \begin{proof}
 \leanok
@@ -1974,6 +2029,235 @@ the complement. These factors are disjoint, so their controlled tensor
 product is a PVM. Nonzero matrix rows force the reported CL question;
 summing the dual outcome gives its exact computational readout projector.
 Then tensor the original answer PVM and use its orthogonality.
+\end{proof}
+
+\begin{lemma}[Perfect PCC strategy for the full auxiliary game]
+\label{lem:intro-honest-full-auxiliary}
+\uses{lem:intro-honest-parsed,lem:intro-honest-hiding,lem:intro-honest-core}
+\lean{MIPRE.Introspection.Honest.hideOp_zero_eq_firstHideOp,
+  MIPRE.Introspection.Honest.pauliX_hideOp_zero_commute,
+  MIPRE.Introspection.Honest.pauliX_hideOp_zero_reject,
+  MIPRE.Introspection.Honest.parsedPauliXOp_isPVM,
+  MIPRE.Introspection.Honest.parsedPauliZOp_isPVM,
+  MIPRE.Introspection.Honest.parsedPauliX_hide_commute,
+  MIPRE.Introspection.Honest.parsedPauliZ_sample_commute,
+  MIPRE.Introspection.Honest.parsedPauliX_hide_reject_zero,
+  MIPRE.Introspection.Honest.parsedPauliZ_sample_reject_zero,
+  MIPRE.Introspection.Honest.parsedHide_pauliX_reject_zero,
+  MIPRE.Introspection.Honest.parsedSample_pauliZ_reject_zero,
+  MIPRE.Introspection.Honest.auxOp_isPVM,
+  MIPRE.Introspection.Honest.auxOp_commute,
+  MIPRE.Introspection.Honest.auxOp_reject_zero,
+  MIPRE.Introspection.Honest.auxStrategy_dimension,
+  MIPRE.Introspection.Honest.auxStrategy_isPCC,
+  MIPRE.Introspection.Honest.auxStrategy_value,
+  MIPRE.Introspection.Honest.exists_auxPerfectPCC}
+\leanok
+A perfect PCC source strategy extends to an explicit perfect PCC strategy
+for the induced game on every auxiliary type: Introspect, Sample, Read and
+all Hide levels, with the actual uniform ordered-edge law and full parsed
+answer alphabet. Its dimension is the seed cardinality times the source
+dimension. The recursive first Hide is exactly the full-register Pauli-$X$
+coarse readout. The concrete parsed $X$/first-Hide and $Z$/Sample edges commute
+and have zero rejected products in both orientations. Construction of the
+honest strategy for all 26 Pauli types is still required for full typed
+completeness.
+\end{lemma}
+\begin{proof}
+\leanok
+Transport the local first-stage Fourier basis through the full-register
+coordinate equivalence. Assemble the previously constructed measurements
+on one register/source space. Analyze every edge of the induced auxiliary
+graph, including loops and the cross-introspection edge. Commuting effects
+establish PCC; vanishing rejected products establish value one.
+\end{proof}
+
+\begin{lemma}[Guarded maps on arbitrary hiding answers]
+\label{lem:intro-guarded-hiding-maps}
+\uses{lem:intro-parsed-predicate}
+\lean{MIPRE.Introspection.CLChecks.prefixRegister_mono,
+  MIPRE.Introspection.CLChecks.outputPrefix_outputPrefix,
+  MIPRE.Introspection.CLChecks.prefixRegister_congr,
+  MIPRE.Introspection.CLChecks.dualReadout_congr,
+  MIPRE.Introspection.CLChecks.dualReadout_proj_compl_prefix,
+  MIPRE.Introspection.CLChecks.tail_proj_tail,
+  MIPRE.Introspection.TypedEstimates.hidingNextGuarded_factor,
+  MIPRE.Introspection.TypedEstimates.hiding_next_accepts_guarded,
+  MIPRE.Introspection.TypedEstimates.hiding_next_guarded_estimate,
+  MIPRE.Introspection.TypedEstimates.hiding_next_normalizer_estimate}
+\leanok
+The next hiding comparison factors through the preceding fine hiding label:
+its preceding question prefix, current dual output and remaining tail.
+The later question prefix is retained as the key. A dummy label handles
+malformed answers and disagreeing prefixes, so every keyed coarse family
+is complete. Success in the actual parsed adjacent-Hide test gives conditional
+squared error at most $2|E|\eps$. With preceding fine error $\eps_f$ and
+prefix-normalizer error $\eta$, replacement by a commuting ideal prefix
+costs at most $6|E|\eps+3\eta+3\eps_f$.
+\end{lemma}
+\begin{proof}
+\leanok
+Claimed prefixes nest even outside the image of the CL map. Equal preceding
+prefixes select the same next register, and the next dual readout and tail
+depend only on the previously retained tail. The actual accepted-answer
+relation therefore supplies the guarded equality. Extract its probability
+from the uniform ordered-edge law and apply conditional consistency and
+the normalizer replacement of Lemma~\ref{lem:intro-conditional-normalizer}.
+\end{proof}
+
+\begin{lemma}[Actual hiding-prefix propagation to Introspect]
+\label{lem:intro-actual-prefix-chain}
+\uses{lem:intro-guarded-hiding-maps,lem:intro-parsed-predicate}
+\lean{MIPRE.Introspection.TypedEstimates.check_hiding_next_prefix,
+  MIPRE.Introspection.TypedEstimates.check_hiding_read_prefix,
+  MIPRE.Introspection.TypedEstimates.prefixChainType_adj,
+  MIPRE.Introspection.TypedEstimates.prefixChainType_check,
+  MIPRE.Introspection.TypedEstimates.prefix_chain_step_estimate,
+  MIPRE.Introspection.TypedEstimates.hiding_introspect_prefix_estimate}
+\leanok
+For any hiding index $j$ and $m\leq j$, the actual Hide-$j$ and Introspect
+measurements of the reported $m$-prefix on Alice's side have squared distance
+at most $8|E|(\ell-j+1)^2\eps$. Every wrong answer constructor contributes
+to a separate dummy outcome. No honest-image or support assumption is
+imposed on the strategy's answers.
+\end{lemma}
+\begin{proof}
+\leanok
+Construct the actual path from Hide-$j$ through the remaining Hide vertices
+and Read to Introspect. Each accepted edge preserves the reported prefix.
+Combine its cross-party estimate with the consistency loop at the next
+vertex to get same-party error $8|E|\eps$. Telescope the chain with the
+squared Cauchy--Schwarz inequality.
+\end{proof}
+
+\begin{lemma}[The actual later normalizer from the prefix chain]
+\label{lem:intro-actual-normalizer-prefix}
+\uses{lem:intro-actual-prefix-chain,lem:intro-guarded-hiding-maps}
+\lean{MIPRE.Introspection.TypedEstimates.prefix_chain_step_estimate_bob,
+  MIPRE.Introspection.TypedEstimates.hiding_introspect_prefix_estimate_bob,
+  MIPRE.Introspection.TypedEstimates.hidingNormalizer_eq_reportedPrefix,
+  MIPRE.Introspection.TypedEstimates.hidingNormalizer_estimate}
+\leanok
+The same prefix-chain estimate holds on Bob's side without assuming that
+the Pauli predicate is symmetric. The actual conditional marginal in the
+adjacent hiding test is exactly the later answer's reported-prefix
+measurement, including the malformed label. If the corresponding Introspect
+prefix has squared error $\delta$ from its ideal, then the later Hide
+normalizer has error at most
+$16|E|(\ell-j+1)^2\eps+2\delta$.
+\end{lemma}
+\begin{proof}
+\leanok
+Use each forward path edge and the loop at its earlier endpoint to obtain
+Bob's estimate via the common Alice measurement. Sum the joint coarse
+outcomes to identify the actual prefix marginal exactly, then combine the
+chain and Introspect-prefix distances by the squared triangle inequality.
+\end{proof}
+
+\begin{lemma}[Dimension-independent conditional normalizer replacement]
+\label{lem:intro-conditional-normalizer}
+\uses{def:state-distance}
+\lean{MIPRE.Introspection.conditionalIdeal_isPVM,
+  MIPRE.Introspection.conditional_coarse_overlap,
+  MIPRE.Introspection.conditional_coarse_ideal_distance,
+  MIPRE.Introspection.conditional_normalizer_change,
+  MIPRE.Introspection.conditional_coarse_ideal_replacement,
+  MIPRE.Introspection.conditional_coarse_ideal_of_test,
+  MIPRE.Introspection.conditionalIdeal_mirror,
+  MIPRE.Introspection.conditional_coarse_ideal_replacement_mirror}
+\leanok
+Let $M_i,P_i$ be complete projective families on opposite parties and
+$Q_y$ a complete projective prefix family commuting with every $P_i$.
+For arbitrary keyed maps $f_y$, define
+$T_{y,z}=Q_y\sum_{i:f_y(i)=z}P_i$.
+This is a PVM. If the fine cross-party squared error is at most $\eps_f$,
+the actual marginal $R_y$ has squared error at most $\eta$ from $Q_y$,
+and the conditional comparison has squared error at most $\alpha$, then
+the later measurement has squared error at most
+$3\alpha+3\eta+3\eps_f$ from $T$. There is no alphabet-size factor.
+Exact mirrors of the primitive prefix and fine families transfer this
+conclusion to the opposite-party ideal family.
+\end{lemma}
+\begin{proof}
+\leanok
+All keyed off-diagonal Born terms are nonnegative because the ideal prefix
+and fine projectors commute. The diagonal terms recover the original fine
+overlap after summing the complete prefix family. Convert overlap to squared
+distance with the prefix attached as a normalizer. Completeness removes
+Alice's coarse projectors from the summed normalizer-change error. Apply
+the three-term squared triangle inequality. Exact mirrors reverse products;
+commutation restores the order in the ideal family.
+\end{proof}
+
+\begin{lemma}[The concrete ideal hiding step]
+\label{lem:intro-concrete-ideal-step}
+\uses{lem:intro-conditional-normalizer,lem:intro-honest-hiding,lem:intro-guarded-hiding-maps}
+\lean{MIPRE.Introspection.conditionalIdeal_eq_coarse_of_reject,
+  MIPRE.Introspection.Honest.hidingPrefixOp_isPVM,
+  MIPRE.Introspection.Honest.hidingPrefixOp_commute_hideOp,
+  MIPRE.Introspection.Honest.hideOp_prefix_fixed,
+  MIPRE.Introspection.Honest.hidingPrefixOp_mul_next,
+  MIPRE.Introspection.Honest.hideCoarseOp_isPVM,
+  MIPRE.Introspection.Honest.hideCoarseOp_conditionalIdeal_eq_next,
+  MIPRE.Introspection.Honest.hideCoarseOp_conditionalIdeal_step}
+\leanok
+The computational readout of the next truncated CL prefix is a complete
+PVM with zero malformed outcome and commutes with the preceding honest
+Hide family. Its product with the guarded coarse preceding family is exactly
+the next honest hiding measurement under the actual test's retained map.
+Discarding the redundant key bookkeeping gives exactly the next fine hiding
+coarse family. Only CL support and the adjacent-level index condition are
+assumed; the operator identities are proved from the constructed measurements.
+\end{lemma}
+\begin{proof}
+\leanok
+The next prefix is a marginal of the next honest Hide PVM, whose effects
+commute with the preceding Hide effects. Matrix support forces every nonzero
+effect's claimed prefix to be fixed by prefix extraction. Expand the ideal
+conditional product in the next PVM. Rejected products vanish; summing the
+complete earlier family leaves exactly the indicated next outcome. Finally
+compose the retained outcome maps.
+\end{proof}
+
+\begin{lemma}[An actual adjacent hiding rigidity step]
+\label{lem:intro-actual-hiding-rigidity-step}
+\uses{lem:intro-concrete-ideal-step,lem:intro-actual-normalizer-prefix,lem:intro-conditional-normalizer}
+\lean{MIPRE.Introspection.mirror_retained_distance_le,
+  MIPRE.Introspection.conditional_coarse_ideal_replacement_retained,
+  MIPRE.Introspection.Honest.hideCoarseOp_transpose,
+  MIPRE.Introspection.Honest.hideCoarseOp_epr_mirror,
+  MIPRE.Introspection.Honest.hideNextRetain_mapped,
+  MIPRE.Introspection.Honest.hideCoarseOp_step_of_normalizer,
+  MIPRE.Introspection.Honest.hideCoarseOp_registerState_mirror,
+  MIPRE.Introspection.Honest.hidingPrefixOp_registerState_mirror,
+  MIPRE.Introspection.Honest.hideCoarseOp_aux_step_of_normalizer,
+  MIPRE.Introspection.TypedEstimates.hiding_next_seed_rigidity,
+  MIPRE.Introspection.TypedEstimates.hiding_next_register_rigidity}
+\leanok
+On an extracted EPR seed register tensored with any normalized auxiliary
+state, let the actual parsed projective strategy fail with probability at
+most $\eps$. Suppose its preceding Alice hiding coarse measurement has
+cross-party squared error at most $\eps_f$ from the ideal, and its Bob
+Introspect prefix has squared error at most $\delta$ from the ideal prefix.
+Then the next Bob hiding coarse measurement has cross-party squared error
+at most
+\[
+ (6+48(\ell-j+1)^2)|E|\eps+6\delta+3\eps_f.
+\]
+The conclusion concerns the actual complete parsed measurement, including
+malformed outcomes. No conditional estimate, ideal commutation, mirror or
+next-level rigidity hypothesis is assumed. The initial estimates from
+QLD and sampling, party-orientation iteration, and the later product-strategy
+induction remain separate obligations.
+\end{lemma}
+\begin{proof}
+\leanok
+Prove transpose invariance of the adaptive honest operators and their exact
+EPR mirrors, then tensor with the arbitrary auxiliary state. Apply the actual
+conditional normalizer estimate and the actual prefix-chain bound. Transfer
+the paired ideal to the other party before coarse-graining cross-party
+consistency. The retained map on parsed answers and the concrete ideal
+product identity identify both sides with the next fine hiding families.
 \end{proof}
 
 \begin{lemma}[Product-form stage from coarse tests]

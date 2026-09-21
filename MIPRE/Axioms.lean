@@ -76,6 +76,17 @@ import MIPRE.Foundations.Introspection.HidingInductionDilation
 import MIPRE.Foundations.Introspection.HidingInduction
 import MIPRE.Foundations.Introspection.HidingRigidity
 import MIPRE.Foundations.Introspection.TypedExtraction
+import MIPRE.Foundations.Introspection.HidingNormalizer
+import MIPRE.Foundations.Introspection.ConditionalNormalizerMirror
+import MIPRE.Foundations.Introspection.ConditionalNormalizerIdeal
+import MIPRE.Foundations.Introspection.HonestCompleteGame
+import MIPRE.Foundations.Introspection.HonestPauliEdges
+import MIPRE.Foundations.Introspection.TypedPrefixChainEstimate
+import MIPRE.Foundations.Introspection.HidingNormalizerPrefix
+import MIPRE.Foundations.Introspection.SourceCompilerBinary
+import MIPRE.Foundations.Introspection.SourceCompilerCost
+import MIPRE.Foundations.Introspection.ConditionalNormalizerStepGame
+import MIPRE.Foundations.Introspection.ConditionalNormalizerStepSeed
 import MIPRE.Foundations.SAT.Arithmetization
 import MIPRE.Foundations.SAT.FiniteCircuitArithmetization
 import MIPRE.Foundations.SAT.CircuitFieldCorrect
@@ -1644,6 +1655,103 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.AnswerParser.guardedProg_haltsWithin,
   MIPRE.Introspection.AnswerParser.callReady_fields,
   MIPRE.Introspection.AnswerParser.guardedProg_accepts_iff
+
+/-! ## Introspection continuation: guarded normalizers and complete auxiliary game -/
+
+#guard_sorry_free MIPRE.Introspection.CLChecks.prefixRegister_mono,
+  MIPRE.Introspection.CLChecks.outputPrefix_outputPrefix,
+  MIPRE.Introspection.CLChecks.prefixRegister_congr,
+  MIPRE.Introspection.CLChecks.dualReadout_congr,
+  MIPRE.Introspection.CLChecks.dualReadout_proj_compl_prefix,
+  MIPRE.Introspection.CLChecks.tail_proj_tail,
+  MIPRE.Introspection.TypedEstimates.hidingNextGuarded_factor,
+  MIPRE.Introspection.TypedEstimates.hiding_next_accepts_guarded,
+  MIPRE.Introspection.TypedEstimates.hiding_next_guarded_estimate,
+  MIPRE.Introspection.TypedEstimates.hiding_next_normalizer_estimate
+
+#guard_sorry_free MIPRE.Introspection.conditionalIdeal_isPVM,
+  MIPRE.Introspection.conditional_coarse_overlap,
+  MIPRE.Introspection.conditional_coarse_ideal_distance,
+  MIPRE.Introspection.conditional_normalizer_change,
+  MIPRE.Introspection.conditional_coarse_ideal_replacement,
+  MIPRE.Introspection.conditional_coarse_ideal_of_test,
+  MIPRE.Introspection.conditionalIdeal_mirror,
+  MIPRE.Introspection.conditional_coarse_ideal_replacement_mirror
+
+#guard_sorry_free MIPRE.Introspection.TypedEstimates.check_hiding_next_prefix,
+  MIPRE.Introspection.TypedEstimates.check_hiding_read_prefix,
+  MIPRE.Introspection.TypedEstimates.prefixChainType_adj,
+  MIPRE.Introspection.TypedEstimates.prefixChainType_check,
+  MIPRE.Introspection.TypedEstimates.prefix_chain_step_estimate,
+  MIPRE.Introspection.TypedEstimates.hiding_introspect_prefix_estimate
+
+#guard_sorry_free MIPRE.Introspection.TypedEstimates.prefix_chain_step_estimate_bob,
+  MIPRE.Introspection.TypedEstimates.hiding_introspect_prefix_estimate_bob,
+  MIPRE.Introspection.TypedEstimates.hidingNormalizer_eq_reportedPrefix,
+  MIPRE.Introspection.TypedEstimates.hidingNormalizer_estimate
+
+#guard_sorry_free MIPRE.Introspection.conditionalIdeal_eq_coarse_of_reject,
+  MIPRE.Introspection.Honest.hidingPrefixOp_isPVM,
+  MIPRE.Introspection.Honest.hidingPrefixOp_commute_hideOp,
+  MIPRE.Introspection.Honest.hideOp_prefix_fixed,
+  MIPRE.Introspection.Honest.hidingPrefixOp_mul_next,
+  MIPRE.Introspection.Honest.hideCoarseOp_isPVM,
+  MIPRE.Introspection.Honest.hideCoarseOp_conditionalIdeal_eq_next,
+  MIPRE.Introspection.Honest.hideCoarseOp_conditionalIdeal_step
+
+#guard_sorry_free MIPRE.Introspection.mirror_retained_distance_le,
+  MIPRE.Introspection.conditional_coarse_ideal_replacement_retained,
+  MIPRE.Introspection.Honest.hideCoarseOp_transpose,
+  MIPRE.Introspection.Honest.hideCoarseOp_epr_mirror,
+  MIPRE.Introspection.Honest.hideNextRetain_mapped,
+  MIPRE.Introspection.Honest.hideCoarseOp_step_of_normalizer,
+  MIPRE.Introspection.Honest.hideCoarseOp_registerState_mirror,
+  MIPRE.Introspection.Honest.hidingPrefixOp_registerState_mirror,
+  MIPRE.Introspection.Honest.hideCoarseOp_aux_step_of_normalizer,
+  MIPRE.Introspection.TypedEstimates.hiding_next_seed_rigidity,
+  MIPRE.Introspection.TypedEstimates.hiding_next_register_rigidity
+
+#guard_sorry_free MIPRE.Introspection.Honest.hideOp_zero_eq_firstHideOp,
+  MIPRE.Introspection.Honest.pauliX_hideOp_zero_commute,
+  MIPRE.Introspection.Honest.pauliX_hideOp_zero_reject,
+  MIPRE.Introspection.Honest.parsedPauliXOp_isPVM,
+  MIPRE.Introspection.Honest.parsedPauliZOp_isPVM,
+  MIPRE.Introspection.Honest.parsedPauliX_hide_commute,
+  MIPRE.Introspection.Honest.parsedPauliZ_sample_commute,
+  MIPRE.Introspection.Honest.parsedPauliX_hide_reject_zero,
+  MIPRE.Introspection.Honest.parsedPauliZ_sample_reject_zero,
+  MIPRE.Introspection.Honest.parsedHide_pauliX_reject_zero,
+  MIPRE.Introspection.Honest.parsedSample_pauliZ_reject_zero,
+  MIPRE.Introspection.Honest.auxOp_isPVM,
+  MIPRE.Introspection.Honest.auxOp_commute,
+  MIPRE.Introspection.Honest.auxOp_reject_zero,
+  MIPRE.Introspection.Honest.auxStrategy_dimension,
+  MIPRE.Introspection.Honest.auxStrategy_isPCC,
+  MIPRE.Introspection.Honest.auxStrategy_value,
+  MIPRE.Introspection.Honest.exists_auxPerfectPCC
+
+#guard_sorry_free MIPRE.Introspection.DynamicParser.boundedOffset_length_le,
+  MIPRE.Introspection.DynamicParser.pairCheck_iff,
+  MIPRE.Introspection.DynamicParser.tripleCheck_iff,
+  MIPRE.Introspection.DynamicParser.pairCheck_original_cutoff,
+  MIPRE.Introspection.DynamicParser.readCheck_original_cutoff,
+  MIPRE.Introspection.SourceCompiler.boundsProg_closed,
+  MIPRE.Introspection.SourceCompiler.boundsProg_runs,
+  MIPRE.Introspection.SourceCompiler.boundsProg_runs_cost,
+  MIPRE.Introspection.SourceCompiler.sourceCheck_iff,
+  MIPRE.Introspection.SourceCompiler.guardCheck_iff,
+  MIPRE.Introspection.SourceCompiler.GuardReady_cutoffs,
+  MIPRE.Introspection.SourceCompiler.GuardReady_question_lengths,
+  MIPRE.Introspection.SourceCompiler.GuardReady_padding,
+  MIPRE.Introspection.SourceCompiler.projectedProg_reject,
+  MIPRE.Introspection.SourceCompiler.projectedProg_accepts_iff,
+  MIPRE.Introspection.SourceCompiler.crossProg_closed,
+  MIPRE.Introspection.SourceCompiler.crossProg_halts,
+  MIPRE.Introspection.SourceCompiler.bounded_dimensionResult,
+  MIPRE.Introspection.SourceCompiler.crossProg_original_iff,
+  MIPRE.Introspection.SourceCompiler.crossCompiler_apply,
+  MIPRE.Introspection.SourceCompiler.crossCompiler_binary_bounds,
+  MIPRE.Introspection.SourceCompiler.crossProg_haltsWithin
 
 /-! ## Blocks of an index type
 
