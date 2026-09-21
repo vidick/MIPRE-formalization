@@ -510,3 +510,123 @@ headline guards, and the inspected headline axioms are exactly the standard
 were regenerated, both blueprint checkers report zero problems, and independent
 reviews covered the parsed predicates, runtime budgets, program semantics,
 clocking and actual-game transport. Full repository CI is the final check.
+
+## Continuation after the merged executable construction (#137)
+
+PR #137 passed the complete 9,668-job build and was merged as `5155df3` on
+21 September 2026. A fresh fetch found no newer main commit or open PR. The
+later upstream QLD register-reindexing update (#138, `9517753`) was then
+fast-forwarded into this branch, followed by the QLD axis-degree legalization
+(#139, `fcd6d73`) before final repository validation. The companion
+manuscript remains at `a459dee`. This continuation follows the
+user's request to try to finish introspection, with particular attention to
+connecting the existing components to actual tests and programs.
+
+The growing-clock obligation is now concretely discharged. For fixed exponent
+`k`, `growingClock k lam` writes the exact unary budget
+`2^((lam*n+1)^k)`. Its description stores `lam` in binary, and an actual
+polynomial-time compiler constructs it. `ClockSimulation` computes the clock
+at `n`, reindexes the source input to `2^n`, runs the proved clocked universal
+interpreter, and rejects timeouts and noncanonical accepting results. It is
+total on every raw input. For a bounded original verifier, positive index,
+and the original four-field cut `(2^n)^lam`, exponent five preserves the
+original decision exactly. The complete generation, reindexing, simulation,
+and final result check have one uniform `ansBound C lam n` runtime bound.
+The simulator itself also has an actual compiler with polynomial cost and
+description size in source length and the binary parameter length.
+
+The actual answer parser now uses the paper's `00`/`01` bit encoding and `10`
+component terminator. For fixed register length `Q` and original-answer bound
+`R`, its polynomial-time pair and triple checks reject malformed tuples,
+incorrect register lengths and overlong original answers. Encoding
+injectivity and the honest strict outer `8Q` bounds are proved. The source-call
+guard rejects invalid pairs before running the source, preserves the supplied
+index, and has exact acceptance and runtime-transfer theorems. These are fixed
+parameter programs: generating `Q,R` from the input index, projecting full
+register questions to the source question space and dispatching all auxiliary
+tests remain part of the uniform compiler.
+
+The new honest construction includes an actual perfect PCC strategy for the
+four Introspect/Sample types, their loops, sampling edges, and the original
+game edge. Its dimension is the seed cardinality times the source dimension.
+Impossible question-label pairs annihilate before source PCC is used.
+The Pauli-Z/Sample and Pauli-X/first-Hide tests have exact commutation and
+rejection-zero proofs. Adaptive Read and Hide register measurements are now
+defined recursively on the original CL tree, and their projectivity is proved
+without assuming that distinct branch continuations commute.
+The exact Read marginal is the original CL question readout. Attaching the
+source answer PVM gives a full Read PVM with the exact Introspect marginal,
+all-label commutation, and zero products on every actual parsed rejection.
+The actual core, Read and Hide operators are now PVMs on the common parsed
+alphabet, with zero effects on wrong constructors and a shared register/source
+space. Both orientations of the Introspect/Read test have commutation and
+rejection-zero guarantees on every parsed label.
+Every Hide marginal is exactly the corresponding truncated CL question
+readout. The full X measurement and stopping Hide factor under the actual
+local/tail coordinate split. Neighboring Hide operators commute and every
+rejected actual adjacent comparison has zero product; the terminal Hide/Read
+pair has the same two guarantees. These proofs derive support from nonzero
+effects and annihilate mismatched local labels before recursing, so they do
+not assume the answers lie in an honest image.
+Both orientations of these hiding edges also have the same guarantees for
+the actual parsed predicate on the full common answer alphabet, including
+wrong constructors and the attached source-answer register.
+
+On the soundness side, an actual coarse joint PVM supplies each commutation
+estimate needed for a product-form stage. Six averaged tested errors at most
+`eps`, with `16*eps <= 1`, construct residual POVMs on `V \ U` at squared
+distance at most `224*sqrt(eps)`. This stage still needs its adaptive
+prefix-conditioned identification. The adjacent-Hide estimate retains the
+later player's prefix as an operator-valued conditioning marginal, rather
+than treating it as an unconditional cross-party comparison.
+
+The final extraction is now tied directly to the parsed game's predicate and
+question law. Non-pair constructors cannot contribute to the original-game
+edge. Exact terminal forms yield an explicit original strategy with failure
+at most `|E|*eps`; squared state error `eta` and terminal measurement errors
+`deltaA,deltaB` yield
+`|E|*(eps + 2*sqrt(eta)) + 2*sqrt(deltaA) + 2*sqrt(deltaB)`.
+The measurement and state replacement inequalities themselves are proved,
+not just the arithmetic that would absorb them into the final error profile.
+They have no answer-cardinality loss. Measurement replacement requires PVMs;
+the residual POVMs from mixing require a common-ancilla quantitative dilation.
+That dilation is now proved: the prefix PVM is unchanged, the same fixed
+ancilla state works for every question and prefix, compression and Born
+probabilities are exact, and squared distance costs at most `2*sqrt(delta)`.
+The dependent-family version permits varying local register carriers with a
+common ancilla alphabet. Applying the explicit register permutations to
+reassemble one global strategy remains part of the induction.
+
+The old blueprint note about an unrepaired manuscript Z-commutation step was
+stale: the pinned manuscript already uses the coarse operators. The blueprint
+now distinguishes that repaired argument from the remaining Lean assembly.
+
+To inhabit `Introspection 7`, the following substantive obligations remain:
+
+1. Build the uniform finite-field Pauli sampler and complete typed decider
+   compiler, including its parameter computation, effective ordered-register
+   dual maps, integration of the checked inner/outer cuts, and description bound
+   for arbitrary input programs. The source program must only be retained
+   when its size fits the parameter. The positive-index runtime results also
+   need the explicit zero-index and invalid-parameter branches of this compiler.
+2. Connect the honest Pauli strategy's full register and projected answers to
+   the auxiliary register measurements, and assemble the checked adaptive
+   measurements and edge proofs into full typed PCC completeness. This includes
+   identifying the recursive zero-stage Hide with the raw first-Hide Pauli
+   readout under the full-register reindexing. Then apply
+   the already checked ambient detyping transport.
+3. Connect QLD state extraction, sampling and hiding tests, ideal-normalizer
+   replacement, conditional product stages and controlled dilation; iterate
+   over all CL levels with one error profile. A completed QLD theorem supplies
+   the initial extraction, not this iteration.
+4. Apply the quantitative terminal extraction and error absorption, and
+   package the actual compiler and all guarantees in the pipeline structure.
+
+No new axiom, admitted proof, or contract assuming these missing obligations
+is used. All 32 new modules pass targeted Lean 4.33.0 checks, and the complete
+`MIPRE/Axioms.lean` passes with 110 new blueprint-matched headline guards.
+The inspected theorem axioms are only `propext`, `Classical.choice`, and
+`Quot.sound` (or subsets). Blueprint coverage and ledger checks report zero
+problems. Independent reviews covered the clock/parser semantics, adaptive
+measurement and hiding-edge proofs, quantitative dilation and actual-game
+extraction. Full repository CI is the final merge check.

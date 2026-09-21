@@ -1216,7 +1216,7 @@ readouts gives the identity.
 \begin{lemma}[Completeness of introspection]
 \label{lem:intro-completeness}
 \ledgernode{1.2.3.2}
-\uses{def:intro-verifier,def:pcc,lem:pauli-linear-fourier,lem:pauli-commute-criterion}
+\uses{def:intro-verifier,def:pcc,lem:pauli-linear-fourier,lem:pauli-commute-criterion,lem:intro-honest-core,lem:intro-honest-adaptive,lem:intro-honest-hiding,lem:intro-honest-parsed}
 If $\verifier_{2^n}$ has a value-$1$ PCC strategy, then $\vint_n$ has one: the players
 measure their EPR halves in the bases the sampled question prescribes and then play the
 value-$1$ strategy of $\verifier_{2^n}$ on the question they have obtained. Every test of the
@@ -1675,7 +1675,7 @@ $X$-measurements on the complements.
 \begin{lemma}[The soundness induction]
 \label{lem:intro-induction}
 \ledgernode{1.2.3.7}
-\uses{lem:intro-sampling-test,lem:intro-hiding-test,lem:conditional-measurement,lem:close-submeasurement,def:ent}
+\uses{lem:intro-sampling-test,lem:intro-hiding-test,lem:conditional-measurement,lem:close-submeasurement,def:ent,lem:intro-coarse-product-stage,lem:intro-adjacent-hiding,lem:intro-conditional-dilation,lem:intro-typed-final-extraction}
 For each level $k \in \{1, \ldots, \ell + 1\}$ there are ancilla states and projective
 measurements, acting on the player's space together with the ancilla, which reproduce the
 strategy's behaviour on the first $k$ levels while acting as the identity on the subspace the
@@ -1747,19 +1747,387 @@ power bound. These are quantitative closure results; they do not replace the
 soundness induction that must supply the error estimates.
 \end{proof}
 
-\begin{remark}[One step of the induction is documented rather than repaired]
+\begin{lemma}[Executable growing clock and original-index simulation]
+\label{lem:intro-growing-clock}
+\uses{lem:intro-ambient-runtime,lem:detype-total-clock}
+\lean{MIPRE.Introspection.ClockArithmetic.uniformProg_closed,
+  MIPRE.Introspection.ClockArithmetic.uniformProg_runs,
+  MIPRE.Introspection.growingClock_budget,
+  MIPRE.Introspection.growingClock_runs,
+  MIPRE.Introspection.growingClock_size,
+  MIPRE.Introspection.growingClockCompiler_apply,
+  MIPRE.Introspection.growingClockCompiler_runs,
+  MIPRE.Introspection.growingClock_polynomial_time,
+  MIPRE.Introspection.growingClock_ansBound_time,
+  MIPRE.Introspection.ClockSimulation.prog_closed,
+  MIPRE.Introspection.ClockSimulation.prog_halts,
+  MIPRE.Introspection.ClockSimulation.decider_accepts_iff,
+  MIPRE.Introspection.ClockSimulation.original_decider_preserved,
+  MIPRE.Introspection.ClockSimulation.compiler_apply,
+  MIPRE.Introspection.ClockSimulation.compiler_binary_bounds,
+  MIPRE.Introspection.ClockSimulation.decider_haltsWithin,
+  MIPRE.Introspection.ClockSimulation.original_decider_ansBound_time}
+\leanok
+For each fixed exponent $k$, an actual closed program generates the unary budget
+$2^{(\lambda n+1)^k}$. Hardwiring $\lambda$ adds only its binary encoding size
+and a fixed overhead; the parameter-to-program compiler is polynomial time.
+For $k,\lambda,n\geq1$, generation time is polynomial in that budget and is
+bounded by a uniformly enlarged introspection budget. A total clocked simulator
+reads the clock at index $n$ and runs the original program at $2^n$.
+For a bounded source verifier and legal original questions and answers,
+the exponent-five clock preserves acceptance exactly.
+Its actual compiler has polynomial cost and output size in the source
+description size and binary parameter length. For a bounded source and
+positive index, the complete clock generation, reindexing, universal
+simulation and result check fit a uniformly enlarged introspection budget.
+This is the original-program simulation component, not the complete
+introspection predicate or its cutoff parser.
+\end{lemma}
+\begin{proof}
+\leanok
+Compose the checked unary arithmetic and exponentiation programs, hardwire
+the binary parameter using the actual specialization compiler, and bound the
+cost by a fixed polynomial in the output budget. The reindexing program
+changes only the source index. Determinism and the legal-query runtime bound
+show that clocking preserves the source's accepting result.
+Compose the actual program constructors for compilation, and absorb the
+complete execution cost into a fixed polynomial of the generated budget.
+\end{proof}
+
+\begin{lemma}[Executable answer parsing and guarded source calls]
+\label{lem:intro-answer-parser}
+\uses{lem:intro-growing-clock,lem:intro-parsed-predicate}
+\lean{MIPRE.Introspection.AnswerParser.field_append_injective,
+  MIPRE.Introspection.AnswerParser.pairCheck_iff,
+  MIPRE.Introspection.AnswerParser.tripleCheck_iff,
+  MIPRE.Introspection.AnswerParser.pairCheck_pairBits,
+  MIPRE.Introspection.AnswerParser.tripleCheck_tripleBits,
+  MIPRE.Introspection.AnswerParser.pairBits_lt_outer,
+  MIPRE.Introspection.AnswerParser.readBits_lt_outer,
+  MIPRE.Introspection.AnswerParser.hideBits_lt_outer,
+  MIPRE.Introspection.AnswerParser.pairCheck_original_cutoff,
+  MIPRE.Introspection.AnswerParser.readCheck_original_cutoff,
+  MIPRE.Introspection.AnswerParser.guardedProg_closed,
+  MIPRE.Introspection.AnswerParser.guardedProg_reject,
+  MIPRE.Introspection.AnswerParser.guardedProg_halts,
+  MIPRE.Introspection.AnswerParser.guardedProg_haltsWithin,
+  MIPRE.Introspection.AnswerParser.callReady_fields,
+  MIPRE.Introspection.AnswerParser.guardedProg_accepts_iff}
+\leanok
+For fixed register length $Q$ and original-answer bound $R$, actual polynomial
+time programs parse the paper's pair and triple answer encodings. They check
+all register lengths and the separate original-answer cutoff. The encoding
+uses $00,01$ for bits and $10$ for component termination; exact re-encoding
+rejects extra fields, malformed delimiters and trailing bits. Under $Q\geq4$
+and $3R\leq Q$, honest encodings fit strictly below the outer $8Q$ bound.
+A guarded source-call program rejects invalid pairs before evaluating the
+source. On valid pairs, acceptance is exactly source acceptance on the parsed
+fields, with halting and polynomial runtime transfer for total bounded sources.
+This component retains the input index and the full register questions.
+Index-dependent parameter generation, projection to the original question
+space and the complete auxiliary-test dispatch remain separate obligations.
+\end{lemma}
+\begin{proof}
+\leanok
+Implement doubling and candidate decoding with list folds, then compare the
+input against the re-encoded candidates. Injectivity follows from the first
+delimiter. The checked one-call routing program tests the format and inner
+cutoffs first, and calls the source only on its accepting route. Determinism
+gives the acceptance equivalence, and the routing cost theorem bounds the
+complete execution.
+\end{proof}
+
+\begin{lemma}[Honest sampling core and first hiding test]
+\label{lem:intro-honest-core}
+\uses{lem:intro-parsed-predicate,lem:intro-final-extraction}
+\lean{MIPRE.Introspection.Honest.coreOp_isPVM,
+  MIPRE.Introspection.Honest.coreOp_commute,
+  MIPRE.Introspection.Honest.coreStrategy_dimension,
+  MIPRE.Introspection.Honest.exists_corePerfectPCC,
+  MIPRE.Introspection.Honest.pauliZ_sample_commute,
+  MIPRE.Introspection.Honest.sample_typed_reject_zero,
+  MIPRE.Introspection.Honest.firstHideOp_isPVM,
+  MIPRE.Introspection.Honest.pauli_firstHide_commute,
+  MIPRE.Introspection.Honest.firstHide_typed_reject_zero}
+\leanok
+A perfect PCC strategy for the source game gives an actual perfect PCC
+strategy for the induced four-type Introspect/Sample game, including its loops,
+sampling edges and cross-introspection edge. Its dimension is the source
+dimension times the seed alphabet size. Honest Pauli-$Z$/Sample and
+Pauli-$X$/first-Hide effects commute and their products vanish whenever the
+full parsed test rejects. All outcome labels are retained.
+This core does not yet assert perfect PCC completeness for all adaptive
+Read and later Hide types or the complete Pauli subgame.
+\end{lemma}
+\begin{proof}
+\leanok
+Tensor the source measurements with diagonal seed-fibre projectors.
+Disjoint fibres annihilate, so source PCC is needed only for question pairs
+arising from a common seed. The first hiding PVM is the coarse-graining
+of the full Pauli-$X$ measurement that reports the first dual readout and
+the untouched tail. Check the actual parsed predicate on every constructor.
+\end{proof}
+
+\begin{lemma}[Honest hiding marginals and edge compatibility]
+\label{lem:intro-honest-hiding}
+\uses{lem:intro-honest-adaptive,lem:intro-parsed-predicate}
+\lean{MIPRE.Introspection.Honest.hideRegister_marginal,
+  MIPRE.Introspection.Honest.hideOp_marginal,
+  MIPRE.Introspection.Honest.pauliX_coordinateSplit,
+  MIPRE.Introspection.Honest.stopHide_split,
+  MIPRE.Introspection.Honest.readRegister_entry_supported,
+  MIPRE.Introspection.Honest.hideRegister_entry_supported,
+  MIPRE.Introspection.Honest.hidingNext_stop_join,
+  MIPRE.Introspection.Honest.hidingNext_join,
+  MIPRE.Introspection.Honest.hidingRead_join,
+  MIPRE.Introspection.Honest.hideOp_commute_next,
+  MIPRE.Introspection.Honest.hideOp_commute_read,
+  MIPRE.Introspection.Honest.hideOp_reject_next_zero,
+  MIPRE.Introspection.Honest.hideOp_reject_read_zero}
+\leanok
+The first marginal of honest Hide at index $k$ is exactly the readout of the
+CL presentation truncated at $k$. Nonzero Read and Hide effects force their
+reported vectors to be supported on the active register. The full Pauli-$X$
+measurement factors under the actual local/tail coordinate split, and the
+stopping Hide measurement has the corresponding dual-linear-X/tail form.
+Neighboring hiding effects commute; for $k+1<\ell$, every answer pair rejected
+by the actual adjacent-hiding check has zero product. For $k+1=\ell$, the
+terminal Hide and Read effects commute and every rejected terminal comparison
+has zero product. These statements include all outcome labels.
+\end{lemma}
+\begin{proof}
+\leanok
+Induct on the CL tree. The common local Z/dual-X PVM annihilates unequal local
+labels before the tail relation is used. At the first stage, the exact product
+selects the common dual output and the exact stopping-tail answer. At later
+stages, nonzero tail effects supply their own support conditions; the actual
+verifier relations lift through the common local label. Both tail projections
+in the adjacent comparison use the later reported question. The terminal
+stage identifies the common prefix and complete dual output.
+\end{proof}
+
+\begin{lemma}[Honest operators on the complete parsed alphabet]
+\label{lem:intro-honest-parsed}
+\uses{lem:intro-honest-adaptive,lem:intro-honest-hiding,lem:intro-parsed-predicate}
+\lean{MIPRE.Introspection.Honest.parsedCoreOp_isPVM,
+  MIPRE.Introspection.Honest.parsedReadOp_isPVM,
+  MIPRE.Introspection.Honest.parsedHideOp_isPVM,
+  MIPRE.Introspection.Honest.parsedCore_read_commute,
+  MIPRE.Introspection.Honest.parsedRead_core_commute,
+  MIPRE.Introspection.Honest.parsedCore_read_reject_zero,
+  MIPRE.Introspection.Honest.parsedRead_core_reject_zero,
+  MIPRE.Introspection.Honest.parsedHide_next_commute,
+  MIPRE.Introspection.Honest.parsedHide_next_commute_reversed,
+  MIPRE.Introspection.Honest.parsedHide_read_commute,
+  MIPRE.Introspection.Honest.parsedRead_hide_commute,
+  MIPRE.Introspection.Honest.parsedHide_next_reject_zero,
+  MIPRE.Introspection.Honest.parsedHide_next_reject_zero_reversed,
+  MIPRE.Introspection.Honest.parsedHide_read_reject_zero,
+  MIPRE.Introspection.Honest.parsedRead_hide_reject_zero}
+\leanok
+The actual core, full Read, and Hide measurements extend to PVMs on the common
+parsed-answer alphabet, acting on one register/source space. Wrong constructors
+have zero effect. In both orientations of the Introspect/Read edge, every
+pair of effects commutes and every rejected answer pair has zero product.
+The same all-constructor guarantees hold in both orientations of every
+adjacent Hide edge and the terminal Hide/Read edge, with their actual index
+conditions and parsed verifier predicates.
+\end{lemma}
+\begin{proof}
+\leanok
+Embed the proper pair, Read, or Hide labels and extend by zero. For Hide,
+tensor the adaptive register PVM with the identity on the source register.
+Summing over all constructors recovers the original PVM normalization.
+Constructor case analysis reduces the reading edge to its exact refinement
+identity; all other products vanish.
+For hiding edges, identify the parsed check exactly with the corresponding
+CL relation and apply the honest hiding product theorem. Tensoring with the
+source identity preserves both commutation and rejected-product vanishing.
+\end{proof}
+
+\begin{lemma}[Adaptive honest Read and Hide measurements]
+\label{lem:intro-honest-adaptive}
+\uses{lem:intro-honest-core,lem:intro-linear-readout-projectivity}
+\lean{MIPRE.Introspection.Honest.readRegister_isPVM,
+  MIPRE.Introspection.Honest.hideRegister_isPVM,
+  MIPRE.Introspection.Honest.readOp_marginal,
+  MIPRE.Introspection.Honest.fullReadOp_isPVM,
+  MIPRE.Introspection.Honest.fullReadOp_marginal,
+  MIPRE.Introspection.Honest.introspect_read_commute,
+  MIPRE.Introspection.Honest.read_typed_reject_zero}
+\leanok
+Recursion on the original CL presentation constructs the honest register
+PVMs for Read and every Hide level, including adaptive branch-dependent
+registers. The Read first marginal is exactly the original CL question
+readout. Attaching the original question-dependent answer measurement gives
+the full Read PVM, whose Introspect marginal is exact. Its effects commute
+with Introspect, and every rejection by the actual parsed Introspect/Read
+test has zero operator product. The hiding edges are proved in
+Lemma~\ref{lem:intro-honest-hiding}; assembly with the full Pauli strategy
+remains an additional obligation.
+\end{lemma}
+\begin{proof}
+\leanok
+At a CL node, measure the commuting linear-Z and dual-linear-X outcomes on
+the selected register, and use the Z outcome to select the continuation on
+the complement. These factors are disjoint, so their controlled tensor
+product is a PVM. Nonzero matrix rows force the reported CL question;
+summing the dual outcome gives its exact computational readout projector.
+Then tensor the original answer PVM and use its orthogonality.
+\end{proof}
+
+\begin{lemma}[Product-form stage from coarse tests]
+\label{lem:intro-coarse-product-stage}
+\uses{lem:pauli-mixing,lem:intro-subtest-estimates}
+\lean{MIPRE.Introspection.coarse_joint_commutator_bound,
+  MIPRE.Introspection.productStage_mixing_premises,
+  MIPRE.Introspection.exists_product_stage_of_coarse_tests}
+\leanok
+For a current projective measurement on register $V$, two actual
+opposite-party coarse joint PVMs provide the tested $Z$ and $X$ marginals.
+A common sampling marginal provides the remaining linear-readout consistency.
+If the sum of these six averaged errors is at most $\eps$ and
+$16\eps\leq1$, the stage constructs actual POVMs on the residual register
+obtained by removing $U$ from $V$, with product-form squared-distance error at most
+$224\sqrt{\eps}$. Commutator estimates are conclusions of the coarse
+tests, rather than hypotheses. The prefix-conditioned identification and
+iteration across all CL levels remain separate obligations.
+\end{lemma}
+\begin{proof}
+\leanok
+Apply commutation analysis to each coarse joint PVM, and combine the two
+sampling comparisons on the same side. The resulting mixing premises are
+bounded by $16\eps$. Apply ambient Pauli mixing on the actual nested
+registers and simplify $56\sqrt{16\eps}$.
+\end{proof}
+
+\begin{lemma}[Conditional projectivization on a common ancilla]
+\label{lem:intro-conditional-dilation}
+\uses{lem:intro-coarse-product-stage,def:state-distance}
+\lean{MIPRE.Introspection.bornProb_extVecA,
+  MIPRE.Introspection.stateSqNorm_extVecA_aOp,
+  MIPRE.Introspection.dilated_pvm_distance,
+  MIPRE.Introspection.conditionalDilationOp_isPVM,
+  MIPRE.Introspection.conditionalDilationOp_compress,
+  MIPRE.Introspection.conditionalDilationOp_born,
+  MIPRE.Introspection.extVecA_registerState,
+  MIPRE.Introspection.exists_conditional_projective_dilation,
+  MIPRE.Introspection.exists_varying_conditional_projective_dilation}
+\leanok
+A family of residual POVMs admits simultaneous projective dilations with
+one fixed ancilla state for every question and prefix. Prefix projectors are
+left intact. Compression and Born probabilities are exact, and an original
+PVM at averaged squared distance $\delta$ from the product POVM is at averaged
+squared distance at most $2\sqrt{\delta}$ from the dilated PVM on the enlarged
+state. A dependent-family version allows all local register carriers and
+transported states to vary with the prefix, while retaining the same ancilla
+alphabet and state. Explicit reassociation preserves the original EPR factor.
+\end{lemma}
+\begin{proof}
+\leanok
+Apply simultaneous Naimark dilation only to the residual factor. Compression
+identifies the mixed quadratic forms, and PVM normalization plus
+Cauchy--Schwarz bounds the resulting distance. Jensen combines the local
+bounds. For varying carriers, choose each local dilation and apply the same
+weighted estimate. Reassembly via the adaptive register permutations remains
+an obligation of the global induction.
+\end{proof}
+
+\begin{lemma}[Conditional estimate for the actual adjacent hiding test]
+\label{lem:intro-adjacent-hiding}
+\uses{lem:intro-parsed-predicate,lem:intro-type-presentation,lem:conditional-measurement}
+\lean{MIPRE.Introspection.conditional_coarse_consistency,
+  MIPRE.Introspection.CLChecks.prefixRegister_outputPrefix_succ,
+  MIPRE.Introspection.CLChecks.dualReadout_outputPrefix,
+  MIPRE.Introspection.TypedEstimates.hiding_next_accepts_conditional,
+  MIPRE.Introspection.TypedEstimates.hiding_next_conditional_estimate}
+\leanok
+The next visited register and dual readout depend only on the claimed
+output prefix. In the actual parsed adjacent-Hide game, the earlier player's
+coarse answer is therefore conditioned on precisely the later player's
+retained prefix. If the later measurement is projective, the conditional
+squared-distance estimate is at most $2|E|\eps$. The conditioning marginal
+is retained as an operator; it is not replaced by an unconditional distance
+or an assumed ideal hiding measurement.
+\end{lemma}
+\begin{proof}
+\leanok
+Prove prefix invariance by recursion on the CL presentation. The four
+accepted-answer comparisons imply the conditional equality of coarse labels.
+Use the later joint PVM and its marginal to convert conditional consistency
+to squared distance, and the actual edge probability $1/|E|$ to bound failure.
+\end{proof}
+
+\begin{lemma}[Quantitative measurement and state replacement]
+\label{lem:intro-value-stability}
+\uses{def:state-distance,def:tensor-strategy}
+\lean{MIPRE.Introspection.pvm_event_stability,
+  MIPRE.Introspection.joint_distance_left,
+  MIPRE.Introspection.testAcceptance_stability_left,
+  MIPRE.Introspection.testAcceptance_stability_right,
+  MIPRE.Introspection.testAcceptance_stability,
+  MIPRE.Introspection.qform_state_stability,
+  MIPRE.Introspection.povmValue_state_stability,
+  MIPRE.Introspection.povmValue_failure_transfer}
+\leanok
+Replacing projective measurements at summed squared state distances
+$\delta_A,\delta_B$ changes any test acceptance by at most
+$2\sqrt{\delta_A}+2\sqrt{\delta_B}$. Replacing normalized state vectors at
+squared distance $\eta$ changes the full game value by at most $2\sqrt{\eta}$.
+These bounds have no answer-cardinality factor. The measurement-replacement
+statements require projectivity, so the mixing output must first undergo a
+quantitatively controlled common-ancilla dilation.
+\end{lemma}
+\begin{proof}
+\leanok
+Apply two Cauchy--Schwarz bounds to the accepted outcomes of the joint PVM.
+Summing the unchanged party's outcomes removes it exactly from the distance.
+For state replacement, the accepted effect is a contraction; expand its
+quadratic-form difference and average with the normalized question law.
+\end{proof}
+
+\begin{lemma}[Quantitative extraction from the concrete typed game]
+\label{lem:intro-typed-final-extraction}
+\uses{lem:intro-final-extraction,lem:intro-parsed-predicate,lem:intro-type-presentation,lem:intro-value-stability}
+\lean{MIPRE.Introspection.TypedExtraction.cross_check,
+  MIPRE.Introspection.TypedExtraction.condWin_cross_eq,
+  MIPRE.Introspection.TypedExtraction.cross_failure_le,
+  MIPRE.Introspection.TypedExtraction.pairReadout_isPVM,
+  MIPRE.Introspection.TypedExtraction.condWin_cross_readout,
+  MIPRE.Introspection.TypedExtraction.exists_strategy_of_terminal_form,
+  MIPRE.Introspection.TypedExtraction.exists_strategy_of_approx_terminal_form,
+  MIPRE.Introspection.TypedExtraction.exists_strategy_of_state_and_terminal_approx}
+\leanok
+The actual cross-introspection test rejects every non-pair constructor and
+has probability $1/|E|$. Terminal product-form measurements therefore
+construct an original-game strategy on exactly the auxiliary spaces with
+failure at most $|E|\eps$. With squared state error $\eta$ and terminal
+measurement errors $\delta_A,\delta_B$, the proved bound is
+\[
+ |E|(\eps+2\sqrt{\eta})+2\sqrt{\delta_A}+2\sqrt{\delta_B}.
+\]
+No separate conditional-acceptance premise is assumed. The Pauli extraction
+and hiding induction must still produce the state and terminal approximations.
+\end{lemma}
+\begin{proof}
+\leanok
+Restrict the acceptance sum to the pair constructors using the parsed
+predicate, identify their Born law with the original CL distribution, and
+apply the exact auxiliary-strategy extraction. Combine the actual edge
+failure bound with the proved state and measurement replacement bounds.
+\end{proof}
+
+\begin{remark}[The coarse-operator repair and its remaining Lean assembly]
 \label{rem:intro-commutation-gap}
-\uses{lem:intro-induction,lem:conditional-measurement}
-The induction's $Z$-step applies a commutation analysis to \emph{fine} operators where the
-surrounding chain supplies only the \emph{coarse} ones. The audit recorded the repair recipe
-in the source at the point of use --- re-run the commutation analysis with the coarse
-operators, exactly as the parallel $X$-step already does --- but left the rewrite itself to
-the authors, because it touches a fifty-line induction. So this is the one place in
-introspection where the blueprint is ahead of the source: the statement of
-Lemma~\ref{lem:intro-induction} is the intended one, and a formalization will have to carry
-out the coarse-operator version rather than transcribe what is printed. It is the only known
-open step in the section; everything else was verified line by line, including the whole
-twirl toolkit and the final constant arithmetic.
+\uses{lem:intro-induction,lem:conditional-measurement,lem:intro-coarse-product-stage}
+The pinned manuscript already runs the $Z$ commutation analysis on the coarse
+operators. The earlier blueprint statement that this rewrite remained undone
+was stale. The checked product-form stage now derives commutators from actual
+coarse joint measurements. Completing the Lean induction still requires
+identifying the adaptive prefix-conditioned operators, proving the hiding
+normalizer replacement, dilating the residual POVMs on one common ancilla,
+and iterating with a uniform error bound. Neither the repaired manuscript
+argument nor the single-stage theorem alone proves Lemma~\ref{lem:intro-induction}.
 \end{remark}
 
 \subsubsection{The theorem}
