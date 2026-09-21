@@ -548,7 +548,13 @@ import MIPRE.Foundations.Blocks
 import MIPRE.Foundations.CL.Basic
 import MIPRE.Foundations.CL.Canonical
 import MIPRE.Foundations.CL.Closure
+import MIPRE.Foundations.CL.Detyping
+import MIPRE.Foundations.CL.DetypingGame
+import MIPRE.Foundations.CL.DetypingLaw
+import MIPRE.Foundations.CL.DetypingQueries
+import MIPRE.Foundations.CL.DetypingSoundness
 import MIPRE.Foundations.CL.Downsize
+import MIPRE.Foundations.CL.Embedding
 import MIPRE.Foundations.CL.Graph
 import MIPRE.Foundations.CL.Register
 import MIPRE.Foundations.CL.Repeat
@@ -801,6 +807,7 @@ import MIPRE.Foundations.SAT.Succinct
 import MIPRE.Foundations.SAT.Table
 import MIPRE.Foundations.SAT.TraceGram
 import MIPRE.Foundations.SAT.Tseitin
+import MIPRE.Foundations.SampledGame
 import MIPRE.Foundations.Sandwich
 import MIPRE.Foundations.Sign
 import MIPRE.Foundations.StateDistance

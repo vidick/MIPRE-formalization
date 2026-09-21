@@ -2418,6 +2418,9 @@ projectivity. Nothing in the chain is a per-outcome estimate, so no constant dep
 \label{lem:qld-axis-degree}
 \ledgernode{1.2.2.6,1.2.2.9}
 \uses{lem:qld-expanded-lines}
+\lean{MIPRE.LowDegree.natDegree_lineRestrict_single_le, MIPRE.QLD.DegLE.add,
+  MIPRE.QLD.degLE_zero, MIPRE.QLD.degLE_padLine, MIPRE.QLD.degLE_rdLine,
+  MIPRE.QLD.degLE_lineCoeffs_aline, MIPRE.QLD.degLE_hatLine_outcome}
 For an axis-parallel line, the expanded line measurement can be supported on
 polynomials of degree at most $d$, with the same register versions and
 consistency estimates as Lemma~\ref{lem:qld-expanded-lines}.
@@ -2428,6 +2431,23 @@ line, so addition preserves the bound for $d\geq1$.
 This is an additional target; the proved expanded-line theorem states the
 weaker general bound $md$.
 \end{lemma}
+
+\paragraph{Comments.} \textbf{The degree computation is formalized; the support claim is not.}
+\texttt{natDegree\_lineRestrict\_single\_le} is the geometric half: the restriction of a polynomial
+to $u_0 + t e_j$ has degree at most its individual degree in $X_j$, because every other substitution
+is a constant. A multilinear encoding therefore restricts to an affine function of the line
+parameter, and \texttt{degLE\_hatLine\_outcome} adds that to a legal axis answer --- whose degree is
+at most $d$ by the answer \emph{type} in this formalization --- to get degree at most $d$ for
+$d\geq1$.
+
+What is missing is exactly the phrase ``can be supported''. The strategy's line measurement is indexed
+by \emph{all} answers, and a diagonal-line answer to an axis-parallel question --- which the decider
+rejects, but for which the measurement still has an element --- produces an outcome of degree up to
+$md$. Making the measurement supported on degree $d$ means coarse-graining those answers into a
+default outcome, and then re-deriving the two items of Lemma~\ref{lem:qld-expanded-lines} for the
+modified measurement at the cost of the format-failure probability, which is $O(\eps)$ but changes the
+constants. That is the remaining work, and it is why Lemma~\ref{lem:qld-padded-lines} states its
+degree-$d$ clause conditionally on this lemma rather than proving it.
 
 \begin{lemma}[Pairs of lines]
 \label{lem:qld-pairs-of-lines}
@@ -2801,7 +2821,8 @@ primes on $w_X, w_Z$, and the unspecified law of the coordinate registers $s_X, 
 \begin{lemma}[Padded line POVM]
 \label{lem:qld-padded-lines}
 \ledgernode{1.2.2.12}
-\uses{lem:qld-pairs-of-lines,lem:qld-sublines,lem:qld-padded-points,def:cross-distance}
+\uses{lem:qld-pairs-of-lines,lem:qld-sublines,lem:qld-padded-points,def:cross-distance,
+  lem:qld-axis-degree}
 \lean{MIPRE.avg_comp_equiv_fst, MIPRE.QLD.Content.lpX, MIPRE.QLD.Content.lpZ, MIPRE.QLD.ofLPX,
   MIPRE.QLD.ofLPZ, MIPRE.QLD.contentSplitX, MIPRE.QLD.pairSplitX, MIPRE.QLD.contentSplitZ,
   MIPRE.QLD.pairSplitZ, MIPRE.QLD.contentSplitPts, MIPRE.QLD.pairSplitPts,
@@ -2861,18 +2882,49 @@ primes on $w_X, w_Z$, and the unspecified law of the coordinate registers $s_X, 
   MIPRE.QLD.avgSubAB_one, MIPRE.QLD.sum_bornProb_le_fibre, MIPRE.QLD.sum_bornProb_diag_le_one,
   MIPRE.QLD.pasteEval, MIPRE.QLD.pasteFib, MIPRE.QLD.pasteFib_eq, MIPRE.QLD.posSemidef_pasteFib,
   MIPRE.QLD.sum_pasteFib, MIPRE.QLD.ptComb, MIPRE.QLD.lineComb,
-  MIPRE.QLD.lineComb_eq_sum_pasteFib, MIPRE.QLD.padded_lines_consistency}
+  MIPRE.QLD.lineComb_eq_sum_pasteFib, MIPRE.QLD.padded_lines_consistency,
+  MIPRE.QLD.extVec2_swapVec, MIPRE.QLD.xSqNorm_swapVec, MIPRE.QLD.extHat_swapVec,
+  MIPRE.QLD.padded_lines_consistency_swap}
+\leanok
 For every padded line $\ell$, there is a POVM with polynomial outcomes of
-degree at most $md+1$, and at most $d$ when $\ell$ is axis-parallel.
+degree at most $md+1$, and --- given Lemma~\ref{lem:qld-axis-degree} --- at
+most $d$ when $\ell$ is axis-parallel.
 On the padded line--point distribution it is consistent with the opposite
 padded point measurement, with error
-$\delta_{\mathrm{combine}}=m\cdot\poly(\eps,md/q)$, in both register versions.
+$\delta_{\mathrm{combine}}=\poly(m)\cdot\poly(\eps,md/q)$, in both register
+versions.
 The answer is the restriction of $\alpha f_X(x)+\beta f_Z(z)$.
 On an axis line, either an $x$ or $z$ coordinate varies with constant
 $\alpha,\beta$, or only one coefficient varies, giving degree at most $d$
 for $d\geq1$. The general bound $md+1\leq4md$ and the separate axis bound
 make these legal answers for the seeded test at $(q,4m,d,1)$.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:qld-pairs-of-lines,lem:qld-sublines,lem:qld-padded-points,lem:qld-axis-degree}
+\leanok
+The measurement is the conditional average, over the sublines the construction of
+Lemma~\ref{lem:qld-sublines} draws for the given padded line, of the pasted line measurement
+coarse-grained by the combining map; its outcome at a point of $\ell$ is
+$\alpha f_X(x) + \beta f_Z(z)$ by construction, and the degree bounds are the ones the Comments
+below record.
+
+For the consistency, the joint law of the two sublines-with-points is, at a fixed padded seed,
+\emph{exactly} a product of the two marginal laws, each restricted or not according to which block
+the padded axis index lies in. So Lemma~\ref{lem:qld-pairs-of-lines} on a product of two independent
+line--point laws applies directly, and the padded law is at most $m^2$ times the product of the two
+unrestricted laws. Coarse-graining the outcome pair $(f_X(x),f_Z(z))$ along
+$(r_1,r_2)\mapsto \alpha r_1 + \beta r_2$ only increases agreement, and $\alpha$ and $\beta$ at the
+sampled point are uniform and independent of both sublines, because translating the padded point in
+those two coordinates alone leaves both sublines fixed. Chaining the three gives
+$\delta_{\mathrm{combine}} = m^2\,\delta_P$. The other register version is this one applied to the
+swapped strategy on the swapped state.
+
+The paper instead chains three Cauchy--Schwarz claims, because it takes the joint law to be
+correlated; that is so given the padded \emph{line}, but the quantity conditions on the two
+\emph{sublines}, which do not determine the relative offset of the two blocks. See
+\texttt{reports/padded-lines-product-law.md}.
+\end{proof}
 
 \paragraph{Comments.} The statement is not yet proved: what is missing is the consistency bound
 $\delta_{\mathrm{combine}}$. Everything the statement asserts \emph{about the measurement} is formalized ---
