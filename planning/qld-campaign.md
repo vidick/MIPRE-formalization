@@ -1462,3 +1462,113 @@ bridge from `LowIndDegPoly F (4m) d` (a coefficient vector) to `MvPolynomial (Fi
 mass argument that a `w`-dependent outcome cannot be consistent with a `w`-independent point
 measurement at two independent `w`, `w'`. The paper's `8md/q` and the standing `16md ≤ q` make
 the `w`-dependent mass at most `4 δ_ld`.
+
+### PR H-a: `lem:qld-global-dummy` (2026-09-21)
+
+**What closed.** `lem:qld-global-dummy`, with both marks. `MIPRE/Background/QLD/Dummy.lean` (fast
+regime) proves that an outcome of the global measurement which reads a dummy coordinate carries
+little weight: `sum_bad_mass_le` gives `(1 - 8md/q) · W ≤ 2δ` for any projective `G` with outcomes
+in `LowIndDegPoly F (4m) d` whose evaluation is `δ`-consistent with a point measurement that does
+not read the dummy coordinates, and `sum_bad_mass_le_of_le` gives `W ≤ 4δ` under `16md ≤ q`.
+`exists_global_pvm_wIndep` (in `PaddedLIDT.lean`) is the statement for the measurements of `-pvm`,
+on both sides, at `4 δ_ld`.
+
+**The route.** The paper's: resample the dummy coordinates (`mix u u'`), use the consistency at
+both points (the pair swap `mixSwap` is an involution, so the resampled point is uniform too), and
+bound the collision probability by Schwartz--Zippel. Two things are done differently. The paper's
+orthogonality step needs projective point measurements; the formalization works with the padded
+point measurements of the *original* strategy, which are POVMs, and uses `P_b + P_b' ≤ 1` for
+`b ≠ b'` instead (`POVM.add_le_one`), so no dilation enters. And Schwartz--Zippel is applied to
+`rename inl g − rename dumSub g` on the variable type `Fin (4m) ⊕ Fin (4m)`, with individual
+degrees, giving `8md/q`; the lemma in `Foundations` is for `Fin n`, so
+`prob_agreeOn_le_individualDegree` restates it for any finite variable type by transport along
+`Fintype.equivFin`. The coefficient at any monomial of `g` involving a dummy coordinate survives
+in the difference (`rename_toMv_ne`, by `coeff_rename_mapDomain` and `coeff_rename_eq_zero`).
+
+**The bridge.** `LowIndDegPoly F n d` is a coefficient vector indexed by exponent vectors with
+entries at most `d`; `LowIndDegPoly.toMv` is the `MvPolynomial` it denotes, with `eval_toMv`,
+`coeff_toMv` and `degreeOf_toMv_le`, and `degreeOf_rename_le` carries a degree bound along an
+injective renaming to every target variable. Stage 4b's linearity and separation analyses will
+use the same bridge.
+
+**Two Lean points.** `swapVec_unit` in `QLD/Swap.lean` has `dA dB : Type`, while the dilated
+registers live in `Type u`; applying it to `padState ψ` sends the unifier into a `whnf` timeout
+rather than a universe error. `swapVec_dotProduct` (Foundations, universe-polymorphic) is the
+lemma to use. And in a theorem named `LowIndDegPoly.eval_toMv`, the bare `eval` resolves to
+`LowIndDegPoly.eval`, not `MvPolynomial.eval`.
+
+### PR H-b: `lem:qld-global-products` (2026-09-21)
+
+**What closed.** `lem:qld-global-products`, with both marks, for every outcome, both product
+orders and both parties. `MIPRE/Background/QLD/Products.lean` (fast regime) proves the abstract
+statement `sum_snorm_sq_ordComb_le`: for a projective `G` with outcomes in `LowIndDegPoly F (4m) d`
+that is `δ`-consistent, on average over a uniform padded point, with the sandwich combination
+`sandComb X Z u c = ∑_{αa+βb=c} Z_b X_a Z_b` of two projective families on Bob's register whose
+average commutator weight is `κ`, and for an ordered product `ord` with `∑ ord = 1` deviating
+from the sandwich by a contraction of the commutator,
+`∑_u μ_u ∑_g ‖(G_g ⊗ (1 − ∑_{αa+βb=g(u)} ord(a,b))) Φ‖² ≤ 2δ + 2κ`. `ordZX` and `ordXZ` instantiate
+it. `PaddedLIDT.lean` specializes it to a `GlobalPair` (`GlobalPair.products_ZX_A`, `_XZ_A`, and
+the Bob versions `_ZX_B`, `_XZ_B` on the swapped state) with `κ = 57676416 ε` from
+`sum_content_hatComm_le(_B)`.
+
+**The route.** Split `1 − B = (1 − P) + (P − B)`. The first part is the consistency: `0 ≤ P ≤ 1`
+gives `(1 − P)² ≤ 1 − P` (`mul_self_le_self_of_le_one`, from `Commute.mul_nonneg`), so
+`∑_g E ‖(G_g ⊗ (1 − P))Φ‖² ≤ ∑_g E ⟨G_g ⊗ (1 − P)⟩ ≤ δ`. The second part: group by the value
+`c = g(u)` and drop Alice's projector `∑_{g(u)=c} G_g ≤ 1` (`sum_snorm_sq_aOp_mul_bOp_le`), leaving
+`E_u ∑_c ‖(1 ⊗ (P_u(c) − B_u(c)))Φ‖²`, the fibre sums of `D = sand − ord`, which sum to zero over
+`(a, b)`; Parseval over `F_q` (`sum_avg_norm_fibre_sq`, transferred to `stateVecB` by
+`sum_avg_normSq_stateVecB_fibre_eq`) gives `(1 − 1/q) ∑_{ab} ‖(1 ⊗ D(a,b))Φ‖²` with no factor `q`,
+and `D = Z[X, Z]` (order `Z X`) or `−(1 − Z)[X, Z]` (order `X Z`) is a contraction of the
+commutator. The uniform padded point is read as independent uniform `(x, z, α, β)` by the
+involution `abSwap` (`sum_uniform_pad4`), and the verifier's content as independent uniform `(x, z)`
+(`sum_content_blocks`).
+
+**The structure.** `GlobalPair ψ hprojA hprojB δ` (in `PaddedLIDT.lean`) bundles `-pvm`'s output:
+`GA`, `GB` and the three consistencies. `exists_globalPair` is `-pvm`; `-dummy`
+(`GlobalPair.sum_bad_mass_A_le`, `_B_le`) and `-products` are theorems on it, and so will be
+`-linear`, `-separate` and stage 4c. The earlier bundled existential `exists_global_pvm_wIndep` is
+gone.
+
+**Two remarks.** The paper's `-products` is for `w`-independent outcomes and goes through the
+dilated projective joint measurement of `lem:qld-4-12`; the sandwich POVM suffices and the
+estimate holds for all outcomes, so `-dummy` is not used here (its `\uses` no longer names it).
+The `X Z` order needs `‖(Z X Z − X Z) w‖ ≤ ‖[X, Z] w‖`, which is not obvious termwise but is the
+identity `Z X Z − X Z = −(1 − Z)(X Z − Z X)`, valid for a projector `Z`.
+
+### PR H-c: `lem:qld-global-linear` (2026-09-21)
+
+**What closed.** `lem:qld-global-linear`, with both marks, for all outcomes and both parties.
+`MIPRE/Background/QLD/Linear.lean` (fast regime) proves the abstract statement
+`sum_bad_linear_mass_le`: if a projective `G` with outcomes in `LowIndDegPoly F (4m) d` satisfies
+the `X_a Z_b` products estimate `∑_g E_u ‖(G_g ⊗ (1 − B_u(g(u))))Φ‖² ≤ Δ`, then
+`(1 − 2η) · ∑_{g not linear in (α,β)} ⟨G_g ⊗ 1⟩ ≤ 2Δ` with `η = (1 + 2d + 4md)/q`. "Linear in
+`(α, β)`" is `IsLinAB g`: every monomial of `g` has exponents `(1, 0)` or `(0, 1)` on the two
+combining coordinates. `PaddedLIDT.lean` specializes it to a `GlobalPair`
+(`GlobalPair.sum_bad_linear_mass_A_le`, `_B_le`) with `Δ = 2δ + 2 · 57676416 ε` from
+`products_XZ_A`, `_B`.
+
+**The route.** Per bad outcome, `⟨G_g⟩ ≤ 2‖(G_g ⊗ B_u)Φ‖² + 2‖(G_g ⊗ (1 − B_u))Φ‖²` for every
+`u`; the second terms are the products estimate, so everything rests on
+`E_u ‖(G_g ⊗ B_u(g(u)))Φ‖² ≤ η ⟨G_g⟩` (`sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB`). The
+uniform padded point is read as a uniform base point `u₀` with a fresh uniform pair `(α, β)`
+written into the combining coordinates (`sum_uniform_setAB`, the map `setAB` being `q²`-to-one by
+the involution `abSwap`); `g(setAB u₀ α β)` is the bivariate polynomial `pAB g u₀` (`eval_pAB`),
+whose coefficients are the `coef`s of `g` — `LowIndDegPoly.coef g T t`, the coefficient vector of
+the monomial pattern `t` on the coordinates `T` as a polynomial in the others
+(`eval_eq_sum_coef`). A bad `g` has a nonzero non-linear coefficient (`exists_bad_coef`);
+Schwartz--Zippel in `4m` variables (`card_eval_eq_zero_le`) bounds the base points where it
+vanishes by `4md/q`, and there each `B` is a contraction (`snorm_sq_ordComb_ordXZ_le`). At the
+other base points `pAB g u₀` differs from every linear form (`pAB_ne_linAB`): the `β = 0` pairs
+cost `1/q`, and for `β ≠ 0` the fibre has one `b` per `a`, so Pythagoras over the orthogonal
+`X_a` (`snorm_sq_ordComb_ordXZ_of_ne`, from `snorm_sq_sum_proj_mul`) writes
+`‖(S ⊗ B)Φ‖² = ∑_{fibre} W(a, b)` with weights summing to `⟨S⟩` (`sum_snorm_sq_ordXZ_eq`);
+exchanging the sums, each weight is counted with the agreement probability of two distinct
+bivariate polynomials, `≤ 2d/q` (`sum_agree_two_le`).
+
+**Two remarks.** The paper displays `O((δ_ld + δ_Q)^{1/2} + md/q)` for the `w`-independent
+outcomes and notes in a `cnote` that the quadratic expansion gives the linear bound; the
+formalization proves the linear bound for all outcomes, so `-dummy` is not a dependency here
+either, and the constant is explicit. Lean points: `Fintype.card_ne_zero` needs `Nonempty F`,
+which `omit [Field F]` removes; `not_imp` is ambiguous between `_root_` and `Classical`
+(the former deprecated); and the `ᴴ` notation is scoped to `Matrix`, so a `namespace MIPRE` block
+needs `open Matrix`.
