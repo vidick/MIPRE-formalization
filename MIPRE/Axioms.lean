@@ -90,6 +90,14 @@ import MIPRE.Foundations.Introspection.ConditionalNormalizerStepSeed
 import MIPRE.Foundations.Introspection.ReadRigidityGame
 import MIPRE.Foundations.Introspection.ProductStageReadTests
 import MIPRE.Foundations.Introspection.ProductStageZTests
+import MIPRE.Foundations.Introspection.AdaptivePrefixAdvance
+import MIPRE.Foundations.Introspection.AdaptivePrefixCommutator
+import MIPRE.Foundations.Introspection.AdaptiveDualLocal
+import MIPRE.Foundations.Introspection.AdaptivePrefixStrategy
+import MIPRE.Foundations.Introspection.StrategyReplacementDilation
+import MIPRE.Foundations.Introspection.AdaptiveXTest
+import MIPRE.Foundations.Introspection.AdaptiveZTest
+import MIPRE.Foundations.Introspection.AdaptivePrefixMarginal
 import MIPRE.Foundations.SAT.Arithmetization
 import MIPRE.Foundations.SAT.FiniteCircuitArithmetization
 import MIPRE.Foundations.SAT.CircuitFieldCorrect
@@ -1790,6 +1798,64 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.TypedEstimates.introspect_dual_commutator,
   MIPRE.Introspection.TypedEstimates.introspect_coarseZ_commutator_bob,
   MIPRE.Introspection.TypedEstimates.introspect_coarseZ_commutator_alice
+
+#guard_sorry_free MIPRE.Introspection.CLChecks.residual_supported,
+  MIPRE.Introspection.CLChecks.residual_exactlyOn,
+  MIPRE.Introspection.CLChecks.stageFactor_subset_residual,
+  MIPRE.Introspection.CLChecks.residualRegister_step,
+  MIPRE.Introspection.CLChecks.dualReadout_stageLinear,
+  MIPRE.Introspection.prefixWeight_eq_card,
+  MIPRE.Introspection.prefixWeight_pos_iff,
+  MIPRE.Introspection.sum_prefixWeight_supported,
+  MIPRE.Introspection.hidingPrefixOp_registerState_weight,
+  MIPRE.Introspection.prefixResidual_distance_sum,
+  MIPRE.Introspection.prefixResidual_commutator_sum
+
+#guard_sorry_free MIPRE.Introspection.Honest.hidingPrefixOp_factor,
+  MIPRE.Introspection.Honest.readDualOp_eq_registerDual,
+  MIPRE.Introspection.Honest.dualRegister_cons_succ,
+  MIPRE.Introspection.Honest.synX_split_second,
+  MIPRE.Introspection.Honest.readDualOp_prefix_factor,
+  MIPRE.Introspection.readDualOp_stage_factor,
+  MIPRE.Introspection.adaptiveZ_readout_factor
+
+#guard_sorry_free MIPRE.Introspection.prefixResidual_isPVM,
+  MIPRE.Introspection.prefixResidual_reassembled_isPVM,
+  MIPRE.Introspection.prefixResidual_reassembled_distance,
+  MIPRE.Introspection.prefixResidual_reassembled_commutator_sum,
+  MIPRE.Introspection.adaptiveZ_reassembled_commutator_sum,
+  MIPRE.Introspection.prefixResidualOp_extend
+
+#guard_sorry_free MIPRE.Introspection.stageRemaining_step,
+  MIPRE.Introspection.prefixStageMarginalError_eq,
+  MIPRE.Introspection.prefixStageCommutatorError_eq,
+  MIPRE.Introspection.exists_adaptive_prefix_mixing,
+  MIPRE.Introspection.transportedConditionalDilation_compress,
+  MIPRE.Introspection.exists_adaptive_prefix_dilation,
+  MIPRE.Introspection.adaptiveReplacement_distance
+
+#guard_sorry_free MIPRE.Introspection.testAcceptance_stability_map_left,
+  MIPRE.Introspection.replaceExtended_other,
+  MIPRE.Introspection.replaceExtended_value,
+  MIPRE.Introspection.registeredReplacementStrategy_value_loss,
+  MIPRE.Introspection.exists_conditional_replacement_strategy,
+  MIPRE.Introspection.exists_adaptive_replacement_strategy
+
+#guard_sorry_free MIPRE.Introspection.advancePrefix_old_prefix,
+  MIPRE.Introspection.advancePrefix_remaining,
+  MIPRE.Introspection.advancePrefix_injective,
+  MIPRE.Introspection.advancePrefix_eval,
+  MIPRE.Introspection.adaptiveLinear_readout_factor,
+  MIPRE.Introspection.advancePrefix_projector_assembly
+
+#guard_sorry_free MIPRE.Introspection.adaptiveDualLabel_injective,
+  MIPRE.Introspection.adaptiveX_reassembled_commutator_le,
+  MIPRE.Introspection.TypedEstimates.introspect_adaptiveX_commutator,
+  MIPRE.Introspection.option_readout_commutator_sum,
+  MIPRE.Introspection.TypedEstimates.introspect_adaptiveZ_commutator
+
+#guard_sorry_free MIPRE.Introspection.advancePrefix_fibSum_sqNorm,
+  MIPRE.Introspection.prefixStageMarginalError_reassembled
 
 /-! ## Blocks of an index type
 

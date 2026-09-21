@@ -34,9 +34,15 @@ Full hiding rigidity is now proved from the extracted primitive X/Z bounds:
 the actual Pauli tests supply its base and prefix estimates, and the finite
 iteration covers every level on both parties. Read rigidity is also complete.
 The actual Sample and Read joint measurements now give the coarse Z and dual
-commutator estimates needed for product-form induction. That induction still
-requires the adaptive prefix-conditioned register identifications and weights,
-residual measurement construction, strategy reassembly and error iteration.
+commutator estimates needed for product-form induction. The actual adaptive
+prefix law, Z and dual-X register factorizations, exact weighted conditioning,
+minimal continuation support, and next-prefix label/projector assembly are now
+checked. A complete single-stage construction applies mixing, constructs actual
+common-ancilla residual projectors, reassembles a global PVM, and returns a
+concrete strategy with a quantitative value-loss bound. The full induction
+still requires refining actual Introspect answers into the stage alphabet and
+supplying and propagating the three stage-error budgets through both parties'
+successive replacements.
 The full `Introspection 7` still requires the remaining verifier branches and
 uniform budget bound, the complete honest 26-type Pauli strategy, and the
 QLD extraction interface and product-strategy soundness iteration. See

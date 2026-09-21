@@ -2515,6 +2515,158 @@ apply the exact auxiliary-strategy extraction. Combine the actual edge
 failure bound with the proved state and measurement replacement bounds.
 \end{proof}
 
+\begin{lemma}[Actual adaptive prefix law and residual registers]
+\label{lem:intro-adaptive-prefix}
+\uses{lem:conditional-measurement,lem:hide-rigidity}
+\lean{MIPRE.Introspection.CLChecks.residual_supported,
+  MIPRE.Introspection.CLChecks.residual_exactlyOn,
+  MIPRE.Introspection.CLChecks.stageFactor_subset_residual,
+  MIPRE.Introspection.CLChecks.residualRegister_step,
+  MIPRE.Introspection.CLChecks.dualReadout_stageLinear,
+  MIPRE.Introspection.prefixWeight_eq_card,
+  MIPRE.Introspection.prefixWeight_pos_iff,
+  MIPRE.Introspection.sum_prefixWeight_supported,
+  MIPRE.Introspection.hidingPrefixOp_registerState_weight,
+  MIPRE.Introspection.prefixResidual_distance_sum,
+  MIPRE.Introspection.prefixResidual_commutator_sum}
+\leanok
+The actual CL continuation acts only on the complement of the visited registers. Its next factor and linear map are computed from the original presentation. The prefix weights are the uniform seed fibre probabilities, agree with the Born law on the EPR register with arbitrary normalized auxiliary state, and sum to one. Full-carrier distances and commutators are exactly the weighted residual errors; impossible prefixes have weight zero.
+\end{lemma}
+\begin{proof}
+\leanok
+Split the actual visited coordinates from their complement. Factor the diagonal prefix projector by fibre locality, evaluate its EPR mass, and apply the tensor squared-norm identity. The continuation support follows by recursion on the CL presentation.
+\end{proof}
+
+\begin{lemma}[Concrete adaptive Z and dual-X factorization]
+\label{lem:intro-adaptive-factorization}
+\uses{lem:intro-read-rigidity,lem:intro-adaptive-prefix}
+\lean{MIPRE.Introspection.Honest.hidingPrefixOp_factor,
+  MIPRE.Introspection.Honest.readDualOp_eq_registerDual,
+  MIPRE.Introspection.Honest.dualRegister_cons_succ,
+  MIPRE.Introspection.Honest.synX_split_second,
+  MIPRE.Introspection.Honest.readDualOp_prefix_factor,
+  MIPRE.Introspection.readDualOp_stage_factor,
+  MIPRE.Introspection.adaptiveZ_readout_factor}
+\leanok
+The actual prefix projector, adaptive computational readout, and Read dual marginal factor on their concrete selected registers. The Read factorization holds for every claimed prefix, including off-image labels. On canonical selected-coordinate labels its residual operator is precisely the linear dual-X readout required by mixing.
+\end{lemma}
+\begin{proof}
+\leanok
+Follow the existing recursive Hide PVM through its coarse marginal. Summing earlier dual answers leaves the Z prefix. Split the X spectral projectors on the actual coordinate partition and identify the recursive dual map with the selected local linear map.
+\end{proof}
+
+\begin{lemma}[Projective reassembly across adaptive prefixes]
+\label{lem:intro-adaptive-reassembly}
+\uses{lem:intro-adaptive-prefix}
+\lean{MIPRE.Introspection.prefixResidual_isPVM,
+  MIPRE.Introspection.prefixResidual_reassembled_isPVM,
+  MIPRE.Introspection.prefixResidual_reassembled_distance,
+  MIPRE.Introspection.prefixResidual_reassembled_commutator_sum,
+  MIPRE.Introspection.adaptiveZ_reassembled_commutator_sum,
+  MIPRE.Introspection.prefixResidualOp_extend}
+\leanok
+Residual projective measurements assemble into one ambient PVM even though their coordinate spaces depend on the prefix. Prefix branches are orthogonal, so reassembly preserves squared errors exactly and global commutators reduce to the corresponding weighted local commutators. A common ancillary extension commutes with this concrete embedding.
+\end{lemma}
+\begin{proof}
+\leanok
+Each branch is supported by its actual honest prefix projector. Distinct projectors multiply to zero; summing the branch normalizers gives identity. The same orthogonality eliminates all cross terms in squared distances and commutators.
+\end{proof}
+
+\begin{lemma}[Adaptive extraction and common-ancilla projectivization]
+\label{lem:intro-adaptive-extraction}
+\uses{lem:pauli-mixing,lem:intro-conditional-dilation,lem:intro-adaptive-factorization,lem:intro-adaptive-reassembly}
+\lean{MIPRE.Introspection.stageRemaining_step,
+  MIPRE.Introspection.prefixStageMarginalError_eq,
+  MIPRE.Introspection.prefixStageCommutatorError_eq,
+  MIPRE.Introspection.exists_adaptive_prefix_mixing,
+  MIPRE.Introspection.transportedConditionalDilation_compress,
+  MIPRE.Introspection.exists_adaptive_prefix_dilation,
+  MIPRE.Introspection.adaptiveReplacement_distance}
+\leanok
+Suppose the current residual measurements are projective and their three full-carrier marginal and commutator errors are at most $\eps$, with $0\leq\eps\leq1$. Using the actual prefix law and selected registers, mixing constructs residual POVMs with squared error at most $56\sqrt{\eps}$. A single fixed ancillary alphabet suffices to produce residual PVMs and one ambient replacement measurement with squared error at most $2\sqrt{56\sqrt{\eps}}$. Its residual support is exactly the next unvisited register.
+\end{lemma}
+\begin{proof}
+\leanok
+Apply the exact conditioning identities to ambient Pauli mixing. Dilate the constructed residual POVMs with one common fixed ancilla, apply the quantitative compression estimate, average square roots by concavity, and use the exact prefix reassembly and register reassociation.
+\end{proof}
+
+\begin{lemma}[A concrete strategy after one adaptive replacement]
+\label{lem:intro-adaptive-strategy}
+\uses{lem:intro-adaptive-extraction}
+\lean{MIPRE.Introspection.testAcceptance_stability_map_left,
+  MIPRE.Introspection.replaceExtended_other,
+  MIPRE.Introspection.replaceExtended_value,
+  MIPRE.Introspection.registeredReplacementStrategy_value_loss,
+  MIPRE.Introspection.exists_conditional_replacement_strategy,
+  MIPRE.Introspection.exists_adaptive_replacement_strategy}
+\leanok
+If the selected measurement has the stated current prefix form and the three stage errors are bounded as above, an actual finite-dimensional tensor-product strategy is constructed. The new state retains the original EPR factor, all other measurements are extended by identity, and the selected measurement retains the prefix and newly extracted Z factor. The absolute game-value loss is at most $2\sqrt{2\sqrt{56\sqrt{\eps}}}$. Arbitrary answer relabelling is allowed. These are single-stage hypotheses, not a completed induction from game success.
+\end{lemma}
+\begin{proof}
+\leanok
+Construct the residual Naimark projectors and the ambient joint PVM, replace the selected question, and reassociate the shared EPR-plus-auxiliary state exactly. Pull the acceptance predicate back through answer relabelling before applying value stability; no same-party coarse-distance contraction is used.
+\end{proof}
+
+\begin{lemma}[Advancing the actual prefix label]
+\label{lem:intro-adaptive-advance}
+\uses{lem:intro-adaptive-factorization}
+\lean{MIPRE.Introspection.advancePrefix_old_prefix,
+  MIPRE.Introspection.advancePrefix_remaining,
+  MIPRE.Introspection.advancePrefix_injective,
+  MIPRE.Introspection.advancePrefix_eval,
+  MIPRE.Introspection.adaptiveLinear_readout_factor,
+  MIPRE.Introspection.advancePrefix_projector_assembly}
+\leanok
+Adding the selected coordinate answer preserves the preceding claimed prefix and selects the intended next remaining register. On attainable old prefixes the extended label recovers both components and is injective. For the actual selected linear outcome it is precisely the next sampler prefix. Coarse assembly of the old prefix and current linear Z projector is exactly the next honest prefix projector.
+\end{lemma}
+\begin{proof}
+\leanok
+Use locality of claimed-prefix extraction and disjointness of the current factor from visited coordinates. Recover the old prefix and selected coordinates, then identify the actual next sampler value using the sum of its stage maps.
+\end{proof}
+
+\begin{lemma}[Actual Sample and Read tests control conditional commutators]
+\label{lem:intro-adaptive-read-error}
+\uses{lem:intro-actual-product-commutators,lem:intro-adaptive-factorization,lem:intro-adaptive-reassembly}
+\lean{MIPRE.Introspection.adaptiveDualLabel_injective,
+  MIPRE.Introspection.adaptiveX_reassembled_commutator_le,
+  MIPRE.Introspection.TypedEstimates.introspect_adaptiveX_commutator,
+  MIPRE.Introspection.option_readout_commutator_sum,
+  MIPRE.Introspection.TypedEstimates.introspect_adaptiveZ_commutator}
+\leanok
+For a current product-form Introspect family, the actual parsed-game Sample
+and Read tests and the proved rigidity bounds control its prefix-weighted
+local Z and dual-X commutators, with the same constants as their full-carrier bounds.
+The current product form is an induction hypothesis; the commutator estimate
+is derived. Malformed outcomes remain in the common residual answer alphabet.
+\end{lemma}
+\begin{proof}
+\leanok
+Embed each selected-coordinate label injectively into the actual option-valued
+Read alphabet. Keep these nonnegative terms of the global commutator sum and
+apply the exact factorization and weighted reassembled-commutator identity.
+For Z, remove only the impossible ideal dummy outcome and use the exact
+adaptive computational-readout factorization.
+\end{proof}
+
+\begin{lemma}[Exact reassembly of the next-prefix marginal error]
+\label{lem:intro-adaptive-marginal}
+\uses{lem:intro-adaptive-advance,lem:intro-adaptive-extraction}
+\lean{MIPRE.Introspection.advancePrefix_fibSum_sqNorm,
+  MIPRE.Introspection.prefixStageMarginalError_reassembled}
+\leanok
+The stage marginal error is exactly the squared distance between the
+advanced coarse residual marginal and the next honest prefix measurement.
+There is no answer-count loss, and no projectivity or normalized-state
+hypothesis is needed for this equality.
+\end{lemma}
+\begin{proof}
+\leanok
+The extended label is injective on attainable old prefixes, and every
+other prefix-supported operator vanishes. Thus coarse assembly preserves
+the squared-error sum exactly. Identify its ideal term with the next-prefix
+projector assembly.
+\end{proof}
+
 \begin{remark}[The coarse-operator repair and its remaining Lean assembly]
 \label{rem:intro-commutation-gap}
 \uses{lem:intro-induction,lem:conditional-measurement,lem:intro-coarse-product-stage}
@@ -2523,11 +2675,13 @@ operators. The earlier blueprint statement that this rewrite remained undone
 was stale. The checked product-form stage derives commutators from coarse
 joint measurements, now instantiated by the actual Sample and Read tests.
 Full hiding rigidity, its normalizer replacement, Read rigidity, and the
-common-ancilla dilation theorem are proved. Completing the Lean induction
-still requires identifying the adaptive prefix-conditioned operators and
-their weights, applying mixing and dilation on evolving residual registers,
-reassembling each global strategy, and iterating its value and measurement
-error bounds. Neither the repaired manuscript
+common-ancilla dilation theorem are proved. The actual adaptive prefix law,
+Z and dual-X factorizations, weighted conditioning, minimal residual support,
+projective reassembly, next-prefix label assembly, and a concrete single-stage
+strategy replacement are now checked. Completing the Lean induction still
+requires refining actual Introspect answers into the stage alphabet, supplying
+and propagating all three stage-error budgets under replacements, and iterating
+the construction on both parties from the QLD-extracted strategy. Neither the repaired manuscript
 argument nor the single-stage theorem alone proves Lemma~\ref{lem:intro-induction}.
 \end{remark}
 

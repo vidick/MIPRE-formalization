@@ -722,3 +722,73 @@ and headline guards are updated together. Inspected theorem axioms are only
 `propext`, `Classical.choice`, and `Quot.sound` (or subsets). Independent reviews
 cover compiler semantics and the keyed-normalizer/hiding argument. Full
 repository CI remains the final merge check.
+
+### Adaptive product-form construction, 2026-09-21
+
+The next major analytic construction is now explicit. The actual CL prefix
+law is the pushforward of the uniform seed, with proved support, normalization,
+Born probability and trace identities. The ideal prefix acts on precisely its
+visited coordinates. The Read dual marginal is derived from the recursive
+Hide PVM and factors into that prefix and the selected local dual-X readout;
+the adaptive computational readout has the corresponding exact Z factorization.
+These statements include impossible claimed prefixes and arbitrary auxiliary
+registers. Their full-carrier squared errors equal the actual prefix-weighted
+residual errors exactly.
+
+`AdaptiveResidual` computes the continuation, its supported linear map, and
+the unvisited coordinates. `exists_adaptive_prefix_mixing` uses this concrete
+data and the three conditional marginal/commutator error bounds, constructing
+POVMs on the next unvisited coordinates at squared error `56*sqrt(eps)`.
+The input residual PVM is the current induction form; the output product form
+is constructed. Orthogonality of the actual prefix projectors proves genuine
+global PVM reassembly and exact addition of branch errors without an alphabet
+or prefix-count factor.
+
+`exists_adaptive_replacement_strategy` composes mixing with actual Naimark
+projectors on one shared fixed ancilla, the concrete register permutations,
+and replacement of the selected question. It returns a `TensorProductStrategy`
+with the original EPR seed and extended auxiliary state. Every other question
+retains its old measurement extended by identity. The global squared distance
+is at most `2*sqrt(56*sqrt(eps))`, and the absolute value loss is at most
+`2*sqrt(2*sqrt(56*sqrt(eps)))`. Arbitrary answer relabelling is handled by pulling
+back the game's predicate; no same-party coarse-distance contraction is used.
+
+`AdaptivePrefixAdvance` proves that adding the current coordinate answer
+preserves the preceding claimed prefix and selects the intended continuation.
+For attainable old prefixes, the new label recovers both components and the
+extension map is injective. Coarse assembly of the old prefix and current
+linear Z projector is exactly the next honest prefix projector. Thus the new
+coordinate support is identified at the extended label, not only at the old one.
+
+The actual Sample and Read tests now give the prefix-weighted local Z and
+dual-X commutator bounds, with their previous constants and no new alphabet
+factor. The Read proof explicitly injects canonical local labels into the
+full option-valued ideal alphabet; the Sample proof discards only the
+impossible ideal dummy outcome. `prefixStageMarginalError_reassembled`
+also identifies the stage marginal error with the actual next-prefix
+measurement distance. Injectivity on attainable prefixes and zero operators
+elsewhere prove exact norm preservation, without a general coarse-distance
+contraction assumption.
+
+The completed construction is one adaptive stage, not the full introspection
+soundness induction. The next implementation should:
+
+1. Refine the current parsed Introspect measurement into the selected-coordinate
+   outcome and residual answer alphabet, proving support and projectivity and
+   handling the malformed/dummy outcome. The actual-test commutator interfaces
+   use the common full-answer alphabet; the mixing stage uses a prefix-dependent
+   coordinate alphabet. Their conversion must be proved.
+   Repackage the constructed old-prefix/current-coordinate joint family as
+   the next-prefix residual invariant, using the proved injectivity and
+   coordinate-support identities.
+2. Supply the marginal estimate and thread all three stage-error budgets through
+   each replacement, using the actual game value and primitive rigidity bounds.
+   Construct both players' sequence of strategies with one quantitative recurrence.
+3. Connect the primitive extracted EPR/X/Z hypotheses to QLD, initialize and
+   iterate the product form, and apply the already proved terminal extraction
+   and error absorption. The uniform compiler and full honest Pauli-strategy
+   obligations listed above still remain before an inhabitant of `Introspection 7`.
+
+The paper's product-form induction was reread at the pinned manuscript commit.
+New results have focused Lean checks, axiom guards and matching blueprint marks;
+the factorization and strategy interfaces received independent review.
