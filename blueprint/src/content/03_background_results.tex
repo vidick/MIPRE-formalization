@@ -4212,7 +4212,9 @@ displays, and Lemma~\ref{lem:qld-povm-to-obs} at the end. Every step it assemble
   MIPRE.QLD.conj_syn_of_sign, MIPRE.QLD.swapU_conj_mTilde, MIPRE.QLD.swapU_conj_mTilde_X,
   MIPRE.QLD.swapU_conj_mTilde_Z, MIPRE.QLD.sum_snorm_sq_sub_eq_two_sub,
   MIPRE.QLD.sum_uniform_agree_bornProb_le, MIPRE.QLD.SimulPair.swapA,
-  MIPRE.QLD.SimulPair.swapU_conj_mTildeAt, MIPRE.QLD.inconsistency_triangle}
+  MIPRE.QLD.SimulPair.swapU_conj_mTildeAt, MIPRE.QLD.inconsistency_triangle,
+  MIPRE.QLD.inconsistency_regroupVec, MIPRE.QLD.pauliAtPOVM,
+  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le, MIPRE.QLD.abs_qform_sub_qform_le}
 There is $\delta_{qld} = O\bigl( \delta_S^{1/4} + md/q \bigr)$ and local unitaries $V_\alice$,
 $V_\bob$ on the expanded spaces such that, writing $M = 2^m$:
 \begin{enumerate}
@@ -4320,15 +4322,28 @@ Lemma~\ref{lem:qld-pauli-selfcons} and are hypotheses of \texttt{exists\_auxVec\
 than conclusions; and, in item 2, \texttt{eq:qld-unitary-5} --- the triangle chain through
 Lemma~\ref{lem:qld-win} and Lemma~\ref{lem:qld-exact-paulis} --- the transport of the estimate
 from $\ket{\Delta}$ back to $\ket{\hat\psi}$ across item 1, and the assembly. Hence no
-\texttt{leanok} mark at either level. Of those, \texttt{eq:qld-unitary-5} needs no new estimate.
-Its engine is the paper's \texttt{fact:triangle-for-simeq}, already in Foundations as
-\texttt{agreeSum\_triangle} (with $11\delta$ for the paper's $9\delta$, as
-Lemma~\ref{lem:qld-global-success} records), and \texttt{inconsistency\_triangle} is that
-estimate in the vocabulary this interface states everything in --- an inconsistency rather than an
-agreement, the two being the same number. What is left of the display is putting its three
-consistencies on one cut: \texttt{consA} and \texttt{consB} are read along the padded state's own
-cut and Lemma~\ref{lem:qld-exact-paulis}'s item 1 along the regrouped one, and
-\texttt{bornProb\_regroupVec} is what carries a Born probability between them.
+\texttt{leanok} mark at either level. 
+
+\emph{And \texttt{eq:qld-unitary-5}.} It needed no new estimate: its engine is the paper's
+\texttt{fact:triangle-for-simeq}, already in Foundations as \texttt{agreeSum\_triangle} (with
+$11\delta$ for the paper's $9\delta$, as Lemma~\ref{lem:qld-global-success} records). Two
+adapters put it to work. \texttt{inconsistency\_triangle} is the estimate in the vocabulary this
+interface states everything in --- an inconsistency rather than an agreement, the two being the
+same number. And \texttt{inconsistency\_regroupVec} settles the one real obstacle, that the three
+legs are not read along the same cut: $\tilde{M}^{W,u}$ needs the ancilla half with the first
+party, which is the regrouped cut, while the strategy's own measurements are stated along the
+padded state's. For operators that ignore the register the regrouping moves --- which the
+strategy's measurements do, being extended by the identity there --- the two readings are the same
+number, the regrouping being a reindexing of the whole space. \texttt{SimulPair
+.inconsistency\_mTilde\_pauli\_le} is then the display, with the two middle legs --- the game's
+point--point and point--Pauli consistencies, the latter read through
+\texttt{pauliAtPOVM} --- as hypotheses, in the same way
+\texttt{exists\_auxVec\_close} takes item 1's near-invariances.
+
+\emph{And the endgame's transport.} \texttt{abs\_qform\_sub\_qform\_le}: moving an expectation
+from the product state to the padded one costs twice the operator's bound times the distance
+between them. Item 1 bounds the \emph{squared} distance, which is exactly where the fourth root
+in $\delta_{qld}$ comes from.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the repairs above, including the
 ledger's declared dependencies for node $1.2.2.16$, which name $1.2.2.4$
 (Lemma~\ref{lem:qld-win}) and which the \texttt{uses} list did not.

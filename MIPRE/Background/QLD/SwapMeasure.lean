@@ -245,6 +245,80 @@ theorem inconsistency_triangle {μ : X → ℝ} (hμ0 : ∀ x, 0 ≤ μ x) (hμ1
 
 end Triangle
 
+/-! ## Moving an expectation to a nearby state
+
+The endgame of item 2 computes against the product state `|aux> (x) |EPR>^M` and then transports
+the answer back to the padded state, across item 1's bound on the distance between them. Item 1
+bounds the *squared* norm, so the transport costs a square root of it --- which is where the
+fourth root in `delta_qld` comes from. -/
+
+section StateMove
+
+variable {N : Type*} [Fintype N]
+
+/-- **Moving a quadratic form to a nearby state costs twice the bound times the distance.** The
+difference splits into two terms, each with the deviation on one side, and each is bounded by
+Cauchy--Schwarz against a state of norm at most one. -/
+theorem abs_qform_sub_qform_le (v w : N → ℂ) {X : Matrix N N ℂ} {K : ℝ} (hK : 0 ≤ K)
+    (hX : Bnd X K) (hv : ‖evec v‖ ≤ 1) (hw : ‖evec w‖ ≤ 1) :
+    |qform v X - qform w X| ≤ 2 * K * ‖evec (v - w)‖ := by
+  have hsplit : star v ⬝ᵥ (X *ᵥ v) - star w ⬝ᵥ (X *ᵥ w)
+      = star (v - w) ⬝ᵥ (X *ᵥ v) + star w ⬝ᵥ (X *ᵥ (v - w)) := by
+    rw [Matrix.mulVec_sub, star_sub, sub_dotProduct, dotProduct_sub]
+    ring
+  have h1 : ‖star (v - w) ⬝ᵥ (X *ᵥ v)‖ ≤ K * ‖evec (v - w)‖ := by
+    rw [← inner_evec]
+    refine le_trans (norm_inner_le_norm _ _) ?_
+    calc ‖evec (v - w)‖ * ‖evec (X *ᵥ v)‖ ≤ ‖evec (v - w)‖ * (K * ‖evec v‖) :=
+          mul_le_mul_of_nonneg_left (hX v) (norm_nonneg _)
+      _ ≤ ‖evec (v - w)‖ * (K * 1) :=
+          mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hv hK) (norm_nonneg _)
+      _ = K * ‖evec (v - w)‖ := by ring
+  have h2 : ‖star w ⬝ᵥ (X *ᵥ (v - w))‖ ≤ K * ‖evec (v - w)‖ := by
+    rw [← inner_evec]
+    refine le_trans (norm_inner_le_norm _ _) ?_
+    calc ‖evec w‖ * ‖evec (X *ᵥ (v - w))‖ ≤ 1 * ‖evec (X *ᵥ (v - w))‖ :=
+          mul_le_mul_of_nonneg_right hw (norm_nonneg _)
+      _ ≤ K * ‖evec (v - w)‖ := by rw [one_mul]; exact hX (v - w)
+  have hre : qform v X - qform w X = (star v ⬝ᵥ (X *ᵥ v) - star w ⬝ᵥ (X *ᵥ w)).re := by
+    rw [qform, qform, Complex.sub_re]
+  rw [hre, hsplit]
+  refine le_trans (Complex.abs_re_le_norm _) (le_trans (norm_add_le _ _) ?_)
+  linarith
+
+end StateMove
+
+/-! ## Carrying a consistency across the regrouped cut
+
+The three legs of `eq:qld-unitary-5` are not read along the same cut. `M~^{W,u}` needs the ancilla
+half with the first party, which is the regrouped cut `mVec`; the strategy's own point and Pauli
+measurements are local to the unpadded registers and are stated along the padded state's own cut.
+For operators that ignore the register the regrouping moves --- which the strategy's measurements
+do, being extended by the identity there --- the two readings are the same number, since the
+regrouping is a reindexing of the whole space and the moved factor carries the identity. -/
+
+section Transport
+
+variable {R S T E X Λ : Type*} [Fintype R] [DecidableEq R] [Fintype S] [DecidableEq S]
+  [Fintype T] [DecidableEq T] [Fintype E] [DecidableEq E] [Fintype X] [Fintype Λ] [DecidableEq Λ]
+
+/-- **A consistency between operators that ignore the moved register reads the same on both
+cuts.** -/
+theorem inconsistency_regroupVec (μ : X → ℝ) (ψ : R × ((S × T) × E) → ℂ)
+    (A : X → POVM Λ R) (B : X → POVM Λ S) :
+    inconsistency μ (regroupVec ψ) (fun x => (A x).aOp (E := T)) (fun x => (B x).aOp (E := E))
+      = inconsistency μ ψ A fun x => ((B x).aOp (E := T)).aOp (E := E) := by
+  refine Finset.sum_congr rfl fun x _ => ?_
+  congr 1
+  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
+  split_ifs with h
+  · rfl
+  · show bornProb (regroupVec ψ) _ _ = bornProb ψ _ _
+    rw [POVM.aOp_mats, POVM.aOp_mats, POVM.aOp_mats, POVM.aOp_mats]
+    exact bornProb_regroupVec ψ ((A x).mats a).val ((B x).mats b).val 1
+
+end Transport
+
 /-! ## The same, on the interface of `lem:qld-simultaneous`
 
 The swap unitary of the appendix is built from the simultaneous pair measurement, so at the
@@ -263,6 +337,13 @@ variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] 
   {ψ : dA × dB → ℂ} {MA : Question F m → POVM (Answer F m d) dA}
   {MB : Question F m → POVM (Answer F m d) dB} {δ : ℝ}
 
+/-- **The `(Pauli, W)` measurement, read at a point.** The paper's
+`M^{(Pauli,W)}_{[g_h(u) = a]}`: the strategy's Pauli measurement coarse-grained by the value at
+`u` of the low-degree encoding of the answer it returns. -/
+def pauliAtPOVM {d' : Type} [Fintype d'] [DecidableEq d']
+    (M : Question F m → POVM (Answer F m d) d') (W : Bas) (u : Point F m) : POVM F d' :=
+  (M (.pauli W)).map (rdPauli u)
+
 namespace SimulPair
 
 variable (P : SimulPair ψ MA MB δ)
@@ -276,6 +357,32 @@ theorem swapA_mul_conjTranspose : P.swapA * P.swapAᴴ = 1 :=
 
 theorem swapA_conjTranspose_mul : P.swapAᴴ * P.swapA = 1 :=
   swapU_conjTranspose_mul P.SA_proj
+
+/-- **Display `eq:qld-unitary-5` at the interface.** The exact Pauli measurement agrees with the
+strategy's `(Pauli, W)` measurement, read at the sampled point, to within eleven times whatever
+bounds the three legs. Its own leg is item 1 of Lemma `lem:qld-exact-paulis`
+(\texttt{inconsistency\_mTilde\_le}); the two middle legs are the game's own consistencies ---
+point against point and point against Pauli --- and are hypotheses here, stated along the padded
+state's own cut and carried across by \texttt{inconsistency\_regroupVec}. -/
+theorem inconsistency_mTilde_pauli_le (W : Bas) {δ' : ℝ}
+    (hpt : inconsistency (uniform (Point F m)) P.Φ
+        (fun u => ((ptAtPOVM MA W u).aOp (E := Anc F m)).aOp (E := P.EA))
+        (fun u => ((ptAtPOVM MB W u).aOp (E := Anc F m)).aOp (E := P.EB)) ≤ δ')
+    (hpauli : inconsistency (uniform (Point F m)) P.Φ
+        (fun u => ((ptAtPOVM MA W u).aOp (E := Anc F m)).aOp (E := P.EA))
+        (fun u => ((pauliAtPOVM MB W u).aOp (E := Anc F m)).aOp (E := P.EB)) ≤ δ')
+    (hmt : inconsistency (uniform (Point F m)) P.mVec
+        (fun u => (P.isPVM_mTildeAt W u).toPOVM) (fun u => (ptAtPOVM MB W u).aOp) ≤ δ') :
+    inconsistency (uniform (Point F m)) P.mVec
+        (fun u => (P.isPVM_mTildeAt W u).toPOVM) (fun u => (pauliAtPOVM MB W u).aOp)
+      ≤ 11 * δ' := by
+  refine inconsistency_triangle (uniform_nonneg (Point F m)) (sum_uniform_eq_one (Point F m))
+    P.mVec_unit _ (fun u => (((ptAtPOVM MA W u).aOp (E := Anc F m)).aOp (E := P.EA)).aOp
+      (E := Anc F m)) _ _ hmt ?_ ?_
+  · rw [SimulPair.mVec, inconsistency_regroupVec]
+    exact hpt
+  · rw [SimulPair.mVec, inconsistency_regroupVec]
+    exact hpauli
 
 /-- **Display `eq:qld-unitary-6` at the interface.** -/
 theorem swapU_conj_mTildeAt (W : Bas) (u : Point F m) (a : F) :

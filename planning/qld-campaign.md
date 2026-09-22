@@ -2076,3 +2076,35 @@ Left after this: putting `eq:qld-unitary-5`'s three consistencies on one cut (`c
 are read along the padded state's cut, `inconsistency_mTilde_le` along the regrouped one, and
 `bornProb_regroupVec` carries a Born probability between them); the transport from the product
 state back to the padded state; item 2's assembly; and the pulling chain's assembly.
+
+### PR N, continued: `eq:qld-unitary-5` at the interface, and the endgame's transport (2026-09-22)
+
+Three more pieces, all in `SwapMeasure.lean`.
+
+**The cut.** The one real obstacle to `eq:qld-unitary-5` was that its three legs are not read along
+the same cut. `M~^{W,u}` wants the ancilla half with the first party, which is the regrouped cut
+`mVec`; the strategy's own point and Pauli measurements are local to the unpadded registers and
+are stated along the padded state's cut. `inconsistency_regroupVec` settles it: for operators that
+ignore the register the regrouping moves --- which the strategy's measurements do, being extended
+by the identity there --- the two readings are the *same number*, the regrouping being a
+reindexing of the whole space and `bornProb_regroupVec` the one entry computation. The proof is
+four lines and the statement is the general one, not an instance.
+
+**The display.** `SimulPair.inconsistency_mTilde_pauli_le` is `eq:qld-unitary-5`: the exact Pauli
+measurement agrees with the strategy's `(Pauli, W)` measurement read at the sampled point
+(`pauliAtPOVM`, which is `rdPauli` --- the paper's `g_h(u)` --- coarse-graining the Pauli answer),
+to within eleven times whatever bounds the three legs. Its own leg is item 1 of
+`lem:qld-exact-paulis`; the two middle legs are the game's point--point and point--Pauli
+consistencies and are hypotheses, in the same way `exists_auxVec_close` takes item 1's
+near-invariances. That is the honest shape: those two are `lem:qld-win`'s to supply, and supplying
+them is a separate piece of work.
+
+**The transport.** `abs_qform_sub_qform_le`: moving an expectation from the product state to the
+padded one costs twice the operator's bound times the distance between them, by splitting the
+difference into two terms with the deviation on one side each. Item 1 bounds the *squared*
+distance, so this is exactly where the fourth root in `delta_qld` comes from.
+
+What item 2 still needs: the two game consistencies that `inconsistency_mTilde_pauli_le` assumes,
+and the assembly --- threading `eq:qld-unitary-7` through `-9` and this transport into the
+statement about `V M^{(Pauli,W)}_h V^dagger`. What `lem:qld-pauli-selfcons` still needs is
+unchanged: the assembly of its chain.
