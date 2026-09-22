@@ -2244,3 +2244,31 @@ carrying both pairs. `Phi`'s type changes and every statement reading `Phi` or `
 --- `Helper`, `Multilinear`, `MTilde`, `AncTransport`, `Pulling`, `SwapMeasure`, `ChainProbe`. The
 estimates are untouched, being about operators and states in the abstract; this is a retyping and a
 re-derivation of the transports. Neither assembly should be started before it.
+
+### PR P: the two-pairs change is additive (2026-09-22)
+
+The scope written an hour ago said `SimulPair.Phi` had to be retyped to carry the paper's second
+entangled pair, at about 94 mentions of `Phi` and 19 of `mVec` across 135 declarations. That was
+wrong, and `MIPRE/Background/QLD/TwoPairs.lean` is the demonstration: it builds against the tree as
+it stands.
+
+`SimulPair`'s `EA` and `EB` are **arbitrary types**, constrained only by `Fintype` and
+`DecidableEq`. The second pair lives inside them --- `EA = Anc x EA'`, `EB = Anc x EB'` --- so
+`Phi` already is a state on the paper's six registers plus padding, and `Phi_reduced` is satisfiable
+unchanged, speaking as it does of `aOp X` and `aOp Y`, which put the identity on all of `EA` and
+`EB` whatever those are.
+
+With each pair split across the party cut the way `hatVec` already splits the first, Alice's side
+is `A A'` and `B'' EA'`, Bob's is `B A''` and `B' EB'`. Alice's `M~` wants `A A' A''` and Bob's
+wants `B B' B''`; each needs one register from the far side, and they are *different* registers.
+So one permutation serves both: `pairSwapEquiv` sends each party's far half home, after which
+Alice holds `A A' A''`, Bob holds `B B' B''`, and both exact Pauli objects are expressible on one
+bipartite cut. `pairSwapVec`, `pairSwapVec_unit`, `reindex_pairSwapEquiv` and `qform_pairSwapVec`
+come with it, in the pattern `regroupEquiv` and `bornProb_regroupVec` set.
+
+The lesson is worth keeping, because it is about reading an interface rather than about this proof:
+**when a structure carries an opaque type parameter, check what can be put into it before changing
+the fields around it.** The first estimate read `EA` and `EB` as fixed padding. They are free.
+
+Left: a structure beside `SimulPair` recording the shape and the mirror `Phi_reduced`; Bob's
+`mTilde` from `SB`; then the two assemblies.
