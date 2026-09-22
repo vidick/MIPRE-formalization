@@ -2051,3 +2051,99 @@ is stating the three consistencies --- `eq:qld-unitary-2`, `-3`, `-4` --- as `ag
 at this interface. That is the second time in two pull requests that an appendix estimate turned
 out to be already in Foundations under another name; the habit is now worth the two minutes it
 costs.
+
+### PR N: the triangle chain's adapter, and a duplicate of my own making (2026-09-22)
+
+Two things.
+
+**`inconsistency_triangle`.** `eq:qld-unitary-5`'s estimate is `agreeSum_triangle`, which speaks of
+the *agreement* of two POVM families; every consistency in the QLD interface --- `consA`, `consB`,
+`inconsistency_mTilde_le` --- is stated as an *inconsistency* instead. The two are the same number
+(`sum_bornProb_diag_eq`), so the adapter is five lines, and with it the display is the estimate
+applied to `eq:qld-unitary-2`, `-3` and `-4`. One Lean detail worth remembering: passing the
+constant as `(delta := delta)` was necessary, because `rw` closes its goal by `rfl` and would
+otherwise unify the triangle's implicit constant with the first hypothesis's left-hand side.
+
+**A duplicate, removed.** `povmOfIsPVM`, which PR #158 added to `Pulling.lean` to bridge `IsPVM` to
+`POVM`, already existed as `IsPVM.toPOVM` in `MIPRE/Foundations/Commutation.lean` --- and the QLD
+tree was already using it, in `inconsistency_mTilde_le` two files away. Removed, and
+`sum_xSqNorm_fibre_le` now goes through the existing one. This is the third time in three pull
+requests that something in this appendix was already in the library; the first two were finds, this
+one was a miss. The lesson is the same and it is now cheap to apply: `grep` the declaration name's
+shape before writing it.
+
+Left after this: putting `eq:qld-unitary-5`'s three consistencies on one cut (`consA` and `consB`
+are read along the padded state's cut, `inconsistency_mTilde_le` along the regrouped one, and
+`bornProb_regroupVec` carries a Born probability between them); the transport from the product
+state back to the padded state; item 2's assembly; and the pulling chain's assembly.
+
+### PR N, continued: `eq:qld-unitary-5` at the interface, and the endgame's transport (2026-09-22)
+
+Three more pieces, all in `SwapMeasure.lean`.
+
+**The cut.** The one real obstacle to `eq:qld-unitary-5` was that its three legs are not read along
+the same cut. `M~^{W,u}` wants the ancilla half with the first party, which is the regrouped cut
+`mVec`; the strategy's own point and Pauli measurements are local to the unpadded registers and
+are stated along the padded state's cut. `inconsistency_regroupVec` settles it: for operators that
+ignore the register the regrouping moves --- which the strategy's measurements do, being extended
+by the identity there --- the two readings are the *same number*, the regrouping being a
+reindexing of the whole space and `bornProb_regroupVec` the one entry computation. The proof is
+four lines and the statement is the general one, not an instance.
+
+**The display.** `SimulPair.inconsistency_mTilde_pauli_le` is `eq:qld-unitary-5`: the exact Pauli
+measurement agrees with the strategy's `(Pauli, W)` measurement read at the sampled point
+(`pauliAtPOVM`, which is `rdPauli` --- the paper's `g_h(u)` --- coarse-graining the Pauli answer),
+to within eleven times whatever bounds the three legs. Its own leg is item 1 of
+`lem:qld-exact-paulis`; the two middle legs are the game's point--point and point--Pauli
+consistencies and are hypotheses, in the same way `exists_auxVec_close` takes item 1's
+near-invariances. That is the honest shape: those two are `lem:qld-win`'s to supply, and supplying
+them is a separate piece of work.
+
+**The transport.** `abs_qform_sub_qform_le`: moving an expectation from the product state to the
+padded one costs twice the operator's bound times the distance between them, by splitting the
+difference into two terms with the deviation on one side each. Item 1 bounds the *squared*
+distance, so this is exactly where the fourth root in `delta_qld` comes from.
+
+What item 2 still needs: the two game consistencies that `inconsistency_mTilde_pauli_le` assumes,
+and the assembly --- threading `eq:qld-unitary-7` through `-9` and this transport into the
+statement about `V M^{(Pauli,W)}_h V^dagger`. What `lem:qld-pauli-selfcons` still needs is
+unchanged: the assembly of its chain.
+
+**And the padding transport.** `SimulPair.bornProb_padded` and `inconsistency_padded`: a
+consistency between the strategy's *own* measurements reads the same on the padded state as on the
+strategy's own state, both operators being extended by the identity on the expansion's ancillas and
+on the padding. The padded state's reduction carries them to the expanded state and
+`bornProb_expVec_kron` carries them down to `psi`, the entangled pair contributing its norm and
+nothing else. That is what lets `inconsistency_mTilde_pauli_le'` ask for its two middle legs in the
+form `agree_subtest_le` leaves them --- on `psi`, with nothing about the expansion or the padding in
+sight. What remains of those two legs is instantiating `agree_subtest_le` at the edges `adj_self'`
+and `adj_point_pauli` with the readings `rdVal` and `rdPauli`, averaging over contents into points
+with `sum_content_pt`, and halving the cross-deviation into an inconsistency (exact for projective
+families).
+
+### PR N, third piece: the two middle legs, discharged (2026-09-22)
+
+`eq:qld-unitary-5`'s two middle legs are no longer hypotheses. They are items 1 and 3 of
+`lem:qld-win` --- `item_consistency` at the point type and `item_pauli_consistency` --- both of
+which were already in `Win.lean`, and three steps carry each into the form the triangle wants.
+
+* The point question a content asks is the point the content carries (`Content.question` at
+  `.point W` is `.point W (c.pt W)`, by `rfl`), so the average over contents of a function of that
+  point is the uniform average over points: `sum_content_pt`, also already in.
+* For *projective* families a cross-party deviation is exactly twice the inconsistency
+  (`inconsistency_eq_half_xPovmDist`). Only `≤` holds for general POVMs
+  (`xSqNorm_sum_le_two_mul`); what makes it an equality is that both families' masses are exactly
+  one, which `one_sub_sum_bornProb_eq` already knew.
+
+`inconsistency_pt_pt_le` and `inconsistency_pt_pauli_le` are the two legs at `86 ε`, which is
+`agree_subtest_le`'s `172 ε` halved, and `inconsistency_mTilde_pauli_le_of_win` is
+`eq:qld-unitary-5` from the game's soundness and item 1 of `lem:qld-exact-paulis` alone.
+
+Two Lean notes. `linarith` compares atoms syntactically, so a hypothesis whose Born probability is
+written unfolded and a goal whose is not will not close: `simp only [bornProb]` on the hypothesis
+was the fix, twice. And a `rw` with the measurement arguments left as `_` unified them against the
+*proof terms* supplied for projectivity, producing `POVM.map _ (MA _)` where the goal had
+`ptAtPOVM MA W u`; naming the two families in `have`s first fixed it.
+
+That is item 1 of the four in `planning/formalization-plan.md`'s QLD list, done. Left: the assembly
+of item 2, the assembly of `lem:qld-pauli-selfcons`'s chain, and `thm:qld`.

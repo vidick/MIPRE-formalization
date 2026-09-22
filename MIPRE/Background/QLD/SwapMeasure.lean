@@ -211,6 +211,114 @@ theorem sum_uniform_agree_bornProb_le {Λ : Type*} [Fintype Λ] [DecidableEq Λ]
 
 end Agree
 
+/-! ## Display `eq:qld-unitary-5`: the triangle chain
+
+Three consistencies chain to a fourth. The paper's `fact:triangle-for-simeq` item 1 is already in
+Foundations as `agreeSum_triangle`, on the *agreement* of two POVM families; the appendix's
+interface states everything as an *inconsistency* instead, and the two are the same number
+(`sum_bornProb_diag_eq`). This is the adapter, and with it `eq:qld-unitary-5` is the estimate
+applied to `eq:qld-unitary-2`, `-3` and `-4`.
+
+The constant is the Lean one, `11 delta` where the paper has `9 delta`: the padding into a
+four-dimensional auxiliary space that buys the `9` is what `agreeSum_triangle` does without, and
+`delta_qld` absorbs the difference. -/
+
+section Triangle
+
+variable {X Λ : Type*} [Fintype X] [Fintype Λ] [DecidableEq Λ]
+  {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+
+/-- **The agreement triangle, read as inconsistencies.** `A` against `D` through `B` and `C`,
+where the two middle legs share a family on each side. -/
+theorem inconsistency_triangle {μ : X → ℝ} (hμ0 : ∀ x, 0 ≤ μ x) (hμ1 : ∑ x, μ x = 1)
+    {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) (A C : X → POVM Λ dA) (B D : X → POVM Λ dB)
+    {δ : ℝ} (hAB : inconsistency μ ψ A B ≤ δ) (hCB : inconsistency μ ψ C B ≤ δ)
+    (hCD : inconsistency μ ψ C D ≤ δ) :
+    inconsistency μ ψ A D ≤ 11 * δ := by
+  have hbridge : ∀ (M : X → POVM Λ dA) (N : X → POVM Λ dB),
+      1 - agreeSum μ ψ M N = inconsistency μ ψ M N := fun M N => by
+    rw [agreeSum, sum_bornProb_diag_eq hμ1 hψ M N]
+    ring
+  have h := agreeSum_triangle (δ := δ) hμ0 hμ1 hψ A C B D
+    ((hbridge A B).symm ▸ hAB) ((hbridge C B).symm ▸ hCB) ((hbridge C D).symm ▸ hCD)
+  rwa [hbridge] at h
+
+end Triangle
+
+/-! ## Moving an expectation to a nearby state
+
+The endgame of item 2 computes against the product state `|aux> (x) |EPR>^M` and then transports
+the answer back to the padded state, across item 1's bound on the distance between them. Item 1
+bounds the *squared* norm, so the transport costs a square root of it --- which is where the
+fourth root in `delta_qld` comes from. -/
+
+section StateMove
+
+variable {N : Type*} [Fintype N]
+
+/-- **Moving a quadratic form to a nearby state costs twice the bound times the distance.** The
+difference splits into two terms, each with the deviation on one side, and each is bounded by
+Cauchy--Schwarz against a state of norm at most one. -/
+theorem abs_qform_sub_qform_le (v w : N → ℂ) {X : Matrix N N ℂ} {K : ℝ} (hK : 0 ≤ K)
+    (hX : Bnd X K) (hv : ‖evec v‖ ≤ 1) (hw : ‖evec w‖ ≤ 1) :
+    |qform v X - qform w X| ≤ 2 * K * ‖evec (v - w)‖ := by
+  have hsplit : star v ⬝ᵥ (X *ᵥ v) - star w ⬝ᵥ (X *ᵥ w)
+      = star (v - w) ⬝ᵥ (X *ᵥ v) + star w ⬝ᵥ (X *ᵥ (v - w)) := by
+    rw [Matrix.mulVec_sub, star_sub, sub_dotProduct, dotProduct_sub]
+    ring
+  have h1 : ‖star (v - w) ⬝ᵥ (X *ᵥ v)‖ ≤ K * ‖evec (v - w)‖ := by
+    rw [← inner_evec]
+    refine le_trans (norm_inner_le_norm _ _) ?_
+    calc ‖evec (v - w)‖ * ‖evec (X *ᵥ v)‖ ≤ ‖evec (v - w)‖ * (K * ‖evec v‖) :=
+          mul_le_mul_of_nonneg_left (hX v) (norm_nonneg _)
+      _ ≤ ‖evec (v - w)‖ * (K * 1) :=
+          mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hv hK) (norm_nonneg _)
+      _ = K * ‖evec (v - w)‖ := by ring
+  have h2 : ‖star w ⬝ᵥ (X *ᵥ (v - w))‖ ≤ K * ‖evec (v - w)‖ := by
+    rw [← inner_evec]
+    refine le_trans (norm_inner_le_norm _ _) ?_
+    calc ‖evec w‖ * ‖evec (X *ᵥ (v - w))‖ ≤ 1 * ‖evec (X *ᵥ (v - w))‖ :=
+          mul_le_mul_of_nonneg_right hw (norm_nonneg _)
+      _ ≤ K * ‖evec (v - w)‖ := by rw [one_mul]; exact hX (v - w)
+  have hre : qform v X - qform w X = (star v ⬝ᵥ (X *ᵥ v) - star w ⬝ᵥ (X *ᵥ w)).re := by
+    rw [qform, qform, Complex.sub_re]
+  rw [hre, hsplit]
+  refine le_trans (Complex.abs_re_le_norm _) (le_trans (norm_add_le _ _) ?_)
+  linarith
+
+end StateMove
+
+/-! ## Carrying a consistency across the regrouped cut
+
+The three legs of `eq:qld-unitary-5` are not read along the same cut. `M~^{W,u}` needs the ancilla
+half with the first party, which is the regrouped cut `mVec`; the strategy's own point and Pauli
+measurements are local to the unpadded registers and are stated along the padded state's own cut.
+For operators that ignore the register the regrouping moves --- which the strategy's measurements
+do, being extended by the identity there --- the two readings are the same number, since the
+regrouping is a reindexing of the whole space and the moved factor carries the identity. -/
+
+section Transport
+
+variable {R S T E X Λ : Type*} [Fintype R] [DecidableEq R] [Fintype S] [DecidableEq S]
+  [Fintype T] [DecidableEq T] [Fintype E] [DecidableEq E] [Fintype X] [Fintype Λ] [DecidableEq Λ]
+
+/-- **A consistency between operators that ignore the moved register reads the same on both
+cuts.** -/
+theorem inconsistency_regroupVec (μ : X → ℝ) (ψ : R × ((S × T) × E) → ℂ)
+    (A : X → POVM Λ R) (B : X → POVM Λ S) :
+    inconsistency μ (regroupVec ψ) (fun x => (A x).aOp (E := T)) (fun x => (B x).aOp (E := E))
+      = inconsistency μ ψ A fun x => ((B x).aOp (E := T)).aOp (E := E) := by
+  refine Finset.sum_congr rfl fun x _ => ?_
+  congr 1
+  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
+  split_ifs with h
+  · rfl
+  · show bornProb (regroupVec ψ) _ _ = bornProb ψ _ _
+    rw [POVM.aOp_mats, POVM.aOp_mats, POVM.aOp_mats, POVM.aOp_mats]
+    exact bornProb_regroupVec ψ ((A x).mats a).val ((B x).mats b).val 1
+
+end Transport
+
 /-! ## The same, on the interface of `lem:qld-simultaneous`
 
 The swap unitary of the appendix is built from the simultaneous pair measurement, so at the
@@ -229,6 +337,91 @@ variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] 
   {ψ : dA × dB → ℂ} {MA : Question F m → POVM (Answer F m d) dA}
   {MB : Question F m → POVM (Answer F m d) dB} {δ : ℝ}
 
+/-- **The `(Pauli, W)` measurement, read at a point.** The paper's
+`M^{(Pauli,W)}_{[g_h(u) = a]}`: the strategy's Pauli measurement coarse-grained by the value at
+`u` of the low-degree encoding of the answer it returns. -/
+def pauliAtPOVM {d' : Type} [Fintype d'] [DecidableEq d']
+    (M : Question F m → POVM (Answer F m d) d') (W : Bas) (u : Point F m) : POVM F d' :=
+  (M (.pauli W)).map (rdPauli u)
+
+/-! ## The two middle legs, from the game
+
+`eq:qld-unitary-5`'s two middle legs are `lem:qld-win`'s items 1 and 3, which the game supplies as
+*cross-party deviations* averaged over the verifier's content. Three steps turn each into the
+inconsistency the triangle wants: the point question a content asks is the point the content
+carries, so the average over contents of a function of that point is the uniform average over
+points (`sum_content_pt`); and for projective families the deviation is exactly twice the
+inconsistency. Nothing here is an estimate --- the estimate is `agree_subtest_le`, and it is
+already in. -/
+
+section GameLegs
+
+variable {ε : ℝ}
+
+/-- **A cross-party deviation is exactly twice the inconsistency**, for projective families on a
+unit state. Only `≤` holds for POVMs (`xSqNorm_sum_le_two_mul`); what makes it an equality here is
+that both families' masses are exactly one. -/
+theorem inconsistency_eq_half_xPovmDist {X Λ : Type*} [Fintype X] [Fintype Λ] [DecidableEq Λ]
+    (μ : X → ℝ) (hψ : star ψ ⬝ᵥ ψ = 1) (M : X → POVM Λ dA) (N : X → POVM Λ dB)
+    (hM : ∀ x, IsPVM fun o => (((M x).mats o).val))
+    (hN : ∀ x, IsPVM fun o => (((N x).mats o).val)) :
+    inconsistency μ ψ M N = xPovmDist μ ψ M N / 2 := by
+  rw [inconsistency_eq_sum_pairInconsistency, xPovmDist, Finset.sum_div]
+  refine Finset.sum_congr rfl fun x _ => ?_
+  have h1 := sum_diag_eq_one_sub hψ (M x) (N x)
+  have h2 := one_sub_sum_bornProb_eq (norm_evec_eq_one_of_unit hψ) (hM x) (hN x)
+  simp only [bornProb] at h2
+  rw [mul_div_assoc]
+  congr 1
+  linarith
+
+/-- **The game's point--point consistency**, as an inconsistency over uniform points: item 1 of
+`lem:qld-win` at the type `(Point, W)`, read through the answer's field element. -/
+theorem inconsistency_pt_pt_le {hm : m ∣ Fintype.card F} (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
+    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) :
+    inconsistency (uniform (Point F m)) ψ (fun u => ptAtPOVM MA W u)
+        (fun u => ptAtPOVM MB W u) ≤ 86 * ε := by
+  have hM : ∀ u : Point F m, IsPVM fun o => (((ptAtPOVM MA W u).mats o).val) :=
+    fun u => isPVM_povm_map _ (hprojA _) _
+  have hN : ∀ u : Point F m, IsPVM fun o => (((ptAtPOVM MB W u).mats o).val) :=
+    fun u => isPVM_povm_map _ (hprojB _) _
+  rw [inconsistency_eq_half_xPovmDist (uniform (Point F m)) hψ _ _ hM hN, xPovmDist,
+    ← sum_content_pt W fun u => ∑ o : F, xSqNorm ψ (((ptAtPOVM MA W u).mats o).val)
+      (((ptAtPOVM MB W u).mats o).val)]
+  have h := item_consistency (hm := hm) hψ hfail (.point W) (φ := rdVal)
+  rw [xPovmDist] at h
+  simp only [show ∀ c : Content F m, (MA (Content.question hm c (Ty.point W))).map rdVal
+      = ptAtPOVM MA W (c.pt W) from fun _ => rfl,
+    show ∀ c : Content F m, (MB (Content.question hm c (Ty.point W))).map rdVal
+      = ptAtPOVM MB W (c.pt W) from fun _ => rfl] at h
+  linarith
+
+/-- **The game's point--Pauli consistency**, likewise: item 3 of `lem:qld-win`, the low-degree
+encoding of the Pauli answer evaluated at the sampled point against the point answer. -/
+theorem inconsistency_pt_pauli_le {hm : m ∣ Fintype.card F} (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
+    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) :
+    inconsistency (uniform (Point F m)) ψ (fun u => ptAtPOVM MA W u)
+        (fun u => pauliAtPOVM MB W u) ≤ 86 * ε := by
+  have hM : ∀ u : Point F m, IsPVM fun o => (((ptAtPOVM MA W u).mats o).val) :=
+    fun u => isPVM_povm_map _ (hprojA _) _
+  have hN : ∀ u : Point F m, IsPVM fun o => (((pauliAtPOVM MB W u).mats o).val) :=
+    fun u => isPVM_povm_map _ (hprojB _) _
+  rw [inconsistency_eq_half_xPovmDist (uniform (Point F m)) hψ _ _ hM hN, xPovmDist,
+    ← sum_content_pt W fun u => ∑ o : F, xSqNorm ψ (((ptAtPOVM MA W u).mats o).val)
+      (((pauliAtPOVM MB W u).mats o).val)]
+  have h := item_pauli_consistency (hm := hm) hψ hfail W
+  simp only [show ∀ c : Content F m, (MA (Content.question hm c (Ty.point W))).map rdVal
+      = ptAtPOVM MA W (c.pt W) from fun _ => rfl,
+    show ∀ c : Content F m, (MB (Content.question hm c (Ty.pauli W))).map (rdPauli (c.pt W))
+      = pauliAtPOVM MB W (c.pt W) from fun _ => rfl] at h
+  linarith
+
+end GameLegs
+
 namespace SimulPair
 
 variable (P : SimulPair ψ MA MB δ)
@@ -242,6 +435,95 @@ theorem swapA_mul_conjTranspose : P.swapA * P.swapAᴴ = 1 :=
 
 theorem swapA_conjTranspose_mul : P.swapAᴴ * P.swapA = 1 :=
   swapU_conjTranspose_mul P.SA_proj
+
+/-- **A Born probability of the strategy's own measurements reads the same on the padded state.**
+Both operators are extended by the identity on the expansion's ancillas and on the padding, so the
+padded state's reduction carries them to the expanded state and the expanded state's factorization
+carries them down to the original one, the entangled pair contributing its own norm and nothing
+else. -/
+theorem bornProb_padded (X : Matrix dA dA ℂ) (Y : Matrix dB dB ℂ) :
+    bornProb P.Φ (aOp (aOp X)) (aOp (aOp Y)) = bornProb ψ X Y := by
+  rw [P.Φ_reduced (aOp X) (aOp Y)]
+  show bornProb (expVec ψ (epr (F := F) (n := Fin m → Bool))) (X ⊗ₖ 1) (Y ⊗ₖ 1) = _
+  rw [bornProb_expVec_kron ψ _ Matrix.PosSemidef.one Matrix.PosSemidef.one,
+    bornProb_one_one epr_unit, mul_one]
+
+/-- **And so does a consistency between them.** This is what puts the game's own consistencies ---
+which are statements about the strategy's measurements on the original state --- into the
+vocabulary the appendix's interface reads them in. -/
+theorem inconsistency_padded {Y Λ : Type*} [Fintype Y] [Fintype Λ] [DecidableEq Λ] (μ : Y → ℝ)
+    (M : Y → POVM Λ dA) (N : Y → POVM Λ dB) :
+    inconsistency μ P.Φ (fun y => ((M y).aOp (E := Anc F m)).aOp (E := P.EA))
+        (fun y => ((N y).aOp (E := Anc F m)).aOp (E := P.EB))
+      = inconsistency μ ψ M N := by
+  refine Finset.sum_congr rfl fun y _ => ?_
+  congr 1
+  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
+  split_ifs with h
+  · rfl
+  · show bornProb P.Φ _ _ = bornProb ψ _ _
+    rw [POVM.aOp_mats, POVM.aOp_mats, POVM.aOp_mats, POVM.aOp_mats]
+    exact P.bornProb_padded ((M y).mats a).val ((N y).mats b).val
+
+/-- **Display `eq:qld-unitary-5` at the interface.** The exact Pauli measurement agrees with the
+strategy's `(Pauli, W)` measurement, read at the sampled point, to within eleven times whatever
+bounds the three legs. Its own leg is item 1 of Lemma `lem:qld-exact-paulis`
+(\texttt{inconsistency\_mTilde\_le}); the two middle legs are the game's own consistencies ---
+point against point and point against Pauli --- and are hypotheses here, stated along the padded
+state's own cut and carried across by \texttt{inconsistency\_regroupVec}. -/
+theorem inconsistency_mTilde_pauli_le (W : Bas) {δ' : ℝ}
+    (hpt : inconsistency (uniform (Point F m)) P.Φ
+        (fun u => ((ptAtPOVM MA W u).aOp (E := Anc F m)).aOp (E := P.EA))
+        (fun u => ((ptAtPOVM MB W u).aOp (E := Anc F m)).aOp (E := P.EB)) ≤ δ')
+    (hpauli : inconsistency (uniform (Point F m)) P.Φ
+        (fun u => ((ptAtPOVM MA W u).aOp (E := Anc F m)).aOp (E := P.EA))
+        (fun u => ((pauliAtPOVM MB W u).aOp (E := Anc F m)).aOp (E := P.EB)) ≤ δ')
+    (hmt : inconsistency (uniform (Point F m)) P.mVec
+        (fun u => (P.isPVM_mTildeAt W u).toPOVM) (fun u => (ptAtPOVM MB W u).aOp) ≤ δ') :
+    inconsistency (uniform (Point F m)) P.mVec
+        (fun u => (P.isPVM_mTildeAt W u).toPOVM) (fun u => (pauliAtPOVM MB W u).aOp)
+      ≤ 11 * δ' := by
+  refine inconsistency_triangle (uniform_nonneg (Point F m)) (sum_uniform_eq_one (Point F m))
+    P.mVec_unit _ (fun u => (((ptAtPOVM MA W u).aOp (E := Anc F m)).aOp (E := P.EA)).aOp
+      (E := Anc F m)) _ _ hmt ?_ ?_
+  · rw [SimulPair.mVec, inconsistency_regroupVec]
+    exact hpt
+  · rw [SimulPair.mVec, inconsistency_regroupVec]
+    exact hpauli
+
+/-- **Display `eq:qld-unitary-5`, with its two middle legs read on the strategy's own state.**
+This is the form the game supplies them in: `agree_subtest_le` bounds a cross-party deviation of
+the strategy's measurements on `psi`, and nothing there knows about the expansion or the padding.
+-/
+theorem inconsistency_mTilde_pauli_le' (W : Bas) {δ' : ℝ}
+    (hpt : inconsistency (uniform (Point F m)) ψ (fun u => ptAtPOVM MA W u)
+      (fun u => ptAtPOVM MB W u) ≤ δ')
+    (hpauli : inconsistency (uniform (Point F m)) ψ (fun u => ptAtPOVM MA W u)
+      (fun u => pauliAtPOVM MB W u) ≤ δ')
+    (hmt : inconsistency (uniform (Point F m)) P.mVec
+        (fun u => (P.isPVM_mTildeAt W u).toPOVM) (fun u => (ptAtPOVM MB W u).aOp) ≤ δ') :
+    inconsistency (uniform (Point F m)) P.mVec
+        (fun u => (P.isPVM_mTildeAt W u).toPOVM) (fun u => (pauliAtPOVM MB W u).aOp)
+      ≤ 11 * δ' :=
+  P.inconsistency_mTilde_pauli_le W (by rw [P.inconsistency_padded]; exact hpt)
+    (by rw [P.inconsistency_padded]; exact hpauli) hmt
+
+/-- **Display `eq:qld-unitary-5`, from the game's soundness and item 1 of
+`lem:qld-exact-paulis` alone.** The two middle legs are now discharged: they are items 1 and 3 of
+`lem:qld-win` at the point and Pauli types, and `86 = 172/2` is `agree_subtest_le`'s constant
+halved by the passage from a cross-party deviation to an inconsistency. -/
+theorem inconsistency_mTilde_pauli_le_of_win {hm : m ∣ Fintype.card F} {ε δ' : ℝ}
+    (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
+    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) (hε : 86 * ε ≤ δ')
+    (hmt : inconsistency (uniform (Point F m)) P.mVec
+        (fun u => (P.isPVM_mTildeAt W u).toPOVM) (fun u => (ptAtPOVM MB W u).aOp) ≤ δ') :
+    inconsistency (uniform (Point F m)) P.mVec
+        (fun u => (P.isPVM_mTildeAt W u).toPOVM) (fun u => (pauliAtPOVM MB W u).aOp)
+      ≤ 11 * δ' :=
+  P.inconsistency_mTilde_pauli_le' W
+    (le_trans (inconsistency_pt_pt_le hψ hfail hprojA hprojB W) hε)
+    (le_trans (inconsistency_pt_pauli_le hψ hfail hprojA hprojB W) hε) hmt
 
 /-- **Display `eq:qld-unitary-6` at the interface.** -/
 theorem swapU_conj_mTildeAt (W : Bas) (u : Point F m) (a : F) :

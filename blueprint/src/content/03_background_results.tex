@@ -4056,7 +4056,7 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.qform_sandwich_nonneg, MIPRE.snorm_sq_sum_proj_sandwich,
   MIPRE.sum_qform_sandwich_le_of_subset, MIPRE.abs_sum_qform_swap_le,
   MIPRE.sum_snorm_sq_proj_comp_le, MIPRE.snorm_one_sub_aOp_mul_bOp_le,
-  MIPRE.sum_snorm_sq_insert_le, MIPRE.povmOfIsPVM, MIPRE.sum_xSqNorm_fibre_le}
+  MIPRE.sum_snorm_sq_insert_le, MIPRE.sum_xSqNorm_fibre_le}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4182,7 +4182,7 @@ deviation per index would multiply the bound by the size of a fibre. The display
 measurements the same way costs nothing --- which is Item 2 of \texttt{fact:agreement}, then
 \texttt{fact:data-processing}, then Item 1 of \texttt{fact:agreement} --- and Foundations has it
 as \texttt{sum\_xSqNorm\_map\_le}, on bundled POVMs. The chain speaks \texttt{IsPVM};
-\texttt{povmOfIsPVM} and \texttt{sum\_xSqNorm\_fibre\_le} bridge the two.
+\texttt{IsPVM.toPOVM} and \texttt{sum\_xSqNorm\_fibre\_le} bridge the two.
 
 \emph{Not formalized}: the assembly of the chain itself --- the index bookkeeping of its eleven
 displays, and Lemma~\ref{lem:qld-povm-to-obs} at the end. Every step it assembles is in place.
@@ -4212,7 +4212,14 @@ displays, and Lemma~\ref{lem:qld-povm-to-obs} at the end. Every step it assemble
   MIPRE.QLD.conj_syn_of_sign, MIPRE.QLD.swapU_conj_mTilde, MIPRE.QLD.swapU_conj_mTilde_X,
   MIPRE.QLD.swapU_conj_mTilde_Z, MIPRE.QLD.sum_snorm_sq_sub_eq_two_sub,
   MIPRE.QLD.sum_uniform_agree_bornProb_le, MIPRE.QLD.SimulPair.swapA,
-  MIPRE.QLD.SimulPair.swapU_conj_mTildeAt}
+  MIPRE.QLD.SimulPair.swapU_conj_mTildeAt, MIPRE.QLD.inconsistency_triangle,
+  MIPRE.QLD.inconsistency_regroupVec, MIPRE.QLD.pauliAtPOVM,
+  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le, MIPRE.QLD.abs_qform_sub_qform_le,
+  MIPRE.QLD.SimulPair.bornProb_padded, MIPRE.QLD.SimulPair.inconsistency_padded,
+  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le',
+  MIPRE.QLD.inconsistency_eq_half_xPovmDist, MIPRE.QLD.inconsistency_pt_pt_le,
+  MIPRE.QLD.inconsistency_pt_pauli_le,
+  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le_of_win}
 There is $\delta_{qld} = O\bigl( \delta_S^{1/4} + md/q \bigr)$ and local unitaries $V_\alice$,
 $V_\bob$ on the expanded spaces such that, writing $M = 2^m$:
 \begin{enumerate}
@@ -4317,14 +4324,49 @@ where the weight is nonzero.
 
 \emph{Not formalized}: the two near-invariances themselves, which are
 Lemma~\ref{lem:qld-pauli-selfcons} and are hypotheses of \texttt{exists\_auxVec\_close} rather
-than conclusions; and, in item 2, \texttt{eq:qld-unitary-5} --- the triangle chain through
-Lemma~\ref{lem:qld-win} and Lemma~\ref{lem:qld-exact-paulis} --- the transport of the estimate
-from $\ket{\Delta}$ back to $\ket{\hat\psi}$ across item 1, and the assembly. Hence no
-\texttt{leanok} mark at either level. Of those, \texttt{eq:qld-unitary-5} needs no new estimate:
-its engine is the paper's \texttt{fact:triangle-for-simeq}, already in Foundations as
-\texttt{agreeSum\_triangle} (with $11\delta$ for the paper's $9\delta$, as
-Lemma~\ref{lem:qld-global-success} records), so what is left there is stating its three
-consistencies at this interface.
+than conclusions; and, in item 2, the assembly --- \texttt{eq:qld-unitary-7} through
+\texttt{-9} and the transport above, threaded into the statement about
+$V M^{(\pauli,W)}_h V^\dagger$. Hence no
+\texttt{leanok} mark at either level. 
+
+\emph{And \texttt{eq:qld-unitary-5}.} It needed no new estimate: its engine is the paper's
+\texttt{fact:triangle-for-simeq}, already in Foundations as \texttt{agreeSum\_triangle} (with
+$11\delta$ for the paper's $9\delta$, as Lemma~\ref{lem:qld-global-success} records). Two
+adapters put it to work. \texttt{inconsistency\_triangle} is the estimate in the vocabulary this
+interface states everything in --- an inconsistency rather than an agreement, the two being the
+same number. And \texttt{inconsistency\_regroupVec} settles the one real obstacle, that the three
+legs are not read along the same cut: $\tilde{M}^{W,u}$ needs the ancilla half with the first
+party, which is the regrouped cut, while the strategy's own measurements are stated along the
+padded state's. For operators that ignore the register the regrouping moves --- which the
+strategy's measurements do, being extended by the identity there --- the two readings are the same
+number, the regrouping being a reindexing of the whole space. \texttt{SimulPair
+.inconsistency\_mTilde\_pauli\_le} is then the display, with the two middle legs --- the game's
+point--point and point--Pauli consistencies, the latter read through
+\texttt{pauliAtPOVM} --- as hypotheses, in the same way
+\texttt{exists\_auxVec\_close} takes item 1's near-invariances. They are asked for in the form
+the game supplies them: \texttt{inconsistency\_padded} reads a consistency between the strategy's
+own measurements on the padded state and on the strategy's own state alike, both being extended by
+the identity on the expansion's ancillas and on the padding, so
+\texttt{inconsistency\_mTilde\_pauli\_le'} takes them on $\ket{\psi}$, where
+\texttt{agree\_subtest\_le} leaves them.
+
+\emph{And those two legs are discharged.} They are items 1 and 3 of Lemma~\ref{lem:qld-win} at the
+point and Pauli types --- \texttt{item\_consistency} and \texttt{item\_pauli\_consistency}, both
+already in --- and three steps carry each into the form the triangle wants. The point question a
+content asks is the point the content carries, so the average over contents of a function of that
+point is the uniform average over points (\texttt{sum\_content\_pt}); and for \emph{projective}
+families a cross-party deviation is exactly twice the inconsistency
+(\texttt{inconsistency\_eq\_half\_xPovmDist} --- only $\leq$ holds for general POVMs, and what
+makes it an equality is that both families' masses are exactly one). That gives
+\texttt{inconsistency\_pt\_pt\_le} and \texttt{inconsistency\_pt\_pauli\_le} at $86\eps$,
+which is \texttt{agree\_subtest\_le}'s $172\eps$ halved, and
+\texttt{inconsistency\_mTilde\_pauli\_le\_of\_win} is then \texttt{eq:qld-unitary-5} from the
+game's soundness and item 1 of Lemma~\ref{lem:qld-exact-paulis} alone.
+
+\emph{And the endgame's transport.} \texttt{abs\_qform\_sub\_qform\_le}: moving an expectation
+from the product state to the padded one costs twice the operator's bound times the distance
+between them. Item 1 bounds the \emph{squared} distance, which is exactly where the fourth root
+in $\delta_{qld}$ comes from.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the repairs above, including the
 ledger's declared dependencies for node $1.2.2.16$, which name $1.2.2.4$
 (Lemma~\ref{lem:qld-win}) and which the \texttt{uses} list did not.

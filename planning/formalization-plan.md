@@ -685,10 +685,33 @@ since it is a different kind of claim from "H4 done". Chapter 7's corollaries (`
 
 **The mountain is chapter 6 and its chapter-3 inputs.** Coverage at `2f4cd53`: chapter 6 has 10
 of 37 statements with `\lean{}` (the CL foundations and the two hypothesis structures) and 6
-with a proof; chapter 3 has 10 of 44, and everything introspection needs — `thm:qld` and its
-fifteen lemmas, `thm:ms-rigidity`, the `lem:lidt-*` transfers — is at zero, as are
+with a proof; chapter 3 has 10 of 44, and `thm:ms-rigidity` and the `lem:lidt-*` transfers are at
+zero, as are
 `thm:succinct-sat` and the two universal-machine specifications (#17, #18) that answer
-reduction's Cook–Levin step rests on. **H5, the assembly of `thm:compression` from the
+reduction's Cook–Levin step rests on.
+
+**`thm:qld` is no longer at zero, and this paragraph's count for it is stale.** The QLD campaign
+has taken its appendix through stage 5; `planning/qld-campaign.md` is the current record, entry by
+entry, and the blueprint's `lem:qld-*` commentary says per lemma what is formalized and what is
+not. As of 2026-09-22 the position is: stages 1 to 4 are done; of stage 5,
+`lem:qld-exact-paulis` is complete, `lem:qld-pauli-selfcons` has every step of its pulling chain
+formalized and wants only the assembly, and `lem:qld-swap` has item 1 given its hypothesis and
+four of item 2's displays. **What `thm:qld` still needs, in order of distance to done:**
+
+1. ~~the two game consistencies `eq:qld-unitary-5` assumes~~ --- **done**: they are items 1 and 3
+   of `lem:qld-win`, carried into the triangle's vocabulary by `sum_content_pt` and
+   `inconsistency_eq_half_xPovmDist`, and `inconsistency_mTilde_pauli_le_of_win` is the display
+   from the game's soundness alone;
+2. the assembly of item 2 --- `eq:qld-unitary-7` through `-9` and `abs_qform_sub_qform_le`
+   threaded into the statement about `V M^(Pauli,W)_h V†`;
+3. the assembly of `lem:qld-pauli-selfcons`'s chain: its eleven displays are each formalized, and
+   what is left is the index bookkeeping that threads them, at a *uniform* probe rather than at
+   `ind_m(u)` (so a `mTilde` at an arbitrary ancilla vector, not only `mTildeAt`), plus
+   `lem:qld-povm-to-obs` at the end;
+4. `thm:qld` itself from the two lemmas.
+
+Items 1 and 2 are independent of 3. None of them needs a new estimate: every estimate the appendix
+uses is now in the library. **H5, the assembly of `thm:compression` from the
 hypothesis structures, is done** (`MIPRE/Foundations/Pipeline/`): `Introspection ℓ`,
 `Oracularization ℓ`, `AnswerReduction ℓ`, `Repetition ℓ`, each a `structure` in the vocabulary
 of `MIPRE.Verifier` with its time bounds stated as resource budgets (`Budget`,
