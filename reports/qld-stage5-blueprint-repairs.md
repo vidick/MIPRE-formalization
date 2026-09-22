@@ -266,3 +266,40 @@ This was found by writing `endEquiv`, a four-factor regrouping intended to *be* 
 then checking the register identification against `qld-isometry.tex` before building on it. The
 regrouping is correct and keeps its place; the identification was not, and the blueprint entry that
 asserted it has been repaired.
+
+### And `lem:qld-pauli-selfcons`'s assembly is blocked on the same thing
+
+The first version of this note said the obstacle was item 2's alone, and that the pulling chain's
+assembly was unblocked bookkeeping. That is wrong, and the reason is worth being precise about,
+because it is the same shortage of registers seen from the other side.
+
+The chain's *conclusion* is
+
+    (W~^e(u-tilde))_{A A' A''}  approx_{delta_qld}  (W~^e(u-tilde))_{B B' B''} ,
+
+a cross-party closeness of Alice's exact Pauli observable and Bob's. Each side needs its party's
+whole triple, so the statement needs all six registers at once. In this formalization `Phi` has
+four: `dA`, one `Anc`, `dB`, one `Anc`. Worse, the two readings pull in opposite directions ---
+`mTildeAt` lives on the regrouping that gives *Alice* both ancilla factors (`mVec`), and a Bob-side
+`mTilde` would need the regrouping that gives *Bob* both. No single bipartite cut of a four-factor
+state supports both, so the conclusion cannot even be *stated* here, let alone proved. There is no
+Bob-side `mTilde` in the tree, and that is why.
+
+What made the one-pair economy work up to now is that every earlier consumer compares an exact
+Pauli object on one party with a *point measurement* on the other, and a point measurement needs no
+ancilla: `inconsistency_mTilde_le` is `mTildeAt` against `(ptAtPOVM MB W u).aOp`, which lives on
+`dB x EB`. The moment two exact Pauli objects are compared, the economy runs out.
+
+### So: one blocker, two consumers
+
+Both remaining assemblies --- `lem:qld-pauli-selfcons`'s chain and `lem:qld-swap` item 2's
+threading --- wait on the same interface change: `SimulPair` carrying **both** entangled pairs,
+`A' A''` and `B' B''`, so that `Phi` has four ancilla factors and each party's exact Pauli object
+can be read with its own pair on its own side.
+
+That change is not local. `Phi`'s type changes, and with it `Phi_reduced`, `consA`, `consB`, and
+every statement in `Helper`, `Multilinear`, `MTilde`, `AncTransport`, `Pulling`, `SwapMeasure` and
+`ChainProbe` that reads `Phi` or `mVec`. The estimates themselves are untouched --- they are about
+operators and states in the abstract and do not care how many ancillas there are --- so this is a
+retyping and a re-derivation of the transports, not new mathematics. But it is the piece of work
+that has to come next, and neither assembly should be started before it.

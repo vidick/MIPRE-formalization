@@ -2219,3 +2219,28 @@ by definition that average (`twirl w = E_u w(u) (x) w(u)`), so the two are one r
 `qform_bOp_twirl`. Worth recording that the edge is this short. The node was separated out from
 `lem:qld-exact-paulis` because the latter's `leanok` marks had to stay honest, and the worry was
 that the separation would cost a translation layer between them. It costs one line.
+
+### The correction to the correction (2026-09-22)
+
+The note above said item 2's threading was blocked on the second entangled pair while
+`lem:qld-pauli-selfcons`'s chain was unblocked bookkeeping. The second half is wrong, and checking
+it before starting the chain assembly is what turned it up.
+
+The chain's conclusion is a cross-party closeness of the two parties' *exact Pauli observables*:
+`(W~^e(u-tilde))_{A A' A''} approx (W~^e(u-tilde))_{B B' B''}`. Each side needs its party's whole
+triple, so six registers at once; `Phi` has four. And the two readings pull opposite ways ---
+`mTildeAt` lives on the regrouping that gives Alice both ancilla factors, a Bob-side `mTilde` would
+need the one that gives Bob both, and no bipartite cut of a four-factor state supports both. The
+conclusion cannot be stated in the present representation. That there is no Bob-side `mTilde` in
+the tree is the same fact from the other side.
+
+What kept the one-pair economy honest until now: every earlier consumer compares an exact Pauli
+object on one party with a *point measurement* on the other, and a point measurement carries no
+ancilla. `inconsistency_mTilde_le` is `mTildeAt` against `(ptAtPOVM MB W u).aOp` on `dB x EB`. Two
+exact Pauli objects is the first comparison the economy cannot serve.
+
+**So there is one blocker with two consumers**, and it is now the next piece of work: `SimulPair`
+carrying both pairs. `Phi`'s type changes and every statement reading `Phi` or `mVec` is re-derived
+--- `Helper`, `Multilinear`, `MTilde`, `AncTransport`, `Pulling`, `SwapMeasure`, `ChainProbe`. The
+estimates are untouched, being about operators and states in the abstract; this is a retyping and a
+re-derivation of the transports. Neither assembly should be started before it.

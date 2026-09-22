@@ -702,16 +702,27 @@ four of item 2's displays. **What `thm:qld` still needs, in order of distance to
    of `lem:qld-win`, carried into the triangle's vocabulary by `sum_content_pt` and
    `inconsistency_eq_half_xPovmDist`, and `inconsistency_mTilde_pauli_le_of_win` is the display
    from the game's soundness alone;
-2. the assembly of item 2 --- `eq:qld-unitary-7` through `-9` and `abs_qform_sub_qform_le`
-   threaded into the statement about `V M^(Pauli,W)_h V†`;
-3. the assembly of `lem:qld-pauli-selfcons`'s chain: its eleven displays are each formalized, and
-   what is left is the index bookkeeping that threads them, at a *uniform* probe rather than at
-   `ind_m(u)` (so a `mTilde` at an arbitrary ancilla vector, not only `mTildeAt`), plus
-   `lem:qld-povm-to-obs` at the end;
+2. **`SimulPair` carrying both entangled pairs.** This is the blocker for everything below it, and
+   it has two consumers. The paper's expanded state is
+   `|psi>_{AB} (x) |EPR>_{A'A''} (x) |EPR>_{B'B''}`; `Phi` carries only `A' A''`, read along the cut
+   `A A' | B A''`. That economy was right while every consumer compared an exact Pauli object on
+   one party with a *point* measurement on the other, which carries no ancilla. Both remaining
+   assemblies compare two exact Pauli objects, and each needs its party's whole triple --- six
+   registers at once, against `Phi`'s four --- so neither can even be *stated* now. `Phi`'s type
+   changes and every statement reading `Phi` or `mVec` is re-derived (`Helper`, `Multilinear`,
+   `MTilde`, `AncTransport`, `Pulling`, `SwapMeasure`, `ChainProbe`); the estimates themselves are
+   untouched, being about operators and states in the abstract. See
+   `reports/qld-stage5-blueprint-repairs.md`, and `planning/qld-two-pairs-scope.md` for the scope:
+   the target is to carry the paper's state as the paper writes it, physically grouped, and derive
+   the split cuts the earlier stages work in by the regroupings this tree already has;
+3. then the two assemblies, in either order: `lem:qld-swap` item 2's threading
+   (`eq:qld-unitary-7` through `-9` and `abs_qform_sub_qform_le` into the statement about
+   `V M^(Pauli,W)_h V†`), and `lem:qld-pauli-selfcons`'s chain at a uniform probe, plus
+   `lem:qld-povm-to-obs` at its end;
 4. `thm:qld` itself from the two lemmas.
 
-Items 1 and 2 are independent of 3. None of them needs a new estimate: every estimate the appendix
-uses is now in the library. **H5, the assembly of `thm:compression` from the
+Item 1 is independent of the rest. **None of them needs a new estimate**: every estimate the
+appendix uses is in the library, and item 2 is a retyping, not new mathematics. **H5, the assembly of `thm:compression` from the
 hypothesis structures, is done** (`MIPRE/Foundations/Pipeline/`): `Introspection ℓ`,
 `Oracularization ℓ`, `AnswerReduction ℓ`, `Repetition ℓ`, each a `structure` in the vocabulary
 of `MIPRE.Verifier` with its time bounds stated as resource budgets (`Budget`,
