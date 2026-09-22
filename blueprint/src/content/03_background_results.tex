@@ -4089,7 +4089,9 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.SimulPair.mTildeAnc_mul_kron, MIPRE.QLD.SimulPair.aOp_mTildeAnc_mul_nearId,
   MIPRE.QLD.snorm_sq_sum_orthogonal', MIPRE.QLD.isPVM_proj, MIPRE.QLD.isPVM_chainOp,
   MIPRE.QLD.isPVM_ptAtPOVM, MIPRE.QLD.SimulPair.chainShift, MIPRE.QLD.SimulPair.ptA,
-  MIPRE.QLD.SimulPair.ptB, MIPRE.QLD.SimulPair.sum_snorm_sq_insert_chain}
+  MIPRE.QLD.SimulPair.ptB, MIPRE.QLD.SimulPair.sum_snorm_sq_insert_chain,
+  MIPRE.QLD.stateVec_hatVec_proj, MIPRE.QLD.xSqNorm_hatVec_proj,
+  MIPRE.QLD.SimulPair.stateVec_ancProj, MIPRE.QLD.SimulPair.sum_ancProj_mulVec}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4340,9 +4342,25 @@ of the outcome map $(g,h) \mapsto (g - g_h)(u)$ be seen once rather than once pe
 the display over the measurement outcome $a$ recovers the whole index set, the sets
 \texttt{chainIdx} being its fibres, which is \texttt{Finset.sum\_fiberwise}.
 
-\emph{Not formalized}: the remaining five $\approx$ steps --- their estimates are all in place, as
-recorded above, and what is missing is the rest of the four-index bookkeeping --- and
-Lemma~\ref{lem:qld-povm-to-obs} at the very end.
+\emph{And the two transports, \texttt{eq:qld-pulling-3a} and \texttt{eq:qld-pulling-4}.} Both are
+$\approx_0$ steps --- identities on the state, not estimates.
+\texttt{SimulPair.stateVec\_ancProj} moves a single Weyl projector from $\alice'$ to $\alice''$ at
+no cost, the two halves of the pair being maximally entangled and the projectors symmetric; and
+\texttt{SimulPair.sum\_ancProj\_mulVec} is the consequence the chain uses, that summing the matched
+pairs of them, one on each party, leaves the state alone. \texttt{AncTransport.lean} had both for
+the \emph{syndrome} projector, which is a fibre of the spectral family; the chain moves one
+projector of that family, so it needs the single-projector version, and
+\texttt{stateVec\_epr\_proj} --- already in Foundations, and already used by the endgame --- is the
+ingredient. The shape of the argument is worth restating because it is what makes these steps
+available at all: Lemma~\ref{lem:qld-simultaneous} does not say the padded state \emph{is} an
+expanded state, only that it reproduces its expectations, so a \emph{vector} identity about it
+looks out of reach. It is not, because the identity to be proved is the vanishing of a squared
+norm, and a squared norm is an expectation.
+
+\emph{Not formalized}: the remaining three $\approx$ steps --- \texttt{eq:qld-pulling-3b},
+\texttt{eq:qld-pulling-5} to \texttt{-7}, and \texttt{eq:qld-pulling-10} to \texttt{-12}. Their
+estimates are all in place, as recorded above; what is missing is the rest of the four-index
+bookkeeping. And Lemma~\ref{lem:qld-povm-to-obs} at the very end.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
 
 \effortHard
