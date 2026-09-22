@@ -4322,11 +4322,28 @@ diagonal is excluded by the weight rather than by the index set, which is why
 \texttt{sum\_uniform\_agree\_mass\_le} now asks for the two polynomials to be distinct only
 where the weight is nonzero.
 
+\emph{And the endgame's own steps, in \texttt{SwapEndgame.lean}.} Item 1 leaves a product state
+$\ket{\aux} \ot \ket{\EPR_q}^{\ot M}$, and what the endgame does to it is elementary once said
+plainly: an operator on the entangled pair acts on the second factor and leaves the first
+(\texttt{bOp\_mulVec\_auxVec}, one entry computation), so two operators that agree on
+$\ket{\EPR_q}^{\ot M}$ agree on the product (\texttt{mulVec\_auxVec\_congr}). That is
+\texttt{eq:qld-unitary-7}'s last line, where a generalized Pauli's spectral projector moves from
+one half of the pair to the other: the projectors are symmetric, being real Fourier averages of a
+symmetric family, so \texttt{stateVec\_epr\_proj} moves them across and
+\texttt{mulVec\_auxVec\_proj} carries that to the product state
+(\texttt{mulVec\_auxVec\_syn} for the syndrome projectors). The display's first two lines are
+\texttt{sum\_snorm\_sq\_sub\_le\_of\_agree}: everything after them is a lower bound on one
+number, the agreement, and the deviation is twice its deficit. And
+\texttt{sum\_uniform\_bornProb\_fibre\_le} is \texttt{eq:qld-unitary-8} in the form the chain
+consumes: reading the two families at the value of the encoding at the sampled point rather than at
+the full outcome raises the agreement by at most $md/q$, the pairs it adds being the distinct ones
+whose encodings collide there.
+
 \emph{Not formalized}: the two near-invariances themselves, which are
 Lemma~\ref{lem:qld-pauli-selfcons} and are hypotheses of \texttt{exists\_auxVec\_close} rather
-than conclusions; and, in item 2, the assembly --- \texttt{eq:qld-unitary-7} through
-\texttt{-9} and the transport above, threaded into the statement about
-$V M^{(\pauli,W)}_h V^\dagger$. Hence no
+than conclusions; and, in item 2, the threading of those steps into the statement about
+$V M^{(\pauli,W)}_h V^\dagger$, which is where the registers of the conjugated Pauli measurement
+have to be matched with item 1's. Every step it threads is in place. Hence no
 \texttt{leanok} mark at either level. 
 
 \emph{And \texttt{eq:qld-unitary-5}.} It needed no new estimate: its engine is the paper's

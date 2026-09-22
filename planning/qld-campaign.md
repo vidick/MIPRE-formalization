@@ -2147,3 +2147,32 @@ was the fix, twice. And a `rw` with the measurement arguments left as `_` unifie
 
 That is item 1 of the four in `planning/formalization-plan.md`'s QLD list, done. Left: the assembly
 of item 2, the assembly of `lem:qld-pauli-selfcons`'s chain, and `thm:qld`.
+
+### PR O: the endgame of item 2, in bricks (2026-09-22)
+
+`MIPRE/Background/QLD/SwapEndgame.lean`, new. Item 1 leaves a product state
+`|aux> (x) |EPR_q>^M`, and what the endgame does to it turns out to be elementary once said
+plainly.
+
+* An operator on the entangled pair acts on the second factor and leaves the first
+  (`bOp_mulVec_auxVec`, one entry computation), so two operators that agree on the pair agree on
+  the whole product (`mulVec_auxVec_congr`). That is `eq:qld-unitary-7`'s last line, where a
+  generalized Pauli's spectral projector moves from one half of the pair to the other: the
+  projectors are symmetric, being real Fourier averages of a symmetric family, so the existing
+  `stateVec_epr_proj` moves them across the pair and `mulVec_auxVec_proj` carries that to the
+  product state. `mulVec_auxVec_syn` is the same for the syndrome projectors.
+* `sum_snorm_sq_sub_le_of_agree` is the display's first two lines read as a bound: everything after
+  them is a lower bound on one number, the agreement, and the deviation the lemma asks about is
+  twice its deficit.
+* `sum_uniform_bornProb_fibre_le` is `eq:qld-unitary-8` in the form the chain consumes. Reading the
+  two families at the *value* of the encoding at the sampled point rather than at the full outcome
+  can only add agreeing pairs, and the ones it adds are the distinct pairs whose encodings collide
+  there, which `sum_uniform_agree_bornProb_le` already bounds. The work is the regrouping: the
+  agreeing pairs at `u`, fibred by the common value, are exactly the products of the fibres, and
+  the diagonal of that is the fine agreement.
+
+With this, every step of item 2's endgame is formalized. What is left of item 2 is the threading:
+matching the registers of the conjugated Pauli measurement with item 1's, which is where
+`exists_auxVec_close`'s cut (the two parties' non-ancilla registers as one index, their two ancilla
+halves adjacent) has to be reconciled with the measurement's. That is bookkeeping, and it is the
+only thing between here and the lemma.
