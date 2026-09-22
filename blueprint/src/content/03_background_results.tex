@@ -3843,7 +3843,8 @@ same sum, grouped differently, and the outcome form is what the Pauli constructi
   MIPRE.QLD.wTilde_mul_wTilde, MIPRE.QLD.dotF_smul_right, MIPRE.QLD.trDot_smul_smul,
   MIPRE.QLD.trDot_smul_right, MIPRE.QLD.sum_kron, MIPRE.QLD.kron_sum,
   MIPRE.QLD.prob_agree_ldEnc_le_of_not_multilinear, MIPRE.QLD.nonMultilinear_mass_le,
-  MIPRE.QLD.sum_sub_le_of_eq_on, MIPRE.QLD.sum_normSq_point_sub_pauli_le}
+  MIPRE.QLD.sum_sub_le_of_eq_on, MIPRE.QLD.sum_normSq_point_sub_pauli_le, MIPRE.conv,
+  MIPRE.conjTranspose_conv_mul_conv, MIPRE.sum_conv, MIPRE.sum_normSq_stateVecB_conv_eq}
 From the simultaneous measurement one constructs, for $W \in \{X, Z\}$, measurements and
 binary observables on the expanded space which satisfy the Pauli group relations
 \emph{exactly} --- linearity in the argument, and $XZ$ commutation or anticommutation with the
@@ -3874,8 +3875,13 @@ are close \emph{on one party}, at $688\,\eps$
 (\texttt{sum\_normSq\_point\_sub\_pauli\_le}), which is what lets the point be sampled
 independently of the operators. The two inputs are cross-party items of
 Lemma~\ref{lem:qld-win}, and they share Alice's point measurement, so one triangle inequality
-removes it. What remains is the chain that carries this to the expanded state and applies the
-aggregation to the simultaneous measurement's outcomes.
+removes it. A fifth carries such a statement from the strategy's state to the expanded one: every
+hatted measurement is a convolution $\widehat X_c = \sum_{a + b = c} X_a \ot T_b$ with the
+ancilla's Weyl measurement, and for a \emph{projective} $T$ the cross terms of
+$\widehat X^\dagger \widehat X$ vanish, so the common ancilla factor drops out exactly:
+$\sum_c \|(\Id \ot \widehat X_c) \widehat\psi\|^2
+  = \sum_a \|(\Id \ot X_a) \psi\|^2$ (\texttt{sum\_normSq\_stateVecB\_conv\_eq}). What
+remains is to apply the aggregation to the simultaneous measurement's outcomes.
 
 \emph{Formalized, unconditionally}, in \texttt{MIPRE/Background/QLD/ExactPauli.lean}: the two
 marginals of a projective pair measurement (\texttt{sCoarse}, projective by

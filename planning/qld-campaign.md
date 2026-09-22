@@ -1730,3 +1730,13 @@ measurement, so Foundations' `normSq_stateVecB_sub_le` (the triangle
 written for the pasting lemma and reused verbatim here) removes it: `sum_normSq_point_sub_pauli_le`, at `688 ε` on average over the verifier's content.
 This is on the bare strategy; carrying it to the expanded state, and from there to the mass
 argument, is the next step.
+
+**The ancilla transfer.** A second piece of the same module: `sum_normSq_stateVecB_conv_eq`. Every
+hatted measurement is a convolution `X̂_c = ∑_{a+b=c} X_a ⊗ T_b` of the party's own family with the
+ancilla's Weyl measurement, and for a *projective* `T` the cross terms of `X̂ᴴ X̂` vanish --- the
+ancilla outcome determines the other one (`conjTranspose_conv_mul_conv`) --- so the same-party
+deviation on the expanded state equals the one on the strategy's own state, with no loss at all.
+Summing a convolution over its outcome frees the ancilla factor (`sum_conv`), and
+`bornProb_expVec_kron` then peels the maximally entangled pair off, whose own weight is one. With
+this and the previous piece, what is left of the approximate half is the aggregation itself: the
+projective family indexed by cube data, and `nonMultilinear_mass_le` applied to it.
