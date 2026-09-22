@@ -1948,3 +1948,47 @@ itself subtracted from one, the marginal's outcomes summing to the identity.
 Left on the node: `eq:qld-pulling-3`; the middle of `-10` (the expansion of the squared norm and
 the `O(sqrt eps)` substitution at `eq:qld-pulling-13`); the assembly; and the final passage through
 `fact:agreement`, `fact:data-processing` and `lem:qld-povm-to-obs`.
+
+### PR L, fifth piece: the middle of `eq:qld-pulling-10`, `eq:qld-pulling-3`, and the final passage (2026-09-22)
+
+`MIPRE/Background/QLD/Pulling.lean`, continued. Three sections, and after them the only thing the
+node is missing is the assembly of the chain itself.
+
+**The middle of `eq:qld-pulling-10` (`section Substitute`).** Between the two ends already in
+place, the estimate expands a squared norm over the orthogonal outcomes of a projective family
+into a sum of sandwiches (`snorm_sq_sum_proj_sandwich`), drops the constraint on the outcomes
+(`sum_qform_sandwich_le_of_subset`, from the nonnegativity `qform_sandwich_nonneg`), and then
+*moves* the sandwiched measurement from one party to the other. That last step is
+`abs_sum_qform_swap_le`, and it is the only Cauchy--Schwarz in the whole chain: the difference of
+the two sandwiches is written as two terms each carrying the deviation `X - Y` on one side, and
+each is bounded by `sqrt(eps)` against a mass at most one. `snorm_sq_proj_mul_eq_qform` is how
+that mass is read off a sandwich.
+
+The `X` side needs no second half: `X S X = X S` there, because `X` is a projection commuting with
+what it sandwiches. The summed Cauchy--Schwarz is `Introspection.abs_sum_qform_mul_le`, already in
+Foundations for the introspection induction and the reason this file now imports
+`MIPRE/Foundations/Introspection/ValueStability.lean`. It wants the self-adjoint factor written
+first, which the deviation is and the half-sandwich is not; `qform_conjTranspose` turns the first
+term around so that both fit.
+
+**`eq:qld-pulling-3` (`section Insert`).** The expansion leaves one party's projector beside the
+*other* party's point measurement, and the chain inserts a copy of that measurement on the first
+party's side. Two things make the step cost the self-consistency of `lem:qld-win` and no more. The
+deficit of the insertion is the cross-party deviation itself (`snorm_one_sub_aOp_mul_bOp_le`):
+`(1 - A) B = B (B - A)` because `B` is a projection and the parties commute, and a projection in
+front costs nothing. And the projective family in front is indexed *through a map* to the
+measurement's own outcomes, so only the fibres of that map are summed over
+(`sum_snorm_sq_proj_comp_le`). Without the fibres this would be false --- the index of the family
+is far larger than the outcome set, and summing one deviation once per index would multiply the
+bound by the size of a fibre. `sum_snorm_sq_insert_le` is the display.
+
+**The final passage (`section Coarse`).** This turned out to be already available. Foundations has
+`sum_xSqNorm_map_le` --- coarse-graining two projective measurements the same way costs nothing,
+which is exactly `fact:agreement`, `fact:data-processing` and `fact:agreement` again --- stated on
+bundled POVMs, because that is what the expansion stage of the introspection tree speaks. The
+chain speaks `IsPVM`. `povmOfIsPVM` and `sum_xSqNorm_fibre_le` bridge the two, and the passage is
+then one `simpa`. Worth recording as a small lesson: before writing an estimate of this shape,
+look for it in `Foundations/Sandwich.lean` and `Foundations/Expanded.lean` first.
+
+Left on the node: the assembly of the chain itself, which is the index bookkeeping of the eleven
+displays plus `lem:qld-povm-to-obs` at the end. Every step it assembles is now formalized.

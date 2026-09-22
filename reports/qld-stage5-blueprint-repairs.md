@@ -220,8 +220,19 @@ The general lesson for the rest of the chain: an exact statement about `Phi` tha
 a vanishing squared norm is reachable through `Phi_reduced`, and one that cannot is not. Every
 `approx_0` step of this chain is of the first kind.
 
-What remains of the node is its estimates: `eq:qld-pulling-1`, `-3`, `-7`, and `-10` through `-12`,
-then `fact:agreement`, `fact:data-processing` and `lem:qld-povm-to-obs`. They use
-`fact:add-a-proj` (`MIPRE/Foundations/Commutation.lean`) and the second item of `lem:qld-helper`,
-both in place; beyond that they are the same kind of state-norm bookkeeping as stage 4's three
-pull requests, at about the same size.
+The estimates of the node are now formalized too: `eq:qld-pulling-1` (the near-identity is a
+projection), `-3` (inserting the other party's outcome), `-7` and `-11` (the helper in the chain's
+own indexing), `-12` (Schwartz--Zippel again), and `-10` end to end --- `fact:add-a-proj` at the
+top, the orthogonal expansion and the `2 sqrt(eps)` substitution in the middle, the helper at the
+bottom. What remains of the node is the assembly: the index bookkeeping that threads the eleven
+displays together, and `lem:qld-povm-to-obs` at the end.
+
+One thing found while doing the last of them is worth recording, because it is a general lesson
+about this library rather than about this proof. The final passage of the node --- Item 2 of
+`fact:agreement`, then `fact:data-processing`, then Item 1 of `fact:agreement` --- is
+`sum_xSqNorm_map_le` in `MIPRE/Foundations/Sandwich.lean`, written for the introspection
+induction and stated on bundled `POVM`s. Nothing in the QLD tree was reaching for it, because the
+QLD tree speaks `IsPVM` and matrices. The two are a `simpa` apart (`povmOfIsPVM`,
+`sum_xSqNorm_fibre_le`). The estimates of this appendix are not as specific as they look, and
+`Foundations/Sandwich.lean` and `Foundations/Expanded.lean` are worth reading before writing
+another one.

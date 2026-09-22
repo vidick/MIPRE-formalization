@@ -4052,7 +4052,11 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.sum_uniform_agree_mass_le, MIPRE.agreeOp, MIPRE.agreeOp_conjTranspose,
   MIPRE.agreeOp_mul_self, MIPRE.qform_agreeOp, MIPRE.snorm_sq_one_sub_agreeOp,
   MIPRE.snorm_sub_mul_agreeOp_le, MIPRE.sum_kron_le_one, MIPRE.sum_bornProb_kron_le,
-  MIPRE.QLD.SimulPair.sum_bornProb_polyMarg_one_sub_le}
+  MIPRE.QLD.SimulPair.sum_bornProb_polyMarg_one_sub_le, MIPRE.snorm_sq_proj_mul_eq_qform,
+  MIPRE.qform_sandwich_nonneg, MIPRE.snorm_sq_sum_proj_sandwich,
+  MIPRE.sum_qform_sandwich_le_of_subset, MIPRE.abs_sum_qform_swap_le,
+  MIPRE.sum_snorm_sq_proj_comp_le, MIPRE.snorm_one_sub_aOp_mul_bOp_le,
+  MIPRE.sum_snorm_sq_insert_le, MIPRE.povmOfIsPVM, MIPRE.sum_xSqNorm_fibre_le}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4151,10 +4155,37 @@ operator on the other party that discards the index the sandwich runs over
 agreement, read by polynomial outcome, is at most $\delta_S$, the marginal's outcomes summing to
 the identity.
 
-\emph{Not formalized}: \texttt{eq:qld-pulling-3}; the middle of \texttt{eq:qld-pulling-10}'s
-justification, which is the expansion of the squared norm and the $O(\sqrt{\eps})$ substitution
-at \texttt{eq:qld-pulling-13}; the assembly of the chain itself; and the final passage through
-\texttt{fact:agreement}, \texttt{fact:data-processing} and Lemma~\ref{lem:qld-povm-to-obs}.
+\emph{And the middle of that justification, which is the only Cauchy--Schwarz in the chain.}
+The estimate expands a squared norm over the orthogonal outcomes of a projective family into a sum
+of sandwiches, one per outcome (\texttt{snorm\_sq\_sum\_proj\_sandwich}); drops the constraint
+on the outcomes, every sandwich being nonnegative
+(\texttt{sum\_qform\_sandwich\_le\_of\_subset}); and then \emph{moves} the sandwiched
+measurement from one party to the other. That is \texttt{abs\_sum\_qform\_swap\_le}, display
+\texttt{eq:qld-pulling-13}: the difference of the two sandwiches is two terms each carrying the
+deviation on one side, and each is bounded by $\sqrt{\eps}$ against a mass at most one, so the
+substitution costs $2\sqrt{\eps}$. The side that is left as a single factor rather than a
+sandwich is the one whose measurement commutes with what it sandwiches, where $XSX = XS$.
+
+\emph{And \texttt{eq:qld-pulling-3}.} The expansion leaves one party's projector beside the
+\emph{other} party's point measurement, and the chain inserts a copy of that measurement on the
+first party's side, spending the self-consistency of Lemma~\ref{lem:qld-win}. Two things make the
+step cost that and no more. The deficit of the insertion is the cross-party deviation itself
+(\texttt{snorm\_one\_sub\_aOp\_mul\_bOp\_le}): $(\Id - A)B = B(B - A)$, the outcome inserted
+beside being a projection and the parties commuting, and a projection in front costs nothing. And
+the family in front is indexed \emph{through a map} to the measurement's own outcomes, so the sum
+sees only the fibres of that map (\texttt{sum\_snorm\_sq\_proj\_comp\_le}). Without the fibres
+the step would be false: the family's index is far larger than the outcome set, and paying one
+deviation per index would multiply the bound by the size of a fibre. The display is
+\texttt{sum\_snorm\_sq\_insert\_le}.
+
+\emph{And the final passage was already in the library.} Coarse-graining two projective
+measurements the same way costs nothing --- which is Item 2 of \texttt{fact:agreement}, then
+\texttt{fact:data-processing}, then Item 1 of \texttt{fact:agreement} --- and Foundations has it
+as \texttt{sum\_xSqNorm\_map\_le}, on bundled POVMs. The chain speaks \texttt{IsPVM};
+\texttt{povmOfIsPVM} and \texttt{sum\_xSqNorm\_fibre\_le} bridge the two.
+
+\emph{Not formalized}: the assembly of the chain itself --- the index bookkeeping of its eleven
+displays, and Lemma~\ref{lem:qld-povm-to-obs} at the end. Every step it assembles is in place.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
 
 \effortHard

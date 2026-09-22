@@ -5,6 +5,7 @@ Authors: Thomas Vidick
 -/
 import MIPRE.Background.QLD.MTilde
 import MIPRE.Background.QLD.AncTransport
+import MIPRE.Foundations.Introspection.ValueStability
 
 /-!
 # The estimates of `lem:qld-pauli-selfcons`, by polynomial outcome
@@ -165,6 +166,256 @@ theorem sum_bornProb_kron_le {dA : Type*} [Fintype dA] [DecidableEq dA] (ψ : dA
   exact bornProb_mono_right ψ hA (sum_kron_le_one hBsa hB hT)
 
 end AddAProj
+
+/-! ## The middle of `eq:qld-pulling-10`'s justification
+
+Between `fact:add-a-proj` at the top and the helper at the bottom, the estimate does two things.
+It expands a squared norm over the orthogonal outcomes of a projective family into a sum of
+sandwiches, one per outcome, and it then *moves* the measurement being sandwiched from one party
+to the other. The move is the only place in the chain where Cauchy--Schwarz is used, and it is
+where the `O(sqrt(eps))` of display `eq:qld-pulling-13` comes from: the two placements of the
+point measurement differ by `eps` in summed squared state distance, and substituting one for the
+other costs twice its square root.
+
+Nothing here knows about the chain's indices. The projective family, the operators beside it and
+the two placements are arbitrary; what is used of the geometry is that the measurement being
+moved is a projection commuting with what it sandwiches, which in the chain holds because the two
+act on different parties. -/
+
+section Substitute
+
+variable {N : Type*} [Fintype N] [DecidableEq N] {ι : Type*} [Fintype ι] [DecidableEq ι]
+
+omit [DecidableEq N] in
+/-- **A projector's sandwich is the squared norm of half of it.** The `sqrt(1)` factors of the
+chain's Cauchy--Schwarz are read off a sandwich this way. -/
+theorem snorm_sq_proj_mul_eq_qform (v : N → ℂ) {S Y : Matrix N N ℂ} (hSsa : Sᴴ = S)
+    (hSidem : S * S = S) (hYsa : Yᴴ = Y) :
+    snorm v (S * Y) ^ 2 = qform v (Y * S * Y) := by
+  rw [snorm_sq_eq_qform, Matrix.conjTranspose_mul, hSsa, hYsa]
+  congr 1
+  rw [Matrix.mul_assoc, ← Matrix.mul_assoc S S Y, hSidem, ← Matrix.mul_assoc]
+
+/-- **A sandwiched positive operator is a nonnegative form.** -/
+theorem qform_sandwich_nonneg (v : N → ℂ) {P : Matrix N N ℂ} (hP : P.PosSemidef)
+    (W : Matrix N N ℂ) : 0 ≤ qform v (Wᴴ * P * W) :=
+  qform_nonneg_of_nonneg v (Matrix.nonneg_iff_posSemidef.mpr (hP.conjTranspose_mul_mul_same W))
+
+/-- **The squared norm of a sum over orthogonal outcomes is a sum of sandwiches.** One term per
+outcome, with the operator beside it on both sides; the cross terms vanish because the outcomes
+annihilate each other. -/
+theorem snorm_sq_sum_proj_sandwich (v : N → ℂ) {P : ι → Matrix N N ℂ} (hP : IsPVM P)
+    (W : ι → Matrix N N ℂ) (s : Finset ι) :
+    snorm v (∑ i ∈ s, P i * W i) ^ 2 = ∑ i ∈ s, qform v ((W i)ᴴ * P i * W i) := by
+  rw [snorm_sq_sum_proj_mul v hP.isSelfAdjoint (fun i j hij => hP.orthogonal hij) W s]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  have h : (W i)ᴴ * (P i)ᴴ * (P i * W i) = (W i)ᴴ * P i * W i := by
+    rw [hP.isSelfAdjoint, Matrix.mul_assoc, ← Matrix.mul_assoc (P i) (P i) (W i), hP.idem,
+      ← Matrix.mul_assoc]
+  rw [snorm_sq_eq_qform, Matrix.conjTranspose_mul, h]
+
+omit [DecidableEq ι] in
+/-- **Dropping a constraint on the outcomes.** Every sandwich is nonnegative, so enlarging the set
+summed over only increases the total. -/
+theorem sum_qform_sandwich_le_of_subset (v : N → ℂ) {P : ι → Matrix N N ℂ} (hP : IsPVM P)
+    (W : ι → Matrix N N ℂ) {s t : Finset ι} (hst : s ⊆ t) :
+    ∑ i ∈ s, qform v ((W i)ᴴ * P i * W i) ≤ ∑ i ∈ t, qform v ((W i)ᴴ * P i * W i) :=
+  Finset.sum_le_sum_of_subset_of_nonneg hst fun i _ _ =>
+    qform_sandwich_nonneg v (hP.posSemidef i) (W i)
+
+/-- **Display `eq:qld-pulling-13`: moving the sandwiched measurement across costs
+`2 sqrt(eps)`.** `X` and `Y` are the two placements of one projective measurement, `X` the one
+that commutes with the projector `S` it sandwiches; `eps` bounds the summed squared state
+distance between them. Writing the difference of the two sandwiches as a sum of two terms, each
+with the deviation `X - Y` on one side, and applying Cauchy--Schwarz across the index to each,
+leaves `sqrt(eps)` twice --- the other factor of each product being a mass at most one.
+
+The sandwich on the `X` side has collapsed: `X S X = X S` there, since `X` is a projection
+commuting with `S`. That is why only the `Y` side is written with both halves. -/
+theorem abs_sum_qform_swap_le (v : N → ℂ) (s : Finset ι) {X Y S : ι → Matrix N N ℂ} {ε : ℝ}
+    (hXsa : ∀ i, (X i)ᴴ = X i) (hXidem : ∀ i, X i * X i = X i) (hYsa : ∀ i, (Y i)ᴴ = Y i)
+    (hSsa : ∀ i, (S i)ᴴ = S i) (hcomm : ∀ i, X i * S i = S i * X i)
+    (hε : ∑ i ∈ s, snorm v (X i - Y i) ^ 2 ≤ ε)
+    (hY : ∑ i ∈ s, snorm v (S i * Y i) ^ 2 ≤ 1)
+    (hX : ∑ i ∈ s, snorm v (S i * X i) ^ 2 ≤ 1) :
+    |(∑ i ∈ s, qform v (X i * S i)) - ∑ i ∈ s, qform v (Y i * S i * Y i)|
+      ≤ 2 * Real.sqrt ε := by
+  have hdev : ∀ i, (X i - Y i)ᴴ = X i - Y i := fun i => by
+    rw [Matrix.conjTranspose_sub, hXsa, hYsa]
+  have hterm : ∀ i ∈ s, qform v (X i * S i) - qform v (Y i * S i * Y i)
+      = qform v ((X i - Y i) * (S i * Y i)) + qform v ((X i - Y i) * (S i * X i)) := by
+    intro i _
+    have hXSX : X i * S i * X i = X i * S i := by
+      rw [Matrix.mul_assoc, ← hcomm i, ← Matrix.mul_assoc, hXidem]
+    have hflip : qform v (Y i * S i * (X i - Y i)) = qform v ((X i - Y i) * (S i * Y i)) := by
+      rw [← qform_conjTranspose v (Y i * S i * (X i - Y i))]
+      congr 1
+      rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, hdev, hSsa, hYsa]
+    rw [← hXSX, ← qform_sub, ← hflip, ← qform_add]
+    congr 1
+    noncomm_ring
+  have hsplit : (∑ i ∈ s, qform v (X i * S i)) - ∑ i ∈ s, qform v (Y i * S i * Y i)
+      = (∑ i ∈ s, qform v ((X i - Y i) * (S i * Y i)))
+        + ∑ i ∈ s, qform v ((X i - Y i) * (S i * X i)) := by
+    rw [← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
+    exact Finset.sum_congr rfl hterm
+  have hdevε : Real.sqrt (∑ i ∈ s, snorm v (X i - Y i) ^ 2) ≤ Real.sqrt ε :=
+    Real.sqrt_le_sqrt hε
+  have hb : ∀ Z : ι → Matrix N N ℂ, (∑ i ∈ s, snorm v (S i * Z i) ^ 2) ≤ 1 →
+      |∑ i ∈ s, qform v ((X i - Y i) * (S i * Z i))| ≤ Real.sqrt ε := by
+    intro Z hZ
+    refine le_trans (Introspection.abs_sum_qform_mul_le v s (fun i => X i - Y i)
+      (fun i => S i * Z i) hdev) ?_
+    have h1 : Real.sqrt (∑ i ∈ s, snorm v (S i * Z i) ^ 2) ≤ 1 := by
+      simpa using Real.sqrt_le_sqrt hZ
+    calc Real.sqrt (∑ i ∈ s, snorm v (X i - Y i) ^ 2)
+          * Real.sqrt (∑ i ∈ s, snorm v (S i * Z i) ^ 2)
+        ≤ Real.sqrt (∑ i ∈ s, snorm v (X i - Y i) ^ 2) * 1 :=
+          mul_le_mul_of_nonneg_left h1 (Real.sqrt_nonneg _)
+      _ ≤ Real.sqrt ε := by rw [mul_one]; exact hdevε
+  rw [hsplit]
+  refine le_trans (abs_add_le _ _) ?_
+  have := hb Y hY
+  have := hb X hX
+  linarith
+
+end Substitute
+
+/-! ## Display `eq:qld-pulling-3`: inserting the other party's outcome
+
+The expansion stage leaves one party's projector beside the *other* party's point measurement.
+The chain then inserts a copy of that measurement on the first party's side, which is where the
+self-consistency of `lem:qld-win` is spent. Two things make the step cost exactly that and no
+more. The deficit of the insertion is the cross-party deviation itself, because the outcome being
+inserted beside is a projection and the two parties commute; and the projective family in front
+is indexed through a map to the measurement's own outcomes, so the fibres of that map --- and not
+the whole index --- are what the sum sees. -/
+
+section Insert
+
+section Fibre
+
+variable {N : Type*} [Fintype N] [DecidableEq N] {ι κ : Type*} [Fintype ι] [DecidableEq ι]
+  [Fintype κ] [DecidableEq κ]
+
+/-- **A projective family in front, indexed through a map to the operators' own index.** Each
+fibre of the map contributes at most the operator it names, because the projectors in a fibre sum
+to a projection and a projection is a contraction. Without the fibres this would be false: the
+index `i` can be far larger than `k`, and summing one operator once per `i` would multiply the
+bound by the size of a fibre. -/
+theorem sum_snorm_sq_proj_comp_le (v : N → ℂ) {P : ι → Matrix N N ℂ} (hP : IsPVM P)
+    (c : ι → κ) (Z : κ → Matrix N N ℂ) :
+    ∑ i, snorm v (P i * Z (c i)) ^ 2 ≤ ∑ k, snorm v (Z k) ^ 2 := by
+  classical
+  have hsplit : ∑ i, snorm v (P i * Z (c i)) ^ 2
+      = ∑ k, ∑ i ∈ univ.filter fun i => c i = k, snorm v (P i * Z (c i)) ^ 2 :=
+    (Finset.sum_fiberwise (univ : Finset ι) c fun i => snorm v (P i * Z (c i)) ^ 2).symm
+  rw [hsplit]
+  refine Finset.sum_le_sum fun k _ => ?_
+  have hfib : ∑ i ∈ univ.filter fun i => c i = k, snorm v (P i * Z (c i)) ^ 2
+      = ∑ i ∈ univ.filter fun i => c i = k, snorm v (P i * Z k) ^ 2 :=
+    Finset.sum_congr rfl fun i hi => by rw [(Finset.mem_filter.mp hi).2]
+  rw [hfib, ← snorm_sq_sum_orthogonal v hP (Z k) (univ.filter fun i => c i = k)]
+  refine snorm_sq_mul_le_of_contraction v ?_ (Z k)
+  have hsa : (∑ i ∈ univ.filter fun i => c i = k, P i)ᴴ
+      = ∑ i ∈ univ.filter fun i => c i = k, P i := by
+    rw [Matrix.conjTranspose_sum]
+    exact Finset.sum_congr rfl fun i _ => hP.isSelfAdjoint i
+  have hidem : (∑ i ∈ univ.filter fun i => c i = k, P i)
+      * (∑ i ∈ univ.filter fun i => c i = k, P i)
+      = ∑ i ∈ univ.filter fun i => c i = k, P i := by
+    rw [Finset.sum_mul]
+    refine Finset.sum_congr rfl fun i hi => ?_
+    rw [Matrix.mul_sum,
+      Finset.sum_eq_single_of_mem i hi fun j _ hji => hP.orthogonal (Ne.symm hji), hP.idem]
+  rw [hsa, hidem]
+  exact proj_le_one hsa hidem
+
+end Fibre
+
+variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+  {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
+
+/-- **The deficit of the insertion is the cross-party deviation.** Inserting one party's outcome
+in front of the other party's costs `(1 - A) B`, which is `B (B - A)` because `B` is a projection
+and the two parties commute --- and a projection in front costs nothing. -/
+theorem snorm_one_sub_aOp_mul_bOp_le (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) {B : Matrix dB dB ℂ}
+    (hBsa : Bᴴ = B) (hBidem : B * B = B) :
+    snorm ψ (((1 : Matrix (dA × dB) (dA × dB) ℂ) - aOp A) * bOp B)
+      ≤ snorm ψ ((aOp A : Matrix (dA × dB) (dA × dB) ℂ) - bOp B) := by
+  have hrw : ((1 : Matrix (dA × dB) (dA × dB) ℂ) - aOp A) * bOp B
+      = bOp B * ((bOp B : Matrix (dA × dB) (dA × dB) ℂ) - aOp A) := by
+    rw [Matrix.sub_mul, Matrix.mul_sub, Matrix.one_mul, ← bOp_mul, hBidem,
+      ← aOp_mul_bOp]
+  have hbnd : Bnd (bOp B : Matrix (dA × dB) (dA × dB) ℂ) 1 := by
+    refine bnd_bOp ?_
+    rw [hBsa, hBidem]
+    exact proj_le_one hBsa hBidem
+  rw [hrw, snorm_sub_comm ψ (aOp A) (bOp B)]
+  simpa using snorm_mul_le ψ hbnd ((bOp B : Matrix (dA × dB) (dA × dB) ℂ) - aOp A)
+
+/-- **Display `eq:qld-pulling-3`.** Inserting the other party's outcome beside each term of a
+projective family, the family being indexed through the measurement's own outcomes, costs the
+measurement's summed cross-consistency and nothing else. -/
+theorem sum_snorm_sq_insert_le (ψ : dA × dB → ℂ)
+    {P : ι → Matrix (dA × dB) (dA × dB) ℂ} (hP : IsPVM P) (c : ι → κ) (A : κ → Matrix dA dA ℂ)
+    {B : κ → Matrix dB dB ℂ} (hBsa : ∀ k, (B k)ᴴ = B k) (hBidem : ∀ k, B k * B k = B k)
+    {ε : ℝ} (hcons : ∑ k, xSqNorm ψ (A k) (B k) ≤ ε) :
+    ∑ i, snorm ψ (P i
+        * (((1 : Matrix (dA × dB) (dA × dB) ℂ) - aOp (A (c i))) * bOp (B (c i)))) ^ 2 ≤ ε := by
+  refine le_trans (sum_snorm_sq_proj_comp_le ψ hP c
+    fun k => ((1 : Matrix (dA × dB) (dA × dB) ℂ) - aOp (A k)) * bOp (B k)) ?_
+  refine le_trans (Finset.sum_le_sum fun k (_ : k ∈ univ) => ?_) hcons
+  rw [xSqNorm_eq_snorm_sq]
+  have h := snorm_one_sub_aOp_mul_bOp_le ψ (A k) (hBsa k) (hBidem k)
+  have h0 := snorm_nonneg ψ (((1 : Matrix (dA × dB) (dA × dB) ℂ) - aOp (A k)) * bOp (B k))
+  nlinarith [h, h0]
+
+end Insert
+
+/-! ## The final passage: coarse-graining the self-consistency
+
+What the chain establishes is that the whole family of exact Pauli outcomes agrees across the
+parties. What `lem:qld-swap` consumes is one binary observable, read off that family by a
+function of the outcome. The passage between the two is the paper's `fact:agreement`,
+`fact:data-processing` and `fact:agreement` again, and for *projective* families it is free: the
+summed deviation and the agreement probability determine each other exactly, and agreement can
+only increase under a relabelling. Foundations has that as `sum_xSqNorm_map_le`, on bundled
+POVMs; what the chain speaks is `IsPVM`, so the two are bridged here. -/
+
+section Coarse
+
+variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+  {Λ Λ' : Type*} [Fintype Λ] [DecidableEq Λ] [Fintype Λ'] [DecidableEq Λ']
+
+/-- **A projective measurement, as a bundled POVM.** -/
+def povmOfIsPVM {P : Λ → Matrix dA dA ℂ} (hP : IsPVM P) : POVM Λ dA where
+  mats a := ⟨P a, selfAdjoint.mem_iff.mpr (by
+    rw [Matrix.star_eq_conjTranspose]
+    exact hP.isSelfAdjoint a)⟩
+  nonneg a := Subtype.coe_le_coe.mp (Matrix.nonneg_iff_posSemidef.mpr (hP.posSemidef a))
+  normalized := by
+    apply Subtype.ext
+    rw [AddSubmonoidClass.coe_finsetSum]
+    exact hP.sum_eq_one
+
+omit [DecidableEq Λ] in
+@[simp] theorem povmOfIsPVM_mats {P : Λ → Matrix dA dA ℂ} (hP : IsPVM P) (a : Λ) :
+    (((povmOfIsPVM hP).mats a).val) = P a := rfl
+
+/-- **Coarse-graining a cross-party consistency costs nothing.** Two projective measurements
+relabelled the same way stay as close as they were --- with no factor for the size of a fibre,
+which a per-fibre triangle inequality would have cost. -/
+theorem sum_xSqNorm_fibre_le {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)
+    {A : Λ → Matrix dA dA ℂ} {B : Λ → Matrix dB dB ℂ} (hA : IsPVM A) (hB : IsPVM B)
+    (f : Λ → Λ') :
+    ∑ c, xSqNorm ψ (∑ a ∈ univ.filter fun a => f a = c, A a)
+        (∑ a ∈ univ.filter fun a => f a = c, B a)
+      ≤ ∑ a, xSqNorm ψ (A a) (B a) := by
+  have h := sum_xSqNorm_map_le hψ (povmOfIsPVM hA) (povmOfIsPVM hB) hA hB f
+  simpa only [POVM.map_mats, povmOfIsPVM_mats] using h
+
+end Coarse
 
 end MIPRE
 
