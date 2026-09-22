@@ -2741,3 +2741,20 @@ reasoning about Lean types instead of the paper; this one cost a session of trea
 field as blocked, for reasoning about the *construction* instead of the *statement*.
 
 Everything from PR Q on is now unconditional.
+
+### PR AG: the chain's first four terms (2026-09-22)
+
+The assembly proper begins. `SimulPair.chainS` names the terms displays `eq:qld-pulling-0` to `-3`
+run through --- the exact Pauli measurement, that measurement times the near-identity, the same
+written over the chain's index, and the same with Alice's copy of the point measurement inserted
+--- on the cut `Phi` lives on. The three lemmas after it are those displays read as bounds on
+**consecutive deviations**, which is the form `sum_snorm_sq_chain_le` consumes.
+
+Two of the three are the displays applied verbatim, which is the point of having named the terms:
+`chainS 0 a - chainS 1 a` is literally `sum_uniform_snorm_sq_nearId_le`'s expression, and
+`chainS 2 a - chainS 3 a` is `sum_snorm_sq_insert_chain`'s after one distribution
+(`chainS_two_sub_three`). The middle step is free, `-2` and `-2b` being identities
+(`chainS_one_eq_two`, which is `aOp_mTildeAnc_mul_nearId` plus `aOp_mul_bOp_eq`).
+
+Seven steps left: `-3a` onward, which is where the transport to the physical cut happens and where
+`physLift` and `sum_bobPairProj_mulVec` get used.

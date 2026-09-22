@@ -4140,7 +4140,12 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.MirrorSimul.reindex_bobPairProj,
   MIPRE.QLD.MirrorSimul.sum_bobPairProj_mulVec, MIPRE.extVec2_apply, MIPRE.QLD.epr_symm,
   MIPRE.QLD.padWeight, MIPRE.QLD.padState_reindex_apply, MIPRE.QLD.hmirror_padState,
-  MIPRE.QLD.mirrorOfGlobalPairs, MIPRE.QLD.exists_mirrorSimul}
+  MIPRE.QLD.mirrorOfGlobalPairs, MIPRE.QLD.exists_mirrorSimul,
+  MIPRE.QLD.SimulPair.chainS, MIPRE.QLD.SimulPair.chainS_one_eq_two,
+  MIPRE.QLD.SimulPair.chainS_two_sub_three,
+  MIPRE.QLD.SimulPair.sum_uniform_snorm_sq_chainS_zero_one,
+  MIPRE.QLD.SimulPair.sum_snorm_sq_chainS_one_two,
+  MIPRE.QLD.SimulPair.sum_snorm_sq_chainS_two_three}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4613,7 +4618,15 @@ pair the matched Weyl projectors act as the projector on one half alone --- the 
 symmetric matrices --- and those sum to the identity. \texttt{reindex\_bobPairProj} puts that
 fact on the physical grouping and \texttt{kron\_one\_mulVec} lets it act on the pair alone.
 
-\emph{Not formalized}: the remaining ten steps of the chaining, and
+\emph{And the chaining has started.} \texttt{SimulPair.chainS} names the four terms displays
+\texttt{eq:qld-pulling-0} to \texttt{-3} run through, on the cut $\Phi$ lives on, and the three
+lemmas after it are those displays read as bounds on \emph{consecutive} deviations --- the form
+\texttt{sum\_snorm\_sq\_chain\_le} consumes. Two of the three are the displays applied
+verbatim; the middle one is free, \texttt{eq:qld-pulling-2} and \texttt{-2b} being identities
+(\texttt{chainS\_one\_eq\_two}).
+
+\emph{Not formalized}: the remaining seven steps of the chaining --- \texttt{eq:qld-pulling-3a}
+onward, which are where the transport to the physical cut happens --- and
 Lemma~\ref{lem:qld-povm-to-obs} at the very end.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
 
