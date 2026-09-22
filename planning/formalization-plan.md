@@ -8,6 +8,14 @@ as `planning/ledger-informed-plan.md` stays as the record of the ledger accounti
 
 ## Three artifacts, and what each is authoritative for
 
+**Introspection checkpoint, 2026-09-22.** The exact current boundary and next
+steps are recorded in [introspection-checkpoint-20260922.md](introspection-checkpoint-20260922.md).
+The continuation adds uniform basis/block conversion, actual Pauli query
+programs, full-register Read/Sample checks, canonical binary elimination, and
+explicit-selector question relabelling. Full-game transport, index-dependent sampler packaging, the
+remaining decider branches and uniform verifier budget, and actual QLD
+extraction still remain. `Introspection 7` is not yet inhabited.
+
 **Construction update, 2026-09-21.** The classical PCP and effective self-dual
 basis campaigns are complete, including the proved Shoup construction (#135).
 PR #134's semantic detyping, PR #137's executable continuation and PR #140's
