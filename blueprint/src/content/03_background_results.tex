@@ -4081,7 +4081,9 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.mem_coupledIdx, MIPRE.QLD.swap_mem_coupledIdx, MIPRE.QLD.MirrorSimul.endOp,
   MIPRE.QLD.MirrorSimul.endOpMirror, MIPRE.QLD.reindex_prodComm_kron,
   MIPRE.QLD.MirrorSimul.endOpMirror_apply, MIPRE.QLD.MirrorSimul.endOpMirror_eq,
-  MIPRE.QLD.snorm_reindex_prodComm, MIPRE.QLD.sum_xSqNorm_le_of_endOp}
+  MIPRE.QLD.snorm_reindex_prodComm, MIPRE.QLD.sum_xSqNorm_le_of_endOp,
+  MIPRE.QLD.snorm_comp_equiv, MIPRE.QLD.sum_snorm_sq_sub_mul, MIPRE.QLD.SimulPair.nearId,
+  MIPRE.QLD.SimulPair.sum_snorm_sq_nearId, MIPRE.QLD.SimulPair.sum_uniform_snorm_sq_nearId_le}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4287,9 +4289,22 @@ for a family of deviations (\texttt{sum\_snorm\_sq\_triangle'}, already in Found
 \texttt{eq:qld-pulling-cons} at twice the cost, which is the factor the paper absorbs into
 $\delta_S$.
 
-\emph{Not formalized}: the eight $\approx$ steps between those two ends --- their estimates are all
-in place, as recorded above, and what is missing is the four-index bookkeeping that threads them ---
-and Lemma~\ref{lem:qld-povm-to-obs} at the very end.
+\emph{And the chain's first step.} Display \texttt{eq:qld-pulling-1} right-multiplies the exact
+Pauli measurement by the near-identity, and \texttt{SimulPair.sum\_uniform\_snorm\_sq\_nearId\_le}
+is that display at item 1 of Lemma~\ref{lem:qld-helper}'s own constant. Two things make it cost
+that and no more. The insertion's deficit is \emph{exactly} the near-identity's, because the
+measurement's outcomes are orthogonal, so summing the deviation over them leaves one copy rather
+than one per outcome (\texttt{sum\_snorm\_sq\_sub\_mul}) --- without that, the bound would carry a
+factor $q$. And the near-identity lives on $\Phi$'s own cut, where
+\texttt{snorm\_sq\_one\_sub\_agreeOp} turns its deficit into the helper's Born probability, while
+$\tilde{M}$ lives on the cut that has $\alice''$ with Alice; \texttt{snorm\_comp\_equiv} moves
+between them, a state-norm being carried by any reindexing of the whole space. That lemma is what
+lets each step of the chain be read along whichever of the paper's three groupings it is local in,
+rather than forcing one grouping on all of them.
+
+\emph{Not formalized}: the remaining seven $\approx$ steps --- their estimates are all in place, as
+recorded above, and what is missing is the four-index bookkeeping that threads them --- and
+Lemma~\ref{lem:qld-povm-to-obs} at the very end.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
 
 \effortHard
