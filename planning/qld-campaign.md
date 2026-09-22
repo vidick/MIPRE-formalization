@@ -2629,3 +2629,33 @@ from `swapVec_unit` and `povmValue_swapped_le`.
 
 Left on the chain: `-12` (Schwartz--Zippel), the assembly through `sum_xSqNorm_le_of_endOp`, and
 `lem:qld-povm-to-obs`.
+
+### PR AC: `eq:qld-pulling-12`, and all eleven displays (2026-09-22)
+
+Schwartz--Zippel, the chain's only step that is not about operators. The constraint the chain
+carries is an equality of polynomial *values* at the sampled point; passing to equality of the
+polynomials themselves discards only the tuples where distinct polynomials happen to agree there.
+
+Two things worth recording.
+
+The polynomials compared are **not** the chain's pair outcomes. They are those outcomes shifted by
+the Weyl outcomes' encodings --- `g + g_h` against `g' + g_h'` --- which is what `ChainCoupled`
+says, and `ldEnc h` is an `MvPolynomial`, not a `LowIndDegPoly`. So `sum_uniform_agree_mass_le`,
+which is stated for `LowIndDegPoly`s, does not apply; `sum_uniform_chainCoupled_agree_le` goes to
+`prob_agree_le_individualDegree` directly. The encoding is multilinear, so the sum keeps the
+individual-degree bound exactly when `d >= 1` --- the lemma's one hypothesis, and the only place in
+the chain where a lower bound on `d` is needed.
+
+`chainQShift_eq_iff` is characteristic two again: the chain writes the condition with the shift on
+one side, Schwartz--Zippel wants it split across, and `add_add_cancel` is the whole difference.
+
+The weights are the four-index family's own Born probabilities, which sum to exactly one
+(`sum_qform_chainQ`), so the mass lemma's `<= 1` is met with nothing to spare.
+
+**All eleven displays of the chain are formalized.** What is left of `lem:qld-pauli-selfcons` is
+the assembly: naming the eleven intermediate operator families, checking that each display's bound
+is the deviation between consecutive ones, and chaining them through `sum_snorm_sq_triangle'` into
+`sum_xSqNorm_le_of_endOp`'s two hypotheses. Several of the `approx_0` steps are identities *on the
+state* rather than on operators, which is fine --- a state-norm sees only the vector --- but it
+means the intermediate families are not related by operator equations and each step has to be
+stated at the level of `snorm physVec (T_k a - T_{k+1} a)`.
