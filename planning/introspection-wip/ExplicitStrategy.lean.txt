@@ -1,0 +1,130 @@
+/-
+Copyright (c) 2026 MIPRE contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import MIPRE.Background.Introspection.ExplicitGame
+import MIPRE.Background.Introspection.BinaryGame
+
+/-! # Explicit-selector completeness and actual QLD restriction
+
+These constructions consume the complete typed game equivalence. Completeness
+retains the honest PCC dimension. Soundness restriction produces an actual
+QLD strategy on the original state and preserves every valid Pauli effect.
+-/
+
+noncomputable section
+namespace MIPRE.Introspection.ExplicitGame
+open Finset Classical
+open QLD.PauliCL.ExplicitSeed
+set_option linter.unusedSectionVars false
+set_option backward.isDefEq.respectTransparency false
+set_option maxHeartbeats 800000
+
+section Restriction
+variable {F F₀ ι A : Type*} [Field F] [Fintype F] [DecidableEq F]
+  [Algebra (ZMod 2) F] [Field F₀] [Fintype F₀] [DecidableEq F₀]
+  [Fintype ι] [DecidableEq ι] [Fintype A] {m t d ℓ : ℕ} [NeZero m]
+  (hm : m ∣ Fintype.card F) (χ : F → Fin m) (π : F ≃ F)
+  (hχ : ∀ s, LIDT.CL.chi hm (π s) = χ s)
+  (b : Module.Basis (Fin t) (ZMod 2) F)
+  (L : Bool → CL.CLFun F₀ ι ℓ) (project : QLD.Answer F m d → ι → F₀)
+  (D : (ι → F₀) → (ι → F₀) → A → A → Bool)
+  (S : TensorProductStrategy (game hm χ π b L project D))
+
+/-- Full explicit introspection restricted to the actual QLD game. -/
+def qldStrategy : TensorProductStrategy (QLD.qldGame (d := d) hm) :=
+  PauliRestriction.strategy hm b L project D
+    (toLegacy hm χ π b L project D S) (.val 0) (.val 0)
+
+theorem qldStrategy_state : (qldStrategy hm χ π b L project D S).ψ = S.ψ := rfl
+
+theorem qldStrategy_dimensions :
+    (qldStrategy hm χ π b L project D S).dA = S.dA ∧
+    (qldStrategy hm χ π b L project D S).dB = S.dB := ⟨rfl,rfl⟩
+
+include hχ in
+theorem qldStrategy_failure_le {ε : ℝ} (hS : 1 - S.value ≤ ε) :
+    1 - (qldStrategy hm χ π b L project D S).value ≤
+      (TypeGraph.edges QLD.adj (.pauli .X) (.pauli .Z) ℓ).card * ε := by
+  apply PauliRestriction.strategy_failure_le
+  rwa [toLegacy_value hm χ π hχ b L project D]
+
+theorem qldStrategy_pauliAns_A (W : QLD.Bas) (a : (Fin m → Bool) → F) :
+    (qldStrategy hm χ π b L project D S).PA.M (.pauli W) (.pauliAns a) =
+      S.PA.M (QuestionType.pauli (.pauli W),0) (.pauli (.pauliAns a)) := by
+  exact (PauliRestriction.strategy_pauliAns_A hm b L project D
+    (toLegacy hm χ π b L project D S) W a).trans
+      (toLegacy_pauli_A hm χ π b L project D S W (.pauli (.pauliAns a)))
+
+theorem qldStrategy_pauliAns_B (W : QLD.Bas) (a : (Fin m → Bool) → F) :
+    (qldStrategy hm χ π b L project D S).PB.M (.pauli W) (.pauliAns a) =
+      S.PB.M (QuestionType.pauli (.pauli W),0) (.pauli (.pauliAns a)) := by
+  exact (PauliRestriction.strategy_pauliAns_B hm b L project D
+    (toLegacy hm χ π b L project D S) W a).trans
+      (toLegacy_pauli_B hm χ π b L project D S W (.pauli (.pauliAns a)))
+end Restriction
+
+section Completeness
+variable {F A : Type*} [Field F] [Fintype F] [DecidableEq F]
+  [Algebra (ZMod 2) F] [Fintype A] [DecidableEq A] {m t d ℓ : ℕ} [NeZero m]
+  (L : Bool → CL.CLFun (ZMod 2) (BinaryComplete.Coord m t) ℓ)
+  (D : BinaryComplete.Seed m t → BinaryComplete.Seed m t → A → A → Bool)
+  (R : SyncStrategy (Honest.sourceGame L D).doubled)
+
+/-- The explicit-selector full typed game has the same concrete honest PCC dimension. -/
+theorem exists_perfectPCC (hm : m ∣ Fintype.card F) (χ : F → Fin m) (π : F ≃ F)
+    (hχ : ∀ s, LIDT.CL.chi hm (π s) = χ s)
+    (b : Module.Basis (Fin t) (ZMod 2) F) (hb : LowDegree.IsSelfDualBasis b)
+    (hd : 1 ≤ d) (hL : ∀ w, (L w).SupportedOn univ) (hR : R.IsPCC) (hv : R.value = 1) :
+    ∃ Q : SyncStrategy (game hm χ π b L (BinaryComplete.project (d := d) b) D).doubled,
+      Q.IsPCC ∧ Q.value = 1 ∧ Q.d = 2 * Fintype.card (BinaryComplete.Seed m t) * R.d := by
+  obtain ⟨Q,hQ,hvQ,hdQ⟩ := BinaryComplete.exists_perfectPCC L D R hm b hb hd hL hR hv
+  refine ⟨pccToExplicit hm χ π b L _ D Q,
+    pccToExplicit_isPCC hm χ π hχ b L _ D Q hQ, ?_, hdQ⟩
+  rw [pccToExplicit_value hm χ π hχ b L _ D, hvQ]
+end Completeness
+
+section Selector
+variable {k j t d ℓ : ℕ} (E : SAT.BinField k) (hj : j ≤ k)
+  [Algebra (ZMod 2) E.carrier]
+  {F₀ ι A : Type*} [Field F₀] [Fintype F₀] [DecidableEq F₀]
+  [Fintype ι] [DecidableEq ι] [Fintype A]
+  (b : Module.Basis (Fin t) (ZMod 2) E.carrier)
+  (L : Bool → CL.CLFun F₀ ι ℓ) (project : QLD.Answer E.carrier (2^j) d → ι → F₀)
+  (D : (ι → F₀) → (ι → F₀) → A → A → Bool)
+
+/-- Concrete finite game using the implemented high-bit selector. -/
+def selectorGame := game (dyadic_divides E j hj) (SeedProgram.selector E j hj)
+  (seedPermutation E) b L project D
+
+/-- Concrete selector transport: the enumeration correspondence is proved internally. -/
+theorem selector_toLegacy_value
+    (S : TensorProductStrategy (selectorGame E hj b L project D)) :
+    (toLegacy (dyadic_divides E j hj) (SeedProgram.selector E j hj)
+      (seedPermutation E) b L project D S).value = S.value :=
+  toLegacy_value _ _ _ (chi_seedPermutation E j hj _) b L project D S
+
+theorem selector_qldStrategy_failure_le
+    (S : TensorProductStrategy (selectorGame E hj b L project D))
+    {ε : ℝ} (hS : 1 - S.value ≤ ε) :
+    1 - (qldStrategy (dyadic_divides E j hj) (SeedProgram.selector E j hj)
+      (seedPermutation E) b L project D S).value ≤
+      (TypeGraph.edges QLD.adj (.pauli .X) (.pauli .Z) ℓ).card * ε :=
+  qldStrategy_failure_le _ _ _ (chi_seedPermutation E j hj _) b L project D S hS
+
+end Selector
+
+/-- Honest completeness instantiated with the implemented selector, with no
+enumeration-compatibility premise. -/
+theorem selector_exists_perfectPCC {k j t d ℓ : ℕ} (E : SAT.BinField k) (hj : j ≤ k)
+    [Algebra (ZMod 2) E.carrier] {A : Type*} [Fintype A] [DecidableEq A]
+    (b : Module.Basis (Fin t) (ZMod 2) E.carrier) (hb : LowDegree.IsSelfDualBasis b)
+    (L : Bool → CL.CLFun (ZMod 2) (BinaryComplete.Coord (2^j) t) ℓ)
+    (D : BinaryComplete.Seed (2^j) t → BinaryComplete.Seed (2^j) t → A → A → Bool)
+    (R : SyncStrategy (Honest.sourceGame L D).doubled)
+    (hd : 1 ≤ d) (hL : ∀ w, (L w).SupportedOn univ) (hR : R.IsPCC) (hv : R.value = 1) :
+    ∃ Q : SyncStrategy (selectorGame E hj b L (BinaryComplete.project (d := d) b) D).doubled,
+      Q.IsPCC ∧ Q.value = 1 ∧ Q.d = 2 * Fintype.card (BinaryComplete.Seed (2^j) t) * R.d :=
+  exists_perfectPCC L D R _ _ _ (chi_seedPermutation E j hj _) b hb hd hL hR hv
+
+end MIPRE.Introspection.ExplicitGame

@@ -26,6 +26,10 @@ import MIPRE.Background.QLD.LineRepresentative
 import MIPRE.Background.QLD.CLExplicitSeed
 import MIPRE.Background.QLD.SeededLinePrograms
 import MIPRE.Foundations.GuardSorryFree
+import MIPRE.Background.QLD.PauliRowPrograms
+import MIPRE.Background.QLD.PauliFactorPrograms
+import MIPRE.Background.QLD.SamplerQueryProgram
+import MIPRE.Background.QLD.CLExplicitTransport
 
 /-!
 # Axiom audit for the Pauli basis test's orthonormalization step
@@ -1134,6 +1138,17 @@ padded state in `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
   MIPRE.Introspection.BinaryComplete.card_seed,
   MIPRE.Introspection.BinaryComplete.exists_padded_perfectPCC,
   MIPRE.Introspection.BinaryComplete.exists_depthPadded_perfectPCC
+
+#guard_sorry_free MIPRE.QLD.PauliCL.linearBits_correct,
+  MIPRE.QLD.PauliCL.marginalBits_correct,
+  MIPRE.QLD.PauliCL.factorBits_correct,
+  MIPRE.QLD.PauliCL.SamplerProgram.query_dimension,
+  MIPRE.QLD.PauliCL.SamplerProgram.query_marginal,
+  MIPRE.QLD.PauliCL.SamplerProgram.query_linear,
+  MIPRE.QLD.PauliCL.SamplerProgram.query_factor,
+  MIPRE.QLD.PauliCL.SamplerProgram.query_runs,
+  MIPRE.QLD.PauliCL.ExplicitSeed.binaryOutputPermutation_presentation,
+  MIPRE.QLD.PauliCL.ExplicitSeed.binaryQuestion_outputPermutation
 /-! `lem:qld-global-separate` (`MIPRE/Background/QLD/Separate.lean`, and its specialization to the
 padded state in `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
 #guard_sorry_free MIPRE.LIDT.LowIndDegPoly.eval_zero, MIPRE.LIDT.LowIndDegPoly.eval_sub,
