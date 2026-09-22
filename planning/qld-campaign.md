@@ -1682,3 +1682,37 @@ deviation (`xSqNorm_aOp`, by the three-term expansion `xSqNorm_eq_expand`).
 **A Lean point.** A `have h : ∀ {R S : Type*} ...` inside a declaration whose own universe is
 fixed produces `AddConstAsyncResult.commitConst: constant has level params [u, u_2, u_3] but
 expected [u]`; the two norm bridges had to become top-level universe-polymorphic theorems.
+
+### What PR J-b needs, read off the paper (2026-09-22)
+
+The approximate half of `lem:qld-exact-paulis` is the paper's
+`lem:qld-construct-the-paulis`, item 1: `M̃^{W,ind_m(u)}_a` (the `ExactPauli.lean` construction,
+`mTilde`) is consistent with the strategy's `(Point, W)` point measurement on the opposite party,
+on average over a uniform `u ∈ F_q^m`. Its proof is a four-line chain, and the fourth line is the
+one that was repaired twice in the paper:
+
+1. expand `mTilde` by `eq:tilde_M`, which is `mTilde_eq_sum`, already formalized;
+2. recognize `M^{(Point,W),u}_{a} ⊗ τ^W_{cd(g)·ind_m(u) − a}` summed over `a` as the hatted point
+   measurement `M̂^{(Point,W),u}_{cd(g)·ind_m(u)}` --- the definition of `hatPtPOVM`;
+3. **the substitution** `cd(g)·ind_m(u) ↦ g(u)`, which is false for non-multilinear `g`: the
+   error is at most twice the mass `Ŝ^W` puts on non-multilinear outcomes;
+4. apply `lem:qld-helper` item 1.
+
+Step 3 is the one with Lean already in place from PR D:
+`prob_agree_ldEnc_le_of_not_multilinear` (two distinct polynomials of total degree `md` agree at a
+uniform point with probability at most `md/q` --- the *agreement* direction, which is the repair),
+`nonMultilinear_mass_le` (the abstract aggregation: `S` a probability vector, `T ≤ S` with
+`T ≤ c·S` off a set and `∑T ≥ 1 − η`, then the mass off the set is at most `η + c`), and
+`sum_sub_le_of_eq_on` (the substitution error of two families agreeing on that set). What is
+missing is the chain that produces the hypotheses of `nonMultilinear_mass_le` for the actual
+measurements: the Pauli-basis consistency check in its *same-side* form
+`(M^{(Point,W),u}_{a'})_A ≈ (M^{(Pauli,W)}_{[g_h(u) = a']})_A`, obtained from
+`lem:qld-win-implications` in both orientations plus the self-consistency of the point
+measurements, and the projective family `N_k = ∑_{h + h'' = k} M^{(Pauli,W)}_h ⊗ τ^W_{h''}` it
+produces. That same-side step is `lem:qld-helper` item 2's pattern (`aOp_mul_one_sub_eq`) applied
+to the Pauli-basis measurement rather than the marginal.
+
+The six-register state `A A' B'' | B A'' B'` enters only here: `mTilde` acts on
+`B B' B''` while the point measurement acts on `A`, so the two cuts of the paper's
+`ψ̂` are needed at once, with `stateDist` transported between them. `SwapUnitary.lean` already has
+the two twirls and the maximally entangled state; the transport is the piece to write.
