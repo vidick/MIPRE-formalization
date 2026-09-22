@@ -2272,3 +2272,40 @@ the fields around it.** The first estimate read `EA` and `EB` as fixed padding. 
 
 Left: a structure beside `SimulPair` recording the shape and the mirror `Phi_reduced`; Bob's
 `mTilde` from `SB`; then the two assemblies.
+
+### PR Q: the mirror is a second `SimulPair` (2026-09-22)
+
+The scope written an hour before this one was wrong too, in the other direction, and the reason is
+worth recording because it is the same mistake twice: **both wrong turns came from reasoning about
+the Lean types instead of reading the paper's register assignments.**
+
+Putting the second pair inside `EA` and `EB` typechecks and needs nothing retyped. It also lets
+`SA : POVM (PolyPair) ((dA x Anc) x EA)` act on `B''`, which is Bob's. The paper's `S-hat` does
+not: `lem:qld-4-7` gives it on `H (x) (C^q)^{(x) n}` for each player's own space, and
+`qld-separating.tex` says in as many words that `M-tilde` then acts on `A A' A''` (resp.
+`B B' B''`). A measurement free to touch `B''` makes `M-tilde` and the swap unitary non-local, and
+then `lem:qld-pauli-selfcons` cannot be **stated**, its two sides not lying on opposite sides of
+any cut.
+
+The design that works appends the pair instead. A `SimulPair` stays exactly as stages 4a--4c
+produce it, carrying only the pair its own cut splits; the other pair is tensored on with
+`expVec _ epr`, one half to each party. Party registers then read `((X x Anc) x E) x Anc`, with the
+appended half outermost --- which is where `mTilde` writes its Pauli register, so `mTildeAnc` lands
+on Alice's physical register `A A' Ea A''` with nothing to reindex.
+
+And the second cut is not a new kind of data. `sec:expanding` partitions the six registers two ways
+and says every bipartite relation holds for both; `lem:qld-4-7` gives `S-hat` on `A A'` *and* on
+`B B'`. So **the mirror of a `SimulPair` is a `SimulPair`**, at the swapped strategy with the
+players exchanged. `MirrorSimul` in `MIPRE/Background/QLD/Mirror.lean` carries the two readings and
+`hmirror`, which says the two appendings give one state; `toFirst` and `toSecond` are the views.
+Bob's `mTildeAnc`, `swapA`, projectivity and `eq:qld-unitary-6` are then instantiations, with no
+mirror lemma proved.
+
+A claim that went out and had to be withdrawn: PR #163's description said Bob's `mTilde` could come
+from `SimulPair.SB`. It cannot --- `SB` is typed on `(dB x Anc) x EB` with that `Anc` being `A''`,
+so it sits on `B A''`, the second party of the *first* cut, not on `B B'`. The description was
+corrected before merge. Checking the premise before building on it has now caught four wrong claims
+in this campaign; the cost of the check has been minutes each time.
+
+Left: the two assemblies, now that both are expressible, and then `thm:qld` --- where the paper's
+"symmetric equivalents" remark has to be made good by running stage 4 on the second cut as well.
