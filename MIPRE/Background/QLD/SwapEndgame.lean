@@ -254,6 +254,32 @@ theorem qform_endVec (ψ : ((A × T) × E) × ((B × T') × E') → ℂ)
 
 end EndCut
 
+/-! ## The twirl, as an average over probes
+
+Item 1 asks for a near-invariance of the state under the Weyl twirl on its two ancilla halves.
+What `lem:qld-pauli-selfcons` supplies is an agreement of the two parties' exact Pauli observables
+averaged over a *uniform* probe. The twirl is by definition that average, so the two statements are
+one rewriting apart --- which is the edge the blueprint's dependency graph was missing, made
+explicit. -/
+
+section Twirl
+
+variable {R : Type*} [Fintype R] [DecidableEq R]
+
+/-- **The twirl's expectation is the uniform average of the per-probe ones.** -/
+theorem qform_bOp_twirl (θ : R × ((n → F) × (n → F)) → ℂ)
+    (w : (n → F) → Matrix (n → F) (n → F) ℂ) :
+    qform θ (bOp (twirl w) :
+        Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ)
+      = ∑ u, uniform (n → F) u * qform θ (bOp (w u ⊗ₖ w u)) := by
+  have hsc : ((Fintype.card (n → F) : ℂ))⁻¹ = ((((Fintype.card (n → F) : ℝ))⁻¹ : ℝ) : ℂ) := by
+    push_cast
+    ring
+  rw [twirl, hsc, bOp_smul, qform_smul_real, bOp_sum, qform_sum, Finset.mul_sum]
+  exact Finset.sum_congr rfl fun u _ => rfl
+
+end Twirl
+
 end MIPRE.QLD
 
 end

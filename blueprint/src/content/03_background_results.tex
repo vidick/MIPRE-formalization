@@ -4234,7 +4234,7 @@ displays, and Lemma~\ref{lem:qld-povm-to-obs} at the end. Every step it assemble
   MIPRE.QLD.mulVec_auxVec_congr, MIPRE.QLD.mulVec_auxVec_proj, MIPRE.QLD.mulVec_auxVec_syn,
   MIPRE.QLD.sum_snorm_sq_sub_le_of_agree, MIPRE.QLD.sum_uniform_bornProb_fibre_le,
   MIPRE.QLD.endEquiv, MIPRE.QLD.endVec, MIPRE.QLD.endVec_unit, MIPRE.QLD.reindex_endEquiv,
-  MIPRE.QLD.qform_endVec}
+  MIPRE.QLD.qform_endVec, MIPRE.QLD.qform_bOp_twirl}
 There is $\delta_{qld} = O\bigl( \delta_S^{1/4} + md/q \bigr)$ and local unitaries $V_\alice$,
 $V_\bob$ on the expanded spaces such that, writing $M = 2^m$:
 \begin{enumerate}
@@ -4361,6 +4361,14 @@ apart, and \texttt{endEquiv} is that permutation, with \texttt{qform\_endVec} ca
 expectation between the two readings. It is the same pattern as \texttt{regroupEquiv}, which moves
 one ancilla half across the party cut, applied to move both out of it, and it is what the threading
 has to say before any of the endgame's steps can be pointed at the same vector.
+
+\emph{And the missing edge, made explicit.} Item 1 asks for a near-invariance of the state under
+the Weyl twirl on its two ancilla halves; what Lemma~\ref{lem:qld-pauli-selfcons} supplies is an
+agreement of the two parties' exact Pauli observables averaged over a \emph{uniform} probe. The
+twirl is by definition that average, so the two are one rewriting apart:
+\texttt{qform\_bOp\_twirl}. That this edge is short is not an accident --- it is why the missing
+node was worth separating out rather than folding into
+Lemma~\ref{lem:qld-exact-paulis}.
 
 \emph{Not formalized}: the two near-invariances themselves, which are
 Lemma~\ref{lem:qld-pauli-selfcons} and are hypotheses of \texttt{exists\_auxVec\_close} rather

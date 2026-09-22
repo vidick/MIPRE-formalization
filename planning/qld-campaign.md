@@ -2198,3 +2198,11 @@ conjugation's are written with the same pairing.
 
 That is the first brick of the chain assembly: every display of the chain has to be available at
 this probe, and until now none of them were stateable there.
+
+**And the missing edge, made explicit.** Item 1 of `lem:qld-swap` asks for a near-invariance of the
+state under the Weyl twirl on its two ancilla halves; what `lem:qld-pauli-selfcons` supplies is an
+agreement of the two parties' exact Pauli observables averaged over a *uniform* probe. The twirl is
+by definition that average (`twirl w = E_u w(u) (x) w(u)`), so the two are one rewriting apart:
+`qform_bOp_twirl`. Worth recording that the edge is this short. The node was separated out from
+`lem:qld-exact-paulis` because the latter's `leanok` marks had to stay honest, and the worry was
+that the separation would cost a translation layer between them. It costs one line.
