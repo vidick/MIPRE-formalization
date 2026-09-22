@@ -171,6 +171,14 @@ pushed to the physical grouping, whichever cut it came from. -/
 theorem pairSwapVec_mirrorVec (ψ : (((A × T1) × E) × T2) × (((B × S1) × E') × S2) → ℂ) :
     pairSwapVec (mirrorVec ψ) = pairSwapVec ψ ∘ Prod.swap := rfl
 
+/-- **`mirrorVec` is an involution, on the nose.** `mirrorEquiv` exchanges the two parties and,
+within each, the party's own pair half with the other pair's; doing that twice puts every register
+back where it started, so composing it with itself is the identity by `rfl`. This is why the
+mirror of a `MirrorSimul` is a `MirrorSimul`: the field saying the two cuts read one state survives
+the exchange. -/
+theorem mirrorVec_mirrorVec (ψ : (((A × T1) × E) × T2) × (((B × S1) × E') × S2) → ℂ) :
+    mirrorVec (mirrorVec ψ) = ψ := rfl
+
 end Swap
 
 end MIPRE.QLD

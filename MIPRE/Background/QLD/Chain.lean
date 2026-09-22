@@ -360,6 +360,17 @@ theorem isPVM_chainOp (P : SimulPair ψ MA MB δ) (W : Bas) :
     IsPVM fun p : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m => P.chainOp W p := by
   exact isPVM_kron (isPVM_polyMarg P.SA_proj W) (isPVM_proj (isWeylFamily_weylOf W))
 
+/-- **Summing the *pair* outcome out of the summand** leaves the Weyl projector alone, the pair
+measurement's outcomes being complete. This is what `eq:qld-pulling-9a` inserts. -/
+theorem SimulPair.sum_poly_chainOp (P : SimulPair ψ MA MB δ) (W : Bas) (h : Anc F m) :
+    (∑ g : LowIndDegPoly (F := F) (m := m) (d := d), P.chainOp W (g, h))
+      = bOp (proj (weylOf W) h) := by
+  rw [show (∑ g : LowIndDegPoly (F := F) (m := m) (d := d), P.chainOp W (g, h))
+      = ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
+        (((polyMarg P.SA W).mats g).val) ⊗ₖ proj (weylOf W) h from rfl,
+    ← sum_kron' univ, (isPVM_polyMarg P.SA_proj W).sum_eq_one]
+  rfl
+
 omit [Algebra (ZMod 2) F] [NeZero m] in
 /-- **The point measurement read off a strategy is projective** when the strategy's own is: it is a
 coarse-graining of it along the answer's value. -/
@@ -754,6 +765,32 @@ namespace MirrorSimul
 
 variable (M : MirrorSimul ψ MA MB δ)
 
+/-! ## Each party's chain summand, on its own register
+
+Every object of `eq:qld-pulling-5` onward carries a party's whole triple, and each is named in
+that party's own spelling rather than reached through `toFirst` or `toSecond`: `toFirst.EA` is
+`M.Ea` by definition, but the two spellings do not unify inside an elaborated product type, and a
+single occurrence of the wrong one makes the product's `HMul` instance fail to synthesize. -/
+
+/-- **Alice's chain summand**, on `A A' Ea A''`: her pair measurement's `W`-marginal at `g`,
+tensored with the Weyl spectral projector at `h`. -/
+def aliceChainOp (W : Bas)
+    (p : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) :
+    Matrix (((dA × Anc F m) × M.Ea) × Anc F m) (((dA × Anc F m) × M.Ea) × Anc F m) ℂ :=
+  M.toFirst.chainOp W p
+
+/-- It is a projective family in the pair `(g, h)`, by the lemma that says the first cut's is. -/
+theorem isPVM_aliceChainOp (W : Bas) : IsPVM (M.aliceChainOp W) := isPVM_chainOp M.toFirst W
+
+/-- **Bob's**, on `B B' Eb B''` --- the mirror image, and the second cut's. -/
+def bobChainOp (W : Bas)
+    (p : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) :
+    Matrix (((dB × Anc F m) × M.Eb) × Anc F m) (((dB × Anc F m) × M.Eb) × Anc F m) ℂ :=
+  M.toSecond.chainOp W p
+
+/-- It is a projective family too, by the lemma that says the second cut's is. -/
+theorem isPVM_bobChainOp (W : Bas) : IsPVM (M.bobChainOp W) := isPVM_chainOp M.toSecond W
+
 /-- **Bob's Weyl projector**, on the half `B''` of the appended pair that the physical grouping
 gives him --- the outermost factor of his register. -/
 def bobWeyl (W : Bas) (h : Anc F m) :
@@ -766,31 +803,15 @@ def chainP (W : Bas)
     (t : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) × Anc F m) :
     Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m))
       ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m)) ℂ :=
-  aOp (M.toFirst.chainOp W t.1) * bOp (M.bobWeyl W t.2)
+  aOp (M.aliceChainOp W t.1) * bOp (M.bobWeyl W t.2)
 
 /-- It is projective: `aOp U * bOp V` is `U (x) V`, and each party's family is projective. -/
 theorem isPVM_chainP (W : Bas) : IsPVM (M.chainP W) := by
-  have hrw : M.chainP W = fun t => (M.toFirst.chainOp W t.1) ⊗ₖ (M.bobWeyl W t.2) :=
+  have hrw : M.chainP W = fun t => (M.aliceChainOp W t.1) ⊗ₖ (M.bobWeyl W t.2) :=
     funext fun t => aOp_mul_bOp_eq _ _
   rw [hrw]
-  exact isPVM_kron (isPVM_chainOp M.toFirst W)
+  exact isPVM_kron (M.isPVM_aliceChainOp W)
     (IsPVM.bOp (isPVM_proj (isWeylFamily_weylOf W)))
-
-/-! ## The two remaining displays, on the physical cut
-
-`eq:qld-pulling-5` to `-7` is the first step of the chain that compares operators on all six
-registers, and the objects it runs over are each party's whole triple. Alice's are named here in
-her own spelling rather than reached through `toFirst`, because the two spellings of her padding,
-identical by definition, do not unify inside an elaborated product type. -/
-
-
-/-- **Alice's chain summand, typed on her own padding.** `toFirst.EA` is `M.Ea` by definition,
-but the two spellings do not unify inside an elaborated product type, so the physical-cut
-statements name this rather than reaching through `toFirst`. -/
-def aliceChainOp (W : Bas)
-    (p : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) :
-    Matrix (((dA × Anc F m) × M.Ea) × Anc F m) (((dA × Anc F m) × M.Ea) × Anc F m) ℂ :=
-  M.toFirst.chainOp W p
 
 /-- **Alice's hatted point measurement**, on her physical register `A A' Ea A''`. -/
 def aliceHat (W : Bas) (u : Point F m) (c : F) :
@@ -861,9 +882,6 @@ theorem bobHat_conj_bobWeyl (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val
   rw [Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one, hsa,
     ← Matrix.mul_kronecker_mul, ← Matrix.mul_kronecker_mul, Matrix.mul_one, Matrix.one_mul,
     Matrix.mul_one, hid]
-
-/-- It is a projective family in the pair `(g, h)`, by the lemma that says the first cut's is. -/
-theorem isPVM_aliceChainOp (W : Bas) : IsPVM (M.aliceChainOp W) := isPVM_chainOp M.toFirst W
 
 /-- **Alice's sandwich is positive semidefinite**, being a projector conjugated. -/
 theorem posSemidef_aliceSand (W : Bas) (u : Point F m)
@@ -976,6 +994,69 @@ theorem sum_uniform_snorm_sq_chainP_le {hm : m ∣ Fintype.card F} {ε : ℝ}
     mul_le_mul_of_nonneg_left (M.sum_snorm_sq_chainP_le hprojB W v u)
       (uniform_nonneg (Point F m) u)) ?_
   exact M.toFirst.sum_snorm_sq_polyMarg_one_sub_le (hm := hm) hψ hfail hprojB W
+
+/-! ## The four-index family, and Bob's half of the chain for free
+
+`eq:qld-pulling-9a` left-multiplies by Bob's own pair measurement, which is the identity, and from
+there to `eq:qld-pulling-12` the chain runs over *both* parties' pairs. `chainQ` is that family,
+and `endOp` --- the chain's endpoint, already in place --- is its restriction to the coupled index
+set. What the mirror buys is the rest: Bob's derivation is Alice's, instantiated. -/
+
+/-- **The chain's four-index family on the physical cut**: each party's pair outcome and Weyl
+outcome together. -/
+def chainQ (W : Bas)
+    (q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)
+      × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)) :
+    Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m))
+      ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m)) ℂ :=
+  aOp (M.aliceChainOp W q.1) * bOp (M.bobChainOp W q.2)
+
+set_option maxHeartbeats 1000000 in
+/-- It is projective, each party's family being so. -/
+theorem isPVM_chainQ (W : Bas) : IsPVM (M.chainQ W) := by
+  have hrw : M.chainQ W = fun q => (M.aliceChainOp W q.1) ⊗ₖ (M.bobChainOp W q.2) :=
+    funext fun q => aOp_mul_bOp_eq _ _
+  rw [hrw]
+  exact isPVM_kron (M.isPVM_aliceChainOp W) (M.isPVM_bobChainOp W)
+
+/-- **`endOp` is that family, restricted to the coupled index set** --- so display
+`eq:qld-pulling-12` and the displays leading to it speak about one and the same projective
+measurement. -/
+theorem endOp_eq_sum_chainQ (W : Bas) (v : Anc F m) (a : F) :
+    M.endOp W v a = ∑ q ∈ coupledIdx v a, M.chainQ W q :=
+  Finset.sum_congr rfl fun _ _ => (aOp_mul_bOp_eq _ _).symm
+
+/-- **Display `eq:qld-pulling-9a`**: left-multiplying by Bob's own pair measurement, which is the
+identity, refines the chain's three-index family into the four-index one. -/
+theorem sum_poly_chainQ (W : Bas)
+    (t1 : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) (h' : Anc F m) :
+    (∑ g' : LowIndDegPoly (F := F) (m := m) (d := d), M.chainQ W (t1, (g', h')))
+      = M.chainP W (t1, h') := by
+  have hsum : (∑ g' : LowIndDegPoly (F := F) (m := m) (d := d),
+      M.bobChainOp W (g', h')) = M.bobWeyl W h' :=
+    M.toSecond.sum_poly_chainOp W h'
+  show (∑ g' : LowIndDegPoly (F := F) (m := m) (d := d),
+      aOp (M.aliceChainOp W t1) * bOp (M.bobChainOp W (g', h')))
+    = aOp (M.aliceChainOp W t1) * bOp (M.bobWeyl W h')
+  rw [← hsum, bOp_sum, Finset.mul_sum]
+
+set_option maxHeartbeats 1000000 in
+/-- **Bob's `eq:qld-pulling-5` to `-8`, for free.** The same lemma at the mirror: what it asks of
+Bob there it asks of Alice here, and the state it is read on is the physical state with the two
+parties written in the other order. The paper's ``an entirely analogous derivation'' for the
+second party is discharged this way for the whole chain, not lemma by lemma. -/
+theorem mirror_sum_snorm_sq_chainP_le (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
+    (W : Bas) (v : Anc F m) (u : Point F m) :
+    ∑ a : F, snorm (M.physVec ∘ Prod.swap)
+        (∑ t ∈ univ.filter fun t : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) × Anc F m
+            => dotF (chainLabel t.1.1 t.1.2) v = a,
+          M.mirror.chainP W t * M.mirror.chainW W u t) ^ 2
+      ≤ ∑ g : LowIndDegPoly (F := F) (m := m) (d := d), snorm M.Φ'
+          (aOp (((polyMarg M.SA' W).mats g).val
+            * (1 - (aOp (hatMats MB W u (g.eval u)) : Matrix ((dB × Anc F m) × M.Eb) _ ℂ))))
+          ^ 2 := by
+  rw [← M.mirror_physVec]
+  exact M.mirror.sum_snorm_sq_chainP_le hprojA W v u
 
 end MirrorSimul
 

@@ -2518,3 +2518,43 @@ never to rewrite under a `toFirst` projection.
 Ten of the chain's eleven displays are in. One estimate left: `-10` to `-12`, the Cauchy--Schwarz
 swap (`abs_sum_qform_swap_le`) and Schwartz--Zippel (`sum_uniform_agree_mass_le`), both of which
 are already in the tree. Then the chain's assembly and `lem:qld-povm-to-obs` at its end.
+
+### PR Z: the mirror of a `MirrorSimul`, and the four-index family (2026-09-22)
+
+**The mirror of a `MirrorSimul` is a `MirrorSimul`** --- at the swapped strategy, with the two
+players' measurements exchanged and the two cuts exchanged. This is the same economy `toSecond`
+buys one level down, and it should have been noticed when `MirrorSimul` was introduced in PR Q.
+
+`toFirst` and `toSecond` give Bob's objects as a `SimulPair`, which is enough for anything stated
+on one cut's state --- `bobMTilde`, `bobSwap`, `bobSwap_conj_bobMTilde` all came that way. But the
+chain's last displays compare operators on the **physical** state, and nothing about that state was
+available for Bob: `physVec`, `bornProb_physVec`, `chainP`, `chainW` are all `MirrorSimul` methods.
+`mirror` supplies them. `mirror_sum_snorm_sq_chainP_le` is `-5` to `-8` for Bob, and its proof is
+`rw [← M.mirror_physVec]; exact M.mirror.sum_snorm_sq_chainP_le hprojA W v u`.
+
+What makes it go through is that `hmirror` survives the exchange, and that is `mirrorVec_mirrorVec`:
+`mirrorEquiv` composed with itself is the identity, **by `rfl`**. Exchanging the two parties and,
+within each, the party's own pair half with the other pair's, puts every register back where it
+started. The `Prod.swap`-twice and `Prod.mk.eta` definitional equalities carry the rest --- the
+whole `mirror` definition typechecks with `hmirror := by rw [M.hmirror, mirrorVec_mirrorVec]` and
+every other field a projection.
+
+This halves what is left of the chain. `sum_xSqNorm_le_of_endOp` takes both parties' chains as
+hypotheses; only one has to be built.
+
+*The four-index family.* From `-9a` on the chain runs over both parties' pairs. `chainQ` is that
+family; `endOp_eq_sum_chainQ` says the endpoint already in the tree is exactly its restriction to
+`coupledIdx`, so the displays leading there and the endpoint speak about one projective
+measurement. `sum_poly_chainQ` is `-9a`: left-multiplying by Bob's own pair measurement, which is
+the identity, refines the three-index family into the four-index one.
+
+*The spelling rule, for the third and fourth time.* `chainP` was defined through
+`M.toFirst.chainOp`; the moment a statement mentioned both it and `aliceChainOp`, the product's
+`HMul` instance failed to synthesize, because `toFirst.EA` and `M.Ea`, equal by definition, are not
+the same spelling. Retyping `chainP` through `aliceChainOp` fixed it, and `bobChainOp` was
+introduced for the same reason rather than using `mirror.aliceChainOp`. The rule, now applied
+consistently: **give every physical-cut object its own name in its own party's spelling, and never
+reach through `toFirst`, `toSecond` or `mirror` inside a statement.**
+
+What is left of the chain: `-10` to `-12`, then the assembly through `sum_xSqNorm_le_of_endOp`,
+then `lem:qld-povm-to-obs`.

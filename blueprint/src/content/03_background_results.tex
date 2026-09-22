@@ -4104,7 +4104,14 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.MirrorSimul.sum_bornProb_chainW_drop_le,
   MIPRE.QLD.MirrorSimul.bornProb_physVec_aOp_kron,
   MIPRE.QLD.MirrorSimul.bornProb_physVec_aOp, MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainP_le,
-  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainP_le}
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainP_le, MIPRE.QLD.mirrorVec_mirrorVec,
+  MIPRE.QLD.MirrorSimul.mirror, MIPRE.QLD.MirrorSimul.mirror_toFirst,
+  MIPRE.QLD.MirrorSimul.mirror_toSecond, MIPRE.QLD.MirrorSimul.mirror_SA,
+  MIPRE.QLD.MirrorSimul.mirror_physVec, MIPRE.QLD.MirrorSimul.bobChainOp,
+  MIPRE.QLD.MirrorSimul.isPVM_bobChainOp, MIPRE.QLD.SimulPair.sum_poly_chainOp,
+  MIPRE.QLD.MirrorSimul.chainQ, MIPRE.QLD.MirrorSimul.isPVM_chainQ,
+  MIPRE.QLD.MirrorSimul.endOp_eq_sum_chainQ, MIPRE.QLD.MirrorSimul.sum_poly_chainQ,
+  MIPRE.QLD.MirrorSimul.mirror_sum_snorm_sq_chainP_le}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4427,6 +4434,32 @@ carries Bob's padding under \texttt{toFirst}'s name for it, and rewriting inside
 is not type-correct. The same spelling problem is why Alice's objects here
 (\texttt{aliceChainOp}, \texttt{aliceHat}) are named rather than reached through
 \texttt{toFirst}.
+
+\emph{And Bob's whole derivation is Alice's, instantiated.} \textbf{The mirror of a
+\texttt{MirrorSimul} is a \texttt{MirrorSimul}} --- at the swapped strategy, with the two
+players' measurements exchanged and the two cuts exchanged. \texttt{toFirst} and
+\texttt{toSecond} give Bob's objects as a \texttt{SimulPair}, which is enough for anything
+stated on one cut's state; \texttt{mirror} gives them on the \emph{physical} state, which is what
+the chain's last displays compare, so every lemma about the six-register cut becomes Bob's by
+instantiation. \texttt{mirror\_sum\_snorm\_sq\_chainP\_le} is
+\texttt{eq:qld-pulling-5} to \texttt{-8} for Bob, and its proof is one rewrite and one
+application. The paper's ``an analogous derivation shows'' for the second party is discharged that
+way for the whole chain rather than display by display, and
+\texttt{sum\_xSqNorm\_le\_of\_endOp}, which needs both parties' chains, will be fed from one.
+
+What makes it go through is that the state field survives the exchange:
+\texttt{mirrorVec\_mirrorVec} says \texttt{mirrorEquiv} composed with itself is the identity,
+by \texttt{rfl} --- exchanging the two parties and, within each, the party's own pair half with
+the other pair's, puts every register back where it started.
+
+\emph{And the four-index family.} From \texttt{eq:qld-pulling-9a} on, the chain runs over
+\emph{both} parties' pairs: \texttt{chainQ} is that family, projective by
+\texttt{isPVM\_chainQ}, and \texttt{endOp\_eq\_sum\_chainQ} says the chain's endpoint --- in
+place since the arithmetic frame was built --- is exactly its restriction to the coupled index set,
+so the displays leading there and the endpoint speak about one projective measurement.
+\texttt{sum\_poly\_chainQ} is \texttt{eq:qld-pulling-9a} itself: left-multiplying by Bob's own
+pair measurement, which is the identity, refines the three-index family into the four-index one,
+and \texttt{SimulPair.sum\_poly\_chainOp} is the completeness that makes it so.
 
 \emph{Not formalized}: \texttt{eq:qld-pulling-10} to \texttt{-12}, which is the Cauchy--Schwarz
 swap and Schwartz--Zippel, and Lemma~\ref{lem:qld-povm-to-obs} at the very end.
