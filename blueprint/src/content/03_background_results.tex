@@ -4043,7 +4043,10 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
 \label{lem:qld-pauli-selfcons}
 \ledgernode{1.2.2.15}
 \uses{lem:qld-exact-paulis,lem:qld-helper,lem:qld-win,lem:schwartz-zippel,def:cross-distance}
-\lean{MIPRE.QLD.syn_mul_syn}
+\lean{MIPRE.QLD.syn_mul_syn, MIPRE.QLD.stateVec_expVec_kron_one,
+  MIPRE.QLD.stateVecB_expVec_kron_one, MIPRE.QLD.stateVec_hatVec_syn,
+  MIPRE.QLD.xSqNorm_hatVec_syn, MIPRE.QLD.SimulPair.stateVec_ancSyn,
+  MIPRE.QLD.SimulPair.sum_ancSyn_mulVec}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4077,15 +4080,36 @@ node. It is separated out here rather than folded back into
 Lemma~\ref{lem:qld-exact-paulis} so that the latter's \texttt{leanok} marks stay honest: what is
 formalized there is exactly what it states.
 
-Not formalized, apart from its combinatorial core. Its chain is the eleven displays of the paper's
-\texttt{qld-separating.tex}, and it is the substantial piece of stage 5 that remains. One
-ingredient is in place: the justification of display \texttt{eq:qld-pulling-2b}, that the syndrome
-projectors of one Weyl family at two different probes multiply to the projector onto the outcomes
-satisfying both conditions (\texttt{syn\_mul\_syn}) --- off the diagonal the spectral projectors
-annihilate each other, so only the eigenvalue patterns in both level sets survive. The
-approximation steps around it use the paper's \texttt{fact:add-a-proj}, which
-\texttt{MIPRE/Foundations/Commutation.lean} already has. \texttt{reports/qld-stage5-blueprint-repairs.md}
-records the omission.
+\emph{The exact steps of the chain are formalized.} Its eleven displays are of two kinds: steps
+marked $\approx_0$, which are identities, and steps marked $\approx_\delta$, which are estimates.
+All the identities are in place.
+
+\texttt{syn\_mul\_syn} is display \texttt{eq:qld-pulling-2b}: the syndrome projectors of one Weyl
+family at two different probes multiply to the projector onto the outcomes satisfying both
+conditions --- off the diagonal the spectral projectors annihilate each other, so only the
+eigenvalue patterns in both level sets survive.
+
+\texttt{SimulPair.stateVec\_ancSyn} is \texttt{eq:qld-pulling-3a}: a generalized Pauli moves from
+one party's ancilla half to the other's at no cost, the two halves being maximally entangled and
+the syndrome projectors symmetric. The point worth recording is that this is available at all.
+Lemma~\ref{lem:qld-simultaneous} does not say that the padded state \emph{is} an expanded state,
+only that it reproduces its expectations, so a \emph{vector} identity about it looks out of reach.
+It is not: the identity to be proved is the vanishing of a squared norm, and a squared norm is an
+expectation, so \texttt{SimulPair.xSqNorm\_aOp} carries it across with no loss.
+
+\texttt{SimulPair.sum\_ancSyn\_mulVec} is \texttt{eq:qld-pulling-4}: summing the matched pairs of
+syndrome projectors, one on each party, leaves the state unchanged, since by the transport each
+matched pair acts as the projector on one side alone and those sum to the identity.
+
+\emph{Not formalized}: the $\approx_\delta$ steps, which are
+\texttt{eq:qld-pulling-1}, \texttt{eq:qld-pulling-3}, \texttt{eq:qld-pulling-7} and
+\texttt{eq:qld-pulling-10} through \texttt{eq:qld-pulling-12}, and the final passage through
+\texttt{fact:agreement}, \texttt{fact:data-processing} and Lemma~\ref{lem:qld-povm-to-obs}. They
+use the paper's \texttt{fact:add-a-proj}, which
+\texttt{MIPRE/Foundations/Commutation.lean} already has, and the second item of
+Lemma~\ref{lem:qld-helper}, which is formalized; what they need beyond that is the same kind of
+state-norm bookkeeping as stage 4's three pull requests, at about the same size.
+\texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
 
 \effortHard
 

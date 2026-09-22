@@ -1850,3 +1850,27 @@ the paper's second item of `lem:qld-construct-the-paulis`, and the blueprint's p
 `reports/qld-stage5-blueprint-repairs.md`. It is the substantial piece of stage 5 that remains, and
 it is what `thm:qld` is now waiting on: item 2 of `lem:qld-swap` and the assembly both run through
 it.
+
+### PR L, first piece: the exact steps of `lem:qld-pauli-selfcons` (2026-09-22)
+
+`MIPRE/Background/QLD/AncTransport.lean` (fast regime). The node added in the previous PR is the
+blocker for everything left in stage 5, so this starts on it. Its chain splits cleanly: the
+`approx_0` displays are identities and the `approx_delta` ones are estimates. All the identities
+are now in (`syn_mul_syn` landed with the previous PR; `stateVec_ancSyn` and `sum_ancSyn_mulVec`
+here).
+
+**The one that looked blocked.** `eq:qld-pulling-3a` moves a generalized Pauli between the two
+ancilla halves, exactly. Foundations has that for the bare entangled state, but the chain runs on
+a `SimulPair`'s padded state `Phi`, and `SimulPair` does not say `Phi` *is* an expanded state ---
+only `Phi_reduced`, that it reproduces expectations. A vector identity looked out of reach, which
+would have meant strengthening the merged stage-4 interface. It is not out of reach: the identity
+is the vanishing of `xSqNorm Phi A B`, and a squared norm is an expectation, so the existing
+`SimulPair.xSqNorm_aOp` carries it. Worth remembering for the rest of the chain: an exact statement
+about `Phi` expressible as a vanishing squared norm is reachable through `Phi_reduced`; one that is
+not, is not. Every `approx_0` step here is of the first kind, so no interface change is needed.
+
+**Sizing what is left.** The estimates are `eq:qld-pulling-1`, `-3`, `-7` and `-10` through `-12`,
+then the passage through `fact:agreement`, `fact:data-processing` and `lem:qld-povm-to-obs`. Their
+tools are in place (`fact:add-a-proj` in `MIPRE/Foundations/Commutation.lean`, item 2 of
+`lem:qld-helper`). On stage 4's evidence that is about three pull requests, after which
+`lem:qld-swap` item 2 and the `thm:qld` assembly follow.
