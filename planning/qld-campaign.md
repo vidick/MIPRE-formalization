@@ -2477,3 +2477,44 @@ together, against Bob's Weyl outcome --- with `isPVM_chainP`, which is what both
 
 What is left of the two displays is the identification of their terms with that shape, and then the
 reduction of what remains to the helper's item 2 and to Schwartz-Zippel.
+
+### PR Y: `eq:qld-pulling-5` to `-9`, the first of the two remaining estimates (2026-09-22)
+
+The first step of the chain to compare operators on all six registers, and the first to run over a
+*triple* index: Alice's pair outcome `g`, her Weyl outcome `h`, and Bob's Weyl outcome `h'`.
+`sum_snorm_sq_chainP_le` is displays `-5` through `-8`, `sum_uniform_snorm_sq_chainP_le` is `-9`.
+The step costs item 2 of `lem:qld-helper` and nothing more.
+
+Three things had to be arranged, and each recurs at `-10`.
+
+*The tail.* `chainW` is Alice's gap `Id - M-hat^u_{g(u)}` against Bob's point measurement at
+`(g - g_h + g_h')(u)` --- shifted by **both** Weyl outcomes, which is why the index is a triple.
+`chainW_sandwich` is where it meets `sum_snorm_sq_fiber_sandwich_le`: conjugating the chain's
+projector by the tail splits across the cut, each party's factor local, so one rewrite turns the
+shape's quadratic form into a Born probability.
+
+*Bob discharges.* `bobHat_conj_bobWeyl` says his factor is a projector on `B B'` tensored with a
+Weyl outcome on `B''`; `sum_bornProb_chainW_drop_le` sums it away by `sum_bornProb_kron_le`. The
+projector **varies with** the Weyl outcome, so the discharge has to be stated with the two indices
+coupled --- `sum_bornProb_sandwich_drop_le` from PR X, which fixes the projector across the
+dropped index, does not cover it. That was worth finding before writing the proof rather than
+after.
+
+*Alice collapses and travels.* `sum_aliceChainOp` sums the Weyl outcome out of her summand, the
+spectral projectors being complete, and `sum_aliceChainOp_sandwich` carries that through the
+sandwich, her gap operator not depending on the Weyl index. What is left is on `A A'` alone, and
+`bornProb_physVec_aOp` carries it back to `Phi`, where
+`SimulPair.sum_snorm_sq_polyMarg_one_sub_le` bounds it.
+
+The transport is stated twice. `bornProb_physVec_aOp_kron` keeps the identity written as a
+fourfold tensor product and only `bornProb_physVec_aOp` collapses it, because the intermediate
+`mVec` carries Bob's padding under `toFirst`'s name for it and `rw` cannot abstract inside that
+application --- the motive is not type-correct at `implicit` transparency. The same spelling
+problem is why Alice's objects here (`aliceChainOp`, `aliceHat`) are named in her own spelling
+rather than reached through `toFirst`. This is the third time `toFirst.EA` versus `M.Ea` has cost
+a detour; the rule that has worked every time is to give a physical-cut object its own name and
+never to rewrite under a `toFirst` projection.
+
+Ten of the chain's eleven displays are in. One estimate left: `-10` to `-12`, the Cauchy--Schwarz
+swap (`abs_sum_qform_swap_le`) and Schwartz--Zippel (`sum_uniform_agree_mass_le`), both of which
+are already in the tree. Then the chain's assembly and `lem:qld-povm-to-obs` at its end.

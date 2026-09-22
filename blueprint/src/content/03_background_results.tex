@@ -4095,7 +4095,16 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.syn_mul_proj, MIPRE.QLD.hatMats_mul_proj,
   MIPRE.QLD.sum_snorm_sq_fiber_sandwich_le, MIPRE.QLD.sum_bornProb_sandwich_drop_le,
   MIPRE.QLD.MirrorSimul.bobWeyl, MIPRE.QLD.MirrorSimul.chainP,
-  MIPRE.QLD.MirrorSimul.isPVM_chainP}
+  MIPRE.QLD.MirrorSimul.isPVM_chainP, MIPRE.QLD.MirrorSimul.aliceChainOp,
+  MIPRE.QLD.MirrorSimul.aliceHat, MIPRE.QLD.MirrorSimul.bobHat,
+  MIPRE.QLD.MirrorSimul.chainW, MIPRE.QLD.MirrorSimul.chainW_sandwich,
+  MIPRE.QLD.MirrorSimul.sum_aliceChainOp, MIPRE.QLD.MirrorSimul.sum_aliceChainOp_sandwich,
+  MIPRE.QLD.MirrorSimul.bobHat_conj_bobWeyl, MIPRE.QLD.MirrorSimul.isPVM_aliceChainOp,
+  MIPRE.QLD.MirrorSimul.posSemidef_aliceSand,
+  MIPRE.QLD.MirrorSimul.sum_bornProb_chainW_drop_le,
+  MIPRE.QLD.MirrorSimul.bornProb_physVec_aOp_kron,
+  MIPRE.QLD.MirrorSimul.bornProb_physVec_aOp, MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainP_le,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainP_le}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4387,9 +4396,40 @@ That is \texttt{fact:add-a-proj} in the form the two displays consume it.
 \texttt{MirrorSimul.chainP} is the projective family they sum over --- Alice's pair and Weyl
 outcomes together, against Bob's Weyl outcome, on the physical cut.
 
-\emph{Not formalized}: the two displays themselves, which is now the identification of their terms
-with that shape and the reduction of what is left to item 2 of Lemma~\ref{lem:qld-helper} and to
-Lemma~\ref{lem:schwartz-zippel}. And Lemma~\ref{lem:qld-povm-to-obs} at the very end.
+\emph{And the first of the two is done.} \texttt{sum\_snorm\_sq\_chainP\_le} is
+\texttt{eq:qld-pulling-5} to \texttt{-8} and
+\texttt{sum\_uniform\_snorm\_sq\_chainP\_le} is \texttt{eq:qld-pulling-9}: the step costs item
+2 of Lemma~\ref{lem:qld-helper} and nothing more. Three things had to be arranged, and each is
+worth recording because the same three recur at \texttt{eq:qld-pulling-10}.
+
+The chain's tail at this display is \texttt{chainW}, Alice's gap $\Id - \widehat{M}^u_{g(u)}$
+against Bob's point measurement at the shifted outcome $(g - g_h + g_{h'})(u)$ --- shifted by
+\emph{both} Weyl outcomes, which is what makes the display's index a triple rather than a pair.
+\texttt{chainW\_sandwich} is where that tail meets the outer shape: conjugating the chain's
+projector by it splits across the cut, each party's factor staying local, so a single rewrite
+turns the quadratic form the shape produces into a Born probability.
+
+Bob's side then discharges. \texttt{bobHat\_conj\_bobWeyl} says his factor is a projector on
+$\bob \bob'$ tensored with a Weyl outcome on $\bob''$, and
+\texttt{sum\_bornProb\_chainW\_drop\_le} sums it away by \texttt{sum\_bornProb\_kron\_le}
+--- the projector varying with the Weyl outcome, which is why the discharge has to be stated with
+the two indices coupled rather than at a fixed projector.
+
+Alice's side then collapses and travels. \texttt{sum\_aliceChainOp} sums the Weyl outcome out of
+her summand, the spectral projectors being complete, and
+\texttt{sum\_aliceChainOp\_sandwich} carries that through the sandwich, her gap operator not
+depending on the Weyl index. What is left is on $\alice \alice'$ alone, and
+\texttt{bornProb\_physVec\_aOp} carries it back to $\Phi$, where
+\texttt{SimulPair.sum\_snorm\_sq\_polyMarg\_one\_sub\_le} bounds it. That transport is
+stated twice --- \texttt{bornProb\_physVec\_aOp\_kron} keeps the identity written as a fourfold
+tensor product, and only the second collapses it --- because the intermediate \texttt{mVec}
+carries Bob's padding under \texttt{toFirst}'s name for it, and rewriting inside that application
+is not type-correct. The same spelling problem is why Alice's objects here
+(\texttt{aliceChainOp}, \texttt{aliceHat}) are named rather than reached through
+\texttt{toFirst}.
+
+\emph{Not formalized}: \texttt{eq:qld-pulling-10} to \texttt{-12}, which is the Cauchy--Schwarz
+swap and Schwartz--Zippel, and Lemma~\ref{lem:qld-povm-to-obs} at the very end.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
 
 \effortHard
