@@ -4129,7 +4129,12 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.sum_uniform_chainCoupled_agree_le, MIPRE.QLD.chainQShift_eq_iff,
   MIPRE.QLD.sum_filter_and, MIPRE.QLD.sum_uniform_chainCoupled_mass_le,
   MIPRE.QLD.MirrorSimul.norm_evec_physVec, MIPRE.QLD.MirrorSimul.sum_qform_chainQ,
-  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainQ_notCoupled_le}
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainQ_notCoupled_le,
+  MIPRE.QLD.sum_snorm_sq_chain_le, MIPRE.QLD.qform_kron_one_of_unit,
+  MIPRE.QLD.MirrorSimul.physLiftEquiv, MIPRE.QLD.MirrorSimul.physVec_comp_physLiftEquiv,
+  MIPRE.QLD.MirrorSimul.physLift, MIPRE.QLD.MirrorSimul.physLift_sub,
+  MIPRE.QLD.MirrorSimul.physLift_mul, MIPRE.QLD.MirrorSimul.physLift_conjTranspose,
+  MIPRE.QLD.MirrorSimul.qform_physLift, MIPRE.QLD.MirrorSimul.snorm_physLift}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4548,9 +4553,26 @@ needed. And \texttt{chainQShift\_eq\_iff} is where characteristic two is spent a
 condition the chain carries the shift on one side of is the condition Schwartz--Zippel wants it
 split across.
 
-\emph{All eleven displays are now formalized.} \emph{Not formalized}: the chain's assembly
-through \texttt{sum\_xSqNorm\_le\_of\_endOp}, which is the bookkeeping of naming the eleven
-intermediate operator families and chaining the displays by the triangle inequality; and
+\emph{All eleven displays are now formalized, and so are the assembly's two joints.}
+
+\texttt{sum\_snorm\_sq\_chain\_le} is the triangle inequality along a \emph{chain} rather
+than across one step, and it is worth having rather than iterating
+\texttt{sum\_snorm\_sq\_triangle'}: a chain of $n$ steps costs a factor $n$, not $2^n$,
+because the total deviation telescopes into the sum of the steps' and Cauchy--Schwarz against the
+constant one turns the squared norm of a sum of $n$ terms into $n$ times the sum of their squares.
+For eleven displays that is the difference between eleven and two thousand.
+
+\texttt{physLift} is the other joint. Displays \texttt{eq:qld-pulling-1} to \texttt{-4} are
+local in the first cut's grouping and everything from \texttt{-5} on is local in the physical
+one, so each of the first four has to be carried across --- and what carries it is that the
+appended pair contributes its norm and nothing else (\texttt{qform\_kron\_one\_of\_unit}, the
+one-party form of \texttt{bornProb\_expVec\_kron}) together with a regrouping
+(\texttt{physLiftEquiv}). \texttt{physLift} is a $*$-homomorphism, so
+\texttt{snorm\_physLift} follows from \texttt{qform\_physLift} with no further work, and a
+deviation of two lifted operators is the lift of their deviation.
+
+\emph{Not formalized}: the chaining itself --- naming the eleven intermediate operator families
+and checking that each display's bound is the deviation between consecutive ones --- and
 Lemma~\ref{lem:qld-povm-to-obs} at the very end.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
 

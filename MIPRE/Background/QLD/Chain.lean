@@ -301,6 +301,90 @@ theorem sum_xSqNorm_le_of_endOp (M : MirrorSimul ψ MA MB δ) (W : Bas) (v : Anc
 
 end Close
 
+/-! ## The chain's assembly: chaining and transport
+
+Two facts the eleven displays have to be joined by. The first is the triangle inequality along a
+chain rather than across one step; the second carries a statement about the first cut's state to
+the physical one, since displays `eq:qld-pulling-1` to `-4` are local in the first cut's grouping
+and everything from `-5` on is local in the physical one. -/
+
+/-- **The triangle inequality along a chain of deviations.** A chain of `n` steps costs a factor
+`n`, not `2ⁿ`: the total deviation telescopes into the sum of the steps', and Cauchy--Schwarz
+against the constant one turns the squared norm of a sum of `n` terms into `n` times the sum of
+their squares. Iterating `sum_snorm_sq_triangle'` would cost `2ⁿ`, which for the eleven displays of
+`lem:qld-pauli-selfcons` is a factor of two thousand rather than eleven. -/
+theorem sum_snorm_sq_chain_le {N ι : Type*} [Fintype N] [Fintype ι] (v : N → ℂ) (n : ℕ)
+    (T : ℕ → ι → Matrix N N ℂ) :
+    ∑ i, snorm v (T 0 i - T n i) ^ 2
+      ≤ n * ∑ k ∈ Finset.range n, ∑ i, snorm v (T k i - T (k + 1) i) ^ 2 := by
+  classical
+  have htel : ∀ i, T 0 i - T n i
+      = ∑ k ∈ Finset.range n, (T k i - T (k + 1) i) := by
+    intro i
+    rw [Finset.sum_range_sub' (fun k => T k i) n]
+  have hpt : ∀ i, snorm v (T 0 i - T n i) ^ 2
+      ≤ (n : ℝ) * ∑ k ∈ Finset.range n, snorm v (T k i - T (k + 1) i) ^ 2 := by
+    intro i
+    have hle : snorm v (T 0 i - T n i)
+        ≤ ∑ k ∈ Finset.range n, snorm v (T k i - T (k + 1) i) := by
+      rw [htel i]
+      exact QLD.snorm_sum_le v _ _
+    have hcs := sum_mul_sq_le_sq_mul_sq (Finset.range n) (fun _ => (1 : ℝ))
+      (fun k => snorm v (T k i - T (k + 1) i))
+    have hone : (∑ _k ∈ Finset.range n, (1 : ℝ) ^ 2) = (n : ℝ) := by
+      simp
+    have hsum : (∑ k ∈ Finset.range n, (1 : ℝ) * snorm v (T k i - T (k + 1) i))
+        = ∑ k ∈ Finset.range n, snorm v (T k i - T (k + 1) i) :=
+      Finset.sum_congr rfl fun k _ => one_mul _
+    rw [hone, hsum] at hcs
+    nlinarith [snorm_nonneg v (T 0 i - T n i),
+      Finset.sum_nonneg fun (k : ℕ) (_ : k ∈ Finset.range n) => snorm_nonneg v (T k i - T (k+1) i)]
+  refine le_trans (Finset.sum_le_sum fun i (_ : i ∈ univ) => hpt i) (le_of_eq ?_)
+  rw [← Finset.mul_sum]
+  congr 1
+  exact Finset.sum_comm
+
+/-- **Appending a unit vector on a register the operator ignores changes no quadratic form.** The
+one-party form of `bornProb_expVec_kron`, and the only thing the chain's transport from the first
+cut to the physical one needs beyond reindexing. -/
+theorem qform_kron_one_of_unit {R C : Type*} [Fintype R] [Fintype C] [DecidableEq C]
+    {χ : C → ℂ} (hχ : star χ ⬝ᵥ χ = 1) (φ : R → ℂ) (U : Matrix R R ℂ) :
+    qform (fun p : R × C => φ p.1 * χ p.2) (U ⊗ₖ (1 : Matrix C C ℂ)) = qform φ U := by
+  classical
+  have hmv : ∀ (r : R) (c : C),
+      ((U ⊗ₖ (1 : Matrix C C ℂ)) *ᵥ fun p : R × C => φ p.1 * χ p.2) (r, c)
+        = (U *ᵥ φ) r * χ c := by
+    intro r c
+    show (∑ p : R × C, (U ⊗ₖ (1 : Matrix C C ℂ)) (r, c) p * (φ p.1 * χ p.2))
+      = (∑ r' : R, U r r' * φ r') * χ c
+    rw [Fintype.sum_prod_type, Finset.sum_mul]
+    refine Finset.sum_congr rfl fun r' _ => ?_
+    rw [Finset.sum_congr rfl fun c' (_ : c' ∈ univ) => show
+        (U ⊗ₖ (1 : Matrix C C ℂ)) (r, c) (r', c') * (φ r' * χ c')
+          = (U r r' * φ r') * ((1 : Matrix C C ℂ) c c' * χ c') from by
+        show U r r' * (1 : Matrix C C ℂ) c c' * (φ r' * χ c') = _
+        ring,
+      ← Finset.mul_sum]
+    congr 1
+    show (∑ c' : C, (1 : Matrix C C ℂ) c c' * χ c') = χ c
+    exact congrFun (Matrix.one_mulVec χ) c
+  have hfac : (∑ r : R, ∑ c : C, star (fun p : R × C => φ p.1 * χ p.2) (r, c)
+        * ((U *ᵥ φ) r * χ c))
+      = (star φ ⬝ᵥ (U *ᵥ φ)) * (star χ ⬝ᵥ χ) := by
+    rw [dotProduct, dotProduct, Finset.sum_mul]
+    refine Finset.sum_congr rfl fun r _ => ?_
+    rw [Finset.mul_sum]
+    refine Finset.sum_congr rfl fun c _ => ?_
+    show (starRingEnd ℂ) (φ r * χ c) * ((U *ᵥ φ) r * χ c)
+      = (starRingEnd ℂ) (φ r) * (U *ᵥ φ) r * ((starRingEnd ℂ) (χ c) * χ c)
+    rw [map_mul]
+    ring
+  rw [qform, qform, dotProduct, Fintype.sum_prod_type,
+    Finset.sum_congr rfl fun r (_ : r ∈ univ) => Finset.sum_congr rfl fun c _ => by
+      rw [hmv r c],
+    hfac, hχ, mul_one]
+
+
 /-! ## The chain's first estimate
 
 `eq:qld-pulling-0` to `eq:qld-pulling-1` right-multiplies the exact Pauli measurement by the
@@ -1747,6 +1831,82 @@ theorem sum_uniform_snorm_sq_chainQ_notCoupled_le (hd : 1 ≤ d) (W : Bas) (v : 
     (fun q => qform_nonneg_of_nonneg M.physVec
       (Matrix.nonneg_iff_posSemidef.mpr (hP.posSemidef q)))
     (le_of_eq (M.sum_qform_chainQ W))
+
+/-- **The first cut's space, with the appended pair, regrouped as the physical cut.** The pair's
+two halves go where the physical grouping wants them: one beside Bob's own space, one outermost. -/
+def physLiftEquiv :
+    (((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb)) × (Anc F m × Anc F m))
+      ≃ ((((dA × Anc F m) × M.Ea) × Anc F m) × ((((dB × Anc F m) × M.Eb) × Anc F m))) where
+  toFun p := (p.1.1, (((p.1.2.1, p.2.2), p.1.2.2), p.2.1))
+  invFun q := ((q.1, (q.2.1.1.1, q.2.1.2)), (q.2.2, q.2.1.1.2))
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+/-- **The physical state, read through that regrouping, is the first cut's with the pair beside
+it.** -/
+theorem physVec_comp_physLiftEquiv :
+    M.physVec ∘ M.physLiftEquiv
+      = fun p => M.toFirst.mVec p.1 * epr (F := F) (n := Fin m → Bool) p.2 := rfl
+
+/-- **An operator of the first cut, lifted to the physical one**: the identity on the appended
+pair, and the registers regrouped. -/
+def physLift (U : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb))
+      ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb)) ℂ) :
+    Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m))
+      ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m)) ℂ :=
+  Matrix.reindex M.physLiftEquiv M.physLiftEquiv
+    (U ⊗ₖ (1 : Matrix (Anc F m × Anc F m) (Anc F m × Anc F m) ℂ))
+
+theorem physLift_sub (U V : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb))
+    ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb)) ℂ) :
+    M.physLift (U - V) = M.physLift U - M.physLift V := by
+  rw [physLift, physLift, physLift, sub_kronecker_right]
+  ext p q
+  simp [Matrix.reindex_apply, Matrix.submatrix_apply]
+
+theorem physLift_mul (U V : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb))
+    ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb)) ℂ) :
+    M.physLift (U * V) = M.physLift U * M.physLift V := by
+  rw [physLift, physLift, physLift,
+    show (U * V) ⊗ₖ (1 : Matrix (Anc F m × Anc F m) (Anc F m × Anc F m) ℂ)
+      = (U ⊗ₖ (1 : Matrix (Anc F m × Anc F m) (Anc F m × Anc F m) ℂ))
+        * (V ⊗ₖ (1 : Matrix (Anc F m × Anc F m) (Anc F m × Anc F m) ℂ)) from by
+      rw [← Matrix.mul_kronecker_mul, Matrix.mul_one],
+    Matrix.reindex_apply, Matrix.reindex_apply, Matrix.reindex_apply]
+  exact (Matrix.submatrix_mul_equiv _ _ _ _ _).symm
+
+theorem physLift_conjTranspose (U : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb))
+    ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb)) ℂ) :
+    (M.physLift U)ᴴ = M.physLift Uᴴ := by
+  rw [physLift, physLift, Matrix.reindex_apply, Matrix.reindex_apply,
+    Matrix.conjTranspose_submatrix, Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one]
+
+/-- **The transport**: a first-cut operator, lifted, has the same quadratic form on the physical
+state that it has on the first cut's own. The appended pair contributes its norm and nothing
+else. -/
+theorem qform_physLift (U : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb))
+    ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb)) ℂ) :
+    qform M.physVec (M.physLift U) = qform M.toFirst.mVec U := by
+  have h := qform_comp_equiv M.physLiftEquiv (M.physVec ∘ M.physLiftEquiv)
+    (U ⊗ₖ (1 : Matrix (Anc F m × Anc F m) (Anc F m × Anc F m) ℂ))
+  rw [show (M.physVec ∘ M.physLiftEquiv) ∘ M.physLiftEquiv.symm = M.physVec from by
+    rw [Function.comp_assoc, Equiv.self_comp_symm, Function.comp_id]] at h
+  have h2 : qform M.physVec (M.physLift U)
+      = qform (M.physVec ∘ M.physLiftEquiv)
+        (U ⊗ₖ (1 : Matrix (Anc F m × Anc F m) (Anc F m × Anc F m) ℂ)) :=
+    congrArg Complex.re h
+  rw [h2, M.physVec_comp_physLiftEquiv]
+  exact qform_kron_one_of_unit (epr_unit (F := F) (n := Fin m → Bool)) M.toFirst.mVec U
+
+/-- And the same for a state-norm, a state-norm being the square root of a quadratic form. -/
+theorem snorm_physLift (U : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb))
+    ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb)) ℂ) :
+    snorm M.physVec (M.physLift U) = snorm M.toFirst.mVec U := by
+  have hsq : snorm M.physVec (M.physLift U) ^ 2 = snorm M.toFirst.mVec U ^ 2 := by
+    rw [snorm_sq_eq_qform M.physVec (M.physLift U), M.physLift_conjTranspose,
+      ← M.physLift_mul, M.qform_physLift]
+    exact (snorm_sq_eq_qform M.toFirst.mVec U).symm
+  nlinarith [snorm_nonneg M.physVec (M.physLift U), snorm_nonneg M.toFirst.mVec U]
 
 end MirrorSimul
 

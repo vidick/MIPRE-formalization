@@ -2659,3 +2659,28 @@ is the deviation between consecutive ones, and chaining them through `sum_snorm_
 state* rather than on operators, which is fine --- a state-norm sees only the vector --- but it
 means the intermediate families are not related by operator equations and each step has to be
 stated at the level of `snorm physVec (T_k a - T_{k+1} a)`.
+
+### PR AD: the assembly's two joints (2026-09-22)
+
+`sum_snorm_sq_chain_le` is the triangle inequality along a **chain** rather than across one step.
+Iterating `sum_snorm_sq_triangle'` eleven times would cost `2^11 = 2048`; the chain form costs
+`11`, because the total deviation telescopes into the sum of the steps' and Cauchy--Schwarz against
+the constant one turns the squared norm of a sum of `n` terms into `n` times the sum of squares.
+The paper absorbs the constant into `delta_S` either way, but a factor of two thousand in a bound
+whose whole point is to be `poly(eps)` is not something to hand over silently.
+
+`physLift` is the other joint. Displays `-1` to `-4` are local in the first cut's grouping and
+everything from `-5` on is local in the physical one, so each of the first four has to be carried
+across. What carries it is `qform_kron_one_of_unit` --- the one-party form of
+`bornProb_expVec_kron`, saying the appended pair contributes its norm and nothing else --- together
+with the regrouping `physLiftEquiv`. `physLift` is a `*`-homomorphism (`physLift_mul`,
+`physLift_conjTranspose`, `physLift_sub`), so `snorm_physLift` follows from `qform_physLift` with
+no further work: a squared state-norm is a quadratic form of `U^H U`, and the lift commutes with
+both.
+
+What is left of `lem:qld-pauli-selfcons` is the chaining itself: naming the eleven intermediate
+operator families `T_0 = aOp aliceMTilde` through `T_11 = endOp`, and checking that each display's
+bound is `sum_a snorm physVec (T_k a - T_{k+1} a)^2`. Several of the `approx_0` steps are
+identities *on the state* rather than on operators, which a state-norm does not mind, but it does
+mean the families are not related by operator equations and each step has to be checked at the
+level of the norm.
