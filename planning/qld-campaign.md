@@ -1572,3 +1572,147 @@ either, and the constant is explicit. Lean points: `Fintype.card_ne_zero` needs 
 which `omit [Field F]` removes; `not_imp` is ambiguous between `_root_` and `Classical`
 (the former deprecated); and the `ᴴ` notation is scoped to `Matrix`, so a `namespace MIPRE` block
 needs `open Matrix`.
+
+### PR H-d: `lem:qld-global-separate` (2026-09-21)
+
+**What closed.** `lem:qld-global-separate`, with both marks, for all outcomes and both parties.
+`MIPRE/Background/QLD/Separate.lean` (fast regime) defines the good outcomes `IsGood g`
+(`g = α g_X(x) + β g_Z(z)`, every monomial with exponents `(1, 0)` on `(α, β)` and nothing else
+outside the `x` block, or `(0, 1)` and nothing else outside the `z` block) and proves
+`sum_not_isGood_mass_le`: from the two ordered-product estimates with bounds `Δ₁` (order `X_a Z_b`)
+and `Δ₂` (order `Z_b X_a`), `(1 − 2η) · ∑_{¬IsGood g} ⟨G_g⟩ ≤ 2Δ₁ + 2Δ₂` with
+`η = (2 + 2d + 8md)/q`. `PaddedLIDT.lean` specializes it to a `GlobalPair`
+(`GlobalPair.sum_not_isGood_mass_A_le`, `_B_le`, right-hand side `4(2δ + 2 · 57676416 ε)`).
+
+**The route.** `not_isGood_cases`: a non-good outcome is non-linear, or linear with the `β`
+coefficient `gB` reading a coordinate outside the `z` block (`LowIndDegPoly.DepOutside`), or linear
+with the `α` coefficient `gA` reading a coordinate outside the `x` block; `isGood_of` is the
+converse, through `coef_maskOff`. The assembly of `-linear` is restated abstractly
+(`sum_bad_mass_le_of_avg`: any bad predicate, any Bob-side family `B`), applied once per order
+with the common `η`, and the two weights are added by a union bound. Per bad linear outcome and
+base point `u₀`, `g(setAB u₀ α β) = α gA(u₀) + β gB(u₀)` (`eval_setAB_of_isLinAB`, from
+`pAB_eq_linAB_of_isLinAB`), the fibre contains the diagonal pair always and any other pair for at
+most `q` values of `(α, β)` (`card_filter_linear_le`, a nontrivial linear form on `F²`), so the
+`(α, β)`-average is at most `2/q ⟨S⟩ + W(gA(u₀), gB(u₀))` (`sum_ab_snorm_sq_ordComb_le_of_lin`),
+and the diagonal weight is `⟨S ⊗ Z X Z⟩ ≤ ⟨S ⊗ Z_{gB(u₀)}(zBlk u₀)⟩` (`snorm_sq_ordXZ_le_bornProb`).
+Then `sum_uniform_bornProb_readOn_le`: for an operator family reading only the coordinates in `T`
+and a polynomial `H` reading a coordinate outside `T`, `E_u ⟨S ⊗ Op_u(H(u))⟩ ≤ 8md/q ⟨S⟩`. The
+uniform point is read as a uniform `T` block with the rest uniform and independent
+(`sum_uniform_mixOn`, the involution `mixOnSwap`); `LowIndDegPoly.restrictOff H T z` is `H` with
+the `T` coordinates fixed to `z`, as a coefficient vector in the others (`eval_restrictOff`,
+through `eval_eq_sum_coef` on `Tᶜ`); it is non-constant unless a nonzero coefficient vector
+`H.coef Tᶜ t₀`, `t₀ ≠ 0` (`exists_coef_ne_zero_of_depOutside`), vanishes at `z`, and a
+non-constant vector takes each value with probability at most `4md/q`
+(`sum_uniform_eval_eq_zero_le` on `restrictOff − const b`). The `Z X` order is the `X Z` order with
+`(X, a, α)` and `(Z, b, β)` exchanged (`ptComb_ordZX_eq`, reindexing the fibre by `Prod.swap`), so
+the mirror half reuses every lemma with the two families swapped and the base point read as a
+uniform `x` block.
+
+**Remarks.** The paper's bound is `O((δ_ld + δ_Q)^{1/2} + md/q)` and its Schwartz--Zippel counts
+are `(2m+2)d/q` and `2md/q`; the formalization's are `4md/q` each, from `card_eval_eq_zero_le`
+over all `4m` coordinates, and the bound is linear. Since the good outcomes read no dummy
+coordinate, `-dummy` is subsumed for stage 4c. Two Lean points: `gcongr` on
+`c * ↑(#s) ≤ c * ↑(#t)` descends to the Finset inequality `s ≤ t`, so `mul_le_mul_of_nonneg_left`
+with `exact_mod_cast` is the predictable route; and a multi-line `nlinarith [...]` hint list
+inside a term-mode `by` breaks on the continuation line's column, so the facts go in `have`s.
+
+### PR I: stage 4c — `-complete`, `-sandwich`, `-robustness`, `lem:qld-simultaneous` (2026-09-22)
+
+**What closed.** The four remaining statements of stage 4, and with them the interface stage 5 is
+proved against. `MIPRE/Background/QLD/Complete.lean` (fast regime) relabels each good outcome
+`g = α g_X(x) + β g_Z(z)` by the pair `(g_X, g_Z)` (`pairOf`, through
+`LowIndDegPoly.blockPoly`, a coefficient vector read on a block of the variables, with
+`eval_blockPoly` for a vector supported there), and `pairMeas` is the coarse-graining of the
+global measurement by it: projective (`isPVM_pairMeas`), complete, with the non-good outcomes
+absorbed into the fixed pair — the paper's complement `R`, whose weight `lem:qld-global-separate`
+bounds. `inconsistency_map_eq` reads the inconsistency of any such coarse-graining outcome by
+outcome. The marginals: `one_sub_two_sqrt_le_sum_snorm_sq` turns the products estimate into
+`∑_g E_u ‖(G_g ⊗ B_u(g(u)))Φ‖² ≥ 1 − 2√Δ` (triangle inequality, then one Cauchy--Schwarz over the
+pairs `(u, g)`), and `marg_Z_ge`, `marg_X_ge` bound the rest by the fibre analysis of `-separate`
+plus the non-good weight, giving `E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 − 2√Δ − 2/q − δ_G` and the
+`X` mirror; `inconsistency_evalMarg_Z_le`, `_X_le` are the same statements as inconsistencies.
+
+**The errors.** `PaddedLIDT.lean` names them as functions of the `GlobalPair` error `δ` and the
+strategy's failure `ε`: `deltaProd δ ε = 2δ + 2·57676416 ε` (the products bound `Δ`),
+`deltaSep δ ε = 8 Δ` (the non-separated weight `δ_G`) and
+`deltaS q δ ε = 2√Δ + 2/q + δ_G`. `deltaSep` needs `48 m d ≤ q`: `2 + 2d + 8md ≤ 12md` for
+`m, d ≥ 1`, so `η = (2+2d+8md)/q ≤ 1/4` and the factor `1 − 2η` of `-separate` is at least `1/2`
+(`one_sub_two_eta_ge`). The standing assumption of the subsection is `16md ≤ q`; the regime
+`16md < q < 48md` is absorbed in the assembly the same way `16md > q` is, by enlarging the
+universal constant, and the blueprint says so.
+
+**The instance.** `GlobalPair.toSimulPair` builds a `SimulPair` with
+`EA = EB = (F × F) × CL.Answer F (4m) d 1`, the state `padState ψ` reindexed by
+`Equiv.prodAssoc`, and the completed pair measurements reindexed likewise. The transport is
+four lemmas: `isPVM_reindex` (a reindexing is a `*`-isomorphism, so projectivity survives),
+`reindex_aOp_aOp` (extending twice by the identity and reassociating is extending once by the
+product ancilla), `POVM.aOp_aOp_reindex` (its POVM form), and Foundations'
+`inconsistency_reindex`, `bornProb_reindex`, `reindexVec_unit`. `exists_simulPair` composes it
+with `exists_globalPair`.
+
+**Two remarks.** The paper's `lem:qld-4-7` also announces the sandwiched joint estimate; stage 5
+consumes only the two evaluated marginals, so the structure carries those and the sandwich stays
+where it is used, inside `-sandwich`. And the bound here is linear in `δ_ld` and `ε` up to the one
+square root the Cauchy--Schwarz costs, where the paper writes `O((δ_ld + δ_Q)^{1/2} + md/q)`
+throughout; `δ_S` is closed under that square root by halving `b`, which is the assembly's job.
+
+### PR J-a: `lem:qld-helper` (2026-09-22)
+
+**What closed.** Both items of `lem:qld-helper`, on an abstract `SimulPair`.
+`MIPRE/Background/QLD/Helper.lean` (fast regime). Item 1 is the consistency read as an agreement:
+`sum_bornProb_diag_eq` says the inconsistency of two POVM families on a unit state is one minus
+the probability that they agree (from `sum_diag_eq_one_sub`, which was already there for the pair
+form). Item 2 is the same-party statement the Pauli construction needs, and rests on one matrix
+identity (`aOp_mul_one_sub_eq`): with `T`, `A` on Alice and `B` on Bob a projector,
+`(T ⊗ 1)(1 − A ⊗ 1) = (1 − 1 ⊗ B)(T ⊗ 1 − 1 ⊗ B) − (T ⊗ 1)(A ⊗ 1 − 1 ⊗ B)`, because the cross
+terms `(T ⊗ 1)(1 ⊗ B)` cancel and `(1 − 1 ⊗ B)(1 ⊗ B) = 0`. Both front factors are contractions
+(`snorm_mul_le` with `bnd_aOp`, `bnd_bOp`), so the same-party deviation is at most the two
+cross-party ones: `2δ_S` from item 1 (`xSqNorm_sum_le_two_mul`) and `172 ε` from the
+self-consistency of the expanded point measurements. Squaring costs a factor two on each, giving
+`4δ_S + 344ε`.
+
+**Two transfers.** The self-consistency (`hatPOVM_consistency`) is stated at the verifier's
+content; `sum_content_pt` says the content's `W` block is uniform, so it reads at a uniform point.
+And it lives on the expanded state, while the helper is on the padded state `Φ`: `SimulPair`'s
+`Φ_reduced` gives the Born probabilities, and `Simul.lean` now derives the two squared state norms
+from it (`stateSqNorm_aOp`, `normSq_stateVecB_aOp`, through the generic
+`stateSqNorm_eq_bornProb_one` and `normSq_stateVecB_eq_one_bornProb`), hence the whole cross-party
+deviation (`xSqNorm_aOp`, by the three-term expansion `xSqNorm_eq_expand`).
+
+**A Lean point.** A `have h : ∀ {R S : Type*} ...` inside a declaration whose own universe is
+fixed produces `AddConstAsyncResult.commitConst: constant has level params [u, u_2, u_3] but
+expected [u]`; the two norm bridges had to become top-level universe-polymorphic theorems.
+
+### What PR J-b needs, read off the paper (2026-09-22)
+
+The approximate half of `lem:qld-exact-paulis` is the paper's
+`lem:qld-construct-the-paulis`, item 1: `M̃^{W,ind_m(u)}_a` (the `ExactPauli.lean` construction,
+`mTilde`) is consistent with the strategy's `(Point, W)` point measurement on the opposite party,
+on average over a uniform `u ∈ F_q^m`. Its proof is a four-line chain, and the fourth line is the
+one that was repaired twice in the paper:
+
+1. expand `mTilde` by `eq:tilde_M`, which is `mTilde_eq_sum`, already formalized;
+2. recognize `M^{(Point,W),u}_{a} ⊗ τ^W_{cd(g)·ind_m(u) − a}` summed over `a` as the hatted point
+   measurement `M̂^{(Point,W),u}_{cd(g)·ind_m(u)}` --- the definition of `hatPtPOVM`;
+3. **the substitution** `cd(g)·ind_m(u) ↦ g(u)`, which is false for non-multilinear `g`: the
+   error is at most twice the mass `Ŝ^W` puts on non-multilinear outcomes;
+4. apply `lem:qld-helper` item 1.
+
+Step 3 is the one with Lean already in place from PR D:
+`prob_agree_ldEnc_le_of_not_multilinear` (two distinct polynomials of total degree `md` agree at a
+uniform point with probability at most `md/q` --- the *agreement* direction, which is the repair),
+`nonMultilinear_mass_le` (the abstract aggregation: `S` a probability vector, `T ≤ S` with
+`T ≤ c·S` off a set and `∑T ≥ 1 − η`, then the mass off the set is at most `η + c`), and
+`sum_sub_le_of_eq_on` (the substitution error of two families agreeing on that set). What is
+missing is the chain that produces the hypotheses of `nonMultilinear_mass_le` for the actual
+measurements: the Pauli-basis consistency check in its *same-side* form
+`(M^{(Point,W),u}_{a'})_A ≈ (M^{(Pauli,W)}_{[g_h(u) = a']})_A`, obtained from
+`lem:qld-win-implications` in both orientations plus the self-consistency of the point
+measurements, and the projective family `N_k = ∑_{h + h'' = k} M^{(Pauli,W)}_h ⊗ τ^W_{h''}` it
+produces. That same-side step is `lem:qld-helper` item 2's pattern (`aOp_mul_one_sub_eq`) applied
+to the Pauli-basis measurement rather than the marginal.
+
+The six-register state `A A' B'' | B A'' B'` enters only here: `mTilde` acts on
+`B B' B''` while the point measurement acts on `A`, so the two cuts of the paper's
+`ψ̂` are needed at once, with `stateDist` transported between them. `SwapUnitary.lean` already has
+the two twirls and the maximally entangled state; the transport is the piece to write.

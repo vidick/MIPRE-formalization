@@ -415,11 +415,13 @@ import MIPRE.Background.QLD.CLTransport
 import MIPRE.Background.QLD.Combine
 import MIPRE.Background.QLD.Combined
 import MIPRE.Background.QLD.Commutation
+import MIPRE.Background.QLD.Complete
 import MIPRE.Background.QLD.Consistency
 import MIPRE.Background.QLD.Dummy
 import MIPRE.Background.QLD.ExactPauli
 import MIPRE.Background.QLD.Expanded
 import MIPRE.Background.QLD.Game
+import MIPRE.Background.QLD.Helper
 import MIPRE.Background.QLD.Legalize
 import MIPRE.Background.QLD.LineRepresentative
 import MIPRE.Background.QLD.Linear
@@ -438,6 +440,7 @@ import MIPRE.Background.QLD.Product
 import MIPRE.Background.QLD.Products
 import MIPRE.Background.QLD.SamplerQueryProgram
 import MIPRE.Background.QLD.SeededLinePrograms
+import MIPRE.Background.QLD.Separate
 import MIPRE.Background.QLD.Simul
 import MIPRE.Background.QLD.Swap
 import MIPRE.Background.QLD.SwapUnitary
