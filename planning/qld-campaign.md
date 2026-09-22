@@ -2709,3 +2709,35 @@ is `weylOf_transpose` plus `stateVec_epr_proj`), and those sum to the identity.
 pair alone.
 
 Ten steps of the chaining left, then `lem:qld-povm-to-obs`.
+
+### PR AF: `MirrorSimul`, discharged (2026-09-22)
+
+`MirrorSimul` was introduced in PR Q as an interface, and nothing constructed one. Every result of
+PRs Q through AE was therefore conditional on a structure no strategy had been shown to have. This
+closes it: `exists_mirrorSimul` says a legal projective strategy of value `1 - eps` has both cuts,
+on one state.
+
+**The prediction that this was blocked on new mathematics was wrong, and the reason is worth
+keeping.** The argument for "blocked" was: `lem:qld-simultaneous` is an *existence* statement, so
+applying it to each cut gives two unrelated states and `hmirror` cannot follow. That reads the
+field as "the two cuts must come from one construction."
+
+It does not say that. It says the two cuts' **states** agree once each is given the pair the other
+carries --- and nothing about their measurements. The paper does not relate them either:
+`lem:qld-4-7` gives one pair measurement per player's space, and the chain's endpoint is symmetric
+in the two for a reason of its own (`swap_mem_coupledIdx`), not because they are the same object.
+
+And the states are not abstract. `GlobalPair.toSimulPair` is an explicit construction, so
+`padState` is the strategy tensored with one maximally entangled pair and four padding registers
+pinned at basis vectors (`padState_reindex_apply`, via the new `extVec2_apply`). Two runs of
+`exists_globalPair` --- one at the strategy, one at the swapped strategy, whose padded state
+carries the *other* pair --- give two cuts whose states are the same six-register product read two
+ways. `hmirror_padState` is then: expand both sides, and observe that swapping a pair's halves
+changes nothing (`epr_symm`). The whole file is under 150 lines.
+
+The lesson, which `planning/qld-two-pairs-scope.md` now also records: **look at what the structure
+demands before assuming its hard-looking field is hard.** Two designs were discarded in PR Q for
+reasoning about Lean types instead of the paper; this one cost a session of treating a provable
+field as blocked, for reasoning about the *construction* instead of the *statement*.
+
+Everything from PR Q on is now unconditional.

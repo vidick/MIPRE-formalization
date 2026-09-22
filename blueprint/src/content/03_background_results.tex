@@ -4138,7 +4138,9 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.sum_epr_proj_mulVec, MIPRE.QLD.kron_one_mulVec,
   MIPRE.QLD.MirrorSimul.bobPairProj, MIPRE.QLD.MirrorSimul.bobPairProj_eq,
   MIPRE.QLD.MirrorSimul.reindex_bobPairProj,
-  MIPRE.QLD.MirrorSimul.sum_bobPairProj_mulVec}
+  MIPRE.QLD.MirrorSimul.sum_bobPairProj_mulVec, MIPRE.extVec2_apply, MIPRE.QLD.epr_symm,
+  MIPRE.QLD.padWeight, MIPRE.QLD.padState_reindex_apply, MIPRE.QLD.hmirror_padState,
+  MIPRE.QLD.mirrorOfGlobalPairs, MIPRE.QLD.exists_mirrorSimul}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4274,6 +4276,25 @@ apart by name: \texttt{SimulPair.mTildeAnc} is the exact Pauli measurement at an
 Lemma~\ref{lem:qld-exact-paulis}'s, and \texttt{swapU\_conj\_mTildeAnc} says that conjugation by
 the swap unitary strips the pair measurement off it whatever the probe --- the cancellation is
 between the outcome's shift and the conjugation's, and both are written with the same pairing.
+
+\emph{And a strategy has one.} \texttt{MirrorSimul} was introduced as an interface, and for
+several steps of this campaign nothing constructed one --- so everything stated against it was
+conditional on a structure no strategy had been shown to have.
+\texttt{exists\_mirrorSimul} closes that: a legal projective strategy of value $1 - \eps$ has
+both cuts, on one state.
+
+The construction is two runs of Lemma~\ref{lem:qld-simultaneous}, one at the strategy and one at the
+\emph{swapped} strategy, whose padded state carries the other pair. What made this look hard, and
+is the thing to record, is a misreading of what the interface demands: it does \emph{not} ask the
+two cuts' pair measurements to be related --- the paper does not either, since its own
+simultaneous-measurement lemma gives one measurement per player's space --- but only that the two
+\emph{states} agree once each is given the pair the other carries. And those states are explicit:
+\texttt{padState} is the strategy tensored with one maximally entangled pair and four padding
+registers pinned at basis vectors (\texttt{padState\_reindex\_apply}), so both sides of
+\texttt{hmirror} are the same product of the same six factors and all that is left to check is
+that swapping a pair's halves changes nothing (\texttt{epr\_symm}). Reading the field as ``the
+two cuts must come from one construction'' rather than ``the two cuts' states must agree'' is what
+made it look like new mathematics.
 
 \emph{And the conclusion is now expressible, which it was not.} Both sides of this statement are
 exact Pauli objects, one per party, so writing it down at all needs each party's whole triple on
