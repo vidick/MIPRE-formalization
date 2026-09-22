@@ -616,16 +616,17 @@ theorem sum_uniform_bornProb_readOn_le {T : Finset (Fin (4 * m))}
 
 variable {X Z : Point F m → F → Matrix RB RB ℂ}
 
-/-- **A linear outcome whose `β` coefficient reads a coordinate outside the `z` block**, against
-the order `X_a Z_b`: `E_u ‖(S ⊗ B_u(g(u))) Φ‖² ≤ (2 + 8md)/q · ⟨S ⊗ 1⟩`. -/
-theorem sum_uniform_snorm_sq_ordComb_XZ_le_of_depB (hd : 1 ≤ d) (Φ : RA × RB → ℂ)
+/-- **A linear outcome against the order `X_a Z_b`**: the fibre contributes `2/q · ⟨S ⊗ 1⟩`
+beyond its diagonal pair, whose weight is at most `E_{u₀} ⟨S ⊗ Z_{g₂(u₀)}(z)⟩`. -/
+theorem sum_uniform_snorm_sq_ordComb_XZ_le_of_isLinAB (hd : 1 ≤ d) (Φ : RA × RB → ℂ)
     {S : Matrix RA RA ℂ} (hsa : Sᴴ = S) (hidem : S * S = S) (hX : ∀ x, IsPVM (X x))
     (hZ : ∀ z, IsPVM (Z z)) {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}
-    (hlin : IsLinAB g) (hB : (gB hd g).DepOutside zSet) :
+    (hlin : IsLinAB g) :
     ∑ u, uniform (Point F (4 * m)) u
         * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (ordComb ordXZ X Z u (g.eval u))) ^ 2
-      ≤ (2 + 8 * m * d) / Fintype.card F * bornProb Φ S 1 := by
-  have hS := posSemidef_of_proj hsa hidem
+      ≤ 2 / Fintype.card F * bornProb Φ S 1
+        + ∑ u₀, uniform (Point F (4 * m)) u₀
+          * bornProb Φ S (Z (zBlk u₀) ((gB hd g).eval u₀)) := by
   rw [sum_uniform_setAB]
   have hinner : ∀ u₀ : Point F (4 * m),
       ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)
@@ -648,22 +649,37 @@ theorem sum_uniform_snorm_sq_ordComb_XZ_le_of_depB (hd : 1 ≤ d) (Φ : RA × RB
         + ∑ u₀, uniform (Point F (4 * m)) u₀ * bornProb Φ S (Z (zBlk u₀) ((gB hd g).eval u₀)) := by
         rw [Finset.mul_sum, Finset.sum_mul, ← Finset.sum_add_distrib]
         exact Finset.sum_congr rfl fun u₀ _ => by ring
-    _ ≤ 2 / Fintype.card F * 1 * bornProb Φ S 1 + 8 * m * d / Fintype.card F * bornProb Φ S 1 := by
-        rw [sum_uniform_eq_one]
-        exact add_le_add le_rfl (sum_uniform_bornProb_readOn_le (Op := fun u => Z (zBlk u))
-          (fun u u' => by rw [zBlk_mixOn_zSet]) (fun u => hZ _) hB Φ hS)
-    _ = (2 + 8 * m * d) / Fintype.card F * bornProb Φ S 1 := by ring
+    _ = _ := by rw [sum_uniform_eq_one, mul_one]
 
-/-- **A linear outcome whose `α` coefficient reads a coordinate outside the `x` block**, against
-the order `Z_b X_a`: the mirror image, with the roles of `(X, a, α)` and `(Z, b, β)` exchanged. -/
-theorem sum_uniform_snorm_sq_ordComb_ZX_le_of_depA (hd : 1 ≤ d) (Φ : RA × RB → ℂ)
+/-- **A linear outcome whose `β` coefficient reads a coordinate outside the `z` block**, against
+the order `X_a Z_b`: `E_u ‖(S ⊗ B_u(g(u))) Φ‖² ≤ (2 + 8md)/q · ⟨S ⊗ 1⟩`. -/
+theorem sum_uniform_snorm_sq_ordComb_XZ_le_of_depB (hd : 1 ≤ d) (Φ : RA × RB → ℂ)
     {S : Matrix RA RA ℂ} (hsa : Sᴴ = S) (hidem : S * S = S) (hX : ∀ x, IsPVM (X x))
     (hZ : ∀ z, IsPVM (Z z)) {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}
-    (hlin : IsLinAB g) (hA : (gA hd g).DepOutside xSet) :
+    (hlin : IsLinAB g) (hB : (gB hd g).DepOutside zSet) :
+    ∑ u, uniform (Point F (4 * m)) u
+        * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (ordComb ordXZ X Z u (g.eval u))) ^ 2
+      ≤ (2 + 8 * m * d) / Fintype.card F * bornProb Φ S 1 := by
+  calc _ ≤ 2 / Fintype.card F * bornProb Φ S 1
+        + ∑ u₀, uniform (Point F (4 * m)) u₀
+          * bornProb Φ S (Z (zBlk u₀) ((gB hd g).eval u₀)) :=
+        sum_uniform_snorm_sq_ordComb_XZ_le_of_isLinAB hd Φ hsa hidem hX hZ hlin
+    _ ≤ 2 / Fintype.card F * bornProb Φ S 1 + 8 * m * d / Fintype.card F * bornProb Φ S 1 :=
+        add_le_add le_rfl (sum_uniform_bornProb_readOn_le (Op := fun u => Z (zBlk u))
+          (fun u u' => by rw [zBlk_mixOn_zSet]) (fun u => hZ _) hB Φ (posSemidef_of_proj hsa hidem))
+    _ = (2 + 8 * m * d) / Fintype.card F * bornProb Φ S 1 := by ring
+
+/-- **A linear outcome against the order `Z_b X_a`**: the mirror image, with the roles of
+`(X, a, α)` and `(Z, b, β)` exchanged. -/
+theorem sum_uniform_snorm_sq_ordComb_ZX_le_of_isLinAB (hd : 1 ≤ d) (Φ : RA × RB → ℂ)
+    {S : Matrix RA RA ℂ} (hsa : Sᴴ = S) (hidem : S * S = S) (hX : ∀ x, IsPVM (X x))
+    (hZ : ∀ z, IsPVM (Z z)) {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}
+    (hlin : IsLinAB g) :
     ∑ u, uniform (Point F (4 * m)) u
         * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (ordComb ordZX X Z u (g.eval u))) ^ 2
-      ≤ (2 + 8 * m * d) / Fintype.card F * bornProb Φ S 1 := by
-  have hS := posSemidef_of_proj hsa hidem
+      ≤ 2 / Fintype.card F * bornProb Φ S 1
+        + ∑ u₀, uniform (Point F (4 * m)) u₀
+          * bornProb Φ S (X (xBlk u₀) ((gA hd g).eval u₀)) := by
   rw [sum_uniform_setAB]
   have hinner : ∀ u₀ : Point F (4 * m),
       ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)
@@ -698,10 +714,24 @@ theorem sum_uniform_snorm_sq_ordComb_ZX_le_of_depA (hd : 1 ≤ d) (Φ : RA × RB
         + ∑ u₀, uniform (Point F (4 * m)) u₀ * bornProb Φ S (X (xBlk u₀) ((gA hd g).eval u₀)) := by
         rw [Finset.mul_sum, Finset.sum_mul, ← Finset.sum_add_distrib]
         exact Finset.sum_congr rfl fun u₀ _ => by ring
-    _ ≤ 2 / Fintype.card F * 1 * bornProb Φ S 1 + 8 * m * d / Fintype.card F * bornProb Φ S 1 := by
-        rw [sum_uniform_eq_one]
-        exact add_le_add le_rfl (sum_uniform_bornProb_readOn_le (Op := fun u => X (xBlk u))
-          (fun u u' => by rw [xBlk_mixOn_xSet]) (fun u => hX _) hA Φ hS)
+    _ = _ := by rw [sum_uniform_eq_one, mul_one]
+
+/-- **A linear outcome whose `α` coefficient reads a coordinate outside the `x` block**, against
+the order `Z_b X_a`. -/
+theorem sum_uniform_snorm_sq_ordComb_ZX_le_of_depA (hd : 1 ≤ d) (Φ : RA × RB → ℂ)
+    {S : Matrix RA RA ℂ} (hsa : Sᴴ = S) (hidem : S * S = S) (hX : ∀ x, IsPVM (X x))
+    (hZ : ∀ z, IsPVM (Z z)) {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}
+    (hlin : IsLinAB g) (hA : (gA hd g).DepOutside xSet) :
+    ∑ u, uniform (Point F (4 * m)) u
+        * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (ordComb ordZX X Z u (g.eval u))) ^ 2
+      ≤ (2 + 8 * m * d) / Fintype.card F * bornProb Φ S 1 := by
+  calc _ ≤ 2 / Fintype.card F * bornProb Φ S 1
+        + ∑ u₀, uniform (Point F (4 * m)) u₀
+          * bornProb Φ S (X (xBlk u₀) ((gA hd g).eval u₀)) :=
+        sum_uniform_snorm_sq_ordComb_ZX_le_of_isLinAB hd Φ hsa hidem hX hZ hlin
+    _ ≤ 2 / Fintype.card F * bornProb Φ S 1 + 8 * m * d / Fintype.card F * bornProb Φ S 1 :=
+        add_le_add le_rfl (sum_uniform_bornProb_readOn_le (Op := fun u => X (xBlk u))
+          (fun u u' => by rw [xBlk_mixOn_xSet]) (fun u => hX _) hA Φ (posSemidef_of_proj hsa hidem))
     _ = (2 + 8 * m * d) / Fintype.card F * bornProb Φ S 1 := by ring
 
 omit [DecidableEq F] [NeZero m] in
