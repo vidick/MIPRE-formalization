@@ -2040,3 +2040,14 @@ nothing that used it changes --- and `sum_uniform_agree_bornProb_le` is the disp
 Left on item 2: `eq:qld-unitary-5`, the triangle chain through `lem:qld-win` and
 `lem:qld-exact-paulis`; the transport of the estimate from the product state back to the padded
 state across item 1; and the assembly. Left on `lem:qld-pauli-selfcons`: its assembly, unchanged.
+
+**A note on what `eq:qld-unitary-5` still needs.** Looking for the triangle chain's engine turned
+up `agreeSum_triangle` in `MIPRE/Foundations/POVMMix.lean`: the POVM form of the paper's
+`fact:triangle-for-simeq` item 1, formalized earlier in the campaign for
+`lem:qld-global-success`, with `11 delta` in place of the paper's `9 delta` (the padding into a
+four-dimensional auxiliary space that buys the `9` is what the Lean proof does without, and the
+blueprint records the difference). So `eq:qld-unitary-5` is not a new estimate: what is left of it
+is stating the three consistencies --- `eq:qld-unitary-2`, `-3`, `-4` --- as `agreeSum` statements
+at this interface. That is the second time in two pull requests that an appendix estimate turned
+out to be already in Foundations under another name; the habit is now worth the two minutes it
+costs.

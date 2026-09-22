@@ -4320,7 +4320,11 @@ Lemma~\ref{lem:qld-pauli-selfcons} and are hypotheses of \texttt{exists\_auxVec\
 than conclusions; and, in item 2, \texttt{eq:qld-unitary-5} --- the triangle chain through
 Lemma~\ref{lem:qld-win} and Lemma~\ref{lem:qld-exact-paulis} --- the transport of the estimate
 from $\ket{\Delta}$ back to $\ket{\hat\psi}$ across item 1, and the assembly. Hence no
-\texttt{leanok} mark at either level.
+\texttt{leanok} mark at either level. Of those, \texttt{eq:qld-unitary-5} needs no new estimate:
+its engine is the paper's \texttt{fact:triangle-for-simeq}, already in Foundations as
+\texttt{agreeSum\_triangle} (with $11\delta$ for the paper's $9\delta$, as
+Lemma~\ref{lem:qld-global-success} records), so what is left there is stating its three
+consistencies at this interface.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the repairs above, including the
 ledger's declared dependencies for node $1.2.2.16$, which name $1.2.2.4$
 (Lemma~\ref{lem:qld-win}) and which the \texttt{uses} list did not.
