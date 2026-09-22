@@ -424,6 +424,7 @@ import MIPRE.Background.QLD.Legalize
 import MIPRE.Background.QLD.LineRepresentative
 import MIPRE.Background.QLD.Linear
 import MIPRE.Background.QLD.Lines
+import MIPRE.Background.QLD.Multilinear
 import MIPRE.Background.QLD.NonMultilinear
 import MIPRE.Background.QLD.Ortho
 import MIPRE.Background.QLD.Padded
