@@ -440,6 +440,7 @@ import MIPRE.Background.QLD.SeededLinePrograms
 import MIPRE.Background.QLD.Separate
 import MIPRE.Background.QLD.Simul
 import MIPRE.Background.QLD.Swap
+import MIPRE.Background.QLD.SwapState
 import MIPRE.Background.QLD.SwapUnitary
 import MIPRE.Background.QLD.Win
 import MIPRE.Background.QLD.WinMS
