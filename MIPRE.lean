@@ -431,6 +431,7 @@ import MIPRE.Background.QLD.Linear
 import MIPRE.Background.QLD.Lines
 import MIPRE.Background.QLD.MTilde
 import MIPRE.Background.QLD.Mirror
+import MIPRE.Background.QLD.MirrorExists
 import MIPRE.Background.QLD.Multilinear
 import MIPRE.Background.QLD.NonMultilinear
 import MIPRE.Background.QLD.Ortho

@@ -69,9 +69,26 @@ the nose --- so a statement proved on either cut is a statement about one physic
    conclusion can be written down at once.
 2. The assembly of `lem:qld-swap` item 2, which threads item 1 and the endgame of
    `MIPRE/Background/QLD/SwapEndgame.lean`.
-3. `thm:qld`, and with it the discharge of `MirrorSimul` from `lem:qld-simultaneous` --- which is
-   where the paper's "symmetric equivalents" remark has to be made good, by running stage 4 on the
-   second cut as well as the first.
+3. `thm:qld`.
+
+**The discharge of `MirrorSimul` is done** (`MIPRE/Background/QLD/MirrorExists.lean`), and it was
+easier than this note predicted. The prediction was that the paper's "symmetric equivalents" remark
+would have to be made good by running stage 4 on the second cut in a way tied to the first --- that
+`lem:qld-simultaneous` being an *existence* statement meant two applications would give two
+unrelated states and `hmirror` would not follow.
+
+That was wrong, and the reason is worth keeping: **the structure never asks the two cuts'
+measurements to be related.** It asks only that the two *states* agree once each is given the pair
+the other carries. And the states are not abstract --- `toSimulPair` is an explicit construction,
+so `padState` is the strategy tensored with one maximally entangled pair and four padding registers
+pinned at basis vectors. Two runs of `exists_globalPair`, one at the strategy and one at the
+swapped strategy, therefore give two cuts whose states are the same six-register product read two
+ways, and `hmirror` comes down to `epr_symm`: swapping a pair's halves changes nothing.
+
+The lesson, which is the same one this file already records twice: **look at what the structure
+actually demands before assuming the hard-looking field is hard.** Reading `hmirror` as "the two
+cuts must come from one construction" rather than "the two cuts' states must agree" cost a session
+of treating this as blocked.
 
 ## Discarded design 1: retype `Phi`
 
