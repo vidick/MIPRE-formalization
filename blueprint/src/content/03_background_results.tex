@@ -4219,7 +4219,11 @@ displays, and Lemma~\ref{lem:qld-povm-to-obs} at the end. Every step it assemble
   MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le',
   MIPRE.QLD.inconsistency_eq_half_xPovmDist, MIPRE.QLD.inconsistency_pt_pt_le,
   MIPRE.QLD.inconsistency_pt_pauli_le,
-  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le_of_win}
+  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le_of_win, MIPRE.QLD.bOp_mulVec_auxVec,
+  MIPRE.QLD.mulVec_auxVec_congr, MIPRE.QLD.mulVec_auxVec_proj, MIPRE.QLD.mulVec_auxVec_syn,
+  MIPRE.QLD.sum_snorm_sq_sub_le_of_agree, MIPRE.QLD.sum_uniform_bornProb_fibre_le,
+  MIPRE.QLD.endEquiv, MIPRE.QLD.endVec, MIPRE.QLD.endVec_unit, MIPRE.QLD.reindex_endEquiv,
+  MIPRE.QLD.qform_endVec}
 There is $\delta_{qld} = O\bigl( \delta_S^{1/4} + md/q \bigr)$ and local unitaries $V_\alice$,
 $V_\bob$ on the expanded spaces such that, writing $M = 2^m$:
 \begin{enumerate}
@@ -4338,6 +4342,14 @@ number, the agreement, and the deviation is twice its deficit. And
 consumes: reading the two families at the value of the encoding at the sampled point rather than at
 the full outcome raises the agreement by at most $md/q$, the pairs it adds being the distinct ones
 whose encodings collide there.
+
+\emph{And item 1's cut, as a regrouping.} \texttt{exists\_auxVec\_close} reads the state along a
+cut of its own --- the two parties' non-ancilla registers as one index, their two ancilla halves
+adjacent --- while the padded state is grouped by party. The two are a permutation of four factors
+apart, and \texttt{endEquiv} is that permutation, with \texttt{qform\_endVec} carrying an
+expectation between the two readings. It is the same pattern as \texttt{regroupEquiv}, which moves
+one ancilla half across the party cut, applied to move both out of it, and it is what the threading
+has to say before any of the endgame's steps can be pointed at the same vector.
 
 \emph{Not formalized}: the two near-invariances themselves, which are
 Lemma~\ref{lem:qld-pauli-selfcons} and are hypotheses of \texttt{exists\_auxVec\_close} rather

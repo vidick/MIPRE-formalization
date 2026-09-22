@@ -2176,3 +2176,12 @@ matching the registers of the conjugated Pauli measurement with item 1's, which 
 `exists_auxVec_close`'s cut (the two parties' non-ancilla registers as one index, their two ancilla
 halves adjacent) has to be reconciled with the measurement's. That is bookkeeping, and it is the
 only thing between here and the lemma.
+
+**And item 1's cut.** `exists_auxVec_close` reads the state along a cut of its own --- the two
+parties' non-ancilla registers as one index `R`, their two ancilla halves adjacent as `T x T` ---
+while the padded state is grouped by party, `((dA x Anc) x EA) x ((dB x Anc) x EB)`. The two are a
+permutation of four factors apart. `endEquiv` is that permutation and `qform_endVec` carries an
+expectation between the two readings, by the same route `regroupEquiv` and `bornProb_regroupVec`
+take: one `Equiv`, one entry computation for the reindexed operator, and `qform_comp_equiv`, which
+is general and makes no reference to a cut. That is what the threading has to say first; with it,
+all of the endgame's steps can be pointed at one vector.

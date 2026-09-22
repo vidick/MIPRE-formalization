@@ -188,6 +188,72 @@ theorem sum_uniform_bornProb_fibre_le {Λ : Type*} [Fintype Λ] [DecidableEq Λ]
 
 end Coarse
 
+/-! ## Item 1's cut, as a regrouping
+
+`exists_auxVec_close` reads the state along a cut of its own: the two parties' non-ancilla
+registers as one index, their two ancilla halves adjacent. The padded state is grouped by party,
+`((dA x Anc) x EA) x ((dB x Anc) x EB)`, so the two are a permutation of four factors apart. This
+is that permutation, in the shape `qform_comp_equiv` consumes --- the same pattern as
+`regroupEquiv`, which moves one ancilla half across the party cut, but moving both out of it.
+
+Nothing here is an estimate. It is what the threading of item 2 has to say before any of the
+endgame's steps can be pointed at the same vector. -/
+
+section EndCut
+
+variable {A B T T' E E' : Type*} [Fintype A] [DecidableEq A] [Fintype B] [DecidableEq B]
+  [Fintype T] [DecidableEq T] [Fintype T'] [DecidableEq T'] [Fintype E] [DecidableEq E]
+  [Fintype E'] [DecidableEq E']
+
+/-- **The regrouping onto item 1's cut**: the two parties' non-ancilla registers together, the two
+ancilla halves together. -/
+def endEquiv : ((A × T) × E) × ((B × T') × E') ≃ ((A × E) × (B × E')) × (T × T') where
+  toFun p := (((p.1.1.1, p.1.2), (p.2.1.1, p.2.2)), (p.1.1.2, p.2.1.2))
+  invFun q := (((q.1.1.1, q.2.1), q.1.1.2), ((q.1.2.1, q.2.2), q.1.2.2))
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+/-- The state, read along it. -/
+def endVec (ψ : ((A × T) × E) × ((B × T') × E') → ℂ) :
+    ((A × E) × (B × E')) × (T × T') → ℂ :=
+  ψ ∘ (endEquiv (A := A) (B := B) (T := T) (T' := T') (E := E) (E' := E')).symm
+
+omit [DecidableEq A] [DecidableEq B] [DecidableEq T] [DecidableEq T'] [DecidableEq E]
+  [DecidableEq E'] in
+/-- A regrouped unit vector is a unit vector. -/
+theorem endVec_unit {ψ : ((A × T) × E) × ((B × T') × E') → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) :
+    star (endVec ψ) ⬝ᵥ endVec ψ = 1 := by
+  rw [← hψ]
+  exact Equiv.sum_comp
+    (endEquiv (A := A) (B := B) (T := T) (T' := T') (E := E) (E' := E')).symm
+    fun p => star ψ p * ψ p
+
+/-- **The same operator, grouped the two ways.** A product across the four factors --- one operator
+per party's non-ancilla register and one on each ancilla half --- is carried by the regrouping to
+the product of the two pairs. -/
+theorem reindex_endEquiv (XA : Matrix A A ℂ) (XB : Matrix B B ℂ) (YA : Matrix T T ℂ)
+    (YB : Matrix T' T' ℂ) (ZA : Matrix E E ℂ) (ZB : Matrix E' E' ℂ) :
+    Matrix.reindex (endEquiv (A := A) (B := B) (T := T) (T' := T') (E := E) (E' := E'))
+        (endEquiv (A := A) (B := B) (T := T) (T' := T') (E := E) (E' := E'))
+        (((XA ⊗ₖ YA) ⊗ₖ ZA) ⊗ₖ ((XB ⊗ₖ YB) ⊗ₖ ZB))
+      = (((XA ⊗ₖ ZA) ⊗ₖ (XB ⊗ₖ ZB)) ⊗ₖ (YA ⊗ₖ YB)) := by
+  ext p q
+  obtain ⟨⟨⟨a, e⟩, b, e'⟩, t, t'⟩ := p
+  obtain ⟨⟨⟨a', e''⟩, b', e'''⟩, s, s'⟩ := q
+  simp only [Matrix.reindex_apply, Matrix.submatrix_apply, endEquiv, Equiv.coe_fn_symm_mk,
+    kroneckerMap_apply]
+  ring
+
+/-- **And so is the quadratic form.** -/
+theorem qform_endVec (ψ : ((A × T) × E) × ((B × T') × E') → ℂ)
+    (XA : Matrix A A ℂ) (XB : Matrix B B ℂ) (YA : Matrix T T ℂ) (YB : Matrix T' T' ℂ)
+    (ZA : Matrix E E ℂ) (ZB : Matrix E' E' ℂ) :
+    qform (endVec ψ) (((XA ⊗ₖ ZA) ⊗ₖ (XB ⊗ₖ ZB)) ⊗ₖ (YA ⊗ₖ YB))
+      = qform ψ (((XA ⊗ₖ YA) ⊗ₖ ZA) ⊗ₖ ((XB ⊗ₖ YB) ⊗ₖ ZB)) := by
+  rw [qform, qform, endVec, ← reindex_endEquiv, qform_comp_equiv]
+
+end EndCut
+
 end MIPRE.QLD
 
 end
