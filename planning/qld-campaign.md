@@ -2587,3 +2587,45 @@ What is left of `-10` is `eq:qld-pulling-13`, the swap --- `abs_sum_qform_swap_l
 tree, applied on the *second* cut, so every transport it needs goes through `mirror`. Then `-11`
 (the helper's item 2 on Bob's side, with a constraint on the index set) and `-12`
 (Schwartz--Zippel, `sum_uniform_agree_mass_le`, also in the tree).
+
+### PR AB: `eq:qld-pulling-10` complete, and `-11` (2026-09-22)
+
+*The swap, and where the existing package did not fit.* `abs_sum_qform_swap_le` (PR J) measures the
+two placements' deviation **bare**: its hypothesis is `sum_i ||(X_i - Y_i) v||^2 <= eps`. Display
+`-13`'s index runs over pairs `(g, a)` of a pair outcome and a point outcome, and the deviation
+depends on `a` alone, so the bare form pays one deviation per polynomial --- a factor of
+`|LowIndDegPoly|`, which destroys the bound. The paper's own Cauchy--Schwarz is taken against the
+**sandwiched** quantities, both of which have the pair measurement inside, so summing it away is
+free.
+
+`abs_sum_qform_swap_proj_le` is that argument. It works because the operator being sandwiched is a
+projector, hence equal to `S^H S`, so `D^H S Y = (S D)^H (S Y)` with no square root anywhere ---
+the generalized Cauchy--Schwarz for a positive form, in the one case where it is elementary.
+`abs_sum_qform_conjTranspose_mul_le` is the summed Cauchy--Schwarz it needs; the existing
+`Introspection.abs_sum_qform_mul_le` assumes the first family self-adjoint, which `S * D` is not.
+
+The two are kept side by side rather than one derived from the other: the bare form's hypothesis is
+strictly stronger (a projector in front is a contraction), so the projector form implies it, but
+the bare form reads better where it applies and is already cited.
+
+*`-13` lives on a `SimulPair`, not on `MirrorSimul`.* Both placements of the point measurement are
+local **there**: the sandwiching one is the first party's own and the replacing one is the second
+party's. On the physical cut neither is. So the lemma is stated one level down and the mirror makes
+it Bob's --- which is the same economy again, and the reason to look for the right level before
+writing the statement.
+
+`sum_uniform_qform_ne_le` is `eq:qld-pulling-10` complete, at `delta_S + 2 sqrt(172 eps)`. The
+average over the sampled point goes inside the square root by `sum_weighted_sqrt_le`, Cauchy--
+Schwarz against the constant one.
+
+*`-11`, and the generalisation that paid.* `bobLift` is any operator of Bob's extended by the
+identity on the half of the pair he holds. Both remaining displays sandwich the four-index family
+with one of these and only which one differs, so `bobLift_sandwich_kron` and `sum_qform_bobLift_eq`
+serve both --- and `sum_qform_bobLift_eq` lands directly on `Phi'`, through
+`bornProb_physVec_bOp`, rather than stopping on the physical state as PR AA's specialised version
+did. `sum_snorm_sq_chainQ_agree_le` is the display; its cost is item 2 of `lem:qld-helper` at the
+second cut, which `mirror` supplies with no new proof, the swapped strategy's hypotheses coming
+from `swapVec_unit` and `povmValue_swapped_le`.
+
+Left on the chain: `-12` (Schwartz--Zippel), the assembly through `sum_xSqNorm_le_of_endOp`, and
+`lem:qld-povm-to-obs`.

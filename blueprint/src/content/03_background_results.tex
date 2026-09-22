@@ -4117,7 +4117,15 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.MirrorSimul.bobSand, MIPRE.QLD.MirrorSimul.bobHat_conj_bobChainOp,
   MIPRE.QLD.MirrorSimul.bobTail_sandwich_kron, MIPRE.QLD.MirrorSimul.chainV,
   MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainQ_disagree_le,
-  MIPRE.QLD.MirrorSimul.sum_qform_bobTail_eq}
+  MIPRE.QLD.MirrorSimul.sum_qform_bobTail_eq, MIPRE.abs_sum_qform_conjTranspose_mul_le,
+  MIPRE.abs_sum_qform_swap_proj_le, MIPRE.QLD.SimulPair.norm_evec_state,
+  MIPRE.QLD.SimulPair.abs_sum_qform_ne_swap_le, MIPRE.QLD.SimulPair.sum_qform_ne_eq,
+  MIPRE.QLD.SimulPair.sum_uniform_qform_ne_le, MIPRE.QLD.MirrorSimul.bornProb_physVec_bOp,
+  MIPRE.QLD.MirrorSimul.bobLift, MIPRE.QLD.MirrorSimul.bobLift_sandwich,
+  MIPRE.QLD.MirrorSimul.aOp_conj_bobChainOp, MIPRE.QLD.MirrorSimul.bobLift_sandwich_kron,
+  MIPRE.QLD.MirrorSimul.sum_qform_bobLift_eq,
+  MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainQ_agree_le,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainQ_agree_le}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4484,10 +4492,45 @@ nonnegative. \texttt{sum\_qform\_bobTail\_eq} closes the reduction at
 \texttt{eq:qld-pulling-13a}: Alice's whole family and Bob's Weyl outcome both sum to the identity,
 so what is left carries neither, and the bound is a statement about Bob's registers alone.
 
-\emph{Not formalized}: \texttt{eq:qld-pulling-13}, the swap itself, and with it the rest of
-\texttt{-10}; then \texttt{-11} and \texttt{-12}; and Lemma~\ref{lem:qld-povm-to-obs} at the
-very end. \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this
-node.
+\emph{And the swap, which completes \texttt{eq:qld-pulling-10}.} The chain's only
+Cauchy--Schwarz, and the one step where the existing package did not fit.
+\texttt{abs\_sum\_qform\_swap\_le} measures the two placements' deviation \emph{bare}; this
+display sandwiches a projector with the measurement it swaps, and the deviation has to be read
+\emph{through} that projector, because the index runs over pairs of a pair outcome and a point
+outcome and the bare form would pay one deviation per pair outcome --- a factor of the number of
+polynomials. \texttt{abs\_sum\_qform\_swap\_proj\_le} is the same argument with the
+Cauchy--Schwarz taken against the projector's own form, which is legitimate because a projector
+\emph{is} $S^*S$, so no square root is needed;
+\texttt{abs\_sum\_qform\_conjTranspose\_mul\_le} is the summed Cauchy--Schwarz it uses, the
+existing one assuming the first family self-adjoint.
+
+\texttt{SimulPair.abs\_sum\_qform\_ne\_swap\_le} is \texttt{eq:qld-pulling-13} itself,
+stated on a \texttt{SimulPair} because that is where both placements are local --- the one that
+sandwiches is the first party's own, the one that replaces it the second party's --- and the
+mirror then makes it Bob's. \texttt{sum\_qform\_ne\_eq} reads the swapped side back as a Born
+probability, the other party's point measurement summed over the outcomes its own value excludes
+being the complement of that value, and
+\texttt{sum\_uniform\_qform\_ne\_le} is \texttt{eq:qld-pulling-10} complete, at
+$\delta_S + 2\sqrt{172\eps}$. The average over the sampled point goes inside the square root by
+Cauchy--Schwarz against the constant one (\texttt{sum\_weighted\_sqrt\_le}).
+
+\emph{And \texttt{eq:qld-pulling-11}.} \texttt{bobLift} is any operator of Bob's extended by the
+identity on the half of the pair he holds --- both remaining displays sandwich the four-index
+family with one of these, and only which one differs, so
+\texttt{bobLift\_sandwich\_kron} and \texttt{sum\_qform\_bobLift\_eq} serve both.
+\texttt{sum\_snorm\_sq\_chainQ\_agree\_le} is the display and
+\texttt{sum\_uniform\_snorm\_sq\_chainQ\_agree\_le} its cost, which is item 2 of
+Lemma~\ref{lem:qld-helper} at the second cut --- available with no new proof, the mirror of a
+\texttt{MirrorSimul} being a \texttt{MirrorSimul}, and the swapped strategy's hypotheses coming
+from \texttt{swapVec\_unit} and \texttt{povmValue\_swapped\_le}.
+\texttt{bornProb\_physVec\_bOp} is the bridge those two run through: the mirror image of
+\texttt{bornProb\_physVec\_aOp}, carrying an operator that is Bob's alone back to the state the
+second cut describes.
+
+\emph{Not formalized}: \texttt{eq:qld-pulling-12}, which is Schwartz--Zippel; the chain's
+assembly through \texttt{sum\_xSqNorm\_le\_of\_endOp}; and
+Lemma~\ref{lem:qld-povm-to-obs} at the very end.
+\texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
 
 \effortHard
 
