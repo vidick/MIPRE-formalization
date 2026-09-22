@@ -2684,3 +2684,28 @@ bound is `sum_a snorm physVec (T_k a - T_{k+1} a)^2`. Several of the `approx_0` 
 identities *on the state* rather than on operators, which a state-norm does not mind, but it does
 mean the families are not related by operator equations and each step has to be checked at the
 level of the norm.
+
+### PR AE: `eq:qld-pulling-4` on the physical cut (2026-09-22)
+
+The first of the chaining's eleven steps, and the one that had to be read off the paper rather than
+the Lean.
+
+`eq:qld-pulling-4` brings the second pair's outcome into the chain, and the pair it is about is the
+**appended** one: the paper writes `|psi-hat> = sum_h' (tau_h')_{B'} (x) (tau_h')_{B''} |psi-hat>`,
+and in the physical grouping both of those halves are Bob's. So the matched projectors are one
+operator of *his* (`bobPairProj`), not a cross-party pair, and the step is the statement that it
+fixes the physical state (`sum_bobPairProj_mulVec`).
+
+`SimulPair.sum_ancProj_mulVec`, which the blueprint's commentary previously called this display, is
+the same fact for the **first** pair and belongs to `eq:qld-pulling-3a`. The two are genuinely
+different steps about different pairs. That was worth checking against `qld-separating.tex` before
+writing the statement --- it is the fourth time in this campaign that a register assignment guessed
+from the Lean types would have been wrong, and the first three each cost a redesign.
+
+`sum_epr_proj_mulVec` is what makes it go: on a maximally entangled pair the matched Weyl
+projectors act as the projector on one half alone (the projectors being symmetric matrices, which
+is `weylOf_transpose` plus `stateVec_epr_proj`), and those sum to the identity.
+`reindex_bobPairProj` puts that on the physical grouping and `kron_one_mulVec` lets it act on the
+pair alone.
+
+Ten steps of the chaining left, then `lem:qld-povm-to-obs`.

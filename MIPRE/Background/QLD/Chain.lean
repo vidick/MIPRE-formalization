@@ -1015,6 +1015,53 @@ end First
 
 end Endpoint
 
+/-- **The matched Weyl projectors leave a maximally entangled pair alone.** Each matched pair acts
+as the projector on one half alone, the pair being maximally entangled and the projectors
+symmetric, and those sum to the identity. This is the ingredient of `eq:qld-pulling-4` --- there
+the pair is the *appended* one, both of whose halves the physical grouping gives to Bob. -/
+theorem sum_epr_proj_mulVec (W : Bas) :
+    (∑ h : Anc F m, (aOp (proj (weylOf W) h)
+        : Matrix (Anc F m × Anc F m) (Anc F m × Anc F m) ℂ) * bOp (proj (weylOf W) h))
+      *ᵥ (epr (F := F) (n := Fin m → Bool)) = epr := by
+  have hsym : ∀ a : Anc F m, (weylOf W a)ᵀ = weylOf W a := weylOf_transpose W
+  have htr : ∀ h : Anc F m,
+      (bOp (proj (weylOf W) h) : Matrix (Anc F m × Anc F m) _ ℂ)
+          *ᵥ (epr (F := F) (n := Fin m → Bool))
+        = (aOp (proj (weylOf W) h) : Matrix (Anc F m × Anc F m) _ ℂ) *ᵥ epr := fun h =>
+    congrArg WithLp.ofLp (stateVec_epr_proj hsym h).symm
+  have hidem : ∀ h : Anc F m, proj (weylOf W) h * proj (weylOf W) h = proj (weylOf W) h :=
+    fun h => (isPVM_proj (isWeylFamily_weylOf W)).idem h
+  rw [Matrix.sum_mulVec]
+  have hstep : ∀ h : Anc F m,
+      ((aOp (proj (weylOf W) h) : Matrix (Anc F m × Anc F m) _ ℂ) * bOp (proj (weylOf W) h))
+          *ᵥ (epr (F := F) (n := Fin m → Bool))
+        = (aOp (proj (weylOf W) h) : Matrix (Anc F m × Anc F m) _ ℂ) *ᵥ epr := fun h => by
+    rw [← Matrix.mulVec_mulVec, htr h, Matrix.mulVec_mulVec, ← aOp_mul, hidem h]
+  rw [Finset.sum_congr rfl fun h (_ : h ∈ univ) => hstep h, ← Matrix.sum_mulVec, ← aOp_sum,
+    (isPVM_proj (isWeylFamily_weylOf W)).sum_eq_one, aOp_one, Matrix.one_mulVec]
+
+/-- **The identity on one factor leaves the other's action alone.** -/
+theorem kron_one_mulVec {R C : Type*} [Fintype R] [DecidableEq R] [Fintype C] [DecidableEq C]
+    (φ : R → ℂ) (χ : C → ℂ) (B : Matrix C C ℂ) :
+    (((1 : Matrix R R ℂ) ⊗ₖ B) *ᵥ fun p : R × C => φ p.1 * χ p.2)
+      = fun p : R × C => φ p.1 * (B *ᵥ χ) p.2 := by
+  funext p
+  obtain ⟨r, c⟩ := p
+  show (∑ q : R × C, ((1 : Matrix R R ℂ) ⊗ₖ B) (r, c) q * (φ q.1 * χ q.2))
+    = φ r * ∑ c' : C, B c c' * χ c'
+  rw [Fintype.sum_prod_type,
+    Finset.sum_congr rfl fun r' (_ : r' ∈ univ) => show
+      (∑ c' : C, ((1 : Matrix R R ℂ) ⊗ₖ B) (r, c) (r', c') * (φ r' * χ c'))
+        = ((1 : Matrix R R ℂ) r r' * φ r') * ∑ c' : C, B c c' * χ c' from by
+      rw [Finset.mul_sum]
+      exact Finset.sum_congr rfl fun c' _ => by
+        show (1 : Matrix R R ℂ) r r' * B c c' * (φ r' * χ c') = _
+        ring,
+    ← Finset.sum_mul]
+  congr 1
+  show (∑ r' : R, (1 : Matrix R R ℂ) r r' * φ r') = φ r
+  exact congrFun (Matrix.one_mulVec φ) r
+
 /-! ## The physical cut's operators
 
 What the last two displays sum over. -/
@@ -1907,6 +1954,88 @@ theorem snorm_physLift (U : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (d
       ← M.physLift_mul, M.qform_physLift]
     exact (snorm_sq_eq_qform M.toFirst.mVec U).symm
   nlinarith [snorm_nonneg M.physVec (M.physLift U), snorm_nonneg M.toFirst.mVec U]
+
+/-! ## `eq:qld-pulling-4` on the physical cut
+
+The step that brings the second pair's outcome into the chain. Both of that pair's halves are
+Bob's in the physical grouping, so the matched Weyl projectors are one operator of his, and the
+pair being maximally entangled they leave the state alone. -/
+
+/-- **The appended pair's matched Weyl projectors, on Bob's physical register.** The physical
+grouping gives him both halves, one beside his own space and one outermost. -/
+def bobPairProj (W : Bas) (h : Anc F m) :
+    Matrix (((dB × Anc F m) × M.Eb) × Anc F m) (((dB × Anc F m) × M.Eb) × Anc F m) ℂ :=
+  aOp (aOp ((1 : Matrix dB dB ℂ) ⊗ₖ proj (weylOf W) h)) * bOp (proj (weylOf W) h)
+
+/-- It is a single fourfold product. -/
+theorem bobPairProj_eq (W : Bas) (h : Anc F m) :
+    M.bobPairProj W h
+      = ((((1 : Matrix dB dB ℂ) ⊗ₖ proj (weylOf W) h) ⊗ₖ (1 : Matrix M.Eb M.Eb ℂ))
+          ⊗ₖ proj (weylOf W) h) := by
+  rw [bobPairProj, aOp_mul_bOp_eq]
+  rfl
+
+/-- Under the regrouping, it is the pair's matched projectors and nothing else. -/
+theorem reindex_bobPairProj (W : Bas) (h : Anc F m) :
+    Matrix.reindex M.physLiftEquiv M.physLiftEquiv
+        ((1 : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb))
+            ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb)) ℂ)
+          ⊗ₖ (proj (weylOf W) h ⊗ₖ proj (weylOf W) h))
+      = bOp (M.bobPairProj W h) := by
+  rw [M.bobPairProj_eq W h]
+  ext p q
+  obtain ⟨p1, ⟨⟨p2, p3⟩, p4⟩, p5⟩ := p
+  obtain ⟨q1, ⟨⟨q2, q3⟩, q4⟩, q5⟩ := q
+  simp only [Matrix.reindex_apply, Matrix.submatrix_apply, physLiftEquiv, Equiv.coe_fn_symm_mk,
+    kroneckerMap_apply, bOp, Matrix.one_apply, Prod.mk.injEq]
+  by_cases h1 : p1 = q1 <;> by_cases h2 : p2 = q2 <;> by_cases h4 : p4 = q4 <;>
+    simp [h1, h2, h4] <;> ring
+
+set_option maxHeartbeats 4000000 in
+/-- **Display `eq:qld-pulling-4`: the appended pair's matched Weyl projectors leave the physical
+state alone.** Both halves are Bob's in the physical grouping, and the pair is maximally entangled,
+so each matched pair acts as the projector on one half alone and those sum to the identity. This is
+the step that brings the second pair's outcome into the chain. -/
+theorem sum_bobPairProj_mulVec (W : Bas) :
+    (∑ h : Anc F m, (bOp (M.bobPairProj W h)
+        : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m))
+          _ ℂ)) *ᵥ M.physVec = M.physVec := by
+  classical
+  have hcomp : (M.physVec ∘ M.physLiftEquiv) ∘ M.physLiftEquiv.symm = M.physVec := by
+    rw [Function.comp_assoc, Equiv.self_comp_symm, Function.comp_id]
+  have hA : (∑ h : Anc F m, (bOp (M.bobPairProj W h)
+        : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m))
+          _ ℂ))
+      = Matrix.reindex M.physLiftEquiv M.physLiftEquiv
+        ((1 : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb))
+            ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb)) ℂ)
+          ⊗ₖ ∑ h : Anc F m, (proj (weylOf W) h ⊗ₖ proj (weylOf W) h)) := by
+    rw [kronecker_sum_right, reindex_sum]
+    exact (Finset.sum_congr rfl fun h _ => M.reindex_bobPairProj W h).symm
+  have hB : ((∑ h : Anc F m, (proj (weylOf W) h ⊗ₖ proj (weylOf W) h))
+        *ᵥ (epr (F := F) (n := Fin m → Bool))) = epr := by
+    have h0 := sum_epr_proj_mulVec (F := F) (m := m) W
+    rwa [Finset.sum_congr rfl fun h (_ : h ∈ univ) => aOp_mul_bOp_eq
+      (proj (weylOf W) h) (proj (weylOf W) h)] at h0
+  have key : (((1 : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb))
+          ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb)) ℂ)
+        ⊗ₖ ∑ h : Anc F m, (proj (weylOf W) h ⊗ₖ proj (weylOf W) h))
+      *ᵥ (M.physVec ∘ M.physLiftEquiv)) = M.physVec ∘ M.physLiftEquiv := by
+    rw [M.physVec_comp_physLiftEquiv]
+    exact (kron_one_mulVec M.toFirst.mVec (epr (F := F) (n := Fin m → Bool)) _).trans
+      (funext fun p => by rw [hB])
+  calc (∑ h : Anc F m, (bOp (M.bobPairProj W h)
+        : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m))
+          _ ℂ)) *ᵥ M.physVec
+      = (((1 : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb))
+              ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb)) ℂ)
+            ⊗ₖ ∑ h : Anc F m, (proj (weylOf W) h ⊗ₖ proj (weylOf W) h))
+          *ᵥ (M.physVec ∘ M.physLiftEquiv)) ∘ M.physLiftEquiv.symm := by
+        rw [hA, Matrix.reindex_apply]
+        conv_lhs => rw [← hcomp]
+        rw [Matrix.submatrix_mulVec_equiv, Equiv.symm_symm, hcomp]
+    _ = (M.physVec ∘ M.physLiftEquiv) ∘ M.physLiftEquiv.symm := by rw [key]
+    _ = M.physVec := hcomp
 
 end MirrorSimul
 

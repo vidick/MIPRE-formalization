@@ -4134,7 +4134,11 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.MirrorSimul.physLiftEquiv, MIPRE.QLD.MirrorSimul.physVec_comp_physLiftEquiv,
   MIPRE.QLD.MirrorSimul.physLift, MIPRE.QLD.MirrorSimul.physLift_sub,
   MIPRE.QLD.MirrorSimul.physLift_mul, MIPRE.QLD.MirrorSimul.physLift_conjTranspose,
-  MIPRE.QLD.MirrorSimul.qform_physLift, MIPRE.QLD.MirrorSimul.snorm_physLift}
+  MIPRE.QLD.MirrorSimul.qform_physLift, MIPRE.QLD.MirrorSimul.snorm_physLift,
+  MIPRE.QLD.sum_epr_proj_mulVec, MIPRE.QLD.kron_one_mulVec,
+  MIPRE.QLD.MirrorSimul.bobPairProj, MIPRE.QLD.MirrorSimul.bobPairProj_eq,
+  MIPRE.QLD.MirrorSimul.reindex_bobPairProj,
+  MIPRE.QLD.MirrorSimul.sum_bobPairProj_mulVec}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4571,8 +4575,24 @@ one-party form of \texttt{bornProb\_expVec\_kron}) together with a regrouping
 \texttt{snorm\_physLift} follows from \texttt{qform\_physLift} with no further work, and a
 deviation of two lifted operators is the lift of their deviation.
 
-\emph{Not formalized}: the chaining itself --- naming the eleven intermediate operator families
-and checking that each display's bound is the deviation between consecutive ones --- and
+\emph{And the first step of the chaining, which is the one that had to be read off the paper
+rather than the Lean.} \texttt{eq:qld-pulling-4} is the step that brings the second pair's outcome
+into the chain, and the pair it is about is the \emph{appended} one --- the paper writes
+$\ket{\hat\psi} = \sum_{h'} (\tau_{h'})_{\bob'} \ot (\tau_{h'})_{\bob''}
+\ket{\hat\psi}$, and in the physical grouping both of those halves are Bob's. So the matched
+projectors are one operator of \emph{his} (\texttt{bobPairProj}), not a cross-party pair, and the
+step is the statement that it fixes the physical state
+(\texttt{sum\_bobPairProj\_mulVec}). \texttt{SimulPair.sum\_ancProj\_mulVec}, which an
+earlier note here called this display, is the same fact for the \emph{first} pair and belongs to
+\texttt{eq:qld-pulling-3a}. The two are genuinely different steps about different pairs, and the
+registers had to be checked against \texttt{qld-separating.tex} to see it.
+
+What makes the new one go through is \texttt{sum\_epr\_proj\_mulVec}: on a maximally entangled
+pair the matched Weyl projectors act as the projector on one half alone --- the projectors being
+symmetric matrices --- and those sum to the identity. \texttt{reindex\_bobPairProj} puts that
+fact on the physical grouping and \texttt{kron\_one\_mulVec} lets it act on the pair alone.
+
+\emph{Not formalized}: the remaining ten steps of the chaining, and
 Lemma~\ref{lem:qld-povm-to-obs} at the very end.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
 
