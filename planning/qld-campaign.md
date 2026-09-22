@@ -2185,3 +2185,16 @@ expectation between the two readings, by the same route `regroupEquiv` and `born
 take: one `Equiv`, one entry computation for the reindexed operator, and `qform_comp_equiv`, which
 is general and makes no reference to a cut. That is what the threading has to say first; with it,
 all of the endgame's steps can be pointed at one vector.
+
+**And the chain's probe.** `lem:qld-pauli-selfcons` runs at a *uniform* `u-tilde` in `F_q^M`, which
+is not a point's low-degree encoding --- the encodings are a tiny subset of `F_q^M`, and confusing
+the two is the omission that created the node. `MIPRE/Background/QLD/ChainProbe.lean` keeps them
+apart by name: `SimulPair.mTildeAnc` is the exact Pauli measurement at an arbitrary probe (the
+generic `mTilde` already took the probe as an argument, so this is a naming, not a construction),
+`isPVM_mTildeAnc` says it is projective at every probe, `mTildeAt_eq_mTildeAnc` is the one place it
+meets `lem:qld-exact-paulis`'s, and `swapU_conj_mTildeAnc` is `eq:qld-unitary-6` there --- the
+conjugation's cancellation never used the probe's shape, only that the outcome's shift and the
+conjugation's are written with the same pairing.
+
+That is the first brick of the chain assembly: every display of the chain has to be available at
+this probe, and until now none of them were stateable there.

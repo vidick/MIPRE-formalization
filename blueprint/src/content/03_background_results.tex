@@ -4056,7 +4056,9 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.qform_sandwich_nonneg, MIPRE.snorm_sq_sum_proj_sandwich,
   MIPRE.sum_qform_sandwich_le_of_subset, MIPRE.abs_sum_qform_swap_le,
   MIPRE.sum_snorm_sq_proj_comp_le, MIPRE.snorm_one_sub_aOp_mul_bOp_le,
-  MIPRE.sum_snorm_sq_insert_le, MIPRE.sum_xSqNorm_fibre_le}
+  MIPRE.sum_snorm_sq_insert_le, MIPRE.sum_xSqNorm_fibre_le,
+  MIPRE.QLD.SimulPair.mTildeAnc, MIPRE.QLD.SimulPair.isPVM_mTildeAnc,
+  MIPRE.QLD.SimulPair.mTildeAt_eq_mTildeAnc, MIPRE.QLD.SimulPair.swapU_conj_mTildeAnc}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4183,6 +4185,15 @@ measurements the same way costs nothing --- which is Item 2 of \texttt{fact:agre
 \texttt{fact:data-processing}, then Item 1 of \texttt{fact:agreement} --- and Foundations has it
 as \texttt{sum\_xSqNorm\_map\_le}, on bundled POVMs. The chain speaks \texttt{IsPVM};
 \texttt{IsPVM.toPOVM} and \texttt{sum\_xSqNorm\_fibre\_le} bridge the two.
+
+\emph{And the probe it runs at.} This chain is stated at a \emph{uniform} $\tilde{u} \in
+\F_q^{M}$, and that is not a point's low-degree encoding --- the encodings are a tiny subset of
+$\F_q^M$. Confusing the two is the omission that created this node, so the two probes are kept
+apart by name: \texttt{SimulPair.mTildeAnc} is the exact Pauli measurement at an arbitrary probe,
+\texttt{mTildeAt\_eq\_mTildeAnc} is the one place it meets
+Lemma~\ref{lem:qld-exact-paulis}'s, and \texttt{swapU\_conj\_mTildeAnc} says that conjugation by
+the swap unitary strips the pair measurement off it whatever the probe --- the cancellation is
+between the outcome's shift and the conjugation's, and both are written with the same pairing.
 
 \emph{Not formalized}: the assembly of the chain itself --- the index bookkeeping of its eleven
 displays, and Lemma~\ref{lem:qld-povm-to-obs} at the end. Every step it assembles is in place.
