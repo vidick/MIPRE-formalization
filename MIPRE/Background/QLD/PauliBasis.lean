@@ -115,7 +115,7 @@ end MIPRE
 
 namespace MIPRE.QLD
 
-open Finset Matrix MIPRE MIPRE.LowDegree
+open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl
 open scoped Kronecker ComplexOrder MatrixOrder
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
@@ -164,6 +164,61 @@ theorem sum_normSq_point_sub_pauli_le (hψ : star ψ ⬝ᵥ ψ = 1)
     exact Finset.sum_congr rfl fun c _ => by ring
   rw [hsplit] at hsum
   linarith
+
+/-! ## The same statement on the expanded state -/
+
+/-- The convolution shape of a hatted point measurement: the party's own reading tensored with the
+ancilla's syndrome measurement, summed along the sum of outcomes. -/
+theorem hatPtPOVM_mats_eq_conv (M : Question F m → POVM (Answer F m d) dB) (W : Bas)
+    (u : Point F m) (a : F) :
+    (((hatPtPOVM M W u).mats a).val)
+      = conv (fun o => ((((M (.point W u)).map rdVal).mats o).val))
+        (fun b => (((synPOVM W u).mats b).val)) a :=
+  POVM.map_mats _ _ _
+
+/-- The same shape for the Pauli basis answer read at the point. -/
+theorem hatPauliPOVM_mats_eq_conv (M : Question F m → POVM (Answer F m d) dB) (W : Bas)
+    (u : Point F m) (a : F) :
+    ((((((M (.pauli W)).map (rdPauli u)).kron (synPOVM W u)).map fun p => p.1 + p.2).mats a).val)
+      = conv (fun o => ((((M (.pauli W)).map (rdPauli u)).mats o).val))
+        (fun b => (((synPOVM W u).mats b).val)) a :=
+  POVM.map_mats _ _ _
+
+/-- **The same-party closeness, on the expanded state.** The hatted point measurement and the
+hatted Pauli basis reading differ, on Bob's side of `hatVec ψ`, by what the bare measurements
+differ by: the shared ancilla factor drops out exactly, so the constant is unchanged. -/
+theorem sum_normSq_hat_point_sub_pauli_le (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :
+    ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *
+        ∑ a : F, ‖stateVecB (hatVec (F := F) (m := m) ψ)
+          ((((hatPtPOVM MB W (c.pt W)).mats a).val)
+            - ((((((MB (.pauli W)).map (rdPauli (c.pt W))).kron (synPOVM W (c.pt W))).map
+              fun p => p.1 + p.2).mats a).val))‖ ^ 2
+      ≤ 688 * ε := by
+  have hbare := sum_normSq_point_sub_pauli_le (MB := MB) hψ hfail W
+  have hterm : ∀ c : Content F m,
+      ∑ a : F, ‖stateVecB (hatVec (F := F) (m := m) ψ)
+        ((((hatPtPOVM MB W (c.pt W)).mats a).val)
+          - ((((((MB (.pauli W)).map (rdPauli (c.pt W))).kron (synPOVM W (c.pt W))).map
+            fun p => p.1 + p.2).mats a).val))‖ ^ 2
+      = ∑ a : F, ‖stateVecB ψ ((((MB (.point W (c.pt W))).map rdVal).mats a).val
+          - (((MB (.pauli W)).map (rdPauli (c.pt W))).mats a).val)‖ ^ 2 := by
+    intro c
+    have hconv : ∀ a : F,
+        (((hatPtPOVM MB W (c.pt W)).mats a).val)
+          - ((((((MB (.pauli W)).map (rdPauli (c.pt W))).kron (synPOVM W (c.pt W))).map
+            fun p => p.1 + p.2).mats a).val)
+        = conv (fun o => ((((MB (.point W (c.pt W))).map rdVal).mats o).val)
+            - (((MB (.pauli W)).map (rdPauli (c.pt W))).mats o).val)
+          (fun b => (((synPOVM W (c.pt W)).mats b).val)) a := by
+      intro a
+      rw [hatPtPOVM_mats_eq_conv, hatPauliPOVM_mats_eq_conv, conv, conv, conv,
+        ← Finset.sum_sub_distrib]
+      exact Finset.sum_congr rfl fun p _ => (sub_kronecker_right _ _ _).symm
+    simp only [hconv]
+    exact sum_normSq_stateVecB_conv_eq ψ epr_unit _ (isPVM_synOfPOVM W _)
+  rw [Finset.sum_congr rfl fun c (_ : c ∈ univ) => by rw [hterm c]]
+  exact hbare
 
 end MIPRE.QLD
 

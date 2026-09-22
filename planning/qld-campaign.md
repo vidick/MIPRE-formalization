@@ -1740,3 +1740,10 @@ Summing a convolution over its outcome frees the ancilla factor (`sum_conv`), an
 `bornProb_expVec_kron` then peels the maximally entangled pair off, whose own weight is one. With
 this and the previous piece, what is left of the approximate half is the aggregation itself: the
 projective family indexed by cube data, and `nonMultilinear_mass_le` applied to it.
+
+**On the expanded state.** `sum_normSq_hat_point_sub_pauli_le` puts the two together: a hatted
+point measurement is `conv X T` for `X` the party's own reading and `T` the syndrome measurement
+(`hatPtPOVM_mats_eq_conv`, which is `POVM.map_mats` and nothing more), the Pauli basis reading at
+the point has the same shape against the same `T`, their difference is the convolution of the
+differences, and the transfer removes `T`. So the constant on the expanded state is the bare one,
+`688 ε`.

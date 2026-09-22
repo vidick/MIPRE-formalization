@@ -3844,7 +3844,9 @@ same sum, grouped differently, and the outcome form is what the Pauli constructi
   MIPRE.QLD.trDot_smul_right, MIPRE.QLD.sum_kron, MIPRE.QLD.kron_sum,
   MIPRE.QLD.prob_agree_ldEnc_le_of_not_multilinear, MIPRE.QLD.nonMultilinear_mass_le,
   MIPRE.QLD.sum_sub_le_of_eq_on, MIPRE.QLD.sum_normSq_point_sub_pauli_le, MIPRE.conv,
-  MIPRE.conjTranspose_conv_mul_conv, MIPRE.sum_conv, MIPRE.sum_normSq_stateVecB_conv_eq}
+  MIPRE.conjTranspose_conv_mul_conv, MIPRE.sum_conv, MIPRE.sum_normSq_stateVecB_conv_eq,
+  MIPRE.QLD.hatPtPOVM_mats_eq_conv, MIPRE.QLD.hatPauliPOVM_mats_eq_conv,
+  MIPRE.QLD.sum_normSq_hat_point_sub_pauli_le}
 From the simultaneous measurement one constructs, for $W \in \{X, Z\}$, measurements and
 binary observables on the expanded space which satisfy the Pauli group relations
 \emph{exactly} --- linearity in the argument, and $XZ$ commutation or anticommutation with the
@@ -3880,8 +3882,12 @@ hatted measurement is a convolution $\widehat X_c = \sum_{a + b = c} X_a \ot T_b
 ancilla's Weyl measurement, and for a \emph{projective} $T$ the cross terms of
 $\widehat X^\dagger \widehat X$ vanish, so the common ancilla factor drops out exactly:
 $\sum_c \|(\Id \ot \widehat X_c) \widehat\psi\|^2
-  = \sum_a \|(\Id \ot X_a) \psi\|^2$ (\texttt{sum\_normSq\_stateVecB\_conv\_eq}). What
-remains is to apply the aggregation to the simultaneous measurement's outcomes.
+  = \sum_a \|(\Id \ot X_a) \psi\|^2$ (\texttt{sum\_normSq\_stateVecB\_conv\_eq}). The two
+together put the closeness on the expanded state with the same constant
+(\texttt{sum\_normSq\_hat\_point\_sub\_pauli\_le}). What remains is to apply the aggregation
+to the simultaneous measurement's outcomes: the projective family indexed by cube data, the
+Cauchy--Schwarz that substitutes it for the point measurement at cost $O(\sqrt{\eps})$, and
+Lemma~\ref{lem:schwartz-zippel} per non-multilinear outcome.
 
 \emph{Formalized, unconditionally}, in \texttt{MIPRE/Background/QLD/ExactPauli.lean}: the two
 marginals of a projective pair measurement (\texttt{sCoarse}, projective by
