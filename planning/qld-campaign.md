@@ -1572,3 +1572,86 @@ either, and the constant is explicit. Lean points: `Fintype.card_ne_zero` needs 
 which `omit [Field F]` removes; `not_imp` is ambiguous between `_root_` and `Classical`
 (the former deprecated); and the `ᴴ` notation is scoped to `Matrix`, so a `namespace MIPRE` block
 needs `open Matrix`.
+
+### PR H-d: `lem:qld-global-separate` (2026-09-21)
+
+**What closed.** `lem:qld-global-separate`, with both marks, for all outcomes and both parties.
+`MIPRE/Background/QLD/Separate.lean` (fast regime) defines the good outcomes `IsGood g`
+(`g = α g_X(x) + β g_Z(z)`, every monomial with exponents `(1, 0)` on `(α, β)` and nothing else
+outside the `x` block, or `(0, 1)` and nothing else outside the `z` block) and proves
+`sum_not_isGood_mass_le`: from the two ordered-product estimates with bounds `Δ₁` (order `X_a Z_b`)
+and `Δ₂` (order `Z_b X_a`), `(1 − 2η) · ∑_{¬IsGood g} ⟨G_g⟩ ≤ 2Δ₁ + 2Δ₂` with
+`η = (2 + 2d + 8md)/q`. `PaddedLIDT.lean` specializes it to a `GlobalPair`
+(`GlobalPair.sum_not_isGood_mass_A_le`, `_B_le`, right-hand side `4(2δ + 2 · 57676416 ε)`).
+
+**The route.** `not_isGood_cases`: a non-good outcome is non-linear, or linear with the `β`
+coefficient `gB` reading a coordinate outside the `z` block (`LowIndDegPoly.DepOutside`), or linear
+with the `α` coefficient `gA` reading a coordinate outside the `x` block; `isGood_of` is the
+converse, through `coef_maskOff`. The assembly of `-linear` is restated abstractly
+(`sum_bad_mass_le_of_avg`: any bad predicate, any Bob-side family `B`), applied once per order
+with the common `η`, and the two weights are added by a union bound. Per bad linear outcome and
+base point `u₀`, `g(setAB u₀ α β) = α gA(u₀) + β gB(u₀)` (`eval_setAB_of_isLinAB`, from
+`pAB_eq_linAB_of_isLinAB`), the fibre contains the diagonal pair always and any other pair for at
+most `q` values of `(α, β)` (`card_filter_linear_le`, a nontrivial linear form on `F²`), so the
+`(α, β)`-average is at most `2/q ⟨S⟩ + W(gA(u₀), gB(u₀))` (`sum_ab_snorm_sq_ordComb_le_of_lin`),
+and the diagonal weight is `⟨S ⊗ Z X Z⟩ ≤ ⟨S ⊗ Z_{gB(u₀)}(zBlk u₀)⟩` (`snorm_sq_ordXZ_le_bornProb`).
+Then `sum_uniform_bornProb_readOn_le`: for an operator family reading only the coordinates in `T`
+and a polynomial `H` reading a coordinate outside `T`, `E_u ⟨S ⊗ Op_u(H(u))⟩ ≤ 8md/q ⟨S⟩`. The
+uniform point is read as a uniform `T` block with the rest uniform and independent
+(`sum_uniform_mixOn`, the involution `mixOnSwap`); `LowIndDegPoly.restrictOff H T z` is `H` with
+the `T` coordinates fixed to `z`, as a coefficient vector in the others (`eval_restrictOff`,
+through `eval_eq_sum_coef` on `Tᶜ`); it is non-constant unless a nonzero coefficient vector
+`H.coef Tᶜ t₀`, `t₀ ≠ 0` (`exists_coef_ne_zero_of_depOutside`), vanishes at `z`, and a
+non-constant vector takes each value with probability at most `4md/q`
+(`sum_uniform_eval_eq_zero_le` on `restrictOff − const b`). The `Z X` order is the `X Z` order with
+`(X, a, α)` and `(Z, b, β)` exchanged (`ptComb_ordZX_eq`, reindexing the fibre by `Prod.swap`), so
+the mirror half reuses every lemma with the two families swapped and the base point read as a
+uniform `x` block.
+
+**Remarks.** The paper's bound is `O((δ_ld + δ_Q)^{1/2} + md/q)` and its Schwartz--Zippel counts
+are `(2m+2)d/q` and `2md/q`; the formalization's are `4md/q` each, from `card_eval_eq_zero_le`
+over all `4m` coordinates, and the bound is linear. Since the good outcomes read no dummy
+coordinate, `-dummy` is subsumed for stage 4c. Two Lean points: `gcongr` on
+`c * ↑(#s) ≤ c * ↑(#t)` descends to the Finset inequality `s ≤ t`, so `mul_le_mul_of_nonneg_left`
+with `exact_mod_cast` is the predictable route; and a multi-line `nlinarith [...]` hint list
+inside a term-mode `by` breaks on the continuation line's column, so the facts go in `have`s.
+
+### PR I: stage 4c — `-complete`, `-sandwich`, `-robustness`, `lem:qld-simultaneous` (2026-09-22)
+
+**What closed.** The four remaining statements of stage 4, and with them the interface stage 5 is
+proved against. `MIPRE/Background/QLD/Complete.lean` (fast regime) relabels each good outcome
+`g = α g_X(x) + β g_Z(z)` by the pair `(g_X, g_Z)` (`pairOf`, through
+`LowIndDegPoly.blockPoly`, a coefficient vector read on a block of the variables, with
+`eval_blockPoly` for a vector supported there), and `pairMeas` is the coarse-graining of the
+global measurement by it: projective (`isPVM_pairMeas`), complete, with the non-good outcomes
+absorbed into the fixed pair — the paper's complement `R`, whose weight `lem:qld-global-separate`
+bounds. `inconsistency_map_eq` reads the inconsistency of any such coarse-graining outcome by
+outcome. The marginals: `one_sub_two_sqrt_le_sum_snorm_sq` turns the products estimate into
+`∑_g E_u ‖(G_g ⊗ B_u(g(u)))Φ‖² ≥ 1 − 2√Δ` (triangle inequality, then one Cauchy--Schwarz over the
+pairs `(u, g)`), and `marg_Z_ge`, `marg_X_ge` bound the rest by the fibre analysis of `-separate`
+plus the non-good weight, giving `E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 − 2√Δ − 2/q − δ_G` and the
+`X` mirror; `inconsistency_evalMarg_Z_le`, `_X_le` are the same statements as inconsistencies.
+
+**The errors.** `PaddedLIDT.lean` names them as functions of the `GlobalPair` error `δ` and the
+strategy's failure `ε`: `deltaProd δ ε = 2δ + 2·57676416 ε` (the products bound `Δ`),
+`deltaSep δ ε = 8 Δ` (the non-separated weight `δ_G`) and
+`deltaS q δ ε = 2√Δ + 2/q + δ_G`. `deltaSep` needs `48 m d ≤ q`: `2 + 2d + 8md ≤ 12md` for
+`m, d ≥ 1`, so `η = (2+2d+8md)/q ≤ 1/4` and the factor `1 − 2η` of `-separate` is at least `1/2`
+(`one_sub_two_eta_ge`). The standing assumption of the subsection is `16md ≤ q`; the regime
+`16md < q < 48md` is absorbed in the assembly the same way `16md > q` is, by enlarging the
+universal constant, and the blueprint says so.
+
+**The instance.** `GlobalPair.toSimulPair` builds a `SimulPair` with
+`EA = EB = (F × F) × CL.Answer F (4m) d 1`, the state `padState ψ` reindexed by
+`Equiv.prodAssoc`, and the completed pair measurements reindexed likewise. The transport is
+four lemmas: `isPVM_reindex` (a reindexing is a `*`-isomorphism, so projectivity survives),
+`reindex_aOp_aOp` (extending twice by the identity and reassociating is extending once by the
+product ancilla), `POVM.aOp_aOp_reindex` (its POVM form), and Foundations'
+`inconsistency_reindex`, `bornProb_reindex`, `reindexVec_unit`. `exists_simulPair` composes it
+with `exists_globalPair`.
+
+**Two remarks.** The paper's `lem:qld-4-7` also announces the sandwiched joint estimate; stage 5
+consumes only the two evaluated marginals, so the structure carries those and the sandwich stays
+where it is used, inside `-sandwich`. And the bound here is linear in `δ_ld` and `ε` up to the one
+square root the Cauchy--Schwarz costs, where the paper writes `O((δ_ld + δ_Q)^{1/2} + md/q)`
+throughout; `δ_S` is closed under that square root by halving `b`, which is the assembly's job.

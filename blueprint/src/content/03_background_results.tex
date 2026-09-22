@@ -3103,16 +3103,30 @@ this step.
 \uses{lem:qld-global-robustness}
 \lean{  MIPRE.QLD.PolyPair, MIPRE.QLD.PolyPair.proj, MIPRE.QLD.evalMarg, MIPRE.QLD.evalMarg_mats,
   MIPRE.QLD.isPVM_evalMarg, MIPRE.QLD.SimulPair, MIPRE.QLD.SimulPair.mono,
-  MIPRE.QLD.SimulPair.bornProb_aOp_aOp}
+  MIPRE.QLD.SimulPair.bornProb_aOp_aOp, MIPRE.QLD.GlobalPair.toSimulPair,
+  MIPRE.QLD.exists_simulPair}
+\leanok
 There are universal $a>1$, $0<b<1$ and, on each relevant padded local space,
 a complete projective measurement $\widehat S_{g_X,g_Z}$ of pairs of
 individual-degree-$d$ polynomials on $\F_q^m$. Its evaluated $X$ and $Z$
 marginals are consistent with the opposite expanded point measurements,
 with error at most
 $\delta_S=a(md)^a(\eps^b+q^{-b}+2^{-bmd})$.
-The same measurement satisfies the sandwiched joint estimate below.
 Both register versions are required; no symmetric-strategy hypothesis is added.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:qld-global-pvm,lem:qld-global-robustness}
+\leanok
+Lemma~\ref{lem:qld-global-pvm} supplies the pair $(G_A, G_B)$ with error $\delta_{\mathrm{ld}}$;
+Lemmas~\ref{lem:qld-global-dummy}--\ref{lem:qld-global-robustness} complete it to a projective
+measurement of pairs whose evaluated marginals track the opposite party's expanded point
+measurements with error $\delta_S = 2\sqrt{\Delta} + 2/q + 8\Delta$,
+$\Delta = 2\delta_{\mathrm{ld}} + 2 \cdot 57676416\,\eps$, and carry it to the register shape of
+the structure. The displayed functional form is reached in the assembly of
+Theorem~\ref{thm:qld}, where $\delta_{\mathrm{ld}}$ is the seeded soundness theorem's error and
+the square root halves the exponent $b$.
+\end{proof}
 
 \paragraph{Comments.} The conclusion is formalized as the structure \texttt{SimulPair}
 (\texttt{MIPRE/Background/QLD/Simul.lean}): for a strategy $(\psi, M_A, M_B)$ and an error
@@ -3120,12 +3134,14 @@ $\delta$, ancilla types $E_A$, $E_B$, a unit state $\Phi$ on
 $((d_A \times \mathrm{Anc}) \times E_A) \times ((d_B \times \mathrm{Anc}) \times E_B)$ that
 reduces to the expanded state on the two hat registers, projective pair measurements $S_A$, $S_B$
 with outcomes in pairs of individual-degree-$d$ polynomials, and the two evaluated-marginal
-consistencies. The lemma is then the existence of a \texttt{SimulPair} at error $\delta_S$, which
-Lemmas~\ref{lem:qld-global-pvm}--\ref{lem:qld-global-robustness} are to supply; stage 5 is proved
-against the structure. The padded state of Lemma~\ref{lem:qld-global-pvm} lives on the registers
-$((d_A \times \mathrm{Anc}) \times \F_q^2) \times \mathrm{Ans}$ with $\mathrm{Ans}$ the
-dilation's answer ancilla, and is carried to the structure's register shape by the associativity
-reindexing.
+consistencies. The lemma is the existence of a \texttt{SimulPair} at error $\delta_S$
+(\texttt{exists\_simulPair}); stage 5 is proved against the structure. Two departures from the
+paper's statement. The sandwiched joint estimate it also announces is not carried in the
+structure: stage 5 consumes only the two evaluated marginals, and the sandwich is what
+Lemma~\ref{lem:qld-global-sandwich} passes through on the way to them. And the hypothesis is
+$48md \leq q$ rather than the standing $16md \leq q$, which is what makes the factor $1 - 2\eta$
+of Lemma~\ref{lem:qld-global-separate} at least $1/2$; as with $16md > q$, the regime
+$48md > q$ is absorbed in the assembly by enlarging the universal constant.
 
 \begin{lemma}[Admissible padded setup]
 \label{lem:qld-global-setup}
@@ -3562,47 +3578,196 @@ set of coordinates as a polynomial in the others (\texttt{eval\_eq\_sum\_coef}).
 \begin{lemma}[Separating the two point variables]
 \label{lem:qld-global-separate}
 \ledgernode{1.2.2.13.7}
-\uses{lem:qld-global-linear,lem:qld-global-products}
-Except for weight $O(\Delta)$, a retained linear outcome has $g_1$ depending
-only on $x$ and $g_2$ only on $z$. The total excluded weight is bounded by
-$\delta_G=C(\sqrt{\delta_{\mathrm{ld}}+\delta_Q}+md/q)$.
-Thus retained outcomes are precisely of the form
-$\alpha g_X(x)+\beta g_Z(z)$ with individual degree at most $d$.
+\uses{lem:qld-global-pvm,lem:qld-global-products,lem:qld-global-linear,lem:schwartz-zippel}
+\lean{  MIPRE.LIDT.LowIndDegPoly.eval_zero, MIPRE.LIDT.LowIndDegPoly.eval_sub,
+  MIPRE.LIDT.LowIndDegPoly.const, MIPRE.LIDT.LowIndDegPoly.eval_const,
+  MIPRE.LIDT.LowIndDegPoly.coef_eq_zero_of_not, MIPRE.LIDT.LowIndDegPoly.restrictOff,
+  MIPRE.LIDT.LowIndDegPoly.restrictOff_apply_of, MIPRE.LIDT.LowIndDegPoly.eval_restrictOff,
+  MIPRE.LIDT.LowIndDegPoly.DepOutside, MIPRE.LIDT.LowIndDegPoly.exists_coef_ne_zero_of_depOutside,
+  MIPRE.QLD.mixOn, MIPRE.QLD.mixOn_mixOn, MIPRE.QLD.mixOnSwap, MIPRE.QLD.sum_mixOn,
+  MIPRE.QLD.sum_uniform_mixOn, MIPRE.QLD.eval_mixOn, MIPRE.QLD.zSet, MIPRE.QLD.xSet,
+  MIPRE.QLD.zIdx_mem_zSet, MIPRE.QLD.xIdx_mem_xSet, MIPRE.QLD.zBlk_mixOn_zSet,
+  MIPRE.QLD.xBlk_mixOn_xSet, MIPRE.QLD.oneD, MIPRE.QLD.gA, MIPRE.QLD.gB, MIPRE.QLD.patch_abSet_aIdx,
+  MIPRE.QLD.patch_abSet_bIdx, MIPRE.QLD.coef_patAB_eq_zero_of_isLinAB,
+  MIPRE.QLD.pAB_eq_linAB_of_isLinAB, MIPRE.QLD.eval_setAB_of_isLinAB, MIPRE.QLD.IsGood,
+  MIPRE.QLD.isGood_of, MIPRE.QLD.not_isGood_cases, MIPRE.QLD.card_filter_linear_le,
+  MIPRE.QLD.ptComb_ordZX_eq, MIPRE.QLD.snorm_sq_ordXZ_le_bornProb,
+  MIPRE.QLD.sum_ab_snorm_sq_ordComb_le_of_lin, MIPRE.QLD.sum_uniform_bornProb_readOn_le,
+  MIPRE.QLD.sum_uniform_snorm_sq_ordComb_XZ_le_of_depB,
+  MIPRE.QLD.sum_uniform_snorm_sq_ordComb_ZX_le_of_depA, MIPRE.QLD.sum_bad_mass_le_of_avg,
+  MIPRE.QLD.sum_not_isGood_mass_le, MIPRE.QLD.GlobalPair.sum_not_isGood_mass_A_le,
+  MIPRE.QLD.GlobalPair.sum_not_isGood_mass_B_le}
+\leanok
+Let $(G_A, G_B)$, $\Phi$ and $\Delta$ be as in Lemma~\ref{lem:qld-global-linear}, where now
+$\Delta$ bounds the estimate of Lemma~\ref{lem:qld-global-products} for both product orders. Call
+an outcome $g$ good if $g = \alpha g_X(x) + \beta g_Z(z)$ with $g_X$ reading only the $x$ block
+and $g_Z$ only the $z$ block: every monomial of $g$ has exponents $(1, 0)$ on $(\alpha, \beta)$
+and no other nonzero exponent outside the $x$ block, or exponents $(0, 1)$ and no other nonzero
+exponent outside the $z$ block. Let $\mathrm{Good}$ be the set of good outcomes. Then, with
+$\eta = (2 + 2d + 8md)/q$,
+\[
+  (1 - 2\eta) \sum_{g \notin \mathrm{Good}} \langle G_{A,g} \otimes \Id \rangle_\Phi
+    \leq 4\Delta ,
+\]
+and likewise for $G_B$. In particular a good outcome reads no dummy coordinate, and the good
+outcomes are in bijection with the pairs $(g_X, g_Z)$ of polynomials of individual degree at most
+$d$ on $\F_q^m$.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:qld-global-pvm,lem:qld-global-products,lem:qld-global-linear,lem:schwartz-zippel}
+\leanok
+An outcome that is not good is not linear in $(\alpha, \beta)$, or is linear,
+$g = \alpha g_1 + \beta g_2$, with $g_2$ reading a coordinate outside the $z$ block, or with
+$g_1$ reading a coordinate outside the $x$ block. The first two kinds are handled against the
+order $\widehat M^X_a \widehat M^Z_b$ and the third against $\widehat M^Z_b \widehat M^X_a$, each
+by the assembly of Lemma~\ref{lem:qld-global-linear}: it suffices to show
+$\mathbb E_u \|(S \otimes B_u(g(u)))\Phi\|^2 \leq \eta \langle S \otimes \Id \rangle$ for
+$S = G_{A,g}$ and each bad $g$, the non-linear ones being Lemma~\ref{lem:qld-global-linear}
+itself. Since $1 - 2\eta$ may be taken nonnegative, the three weights add.
+
+Fix $g = \alpha g_1 + \beta g_2$ linear with $g_2$ reading a coordinate outside the $z$ block,
+and a base point $u_0$; then $g(u_0[\alpha, \beta]) = \alpha g_1(u_0) + \beta g_2(u_0)$. The
+fibre $\{\alpha a + \beta b = \alpha g_1(u_0) + \beta g_2(u_0)\}$ always contains the diagonal
+pair $(g_1(u_0), g_2(u_0))$, and contains any other pair for at most $q$ of the $q^2$ values of
+$(\alpha, \beta)$, the equation being a nontrivial linear form in $(\alpha, \beta)$. With the
+Pythagoras and weight bookkeeping of Lemma~\ref{lem:qld-global-linear}, the average over
+$(\alpha, \beta)$ is at most $2/q \cdot \langle S \otimes \Id \rangle$ plus the diagonal weight
+$W(g_1(u_0), g_2(u_0)) = \langle S \otimes \widehat M^Z_{g_2} \widehat M^X_{g_1}
+\widehat M^Z_{g_2} \rangle \leq \langle S \otimes \widehat M^Z_{g_2(u_0)} \rangle$. Read the
+uniform $u_0$ as a uniform $z$ block with the other coordinates uniform and independent. For a
+fixed $z$ block, $u \mapsto g_2(u)$ is a polynomial in the other coordinates; as $g_2$ reads a
+coordinate outside the $z$ block, some coefficient of a non-constant monomial of this polynomial
+is a nonzero polynomial in the $z$ block, which vanishes for at most a $4md/q$ fraction of the
+$z$ blocks by Schwartz--Zippel, and where it does not vanish the polynomial is non-constant and
+takes each value $b$ with probability at most $4md/q$, again by Schwartz--Zippel. So
+$\mathbb E_{u_0} \langle S \otimes \widehat M^Z_{g_2(u_0)}(z) \rangle
+  \leq \sum_b \mathbb E_z \Pr[g_2 = b \mid z] \langle S \otimes \widehat M^Z_b(z) \rangle
+  \leq 8md/q \cdot \langle S \otimes \Id \rangle$,
+using $\sum_b \widehat M^Z_b(z) = \Id$. Altogether $\eta \geq 2/q + 8md/q$. For $g_1$ reading a
+coordinate outside the $x$ block, exchange the roles of $(\widehat M^X, a, \alpha)$ and
+$(\widehat M^Z, b, \beta)$: the order $\widehat M^Z_b \widehat M^X_a$ along $(\alpha, \beta)$ is
+the order $\widehat M^X_a \widehat M^Z_b$ along $(\beta, \alpha)$ with the two families exchanged,
+and the base point is read as a uniform $x$ block. Bob's version applies the same argument to the
+swapped state.
+\end{proof}
+
+\paragraph{Comments.} The paper states the excluded weight as
+$\delta_G = O((\delta_{\mathrm{ld}} + \delta_Q)^{1/2} + md/q)$; the formalization proves the
+linear bound, as for Lemma~\ref{lem:qld-global-linear}, and with its own constants: both
+Schwartz--Zippel applications are over all $4m$ coordinates (\texttt{card\_eval\_eq\_zero\_le}),
+where the paper counts $2m$ or $2m + 2$. The good outcomes exclude the dummy coordinates as well,
+so this lemma subsumes Lemma~\ref{lem:qld-global-dummy} for the purposes of stage 4c. The
+conditioning on a block is one generic statement (\texttt{sum\_uniform\_bornProb\_readOn\_le}),
+for an operator family reading only the coordinates in a set $T$ and a polynomial reading a
+coordinate outside $T$, with \texttt{LowIndDegPoly.restrictOff} the polynomial in the other
+coordinates obtained by fixing those in $T$; the assembly is one generic statement
+(\texttt{sum\_bad\_mass\_le\_of\_avg}), which Lemma~\ref{lem:qld-global-linear} could also use.
 
 \begin{lemma}[Completing the pair measurement projectively]
 \label{lem:qld-global-complete}
 \ledgernode{1.2.2.13.8}
 \uses{lem:qld-global-separate}
-Relabel the retained projectors by $(g_X,g_Z)$ and add their orthogonal
-complement $R$ to one fixed legal outcome. This is a complete PVM, with
-$\langle R\rangle\leq\delta_G$. Each cross-party inconsistency increases
-by at most $\delta_G$.
+\lean{  MIPRE.LIDT.expandIdx, MIPRE.LIDT.expandIdx_apply_idx, MIPRE.LIDT.expandIdx_apply_of_not,
+  MIPRE.LIDT.prod_pow_expandIdx, MIPRE.LIDT.LowIndDegPoly.blockPoly,
+  MIPRE.LIDT.LowIndDegPoly.eval_blockPoly, MIPRE.QLD.isLinAB_of_isGood, MIPRE.QLD.notMem_xSet_iff,
+  MIPRE.QLD.notMem_zSet_iff, MIPRE.QLD.not_depOutside_gA_of_isGood,
+  MIPRE.QLD.not_depOutside_gB_of_isGood, MIPRE.QLD.gX, MIPRE.QLD.gZ, MIPRE.QLD.eval_gX,
+  MIPRE.QLD.eval_gZ, MIPRE.QLD.pairOf, MIPRE.QLD.pairOf_of_isGood, MIPRE.QLD.pairMeas,
+  MIPRE.QLD.pairMeas_mats, MIPRE.QLD.isPVM_pairMeas, MIPRE.QLD.evalMarg_pairMeas,
+  MIPRE.QLD.inconsistency_map_eq}
+\leanok
+Relabel each good outcome $g = \alpha g_X(x) + \beta g_Z(z)$ of the global measurement by the pair
+$(g_X, g_Z)$ of polynomials of individual degree at most $d$ on $\F_q^m$, and every other outcome
+by the fixed pair $(0, 0)$. The result is a complete projective measurement of pairs, and the
+operator it assigns to $(0, 0)$ beyond the good outcomes with that pair is the paper's complement
+$R$, of weight at most $\delta_G$ by Lemma~\ref{lem:qld-global-separate}. Consequently each
+consistency estimate stated for the good outcomes holds for the completed measurement with its
+error increased by $\delta_G$.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:qld-global-separate}
+\leanok
+The relabelling is a map on outcomes, so the completed measurement is the coarse-graining of the
+global measurement by it; a coarse-graining of a projective measurement is projective, and
+complete because the original is. The pair of a good outcome is read off its two coefficient
+polynomials: $g_X$ is the coefficient of $\alpha$, which reads only the $x$ block, viewed as a
+polynomial in $m$ variables, and $g_Z$ the coefficient of $\beta$ on the $z$ block
+(\texttt{blockPoly}, whose defining property is that a coefficient vector supported on a block
+evaluates through that block). Nothing is lost: for a good outcome $g_X(x) = g_1(u)$ and
+$g_Z(z) = g_2(u)$ at every padded point $u$.
+\end{proof}
 
 \begin{lemma}[Sandwich estimates and the two marginals]
 \label{lem:qld-global-sandwich}
 \ledgernode{1.2.2.13.9}
-\uses{lem:qld-global-complete,lem:qld-global-products,def:cross-distance}
-The completed pair measurement, evaluated at uniform $x,z$, is consistent
-with the positive joint POVM $\widehat M^X_a\widehat M^Z_b\widehat M^X_a$
-with error $O(\delta_G+\sqrt{\delta_{\mathrm{ld}}+\delta_Q}+1/q)$.
-Summation gives its $X$ marginal. Reversing the ordered-product argument gives
-the $Z$ marginal for the same completed measurement. Intermediate
-unsandwiched scalars may be complex; take real parts when estimating them.
+\uses{lem:qld-global-complete,lem:qld-global-products,lem:qld-global-separate,def:cross-distance}
+\lean{  MIPRE.QLD.sum_uniform_zBlk, MIPRE.QLD.sum_uniform_xBlk, MIPRE.QLD.sq_sub_two_mul_le_sq,
+  MIPRE.QLD.one_sub_two_sqrt_le_sum_snorm_sq, MIPRE.QLD.marg_Z_ge, MIPRE.QLD.marg_X_ge,
+  MIPRE.QLD.inconsistency_evalMarg_Z_le, MIPRE.QLD.inconsistency_evalMarg_X_le}
+\leanok
+Let $\Delta$ be the bound of Lemma~\ref{lem:qld-global-products} and $\delta_G$ the weight of the
+outcomes that are not of the separated form. Then the evaluated $Z$ marginal of the completed pair
+measurement is consistent with Bob's expanded $(\mathtt{Point}, Z)$ measurement at a uniform
+$z \in \F_q^m$, with error at most $2\sqrt{\Delta} + 2/q + \delta_G$, and likewise the $X$
+marginal with the $X$ measurement at a uniform $x$.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:qld-global-complete,lem:qld-global-products,lem:qld-global-separate}
+\leanok
+Write $B_u(c)$ for the combination of the ordered products $\widehat M^X_a \widehat M^Z_b$ along
+$\alpha a + \beta b = c$. From $\sum_g \mathbb E_u \|(G_g \otimes (\Id - B_u(g(u))))\Phi\|^2 \leq
+\Delta$ and $\|(G_g \otimes \Id)\Phi\| \leq \|(G_g \otimes B_u)\Phi\| +
+\|(G_g \otimes (\Id - B_u))\Phi\|$, one Cauchy--Schwarz over the pairs $(u, g)$ gives
+$\sum_g \mathbb E_u \|(G_g \otimes B_u(g(u)))\Phi\|^2 \geq 1 - 2\sqrt{\Delta}$. For a good
+outcome, the fibre analysis of Lemma~\ref{lem:qld-global-separate} bounds the left-hand side
+above by $2/q \cdot \langle G_g \otimes \Id \rangle$ plus the diagonal weight
+$\mathbb E_{u_0} \langle G_g \otimes \widehat M^Z_{g_Z(z)}(z)\rangle$, and the outcomes that are
+not good contribute at most $\delta_G$ in total. The $z$ block of a uniform padded point is
+uniform, so what remains is exactly the $Z$ marginal, and rearranging gives the bound. The $X$
+marginal is the same computation from the other product order. No complex intermediate appears:
+every quantity estimated here is a squared norm or a Born probability of a positive operator.
+\end{proof}
 
 \begin{lemma}[Global robustness and register transport]
 \label{lem:qld-global-robustness}
 \ledgernode{1.2.2.13.10}
-\uses{lem:qld-global-sandwich,lem:qld-global-setup}
-All preceding losses are absorbed by
-$a(md)^a(\eps^b+q^{-b}+2^{-bmd})$ after increasing $a$ and decreasing $b$.
-Repeat the construction on each of the two relevant register cuts to obtain
-both evaluated marginal estimates without a symmetry assumption.
-Constants in the intermediate $O$ bounds are absorbed into the displayed
-error; they are not silently set to one in the state-distance relation.
+\uses{lem:qld-global-sandwich,lem:qld-global-separate,lem:qld-global-setup}
+\lean{  MIPRE.isPVM_reindex, MIPRE.isPVM_reindex_povm, MIPRE.reindex_aOp_aOp,
+  MIPRE.POVM.aOp_aOp_reindex, MIPRE.ProjectiveMeasurement.isPVM_M, MIPRE.QLD.deltaProd,
+  MIPRE.QLD.deltaSep, MIPRE.QLD.deltaS, MIPRE.QLD.GlobalPair.one_sub_two_eta_ge,
+  MIPRE.QLD.GlobalPair.sum_not_isGood_mass_A_le', MIPRE.QLD.GlobalPair.sum_not_isGood_mass_B_le',
+  MIPRE.QLD.liftPt, MIPRE.QLD.liftPt_mats, MIPRE.QLD.GlobalPair.inconsistency_evalMarg_A_le,
+  MIPRE.QLD.GlobalPair.inconsistency_evalMarg_B_le}
+\leanok
+Collect the three errors of stage 4b--4c as explicit functions of the error $\delta$ of
+Lemma~\ref{lem:qld-global-pvm} and the failure $\eps$ of the strategy:
+$\Delta = 2\delta + 2 \cdot 57676416\,\eps$ is the ordered-products bound,
+$\delta_G = 8\Delta$ the weight of the outcomes that are not of the separated form, and
+$\delta_S = 2\sqrt{\Delta} + 2/q + \delta_G$ the marginal error. The bound
+$\delta_G = 8\Delta$ holds under $48md \leq q$, where the factor $1 - 2\eta$ of
+Lemma~\ref{lem:qld-global-separate} is at least $1/2$. Both register versions are obtained by
+running the same estimates against the swapped padded state; no symmetry of the strategy is
+assumed. Finally the measurements are carried from the dilated registers
+$((d_A \times \mathrm{Anc}) \times \F_q^2) \times \mathrm{Ans}$ to the shape
+$(d_A \times \mathrm{Anc}) \times E_A$ of Lemma~\ref{lem:qld-simultaneous} by the associativity
+reindexing, which preserves projectivity, the Born rule and every inconsistency.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:qld-global-sandwich,lem:qld-global-separate}
+\leanok
+For the arithmetic: $2 + 2d + 8md \leq 12md$ for $m, d \geq 1$, so $48md \leq q$ gives
+$\eta = (2 + 2d + 8md)/q \leq 1/4$ and $1 - 2\eta \geq 1/2$; since the weight is nonnegative,
+Lemma~\ref{lem:qld-global-separate} then reads $\delta_G \leq 8\Delta$. For the transport:
+reindexing a register along an equivalence is a $*$-isomorphism of the matrix algebra, so it takes
+projective measurements to projective measurements, and conjugating the state by the same
+equivalence leaves every quadratic form unchanged; extending an operator by the identity twice
+and reassociating is extending it once by the product ancilla. Bob's versions are Alice's applied
+to the swapped state, which the inconsistency and the Born rule exchange.
+\end{proof}
 
 \subsubsection{Separation and the swap isometry}
 

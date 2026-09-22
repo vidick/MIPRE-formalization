@@ -8,6 +8,8 @@ import MIPRE.Background.QLD.Simul
 import MIPRE.Background.QLD.Dummy
 import MIPRE.Background.QLD.Products
 import MIPRE.Background.QLD.Linear
+import MIPRE.Background.QLD.Separate
+import MIPRE.Background.QLD.Complete
 import MIPRE.Background.LIDT.Adapter.Registers
 
 /-!
@@ -516,8 +518,251 @@ theorem sum_bad_linear_mass_B_le (hd : 1 ≤ d) (hψ : star ψ ⬝ᵥ ψ = 1)
     (P.products_XZ_B hm hψ hfail)
   simpa only [bornProb_swapVec] using h
 
+/-- **`lem:qld-global-separate` for Alice's global measurement**: the outcomes that are not of the
+form `α g_X(x) + β g_Z(z)` weigh at most `4Δ / (1 - 2η)`, where `Δ = 2δ + 2 · 57676416 ε` is the
+bound of `lem:qld-global-products` for either order and `η = (2 + 2d + 8md)/q`. -/
+theorem sum_not_isGood_mass_A_le (hd : 1 ≤ d) (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
+    (1 - 2 * ((2 + 2 * d + 8 * m * d) / Fintype.card F))
+        * ∑ g ∈ univ.filter (fun g => ¬ IsGood g),
+          bornProb (padState (F := F) (m := m) (d := d) ψ) (P.GA.M () g) 1
+      ≤ 4 * (2 * δ + 2 * (57676416 * ε)) := by
+  have h := sum_not_isGood_mass_le hd _ P.GA (isPVM_liftOp hprojB .X) (isPVM_liftOp hprojB .Z)
+    (P.products_XZ_A hm hψ hfail) (P.products_ZX_A hm hψ hfail)
+  linarith
+
+/-- **`lem:qld-global-separate` for Bob's global measurement.** -/
+theorem sum_not_isGood_mass_B_le (hd : 1 ≤ d) (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
+    (1 - 2 * ((2 + 2 * d + 8 * m * d) / Fintype.card F))
+        * ∑ g ∈ univ.filter (fun g => ¬ IsGood g),
+          bornProb (padState (F := F) (m := m) (d := d) ψ) 1 (P.GB.M () g)
+      ≤ 4 * (2 * δ + 2 * (57676416 * ε)) := by
+  have h := sum_not_isGood_mass_le hd _ P.GB (isPVM_liftOp hprojA .X) (isPVM_liftOp hprojA .Z)
+    (P.products_XZ_B hm hψ hfail) (P.products_ZX_B hm hψ hfail)
+  simp only [bornProb_swapVec] at h
+  linarith
+
+/-! ## The errors of stage 4c -/
+
 end GlobalPair
 
+/-- **`Δ`**, the ordered-products bound of `lem:qld-global-products` for a `GlobalPair` of error
+`δ` on a strategy of failure `ε`: `2 δ + 2 κ` with `κ = 57676416 ε`. -/
+def deltaProd (δ ε : ℝ) : ℝ := 2 * δ + 2 * (57676416 * ε)
+
+/-- **`δ_G`**, the weight of the outcomes that are not of the separated form
+`α g_X(x) + β g_Z(z)`: `8 Δ`, from `lem:qld-global-separate` under `48 m d ≤ q`. -/
+def deltaSep (δ ε : ℝ) : ℝ := 8 * deltaProd δ ε
+
+/-- **`δ_S`**, the error of `lem:qld-simultaneous`: the marginal estimate
+`2 √Δ + 2/q + δ_G`. -/
+noncomputable def deltaS (q : ℕ) (δ ε : ℝ) : ℝ :=
+  2 * Real.sqrt (deltaProd δ ε) + 2 / q + deltaSep δ ε
+
+/-- The opposite party's expanded point measurement, doubly extended to the dilated register. -/
+def liftPt {d' : Type} [Fintype d'] [DecidableEq d']
+    (M : Question F m → POVM (Answer F m d) d') (W : Bas) (u : Point F m) :
+    POVM F (PadReg F m d d') :=
+  ((hatPtPOVM M W u).aOp (E := F × F)).aOp (E := CL.Answer F (4 * m) d 1)
+
+theorem liftPt_mats {d' : Type} [Fintype d'] [DecidableEq d']
+    (M : Question F m → POVM (Answer F m d) d') (W : Bas) (u : Point F m) (a : F) :
+    (((liftPt M W u).mats a).val) = liftOp M W u a := rfl
+
+namespace GlobalPair
+
+variable {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
+  {ψ : dA × dB → ℂ} {hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val)}
+  {hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)} {δ : ℝ}
+  (P : GlobalPair ψ hprojA hprojB δ)
+
+variable (hm : m ∣ Fintype.card F) {ε : ℝ}
+
+omit [Algebra (ZMod 2) F] in
+/-- Under `48 m d ≤ q` the factor `1 - 2η` of `lem:qld-global-separate` is at least `1/2`. -/
+theorem one_sub_two_eta_ge (hd : 1 ≤ d) (hq : 48 * m * d ≤ Fintype.card F) :
+    (1 : ℝ) / 2 ≤ 1 - 2 * ((2 + 2 * d + 8 * m * d) / Fintype.card F) := by
+  have hm1 : (1 : ℝ) ≤ m := by
+    exact_mod_cast Nat.one_le_iff_ne_zero.mpr (NeZero.ne m)
+  have hd1 : (1 : ℝ) ≤ d := by exact_mod_cast hd
+  have hq0 : (0 : ℝ) < Fintype.card F := by
+    exact_mod_cast Fintype.card_pos
+  have hqc : (48 : ℝ) * m * d ≤ Fintype.card F := by exact_mod_cast hq
+  have hkey : ((2 : ℝ) + 2 * d + 8 * m * d) / Fintype.card F ≤ 1 / 4 := by
+    rw [div_le_iff₀ hq0]
+    nlinarith
+  linarith
+
+include hm in
+/-- **`lem:qld-global-separate`, solved for the weight**: under `48 m d ≤ q` the outcomes of
+Alice's global measurement that are not of the separated form weigh at most `δ_G`. -/
+theorem sum_not_isGood_mass_A_le' (hd : 1 ≤ d) (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (hq : 48 * m * d ≤ Fintype.card F) :
+    ∑ g ∈ univ.filter (fun g => ¬ IsGood g),
+      bornProb (padState (F := F) (m := m) (d := d) ψ) (P.GA.M () g) 1
+      ≤ deltaSep δ ε := by
+  have h := P.sum_not_isGood_mass_A_le hm hd hψ hfail
+  have h2 := one_sub_two_eta_ge (F := F) (m := m) (d := d) hd hq
+  have h0 : 0 ≤ ∑ g ∈ univ.filter (fun g => ¬ IsGood g),
+      bornProb (padState (F := F) (m := m) (d := d) ψ) (P.GA.M () g) 1 :=
+    Finset.sum_nonneg fun g _ => bornProb_nonneg _
+      (posSemidef_of_proj (P.GA.selfAdjoint () g) (P.GA.projective () g)) Matrix.PosSemidef.one
+  rw [deltaSep, deltaProd]
+  nlinarith
+
+include hm in
+/-- **`lem:qld-global-separate`, solved for the weight**, for Bob's global measurement. -/
+theorem sum_not_isGood_mass_B_le' (hd : 1 ≤ d) (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (hq : 48 * m * d ≤ Fintype.card F) :
+    ∑ g ∈ univ.filter (fun g => ¬ IsGood g),
+      bornProb (swapVec (padState (F := F) (m := m) (d := d) ψ)) (P.GB.M () g) 1
+      ≤ deltaSep δ ε := by
+  have h := P.sum_not_isGood_mass_B_le hm hd hψ hfail
+  simp only [bornProb_swapVec]
+  have h2 := one_sub_two_eta_ge (F := F) (m := m) (d := d) hd hq
+  have h0 : 0 ≤ ∑ g ∈ univ.filter (fun g => ¬ IsGood g),
+      bornProb (padState (F := F) (m := m) (d := d) ψ) 1 (P.GB.M () g) :=
+    Finset.sum_nonneg fun g _ => bornProb_nonneg _ Matrix.PosSemidef.one
+      (posSemidef_of_proj (P.GB.selfAdjoint () g) (P.GB.projective () g))
+  rw [deltaSep, deltaProd]
+  nlinarith
+
+/-! ## The evaluated marginals of the completed pair measurement -/
+
+include hm in
+/-- **`lem:qld-global-sandwich` for Alice's completed pair measurement**: its evaluated `W`
+marginal is consistent with Bob's expanded `(Point, W)` measurement, with error `δ_S`. -/
+theorem inconsistency_evalMarg_A_le (hd : 1 ≤ d) (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (hq : 48 * m * d ≤ Fintype.card F)
+    (W : Bas) :
+    inconsistency (uniform (Point F m)) (padState (F := F) (m := m) (d := d) ψ)
+        (fun u => evalMarg (pairMeas hd P.GA) W u) (fun u => liftPt MB W u)
+      ≤ deltaS (Fintype.card F) δ ε := by
+  have hbad := P.sum_not_isGood_mass_A_le' hm hd hψ hfail hq
+  cases W with
+  | X =>
+      refine inconsistency_evalMarg_X_le hd (padState_unit hψ) P.GA (isPVM_liftOp hprojB .X)
+        (isPVM_liftOp hprojB .Z) (fun u => liftPt MB .X u) (fun u a => liftPt_mats MB .X u a)
+        ?_ hbad
+      rw [deltaProd]
+      exact P.products_ZX_A hm hψ hfail
+  | Z =>
+      refine inconsistency_evalMarg_Z_le hd (padState_unit hψ) P.GA (isPVM_liftOp hprojB .X)
+        (isPVM_liftOp hprojB .Z) (fun u => liftPt MB .Z u) (fun u a => liftPt_mats MB .Z u a)
+        ?_ hbad
+      rw [deltaProd]
+      exact P.products_XZ_A hm hψ hfail
+
+include hm in
+/-- **`lem:qld-global-sandwich` for Bob's completed pair measurement**, on the padded state with
+the parties exchanged. -/
+theorem inconsistency_evalMarg_B_le (hd : 1 ≤ d) (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (hq : 48 * m * d ≤ Fintype.card F)
+    (W : Bas) :
+    inconsistency (uniform (Point F m)) (padState (F := F) (m := m) (d := d) ψ)
+        (fun u => liftPt MA W u) (fun u => evalMarg (pairMeas hd P.GB) W u)
+      ≤ deltaS (Fintype.card F) δ ε := by
+  have hbad := P.sum_not_isGood_mass_B_le' hm hd hψ hfail hq
+  rw [← inconsistency_swapVec]
+  cases W with
+  | X =>
+      refine inconsistency_evalMarg_X_le hd (swapVec_padState_unit ψ hψ) P.GB
+        (isPVM_liftOp hprojA .X) (isPVM_liftOp hprojA .Z) (fun u => liftPt MA .X u)
+        (fun u a => liftPt_mats MA .X u a) ?_ hbad
+      rw [deltaProd]
+      exact P.products_ZX_B hm hψ hfail
+  | Z =>
+      refine inconsistency_evalMarg_Z_le hd (swapVec_padState_unit ψ hψ) P.GB
+        (isPVM_liftOp hprojA .X) (isPVM_liftOp hprojA .Z) (fun u => liftPt MA .Z u)
+        (fun u a => liftPt_mats MA .Z u a) ?_ hbad
+      rw [deltaProd]
+      exact P.products_XZ_B hm hψ hfail
+
+/-! ## The interface instance -/
+
+include hm in
+/-- **`lem:qld-simultaneous`**: the completed pair measurements of a `GlobalPair`, carried to the
+register shape of `SimulPair` by the associativity reindexing, are a `SimulPair` of error
+`δ_S = 2 √Δ + 2/q + δ_G`. -/
+noncomputable def toSimulPair (hd : 1 ≤ d) (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (hq : 48 * m * d ≤ Fintype.card F) :
+    SimulPair ψ MA MB (deltaS (Fintype.card F) δ ε) where
+  EA := (F × F) × CL.Answer F (4 * m) d 1
+  instFintypeEA := inferInstance
+  instDecEqEA := inferInstance
+  EB := (F × F) × CL.Answer F (4 * m) d 1
+  instFintypeEB := inferInstance
+  instDecEqEB := inferInstance
+  Φ := reindexVec (Equiv.prodAssoc (dA × Anc F m) (F × F) (CL.Answer F (4 * m) d 1))
+    (Equiv.prodAssoc (dB × Anc F m) (F × F) (CL.Answer F (4 * m) d 1))
+    (padState (F := F) (m := m) (d := d) ψ)
+  Φ_unit := reindexVec_unit _ _ (padState_unit hψ)
+  Φ_reduced := fun X Y => by
+    rw [← reindex_aOp_aOp (E := F × F) (E' := CL.Answer F (4 * m) d 1) X,
+      ← reindex_aOp_aOp (E := F × F) (E' := CL.Answer F (4 * m) d 1) Y, bornProb_reindex,
+      bornProb_padState_aOp_aOp]
+  SA := (pairMeas hd P.GA).reindex
+    (Equiv.prodAssoc (dA × Anc F m) (F × F) (CL.Answer F (4 * m) d 1))
+  SA_proj := isPVM_reindex_povm _ (isPVM_pairMeas hd P.GA)
+  SB := (pairMeas hd P.GB).reindex
+    (Equiv.prodAssoc (dB × Anc F m) (F × F) (CL.Answer F (4 * m) d 1))
+  SB_proj := isPVM_reindex_povm _ (isPVM_pairMeas hd P.GB)
+  consA := fun W => by
+    have hmap : ∀ u : Point F m, evalMarg ((pairMeas hd P.GA).reindex
+        (Equiv.prodAssoc (dA × Anc F m) (F × F) (CL.Answer F (4 * m) d 1))) W u
+        = (evalMarg (pairMeas hd P.GA) W u).reindex
+          (Equiv.prodAssoc (dA × Anc F m) (F × F) (CL.Answer F (4 * m) d 1)) :=
+      fun u => (POVM.map_reindex _ _ _).symm
+    have hpt : ∀ u : Point F m,
+        (hatPtPOVM MB W u).aOp (E := (F × F) × CL.Answer F (4 * m) d 1)
+          = (liftPt MB W u).reindex
+            (Equiv.prodAssoc (dB × Anc F m) (F × F) (CL.Answer F (4 * m) d 1)) :=
+      fun u => (POVM.aOp_aOp_reindex _).symm
+    simp only [hmap, hpt]
+    rw [inconsistency_reindex]
+    exact P.inconsistency_evalMarg_A_le hm hd hψ hfail hq W
+  consB := fun W => by
+    have hmap : ∀ u : Point F m, evalMarg ((pairMeas hd P.GB).reindex
+        (Equiv.prodAssoc (dB × Anc F m) (F × F) (CL.Answer F (4 * m) d 1))) W u
+        = (evalMarg (pairMeas hd P.GB) W u).reindex
+          (Equiv.prodAssoc (dB × Anc F m) (F × F) (CL.Answer F (4 * m) d 1)) :=
+      fun u => (POVM.map_reindex _ _ _).symm
+    have hpt : ∀ u : Point F m,
+        (hatPtPOVM MA W u).aOp (E := (F × F) × CL.Answer F (4 * m) d 1)
+          = (liftPt MA W u).reindex
+            (Equiv.prodAssoc (dA × Anc F m) (F × F) (CL.Answer F (4 * m) d 1)) :=
+      fun u => (POVM.aOp_aOp_reindex _).symm
+    simp only [hmap, hpt]
+    rw [inconsistency_reindex]
+    exact P.inconsistency_evalMarg_B_le hm hd hψ hfail hq W
+
+end GlobalPair
+
+/-! ## `lem:qld-simultaneous`, from the strategy -/
+
+section Exists
+
+variable (hm : m ∣ Fintype.card F) (hm4 : 4 * m ∣ Fintype.card F)
+  {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
+  {ψ : dA × dB → ℂ} {ε : ℝ}
+
+include hm4 in
+/-- **`lem:qld-simultaneous`**: a legal projective strategy of the Pauli basis test of value
+`1 - ε` has a simultaneous pair measurement with error
+`δ_S(q, δ_ld, ε) = 2 √Δ + 2/q + 8 Δ`, `Δ = 2 δ_ld + 2 · 57676416 ε`. -/
+theorem exists_simulPair (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
+    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (hε : 0 ≤ ε)
+    (hlegA : LegalSupport MA) (hlegB : LegalSupport MB) (hd : 1 ≤ d)
+    (hq : 48 * m * d ≤ Fintype.card F) :
+    Nonempty (SimulPair ψ MA MB
+      (deltaS (Fintype.card F) (deltaLD (Fintype.card F) m d ε) ε)) := by
+  obtain ⟨P⟩ := exists_globalPair hm hm4 hψ hfail hprojA hprojB hε hlegA hlegB hd
+  exact ⟨P.toSimulPair hm hd hψ hfail hq⟩
+
+end Exists
 
 end MIPRE.QLD
 
