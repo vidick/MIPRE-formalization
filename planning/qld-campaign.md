@@ -2051,3 +2051,28 @@ is stating the three consistencies --- `eq:qld-unitary-2`, `-3`, `-4` --- as `ag
 at this interface. That is the second time in two pull requests that an appendix estimate turned
 out to be already in Foundations under another name; the habit is now worth the two minutes it
 costs.
+
+### PR N: the triangle chain's adapter, and a duplicate of my own making (2026-09-22)
+
+Two things.
+
+**`inconsistency_triangle`.** `eq:qld-unitary-5`'s estimate is `agreeSum_triangle`, which speaks of
+the *agreement* of two POVM families; every consistency in the QLD interface --- `consA`, `consB`,
+`inconsistency_mTilde_le` --- is stated as an *inconsistency* instead. The two are the same number
+(`sum_bornProb_diag_eq`), so the adapter is five lines, and with it the display is the estimate
+applied to `eq:qld-unitary-2`, `-3` and `-4`. One Lean detail worth remembering: passing the
+constant as `(delta := delta)` was necessary, because `rw` closes its goal by `rfl` and would
+otherwise unify the triangle's implicit constant with the first hypothesis's left-hand side.
+
+**A duplicate, removed.** `povmOfIsPVM`, which PR #158 added to `Pulling.lean` to bridge `IsPVM` to
+`POVM`, already existed as `IsPVM.toPOVM` in `MIPRE/Foundations/Commutation.lean` --- and the QLD
+tree was already using it, in `inconsistency_mTilde_le` two files away. Removed, and
+`sum_xSqNorm_fibre_le` now goes through the existing one. This is the third time in three pull
+requests that something in this appendix was already in the library; the first two were finds, this
+one was a miss. The lesson is the same and it is now cheap to apply: `grep` the declaration name's
+shape before writing it.
+
+Left after this: putting `eq:qld-unitary-5`'s three consistencies on one cut (`consA` and `consB`
+are read along the padded state's cut, `inconsistency_mTilde_le` along the regrouped one, and
+`bornProb_regroupVec` carries a Born probability between them); the transport from the product
+state back to the padded state; item 2's assembly; and the pulling chain's assembly.

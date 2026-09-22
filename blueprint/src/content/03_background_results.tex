@@ -4056,7 +4056,7 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.qform_sandwich_nonneg, MIPRE.snorm_sq_sum_proj_sandwich,
   MIPRE.sum_qform_sandwich_le_of_subset, MIPRE.abs_sum_qform_swap_le,
   MIPRE.sum_snorm_sq_proj_comp_le, MIPRE.snorm_one_sub_aOp_mul_bOp_le,
-  MIPRE.sum_snorm_sq_insert_le, MIPRE.povmOfIsPVM, MIPRE.sum_xSqNorm_fibre_le}
+  MIPRE.sum_snorm_sq_insert_le, MIPRE.sum_xSqNorm_fibre_le}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4182,7 +4182,7 @@ deviation per index would multiply the bound by the size of a fibre. The display
 measurements the same way costs nothing --- which is Item 2 of \texttt{fact:agreement}, then
 \texttt{fact:data-processing}, then Item 1 of \texttt{fact:agreement} --- and Foundations has it
 as \texttt{sum\_xSqNorm\_map\_le}, on bundled POVMs. The chain speaks \texttt{IsPVM};
-\texttt{povmOfIsPVM} and \texttt{sum\_xSqNorm\_fibre\_le} bridge the two.
+\texttt{IsPVM.toPOVM} and \texttt{sum\_xSqNorm\_fibre\_le} bridge the two.
 
 \emph{Not formalized}: the assembly of the chain itself --- the index bookkeeping of its eleven
 displays, and Lemma~\ref{lem:qld-povm-to-obs} at the end. Every step it assembles is in place.
@@ -4212,7 +4212,7 @@ displays, and Lemma~\ref{lem:qld-povm-to-obs} at the end. Every step it assemble
   MIPRE.QLD.conj_syn_of_sign, MIPRE.QLD.swapU_conj_mTilde, MIPRE.QLD.swapU_conj_mTilde_X,
   MIPRE.QLD.swapU_conj_mTilde_Z, MIPRE.QLD.sum_snorm_sq_sub_eq_two_sub,
   MIPRE.QLD.sum_uniform_agree_bornProb_le, MIPRE.QLD.SimulPair.swapA,
-  MIPRE.QLD.SimulPair.swapU_conj_mTildeAt}
+  MIPRE.QLD.SimulPair.swapU_conj_mTildeAt, MIPRE.QLD.inconsistency_triangle}
 There is $\delta_{qld} = O\bigl( \delta_S^{1/4} + md/q \bigr)$ and local unitaries $V_\alice$,
 $V_\bob$ on the expanded spaces such that, writing $M = 2^m$:
 \begin{enumerate}
@@ -4320,11 +4320,15 @@ Lemma~\ref{lem:qld-pauli-selfcons} and are hypotheses of \texttt{exists\_auxVec\
 than conclusions; and, in item 2, \texttt{eq:qld-unitary-5} --- the triangle chain through
 Lemma~\ref{lem:qld-win} and Lemma~\ref{lem:qld-exact-paulis} --- the transport of the estimate
 from $\ket{\Delta}$ back to $\ket{\hat\psi}$ across item 1, and the assembly. Hence no
-\texttt{leanok} mark at either level. Of those, \texttt{eq:qld-unitary-5} needs no new estimate:
-its engine is the paper's \texttt{fact:triangle-for-simeq}, already in Foundations as
+\texttt{leanok} mark at either level. Of those, \texttt{eq:qld-unitary-5} needs no new estimate.
+Its engine is the paper's \texttt{fact:triangle-for-simeq}, already in Foundations as
 \texttt{agreeSum\_triangle} (with $11\delta$ for the paper's $9\delta$, as
-Lemma~\ref{lem:qld-global-success} records), so what is left there is stating its three
-consistencies at this interface.
+Lemma~\ref{lem:qld-global-success} records), and \texttt{inconsistency\_triangle} is that
+estimate in the vocabulary this interface states everything in --- an inconsistency rather than an
+agreement, the two being the same number. What is left of the display is putting its three
+consistencies on one cut: \texttt{consA} and \texttt{consB} are read along the padded state's own
+cut and Lemma~\ref{lem:qld-exact-paulis}'s item 1 along the regrouped one, and
+\texttt{bornProb\_regroupVec} is what carries a Born probability between them.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the repairs above, including the
 ledger's declared dependencies for node $1.2.2.16$, which name $1.2.2.4$
 (Lemma~\ref{lem:qld-win}) and which the \texttt{uses} list did not.

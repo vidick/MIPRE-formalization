@@ -381,27 +381,12 @@ function of the outcome. The passage between the two is the paper's `fact:agreem
 `fact:data-processing` and `fact:agreement` again, and for *projective* families it is free: the
 summed deviation and the agreement probability determine each other exactly, and agreement can
 only increase under a relabelling. Foundations has that as `sum_xSqNorm_map_le`, on bundled
-POVMs; what the chain speaks is `IsPVM`, so the two are bridged here. -/
+POVMs; what the chain speaks is `IsPVM`, and `IsPVM.toPOVM` bridges the two. -/
 
 section Coarse
 
 variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
   {Λ Λ' : Type*} [Fintype Λ] [DecidableEq Λ] [Fintype Λ'] [DecidableEq Λ']
-
-/-- **A projective measurement, as a bundled POVM.** -/
-def povmOfIsPVM {P : Λ → Matrix dA dA ℂ} (hP : IsPVM P) : POVM Λ dA where
-  mats a := ⟨P a, selfAdjoint.mem_iff.mpr (by
-    rw [Matrix.star_eq_conjTranspose]
-    exact hP.isSelfAdjoint a)⟩
-  nonneg a := Subtype.coe_le_coe.mp (Matrix.nonneg_iff_posSemidef.mpr (hP.posSemidef a))
-  normalized := by
-    apply Subtype.ext
-    rw [AddSubmonoidClass.coe_finsetSum]
-    exact hP.sum_eq_one
-
-omit [DecidableEq Λ] in
-@[simp] theorem povmOfIsPVM_mats {P : Λ → Matrix dA dA ℂ} (hP : IsPVM P) (a : Λ) :
-    (((povmOfIsPVM hP).mats a).val) = P a := rfl
 
 /-- **Coarse-graining a cross-party consistency costs nothing.** Two projective measurements
 relabelled the same way stay as close as they were --- with no factor for the size of a fibre,
@@ -412,8 +397,8 @@ theorem sum_xSqNorm_fibre_le {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 
     ∑ c, xSqNorm ψ (∑ a ∈ univ.filter fun a => f a = c, A a)
         (∑ a ∈ univ.filter fun a => f a = c, B a)
       ≤ ∑ a, xSqNorm ψ (A a) (B a) := by
-  have h := sum_xSqNorm_map_le hψ (povmOfIsPVM hA) (povmOfIsPVM hB) hA hB f
-  simpa only [POVM.map_mats, povmOfIsPVM_mats] using h
+  have h := sum_xSqNorm_map_le hψ hA.toPOVM hB.toPOVM hA hB f
+  simpa only [POVM.map_mats, IsPVM.toPOVM_mats] using h
 
 end Coarse
 

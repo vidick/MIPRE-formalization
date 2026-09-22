@@ -211,6 +211,40 @@ theorem sum_uniform_agree_bornProb_le {Λ : Type*} [Fintype Λ] [DecidableEq Λ]
 
 end Agree
 
+/-! ## Display `eq:qld-unitary-5`: the triangle chain
+
+Three consistencies chain to a fourth. The paper's `fact:triangle-for-simeq` item 1 is already in
+Foundations as `agreeSum_triangle`, on the *agreement* of two POVM families; the appendix's
+interface states everything as an *inconsistency* instead, and the two are the same number
+(`sum_bornProb_diag_eq`). This is the adapter, and with it `eq:qld-unitary-5` is the estimate
+applied to `eq:qld-unitary-2`, `-3` and `-4`.
+
+The constant is the Lean one, `11 delta` where the paper has `9 delta`: the padding into a
+four-dimensional auxiliary space that buys the `9` is what `agreeSum_triangle` does without, and
+`delta_qld` absorbs the difference. -/
+
+section Triangle
+
+variable {X Λ : Type*} [Fintype X] [Fintype Λ] [DecidableEq Λ]
+  {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+
+/-- **The agreement triangle, read as inconsistencies.** `A` against `D` through `B` and `C`,
+where the two middle legs share a family on each side. -/
+theorem inconsistency_triangle {μ : X → ℝ} (hμ0 : ∀ x, 0 ≤ μ x) (hμ1 : ∑ x, μ x = 1)
+    {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) (A C : X → POVM Λ dA) (B D : X → POVM Λ dB)
+    {δ : ℝ} (hAB : inconsistency μ ψ A B ≤ δ) (hCB : inconsistency μ ψ C B ≤ δ)
+    (hCD : inconsistency μ ψ C D ≤ δ) :
+    inconsistency μ ψ A D ≤ 11 * δ := by
+  have hbridge : ∀ (M : X → POVM Λ dA) (N : X → POVM Λ dB),
+      1 - agreeSum μ ψ M N = inconsistency μ ψ M N := fun M N => by
+    rw [agreeSum, sum_bornProb_diag_eq hμ1 hψ M N]
+    ring
+  have h := agreeSum_triangle (δ := δ) hμ0 hμ1 hψ A C B D
+    ((hbridge A B).symm ▸ hAB) ((hbridge C B).symm ▸ hCB) ((hbridge C D).symm ▸ hCD)
+  rwa [hbridge] at h
+
+end Triangle
+
 /-! ## The same, on the interface of `lem:qld-simultaneous`
 
 The swap unitary of the appendix is built from the simultaneous pair measurement, so at the
