@@ -2120,3 +2120,30 @@ sight. What remains of those two legs is instantiating `agree_subtest_le` at the
 and `adj_point_pauli` with the readings `rdVal` and `rdPauli`, averaging over contents into points
 with `sum_content_pt`, and halving the cross-deviation into an inconsistency (exact for projective
 families).
+
+### PR N, third piece: the two middle legs, discharged (2026-09-22)
+
+`eq:qld-unitary-5`'s two middle legs are no longer hypotheses. They are items 1 and 3 of
+`lem:qld-win` --- `item_consistency` at the point type and `item_pauli_consistency` --- both of
+which were already in `Win.lean`, and three steps carry each into the form the triangle wants.
+
+* The point question a content asks is the point the content carries (`Content.question` at
+  `.point W` is `.point W (c.pt W)`, by `rfl`), so the average over contents of a function of that
+  point is the uniform average over points: `sum_content_pt`, also already in.
+* For *projective* families a cross-party deviation is exactly twice the inconsistency
+  (`inconsistency_eq_half_xPovmDist`). Only `≤` holds for general POVMs
+  (`xSqNorm_sum_le_two_mul`); what makes it an equality is that both families' masses are exactly
+  one, which `one_sub_sum_bornProb_eq` already knew.
+
+`inconsistency_pt_pt_le` and `inconsistency_pt_pauli_le` are the two legs at `86 ε`, which is
+`agree_subtest_le`'s `172 ε` halved, and `inconsistency_mTilde_pauli_le_of_win` is
+`eq:qld-unitary-5` from the game's soundness and item 1 of `lem:qld-exact-paulis` alone.
+
+Two Lean notes. `linarith` compares atoms syntactically, so a hypothesis whose Born probability is
+written unfolded and a goal whose is not will not close: `simp only [bornProb]` on the hypothesis
+was the fix, twice. And a `rw` with the measurement arguments left as `_` unified them against the
+*proof terms* supplied for projectivity, producing `POVM.map _ (MA _)` where the goal had
+`ptAtPOVM MA W u`; naming the two families in `have`s first fixed it.
+
+That is item 1 of the four in `planning/formalization-plan.md`'s QLD list, done. Left: the assembly
+of item 2, the assembly of `lem:qld-pauli-selfcons`'s chain, and `thm:qld`.

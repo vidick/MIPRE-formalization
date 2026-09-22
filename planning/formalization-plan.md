@@ -698,10 +698,10 @@ not. As of 2026-09-22 the position is: stages 1 to 4 are done; of stage 5,
 formalized and wants only the assembly, and `lem:qld-swap` has item 1 given its hypothesis and
 four of item 2's displays. **What `thm:qld` still needs, in order of distance to done:**
 
-1. the two game consistencies `SimulPair.inconsistency_mTilde_pauli_le` assumes --- point against
-   point and point against Pauli, which are instances of `agree_subtest_le` on the edges
-   `adj_self'` and `adj_point_pauli`, carried to the padded state the way
-   `inconsistency_evalMarg_A_le` carries `consA` in `PaddedLIDT.lean`;
+1. ~~the two game consistencies `eq:qld-unitary-5` assumes~~ --- **done**: they are items 1 and 3
+   of `lem:qld-win`, carried into the triangle's vocabulary by `sum_content_pt` and
+   `inconsistency_eq_half_xPovmDist`, and `inconsistency_mTilde_pauli_le_of_win` is the display
+   from the game's soundness alone;
 2. the assembly of item 2 --- `eq:qld-unitary-7` through `-9` and `abs_qform_sub_qform_le`
    threaded into the statement about `V M^(Pauli,W)_h V†`;
 3. the assembly of `lem:qld-pauli-selfcons`'s chain: its eleven displays are each formalized, and

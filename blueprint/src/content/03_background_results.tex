@@ -4216,7 +4216,10 @@ displays, and Lemma~\ref{lem:qld-povm-to-obs} at the end. Every step it assemble
   MIPRE.QLD.inconsistency_regroupVec, MIPRE.QLD.pauliAtPOVM,
   MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le, MIPRE.QLD.abs_qform_sub_qform_le,
   MIPRE.QLD.SimulPair.bornProb_padded, MIPRE.QLD.SimulPair.inconsistency_padded,
-  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le'}
+  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le',
+  MIPRE.QLD.inconsistency_eq_half_xPovmDist, MIPRE.QLD.inconsistency_pt_pt_le,
+  MIPRE.QLD.inconsistency_pt_pauli_le,
+  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le_of_win}
 There is $\delta_{qld} = O\bigl( \delta_S^{1/4} + md/q \bigr)$ and local unitaries $V_\alice$,
 $V_\bob$ on the expanded spaces such that, writing $M = 2^m$:
 \begin{enumerate}
@@ -4321,9 +4324,9 @@ where the weight is nonzero.
 
 \emph{Not formalized}: the two near-invariances themselves, which are
 Lemma~\ref{lem:qld-pauli-selfcons} and are hypotheses of \texttt{exists\_auxVec\_close} rather
-than conclusions; and, in item 2, \texttt{eq:qld-unitary-5} --- the triangle chain through
-Lemma~\ref{lem:qld-win} and Lemma~\ref{lem:qld-exact-paulis} --- the transport of the estimate
-from $\ket{\Delta}$ back to $\ket{\hat\psi}$ across item 1, and the assembly. Hence no
+than conclusions; and, in item 2, the assembly --- \texttt{eq:qld-unitary-7} through
+\texttt{-9} and the transport above, threaded into the statement about
+$V M^{(\pauli,W)}_h V^\dagger$. Hence no
 \texttt{leanok} mark at either level. 
 
 \emph{And \texttt{eq:qld-unitary-5}.} It needed no new estimate: its engine is the paper's
@@ -4346,6 +4349,19 @@ own measurements on the padded state and on the strategy's own state alike, both
 the identity on the expansion's ancillas and on the padding, so
 \texttt{inconsistency\_mTilde\_pauli\_le'} takes them on $\ket{\psi}$, where
 \texttt{agree\_subtest\_le} leaves them.
+
+\emph{And those two legs are discharged.} They are items 1 and 3 of Lemma~\ref{lem:qld-win} at the
+point and Pauli types --- \texttt{item\_consistency} and \texttt{item\_pauli\_consistency}, both
+already in --- and three steps carry each into the form the triangle wants. The point question a
+content asks is the point the content carries, so the average over contents of a function of that
+point is the uniform average over points (\texttt{sum\_content\_pt}); and for \emph{projective}
+families a cross-party deviation is exactly twice the inconsistency
+(\texttt{inconsistency\_eq\_half\_xPovmDist} --- only $\leq$ holds for general POVMs, and what
+makes it an equality is that both families' masses are exactly one). That gives
+\texttt{inconsistency\_pt\_pt\_le} and \texttt{inconsistency\_pt\_pauli\_le} at $86\eps$,
+which is \texttt{agree\_subtest\_le}'s $172\eps$ halved, and
+\texttt{inconsistency\_mTilde\_pauli\_le\_of\_win} is then \texttt{eq:qld-unitary-5} from the
+game's soundness and item 1 of Lemma~\ref{lem:qld-exact-paulis} alone.
 
 \emph{And the endgame's transport.} \texttt{abs\_qform\_sub\_qform\_le}: moving an expectation
 from the product state to the padded one costs twice the operator's bound times the distance

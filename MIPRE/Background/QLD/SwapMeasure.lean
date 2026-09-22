@@ -344,6 +344,84 @@ def pauliAtPOVM {d' : Type} [Fintype d'] [DecidableEq d']
     (M : Question F m → POVM (Answer F m d) d') (W : Bas) (u : Point F m) : POVM F d' :=
   (M (.pauli W)).map (rdPauli u)
 
+/-! ## The two middle legs, from the game
+
+`eq:qld-unitary-5`'s two middle legs are `lem:qld-win`'s items 1 and 3, which the game supplies as
+*cross-party deviations* averaged over the verifier's content. Three steps turn each into the
+inconsistency the triangle wants: the point question a content asks is the point the content
+carries, so the average over contents of a function of that point is the uniform average over
+points (`sum_content_pt`); and for projective families the deviation is exactly twice the
+inconsistency. Nothing here is an estimate --- the estimate is `agree_subtest_le`, and it is
+already in. -/
+
+section GameLegs
+
+variable {ε : ℝ}
+
+/-- **A cross-party deviation is exactly twice the inconsistency**, for projective families on a
+unit state. Only `≤` holds for POVMs (`xSqNorm_sum_le_two_mul`); what makes it an equality here is
+that both families' masses are exactly one. -/
+theorem inconsistency_eq_half_xPovmDist {X Λ : Type*} [Fintype X] [Fintype Λ] [DecidableEq Λ]
+    (μ : X → ℝ) (hψ : star ψ ⬝ᵥ ψ = 1) (M : X → POVM Λ dA) (N : X → POVM Λ dB)
+    (hM : ∀ x, IsPVM fun o => (((M x).mats o).val))
+    (hN : ∀ x, IsPVM fun o => (((N x).mats o).val)) :
+    inconsistency μ ψ M N = xPovmDist μ ψ M N / 2 := by
+  rw [inconsistency_eq_sum_pairInconsistency, xPovmDist, Finset.sum_div]
+  refine Finset.sum_congr rfl fun x _ => ?_
+  have h1 := sum_diag_eq_one_sub hψ (M x) (N x)
+  have h2 := one_sub_sum_bornProb_eq (norm_evec_eq_one_of_unit hψ) (hM x) (hN x)
+  simp only [bornProb] at h2
+  rw [mul_div_assoc]
+  congr 1
+  linarith
+
+/-- **The game's point--point consistency**, as an inconsistency over uniform points: item 1 of
+`lem:qld-win` at the type `(Point, W)`, read through the answer's field element. -/
+theorem inconsistency_pt_pt_le {hm : m ∣ Fintype.card F} (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
+    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) :
+    inconsistency (uniform (Point F m)) ψ (fun u => ptAtPOVM MA W u)
+        (fun u => ptAtPOVM MB W u) ≤ 86 * ε := by
+  have hM : ∀ u : Point F m, IsPVM fun o => (((ptAtPOVM MA W u).mats o).val) :=
+    fun u => isPVM_povm_map _ (hprojA _) _
+  have hN : ∀ u : Point F m, IsPVM fun o => (((ptAtPOVM MB W u).mats o).val) :=
+    fun u => isPVM_povm_map _ (hprojB _) _
+  rw [inconsistency_eq_half_xPovmDist (uniform (Point F m)) hψ _ _ hM hN, xPovmDist,
+    ← sum_content_pt W fun u => ∑ o : F, xSqNorm ψ (((ptAtPOVM MA W u).mats o).val)
+      (((ptAtPOVM MB W u).mats o).val)]
+  have h := item_consistency (hm := hm) hψ hfail (.point W) (φ := rdVal)
+  rw [xPovmDist] at h
+  simp only [show ∀ c : Content F m, (MA (Content.question hm c (Ty.point W))).map rdVal
+      = ptAtPOVM MA W (c.pt W) from fun _ => rfl,
+    show ∀ c : Content F m, (MB (Content.question hm c (Ty.point W))).map rdVal
+      = ptAtPOVM MB W (c.pt W) from fun _ => rfl] at h
+  linarith
+
+/-- **The game's point--Pauli consistency**, likewise: item 3 of `lem:qld-win`, the low-degree
+encoding of the Pauli answer evaluated at the sampled point against the point answer. -/
+theorem inconsistency_pt_pauli_le {hm : m ∣ Fintype.card F} (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
+    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) :
+    inconsistency (uniform (Point F m)) ψ (fun u => ptAtPOVM MA W u)
+        (fun u => pauliAtPOVM MB W u) ≤ 86 * ε := by
+  have hM : ∀ u : Point F m, IsPVM fun o => (((ptAtPOVM MA W u).mats o).val) :=
+    fun u => isPVM_povm_map _ (hprojA _) _
+  have hN : ∀ u : Point F m, IsPVM fun o => (((pauliAtPOVM MB W u).mats o).val) :=
+    fun u => isPVM_povm_map _ (hprojB _) _
+  rw [inconsistency_eq_half_xPovmDist (uniform (Point F m)) hψ _ _ hM hN, xPovmDist,
+    ← sum_content_pt W fun u => ∑ o : F, xSqNorm ψ (((ptAtPOVM MA W u).mats o).val)
+      (((pauliAtPOVM MB W u).mats o).val)]
+  have h := item_pauli_consistency (hm := hm) hψ hfail W
+  simp only [show ∀ c : Content F m, (MA (Content.question hm c (Ty.point W))).map rdVal
+      = ptAtPOVM MA W (c.pt W) from fun _ => rfl,
+    show ∀ c : Content F m, (MB (Content.question hm c (Ty.pauli W))).map (rdPauli (c.pt W))
+      = pauliAtPOVM MB W (c.pt W) from fun _ => rfl] at h
+  linarith
+
+end GameLegs
+
 namespace SimulPair
 
 variable (P : SimulPair ψ MA MB δ)
@@ -429,6 +507,23 @@ theorem inconsistency_mTilde_pauli_le' (W : Bas) {δ' : ℝ}
       ≤ 11 * δ' :=
   P.inconsistency_mTilde_pauli_le W (by rw [P.inconsistency_padded]; exact hpt)
     (by rw [P.inconsistency_padded]; exact hpauli) hmt
+
+/-- **Display `eq:qld-unitary-5`, from the game's soundness and item 1 of
+`lem:qld-exact-paulis` alone.** The two middle legs are now discharged: they are items 1 and 3 of
+`lem:qld-win` at the point and Pauli types, and `86 = 172/2` is `agree_subtest_le`'s constant
+halved by the passage from a cross-party deviation to an inconsistency. -/
+theorem inconsistency_mTilde_pauli_le_of_win {hm : m ∣ Fintype.card F} {ε δ' : ℝ}
+    (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
+    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) (hε : 86 * ε ≤ δ')
+    (hmt : inconsistency (uniform (Point F m)) P.mVec
+        (fun u => (P.isPVM_mTildeAt W u).toPOVM) (fun u => (ptAtPOVM MB W u).aOp) ≤ δ') :
+    inconsistency (uniform (Point F m)) P.mVec
+        (fun u => (P.isPVM_mTildeAt W u).toPOVM) (fun u => (pauliAtPOVM MB W u).aOp)
+      ≤ 11 * δ' :=
+  P.inconsistency_mTilde_pauli_le' W
+    (le_trans (inconsistency_pt_pt_le hψ hfail hprojA hprojB W) hε)
+    (le_trans (inconsistency_pt_pauli_le hψ hfail hprojA hprojB W) hε) hmt
 
 /-- **Display `eq:qld-unitary-6` at the interface.** -/
 theorem swapU_conj_mTildeAt (W : Bas) (u : Point F m) (a : F) :
