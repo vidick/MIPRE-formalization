@@ -4092,7 +4092,10 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.SimulPair.ptB, MIPRE.QLD.SimulPair.sum_snorm_sq_insert_chain,
   MIPRE.QLD.stateVec_hatVec_proj, MIPRE.QLD.xSqNorm_hatVec_proj,
   MIPRE.QLD.SimulPair.stateVec_ancProj, MIPRE.QLD.SimulPair.sum_ancProj_mulVec,
-  MIPRE.QLD.syn_mul_proj, MIPRE.QLD.hatMats_mul_proj}
+  MIPRE.QLD.syn_mul_proj, MIPRE.QLD.hatMats_mul_proj,
+  MIPRE.QLD.sum_snorm_sq_fiber_sandwich_le, MIPRE.QLD.sum_bornProb_sandwich_drop_le,
+  MIPRE.QLD.MirrorSimul.bobWeyl, MIPRE.QLD.MirrorSimul.chainP,
+  MIPRE.QLD.MirrorSimul.isPVM_chainP}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4367,10 +4370,26 @@ supporting fact is \texttt{syn\_mul\_proj} --- a syndrome projector meets a sing
 projector in that projector or in nothing, the syndrome being the fibre of the family over the
 pairing.
 
-\emph{Not formalized}: the remaining two $\approx$ steps, \texttt{eq:qld-pulling-5} to \texttt{-7}
-and \texttt{eq:qld-pulling-10} to \texttt{-12}. Their estimates are in place, as recorded above;
-what is missing is the rest of the four-index bookkeeping. And
-Lemma~\ref{lem:qld-povm-to-obs} at the very end.
+\emph{And the last two displays' common machinery.} \texttt{eq:qld-pulling-5} to \texttt{-7} and
+\texttt{eq:qld-pulling-10} to \texttt{-12} are the chain's remaining estimates, and they are the
+first of its steps to live on all six registers: both compare operators on the physical cut,
+$\alice \alice' \alice''$ against $\bob \bob' \bob''$, which is what \texttt{MirrorSimul} was built
+to make expressible. They share an outer shape and a way of discharging the far party.
+
+\texttt{sum\_snorm\_sq\_fiber\_sandwich\_le} is the shape: each display bounds the summed squared
+norm of the chain's terms grouped by the measurement outcome, projectivity turns each group into a
+sum of sandwiches (\texttt{snorm\_sq\_sum\_proj\_sandwich}), the groups are the fibres of the
+outcome map --- so the double sum is the single one over the whole index --- and what is left to
+bound carries no outcome at all. \texttt{sum\_bornProb\_sandwich\_drop\_le} is the discharge: each
+sandwich carries, on the far party, a projector times a Weyl outcome, and summed over that outcome
+these are at most the identity, so the whole sum is bounded by the near party's sandwiches alone.
+That is \texttt{fact:add-a-proj} in the form the two displays consume it.
+\texttt{MirrorSimul.chainP} is the projective family they sum over --- Alice's pair and Weyl
+outcomes together, against Bob's Weyl outcome, on the physical cut.
+
+\emph{Not formalized}: the two displays themselves, which is now the identification of their terms
+with that shape and the reduction of what is left to item 2 of Lemma~\ref{lem:qld-helper} and to
+Lemma~\ref{lem:schwartz-zippel}. And Lemma~\ref{lem:qld-povm-to-obs} at the very end.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
 
 \effortHard

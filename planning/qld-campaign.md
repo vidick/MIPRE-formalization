@@ -2450,3 +2450,30 @@ fibre of the family over the pairing.
 
 Nine of the chain's eleven displays are now in. Two `approx` steps left: `-5`/`-7` (the helper's
 item 2 at polynomial indexing) and `-10`/`-11` (the Cauchy-Schwarz swap and Schwartz-Zippel).
+
+### PR X: the last two displays' common machinery (2026-09-22)
+
+`eq:qld-pulling-5` to `-7` and `-10` to `-12` are the chain's remaining estimates, and they are the
+first of its steps to live on all six registers: both compare operators on the **physical cut**,
+`A A' A''` against `B B' B''`, which is what `MirrorSimul` was built to make expressible. Displays
+`-1` through `-4` all lived on `Phi` or `mVec`, four registers and two indices; these carry a
+four-index sum. That is the size difference, and it is why they are last.
+
+They share two things, and both are now in.
+
+`sum_snorm_sq_fiber_sandwich_le` is the outer shape. Each display bounds the summed squared norm of
+the chain's terms grouped by the measurement outcome; projectivity turns each group into a sum of
+sandwiches (`snorm_sq_sum_proj_sandwich`, in the tree since PR J), the groups are the fibres of the
+outcome map, so the double sum is the single sum over the whole index, and what is left to bound
+carries no outcome in it at all.
+
+`sum_bornProb_sandwich_drop_le` is the discharge. Each sandwich carries, on the far party, a
+projector times a Weyl outcome; summed over that outcome these are at most the identity
+(`sum_kron_le_one`), so the whole sum is bounded by the near party's sandwiches alone. That is
+`fact:add-a-proj` in the form both displays consume it.
+
+`MirrorSimul.chainP` is the projective family they sum over --- Alice's pair and Weyl outcomes
+together, against Bob's Weyl outcome --- with `isPVM_chainP`, which is what both lemmas need of it.
+
+What is left of the two displays is the identification of their terms with that shape, and then the
+reduction of what remains to the helper's item 2 and to Schwartz-Zippel.
