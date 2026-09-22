@@ -2309,3 +2309,34 @@ in this campaign; the cost of the check has been minutes each time.
 
 Left: the two assemblies, now that both are expressible, and then `thm:qld` --- where the paper's
 "symmetric equivalents" remark has to be made good by running stage 4 on the second cut as well.
+
+### PR R: the pulling chain's two ends (2026-09-22)
+
+`MIPRE/Background/QLD/Chain.lean` is the chain's arithmetic frame, and it contains no estimate: it
+is the index algebra that the eleven displays are bookkeeping for.
+
+**The near end.** `mTildeAnc_eq_sum_chainIdx` is `eq:qld-pulling-2` and `eq:qld-pulling-2b`. The
+definition `eq:tilde_M` sums over pair outcomes `g` with a syndrome projector attached; the chain
+sums over pairs `(g, h)` cut out by `(cd(g) - h) . u-tilde = a`. Same sum: the syndrome projector
+is the fibre of the spectral family over that pairing, and in characteristic two the shift the
+definition carries is the sum the chain's label is written with.
+
+**The far end, and why the lemma holds at all.** `endOp` is display `eq:qld-pulling-12`. Both
+parties' derivations end there, and the two exact Pauli measurements are close to *each other* ---
+rather than each close to something --- only because that display is symmetric in the two pairs.
+That is not apparent: its index set is cut out by a coupling `g - g_h = g' - g_h'`, symmetric on
+its face, together with a pairing condition read off the *first* pair alone.
+
+`chainLabel_eq_of_coupled` is the reason, and the proof is one line: evaluate the coupling at a
+cube point, where the encoding of a cube datum is that datum. So coupled pairs carry the same
+label, the condition may be read off either pair, and the index set is invariant under exchanging
+them (`swap_mem_coupledIdx`). `endOpMirror_apply` is then the symmetry of the display itself.
+
+**And closing.** `sum_xSqNorm_le_of_endOp`: given the two chains, `sum_snorm_sq_triangle'` (already
+in Foundations) gives `eq:qld-pulling-cons` at twice the cost, the factor the paper absorbs into
+`delta_S`.
+
+What is left of `lem:qld-pauli-selfcons` is the eight `approx` steps between those two ends. Every
+estimate they consume is in the tree --- the blueprint's comment on the lemma lists them one by one
+--- and what is missing is the four-index bookkeeping that threads them. That is now the only thing
+missing, and it is bounded work with no mathematics left in it.

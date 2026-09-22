@@ -718,7 +718,11 @@ four of item 2's displays. **What `thm:qld` still needs, in order of distance to
 3. then the two assemblies, in either order: `lem:qld-swap` item 2's threading
    (`eq:qld-unitary-7` through `-9` and `abs_qform_sub_qform_le` into the statement about
    `V M^(Pauli,W)_h V†`), and `lem:qld-pauli-selfcons`'s chain at a uniform probe, plus
-   `lem:qld-povm-to-obs` at its end;
+   `lem:qld-povm-to-obs` at its end. The chain's **two ends** are in
+   (`MIPRE/Background/QLD/Chain.lean`): `mTildeAnc_eq_sum_chainIdx` is `eq:qld-pulling-2b`,
+   `endOpMirror_apply` is the symmetry of `eq:qld-pulling-12` that makes the lemma conclude, and
+   `sum_xSqNorm_le_of_endOp` is the triangle that closes it. What is left is the eight `approx`
+   steps between them --- every estimate in the tree, only the four-index bookkeeping missing;
 4. `thm:qld` itself from the two lemmas.
 
 Items 1 and 2 are done. **Neither of the remaining two needs a new estimate**: every estimate the
