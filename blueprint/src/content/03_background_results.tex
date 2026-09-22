@@ -4051,7 +4051,8 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.SimulPair.sum_snorm_sq_polyMarg_one_sub_le, MIPRE.QLD.sum_uniform_agree_le,
   MIPRE.QLD.sum_uniform_agree_mass_le, MIPRE.agreeOp, MIPRE.agreeOp_conjTranspose,
   MIPRE.agreeOp_mul_self, MIPRE.qform_agreeOp, MIPRE.snorm_sq_one_sub_agreeOp,
-  MIPRE.snorm_sub_mul_agreeOp_le}
+  MIPRE.snorm_sub_mul_agreeOp_le, MIPRE.sum_kron_le_one, MIPRE.sum_bornProb_kron_le,
+  MIPRE.QLD.SimulPair.sum_bornProb_polyMarg_one_sub_le}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4138,10 +4139,22 @@ anywhere --- and a contraction on the left cannot amplify it
 to be projective, which is what lets it apply here, where the second party's factors are indexed
 by $g$ through $g(u)$ and so are not a measurement in $g$.
 
-\emph{Not formalized}: \texttt{eq:qld-pulling-3} and \texttt{eq:qld-pulling-10}, the assembly of
-the chain itself, and the final passage through \texttt{fact:agreement},
-\texttt{fact:data-processing} and Lemma~\ref{lem:qld-povm-to-obs}. Their remaining tool is the
-paper's \texttt{fact:add-a-proj}, which \texttt{MIPRE/Foundations/Commutation.lean} already has.
+\emph{And the two ends of \texttt{eq:qld-pulling-10}'s justification.} That display is argued by
+bounding the magnitude of a difference, and the argument runs from
+\texttt{fact:add-a-proj} at the top to the helper at the bottom. Both ends are in place. The top
+is \texttt{sum\_kron\_le\_one}: a family of projectors on one factor, tensored with a projective
+measurement on another, sums to at most the identity, because the complement
+$\sum_x (\Id - B_x) \ot T_x$ is a sum of positive semidefinite terms; against a positive
+operator on the other party that discards the index the sandwich runs over
+(\texttt{sum\_bornProb\_kron\_le}). The bottom is \texttt{eq:qld-pulling-14},
+\texttt{SimulPair.sum\_bornProb\_polyMarg\_one\_sub\_le}: the complement of the helper's
+agreement, read by polynomial outcome, is at most $\delta_S$, the marginal's outcomes summing to
+the identity.
+
+\emph{Not formalized}: \texttt{eq:qld-pulling-3}; the middle of \texttt{eq:qld-pulling-10}'s
+justification, which is the expansion of the squared norm and the $O(\sqrt{\eps})$ substitution
+at \texttt{eq:qld-pulling-13}; the assembly of the chain itself; and the final passage through
+\texttt{fact:agreement}, \texttt{fact:data-processing} and Lemma~\ref{lem:qld-povm-to-obs}.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
 
 \effortHard

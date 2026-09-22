@@ -125,6 +125,47 @@ theorem snorm_sub_mul_agreeOp_le (ψ : dA × dB → ℂ) {X : Matrix (dA × dB) 
 
 end Agree
 
+/-! ## The paper's `fact:add-a-proj`, in the shape the chain uses it -/
+
+section AddAProj
+
+variable {dB anc X : Type*} [Fintype dB] [DecidableEq dB] [Fintype anc] [DecidableEq anc]
+  [Fintype X]
+
+/-- **A family of projectors tensored with a projective measurement sums to at most the
+identity.** The complement is `∑_x (1 - B_x) ⊗ T_x`, a sum of positive semidefinite terms. This is
+what displays `eq:qld-pulling-8` and `eq:qld-pulling-10` use to discard the index the sandwich
+runs over. -/
+theorem sum_kron_le_one {B : X → Matrix dB dB ℂ} (hBsa : ∀ x, (B x)ᴴ = B x)
+    (hB : ∀ x, B x * B x = B x) {T : X → Matrix anc anc ℂ} (hT : IsPVM T) :
+    (∑ x, B x ⊗ₖ T x) ≤ (1 : Matrix (dB × anc) (dB × anc) ℂ) := by
+  have hrw : (1 : Matrix (dB × anc) (dB × anc) ℂ) - ∑ x, B x ⊗ₖ T x
+      = ∑ x, ((1 : Matrix dB dB ℂ) - B x) ⊗ₖ T x := by
+    rw [Finset.sum_congr rfl fun x (_ : x ∈ univ) =>
+        sub_kronecker_right (1 : Matrix dB dB ℂ) (B x) (T x),
+      Finset.sum_sub_distrib, ← kronecker_sum_right, hT.sum_eq_one, Matrix.one_kronecker_one]
+  refine sub_nonneg.mp ?_
+  rw [hrw]
+  refine Finset.sum_nonneg fun x _ => Matrix.nonneg_iff_posSemidef.mpr ?_
+  refine Matrix.PosSemidef.kronecker ?_ (hT.posSemidef x)
+  refine posSemidef_of_proj ?_ ?_
+  · rw [Matrix.conjTranspose_sub, Matrix.conjTranspose_one, hBsa]
+  · rw [Matrix.sub_mul, Matrix.mul_sub, Matrix.mul_sub, Matrix.one_mul, Matrix.mul_one,
+      Matrix.one_mul, hB]
+    abel
+
+/-- **Discarding that index.** Against a positive semidefinite operator on the other party, the
+family's total contribution is at most the operator's own weight. -/
+theorem sum_bornProb_kron_le {dA : Type*} [Fintype dA] [DecidableEq dA] (ψ : dA × (dB × anc) → ℂ)
+    {A : Matrix dA dA ℂ} (hA : A.PosSemidef) {B : X → Matrix dB dB ℂ}
+    (hBsa : ∀ x, (B x)ᴴ = B x) (hB : ∀ x, B x * B x = B x) {T : X → Matrix anc anc ℂ}
+    (hT : IsPVM T) :
+    ∑ x, bornProb ψ A (B x ⊗ₖ T x) ≤ bornProb ψ A 1 := by
+  rw [← bornProb_sum_right]
+  exact bornProb_mono_right ψ hA (sum_kron_le_one hBsa hB hT)
+
+end AddAProj
+
 end MIPRE
 
 namespace MIPRE.QLD
@@ -204,6 +245,42 @@ theorem sum_snorm_sq_polyMarg_one_sub_le {hm : m ∣ Fintype.card F} {ε : ℝ}
       exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun g hg => by
         rw [(Finset.mem_filter.mp hg).2]
   rwa [Finset.sum_congr rfl fun u (_ : u ∈ univ) => by rw [hu u]] at h
+
+/-- **Display `eq:qld-pulling-14`**: the complement of the helper's agreement, read by polynomial
+outcome. The sub-chain that justifies `eq:qld-pulling-10` terminates here, and the bound is the
+helper's own `delta_S`: the marginal's outcomes sum to the identity, so the complementary mass is
+one minus the agreement. -/
+theorem sum_bornProb_polyMarg_one_sub_le (W : Bas) :
+    ∑ u, uniform (Point F m) u * ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
+        bornProb P.Φ (((polyMarg P.SA W).mats g).val)
+          (1 - (aOp (hatMats MB W u (g.eval u)) : Matrix ((dB × Anc F m) × P.EB) _ ℂ))
+      ≤ δ := by
+  classical
+  have hlow := P.sum_bornProb_polyMarg_ge (MB := MB) W
+  have hsplit : ∀ u : Point F m,
+      (∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
+          bornProb P.Φ (((polyMarg P.SA W).mats g).val)
+            (1 - (aOp (hatMats MB W u (g.eval u)) : Matrix ((dB × Anc F m) × P.EB) _ ℂ)))
+        = 1 - ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
+            bornProb P.Φ (((polyMarg P.SA W).mats g).val)
+              (aOp (hatMats MB W u (g.eval u))) := by
+    intro u
+    rw [Finset.sum_congr rfl fun g (_ : g ∈ univ) =>
+        bornProb_sub_right P.Φ (((polyMarg P.SA W).mats g).val) 1
+          (aOp (hatMats MB W u (g.eval u))),
+      Finset.sum_sub_distrib, ← bornProb_sum_left,
+      (isPVM_polyMarg P.SA_proj W).sum_eq_one, bornProb_one_one P.Φ_unit]
+  rw [Finset.sum_congr rfl fun u (_ : u ∈ univ) => by rw [hsplit u],
+    Finset.sum_congr rfl fun u (_ : u ∈ univ) =>
+      show uniform (Point F m) u * (1 - ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
+            bornProb P.Φ (((polyMarg P.SA W).mats g).val)
+              (aOp (hatMats MB W u (g.eval u))))
+          = uniform (Point F m) u - uniform (Point F m) u
+              * ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
+                bornProb P.Φ (((polyMarg P.SA W).mats g).val)
+                  (aOp (hatMats MB W u (g.eval u))) from by ring,
+    Finset.sum_sub_distrib, sum_uniform_eq_one]
+  linarith
 
 end SimulPair
 

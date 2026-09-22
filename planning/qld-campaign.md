@@ -1928,3 +1928,23 @@ not a measurement in `g`.
 
 Left on the node after this: `eq:qld-pulling-3`, `eq:qld-pulling-10`, the assembly, and the final
 passage through `fact:agreement`, `fact:data-processing` and `lem:qld-povm-to-obs`.
+
+### PR L, fourth piece: the two ends of `eq:qld-pulling-10` (2026-09-22)
+
+`MIPRE/Background/QLD/Pulling.lean`, continued. That display is argued by bounding the magnitude of
+a difference, and its justification runs from `fact:add-a-proj` at the top to the helper at the
+bottom. Both ends are now in.
+
+The top is `sum_kron_le_one`: a family of projectors on one factor tensored with a projective
+measurement on another sums to at most the identity, the complement `sum_x (1 - B_x) (x) T_x` being
+a sum of positive semidefinite terms. Against a positive operator on the other party that discards
+the index the sandwich runs over (`sum_bornProb_kron_le`), which is one line given
+`bornProb_sum_right` and `bornProb_mono_right`.
+
+The bottom is `eq:qld-pulling-14`, `SimulPair.sum_bornProb_polyMarg_one_sub_le`: the complement of
+the helper's agreement, read by polynomial outcome, is at most `delta_S`. It is the agreement
+itself subtracted from one, the marginal's outcomes summing to the identity.
+
+Left on the node: `eq:qld-pulling-3`; the middle of `-10` (the expansion of the squared norm and
+the `O(sqrt eps)` substitution at `eq:qld-pulling-13`); the assembly; and the final passage through
+`fact:agreement`, `fact:data-processing` and `lem:qld-povm-to-obs`.
