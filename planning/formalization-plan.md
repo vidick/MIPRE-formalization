@@ -712,7 +712,9 @@ four of item 2's displays. **What `thm:qld` still needs, in order of distance to
    changes and every statement reading `Phi` or `mVec` is re-derived (`Helper`, `Multilinear`,
    `MTilde`, `AncTransport`, `Pulling`, `SwapMeasure`, `ChainProbe`); the estimates themselves are
    untouched, being about operators and states in the abstract. See
-   `reports/qld-stage5-blueprint-repairs.md`;
+   `reports/qld-stage5-blueprint-repairs.md`, and `planning/qld-two-pairs-scope.md` for the scope:
+   the target is to carry the paper's state as the paper writes it, physically grouped, and derive
+   the split cuts the earlier stages work in by the regroupings this tree already has;
 3. then the two assemblies, in either order: `lem:qld-swap` item 2's threading
    (`eq:qld-unitary-7` through `-9` and `abs_qform_sub_qform_le` into the statement about
    `V M^(Pauli,W)_h V†`), and `lem:qld-pauli-selfcons`'s chain at a uniform probe, plus
