@@ -2758,3 +2758,39 @@ Two of the three are the displays applied verbatim, which is the point of having
 
 Seven steps left: `-3a` onward, which is where the transport to the physical cut happens and where
 `physLift` and `sum_bobPairProj_mulVec` get used.
+
+### PR AH: the chain's four free steps, which are one step (2026-09-22)
+
+Displays `eq:qld-pulling-3a`, `-3b`, `-4` and `-5` are all "approx_0" or identities, so the chain
+pays nothing between `-3` and `-5`. That is a reason not to name the three terms in between:
+`MirrorSimul.physLift_chainU3b_mulVec` is the whole stretch at once, `chainU3b` being the only
+intermediate the proof needs.
+
+One fact runs through all four, used once on each of the two entangled pairs: **the projector on
+one half is the projector on the other, on the state.** `SimulPair.ancProj_mulVec_mVec` is that
+for the pair `A' A''`, and `MirrorSimul.bobPairProj_mulVec` for the appended pair `B' B''`, which
+the physical grouping gives to Bob entire. Given it, each half of the step is two lines: insert
+the projector on the half the chain does not carry, move it next to the one the chain does carry
+(it commutes with everything in between) where it is absorbed, and read the point measurement
+beside it as the *hatted* point measurement cut down by that projector --- `hatMats_mul_proj`,
+which is `eq:qld-pulling-3b` and was already in the tree from PR Z.
+
+Three things were worth the trouble:
+
+- **`stateVec_ancProj` is about `Phi`, and the chain runs on `mVec`.** The transport had to be
+  moved across the regrouping, and `qform_comp_equiv` does not do it: it carries the quadratic
+  form, not `mulVec`. `mulVec_comp_equiv` is the missing sibling, three lines, and with
+  `reindex_regroupEquiv` it turns the `Phi` statement into the `mVec` one.
+- **`physLift` carries a state identity, not just a norm.** `physLift_mulVec` says the lift acts
+  as the first cut's operator beside an untouched pair, so `physLift_mulVec_congr` lifts
+  `eq:qld-pulling-3a` and `-3b` --- which are local in the first cut's grouping --- to the
+  physical cut, where `-4` and `-5` live.
+- **The `toFirst.EA` / `M.Ea` spelling problem cost three rewrites.** `rw` fails on a term whose
+  two factors reach the same type by different paths, even though the types are definitionally
+  equal, because the `HMul` instances are not syntactically the same. The fix each time was to
+  state the object once, in the party's own spelling, as a `def` whose declared result type pins
+  everything from the outside (`chainU3b`, `bobPt`, `bobAnc`) --- which is the convention the
+  file already followed for `aliceChainOp` and `bobChainOp`, now with a sharper reason.
+
+Five steps left: `-7`, `-9a`, `-10`, `-11` and `-12` read as consecutive deviations. Every one of
+them is a display already in the tree; what is left is to name the terms and match the shapes.
