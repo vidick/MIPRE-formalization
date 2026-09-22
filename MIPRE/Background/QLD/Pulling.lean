@@ -568,14 +568,19 @@ theorem sum_uniform_agree_le
   exact hsz
 
 omit [NeZero m] in
-/-- **Restricting a weighted sum to pointwise agreement costs `md/q`** when the polynomials
-compared are distinct. This is display `eq:qld-pulling-12`: the chain's sum is constrained by an
-equality of polynomial *values* at the sampled point, and passing to equality of the polynomials
-themselves discards only the tuples where distinct polynomials happen to agree there. The weights
-are the Born probabilities of a projective family, hence nonnegative and summing to at most one. -/
+/-- **Restricting a weighted sum to pointwise agreement costs `md/q`**, at every index whose
+weight is nonzero and whose two polynomials are distinct. This is display `eq:qld-pulling-12`: the
+chain's sum is constrained by an equality of polynomial *values* at the sampled point, and passing
+to equality of the polynomials themselves discards only the tuples where distinct polynomials
+happen to agree there. The weights are the Born probabilities of a projective family, hence
+nonnegative and summing to at most one.
+
+The hypothesis is asked only where the weight is nonzero, which is what lets the same packaging
+serve `eq:qld-unitary-8` of `lem:qld-swap` item 2: there the index is a *pair* and the diagonal,
+where the two polynomials coincide, is excluded by the weight rather than by the index set. -/
 theorem sum_uniform_agree_mass_le {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {p q : ι → LowIndDegPoly (F := F) (m := m) (d := d)} (hne : ∀ i, (p i).toMv ≠ (q i).toMv)
-    (w : ι → ℝ) (hw0 : ∀ i, 0 ≤ w i) (hw : ∑ i, w i ≤ 1) :
+    {p q : ι → LowIndDegPoly (F := F) (m := m) (d := d)} (w : ι → ℝ)
+    (hne : ∀ i, w i ≠ 0 → (p i).toMv ≠ (q i).toMv) (hw0 : ∀ i, 0 ≤ w i) (hw : ∑ i, w i ≤ 1) :
     ∑ u, uniform (Point F m) u
         * ∑ i ∈ univ.filter fun i => (p i).eval u = (q i).eval u, w i
       ≤ (m : ℝ) * d / Fintype.card F := by
@@ -593,8 +598,10 @@ theorem sum_uniform_agree_mass_le {ι : Type*} [Fintype ι] [DecidableEq ι]
   calc ∑ i, w i * ∑ u, uniform (Point F m) u
           * (if (p i).eval u = (q i).eval u then (1 : ℝ) else 0)
       ≤ ∑ i, w i * ((m : ℝ) * d / Fintype.card F) :=
-        Finset.sum_le_sum fun i _ =>
-          mul_le_mul_of_nonneg_left (sum_uniform_agree_le (hne i)) (hw0 i)
+        Finset.sum_le_sum fun i _ => by
+          rcases eq_or_ne (w i) 0 with h0 | h0
+          · rw [h0, zero_mul, zero_mul]
+          · exact mul_le_mul_of_nonneg_left (sum_uniform_agree_le (hne i h0)) (hw0 i)
     _ = (∑ i, w i) * ((m : ℝ) * d / Fintype.card F) := by rw [Finset.sum_mul]
     _ ≤ 1 * ((m : ℝ) * d / Fintype.card F) := mul_le_mul_of_nonneg_right hw hmd
     _ = (m : ℝ) * d / Fintype.card F := one_mul _
