@@ -440,6 +440,50 @@ theorem hatMats_mul_proj (M : Question F m → POVM (Answer F m d) d') (W : Bas)
   rw [Finset.sum_ite_eq' univ (c + dotF h (indVec u))
     (fun a' => (((ptAtPOVM M W u).mats a').val) ⊗ₖ proj (weylOf W) h), if_pos (mem_univ _)]
 
+/-! ## The last two displays' common machinery
+
+`eq:qld-pulling-5` to `-7` and `eq:qld-pulling-10` to `-12` are the chain's remaining estimates,
+and they are the first of its steps to live on all six registers: both compare operators on the
+physical cut, Alice's `A A' A''` against Bob's `B B' B''`. They share an outer shape and a way of
+discharging the far party, collected here. -/
+
+section LastTwo
+
+variable {dA' dB' anc ι κ : Type*} [Fintype dA'] [DecidableEq dA'] [Fintype dB'] [DecidableEq dB']
+  [Fintype anc] [DecidableEq anc] [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
+
+omit [Field F] [Algebra (ZMod 2) F] in
+/-- **The outer shape both remaining displays share.** Each is a bound on the summed squared norm
+of the chain's terms, grouped by the measurement outcome. Projectivity turns each group into a sum
+of sandwiches (`snorm_sq_sum_proj_sandwich`), the groups are the fibres of the outcome map, so the
+double sum is the single one over the whole index --- and what is left to bound is a sum of
+sandwiches with no outcome in it. -/
+theorem sum_snorm_sq_fiber_sandwich_le {N : Type*} [Fintype N] [DecidableEq N] (v : N → ℂ)
+    {P : ι → Matrix N N ℂ} (hP : IsPVM P) (W : ι → Matrix N N ℂ)
+    (c : ι → F) {ε : ℝ} (hbound : ∑ i, qform v ((W i)ᴴ * P i * W i) ≤ ε) :
+    ∑ a : F, snorm v (∑ i ∈ univ.filter fun i => c i = a, P i * W i) ^ 2 ≤ ε := by
+  classical
+  rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) => snorm_sq_sum_proj_sandwich v hP W _,
+    Finset.sum_fiberwise univ c fun i => qform v ((W i)ᴴ * P i * W i)]
+  exact hbound
+
+omit [DecidableEq ι] [DecidableEq κ] in
+/-- **Dropping the far party's sub-identity factor.** Each of the chain's sandwiches carries, on
+the far party, a projector times a Weyl outcome; summed over the outcome those are at most the
+identity, so the whole sum is bounded by the near party's sandwiches alone. This is
+`fact:add-a-proj` in the form `eq:qld-pulling-7` and `eq:qld-pulling-11` consume it. -/
+theorem sum_bornProb_sandwich_drop_le (ψ : dA' × (dB' × anc) → ℂ)
+    {S : ι → Matrix dA' dA' ℂ} (hS : IsPVM S) (X : ι → Matrix dA' dA' ℂ)
+    {B : ι → Matrix dB' dB' ℂ} (hBsa : ∀ i, (B i)ᴴ = B i) (hBidem : ∀ i, B i * B i = B i)
+    {T : κ → Matrix anc anc ℂ} (hT : IsPVM T) :
+    ∑ i, ∑ _x : κ, bornProb ψ ((X i)ᴴ * S i * X i) (B i ⊗ₖ T _x)
+      ≤ ∑ i, bornProb ψ ((X i)ᴴ * S i * X i) 1 := by
+  refine Finset.sum_le_sum fun i _ => ?_
+  exact sum_bornProb_kron_le ψ (Matrix.PosSemidef.conjTranspose_mul_mul_same (hS.posSemidef i) _)
+    (fun _ => hBsa i) (fun _ => hBidem i) hT
+
+end LastTwo
+
 section First
 
 variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
@@ -692,6 +736,49 @@ end SimulPair
 end First
 
 end Endpoint
+
+/-! ## The physical cut's operators
+
+What the last two displays sum over. -/
+
+section Physical
+
+variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+  {ψ : dA × dB → ℂ} {MA : Question F m → POVM (Answer F m d) dA}
+  {MB : Question F m → POVM (Answer F m d) dB} {δ : ℝ}
+
+/- Same four-fold product index as `mTildeAt`, and the same reason. -/
+set_option synthInstance.maxSize 1000
+
+namespace MirrorSimul
+
+variable (M : MirrorSimul ψ MA MB δ)
+
+/-- **Bob's Weyl projector**, on the half `B''` of the appended pair that the physical grouping
+gives him --- the outermost factor of his register. -/
+def bobWeyl (W : Bas) (h : Anc F m) :
+    Matrix (((dB × Anc F m) × M.Eb) × Anc F m) (((dB × Anc F m) × M.Eb) × Anc F m) ℂ :=
+  bOp (proj (weylOf W) h)
+
+/-- **The chain's projective family on the physical cut**: Alice's pair outcome and Weyl outcome
+together, against Bob's Weyl outcome. Displays `eq:qld-pulling-5` onward sum over this triple. -/
+def chainP (W : Bas)
+    (t : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) × Anc F m) :
+    Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m))
+      ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m)) ℂ :=
+  aOp (M.toFirst.chainOp W t.1) * bOp (M.bobWeyl W t.2)
+
+/-- It is projective: `aOp U * bOp V` is `U (x) V`, and each party's family is projective. -/
+theorem isPVM_chainP (W : Bas) : IsPVM (M.chainP W) := by
+  have hrw : M.chainP W = fun t => (M.toFirst.chainOp W t.1) ⊗ₖ (M.bobWeyl W t.2) :=
+    funext fun t => aOp_mul_bOp_eq _ _
+  rw [hrw]
+  exact isPVM_kron (isPVM_chainOp M.toFirst W)
+    (IsPVM.bOp (isPVM_proj (isWeylFamily_weylOf W)))
+
+end MirrorSimul
+
+end Physical
 
 end MIPRE.QLD
 
