@@ -2438,3 +2438,15 @@ proved is the vanishing of a squared norm, and a squared norm is an expectation,
 carries it across with no loss.
 
 Three `approx` steps left: `-3b`, `-5`/`-7`, `-10`/`-11`.
+
+### PR W: `eq:qld-pulling-3b`, a definition unfolded the other way (2026-09-22)
+
+`hatMats_mul_proj` says the chain's factor `(M^{Point,u}_r)_A (x) (tau_h)_{A'}` *is* the hatted
+point measurement cut down by the Weyl outcome: `M-hat^u_c` times the projector at `h` keeps exactly
+the point outcome `c - g_h(u)`. The reason is that the syndrome factor of the convolution selects
+the one term whose shift matches `h`, and `syn_mul_proj` is that fact on its own --- a syndrome
+projector meets a single spectral projector in that projector or in nothing, the syndrome being the
+fibre of the family over the pairing.
+
+Nine of the chain's eleven displays are now in. Two `approx` steps left: `-5`/`-7` (the helper's
+item 2 at polynomial indexing) and `-10`/`-11` (the Cauchy-Schwarz swap and Schwartz-Zippel).

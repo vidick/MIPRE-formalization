@@ -394,6 +394,52 @@ theorem xSqNorm_hatVec_proj (φ : dA × dB → ℂ) (W : Bas) (h : Anc F m) :
   rw [xSqNorm, stateVec_hatVec_proj, sub_self, norm_zero]
   norm_num
 
+/-- **A syndrome projector meets a single spectral projector in that projector or in nothing.**
+The syndrome is the fibre of the spectral family over the pairing, so the product keeps the one
+outcome exactly when it lies in the fibre. -/
+theorem syn_mul_proj {n : Type*} [Fintype n] [DecidableEq n]
+    {w : (n → F) → Matrix (n → F) (n → F) ℂ} (hw : IsWeylFamily w) (v : n → F) (b : F)
+    (h : n → F) :
+    syn w v b * proj w h = if dotF h v = b then proj w h else 0 := by
+  classical
+  rw [syn, Finset.sum_mul,
+    Finset.sum_congr rfl fun e (_ : e ∈ univ.filter fun e => dotF e v = b) => proj_mul_proj hw e h]
+  by_cases hb : dotF h v = b
+  · rw [if_pos hb, Finset.sum_ite_eq' (univ.filter fun e : n → F => dotF e v = b) h (proj w),
+      if_pos (mem_filter.mpr ⟨mem_univ h, hb⟩)]
+  · rw [if_neg hb]
+    refine Finset.sum_eq_zero fun e he => if_neg fun hc => hb ?_
+    rw [← hc]
+    exact (mem_filter.mp he).2
+
+variable {d' : Type} [Fintype d'] [DecidableEq d']
+
+/-- **Display `eq:qld-pulling-3b`.** The chain's factor `(M^{Point}_r)_A (x) (tau_h)_{A'}` is the
+hatted point measurement itself, cut down by the Weyl outcome: `M-hat^{u}_{c}` times the projector
+at `h` keeps exactly the point outcome `c - g_h(u)`, the syndrome factor selecting the one term of
+the convolution whose shift matches `h`. -/
+theorem hatMats_mul_proj (M : Question F m → POVM (Answer F m d) d') (W : Bas) (u : Point F m)
+    (c : F) (h : Anc F m) :
+    hatMats M W u c * ((1 : Matrix d' d' ℂ) ⊗ₖ proj (weylOf W) h)
+      = (((ptAtPOVM M W u).mats (c + dotF h (indVec u))).val) ⊗ₖ proj (weylOf W) h := by
+  classical
+  rw [← sum_kron_syn_eq_hatMats M W u c, Finset.sum_mul,
+    Finset.sum_congr rfl fun a' (_ : a' ∈ univ) => by
+      rw [← Matrix.mul_kronecker_mul, Matrix.mul_one, synPOVM_mats,
+        syn_mul_proj (isWeylFamily_weylOf W) (indVec u) (c + a') h]]
+  rw [Finset.sum_congr rfl fun a' (_ : a' ∈ univ) =>
+    show (((ptAtPOVM M W u).mats a').val)
+        ⊗ₖ (if dotF h (indVec u) = c + a' then proj (weylOf W) h else 0)
+      = (if a' = c + dotF h (indVec u)
+          then (((ptAtPOVM M W u).mats a').val) ⊗ₖ proj (weylOf W) h else 0) from by
+      by_cases hx : a' = c + dotF h (indVec u)
+      · rw [if_pos hx, if_pos (show dotF h (indVec u) = c + a' from by
+          rw [hx, ← add_assoc, add_self, zero_add])]
+      · rw [if_neg hx, if_neg (fun hc => hx (by rw [hc, ← add_assoc, add_self, zero_add])),
+          Matrix.kronecker_zero]]
+  rw [Finset.sum_ite_eq' univ (c + dotF h (indVec u))
+    (fun a' => (((ptAtPOVM M W u).mats a').val) ⊗ₖ proj (weylOf W) h), if_pos (mem_univ _)]
+
 section First
 
 variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
