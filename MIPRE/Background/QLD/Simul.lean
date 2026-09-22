@@ -5,6 +5,7 @@ Authors: Thomas Vidick
 -/
 import MIPRE.Background.QLD.Combined
 import MIPRE.Foundations.POVMMix
+import MIPRE.Foundations.CrossConsistency
 
 /-!
 # The simultaneous pair measurement: the interface between stages 4 and 5
@@ -42,6 +43,29 @@ required, and no symmetry of the strategy is assumed.
 noncomputable section
 
 universe u
+
+namespace MIPRE
+
+open Matrix
+open scoped Kronecker ComplexOrder MatrixOrder
+
+section Norms
+
+variable {R S : Type*} [Fintype R] [DecidableEq R] [Fintype S] [DecidableEq S]
+
+/-- Alice's squared state norm as a Born probability against the identity. -/
+theorem stateSqNorm_eq_bornProb_one (φ : R × S → ℂ) (M : Matrix R R ℂ) :
+    stateSqNorm φ M = bornProb φ (Mᴴ * M) 1 := by
+  rw [stateSqNorm_eq_qform, bornProb_eq_qform, bOp_one, Matrix.mul_one]
+
+/-- Bob's squared state norm as a Born probability against the identity. -/
+theorem normSq_stateVecB_eq_one_bornProb (φ : R × S → ℂ) (M : Matrix S S ℂ) :
+    ‖stateVecB φ M‖ ^ 2 = bornProb φ 1 (Mᴴ * M) := by
+  rw [normSq_stateVecB_eq_qform, bornProb_eq_qform, aOp_one, Matrix.one_mul]
+
+end Norms
+
+end MIPRE
 
 namespace MIPRE.QLD
 
@@ -150,6 +174,32 @@ theorem bornProb_aOp_aOp (P : SimulPair ψ MA MB δ) (X : Matrix (dA × Anc F m)
     (Y : Matrix (dB × Anc F m) (dB × Anc F m) ℂ) :
     bornProb P.Φ (aOp X) (aOp Y) = bornProb (hatVec (F := F) (m := m) ψ) X Y :=
   P.Φ_reduced X Y
+
+/-- Alice's squared state norm transfers too: it is a Born probability against the identity. -/
+theorem stateSqNorm_aOp (P : SimulPair ψ MA MB δ) (X : Matrix (dA × Anc F m) (dA × Anc F m) ℂ) :
+    stateSqNorm P.Φ (aOp X) = stateSqNorm (hatVec (F := F) (m := m) ψ) X := by
+  rw [stateSqNorm_eq_bornProb_one, stateSqNorm_eq_bornProb_one, aOp_conjTranspose, ← aOp_mul]
+  have h := P.bornProb_aOp_aOp (Xᴴ * X) 1
+  rw [aOp_one] at h
+  exact h
+
+/-- Bob's squared state norm transfers. -/
+theorem normSq_stateVecB_aOp (P : SimulPair ψ MA MB δ)
+    (Y : Matrix (dB × Anc F m) (dB × Anc F m) ℂ) :
+    ‖stateVecB P.Φ (aOp Y)‖ ^ 2 = ‖stateVecB (hatVec (F := F) (m := m) ψ) Y‖ ^ 2 := by
+  rw [normSq_stateVecB_eq_one_bornProb, normSq_stateVecB_eq_one_bornProb, aOp_conjTranspose,
+    ← aOp_mul]
+  have h := P.bornProb_aOp_aOp 1 (Yᴴ * Y)
+  rw [aOp_one] at h
+  exact h
+
+/-- **The cross-party deviation of two doubly extended operators** is the one they have on the
+expanded state: all three terms of its expansion are expectations the padded state reproduces. -/
+theorem xSqNorm_aOp (P : SimulPair ψ MA MB δ) {X : Matrix (dA × Anc F m) (dA × Anc F m) ℂ}
+    (hX : Xᴴ = X) (Y : Matrix (dB × Anc F m) (dB × Anc F m) ℂ) :
+    xSqNorm P.Φ (aOp X) (aOp Y) = xSqNorm (hatVec (F := F) (m := m) ψ) X Y := by
+  rw [xSqNorm_eq_expand _ (by rw [aOp_conjTranspose, hX]), xSqNorm_eq_expand _ hX,
+    P.stateSqNorm_aOp, P.normSq_stateVecB_aOp, P.bornProb_aOp_aOp]
 
 end SimulPair
 

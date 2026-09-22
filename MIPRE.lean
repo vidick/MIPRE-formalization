@@ -419,6 +419,7 @@ import MIPRE.Background.QLD.Dummy
 import MIPRE.Background.QLD.ExactPauli
 import MIPRE.Background.QLD.Expanded
 import MIPRE.Background.QLD.Game
+import MIPRE.Background.QLD.Helper
 import MIPRE.Background.QLD.Legalize
 import MIPRE.Background.QLD.LineRepresentative
 import MIPRE.Background.QLD.Linear

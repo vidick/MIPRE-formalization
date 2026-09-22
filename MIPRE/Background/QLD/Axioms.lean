@@ -13,6 +13,7 @@ import MIPRE.Background.QLD.PaddedLines
 import MIPRE.Background.QLD.Legalize
 import MIPRE.Background.QLD.PaddedValue
 import MIPRE.Background.QLD.PaddedLIDT
+import MIPRE.Background.QLD.Helper
 import MIPRE.Background.QLD.CLTransport
 import MIPRE.Background.Introspection.HonestPauliLowDegree
 import MIPRE.Background.Introspection.HonestPauliEdges
@@ -1183,3 +1184,13 @@ transport, `MIPRE/Background/QLD/PaddedLIDT.lean` for the errors). -/
 #guard_sorry_free MIPRE.QLD.PolyPair, MIPRE.QLD.PolyPair.proj, MIPRE.QLD.evalMarg,
   MIPRE.QLD.evalMarg_mats, MIPRE.QLD.isPVM_evalMarg, MIPRE.QLD.SimulPair, MIPRE.QLD.SimulPair.mono,
   MIPRE.QLD.SimulPair.bornProb_aOp_aOp, MIPRE.QLD.GlobalPair.toSimulPair, MIPRE.QLD.exists_simulPair
+
+/-! `lem:qld-helper` (`MIPRE/Background/QLD/Helper.lean`, with the state-norm transfers in
+`MIPRE/Background/QLD/Simul.lean`). -/
+#guard_sorry_free MIPRE.stateSqNorm_eq_bornProb_one, MIPRE.normSq_stateVecB_eq_one_bornProb,
+  MIPRE.QLD.SimulPair.stateSqNorm_aOp, MIPRE.QLD.SimulPair.normSq_stateVecB_aOp,
+  MIPRE.QLD.SimulPair.xSqNorm_aOp, MIPRE.aOp_mul_one_sub_eq, MIPRE.snorm_aOp_mul_one_sub_le,
+  MIPRE.snorm_sq_aOp_mul_one_sub_le, MIPRE.QLD.sum_bornProb_diag_eq, MIPRE.QLD.sum_content_pt,
+  MIPRE.QLD.sum_uniform_xSqNorm_hatMats_le, MIPRE.QLD.SimulPair.hatMats_conjTranspose,
+  MIPRE.QLD.SimulPair.sum_bornProb_evalMarg_ge, MIPRE.QLD.SimulPair.sum_xSqNorm_evalMarg_le,
+  MIPRE.QLD.SimulPair.sum_xSqNorm_hat_le, MIPRE.QLD.SimulPair.sum_snorm_sq_evalMarg_one_sub_le

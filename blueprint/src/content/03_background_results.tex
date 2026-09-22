@@ -3777,18 +3777,59 @@ to the swapped state, which the inconsistency and the Born rule exchange.
 \label{lem:qld-helper}
 \ledgernode{1.2.2.14}
 \uses{lem:qld-simultaneous,lem:qld-expanded-points,def:state-distance,def:inconsistency}
-For $W \in \{X, Z\}$ and on average over $u \in \F_q^m$, the $W$-marginal
-$\widehat{S}^W_g$ of the simultaneous measurement satisfies
+\lean{  MIPRE.stateSqNorm_eq_bornProb_one, MIPRE.normSq_stateVecB_eq_one_bornProb,
+  MIPRE.QLD.SimulPair.stateSqNorm_aOp, MIPRE.QLD.SimulPair.normSq_stateVecB_aOp,
+  MIPRE.QLD.SimulPair.xSqNorm_aOp, MIPRE.aOp_mul_one_sub_eq, MIPRE.snorm_aOp_mul_one_sub_le,
+  MIPRE.snorm_sq_aOp_mul_one_sub_le, MIPRE.QLD.sum_bornProb_diag_eq, MIPRE.QLD.sum_content_pt,
+  MIPRE.QLD.sum_uniform_xSqNorm_hatMats_le, MIPRE.QLD.SimulPair.hatMats_conjTranspose,
+  MIPRE.QLD.SimulPair.sum_bornProb_evalMarg_ge, MIPRE.QLD.SimulPair.sum_xSqNorm_evalMarg_le,
+  MIPRE.QLD.SimulPair.sum_xSqNorm_hat_le, MIPRE.QLD.SimulPair.sum_snorm_sq_evalMarg_one_sub_le}
+\leanok
+Let $(\Phi, S_A, S_B)$ be a simultaneous pair measurement of error $\delta_S$
+(Lemma~\ref{lem:qld-simultaneous}) for a strategy of failure $\eps$. For $W \in \{X, Z\}$ and on
+average over a uniform $u \in \F_q^m$, with $\widehat S^W_a$ the evaluated $W$ marginal,
 \begin{equation*}
-  1 - \bra{\widehat{\psi}} \sum_g (\widehat{S}^W_g)_{\alice \alice'} \ot
-    (\widehat{M}^{(\mathtt{Point}, W), u}_{g(u)})_{\bob \alice''} \ket{\widehat{\psi}}
-  \leq \delta_S
+  1 - \mathbb E_u \sum_a \bigl\langle \widehat{S}^W_a \ot
+    \widehat{M}^{(\mathtt{Point}, W), u}_{a} \bigr\rangle_\Phi \leq \delta_S ,
 \end{equation*}
---- the summed operator is a projector, so this is its state-dependent distance from $\Id$ --- and
-$\bigl( \widehat{S}^W_g ( \Id - \widehat{M}^{(\mathtt{Point}, W), u}_{g(u)} )
-\bigr)_{\alice \alice'} \approx_{\delta_S} 0$, in which \emph{both} factors sit on the same party.
-All symmetric equivalents hold.
+the opposite party's measurement being the one on the right, and
+\begin{equation*}
+  \mathbb E_u \sum_a \bigl\| \bigl( \widehat{S}^W_a
+    ( \Id - \widehat{M}^{(\mathtt{Point}, W), u}_{a} ) \ot \Id \bigr) \Phi \bigr\|^2
+  \leq 4 \delta_S + 344\,\eps ,
+\end{equation*}
+in which \emph{both} factors sit on the same party. All symmetric equivalents hold.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:qld-simultaneous,lem:qld-expanded-points}
+\leanok
+The first display is the consistency of Lemma~\ref{lem:qld-simultaneous} read as an agreement:
+for two POVMs with the same outcomes on a unit state, the inconsistency is one minus the
+probability that they agree.
+
+For the second, write $T = \widehat S^W_a$ and $A = \widehat M^{(\mathtt{Point}, W), u}_a$ on
+Alice's register and $B$ for the same point measurement on Bob's; all three are projections, $T$
+because the marginal of a projective measurement is projective, $A$ and $B$ because the expanded
+point measurements are. Since operators on opposite parties commute and $B^2 = B$,
+\[
+  (T \ot \Id)(\Id - A \ot \Id)
+    = (\Id - \Id \ot B)\,(T \ot \Id - \Id \ot B) - (T \ot \Id)(A \ot \Id - \Id \ot B) ,
+\]
+an identity whose two right-hand factors in front, $\Id - \Id \ot B$ and $T \ot \Id$, are
+contractions. So the same-party deviation is at most the sum of two cross-party ones: the first
+is the deviation of the marginal from the opposite party's point measurement, which the first
+display bounds by $2\delta_S$ after summing, and the second is the self-consistency of the
+expanded point measurements, $172\eps$ by Lemma~\ref{lem:qld-expanded-points}. Squaring costs a
+factor two on each. The self-consistency is stated at the verifier's content and used at a
+uniform point; the content's $W$ block is uniform, and it transfers to the padded state because
+doubly extended operators keep their expanded-state expectations.
+\end{proof}
+
+\paragraph{Comments.} The paper absorbs the $\eps$ of the second item into $\delta_S$; here both
+constants are explicit, and the second item's is $4\delta_S + 344\eps$. Both items are stated for
+the evaluated marginal at an outcome $a \in \F_q$ rather than per polynomial $g$: the two are the
+same sum, grouped differently, and the outcome form is what the Pauli construction consumes.
 
 \effortHard
 

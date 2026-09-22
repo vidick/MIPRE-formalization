@@ -1655,3 +1655,30 @@ consumes only the two evaluated marginals, so the structure carries those and th
 where it is used, inside `-sandwich`. And the bound here is linear in `δ_ld` and `ε` up to the one
 square root the Cauchy--Schwarz costs, where the paper writes `O((δ_ld + δ_Q)^{1/2} + md/q)`
 throughout; `δ_S` is closed under that square root by halving `b`, which is the assembly's job.
+
+### PR J-a: `lem:qld-helper` (2026-09-22)
+
+**What closed.** Both items of `lem:qld-helper`, on an abstract `SimulPair`.
+`MIPRE/Background/QLD/Helper.lean` (fast regime). Item 1 is the consistency read as an agreement:
+`sum_bornProb_diag_eq` says the inconsistency of two POVM families on a unit state is one minus
+the probability that they agree (from `sum_diag_eq_one_sub`, which was already there for the pair
+form). Item 2 is the same-party statement the Pauli construction needs, and rests on one matrix
+identity (`aOp_mul_one_sub_eq`): with `T`, `A` on Alice and `B` on Bob a projector,
+`(T ⊗ 1)(1 − A ⊗ 1) = (1 − 1 ⊗ B)(T ⊗ 1 − 1 ⊗ B) − (T ⊗ 1)(A ⊗ 1 − 1 ⊗ B)`, because the cross
+terms `(T ⊗ 1)(1 ⊗ B)` cancel and `(1 − 1 ⊗ B)(1 ⊗ B) = 0`. Both front factors are contractions
+(`snorm_mul_le` with `bnd_aOp`, `bnd_bOp`), so the same-party deviation is at most the two
+cross-party ones: `2δ_S` from item 1 (`xSqNorm_sum_le_two_mul`) and `172 ε` from the
+self-consistency of the expanded point measurements. Squaring costs a factor two on each, giving
+`4δ_S + 344ε`.
+
+**Two transfers.** The self-consistency (`hatPOVM_consistency`) is stated at the verifier's
+content; `sum_content_pt` says the content's `W` block is uniform, so it reads at a uniform point.
+And it lives on the expanded state, while the helper is on the padded state `Φ`: `SimulPair`'s
+`Φ_reduced` gives the Born probabilities, and `Simul.lean` now derives the two squared state norms
+from it (`stateSqNorm_aOp`, `normSq_stateVecB_aOp`, through the generic
+`stateSqNorm_eq_bornProb_one` and `normSq_stateVecB_eq_one_bornProb`), hence the whole cross-party
+deviation (`xSqNorm_aOp`, by the three-term expansion `xSqNorm_eq_expand`).
+
+**A Lean point.** A `have h : ∀ {R S : Type*} ...` inside a declaration whose own universe is
+fixed produces `AddConstAsyncResult.commitConst: constant has level params [u, u_2, u_3] but
+expected [u]`; the two norm bridges had to become top-level universe-polymorphic theorems.
