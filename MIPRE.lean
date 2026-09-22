@@ -435,10 +435,10 @@ import MIPRE.Background.QLD.PaddedLIDT
 import MIPRE.Background.QLD.PaddedLines
 import MIPRE.Background.QLD.PaddedStrategy
 import MIPRE.Background.QLD.PaddedValue
+import MIPRE.Background.QLD.PauliBasis
 import MIPRE.Background.QLD.PauliFactorPrograms
 import MIPRE.Background.QLD.PauliRowPrograms
 import MIPRE.Background.QLD.PauliStagePrograms
-import MIPRE.Background.QLD.PauliBasis
 import MIPRE.Background.QLD.Product
 import MIPRE.Background.QLD.Products
 import MIPRE.Background.QLD.SamplerQueryProgram
