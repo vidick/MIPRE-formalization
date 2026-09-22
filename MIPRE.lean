@@ -442,6 +442,7 @@ import MIPRE.Background.QLD.PauliRowPrograms
 import MIPRE.Background.QLD.PauliStagePrograms
 import MIPRE.Background.QLD.Product
 import MIPRE.Background.QLD.Products
+import MIPRE.Background.QLD.Pulling
 import MIPRE.Background.QLD.SamplerQueryProgram
 import MIPRE.Background.QLD.SeededLinePrograms
 import MIPRE.Background.QLD.Separate

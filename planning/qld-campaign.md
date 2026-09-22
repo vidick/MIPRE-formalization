@@ -1874,3 +1874,38 @@ then the passage through `fact:agreement`, `fact:data-processing` and `lem:qld-p
 tools are in place (`fact:add-a-proj` in `MIPRE/Foundations/Commutation.lean`, item 2 of
 `lem:qld-helper`). On stage 4's evidence that is about three pull requests, after which
 `lem:qld-swap` item 2 and the `thm:qld` assembly follow.
+
+### PR L, second piece: what the estimates of `lem:qld-pauli-selfcons` consume (2026-09-22)
+
+`MIPRE/Background/QLD/Pulling.lean` (fast regime). With the identities closed, this takes the two
+inputs the `approx_delta` displays need and puts them in the form the chain asks for.
+
+**The helper, re-indexed.** Displays `eq:qld-pulling-7` and `eq:qld-pulling-11` are item 2 of
+`lem:qld-helper`, but the helper is stated at an outcome `a` in `F_q` --- what the expansion stage
+produces --- and the chain sums over the *polynomial* outcomes `g`, because the label
+`coded(g) . u-tilde` it carries depends on `g` and not on `g(u)`. The two sums are **equal**, not
+merely comparable: within a fibre of the evaluation the pair measurement's outcomes are orthogonal
+projectors, so every cross term of the squared norm vanishes (`snorm_sq_sum_orthogonal`), and the
+fibres partition the outcomes. So `SimulPair.sum_snorm_sq_polyMarg_one_sub_le` holds at the
+helper's own constant, with nothing lost.
+
+**Schwartz--Zippel again.** `eq:qld-pulling-12` is `sum_uniform_agree_mass_le`: restricting a
+weighted sum to the tuples where two distinct outcome polynomials agree at the sampled point costs
+`md/q`. A small thing worth noting --- the linter caught it --- is that no `1 <= d` hypothesis is
+needed here, unlike at `prob_agree_ldEnc_le_of_not_multilinear`, because both polynomials carry the
+same individual-degree bound and so the Schwartz--Zippel hypothesis is already met. The version in
+`NonMultilinear.lean` needs it only because one side there is an interpolant, of individual degree
+at most one, which has to be brought under the bound `d`.
+
+**A tactic note, since it cost a cycle.** `Finset.sum_fiberwise` will not close
+`sum_a sum_{g in fibre} f(g, a) = sum_g f(g, ev g)` directly: the summand on the left mentions `a`
+and only agrees with the right *inside* the fibre. Rewriting the right-hand side with
+`<- sum_fiberwise` first and then matching pointwise with the membership hypothesis is the pattern
+that works, and it is the same one `Multilinear.lean` uses. Applied the wrong way round it does not
+fail fast --- it spends the whole heartbeat budget on unification and reports a `whnf` timeout,
+which reads like a performance problem and is not one.
+
+What is left of the node: `eq:qld-pulling-1` and `-3` (inserting and moving a near-identity),
+`eq:qld-pulling-10`, the assembly, and the final passage through `fact:agreement`,
+`fact:data-processing` and `lem:qld-povm-to-obs`. The remaining tool is `fact:add-a-proj`, in
+`MIPRE/Foundations/Commutation.lean`.
