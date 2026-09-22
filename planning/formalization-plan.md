@@ -702,8 +702,12 @@ four of item 2's displays. **What `thm:qld` still needs, in order of distance to
    of `lem:qld-win`, carried into the triangle's vocabulary by `sum_content_pt` and
    `inconsistency_eq_half_xPovmDist`, and `inconsistency_mTilde_pauli_le_of_win` is the display
    from the game's soundness alone;
-2. **`SimulPair` carrying both entangled pairs.** This is the blocker for everything below it, and
-   it has two consumers. The paper's expanded state is
+2. **Both entangled pairs in play.** This is the blocker for everything below it, and it has two
+   consumers. It is *additive*, not a retyping: `SimulPair`'s `EA` and `EB` are arbitrary types, so
+   the second pair lives inside them and `pairSwapEquiv`
+   (`MIPRE/Background/QLD/TwoPairs.lean`) is the one permutation that puts both parties' exact
+   Pauli objects on one cut. What is left is a structure beside `SimulPair` recording the shape,
+   and Bob's `mTilde` from `SB`. The paper's expanded state is
    `|psi>_{AB} (x) |EPR>_{A'A''} (x) |EPR>_{B'B''}`; `Phi` carries only `A' A''`, read along the cut
    `A A' | B A''`. That economy was right while every consumer compared an exact Pauli object on
    one party with a *point* measurement on the other, which carries no ancilla. Both remaining
@@ -712,9 +716,8 @@ four of item 2's displays. **What `thm:qld` still needs, in order of distance to
    changes and every statement reading `Phi` or `mVec` is re-derived (`Helper`, `Multilinear`,
    `MTilde`, `AncTransport`, `Pulling`, `SwapMeasure`, `ChainProbe`); the estimates themselves are
    untouched, being about operators and states in the abstract. See
-   `reports/qld-stage5-blueprint-repairs.md`, and `planning/qld-two-pairs-scope.md` for the scope:
-   the target is to carry the paper's state as the paper writes it, physically grouped, and derive
-   the split cuts the earlier stages work in by the regroupings this tree already has;
+   `reports/qld-stage5-blueprint-repairs.md` for why, and `planning/qld-two-pairs-scope.md` for the
+   scope and for the first estimate of it, which was wrong in an instructive way;
 3. then the two assemblies, in either order: `lem:qld-swap` item 2's threading
    (`eq:qld-unitary-7` through `-9` and `abs_qform_sub_qform_le` into the statement about
    `V M^(Pauli,W)_h V†`), and `lem:qld-pauli-selfcons`'s chain at a uniform probe, plus

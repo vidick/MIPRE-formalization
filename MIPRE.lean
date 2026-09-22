@@ -453,6 +453,7 @@ import MIPRE.Background.QLD.SwapEndgame
 import MIPRE.Background.QLD.SwapMeasure
 import MIPRE.Background.QLD.SwapState
 import MIPRE.Background.QLD.SwapUnitary
+import MIPRE.Background.QLD.TwoPairs
 import MIPRE.Background.QLD.TypeEncoding
 import MIPRE.Background.QLD.Win
 import MIPRE.Background.QLD.WinMS

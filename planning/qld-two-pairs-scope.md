@@ -1,102 +1,67 @@
-# Carrying both entangled pairs: what the change is, and what it costs
+# Carrying both entangled pairs
 
 `reports/qld-stage5-blueprint-repairs.md` records why both remaining QLD assemblies are blocked on
-the same thing. This is the scope of the change that unblocks them, written before any Lean is
-touched so that the shape can be argued about cheaply.
+the same thing: the paper's expanded state has two entangled pairs, `A' A''` local to Alice and
+`B' B''` local to Bob, and each remaining assembly compares two *exact Pauli* objects, so each side
+needs its party's whole triple.
 
-## What is represented now, and why it ran out
+**The first version of this document scoped that as a retyping of `SimulPair.Phi`, and it is not
+one.** The change is additive, the structure is untouched, and the record below keeps both the
+wrong estimate and the reason it was wrong, because the reason is a fact about the interface worth
+remembering.
 
-The paper's expanded state is
+## The interface already has room
 
-    |psi-hat> = |psi>_{A B} (x) |EPR>_{A' A''} (x) |EPR>_{B' B''} ,
+`SimulPair`'s padding registers `EA` and `EB` are **arbitrary types**, constrained only by
+`Fintype` and `DecidableEq`. Nothing says what is in them. So the second pair lives there:
 
-with `A' A''` a maximally entangled pair **local to Alice**, `B' B''` one **local to Bob**, and the
-appendix's operators acting on the triples `A A' A''` and `B B' B''`.
+    EA = Anc F m x EA'        EB = Anc F m x EB'
 
-What this formalization carries is `SimulPair.Phi`, a state on
-`((dA x Anc) x EA) x ((dB x Anc) x EB)` --- four factors, one entangled pair, split across the
-party cut. `hatVec psi = expVec psi epr` is that pair with one half grouped with each party, which
-is the paper's cut `A A' | B A''`: Alice's local pair read with `A''` on the other side of the
-bipartition. Mathematically the two readings are the same vector; only the locality story differs.
+and `Phi : ((dA x Anc) x EA) x ((dB x Anc) x EB)` already *is* a state on the paper's six registers
+plus padding. `Phi_reduced` is satisfiable unchanged, because it speaks of `aOp X` and `aOp Y`,
+which put the identity on all of `EA` and `EB` whatever those are.
 
-That economy was deliberate and it was right. `lem:qld-simultaneous` and `lem:qld-helper` each use
-one orientation at a time, and item 1 of `lem:qld-exact-paulis` compares an exact Pauli object on
-one party with a **point measurement** on the other --- and a point measurement carries no ancilla,
-so it needs nothing from the far side. `inconsistency_mTilde_le` is `mTildeAt` against
-`(ptAtPOVM MB W u).aOp`, which lives on `dB x EB`.
+Read the factors as the paper's registers, with each pair split across the party cut the way
+`hatVec` already splits the first:
 
-It runs out at the first comparison of **two exact Pauli objects**, and both remaining assemblies
-are exactly that. `lem:qld-pauli-selfcons` concludes
-`(W~^e(u-tilde))_{A A' A''} approx (W~^e(u-tilde))_{B B' B''}`; `lem:qld-swap` item 1 concludes
-about `|EPR>_{A'' B''}`. Each side of each needs its party's whole triple, so all six registers at
-once, and `Phi` has four.
+* Alice's side, `(dA x Anc) x (Anc x EA')`, is `A A'` and `B'' EA'`;
+* Bob's side, `(dB x Anc) x (Anc x EB')`, is `B A''` and `B' EB'`.
 
-Worse than a shortage: the two readings pull opposite ways. `mTildeAt` lives on the regrouping that
-gives **Alice** both ancilla factors (`mVec`), and a Bob-side `mTilde` would need the one that gives
-**Bob** both. No bipartite cut of a four-factor state supports both at once. That there is no
-Bob-side `mTilde` anywhere in the tree is the same fact from the other side.
+`Phi_reduced` pins the *first* `Anc` on each side to be the halves of the pair `hatVec` carries,
+`A'` with Alice and `A''` with Bob, and says nothing about the second, which is free to be the
+other pair split the other way.
 
-## What to represent instead
+## The one permutation the comparison needs
 
-**Carry the paper's state as the paper writes it: physically grouped.**
+Alice's `M~` wants `A A' A''`, Bob's wants `B B' B''`. Each needs one register from the far side,
+and they are **different** registers --- `A''` for Alice, `B''` for Bob --- so a single permutation
+serves both: send each party's far half home. That is `pairSwapEquiv` in
+`MIPRE/Background/QLD/TwoPairs.lean`, with `pairSwapVec`, `pairSwapVec_unit`,
+`reindex_pairSwapEquiv` and `qform_pairSwapVec` beside it, in the pattern `regroupEquiv` and
+`bornProb_regroupVec` set. After it Alice holds `A A' A''` and Bob holds `B B' B''` --- the
+physical grouping --- and both exact Pauli objects are expressible on one bipartite cut, which is
+what `lem:qld-pauli-selfcons`'s conclusion and `lem:qld-swap` item 1 compare.
 
-    Phi : (((dA x Anc) x Anc) x EA) x (((dB x Anc) x Anc) x EB)
+That file builds against the tree as it stands, which is the demonstration that nothing has to be
+retyped.
 
-Alice holds `A A' A''` and her padding; Bob holds `B B' B''` and his. Each local pair is a vector
-in `Anc x Anc` on **one** side, not split across the cut.
+## What is left
 
-The split cuts the earlier stages work in then become *derived*, by the regroupings this tree
-already knows how to write: `regroupEquiv` and `bornProb_regroupVec` move one ancilla factor across
-the party cut, and `endEquiv` and `qform_endVec` (both merged) move two out of it. The present
-design has it backwards --- it takes one split cut as primitive and derives the other groupings ---
-which is why the second pair has nowhere to live.
+1. A structure beside `SimulPair` --- not replacing it --- recording that `EA` and `EB` have the
+   shape above and that the state carries the second pair there. The natural field is a mirror of
+   `Phi_reduced` for the other orientation; `SB` and `SB_proj` already exist and need nothing.
+2. Bob's `mTilde`, from `SB` on the mirror regrouping, as `mTildeAnc` is Alice's on `mVec`'s.
+3. Then the two assemblies, in either order.
 
-An alternative worth one paragraph of thought and then rejecting: keeping `Phi` and adding a second
-state `Phi'` for the mirror orientation. It fails because the conclusion compares the two parties'
-objects **on one state**, and `Phi` and `Phi'` would be different states, each carrying a different
-single pair. There is no compatibility field that repairs that.
+## What the wrong estimate was, and why
 
-## What changes, and what does not
+The first version proposed retyping `Phi` to
+`(((dA x Anc) x Anc) x EA) x (((dB x Anc) x Anc) x EB)` and re-deriving the roughly 94 mentions of
+`Phi` and 19 of `mVec` across some 135 declarations. That would have worked and it was a day or
+more of mechanical change with a real risk of a proof that used the split grouping essentially.
 
-Counted over the QLD tree: about 94 mentions of `Phi` and 19 of `mVec`, across roughly 135
-declarations in `Simul`, `Helper`, `Multilinear`, `MTilde`, `AncTransport`, `Pulling`,
-`SwapMeasure`, `ChainProbe`, plus the construction in `PaddedLIDT`.
-
-**Does not change: the estimates.** Every one of them is about operators and a state in the
-abstract and does not care how many ancilla factors there are --- `snorm_sq_sum_proj_sandwich`,
-`abs_sum_qform_swap_le`, `sum_snorm_sq_insert_le`, `inconsistency_triangle`,
-`sum_uniform_bornProb_fibre_le`, all of it. None of this is new mathematics.
-
-**Changes:**
-
-1. `Phi`'s type, and with it the structure's fields: `Phi_unit` is unchanged in form,
-   `Phi_reduced` has to say what the four-factor reduction is, and `consA` / `consB` retype.
-2. The transports. `bornProb_regroupVec` and the `SimulPair` wrappers over it (`mVec`,
-   `bornProb_aOp_aOp`, `xSqNorm_aOp`, `bornProb_padded`, `inconsistency_padded`,
-   `inconsistency_regroupVec`) are where the new grouping is actually used, and they are the real
-   work. Expect each to need its own `Equiv` and one entry computation, in the pattern those
-   lemmas already follow.
-3. Every statement that names `Phi` or `mVec` retypes. Most proofs should go through untouched once
-   (1) and (2) are in place, because they use `Phi` only through the interface.
-4. `PaddedLIDT`'s construction of the `SimulPair`, which is where a second `expVec` enters.
-
-## Order of work
-
-1. The new `Phi` and the structure's fields, with `PaddedLIDT`'s construction updated, and nothing
-   else --- the tree will not build, and that is the point: the breakage is the worklist.
-2. The transports, in `MTilde`'s `Regroup` section and its `SimulPair` wrappers.
-3. Walk the breakage file by file in import order: `Simul`, `Helper`, `Multilinear`, `MTilde`,
-   `AncTransport`, `Pulling`, `SwapMeasure`, `ChainProbe`.
-4. Only then the two assemblies, in either order.
-
-## The risk, and the mitigation
-
-The risk is that step 3 turns up a proof that used the *split* grouping essentially rather than
-incidentally --- something that is true of `expVec psi epr` and not of the physically grouped state.
-`AncTransport`'s `stateVec_hatVec_syn` and `xSqNorm_hatVec_syn` are the candidates, since they are
-the ones that reason about `hatVec` as an `expVec` rather than through the interface.
-
-The mitigation is to do step 1 and 2 and then build, before writing anything else: the error list
-is the honest estimate, and it is cheap to obtain. If `AncTransport` is the only casualty, the
-change is a day; if the helper's chain in `Multilinear` also breaks, it is longer. Either way the
-estimate should be taken from the compiler rather than from this document.
+It was wrong because it read `EA` and `EB` as fixed padding rather than as the free parameters they
+are. The lesson generalises: when a structure carries an opaque type parameter, check what can be
+put *into* it before changing the fields around it. The rejected alternative in the first version
+--- a second state for the mirror orientation --- is still rejected, and for the same reason as
+before: the conclusion compares the two parties' objects on **one** state.
