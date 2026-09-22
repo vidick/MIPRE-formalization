@@ -3855,7 +3855,13 @@ same sum, grouped differently, and the outcome form is what the Pauli constructi
   MIPRE.QLD.not_degreeOf_le_one_of_not_isML, MIPRE.QLD.sum_uniform_agree_ldEnc_le,
   MIPRE.QLD.polyMarg, MIPRE.QLD.evalMarg_eq_map_polyMarg, MIPRE.QLD.isPVM_polyMarg,
   MIPRE.QLD.isPVM_hatPauli, MIPRE.QLD.SimulPair.sum_bornProb_hatPauli_ge,
-  MIPRE.QLD.SimulPair.sum_bornProb_not_isML_le}
+  MIPRE.QLD.SimulPair.sum_bornProb_off_le, MIPRE.QLD.SimulPair.sum_bornProb_not_isML_le,
+  MIPRE.QLD.cubeData, MIPRE.QLD.IsInterp, MIPRE.QLD.cubeData_eq_of_eq_ldEnc,
+  MIPRE.QLD.isInterp_of_exists, MIPRE.QLD.ne_ldEnc_of_not_isInterp,
+  MIPRE.QLD.dotF_cubeData_indVec, MIPRE.QLD.sum_uniform_agree_ldEnc_le_of_not_isInterp,
+  MIPRE.QLD.SimulPair.sum_bornProb_not_isInterp_le, MIPRE.sum_bornProb_map_eq,
+  MIPRE.abs_sum_weighted_sub_le, MIPRE.QLD.SimulPair.sum_bornProb_polyMarg_ge,
+  MIPRE.QLD.SimulPair.sum_bornProb_cubeData_ge}
 From the simultaneous measurement one constructs, for $W \in \{X, Z\}$, measurements and
 binary observables on the expanded space which satisfy the Pauli group relations
 \emph{exactly} --- linearity in the argument, and $XZ$ commutation or anticommutation with the
@@ -3913,6 +3919,28 @@ non-multilinear outcome, uniformly in the cube datum
 rather than by their value at the point (\texttt{polyMarg}), which is what makes the outcome
 operator independent of the point that Schwartz--Zippel then samples.
 
+\emph{And the agreement itself is formalized}: expanding $\tilde{M}^{W,\ind_m(u)}_a$ and
+contracting the generalized Pauli against the strategy's point measurement turns the first item's
+left-hand side into the outcome sum with the label $\coded(g) \cdot \ind_m(u)$, and
+\begin{equation*}
+  \mathbb E_u \sum_g \bigl\langle \widehat S^W_g \ot
+    \widehat M^{(\mathtt{Point}, W), u}_{\coded(g) \cdot \ind_m(u)} \bigr\rangle_\Phi
+  \;\geq\; 1 - \delta_S - 2\Bigl( \delta_S + \sqrt{688\,\eps} + \frac{md}{q} \Bigr)
+\end{equation*}
+(\texttt{SimulPair.sum\_bornProb\_cubeData\_ge}), from the helper's agreement read by polynomial
+(\texttt{SimulPair.sum\_bornProb\_polyMarg\_ge}) and the mass bound, through
+\texttt{sum\_sub\_le\_of\_eq\_on}.
+
+\emph{One outstanding ingredient turned out not to be needed.} The chain was stated with the good
+set ``$g$ is multilinear'', and then agreement of the two labels on it is uniqueness of multilinear
+interpolation --- an independent fact about \texttt{MvPolynomial} that
+\texttt{sum\_sub\_le\_of\_eq\_on} took as a hypothesis. Taking the good set to be ``$g$
+\emph{is} the low-degree encoding of its own cube data'' (\texttt{IsInterp}) removes it: there the
+two labels agree by definition (\texttt{dotF\_cubeData\_indVec}), and off it $g$ differs from the
+encoding of \emph{every} cube datum (\texttt{ne\_ldEnc\_of\_not\_isInterp}), which is exactly
+the hypothesis Schwartz--Zippel wants, uniformly in the datum. Uniqueness of multilinear
+interpolation would say the two sets coincide; neither inclusion is used.
+
 \emph{Formalized, unconditionally}, in \texttt{MIPRE/Background/QLD/ExactPauli.lean}: the two
 marginals of a projective pair measurement (\texttt{sCoarse}, projective by
 \texttt{IsPVM.coarse}), the measurement $\tilde{M}^{W,\tilde{u}}_a$ (\texttt{mTilde}) and the
@@ -3945,8 +3973,9 @@ interpolation. \texttt{sum\_sub\_le\_of\_eq\_on} therefore takes agreement on th
 outcomes as a hypothesis rather than deriving it.
 
 \emph{Not formalized}, and the reason there is no statement-level \texttt{leanok} mark:
-the $\delta$-closeness of $\tilde{M}^{W,\tilde{u}}$ itself to the $(\mathtt{Point},W)$
-measurements. What is missing is register bookkeeping, not mathematics. The paper's expanded state
+the display above is the agreement item 1 asserts, but it is not yet \emph{read as}
+$\tilde{M}^{W,\tilde{u}}$, a single operator on one party. What is missing is register
+bookkeeping, not mathematics. The paper's expanded state
 $\ket{\hat\psi} = \ket{\psi}_{\alice\bob} \ot \ket{\EPR}_{\alice'\alice''} \ot
 \ket{\EPR}_{\bob'\bob''}$ carries \emph{two} entangled pairs and is used along two different
 cuts: $\alice\alice' \mid \bob\alice''$ for one orientation of

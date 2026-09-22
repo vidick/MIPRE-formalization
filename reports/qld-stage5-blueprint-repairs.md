@@ -121,18 +121,44 @@ Formalized, with no error terms and no game in sight:
   the discharge of the critical finding at node `1.2.2.15`, to the extent it can be discharged
   without the six-register state.
 
+Since then the approximate half of `lem:qld-exact-paulis` has been carried through to its
+inequality, in `MIPRE/Background/QLD/{PauliBasis,Multilinear}.lean`:
+
+* the non-multilinear mass bound `delta_S + sqrt(688 eps) + md/q`
+  (`SimulPair.sum_bornProb_not_isInterp_le`), and
+* item 1's agreement in the form the appendix's chain produces,
+  `E_u sum_g <S^W_g (x) M^(Point,W),u_{coded(g).ind_m(u)}> >= 1 - delta_S - 2(delta_S +
+  sqrt(688 eps) + md/q)` (`SimulPair.sum_bornProb_cubeData_ge`).
+
+Two findings came out of doing it.
+
+**Uniqueness of multilinear interpolation is not needed.** The chain was written with the good set
+"g is multilinear", and then agreement of the two labels on it *is* uniqueness of multilinear
+interpolation, which `sum_sub_le_of_eq_on` accordingly took as a hypothesis. Taking the good set to
+be "g is the low-degree encoding of its own cube data" (`IsInterp`) removes the dependency
+entirely: on it the two labels agree by definition, and off it `g` differs from the encoding of
+*every* cube datum, which is exactly what Schwartz--Zippel needs, uniformly in the datum.
+Uniqueness would say the two sets coincide; neither inclusion is used anywhere.
+
+**Only one entangled pair is needed per orientation.** The paper's expanded state
+`|psi> (x) EPR_{A'A''} (x) EPR_{B'B''}` carries two pairs and is read along two cuts,
+`A A' | B A''` and `B B' | A B''`, one per orientation of `lem:qld-4-7`. Each orientation uses one
+pair, and `MIPRE.QLD.hatVec` is exactly one such cut. In that cut the register the paper calls
+`A''` is the opposite party's ancilla half, so `sum_g (S^W_g)_{A A'} (x) tau_{...}` --- which in the
+paper's six-register picture is one operator `M~` on `A A' A''` --- is here an ordinary bipartite
+pairing of Alice's `S^W_g` against Bob's point measurement convolved with his own ancilla. That is
+why the inequality above needs no second pair.
+
 Not formalized, and therefore no `leanok` mark on either statement:
 
-* the `delta`-closeness of `M~^{W,u}` to the strategy's `(Point,W)` measurements. Its hypothesis
-  lives on the four-register cut `A A' | B A''` that `MIPRE.QLD.hatVec` is, while `M~^{W,u}` needs
-  `A A' A''` on one party. That is a six-register state with two maximally entangled pairs and
-  transport between two cuts;
+* reading the display above *as* `M~^{W,u}`, a single operator on one party. `mTilde` wants the
+  pair measurement and the generalized Pauli on disjoint registers of one party, and
+  `SimulPair.SA` acts on all of `A A' A''`; adjoining the second pair and transporting across it is
+  the remaining bookkeeping, together with the factor reindexing `(A x A'') x E ~= (A x E) x A''`
+  that `mTilde`'s shape asks for;
 * the embedding of the two ancilla halves into the four-party index, which is what turns
   `twirl_mul_twirl` into a statement about the expanded state;
-* item 2 of `lem:qld-swap` in its entirety;
-* uniqueness of multilinear interpolation --- that a multilinear polynomial is the interpolant of its
-  own values on the cube. An independent fact about `MvPolynomial`, and the one ingredient of the
-  non-multilinear chain still taken as a hypothesis (`sum_sub_le_of_eq_on`).
+* item 2 of `lem:qld-swap` in its entirety.
 
 Stage 4, `lem:qld-simultaneous` and its ten sub-lemmas, is untouched and is a multi-PR job of its
 own; `planning/qld-campaign.md` records the sizing.
