@@ -4091,7 +4091,8 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.isPVM_ptAtPOVM, MIPRE.QLD.SimulPair.chainShift, MIPRE.QLD.SimulPair.ptA,
   MIPRE.QLD.SimulPair.ptB, MIPRE.QLD.SimulPair.sum_snorm_sq_insert_chain,
   MIPRE.QLD.stateVec_hatVec_proj, MIPRE.QLD.xSqNorm_hatVec_proj,
-  MIPRE.QLD.SimulPair.stateVec_ancProj, MIPRE.QLD.SimulPair.sum_ancProj_mulVec}
+  MIPRE.QLD.SimulPair.stateVec_ancProj, MIPRE.QLD.SimulPair.sum_ancProj_mulVec,
+  MIPRE.QLD.syn_mul_proj, MIPRE.QLD.hatMats_mul_proj}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4357,10 +4358,19 @@ expanded state, only that it reproduces its expectations, so a \emph{vector} ide
 looks out of reach. It is not, because the identity to be proved is the vanishing of a squared
 norm, and a squared norm is an expectation.
 
-\emph{Not formalized}: the remaining three $\approx$ steps --- \texttt{eq:qld-pulling-3b},
-\texttt{eq:qld-pulling-5} to \texttt{-7}, and \texttt{eq:qld-pulling-10} to \texttt{-12}. Their
-estimates are all in place, as recorded above; what is missing is the rest of the four-index
-bookkeeping. And Lemma~\ref{lem:qld-povm-to-obs} at the very end.
+\emph{And \texttt{eq:qld-pulling-3b}, which is a definition unfolded the other way.}
+\texttt{hatMats\_mul\_proj} says the chain's factor $(M^{(\mathtt{Point},W),u}_r)_\alice \ot
+(\tau_h)_{\alice'}$ \emph{is} the hatted point measurement cut down by the Weyl outcome:
+$\widehat{M}^{u}_{c}$ times the projector at $h$ keeps exactly the point outcome $c - g_h(u)$,
+because the syndrome factor selects the one term of the convolution whose shift matches $h$. The
+supporting fact is \texttt{syn\_mul\_proj} --- a syndrome projector meets a single spectral
+projector in that projector or in nothing, the syndrome being the fibre of the family over the
+pairing.
+
+\emph{Not formalized}: the remaining two $\approx$ steps, \texttt{eq:qld-pulling-5} to \texttt{-7}
+and \texttt{eq:qld-pulling-10} to \texttt{-12}. Their estimates are in place, as recorded above;
+what is missing is the rest of the four-index bookkeeping. And
+Lemma~\ref{lem:qld-povm-to-obs} at the very end.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
 
 \effortHard
