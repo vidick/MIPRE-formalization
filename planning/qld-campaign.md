@@ -1615,3 +1615,43 @@ coordinate, `-dummy` is subsumed for stage 4c. Two Lean points: `gcongr` on
 `c * ↑(#s) ≤ c * ↑(#t)` descends to the Finset inequality `s ≤ t`, so `mul_le_mul_of_nonneg_left`
 with `exact_mod_cast` is the predictable route; and a multi-line `nlinarith [...]` hint list
 inside a term-mode `by` breaks on the continuation line's column, so the facts go in `have`s.
+
+### PR I: stage 4c — `-complete`, `-sandwich`, `-robustness`, `lem:qld-simultaneous` (2026-09-22)
+
+**What closed.** The four remaining statements of stage 4, and with them the interface stage 5 is
+proved against. `MIPRE/Background/QLD/Complete.lean` (fast regime) relabels each good outcome
+`g = α g_X(x) + β g_Z(z)` by the pair `(g_X, g_Z)` (`pairOf`, through
+`LowIndDegPoly.blockPoly`, a coefficient vector read on a block of the variables, with
+`eval_blockPoly` for a vector supported there), and `pairMeas` is the coarse-graining of the
+global measurement by it: projective (`isPVM_pairMeas`), complete, with the non-good outcomes
+absorbed into the fixed pair — the paper's complement `R`, whose weight `lem:qld-global-separate`
+bounds. `inconsistency_map_eq` reads the inconsistency of any such coarse-graining outcome by
+outcome. The marginals: `one_sub_two_sqrt_le_sum_snorm_sq` turns the products estimate into
+`∑_g E_u ‖(G_g ⊗ B_u(g(u)))Φ‖² ≥ 1 − 2√Δ` (triangle inequality, then one Cauchy--Schwarz over the
+pairs `(u, g)`), and `marg_Z_ge`, `marg_X_ge` bound the rest by the fibre analysis of `-separate`
+plus the non-good weight, giving `E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 − 2√Δ − 2/q − δ_G` and the
+`X` mirror; `inconsistency_evalMarg_Z_le`, `_X_le` are the same statements as inconsistencies.
+
+**The errors.** `PaddedLIDT.lean` names them as functions of the `GlobalPair` error `δ` and the
+strategy's failure `ε`: `deltaProd δ ε = 2δ + 2·57676416 ε` (the products bound `Δ`),
+`deltaSep δ ε = 8 Δ` (the non-separated weight `δ_G`) and
+`deltaS q δ ε = 2√Δ + 2/q + δ_G`. `deltaSep` needs `48 m d ≤ q`: `2 + 2d + 8md ≤ 12md` for
+`m, d ≥ 1`, so `η = (2+2d+8md)/q ≤ 1/4` and the factor `1 − 2η` of `-separate` is at least `1/2`
+(`one_sub_two_eta_ge`). The standing assumption of the subsection is `16md ≤ q`; the regime
+`16md < q < 48md` is absorbed in the assembly the same way `16md > q` is, by enlarging the
+universal constant, and the blueprint says so.
+
+**The instance.** `GlobalPair.toSimulPair` builds a `SimulPair` with
+`EA = EB = (F × F) × CL.Answer F (4m) d 1`, the state `padState ψ` reindexed by
+`Equiv.prodAssoc`, and the completed pair measurements reindexed likewise. The transport is
+four lemmas: `isPVM_reindex` (a reindexing is a `*`-isomorphism, so projectivity survives),
+`reindex_aOp_aOp` (extending twice by the identity and reassociating is extending once by the
+product ancilla), `POVM.aOp_aOp_reindex` (its POVM form), and Foundations'
+`inconsistency_reindex`, `bornProb_reindex`, `reindexVec_unit`. `exists_simulPair` composes it
+with `exists_globalPair`.
+
+**Two remarks.** The paper's `lem:qld-4-7` also announces the sandwiched joint estimate; stage 5
+consumes only the two evaluated marginals, so the structure carries those and the sandwich stays
+where it is used, inside `-sandwich`. And the bound here is linear in `δ_ld` and `ε` up to the one
+square root the Cauchy--Schwarz costs, where the paper writes `O((δ_ld + δ_Q)^{1/2} + md/q)`
+throughout; `δ_S` is closed under that square root by halving `b`, which is the assembly's job.

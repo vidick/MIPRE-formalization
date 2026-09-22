@@ -3103,16 +3103,30 @@ this step.
 \uses{lem:qld-global-robustness}
 \lean{  MIPRE.QLD.PolyPair, MIPRE.QLD.PolyPair.proj, MIPRE.QLD.evalMarg, MIPRE.QLD.evalMarg_mats,
   MIPRE.QLD.isPVM_evalMarg, MIPRE.QLD.SimulPair, MIPRE.QLD.SimulPair.mono,
-  MIPRE.QLD.SimulPair.bornProb_aOp_aOp}
+  MIPRE.QLD.SimulPair.bornProb_aOp_aOp, MIPRE.QLD.GlobalPair.toSimulPair,
+  MIPRE.QLD.exists_simulPair}
+\leanok
 There are universal $a>1$, $0<b<1$ and, on each relevant padded local space,
 a complete projective measurement $\widehat S_{g_X,g_Z}$ of pairs of
 individual-degree-$d$ polynomials on $\F_q^m$. Its evaluated $X$ and $Z$
 marginals are consistent with the opposite expanded point measurements,
 with error at most
 $\delta_S=a(md)^a(\eps^b+q^{-b}+2^{-bmd})$.
-The same measurement satisfies the sandwiched joint estimate below.
 Both register versions are required; no symmetric-strategy hypothesis is added.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:qld-global-pvm,lem:qld-global-robustness}
+\leanok
+Lemma~\ref{lem:qld-global-pvm} supplies the pair $(G_A, G_B)$ with error $\delta_{\mathrm{ld}}$;
+Lemmas~\ref{lem:qld-global-dummy}--\ref{lem:qld-global-robustness} complete it to a projective
+measurement of pairs whose evaluated marginals track the opposite party's expanded point
+measurements with error $\delta_S = 2\sqrt{\Delta} + 2/q + 8\Delta$,
+$\Delta = 2\delta_{\mathrm{ld}} + 2 \cdot 57676416\,\eps$, and carry it to the register shape of
+the structure. The displayed functional form is reached in the assembly of
+Theorem~\ref{thm:qld}, where $\delta_{\mathrm{ld}}$ is the seeded soundness theorem's error and
+the square root halves the exponent $b$.
+\end{proof}
 
 \paragraph{Comments.} The conclusion is formalized as the structure \texttt{SimulPair}
 (\texttt{MIPRE/Background/QLD/Simul.lean}): for a strategy $(\psi, M_A, M_B)$ and an error
@@ -3120,12 +3134,14 @@ $\delta$, ancilla types $E_A$, $E_B$, a unit state $\Phi$ on
 $((d_A \times \mathrm{Anc}) \times E_A) \times ((d_B \times \mathrm{Anc}) \times E_B)$ that
 reduces to the expanded state on the two hat registers, projective pair measurements $S_A$, $S_B$
 with outcomes in pairs of individual-degree-$d$ polynomials, and the two evaluated-marginal
-consistencies. The lemma is then the existence of a \texttt{SimulPair} at error $\delta_S$, which
-Lemmas~\ref{lem:qld-global-pvm}--\ref{lem:qld-global-robustness} are to supply; stage 5 is proved
-against the structure. The padded state of Lemma~\ref{lem:qld-global-pvm} lives on the registers
-$((d_A \times \mathrm{Anc}) \times \F_q^2) \times \mathrm{Ans}$ with $\mathrm{Ans}$ the
-dilation's answer ancilla, and is carried to the structure's register shape by the associativity
-reindexing.
+consistencies. The lemma is the existence of a \texttt{SimulPair} at error $\delta_S$
+(\texttt{exists\_simulPair}); stage 5 is proved against the structure. Two departures from the
+paper's statement. The sandwiched joint estimate it also announces is not carried in the
+structure: stage 5 consumes only the two evaluated marginals, and the sandwich is what
+Lemma~\ref{lem:qld-global-sandwich} passes through on the way to them. And the hypothesis is
+$48md \leq q$ rather than the standing $16md \leq q$, which is what makes the factor $1 - 2\eta$
+of Lemma~\ref{lem:qld-global-separate} at least $1/2$; as with $16md > q$, the regime
+$48md > q$ is absorbed in the assembly by enlarging the universal constant.
 
 \begin{lemma}[Admissible padded setup]
 \label{lem:qld-global-setup}
@@ -3652,35 +3668,106 @@ coordinates obtained by fixing those in $T$; the assembly is one generic stateme
 \label{lem:qld-global-complete}
 \ledgernode{1.2.2.13.8}
 \uses{lem:qld-global-separate}
-Relabel the retained projectors by $(g_X,g_Z)$ and add their orthogonal
-complement $R$ to one fixed legal outcome. This is a complete PVM, with
-$\langle R\rangle\leq\delta_G$. Each cross-party inconsistency increases
-by at most $\delta_G$.
+\lean{  MIPRE.LIDT.expandIdx, MIPRE.LIDT.expandIdx_apply_idx, MIPRE.LIDT.expandIdx_apply_of_not,
+  MIPRE.LIDT.prod_pow_expandIdx, MIPRE.LIDT.LowIndDegPoly.blockPoly,
+  MIPRE.LIDT.LowIndDegPoly.eval_blockPoly, MIPRE.QLD.isLinAB_of_isGood, MIPRE.QLD.notMem_xSet_iff,
+  MIPRE.QLD.notMem_zSet_iff, MIPRE.QLD.not_depOutside_gA_of_isGood,
+  MIPRE.QLD.not_depOutside_gB_of_isGood, MIPRE.QLD.gX, MIPRE.QLD.gZ, MIPRE.QLD.eval_gX,
+  MIPRE.QLD.eval_gZ, MIPRE.QLD.pairOf, MIPRE.QLD.pairOf_of_isGood, MIPRE.QLD.pairMeas,
+  MIPRE.QLD.pairMeas_mats, MIPRE.QLD.isPVM_pairMeas, MIPRE.QLD.evalMarg_pairMeas,
+  MIPRE.QLD.inconsistency_map_eq}
+\leanok
+Relabel each good outcome $g = \alpha g_X(x) + \beta g_Z(z)$ of the global measurement by the pair
+$(g_X, g_Z)$ of polynomials of individual degree at most $d$ on $\F_q^m$, and every other outcome
+by the fixed pair $(0, 0)$. The result is a complete projective measurement of pairs, and the
+operator it assigns to $(0, 0)$ beyond the good outcomes with that pair is the paper's complement
+$R$, of weight at most $\delta_G$ by Lemma~\ref{lem:qld-global-separate}. Consequently each
+consistency estimate stated for the good outcomes holds for the completed measurement with its
+error increased by $\delta_G$.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:qld-global-separate}
+\leanok
+The relabelling is a map on outcomes, so the completed measurement is the coarse-graining of the
+global measurement by it; a coarse-graining of a projective measurement is projective, and
+complete because the original is. The pair of a good outcome is read off its two coefficient
+polynomials: $g_X$ is the coefficient of $\alpha$, which reads only the $x$ block, viewed as a
+polynomial in $m$ variables, and $g_Z$ the coefficient of $\beta$ on the $z$ block
+(\texttt{blockPoly}, whose defining property is that a coefficient vector supported on a block
+evaluates through that block). Nothing is lost: for a good outcome $g_X(x) = g_1(u)$ and
+$g_Z(z) = g_2(u)$ at every padded point $u$.
+\end{proof}
 
 \begin{lemma}[Sandwich estimates and the two marginals]
 \label{lem:qld-global-sandwich}
 \ledgernode{1.2.2.13.9}
-\uses{lem:qld-global-complete,lem:qld-global-products,def:cross-distance}
-The completed pair measurement, evaluated at uniform $x,z$, is consistent
-with the positive joint POVM $\widehat M^X_a\widehat M^Z_b\widehat M^X_a$
-with error $O(\delta_G+\sqrt{\delta_{\mathrm{ld}}+\delta_Q}+1/q)$.
-Summation gives its $X$ marginal. Reversing the ordered-product argument gives
-the $Z$ marginal for the same completed measurement. Intermediate
-unsandwiched scalars may be complex; take real parts when estimating them.
+\uses{lem:qld-global-complete,lem:qld-global-products,lem:qld-global-separate,def:cross-distance}
+\lean{  MIPRE.QLD.sum_uniform_zBlk, MIPRE.QLD.sum_uniform_xBlk, MIPRE.QLD.sq_sub_two_mul_le_sq,
+  MIPRE.QLD.one_sub_two_sqrt_le_sum_snorm_sq, MIPRE.QLD.marg_Z_ge, MIPRE.QLD.marg_X_ge,
+  MIPRE.QLD.inconsistency_evalMarg_Z_le, MIPRE.QLD.inconsistency_evalMarg_X_le}
+\leanok
+Let $\Delta$ be the bound of Lemma~\ref{lem:qld-global-products} and $\delta_G$ the weight of the
+outcomes that are not of the separated form. Then the evaluated $Z$ marginal of the completed pair
+measurement is consistent with Bob's expanded $(\mathtt{Point}, Z)$ measurement at a uniform
+$z \in \F_q^m$, with error at most $2\sqrt{\Delta} + 2/q + \delta_G$, and likewise the $X$
+marginal with the $X$ measurement at a uniform $x$.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:qld-global-complete,lem:qld-global-products,lem:qld-global-separate}
+\leanok
+Write $B_u(c)$ for the combination of the ordered products $\widehat M^X_a \widehat M^Z_b$ along
+$\alpha a + \beta b = c$. From $\sum_g \mathbb E_u \|(G_g \otimes (\Id - B_u(g(u))))\Phi\|^2 \leq
+\Delta$ and $\|(G_g \otimes \Id)\Phi\| \leq \|(G_g \otimes B_u)\Phi\| +
+\|(G_g \otimes (\Id - B_u))\Phi\|$, one Cauchy--Schwarz over the pairs $(u, g)$ gives
+$\sum_g \mathbb E_u \|(G_g \otimes B_u(g(u)))\Phi\|^2 \geq 1 - 2\sqrt{\Delta}$. For a good
+outcome, the fibre analysis of Lemma~\ref{lem:qld-global-separate} bounds the left-hand side
+above by $2/q \cdot \langle G_g \otimes \Id \rangle$ plus the diagonal weight
+$\mathbb E_{u_0} \langle G_g \otimes \widehat M^Z_{g_Z(z)}(z)\rangle$, and the outcomes that are
+not good contribute at most $\delta_G$ in total. The $z$ block of a uniform padded point is
+uniform, so what remains is exactly the $Z$ marginal, and rearranging gives the bound. The $X$
+marginal is the same computation from the other product order. No complex intermediate appears:
+every quantity estimated here is a squared norm or a Born probability of a positive operator.
+\end{proof}
 
 \begin{lemma}[Global robustness and register transport]
 \label{lem:qld-global-robustness}
 \ledgernode{1.2.2.13.10}
-\uses{lem:qld-global-sandwich,lem:qld-global-setup}
-All preceding losses are absorbed by
-$a(md)^a(\eps^b+q^{-b}+2^{-bmd})$ after increasing $a$ and decreasing $b$.
-Repeat the construction on each of the two relevant register cuts to obtain
-both evaluated marginal estimates without a symmetry assumption.
-Constants in the intermediate $O$ bounds are absorbed into the displayed
-error; they are not silently set to one in the state-distance relation.
+\uses{lem:qld-global-sandwich,lem:qld-global-separate,lem:qld-global-setup}
+\lean{  MIPRE.isPVM_reindex, MIPRE.isPVM_reindex_povm, MIPRE.reindex_aOp_aOp,
+  MIPRE.POVM.aOp_aOp_reindex, MIPRE.ProjectiveMeasurement.isPVM_M, MIPRE.QLD.deltaProd,
+  MIPRE.QLD.deltaSep, MIPRE.QLD.deltaS, MIPRE.QLD.GlobalPair.one_sub_two_eta_ge,
+  MIPRE.QLD.GlobalPair.sum_not_isGood_mass_A_le', MIPRE.QLD.GlobalPair.sum_not_isGood_mass_B_le',
+  MIPRE.QLD.liftPt, MIPRE.QLD.liftPt_mats, MIPRE.QLD.GlobalPair.inconsistency_evalMarg_A_le,
+  MIPRE.QLD.GlobalPair.inconsistency_evalMarg_B_le}
+\leanok
+Collect the three errors of stage 4b--4c as explicit functions of the error $\delta$ of
+Lemma~\ref{lem:qld-global-pvm} and the failure $\eps$ of the strategy:
+$\Delta = 2\delta + 2 \cdot 57676416\,\eps$ is the ordered-products bound,
+$\delta_G = 8\Delta$ the weight of the outcomes that are not of the separated form, and
+$\delta_S = 2\sqrt{\Delta} + 2/q + \delta_G$ the marginal error. The bound
+$\delta_G = 8\Delta$ holds under $48md \leq q$, where the factor $1 - 2\eta$ of
+Lemma~\ref{lem:qld-global-separate} is at least $1/2$. Both register versions are obtained by
+running the same estimates against the swapped padded state; no symmetry of the strategy is
+assumed. Finally the measurements are carried from the dilated registers
+$((d_A \times \mathrm{Anc}) \times \F_q^2) \times \mathrm{Ans}$ to the shape
+$(d_A \times \mathrm{Anc}) \times E_A$ of Lemma~\ref{lem:qld-simultaneous} by the associativity
+reindexing, which preserves projectivity, the Born rule and every inconsistency.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:qld-global-sandwich,lem:qld-global-separate}
+\leanok
+For the arithmetic: $2 + 2d + 8md \leq 12md$ for $m, d \geq 1$, so $48md \leq q$ gives
+$\eta = (2 + 2d + 8md)/q \leq 1/4$ and $1 - 2\eta \geq 1/2$; since the weight is nonnegative,
+Lemma~\ref{lem:qld-global-separate} then reads $\delta_G \leq 8\Delta$. For the transport:
+reindexing a register along an equivalence is a $*$-isomorphism of the matrix algebra, so it takes
+projective measurements to projective measurements, and conjugating the state by the same
+equivalence leaves every quadratic form unchanged; extending an operator by the identity twice
+and reassociating is extending it once by the product ancilla. Bob's versions are Alice's applied
+to the swapped state, which the inconsistency and the Born rule exchange.
+\end{proof}
 
 \subsubsection{Separation and the swap isometry}
 

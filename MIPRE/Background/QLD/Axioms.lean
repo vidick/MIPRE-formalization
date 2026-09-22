@@ -1153,3 +1153,33 @@ padded state in `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
   MIPRE.QLD.sum_uniform_snorm_sq_ordComb_ZX_le_of_depA, MIPRE.QLD.sum_bad_mass_le_of_avg,
   MIPRE.QLD.sum_not_isGood_mass_le, MIPRE.QLD.GlobalPair.sum_not_isGood_mass_A_le,
   MIPRE.QLD.GlobalPair.sum_not_isGood_mass_B_le
+
+/-! `lem:qld-global-complete` (`MIPRE/Background/QLD/Complete.lean`). -/
+#guard_sorry_free MIPRE.LIDT.expandIdx, MIPRE.LIDT.expandIdx_apply_idx,
+  MIPRE.LIDT.expandIdx_apply_of_not, MIPRE.LIDT.prod_pow_expandIdx,
+  MIPRE.LIDT.LowIndDegPoly.blockPoly, MIPRE.LIDT.LowIndDegPoly.eval_blockPoly,
+  MIPRE.QLD.isLinAB_of_isGood, MIPRE.QLD.notMem_xSet_iff, MIPRE.QLD.notMem_zSet_iff,
+  MIPRE.QLD.not_depOutside_gA_of_isGood, MIPRE.QLD.not_depOutside_gB_of_isGood, MIPRE.QLD.gX,
+  MIPRE.QLD.gZ, MIPRE.QLD.eval_gX, MIPRE.QLD.eval_gZ, MIPRE.QLD.pairOf, MIPRE.QLD.pairOf_of_isGood,
+  MIPRE.QLD.pairMeas, MIPRE.QLD.pairMeas_mats, MIPRE.QLD.isPVM_pairMeas,
+  MIPRE.QLD.evalMarg_pairMeas, MIPRE.QLD.inconsistency_map_eq
+
+/-! `lem:qld-global-sandwich` (`MIPRE/Background/QLD/Complete.lean`). -/
+#guard_sorry_free MIPRE.QLD.sum_uniform_zBlk, MIPRE.QLD.sum_uniform_xBlk,
+  MIPRE.QLD.sq_sub_two_mul_le_sq, MIPRE.QLD.one_sub_two_sqrt_le_sum_snorm_sq, MIPRE.QLD.marg_Z_ge,
+  MIPRE.QLD.marg_X_ge, MIPRE.QLD.inconsistency_evalMarg_Z_le, MIPRE.QLD.inconsistency_evalMarg_X_le
+
+/-! `lem:qld-global-robustness` (`MIPRE/Background/QLD/Complete.lean` for the register
+transport, `MIPRE/Background/QLD/PaddedLIDT.lean` for the errors). -/
+#guard_sorry_free MIPRE.isPVM_reindex, MIPRE.isPVM_reindex_povm, MIPRE.reindex_aOp_aOp,
+  MIPRE.POVM.aOp_aOp_reindex, MIPRE.ProjectiveMeasurement.isPVM_M, MIPRE.QLD.deltaProd,
+  MIPRE.QLD.deltaSep, MIPRE.QLD.deltaS, MIPRE.QLD.GlobalPair.one_sub_two_eta_ge,
+  MIPRE.QLD.GlobalPair.sum_not_isGood_mass_A_le', MIPRE.QLD.GlobalPair.sum_not_isGood_mass_B_le',
+  MIPRE.QLD.liftPt, MIPRE.QLD.liftPt_mats, MIPRE.QLD.GlobalPair.inconsistency_evalMarg_A_le,
+  MIPRE.QLD.GlobalPair.inconsistency_evalMarg_B_le
+
+/-! `lem:qld-simultaneous` (`MIPRE/Background/QLD/Simul.lean` for the structure,
+`MIPRE/Background/QLD/PaddedLIDT.lean` for the instance). -/
+#guard_sorry_free MIPRE.QLD.PolyPair, MIPRE.QLD.PolyPair.proj, MIPRE.QLD.evalMarg,
+  MIPRE.QLD.evalMarg_mats, MIPRE.QLD.isPVM_evalMarg, MIPRE.QLD.SimulPair, MIPRE.QLD.SimulPair.mono,
+  MIPRE.QLD.SimulPair.bornProb_aOp_aOp, MIPRE.QLD.GlobalPair.toSimulPair, MIPRE.QLD.exists_simulPair
