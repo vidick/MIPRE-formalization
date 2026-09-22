@@ -239,22 +239,39 @@ hypotheses below are exactly the two chains --- Alice's `eq:qld-pulling-0` throu
 `lem:qld-pauli-selfcons`. -/
 
 omit [NeZero m] in
-/-- **A deviation reads the same on either party's ordering of the physical cut.** Swapping the two
-parties is a reindexing of the whole space, and a state-norm makes no reference to a cut. -/
+/-- **A deviation is carried by any reindexing of the whole space.** `qform_comp_equiv` says the
+quadratic form is, and a state-norm is the square root of one. This is what lets the chain be read
+along whichever of the paper's three groupings each of its steps is local in. -/
+theorem snorm_comp_equiv {N N' : Type*} [Fintype N] [DecidableEq N] [Fintype N'] [DecidableEq N']
+    (e : N ≃ N') (φ : N → ℂ) (X : Matrix N N ℂ) :
+    snorm (φ ∘ e.symm) (Matrix.reindex e e X) = snorm φ X := by
+  have hsq : snorm (φ ∘ e.symm) (Matrix.reindex e e X) ^ 2 = snorm φ X ^ 2 := by
+    rw [snorm_sq_eq_qform, snorm_sq_eq_qform, Matrix.reindex_apply,
+      Matrix.conjTranspose_submatrix, Matrix.submatrix_mul_equiv, ← Matrix.reindex_apply,
+      qform, qform, qform_comp_equiv]
+  have h1 := snorm_nonneg (φ ∘ e.symm) (Matrix.reindex e e X)
+  have h2 := snorm_nonneg φ X
+  nlinarith
+
+omit [NeZero m] in
+/-- **In particular it reads the same on either party's ordering of the physical cut**, which is
+what lets Bob's chain, derived at `toSecond`, be compared with Alice's. -/
 theorem snorm_reindex_prodComm {A B : Type*} [Fintype A] [DecidableEq A] [Fintype B]
     [DecidableEq B] (φ : A × B → ℂ) (X : Matrix (A × B) (A × B) ℂ) :
     snorm (φ ∘ Prod.swap) (Matrix.reindex (Equiv.prodComm A B) (Equiv.prodComm A B) X)
-      = snorm φ X := by
-  have hsq : snorm (φ ∘ Prod.swap)
-      (Matrix.reindex (Equiv.prodComm A B) (Equiv.prodComm A B) X) ^ 2 = snorm φ X ^ 2 := by
-    rw [snorm_sq_eq_qform, snorm_sq_eq_qform, Matrix.reindex_apply,
-      Matrix.conjTranspose_submatrix, Matrix.submatrix_mul_equiv, ← Matrix.reindex_apply,
-      qform, qform, show (φ ∘ Prod.swap) = φ ∘ (Equiv.prodComm A B).symm from rfl,
-      qform_comp_equiv]
-  have h1 := snorm_nonneg (φ ∘ Prod.swap)
-    (Matrix.reindex (Equiv.prodComm A B) (Equiv.prodComm A B) X)
-  have h2 := snorm_nonneg φ X
-  nlinarith
+      = snorm φ X :=
+  snorm_comp_equiv (Equiv.prodComm A B) φ X
+
+omit [NeZero m] in
+/-- **Right-multiplying a projective measurement costs exactly the operator's deviation from the
+identity.** Summed over the outcomes there is no cross term, so no factor of the outcome count
+appears --- which is what makes display `eq:qld-pulling-1` free rather than lossy. -/
+theorem sum_snorm_sq_sub_mul {N Λ : Type*} [Fintype N] [DecidableEq N] [Fintype Λ]
+    [DecidableEq Λ] (v : N → ℂ) {P : Λ → Matrix N N ℂ} (hP : IsPVM P) (Y : Matrix N N ℂ) :
+    ∑ a : Λ, snorm v (P a - P a * Y) ^ 2 = snorm v (1 - Y) ^ 2 := by
+  rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) => by
+    rw [show P a - P a * Y = P a * (1 - Y) from by rw [Matrix.mul_sub, Matrix.mul_one]]]
+  rw [← snorm_sq_sum_orthogonal v hP (1 - Y) univ, hP.sum_eq_one, Matrix.one_mul]
 
 section Close
 
@@ -282,6 +299,89 @@ theorem sum_xSqNorm_le_of_endOp (M : MirrorSimul ψ MA MB δ) (W : Bas) (v : Anc
   linarith
 
 end Close
+
+/-! ## The chain's first estimate
+
+`eq:qld-pulling-0` to `eq:qld-pulling-1` right-multiplies the exact Pauli measurement by the
+near-identity of `lem:qld-helper`. What makes the step cost the helper's bound and no more is
+`sum_snorm_sq_sub_mul`: the measurement's outcomes are orthogonal, so summing over them leaves one
+deviation rather than one per outcome. -/
+
+section First
+
+variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+  {ψ : dA × dB → ℂ} {MA : Question F m → POVM (Answer F m d) dA}
+  {MB : Question F m → POVM (Answer F m d) dB} {δ : ℝ}
+
+/- Same four-fold product index as `mTildeAt`, and the same reason. -/
+set_option synthInstance.maxSize 1000
+
+variable (P : SimulPair ψ MA MB δ)
+
+/-- **The helper's near-identity**, read along the cut `mTilde` lives on. On `Phi`'s own cut it is
+`agreeOp` of Alice's pair-measurement marginals against Bob's expanded point measurements, which is
+what `lem:qld-helper` bounds; `regroupEquiv` carries it to the cut that has `A''` on Alice's
+side. -/
+def SimulPair.nearId (W : Bas) (u : Point F m) :
+    Matrix ((((dA × Anc F m) × P.EA) × Anc F m) × (dB × P.EB))
+      ((((dA × Anc F m) × P.EA) × Anc F m) × (dB × P.EB)) ℂ :=
+  Matrix.reindex regroupEquiv regroupEquiv
+    (agreeOp (fun g : LowIndDegPoly (F := F) (m := m) (d := d) =>
+        ((polyMarg P.SA W).mats g).val)
+      (fun g => (aOp (hatMats MB W u (g.eval u)) : Matrix ((dB × Anc F m) × P.EB) _ ℂ)))
+
+/-- **Display `eq:qld-pulling-1`, as an identity.** Inserting the near-identity costs exactly its
+own deficit on the state, with no loss at all. -/
+theorem SimulPair.sum_snorm_sq_nearId (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val))
+    (W : Bas) (v : Anc F m) (u : Point F m) :
+    ∑ a : F, snorm P.mVec ((aOp (P.mTildeAnc W v a) : Matrix _ _ ℂ)
+          - (aOp (P.mTildeAnc W v a) : Matrix _ _ ℂ) * P.nearId W u) ^ 2
+      = 1 - ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
+          bornProb P.Φ (((polyMarg P.SA W).mats g).val)
+            (aOp (hatMats MB W u (g.eval u))) := by
+  have hone : (1 : Matrix ((((dA × Anc F m) × P.EA) × Anc F m) × (dB × P.EB)) _ ℂ)
+        - P.nearId W u
+      = Matrix.reindex regroupEquiv regroupEquiv
+        (1 - agreeOp (fun g : LowIndDegPoly (F := F) (m := m) (d := d) =>
+            ((polyMarg P.SA W).mats g).val)
+          (fun g => (aOp (hatMats MB W u (g.eval u)) : Matrix ((dB × Anc F m) × P.EB) _ ℂ))) := by
+    ext i j
+    simp [SimulPair.nearId, Matrix.reindex_apply, Matrix.submatrix_apply, Matrix.one_apply]
+  have hnorm : ‖evec P.Φ‖ = 1 := by
+    have h : ‖evec P.Φ‖ ^ 2 = 1 := by rw [norm_evec_sq, P.Φ_unit]; norm_num
+    nlinarith [norm_nonneg (evec P.Φ), h]
+  rw [sum_snorm_sq_sub_mul _ (IsPVM.aOp (P.isPVM_mTildeAnc W v)), hone, SimulPair.mVec,
+    regroupVec, snorm_comp_equiv, snorm_sq_one_sub_agreeOp hnorm
+      (isPVM_polyMarg P.SA_proj W)
+      (fun g => ((IsPVM.aOp (isPVM_hatMats hprojB W u)).isSelfAdjoint _))
+      (fun g => ((IsPVM.aOp (isPVM_hatMats hprojB W u)).idem _))]
+
+/-- **And its cost**, which is item 1 of `lem:qld-helper`. -/
+theorem SimulPair.sum_uniform_snorm_sq_nearId_le
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) (v : Anc F m) :
+    ∑ u, uniform (Point F m) u
+        * ∑ a : F, snorm P.mVec ((aOp (P.mTildeAnc W v a) : Matrix _ _ ℂ)
+            - (aOp (P.mTildeAnc W v a) : Matrix _ _ ℂ) * P.nearId W u) ^ 2
+      ≤ δ := by
+  have hsplit : ∀ u : Point F m,
+      (∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
+          bornProb P.Φ (((polyMarg P.SA W).mats g).val)
+            (1 - (aOp (hatMats MB W u (g.eval u)) : Matrix ((dB × Anc F m) × P.EB) _ ℂ)))
+        = 1 - ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
+            bornProb P.Φ (((polyMarg P.SA W).mats g).val)
+              (aOp (hatMats MB W u (g.eval u))) := by
+    intro u
+    rw [Finset.sum_congr rfl fun g (_ : g ∈ univ) =>
+        bornProb_sub_right P.Φ (((polyMarg P.SA W).mats g).val) 1
+          (aOp (hatMats MB W u (g.eval u))),
+      Finset.sum_sub_distrib, ← bornProb_sum_left,
+      (isPVM_polyMarg P.SA_proj W).sum_eq_one, bornProb_one_one P.Φ_unit]
+  have h := P.sum_bornProb_polyMarg_one_sub_le (MB := MB) W
+  rw [Finset.sum_congr rfl fun u (_ : u ∈ univ) => by rw [hsplit u]] at h
+  rw [Finset.sum_congr rfl fun u (_ : u ∈ univ) => by rw [P.sum_snorm_sq_nearId hprojB W v u]]
+  exact h
+
+end First
 
 end Endpoint
 

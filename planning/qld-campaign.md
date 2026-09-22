@@ -2340,3 +2340,26 @@ What is left of `lem:qld-pauli-selfcons` is the eight `approx` steps between tho
 estimate they consume is in the tree --- the blueprint's comment on the lemma lists them one by one
 --- and what is missing is the four-index bookkeeping that threads them. That is now the only thing
 missing, and it is bounded work with no mathematics left in it.
+
+### PR S: the chain's first estimate (2026-09-22)
+
+`eq:qld-pulling-1` right-multiplies the exact Pauli measurement by the helper's near-identity.
+`SimulPair.sum_uniform_snorm_sq_nearId_le` is that display, at item 1 of `lem:qld-helper`'s own
+constant, and two things make it cost that and no more.
+
+The insertion's deficit is *exactly* the near-identity's. A naive termwise bound would give
+`sum_a snorm(1 - N)^2 = q * snorm(1 - N)^2` and lose a factor of the field size; what saves it is
+that the measurement's outcomes are orthogonal, so `snorm_sq_sum_orthogonal` at the complete family
+collapses the sum. That is `sum_snorm_sq_sub_mul`, and it is worth having separately: the same
+shape recurs at `eq:qld-pulling-7` and `eq:qld-pulling-11`.
+
+The near-identity lives on `Phi`'s own cut, where `snorm_sq_one_sub_agreeOp` turns its deficit into
+the helper's Born probability; `mTilde` lives on the cut that has `A''` with Alice.
+`snorm_comp_equiv` moves between them --- a state-norm is carried by *any* reindexing of the whole
+space, `qform_comp_equiv` being the statement for the quadratic form. That generalises the
+`prodComm` case written for the endpoint's symmetry, and it is the lemma that lets each step of the
+chain be read along whichever of the paper's three groupings it is local in, instead of forcing one
+grouping on all of them. Having it settles a question that looked like an obstacle: the chain runs
+across three different cuts, and no one of them makes every step local.
+
+Seven `approx` steps left.
