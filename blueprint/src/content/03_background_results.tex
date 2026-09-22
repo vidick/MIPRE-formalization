@@ -4046,7 +4046,10 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
 \lean{MIPRE.QLD.syn_mul_syn, MIPRE.QLD.stateVec_expVec_kron_one,
   MIPRE.QLD.stateVecB_expVec_kron_one, MIPRE.QLD.stateVec_hatVec_syn,
   MIPRE.QLD.xSqNorm_hatVec_syn, MIPRE.QLD.SimulPair.stateVec_ancSyn,
-  MIPRE.QLD.SimulPair.sum_ancSyn_mulVec}
+  MIPRE.QLD.SimulPair.sum_ancSyn_mulVec, MIPRE.snorm_sq_sum_orthogonal,
+  MIPRE.QLD.SimulPair.snorm_sq_evalMarg_eq_sum_polyMarg,
+  MIPRE.QLD.SimulPair.sum_snorm_sq_polyMarg_one_sub_le, MIPRE.QLD.sum_uniform_agree_le,
+  MIPRE.QLD.sum_uniform_agree_mass_le}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4101,14 +4104,31 @@ expectation, so \texttt{SimulPair.xSqNorm\_aOp} carries it across with no loss.
 syndrome projectors, one on each party, leaves the state unchanged, since by the transport each
 matched pair acts as the projector on one side alone and those sum to the identity.
 
-\emph{Not formalized}: the $\approx_\delta$ steps, which are
-\texttt{eq:qld-pulling-1}, \texttt{eq:qld-pulling-3}, \texttt{eq:qld-pulling-7} and
-\texttt{eq:qld-pulling-10} through \texttt{eq:qld-pulling-12}, and the final passage through
-\texttt{fact:agreement}, \texttt{fact:data-processing} and Lemma~\ref{lem:qld-povm-to-obs}. They
-use the paper's \texttt{fact:add-a-proj}, which
-\texttt{MIPRE/Foundations/Commutation.lean} already has, and the second item of
-Lemma~\ref{lem:qld-helper}, which is formalized; what they need beyond that is the same kind of
-state-norm bookkeeping as stage 4's three pull requests, at about the same size.
+\emph{And what the estimates consume is in place.} Two of the $\approx_\delta$ displays,
+\texttt{eq:qld-pulling-7} and \texttt{eq:qld-pulling-11}, are the second item of
+Lemma~\ref{lem:qld-helper} --- but not in the indexing that lemma is stated in. The helper is
+stated at an outcome $a \in \F_q$, which is what the expansion stage produces, while the chain
+sums over the \emph{polynomial} outcomes $g$, because the label $\coded(g) \cdot \tilde{u}$ it
+carries is a function of $g$ and not of $g(u)$. The two sums are \emph{equal}, not merely
+comparable: within a fibre of the evaluation the pair measurement's outcomes are orthogonal
+projectors, so every cross term of the squared norm vanishes
+(\texttt{snorm\_sq\_sum\_orthogonal}), and the fibres partition the outcomes. That gives
+\texttt{SimulPair.sum\_snorm\_sq\_polyMarg\_one\_sub\_le}, at the helper's own constant
+$4\delta_S + 344\,\eps$.
+
+Display \texttt{eq:qld-pulling-12} is Lemma~\ref{lem:schwartz-zippel} again, in the form
+\texttt{sum\_uniform\_agree\_mass\_le}: restricting a weighted sum to the tuples where two
+distinct outcome polynomials agree at the sampled point costs $md/q$, the weights being Born
+probabilities of a projective family and so summing to at most one. No lower bound on $d$ is needed
+here, unlike at \texttt{prob\_agree\_ldEnc\_le\_of\_not\_multilinear}: both polynomials carry
+the same degree bound, so the hypothesis is already met.
+
+\emph{Not formalized}: the remaining $\approx_\delta$ displays ---
+\texttt{eq:qld-pulling-1} and \texttt{eq:qld-pulling-3}, which insert and move a near-identity,
+and \texttt{eq:qld-pulling-10} --- the assembly of the chain itself, and the final passage through
+\texttt{fact:agreement}, \texttt{fact:data-processing} and Lemma~\ref{lem:qld-povm-to-obs}. Their
+remaining tool is the paper's \texttt{fact:add-a-proj}, which
+\texttt{MIPRE/Foundations/Commutation.lean} already has.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
 
 \effortHard
