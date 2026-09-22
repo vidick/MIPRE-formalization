@@ -4073,7 +4073,15 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.MirrorSimul.isPVM_bobMTilde, MIPRE.QLD.MirrorSimul.bobSwap,
   MIPRE.QLD.MirrorSimul.bobSwap_mul_conjTranspose,
   MIPRE.QLD.MirrorSimul.bobSwap_conjTranspose_mul,
-  MIPRE.QLD.MirrorSimul.bobSwap_conj_bobMTilde, MIPRE.QLD.MirrorSimul.selfConsGap}
+  MIPRE.QLD.MirrorSimul.bobSwap_conj_bobMTilde, MIPRE.QLD.MirrorSimul.selfConsGap,
+  MIPRE.QLD.chainLabel, MIPRE.QLD.ChainCoupled, MIPRE.QLD.chainCoupled_symm,
+  MIPRE.QLD.chainLabel_eq_of_coupled, MIPRE.QLD.dotF_chainLabel_eq_of_coupled,
+  MIPRE.QLD.chainIdx, MIPRE.QLD.mem_chainIdx, MIPRE.QLD.dotF_chainLabel_eq_iff,
+  MIPRE.QLD.SimulPair.chainOp, MIPRE.QLD.mTildeAnc_eq_sum_chainIdx, MIPRE.QLD.coupledIdx,
+  MIPRE.QLD.mem_coupledIdx, MIPRE.QLD.swap_mem_coupledIdx, MIPRE.QLD.MirrorSimul.endOp,
+  MIPRE.QLD.MirrorSimul.endOpMirror, MIPRE.QLD.reindex_prodComm_kron,
+  MIPRE.QLD.MirrorSimul.endOpMirror_apply, MIPRE.QLD.MirrorSimul.endOpMirror_eq,
+  MIPRE.QLD.snorm_reindex_prodComm, MIPRE.QLD.sum_xSqNorm_le_of_endOp}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4252,9 +4260,36 @@ trivial register on the first party, which is all \texttt{sndExtVec} is), and
 \texttt{pairSwapVec\_mirrorVec} says the two cuts' physical readings are the same vector on the
 nose, with only the parties written in the other order.
 
-\emph{Not formalized}: the assembly of the chain itself --- the index bookkeeping of its eleven
-displays, and Lemma~\ref{lem:qld-povm-to-obs} at the end. Every step it assembles is in place, and
-so now is the cut its conclusion is stated along.
+\emph{And the chain's two ends are formalized, which leaves only its middle.} The chain's
+arithmetic frame is \texttt{MIPRE/Background/QLD/Chain.lean}, and it holds no estimate at all: it
+is the index algebra the eleven displays are bookkeeping for.
+
+At the near end, \texttt{mTildeAnc\_eq\_sum\_chainIdx} is \texttt{eq:qld-pulling-2} and
+\texttt{eq:qld-pulling-2b}: the exact Pauli measurement, written not as `\texttt{eq:tilde\_M}`'s
+sum over pair outcomes $g$ with a syndrome projector attached, but as the chain's sum over pairs
+$(g,h)$ cut out by $(\coded(g) - h) \cdot \tilde{u} = a$. The two are the same sum, the syndrome
+projector being the fibre of the spectral family over that pairing; in characteristic two the shift
+the definition carries is the sum the chain's label is written with
+(\texttt{dotF\_chainLabel\_eq\_iff}).
+
+At the far end, \texttt{endOp} is display \texttt{eq:qld-pulling-12} and
+\texttt{endOpMirror\_apply} is the sentence that makes the whole lemma go through. Both parties'
+derivations end at that display, and the reason the two are then close to \emph{each other} rather
+than each close to something is that it is symmetric in the two pairs --- which is not apparent, its
+index set being cut out by a coupling that mentions both pairs and a pairing condition that mentions
+only the first. \texttt{chainLabel\_eq\_of\_coupled} is why: coupled pairs carry the same label, so
+the condition may be read off either, and the whole index set is invariant under exchanging them
+(\texttt{swap\_mem\_coupledIdx}). Evaluating the coupling at a cube point is the entire proof, the
+encoding of a cube datum being that datum on the cube.
+
+And \texttt{sum\_xSqNorm\_le\_of\_endOp} closes it: given the two chains, the triangle inequality
+for a family of deviations (\texttt{sum\_snorm\_sq\_triangle'}, already in Foundations) gives
+\texttt{eq:qld-pulling-cons} at twice the cost, which is the factor the paper absorbs into
+$\delta_S$.
+
+\emph{Not formalized}: the eight $\approx$ steps between those two ends --- their estimates are all
+in place, as recorded above, and what is missing is the four-index bookkeeping that threads them ---
+and Lemma~\ref{lem:qld-povm-to-obs} at the very end.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
 
 \effortHard
