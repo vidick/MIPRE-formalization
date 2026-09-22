@@ -2389,3 +2389,29 @@ Kronecker product distributes over a sum on either side, at arbitrary registers 
 `kron_sum` is typed to `ExactPauli.lean`'s own registers) and `reindex_sum`.
 
 Six `approx` steps left.
+
+### PR U: the chain's insertion, `eq:qld-pulling-3` (2026-09-22)
+
+The expansion of PR T leaves Bob's point measurement beside each term; this display inserts Alice's
+copy of it, spending the point measurements' self-consistency.
+`SimulPair.sum_snorm_sq_insert_chain` is that display. The packaging `sum_snorm_sq_insert_le`, in
+the tree since PR J, does the work once its hypotheses are supplied, and supplying them is the
+whole content.
+
+Both hypotheses are about the chain's terms being a **projective family in the pair `(g, h)`** ---
+`isPVM_chainOp`, a marginal of the pair measurement tensored with a Weyl spectral projector.
+Projectivity is what makes the outcomes not interfere, so that the squared norm of a sum over one
+outcome's fibre is the sum of the squared norms; and it is what makes the fibres of the outcome map
+`(g,h) |-> (g - g_h)(u)` be seen once rather than once per index. Without the second, the bound
+would be multiplied by the size of a fibre.
+
+Two small gaps in the toolkit turned up and are filled. `isPVM_proj` bundles three facts Foundations
+had only separately (`proj_conjTranspose`, `proj_mul_proj`, `sum_proj`) into the form `isPVM_kron`
+consumes. And `snorm_sq_sum_orthogonal'` is the varying-tail version of `snorm_sq_sum_orthogonal`:
+the existing one fixes a single `R` for all the blocks, while the chain's tail carries each term's
+own point measurement. Orthogonality kills the cross terms either way.
+
+Summing the display over the measurement outcome `a` recovers the whole index set --- the
+`chainIdx v a` are the fibres of the label map --- which is `Finset.sum_fiberwise`.
+
+Five `approx` steps left.

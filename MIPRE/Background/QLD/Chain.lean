@@ -328,6 +328,51 @@ theorem reindex_sum {M N ι : Type*} (e : M ≃ N) (s : Finset ι) (f : ι → M
   ext p q
   simp [Matrix.reindex_apply, Matrix.submatrix_apply, Matrix.sum_apply]
 
+/-- **A sum of orthogonal blocks has no cross terms, even with a different tail on each.** The
+common-tail version `snorm_sq_sum_orthogonal` does not cover the chain, whose tail carries the
+outcome's own point measurement. -/
+theorem snorm_sq_sum_orthogonal' {N Λ : Type*} [Fintype N] [DecidableEq N] [Fintype Λ]
+    [DecidableEq Λ] (v : N → ℂ) {S : Λ → Matrix N N ℂ} (hS : IsPVM S)
+    (R : Λ → Matrix N N ℂ) (s : Finset Λ) :
+    snorm v (∑ g ∈ s, S g * R g) ^ 2 = ∑ g ∈ s, snorm v (S g * R g) ^ 2 := by
+  classical
+  rw [snorm_sq_eq_qform, Matrix.conjTranspose_sum, Finset.sum_mul]
+  have hterm : ∀ g ∈ s, ((S g * R g)ᴴ * ∑ g' ∈ s, S g' * R g') = (S g * R g)ᴴ * (S g * R g) := by
+    intro g hg
+    rw [Finset.mul_sum, Finset.sum_eq_single_of_mem g hg fun g' _ hg' => ?_]
+    rw [Matrix.conjTranspose_mul, hS.isSelfAdjoint, Matrix.mul_assoc,
+      show S g * (S g' * R g') = (S g * S g') * R g' from (Matrix.mul_assoc _ _ _).symm,
+      hS.orthogonal (Ne.symm hg'), Matrix.zero_mul, Matrix.mul_zero]
+  rw [Finset.sum_congr rfl hterm, qform_sum]
+  exact Finset.sum_congr rfl fun g _ => (snorm_sq_eq_qform v (S g * R g)).symm
+
+/-- **A Weyl family's spectral projectors are a projective measurement.** The three facts are in
+Foundations one by one; this is them bundled, which is the form `isPVM_kron` consumes. -/
+theorem isPVM_proj {n : Type*} [Fintype n] [DecidableEq n]
+    {w : (n → F) → Matrix (n → F) (n → F) ℂ} (hw : IsWeylFamily w) : IsPVM (proj w) where
+  isSelfAdjoint e := proj_conjTranspose hw e
+  idem e := by simpa using proj_mul_proj hw e e
+  sum_eq_one := sum_proj hw
+
+/-- **The chain's summands are a projective measurement** in the pair `(g, h)`: a marginal of a
+projective pair measurement, tensored with a Weyl spectral projector. -/
+theorem isPVM_chainOp (P : SimulPair ψ MA MB δ) (W : Bas) :
+    IsPVM fun p : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m => P.chainOp W p := by
+  exact isPVM_kron (isPVM_polyMarg P.SA_proj W) (isPVM_proj (isWeylFamily_weylOf W))
+
+omit [Algebra (ZMod 2) F] [NeZero m] in
+/-- **The point measurement read off a strategy is projective** when the strategy's own is: it is a
+coarse-graining of it along the answer's value. -/
+theorem isPVM_ptAtPOVM {d' : Type} [Fintype d'] [DecidableEq d']
+    {M : Question F m → POVM (Answer F m d) d'}
+    (hproj : ∀ q, IsPVM fun a => (((M q).mats a).val)) (W : Bas) (u : Point F m) :
+    IsPVM fun k : F => (((ptAtPOVM M W u).mats k).val) := by
+  have hfun : (fun k : F => (((ptAtPOVM M W u).mats k).val))
+      = fun k => ∑ a ∈ univ.filter fun a => rdVal a = k, (((M (.point W u)).mats a).val) :=
+    funext fun k => POVM.map_mats _ _ _
+  rw [hfun]
+  exact (hproj _).coarse _
+
 section First
 
 variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
@@ -483,6 +528,53 @@ theorem aOp_mTildeAnc_mul_nearId (W : Bas) (v : Anc F m) (u : Point F m) (a : F)
     exact if_pos ⟨hA, by rw [← add_assoc, add_self, zero_add]⟩
   · rw [if_neg fun hc => hA ((dotF_chainLabel_eq_iff g h v a).mp hc)]
     refine Finset.sum_eq_zero fun a' _ => if_neg fun hc => hA hc.1
+
+/-- **The outcome the chain's index pair carries**, the paper's `(g - g_h)(u)`: the pair outcome's
+value at the sampled point, shifted by the Weyl outcome's own encoding there. -/
+def chainShift (u : Point F m) (p : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) : F :=
+  p.1.eval u + dotF p.2 (indVec u)
+
+/-- Alice's copy of the point measurement, on her whole register. -/
+def ptA (W : Bas) (u : Point F m) (k : F) :
+    Matrix (((dA × Anc F m) × P.EA) × Anc F m) (((dA × Anc F m) × P.EA) × Anc F m) ℂ :=
+  aOp (aOp (aOp (((ptAtPOVM MA W u).mats k).val)))
+
+/-- Bob's, on his. -/
+def ptB (W : Bas) (u : Point F m) (k : F) : Matrix (dB × P.EB) (dB × P.EB) ℂ :=
+  aOp (((ptAtPOVM MB W u).mats k).val)
+
+set_option maxHeartbeats 1000000 in
+/-- **Display `eq:qld-pulling-3`.** Inserting Alice's copy of the point measurement beside each
+term of the chain costs the point measurements' own cross-consistency and nothing else. Two things
+hold the bound down: the chain's terms are a projective family in the pair `(g, h)`, so the
+outcomes do not interfere (`snorm_sq_sum_orthogonal'`) and the fibres of the outcome map are seen
+only once (`sum_snorm_sq_proj_comp_le`, inside `sum_snorm_sq_insert_le`). -/
+theorem sum_snorm_sq_insert_chain (W : Bas) (v : Anc F m) (u : Point F m) {ε : ℝ}
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val))
+    (hcons : ∑ k : F, xSqNorm P.mVec (P.ptA W u k) (P.ptB W u k) ≤ ε) :
+    ∑ a : F, snorm P.mVec (∑ p ∈ chainIdx (F := F) (m := m) (d := d) v a,
+        (aOp (P.chainOp W p) : Matrix _ _ ℂ)
+          * (((1 : Matrix ((((dA × Anc F m) × P.EA) × Anc F m) × (dB × P.EB)) _ ℂ)
+              - aOp (P.ptA W u (chainShift u p))) * bOp (P.ptB W u (chainShift u p)))) ^ 2
+      ≤ ε := by
+  classical
+  have hP : IsPVM fun p : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m =>
+      (aOp (P.chainOp W p) : Matrix ((((dA × Anc F m) × P.EA) × Anc F m) × (dB × P.EB)) _ ℂ) :=
+    IsPVM.aOp (isPVM_chainOp P W)
+  rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) => snorm_sq_sum_orthogonal' _ hP _ _]
+  rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) => rfl]
+  refine le_trans (le_of_eq ?_)
+    (sum_snorm_sq_insert_le P.mVec hP (chainShift u) (P.ptA W u)
+      (fun k => (IsPVM.aOp (isPVM_ptAtPOVM hprojB W u)).isSelfAdjoint k)
+      (fun k => (IsPVM.aOp (isPVM_ptAtPOVM hprojB W u)).idem k) hcons)
+  simp only [chainIdx]
+  exact (Finset.sum_fiberwise
+    (univ : Finset (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m))
+    (fun p => dotF (chainLabel p.1 p.2) v)
+    (fun p => snorm P.mVec ((aOp (P.chainOp W p) : Matrix _ _ ℂ)
+      * (((1 : Matrix ((((dA × Anc F m) × P.EA) × Anc F m) × (dB × P.EB)) _ ℂ)
+          - aOp (P.ptA W u (chainShift u p)))
+        * bOp (P.ptB W u (chainShift u p)))) ^ 2))
 
 end SimulPair
 
