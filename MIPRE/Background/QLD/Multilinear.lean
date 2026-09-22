@@ -113,6 +113,31 @@ theorem abs_sum_weighted_bornProb_le {C : Type*} [Fintype C] {μ : X → ℝ} (h
   exact h1.trans (sum_weighted_sqrt_le μ _ hμ0 hμ
     fun x => Finset.sum_nonneg fun c _ => sq_nonneg _)
 
+omit [Fintype X] [DecidableEq X] in
+/-- **Grouping an agreement by the common label.** Summing the Born probabilities of all outcome
+pairs whose labels match is the same as summing the two coarse-grained measurements against each
+other at each label. This is what lets the helper's agreement, which is stated at an outcome in
+`F_q`, be read as an agreement between the polynomial-indexed marginal and a point-independent
+family on the other party. -/
+theorem sum_filter_bornProb_eq {C : Type*} [Fintype C] [DecidableEq C] (Φ : RA × RB → ℂ)
+    (S : POVM G RA) (N : POVM K RB) (ev : G → C) (val : K → C) :
+    ∑ g, ∑ k ∈ univ.filter fun k => val k = ev g,
+        bornProb Φ ((S.mats g).val) ((N.mats k).val)
+      = ∑ c, bornProb Φ (((S.map ev).mats c).val) (((N.map val).mats c).val) := by
+  classical
+  have hc : ∀ c : C, bornProb Φ (((S.map ev).mats c).val) (((N.map val).mats c).val)
+      = ∑ g ∈ univ.filter fun g => ev g = c, ∑ k ∈ univ.filter fun k => val k = c,
+          bornProb Φ ((S.mats g).val) ((N.mats k).val) := by
+    intro c
+    rw [POVM.map_mats, POVM.map_mats, bornProb_sum_left]
+    exact Finset.sum_congr rfl fun g _ => bornProb_sum_right _ _ _ _
+  rw [← Finset.sum_fiberwise (univ : Finset G) ev
+      (fun g => ∑ k ∈ univ.filter fun k => val k = ev g,
+        bornProb Φ ((S.mats g).val) ((N.mats k).val)),
+    Finset.sum_congr rfl fun c (_ : c ∈ univ) => hc c]
+  exact Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun g hg => by
+    rw [(Finset.mem_filter.mp hg).2]
+
 end Mass
 
 end MIPRE
@@ -178,6 +203,164 @@ theorem sum_uniform_agree_ldEnc_le (hd : 1 ≤ d)
   exact hsz
 
 end ML
+
+/-! ## The marginal indexed by polynomials
+
+`evalMarg` reads the pair measurement's `W` component through its value at the sampled point, so
+the family it names depends on the point. The repaired argument needs a family that does not: the
+Schwartz--Zippel bound is applied to a *fixed* outcome operator against a point drawn afterwards.
+`polyMarg` is that family, and `evalMarg` is its coarse-graining at each point. -/
+
+section PolyMarg
+
+variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
+  [NeZero m] {R : Type*} [Fintype R] [DecidableEq R]
+
+/-- **The `W` marginal of a pair measurement, indexed by polynomials.** -/
+def polyMarg (S : POVM (PolyPair F m d) R) (W : Bas) :
+    POVM (LowIndDegPoly (F := F) (m := m) (d := d)) R :=
+  S.map (PolyPair.proj W)
+
+omit [Algebra (ZMod 2) F] [NeZero m] in
+/-- The evaluated marginal is the polynomial marginal read at the point. -/
+theorem evalMarg_eq_map_polyMarg (S : POVM (PolyPair F m d) R) (W : Bas) (u : Point F m) :
+    evalMarg S W u = (polyMarg S W).map fun g => g.eval u :=
+  (POVM.map_map S (PolyPair.proj W) fun g => g.eval u).symm
+
+omit [Algebra (ZMod 2) F] [NeZero m] in
+/-- The polynomial marginal of a projective pair measurement is projective. -/
+theorem isPVM_polyMarg {S : POVM (PolyPair F m d) R} (hS : IsPVM fun p => ((S.mats p).val))
+    (W : Bas) : IsPVM fun g => (((polyMarg S W).mats g).val) :=
+  isPVM_povm_map S hS _
+
+end PolyMarg
+
+/-! ## The mass the simultaneous measurement puts on non-multilinear outcomes -/
+
+section Bad
+
+variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
+  [NeZero m] {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+  {ψ : dA × dB → ℂ} {MA : Question F m → POVM (Answer F m d) dA}
+  {MB : Question F m → POVM (Answer F m d) dB} {δ : ℝ}
+
+/-- **The hatted Pauli family is projective**: a product of two projective measurements, coarse
+grained along the sum of their outcomes. -/
+theorem isPVM_hatPauli (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) :
+    IsPVM fun k => (((hatPauli MB W).mats k).val) :=
+  isPVM_povm_map _ (isPVM_povm_kron _ _ (isPVM_povm_map _ (hprojB _) _)
+    (isPVM_synOfPOVM W id)) _
+
+namespace SimulPair
+
+variable (P : SimulPair ψ MA MB δ)
+
+/-- **The substitution.** Replacing Bob's expanded point measurement by the point-independent
+hatted Pauli family inside the helper's agreement costs `sqrt (688 eps)`: one Cauchy--Schwarz at
+each point against Alice's projective marginal, then Jensen for the average over points. -/
+theorem sum_bornProb_hatPauli_ge {hm : m ∣ Fintype.card F} {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :
+    1 - δ - Real.sqrt (688 * ε) ≤ ∑ u, uniform (Point F m) u * ∑ a : F,
+      bornProb P.Φ (((evalMarg P.SA W u).mats a).val)
+        (aOp ((((hatPauli MB W).map fun k => dotF k (indVec u)).mats a).val)) := by
+  classical
+  have hT : ∀ u : Point F m, IsPVM fun a : F => (((evalMarg P.SA W u).mats a).val) := fun u =>
+    isPVM_evalMarg P.SA_proj W u
+  -- the hatted Pauli family, read at the point, is the convolution the closeness bound names
+  have hC : ∀ (u : Point F m) (a : F),
+      ((((hatPauli MB W).map fun k => dotF k (indVec u)).mats a).val)
+        = ((((((MB (.pauli W)).map (rdPauli u)).kron (synPOVM W u)).map
+            fun p => p.1 + p.2).mats a).val) := fun u a => by rw [hatPauli_map]
+  set D : Point F m → F → Matrix (dB × Anc F m) (dB × Anc F m) ℂ := fun u a =>
+    hatMats MB W u a - ((((hatPauli MB W).map fun k => dotF k (indVec u)).mats a).val) with hD
+  -- the two agreements differ by the Born probabilities of the difference
+  have hsplit : ∀ (u : Point F m) (a : F),
+      bornProb P.Φ (((evalMarg P.SA W u).mats a).val) (aOp (hatMats MB W u a))
+        = bornProb P.Φ (((evalMarg P.SA W u).mats a).val)
+            (aOp ((((hatPauli MB W).map fun k => dotF k (indVec u)).mats a).val))
+          + bornProb P.Φ (((evalMarg P.SA W u).mats a).val) (aOp (D u a)) := by
+    intro u a
+    rw [hD, aOp_sub, bornProb_sub_right]
+    ring
+  -- Cauchy--Schwarz, averaged
+  have hcs : |∑ u, uniform (Point F m) u * ∑ a : F,
+      bornProb P.Φ (((evalMarg P.SA W u).mats a).val) (aOp (D u a))|
+      ≤ Real.sqrt (∑ u, uniform (Point F m) u * ∑ a : F,
+        ‖stateVecB P.Φ (aOp (D u a) : Matrix ((dB × Anc F m) × P.EB) _ ℂ)‖ ^ 2) :=
+    MIPRE.abs_sum_weighted_bornProb_le (uniform_nonneg (Point F m))
+      (sum_uniform_eq_one (Point F m)) P.Φ_unit hT _
+  -- the squared distance is the one on the expanded state, and it is at most `688 eps`
+  have hnorm : ∀ (u : Point F m) (a : F),
+      ‖stateVecB P.Φ (aOp (D u a) : Matrix ((dB × Anc F m) × P.EB) _ ℂ)‖ ^ 2
+        = ‖stateVecB (hatVec (F := F) (m := m) ψ) (D u a)‖ ^ 2 := fun u a =>
+    P.normSq_stateVecB_aOp _
+  have h688 : ∑ u, uniform (Point F m) u * ∑ a : F,
+      ‖stateVecB (hatVec (F := F) (m := m) ψ) (D u a)‖ ^ 2 ≤ 688 * ε := by
+    have h := sum_normSq_hat_point_sub_pauli_le (MB := MB) (hm := hm) hψ hfail W
+    rw [sum_content_pt W fun u => ∑ a : F, ‖stateVecB (hatVec (F := F) (m := m) ψ)
+      ((((hatPtPOVM MB W u).mats a).val)
+        - ((((((MB (.pauli W)).map (rdPauli u)).kron (synPOVM W u)).map
+            fun p => p.1 + p.2).mats a).val))‖ ^ 2] at h
+    refine le_trans (le_of_eq ?_) h
+    refine Finset.sum_congr rfl fun u _ => congrArg _ (Finset.sum_congr rfl fun a _ => ?_)
+    simp only [hD, hC u a, hatMats]
+  -- assemble
+  have hlow := P.sum_bornProb_evalMarg_ge (MB := MB) W
+  rw [Finset.sum_congr rfl fun u (_ : u ∈ univ) => by
+    rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) => hsplit u a, Finset.sum_add_distrib,
+      mul_add]] at hlow
+  rw [Finset.sum_add_distrib] at hlow
+  have habs := abs_le.mp (hcs.trans (Real.sqrt_le_sqrt
+    (le_trans (le_of_eq (Finset.sum_congr rfl fun u _ =>
+      congrArg _ (Finset.sum_congr rfl fun a _ => hnorm u a))) h688)))
+  linarith [habs.1, habs.2]
+
+/-- **The mass at non-multilinear outcomes**, the critical step of
+`lem:qld-construct-the-paulis`. Alice's polynomial-indexed marginal agrees, at a point sampled
+*after* the operators are fixed, with the point-independent hatted Pauli family; a
+non-multilinear outcome can agree with any one cube datum on at most an `md/q` fraction of points
+(Schwartz--Zippel in the agreement direction); so the mass the marginal puts on non-multilinear
+outcomes is at most the sum of the two. -/
+theorem sum_bornProb_not_isML_le {hm : m ∣ Fintype.card F} {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)
+    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (hd : 1 ≤ d) (W : Bas) :
+    ∑ g ∈ univ \ univ.filter (IsML (F := F) (m := m) (d := d)),
+        bornProb P.Φ (((polyMarg P.SA W).mats g).val) 1
+      ≤ (δ + Real.sqrt (688 * ε)) + (m : ℝ) * d / Fintype.card F := by
+  classical
+  -- the agreement at a point, regrouped as a sum over matching outcome pairs
+  have hreg : ∀ u : Point F m,
+      (∑ g, ∑ k ∈ univ.filter fun k => dotF k (indVec u) = g.eval u,
+          bornProb P.Φ (((polyMarg P.SA W).mats g).val) (aOp (((hatPauli MB W).mats k).val)))
+        = ∑ a : F, bornProb P.Φ (((evalMarg P.SA W u).mats a).val)
+            (aOp ((((hatPauli MB W).map fun k => dotF k (indVec u)).mats a).val)) := by
+    intro u
+    have h := MIPRE.sum_filter_bornProb_eq P.Φ (polyMarg P.SA W)
+      ((hatPauli MB W).aOp (E := P.EB)) (fun g => g.eval u) fun k => dotF k (indVec u)
+    simp only [POVM.aOp_mats] at h
+    rw [h, ← POVM.map_aOp, ← evalMarg_eq_map_polyMarg]
+    simp only [POVM.aOp_mats]
+  -- the helper's agreement, after the substitution, in the shape the aggregation consumes
+  have hlow : 1 - (δ + Real.sqrt (688 * ε))
+      ≤ ∑ g, ∑ u, uniform (Point F m) u
+          * ∑ k ∈ univ.filter fun k => dotF k (indVec u) = g.eval u,
+            bornProb P.Φ (((polyMarg P.SA W).mats g).val)
+              (aOp (((hatPauli MB W).mats k).val)) := by
+    have h := P.sum_bornProb_hatPauli_ge (hm := hm) hψ hfail W
+    rw [Finset.sum_congr rfl fun u (_ : u ∈ univ) => by rw [← hreg u]] at h
+    simp only [Finset.mul_sum] at h
+    rw [Finset.sum_comm] at h
+    simp only [← Finset.mul_sum] at h
+    linarith
+  refine MIPRE.sum_mass_off_le (uniform_nonneg (Point F m)) (sum_uniform_eq_one (Point F m))
+    P.Φ_unit (isPVM_polyMarg P.SA_proj W) (isPVM_hatPauli hprojB W).aOp
+    (fun k u => dotF k (indVec u)) (fun g u => g.eval u) (by positivity) hlow ?_
+  intro g hg k
+  exact sum_uniform_agree_ldEnc_le hd (by simpa using hg) k
+
+end SimulPair
+
+end Bad
 
 end MIPRE.QLD
 
