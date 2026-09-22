@@ -1825,3 +1825,28 @@ linearity in the argument (both tensor factors are additive, so it is exact). Wi
 One small infrastructure note: the index of `mTilde`'s matrices is a four-fold product whose
 `DecidableEq` runs past the default `synthInstance.maxSize` --- each half alone is found, the
 product is not. Raised in that file and nowhere else.
+
+### PR K, second piece: the swap isometry's state estimate (2026-09-22)
+
+`MIPRE/Background/QLD/SwapState.lean` (fast regime). `SwapUnitary.lean` had item 1 of
+`lem:qld-swap` in three separate pieces --- the exact conjugation, `twirl_mul_twirl`, and the
+repaired arithmetic chain --- and not the assembly, because `twirl_mul_twirl` lives on the two
+ancilla halves alone while the state lives on all four registers. The assembly is
+`exists_auxVec_close`, and it was smaller than the note here predicted.
+
+Two reasons. First, **the twirl is a projection**, not merely a contraction: the Weyl family is a
+homomorphism, so `(sum_u w_u (x) w_u)^2` collapses --- for each `s` there are exactly `q^n` pairs
+`(u,v)` with `u + v = s`. That is `twirl_mul_self`, and it lets `snorm_le_one_of_proj` supply the
+`||x|| <= 1` hypothesis of `norm_sub_sq_le_of_re_inner_ge` with no operator-norm estimate anywhere
+(the alternative, lifting a `Bnd` through `bOp`, would have needed a fibrewise decomposition that
+Foundations does not have). Second, **the range of `1 (x) |EPR><EPR|` consists of product
+vectors** by inspection (`bOp_eprProj_mulVec`), so the auxiliary state of item 1 is read off
+directly --- no partial trace, no Schmidt decomposition.
+
+**And the graph was wrong.** Assembling item 1 made it visible that its real input --- the
+self-consistency of `W~^e(u-tilde)` at a *uniform* `u-tilde` --- is nowhere in the blueprint. It is
+the paper's second item of `lem:qld-construct-the-paulis`, and the blueprint's paraphrase of
+`lem:qld-exact-paulis` kept only the first. Added as `lem:qld-pauli-selfcons` and recorded in
+`reports/qld-stage5-blueprint-repairs.md`. It is the substantial piece of stage 5 that remains, and
+it is what `thm:qld` is now waiting on: item 2 of `lem:qld-swap` and the assembly both run through
+it.

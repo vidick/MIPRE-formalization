@@ -164,10 +164,32 @@ choice of bipartition: `quadForm_reindex` reindexes the two parties separately a
 a factor between them, and its absence read as an impossibility. The unary companion
 `qform_comp_equiv` is three lines.
 
-With that, `lem:qld-exact-paulis` carries `leanok` at both levels. `lem:qld-swap` does not:
-* the embedding of the two ancilla halves into the four-party index, which is what turns
-  `twirl_mul_twirl` into a statement about the expanded state;
-* item 2 of `lem:qld-swap` in its entirety.
+With that, `lem:qld-exact-paulis` carries `leanok` at both levels.
+
+**A fourth finding: the blueprint's paraphrase of `lem:qld-exact-paulis` dropped an item, and the
+dependency graph was missing a node.** The paper's `lem:qld-construct-the-paulis` has two items:
+consistency of `M~^{W,ind_m(u)}` with the point measurements, and *self-consistency* of the
+observables `W~^e(u-tilde)` at a **uniform** `u-tilde`. The blueprint's statement kept only the
+first. That looked harmless until item 1 of `lem:qld-swap` was assembled: the swap estimate needs
+the two Weyl twirls to be near-invariances of the state, and the only thing that supplies them is
+exactly the dropped item --- at a uniform `u-tilde`, not at `u-tilde = ind_m(u)`, which is all the
+first item gives. So the graph said `lem:qld-swap` rested on `lem:qld-exact-paulis` and
+`lem:qld-win`, and one of its real inputs appeared nowhere. Added as
+`lem:qld-pauli-selfcons`, with the paper's chain as its proof sketch, `\uses` on
+`lem:qld-exact-paulis`, `lem:qld-helper`, `lem:qld-win` and `lem:schwartz-zippel`, and no `leanok`.
+It is kept separate from `lem:qld-exact-paulis` rather than folded back in so that the latter's
+marks stay honest.
+
+`lem:qld-swap` therefore does not carry `leanok`:
+* item 1 is formalized *given* its hypothesis (`exists_auxVec_close`), and that hypothesis is
+  `lem:qld-pauli-selfcons`, which is not;
+* item 2 in its entirety.
+
+The tensor bookkeeping that stood here as the obstacle to item 1 is done
+(`MIPRE/Background/QLD/SwapState.lean`), and was smaller than billed: the twirl is a *projection*
+(`twirl_mul_self`, from the Weyl family's group law), so no operator-norm estimate is needed, and
+the range of `1 (x) |EPR><EPR|` consists of product vectors by inspection
+(`bOp_eprProj_mulVec`), so the auxiliary state needs no partial trace.
 
 Stage 4, `lem:qld-simultaneous` and its ten sub-lemmas, was untouched when this was written and
 has since been done (PRs #144, #147, #150); `planning/qld-campaign.md` records how it went.

@@ -4039,10 +4039,54 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
 
 \effortHard
 
+\begin{lemma}[Self-consistency of the exact Pauli observables]
+\label{lem:qld-pauli-selfcons}
+\ledgernode{1.2.2.15}
+\uses{lem:qld-exact-paulis,lem:qld-helper,lem:qld-win,lem:schwartz-zippel,def:cross-distance}
+On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
+of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
+\begin{equation*}
+  \bigl( \tilde{W}^e(\tilde{u}) \bigr)_{\alice \alice' \alice''}
+  \;\approx_{\delta_{qld}}\;
+  \bigl( \tilde{W}^e(\tilde{u}) \bigr)_{\bob \bob' \bob''} .
+\end{equation*}
+\end{lemma}
+
+\begin{proof}
+\uses{lem:qld-exact-paulis,lem:qld-helper,lem:qld-win,lem:schwartz-zippel}
+The paper's ``pulling'' chain. Right-multiplying $\tilde{M}^{W,\tilde{u}}_a$ on one party by the
+near-identity $\sum_g (\widehat S^W_g)_{\alice\alice'} \ot
+(\widehat M^{(\mathtt{Point},W),u}_{g(u)})_{\bob\alice''}$ of Lemma~\ref{lem:qld-helper} and
+expanding both definitions rewrites it as a sum over pairs $(g, h)$ with
+$(\coded(g) - h) \cdot \tilde{u} = a$ of $(\widehat S^W_g) \ot (\tau^W_h) \ot
+(M^{(\mathtt{Point},W),u}_{(g - g_h)(u)})$; the self-consistency of the point measurements
+(Lemma~\ref{lem:qld-win}) then moves the last factor across, and undoing the expansion on the
+other side gives the claim. Lemma~\ref{lem:schwartz-zippel} enters where $g$ is compared with
+$g_h$, and is where the $md/q$ of $\delta_{qld}$ comes from.
+\end{proof}
+
+\paragraph{Comments.} \emph{This statement is not in the pinned paper's
+Lemma~\ref{lem:qld-exact-paulis}; it is the second item of that lemma in the paper, and the
+blueprint's paraphrase of Lemma~\ref{lem:qld-exact-paulis} dropped it.} That was found by
+formalizing: Lemma~\ref{lem:qld-swap}'s item 1 needs the two twirls to be near-invariances of the
+state, and the only thing that supplies them is this self-consistency at a \emph{uniform}
+$\tilde{u}$ --- not at $\tilde{u} = \ind_m(u)$, which is all
+Lemma~\ref{lem:qld-exact-paulis} gives. So the dependency graph was missing an edge, and worse, a
+node. It is separated out here rather than folded back into
+Lemma~\ref{lem:qld-exact-paulis} so that the latter's \texttt{leanok} marks stay honest: what is
+formalized there is exactly what it states.
+
+Not formalized. Its chain is the eleven displays of the paper's
+\texttt{qld-separating.tex}, and it is the substantial piece of stage 5 that remains.
+\texttt{reports/qld-stage5-blueprint-repairs.md} records the omission.
+
+\effortHard
+
 \begin{lemma}[The swap isometry]
 \label{lem:qld-swap}
 \ledgernode{1.2.2.16}
-\uses{lem:qld-exact-paulis,lem:qld-win,lem:schwartz-zippel,def:state-distance,def:cross-distance}
+\uses{lem:qld-exact-paulis,lem:qld-pauli-selfcons,lem:qld-win,lem:schwartz-zippel,
+  def:state-distance,def:cross-distance}
 \lean{MIPRE.QLD.sTensor, MIPRE.QLD.sTensor_mul, MIPRE.QLD.sTensor_one,
   MIPRE.QLD.sTensor_conjTranspose, MIPRE.QLD.wTilde_eq_sTensor, MIPRE.QLD.uOf, MIPRE.QLD.swapU,
   MIPRE.QLD.uOf_conjTranspose, MIPRE.QLD.uOf_mul_conjTranspose,
@@ -4052,7 +4096,11 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.eprProj, MIPRE.QLD.eprProj_apply, MIPRE.QLD.twirl, MIPRE.QLD.wX_mul_wZ_apply,
   MIPRE.QLD.twirl_mul_twirl_eq_sum, MIPRE.QLD.twirl_mul_twirl,
   MIPRE.QLD.norm_sub_sq_le_of_re_inner_ge, MIPRE.QLD.re_inner_ge_of_two_close,
-  MIPRE.QLD.norm_sub_normalize_sq_le}
+  MIPRE.QLD.norm_sub_normalize_sq_le, MIPRE.QLD.snorm_sum_le, MIPRE.QLD.kron_self_isometry,
+  MIPRE.QLD.twirl_conjTranspose, MIPRE.QLD.snorm_twirl_le, MIPRE.QLD.twirl_mul_self,
+  MIPRE.QLD.conj_epr, MIPRE.QLD.star_epr, MIPRE.QLD.eprProj_conjTranspose,
+  MIPRE.QLD.epr_dotProduct, MIPRE.QLD.eprProj_mul_self, MIPRE.QLD.auxVec,
+  MIPRE.QLD.bOp_eprProj_mulVec, MIPRE.QLD.exists_auxVec_close}
 There is $\delta_{qld} = O\bigl( \delta_S^{1/4} + md/q \bigr)$ and local unitaries $V_\alice$,
 $V_\bob$ on the expanded spaces such that, writing $M = 2^m$:
 \begin{enumerate}
@@ -4080,8 +4128,10 @@ $\delta_{qld}$ comes from, by Lemma~\ref{lem:schwartz-zippel}. Item 1 alone give
 $O(\sqrt{\delta_S})$.
 \end{proof}
 
-\paragraph{Comments.} What is formalized is the whole of item 1 except the tensor bookkeeping, and
-none of item 2. The exact pieces are in \texttt{MIPRE/Background/QLD/SwapUnitary.lean}.
+\paragraph{Comments.} What is formalized is the whole of item 1 \emph{given its hypothesis} ---
+the self-consistency of Lemma~\ref{lem:qld-pauli-selfcons}, at a uniform $\tilde{u}$ --- and none
+of item 2. The exact pieces are in \texttt{MIPRE/Background/QLD/SwapUnitary.lean} and the
+assembly in \texttt{MIPRE/Background/QLD/SwapState.lean}.
 
 Every operator in the construction has the shape $\sum_p \widehat{S}_p \ot T_p$
 (\texttt{sTensor}), and because $\widehat{S}$ is projective these compose factorwise
@@ -4113,10 +4163,23 @@ $1 - 2\sqrt{\delta_S} - 2\delta_S$, and it carries a case split the paper does n
 no hidden ``for small enough $\delta_S$'' has to handle $\delta_S > 1$, where squaring
 $1 - \sqrt{\delta_S}$ would reverse the inequality and where the trivial bound is already stronger.
 
-\emph{Not formalized}: the embedding of the two ancilla halves into the four-party index, which is
-what turns \texttt{twirl\_mul\_twirl} into a statement about $\ket{\widehat{\psi}}$ and
-\texttt{norm\_sub\_normalize\_sq\_le} into the product state $\ket{\aux} \ot \ket{\EPR_q}^{\ot M}$;
-and the whole of item 2. Hence no \texttt{leanok} mark at either level.
+\emph{The assembly is done.} \texttt{exists\_auxVec\_close} is item 1: a unit state on
+$R \times (T \times T)$ --- the two parties' non-ancilla registers as one index, their two ancilla
+halves adjacent --- that is nearly invariant under both Weyl twirls is within
+$2 - 2\sqrt{1 - \eta}$ of a product $\ket{\aux} \ot \ket{\EPR_q}^{\ot M}$, with
+$\eta = 2\sqrt{\delta} + 2\delta$, which is $O(\sqrt{\delta})$ as the proof above says. Two
+things made it shorter than expected. The twirl is a \emph{projection}
+(\texttt{twirl\_mul\_self}), not merely a contraction: the Weyl family is a homomorphism, so the
+double average collapses, for each $s$ there being exactly $q^n$ pairs $(u,v)$ with $u + v = s$.
+That supplies the contraction hypothesis of \texttt{norm\_sub\_sq\_le\_of\_re\_inner\_ge}
+through \texttt{snorm\_le\_one\_of\_proj}, with no operator-norm estimate anywhere. And the
+range of $\Id \ot \ket{\EPR}\bra{\EPR}$ consists of product vectors by inspection
+(\texttt{bOp\_eprProj\_mulVec}), which is where $\ket{\aux}$ comes from --- no partial trace and
+no Schmidt decomposition.
+
+\emph{Not formalized}: the two near-invariances themselves, which are
+Lemma~\ref{lem:qld-pauli-selfcons} and are hypotheses of \texttt{exists\_auxVec\_close} rather
+than conclusions; and the whole of item 2. Hence no \texttt{leanok} mark at either level.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the repairs above, including the
 ledger's declared dependencies for node $1.2.2.16$, which name $1.2.2.4$
 (Lemma~\ref{lem:qld-win}) and which the \texttt{uses} list did not.
