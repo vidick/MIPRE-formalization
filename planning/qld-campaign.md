@@ -2108,3 +2108,15 @@ What item 2 still needs: the two game consistencies that `inconsistency_mTilde_p
 and the assembly --- threading `eq:qld-unitary-7` through `-9` and this transport into the
 statement about `V M^{(Pauli,W)}_h V^dagger`. What `lem:qld-pauli-selfcons` still needs is
 unchanged: the assembly of its chain.
+
+**And the padding transport.** `SimulPair.bornProb_padded` and `inconsistency_padded`: a
+consistency between the strategy's *own* measurements reads the same on the padded state as on the
+strategy's own state, both operators being extended by the identity on the expansion's ancillas and
+on the padding. The padded state's reduction carries them to the expanded state and
+`bornProb_expVec_kron` carries them down to `psi`, the entangled pair contributing its norm and
+nothing else. That is what lets `inconsistency_mTilde_pauli_le'` ask for its two middle legs in the
+form `agree_subtest_le` leaves them --- on `psi`, with nothing about the expansion or the padding in
+sight. What remains of those two legs is instantiating `agree_subtest_le` at the edges `adj_self'`
+and `adj_point_pauli` with the readings `rdVal` and `rdPauli`, averaging over contents into points
+with `sum_content_pt`, and halving the cross-deviation into an inconsistency (exact for projective
+families).

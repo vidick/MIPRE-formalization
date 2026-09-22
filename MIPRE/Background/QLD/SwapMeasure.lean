@@ -358,6 +358,35 @@ theorem swapA_mul_conjTranspose : P.swapA * P.swapAᴴ = 1 :=
 theorem swapA_conjTranspose_mul : P.swapAᴴ * P.swapA = 1 :=
   swapU_conjTranspose_mul P.SA_proj
 
+/-- **A Born probability of the strategy's own measurements reads the same on the padded state.**
+Both operators are extended by the identity on the expansion's ancillas and on the padding, so the
+padded state's reduction carries them to the expanded state and the expanded state's factorization
+carries them down to the original one, the entangled pair contributing its own norm and nothing
+else. -/
+theorem bornProb_padded (X : Matrix dA dA ℂ) (Y : Matrix dB dB ℂ) :
+    bornProb P.Φ (aOp (aOp X)) (aOp (aOp Y)) = bornProb ψ X Y := by
+  rw [P.Φ_reduced (aOp X) (aOp Y)]
+  show bornProb (expVec ψ (epr (F := F) (n := Fin m → Bool))) (X ⊗ₖ 1) (Y ⊗ₖ 1) = _
+  rw [bornProb_expVec_kron ψ _ Matrix.PosSemidef.one Matrix.PosSemidef.one,
+    bornProb_one_one epr_unit, mul_one]
+
+/-- **And so does a consistency between them.** This is what puts the game's own consistencies ---
+which are statements about the strategy's measurements on the original state --- into the
+vocabulary the appendix's interface reads them in. -/
+theorem inconsistency_padded {Y Λ : Type*} [Fintype Y] [Fintype Λ] [DecidableEq Λ] (μ : Y → ℝ)
+    (M : Y → POVM Λ dA) (N : Y → POVM Λ dB) :
+    inconsistency μ P.Φ (fun y => ((M y).aOp (E := Anc F m)).aOp (E := P.EA))
+        (fun y => ((N y).aOp (E := Anc F m)).aOp (E := P.EB))
+      = inconsistency μ ψ M N := by
+  refine Finset.sum_congr rfl fun y _ => ?_
+  congr 1
+  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
+  split_ifs with h
+  · rfl
+  · show bornProb P.Φ _ _ = bornProb ψ _ _
+    rw [POVM.aOp_mats, POVM.aOp_mats, POVM.aOp_mats, POVM.aOp_mats]
+    exact P.bornProb_padded ((M y).mats a).val ((N y).mats b).val
+
 /-- **Display `eq:qld-unitary-5` at the interface.** The exact Pauli measurement agrees with the
 strategy's `(Pauli, W)` measurement, read at the sampled point, to within eleven times whatever
 bounds the three legs. Its own leg is item 1 of Lemma `lem:qld-exact-paulis`
@@ -383,6 +412,23 @@ theorem inconsistency_mTilde_pauli_le (W : Bas) {δ' : ℝ}
     exact hpt
   · rw [SimulPair.mVec, inconsistency_regroupVec]
     exact hpauli
+
+/-- **Display `eq:qld-unitary-5`, with its two middle legs read on the strategy's own state.**
+This is the form the game supplies them in: `agree_subtest_le` bounds a cross-party deviation of
+the strategy's measurements on `psi`, and nothing there knows about the expansion or the padding.
+-/
+theorem inconsistency_mTilde_pauli_le' (W : Bas) {δ' : ℝ}
+    (hpt : inconsistency (uniform (Point F m)) ψ (fun u => ptAtPOVM MA W u)
+      (fun u => ptAtPOVM MB W u) ≤ δ')
+    (hpauli : inconsistency (uniform (Point F m)) ψ (fun u => ptAtPOVM MA W u)
+      (fun u => pauliAtPOVM MB W u) ≤ δ')
+    (hmt : inconsistency (uniform (Point F m)) P.mVec
+        (fun u => (P.isPVM_mTildeAt W u).toPOVM) (fun u => (ptAtPOVM MB W u).aOp) ≤ δ') :
+    inconsistency (uniform (Point F m)) P.mVec
+        (fun u => (P.isPVM_mTildeAt W u).toPOVM) (fun u => (pauliAtPOVM MB W u).aOp)
+      ≤ 11 * δ' :=
+  P.inconsistency_mTilde_pauli_le W (by rw [P.inconsistency_padded]; exact hpt)
+    (by rw [P.inconsistency_padded]; exact hpauli) hmt
 
 /-- **Display `eq:qld-unitary-6` at the interface.** -/
 theorem swapU_conj_mTildeAt (W : Bas) (u : Point F m) (a : F) :

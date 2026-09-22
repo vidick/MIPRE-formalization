@@ -4214,7 +4214,9 @@ displays, and Lemma~\ref{lem:qld-povm-to-obs} at the end. Every step it assemble
   MIPRE.QLD.sum_uniform_agree_bornProb_le, MIPRE.QLD.SimulPair.swapA,
   MIPRE.QLD.SimulPair.swapU_conj_mTildeAt, MIPRE.QLD.inconsistency_triangle,
   MIPRE.QLD.inconsistency_regroupVec, MIPRE.QLD.pauliAtPOVM,
-  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le, MIPRE.QLD.abs_qform_sub_qform_le}
+  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le, MIPRE.QLD.abs_qform_sub_qform_le,
+  MIPRE.QLD.SimulPair.bornProb_padded, MIPRE.QLD.SimulPair.inconsistency_padded,
+  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le'}
 There is $\delta_{qld} = O\bigl( \delta_S^{1/4} + md/q \bigr)$ and local unitaries $V_\alice$,
 $V_\bob$ on the expanded spaces such that, writing $M = 2^m$:
 \begin{enumerate}
@@ -4338,7 +4340,12 @@ number, the regrouping being a reindexing of the whole space. \texttt{SimulPair
 .inconsistency\_mTilde\_pauli\_le} is then the display, with the two middle legs --- the game's
 point--point and point--Pauli consistencies, the latter read through
 \texttt{pauliAtPOVM} --- as hypotheses, in the same way
-\texttt{exists\_auxVec\_close} takes item 1's near-invariances.
+\texttt{exists\_auxVec\_close} takes item 1's near-invariances. They are asked for in the form
+the game supplies them: \texttt{inconsistency\_padded} reads a consistency between the strategy's
+own measurements on the padded state and on the strategy's own state alike, both being extended by
+the identity on the expansion's ancillas and on the padding, so
+\texttt{inconsistency\_mTilde\_pauli\_le'} takes them on $\ket{\psi}$, where
+\texttt{agree\_subtest\_le} leaves them.
 
 \emph{And the endgame's transport.} \texttt{abs\_qform\_sub\_qform\_le}: moving an expectation
 from the product state to the padded one costs twice the operator's bound times the distance
