@@ -53,6 +53,78 @@ theorem snorm_sq_sum_orthogonal (v : N → ℂ) {S : Λ → Matrix N N ℂ} (hS 
 
 end Orthogonal
 
+/-! ## The agreement operator, and inserting it as a near-identity
+
+Display `eq:qld-pulling-1` right-multiplies by
+`sum_g (S-hat^W_g)_{A A'} (x) (M-hat^{(Point,W),u}_{g(u)})_{B A''}`, which the first item of
+`lem:qld-helper` says is close to the identity on the state. What makes the step cheap is that this
+operator is a *projection*: the outcomes of the pair measurement are orthogonal, so the cross terms
+vanish, and the opposite party's factors are projectors. Its deficit from the identity is then
+exactly one minus the agreement, with no Cauchy--Schwarz anywhere. -/
+
+section Agree
+
+variable {dA dB G : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+  [Fintype G] [DecidableEq G]
+
+/-- **The agreement operator** `sum_g S_g (x) B_g` of a family on one party against a family on the
+other, indexed by the same outcome. -/
+def agreeOp (S : G → Matrix dA dA ℂ) (B : G → Matrix dB dB ℂ) :
+    Matrix (dA × dB) (dA × dB) ℂ :=
+  ∑ g, (aOp (S g) : Matrix (dA × dB) _ ℂ) * bOp (B g)
+
+omit [DecidableEq G] in
+theorem agreeOp_conjTranspose {S : G → Matrix dA dA ℂ} {B : G → Matrix dB dB ℂ}
+    (hS : ∀ g, (S g)ᴴ = S g) (hB : ∀ g, (B g)ᴴ = B g) :
+    (agreeOp S B)ᴴ = agreeOp S B := by
+  rw [agreeOp, Matrix.conjTranspose_sum]
+  exact Finset.sum_congr rfl fun g _ => by rw [aOp_bOp_conjTranspose, hS, hB]
+
+/-- **It is idempotent**, because the first party's outcomes are orthogonal and the second party's
+factors are projectors. -/
+theorem agreeOp_mul_self {S : G → Matrix dA dA ℂ} (hS : IsPVM S) {B : G → Matrix dB dB ℂ}
+    (hB : ∀ g, B g * B g = B g) : agreeOp S B * agreeOp S B = agreeOp S B := by
+  classical
+  rw [agreeOp, Finset.sum_mul]
+  refine Finset.sum_congr rfl fun g _ => ?_
+  rw [Finset.mul_sum, Finset.sum_eq_single g (fun g' _ hg' => by
+      rw [aOp_bOp_mul_aOp_bOp, hS.orthogonal (Ne.symm hg'), aOp_zero, Matrix.zero_mul])
+    fun hmem => absurd (Finset.mem_univ g) hmem,
+    aOp_bOp_mul_aOp_bOp, hS.idem, hB]
+
+omit [DecidableEq G] in
+theorem qform_agreeOp (ψ : dA × dB → ℂ) (S : G → Matrix dA dA ℂ) (B : G → Matrix dB dB ℂ) :
+    qform ψ (agreeOp S B) = ∑ g, bornProb ψ (S g) (B g) := by
+  rw [agreeOp, qform_sum]
+  exact Finset.sum_congr rfl fun g _ => (bornProb_eq_qform ψ (S g) (B g)).symm
+
+/-- **The deficit of the agreement operator from the identity is one minus the agreement.** No
+Cauchy--Schwarz: the operator is a projection, so its squared deviation is linear in it. -/
+theorem snorm_sq_one_sub_agreeOp {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖ = 1)
+    {S : G → Matrix dA dA ℂ} (hS : IsPVM S) {B : G → Matrix dB dB ℂ}
+    (hBsa : ∀ g, (B g)ᴴ = B g) (hB : ∀ g, B g * B g = B g) :
+    snorm ψ (1 - agreeOp S B) ^ 2 = 1 - ∑ g, bornProb ψ (S g) (B g) := by
+  have hsa := agreeOp_conjTranspose hS.isSelfAdjoint hBsa
+  have hid := agreeOp_mul_self hS hB
+  have hkey : ((1 : Matrix (dA × dB) (dA × dB) ℂ) - agreeOp S B)ᴴ * (1 - agreeOp S B)
+      = 1 - agreeOp S B := by
+    rw [Matrix.conjTranspose_sub, Matrix.conjTranspose_one, hsa, Matrix.sub_mul, Matrix.mul_sub,
+      Matrix.mul_sub, Matrix.one_mul, Matrix.mul_one, Matrix.one_mul, hid]
+    abel
+  rw [snorm_sq_eq_qform, hkey, qform_sub, qform_one ψ hψ, qform_agreeOp]
+
+omit [DecidableEq G] in
+/-- **Inserting the near-identity costs at most its own deficit.** A contraction on the left cannot
+amplify it, which is the whole of display `eq:qld-pulling-1`. -/
+theorem snorm_sub_mul_agreeOp_le (ψ : dA × dB → ℂ) {X : Matrix (dA × dB) (dA × dB) ℂ}
+    (hX : Bnd X 1) (S : G → Matrix dA dA ℂ) (B : G → Matrix dB dB ℂ) :
+    snorm ψ (X - X * agreeOp S B) ≤ snorm ψ (1 - agreeOp S B) := by
+  rw [show X - X * agreeOp S B = X * (1 - agreeOp S B) from by
+    rw [Matrix.mul_sub, Matrix.mul_one]]
+  exact le_trans (snorm_mul_le ψ hX _) (le_of_eq (one_mul _))
+
+end Agree
+
 end MIPRE
 
 namespace MIPRE.QLD
