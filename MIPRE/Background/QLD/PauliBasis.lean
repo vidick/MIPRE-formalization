@@ -89,6 +89,25 @@ theorem sum_conv (Z : C → Matrix dB dB ℂ) {T : C → Matrix anc' anc' ℂ} (
     _ = (∑ a, Z a) ⊗ₖ (1 : Matrix anc' anc' ℂ) :=
         (sum_kronecker_left univ Z (1 : Matrix anc' anc' ℂ)).symm
 
+/-- **The Kronecker product of two coarse-grainings is the coarse-graining of the product**,
+along the product map on the outcomes. -/
+theorem POVM.map_kron_map {ι κ ι' κ' : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ]
+    [DecidableEq κ] [Fintype ι'] [DecidableEq ι'] [Fintype κ'] [DecidableEq κ']
+    (Y : POVM ι dB) (P : POVM κ anc') (f : ι → ι') (g : κ → κ') :
+    (Y.kron P).map (fun p => (f p.1, g p.2)) = (Y.map f).kron (P.map g) := by
+  classical
+  refine POVM.ext' fun q => ?_
+  rw [POVM.map_mats, POVM.kron_mats, POVM.map_mats, POVM.map_mats]
+  have hset : (univ.filter fun p : ι × κ => (f p.1, g p.2) = q)
+      = (univ.filter fun h => f h = q.1) ×ˢ (univ.filter fun b => g b = q.2) := by
+    ext p
+    simp only [mem_filter, mem_univ, true_and, Finset.mem_product, Prod.ext_iff]
+  rw [hset, Finset.sum_product]
+  simp only [POVM.kron_mats]
+  rw [sum_kronecker_left]
+  refine Finset.sum_congr rfl fun h _ => ?_
+  rw [kronecker_sum_right]
+
 /-- **The transfer**: on the expanded state, the same-party deviation of two convolutions with a
 common projective ancilla family is the deviation of the two families themselves. -/
 theorem sum_normSq_stateVecB_conv_eq (ψ : dA × dB → ℂ) {e : anc × anc' → ℂ}
