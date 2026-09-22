@@ -413,6 +413,7 @@ import MIPRE.Background.QLD.CLExplicitSeed
 import MIPRE.Background.QLD.CLExplicitTransport
 import MIPRE.Background.QLD.CLPresentation
 import MIPRE.Background.QLD.CLTransport
+import MIPRE.Background.QLD.ChainProbe
 import MIPRE.Background.QLD.Combine
 import MIPRE.Background.QLD.Combined
 import MIPRE.Background.QLD.Commutation
@@ -448,6 +449,7 @@ import MIPRE.Background.QLD.SeededLinePrograms
 import MIPRE.Background.QLD.Separate
 import MIPRE.Background.QLD.Simul
 import MIPRE.Background.QLD.Swap
+import MIPRE.Background.QLD.SwapEndgame
 import MIPRE.Background.QLD.SwapMeasure
 import MIPRE.Background.QLD.SwapState
 import MIPRE.Background.QLD.SwapUnitary

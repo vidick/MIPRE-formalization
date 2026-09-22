@@ -2147,3 +2147,75 @@ was the fix, twice. And a `rw` with the measurement arguments left as `_` unifie
 
 That is item 1 of the four in `planning/formalization-plan.md`'s QLD list, done. Left: the assembly
 of item 2, the assembly of `lem:qld-pauli-selfcons`'s chain, and `thm:qld`.
+
+### PR O: the endgame of item 2, in bricks (2026-09-22)
+
+`MIPRE/Background/QLD/SwapEndgame.lean`, new. Item 1 leaves a product state
+`|aux> (x) |EPR_q>^M`, and what the endgame does to it turns out to be elementary once said
+plainly.
+
+* An operator on the entangled pair acts on the second factor and leaves the first
+  (`bOp_mulVec_auxVec`, one entry computation), so two operators that agree on the pair agree on
+  the whole product (`mulVec_auxVec_congr`). That is `eq:qld-unitary-7`'s last line, where a
+  generalized Pauli's spectral projector moves from one half of the pair to the other: the
+  projectors are symmetric, being real Fourier averages of a symmetric family, so the existing
+  `stateVec_epr_proj` moves them across the pair and `mulVec_auxVec_proj` carries that to the
+  product state. `mulVec_auxVec_syn` is the same for the syndrome projectors.
+* `sum_snorm_sq_sub_le_of_agree` is the display's first two lines read as a bound: everything after
+  them is a lower bound on one number, the agreement, and the deviation the lemma asks about is
+  twice its deficit.
+* `sum_uniform_bornProb_fibre_le` is `eq:qld-unitary-8` in the form the chain consumes. Reading the
+  two families at the *value* of the encoding at the sampled point rather than at the full outcome
+  can only add agreeing pairs, and the ones it adds are the distinct pairs whose encodings collide
+  there, which `sum_uniform_agree_bornProb_le` already bounds. The work is the regrouping: the
+  agreeing pairs at `u`, fibred by the common value, are exactly the products of the fibres, and
+  the diagonal of that is the fine agreement.
+
+With this, every step of item 2's endgame is formalized. What is left of item 2 is the threading:
+matching the registers of the conjugated Pauli measurement with item 1's, which is where
+`exists_auxVec_close`'s cut (the two parties' non-ancilla registers as one index, their two ancilla
+halves adjacent) has to be reconciled with the measurement's. That is bookkeeping, and it is the
+only thing between here and the lemma.
+
+**And a four-factor regrouping --- which is _not_ item 1's cut, and finding that out is the point.**
+`endEquiv` moves both ancilla factors of a two-party product out of the party grouping and puts
+them together; `qform_endVec` carries an expectation between the readings, by the same route
+`regroupEquiv` and `bornProb_regroupVec` take. It was written to be item 1's cut. It is not, and
+checking the claim before building on it turned up the real obstacle to item 2's threading.
+
+`exists_auxVec_close` concludes about `|EPR>_{A'' B''}` --- one half of *each* party's local pair;
+the paper's expanded state is `|psi>_{AB} (x) |EPR>_{A'A''} (x) |EPR>_{B'B''}`, and `V_A` acts on
+`A A' A''`, `V_B` on `B B' B''`. The padded state of this formalization carries only the pair
+`A' A''`, read along the cut `A A' | B A''`, with no `B' B''` in it at all. That was deliberate:
+`lem:qld-simultaneous` and `lem:qld-helper` each use one orientation at a time, and
+`reports/qld-stage5-blueprint-repairs.md` already records that the second pair was not needed for
+`lem:qld-exact-paulis`'s item 1. Item 2's threading is the first consumer that does need it.
+
+So the standing claim that "what remains is index bookkeeping with no missing mathematics" was
+right for `lem:qld-pauli-selfcons`'s chain and **wrong for item 2's threading**: before the
+endgame's steps can be pointed at one vector, the interface has to carry both entangled pairs, or
+there has to be an argument that one suffices here as it did there. That is an interface change,
+and it is the next real decision of the campaign. `endEquiv` and `qform_endVec` keep their place ---
+whatever the representation, the regrouping they do is the shape the threading needs --- but they do
+not by themselves reach item 1's conclusion.
+
+**And the chain's probe.** `lem:qld-pauli-selfcons` runs at a *uniform* `u-tilde` in `F_q^M`, which
+is not a point's low-degree encoding --- the encodings are a tiny subset of `F_q^M`, and confusing
+the two is the omission that created the node. `MIPRE/Background/QLD/ChainProbe.lean` keeps them
+apart by name: `SimulPair.mTildeAnc` is the exact Pauli measurement at an arbitrary probe (the
+generic `mTilde` already took the probe as an argument, so this is a naming, not a construction),
+`isPVM_mTildeAnc` says it is projective at every probe, `mTildeAt_eq_mTildeAnc` is the one place it
+meets `lem:qld-exact-paulis`'s, and `swapU_conj_mTildeAnc` is `eq:qld-unitary-6` there --- the
+conjugation's cancellation never used the probe's shape, only that the outcome's shift and the
+conjugation's are written with the same pairing.
+
+That is the first brick of the chain assembly: every display of the chain has to be available at
+this probe, and until now none of them were stateable there.
+
+**And the missing edge, made explicit.** Item 1 of `lem:qld-swap` asks for a near-invariance of the
+state under the Weyl twirl on its two ancilla halves; what `lem:qld-pauli-selfcons` supplies is an
+agreement of the two parties' exact Pauli observables averaged over a *uniform* probe. The twirl is
+by definition that average (`twirl w = E_u w(u) (x) w(u)`), so the two are one rewriting apart:
+`qform_bOp_twirl`. Worth recording that the edge is this short. The node was separated out from
+`lem:qld-exact-paulis` because the latter's `leanok` marks had to stay honest, and the worry was
+that the separation would cost a translation layer between them. It costs one line.

@@ -4056,7 +4056,9 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.qform_sandwich_nonneg, MIPRE.snorm_sq_sum_proj_sandwich,
   MIPRE.sum_qform_sandwich_le_of_subset, MIPRE.abs_sum_qform_swap_le,
   MIPRE.sum_snorm_sq_proj_comp_le, MIPRE.snorm_one_sub_aOp_mul_bOp_le,
-  MIPRE.sum_snorm_sq_insert_le, MIPRE.sum_xSqNorm_fibre_le}
+  MIPRE.sum_snorm_sq_insert_le, MIPRE.sum_xSqNorm_fibre_le,
+  MIPRE.QLD.SimulPair.mTildeAnc, MIPRE.QLD.SimulPair.isPVM_mTildeAnc,
+  MIPRE.QLD.SimulPair.mTildeAt_eq_mTildeAnc, MIPRE.QLD.SimulPair.swapU_conj_mTildeAnc}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4184,6 +4186,15 @@ measurements the same way costs nothing --- which is Item 2 of \texttt{fact:agre
 as \texttt{sum\_xSqNorm\_map\_le}, on bundled POVMs. The chain speaks \texttt{IsPVM};
 \texttt{IsPVM.toPOVM} and \texttt{sum\_xSqNorm\_fibre\_le} bridge the two.
 
+\emph{And the probe it runs at.} This chain is stated at a \emph{uniform} $\tilde{u} \in
+\F_q^{M}$, and that is not a point's low-degree encoding --- the encodings are a tiny subset of
+$\F_q^M$. Confusing the two is the omission that created this node, so the two probes are kept
+apart by name: \texttt{SimulPair.mTildeAnc} is the exact Pauli measurement at an arbitrary probe,
+\texttt{mTildeAt\_eq\_mTildeAnc} is the one place it meets
+Lemma~\ref{lem:qld-exact-paulis}'s, and \texttt{swapU\_conj\_mTildeAnc} says that conjugation by
+the swap unitary strips the pair measurement off it whatever the probe --- the cancellation is
+between the outcome's shift and the conjugation's, and both are written with the same pairing.
+
 \emph{Not formalized}: the assembly of the chain itself --- the index bookkeeping of its eleven
 displays, and Lemma~\ref{lem:qld-povm-to-obs} at the end. Every step it assembles is in place.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
@@ -4219,7 +4230,11 @@ displays, and Lemma~\ref{lem:qld-povm-to-obs} at the end. Every step it assemble
   MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le',
   MIPRE.QLD.inconsistency_eq_half_xPovmDist, MIPRE.QLD.inconsistency_pt_pt_le,
   MIPRE.QLD.inconsistency_pt_pauli_le,
-  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le_of_win}
+  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le_of_win, MIPRE.QLD.bOp_mulVec_auxVec,
+  MIPRE.QLD.mulVec_auxVec_congr, MIPRE.QLD.mulVec_auxVec_proj, MIPRE.QLD.mulVec_auxVec_syn,
+  MIPRE.QLD.sum_snorm_sq_sub_le_of_agree, MIPRE.QLD.sum_uniform_bornProb_fibre_le,
+  MIPRE.QLD.endEquiv, MIPRE.QLD.endVec, MIPRE.QLD.endVec_unit, MIPRE.QLD.reindex_endEquiv,
+  MIPRE.QLD.qform_endVec, MIPRE.QLD.qform_bOp_twirl}
 There is $\delta_{qld} = O\bigl( \delta_S^{1/4} + md/q \bigr)$ and local unitaries $V_\alice$,
 $V_\bob$ on the expanded spaces such that, writing $M = 2^m$:
 \begin{enumerate}
@@ -4322,11 +4337,52 @@ diagonal is excluded by the weight rather than by the index set, which is why
 \texttt{sum\_uniform\_agree\_mass\_le} now asks for the two polynomials to be distinct only
 where the weight is nonzero.
 
+\emph{And the endgame's own steps, in \texttt{SwapEndgame.lean}.} Item 1 leaves a product state
+$\ket{\aux} \ot \ket{\EPR_q}^{\ot M}$, and what the endgame does to it is elementary once said
+plainly: an operator on the entangled pair acts on the second factor and leaves the first
+(\texttt{bOp\_mulVec\_auxVec}, one entry computation), so two operators that agree on
+$\ket{\EPR_q}^{\ot M}$ agree on the product (\texttt{mulVec\_auxVec\_congr}). That is
+\texttt{eq:qld-unitary-7}'s last line, where a generalized Pauli's spectral projector moves from
+one half of the pair to the other: the projectors are symmetric, being real Fourier averages of a
+symmetric family, so \texttt{stateVec\_epr\_proj} moves them across and
+\texttt{mulVec\_auxVec\_proj} carries that to the product state
+(\texttt{mulVec\_auxVec\_syn} for the syndrome projectors). The display's first two lines are
+\texttt{sum\_snorm\_sq\_sub\_le\_of\_agree}: everything after them is a lower bound on one
+number, the agreement, and the deviation is twice its deficit. And
+\texttt{sum\_uniform\_bornProb\_fibre\_le} is \texttt{eq:qld-unitary-8} in the form the chain
+consumes: reading the two families at the value of the encoding at the sampled point rather than at
+the full outcome raises the agreement by at most $md/q$, the pairs it adds being the distinct ones
+whose encodings collide there.
+
+\emph{And a four-factor regrouping, which is \emph{not} yet item 1's cut.}
+\texttt{endEquiv} moves both ancilla factors of a two-party product out of the party grouping and
+puts them together, and \texttt{qform\_endVec} carries an expectation between the two readings; it
+is the same pattern as \texttt{regroupEquiv}, which moves one across. It was written to be item
+1's cut and it is not, which is worth stating plainly because it locates the real obstacle.
+\texttt{exists\_auxVec\_close} concludes about $\ket{\EPR_q}^{\ot M}_{\alice'' \bob''}$ --- one
+half of \emph{each} party's local pair --- whereas the padded state of this formalization carries
+only the pair $\alice' \alice''$, read along the cut $\alice \alice' \mid \bob \alice''$, and
+has no $\bob' \bob''$ in it at all. That was deliberate and correct for
+Lemma~\ref{lem:qld-simultaneous} and Lemma~\ref{lem:qld-helper}, each of which uses one
+orientation at a time, and it is what \texttt{reports/qld-stage5-blueprint-repairs.md} records as
+the second entangled pair not being needed for Lemma~\ref{lem:qld-exact-paulis}'s item 1. Item 2's
+threading is the first consumer that does need it. So what stands between the endgame's steps and
+the lemma is not bookkeeping: it is extending the interface to carry both pairs, or an argument
+that one suffices here too.
+
+\emph{And the missing edge, made explicit.} Item 1 asks for a near-invariance of the state under
+the Weyl twirl on its two ancilla halves; what Lemma~\ref{lem:qld-pauli-selfcons} supplies is an
+agreement of the two parties' exact Pauli observables averaged over a \emph{uniform} probe. The
+twirl is by definition that average, so the two are one rewriting apart:
+\texttt{qform\_bOp\_twirl}. That this edge is short is not an accident --- it is why the missing
+node was worth separating out rather than folding into
+Lemma~\ref{lem:qld-exact-paulis}.
+
 \emph{Not formalized}: the two near-invariances themselves, which are
 Lemma~\ref{lem:qld-pauli-selfcons} and are hypotheses of \texttt{exists\_auxVec\_close} rather
-than conclusions; and, in item 2, the assembly --- \texttt{eq:qld-unitary-7} through
-\texttt{-9} and the transport above, threaded into the statement about
-$V M^{(\pauli,W)}_h V^\dagger$. Hence no
+than conclusions; and, in item 2, the threading of those steps into the statement about
+$V M^{(\pauli,W)}_h V^\dagger$, which is where the registers of the conjugated Pauli measurement
+have to be matched with item 1's. Every step it threads is in place. Hence no
 \texttt{leanok} mark at either level. 
 
 \emph{And \texttt{eq:qld-unitary-5}.} It needed no new estimate: its engine is the paper's
