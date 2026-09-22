@@ -2794,3 +2794,35 @@ Three things were worth the trouble:
 
 Five steps left: `-7`, `-9a`, `-10`, `-11` and `-12` read as consecutive deviations. Every one of
 them is a display already in the tree; what is left is to name the terms and match the shapes.
+
+### PR AI: the chaining, complete (2026-09-22)
+
+`MIPRE/Background/QLD/ChainAssembly.lean`. `chainT` is the pulling chain on the physical cut: ten
+terms for nine steps, the four of `eq:qld-pulling-0` to `-3` entering lifted and everything from
+`-5` on entering directly. Three of the nine are free — `-2`/`-2b`, `-3a` to `-5`, and `-9a` — and
+the six that are not cost, in order: item 1 of `lem:qld-helper`, the game's point–point
+consistency, item 2 of `lem:qld-helper`, `eq:qld-pulling-10` complete, item 2 again at the second
+cut, and Schwartz–Zippel. `sum_uniform_snorm_sq_mTildeAnc_endOp_le` is `eq:qld-pulling-cons` for
+Alice.
+
+Two things about the shape of this file are worth keeping.
+
+**Naming the terms is the whole design.** Each of the nine steps is one already-proved display
+plus a line of `Finset` bookkeeping, and the bookkeeping is the only thing that could have gone
+wrong. Six of the nine differences are sums over a filtered index set, and each time the question
+was which of two filter nestings the display was stated at. `Finset.filter_comm` settles it, but
+`rw [Finset.filter_comm, Finset.filter_comm]` does **not**: the second rewrite finds the first's
+output and flips it back. Both splits here (`chainT_six_sub_seven`, `chainT_eight_sub_nine`) name
+the two set equalities as `have`s instead.
+
+**The last missing cost was the cheapest to state and the least obvious to find.**
+`eq:qld-pulling-3`'s hypothesis `∑ k, xSqNorm mVec (ptA k) (ptB k) ≤ ε` had been carried since PR
+Z with no supplier, and it is just the game's point–point consistency (`inconsistency_pt_pt_le`)
+read on the cut the chain runs on. Getting it there is what `SimulPair`'s `Phi_reduced` field is
+for, and `bornProb_mVec_ext` is the two-step reading: `bornProb_regroupVec` moves `A''` back to
+Bob, `Phi_reduced` drops the padding, and `bornProb_expVec_kron` drops the pair, which contributes
+only its norm.
+
+Left for the last piece: the mirror half of `eq:qld-pulling-cons` (this one at `M.mirror`, the
+endpoint being symmetric by `swap_mem_coupledIdx`), `lem:qld-povm-to-obs`, and then
+`lem:qld-swap` item 2 and `thm:qld`.

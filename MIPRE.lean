@@ -414,6 +414,7 @@ import MIPRE.Background.QLD.CLExplicitTransport
 import MIPRE.Background.QLD.CLPresentation
 import MIPRE.Background.QLD.CLTransport
 import MIPRE.Background.QLD.Chain
+import MIPRE.Background.QLD.ChainAssembly
 import MIPRE.Background.QLD.ChainProbe
 import MIPRE.Background.QLD.Combine
 import MIPRE.Background.QLD.Combined
