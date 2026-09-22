@@ -2826,3 +2826,39 @@ only its norm.
 Left for the last piece: the mirror half of `eq:qld-pulling-cons` (this one at `M.mirror`, the
 endpoint being symmetric by `swap_mem_coupledIdx`), `lem:qld-povm-to-obs`, and then
 `lem:qld-swap` item 2 and `thm:qld`.
+
+### PR AJ: lem:qld-pauli-selfcons (2026-09-22)
+
+`MIPRE/Background/QLD/SelfCons.lean`. Two steps after the chain, and neither is a new derivation.
+
+**Bob's half is Alice's at the mirror.** `MirrorSimul.mirror` makes the mirror a `MirrorSimul`
+again, `mirror_physVec` says its physical state is this one with the parties written in the other
+order, and `endOp_swap_sum` says its endpoint is this one read from the other side — which is
+`swap_mem_coupledIdx`, the symmetry of the index set that is the whole reason the lemma holds.
+`snorm_swapVec_aOp_sub_kron_sum` carries the norm across the swap, and `sum_xSqNorm_le_of_endOp`,
+in the tree since the endpoint was named, puts the two halves together. That the mirror paid for
+itself here, as it did at `-5` to `-8` and at `-11`, is the third time in this campaign.
+
+**From the measurements to the observable, and the one wrong turn available.** The obvious route
+is `lem:qld-povm-to-obs` on the whole outcome set. It costs a factor `|F| = q`, which turns the
+chain's `md/q` into `md` and loses the lemma — the chain spends nine displays keeping `md/q` and
+one careless application would throw it away. The paper does not do that: it coarse-grains
+*first*, along the character the observable reads, and turns only the resulting **two**-outcome
+family into an observable. Coarse-graining is free for projective families and was already in the
+tree as `sum_xSqNorm_fibre_le`, put there when `Pulling.lean` was written and described in its own
+docstring as "the final passage". So the factor is two.
+
+This one was caught by reading the paper's sentence rather than the blueprint's: the blueprint
+cites `lem:qld-povm-to-obs` and says nothing about coarse-graining first, and the first Lean proof
+written here did apply it directly and got `q · (...)`. The paper's sentence — "by using Item 2 of
+Fact agreement, followed by Fact data-processing, and then followed by Item 1 of Fact agreement,
+we get ... where the answer summation is over `b ∈ F_2`" — is where the two-outcome family comes
+from. `CLAUDE.md`'s rule about reading the paper before formalizing a blueprint statement earned
+its keep again.
+
+**The blueprint statement was repaired.** It said `≈_{δ_qld}` on average over a uniform probe,
+with `δ_qld` defined in a *later* lemma. It now carries the explicit constant the Lean proves,
+`72(10 δ_S + 860 ε + 2√(172ε) + md/q)`, and says the bound holds at every probe, which is what the
+chain gives — it averages over the sampled point, never over the probe.
+
+Left: `lem:qld-swap` item 2 and `thm:qld`.

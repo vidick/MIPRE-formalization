@@ -450,6 +450,7 @@ import MIPRE.Background.QLD.Products
 import MIPRE.Background.QLD.Pulling
 import MIPRE.Background.QLD.SamplerQueryProgram
 import MIPRE.Background.QLD.SeededLinePrograms
+import MIPRE.Background.QLD.SelfCons
 import MIPRE.Background.QLD.Separate
 import MIPRE.Background.QLD.Simul
 import MIPRE.Background.QLD.Swap

@@ -4182,14 +4182,31 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_five_six,
   MIPRE.QLD.sum_mul_const_mul_sum_range, MIPRE.QLD.MirrorSimul.chainT_zero_eq,
   MIPRE.QLD.MirrorSimul.chainT_nine_eq, MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_le,
-  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_mTildeAnc_endOp_le}
-On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
-of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_mTildeAnc_endOp_le,
+  MIPRE.QLD.snorm_sq_obs_sub_le, MIPRE.QLD.sum_fibre_smul, MIPRE.QLD.swapVec_sum,
+  MIPRE.QLD.mulVec_kron_sum_swapVec, MIPRE.QLD.snorm_swapVec_aOp_sub_kron_sum,
+  MIPRE.QLD.MirrorSimul.aliceWTilde, MIPRE.QLD.MirrorSimul.bobWTilde,
+  MIPRE.QLD.MirrorSimul.endOp_swap_sum,
+  MIPRE.QLD.MirrorSimul.sum_snorm_sq_aliceMTilde_endOp_le,
+  MIPRE.QLD.MirrorSimul.snorm_endOp_bobMTilde_eq,
+  MIPRE.QLD.MirrorSimul.sum_snorm_sq_endOp_bobMTilde_le,
+  MIPRE.QLD.MirrorSimul.sum_selfConsGap_le, MIPRE.QLD.MirrorSimul.snorm_sq_wTilde_le}
+For every basis $W$, every $e \in \F_q$ and every probe $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the
+exact Pauli observable of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same
+observable on the other:
 \begin{equation*}
-  \bigl( \tilde{W}^e(\tilde{u}) \bigr)_{\alice \alice' \alice''}
-  \;\approx_{\delta_{qld}}\;
-  \bigl( \tilde{W}^e(\tilde{u}) \bigr)_{\bob \bob' \bob''} .
+  \norm{\Bigl( \bigl( \tilde{W}^e(\tilde{u}) \bigr)_{\alice \alice' \alice''}
+    - \bigl( \tilde{W}^e(\tilde{u}) \bigr)_{\bob \bob' \bob''} \Bigr)
+    \ket{\widehat{\psi}}}^2
+  \;\leq\; 72 \Bigl( 10 \delta_S + 860 \eps + 2\sqrt{172 \eps} + \frac{md}{q} \Bigr)
+  \;=\; O\Bigl( \delta_S + \sqrt{\eps} + \frac{md}{q} \Bigr) ,
 \end{equation*}
+which is the paper's $\bigl( \tilde{W}^e(\tilde{u}) \bigr)_{\alice \alice' \alice''}
+\approx_{\delta_{qld}} \bigl( \tilde{W}^e(\tilde{u}) \bigr)_{\bob \bob' \bob''}$ once the
+$O(\sqrt\eps)$ and $O(md/q)$ terms are absorbed into $\delta_S$, as the paper says it
+does. Two departures from the paper's phrasing, both in the direction of a stronger statement:
+the bound holds at \emph{every} probe rather than on average over a uniform one --- the chain
+never averages over the probe, only over the sampled point --- and the constant is explicit.
 \end{lemma}
 
 \begin{proof}
@@ -4712,12 +4729,28 @@ reading is free, and for the reason the whole \texttt{SimulPair} interface exist
 the expanded state's pair contributes only its norm --- but it has to be done once
 (\texttt{bornProb\_mVec\_ext}, \texttt{xSqNorm\_mVec\_ext}).
 
-\emph{Not formalized}: the mirror half of \texttt{eq:qld-pulling-cons} --- which is this one at
-\texttt{M.mirror}, the endpoint being symmetric by \texttt{swap\_mem\_coupledIdx} --- and
-Lemma~\ref{lem:qld-povm-to-obs}, which turns the agreement of the two exact Pauli
-\emph{measurements} into the agreement of the two exact Pauli \emph{observables} this lemma
-states. \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this
-node.
+\emph{And the lemma, which is now proved.} Two steps after the chain, and neither is a new
+derivation.
+
+\emph{Bob's half is Alice's at the mirror.} \texttt{MirrorSimul.mirror} makes the mirror a
+\texttt{MirrorSimul} again, \texttt{mirror\_physVec} says its physical state is this one with the
+parties written in the other order, and \texttt{endOp\_swap\_sum} says its endpoint is this one
+read from the other side --- which is \texttt{swap\_mem\_coupledIdx}, the symmetry of the index
+set that is the whole reason this lemma holds.
+\texttt{snorm\_swapVec\_aOp\_sub\_kron\_sum} carries the norm across the swap, and
+\texttt{sum\_xSqNorm\_le\_of\_endOp}, in the tree since the endpoint was named, puts the two
+halves together: \texttt{sum\_selfConsGap\_le} is the two exact Pauli \emph{measurements}
+agreeing.
+
+\emph{From the measurements to the observable.} This is the one place where the obvious route is
+the wrong one. Lemma~\ref{lem:qld-povm-to-obs} applied to the whole outcome set costs a factor
+$q$, which would turn the chain's $md/q$ into $md$ and lose the lemma. The paper coarse-grains
+\emph{first}, along the character the observable reads --- free for projective families, and in
+the tree as \texttt{sum\_xSqNorm\_fibre\_le} --- and turns only the resulting \emph{two}-outcome
+family into an observable. So the factor is two, and \texttt{snorm\_sq\_obs\_sub\_le} is
+Lemma~\ref{lem:qld-povm-to-obs} in the state-norm form that step takes.
+\texttt{MirrorSimul.snorm\_sq\_wTilde\_le} is the lemma.
+\texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
 
 \effortHard
 
