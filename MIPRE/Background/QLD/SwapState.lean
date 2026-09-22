@@ -278,6 +278,45 @@ theorem exists_auxVec_close (θ : R × ((n → F) × (n → F)) → ℂ) (hθ : 
 
 end Item1
 
+/-! ## The combinatorial core of the self-consistency chain
+
+`lem:qld-pauli-selfcons` --- the paper's second item of `lem:qld-construct-the-paulis`, and the
+hypothesis of `exists_auxVec_close` above --- turns on one algebraic identity, the justification of
+its display `eq:qld-pulling-2b`: the syndrome projector at the probe `u-tilde` and the syndrome
+projector at the probe `ind_m(u)` multiply to the projector onto the outcomes satisfying both
+conditions. That identity is here; the approximation steps around it are not. -/
+
+section Joint
+
+/-- **Two syndrome projectors of the same Weyl family, at different probes, multiply to the joint
+one.** Off the diagonal the spectral projectors annihilate each other, so only the eigenvalue
+patterns lying in both level sets survive. -/
+theorem syn_mul_syn {w : (n → F) → Matrix (n → F) (n → F) ℂ} (hw : IsWeylFamily w)
+    (v v' : n → F) (a a' : F) :
+    syn w v a * syn w v' a'
+      = ∑ e ∈ univ.filter fun e => dotF e v = a ∧ dotF e v' = a', proj w e := by
+  classical
+  rw [syn, syn, Finset.sum_mul]
+  have hterm : ∀ e ∈ univ.filter fun e : n → F => dotF e v = a,
+      (proj w e * ∑ e' ∈ univ.filter fun e' : n → F => dotF e' v' = a', proj w e')
+        = if dotF e v' = a' then proj w e else 0 := by
+    intro e _
+    rw [Finset.mul_sum]
+    by_cases hs : dotF e v' = a'
+    · rw [if_pos hs,
+        Finset.sum_eq_single e
+          (fun e' _ he' => by rw [proj_mul_proj hw, if_neg fun hh => he' hh.symm])
+          fun hmem => absurd (Finset.mem_filter.mpr ⟨Finset.mem_univ e, hs⟩) hmem,
+        proj_mul_proj hw, if_pos rfl]
+    · rw [if_neg hs]
+      refine Finset.sum_eq_zero fun e' he' => ?_
+      refine (proj_mul_proj hw e e').trans (if_neg fun hh : e = e' => hs ?_)
+      rw [hh]
+      exact (Finset.mem_filter.mp he').2
+  rw [Finset.sum_congr rfl hterm, ← Finset.sum_filter, Finset.filter_filter]
+
+end Joint
+
 end MIPRE.QLD
 
 end

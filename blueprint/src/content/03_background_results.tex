@@ -4043,6 +4043,7 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
 \label{lem:qld-pauli-selfcons}
 \ledgernode{1.2.2.15}
 \uses{lem:qld-exact-paulis,lem:qld-helper,lem:qld-win,lem:schwartz-zippel,def:cross-distance}
+\lean{MIPRE.QLD.syn_mul_syn}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4076,9 +4077,15 @@ node. It is separated out here rather than folded back into
 Lemma~\ref{lem:qld-exact-paulis} so that the latter's \texttt{leanok} marks stay honest: what is
 formalized there is exactly what it states.
 
-Not formalized. Its chain is the eleven displays of the paper's
-\texttt{qld-separating.tex}, and it is the substantial piece of stage 5 that remains.
-\texttt{reports/qld-stage5-blueprint-repairs.md} records the omission.
+Not formalized, apart from its combinatorial core. Its chain is the eleven displays of the paper's
+\texttt{qld-separating.tex}, and it is the substantial piece of stage 5 that remains. One
+ingredient is in place: the justification of display \texttt{eq:qld-pulling-2b}, that the syndrome
+projectors of one Weyl family at two different probes multiply to the projector onto the outcomes
+satisfying both conditions (\texttt{syn\_mul\_syn}) --- off the diagonal the spectral projectors
+annihilate each other, so only the eigenvalue patterns in both level sets survive. The
+approximation steps around it use the paper's \texttt{fact:add-a-proj}, which
+\texttt{MIPRE/Foundations/Commutation.lean} already has. \texttt{reports/qld-stage5-blueprint-repairs.md}
+records the omission.
 
 \effortHard
 
