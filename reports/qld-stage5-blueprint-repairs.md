@@ -236,3 +236,33 @@ QLD tree speaks `IsPVM` and matrices. The two are a `simpa` apart (`povmOfIsPVM`
 `sum_xSqNorm_fibre_le`). The estimates of this appendix are not as specific as they look, and
 `Foundations/Sandwich.lean` and `Foundations/Expanded.lean` are worth reading before writing
 another one.
+
+## The second entangled pair, and where it is finally needed
+
+An earlier note in this report records that the paper's second entangled pair, `B' B''`, was not
+needed for item 1 of `lem:qld-exact-paulis`: the register `A''` is already on the far side of the
+`hatVec` cut, so `mTilde` as a single matrix is a regrouping of the same six registers and no new
+estimate. That is still true, and the same holds for `lem:qld-simultaneous` and `lem:qld-helper`,
+each of which uses one orientation at a time.
+
+Item 2 of `lem:qld-swap` is the first consumer for which it is **not** true, and the discrepancy is
+worth stating before anyone builds on the current interface.
+
+The paper's expanded state is `|psi>_{AB} (x) |EPR>_{A'A''} (x) |EPR>_{B'B''}`, with `V_A` acting on
+`A A' A''` and `V_B` on `B B' B''`, and item 1 concludes that `V_A (x) V_B |psi-hat>` is close to
+`|aux>_{A A' B B'} (x) |EPR>_{A'' B''}` --- a pair made of one half from *each* party. The padded
+state `SimulPair.Phi` of this formalization is on `((dA x Anc) x EA) x ((dB x Anc) x EB)`, which is
+the cut `A A' | B A''`: it carries the pair `A' A''` and has no `B' B''` at all.
+
+So item 2's threading cannot simply regroup `Phi`'s factors into item 1's cut, because the register
+it needs is not there. Either the interface gains the second pair --- which means a second
+`expVec`, and every statement about `Phi` re-examined for whether it survives --- or there is an
+argument that one pair suffices here as it did for the lemmas above, in which case item 1's
+statement as formalized (`exists_auxVec_close`, which is stated abstractly on `R x (T x T)` and so
+does not commit to which halves) should be instantiated at `A' A''` and the blueprint's description
+of its cut corrected.
+
+This was found by writing `endEquiv`, a four-factor regrouping intended to *be* item 1's cut, and
+then checking the register identification against `qld-isometry.tex` before building on it. The
+regrouping is correct and keeps its place; the identification was not, and the blueprint entry that
+asserted it has been repaired.

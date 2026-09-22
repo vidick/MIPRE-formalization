@@ -2177,14 +2177,27 @@ matching the registers of the conjugated Pauli measurement with item 1's, which 
 halves adjacent) has to be reconciled with the measurement's. That is bookkeeping, and it is the
 only thing between here and the lemma.
 
-**And item 1's cut.** `exists_auxVec_close` reads the state along a cut of its own --- the two
-parties' non-ancilla registers as one index `R`, their two ancilla halves adjacent as `T x T` ---
-while the padded state is grouped by party, `((dA x Anc) x EA) x ((dB x Anc) x EB)`. The two are a
-permutation of four factors apart. `endEquiv` is that permutation and `qform_endVec` carries an
-expectation between the two readings, by the same route `regroupEquiv` and `bornProb_regroupVec`
-take: one `Equiv`, one entry computation for the reindexed operator, and `qform_comp_equiv`, which
-is general and makes no reference to a cut. That is what the threading has to say first; with it,
-all of the endgame's steps can be pointed at one vector.
+**And a four-factor regrouping --- which is _not_ item 1's cut, and finding that out is the point.**
+`endEquiv` moves both ancilla factors of a two-party product out of the party grouping and puts
+them together; `qform_endVec` carries an expectation between the readings, by the same route
+`regroupEquiv` and `bornProb_regroupVec` take. It was written to be item 1's cut. It is not, and
+checking the claim before building on it turned up the real obstacle to item 2's threading.
+
+`exists_auxVec_close` concludes about `|EPR>_{A'' B''}` --- one half of *each* party's local pair;
+the paper's expanded state is `|psi>_{AB} (x) |EPR>_{A'A''} (x) |EPR>_{B'B''}`, and `V_A` acts on
+`A A' A''`, `V_B` on `B B' B''`. The padded state of this formalization carries only the pair
+`A' A''`, read along the cut `A A' | B A''`, with no `B' B''` in it at all. That was deliberate:
+`lem:qld-simultaneous` and `lem:qld-helper` each use one orientation at a time, and
+`reports/qld-stage5-blueprint-repairs.md` already records that the second pair was not needed for
+`lem:qld-exact-paulis`'s item 1. Item 2's threading is the first consumer that does need it.
+
+So the standing claim that "what remains is index bookkeeping with no missing mathematics" was
+right for `lem:qld-pauli-selfcons`'s chain and **wrong for item 2's threading**: before the
+endgame's steps can be pointed at one vector, the interface has to carry both entangled pairs, or
+there has to be an argument that one suffices here as it did there. That is an interface change,
+and it is the next real decision of the campaign. `endEquiv` and `qform_endVec` keep their place ---
+whatever the representation, the regrouping they do is the shape the threading needs --- but they do
+not by themselves reach item 1's conclusion.
 
 **And the chain's probe.** `lem:qld-pauli-selfcons` runs at a *uniform* `u-tilde` in `F_q^M`, which
 is not a point's low-degree encoding --- the encodings are a tiny subset of `F_q^M`, and confusing

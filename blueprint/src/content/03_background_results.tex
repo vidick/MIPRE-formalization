@@ -4354,13 +4354,21 @@ consumes: reading the two families at the value of the encoding at the sampled p
 the full outcome raises the agreement by at most $md/q$, the pairs it adds being the distinct ones
 whose encodings collide there.
 
-\emph{And item 1's cut, as a regrouping.} \texttt{exists\_auxVec\_close} reads the state along a
-cut of its own --- the two parties' non-ancilla registers as one index, their two ancilla halves
-adjacent --- while the padded state is grouped by party. The two are a permutation of four factors
-apart, and \texttt{endEquiv} is that permutation, with \texttt{qform\_endVec} carrying an
-expectation between the two readings. It is the same pattern as \texttt{regroupEquiv}, which moves
-one ancilla half across the party cut, applied to move both out of it, and it is what the threading
-has to say before any of the endgame's steps can be pointed at the same vector.
+\emph{And a four-factor regrouping, which is \emph{not} yet item 1's cut.}
+\texttt{endEquiv} moves both ancilla factors of a two-party product out of the party grouping and
+puts them together, and \texttt{qform\_endVec} carries an expectation between the two readings; it
+is the same pattern as \texttt{regroupEquiv}, which moves one across. It was written to be item
+1's cut and it is not, which is worth stating plainly because it locates the real obstacle.
+\texttt{exists\_auxVec\_close} concludes about $\ket{\EPR_q}^{\ot M}_{\alice'' \bob''}$ --- one
+half of \emph{each} party's local pair --- whereas the padded state of this formalization carries
+only the pair $\alice' \alice''$, read along the cut $\alice \alice' \mid \bob \alice''$, and
+has no $\bob' \bob''$ in it at all. That was deliberate and correct for
+Lemma~\ref{lem:qld-simultaneous} and Lemma~\ref{lem:qld-helper}, each of which uses one
+orientation at a time, and it is what \texttt{reports/qld-stage5-blueprint-repairs.md} records as
+the second entangled pair not being needed for Lemma~\ref{lem:qld-exact-paulis}'s item 1. Item 2's
+threading is the first consumer that does need it. So what stands between the endgame's steps and
+the lemma is not bookkeeping: it is extending the interface to carry both pairs, or an argument
+that one suffices here too.
 
 \emph{And the missing edge, made explicit.} Item 1 asks for a near-invariance of the state under
 the Weyl twirl on its two ancilla halves; what Lemma~\ref{lem:qld-pauli-selfcons} supplies is an
