@@ -1097,8 +1097,17 @@ actual axis erasure, direction truncation, and canonical diagonal-line programs.
 They compute the legacy QLD maps after the same seed permutation and halt in
 polynomial time on all raw inputs.
 
-Independent integration review identified the following remaining concrete
-interfaces. These are not silently assumed by any completed theorem:
+The review below records the boundary at PR #149. The 2026-09-22 continuation
+closes computational/self-dual basis conversion and the underlying question
+relabelling (the full-game transport draft remains unchecked),
+adds all Pauli query algorithms and full-register Read/Sample programs, and
+proves executable canonical binary reduction. See
+[the exact checkpoint and resumption plan](introspection-checkpoint-20260922.md)
+for current file/API names, validation, and the remaining work. In particular,
+the executable Pauli decider and the hiding-prefix validity issue are real
+remaining tasks, not mere final theorem packaging.
+
+Independent integration review at PR #149 identified these interfaces:
 
 1. `BinaryGame` and Pauli restriction use the legacy CL presentation.
    `CLExplicitSeed` has a new presentation and decoder with a proved QLD law;

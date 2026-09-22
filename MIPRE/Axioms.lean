@@ -3,6 +3,10 @@ Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import MIPRE.Foundations.GuardSorryFree
+import MIPRE.Foundations.Introspection.BasisProg
+import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
+import MIPRE.Foundations.Introspection.AuxiliarySamplingCorrect
+import MIPRE.Foundations.Introspection.AuxiliaryCanonicalProgram
 import MIPRE.Foundations.Blocks
 import MIPRE.Foundations.CL.Basic
 import MIPRE.Foundations.LowDegree.SchwartzZippel
@@ -2058,6 +2062,13 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.SourcePadding.restrictStrategy_value,
   MIPRE.Introspection.SourcePadding.quantumValue_le,
   MIPRE.Introspection.SourcePadding.quantumValue_depthFamily_le
+
+#guard_sorry_free MIPRE.Introspection.BasisProgram.toSelfDualProg_correct,
+  MIPRE.Introspection.BasisProgram.fromSelfDualProg_correct,
+  MIPRE.Introspection.AuxiliaryProgram.readingCheck_typed,
+  MIPRE.Introspection.AuxiliaryProgram.rawCheck_haltsWithin,
+  MIPRE.Introspection.AuxiliaryProgram.samplingProg_depthFamily,
+  MIPRE.Introspection.AuxiliaryCanonical.canonicalProg_correct
 
 /-! ## Blocks of an index type
 

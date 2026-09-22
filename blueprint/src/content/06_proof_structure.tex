@@ -3410,6 +3410,84 @@ fields then agree literally. Transport the uniform distribution through
 that permutation.
 \end{proof}
 
+\begin{lemma}[Executable binary Pauli queries]
+\label{lem:intro-executable-pauli-queries}
+\uses{lem:intro-executable-seeded-lines}
+\lean{MIPRE.Introspection.BasisProgram.toSelfDualProg_correct,
+  MIPRE.Introspection.BasisProgram.fromSelfDualProg_correct,
+  MIPRE.QLD.PauliCL.linearBits_correct,
+  MIPRE.QLD.PauliCL.marginalBits_correct,
+  MIPRE.QLD.PauliCL.factorBits_correct,
+  MIPRE.QLD.PauliCL.SamplerProgram.query_dimension,
+  MIPRE.QLD.PauliCL.SamplerProgram.query_marginal,
+  MIPRE.QLD.PauliCL.SamplerProgram.query_linear,
+  MIPRE.QLD.PauliCL.SamplerProgram.query_factor,
+  MIPRE.QLD.PauliCL.SamplerProgram.query_runs}
+\leanok
+For explicit unary field and selector widths and point dimension, uniform
+polynomial-time programs compute all three Pauli marginals, linear maps and
+factor indicators in the numbered binary register. For positive odd field
+degree and selector width at most field degree, these are the exact downsized
+CL queries in the effective self-dual basis. Linear and factor correctness
+hold for arbitrary prefixes. A total router handles the four query kinds
+and the fixed twenty-six type labels.
+\end{lemma}
+\begin{proof}
+\leanok
+Construct the self-dual basis effectively and convert field rows in both
+directions. Pack the point, seed, direction and scalar registers in the
+proved coordinate order. Execute the appropriate stage maps and compose
+successive stages for marginals; factor indicators use the fixed register
+partition. The type decoder tabulates only the fixed finite type set.
+Canonical index-dependent parameter selection and packaging as a typed
+sampler remain separate obligations.
+\end{proof}
+
+\begin{lemma}[Full-register auxiliary programs]
+\label{lem:intro-executable-padded-auxiliary}
+\uses{lem:intro-binary-source-padding}
+\lean{MIPRE.Introspection.AuxiliaryProgram.readingCheck_typed,
+  MIPRE.Introspection.AuxiliaryProgram.rawCheck_haltsWithin,
+  MIPRE.Introspection.AuxiliaryProgram.samplingProg_depthFamily,
+  MIPRE.Introspection.AuxiliaryCanonical.canonicalProg_correct}
+\leanok
+The full padded-register Read relation has an exact executable check,
+including the original answer cutoff. For a bounded source verifier and
+the explicit depth, dimension and answer-length hypotheses, a clocked
+source marginal call implements the padded Sample relation. Independently,
+a uniform polynomial-time elimination program computes the exact canonical
+quotient representative of a supplied binary row span.
+\end{lemma}
+\begin{proof}
+\leanok
+Parse canonical answer encodings while retaining unrestricted full-register
+dual labels. Restrict only the source sampling call to the original
+coordinates; exact zero extension proves its padded-game semantics.
+Use the source boundedness estimate to discharge the clock.
+For canonical reduction, identify the leading coordinates of the computed
+pivot basis with the canonical pivot set, and characterize the remainder
+by its coset and canonical complement. The dual-map specialization and
+the executable Hide checks remain to be composed.
+\end{proof}
+
+\begin{lemma}[Output relabelling for the explicit selector]
+\label{lem:intro-explicit-selector-questions}
+\uses{lem:intro-executable-seeded-lines}
+\lean{MIPRE.QLD.PauliCL.ExplicitSeed.binaryOutputPermutation_presentation,
+  MIPRE.QLD.PauliCL.ExplicitSeed.binaryQuestion_outputPermutation}
+\leanok
+For a compatible seed permutation, explicit-selector and legacy Pauli
+outputs are related by an actual binary question equivalence. The decoded
+legacy questions agree under this equivalence.
+\end{lemma}
+\begin{proof}
+\leanok
+Conjugate the seed permutation through the binary basis and change only
+the line question seeds. Prove that this output map intertwines the two
+presentations with the common seed permutation, and that decoding agrees.
+The full introspection strategy transport is a separate, unfinished step.
+\end{proof}
+
 \begin{lemma}[Arbitrary binary source registers and exact padding]
 \label{lem:intro-binary-source-padding}
 \uses{lem:intro-full-typed-completeness,def:cl-function}
@@ -3454,8 +3532,10 @@ binary completeness construction.
 \uses{lem:intro-binary-source-padding}
 The exact full-register padding preserves evaluation but changes factor
 and dual data. Its honest Read and Hide dual labels can carry unused
-coordinates. The executable checks must implement this variant or prove
-a format/coarsening bridge to checks requiring those labels to lie in
+coordinates. The new executable Read check implements this full-register
+variant, and the Sample program implements the padded sampling relation.
+The Hide checks still need this variant or a format/coarsening bridge
+to checks requiring those labels to lie in
 the original source subspace. The finite-game completeness theorem does
 not assert that existing strict-subspace parser guards already do so.
 \end{remark}
