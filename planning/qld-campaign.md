@@ -1716,3 +1716,75 @@ The six-register state `A A' B'' | B A'' B'` enters only here: `mTilde` acts on
 `B B' B''` while the point measurement acts on `A`, so the two cuts of the paper's
 `ψ̂` are needed at once, with `stateDist` transported between them. `SwapUnitary.lean` already has
 the two twirls and the maximally entangled state; the transport is the piece to write.
+
+### PR J-b, first piece: the point and Pauli-basis measurements on one party (2026-09-22)
+
+`MIPRE/Background/QLD/PauliBasis.lean` (fast regime). The repaired proof of
+`lem:qld-exact-paulis` needs the `(Point, W)` measurement to be close to the low-degree reading of
+the `(Pauli, W)` answer *on the same party*, because the Pauli basis answer does not depend on the
+sampled point and that is what lets Schwartz--Zippel see a uniform point independent of the
+operators. Both inputs are cross-party items of `lem:qld-win-implications` --- `item_consistency`
+at the type `(Point, W)` and `item_pauli_consistency` --- and they share Alice's point
+measurement, so Foundations' `normSq_stateVecB_sub_le` (the triangle
+`‖(1 ⊗ (N₁ − N₂))ψ‖ ≤ ‖(A ⊗ 1 − 1 ⊗ N₂)ψ‖ + ‖(A ⊗ 1 − 1 ⊗ N₁)ψ‖`, squared at the usual factor two,
+written for the pasting lemma and reused verbatim here) removes it: `sum_normSq_point_sub_pauli_le`, at `688 ε` on average over the verifier's content.
+This is on the bare strategy; carrying it to the expanded state, and from there to the mass
+argument, is the next step.
+
+**The ancilla transfer.** A second piece of the same module: `sum_normSq_stateVecB_conv_eq`. Every
+hatted measurement is a convolution `X̂_c = ∑_{a+b=c} X_a ⊗ T_b` of the party's own family with the
+ancilla's Weyl measurement, and for a *projective* `T` the cross terms of `X̂ᴴ X̂` vanish --- the
+ancilla outcome determines the other one (`conjTranspose_conv_mul_conv`) --- so the same-party
+deviation on the expanded state equals the one on the strategy's own state, with no loss at all.
+Summing a convolution over its outcome frees the ancilla factor (`sum_conv`), and
+`bornProb_expVec_kron` then peels the maximally entangled pair off, whose own weight is one. With
+this and the previous piece, what is left of the approximate half is the aggregation itself: the
+projective family indexed by cube data, and `nonMultilinear_mass_le` applied to it.
+
+**On the expanded state.** `sum_normSq_hat_point_sub_pauli_le` puts the two together: a hatted
+point measurement is `conv X T` for `X` the party's own reading and `T` the syndrome measurement
+(`hatPtPOVM_mats_eq_conv`, which is `POVM.map_mats` and nothing more), the Pauli basis reading at
+the point has the same shape against the same `T`, their difference is the convolution of the
+differences, and the transfer removes `T`. So the constant on the expanded state is the bare one,
+`688 ε`.
+
+### PR J, the rest: the mass at bad outcomes, and item 1's agreement (2026-09-22)
+
+`MIPRE/Background/QLD/Multilinear.lean` (fast regime). With the closeness of the previous piece in
+hand, the aggregation goes through, and then so does item 1.
+
+**The point-independent family.** `hatPauli MB W` is the strategy's `(Pauli, W)` measurement
+convolved with the ancilla's Weyl measurement --- projective (`isPVM_hatPauli`), indexed by cube
+data, and crucially not a function of any sampled point. `hatPauli_map` says that reading it at
+`u` gives the hatted Pauli measurement there, because the pairing is additive and coarse-graining
+therefore commutes with the convolution. `POVM.map_kron_map` is the small general fact that makes
+that one rewrite.
+
+**The substitution.** `abs_sum_weighted_bornProb_le` is Cauchy--Schwarz against a projective
+family at each question followed by Jensen for the average; against Alice's evaluated marginal it
+replaces Bob's point measurement by the hatted Pauli family at cost the root of their average
+squared distance, `√(688 ε)` (`SimulPair.sum_bornProb_hatPauli_ge`).
+
+**The aggregation.** `sum_mass_off_le` is `nonMultilinear_mass_le` in operator form: a projective
+`S` on one party, a projective `N` on the other, two labellings, an agreement lower bound and a
+uniform bound on how often a bad outcome matches any one label. `SimulPair.sum_bornProb_off_le`
+instantiates it, and the marginal it uses is `polyMarg` --- indexed by *polynomials*, not by their
+value at the point, which is the whole point: the outcome operator must not depend on the point
+Schwartz--Zippel then samples. The result is `δ_S + √(688 ε) + md/q`.
+
+**Item 1.** Expanding `mTilde` and contracting the generalized Pauli on the opposite party's
+ancilla against the strategy's point measurement turns item 1's left-hand side into the outcome
+sum with the label `coded(g) · ind_m(u)`, which differs from the helper's `g(u)` only off the good
+set. `sum_sub_le_of_eq_on` pays twice the mass, and `SimulPair.sum_bornProb_cubeData_ge` is
+
+    E_u ∑_g ⟨Ŝ^W_g ⊗ M̂^(Point,W),u_{coded(g)·ind_m(u)}⟩ ≥ 1 − δ_S − 2(δ_S + √(688 ε) + md/q).
+
+**Two things this found**, both in `reports/qld-stage5-blueprint-repairs.md`. Uniqueness of
+multilinear interpolation, listed here as the chain's one outstanding ingredient, is not needed:
+take the good set to be `IsInterp`, "g is the encoding of its own cube data", and agreement on it
+is definitional while Schwartz--Zippel off it is immediate and uniform in the datum. And the
+six-register state is not needed for item 1: each orientation of `lem:qld-4-7` reads one of the
+paper's two pairs, `hatVec` is one such cut, and in it the paper's `A''` is the opposite party's
+ancilla half --- so the pairing is bipartite. The second pair is still needed to read the display
+*as* `mTilde`, one operator on one party, which is what stands between this and a statement-level
+`\leanok`.

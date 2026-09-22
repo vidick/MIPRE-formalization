@@ -3843,7 +3843,25 @@ same sum, grouped differently, and the outcome form is what the Pauli constructi
   MIPRE.QLD.wTilde_mul_wTilde, MIPRE.QLD.dotF_smul_right, MIPRE.QLD.trDot_smul_smul,
   MIPRE.QLD.trDot_smul_right, MIPRE.QLD.sum_kron, MIPRE.QLD.kron_sum,
   MIPRE.QLD.prob_agree_ldEnc_le_of_not_multilinear, MIPRE.QLD.nonMultilinear_mass_le,
-  MIPRE.QLD.sum_sub_le_of_eq_on}
+  MIPRE.QLD.sum_sub_le_of_eq_on, MIPRE.QLD.sum_normSq_point_sub_pauli_le, MIPRE.conv,
+  MIPRE.conjTranspose_conv_mul_conv, MIPRE.sum_conv, MIPRE.sum_normSq_stateVecB_conv_eq,
+  MIPRE.QLD.hatPtPOVM_mats_eq_conv, MIPRE.QLD.hatPauliPOVM_mats_eq_conv,
+  MIPRE.QLD.sum_normSq_hat_point_sub_pauli_le, MIPRE.QLD.rdPauliVec,
+  MIPRE.QLD.rdPauli_eq_dotF, MIPRE.QLD.dotF_add_left, MIPRE.QLD.weylPOVM,
+  MIPRE.QLD.weylPOVM_mats, MIPRE.QLD.synOfPOVM_eq_map, MIPRE.QLD.hatPauli,
+  MIPRE.QLD.hatPauli_map, MIPRE.POVM.map_kron_map, MIPRE.QLD.abs_bornProb_le,
+  MIPRE.QLD.abs_sum_bornProb_le, MIPRE.abs_sum_weighted_bornProb_le,
+  MIPRE.sum_filter_bornProb_eq, MIPRE.sum_mass_off_le, MIPRE.QLD.IsML,
+  MIPRE.QLD.not_degreeOf_le_one_of_not_isML, MIPRE.QLD.sum_uniform_agree_ldEnc_le,
+  MIPRE.QLD.polyMarg, MIPRE.QLD.evalMarg_eq_map_polyMarg, MIPRE.QLD.isPVM_polyMarg,
+  MIPRE.QLD.isPVM_hatPauli, MIPRE.QLD.SimulPair.sum_bornProb_hatPauli_ge,
+  MIPRE.QLD.SimulPair.sum_bornProb_off_le, MIPRE.QLD.SimulPair.sum_bornProb_not_isML_le,
+  MIPRE.QLD.cubeData, MIPRE.QLD.IsInterp, MIPRE.QLD.cubeData_eq_of_eq_ldEnc,
+  MIPRE.QLD.isInterp_of_exists, MIPRE.QLD.ne_ldEnc_of_not_isInterp,
+  MIPRE.QLD.dotF_cubeData_indVec, MIPRE.QLD.sum_uniform_agree_ldEnc_le_of_not_isInterp,
+  MIPRE.QLD.SimulPair.sum_bornProb_not_isInterp_le, MIPRE.sum_bornProb_map_eq,
+  MIPRE.abs_sum_weighted_sub_le, MIPRE.QLD.SimulPair.sum_bornProb_polyMarg_ge,
+  MIPRE.QLD.SimulPair.sum_bornProb_cubeData_ge}
 From the simultaneous measurement one constructs, for $W \in \{X, Z\}$, measurements and
 binary observables on the expanded space which satisfy the Pauli group relations
 \emph{exactly} --- linearity in the argument, and $XZ$ commutation or anticommutation with the
@@ -3864,7 +3882,64 @@ so it is the agreement and not the disagreement that the bound controls
 \end{proof}
 
 \paragraph{Comments.} The exact half is formalized and the approximate half is not, and the
-dividing line is the register count.
+dividing line is the register count. Of the approximate half's ingredients, three are in place:
+the agreement form of Schwartz--Zippel against every multilinear polynomial at once, the
+aggregation that turns it into a bound on the mass at non-multilinear outcomes, and the
+substitution error of two families agreeing off that mass
+(\texttt{MIPRE/Background/QLD/NonMultilinear.lean}). A fourth is now too: the strategy's
+$(\mathtt{Point}, W)$ measurement and the low-degree reading of its $(\mathtt{Pauli}, W)$ answer
+are close \emph{on one party}, at $688\,\eps$
+(\texttt{sum\_normSq\_point\_sub\_pauli\_le}), which is what lets the point be sampled
+independently of the operators. The two inputs are cross-party items of
+Lemma~\ref{lem:qld-win}, and they share Alice's point measurement, so one triangle inequality
+removes it. A fifth carries such a statement from the strategy's state to the expanded one: every
+hatted measurement is a convolution $\widehat X_c = \sum_{a + b = c} X_a \ot T_b$ with the
+ancilla's Weyl measurement, and for a \emph{projective} $T$ the cross terms of
+$\widehat X^\dagger \widehat X$ vanish, so the common ancilla factor drops out exactly:
+$\sum_c \|(\Id \ot \widehat X_c) \widehat\psi\|^2
+  = \sum_a \|(\Id \ot X_a) \psi\|^2$ (\texttt{sum\_normSq\_stateVecB\_conv\_eq}). The two
+together put the closeness on the expanded state with the same constant
+(\texttt{sum\_normSq\_hat\_point\_sub\_pauli\_le}). The aggregation has now been applied to the
+simultaneous measurement's outcomes, in \texttt{MIPRE/Background/QLD/Multilinear.lean}, and the
+bound the appendix's repair turns on is formalized: with $\widehat S^W$ a simultaneous pair
+measurement of error $\delta_S$ for a strategy of failure $\eps$,
+\begin{equation*}
+  \sum_{g \text{ not multilinear}} \bigl\langle \widehat S^W_g \ot \Id \bigr\rangle_\Phi
+  \;\leq\; \delta_S + \sqrt{688\,\eps} + \frac{md}{q}
+\end{equation*}
+(\texttt{SimulPair.sum\_bornProb\_not\_isML\_le}). Its three inputs are the
+point-independent family indexed by cube data (\texttt{hatPauli}, the strategy's
+$(\mathtt{Pauli}, W)$ measurement convolved with the ancilla's Weyl measurement, projective and
+independent of the sampled point, whose reading at a point is the hatted Pauli measurement there
+--- \texttt{hatPauli\_map}); the Cauchy--Schwarz that substitutes it for the point measurement at
+cost $\sqrt{688\,\eps}$ (\texttt{abs\_sum\_weighted\_bornProb\_le},
+\texttt{SimulPair.sum\_bornProb\_hatPauli\_ge}); and Lemma~\ref{lem:schwartz-zippel} per
+non-multilinear outcome, uniformly in the cube datum
+(\texttt{sum\_uniform\_agree\_ldEnc\_le}). The marginal is taken \emph{indexed by polynomials}
+rather than by their value at the point (\texttt{polyMarg}), which is what makes the outcome
+operator independent of the point that Schwartz--Zippel then samples.
+
+\emph{And the agreement itself is formalized}: expanding $\tilde{M}^{W,\ind_m(u)}_a$ and
+contracting the generalized Pauli against the strategy's point measurement turns the first item's
+left-hand side into the outcome sum with the label $\coded(g) \cdot \ind_m(u)$, and
+\begin{equation*}
+  \mathbb E_u \sum_g \bigl\langle \widehat S^W_g \ot
+    \widehat M^{(\mathtt{Point}, W), u}_{\coded(g) \cdot \ind_m(u)} \bigr\rangle_\Phi
+  \;\geq\; 1 - \delta_S - 2\Bigl( \delta_S + \sqrt{688\,\eps} + \frac{md}{q} \Bigr)
+\end{equation*}
+(\texttt{SimulPair.sum\_bornProb\_cubeData\_ge}), from the helper's agreement read by polynomial
+(\texttt{SimulPair.sum\_bornProb\_polyMarg\_ge}) and the mass bound, through
+\texttt{sum\_sub\_le\_of\_eq\_on}.
+
+\emph{One outstanding ingredient turned out not to be needed.} The chain was stated with the good
+set ``$g$ is multilinear'', and then agreement of the two labels on it is uniqueness of multilinear
+interpolation --- an independent fact about \texttt{MvPolynomial} that
+\texttt{sum\_sub\_le\_of\_eq\_on} took as a hypothesis. Taking the good set to be ``$g$
+\emph{is} the low-degree encoding of its own cube data'' (\texttt{IsInterp}) removes it: there the
+two labels agree by definition (\texttt{dotF\_cubeData\_indVec}), and off it $g$ differs from the
+encoding of \emph{every} cube datum (\texttt{ne\_ldEnc\_of\_not\_isInterp}), which is exactly
+the hypothesis Schwartz--Zippel wants, uniformly in the datum. Uniqueness of multilinear
+interpolation would say the two sets coincide; neither inclusion is used.
 
 \emph{Formalized, unconditionally}, in \texttt{MIPRE/Background/QLD/ExactPauli.lean}: the two
 marginals of a projective pair measurement (\texttt{sCoarse}, projective by
@@ -3898,11 +3973,22 @@ interpolation. \texttt{sum\_sub\_le\_of\_eq\_on} therefore takes agreement on th
 outcomes as a hypothesis rather than deriving it.
 
 \emph{Not formalized}, and the reason there is no statement-level \texttt{leanok} mark:
-the $\delta$-closeness to the $(\mathtt{Point},W)$ measurements. Its hypothesis lives on the
-four-register cut $\alice \alice' \mid \bob \alice''$ that \texttt{MIPRE.QLD.hatVec} is, while
-$\tilde{M}^{W,\tilde{u}}$ needs $\alice \alice' \alice''$ on one party --- a six-register state
-with two maximally entangled pairs, and transport between two cuts. That bookkeeping, and the
-eleven-display chain above it, are what remains.
+the display above is the agreement item 1 asserts, but it is not yet \emph{read as}
+$\tilde{M}^{W,\tilde{u}}$, a single operator on one party. What is missing is register
+bookkeeping, not mathematics. The paper's expanded state
+$\ket{\hat\psi} = \ket{\psi}_{\alice\bob} \ot \ket{\EPR}_{\alice'\alice''} \ot
+\ket{\EPR}_{\bob'\bob''}$ carries \emph{two} entangled pairs and is used along two different
+cuts: $\alice\alice' \mid \bob\alice''$ for one orientation of
+Lemma~\ref{lem:qld-simultaneous} and $\bob\bob' \mid \alice\bob''$ for the other.
+\texttt{MIPRE.QLD.hatVec} is one such cut, with one pair, which is all
+Lemmas~\ref{lem:qld-simultaneous} and~\ref{lem:qld-helper} need, since each uses one orientation
+at a time. But $\tilde{M}^{W,\tilde{u}} = \sum_g \widehat S^W_g \ot
+\tau^W_{\coded(g) \cdot \tilde{u} - a}(\tilde{u})$ needs $\widehat S^W$ and the generalized
+Pauli on \emph{disjoint} registers of one party --- $\alice\alice'$ and $\alice''$ --- and
+$\texttt{SimulPair.SA}$ acts on the whole of $\alice\alice'\alice''$. So the second pair has to
+be adjoined and the operators transported across it. That is what remains, together with the
+factor reindexing $(\alice \times \alice'') \times E \cong (\alice \times E) \times
+\alice''$ that \texttt{mTilde}'s shape asks for.
 
 \emph{A ledger discrepancy worth recording.} Node $1.2.2.15$ declares its dependencies as
 $\{1.2.2.13, 1.2.2.14, 1.2.2.7\}$ --- the last being Theorem~\ref{thm:linearity} --- and does not

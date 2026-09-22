@@ -424,6 +424,7 @@ import MIPRE.Background.QLD.Legalize
 import MIPRE.Background.QLD.LineRepresentative
 import MIPRE.Background.QLD.Linear
 import MIPRE.Background.QLD.Lines
+import MIPRE.Background.QLD.Multilinear
 import MIPRE.Background.QLD.NonMultilinear
 import MIPRE.Background.QLD.Ortho
 import MIPRE.Background.QLD.Padded
@@ -431,6 +432,7 @@ import MIPRE.Background.QLD.PaddedLIDT
 import MIPRE.Background.QLD.PaddedLines
 import MIPRE.Background.QLD.PaddedStrategy
 import MIPRE.Background.QLD.PaddedValue
+import MIPRE.Background.QLD.PauliBasis
 import MIPRE.Background.QLD.Product
 import MIPRE.Background.QLD.Products
 import MIPRE.Background.QLD.SeededLinePrograms
