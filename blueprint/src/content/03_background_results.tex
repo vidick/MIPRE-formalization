@@ -4159,7 +4159,30 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.MirrorSimul.bobPt_mul_bobPairProj, MIPRE.QLD.MirrorSimul.bobHat_mul_bobWeyl,
   MIPRE.QLD.MirrorSimul.physLift_mulVec, MIPRE.QLD.MirrorSimul.physLift_mulVec_congr,
   MIPRE.QLD.MirrorSimul.chainU3b, MIPRE.QLD.MirrorSimul.chainU3b_eq,
-  MIPRE.QLD.MirrorSimul.physLift_chainU3b, MIPRE.QLD.MirrorSimul.physLift_chainU3b_mulVec}
+  MIPRE.QLD.MirrorSimul.physLift_chainU3b, MIPRE.QLD.MirrorSimul.physLift_chainU3b_mulVec,
+  MIPRE.QLD.SimulPair.bornProb_mVec_ext, MIPRE.QLD.SimulPair.xSqNorm_mVec_ext,
+  MIPRE.QLD.SimulPair.sum_uniform_xSqNorm_pt_le, MIPRE.QLD.snorm_sub_eq_zero_of_mulVec,
+  MIPRE.QLD.MirrorSimul.chainT, MIPRE.QLD.MirrorSimul.snorm_physLift_sub,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_zero_one,
+  MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainT_one_two,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_two_three,
+  MIPRE.QLD.MirrorSimul.snorm_chainT_three_four,
+  MIPRE.QLD.MirrorSimul.chainT_five_sub_four,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_four_five,
+  MIPRE.QLD.MirrorSimul.chainT_five_eq_six, MIPRE.QLD.MirrorSimul.chainT_six_sub_seven,
+  MIPRE.QLD.MirrorSimul.bornProb_bobSand_eq,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_six_seven,
+  MIPRE.QLD.MirrorSimul.bobLift_one, MIPRE.QLD.MirrorSimul.bobLift_sub,
+  MIPRE.QLD.MirrorSimul.chainT_eight_sub_seven,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_seven_eight,
+  MIPRE.QLD.chainQShift_eq_of_coupled, MIPRE.QLD.MirrorSimul.chainT_eight_sub_nine,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_eight_nine,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_one_two,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_three_four,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_five_six,
+  MIPRE.QLD.sum_mul_const_mul_sum_range, MIPRE.QLD.MirrorSimul.chainT_zero_eq,
+  MIPRE.QLD.MirrorSimul.chainT_nine_eq, MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_le,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_mTildeAnc_endOp_le}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4667,10 +4690,33 @@ Bob's matched pair is already there, \texttt{eq:qld-pulling-4} having put it the
 identity on that cut's state lifts to one on the physical state because the lift acts on the
 appended pair as the identity.
 
-\emph{Not formalized}: the chaining's remaining five steps --- \texttt{eq:qld-pulling-7},
-\texttt{-9a}, \texttt{-10}, \texttt{-11} and \texttt{-12} read as consecutive deviations, every
-one of which is a display already in the tree --- and Lemma~\ref{lem:qld-povm-to-obs} at the very
-end. \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this
+\emph{And the chaining, which is done.} \texttt{MirrorSimul.chainT} is the chain on the physical
+cut: ten terms for nine steps, the four of \texttt{eq:qld-pulling-0} to \texttt{-3} entering
+lifted and everything from \texttt{-5} on entering directly. Three of the nine steps are free
+--- \texttt{eq:qld-pulling-2} and \texttt{-2b}, then \texttt{-3a} to \texttt{-5}, then
+\texttt{-9a} --- and the six that are not cost, in order: item 1 of
+Lemma~\ref{lem:qld-helper}, the game's point--point consistency, item 2 of
+Lemma~\ref{lem:qld-helper}, \texttt{eq:qld-pulling-10} complete, item 2 again at the second cut,
+and Schwartz--Zippel. \texttt{sum\_uniform\_snorm\_sq\_chainT\_le} is their sum at the factor
+nine that \texttt{sum\_snorm\_sq\_chain\_le} charges, and
+\texttt{sum\_uniform\_snorm\_sq\_mTildeAnc\_endOp\_le} is \texttt{eq:qld-pulling-cons} for
+Alice: her exact Pauli measurement on $\alice \alice' \alice''$ is within
+$9(10 \delta_S + 860 \eps + 2\sqrt{172 \eps} + md/q)$, in summed squared state distance, of the
+chain's endpoint.
+
+The one cost the displays did not already supply is \texttt{eq:qld-pulling-3}'s.
+\texttt{SimulPair.sum\_uniform\_xSqNorm\_pt\_le} supplies it: the game's point--point
+consistency, read on the cut the chain runs on rather than on the strategy's own state. That
+reading is free, and for the reason the whole \texttt{SimulPair} interface exists ---
+\texttt{Phi\_reduced} says the padded state reproduces the expanded state's expectations, and
+the expanded state's pair contributes only its norm --- but it has to be done once
+(\texttt{bornProb\_mVec\_ext}, \texttt{xSqNorm\_mVec\_ext}).
+
+\emph{Not formalized}: the mirror half of \texttt{eq:qld-pulling-cons} --- which is this one at
+\texttt{M.mirror}, the endpoint being symmetric by \texttt{swap\_mem\_coupledIdx} --- and
+Lemma~\ref{lem:qld-povm-to-obs}, which turns the agreement of the two exact Pauli
+\emph{measurements} into the agreement of the two exact Pauli \emph{observables} this lemma
+states. \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this
 node.
 
 \effortHard
