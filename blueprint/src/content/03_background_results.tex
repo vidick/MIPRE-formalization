@@ -4208,7 +4208,11 @@ displays, and Lemma~\ref{lem:qld-povm-to-obs} at the end. Every step it assemble
   MIPRE.QLD.twirl_conjTranspose, MIPRE.QLD.snorm_twirl_le, MIPRE.QLD.twirl_mul_self,
   MIPRE.QLD.conj_epr, MIPRE.QLD.star_epr, MIPRE.QLD.eprProj_conjTranspose,
   MIPRE.QLD.epr_dotProduct, MIPRE.QLD.eprProj_mul_self, MIPRE.QLD.auxVec,
-  MIPRE.QLD.bOp_eprProj_mulVec, MIPRE.QLD.exists_auxVec_close}
+  MIPRE.QLD.bOp_eprProj_mulVec, MIPRE.QLD.exists_auxVec_close, MIPRE.QLD.conj_proj_of_sign,
+  MIPRE.QLD.conj_syn_of_sign, MIPRE.QLD.swapU_conj_mTilde, MIPRE.QLD.swapU_conj_mTilde_X,
+  MIPRE.QLD.swapU_conj_mTilde_Z, MIPRE.QLD.sum_snorm_sq_sub_eq_two_sub,
+  MIPRE.QLD.sum_uniform_agree_bornProb_le, MIPRE.QLD.SimulPair.swapA,
+  MIPRE.QLD.SimulPair.swapU_conj_mTildeAt}
 There is $\delta_{qld} = O\bigl( \delta_S^{1/4} + md/q \bigr)$ and local unitaries $V_\alice$,
 $V_\bob$ on the expanded spaces such that, writing $M = 2^m$:
 \begin{enumerate}
@@ -4285,9 +4289,42 @@ range of $\Id \ot \ket{\EPR}\bra{\EPR}$ consists of product vectors by inspectio
 (\texttt{bOp\_eprProj\_mulVec}), which is where $\ket{\aux}$ comes from --- no partial trace and
 no Schmidt decomposition.
 
+\emph{And three of item 2's displays.} Conjugation carries the exact Pauli \emph{measurement} to
+the bare syndrome projector exactly, not just the observable: that is \texttt{eq:qld-unitary-6},
+\texttt{swapU\_conj\_mTilde}, and at the interface
+\texttt{SimulPair.swapU\_conj\_mTildeAt}. What makes it work is one mechanism, recorded on its
+own because the observable's proof did not need it: the twisted commutation relation says
+conjugation multiplies each Weyl operator by a character, and on the \emph{projectors} that is a
+\emph{shift} --- a spectral projector is the Fourier average against a character, and two
+characters compose by adding their labels (\texttt{conj\_proj\_of\_sign}), so a syndrome
+projector's outcome moves by the shift's own pairing with the probe
+(\texttt{conj\_syn\_of\_sign}). In $\tilde{M}^{W,u}_a$ the outcome carried at the pair outcome
+$p$ is $\coded(g_{\pi p}) \cdot u + a$ and the shift is $\coded(g_{\pi p})$, so the two cancel in
+characteristic two and the pair outcome disappears. That cancellation is the paper's relabelling
+$h' = h + \coded(g_W)$, the passage its \texttt{cnote} records as repaired; what makes it exact
+here is that the shift and the outcome are written with the same $\coded(g_{\pi p}) \cdot u$ by
+construction.
+
+The endgame's opening expansion is \texttt{sum\_snorm\_sq\_sub\_eq\_two\_sub}
+(\texttt{eq:qld-unitary-7}): the two families compared there act on the \emph{same} party, so the
+bipartite \texttt{one\_sub\_sum\_bornProb\_eq} does not apply, but the same three-term
+expansion does. And its one estimate, \texttt{eq:qld-unitary-8}, is Schwartz--Zippel in the
+packaging \texttt{eq:qld-pulling-12} already used
+(\texttt{sum\_uniform\_agree\_bornProb\_le}): the index is a pair of Pauli outcomes and the
+diagonal is excluded by the weight rather than by the index set, which is why
+\texttt{sum\_uniform\_agree\_mass\_le} now asks for the two polynomials to be distinct only
+where the weight is nonzero.
+
 \emph{Not formalized}: the two near-invariances themselves, which are
 Lemma~\ref{lem:qld-pauli-selfcons} and are hypotheses of \texttt{exists\_auxVec\_close} rather
-than conclusions; and the whole of item 2. Hence no \texttt{leanok} mark at either level.
+than conclusions; and, in item 2, \texttt{eq:qld-unitary-5} --- the triangle chain through
+Lemma~\ref{lem:qld-win} and Lemma~\ref{lem:qld-exact-paulis} --- the transport of the estimate
+from $\ket{\Delta}$ back to $\ket{\hat\psi}$ across item 1, and the assembly. Hence no
+\texttt{leanok} mark at either level. Of those, \texttt{eq:qld-unitary-5} needs no new estimate:
+its engine is the paper's \texttt{fact:triangle-for-simeq}, already in Foundations as
+\texttt{agreeSum\_triangle} (with $11\delta$ for the paper's $9\delta$, as
+Lemma~\ref{lem:qld-global-success} records), so what is left there is stating its three
+consistencies at this interface.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the repairs above, including the
 ledger's declared dependencies for node $1.2.2.16$, which name $1.2.2.4$
 (Lemma~\ref{lem:qld-win}) and which the \texttt{uses} list did not.

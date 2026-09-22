@@ -1992,3 +1992,62 @@ look for it in `Foundations/Sandwich.lean` and `Foundations/Expanded.lean` first
 
 Left on the node: the assembly of the chain itself, which is the index bookkeeping of the eleven
 displays plus `lem:qld-povm-to-obs` at the end. Every step it assembles is now formalized.
+
+### PR M: the exact steps of `lem:qld-swap` item 2 (2026-09-22)
+
+`MIPRE/Background/QLD/SwapMeasure.lean`, new. Item 2 of `lem:qld-swap` is the longer half of the
+swap lemma and none of it was formalized. Three of its displays are now, and they are the ones
+that are identities or that reuse a packaging already in the library.
+
+**`eq:qld-unitary-6`: conjugating the measurement, not the observable.** `SwapUnitary.lean`
+carries the observable version, `V W~^e(u) V^dagger = Id (x) tau^W(e . u)`. The measurement
+version needs one thing the observable version did not, and it is worth having on its own. The
+twisted commutation relation says conjugation by the ancilla factor multiplies each Weyl operator
+by a character; on the *spectral projectors* that is a **shift**, because a projector is the
+Fourier average of the family against a character and two characters compose by adding their
+labels (`conj_proj_of_sign`). A syndrome projector is a sum of spectral projectors over a level
+set of the pairing with the probe, so its outcome moves by the shift's own pairing
+(`conj_syn_of_sign`), the level sets being carried onto each other by adding the shift --- an
+involution of the index group in characteristic two.
+
+Then the cancellation is arithmetic. In `M~^{W,u}_a` the outcome carried at the pair outcome `p`
+is `cd(pi p) . u + a` and the shift conjugation applies is `cd(pi p)`, whose pairing with `u` is
+that same `cd(pi p) . u`; so every factor of the conjugated sum is the same syndrome projector,
+the pair outcome is gone, and the measurement in front sums to the identity
+(`swapU_conj_mTilde`, and `swapU_conj_mTilde_X` / `_Z` at the two bases). This is the paper's
+relabelling `h' = h + coded(g_W)`, the passage its `\cnote` records as repaired: the repair kept
+`coded(g_W) . ind_m(u)` rather than the false `g_W(u)`, and what makes the relabelling exact here
+is that the shift and the outcome are written with the same `cd(pi p) . u` by construction, so
+nothing has to be identified at all.
+
+At the interface this is `SimulPair.swapU_conj_mTildeAt`, with `SimulPair.swapA` Alice's swap
+unitary. `PolyPair.proj .X` is the first projection and `weylOf .X` is `wX`, and likewise for `Z`,
+so the two bases are the two cases of `Bas` and nothing else is needed.
+
+**`eq:qld-unitary-7`: the expansion.** `sum_snorm_sq_sub_eq_two_sub`. The two families compared in
+the endgame act on the *same* party, so `one_sub_sum_bornProb_eq` --- the bipartite version, which
+the rest of the appendix uses --- does not apply. The same three-term expansion does, with both
+diagonal sums exactly one because both families are projective, and with no real part left in the
+statement: `qform` is already the real part, and the flipped cross term has the same one.
+
+**`eq:qld-unitary-8`: the same Schwartz--Zippel.** The endgame's one estimate turned out to be
+`eq:qld-pulling-12` again, in the packaging already written for it. The only mismatch was
+bookkeeping: there the index set excludes the coinciding polynomials, here the index is a *pair*
+of Pauli outcomes and the diagonal is excluded by the weight. So `sum_uniform_agree_mass_le` now
+asks for the two polynomials to be distinct only where the weight is nonzero --- a weakening, so
+nothing that used it changes --- and `sum_uniform_agree_bornProb_le` is the display.
+
+Left on item 2: `eq:qld-unitary-5`, the triangle chain through `lem:qld-win` and
+`lem:qld-exact-paulis`; the transport of the estimate from the product state back to the padded
+state across item 1; and the assembly. Left on `lem:qld-pauli-selfcons`: its assembly, unchanged.
+
+**A note on what `eq:qld-unitary-5` still needs.** Looking for the triangle chain's engine turned
+up `agreeSum_triangle` in `MIPRE/Foundations/POVMMix.lean`: the POVM form of the paper's
+`fact:triangle-for-simeq` item 1, formalized earlier in the campaign for
+`lem:qld-global-success`, with `11 delta` in place of the paper's `9 delta` (the padding into a
+four-dimensional auxiliary space that buys the `9` is what the Lean proof does without, and the
+blueprint records the difference). So `eq:qld-unitary-5` is not a new estimate: what is left of it
+is stating the three consistencies --- `eq:qld-unitary-2`, `-3`, `-4` --- as `agreeSum` statements
+at this interface. That is the second time in two pull requests that an appendix estimate turned
+out to be already in Foundations under another name; the habit is now worth the two minutes it
+costs.
