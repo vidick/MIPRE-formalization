@@ -373,6 +373,27 @@ theorem isPVM_ptAtPOVM {d' : Type} [Fintype d'] [DecidableEq d']
   rw [hfun]
   exact (hproj _).coarse _
 
+/-- **A single Weyl spectral projector transports across the expanded state, exactly.** The
+syndrome version is `stateVec_hatVec_syn`; the chain's display `eq:qld-pulling-3a` moves one
+projector, not a fibre of them. -/
+theorem stateVec_hatVec_proj (φ : dA × dB → ℂ) (W : Bas) (h : Anc F m) :
+    stateVec (hatVec (F := F) (m := m) φ) ((1 : Matrix dA dA ℂ) ⊗ₖ proj (weylOf W) h)
+      = stateVecB (hatVec (F := F) (m := m) φ)
+        ((1 : Matrix dB dB ℂ) ⊗ₖ proj (weylOf W) h) := by
+  rw [hatVec, stateVec_expVec_kron_one, stateVecB_expVec_kron_one]
+  congr 2
+  have hh := stateVec_epr_proj (w := weylOf W) (weylOf_transpose W) h
+  rw [stateVec, stateVecB] at hh
+  exact congrArg (WithLp.ofLp) hh
+
+/-- The same, as the vanishing of a cross-party deviation --- the form that crosses to the padded
+state, `SimulPair` saying only that `Phi` reproduces the expanded state's expectations. -/
+theorem xSqNorm_hatVec_proj (φ : dA × dB → ℂ) (W : Bas) (h : Anc F m) :
+    xSqNorm (hatVec (F := F) (m := m) φ) ((1 : Matrix dA dA ℂ) ⊗ₖ proj (weylOf W) h)
+        ((1 : Matrix dB dB ℂ) ⊗ₖ proj (weylOf W) h) = 0 := by
+  rw [xSqNorm, stateVec_hatVec_proj, sub_self, norm_zero]
+  norm_num
+
 section First
 
 variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
@@ -575,6 +596,50 @@ theorem sum_snorm_sq_insert_chain (W : Bas) (v : Anc F m) (u : Point F m) {ε : 
       * (((1 : Matrix ((((dA × Anc F m) × P.EA) × Anc F m) × (dB × P.EB)) _ ℂ)
           - aOp (P.ptA W u (chainShift u p)))
         * bOp (P.ptB W u (chainShift u p)))) ^ 2))
+
+/-- **Display `eq:qld-pulling-3a`: the Weyl projector transports across the padded state.** The
+two halves of the pair `hatVec` carries are maximally entangled and the projectors are symmetric,
+so moving one from Alice's half to Bob's costs nothing. -/
+theorem stateVec_ancProj (W : Bas) (h : Anc F m) :
+    stateVec P.Φ (aOp ((1 : Matrix dA dA ℂ) ⊗ₖ proj (weylOf W) h))
+      = stateVecB P.Φ (aOp ((1 : Matrix dB dB ℂ) ⊗ₖ proj (weylOf W) h)) := by
+  have hsa : (((1 : Matrix dA dA ℂ) ⊗ₖ proj (weylOf W) h))ᴴ
+      = (1 : Matrix dA dA ℂ) ⊗ₖ proj (weylOf W) h := by
+    rw [Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one,
+      proj_conjTranspose (isWeylFamily_weylOf W)]
+  have hx : xSqNorm P.Φ (aOp ((1 : Matrix dA dA ℂ) ⊗ₖ proj (weylOf W) h))
+      (aOp ((1 : Matrix dB dB ℂ) ⊗ₖ proj (weylOf W) h)) = 0 := by
+    rw [P.xSqNorm_aOp hsa, xSqNorm_hatVec_proj]
+  rw [xSqNorm, pow_eq_zero_iff (by norm_num), norm_eq_zero, sub_eq_zero] at hx
+  exact hx
+
+/-- **Display `eq:qld-pulling-4`: the matched pairs of Weyl projectors leave the state alone.** By
+the transport each matched pair acts as the projector on one side alone, and those sum to the
+identity. -/
+theorem sum_ancProj_mulVec (W : Bas) :
+    (∑ h : Anc F m, (MIPRE.aOp (aOp ((1 : Matrix dA dA ℂ) ⊗ₖ proj (weylOf W) h))
+        * MIPRE.bOp (aOp ((1 : Matrix dB dB ℂ) ⊗ₖ proj (weylOf W) h)))) *ᵥ P.Φ = P.Φ := by
+  have htr : ∀ h : Anc F m,
+      (MIPRE.bOp (aOp ((1 : Matrix dB dB ℂ) ⊗ₖ proj (weylOf W) h))) *ᵥ P.Φ
+        = (MIPRE.aOp (aOp ((1 : Matrix dA dA ℂ) ⊗ₖ proj (weylOf W) h))) *ᵥ P.Φ := fun h =>
+    congrArg WithLp.ofLp (P.stateVec_ancProj W h).symm
+  have hidem : ∀ h : Anc F m,
+      ((1 : Matrix dA dA ℂ) ⊗ₖ proj (weylOf W) h) * ((1 : Matrix dA dA ℂ) ⊗ₖ proj (weylOf W) h)
+        = (1 : Matrix dA dA ℂ) ⊗ₖ proj (weylOf W) h := fun h => by
+    rw [← Matrix.mul_kronecker_mul, Matrix.one_mul,
+      (isPVM_proj (isWeylFamily_weylOf W)).idem]
+  have hone : (∑ h : Anc F m, ((1 : Matrix dA dA ℂ) ⊗ₖ proj (weylOf W) h))
+      = (1 : Matrix (dA × Anc F m) (dA × Anc F m) ℂ) := by
+    rw [← kronecker_sum_right, (isPVM_proj (isWeylFamily_weylOf W)).sum_eq_one,
+      Matrix.one_kronecker_one]
+  rw [Matrix.sum_mulVec]
+  have hstep : ∀ h : Anc F m,
+      (MIPRE.aOp (aOp ((1 : Matrix dA dA ℂ) ⊗ₖ proj (weylOf W) h))
+          * MIPRE.bOp (aOp ((1 : Matrix dB dB ℂ) ⊗ₖ proj (weylOf W) h))) *ᵥ P.Φ
+        = (MIPRE.aOp (aOp ((1 : Matrix dA dA ℂ) ⊗ₖ proj (weylOf W) h))) *ᵥ P.Φ := fun h => by
+    rw [← Matrix.mulVec_mulVec, htr h, Matrix.mulVec_mulVec, ← aOp_mul, ← aOp_mul, hidem h]
+  rw [Finset.sum_congr rfl fun h (_ : h ∈ univ) => hstep h, ← Matrix.sum_mulVec, ← aOp_sum,
+    ← aOp_sum, hone, aOp_one, aOp_one, Matrix.one_mulVec]
 
 end SimulPair
 

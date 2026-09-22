@@ -2415,3 +2415,26 @@ Summing the display over the measurement outcome `a` recovers the whole index se
 `chainIdx v a` are the fibres of the label map --- which is `Finset.sum_fiberwise`.
 
 Five `approx` steps left.
+
+### PR V: the chain's two transports, `eq:qld-pulling-3a` and `-4` (2026-09-22)
+
+Both are `approx_0` steps: identities on the state, not estimates.
+
+`SimulPair.stateVec_ancProj` moves a single Weyl projector from `A'` to `A''` at no cost --- the
+two halves of the pair are maximally entangled and the projectors are symmetric. `sum_ancProj_mulVec`
+is the consequence the chain uses: summing the matched pairs of them, one on each party, leaves the
+state alone, since by the transport each matched pair acts as the projector on one side and those
+sum to the identity.
+
+`AncTransport.lean` had both for the *syndrome* projector, which is a fibre of the spectral family.
+The chain moves one projector of that family, not a fibre, so it needs the single-projector version.
+`stateVec_epr_proj` --- already in Foundations and already used by the endgame --- is the ingredient,
+so this is four short lemmas mirroring four that were already there.
+
+The shape of the argument is worth restating, because it is what makes these steps available at all:
+`lem:qld-simultaneous` does not say the padded state *is* an expanded state, only that it reproduces
+its expectations, so a **vector** identity about it looks out of reach. It is not: the identity to be
+proved is the vanishing of a squared norm, and a squared norm is an expectation, so `xSqNorm_aOp`
+carries it across with no loss.
+
+Three `approx` steps left: `-3b`, `-5`/`-7`, `-10`/`-11`.
