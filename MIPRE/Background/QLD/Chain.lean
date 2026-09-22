@@ -467,16 +467,26 @@ omit [Field F] [Algebra (ZMod 2) F] in
 /-- **The outer shape both remaining displays share.** Each is a bound on the summed squared norm
 of the chain's terms, grouped by the measurement outcome. Projectivity turns each group into a sum
 of sandwiches (`snorm_sq_sum_proj_sandwich`), the groups are the fibres of the outcome map, so the
-double sum is the single one over the whole index --- and what is left to bound is a sum of
-sandwiches with no outcome in it. -/
+double sum is the single one over the index --- and what is left to bound is a sum of sandwiches
+with no outcome in it. The index may be a subset, which is what `eq:qld-pulling-10` needs: it sums
+over the pairs whose outcomes *disagree*. -/
+theorem sum_snorm_sq_fiber_sandwich_subset_le {N : Type*} [Fintype N] [DecidableEq N] (v : N → ℂ)
+    {P : ι → Matrix N N ℂ} (hP : IsPVM P) (W : ι → Matrix N N ℂ)
+    (c : ι → F) (D : Finset ι) {ε : ℝ}
+    (hbound : ∑ i ∈ D, qform v ((W i)ᴴ * P i * W i) ≤ ε) :
+    ∑ a : F, snorm v (∑ i ∈ D.filter fun i => c i = a, P i * W i) ^ 2 ≤ ε := by
+  classical
+  rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) => snorm_sq_sum_proj_sandwich v hP W _,
+    Finset.sum_fiberwise D c fun i => qform v ((W i)ᴴ * P i * W i)]
+  exact hbound
+
+omit [Field F] [Algebra (ZMod 2) F] in
+/-- The case the first of the two displays uses, where the whole index is summed over. -/
 theorem sum_snorm_sq_fiber_sandwich_le {N : Type*} [Fintype N] [DecidableEq N] (v : N → ℂ)
     {P : ι → Matrix N N ℂ} (hP : IsPVM P) (W : ι → Matrix N N ℂ)
     (c : ι → F) {ε : ℝ} (hbound : ∑ i, qform v ((W i)ᴴ * P i * W i) ≤ ε) :
-    ∑ a : F, snorm v (∑ i ∈ univ.filter fun i => c i = a, P i * W i) ^ 2 ≤ ε := by
-  classical
-  rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) => snorm_sq_sum_proj_sandwich v hP W _,
-    Finset.sum_fiberwise univ c fun i => qform v ((W i)ᴴ * P i * W i)]
-  exact hbound
+    ∑ a : F, snorm v (∑ i ∈ univ.filter fun i => c i = a, P i * W i) ^ 2 ≤ ε :=
+  sum_snorm_sq_fiber_sandwich_subset_le v hP W c univ hbound
 
 omit [DecidableEq ι] [DecidableEq κ] in
 /-- **Dropping the far party's sub-identity factor.** Each of the chain's sandwiches carries, on
@@ -1057,6 +1067,156 @@ theorem mirror_sum_snorm_sq_chainP_le (hprojA : ∀ q, IsPVM fun a => (((MA q).m
           ^ 2 := by
   rw [← M.mirror_physVec]
   exact M.mirror.sum_snorm_sq_chainP_le hprojA W v u
+
+/-! ## `eq:qld-pulling-10`, down to its Cauchy--Schwarz step
+
+The second of the chain's two remaining estimates. It runs over the four-index family and over the
+pairs whose outcomes *disagree* at the sampled point, and the reduction below is everything before
+the swap: projectivity, one relaxation, and two completeness sums. -/
+
+end MirrorSimul
+
+/-- **The outcome the chain's four-index pair carries**, the paper's `(g - g_h + g_h')(u)`. -/
+def chainQShift (u : Point F m)
+    (q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)
+      × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)) : F :=
+  q.1.1.eval u + dotF q.1.2 (indVec u) + dotF q.2.2 (indVec u)
+
+namespace MirrorSimul
+
+variable (M : MirrorSimul ψ MA MB δ)
+
+
+/-- **Bob's tail at `eq:qld-pulling-9a`**, at an arbitrary outcome: his point measurement, and
+nothing on Alice. -/
+def bobTail (W : Bas) (u : Point F m) (c : F) :
+    Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m))
+      ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m)) ℂ :=
+  aOp (1 : Matrix (((dA × Anc F m) × M.Ea) × Anc F m) (((dA × Anc F m) × M.Ea) × Anc F m) ℂ)
+    * bOp (M.bobHat W u c)
+
+set_option maxHeartbeats 1000000 in
+/-- **The sandwich splits across the parties**, Alice's factor untouched. -/
+theorem bobTail_sandwich (W : Bas) (u : Point F m) (c : F)
+    (q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)
+      × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)) :
+    (M.bobTail W u c)ᴴ * M.chainQ W q * M.bobTail W u c
+      = aOp (M.aliceChainOp W q.1)
+        * bOp ((M.bobHat W u c)ᴴ * M.bobChainOp W q.2 * M.bobHat W u c) := by
+  rw [bobTail, chainQ, aOp_bOp_conjTranspose, aOp_bOp_mul_aOp_bOp, aOp_bOp_mul_aOp_bOp,
+    Matrix.conjTranspose_one, Matrix.one_mul, Matrix.mul_one]
+
+/-- Bob's sandwiched pair-measurement marginal, on `B B' Eb`. -/
+def bobSand (W : Bas) (u : Point F m) (c : F)
+    (g : LowIndDegPoly (F := F) (m := m) (d := d)) :
+    Matrix ((dB × Anc F m) × M.Eb) ((dB × Anc F m) × M.Eb) ℂ :=
+  (aOp (hatMats MB W u c) : Matrix ((dB × Anc F m) × M.Eb) _ ℂ)ᴴ
+    * ((polyMarg M.SA' W).mats g).val
+    * (aOp (hatMats MB W u c) : Matrix ((dB × Anc F m) × M.Eb) _ ℂ)
+
+/-- **Bob's factor of that sandwich**: his point measurement conjugating his pair measurement's
+marginal, tensored with his Weyl outcome. -/
+theorem bobHat_conj_bobChainOp (W : Bas) (u : Point F m) (c : F)
+    (p : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) :
+    (M.bobHat W u c)ᴴ * M.bobChainOp W p * M.bobHat W u c
+      = M.bobSand W u c p.1 ⊗ₖ proj (weylOf W) p.2 := by
+  show ((aOp (hatMats MB W u c) : Matrix ((dB × Anc F m) × M.Eb) _ ℂ) ⊗ₖ 1)ᴴ
+      * ((((polyMarg M.SA' W).mats p.1).val) ⊗ₖ proj (weylOf W) p.2)
+      * ((aOp (hatMats MB W u c) : Matrix ((dB × Anc F m) × M.Eb) _ ℂ) ⊗ₖ 1) = _
+  rw [Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one,
+    ← Matrix.mul_kronecker_mul, ← Matrix.mul_kronecker_mul, Matrix.one_mul, Matrix.mul_one]
+  rfl
+
+/-- **The sandwich, fully split.** -/
+theorem bobTail_sandwich_kron (W : Bas) (u : Point F m) (c : F)
+    (q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)
+      × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)) :
+    qform M.physVec ((M.bobTail W u c)ᴴ * M.chainQ W q * M.bobTail W u c)
+      = bornProb M.physVec (M.aliceChainOp W q.1)
+        (M.bobSand W u c q.2.1 ⊗ₖ proj (weylOf W) q.2.2) := by
+  rw [M.bobTail_sandwich W u c q, M.bobHat_conj_bobChainOp W u c q.2, ← bornProb_eq_qform]
+
+/-- **The tail at the chain's own outcome**, the paper's `(g - g_h + g_h')(u)`. -/
+def chainV (W : Bas) (u : Point F m)
+    (q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)
+      × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)) :
+    Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m))
+      ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m)) ℂ :=
+  M.bobTail W u (chainQShift u q)
+
+set_option maxHeartbeats 1000000 in
+/-- **The first two steps of `eq:qld-pulling-10`'s justification.** Projectivity turns the grouped
+squared norm into a sum of sandwiches over the disagreeing pairs; each of those is one term of a
+sum over *all* outcomes the pair's own value excludes, and the rest of that sum is nonnegative; and
+then the constraint tying the outcome to the index may be dropped. -/
+theorem sum_snorm_sq_chainQ_disagree_le (W : Bas) (v : Anc F m) (u : Point F m) :
+    ∑ a : F, snorm M.physVec
+        (∑ q ∈ (univ.filter fun q => chainQShift u q ≠ q.2.1.eval u).filter
+              fun q => dotF (chainLabel q.1.1 q.1.2) v = a,
+          M.chainQ W q * M.chainV W u q) ^ 2
+      ≤ ∑ q, ∑ c ∈ univ.filter fun c : F => c ≠ q.2.1.eval u,
+          qform M.physVec ((M.bobTail W u c)ᴴ * M.chainQ W q * M.bobTail W u c) := by
+  classical
+  have hnn : ∀ (q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)
+      × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)) (c : F),
+      0 ≤ qform M.physVec ((M.bobTail W u c)ᴴ * M.chainQ W q * M.bobTail W u c) :=
+    fun q c => qform_sandwich_nonneg M.physVec ((M.isPVM_chainQ W).posSemidef q) _
+  refine sum_snorm_sq_fiber_sandwich_subset_le M.physVec (M.isPVM_chainQ W)
+    (fun q => M.chainV W u q) (fun q => dotF (chainLabel q.1.1 q.1.2) v)
+    (univ.filter fun q => chainQShift u q ≠ q.2.1.eval u) ?_
+  refine le_trans (Finset.sum_le_sum fun q hq => ?_)
+    (Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
+      fun q _ _ => Finset.sum_nonneg fun c _ => hnn q c)
+  exact Finset.single_le_sum (f := fun c : F =>
+      qform M.physVec ((M.bobTail W u c)ᴴ * M.chainQ W q * M.bobTail W u c))
+    (fun c _ => hnn q c)
+    (Finset.mem_filter.mpr ⟨mem_univ _, (Finset.mem_filter.mp hq).2⟩)
+
+set_option maxHeartbeats 1000000 in
+/-- **Display `eq:qld-pulling-13a`**: Alice's family and Bob's Weyl outcome both sum to the
+identity, so what is left of the bound carries neither. -/
+theorem sum_qform_bobTail_eq (W : Bas) (u : Point F m) :
+    (∑ q, ∑ c ∈ univ.filter fun c : F => c ≠ q.2.1.eval u,
+        qform M.physVec ((M.bobTail W u c)ᴴ * M.chainQ W q * M.bobTail W u c))
+      = ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
+          ∑ c ∈ univ.filter fun c : F => c ≠ g.eval u,
+            bornProb M.physVec 1 (aOp (M.bobSand W u c g)) := by
+  classical
+  have hq1 : ∀ (g : LowIndDegPoly (F := F) (m := m) (d := d)) (h : Anc F m) (c : F),
+      (∑ q1 : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m,
+          bornProb M.physVec (M.aliceChainOp W q1)
+            (M.bobSand W u c g ⊗ₖ proj (weylOf W) h))
+        = bornProb M.physVec 1 (M.bobSand W u c g ⊗ₖ proj (weylOf W) h) := by
+    intro g h c
+    rw [← bornProb_sum_left, (M.isPVM_aliceChainOp W).sum_eq_one]
+  have hh : ∀ (g : LowIndDegPoly (F := F) (m := m) (d := d)) (c : F),
+      (∑ h : Anc F m, bornProb M.physVec 1 (M.bobSand W u c g ⊗ₖ proj (weylOf W) h))
+        = bornProb M.physVec 1 (aOp (M.bobSand W u c g)) := by
+    intro g c
+    rw [← bornProb_sum_right, ← kron_sum' univ,
+      (isPVM_proj (isWeylFamily_weylOf W)).sum_eq_one]
+    rfl
+  have key : ∀ q2 : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m,
+      (∑ q1 : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m,
+          ∑ c ∈ univ.filter fun c : F => c ≠ q2.1.eval u,
+            bornProb M.physVec (M.aliceChainOp W q1)
+              (M.bobSand W u c q2.1 ⊗ₖ proj (weylOf W) q2.2))
+        = ∑ c ∈ univ.filter fun c : F => c ≠ q2.1.eval u,
+            bornProb M.physVec 1 (M.bobSand W u c q2.1 ⊗ₖ proj (weylOf W) q2.2) := by
+    intro q2
+    rw [Finset.sum_comm]
+    exact Finset.sum_congr rfl fun c _ => hq1 q2.1 q2.2 c
+  rw [Finset.sum_congr rfl fun q (_ : q ∈ univ) => Finset.sum_congr rfl fun c _ =>
+      M.bobTail_sandwich_kron W u c q,
+    Fintype.sum_prod_type, Finset.sum_comm,
+    Finset.sum_congr rfl fun q2 (_ : q2 ∈ univ) => key q2, Fintype.sum_prod_type]
+  refine Finset.sum_congr rfl fun g _ => ?_
+  show (∑ h : Anc F m, ∑ c ∈ univ.filter fun c : F => c ≠ g.eval u,
+      bornProb M.physVec 1 (M.bobSand W u c g ⊗ₖ proj (weylOf W) h))
+    = ∑ c ∈ univ.filter fun c : F => c ≠ g.eval u,
+      bornProb M.physVec 1 (aOp (M.bobSand W u c g))
+  rw [Finset.sum_comm]
+  exact Finset.sum_congr rfl fun c _ => hh g c
 
 end MirrorSimul
 
