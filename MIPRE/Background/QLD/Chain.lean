@@ -752,6 +752,179 @@ theorem sum_ancProj_mulVec (W : Bas) :
   rw [Finset.sum_congr rfl fun h (_ : h ∈ univ) => hstep h, ← Matrix.sum_mulVec, ← aOp_sum,
     ← aOp_sum, hone, aOp_one, aOp_one, Matrix.one_mulVec]
 
+/-! ## `eq:qld-pulling-13`, the chain's only Cauchy--Schwarz
+
+The swap that completes `eq:qld-pulling-10`. It is stated on a `SimulPair`, on the cut that pair's
+state lives on, because that is where both placements of the point measurement are local: the one
+that sandwiches is the first party's own, the one that replaces it is the second party's. The
+mirror then makes it Bob's. -/
+
+/-- The pair's state is a unit vector in the Euclidean norm. -/
+theorem norm_evec_state : ‖evec P.Φ‖ = 1 := by
+  have h : ‖evec P.Φ‖ ^ 2 = 1 := by
+    rw [norm_evec_sq, P.Φ_unit]
+    norm_num
+  nlinarith [norm_nonneg (evec P.Φ)]
+
+set_option maxHeartbeats 1000000 in
+/-- **Display `eq:qld-pulling-13`**: moving the sandwiching point measurement from the party that
+carries the pair measurement to the other one. The cost is twice the square root of the two
+placements' summed squared state distance, and no more: the pair measurement's outcomes are
+orthogonal, so summing the deviation over them leaves one copy rather than one per outcome. -/
+theorem abs_sum_qform_ne_swap_le
+    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val))
+    (W : Bas) (u : Point F m) {εu : ℝ}
+    (hcons : ∑ a : F, xSqNorm P.Φ (aOp (hatMats MA W u a)) (aOp (hatMats MB W u a)) ≤ εu) :
+    |(∑ q ∈ univ.filter fun q : LowIndDegPoly (F := F) (m := m) (d := d) × F =>
+          q.2 ≠ q.1.eval u,
+        qform P.Φ ((bOp (aOp (hatMats MB W u q.2))
+            : Matrix (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB)) _ ℂ)
+          * aOp (((polyMarg P.SA W).mats q.1).val)))
+      - ∑ q ∈ univ.filter fun q : LowIndDegPoly (F := F) (m := m) (d := d) × F =>
+          q.2 ≠ q.1.eval u,
+        qform P.Φ ((aOp (aOp (hatMats MA W u q.2))
+            : Matrix (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB)) _ ℂ)
+          * aOp (((polyMarg P.SA W).mats q.1).val)
+          * aOp (aOp (hatMats MA W u q.2)))|
+      ≤ 2 * Real.sqrt εu := by
+  classical
+  set SS : LowIndDegPoly (F := F) (m := m) (d := d)
+      → Matrix (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB))
+        (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB)) ℂ :=
+    fun g => aOp (((polyMarg P.SA W).mats g).val) with hSS
+  set XX : F → Matrix (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB))
+        (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB)) ℂ :=
+    fun c => bOp (aOp (hatMats MB W u c)) with hXX
+  set YY : F → Matrix (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB))
+        (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB)) ℂ :=
+    fun c => aOp (aOp (hatMats MA W u c)) with hYY
+  have hSpvm : IsPVM SS := (isPVM_polyMarg P.SA_proj W).aOp
+  have hXpvm : IsPVM XX := ((isPVM_hatMats hprojB W u).aOp).bOp
+  have hYpvm : IsPVM YY := ((isPVM_hatMats hprojA W u).aOp).aOp
+  have hdrop : ∀ Z : F → Matrix (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB))
+        (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB)) ℂ,
+      (∑ q ∈ univ.filter fun q : LowIndDegPoly (F := F) (m := m) (d := d) × F =>
+          q.2 ≠ q.1.eval u, snorm P.Φ (SS q.1 * Z q.2) ^ 2)
+        ≤ ∑ c : F, snorm P.Φ (Z c) ^ 2 := by
+    intro Z
+    refine le_trans (Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
+      fun q _ _ => sq_nonneg _) (le_of_eq ?_)
+    rw [Fintype.sum_prod_type, Finset.sum_comm]
+    refine Finset.sum_congr rfl fun c _ => ?_
+    rw [← snorm_sq_sum_orthogonal P.Φ hSpvm (Z c) univ, hSpvm.sum_eq_one, Matrix.one_mul]
+  have hmass : ∀ Z : F → Matrix (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB))
+        (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB)) ℂ, IsPVM Z →
+      (∑ q ∈ univ.filter fun q : LowIndDegPoly (F := F) (m := m) (d := d) × F =>
+          q.2 ≠ q.1.eval u, snorm P.Φ (SS q.1 * Z q.2) ^ 2) ≤ 1 := by
+    intro Z hZ
+    refine le_trans (hdrop Z) (le_of_eq ?_)
+    rw [Finset.sum_congr rfl fun c (_ : c ∈ univ) => show
+        snorm P.Φ (Z c) ^ 2 = snorm P.Φ (Z c * 1) ^ 2 from by rw [Matrix.mul_one],
+      ← snorm_sq_sum_orthogonal P.Φ hZ 1 univ, hZ.sum_eq_one, Matrix.one_mul,
+      snorm_one P.Φ P.norm_evec_state, one_pow]
+  refine abs_sum_qform_swap_proj_le P.Φ _ (fun q => hXpvm.isSelfAdjoint q.2)
+    (fun q => hXpvm.idem q.2) (fun q => hYpvm.isSelfAdjoint q.2)
+    (fun q => hSpvm.isSelfAdjoint q.1) (fun q => hSpvm.idem q.1)
+    (fun q => (aOp_mul_bOp _ _).symm) ?_ (hmass YY hYpvm) (hmass XX hXpvm)
+  refine le_trans (hdrop fun c => XX c - YY c) (le_trans (le_of_eq ?_) hcons)
+  exact Finset.sum_congr rfl fun c _ => by
+    rw [xSqNorm_eq_snorm_sq, snorm_sub_comm]
+
+set_option maxHeartbeats 1000000 in
+/-- **The swapped side, read as a Born probability.** Summing the other party's point measurement
+over the outcomes its own value excludes leaves the complement of that value. -/
+theorem sum_qform_ne_eq (W : Bas) (u : Point F m)
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) :
+    (∑ q ∈ univ.filter fun q : LowIndDegPoly (F := F) (m := m) (d := d) × F =>
+        q.2 ≠ q.1.eval u,
+      qform P.Φ ((bOp (aOp (hatMats MB W u q.2))
+          : Matrix (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB)) _ ℂ)
+        * aOp (((polyMarg P.SA W).mats q.1).val)))
+      = ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
+          bornProb P.Φ (((polyMarg P.SA W).mats g).val)
+            (1 - (aOp (hatMats MB W u (g.eval u)) : Matrix ((dB × Anc F m) × P.EB) _ ℂ)) := by
+  classical
+  have hB : IsPVM fun c : F =>
+      (aOp (hatMats MB W u c) : Matrix ((dB × Anc F m) × P.EB) _ ℂ) :=
+    (isPVM_hatMats hprojB W u).aOp
+  have hne : ∀ g : LowIndDegPoly (F := F) (m := m) (d := d),
+      (∑ c ∈ univ.filter fun c : F => c ≠ g.eval u,
+          (aOp (hatMats MB W u c) : Matrix ((dB × Anc F m) × P.EB) _ ℂ))
+        = 1 - aOp (hatMats MB W u (g.eval u)) := by
+    intro g
+    rw [Finset.filter_ne', Finset.sum_erase_eq_sub (mem_univ (g.eval u)), hB.sum_eq_one]
+  rw [Finset.sum_filter, Fintype.sum_prod_type]
+  refine Finset.sum_congr rfl fun g _ => ?_
+  rw [← Finset.sum_filter,
+    Finset.sum_congr rfl fun c (_ : c ∈ univ.filter fun c : F => c ≠ g.eval u) => show
+      qform P.Φ ((bOp (aOp (hatMats MB W u c))
+          : Matrix (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB)) _ ℂ)
+        * aOp (((polyMarg P.SA W).mats g).val))
+        = bornProb P.Φ (((polyMarg P.SA W).mats g).val) (aOp (hatMats MB W u c)) from by
+      rw [bornProb_eq_qform, aOp_mul_bOp],
+    ← bornProb_sum_right, hne g]
+
+set_option maxHeartbeats 1000000 in
+/-- **Display `eq:qld-pulling-10`, complete**: the whole cost of moving the point measurement
+across and then dropping it is the helper's own `delta_S` plus twice the square root of the point
+measurements' cross-party deviation. The average over the sampled point goes inside the square
+root by Cauchy--Schwarz against the constant one. -/
+theorem sum_uniform_qform_ne_le {hm : m ∣ Fintype.card F} {ε : ℝ}
+    (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
+    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) :
+    (∑ u, uniform (Point F m) u
+        * ∑ q ∈ univ.filter fun q : LowIndDegPoly (F := F) (m := m) (d := d) × F =>
+            q.2 ≠ q.1.eval u,
+          qform P.Φ ((aOp (aOp (hatMats MA W u q.2))
+              : Matrix (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB)) _ ℂ)
+            * aOp (((polyMarg P.SA W).mats q.1).val)
+            * aOp (aOp (hatMats MA W u q.2))))
+      ≤ δ + 2 * Real.sqrt (172 * ε) := by
+  classical
+  set dev : Point F m → ℝ := fun u =>
+    ∑ a : F, xSqNorm P.Φ (aOp (hatMats MA W u a)) (aOp (hatMats MB W u a)) with hdevdef
+  have hdev0 : ∀ u, 0 ≤ dev u := fun u =>
+    Finset.sum_nonneg fun a _ => xSqNorm_nonneg _ _ _
+  have hstep : ∀ u : Point F m,
+      (∑ q ∈ univ.filter fun q : LowIndDegPoly (F := F) (m := m) (d := d) × F =>
+          q.2 ≠ q.1.eval u,
+        qform P.Φ ((aOp (aOp (hatMats MA W u q.2))
+            : Matrix (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB)) _ ℂ)
+          * aOp (((polyMarg P.SA W).mats q.1).val)
+          * aOp (aOp (hatMats MA W u q.2))))
+        ≤ (∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
+            bornProb P.Φ (((polyMarg P.SA W).mats g).val)
+              (1 - (aOp (hatMats MB W u (g.eval u)) : Matrix ((dB × Anc F m) × P.EB) _ ℂ)))
+          + 2 * Real.sqrt (dev u) := by
+    intro u
+    have h := P.abs_sum_qform_ne_swap_le hprojA hprojB W u (le_refl (dev u))
+    rw [P.sum_qform_ne_eq W u hprojB] at h
+    have := abs_le.mp h
+    linarith [this.1]
+  have havg := Finset.sum_le_sum fun u (_ : u ∈ univ) =>
+    mul_le_mul_of_nonneg_left (hstep u) (uniform_nonneg (Point F m) u)
+  have hsplit : (∑ u, uniform (Point F m) u
+        * ((∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
+            bornProb P.Φ (((polyMarg P.SA W).mats g).val)
+              (1 - (aOp (hatMats MB W u (g.eval u)) : Matrix ((dB × Anc F m) × P.EB) _ ℂ)))
+          + 2 * Real.sqrt (dev u)))
+      = (∑ u, uniform (Point F m) u
+          * ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
+            bornProb P.Φ (((polyMarg P.SA W).mats g).val)
+              (1 - (aOp (hatMats MB W u (g.eval u)) : Matrix ((dB × Anc F m) × P.EB) _ ℂ)))
+        + 2 * ∑ u, uniform (Point F m) u * Real.sqrt (dev u) := by
+    rw [Finset.mul_sum, ← Finset.sum_add_distrib]
+    exact Finset.sum_congr rfl fun u _ => by ring
+  rw [hsplit] at havg
+  have hsqrt : (∑ u, uniform (Point F m) u * Real.sqrt (dev u))
+      ≤ Real.sqrt (172 * ε) := by
+    refine le_trans (sum_weighted_sqrt_le (uniform (Point F m)) dev
+      (uniform_nonneg (Point F m)) (sum_uniform_eq_one (Point F m)) hdev0) ?_
+    exact Real.sqrt_le_sqrt (P.sum_xSqNorm_hat_le (hm := hm) hψ hfail W)
+  linarith [P.sum_bornProb_polyMarg_one_sub_le (MB := MB) W]
+
 end SimulPair
 
 end First
@@ -1217,6 +1390,161 @@ theorem sum_qform_bobTail_eq (W : Bas) (u : Point F m) :
       bornProb M.physVec 1 (aOp (M.bobSand W u c g))
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun c _ => hh g c
+
+/-! ## `eq:qld-pulling-11`, and the second cut's bridge
+
+The last of the chain's estimates before Schwartz--Zippel. Everything here is Bob's, and
+everything Bob's is Alice's at the mirror. -/
+
+/-- **The bridge from the physical state to the second cut.** The mirror image of
+`bornProb_physVec_aOp`: an operator that is Bob's alone, and the identity on the half of the
+appended pair he holds, sees the state the second cut already describes. -/
+theorem bornProb_physVec_bOp
+    (Z : Matrix ((dB × Anc F m) × M.Eb) ((dB × Anc F m) × M.Eb) ℂ) :
+    bornProb M.physVec 1 (aOp Z) = bornProb M.Φ' Z 1 := by
+  have hsw : swapVec M.physVec = M.mirror.physVec := M.mirror_physVec.symm
+  rw [← bornProb_swapVec M.physVec (1 : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m)) _ ℂ) (aOp Z),
+    hsw]
+  exact M.mirror.bornProb_physVec_aOp Z
+
+/-- **Bob's lift**: an operator of his on `B B' Eb`, extended by the identity on `B''` and on
+Alice. Both remaining displays sandwich the four-index family with one of these; only which one
+differs. -/
+def bobLift (T : Matrix ((dB × Anc F m) × M.Eb) ((dB × Anc F m) × M.Eb) ℂ) :
+    Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m))
+      ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m)) ℂ :=
+  aOp (1 : Matrix (((dA × Anc F m) × M.Ea) × Anc F m) (((dA × Anc F m) × M.Ea) × Anc F m) ℂ)
+    * bOp (aOp T)
+
+set_option maxHeartbeats 1000000 in
+/-- **The sandwich splits across the parties**, Alice's factor untouched. -/
+theorem bobLift_sandwich (W : Bas)
+    (T : Matrix ((dB × Anc F m) × M.Eb) ((dB × Anc F m) × M.Eb) ℂ)
+    (q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)
+      × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)) :
+    (M.bobLift T)ᴴ * M.chainQ W q * M.bobLift T
+      = aOp (M.aliceChainOp W q.1)
+        * bOp ((aOp T : Matrix (((dB × Anc F m) × M.Eb) × Anc F m) _ ℂ)ᴴ
+            * M.bobChainOp W q.2 * aOp T) := by
+  rw [bobLift, chainQ, aOp_bOp_conjTranspose, aOp_bOp_mul_aOp_bOp, aOp_bOp_mul_aOp_bOp,
+    Matrix.conjTranspose_one, Matrix.one_mul, Matrix.mul_one]
+
+/-- **Bob's factor of it**: his operator conjugating his pair measurement's marginal, tensored
+with his Weyl outcome. -/
+theorem aOp_conj_bobChainOp (W : Bas)
+    (T : Matrix ((dB × Anc F m) × M.Eb) ((dB × Anc F m) × M.Eb) ℂ)
+    (p : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) :
+    (aOp T : Matrix (((dB × Anc F m) × M.Eb) × Anc F m) _ ℂ)ᴴ * M.bobChainOp W p * aOp T
+      = (Tᴴ * ((polyMarg M.SA' W).mats p.1).val * T) ⊗ₖ proj (weylOf W) p.2 := by
+  show (T ⊗ₖ (1 : Matrix (Anc F m) (Anc F m) ℂ))ᴴ
+      * ((((polyMarg M.SA' W).mats p.1).val) ⊗ₖ proj (weylOf W) p.2)
+      * (T ⊗ₖ (1 : Matrix (Anc F m) (Anc F m) ℂ)) = _
+  rw [Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one,
+    ← Matrix.mul_kronecker_mul, ← Matrix.mul_kronecker_mul, Matrix.one_mul, Matrix.mul_one]
+
+set_option maxHeartbeats 1000000 in
+/-- **The sandwich, fully split.** -/
+theorem bobLift_sandwich_kron (W : Bas)
+    (T : Matrix ((dB × Anc F m) × M.Eb) ((dB × Anc F m) × M.Eb) ℂ)
+    (q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)
+      × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)) :
+    qform M.physVec ((M.bobLift T)ᴴ * M.chainQ W q * M.bobLift T)
+      = bornProb M.physVec (M.aliceChainOp W q.1)
+        ((Tᴴ * ((polyMarg M.SA' W).mats q.2.1).val * T) ⊗ₖ proj (weylOf W) q.2.2) := by
+  rw [M.bobLift_sandwich W T q, M.aOp_conj_bobChainOp W T q.2, ← bornProb_eq_qform]
+
+set_option maxHeartbeats 1000000 in
+/-- **Alice's family and Bob's Weyl outcome sum away**, leaving a statement about the second cut
+alone. This is the shape both `eq:qld-pulling-10` and `eq:qld-pulling-11` end at. -/
+theorem sum_qform_bobLift_eq (W : Bas)
+    (T : LowIndDegPoly (F := F) (m := m) (d := d)
+      → Matrix ((dB × Anc F m) × M.Eb) ((dB × Anc F m) × M.Eb) ℂ) :
+    (∑ q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)
+        × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m),
+      qform M.physVec ((M.bobLift (T q.2.1))ᴴ * M.chainQ W q * M.bobLift (T q.2.1)))
+      = ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
+          bornProb M.Φ' ((T g)ᴴ * ((polyMarg M.SA' W).mats g).val * T g) 1 := by
+  classical
+  have hq1 : ∀ (g : LowIndDegPoly (F := F) (m := m) (d := d)) (h : Anc F m),
+      (∑ q1 : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m,
+          bornProb M.physVec (M.aliceChainOp W q1)
+            (((T g)ᴴ * ((polyMarg M.SA' W).mats g).val * T g) ⊗ₖ proj (weylOf W) h))
+        = bornProb M.physVec 1
+            (((T g)ᴴ * ((polyMarg M.SA' W).mats g).val * T g) ⊗ₖ proj (weylOf W) h) := by
+    intro g h
+    rw [← bornProb_sum_left, (M.isPVM_aliceChainOp W).sum_eq_one]
+  have hh : ∀ g : LowIndDegPoly (F := F) (m := m) (d := d),
+      (∑ h : Anc F m, bornProb M.physVec 1
+          (((T g)ᴴ * ((polyMarg M.SA' W).mats g).val * T g) ⊗ₖ proj (weylOf W) h))
+        = bornProb M.Φ' ((T g)ᴴ * ((polyMarg M.SA' W).mats g).val * T g) 1 := by
+    intro g
+    rw [← bornProb_sum_right, ← kron_sum' univ,
+      (isPVM_proj (isWeylFamily_weylOf W)).sum_eq_one]
+    exact M.bornProb_physVec_bOp _
+  rw [Finset.sum_congr rfl fun q (_ : q ∈ univ) => M.bobLift_sandwich_kron W (T q.2.1) q,
+    Fintype.sum_prod_type, Finset.sum_comm,
+    Finset.sum_congr rfl fun q2 (_ : q2 ∈ univ) => hq1 q2.1 q2.2, Fintype.sum_prod_type]
+  refine Finset.sum_congr rfl fun g _ => ?_
+  show (∑ h : Anc F m, bornProb M.physVec 1
+      (((T g)ᴴ * ((polyMarg M.SA' W).mats g).val * T g) ⊗ₖ proj (weylOf W) h))
+    = bornProb M.Φ' ((T g)ᴴ * ((polyMarg M.SA' W).mats g).val * T g) 1
+  exact hh g
+
+set_option maxHeartbeats 1000000 in
+/-- **Display `eq:qld-pulling-11`**: dropping Bob's point measurement from his side of the
+chain's endpoint costs item 2 of `lem:qld-helper`, read on the second cut. The index set carries
+the agreement constraint, which the bound simply drops --- every sandwich is nonnegative. -/
+theorem sum_snorm_sq_chainQ_agree_le (W : Bas) (v : Anc F m) (u : Point F m) :
+    ∑ a : F, snorm M.physVec
+        (∑ q ∈ (univ.filter fun q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)
+              × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) =>
+              chainQShift u q = q.2.1.eval u).filter
+            fun q => dotF (chainLabel q.1.1 q.1.2) v = a,
+          M.chainQ W q
+            * M.bobLift (1 - (aOp (hatMats MB W u (q.2.1.eval u))
+                : Matrix ((dB × Anc F m) × M.Eb) _ ℂ))) ^ 2
+      ≤ ∑ g : LowIndDegPoly (F := F) (m := m) (d := d), snorm M.Φ'
+          (aOp (((polyMarg M.SA' W).mats g).val
+            * (1 - (aOp (hatMats MB W u (g.eval u)) : Matrix ((dB × Anc F m) × M.Eb) _ ℂ))))
+          ^ 2 := by
+  classical
+  set T : LowIndDegPoly (F := F) (m := m) (d := d)
+      → Matrix ((dB × Anc F m) × M.Eb) ((dB × Anc F m) × M.Eb) ℂ :=
+    fun g => 1 - (aOp (hatMats MB W u (g.eval u)) : Matrix ((dB × Anc F m) × M.Eb) _ ℂ) with hT
+  refine sum_snorm_sq_fiber_sandwich_subset_le M.physVec (M.isPVM_chainQ W)
+    (fun q => M.bobLift (T q.2.1)) (fun q => dotF (chainLabel q.1.1 q.1.2) v) _ ?_
+  refine le_trans (Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
+    fun q _ _ => qform_sandwich_nonneg M.physVec ((M.isPVM_chainQ W).posSemidef q) _)
+    (le_of_eq ?_)
+  rw [M.sum_qform_bobLift_eq W T]
+  refine Finset.sum_congr rfl fun g _ => ?_
+  rw [snorm_sq_eq_qform, bornProb_eq_qform, bOp_one, Matrix.mul_one, aOp_conjTranspose, ← aOp_mul]
+  congr 1
+  rw [Matrix.conjTranspose_mul]
+  simp only [Matrix.mul_assoc]
+  rw [← Matrix.mul_assoc (((polyMarg M.SA' W).mats g).val)ᴴ,
+    (isPVM_polyMarg M.SA'_proj W).isSelfAdjoint g, (isPVM_polyMarg M.SA'_proj W).idem g]
+
+set_option maxHeartbeats 1000000 in
+/-- **And its cost**, which is item 2 of `lem:qld-helper` at the second cut --- available, with no
+new proof, because the mirror of a `MirrorSimul` is a `MirrorSimul`. -/
+theorem sum_uniform_snorm_sq_chainQ_agree_le {hm : m ∣ Fintype.card F} {ε : ℝ}
+    (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
+    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val)) (W : Bas) (v : Anc F m) :
+    (∑ u, uniform (Point F m) u * ∑ a : F, snorm M.physVec
+        (∑ q ∈ (univ.filter fun q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)
+              × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) =>
+              chainQShift u q = q.2.1.eval u).filter
+            fun q => dotF (chainLabel q.1.1 q.1.2) v = a,
+          M.chainQ W q
+            * M.bobLift (1 - (aOp (hatMats MB W u (q.2.1.eval u))
+                : Matrix ((dB × Anc F m) × M.Eb) _ ℂ))) ^ 2)
+      ≤ 4 * δ + 2 * (172 * ε) := by
+  refine le_trans (Finset.sum_le_sum fun u (_ : u ∈ univ) =>
+    mul_le_mul_of_nonneg_left (M.sum_snorm_sq_chainQ_agree_le W v u)
+      (uniform_nonneg (Point F m) u)) ?_
+  exact M.toSecond.sum_snorm_sq_polyMarg_one_sub_le (hm := hm) (swapVec_unit hψ)
+    (povmValue_swapped_le hfail) hprojA W
 
 end MirrorSimul
 

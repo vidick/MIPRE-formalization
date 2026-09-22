@@ -223,6 +223,85 @@ theorem sum_qform_sandwich_le_of_subset (v : N → ℂ) {P : ι → Matrix N N �
   Finset.sum_le_sum_of_subset_of_nonneg hst fun i _ _ =>
     qform_sandwich_nonneg v (hP.posSemidef i) (W i)
 
+omit [DecidableEq N] [Fintype ι] [DecidableEq ι] in
+/-- **Cauchy--Schwarz across an index, with the first family not self-adjoint.**
+`Introspection.abs_sum_qform_mul_le` is the case where it is, so that `M * R` is already
+`Mᴴ * R`; the projector form of the chain's swap needs the general one. -/
+theorem abs_sum_qform_conjTranspose_mul_le (v : N → ℂ) (s : Finset ι)
+    (M R : ι → Matrix N N ℂ) :
+    |∑ i ∈ s, qform v ((M i)ᴴ * R i)|
+      ≤ Real.sqrt (∑ i ∈ s, snorm v (M i) ^ 2) * Real.sqrt (∑ i ∈ s, snorm v (R i) ^ 2) := by
+  have hpt : ∀ i ∈ s, |qform v ((M i)ᴴ * R i)| ≤ snorm v (M i) * snorm v (R i) :=
+    fun i _ => abs_qform_conjTranspose_mul_le v (M i) (R i)
+  refine le_trans (le_trans (Finset.abs_sum_le_sum_abs _ _) (Finset.sum_le_sum hpt)) ?_
+  have hsq := sum_mul_sq_le_sq_mul_sq s (fun i => snorm v (M i)) (fun i => snorm v (R i))
+  have hn : (0 : ℝ) ≤ ∑ i ∈ s, snorm v (M i) ^ 2 := Finset.sum_nonneg fun _ _ => sq_nonneg _
+  calc (∑ i ∈ s, snorm v (M i) * snorm v (R i))
+      ≤ |∑ i ∈ s, snorm v (M i) * snorm v (R i)| := le_abs_self _
+    _ = Real.sqrt ((∑ i ∈ s, snorm v (M i) * snorm v (R i)) ^ 2) :=
+        (Real.sqrt_sq_eq_abs _).symm
+    _ ≤ Real.sqrt ((∑ i ∈ s, snorm v (M i) ^ 2) * ∑ i ∈ s, snorm v (R i) ^ 2) :=
+        Real.sqrt_le_sqrt hsq
+    _ = _ := Real.sqrt_mul hn _
+
+/-- **Display `eq:qld-pulling-13`, with the deviation read through the projector.** The chain's
+second remaining estimate sandwiches a *projector* with the measurement it swaps, and what bounds
+the cost is the deviation read through that projector --- summing the projector away is what makes
+the bound `eps` rather than `eps` times the number of pair outcomes, which is what the bare form
+below would give. Otherwise the two are the same argument. -/
+theorem abs_sum_qform_swap_proj_le (v : N → ℂ) (s : Finset ι) {X Y S : ι → Matrix N N ℂ} {ε : ℝ}
+    (hXsa : ∀ i, (X i)ᴴ = X i) (hXidem : ∀ i, X i * X i = X i) (hYsa : ∀ i, (Y i)ᴴ = Y i)
+    (hSsa : ∀ i, (S i)ᴴ = S i) (hSidem : ∀ i, S i * S i = S i)
+    (hcomm : ∀ i, X i * S i = S i * X i)
+    (hε : ∑ i ∈ s, snorm v (S i * (X i - Y i)) ^ 2 ≤ ε)
+    (hY : ∑ i ∈ s, snorm v (S i * Y i) ^ 2 ≤ 1)
+    (hX : ∑ i ∈ s, snorm v (S i * X i) ^ 2 ≤ 1) :
+    |(∑ i ∈ s, qform v (X i * S i)) - ∑ i ∈ s, qform v (Y i * S i * Y i)|
+      ≤ 2 * Real.sqrt ε := by
+  have hdev : ∀ i, (X i - Y i)ᴴ = X i - Y i := fun i => by
+    rw [Matrix.conjTranspose_sub, hXsa, hYsa]
+  have hterm : ∀ i ∈ s, qform v (X i * S i) - qform v (Y i * S i * Y i)
+      = qform v ((X i - Y i) * (S i * Y i)) + qform v ((X i - Y i) * (S i * X i)) := by
+    intro i _
+    have hXSX : X i * S i * X i = X i * S i := by
+      rw [Matrix.mul_assoc, ← hcomm i, ← Matrix.mul_assoc, hXidem]
+    have hflip : qform v (Y i * S i * (X i - Y i)) = qform v ((X i - Y i) * (S i * Y i)) := by
+      rw [← qform_conjTranspose v (Y i * S i * (X i - Y i))]
+      congr 1
+      rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, hdev, hSsa, hYsa]
+    rw [← hXSX, ← qform_sub, ← hflip, ← qform_add]
+    congr 1
+    noncomm_ring
+  have hsplit : (∑ i ∈ s, qform v (X i * S i)) - ∑ i ∈ s, qform v (Y i * S i * Y i)
+      = (∑ i ∈ s, qform v ((X i - Y i) * (S i * Y i)))
+        + ∑ i ∈ s, qform v ((X i - Y i) * (S i * X i)) := by
+    rw [← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
+    exact Finset.sum_congr rfl hterm
+  have hb : ∀ Z : ι → Matrix N N ℂ, (∑ i ∈ s, snorm v (S i * Z i) ^ 2) ≤ 1 →
+      |∑ i ∈ s, qform v ((X i - Y i) * (S i * Z i))| ≤ Real.sqrt ε := by
+    intro Z hZ
+    have hcong : ∀ i ∈ s, qform v ((X i - Y i) * (S i * Z i))
+        = qform v ((S i * (X i - Y i))ᴴ * (S i * Z i)) := by
+      intro i _
+      congr 1
+      rw [Matrix.conjTranspose_mul, hSsa, hdev i, Matrix.mul_assoc,
+        ← Matrix.mul_assoc (S i) (S i), hSidem]
+    rw [Finset.sum_congr rfl hcong]
+    refine le_trans (abs_sum_qform_conjTranspose_mul_le v s
+      (fun i => S i * (X i - Y i)) (fun i => S i * Z i)) ?_
+    have h1 : Real.sqrt (∑ i ∈ s, snorm v (S i * Z i) ^ 2) ≤ 1 := by
+      simpa using Real.sqrt_le_sqrt hZ
+    calc Real.sqrt (∑ i ∈ s, snorm v (S i * (X i - Y i)) ^ 2)
+          * Real.sqrt (∑ i ∈ s, snorm v (S i * Z i) ^ 2)
+        ≤ Real.sqrt (∑ i ∈ s, snorm v (S i * (X i - Y i)) ^ 2) * 1 :=
+          mul_le_mul_of_nonneg_left h1 (Real.sqrt_nonneg _)
+      _ ≤ Real.sqrt ε := by rw [mul_one]; exact Real.sqrt_le_sqrt hε
+  rw [hsplit]
+  refine le_trans (abs_add_le _ _) ?_
+  have := hb Y hY
+  have := hb X hX
+  linarith
+
 /-- **Display `eq:qld-pulling-13`: moving the sandwiched measurement across costs
 `2 sqrt(eps)`.** `X` and `Y` are the two placements of one projective measurement, `X` the one
 that commutes with the projector `S` it sandwiches; `eps` bounds the summed squared state
