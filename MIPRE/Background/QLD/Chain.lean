@@ -776,6 +776,207 @@ theorem isPVM_chainP (W : Bas) : IsPVM (M.chainP W) := by
   exact isPVM_kron (isPVM_chainOp M.toFirst W)
     (IsPVM.bOp (isPVM_proj (isWeylFamily_weylOf W)))
 
+/-! ## The two remaining displays, on the physical cut
+
+`eq:qld-pulling-5` to `-7` is the first step of the chain that compares operators on all six
+registers, and the objects it runs over are each party's whole triple. Alice's are named here in
+her own spelling rather than reached through `toFirst`, because the two spellings of her padding,
+identical by definition, do not unify inside an elaborated product type. -/
+
+
+/-- **Alice's chain summand, typed on her own padding.** `toFirst.EA` is `M.Ea` by definition,
+but the two spellings do not unify inside an elaborated product type, so the physical-cut
+statements name this rather than reaching through `toFirst`. -/
+def aliceChainOp (W : Bas)
+    (p : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) :
+    Matrix (((dA × Anc F m) × M.Ea) × Anc F m) (((dA × Anc F m) × M.Ea) × Anc F m) ℂ :=
+  M.toFirst.chainOp W p
+
+/-- **Alice's hatted point measurement**, on her physical register `A A' Ea A''`. -/
+def aliceHat (W : Bas) (u : Point F m) (c : F) :
+    Matrix (((dA × Anc F m) × M.Ea) × Anc F m) (((dA × Anc F m) × M.Ea) × Anc F m) ℂ :=
+  aOp (aOp (hatMats MA W u c))
+
+/-- **Bob's**, on his. -/
+def bobHat (W : Bas) (u : Point F m) (c : F) :
+    Matrix (((dB × Anc F m) × M.Eb) × Anc F m) (((dB × Anc F m) × M.Eb) × Anc F m) ℂ :=
+  aOp (aOp (hatMats MB W u c))
+
+/-- **The tail the chain carries at `eq:qld-pulling-5`**: Alice's gap from her own point
+measurement, against Bob's point measurement at the shifted outcome `(g - g_h + g_h')(u)`. -/
+def chainW (W : Bas) (u : Point F m)
+    (t : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) × Anc F m) :
+    Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m))
+      ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m)) ℂ :=
+  aOp (1 - M.aliceHat W u (t.1.1.eval u))
+    * bOp (M.bobHat W u (t.1.1.eval u + dotF t.1.2 (indVec u) + dotF t.2 (indVec u)))
+
+/-- **The sandwich splits across the parties**, each factor being local. -/
+theorem chainW_sandwich (W : Bas) (u : Point F m)
+    (t : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) × Anc F m) :
+    (M.chainW W u t)ᴴ * (aOp (M.aliceChainOp W t.1) * bOp (M.bobWeyl W t.2))
+        * M.chainW W u t
+      = aOp ((1 - M.aliceHat W u (t.1.1.eval u))ᴴ * M.aliceChainOp W t.1
+            * (1 - M.aliceHat W u (t.1.1.eval u)))
+        * bOp ((M.bobHat W u (t.1.1.eval u + dotF t.1.2 (indVec u) + dotF t.2 (indVec u)))ᴴ
+            * M.bobWeyl W t.2
+            * M.bobHat W u (t.1.1.eval u + dotF t.1.2 (indVec u) + dotF t.2 (indVec u))) := by
+  rw [chainW, aOp_bOp_conjTranspose, aOp_bOp_mul_aOp_bOp, aOp_bOp_mul_aOp_bOp]
+
+/-- **Summing the Weyl outcome out of Alice's summand** leaves her pair measurement's marginal
+alone, extended by the identity on `A''`. -/
+theorem sum_aliceChainOp (W : Bas) (g : LowIndDegPoly (F := F) (m := m) (d := d)) :
+    (∑ h : Anc F m, M.aliceChainOp W (g, h))
+      = aOp (((polyMarg M.SA W).mats g).val) := by
+  rw [show (∑ h : Anc F m, M.aliceChainOp W (g, h))
+      = ∑ h : Anc F m, (((polyMarg M.SA W).mats g).val) ⊗ₖ proj (weylOf W) h from rfl,
+    ← kron_sum' univ, (isPVM_proj (isWeylFamily_weylOf W)).sum_eq_one]
+  rfl
+
+/-- **So the Weyl index collapses out of her sandwich**, the gap operator not depending on it. -/
+theorem sum_aliceChainOp_sandwich (W : Bas) (u : Point F m)
+    (g : LowIndDegPoly (F := F) (m := m) (d := d)) :
+    (∑ h : Anc F m, (1 - M.aliceHat W u (g.eval u))ᴴ * M.aliceChainOp W (g, h)
+        * (1 - M.aliceHat W u (g.eval u)))
+      = (1 - M.aliceHat W u (g.eval u))ᴴ * aOp (((polyMarg M.SA W).mats g).val)
+        * (1 - M.aliceHat W u (g.eval u)) := by
+  rw [← Finset.sum_mul, ← Finset.mul_sum, M.sum_aliceChainOp W g]
+
+/-- **The far party's factor of the chain's sandwich**: a projector on `B B'` times a Weyl
+outcome on `B''`. -/
+theorem bobHat_conj_bobWeyl (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val))
+    (W : Bas) (u : Point F m) (c : F) (h : Anc F m) :
+    (M.bobHat W u c)ᴴ * M.bobWeyl W h * M.bobHat W u c
+      = (aOp (hatMats MB W u c) : Matrix ((dB × Anc F m) × M.Eb) _ ℂ)
+        ⊗ₖ proj (weylOf W) h := by
+  have hsa : ((aOp (hatMats MB W u c) : Matrix ((dB × Anc F m) × M.Eb) _ ℂ))ᴴ
+      = aOp (hatMats MB W u c) := by
+    rw [aOp, Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one,
+      SimulPair.hatMats_conjTranspose]
+  have hid : (aOp (hatMats MB W u c) : Matrix ((dB × Anc F m) × M.Eb) _ ℂ)
+      * aOp (hatMats MB W u c) = aOp (hatMats MB W u c) := by
+    rw [← aOp_mul, (isPVM_hatMats hprojB W u).idem]
+  show ((aOp (hatMats MB W u c) : Matrix ((dB × Anc F m) × M.Eb) _ ℂ) ⊗ₖ 1)ᴴ
+      * (1 ⊗ₖ proj (weylOf W) h) * (aOp (hatMats MB W u c) ⊗ₖ 1) = _
+  rw [Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one, hsa,
+    ← Matrix.mul_kronecker_mul, ← Matrix.mul_kronecker_mul, Matrix.mul_one, Matrix.one_mul,
+    Matrix.mul_one, hid]
+
+/-- It is a projective family in the pair `(g, h)`, by the lemma that says the first cut's is. -/
+theorem isPVM_aliceChainOp (W : Bas) : IsPVM (M.aliceChainOp W) := isPVM_chainOp M.toFirst W
+
+/-- **Alice's sandwich is positive semidefinite**, being a projector conjugated. -/
+theorem posSemidef_aliceSand (W : Bas) (u : Point F m)
+    (t : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) :
+    ((1 - M.aliceHat W u (t.1.eval u))ᴴ * M.aliceChainOp W t
+      * (1 - M.aliceHat W u (t.1.eval u))).PosSemidef :=
+  Matrix.PosSemidef.conjTranspose_mul_mul_same ((M.isPVM_aliceChainOp W).posSemidef t) _
+
+/-- **Display `eq:qld-pulling-8`: dropping the far party.** Summed over Bob's Weyl outcome, his
+factor is a projector times a projective measurement, so at most the identity. -/
+theorem sum_bornProb_chainW_drop_le (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val))
+    (W : Bas) (u : Point F m)
+    (t : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) :
+    (∑ h' : Anc F m, bornProb M.physVec
+        ((1 - M.aliceHat W u (t.1.eval u))ᴴ * M.aliceChainOp W t
+          * (1 - M.aliceHat W u (t.1.eval u)))
+        ((M.bobHat W u (t.1.eval u + dotF t.2 (indVec u) + dotF h' (indVec u)))ᴴ
+          * M.bobWeyl W h'
+          * M.bobHat W u (t.1.eval u + dotF t.2 (indVec u) + dotF h' (indVec u))))
+      ≤ bornProb M.physVec ((1 - M.aliceHat W u (t.1.eval u))ᴴ * M.aliceChainOp W t
+          * (1 - M.aliceHat W u (t.1.eval u))) 1 := by
+  rw [Finset.sum_congr rfl fun h' (_ : h' ∈ univ) => by
+    rw [M.bobHat_conj_bobWeyl hprojB W u _ h']]
+  exact sum_bornProb_kron_le M.physVec (M.posSemidef_aliceSand W u t)
+    (fun h' => by
+      rw [aOp, Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one,
+        SimulPair.hatMats_conjTranspose])
+    (fun h' => by rw [← aOp_mul, (isPVM_hatMats hprojB W u).idem])
+    (isPVM_proj (isWeylFamily_weylOf W))
+
+/-- **The bridge from the physical state back to `Phi`.** An operator that is Alice's alone, and
+the identity on the half of the appended pair she holds, sees the state `lem:qld-simultaneous`
+already describes. The identity is spelled out as a fourfold tensor product because the
+intermediate `mVec` carries Bob's padding under `toFirst`'s name for it, and rewriting inside
+that application is not type-correct. -/
+theorem bornProb_physVec_aOp_kron
+    (Z : Matrix ((dA × Anc F m) × M.Ea) ((dA × Anc F m) × M.Ea) ℂ) :
+    bornProb M.physVec (aOp Z)
+        ((((1 : Matrix dB dB ℂ) ⊗ₖ (1 : Matrix (Anc F m) (Anc F m) ℂ))
+          ⊗ₖ (1 : Matrix M.Eb M.Eb ℂ)) ⊗ₖ (1 : Matrix (Anc F m) (Anc F m) ℂ))
+      = bornProb M.Φ Z 1 := by
+  have h1 := M.bornProb_physVec (aOp Z) (1 : Matrix dB dB ℂ) (1 : Matrix M.Eb M.Eb ℂ)
+  have h2 := bornProb_regroupVec M.Φ Z (1 : Matrix dB dB ℂ) (1 : Matrix (Anc F m) (Anc F m) ℂ)
+  rw [show (aOp ((1 : Matrix dB dB ℂ) ⊗ₖ (1 : Matrix (Anc F m) (Anc F m) ℂ))
+      : Matrix ((dB × Anc F m) × M.Eb) _ ℂ) = 1 from by
+    rw [Matrix.one_kronecker_one, aOp_one]] at h2
+  exact h1.trans h2
+
+/-- The same, with the identity collapsed. -/
+theorem bornProb_physVec_aOp
+    (Z : Matrix ((dA × Anc F m) × M.Ea) ((dA × Anc F m) × M.Ea) ℂ) :
+    bornProb M.physVec (aOp Z) 1 = bornProb M.Φ Z 1 := by
+  have e : ((((1 : Matrix dB dB ℂ) ⊗ₖ (1 : Matrix (Anc F m) (Anc F m) ℂ))
+      ⊗ₖ (1 : Matrix M.Eb M.Eb ℂ)) ⊗ₖ (1 : Matrix (Anc F m) (Anc F m) ℂ)) = 1 := by
+    rw [Matrix.one_kronecker_one, Matrix.one_kronecker_one, Matrix.one_kronecker_one]
+  rw [← e]
+  exact M.bornProb_physVec_aOp_kron Z
+
+set_option maxHeartbeats 1000000 in
+/-- **Displays `eq:qld-pulling-5` to `-8`.** The chain's terms on the physical cut, grouped by the
+measurement outcome: projectivity turns each group into a sum of sandwiches, Bob's factor is a
+projector times a Weyl outcome and so sums away, and Alice's Weyl outcome sums out of hers,
+leaving the pair-measurement marginal against the complement of her own point measurement. -/
+theorem sum_snorm_sq_chainP_le (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val))
+    (W : Bas) (v : Anc F m) (u : Point F m) :
+    ∑ a : F, snorm M.physVec
+        (∑ t ∈ univ.filter fun t : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) × Anc F m
+            => dotF (chainLabel t.1.1 t.1.2) v = a,
+          M.chainP W t * M.chainW W u t) ^ 2
+      ≤ ∑ g : LowIndDegPoly (F := F) (m := m) (d := d), snorm M.Φ
+          (aOp (((polyMarg M.SA W).mats g).val
+            * (1 - (aOp (hatMats MA W u (g.eval u)) : Matrix ((dA × Anc F m) × M.Ea) _ ℂ))))
+          ^ 2 := by
+  classical
+  refine sum_snorm_sq_fiber_sandwich_le M.physVec (M.isPVM_chainP W) (M.chainW W u)
+    (fun t => dotF (chainLabel t.1.1 t.1.2) v) ?_
+  rw [Finset.sum_congr rfl fun t (_ : t ∈ univ) => by
+    rw [show M.chainP W t = aOp (M.aliceChainOp W t.1) * bOp (M.bobWeyl W t.2) from rfl,
+      M.chainW_sandwich W u t, ← bornProb_eq_qform], Fintype.sum_prod_type]
+  refine le_trans (Finset.sum_le_sum fun t1 (_ : t1 ∈ univ) =>
+    M.sum_bornProb_chainW_drop_le hprojB W u t1) ?_
+  rw [Fintype.sum_prod_type]
+  refine Finset.sum_le_sum fun g _ => le_of_eq ?_
+  have hexp : (1 - M.aliceHat W u (g.eval u))ᴴ * aOp (((polyMarg M.SA W).mats g).val)
+        * (1 - M.aliceHat W u (g.eval u))
+      = aOp ((1 - (aOp (hatMats MA W u (g.eval u)) : Matrix ((dA × Anc F m) × M.Ea) _ ℂ))ᴴ
+          * ((polyMarg M.SA W).mats g).val
+          * (1 - (aOp (hatMats MA W u (g.eval u)) : Matrix ((dA × Anc F m) × M.Ea) _ ℂ))) := by
+    rw [aliceHat, ← aOp_one, ← aOp_sub, aOp_conjTranspose, ← aOp_mul, ← aOp_mul]
+  rw [← bornProb_sum_left, M.sum_aliceChainOp_sandwich W u g, hexp, M.bornProb_physVec_aOp,
+    snorm_sq_eq_qform, bornProb_eq_qform, bOp_one, Matrix.mul_one, aOp_conjTranspose, ← aOp_mul]
+  congr 1
+  rw [Matrix.conjTranspose_mul]
+  simp only [Matrix.mul_assoc]
+  rw [← Matrix.mul_assoc (((polyMarg M.SA W).mats g).val)ᴴ,
+    (isPVM_polyMarg M.SA_proj W).isSelfAdjoint g, (isPVM_polyMarg M.SA_proj W).idem g]
+
+set_option maxHeartbeats 1000000 in
+/-- **Display `eq:qld-pulling-9`**: the chain's step from `eq:qld-pulling-5` to
+`eq:qld-pulling-7` costs item 2 of `lem:qld-helper` and nothing more. -/
+theorem sum_uniform_snorm_sq_chainP_le {hm : m ∣ Fintype.card F} {ε : ℝ}
+    (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) (v : Anc F m) :
+    ∑ u, uniform (Point F m) u * ∑ a : F, snorm M.physVec
+        (∑ t ∈ univ.filter fun t : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) × Anc F m
+            => dotF (chainLabel t.1.1 t.1.2) v = a,
+          M.chainP W t * M.chainW W u t) ^ 2
+      ≤ 4 * δ + 2 * (172 * ε) := by
+  refine le_trans (Finset.sum_le_sum fun u (_ : u ∈ univ) =>
+    mul_le_mul_of_nonneg_left (M.sum_snorm_sq_chainP_le hprojB W v u)
+      (uniform_nonneg (Point F m) u)) ?_
+  exact M.toFirst.sum_snorm_sq_polyMarg_one_sub_le (hm := hm) hψ hfail hprojB W
+
 end MirrorSimul
 
 end Physical
