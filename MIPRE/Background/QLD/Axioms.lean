@@ -13,6 +13,17 @@ import MIPRE.Background.QLD.PaddedLines
 import MIPRE.Background.QLD.Legalize
 import MIPRE.Background.QLD.PaddedValue
 import MIPRE.Background.QLD.PaddedLIDT
+import MIPRE.Background.QLD.CLTransport
+import MIPRE.Background.Introspection.HonestPauliLowDegree
+import MIPRE.Background.Introspection.HonestPauliEdges
+import MIPRE.Background.Introspection.HonestPauliGame
+import MIPRE.Background.Introspection.CompleteGame
+import MIPRE.Background.Introspection.BinaryGame
+import MIPRE.Background.Introspection.BinaryPadding
+import MIPRE.Background.Introspection.PauliRestriction
+import MIPRE.Background.QLD.LineRepresentative
+import MIPRE.Background.QLD.CLExplicitSeed
+import MIPRE.Background.QLD.SeededLinePrograms
 import MIPRE.Foundations.GuardSorryFree
 
 /-!
@@ -1028,3 +1039,97 @@ padded state in `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
   MIPRE.QLD.sum_uniform_setAB, MIPRE.QLD.sum_ab_snorm_sq_ordComb_le_of_good,
   MIPRE.QLD.sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB, MIPRE.QLD.sum_bad_linear_mass_le,
   MIPRE.QLD.GlobalPair.sum_bad_linear_mass_A_le, MIPRE.QLD.GlobalPair.sum_bad_linear_mass_B_le
+
+/-! ## Actual Pauli CL sampler content and honest measurements -/
+
+#guard_sorry_free MIPRE.QLD.PauliCL.presentation_exactlyOn,
+  MIPRE.QLD.PauliCL.questionOfVector_presentation,
+  MIPRE.QLD.PauliCL.presentation_pauli_eval,
+  MIPRE.QLD.PauliCL.qldGame_mu_presentation,
+  MIPRE.QLD.PauliCL.binaryPresentation_exactlyOn,
+  MIPRE.QLD.PauliCL.binaryPresentation_pauli_eval,
+  MIPRE.QLD.PauliCL.qldGame_mu_binaryPresentation,
+  MIPRE.QLD.PauliCL.questionOfVector_canonical,
+  MIPRE.QLD.PauliCL.encode_decode_eval,
+  MIPRE.QLD.PauliCL.pullbackStrategy_value,
+  MIPRE.QLD.PauliCL.pullbackStrategy_pauli_A,
+  MIPRE.QLD.PauliCL.pullbackStrategy_pauli_B
+
+#guard_sorry_free MIPRE.QLD.Honest.probe_observable,
+  MIPRE.QLD.Honest.probe_phase,
+  MIPRE.QLD.Honest.answerOp_isPVM,
+  MIPRE.QLD.Honest.answerOp_format_zero,
+  MIPRE.QLD.Honest.answerOp_pauli,
+  MIPRE.QLD.Honest.pvm_fibre_commute,
+  MIPRE.QLD.Honest.pvm_fibre_reject,
+  MIPRE.QLD.Honest.answerOp_aline_point_commute,
+  MIPRE.QLD.Honest.answerOp_dline_point_commute,
+  MIPRE.QLD.Honest.answerOp_pauli_point_commute,
+  MIPRE.QLD.Honest.answerOp_aline_point_reject,
+  MIPRE.QLD.Honest.answerOp_dline_point_reject,
+  MIPRE.QLD.Honest.answerOp_pauli_point_reject,
+  MIPRE.QLD.Honest.answerOp_point_pairB_commute,
+  MIPRE.QLD.Honest.answerOp_point_pairB_reject,
+  MIPRE.QLD.Honest.answerOp_point_var_commute,
+  MIPRE.QLD.Honest.answerOp_point_var_reject,
+  MIPRE.QLD.Honest.answerOp_con_var_commute,
+  MIPRE.QLD.Honest.answerOp_con_var_reject,
+  MIPRE.QLD.Honest.answerOp_pairB_pair_commute,
+  MIPRE.QLD.Honest.answerOp_pairB_pair_reject
+
+#guard_sorry_free MIPRE.QLD.Honest.qldGame_positive_content,
+  MIPRE.QLD.Honest.answerOp_commute,
+  MIPRE.QLD.Honest.answerOp_reject,
+  MIPRE.QLD.Honest.strategy_isPCC,
+  MIPRE.QLD.Honest.strategy_value,
+  MIPRE.QLD.Honest.exists_perfectPCC
+
+#print axioms MIPRE.QLD.Honest.exists_perfectPCC
+#print axioms MIPRE.QLD.PauliCL.pullbackStrategy_value
+
+#guard_sorry_free MIPRE.QLD.PauliCL.coordNumbering_point_X,
+  MIPRE.QLD.PauliCL.coordNumbering_point_Z,
+  MIPRE.QLD.PauliCL.coordNumbering_seed,
+  MIPRE.QLD.PauliCL.coordNumbering_direction,
+  MIPRE.QLD.PauliCL.coordNumbering_scalar_X,
+  MIPRE.QLD.PauliCL.coordNumbering_scalar_Z,
+  MIPRE.QLD.PauliCL.binaryCoordEquiv_val,
+  MIPRE.QLD.PauliCL.binaryVectorEquiv_apply,
+  MIPRE.QLD.PauliCL.representative_eq_canonLin,
+  MIPRE.QLD.PauliCL.lineRepresentativeProg_canonLin
+
+#guard_sorry_free MIPRE.Introspection.Complete.pauliOp_X,
+  MIPRE.Introspection.Complete.pauliOp_Z,
+  MIPRE.Introspection.Complete.sampleOp_commute,
+  MIPRE.Introspection.Complete.sampleOp_reject,
+  MIPRE.Introspection.Complete.strategy_isPCC,
+  MIPRE.Introspection.Complete.strategy_value,
+  MIPRE.Introspection.Complete.exists_perfectPCC,
+  MIPRE.Introspection.BinaryComplete.pauliOp_X,
+  MIPRE.Introspection.BinaryComplete.pauliOp_Z,
+  MIPRE.Introspection.BinaryComplete.strategy_isPCC,
+  MIPRE.Introspection.BinaryComplete.strategy_value,
+  MIPRE.Introspection.BinaryComplete.exists_perfectPCC
+
+#print axioms MIPRE.Introspection.BinaryComplete.exists_perfectPCC
+
+#guard_sorry_free MIPRE.Introspection.PauliRestriction.strategy_state,
+  MIPRE.Introspection.PauliRestriction.strategy_failure_le,
+  MIPRE.Introspection.PauliRestriction.strategy_pauliAns_A,
+  MIPRE.Introspection.PauliRestriction.strategy_pauliAns_B
+
+#print axioms MIPRE.Introspection.PauliRestriction.strategy_failure_le
+
+#guard_sorry_free MIPRE.QLD.PauliCL.ExplicitSeed.presentation_exactlyOn,
+  MIPRE.QLD.PauliCL.ExplicitSeed.binaryPresentation_exactlyOn,
+  MIPRE.QLD.PauliCL.ExplicitSeed.decode_presentation,
+  MIPRE.QLD.PauliCL.ExplicitSeed.chi_seedPermutation,
+  MIPRE.QLD.PauliCL.ExplicitSeed.qldGame_mu_selector_binary
+
+#guard_sorry_free MIPRE.QLD.PauliCL.axisRepresentativeProg_legacy,
+  MIPRE.QLD.PauliCL.diagonalRepresentativeProg_legacy
+
+#guard_sorry_free MIPRE.Introspection.BinaryComplete.paddingEmbedding_number,
+  MIPRE.Introspection.BinaryComplete.card_seed,
+  MIPRE.Introspection.BinaryComplete.exists_padded_perfectPCC,
+  MIPRE.Introspection.BinaryComplete.exists_depthPadded_perfectPCC

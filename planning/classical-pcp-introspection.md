@@ -970,3 +970,158 @@ malformed-answer accounting, successor construction, and the inverse-threshold
 arithmetic. No new axiom, admitted proof, or contract assuming the missing
 induction conclusions has been added. Full repository CI and the matching
 headline guards provide the validation workflow for this continuation.
+
+### Both-player soundness assembly and honest Pauli construction, 2026-09-21
+
+This continuation supersedes items 1 and 2 of the preceding remaining-work
+list. Both actual terminal measurements, ordinary-answer extraction, and the
+complete finite-game quantitative soundness argument are now constructed.
+The companion paper was consulted at `a459dee`, especially the two-block
+induction, terminal extraction, and Pauli completeness construction. Local
+Linux Lean checking is working again with the current prebuilt repository
+cache; the new modules and headline axiom guards are checked before CI.
+
+`AdaptivePlayerSwap` exchanges the actual parsed game while explicitly
+transposing its Pauli predicate. `AdaptiveBobIteration` obtains the concrete
+Bob construction and proves the unchanged primitive-error identities needed
+after Alice's block. `AdaptiveTwoSidedIteration` runs Alice at role false and
+Bob at role true, with explicit product ancillas on both sides and a single
+failure recurrence at `2*ell`. Bob's block retains Alice's terminal measurement
+literally. No symmetry of the arbitrary Pauli decision predicate is assumed.
+
+`TerminalOptionExtraction` constructs an original-game strategy directly from
+the two terminal prefix invariants. It maps the auxiliary `none` outcome to a
+fixed ordinary answer; this preserves projectivity and cannot lower accepted
+valid mass. The only terminal conditioning loss is the actual ordered-edge
+count. Neither malformed mass nor a future measurement form is assumed away.
+
+`AdaptivePowerBudget` bounds the full recurrence by an explicit coefficient
+times an iterated root and handles errors outside the admissible regime with
+the same coefficient. `PrimitivePauliTransfer` derives Alice's Z estimate from
+the actual tested Pauli loop and Bob's primitive estimate, including malformed
+outcomes. `PrimitiveSoundness.quantumValue_ge_of_primitive_pauli` (in namespace
+`MIPRE.Introspection.TypedEstimates`) composes full hiding rigidity, both actual
+iterations and terminal extraction. Its inputs are actual parsed-game failure,
+projectivity, exact source-register coverage, and only the primitive Alice-X
+and Bob-Z estimates on the ideal register state. For a common bound `t >= 0`,
+the original quantum value is at least `1 - C * iteratedRoot (6*ell) t`.
+The coefficient depends only on depth and graph size. A checked corollary and
+uniform-constants lemma give the paper's two-term error profile.
+
+`PVMStateTransfer` transfers the full summed squared difference of two PVMs
+to a nearby state with error `2*delta + 8*eta`. It uses projective normalization
+before estimating, so the bound has no outcome-cardinality factor.
+`ExtractedStateSoundness.quantumValue_ge_of_extracted_state` (also in the
+`TypedEstimates` namespace) uses this and game-value stability to start from
+the actual approximately extracted state. With the state distance squared,
+game failure and both primitive errors bounded by `t`, its unconditional loss
+is `20*C * iteratedRoot (6*ell+1) t`. Both small and large errors are covered.
+Independent review checked the constants, orientations, terminal answer
+completion, and preservation of the completed first-player invariant.
+
+`HonestMagicSquare` and `HonestMagicSquareGame` construct the extension of any
+anticommuting self-adjoint pair with one extra qubit. The concrete variable
+and constraint measurements preserve the original binary measurements at
+cells zero and four. All rejected incidence/parity products vanish, and the
+actual doubled Magic Square game has a perfect PCC strategy. This construction
+does not use the old sorried generic LCS game-value bridge.
+
+The remaining external extraction boundary is precise. The paper's QLD
+conclusion gives local isometries, an unsquared state-distance bound, and
+valid-outcome measurement estimates on the ideal EPR-plus-auxiliary state.
+`IsometricStrategy` now constructs the transported PVMs on the entire target
+space, preserving the original game value exactly on the embedded state.
+`IsometricCompletionError` bounds their image-complement mass on the ideal
+state and proves compatibility with every answer map. `IsometricSoundness`
+assembles this into the actual finite-game conclusion.
+
+`ValidOutcomeError` removes the remaining malformed-answer premise. A positive
+submeasurement with valid-answer error `delta` has missing mass at most
+`2*sqrt(delta)`; extending it inside the identity gives full mapped error at
+most `2*delta + 4*sqrt(delta)`, without an answer-cardinality factor.
+`ValidPauliSoundness.quantumValue_ge_of_valid_isometric_images` consumes exactly
+an unsquared state distance and valid raw Alice-X/Bob-Z image estimates on the
+ideal state. Its final bound is `1 - 6*C_extracted*iteratedRoot (6*ell+2) t`.
+All malformed raw constructors and the image complement are included in the
+proof. This is an adapter for supplied extraction data; existence of those
+data, the actual `thm:qld`, and the binary-Pauli corollary remain separate.
+
+The complete honest Pauli game is now constructed in
+`Background/Introspection/HonestPauli{Observables,Measurements,Coarse,LowDegree,Edges,Game}`.
+Every actual graph edge is checked, including reverse edges, loops, malformed
+answers, and zero line direction. `exists_perfectPCC` supplies the actual
+26-type game's perfect PCC strategy with dimension twice the field-register
+cardinality. `Complete{Measurements,Anchors,Sampled,Game}` composes this with the
+honest auxiliary strategy, using the actual parsed predicate and a common
+sampled content witness. `Binary{Measurements,Anchors,Sampled,Game}` conjugates
+the quantum register through a self-dual basis, so the source CL maps may be
+arbitrary binary CL maps. Binary linearity is never mistaken for linearity over
+the larger field. The resulting dimension is `2*2^(2^m*t)*D`.
+
+`SourcePadding` and `BinaryPadding` extend arbitrary source registers
+`Fin s` into the explicitly numbered `2^m*t` qubit coordinates. For positive
+depth, a direct sum with a zero map consumes unused coordinates without
+changing the depth or source evaluation. The actual full typed game then
+has a perfect PCC strategy of dimension `2^(2^m*t+1)*D`.
+`SourcePaddingValue` restricts every padded tensor strategy back to the
+original game with exactly the same state and value. In particular,
+`quantumValue_depthFamily_le` completes the return from the padded source
+value in soundness. No perfectness or PCC premise is needed for this return.
+
+`Background/QLD/CL{Presentation,Binary,Transport}` supplies the actual 26-type
+three-level CL family, its complete coordinate partition, the exact existing
+QLD question law, and strategy pullback with unchanged state, dimensions,
+value, and distinguished Pauli measurements. Its binary numbering explicitly
+orders point-X, point-Z, seed, direction, scale-X, scale-Z, and then the basis
+bits. It no longer uses an arbitrary finite enumeration for these coordinates.
+The actual `PauliRestriction` constructs a strategy for the existing QLD game
+from any full parsed-game strategy. It preserves the state and dimensions and
+bounds QLD failure by the full ordered-edge count times the original failure.
+Malformed outer constructors are assigned a scalar answer, so every valid
+full-Pauli answer operator is exactly the original raw operator on both
+parties. Future QLD extraction estimates therefore feed the valid-answer
+soundness interface without a hidden zero-malformed-mass premise.
+
+`LineRepresentativeProg` is a uniform total program computing canonical line
+representatives using the proved Shoup arithmetic. Its correctness includes
+zero directions and its runtime is bounded by one polynomial in field width
+plus vector length. The `Background/QLD/LineRepresentative` bridge identifies
+its result with the actual `CL.canonLin` used by the sampler.
+
+`SeedSelectorProg` gives an explicit canonical-bit field enumeration and a
+uniform balanced dyadic selector. `CLExplicitSeed` uses a proved seed/content
+permutation to identify its field and binary CL question laws with the actual
+existing QLD law; no selector-correspondence premise remains in the instantiated
+theorem. `SeededLineProg` and `SeededLinePrograms` compose that selector with
+actual axis erasure, direction truncation, and canonical diagonal-line programs.
+They compute the legacy QLD maps after the same seed permutation and halt in
+polynomial time on all raw inputs.
+
+Independent integration review identified the following remaining concrete
+interfaces. These are not silently assumed by any completed theorem:
+
+1. `BinaryGame` and Pauli restriction use the legacy CL presentation.
+   `CLExplicitSeed` has a new presentation and decoder with a proved QLD law;
+   the corresponding full typed-game strategy transport must still be supplied.
+2. The executable field programs consume `BinField.toBits`, while the binary
+   CL family uses `b.repr`. A self-dual quantum basis need not equal the
+   computational field basis; the executable assembly needs the proved basis
+   conversion, or explicit separation of these two bases.
+3. Same-depth exact padding consumes unused coordinates with a zero component
+   in the first factor. It preserves evaluation but changes factor and dual
+   data. Honest Read/Hide dual answers can be nonzero outside the original
+   source register. The auxiliary executable checks must implement this full
+   register variant or provide a separate format/coarsening bridge before
+   reusing the strict original-subspace parser guards. Cross-Introspect outputs
+   still have zero unused coordinates, so source unpadding remains compatible.
+4. The all-type marginal/map/factor router, binary block I/O, total decider
+   dispatch, `TypedSampler` assembly, parameter selection and single uniform
+   verifier budget remain to be composed with these checked programs.
+
+The uniform executable verifier, all remaining dispatch branches and their
+single universal budget, the actual QLD extraction theorem, and the final
+finite-game/verifier connection still have to be assembled into `Introspection 7`.
+The compiler contract and
+`thm:introspection` remain unmarked until an actual inhabitant is constructed.
+No new axiom, admitted proof, or assumption of a missing induction conclusion
+has been added.

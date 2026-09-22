@@ -52,12 +52,26 @@ An explicit positive threshold discharges smallness throughout the finite
 Alice iteration, with concrete auxiliary spaces and accumulated failure bounds.
 At the terminal level, exact register coverage gives conditional question
 readouts tensored with projective auxiliary measurements on the full option
-alphabet. Remaining soundness work is to construct and compose Bob's iteration,
-derive the paper's power error profile, and complete extraction while retaining
-the malformed-answer accounting.
-The full `Introspection 7` still requires the remaining verifier branches and
-uniform budget bound, the complete honest 26-type Pauli strategy, and the
-QLD extraction interface and product-strategy soundness iteration. See
+alphabet. Both actual player iterations are now composed, and ordinary-answer
+extraction completes malformed auxiliary outcomes without additional loss.
+The complete finite parsed-game soundness theorem derives all hiding estimates
+and Alice's Z estimate from just the primitive Alice-X/Bob-Z guarantees. It
+includes the full recurrence, the large-error regime, and the paper's two-term
+profile. Dimension-independent PVM state transfer also gives this conclusion
+from an approximately extracted state, with one additional square root.
+The honest arbitrary-pair Magic Square extension and its actual perfect PCC
+strategy are constructed without the old sorried generic LCS value bridge.
+The full 26-type Pauli strategy and its composition with all auxiliary
+introspection types now give an actual perfect PCC strategy, including for
+arbitrary binary CL source functions after self-dual register transport.
+Local-isometry transport, image-complement completion, and valid-answer
+error extension now connect the paper's unsquared-distance extraction
+interface to finite-game soundness. No malformed-mass assumption is needed.
+The concrete Pauli CL family has exact question-law and strategy transport,
+explicit binary block numbering, and a checked uniform canonical-line program.
+The full `Introspection 7` still requires the actual QLD extraction theorem,
+the remaining executable verifier branches and uniform budget bound, and the
+final connection of finite games to the verifier contract. See
 [classical-pcp-introspection.md](classical-pcp-introspection.md) for the checked
 scope and remaining obligations. Neither a completed QLD theorem nor the new
 component proofs by themselves inhabit introspection or answer reduction.
