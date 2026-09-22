@@ -4145,7 +4145,21 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.SimulPair.chainS_two_sub_three,
   MIPRE.QLD.SimulPair.sum_uniform_snorm_sq_chainS_zero_one,
   MIPRE.QLD.SimulPair.sum_snorm_sq_chainS_one_two,
-  MIPRE.QLD.SimulPair.sum_snorm_sq_chainS_two_three}
+  MIPRE.QLD.SimulPair.sum_snorm_sq_chainS_two_three, MIPRE.QLD.mulVec_comp_equiv,
+  MIPRE.QLD.sum_chainLabel_filter, MIPRE.QLD.SimulPair.ancA, MIPRE.QLD.SimulPair.ancB,
+  MIPRE.QLD.SimulPair.ancProj_mulVec_mVec, MIPRE.QLD.SimulPair.hatA,
+  MIPRE.QLD.SimulPair.ptA_mul_ancA, MIPRE.QLD.SimulPair.ancB_ptA_mulVec,
+  MIPRE.QLD.SimulPair.chainS3b, MIPRE.QLD.SimulPair.chainOp_eq_mul,
+  MIPRE.QLD.SimulPair.chainS_three_mulVec, MIPRE.QLD.epr_proj_pair_mulVec,
+  MIPRE.QLD.kron_mulVec_one, MIPRE.QLD.MirrorSimul.physLift_aOp,
+  MIPRE.QLD.MirrorSimul.physLift_bOp_aOp, MIPRE.QLD.MirrorSimul.reindex_bobWeyl,
+  MIPRE.QLD.MirrorSimul.bobPairProj_mulVec, MIPRE.QLD.MirrorSimul.physLift_sum,
+  MIPRE.QLD.MirrorSimul.bobPt, MIPRE.QLD.MirrorSimul.bobAnc,
+  MIPRE.QLD.MirrorSimul.bobPairProj_eq_mul, MIPRE.QLD.MirrorSimul.bobPt_mul_bobAnc,
+  MIPRE.QLD.MirrorSimul.bobPt_mul_bobPairProj, MIPRE.QLD.MirrorSimul.bobHat_mul_bobWeyl,
+  MIPRE.QLD.MirrorSimul.physLift_mulVec, MIPRE.QLD.MirrorSimul.physLift_mulVec_congr,
+  MIPRE.QLD.MirrorSimul.chainU3b, MIPRE.QLD.MirrorSimul.chainU3b_eq,
+  MIPRE.QLD.MirrorSimul.physLift_chainU3b, MIPRE.QLD.MirrorSimul.physLift_chainU3b_mulVec}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4625,10 +4639,39 @@ lemmas after it are those displays read as bounds on \emph{consecutive} deviatio
 verbatim; the middle one is free, \texttt{eq:qld-pulling-2} and \texttt{-2b} being identities
 (\texttt{chainS\_one\_eq\_two}).
 
-\emph{Not formalized}: the remaining seven steps of the chaining --- \texttt{eq:qld-pulling-3a}
-onward, which are where the transport to the physical cut happens --- and
-Lemma~\ref{lem:qld-povm-to-obs} at the very end.
-\texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
+\emph{And the chain's four free steps, which are one step.} Displays \texttt{eq:qld-pulling-3a},
+\texttt{-3b}, \texttt{-4} and \texttt{-5} are all ``$\approx_0$'' or identities, so the chain pays
+nothing between \texttt{-3} and \texttt{-5} and there is no reason to name the three terms
+between them: \texttt{MirrorSimul.physLift\_chainU3b\_mulVec} is the whole stretch at once.
+
+What runs through all four is one fact about a maximally entangled pair, used on each of the
+two pairs in turn: \emph{the projector on one half is the projector on the other, on the state.}
+\texttt{SimulPair.ancProj\_mulVec\_mVec} is that for the pair $\alice'\alice''$, read on the cut
+$\Phi$ lives on rather than on $\Phi$ itself --- which is what \texttt{mulVec\_comp\_equiv} is
+for, the regrouping carrying \texttt{mulVec} the way \texttt{qform\_comp\_equiv} carries the
+quadratic form --- and \texttt{MirrorSimul.bobPairProj\_mulVec} is the same for the appended pair
+$\bob'\bob''$, which the physical grouping gives to Bob entire.
+
+Given that, both halves of the step are the same two lines. Insert the projector on the half
+the chain does not carry; it commutes with everything between it and the state, so it may be
+moved next to the one the chain does carry, where it is absorbed; and now the point measurement
+beside it is the \emph{hatted} point measurement cut down by that projector
+(\texttt{hatMats\_mul\_proj}, which is \texttt{eq:qld-pulling-3b} and was already in the tree).
+\texttt{SimulPair.ancB\_ptA\_mulVec} is Alice's half and
+\texttt{MirrorSimul.bobPt\_mul\_bobPairProj} is Bob's. The asymmetry between the two --- Alice's
+is an identity \emph{on the state} and Bob's an identity \emph{of operators} --- is only that
+Bob's matched pair is already there, \texttt{eq:qld-pulling-4} having put it there.
+
+\texttt{MirrorSimul.physLift\_mulVec\_congr} is what carries the first of the two across:
+\texttt{eq:qld-pulling-3a} and \texttt{-3b} are local in the first cut's grouping, and an
+identity on that cut's state lifts to one on the physical state because the lift acts on the
+appended pair as the identity.
+
+\emph{Not formalized}: the chaining's remaining five steps --- \texttt{eq:qld-pulling-7},
+\texttt{-9a}, \texttt{-10}, \texttt{-11} and \texttt{-12} read as consecutive deviations, every
+one of which is a display already in the tree --- and Lemma~\ref{lem:qld-povm-to-obs} at the very
+end. \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this
+node.
 
 \effortHard
 

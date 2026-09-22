@@ -107,6 +107,37 @@ theorem dotF_chainLabel_eq_iff (g : LowIndDegPoly (F := F) (m := m) (d := d)) (h
   · rw [← hx, ← add_assoc, add_self, zero_add]
   · rw [hx, ← add_assoc, add_self, zero_add]
 
+/-! ## A reindexing, and the label filters
+
+Two facts the assembly needs: a reindexing of the whole space carries `mulVec` the way
+`qform_comp_equiv` carries the quadratic form, and the chain's label filters are products, the
+label reading only the first pair. -/
+
+/-- **A reindexing carries `mulVec` the way it carries the quadratic form.** -/
+theorem mulVec_comp_equiv {N N' : Type*} [Fintype N] [Fintype N'] [DecidableEq N] [DecidableEq N']
+    (e : N ≃ N') (v : N → ℂ) (A : Matrix N N ℂ) :
+    (Matrix.reindex e e A) *ᵥ (v ∘ e.symm) = (A *ᵥ v) ∘ e.symm := by
+  rw [Matrix.reindex_apply, Matrix.submatrix_mulVec_equiv, Equiv.symm_symm,
+    Function.comp_assoc, Equiv.symm_comp_self, Function.comp_id]
+
+omit [Algebra (ZMod 2) F] [NeZero m] in
+/-- **The chain's three- and four-index label filters are products**, the label reading only the
+first pair. -/
+theorem sum_chainLabel_filter {ι : Type*} [Fintype ι] [DecidableEq ι] {A : Type*}
+    [AddCommMonoid A] (v : Anc F m) (a : F)
+    (f : ((LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) × ι) → A) :
+    (∑ t ∈ univ.filter fun t : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) × ι
+        => dotF (chainLabel t.1.1 t.1.2) v = a, f t)
+      = ∑ p ∈ chainIdx (F := F) (m := m) (d := d) v a, ∑ i : ι, f (p, i) := by
+  classical
+  rw [show (univ.filter fun t : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) × ι
+      => dotF (chainLabel t.1.1 t.1.2) v = a)
+      = (chainIdx (F := F) (m := m) (d := d) v a) ×ˢ (univ : Finset ι) from by
+    ext t
+    simp [chainIdx]]
+  exact Finset.sum_product _ _ f
+
+
 section Probe
 
 variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
@@ -1080,6 +1111,124 @@ theorem sum_snorm_sq_chainS_two_three {ε : ℝ} (W : Bas) (v : Anc F m) (u : Po
   rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) => by rw [P.chainS_two_sub_three W v u a]]
   exact P.sum_snorm_sq_insert_chain W v u hprojB hcons
 
+/-- Alice's half of the first pair, on her register of the cut `mVec` reads. -/
+def ancA (W : Bas) (h : Anc F m) :
+    Matrix (((dA × Anc F m) × P.EA) × Anc F m) (((dA × Anc F m) × P.EA) × Anc F m) ℂ :=
+  aOp (aOp ((1 : Matrix dA dA ℂ) ⊗ₖ proj (weylOf W) h))
+
+/-- The other half, which that cut also gives her. -/
+def ancB (W : Bas) (h : Anc F m) :
+    Matrix (((dA × Anc F m) × P.EA) × Anc F m) (((dA × Anc F m) × P.EA) × Anc F m) ℂ :=
+  bOp (proj (weylOf W) h)
+
+/-- **Display `eq:qld-pulling-3a` on the cut the chain runs on.** -/
+theorem ancProj_mulVec_mVec (W : Bas) (h : Anc F m) :
+    (aOp (P.ancA W h) : Matrix ((((dA × Anc F m) × P.EA) × Anc F m) × (dB × P.EB)) _ ℂ)
+        *ᵥ P.mVec
+      = (aOp (P.ancB W h)) *ᵥ P.mVec := by
+  have h1 : (MIPRE.aOp (aOp ((1 : Matrix dA dA ℂ) ⊗ₖ proj (weylOf W) h))
+        : Matrix (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB)) _ ℂ) *ᵥ P.Φ
+      = MIPRE.bOp (aOp ((1 : Matrix dB dB ℂ) ⊗ₖ proj (weylOf W) h)) *ᵥ P.Φ :=
+    congrArg WithLp.ofLp (P.stateVec_ancProj W h)
+  have e1 : Matrix.reindex (regroupEquiv (R := ((dA × Anc F m) × P.EA)) (S := dB)
+        (T := Anc F m) (E := P.EB)) regroupEquiv
+        (MIPRE.aOp (aOp ((1 : Matrix dA dA ℂ) ⊗ₖ proj (weylOf W) h)))
+      = aOp (P.ancA W h) := by
+    rw [show (MIPRE.aOp (aOp ((1 : Matrix dA dA ℂ) ⊗ₖ proj (weylOf W) h))
+        : Matrix (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB)) _ ℂ)
+        = (aOp ((1 : Matrix dA dA ℂ) ⊗ₖ proj (weylOf W) h))
+          ⊗ₖ (aOp ((1 : Matrix dB dB ℂ) ⊗ₖ (1 : Matrix (Anc F m) (Anc F m) ℂ))) from by
+      rw [Matrix.one_kronecker_one, aOp_one]
+      rfl, reindex_regroupEquiv, aOp_one]
+    rfl
+  have e2 : Matrix.reindex (regroupEquiv (R := ((dA × Anc F m) × P.EA)) (S := dB)
+        (T := Anc F m) (E := P.EB)) regroupEquiv
+        (MIPRE.bOp (aOp ((1 : Matrix dB dB ℂ) ⊗ₖ proj (weylOf W) h)))
+      = aOp (P.ancB W h) := by
+    rw [show (MIPRE.bOp (aOp ((1 : Matrix dB dB ℂ) ⊗ₖ proj (weylOf W) h))
+        : Matrix (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB)) _ ℂ)
+        = (1 : Matrix ((dA × Anc F m) × P.EA) ((dA × Anc F m) × P.EA) ℂ)
+          ⊗ₖ (aOp ((1 : Matrix dB dB ℂ) ⊗ₖ proj (weylOf W) h)) from rfl,
+      reindex_regroupEquiv, aOp_one]
+    rfl
+  rw [← e1, ← e2, mVec, regroupVec, mulVec_comp_equiv, mulVec_comp_equiv, h1]
+
+/-- **Alice's hatted point measurement**, on her register of the cut `mVec` reads. -/
+def hatA (W : Bas) (u : Point F m) (c : F) :
+    Matrix (((dA × Anc F m) × P.EA) × Anc F m) (((dA × Anc F m) × P.EA) × Anc F m) ℂ :=
+  aOp (aOp (hatMats MA W u c))
+
+/-- **Display `eq:qld-pulling-3b` on Alice's whole register.** -/
+theorem ptA_mul_ancA (W : Bas) (u : Point F m) (c : F) (h : Anc F m) :
+    P.ptA W u (c + dotF h (indVec u)) * P.ancA W h = P.hatA W u c * P.ancA W h := by
+  rw [ptA, ancA, hatA, ← aOp_mul, ← aOp_mul, ← aOp_mul, ← aOp_mul, hatMats_mul_proj]
+  congr 2
+  rw [aOp, ← Matrix.mul_kronecker_mul, Matrix.mul_one, Matrix.one_mul]
+
+/-- **Displays `eq:qld-pulling-3a` and `-3b` together.** Inserting Alice's own half of the first
+pair beside the half the chain already carries changes nothing on the state, and once it is there
+the point measurement and the hatted point measurement agree. -/
+theorem ancB_ptA_mulVec (W : Bas) (u : Point F m) (c : F) (h : Anc F m)
+    (Y : Matrix (dB × P.EB) (dB × P.EB) ℂ) :
+    (aOp (P.ancB W h * P.ptA W u (c + dotF h (indVec u))) * bOp Y) *ᵥ P.mVec
+      = (aOp (P.ancB W h * P.hatA W u c) * bOp Y) *ᵥ P.mVec := by
+  have hmove : ∀ Z : Matrix ((dA × Anc F m) × P.EA) ((dA × Anc F m) × P.EA) ℂ,
+      (aOp (P.ancB W h * aOp Z) * bOp Y
+          : Matrix ((((dA × Anc F m) × P.EA) × Anc F m) × (dB × P.EB)) _ ℂ) *ᵥ P.mVec
+        = (aOp ((aOp Z : Matrix (((dA × Anc F m) × P.EA) × Anc F m) _ ℂ) * P.ancA W h) * bOp Y)
+            *ᵥ P.mVec := by
+    intro Z
+    have hc : P.ancB W h * (aOp Z : Matrix (((dA × Anc F m) × P.EA) × Anc F m) _ ℂ)
+        = aOp Z * P.ancB W h := by
+      rw [ancB]
+      exact (aOp_mul_bOp Z (proj (weylOf W) h)).symm
+    rw [hc, aOp_mul, Matrix.mul_assoc, aOp_mul_bOp, ← Matrix.mul_assoc, ← Matrix.mulVec_mulVec,
+      ← P.ancProj_mulVec_mVec W h, Matrix.mulVec_mulVec, Matrix.mul_assoc,
+      ← aOp_mul_bOp, ← Matrix.mul_assoc, ← aOp_mul]
+  have hp : P.ptA W u (c + dotF h (indVec u))
+      = aOp (aOp (aOp (((ptAtPOVM MA W u).mats (c + dotF h (indVec u))).val))) := rfl
+  have hh : P.hatA W u c = aOp (aOp (hatMats MA W u c)) := rfl
+  rw [hp, hh, hmove, hmove, ← hp, ← hh, P.ptA_mul_ancA W u c h]
+
+/-- **Display `eq:qld-pulling-3b`'s term**: the chain's third term with Alice's own hatted point
+measurement in place of her copy of the point measurement. -/
+def chainS3b (W : Bas) (v : Anc F m) (u : Point F m) (a : F) :
+    Matrix ((((dA × Anc F m) × P.EA) × Anc F m) × (dB × P.EB))
+      ((((dA × Anc F m) × P.EA) × Anc F m) × (dB × P.EB)) ℂ :=
+  ∑ p ∈ chainIdx (F := F) (m := m) (d := d) v a,
+    (aOp (P.chainOp W p * P.hatA W u (p.1.eval u)) : Matrix _ _ ℂ)
+      * bOp (P.ptB W u (chainShift u p))
+
+/-- **The chain's summand splits into the pair measurement's marginal and the Weyl outcome.** -/
+theorem chainOp_eq_mul (W : Bas) (p : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) :
+    P.chainOp W p
+      = (aOp (((polyMarg P.SA W).mats p.1).val)
+          : Matrix (((dA × Anc F m) × P.EA) × Anc F m) _ ℂ) * P.ancB W p.2 := by
+  rw [ancB]
+  exact (aOp_mul_bOp_eq _ _).symm
+
+/-- **Displays `eq:qld-pulling-3a` and `-3b`, on the chain's third term.** -/
+theorem chainS_three_mulVec (W : Bas) (v : Anc F m) (u : Point F m) (a : F) :
+    P.chainS W v u 3 a *ᵥ P.mVec = P.chainS3b W v u a *ᵥ P.mVec := by
+  classical
+  have hterm : ∀ p : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m,
+      ((aOp (P.chainOp W p) : Matrix ((((dA × Anc F m) × P.EA) × Anc F m) × (dB × P.EB)) _ ℂ)
+          * (aOp (P.ptA W u (chainShift u p)) * bOp (P.ptB W u (chainShift u p)))) *ᵥ P.mVec
+        = ((aOp (P.chainOp W p * P.hatA W u (p.1.eval u)) : Matrix _ _ ℂ)
+            * bOp (P.ptB W u (chainShift u p))) *ᵥ P.mVec := by
+    intro p
+    rw [P.chainOp_eq_mul W p,
+      show chainShift u p = p.1.eval u + dotF p.2 (indVec u) from rfl,
+      aOp_mul, Matrix.mul_assoc,
+      ← Matrix.mul_assoc (aOp (P.ancB W p.2)), ← aOp_mul, ← Matrix.mulVec_mulVec,
+      P.ancB_ptA_mulVec W u (p.1.eval u) p.2 _, Matrix.mulVec_mulVec,
+      ← Matrix.mul_assoc, ← aOp_mul, Matrix.mul_assoc]
+  show (∑ p ∈ chainIdx (F := F) (m := m) (d := d) v a,
+      (aOp (P.chainOp W p) : Matrix _ _ ℂ)
+        * (aOp (P.ptA W u (chainShift u p)) * bOp (P.ptB W u (chainShift u p)))) *ᵥ P.mVec = _
+  rw [chainS3b, Matrix.sum_mulVec, Matrix.sum_mulVec]
+  exact Finset.sum_congr rfl fun p _ => hterm p
+
 end SimulPair
 
 end First
@@ -1111,6 +1260,22 @@ theorem sum_epr_proj_mulVec (W : Bas) :
   rw [Finset.sum_congr rfl fun h (_ : h ∈ univ) => hstep h, ← Matrix.sum_mulVec, ← aOp_sum,
     (isPVM_proj (isWeylFamily_weylOf W)).sum_eq_one, aOp_one, Matrix.one_mulVec]
 
+/-- **The matched Weyl projectors on a maximally entangled pair act as the one on the first
+half.** -/
+theorem epr_proj_pair_mulVec (W : Bas) (h : Anc F m) :
+    ((proj (weylOf W) h ⊗ₖ proj (weylOf W) h) : Matrix (Anc F m × Anc F m) _ ℂ)
+        *ᵥ (epr (F := F) (n := Fin m → Bool))
+      = (proj (weylOf W) h ⊗ₖ (1 : Matrix (Anc F m) (Anc F m) ℂ)) *ᵥ epr := by
+  have htr : (bOp (proj (weylOf W) h) : Matrix (Anc F m × Anc F m) _ ℂ)
+      *ᵥ (epr (F := F) (n := Fin m → Bool))
+        = (aOp (proj (weylOf W) h) : Matrix (Anc F m × Anc F m) _ ℂ) *ᵥ epr :=
+    congrArg WithLp.ofLp (stateVec_epr_proj (weylOf_transpose W) h).symm
+  have hidem : proj (weylOf W) h * proj (weylOf W) h = proj (weylOf W) h :=
+    (isPVM_proj (isWeylFamily_weylOf W)).idem h
+  rw [show ((proj (weylOf W) h ⊗ₖ proj (weylOf W) h) : Matrix (Anc F m × Anc F m) _ ℂ)
+      = aOp (proj (weylOf W) h) * bOp (proj (weylOf W) h) from (aOp_mul_bOp_eq _ _).symm,
+    ← Matrix.mulVec_mulVec, htr, Matrix.mulVec_mulVec, ← aOp_mul, hidem, aOp]
+
 /-- **The identity on one factor leaves the other's action alone.** -/
 theorem kron_one_mulVec {R C : Type*} [Fintype R] [DecidableEq R] [Fintype C] [DecidableEq C]
     (φ : R → ℂ) (χ : C → ℂ) (B : Matrix C C ℂ) :
@@ -1132,6 +1297,28 @@ theorem kron_one_mulVec {R C : Type*} [Fintype R] [DecidableEq R] [Fintype C] [D
   congr 1
   show (∑ r' : R, (1 : Matrix R R ℂ) r r' * φ r') = φ r
   exact congrFun (Matrix.one_mulVec φ) r
+
+/-- **The identity on the second factor leaves the first's action alone.** -/
+theorem kron_mulVec_one {R C : Type*} [Fintype R] [DecidableEq R] [Fintype C] [DecidableEq C]
+    (φ : R → ℂ) (χ : C → ℂ) (A : Matrix R R ℂ) :
+    ((A ⊗ₖ (1 : Matrix C C ℂ)) *ᵥ fun p : R × C => φ p.1 * χ p.2)
+      = fun p : R × C => (A *ᵥ φ) p.1 * χ p.2 := by
+  funext p
+  obtain ⟨r, c⟩ := p
+  show (∑ q : R × C, (A ⊗ₖ (1 : Matrix C C ℂ)) (r, c) q * (φ q.1 * χ q.2))
+    = (∑ r' : R, A r r' * φ r') * χ c
+  rw [Fintype.sum_prod_type,
+    Finset.sum_congr rfl fun r' (_ : r' ∈ univ) => show
+      (∑ c' : C, (A ⊗ₖ (1 : Matrix C C ℂ)) (r, c) (r', c') * (φ r' * χ c'))
+        = (A r r' * φ r') * ∑ c' : C, (1 : Matrix C C ℂ) c c' * χ c' from by
+      rw [Finset.mul_sum]
+      exact Finset.sum_congr rfl fun c' _ => by
+        show A r r' * (1 : Matrix C C ℂ) c c' * (φ r' * χ c') = _
+        ring,
+    ← Finset.sum_mul]
+  congr 1
+  show (∑ c' : C, (1 : Matrix C C ℂ) c c' * χ c') = χ c
+  exact congrFun (Matrix.one_mulVec χ) c
 
 /-! ## The physical cut's operators
 
@@ -2107,6 +2294,210 @@ theorem sum_bobPairProj_mulVec (W : Bas) :
         rw [Matrix.submatrix_mulVec_equiv, Equiv.symm_symm, hcomp]
     _ = (M.physVec ∘ M.physLiftEquiv) ∘ M.physLiftEquiv.symm := by rw [key]
     _ = M.physVec := hcomp
+
+/-- **An operator of Alice's is unchanged by the lift**, the appended pair being Bob's. -/
+theorem physLift_aOp (X : Matrix (((dA × Anc F m) × M.Ea) × Anc F m)
+    (((dA × Anc F m) × M.Ea) × Anc F m) ℂ) :
+    M.physLift (aOp X) = aOp X := by
+  ext p q
+  obtain ⟨p1, ⟨⟨p2, p3⟩, p4⟩, p5⟩ := p
+  obtain ⟨q1, ⟨⟨q2, q3⟩, q4⟩, q5⟩ := q
+  simp only [physLift, Matrix.reindex_apply, Matrix.submatrix_apply, physLiftEquiv,
+    Equiv.coe_fn_symm_mk, kroneckerMap_apply, aOp, Matrix.one_apply, Prod.mk.injEq]
+  by_cases h2 : p2 = q2 <;> by_cases h3 : p3 = q3 <;> by_cases h4 : p4 = q4 <;>
+    by_cases h5 : p5 = q5 <;> simp [h2, h3, h4, h5]
+
+/-- **And an operator of Bob's own space is extended by the identity on the appended pair.** -/
+theorem physLift_bOp_aOp (Y : Matrix dB dB ℂ) :
+    M.physLift (bOp (aOp Y)) = bOp (aOp (aOp (aOp Y))) := by
+  ext p q
+  obtain ⟨p1, ⟨⟨p2, p3⟩, p4⟩, p5⟩ := p
+  obtain ⟨q1, ⟨⟨q2, q3⟩, q4⟩, q5⟩ := q
+  simp only [physLift, Matrix.reindex_apply, Matrix.submatrix_apply, physLiftEquiv,
+    Equiv.coe_fn_symm_mk, kroneckerMap_apply, aOp, bOp, Matrix.one_apply, Prod.mk.injEq]
+  by_cases h1 : p1 = q1 <;> by_cases h3 : p3 = q3 <;> by_cases h4 : p4 = q4 <;>
+    by_cases h5 : p5 = q5 <;> simp [h1, h3, h4, h5]
+
+/-- Under the regrouping, Bob's Weyl outcome is the projector on the appended pair's first
+half. -/
+theorem reindex_bobWeyl (W : Bas) (h : Anc F m) :
+    Matrix.reindex M.physLiftEquiv M.physLiftEquiv
+        ((1 : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb))
+            ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb)) ℂ)
+          ⊗ₖ (proj (weylOf W) h ⊗ₖ (1 : Matrix (Anc F m) (Anc F m) ℂ)))
+      = bOp (M.bobWeyl W h) := by
+  ext p q
+  obtain ⟨p1, ⟨⟨p2, p3⟩, p4⟩, p5⟩ := p
+  obtain ⟨q1, ⟨⟨q2, q3⟩, q4⟩, q5⟩ := q
+  simp only [Matrix.reindex_apply, Matrix.submatrix_apply, physLiftEquiv, Equiv.coe_fn_symm_mk,
+    kroneckerMap_apply, bOp, bobWeyl, Matrix.one_apply, Prod.mk.injEq]
+  by_cases h1 : p1 = q1 <;> by_cases h2 : p2 = q2 <;> by_cases h3 : p3 = q3 <;>
+    by_cases h4 : p4 = q4 <;> simp [h1, h2, h3, h4]
+
+set_option maxHeartbeats 4000000 in
+/-- **One matched pair of Weyl projectors acts as Bob's Weyl outcome alone.** The pair the
+physical grouping gives him entirely is maximally entangled, so the projector on its second half
+is redundant beside the one on its first. -/
+theorem bobPairProj_mulVec (W : Bas) (h : Anc F m) :
+    (bOp (M.bobPairProj W h)
+        : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m))
+          _ ℂ) *ᵥ M.physVec
+      = (bOp (M.bobWeyl W h)) *ᵥ M.physVec := by
+  have hcomp : (M.physVec ∘ M.physLiftEquiv) ∘ M.physLiftEquiv.symm = M.physVec := by
+    rw [Function.comp_assoc, Equiv.self_comp_symm, Function.comp_id]
+  have key : ∀ T : Matrix (Anc F m × Anc F m) (Anc F m × Anc F m) ℂ,
+      (Matrix.reindex M.physLiftEquiv M.physLiftEquiv
+            ((1 : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb))
+                ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb)) ℂ) ⊗ₖ T))
+          *ᵥ M.physVec
+        = (fun p => M.toFirst.mVec p.1 * (T *ᵥ (epr (F := F) (n := Fin m → Bool))) p.2)
+            ∘ M.physLiftEquiv.symm := by
+    intro T
+    rw [Matrix.reindex_apply]
+    conv_lhs => rw [← hcomp]
+    rw [Matrix.submatrix_mulVec_equiv, Equiv.symm_symm, hcomp, M.physVec_comp_physLiftEquiv]
+    exact congrArg (· ∘ ⇑M.physLiftEquiv.symm)
+      (kron_one_mulVec M.toFirst.mVec (epr (F := F) (n := Fin m → Bool)) T)
+  rw [← M.reindex_bobPairProj W h, ← M.reindex_bobWeyl W h, key, key, epr_proj_pair_mulVec]
+
+/-- The lift is additive, hence carries a finite sum. -/
+theorem physLift_sum {ι : Type*} (s : Finset ι)
+    (U : ι → Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb))
+      ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb)) ℂ) :
+    M.physLift (∑ i ∈ s, U i) = ∑ i ∈ s, M.physLift (U i) := by
+  ext p q
+  simp [physLift, Matrix.reindex_apply, Matrix.submatrix_apply, Matrix.sum_apply,
+    Finset.sum_mul]
+
+/-- **Bob's point measurement, on his whole physical register.** -/
+def bobPt (W : Bas) (u : Point F m) (k : F) :
+    Matrix (((dB × Anc F m) × M.Eb) × Anc F m) (((dB × Anc F m) × M.Eb) × Anc F m) ℂ :=
+  aOp (aOp (aOp (((ptAtPOVM MB W u).mats k).val)))
+
+/-- **The half of the appended pair that sits beside Bob's own space.** -/
+def bobAnc (W : Bas) (h : Anc F m) :
+    Matrix (((dB × Anc F m) × M.Eb) × Anc F m) (((dB × Anc F m) × M.Eb) × Anc F m) ℂ :=
+  aOp (aOp ((1 : Matrix dB dB ℂ) ⊗ₖ proj (weylOf W) h))
+
+/-- The matched pair of projectors is that one and Bob's Weyl outcome. -/
+theorem bobPairProj_eq_mul (W : Bas) (h : Anc F m) :
+    M.bobPairProj W h = M.bobAnc W h * M.bobWeyl W h := rfl
+
+/-- **Display `eq:qld-pulling-5`'s algebra on Bob's register.** The projector on the pair's
+first half cuts the hatted point measurement down to the one term of its convolution whose shift
+matches, which is Bob's point measurement at the chain's own outcome. -/
+theorem bobPt_mul_bobAnc (W : Bas) (u : Point F m) (c : F) (h : Anc F m) :
+    M.bobPt W u (c + dotF h (indVec u)) * M.bobAnc W h
+      = M.bobHat W u c * M.bobAnc W h := by
+  rw [bobPt, bobAnc, bobHat, ← aOp_mul, ← aOp_mul, ← aOp_mul, ← aOp_mul, hatMats_mul_proj]
+  congr 2
+  rw [aOp, ← Matrix.mul_kronecker_mul, Matrix.mul_one, Matrix.one_mul]
+
+/-- The same against the matched pair, which is the form `eq:qld-pulling-5` uses. -/
+theorem bobPt_mul_bobPairProj (W : Bas) (u : Point F m) (k : F) (h : Anc F m) :
+    M.bobPt W u k * M.bobPairProj W h
+      = M.bobHat W u (k + dotF h (indVec u)) * M.bobPairProj W h := by
+  have hk : (k + dotF h (indVec u)) + dotF h (indVec u) = k := by
+    rw [add_assoc, add_self, add_zero]
+  rw [bobPairProj_eq_mul, ← Matrix.mul_assoc, ← Matrix.mul_assoc]
+  congr 1
+  conv_lhs => rw [← hk]
+  exact M.bobPt_mul_bobAnc W u (k + dotF h (indVec u)) h
+
+/-- Bob's Weyl outcome and his hatted point measurement commute, living on different halves of
+his register. -/
+theorem bobHat_mul_bobWeyl (W : Bas) (u : Point F m) (c : F) (h : Anc F m) :
+    M.bobHat W u c * M.bobWeyl W h = M.bobWeyl W h * M.bobHat W u c :=
+  aOp_mul_bOp (aOp (hatMats MB W u c)) (proj (weylOf W) h)
+
+/-- **The lift's action on the state**: the first cut's vector, acted on, beside the appended
+pair. -/
+theorem physLift_mulVec (U : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb))
+    ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb)) ℂ) :
+    M.physLift U *ᵥ M.physVec
+      = (fun p => (U *ᵥ M.toFirst.mVec) p.1 * (epr (F := F) (n := Fin m → Bool)) p.2)
+        ∘ M.physLiftEquiv.symm := by
+  have hcomp : (M.physVec ∘ M.physLiftEquiv) ∘ M.physLiftEquiv.symm = M.physVec := by
+    rw [Function.comp_assoc, Equiv.self_comp_symm, Function.comp_id]
+  rw [physLift, Matrix.reindex_apply]
+  conv_lhs => rw [← hcomp]
+  rw [Matrix.submatrix_mulVec_equiv, Equiv.symm_symm, hcomp, M.physVec_comp_physLiftEquiv]
+  exact congrArg (· ∘ ⇑M.physLiftEquiv.symm)
+    (kron_mulVec_one M.toFirst.mVec (epr (F := F) (n := Fin m → Bool)) U)
+
+/-- **So an identity on the first cut's state lifts to one on the physical state.** -/
+theorem physLift_mulVec_congr {U V : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb))
+    ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb)) ℂ}
+    (h : U *ᵥ M.toFirst.mVec = V *ᵥ M.toFirst.mVec) :
+    M.physLift U *ᵥ M.physVec = M.physLift V *ᵥ M.physVec := by
+  rw [M.physLift_mulVec U, M.physLift_mulVec V, h]
+
+/-- **Display `eq:qld-pulling-3b`'s term**, written in each party's own spelling. -/
+def chainU3b (W : Bas) (v : Anc F m) (u : Point F m) (a : F) :
+    Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb))
+      ((((dA × Anc F m) × M.Ea) × Anc F m) × (dB × M.Eb)) ℂ :=
+  ∑ p ∈ chainIdx (F := F) (m := m) (d := d) v a,
+    aOp (M.aliceChainOp W p * M.aliceHat W u (p.1.eval u))
+      * bOp (aOp (((ptAtPOVM MB W u).mats (SimulPair.chainShift u p)).val))
+
+/-- It is the first cut's own `-3b` term. -/
+theorem chainU3b_eq (W : Bas) (v : Anc F m) (u : Point F m) (a : F) :
+    M.chainU3b W v u a = M.toFirst.chainS3b W v u a := rfl
+
+/-- The lift of that term, with Bob's point measurement on his whole physical register. -/
+theorem physLift_chainU3b (W : Bas) (v : Anc F m) (u : Point F m) (a : F) :
+    M.physLift (M.chainU3b W v u a)
+      = ∑ p ∈ chainIdx (F := F) (m := m) (d := d) v a,
+        aOp (M.aliceChainOp W p * M.aliceHat W u (p.1.eval u))
+          * bOp (M.bobPt W u (SimulPair.chainShift u p)) := by
+  rw [chainU3b, M.physLift_sum]
+  exact Finset.sum_congr rfl fun p _ => by
+    rw [M.physLift_mul, M.physLift_aOp, M.physLift_bOp_aOp]
+    rfl
+
+set_option maxHeartbeats 4000000 in
+/-- **Displays `eq:qld-pulling-4` and `-5`.** Resolving the identity on the appended pair brings
+its outcome into the chain, and each matched pair cuts Bob's point measurement down to the
+hatted point measurement at the shifted outcome. The step costs nothing. -/
+theorem physLift_chainU3b_mulVec (W : Bas) (v : Anc F m) (u : Point F m) (a : F) :
+    M.physLift (M.chainU3b W v u a) *ᵥ M.physVec
+      = (∑ t ∈ univ.filter fun t : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) × Anc F m
+            => dotF (chainLabel t.1.1 t.1.2) v = a,
+          M.chainP W t * (aOp (M.aliceHat W u (t.1.1.eval u))
+            * bOp (M.bobHat W u (t.1.1.eval u + dotF t.1.2 (indVec u) + dotF t.2 (indVec u)))))
+          *ᵥ M.physVec := by
+  classical
+  have hins : ∀ Z : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m)
+        × (((dB × Anc F m) × M.Eb) × Anc F m)) _ ℂ,
+      Z *ᵥ M.physVec = ∑ h : Anc F m, (Z * bOp (M.bobPairProj W h)) *ᵥ M.physVec := by
+    intro Z
+    conv_lhs => rw [← M.sum_bobPairProj_mulVec W]
+    rw [Matrix.mulVec_mulVec, Finset.mul_sum, Matrix.sum_mulVec]
+  have hterm : ∀ (p : LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) (h : Anc F m),
+      ((aOp (M.aliceChainOp W p * M.aliceHat W u (p.1.eval u))
+            * bOp (M.bobPt W u (SimulPair.chainShift u p))) * bOp (M.bobPairProj W h))
+          *ᵥ M.physVec
+        = (M.chainP W (p, h) * (aOp (M.aliceHat W u (p.1.eval u))
+            * bOp (M.bobHat W u (p.1.eval u + dotF p.2 (indVec u) + dotF h (indVec u)))))
+          *ᵥ M.physVec := by
+    intro p h
+    have hc : SimulPair.chainShift u p + dotF h (indVec u)
+        = p.1.eval u + dotF p.2 (indVec u) + dotF h (indVec u) := rfl
+    rw [Matrix.mul_assoc, ← bOp_mul, M.bobPt_mul_bobPairProj W u (SimulPair.chainShift u p) h,
+      hc, bOp_mul, ← Matrix.mul_assoc, ← Matrix.mulVec_mulVec, M.bobPairProj_mulVec W h,
+      Matrix.mulVec_mulVec]
+    congr 1
+    rw [show M.chainP W (p, h) = aOp (M.aliceChainOp W p) * bOp (M.bobWeyl W h) from rfl, aOp_mul]
+    simp only [Matrix.mul_assoc]
+    congr 1
+    rw [← bOp_mul, M.bobHat_mul_bobWeyl, bOp_mul, ← Matrix.mul_assoc, aOp_mul_bOp,
+      Matrix.mul_assoc]
+  rw [M.physLift_chainU3b W v u a, Matrix.sum_mulVec,
+    Finset.sum_congr rfl fun p (_ : p ∈ chainIdx (F := F) (m := m) (d := d) v a) => hins _,
+    sum_chainLabel_filter v a, Matrix.sum_mulVec]
+  refine Finset.sum_congr rfl fun p _ => ?_
+  rw [Matrix.sum_mulVec]
+  exact Finset.sum_congr rfl fun h _ => hterm p h
 
 end MirrorSimul
 
