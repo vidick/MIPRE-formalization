@@ -2363,3 +2363,29 @@ grouping on all of them. Having it settles a question that looked like an obstac
 across three different cuts, and no one of them makes every step local.
 
 Seven `approx` steps left.
+
+### PR T: the chain's expansion, `eq:qld-pulling-2b` (2026-09-22)
+
+`SimulPair.aOp_mTildeAnc_mul_nearId` is the product the second and third displays carry out. It is
+an identity, not an estimate, and it runs in three moves.
+
+The near-identity expands because the hatted point measurement *is* the convolution
+`sum_{a'} M^{(Point,W),u}_{a'} (x) tau^{W,u}_{c-a'}` by construction --- that is
+`sum_kron_syn_eq_hatMats`, already in the tree --- and `reindex_regroupEquiv` sends each of its
+terms to the cut `mTilde` lives on, which puts `tau^{W,u}` beside Alice and the point measurement
+alone on Bob. That is `nearId_eq_sum`.
+
+Multiplying then kills all but one pair outcome (the family is projective) and fuses the two
+syndrome projectors into the Weyl outcomes meeting both conditions. That is `syn_mul_syn`, and it
+is where the chain's index set first appears: `mTildeAnc_mul_kron`.
+
+Finally the sum over Bob's point outcome collapses. For each Weyl outcome `h` exactly one `a'`
+survives --- in characteristic two `h . ind_m(u) = g(u) + a'` determines it --- and that one is
+`(g - g_h)(u)`, the paper's. What is left is a sum over `chainIdx` with `chainOp` as its summand,
+which is what those two definitions were introduced for in PR R.
+
+Three small general lemmas came out of it and are worth keeping: `kron_sum'` and `sum_kron'` (the
+Kronecker product distributes over a sum on either side, at arbitrary registers --- the existing
+`kron_sum` is typed to `ExactPauli.lean`'s own registers) and `reindex_sum`.
+
+Six `approx` steps left.
