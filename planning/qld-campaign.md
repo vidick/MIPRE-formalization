@@ -2558,3 +2558,32 @@ reach through `toFirst`, `toSecond` or `mirror` inside a statement.**
 
 What is left of the chain: `-10` to `-12`, then the assembly through `sum_xSqNorm_le_of_endOp`,
 then `lem:qld-povm-to-obs`.
+
+### PR AA: `eq:qld-pulling-10` down to its Cauchy--Schwarz step (2026-09-22)
+
+The chain's second remaining estimate runs over the four-index family and over the pairs whose
+outcomes **disagree** at the sampled point. Everything before the swap is now in.
+
+`sum_snorm_sq_fiber_sandwich_subset_le` is the outer shape on a subset of the index. The version
+PR X added fixes the index to `univ`, which the first display needs and this one does not; the
+general form is now the lemma and the old one is a one-line case of it.
+
+`bobTail_sandwich` splits the sandwich across the cut --- Alice's factor untouched, since this
+display's tail is Bob's alone --- and `bobHat_conj_bobChainOp` identifies Bob's factor as his
+sandwiched pair-measurement marginal `bobSand` tensored with his Weyl outcome.
+
+`sum_snorm_sq_chainQ_disagree_le` is the relaxation, which is where the paper's `<=` sits. Each
+disagreeing pair contributes one term of a sum over **all** outcomes the pair's own value excludes;
+the rest of that sum is nonnegative; and the constraint tying the outcome to the index may then be
+dropped. Worth recording what this step does *not* use: no Cauchy--Schwarz, and no measurement
+property beyond projectivity --- only `qform_sandwich_nonneg`, that a sandwich is nonnegative.
+`Finset.single_le_sum` and `Finset.sum_le_sum_of_subset_of_nonneg` are the whole argument.
+
+`sum_qform_bobTail_eq` closes the reduction at `eq:qld-pulling-13a`: Alice's whole family and Bob's
+Weyl outcome both sum to the identity, so what is left carries neither, and the bound is a
+statement about Bob's registers alone.
+
+What is left of `-10` is `eq:qld-pulling-13`, the swap --- `abs_sum_qform_swap_le`, already in the
+tree, applied on the *second* cut, so every transport it needs goes through `mirror`. Then `-11`
+(the helper's item 2 on Bob's side, with a constraint on the index set) and `-12`
+(Schwartz--Zippel, `sum_uniform_agree_mass_le`, also in the tree).

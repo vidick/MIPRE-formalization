@@ -4111,7 +4111,13 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.MirrorSimul.isPVM_bobChainOp, MIPRE.QLD.SimulPair.sum_poly_chainOp,
   MIPRE.QLD.MirrorSimul.chainQ, MIPRE.QLD.MirrorSimul.isPVM_chainQ,
   MIPRE.QLD.MirrorSimul.endOp_eq_sum_chainQ, MIPRE.QLD.MirrorSimul.sum_poly_chainQ,
-  MIPRE.QLD.MirrorSimul.mirror_sum_snorm_sq_chainP_le}
+  MIPRE.QLD.MirrorSimul.mirror_sum_snorm_sq_chainP_le,
+  MIPRE.QLD.sum_snorm_sq_fiber_sandwich_subset_le, MIPRE.QLD.chainQShift,
+  MIPRE.QLD.MirrorSimul.bobTail, MIPRE.QLD.MirrorSimul.bobTail_sandwich,
+  MIPRE.QLD.MirrorSimul.bobSand, MIPRE.QLD.MirrorSimul.bobHat_conj_bobChainOp,
+  MIPRE.QLD.MirrorSimul.bobTail_sandwich_kron, MIPRE.QLD.MirrorSimul.chainV,
+  MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainQ_disagree_le,
+  MIPRE.QLD.MirrorSimul.sum_qform_bobTail_eq}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4461,9 +4467,27 @@ so the displays leading there and the endpoint speak about one projective measur
 pair measurement, which is the identity, refines the three-index family into the four-index one,
 and \texttt{SimulPair.sum\_poly\_chainOp} is the completeness that makes it so.
 
-\emph{Not formalized}: \texttt{eq:qld-pulling-10} to \texttt{-12}, which is the Cauchy--Schwarz
-swap and Schwartz--Zippel, and Lemma~\ref{lem:qld-povm-to-obs} at the very end.
-\texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
+\emph{And \texttt{eq:qld-pulling-10} down to its Cauchy--Schwarz step.} That display runs over
+the four-index family and over the pairs whose outcomes \emph{disagree} at the sampled point, and
+everything before the swap is now in. \texttt{sum\_snorm\_sq\_fiber\_sandwich\_subset\_le}
+is the outer shape on a subset of the index --- the form the disagreeing pairs need, and the one
+the first display's version is now a case of. \texttt{bobTail\_sandwich} splits the sandwich
+across the cut and \texttt{bobHat\_conj\_bobChainOp} identifies Bob's factor as his sandwiched
+pair-measurement marginal \texttt{bobSand} tensored with his Weyl outcome.
+
+\texttt{sum\_snorm\_sq\_chainQ\_disagree\_le} is then the relaxation, which is where the
+paper's ``$\leq$'' sits: each disagreeing pair contributes one term of a sum over \emph{all}
+outcomes that the pair's own value excludes, the rest of that sum is nonnegative, and the
+constraint tying the outcome to the index may then be dropped. Note what is \emph{not} used: no
+Cauchy--Schwarz, no measurement property beyond projectivity --- only that a sandwich is
+nonnegative. \texttt{sum\_qform\_bobTail\_eq} closes the reduction at
+\texttt{eq:qld-pulling-13a}: Alice's whole family and Bob's Weyl outcome both sum to the identity,
+so what is left carries neither, and the bound is a statement about Bob's registers alone.
+
+\emph{Not formalized}: \texttt{eq:qld-pulling-13}, the swap itself, and with it the rest of
+\texttt{-10}; then \texttt{-11} and \texttt{-12}; and Lemma~\ref{lem:qld-povm-to-obs} at the
+very end. \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this
+node.
 
 \effortHard
 
