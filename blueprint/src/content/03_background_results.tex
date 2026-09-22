@@ -4083,7 +4083,10 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.MirrorSimul.endOpMirror_apply, MIPRE.QLD.MirrorSimul.endOpMirror_eq,
   MIPRE.QLD.snorm_reindex_prodComm, MIPRE.QLD.sum_xSqNorm_le_of_endOp,
   MIPRE.QLD.snorm_comp_equiv, MIPRE.QLD.sum_snorm_sq_sub_mul, MIPRE.QLD.SimulPair.nearId,
-  MIPRE.QLD.SimulPair.sum_snorm_sq_nearId, MIPRE.QLD.SimulPair.sum_uniform_snorm_sq_nearId_le}
+  MIPRE.QLD.SimulPair.sum_snorm_sq_nearId, MIPRE.QLD.SimulPair.sum_uniform_snorm_sq_nearId_le,
+  MIPRE.QLD.kron_sum', MIPRE.QLD.sum_kron', MIPRE.QLD.reindex_sum,
+  MIPRE.QLD.SimulPair.nearId_eq_sum, MIPRE.QLD.SimulPair.mTildeAnc_eq_sum,
+  MIPRE.QLD.SimulPair.mTildeAnc_mul_kron, MIPRE.QLD.SimulPair.aOp_mTildeAnc_mul_nearId}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4302,8 +4305,25 @@ between them, a state-norm being carried by any reindexing of the whole space. T
 lets each step of the chain be read along whichever of the paper's three groupings it is local in,
 rather than forcing one grouping on all of them.
 
-\emph{Not formalized}: the remaining seven $\approx$ steps --- their estimates are all in place, as
-recorded above, and what is missing is the four-index bookkeeping that threads them --- and
+\emph{And the expansion that follows it.} Displays \texttt{eq:qld-pulling-2} and
+\texttt{eq:qld-pulling-2b} carry out the product, and
+\texttt{SimulPair.aOp\_mTildeAnc\_mul\_nearId} is that computation at the interface. It is an
+identity, not an estimate, and it runs in three moves. The near-identity expands because the hatted
+point measurement \emph{is} the convolution
+$\sum_{a'} M^{(\mathtt{Point},W),u}_{a'} \ot \tau^{W,u}_{c-a'}$
+by construction (\texttt{sum\_kron\_syn\_eq\_hatMats}), and \texttt{reindex\_regroupEquiv} sends
+each of its terms to the cut $\tilde{M}$ lives on, putting $\tau^{W,u}$ beside Alice and the point
+measurement alone on Bob (\texttt{SimulPair.nearId\_eq\_sum}). Multiplying then kills all but one
+pair outcome, the family being projective, and fuses the two syndrome projectors into the Weyl
+outcomes meeting both conditions --- \texttt{syn\_mul\_syn}, which is where the chain's index set
+first appears (\texttt{SimulPair.mTildeAnc\_mul\_kron}). Finally the sum over Bob's outcome
+collapses: for each Weyl outcome $h$ exactly one $a'$ survives, namely $(g - g_h)(u)$, because in
+characteristic two the condition $h \cdot \ind_m(u) = g(u) + a'$ determines $a'$. What is left is a
+sum over \texttt{chainIdx}, with \texttt{chainOp} as its summand --- which is what that definition
+was introduced for.
+
+\emph{Not formalized}: the remaining six $\approx$ steps --- their estimates are all in place, as
+recorded above, and what is missing is the rest of the four-index bookkeeping --- and
 Lemma~\ref{lem:qld-povm-to-obs} at the very end.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
 

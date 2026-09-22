@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 import MIPRE.Background.QLD.Mirror
+import MIPRE.Background.QLD.SwapState
 
 /-!
 # The pulling chain's index algebra
@@ -307,6 +308,26 @@ near-identity of `lem:qld-helper`. What makes the step cost the helper's bound a
 `sum_snorm_sq_sub_mul`: the measurement's outcomes are orthogonal, so summing over them leaves one
 deviation rather than one per outcome. -/
 
+/-- `A (x) (sum B) = sum (A (x) B)`, on any registers. -/
+theorem kron_sum' {R S ι : Type*} [Fintype R] [Fintype S] (s : Finset ι)
+    (A : Matrix R R ℂ) (B : ι → Matrix S S ℂ) :
+    A ⊗ₖ (∑ x ∈ s, B x) = ∑ x ∈ s, A ⊗ₖ B x := by
+  ext p q
+  simp [Matrix.sum_apply, Finset.mul_sum]
+
+/-- `(sum B) (x) A = sum (B (x) A)`, on any registers. -/
+theorem sum_kron' {R S ι : Type*} [Fintype R] [Fintype S] (s : Finset ι)
+    (B : ι → Matrix R R ℂ) (A : Matrix S S ℂ) :
+    (∑ x ∈ s, B x) ⊗ₖ A = ∑ x ∈ s, B x ⊗ₖ A := by
+  ext p q
+  simp [Matrix.sum_apply, Finset.sum_mul]
+
+/-- Reindexing is additive. -/
+theorem reindex_sum {M N ι : Type*} (e : M ≃ N) (s : Finset ι) (f : ι → Matrix M M ℂ) :
+    Matrix.reindex e e (∑ i ∈ s, f i) = ∑ i ∈ s, Matrix.reindex e e (f i) := by
+  ext p q
+  simp [Matrix.reindex_apply, Matrix.submatrix_apply, Matrix.sum_apply]
+
 section First
 
 variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
@@ -380,6 +401,90 @@ theorem SimulPair.sum_uniform_snorm_sq_nearId_le
   rw [Finset.sum_congr rfl fun u (_ : u ∈ univ) => by rw [hsplit u]] at h
   rw [Finset.sum_congr rfl fun u (_ : u ∈ univ) => by rw [P.sum_snorm_sq_nearId hprojB W v u]]
   exact h
+
+namespace SimulPair
+
+/-- **The near-identity, expanded.** -/
+theorem nearId_eq_sum (W : Bas) (u : Point F m) :
+    P.nearId W u
+      = ∑ g : LowIndDegPoly (F := F) (m := m) (d := d), ∑ a' : F,
+          ((((polyMarg P.SA W).mats g).val
+              ⊗ₖ syn (weylOf W) (indVec u) (g.eval u + a'))
+            ⊗ₖ (aOp (((ptAtPOVM MB W u).mats a').val) : Matrix (dB × P.EB) _ ℂ)) := by
+  rw [nearId, agreeOp, reindex_sum]
+  refine Finset.sum_congr rfl fun g _ => ?_
+  rw [aOp_mul_bOp_eq, ← sum_kron_syn_eq_hatMats MB W u (g.eval u), aOp_sum, kron_sum',
+    reindex_sum]
+  refine Finset.sum_congr rfl fun a' _ => ?_
+  exact reindex_regroupEquiv _ _ _
+
+/-- **The exact Pauli measurement, expanded over the pair outcomes.** -/
+theorem mTildeAnc_eq_sum (W : Bas) (v : Anc F m) (a : F) :
+    P.mTildeAnc W v a
+      = ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
+          ((polyMarg P.SA W).mats g).val ⊗ₖ syn (weylOf W) v (dotF (cubeData g) v + a) :=
+  Finset.sum_congr rfl fun g _ => by rw [sCoarse_eq_polyMarg]
+
+/-- **Multiplying it by one of the near-identity's terms.** The pair measurement's outcomes are
+orthogonal, so only the matching one survives, and `syn_mul_syn` collapses the two syndrome
+projectors onto the Weyl outcomes satisfying both conditions. -/
+theorem mTildeAnc_mul_kron (W : Bas) (v : Anc F m) (u : Point F m) (a : F)
+    (g : LowIndDegPoly (F := F) (m := m) (d := d)) (b : F) :
+    P.mTildeAnc W v a
+        * (((polyMarg P.SA W).mats g).val ⊗ₖ syn (weylOf W) (indVec u) b)
+      = ∑ h ∈ univ.filter fun h : Anc F m =>
+            dotF h v = dotF (cubeData g) v + a ∧ dotF h (indVec u) = b,
+          ((polyMarg P.SA W).mats g).val ⊗ₖ proj (weylOf W) h := by
+  classical
+  rw [mTildeAnc_eq_sum, Finset.sum_mul,
+    Finset.sum_eq_single g (fun g' _ hg' => by
+      rw [← Matrix.mul_kronecker_mul, (isPVM_polyMarg P.SA_proj W).orthogonal hg',
+        Matrix.zero_kronecker])
+      fun hmem => absurd (Finset.mem_univ g) hmem,
+    ← Matrix.mul_kronecker_mul, (isPVM_polyMarg P.SA_proj W).idem,
+    syn_mul_syn (isWeylFamily_weylOf W), kron_sum']
+
+/-- **Display `eq:qld-pulling-2b` at the interface.** Expanding both factors, the pair
+measurement's orthogonality picks out one outcome, `syn_mul_syn` fuses the two syndrome projectors,
+and the sum over Bob's point outcome collapses --- for each Weyl outcome `h` exactly one of them
+survives, namely `(g - g_h)(u)`. What is left is a sum over the chain's own index set. -/
+theorem aOp_mTildeAnc_mul_nearId (W : Bas) (v : Anc F m) (u : Point F m) (a : F) :
+    (aOp (P.mTildeAnc W v a) : Matrix _ _ ℂ) * P.nearId W u
+      = ∑ p ∈ chainIdx (F := F) (m := m) (d := d) v a,
+          (P.chainOp W p)
+            ⊗ₖ (aOp (((ptAtPOVM MB W u).mats (p.1.eval u + dotF p.2 (indVec u))).val)
+                : Matrix (dB × P.EB) _ ℂ) := by
+  classical
+  rw [nearId_eq_sum, Finset.mul_sum, chainIdx, Finset.sum_filter, Fintype.sum_prod_type]
+  refine Finset.sum_congr rfl fun g _ => ?_
+  rw [Finset.mul_sum]
+  have hterm : ∀ a' : F,
+      (aOp (P.mTildeAnc W v a) : Matrix _ _ ℂ)
+          * ((((polyMarg P.SA W).mats g).val ⊗ₖ syn (weylOf W) (indVec u) (g.eval u + a'))
+            ⊗ₖ (aOp (((ptAtPOVM MB W u).mats a').val) : Matrix (dB × P.EB) _ ℂ))
+        = ∑ h : Anc F m, (if dotF h v = dotF (cubeData g) v + a ∧ dotF h (indVec u)
+              = g.eval u + a' then
+            (((polyMarg P.SA W).mats g).val ⊗ₖ proj (weylOf W) h)
+              ⊗ₖ (aOp (((ptAtPOVM MB W u).mats a').val) : Matrix (dB × P.EB) _ ℂ) else 0) := by
+    intro a'
+    rw [aOp, ← Matrix.mul_kronecker_mul, Matrix.one_mul, P.mTildeAnc_mul_kron W v u a g,
+      Finset.sum_filter, sum_kron']
+    refine Finset.sum_congr rfl fun h _ => ?_
+    split_ifs with h1
+    · rfl
+    · rw [Matrix.zero_kronecker]
+  rw [Finset.sum_congr rfl fun a' (_ : a' ∈ univ) => hterm a', Finset.sum_comm]
+  refine Finset.sum_congr rfl fun h _ => ?_
+  by_cases hA : dotF h v = dotF (cubeData g) v + a
+  · rw [if_pos ((dotF_chainLabel_eq_iff g h v a).mpr hA),
+      Finset.sum_eq_single (g.eval u + dotF h (indVec u))
+        (fun a' _ hne => if_neg fun hc => hne (by rw [hc.2, ← add_assoc, add_self, zero_add]))
+        (fun hmem => absurd (mem_univ _) hmem)]
+    exact if_pos ⟨hA, by rw [← add_assoc, add_self, zero_add]⟩
+  · rw [if_neg fun hc => hA ((dotF_chainLabel_eq_iff g h v a).mp hc)]
+    refine Finset.sum_eq_zero fun a' _ => if_neg fun hc => hA hc.1
+
+end SimulPair
 
 end First
 
