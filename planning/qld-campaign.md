@@ -1788,3 +1788,65 @@ paper's two pairs, `hatVec` is one such cut, and in it the paper's `A''` is the 
 ancilla half --- so the pairing is bipartite. The second pair is still needed to read the display
 *as* `mTilde`, one operator on one party, which is what stands between this and a statement-level
 `\leanok`.
+
+### PR K, first piece: `mTilde` as one operator on one party (2026-09-22)
+
+`MIPRE/Background/QLD/MTilde.lean` (fast regime). The merged stage 5a left item 1 of
+`lem:qld-exact-paulis` as a sum over the simultaneous measurement's outcomes; the paper states it
+as a closeness of two measurements, and this reads it that way. It is a reindexing, not an
+estimate, and the reason is worth recording because the campaign carried the opposite belief for
+three PRs.
+
+**The obstacle was not real.** The note said `mTilde` needs `S-hat^W` and the generalized Pauli on
+disjoint registers of one party, `A A'` and `A''`, while `SimulPair.SA` acts on all of
+`A A' A''` --- so the paper's second entangled pair had to be adjoined and the operators
+transported between two cuts. The first half is true; the conclusion is not. In `hatVec`'s cut the
+register `A''` is the *opposite party's* ancilla half: it is already present, on the far side. So
+writing `M~` as one matrix regroups the same six registers along a third cut,
+`A A' A'' | B`, and that is `bornProb_regroupVec` --- one entry computation
+(`reindex_regroupEquiv`) plus one invariance of the quadratic form (`qform_comp_equiv`). What made
+it look impossible was that Foundations only had `quadForm_reindex`, which reindexes the two
+parties *separately* and therefore cannot move a factor between them; the unary companion is three
+lines and was simply missing.
+
+**What it took.** `isPVM_mTilde` (through `sTensor_mul`, so through projectivity of the pair
+measurement and nothing else); `sum_kron_syn_eq_hatMats`, the characteristic-two shift that turns
+`mTilde`'s defining sum into the hatted point measurement --- `c + a` is the partner of `a` in the
+fibre of the sum, so summing along `a` is summing over the fibre; and then
+`SimulPair.sum_bornProb_mTilde_ge` and `SimulPair.inconsistency_mTilde_le`, the latter in the
+paper's own `simeq_delta` form at `delta = delta_S + 2(delta_S + sqrt(688 eps) + md/q)`.
+
+**And the exact half moved onto the same objects.** `wTilde`'s three relations were proved for an
+abstract projective pair measurement; `SimulPair.wTildeAt` instantiates them at the simultaneous
+one, and `wTilde_mul_add` adds the fourth relation the lemma asserts and the file did not have,
+linearity in the argument (both tensor factors are additive, so it is exact). With that,
+`lem:qld-exact-paulis` carries `\leanok` at both levels, 94 guarded declarations.
+
+One small infrastructure note: the index of `mTilde`'s matrices is a four-fold product whose
+`DecidableEq` runs past the default `synthInstance.maxSize` --- each half alone is found, the
+product is not. Raised in that file and nowhere else.
+
+### PR K, second piece: the swap isometry's state estimate (2026-09-22)
+
+`MIPRE/Background/QLD/SwapState.lean` (fast regime). `SwapUnitary.lean` had item 1 of
+`lem:qld-swap` in three separate pieces --- the exact conjugation, `twirl_mul_twirl`, and the
+repaired arithmetic chain --- and not the assembly, because `twirl_mul_twirl` lives on the two
+ancilla halves alone while the state lives on all four registers. The assembly is
+`exists_auxVec_close`, and it was smaller than the note here predicted.
+
+Two reasons. First, **the twirl is a projection**, not merely a contraction: the Weyl family is a
+homomorphism, so `(sum_u w_u (x) w_u)^2` collapses --- for each `s` there are exactly `q^n` pairs
+`(u,v)` with `u + v = s`. That is `twirl_mul_self`, and it lets `snorm_le_one_of_proj` supply the
+`||x|| <= 1` hypothesis of `norm_sub_sq_le_of_re_inner_ge` with no operator-norm estimate anywhere
+(the alternative, lifting a `Bnd` through `bOp`, would have needed a fibrewise decomposition that
+Foundations does not have). Second, **the range of `1 (x) |EPR><EPR|` consists of product
+vectors** by inspection (`bOp_eprProj_mulVec`), so the auxiliary state of item 1 is read off
+directly --- no partial trace, no Schmidt decomposition.
+
+**And the graph was wrong.** Assembling item 1 made it visible that its real input --- the
+self-consistency of `W~^e(u-tilde)` at a *uniform* `u-tilde` --- is nowhere in the blueprint. It is
+the paper's second item of `lem:qld-construct-the-paulis`, and the blueprint's paraphrase of
+`lem:qld-exact-paulis` kept only the first. Added as `lem:qld-pauli-selfcons` and recorded in
+`reports/qld-stage5-blueprint-repairs.md`. It is the substantial piece of stage 5 that remains, and
+it is what `thm:qld` is now waiting on: item 2 of `lem:qld-swap` and the assembly both run through
+it.

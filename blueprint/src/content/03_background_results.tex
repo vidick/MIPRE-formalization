@@ -3861,7 +3861,20 @@ same sum, grouped differently, and the outcome form is what the Pauli constructi
   MIPRE.QLD.dotF_cubeData_indVec, MIPRE.QLD.sum_uniform_agree_ldEnc_le_of_not_isInterp,
   MIPRE.QLD.SimulPair.sum_bornProb_not_isInterp_le, MIPRE.sum_bornProb_map_eq,
   MIPRE.abs_sum_weighted_sub_le, MIPRE.QLD.SimulPair.sum_bornProb_polyMarg_ge,
-  MIPRE.QLD.SimulPair.sum_bornProb_cubeData_ge}
+  MIPRE.QLD.SimulPair.sum_bornProb_cubeData_ge, MIPRE.regroupEquiv, MIPRE.regroupVec,
+  MIPRE.qform_comp_equiv, MIPRE.reindex_regroupEquiv, MIPRE.bornProb_regroupVec,
+  MIPRE.regroupVec_unit, MIPRE.QLD.mTilde_eq_sTensor, MIPRE.QLD.isPVM_mTilde,
+  MIPRE.QLD.dotF_add_right, MIPRE.QLD.cdPhase_add, MIPRE.QLD.wTilde_mul_add,
+  MIPRE.QLD.add_self_eq_zero', MIPRE.QLD.add_eq_iff_eq_add, MIPRE.QLD.ptAtPOVM,
+  MIPRE.QLD.hatPtPOVM_eq_kron, MIPRE.QLD.sum_kron_syn_eq_hatMats,
+  MIPRE.QLD.sCoarse_eq_polyMarg, MIPRE.QLD.SimulPair.mVec, MIPRE.QLD.SimulPair.mVec_unit,
+  MIPRE.QLD.SimulPair.mTildeAt, MIPRE.QLD.SimulPair.isPVM_mTildeAt,
+  MIPRE.QLD.SimulPair.mTildeAt_eq, MIPRE.QLD.SimulPair.bornProb_mTildeAt,
+  MIPRE.QLD.SimulPair.sum_bornProb_mTildeAt, MIPRE.QLD.SimulPair.sum_bornProb_mTilde_ge,
+  MIPRE.QLD.SimulPair.inconsistency_mTilde_le, MIPRE.QLD.SimulPair.wTildeAt,
+  MIPRE.QLD.SimulPair.wTildeAt_conjTranspose, MIPRE.QLD.SimulPair.wTildeAt_mul_self,
+  MIPRE.QLD.SimulPair.wTildeAt_mul_add, MIPRE.QLD.SimulPair.wTildeAt_mul_wTildeAt}
+\leanok
 From the simultaneous measurement one constructs, for $W \in \{X, Z\}$, measurements and
 binary observables on the expanded space which satisfy the Pauli group relations
 \emph{exactly} --- linearity in the argument, and $XZ$ commutation or anticommutation with the
@@ -3872,6 +3885,7 @@ state.
 
 \begin{proof}
 \uses{lem:schwartz-zippel}
+\leanok
 Exactness of the linearity comes from projectivity of the simultaneous measurement together
 with the group law of the Pauli basis; Theorem~\ref{thm:linearity} is \emph{not} used here.
 The remaining ingredient bounds the mass the simultaneous measurement places on
@@ -3881,8 +3895,18 @@ so it is the agreement and not the disagreement that the bound controls
 (Remark~\ref{rem:qld-admitted}).
 \end{proof}
 
-\paragraph{Comments.} The exact half is formalized and the approximate half is not, and the
-dividing line is the register count. Of the approximate half's ingredients, three are in place:
+\paragraph{Comments.} Both halves are formalized, for a simultaneous pair measurement
+(Lemma~\ref{lem:qld-simultaneous}) of a strategy of failure $\eps$, and both are about the
+\emph{same} objects: $\tilde{M}^{W,\ind_m(u)}$ and $\tilde{W}^e(\tilde{u})$ built from that
+measurement, on that party's registers. The closeness constant is explicit,
+\begin{equation*}
+  \delta \;=\; \delta_S + 2\Bigl( \delta_S + \sqrt{688\,\eps} + \frac{md}{q} \Bigr) ,
+\end{equation*}
+which is the $O(\delta_S + \sqrt{\eps} + md/q)$ the paper absorbs into $\delta_S$. The rest of
+this comment records how it was reached, because two of the obstacles it used to list turned out
+not to exist.
+
+Of the approximate half's ingredients, three were in place first:
 the agreement form of Schwartz--Zippel against every multilinear polynomial at once, the
 aggregation that turns it into a bound on the mass at non-multilinear outcomes, and the
 substitution error of two families agreeing off that mass
@@ -3948,9 +3972,14 @@ observable $\tilde{W}^e(\tilde{u})$ (\texttt{wTilde}), and the identity everythi
 \texttt{wTilde\_eq} says the observable \emph{factorizes} as a signed sum of the pair measurement
 tensor a bare generalized Pauli. Self-adjointness, squaring to the identity, and the twisted
 commutation relation are then three lines
-(\texttt{wTilde\_conjTranspose}, \texttt{wTilde\_mul\_self}, \texttt{wTilde\_mul\_wTilde}), with
+(\texttt{wTilde\_conjTranspose}, \texttt{wTilde\_mul\_self}, \texttt{wTilde\_mul\_wTilde}), and
+linearity in the argument a fourth (\texttt{wTilde\_mul\_add}: both tensor factors are additive,
+the sign because the pairing is and the generalized Pauli by the Weyl family's group law), with
 \texttt{IsPVM} and \texttt{MIPRE.Weyl.IsWeylFamily} the only hypotheses --- no game, no error term,
-and no appeal to Theorem~\ref{thm:linearity}, exactly as the proof above says.
+and no appeal to Theorem~\ref{thm:linearity}, exactly as the proof above says. All four are
+instantiated at a simultaneous pair measurement in \texttt{MIPRE/Background/QLD/MTilde.lean}
+(\texttt{SimulPair.wTildeAt} and its relations), which is what puts them on the same objects as
+the closeness below.
 
 \emph{The phase is the general one.} The pinned paper's display for the commutation relation used
 to split into $e \neq e'$, claiming exact commutation, and $e = e'$, carrying a phase. That split is
@@ -3966,29 +3995,40 @@ relation holds for every pair of field elements.
 agreement direction and uniformly in the interpolated data, which is what the sum over
 $\F_q^M$ needs; \texttt{nonMultilinear\_mass\_le} is the aggregation that turns it into the bound
 on the mass the simultaneous measurement places on non-multilinear outcomes; and
-\texttt{sum\_sub\_le\_of\_eq\_on} is the substitution error given that mass. One ingredient of that
-chain is outstanding and is an independent fact about \texttt{MvPolynomial}: that a multilinear
-polynomial is the interpolant of its own values on $\{0,1\}^m$, i.e.\ uniqueness of multilinear
-interpolation. \texttt{sum\_sub\_le\_of\_eq\_on} therefore takes agreement on the multilinear
-outcomes as a hypothesis rather than deriving it.
+\texttt{sum\_sub\_le\_of\_eq\_on} is the substitution error given that mass, taking agreement on
+the good set as a hypothesis --- which is why the choice of good set below matters.
 
-\emph{Not formalized}, and the reason there is no statement-level \texttt{leanok} mark:
-the display above is the agreement item 1 asserts, but it is not yet \emph{read as}
-$\tilde{M}^{W,\tilde{u}}$, a single operator on one party. What is missing is register
-bookkeeping, not mathematics. The paper's expanded state
-$\ket{\hat\psi} = \ket{\psi}_{\alice\bob} \ot \ket{\EPR}_{\alice'\alice''} \ot
-\ket{\EPR}_{\bob'\bob''}$ carries \emph{two} entangled pairs and is used along two different
-cuts: $\alice\alice' \mid \bob\alice''$ for one orientation of
-Lemma~\ref{lem:qld-simultaneous} and $\bob\bob' \mid \alice\bob''$ for the other.
-\texttt{MIPRE.QLD.hatVec} is one such cut, with one pair, which is all
-Lemmas~\ref{lem:qld-simultaneous} and~\ref{lem:qld-helper} need, since each uses one orientation
-at a time. But $\tilde{M}^{W,\tilde{u}} = \sum_g \widehat S^W_g \ot
-\tau^W_{\coded(g) \cdot \tilde{u} - a}(\tilde{u})$ needs $\widehat S^W$ and the generalized
-Pauli on \emph{disjoint} registers of one party --- $\alice\alice'$ and $\alice''$ --- and
-$\texttt{SimulPair.SA}$ acts on the whole of $\alice\alice'\alice''$. So the second pair has to
-be adjoined and the operators transported across it. That is what remains, together with the
-factor reindexing $(\alice \times \alice'') \times E \cong (\alice \times E) \times
-\alice''$ that \texttt{mTilde}'s shape asks for.
+\emph{And it is read as a closeness of two measurements}, which is how the paper states item 1.
+$\tilde{M}^{W,\ind_m(u)}$ is a projective measurement (\texttt{isPVM\_mTildeAt}, through
+\texttt{sTensor\_mul}, so through projectivity of the simultaneous measurement and nothing else),
+and
+\begin{equation*}
+  \mathbb E_u \sum_a \bigl\langle \tilde{M}^{W,\ind_m(u)}_a \ot
+    M^{(\mathtt{Point}, W), u}_a \bigr\rangle \;\geq\; 1 - \delta
+\end{equation*}
+(\texttt{SimulPair.sum\_bornProb\_mTilde\_ge}, and
+\texttt{SimulPair.inconsistency\_mTilde\_le} for the $\simeq_\delta$ form). The two are the same
+statement grouped differently: expanding $\tilde{M}$ and contracting the generalized Pauli against
+the point measurement is \texttt{sum\_kron\_syn\_eq\_hatMats}, one characteristic-two shift.
+
+\emph{The second entangled pair was never needed.} The obstacle recorded here until this point was
+that the paper's expanded state $\ket{\hat\psi} = \ket{\psi}_{\alice\bob} \ot
+\ket{\EPR}_{\alice'\alice''} \ot \ket{\EPR}_{\bob'\bob''}$ carries \emph{two} entangled
+pairs, each local to one party, and is read along two cuts ---
+$\alice\alice' \mid \bob\alice''$ for one orientation of Lemma~\ref{lem:qld-simultaneous} and
+$\bob\bob' \mid \alice\bob''$ for the other --- while \texttt{MIPRE.QLD.hatVec} is one such
+cut, with one pair. That is right, and it is all Lemmas~\ref{lem:qld-simultaneous}
+and~\ref{lem:qld-helper} need. What it does \emph{not} imply is that
+$\tilde{M}^{W,\tilde{u}} = \sum_g \widehat S^W_g \ot \tau^W_{\coded(g) \cdot \tilde{u} -
+a}(\tilde{u})$, which wants $\widehat S^W$ and the generalized Pauli on the disjoint registers
+$\alice\alice'$ and $\alice''$, needs a new pair: the register $\alice''$ is already there, on
+the far side of the cut, and writing $\tilde{M}$ as one matrix is a \emph{regrouping} of the same
+six registers along a third cut, $\alice\alice'\alice'' \mid \bob$. Every Born probability
+transports across it by \texttt{bornProb\_regroupVec}, which is one entry computation
+(\texttt{reindex\_regroupEquiv}) and one invariance of the quadratic form
+(\texttt{qform\_comp\_equiv}, the unary companion of \texttt{quadForm\_reindex}, which reindexes
+the two parties separately and so cannot move a factor between them). No second pair, no transport
+between cuts, and no new estimate.
 
 \emph{A ledger discrepancy worth recording.} Node $1.2.2.15$ declares its dependencies as
 $\{1.2.2.13, 1.2.2.14, 1.2.2.7\}$ --- the last being Theorem~\ref{thm:linearity} --- and does not
@@ -3999,10 +4039,61 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
 
 \effortHard
 
+\begin{lemma}[Self-consistency of the exact Pauli observables]
+\label{lem:qld-pauli-selfcons}
+\ledgernode{1.2.2.15}
+\uses{lem:qld-exact-paulis,lem:qld-helper,lem:qld-win,lem:schwartz-zippel,def:cross-distance}
+\lean{MIPRE.QLD.syn_mul_syn}
+On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
+of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
+\begin{equation*}
+  \bigl( \tilde{W}^e(\tilde{u}) \bigr)_{\alice \alice' \alice''}
+  \;\approx_{\delta_{qld}}\;
+  \bigl( \tilde{W}^e(\tilde{u}) \bigr)_{\bob \bob' \bob''} .
+\end{equation*}
+\end{lemma}
+
+\begin{proof}
+\uses{lem:qld-exact-paulis,lem:qld-helper,lem:qld-win,lem:schwartz-zippel}
+The paper's ``pulling'' chain. Right-multiplying $\tilde{M}^{W,\tilde{u}}_a$ on one party by the
+near-identity $\sum_g (\widehat S^W_g)_{\alice\alice'} \ot
+(\widehat M^{(\mathtt{Point},W),u}_{g(u)})_{\bob\alice''}$ of Lemma~\ref{lem:qld-helper} and
+expanding both definitions rewrites it as a sum over pairs $(g, h)$ with
+$(\coded(g) - h) \cdot \tilde{u} = a$ of $(\widehat S^W_g) \ot (\tau^W_h) \ot
+(M^{(\mathtt{Point},W),u}_{(g - g_h)(u)})$; the self-consistency of the point measurements
+(Lemma~\ref{lem:qld-win}) then moves the last factor across, and undoing the expansion on the
+other side gives the claim. Lemma~\ref{lem:schwartz-zippel} enters where $g$ is compared with
+$g_h$, and is where the $md/q$ of $\delta_{qld}$ comes from.
+\end{proof}
+
+\paragraph{Comments.} \emph{This statement is not in the pinned paper's
+Lemma~\ref{lem:qld-exact-paulis}; it is the second item of that lemma in the paper, and the
+blueprint's paraphrase of Lemma~\ref{lem:qld-exact-paulis} dropped it.} That was found by
+formalizing: Lemma~\ref{lem:qld-swap}'s item 1 needs the two twirls to be near-invariances of the
+state, and the only thing that supplies them is this self-consistency at a \emph{uniform}
+$\tilde{u}$ --- not at $\tilde{u} = \ind_m(u)$, which is all
+Lemma~\ref{lem:qld-exact-paulis} gives. So the dependency graph was missing an edge, and worse, a
+node. It is separated out here rather than folded back into
+Lemma~\ref{lem:qld-exact-paulis} so that the latter's \texttt{leanok} marks stay honest: what is
+formalized there is exactly what it states.
+
+Not formalized, apart from its combinatorial core. Its chain is the eleven displays of the paper's
+\texttt{qld-separating.tex}, and it is the substantial piece of stage 5 that remains. One
+ingredient is in place: the justification of display \texttt{eq:qld-pulling-2b}, that the syndrome
+projectors of one Weyl family at two different probes multiply to the projector onto the outcomes
+satisfying both conditions (\texttt{syn\_mul\_syn}) --- off the diagonal the spectral projectors
+annihilate each other, so only the eigenvalue patterns in both level sets survive. The
+approximation steps around it use the paper's \texttt{fact:add-a-proj}, which
+\texttt{MIPRE/Foundations/Commutation.lean} already has. \texttt{reports/qld-stage5-blueprint-repairs.md}
+records the omission.
+
+\effortHard
+
 \begin{lemma}[The swap isometry]
 \label{lem:qld-swap}
 \ledgernode{1.2.2.16}
-\uses{lem:qld-exact-paulis,lem:qld-win,lem:schwartz-zippel,def:state-distance,def:cross-distance}
+\uses{lem:qld-exact-paulis,lem:qld-pauli-selfcons,lem:qld-win,lem:schwartz-zippel,
+  def:state-distance,def:cross-distance}
 \lean{MIPRE.QLD.sTensor, MIPRE.QLD.sTensor_mul, MIPRE.QLD.sTensor_one,
   MIPRE.QLD.sTensor_conjTranspose, MIPRE.QLD.wTilde_eq_sTensor, MIPRE.QLD.uOf, MIPRE.QLD.swapU,
   MIPRE.QLD.uOf_conjTranspose, MIPRE.QLD.uOf_mul_conjTranspose,
@@ -4012,7 +4103,11 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.eprProj, MIPRE.QLD.eprProj_apply, MIPRE.QLD.twirl, MIPRE.QLD.wX_mul_wZ_apply,
   MIPRE.QLD.twirl_mul_twirl_eq_sum, MIPRE.QLD.twirl_mul_twirl,
   MIPRE.QLD.norm_sub_sq_le_of_re_inner_ge, MIPRE.QLD.re_inner_ge_of_two_close,
-  MIPRE.QLD.norm_sub_normalize_sq_le}
+  MIPRE.QLD.norm_sub_normalize_sq_le, MIPRE.QLD.snorm_sum_le, MIPRE.QLD.kron_self_isometry,
+  MIPRE.QLD.twirl_conjTranspose, MIPRE.QLD.snorm_twirl_le, MIPRE.QLD.twirl_mul_self,
+  MIPRE.QLD.conj_epr, MIPRE.QLD.star_epr, MIPRE.QLD.eprProj_conjTranspose,
+  MIPRE.QLD.epr_dotProduct, MIPRE.QLD.eprProj_mul_self, MIPRE.QLD.auxVec,
+  MIPRE.QLD.bOp_eprProj_mulVec, MIPRE.QLD.exists_auxVec_close}
 There is $\delta_{qld} = O\bigl( \delta_S^{1/4} + md/q \bigr)$ and local unitaries $V_\alice$,
 $V_\bob$ on the expanded spaces such that, writing $M = 2^m$:
 \begin{enumerate}
@@ -4040,8 +4135,10 @@ $\delta_{qld}$ comes from, by Lemma~\ref{lem:schwartz-zippel}. Item 1 alone give
 $O(\sqrt{\delta_S})$.
 \end{proof}
 
-\paragraph{Comments.} What is formalized is the whole of item 1 except the tensor bookkeeping, and
-none of item 2. The exact pieces are in \texttt{MIPRE/Background/QLD/SwapUnitary.lean}.
+\paragraph{Comments.} What is formalized is the whole of item 1 \emph{given its hypothesis} ---
+the self-consistency of Lemma~\ref{lem:qld-pauli-selfcons}, at a uniform $\tilde{u}$ --- and none
+of item 2. The exact pieces are in \texttt{MIPRE/Background/QLD/SwapUnitary.lean} and the
+assembly in \texttt{MIPRE/Background/QLD/SwapState.lean}.
 
 Every operator in the construction has the shape $\sum_p \widehat{S}_p \ot T_p$
 (\texttt{sTensor}), and because $\widehat{S}$ is projective these compose factorwise
@@ -4073,10 +4170,23 @@ $1 - 2\sqrt{\delta_S} - 2\delta_S$, and it carries a case split the paper does n
 no hidden ``for small enough $\delta_S$'' has to handle $\delta_S > 1$, where squaring
 $1 - \sqrt{\delta_S}$ would reverse the inequality and where the trivial bound is already stronger.
 
-\emph{Not formalized}: the embedding of the two ancilla halves into the four-party index, which is
-what turns \texttt{twirl\_mul\_twirl} into a statement about $\ket{\widehat{\psi}}$ and
-\texttt{norm\_sub\_normalize\_sq\_le} into the product state $\ket{\aux} \ot \ket{\EPR_q}^{\ot M}$;
-and the whole of item 2. Hence no \texttt{leanok} mark at either level.
+\emph{The assembly is done.} \texttt{exists\_auxVec\_close} is item 1: a unit state on
+$R \times (T \times T)$ --- the two parties' non-ancilla registers as one index, their two ancilla
+halves adjacent --- that is nearly invariant under both Weyl twirls is within
+$2 - 2\sqrt{1 - \eta}$ of a product $\ket{\aux} \ot \ket{\EPR_q}^{\ot M}$, with
+$\eta = 2\sqrt{\delta} + 2\delta$, which is $O(\sqrt{\delta})$ as the proof above says. Two
+things made it shorter than expected. The twirl is a \emph{projection}
+(\texttt{twirl\_mul\_self}), not merely a contraction: the Weyl family is a homomorphism, so the
+double average collapses, for each $s$ there being exactly $q^n$ pairs $(u,v)$ with $u + v = s$.
+That supplies the contraction hypothesis of \texttt{norm\_sub\_sq\_le\_of\_re\_inner\_ge}
+through \texttt{snorm\_le\_one\_of\_proj}, with no operator-norm estimate anywhere. And the
+range of $\Id \ot \ket{\EPR}\bra{\EPR}$ consists of product vectors by inspection
+(\texttt{bOp\_eprProj\_mulVec}), which is where $\ket{\aux}$ comes from --- no partial trace and
+no Schmidt decomposition.
+
+\emph{Not formalized}: the two near-invariances themselves, which are
+Lemma~\ref{lem:qld-pauli-selfcons} and are hypotheses of \texttt{exists\_auxVec\_close} rather
+than conclusions; and the whole of item 2. Hence no \texttt{leanok} mark at either level.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the repairs above, including the
 ledger's declared dependencies for node $1.2.2.16$, which name $1.2.2.4$
 (Lemma~\ref{lem:qld-win}) and which the \texttt{uses} list did not.
