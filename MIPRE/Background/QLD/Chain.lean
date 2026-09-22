@@ -1009,6 +1009,77 @@ theorem sum_uniform_qform_ne_le {hm : m ∣ Fintype.card F} {ε : ℝ}
     exact Real.sqrt_le_sqrt (P.sum_xSqNorm_hat_le (hm := hm) hψ hfail W)
   linarith [P.sum_bornProb_polyMarg_one_sub_le (MB := MB) W]
 
+/-! ## The chain's first four terms, and the three steps between them
+
+The assembly proper. `chainS` names the terms displays `eq:qld-pulling-0` to `-3` run through, on
+the cut `Phi` lives on, and the three lemmas below are those displays read as bounds on
+consecutive deviations --- which is the form `sum_snorm_sq_chain_le` consumes. -/
+
+/-- **The chain's first four terms, on the cut `Phi` lives on.** `eq:qld-pulling-0` through
+`eq:qld-pulling-3`: the exact Pauli measurement, that measurement times the near-identity, the
+same written over the chain's index, and the same with Alice's copy of the point measurement
+inserted. -/
+def chainS (W : Bas) (v : Anc F m) (u : Point F m) :
+    ℕ → F → Matrix ((((dA × Anc F m) × P.EA) × Anc F m) × (dB × P.EB))
+      ((((dA × Anc F m) × P.EA) × Anc F m) × (dB × P.EB)) ℂ
+  | 0 => fun a => aOp (P.mTildeAnc W v a)
+  | 1 => fun a => (aOp (P.mTildeAnc W v a) : Matrix _ _ ℂ) * P.nearId W u
+  | 2 => fun a => ∑ p ∈ chainIdx (F := F) (m := m) (d := d) v a,
+      (aOp (P.chainOp W p) : Matrix _ _ ℂ) * bOp (P.ptB W u (chainShift u p))
+  | _ => fun a => ∑ p ∈ chainIdx (F := F) (m := m) (d := d) v a,
+      (aOp (P.chainOp W p) : Matrix _ _ ℂ)
+        * (aOp (P.ptA W u (chainShift u p)) * bOp (P.ptB W u (chainShift u p)))
+
+/-- **Displays `eq:qld-pulling-2` and `-2b` say the second and third terms are one.** -/
+theorem chainS_one_eq_two (W : Bas) (v : Anc F m) (u : Point F m) :
+    P.chainS W v u 1 = P.chainS W v u 2 := by
+  funext a
+  show (aOp (P.mTildeAnc W v a) : Matrix _ _ ℂ) * P.nearId W u
+    = ∑ p ∈ chainIdx (F := F) (m := m) (d := d) v a,
+      (aOp (P.chainOp W p) : Matrix _ _ ℂ) * bOp (P.ptB W u (chainShift u p))
+  rw [P.aOp_mTildeAnc_mul_nearId W v u a]
+  exact Finset.sum_congr rfl fun p _ => (aOp_mul_bOp_eq _ _).symm
+
+/-- **And the third and fourth differ by what `eq:qld-pulling-3` bounds.** -/
+theorem chainS_two_sub_three (W : Bas) (v : Anc F m) (u : Point F m) (a : F) :
+    P.chainS W v u 2 a - P.chainS W v u 3 a
+      = ∑ p ∈ chainIdx (F := F) (m := m) (d := d) v a,
+        (aOp (P.chainOp W p) : Matrix _ _ ℂ)
+          * (((1 : Matrix ((((dA × Anc F m) × P.EA) × Anc F m) × (dB × P.EB)) _ ℂ)
+              - aOp (P.ptA W u (chainShift u p))) * bOp (P.ptB W u (chainShift u p))) := by
+  show (∑ p ∈ chainIdx (F := F) (m := m) (d := d) v a,
+      (aOp (P.chainOp W p) : Matrix _ _ ℂ) * bOp (P.ptB W u (chainShift u p)))
+    - (∑ p ∈ chainIdx (F := F) (m := m) (d := d) v a,
+      (aOp (P.chainOp W p) : Matrix _ _ ℂ)
+        * (aOp (P.ptA W u (chainShift u p)) * bOp (P.ptB W u (chainShift u p)))) = _
+  rw [← Finset.sum_sub_distrib]
+  exact Finset.sum_congr rfl fun p _ => by
+    rw [Matrix.sub_mul, Matrix.one_mul, Matrix.mul_sub]
+
+/-- **Step 0 to 1 is `eq:qld-pulling-1`**, at item 1 of `lem:qld-helper`'s own constant. -/
+theorem sum_uniform_snorm_sq_chainS_zero_one
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) (v : Anc F m) :
+    (∑ u, uniform (Point F m) u
+        * ∑ a : F, snorm P.mVec (P.chainS W v u 0 a - P.chainS W v u 1 a) ^ 2) ≤ δ :=
+  P.sum_uniform_snorm_sq_nearId_le hprojB W v
+
+/-- **Step 1 to 2 is free**, being displays `eq:qld-pulling-2` and `-2b`, which are identities. -/
+theorem sum_snorm_sq_chainS_one_two (W : Bas) (v : Anc F m) (u : Point F m) :
+    (∑ a : F, snorm P.mVec (P.chainS W v u 1 a - P.chainS W v u 2 a) ^ 2) = 0 := by
+  rw [P.chainS_one_eq_two W v u]
+  have hz : snorm P.mVec 0 = 0 := by
+    rw [snorm, Matrix.zero_mulVec]
+    simp [evec]
+  simp [hz]
+
+/-- **Step 2 to 3 is `eq:qld-pulling-3`**, the insertion. -/
+theorem sum_snorm_sq_chainS_two_three {ε : ℝ} (W : Bas) (v : Anc F m) (u : Point F m)
+    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val))
+    (hcons : ∑ k : F, xSqNorm P.mVec (P.ptA W u k) (P.ptB W u k) ≤ ε) :
+    (∑ a : F, snorm P.mVec (P.chainS W v u 2 a - P.chainS W v u 3 a) ^ 2) ≤ ε := by
+  rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) => by rw [P.chainS_two_sub_three W v u a]]
+  exact P.sum_snorm_sq_insert_chain W v u hprojB hcons
+
 end SimulPair
 
 end First
