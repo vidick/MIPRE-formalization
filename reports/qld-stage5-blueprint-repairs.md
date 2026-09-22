@@ -193,3 +193,35 @@ the range of `1 (x) |EPR><EPR|` consists of product vectors by inspection
 
 Stage 4, `lem:qld-simultaneous` and its ten sub-lemmas, was untouched when this was written and
 has since been done (PRs #144, #147, #150); `planning/qld-campaign.md` records how it went.
+
+## The exact steps of `lem:qld-pauli-selfcons`, and one thing that looked out of reach
+
+Written 2026-09-22, after the node above was added.
+
+The chain's eleven displays are of two kinds: `approx_0` steps, which are identities, and
+`approx_delta` steps, which are estimates. All the identities are now formalized
+(`MIPRE/Background/QLD/AncTransport.lean`, with `syn_mul_syn` in `SwapState.lean`).
+
+One of them is worth recording because it looked impossible and was not. Display
+`eq:qld-pulling-3a` moves a generalized Pauli from one party's ancilla half to the other's, and the
+paper calls the move exact. `MIPRE/Foundations/WeylEPR.lean` has that for the bare entangled state,
+`stateVec_epr_syn`. But the chain runs on a `SimulPair`'s *padded* state `Phi`, and the structure
+does not say `Phi` **is** an expanded state --- only that it reproduces its expectations
+(`Phi_reduced`). A *vector* identity therefore seemed unavailable from the interface, which would
+have meant strengthening `SimulPair`, i.e. reopening merged work.
+
+It is available. The identity to be proved is `stateVec Phi A = stateVecB Phi B`, which is the
+vanishing of `xSqNorm Phi A B` --- and a squared norm is an expectation. So
+`SimulPair.xSqNorm_aOp`, which is already there, carries it from `hatVec psi` to `Phi` with no
+loss. `SimulPair.stateVec_ancSyn` is that, and `SimulPair.sum_ancSyn_mulVec`
+(display `eq:qld-pulling-4`) follows from it.
+
+The general lesson for the rest of the chain: an exact statement about `Phi` that can be written as
+a vanishing squared norm is reachable through `Phi_reduced`, and one that cannot is not. Every
+`approx_0` step of this chain is of the first kind.
+
+What remains of the node is its estimates: `eq:qld-pulling-1`, `-3`, `-7`, and `-10` through `-12`,
+then `fact:agreement`, `fact:data-processing` and `lem:qld-povm-to-obs`. They use
+`fact:add-a-proj` (`MIPRE/Foundations/Commutation.lean`) and the second item of `lem:qld-helper`,
+both in place; beyond that they are the same kind of state-norm bookkeeping as stage 4's three
+pull requests, at about the same size.
