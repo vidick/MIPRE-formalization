@@ -1909,3 +1909,22 @@ What is left of the node: `eq:qld-pulling-1` and `-3` (inserting and moving a ne
 `eq:qld-pulling-10`, the assembly, and the final passage through `fact:agreement`,
 `fact:data-processing` and `lem:qld-povm-to-obs`. The remaining tool is `fact:add-a-proj`, in
 `MIPRE/Foundations/Commutation.lean`.
+
+### PR L, third piece: the near-identity of `eq:qld-pulling-1` (2026-09-22)
+
+`MIPRE/Background/QLD/Pulling.lean`, continued (fast regime). The display right-multiplies by
+`sum_g (S-hat^W_g)_{A A'} (x) (M-hat^{(Point,W),u}_{g(u)})_{B A''}`, which item 1 of
+`lem:qld-helper` says is near the identity. The step is cheap for a reason worth naming: that
+operator is a **projection** (`agreeOp_mul_self`). The pair measurement's outcomes are orthogonal,
+so the cross terms of the square vanish, and the opposite party's factors are projectors. So its
+deficit from the identity is *linear* in it --- `snorm_sq_one_sub_agreeOp` gives exactly
+`1 - agreement`, with no Cauchy--Schwarz --- and a contraction on the left cannot amplify it
+(`snorm_sub_mul_agreeOp_le`).
+
+The package is stated for any family of projectors on the second party, not just a measurement:
+the cross-term cancellation needs only the *first* party's family to be projective. That is what
+lets it apply here, where the second-party factors are indexed by `g` through `g(u)` and so are
+not a measurement in `g`.
+
+Left on the node after this: `eq:qld-pulling-3`, `eq:qld-pulling-10`, the assembly, and the final
+passage through `fact:agreement`, `fact:data-processing` and `lem:qld-povm-to-obs`.

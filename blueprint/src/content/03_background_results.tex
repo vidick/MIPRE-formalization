@@ -4049,7 +4049,9 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.SimulPair.sum_ancSyn_mulVec, MIPRE.snorm_sq_sum_orthogonal,
   MIPRE.QLD.SimulPair.snorm_sq_evalMarg_eq_sum_polyMarg,
   MIPRE.QLD.SimulPair.sum_snorm_sq_polyMarg_one_sub_le, MIPRE.QLD.sum_uniform_agree_le,
-  MIPRE.QLD.sum_uniform_agree_mass_le}
+  MIPRE.QLD.sum_uniform_agree_mass_le, MIPRE.agreeOp, MIPRE.agreeOp_conjTranspose,
+  MIPRE.agreeOp_mul_self, MIPRE.qform_agreeOp, MIPRE.snorm_sq_one_sub_agreeOp,
+  MIPRE.snorm_sub_mul_agreeOp_le}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4123,12 +4125,23 @@ probabilities of a projective family and so summing to at most one. No lower bou
 here, unlike at \texttt{prob\_agree\_ldEnc\_le\_of\_not\_multilinear}: both polynomials carry
 the same degree bound, so the hypothesis is already met.
 
-\emph{Not formalized}: the remaining $\approx_\delta$ displays ---
-\texttt{eq:qld-pulling-1} and \texttt{eq:qld-pulling-3}, which insert and move a near-identity,
-and \texttt{eq:qld-pulling-10} --- the assembly of the chain itself, and the final passage through
-\texttt{fact:agreement}, \texttt{fact:data-processing} and Lemma~\ref{lem:qld-povm-to-obs}. Their
-remaining tool is the paper's \texttt{fact:add-a-proj}, which
-\texttt{MIPRE/Foundations/Commutation.lean} already has.
+\emph{And the near-identity is a projection.} Display \texttt{eq:qld-pulling-1} right-multiplies
+by $\sum_g (\widehat S^W_g)_{\alice\alice'} \ot
+(\widehat M^{(\mathtt{Point},W),u}_{g(u)})_{\bob\alice''}$, which the first item of
+Lemma~\ref{lem:qld-helper} says is close to the identity on the state. What makes the step cheap
+is that this operator is a \emph{projection} (\texttt{agreeOp\_mul\_self}): the pair
+measurement's outcomes are orthogonal, so the cross terms vanish, and the opposite party's factors
+are projectors. Its deficit from the identity is then exactly one minus the agreement
+(\texttt{snorm\_sq\_one\_sub\_agreeOp}) --- linear in the operator, with no Cauchy--Schwarz
+anywhere --- and a contraction on the left cannot amplify it
+(\texttt{snorm\_sub\_mul\_agreeOp\_le}). The package asks only the \emph{first} party's family
+to be projective, which is what lets it apply here, where the second party's factors are indexed
+by $g$ through $g(u)$ and so are not a measurement in $g$.
+
+\emph{Not formalized}: \texttt{eq:qld-pulling-3} and \texttt{eq:qld-pulling-10}, the assembly of
+the chain itself, and the final passage through \texttt{fact:agreement},
+\texttt{fact:data-processing} and Lemma~\ref{lem:qld-povm-to-obs}. Their remaining tool is the
+paper's \texttt{fact:add-a-proj}, which \texttt{MIPRE/Foundations/Commutation.lean} already has.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
 
 \effortHard
