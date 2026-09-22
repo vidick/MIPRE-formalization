@@ -4086,7 +4086,10 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.SimulPair.sum_snorm_sq_nearId, MIPRE.QLD.SimulPair.sum_uniform_snorm_sq_nearId_le,
   MIPRE.QLD.kron_sum', MIPRE.QLD.sum_kron', MIPRE.QLD.reindex_sum,
   MIPRE.QLD.SimulPair.nearId_eq_sum, MIPRE.QLD.SimulPair.mTildeAnc_eq_sum,
-  MIPRE.QLD.SimulPair.mTildeAnc_mul_kron, MIPRE.QLD.SimulPair.aOp_mTildeAnc_mul_nearId}
+  MIPRE.QLD.SimulPair.mTildeAnc_mul_kron, MIPRE.QLD.SimulPair.aOp_mTildeAnc_mul_nearId,
+  MIPRE.QLD.snorm_sq_sum_orthogonal', MIPRE.QLD.isPVM_proj, MIPRE.QLD.isPVM_chainOp,
+  MIPRE.QLD.isPVM_ptAtPOVM, MIPRE.QLD.SimulPair.chainShift, MIPRE.QLD.SimulPair.ptA,
+  MIPRE.QLD.SimulPair.ptB, MIPRE.QLD.SimulPair.sum_snorm_sq_insert_chain}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4322,7 +4325,22 @@ characteristic two the condition $h \cdot \ind_m(u) = g(u) + a'$ determines $a'$
 sum over \texttt{chainIdx}, with \texttt{chainOp} as its summand --- which is what that definition
 was introduced for.
 
-\emph{Not formalized}: the remaining six $\approx$ steps --- their estimates are all in place, as
+\emph{And the insertion, \texttt{eq:qld-pulling-3}.} The expansion leaves Bob's point measurement
+beside each term, and the chain inserts Alice's copy of it, spending the point measurements'
+self-consistency. \texttt{SimulPair.sum\_snorm\_sq\_insert\_chain} is that display, and the
+packaging \texttt{sum\_snorm\_sq\_insert\_le} does the work once its two hypotheses are supplied.
+Both are about the chain's terms being a \emph{projective family in the pair} $(g,h)$
+(\texttt{isPVM\_chainOp}, a marginal of the pair measurement tensored with a Weyl spectral
+projector --- for which \texttt{isPVM\_proj} bundles three facts Foundations had only separately).
+Projectivity is what makes the outcomes not interfere, so the squared norm of the sum over an
+outcome's fibre is the sum of the squared norms
+(\texttt{snorm\_sq\_sum\_orthogonal'} --- the existing common-tail version does not cover the
+chain, whose tail carries each term's own point measurement), and it is also what makes the fibres
+of the outcome map $(g,h) \mapsto (g - g_h)(u)$ be seen once rather than once per index. Summing
+the display over the measurement outcome $a$ recovers the whole index set, the sets
+\texttt{chainIdx} being its fibres, which is \texttt{Finset.sum\_fiberwise}.
+
+\emph{Not formalized}: the remaining five $\approx$ steps --- their estimates are all in place, as
 recorded above, and what is missing is the rest of the four-index bookkeeping --- and
 Lemma~\ref{lem:qld-povm-to-obs} at the very end.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
