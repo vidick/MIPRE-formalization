@@ -1788,3 +1788,40 @@ paper's two pairs, `hatVec` is one such cut, and in it the paper's `A''` is the 
 ancilla half --- so the pairing is bipartite. The second pair is still needed to read the display
 *as* `mTilde`, one operator on one party, which is what stands between this and a statement-level
 `\leanok`.
+
+### PR K, first piece: `mTilde` as one operator on one party (2026-09-22)
+
+`MIPRE/Background/QLD/MTilde.lean` (fast regime). The merged stage 5a left item 1 of
+`lem:qld-exact-paulis` as a sum over the simultaneous measurement's outcomes; the paper states it
+as a closeness of two measurements, and this reads it that way. It is a reindexing, not an
+estimate, and the reason is worth recording because the campaign carried the opposite belief for
+three PRs.
+
+**The obstacle was not real.** The note said `mTilde` needs `S-hat^W` and the generalized Pauli on
+disjoint registers of one party, `A A'` and `A''`, while `SimulPair.SA` acts on all of
+`A A' A''` --- so the paper's second entangled pair had to be adjoined and the operators
+transported between two cuts. The first half is true; the conclusion is not. In `hatVec`'s cut the
+register `A''` is the *opposite party's* ancilla half: it is already present, on the far side. So
+writing `M~` as one matrix regroups the same six registers along a third cut,
+`A A' A'' | B`, and that is `bornProb_regroupVec` --- one entry computation
+(`reindex_regroupEquiv`) plus one invariance of the quadratic form (`qform_comp_equiv`). What made
+it look impossible was that Foundations only had `quadForm_reindex`, which reindexes the two
+parties *separately* and therefore cannot move a factor between them; the unary companion is three
+lines and was simply missing.
+
+**What it took.** `isPVM_mTilde` (through `sTensor_mul`, so through projectivity of the pair
+measurement and nothing else); `sum_kron_syn_eq_hatMats`, the characteristic-two shift that turns
+`mTilde`'s defining sum into the hatted point measurement --- `c + a` is the partner of `a` in the
+fibre of the sum, so summing along `a` is summing over the fibre; and then
+`SimulPair.sum_bornProb_mTilde_ge` and `SimulPair.inconsistency_mTilde_le`, the latter in the
+paper's own `simeq_delta` form at `delta = delta_S + 2(delta_S + sqrt(688 eps) + md/q)`.
+
+**And the exact half moved onto the same objects.** `wTilde`'s three relations were proved for an
+abstract projective pair measurement; `SimulPair.wTildeAt` instantiates them at the simultaneous
+one, and `wTilde_mul_add` adds the fourth relation the lemma asserts and the file did not have,
+linearity in the argument (both tensor factors are additive, so it is exact). With that,
+`lem:qld-exact-paulis` carries `\leanok` at both levels, 94 guarded declarations.
+
+One small infrastructure note: the index of `mTilde`'s matrices is a four-fold product whose
+`DecidableEq` runs past the default `synthInstance.maxSize` --- each half alone is found, the
+product is not. Raised in that file and nowhere else.

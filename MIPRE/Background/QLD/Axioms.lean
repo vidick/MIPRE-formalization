@@ -14,6 +14,7 @@ import MIPRE.Background.QLD.Legalize
 import MIPRE.Background.QLD.PaddedValue
 import MIPRE.Background.QLD.PaddedLIDT
 import MIPRE.Background.QLD.Helper
+import MIPRE.Background.QLD.MTilde
 import MIPRE.Background.QLD.CLTransport
 import MIPRE.Background.Introspection.HonestPauliLowDegree
 import MIPRE.Background.Introspection.HonestPauliEdges
@@ -1194,3 +1195,43 @@ transport, `MIPRE/Background/QLD/PaddedLIDT.lean` for the errors). -/
   MIPRE.QLD.sum_uniform_xSqNorm_hatMats_le, MIPRE.QLD.SimulPair.hatMats_conjTranspose,
   MIPRE.QLD.SimulPair.sum_bornProb_evalMarg_ge, MIPRE.QLD.SimulPair.sum_xSqNorm_evalMarg_le,
   MIPRE.QLD.SimulPair.sum_xSqNorm_hat_le, MIPRE.QLD.SimulPair.sum_snorm_sq_evalMarg_one_sub_le
+
+/-! `lem:qld-exact-paulis`. The exact half is
+`MIPRE/Background/QLD/{ExactPauli,SwapUnitary}.lean`, the approximate half
+`MIPRE/Background/QLD/{NonMultilinear,PauliBasis,Multilinear}.lean`, and the reading of the
+latter as a closeness of two measurements `MIPRE/Background/QLD/MTilde.lean`. -/
+#guard_sorry_free MIPRE.QLD.sCoarse, MIPRE.QLD.isPVM_sCoarse, MIPRE.QLD.sum_sCoarse_kron,
+  MIPRE.QLD.mTilde, MIPRE.QLD.mTilde_eq_sum, MIPRE.QLD.cdPhase, MIPRE.QLD.wTilde,
+  MIPRE.QLD.wTilde_eq, MIPRE.QLD.wTilde_conjTranspose, MIPRE.QLD.wTilde_mul_self,
+  MIPRE.QLD.wTilde_mul_wTilde, MIPRE.QLD.dotF_smul_right, MIPRE.QLD.trDot_smul_smul,
+  MIPRE.QLD.trDot_smul_right, MIPRE.QLD.sum_kron, MIPRE.QLD.kron_sum,
+  MIPRE.QLD.prob_agree_ldEnc_le_of_not_multilinear, MIPRE.QLD.nonMultilinear_mass_le,
+  MIPRE.QLD.sum_sub_le_of_eq_on, MIPRE.QLD.sum_normSq_point_sub_pauli_le, MIPRE.conv,
+  MIPRE.conjTranspose_conv_mul_conv, MIPRE.sum_conv, MIPRE.sum_normSq_stateVecB_conv_eq,
+  MIPRE.QLD.hatPtPOVM_mats_eq_conv, MIPRE.QLD.hatPauliPOVM_mats_eq_conv,
+  MIPRE.QLD.sum_normSq_hat_point_sub_pauli_le, MIPRE.QLD.rdPauliVec, MIPRE.QLD.rdPauli_eq_dotF,
+  MIPRE.QLD.dotF_add_left, MIPRE.QLD.weylPOVM, MIPRE.QLD.weylPOVM_mats, MIPRE.QLD.synOfPOVM_eq_map,
+  MIPRE.QLD.hatPauli, MIPRE.QLD.hatPauli_map, MIPRE.POVM.map_kron_map, MIPRE.QLD.abs_bornProb_le,
+  MIPRE.QLD.abs_sum_bornProb_le, MIPRE.abs_sum_weighted_bornProb_le, MIPRE.sum_filter_bornProb_eq,
+  MIPRE.sum_mass_off_le, MIPRE.QLD.IsML, MIPRE.QLD.not_degreeOf_le_one_of_not_isML,
+  MIPRE.QLD.sum_uniform_agree_ldEnc_le, MIPRE.QLD.polyMarg, MIPRE.QLD.evalMarg_eq_map_polyMarg,
+  MIPRE.QLD.isPVM_polyMarg, MIPRE.QLD.isPVM_hatPauli, MIPRE.QLD.SimulPair.sum_bornProb_hatPauli_ge,
+  MIPRE.QLD.SimulPair.sum_bornProb_off_le, MIPRE.QLD.SimulPair.sum_bornProb_not_isML_le,
+  MIPRE.QLD.cubeData, MIPRE.QLD.IsInterp, MIPRE.QLD.cubeData_eq_of_eq_ldEnc,
+  MIPRE.QLD.isInterp_of_exists, MIPRE.QLD.ne_ldEnc_of_not_isInterp, MIPRE.QLD.dotF_cubeData_indVec,
+  MIPRE.QLD.sum_uniform_agree_ldEnc_le_of_not_isInterp,
+  MIPRE.QLD.SimulPair.sum_bornProb_not_isInterp_le, MIPRE.sum_bornProb_map_eq,
+  MIPRE.abs_sum_weighted_sub_le, MIPRE.QLD.SimulPair.sum_bornProb_polyMarg_ge,
+  MIPRE.QLD.SimulPair.sum_bornProb_cubeData_ge, MIPRE.regroupEquiv, MIPRE.regroupVec,
+  MIPRE.qform_comp_equiv, MIPRE.reindex_regroupEquiv, MIPRE.bornProb_regroupVec,
+  MIPRE.regroupVec_unit, MIPRE.QLD.mTilde_eq_sTensor, MIPRE.QLD.isPVM_mTilde,
+  MIPRE.QLD.dotF_add_right, MIPRE.QLD.cdPhase_add, MIPRE.QLD.wTilde_mul_add,
+  MIPRE.QLD.add_self_eq_zero', MIPRE.QLD.add_eq_iff_eq_add, MIPRE.QLD.ptAtPOVM,
+  MIPRE.QLD.hatPtPOVM_eq_kron, MIPRE.QLD.sum_kron_syn_eq_hatMats, MIPRE.QLD.sCoarse_eq_polyMarg,
+  MIPRE.QLD.SimulPair.mVec, MIPRE.QLD.SimulPair.mVec_unit, MIPRE.QLD.SimulPair.mTildeAt,
+  MIPRE.QLD.SimulPair.isPVM_mTildeAt, MIPRE.QLD.SimulPair.mTildeAt_eq,
+  MIPRE.QLD.SimulPair.bornProb_mTildeAt, MIPRE.QLD.SimulPair.sum_bornProb_mTildeAt,
+  MIPRE.QLD.SimulPair.sum_bornProb_mTilde_ge, MIPRE.QLD.SimulPair.inconsistency_mTilde_le,
+  MIPRE.QLD.SimulPair.wTildeAt, MIPRE.QLD.SimulPair.wTildeAt_conjTranspose,
+  MIPRE.QLD.SimulPair.wTildeAt_mul_self, MIPRE.QLD.SimulPair.wTildeAt_mul_add,
+  MIPRE.QLD.SimulPair.wTildeAt_mul_wTildeAt

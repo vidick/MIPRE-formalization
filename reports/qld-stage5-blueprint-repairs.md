@@ -149,16 +149,25 @@ paper's six-register picture is one operator `M~` on `A A' A''` --- is here an o
 pairing of Alice's `S^W_g` against Bob's point measurement convolved with his own ancilla. That is
 why the inequality above needs no second pair.
 
-Not formalized, and therefore no `leanok` mark on either statement:
+**A third finding, from doing that last step: the second pair was never needed.** The bullet that
+stood here said the remaining work was to adjoin the paper's second entangled pair and transport
+across it. That was wrong, and in an instructive way. The paper's `A''` is not a register one has
+to create --- it is already in `hatVec`, on the far side of the cut. Writing
+`M~^{W,u} = sum_g S-hat^W_g (x) tau^W_{...}` as a single matrix is a *regrouping* of the same six
+registers along a third cut, `A A' A'' | B`, and Born probabilities transport across it by one
+entry computation (`reindex_regroupEquiv`) plus one invariance of the quadratic form
+(`qform_comp_equiv`). `MIPRE/Background/QLD/MTilde.lean` does it, and
+`SimulPair.inconsistency_mTilde_le` is item 1 in the paper's own `simeq_delta` form, at
+`delta = delta_S + 2 (delta_S + sqrt(688 eps) + md/q)`. The instructive part is that the
+obstacle was an artifact of reading the paper's register names as a demand rather than as one
+choice of bipartition: `quadForm_reindex` reindexes the two parties separately and so cannot move
+a factor between them, and its absence read as an impossibility. The unary companion
+`qform_comp_equiv` is three lines.
 
-* reading the display above *as* `M~^{W,u}`, a single operator on one party. `mTilde` wants the
-  pair measurement and the generalized Pauli on disjoint registers of one party, and
-  `SimulPair.SA` acts on all of `A A' A''`; adjoining the second pair and transporting across it is
-  the remaining bookkeeping, together with the factor reindexing `(A x A'') x E ~= (A x E) x A''`
-  that `mTilde`'s shape asks for;
+With that, `lem:qld-exact-paulis` carries `leanok` at both levels. `lem:qld-swap` does not:
 * the embedding of the two ancilla halves into the four-party index, which is what turns
   `twirl_mul_twirl` into a statement about the expanded state;
 * item 2 of `lem:qld-swap` in its entirety.
 
-Stage 4, `lem:qld-simultaneous` and its ten sub-lemmas, is untouched and is a multi-PR job of its
-own; `planning/qld-campaign.md` records the sizing.
+Stage 4, `lem:qld-simultaneous` and its ten sub-lemmas, was untouched when this was written and
+has since been done (PRs #144, #147, #150); `planning/qld-campaign.md` records how it went.
