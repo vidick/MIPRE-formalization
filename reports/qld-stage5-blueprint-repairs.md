@@ -303,3 +303,39 @@ every statement in `Helper`, `Multilinear`, `MTilde`, `AncTransport`, `Pulling`,
 operators and states in the abstract and do not care how many ancillas there are --- so this is a
 retyping and a re-derivation of the transports, not new mathematics. But it is the piece of work
 that has to come next, and neither assembly should be started before it.
+
+### Resolved, and not in the way this report predicted
+
+The section above said the change was a retyping of `Phi` and a re-derivation of every transport.
+It is neither, and the two attempts to guess it from the Lean types both failed before the paper
+was read carefully enough. What settled it were three passages:
+
+* `qld-commutation.tex`, `sec:expanding`: the six registers are partitioned into two parties in
+  **two** ways --- `A A'` against `B A''`, and `B B'` against `A B''` --- and every bipartite
+  relation derived for one holds for the other with the registers changed.
+* `lem:qld-4-7`: the pair measurement `S-hat` exists on `H (x) (C^q)^{(x) n}` for **each** of the
+  two players' spaces, with the displays `(S-hat)_{A A'} ~ (M-hat)_{B A''}` and
+  `(S-hat)_{B B'} ~ (M-hat)_{A B''}`.
+* `qld-separating.tex`: "If `S-hat^W_g` is viewed as an operator acting on registers `A A'` (resp.
+  `B B'`) then we view `M-tilde^{W,u-tilde}_a` as an operator acting on registers `A A' A''` (resp.
+  `B B' B''`)."
+
+So the pair measurement is supported on the party's own two registers, and the conclusion of
+`lem:qld-pauli-selfcons` is stated along a *third* grouping --- the physical one,
+`A A' A'' | B B' B''` --- which is neither of the two cuts the rest of the section works on.
+
+`MirrorSimul` (`MIPRE/Background/QLD/Mirror.lean`) follows from that directly. Each cut keeps the
+state it already sees, unchanged; the other pair is **appended**, one half to each party, with
+`expVec _ epr`; and the second cut is a second `SimulPair` at the swapped strategy with the two
+players' measurements exchanged, which is exactly what the symmetry paragraph licenses. Nothing in
+`Helper`, `Multilinear`, `MTilde`, `AncTransport`, `Pulling`, `SwapMeasure` or `ChainProbe` is
+touched, and Bob's `mTildeAnc`, `swapA`, projectivity and `eq:qld-unitary-6` are instantiations of
+Alice's rather than new proofs.
+
+The finding for the *formalization* --- not a defect in the paper --- is that
+`SimulPair.SB` is not the mirror of `SimulPair.SA`. `SB` is typed on `(dB x Anc F m) x EB` where
+that `Anc F m` is `A''`, so it sits on `B A''`: it is the second party of the **first** cut, the
+symmetric equivalent `M-hat_{A A'} ~ S-hat_{B A''}` of the first display. Bob's swap unitary is
+built from `S-hat` on `B B'`, which is the first party of the **second** cut and was not in the
+tree at all. A pull request description asserted the reuse before it was checked, and was corrected
+before merge; `planning/qld-two-pairs-scope.md` keeps that and both discarded designs.

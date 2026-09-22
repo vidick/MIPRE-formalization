@@ -4058,7 +4058,22 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.sum_snorm_sq_proj_comp_le, MIPRE.snorm_one_sub_aOp_mul_bOp_le,
   MIPRE.sum_snorm_sq_insert_le, MIPRE.sum_xSqNorm_fibre_le,
   MIPRE.QLD.SimulPair.mTildeAnc, MIPRE.QLD.SimulPair.isPVM_mTildeAnc,
-  MIPRE.QLD.SimulPair.mTildeAt_eq_mTildeAnc, MIPRE.QLD.SimulPair.swapU_conj_mTildeAnc}
+  MIPRE.QLD.SimulPair.mTildeAt_eq_mTildeAnc, MIPRE.QLD.SimulPair.swapU_conj_mTildeAnc,
+  MIPRE.QLD.pairSwapEquiv, MIPRE.QLD.pairSwapVec, MIPRE.QLD.pairSwapVec_unit,
+  MIPRE.QLD.reindex_pairSwapEquiv, MIPRE.QLD.qform_pairSwapVec, MIPRE.QLD.mirrorEquiv,
+  MIPRE.QLD.mirrorVec, MIPRE.QLD.mirrorVec_unit, MIPRE.QLD.pairSwapVec_mirrorVec,
+  MIPRE.sndExtVec, MIPRE.sndExtVec_eq, MIPRE.reindex_prodPUnit, MIPRE.expVec_punit_unit,
+  MIPRE.bornProb_sndExtVec, MIPRE.sndExtVec_unit, MIPRE.sndPairEquiv,
+  MIPRE.reindex_sndPairEquiv, MIPRE.bornProb_sndPair, MIPRE.QLD.MirrorSimul,
+  MIPRE.QLD.MirrorSimul.toFirst, MIPRE.QLD.MirrorSimul.toSecond,
+  MIPRE.QLD.MirrorSimul.physVec, MIPRE.QLD.MirrorSimul.physVec_unit,
+  MIPRE.QLD.MirrorSimul.physVec_mirror, MIPRE.QLD.MirrorSimul.bornProb_expPair,
+  MIPRE.QLD.MirrorSimul.physVec_eq_sndPair, MIPRE.QLD.MirrorSimul.bornProb_physVec,
+  MIPRE.QLD.MirrorSimul.aliceMTilde, MIPRE.QLD.MirrorSimul.bobMTilde,
+  MIPRE.QLD.MirrorSimul.isPVM_bobMTilde, MIPRE.QLD.MirrorSimul.bobSwap,
+  MIPRE.QLD.MirrorSimul.bobSwap_mul_conjTranspose,
+  MIPRE.QLD.MirrorSimul.bobSwap_conjTranspose_mul,
+  MIPRE.QLD.MirrorSimul.bobSwap_conj_bobMTilde, MIPRE.QLD.MirrorSimul.selfConsGap}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4195,8 +4210,51 @@ Lemma~\ref{lem:qld-exact-paulis}'s, and \texttt{swapU\_conj\_mTildeAnc} says tha
 the swap unitary strips the pair measurement off it whatever the probe --- the cancellation is
 between the outcome's shift and the conjugation's, and both are written with the same pairing.
 
+\emph{And the conclusion is now expressible, which it was not.} Both sides of this statement are
+exact Pauli objects, one per party, so writing it down at all needs each party's whole triple on
+its own side of one cut: Alice's $\alice \alice' \alice''$ against Bob's $\bob \bob' \bob''$. The
+formalization's padded state carried only the pair $\alice' \alice''$, so there was no such cut and
+no such statement. \texttt{MirrorSimul} supplies it, and the shape it takes was decided by three
+sentences of the paper rather than by the Lean types.
+
+The registers are partitioned two ways --- $\alice \alice'$ against $\bob \alice''$, and
+$\bob \bob'$ against $\alice \bob''$ --- and \texttt{qld-commutation.tex}'s
+\texttt{sec:expanding} records that every bipartite relation derived for one holds for the other
+with the registers changed. Lemma~\ref{lem:qld-simultaneous} gives $\widehat{S}$ on
+$\alice \alice'$ \emph{and} on $\bob \bob'$, one per player's space, and it is the second that
+$V_\bob$ conjugates by. So the second reading is not data of a new kind: \textbf{the mirror of a
+\texttt{SimulPair} is a \texttt{SimulPair}}, at the swapped strategy with the two players'
+measurements exchanged. \texttt{toFirst} and \texttt{toSecond} are the two views, and every lemma
+already proved about \texttt{SimulPair} --- \texttt{mVec}, \texttt{mTildeAnc}, \texttt{swapA},
+\texttt{swapU\_conj\_mTildeAnc} --- becomes Bob's by instantiation, with no mirror lemma to prove.
+\texttt{bobSwap\_conj\_bobMTilde} is the paper's ``an entirely analogous calculation shows''
+discharged that way.
+
+Where the second pair goes was the one real decision, and getting it wrong breaks the statement
+rather than merely lengthening the proof. It is \emph{appended}: each view keeps the state its own
+cut sees, with only its own pair in it, and the other pair is tensored on with \texttt{expVec \_
+epr}, one half to each party (\texttt{hmirror} says the two appendings agree). The alternative ---
+hiding the second pair inside \texttt{SimulPair}'s arbitrary padding registers, which typechecks
+and needs nothing retyped --- would let $\widehat{S}$ act on $\bob''$, which is Bob's, and the
+paper's does not. A non-local $\widehat{S}$ makes $\tilde{M}$ and the swap unitary non-local, and
+then the two sides of this lemma do not lie on opposite sides of any cut. Appending puts the pair
+halves outermost, which is also where \texttt{mTilde} writes its Pauli register, so
+\texttt{mTildeAnc} lands on Alice's physical register with nothing to reindex ---
+\texttt{aliceMTilde} and \texttt{bobMTilde} are the two sides, and \texttt{selfConsGap} is this
+lemma's left-hand side. \texttt{planning/qld-two-pairs-scope.md} keeps both discarded designs.
+
+The bridge from what is proved to where it has to be read is \texttt{bornProb\_physVec}: along the
+cut $\tilde{M}$ needs, $\alice''$ has already moved to Alice, so what the appending adds is
+entirely Bob's, and an operator that is the identity on it sees the state
+Lemma~\ref{lem:qld-simultaneous} already describes. \texttt{sndExtVec} is that one-sided appending
+(\texttt{expVec} puts one register on each party and does not cover it; it does cover it with a
+trivial register on the first party, which is all \texttt{sndExtVec} is), and
+\texttt{pairSwapVec\_mirrorVec} says the two cuts' physical readings are the same vector on the
+nose, with only the parties written in the other order.
+
 \emph{Not formalized}: the assembly of the chain itself --- the index bookkeeping of its eleven
-displays, and Lemma~\ref{lem:qld-povm-to-obs} at the end. Every step it assembles is in place.
+displays, and Lemma~\ref{lem:qld-povm-to-obs} at the end. Every step it assembles is in place, and
+so now is the cut its conclusion is stated along.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
 
 \effortHard
@@ -4366,9 +4424,16 @@ has no $\bob' \bob''$ in it at all. That was deliberate and correct for
 Lemma~\ref{lem:qld-simultaneous} and Lemma~\ref{lem:qld-helper}, each of which uses one
 orientation at a time, and it is what \texttt{reports/qld-stage5-blueprint-repairs.md} records as
 the second entangled pair not being needed for Lemma~\ref{lem:qld-exact-paulis}'s item 1. Item 2's
-threading is the first consumer that does need it. So what stands between the endgame's steps and
-the lemma is not bookkeeping: it is extending the interface to carry both pairs, or an argument
-that one suffices here too.
+threading is the first consumer that does need it.
+
+\emph{And that obstacle is now removed.} \texttt{MirrorSimul}, described in the comments on
+Lemma~\ref{lem:qld-pauli-selfcons}, carries both pairs by appending each to the cut that does not
+already have it, and produces the two \texttt{SimulPair} views the two orientations need.
+\texttt{physVec} is the state on the physical grouping $\alice \alice' \alice''$ against
+$\bob \bob' \bob''$, which is the cut item 1 concludes along, \texttt{physVec\_mirror} says the
+mirrored view lands on it too, and \texttt{bornProb\_physVec} carries expectations from the cut
+everything was proved on. What stands between the endgame's steps and the lemma is now bookkeeping
+again.
 
 \emph{And the missing edge, made explicit.} Item 1 asks for a near-invariance of the state under
 the Weyl twirl on its two ancilla halves; what Lemma~\ref{lem:qld-pauli-selfcons} supplies is an
@@ -4382,8 +4447,8 @@ Lemma~\ref{lem:qld-exact-paulis}.
 Lemma~\ref{lem:qld-pauli-selfcons} and are hypotheses of \texttt{exists\_auxVec\_close} rather
 than conclusions; and, in item 2, the threading of those steps into the statement about
 $V M^{(\pauli,W)}_h V^\dagger$, which is where the registers of the conjugated Pauli measurement
-have to be matched with item 1's. Every step it threads is in place. Hence no
-\texttt{leanok} mark at either level. 
+have to be matched with item 1's --- on \texttt{physVec}, now that there is such a cut. Every step
+it threads is in place. Hence no \texttt{leanok} mark at either level. 
 
 \emph{And \texttt{eq:qld-unitary-5}.} It needed no new estimate: its engine is the paper's
 \texttt{fact:triangle-for-simeq}, already in Foundations as \texttt{agreeSum\_triangle} (with
