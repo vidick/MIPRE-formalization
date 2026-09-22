@@ -3843,7 +3843,7 @@ same sum, grouped differently, and the outcome form is what the Pauli constructi
   MIPRE.QLD.wTilde_mul_wTilde, MIPRE.QLD.dotF_smul_right, MIPRE.QLD.trDot_smul_smul,
   MIPRE.QLD.trDot_smul_right, MIPRE.QLD.sum_kron, MIPRE.QLD.kron_sum,
   MIPRE.QLD.prob_agree_ldEnc_le_of_not_multilinear, MIPRE.QLD.nonMultilinear_mass_le,
-  MIPRE.QLD.sum_sub_le_of_eq_on}
+  MIPRE.QLD.sum_sub_le_of_eq_on, MIPRE.QLD.sum_normSq_point_sub_pauli_le}
 From the simultaneous measurement one constructs, for $W \in \{X, Z\}$, measurements and
 binary observables on the expanded space which satisfy the Pauli group relations
 \emph{exactly} --- linearity in the argument, and $XZ$ commutation or anticommutation with the
@@ -3864,7 +3864,18 @@ so it is the agreement and not the disagreement that the bound controls
 \end{proof}
 
 \paragraph{Comments.} The exact half is formalized and the approximate half is not, and the
-dividing line is the register count.
+dividing line is the register count. Of the approximate half's ingredients, three are in place:
+the agreement form of Schwartz--Zippel against every multilinear polynomial at once, the
+aggregation that turns it into a bound on the mass at non-multilinear outcomes, and the
+substitution error of two families agreeing off that mass
+(\texttt{MIPRE/Background/QLD/NonMultilinear.lean}). A fourth is now too: the strategy's
+$(\mathtt{Point}, W)$ measurement and the low-degree reading of its $(\mathtt{Pauli}, W)$ answer
+are close \emph{on one party}, at $688\,\eps$
+(\texttt{sum\_normSq\_point\_sub\_pauli\_le}), which is what lets the point be sampled
+independently of the operators. The two inputs are cross-party items of
+Lemma~\ref{lem:qld-win}, and they share Alice's point measurement, so one triangle inequality
+removes it. What remains is the chain that carries this to the expanded state and applies the
+aggregation to the simultaneous measurement's outcomes.
 
 \emph{Formalized, unconditionally}, in \texttt{MIPRE/Background/QLD/ExactPauli.lean}: the two
 marginals of a projective pair measurement (\texttt{sCoarse}, projective by

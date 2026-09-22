@@ -1716,3 +1716,17 @@ The six-register state `A A' B'' | B A'' B'` enters only here: `mTilde` acts on
 `B B' B''` while the point measurement acts on `A`, so the two cuts of the paper's
 `ψ̂` are needed at once, with `stateDist` transported between them. `SwapUnitary.lean` already has
 the two twirls and the maximally entangled state; the transport is the piece to write.
+
+### PR J-b, first piece: the point and Pauli-basis measurements on one party (2026-09-22)
+
+`MIPRE/Background/QLD/PauliBasis.lean` (fast regime). The repaired proof of
+`lem:qld-exact-paulis` needs the `(Point, W)` measurement to be close to the low-degree reading of
+the `(Pauli, W)` answer *on the same party*, because the Pauli basis answer does not depend on the
+sampled point and that is what lets Schwartz--Zippel see a uniform point independent of the
+operators. Both inputs are cross-party items of `lem:qld-win-implications` --- `item_consistency`
+at the type `(Point, W)` and `item_pauli_consistency` --- and they share Alice's point
+measurement, so Foundations' `normSq_stateVecB_sub_le` (the triangle
+`‖(1 ⊗ (N₁ − N₂))ψ‖ ≤ ‖(A ⊗ 1 − 1 ⊗ N₂)ψ‖ + ‖(A ⊗ 1 − 1 ⊗ N₁)ψ‖`, squared at the usual factor two,
+written for the pasting lemma and reused verbatim here) removes it: `sum_normSq_point_sub_pauli_le`, at `688 ε` on average over the verifier's content.
+This is on the bare strategy; carrying it to the expanded state, and from there to the mass
+argument, is the next step.
