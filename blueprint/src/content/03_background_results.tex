@@ -3846,7 +3846,16 @@ same sum, grouped differently, and the outcome form is what the Pauli constructi
   MIPRE.QLD.sum_sub_le_of_eq_on, MIPRE.QLD.sum_normSq_point_sub_pauli_le, MIPRE.conv,
   MIPRE.conjTranspose_conv_mul_conv, MIPRE.sum_conv, MIPRE.sum_normSq_stateVecB_conv_eq,
   MIPRE.QLD.hatPtPOVM_mats_eq_conv, MIPRE.QLD.hatPauliPOVM_mats_eq_conv,
-  MIPRE.QLD.sum_normSq_hat_point_sub_pauli_le}
+  MIPRE.QLD.sum_normSq_hat_point_sub_pauli_le, MIPRE.QLD.rdPauliVec,
+  MIPRE.QLD.rdPauli_eq_dotF, MIPRE.QLD.dotF_add_left, MIPRE.QLD.weylPOVM,
+  MIPRE.QLD.weylPOVM_mats, MIPRE.QLD.synOfPOVM_eq_map, MIPRE.QLD.hatPauli,
+  MIPRE.QLD.hatPauli_map, MIPRE.POVM.map_kron_map, MIPRE.QLD.abs_bornProb_le,
+  MIPRE.QLD.abs_sum_bornProb_le, MIPRE.abs_sum_weighted_bornProb_le,
+  MIPRE.sum_filter_bornProb_eq, MIPRE.sum_mass_off_le, MIPRE.QLD.IsML,
+  MIPRE.QLD.not_degreeOf_le_one_of_not_isML, MIPRE.QLD.sum_uniform_agree_ldEnc_le,
+  MIPRE.QLD.polyMarg, MIPRE.QLD.evalMarg_eq_map_polyMarg, MIPRE.QLD.isPVM_polyMarg,
+  MIPRE.QLD.isPVM_hatPauli, MIPRE.QLD.SimulPair.sum_bornProb_hatPauli_ge,
+  MIPRE.QLD.SimulPair.sum_bornProb_not_isML_le}
 From the simultaneous measurement one constructs, for $W \in \{X, Z\}$, measurements and
 binary observables on the expanded space which satisfy the Pauli group relations
 \emph{exactly} --- linearity in the argument, and $XZ$ commutation or anticommutation with the
@@ -3884,10 +3893,25 @@ $\widehat X^\dagger \widehat X$ vanish, so the common ancilla factor drops out e
 $\sum_c \|(\Id \ot \widehat X_c) \widehat\psi\|^2
   = \sum_a \|(\Id \ot X_a) \psi\|^2$ (\texttt{sum\_normSq\_stateVecB\_conv\_eq}). The two
 together put the closeness on the expanded state with the same constant
-(\texttt{sum\_normSq\_hat\_point\_sub\_pauli\_le}). What remains is to apply the aggregation
-to the simultaneous measurement's outcomes: the projective family indexed by cube data, the
-Cauchy--Schwarz that substitutes it for the point measurement at cost $O(\sqrt{\eps})$, and
-Lemma~\ref{lem:schwartz-zippel} per non-multilinear outcome.
+(\texttt{sum\_normSq\_hat\_point\_sub\_pauli\_le}). The aggregation has now been applied to the
+simultaneous measurement's outcomes, in \texttt{MIPRE/Background/QLD/Multilinear.lean}, and the
+bound the appendix's repair turns on is formalized: with $\widehat S^W$ a simultaneous pair
+measurement of error $\delta_S$ for a strategy of failure $\eps$,
+\begin{equation*}
+  \sum_{g \text{ not multilinear}} \bigl\langle \widehat S^W_g \ot \Id \bigr\rangle_\Phi
+  \;\leq\; \delta_S + \sqrt{688\,\eps} + \frac{md}{q}
+\end{equation*}
+(\texttt{SimulPair.sum\_bornProb\_not\_isML\_le}). Its three inputs are the
+point-independent family indexed by cube data (\texttt{hatPauli}, the strategy's
+$(\mathtt{Pauli}, W)$ measurement convolved with the ancilla's Weyl measurement, projective and
+independent of the sampled point, whose reading at a point is the hatted Pauli measurement there
+--- \texttt{hatPauli\_map}); the Cauchy--Schwarz that substitutes it for the point measurement at
+cost $\sqrt{688\,\eps}$ (\texttt{abs\_sum\_weighted\_bornProb\_le},
+\texttt{SimulPair.sum\_bornProb\_hatPauli\_ge}); and Lemma~\ref{lem:schwartz-zippel} per
+non-multilinear outcome, uniformly in the cube datum
+(\texttt{sum\_uniform\_agree\_ldEnc\_le}). The marginal is taken \emph{indexed by polynomials}
+rather than by their value at the point (\texttt{polyMarg}), which is what makes the outcome
+operator independent of the point that Schwartz--Zippel then samples.
 
 \emph{Formalized, unconditionally}, in \texttt{MIPRE/Background/QLD/ExactPauli.lean}: the two
 marginals of a projective pair measurement (\texttt{sCoarse}, projective by
@@ -3921,11 +3945,21 @@ interpolation. \texttt{sum\_sub\_le\_of\_eq\_on} therefore takes agreement on th
 outcomes as a hypothesis rather than deriving it.
 
 \emph{Not formalized}, and the reason there is no statement-level \texttt{leanok} mark:
-the $\delta$-closeness to the $(\mathtt{Point},W)$ measurements. Its hypothesis lives on the
-four-register cut $\alice \alice' \mid \bob \alice''$ that \texttt{MIPRE.QLD.hatVec} is, while
-$\tilde{M}^{W,\tilde{u}}$ needs $\alice \alice' \alice''$ on one party --- a six-register state
-with two maximally entangled pairs, and transport between two cuts. That bookkeeping, and the
-eleven-display chain above it, are what remains.
+the $\delta$-closeness of $\tilde{M}^{W,\tilde{u}}$ itself to the $(\mathtt{Point},W)$
+measurements. What is missing is register bookkeeping, not mathematics. The paper's expanded state
+$\ket{\hat\psi} = \ket{\psi}_{\alice\bob} \ot \ket{\EPR}_{\alice'\alice''} \ot
+\ket{\EPR}_{\bob'\bob''}$ carries \emph{two} entangled pairs and is used along two different
+cuts: $\alice\alice' \mid \bob\alice''$ for one orientation of
+Lemma~\ref{lem:qld-simultaneous} and $\bob\bob' \mid \alice\bob''$ for the other.
+\texttt{MIPRE.QLD.hatVec} is one such cut, with one pair, which is all
+Lemmas~\ref{lem:qld-simultaneous} and~\ref{lem:qld-helper} need, since each uses one orientation
+at a time. But $\tilde{M}^{W,\tilde{u}} = \sum_g \widehat S^W_g \ot
+\tau^W_{\coded(g) \cdot \tilde{u} - a}(\tilde{u})$ needs $\widehat S^W$ and the generalized
+Pauli on \emph{disjoint} registers of one party --- $\alice\alice'$ and $\alice''$ --- and
+$\texttt{SimulPair.SA}$ acts on the whole of $\alice\alice'\alice''$. So the second pair has to
+be adjoined and the operators transported across it. That is what remains, together with the
+factor reindexing $(\alice \times \alice'') \times E \cong (\alice \times E) \times
+\alice''$ that \texttt{mTilde}'s shape asks for.
 
 \emph{A ledger discrepancy worth recording.} Node $1.2.2.15$ declares its dependencies as
 $\{1.2.2.13, 1.2.2.14, 1.2.2.7\}$ --- the last being Theorem~\ref{thm:linearity} --- and does not
