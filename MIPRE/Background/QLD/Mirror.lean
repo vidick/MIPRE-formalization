@@ -292,6 +292,44 @@ def toSecond : SimulPair (ψ ∘ Prod.swap) MB MA δ where
 
 @[simp] theorem toSecond_SA : M.toSecond.SA = M.SA' := rfl
 
+/-- **The mirror of a `MirrorSimul` is a `MirrorSimul`**, at the swapped strategy with the two
+players' measurements exchanged and the two cuts exchanged. `toFirst` and `toSecond` give Bob's
+objects as a `SimulPair`, which is enough for everything stated on one cut's state; this gives
+Bob's objects on the *physical* state, which is what the chain's last displays compare. So every
+lemma about the six-register cut becomes Bob's by instantiating here, with no mirror lemma to
+prove --- the same economy `toSecond` buys one level down. The field saying the two cuts read one
+state survives because `mirrorVec` is an involution (`mirrorVec_mirrorVec`). -/
+def mirror : MirrorSimul (ψ ∘ Prod.swap) MB MA δ where
+  Ea := M.Eb
+  Eb := M.Ea
+  Φ := M.Φ'
+  Φ_unit := M.Φ'_unit
+  Φ_reduced := M.Φ'_reduced
+  SA := M.SA'
+  SA_proj := M.SA'_proj
+  SB := M.SB'
+  SB_proj := M.SB'_proj
+  consA := M.consA'
+  consB := M.consB'
+  Φ' := M.Φ
+  Φ'_unit := M.Φ_unit
+  Φ'_reduced := M.Φ_reduced
+  SA' := M.SA
+  SA'_proj := M.SA_proj
+  SB' := M.SB
+  SB'_proj := M.SB_proj
+  consA' := M.consA
+  consB' := M.consB
+  hmirror := by rw [M.hmirror, mirrorVec_mirrorVec]
+
+@[simp] theorem mirror_toFirst : M.mirror.toFirst = M.toSecond := rfl
+
+@[simp] theorem mirror_toSecond : M.mirror.toSecond = M.toFirst := rfl
+
+@[simp] theorem mirror_Φ : M.mirror.Φ = M.Φ' := rfl
+
+@[simp] theorem mirror_SA : M.mirror.SA = M.SA' := rfl
+
 /-! ## The physical state -/
 
 /-- **The state on all six registers, grouped as the two parties physically hold them**: Alice's
@@ -310,6 +348,11 @@ theorem physVec_mirror :
     pairSwapVec (expVec M.Φ' (epr (F := F) (n := Fin m → Bool))) = M.physVec ∘ Prod.swap := by
   rw [M.hmirror]
   exact pairSwapVec_mirrorVec _
+
+/-- **The mirror reads the same physical state**, with only the two parties written in the other
+order. This is `physVec_mirror` in the form the instantiations use: whatever is proved about
+`physVec` holds for Bob by being proved about `M.mirror.physVec`. -/
+theorem mirror_physVec : M.mirror.physVec = M.physVec ∘ Prod.swap := M.physVec_mirror
 
 /-- **A cut-1 expectation is unchanged by appending the other pair.** Operators that are the
 identity on the appended halves see the state the `SimulPair` already describes: the pair
