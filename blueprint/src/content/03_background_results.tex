@@ -4125,7 +4125,11 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.MirrorSimul.aOp_conj_bobChainOp, MIPRE.QLD.MirrorSimul.bobLift_sandwich_kron,
   MIPRE.QLD.MirrorSimul.sum_qform_bobLift_eq,
   MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainQ_agree_le,
-  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainQ_agree_le}
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainQ_agree_le,
+  MIPRE.QLD.sum_uniform_chainCoupled_agree_le, MIPRE.QLD.chainQShift_eq_iff,
+  MIPRE.QLD.sum_filter_and, MIPRE.QLD.sum_uniform_chainCoupled_mass_le,
+  MIPRE.QLD.MirrorSimul.norm_evec_physVec, MIPRE.QLD.MirrorSimul.sum_qform_chainQ,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainQ_notCoupled_le}
 On average over a \emph{uniform} $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the exact Pauli observable
 of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same observable on the other:
 \begin{equation*}
@@ -4527,8 +4531,26 @@ from \texttt{swapVec\_unit} and \texttt{povmValue\_swapped\_le}.
 \texttt{bornProb\_physVec\_aOp}, carrying an operator that is Bob's alone back to the state the
 second cut describes.
 
-\emph{Not formalized}: \texttt{eq:qld-pulling-12}, which is Schwartz--Zippel; the chain's
-assembly through \texttt{sum\_xSqNorm\_le\_of\_endOp}; and
+\emph{And \texttt{eq:qld-pulling-12}, which is the last of the eleven.} The chain's constraint
+is an equality of polynomial \emph{values} at the sampled point; passing to equality of the
+polynomials themselves discards only the tuples where distinct polynomials happen to agree there,
+and Schwartz--Zippel bounds that by $md/q$. \texttt{sum\_uniform\_chainCoupled\_agree\_le} is
+that bound at one pair of index pairs and \texttt{sum\_uniform\_chainCoupled\_mass\_le} the
+weighted form, with \texttt{sum\_uniform\_snorm\_sq\_chainQ\_notCoupled\_le} the display
+itself --- the weights being the four-index family's own Born probabilities, which sum to exactly
+one (\texttt{sum\_qform\_chainQ}).
+
+Two things are worth recording. The polynomials compared are not the chain's pair outcomes but
+those outcomes shifted by the Weyl outcomes' encodings, $g + g_h$ against $g' + g_{h'}$, and the
+encoding is multilinear --- so the sum keeps the individual-degree bound exactly when $d \geq 1$,
+which is the lemma's one hypothesis and the only place in the chain where a lower bound on $d$ is
+needed. And \texttt{chainQShift\_eq\_iff} is where characteristic two is spent again: the
+condition the chain carries the shift on one side of is the condition Schwartz--Zippel wants it
+split across.
+
+\emph{All eleven displays are now formalized.} \emph{Not formalized}: the chain's assembly
+through \texttt{sum\_xSqNorm\_le\_of\_endOp}, which is the bookkeeping of naming the eleven
+intermediate operator families and chaining the displays by the triangle inequality; and
 Lemma~\ref{lem:qld-povm-to-obs} at the very end.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
 

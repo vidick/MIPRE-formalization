@@ -1548,6 +1548,208 @@ theorem sum_uniform_snorm_sq_chainQ_agree_le {hm : m ∣ Fintype.card F} {ε : �
 
 end MirrorSimul
 
+/-! ## `eq:qld-pulling-12`, Schwartz--Zippel
+
+The chain's last display, and its only step that is not about operators: the constraint the chain
+carries is an equality of polynomial *values* at the sampled point, and passing to equality of the
+polynomials themselves discards only the tuples where distinct polynomials happen to agree
+there. -/
+
+/-- **Schwartz--Zippel for the chain's coupling.** Two index pairs that are not coupled carry
+distinct polynomials, and distinct polynomials of individual degree at most `d` agree at a uniform
+point with probability at most `md/q`. The encoding of a Weyl outcome is multilinear, so adding it
+keeps the degree bound as long as `d` is at least one. -/
+theorem sum_uniform_chainCoupled_agree_le (hd : 1 ≤ d)
+    {g g' : LowIndDegPoly (F := F) (m := m) (d := d)} {h h' : Anc F m}
+    (hne : ¬ ChainCoupled g g' h h') :
+    ∑ u, uniform (Point F m) u
+        * (if g.eval u + dotF h (indVec u) = g'.eval u + dotF h' (indVec u) then (1 : ℝ) else 0)
+      ≤ (m : ℝ) * d / Fintype.card F := by
+  classical
+  have hdeg : ∀ (a : LowIndDegPoly (F := F) (m := m) (d := d)) (b : Anc F m) (i : Fin m),
+      (a.toMv + ldEnc b).degreeOf i ≤ d := by
+    intro a b i
+    refine le_trans (MvPolynomial.degreeOf_add_le i _ _) ?_
+    exact max_le (LowIndDegPoly.degreeOf_toMv_le a i)
+      (le_trans (degreeOf_ldEnc_le b i) hd)
+  have hsz := prob_agree_le_individualDegree hne (hdeg g h) (hdeg g' h')
+  have hset : (univ.filter fun u : Point F m =>
+        g.eval u + dotF h (indVec u) = g'.eval u + dotF h' (indVec u))
+      = agree (g.toMv + ldEnc h) (g'.toMv + ldEnc h') := by
+    ext u
+    rw [mem_filter, mem_agree, map_add, map_add, LowIndDegPoly.eval_toMv,
+      LowIndDegPoly.eval_toMv, ← dotF_indVec, ← dotF_indVec]
+    simp only [mem_univ, true_and]
+  simp only [uniform]
+  rw [← Finset.mul_sum, Finset.sum_boole, hset, Fintype.card_fun, Fintype.card_fin]
+  push_cast at hsz ⊢
+  rw [inv_mul_eq_div]
+  exact hsz
+
+omit [Fintype F] [DecidableEq F] [NeZero m] in
+/-- **The chain's agreement condition, in the form Schwartz--Zippel reads.** In characteristic two
+the shift the chain carries may be moved to the other side. -/
+theorem chainQShift_eq_iff (u : Point F m)
+    (q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)
+      × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)) :
+    MIPRE.QLD.chainQShift u q = q.2.1.eval u
+      ↔ q.1.1.eval u + dotF q.1.2 (indVec u)
+        = q.2.1.eval u + dotF q.2.2 (indVec u) := by
+  rw [chainQShift]
+  constructor <;> intro hx
+  · rw [← hx, add_add_cancel]
+  · rw [hx, add_add_cancel]
+
+omit [Algebra (ZMod 2) F] [NeZero m] in
+/-- A version of `Finset.filter` bookkeeping the display needs: restricting a weighted sum to a
+subset of the index is the same as zeroing the weights outside it. -/
+theorem sum_filter_and {ι : Type*} [Fintype ι] [DecidableEq ι] (p r : ι → Prop)
+    [DecidablePred p] [DecidablePred r] (f : ι → ℝ) :
+    (∑ i ∈ univ.filter fun i => r i ∧ p i, f i)
+      = ∑ i ∈ univ.filter r, (if p i then f i else 0) := by
+  classical
+  rw [Finset.sum_filter, Finset.sum_filter]
+  exact Finset.sum_congr rfl fun i _ => by
+    by_cases hr : r i <;> by_cases hp : p i <;> simp [hr, hp]
+
+/-- **Display `eq:qld-pulling-12`, as a bound on a weighted sum.** The chain's constraint is an
+equality of polynomial *values* at the sampled point; passing to equality of the polynomials
+themselves discards only the tuples where distinct polynomials happen to agree there, and those
+carry at most `md/q` of the weight. -/
+theorem sum_uniform_chainCoupled_mass_le (hd : 1 ≤ d)
+    (w : ((LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)
+        × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)) → ℝ)
+    (hw0 : ∀ q, 0 ≤ w q) (hw : ∑ q, w q ≤ 1) :
+    (∑ u, uniform (Point F m) u
+        * ∑ q ∈ univ.filter fun q => MIPRE.QLD.chainQShift u q = q.2.1.eval u
+            ∧ ¬ ChainCoupled q.1.1 q.2.1 q.1.2 q.2.2, w q)
+      ≤ (m : ℝ) * d / Fintype.card F := by
+  classical
+  set w' : ((LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)
+      × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)) → ℝ :=
+    fun q => if ¬ ChainCoupled q.1.1 q.2.1 q.1.2 q.2.2 then w q else 0 with hw'
+  have hw'0 : ∀ q, 0 ≤ w' q := fun q => by
+    simp only [hw']
+    split_ifs with h
+    · exact le_refl 0
+    · exact hw0 q
+  have hw'le : ∑ q, w' q ≤ 1 := by
+    refine le_trans (Finset.sum_le_sum fun q (_ : q ∈ univ) => ?_) hw
+    simp only [hw']
+    split_ifs with h
+    · exact hw0 q
+    · exact le_refl _
+  have hmd : (0 : ℝ) ≤ (m : ℝ) * d / Fintype.card F := by positivity
+  have hrw : ∀ u : Point F m,
+      (∑ q ∈ univ.filter fun q => MIPRE.QLD.chainQShift u q = q.2.1.eval u
+          ∧ ¬ ChainCoupled q.1.1 q.2.1 q.1.2 q.2.2, w q)
+        = ∑ q ∈ univ.filter fun q => q.1.1.eval u + dotF q.1.2 (indVec u)
+            = q.2.1.eval u + dotF q.2.2 (indVec u), w' q := by
+    intro u
+    simp only [hw']
+    rw [sum_filter_and
+      (p := fun q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)
+          × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) =>
+        ¬ ChainCoupled q.1.1 q.2.1 q.1.2 q.2.2)
+      (r := fun q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)
+          × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) =>
+        MIPRE.QLD.chainQShift u q = q.2.1.eval u) w]
+    exact Finset.sum_congr (Finset.filter_congr fun q _ => by
+      rw [chainQShift_eq_iff u q]) fun q _ => rfl
+  rw [Finset.sum_congr rfl fun u (_ : u ∈ univ) => by rw [hrw u]]
+  have hswap : (∑ u, uniform (Point F m) u
+        * ∑ q ∈ univ.filter fun q => q.1.1.eval u + dotF q.1.2 (indVec u)
+            = q.2.1.eval u + dotF q.2.2 (indVec u), w' q)
+      = ∑ q, w' q * ∑ u, uniform (Point F m) u
+          * (if q.1.1.eval u + dotF q.1.2 (indVec u)
+              = q.2.1.eval u + dotF q.2.2 (indVec u) then (1 : ℝ) else 0) := by
+    simp only [Finset.sum_filter, Finset.mul_sum]
+    rw [Finset.sum_comm]
+    exact Finset.sum_congr rfl fun q _ =>
+      Finset.sum_congr rfl fun u _ => by split_ifs <;> ring
+  rw [hswap]
+  calc ∑ q, w' q * ∑ u, uniform (Point F m) u
+          * (if q.1.1.eval u + dotF q.1.2 (indVec u)
+              = q.2.1.eval u + dotF q.2.2 (indVec u) then (1 : ℝ) else 0)
+      ≤ ∑ q, w' q * ((m : ℝ) * d / Fintype.card F) :=
+        Finset.sum_le_sum fun q _ => by
+          by_cases hc : ChainCoupled q.1.1 q.2.1 q.1.2 q.2.2
+          · have hz : w' q = 0 := by
+              simp only [hw']
+              exact if_neg (not_not_intro hc)
+            rw [hz, zero_mul, zero_mul]
+          · exact mul_le_mul_of_nonneg_left
+              (sum_uniform_chainCoupled_agree_le hd hc) (hw'0 q)
+    _ = (∑ q, w' q) * ((m : ℝ) * d / Fintype.card F) := by rw [Finset.sum_mul]
+    _ ≤ 1 * ((m : ℝ) * d / Fintype.card F) := mul_le_mul_of_nonneg_right hw'le hmd
+    _ = (m : ℝ) * d / Fintype.card F := one_mul _
+
+namespace MirrorSimul
+
+variable (M : MirrorSimul ψ MA MB δ)
+
+theorem norm_evec_physVec : ‖evec M.physVec‖ = 1 := by
+  have h : ‖evec M.physVec‖ ^ 2 = 1 := by
+    rw [norm_evec_sq, M.physVec_unit]
+    norm_num
+  nlinarith [norm_nonneg (evec M.physVec)]
+
+set_option maxHeartbeats 1000000 in
+/-- **The chain's four-index family has total weight one on the physical state.** -/
+theorem sum_qform_chainQ (W : Bas) :
+    (∑ q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)
+        × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m),
+      qform M.physVec (M.chainQ W q)) = 1 := by
+  have hP := M.isPVM_chainQ W
+  rw [Finset.sum_congr rfl fun q (_ : q ∈ univ) => show
+      qform M.physVec (M.chainQ W q) = snorm M.physVec (M.chainQ W q * 1) ^ 2 from by
+        rw [Matrix.mul_one, snorm_sq_eq_qform, hP.isSelfAdjoint q, hP.idem q],
+    ← snorm_sq_sum_orthogonal M.physVec hP 1 univ, hP.sum_eq_one, Matrix.one_mul,
+    snorm_one M.physVec M.norm_evec_physVec, one_pow]
+
+set_option maxHeartbeats 1000000 in
+/-- **Display `eq:qld-pulling-12`**: the chain's constraint is an equality of polynomial *values*
+at the sampled point; passing to equality of the polynomials themselves discards only the tuples
+where distinct polynomials happen to agree there, and Schwartz--Zippel bounds that by `md/q`. -/
+theorem sum_uniform_snorm_sq_chainQ_notCoupled_le (hd : 1 ≤ d) (W : Bas) (v : Anc F m) :
+    (∑ u, uniform (Point F m) u * ∑ a : F, snorm M.physVec
+        (∑ q ∈ (univ.filter fun q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)
+              × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) =>
+              MIPRE.QLD.chainQShift u q = q.2.1.eval u
+                ∧ ¬ ChainCoupled q.1.1 q.2.1 q.1.2 q.2.2).filter
+            fun q => dotF (chainLabel q.1.1 q.1.2) v = a,
+          M.chainQ W q) ^ 2)
+      ≤ (m : ℝ) * d / Fintype.card F := by
+  classical
+  have hP := M.isPVM_chainQ W
+  have hu : ∀ u : Point F m,
+      (∑ a : F, snorm M.physVec
+          (∑ q ∈ (univ.filter fun q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)
+                × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) =>
+                MIPRE.QLD.chainQShift u q = q.2.1.eval u
+                  ∧ ¬ ChainCoupled q.1.1 q.2.1 q.1.2 q.2.2).filter
+              fun q => dotF (chainLabel q.1.1 q.1.2) v = a,
+            M.chainQ W q) ^ 2)
+        ≤ ∑ q ∈ univ.filter fun q => MIPRE.QLD.chainQShift u q = q.2.1.eval u
+            ∧ ¬ ChainCoupled q.1.1 q.2.1 q.1.2 q.2.2,
+          qform M.physVec (M.chainQ W q) := by
+    intro u
+    refine le_trans (le_of_eq (Finset.sum_congr rfl fun a (_ : a ∈ univ) =>
+      congrArg (· ^ 2) (congrArg (snorm M.physVec)
+        (Finset.sum_congr rfl fun q _ => (Matrix.mul_one (M.chainQ W q)).symm)))) ?_
+    refine sum_snorm_sq_fiber_sandwich_subset_le M.physVec hP (fun _ => 1)
+      (fun q => dotF (chainLabel q.1.1 q.1.2) v) _ (le_of_eq ?_)
+    exact Finset.sum_congr rfl fun q _ => by
+      rw [Matrix.conjTranspose_one, Matrix.one_mul, Matrix.mul_one]
+  refine le_trans (Finset.sum_le_sum fun u (_ : u ∈ univ) =>
+    mul_le_mul_of_nonneg_left (hu u) (uniform_nonneg (Point F m) u)) ?_
+  exact sum_uniform_chainCoupled_mass_le hd (fun q => qform M.physVec (M.chainQ W q))
+    (fun q => qform_nonneg_of_nonneg M.physVec
+      (Matrix.nonneg_iff_posSemidef.mpr (hP.posSemidef q)))
+    (le_of_eq (M.sum_qform_chainQ W))
+
+end MirrorSimul
+
 end Physical
 
 end MIPRE.QLD
