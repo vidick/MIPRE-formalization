@@ -714,6 +714,8 @@ import MIPRE.Foundations.CL.Downsize
 import MIPRE.Foundations.CL.Embedding
 import MIPRE.Foundations.CL.Graph
 import MIPRE.Foundations.CL.Product
+import MIPRE.Foundations.CL.ProductSampler
+import MIPRE.Foundations.CL.ProductSamplerProg
 import MIPRE.Foundations.CL.Register
 import MIPRE.Foundations.CL.Repeat
 import MIPRE.Foundations.CL.Sampler
