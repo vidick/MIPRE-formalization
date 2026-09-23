@@ -1,8 +1,10 @@
 import MIPRE.Axioms
 import MIPRE.Background.AnswerReduction.AnswerFormat
 import MIPRE.Background.AnswerReduction.Family
+import MIPRE.Background.AnswerReduction.Layout
 import MIPRE.Background.AnswerReduction.PcpPresentation
 import MIPRE.Background.AnswerReduction.Predicate
+import MIPRE.Background.AnswerReduction.Stages
 import MIPRE.Background.AnswerReduction.TypedGame
 import MIPRE.Background.GowersHatami.Basic
 import MIPRE.Background.Introspection.AmbientRawGame
@@ -407,6 +409,7 @@ import MIPRE.Background.LIDT.MIPStarRE.Quantum.Measurement
 import MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB
 import MIPRE.Background.LIDT.Padding
 import MIPRE.Background.LIDT.Presentation
+import MIPRE.Background.LIDT.PresentationQueries
 import MIPRE.Background.LIDT.Simultaneous
 import MIPRE.Background.LIDT.Soundness
 import MIPRE.Background.Orthonormalization.Axioms
