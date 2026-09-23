@@ -46,7 +46,11 @@ The reading of the paper's statement in the vocabulary of `MIPRE.Verifier`:
   `𝒱^ans_n` (completeness), and `val*(𝒱^ans_n) > 1 - ε` gives `val*(𝒱_n) ≥ 1 - δ(ε, n)` with
   `δ(ε, n) = σ^a((λn)^{μa} ε^b + (λn)^{-μb})` (soundness), for universal constants `a, b`, with
   `a ≥ 1` assumed as in `Introspection`. The blueprint's statement has no threshold; the
-  paper's does, and it is kept.
+  paper's does, and it is kept. Completeness also asks `λ, μ ≥ 1`, as soundness asks `λ ≥ 1`:
+  the paper's regime, in which `(λn + 1)^μ ≥ n + 1`. The PCP's validity hypotheses bound
+  `2 log n` by its time bound, which grows with `(λn + 1)^μ` only; at `λ = 0` or `μ = 0` that is
+  a constant and fails for large `n`, so the clause would be false there. Compression's `λ` is at
+  least `2` and its `μ` at least `1`.
 
 Answer alphabets: `𝒱_n` is read with answers of length at most the decider's time bound
 `2^{(λn + 1)^μ}`, the length the PCP decodes to, and `𝒱^ans_n`
@@ -143,8 +147,8 @@ structure AnswerReduction (ℓ : ℕ) where
     (output V lam mu sigma).Within n
       (Budget.uniform (AnswerReduction.outBound bound lam mu sigma n)
         (AnswerReduction.outDegree deg mu))
-  /-- **Completeness**, for `n ≥ C_ar`. -/
-  completeness : ∀ (V : Verifier ℓ) (lam mu sigma n : ℕ), C ≤ n →
+  /-- **Completeness**, for `n ≥ C_ar` and `λ, μ ≥ 1`. -/
+  completeness : ∀ (V : Verifier ℓ) (lam mu sigma n : ℕ), C ≤ n → 1 ≤ lam → 1 ≤ mu →
     V.Within n (AnswerReduction.inBudget lam mu n) → V.decider.size ≤ sigma →
     V.HasPerfectPCC n (AnswerReduction.inAns lam mu n) →
     (output V lam mu sigma).HasPerfectPCC n (AnswerReduction.outBound bound lam mu sigma n)
