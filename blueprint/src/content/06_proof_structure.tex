@@ -5291,7 +5291,7 @@ the $\mathrm{Point}_6$ question and answer.
 For a PCP decider and parameters $(\lambda,\mu,\sigma)$, and an $(\ell+1)$-level input sampler
 $S$, there is a typed sampler with $\max\{\ell+1,3\}$ levels on the types of
 Definition~\ref{def:ar-typed-game} whose typed CL functions are that game's, with the PCP
-parameters $\mathrm{pcpparams}(n,2^Q,Q,\sigma)$, $Q=(\lambda n+1)^\mu$, and with the seed selectors
+parameters $\mathrm{pcpparams}(n,T,Q,\sigma)$, $Q=(\lambda n+1)^\mu$, $T=2^{(Q+5)(\mu+1)}$, and with the seed selectors
 reading the high bits of the seed. Its program is computed from the program of $S$ and
 $(\lambda,\mu,\sigma)$ alone.
 \end{lemma}
@@ -5299,7 +5299,8 @@ $(\lambda,\mu,\sigma)$ alone.
 \begin{proof}
 \leanok
 The program first runs a routine computing the PCP parameters at the index: $\lambda$ and $n$ in
-unary, $Q$ by a power loop, $T=2^Q$, the parameters by the PCP decider's parameter program, and
+unary ($\lambda$ replaced by $0$ at the index $0$), $Q$ by a power loop, $\mu$ in unary and
+$T=2^{(Q+5)(\mu+1)}$, the parameters by the PCP decider's parameter program, and
 the copies' offsets, lengths, selector widths and seeds in unary. A query at a type is then split:
 the bits of the PCP part are answered outright, and the others make up a query to the typed
 oracularized sampler, answered through the universal machine, below its own level; beyond it the
@@ -5323,13 +5324,13 @@ For a PCP decider and parameters $(\lambda,\mu,\sigma)$, and an $(\ell+1)$-level
 $(S,D)$, there is a typed decider on the types of Definition~\ref{def:ar-typed-game}, computed
 from the programs of $S$ and $D$ and $(\lambda,\mu,\sigma)$, which halts on every input and, on the
 bits of any two questions of that game and any two answers, accepts exactly when that game's
-predicate does, with the game check run at $\mathrm{pcpparams}(n,2^Q,Q,\sigma)$,
-$Q=(\lambda n+1)^\mu$.
+predicate does, with the game check run at $\mathrm{pcpparams}(n,T,Q,\sigma)$,
+$Q=(\lambda n+1)^\mu$, $T=2^{(Q+5)(\mu+1)}$.
 \end{lemma}
 
 \begin{proof}
 \leanok
-The decider runs the sampler's parameter routine, computes $Q$ and $2^Q$, asks the input sampler
+The decider runs the sampler's parameter routine, computes $Q$ and $T$, asks the input sampler
 for both players' full marginals at the oracle halves of the two questions through the universal
 machine, and runs the PCP verifier on each question's game-check view. It then parses each
 answer into $k$-bit blocks and decides on blocks. Of the low-degree test's decision only a point
