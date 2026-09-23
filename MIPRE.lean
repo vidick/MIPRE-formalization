@@ -3,6 +3,7 @@ import MIPRE.Background.AnswerReduction.AnswerFormat
 import MIPRE.Background.AnswerReduction.Family
 import MIPRE.Background.AnswerReduction.Layout
 import MIPRE.Background.AnswerReduction.PcpPresentation
+import MIPRE.Background.AnswerReduction.PcpSampler
 import MIPRE.Background.AnswerReduction.Predicate
 import MIPRE.Background.AnswerReduction.StageCorrect
 import MIPRE.Background.AnswerReduction.StageLists

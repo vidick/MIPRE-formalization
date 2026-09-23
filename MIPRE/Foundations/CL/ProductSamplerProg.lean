@@ -395,14 +395,6 @@ theorem map_false_eq {l : BitStr} {s : ℕ} (h : l.length = s) :
   subst h
   induction l <;> simp_all [List.replicate_succ]
 
-theorem leftPart_append {a b : ℕ} (v : Fin a → 𝔽₂) (w : Fin b → 𝔽₂) :
-    leftPart (Fin.append v w) = v := by
-  funext i; simp [leftPart]
-
-theorem rightPart_append {a b : ℕ} (v : Fin a → 𝔽₂) (w : Fin b → 𝔽₂) :
-    rightPart (Fin.append v w) = w := by
-  funext i; simp [rightPart]
-
 /-- **The product of a typed sampler and a direct sampler**: the types are pairs, the
 presentations `prodCL`, and the program calls `A`'s at most once. -/
 def prodDirect : TypedSampler L (Ta × Tb) where

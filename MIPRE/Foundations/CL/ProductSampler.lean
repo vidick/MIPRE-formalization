@@ -73,6 +73,14 @@ def leftPart (x : Fin (a + b) → 𝔽₂) : Fin a → 𝔽₂ := fun i => x (Fi
 /-- The last `b` coordinates. -/
 def rightPart (x : Fin (a + b) → 𝔽₂) : Fin b → 𝔽₂ := fun i => x (Fin.natAdd a i)
 
+@[simp] theorem leftPart_append (v : Fin a → 𝔽₂) (w : Fin b → 𝔽₂) :
+    leftPart (Fin.append v w) = v := by
+  funext i; simp [leftPart]
+
+@[simp] theorem rightPart_append (v : Fin a → 𝔽₂) (w : Fin b → 𝔽₂) :
+    rightPart (Fin.append v w) = w := by
+  funext i; simp [rightPart]
+
 theorem toBits_append (v : Fin a → 𝔽₂) (w : Fin b → 𝔽₂) :
     toBits (Fin.append v w) = toBits v ++ toBits w := by
   simp only [toBits, List.ofFn_add, Fin.append_right]
