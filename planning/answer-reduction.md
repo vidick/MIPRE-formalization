@@ -1,6 +1,6 @@
 # Answer reduction: the construction (AR-3)
 
-Status 2026-09-23. **Done: AR-3a, AR-3b, AR-3c** (the mathematics of the construction):
+Status 2026-09-23. **AR-3 is done.** **Done: AR-3a, AR-3b, AR-3c** (the mathematics of the construction):
 `Background/LIDT/Presentation.lean`, `Background/AnswerReduction/{PcpPresentation,Predicate,
 Family,AnswerFormat,TypedGame}.lean`, `Foundations/CL/Product.lean`. One thing met on the way:
 with the 54 types, the kernel unfolds `Finset.univ` of the type pairs when checking the type
@@ -51,7 +51,36 @@ stages). Findings on the way:
   field `PD.fld k`. Completeness needs the two representations to agree, or a hypothesis saying
   so; this is to be settled at the start of AR-4.
 
-AR-3f is next: the running times, detyping, and the `AnswerReduction` contract.
+**Done: AR-3f, and with it AR-3** (`lem:ar-construction`, `lem:ar-sampler-independence`, and
+the running times of `lem:ar-typed-sampler` and `lem:ar-typed-decider`). The output is
+`AnswerReduction.arVerifier`, the typed verifier through the detyping compiler at the answer cut
+`32 (k + 1)(m' + 7)^2` (`Construction.lean`); its programs are polynomial-time functions of the
+input programs and `(λ, μ, σ)` (`arSamplerProg`, `arCompute`, by the program builders of
+`Foundations/CL/ProgBuild.lean`); and `arVerifier_within` is the contract's `within` clause.
+Findings on the way:
+
+* **Two repairs of the contract** (`Foundations/Pipeline/AnswerReduction.lean`), both weakenings,
+  both recorded in `def:answer-reduction-contract`. (1) `within` assumes `|𝒮| ≤ σ` as well as
+  `|𝒟| ≤ σ`: the output runs the input sampler through the universal machine, whose overhead
+  grows with the program simulated; compression's `σ` now also dominates the introspective
+  sampler's size (`Compress.Csig`). The paper's `thm:ar` bounds only `|𝒟|`; its Turing machines
+  can hard-wire `𝒮`, the ambient programs here run it as data. (2) The output bound's argument is
+  `(λn + 1)^μ + σ + λ + n`: the added terms change nothing for `λ, μ ≥ 1` and `n ≥ 2`, the
+  paper's regime, and they let the construction read `n` and `λ` at every index, so no special
+  case at `λ = 0`, `μ = 0` or `n ≤ 1` is needed. Compression's `β` absorbs them.
+* **A new hypothesis on the PCP decider**: its parameters `k, m, s` are polynomial in
+  `(log n, log T, Q, σ)` (`ParamsBound`), as the paper's `pcpparams` are. The decider reads `k`
+  and `m'` in unary, so this is what makes its time polynomial. It must be proved for the classical
+  PCP decider before the `AnswerReduction` instance is assembled.
+* **The accounting is `PDom`** (`Foundations/Pipeline/PowDom.lean`): bounds
+  `(c (W + 1)^m X^e)^{μ + 1}`, closed under sums, products, fixed polynomials and one call to a
+  degree-`μ` sampler on a query below an *unpowered* monomial (`ofCall`). Every call to the input
+  sampler is on such a query: the oracularized sampler's forwarded query is linear in the typed
+  query, and the typed decider's marginal queries are the oracle halves of questions, of length
+  the input sampler's dimension once detyping has checked the question lengths. The unary loops'
+  times are polynomial in the values they count (`toUnaryProg_time`, `powProg_time`).
+
+AR-4 (completeness) is next.
 
 Written after reading the paper's `ld_compiler.tex` (`sec:ar-params`,
 `sec:ar-verifier`, `fig:decider-pcp`, `thm:ar` and the complexity part of its proof), ledger node

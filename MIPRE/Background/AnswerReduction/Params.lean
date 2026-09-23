@@ -10,14 +10,18 @@ import MIPRE.Foundations.Pipeline.AnswerReduction
 /-!
 # The PCP parameters of answer reduction, and the routine computing them
 
-Piece AR-3d of `planning/answer-reduction.md`. At index `n`, with the parameters `(λ, μ, σ)`,
-answer reduction runs the PCP of a `PcpDecider` at `pcpparams(n, T, Q, σ)` with
-`Q = (λn + 1)^μ` the input sampler's budget and `T = 2^Q` the input decider's (`arPar`); `m` and
-`m'` are powers of two, so this is a `PcpFamily` (`family`).
+Pieces AR-3d and AR-3f of `planning/answer-reduction.md`. At index `n`, with the parameters
+`(λ, μ, σ)`, answer reduction runs the PCP of a `PcpDecider` at `pcpparams(n, T, Q, σ)` with
+`Q = (λn + 1)^μ` the input sampler's budget and `T = 2^{(Q + 5)(μ + 1)}` (`tPcp`): an input
+decider within its budget `2^Q (|d| + 1)^μ` accepts honest answers, of length at most `2^Q`,
+within `T` steps, which is what the PCP's completeness asks. `m` and `m'` are powers of two, so
+this is a `PcpFamily` (`family`).
 
 The routine `parProg` computes the family's parameters `pd n` from `n`, with `(λ, μ, σ)`
-hardcoded: `λ` and `n` in unary, `Q` by a power loop, `T` from `Q`, the PCP's parameters by its
-parameter program, and `k, m, s` in unary. `parProg_runs` is its correctness.
+hardcoded. Its budgets' routine `budCore` computes `(Q, T)`: `λ` and `n` in unary (`λ` replaced
+by `0` at the index `0`, where it is not needed, so that no step is longer than `Q`), `Q` by a
+power loop, `μ` in unary and `T` from both. Then the PCP's parameter program gives `(k, m, s)`,
+and `k, m, s` are written in unary. `parProg_runs` is its correctness.
 -/
 
 noncomputable section
@@ -31,8 +35,12 @@ variable (PD : PcpDecider) (lam mu sigma : ℕ)
 /-- The input sampler's budget `Q = (λn + 1)^μ`. -/
 abbrev arQ (n : ℕ) : ℕ := (lam * n + 1) ^ mu
 
-/-- **The PCP parameters at index `n`**: `pcpparams(n, 2^Q, Q, σ)`. -/
-def arPar (n : ℕ) : PcpParams := PD.params n (AnswerReduction.inAns lam mu n) (arQ lam mu n) sigma
+/-- The PCP's time bound `T = 2^{(Q + 5)(μ + 1)}`: an input decider running within
+`2^Q (|d| + 1)^μ` on inputs of answers at most `2^Q` long accepts within `T`. -/
+abbrev tPcp (n : ℕ) : ℕ := 2 ^ ((arQ lam mu n + 5) * (mu + 1))
+
+/-- **The PCP parameters at index `n`**: `pcpparams(n, T, Q, σ)`. -/
+def arPar (n : ℕ) : PcpParams := PD.params n (tPcp lam mu n) (arQ lam mu n) sigma
 
 theorem arPar_hk (n : ℕ) : 1 ≤ (arPar PD lam mu sigma n).k :=
   (PD.odd_k _ _ _ _).pos
@@ -63,8 +71,11 @@ namespace ParRoutine
 /-- The hardcoded `(λ, μ, σ)`. -/
 def hD : PolyTimeFun Data Data := treeHead
 
-/-- Stage 1: `λ` in unary. The input is `X₀ = (λ, μ, σ), n`. -/
-def pre1 : PolyTimeFun Data Data := ap₂ treePair (treeHead.comp hD) (PolyTimeFun.id Data)
+/-- Stage 1: `λ` in unary, or `0` at the index `0`, where `λ` is not needed and may be
+arbitrarily large. The input is `X₀ = (λ, μ, σ), n`. -/
+def pre1 : PolyTimeFun Data Data :=
+  ap₂ treePair (ite (ap₂ treeEq treeTail (const Data.nil)) (const (encode (0 : ℕ)))
+    (treeHead.comp hD)) (PolyTimeFun.id Data)
 def post1 : PolyTimeFun (Data × Data) Data := ap₂ treePair snd fst
 
 /-- Stage 2: `n` in unary; then the base `λn + 1` and the exponent `μ`. -/
@@ -76,14 +87,19 @@ def post2 : PolyTimeFun (Data × Data) Data :=
       (treeHead.comp (treeTail.comp (treeHead.comp (treeTail.comp fst)))))
     (treeTail.comp fst)
 
-/-- Stage 3: `Q = (λn + 1)^μ`, then `T = 2^Q` and the PCP's parameters `(k, m, s)`. -/
+/-- Stage 3: `Q = (λn + 1)^μ` in unary, kept in front of the input. -/
 def pre3 : PolyTimeFun Data Data := PolyTimeFun.id Data
-def post3 : PolyTimeFun (Data × Data) Data :=
-  let Q := readUnary.comp snd
-  let T := bitsValue.comp (ap₂ append ((map (const false)).comp Q) (const [true]))
-  let n := readNat.comp (treeTail.comp fst)
-  let σ := readNat.comp (treeTail.comp (treeTail.comp (treeHead.comp fst)))
-  encoded.comp (PD.paramsProg.comp (n.pair (T.pair ((addUnary.comp ((const 0).pair Q)).pair σ))))
+
+/-- Stage 4: `μ` in unary; then `(Q, T)` in binary, `T = 2^{(Q + 5)(μ + 1)}`. -/
+def preMu : PolyTimeFun Data Data :=
+  ap₂ treePair (treeHead.comp (treeTail.comp (treeHead.comp (treeTail.comp (PolyTimeFun.id Data)))))
+    (PolyTimeFun.id Data)
+def postBud : PolyTimeFun (Data × Data) Data :=
+  let Q := readUnary.comp (treeHead.comp fst)
+  let E := LowDegree.DegreeArithmetic.mulUnaryProg.comp
+    ((ap₂ append Q (const (unary 5))).pair ((const ()).cons (readUnary.comp snd)))
+  encoded.comp ((addUnary.comp ((const 0).pair Q)).pair
+    (bitsValue.comp (ap₂ append ((map (const false)).comp E) (const [true]))))
 
 /-- Stages 4, 5, 6: `k`, `m`, `s` in unary. -/
 def pre4 : PolyTimeFun Data Data := ap₂ treePair treeHead (PolyTimeFun.id Data)
@@ -92,6 +108,25 @@ def pre5 : PolyTimeFun Data Data :=
 def pre6 : PolyTimeFun Data Data :=
   ap₂ treePair (treeTail.comp (treeTail.comp (treeTail.comp treeTail))) (PolyTimeFun.id Data)
 def postKeep : PolyTimeFun (Data × Data) Data := ap₂ treePair snd fst
+
+/-- **The budgets' routine**, on `((λ, μ, σ), n)`: `(Q, T)` in binary. -/
+def budCore : Prog :=
+  seqProg (stageProg pre1 toUnaryProg post1) <|
+  seqProg (stageProg pre2 toUnaryProg post2) <|
+  seqProg (stageProg pre3 powProg postKeep) (stageProg preMu toUnaryProg postBud)
+
+theorem budCore_closed : budCore.WellScoped 1 :=
+  seqProg_closed (stageProg_closed _ toUnaryProg_closed _) <|
+  seqProg_closed (stageProg_closed _ toUnaryProg_closed _) <|
+  seqProg_closed (stageProg_closed _ powProg_closed _) (stageProg_closed _ toUnaryProg_closed _)
+
+/-- The PCP's parameters `(k, m, s)`, from `((Q, T), (λ, μ, σ), n)`. -/
+def paramsP : PolyTimeFun Data Data :=
+  let n := readNat.comp (treeTail.comp treeTail)
+  let Q := readNat.comp (treeHead.comp treeHead)
+  let T := readNat.comp (treeTail.comp treeHead)
+  let σ := readNat.comp (treeTail.comp (treeTail.comp (treeHead.comp treeTail)))
+  encoded.comp (PD.paramsProg.comp (n.pair (T.pair (Q.pair σ))))
 
 /-- `log₂` of a power of two, from its binary encoding, in unary. -/
 def logU : PolyTimeFun ℕ Unary := tail.comp ((map (const ())).comp (readBits.comp encoded))
@@ -131,18 +166,17 @@ def post6 : PolyTimeFun (Data × Data) Data :=
     else (const []).pair (um'.pair (jm'.pair (const (unary c))))
   encoded.comp (uk.pair (um'.pair (listOf ((List.range 6).map d))))
 
-/-- **The routine's core**, on `((λ, μ, σ), n)`. -/
+/-- **The routine's core**, on `((λ, μ, σ), n)`: the budgets, the PCP's parameters, then `k`,
+`m`, `s` in unary. -/
 def core : Prog :=
-  seqProg (stageProg pre1 toUnaryProg post1) <|
-  seqProg (stageProg pre2 toUnaryProg post2) <|
-  seqProg (stageProg pre3 powProg (post3 PD)) <|
+  seqProg (stageProg (ap₂ treePair (PolyTimeFun.id Data) (PolyTimeFun.id Data)) budCore postKeep) <|
+  seqProg (paramsP PD).code <|
   seqProg (stageProg pre4 toUnaryProg postKeep) <|
   seqProg (stageProg pre5 toUnaryProg postKeep) (stageProg pre6 toUnaryProg post6)
 
 theorem core_closed : (core PD).WellScoped 1 :=
-  seqProg_closed (stageProg_closed _ toUnaryProg_closed _) <|
-  seqProg_closed (stageProg_closed _ toUnaryProg_closed _) <|
-  seqProg_closed (stageProg_closed _ powProg_closed _) <|
+  seqProg_closed (stageProg_closed _ budCore_closed _) <|
+  seqProg_closed (PolyTimeFun.closed _) <|
   seqProg_closed (stageProg_closed _ toUnaryProg_closed _) <|
   seqProg_closed (stageProg_closed _ toUnaryProg_closed _) (stageProg_closed _ toUnaryProg_closed _)
 
@@ -203,15 +237,25 @@ theorem post6_apply (n : ℕ) :
   simp [List.replicate_succ]
 
 open ParRoutine in
-/-- **The routine's core computes the parameters** of the family, from `((λ, μ, σ), n)`. -/
-theorem parCore_runs (n : ℕ) :
-    ∃ t, (core PD).Runs (.cons (encode (lam, mu, sigma)) (encode n))
-      ((family PD lam mu sigma).pd n) t := by
-  set P := arPar PD lam mu sigma n with hP
+/-- **The budgets' routine computes `(Q, T)`.** -/
+theorem budCore_runs (n : ℕ) :
+    ∃ t, budCore.Runs (.cons (encode (lam, mu, sigma)) (encode n))
+      (encode (arQ lam mu n, tPcp lam mu n)) t := by
   let X0 : Data := .cons (encode (lam, mu, sigma)) (encode n)
-  obtain ⟨t1, h1⟩ := toUnaryProg_runs lam
-  obtain ⟨s1, S1⟩ := stageProg_runs pre1 toUnaryProg_closed post1 X0 (encode lam) X0 _ t1 rfl h1
-  let X1 : Data := .cons (encode (unary lam)) X0
+  let lam' : ℕ := if n = 0 then 0 else lam
+  have hl : lam' * n = lam * n := by by_cases hn : n = 0 <;> simp [lam', hn]
+  obtain ⟨t1, h1⟩ := toUnaryProg_runs lam'
+  obtain ⟨s1, S1⟩ := stageProg_runs pre1 toUnaryProg_closed post1 X0 (encode lam') X0 _ t1
+    (by
+      by_cases hn : n = 0
+      · subst hn
+        have h0 : (encode (0 : ℕ) : Data) = .nil := rfl
+        simp [pre1, X0, lam', encode_prod, treeEq_apply, h0]
+      · have : (encode n : Data) ≠ .nil := by
+          intro h
+          exact hn (encode_injective (h.trans rfl : (encode n : Data) = encode (0 : ℕ)))
+        simp [pre1, hD, X0, lam', hn, encode_prod, treeEq_apply, this]) h1
+  let X1 : Data := .cons (encode (unary lam')) X0
   obtain ⟨t2, h2⟩ := toUnaryProg_runs n
   obtain ⟨s2, S2⟩ := stageProg_runs pre2 toUnaryProg_closed post2 X1 (encode n) X1 _ t2 rfl h2
   have hpost2 : post2 (X1, encode (unary n)) =
@@ -219,19 +263,47 @@ theorem parCore_runs (n : ℕ) :
     simp only [post2, ap₂_apply, treePair_apply, comp_apply, fst_apply, snd_apply,
       treeHead_cons, treeTail_cons, readUnary_encode, cons_apply, const_apply, pair_apply,
       LowDegree.DegreeArithmetic.mulUnaryProg_apply, length_unary, encoded_apply,
-      unary_mul_succ, X1, X0, encode_prod]
+      unary_mul_succ, X1, X0, encode_prod, hl]
   rw [hpost2] at S2
   obtain ⟨t3, h3⟩ := powProg_runs (unary (lam * n + 1)) mu
-  obtain ⟨s3, S3⟩ := stageProg_runs pre3 powProg_closed (post3 PD) _ _ X0 _ t3 rfl h3
-  have hpost3 : post3 PD (X0, encode (unary ((unary (lam * n + 1)).length ^ mu))) =
-      encode (P.k, P.m, P.s) := by
-    simp only [post3, comp_apply, pair_apply, fst_apply, snd_apply, treeHead_cons, treeTail_cons,
-      readUnary_encode, map_apply, ap₂_apply, append_apply, const_apply, readNat_encode,
-      addUnary_apply, length_unary, encoded_apply, X0, encode_prod]
-    rw [map_const_toFun, length_unary, PolyTimeFun.bitsValue_apply, bitsVal_pow, zero_add,
-      PD.paramsProg_eq]
+  obtain ⟨s3, S3⟩ := stageProg_runs pre3 powProg_closed postKeep _ _ X0 _ t3 rfl h3
+  simp only [postKeep, ap₂_apply, treePair_apply, fst_apply, snd_apply, length_unary] at S3
+  let X3 : Data := .cons (encode (unary (arQ lam mu n))) X0
+  obtain ⟨t4, h4⟩ := toUnaryProg_runs mu
+  obtain ⟨s4, S4⟩ := stageProg_runs preMu toUnaryProg_closed postBud X3 (encode mu) X3 _ t4
+    (by simp [preMu, X3, X0, encode_prod]) h4
+  have hpost4 : postBud (X3, encode (unary mu)) = encode (arQ lam mu n, tPcp lam mu n) := by
+    simp only [postBud, comp_apply, pair_apply, fst_apply, snd_apply, treeHead_cons,
+      readUnary_encode, map_apply, ap₂_apply, append_apply, const_apply, addUnary_apply,
+      length_unary, encoded_apply, X3, cons_apply, LowDegree.DegreeArithmetic.mulUnaryProg_apply,
+      List.length_append, List.length_cons]
+    rw [map_const_toFun, length_unary, PolyTimeFun.bitsValue_apply, bitsVal_pow, zero_add]
+  rw [hpost4] at S4
+  exact seq_runs (seqProg_closed (stageProg_closed _ toUnaryProg_closed _) <|
+      seqProg_closed (stageProg_closed _ powProg_closed _) (stageProg_closed _ toUnaryProg_closed _))
+    ⟨_, S1⟩ <|
+    seq_runs (seqProg_closed (stageProg_closed _ powProg_closed _)
+      (stageProg_closed _ toUnaryProg_closed _)) ⟨_, S2⟩ <|
+    seq_runs (stageProg_closed _ toUnaryProg_closed _) ⟨_, S3⟩ ⟨_, S4⟩
+
+open ParRoutine in
+/-- **The routine's core computes the parameters** of the family, from `((λ, μ, σ), n)`. -/
+theorem parCore_runs (n : ℕ) :
+    ∃ t, (core PD).Runs (.cons (encode (lam, mu, sigma)) (encode n))
+      ((family PD lam mu sigma).pd n) t := by
+  set P := arPar PD lam mu sigma n with hP
+  let X0 : Data := .cons (encode (lam, mu, sigma)) (encode n)
+  obtain ⟨tb, hb⟩ := budCore_runs lam mu sigma n
+  obtain ⟨s1, S1⟩ := stageProg_runs (ap₂ treePair (PolyTimeFun.id Data) (PolyTimeFun.id Data))
+    budCore_closed postKeep X0 X0 X0 _ tb (by simp) hb
+  simp only [postKeep, ap₂_apply, treePair_apply, fst_apply, snd_apply] at S1
+  let X1 : Data := .cons (encode (arQ lam mu n, tPcp lam mu n)) X0
+  obtain ⟨t2, -, S2⟩ := (paramsP PD).computes X1
+  have hp : paramsP PD X1 = encode (P.k, P.m, P.s) := by
+    simp only [paramsP, comp_apply, pair_apply, treeHead_cons, treeTail_cons, readNat_encode,
+      encoded_apply, X1, X0, encode_prod, PD.paramsProg_eq]
     rfl
-  rw [hpost3] at S3
+  rw [encode_data, hp] at S2
   let X3 : Data := encode (P.k, P.m, P.s)
   obtain ⟨t4, h4⟩ := toUnaryProg_runs P.k
   obtain ⟨s4, S4⟩ := stageProg_runs pre4 toUnaryProg_closed postKeep X3 (encode P.k) X3 _ t4
@@ -245,22 +317,16 @@ theorem parCore_runs (n : ℕ) :
   obtain ⟨s6, S6⟩ := stageProg_runs pre6 toUnaryProg_closed post6 X5 (encode P.s) X5 _ t6
     rfl h6
   rw [post6_apply] at S6
-  obtain ⟨t, h⟩ := seq_runs (seqProg_closed (stageProg_closed _ toUnaryProg_closed _) <|
-      seqProg_closed (stageProg_closed _ powProg_closed _) <|
+  exact seq_runs (seqProg_closed (PolyTimeFun.closed _) <|
       seqProg_closed (stageProg_closed _ toUnaryProg_closed _) <|
       seqProg_closed (stageProg_closed _ toUnaryProg_closed _)
         (stageProg_closed _ toUnaryProg_closed _)) ⟨_, S1⟩ <|
-    seq_runs (seqProg_closed (stageProg_closed _ powProg_closed _) <|
-      seqProg_closed (stageProg_closed _ toUnaryProg_closed _) <|
-      seqProg_closed (stageProg_closed _ toUnaryProg_closed _)
-        (stageProg_closed _ toUnaryProg_closed _)) ⟨_, S2⟩ <|
     seq_runs (seqProg_closed (stageProg_closed _ toUnaryProg_closed _) <|
       seqProg_closed (stageProg_closed _ toUnaryProg_closed _)
-        (stageProg_closed _ toUnaryProg_closed _)) ⟨_, S3⟩ <|
+        (stageProg_closed _ toUnaryProg_closed _)) ⟨_, S2⟩ <|
     seq_runs (seqProg_closed (stageProg_closed _ toUnaryProg_closed _)
         (stageProg_closed _ toUnaryProg_closed _)) ⟨_, S4⟩ <|
     seq_runs (stageProg_closed _ toUnaryProg_closed _) ⟨_, S5⟩ ⟨_, S6⟩
-  exact ⟨_, h⟩
 
 /-- **The routine computes the parameters** of the family. -/
 theorem parProg_runs (n : ℕ) :

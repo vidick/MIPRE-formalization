@@ -2,14 +2,18 @@ import MIPRE.Axioms
 import MIPRE.Background.AnswerReduction.AnswerFormat
 import MIPRE.Background.AnswerReduction.ArDecider
 import MIPRE.Background.AnswerReduction.ArSampler
+import MIPRE.Background.AnswerReduction.Construction
 import MIPRE.Background.AnswerReduction.DecideProg
 import MIPRE.Background.AnswerReduction.DecideSpec
+import MIPRE.Background.AnswerReduction.DeciderCost
 import MIPRE.Background.AnswerReduction.Family
 import MIPRE.Background.AnswerReduction.Layout
 import MIPRE.Background.AnswerReduction.Params
+import MIPRE.Background.AnswerReduction.ParamsCost
 import MIPRE.Background.AnswerReduction.PcpPresentation
 import MIPRE.Background.AnswerReduction.PcpSampler
 import MIPRE.Background.AnswerReduction.Predicate
+import MIPRE.Background.AnswerReduction.SamplerCost
 import MIPRE.Background.AnswerReduction.StageCorrect
 import MIPRE.Background.AnswerReduction.StageLists
 import MIPRE.Background.AnswerReduction.StageProg
@@ -703,6 +707,7 @@ import MIPRE.Foundations.CL.DetypingClock
 import MIPRE.Foundations.CL.DetypingComplete
 import MIPRE.Foundations.CL.DetypingCompleteSupport
 import MIPRE.Foundations.CL.DetypingDecider
+import MIPRE.Foundations.CL.DetypingDeciderCost
 import MIPRE.Foundations.CL.DetypingDeciderGame
 import MIPRE.Foundations.CL.DetypingDeciderProg
 import MIPRE.Foundations.CL.DetypingDeciderRoute
@@ -727,7 +732,9 @@ import MIPRE.Foundations.CL.Embedding
 import MIPRE.Foundations.CL.Graph
 import MIPRE.Foundations.CL.Product
 import MIPRE.Foundations.CL.ProductSampler
+import MIPRE.Foundations.CL.ProductSamplerCost
 import MIPRE.Foundations.CL.ProductSamplerProg
+import MIPRE.Foundations.CL.ProgBuild
 import MIPRE.Foundations.CL.Register
 import MIPRE.Foundations.CL.Repeat
 import MIPRE.Foundations.CL.Sampler
@@ -1169,6 +1176,8 @@ import MIPRE.Foundations.Pipeline.Compress
 import MIPRE.Foundations.Pipeline.Introspection
 import MIPRE.Foundations.Pipeline.Margin
 import MIPRE.Foundations.Pipeline.Oracularization
+import MIPRE.Foundations.Pipeline.PowDom
+import MIPRE.Foundations.Pipeline.PowDomRun
 import MIPRE.Foundations.Pipeline.Repetition
 import MIPRE.Foundations.Pipeline.UnaryArith
 import MIPRE.Foundations.RegisterReindex

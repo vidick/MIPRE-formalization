@@ -22,13 +22,16 @@ reduction) and is not consumed here.
 The parameters, all determined by the three structures:
 
 * `σ(λ)`: the paper's `⌈C λ^C⌉`, any polynomial in `λ` computable in polynomial time that
-  dominates the size `C(λ + 1)^C` of the introspective decider. It is `sigmaFun C λ`, the
-  `C`-fold iterate of `n ↦ 2^{2·size n}` on `2λ + 1`, which is `2^{C(size λ + 2)}` at least
+  dominates the size `C(λ + 1)^C` of the introspective decider and the size `s₁(λ)` of the
+  introspective sampler — the second because answer reduction runs the input sampler through
+  the universal machine, whose overhead grows with the program simulated, so its complexity
+  clause asks `|𝒮|, |𝒟| ≤ σ`. It is `sigmaFun C_σ λ`, the
+  `C_σ`-fold iterate of `n ↦ 2^{2·size n}` on `2λ + 1`, which is `2^{C(size λ + 2)}` at least
   and is computed by iterating `lamProg`; there is no polynomial-time arithmetic in the
   toolkit to compute the paper's expression directly, and any dominating polynomial serves.
 * `μ`: the margin claim `exists_mu`, at least `C` so that the introspective verifier is within
   answer reduction's input budget.
-* `β`: an exponent with `poly((λn + 1)^μ + σ(λ))^(μ + 1) ≤ (λn + 1)^β`, the parse length
+* `β`: an exponent with `poly((λn + 1)^μ + σ(λ) + λ + n)^(μ + 1) ≤ (λn + 1)^β`, the parse length
   handed to repetition, dominating the ambient answer bound of the answer-reduced verifier.
 * `τ`: the repetition exponent `exists_tau`, from the lower bound `ε₂ ≥ x^{-P}` of
   `exists_eps2_lower`, against the parse length `2^{β(|λ| + |n|)} ≤ (λn + 1)^{6β}`.
@@ -108,22 +111,61 @@ theorem polyBounded_sigmaFun (C : ℕ) : PolyBounded (sigmaFun C) := by
 
 variable (I : Introspection 7) (A : AnswerReduction 5) (R : Repetition 7)
 
-/-- `σ(λ) = sigmaFun C λ`. -/
-noncomputable def sigma (lam : ℕ) : ℕ := sigmaFun I.C lam
+/-- A bound on the size of the introspective sampler's program. -/
+noncomputable def s₁ (lam : ℕ) : ℕ := I.samplerProg.timeBound.eval (4 * Nat.size lam + 1)
+
+theorem sampler_size_le_s₁ (lam : ℕ) : (I.sampler lam).size ≤ s₁ I lam := by
+  show esize (I.sampler lam).prog ≤ _
+  rw [← I.samplerProg_eq]
+  exact (I.samplerProg.esize_apply_le lam).trans (polynomial_eval_mono _ (esize_nat_le lam))
+
+/-- The coefficient of the monomial bound on `s₁`. -/
+noncomputable def cS : ℕ :=
+  (∑ i ∈ Finset.range (I.samplerProg.timeBound.natDegree + 1), I.samplerProg.timeBound.coeff i) *
+    4 ^ I.samplerProg.timeBound.natDegree
+
+theorem s₁_le (lam : ℕ) : s₁ I lam ≤ cS I * (lam + 1) ^ I.samplerProg.timeBound.natDegree := by
+  have hs : 4 * Nat.size lam + 1 ≤ 4 * (lam + 1) := by
+    have := Nat.size_le.mpr (Nat.lt_two_pow_self (n := lam)); omega
+  refine (polynomial_eval_mono _ hs).trans ((polynomial_eval_le_sum_coeff_mul_pow _
+    (by omega)).trans (le_of_eq ?_))
+  rw [cS, mul_pow, Nat.mul_assoc]
+
+/-- The exponent of `σ`: large enough that `C_σ (λ + 1)^{C_σ}` dominates both the introspective
+decider's size `C(λ + 1)^C` and the introspective sampler's size `s₁`. -/
+noncomputable def Csig : ℕ := I.C + cS I + I.samplerProg.timeBound.natDegree
+
+theorem mul_pow_le_Csig {c d : ℕ} (hc : c ≤ Csig I) (hd : d ≤ Csig I) (lam : ℕ) :
+    c * (lam + 1) ^ d ≤ Csig I * (lam + 1) ^ Csig I :=
+  Nat.mul_le_mul hc (Nat.pow_le_pow_right (by omega) hd)
+
+/-- `σ(λ) = sigmaFun C_σ λ`. -/
+noncomputable def sigma (lam : ℕ) : ℕ := sigmaFun (Csig I) lam
 
 theorem decider_size_le_sigma (V : Prog × Prog) (lam : ℕ) :
     (I.output V lam).decider.size ≤ sigma I lam :=
-  (I.decider_size V lam).trans (le_sigmaFun _ _)
+  ((I.decider_size V lam).trans (mul_pow_le_Csig I (by unfold Csig; omega)
+    (by unfold Csig; omega) lam)).trans (le_sigmaFun _ _)
+
+theorem sampler_size_le_sigma (V : Prog × Prog) (lam : ℕ) :
+    (I.output V lam).sampler.size ≤ sigma I lam := by
+  rw [I.output_sampler]
+  exact (((sampler_size_le_s₁ I lam).trans (s₁_le I lam)).trans (mul_pow_le_Csig I
+    (by unfold Csig; omega) (by unfold Csig; omega) lam)).trans (le_sigmaFun _ _)
+
+/-- Both programs of the introspective verifier are within `σ(λ)`. -/
+theorem size_le_sigma (V : Prog × Prog) (lam : ℕ) : (I.output V lam).size ≤ sigma I lam :=
+  max_le (sampler_size_le_sigma I V lam) (decider_size_le_sigma I V lam)
 
 theorem one_le_sigma (lam : ℕ) : 1 ≤ sigma I lam := one_le_sigmaFun _ _
 
 theorem sigma_mono {m n : ℕ} (h : m ≤ n) : sigma I m ≤ sigma I n := sigmaFun_mono _ h
 
 /-- The exponent `K` with `σ(z) ≤ z^K` for `z ≥ 2`. -/
-noncomputable def K : ℕ := (polyBounded_sigmaFun I.C).exists_le_pow.choose
+noncomputable def K : ℕ := (polyBounded_sigmaFun (Csig I)).exists_le_pow.choose
 
 theorem sigma_le_pow : ∀ z, 2 ≤ z → sigma I z ≤ z ^ K I :=
-  (polyBounded_sigmaFun I.C).exists_le_pow.choose_spec
+  (polyBounded_sigmaFun (Csig I)).exists_le_pow.choose_spec
 
 /-- `μ`, from the margin claim. -/
 noncomputable def mu : ℕ :=
@@ -141,14 +183,15 @@ theorem margin_spec : ∀ x : ℝ, (N₁ I A : ℝ) ≤ x → ∀ s : ℝ, 1 ≤
   (exists_mu (b₁ := I.b) I.one_le_a A.one_le_a A.b_pos (K I) I.C).choose_spec.2.choose_spec
 
 theorem polyBounded_arBound :
-    PolyBounded fun z => (A.bound.eval (z ^ mu I A + sigma I z)) ^ (mu I A + 1) :=
-  (PolyBounded.eval A.bound ((PolyBounded.id.pow _).add (polyBounded_sigmaFun I.C))).pow _
+    PolyBounded fun z => (A.bound.eval (z ^ mu I A + sigma I z + z + z)) ^ (mu I A + 1) :=
+  (PolyBounded.eval A.bound ((((PolyBounded.id.pow _).add (polyBounded_sigmaFun (Csig I))).add
+    PolyBounded.id).add PolyBounded.id)).pow _
 
 /-- `β`, the parse-length exponent handed to repetition. -/
 noncomputable def beta : ℕ := (polyBounded_arBound I A).exists_le_pow.choose
 
 theorem arBound_le_pow :
-    ∀ z, 2 ≤ z → (A.bound.eval (z ^ mu I A + sigma I z)) ^ (mu I A + 1) ≤ z ^ beta I A :=
+    ∀ z, 2 ≤ z → (A.bound.eval (z ^ mu I A + sigma I z + z + z)) ^ (mu I A + 1) ≤ z ^ beta I A :=
   (polyBounded_arBound I A).exists_le_pow.choose_spec
 
 /-- `P`, with `ε₂ ≥ x^{-P}`. -/
@@ -256,7 +299,7 @@ noncomputable def samplerProg : PolyTimeFun ℕ Prog :=
   R.samplerProg.comp
     ((A.samplerProg.comp
       (I.samplerProg.pair
-        ((PolyTimeFun.id ℕ).pair ((PolyTimeFun.const (mu I A)).pair (sigmaFun I.C))))).pair
+        ((PolyTimeFun.id ℕ).pair ((PolyTimeFun.const (mu I A)).pair (sigmaFun (Csig I)))))).pair
       ((PolyTimeFun.id ℕ).pair (PolyTimeFun.const (tau I A R))))
 
 theorem samplerProg_eq (lam : ℕ) : samplerProg I A R lam = (sampler I A R lam).prog := by
@@ -271,7 +314,7 @@ input programs and `λ`. -/
 noncomputable def compress : PolyTimeFun ((Prog × Prog) × ℕ) Prog :=
   let lamF : PolyTimeFun ((Prog × Prog) × ℕ) ℕ := PolyTimeFun.snd
   let S₁ := I.samplerProg.comp lamF
-  let params := lamF.pair ((PolyTimeFun.const (mu I A)).pair ((sigmaFun I.C).comp lamF))
+  let params := lamF.pair ((PolyTimeFun.const (mu I A)).pair ((sigmaFun (Csig I)).comp lamF))
   let S₂ := A.samplerProg.comp (S₁.pair params)
   let D₂ := A.compute.comp ((S₁.pair I.compute).pair params)
   R.compute.comp ((S₂.pair D₂).pair
@@ -293,14 +336,6 @@ theorem output_decider (V : Prog × Prog) (lam : ℕ) :
   rfl
 
 /-! ## The accounting -/
-
-/-- A bound on the size of the introspective sampler's program. -/
-noncomputable def s₁ (lam : ℕ) : ℕ := I.samplerProg.timeBound.eval (4 * Nat.size lam + 1)
-
-theorem sampler_size_le_s₁ (lam : ℕ) : (I.sampler lam).size ≤ s₁ I lam := by
-  show esize (I.sampler lam).prog ≤ _
-  rw [← I.samplerProg_eq]
-  exact (I.samplerProg.esize_apply_le lam).trans (polynomial_eval_mono _ (esize_nat_le lam))
 
 /-- A bound on the size of the encoded parameters `(λ, μ, σ(λ))`. -/
 noncomputable def pArg (lam : ℕ) : ℕ :=
@@ -383,7 +418,7 @@ theorem polyBounded_G : PolyBounded (G I A R) := by
   have hz : PolyBounded fun z : ℕ => z * z + 1 := (PolyBounded.id.mul PolyBounded.id).add_const 1
   have hpow2 : ∀ e : ℕ, PolyBounded fun z : ℕ => 2 ^ (e * (Nat.size z + Nat.size z)) := fun e =>
     (PolyBounded.two_pow_size 0 (2 * e)).mono fun z => le_of_eq (by ring_nf)
-  have hsig : PolyBounded fun z : ℕ => sigma I z := polyBounded_sigmaFun I.C
+  have hsig : PolyBounded fun z : ℕ => sigma I z := polyBounded_sigmaFun (Csig I)
   have hs₁ : PolyBounded fun z : ℕ => s₁ I z :=
     PolyBounded.eval _ ((PolyBounded.size.const_mul 4).add_const 1)
   have hp : PolyBounded fun z : ℕ => pArg I A z := by
@@ -398,7 +433,7 @@ theorem polyBounded_G : PolyBounded (G I A R) := by
       fun z => ?_
     exact max_le_add_of_nonneg (Nat.zero_le _) (Nat.zero_le _)
   have har : PolyBounded fun z : ℕ => arBound I A z z :=
-    (PolyBounded.eval _ ((hz.pow _).add hsig)).pow _
+    (PolyBounded.eval _ ((((hz.pow _).add hsig).add PolyBounded.id).add PolyBounded.id)).pow _
   have ht : PolyBounded fun z : ℕ => timeB I A R z z := by
     unfold timeB Repetition.arg
     simp only [Budget.uniform_S, Budget.uniform_d, Budget.uniform_D, Budget.uniform_B,
@@ -440,7 +475,7 @@ theorem arOutput_within (V : Prog × Prog) (lam n : ℕ) :
     (arOutput I A (I.output V lam) lam).Within n
       (Budget.uniform (arBound I A lam n) (arDegree I A)) :=
   A.within (I.output V lam) lam (mu I A) (sigma I lam) n (introOutput_within I A V lam n)
-    (decider_size_le_sigma I V lam)
+    (size_le_sigma I V lam)
 
 /-- The compressed verifier is within its bounds. -/
 theorem output_within (V : Prog × Prog) (lam n : ℕ) :
@@ -464,8 +499,13 @@ theorem arBound_le_parseBound {lam n : ℕ} (hl : 1 ≤ lam) (hn : 1 ≤ n) :
   have hz : 2 ≤ lam * n + 1 := by nlinarith
   have hs : sigma I lam ≤ sigma I (lam * n + 1) := sigma_mono I (by nlinarith)
   calc arBound I A lam n ≤
-        (A.bound.eval ((lam * n + 1) ^ mu I A + sigma I (lam * n + 1))) ^ (mu I A + 1) :=
-        Nat.pow_le_pow_left (polynomial_eval_mono _ (by unfold AnswerReduction.arg; omega)) _
+        (A.bound.eval ((lam * n + 1) ^ mu I A + sigma I (lam * n + 1) + (lam * n + 1) +
+          (lam * n + 1))) ^ (mu I A + 1) :=
+        Nat.pow_le_pow_left (polynomial_eval_mono _ (by
+          unfold AnswerReduction.arg
+          have h1 : lam ≤ lam * n + 1 := by nlinarith
+          have h2 : n ≤ lam * n + 1 := by nlinarith
+          omega)) _
     _ ≤ (lam * n + 1) ^ beta I A := arBound_le_pow I A _ hz
     _ ≤ _ := pow_le_reps hl _
 

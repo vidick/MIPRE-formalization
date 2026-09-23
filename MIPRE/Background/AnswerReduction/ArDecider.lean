@@ -19,7 +19,7 @@ parameters as data. On a typed input `(n, u, x, v, y, a, b)` it runs eight stage
 its input as context:
 
 1. the PCP parameters `pd n`, by the parameter routine of the sampler (`ParRoutine.core`);
-2. `Q = (λn + 1)^μ` and `T = 2^Q` (`qCore`);
+2. `Q = (λn + 1)^μ` and `T = 2^{(Q + 5)(μ + 1)}` (`ParRoutine.budCore`);
 3. to 6. the input sampler's full marginals `L^𝖠 x_O`, `L^𝖡 x_O`, `L^𝖠 y_O`, `L^𝖡 y_O` of the
    oracle halves of the two questions, through the universal machine;
 7. and 8. the PCP verifier of `PD` on each question's game-check view;
@@ -53,53 +53,6 @@ theorem stg_runs (arg : PolyTimeFun Data Data) {p : Prog} (hp : p.WellScoped 1) 
   obtain ⟨t', h'⟩ := stageProg_runs (ap₂ treePair arg (PolyTimeFun.id Data)) hp postKeep X
     (arg X) X r t (by simp) ht
   exact ⟨t', by simpa [postKeep, stg] using h'⟩
-
-/-! ## The budgets `Q` and `T` -/
-
-/-- `(Q, T)` from `Q` in unary. -/
-def qPost : PolyTimeFun (Data × Data) Data :=
-  let Q := readUnary.comp snd
-  encoded.comp ((addUnary.comp ((const 0).pair Q)).pair
-    (bitsValue.comp (ap₂ append ((map (const false)).comp Q) (const [true]))))
-
-/-- **The budgets' routine**, on `((λ, μ, σ), n)`: stages 1 to 3 of the parameter routine, then
-`(Q, T)`. -/
-def qCore : Prog :=
-  seqProg (stageProg pre1 toUnaryProg post1) <|
-  seqProg (stageProg pre2 toUnaryProg post2) (stageProg pre3 powProg qPost)
-
-theorem qCore_closed : qCore.WellScoped 1 :=
-  seqProg_closed (stageProg_closed _ toUnaryProg_closed _) <|
-  seqProg_closed (stageProg_closed _ toUnaryProg_closed _) (stageProg_closed _ powProg_closed _)
-
-theorem qCore_runs (lam mu sigma n : ℕ) :
-    ∃ t, qCore.Runs (.cons (encode (lam, mu, sigma)) (encode n))
-      (encode (arQ lam mu n, AnswerReduction.inAns lam mu n)) t := by
-  let X0 : Data := .cons (encode (lam, mu, sigma)) (encode n)
-  obtain ⟨t1, h1⟩ := toUnaryProg_runs lam
-  obtain ⟨s1, S1⟩ := stageProg_runs pre1 toUnaryProg_closed post1 X0 (encode lam) X0 _ t1 rfl h1
-  let X1 : Data := .cons (encode (unary lam)) X0
-  obtain ⟨t2, h2⟩ := toUnaryProg_runs n
-  obtain ⟨s2, S2⟩ := stageProg_runs pre2 toUnaryProg_closed post2 X1 (encode n) X1 _ t2 rfl h2
-  have hpost2 : post2 (X1, encode (unary n)) =
-      .cons (encode (unary (lam * n + 1), mu)) X0 := by
-    simp only [post2, ap₂_apply, treePair_apply, comp_apply, fst_apply, snd_apply,
-      treeHead_cons, treeTail_cons, readUnary_encode, cons_apply, const_apply, pair_apply,
-      LowDegree.DegreeArithmetic.mulUnaryProg_apply, length_unary, encoded_apply,
-      unary_mul_succ, X1, X0, encode_prod]
-  rw [hpost2] at S2
-  obtain ⟨t3, h3⟩ := powProg_runs (unary (lam * n + 1)) mu
-  obtain ⟨s3, S3⟩ := stageProg_runs pre3 powProg_closed qPost _ _ X0 _ t3 rfl h3
-  have hpost3 : qPost (X0, encode (unary ((unary (lam * n + 1)).length ^ mu))) =
-      encode (arQ lam mu n, AnswerReduction.inAns lam mu n) := by
-    simp only [qPost, comp_apply, pair_apply, snd_apply, readUnary_encode, map_apply, ap₂_apply,
-      append_apply, const_apply, addUnary_apply, length_unary, encoded_apply]
-    rw [map_const_toFun, length_unary, PolyTimeFun.bitsValue_apply, bitsVal_pow, zero_add]
-  rw [hpost3] at S3
-  obtain ⟨t, h⟩ := seq_runs (seqProg_closed (stageProg_closed _ toUnaryProg_closed _)
-      (stageProg_closed _ powProg_closed _)) ⟨_, S1⟩ <|
-    seq_runs (stageProg_closed _ powProg_closed _) ⟨_, S2⟩ ⟨_, S3⟩
-  exact ⟨_, h⟩
 
 /-! ## Reading the context -/
 
@@ -224,7 +177,7 @@ def readV : PolyTimeFun Data VerdictIn :=
 /-- **The core of the answer-reduced decider**, on `((S̄, D̄, λ, μ, σ), (n, u, x, v, y, a, b))`. -/
 def core : Prog :=
   seqProg (stg (argPar 0) (ParRoutine.core PD)) <|
-  seqProg (stg (argPar 1) qCore) <|
+  seqProg (stg (argPar 1) budCore) <|
   seqProg (stg (argMarg ℓ 2 2 .alice) selfUniversal.univ) <|
   seqProg (stg (argMarg ℓ 3 2 .bob) selfUniversal.univ) <|
   seqProg (stg (argMarg ℓ 4 4 .alice) selfUniversal.univ) <|
@@ -236,7 +189,7 @@ theorem core_closed : (core PD ℓ).WellScoped 1 := by
   have hu := selfUniversal.closed
   have hv := PD.verify.closed
   exact seqProg_closed (stg_closed _ (ParRoutine.core_closed PD)) <|
-    seqProg_closed (stg_closed _ qCore_closed) <|
+    seqProg_closed (stg_closed _ budCore_closed) <|
     seqProg_closed (stg_closed _ hu) <| seqProg_closed (stg_closed _ hu) <|
     seqProg_closed (stg_closed _ hu) <| seqProg_closed (stg_closed _ hu) <|
     seqProg_closed (stg_closed _ hv) <| seqProg_closed (stg_closed _ hv) (PolyTimeFun.closed _)
@@ -280,12 +233,12 @@ def aBl (t : ArTy) (s : BitStr) : List BitStr :=
 
 /-- A game check's verdict. -/
 def chkV (rA rB : Data) (z : BitStr) (t : ArTy) (s : BitStr) : Bool :=
-  PD.verify (pcpInput dp n (AnswerReduction.inAns lam mu n) (arQ lam mu n) sigma
+  PD.verify (pcpInput dp n (tPcp lam mu n) (arQ lam mu n) sigma
     (readBits rA) (readBits rB) (pBl PD lam mu sigma n z).1 (aBl PD lam mu sigma n t s))
 
 /-- The contexts after each stage. -/
 def ctx1 : Data := .cons ((family PD lam mu sigma).pd n) (ctx0 sp dp lam mu sigma n u v x y a b)
-def ctx2 : Data := .cons (encode (arQ lam mu n, AnswerReduction.inAns lam mu n))
+def ctx2 : Data := .cons (encode (arQ lam mu n, tPcp lam mu n))
   (ctx1 PD sp dp lam mu sigma n u v x y a b)
 def ctx6 : Data := .cons ryB (.cons ryA (.cons rxB (.cons rxA
   (ctx2 PD sp dp lam mu sigma n u v x y a b))))
@@ -361,11 +314,11 @@ theorem pBlocks_eq (j i : ℕ) (d : Data) (z : BitStr)
 theorem argVer_eq (j i it ia rA rB : ℕ) (d RA RB : Data) (z : BitStr) (t : ArTy) (s : BitStr)
     (hpd : pdD j d = (family PD lam mu sigma).pd n) (hdp : dpD j d = encode dp)
     (hn : inp j 0 d = encode n)
-    (hqt : res (j - 2) d = encode (arQ lam mu n, AnswerReduction.inAns lam mu n))
+    (hqt : res (j - 2) d = encode (arQ lam mu n, tPcp lam mu n))
     (hσ : treeTail (treeTail (lmsD j d)) = encode sigma) (hA : res rA d = RA) (hB : res rB d = RB)
     (hz : inp j i d = encode z) (ht : inp j it d = encode t)
     (hs : (if ia = 5 then inp j ia else inpLast j) d = encode s) :
-    argVer j i it ia rA rB d = encode (pcpInput dp n (AnswerReduction.inAns lam mu n)
+    argVer j i it ia rA rB d = encode (pcpInput dp n (tPcp lam mu n)
       (arQ lam mu n) sigma (readBits RA) (readBits RB) (pBl PD lam mu sigma n z).1
       (aBl PD lam mu sigma n t s)) := by
   rw [argVer]
@@ -379,7 +332,7 @@ theorem ctx6_reads :
     dpD 6 (ctx6 PD sp dp lam mu sigma n u v x y a b rxA rxB ryA ryB) = encode dp ∧
     inp 6 0 (ctx6 PD sp dp lam mu sigma n u v x y a b rxA rxB ryA ryB) = encode n ∧
     res 4 (ctx6 PD sp dp lam mu sigma n u v x y a b rxA rxB ryA ryB) =
-      encode (arQ lam mu n, AnswerReduction.inAns lam mu n) ∧
+      encode (arQ lam mu n, tPcp lam mu n) ∧
     treeTail (treeTail (lmsD 6 (ctx6 PD sp dp lam mu sigma n u v x y a b rxA rxB ryA ryB))) =
       encode sigma ∧
     res 3 (ctx6 PD sp dp lam mu sigma n u v x y a b rxA rxB ryA ryB) = rxA ∧
@@ -395,7 +348,7 @@ theorem ctx7_reads :
     dpD 7 (ctx7 PD sp dp lam mu sigma n u v x y a b rxA rxB ryA ryB) = encode dp ∧
     inp 7 0 (ctx7 PD sp dp lam mu sigma n u v x y a b rxA rxB ryA ryB) = encode n ∧
     res 5 (ctx7 PD sp dp lam mu sigma n u v x y a b rxA rxB ryA ryB) =
-      encode (arQ lam mu n, AnswerReduction.inAns lam mu n) ∧
+      encode (arQ lam mu n, tPcp lam mu n) ∧
     treeTail (treeTail (lmsD 7 (ctx7 PD sp dp lam mu sigma n u v x y a b rxA rxB ryA ryB))) =
       encode sigma ∧
     res 2 (ctx7 PD sp dp lam mu sigma n u v x y a b rxA rxB ryA ryB) = ryA ∧
@@ -440,8 +393,8 @@ theorem core_runs
   set X2 := ctx2 PD sp dp lam mu sigma n u v x y a b
   have r1 := stg_runs (argPar 0) (ParRoutine.core_closed PD) X0 _
     (by rw [argPar_zero]; exact parCore_runs PD lam mu sigma n)
-  have r2 := stg_runs (argPar 1) qCore_closed (ctx1 PD sp dp lam mu sigma n u v x y a b) _
-    (by rw [argPar_one]; exact qCore_runs lam mu sigma n)
+  have r2 := stg_runs (argPar 1) budCore_closed (ctx1 PD sp dp lam mu sigma n u v x y a b) _
+    (by rw [argPar_one]; exact budCore_runs lam mu sigma n)
   have r3 := stg_runs (argMarg ℓ 2 2 .alice) hu X2 rxA (by
     rw [margArg_eq PD ℓ sp lam mu sigma n 2 2 .alice X2 x (by simp [pdD, res, X2, ctx2, ctx1])
       (by simp [spD, hdat, X2, ctx2, ctx1, ctx0, encode_prod])
@@ -471,7 +424,7 @@ theorem core_runs
   have r7 := stg_runs (argVer 6 2 1 5 3 2) hv (ctx6 PD sp dp lam mu sigma n u v x y a b rxA rxB
     ryA ryB) (encode (chkV PD dp lam mu sigma n rxA rxB x u a)) (by
       rw [argVer_eq PD dp lam mu sigma n 6 2 1 5 3 2 _ rxA rxB x u a e1 e2 e3 e4 e5 e6 e7 e8 e9 e10]
-      obtain ⟨t, -, ht⟩ := PD.verify.computes (pcpInput dp n (AnswerReduction.inAns lam mu n)
+      obtain ⟨t, -, ht⟩ := PD.verify.computes (pcpInput dp n (tPcp lam mu n)
         (arQ lam mu n) sigma (readBits rxA) (readBits rxB) (pBl PD lam mu sigma n x).1
         (aBl PD lam mu sigma n u a))
       exact ⟨t, ht⟩)
@@ -480,14 +433,14 @@ theorem core_runs
   have r8 := stg_runs (argVer 7 4 3 6 2 1) hv (ctx7 PD sp dp lam mu sigma n u v x y a b rxA rxB
     ryA ryB) (encode (chkV PD dp lam mu sigma n ryA ryB y v b)) (by
       rw [argVer_eq PD dp lam mu sigma n 7 4 3 6 2 1 _ ryA ryB y v b f1 f2 f3 f4 f5 f6 f7 f8 f9 f10]
-      obtain ⟨t, -, ht⟩ := PD.verify.computes (pcpInput dp n (AnswerReduction.inAns lam mu n)
+      obtain ⟨t, -, ht⟩ := PD.verify.computes (pcpInput dp n (tPcp lam mu n)
         (arQ lam mu n) sigma (readBits ryA) (readBits ryB) (pBl PD lam mu sigma n y).1
         (aBl PD lam mu sigma n v b))
       exact ⟨t, ht⟩)
   obtain ⟨t9, -, r9⟩ := (verdictP.comp readV).computes
     (ctx8 PD sp dp lam mu sigma n u v x y a b rxA rxB ryA ryB)
   have hc := PolyTimeFun.closed (verdictP.comp readV)
-  exact seq_runs (seqProg_closed (stg_closed _ qCore_closed) <|
+  exact seq_runs (seqProg_closed (stg_closed _ budCore_closed) <|
       seqProg_closed (stg_closed _ hu) <| seqProg_closed (stg_closed _ hu) <|
       seqProg_closed (stg_closed _ hu) <| seqProg_closed (stg_closed _ hu) <|
       seqProg_closed (stg_closed _ hv) <| seqProg_closed (stg_closed _ hv) hc) r1 <|
@@ -559,7 +512,7 @@ theorem margQ_runs (w : Player) (z : Fin (dim V n ((F).par n)) → 𝔽₂) :
 /-- The game check of the typed game at index `n`. -/
 abbrev chk : (Fin (V.sampler.dim n) → 𝔽₂) → (Fin ((F).par n).m' → Fq ((F).par n) ((F).hk n)) →
     (Fin (((F).par n).m' + 6) → Fq ((F).par n) ((F).hk n)) → Bool :=
-  gameCheck V n ((F).par n) ((F).hk n) PD V.decider.prog (AnswerReduction.inAns lam mu n)
+  gameCheck V n ((F).par n) ((F).hk n) PD V.decider.prog (tPcp lam mu n)
     (arQ lam mu n) sigma
 
 /-- **The game check's verdict is the game check**, on a parsed `Point_6` answer. -/
@@ -666,11 +619,11 @@ theorem total : (typedDecider PD V lam mu sigma).Total := by
       simp [argPar, lmsD, hdat, inp, X0, H, encode_prod]]
     exact parCore_runs PD lam mu sigma n)
   set X1 : Data := .cons ((family PD lam mu sigma).pd n) X0
-  have r2 := stg_runs (argPar 1) qCore_closed X1 _ (by
+  have r2 := stg_runs (argPar 1) budCore_closed X1 _ (by
     rw [show argPar 1 X1 = .cons (encode (lam, mu, sigma)) (encode n) by
       simp [argPar, lmsD, hdat, inp, X1, X0, H, encode_prod]]
-    exact qCore_runs lam mu sigma n)
-  set X2 : Data := .cons (encode (arQ lam mu n, AnswerReduction.inAns lam mu n)) X1
+    exact budCore_runs lam mu sigma n)
+  set X2 : Data := .cons (encode (arQ lam mu n, tPcp lam mu n)) X1
   obtain ⟨q3, e3⟩ : ∃ q, argMarg ℓ 2 2 .alice X2 = .cons (encode V.sampler.prog) (.cons (encode n) q) :=
     ⟨_, argMarg_general V n 2 2 .alice X2 (by simp [spD, hdat, X2, X1, X0, H, encode_prod])
       (by simp [inp, X2, X1, X0])⟩
@@ -709,7 +662,7 @@ theorem total : (typedDecider PD V lam mu sigma).Total := by
     rw [e8]; obtain ⟨t, -, h⟩ := PD.verify.computes c8; exact ⟨t, h⟩)
   obtain ⟨t9, -, r9⟩ := (verdictP.comp readV).computes (.cons (encode (PD.verify c8)) X7)
   have hc := PolyTimeFun.closed (verdictP.comp readV)
-  obtain ⟨t, h⟩ := seq_runs (seqProg_closed (stg_closed _ qCore_closed) <|
+  obtain ⟨t, h⟩ := seq_runs (seqProg_closed (stg_closed _ budCore_closed) <|
       seqProg_closed (stg_closed _ hu) <| seqProg_closed (stg_closed _ hu) <|
       seqProg_closed (stg_closed _ hu) <| seqProg_closed (stg_closed _ hu) <|
       seqProg_closed (stg_closed _ hv) <| seqProg_closed (stg_closed _ hv) hc) r1 <|
