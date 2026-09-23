@@ -1356,6 +1356,31 @@ bits too long is a statement about a different verifier.
 \label{thm:qld}
 \ledgernode{1.2.2, 1.2.2.17}
 \uses{def:qld-game,def:q-value,def:distance,lem:ms-direct-anticomm,thm:lidt-cl-soundness}
+\lean{MIPRE.QLD.errShape, MIPRE.QLD.ErrSmall, MIPRE.QLD.errSum, MIPRE.QLD.errShape_eq,
+  MIPRE.QLD.errSum_nonneg, MIPRE.QLD.one_le_md_real, MIPRE.QLD.one_le_q_real,
+  MIPRE.QLD.errSum_anti, MIPRE.QLD.errSum_le_three, MIPRE.QLD.errSum_rpow_le,
+  MIPRE.QLD.errShape_nonneg, MIPRE.QLD.md_rpow_mono, MIPRE.QLD.one_le_md_rpow,
+  MIPRE.QLD.errSum_le_errShape, MIPRE.QLD.errShape_mono, MIPRE.QLD.errShape_add,
+  MIPRE.QLD.errShape_const_mul, MIPRE.QLD.mdpow_mul_errShape, MIPRE.QLD.errShape_rpow_le,
+  MIPRE.QLD.errShape_mul, MIPRE.QLD.ErrSmall.mono, MIPRE.QLD.ErrSmall.congr,
+  MIPRE.QLD.ErrSmall.nonneg, MIPRE.QLD.ErrSmall.add, MIPRE.QLD.ErrSmall.const_mul,
+  MIPRE.QLD.ErrSmall.div_const, MIPRE.QLD.ErrSmall.mdpow_mul, MIPRE.QLD.ErrSmall.md_mul,
+  MIPRE.QLD.ErrSmall.rpow, MIPRE.QLD.ErrSmall.sqrt, MIPRE.QLD.ErrSmall.mul,
+  MIPRE.QLD.ErrSmall.of_le_errSum, MIPRE.QLD.not_errSmall_one, MIPRE.QLD.errSmall_eps,
+  MIPRE.QLD.errSmall_sqrt_eps, MIPRE.QLD.errSmall_q_rpow_neg, MIPRE.QLD.errSmall_inv_q,
+  MIPRE.QLD.errSmall_two_rpow_neg, MIPRE.QLD.errSmall_md_div_q, MIPRE.QLD.errSmall_const_div_q,
+  MIPRE.QLD.ErrSmall.m_mul_m_mul, MIPRE.QLD.errSmall_deltaQ, MIPRE.QLD.errSmall_kappaPairs,
+  MIPRE.QLD.errSmall_deltaPairsD, MIPRE.QLD.ErrSmall.deltaPairs_comp,
+  MIPRE.QLD.errSmall_deltaGS, MIPRE.QLD.deltaCL_four_mul_le, MIPRE.QLD.ErrSmall.deltaCL_comp,
+  MIPRE.QLD.errSmall_deltaLD, MIPRE.QLD.ErrSmall.deltaS_comp, MIPRE.QLD.errSmall_deltaS,
+  MIPRE.QLD.ErrSmall.deltaSelfCons_comp, MIPRE.QLD.errSmall_deltaSelfCons,
+  MIPRE.QLD.two_sub_two_sqrt_one_sub, MIPRE.QLD.ErrSmall.itemOne_comp,
+  MIPRE.QLD.errSmall_itemOneEta, MIPRE.QLD.errSmall_swapItemOne,
+  MIPRE.QLD.errSmall_swapItemOne_sqrt, MIPRE.QLD.ErrSmall.of_cases,
+  MIPRE.QLD.ErrSmall.of_regime, MIPRE.QLD.errShape_mono_eps,
+  MIPRE.QLD.ErrSmall.exists_le_min_one, MIPRE.QLD.exists_card_eq_two_pow,
+  MIPRE.QLD.exists_eq_two_pow_of_dvd_card, MIPRE.QLD.four_mul_dvd_card,
+  MIPRE.QLD.four_mul_dvd_card_of_regime}
 There exists a function
 \begin{equation*}
   \delta_{qld}(\eps, m, d, q) = a (md)^a \bigl( \eps^b + q^{-b} + 2^{-bmd} \bigr)
@@ -1393,6 +1418,30 @@ proof passes through --- $\kappa$-convexity requires $c_1 \leq 1$, the synchroni
 defect obeys $\delta_{\mathrm{sync}} \leq 4\eps$ rather than $3\eps$, and one corner block
 pairs with a transpose --- none checked here, none affecting the statement above, all
 relevant to whoever writes its proof.
+
+\emph{What is formalized toward it, and why there is no \texttt{leanok} mark.} The theorem is not
+proved; the Lean named above is the arithmetic and parameter bookkeeping its proof needs, landed
+ahead of the assembly. \texttt{MIPRE/Background/QLD/ErrorShape.lean} is the error shape:
+\texttt{ErrSmall} says a family of error terms is dominated by
+$a(md)^a(\eps^b + q^{-b} + 2^{-bmd})$ with $a \geq 1$ and $0 < b < 1$ chosen \emph{before} the
+parameters, on the range $0 \leq \eps \leq 1$, $m, d \geq 1$, $q \geq 2$. The class is closed
+under sums, constant multiples, products, square roots, real powers $t^B$ for $0 < B \leq 1$
+(by subadditivity) and polynomial prefactors in $md$, and every link of the chain the appendix
+produces is in it --- from $\delta_{\mathrm{CL}}$ at $(q, 4m, d)$ through $\delta_{\mathrm{ld}}$,
+$\delta_S$ and the constant of Lemma~\ref{lem:qld-pauli-selfcons} to item~1 of
+Lemma~\ref{lem:qld-swap}, whose bound $2 - 2\sqrt{1 - \eta}$ is at most $2\eta$ for every
+$\eta \geq 0$. \texttt{not\_errSmall\_one} guards the definition: a positive constant is not in
+the class. \texttt{ErrSmall.of\_regime} and \texttt{ErrSmall.of\_cases} are the paper's move of
+taking the trivial bound outside the regime, needed for $48md \leq q$ and for item~1's
+smallness hypothesis. \texttt{MIPRE/Background/QLD/Regime.lean} discharges $4m \mid q$ inside the
+regime; Lemma~\ref{lem:qld-global-setup}'s comments say why the size condition cannot be dropped.
+
+\emph{A property of the shape itself.} Because of the $2^{-bmd}$ term the right-hand side never
+falls below $a \cdot 2^{-bmd}$, so for any bound on $md$ the theorem is satisfied trivially by a
+large enough $a$, the conclusions being about unit vectors and projective measurements. The
+statement has content only as $md$ grows, with $\eps$ small and $q$ large. That is inherent in
+the stated form, not a defect of the formalization, but it is worth knowing when reading the
+constants the proof produces.
 
 
 \subsubsection{The shape of the soundness proof}
