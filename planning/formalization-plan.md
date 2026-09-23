@@ -738,6 +738,16 @@ general POVM strategies. The four pull requests that finish it, and why the desc
 narrowing the statement to projective strategies, are the last section of
 `planning/qld-campaign.md`, "Finishing `thm:qld`".
 
+**`thm:qld` is proved (2026-09-23).** `MIPRE.QLD.qld_soundness`
+(`MIPRE/Background/QLD/Soundness.lean`) is the theorem at proof level, with universal constants
+`a >= 1`, `0 < b < 1`, for an arbitrary POVM strategy, under characteristic two, `m | q`,
+`m, d >= 1` only, and it depends on no axiom beyond Lean's three. Its shapes are the ones
+`quantumValue_ge_of_valid_isometric_images` (introspection) takes. **The one piece of glue left
+for the consumer**: item 2 is stated for the Pauli measurement read as cube data
+(`map rdPauliVec`, malformed answers at `h = 0`), while the consumer sums over valid answers
+only, so the bridge needs a bound on the malformed Pauli mass. That belongs with the
+introspection work, not here.
+
 **H5, the assembly of `thm:compression` from the
 hypothesis structures, is done** (`MIPRE/Foundations/Pipeline/`): `Introspection ℓ`,
 `Oracularization ℓ`, `AnswerReduction ℓ`, `Repetition ℓ`, each a `structure` in the vocabulary

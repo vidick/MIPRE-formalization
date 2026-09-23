@@ -2961,3 +2961,33 @@ commits, each self-contained.
 
 Left for 4: `ErrSmall` for `deltaItemTwo _ etaItemOne` (the same combinators), legalization,
 the Naimark descent, the `V -> phi` composition, and the theorem.
+
+**4 is done, the same day.** `qld_soundness` in `Soundness.lean`, on four new modules, each
+written and adversarially reviewed on its own before the assembly used it:
+
+* `Descent.lean` --- generic. The paper passes from `V`-conjugation to `phi`-conjugation, and
+  from the dilated strategy to the original POVMs, through the *agreement* with `tau^W` on the
+  other half of the pair, because agreement is linear in each party's operators while closeness
+  is not. `sum_snorm_sq_descent_aOp` is that step once and for all: closeness of a PVM on the
+  product state becomes an agreement (`2 - 2 agree`, an equality for two PVMs), moves to the
+  image state and back (`2 ||Delta - Gamma||` each way, `bnd_sum_kronecker` being the contraction),
+  and becomes closeness of any sub-POVM with the same agreement on the image state (an
+  inequality). The cost is `8 r`; with `r = sqrt eta` that is the fourth root again.
+  `sum_snorm_sq_descent_isometry_aOp` packages it for `X_h = U A_h U^dagger`.
+* `PhysEmbed.lean` --- `physVec_mirrorOfGlobalPairs`: the state all of stage 5 works on is
+  `(physEmb ⊗ physEmb) psi`, `physEmb` appending the EPR pair on `A' A''` and the padding at its
+  basis vector. This is why the theorem uses `mirrorOfGlobalPairs` and not `exists_mirrorSimul`:
+  the latter's `Nonempty` forgets the state.
+* `QLDError.lean` --- `qldErr`, `min (qldBound) 4` in the regime and `4` outside, in the class.
+* `RegisterForm.lean` --- register first, `registerState`, and the consumer's honest readouts as
+  spectral projectors (`proj_weylOf_X`, `proj_weylOf_Z`).
+
+Legalization turned out free in the strongest sense: it does not change the cube data a Pauli
+answer carries (`rdPauliVec_legalize_pauli`), so the theorem is about the *original* strategy's
+Pauli measurement with no transfer at all. What is left for the consumer is the valid-answer
+bridge recorded in `planning/formalization-plan.md`.
+
+One repair on the way: `lem:qld-pauli-selfcons` was formalized in #183
+(`MirrorSimul.snorm_sq_wTilde_le`, exactly the blueprint's `72 (10 delta_S + 860 eps + ...)`)
+but never given its `\leanok` marks, so after #185 the graph showed `lem:qld-swap` proved on an
+unproved dependency. Both marks and the 283 guards went in with `thm:qld`.

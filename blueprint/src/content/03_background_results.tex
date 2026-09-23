@@ -1380,7 +1380,55 @@ bits too long is a statement about a different verifier.
   MIPRE.QLD.ErrSmall.of_regime, MIPRE.QLD.errShape_mono_eps,
   MIPRE.QLD.ErrSmall.exists_le_min_one, MIPRE.QLD.exists_card_eq_two_pow,
   MIPRE.QLD.exists_eq_two_pow_of_dvd_card, MIPRE.QLD.four_mul_dvd_card,
-  MIPRE.QLD.four_mul_dvd_card_of_regime}
+  MIPRE.QLD.four_mul_dvd_card_of_regime,
+  MIPRE.QLD.bornProb_kronecker_mulVec, MIPRE.QLD.conjTranspose_mul_conj_mul,
+  MIPRE.QLD.bornProb_kronecker_mulVec_conj_left, MIPRE.QLD.bornProb_kronecker_mulVec_conj_right,
+  MIPRE.QLD.conj_isometry_subPOVM, MIPRE.QLD.le_one_of_sum_le_one,
+  MIPRE.QLD.sum_snorm_sq_aOp_sub_bOp_le, MIPRE.QLD.sum_snorm_sq_aOp_sub_bOp_eq,
+  MIPRE.QLD.bnd_sum_kronecker, MIPRE.QLD.abs_sum_bornProb_sub_le,
+  MIPRE.QLD.snorm_aOp_sub_aOp_eq_of_move, MIPRE.QLD.sum_snorm_sq_descent_aOp,
+  MIPRE.QLD.sum_snorm_sq_aOp_sub_aOp_le_two, MIPRE.QLD.snorm_swapVec_aOp_sub_aOp,
+  MIPRE.QLD.sum_snorm_sq_descent_bOp, MIPRE.QLD.sum_snorm_sq_bOp_sub_bOp_le_two,
+  MIPRE.QLD.norm_evec_kronecker_mulVec, MIPRE.QLD.sum_snorm_sq_descent_isometry_aOp,
+  MIPRE.QLD.sum_snorm_sq_descent_isometry_bOp, MIPRE.QLD.aOp_mul_bOp_mulVec_kronecker,
+  MIPRE.QLD.isometry_mul_of_isometry, MIPRE.QLD.physEmb, MIPRE.QLD.padWeight_eq_ite,
+  MIPRE.QLD.physEmb_apply, MIPRE.QLD.physEmb_isometry, MIPRE.QLD.aOp_mul_physEmb,
+  MIPRE.QLD.physEmb_conjTranspose_mul_aOp, MIPRE.QLD.physEmb_conj_aOp,
+  MIPRE.QLD.physEmb_mul_mul_conjTranspose, MIPRE.QLD.aOp_mul_physEmbProj_comm,
+  MIPRE.QLD.physEmbProj_idem, MIPRE.QLD.physEmb_kron_mulVec_apply, MIPRE.QLD.physEmb_kron_isometry,
+  MIPRE.QLD.physVec_mirrorOfGlobalPairs, MIPRE.QLD.physVec_mirrorOfGlobalPairs_eq_isometricState,
+  MIPRE.QLD.physSwap_mulVec_physVec_mirrorOfGlobalPairs, MIPRE.QLD.qldDelta, MIPRE.QLD.qldHlt,
+  MIPRE.QLD.qldEta, MIPRE.QLD.qldBound, MIPRE.QLD.qldErr, MIPRE.QLD.qldDelta_eq,
+  MIPRE.QLD.qldHlt_eq, MIPRE.QLD.qldEta_eq, MIPRE.QLD.deltaLD_nonneg, MIPRE.QLD.deltaS_nonneg,
+  MIPRE.QLD.qldDelta_nonneg, MIPRE.QLD.qldHlt_nonneg, MIPRE.QLD.qldEta_nonneg,
+  MIPRE.QLD.qldEta_le_two_mul_qldHlt, MIPRE.QLD.deltaLegs_nonneg, MIPRE.QLD.deltaItemTwo_nonneg,
+  MIPRE.QLD.qldItemTwo_nonneg, MIPRE.QLD.qldBound_nonneg, MIPRE.QLD.sqrt_qldEta_le_qldBound,
+  MIPRE.QLD.itemTwo_le_qldBound, MIPRE.QLD.qldErr_of_not, MIPRE.QLD.qldErr_of_regime,
+  MIPRE.QLD.qldErr_le_four, MIPRE.QLD.qldErr_le_qldBound, MIPRE.QLD.qldErr_nonneg,
+  MIPRE.QLD.le_qldErr, MIPRE.QLD.ErrSmall.deltaLegs_comp, MIPRE.QLD.ErrSmall.deltaItemTwo_comp,
+  MIPRE.QLD.errSmall_qldDelta, MIPRE.QLD.errSmall_qldHlt, MIPRE.QLD.errSmall_qldEta,
+  MIPRE.QLD.errSmall_deltaLegs, MIPRE.QLD.errSmall_deltaItemTwo, MIPRE.QLD.errSmall_qldBound,
+  MIPRE.QLD.errSmall_qldErr, MIPRE.QLD.exists_qldErr_le, MIPRE.QLD.regFirst,
+  MIPRE.QLD.regFirst_apply, MIPRE.QLD.regFirst_isometry, MIPRE.QLD.isometricImage_regFirst,
+  MIPRE.QLD.aOp_eq_registerOp_bOp, MIPRE.QLD.isometricImage_regFirst_sub_aOp, MIPRE.QLD.regSwap,
+  MIPRE.QLD.isometricState_regFirst, MIPRE.QLD.snorm_comp_registerOp,
+  MIPRE.QLD.aOp_registerOp_prodCongr, MIPRE.QLD.bOp_registerOp_prodCongr,
+  MIPRE.QLD.snorm_comp_regSwap_alice, MIPRE.QLD.snorm_comp_regSwap_bob,
+  MIPRE.QLD.registerState_eq_outerUnVec, MIPRE.QLD.norm_isometricState_sub_registerState,
+  MIPRE.QLD.snorm_registerState_alice, MIPRE.QLD.snorm_registerState_bob,
+  MIPRE.QLD.norm_evec_registerState, MIPRE.QLD.norm_evec_outerUnVec_auxVec,
+  MIPRE.QLD.norm_evec_auxVec, MIPRE.QLD.unit_of_norm_evec_auxVec, MIPRE.QLD.registerState_move,
+  MIPRE.QLD.proj_weylOf_X, MIPRE.QLD.proj_weylOf_Z, MIPRE.QLD.povmValue_nonneg,
+  MIPRE.QLD.isometry_mul_isometry, MIPRE.QLD.conj_mul_conj_unitary, MIPRE.QLD.norm_evec_sub_le_two,
+  MIPRE.QLD.rdPauliVec_legalize_pauli, MIPRE.QLD.two_le_card_field, MIPRE.QLD.exists_legal_dilation,
+  MIPRE.QLD.physEmb_mul_ancillaEmbed_isometry, MIPRE.QLD.physEmb_mul_ancillaEmbed_conj,
+  MIPRE.QLD.kronecker_mulVec_extVec2, MIPRE.QLD.MirrorSimul.isPVM_bobConjPauli,
+  MIPRE.QLD.MirrorSimul.exists_phys_descent, MIPRE.QLD.exists_phys_of_regime,
+  MIPRE.QLD.norm_isometricState_sub_registerState_le_two,
+  MIPRE.QLD.sum_snorm_sq_registerState_alice_le_two,
+  MIPRE.QLD.sum_snorm_sq_registerState_bob_le_two, MIPRE.QLD.exists_le_qldErr,
+  MIPRE.QLD.qld_soundness}
+\leanok
 There exists a function
 \begin{equation*}
   \delta_{qld}(\eps, m, d, q) = a (md)^a \bigl( \eps^b + q^{-b} + 2^{-bmd} \bigr)
@@ -1397,13 +1445,29 @@ $(\pauli, W)$ are $\delta_{qld}$-close to the Pauli basis measurements $\tau^W_u
 \in \F_q^M$, acting on $\ket{\EPR_q}^{\ot M}$.
 \end{theorem}
 
+\begin{proof}
+\uses{lem:qld-swap,lem:qld-global-setup,lem:naimark-dilation,lem:qld-axis-degree}
+\leanok
+Outside the regime $48md \leq q$, or where item~1 of Lemma~\ref{lem:qld-swap} has no content,
+take the trivial bounds, which the shape dominates once $a$ is large. Inside it, legalize the
+strategy's answers (Lemma~\ref{lem:qld-axis-degree}'s \texttt{legalizeStrat}, which does not
+change the Pauli measurements' cube data) and dilate it to a projective one
+(Lemma~\ref{lem:naimark-dilation}); apply Lemma~\ref{lem:qld-swap}; take for $\phi$ the swap
+unitary after the embedding $\ket{\theta} \mapsto \ket{\theta} \ot \ket{\EPR_q}^{\ot M}$ with
+the padding at a basis vector, after the dilation's embedding. The passage from the lemma's
+$V$-conjugation to $\phi$-conjugation, and from the dilated measurements down to the original
+POVMs, both go through the agreement with $\tau^W$ on the \emph{other} half of the entangled
+pair, which is linear in each party's operators; each state transfer costs twice item~1's
+distance, and item~1 bounds the squared norm, whence the fourth root.
+\end{proof}
+
 \paragraph{Source.} The pinned paper~\cite{AuditSync26}, \texttt{qld-appendix.tex}
 and its five proof files, states this Pauli theorem and its reduction to the seeded
 CL test. The reduction follows the architecture of~\cite[Section 7]{JNVWY20};
 the canonical-line soundness theorem of~\cite{JNVWY21qld} is related background.
 Lemma~\ref{lem:ms-direct-anticomm} supplies the base anticommutation directly.
 
-\paragraph{Comments.} This is a substantial remaining formalization target and the
+\paragraph{Comments.} This is the
 workhorse of question reduction: introspection certifies the players' sampling of
 their own questions against Pauli basis measurements. The reduction uses direct
 Magic Square anticommutation, linearity and orthonormalization, together with the
@@ -1416,12 +1480,50 @@ interface, so its uses require no additional synchronous-value transport. The ve
 campaign~\cite{Audit26} further reports three corrections in the tensor-code material the
 proof passes through --- $\kappa$-convexity requires $c_1 \leq 1$, the synchronicity
 defect obeys $\delta_{\mathrm{sync}} \leq 4\eps$ rather than $3\eps$, and one corner block
-pairs with a transpose --- none checked here, none affecting the statement above, all
-relevant to whoever writes its proof.
+pairs with a transpose --- none affecting the statement above. The formal proof below is
+checked end to end with no assumption beyond Lean's standard axioms, so it does not rest on the
+paper's account of that material.
 
-\emph{What is formalized toward it, and why there is no \texttt{leanok} mark.} The theorem is not
-proved; the Lean named above is the arithmetic and parameter bookkeeping its proof needs, landed
-ahead of the assembly. \texttt{MIPRE/Background/QLD/ErrorShape.lean} is the error shape:
+\emph{The formalization.} \texttt{MIPRE.QLD.qld\_soundness}
+(\texttt{MIPRE/Background/QLD/Soundness.lean}) is the theorem: there are $a \geq 1$ and
+$0 < b < 1$ such that for every field $\F_q$ of characteristic two, every $m \geq 1$ with
+$m \mid q$, every $d \geq 1$, and every POVM strategy for $\game^{\pauli}_{\qldparams}$ that
+fails with probability at most $\eps$, there are isometries $V_\alice$, $V_\bob$ into
+$(\C^q)^{\ot M} \ot \mH'$ and a unit $\ket{\aux}$ with both items at
+$\delta_{qld} = a(md)^a(\eps^b + q^{-b} + 2^{-bmd})$. Item 2 is stated for both parties and both
+bases, relative to the one state $\ket{\EPR_q}^{\ot M} \ot \ket{\aux}$, as the summed squared
+state-dependent distance. The shapes are those the introspection consumer takes
+(\texttt{quantumValue\_ge\_of\_valid\_isometric\_images} in
+\texttt{MIPRE/Foundations/Introspection/ValidPauliSoundness.lean}): register-first isometries,
+\texttt{isometricState}, \texttt{registerState}, \texttt{isometricImage}, and an unsquared
+distance in item~1. Three points of the statement are worth knowing.
+\begin{itemize}
+\item It asks less than admissibility: characteristic two, $m \mid q$ and $d \geq 1$. The
+  regime $48md \leq q$ and the divisibility $4m \mid q$ are discharged inside the proof, not
+  assumed (\texttt{MIPRE/Background/QLD/Regime.lean}).
+\item The strategy is arbitrary: not projective, not legal. Legalization is free because it
+  does not change the cube data a Pauli answer carries (\texttt{rdPauliVec\_legalize\_pauli}),
+  and the Naimark descent is \texttt{sum\_snorm\_sq\_descent\_isometry\_aOp} and its Bob
+  form in \texttt{MIPRE/Background/QLD/Descent.lean}: closeness on the product state is turned
+  into agreement with $\tau^W$ on the other half of the pair, which is linear in the measurement
+  and so reads the same on the dilated and the original strategy, then turned back, at a cost of
+  $8\sqrt{\eta}$ for item~1's bound $\eta$. This is the paper's argument, made exact.
+\item Item 2 is about the strategy's Pauli measurement read as cube data,
+  \texttt{(MA (.pauli W)).map rdPauliVec}, which puts every malformed Pauli answer at $h = 0$,
+  as the game's reading does. The introspection consumer sums over the \emph{valid} answers
+  only; passing between the two needs a bound on the malformed mass. That bridge belongs to
+  the consumer and is not part of this theorem.
+\end{itemize}
+The explicit isometry is \texttt{physEmb} (\texttt{MIPRE/Background/QLD/PhysEmbed.lean}):
+\texttt{physVec\_mirrorOfGlobalPairs} says the state the whole of stage~5 works on is the
+strategy's state under it. \texttt{MIPRE/Background/QLD/RegisterForm.lean} moves the register
+to the front, and also identifies the consumer's honest readouts with the spectral projectors
+(\texttt{proj\_weylOf\_X}, \texttt{proj\_weylOf\_Z}).
+
+\emph{The error.} \texttt{MIPRE/Background/QLD/QLDError.lean} names the bound the proof
+produces, \texttt{qldErr}: $\min(\texttt{qldBound}, 4)$ inside the regime and $4$ outside,
+with \texttt{qldBound} item~2's constant plus $9\sqrt{\eta}$, and shows it is in the class
+below. \texttt{MIPRE/Background/QLD/ErrorShape.lean} is the error shape:
 \texttt{ErrSmall} says a family of error terms is dominated by
 $a(md)^a(\eps^b + q^{-b} + 2^{-bmd})$ with $a \geq 1$ and $0 < b < 1$ chosen \emph{before} the
 parameters, on the range $0 \leq \eps \leq 1$, $m, d \geq 1$, $q \geq 2$. The class is closed
@@ -1435,6 +1537,10 @@ the class. \texttt{ErrSmall.of\_regime} and \texttt{ErrSmall.of\_cases} are the 
 taking the trivial bound outside the regime, needed for $48md \leq q$ and for item~1's
 smallness hypothesis. \texttt{MIPRE/Background/QLD/Regime.lean} discharges $4m \mid q$ inside the
 regime; Lemma~\ref{lem:qld-global-setup}'s comments say why the size condition cannot be dropped.
+
+The ledger node $1.2.2$ also records completeness of the game. That is
+Lemma~\ref{lem:intro-honest-full-pauli}, formalized separately; this theorem is the soundness
+half, node $1.2.2.17$'s assembly.
 
 \emph{A property of the shape itself.} Because of the $2^{-bmd}$ term the right-hand side never
 falls below $a \cdot 2^{-bmd}$, so for any bound on $md$ the theorem is satisfied trivially by a
@@ -4247,6 +4353,7 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.MirrorSimul.snorm_endOp_bobMTilde_eq,
   MIPRE.QLD.MirrorSimul.sum_snorm_sq_endOp_bobMTilde_le,
   MIPRE.QLD.MirrorSimul.sum_selfConsGap_le, MIPRE.QLD.MirrorSimul.snorm_sq_wTilde_le}
+\leanok
 For every basis $W$, every $e \in \F_q$ and every probe $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the
 exact Pauli observable of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same
 observable on the other:
@@ -4267,6 +4374,7 @@ never averages over the probe, only over the sampled point --- and the constant 
 
 \begin{proof}
 \uses{lem:qld-exact-paulis,lem:qld-helper,lem:qld-win,lem:schwartz-zippel}
+\leanok
 The paper's ``pulling'' chain. Right-multiplying $\tilde{M}^{W,\tilde{u}}_a$ on one party by the
 near-identity $\sum_g (\widehat S^W_g)_{\alice\alice'} \ot
 (\widehat M^{(\mathtt{Point},W),u}_{g(u)})_{\bob\alice''}$ of Lemma~\ref{lem:qld-helper} and
