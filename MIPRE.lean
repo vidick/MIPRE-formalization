@@ -16,6 +16,7 @@ import MIPRE.Background.AnswerReduction.PcpPresentation
 import MIPRE.Background.AnswerReduction.PcpSampler
 import MIPRE.Background.AnswerReduction.Predicate
 import MIPRE.Background.AnswerReduction.SamplerCost
+import MIPRE.Background.AnswerReduction.SoundCopy
 import MIPRE.Background.AnswerReduction.SoundSetup
 import MIPRE.Background.AnswerReduction.StageCorrect
 import MIPRE.Background.AnswerReduction.StageLists
@@ -427,6 +428,7 @@ import MIPRE.Background.LIDT.MIPStarRE.Quantum.Measurement
 import MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB
 import MIPRE.Background.LIDT.Padding
 import MIPRE.Background.LIDT.Presentation
+import MIPRE.Background.LIDT.PresentationEmbed
 import MIPRE.Background.LIDT.PresentationQueries
 import MIPRE.Background.LIDT.Simultaneous
 import MIPRE.Background.LIDT.Soundness
