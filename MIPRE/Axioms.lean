@@ -149,6 +149,9 @@ import MIPRE.Foundations.StateDistance
 import MIPRE.Foundations.PerfectStrategy
 import MIPRE.Foundations.OracularComplete
 import MIPRE.Foundations.OracularSound
+import MIPRE.Foundations.OracularTensor
+import MIPRE.Foundations.OracularTyped
+import MIPRE.Foundations.OracularSampler
 import MIPRE.Foundations.LowDegree.SelfDualize
 import MIPRE.Foundations.LowDegree.NormalBasis
 import MIPRE.Foundations.SAT.AdmissibleField
@@ -550,6 +553,52 @@ tell you the guard is missing.
   MIPRE.SeededGame.oracleStrategy_value_eq_one,
   MIPRE.SeededGame.soundStrategy,
   MIPRE.SeededGame.soundStrategy_value_ge
+
+-- blueprint `lem:oracular-soundness-tensor`: soundness of oracularization for arbitrary
+-- tensor-product strategies, the form `Verifier.valStar` needs, with the synchronous constant.
+#guard_sorry_free MIPRE.SeededGame.tensorSound,
+  MIPRE.SeededGame.tensorSound_value_ge,
+  MIPRE.SeededGame.quantumValue_ge_of_oracular,
+  MIPRE.sum_snorm_sq_ge_of_close,
+  MIPRE.sum_snorm_sq_chain,
+  MIPRE.SeededGame.sum_snorm_sq_joint_le,
+  MIPRE.SeededGame.succAt_oracle_le,
+  MIPRE.SeededGame.succAt_tensorSound_ge,
+  MIPRE.SeededGame.sum_failAt_four_le
+
+-- blueprint `lem:oracular-typed-transfers`: the typed oracularized game of a normal form
+-- verifier, in the vocabulary of the detyping compiler, and its two value transfers.
+#guard_sorry_free MIPRE.CL.CLFun.eval_ident,
+  MIPRE.CL.CLFun.exactlyOn_ident,
+  MIPRE.exactlyOn_roleFamily,
+  MIPRE.SeededGame.typedGame_mu,
+  MIPRE.SeededGame.quantumValue_typedGame_le,
+  MIPRE.SyncStrategy.pushTo,
+  MIPRE.SyncStrategy.value_le_pushTo,
+  MIPRE.SyncStrategy.isPCC_pushTo,
+  MIPRE.Verifier.valStar_ge_of_typed,
+  MIPRE.Verifier.exists_typed_perfectPCC,
+  MIPRE.pairDec_pairEnc,
+  MIPRE.parseAns_encAns,
+  MIPRE.oaccepts_of_oraclePred,
+  MIPRE.oraclePred_encAns,
+  MIPRE.Verifier.valStar_ge_of_oraclePred,
+  MIPRE.Verifier.exists_oraclePred_perfectPCC
+
+-- blueprint `lem:oracle-typed-sampler`: the typed oracularized sampler, its query clauses, its
+-- running time and its program as a polynomial-time function of the input sampler's.
+#guard_sorry_free MIPRE.oracleSampler,
+  MIPRE.oracleSampler_cl,
+  MIPRE.oracleSampler_dim,
+  MIPRE.OracleSampler.core,
+  MIPRE.OracleSampler.route_dimension,
+  MIPRE.OracleSampler.route_alice,
+  MIPRE.OracleSampler.route_bob,
+  MIPRE.OracleSampler.route_oracle,
+  MIPRE.OracleSampler.core_runs_within,
+  MIPRE.OracleSampler.oracleSampler_timeBound,
+  MIPRE.OracleSampler.samplerProgFun,
+  MIPRE.OracleSampler.samplerProgFun_apply
 
 -- blueprint `lem:pcp-zero-basis`: preserve the individual-degree bounds needed by the PCP.
 #guard_sorry_free MIPRE.SAT.ArrayProg.eqBits,

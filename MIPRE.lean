@@ -1123,7 +1123,10 @@ import MIPRE.Foundations.LowDegree.ZeroBasis
 import MIPRE.Foundations.OpBound
 import MIPRE.Foundations.OracularComplete
 import MIPRE.Foundations.OracularGame
+import MIPRE.Foundations.OracularSampler
 import MIPRE.Foundations.OracularSound
+import MIPRE.Foundations.OracularTensor
+import MIPRE.Foundations.OracularTyped
 import MIPRE.Foundations.POVMMix
 import MIPRE.Foundations.POVMValue
 import MIPRE.Foundations.PVM

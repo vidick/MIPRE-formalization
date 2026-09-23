@@ -4046,10 +4046,68 @@ $\valstar \geq 1 - 9\eps - 2\sqrt{54\eps} \geq 1 - 24\sqrt{\eps}$, the last step
 $\eps \leq \sqrt\eps$ for $\eps \leq 1$ and $2\sqrt{54} < 15$.
 \end{proof}
 
+\begin{lemma}[Soundness of oracularization, for bipartite strategies]
+\label{lem:oracular-soundness-tensor}
+\uses{def:oracular-game,def:tensor-strategy,def:q-value,def:cross-distance,%
+lem:close-measurements-close-values}
+\lean{MIPRE.SeededGame.tensorSound, MIPRE.SeededGame.tensorSound_value_ge,
+  MIPRE.SeededGame.quantumValue_ge_of_oracular, MIPRE.sum_snorm_sq_ge_of_close,
+  MIPRE.sum_snorm_sq_chain, MIPRE.SeededGame.sum_snorm_sq_joint_le,
+  MIPRE.SeededGame.succAt_oracle_le, MIPRE.SeededGame.succAt_tensorSound_ge,
+  MIPRE.SeededGame.sum_failAt_four_le}
+\leanok
+Let $S$ be a seeded game with nonempty seed space and nonempty answer alphabet, let
+$0 \leq \eps \leq 1$, and let $N$ be a tensor-product strategy for the oracularization of $S$
+with value at least $1 - \eps$. Let $\Sigma(N)$ be the strategy for the game of $S$, on the same
+state, in which Alice measures the first player's $\{N^{(\alice,\, x)}_a\}$ and Bob the second
+player's $\{N^{(\bob,\, y)}_b\}$, each relabelled so that the oracle-shaped answers are grouped
+into one fixed answer. Then $\Sigma(N)$ has value at least $1 - 24\sqrt{\eps}$. Consequently, for
+every $\eps > 0$, if $\valstar$ of the oracularization of $S$ exceeds $1 - \eps$, then
+$\valstar$ of the game of $S$ is at least $1 - 24\sqrt{\eps}$.
+\end{lemma}
+\begin{proof}
+\leanok
+A tensor-product strategy is projective, so no dilation is needed. Fix a seed $z$ and write, on
+the joint space, $O$ for the first player's measurement at $(\oracle, z)$, $O^\alice_u$ and
+$O^\bob_v$ for its sums over the answers whose Alice, respectively Bob, component is $u$,
+respectively $v$, $C$ for the first player's measurement at $(\alice, L^\alice(z))$, and $P$,
+$Q$ for the second player's at $(\alice, L^\alice(z))$ and $(\bob, L^\bob(z))$. Then
+$C_u \ot Q_v - O^\alice_u O^\bob_v \ot \Id = X_1 + X_2 + X_3$, where
+\begin{equation*}
+  X_1 = (\Id \ot Q_v)(C_u \ot \Id - \Id \ot P_u), \quad
+  X_2 = (\Id \ot Q_v)(\Id \ot P_u - O^\alice_u \ot \Id), \quad
+  X_3 = (O^\alice_u \ot \Id)(\Id \ot Q_v - O^\bob_v \ot \Id).
+\end{equation*}
+The front factors are projective measurements, so summed over their outcome they cost nothing,
+and each of the three deviations is the cross-party inconsistency of one role pair ---
+$(\alice, \alice)$, $(\oracle, \alice)$, $(\oracle, \bob)$ --- at which acceptance forces the two
+answers compared to agree; by the estimate of Definition~\ref{def:cross-distance} each is at most
+twice that pair's conditional failure. So
+$\delta_z = \sum_{u,v} \norm{(C_u \ot Q_v - O^\alice_u O^\bob_v \ot \Id)\ket{\psi}}^2$ is at most
+$6$ times the sum of the three conditional failures, with no square root. Both
+$\{C_u \ot Q_v\}$ and $\{O^\alice_u O^\bob_v \ot \Id\}$ are projective measurements indexed by
+pairs, and on the pairs of isolated answers the input predicate accepts at
+$(L^\alice(z), L^\bob(z))$ the second carries at least the oracle's acceptance probability at
+$(\oracle, \oracle)$, since $O^\alice_u O^\bob_v$ is the sum of the oracle's outcomes with those
+two components. The measurement-level form of
+Lemma~\ref{lem:close-measurements-close-values} (the paper's
+\texttt{fact:approx-implies-close-value}) then puts the conditional value of $\Sigma(N)$ at the
+seed at least one minus the conditional failure at $(\oracle, \oracle)$ minus $2\sqrt{\delta_z}$.
+The four role pairs used are distinct and each carries a ninth of the question weight, so their
+conditional failures average to at most $9\eps$ in total, and with Cauchy--Schwarz taking the
+average inside the square root, $\valstar \geq 1 - 9\eps - 2\sqrt{54\eps} \geq 1 - 24\sqrt\eps$.
+The paper's chain \texttt{eq:oracle-1} to \texttt{eq:oracle-3} is not needed: the oracle's
+measurement enters only through its joint marginal, so there is no marginalization step inside a
+pair-indexed family, and the second player's two isolated measurements are multiplied in one
+order only, so there is no commutation step. For the second statement, when $\eps \leq 1$ a
+strategy of value above $1 - \eps$ exists and the first applies; when $\eps > 1$ the bound is
+negative.
+\end{proof}
+
 \begin{remark}[What the game-level clauses leave to the verifier level]
 \label{rem:oracular-game-level}
 \uses{thm:oracularization,lem:oracular-completeness,lem:oracular-soundness,%
-def:oracularization-contract,rem:oracularization-repairs}
+lem:oracular-soundness-tensor,def:oracularization-contract,rem:oracularization-repairs}
 Lemmas~\ref{lem:oracular-completeness} and~\ref{lem:oracular-soundness} are the two clauses of
 Theorem~\ref{thm:oracularization} with the samplers, deciders and typed question strings
 stripped away, and they settle the two repairs that are about the strategies: repair~2, the
@@ -4062,7 +4120,110 @@ Remark~\ref{rem:oracularization-contract} are all statements about a verifier an
 appears at this level. The soundness constant here is $24$ rather than an unspecified $c$; the
 ambient contract asks only for some fixed $c>0$, so the game-level lemma is stronger than the
 contract needs on that point and silent on every other.
+
+Lemma~\ref{lem:oracular-soundness} is stated for synchronous strategies, and a verifier-level
+statement cannot use that form: $\valstar$ is a supremum over tensor-product strategies, and so is
+the strategy transport of detyping, while the bridge from synchronous to general values
+(Theorem~\ref{thm:almost-sync}) is off the critical path. The paper's own soundness theorem is
+bipartite. Lemma~\ref{lem:oracular-soundness-tensor} is that form, with the same constant.
 \end{remark}
+
+\begin{definition}[The typed oracularized game]
+\label{def:oracular-typed-game}
+\uses{def:oracular-game,def:normal-verifier,def:typed-sampler-interface}
+\lean{MIPRE.CL.CLFun.ident, MIPRE.roleFamily, MIPRE.roleGraph, MIPRE.SeededGame.ofCL,
+  MIPRE.Verifier.seeded, MIPRE.pairEnc, MIPRE.pairDec, MIPRE.parseAns, MIPRE.oraclePred,
+  MIPRE.encAns, MIPRE.Verifier.oracleTypedPred}
+\leanok
+Let $\verifier$ be a normal form verifier with at least one level, $n$ an index, $B$ a parse cut
+and $T$ an answer cut, and let $L^\alice, L^\bob$ be the CL functions of its sampler at $n$. The
+\emph{typed oracularized game} of $\verifier_n$ is the finite typed game, in the sense of
+Definition~\ref{def:typed-sampler-interface}, on the complete type graph with loops over
+$\type^\ora = \{\oracle, \alice, \bob\}$. Its CL functions are the identity for the type
+$\oracle$, as a CL function with the levels of $\verifier$, and $L^\alice$, $L^\bob$ for the types
+$\alice$, $\bob$, the same for both players; its answers are the bit strings of length at most $T$.
+Its predicate parses each answer by the type of the player who gave it: an oracle's must be the
+serialization of a pair of strings of length at most $B$, an isolated player's a single string of
+length at most $B$. It rejects when a parse fails, and otherwise decides as the oracularization
+(Definition~\ref{def:oracular-game}) of the seeded game $(L^\alice, L^\bob, D)$, where $D$ is the
+predicate of $\verifier_n$ on answers of length at most $B$.
+\end{definition}
+
+\begin{lemma}[Value transfers of the typed oracularized game]
+\label{lem:oracular-typed-transfers}
+\uses{def:oracular-typed-game,lem:oracular-completeness,lem:oracular-soundness-tensor,def:pcc}
+\lean{MIPRE.CL.CLFun.eval_ident, MIPRE.CL.CLFun.exactlyOn_ident, MIPRE.exactlyOn_roleFamily,
+  MIPRE.SeededGame.typedGame_mu, MIPRE.SeededGame.quantumValue_typedGame_le,
+  MIPRE.SyncStrategy.pushTo, MIPRE.SyncStrategy.value_le_pushTo,
+  MIPRE.SyncStrategy.isPCC_pushTo, MIPRE.Verifier.valStar_ge_of_typed,
+  MIPRE.Verifier.exists_typed_perfectPCC, MIPRE.pairDec_pairEnc, MIPRE.parseAns_encAns,
+  MIPRE.oaccepts_of_oraclePred, MIPRE.oraclePred_encAns,
+  MIPRE.Verifier.valStar_ge_of_oraclePred, MIPRE.Verifier.exists_oraclePred_perfectPCC}
+\leanok
+In the setting of Definition~\ref{def:oracular-typed-game}:
+\begin{enumerate}
+\item (\textbf{Soundness}) for every $\eps > 0$ and every answer cut $T$, if the quantum value of
+  the typed oracularized game exceeds $1 - \eps$, then $\valstar(\verifier_n) \geq 1 - 24\sqrt\eps$
+  with answers of length at most $B$;
+\item (\textbf{Completeness}) if $\verifier_n$ has a value-$1$ PCC strategy with answers of length
+  at most $B$, then for every $T \geq 8B + 3$ the doubled typed oracularized game has a value-$1$
+  PCC synchronous strategy.
+\end{enumerate}
+The same holds for any typed predicate whose acceptance implies the oracularized predicate after a
+reading of the answers, for soundness, and for any typed predicate that accepts an encoding of every
+answer pair the oracularized predicate accepts, for completeness.
+\end{lemma}
+\begin{proof}
+\leanok
+The typed game samples a uniform ordered pair of types and one common uniform seed, and the
+identity gives the oracle the seed itself, so its question distribution is exactly that of the
+oracularization. For soundness, a tensor-product strategy of the typed game, played through the
+parse on the same state, is a strategy of the oracularization that loses nothing, because the
+typed predicate accepts only what the oracularized one accepts after parsing; then
+Lemma~\ref{lem:oracular-soundness-tensor} applies. For completeness, the strategy of
+Lemma~\ref{lem:oracular-completeness}, whose two players use identical operators, is doubled and
+its outcomes pushed forward along the honest encoding: the serialization for an oracle's pair, the
+string itself for an isolated player's answer. Summing a projective measurement over the fibres of
+a map keeps it projective and keeps commutation, and the pushed-forward strategy wins whenever the
+original does, because an accepted answer has the shape its type asks for and parses back from its
+encoding. The serialization of two strings of length at most $B$ has length at most $8B + 3$. In
+the ambient model the input witness already answers with strings of length at most $B$; in the
+source model that is what the truncation of Lemma~\ref{lem:oracle-timeout-pcc} provides.
+\end{proof}
+
+\begin{lemma}[The typed oracularized sampler]
+\label{lem:oracle-typed-sampler}
+\uses{def:oracular-typed-game,def:typed-sampler-interface,lem:universal-tm,lem:smn}
+\lean{MIPRE.oracleSampler, MIPRE.oracleSampler_cl, MIPRE.oracleSampler_dim,
+  MIPRE.OracleSampler.core, MIPRE.OracleSampler.route_dimension,
+  MIPRE.OracleSampler.route_alice, MIPRE.OracleSampler.route_bob,
+  MIPRE.OracleSampler.route_oracle, MIPRE.OracleSampler.core_runs_within,
+  MIPRE.OracleSampler.oracleSampler_timeBound, MIPRE.OracleSampler.samplerProgFun,
+  MIPRE.OracleSampler.samplerProgFun_apply}
+\leanok
+For every sampler $\sampler$ with at least one level there is a typed sampler over
+$\type^\ora$, with the levels of $\sampler$, whose typed CL functions are those of
+Definition~\ref{def:oracular-typed-game}: the identity for $\oracle$, and the CL functions
+$L^\alice$, $L^\bob$ of $\sampler$ for $\alice$, $\bob$, the same for both players. It depends on
+$\sampler$ alone, and its program is computed from the program of $\sampler$ in polynomial time.
+There are constants $c, m, e$ such that, whenever $\sampler$ runs within $B(\abs{d} + 1)^k$ on
+inputs $(n, d)$ and $B$, $\abs{\sampler}$ and $n$ are at most $W$, the typed sampler runs within
+$c(W + 1)^m(\abs{d} + 1)^{e(k + 1)}$ on inputs $(n, d)$.
+\end{lemma}
+\begin{proof}
+\leanok
+The program is a fixed core run on the program of $\sampler$ through the s-m-n construction of
+Lemma~\ref{lem:smn}, as the repeated sampler is. The core answers a typed query with at most one
+call to $\sampler$, through the universal machine of Lemma~\ref{lem:universal-tm}. The dimension
+query is forwarded unchanged. A query at an isolated type is forwarded as the query of the
+corresponding original player. A query at the type $\oracle$ is answered from the query itself,
+with no call: the identity's marginals are the seed, its first stage map is the identity and its
+later ones are zero, its first factor space is everything and its later ones are empty. The zero
+vectors are written over the supplied vector rather than over the dimension, so the core never
+allocates by a dimension it has not been given. A forwarded query is at most twice the typed
+query plus a constant, and since $\abs{d} + 1 \geq 2$ the resulting constant factor is absorbed
+into the degree, so no term exponential in $k$ enters the coefficient.
+\end{proof}
 
 \begin{definition}[Ambient oracularization contract]
 \label{def:oracularization-contract}
@@ -4094,6 +4255,18 @@ and detypes only the final answer-reduced verifier. The checked composition
 \texttt{MIPRE.Oracularization}. Inhabiting the existing untyped oracle structure
 would require a separate justification before using it in the source answer-reduction
 proof; it is not a fourth exterior stage or an additional soundness loss in compression.
+
+The structure is moreover satisfied by a transformation that does not oracularize at all: keep
+the input sampler, and let the output decider reject any answer longer than the parse bound and
+otherwise run the input decider. At the parse bound its game is $\verifier_n$ itself, so
+completeness is the identity and soundness holds with $c = 1$. No field sees the \emph{oracle
+form} of the output --- that one player's answer alone decides the game check, and the other
+player's answer must equal one of its components --- and that form is the only property of
+oracularization that answer reduction uses: the probabilistically checkable proof replaces
+exactly that game check (Lemma~\ref{lem:ar-construction}), and the decoding step returns to
+exactly that form (Lemma~\ref{lem:ar-decoding}). No contract made of value transfers alone can
+see it. The formalization therefore targets the typed construction itself, with its value
+transfers as theorems about it; \texttt{planning/oracularization.md} records the plan.
 \end{remark}
 
 \begin{remark}[What the audit changed in oracularization]
