@@ -95,6 +95,7 @@ import MIPRE.Background.LIDT.Bridge.Polynomial
 import MIPRE.Background.LIDT.Bridge.Strategy
 import MIPRE.Background.LIDT.Bridge.Value
 import MIPRE.Background.LIDT.CLGame
+import MIPRE.Background.LIDT.CLHonest
 import MIPRE.Background.LIDT.Coefficients
 import MIPRE.Background.LIDT.Extraction
 import MIPRE.Background.LIDT.Game
@@ -1244,6 +1245,7 @@ import MIPRE.Foundations.StateDistance
 import MIPRE.Foundations.StrategyDilation
 import MIPRE.Foundations.Swap
 import MIPRE.Foundations.SyncMergeByQuestion
+import MIPRE.Foundations.SyncPushQ
 import MIPRE.Foundations.SyncTransport
 import MIPRE.Foundations.TensorFamily
 import MIPRE.Foundations.ValueApprox
