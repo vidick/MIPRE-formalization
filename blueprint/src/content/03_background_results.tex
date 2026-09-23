@@ -4787,7 +4787,20 @@ Lemma~\ref{lem:qld-povm-to-obs} in the state-norm form that step takes.
   MIPRE.QLD.mulVec_auxVec_congr, MIPRE.QLD.mulVec_auxVec_proj, MIPRE.QLD.mulVec_auxVec_syn,
   MIPRE.QLD.sum_snorm_sq_sub_le_of_agree, MIPRE.QLD.sum_uniform_bornProb_fibre_le,
   MIPRE.QLD.endEquiv, MIPRE.QLD.endVec, MIPRE.QLD.endVec_unit, MIPRE.QLD.reindex_endEquiv,
-  MIPRE.QLD.qform_endVec, MIPRE.QLD.qform_bOp_twirl}
+  MIPRE.QLD.qform_endVec, MIPRE.QLD.qform_bOp_twirl, MIPRE.QLD.outerPairEquiv,
+  MIPRE.QLD.outerVec, MIPRE.QLD.outerVec_unit, MIPRE.QLD.reindex_outerPairEquiv,
+  MIPRE.QLD.qform_outerVec, MIPRE.QLD.SimulPair.swapA_conj_wTildeAt,
+  MIPRE.QLD.SimulPair.swapA_conj_wTildeAt_one, MIPRE.QLD.conj_inv_of_unitary,
+  MIPRE.QLD.MirrorSimul.aliceSwap, MIPRE.QLD.MirrorSimul.aliceSwap_conjTranspose_mul,
+  MIPRE.QLD.MirrorSimul.aliceSwap_conj_aliceWTilde,
+  MIPRE.QLD.MirrorSimul.bobSwap_conj_bobWTilde, MIPRE.QLD.MirrorSimul.physSwap,
+  MIPRE.QLD.MirrorSimul.physSwap_conjTranspose_mul, MIPRE.QLD.MirrorSimul.endState,
+  MIPRE.QLD.MirrorSimul.endState_unit, MIPRE.QLD.MirrorSimul.qform_endState_weyl,
+  MIPRE.QLD.deltaSelfCons, MIPRE.QLD.deltaSelfCons_nonneg,
+  MIPRE.QLD.MirrorSimul.aliceWTilde_conjTranspose, MIPRE.QLD.MirrorSimul.aliceWTilde_mul_self,
+  MIPRE.QLD.MirrorSimul.bobWTilde_conjTranspose, MIPRE.QLD.MirrorSimul.bobWTilde_mul_self,
+  MIPRE.QLD.MirrorSimul.bornProb_wTilde_ge, MIPRE.QLD.MirrorSimul.qform_endState_twirl_ge,
+  MIPRE.QLD.MirrorSimul.exists_aux_close}
 There is $\delta_{qld} = O\bigl( \delta_S^{1/4} + md/q \bigr)$ and local unitaries $V_\alice$,
 $V_\bob$ on the expanded spaces such that, writing $M = 2^m$:
 \begin{enumerate}
@@ -4938,9 +4951,31 @@ twirl is by definition that average, so the two are one rewriting apart:
 node was worth separating out rather than folding into
 Lemma~\ref{lem:qld-exact-paulis}.
 
-\emph{Not formalized}: the two near-invariances themselves, which are
-Lemma~\ref{lem:qld-pauli-selfcons} and are hypotheses of \texttt{exists\_auxVec\_close} rather
-than conclusions; and, in item 2, the threading of those steps into the statement about
+\emph{And item 1 is now unconditional.} The near-invariances were hypotheses of
+\texttt{exists\_auxVec\_close}; Lemma~\ref{lem:qld-pauli-selfcons} supplies them, and
+\texttt{MirrorSimul.exists\_aux\_close} is item 1 with nothing assumed beyond the game's.
+Three things had to be said to make the blueprint's ``one rewriting'' go through, and each is
+worth naming.
+
+\emph{The cut.} \texttt{endEquiv} regroups a four-fold product whose ancilla halves sit in the
+middle. The physical cut of a \texttt{MirrorSimul} puts each party's half of the pair it holds at
+the \emph{end}, so \texttt{outerPairEquiv} is the regrouping this needs --- written once it was
+clear which cut the state actually has, which is the same point the paragraph above makes about
+\texttt{endEquiv} not being item 1's cut.
+
+\emph{The conjugation, read backwards.} \texttt{swapU\_conj\_wTilde\_X} and \texttt{\_Z} say
+the swap unitary strips the pair measurement off the exact Pauli observable exactly; read the
+other way (\texttt{conj\_inv\_of\_unitary}) that turns an expectation of the honest Weyl operator
+on the swapped state into an expectation of the two parties' observables on the state itself
+(\texttt{MirrorSimul.qform\_endState\_weyl}).
+
+\emph{And the two involutions.} Each party's exact Pauli observable is self-adjoint and squares
+to one, so its cross-party deviation and its joint expectation determine each other
+\emph{exactly}, the summed squared deviation being $2 - 2$ times the joint expectation, with no
+inequality anywhere
+(\texttt{MirrorSimul.bornProb\_wTilde\_ge}).
+
+\emph{Not formalized}: item 2, the threading of these steps into the statement about
 $V M^{(\pauli,W)}_h V^\dagger$, which is where the registers of the conjugated Pauli measurement
 have to be matched with item 1's --- on \texttt{physVec}, now that there is such a cut. Every step
 it threads is in place. Hence no \texttt{leanok} mark at either level. 
