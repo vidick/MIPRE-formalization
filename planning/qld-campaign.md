@@ -2862,3 +2862,35 @@ with `δ_qld` defined in a *later* lemma. It now carries the explicit constant t
 chain gives — it averages over the sampled point, never over the probe.
 
 Left: `lem:qld-swap` item 2 and `thm:qld`.
+
+### PR AK: item 1 of lem:qld-swap, unconditional (2026-09-23)
+
+`MIPRE/Background/QLD/SwapItemOne.lean`. `exists_auxVec_close` proved item 1 *given* the two
+near-invariances; `lem:qld-pauli-selfcons` supplies them, and `exists_aux_close` is item 1 with
+nothing assumed beyond the game's hypotheses and a smallness condition on the constant.
+
+The blueprint called this "one rewriting", and it is — the twirl is by definition the uniform
+average of the per-probe Weyl operators (`qform_bOp_twirl`), and at each probe that expectation is
+the two parties' exact Pauli observables agreeing. Three things had to be said to get there.
+
+- **The cut.** `endEquiv` regroups a four-fold product whose ancilla halves sit in the *middle*.
+  The physical cut of a `MirrorSimul` puts each party's half of the pair it holds at the *end*, so
+  `outerPairEquiv` is the regrouping this needs. The blueprint already recorded that `endEquiv`
+  "was written to be item 1's cut and it is not"; this is the cut it is.
+- **The conjugation, read backwards.** `swapU_conj_wTilde_X`/`_Z` strip the pair measurement off
+  the observable exactly; `conj_inv_of_unitary` reads that the other way, turning an expectation of
+  the honest Weyl operator on the swapped state into one of the two observables on the state
+  itself.
+- **The two involutions.** Each exact Pauli observable is self-adjoint and squares to one, so
+  `xSqNorm = 2 - 2·bornProb` exactly — no inequality anywhere in the passage from
+  `lem:qld-pauli-selfcons`'s deviation bound to item 1's expectation bound.
+
+Three association-and-spelling failures cost iterations, all the same shape as the ones recorded
+in PR AH: `dotProduct_mulVec_conj` concludes `Vᴴ * (Q * V)` and `conj_inv_of_unitary` was first
+written to conclude `(Vᴴ * Y) * V`; `aOp X * bOp Y = X ⊗ₖ Y` is a theorem and not `rfl`, so a `rw`
+with it inside a `have` breaks the later defeq check; and the conjugation identity had to be
+restated in each party's own spelling (`aliceSwap_conj_aliceWTilde`, `bobSwap_conj_bobWTilde`)
+before `rw` would find it. The rule that keeps working: **name the object once, in the party's own
+spelling, in a `def` whose declared result type pins it from the outside.**
+
+Left: item 2 of `lem:qld-swap` — the threading into `V M^{(Pauli,W)}_h V†` — and `thm:qld`.
