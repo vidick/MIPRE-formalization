@@ -4268,6 +4268,40 @@ programs rather than through determinism. The two value statements are those of
 Lemma~\ref{lem:oracular-typed-transfers}, read through the acceptance law.
 \end{proof}
 
+\begin{lemma}[Running times of the typed oracularized decider]
+\label{lem:oracle-decider-time}
+\uses{lem:oracle-typed-decider,lem:universal-tm}
+\lean{MIPRE.OracleDecider.gameProg_runs_within, MIPRE.OracleDecider.core_runs_within,
+  MIPRE.OracleDecider.core_timeBound, MIPRE.OracleDecider.core_accepting_le,
+  MIPRE.OracleDecider.budget_sufficient,
+  MIPRE.OracleDecider.exists_typedPredicate_perfectPCC_within,
+  MIPRE.OracleDecider.oracleDecider_runs_within, MIPRE.OracleDecider.oracleDecider_timeBound}
+\leanok
+In the setting of Lemma~\ref{lem:oracle-typed-decider}, let the sampler and the decider of
+$\verifier$ run within $T_S(\abs{d} + 1)^k$ and $T_D(\abs{d} + 1)^k$ on inputs $(n, d)$, with
+$T_S, T_D \leq W$. There are constants depending only on $\ell$ such that:
+\begin{enumerate}
+\item the core runs on every well-formed input $c$ within $c_0(W + 1)^m(\abs{c} + 1)^{e(k + 1)}$;
+\item hence, if the budget $K(n)$ is at least that bound at the largest core input whose answers
+  lie within the inner cut, the completeness statement of Lemma~\ref{lem:oracle-typed-decider}
+  holds with no further hypothesis;
+\item the decider runs on every input $(n, d)$ within $c_1(W + 1)^{m_1}(\abs{d} + 1)^{e_1}$ whenever
+  $K(n)$, $B(n)$, the index routine's running time at $n$, the description lengths of the three
+  programs and $n$ are at most $W$, and the degree $e_1$ does not depend on $k$.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+\leanok
+The core's cost is the sum of the costs of its stages, each bounded through the cost lemmas of
+the routing combinators and the overhead of the universal machine. The answers of the sampler of
+$\verifier$ to the marginal queries are sized by its correctness clause, as vectors of length
+$s(n)$, and not by its running time; otherwise the time of the decider of $\verifier$, of degree
+$k$ in its input, would compound to degree $k^2$. Affine size bounds are absorbed into powers of
+$\abs{c} + 1 \geq 2$, so that no constant depends on $k$. The decider's own cost is that of the
+index routine and of the clocked universal machine on the budget and the input, so the running
+time of $\verifier$ enters only through the budget.
+\end{proof}
+
 \begin{definition}[Ambient oracularization contract]
 \label{def:oracularization-contract}
 \uses{def:normal-verifier,def:pcc}

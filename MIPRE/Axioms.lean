@@ -153,6 +153,7 @@ import MIPRE.Foundations.OracularTensor
 import MIPRE.Foundations.OracularTyped
 import MIPRE.Foundations.OracularSampler
 import MIPRE.Foundations.OracularDecider
+import MIPRE.Foundations.OracularDeciderCost
 import MIPRE.Foundations.LowDegree.SelfDualize
 import MIPRE.Foundations.LowDegree.NormalBasis
 import MIPRE.Foundations.SAT.AdmissibleField
@@ -616,6 +617,17 @@ tell you the guard is missing.
   MIPRE.OracleDecider.typedPredicate_complete,
   MIPRE.OracleDecider.valStar_ge_of_typedPredicate,
   MIPRE.OracleDecider.exists_typedPredicate_perfectPCC
+
+-- blueprint `lem:oracle-decider-time`: the running times of the typed oracularized decider — the
+-- core's, which discharges the budget hypothesis, and the decider's own.
+#guard_sorry_free MIPRE.OracleDecider.gameProg_runs_within,
+  MIPRE.OracleDecider.core_runs_within,
+  MIPRE.OracleDecider.core_timeBound,
+  MIPRE.OracleDecider.core_accepting_le,
+  MIPRE.OracleDecider.budget_sufficient,
+  MIPRE.OracleDecider.exists_typedPredicate_perfectPCC_within,
+  MIPRE.OracleDecider.oracleDecider_runs_within,
+  MIPRE.OracleDecider.oracleDecider_timeBound
 
 -- blueprint `lem:pcp-zero-basis`: preserve the individual-degree bounds needed by the PCP.
 #guard_sorry_free MIPRE.SAT.ArrayProg.eqBits,
