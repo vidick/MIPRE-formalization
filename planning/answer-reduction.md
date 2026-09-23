@@ -25,7 +25,33 @@ the input sampler's and `(λ, μ, σ)`. Findings on the way:
   sixth copy's point register, its direction register, the seeds), so every copy is a
   contiguous run and one set of list programs serves all six.
 
-The running time of the sampler moves to AR-3f, with the decider's. AR-3e is next.
+The running time of the sampler moves to AR-3f, with the decider's.
+
+**Done: AR-3e without its running time** (`lem:ar-typed-decider`): the typed answer-reduced
+decider `AnswerReduction.typedDecider`, total (`total`), with acceptance law exactly
+`typedPred` at the game check (`accepts_iff`). The pieces are `DecideSpec.lean` (the decision on
+`k`-bit blocks, `verdictB_eq`), `DecideProg.lean` (its programs) and `ArDecider.lean` (the eight
+stages). Findings on the way:
+
+* **No clock.** Unlike O4, the decider never runs the input decider: its program only enters the
+  PCP verifier's input as data. The input sampler halts on every input, the parses are total, and
+  the PCP verifier is run on the encoding of a genuine `PcpInput`, so every stage halts and
+  `Accepts ↔ typedPred` holds by determinism, with no budget hypothesis.
+* **Only point-against-line is ever tested.** Steps 3 and 4 of `fig:decider-pcp` call the
+  seeded test's decision only on a `Point` question against a line question of the same copy, so
+  `D^ld` reduces to the introspection line-versus-point program on the line the question
+  describes (`ldB_aline`, `ldB_dline`). The questions' seeds enter only through the selector
+  `χ`, and `chi (π s) = χ s`, so the non-computable seed permutation never reaches the program.
+* **The five steps are planned by the types.** Each side asks for at most one comparison of
+  answer blocks, one low-degree subtest and one game check; which ones is a function of the 54 ×
+  54 type pairs (`eqPlan`, `ldPlan`, `chkPlan`), computed by a finite table, and `sideB_eq` is
+  one case per role pair.
+* **For AR-4: the check reads the Shoup bits.** `gameCheck` hands the PCP verifier the view in
+  the Shoup representation `shoupBinField`, while `PcpDecider.completeness` is stated for its own
+  field `PD.fld k`. Completeness needs the two representations to agree, or a hypothesis saying
+  so; this is to be settled at the start of AR-4.
+
+AR-3f is next: the running times, detyping, and the `AnswerReduction` contract.
 
 Written after reading the paper's `ld_compiler.tex` (`sec:ar-params`,
 `sec:ar-verifier`, `fig:decider-pcp`, `thm:ar` and the complexity part of its proof), ledger node

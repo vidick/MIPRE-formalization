@@ -192,6 +192,7 @@ import MIPRE.Background.LIDT.Extraction
 import MIPRE.Background.LIDT.Padding
 import MIPRE.Background.LIDT.Simultaneous
 import MIPRE.Background.AnswerReduction.ArSampler
+import MIPRE.Background.AnswerReduction.ArDecider
 import MIPRE.Foundations.Expanded
 import MIPRE.Foundations.WeylEPR
 import MIPRE.Foundations.Swap
@@ -1703,6 +1704,19 @@ tell you the guard is missing.
   MIPRE.AnswerReduction.typedSampler,
   MIPRE.AnswerReduction.typedSampler_cl,
   MIPRE.AnswerReduction.typedSampler_prog
+
+-- blueprint `lem:ar-typed-decider`: the typed answer-reduced decider, total, with the typed
+-- predicate as its acceptance law.
+#guard_sorry_free MIPRE.AnswerReduction.ldB_aline,
+  MIPRE.AnswerReduction.ldB_dline,
+  MIPRE.AnswerReduction.sideB_eq,
+  MIPRE.AnswerReduction.verdictB_eq,
+  MIPRE.AnswerReduction.verdictP_apply,
+  MIPRE.AnswerReduction.parseBP_apply,
+  MIPRE.AnswerReduction.typedDecider,
+  MIPRE.AnswerReduction.core_runs,
+  MIPRE.AnswerReduction.accepts_iff,
+  MIPRE.AnswerReduction.total
 
 /-! ## Introspection mixing, conditioning, and graph rejection sampling -/
 
