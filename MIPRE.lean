@@ -444,6 +444,7 @@ import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.WOTCompact
 import MIPRE.Background.Orthonormalization.Orthogonalization.PhiNorm
 import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
 import MIPRE.Background.Orthonormalization.Statement
+import MIPRE.Background.Pipeline
 import MIPRE.Background.QLD.AncTransport
 import MIPRE.Background.QLD.Anticomm
 import MIPRE.Background.QLD.Axioms
