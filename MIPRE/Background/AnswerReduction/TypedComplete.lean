@@ -150,7 +150,8 @@ theorem length_enc_honestAns_le [NeZero P.m] {hm : P.m ∣ Fintype.card (Fq P hk
     {hm' : P.m' ∣ Fintype.card (Fq P hk)} (S : LIDT.CL.Sel (Fq P hk) P.m hm)
     (S' : LIDT.CL.Sel (Fq P hk) P.m' hm') (H : HPolys P (Fq P hk)) (t : PcpTy)
     (y : Coord P → Fq P hk) :
-    (enc (fld P hk) (honestAns S S' H t y)).length ≤ 32 * ((P.k + 1) * (P.m' + 7) * (P.m' + 7)) := by
+    (enc (fld P hk) (honestAns S S' H t y)).length ≤
+      32 * ((P.k + 1) * (P.m' + 7) * (P.m' + 7)) := by
   have h1 := length_enc_le (fld P hk) (honestAns S S' H t y)
   rw [length_elems (fld P hk) (ansFmt_honestAns S S' H t y)] at h1
   have h2 := cnt_le (P := P) t

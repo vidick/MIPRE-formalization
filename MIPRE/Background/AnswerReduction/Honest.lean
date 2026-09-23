@@ -174,7 +174,8 @@ theorem accepts_q1_honest {g : MvPolynomial (Fin P.m) F} (hg : ∀ i, g.degreeOf
     (v : Fin 5) (τ τ' : Ty) (w : Coord P → F) :
     CL.accepts hm (q1 S v τ ((pres P S S' (v.castSucc, τ)).eval w))
       (q1 S v τ' ((pres P S S' (v.castSucc, τ')).eval w))
-      (LIDT.CL.honest hm (d := dPcp) (fun _ : Fin 1 => g) (q1 S v τ ((pres P S S' (v.castSucc, τ)).eval w)))
+      (LIDT.CL.honest hm (d := dPcp) (fun _ : Fin 1 => g)
+        (q1 S v τ ((pres P S S' (v.castSucc, τ)).eval w)))
       (LIDT.CL.honest hm (d := dPcp) (fun _ : Fin 1 => g)
         (q1 S v τ' ((pres P S S' (v.castSucc, τ')).eval w))) = true := by
   rw [q1_eval, q1_eval]
@@ -212,7 +213,8 @@ theorem val6_eq_val1 {chk : (Fin P.m' → F) → (Fin (P.m' + 6) → F) → Bool
     (ho : Hp.Oracle chk) (v : Fin 5) (hg : Hq.g v = Hp.g v) {i : Fin 6} (h5 : (i : ℕ) = 5)
     (w : Coord P → F) :
     val6 (HPolys.idx6 v) (honestAns S S' Hp (i, .point) ((pres P S S' (i, .point)).eval w)) =
-      val1 (honestAns S S' Hq (v.castSucc, .point) ((pres P S S' (v.castSucc, .point)).eval w)) := by
+      val1 (honestAns S S' Hq (v.castSucc, .point)
+        ((pres P S S' (v.castSucc, .point)).eval w)) := by
   rw [val6_honest S S' Hp h5, val1_honest, ho.1, block_ptOf_regs6, ptOf_regs_point6 S S' w v h5,
     ptOf_regs_point, hg]
 
