@@ -9,6 +9,7 @@ import MIPRE.Background.AnswerReduction.DecideSpec
 import MIPRE.Background.AnswerReduction.DeciderCost
 import MIPRE.Background.AnswerReduction.Family
 import MIPRE.Background.AnswerReduction.Honest
+import MIPRE.Background.AnswerReduction.Instance
 import MIPRE.Background.AnswerReduction.Layout
 import MIPRE.Background.AnswerReduction.Params
 import MIPRE.Background.AnswerReduction.ParamsCost
@@ -1304,6 +1305,7 @@ import MIPRE.LCS.Strategy.ObservableStrategy
 import MIPRE.LCS.Strategy.ObservableToProjector
 import MIPRE.LCS.Strategy.ProjectorStrategy
 import MIPRE.LCS.WinningCondition
+import MIPRE.MainTheorem
 import MIPRE.TM.Code.Encoding.MachineCode
 import MIPRE.TM.Code.Encoding.Nat
 import MIPRE.TM.Code.Encoding.Total

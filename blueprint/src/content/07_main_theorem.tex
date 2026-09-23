@@ -13,7 +13,8 @@ definition for definition, the Lean file
 synchronous form]
 \label{thm:main}
 \uses{thm:compression-target,thm:halting,def:game-description,def:sync-value,def:re}
-\lean{HaltingGameValue.halting_reduces_to_gameValue, MIPRE.Halting.halting_reduces_to_gameValue_of}
+\lean{HaltingGameValue.halting_reduces_to_gameValue, HaltingGameValue.HaltingReducesToGameValue,
+  MIPRE.Halting.halting_reduces_to_gameValue_of}
 \leanok
 There is a computable map $g$ from Turing machines to game descriptions such that for
 every Turing machine $\machine$:
@@ -25,16 +26,23 @@ every Turing machine $\machine$:
 \end{enumerate}
 \end{theorem}
 
-\emph{Status.} The theorem is proved in Lean conditionally on an inhabitant of
-\texttt{MIPRE.GapCompression}, the open target of Theorem~\ref{thm:compression-target}:
+\begin{proof}
+\uses{thm:compression-target,thm:halting}
+\leanok
 \texttt{MIPRE.Halting.halting\_reduces\_to\_gameValue\_of} takes a
-\texttt{MIPRE.GapCompression} and a universal machine and concludes exactly this statement,
-free of \texttt{sorry}; the unconditional \texttt{HaltingGameValue.halting\_reduces\_to\_gameValue}
-keeps its \texttt{sorry} as the target of Chapter~\ref{ch:proof-structure}, and the
-difference between the two is one structure. Theorem~\ref{thm:compression} constructs
-that structure conditionally on the ambient introspection and answer-reduction contracts;
-with the supplied introspection and repetition stages the only remaining hypothesis is answer
-reduction (Corollary~\ref{cor:compression-from-answer-reduction}).
+\texttt{MIPRE.GapCompression} and a universal machine and concludes exactly this statement;
+Theorem~\ref{thm:compression-target} supplies the compression.
+\end{proof}
+
+\emph{Status.} The theorem is proved in Lean, with no hypothesis:
+\texttt{HaltingGameValue.halting\_reduces\_to\_gameValue} (\texttt{MIPRE/MainTheorem.lean}) proves
+the proposition \texttt{HaltingGameValue.HaltingReducesToGameValue}, which
+\texttt{MIPRE/HaltingGameValue.lean} states on top of Mathlib alone. The proof cannot live in
+that file, which imports nothing else; it is the conditional
+\texttt{MIPRE.Halting.halting\_reduces\_to\_gameValue\_of} at the compression of
+Theorem~\ref{thm:compression-target}, built from the supplied introspection, answer-reduction and
+repetition stages (Corollary~\ref{cor:compression-from-answer-reduction}), and it depends on
+the axioms \texttt{propext}, \texttt{Classical.choice} and \texttt{Quot.sound} only.
 
 Theorem~\ref{thm:main} reads the computable explicit-game conclusion of
 Theorem~\ref{thm:halting} in the synchronous value. Its construction tabulates a
@@ -99,7 +107,8 @@ $\synval \leq \valstar$ (Lemma~\ref{lem:sync-le-valstar}) in that vocabulary.
 \begin{corollary}[Halting reduces to the quantum value]
 \label{cor:main-quantum}
 \uses{thm:halting,thm:main,lem:sync-le-valstar,def:q-value,def:game-description}
-\lean{MIPRE.Halting.halting_reduction_quantum_of, MIPRE.Halting.halting_reduction_both_of}
+\lean{MIPRE.Halting.halting_reduction_quantum, MIPRE.Halting.halting_reduction_quantum_of,
+  MIPRE.Halting.halting_reduction_both_of}
 \leanok
 With $g$ as in Theorem~\ref{thm:main}: if $\machine$ halts on the empty input then
 $\valstar(\game_{g(\machine)}) = 1$, and if $\machine$ does not halt on the empty input
@@ -108,8 +117,7 @@ then $\valstar(\game_{g(\machine)}) \leq \tfrac12$.
 
 \begin{proof}
 \leanok
-Conditionally on the compression inhabitant of Theorem~\ref{thm:compression-target},
-as Theorem~\ref{thm:main} is:
+At the compression of Theorem~\ref{thm:compression-target}, as Theorem~\ref{thm:main} is:
 \texttt{MIPRE.Halting.halting\_reduction\_both\_of} produces one computable map with both
 values, the quantum one from \texttt{tab\_value} and
 \texttt{Verifier.valStar\_eq\_one\_of\_hasPerfectPCC} in the halting branch and from
@@ -130,7 +138,8 @@ free comparison $\synval \leq \valstar$.
 \label{cor:value-uncomputable}
 \ledgernode{1.7}
 \uses{thm:main,cor:main-quantum,thm:halting-undecidable}
-\lean{MIPRE.Halting.gameValue_uncomputable_of, MIPRE.Halting.quantumValue_uncomputable_of}
+\lean{MIPRE.Halting.gameValue_uncomputable, MIPRE.Halting.quantumValue_uncomputable,
+  MIPRE.Halting.gameValue_uncomputable_of, MIPRE.Halting.quantumValue_uncomputable_of}
 \leanok
 There is no algorithm that, given a game description $g$ with the promise that
 $\synval(\game_g) = 1$ or $\synval(\game_g) \leq \frac12$, decides which is the
@@ -145,8 +154,8 @@ every description of value at most $\frac12$, composed with the map of
 Theorem~\ref{thm:main} (respectively Corollary~\ref{cor:main-quantum}), would decide
 whether a machine halts on the empty input, against Theorem~\ref{thm:halting-undecidable}.
 In Lean the algorithm is a Mathlib-computable Boolean function
-(\texttt{Halting/Corollaries.lean}), conditionally on an inhabitant of
-\texttt{MIPRE.GapCompression} (Theorem~\ref{thm:compression-target}).
+(\texttt{Halting/Corollaries.lean}), at the compression of
+Theorem~\ref{thm:compression-target}.
 \end{proof}
 
 \begin{lemma}[$\MIPstar \subseteq \RE$]
@@ -175,7 +184,8 @@ model.
 \label{thm:mipstar-eq-re}
 \ledgernode{1}
 \uses{def:mipstar,def:re,thm:halting,cor:main-quantum,thm:halting-undecidable,lem:value-lower-approx,lem:mipstar-sub-re}
-\lean{MIPRE.Halting.mipstar_eq_re_of, MIPRE.Halting.re_subset_mipstar_of,
+\lean{MIPRE.Halting.mipstar_eq_re, MIPRE.Halting.re_subset_mipstar,
+  MIPRE.Halting.mipstar_eq_re_of, MIPRE.Halting.re_subset_mipstar_of,
   MIPRE.Halting.exists_code_halts_of_isRE}
 \leanok
 $\MIPstar = \RE$.
@@ -192,10 +202,8 @@ $\MIPstar \subseteq \RE$ is
 Lemma~\ref{lem:mipstar-sub-re}. In Lean the many-one reduction of an r.e.\ language to
 halting on the empty input is \texttt{MIPRE.IsRE.exists\_code\_halts}, from Mathlib's
 \texttt{Nat.Partrec.Code.curry}, and the class $\MIPstar$ is the computable one of
-Definition~\ref{def:mipstar}; the equality is conditional on the compression inhabitant
-of Theorem~\ref{thm:compression-target},
-as Theorem~\ref{thm:main} is; with the supplied stages, on an answer-reduction inhabitant
-alone (Corollary~\ref{cor:compression-from-answer-reduction}).
+Definition~\ref{def:mipstar}; the equality holds at the compression of
+Theorem~\ref{thm:compression-target}, as Theorem~\ref{thm:main} does.
 \end{proof}
 
 \begin{remark}

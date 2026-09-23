@@ -897,7 +897,28 @@ The route is in [answer-reduction.md](answer-reduction.md). It asks a third hypo
 decider, `FieldLarge`: for every `e`, eventually `q >= (8 (Q + 1) m')^e`, the paper's lower bound
 on the field (`eq:pcp-q-choice`) that `thm:pcp-decider` does not carry. The classical decider's
 field is `128 m'^2` or so, so AR-6 must enlarge its `fieldDegree` to about `size(8 (Q + 1) m')^2`
-(and re-establish `ParamsBound`, which a polylogarithmic `k` keeps). AR-6, inhabiting `AnswerReduction 5`, is next.
+(and re-establish `ParamsBound`, which a polylogarithmic `k` keeps).
+
+**AR-6 is done: answer reduction is supplied, and the main theorem is proved.**
+`AnswerReduction.answerReduction : AnswerReduction 5`
+(`MIPRE/Background/AnswerReduction/Instance.lean`) is `arVerifier` over the classical PCP
+decider:
+
+* **`ShoupField`** holds by definition.
+* **`FieldLarge`** holds after one change to the classical field degree, now
+  `k = 2 ((size Q + size m' + 3)^2 + size m') + 7` (`TM/CookLevin/PcpParameters.lean`,
+  `pcpParams_field_eventually_large`). It is still odd and still at least `2 size m' + 7`.
+* **`ParamsBound`** follows from `outerDim_polynomial` and `fieldDegree_le`.
+
+With it, `GapCompression.ofAnswerReduction` gives `MIPRE.gapCompression`. `MIPRE/MainTheorem.lean`
+proves `HaltingGameValue.halting_reduces_to_gameValue`, the quantum-value form, both
+uncomputability statements and `MIPRE.Halting.mipstar_eq_re : MIPStar = IsRE`. All of them use
+`propext`, `Classical.choice` and `Quot.sound` only.
+
+The statement file `MIPRE/HaltingGameValue.lean` stays Mathlib-only. It now states the theorem as
+the proposition `HaltingReducesToGameValue`, and `MainTheorem.lean` proves it. A proof there
+would have to import the whole development, and `MIPRE/Foundations` imports the statement file,
+so the proof cannot live in it.
 
 **The standing risk** is the one `planning/h4-assembly.md` §4 item 4 names: `GapCompression`
 has been consumed five times and supplied never — `TimeBoundAt` was refuted three times and

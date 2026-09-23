@@ -1,6 +1,6 @@
 # Answer reduction: the construction (AR-3)
 
-Status 2026-09-23. **AR-3, AR-4 and AR-5 are done** (AR-5: see "AR-5 as formalized" below). **Done: AR-3a, AR-3b, AR-3c** (the mathematics of the construction):
+Status 2026-09-23. **AR-3 to AR-6 are done** (AR-5: see "AR-5 as formalized" below; AR-6: `answerReduction` in `Background/AnswerReduction/Instance.lean`, over the classical PCP decider with its field degree enlarged, and the main theorem in `MIPRE/MainTheorem.lean`). **Done: AR-3a, AR-3b, AR-3c** (the mathematics of the construction):
 `Background/LIDT/Presentation.lean`, `Background/AnswerReduction/{PcpPresentation,Predicate,
 Family,AnswerFormat,TypedGame}.lean`, `Foundations/CL/Product.lean`. One thing met on the way:
 with the 54 types, the kernel unfolds `Finset.univ` of the type pairs when checking the type

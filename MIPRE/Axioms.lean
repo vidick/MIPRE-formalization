@@ -196,6 +196,8 @@ import MIPRE.Background.AnswerReduction.ArDecider
 import MIPRE.Background.AnswerReduction.Construction
 import MIPRE.Background.AnswerReduction.Complete
 import MIPRE.Background.AnswerReduction.SoundFinal
+import MIPRE.Background.AnswerReduction.Instance
+import MIPRE.MainTheorem
 import MIPRE.Foundations.Expanded
 import MIPRE.Foundations.WeylEPR
 import MIPRE.Foundations.Swap
@@ -730,7 +732,9 @@ tell you the guard is missing.
   MIPRE.TM.CookLevin.Pad.pcpParams_odd,
   MIPRE.TM.CookLevin.Pad.pcpParams_field_large,
   MIPRE.TM.CookLevin.Pad.pcpParams_inner_dvd,
-  MIPRE.TM.CookLevin.Pad.pcpParams_outer_dvd
+  MIPRE.TM.CookLevin.Pad.pcpParams_outer_dvd,
+  MIPRE.TM.CookLevin.Pad.pcpParams_field_eventually_large,
+  MIPRE.TM.CookLevin.Pad.fieldDegree_le
 
 #guard_sorry_free MIPRE.LowDegree.exists_cubeZero_division,
   MIPRE.LowDegree.exists_zero_basis
@@ -1796,6 +1800,27 @@ tell you the guard is missing.
   MIPRE.AnswerReduction.sqrt_le_delta,
   MIPRE.AnswerReduction.exists_threshold_clB,
   MIPRE.AnswerReduction.z_le
+
+-- blueprint `lem:answer-reduction-supply` and `thm:answer-reduction`: the answer-reduction
+-- contract, inhabited over the classical PCP decider.
+#guard_sorry_free MIPRE.AnswerReduction.answerReduction,
+  MIPRE.AnswerReduction.shoupField_classical,
+  MIPRE.AnswerReduction.exists_paramsBound_classical,
+  MIPRE.AnswerReduction.fieldLarge_classical
+
+-- blueprint `thm:compression-target`: gap-preserving compression, inhabited.
+#guard_sorry_free MIPRE.gapCompression
+
+-- blueprint `thm:main`, `cor:main-quantum`, `cor:value-uncomputable`, `thm:mipstar-eq-re`: the
+-- main theorem and its consequences, with no hypothesis.
+#guard_sorry_free HaltingGameValue.halting_reduces_to_gameValue,
+  HaltingGameValue.HaltingReducesToGameValue,
+  MIPRE.Halting.halting_reduces_to_gameValue_of,
+  MIPRE.Halting.halting_reduction_quantum,
+  MIPRE.Halting.gameValue_uncomputable,
+  MIPRE.Halting.quantumValue_uncomputable,
+  MIPRE.Halting.mipstar_eq_re,
+  MIPRE.Halting.re_subset_mipstar
 
 /-! ## Introspection mixing, conditioning, and graph rejection sampling -/
 

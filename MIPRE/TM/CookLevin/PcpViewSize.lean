@@ -42,20 +42,26 @@ theorem pcpInput_size_polynomial : ∃ B : Polynomial ℕ, ∀ D n T Q σ x y z 
     Valid D n T Q σ x y → ViewFormat (pcpParams n T Q σ) z ev →
       esize (pcpInput D n T Q σ x y z ev) ≤ B.eval (LOf n T Q σ) := by
   obtain ⟨R, hR⟩ := outerDim_polynomial
-  refine ⟨25 * X + 16 + (8 * R + 30) * (2 * R + 6), ?_⟩
+  set K : Polynomial ℕ := 2 * ((X + R + 3) ^ 2 + R) + 7 with hK
+  refine ⟨25 * X + 16 + (4 * K + 2) * (2 * R + 6), ?_⟩
   intro D n T Q σ x y z ev hV hf
   have hd := esize_descInput_le D n T Q σ x y hV
   have hv := esize_view_le (pcpParams n T Q σ) z ev hf
   have hm : (pcpParams n T Q σ).m' ≤ R.eval (LOf n T Q σ) := by
     rw [pcpParams_outer]
     exact hR n T Q σ
-  have hk : (pcpParams n T Q σ).k ≤ 2 * R.eval (LOf n T Q σ) + 7 := by
-    have hs := size_le_self (outerDim n T Q σ)
+  have hk : (pcpParams n T Q σ).k ≤ K.eval (LOf n T Q σ) := by
+    have h1 := fieldDegree_le n T Q σ
+    have hQ : Q ≤ LOf n T Q σ := by unfold LOf; omega
     have ho := hR n T Q σ
-    change 2 * Nat.size (outerDim n T Q σ) + 7 ≤ _
+    have h2 : (Q + outerDim n T Q σ + 3) ^ 2 ≤ (LOf n T Q σ + R.eval (LOf n T Q σ) + 3) ^ 2 :=
+      Nat.pow_le_pow_left (by omega) 2
+    change fieldDegree n T Q σ ≤ _
+    simp only [hK, Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_pow,
+      Polynomial.eval_ofNat, Polynomial.eval_X]
     omega
   have hprod := Nat.mul_le_mul
-    (show 4 * (pcpParams n T Q σ).k + 2 ≤ 8 * R.eval (LOf n T Q σ) + 30 by omega)
+    (show 4 * (pcpParams n T Q σ).k + 2 ≤ 4 * K.eval (LOf n T Q σ) + 2 by omega)
     (show 2 * (pcpParams n T Q σ).m' + 6 ≤ 2 * R.eval (LOf n T Q σ) + 6 by omega)
   change esize (((D, n, T, Q, σ), x, y) : DescInput) + esize (z, ev) + 1 ≤ _
   simp only [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_ofNat, Polynomial.eval_X]

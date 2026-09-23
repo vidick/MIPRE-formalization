@@ -96,14 +96,6 @@ theorem pcpCircuitProg_describes (D : Decider) (n T Q σ : ℕ) (x y : BitStr) (
   rw [pcpCircuitProg_apply]
   exact describeExact_describes D n T Q σ x y hV _
 
-/-- The field degree in unary, for the existing Shoup modulus program. -/
-noncomputable def fieldDegreeU : PolyTimeFun ParamInput Unary :=
-  ap₂ addU (ap₁ (nsmulU 2) (sizeU.comp outerDimProg)) (const (unary 7))
-
-theorem fieldDegreeU_length (p : ParamInput) :
-    (fieldDegreeU p).length = (pcpParams p.1 p.2.1 p.2.2.1 p.2.2.2).k := by
-  simp [fieldDegreeU, pcpParams, fieldDegree, outerDimProg_apply]
-
 theorem fieldDegreeU_apply (p : ParamInput) :
     fieldDegreeU p = unary ((pcpParams p.1 p.2.1 p.2.2.1 p.2.2.2).k) := by
   apply List.ext_getElem

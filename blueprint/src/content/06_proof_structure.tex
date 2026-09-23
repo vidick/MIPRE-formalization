@@ -4629,19 +4629,24 @@ of Theorem~\ref{thm:pcp-decider}.
   MIPRE.TM.CookLevin.Pad.pcpParams_odd,
   MIPRE.TM.CookLevin.Pad.pcpParams_field_large,
   MIPRE.TM.CookLevin.Pad.pcpParams_inner_dvd,
-  MIPRE.TM.CookLevin.Pad.pcpParams_outer_dvd}
+  MIPRE.TM.CookLevin.Pad.pcpParams_outer_dvd,
+  MIPRE.TM.CookLevin.Pad.pcpParams_field_eventually_large,
+  MIPRE.TM.CookLevin.Pad.fieldDegree_le}
 \leanok
 The padded dimensions extend to ambient polynomial-time classical PCP parameters
-$(k,m,s)$ with $k$ odd, $q=2^k\geq 82m'$, and both $m\mid q$ and $m'\mid q$.
+$(k,m,s)$ with $k$ odd, $q=2^k\geq 82m'$, and both $m\mid q$ and $m'\mid q$. The field is
+moreover eventually larger than every fixed power of $8(Q+1)m'$: for every $e$, once
+$Q\geq2^e$, $q\geq(8(Q+1)m')^e$, while $k$ stays polylogarithmic in $Qm'$.
 \end{lemma}
 \begin{proof}
 \leanok
-Choose $k=2\mathrm{size}(m')+7$. Then
-$q=128(2^{\mathrm{size}(m')})^2\geq82m'$. Both dimensions are powers of
-two at most $q$, hence divide it. Compute the degree from the binary length of
-$m'$ and combine it with the already verified $(m,s)$ program. This supplies
-the field-size requirement for classical majority soundness; stronger
-low-degree-test field-size choices remain with their consumers.
+Choose $k=2(s_0^2+\mathrm{size}(m'))+7$ with $s_0=\mathrm{size}(Q)+\mathrm{size}(m')+3$. Then
+$q\geq128(2^{\mathrm{size}(m')})^2\geq82m'$. Both dimensions are powers of
+two at most $q$, hence divide it. Since $8(Q+1)m'<2^{s_0}$, for $s_0\geq e$ we get
+$(8(Q+1)m')^e<2^{s_0e}\leq2^{s_0^2}\leq q$, and $Q\geq2^e$ gives $s_0>e$; this is the field
+size answer reduction's low-degree test needs (\texttt{FieldLarge}), whose exponent this
+construction need not know. Compute the degree in unary from the binary lengths of $Q$ and $m'$
+and combine it with the already verified $(m,s)$ program.
 \end{proof}
 
 \begin{lemma}[Circuit arithmetization with bounded input use]
@@ -5723,6 +5728,8 @@ the input sampler's program and $(\lambda,\mu,\sigma)$.
 \label{thm:answer-reduction}
 \ledgernode{1.3, 1.3.4}
 \uses{def:normal-verifier,def:pcc,lem:ar-construction,lem:ar-completeness,lem:ar-error-assembly,lem:ar-sampler-independence}
+\lean{MIPRE.AnswerReduction.answerReduction}
+\leanok
 In the source model there is a polynomial-time Turing machine $\ComputeAnsVerifier$ that on input
 $(\verifier, \lambda, \ell, \mu, \sigma)$, for $\verifier$ an $\ell$-level normal form
 verifier whose decider is in standard timeout-counter form, with
@@ -5742,6 +5749,13 @@ $C_{\mathrm{ar}}$, for all $n \geq C_{\mathrm{ar}}$:
   $\valstar(\verifier_n) \geq 1 - \delta(\eps, n)$.
 \end{enumerate}
 \end{theorem}
+
+\begin{proof}
+\uses{lem:answer-reduction-supply,def:answer-reduction-contract}
+\leanok
+In the ambient form of Definition~\ref{def:answer-reduction-contract}, at $\ell=5$, this is
+Lemma~\ref{lem:answer-reduction-supply}.
+\end{proof}
 
 \begin{definition}[Ambient answer-reduction contract]
 \label{def:answer-reduction-contract}
@@ -5778,8 +5792,8 @@ $1-\delta(\eps,n)$ at those cuts, with
 $\delta(\eps,n)=\sigma^a((\lambda n)^{\mu a}\eps^b+(\lambda n)^{-\mu b})$,
 $a\geq1$ and $0<b\leq1$. Sampler and decider descriptions are computable in
 polynomial time; the sampler depends only on the input sampler and the parameters.
-The composition consumes an instance at $\ell=5$. Defining this contract does not
-construct an inhabitant or prove its correspondence with the source.
+The composition consumes an instance at $\ell=5$, which
+Lemma~\ref{lem:answer-reduction-supply} constructs.
 \end{definition}
 
 \paragraph{Audit against the source (2026-09-23).} Oracularization's first ambient contract
@@ -5809,13 +5823,27 @@ of the time bounds against the construction.
 \begin{lemma}[Supplying ambient answer reduction]
 \label{lem:answer-reduction-supply}
 \uses{thm:answer-reduction,def:answer-reduction-contract,rem:runtime-normalization,rem:pcc-representation-bridge,rem:oracularization-contract}
+\lean{MIPRE.AnswerReduction.answerReduction, MIPRE.AnswerReduction.shoupField_classical,
+  MIPRE.AnswerReduction.exists_paramsBound_classical, MIPRE.AnswerReduction.fieldLarge_classical}
+\leanok
 The ambient contract \texttt{MIPRE.AnswerReduction 5} is inhabited.
-\emph{Open target.} A source-based proof must supply runtime and answer-cut
-normalization, both directions of the PCC representation bridge, and a typed oracle
-interface within answer reduction. It must recover the ambient budget and parameter
-clauses. This does not require a separate exterior application of the untyped oracle
-contract; its present definition is not a proof of the needed typed interface.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:ar-construction,lem:ar-completeness,lem:ar-error-assembly,lem:ar-sampler-independence,lem:pcp-effective-parameters}
+\leanok
+By the answer-reduced verifier over the classical PCP decider. The three hypotheses the
+construction and its analysis ask of the decider hold for it: its field is the Shoup field, by
+definition; its parameters are polynomial in $(\log n,\log T,Q,\sigma)$, the padded dimension
+being so and the field degree polylogarithmic in $Qm'$; and its field is eventually larger than
+every fixed power of $8(Q+1)m'$ (Lemma~\ref{lem:pcp-effective-parameters}). The complexity clause
+and the answer cut below the output bound are Lemma~\ref{lem:ar-construction}, completeness is
+Lemma~\ref{lem:ar-completeness} at the cut and hence at the bound, and soundness is
+Lemma~\ref{lem:ar-error-assembly} at the bound. Runtime and answer-cut normalization, the PCC
+bridge and the typed oracle interface are absorbed by the construction: the input's time bound
+is used semantically, the output rejects answers beyond its cut, and the typed oracularized
+game is the one Lemma~\ref{lem:ar-decoding} plays.
+\end{proof}
 
 This is the most technically heterogeneous section of the paper
 (\cite[Section 10]{JNVWY20}): half classical (tableaux, Tseitin encoding,
@@ -6051,15 +6079,18 @@ definitional identifications.
 \begin{theorem}[Ambient compression inhabitation target]
 \label{thm:compression-target}
 \uses{lem:introspection-supply,lem:answer-reduction-supply,thm:compression}
+\lean{MIPRE.gapCompression}
+\leanok
 The type \texttt{MIPRE.GapCompression} is inhabited.
-\emph{Open target.} Theorem~\ref{thm:compression} proves the assembly.
-Lemma~\ref{lem:introspection-supply} and the proved repetition construction
-supply two of its inputs; Lemma~\ref{lem:answer-reduction-supply} remains open.
-This target records unconditional inhabitation separately from that checked
-conditional theorem. Corollary~\ref{cor:compression-from-answer-reduction} plugs the two
-supplied inputs into the assembly, so an inhabitant of \texttt{MIPRE.AnswerReduction 5} is
-the only missing input.
 \end{theorem}
+
+\begin{proof}
+\uses{cor:compression-from-answer-reduction,lem:answer-reduction-supply}
+\leanok
+Corollary~\ref{cor:compression-from-answer-reduction} at the answer reduction of
+Lemma~\ref{lem:answer-reduction-supply}: Theorem~\ref{thm:compression} applied to the three
+supplied stages.
+\end{proof}
 
 \begin{corollary}[Compression, and $\MIPstar = \RE$, from answer reduction alone]
 \label{cor:compression-from-answer-reduction}
