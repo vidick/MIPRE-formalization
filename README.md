@@ -18,6 +18,11 @@ introspection, oracularization, answer reduction and parallel repetition is to e
 statement above with no `sorry`. The unconditional `halting_reduces_to_gameValue` keeps its
 `sorry` as the target, and the difference between the two is exactly that structure.
 
+The ambient introspection stage is supplied by
+[`MIPRE.Introspection.seven`](MIPRE/Background/Introspection/Compiler.lean), with
+completeness, soundness from the proved QLD theorem, and all-index compiler budgets.
+Answer reduction remains an input to the compression pipeline.
+
 ## Project links
 
 - [Project website](https://vidick.github.io/MIPRE-formalization/)
@@ -40,6 +45,9 @@ statement above with no `sorry`. The unconditional `halting_reduces_to_gameValue
    lake exe cache get
    lake build
    ```
+
+For native Windows development, see [the local Lean workflow](docs/lean-local-windows.md)
+for caches outside OneDrive and timed single-file, module, and full-library checks.
 
 ### Cloud sessions
 

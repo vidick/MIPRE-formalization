@@ -21,10 +21,11 @@ compression}, Theorem~\ref{thm:compression}, stated as the structure
 \texttt{MIPRE.GapCompression}: \texttt{MIPRE.Halting.halting\_reduces\_to\_gameValue\_of}
 takes that one structure and concludes Theorem~\ref{thm:main} with no \texttt{sorry}, and
 \texttt{\#print axioms} shows nothing else. The unconditional statement keeps its
-\texttt{sorry} as the target. The abstract compression assembly and the repetition
-instance are formalized. What remains is to supply introspection and answer reduction
-(including its internal typed oracularization), with the paper-to-model
-interfaces recorded in Section~\ref{ch:proof-structure}, remains work. The goals of this project are to (a) complete a formalization of this theorem and
+\texttt{sorry} as the target. The abstract compression assembly, the repetition
+instance and the ambient introspection instance for seven-level inputs are
+formalized. Supplying answer reduction (including its internal typed
+oracularization) remains open, with the paper-to-model interfaces recorded in
+Section~\ref{ch:proof-structure}. The goals of this project are to (a) complete a formalization of this theorem and
 (b) do it in such a way that the required effort benefits the community down-the-line, e.g.\ by
 making the proof modular, stating and proving as many facts as possible in a manner that is reusable, etc.
 Finally, (c) we expect multiple simplifications and clarifications to the proof to accompany the effort.
