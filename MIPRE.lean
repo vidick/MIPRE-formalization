@@ -20,6 +20,7 @@ import MIPRE.Background.AnswerReduction.SoundCopy
 import MIPRE.Background.AnswerReduction.SoundDecoded
 import MIPRE.Background.AnswerReduction.SoundError
 import MIPRE.Background.AnswerReduction.SoundExtract
+import MIPRE.Background.AnswerReduction.SoundFinal
 import MIPRE.Background.AnswerReduction.SoundGameCheck
 import MIPRE.Background.AnswerReduction.SoundIsolate
 import MIPRE.Background.AnswerReduction.SoundPcp
