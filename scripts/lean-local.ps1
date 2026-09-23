@@ -251,7 +251,7 @@ try {
                 } | Select-Object -First 1
                 if (-not $pythonCommand) { throw 'Python 3 not found; pass -Python with its executable path.' }
                 $pythonExe = $pythonCommand.Source
-                $pythonArgs = if ($pythonCommand.Name -eq 'py.exe') { @('-3') } else { @() }
+                $pythonArgs = @(if ($pythonCommand.Name -eq 'py.exe') { '-3' })
             }
             $gitExe = (Get-Command git -CommandType Application -ErrorAction Stop |
                 Select-Object -First 1).Source

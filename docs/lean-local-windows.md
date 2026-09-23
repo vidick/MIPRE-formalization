@@ -7,6 +7,17 @@ PowerShell 7 terminal at the repository root.
 
 ## One-time setup
 
+Keep this checkout's text files in LF form so `mk_all --check` can compare the
+generated import file byte for byte:
+
+```powershell
+git config --local core.autocrlf input
+```
+
+If an earlier checkout or merge wrote `MIPRE.lean` with CRLF endings, regenerate
+it with the pinned `lake exe mk_all` command before validation. The Git diff
+should then show only any actual import changes.
+
 Keep Lake's numerous cache files outside OneDrive. The source checkout can stay
 in OneDrive; make its `.lake` directory a junction to a persistent local directory.
 Use a separate Lake directory for each checkout and toolchain/dependency combination.
