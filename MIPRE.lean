@@ -422,6 +422,7 @@ import MIPRE.Background.QLD.Commutation
 import MIPRE.Background.QLD.Complete
 import MIPRE.Background.QLD.Consistency
 import MIPRE.Background.QLD.Dummy
+import MIPRE.Background.QLD.ErrorShape
 import MIPRE.Background.QLD.ExactPauli
 import MIPRE.Background.QLD.Expanded
 import MIPRE.Background.QLD.Game
