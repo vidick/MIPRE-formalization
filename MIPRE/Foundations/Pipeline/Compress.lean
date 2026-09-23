@@ -29,8 +29,9 @@ The parameters, all determined by the three structures:
   `C_σ`-fold iterate of `n ↦ 2^{2·size n}` on `2λ + 1`, which is `2^{C(size λ + 2)}` at least
   and is computed by iterating `lamProg`; there is no polynomial-time arithmetic in the
   toolkit to compute the paper's expression directly, and any dominating polynomial serves.
-* `μ`: the margin claim `exists_mu`, at least `C` so that the introspective verifier is within
-  answer reduction's input budget.
+* `μ`: the margin claim `exists_mu`, at least `C + 1`: at least `C` so that the introspective
+  verifier is within answer reduction's input budget, and positive, as answer reduction's
+  completeness asks.
 * `β`: an exponent with `poly((λn + 1)^μ + σ(λ) + λ + n)^(μ + 1) ≤ (λn + 1)^β`, the parse length
   handed to repetition, dominating the ambient answer bound of the answer-reduced verifier.
 * `τ`: the repetition exponent `exists_tau`, from the lower bound `ε₂ ≥ x^{-P}` of
@@ -169,18 +170,23 @@ theorem sigma_le_pow : ∀ z, 2 ≤ z → sigma I z ≤ z ^ K I :=
 
 /-- `μ`, from the margin claim. -/
 noncomputable def mu : ℕ :=
-  (exists_mu (b₁ := I.b) I.one_le_a A.one_le_a A.b_pos (K I) I.C).choose
+  (exists_mu (b₁ := I.b) I.one_le_a A.one_le_a A.b_pos (K I) (I.C + 1)).choose
 
-theorem C_le_mu : I.C ≤ mu I A :=
-  (exists_mu (b₁ := I.b) I.one_le_a A.one_le_a A.b_pos (K I) I.C).choose_spec.1
+theorem C_succ_le_mu : I.C + 1 ≤ mu I A :=
+  (exists_mu (b₁ := I.b) I.one_le_a A.one_le_a A.b_pos (K I) (I.C + 1)).choose_spec.1
+
+theorem C_le_mu : I.C ≤ mu I A := (Nat.le_succ _).trans (C_succ_le_mu I A)
+
+/-- `μ ≥ 1`, which answer reduction's completeness asks. -/
+theorem one_le_mu : 1 ≤ mu I A := (Nat.le_add_left 1 _).trans (C_succ_le_mu I A)
 
 /-- The threshold of the margin claim. -/
 noncomputable def N₁ : ℕ :=
-  (exists_mu (b₁ := I.b) I.one_le_a A.one_le_a A.b_pos (K I) I.C).choose_spec.2.choose
+  (exists_mu (b₁ := I.b) I.one_le_a A.one_le_a A.b_pos (K I) (I.C + 1)).choose_spec.2.choose
 
 theorem margin_spec : ∀ x : ℝ, (N₁ I A : ℝ) ≤ x → ∀ s : ℝ, 1 ≤ s → s ≤ x ^ (K I : ℝ) →
     s ^ A.a * x ^ (-((mu I A : ℝ) * A.b)) < eps1 I.a I.b x / 2 :=
-  (exists_mu (b₁ := I.b) I.one_le_a A.one_le_a A.b_pos (K I) I.C).choose_spec.2.choose_spec
+  (exists_mu (b₁ := I.b) I.one_le_a A.one_le_a A.b_pos (K I) (I.C + 1)).choose_spec.2.choose_spec
 
 theorem polyBounded_arBound :
     PolyBounded fun z => (A.bound.eval (z ^ mu I A + sigma I z + z + z)) ^ (mu I A + 1) :=
@@ -519,7 +525,7 @@ theorem output_hasPerfectPCC (V : Verifier 7) (lam n : ℕ) (hB : V.IsBounded la
   have hlam : 1 ≤ lam := by have := hB.two_le; omega
   have h₁ := I.completeness V lam n hB h
   have h₁' := (I.output _ lam).hasPerfectPCC_of_le (ansBound_le_inAns I A lam n) h₁
-  have h₂ := A.completeness (I.output _ lam) lam (mu I A) (sigma I lam) n hC
+  have h₂ := A.completeness (I.output _ lam) lam (mu I A) (sigma I lam) n hC hlam (one_le_mu I A)
     (introOutput_within I A _ lam n) (decider_size_le_sigma I _ lam) h₁'
   have h₂' : (arOutput I A (I.output _ lam) lam).HasPerfectPCC n
       (Repetition.parseBound lam (beta I A) n) :=

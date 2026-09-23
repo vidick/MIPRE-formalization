@@ -1,6 +1,6 @@
 # Answer reduction: the construction (AR-3)
 
-Status 2026-09-23. **AR-3 is done.** **Done: AR-3a, AR-3b, AR-3c** (the mathematics of the construction):
+Status 2026-09-23. **AR-3 and AR-4 are done.** **Done: AR-3a, AR-3b, AR-3c** (the mathematics of the construction):
 `Background/LIDT/Presentation.lean`, `Background/AnswerReduction/{PcpPresentation,Predicate,
 Family,AnswerFormat,TypedGame}.lean`, `Foundations/CL/Product.lean`. One thing met on the way:
 with the 54 types, the kernel unfolds `Finset.univ` of the type pairs when checking the type
@@ -80,7 +80,35 @@ Findings on the way:
   the input sampler's dimension once detyping has checked the question lengths. The unary loops'
   times are polynomial in the values they count (`toUnaryProg_time`, `powProg_time`).
 
-AR-4 (completeness) is next.
+**Done: AR-4, completeness** (`lem:ar-completeness`): `arVerifier_completeness` and
+`arVerifier_hasPerfectPCC` (`Complete.lean`), from the typed game's completeness
+(`exists_typedGame_perfectPCC`, `TypedComplete.lean`) and the combinatorial core
+(`accepts_honestAns`, `Honest.lean`). The honest strategy is the oracularized game's honest
+strategy read through the question map that keeps a question's role and oracle half, and answered
+by a question-dependent classical post-processing (`SyncStrategy.pushQ`,
+`Foundations/SyncPushQ.lean`): an oracle holds the PCP proof of its pair, an isolated player the
+low-degree encoding of its answer at its own copy, and each answers the low-degree questions
+honestly (`LIDT.CL.honest`, `Background/LIDT/CLHonest.lean`). Findings on the way:
+
+* **The contract's completeness was false at `λ = 0` or `μ = 0`.** The PCP's validity asks
+  `2 log n ≤ T`, and `T = 2^{(Q + 5)(μ + 1)}` with `Q = (λn + 1)^μ` is then a constant. The clause
+  now asks `λ, μ ≥ 1`, the paper's regime; compression's `μ` comes from the margin claim called
+  with `C + 1` (`Compress.one_le_mu`). A weakening.
+* **The PCP's field must be the Shoup field** (`ShoupField`): the game check hands the PCP
+  verifier the view in the Shoup representation, and `PcpDecider.completeness` is stated in the
+  decider's own field. A second hypothesis on the PCP decider beside `ParamsBound`, to be
+  discharged when the classical decider is plugged in (`shoupAdmissibleField` is the natural
+  choice).
+* **No truncation is needed.** `lem:oracle-timeout-pcc` coarse-grains the input strategy by
+  prefix truncation so that the decider's answers fit its timeout. In the ambient form the input
+  is already read at the answer cut `2^Q`, and an input within its budget runs within
+  `2^Q (|d| + 1)^μ ≤ T` on every input, so an accepted pair is accepted within `T` by determinism
+  (`acceptsWithin_of_accepts`).
+* **The decider re-derives the base point.** It reads the sample off a question vector and
+  recomputes the canonical base point; the presentation outputs an already canonical one, and the
+  canonical map is a projection, so the two agree (`Regs.sampleOf_eval_question`).
+
+AR-5 (soundness) is next.
 
 Written after reading the paper's `ld_compiler.tex` (`sec:ar-params`,
 `sec:ar-verifier`, `fig:decider-pcp`, `thm:ar` and the complexity part of its proof), ledger node

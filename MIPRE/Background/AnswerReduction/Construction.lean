@@ -242,14 +242,13 @@ theorem pow_le_pow_of_le {W K c m C M : ℕ} (hc : c ≤ C) (hm : m ≤ M) :
     (c * (W + 1) ^ m) ^ (K + 1) ≤ (C * (W + 1) ^ M) ^ (K + 1) :=
   Nat.pow_le_pow_left (Nat.mul_le_mul hc (Nat.pow_le_pow_right (by omega) hm)) _
 
-/-- **The complexity clause of answer reduction** (`within` of the `AnswerReduction` contract):
-an input within `inBudget λ μ n` with `|𝒮|, |𝒟| ≤ σ` gives an output within
-`outBound bound λ μ σ n` at degree `outDegree deg μ`, rejecting longer answers, for a polynomial
-`bound` and a degree `deg` depending only on the PCP. -/
-theorem arVerifier_within (ℓ : ℕ) (hR : ParamsBound PD R) : ∃ (bound : Polynomial ℕ) (deg : ℕ),
-    ∀ (V : Verifier (ℓ + 1)) (lam mu sigma n : ℕ), V.Within n (inBudget lam mu n) →
+/-- **The output bounds of answer reduction**: the complexity clause (`arVerifier_within`), and
+the answer cut below the same output bound, which completeness needs. -/
+theorem arVerifier_bounds (ℓ : ℕ) (hR : ParamsBound PD R) : ∃ (bound : Polynomial ℕ) (deg : ℕ),
+    (∀ (V : Verifier (ℓ + 1)) (lam mu sigma n : ℕ), V.Within n (inBudget lam mu n) →
       V.size ≤ sigma → (arVerifier PD lam mu sigma V).Within n
-        (Budget.uniform (outBound bound lam mu sigma n) (outDegree deg mu)) := by
+        (Budget.uniform (outBound bound lam mu sigma n) (outDegree deg mu))) ∧
+    ∀ lam mu sigma n, cutVal (arPar PD lam mu sigma n) ≤ outBound bound lam mu sigma n := by
   obtain ⟨cT, mT, eT, hT⟩ := typedSampler_time ℓ PD R
   obtain ⟨cs, ms, ds, hs⟩ := CL.Detyping.sampler_time graph cT mT eT
   obtain ⟨cC, mC, eC, hC⟩ := arCut_time PD R
@@ -258,8 +257,24 @@ theorem arVerifier_within (ℓ : ℕ) (hR : ParamsBound PD R) : ∃ (bound : Pol
   obtain ⟨cP, mP, eP, hP⟩ := CL.Detyping.DeciderProgram.prog_time graph cT mT eT cC mC eC cD mD eD
   obtain ⟨cm, mm, em, hdim⟩ := dim_pdom PD R
   obtain ⟨cc, mc, ec, hcut⟩ := cutVal_pdom PD R
+  have hcutB : ∀ lam mu sigma n, cutVal (arPar PD lam mu sigma n) ≤
+      outBound (Polynomial.C (cs + cP + cm + cc) * (Polynomial.X + 1) ^ (ms + mP + mm + mc))
+        lam mu sigma n := by
+    intro lam mu sigma n
+    set W := arg lam mu sigma n with hWdef
+    have hQ : arQ lam mu n ≤ W := by simp only [hWdef, arg, arQ]; omega
+    have hs' : sigma ≤ W := by simp only [hWdef, arg]; omega
+    have hn : n ≤ W := by simp only [hWdef, arg]; omega
+    have hbd : outBound (Polynomial.C (cs + cP + cm + cc) *
+        (Polynomial.X + 1) ^ (ms + mP + mm + mc)) lam mu sigma n =
+        ((cs + cP + cm + cc) * (W + 1) ^ (ms + mP + mm + mc)) ^ (mu + 1) := by
+      simp [outBound, hWdef]
+    rw [hbd]
+    have h := (hcut (W := W) (X := 1) hR lam mu sigma n le_rfl hQ hs' hn).le_final
+    simp only [one_pow, Nat.mul_one] at h
+    exact h.trans (pow_le_pow_of_le (by omega) (by omega))
   refine ⟨Polynomial.C (cs + cP + cm + cc) * (Polynomial.X + 1) ^ (ms + mP + mm + mc), ds + eP,
-    fun V lam mu sigma n hV hsz => ?_⟩
+    fun V lam mu sigma n hV hsz => ?_, hcutB⟩
   set W := arg lam mu sigma n with hWdef
   have hQ : arQ lam mu n ≤ W := by simp only [hWdef, arg, arQ]; omega
   have hl : lam ≤ W := by simp only [hWdef, arg]; omega
@@ -311,12 +326,21 @@ theorem arVerifier_within (ℓ : ℕ) (hR : ParamsBound PD R) : ∃ (bound : Pol
     exact ⟨r, t, ht, hr⟩
   · -- the answer cut
     simp only [Budget.uniform_B, hbd]
-    refine Verifier.RejectsLong.mono ?_ (CL.Detyping.DeciderProgram.verifier_rejectsLong graph
+    exact Verifier.RejectsLong.mono ((hcutB lam mu sigma n).trans hbd.le)
+      (CL.Detyping.DeciderProgram.verifier_rejectsLong graph
       (typedSampler V.sampler PD lam mu sigma) (typedDecider PD V lam mu sigma)
       (arCut PD lam mu sigma) _ (total PD V lam mu sigma) n)
-    have h := (hcut (W := W) (X := 1) hR lam mu sigma n le_rfl hQ hs' hn).le_final
-    simp only [one_pow, Nat.mul_one] at h
-    exact h.trans (pow_le_pow_of_le (by omega) (by omega))
+
+/-- **The complexity clause of answer reduction** (`within` of the `AnswerReduction` contract):
+an input within `inBudget λ μ n` with `|𝒮|, |𝒟| ≤ σ` gives an output within
+`outBound bound λ μ σ n` at degree `outDegree deg μ`, rejecting longer answers, for a polynomial
+`bound` and a degree `deg` depending only on the PCP. -/
+theorem arVerifier_within (ℓ : ℕ) (hR : ParamsBound PD R) : ∃ (bound : Polynomial ℕ) (deg : ℕ),
+    ∀ (V : Verifier (ℓ + 1)) (lam mu sigma n : ℕ), V.Within n (inBudget lam mu n) →
+      V.size ≤ sigma → (arVerifier PD lam mu sigma V).Within n
+        (Budget.uniform (outBound bound lam mu sigma n) (outDegree deg mu)) :=
+  let ⟨bound, deg, h, _⟩ := arVerifier_bounds PD R ℓ hR
+  ⟨bound, deg, h⟩
 
 end Within
 

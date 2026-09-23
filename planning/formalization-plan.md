@@ -875,8 +875,14 @@ as the decider's (the output simulates the input sampler through the universal m
 output bound's argument gains `λ + n` (inert in the paper's regime `λ, μ ≥ 1`, `n ≥ 2`). That is
 the seventh time a time bound has been refuted from the other side. The construction also asks
 of the PCP decider that its parameters be polynomial in `(log n, log T, Q, σ)`
-(`ParamsBound`), which the classical PCP decider must be shown to satisfy. AR-4, completeness,
-is next.
+(`ParamsBound`), which the classical PCP decider must be shown to satisfy.
+
+**AR-4 is done: completeness** (`lem:ar-completeness`): `AnswerReduction.arVerifier_completeness`
+in `MIPRE/Background/AnswerReduction/Complete.lean`, with the `within` clause and completeness at
+one output bound. The contract's completeness now asks `λ, μ ≥ 1`: at `λ = 0` or `μ = 0` the PCP's
+validity hypothesis `2 log n ≤ T` fails for large `n` and the clause was false. Compression
+supplies both (`Compress.one_le_mu`). The PCP decider must also use the Shoup field
+(`ShoupField`), a second hypothesis on it beside `ParamsBound`. AR-5, soundness, is next.
 
 **The standing risk** is the one `planning/h4-assembly.md` §4 item 4 names: `GapCompression`
 has been consumed five times and supplied never — `TimeBoundAt` was refuted three times and

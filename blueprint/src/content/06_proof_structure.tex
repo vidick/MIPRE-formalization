@@ -5409,13 +5409,60 @@ give $P$ and $d$.
 \begin{lemma}[Answer-reduction completeness]
 \label{lem:ar-completeness}
 \ledgernode{1.3.4.2}
-\uses{lem:ar-construction,lem:oracle-timeout-pcc,lem:detype-completeness}
+\uses{lem:ar-construction,lem:detype-completeness}
+\lean{MIPRE.AnswerReduction.arVerifier_completeness,
+  MIPRE.AnswerReduction.arVerifier_hasPerfectPCC, MIPRE.AnswerReduction.ShoupField,
+  MIPRE.AnswerReduction.exists_typedGame_perfectPCC, MIPRE.AnswerReduction.hdata,
+  MIPRE.AnswerReduction.accepts_honestAns, MIPRE.AnswerReduction.side_honest,
+  MIPRE.AnswerReduction.honestAns, MIPRE.AnswerReduction.consistent_of_oaccepts,
+  MIPRE.AnswerReduction.exists_proofGood, MIPRE.AnswerReduction.acceptsWithin_of_accepts,
+  MIPRE.AnswerReduction.valid_of, MIPRE.AnswerReduction.length_enc_honestAns_le,
+  MIPRE.SyncStrategy.pushQ, MIPRE.SyncStrategy.isPCC_pushQ,
+  MIPRE.SyncStrategy.value_pushQ_eq_one, MIPRE.LIDT.CL.honest, MIPRE.LIDT.CL.accepts_honest,
+  MIPRE.LIDT.CL.Regs.sampleOf_eval_question}
+\leanok
 A perfect PCC input witness gives a perfect typed answer-reduction witness,
 using the complete honest proof tuple and one combined measurement rule on
 both players. All queried formats are satisfied; mismatched proof branches
 use a whole legal zero tuple. Apply detyping completeness, including its
 identical-operator property, to obtain the exterior PCC witness.
+In the ambient form, for $\lambda,\mu\geq1$: an input within
+\texttt{inBudget}~$\lambda$~$\mu$~$n$ with $\abs{\decider}\leq\sigma$ and a value-$1$ PCC
+strategy at the answer cut $2^{(\lambda n+1)^\mu}$ gives the answer-reduced verifier a value-$1$
+PCC strategy at the answer cut $32(k+1)(m'+7)^2$, and so at the output bound. Two hypotheses on
+the PCP decider are used: its field is the Shoup field the sampler downsizes along
+(\texttt{ShoupField}), and, for the output bound, its parameters are polynomial in
+$(\log n,\log T,Q,\sigma)$ (\texttt{ParamsBound}, as in Lemma~\ref{lem:ar-construction}).
 \end{lemma}
+
+\begin{proof}
+\uses{lem:ar-construction,lem:detype-completeness,lem:oracular-completeness,thm:pcp-decider,def:lidt-cl}
+\leanok
+Each player measures the oracularized game's honest strategy
+(Lemma~\ref{lem:oracular-completeness}) at the oracularized question its seed's oracle half
+determines, and post-processes the outcome classically: an oracle answering the pair $(a,b)$ at
+seed $x$ holds a PCP proof of $(x,a,b)$ from Theorem~\ref{thm:pcp-decider}, whose first two
+answer polynomials are the low-degree encodings of $a$ and $b$; an isolated player $v$ answering
+$a$ holds the low-degree encoding of $a$ at copy $v$ and zero elsewhere; each answers every
+low-degree question honestly, with the values at a point and the restrictions to a line. A
+measurement read through a question map and a question-dependent answer map stays projective,
+PCC when pairs of positive weight are read as pairs of positive weight, and of value $1$ when
+the old strategy's operators for rejected pairs multiply to zero there and every accepted old
+pair is read as an accepted new one. Two typed questions of positive weight are read off one
+seed: their oracle halves are an oracularized pair of positive weight, whose checks (equal roles
+give equal answers, an oracle's component matches the isolated player's, the oracle's pair is
+accepted) are exactly the consistency the five steps of the answer-reduced predicate need, and
+their PCP halves are questions of one PCP vector, where the seeded test (Definition~\ref{def:lidt-cl})
+accepts honest answers of polynomials of individual degree at most $7$, the base points the
+presentation outputs being already canonical. The oracle's check passes at every point because
+the input decider accepts within the PCP's time bound $T=2^{(Q+5)(\mu+1)}$, $Q=(\lambda n+1)^\mu$:
+it runs within $2^Q(\abs{d}+1)^\mu$ on every input, and the answers are already cut at $2^Q$, so
+the timeout of Lemma~\ref{lem:oracle-timeout-pcc} is here a consequence of determinism rather
+than a truncation. The PCP's validity needs $2\lceil\log n\rceil\leq T$, which is where
+$\lambda,\mu\geq1$ enters. Honest answers are at most $32(k+1)(m'+7)^2$ bits long, the answer cut,
+where the detyped decider's predicate is the typed game's; detyping completeness
+(Lemma~\ref{lem:detype-completeness}) gives the output's strategy.
+\end{proof}
 
 \begin{lemma}[Typed soundness setup]
 \label{lem:ar-soundness-setup}
@@ -5633,7 +5680,11 @@ sampler's degree; fixing $\mu$ in compression leaves a polynomial bound. Its thr
 plays the role of the source threshold (\texttt{thm:ar} in \texttt{ld\_compiler.tex}); an earlier statement here had the
 value clauses for all $n$. Its soundness field also explicitly requires $n\geq2$,
 $\lambda\geq1$ and $\eps>0$. Completeness transfers ambient \texttt{HasPerfectPCC}
-from input answer cut $2^{(\lambda n+1)^\mu}$ to the output budget's answer cut.
+from input answer cut $2^{(\lambda n+1)^\mu}$ to the output budget's answer cut, for
+$\lambda,\mu\geq1$: the source's regime, and the one in which $(\lambda n+1)^\mu\geq n+1$, which
+the PCP's validity hypothesis $2\lceil\log n\rceil\leq T$ needs. At $\lambda=0$ or $\mu=0$ the
+PCP's time bound is a constant and the clause would be false for large $n$; compression's
+$\lambda$ is at least $2$ and its $\mu$ at least $1$ (Lemma~\ref{lem:ar-completeness}).
 Soundness transfers output value greater than $1-\eps$ to input value at least
 $1-\delta(\eps,n)$ at those cuts, with
 $\delta(\eps,n)=\sigma^a((\lambda n)^{\mu a}\eps^b+(\lambda n)^{-\mu b})$,
