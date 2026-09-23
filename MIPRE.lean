@@ -1,7 +1,9 @@
 import MIPRE.Axioms
 import MIPRE.Background.AnswerReduction.AnswerFormat
+import MIPRE.Background.AnswerReduction.ArSampler
 import MIPRE.Background.AnswerReduction.Family
 import MIPRE.Background.AnswerReduction.Layout
+import MIPRE.Background.AnswerReduction.Params
 import MIPRE.Background.AnswerReduction.PcpPresentation
 import MIPRE.Background.AnswerReduction.PcpSampler
 import MIPRE.Background.AnswerReduction.Predicate
@@ -767,6 +769,7 @@ import MIPRE.Foundations.Cost.Toolkit
 import MIPRE.Foundations.Cost.TreeBits
 import MIPRE.Foundations.Cost.Unary
 import MIPRE.Foundations.Cost.Universal
+import MIPRE.Foundations.Cost.While
 import MIPRE.Foundations.CrossConsistency
 import MIPRE.Foundations.Dilation
 import MIPRE.Foundations.Distances
@@ -1164,6 +1167,7 @@ import MIPRE.Foundations.Pipeline.Introspection
 import MIPRE.Foundations.Pipeline.Margin
 import MIPRE.Foundations.Pipeline.Oracularization
 import MIPRE.Foundations.Pipeline.Repetition
+import MIPRE.Foundations.Pipeline.UnaryArith
 import MIPRE.Foundations.RegisterReindex
 import MIPRE.Foundations.Repeat.Bits
 import MIPRE.Foundations.Repeat.DecLoop
