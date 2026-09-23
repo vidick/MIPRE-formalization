@@ -1,8 +1,16 @@
 import MIPRE.Axioms
 import MIPRE.Background.AnswerReduction.AnswerFormat
+import MIPRE.Background.AnswerReduction.ArSampler
 import MIPRE.Background.AnswerReduction.Family
+import MIPRE.Background.AnswerReduction.Layout
+import MIPRE.Background.AnswerReduction.Params
 import MIPRE.Background.AnswerReduction.PcpPresentation
+import MIPRE.Background.AnswerReduction.PcpSampler
 import MIPRE.Background.AnswerReduction.Predicate
+import MIPRE.Background.AnswerReduction.StageCorrect
+import MIPRE.Background.AnswerReduction.StageLists
+import MIPRE.Background.AnswerReduction.StageProg
+import MIPRE.Background.AnswerReduction.Stages
 import MIPRE.Background.AnswerReduction.TypedGame
 import MIPRE.Background.GowersHatami.Basic
 import MIPRE.Background.Introspection.AmbientRawGame
@@ -407,6 +415,7 @@ import MIPRE.Background.LIDT.MIPStarRE.Quantum.Measurement
 import MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB
 import MIPRE.Background.LIDT.Padding
 import MIPRE.Background.LIDT.Presentation
+import MIPRE.Background.LIDT.PresentationQueries
 import MIPRE.Background.LIDT.Simultaneous
 import MIPRE.Background.LIDT.Soundness
 import MIPRE.Background.Orthonormalization.Axioms
@@ -714,6 +723,8 @@ import MIPRE.Foundations.CL.Downsize
 import MIPRE.Foundations.CL.Embedding
 import MIPRE.Foundations.CL.Graph
 import MIPRE.Foundations.CL.Product
+import MIPRE.Foundations.CL.ProductSampler
+import MIPRE.Foundations.CL.ProductSamplerProg
 import MIPRE.Foundations.CL.Register
 import MIPRE.Foundations.CL.Repeat
 import MIPRE.Foundations.CL.Sampler
@@ -758,6 +769,7 @@ import MIPRE.Foundations.Cost.Toolkit
 import MIPRE.Foundations.Cost.TreeBits
 import MIPRE.Foundations.Cost.Unary
 import MIPRE.Foundations.Cost.Universal
+import MIPRE.Foundations.Cost.While
 import MIPRE.Foundations.CrossConsistency
 import MIPRE.Foundations.Dilation
 import MIPRE.Foundations.Distances
@@ -1155,6 +1167,7 @@ import MIPRE.Foundations.Pipeline.Introspection
 import MIPRE.Foundations.Pipeline.Margin
 import MIPRE.Foundations.Pipeline.Oracularization
 import MIPRE.Foundations.Pipeline.Repetition
+import MIPRE.Foundations.Pipeline.UnaryArith
 import MIPRE.Foundations.RegisterReindex
 import MIPRE.Foundations.Repeat.Bits
 import MIPRE.Foundations.Repeat.DecLoop

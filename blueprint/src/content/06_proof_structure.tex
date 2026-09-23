@@ -5177,7 +5177,8 @@ $\delta_1$ or simultaneous $\delta_2$.
 \label{def:ar-pcp-sampler}
 \uses{def:lidt-cl,thm:pcp-decider}
 \lean{MIPRE.LIDT.CL.Regs, MIPRE.LIDT.CL.Regs.pres, MIPRE.LIDT.CL.Regs.pres_exactlyOn,
-  MIPRE.LIDT.CL.Regs.questionOf_eval, MIPRE.LIDT.CL.Regs.sum_sampleOf,
+  MIPRE.LIDT.CL.Sel, MIPRE.LIDT.CL.Sel.canonical, MIPRE.LIDT.CL.Sel.exists_perm,
+  MIPRE.LIDT.CL.Sel.ofSelector, MIPRE.LIDT.CL.Regs.questionOf_eval, MIPRE.LIDT.CL.Regs.sum_sampleOf,
   MIPRE.CL.sum_comp_injective, MIPRE.AnswerReduction.Pcp.Coord,
   MIPRE.AnswerReduction.Pcp.Coord.card_coord, MIPRE.AnswerReduction.Pcp.regs,
   MIPRE.AnswerReduction.Pcp.regs6, MIPRE.AnswerReduction.Pcp.block_ptOf_regs6,
@@ -5199,6 +5200,12 @@ as a three-level CL function (seed, then direction, then the point register), ex
 space. Its full evaluation is the seeded question of its copy, and a uniform vector carries a
 uniform sample of each copy. The $i$-th block of copy $6$'s point, in the block order of the
 PCP, is copy $i$'s point: this overlap is what the consistency tests compare.
+
+The block of the seed register a direction is drawn from is read off the seed by a selector
+$\chi:\F_q\to[m]$. The test's own selector numbers the field by an enumeration no program
+computes, so the presentation takes any selector with blocks of size $q/m$ (the effective one
+reads the seed's high bits), together with a permutation of the seeds carrying it to the test's;
+the permutation is used only in the analysis, where a uniform seed stays uniform under it.
 \end{definition}
 
 \begin{definition}[The answer-reduced decision predicate]
@@ -5231,8 +5238,11 @@ The PCP verifier's decision is a parameter of the predicate.
 \uses{def:ar-pcp-sampler,def:ar-decider-predicate,lem:cl-downsize,def:oracular-typed-game}
 \lean{MIPRE.CL.CLFun.castLevel, MIPRE.CL.CLFun.liftTo, MIPRE.CL.CLFun.ExactlyOn.liftTo,
   MIPRE.CL.CLFun.eval_liftTo, MIPRE.CL.CLFun.prod, MIPRE.CL.CLFun.ExactlyOn.prod,
-  MIPRE.CL.CLFun.eval_prod, MIPRE.AnswerReduction.coordIndex, MIPRE.AnswerReduction.index,
-  MIPRE.AnswerReduction.pcpBin, MIPRE.AnswerReduction.fam, MIPRE.AnswerReduction.cl,
+  MIPRE.CL.CLFun.eval_prod, MIPRE.CL.CLFun.prodCL, MIPRE.CL.CLFun.ExactlyOn.prodCL,
+  MIPRE.CL.CLFun.eval_truncate_prodCL, MIPRE.AnswerReduction.Pcp.layout,
+  MIPRE.AnswerReduction.Pcp.coordIndex, MIPRE.AnswerReduction.Pcp.bitIndex,
+  MIPRE.AnswerReduction.Pcp.toBits_pcp, MIPRE.AnswerReduction.pcpBin,
+  MIPRE.AnswerReduction.pcpCl, MIPRE.AnswerReduction.cl,
   MIPRE.AnswerReduction.cl_exactlyOn, MIPRE.AnswerReduction.oraclePart_eval,
   MIPRE.AnswerReduction.pcpPart_eval, MIPRE.AnswerReduction.cnt, MIPRE.AnswerReduction.enc,
   MIPRE.AnswerReduction.parse, MIPRE.AnswerReduction.parse_enc,
@@ -5250,14 +5260,55 @@ disjoint coordinates, both padded to $\max\{\ell+1,3\}$ levels:
 \item the PCP presentation of the PCP type, downsized to $\mathbb{F}_2$ along the Shoup
   polynomial basis of $\F_q$, whose coordinates are the bits the PCP verifier reads.
 \end{itemize}
-The coordinates are numbered explicitly, and a question carries the oracularized question in the
-first part and the downsized PCP question in the second. An answer is written as its field
+The coordinates of the PCP part are numbered in three runs: the concatenated point register of
+the sixth copy, its concatenated direction register, and the six seeds; each copy of the test is
+then a contiguous run of the first two with its own seed. A question carries the oracularized
+question in the first part and the downsized PCP question in the second, the latter as the Shoup
+bits of its coordinates in that order. An answer is written as its field
 elements' bit blocks, serialized, and parsed back with the count and block length its type
 prescribes; an answer of the right format parses back from its encoding. The predicate rejects a
 failed parse and otherwise applies Definition~\ref{def:ar-decider-predicate} to the decoded
 questions. Its game check runs the PCP verifier on the input question pair and the view read off
 the $\mathrm{Point}_6$ question and answer.
 \end{definition}
+
+\begin{lemma}[The typed answer-reduced sampler]
+\label{lem:ar-typed-sampler}
+\uses{def:ar-typed-game,lem:oracle-effective-interface,lem:typed-downsize}
+\lean{MIPRE.CL.DirectSampler, MIPRE.CL.TypedSampler.prodDirect,
+  MIPRE.CL.CLFun.toBits_eval_truncate_prodCL, MIPRE.CL.CLFun.toBits_mapOfPrefix_prodCL,
+  MIPRE.CL.CLFun.indicatorBits_factorOfPrefix_prodCL, MIPRE.LIDT.CL.Regs.eval_pres,
+  MIPRE.LIDT.CL.Regs.mapOfPrefix_two, MIPRE.AnswerReduction.Pcp.comps_marginal,
+  MIPRE.AnswerReduction.StageProg.copyProg, MIPRE.AnswerReduction.StageProg.copyProg_apply,
+  MIPRE.AnswerReduction.StageProg.copyAnswer_marginal,
+  MIPRE.AnswerReduction.StageProg.copyAnswer_linear,
+  MIPRE.AnswerReduction.StageProg.copyAnswer_factor, MIPRE.AnswerReduction.powSel,
+  MIPRE.AnswerReduction.PcpFamily, MIPRE.AnswerReduction.PcpFamily.directSampler,
+  MIPRE.AnswerReduction.family, MIPRE.AnswerReduction.parProg,
+  MIPRE.AnswerReduction.parProg_runs, MIPRE.AnswerReduction.typedSampler,
+  MIPRE.AnswerReduction.typedSampler_cl, MIPRE.AnswerReduction.typedSampler_prog}
+\leanok
+For a PCP decider and parameters $(\lambda,\mu,\sigma)$, and an $(\ell+1)$-level input sampler
+$S$, there is a typed sampler with $\max\{\ell+1,3\}$ levels on the types of
+Definition~\ref{def:ar-typed-game} whose typed CL functions are that game's, with the PCP
+parameters $\mathrm{pcpparams}(n,2^Q,Q,\sigma)$, $Q=(\lambda n+1)^\mu$, and with the seed selectors
+reading the high bits of the seed. Its program is computed from the program of $S$ and
+$(\lambda,\mu,\sigma)$ alone.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The program first runs a routine computing the PCP parameters at the index: $\lambda$ and $n$ in
+unary, $Q$ by a power loop, $T=2^Q$, the parameters by the PCP decider's parameter program, and
+the copies' offsets, lengths, selector widths and seeds in unary. A query at a type is then split:
+the bits of the PCP part are answered outright, and the others make up a query to the typed
+oracularized sampler, answered through the universal machine, below its own level; beyond it the
+marginal is asked at its last level and a linear map or factor query has a zero oracle half. A
+PCP query is answered by the copy its type names, on the three runs of $k$-bit blocks: the seed on
+the seed run, the selected direction on the direction run and the line's base point on the point
+run, computed by the introspection sampler's Shoup programs. Each of the three kinds of answer is
+the Shoup bits of the presentation's, run by run.
+\end{proof}
 
 \begin{lemma}[Answer-reduction construction]
 \label{lem:ar-construction}

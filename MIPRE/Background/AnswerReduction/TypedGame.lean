@@ -73,7 +73,8 @@ def gameCheck (PD : PcpDecider) (D : Prog) (T Qn σ : ℕ) (x : Fin (V.sampler.d
   PD.verify (pcpInput D n T Qn σ (toBits ((V.sampler.cl n .alice).eval x))
     (toBits ((V.sampler.cl n .bob).eval x)) ((fld P hk).vecBits z) ((fld P hk).vecBits α))
 
-variable [NeZero P.m] (hm : P.m ∣ Fintype.card (Fq P hk)) (hm' : P.m' ∣ Fintype.card (Fq P hk))
+variable [NeZero P.m] {hm : P.m ∣ Fintype.card (Fq P hk)} {hm' : P.m' ∣ Fintype.card (Fq P hk)}
+  (S : LIDT.CL.Sel (Fq P hk) P.m hm) (S' : LIDT.CL.Sel (Fq P hk) P.m' hm')
   (check : (Fin (V.sampler.dim n) → 𝔽₂) → (Fin P.m' → Fq P hk) → (Fin (P.m' + 6) → Fq P hk) →
     Bool)
 
@@ -81,19 +82,19 @@ variable [NeZero P.m] (hm : P.m ∣ Fintype.card (Fq P hk)) (hm' : P.m' ∣ Fint
 def typedPred (B : ℕ) (p q : Detyping.Question ArTy (Fin (dim V n P)))
     (a b : Verifier.Answers B) : Bool :=
   match parse (fld P hk) p.1.2 a.1, parse (fld P hk) q.1.2 b.1 with
-  | some u, some v => accepts hm hm' check (decodeQ V n P hk p) (decodeQ V n P hk q) u v
+  | some u, some v => accepts S S' check (decodeQ V n P hk p) (decodeQ V n P hk q) u v
   | _, _ => false
 
 /-- **The typed answer-reduced game** at index `n`, with answers of length at most `B`. -/
 def typedGame (B : ℕ) :=
-  Detyping.typedGame graph graph_nonempty (fun _ => cl V n P hk hm hm')
-    (typedPred V n P hk hm hm' check B)
+  Detyping.typedGame graph graph_nonempty (fun _ => cl V n P hk S S')
+    (typedPred V n P hk S S' check B)
 
 /-- Acceptance of the bit-string predicate is acceptance of `accepts` after the parse. -/
 theorem accepts_of_typedPred {B : ℕ} {p q : Detyping.Question ArTy (Fin (dim V n P))}
-    {a b : Verifier.Answers B} (h : typedPred V n P hk hm hm' check B p q a b = true) :
+    {a b : Verifier.Answers B} (h : typedPred V n P hk S S' check B p q a b = true) :
     ∃ u v, parse (fld P hk) p.1.2 a.1 = some u ∧ parse (fld P hk) q.1.2 b.1 = some v ∧
-      accepts hm hm' check (decodeQ V n P hk p) (decodeQ V n P hk q) u v = true := by
+      accepts S S' check (decodeQ V n P hk p) (decodeQ V n P hk q) u v = true := by
   unfold typedPred at h
   split at h
   · rename_i u v hu hv
@@ -103,7 +104,7 @@ theorem accepts_of_typedPred {B : ℕ} {p q : Detyping.Question ArTy (Fin (dim V
 theorem ansFmt_of_accepts {X : Type*}
     {check' : X → (Fin P.m' → Fq P hk) → (Fin (P.m' + 6) → Fq P hk) → Bool}
     {p q : AnswerReduction.Q P (Fq P hk) X} {u v : Ans P (Fq P hk)}
-    (h : accepts hm hm' check' p q u v = true) :
+    (h : accepts S S' check' p q u v = true) :
     ansFmt p.1.2 u = true ∧ ansFmt q.1.2 v = true := by
   simp only [accepts, Bool.and_eq_true] at h
   exact ⟨h.1.1.1.1, h.1.1.1.2⟩
@@ -111,11 +112,11 @@ theorem ansFmt_of_accepts {X : Type*}
 /-- `accepts` on two answers is acceptance of their honest encodings. -/
 theorem typedPred_enc {B : ℕ} {p q : Detyping.Question ArTy (Fin (dim V n P))}
     {u v : Ans P (Fq P hk)}
-    (h : accepts hm hm' check (decodeQ V n P hk p) (decodeQ V n P hk q) u v = true)
+    (h : accepts S S' check (decodeQ V n P hk p) (decodeQ V n P hk q) u v = true)
     (hu : (enc (fld P hk) u).length ≤ B) (hv : (enc (fld P hk) v).length ≤ B) :
-    typedPred V n P hk hm hm' check B p q ⟨enc (fld P hk) u, hu⟩ ⟨enc (fld P hk) v, hv⟩
+    typedPred V n P hk S S' check B p q ⟨enc (fld P hk) u, hu⟩ ⟨enc (fld P hk) v, hv⟩
       = true := by
-  obtain ⟨hfu, hfv⟩ := ansFmt_of_accepts P hk hm hm' h
+  obtain ⟨hfu, hfv⟩ := ansFmt_of_accepts P hk S S' h
   have hfu' : ansFmt p.1.2 u = true := hfu
   have hfv' : ansFmt q.1.2 v = true := hfv
   simp only [typedPred]

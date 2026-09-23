@@ -99,15 +99,16 @@ def roleIdx : Role → Option (Fin 5)
   | .alice => some 0
   | .bob => some 1
 
-variable [NeZero P.m] (hm : P.m ∣ Fintype.card F) (hm' : P.m' ∣ Fintype.card F)
+variable [NeZero P.m] {hm : P.m ∣ Fintype.card F} {hm' : P.m' ∣ Fintype.card F}
+  (S : Sel F P.m hm) (S' : Sel F P.m' hm')
 
 /-- The `m'`-variable test's question of copy 6 at a vector. -/
 def q6 (τ : LIDT.CL.Ty) (x : Coord P → F) : LIDT.CL.Question F P.m' :=
-  (((regs6 P).sampleOf τ x).question hm' τ)
+  (((regs6 P).sampleOf S' τ x).question hm' τ)
 
 /-- The `m`-variable test's question of copy `i ≤ 5` at a vector. -/
 def q1 (i : Fin 5) (τ : LIDT.CL.Ty) (x : Coord P → F) : LIDT.CL.Question F P.m :=
-  (((regs P i).sampleOf τ x).question hm τ)
+  (((regs P i).sampleOf S τ x).question hm τ)
 
 variable {X : Type*}
 
@@ -133,7 +134,7 @@ def side (check : X → (Fin P.m' → F) → (Fin (P.m' + 6) → F) → Bool)
   (match roleIdx r, roleIdx r' with
     | some v, some v' =>
       if v = v' ∧ (i : ℕ) = v ∧ (i' : ℕ) = v ∧ τ = .point ∧ τ' ≠ .point then
-        CL.accepts hm (q1 hm v τ p.2.2) (q1 hm v τ' q.2.2) (ans1 a) (ans1 b)
+        CL.accepts hm (q1 S v τ p.2.2) (q1 S v τ' q.2.2) (ans1 a) (ans1 b)
       else true
     | _, _ => true) &&
   -- step 4: between two oracles
@@ -141,10 +142,10 @@ def side (check : X → (Fin P.m' → F) → (Fin (P.m' + 6) → F) → Bool)
     (if h : 2 ≤ (i : ℕ) ∧ (i : ℕ) < 5 ∧ τ = .point ∧ (i' : ℕ) = 5 ∧ τ' = .point then
       decide (val1 a = val6 ⟨i, by omega⟩ b) else true) &&
     (if h : 2 ≤ (i : ℕ) ∧ (i : ℕ) < 5 ∧ i' = i ∧ τ = .point ∧ τ' ≠ .point then
-      CL.accepts hm (q1 hm ⟨i, h.2.1⟩ τ p.2.2) (q1 hm ⟨i, h.2.1⟩ τ' q.2.2) (ans1 a) (ans1 b)
+      CL.accepts hm (q1 S ⟨i, h.2.1⟩ τ p.2.2) (q1 S ⟨i, h.2.1⟩ τ' q.2.2) (ans1 a) (ans1 b)
       else true) &&
     (if (i : ℕ) = 5 ∧ (i' : ℕ) = 5 ∧ τ = .point ∧ τ' ≠ .point then
-      CL.accepts hm' (q6 hm' τ p.2.2) (q6 hm' τ' q.2.2) (ans6 a) (ans6 b)
+      CL.accepts hm' (q6 S' τ p.2.2) (q6 S' τ' q.2.2) (ans6 a) (ans6 b)
       else true)
   else true) &&
   -- step 5: the game check
@@ -158,7 +159,7 @@ def accepts (check : X → (Fin P.m' → F) → (Fin (P.m' + 6) → F) → Bool)
     (p q : Q P F X) (a b : Ans P F) : Bool :=
   ansFmt p.1.2 a && ansFmt q.1.2 b &&
   (if p.1 = q.1 then decide (a = b) else true) &&
-  side hm hm' check p q a b && side hm hm' check q p b a
+  side S S' check p q a b && side S S' check q p b a
 
 end MIPRE.AnswerReduction
 
