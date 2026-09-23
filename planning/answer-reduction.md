@@ -4,8 +4,28 @@ Status 2026-09-23. **Done: AR-3a, AR-3b, AR-3c** (the mathematics of the constru
 `Background/LIDT/Presentation.lean`, `Background/AnswerReduction/{PcpPresentation,Predicate,
 Family,AnswerFormat,TypedGame}.lean`, `Foundations/CL/Product.lean`. One thing met on the way:
 with the 54 types, the kernel unfolds `Finset.univ` of the type pairs when checking the type
-graph's nonemptiness, so that one declaration raises `maxRecDepth` locally. The complexity half,
-AR-3d to AR-3f, is next.
+graph's nonemptiness, so that one declaration raises `maxRecDepth` locally.
+
+**Done: AR-3d without its running time** (`lem:ar-typed-sampler`): the typed answer-reduced
+sampler `AnswerReduction.typedSampler`, correct on every query, with its program computed from
+the input sampler's and `(λ, μ, σ)`. Findings on the way:
+
+* **The test's selector is not computable.** `LIDT.CL.chi` numbers `F_q` by
+  `Fintype.equivFin`. The presentation now takes any selector with blocks of size `q/n` together
+  with a seed permutation carrying it to `chi` (`LIDT.CL.Sel`); the program uses the seed's high
+  bits (`powSel`), as the introspection sampler does, and the permutation lives only in the
+  analysis.
+* **The parameters need a loop.** `Q = (λn + 1)^μ` with `μ` in binary is not a polynomial-time
+  function of `(λ, μ, n)`, so the PCP parameters come from a routine (`parProg`) of `whileProg`
+  loops (`Foundations/Cost/While.lean`, `Foundations/Pipeline/UnaryArith.lean`), run before the
+  router. The contract only bounds the program's time at each index, so this is allowed.
+* **The sampler is a generic product.** `CL.TypedSampler.prodDirect` (Foundations) combines any
+  typed sampler with a `CL.DirectSampler`, answered by a polynomial-time function of per-index
+  parameters, with one call to the former. The PCP coordinates are laid out in three runs (the
+  sixth copy's point register, its direction register, the seeds), so every copy is a
+  contiguous run and one set of list programs serves all six.
+
+The running time of the sampler moves to AR-3f, with the decider's. AR-3e is next.
 
 Written after reading the paper's `ld_compiler.tex` (`sec:ar-params`,
 `sec:ar-verifier`, `fig:decider-pcp`, `thm:ar` and the complexity part of its proof), ledger node

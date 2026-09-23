@@ -191,6 +191,7 @@ import MIPRE.Foundations.LowDegreeSandwich
 import MIPRE.Background.LIDT.Extraction
 import MIPRE.Background.LIDT.Padding
 import MIPRE.Background.LIDT.Simultaneous
+import MIPRE.Background.AnswerReduction.ArSampler
 import MIPRE.Foundations.Expanded
 import MIPRE.Foundations.WeylEPR
 import MIPRE.Foundations.Swap
@@ -1677,6 +1678,31 @@ tell you the guard is missing.
   MIPRE.LIDT.Simul.inconsistency_le_one,
   MIPRE.LIDT.Simul.clSoundness_padded,
   MIPRE.LIDT.Simul.clSoundness
+
+-- blueprint `lem:ar-typed-sampler`: the typed answer-reduced sampler, its PCP half answered
+-- directly, with the parameter routine and the copies' stage programs.
+#guard_sorry_free MIPRE.CL.DirectSampler,
+  MIPRE.CL.TypedSampler.prodDirect,
+  MIPRE.CL.CLFun.toBits_eval_truncate_prodCL,
+  MIPRE.CL.CLFun.toBits_mapOfPrefix_prodCL,
+  MIPRE.CL.CLFun.indicatorBits_factorOfPrefix_prodCL,
+  MIPRE.LIDT.CL.Regs.eval_pres,
+  MIPRE.LIDT.CL.Regs.mapOfPrefix_two,
+  MIPRE.AnswerReduction.Pcp.comps_marginal,
+  MIPRE.AnswerReduction.StageProg.copyProg,
+  MIPRE.AnswerReduction.StageProg.copyProg_apply,
+  MIPRE.AnswerReduction.StageProg.copyAnswer_marginal,
+  MIPRE.AnswerReduction.StageProg.copyAnswer_linear,
+  MIPRE.AnswerReduction.StageProg.copyAnswer_factor,
+  MIPRE.AnswerReduction.powSel,
+  MIPRE.AnswerReduction.PcpFamily,
+  MIPRE.AnswerReduction.PcpFamily.directSampler,
+  MIPRE.AnswerReduction.family,
+  MIPRE.AnswerReduction.parProg,
+  MIPRE.AnswerReduction.parProg_runs,
+  MIPRE.AnswerReduction.typedSampler,
+  MIPRE.AnswerReduction.typedSampler_cl,
+  MIPRE.AnswerReduction.typedSampler_prog
 
 /-! ## Introspection mixing, conditioning, and graph rejection sampling -/
 
