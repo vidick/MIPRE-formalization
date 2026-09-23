@@ -832,33 +832,39 @@ is repaired. And the error is linear in `k` only because the layers are added as
 have made it exponential. The mirror with the parties exchanged, which `lem:ar-giant-sandwich`
 also needs, is the same theorem applied to the swapped state.
 
-**AR-2, the simultaneous low-degree test** (`lem:lidt-ldc`), is the paper's padding reduction
-(`ldt.tex`, Steps 0--5 of the general-`ldc` proof): pad to `M = K + m` variables, `M` the least
-power of two at least `m + r`, answer the combined point `(x, y)` by `sum_{j<r} x_j b_j`, apply the
-single-codeword theorem, extract. It is split in three.
+**AR-2 is done: the simultaneous low-degree test** (`thm:lidt-cl-soundness` through
+`lem:lidt-ldc`) is `MIPRE.LIDT.Simul.clSoundness` in `MIPRE/Background/LIDT/Simultaneous.lean`,
+for `q` a power of two, `m | q` and `m, d, r >= 1`, with error
+`deltaSim = a (dmr)^a (eps^b + q^{-b} + 2^{-bmd})`, `b` the single-codeword exponent and
+`a = 40 a_1 4^{a_1}`. It is the paper's padding reduction (`ldt.tex`, Steps 0--5 of the
+general-`ldc` proof) in three parts.
 
-* *AR-2a, the extraction* (Step 4) is done: `MIPRE/Background/LIDT/Extraction.lean`,
+* *AR-2a, the extraction* (Step 4): `MIPRE/Background/LIDT/Extraction.lean`,
   `extracted_conclusions`, loss `(K + m) d / q`. The generic coefficient-vector algebra it needs
   (`LowIndDegPoly.coef`, `toMv`, Schwartz--Zippel for coefficient vectors) had been written inside
   the Pauli analysis; it now lives in `MIPRE/Background/LIDT/Coefficients.lean` under the same
   names, so that the LIDT side can use it without importing the QLD chain.
-* *AR-2b, the adapter* (Steps 1--2 and Claims 1--3). The formalization will depart from the
-  paper's seed choice, and the departure is worth recording before it is built. The paper draws
-  each player's diagonal seed independently from the law `q^{j-1}`, and pays for the independence
-  on the two same-type line subtests with a triangle chain and a `d/q` term. Instead: both players
-  share one seed *offset* `r in Fin (q/m)`, and the original seed's block is the deterministic
-  `j = max(i - K, 0)` of the combined seed's block `i`. Then every simulated question pair is the
-  image of a *single* original sample (`u = y`, `v = v^y`, seed `seedOf j r`), acceptance transfers
-  subtest by subtest --- the same-type line subtests to the original equality subtest --- and the
-  push-forward bound of `exists_one_sub_value_adapt_le` is a fibre count: at most
-  `9 (K+1) m / M <= 9 M`. So the combined failure is at most `9 M eps`, with no `d/q` term. For
-  `j >= 1` the conditional direction law is exactly the original's; for `j = 0` it is uniform,
-  which the original assigns weight `1/m` against the combined `(K+1)/M`, whence the density.
-* *AR-2c, assembly and error* (Steps 3 and 5): apply `clSoundness_ldc_one_deltaCL` to the adapted
-  strategy (projective, same state), then `extracted_conclusions`, then absorb
-  `deltaCL q M d (9 M eps) + (K + m) d / q` into `a (dmr)^a (eps^b + q^{-b} + 2^{-bmd})` using
-  `M <= 4mr`; the trivial regimes `m + r > q`, `d >= q` as in Step 0. `q` must be a power of two
-  for `M | q`, so the statement carries that hypothesis.
+* *AR-2b, the adapter* (Steps 1--2 and Claims 1--3): `MIPRE/Background/LIDT/Padding.lean`,
+  `exists_padded_value`, failure at most `9 (K + 1) eps`. It departs from the paper's seed choice.
+  The paper draws each player's diagonal seed independently from the law `q^{j-1}`, and pays for
+  the independence on the two same-type line subtests with a triangle chain and a `d/q` term,
+  `27 M (eps + d/q)` in all. Here both players share one seed *offset* `sigma in Fin (q/m)`, and
+  the original seed's block is the deterministic `j = max(i - K, 0)` of the combined seed's block
+  `i`. Then every simulated question pair is the pair of questions of a *single* original sample
+  (`sampleMap`, `qmap_question`), acceptance transfers subtest by subtest (`accepts_rmap`) ---
+  the same-type line subtests to the original equality subtest --- and the push-forward bound of
+  `exists_one_sub_value_adapt_le` is a fibre count (`card_sampleMap_fiber_le`): three preimages
+  per type, `q^{2K}` combining coordinates, at most `(K + 1) q / M` combined seeds, the offset
+  determined. That gives `9 (K + 1) (q/M) / (q/m)`, bounded crudely by `9 (K + 1)`; no `d/q`
+  term. The decider is characterized once on the two questions of a sample
+  (`accepts_sample_imp`, `accepts_sample_of`), so the transfer is checked on values
+  (`valAt_rmap`).
+* *AR-2c, assembly and error* (Steps 3 and 5): `clSoundness_padded` applies
+  `clSoundness_ldc_one_deltaCL` to the padded strategy, whose point measurements are the combined
+  ones (`pointPOVMA_padded`), then `extracted_conclusions`; `deltaCL_padded_le` absorbs
+  `deltaCL q M d (9 (K+1) eps) + M d / q` using `M <= 2 (m + r) <= 4mr`, and `one_le_deltaSim`
+  covers `m + r > q`, where no padding fits and constant measurements do. The paper's second
+  trivial regime, `d >= q`, is not needed: the single-codeword theorem has no `d < q` hypothesis.
 
 **The standing risk** is the one `planning/h4-assembly.md` §4 item 4 names: `GapCompression`
 has been consumed five times and supplied never — `TimeBoundAt` was refuted three times and

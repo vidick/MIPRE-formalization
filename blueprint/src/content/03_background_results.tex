@@ -33,7 +33,7 @@ Almost-synchronous correlations & Thm.~\ref{thm:almost-sync} & \cite{Vid22} & ha
 Orthonormalization & Thm.~\ref{thm:orthonormalization} & \cite{dlS21} & \checkmark \\
 Magic Square rigidity & Thm.~\ref{thm:ms-rigidity} & \cite{WBMS16} & easy \\
 Low individual degree test (canonical lines) & Thm.~\ref{thm:lidt-soundness} & \cite{JNVWY21qld} & \checkmark \\
-Low individual degree test (seeded CL) & Thm.~\ref{thm:lidt-cl-soundness} & \cite{AuditSync26} & hard \\
+Low individual degree test (seeded CL) & Thm.~\ref{thm:lidt-cl-soundness} & \cite{AuditSync26} & \checkmark \\
 Low individual degree test (seeded CL, one codeword) & Thm.~\ref{thm:lidt-cl-soundness-one} & \cite{JNVWY21qld} & \checkmark \\
 Low individual degree test (Pauli) & Thm.~\ref{thm:qld} & \cite{AuditSync26} & hard \\
 Direct parallel repetition (commuting-operator) & Thm.~\ref{thm:direct-repetition-co} & \cite{Vid26} & \checkmark \\
@@ -647,6 +647,8 @@ Lemma~\ref{lem:lidt-test-transfer} consumes.
 \label{thm:lidt-cl-soundness}
 \ledgernode{1.2.1}
 \uses{def:lidt-cl,lem:lidt-ldc,def:inconsistency}
+\lean{MIPRE.LIDT.Simul.clSoundness}
+\leanok
 There are universal constants $a\geq 1$ and $0<b<1$ such that every projective
 strategy passing the seeded CL test with probability at least $1-\eps$, for
 $\eps>0$, admits projective measurements $G^\alice,G^\bob$ on the respective
@@ -658,11 +660,19 @@ full tuple measurements are consistent with each other, all with error at most
   \delta_{\mathrm{CL}}(\eps,q,m,d,\mathrm{ldc})
   = a(dm\,\mathrm{ldc})^a\bigl(\eps^b+q^{-b}+2^{-bmd}\bigr).
 \]
-The full tuple consistency has no question average. The general simultaneous theorem
-remains open. Its single-codeword case is proved in
-Theorem~\ref{thm:lidt-cl-soundness-one}; the remaining extension is
-Lemma~\ref{lem:lidt-ldc}. The tensor-code intermediates below remain separate targets.
+The full tuple consistency has no question average. The Lean statement takes $q=2^k$,
+$m\mid q$ and $m,d,\mathrm{ldc}\geq1$; $b$ is the exponent of
+Theorem~\ref{thm:lidt-cl-soundness-one} and $a$ is the constant of
+Lemma~\ref{lem:lidt-ldc-error}. The tensor-code intermediates below remain separate targets.
 \end{theorem}
+
+\begin{proof}
+\leanok
+\uses{lem:lidt-ldc,lem:lidt-ldc-error}
+If $m+\mathrm{ldc}\leq q$, Lemma~\ref{lem:lidt-ldc} at the padding of
+Lemma~\ref{lem:lidt-ldc-error}, whose error that lemma absorbs. Otherwise the error bound is at
+least one, and any complete projective measurements satisfy the three conclusions.
+\end{proof}
 
 \begin{remark}[The CL-to-canonical adapter and parameter corollary]
 \label{rem:lidt-cl-adapter}
@@ -1095,6 +1105,8 @@ almost-synchronicity at all.
 \label{lem:lidt-ldc}
 \ledgernode{1.2.1.9,1.2.1.9.1}
 \uses{lem:lidt-ldc-adapter,lem:lidt-ldc-extraction,lem:lidt-ldc-error,thm:lidt-cl-soundness-one}
+\lean{MIPRE.LIDT.Simul.clSoundness_padded}
+\leanok
 For admissible $q$, $m,d,r\geq1$, $m\mid q$, and $r=\mathrm{ldc}$, the
 single-codeword seeded CL contract implies the simultaneous contract of
 Theorem~\ref{thm:lidt-cl-soundness}, including a projective measurement of
@@ -1102,28 +1114,96 @@ complete $r$-tuples on each player's original space and full-tuple consistency.
 The chosen input contract is the proved Theorem~\ref{thm:lidt-cl-soundness-one}.
 This extension is needed at $(q,m',d,m'+6)$ in answer reduction; QLD uses only
 $(q,4m,d,1)$. The separate tensor-code route is alternative provenance.
+
+In Lean the reduction is stated at any padding $K$ with $r\leq K$, $K\geq1$ and $(K+m)\mid q$:
+the three conclusions hold with errors $\delta_{\mathrm{CL}}(9(K+1)\eps,q,K+m,d,1)+(K+m)d/q$
+for the two point conclusions and $\delta_{\mathrm{CL}}(9(K+1)\eps,q,K+m,d,1)$ for the full-tuple
+one.
 \end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:lidt-ldc-adapter,lem:lidt-ldc-extraction,thm:lidt-cl-soundness-one}
+Lemma~\ref{lem:lidt-ldc-adapter} gives, on the same state and spaces, a strategy at
+$(q,K+m,d,1)$ of failure at most $9(K+1)\eps$ whose point measurements are the combined ones.
+Theorem~\ref{thm:lidt-cl-soundness-one} gives $R^\alice$, $R^\bob$ satisfying the three
+single-codeword conclusions against them with error $\delta_{\mathrm{CL}}(9(K+1)\eps,q,K+m,d,1)$,
+and Lemma~\ref{lem:lidt-ldc-extraction} turns those into $G^\alice$, $G^\bob$.
+\end{proof}
 
 \begin{lemma}[The padded multi-codeword game adapter]
 \label{lem:lidt-ldc-adapter}
 \ledgernode{1.2.1.9.2}
 \uses{def:lidt-cl}
-Suppose $m+r\leq q$. Let $M$ be the least power of two at least $m+r$ and
-put $K=M-m$. Then $M\mid q$ and $M\leq4mr$. A projective strategy of failure
-at most $\eps$ at $(q,m,d,r)$ induces, on the same state and spaces, one at
-$(q,M,d,1)$ with failure at most $27M(\eps+d/q)$.
-At $(x,y)\in\F_q^K\times\F_q^m$, its point answer is
-$\sum_{j=1}^r x_jb_j$, where $(b_1,\ldots,b_r)$ is the original answer.
-All measurements are deterministic coarse-grainings after seed choices are fixed.
-Axis answers have degree at most $d$, diagonal answers at most $md+1\leq Md$.
-The adapter rebases projected lines, treats zero projected directions by point
-queries, and uses the conditional seed law of the projected diagonal distribution.
-For a nonzero projected direction with $z_0$ leading zero coordinates, the
-direction index $j\leq z_0+1$ has weights proportional to $q^{j-1}$, with
-uniform seed within each fibre. Independent choices for both players and both
-line types are fixed by averaging the complete game failure, including equality
-subtests. Choosing an arbitrary representative seed is not justified.
+\lean{MIPRE.LIDT.Simul.valAt, MIPRE.LIDT.Simul.IsCross, MIPRE.LIDT.Simul.SampleRel,
+  MIPRE.LIDT.Simul.sample_mem_line, MIPRE.LIDT.Simul.accepts_sample_imp,
+  MIPRE.LIDT.Simul.accepts_sample_of, MIPRE.LIDT.Simul.eq_rep_add_lineParam,
+  MIPRE.LIDT.Simul.shiftOf, MIPRE.LIDT.Simul.eq_rep_add_shiftOf,
+  MIPRE.LIDT.Simul.lineParam_rep_add, MIPRE.LIDT.Simul.rep_add_smul', MIPRE.LIDT.Simul.yOf_add,
+  MIPRE.LIDT.Simul.yOf_smul, MIPRE.LIDT.Simul.xOf_add, MIPRE.LIDT.Simul.xOf_smul,
+  MIPRE.LIDT.Simul.yOf_zero, MIPRE.LIDT.Simul.jIdx, MIPRE.LIDT.Simul.jIdx_of_le,
+  MIPRE.LIDT.Simul.yOf_single_of_le, MIPRE.LIDT.Simul.yOf_single_of_lt,
+  MIPRE.LIDT.Simul.xOf_single_of_le, MIPRE.LIDT.Simul.yOf_zeroBelow,
+  MIPRE.LIDT.Simul.yOf_rep_single_of_le, MIPRE.LIDT.Simul.yOf_rep_single_of_lt,
+  MIPRE.LIDT.Simul.exists_yOf_rep, MIPRE.LIDT.Simul.jOf, MIPRE.LIDT.Simul.tyMap,
+  MIPRE.LIDT.Simul.qmap, MIPRE.LIDT.Simul.wyOf, MIPRE.LIDT.Simul.sampleMap,
+  MIPRE.LIDT.Simul.qmap_question, MIPRE.LIDT.Simul.xr, MIPRE.LIDT.Simul.xr_add,
+  MIPRE.LIDT.Simul.xr_smul, MIPRE.LIDT.Simul.xr_zero, MIPRE.LIDT.Simul.linEval,
+  MIPRE.LIDT.Simul.eval_linPoly_padB, MIPRE.LIDT.Simul.affPoly, MIPRE.LIDT.Simul.eval_affPoly,
+  MIPRE.LIDT.Simul.natDegree_affPoly_le, MIPRE.LIDT.Simul.natDegree_affPoly_le_of_zero,
+  MIPRE.LIDT.Simul.valsOf, MIPRE.LIDT.Simul.polysOf, MIPRE.LIDT.Simul.lineAns,
+  MIPRE.LIDT.Simul.rmap, MIPRE.LIDT.Simul.fmtOk_rmap, MIPRE.LIDT.Simul.base_add_lineParam,
+  MIPRE.LIDT.Simul.eval_lineAns_eq, MIPRE.LIDT.Simul.valAt_line_aux,
+  MIPRE.LIDT.Simul.natDegree_polysOf_values, MIPRE.LIDT.Simul.valAt_rmap,
+  MIPRE.LIDT.Simul.sample_question_mem, MIPRE.LIDT.Simul.valAt_eq_of_sampleRel,
+  MIPRE.LIDT.Simul.eq_point_of_not_cross, MIPRE.LIDT.Simul.not_isCross_point_left,
+  MIPRE.LIDT.Simul.not_isCross_point_right, MIPRE.LIDT.Simul.accepts_rmap,
+  MIPRE.LIDT.Simul.clGame_D_rmap, MIPRE.LIDT.Simul.sampleEquiv, MIPRE.LIDT.Simul.card_ty,
+  MIPRE.LIDT.Simul.card_sample, MIPRE.LIDT.Simul.eq_of_xOf_yOf,
+  MIPRE.LIDT.Simul.card_jOf_fiber_le, MIPRE.LIDT.Simul.card_sampleMap_fiber_le,
+  MIPRE.LIDT.Simul.clGame_mu_fibre, MIPRE.LIDT.Simul.sum_mu_qmap_le, MIPRE.LIDT.Simul.tuplePOVMA,
+  MIPRE.LIDT.Simul.tuplePOVMB, MIPRE.LIDT.Simul.toPOVM_mergeAt, MIPRE.LIDT.Simul.padded,
+  MIPRE.LIDT.Simul.exists_padded_value, MIPRE.LIDT.Simul.pointPOVMA_padded,
+  MIPRE.LIDT.Simul.pointPOVMB_padded}
+\leanok
+Let $1\leq r\leq K$, $d\geq1$, $m\mid q$ and $(K+m)\mid q$, and split the points of
+$\F_q^{K+m}$ as $(x,y)$ with the $K$ combining coordinates first. A projective strategy of
+failure at most $\eps$ at $(q,m,d,r)$ induces, on the same state and spaces, one at
+$(q,K+m,d,1)$ with failure at most $9(K+1)\eps$. At $(x,y)$ its point answer is
+$\sum_{j=1}^r x_jb_j$, where $(b_1,\ldots,b_r)$ is the original answer at $y$. Axis answers have
+degree at most $d$, diagonal answers at most $md+1\leq(K+m)d$.
+
+Both players share one seed offset. A combined question whose seed lies in block $i$ (counting
+from $0$) is sent to the original question with seed block $\max(i-K,0)$ and that offset, its line
+projected to the original coordinates and rebased; a line whose projection is a single point is
+sent to that point. Line answers are the original ones reparametrized along the combined line,
+multiplied by the combining coordinates and summed. All measurements are deterministic
+coarse-grainings once the offset is fixed, and the offset is chosen by averaging the complete
+game failure, not arbitrarily.
 \end{lemma}
+
+\begin{proof}
+\leanok
+On the two questions of one sample, the decider checks the formats, then equality for equal
+types, nothing for the two cross type pairs, and otherwise equality of the two answers' values at
+the sample's point. With a shared offset every pair of simulated questions is the pair of
+questions of a \emph{single} original sample, whose point, seed and direction are the original
+parts of the combined ones and whose types are the combined ones, collapsed to the point type
+where the projected line is a point. Acceptance then transfers subtest by subtest: equal combined
+types have equal images, and on a line-versus-point pair the combined answer's value at the point
+is $\sum_j x_jb_j$ with $b$ the original answer's value at $y$.
+
+The cost is the push-forward of the question distribution, averaged over the offset. The
+original sample, point, seed and offset determine the combined sample up to the three
+preimages of each type, the $q^{2K}$ combining coordinates of the point and the direction, and at
+most $(K+1)q/(K+m)$ combined seeds, the offset being determined; comparing the sizes of the two
+sample spaces, this is at most $9(K+1)$ times the original mass per offset.
+
+This is not the paper's route, which draws the seeds independently for each player from the
+conditional seed law of the projected diagonal distribution and loses $27M(\eps+d/q)$. Sharing the
+offset makes the simulated pair a single original sample, so the same-type line subtests need no
+chain of consistency links and the $d/q$ term does not arise.
+\end{proof}
 
 \begin{lemma}[Extracting exactly linear combined codewords]
 \label{lem:lidt-ldc-extraction}
@@ -1185,13 +1265,31 @@ costs $Kd/q$ rather than the source's $1/q$, since one Schwartz--Zippel lemma se
 \label{lem:lidt-ldc-error}
 \ledgernode{1.2.1.9.3}
 \uses{lem:lidt-ldc-extraction}
-There are universal $a\geq1$ and $0<b<1$ for which the preceding losses are
-bounded by $a(dmr)^a(\eps^b+q^{-b}+2^{-bmd})$.
-Use $M\leq4mr$, concavity of powers, and $M\geq m$ in the exponential term.
-When $m+r>q$, enlarge $a$ so the bound is at least one and use arbitrary
-complete projective measurements. This separates the trivial regime from the
-padding argument that requires $M\mid q$.
+\lean{MIPRE.LIDT.Simul.padM, MIPRE.LIDT.Simul.le_padM, MIPRE.LIDT.Simul.padM_le,
+  MIPRE.LIDT.Simul.padM_le_mul, MIPRE.LIDT.Simul.padM_dvd, MIPRE.LIDT.Simul.simA,
+  MIPRE.LIDT.Simul.deltaSim, MIPRE.LIDT.Simul.forty_le_simA, MIPRE.LIDT.Simul.clA_add_one_le_simA,
+  MIPRE.LIDT.Simul.rpow_le_rpow_simA, MIPRE.LIDT.Simul.deltaCL_padded_le,
+  MIPRE.LIDT.Simul.one_le_deltaSim, MIPRE.LIDT.Simul.constPM,
+  MIPRE.LIDT.Simul.inconsistency_le_one}
+\leanok
+Let $q=2^k$, $m,d,r\geq1$ and let $M$ be the least power of two at least $m+r$. If
+$m+r\leq q$ then $M\mid q$ and $M\leq2(m+r)\leq4mr$, and with $K=M-m$ the losses of
+Lemma~\ref{lem:lidt-ldc}, $\delta_{\mathrm{CL}}(9(K+1)\eps,q,M,d,1)+Md/q$, are bounded by
+\[
+  \delta_{\mathrm{sim}}(\eps,q,m,d,r)=a(dmr)^a(\eps^b+q^{-b}+2^{-bmd}),
+\]
+with $b$ the exponent of Theorem~\ref{thm:lidt-cl-soundness-one} and $a=40a_1 4^{a_1}$, $a_1$ its
+constant. If $m+r>q$ then $\delta_{\mathrm{sim}}\geq1$, and arbitrary complete projective
+measurements do. This separates the trivial regime from the padding argument that requires
+$M\mid q$.
 \end{lemma}
+
+\begin{proof}
+\leanok
+Use $M\leq4mr$ for the polynomial factor and the extraction term, $x^b\leq x$ for $x\geq1$ for
+the failure blow-up $9(K+1)\leq9M$, $q^{-1}\leq q^{-b}$, and $M\geq m$ in the exponential term.
+When $m+r>q$, $q<2dmr$ gives $q^{-b}\geq(2dmr)^{-1}$.
+\end{proof}
 
 \begin{lemma}[Effective seeded low-degree test]
 \label{lem:lidt-effective}
