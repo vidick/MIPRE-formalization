@@ -13,12 +13,14 @@ import MIPRE.Foundations.CL.ProductSamplerCost
 Piece AR-3f of `planning/answer-reduction.md`, for `lem:ar-typed-decider`. The decider's eight
 stages (`MIPRE/Background/AnswerReduction/ArDecider`) are, in cost: the parameter routine and the
 budgets' routine (`parCore_time`, `budCore_time`); four calls to the input sampler through the
-universal machine, each on a marginal query no larger than the input by more than a constant
-(`size_margQuery_le`), so that one call costs `Q (c |d|)^μ` (`PDom.ofCall`); two runs of the PCP
-verifier and the final verdict, polynomial-time functions of the context. So the decider's time on
-`(n, d)` is dominated by `(C (W + 1)^M (|d| + 1)^E)^{μ + 1}` (`typedDecider_time`), for any `W`
-above `Q = (λn + 1)^μ`, `λ`, `σ`, `n` and both input programs' sizes, when the input sampler runs
-within `Q (|d| + 1)^μ`, on every input — no answer is ever handed to the input decider.
+universal machine, each on a marginal query of a constant-size header and the oracle half of a
+question (`size_margQuery_le`), so that one call costs `Q (c W)^μ` when the oracle halves are at
+most `W` long (`PDom.ofCall`); two runs of the PCP verifier and the final verdict,
+polynomial-time functions of the context. So the decider's time on `(n, d)` is dominated by
+`(C (W + 1)^M X^E)^{μ + 1}` (`typedDecider_time`) whenever `|d|` is, for any `W` above
+`Q = (λn + 1)^μ`, `λ`, `σ`, `n` and both input programs' sizes, when the input sampler runs within
+`Q (|d| + 1)^μ` and the two questions' oracle halves are at most `W` long — as they are on every
+input the detyping compiler hands the decider. No answer is ever handed to the input decider.
 -/
 
 noncomputable section
