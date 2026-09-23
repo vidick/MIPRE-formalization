@@ -4028,6 +4028,40 @@ the ambient model the input witness already answers with strings of length at mo
 source model that is what the truncation of Lemma~\ref{lem:oracle-timeout-pcc} provides.
 \end{proof}
 
+\begin{lemma}[The typed oracularized sampler]
+\label{lem:oracle-typed-sampler}
+\uses{def:oracular-typed-game,def:typed-sampler-interface,lem:universal-tm,lem:smn}
+\lean{MIPRE.oracleSampler, MIPRE.oracleSampler_cl, MIPRE.oracleSampler_dim,
+  MIPRE.OracleSampler.core, MIPRE.OracleSampler.route_dimension,
+  MIPRE.OracleSampler.route_alice, MIPRE.OracleSampler.route_bob,
+  MIPRE.OracleSampler.route_oracle, MIPRE.OracleSampler.core_runs_within,
+  MIPRE.OracleSampler.oracleSampler_timeBound, MIPRE.OracleSampler.samplerProgFun,
+  MIPRE.OracleSampler.samplerProgFun_apply}
+\leanok
+For every sampler $\sampler$ with at least one level there is a typed sampler over
+$\type^\ora$, with the levels of $\sampler$, whose typed CL functions are those of
+Definition~\ref{def:oracular-typed-game}: the identity for $\oracle$, and the CL functions
+$L^\alice$, $L^\bob$ of $\sampler$ for $\alice$, $\bob$, the same for both players. It depends on
+$\sampler$ alone, and its program is computed from the program of $\sampler$ in polynomial time.
+There are constants $c, m, e$ such that, whenever $\sampler$ runs within $B(\abs{d} + 1)^k$ on
+inputs $(n, d)$ and $B$, $\abs{\sampler}$ and $n$ are at most $W$, the typed sampler runs within
+$c(W + 1)^m(\abs{d} + 1)^{e(k + 1)}$ on inputs $(n, d)$.
+\end{lemma}
+\begin{proof}
+\leanok
+The program is a fixed core run on the program of $\sampler$ through the s-m-n construction of
+Lemma~\ref{lem:smn}, as the repeated sampler is. The core answers a typed query with at most one
+call to $\sampler$, through the universal machine of Lemma~\ref{lem:universal-tm}. The dimension
+query is forwarded unchanged. A query at an isolated type is forwarded as the query of the
+corresponding original player. A query at the type $\oracle$ is answered from the query itself,
+with no call: the identity's marginals are the seed, its first stage map is the identity and its
+later ones are zero, its first factor space is everything and its later ones are empty. The zero
+vectors are written over the supplied vector rather than over the dimension, so the core never
+allocates by a dimension it has not been given. A forwarded query is at most twice the typed
+query plus a constant, and since $\abs{d} + 1 \geq 2$ the resulting constant factor is absorbed
+into the degree, so no term exponential in $k$ enters the coefficient.
+\end{proof}
+
 \begin{definition}[Ambient oracularization contract]
 \label{def:oracularization-contract}
 \uses{def:normal-verifier,def:pcc}
