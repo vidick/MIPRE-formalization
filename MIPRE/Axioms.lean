@@ -11,6 +11,7 @@ import MIPRE.Background.Introspection.DecisionKernelComplete
 import MIPRE.Background.Introspection.CanonicalDecodedStrategy
 import MIPRE.Background.Introspection.NumberedSoundness
 import MIPRE.Background.Introspection.Compiler
+import MIPRE.Background.Pipeline
 import MIPRE.Foundations.Blocks
 import MIPRE.Foundations.CL.Basic
 import MIPRE.Foundations.LowDegree.SchwartzZippel
@@ -2228,3 +2229,13 @@ block decomposition then needs. -/
   MIPRE.sum_comm_six,
   MIPRE.sum_comm_six_swap,
   MIPRE.sum_prod_fst
+
+/-! `cor:compression-from-answer-reduction`: the pipeline with its supplied stages
+(`MIPRE/Background/Pipeline.lean`). -/
+#guard_sorry_free MIPRE.GapCompression.ofAnswerReduction,
+  MIPRE.Halting.halting_reduces_to_gameValue_of_answerReduction,
+  MIPRE.Halting.halting_reduction_quantum_of_answerReduction,
+  MIPRE.Halting.gameValue_uncomputable_of_answerReduction,
+  MIPRE.Halting.quantumValue_uncomputable_of_answerReduction,
+  MIPRE.Halting.re_subset_mipstar_of_answerReduction,
+  MIPRE.Halting.mipstar_eq_re_of_answerReduction

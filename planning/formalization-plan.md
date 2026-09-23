@@ -805,6 +805,22 @@ and their running times accounted for explicitly. Order by distance to done for 
 oracularization (one theorem, an input to answer reduction's proof), answer reduction (needs
 H2 and `thm:succinct-sat`), introspection last and deepest.
 
+**Update 2026-09-23: answer reduction is the only missing stage.** `Introspection 7` is
+inhabited (#193, `Introspection.seven`), and `MIPRE/Background/Pipeline.lean` instantiates
+`ofPipeline` with it, `repetition 7` and `Cost.selfUniversal`:
+`Halting.mipstar_eq_re_of_answerReduction : AnswerReduction 5 → MIPStar = IsRE`, sorry-free
+(`cor:compression-from-answer-reduction`). An inhabitant of `AnswerReduction 5` now closes
+`HaltingGameValue.halting_reduces_to_gameValue` in one line. Before starting its proof the
+contract was audited against `thm:ar` (`ld_compiler.tex`) for the failure #189 found in
+oracularization's: it is not vacuous (the complexity clause excludes the wrapper witness, and
+constant deciders fail one of the value clauses), and every difference from the source is a
+weakening a construction can absorb (no timeout-counter hypothesis, the time bound assumed
+semantically at the index; a larger decider bound whose logarithm is still polynomial; `a >= 1`,
+`b <= 1`; no Entanglement clause; `sigma = 0` excluded by `esize_pos`). The audit is recorded
+under `def:answer-reduction-contract`. What is left is the source proof: oracularization is
+inhabited (#196, `Oracularization.construction`, the typed construction with its value transfers
+as theorems), so the thirteen `lem:ar-*` nodes and `thm:answer-reduction`.
+
 **The standing risk** is the one `planning/h4-assembly.md` §4 item 4 names: `GapCompression`
 has been consumed five times and supplied never — `TimeBoundAt` was refuted three times and
 `IsSynchronousAt` once (#77), each time by a consumer — and chapter 6 will read the structure

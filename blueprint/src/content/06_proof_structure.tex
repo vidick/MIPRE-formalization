@@ -5340,6 +5340,30 @@ The composition consumes an instance at $\ell=5$. Defining this contract does no
 construct an inhabitant or prove its correspondence with the source.
 \end{definition}
 
+\paragraph{Audit against the source (2026-09-23).} Oracularization's first ambient contract
+was vacuous: a wrapper that keeps the input verifier satisfied every field
+(Remark~\ref{rem:oracularization-contract}). This one does not admit that witness, because its complexity clause does the work: an input whose
+decider runs in time $2^{(\lambda n+1)^\mu}$ at degree $\mu$, with answers of that length, must
+give an output within a polynomial in $(\lambda n+1)^\mu+\sigma$ that rejects longer answers.
+A constant decider fails too: always accepting breaks soundness once $(\lambda n)^{-\mu b}$ is
+small, and always rejecting breaks completeness. Against the source's \texttt{thm:ar}
+(\texttt{ld\_compiler.tex}) the contract is a weakening at every point where it differs:
+\begin{itemize}
+\item it drops the hypothesis that the input decider is in timeout-counter form, and assumes
+  the time bound only semantically, through \texttt{Verifier.Within}, at the index in
+  question; a construction clocks the input decider itself, as the typed oracularized decider
+  does (Lemma~\ref{lem:oracle-typed-decider});
+\item its decider bound $2^{(\lambda n+1)^\mu}$ exceeds the source's $(2^{\lambda n})^\mu$, but its
+  logarithm is still polynomial in $(\lambda n+1)^\mu$, which is all the PCP needs;
+\item it allows $b = 1$ and requires $a \geq 1$, both choices of the prover;
+\item it omits the Entanglement clause, which compression does not use;
+\item $\delta$ vanishes at $\sigma = 0$, but no input satisfies $\abs{\decider} \leq 0$, program
+  encodings having positive size (\texttt{MIPRE.Cost.esize\_pos}).
+\end{itemize}
+So the contract is neither trivially satisfiable nor, as far as this comparison shows,
+stronger than the source. The comparison does not replace the proof, which is the only check
+of the time bounds against the construction.
+
 \begin{lemma}[Supplying ambient answer reduction]
 \label{lem:answer-reduction-supply}
 \uses{thm:answer-reduction,def:answer-reduction-contract,rem:runtime-normalization,rem:pcc-representation-bridge,rem:oracularization-contract}
@@ -5589,8 +5613,42 @@ The type \texttt{MIPRE.GapCompression} is inhabited.
 Lemma~\ref{lem:introspection-supply} and the proved repetition construction
 supply two of its inputs; Lemma~\ref{lem:answer-reduction-supply} remains open.
 This target records unconditional inhabitation separately from that checked
-conditional theorem.
+conditional theorem. Corollary~\ref{cor:compression-from-answer-reduction} plugs the two
+supplied inputs into the assembly, so an inhabitant of \texttt{MIPRE.AnswerReduction 5} is
+the only missing input.
 \end{theorem}
+
+\begin{corollary}[Compression, and $\MIPstar = \RE$, from answer reduction alone]
+\label{cor:compression-from-answer-reduction}
+\uses{thm:compression,lem:introspection-supply,thm:parallel-repetition,lem:universal-tm,thm:main,cor:main-quantum,cor:value-uncomputable,thm:mipstar-eq-re}
+\lean{MIPRE.GapCompression.ofAnswerReduction,
+  MIPRE.Halting.halting_reduces_to_gameValue_of_answerReduction,
+  MIPRE.Halting.halting_reduction_quantum_of_answerReduction,
+  MIPRE.Halting.gameValue_uncomputable_of_answerReduction,
+  MIPRE.Halting.quantumValue_uncomputable_of_answerReduction,
+  MIPRE.Halting.re_subset_mipstar_of_answerReduction,
+  MIPRE.Halting.mipstar_eq_re_of_answerReduction}
+\leanok
+From an inhabitant of \texttt{MIPRE.AnswerReduction 5} alone there is a
+\texttt{MIPRE.GapCompression}, and consequently Theorem~\ref{thm:main},
+Corollary~\ref{cor:main-quantum}, Corollary~\ref{cor:value-uncomputable} and
+Theorem~\ref{thm:mipstar-eq-re} hold with no other hypothesis.
+\end{corollary}
+
+\begin{proof}
+\leanok
+Theorem~\ref{thm:compression} applied to the introspection instance of
+Lemma~\ref{lem:introspection-supply}, the given answer reduction, and the repetition
+construction of Theorem~\ref{thm:parallel-repetition}; the universal machine is the one of
+Lemma~\ref{lem:universal-tm}. The chapter~7 results are then their conditional forms at this
+compression.
+\end{proof}
+
+\paragraph{Comments.} \texttt{MIPRE/Background/Pipeline.lean}. It is the first time the
+assembly is instantiated with the actual stage instances rather than hypotheses, so it is a
+check from the supply side that \texttt{ofPipeline} composes with them as they are. An
+inhabitant of \texttt{MIPRE.AnswerReduction 5} closes the \texttt{sorry} of
+\texttt{HaltingGameValue.halting\_reduces\_to\_gameValue} in one line.
 
 The three exterior stages are chained through a parameter budget:
 each stage's soundness clause is applied contrapositively, and each application needs a

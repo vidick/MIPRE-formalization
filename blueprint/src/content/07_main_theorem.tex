@@ -32,7 +32,9 @@ every Turing machine $\machine$:
 free of \texttt{sorry}; the unconditional \texttt{HaltingGameValue.halting\_reduces\_to\_gameValue}
 keeps its \texttt{sorry} as the target of Chapter~\ref{ch:proof-structure}, and the
 difference between the two is one structure. Theorem~\ref{thm:compression} constructs
-that structure conditionally on the ambient introspection and answer-reduction contracts.
+that structure conditionally on the ambient introspection and answer-reduction contracts;
+with the supplied introspection and repetition stages the only remaining hypothesis is answer
+reduction (Corollary~\ref{cor:compression-from-answer-reduction}).
 
 Theorem~\ref{thm:main} reads the computable explicit-game conclusion of
 Theorem~\ref{thm:halting} in the synchronous value. Its construction tabulates a
@@ -192,7 +194,8 @@ halting on the empty input is \texttt{MIPRE.IsRE.exists\_code\_halts}, from Math
 \texttt{Nat.Partrec.Code.curry}, and the class $\MIPstar$ is the computable one of
 Definition~\ref{def:mipstar}; the equality is conditional on the compression inhabitant
 of Theorem~\ref{thm:compression-target},
-as Theorem~\ref{thm:main} is.
+as Theorem~\ref{thm:main} is; with the supplied stages, on an answer-reduction inhabitant
+alone (Corollary~\ref{cor:compression-from-answer-reduction}).
 \end{proof}
 
 \begin{remark}
