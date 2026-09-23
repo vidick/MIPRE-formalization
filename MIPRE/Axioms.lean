@@ -187,6 +187,7 @@ import MIPRE.Foundations.Commutation
 import MIPRE.Foundations.Linearity
 import MIPRE.Foundations.Sandwich
 import MIPRE.Foundations.Pasting
+import MIPRE.Foundations.LowDegreeSandwich
 import MIPRE.Foundations.Expanded
 import MIPRE.Foundations.WeylEPR
 import MIPRE.Foundations.Swap
@@ -1496,6 +1497,39 @@ tell you the guard is missing.
   MIPRE.one_sub_sum_bornProb_pasteJ_le,
   MIPRE.sum_xSqNorm_pasteJ_le,
   MIPRE.sum_collisionTerm_le
+
+-- blueprint `lem:ar-sandwich-support`, the paper's `lem:ld-sandwich`: the `k`-fold sandwich of
+-- projective measurements, from evaluated coordinate agreement to evaluated tuple agreement, with
+-- the explicit constant `2 sqrt 2 k`.
+#guard_sorry_free MIPRE.one_sub_sum_bornProb_ldSandwich_le,
+  MIPRE.sandK,
+  MIPRE.sandK_zero,
+  MIPRE.sandK_succ,
+  MIPRE.sandK_snoc,
+  MIPRE.sandK_nonneg,
+  MIPRE.sum_sandK,
+  MIPRE.sqrt_sum_xSqNorm_sandK_le,
+  MIPRE.sqrt_sum_xSqNorm_sandStep_le,
+  MIPRE.sum_snorm_sq_sandStep_le,
+  MIPRE.snorm_sandStep_le,
+  MIPRE.sandStep_identity,
+  MIPRE.snorm_add3_le,
+  MIPRE.sqrt_sum_weighted_sq_add_le,
+  MIPRE.sqrt_sum_weighted_sq_le_add3,
+  MIPRE.sum_mul_sum_eq_sum_prod,
+  MIPRE.sqrt_wsum_le_add3,
+  MIPRE.IsPVM.le_one,
+  MIPRE.IsPVM.aOp_contraction,
+  MIPRE.IsPVM.bOp_contraction,
+  MIPRE.sum_bOp_conjTranspose_mul_self_le_one_of_nonneg,
+  MIPRE.fibSum_comp_equiv,
+  MIPRE.fibSum_marg_left,
+  MIPRE.fibSum_snd,
+  MIPRE.fibSum_fibSum,
+  MIPRE.sum_sum_bornProb_eq_one,
+  MIPRE.one_sub_sum_bornProb_le_sqrt,
+  MIPRE.sum_bornProb_le_fibSum_of_nonneg,
+  MIPRE.one_sub_sum_bornProb_le_eval
 
 /-! ## Introspection mixing, conditioning, and graph rejection sampling -/
 
