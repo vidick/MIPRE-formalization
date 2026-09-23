@@ -874,10 +874,17 @@ now: a witness for the non-theorem clauses of `GapCompression` alone (`output_*`
 `sampler_time`, `decider_time`, `sampler_dim`, `output_rejects_long`), to confirm the shape is
 inhabitable; a full trivial instance is impossible, the structure asserting a genuine theorem.
 
-**Chapter 8** (separation, Tsirelson, CEP) has 20 statements and no Lean, and needs NPA
-convergence, GNS, and `lem:rcf-decision` — decidability of real closed fields, which Mathlib
-does not have and which is a project of its own. Scope it; do not start it before chapter 6 has
-moved.
+**Chapter 8 — implementation plan added 2026-09-23.**
+[tsirelson-campaign.md](tsirelson-campaign.md) scopes the non-explicit negative answer to
+Tsirelson's problem, with precise interfaces, twelve proposed review milestones, and local
+validation gates. Quantum lower semidecision and Lin's tracial density theorem are already
+formalized; the companion repository contains a reviewed mathematical NPA proof, and the
+pinned Mathlib has GNS infrastructure. NPA convergence and effective commuting upper
+semidecision still need Lean implementations. The plan proposes exact bounded-feasibility
+refutation certificates, subject to an early proof/implementation gate, to avoid making full
+real-closed-field decision a prerequisite. The explicit separating game and CEP remain
+separate. Upstream PR #197 supplies the main pipeline from answer reduction alone, so this
+downstream work can proceed against that explicit interface while answer reduction finishes.
 
 ## Working rules for this track
 
