@@ -681,6 +681,106 @@ theorem gcB_le (hgc : PcpSound V n P hk check B' dec) (x : Fin (V.sampler.dim n)
         have := Finset.sum_le_sum fun i (_ : i ∈ univ) => hdis i
         linarith
 
+/-! ## The value of the decoded strategy -/
+
+theorem one_sub_value_nonneg : 0 ≤ 1 - T.value := sub_nonneg.mpr (T.value_le_one)
+
+theorem err1_nonneg : 0 ≤ err1 V n P hk S S' check B T :=
+  Simul.deltaSim_nonneg _ _ _ _ <| by
+    have := one_sub_value_nonneg V n P hk S S' check B T; positivity
+
+theorem err6_nonneg : 0 ≤ err6 V n P hk S S' check B T :=
+  Simul.deltaSim_nonneg _ _ _ _ <| by
+    have := one_sub_value_nonneg V n P hk S S' check B T; positivity
+
+/-- The combined error of the decoded strategy's analysis. -/
+def errD : ℝ :=
+  11 * (err6 V n P hk S S' check B T + 2916 * (1 - T.value) + err1 V n P hk S S' check B T)
+    + errSZ P hk
+
+theorem sum_disPolyA_le' (i : Fin 5) :
+    ∑ x, disPolyA V n P hk S S' check B T i x
+      ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * errD V n P hk S S' check B T :=
+  sum_disPolyA_le V n P hk S S' check B T i
+
+theorem sum_disPolyB_le' (i : Fin 5) :
+    ∑ x, disPolyB V n P hk S S' check B T i x
+      ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * errD V n P hk S S' check B T := by
+  have h := sum_disPolyB_le V n P hk S S' check B T i
+  unfold errD
+  linarith
+
+/-- **Alice's oracles' game checks**, summed over the oracle halves. -/
+theorem sum_gcA_le (hgc : PcpSound V n P hk check B' dec) :
+    ∑ x, gcA V n P hk S S' check B T B' dec ((roleFamily (V.sampler.cl n) .oracle).eval x)
+      ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * (7 * errD V n P hk S S' check B T) := by
+  have h1 := Finset.sum_le_sum fun x (_ : x ∈ univ) =>
+    gcA_le V n P hk S S' check B T B' dec hgc x
+  have h2 := sum_gcEvA_le V n P hk S S' check B T
+  have h3 : ∑ i : Fin 5, ∑ x, disPolyA V n P hk S S' check B T i x
+      ≤ ∑ _i : Fin 5, Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * errD V n P hk S S' check B T :=
+    Finset.sum_le_sum fun i _ => sum_disPolyA_le' V n P hk S S' check B T i
+  rw [Finset.sum_add_distrib, Finset.sum_comm, ← Finset.mul_sum] at h1
+  simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] at h3
+  have hX : (0 : ℝ) ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) := by positivity
+  have he1 := err1_nonneg V n P hk S S' check B T
+  have hsz := errSZ_nonneg P hk
+  have hθ := one_sub_value_nonneg V n P hk S S' check B T
+  have he6 := err6_nonneg V n P hk S S' check B T
+  have hG : err6 V n P hk S S' check B T + 2916 * (1 - T.value)
+      ≤ errD V n P hk S S' check B T := by unfold errD; linarith
+  have := mul_le_mul_of_nonneg_left hG hX
+  push_cast at h3
+  nlinarith
+
+/-- **Bob's oracles' game checks**, summed over the oracle halves. -/
+theorem sum_gcB_le (hgc : PcpSound V n P hk check B' dec) :
+    ∑ x, gcB V n P hk S S' check B T B' dec ((roleFamily (V.sampler.cl n) .oracle).eval x)
+      ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * (7 * errD V n P hk S S' check B T) := by
+  have h1 := Finset.sum_le_sum fun x (_ : x ∈ univ) =>
+    gcB_le V n P hk S S' check B T B' dec hgc x
+  have h2 := sum_gcEvB_le V n P hk S S' check B T
+  have h3 : ∑ i : Fin 5, ∑ x, disPolyB V n P hk S S' check B T i x
+      ≤ ∑ _i : Fin 5, Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * errD V n P hk S S' check B T :=
+    Finset.sum_le_sum fun i _ => sum_disPolyB_le' V n P hk S S' check B T i
+  rw [Finset.sum_add_distrib, Finset.sum_comm, ← Finset.mul_sum] at h1
+  simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] at h3
+  have hX : (0 : ℝ) ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) := by positivity
+  have he1 := err1_nonneg V n P hk S S' check B T
+  have hsz := errSZ_nonneg P hk
+  have hθ := one_sub_value_nonneg V n P hk S S' check B T
+  have he6 := err6_nonneg V n P hk S S' check B T
+  have hG : err6 V n P hk S S' check B T + 2916 * (1 - T.value)
+      ≤ errD V n P hk S S' check B T := by unfold errD; linarith
+  have := mul_le_mul_of_nonneg_left hG hX
+  push_cast at h3
+  nlinarith
+
+/-- **The two oracles' `J` disagree** at most the sixth copy's extraction error, on average. -/
+theorem sum_dis_JA_JB_le :
+    ∑ x, dis T.ψ ((JA V n P hk S S' check B T ((roleFamily (V.sampler.cl n) .oracle).eval x)).toPOVM
+        ()) ((JB V n P hk S S' check B T ((roleFamily (V.sampler.cl n) .oracle).eval x)).toPOVM ())
+      ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * err6 V n P hk S S' check B T := by
+  refine le_trans (Finset.sum_le_sum fun x _ => ?_) (sum_deltaSim6_le V n P hk S S' check B T)
+  obtain ⟨-, -, h3⟩ := ext6_spec V n P hk S S' check B T
+    ((roleFamily (V.sampler.cl n) .oracle).eval x)
+  have := sum_dis_le_of_inconsistency T.ψ_unit _ _ h3
+  simpa using this
+
+/-- **Two isolated players' `G` disagree** at most copy `i`'s extraction error, on average. -/
+theorem sum_dis_GA_GB_le (i : Fin 5) :
+    ∑ x, dis T.ψ ((GA1 V n P hk S S' check B T (roleOf i) i
+        ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)).toPOVM ())
+        ((GB1 V n P hk S S' check B T (roleOf i) i
+          ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)).toPOVM ())
+      ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * err1 V n P hk S S' check B T := by
+  refine le_trans (Finset.sum_le_sum fun x _ => ?_)
+    (sum_deltaSim1_le V n P hk S S' check B T (ldStep_roleOf i))
+  obtain ⟨-, -, h3⟩ := ext1_spec V n P hk S S' check B T (roleOf i) i
+    ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)
+  have := sum_dis_le_of_inconsistency T.ψ_unit _ _ h3
+  simpa using this
+
 end MIPRE.AnswerReduction
 
 end

@@ -69,6 +69,15 @@ theorem sum_deltaSim_le {ι : Type*} [Fintype ι] (q m d r : ℕ) (ε : ι → �
   have := mul_le_mul_of_nonneg_left h hA
   nlinarith
 
+theorem deltaSim_nonneg (q m d r : ℕ) {ε : ℝ} (hε : 0 ≤ ε) : 0 ≤ deltaSim q m d r ε := by
+  have := forty_le_simA
+  have h1 : 0 ≤ ε ^ clB := Real.rpow_nonneg hε _
+  have h2 : 0 ≤ (q : ℝ) ^ (-clB) := Real.rpow_nonneg (Nat.cast_nonneg _) _
+  have h3 : 0 ≤ (2 : ℝ) ^ (-(clB * m * d)) := Real.rpow_nonneg (by norm_num) _
+  have h4 : 0 ≤ ((d * m * r : ℕ) : ℝ) ^ simA := Real.rpow_nonneg (Nat.cast_nonneg _) _
+  unfold deltaSim
+  positivity
+
 end MIPRE.LIDT.Simul
 
 namespace MIPRE.AnswerReduction
