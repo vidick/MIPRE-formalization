@@ -4,6 +4,9 @@ import MIPRE.Background.AnswerReduction.Family
 import MIPRE.Background.AnswerReduction.Layout
 import MIPRE.Background.AnswerReduction.PcpPresentation
 import MIPRE.Background.AnswerReduction.Predicate
+import MIPRE.Background.AnswerReduction.StageCorrect
+import MIPRE.Background.AnswerReduction.StageLists
+import MIPRE.Background.AnswerReduction.StageProg
 import MIPRE.Background.AnswerReduction.Stages
 import MIPRE.Background.AnswerReduction.TypedGame
 import MIPRE.Background.GowersHatami.Basic
