@@ -7,7 +7,8 @@ the precedent `planning/repetition-verifier.md` — and before any verifier-leve
 analogue of that file for this item: what exists, what the target is, and the pieces in order.
 Tracked by issue #189.
 
-**Done:** O1 (#190, `Foundations/OracularTensor.lean`) and O2 (`Foundations/OracularTyped.lean`).
+**Done:** O1 (#190, `Foundations/OracularTensor.lean`), O2 (#191, `Foundations/OracularTyped.lean`)
+and O3 (`Foundations/OracularSampler.lean`).
 The rest of this file is the plan as written before the work; what changed on the way is recorded
 in the entries below.
 
@@ -116,6 +117,16 @@ with the player replaced, and answers `oracle` queries directly; the `runs_*` cl
 every input, the time bound `poly(TIME_S)` and the program as a `PolyTimeFun` of `S.prog`
 (`lem:oracle-effective-interface`, sampler half). Precedent: `CL/DetypingProgTyped.lean` (the
 reverse adapter) and `Prog.routeOneCall`.
+
+*As done:* `lem:oracle-typed-sampler`. The program is `hardcode core (encode S.prog)`, the core
+being `Prog.routeOneCall` with the universal machine as the one callee, so `samplerProgFun` is the
+s-m-n map, as in repetition. The oracle's queries need no call: the identity's zero vectors are
+written over the supplied vector (`y` for a stage map, `u` for a factor space), whose length is the
+dimension exactly when the query is well formed, the only case the correctness clauses concern.
+The running time (`oracleSampler_timeBound`) is `c (W + 1)^m (|d| + 1)^{e (k + 1)}` with `W`
+dominating only the input's coefficient, description length and the index; unlike repetition's
+`Repetition.arg` it needs no `10^k`, because a forwarded query is at most twice the typed query
+plus a constant, and `|d| + 1 ≥ 2` absorbs that constant factor into the degree.
 
 **O4 — the typed decider.** A total `TypedDecider Role`: the dimension query, the type and length
 checks, the bounded parse of each answer against `B` (pairs for the oracle, single strings

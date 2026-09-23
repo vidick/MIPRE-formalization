@@ -147,6 +147,7 @@ import MIPRE.Foundations.OracularComplete
 import MIPRE.Foundations.OracularSound
 import MIPRE.Foundations.OracularTensor
 import MIPRE.Foundations.OracularTyped
+import MIPRE.Foundations.OracularSampler
 import MIPRE.Foundations.LowDegree.SelfDualize
 import MIPRE.Foundations.LowDegree.NormalBasis
 import MIPRE.Foundations.SAT.AdmissibleField
@@ -579,6 +580,21 @@ tell you the guard is missing.
   MIPRE.oraclePred_encAns,
   MIPRE.Verifier.valStar_ge_of_oraclePred,
   MIPRE.Verifier.exists_oraclePred_perfectPCC
+
+-- blueprint `lem:oracle-typed-sampler`: the typed oracularized sampler, its query clauses, its
+-- running time and its program as a polynomial-time function of the input sampler's.
+#guard_sorry_free MIPRE.oracleSampler,
+  MIPRE.oracleSampler_cl,
+  MIPRE.oracleSampler_dim,
+  MIPRE.OracleSampler.core,
+  MIPRE.OracleSampler.route_dimension,
+  MIPRE.OracleSampler.route_alice,
+  MIPRE.OracleSampler.route_bob,
+  MIPRE.OracleSampler.route_oracle,
+  MIPRE.OracleSampler.core_runs_within,
+  MIPRE.OracleSampler.oracleSampler_timeBound,
+  MIPRE.OracleSampler.samplerProgFun,
+  MIPRE.OracleSampler.samplerProgFun_apply
 
 -- blueprint `lem:pcp-zero-basis`: preserve the individual-degree bounds needed by the PCP.
 #guard_sorry_free MIPRE.SAT.ArrayProg.eqBits,
