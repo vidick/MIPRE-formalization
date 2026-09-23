@@ -3905,6 +3905,11 @@ reduction. This is probably the easiest transformation in the paper and could be
 \label{thm:oracularization}
 \ledgernode{1.3.5}
 \uses{def:normal-verifier,def:pcc,def:sync-strategy}
+\lean{MIPRE.Oracularization.construction,
+  MIPRE.Oracularization.typed_soundness, MIPRE.Oracularization.typed_completeness,
+  MIPRE.Oracularization.detyped, MIPRE.Oracularization.detyped_completeness,
+  MIPRE.Oracularization.detyped_soundness}
+\leanok
 The source theorem supplies a polynomial-time Turing machine $\ComputeOracleVerifier$
 mapping an $\ell$-level normal form verifier $\verifier = (\sampler, \decider)$,
 whose decider is in standard timeout-counter form, to a \emph{typed} verifier $\vora$
@@ -3924,6 +3929,29 @@ bounded parse of each answer component against the decider's timeout bound $B_\d
 answers failing the parse are grouped into one distinguished outcome, so the oracle
 families are projective measurements and not sub-measurements.
 \end{theorem}
+\begin{proof}
+\uses{def:oracularization-contract,lem:oracle-typed-sampler,lem:oracle-typed-decider,%
+lem:oracle-decider-time,lem:oracular-typed-transfers,lem:detype-compiler}
+\leanok
+The typed oracularized verifier is the pair of Lemma~\ref{lem:oracle-typed-sampler} and
+Lemma~\ref{lem:oracle-typed-decider}, and it inhabits the specification of
+Definition~\ref{def:oracularization-contract}, with the running times of
+Lemma~\ref{lem:oracle-decider-time}. Completeness and soundness of its typed game are the
+transfers of Lemma~\ref{lem:oracular-typed-transfers}, read through the decider's acceptance
+law, with $\delta(\eps) = 24\sqrt{\eps}$. Through the detyping compiler of
+Lemma~\ref{lem:detype-compiler}, the verifier with $\ell + 3$ levels has the same completeness and
+soundness with $\delta(\eps) = 1536\sqrt{\eps}$: the factor $16^3$ of the three types, under the
+square root, times $24$.
+\end{proof}
+
+\paragraph{Formalized form.} The ambient model has no timeout-counter form. The formalization
+replaces it with an index routine that supplies, at each index $n$, a parse cut $B(n)$ and a
+simulation budget $K(n)$; the decider runs its core under the clocked universal machine for $K(n)$
+steps, which makes it total, as the detyping compiler requires. Soundness holds at every budget.
+Completeness holds once $K(n)$ covers the running time of the core, which is polynomial in the
+running times of $\verifier$ at $n$ (Lemma~\ref{lem:oracle-decider-time}): this is the hypothesis
+that the timeout bound supplies in the source. The typed sampler has the levels of the input
+sampler, at least one.
 
 \begin{definition}[The oracularized game]
 \label{def:oracular-game}
@@ -4302,48 +4330,50 @@ index routine and of the clocked universal machine on the budget and the input, 
 time of $\verifier$ enters only through the budget.
 \end{proof}
 
-\begin{definition}[Ambient oracularization contract]
+\begin{definition}[Oracularization specification]
 \label{def:oracularization-contract}
-\uses{def:normal-verifier,def:pcc}
-\lean{MIPRE.Oracularization}
+\uses{def:oracular-typed-game,lem:oracle-typed-sampler,def:pcc}
+\lean{MIPRE.Oracularization, MIPRE.Oracularization.inputSize}
 \leanok
-The structure \texttt{MIPRE.Oracularization}, parametrized by $\ell$, is an ambient hypothesis
-structure with \emph{untyped}, level-preserving output. It takes an explicit parse
-bound $(\lambda n+1)^\beta$; its sampler depends only on the input sampler, and its
-sampler and decider descriptions are computable in polynomial time. Completeness
-transfers \texttt{HasPerfectPCC} at that input cut to the declared output answer bound,
-a fixed polynomial in the parse bound. Soundness, for $\eps>0$, transfers output value
-greater than $1-\eps$ to input value at least $1-c\sqrt{\eps}$, for a fixed $c>0$.
-Its resource clause is polynomial in the parse bound, the input budget and the input
-description size, at a degree affine in the input's degree. These are specified fields;
-the declaration does not construct such a verifier.
+The structure \texttt{MIPRE.Oracularization}, parametrized by $\ell$, specifies the typed
+oracularized verifier of an $(\ell + 1)$-level normal form verifier. Its sampler is the typed
+sampler of Lemma~\ref{lem:oracle-typed-sampler}, so the oracle form of the sampler is
+definitional. Its fields specify the decider: a typed decider over $\type^\ora$ of the programs
+of the input sampler and decider and of an index routine supplying a parse cut $B(n)$ and a
+simulation budget $K(n)$. The decider halts on every input, and its program is a polynomial-time
+function of the three programs. It accepts only answers that the bit-string predicate of
+Definition~\ref{def:oracular-typed-game} accepts at the cut $B(n)$: this is the oracle form of the
+decider. It accepts every such answer within an answer cut $T$ once
+$K(n) \geq c(W + 1)^m(Z + 1)^{e(k + 1)}$, where $W$ bounds the running-time coefficients of the
+input verifier at $n$, $k$ is their degree, and $Z$ is the sum of the description lengths of the
+input programs, the sizes of $B(n)$ and $n$, the dimension $s(n)$ and $T$. It runs within
+$c'(W' + 1)^{m'}(\abs{d} + 1)^{e'}$ on inputs $(n, d)$, where $W'$ bounds $K(n)$, $B(n)$, the index
+routine's running time at $n$, the description lengths of the three programs and $n$.
 \end{definition}
 
-\begin{remark}[Typed oracle interface obligation]
+\begin{remark}[The specification and the earlier contract]
 \label{rem:oracularization-contract}
-\uses{thm:oracularization,def:oracularization-contract,rem:typed-detyping,rem:runtime-normalization,rem:pcc-representation-bridge}
-The source typed theorem does not directly inhabit this structure. Generic detyping
-adds two levels, so a level-preserving untyped implementation or a suitable typed
-interface remains an obligation, together with the runtime adaptation of
-Remark~\ref{rem:runtime-normalization}. In the paper, oracularization is internal to
-the proof of Theorem~\ref{thm:answer-reduction}; its analysis uses the typed verifier
-and detypes only the final answer-reduced verifier. The checked composition
-\texttt{MIPRE.GapCompression.ofPipeline} therefore does not consume
-\texttt{MIPRE.Oracularization}. Inhabiting the existing untyped oracle structure
-would require a separate justification before using it in the source answer-reduction
-proof; it is not a fourth exterior stage or an additional soundness loss in compression.
-
-The structure is moreover satisfied by a transformation that does not oracularize at all: keep
+\uses{thm:oracularization,def:oracularization-contract,rem:typed-detyping,rem:runtime-normalization}
+An earlier version of \texttt{MIPRE.Oracularization} was untyped and level-preserving, with value
+transfers as fields. It was satisfied by a transformation that does not oracularize at all: keep
 the input sampler, and let the output decider reject any answer longer than the parse bound and
 otherwise run the input decider. At the parse bound its game is $\verifier_n$ itself, so
-completeness is the identity and soundness holds with $c = 1$. No field sees the \emph{oracle
+completeness is the identity and soundness holds with $c = 1$. No field saw the \emph{oracle
 form} of the output --- that one player's answer alone decides the game check, and the other
 player's answer must equal one of its components --- and that form is the only property of
 oracularization that answer reduction uses: the probabilistically checkable proof replaces
 exactly that game check (Lemma~\ref{lem:ar-construction}), and the decoding step returns to
-exactly that form (Lemma~\ref{lem:ar-decoding}). No contract made of value transfers alone can
-see it. The formalization therefore targets the typed construction itself, with its value
-transfers as theorems about it; \texttt{planning/oracularization.md} records the plan.
+exactly that form (Lemma~\ref{lem:ar-decoding}).
+
+The specification of Definition~\ref{def:oracularization-contract} sees the oracle form in both
+halves: the sampler is fixed to the oracle's, and the decider's acceptance implies the
+oracularized predicate. It is inhabited by the construction, and the value transfers are theorems
+about every inhabitant, both for the typed game and for the verifier with $\ell + 3$ levels that
+the detyping compiler produces. In the source, oracularization is internal to the proof of
+Theorem~\ref{thm:answer-reduction}, whose analysis uses the typed verifier and detypes only the
+final answer-reduced verifier. The checked composition \texttt{MIPRE.GapCompression.ofPipeline}
+does not consume \texttt{MIPRE.Oracularization}, and the detyped verifier is not a stage of
+compression.
 \end{remark}
 
 \begin{remark}[What the audit changed in oracularization]
@@ -5038,12 +5068,19 @@ $\TIME_D(n)\leq B$; wrapper runtime may be polynomial in $B$.
 \begin{lemma}[Effective typed oracle construction]
 \label{lem:oracle-effective-interface}
 \ledgernode{1.3.5.1}
-\uses{thm:oracularization}
+\uses{thm:oracularization,lem:oracle-typed-sampler,lem:oracle-decider-time}
+\lean{MIPRE.OracleSampler.samplerProgFun, MIPRE.OracleSampler.oracleSampler_timeBound,
+  MIPRE.OracleDecider.deciderProgFun, MIPRE.OracleDecider.oracleDecider_timeBound,
+  MIPRE.OracleDecider.core_timeBound}
+\leanok
 The typed oracle verifier is compiled in time polynomial in the input
 description. Its sampler preserves $\ell$ levels, depends only on the
 input sampler, and runs in $\poly(\TIME_S(n))$. Its decider runs in
 $\poly(\TIME_S(n),B_D(n))$, including the bounded format checks.
 This is the typed construction used inside answer reduction.
+In the ambient model the decider's running time is polynomial in the budget of its index
+routine, and a budget polynomial in the running times of the input verifier covers the core
+(Lemma~\ref{lem:oracle-decider-time}).
 \end{lemma}
 
 \begin{lemma}[Timeout-compatible oracle PCC completeness]

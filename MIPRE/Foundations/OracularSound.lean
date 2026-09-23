@@ -45,10 +45,12 @@ blueprint `rem:distance-state`. `MIPRE/Foundations/Closeness.lean` is that calcu
 
 ## Scope
 
-Nothing here inhabits `MIPRE.Oracularization`. The complexity clause, the bounded parse and
-its grouping, the truncation to `B_𝒟(n)` and the level accounting of
-`rem:oracularization-contract` are all statements about a verifier and none of them appears at
-this level; `rem:oracular-game-level` records that.
+Nothing here inhabits `MIPRE.Oracularization`: that is done at the level of verifiers, in
+`Foundations/Pipeline/Oracularization.lean`, whose bipartite soundness rests on
+`Foundations/OracularTensor.lean` rather than on the synchronous argument here. The complexity
+clause, the bounded parse and its grouping, the truncation to `B_𝒟(n)` and the level accounting
+are all statements about a verifier and none of them appears at this level;
+`rem:oracular-game-level` records that.
 -/
 
 namespace MIPRE

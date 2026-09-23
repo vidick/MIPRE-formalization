@@ -7,9 +7,12 @@ the precedent `planning/repetition-verifier.md` — and before any verifier-leve
 analogue of that file for this item: what exists, what the target is, and the pieces in order.
 Tracked by issue #189.
 
-**Done:** O1 (#190, `Foundations/OracularTensor.lean`), O2 (#191, `Foundations/OracularTyped.lean`),
-O3 (#192, `Foundations/OracularSampler.lean`), O4 (#194, `Foundations/OracularDecider.lean`) and its
-running times (`Foundations/OracularDeciderCost.lean`); O5 is next.
+**Done:** all five pieces. O1 (#190, `Foundations/OracularTensor.lean`), O2 (#191,
+`Foundations/OracularTyped.lean`), O3 (#192, `Foundations/OracularSampler.lean`), O4 (#194,
+`Foundations/OracularDecider.lean`), its running times (#195, `Foundations/OracularDeciderCost.lean`)
+and O5 (`Foundations/Pipeline/Oracularization.lean`): the contract is restated as the
+specification of the typed construction and inhabited, and `thm:oracularization` carries both
+`\leanok` marks.
 The rest of this file is the plan as written before the work; what changed on the way is recorded
 in the entries below.
 
@@ -20,9 +23,10 @@ in the entries below.
   PCC synchronous strategy of the doubled input game gives a PCC synchronous strategy of the
   oracularization with the same value; soundness `SeededGame.soundStrategy_value_ge`
   (`lem:oracular-soundness`): value `1 - ε` gives `1 - 24 √ε`, **for synchronous strategies**.
-* **The contract.** `MIPRE.Oracularization ℓ` (`Foundations/Pipeline/Oracularization.lean`,
+* **The contract**, as it was. `MIPRE.Oracularization ℓ` (`Foundations/Pipeline/Oracularization.lean`,
   `def:oracularization-contract`): untyped, level-preserving, with value transfers and a budget
-  clause. `GapCompression.ofPipeline` does not consume it (`rem:oracularization-contract`).
+  clause. `GapCompression.ofPipeline` does not consume it (`rem:oracularization-contract`). O5
+  replaced it.
 * **The detyping compiler, complete.** `CL.Detyping.DeciderProgram.verifier E S D C :
   Verifier (ℓ + 2)` from a `TypedSampler ℓ T`, a total `TypedDecider T` and a cutoff program,
   with PCC completeness (`verifier_hasPerfectPCC`), same-state soundness at the factor `16^|T|`
@@ -188,6 +192,32 @@ O3 and O4; the detyped `ℓ + 2`-level verifier as a corollary through the compi
 `\lean` and `\leanok` on `thm:oracularization`, `lem:oracle-effective-interface`,
 `lem:oracle-timeout-pcc`; `def:oracularization-contract` and `rem:oracularization-contract`
 rewritten.
+
+*As done:* `MIPRE.Oracularization ℓ` is now the specification of the typed construction for
+`ℓ + 1`-level inputs. The sampler is `oracleSampler`, so its oracle form is definitional; no field
+describes it, because a field would have to state the typed CL functions across the propositional
+equality of dimensions, and `oracleSampler`'s is definitional. The fields describe the decider, of
+the input programs and an index routine:
+
+* `total` and `compute`, the s-m-n map;
+* `sound`, acceptance implies `oraclePred` at the routine's cut — the oracle form of the decider,
+  what the vacuous contract could not see;
+* `complete`, the converse on answers within a cut `T`, once the budget is at least
+  `c (W + 1)^m (Z + 1)^{e (k + 1)}` with `Z = inputSize`, a construction-independent size (the
+  description lengths, the cut, the index, the dimension, `T`);
+* `time`, the running time.
+
+`Oracularization.construction` inhabits it (O4, O4b; the core's input bound is absorbed into a
+power of `inputSize`). The value transfers are theorems about every inhabitant: for the typed game
+(`typed_soundness`, `1 - 24√ε`; `typed_completeness`), and for the detyped verifier, which has
+`ℓ + 3` levels for `ℓ + 1`-level input (`detyped`, `detyped_completeness`, `detyped_soundness`,
+`1 - 1536√ε`: the compiler's `16³` on three types, under the square root). `lem:oracle-timeout-pcc`
+is not formalized: the specification's completeness takes `V.HasPerfectPCC` at the parse cut
+itself, and the truncation that supplies it is the consumer's (`Verifier.hasPerfectPCC_of_le`
+goes the other way).
+
+What answer reduction will take from here: the typed sampler and decider with their oracle forms,
+the index routine as the place where its exponential timeout bound enters, and the transfers.
 
 ## Order and size
 
