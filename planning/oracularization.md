@@ -7,6 +7,10 @@ the precedent `planning/repetition-verifier.md` — and before any verifier-leve
 analogue of that file for this item: what exists, what the target is, and the pieces in order.
 Tracked by issue #189.
 
+**Done:** O1 (#190, `Foundations/OracularTensor.lean`) and O2 (`Foundations/OracularTyped.lean`).
+The rest of this file is the plan as written before the work; what changed on the way is recorded
+in the entries below.
+
 ## What exists
 
 * **The game level.** `SeededGame.oracular` (`def:oracular-game`), a synchronous game with no
@@ -88,11 +92,23 @@ Blueprint: a lemma beside `lem:oracular-soundness`, proof-level `\leanok` with i
 **O2 — the typed game.** `Detyping.typedGame` on the complete type graph with loops over `Role`,
 with the role family `(id, L^𝖠, L^𝖡)` and bit-string answers under a bounded-parse predicate,
 compared with `SeededGame.oracular` over `Answers B` through the parse (soundness: acceptance
-factors through it) and the encoding (completeness: an injective relabelling). Delivered in the
-forms the detyping transport consumes: a PCC value-`1` synchronous strategy of the doubled typed
-game from `V.HasPerfectPCC n B` (`oracleStrategy`, doubled and relabelled), and
+factors through it) and the encoding (completeness). Delivered in the forms the detyping
+transport consumes: a PCC value-`1` synchronous strategy of the doubled typed game from
+`V.HasPerfectPCC n B` (`oracleStrategy`, doubled and relabelled), and
 `quantumValue (typed game) > 1 - ε → V.valStar n B ≥ 1 - 24√ε` (O1, through the parse). Also
 `lem:oracle-timeout-pcc` (`1.3.5.2`) at this level. Pure mathematics; no programs.
+
+*As done:* `def:oracular-typed-game`, `lem:oracular-typed-transfers`. Both transfers are proved for
+any typed predicate of the right form (`valStar_ge_of_typed`, `exists_typed_perfectPCC`) and then
+for the concrete one (`Verifier.oracleTypedPred`: `pairEnc`/`pairDec` serialize a pair by the
+postorder bits of its encoding, the format the repeated decider already parses; `parseAns` parses
+by role against `B`; `oraclePred` rejects a failed parse). The encoding for completeness is a
+pushforward, not an injective relabelling (`SyncStrategy.pushTo`): the honest encoding of a pair
+and of a single answer may collide, and only accepted pairs need to survive. The output cut must
+hold every honest encoding, `T ≥ 8B + 3`. Soundness holds at every output cut. What O4 has to
+prove is exactly that the typed decider program accepts `(n, t, x, u, y, a, b)` iff
+`oraclePred (V.seeded n B) (t, x) (u, y) a b`; the detyping transport then applies with
+`C.inner n = C.outer n = T`.
 
 **O3 — the typed sampler.** `TypedSampler ℓ Role` from `CL.Sampler ℓ`: the identity as an
 `ℓ`-level CL function; a query adapter that forwards `alice`/`bob` queries to the input sampler

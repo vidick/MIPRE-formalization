@@ -146,6 +146,7 @@ import MIPRE.Foundations.PerfectStrategy
 import MIPRE.Foundations.OracularComplete
 import MIPRE.Foundations.OracularSound
 import MIPRE.Foundations.OracularTensor
+import MIPRE.Foundations.OracularTyped
 import MIPRE.Foundations.LowDegree.SelfDualize
 import MIPRE.Foundations.LowDegree.NormalBasis
 import MIPRE.Foundations.SAT.AdmissibleField
@@ -559,6 +560,25 @@ tell you the guard is missing.
   MIPRE.SeededGame.succAt_oracle_le,
   MIPRE.SeededGame.succAt_tensorSound_ge,
   MIPRE.SeededGame.sum_failAt_four_le
+
+-- blueprint `lem:oracular-typed-transfers`: the typed oracularized game of a normal form
+-- verifier, in the vocabulary of the detyping compiler, and its two value transfers.
+#guard_sorry_free MIPRE.CL.CLFun.eval_ident,
+  MIPRE.CL.CLFun.exactlyOn_ident,
+  MIPRE.exactlyOn_roleFamily,
+  MIPRE.SeededGame.typedGame_mu,
+  MIPRE.SeededGame.quantumValue_typedGame_le,
+  MIPRE.SyncStrategy.pushTo,
+  MIPRE.SyncStrategy.value_le_pushTo,
+  MIPRE.SyncStrategy.isPCC_pushTo,
+  MIPRE.Verifier.valStar_ge_of_typed,
+  MIPRE.Verifier.exists_typed_perfectPCC,
+  MIPRE.pairDec_pairEnc,
+  MIPRE.parseAns_encAns,
+  MIPRE.oaccepts_of_oraclePred,
+  MIPRE.oraclePred_encAns,
+  MIPRE.Verifier.valStar_ge_of_oraclePred,
+  MIPRE.Verifier.exists_oraclePred_perfectPCC
 
 -- blueprint `lem:pcp-zero-basis`: preserve the individual-degree bounds needed by the PCP.
 #guard_sorry_free MIPRE.SAT.ArrayProg.eqBits,

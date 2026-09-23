@@ -3965,6 +3965,69 @@ the strategy transport of detyping, while the bridge from synchronous to general
 bipartite. Lemma~\ref{lem:oracular-soundness-tensor} is that form, with the same constant.
 \end{remark}
 
+\begin{definition}[The typed oracularized game]
+\label{def:oracular-typed-game}
+\uses{def:oracular-game,def:normal-verifier,def:typed-sampler-interface}
+\lean{MIPRE.CL.CLFun.ident, MIPRE.roleFamily, MIPRE.roleGraph, MIPRE.SeededGame.ofCL,
+  MIPRE.Verifier.seeded, MIPRE.pairEnc, MIPRE.pairDec, MIPRE.parseAns, MIPRE.oraclePred,
+  MIPRE.encAns, MIPRE.Verifier.oracleTypedPred}
+\leanok
+Let $\verifier$ be a normal form verifier with at least one level, $n$ an index, $B$ a parse cut
+and $T$ an answer cut, and let $L^\alice, L^\bob$ be the CL functions of its sampler at $n$. The
+\emph{typed oracularized game} of $\verifier_n$ is the finite typed game, in the sense of
+Definition~\ref{def:typed-sampler-interface}, on the complete type graph with loops over
+$\type^\ora = \{\oracle, \alice, \bob\}$. Its CL functions are the identity for the type
+$\oracle$, as a CL function with the levels of $\verifier$, and $L^\alice$, $L^\bob$ for the types
+$\alice$, $\bob$, the same for both players; its answers are the bit strings of length at most $T$.
+Its predicate parses each answer by the type of the player who gave it: an oracle's must be the
+serialization of a pair of strings of length at most $B$, an isolated player's a single string of
+length at most $B$. It rejects when a parse fails, and otherwise decides as the oracularization
+(Definition~\ref{def:oracular-game}) of the seeded game $(L^\alice, L^\bob, D)$, where $D$ is the
+predicate of $\verifier_n$ on answers of length at most $B$.
+\end{definition}
+
+\begin{lemma}[Value transfers of the typed oracularized game]
+\label{lem:oracular-typed-transfers}
+\uses{def:oracular-typed-game,lem:oracular-completeness,lem:oracular-soundness-tensor,def:pcc}
+\lean{MIPRE.CL.CLFun.eval_ident, MIPRE.CL.CLFun.exactlyOn_ident, MIPRE.exactlyOn_roleFamily,
+  MIPRE.SeededGame.typedGame_mu, MIPRE.SeededGame.quantumValue_typedGame_le,
+  MIPRE.SyncStrategy.pushTo, MIPRE.SyncStrategy.value_le_pushTo,
+  MIPRE.SyncStrategy.isPCC_pushTo, MIPRE.Verifier.valStar_ge_of_typed,
+  MIPRE.Verifier.exists_typed_perfectPCC, MIPRE.pairDec_pairEnc, MIPRE.parseAns_encAns,
+  MIPRE.oaccepts_of_oraclePred, MIPRE.oraclePred_encAns,
+  MIPRE.Verifier.valStar_ge_of_oraclePred, MIPRE.Verifier.exists_oraclePred_perfectPCC}
+\leanok
+In the setting of Definition~\ref{def:oracular-typed-game}:
+\begin{enumerate}
+\item (\textbf{Soundness}) for every $\eps > 0$ and every answer cut $T$, if the quantum value of
+  the typed oracularized game exceeds $1 - \eps$, then $\valstar(\verifier_n) \geq 1 - 24\sqrt\eps$
+  with answers of length at most $B$;
+\item (\textbf{Completeness}) if $\verifier_n$ has a value-$1$ PCC strategy with answers of length
+  at most $B$, then for every $T \geq 8B + 3$ the doubled typed oracularized game has a value-$1$
+  PCC synchronous strategy.
+\end{enumerate}
+The same holds for any typed predicate whose acceptance implies the oracularized predicate after a
+reading of the answers, for soundness, and for any typed predicate that accepts an encoding of every
+answer pair the oracularized predicate accepts, for completeness.
+\end{lemma}
+\begin{proof}
+\leanok
+The typed game samples a uniform ordered pair of types and one common uniform seed, and the
+identity gives the oracle the seed itself, so its question distribution is exactly that of the
+oracularization. For soundness, a tensor-product strategy of the typed game, played through the
+parse on the same state, is a strategy of the oracularization that loses nothing, because the
+typed predicate accepts only what the oracularized one accepts after parsing; then
+Lemma~\ref{lem:oracular-soundness-tensor} applies. For completeness, the strategy of
+Lemma~\ref{lem:oracular-completeness}, whose two players use identical operators, is doubled and
+its outcomes pushed forward along the honest encoding: the serialization for an oracle's pair, the
+string itself for an isolated player's answer. Summing a projective measurement over the fibres of
+a map keeps it projective and keeps commutation, and the pushed-forward strategy wins whenever the
+original does, because an accepted answer has the shape its type asks for and parses back from its
+encoding. The serialization of two strings of length at most $B$ has length at most $8B + 3$. In
+the ambient model the input witness already answers with strings of length at most $B$; in the
+source model that is what the truncation of Lemma~\ref{lem:oracle-timeout-pcc} provides.
+\end{proof}
+
 \begin{definition}[Ambient oracularization contract]
 \label{def:oracularization-contract}
 \uses{def:normal-verifier,def:pcc}
