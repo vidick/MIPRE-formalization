@@ -21,6 +21,7 @@ import MIPRE.Background.AnswerReduction.SoundDecoded
 import MIPRE.Background.AnswerReduction.SoundExtract
 import MIPRE.Background.AnswerReduction.SoundGameCheck
 import MIPRE.Background.AnswerReduction.SoundIsolate
+import MIPRE.Background.AnswerReduction.SoundPcp
 import MIPRE.Background.AnswerReduction.SoundPoly
 import MIPRE.Background.AnswerReduction.SoundRelations
 import MIPRE.Background.AnswerReduction.SoundSetup
