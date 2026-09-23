@@ -5177,7 +5177,8 @@ $\delta_1$ or simultaneous $\delta_2$.
 \label{def:ar-pcp-sampler}
 \uses{def:lidt-cl,thm:pcp-decider}
 \lean{MIPRE.LIDT.CL.Regs, MIPRE.LIDT.CL.Regs.pres, MIPRE.LIDT.CL.Regs.pres_exactlyOn,
-  MIPRE.LIDT.CL.Regs.questionOf_eval, MIPRE.LIDT.CL.Regs.sum_sampleOf,
+  MIPRE.LIDT.CL.Sel, MIPRE.LIDT.CL.Sel.canonical, MIPRE.LIDT.CL.Sel.exists_perm,
+  MIPRE.LIDT.CL.Sel.ofSelector, MIPRE.LIDT.CL.Regs.questionOf_eval, MIPRE.LIDT.CL.Regs.sum_sampleOf,
   MIPRE.CL.sum_comp_injective, MIPRE.AnswerReduction.Pcp.Coord,
   MIPRE.AnswerReduction.Pcp.Coord.card_coord, MIPRE.AnswerReduction.Pcp.regs,
   MIPRE.AnswerReduction.Pcp.regs6, MIPRE.AnswerReduction.Pcp.block_ptOf_regs6,
@@ -5199,6 +5200,12 @@ as a three-level CL function (seed, then direction, then the point register), ex
 space. Its full evaluation is the seeded question of its copy, and a uniform vector carries a
 uniform sample of each copy. The $i$-th block of copy $6$'s point, in the block order of the
 PCP, is copy $i$'s point: this overlap is what the consistency tests compare.
+
+The block of the seed register a direction is drawn from is read off the seed by a selector
+$\chi:\F_q\to[m]$. The test's own selector numbers the field by an enumeration no program
+computes, so the presentation takes any selector with blocks of size $q/m$ (the effective one
+reads the seed's high bits), together with a permutation of the seeds carrying it to the test's;
+the permutation is used only in the analysis, where a uniform seed stays uniform under it.
 \end{definition}
 
 \begin{definition}[The answer-reduced decision predicate]

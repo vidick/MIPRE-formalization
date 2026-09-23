@@ -184,15 +184,15 @@ abbrev PcpTy := Fin 6 × LIDT.CL.Ty
 instance : NeZero P.m' := ⟨by simp [PcpParams.m']⟩
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [NeZero P.m]
-  (hm : P.m ∣ Fintype.card F) (hm' : P.m' ∣ Fintype.card F)
+  {hm : P.m ∣ Fintype.card F} {hm' : P.m' ∣ Fintype.card F} (S : Sel F P.m hm)
+  (S' : Sel F P.m' hm')
 
 /-- **The three-level presentation** of the PCP type `t`. -/
 def pres (t : PcpTy) : MIPRE.CL.CLFun F (Coord P) 3 :=
-  if h : (t.1 : ℕ) < 5 then (regs P ⟨t.1, h⟩).pres hm t.2 else (regs6 P).pres hm' t.2
+  if h : (t.1 : ℕ) < 5 then (regs P ⟨t.1, h⟩).pres S t.2 else (regs6 P).pres S' t.2
 
-omit [DecidableEq F] in
 theorem pres_exactlyOn (t : PcpTy) :
-    (pres P hm hm' t : MIPRE.CL.CLFun F (Coord P) 3).ExactlyOn univ := by
+    (pres P S S' t : MIPRE.CL.CLFun F (Coord P) 3).ExactlyOn univ := by
   unfold pres
   split_ifs
   · exact Regs.pres_exactlyOn _ _ _
@@ -202,15 +202,14 @@ theorem pres_exactlyOn (t : PcpTy) :
 first five copies, of the `m'`-variable test for the sixth. -/
 def questionOf (t : PcpTy) (x : Coord P → F) :
     LIDT.CL.Question F P.m ⊕ LIDT.CL.Question F P.m' :=
-  if h : (t.1 : ℕ) < 5 then .inl ((regs P ⟨t.1, h⟩).questionOf t.2 x)
-  else .inr ((regs6 P).questionOf t.2 x)
+  if h : (t.1 : ℕ) < 5 then .inl ((regs P ⟨t.1, h⟩).questionOf S t.2 x)
+  else .inr ((regs6 P).questionOf S' t.2 x)
 
-omit [DecidableEq F] in
 /-- **The presentation computes the seeded question** of its copy. -/
 theorem question_eval (t : PcpTy) (x : Coord P → F) :
-    questionOf P t ((pres P hm hm' t).eval x)
-      = if h : (t.1 : ℕ) < 5 then .inl (((regs P ⟨t.1, h⟩).sampleOf t.2 x).question hm t.2)
-        else .inr (((regs6 P).sampleOf t.2 x).question hm' t.2) := by
+    questionOf P S S' t ((pres P S S' t).eval x)
+      = if h : (t.1 : ℕ) < 5 then .inl (((regs P ⟨t.1, h⟩).sampleOf S t.2 x).question hm t.2)
+        else .inr (((regs6 P).sampleOf S' t.2 x).question hm' t.2) := by
   unfold questionOf pres
   split_ifs with h
   · rw [Regs.questionOf_eval]

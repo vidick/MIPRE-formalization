@@ -73,32 +73,33 @@ abbrev level (ℓ : ℕ) : ℕ := max (ℓ + 1) 3
 /-- The dimension of the answer-reduced sampler at index `n`. -/
 abbrev dim : ℕ := V.sampler.dim n + pcpDim P * P.k
 
-variable [NeZero P.m] (hm : P.m ∣ Fintype.card (Fq P hk)) (hm' : P.m' ∣ Fintype.card (Fq P hk))
+variable [NeZero P.m] {hm : P.m ∣ Fintype.card (Fq P hk)} {hm' : P.m' ∣ Fintype.card (Fq P hk)}
+  (S : LIDT.CL.Sel (Fq P hk) P.m hm) (S' : LIDT.CL.Sel (Fq P hk) P.m' hm')
 
 /-- The downsized PCP presentation of a PCP type. -/
 def pcpBin (t : PcpTy) : CLFun 𝔽₂ (Coord P × Fin P.k) 3 :=
-  (Pcp.pres P hm hm' t).downsize (basis P hk)
+  (Pcp.pres P S S' t).downsize (basis P hk)
 
 /-- The two halves side by side, at the common level. -/
 def fam (rt : Role × PcpTy) : CLFun 𝔽₂ (Fin (V.sampler.dim n) ⊕ (Coord P × Fin P.k)) (level ℓ) :=
   ((roleFamily (V.sampler.cl n) rt.1).liftTo univ (level ℓ) (le_max_left _ _)).prod
-    ((pcpBin P hk hm hm' rt.2).liftTo univ (level ℓ) (le_max_right _ _))
+    ((pcpBin P hk S S' rt.2).liftTo univ (level ℓ) (le_max_right _ _))
 
 /-- **The typed CL function** of the answer-reduced sampler at the type `rt`, on the numbered
 coordinates. -/
 def cl (rt : Role × PcpTy) : CLFun 𝔽₂ (Fin (dim V n P)) (level ℓ) :=
-  (fam V n P hk hm hm' rt).reindex (index (V.sampler.dim n) P P.k)
+  (fam V n P hk S S' rt).reindex (index (V.sampler.dim n) P P.k)
 
-theorem pcpBin_exactlyOn (t : PcpTy) : (pcpBin P hk hm hm' t).ExactlyOn univ := by
-  have h := (Pcp.pres_exactlyOn P hm hm' t).downsize (basis P hk)
+theorem pcpBin_exactlyOn (t : PcpTy) : (pcpBin P hk S S' t).ExactlyOn univ := by
+  have h := (Pcp.pres_exactlyOn P S S' t).downsize (basis P hk)
   rwa [Finset.univ_product_univ] at h
 
-theorem fam_exactlyOn (rt : Role × PcpTy) : (fam V n P hk hm hm' rt).ExactlyOn univ :=
+theorem fam_exactlyOn (rt : Role × PcpTy) : (fam V n P hk S S' rt).ExactlyOn univ :=
   ExactlyOn.prod ((exactlyOn_roleFamily (V.sampler.cl_exactlyOn n) rt.1).liftTo _ _)
-    ((pcpBin_exactlyOn P hk hm hm' rt.2).liftTo _ _)
+    ((pcpBin_exactlyOn P hk S S' rt.2).liftTo _ _)
 
-theorem cl_exactlyOn (rt : Role × PcpTy) : (cl V n P hk hm hm' rt).ExactlyOn univ := by
-  have h := (fam_exactlyOn V n P hk hm hm' rt).reindex (index (V.sampler.dim n) P P.k)
+theorem cl_exactlyOn (rt : Role × PcpTy) : (cl V n P hk S S' rt).ExactlyOn univ := by
+  have h := (fam_exactlyOn V n P hk S S' rt).reindex (index (V.sampler.dim n) P P.k)
   rwa [Finset.map_univ_equiv] at h
 
 /-! ## What a question carries -/
@@ -112,17 +113,17 @@ def pcpPart (y : Fin (dim V n P) → 𝔽₂) : Coord P → Fq P hk :=
   (downsizeEquiv (basis P hk)).symm fun p => y (index (V.sampler.dim n) P P.k (.inr p))
 
 theorem fam_eval (rt : Role × PcpTy) (x : Fin (V.sampler.dim n) ⊕ (Coord P × Fin P.k) → 𝔽₂) :
-    (fam V n P hk hm hm' rt).eval x
+    (fam V n P hk S S' rt).eval x
       = Sum.elim ((roleFamily (V.sampler.cl n) rt.1).eval fun i => x (.inl i))
-          (downsizeEquiv (basis P hk) ((Pcp.pres P hm hm' rt.2).eval
+          (downsizeEquiv (basis P hk) ((Pcp.pres P S S' rt.2).eval
             ((downsizeEquiv (basis P hk)).symm fun p => x (.inr p)))) := by
   rw [fam, eval_prod _ _ ((exactlyOn_roleFamily (V.sampler.cl_exactlyOn n) rt.1).liftTo _ _)
-    ((pcpBin_exactlyOn P hk hm hm' rt.2).liftTo _ _), eval_liftTo, eval_liftTo, pcpBin,
+    ((pcpBin_exactlyOn P hk S S' rt.2).liftTo _ _), eval_liftTo, eval_liftTo, pcpBin,
     eval_downsize']
 
 /-- **The oracle half of a question** is the oracularized sampler's question. -/
 theorem oraclePart_eval (rt : Role × PcpTy) (y : Fin (dim V n P) → 𝔽₂) :
-    oraclePart V n P ((cl V n P hk hm hm' rt).eval y)
+    oraclePart V n P ((cl V n P hk S S' rt).eval y)
       = (roleFamily (V.sampler.cl n) rt.1).eval (oraclePart V n P y) := by
   funext i
   simp only [oraclePart, cl, eval_reindex', reindexEquiv_apply, fam_eval,
@@ -131,8 +132,8 @@ theorem oraclePart_eval (rt : Role × PcpTy) (y : Fin (dim V n P) → 𝔽₂) :
 
 /-- **The PCP half of a question** is the PCP presentation's question. -/
 theorem pcpPart_eval (rt : Role × PcpTy) (y : Fin (dim V n P) → 𝔽₂) :
-    pcpPart V n P hk ((cl V n P hk hm hm' rt).eval y)
-      = (Pcp.pres P hm hm' rt.2).eval (pcpPart V n P hk y) := by
+    pcpPart V n P hk ((cl V n P hk S S' rt).eval y)
+      = (Pcp.pres P S S' rt.2).eval (pcpPart V n P hk y) := by
   simp only [pcpPart, cl, eval_reindex', reindexEquiv_apply, fam_eval,
     Equiv.symm_apply_apply, Sum.elim_inr, reindexEquiv_symm_apply]
   exact (downsizeEquiv (basis P hk)).symm_apply_apply _

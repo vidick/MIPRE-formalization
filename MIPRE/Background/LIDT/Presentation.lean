@@ -90,6 +90,45 @@ structure Regs (ι : Type*) (n : ℕ) where
   pt_ne_coord : ∀ i, pt i ≠ coord
   dir_ne_coord : ∀ j, dir j ≠ coord
 
+/-- **A seed selector**: the block index `χ(s)` a sampler computes from a seed, with a
+permutation `π` of the seeds under which it is the test's own `chi`. The test's `chi` numbers the
+field by `Fintype.equivFin`, which no program can compute; an effective sampler uses an explicit
+selector with the same block sizes, and the permutation, which only the analysis sees, carries
+its questions to the test's (`questionOf_eval`). `Sel.canonical` is the test's own selector. -/
+structure Sel (F : Type*) [Field F] [Fintype F] [DecidableEq F] (n : ℕ) [NeZero n]
+    (hn : n ∣ Fintype.card F) where
+  /-- The selector. -/
+  χ : F → Fin n
+  /-- The permutation of the seeds. -/
+  π : F ≃ F
+  chi_π : ∀ s, chi hn (π s) = χ s
+
+namespace Sel
+
+variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {n : ℕ} [NeZero n]
+
+/-- The test's own selector. -/
+def canonical (hn : n ∣ Fintype.card F) : Sel F n hn := ⟨chi hn, Equiv.refl F, fun _ => rfl⟩
+
+omit [DecidableEq F] in
+/-- **Any selector with blocks of size `q / n`** is a seed selector: the permutation matching it
+to the test's `chi` exists. -/
+theorem exists_perm (hn : n ∣ Fintype.card F) (χ : F → Fin n)
+    (hχ : ∀ i, (Finset.univ.filter fun s => χ s = i).card = Fintype.card F / n) :
+    ∃ π : F ≃ F, ∀ s, chi hn (π s) = χ s := by
+  classical
+  have hfib : ∀ i : Fin n, {s // χ s = i} ≃ {s // chi hn s = i} := fun i =>
+    Fintype.equivOfCardEq (by
+      rw [Fintype.card_subtype, Fintype.card_subtype, hχ i, card_chi_fiber hn i])
+  exact ⟨Equiv.ofFiberEquiv hfib, fun s => Equiv.ofFiberEquiv_map hfib s⟩
+
+/-- The seed selector of a selector with blocks of size `q / n`. -/
+noncomputable def ofSelector (hn : n ∣ Fintype.card F) (χ : F → Fin n)
+    (hχ : ∀ i, (Finset.univ.filter fun s => χ s = i).card = Fintype.card F / n) : Sel F n hn :=
+  ⟨χ, (exists_perm hn χ hχ).choose, (exists_perm hn χ hχ).choose_spec⟩
+
+end Sel
+
 namespace Regs
 
 variable {ι : Type*} [DecidableEq ι] [Fintype ι] {n : ℕ} (R : Regs ι n)
@@ -223,7 +262,7 @@ theorem dirLin_apply (i : Fin n) (x : ι → F) :
     R.dirOf_proj_dirSet]
   exact R.proj_dirSet_putDir _
 
-variable [Fintype F] [DecidableEq F] [NeZero n] (hn : n ∣ Fintype.card F)
+variable [Fintype F] [DecidableEq F] [NeZero n] {hn : n ∣ Fintype.card F} (S : Sel F n hn)
 
 /-- The first stage: the seed, for the two line types. -/
 def seedLin : Ty → RegLinear F R.coordSet
@@ -232,35 +271,35 @@ def seedLin : Ty → RegLinear F R.coordSet
 
 /-- The second stage: `π_{χ(s)}` of the direction, for the diagonal type. -/
 def secondLin : Ty → F → RegLinear F R.dirSet
-  | .dline, s => R.dirLin (chi hn s)
+  | .dline, s => R.dirLin (S.χ s)
   | _, _ => 0
 
 /-- The third stage: the canonical base point of the line through the point. -/
 def finalLin : Ty → F → Point F n → RegLinear F R.finalSet
   | .point, _, _ => R.ptLin LinearMap.id
-  | .aline, s, _ => R.ptLin (MIPRE.CL.canonLin (Submodule.span F {Pi.single (chi hn s) 1}))
+  | .aline, s, _ => R.ptLin (MIPRE.CL.canonLin (Submodule.span F {Pi.single (S.χ s) 1}))
   | .dline, _, v => R.ptLin (MIPRE.CL.canonLin (Submodule.span F {v}))
 
 /-- **The three-level presentation** of the question of type `t`: seed, then direction, then
 the point register and everything else. -/
 def pres (t : Ty) : CLFun F ι 3 :=
   .cons R.coordSet (R.seedLin t) fun y =>
-    .cons R.dirSet (R.secondLin hn t (y R.coord)) fun z =>
-      .cons R.finalSet (R.finalLin hn t (y R.coord) (R.dirOf z)) fun _ => .zero
+    .cons R.dirSet (R.secondLin S t (y R.coord)) fun z =>
+      .cons R.finalSet (R.finalLin S t (y R.coord) (R.dirOf z)) fun _ => .zero
 
-omit [DecidableEq F] in
-theorem pres_exactlyOn (t : Ty) : (R.pres hn t).ExactlyOn univ :=
+theorem pres_exactlyOn (t : Ty) : (R.pres S t).ExactlyOn univ :=
   ⟨subset_univ _, fun _ => ⟨R.dirSet_subset, fun _ => ⟨Subset.rfl, fun _ => Finset.sdiff_self _⟩⟩⟩
 
-/-- Read the question of type `t` off a vector. -/
+/-- Read the question of type `t` off a vector, the seed decoded by the selector's permutation. -/
 def questionOf (t : Ty) (x : ι → F) : Question F n :=
   match t with
   | .point => .point (R.ptOf x)
-  | .aline => .aline (R.ptOf x) (x R.coord)
-  | .dline => .dline (R.ptOf x) (x R.coord) (R.dirOf x)
+  | .aline => .aline (R.ptOf x) (S.π (x R.coord))
+  | .dline => .dline (R.ptOf x) (S.π (x R.coord)) (R.dirOf x)
 
-/-- The sample a vector carries, with both types `t`. -/
-def sampleOf (t : Ty) (x : ι → F) : Sample F n := ⟨t, t, R.ptOf x, x R.coord, R.dirOf x⟩
+/-- The sample a vector carries, with both types `t`, the seed decoded by the selector's
+permutation. -/
+def sampleOf (t : Ty) (x : ι → F) : Sample F n := ⟨t, t, R.ptOf x, S.π (x R.coord), R.dirOf x⟩
 
 omit [DecidableEq ι] [Fintype ι] [NeZero n] in
 theorem not_mem_coordSet_pt (i : Fin n) : R.pt i ∉ R.coordSet := by
@@ -278,10 +317,9 @@ theorem not_mem_coordSet_dir (j : Fin n) : R.dir j ∉ R.coordSet := by
 omit [DecidableEq ι] [Fintype ι] [NeZero n] in
 theorem coord_mem_coordSet : R.coord ∈ R.coordSet := mem_singleton_self _
 
-omit [DecidableEq F] in
 /-- **The presentation computes the seeded question** of the sample the registers carry. -/
 theorem questionOf_eval (t : Ty) (x : ι → F) :
-    R.questionOf t ((R.pres hn t).eval x) = (R.sampleOf t x).question hn t := by
+    R.questionOf S t ((R.pres S t).eval x) = (R.sampleOf S t x).question hn t := by
   have hpt : ∀ i, (proj R.dirSetᶜ (proj R.coordSetᶜ x)) (R.pt i) = x (R.pt i) := fun i => by
     rw [proj_apply_of_mem (by simpa using R.not_mem_dirSet_pt i),
       proj_apply_of_mem (by simpa using R.not_mem_coordSet_pt i)]
@@ -299,7 +337,7 @@ theorem questionOf_eval (t : Ty) (x : ι → F) :
   | aline =>
     simp only [pres, CLFun.eval_cons, CLFun.eval_zero, seedLin, secondLin, finalLin,
       RegLinear.zero_apply, RegLinear.id_apply, zero_add, add_zero, ptLin_apply, hptOf, hcoord]
-    simp only [questionOf, sampleOf, Sample.question, rep]
+    simp only [questionOf, sampleOf, Sample.question, rep, S.chi_π]
     congr 1
     · funext i
       simp only [ptOf, Pi.add_apply]
@@ -309,7 +347,7 @@ theorem questionOf_eval (t : Ty) (x : ι → F) :
     simp only [pres, CLFun.eval_cons, CLFun.eval_zero, seedLin, secondLin, finalLin,
       RegLinear.id_apply, add_zero, ptLin_apply, dirLin_apply, hptOf, hcoord, hdirOf]
     simp only [dirOf_putDir]
-    simp only [questionOf, sampleOf, Sample.question, rep]
+    simp only [questionOf, sampleOf, Sample.question, rep, S.chi_π]
     congr 1
     · funext i
       simp only [ptOf, Pi.add_apply]
@@ -340,18 +378,17 @@ theorem embed_injective :
   · exact absurd h (R.dir_ne_coord j)
   · rw [R.dir_injective h]
 
-omit [Field F] [DecidableEq F] [NeZero n] in
 /-- **Uniform content gives a uniform sample**: summing a function of the sample the registers
 carry over all vectors is summing it over all samples, `q^{|ι| - (2n+1)}` times. -/
 theorem sum_sampleOf {M : Type*} [AddCommMonoid M] (t : Ty) (g : Sample F n → M) :
-    ∑ x : ι → F, g (R.sampleOf t x)
+    ∑ x : ι → F, g (R.sampleOf S t x)
       = (Fintype.card F ^ (Fintype.card ι - (2 * n + 1))) •
           ∑ u : Point F n, ∑ s : F, ∑ v : Point F n, g ⟨t, t, u, s, v⟩ := by
   classical
   set e := Sum.elim R.pt (Sum.elim (fun _ : Unit => R.coord) R.dir)
   let G : (Fin n ⊕ (Unit ⊕ Fin n) → F) → M := fun y =>
-    g ⟨t, t, fun i => y (.inl i), y (.inr (.inl ())), fun j => y (.inr (.inr j))⟩
-  rw [show (∑ x : ι → F, g (R.sampleOf t x)) = ∑ x : ι → F, G (x ∘ e) from rfl,
+    g ⟨t, t, fun i => y (.inl i), S.π (y (.inr (.inl ()))), fun j => y (.inr (.inr j))⟩
+  rw [show (∑ x : ι → F, g (R.sampleOf S t x)) = ∑ x : ι → F, G (x ∘ e) from rfl,
     MIPRE.CL.sum_comp_injective e R.embed_injective G]
   congr 1
   · simp [Fintype.card_sum]; ring_nf
@@ -361,7 +398,7 @@ theorem sum_sampleOf {M : Type*} [AddCommMonoid M] (t : Ty) (g : Sample F n → 
     rw [← (Equiv.sumArrowEquivProdArrow _ _ F).symm.sum_comp]
     simp only [Fintype.sum_prod_type]
     rw [← (Equiv.funUnique Unit F).symm.sum_comp]
-    rfl
+    exact S.π.sum_comp (fun s => ∑ v : Point F n, g ⟨t, t, u, s, v⟩)
 
 end Regs
 
