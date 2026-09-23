@@ -400,6 +400,8 @@ import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.Order
 import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing
 import MIPRE.Background.LIDT.MIPStarRE.Quantum.Measurement
 import MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB
+import MIPRE.Background.LIDT.Padding
+import MIPRE.Background.LIDT.Simultaneous
 import MIPRE.Background.LIDT.Soundness
 import MIPRE.Background.Orthonormalization.Axioms
 import MIPRE.Background.Orthonormalization.Orthogonalization.Assembly
