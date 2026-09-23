@@ -1,4 +1,6 @@
 import MIPRE.Axioms
+import MIPRE.Background.AnswerReduction.PcpPresentation
+import MIPRE.Background.AnswerReduction.Predicate
 import MIPRE.Background.GowersHatami.Basic
 import MIPRE.Background.Introspection.AmbientRawGame
 import MIPRE.Background.Introspection.AmbientVerifierTransport
@@ -401,6 +403,7 @@ import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing
 import MIPRE.Background.LIDT.MIPStarRE.Quantum.Measurement
 import MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB
 import MIPRE.Background.LIDT.Padding
+import MIPRE.Background.LIDT.Presentation
 import MIPRE.Background.LIDT.Simultaneous
 import MIPRE.Background.LIDT.Soundness
 import MIPRE.Background.Orthonormalization.Axioms

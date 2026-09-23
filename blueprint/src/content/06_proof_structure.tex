@@ -5173,6 +5173,59 @@ The common upper bound $\kappa$ below absorbs both the individual and
 simultaneous errors; it is not a renaming of the source's individual
 $\delta_1$ or simultaneous $\delta_2$.
 
+\begin{definition}[The PCP sampler of answer reduction]
+\label{def:ar-pcp-sampler}
+\uses{def:lidt-cl,thm:pcp-decider}
+\lean{MIPRE.LIDT.CL.Regs, MIPRE.LIDT.CL.Regs.pres, MIPRE.LIDT.CL.Regs.pres_exactlyOn,
+  MIPRE.LIDT.CL.Regs.questionOf_eval, MIPRE.LIDT.CL.Regs.sum_sampleOf,
+  MIPRE.CL.sum_comp_injective, MIPRE.AnswerReduction.Pcp.Coord,
+  MIPRE.AnswerReduction.Pcp.Coord.card_coord, MIPRE.AnswerReduction.Pcp.regs,
+  MIPRE.AnswerReduction.Pcp.regs6, MIPRE.AnswerReduction.Pcp.block_ptOf_regs6,
+  MIPRE.AnswerReduction.Pcp.pres, MIPRE.AnswerReduction.Pcp.pres_exactlyOn,
+  MIPRE.AnswerReduction.Pcp.question_eval}
+\leanok
+For PCP parameters $(q,m,d,m',s)$, the typed PCP sampler has the eighteen types
+$\mathrm{Point}_i,\mathrm{ALine}_i,\mathrm{DLine}_i$, $i=1,\ldots,6$, on the space
+\[
+  V^{\mathrm{pcp}}=\bigoplus_{i\leq5}\bigl(V_{i,\mathrm{pt}}\oplus V_{i,\mathrm{coord}}\oplus
+  V_{i,\mathrm{dir}}\bigr)\oplus V_{\mathrm{aux},\mathrm{pt}}\oplus V_{6,\mathrm{coord}}\oplus
+  V_{\mathrm{aux},\mathrm{dir}}
+\]
+over $\F_q$, of dimension $10m+2s+16$. Copy $i\leq5$ is the seeded CL test of
+Definition~\ref{def:lidt-cl} in $m$ variables on its own point, coordinate and direction
+registers. Copy $6$ is the test in $m'=5m+5+s$ variables whose point and direction registers are
+the concatenations of the five copies' registers with the auxiliary ones. Each type is presented
+as a three-level CL function (seed, then direction, then the point register), exact on the whole
+space. Its full evaluation is the seeded question of its copy, and a uniform vector carries a
+uniform sample of each copy. The $i$-th block of copy $6$'s point, in the block order of the
+PCP, is copy $i$'s point: this overlap is what the consistency tests compare.
+\end{definition}
+
+\begin{definition}[The answer-reduced decision predicate]
+\label{def:ar-decider-predicate}
+\uses{def:ar-pcp-sampler,def:oracular-typed-game}
+\lean{MIPRE.AnswerReduction.Ans, MIPRE.AnswerReduction.ansFmt, MIPRE.AnswerReduction.side,
+  MIPRE.AnswerReduction.accepts}
+\leanok
+A type of the answer-reduced verifier is a pair of an oracularization role and a PCP type. An
+answer is an answer of its copy's low-degree test, with one codeword for copies $1$ to $5$ and
+$m'+6$ codewords for copy $6$. The oracle answers of the input verifier are never sent. The
+predicate is the format preamble on both answers, then the five steps of the paper's decision
+procedure for both players:
+\begin{enumerate}
+\item equal types have equal answers;
+\item the oracle's $\mathrm{Point}_6$ answer agrees with an isolated player $v$'s
+  $\mathrm{Point}_v$ answer in component $v$;
+\item an isolated player $v$'s input codeword passes the $m$-variable test on copy $v$;
+\item between two oracles, copies $3$, $4$ and $5$ pass the consistency check against copy $6$
+  and the individual $m$-variable test, and copy $6$ passes the simultaneous test with $m'+6$
+  codewords;
+\item on an oracle's $\mathrm{Point}_6$ question, the point and the answer form a PCP view that
+  the PCP verifier accepts on the input question pair.
+\end{enumerate}
+The PCP verifier's decision is a parameter of the predicate.
+\end{definition}
+
 \begin{lemma}[Answer-reduction construction]
 \label{lem:ar-construction}
 \ledgernode{1.3.4.1}
