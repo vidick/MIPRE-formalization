@@ -15,6 +15,7 @@ import MIPRE.Background.Introspection.HonestPauliGame
 import MIPRE.Background.Introspection.HonestPauliLowDegree
 import MIPRE.Background.Introspection.HonestPauliMeasurements
 import MIPRE.Background.Introspection.HonestPauliObservables
+import MIPRE.Background.Introspection.PauliExtraction
 import MIPRE.Background.Introspection.PauliRestriction
 import MIPRE.Background.LIDT.Adapter.Geometry
 import MIPRE.Background.LIDT.Adapter.Parameters
@@ -408,6 +409,7 @@ import MIPRE.Background.QLD.AncTransport
 import MIPRE.Background.QLD.Anticomm
 import MIPRE.Background.QLD.Axioms
 import MIPRE.Background.QLD.BinaryBlocks
+import MIPRE.Background.QLD.BinaryForm
 import MIPRE.Background.QLD.CLBinary
 import MIPRE.Background.QLD.CLExplicitSeed
 import MIPRE.Background.QLD.CLExplicitTransport
@@ -469,6 +471,7 @@ import MIPRE.Background.QLD.SwapState
 import MIPRE.Background.QLD.SwapUnitary
 import MIPRE.Background.QLD.TwoPairs
 import MIPRE.Background.QLD.TypeEncoding
+import MIPRE.Background.QLD.ValidAnswers
 import MIPRE.Background.QLD.Win
 import MIPRE.Background.QLD.WinMS
 import MIPRE.Background.Repetition.Axioms

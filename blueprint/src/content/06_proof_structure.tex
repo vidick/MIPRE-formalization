@@ -1565,6 +1565,12 @@ mixing estimate of Lemma~\ref{lem:pauli-mixing} to replace the strategy's own me
 commute with the Pauli basis.
 \end{proof}
 
+\paragraph{Comments.} The formal route keeps the paper's estimates as distances instead of
+replacing the strategy: Lemma~\ref{lem:intro-pauli-extraction} is the application of
+Theorem~\ref{thm:qld}, through Corollary~\ref{cor:qld-binary}, that this proof makes, and
+Lemma~\ref{lem:intro-valid-isometric-soundness} accounts for the replacement. The statement above,
+with its exact state and exact Pauli operators, is not formalized as such.
+
 \effortHard
 
 \begin{lemma}[Sampling and hiding subtest estimates]
@@ -3253,8 +3259,9 @@ summed squared error at most $t$ on valid full-register Alice-X and Bob-Z
 answers. The original game has quantum value at least
 $1-C\,\mathrm{root}_{6\ell+2}(t)$, for an explicit coefficient depending
 only on depth and graph size. The estimate holds for every $t\geq0$ and
-retains all malformed answers and image-complement mass. Existence of the
-local isometries and their estimates is still an input from Pauli soundness.
+retains all malformed answers and image-complement mass. The local
+isometries and their estimates are inputs here; Lemma~\ref{lem:intro-pauli-extraction}
+supplies them for the actual game from Theorem~\ref{thm:qld}.
 The final loss preserves the paper's two-term error profile with uniform
 constants and a positive exponent at most one.
 \end{lemma}
@@ -3369,6 +3376,72 @@ average over the Pauli edges, then pull back along canonical question
 encoding. A valid full-Pauli answer differs from the scalar completion
 answer, so its fibre contains only its original raw constructor.
 \end{proof}
+
+\begin{lemma}[Pauli extraction for the introspection game]
+\label{lem:intro-pauli-extraction}
+\uses{lem:intro-pauli-restriction,cor:qld-valid,cor:qld-binary}
+\lean{MIPRE.Introspection.PauliExtraction.exists_valid_extraction,
+  MIPRE.Introspection.PauliExtraction.binaryGame_eq_fullGame,
+  MIPRE.Introspection.PauliExtraction.binaryToFull,
+  MIPRE.Introspection.PauliExtraction.binaryToFull_value,
+  MIPRE.Introspection.PauliExtraction.fieldGame_eq_fullGame,
+  MIPRE.Introspection.PauliExtraction.fieldToFull,
+  MIPRE.Introspection.PauliExtraction.fieldToFull_value,
+  MIPRE.Introspection.PauliExtraction.exists_binary_extraction,
+  MIPRE.Introspection.PauliExtraction.exists_field_extraction}
+\leanok
+There are constants $a \geq 1$ and $0 < b < 1$ such that the following holds. Let $N$ be the
+number of ordered edges of the typed graph, and let $T = \eps + 2\,\delta_{qld}(N\eps, m, d, q) +
+8/q$ with $\delta_{qld}$ at these constants. For every projective strategy of the full parsed
+introspection game failing with probability at most $\eps$, there are local isometries from the
+players' spaces onto the Pauli register tensored with auxiliary spaces, and a unit state
+$\ket{\xi}$, such that the image of the strategy's state is within $T$ of
+$\ket{\EPR} \ot \ket{\xi}$, and for both players and both bases the image of the strategy's own
+$(\pauli, W)$ measurement, summed over the valid full-register answers, is within $T$ of the
+honest Pauli readouts in the state-dependent distance. On the binary game the register is
+$\F_2^{M \times t}$, the state is $\ket{\EPR_2}^{\ot Mt} \ot \ket{\xi}$ and the readouts are
+qubit Paulis, for a self-dual basis; on the field-register game the register is $\F_q^M$ itself.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Restrict the strategy to the actual Pauli basis game (Lemma~\ref{lem:intro-pauli-restriction}):
+same state, failure at most $N\eps$, and the same operators at valid answers. Apply
+Corollary~\ref{cor:qld-valid} to the restriction, and for the binary game relabel the register as
+in Corollary~\ref{cor:qld-binary}.
+\end{proof}
+
+\paragraph{Comments.} This is the paper's use of \texttt{cor:pauli-binary} in the proof of
+\texttt{lem:intro-pauli-strat} (Lemma~\ref{lem:intro-pauli-extract}): the conditioning on the
+Pauli block is the factor $N$, and the estimates are kept as distances, the form
+Lemma~\ref{lem:intro-valid-isometric-soundness} consumes, rather than used to replace the strategy
+by an exact one. All four Pauli estimates are proved, as the paper states them; the consumer uses
+Alice's $X$ and Bob's $Z$. \texttt{MIPRE/Background/Introspection/PauliExtraction.lean}.
+
+\begin{lemma}[Introspection soundness from the extracted Pauli strategy]
+\label{lem:intro-extracted-soundness}
+\uses{lem:intro-pauli-extraction,lem:intro-valid-isometric-soundness}
+\lean{MIPRE.Introspection.PauliExtraction.exists_quantumValue_ge_of_binary,
+  MIPRE.Introspection.PauliExtraction.exists_quantumValue_ge_of_field}
+\leanok
+Suppose the original game's CL functions are exact on the whole Pauli register. If the binary
+(respectively field-register) parsed introspection game has a projective strategy failing with
+probability at most $\eps$, then the original game has quantum value at least
+$1 - C\,\mathrm{root}_{6\ell+2}(T)$, with $T$ as in Lemma~\ref{lem:intro-pauli-extraction} and
+$C$ the coefficient of Lemma~\ref{lem:intro-valid-isometric-soundness}.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Lemma~\ref{lem:intro-valid-isometric-soundness} applied to the data of
+Lemma~\ref{lem:intro-pauli-extraction}; the Pauli question's sampler is constant, and the valid
+answer at a register label projects back to that label.
+\end{proof}
+
+\paragraph{Comments.} The exactness hypothesis is the consumer's and covers all $M t = M \log q$
+coordinates of the register, whereas the paper's original questions have length $s(N) \leq Q$.
+Reaching an arbitrary original game therefore still needs the padding of the source register to
+$Q$ coordinates to be composed with this lemma; that step is not part of it.
 
 \begin{lemma}[An executable balanced seed selector and line stages]
 \label{lem:intro-executable-seeded-lines}

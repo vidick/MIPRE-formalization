@@ -707,6 +707,9 @@ To inhabit `Introspection 7`, the following substantive obligations remain:
    transport. The adaptive auxiliary construction and first-Hide register
    identity are complete.
 3. Connect QLD extraction to the primitive register-state X/Z guarantees.
+   (**Done 2026-09-23** for the valid-answer interface: `PauliExtraction.exists_binary_extraction`
+   and `exists_quantumValue_ge_of_binary`, from `thm:qld` via `PauliRestriction`; see
+   `introspection-checkpoint-20260922.md`, item 5.)
    Full hiding and Read rigidity, and the actual coarse commutators, are
    now proved from those guarantees. Build the conditional residual strategy
    with controlled dilation over all CL levels and one error profile: prove
