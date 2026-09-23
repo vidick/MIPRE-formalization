@@ -821,6 +821,17 @@ under `def:answer-reduction-contract`. What is left is the source proof: oracula
 inhabited (#196, `Oracularization.construction`, the typed construction with its value transfers
 as theorems), so the thirteen `lem:ar-*` nodes and `thm:answer-reduction`.
 
+The work is tracked in #198 as six packages (AR-1 to AR-6). **AR-1 is done:**
+`lem:ar-sandwich-support`, the paper's `lem:ld-sandwich` (NW19's Fact 4.34 with an index), is
+`one_sub_sum_bornProb_ldSandwich_le` in `MIPRE/Foundations/LowDegreeSandwich.lean`, for every `k`
+and with the constant `2 sqrt 2 k` the source leaves implicit. Two things about it are worth
+knowing before AR-5 consumes it. Its relations are the paper's consistency (a disagreement
+probability), not the blueprint's squared distance; the blueprint entry had paraphrased both and
+is repaired. And the error is linear in `k` only because the layers are added as square roots
+(Minkowski in `l2` over index and outcomes); the obvious `(a+b+c)^2 <= 3(...)` triangle would
+have made it exponential. The mirror with the parties exchanged, which `lem:ar-giant-sandwich`
+also needs, is the same theorem applied to the swapped state.
+
 **The standing risk** is the one `planning/h4-assembly.md` §4 item 4 names: `GapCompression`
 has been consumed five times and supplied never — `TimeBoundAt` was refuted three times and
 `IsSynchronousAt` once (#77), each time by a consumer — and chapter 6 will read the structure
