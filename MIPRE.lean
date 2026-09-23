@@ -4,6 +4,7 @@ import MIPRE.Background.AnswerReduction.ArDecider
 import MIPRE.Background.AnswerReduction.ArSampler
 import MIPRE.Background.AnswerReduction.DecideProg
 import MIPRE.Background.AnswerReduction.DecideSpec
+import MIPRE.Background.AnswerReduction.DeciderCost
 import MIPRE.Background.AnswerReduction.Family
 import MIPRE.Background.AnswerReduction.Layout
 import MIPRE.Background.AnswerReduction.Params
