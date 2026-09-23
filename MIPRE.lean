@@ -19,6 +19,7 @@ import MIPRE.Background.AnswerReduction.StageCorrect
 import MIPRE.Background.AnswerReduction.StageLists
 import MIPRE.Background.AnswerReduction.StageProg
 import MIPRE.Background.AnswerReduction.Stages
+import MIPRE.Background.AnswerReduction.TypedComplete
 import MIPRE.Background.AnswerReduction.TypedGame
 import MIPRE.Background.GowersHatami.Basic
 import MIPRE.Background.Introspection.AmbientRawGame
