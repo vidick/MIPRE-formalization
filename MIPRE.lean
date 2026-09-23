@@ -7,6 +7,7 @@ import MIPRE.Background.AnswerReduction.DecideSpec
 import MIPRE.Background.AnswerReduction.Family
 import MIPRE.Background.AnswerReduction.Layout
 import MIPRE.Background.AnswerReduction.Params
+import MIPRE.Background.AnswerReduction.ParamsCost
 import MIPRE.Background.AnswerReduction.PcpPresentation
 import MIPRE.Background.AnswerReduction.PcpSampler
 import MIPRE.Background.AnswerReduction.Predicate
@@ -1169,6 +1170,8 @@ import MIPRE.Foundations.Pipeline.Compress
 import MIPRE.Foundations.Pipeline.Introspection
 import MIPRE.Foundations.Pipeline.Margin
 import MIPRE.Foundations.Pipeline.Oracularization
+import MIPRE.Foundations.Pipeline.PowDom
+import MIPRE.Foundations.Pipeline.PowDomRun
 import MIPRE.Foundations.Pipeline.Repetition
 import MIPRE.Foundations.Pipeline.UnaryArith
 import MIPRE.Foundations.RegisterReindex
