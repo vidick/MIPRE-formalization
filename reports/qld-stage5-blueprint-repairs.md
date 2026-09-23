@@ -101,6 +101,17 @@ derivation presented as a hypothesis list. The step needs `q = 2^k`, whence `m |
 a power of two; the paper asserts that in a `\cnote` without proof, and `def:admissible` does not say
 it. A Lean formalization will need it as a lemma, so the blueprint should name it.
 
+**Resolved 2026-09-23, and the obvious reading turned out to be false.** The statement has since
+been rewritten to take `4m | q` as an explicit assumption, which is correct, and the discharge now
+lives in `MIPRE/Background/QLD/Regime.lean`. Two things came out of writing it. First, `m | q`
+together with `q` a power of two does **not** give `4m | q` --- take `m = q`. What it gives is that
+`m = 2^j`, and then `4m = 2^{j+2}` divides `2^n` exactly when `4m <= q`. So the size condition is
+load-bearing, and it is the regime `48 m d <= q` that supplies it (`four_mul_dvd_card_of_regime`);
+outside the regime the theorem takes the trivial bound and never needs the divisibility. Second,
+"admissible" is not what the step uses: the oddness of `t` in `q = 2^t` is for the self-dual basis,
+and a finite field of characteristic two is a power-of-two size for free (`FiniteField.card`), so the
+step costs no hypothesis the appendix does not already carry.
+
 ## What the Lean of this pull request does and does not claim
 
 Formalized, with no error terms and no game in sight:

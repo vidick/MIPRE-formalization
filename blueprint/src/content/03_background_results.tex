@@ -3216,6 +3216,13 @@ soundness for POVM strategies (\texttt{MIPRE.LIDT.CL.clSoundness\_ldc\_one\_delt
 on the twice-extended state the Born rule sees only compressions, so nothing has to be proved
 about the dilation beyond Naimark's theorem. The node's ``$16md > q$'' clause belongs to the
 assembly of Theorem~\ref{thm:qld}, where the trivial bound is used instead of the padded theorem.
+So does the assumption $4m \mid q$, and it is worth saying what discharges it, because the obvious
+reading is false: $m \mid q$ with $q$ a power of two gives only that $m$ is a power of two, and at
+$m = q$ the conclusion fails. What gives $4m \mid q$ is $m \mid q$ together with $4m \leq q$, which
+the regime $48md \leq q$ supplies (\texttt{MIPRE.QLD.four\_mul\_dvd\_card\_of\_regime}); outside
+it the trivial bound is used and the divisibility is never needed. Nor is admissibility what the
+step uses --- the oddness of the degree is for the self-dual basis --- since a finite field of
+characteristic two has power-of-two size already.
 
 \begin{lemma}[All padded subtests succeed]
 \label{lem:qld-global-success}
