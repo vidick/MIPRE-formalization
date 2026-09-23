@@ -118,6 +118,47 @@ theorem sampleOf_embedQ (sm : Sample F n) (t : Ty) :
   rw [Sample.question_ty] at h
   rw [sampleOf_question, h, recanon_question]
 
+end Regs
+
+/-! ## Two types on one sample -/
+
+/-- A sample with its two types replaced. -/
+def Sample.retype {F : Type*} {n : ℕ} (sm : Sample F n) (a b : Ty) : Sample F n :=
+  ⟨a, b, sm.u, sm.s, sm.v⟩
+
+/-- A question depends on the sample's point, seed and direction, not on its types. -/
+@[simp] theorem Sample.question_retype {F : Type*} [Field F] [Fintype F] [DecidableEq F] {n : ℕ}
+    [NeZero n] (hn : n ∣ Fintype.card F) (sm : Sample F n) (a b t : Ty) :
+    (sm.retype a b).question hn t = sm.question hn t := by
+  cases t <;> rfl
+
+/-- A sample is its two types, point, seed and direction. -/
+def Sample.equiv (F : Type*) (n : ℕ) : Sample F n ≃ Ty × Ty × Point F n × F × Point F n where
+  toFun sm := (sm.tyA, sm.tyB, sm.u, sm.s, sm.v)
+  invFun p := ⟨p.1, p.2.1, p.2.2.1, p.2.2.2.1, p.2.2.2.2⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+namespace Regs
+
+variable {ι : Type*} [DecidableEq ι] [Fintype ι] {n : ℕ} (R : Regs ι n)
+variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [NeZero n] {hn : n ∣ Fintype.card F}
+  (S : Sel F n hn)
+
+/-- **Uniform content and a uniform pair of types give a uniform sample**: the sample the
+registers carry at the first type, retyped to a pair of types, summed over both types and all
+vectors, is every sample `q^{|ι| - (2n+1)}` times. -/
+theorem sum_sampleOf_retype {M : Type*} [AddCommMonoid M] (g : Sample F n → M) :
+    ∑ a : Ty, ∑ b : Ty, ∑ x : ι → F, g ((R.sampleOf S a x).retype a b)
+      = (Fintype.card F ^ (Fintype.card ι - (2 * n + 1))) • ∑ sm : Sample F n, g sm := by
+  have h a b : ∑ x : ι → F, g ((R.sampleOf S a x).retype a b) = _ :=
+    R.sum_sampleOf S a (fun sm => g (sm.retype a b))
+  simp_rw [h, ← Finset.smul_sum]
+  congr 1
+  rw [← (Sample.equiv F n).symm.sum_comp]
+  simp only [Fintype.sum_prod_type]
+  rfl
+
 end MIPRE.LIDT.CL.Regs
 
 end
