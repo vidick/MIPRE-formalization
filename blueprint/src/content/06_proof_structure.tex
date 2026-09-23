@@ -5562,7 +5562,11 @@ input are the budget \texttt{AnswerReduction.inBudget}: sampler and decider runt
 coefficients at most $(\lambda n + 1)^\mu$ and $2^{(\lambda n + 1)^\mu}$, respectively,
 both at input-size degree $\mu$, questions of dimension at most
 the sampler's bound and answers rejected beyond the decider's, together with $\abs{\decider}
-\leq \sigma$. For a universal base polynomial $P$ and base degree $d$, the
+\leq \sigma$. The complexity clause asks $\abs{\sampler} \leq \sigma$ as well: the output
+runs the input sampler through the universal machine, whose overhead is polynomial in the
+size of the program it simulates, and the source's $\poly((\lambda n)^\mu, \sigma)$ bounds
+are silent on that size (the introspective sampler that compression supplies has size
+polynomial in $\log \lambda$). For a universal base polynomial $P$ and base degree $d$, the
 output is within $P((\lambda n+1)^\mu+\sigma)^{\mu+1}$ at input-size degree
 $d(\mu+1)$, and rejects longer answers. The extra power retains the input
 sampler's degree; fixing $\mu$ in compression leaves a polynomial bound. Its threshold $C_{\mathrm{ar}}$
@@ -5788,7 +5792,8 @@ Remark~\ref{rem:compression-chain}. In Lean this is
 $\sigma(\lambda)$ is computed by iterating the program of $\lambda(n)$ of
 Lemma~\ref{lem:lambda}, there being no polynomial-time arithmetic in the toolkit for the
 paper's $\lceil C_{\mathrm{intro}} \lambda^{C_{\mathrm{intro}}} \rceil$, which only has to be
-dominated. Oracularization is not a stage: it is the first step of the proof of
+dominated; it also dominates the size of the introspective sampler, which the complexity
+clause of Definition~\ref{def:answer-reduction-contract} bounds by $\sigma$. Oracularization is not a stage: it is the first step of the proof of
 Theorem~\ref{thm:answer-reduction}.
 \end{proof}
 
@@ -5960,7 +5965,8 @@ first term of $\delta_2(\eps_2, n)$ is exactly $\eps_1 / 3$. The paper fixes $\s
 \lceil C_{\mathrm{intro}} \lambda^{C_{\mathrm{intro}}} \rceil$ and $\mu = \lceil \max\{
 C_{\mathrm{intro}}, (9 a_1 + 2 a_2 C_{\mathrm{intro}}) / (b_1 b_2) \} \rceil$ and has the bound
 for all $n \geq 2$; the formalization takes $\sigma$ any polynomial in $\lambda$ dominating
-$C_{\mathrm{intro}} (\lambda + 1)^{C_{\mathrm{intro}}}$, hence $\sigma \leq x^K$ for a
+$C_{\mathrm{intro}} (\lambda + 1)^{C_{\mathrm{intro}}}$ and the size of the introspective
+sampler, hence $\sigma \leq x^K$ for a
 universal $K$, and a threshold on $n$ that $C_0$ absorbs.
 \end{proof}
 

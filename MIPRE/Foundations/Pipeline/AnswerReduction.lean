@@ -24,8 +24,8 @@ The reading of the paper's statement in the vocabulary of `MIPRE.Verifier`:
   from the input programs and the parameters (`compute`).
 * The ambient input budget `inBudget λ μ n` bounds the sampler and dimension by
   `(λn + 1)^μ`, and the decider and answer length by `2^{(λn + 1)^μ}`, together with
-  `𝒟.size ≤ σ`. This explicitly adapts the paper's absolute-time hypothesis
-  `TIME_𝒟(n) ≤ (2^{λn})^μ` to the ambient input-size degree: the logarithm of the
+  `𝒟.size ≤ σ`; the complexity clause asks `𝒮.size ≤ σ` as well (below). This explicitly
+  adapts the paper's absolute-time hypothesis `TIME_𝒟(n) ≤ (2^{λn})^μ` to the ambient input-size degree: the logarithm of the
   permitted absolute decider time on legal inputs is polynomial in the sampler's budget
   when `λ, n ≥ 1`.
   The ambient sampler also has input-size degree `μ`: on inputs of size `O(L)`, where
@@ -35,6 +35,13 @@ The reading of the paper's statement in the vocabulary of `MIPRE.Verifier`:
   `outDegree deg μ = deg * (μ + 1)`, and reject longer answers. This is a conservative
   adaptation of the paper's absolute-time contract, not a proof of that adaptation or of
   answer reduction. Compression fixes `μ`, so its final bound remains polynomial.
+* The complexity clause bounds the input sampler's description by `σ` too. The output
+  simulates the input sampler (the oracularized sampler and the answer-reduced decider both
+  call it through the universal machine), and the simulation's overhead is polynomial in the
+  size of the program simulated as well as in its running time; the paper's `thm:ar` bounds
+  only `|𝒟|`, and its `poly((λn)^μ, σ)` running times hold for a sampler of bounded size, as
+  the introspective sampler that compression feeds it is. Completeness and soundness do not
+  need the bound and keep the paper's hypothesis.
 * For `n ≥ C_ar` (the paper's threshold): a value-`1` PCC strategy for `𝒱_n` gives one for
   `𝒱^ans_n` (completeness), and `val*(𝒱^ans_n) > 1 - ε` gives `val*(𝒱_n) ≥ 1 - δ(ε, n)` with
   `δ(ε, n) = σ^a((λn)^{μa} ε^b + (λn)^{-μb})` (soundness), for universal constants `a, b`, with
@@ -125,10 +132,11 @@ structure AnswerReduction (ℓ : ℕ) where
   output_decider : ∀ (V : Verifier ℓ) (lam mu sigma : ℕ),
     (output V lam mu sigma).decider.prog =
       compute ((V.sampler.prog, V.decider.prog), lam, mu, sigma)
-  /-- The complexity clause: an input within `inBudget λ μ n` with `|𝒟| ≤ σ` gives an output
-  within `outBound bound λ μ σ n` at degree `outDegree deg μ`, rejecting longer answers. -/
+  /-- The complexity clause: an input within `inBudget λ μ n` with `|𝒮|, |𝒟| ≤ σ` gives an
+  output within `outBound bound λ μ σ n` at degree `outDegree deg μ`, rejecting longer
+  answers. -/
   within : ∀ (V : Verifier ℓ) (lam mu sigma n : ℕ),
-    V.Within n (AnswerReduction.inBudget lam mu n) → V.decider.size ≤ sigma →
+    V.Within n (AnswerReduction.inBudget lam mu n) → V.size ≤ sigma →
     (output V lam mu sigma).Within n
       (Budget.uniform (AnswerReduction.outBound bound lam mu sigma n)
         (AnswerReduction.outDegree deg mu))
