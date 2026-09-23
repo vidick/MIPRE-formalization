@@ -261,3 +261,71 @@ that call path.
 
 AR-3a and AR-3b are what AR-4 and AR-5 consume, and need no programs. AR-3c to AR-3f are the
 complexity half, and only they test the contract's time bounds.
+
+## AR-5: soundness, the plan
+
+Written after reading the paper's soundness proof (`ld_compiler.tex`, `sec:ar-soundness`: claims
+`claim:ar-1` to `claim:ar-5`, `lem:ar-ar`, `lem:ar-ora` and the error computation) and the Lean
+that exists for it. The target is the contract's `soundness` clause for `arVerifier`, with
+`δ(ε, n) = σ^a((λn)^{μa} ε^b + (λn)^{-μb})` for universal `a, b`.
+
+### The chain
+
+1. **Detyping** (exists): a strategy of value `≥ 1 - ε` for the output game at the answer cut
+   gives a typed strategy of value `≥ 1 - Kε`, `K = 16^{54}`, on the same state
+   (`CL.Detyping.DeciderProgram.restrictAmbient_value_ge`), for the typed game with the
+   decider's predicate, which is `typedPred` at the cut (`typedPredicate_eq`).
+2. **No symmetrization.** The paper symmetrizes so that one family serves both players. The
+   Lean keeps the two families `MA, MB` of a `TensorProductStrategy`: every relation the paper
+   derives for `M ⊗ I` versus `I ⊗ M` is derived for `MA` against `MB` and for `MB` against
+   `MA`, each from the ordered type pair that carries it (the type graph is complete, so both
+   orders are sampled). Projectivity comes from a Naimark dilation (`Foundations/Dilation`)
+   applied once, before anything else.
+3. **Conditioning** (`claim:ar-1` to `claim:ar-4`): the typed game samples a uniform ordered
+   pair of the 54 types and a uniform seed, so the failure conditioned on a type pair is at most
+   `54² θ`. Each subtest is a set of type pairs; the per-seed failure is then averaged. The
+   engine is `CrossConsistency.lean` (`condFail`, `sum_mul_condFail_le`).
+4. **Copy isolation** (the per-seed low-degree games): for a seed `x` of the input sampler and a
+   copy of the test, the AR strategy restricted to that copy's nine type pairs, at roles
+   `(v, v)` or `(oracle, oracle)` and oracle half `x`, is a strategy for `clGame` of the copy's
+   parameters. Two facts make this exact:
+   * the presentation's output is supported on the copy's own registers and is a bijective
+     function of the copy's sample (`Regs.sampleOf_eval_question` and its converse), so the CL
+     question determines the AR question;
+   * uniform content gives a uniform sample (`Regs.sum_sampleOf`), so the distributions agree;
+   and the AR predicate on those pairs implies `CL.accepts` of the parsed answers (format
+   preamble, step 1 for equal types, steps 3 and 4 for point against line).
+   Answers are pushed forward along `parse` then `ans1`/`ans6`, a question-dependent map.
+5. **Extraction** (`claim:ar-3`, `claim:ar-4`): `LIDT.Simul.clSoundness` per seed, with the
+   measurements chosen by `Classical.choose`; the errors `deltaSim q m d r ε_x` are averaged over
+   seeds by concavity of `ε ↦ ε^{clB}` (Jensen).
+6. **Cross relations** (`claim:ar-2`, the first item of `claim:ar-4`, and the input side of
+   `claim:ar-5`): consistency of the oracle's `Point_6` block with an isolated player's `Point_v`
+   and with the copy-`i` point, chained with the extraction's relations into the sandwich
+   lemma's hypothesis (`one_sub_sum_bornProb_ldSandwich_le`, `k = 6`, index = the full seed).
+7. **The sandwich** (`claim:ar-5`): `Λ`, the giant sandwich of the five `G`'s around `J`'s
+   constraint marginal; conclusion `Λ` consistent with `J` at a uniform point.
+8. **Decoding** (`lem:ar-ar`, `lem:ar-ora`): the typed oracularized strategy measures `Λ` (an
+   oracle) or `G_v` (an isolated player) and answers the decoded strings. No truncation is
+   needed: the PCP's soundness gives accepted answers of length at most `T`, and an input within
+   its budget rejects answers longer than `2^Q` (`RejectsLong`), so accepted answers already fit
+   the input's answer alphabet. The game check goes through the PCP's soundness at `p = 1/2`.
+   Then `Verifier.valStar_ge_of_typed` (oracularization soundness, one square root).
+9. **Error assembly** (`lem:ar-error-assembly`): explicit, with `clA`, `clB`, `simA`.
+
+### New hypothesis on the PCP decider
+
+The LDT error has a field term `q^{-clB}` with prefactor `simA (7 m'(m' + 6))^{simA}`, which must
+be at most `1/Q` for the error to have the contract's shape. `thm:pcp-decider` deliberately does
+not carry the paper's lower bound on `q` (`eq:pcp-q-choice`); AR-5 states it as a hypothesis on
+the decider (`FieldLarge`), beside `ParamsBound` and `ShoupField`, and AR-6 must make the
+classical decider's `pcpParams` choose `k` large enough.
+
+### Pieces
+
+* **AR-5a** detyping and conditioning at the typed game; the soundness statement as a target.
+* **AR-5b** copy isolation: the per-seed CL strategies and their values.
+* **AR-5c** extraction and averaging.
+* **AR-5d** cross relations and the sandwich hypothesis.
+* **AR-5e** the sandwich and the decoded oracularized strategy's value.
+* **AR-5f** error assembly, the contract clause, blueprint.
