@@ -71,7 +71,8 @@ theorem ptOf_pres6 (w : Coord P → Fq P hk) :
   rw [pres_six S S' w .point (by rfl)]
   exact ptOf_point_eval _ _ w
 
-/-- **Step 5 at two `Point_6` questions**: acceptance forces the PCP check to pass on both answers. -/
+/-- **Step 5 at two `Point_6` questions**: acceptance forces the PCP check to pass on both
+answers. -/
 theorem check_of_typedPred (x : Fin (V.sampler.dim n) → 𝔽₂) (w : Coord P → Fq P hk)
     {a b : Verifier.Answers B}
     (h : typedPred V n P hk S S' check B (tq V n P hk S S' (.oracle, ((5 : Fin 6), .point)) x w)
