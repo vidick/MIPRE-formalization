@@ -11,6 +11,7 @@ import MIPRE.Background.AnswerReduction.ParamsCost
 import MIPRE.Background.AnswerReduction.PcpPresentation
 import MIPRE.Background.AnswerReduction.PcpSampler
 import MIPRE.Background.AnswerReduction.Predicate
+import MIPRE.Background.AnswerReduction.SamplerCost
 import MIPRE.Background.AnswerReduction.StageCorrect
 import MIPRE.Background.AnswerReduction.StageLists
 import MIPRE.Background.AnswerReduction.StageProg
@@ -728,6 +729,7 @@ import MIPRE.Foundations.CL.Embedding
 import MIPRE.Foundations.CL.Graph
 import MIPRE.Foundations.CL.Product
 import MIPRE.Foundations.CL.ProductSampler
+import MIPRE.Foundations.CL.ProductSamplerCost
 import MIPRE.Foundations.CL.ProductSamplerProg
 import MIPRE.Foundations.CL.Register
 import MIPRE.Foundations.CL.Repeat

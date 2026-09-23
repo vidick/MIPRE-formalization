@@ -157,6 +157,25 @@ theorem ofCall {B q t c m e : ℕ} (hB : B ≤ W) (hq : q + 1 ≤ c * (W + 1) ^ 
     _ = (c * (W + 1) ^ (m + 1) * X ^ e) ^ (K + 1) := by
         rw [← mul_pow]; congr 1; ring
 
+/-- **One call to a program** of coefficient `B ≤ c₀ (W + 1)^{m₀}` and degree `e' (K + 1)`, on a
+query of size below the unpowered monomial `c₁ (W + 1)^{m₁} X^{e₁}`. -/
+theorem ofCallPow {B q t c₀ m₀ c₁ m₁ e₁ e' : ℕ} (hB : B ≤ c₀ * (W + 1) ^ m₀)
+    (hq : q + 1 ≤ c₁ * (W + 1) ^ m₁ * X ^ e₁) (ht : t ≤ B * (q + 1) ^ (e' * (K + 1))) :
+    PDom W X K (c₀ * c₁ ^ e') (m₀ + m₁ * e') (e₁ * e') t := by
+  unfold PDom
+  refine ht.trans ?_
+  calc B * (q + 1) ^ (e' * (K + 1))
+      ≤ c₀ * (W + 1) ^ m₀ * ((c₁ * (W + 1) ^ m₁ * X ^ e₁) ^ e') ^ (K + 1) := by
+        rw [← pow_mul]
+        exact Nat.mul_le_mul hB (Nat.pow_le_pow_left hq _)
+    _ ≤ (c₀ * (W + 1) ^ m₀) ^ (K + 1) * ((c₁ * (W + 1) ^ m₁ * X ^ e₁) ^ e') ^ (K + 1) :=
+        Nat.mul_le_mul_right _ le_pow_succ
+    _ = (c₀ * c₁ ^ e' * (W + 1) ^ (m₀ + m₁ * e') * X ^ (e₁ * e')) ^ (K + 1) := by
+        rw [← mul_pow]
+        congr 1
+        rw [mul_pow, mul_pow, ← pow_mul, ← pow_mul, pow_add]
+        ring
+
 /-- A linear function of `W` and `K + 1`. -/
 theorem ofLin (hX : 1 ≤ X) {a b c v : ℕ} (h : v ≤ a * W + b * (K + 1) + c) :
     PDom W X K (a + 2 * b + c + 3) 1 0 v := by

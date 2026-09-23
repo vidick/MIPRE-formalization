@@ -108,6 +108,11 @@ theorem powProg_time (b : Unary) (e : ℕ) (hb : 1 ≤ b.length) :
     omega
   omega
 
+/-- The size of a hardcoded program. -/
+theorem esize_hardcode (p : Prog) (d : Data) : esize (Cost.hardcode p d) = esize p + d.size + 35 := by
+  simp only [Prog.esize_eq_size_toData, toData_hardcode, Data.size_cons, Data.size_nil, Data.size_ofNat]
+  omega
+
 /-! ## Runs within a powered monomial -/
 
 /-- `p` runs from `x` to `r` at a cost below `(c (W + 1)^m X^e)^{K + 1}`. -/
