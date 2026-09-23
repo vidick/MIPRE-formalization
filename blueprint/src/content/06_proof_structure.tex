@@ -5468,13 +5468,26 @@ where the detyped decider's predicate is the typed game's; detyping completeness
 \label{lem:ar-soundness-setup}
 \ledgernode{1.3.4.3}
 \uses{lem:ar-construction,lem:detype-soundness}
+\lean{MIPRE.AnswerReduction.typedStrategy, MIPRE.AnswerReduction.typedStrategy_value_ge}
+\leanok
 An exterior strategy with deficit $\eps_{\mathrm{out}}$ gives a typed strategy
 with deficit $\theta=16^{|T^{\mathrm{ar}}|}\eps_{\mathrm{out}}$ on the same
 state. Symmetrize the typed strategy for its symmetric game; do not assume
 the detyped question law is symmetric. The soundness proof then works with
 projective, well-formatted measurements and a swap-invariant state.
 All type-pair conditioning costs are constants since $T^{\mathrm{ar}}$ is fixed.
+The Lean does not symmetrize: it keeps the two families of measurements of a tensor-product
+strategy and derives every relation for each ordered pair of players from the ordered type pair
+that carries it, the type graph being complete.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:detype-soundness}
+\leanok
+Detyping soundness (Lemma~\ref{lem:detype-soundness}) restricts the strategy to the typed game
+with the typed decider's predicate, which is the typed answer-reduced predicate at the answer
+cut, on the same state.
+\end{proof}
 
 \begin{definition}[Full-seed indexing for answer reduction]
 \label{def:ar-seed-index}
@@ -5491,6 +5504,9 @@ injectivity or specifying its conditional seed distribution.
 \label{lem:ar-global-tests}
 \ledgernode{1.3.4.4}
 \uses{def:ar-seed-index,def:cross-distance}
+\lean{MIPRE.AnswerReduction.sum_edges_le, MIPRE.AnswerReduction.sum_copyFail_le,
+  MIPRE.AnswerReduction.sum_copyFail6_le, MIPRE.AnswerReduction.sum_dis_edge_le}
+\leanok
 Conditioning the typed success estimate on each checked type pair gives the
 global PCP subtests with $O(\theta)$ failure, averaged over uniform $\xi$
 and the prescribed PCP seed. Retain the joint proof-tuple format, individual
@@ -5502,6 +5518,8 @@ low-degree theorem is applied to line--point success alone.
 \label{lem:ar-input-tests}
 \ledgernode{1.3.4.5}
 \uses{lem:ar-global-tests}
+\lean{MIPRE.AnswerReduction.sum_dis_MA1_MB6_le, MIPRE.AnswerReduction.sum_dis_MA6_MB1_le}
+\leanok
 The two input-codeword tests, conditioned on their respective typed questions,
 have $O(\theta)$ failure on the required seeded point/line laws. The
 distributions are conditioned before averaging over $\xi$, and include
@@ -5513,6 +5531,9 @@ relations consumed by the individual-polynomial extraction.
 \label{lem:ar-common-polynomials}
 \ledgernode{1.3.4.6}
 \uses{lem:ar-input-tests,thm:lidt-cl-soundness-one,lem:schwartz-zippel}
+\lean{MIPRE.AnswerReduction.exists_ext1, MIPRE.AnswerReduction.ext1_spec,
+  MIPRE.AnswerReduction.sum_deltaSim1_le, MIPRE.LIDT.Simul.sum_deltaSim_le}
+\leanok
 For each seed, extract the input and proof polynomial PVMs, averaged with
 the source's conditional question laws. One common family $G_i$ can be used
 on both copies, for $i=1,\ldots,5$. To derive this, choose one side's LDT
@@ -5522,12 +5543,19 @@ consistency; average the resulting errors using Jensen. Identical point
 operators alone do not make the two existential LDT outputs identical.
 The resulting evaluation and full-polynomial consistency error is denoted
 $\kappa=O(\sqrt E+\rho)$ with $E,\rho$ as below.
+The Lean keeps one extracted family per player, $G^A_i$ and $G^B_i$, with their consistency,
+rather than a single common family; the errors are averaged over the seed by concavity of
+$\eps\mapsto\eps^{b'}$.
 \end{lemma}
 
 \begin{lemma}[A simultaneous complete proof tuple]
 \label{lem:ar-simultaneous-proof}
 \ledgernode{1.3.4.7}
 \uses{lem:ar-common-polynomials,thm:lidt-cl-soundness}
+\lean{MIPRE.AnswerReduction.exists_ext6, MIPRE.AnswerReduction.ext6_spec,
+  MIPRE.AnswerReduction.sum_deltaSim6_le, MIPRE.AnswerReduction.sum_dis_JAe_GBe_le,
+  MIPRE.AnswerReduction.sum_dis_GAe_JBe_le}
+\leanok
 Use the simultaneous theorem at $(q,m',d,m'+6)$ to obtain a projective
 measurement $J$ of the entire tuple $(f_1,\ldots,f_5,c_0,\ldots,c_{m'})$.
 Write $M_i$ for individual point measurements, and $M_6$ for the complete
@@ -5558,6 +5586,12 @@ the evaluation point uniform independently of it. Reverse the six-index
 order so the constraint-tuple marginal of $J$ is innermost. The resulting
 giant sandwich has error
 $\delta_3=O(\sqrt{\kappa+\rho})=O((\sqrt E+\rho)^{1/2})$.
+The Lean proof does not use this lemma. The oracle there measures the complete $J$ itself, and
+what the sandwich provides is replaced by a Schwartz--Zippel comparison: the $i$-th component of
+$J$'s outcome agrees at a uniform point with the placement on its block of the other player's
+$G_i$ outcome, except with probability $O(E+\theta)$, and two distinct individual-degree-$d$
+polynomials agree there with probability at most $\rho$. So $J$'s outcome is placed on its
+blocks, and equal to the placed $G_i$ outcome, except with probability $O(E+\theta+\rho)$.
 \end{lemma}
 
 \begin{lemma}[Transferring to the polynomial strategy]
@@ -5569,12 +5603,19 @@ the same state. Transfer acceptance through the complete tuple $J$,
 including its constraint polynomials and tested formats, to obtain success
 $1-O(\sqrt{\delta_3})$. The proof uses the full-tuple relations of
 Lemma~\ref{lem:ar-simultaneous-proof}, not independently chosen evaluations.
+The Lean proof does not use this lemma: its decoded strategy
+(Lemma~\ref{lem:ar-decoding}) measures $J$ and the extracted $G_i$ directly.
 \end{lemma}
 
 \begin{lemma}[Decoding with the original answer cutoff]
 \label{lem:ar-decoding}
 \ledgernode{1.3.4.10}
-\uses{lem:ar-polynomial-strategy,lem:timeout-truncation-interface,thm:oracularization}
+\uses{lem:ar-simultaneous-proof,lem:schwartz-zippel,thm:pcp-decider,thm:oracularization}
+\lean{MIPRE.AnswerReduction.MAo, MIPRE.AnswerReduction.MBo, MIPRE.AnswerReduction.decAns,
+  MIPRE.AnswerReduction.pcpOf, MIPRE.AnswerReduction.pcpSound,
+  MIPRE.AnswerReduction.one_sub_povmValue_decoded_le,
+  MIPRE.AnswerReduction.valStar_ge_decoded, MIPRE.AnswerReduction.valStar_ge_of_typedGame}
+\leanok
 Decode the polynomial strategy to the oracle strategy, applying the
 length-$B_D(n)$ prefix cutoff to each original answer. It preserves the
 simulated decider's output both before and after the oracle construction,
@@ -5582,12 +5623,38 @@ and makes every decoded answer pass its bounded parser. Check all three
 oracle subtests. Group malformed or failed decodings into fixed legal
 outcomes so measurements remain complete. The final conversion to the
 input game yields deficit $O(\delta_3^{1/4})$.
+The Lean decodes without the sandwich and without a cutoff. An oracle measures the complete $J$
+and answers the pair decoded from its first two answer polynomials, read on their blocks; an
+isolated player measures its own copy's $G$ and answers the decoded polynomial. The decoder
+returns the answer of length at most $2^{(\lambda n+1)^\mu}$ whose answer vector the polynomial's
+Boolean values are. No truncation is needed: the PCP's soundness gives accepted answers of length
+at most $T$, and an input within its budget rejects answers longer than
+$2^{(\lambda n+1)^\mu}$, so accepted answers already fit its alphabet, where the answer vector
+determines them. The oracle's game check fails only where $J$'s outcome is not placed on its
+blocks, or the PCP check rejects it at half the points; each ordered pair of roles fails at most
+by a game check and the disagreement of the polynomials. The decoded POVM strategy fails the
+typed oracularized game with probability at most $6$ times the combined error; a Naimark
+dilation makes it projective, and oracularization soundness (one square root) gives
+$\val^*(\verifier_n)\geq 1-24\sqrt{7\,\mathrm{err}}$.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:ar-simultaneous-proof,lem:schwartz-zippel,thm:pcp-decider,thm:oracularization}
+\leanok
+As described: the nine ordered pairs of roles are bounded pair by pair, and the bounds summed
+over the seed with the averaged extraction errors of Lemmas~\ref{lem:ar-common-polynomials}
+and~\ref{lem:ar-simultaneous-proof}.
+\end{proof}
 
 \begin{lemma}[Answer-reduction quantitative assembly]
 \label{lem:ar-error-assembly}
 \ledgernode{1.3.4.11}
 \uses{lem:ar-decoding,lem:ar-soundness-setup,lem:ar-common-polynomials}
+\lean{MIPRE.AnswerReduction.arVerifier_soundness, MIPRE.AnswerReduction.FieldLarge,
+  MIPRE.AnswerReduction.errE, MIPRE.AnswerReduction.errE_le,
+  MIPRE.AnswerReduction.sqrt_le_delta, MIPRE.AnswerReduction.exists_threshold_clB,
+  MIPRE.AnswerReduction.z_le}
+\leanok
 Put $L=(\lambda n)^\mu$, $\rho=m'd/q$ and
 $E=\delta_{\mathrm{CL}}(\theta,q,m',d,m'+6)$ for the source parameter
 routine. The comparison with the smaller-$m$ LDT error uses its field-error
@@ -5607,7 +5674,27 @@ and enlarge the polynomial coefficient and threshold to absorb every
 constant. This gives the displayed error of Theorem~\ref{thm:answer-reduction}.
 When that error is at least one the value conclusion is trivial; the
 nontrivial regime also justifies the small-error inequalities above.
+
+In the Lean, without the sandwich, the chain has one square root, from oracularization, and the
+exponent is $b=b'/2$. The field term $q^{-b'}$ of the low-degree test has the prefactor
+$a'(7m'(m'+6))^{a'}$, polynomial in $m'$ of degree about $2a'$, and is controlled by a hypothesis
+on the PCP decider, \texttt{FieldLarge}: its field has at least $(8(Q+1)m')^{e}$ elements with
+$e=40000(3\lceil a'\rceil+4)$. Theorem~\ref{thm:pcp-decider} does not carry the paper's lower
+bound on $q$ (\texttt{eq:pcp-q-choice}); this is it, beside \texttt{ParamsBound} and
+\texttt{ShoupField}. The term $2^{-b'md}$ uses $m\geq Q$, from $2^m\geq 2T$, and the threshold
+on $n$; $\mu=0$ and $\eps\geq 1$ are trivial, the loss being at least $1$ there.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:ar-decoding,lem:ar-soundness-setup}
+\leanok
+With $\theta\leq 16^{54}\eps$, the combined error is at most
+$39204\cdot16^{54}Z^{3A}\eps^{b'}+(Q+1)^{-2}+22Z^{3A}2^{-b'Q}$, $Z=8(Q+1)m'$, $A=\lceil
+a'\rceil$, over the large field. The parameters bound $Z$ by a polynomial in $Q\sigma$, and
+$N^\mu\leq Q\leq N^{2\mu}$ for $N=\lambda n\geq2$, so $24\sqrt{7\,\mathrm{err}}$ is at most
+$\sigma^a(N^{\mu a}\eps^{b'/2}+N^{-\mu b'/2})$ for a constant $a$ depending only on the
+parameter polynomial, past a threshold on $Q\geq n+1$.
+\end{proof}
 
 \begin{lemma}[Answer-reduction sampler independence]
 \label{lem:ar-sampler-independence}

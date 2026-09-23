@@ -195,6 +195,7 @@ import MIPRE.Background.AnswerReduction.ArSampler
 import MIPRE.Background.AnswerReduction.ArDecider
 import MIPRE.Background.AnswerReduction.Construction
 import MIPRE.Background.AnswerReduction.Complete
+import MIPRE.Background.AnswerReduction.SoundFinal
 import MIPRE.Foundations.Expanded
 import MIPRE.Foundations.WeylEPR
 import MIPRE.Foundations.Swap
@@ -1771,6 +1772,30 @@ tell you the guard is missing.
   MIPRE.LIDT.CL.honest,
   MIPRE.LIDT.CL.accepts_honest,
   MIPRE.LIDT.CL.Regs.sampleOf_eval_question
+
+-- blueprint `lem:ar-soundness-setup`: detyping soundness for answer reduction.
+#guard_sorry_free MIPRE.AnswerReduction.typedStrategy,
+  MIPRE.AnswerReduction.typedStrategy_value_ge
+
+-- blueprint `lem:ar-decoding`: the decoded strategy for the typed oracularized game, the PCP's
+-- soundness through the decoder, and `val*` of the input from a typed strategy.
+#guard_sorry_free MIPRE.AnswerReduction.MAo,
+  MIPRE.AnswerReduction.MBo,
+  MIPRE.AnswerReduction.decAns,
+  MIPRE.AnswerReduction.pcpOf,
+  MIPRE.AnswerReduction.pcpSound,
+  MIPRE.AnswerReduction.one_sub_povmValue_decoded_le,
+  MIPRE.AnswerReduction.valStar_ge_decoded,
+  MIPRE.AnswerReduction.valStar_ge_of_typedGame
+
+-- blueprint `lem:ar-error-assembly`: soundness of answer reduction, under `FieldLarge`.
+#guard_sorry_free MIPRE.AnswerReduction.arVerifier_soundness,
+  MIPRE.AnswerReduction.FieldLarge,
+  MIPRE.AnswerReduction.errE,
+  MIPRE.AnswerReduction.errE_le,
+  MIPRE.AnswerReduction.sqrt_le_delta,
+  MIPRE.AnswerReduction.exists_threshold_clB,
+  MIPRE.AnswerReduction.z_le
 
 /-! ## Introspection mixing, conditioning, and graph rejection sampling -/
 

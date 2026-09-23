@@ -1,6 +1,6 @@
 # Answer reduction: the construction (AR-3)
 
-Status 2026-09-23. **AR-3 and AR-4 are done.** **Done: AR-3a, AR-3b, AR-3c** (the mathematics of the construction):
+Status 2026-09-23. **AR-3, AR-4 and AR-5 are done** (AR-5: see "AR-5 as formalized" below). **Done: AR-3a, AR-3b, AR-3c** (the mathematics of the construction):
 `Background/LIDT/Presentation.lean`, `Background/AnswerReduction/{PcpPresentation,Predicate,
 Family,AnswerFormat,TypedGame}.lean`, `Foundations/CL/Product.lean`. One thing met on the way:
 with the 54 types, the kernel unfolds `Finset.univ` of the type pairs when checking the type
@@ -329,3 +329,43 @@ classical decider's `pcpParams` choose `k` large enough.
 * **AR-5d** cross relations and the sandwich hypothesis.
 * **AR-5e** the sandwich and the decoded oracularized strategy's value.
 * **AR-5f** error assembly, the contract clause, blueprint.
+
+### AR-5 as formalized: no sandwich
+
+Steps 1 to 6 are as planned (`SoundSetup`, `SoundIsolate`, `SoundExtract`, `SoundRelations`), with
+one family of extracted measurements per player (`GA1`, `GB1` for copies 1 to 5, `JA`, `JB` for
+the sixth) rather than a common one. Steps 7 and 8 changed: there is no sandwich.
+
+* **The oracle measures `J`.** The decoded strategy (`SoundDecoded`, `MAo`, `MBo`) answers an
+  oracle question with the pair decoded from the first two components of `J`'s outcome read on
+  their blocks, and an isolated question with the decoded outcome of that copy's `G`.
+* **Block locality by Schwartz--Zippel** (`SoundPoly`). The `i`-th component of `J`'s outcome
+  agrees at a uniform point of the sixth copy with the placement on block `i` (`liftBlk`) of the
+  other player's `G_i` outcome, except with probability `11 (E_6 + 2916 theta + E_1)` (the chains
+  of `SoundRelations`); two distinct individual-degree-7 polynomials agree there with probability
+  at most `m' d / q`. So `J`'s outcome equals the placed `G_i` outcome, hence is placed on its
+  blocks, except with probability `errD` (`disPolyA_le`, `sum_disPolyA_le`).
+* **The game check** (`SoundGameCheck`, `gcA_le`). An oracle's decoded pair fails the game check
+  only if `J`'s outcome is not placed on its blocks, or the PCP check rejects its evaluations at
+  half the points (`PcpSound`, the contrapositive of the PCP's soundness, discharged in `SoundPcp`
+  with the decoder `decAns` and the PCP proof `pcpOf` an outcome carries). The rejected weight is
+  at most twice the sixth copy's point-subtest failure.
+* **Nine pairs of roles** (`condFail_OO_le` ... `condFail_ba_le`), summed over the seed:
+  `1 - povmValue <= 6 errD` (`one_sub_povmValue_decoded_le`). A Naimark dilation makes it a
+  `TensorProductStrategy`, and `Verifier.valStar_ge_of_typed` gives
+  `val*(V_n) >= 1 - 24 sqrt(7 errD)` (`valStar_ge_decoded`).
+* **Error assembly** (`SoundError`, `SoundFinal`). With `theta <= 16^{54} eps`,
+  `errD <= 39204 K Z^{3A} eps^{clB} + (Q+1)^{-2} + 22 Z^{3A} 2^{-clB Q}`, `Z = 8 (Q + 1) m'`,
+  `A = ceil(simA)` (`errE_le`), using `FieldLarge` for both field terms and `m >= Q` (from
+  `2^m >= 2T`) for the last. `ParamsBound` gives `Z <= zC (Q sigma)^{zE}` (`z_le`), and
+  `sqrt_le_delta` compares with `delta` for `n` past a threshold (`exists_threshold_clB`). At
+  `mu = 0` or `eps >= 1` the loss is at least `1`.
+
+The sandwich lemma (AR-1, `lem:ar-sandwich-support`) is therefore not consumed by soundness. It
+stays, as the paper's statement. What the sandwich bought in the paper --- a single measurement
+consistent with every `G_i` --- is here `J` itself, which the simultaneous test already provides.
+
+`FieldLarge` is new: the prefactor of the field term `q^{-clB}` is `simA (7 m' (m'+6))^{simA}`, so
+`q` must be at least a fixed power of `m'` and `Q`, a power of about `80000 simA`. The constants are
+irreducible definitions (`simAN = ceil(simA)`, `fieldExp`), never evaluated. AR-6 must choose the
+classical decider's `k` at least `fieldExp * size (8 (Q + 1) m')`, still logarithmic.
