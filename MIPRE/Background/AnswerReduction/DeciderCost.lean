@@ -73,18 +73,18 @@ theorem size_margQuery_le (ℓ : ℕ) (w : Player) (ob : BitStr) (d : Data) (hob
 /-- The cost of one marginal call through the universal machine, before the machine's overhead:
 the input sampler's program, the query, and the input sampler's time on it. -/
 theorem margCall_pdom (ℓ : ℕ) : ∃ c m e, ∀ {W X K : ℕ} (sp : Prog) (n Q : ℕ) (q : Data)
-    (t : ℕ), 1 ≤ X → esize sp ≤ W → n ≤ W → Q ≤ W → q.size + 1 ≤ 4 * X + 4 * ℓ + 40 →
+    (t : ℕ), 1 ≤ X → esize sp ≤ W → n ≤ W → Q ≤ W → q.size + 1 ≤ (4 * ℓ + 44) * (W + 1) →
     t ≤ Q * (q.size + 1) ^ K →
     PDom W X K c m e (esize sp + (Data.cons (encode n) q).size + t) := by
   exact ⟨_, _, _, fun {W X K} sp n Q q t hX hsp hn hQ hq ht => by
     have en := esize_nat_le_four n
-    have hq' : q.size + 1 ≤ (4 * ℓ + 44) * (W + 1) ^ 0 * X ^ 1 := by
-      simp only [pow_zero, pow_one, Nat.mul_one]
-      nlinarith
+    have hq' : q.size + 1 ≤ (4 * ℓ + 44) * (W + 1) ^ 1 * X ^ 0 := by
+      simpa only [pow_zero, pow_one, Nat.mul_one] using hq
     have hcall := PDom.ofCall hQ hq' ht
     have hlin : PDom W X K _ _ _ (esize sp + esize n + 1) :=
       PDom.ofAffine (a := 5) (b := 2) (by omega)
-    have hqs : PDom W X K _ _ _ q.size := PDom.ofAffineX (a := 4) (b := 4 * ℓ + 40) hX (by omega)
+    have hqs : PDom W X K _ _ _ q.size :=
+      PDom.ofAffine (a := 4 * ℓ + 44) (b := 4 * ℓ + 44) (by nlinarith)
     refine ((hlin.add hX hqs).add hX hcall).of_le ?_
     simp only [Data.size_cons]
     change esize sp + (esize n + q.size + 1) + t ≤ _
@@ -111,25 +111,31 @@ theorem hdat_pdom : ∃ c m e, ∀ {W X K : ℕ} (sp dp : Prog) (lam sigma : ℕ
     omega⟩
 
 /-- The index and the rest of the input. -/
-theorem input_pdom : ∃ c m e, ∀ {W X K : ℕ} (n : ℕ) (d : Data), 1 ≤ X → n ≤ W → d.size + 1 ≤ X →
-    PDom W X K c m e (Data.cons (encode n) d).size := by
+theorem input_pdom (cd md ed : ℕ) : ∃ c m e, ∀ {W X K : ℕ} (n : ℕ) (d : Data), 1 ≤ X →
+    n ≤ W → PDom W X K cd md ed d.size → PDom W X K c m e (Data.cons (encode n) d).size := by
   exact ⟨_, _, _, fun {W X K} n d hX hn hd => by
     have en := esize_nat_le_four n
     refine ((PDom.ofAffine (a := 4) (b := 2) (by omega : esize n + 1 ≤ 4 * W + 2)).add hX
-      (PDom.ofLeX (by omega : d.size ≤ X))).of_le ?_
+      hd).of_le ?_
     simp only [Data.size_cons]
     change esize n + d.size + 1 ≤ _
     omega⟩
 
-/-- **The running time of the typed answer-reduced decider**, on every input `(n, d)`. -/
-theorem typedDecider_time (ℓ : ℕ) (PD : PcpDecider) (R : Polynomial ℕ) : ∃ C M E, ∀ {W : ℕ}
-    (V : Verifier (ℓ + 1)) (lam mu sigma n : ℕ), ParamsBound PD R → 1 ≤ mu →
-    arQ lam mu n ≤ W → lam ≤ W → sigma ≤ W → n ≤ W → esize V.sampler.prog ≤ W →
+/-- **The running time of the typed answer-reduced decider**, on every input `(n, d)` whose size is
+dominated and whose two question fields have oracle halves no longer than `W` — as the detyped
+decider's inputs have: their oracle halves are the input sampler's questions. -/
+theorem typedDecider_time (ℓ : ℕ) (PD : PcpDecider) (R : Polynomial ℕ) (cd md ed : ℕ) :
+    ∃ C M E, ∀ {W X : ℕ} (V : Verifier (ℓ + 1)) (lam mu sigma n : ℕ), ParamsBound PD R →
+    1 ≤ X → 1 ≤ mu → arQ lam mu n ≤ W → lam ≤ W → sigma ≤ W → n ≤ W → esize V.sampler.prog ≤ W →
     esize V.decider.prog ≤ W → V.sampler.TimeBoundAt n (arQ lam mu n) mu →
-    ∀ d : Data, ∃ r t, PDom W (d.size + 1) mu C M E t ∧
+    ∀ d : Data, PDom W X mu cd md ed d.size →
+    (readBits (treeHead (treeTail d))).length ≤ W + (dB PD lam mu sigma n).length →
+    (readBits (treeHead (treeTail (treeTail (treeTail d))))).length ≤
+      W + (dB PD lam mu sigma n).length →
+    ∃ r t, PDom W X mu C M E t ∧
       (typedDecider PD V lam mu sigma).prog.Runs (.cons (encode n) d) r t := by
   obtain ⟨cH, mH, eH, hH⟩ := hdat_pdom
-  obtain ⟨cI, mI, eI, hI⟩ := input_pdom
+  obtain ⟨cI, mI, eI, hI⟩ := input_pdom cd md ed
   obtain ⟨c0, m0, e0, h0⟩ := next_pdom cI mI eI cH mH eH
   obtain ⟨cp, mp, ep, hp⟩ := parCore_time PD R
   obtain ⟨c1, m1, e1, h1⟩ := PRuns.stage (ap₂ treePair (argPar 0) (PolyTimeFun.id Data))
@@ -164,107 +170,121 @@ theorem typedDecider_time (ℓ : ℕ) (PD : PcpDecider) (R : Polynomial ℕ) : �
     postKeep x7c x7m x7e v8c v8m v8e
   obtain ⟨x8c, x8m, x8e, hx8⟩ := next_pdom x7c x7m x7e v8c v8m v8e
   obtain ⟨cf, mf, ef, hf⟩ := PRuns.ptf (verdictP.comp readV) x8c x8m x8e
-  exact ⟨_, _, _, fun {W} V lam mu sigma n hR hmu hQ hl hs hn hsp hdp hS d => by
-    have hX : 1 ≤ d.size + 1 := by omega
+  exact ⟨_, _, _, fun {W X} V lam mu sigma n hR hX hmu hQ hl hs hn hsp hdp hS d hd hxd hyd => by
     have hu' := selfUniversal.closed
     have hv' := PD.verify.closed
     set H : Data := encode (V.sampler.prog, V.decider.prog, lam, mu, sigma) with hHdef
-    have pH : PDom W (d.size + 1) mu cH mH eH H.size :=
+    have pH : PDom W X mu cH mH eH H.size :=
       hH V.sampler.prog V.decider.prog lam sigma hX hsp hdp hl hs
-    have pI : PDom W (d.size + 1) mu cI mI eI (Data.cons (encode n) d).size :=
-      hI n d hX hn le_rfl
+    have pI : PDom W X mu cI mI eI (Data.cons (encode n) d).size :=
+      hI n d hX hn hd
     set X0 : Data := .cons H (.cons (encode n) d) with hX0def
-    have pX0 : PDom W (d.size + 1) mu c0 m0 e0 X0.size := h0 _ _ hX pI pH
+    have pX0 : PDom W X mu c0 m0 e0 X0.size := h0 _ _ hX pI pH
     -- stage 1
     have hpre1 : (ap₂ treePair (argPar 0) (PolyTimeFun.id Data)) X0 =
         .cons (.cons (encode (lam, mu, sigma)) (encode n)) X0 := by
       simp [argPar, lmsD, hdat, inp, X0, H, encode_prod]
-    have P1 := hp (W := W) (X := d.size + 1) hR lam mu sigma n hX hmu hQ hl hs hn
+    have P1 := hp (W := W) (X := X) hR lam mu sigma n hX hmu hQ hl hs hn
     have S1 := h1 (ParRoutine.core_closed PD) X0 _ X0 _ hX hpre1 pX0 P1
     simp only [postKeep, ap₂_apply, treePair_apply, fst_apply, snd_apply] at S1
     set X1 : Data := .cons ((family PD lam mu sigma).pd n) X0 with hX1def
-    have pX1 : PDom W (d.size + 1) mu x1c x1m x1e X1.size := hx1 _ _ hX pX0 P1.size_le
+    have pX1 : PDom W X mu x1c x1m x1e X1.size := hx1 _ _ hX pX0 P1.size_le
     -- stage 2
     have hpre2 : (ap₂ treePair (argPar 1) (PolyTimeFun.id Data)) X1 =
         .cons (.cons (encode (lam, mu, sigma)) (encode n)) X1 := by
       simp [argPar, lmsD, hdat, inp, X1, X0, H, encode_prod]
-    have P2 := hb (W := W) (X := d.size + 1) lam mu sigma n hX hmu hQ hl hs hn
+    have P2 := hb (W := W) (X := X) lam mu sigma n hX hmu hQ hl hs hn
     have S2 := h2 budCore_closed X1 _ X1 _ hX hpre2 pX1 P2
     simp only [postKeep, ap₂_apply, treePair_apply, fst_apply, snd_apply] at S2
     set X2 : Data := .cons (encode (arQ lam mu n, tPcp lam mu n)) X1 with hX2def
-    have pX2 : PDom W (d.size + 1) mu x2c x2m x2e X2.size := hx2 _ _ hX pX1 P2.size_le
+    have pX2 : PDom W X mu x2c x2m x2e X2.size := hx2 _ _ hX pX1 P2.size_le
     -- stages 3 to 6: the marginals
-    have marg : ∀ (j i : ℕ) (w : Player) (Xj : Data), 1 ≤ i →
+    have marg : ∀ (j i : ℕ) (w : Player) (Xj : Data),
         spD j Xj = encode V.sampler.prog → inp j 0 Xj = encode n →
-        tails j Xj = .cons (treeHead (tails j Xj)) (.cons (encode n) d) →
-        ∃ r, PRuns W (d.size + 1) mu cu mu' eu selfUniversal.univ (argMarg ℓ j i w Xj) r := by
-      intro j i w Xj hi hspj hnj htj
+        pdD j Xj = (family PD lam mu sigma).pd n →
+        (readBits (inp j i Xj)).length ≤ W + (dB PD lam mu sigma n).length →
+        ∃ r, PRuns W X mu cu mu' eu selfUniversal.univ (argMarg ℓ j i w Xj) r := by
+      intro j i w Xj hspj hnj hpdj hlen
       rw [argMarg_general V n j i w Xj hspj hnj]
       set q : Data := encode ((1 : ℕ), w, ℓ + 1, oBits j i Xj, ([] : BitStr))
-      have hq : q.size + 1 ≤ 4 * (d.size + 1) + 4 * ℓ + 40 := by
-        have : q.size ≤ 4 * d.size + 4 * ℓ + 40 := size_margQuery_le ℓ w (oBits j i Xj) d
-          ((length_oBits_le j i Xj).trans (size_inp_le j i hi Xj n d htj))
+      have hob : (oBits j i Xj).length ≤ W := by
+        obtain ⟨-, -, hdim⟩ := pdD_eq PD lam mu sigma n Xj hpdj
+        simp only [oBits, comp_apply, pair_apply, hdim, leftBP_apply, qBits, List.length_take]
         omega
+      have hq : q.size + 1 ≤ (4 * ℓ + 44) * (W + 1) := by
+        have : q.size ≤ 4 * W + 4 * ℓ + 40 := by
+          have h := esize_bitStr_le (oBits j i Xj)
+          have h2 := esize_nat_le_four (ℓ + 1)
+          have h3 : esize w ≤ 3 := by cases w <;> decide
+          have h4 : esize (1 : ℕ) ≤ 5 := by decide
+          have h5 : esize ([] : BitStr) = 1 := rfl
+          simp only [q, encode_prod, Data.size_cons]
+          change esize (1 : ℕ) + (esize w + (esize (ℓ + 1) + (esize (oBits j i Xj) +
+            esize ([] : BitStr) + 1) + 1) + 1) + 1 ≤ _
+          omega
+        nlinarith
       obtain ⟨r, t, ht, hr⟩ := hS q
       exact ⟨r, hu V.sampler.prog (.cons (encode n) q) r t hX hr
         (hm V.sampler.prog n (arQ lam mu n) q t hX hsp hn hQ hq ht)⟩
-    obtain ⟨rxA, P3⟩ := marg 2 2 .alice X2 (by omega)
+    obtain ⟨rxA, P3⟩ := marg 2 2 .alice X2
       (by simp [spD, hdat, X2, X1, X0, H, encode_prod]) (by simp [inp, X2, X1, X0])
-      (by simp [X2, X1, X0])
+      (by simp [pdD, res, X2, X1]) (by simpa [inp, X2, X1, X0, tails, comp_apply] using hxd)
     have S3 := h3 hu' X2 _ X2 _ hX (by simp) pX2 P3
     simp only [postKeep, ap₂_apply, treePair_apply, fst_apply, snd_apply] at S3
     set X3 : Data := .cons rxA X2 with hX3def
-    have pX3 : PDom W (d.size + 1) mu x3c x3m x3e X3.size := hx3 _ _ hX pX2 P3.size_le
-    obtain ⟨rxB, P4⟩ := marg 3 2 .bob X3 (by omega)
+    have pX3 : PDom W X mu x3c x3m x3e X3.size := hx3 _ _ hX pX2 P3.size_le
+    obtain ⟨rxB, P4⟩ := marg 3 2 .bob X3
       (by simp [spD, hdat, X3, X2, X1, X0, H, encode_prod]) (by simp [inp, X3, X2, X1, X0])
-      (by simp [X3, X2, X1, X0])
+      (by simp [pdD, res, X3, X2, X1]) (by simpa [inp, X3, X2, X1, X0, tails, comp_apply] using hxd)
     have S4 := h4 hu' X3 _ X3 _ hX (by simp) pX3 P4
     simp only [postKeep, ap₂_apply, treePair_apply, fst_apply, snd_apply] at S4
     set X4 : Data := .cons rxB X3 with hX4def
-    have pX4 : PDom W (d.size + 1) mu x4c x4m x4e X4.size := hx4 _ _ hX pX3 P4.size_le
-    obtain ⟨ryA, P5⟩ := marg 4 4 .alice X4 (by omega)
+    have pX4 : PDom W X mu x4c x4m x4e X4.size := hx4 _ _ hX pX3 P4.size_le
+    obtain ⟨ryA, P5⟩ := marg 4 4 .alice X4
       (by simp [spD, hdat, X4, X3, X2, X1, X0, H, encode_prod])
-      (by simp [inp, X4, X3, X2, X1, X0]) (by simp [X4, X3, X2, X1, X0])
+      (by simp [inp, X4, X3, X2, X1, X0]) (by simp [pdD, res, X4, X3, X2, X1])
+      (by simpa [inp, X4, X3, X2, X1, X0, tails, comp_apply] using hyd)
     have S5 := h5 hu' X4 _ X4 _ hX (by simp) pX4 P5
     simp only [postKeep, ap₂_apply, treePair_apply, fst_apply, snd_apply] at S5
     set X5 : Data := .cons ryA X4 with hX5def
-    have pX5 : PDom W (d.size + 1) mu x5c x5m x5e X5.size := hx5 _ _ hX pX4 P5.size_le
-    obtain ⟨ryB, P6⟩ := marg 5 4 .bob X5 (by omega)
+    have pX5 : PDom W X mu x5c x5m x5e X5.size := hx5 _ _ hX pX4 P5.size_le
+    obtain ⟨ryB, P6⟩ := marg 5 4 .bob X5
       (by simp [spD, hdat, X5, X4, X3, X2, X1, X0, H, encode_prod])
-      (by simp [inp, X5, X4, X3, X2, X1, X0]) (by simp [X5, X4, X3, X2, X1, X0])
+      (by simp [inp, X5, X4, X3, X2, X1, X0]) (by simp [pdD, res, X5, X4, X3, X2, X1])
+      (by simpa [inp, X5, X4, X3, X2, X1, X0, tails, comp_apply] using hyd)
     have S6 := h6 hu' X5 _ X5 _ hX (by simp) pX5 P6
     simp only [postKeep, ap₂_apply, treePair_apply, fst_apply, snd_apply] at S6
     set X6 : Data := .cons ryB X5 with hX6def
-    have pX6 : PDom W (d.size + 1) mu x6c x6m x6e X6.size := hx6 _ _ hX pX5 P6.size_le
+    have pX6 : PDom W X mu x6c x6m x6e X6.size := hx6 _ _ hX pX5 P6.size_le
     -- stages 7 and 8: the game checks
     obtain ⟨c7i, e7⟩ : ∃ c : PcpInput, argVer 6 2 1 5 3 2 X6 = encode c :=
       ⟨_, argVer_general V 6 2 1 5 3 2 X6
         (by simp [dpD, hdat, X6, X5, X4, X3, X2, X1, X0, H, encode_prod])⟩
-    have pa7 : PDom W (d.size + 1) mu a7c a7m a7e (esize c7i) := by
+    have pa7 : PDom W X mu a7c a7m a7e (esize c7i) := by
       have := ha7 (W := W) (K := mu) X6 hX pX6
       rw [e7] at this
       exact this
-    have P7 := hv7 (W := W) (X := d.size + 1) (K := mu) c7i hX pa7
+    have P7 := hv7 (W := W) (X := X) (K := mu) c7i hX pa7
     rw [← e7] at P7
     have S7 := h7 hv' X6 _ X6 _ hX (by simp) pX6 P7
     simp only [postKeep, ap₂_apply, treePair_apply, fst_apply, snd_apply] at S7
     set X7 : Data := .cons (encode (PD.verify c7i)) X6 with hX7def
-    have pX7 : PDom W (d.size + 1) mu x7c x7m x7e X7.size := hx7 _ _ hX pX6 P7.size_le
+    have pX7 : PDom W X mu x7c x7m x7e X7.size := hx7 _ _ hX pX6 P7.size_le
     obtain ⟨c8i, e8⟩ : ∃ c : PcpInput, argVer 7 4 3 6 2 1 X7 = encode c :=
       ⟨_, argVer_general V 7 4 3 6 2 1 X7
         (by simp [dpD, hdat, X7, X6, X5, X4, X3, X2, X1, X0, H, encode_prod])⟩
-    have pa8 : PDom W (d.size + 1) mu a8c a8m a8e (esize c8i) := by
+    have pa8 : PDom W X mu a8c a8m a8e (esize c8i) := by
       have := ha8 (W := W) (K := mu) X7 hX pX7
       rw [e8] at this
       exact this
-    have P8 := hv8 (W := W) (X := d.size + 1) (K := mu) c8i hX pa8
+    have P8 := hv8 (W := W) (X := X) (K := mu) c8i hX pa8
     rw [← e8] at P8
     have S8 := h8 hv' X7 _ X7 _ hX (by simp) pX7 P8
     simp only [postKeep, ap₂_apply, treePair_apply, fst_apply, snd_apply] at S8
     set X8 : Data := .cons (encode (PD.verify c8i)) X7 with hX8def
-    have pX8 : PDom W (d.size + 1) mu x8c x8m x8e X8.size := hx8 _ _ hX pX7 P8.size_le
+    have pX8 : PDom W X mu x8c x8m x8e X8.size := hx8 _ _ hX pX7 P8.size_le
     -- the verdict
-    have P9 := hf (W := W) (X := d.size + 1) (K := mu) X8 hX pX8
+    have P9 := hf (W := W) (X := X) (K := mu) X8 hX pX8
     rw [encode_data] at P9
     have hc := PolyTimeFun.closed (verdictP.comp readV)
     have Pcore := PRuns.seq hX (seqProg_closed (stg_closed _ budCore_closed) <|
