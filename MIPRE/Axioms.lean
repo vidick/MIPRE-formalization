@@ -145,6 +145,7 @@ import MIPRE.Foundations.StateDistance
 import MIPRE.Foundations.PerfectStrategy
 import MIPRE.Foundations.OracularComplete
 import MIPRE.Foundations.OracularSound
+import MIPRE.Foundations.OracularTensor
 import MIPRE.Foundations.LowDegree.SelfDualize
 import MIPRE.Foundations.LowDegree.NormalBasis
 import MIPRE.Foundations.SAT.AdmissibleField
@@ -546,6 +547,18 @@ tell you the guard is missing.
   MIPRE.SeededGame.oracleStrategy_value_eq_one,
   MIPRE.SeededGame.soundStrategy,
   MIPRE.SeededGame.soundStrategy_value_ge
+
+-- blueprint `lem:oracular-soundness-tensor`: soundness of oracularization for arbitrary
+-- tensor-product strategies, the form `Verifier.valStar` needs, with the synchronous constant.
+#guard_sorry_free MIPRE.SeededGame.tensorSound,
+  MIPRE.SeededGame.tensorSound_value_ge,
+  MIPRE.SeededGame.quantumValue_ge_of_oracular,
+  MIPRE.sum_snorm_sq_ge_of_close,
+  MIPRE.sum_snorm_sq_chain,
+  MIPRE.SeededGame.sum_snorm_sq_joint_le,
+  MIPRE.SeededGame.succAt_oracle_le,
+  MIPRE.SeededGame.succAt_tensorSound_ge,
+  MIPRE.SeededGame.sum_failAt_four_le
 
 -- blueprint `lem:pcp-zero-basis`: preserve the individual-degree bounds needed by the PCP.
 #guard_sorry_free MIPRE.SAT.ArrayProg.eqBits,

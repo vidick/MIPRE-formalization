@@ -1008,6 +1008,7 @@ import MIPRE.Foundations.OpBound
 import MIPRE.Foundations.OracularComplete
 import MIPRE.Foundations.OracularGame
 import MIPRE.Foundations.OracularSound
+import MIPRE.Foundations.OracularTensor
 import MIPRE.Foundations.POVMMix
 import MIPRE.Foundations.POVMValue
 import MIPRE.Foundations.PVM
