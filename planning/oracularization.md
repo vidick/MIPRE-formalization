@@ -8,8 +8,8 @@ analogue of that file for this item: what exists, what the target is, and the pi
 Tracked by issue #189.
 
 **Done:** O1 (#190, `Foundations/OracularTensor.lean`), O2 (#191, `Foundations/OracularTyped.lean`),
-O3 (#192, `Foundations/OracularSampler.lean`) and the acceptance law of O4
-(`Foundations/OracularDecider.lean`); O4's running time is next.
+O3 (#192, `Foundations/OracularSampler.lean`), O4 (#194, `Foundations/OracularDecider.lean`) and its
+running times (`Foundations/OracularDeciderCost.lean`); O5 is next.
 The rest of this file is the plan as written before the work; what changed on the way is recorded
 in the entries below.
 
@@ -163,10 +163,23 @@ the checks of `fig:oracle-decider`. Its acceptance law is O2's predicate; its ti
   for each of at most two oracles.
 * The program is `hardcode (shell j) (encode (S̄, D̄, Ī))`, so `deciderProgFun` is the s-m-n map.
 
-*Still to do (O4b):* the core's running time in terms of the input's time bounds — which
-discharges the budget hypothesis for an explicit `K` — and the decider's own running time: the
-index routine's plus a polynomial in `K n` and the input (the clocked universal machine's
-overhead).
+*As done, the running times:* `lem:oracle-decider-time`. The core runs on a well-formed input `c`
+within `c₀ (W + 1)^m (|c| + 1)^{e (k + 1)}` when the input's sampler and decider run within
+`TS (|d| + 1)^k`, `TD (|d| + 1)^k` and `TS, TD ≤ W` (`core_timeBound`), so every accepting run fits
+in any budget above that bound at the largest core input with answers within the inner cut
+(`budget_sufficient`), and completeness of the compiled typed game then needs nothing more
+(`exists_typedPredicate_perfectPCC_within`). Two points on the way:
+
+* The input sampler's answers to the marginal queries are sized by its **correctness clause**
+  (vectors of length `s(n)`), not by its running time. Sizing them by time would feed
+  `TS X^k` into the input decider's bound and compound the degree to `k²`.
+* Affine size bounds are absorbed into powers of `|c| + 1 ≥ 2` (`affine_le_pow`), as in O3, so no
+  constant depends on `k`.
+
+The decider itself runs within `c₁ (W + 1)^{m₁} (|d| + 1)^{e₁}` with `W` dominating the budget, the
+cut, the index routine's time at `n`, the three programs' description lengths and `n`
+(`oracleDecider_timeBound`). Its degree `e₁` is fixed: the input verifier's time enters only
+through the budget, which O5 chooses.
 
 **O5 — assembly.** Restate `Oracularization ℓ` as the specification of the construction — typed
 output over `Role` on the complete graph, the oracle form of sampler and decider, the complexity

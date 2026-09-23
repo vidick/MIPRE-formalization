@@ -1123,6 +1123,7 @@ import MIPRE.Foundations.LowDegree.ZeroBasis
 import MIPRE.Foundations.OpBound
 import MIPRE.Foundations.OracularComplete
 import MIPRE.Foundations.OracularDecider
+import MIPRE.Foundations.OracularDeciderCost
 import MIPRE.Foundations.OracularGame
 import MIPRE.Foundations.OracularSampler
 import MIPRE.Foundations.OracularSound
