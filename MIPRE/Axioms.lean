@@ -188,6 +188,7 @@ import MIPRE.Foundations.Linearity
 import MIPRE.Foundations.Sandwich
 import MIPRE.Foundations.Pasting
 import MIPRE.Foundations.LowDegreeSandwich
+import MIPRE.Background.LIDT.Extraction
 import MIPRE.Foundations.Expanded
 import MIPRE.Foundations.WeylEPR
 import MIPRE.Foundations.Swap
@@ -1530,6 +1531,58 @@ tell you the guard is missing.
   MIPRE.one_sub_sum_bornProb_le_sqrt,
   MIPRE.sum_bornProb_le_fibSum_of_nonneg,
   MIPRE.one_sub_sum_bornProb_le_eval
+
+-- blueprint `lem:lidt-ldc-extraction`: from the single-codeword conclusions for the combined
+-- point measurements to the simultaneous conclusions, by extracting the exactly `x`-linear
+-- outcomes.
+#guard_sorry_free MIPRE.LIDT.Simul.pevY,
+  MIPRE.LIDT.Simul.eval_pevY,
+  MIPRE.LIDT.Simul.eval_sub,
+  MIPRE.LIDT.Simul.unitExp,
+  MIPRE.LIDT.Simul.unitExp_injective,
+  MIPRE.LIDT.Simul.prod_pow_unitExp,
+  MIPRE.LIDT.Simul.linPoly,
+  MIPRE.LIDT.Simul.eval_linPoly,
+  MIPRE.LIDT.Simul.linPoly_unitExp,
+  MIPRE.LIDT.Simul.linPoly_of_forall_ne,
+  MIPRE.LIDT.Simul.linPoly_injective,
+  MIPRE.LIDT.Simul.IsXLin,
+  MIPRE.LIDT.Simul.xCoef,
+  MIPRE.LIDT.Simul.pevY_eq_linPoly,
+  MIPRE.LIDT.Simul.exists_badCoef,
+  MIPRE.LIDT.Simul.pevY_apply,
+  MIPRE.LIDT.Simul.padB,
+  MIPRE.LIDT.Simul.padB_castLE,
+  MIPRE.LIDT.Simul.extract,
+  MIPRE.LIDT.Simul.extEval,
+  MIPRE.LIDT.Simul.badQ,
+  MIPRE.LIDT.Simul.badQ_ne_zero,
+  MIPRE.LIDT.Simul.pevY_badQ,
+  MIPRE.LIDT.Simul.card_agree_le,
+  MIPRE.LIDT.Simul.agreeX,
+  MIPRE.LIDT.Simul.agreeX_le_one,
+  MIPRE.LIDT.Simul.badInd,
+  MIPRE.LIDT.Simul.agreeX_le,
+  MIPRE.LIDT.Simul.sum_uniform_badInd_le,
+  MIPRE.LIDT.Simul.sum_uniform_one,
+  MIPRE.LIDT.Simul.sum_agreeX_le,
+  MIPRE.LIDT.Simul.inconsistency_eq_one_sub,
+  MIPRE.LIDT.Simul.sum_bornProb_map_right,
+  MIPRE.LIDT.Simul.sum_bornProb_map_left,
+  MIPRE.LIDT.Simul.xOf,
+  MIPRE.LIDT.Simul.yOf,
+  MIPRE.LIDT.Simul.sum_uniform_pad,
+  MIPRE.LIDT.Simul.sum_uniform_agree,
+  MIPRE.LIDT.Simul.inconsistency_extract_right_le,
+  MIPRE.LIDT.Simul.inconsistency_extract_left_le,
+  MIPRE.LIDT.Simul.inconsistency_map_le,
+  MIPRE.LIDT.Simul.isPVM_pm,
+  MIPRE.LIDT.Simul.extractPM,
+  MIPRE.LIDT.Simul.extractPM_toPOVM,
+  MIPRE.LIDT.Simul.evalTuplePOVM,
+  MIPRE.LIDT.Simul.evalTuplePOVM_extractPM,
+  MIPRE.LIDT.Simul.combPOVM,
+  MIPRE.LIDT.Simul.extracted_conclusions
 
 /-! ## Introspection mixing, conditioning, and graph rejection sampling -/
 

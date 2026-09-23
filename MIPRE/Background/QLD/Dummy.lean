@@ -5,6 +5,7 @@ Authors: Thomas Vidick
 -/
 import MIPRE.Background.QLD.PaddedStrategy
 import MIPRE.Foundations.LowDegree.SchwartzZippel
+import MIPRE.Background.LIDT.Coefficients
 import MIPRE.Foundations.StrategyDilation
 
 /-!
@@ -35,126 +36,13 @@ probability by `8md/q` (`card_mixAgree_le`); for one that does not, the probabil
 
 ## The bridge to `MvPolynomial`
 
-`LowIndDegPoly F n d` is a coefficient vector indexed by exponent vectors with entries at most
-`d`; `LowIndDegPoly.toMv` is the polynomial it denotes, with the evaluation, coefficient and
-individual-degree facts, and `degreeOf_rename_le` carries degree bounds along an injective
-renaming to every target variable. Schwartz--Zippel is stated in `Foundations` for `Fin n`
-variables; `prob_agreeOn_le_individualDegree` is the same statement for any finite variable type,
-which is what the pair `Fin (4m) ⊕ Fin (4m)` needs.
+`LowIndDegPoly.toMv`, `degreeOf_rename_le` and `prob_agreeOn_le_individualDegree` (Schwartz--Zippel
+for any finite variable type, which is what the pair `Fin (4m) ⊕ Fin (4m)` needs) were written
+here and now live in `MIPRE/Background/LIDT/Coefficients.lean`, where the simultaneous low-degree
+test can use them too.
 -/
 
 noncomputable section
-
-/-! ## Schwartz--Zippel for any finite variable type -/
-
-namespace MIPRE.LowDegree
-
-open Finset MvPolynomial
-
-variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {σ : Type*} [Fintype σ] [DecidableEq σ]
-
-/-- The points of `F^σ` at which two polynomials agree. -/
-def agreeOn (f g : MvPolynomial σ F) : Finset (σ → F) := {x ∈ univ | eval x f = eval x g}
-
-@[simp] theorem mem_agreeOn {f g : MvPolynomial σ F} {x : σ → F} :
-    x ∈ agreeOn f g ↔ eval x f = eval x g := by
-  simp [agreeOn]
-
-/-- **Schwartz--Zippel, individual-degree form, for any finite variable type**: two unequal
-polynomials of individual degree at most `d` in the variables `σ` agree at a uniformly random
-point of `F^σ` with probability at most `|σ| d / q`. -/
-theorem prob_agreeOn_le_individualDegree {f g : MvPolynomial σ F} (hfg : f ≠ g) {d : ℕ}
-    (hf : ∀ i, f.degreeOf i ≤ d) (hg : ∀ i, g.degreeOf i ≤ d) :
-    ((agreeOn f g).card : ℝ) / (Fintype.card F : ℝ) ^ Fintype.card σ
-      ≤ (Fintype.card σ : ℝ) * d / Fintype.card F := by
-  set e : σ ≃ Fin (Fintype.card σ) := Fintype.equivFin σ
-  have hne : rename e f ≠ rename e g := fun h => hfg (rename_injective e e.injective h)
-  have hdeg : ∀ p : MvPolynomial σ F, (∀ i, p.degreeOf i ≤ d) →
-      ∀ j, (rename e p).degreeOf j ≤ d := fun p hp j => by
-    have := degreeOf_rename_of_injective (p := p) e.injective (e.symm j)
-    rw [Equiv.apply_symm_apply] at this
-    rw [this]
-    exact hp _
-  have h := prob_agree_le_individualDegree hne (hdeg f hf) (hdeg g hg)
-  have hcard : (agreeOn f g).card = (agree (rename e f) (rename e g)).card := by
-    refine Finset.card_equiv (Equiv.arrowCongr e (Equiv.refl F)) fun x => ?_
-    rw [mem_agreeOn, mem_agree, eval_rename, eval_rename]
-    have hx : ((Equiv.arrowCongr e (Equiv.refl F)) x) ∘ e = x := by
-      funext i
-      simp [Equiv.arrowCongr_apply]
-    rw [hx]
-  rw [hcard]
-  exact h
-
-end MIPRE.LowDegree
-
-/-! ## Coefficient vectors as polynomials -/
-
-namespace MIPRE.LIDT
-
-open Finset MvPolynomial
-
-variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {n d : ℕ}
-
-/-- An exponent vector with entries at most `d`, as a finitely supported function. -/
-def expFinsupp (e : Fin n → Fin (d + 1)) : Fin n →₀ ℕ :=
-  Finsupp.equivFunOnFinite.symm fun i => (e i : ℕ)
-
-@[simp] theorem expFinsupp_apply (e : Fin n → Fin (d + 1)) (i : Fin n) :
-    expFinsupp e i = (e i : ℕ) := rfl
-
-theorem expFinsupp_injective : Function.Injective (expFinsupp (n := n) (d := d)) :=
-  fun _ _ h => funext fun i => Fin.ext (congrArg (fun v : Fin n →₀ ℕ => v i) h)
-
-/-- **The polynomial a coefficient vector denotes.** -/
-def LowIndDegPoly.toMv (g : LowIndDegPoly (F := F) (m := n) (d := d)) : MvPolynomial (Fin n) F :=
-  ∑ e, monomial (expFinsupp e) (g e)
-
-omit [Fintype F] [DecidableEq F] in
-theorem LowIndDegPoly.eval_toMv (g : LowIndDegPoly (F := F) (m := n) (d := d)) (u : Point F n) :
-    MvPolynomial.eval u g.toMv = g.eval u := by
-  simp only [LowIndDegPoly.toMv, map_sum, MvPolynomial.eval_monomial, LowIndDegPoly.eval]
-  refine Finset.sum_congr rfl fun e _ => ?_
-  rw [Finsupp.prod_fintype _ _ fun i => pow_zero _]
-  rfl
-
-omit [Fintype F] [DecidableEq F] in
-theorem LowIndDegPoly.coeff_toMv (g : LowIndDegPoly (F := F) (m := n) (d := d))
-    (e : Fin n → Fin (d + 1)) : coeff (expFinsupp e) g.toMv = g e := by
-  simp only [LowIndDegPoly.toMv, coeff_sum, coeff_monomial]
-  rw [Finset.sum_eq_single e (fun e' _ hne => if_neg (expFinsupp_injective.ne hne))
-    (fun h => absurd (mem_univ e) h)]
-  exact if_pos rfl
-
-omit [Fintype F] [DecidableEq F] in
-theorem LowIndDegPoly.degreeOf_toMv_le (g : LowIndDegPoly (F := F) (m := n) (d := d))
-    (i : Fin n) : g.toMv.degreeOf i ≤ d := by
-  rw [degreeOf_le_iff]
-  intro s hs
-  rw [mem_support_iff, LowIndDegPoly.toMv, coeff_sum] at hs
-  obtain ⟨e, -, he⟩ := Finset.exists_ne_zero_of_sum_ne_zero hs
-  rw [coeff_monomial] at he
-  split_ifs at he with h
-  · rw [← h, expFinsupp_apply]
-    exact Nat.lt_succ_iff.mp (e i).isLt
-  · exact absurd rfl he
-
-omit [Fintype F] [DecidableEq F] in
-/-- Renaming along an injection keeps individual degrees bounded, at every target variable. -/
-theorem degreeOf_rename_le {σ τ : Type*} {p : MvPolynomial σ F} {f : σ → τ}
-    (hf : Function.Injective f) {d : ℕ} (hp : ∀ i, p.degreeOf i ≤ d) (j : τ) :
-    (rename f p).degreeOf j ≤ d := by
-  rw [degreeOf_le_iff]
-  intro s hs
-  obtain ⟨v, rfl, hv⟩ := coeff_rename_ne_zero f p s (mem_support_iff.mp hs)
-  by_cases hj : j ∈ Set.range f
-  · obtain ⟨i, rfl⟩ := hj
-    rw [Finsupp.mapDomain_apply hf]
-    exact degreeOf_le_iff.mp (hp i) v (mem_support_iff.mpr hv)
-  · rw [Finsupp.mapDomain_of_notMem_range _ _ hj]
-    exact Nat.zero_le _
-
-end MIPRE.LIDT
 
 namespace MIPRE
 

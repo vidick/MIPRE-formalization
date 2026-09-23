@@ -1094,7 +1094,7 @@ almost-synchronicity at all.
 \begin{lemma}[Several codewords: the simultaneity reduction]
 \label{lem:lidt-ldc}
 \ledgernode{1.2.1.9,1.2.1.9.1}
-\uses{lem:lidt-ldc-adapter,lem:lidt-ldc-extraction,lem:lidt-ldc-error}
+\uses{lem:lidt-ldc-adapter,lem:lidt-ldc-extraction,lem:lidt-ldc-error,thm:lidt-cl-soundness-one}
 For admissible $q$, $m,d,r\geq1$, $m\mid q$, and $r=\mathrm{ldc}$, the
 single-codeword seeded CL contract implies the simultaneous contract of
 Theorem~\ref{thm:lidt-cl-soundness}, including a projective measurement of
@@ -1128,19 +1128,58 @@ subtests. Choosing an arbitrary representative seed is not justified.
 \begin{lemma}[Extracting exactly linear combined codewords]
 \label{lem:lidt-ldc-extraction}
 \ledgernode{1.2.1.9.2}
-\uses{lem:lidt-ldc-adapter,thm:lidt-cl-soundness-one,lem:schwartz-zippel}
-Apply the single-codeword contract to the padded strategy. Restrict its global
-polynomial measurements to outcomes of the form
-$g(x,y)=\sum_{j=1}^r x_jg_j(y)$, with zero coefficients on unused combining
-coordinates, and complete the resulting projective submeasurements at a fixed
-legal tuple. This gives projective measurements of the complete tuple
-$(g_1,\ldots,g_r)$, each of individual degree at most $d$.
-The discarded mass, both point-consistency defects, and full-tuple consistency
-are bounded by a universal polynomial loss in the padded soundness error and
-$dm/q$. The exclusion uses polynomial separation: for an outcome not exactly
-linear in $x$, the chance over $y$ that its restriction is exactly linear is
-at most $dm/q$. It does not select independent single-codeword measurements.
+\uses{def:lidt-cl,lem:schwartz-zippel}
+\lean{MIPRE.LIDT.Simul.extracted_conclusions, MIPRE.LIDT.Simul.inconsistency_extract_right_le,
+  MIPRE.LIDT.Simul.inconsistency_extract_left_le, MIPRE.LIDT.Simul.inconsistency_map_le,
+  MIPRE.LIDT.Simul.pevY, MIPRE.LIDT.Simul.eval_pevY, MIPRE.LIDT.Simul.eval_sub,
+  MIPRE.LIDT.Simul.unitExp, MIPRE.LIDT.Simul.unitExp_injective,
+  MIPRE.LIDT.Simul.prod_pow_unitExp, MIPRE.LIDT.Simul.linPoly, MIPRE.LIDT.Simul.eval_linPoly,
+  MIPRE.LIDT.Simul.linPoly_unitExp, MIPRE.LIDT.Simul.linPoly_of_forall_ne,
+  MIPRE.LIDT.Simul.linPoly_injective, MIPRE.LIDT.Simul.IsXLin, MIPRE.LIDT.Simul.xCoef,
+  MIPRE.LIDT.Simul.pevY_eq_linPoly, MIPRE.LIDT.Simul.exists_badCoef,
+  MIPRE.LIDT.Simul.pevY_apply, MIPRE.LIDT.Simul.padB, MIPRE.LIDT.Simul.padB_castLE,
+  MIPRE.LIDT.Simul.extract, MIPRE.LIDT.Simul.extEval, MIPRE.LIDT.Simul.badQ,
+  MIPRE.LIDT.Simul.badQ_ne_zero, MIPRE.LIDT.Simul.pevY_badQ, MIPRE.LIDT.Simul.card_agree_le,
+  MIPRE.LIDT.Simul.agreeX, MIPRE.LIDT.Simul.agreeX_le_one, MIPRE.LIDT.Simul.badInd,
+  MIPRE.LIDT.Simul.agreeX_le, MIPRE.LIDT.Simul.sum_uniform_badInd_le,
+  MIPRE.LIDT.Simul.sum_uniform_one, MIPRE.LIDT.Simul.sum_agreeX_le,
+  MIPRE.LIDT.Simul.inconsistency_eq_one_sub, MIPRE.LIDT.Simul.sum_bornProb_map_right,
+  MIPRE.LIDT.Simul.sum_bornProb_map_left, MIPRE.LIDT.Simul.xOf, MIPRE.LIDT.Simul.yOf,
+  MIPRE.LIDT.Simul.sum_uniform_pad, MIPRE.LIDT.Simul.sum_uniform_agree,
+  MIPRE.LIDT.Simul.isPVM_pm, MIPRE.LIDT.Simul.extractPM, MIPRE.LIDT.Simul.extractPM_toPOVM,
+  MIPRE.LIDT.Simul.evalTuplePOVM, MIPRE.LIDT.Simul.evalTuplePOVM_extractPM,
+  MIPRE.LIDT.Simul.combPOVM}
+\leanok
+Let $1\leq r\leq K$ and $d\geq1$, split the points of $\F_q^{K+m}$ as $(x,y)$ with the $K$
+combining coordinates first, and let $\{A^y_b\}$, $\{B^y_b\}$ be the two players' point
+measurements for the $r$-codeword test, with outcomes $b\in\F_q^r$. The \emph{combined} point
+measurement at $(x,y)$ measures $A^y$ and answers $\sum_{j\leq r}x_jb_j$. Let $R^\alice$,
+$R^\bob$ be projective measurements of polynomials in the $K+m$ variables of individual degree at
+most $d$ which satisfy the three conclusions of the single-codeword contract against the combined
+point measurements with error $\delta$. Coarse-grain each by keeping the outcomes that are
+exactly linear in $x$, $g(x,y)=\sum_{i\leq K}x_ig_i(y)$, reading off $(g_1,\ldots,g_r)$, and
+sending every other outcome to the zero tuple. The results $G^\alice$, $G^\bob$ are projective
+measurements of complete $r$-tuples of polynomials of individual degree at most $d$ in $m$
+variables; each evaluated at a uniform $y$ is consistent with the other player's point
+measurement with error $\delta+(K+m)d/q$, and $G^\alice$, $G^\bob$ are consistent with each other
+with error $\delta$. It does not select independent single-codeword measurements.
 \end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:schwartz-zippel}
+Fix $y$, the original answer $b$ and the outcome $g$, and average over $x$ alone: the Born
+probabilities do not depend on $x$, since the original point measurement is asked $y$ and $R$
+is asked nothing. If $g$ is exactly linear in $x$ and its tuple at $y$ is not $b$, then
+$x\mapsto g(x,y)$ and the combined answer are two different linear forms and agree with
+probability at most $Kd/q$. If $g$ is not exactly linear, some monomial with a forbidden
+$x$-part has a nonzero coefficient $Q_g$, a polynomial in $y$; where $Q_g(y)\neq0$ the same
+bound holds, and $Q_g(y)=0$ has probability at most $md/q$, paid once per outcome weighted by
+its total Born weight, because summing the Born probabilities over $b$ removes $y$. Both bounds
+are Lemma~\ref{lem:schwartz-zippel}. The full-tuple conclusion is data processing: the same
+coarse-graining applied to both players can only increase agreement. The linear-forms case
+costs $Kd/q$ rather than the source's $1/q$, since one Schwartz--Zippel lemma serves all cases.
+\end{proof}
 
 \begin{lemma}[Absorbing the simultaneous reduction's error]
 \label{lem:lidt-ldc-error}
