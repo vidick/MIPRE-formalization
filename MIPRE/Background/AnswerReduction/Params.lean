@@ -203,9 +203,10 @@ theorem post6_apply (n : ℕ) :
   simp [List.replicate_succ]
 
 open ParRoutine in
-/-- **The routine computes the parameters** of the family. -/
-theorem parProg_runs (n : ℕ) :
-    ∃ t, (parProg PD lam mu sigma).Runs (encode n) ((family PD lam mu sigma).pd n) t := by
+/-- **The routine's core computes the parameters** of the family, from `((λ, μ, σ), n)`. -/
+theorem parCore_runs (n : ℕ) :
+    ∃ t, (core PD).Runs (.cons (encode (lam, mu, sigma)) (encode n))
+      ((family PD lam mu sigma).pd n) t := by
   set P := arPar PD lam mu sigma n with hP
   let X0 : Data := .cons (encode (lam, mu, sigma)) (encode n)
   obtain ⟨t1, h1⟩ := toUnaryProg_runs lam
@@ -259,7 +260,13 @@ theorem parProg_runs (n : ℕ) :
     seq_runs (seqProg_closed (stageProg_closed _ toUnaryProg_closed _)
         (stageProg_closed _ toUnaryProg_closed _)) ⟨_, S4⟩ <|
     seq_runs (stageProg_closed _ toUnaryProg_closed _) ⟨_, S5⟩ ⟨_, S6⟩
-  exact ⟨_, hardcode_time (core_closed PD) h⟩
+  exact ⟨_, h⟩
+
+/-- **The routine computes the parameters** of the family. -/
+theorem parProg_runs (n : ℕ) :
+    ∃ t, (parProg PD lam mu sigma).Runs (encode n) ((family PD lam mu sigma).pd n) t := by
+  obtain ⟨t, h⟩ := parCore_runs PD lam mu sigma n
+  exact ⟨_, hardcode_time (ParRoutine.core_closed PD) h⟩
 
 end MIPRE.AnswerReduction
 

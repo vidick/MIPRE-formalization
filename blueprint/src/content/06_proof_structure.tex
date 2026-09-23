@@ -5310,10 +5310,44 @@ run, computed by the introspection sampler's Shoup programs. Each of the three k
 the Shoup bits of the presentation's, run by run.
 \end{proof}
 
+\begin{lemma}[The typed answer-reduced decider]
+\label{lem:ar-typed-decider}
+\uses{def:ar-typed-game,lem:ar-typed-sampler,lem:lidt-effective}
+\lean{MIPRE.AnswerReduction.ldB_aline, MIPRE.AnswerReduction.ldB_dline,
+  MIPRE.AnswerReduction.sideB_eq, MIPRE.AnswerReduction.verdictB_eq,
+  MIPRE.AnswerReduction.verdictP_apply, MIPRE.AnswerReduction.parseBP_apply,
+  MIPRE.AnswerReduction.typedDecider, MIPRE.AnswerReduction.core_runs,
+  MIPRE.AnswerReduction.accepts_iff, MIPRE.AnswerReduction.total}
+\leanok
+For a PCP decider and parameters $(\lambda,\mu,\sigma)$, and an $(\ell+1)$-level input verifier
+$(S,D)$, there is a typed decider on the types of Definition~\ref{def:ar-typed-game}, computed
+from the programs of $S$ and $D$ and $(\lambda,\mu,\sigma)$, which halts on every input and, on the
+bits of any two questions of that game and any two answers, accepts exactly when that game's
+predicate does, with the game check run at $\mathrm{pcpparams}(n,2^Q,Q,\sigma)$,
+$Q=(\lambda n+1)^\mu$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The decider runs the sampler's parameter routine, computes $Q$ and $2^Q$, asks the input sampler
+for both players' full marginals at the oracle halves of the two questions through the universal
+machine, and runs the PCP verifier on each question's game-check view. It then parses each
+answer into $k$-bit blocks and decides on blocks. Of the low-degree test's decision only a point
+question against a line question of the same copy is ever checked, and there it is the
+line-versus-point check of the introspection programs on the line the question describes: the
+seed's high bits select the axis or mask the diagonal direction, and the line's base point is the
+sampler's third-stage representative. The five steps are organised by what the type pair asks
+for: at most one comparison of two answer blocks, one low-degree subtest and one game check,
+chosen by a finite table of the types. Every stage halts on every input, since the parses are
+total, the input sampler halts on every input and the PCP verifier runs on the encoding of a
+genuine input; so no clock is needed, and acceptance is the predicate by determinism.
+\end{proof}
+
 \begin{lemma}[Answer-reduction construction]
 \label{lem:ar-construction}
 \ledgernode{1.3.4.1}
-\uses{lem:oracle-effective-interface,thm:pcp-decider,lem:typed-downsize,lem:detype-compiler,lem:lidt-effective}
+\uses{lem:oracle-effective-interface,thm:pcp-decider,lem:typed-downsize,lem:detype-compiler,lem:lidt-effective,
+  lem:ar-typed-sampler,lem:ar-typed-decider}
 With the parameter and timeout hypotheses of Theorem~\ref{thm:answer-reduction},
 construct the typed oracle verifier and the PCP verifier. Downsize the PCP
 sampler using its explicit field routine before taking the direct sum with
