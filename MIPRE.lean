@@ -1,6 +1,9 @@
 import MIPRE.Axioms
+import MIPRE.Background.AnswerReduction.AnswerFormat
+import MIPRE.Background.AnswerReduction.Family
 import MIPRE.Background.AnswerReduction.PcpPresentation
 import MIPRE.Background.AnswerReduction.Predicate
+import MIPRE.Background.AnswerReduction.TypedGame
 import MIPRE.Background.GowersHatami.Basic
 import MIPRE.Background.Introspection.AmbientRawGame
 import MIPRE.Background.Introspection.AmbientVerifierTransport
@@ -710,6 +713,7 @@ import MIPRE.Foundations.CL.DetypingSoundness
 import MIPRE.Foundations.CL.Downsize
 import MIPRE.Foundations.CL.Embedding
 import MIPRE.Foundations.CL.Graph
+import MIPRE.Foundations.CL.Product
 import MIPRE.Foundations.CL.Register
 import MIPRE.Foundations.CL.Repeat
 import MIPRE.Foundations.CL.Sampler

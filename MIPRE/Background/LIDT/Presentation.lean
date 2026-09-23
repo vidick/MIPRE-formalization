@@ -178,11 +178,13 @@ omit [Fintype ι] in
 theorem dir_mem_dirSet (j : Fin n) : R.dir j ∈ R.dirSet := mem_image_of_mem _ (mem_univ j)
 
 theorem proj_finalSet_putPt (w : Point F n) : proj R.finalSet (R.putPt w) = R.putPt w := by
-  refine proj_eq_self_iff.mpr fun c hc => R.putPt_of_not (fun i h => hc (by subst h; exact R.pt_mem_finalSet i)) w
+  refine proj_eq_self_iff.mpr fun c hc =>
+    R.putPt_of_not (fun i h => hc (by subst h; exact R.pt_mem_finalSet i)) w
 
 omit [Fintype ι] in
 theorem proj_dirSet_putDir (w : Point F n) : proj R.dirSet (R.putDir w) = R.putDir w := by
-  refine proj_eq_self_iff.mpr fun c hc => R.putDir_of_not (fun j h => hc (by subst h; exact R.dir_mem_dirSet j)) w
+  refine proj_eq_self_iff.mpr fun c hc =>
+    R.putDir_of_not (fun j h => hc (by subst h; exact R.dir_mem_dirSet j)) w
 
 theorem ptOf_proj_finalSet (x : ι → F) : R.ptOf (proj R.finalSet x) = R.ptOf x := by
   funext i; simp [ptOf, proj_apply_of_mem (R.pt_mem_finalSet i)]

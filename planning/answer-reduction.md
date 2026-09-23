@@ -1,6 +1,13 @@
 # Answer reduction: the construction (AR-3)
 
-Status 2026-09-23. Written after reading the paper's `ld_compiler.tex` (`sec:ar-params`,
+Status 2026-09-23. **Done: AR-3a, AR-3b, AR-3c** (the mathematics of the construction):
+`Background/LIDT/Presentation.lean`, `Background/AnswerReduction/{PcpPresentation,Predicate,
+Family,AnswerFormat,TypedGame}.lean`, `Foundations/CL/Product.lean`. One thing met on the way:
+with the 54 types, the kernel unfolds `Finset.univ` of the type pairs when checking the type
+graph's nonemptiness, so that one declaration raises `maxRecDepth` locally. The complexity half,
+AR-3d to AR-3f, is next.
+
+Written after reading the paper's `ld_compiler.tex` (`sec:ar-params`,
 `sec:ar-verifier`, `fig:decider-pcp`, `thm:ar` and the complexity part of its proof), ledger node
 `1.3.4.1` and `1.3.4.12`, the blueprint's `lem:ar-construction`, `lem:ar-sampler-independence`,
 `lem:typed-downsize`, `lem:lidt-effective`, and the precedent `planning/oracularization.md`. It was
