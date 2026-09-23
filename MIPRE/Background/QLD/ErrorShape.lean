@@ -110,12 +110,12 @@ theorem errSum_nonneg (b : ℝ) (hε : 0 ≤ ε) (m d q : ℕ) : 0 ≤ errSum b 
   unfold errSum
   positivity
 
-theorem ErrShape.one_le_md (hm : 1 ≤ m) (hd : 1 ≤ d) : (1 : ℝ) ≤ (m : ℝ) * d := by
+theorem one_le_md_real (hm : 1 ≤ m) (hd : 1 ≤ d) : (1 : ℝ) ≤ (m : ℝ) * d := by
   have hM : (1 : ℝ) ≤ m := by exact_mod_cast hm
   have hD : (1 : ℝ) ≤ d := by exact_mod_cast hd
   nlinarith
 
-theorem ErrShape.one_le_q (hq : 2 ≤ q) : (1 : ℝ) ≤ q := by
+theorem one_le_q_real (hq : 2 ≤ q) : (1 : ℝ) ≤ q := by
   have : (2 : ℝ) ≤ q := by exact_mod_cast hq
   linarith
 
@@ -178,11 +178,11 @@ theorem errShape_nonneg {a b : ℝ} (ha : 0 ≤ a) (hε : 0 ≤ ε) : 0 ≤ errS
   have := errSum_nonneg b hε m d q
   positivity
 
-theorem ErrShape.mdpow_mono (hmd : 1 ≤ (m : ℝ) * d) {r r' : ℝ} (h : r ≤ r') :
+theorem md_rpow_mono (hmd : 1 ≤ (m : ℝ) * d) {r r' : ℝ} (h : r ≤ r') :
     ((m : ℝ) * d) ^ r ≤ ((m : ℝ) * d) ^ r' :=
   Real.rpow_le_rpow_of_exponent_le hmd h
 
-theorem ErrShape.one_le_mdpow (hmd : 1 ≤ (m : ℝ) * d) {r : ℝ} (hr : 0 ≤ r) :
+theorem one_le_md_rpow (hmd : 1 ≤ (m : ℝ) * d) {r : ℝ} (hr : 0 ≤ r) :
     1 ≤ ((m : ℝ) * d) ^ r :=
   Real.one_le_rpow hmd hr
 
@@ -190,7 +190,7 @@ theorem ErrShape.one_le_mdpow (hmd : 1 ≤ (m : ℝ) * d) {r : ℝ} (hr : 0 ≤ 
 theorem errSum_le_errShape {a b : ℝ} (ha : 1 ≤ a) (hε : 0 ≤ ε) (hmd : 1 ≤ (m : ℝ) * d) :
     errSum b ε m d q ≤ errShape a b ε m d q := by
   rw [errShape_eq]
-  have h1 := ErrShape.one_le_mdpow hmd (by linarith : (0 : ℝ) ≤ a)
+  have h1 := one_le_md_rpow hmd (by linarith : (0 : ℝ) ≤ a)
   have hS := errSum_nonneg b hε m d q
   have : 1 ≤ a * ((m : ℝ) * d) ^ a := by nlinarith
   nlinarith
@@ -200,9 +200,9 @@ theorem errShape_mono {a a' b b' : ℝ} (ha : 1 ≤ a) (haa : a ≤ a') (hb' : 0
     (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1) (hmd : 1 ≤ (m : ℝ) * d) (hq : 1 ≤ (q : ℝ)) :
     errShape a b ε m d q ≤ errShape a' b' ε m d q := by
   rw [errShape_eq, errShape_eq]
-  have h1 := ErrShape.mdpow_mono hmd haa
+  have h1 := md_rpow_mono hmd haa
   have h2 := errSum_anti (m := m) (d := d) hb' hbb hε0 hε1 hq
-  have hX := ErrShape.one_le_mdpow hmd (by linarith : (0 : ℝ) ≤ a)
+  have hX := one_le_md_rpow hmd (by linarith : (0 : ℝ) ≤ a)
   have hS := errSum_nonneg b hε0 m d q
   exact mul_le_mul (mul_le_mul haa h1 (by linarith) (by linarith)) h2 hS
     (mul_nonneg (by linarith) (by linarith))
@@ -215,12 +215,12 @@ theorem errShape_add {a₁ a₂ b₁ b₂ : ℝ} (ha₁ : 1 ≤ a₁) (ha₂ : 1
   have hb : 0 < min b₁ b₂ := lt_min hb₁ hb₂
   have S1 := errSum_anti (m := m) (d := d) hb (min_le_left _ _) hε0 hε1 hq
   have S2 := errSum_anti (m := m) (d := d) hb (min_le_right _ _) hε0 hε1 hq
-  have X1 := ErrShape.mdpow_mono hmd (show a₁ ≤ a₁ + a₂ by linarith)
-  have X2 := ErrShape.mdpow_mono hmd (show a₂ ≤ a₁ + a₂ by linarith)
+  have X1 := md_rpow_mono hmd (show a₁ ≤ a₁ + a₂ by linarith)
+  have X2 := md_rpow_mono hmd (show a₂ ≤ a₁ + a₂ by linarith)
   have hS1 := errSum_nonneg b₁ hε0 m d q
   have hS2 := errSum_nonneg b₂ hε0 m d q
-  have hX1 := ErrShape.one_le_mdpow hmd (by linarith : (0 : ℝ) ≤ a₁)
-  have hX2 := ErrShape.one_le_mdpow hmd (by linarith : (0 : ℝ) ≤ a₂)
+  have hX1 := one_le_md_rpow hmd (by linarith : (0 : ℝ) ≤ a₁)
+  have hX2 := one_le_md_rpow hmd (by linarith : (0 : ℝ) ≤ a₂)
   rw [errShape_eq, errShape_eq, errShape_eq]
   calc a₁ * ((m : ℝ) * d) ^ a₁ * errSum b₁ ε m d q + a₂ * ((m : ℝ) * d) ^ a₂ * errSum b₂ ε m d q
       ≤ a₁ * ((m : ℝ) * d) ^ (a₁ + a₂) * errSum (min b₁ b₂) ε m d q
@@ -233,8 +233,8 @@ theorem errShape_const_mul {a b c : ℝ} (ha : 1 ≤ a) (hc : 0 ≤ c) (hε0 : 0
     (hmd : 1 ≤ (m : ℝ) * d) :
     c * errShape a b ε m d q ≤ errShape ((c + 1) * a) b ε m d q := by
   have hS := errSum_nonneg b hε0 m d q
-  have X1 := ErrShape.mdpow_mono hmd (show a ≤ (c + 1) * a by nlinarith)
-  have hX := ErrShape.one_le_mdpow hmd (by linarith : (0 : ℝ) ≤ a)
+  have X1 := md_rpow_mono hmd (show a ≤ (c + 1) * a by nlinarith)
+  have hX := one_le_md_rpow hmd (by linarith : (0 : ℝ) ≤ a)
   rw [errShape_eq, errShape_eq]
   calc c * (a * ((m : ℝ) * d) ^ a * errSum b ε m d q)
       = (c * a) * ((m : ℝ) * d) ^ a * errSum b ε m d q := by ring
@@ -247,7 +247,7 @@ theorem mdpow_mul_errShape {a b r : ℝ} (ha : 1 ≤ a) (hr : 0 ≤ r) (hε0 : 0
     (hmd : 1 ≤ (m : ℝ) * d) :
     ((m : ℝ) * d) ^ r * errShape a b ε m d q ≤ errShape (a + r) b ε m d q := by
   have hS := errSum_nonneg b hε0 m d q
-  have hX := ErrShape.one_le_mdpow hmd (by linarith : (0 : ℝ) ≤ a + r)
+  have hX := one_le_md_rpow hmd (by linarith : (0 : ℝ) ≤ a + r)
   rw [errShape_eq, errShape_eq]
   calc ((m : ℝ) * d) ^ r * (a * ((m : ℝ) * d) ^ a * errSum b ε m d q)
       = a * ((m : ℝ) * d) ^ (a + r) * errSum b ε m d q := by
@@ -257,13 +257,13 @@ theorem mdpow_mul_errShape {a b r : ℝ} (ha : 1 ≤ a) (hr : 0 ≤ r) (hε0 : 0
         gcongr
         linarith
 
-/-- **Powers `t ↦ t^B`, `0 < B ≤ 1`**: the prefactor only shrinks, and the bracket is
+/-- **Powers `t ↦ t^B`, `0 ≤ B ≤ 1`**: the prefactor only shrinks, and the bracket is
 subadditive. The exponent becomes `bB`. -/
 theorem errShape_rpow_le {a b B : ℝ} (ha : 1 ≤ a) (hB0 : 0 ≤ B) (hB1 : B ≤ 1) (hε0 : 0 ≤ ε)
     (hmd : 1 ≤ (m : ℝ) * d) :
     (errShape a b ε m d q) ^ B ≤ errShape a (b * B) ε m d q := by
   have hS := errSum_nonneg b hε0 m d q
-  have hX := ErrShape.one_le_mdpow hmd (by linarith : (0 : ℝ) ≤ a)
+  have hX := one_le_md_rpow hmd (by linarith : (0 : ℝ) ≤ a)
   have hXB : (((m : ℝ) * d) ^ a) ^ B ≤ ((m : ℝ) * d) ^ a := by
     calc (((m : ℝ) * d) ^ a) ^ B ≤ (((m : ℝ) * d) ^ a) ^ (1 : ℝ) :=
           Real.rpow_le_rpow_of_exponent_le hX hB1
@@ -292,9 +292,9 @@ theorem errShape_mul {a₁ a₂ b₁ b₂ : ℝ} (ha₁ : 1 ≤ a₁) (ha₂ : 1
   have hS1 := errSum_nonneg b₁ hε0 m d q
   have hS2 := errSum_nonneg b₂ hε0 m d q
   have hS := errSum_nonneg (min b₁ b₂) hε0 m d q
-  have hX := ErrShape.one_le_mdpow hmd (by linarith : (0 : ℝ) ≤ a₁ + a₂)
+  have hX := one_le_md_rpow hmd (by linarith : (0 : ℝ) ≤ a₁ + a₂)
   have hA : a₁ + a₂ ≤ 3 * a₁ * a₂ := by nlinarith
-  have X2 := ErrShape.mdpow_mono hmd hA
+  have X2 := md_rpow_mono hmd hA
   have hSS : errSum b₁ ε m d q * errSum b₂ ε m d q ≤ 3 * errSum (min b₁ b₂) ε m d q := by
     calc errSum b₁ ε m d q * errSum b₂ ε m d q
         ≤ errSum (min b₁ b₂) ε m d q * errSum (min b₁ b₂) ε m d q := by gcongr
@@ -354,7 +354,7 @@ theorem add (hf : ErrSmall f) (hg : ErrSmall g) :
   obtain ⟨hf0, hf1⟩ := hf ε m d q hε0 hε1 hm hd hq
   obtain ⟨hg0, hg1⟩ := hg ε m d q hε0 hε1 hm hd hq
   exact ⟨add_nonneg hf0 hg0, (add_le_add hf1 hg1).trans
-    (errShape_add ha₁ ha₂ hb₁ hb₂ hε0 hε1 (ErrShape.one_le_md hm hd) (ErrShape.one_le_q hq))⟩
+    (errShape_add ha₁ ha₂ hb₁ hb₂ hε0 hε1 (one_le_md_real hm hd) (one_le_q_real hq))⟩
 
 /-- **Constant multiples**, by a nonnegative constant. -/
 theorem const_mul (hf : ErrSmall f) {c : ℝ} (hc : 0 ≤ c) :
@@ -363,9 +363,9 @@ theorem const_mul (hf : ErrSmall f) {c : ℝ} (hc : 0 ≤ c) :
   refine ⟨(c + 1) * a, b, by nlinarith, hb0, hb1, fun ε m d q hε0 hε1 hm hd hq => ?_⟩
   obtain ⟨hf0, hf1⟩ := hf ε m d q hε0 hε1 hm hd hq
   exact ⟨mul_nonneg hc hf0, (mul_le_mul_of_nonneg_left hf1 hc).trans
-    (errShape_const_mul ha hc hε0 (ErrShape.one_le_md hm hd))⟩
+    (errShape_const_mul ha hc hε0 (one_le_md_real hm hd))⟩
 
-/-- **Division** by a positive constant. -/
+/-- **Division** by a nonnegative constant (at `c = 0` the quotient is `0`). -/
 theorem div_const (hf : ErrSmall f) {c : ℝ} (hc : 0 ≤ c) :
     ErrSmall fun ε m d q => f ε m d q / c :=
   (hf.const_mul (inv_nonneg.mpr hc)).congr fun ε m d q _ _ _ _ _ => by rw [div_eq_inv_mul]
@@ -378,7 +378,7 @@ theorem mdpow_mul (hf : ErrSmall f) {r : ℝ} (hr : 0 ≤ r) :
   obtain ⟨hf0, hf1⟩ := hf ε m d q hε0 hε1 hm hd hq
   have hX : 0 ≤ ((m : ℝ) * d) ^ r := Real.rpow_nonneg (by positivity) _
   exact ⟨mul_nonneg hX hf0, (mul_le_mul_of_nonneg_left hf1 hX).trans
-    (mdpow_mul_errShape ha hr hε0 (ErrShape.one_le_md hm hd))⟩
+    (mdpow_mul_errShape ha hr hε0 (one_le_md_real hm hd))⟩
 
 /-- **The polynomial prefactor `md`.** -/
 theorem md_mul (hf : ErrSmall f) : ErrSmall fun ε m d q => (m : ℝ) * d * f ε m d q :=
@@ -391,7 +391,7 @@ theorem rpow (hf : ErrSmall f) {B : ℝ} (hB0 : 0 < B) (hB1 : B ≤ 1) :
   refine ⟨a, b * B, ha, mul_pos hb0 hB0, by nlinarith, fun ε m d q hε0 hε1 hm hd hq => ?_⟩
   obtain ⟨hf0, hf1⟩ := hf ε m d q hε0 hε1 hm hd hq
   exact ⟨Real.rpow_nonneg hf0 _, (Real.rpow_le_rpow hf0 hf1 hB0.le).trans
-    (errShape_rpow_le ha hB0.le hB1 hε0 (ErrShape.one_le_md hm hd))⟩
+    (errShape_rpow_le ha hB0.le hB1 hε0 (one_le_md_real hm hd))⟩
 
 /-- **Square roots.** -/
 theorem sqrt (hf : ErrSmall f) : ErrSmall fun ε m d q => Real.sqrt (f ε m d q) :=
@@ -408,7 +408,7 @@ theorem mul (hf : ErrSmall f) (hg : ErrSmall g) :
   obtain ⟨hf0, hf1⟩ := hf ε m d q hε0 hε1 hm hd hq
   obtain ⟨hg0, hg1⟩ := hg ε m d q hε0 hε1 hm hd hq
   exact ⟨mul_nonneg hf0 hg0, (mul_le_mul hf1 hg1 hg0 (errShape_nonneg (by linarith) hε0)).trans
-    (errShape_mul ha₁ ha₂ hb₁ hb₂ hε0 hε1 (ErrShape.one_le_md hm hd) (ErrShape.one_le_q hq))⟩
+    (errShape_mul ha₁ ha₂ hb₁ hb₂ hε0 hε1 (one_le_md_real hm hd) (one_le_q_real hq))⟩
 
 /-- **The bracket's own terms.** An error below the bracket `ε^b + q^{-b} + 2^{-bmd}` at a fixed
 `0 < b < 1` is small, with `a = 1`. -/
@@ -417,7 +417,7 @@ theorem of_le_errSum {b : ℝ} (hb0 : 0 < b) (hb1 : b < 1)
       0 ≤ f ε m d q ∧ f ε m d q ≤ errSum b ε m d q) : ErrSmall f := by
   refine ⟨1, b, le_rfl, hb0, hb1, fun ε m d q hε0 hε1 hm hd hq => ?_⟩
   obtain ⟨h0, h1⟩ := h ε m d q hε0 hε1 hm hd hq
-  exact ⟨h0, h1.trans (errSum_le_errShape le_rfl hε0 (ErrShape.one_le_md hm hd))⟩
+  exact ⟨h0, h1.trans (errSum_le_errShape le_rfl hε0 (one_le_md_real hm hd))⟩
 
 end ErrSmall
 
@@ -485,7 +485,7 @@ theorem errSmall_q_rpow_neg {B : ℝ} (hB : 0 < B) : ErrSmall fun _ _ _ q => (q 
   refine ErrSmall.of_le_errSum (b := min B (1 / 2)) hb0 ((min_le_right _ _).trans_lt (by norm_num))
     fun ε m d q hε0 _ _ _ hq => ⟨Real.rpow_nonneg (Nat.cast_nonneg _) _, ?_⟩
   have h1 : (q : ℝ) ^ (-B) ≤ (q : ℝ) ^ (-min B (1 / 2)) :=
-    Real.rpow_le_rpow_of_exponent_le (ErrShape.one_le_q hq) (by linarith [min_le_left B (1 / 2)])
+    Real.rpow_le_rpow_of_exponent_le (one_le_q_real hq) (by linarith [min_le_left B (1 / 2)])
   have h2 : 0 ≤ ε ^ min B (1 / 2) := Real.rpow_nonneg hε0 _
   have h3 : 0 ≤ (2 : ℝ) ^ (-(min B (1 / 2) * (m : ℝ) * d)) := Real.rpow_nonneg (by norm_num) _
   unfold errSum
@@ -577,8 +577,8 @@ theorem errSmall_deltaGS : ErrSmall fun ε m d q => deltaGS q m d ε := by
   have hL : ErrSmall fun _ m d q => ((m : ℝ) * d + 1) / q := by
     refine (errSmall_md_div_q.const_mul (c := 2) (by norm_num)).mono
       fun ε m d q hε0 hε1 hm hd hq => ⟨by positivity, ?_⟩
-    have hmd := ErrShape.one_le_md hm hd
-    have hq0 : (0 : ℝ) < q := by linarith [ErrShape.one_le_q hq]
+    have hmd := one_le_md_real hm hd
+    have hq0 : (0 : ℝ) < q := by linarith [one_le_q_real hq]
     rw [mul_div_assoc', div_le_div_iff_of_pos_right hq0]
     linarith
   exact ((hP.m_mul_m_mul.const_mul (by norm_num)).add
@@ -746,7 +746,7 @@ theorem of_regime (hh : ErrSmall h) (k : ℕ) {C : ℝ} (hC : 0 ≤ C)
     fun ε m d q hε0 hε1 hm hd hq => ?_
   obtain ⟨hf0, hfC, hfh⟩ := hf ε m d q hε0 hε1 hm hd hq
   refine ⟨hf0, hfC, fun hlt => hfh ?_⟩
-  have hq0 : (0 : ℝ) < q := by linarith [ErrShape.one_le_q hq]
+  have hq0 : (0 : ℝ) < q := by linarith [one_le_q_real hq]
   rw [← mul_div_assoc, div_lt_one hq0] at hlt
   have : ((k * m * d : ℕ) : ℝ) < q := by push_cast; linarith
   exact_mod_cast this.le
