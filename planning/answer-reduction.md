@@ -367,5 +367,8 @@ consistent with every `G_i` --- is here `J` itself, which the simultaneous test 
 
 `FieldLarge` is new: the prefactor of the field term `q^{-clB}` is `simA (7 m' (m'+6))^{simA}`, so
 `q` must be at least a fixed power of `m'` and `Q`, a power of about `80000 simA`. The constants are
-irreducible definitions (`simAN = ceil(simA)`, `fieldExp`), never evaluated. AR-6 must choose the
-classical decider's `k` at least `fieldExp * size (8 (Q + 1) m')`, still logarithmic.
+irreducible definitions (`simAN = ceil(simA)`, `fieldExp`), never evaluated. So that `MIPRE/TM`
+need not know them, the hypothesis is *eventual*: for every `e`, past a threshold on `Q`,
+`q >= (8 (Q + 1) m')^e`; soundness already has a threshold on `n`, and `Q >= n + 1`. A field
+degree `k = size(8 (Q + 1) m')^2 + O(log m')` satisfies it for every `e` (past `Q >= 2^e`) and
+keeps `ParamsBound`; that is AR-6's change to the classical decider.

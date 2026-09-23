@@ -5678,8 +5678,9 @@ nontrivial regime also justifies the small-error inequalities above.
 In the Lean, without the sandwich, the chain has one square root, from oracularization, and the
 exponent is $b=b'/2$. The field term $q^{-b'}$ of the low-degree test has the prefactor
 $a'(7m'(m'+6))^{a'}$, polynomial in $m'$ of degree about $2a'$, and is controlled by a hypothesis
-on the PCP decider, \texttt{FieldLarge}: its field has at least $(8(Q+1)m')^{e}$ elements with
-$e=40000(3\lceil a'\rceil+4)$. Theorem~\ref{thm:pcp-decider} does not carry the paper's lower
+on the PCP decider, \texttt{FieldLarge}: for every exponent $e$, past a threshold on $Q$, its
+field has at least $(8(Q+1)m')^{e}$ elements; it is used at $e=40000(3\lceil a'\rceil+4)$, and a
+field of $2^{O(\log^2(Qm'))}$ elements satisfies it. Theorem~\ref{thm:pcp-decider} does not carry the paper's lower
 bound on $q$ (\texttt{eq:pcp-q-choice}); this is it, beside \texttt{ParamsBound} and
 \texttt{ShoupField}. The term $2^{-b'md}$ uses $m\geq Q$, from $2^m\geq 2T$, and the threshold
 on $n$; $\mu=0$ and $\eps\geq 1$ are trivial, the loss being at least $1$ there.

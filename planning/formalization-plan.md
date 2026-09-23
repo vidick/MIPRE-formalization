@@ -894,10 +894,10 @@ player's `G`, holds except with probability `O(E + theta + m'd/q)` by Schwartz--
 lifted `G`. That leaves one square root, from oracularization, instead of four. No answer
 truncation is needed either: an input within its budget rejects answers longer than its bound.
 The route is in [answer-reduction.md](answer-reduction.md). It asks a third hypothesis of the PCP
-decider, `FieldLarge`: `q >= (8 (Q + 1) m')^{fieldExp}`, the paper's lower bound on the field
-(`eq:pcp-q-choice`) that `thm:pcp-decider` does not carry. The classical decider's field is
-`128 m'^2` or so, so AR-6 must enlarge its `fieldDegree` (and re-establish `ParamsBound`, which a
-logarithmic `k` keeps). AR-6, inhabiting `AnswerReduction 5`, is next.
+decider, `FieldLarge`: for every `e`, eventually `q >= (8 (Q + 1) m')^e`, the paper's lower bound
+on the field (`eq:pcp-q-choice`) that `thm:pcp-decider` does not carry. The classical decider's
+field is `128 m'^2` or so, so AR-6 must enlarge its `fieldDegree` to about `size(8 (Q + 1) m')^2`
+(and re-establish `ParamsBound`, which a polylogarithmic `k` keeps). AR-6, inhabiting `AnswerReduction 5`, is next.
 
 **The standing risk** is the one `planning/h4-assembly.md` §4 item 4 names: `GapCompression`
 has been consumed five times and supplied never — `TimeBoundAt` was refuted three times and

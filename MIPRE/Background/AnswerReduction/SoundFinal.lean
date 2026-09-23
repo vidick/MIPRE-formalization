@@ -13,7 +13,7 @@ import MIPRE.Background.AnswerReduction.SoundError
 Piece AR-5f of `planning/answer-reduction.md`, concluded (`lem:ar-soundness`,
 `lem:ar-error-assembly`): the `soundness` clause of the `AnswerReduction` contract for
 `arVerifier` (`arVerifier_soundness`), under a new hypothesis on the PCP decider, `FieldLarge`:
-its field has at least `(8 (Q + 1) m')^{fieldExp}` elements.
+for every exponent `e`, its field eventually has at least `(8 (Q + 1) m')^e` elements.
 
 The chain: a strategy of value above `1 - ε` for the answer-reduced verifier at the answer cut
 (the output verifier rejects longer answers, so its value at any larger bound is the same) gives a
@@ -30,12 +30,15 @@ namespace MIPRE.AnswerReduction
 
 open Finset MIPRE.CL MIPRE.LIDT SAT Pcp Cost
 
-/-- **The PCP's field is large**: at least `(8 (Q + 1) m')^{fieldExp}` elements. The low-degree
-test's field term `q^{-clB}` then kills its prefactor, a polynomial of degree about `2 simA` in
-`m'`. `thm:pcp-decider` does not carry the paper's lower bound on `q` (`eq:pcp-q-choice`); this is
-it, as a hypothesis on the decider, like `ParamsBound` and `ShoupField`. -/
+/-- **The PCP's field is eventually large**: for every exponent `e`, past a threshold on `Q`, at
+least `(8 (Q + 1) m')^e` elements. At `e = fieldExp` the low-degree test's field term `q^{-clB}`
+then kills its prefactor, a polynomial of degree about `2 simA` in `m'`. `thm:pcp-decider` does
+not carry the paper's lower bound on `q` (`eq:pcp-q-choice`); this is it, as a hypothesis on the
+decider, like `ParamsBound` and `ShoupField`. It asks for no particular constant, so a field of
+`2^{O(log² (Q m'))}` elements satisfies it. -/
 def FieldLarge (PD : PcpDecider) : Prop :=
-  ∀ n T Q σ, (8 * ((Q + 1) * (PD.params n T Q σ).m')) ^ fieldExp ≤ (PD.params n T Q σ).q
+  ∀ e : ℕ, ∃ Q₀ : ℕ, ∀ n T Q σ, Q₀ ≤ Q →
+    (8 * ((Q + 1) * (PD.params n T Q σ).m')) ^ e ≤ (PD.params n T Q σ).q
 
 /-! ## The size of the parameters -/
 
@@ -153,7 +156,8 @@ theorem arVerifier_soundness (R : Polynomial ℕ) (hF : ShoupField PD) (hR : Par
   set c : ℕ := zC R ^ (3 * simAN) with hc
   set p : ℕ := 3 * simAN * zE R with hp
   obtain ⟨Q0, hQ0⟩ := exists_threshold_clB c p
-  refine ⟨aOf c p kDet, clB / 2, Q0, by exact_mod_cast one_le_aOf c p kDet,
+  obtain ⟨Q1, hQ1⟩ := hL fieldExp
+  refine ⟨aOf c p kDet, clB / 2, max Q0 Q1, by exact_mod_cast one_le_aOf c p kDet,
     by have := clB_pos; linarith, by have := clB_lt_one; linarith, ?_⟩
   intro V lam mu sigma n ε B hC hn2 hlam hV hsz hε hcut hval
   set a : ℕ := aOf c p kDet with ha
@@ -205,7 +209,13 @@ theorem arVerifier_soundness (R : Polynomial ℕ) (hF : ShoupField PD) (hR : Par
     (Nat.le_mul_of_pos_left _ (by norm_num)).trans (PcpParams.five_mul_m_le P)
   have hq : (8 * ((Q + 1) * P.m')) ^ fieldExp
       ≤ Fintype.card (Fq P (arPar_hk PD lam mu sigma n)) := by
-    rw [card_fq]; exact hL n (tPcp lam mu n) Q sigma
+    rw [card_fq]
+    refine hQ1 n (tPcp lam mu n) Q sigma ?_
+    have : n + 1 ≤ Q := by
+      have h1 : lam * n + 1 ≤ (lam * n + 1) ^ mu := Nat.le_self_pow (by omega) _
+      have h2 : n ≤ lam * n := Nat.le_mul_of_pos_left _ hlam
+      rw [hQ, arQ]; omega
+    omega
   have hθ0 : 0 ≤ 1 - T.value := one_sub_value_nonneg V n P _ _ _ _ _ T
   have herr := errE_le hm1 hmm hQm hq hθ0 (show 1 - T.value ≤ (kDet : ℝ) * ε by linarith)
     (by exact_mod_cast Nat.one_le_pow _ _ (by norm_num)) hε.le hε1.le
