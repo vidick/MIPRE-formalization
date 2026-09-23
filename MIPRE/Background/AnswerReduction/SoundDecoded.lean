@@ -5,6 +5,7 @@ Authors: Thomas Vidick
 -/
 import MIPRE.Background.AnswerReduction.SoundGameCheck
 import MIPRE.Foundations.OracularTyped
+import MIPRE.Foundations.StrategyDilation
 
 /-!
 # Soundness of answer reduction: the decoded strategy
@@ -780,6 +781,179 @@ theorem sum_dis_GA_GB_le (i : Fin 5) :
     ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)
   have := sum_dis_le_of_inconsistency T.ψ_unit _ _ h3
   simpa using this
+
+omit [NeZero P.m] in
+/-- **The failure of a strategy for a typed oracularized game** is the average, over the ordered
+pairs of roles and the seed, of its failure at the questions they determine. -/
+theorem one_sub_povmValue_typed {ι : Type*} [Fintype ι] [DecidableEq ι] {ℓ' : ℕ}
+    (L : Player → CL.CLFun CL.𝔽₂ ι (ℓ' + 1)) {A' : Type*} [Fintype A']
+    (D' : CL.Detyping.Question Role ι → CL.Detyping.Question Role ι → A' → A' → Bool)
+    {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+    (ψ : dA × dB → ℂ) (MA : CL.Detyping.Question Role ι → POVM A' dA)
+    (MB : CL.Detyping.Question Role ι → POVM A' dB) :
+    1 - povmValue (CL.Detyping.typedGame roleGraph roleGraph_nonempty (fun _ => roleFamily L) D')
+        ψ MA MB
+      = (9 * Fintype.card (ι → CL.𝔽₂) : ℝ)⁻¹ * ∑ z : ι → CL.𝔽₂, ∑ u : Role, ∑ v : Role,
+          condFail (CL.Detyping.typedGame roleGraph roleGraph_nonempty (fun _ => roleFamily L) D')
+            ψ MA MB (u, (roleFamily L u).eval z) (v, (roleFamily L v).eval z) := by
+  rw [one_sub_povmValue_eq]
+  change ∑ p, ∑ q, SampledGame.dist
+    (CL.Detyping.typedQuestion (E := roleGraph) (fun _ => roleFamily L) false)
+    (CL.Detyping.typedQuestion (E := roleGraph) (fun _ => roleFamily L) true) p q * _ = _
+  rw [SampledGame.sum_dist_mul, Fintype.card_congr SeededGame.typedSeedEquiv,
+    SeededGame.card_role_prod_prod, div_eq_inv_mul]
+  congr 1
+  rw [← Fintype.sum_equiv SeededGame.typedSeedEquiv.symm _ _ fun _ => rfl,
+    Fintype.sum_prod_type]
+  simp_rw [Fintype.sum_prod_type]
+  rw [Finset.sum_congr rfl fun u _ => Finset.sum_comm, Finset.sum_comm]
+  rfl
+
+/-- **The decoded strategy's failure** at a seed, over the nine ordered pairs of roles. -/
+theorem sum_roles_condFail_le (hgc : PcpSound V n P hk check B' dec)
+    (z : Fin (V.sampler.dim n) → 𝔽₂) :
+    ∑ u : Role, ∑ v : Role, condFail (oGame V n B') T.ψ (MAo V n P hk S S' check B T B' dec)
+        (MBo V n P hk S S' check B T B' dec) (u, (roleFamily (V.sampler.cl n) u).eval z)
+        (v, (roleFamily (V.sampler.cl n) v).eval z)
+      ≤ 3 * gcA V n P hk S S' check B T B' dec ((roleFamily (V.sampler.cl n) .oracle).eval z)
+        + 3 * gcB V n P hk S S' check B T B' dec ((roleFamily (V.sampler.cl n) .oracle).eval z)
+        + dis T.ψ
+            ((JA V n P hk S S' check B T ((roleFamily (V.sampler.cl n) .oracle).eval z)).toPOVM ())
+            ((JB V n P hk S S' check B T ((roleFamily (V.sampler.cl n) .oracle).eval z)).toPOVM ())
+        + (disPolyA V n P hk S S' check B T 0 z + disPolyA V n P hk S S' check B T 1 z
+          + disPolyB V n P hk S S' check B T 0 z + disPolyB V n P hk S S' check B T 1 z)
+        + dis T.ψ ((GA1 V n P hk S S' check B T (roleOf 0) 0
+            ((roleFamily (V.sampler.cl n) (roleOf 0)).eval z)).toPOVM ())
+            ((GB1 V n P hk S S' check B T (roleOf 0) 0
+              ((roleFamily (V.sampler.cl n) (roleOf 0)).eval z)).toPOVM ())
+        + dis T.ψ ((GA1 V n P hk S S' check B T (roleOf 1) 1
+            ((roleFamily (V.sampler.cl n) (roleOf 1)).eval z)).toPOVM ())
+            ((GB1 V n P hk S S' check B T (roleOf 1) 1
+              ((roleFamily (V.sampler.cl n) (roleOf 1)).eval z)).toPOVM ()) := by
+  have hgA := gcA_le V n P hk S S' check B T B' dec hgc z
+  have hgB := gcB_le V n P hk S S' check B T B' dec hgc z
+  simp only [Role.sum_eq]
+  have := condFail_OO_le V n P hk S S' check B T B' dec
+    ((roleFamily (V.sampler.cl n) .oracle).eval z)
+  have := condFail_Oa_le V n P hk S S' check B T B' dec z
+  have := condFail_Ob_le V n P hk S S' check B T B' dec z
+  have := condFail_aO_le V n P hk S S' check B T B' dec z
+  have := condFail_bO_le V n P hk S S' check B T B' dec z
+  have := condFail_aa_le V n P hk S S' check B T B' dec
+    ((roleFamily (V.sampler.cl n) .alice).eval z)
+  have := condFail_bb_le V n P hk S S' check B T B' dec ((roleFamily (V.sampler.cl n) .bob).eval z)
+  have := condFail_ab_le V n P hk S S' check B T B' dec
+    ((roleFamily (V.sampler.cl n) .alice).eval z)
+    ((roleFamily (V.sampler.cl n) .bob).eval z)
+  have := condFail_ba_le V n P hk S S' check B T B' dec ((roleFamily (V.sampler.cl n) .bob).eval z)
+    ((roleFamily (V.sampler.cl n) .alice).eval z)
+  have hg0 :
+      0 ≤ gcA V n P hk S S' check B T B' dec ((roleFamily (V.sampler.cl n) .oracle).eval z) :=
+    Finset.sum_nonneg fun f _ => by
+      split_ifs
+      · exact le_refl 0
+      · exact bornProb_nonneg _ ((((JA V n P hk S S' check B T _).toPOVM ())).posSemidef f)
+          (Matrix.PosSemidef.one)
+  have hg1 :
+      0 ≤ gcB V n P hk S S' check B T B' dec ((roleFamily (V.sampler.cl n) .oracle).eval z) :=
+    Finset.sum_nonneg fun f _ => by
+      split_ifs
+      · exact le_refl 0
+      · exact bornProb_nonneg _ (Matrix.PosSemidef.one)
+          ((((JB V n P hk S S' check B T _).toPOVM ())).posSemidef f)
+  change _ ≤ _ + dis T.ψ ((GA1 V n P hk S S' check B T (roleOf 0) 0
+            ((roleFamily (V.sampler.cl n) .alice).eval z)).toPOVM ())
+            ((GB1 V n P hk S S' check B T (roleOf 0) 0
+              ((roleFamily (V.sampler.cl n) .alice).eval z)).toPOVM ())
+        + dis T.ψ ((GA1 V n P hk S S' check B T (roleOf 1) 1
+            ((roleFamily (V.sampler.cl n) .bob).eval z)).toPOVM ())
+            ((GB1 V n P hk S S' check B T (roleOf 1) 1
+              ((roleFamily (V.sampler.cl n) .bob).eval z)).toPOVM ())
+  linarith
+
+/-- **The decoded strategy fails the typed oracularized game** with probability at most `6` times
+the combined error, given the PCP's soundness in the form `hgc`. -/
+theorem one_sub_povmValue_decoded_le (hgc : PcpSound V n P hk check B' dec) :
+    1 - povmValue (oGame V n B') T.ψ (MAo V n P hk S S' check B T B' dec)
+        (MBo V n P hk S S' check B T B' dec)
+      ≤ 6 * errD V n P hk S S' check B T := by
+  rw [one_sub_povmValue_typed]
+  have h := Finset.sum_le_sum fun z (_ : z ∈ univ) =>
+    sum_roles_condFail_le V n P hk S S' check B T B' dec hgc z
+  simp only [Finset.sum_add_distrib, ← Finset.mul_sum] at h
+  have hA := sum_gcA_le V n P hk S S' check B T B' dec hgc
+  have hB := sum_gcB_le V n P hk S S' check B T B' dec hgc
+  have hJ := sum_dis_JA_JB_le V n P hk S S' check B T
+  have hG0 := sum_dis_GA_GB_le V n P hk S S' check B T 0
+  have hG1 := sum_dis_GA_GB_le V n P hk S S' check B T 1
+  have hA0 := sum_disPolyA_le' V n P hk S S' check B T 0
+  have hA1 := sum_disPolyA_le' V n P hk S S' check B T 1
+  have hB0 := sum_disPolyB_le' V n P hk S S' check B T 0
+  have hB1 := sum_disPolyB_le' V n P hk S S' check B T 1
+  have he1 := err1_nonneg V n P hk S S' check B T
+  have he6 := err6_nonneg V n P hk S S' check B T
+  have hsz := errSZ_nonneg P hk
+  have hθ := one_sub_value_nonneg V n P hk S S' check B T
+  have hD : 11 * (err6 V n P hk S S' check B T + err1 V n P hk S S' check B T)
+      ≤ errD V n P hk S S' check B T := by unfold errD; linarith
+  set X : ℝ := (Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) : ℝ) with hX
+  have hXpos : 0 < X := by rw [hX]; exact_mod_cast Fintype.card_pos
+  have htot : ∑ z, ∑ u : Role, ∑ v : Role, condFail (oGame V n B') T.ψ
+      (MAo V n P hk S S' check B T B' dec) (MBo V n P hk S S' check B T B' dec)
+      (u, (roleFamily (V.sampler.cl n) u).eval z) (v, (roleFamily (V.sampler.cl n) v).eval z)
+      ≤ X * (54 * errD V n P hk S S' check B T) := by
+    have hXe1 := mul_le_mul_of_nonneg_left hD hXpos.le
+    nlinarith
+  rw [inv_mul_le_iff₀ (by positivity)]
+  linarith
+
+/-! ## The input verifier's value -/
+
+omit [NeZero P.m] in
+theorem errSZ_pos : 0 < errSZ P hk := by
+  have h1 := one_le_dPcp
+  have h5 : 5 ≤ P.m' := by simp only [PcpParams.m']; omega
+  have hq : 0 < Fintype.card (Fq P hk) := Fintype.card_pos
+  unfold errSZ
+  have : (5 : ℝ) ≤ P.m' := by exact_mod_cast h5
+  have : (1 : ℝ) ≤ dPcp := by exact_mod_cast h1
+  positivity
+
+theorem errD_pos : 0 < errD V n P hk S S' check B T := by
+  have := err1_nonneg V n P hk S S' check B T
+  have := err6_nonneg V n P hk S S' check B T
+  have := one_sub_value_nonneg V n P hk S S' check B T
+  have := errSZ_pos P hk
+  unfold errD
+  positivity
+
+/-- **A POVM strategy's value is at most the quantum value**: Naimark dilation makes both
+families projective on the twice-extended state, with the same value. -/
+theorem povmValue_le_quantumValue {X Y A₁ B₁ : Type*} [Fintype X] [Fintype Y] [Fintype A₁]
+    [DecidableEq A₁] [Fintype B₁] [DecidableEq B₁] (G : Game X Y A₁ B₁) {dA dB : Type*}
+    [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB] {ψ : dA × dB → ℂ}
+    (hψ : star ψ ⬝ᵥ ψ = 1) (MA : X → POVM A₁ dA) (MB : Y → POVM B₁ dB) (a₀ : A₁) (b₀ : B₁) :
+    povmValue G ψ MA MB ≤ quantumValue G := by
+  obtain ⟨PA, hPA⟩ := exists_projective_dilation_povm MA a₀
+  obtain ⟨PB, hPB⟩ := exists_projective_dilation_povm MB b₀
+  have h := TensorProductStrategy.value_ofProjective G (extVec2 ψ a₀ b₀) (extVec2_unit hψ a₀ b₀)
+    PA PB
+  rw [povmValue_extVec2] at h
+  simp only [hPA, hPB] at h
+  rw [← h]
+  exact le_ciSup (TensorProductStrategy.bddAbove_range_value G) _
+
+/-- **The input verifier's value** is close to `1`: the decoded strategy plays the typed
+oracularized game with failure at most `6` times the combined error. -/
+theorem valStar_ge_decoded (hgc : PcpSound V n P hk check B' dec) :
+    1 - 24 * √(7 * errD V n P hk S S' check B T) ≤ V.valStar n B' := by
+  have hpos := errD_pos V n P hk S S' check B T
+  refine V.valStar_ge_of_typed n B' ((V.seeded n B').oaccepts) (fun _ a => a)
+    (fun _ _ _ _ h => h) (by positivity) ?_
+  have h1 := one_sub_povmValue_decoded_le V n P hk S S' check B T B' dec hgc
+  have h2 := povmValue_le_quantumValue (oGame V n B') T.ψ_unit
+    (MAo V n P hk S S' check B T B' dec) (MBo V n P hk S S' check B T B' dec) default default
+  linarith
 
 end MIPRE.AnswerReduction
 
