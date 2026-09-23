@@ -791,6 +791,7 @@ import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Cost.While
 import MIPRE.Foundations.CrossConsistency
 import MIPRE.Foundations.Dilation
+import MIPRE.Foundations.Disagreement
 import MIPRE.Foundations.Distances
 import MIPRE.Foundations.Expanded
 import MIPRE.Foundations.GameAdapt
