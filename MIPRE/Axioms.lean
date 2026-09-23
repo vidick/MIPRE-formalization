@@ -154,6 +154,7 @@ import MIPRE.Foundations.OracularTyped
 import MIPRE.Foundations.OracularSampler
 import MIPRE.Foundations.OracularDecider
 import MIPRE.Foundations.OracularDeciderCost
+import MIPRE.Foundations.Pipeline.Oracularization
 import MIPRE.Foundations.LowDegree.SelfDualize
 import MIPRE.Foundations.LowDegree.NormalBasis
 import MIPRE.Foundations.SAT.AdmissibleField
@@ -628,6 +629,15 @@ tell you the guard is missing.
   MIPRE.OracleDecider.exists_typedPredicate_perfectPCC_within,
   MIPRE.OracleDecider.oracleDecider_runs_within,
   MIPRE.OracleDecider.oracleDecider_timeBound
+
+-- blueprint `thm:oracularization`: the specification inhabited, and the value transfers of the
+-- typed oracularized verifier and of the detyped one, with `ℓ + 3` levels.
+#guard_sorry_free MIPRE.Oracularization.construction,
+  MIPRE.Oracularization.typed_soundness,
+  MIPRE.Oracularization.typed_completeness,
+  MIPRE.Oracularization.detyped,
+  MIPRE.Oracularization.detyped_completeness,
+  MIPRE.Oracularization.detyped_soundness
 
 -- blueprint `lem:pcp-zero-basis`: preserve the individual-degree bounds needed by the PCP.
 #guard_sorry_free MIPRE.SAT.ArrayProg.eqBits,
