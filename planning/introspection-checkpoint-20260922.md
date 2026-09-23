@@ -111,6 +111,16 @@ have passed Lean; do not mark the higher-level statements proved yet.
    restriction and padding value return, and only then inhabit
    `Introspection 7` and mark `thm:introspection` proved.
 
+   **Update 2026-09-23: the extraction is supplied.** `thm:qld` is proved (#187), and
+   `Background/Introspection/PauliExtraction.lean` proves the existence of exactly these inputs:
+   `exists_binary_extraction` gives the isometries, the unit `ξ`, `hstate`, `hX` and `hZ` (and
+   the other two Pauli estimates) for any projective strategy of `BinaryComplete.game` with a
+   self-dual basis, at `T = ε + 2 errShape a b (N ε) m d q + 8/q`, and
+   `exists_quantumValue_ge_of_binary` composes them with `ValidPauliSoundness`. The field-register
+   game has the same pair. No malformed-mass premise is used (`QLD/ValidAnswers.lean`). What is left
+   of this item is the composition with the explicit-game restriction and the source padding: the
+   corollaries assume the original CL functions are exact on the whole register.
+
 ## Validation and local resumption
 
 New modules are checked with Lean 4.33.0 in dependency order and headline
