@@ -193,6 +193,7 @@ import MIPRE.Background.LIDT.Padding
 import MIPRE.Background.LIDT.Simultaneous
 import MIPRE.Background.AnswerReduction.ArSampler
 import MIPRE.Background.AnswerReduction.ArDecider
+import MIPRE.Background.AnswerReduction.Construction
 import MIPRE.Foundations.Expanded
 import MIPRE.Foundations.WeylEPR
 import MIPRE.Foundations.Swap
@@ -1716,7 +1717,37 @@ tell you the guard is missing.
   MIPRE.AnswerReduction.typedDecider,
   MIPRE.AnswerReduction.core_runs,
   MIPRE.AnswerReduction.accepts_iff,
-  MIPRE.AnswerReduction.total
+  MIPRE.AnswerReduction.total,
+  MIPRE.AnswerReduction.size_margQuery_le,
+  MIPRE.AnswerReduction.typedDecider_time
+
+-- blueprint `lem:ar-typed-sampler`, its running time: the parameter routine's, the product's,
+-- and the typed sampler's.
+#guard_sorry_free MIPRE.AnswerReduction.ParamsBound,
+  MIPRE.AnswerReduction.parProg_time,
+  MIPRE.CL.ProductSampler.route_call_size,
+  MIPRE.CL.ProductSampler.prog_time,
+  MIPRE.AnswerReduction.typedSampler_time
+
+-- blueprint `lem:ar-construction`: the answer-reduced verifier, its programs, and its complexity
+-- clause.
+#guard_sorry_free MIPRE.AnswerReduction.cutVal,
+  MIPRE.AnswerReduction.arCut,
+  MIPRE.AnswerReduction.arVerifier,
+  MIPRE.AnswerReduction.arSamplerProg,
+  MIPRE.AnswerReduction.arSamplerProg_eq,
+  MIPRE.AnswerReduction.arCompute,
+  MIPRE.AnswerReduction.arCompute_eq,
+  MIPRE.AnswerReduction.arVerifier_within,
+  MIPRE.CL.Detyping.sampler_time,
+  MIPRE.CL.Detyping.DeciderProgram.route_call_typed,
+  MIPRE.CL.Detyping.DeciderProgram.prog_time,
+  MIPRE.Pipeline.PDom,
+  MIPRE.Pipeline.PRuns
+
+-- blueprint `lem:ar-sampler-independence`: the output sampler depends only on the input sampler.
+#guard_sorry_free MIPRE.AnswerReduction.arVerifier_sampler,
+  MIPRE.AnswerReduction.arSamplerProg_eq
 
 /-! ## Introspection mixing, conditioning, and graph rejection sampling -/
 

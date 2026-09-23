@@ -866,6 +866,18 @@ general-`ldc` proof) in three parts.
   covers `m + r > q`, where no padding fits and constant measurements do. The paper's second
   trivial regime, `d >= q`, is not needed: the single-codeword theorem has no `d < q` hypothesis.
 
+**AR-3 is done: the construction** (`lem:ar-construction`, `lem:ar-sampler-independence`):
+`AnswerReduction.arVerifier` with its programs as polynomial-time functions and the contract's
+`within` clause, `arVerifier_within`, in `MIPRE/Background/AnswerReduction/Construction.lean`;
+the pieces and findings are in [answer-reduction.md](answer-reduction.md). Supplying `within`
+changed the contract twice, both weakenings: the input sampler's size is bounded by `σ` as well
+as the decider's (the output simulates the input sampler through the universal machine), and the
+output bound's argument gains `λ + n` (inert in the paper's regime `λ, μ ≥ 1`, `n ≥ 2`). That is
+the seventh time a time bound has been refuted from the other side. The construction also asks
+of the PCP decider that its parameters be polynomial in `(log n, log T, Q, σ)`
+(`ParamsBound`), which the classical PCP decider must be shown to satisfy. AR-4, completeness,
+is next.
+
 **The standing risk** is the one `planning/h4-assembly.md` §4 item 4 names: `GapCompression`
 has been consumed five times and supplied never — `TimeBoundAt` was refuted three times and
 `IsSynchronousAt` once (#77), each time by a consumer — and chapter 6 will read the structure

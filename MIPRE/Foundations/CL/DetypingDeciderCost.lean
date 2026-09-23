@@ -57,12 +57,13 @@ theorem route_call_typed (n s inner outer : ℕ) (d payload : Data)
       rfl
   all_goals simp at h
 
-variable {ℓ : ℕ} (S : TypedSampler ℓ T) (D : TypedDecider T) (C : CutoffProgram)
+variable {ℓ : ℕ}
 
 /-- **The running time of the detyped decider**: dominated as soon as the typed sampler runs
 within `(cS (W + 1)^{mS})^{K + 1}` at degree `eS (K + 1)` at `n`, the cutoff routine within a
 dominated time, and the typed decider within one on the typed inputs the router hands it. -/
-theorem prog_time (cS mS eS cC mC eC cD mD eD : ℕ) : ∃ c m e, ∀ {W K : ℕ} (n : ℕ), n ≤ W →
+theorem prog_time (cS mS eS cC mC eC cD mD eD : ℕ) : ∃ c m e, ∀ {W K : ℕ}
+    (S : TypedSampler ℓ T) (D : TypedDecider T) (C : CutoffProgram) (n : ℕ), n ≤ W →
     S.TimeBoundAt n ((cS * (W + 1) ^ mS) ^ (K + 1)) (eS * (K + 1)) →
     (∀ {X : ℕ}, 1 ≤ X → PRuns W X K cC mC eC C.prog (encode n) (encode (C.inner n, C.outer n))) →
     (∀ {X : ℕ}, 1 ≤ X → ∀ (u v : T) (x y a b : BitStr), x.length = S.dim n →
@@ -76,7 +77,7 @@ theorem prog_time (cS mS eS cC mC eC cD mD eD : ℕ) : ∃ c m e, ∀ {W K : ℕ
   obtain ⟨cc, mc, ec, hc⟩ := PDom.consSize cx mx ex cC mC eC
   obtain ⟨c3, m3, e3, h3⟩ := PRuns.routeCall (route E) post cc mc ec cD mD eD
   obtain ⟨c4, m4, e4, h4⟩ := PRuns.routeDirect (route E) post cc mc ec
-  exact ⟨_, _, _, fun {W K} n hn hS hC hD d => by
+  exact ⟨_, _, _, fun {W K} S D C n hn hS hC hD d => by
     have hX : 1 ≤ d.size + 1 := by omega
     set input : Data := .cons (encode n) d with hinput
     have pin : PDom W (d.size + 1) K ci mi ei input.size := hi n d hX hn le_rfl
@@ -135,7 +136,7 @@ namespace MIPRE.CL.Detyping
 open Cost Pipeline Polynomial
 
 variable {T : Type*} [Fintype T] [DecidableEq T] [SizedEncoding T] {ℓ : ℕ}
-variable (E : T → T → Prop) [DecidableRel E] (S : TypedSampler ℓ T)
+variable (E : T → T → Prop) [DecidableRel E]
 
 /-- The detyped sampler's coefficient is its runtime polynomial's value at `1`: the router's cost
 at the size of the index. -/
@@ -149,13 +150,14 @@ theorem samplerCoefficient_eq (n B k : ℕ) : samplerCoefficient E n B k =
   omega
 
 /-- **The running time of the detyped sampler**: dominated as soon as the typed sampler's is. -/
-theorem sampler_time (hℓ : 0 < ℓ) (cS mS eS : ℕ) : ∃ c m d, ∀ {W K : ℕ} (n : ℕ), n ≤ W →
+theorem sampler_time (cS mS eS : ℕ) : ∃ c m d, ∀ {W K : ℕ} (S : TypedSampler ℓ T) (hℓ : 0 < ℓ)
+    (n : ℕ), n ≤ W →
     S.TimeBoundAt n ((cS * (W + 1) ^ mS) ^ (K + 1)) (eS * (K + 1)) →
     (sampler E S hℓ).TimeBoundAt n ((c * (W + 1) ^ m) ^ (K + 1)) (d * (K + 1)) := by
   set R := (Program.route E).timeBound
   set P := (Program.post (graphDim T)).timeBound
   set cR := (∑ i ∈ Finset.range (R.natDegree + 1), R.coeff i + 1) * 4 ^ R.natDegree + 1
-  exact ⟨_, _, R.natDegree * (eS + 1) * (P.natDegree + 1), fun {W K} n hn hS => by
+  exact ⟨_, _, R.natDegree * (eS + 1) * (P.natDegree + 1), fun {W K} S hℓ n hn hS => by
     have h := sampler_timeBoundAt_uniform_degree E S hℓ n _ _ hS
     have h1 : (1 : ℕ) ≤ 1 := le_rfl
     have hy : esize n + 2 + 1 ≤ 4 * (W + 1) := by have := esize_nat_le_four n; omega

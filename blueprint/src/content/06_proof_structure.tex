@@ -5286,14 +5286,20 @@ the $\mathrm{Point}_6$ question and answer.
   MIPRE.AnswerReduction.PcpFamily, MIPRE.AnswerReduction.PcpFamily.directSampler,
   MIPRE.AnswerReduction.family, MIPRE.AnswerReduction.parProg,
   MIPRE.AnswerReduction.parProg_runs, MIPRE.AnswerReduction.typedSampler,
-  MIPRE.AnswerReduction.typedSampler_cl, MIPRE.AnswerReduction.typedSampler_prog}
+  MIPRE.AnswerReduction.typedSampler_cl, MIPRE.AnswerReduction.typedSampler_prog,
+  MIPRE.AnswerReduction.ParamsBound, MIPRE.AnswerReduction.parProg_time,
+  MIPRE.CL.ProductSampler.route_call_size, MIPRE.CL.ProductSampler.prog_time,
+  MIPRE.AnswerReduction.typedSampler_time}
 \leanok
 For a PCP decider and parameters $(\lambda,\mu,\sigma)$, and an $(\ell+1)$-level input sampler
 $S$, there is a typed sampler with $\max\{\ell+1,3\}$ levels on the types of
 Definition~\ref{def:ar-typed-game} whose typed CL functions are that game's, with the PCP
 parameters $\mathrm{pcpparams}(n,T,Q,\sigma)$, $Q=(\lambda n+1)^\mu$, $T=2^{(Q+5)(\mu+1)}$, and with the seed selectors
 reading the high bits of the seed. Its program is computed from the program of $S$ and
-$(\lambda,\mu,\sigma)$ alone.
+$(\lambda,\mu,\sigma)$ alone. If the PCP's parameters are polynomial in
+$(\log n,\log T,Q,\sigma)$ and $S$ runs within $Q(|d|+1)^\mu$ at $n$, it runs within
+$(C(W+1)^M)^{\mu+1}(|d|+1)^{E(\mu+1)}$ for universal $C,M,E$ and any $W$ above $Q$, $\lambda$,
+$\sigma$, $n$ and $|S|$.
 \end{lemma}
 
 \begin{proof}
@@ -5301,14 +5307,20 @@ $(\lambda,\mu,\sigma)$ alone.
 The program first runs a routine computing the PCP parameters at the index: $\lambda$ and $n$ in
 unary ($\lambda$ replaced by $0$ at the index $0$), $Q$ by a power loop, $\mu$ in unary and
 $T=2^{(Q+5)(\mu+1)}$, the parameters by the PCP decider's parameter program, and
-the copies' offsets, lengths, selector widths and seeds in unary. A query at a type is then split:
+the copies' offsets, lengths, selector widths and seeds in unary; every loop is as long as one of
+$\lambda$, $n$, $\mu$, $Q$, $k$, $m$, $s$, and the bit length of $T$ is the product of one quantity
+below $W$ and one below $\mu+1$. A query at a type is then split:
 the bits of the PCP part are answered outright, and the others make up a query to the typed
 oracularized sampler, answered through the universal machine, below its own level; beyond it the
 marginal is asked at its last level and a linear map or factor query has a zero oracle half. A
 PCP query is answered by the copy its type names, on the three runs of $k$-bit blocks: the seed on
 the seed run, the selected direction on the direction run and the line's base point on the point
 run, computed by the introspection sampler's Shoup programs. Each of the three kinds of answer is
-the Shoup bits of the presentation's, run by run.
+the Shoup bits of the presentation's, run by run. The forwarded query is at most linearly larger
+than the typed query, so the oracularized sampler's time on it, which is polynomial in $W$ times
+the query's size to the power $e(\mu+1)$, raises only constants to the power $\mu+1$; the rest is
+polynomial-time work on data of dominated size. Bounds of the shape $(c(W+1)^m X^e)^{\mu+1}$ are
+closed under sums, products, fixed polynomials and such calls, which is the whole accounting.
 \end{proof}
 
 \begin{lemma}[The typed answer-reduced decider]
@@ -5318,14 +5330,18 @@ the Shoup bits of the presentation's, run by run.
   MIPRE.AnswerReduction.sideB_eq, MIPRE.AnswerReduction.verdictB_eq,
   MIPRE.AnswerReduction.verdictP_apply, MIPRE.AnswerReduction.parseBP_apply,
   MIPRE.AnswerReduction.typedDecider, MIPRE.AnswerReduction.core_runs,
-  MIPRE.AnswerReduction.accepts_iff, MIPRE.AnswerReduction.total}
+  MIPRE.AnswerReduction.accepts_iff, MIPRE.AnswerReduction.total,
+  MIPRE.AnswerReduction.size_margQuery_le, MIPRE.AnswerReduction.typedDecider_time}
 \leanok
 For a PCP decider and parameters $(\lambda,\mu,\sigma)$, and an $(\ell+1)$-level input verifier
 $(S,D)$, there is a typed decider on the types of Definition~\ref{def:ar-typed-game}, computed
 from the programs of $S$ and $D$ and $(\lambda,\mu,\sigma)$, which halts on every input and, on the
 bits of any two questions of that game and any two answers, accepts exactly when that game's
 predicate does, with the game check run at $\mathrm{pcpparams}(n,T,Q,\sigma)$,
-$Q=(\lambda n+1)^\mu$, $T=2^{(Q+5)(\mu+1)}$.
+$Q=(\lambda n+1)^\mu$, $T=2^{(Q+5)(\mu+1)}$. Under the hypotheses of
+Lemma~\ref{lem:ar-typed-sampler}, and $|D|\le W$, it runs within
+$(C(W+1)^M(|d|+1)^E)^{\mu+1}$ on every input $(n,d)$ whose two questions have oracle halves of
+length at most $W$ --- as the questions the detyping compiler hands it have.
 \end{lemma}
 
 \begin{proof}
@@ -5341,14 +5357,23 @@ sampler's third-stage representative. The five steps are organised by what the t
 for: at most one comparison of two answer blocks, one low-degree subtest and one game check,
 chosen by a finite table of the types. Every stage halts on every input, since the parses are
 total, the input sampler halts on every input and the PCP verifier runs on the encoding of a
-genuine input; so no clock is needed, and acceptance is the predicate by determinism.
+genuine input; so no clock is needed, and acceptance is the predicate by determinism. Its time is
+dominated as the sampler's is: each marginal query is the oracle half of a question with a
+constant-size header, and everything else is polynomial-time work on the context.
 \end{proof}
 
 \begin{lemma}[Answer-reduction construction]
 \label{lem:ar-construction}
 \ledgernode{1.3.4.1}
 \uses{lem:oracle-effective-interface,thm:pcp-decider,lem:typed-downsize,lem:detype-compiler,lem:lidt-effective,
-  lem:ar-typed-sampler,lem:ar-typed-decider}
+  lem:ar-typed-sampler,lem:ar-typed-decider,def:answer-reduction-contract}
+\lean{MIPRE.AnswerReduction.cutVal, MIPRE.AnswerReduction.arCut,
+  MIPRE.AnswerReduction.arVerifier, MIPRE.AnswerReduction.arSamplerProg,
+  MIPRE.AnswerReduction.arSamplerProg_eq, MIPRE.AnswerReduction.arCompute,
+  MIPRE.AnswerReduction.arCompute_eq, MIPRE.AnswerReduction.arVerifier_within,
+  MIPRE.CL.Detyping.sampler_time, MIPRE.CL.Detyping.DeciderProgram.route_call_typed,
+  MIPRE.CL.Detyping.DeciderProgram.prog_time, MIPRE.Pipeline.PDom, MIPRE.Pipeline.PRuns}
+\leanok
 With the parameter and timeout hypotheses of Theorem~\ref{thm:answer-reduction},
 construct the typed oracle verifier and the PCP verifier. Downsize the PCP
 sampler using its explicit field routine before taking the direct sum with
@@ -5356,7 +5381,30 @@ the binary oracle sampler. This yields a common binary ambient space and
 $\max\{\ell,3\}$ typed levels, hence $\max\{\ell+2,5\}$ levels after detyping.
 The compiled timeout and actual runtimes have the claimed polynomial bounds.
 Format checks include all proof coefficients and answer components.
+In the ambient model, for a PCP decider whose parameters are polynomial in
+$(\log n,\log T,Q,\sigma)$: the output's programs are polynomial-time functions of the input
+programs and $(\lambda,\mu,\sigma)$, and for a polynomial $P$ and degree $d$ depending only on the
+PCP, an input within the budget of Definition~\ref{def:answer-reduction-contract} with
+$|S|,|D|\le\sigma$ gives an output within $P((\lambda n+1)^\mu+\sigma+\lambda+n)^{\mu+1}$ at
+input-size degree $d(\mu+1)$ that rejects answers longer than its cut $32(k+1)(m'+7)^2$.
 \end{lemma}
+
+\begin{proof}
+\leanok
+The output is the typed verifier of Lemmas~\ref{lem:ar-typed-sampler} and~\ref{lem:ar-typed-decider}
+through the detyping compiler, at a cutoff routine that runs the parameter routine and writes both
+cuts $32(k+1)(m'+7)^2$. Its programs place the input programs in fixed contexts, which is
+polynomial time. Take $W=(\lambda n+1)^\mu+\sigma+\lambda+n$: it is above $Q$, $\lambda$, $\sigma$,
+$n$, both input programs' sizes and the input sampler's dimension, so the typed sampler's and
+decider's bounds apply. The detyped sampler's coefficient is the router's cost polynomial at the
+index, with the typed sampler's coefficient raised to the router's degree; the detyped decider
+runs the typed sampler on the dimension query, the cutoff routine, and at most one call to the
+typed decider on a typed input with questions of the typed sampler's dimension, whose oracle
+halves are the input sampler's questions, and answers within the cut. The dimension and the cut
+are polynomial in $W$ and the PCP's parameters. Every bound has the shape
+$(c(W+1)^m)^{\mu+1}(|d|+1)^{e(\mu+1)}$, and the sum of the constants and the largest exponents
+give $P$ and $d$.
+\end{proof}
 
 \begin{lemma}[Answer-reduction completeness]
 \label{lem:ar-completeness}
@@ -5518,6 +5566,8 @@ nontrivial regime also justifies the small-error inequalities above.
 \label{lem:ar-sampler-independence}
 \ledgernode{1.3.4.12}
 \uses{lem:ar-construction,lem:oracle-effective-interface,lem:detype-compiler}
+\lean{MIPRE.AnswerReduction.arVerifier_sampler, MIPRE.AnswerReduction.arSamplerProg_eq}
+\leanok
 The output sampler is determined by $(S,\lambda,\ell,\mu,\sigma)$, independent
 of the input decider's code. The typed oracle sampler uses only $S$; PCP
 parameters use only the supplied numerical bounds; downsizing uses their
@@ -5526,6 +5576,13 @@ fixed graph. This supplies the source premise used by compression's
 sampler-independence argument (ledger node $1.5.1$). The already checked
 conditional compression theorem keeps its existing Lean proof and premises.
 \end{lemma}
+
+\begin{proof}
+\leanok
+The output sampler is the detyping compiler's sampler of the typed sampler, which is built from
+the input sampler and $(\lambda,\mu,\sigma)$ only; its program is a polynomial-time function of
+the input sampler's program and $(\lambda,\mu,\sigma)$.
+\end{proof}
 
 \begin{theorem}[Answer reduction]
 \label{thm:answer-reduction}
@@ -5590,7 +5647,7 @@ construct an inhabitant or prove its correspondence with the source.
 was vacuous: a wrapper that keeps the input verifier satisfied every field
 (Remark~\ref{rem:oracularization-contract}). This one does not admit that witness, because its complexity clause does the work: an input whose
 decider runs in time $2^{(\lambda n+1)^\mu}$ at degree $\mu$, with answers of that length, must
-give an output within a polynomial in $(\lambda n+1)^\mu+\sigma$ that rejects longer answers.
+give an output within a polynomial in $(\lambda n+1)^\mu+\sigma+\lambda+n$ that rejects longer answers.
 A constant decider fails too: always accepting breaks soundness once $(\lambda n)^{-\mu b}$ is
 small, and always rejecting breaks completeness. Against the source's \texttt{thm:ar}
 (\texttt{ld\_compiler.tex}) the contract is a weakening at every point where it differs:
