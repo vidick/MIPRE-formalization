@@ -5567,8 +5567,11 @@ runs the input sampler through the universal machine, whose overhead is polynomi
 size of the program it simulates, and the source's $\poly((\lambda n)^\mu, \sigma)$ bounds
 are silent on that size (the introspective sampler that compression supplies has size
 polynomial in $\log \lambda$). For a universal base polynomial $P$ and base degree $d$, the
-output is within $P((\lambda n+1)^\mu+\sigma)^{\mu+1}$ at input-size degree
-$d(\mu+1)$, and rejects longer answers. The extra power retains the input
+output is within $P((\lambda n+1)^\mu+\sigma+\lambda+n)^{\mu+1}$ at input-size degree
+$d(\mu+1)$, and rejects longer answers. The terms $\lambda+n$ change nothing for $\lambda,\mu\geq1$
+and $n\geq2$, where they are at most $2(\lambda n)^\mu$; they cover the indices where
+$(\lambda n+1)^\mu$ does not grow with $n$, at which the output still computes the PCP's
+parameters from $n$ and $\lambda$. The extra power retains the input
 sampler's degree; fixing $\mu$ in compression leaves a polynomial bound. Its threshold $C_{\mathrm{ar}}$
 plays the role of the source threshold (\texttt{thm:ar} in \texttt{ld\_compiler.tex}); an earlier statement here had the
 value clauses for all $n$. Its soundness field also explicitly requires $n\geq2$,

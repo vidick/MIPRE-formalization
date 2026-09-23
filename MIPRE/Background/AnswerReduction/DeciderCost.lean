@@ -126,7 +126,7 @@ dominated and whose two question fields have oracle halves no longer than `W` �
 decider's inputs have: their oracle halves are the input sampler's questions. -/
 theorem typedDecider_time (ℓ : ℕ) (PD : PcpDecider) (R : Polynomial ℕ) (cd md ed : ℕ) :
     ∃ C M E, ∀ {W X : ℕ} (V : Verifier (ℓ + 1)) (lam mu sigma n : ℕ), ParamsBound PD R →
-    1 ≤ X → 1 ≤ mu → arQ lam mu n ≤ W → lam ≤ W → sigma ≤ W → n ≤ W → esize V.sampler.prog ≤ W →
+    1 ≤ X → arQ lam mu n ≤ W → lam ≤ W → sigma ≤ W → n ≤ W → esize V.sampler.prog ≤ W →
     esize V.decider.prog ≤ W → V.sampler.TimeBoundAt n (arQ lam mu n) mu →
     ∀ d : Data, PDom W X mu cd md ed d.size →
     (readBits (treeHead (treeTail d))).length ≤ W + (dB PD lam mu sigma n).length →
@@ -170,7 +170,7 @@ theorem typedDecider_time (ℓ : ℕ) (PD : PcpDecider) (R : Polynomial ℕ) (cd
     postKeep x7c x7m x7e v8c v8m v8e
   obtain ⟨x8c, x8m, x8e, hx8⟩ := next_pdom x7c x7m x7e v8c v8m v8e
   obtain ⟨cf, mf, ef, hf⟩ := PRuns.ptf (verdictP.comp readV) x8c x8m x8e
-  exact ⟨_, _, _, fun {W X} V lam mu sigma n hR hX hmu hQ hl hs hn hsp hdp hS d hd hxd hyd => by
+  exact ⟨_, _, _, fun {W X} V lam mu sigma n hR hX hQ hl hs hn hsp hdp hS d hd hxd hyd => by
     have hu' := selfUniversal.closed
     have hv' := PD.verify.closed
     set H : Data := encode (V.sampler.prog, V.decider.prog, lam, mu, sigma) with hHdef
@@ -184,7 +184,7 @@ theorem typedDecider_time (ℓ : ℕ) (PD : PcpDecider) (R : Polynomial ℕ) (cd
     have hpre1 : (ap₂ treePair (argPar 0) (PolyTimeFun.id Data)) X0 =
         .cons (.cons (encode (lam, mu, sigma)) (encode n)) X0 := by
       simp [argPar, lmsD, hdat, inp, X0, H, encode_prod]
-    have P1 := hp (W := W) (X := X) hR lam mu sigma n hX hmu hQ hl hs hn
+    have P1 := hp (W := W) (X := X) hR lam mu sigma n hX hQ hl hs hn
     have S1 := h1 (ParRoutine.core_closed PD) X0 _ X0 _ hX hpre1 pX0 P1
     simp only [postKeep, ap₂_apply, treePair_apply, fst_apply, snd_apply] at S1
     set X1 : Data := .cons ((family PD lam mu sigma).pd n) X0 with hX1def
@@ -193,7 +193,7 @@ theorem typedDecider_time (ℓ : ℕ) (PD : PcpDecider) (R : Polynomial ℕ) (cd
     have hpre2 : (ap₂ treePair (argPar 1) (PolyTimeFun.id Data)) X1 =
         .cons (.cons (encode (lam, mu, sigma)) (encode n)) X1 := by
       simp [argPar, lmsD, hdat, inp, X1, X0, H, encode_prod]
-    have P2 := hb (W := W) (X := X) lam mu sigma n hX hmu hQ hl hs hn
+    have P2 := hb (W := W) (X := X) lam mu sigma n hX hQ hl hs hn
     have S2 := h2 budCore_closed X1 _ X1 _ hX hpre2 pX1 P2
     simp only [postKeep, ap₂_apply, treePair_apply, fst_apply, snd_apply] at S2
     set X2 : Data := .cons (encode (arQ lam mu n, tPcp lam mu n)) X1 with hX2def

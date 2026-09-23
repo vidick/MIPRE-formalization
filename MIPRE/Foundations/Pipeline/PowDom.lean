@@ -176,6 +176,10 @@ theorem ofCallPow {B q t c₀ m₀ c₁ m₁ e₁ e' : ℕ} (hB : B ≤ c₀ * (
         rw [mul_pow, mul_pow, ← pow_mul, ← pow_mul, pow_add]
         ring
 
+/-- Below the unpowered monomial. -/
+theorem ofMono {c m e v : ℕ} (h : v ≤ c * (W + 1) ^ m * X ^ e) : PDom W X K c m e v :=
+  h.trans le_pow_succ
+
 /-- A linear function of `W` and `K + 1`. -/
 theorem ofLin (hX : 1 ≤ X) {a b c v : ℕ} (h : v ≤ a * W + b * (K + 1) + c) :
     PDom W X K (a + 2 * b + c + 3) 1 0 v := by

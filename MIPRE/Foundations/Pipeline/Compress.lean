@@ -31,7 +31,7 @@ The parameters, all determined by the three structures:
   toolkit to compute the paper's expression directly, and any dominating polynomial serves.
 * `μ`: the margin claim `exists_mu`, at least `C` so that the introspective verifier is within
   answer reduction's input budget.
-* `β`: an exponent with `poly((λn + 1)^μ + σ(λ))^(μ + 1) ≤ (λn + 1)^β`, the parse length
+* `β`: an exponent with `poly((λn + 1)^μ + σ(λ) + λ + n)^(μ + 1) ≤ (λn + 1)^β`, the parse length
   handed to repetition, dominating the ambient answer bound of the answer-reduced verifier.
 * `τ`: the repetition exponent `exists_tau`, from the lower bound `ε₂ ≥ x^{-P}` of
   `exists_eps2_lower`, against the parse length `2^{β(|λ| + |n|)} ≤ (λn + 1)^{6β}`.
@@ -183,14 +183,15 @@ theorem margin_spec : ∀ x : ℝ, (N₁ I A : ℝ) ≤ x → ∀ s : ℝ, 1 ≤
   (exists_mu (b₁ := I.b) I.one_le_a A.one_le_a A.b_pos (K I) I.C).choose_spec.2.choose_spec
 
 theorem polyBounded_arBound :
-    PolyBounded fun z => (A.bound.eval (z ^ mu I A + sigma I z)) ^ (mu I A + 1) :=
-  (PolyBounded.eval A.bound ((PolyBounded.id.pow _).add (polyBounded_sigmaFun (Csig I)))).pow _
+    PolyBounded fun z => (A.bound.eval (z ^ mu I A + sigma I z + z + z)) ^ (mu I A + 1) :=
+  (PolyBounded.eval A.bound ((((PolyBounded.id.pow _).add (polyBounded_sigmaFun (Csig I))).add
+    PolyBounded.id).add PolyBounded.id)).pow _
 
 /-- `β`, the parse-length exponent handed to repetition. -/
 noncomputable def beta : ℕ := (polyBounded_arBound I A).exists_le_pow.choose
 
 theorem arBound_le_pow :
-    ∀ z, 2 ≤ z → (A.bound.eval (z ^ mu I A + sigma I z)) ^ (mu I A + 1) ≤ z ^ beta I A :=
+    ∀ z, 2 ≤ z → (A.bound.eval (z ^ mu I A + sigma I z + z + z)) ^ (mu I A + 1) ≤ z ^ beta I A :=
   (polyBounded_arBound I A).exists_le_pow.choose_spec
 
 /-- `P`, with `ε₂ ≥ x^{-P}`. -/
@@ -432,7 +433,7 @@ theorem polyBounded_G : PolyBounded (G I A R) := by
       fun z => ?_
     exact max_le_add_of_nonneg (Nat.zero_le _) (Nat.zero_le _)
   have har : PolyBounded fun z : ℕ => arBound I A z z :=
-    (PolyBounded.eval _ ((hz.pow _).add hsig)).pow _
+    (PolyBounded.eval _ ((((hz.pow _).add hsig).add PolyBounded.id).add PolyBounded.id)).pow _
   have ht : PolyBounded fun z : ℕ => timeB I A R z z := by
     unfold timeB Repetition.arg
     simp only [Budget.uniform_S, Budget.uniform_d, Budget.uniform_D, Budget.uniform_B,
@@ -498,8 +499,13 @@ theorem arBound_le_parseBound {lam n : ℕ} (hl : 1 ≤ lam) (hn : 1 ≤ n) :
   have hz : 2 ≤ lam * n + 1 := by nlinarith
   have hs : sigma I lam ≤ sigma I (lam * n + 1) := sigma_mono I (by nlinarith)
   calc arBound I A lam n ≤
-        (A.bound.eval ((lam * n + 1) ^ mu I A + sigma I (lam * n + 1))) ^ (mu I A + 1) :=
-        Nat.pow_le_pow_left (polynomial_eval_mono _ (by unfold AnswerReduction.arg; omega)) _
+        (A.bound.eval ((lam * n + 1) ^ mu I A + sigma I (lam * n + 1) + (lam * n + 1) +
+          (lam * n + 1))) ^ (mu I A + 1) :=
+        Nat.pow_le_pow_left (polynomial_eval_mono _ (by
+          unfold AnswerReduction.arg
+          have h1 : lam ≤ lam * n + 1 := by nlinarith
+          have h2 : n ≤ lam * n + 1 := by nlinarith
+          omega)) _
     _ ≤ (lam * n + 1) ^ beta I A := arBound_le_pow I A _ hz
     _ ≤ _ := pow_le_reps hl _
 

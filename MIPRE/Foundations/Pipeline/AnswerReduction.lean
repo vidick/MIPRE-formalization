@@ -25,13 +25,13 @@ The reading of the paper's statement in the vocabulary of `MIPRE.Verifier`:
 * The ambient input budget `inBudget λ μ n` bounds the sampler and dimension by
   `(λn + 1)^μ`, and the decider and answer length by `2^{(λn + 1)^μ}`, together with
   `𝒟.size ≤ σ`; the complexity clause asks `𝒮.size ≤ σ` as well (below). This explicitly
-  adapts the paper's absolute-time hypothesis `TIME_𝒟(n) ≤ (2^{λn})^μ` to the ambient input-size degree: the logarithm of the
-  permitted absolute decider time on legal inputs is polynomial in the sampler's budget
-  when `λ, n ≥ 1`.
+  adapts the paper's absolute-time hypothesis `TIME_𝒟(n) ≤ (2^{λn})^μ` to the ambient
+  input-size degree: the logarithm of the permitted absolute decider time on legal inputs is
+  polynomial in the sampler's budget when `λ, n ≥ 1`.
   The ambient sampler also has input-size degree `μ`: on inputs of size `O(L)`, where
   `L = (λn + 1)^μ`, its cost can be `L * O(L)^μ`. A universal polynomial in `L + σ` alone
   does not bound that uniformly in `μ`. We therefore use the explicit ambient output bound
-  `outBound bound λ μ σ n = (bound.eval (L + σ))^(μ + 1)`, at degree
+  `outBound bound λ μ σ n = (bound.eval (L + σ + λ + n))^(μ + 1)`, at degree
   `outDegree deg μ = deg * (μ + 1)`, and reject longer answers. This is a conservative
   adaptation of the paper's absolute-time contract, not a proof of that adaptation or of
   answer reduction. Compression fixes `μ`, so its final bound remains polynomial.
@@ -69,8 +69,11 @@ and no answer longer than `2^{(λn + 1)^μ}` accepted. -/
 def inBudget (lam mu n : ℕ) : Budget :=
   ⟨(lam * n + 1) ^ mu, (lam * n + 1) ^ mu, inAns lam mu n, mu, inAns lam mu n⟩
 
-/-- The argument of the polynomial bounding the output at index `n`: `(λn + 1)^μ + σ`. -/
-abbrev arg (lam mu sigma n : ℕ) : ℕ := (lam * n + 1) ^ mu + sigma
+/-- The argument of the polynomial bounding the output at index `n`: `(λn + 1)^μ + σ + λ + n`.
+For `λ, μ ≥ 1` and `n ≥ 2`, the paper's regime, `λ + n ≤ 2 (λn)^μ` and the last two terms change
+nothing; they are there for the indices where `(λn + 1)^μ` does not grow with `n` — `λ = 0`,
+`μ = 0`, or `n = 0` — at which the output still computes the PCP's parameters from `n` and `λ`. -/
+abbrev arg (lam mu sigma n : ℕ) : ℕ := (lam * n + 1) ^ mu + sigma + lam + n
 
 /-- The ambient output bound, retaining the input sampler's degree `μ`. For fixed `μ`,
 this is a polynomial in the base argument. -/

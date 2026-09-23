@@ -36,6 +36,19 @@ theorem pdLin {W X K v : ℕ} (hX : 1 ≤ X) (h : v ≤ 40 * W + 40 * (K + 1) + 
     PDom W X K linC 1 0 v :=
   PDom.ofLin hX h
 
+/-- A linear function of `W` and `K + 1` plus a square in `W`: the routine's quantities, `λn + 1`
+among them. -/
+theorem pdQ {W X K v : ℕ} (hX : 1 ≤ X)
+    (h : v ≤ 40 * W + 40 * (K + 1) + 40 + 4 * (W + 1) ^ 2) : PDom W X K (linC + 4) 2 0 v := by
+  have h1 : PDom W X K linC 1 0 (40 * W + 40 * (K + 1) + 40) := pdLin hX le_rfl
+  have h2 : PDom W X K 4 2 0 (4 * (W + 1) ^ 2) := PDom.ofMono (by simp)
+  exact ((h1.add hX h2).mono hX le_rfl (by simp) (by simp)).of_le h
+
+theorem lam_mul_add_one_le (lam n W : ℕ) (hl : lam ≤ W) (hn : n ≤ W) :
+    lam * n + 1 ≤ (W + 1) ^ 2 := by
+  have := Nat.mul_le_mul hl hn
+  nlinarith
+
 theorem size_X0 (lam mu sigma n : ℕ) :
     (Data.cons (encode (lam, mu, sigma)) (encode n)).size =
       esize lam + esize mu + esize sigma + esize n + 3 := by
@@ -43,27 +56,24 @@ theorem size_X0 (lam mu sigma n : ℕ) :
   change esize lam + (esize mu + esize sigma + 1) + 1 + esize n + 1 = _
   omega
 
-theorem lam_mul_add_one_le_arQ (lam mu n : ℕ) (hmu : 1 ≤ mu) : lam * n + 1 ≤ arQ lam mu n :=
-  Nat.le_self_pow (by omega) _
-
 open ParRoutine in
 /-- **The running time of the budgets' routine.** -/
-theorem budCore_time : ∃ c m e, ∀ {W X : ℕ} (lam mu sigma n : ℕ), 1 ≤ X → 1 ≤ mu →
+theorem budCore_time : ∃ c m e, ∀ {W X : ℕ} (lam mu sigma n : ℕ), 1 ≤ X →
     arQ lam mu n ≤ W → lam ≤ W → sigma ≤ W → n ≤ W →
     PRuns W X mu c m e budCore (.cons (encode (lam, mu, sigma)) (encode n))
       (encode (arQ lam mu n, tPcp lam mu n)) := by
-  obtain ⟨cu, mu', eu, hu⟩ := PRuns.toUnary linC 1 0
-  obtain ⟨cp, mp, ep, hp⟩ := PRuns.pow linC 1 0
-  obtain ⟨c1, m1, e1, h1⟩ := PRuns.stage pre1 post1 linC 1 0 cu mu' eu
-  obtain ⟨c2, m2, e2, h2⟩ := PRuns.stage pre2 post2 linC 1 0 cu mu' eu
-  obtain ⟨c3, m3, e3, h3⟩ := PRuns.stage pre3 postKeep linC 1 0 cp mp ep
-  obtain ⟨c4, m4, e4, h4⟩ := PRuns.stage preMu postBud linC 1 0 cu mu' eu
-  exact ⟨_, _, _, fun {W X} lam mu sigma n hX hmu hQ hl hs hn => by
+  obtain ⟨cu, mu', eu, hu⟩ := PRuns.toUnary (linC + 4) 2 0
+  obtain ⟨cp, mp, ep, hp⟩ := PRuns.pow (linC + 4) 2 0
+  obtain ⟨c1, m1, e1, h1⟩ := PRuns.stage pre1 post1 (linC + 4) 2 0 cu mu' eu
+  obtain ⟨c2, m2, e2, h2⟩ := PRuns.stage pre2 post2 (linC + 4) 2 0 cu mu' eu
+  obtain ⟨c3, m3, e3, h3⟩ := PRuns.stage pre3 postKeep (linC + 4) 2 0 cp mp ep
+  obtain ⟨c4, m4, e4, h4⟩ := PRuns.stage preMu postBud (linC + 4) 2 0 cu mu' eu
+  exact ⟨_, _, _, fun {W X} lam mu sigma n hX hQ hl hs hn => by
     have el := esize_nat_le_four lam
     have em := esize_nat_le_four mu
     have es := esize_nat_le_four sigma
     have en := esize_nat_le_four n
-    have hb := lam_mul_add_one_le_arQ lam mu n hmu
+    have hb := lam_mul_add_one_le lam n W hl hn
     let X0 : Data := .cons (encode (lam, mu, sigma)) (encode n)
     have hX0 : X0.size = esize lam + esize mu + esize sigma + esize n + 3 := size_X0 _ _ _ _
     let lam' : ℕ := if n = 0 then 0 else lam
@@ -80,7 +90,7 @@ theorem budCore_time : ∃ c m e, ∀ {W X : ℕ} (lam mu sigma n : ℕ), 1 ≤ 
             intro h
             exact hn (encode_injective (h.trans rfl : (encode n : Data) = encode (0 : ℕ)))
           simp [pre1, hD, X0, lam', hn, encode_prod, treeEq_apply, this])
-      (pdLin hX (by omega)) (hu (W := W) (K := mu) lam' hX (pdLin hX (by omega)))
+      (pdQ hX (by omega)) (hu (W := W) (K := mu) lam' hX (pdQ hX (by omega)))
     let X1 : Data := .cons (encode (unary lam')) X0
     have hX1 : X1.size = 2 * lam' + 1 + X0.size + 1 := by
       simp only [X1, Data.size_cons]; rw [show (encode (unary lam') : Data).size =
@@ -90,8 +100,8 @@ theorem budCore_time : ∃ c m e, ∀ {W X : ℕ} (lam mu sigma n : ℕ), 1 ≤ 
     rw [hp1] at S1
     -- stage 2: `n` in unary
     have S2 := h2 (W := W) (K := mu) toUnaryProg_closed X1 (encode n) X1 _ hX rfl
-      (pdLin hX (by omega))
-      (hu (W := W) (K := mu) n hX (pdLin hX (by omega)))
+      (pdQ hX (by omega))
+      (hu (W := W) (K := mu) n hX (pdQ hX (by omega)))
     have hpost2 : post2 (X1, encode (unary n)) =
         .cons (encode (unary (lam * n + 1), mu)) X0 := by
       simp only [post2, ap₂_apply, treePair_apply, comp_apply, fst_apply, snd_apply,
@@ -108,9 +118,10 @@ theorem budCore_time : ∃ c m e, ∀ {W X : ℕ} (lam mu sigma n : ℕ), 1 ≤ 
       rfl
     have S3 := h3 (W := W) (K := mu) powProg_closed X2 (encode (unary (lam * n + 1), mu)) X0 _
       hX rfl
-      (pdLin hX (by omega))
-      (hp (W := W) (K := mu) (unary (lam * n + 1)) mu hX (by simp) (pdLin hX (by simp; omega))
-        (pdLin hX (by omega)) (pdLin hX (by simp only [length_unary]; change arQ lam mu n ≤ _; omega)))
+      (pdQ hX (by omega))
+      (hp (W := W) (K := mu) (unary (lam * n + 1)) mu hX (by simp) (pdQ hX (by simp; omega))
+        (pdQ hX (by omega))
+        (pdQ hX (by simp only [length_unary]; change arQ lam mu n ≤ _; omega)))
     simp only [postKeep, ap₂_apply, treePair_apply, fst_apply, snd_apply, length_unary] at S3
     -- stage 4: `μ` in unary, then `(Q, T)`
     let X3 : Data := .cons (encode (unary (arQ lam mu n))) X0
@@ -119,8 +130,8 @@ theorem budCore_time : ∃ c m e, ∀ {W X : ℕ} (lam mu sigma n : ℕ), 1 ≤ 
       rw [show (encode (unary (arQ lam mu n)) : Data).size = esize (unary (arQ lam mu n)) from rfl,
         esize_unary]
     have S4 := h4 (W := W) (K := mu) toUnaryProg_closed X3 (encode mu) X3 _ hX
-      (by simp [preMu, X3, X0, encode_prod]) (pdLin hX (by omega))
-      (hu (W := W) (K := mu) mu hX (pdLin hX (by omega)))
+      (by simp [preMu, X3, X0, encode_prod]) (pdQ hX (by omega))
+      (hu (W := W) (K := mu) mu hX (pdQ hX (by omega)))
     have hpost4 : postBud (X3, encode (unary mu)) = encode (arQ lam mu n, tPcp lam mu n) := by
       simp only [postBud, comp_apply, pair_apply, fst_apply, snd_apply, treeHead_cons,
         readUnary_encode, map_apply, ap₂_apply, append_apply, const_apply, addUnary_apply,
@@ -189,7 +200,7 @@ theorem ctxQT_pdom : ∃ c m e, ∀ {W X : ℕ} (lam mu sigma n : ℕ), 1 ≤ X 
 open ParRoutine in
 /-- **The running time of the routine's core**, on `((λ, μ, σ), n)`. -/
 theorem parCore_time (PD : PcpDecider) (R : Polynomial ℕ) : ∃ c m e, ∀ {W X : ℕ},
-    ParamsBound PD R → ∀ (lam mu sigma n : ℕ), 1 ≤ X → 1 ≤ mu →
+    ParamsBound PD R → ∀ (lam mu sigma n : ℕ), 1 ≤ X →
     arQ lam mu n ≤ W → lam ≤ W → sigma ≤ W → n ≤ W →
     PRuns W X mu c m e (core PD) (.cons (encode (lam, mu, sigma)) (encode n))
       ((family PD lam mu sigma).pd n) := by
@@ -203,7 +214,7 @@ theorem parCore_time (PD : PcpDecider) (R : Polynomial ℕ) : ∃ c m e, ∀ {W 
   obtain ⟨c4, m4, e4, h4⟩ := PRuns.stage pre4 postKeep cq mq eq cu mu' eu
   obtain ⟨c5, m5, e5, h5⟩ := PRuns.stage pre5 postKeep cq mq eq cu mu' eu
   obtain ⟨c6, m6, e6, h6⟩ := PRuns.stage pre6 post6 cq mq eq cu mu' eu
-  exact ⟨_, _, _, fun {W X} hR lam mu sigma n hX hmu hQ hl hs hn => by
+  exact ⟨_, _, _, fun {W X} hR lam mu sigma n hX hQ hl hs hn => by
     set P := arPar PD lam mu sigma n with hPdef
     have hq' := hq (W := W) hR lam mu sigma n hX hQ hs hn
     rw [← hPdef] at hq'
@@ -214,7 +225,7 @@ theorem parCore_time (PD : PcpDecider) (R : Polynomial ℕ) : ∃ c m e, ∀ {W 
     let X0 : Data := .cons (encode (lam, mu, sigma)) (encode n)
     have hX0 : X0.size = esize lam + esize mu + esize sigma + esize n + 3 := size_X0 _ _ _ _
     have SA := hA (W := W) (K := mu) budCore_closed X0 X0 X0 _ hX (by simp)
-      (pdLin hX (by omega)) (hb (W := W) lam mu sigma n hX hmu hQ hl hs hn)
+      (pdLin hX (by omega)) (hb (W := W) lam mu sigma n hX hQ hl hs hn)
     simp only [postKeep, ap₂_apply, treePair_apply, fst_apply, snd_apply] at SA
     let X1 : Data := .cons (encode (arQ lam mu n, tPcp lam mu n)) X0
     have SP := hP (W := W) (K := mu) X1 hX (hx lam mu sigma n hX hQ hl hs hn)
@@ -259,17 +270,17 @@ theorem parCore_time (PD : PcpDecider) (R : Polynomial ℕ) : ∃ c m e, ∀ {W 
 
 /-- **The running time of the parameter routine** `parProg`, on the index `n`. -/
 theorem parProg_time (PD : PcpDecider) (R : Polynomial ℕ) : ∃ c m e, ∀ {W X : ℕ},
-    ParamsBound PD R → ∀ (lam mu sigma n : ℕ), 1 ≤ X → 1 ≤ mu →
+    ParamsBound PD R → ∀ (lam mu sigma n : ℕ), 1 ≤ X →
     arQ lam mu n ≤ W → lam ≤ W → sigma ≤ W → n ≤ W →
     PRuns W X mu c m e (parProg PD lam mu sigma) (encode n) ((family PD lam mu sigma).pd n) := by
   obtain ⟨c, m, e, h⟩ := parCore_time PD R
-  exact ⟨_, _, _, fun {W X} hR lam mu sigma n hX hmu hQ hl hs hn => by
+  exact ⟨_, _, _, fun {W X} hR lam mu sigma n hX hQ hl hs hn => by
     have el := esize_nat_le_four lam
     have em := esize_nat_le_four mu
     have es := esize_nat_le_four sigma
     have en := esize_nat_le_four n
     exact PRuns.hardcode hX (ParRoutine.core_closed PD)
-      (h (W := W) hR lam mu sigma n hX hmu hQ hl hs hn)
+      (h (W := W) hR lam mu sigma n hX hQ hl hs hn)
       (pdLin hX (by
         simp only [encode_prod, Data.size_cons]
         change esize lam + (esize mu + esize sigma + 1) + 1 ≤ _
