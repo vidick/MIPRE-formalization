@@ -186,6 +186,77 @@ theorem sum_ite_bornProb_one_le' {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ �
         Finset.sum_le_sum fun b _ => by linarith [hA b]
     _ = _ := by rw [Finset.sum_add_distrib, hoffsum]
 
+/-- **From evaluations to outcomes**: when distinct outcomes are separated by an evaluation map at
+a point drawn from `ν`, colliding with probability at most `ε`, the disagreement of the outcomes is
+at most the average disagreement of the evaluations, plus `ε`. Neither measurement need be
+projective. -/
+theorem dis_le_sum_dis_map_add {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) [DecidableEq Λ]
+    (M : POVM Λ dA) (N : POVM Λ dB) {Y R : Type*} [Fintype Y] [Fintype R] [DecidableEq R]
+    {ν : Y → ℝ} (hν0 : ∀ y, 0 ≤ ν y) (hν1 : ∑ y, ν y = 1) (ev : Y → Λ → R) {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hsep : ∀ g g', g ≠ g' → ∑ y, ν y * (if ev y g = ev y g' then 1 else 0) ≤ ε) :
+    dis ψ M N ≤ ∑ y, ν y * dis ψ (M.map (ev y)) (N.map (ev y)) + ε := by
+  classical
+  set β : Λ → Λ → ℝ := fun a b => bornProb ψ ((M.mats a).val) ((N.mats b).val) with hβ
+  have hβ0 : ∀ a b, 0 ≤ β a b := fun a b => bornProb_nonneg ψ (M.posSemidef a) (N.posSemidef b)
+  have hβ1 : ∑ a, ∑ b, β a b = 1 := sum_bornProb hψ M N
+  -- the evaluated disagreement at one point
+  have hy : ∀ y, dis ψ (M.map (ev y)) (N.map (ev y))
+      = ∑ a, ∑ b, (if ev y a = ev y b then 0 else 1) * β a b := by
+    intro y
+    unfold dis
+    have h := sum_bornProb_map (ψ := ψ) (MA := fun _ : Unit => M) (MB := fun _ : Unit => N)
+      (x := ()) (y := ()) (ev y) (ev y)
+    rw [h]
+    have hsplit : ∀ a b, (if ev y a = ev y b then (0 : ℝ) else 1) * β a b
+        = β a b - (if ev y a = ev y b then 1 else 0) * β a b := fun a b => by
+      split_ifs <;> ring
+    simp only [hsplit, Finset.sum_sub_distrib, hβ1]
+    rfl
+  -- the disagreement of the outcomes
+  have hd : dis ψ M N = ∑ a, ∑ b, (if a = b then 0 else 1) * β a b := by
+    rw [dis_eq_sum_ne hψ]
+    refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
+    split_ifs <;> simp [hβ]
+  -- averaging over the point
+  have havg : ∑ y, ν y * dis ψ (M.map (ev y)) (N.map (ev y))
+      = ∑ a, ∑ b, (∑ y, ν y * (if ev y a = ev y b then 0 else 1)) * β a b := by
+    simp only [hy, Finset.mul_sum]
+    rw [Finset.sum_comm]
+    refine Finset.sum_congr rfl fun a _ => ?_
+    rw [Finset.sum_comm]
+    refine Finset.sum_congr rfl fun b _ => ?_
+    rw [Finset.sum_mul]
+    exact Finset.sum_congr rfl fun y _ => by ring
+  have hcoef : ∀ a b, (if a = b then (0 : ℝ) else 1) * (1 - ε)
+      ≤ ∑ y, ν y * (if ev y a = ev y b then 0 else 1) := by
+    intro a b
+    by_cases h : a = b
+    · rw [if_pos h, zero_mul]
+      exact Finset.sum_nonneg fun y _ => mul_nonneg (hν0 y) (by split_ifs <;> norm_num)
+    · rw [if_neg h, one_mul]
+      have hs := hsep a b h
+      have hc : ∑ y, ν y * (if ev y a = ev y b then (0 : ℝ) else 1)
+          = ∑ y, ν y - ∑ y, ν y * (if ev y a = ev y b then 1 else 0) := by
+        rw [← Finset.sum_sub_distrib]
+        exact Finset.sum_congr rfl fun y _ => by split_ifs <;> ring
+      rw [hν1] at hc
+      linarith
+  have hlow : (1 - ε) * dis ψ M N ≤ ∑ y, ν y * dis ψ (M.map (ev y)) (N.map (ev y)) := by
+    rw [havg, hd, Finset.mul_sum]
+    refine Finset.sum_le_sum fun a _ => ?_
+    rw [Finset.mul_sum]
+    refine Finset.sum_le_sum fun b _ => ?_
+    have := mul_le_mul_of_nonneg_right (hcoef a b) (hβ0 a b)
+    linarith
+  have hd1 : dis ψ M N ≤ 1 := by
+    have := sum_bornProb_diag_le hψ M N
+    have h0 : 0 ≤ ∑ a, bornProb ψ ((M.mats a).val) ((N.mats a).val) :=
+      Finset.sum_nonneg fun a _ => hβ0 a a
+    unfold dis
+    linarith
+  nlinarith [dis_nonneg hψ M N]
+
 /-! ## Families on a uniform index -/
 
 section Uniform
@@ -303,6 +374,89 @@ theorem sum_ite_bornProb_le_condFail' (hψ : star ψ ⬝ᵥ ψ = 1) {x : X} {y :
       rw [this, zero_mul, zero_add]
       split_ifs <;> simp [h0 a b]
   linarith
+
+/-- The disagreement of two readings is the weight of the outcome pairs they read differently. -/
+theorem dis_map_eq_sum {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) (M : POVM A dA) (N : POVM B dB)
+    (f : A → C) (g : B → C) :
+    dis ψ (M.map f) (N.map g) = ∑ a, ∑ b, (if f a = g b then 0 else 1)
+      * bornProb ψ ((M.mats a).val) ((N.mats b).val) := by
+  unfold dis
+  have h := sum_bornProb_map (ψ := ψ) (MA := fun _ : Unit => M) (MB := fun _ : Unit => N)
+    (x := ()) (y := ()) f g
+  rw [h]
+  have h1 := sum_bornProb hψ M N
+  have hsplit : ∀ a b, (if f a = g b then (0 : ℝ) else 1)
+      * bornProb ψ ((M.mats a).val) ((N.mats b).val)
+      = bornProb ψ ((M.mats a).val) ((N.mats b).val)
+        - (if f a = g b then 1 else 0) * bornProb ψ ((M.mats a).val) ((N.mats b).val) :=
+    fun a b => by split_ifs <;> ring
+  simp only [hsplit, Finset.sum_sub_distrib, h1]
+
+/-- **A subtest accepting when two events are avoided and two readings agree** fails at most the
+events' probabilities plus the readings' disagreement. -/
+theorem condFail_le_of (hψ : star ψ ⬝ᵥ ψ = 1) {x : X} {y : Y} (EA : A → Prop) (EB : B → Prop)
+    [DecidablePred EA] [DecidablePred EB] (f : A → C) (g : B → C)
+    (hD : ∀ a b, ¬ EA a → ¬ EB b → f a = g b → G.D x y a b = true) :
+    condFail G ψ MA MB x y
+      ≤ ∑ a, (if EA a then bornProb ψ (((MA x).mats a).val) (1 : Matrix dB dB ℂ) else 0)
+        + ∑ b, (if EB b then bornProb ψ (1 : Matrix dA dA ℂ) (((MB y).mats b).val) else 0)
+        + dis ψ ((MA x).map f) ((MB y).map g) := by
+  have hβ0 : ∀ a b, 0 ≤ bornProb ψ (((MA x).mats a).val) (((MB y).mats b).val) := fun a b =>
+    bornProb_nonneg ψ ((MA x).posSemidef a) ((MB y).posSemidef b)
+  have htot := sum_bornProb hψ (MA x) (MB y)
+  have hfail : condFail G ψ MA MB x y
+      = ∑ a, ∑ b, (if G.D x y a b then 0 else 1)
+        * bornProb ψ (((MA x).mats a).val) (((MB y).mats b).val) := by
+    have hsum : ∑ a, ∑ b, (if G.D x y a b then (0 : ℝ) else 1)
+          * bornProb ψ (((MA x).mats a).val) (((MB y).mats b).val)
+        + condWin G ψ MA MB x y
+        = ∑ a, ∑ b, bornProb ψ (((MA x).mats a).val) (((MB y).mats b).val) := by
+      unfold condWin
+      rw [← Finset.sum_add_distrib]
+      refine Finset.sum_congr rfl fun a _ => ?_
+      rw [← Finset.sum_add_distrib]
+      exact Finset.sum_congr rfl fun b _ => by split_ifs <;> ring
+    unfold condFail
+    linarith
+  have hA : ∑ a, (if EA a then bornProb ψ (((MA x).mats a).val) (1 : Matrix dB dB ℂ) else 0)
+      = ∑ a, ∑ b, (if EA a then 1 else 0)
+        * bornProb ψ (((MA x).mats a).val) (((MB y).mats b).val) := by
+    refine Finset.sum_congr rfl fun a _ => ?_
+    split_ifs
+    · simp only [one_mul]; exact bornProb_one_right ψ _ (MB y)
+    · simp
+  have hB : ∑ b, (if EB b then bornProb ψ (1 : Matrix dA dA ℂ) (((MB y).mats b).val) else 0)
+      = ∑ a, ∑ b, (if EB b then 1 else 0)
+        * bornProb ψ (((MA x).mats a).val) (((MB y).mats b).val) := by
+    rw [Finset.sum_comm]
+    refine Finset.sum_congr rfl fun b _ => ?_
+    split_ifs
+    · simp only [one_mul]; exact bornProb_one_left ψ (MA x) _
+    · simp
+  rw [hfail, hA, hB, dis_map_eq_sum hψ, ← Finset.sum_add_distrib, ← Finset.sum_add_distrib]
+  refine Finset.sum_le_sum fun a _ => ?_
+  rw [← Finset.sum_add_distrib, ← Finset.sum_add_distrib]
+  refine Finset.sum_le_sum fun b _ => ?_
+  have h0 := hβ0 a b
+  by_cases hd : G.D x y a b = true
+  · have e1 : 0 ≤ (if EA a then (1 : ℝ) else 0) := by split_ifs <;> norm_num
+    have e2 : 0 ≤ (if EB b then (1 : ℝ) else 0) := by split_ifs <;> norm_num
+    have e3 : 0 ≤ (if f a = g b then (0 : ℝ) else 1) := by split_ifs <;> norm_num
+    rw [if_pos hd, zero_mul]
+    positivity
+  · rw [if_neg hd, one_mul]
+    by_cases ha : EA a
+    · have e2 : 0 ≤ (if EB b then (1 : ℝ) else 0) := by split_ifs <;> norm_num
+      have e3 : 0 ≤ (if f a = g b then (0 : ℝ) else 1) := by split_ifs <;> norm_num
+      rw [if_pos ha, one_mul]
+      nlinarith
+    · by_cases hb : EB b
+      · have e3 : 0 ≤ (if f a = g b then (0 : ℝ) else 1) := by split_ifs <;> norm_num
+        rw [if_neg ha, if_pos hb, zero_mul, one_mul, zero_add]
+        nlinarith
+      · have hfg : f a ≠ g b := fun h => hd (hD a b ha hb h)
+        rw [if_neg ha, if_neg hb, if_neg hfg]
+        simp
 
 end Subtests
 

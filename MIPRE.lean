@@ -19,6 +19,7 @@ import MIPRE.Background.AnswerReduction.SamplerCost
 import MIPRE.Background.AnswerReduction.SoundCopy
 import MIPRE.Background.AnswerReduction.SoundExtract
 import MIPRE.Background.AnswerReduction.SoundIsolate
+import MIPRE.Background.AnswerReduction.SoundPoly
 import MIPRE.Background.AnswerReduction.SoundRelations
 import MIPRE.Background.AnswerReduction.SoundSetup
 import MIPRE.Background.AnswerReduction.StageCorrect
@@ -94,6 +95,7 @@ import MIPRE.Background.LIDT.Adapter.Strategy
 import MIPRE.Background.LIDT.Adapter.Value
 import MIPRE.Background.LIDT.Adapter.Weights
 import MIPRE.Background.LIDT.Axioms
+import MIPRE.Background.LIDT.BlockPoly
 import MIPRE.Background.LIDT.Bridge.Consistency
 import MIPRE.Background.LIDT.Bridge.Defect
 import MIPRE.Background.LIDT.Bridge.Field
@@ -1204,6 +1206,7 @@ import MIPRE.Foundations.Repeat.RepSampler
 import MIPRE.Foundations.Repeat.Sampler
 import MIPRE.Foundations.Repeat.SamplerCost
 import MIPRE.Foundations.SAT.AdmissibleField
+import MIPRE.Foundations.SAT.AnswerVec
 import MIPRE.Foundations.SAT.Arithmetization
 import MIPRE.Foundations.SAT.ArrayProg
 import MIPRE.Foundations.SAT.BasisTransport
