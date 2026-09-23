@@ -376,6 +376,42 @@ theorem exists_one_sub_value_adapt_le {Seed : Type*} [Fintype Seed] [Nonempty Se
   obtain ⟨σ, _, hσ⟩ := Finset.exists_le_of_sum_le (Finset.univ_nonempty (α := Seed)) hsum
   exact ⟨σ, hσ⟩
 
+/-- **The summed form of `one_sub_value_adapt_le`**: over a finite family of question maps, the
+adapted strategies' failures add up to at most `|Seed| · C` times `S`'s, when the push-forward
+bound holds on average. Each member is a genuine strategy for `G'`, so this is the form a
+per-seed argument uses: it keeps every member, not only the best one. -/
+theorem sum_one_sub_value_adapt_le {Seed : Type*} [Fintype Seed]
+    (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
+    (qA : Seed → X' → X) (qB : Seed → Y' → Y) (rA : Seed → X' → A → A')
+    (rB : Seed → Y' → B → B') (C : ℝ)
+    (hD : ∀ σ x' y' a b, G'.μ x' y' ≠ 0 →
+      G.D (qA σ x') (qB σ y') a b = true → G'.D x' y' (rA σ x' a) (rB σ y' b) = true)
+    (hμ : ∀ x y, (∑ σ, ∑ x' ∈ Finset.univ.filter (fun x' => qA σ x' = x),
+        ∑ y' ∈ Finset.univ.filter (fun y' => qB σ y' = y), G'.μ x' y')
+      ≤ (Fintype.card Seed : ℝ) * (C * G.μ x y)) :
+    ∑ σ : Seed, (1 - (S.adapt G' (qA σ) (qB σ) (rA σ) (rB σ)).value)
+      ≤ (Fintype.card Seed : ℝ) * (C * (1 - S.value)) := by
+  calc ∑ σ : Seed, (1 - (S.adapt G' (qA σ) (qB σ) (rA σ) (rB σ)).value)
+      ≤ ∑ σ : Seed, ∑ x, ∑ y, (∑ x' ∈ Finset.univ.filter (fun x' => qA σ x' = x),
+          ∑ y' ∈ Finset.univ.filter (fun y' => qB σ y' = y), G'.μ x' y') * S.failAt x y :=
+        Finset.sum_le_sum fun σ _ =>
+          one_sub_value_adapt_le_sum S G' (qA σ) (qB σ) (rA σ) (rB σ) (hD σ)
+    _ = ∑ x, ∑ y, (∑ σ : Seed, ∑ x' ∈ Finset.univ.filter (fun x' => qA σ x' = x),
+          ∑ y' ∈ Finset.univ.filter (fun y' => qB σ y' = y), G'.μ x' y') * S.failAt x y := by
+        rw [Finset.sum_comm]
+        refine Finset.sum_congr rfl fun x _ => ?_
+        rw [Finset.sum_comm]
+        refine Finset.sum_congr rfl fun y _ => ?_
+        rw [Finset.sum_mul]
+    _ ≤ ∑ x, ∑ y, ((Fintype.card Seed : ℝ) * (C * G.μ x y)) * S.failAt x y := by
+        refine Finset.sum_le_sum fun x _ => Finset.sum_le_sum fun y _ => ?_
+        exact mul_le_mul_of_nonneg_right (hμ x y) (S.failAt_nonneg x y)
+    _ = (Fintype.card Seed : ℝ) * (C * (1 - S.value)) := by
+        rw [one_sub_value_eq_sum_failAt, Finset.mul_sum, Finset.mul_sum]
+        refine Finset.sum_congr rfl fun x _ => ?_
+        rw [Finset.mul_sum, Finset.mul_sum]
+        exact Finset.sum_congr rfl fun y _ => by ring
+
 end Adapt
 
 end TensorProductStrategy

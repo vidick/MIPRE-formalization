@@ -16,6 +16,7 @@ import MIPRE.Background.AnswerReduction.PcpPresentation
 import MIPRE.Background.AnswerReduction.PcpSampler
 import MIPRE.Background.AnswerReduction.Predicate
 import MIPRE.Background.AnswerReduction.SamplerCost
+import MIPRE.Background.AnswerReduction.SoundSetup
 import MIPRE.Background.AnswerReduction.StageCorrect
 import MIPRE.Background.AnswerReduction.StageLists
 import MIPRE.Background.AnswerReduction.StageProg
