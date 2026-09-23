@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 import MIPRE.Background.LIDT.Presentation
+import MIPRE.Background.LIDT.CLHonest
 
 /-!
 # The presentation's output is a function of its question
@@ -17,7 +18,20 @@ seeded low-degree test's question, and the two games' questions correspond one t
 
 noncomputable section
 
-namespace MIPRE.LIDT.CL.Regs
+namespace MIPRE.LIDT.CL
+
+/-- The type of a question. -/
+def Question.ty {F : Type*} {n : ℕ} : Question F n → Ty
+  | .point _ => .point
+  | .aline _ _ => .aline
+  | .dline _ _ _ => .dline
+
+@[simp] theorem Sample.question_ty {F : Type*} [Field F] [Fintype F] [DecidableEq F] {n : ℕ}
+    [NeZero n] (hn : n ∣ Fintype.card F) (sm : Sample F n) (t : Ty) :
+    (sm.question hn t).ty = t := by
+  cases t <;> rfl
+
+namespace Regs
 
 open Finset MIPRE.CL
 
@@ -68,6 +82,41 @@ theorem pres_eval (t : Ty) (x : ι → F) :
     simp only [dirOf_putDir, sampleOf, Sample.question, embedQ, rep, S.chi_π,
       Equiv.symm_apply_apply, proj_coordSet]
     abel
+
+omit [DecidableEq ι] [Fintype ι] [Fintype F] [DecidableEq F] [NeZero n] in
+theorem ptOf_add (x y : ι → F) : R.ptOf (x + y) = R.ptOf x + R.ptOf y := rfl
+
+omit [DecidableEq ι] [Fintype ι] [Fintype F] [DecidableEq F] [NeZero n] in
+theorem dirOf_add (x y : ι → F) : R.dirOf (x + y) = R.dirOf x + R.dirOf y := rfl
+
+omit [Fintype ι] [Fintype F] [DecidableEq F] [NeZero n] in
+theorem ptOf_single_coord (c : F) : R.ptOf (Pi.single R.coord c) = 0 := by
+  funext i
+  simp [ptOf, R.pt_ne_coord i]
+
+omit [Fintype ι] [Fintype F] [DecidableEq F] [NeZero n] in
+theorem dirOf_single_coord (c : F) : R.dirOf (Pi.single R.coord c) = 0 := by
+  funext j
+  simp [dirOf, R.dir_ne_coord j]
+
+omit [Fintype ι] in
+/-- **Reading a presented question back** gives the question. -/
+theorem questionOf_embedQ (q : Question F n) : R.questionOf S q.ty (R.embedQ S q) = q := by
+  cases q with
+  | point u => simp [Question.ty, questionOf, embedQ]
+  | aline u₀ s =>
+    simp [Question.ty, questionOf, embedQ, ptOf_single_coord, ptOf_add, R.putPt_coord]
+  | dline u₀ s v =>
+    simp [Question.ty, questionOf, embedQ, ptOf_single_coord, dirOf_single_coord, ptOf_add,
+      dirOf_add, R.putPt_coord, R.putDir_coord]
+
+omit [Fintype ι] in
+/-- The sample read off a presented sample question gives the question back. -/
+theorem sampleOf_embedQ (sm : Sample F n) (t : Ty) :
+    (R.sampleOf S t (R.embedQ S (sm.question hn t))).question hn t = sm.question hn t := by
+  have h := R.questionOf_embedQ S (sm.question hn t)
+  rw [Sample.question_ty] at h
+  rw [sampleOf_question, h, recanon_question]
 
 end MIPRE.LIDT.CL.Regs
 
