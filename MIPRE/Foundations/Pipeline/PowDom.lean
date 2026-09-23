@@ -176,6 +176,23 @@ theorem ofCallPow {B q t c₀ m₀ c₁ m₁ e₁ e' : ℕ} (hB : B ≤ c₀ * (
         rw [mul_pow, mul_pow, ← pow_mul, ← pow_mul, pow_add]
         ring
 
+/-- **A run of a program whose coefficient is already powered**, `B ≤ (c₀ (W + 1)^{m₀})^{K + 1}`,
+at degree `e' (K + 1)`, on an input of size below the unpowered monomial `c₁ (W + 1)^{m₁} X^{e₁}`. -/
+theorem ofPoweredCall {B q t c₀ m₀ c₁ m₁ e₁ e' : ℕ} (hB : B ≤ (c₀ * (W + 1) ^ m₀) ^ (K + 1))
+    (hq : q ≤ c₁ * (W + 1) ^ m₁ * X ^ e₁) (ht : t ≤ B * q ^ (e' * (K + 1))) :
+    PDom W X K (c₀ * c₁ ^ e') (m₀ + m₁ * e') (e₁ * e') t := by
+  unfold PDom
+  refine ht.trans ?_
+  calc B * q ^ (e' * (K + 1))
+      ≤ (c₀ * (W + 1) ^ m₀) ^ (K + 1) * ((c₁ * (W + 1) ^ m₁ * X ^ e₁) ^ e') ^ (K + 1) := by
+        rw [← pow_mul]
+        exact Nat.mul_le_mul hB (Nat.pow_le_pow_left hq _)
+    _ = (c₀ * c₁ ^ e' * (W + 1) ^ (m₀ + m₁ * e') * X ^ (e₁ * e')) ^ (K + 1) := by
+        rw [← mul_pow]
+        congr 1
+        rw [mul_pow, mul_pow, ← pow_mul, ← pow_mul, pow_add]
+        ring
+
 /-- Below the unpowered monomial. -/
 theorem ofMono {c m e v : ℕ} (h : v ≤ c * (W + 1) ^ m * X ^ e) : PDom W X K c m e v :=
   h.trans le_pow_succ

@@ -129,3 +129,71 @@ theorem prog_time (cS mS eS cC mC eC cD mD eD : ℕ) : ∃ c m e, ∀ {W K : ℕ
     exact ⟨r, t, ht.le_final, hr⟩⟩
 
 end MIPRE.CL.Detyping.DeciderProgram
+
+namespace MIPRE.CL.Detyping
+
+open Cost Pipeline Polynomial
+
+variable {T : Type*} [Fintype T] [DecidableEq T] [SizedEncoding T] {ℓ : ℕ}
+variable (E : T → T → Prop) [DecidableRel E] (S : TypedSampler ℓ T)
+
+/-- The detyped sampler's coefficient is its runtime polynomial's value at `1`: the router's cost
+at the size of the index. -/
+theorem samplerCoefficient_eq (n B k : ℕ) : samplerCoefficient E n B k =
+    (Prog.routeCost (Program.route E) (Program.post (graphDim T)) B k).eval (esize n + 2) := by
+  have h := Polynomial.eval_eq_sum_range (p := samplerCost E n B k) 1
+  simp only [one_pow, Nat.mul_one] at h
+  rw [samplerCoefficient, ← h, samplerCost, eval_comp]
+  simp only [eval_add, eval_X, eval_C]
+  congr 1
+  omega
+
+/-- **The running time of the detyped sampler**: dominated as soon as the typed sampler's is. -/
+theorem sampler_time (hℓ : 0 < ℓ) (cS mS eS : ℕ) : ∃ c m d, ∀ {W K : ℕ} (n : ℕ), n ≤ W →
+    S.TimeBoundAt n ((cS * (W + 1) ^ mS) ^ (K + 1)) (eS * (K + 1)) →
+    (sampler E S hℓ).TimeBoundAt n ((c * (W + 1) ^ m) ^ (K + 1)) (d * (K + 1)) := by
+  set R := (Program.route E).timeBound
+  set P := (Program.post (graphDim T)).timeBound
+  set cR := (∑ i ∈ Finset.range (R.natDegree + 1), R.coeff i + 1) * 4 ^ R.natDegree + 1
+  exact ⟨_, _, R.natDegree * (eS + 1) * (P.natDegree + 1), fun {W K} n hn hS => by
+    have h := sampler_timeBoundAt_uniform_degree E S hℓ n _ _ hS
+    have h1 : (1 : ℕ) ≤ 1 := le_rfl
+    have hy : esize n + 2 + 1 ≤ 4 * (W + 1) := by have := esize_nat_le_four n; omega
+    have hRy : R.eval (esize n + 2) + 1 ≤ cR * (W + 1) ^ R.natDegree * 1 ^ 0 := by
+      have e1 := (polynomial_eval_mono R (Nat.le_succ (esize n + 2))).trans
+        (polynomial_eval_le_sum_coeff_mul_pow R (by omega : 1 ≤ esize n + 2 + 1))
+      have e2 : (esize n + 2 + 1) ^ R.natDegree ≤ 4 ^ R.natDegree * (W + 1) ^ R.natDegree := by
+        rw [← mul_pow]; exact Nat.pow_le_pow_left hy _
+      have e3 : 1 ≤ (W + 1) ^ R.natDegree := Nat.one_le_pow _ _ (by omega)
+      set sR := ∑ i ∈ Finset.range (R.natDegree + 1), R.coeff i
+      have e4 : sR * (esize n + 2 + 1) ^ R.natDegree ≤
+          sR * (4 ^ R.natDegree * (W + 1) ^ R.natDegree) := Nat.mul_le_mul_left _ e2
+      have e1' : R.eval (esize n + 2) ≤ sR * (esize n + 2 + 1) ^ R.natDegree := e1
+      have e5 : ((sR + 1) * 4 ^ R.natDegree + 1) * (W + 1) ^ R.natDegree =
+          sR * (4 ^ R.natDegree * (W + 1) ^ R.natDegree) + 4 ^ R.natDegree * (W + 1) ^ R.natDegree +
+            (W + 1) ^ R.natDegree := by ring
+      show R.eval _ + 1 ≤ ((sR + 1) * 4 ^ R.natDegree + 1) * (W + 1) ^ R.natDegree * 1 ^ 0
+      rw [pow_zero, Nat.mul_one, e5]
+      omega
+    have hRy' : PDom W 1 K cR R.natDegree 0 (R.eval (esize n + 2)) :=
+      PDom.ofMono (by omega)
+    have hF : PDom W 1 K _ _ _ ((cS * (W + 1) ^ mS) ^ (K + 1) *
+        (R.eval (esize n + 2) + 1) ^ (eS * (K + 1))) :=
+      PDom.ofPoweredCall (X := 1) le_rfl hRy le_rfl
+    have hsum := (hRy'.add h1 hF)
+    have htot := (PDom.const 10).mul (((hsum.add h1 ((hsum.add h1 (PDom.const 1)).poly h1 P)).add h1
+      (PDom.const 10)))
+    refine h.mono ?_ ?_
+    · rw [samplerCoefficient_eq]
+      have := htot.le_final
+      simp only [one_pow, Nat.mul_one] at this
+      refine le_trans (le_of_eq ?_) this
+      simp only [Prog.routeCost, eval_mul, eval_add, eval_C, eval_pow, eval_one, eval_comp, R, P]
+    · simp only [samplerDegree, Prog.routeDegree]
+      have : eS * (K + 1) + 1 ≤ (eS + 1) * (K + 1) := by nlinarith
+      calc R.natDegree * (eS * (K + 1) + 1) * (P.natDegree + 1)
+          ≤ R.natDegree * ((eS + 1) * (K + 1)) * (P.natDegree + 1) :=
+            Nat.mul_le_mul_right _ (Nat.mul_le_mul_left _ this)
+        _ = R.natDegree * (eS + 1) * (P.natDegree + 1) * (K + 1) := by ring⟩
+
+end MIPRE.CL.Detyping
