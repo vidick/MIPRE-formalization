@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 import MIPRE.Background.QLD.Products
+import MIPRE.Background.LIDT.Coefficients
 
 /-!
 # Linearity in the two combining coefficients (`lem:qld-global-linear`)
@@ -19,6 +20,7 @@ coordinates. The good outcomes are those of the form `g = α g₁(x, z) + β g�
 
 `LowIndDegPoly.coef g T t` is the coefficient vector, in the variables outside `T`, of the
 monomial pattern `t` on the coordinates `T` (`eval_eq_sum_coef`): `g(u) = ∑_t u^t_T · coef(u)`.
+Those generic facts are in `MIPRE/Background/LIDT/Coefficients.lean`.
 With `T = {aIdx, bIdx}` the patterns are pairs `(i, j)`, and `pAB g u₀` is the bivariate
 polynomial `(α, β) ↦ g(setAB u₀ α β)` as a coefficient vector on `Fin 2` (`eval_pAB`). If `g` is
 not of the good form, some coefficient `G_{i₀ j₀}` with `(i₀, j₀) ∉ {(1, 0), (0, 1)}` is a nonzero
@@ -43,188 +45,6 @@ bound the paper's `cnote` at `eq:qld-g-prime-bound` describes, rather than the d
 -/
 
 noncomputable section
-
-/-! ## Coefficients of a monomial pattern -/
-
-namespace MIPRE.LIDT
-
-open Finset
-
-variable {F : Type*} [Field F] {n d : ℕ}
-
-/-- The exponent vector `e` with its coordinates in `T` replaced by those of the pattern `t`. -/
-def patch (T : Finset (Fin n)) (t e : Fin n → Fin (d + 1)) : Fin n → Fin (d + 1) :=
-  fun k => if k ∈ T then t k else e k
-
-/-- The part of an exponent vector on `T`. -/
-def maskOn (T : Finset (Fin n)) (e : Fin n → Fin (d + 1)) : Fin n → Fin (d + 1) :=
-  fun k => if k ∈ T then e k else 0
-
-/-- The part of an exponent vector off `T`. -/
-def maskOff (T : Finset (Fin n)) (e : Fin n → Fin (d + 1)) : Fin n → Fin (d + 1) :=
-  fun k => if k ∈ T then 0 else e k
-
-theorem patch_maskOn_maskOff (T : Finset (Fin n)) (e : Fin n → Fin (d + 1)) :
-    patch T (maskOn T e) (maskOff T e) = e := by
-  funext k
-  simp only [patch, maskOn, maskOff]
-  split_ifs <;> rfl
-
-theorem maskOn_patch (T : Finset (Fin n)) (t e : Fin n → Fin (d + 1)) :
-    maskOn T (patch T t e) = maskOn T t := by
-  funext k
-  simp only [maskOn, patch]
-  split_ifs <;> rfl
-
-theorem maskOff_patch (T : Finset (Fin n)) (t e : Fin n → Fin (d + 1)) :
-    maskOff T (patch T t e) = maskOff T e := by
-  funext k
-  simp only [maskOff, patch]
-  split_ifs <;> rfl
-
-theorem maskOn_eq_self {T : Finset (Fin n)} {t : Fin n → Fin (d + 1)} (h : ∀ k ∉ T, t k = 0) :
-    maskOn T t = t := by
-  funext k
-  simp only [maskOn]
-  split_ifs with hk
-  · rfl
-  · exact (h k hk).symm
-
-theorem maskOff_eq_self {T : Finset (Fin n)} {e : Fin n → Fin (d + 1)} (h : ∀ k ∈ T, e k = 0) :
-    maskOff T e = e := by
-  funext k
-  simp only [maskOff]
-  split_ifs with hk
-  · exact (h k hk).symm
-  · rfl
-
-theorem maskOn_apply_of_not {T : Finset (Fin n)} (e : Fin n → Fin (d + 1)) {k : Fin n}
-    (hk : k ∉ T) : maskOn T e k = 0 := if_neg hk
-
-theorem maskOff_apply_of {T : Finset (Fin n)} (e : Fin n → Fin (d + 1)) {k : Fin n}
-    (hk : k ∈ T) : maskOff T e k = 0 := if_pos hk
-
-/-- **The coefficient of a monomial pattern**: the coefficient vector, in the variables outside
-`T`, of the monomial `∏_{k ∈ T} u_k^{t k}` in `g`; zero unless the pattern is supported in `T`. -/
-def LowIndDegPoly.coef (g : LowIndDegPoly (F := F) (m := n) (d := d)) (T : Finset (Fin n))
-    (t : Fin n → Fin (d + 1)) : LowIndDegPoly (F := F) (m := n) (d := d) :=
-  fun e => if (∀ k ∈ T, e k = 0) ∧ (∀ k ∉ T, t k = 0) then g (patch T t e) else 0
-
-/-- The product of powers splits along `T`. -/
-theorem prod_pow_patch (T : Finset (Fin n)) (u : Point F n) {t e : Fin n → Fin (d + 1)}
-    (he : ∀ k ∈ T, e k = 0) :
-    (∏ k ∈ T, u k ^ (t k : ℕ)) * ∏ k, u k ^ (e k : ℕ)
-      = ∏ k, u k ^ ((patch T t e k : Fin (d + 1)) : ℕ) := by
-  classical
-  have h1 : ∏ k, u k ^ (e k : ℕ) = ∏ k ∈ univ.filter (fun k => k ∉ T), u k ^ (e k : ℕ) := by
-    rw [← Finset.prod_filter_mul_prod_filter_not univ (fun k => k ∈ T)]
-    rw [Finset.prod_eq_one fun k hk => by rw [he k (Finset.mem_filter.mp hk).2]; simp, one_mul]
-  have h2 : ∏ k, u k ^ ((patch T t e k : Fin (d + 1)) : ℕ)
-      = (∏ k ∈ univ.filter (fun k => k ∈ T), u k ^ (t k : ℕ))
-        * ∏ k ∈ univ.filter (fun k => k ∉ T), u k ^ (e k : ℕ) := by
-    rw [← Finset.prod_filter_mul_prod_filter_not univ (fun k => k ∈ T)]
-    congr 1
-    · exact Finset.prod_congr rfl fun k hk => by rw [patch, if_pos (Finset.mem_filter.mp hk).2]
-    · exact Finset.prod_congr rfl fun k hk => by rw [patch, if_neg (Finset.mem_filter.mp hk).2]
-  have hT : univ.filter (fun k : Fin n => k ∈ T) = T := by
-    ext k
-    simp
-  rw [h1, h2, hT]
-
-/-- **Decomposition along the patterns on `T`**: `g(u) = ∑_t u^t_T · (coef g T t)(u)`. -/
-theorem LowIndDegPoly.eval_eq_sum_coef (g : LowIndDegPoly (F := F) (m := n) (d := d))
-    (T : Finset (Fin n)) (u : Point F n) :
-    g.eval u = ∑ t : Fin n → Fin (d + 1), (∏ k ∈ T, u k ^ (t k : ℕ)) * (g.coef T t).eval u := by
-  classical
-  simp only [LowIndDegPoly.eval, LowIndDegPoly.coef, Finset.mul_sum]
-  -- both sides as sums over pairs `(t, e)`
-  have hterm : ∀ (t e : Fin n → Fin (d + 1)),
-      (∏ k ∈ T, u k ^ (t k : ℕ))
-          * ((if (∀ k ∈ T, e k = 0) ∧ (∀ k ∉ T, t k = 0) then g (patch T t e) else 0)
-            * ∏ k, u k ^ (e k : ℕ))
-        = if (∀ k ∈ T, e k = 0) ∧ (∀ k ∉ T, t k = 0) then
-            g (patch T t e) * ∏ k, u k ^ ((patch T t e k : Fin (d + 1)) : ℕ) else 0 := by
-    intro t e
-    split_ifs with h
-    · rw [← prod_pow_patch T u h.1]
-      ring
-    · simp
-  simp_rw [hterm]
-  rw [← Finset.sum_product']
-  symm
-  refine Finset.sum_bij_ne_zero (fun p _ _ => patch T p.1 p.2) (fun _ _ _ => Finset.mem_univ _)
-    ?_ ?_ ?_
-  · intro p₁ _ h₁ p₂ _ h₂ heq
-    have hC₁ : (∀ k ∈ T, p₁.2 k = 0) ∧ (∀ k ∉ T, p₁.1 k = 0) := by
-      by_contra hc
-      exact h₁ (if_neg hc)
-    have hC₂ : (∀ k ∈ T, p₂.2 k = 0) ∧ (∀ k ∉ T, p₂.1 k = 0) := by
-      by_contra hc
-      exact h₂ (if_neg hc)
-    have hon := congrArg (maskOn T) heq
-    have hoff := congrArg (maskOff T) heq
-    rw [maskOn_patch, maskOn_patch, maskOn_eq_self hC₁.2, maskOn_eq_self hC₂.2] at hon
-    rw [maskOff_patch, maskOff_patch, maskOff_eq_self hC₁.1, maskOff_eq_self hC₂.1] at hoff
-    exact Prod.ext hon hoff
-  · intro e _ he
-    have hC : (∀ k ∈ T, maskOff T e k = 0) ∧ (∀ k ∉ T, maskOn T e k = 0) :=
-      ⟨fun k hk => maskOff_apply_of e hk, fun k hk => maskOn_apply_of_not e hk⟩
-    refine ⟨(maskOn T e, maskOff T e), Finset.mem_univ _, ?_, patch_maskOn_maskOff T e⟩
-    rw [if_pos hC, patch_maskOn_maskOff]
-    exact he
-  · intro p _ hp
-    have hC : (∀ k ∈ T, p.2 k = 0) ∧ (∀ k ∉ T, p.1 k = 0) := by
-      by_contra hc
-      exact hp (if_neg hc)
-    rw [if_pos hC]
-
-/-- A coefficient vector on `T` reads no coordinate in `T`. -/
-theorem LowIndDegPoly.eval_coef_of_eq_off (g : LowIndDegPoly (F := F) (m := n) (d := d))
-    (T : Finset (Fin n)) (t : Fin n → Fin (d + 1)) {u u' : Point F n}
-    (h : ∀ k ∉ T, u k = u' k) : (g.coef T t).eval u = (g.coef T t).eval u' := by
-  classical
-  simp only [LowIndDegPoly.eval, LowIndDegPoly.coef]
-  refine Finset.sum_congr rfl fun e _ => ?_
-  split_ifs with he
-  · congr 1
-    refine Finset.prod_congr rfl fun k _ => ?_
-    by_cases hk : k ∈ T
-    · rw [he.1 k hk]
-      simp
-    · rw [h k hk]
-  · simp
-
-/-- A coefficient vector is nonzero where the polynomial has a nonzero coefficient with the
-pattern. -/
-theorem LowIndDegPoly.coef_maskOff (g : LowIndDegPoly (F := F) (m := n) (d := d))
-    (T : Finset (Fin n)) (e : Fin n → Fin (d + 1)) :
-    g.coef T (maskOn T e) (maskOff T e) = g e := by
-  rw [LowIndDegPoly.coef, if_pos ⟨fun k hk => maskOff_apply_of e hk,
-    fun k hk => maskOn_apply_of_not e hk⟩, patch_maskOn_maskOff]
-
-/-- **Schwartz--Zippel for a nonzero coefficient vector**: it vanishes at a uniform point with
-probability at most `n d / q`. -/
-theorem card_eval_eq_zero_le [Fintype F] [DecidableEq F]
-    {G : LowIndDegPoly (F := F) (m := n) (d := d)} (hG : G ≠ 0) :
-    ((univ.filter fun u : Point F n => G.eval u = 0).card : ℝ) / (Fintype.card F : ℝ) ^ n
-      ≤ (n : ℝ) * d / Fintype.card F := by
-  classical
-  have hne : G.toMv ≠ 0 := by
-    intro h
-    apply hG
-    funext e
-    have := LowIndDegPoly.coeff_toMv G e
-    rw [h, MvPolynomial.coeff_zero] at this
-    exact this.symm
-  have h := LowDegree.prob_agree_le_individualDegree hne (d := d) (LowIndDegPoly.degreeOf_toMv_le G)
-    (fun i => by rw [MvPolynomial.degreeOf_zero]; exact Nat.zero_le _)
-  have hcard : LowDegree.agree G.toMv 0 = univ.filter fun u : Point F n => G.eval u = 0 := by
-    ext u
-    simp [LowDegree.mem_agree, LowIndDegPoly.eval_toMv]
-  rw [hcard] at h
-  exact h
-
-end MIPRE.LIDT
 
 namespace MIPRE
 
