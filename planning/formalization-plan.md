@@ -728,6 +728,16 @@ four of item 2's displays. **What `thm:qld` still needs, in order of distance to
 Items 1 and 2 are done. **Neither of the remaining two needs a new estimate**: every estimate the
 appendix uses is in the library, and what is left is assembly.
 
+**Update 2026-09-23.** `lem:qld-pauli-selfcons` is done (#183) and item 1 of `lem:qld-swap` is
+unconditional (#184), `MirrorSimul` having been discharged from the game's own hypotheses (#179,
+`exists_mirrorSimul`). What is left is item 2's threading and `thm:qld`, and the second is *not*
+pure assembly: it needs the error arithmetic that turns the chain `deltaCL -> ... ->
+deltaSelfCons -> item 1` into the shape `a (md)^a (eps^b + q^{-b} + 2^{-bmd})`, the discharge of
+the regime `48 m d <= q`, the derivation of `4m | q` from admissibility, and a Naimark descent for
+general POVM strategies. The four pull requests that finish it, and why the descent was chosen over
+narrowing the statement to projective strategies, are the last section of
+`planning/qld-campaign.md`, "Finishing `thm:qld`".
+
 **H5, the assembly of `thm:compression` from the
 hypothesis structures, is done** (`MIPRE/Foundations/Pipeline/`): `Introspection ℓ`,
 `Oracularization ℓ`, `AnswerReduction ℓ`, `Repetition ℓ`, each a `structure` in the vocabulary
