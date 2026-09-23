@@ -706,6 +706,7 @@ import MIPRE.Foundations.CL.DetypingClock
 import MIPRE.Foundations.CL.DetypingComplete
 import MIPRE.Foundations.CL.DetypingCompleteSupport
 import MIPRE.Foundations.CL.DetypingDecider
+import MIPRE.Foundations.CL.DetypingDeciderCost
 import MIPRE.Foundations.CL.DetypingDeciderGame
 import MIPRE.Foundations.CL.DetypingDeciderProg
 import MIPRE.Foundations.CL.DetypingDeciderRoute

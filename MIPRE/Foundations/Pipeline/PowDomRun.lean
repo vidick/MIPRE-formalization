@@ -115,6 +115,25 @@ theorem esize_hardcode (p : Prog) (d : Data) :
     Data.size_ofNat]
   omega
 
+/-! ## Sizes -/
+
+/-- A pair of dominated data is dominated. -/
+theorem PDom.consSize (c m e c' m' e' : ℕ) : ∃ C M E, ∀ {W X K : ℕ} (x r : Data), 1 ≤ X →
+    PDom W X K c m e x.size → PDom W X K c' m' e' r.size → PDom W X K C M E (Data.cons x r).size :=
+  ⟨_, _, _, fun x r hX hx hr => by
+    simpa only [Data.size_cons] using (hx.add hX hr).add hX (PDom.const 1)⟩
+
+/-- An index and a datum of size below `X`. -/
+theorem PDom.indexInput : ∃ c m e, ∀ {W X K : ℕ} (n : ℕ) (d : Data), 1 ≤ X → n ≤ W →
+    d.size + 1 ≤ X → PDom W X K c m e (Data.cons (encode n) d).size := by
+  exact ⟨_, _, _, fun {W X K} n d hX hn hd => by
+    have en := esize_nat_le_four n
+    refine ((PDom.ofAffine (a := 4) (b := 2) (by omega : esize n + 1 ≤ 4 * W + 2)).add hX
+      (PDom.ofLeX (by omega : d.size ≤ X))).of_le ?_
+    simp only [Data.size_cons]
+    change esize n + d.size + 1 ≤ _
+    omega⟩
+
 /-! ## Runs within a powered monomial -/
 
 /-- `p` runs from `x` to `r` at a cost below `(c (W + 1)^m X^e)^{K + 1}`. -/
@@ -226,6 +245,40 @@ theorem pow (c m e : ℕ) : ∃ C M E, ∀ {W X K : ℕ} (b : Unary) (k : ℕ), 
     exact ((((hi.poly hX powInit.timeBound).add hX ((hk.add hX (PDom.const 1)).mul
       ((hs.poly hX powStep.timeBound).add hX (PDom.const 1)))).add hX
       (PDom.const 1))).of_le ht⟩
+
+/-- **A routed call**: `routeOneCall route p post` on `x`, when the router calls `p` on `a` with the
+context `ctx`. -/
+theorem routeCall (route : PolyTimeFun Data (Bool × Data)) (post : PolyTimeFun (Data × Data) Data)
+    (c m e c' m' e' : ℕ) : ∃ C M E, ∀ {W X K : ℕ} {p : Prog}, p.WellScoped 1 →
+      ∀ (x a ctx r : Data), 1 ≤ X → route x = (true, .cons a ctx) → PDom W X K c m e x.size →
+      PRuns W X K c' m' e' p a r → PRuns W X K C M E (Prog.routeOneCall route p post) x
+        (post (ctx, r)) :=
+  ⟨_, _, _, fun {W X K p} hp x a ctx r hX hroute hx hrun => by
+    obtain ⟨t, ht, hr⟩ := hrun
+    obtain ⟨t', ht', hr'⟩ := Prog.routeOneCall_indirect_cost route hp post x a ctx r t hroute hr
+    have hR : PDom W X K _ _ _ (route.timeBound.eval x.size) := hx.poly hX route.timeBound
+    have hsz := route.esize_apply_le x
+    rw [hroute] at hsz
+    simp only [esize_prod, esize_true, esize_data, Data.size_cons] at hsz
+    have hrs : r.size ≤ t := hr.size_le
+    have hQ := ((hR.add hX ht).add hX (PDom.const 1)).poly hX post.timeBound
+    have hpost : post.timeBound.eval (ctx.size + r.size + 1) ≤
+        post.timeBound.eval (route.timeBound.eval x.size + t + 1) :=
+      polynomial_eval_mono _ (by omega)
+    exact ⟨t', ((((PDom.const 7).mul hR).add hX ((PDom.const 2).mul ht)).add hX hQ).add hX
+      (PDom.const 18) |>.of_le (by omega), hr'⟩⟩
+
+/-- **A direct answer** of a router. -/
+theorem routeDirect (route : PolyTimeFun Data (Bool × Data)) (post : PolyTimeFun (Data × Data) Data)
+    (c m e : ℕ) : ∃ C M E, ∀ {W X K : ℕ} (p : Prog) (x r : Data), 1 ≤ X → route x = (false, r) →
+      PDom W X K c m e x.size → PRuns W X K C M E (Prog.routeOneCall route p post) x r :=
+  ⟨_, _, _, fun {W X K} p x r hX hroute hx => by
+    obtain ⟨t, ht, hr⟩ := Prog.routeOneCall_direct_cost route p post x r hroute
+    have hR : PDom W X K _ _ _ (route.timeBound.eval x.size) := hx.poly hX route.timeBound
+    have hsz := route.esize_apply_le x
+    rw [hroute] at hsz
+    simp only [esize_prod, esize_false, esize_data] at hsz
+    exact ⟨t, (((PDom.const 2).mul hR).add hX (PDom.const 4)).of_le (by omega), hr⟩⟩
 
 end PRuns
 
