@@ -4856,7 +4856,29 @@ Lemma~\ref{lem:qld-povm-to-obs} in the state-norm form that step takes.
   MIPRE.QLD.MirrorSimul.aliceWTilde_conjTranspose, MIPRE.QLD.MirrorSimul.aliceWTilde_mul_self,
   MIPRE.QLD.MirrorSimul.bobWTilde_conjTranspose, MIPRE.QLD.MirrorSimul.bobWTilde_mul_self,
   MIPRE.QLD.MirrorSimul.bornProb_wTilde_ge, MIPRE.QLD.MirrorSimul.qform_endState_twirl_ge,
-  MIPRE.QLD.MirrorSimul.exists_aux_close}
+  MIPRE.QLD.MirrorSimul.exists_aux_close,
+  MIPRE.QLD.toMv_coeffTable, MIPRE.QLD.ancPoly, MIPRE.QLD.ancPoly_toMv, MIPRE.QLD.ancPoly_eval,
+  MIPRE.QLD.ancPoly_toMv_ne, MIPRE.QLD.isPVM_conj_unitary, MIPRE.QLD.bnd_one_of_proj,
+  MIPRE.QLD.mulVec_swapVec_aOp, MIPRE.QLD.mulVec_swapVec_bOp, MIPRE.QLD.qform_conj_eq,
+  MIPRE.QLD.unit_of_norm_evec_eq_one, MIPRE.QLD.outerUnVec, MIPRE.QLD.outerVec_outerUnVec,
+  MIPRE.QLD.norm_evec_outerUnVec, MIPRE.QLD.norm_evec_sub_outerUnVec, MIPRE.QLD.mulVec_outerUnVec,
+  MIPRE.QLD.mulVec_outerUnVec_auxVec, MIPRE.QLD.deltaLegs, MIPRE.QLD.deltaItemTwo,
+  MIPRE.QLD.etaItemOne, MIPRE.QLD.MirrorSimul.alicePauli, MIPRE.QLD.MirrorSimul.bobPauli,
+  MIPRE.QLD.MirrorSimul.aliceConjPauli, MIPRE.QLD.MirrorSimul.bobConjPauli,
+  MIPRE.QLD.MirrorSimul.aliceTau, MIPRE.QLD.MirrorSimul.bobTau,
+  MIPRE.QLD.MirrorSimul.aliceSwap_mul_conjTranspose,
+  MIPRE.QLD.MirrorSimul.physSwap_mul_conjTranspose, MIPRE.QLD.MirrorSimul.isPVM_alicePauli,
+  MIPRE.QLD.MirrorSimul.isPVM_aliceConjPauli, MIPRE.QLD.MirrorSimul.isPVM_aliceTau,
+  MIPRE.QLD.MirrorSimul.isPVM_bobTau, MIPRE.QLD.MirrorSimul.sum_aliceConjPauli_fibre,
+  MIPRE.QLD.MirrorSimul.sum_bobTau_fibre, MIPRE.QLD.MirrorSimul.bornProb_physVec_pauli_bobMTilde,
+  MIPRE.QLD.MirrorSimul.sum_bornProb_physVec_ge,
+  MIPRE.QLD.MirrorSimul.sum_bornProb_conj_ge_of_close, MIPRE.QLD.MirrorSimul.sum_bornProb_fibre_ge,
+  MIPRE.QLD.MirrorSimul.sum_snorm_sq_aliceConjPauli_le, MIPRE.QLD.MirrorSimul.physAux,
+  MIPRE.QLD.MirrorSimul.norm_evec_physAux, MIPRE.QLD.MirrorSimul.norm_evec_physSwap_sub_physAux,
+  MIPRE.QLD.MirrorSimul.aliceTau_mulVec_physAux, MIPRE.QLD.MirrorSimul.sum_snorm_sq_alice_le,
+  MIPRE.QLD.MirrorSimul.mirror_physSwap_mulVec, MIPRE.QLD.MirrorSimul.sum_snorm_sq_bob_le,
+  MIPRE.QLD.MirrorSimul.swap_isometry}
+\leanok
 There is $\delta_{qld} = O\bigl( \delta_S^{1/4} + md/q \bigr)$ and local unitaries $V_\alice$,
 $V_\bob$ on the expanded spaces such that, writing $M = 2^m$:
 \begin{enumerate}
@@ -4875,6 +4897,7 @@ not a weaker form of it.
 \end{lemma}
 
 \begin{proof}
+\leanok
 The standard swap-isometry argument for item 1. It is standard \emph{because} the representation is
 exact: an approximate representation would not give a unitary, which is the whole reason
 Lemma~\ref{lem:qld-exact-paulis} is stated with exact relations. Item 2 is not exact and is the
@@ -4884,10 +4907,25 @@ $\delta_{qld}$ comes from, by Lemma~\ref{lem:schwartz-zippel}. Item 1 alone give
 $O(\sqrt{\delta_S})$.
 \end{proof}
 
-\paragraph{Comments.} What is formalized is the whole of item 1 \emph{given its hypothesis} ---
-the self-consistency of Lemma~\ref{lem:qld-pauli-selfcons}, at a uniform $\tilde{u}$ --- and none
-of item 2. The exact pieces are in \texttt{MIPRE/Background/QLD/SwapUnitary.lean} and the
-assembly in \texttt{MIPRE/Background/QLD/SwapState.lean}.
+\paragraph{Comments.} Both items are formalized, relative to one auxiliary state, with nothing
+assumed beyond the game: \texttt{MirrorSimul.swap\_isometry} in
+\texttt{MIPRE/Background/QLD/SwapItemTwo.lean}. The history below is kept because it records where
+the obstacles were. The exact pieces are in \texttt{MIPRE/Background/QLD/SwapUnitary.lean}, item
+1's assembly in \texttt{MIPRE/Background/QLD/SwapState.lean} and
+\texttt{MIPRE/Background/QLD/SwapItemOne.lean}, and item 2's threading in
+\texttt{SwapItemTwo.lean}.
+
+The Lean statement has two constants where the statement above has one: item 1 is bounded by
+\texttt{etaItemOne}, which is $2 - 2\sqrt{1 - \eta}$ with $\eta = 2\sqrt{\delta_S} + 2\delta_S$,
+and item 2 by \texttt{deltaItemTwo} at that bound, which is
+$2\bigl( 11 \delta' + md/q + 2 \sqrt{\texttt{etaItemOne}} \bigr)$, where $\delta'$
+(\texttt{deltaLegs}) bounds each leg of \texttt{eq:qld-unitary-5}. Their maximum is
+$\delta_{qld}$. Item 2's distance is written out, as
+$\sum_h \norm{(V M^{(\pauli,W)}_h V^\dagger - \Id \ot \tau^W_h) \ket{\aux} \ot
+\ket{\EPR_q}^{\ot M}}^2$, rather than through \texttt{stateSqNorm}; the two are the same
+number. That the maximum has the shape Theorem~\ref{thm:qld} asks for is
+\texttt{errSmall\_swapItemOne} and its companions in
+\texttt{MIPRE/Background/QLD/ErrorShape.lean}.
 
 Every operator in the construction has the shape $\sum_p \widehat{S}_p \ot T_p$
 (\texttt{sTensor}), and because $\widehat{S}$ is projective these compose factorwise
@@ -5031,10 +5069,29 @@ to one, so its cross-party deviation and its joint expectation determine each ot
 inequality anywhere
 (\texttt{MirrorSimul.bornProb\_wTilde\_ge}).
 
-\emph{Not formalized}: item 2, the threading of these steps into the statement about
-$V M^{(\pauli,W)}_h V^\dagger$, which is where the registers of the conjugated Pauli measurement
-have to be matched with item 1's --- on \texttt{physVec}, now that there is such a cut. Every step
-it threads is in place. Hence no \texttt{leanok} mark at either level. 
+\emph{And item 2 is threaded.} \texttt{MirrorSimul.sum\_snorm\_sq\_aliceConjPauli\_le} is
+the chain for Alice, on any unit state $\Delta$ that carries the pair on $\alice'' \bob''$ and is
+within $r$ of the swapped physical state. \texttt{eq:qld-unitary-7} makes the deviation twice the
+deficit of an agreement; on $\Delta$, $\tau^W_h$ on $\alice''$ is $\tau^W_h$ on $\bob''$, which
+makes that agreement a bipartite Born probability across the physical cut;
+\texttt{eq:qld-unitary-8} coarse-grains it along $g_h(u)$ at a cost of $md/q$; and
+\texttt{eq:qld-unitary-6} on \emph{Bob's} side turns the coarse honest projector into Bob's
+exact Pauli measurement conjugated by his swap unitary (\texttt{bobSwap\_conj\_bobMTilde}).
+The transport across item 1 (\texttt{sum\_bornProb\_conj\_ge\_of\_close}) moves the
+conjugation onto the state, where it undoes the swap, and costs $2r$; with $r$ the square root of
+item 1's bound this is where $\delta_S^{1/4}$ enters. The last step is
+\texttt{eq:qld-unitary-5} at the \emph{mirror} instance (\texttt{sum\_bornProb\_physVec\_ge}):
+Bob's exact Pauli measurement against Alice's $(\pauli, W)$ reading is the second cut's
+$\tilde{M}$ against the swapped strategy's Pauli reading. \texttt{sum\_snorm\_sq\_alice\_le}
+applies the chain at $\Delta = \ket{\aux} \ot \ket{\EPR_q}^{\ot M}$ read on the physical cut
+(\texttt{physAux}, through \texttt{outerUnVec}, the inverse of \texttt{outerVec}), for any
+$\ket{\aux}$ close to the swapped state. \texttt{sum\_snorm\_sq\_bob\_le} is Alice's at the
+mirror, relative to the \emph{same} $\ket{\aux}$: the mirror's product state and its swapped
+physical state are this one's with the parties exchanged (\texttt{mirror\_physSwap\_mulVec}), so
+no second auxiliary state is needed. One point of encoding: the Schwartz--Zippel packaging reads
+its index through coefficient tables of bounded individual degree, and \texttt{ancPoly} is the
+table of $\coded(h)$, faithful because the encoding is multilinear and $d \geq 1$
+(\texttt{toMv\_coeffTable}). 
 
 \emph{And \texttt{eq:qld-unitary-5}.} It needed no new estimate: its engine is the paper's
 \texttt{fact:triangle-for-simeq}, already in Foundations as \texttt{agreeSum\_triangle} (with

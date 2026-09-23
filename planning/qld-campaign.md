@@ -2938,3 +2938,26 @@ anywhere under `MIPRE/Background/QLD/`. The plan, agreed with the maintainer:
 
 This session is pinned to one branch, so 1 and 2 land as one pull request with two separate
 commits, each self-contained.
+
+**Status, 2026-09-23 (end of day).** 1, 2 and 3 are in, as separate commits on one branch.
+
+* **1.** `MirrorSimul.swap_isometry` (`SwapItemTwo.lean`) is `lem:qld-swap`, both items, relative
+  to one auxiliary state; proof-level `\leanok` with guards for all 145 names. Two things the
+  plan did not anticipate. Bob's half needed no second auxiliary state: the mirror's product
+  state and its swapped physical state are this one's under `swapVec`
+  (`mirror_physSwap_mulVec`), so Bob's item 2 is Alice's at `M.mirror` relative to the *same*
+  `aux`. And the Schwartz--Zippel packaging reads its index through coefficient tables, so the
+  encoding needed a table of its own (`ancPoly`, faithful by `toMv_coeffTable` because the
+  encoding is multilinear and `1 <= d`). Item 1 is bounded by `etaItemOne`, item 2 by
+  `deltaItemTwo _ etaItemOne`; the statement's single `delta_qld` is their maximum.
+* **2.** `ErrorShape.lean`: `errShape`, the closure class `ErrSmall` (constants chosen before
+  the parameters), and the chain `deltaQ` ... `deltaSelfCons` and item 1's bound in the class.
+  `ErrSmall` is trivially satisfiable when `md` is bounded, because of the `2^{-bmd}` term;
+  that is a property of the paper's shape and is recorded under `thm:qld`.
+* **3.** `Regime.lean`: `4m | q` follows from `m | q`, `q = 2^n` and `48md <= q`, **not** from
+  admissibility alone (`m = q` is admissible and `4q` does not divide `q`); finding D is
+  resolved in that sense. `ErrSmall.of_regime` and `ErrSmall.of_cases` are the "enlarge the
+  constant and take the trivial bound outside the regime" move, stated once.
+
+Left for 4: `ErrSmall` for `deltaItemTwo _ etaItemOne` (the same combinators), legalization,
+the Naimark descent, the `V -> phi` composition, and the theorem.
