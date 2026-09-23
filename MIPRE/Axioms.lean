@@ -7,6 +7,10 @@ import MIPRE.Foundations.Introspection.BasisProg
 import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
 import MIPRE.Foundations.Introspection.AuxiliarySamplingCorrect
 import MIPRE.Foundations.Introspection.AuxiliaryCanonicalProgram
+import MIPRE.Background.Introspection.DecisionKernelComplete
+import MIPRE.Background.Introspection.CanonicalDecodedStrategy
+import MIPRE.Background.Introspection.NumberedSoundness
+import MIPRE.Background.Introspection.Compiler
 import MIPRE.Foundations.Blocks
 import MIPRE.Foundations.CL.Basic
 import MIPRE.Foundations.LowDegree.SchwartzZippel
@@ -2069,6 +2073,48 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.AuxiliaryProgram.rawCheck_haltsWithin,
   MIPRE.Introspection.AuxiliaryProgram.samplingProg_depthFamily,
   MIPRE.Introspection.AuxiliaryCanonical.canonicalProg_correct
+
+/-! ## Canonical introspection compiler, finite kernel and QLD transport -/
+
+#guard_sorry_free MIPRE.Introspection.PauliSampler.sampler,
+  MIPRE.Introspection.PauliSampler.fullCompiler_apply,
+  MIPRE.Introspection.PauliSampler.finalCompiler_apply,
+  MIPRE.Introspection.PauliSampler.finalSampler_dim_zero,
+  MIPRE.Introspection.PauliSampler.finalSampler_uniform_bound
+
+#guard_sorry_free MIPRE.QLD.PauliBinaryProgram.program_ofBits_iff,
+  MIPRE.QLD.PauliBinaryProgram.program_canonical,
+  MIPRE.QLD.PauliAnswerProgram.answerBits_decodeBits,
+  MIPRE.Introspection.DecisionKernel.Answer.pauliDecode_format,
+  MIPRE.Introspection.DecisionKernel.Answer.rawProject_pauliDecode
+
+#guard_sorry_free MIPRE.Introspection.AuxiliaryDual.rowSpaceCheck_correct,
+  MIPRE.Introspection.AuxiliaryDecision.guarded_complete,
+  MIPRE.Introspection.AuxiliaryDecision.check_raw_sound,
+  MIPRE.Introspection.DecisionKernel.program_sound_numbered,
+  MIPRE.Introspection.DecisionKernel.program_complete_numbered
+
+#guard_sorry_free MIPRE.Introspection.ExplicitGame.game_mu,
+  MIPRE.Introspection.ExplicitGame.game_D,
+  MIPRE.Introspection.ExplicitGame.toLegacy_value,
+  MIPRE.Introspection.ExplicitGame.pccToExplicit_isPCC,
+  MIPRE.Introspection.AuxiliaryQuotient.value_le_decodedStrategy,
+  MIPRE.Introspection.NumberedComplete.exists_perfectPCC_with_format,
+  MIPRE.Introspection.NumberedSoundness.quantumValue_ge_of_qld,
+  MIPRE.Introspection.NumberedSoundness.canonical_quantumValue_ge
+
+#guard_sorry_free MIPRE.Introspection.DecisionCompiler.resources_with_cutoff,
+  MIPRE.Introspection.DecisionCompiler.raw_accepts_iff,
+  MIPRE.Introspection.DecisionCompiler.output_hasPerfectPCC_of_raw,
+  MIPRE.Introspection.DecisionCompiler.exists_raw_failure_le,
+  MIPRE.Introspection.CanonicalDecoded.value_le,
+  MIPRE.Introspection.CanonicalDecoded.supported_A,
+  MIPRE.Introspection.CanonicalDecoded.supported_B
+
+#guard_sorry_free MIPRE.Introspection.exists_seven,
+  MIPRE.Introspection.seven,
+  MIPRE.Introspection.CanonicalComplete.output_hasPerfectPCC,
+  MIPRE.Introspection.CompiledSoundness.output_soundness
 
 /-! ## Blocks of an index type
 

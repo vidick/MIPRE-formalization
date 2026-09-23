@@ -8,13 +8,32 @@ as `planning/ledger-informed-plan.md` stays as the record of the ledger accounti
 
 ## Three artifacts, and what each is authoritative for
 
-**Introspection checkpoint, 2026-09-22.** The exact current boundary and next
-steps are recorded in [introspection-checkpoint-20260922.md](introspection-checkpoint-20260922.md).
-The continuation adds uniform basis/block conversion, actual Pauli query
-programs, full-register Read/Sample checks, canonical binary elimination, and
-explicit-selector question relabelling. Full-game transport, index-dependent sampler packaging, the
-remaining decider branches and uniform verifier budget, and actual QLD
-extraction still remain. `Introspection 7` is not yet inhabited.
+**Ambient introspection is supplied, 2026-09-23.**
+`MIPRE.Introspection.exists_seven` in
+[Compiler.lean](../MIPRE/Background/Introspection/Compiler.lean) proves
+`Nonempty (MIPRE.Introspection 7)`; `MIPRE.Introspection.seven` selects the
+compiler. The theorem has passed a standalone Lean check, and its axiom audit
+contains only `propext`, `Classical.choice`, and `Quot.sound`. Its sampler,
+executable decision compiler, all-index resource contract, honest perfect-PCC
+completeness, and output-verifier soundness have passed targeted Lake builds.
+The soundness proof uses the proved `QLD.qld_soundness`, with no extraction
+callback, and composes the numbered quotient game, legal decoded Pauli support,
+canonical error estimates, source-padding removal, and detyping loss.
+
+This is the repository's **ambient seven-level contract**, with its
+polynomial-exponent runtime budget and positive-index strict-value soundness
+domain. A source-model theorem for arbitrary levels or different source
+runtime budgets is a separate statement. Final umbrella, whole-repository,
+blueprint coverage, ledger and diff validation all pass. The completed
+implementation and validation record is
+[introspection-local-progress-20260922.md](introspection-local-progress-20260922.md).
+
+**Historical introspection checkpoint, 2026-09-22.**
+[introspection-checkpoint-20260922.md](introspection-checkpoint-20260922.md)
+records the boundary at PR #152. Its then-open full-game transport, sampler
+packaging, executable branches, uniform budgets, and QLD extraction have since
+been connected to the ambient contract above; its original checklist is not
+the current task list.
 
 **Construction update, 2026-09-21.** The classical PCP and effective self-dual
 basis campaigns are complete, including the proved Shoup construction (#135).
@@ -77,12 +96,15 @@ error extension now connect the paper's unsquared-distance extraction
 interface to finite-game soundness. No malformed-mass assumption is needed.
 The concrete Pauli CL family has exact question-law and strategy transport,
 explicit binary block numbering, and a checked uniform canonical-line program.
-The full `Introspection 7` still requires the actual QLD extraction theorem,
-the remaining executable verifier branches and uniform budget bound, and the
-final connection of finite games to the verifier contract. See
-[classical-pcp-introspection.md](classical-pcp-introspection.md) for the checked
-scope and remaining obligations. Neither a completed QLD theorem nor the new
-component proofs by themselves inhabit introspection or answer reduction.
+At this September 21 checkpoint, the actual QLD extraction theorem, remaining
+executable branches and uniform budgets, and final verifier connection were
+still open. The September 23 construction above now composes these into
+`Introspection 7`. See
+[classical-pcp-introspection.md](classical-pcp-introspection.md) for the earlier
+component campaign; the active implementation record tracks the completed
+ambient compiler and its remaining repository-wide validation. This supplies
+the introspection input to the pipeline; it does not itself supply answer
+reduction.
 
 **Synchronization update, 2026-09-16.** The current paper-to-blueprint contracts
 and remaining adapters are tracked in [paper-correspondence.md](paper-correspondence.md).
@@ -753,9 +775,14 @@ is the paper's `cor:pauli-binary`, the theorem on the qubit register through a s
 `Background/Introspection/PauliExtraction.lean` then supplies the consumer's `hstate`, `hX`, `hZ`
 for the actual binary (and field-register) introspection game from any projective strategy
 (`lem:intro-pauli-extraction`), and composes them into
-`1 - C root_{6l+2}(T) <= val*(G)` (`lem:intro-extracted-soundness`). What that does not yet cover
-is an original game whose CL functions are not exact on the whole `M log q`-coordinate register:
-the source padding still has to be composed with it.
+`1 - C root_{6l+2}(T) <= val*(G)` (`lem:intro-extracted-soundness`). This upstream theorem
+requires original CL functions exact on the whole `M log q`-coordinate register.
+The ambient compiler continuation separately composes source padding and its
+removal in `CompiledSoundness.output_soundness`. Its decoded Pauli measurements
+have proved legal support, so `QLDExtractionAdapter` identifies the coarse and
+valid effects exactly and retains the original `errShape` bound. The broader
+upstream theorem and the exact supported adapter serve different interfaces;
+neither route requires an assumed bound on malformed-answer mass.
 
 **H5, the assembly of `thm:compression` from the
 hypothesis structures, is done** (`MIPRE/Foundations/Pipeline/`): `Introspection ℓ`,

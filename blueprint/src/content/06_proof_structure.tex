@@ -3,9 +3,10 @@
 
 This chapter records the main transformations of~\cite{JNVWY20} at headline level: for
 each, what it does, what it relies on, and one theorem statement so that the dependency
-graph reflects the architecture. The conditional assembly and its parameter arithmetic
-are formalized; supplying the introspection and answer-reduction constructions remains
-a main task of the project. Their soundness analyses use the bipartite framework.
+graph reflects the architecture. The conditional assembly, its parameter arithmetic
+and the ambient introspection construction for seven-level inputs are formalized.
+Supplying answer reduction remains a main task of the project. These soundness
+analyses use the bipartite framework.
 The paper factors these transformations through \emph{typed} verifiers and detypes at
 specified boundaries (Remark~\ref{rem:typed-detyping}); the ambient Lean hypotheses
 also require the runtime adaptation of Remark~\ref{rem:runtime-normalization}.
@@ -1018,8 +1019,9 @@ The graph is the symmetric closure of the explicit oriented chains and Pauli
 edges. Constructor case analysis proves the edge classifications. Summing the
 uniform common-seed law over the zero auxiliary presentations gives the exact
 edge probability; nonnegativity bounds its contribution to the total failure.
-This supplies the graph and CL family, not the remaining uniform Pauli sampler
-implementation or the introspective decision program.
+This supplies the graph and CL family. The uniform Pauli sampler and the
+introspective decision program are supplied by
+Lemmas~\ref{lem:intro-canonical-sampler} and~\ref{lem:intro-quotient-kernel}.
 \end{proof}
 
 \begin{lemma}[The parsed introspection decision predicate]
@@ -1083,8 +1085,8 @@ is $4(|T_{\mathrm{Pauli}}|+2\ell+6)+s(n)$. Every marginal, linear and factor
 query agrees with the specified CL family, and malformed queries halt.
 The typed extension program is independent of $\ell$. Polynomial runtime
 transfers with an explicit index-dependent coefficient and an index-independent
-query degree. Instantiating the uniform Pauli sampler and its parameter/size
-bounds remains required for the full introspection contract.
+query degree. Lemma~\ref{lem:intro-canonical-sampler} supplies the uniform
+Pauli sampler and its parameter and size bounds for the actual compiler.
 \end{lemma}
 \begin{proof}
 \leanok
@@ -1712,8 +1714,8 @@ These form a joint PVM, and their accepted mass is exactly the value of the
 strategy using the auxiliary state and auxiliary measurements in the original
 game. Discarding the question EPR register incurs no further error or dimension
 factor. The identity is specialized to the actual CL distribution of a verifier.
-This assumes the terminal tensor-product measurement form; obtaining that form
-from arbitrary high-value introspection play remains the soundness induction.
+This assumes the terminal tensor-product measurement form, which the soundness
+induction below derives from arbitrary high-value introspection play.
 \end{lemma}
 \begin{proof}
 \leanok
@@ -3512,8 +3514,8 @@ directions. Pack the point, seed, direction and scalar registers in the
 proved coordinate order. Execute the appropriate stage maps and compose
 successive stages for marginals; factor indicators use the fixed register
 partition. The type decoder tabulates only the fixed finite type set.
-Canonical index-dependent parameter selection and packaging as a typed
-sampler remain separate obligations.
+Canonical index-dependent parameter selection and the all-index sampler
+packaging are supplied by Lemma~\ref{lem:intro-canonical-sampler}.
 \end{proof}
 
 \begin{lemma}[Full-register auxiliary programs]
@@ -3540,7 +3542,8 @@ Use the source boundedness estimate to discharge the clock.
 For canonical reduction, identify the leading coordinates of the computed
 pivot basis with the canonical pivot set, and characterize the remainder
 by its coset and canonical complement. The dual-map specialization and
-the executable Hide checks remain to be composed.
+the executable Hide checks are composed in
+Lemma~\ref{lem:intro-quotient-kernel}.
 \end{proof}
 
 \begin{lemma}[Output relabelling for the explicit selector]
@@ -3558,7 +3561,8 @@ legacy questions agree under this equivalence.
 Conjugate the seed permutation through the binary basis and change only
 the line question seeds. Prove that this output map intertwines the two
 presentations with the common seed permutation, and that decoding agrees.
-The full introspection strategy transport is a separate, unfinished step.
+The full strategy transport, including mixed edges and PCC completeness,
+is supplied by Lemma~\ref{lem:intro-numbered-transport}.
 \end{proof}
 
 \begin{lemma}[Arbitrary binary source registers and exact padding]
@@ -3607,13 +3611,150 @@ The exact full-register padding preserves evaluation but changes factor
 and dual data. Its honest Read and Hide dual labels can carry unused
 coordinates. The new executable Read check implements this full-register
 variant, and the Sample program implements the padded sampling relation.
-The Hide checks still need this variant or a format/coarsening bridge
-to checks requiring those labels to lie in
-the original source subspace. The finite-game completeness theorem does
-not assert that existing strict-subspace parser guards already do so.
+The executable Hide checks use a row-space membership relation on the full
+register. A question-local quotient decoder converts accepted dual labels
+to the semantic local dual readouts, without identifying the two coordinate
+orders. Honest semantic labels satisfy the relaxed relation unchanged.
+Prefix guards and attained Introspect outputs supply the support needed by
+the clocked source calls. This bridge is proved in
+Lemma~\ref{lem:intro-quotient-kernel}; it does not require the full-register
+dual labels to lie in the original source subspace.
 \end{remark}
 
-\begin{remark}[The coarse-operator repair and its remaining Lean assembly]
+\begin{lemma}[The canonical sampler at every index]
+\label{lem:intro-canonical-sampler}
+\uses{lem:intro-executable-pauli-queries,lem:intro-binary-source-padding}
+\lean{MIPRE.Introspection.PauliSampler.sampler,
+  MIPRE.Introspection.PauliSampler.fullCompiler_apply,
+  MIPRE.Introspection.PauliSampler.finalCompiler_apply,
+  MIPRE.Introspection.PauliSampler.finalSampler_dim_zero,
+  MIPRE.Introspection.PauliSampler.finalSampler_uniform_bound}
+\leanok
+The effective odd-degree field, self-dual basis and explicit dyadic selector
+give an index-dependent Pauli typed sampler. Extending and detyping it gives
+a five-level sampler whose program is computed uniformly from binary
+$\lambda$. For every input and index its dimension and runtime coefficient
+are bounded by $(\lambda n+1)^C$, at a fixed input-size degree $C$.
+When $\lambda n=0$, the final sampler has dimension zero.
+\end{lemma}
+\begin{proof}
+\leanok
+Compute unary field and register parameters within the polynomial sampler
+budget, then compose the checked uniform Pauli query router with the typed
+and graph routers. At positive indices, absorb their fixed polynomial costs
+into one exponent. Separate constant-time branches at zero parameter or zero
+index supply the exact all-index bound.
+\end{proof}
+
+\begin{lemma}[The complete binary Pauli predicate]
+\label{lem:intro-binary-pauli-predicate}
+\uses{lem:intro-executable-pauli-queries}
+\lean{MIPRE.QLD.PauliBinaryProgram.program_ofBits_iff,
+  MIPRE.QLD.PauliBinaryProgram.program_canonical,
+  MIPRE.QLD.PauliAnswerProgram.answerBits_decodeBits,
+  MIPRE.Introspection.DecisionKernel.Answer.pauliDecode_format,
+  MIPRE.Introspection.DecisionKernel.Answer.rawProject_pauliDecode}
+\leanok
+A uniform polynomial-time program checks the actual QLD predicate on binary
+questions and answers, preserving all twenty-six question types. Canonical
+answer encoding and decoding agree on accepted payloads. The total decoder
+always produces a legal answer constructor for its Pauli question, and the
+executable full-Pauli projection agrees with the semantic qubit register.
+\end{lemma}
+\begin{proof}
+\leanok
+Parse the exact answer shape for each type, convert between effective field
+rows and the self-dual question basis, and compose the checked line, table,
+probe and phase programs. Prove each finite branch before combining the
+type dispatch. Full-table outcomes use the same explicit cube numbering as
+the register projection.
+\end{proof}
+
+\begin{lemma}[Executable quotient hiding and the finite decision kernel]
+\label{lem:intro-quotient-kernel}
+\uses{lem:intro-executable-padded-auxiliary,lem:intro-binary-pauli-predicate}
+\lean{MIPRE.Introspection.AuxiliaryDual.rowSpaceCheck_correct,
+  MIPRE.Introspection.AuxiliaryDecision.guarded_complete,
+  MIPRE.Introspection.AuxiliaryDecision.check_raw_sound,
+  MIPRE.Introspection.DecisionKernel.program_sound_numbered,
+  MIPRE.Introspection.DecisionKernel.program_complete_numbered}
+\leanok
+The actual binary decision kernel implements all auxiliary branches using
+one source-simulation clock and the supplied canonical parameters. Accepted
+raw answers decode into a finite quotient game: original answers retain
+their finite length bound and Pauli answers retain the actual QLD alphabet.
+Conversely, accepted finite answers with the honest prefix, source-output
+and Pauli-format support conditions have accepted canonical encodings.
+\end{lemma}
+\begin{proof}
+\leanok
+Use row-space membership to express the hiding relation independently of
+the local coordinate enumeration. Decode dual labels blockwise; prefix
+agreement makes the selected transforms agree in every tested block.
+Clocked source queries implement the guards and source decision call.
+Canonical format inversions and bounded source-answer decoding then give
+the raw soundness and honest encoding implications in both orientations.
+\end{proof}
+
+\begin{lemma}[Full question transport and actual QLD extraction]
+\label{lem:intro-numbered-transport}
+\uses{lem:intro-explicit-selector-questions,lem:intro-binary-source-padding,thm:qld}
+\lean{MIPRE.Introspection.ExplicitGame.game_mu,
+  MIPRE.Introspection.ExplicitGame.game_D,
+  MIPRE.Introspection.ExplicitGame.toLegacy_value,
+  MIPRE.Introspection.ExplicitGame.pccToExplicit_isPCC,
+  MIPRE.Introspection.AuxiliaryQuotient.value_le_decodedStrategy,
+  MIPRE.Introspection.NumberedComplete.exists_perfectPCC_with_format,
+  MIPRE.Introspection.NumberedSoundness.quantumValue_ge_of_qld,
+  MIPRE.Introspection.NumberedSoundness.canonical_quantumValue_ge}
+\leanok
+Explicit seed relabelling intertwines the full typed question law and
+predicate, including mixed edges. Quotient dual decoding and finite-register
+reindexing preserve the required Pauli support. The actual QLD soundness
+theorem therefore supplies the extraction witness used by introspection,
+with its field-size tails absorbed at the canonical parameters. Honest
+completeness retains PCC, exact dimension and the executable guards' support.
+\end{lemma}
+\begin{proof}
+\leanok
+Transport the shared seed and each question's answer map explicitly.
+Relabel quotient coordinates before selecting local dual representatives.
+The distinguished full Pauli measurements remain fixed throughout, so
+decoder-enforced support passes to the actual QLD restriction. Apply QLD
+extraction, binary basis transport and the proved finite-game induction,
+then absorb the canonical field and register error terms.
+\end{proof}
+
+\begin{lemma}[The ambient compiler's resources and raw-game bridge]
+\label{lem:intro-ambient-kernel}
+\uses{lem:intro-canonical-sampler,lem:intro-quotient-kernel,lem:intro-numbered-transport}
+\lean{MIPRE.Introspection.DecisionCompiler.resources_with_cutoff,
+  MIPRE.Introspection.DecisionCompiler.raw_accepts_iff,
+  MIPRE.Introspection.DecisionCompiler.output_hasPerfectPCC_of_raw,
+  MIPRE.Introspection.DecisionCompiler.exists_raw_failure_le,
+  MIPRE.Introspection.CanonicalDecoded.value_le,
+  MIPRE.Introspection.CanonicalDecoded.supported_A,
+  MIPRE.Introspection.CanonicalDecoded.supported_B}
+\leanok
+The compiled five-level verifier satisfies the ambient resource contract
+on every program input and index, including the output-description and
+answer-cutoff bounds. At positive indices its actual acceptance is the
+canonical raw kernel. Finite graph detyping transfers raw perfect PCC
+completeness outward and transfers high output value inward with the fixed
+graph loss. Total finite answer decoding then increases value and enforces
+the full Pauli support required by QLD soundness.
+\end{lemma}
+\begin{proof}
+\leanok
+Prepare the shared clock and canonical resources once, clamp source
+descriptions, and route every source call through the same bounded
+simulation interface. Combine the all-index sampler, decider and cutoff
+estimates into one budget exponent. Restrict to the enforced finite answer
+cutoff, apply the graph-detyping transport, and merge each question's answer
+fibers under the finite decoder. Its range gives the Pauli support directly.
+\end{proof}
+
+\begin{remark}[The coarse-operator repair and its checked Lean assembly]
 \label{rem:intro-commutation-gap}
 \uses{lem:intro-induction,lem:conditional-measurement,lem:intro-coarse-product-stage}
 The pinned manuscript already runs the $Z$ commutation analysis on the coarse
@@ -3633,13 +3774,13 @@ players are now constructed and composed. Terminal extraction completes
 malformed outcomes without additional loss. The complete finite-game
 soundness theorem derives hiding and the second Z estimate from just the
 primitive Alice-X/Bob-Z guarantees; it handles approximate extracted states,
-all error sizes, and the paper's power profile. Remaining assembly is the
-actual QLD extraction theorem, the uniform verifier construction and
-budgets, and the final connection to the verifier contract. The actual
-isometry, image-complement, and valid-answer adapters are now checked,
-as is the full honest typed strategy over field and binary source registers.
-These finite-game
-results do not yet inhabit the full introspection compiler contract.
+all error sizes, and the paper's power profile. The actual QLD extraction
+adapter, full question and answer transports, uniform verifier construction,
+all-index budgets and raw finite-game connection are now proved in
+Lemmas~\ref{lem:intro-numbered-transport} and~\ref{lem:intro-ambient-kernel}.
+Their top-level assembly supplies the ambient seven-level input contract in
+Lemma~\ref{lem:introspection-supply}.
+This does not claim the separate generic-depth, source-runtime theorem below.
 \end{remark}
 
 \subsubsection{The theorem}
@@ -3717,17 +3858,39 @@ equivalence follows from monotonicity of $2^n$ and its value at zero.
 
 \begin{lemma}[Supplying ambient introspection]
 \label{lem:introspection-supply}
-\uses{thm:introspection,def:introspection-contract,rem:runtime-normalization,rem:pcc-representation-bridge}
+\uses{def:introspection-contract,lem:intro-ambient-kernel,lem:intro-numbered-transport,rem:runtime-normalization,rem:pcc-representation-bridge}
+\lean{MIPRE.Introspection.exists_seven,
+  MIPRE.Introspection.seven,
+  MIPRE.Introspection.CanonicalComplete.output_hasPerfectPCC,
+  MIPRE.Introspection.CompiledSoundness.output_soundness}
+\leanok
 The ambient contract \texttt{MIPRE.Introspection 7} is inhabited.
-\emph{Open target.} A derivation from the source must normalize the input runtimes
-and answer cuts, transfer ambient perfect PCC inputs to source PCC inputs, and
-transfer the source completeness outputs back to \texttt{HasPerfectPCC}. It must
-also establish the stated ambient budgets and soundness parameters. Neither the
-contract definition nor the conditional composition proves these obligations.
+The fixed instance \texttt{MIPRE.Introspection.seven} supplies the introspection
+input to the compression pipeline. It has one common all-index resource
+exponent and the required soundness profile, and handles the exceptional
+zero cases. Its scope is the ambient contract at $\ell=7$;
+Theorem~\ref{thm:introspection} separately states the source-model result for
+arbitrary fixed depth.
 \end{lemma}
+\begin{proof}
+\leanok
+Choose one even canonical parameter constant that absorbs the QLD field-size
+tails, and use the proved clocked universal machine. Combine the sampler,
+decider, cutoff and description estimates into one resource exponent.
+Encode the supported honest finite strategy to obtain ambient perfect PCC
+completeness, using the zero-index branch separately. For positive-index
+soundness, restrict to the enforced answer cutoff, detype, decode finite
+answers and apply actual QLD extraction followed by the source-game bound.
+Absorb the fixed detyping loss into the profile constants. These constructions
+fill every field of the ambient contract; their axiom audit contains only
+\texttt{propext}, \texttt{Classical.choice} and \texttt{Quot.sound}.
+\end{proof}
 
-The soundness analysis is a long rigidity argument~\cite[Section 8]{JNVWY20}. It builds on techniques introduced in~\cite{NW19}, and it may be advisable to formalize some of the key lemmas there first. These include the Pauli basis test together with a toolkit of approximate-measurement lemmas
-(twirling, commutation, sandwiching). For this project, those lemmas should be stated and proved in the bipartite setting, as in the sources: the pipeline carries $\valstar$ throughout, so no tracial restatement is needed and none should be attempted (Remark~\ref{rem:bipartite-route}).
+The checked soundness analysis follows the rigidity argument of
+\cite[Section 8]{JNVWY20} and techniques introduced in~\cite{NW19}: the Pauli
+basis test and the twirling, commutation and sandwiching toolkit. These lemmas
+use the bipartite setting, as in the sources; the pipeline carries $\valstar$
+throughout (Remark~\ref{rem:bipartite-route}).
 
 \subsection{Oracularization}
 \label{sec:ps-oracularization}
@@ -5135,10 +5298,10 @@ definitional identifications.
 \label{thm:compression-target}
 \uses{lem:introspection-supply,lem:answer-reduction-supply,thm:compression}
 The type \texttt{MIPRE.GapCompression} is inhabited.
-\emph{Open target.} Theorem~\ref{thm:compression} proves the assembly once
-Lemmas~\ref{lem:introspection-supply} and~\ref{lem:answer-reduction-supply} supply
-its two remaining inputs. The proved repetition construction supplies its third
-input. This target records unconditional inhabitation separately from that checked
+\emph{Open target.} Theorem~\ref{thm:compression} proves the assembly.
+Lemma~\ref{lem:introspection-supply} and the proved repetition construction
+supply two of its inputs; Lemma~\ref{lem:answer-reduction-supply} remains open.
+This target records unconditional inhabitation separately from that checked
 conditional theorem.
 \end{theorem}
 
