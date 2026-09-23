@@ -422,6 +422,7 @@ import MIPRE.Background.QLD.Commutation
 import MIPRE.Background.QLD.Complete
 import MIPRE.Background.QLD.Consistency
 import MIPRE.Background.QLD.Dummy
+import MIPRE.Background.QLD.ErrorShape
 import MIPRE.Background.QLD.ExactPauli
 import MIPRE.Background.QLD.Expanded
 import MIPRE.Background.QLD.Game
@@ -448,6 +449,7 @@ import MIPRE.Background.QLD.PauliStagePrograms
 import MIPRE.Background.QLD.Product
 import MIPRE.Background.QLD.Products
 import MIPRE.Background.QLD.Pulling
+import MIPRE.Background.QLD.Regime
 import MIPRE.Background.QLD.SamplerQueryProgram
 import MIPRE.Background.QLD.SeededLinePrograms
 import MIPRE.Background.QLD.SelfCons
@@ -456,6 +458,7 @@ import MIPRE.Background.QLD.Simul
 import MIPRE.Background.QLD.Swap
 import MIPRE.Background.QLD.SwapEndgame
 import MIPRE.Background.QLD.SwapItemOne
+import MIPRE.Background.QLD.SwapItemTwo
 import MIPRE.Background.QLD.SwapMeasure
 import MIPRE.Background.QLD.SwapState
 import MIPRE.Background.QLD.SwapUnitary

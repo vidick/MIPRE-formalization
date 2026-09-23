@@ -1356,6 +1356,31 @@ bits too long is a statement about a different verifier.
 \label{thm:qld}
 \ledgernode{1.2.2, 1.2.2.17}
 \uses{def:qld-game,def:q-value,def:distance,lem:ms-direct-anticomm,thm:lidt-cl-soundness}
+\lean{MIPRE.QLD.errShape, MIPRE.QLD.ErrSmall, MIPRE.QLD.errSum, MIPRE.QLD.errShape_eq,
+  MIPRE.QLD.errSum_nonneg, MIPRE.QLD.one_le_md_real, MIPRE.QLD.one_le_q_real,
+  MIPRE.QLD.errSum_anti, MIPRE.QLD.errSum_le_three, MIPRE.QLD.errSum_rpow_le,
+  MIPRE.QLD.errShape_nonneg, MIPRE.QLD.md_rpow_mono, MIPRE.QLD.one_le_md_rpow,
+  MIPRE.QLD.errSum_le_errShape, MIPRE.QLD.errShape_mono, MIPRE.QLD.errShape_add,
+  MIPRE.QLD.errShape_const_mul, MIPRE.QLD.mdpow_mul_errShape, MIPRE.QLD.errShape_rpow_le,
+  MIPRE.QLD.errShape_mul, MIPRE.QLD.ErrSmall.mono, MIPRE.QLD.ErrSmall.congr,
+  MIPRE.QLD.ErrSmall.nonneg, MIPRE.QLD.ErrSmall.add, MIPRE.QLD.ErrSmall.const_mul,
+  MIPRE.QLD.ErrSmall.div_const, MIPRE.QLD.ErrSmall.mdpow_mul, MIPRE.QLD.ErrSmall.md_mul,
+  MIPRE.QLD.ErrSmall.rpow, MIPRE.QLD.ErrSmall.sqrt, MIPRE.QLD.ErrSmall.mul,
+  MIPRE.QLD.ErrSmall.of_le_errSum, MIPRE.QLD.not_errSmall_one, MIPRE.QLD.errSmall_eps,
+  MIPRE.QLD.errSmall_sqrt_eps, MIPRE.QLD.errSmall_q_rpow_neg, MIPRE.QLD.errSmall_inv_q,
+  MIPRE.QLD.errSmall_two_rpow_neg, MIPRE.QLD.errSmall_md_div_q, MIPRE.QLD.errSmall_const_div_q,
+  MIPRE.QLD.ErrSmall.m_mul_m_mul, MIPRE.QLD.errSmall_deltaQ, MIPRE.QLD.errSmall_kappaPairs,
+  MIPRE.QLD.errSmall_deltaPairsD, MIPRE.QLD.ErrSmall.deltaPairs_comp,
+  MIPRE.QLD.errSmall_deltaGS, MIPRE.QLD.deltaCL_four_mul_le, MIPRE.QLD.ErrSmall.deltaCL_comp,
+  MIPRE.QLD.errSmall_deltaLD, MIPRE.QLD.ErrSmall.deltaS_comp, MIPRE.QLD.errSmall_deltaS,
+  MIPRE.QLD.ErrSmall.deltaSelfCons_comp, MIPRE.QLD.errSmall_deltaSelfCons,
+  MIPRE.QLD.two_sub_two_sqrt_one_sub, MIPRE.QLD.ErrSmall.itemOne_comp,
+  MIPRE.QLD.errSmall_itemOneEta, MIPRE.QLD.errSmall_swapItemOne,
+  MIPRE.QLD.errSmall_swapItemOne_sqrt, MIPRE.QLD.ErrSmall.of_cases,
+  MIPRE.QLD.ErrSmall.of_regime, MIPRE.QLD.errShape_mono_eps,
+  MIPRE.QLD.ErrSmall.exists_le_min_one, MIPRE.QLD.exists_card_eq_two_pow,
+  MIPRE.QLD.exists_eq_two_pow_of_dvd_card, MIPRE.QLD.four_mul_dvd_card,
+  MIPRE.QLD.four_mul_dvd_card_of_regime}
 There exists a function
 \begin{equation*}
   \delta_{qld}(\eps, m, d, q) = a (md)^a \bigl( \eps^b + q^{-b} + 2^{-bmd} \bigr)
@@ -1393,6 +1418,30 @@ proof passes through --- $\kappa$-convexity requires $c_1 \leq 1$, the synchroni
 defect obeys $\delta_{\mathrm{sync}} \leq 4\eps$ rather than $3\eps$, and one corner block
 pairs with a transpose --- none checked here, none affecting the statement above, all
 relevant to whoever writes its proof.
+
+\emph{What is formalized toward it, and why there is no \texttt{leanok} mark.} The theorem is not
+proved; the Lean named above is the arithmetic and parameter bookkeeping its proof needs, landed
+ahead of the assembly. \texttt{MIPRE/Background/QLD/ErrorShape.lean} is the error shape:
+\texttt{ErrSmall} says a family of error terms is dominated by
+$a(md)^a(\eps^b + q^{-b} + 2^{-bmd})$ with $a \geq 1$ and $0 < b < 1$ chosen \emph{before} the
+parameters, on the range $0 \leq \eps \leq 1$, $m, d \geq 1$, $q \geq 2$. The class is closed
+under sums, constant multiples, products, square roots, real powers $t^B$ for $0 < B \leq 1$
+(by subadditivity) and polynomial prefactors in $md$, and every link of the chain the appendix
+produces is in it --- from $\delta_{\mathrm{CL}}$ at $(q, 4m, d)$ through $\delta_{\mathrm{ld}}$,
+$\delta_S$ and the constant of Lemma~\ref{lem:qld-pauli-selfcons} to item~1 of
+Lemma~\ref{lem:qld-swap}, whose bound $2 - 2\sqrt{1 - \eta}$ is at most $2\eta$ for every
+$\eta \geq 0$. \texttt{not\_errSmall\_one} guards the definition: a positive constant is not in
+the class. \texttt{ErrSmall.of\_regime} and \texttt{ErrSmall.of\_cases} are the paper's move of
+taking the trivial bound outside the regime, needed for $48md \leq q$ and for item~1's
+smallness hypothesis. \texttt{MIPRE/Background/QLD/Regime.lean} discharges $4m \mid q$ inside the
+regime; Lemma~\ref{lem:qld-global-setup}'s comments say why the size condition cannot be dropped.
+
+\emph{A property of the shape itself.} Because of the $2^{-bmd}$ term the right-hand side never
+falls below $a \cdot 2^{-bmd}$, so for any bound on $md$ the theorem is satisfied trivially by a
+large enough $a$, the conclusions being about unit vectors and projective measurements. The
+statement has content only as $md$ grows, with $\eps$ small and $q$ large. That is inherent in
+the stated form, not a defect of the formalization, but it is worth knowing when reading the
+constants the proof produces.
 
 
 \subsubsection{The shape of the soundness proof}
@@ -3216,6 +3265,13 @@ soundness for POVM strategies (\texttt{MIPRE.LIDT.CL.clSoundness\_ldc\_one\_delt
 on the twice-extended state the Born rule sees only compressions, so nothing has to be proved
 about the dilation beyond Naimark's theorem. The node's ``$16md > q$'' clause belongs to the
 assembly of Theorem~\ref{thm:qld}, where the trivial bound is used instead of the padded theorem.
+So does the assumption $4m \mid q$, and it is worth saying what discharges it, because the obvious
+reading is false: $m \mid q$ with $q$ a power of two gives only that $m$ is a power of two, and at
+$m = q$ the conclusion fails. What gives $4m \mid q$ is $m \mid q$ together with $4m \leq q$, which
+the regime $48md \leq q$ supplies (\texttt{MIPRE.QLD.four\_mul\_dvd\_card\_of\_regime}); outside
+it the trivial bound is used and the divisibility is never needed. Nor is admissibility what the
+step uses --- the oddness of the degree is for the self-dual basis --- since a finite field of
+characteristic two has power-of-two size already.
 
 \begin{lemma}[All padded subtests succeed]
 \label{lem:qld-global-success}
@@ -4800,7 +4856,29 @@ Lemma~\ref{lem:qld-povm-to-obs} in the state-norm form that step takes.
   MIPRE.QLD.MirrorSimul.aliceWTilde_conjTranspose, MIPRE.QLD.MirrorSimul.aliceWTilde_mul_self,
   MIPRE.QLD.MirrorSimul.bobWTilde_conjTranspose, MIPRE.QLD.MirrorSimul.bobWTilde_mul_self,
   MIPRE.QLD.MirrorSimul.bornProb_wTilde_ge, MIPRE.QLD.MirrorSimul.qform_endState_twirl_ge,
-  MIPRE.QLD.MirrorSimul.exists_aux_close}
+  MIPRE.QLD.MirrorSimul.exists_aux_close,
+  MIPRE.QLD.toMv_coeffTable, MIPRE.QLD.ancPoly, MIPRE.QLD.ancPoly_toMv, MIPRE.QLD.ancPoly_eval,
+  MIPRE.QLD.ancPoly_toMv_ne, MIPRE.QLD.isPVM_conj_unitary, MIPRE.QLD.bnd_one_of_proj,
+  MIPRE.QLD.mulVec_swapVec_aOp, MIPRE.QLD.mulVec_swapVec_bOp, MIPRE.QLD.qform_conj_eq,
+  MIPRE.QLD.unit_of_norm_evec_eq_one, MIPRE.QLD.outerUnVec, MIPRE.QLD.outerVec_outerUnVec,
+  MIPRE.QLD.norm_evec_outerUnVec, MIPRE.QLD.norm_evec_sub_outerUnVec, MIPRE.QLD.mulVec_outerUnVec,
+  MIPRE.QLD.mulVec_outerUnVec_auxVec, MIPRE.QLD.deltaLegs, MIPRE.QLD.deltaItemTwo,
+  MIPRE.QLD.etaItemOne, MIPRE.QLD.MirrorSimul.alicePauli, MIPRE.QLD.MirrorSimul.bobPauli,
+  MIPRE.QLD.MirrorSimul.aliceConjPauli, MIPRE.QLD.MirrorSimul.bobConjPauli,
+  MIPRE.QLD.MirrorSimul.aliceTau, MIPRE.QLD.MirrorSimul.bobTau,
+  MIPRE.QLD.MirrorSimul.aliceSwap_mul_conjTranspose,
+  MIPRE.QLD.MirrorSimul.physSwap_mul_conjTranspose, MIPRE.QLD.MirrorSimul.isPVM_alicePauli,
+  MIPRE.QLD.MirrorSimul.isPVM_aliceConjPauli, MIPRE.QLD.MirrorSimul.isPVM_aliceTau,
+  MIPRE.QLD.MirrorSimul.isPVM_bobTau, MIPRE.QLD.MirrorSimul.sum_aliceConjPauli_fibre,
+  MIPRE.QLD.MirrorSimul.sum_bobTau_fibre, MIPRE.QLD.MirrorSimul.bornProb_physVec_pauli_bobMTilde,
+  MIPRE.QLD.MirrorSimul.sum_bornProb_physVec_ge,
+  MIPRE.QLD.MirrorSimul.sum_bornProb_conj_ge_of_close, MIPRE.QLD.MirrorSimul.sum_bornProb_fibre_ge,
+  MIPRE.QLD.MirrorSimul.sum_snorm_sq_aliceConjPauli_le, MIPRE.QLD.MirrorSimul.physAux,
+  MIPRE.QLD.MirrorSimul.norm_evec_physAux, MIPRE.QLD.MirrorSimul.norm_evec_physSwap_sub_physAux,
+  MIPRE.QLD.MirrorSimul.aliceTau_mulVec_physAux, MIPRE.QLD.MirrorSimul.sum_snorm_sq_alice_le,
+  MIPRE.QLD.MirrorSimul.mirror_physSwap_mulVec, MIPRE.QLD.MirrorSimul.sum_snorm_sq_bob_le,
+  MIPRE.QLD.MirrorSimul.swap_isometry}
+\leanok
 There is $\delta_{qld} = O\bigl( \delta_S^{1/4} + md/q \bigr)$ and local unitaries $V_\alice$,
 $V_\bob$ on the expanded spaces such that, writing $M = 2^m$:
 \begin{enumerate}
@@ -4819,6 +4897,7 @@ not a weaker form of it.
 \end{lemma}
 
 \begin{proof}
+\leanok
 The standard swap-isometry argument for item 1. It is standard \emph{because} the representation is
 exact: an approximate representation would not give a unitary, which is the whole reason
 Lemma~\ref{lem:qld-exact-paulis} is stated with exact relations. Item 2 is not exact and is the
@@ -4828,10 +4907,25 @@ $\delta_{qld}$ comes from, by Lemma~\ref{lem:schwartz-zippel}. Item 1 alone give
 $O(\sqrt{\delta_S})$.
 \end{proof}
 
-\paragraph{Comments.} What is formalized is the whole of item 1 \emph{given its hypothesis} ---
-the self-consistency of Lemma~\ref{lem:qld-pauli-selfcons}, at a uniform $\tilde{u}$ --- and none
-of item 2. The exact pieces are in \texttt{MIPRE/Background/QLD/SwapUnitary.lean} and the
-assembly in \texttt{MIPRE/Background/QLD/SwapState.lean}.
+\paragraph{Comments.} Both items are formalized, relative to one auxiliary state, with nothing
+assumed beyond the game: \texttt{MirrorSimul.swap\_isometry} in
+\texttt{MIPRE/Background/QLD/SwapItemTwo.lean}. The history below is kept because it records where
+the obstacles were. The exact pieces are in \texttt{MIPRE/Background/QLD/SwapUnitary.lean}, item
+1's assembly in \texttt{MIPRE/Background/QLD/SwapState.lean} and
+\texttt{MIPRE/Background/QLD/SwapItemOne.lean}, and item 2's threading in
+\texttt{SwapItemTwo.lean}.
+
+The Lean statement has two constants where the statement above has one: item 1 is bounded by
+\texttt{etaItemOne}, which is $2 - 2\sqrt{1 - \eta}$ with $\eta = 2\sqrt{\delta_S} + 2\delta_S$,
+and item 2 by \texttt{deltaItemTwo} at that bound, which is
+$2\bigl( 11 \delta' + md/q + 2 \sqrt{\texttt{etaItemOne}} \bigr)$, where $\delta'$
+(\texttt{deltaLegs}) bounds each leg of \texttt{eq:qld-unitary-5}. Their maximum is
+$\delta_{qld}$. Item 2's distance is written out, as
+$\sum_h \norm{(V M^{(\pauli,W)}_h V^\dagger - \Id \ot \tau^W_h) \ket{\aux} \ot
+\ket{\EPR_q}^{\ot M}}^2$, rather than through \texttt{stateSqNorm}; the two are the same
+number. That the maximum has the shape Theorem~\ref{thm:qld} asks for is
+\texttt{errSmall\_swapItemOne} and its companions in
+\texttt{MIPRE/Background/QLD/ErrorShape.lean}.
 
 Every operator in the construction has the shape $\sum_p \widehat{S}_p \ot T_p$
 (\texttt{sTensor}), and because $\widehat{S}$ is projective these compose factorwise
@@ -4975,10 +5069,29 @@ to one, so its cross-party deviation and its joint expectation determine each ot
 inequality anywhere
 (\texttt{MirrorSimul.bornProb\_wTilde\_ge}).
 
-\emph{Not formalized}: item 2, the threading of these steps into the statement about
-$V M^{(\pauli,W)}_h V^\dagger$, which is where the registers of the conjugated Pauli measurement
-have to be matched with item 1's --- on \texttt{physVec}, now that there is such a cut. Every step
-it threads is in place. Hence no \texttt{leanok} mark at either level. 
+\emph{And item 2 is threaded.} \texttt{MirrorSimul.sum\_snorm\_sq\_aliceConjPauli\_le} is
+the chain for Alice, on any unit state $\Delta$ that carries the pair on $\alice'' \bob''$ and is
+within $r$ of the swapped physical state. \texttt{eq:qld-unitary-7} makes the deviation twice the
+deficit of an agreement; on $\Delta$, $\tau^W_h$ on $\alice''$ is $\tau^W_h$ on $\bob''$, which
+makes that agreement a bipartite Born probability across the physical cut;
+\texttt{eq:qld-unitary-8} coarse-grains it along $g_h(u)$ at a cost of $md/q$; and
+\texttt{eq:qld-unitary-6} on \emph{Bob's} side turns the coarse honest projector into Bob's
+exact Pauli measurement conjugated by his swap unitary (\texttt{bobSwap\_conj\_bobMTilde}).
+The transport across item 1 (\texttt{sum\_bornProb\_conj\_ge\_of\_close}) moves the
+conjugation onto the state, where it undoes the swap, and costs $2r$; with $r$ the square root of
+item 1's bound this is where $\delta_S^{1/4}$ enters. The last step is
+\texttt{eq:qld-unitary-5} at the \emph{mirror} instance (\texttt{sum\_bornProb\_physVec\_ge}):
+Bob's exact Pauli measurement against Alice's $(\pauli, W)$ reading is the second cut's
+$\tilde{M}$ against the swapped strategy's Pauli reading. \texttt{sum\_snorm\_sq\_alice\_le}
+applies the chain at $\Delta = \ket{\aux} \ot \ket{\EPR_q}^{\ot M}$ read on the physical cut
+(\texttt{physAux}, through \texttt{outerUnVec}, the inverse of \texttt{outerVec}), for any
+$\ket{\aux}$ close to the swapped state. \texttt{sum\_snorm\_sq\_bob\_le} is Alice's at the
+mirror, relative to the \emph{same} $\ket{\aux}$: the mirror's product state and its swapped
+physical state are this one's with the parties exchanged (\texttt{mirror\_physSwap\_mulVec}), so
+no second auxiliary state is needed. One point of encoding: the Schwartz--Zippel packaging reads
+its index through coefficient tables of bounded individual degree, and \texttt{ancPoly} is the
+table of $\coded(h)$, faithful because the encoding is multilinear and $d \geq 1$
+(\texttt{toMv\_coeffTable}). 
 
 \emph{And \texttt{eq:qld-unitary-5}.} It needed no new estimate: its engine is the paper's
 \texttt{fact:triangle-for-simeq}, already in Foundations as \texttt{agreeSum\_triangle} (with

@@ -31,6 +31,7 @@ import MIPRE.Background.QLD.PauliRowPrograms
 import MIPRE.Background.QLD.PauliFactorPrograms
 import MIPRE.Background.QLD.SamplerQueryProgram
 import MIPRE.Background.QLD.CLExplicitTransport
+import MIPRE.Background.QLD.SwapItemTwo
 
 /-!
 # Axiom audit for the Pauli basis test's orthonormalization step
@@ -1250,3 +1251,68 @@ latter as a closeness of two measurements `MIPRE/Background/QLD/MTilde.lean`. -/
   MIPRE.QLD.SimulPair.wTildeAt, MIPRE.QLD.SimulPair.wTildeAt_conjTranspose,
   MIPRE.QLD.SimulPair.wTildeAt_mul_self, MIPRE.QLD.SimulPair.wTildeAt_mul_add,
   MIPRE.QLD.SimulPair.wTildeAt_mul_wTildeAt
+
+/-! `lem:qld-swap`: the swap isometry, both items relative to one auxiliary state. The exact
+pieces are `MIPRE/Background/QLD/SwapUnitary.lean`, item 1
+`MIPRE/Background/QLD/{SwapState,SwapItemOne}.lean`, the endgame's steps
+`MIPRE/Background/QLD/{SwapMeasure,SwapEndgame}.lean`, and item 2's threading and the joint
+statement `MIPRE/Background/QLD/SwapItemTwo.lean`. -/
+#guard_sorry_free MIPRE.QLD.sTensor, MIPRE.QLD.sTensor_mul, MIPRE.QLD.sTensor_one,
+  MIPRE.QLD.sTensor_conjTranspose, MIPRE.QLD.wTilde_eq_sTensor, MIPRE.QLD.uOf, MIPRE.QLD.swapU,
+  MIPRE.QLD.uOf_conjTranspose, MIPRE.QLD.uOf_mul_conjTranspose, MIPRE.QLD.uOf_conjTranspose_mul,
+  MIPRE.QLD.swapU_mul_conjTranspose, MIPRE.QLD.swapU_conjTranspose_mul, MIPRE.QLD.uOf_conj_wX,
+  MIPRE.QLD.uOf_conj_wZ, MIPRE.QLD.swapU_conj_of_sign, MIPRE.QLD.swapU_conj_wTilde_X,
+  MIPRE.QLD.swapU_conj_wTilde_Z, MIPRE.QLD.eprProj, MIPRE.QLD.eprProj_apply, MIPRE.QLD.twirl,
+  MIPRE.QLD.wX_mul_wZ_apply, MIPRE.QLD.twirl_mul_twirl_eq_sum, MIPRE.QLD.twirl_mul_twirl,
+  MIPRE.QLD.norm_sub_sq_le_of_re_inner_ge, MIPRE.QLD.re_inner_ge_of_two_close,
+  MIPRE.QLD.norm_sub_normalize_sq_le, MIPRE.QLD.snorm_sum_le, MIPRE.QLD.kron_self_isometry,
+  MIPRE.QLD.twirl_conjTranspose, MIPRE.QLD.snorm_twirl_le, MIPRE.QLD.twirl_mul_self,
+  MIPRE.QLD.conj_epr, MIPRE.QLD.star_epr, MIPRE.QLD.eprProj_conjTranspose, MIPRE.QLD.epr_dotProduct,
+  MIPRE.QLD.eprProj_mul_self, MIPRE.QLD.auxVec, MIPRE.QLD.bOp_eprProj_mulVec,
+  MIPRE.QLD.exists_auxVec_close, MIPRE.QLD.conj_proj_of_sign, MIPRE.QLD.conj_syn_of_sign,
+  MIPRE.QLD.swapU_conj_mTilde, MIPRE.QLD.swapU_conj_mTilde_X, MIPRE.QLD.swapU_conj_mTilde_Z,
+  MIPRE.QLD.sum_snorm_sq_sub_eq_two_sub, MIPRE.QLD.sum_uniform_agree_bornProb_le,
+  MIPRE.QLD.SimulPair.swapA, MIPRE.QLD.SimulPair.swapU_conj_mTildeAt,
+  MIPRE.QLD.inconsistency_triangle, MIPRE.QLD.inconsistency_regroupVec, MIPRE.QLD.pauliAtPOVM,
+  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le, MIPRE.QLD.abs_qform_sub_qform_le,
+  MIPRE.QLD.SimulPair.bornProb_padded, MIPRE.QLD.SimulPair.inconsistency_padded,
+  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le', MIPRE.QLD.inconsistency_eq_half_xPovmDist,
+  MIPRE.QLD.inconsistency_pt_pt_le, MIPRE.QLD.inconsistency_pt_pauli_le,
+  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le_of_win, MIPRE.QLD.bOp_mulVec_auxVec,
+  MIPRE.QLD.mulVec_auxVec_congr, MIPRE.QLD.mulVec_auxVec_proj, MIPRE.QLD.mulVec_auxVec_syn,
+  MIPRE.QLD.sum_snorm_sq_sub_le_of_agree, MIPRE.QLD.sum_uniform_bornProb_fibre_le,
+  MIPRE.QLD.endEquiv, MIPRE.QLD.endVec, MIPRE.QLD.endVec_unit, MIPRE.QLD.reindex_endEquiv,
+  MIPRE.QLD.qform_endVec, MIPRE.QLD.qform_bOp_twirl, MIPRE.QLD.outerPairEquiv, MIPRE.QLD.outerVec,
+  MIPRE.QLD.outerVec_unit, MIPRE.QLD.reindex_outerPairEquiv, MIPRE.QLD.qform_outerVec,
+  MIPRE.QLD.SimulPair.swapA_conj_wTildeAt, MIPRE.QLD.SimulPair.swapA_conj_wTildeAt_one,
+  MIPRE.QLD.conj_inv_of_unitary, MIPRE.QLD.MirrorSimul.aliceSwap,
+  MIPRE.QLD.MirrorSimul.aliceSwap_conjTranspose_mul,
+  MIPRE.QLD.MirrorSimul.aliceSwap_conj_aliceWTilde, MIPRE.QLD.MirrorSimul.bobSwap_conj_bobWTilde,
+  MIPRE.QLD.MirrorSimul.physSwap, MIPRE.QLD.MirrorSimul.physSwap_conjTranspose_mul,
+  MIPRE.QLD.MirrorSimul.endState, MIPRE.QLD.MirrorSimul.endState_unit,
+  MIPRE.QLD.MirrorSimul.qform_endState_weyl, MIPRE.QLD.deltaSelfCons,
+  MIPRE.QLD.deltaSelfCons_nonneg, MIPRE.QLD.MirrorSimul.aliceWTilde_conjTranspose,
+  MIPRE.QLD.MirrorSimul.aliceWTilde_mul_self, MIPRE.QLD.MirrorSimul.bobWTilde_conjTranspose,
+  MIPRE.QLD.MirrorSimul.bobWTilde_mul_self, MIPRE.QLD.MirrorSimul.bornProb_wTilde_ge,
+  MIPRE.QLD.MirrorSimul.qform_endState_twirl_ge, MIPRE.QLD.MirrorSimul.exists_aux_close,
+  MIPRE.QLD.toMv_coeffTable, MIPRE.QLD.ancPoly, MIPRE.QLD.ancPoly_toMv, MIPRE.QLD.ancPoly_eval,
+  MIPRE.QLD.ancPoly_toMv_ne, MIPRE.QLD.isPVM_conj_unitary, MIPRE.QLD.bnd_one_of_proj,
+  MIPRE.QLD.mulVec_swapVec_aOp, MIPRE.QLD.mulVec_swapVec_bOp, MIPRE.QLD.qform_conj_eq,
+  MIPRE.QLD.unit_of_norm_evec_eq_one, MIPRE.QLD.outerUnVec, MIPRE.QLD.outerVec_outerUnVec,
+  MIPRE.QLD.norm_evec_outerUnVec, MIPRE.QLD.norm_evec_sub_outerUnVec, MIPRE.QLD.mulVec_outerUnVec,
+  MIPRE.QLD.mulVec_outerUnVec_auxVec, MIPRE.QLD.deltaLegs, MIPRE.QLD.deltaItemTwo,
+  MIPRE.QLD.etaItemOne, MIPRE.QLD.MirrorSimul.alicePauli, MIPRE.QLD.MirrorSimul.bobPauli,
+  MIPRE.QLD.MirrorSimul.aliceConjPauli, MIPRE.QLD.MirrorSimul.bobConjPauli,
+  MIPRE.QLD.MirrorSimul.aliceTau, MIPRE.QLD.MirrorSimul.bobTau,
+  MIPRE.QLD.MirrorSimul.aliceSwap_mul_conjTranspose,
+  MIPRE.QLD.MirrorSimul.physSwap_mul_conjTranspose, MIPRE.QLD.MirrorSimul.isPVM_alicePauli,
+  MIPRE.QLD.MirrorSimul.isPVM_aliceConjPauli, MIPRE.QLD.MirrorSimul.isPVM_aliceTau,
+  MIPRE.QLD.MirrorSimul.isPVM_bobTau, MIPRE.QLD.MirrorSimul.sum_aliceConjPauli_fibre,
+  MIPRE.QLD.MirrorSimul.sum_bobTau_fibre, MIPRE.QLD.MirrorSimul.bornProb_physVec_pauli_bobMTilde,
+  MIPRE.QLD.MirrorSimul.sum_bornProb_physVec_ge,
+  MIPRE.QLD.MirrorSimul.sum_bornProb_conj_ge_of_close, MIPRE.QLD.MirrorSimul.sum_bornProb_fibre_ge,
+  MIPRE.QLD.MirrorSimul.sum_snorm_sq_aliceConjPauli_le, MIPRE.QLD.MirrorSimul.physAux,
+  MIPRE.QLD.MirrorSimul.norm_evec_physAux, MIPRE.QLD.MirrorSimul.norm_evec_physSwap_sub_physAux,
+  MIPRE.QLD.MirrorSimul.aliceTau_mulVec_physAux, MIPRE.QLD.MirrorSimul.sum_snorm_sq_alice_le,
+  MIPRE.QLD.MirrorSimul.mirror_physSwap_mulVec, MIPRE.QLD.MirrorSimul.sum_snorm_sq_bob_le,
+  MIPRE.QLD.MirrorSimul.swap_isometry

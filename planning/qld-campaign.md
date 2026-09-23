@@ -2894,3 +2894,70 @@ before `rw` would find it. The rule that keeps working: **name the object once, 
 spelling, in a `def` whose declared result type pins it from the outside.**
 
 Left: item 2 of `lem:qld-swap` — the threading into `V M^{(Pauli,W)}_h V†` — and `thm:qld`.
+
+### Finishing `thm:qld`: the last four pull requests (2026-09-23)
+
+The previous agent stopped after PR AK with two things left: item 2 of `lem:qld-swap` and
+`thm:qld` itself. Everything from the game down to item 1 is unconditional --- `exists_mirrorSimul`
+builds the two-cut interface from the game's own hypotheses, and `MirrorSimul.exists_aux_close` is
+item 1 with nothing assumed. `lake build` is green at `a176a91` (9884 jobs) and there is no `sorry`
+anywhere under `MIPRE/Background/QLD/`. The plan, agreed with the maintainer:
+
+1. **Item 2's threading** (`MIPRE/Background/QLD/SwapItemTwo.lean`). No new estimate: every display
+   is in. For Alice, the chain is `eq:qld-unitary-7` (`sum_snorm_sq_sub_le_of_agree`, both families
+   projective, on the product state), then `mulVec_auxVec_syn`/`_proj` to move `tau^W` from `A''`
+   to `B''`, then `eq:qld-unitary-8` (`sum_uniform_bornProb_fibre_le`, the `md/q`), then
+   `eq:qld-unitary-6` on **Bob's** side (`bobSwap_conj_bobMTilde`) to turn the syndrome projector
+   back into Bob's exact Pauli measurement, then the transport from the product state to
+   `endState` across item 1 (`abs_qform_sub_qform_le`, where `delta_S^{1/4}` comes from), then
+   `eq:qld-unitary-5` at the **mirror** instance (`M.toSecond.inconsistency_mTilde_pauli_le_of_win`:
+   Bob's `M~` against Alice's `(Pauli, W)` reading), carried to the physical state by
+   `physVec_mirror`. Bob's half is Alice's at `M.mirror`. Stated for an arbitrary `aux` close to
+   `endState`, then combined with `exists_aux_close` into the joint `lem:qld-swap`. Closes
+   `lem:qld-swap` at proof level.
+2. **The error shape** (`MIPRE/Background/QLD/ErrorShape.lean`). A closure calculus for the
+   target form `a (md)^a (eps^b + q^{-b} + 2^{-bmd})`: sums, constant multiples, square roots and
+   real powers `t^B` (`0 < B <= 1`, by subadditivity), monotonicity, and the base cases `eps`,
+   `sqrt eps`, `md/q`, `1/q`, `m^2`, `deltaCL`. Then every link of the existing chain ---
+   `deltaQ`, `kappaPairs`, `deltaPairsD`, `deltaPairs`, `deltaGS`, `deltaLD`, `deltaS`,
+   `deltaSelfCons`, and item 1's `2 - 2 sqrt(1 - eta)` (which is `<= 2 eta` for every `eta >= 0`)
+   --- is in the class. Independent of item 1, so it runs in parallel with it; item 2's own bound
+   is built from the same operations and joins the class in PR 4 by the same combinators.
+3. **The regime and admissibility.** Discharge `48 m d <= q` by enlarging the constant and taking
+   the trivial bound outside it (the paper's move); derive `4m | q` from `def:admissible` (`q =
+   2^k`, `m | q`), which the paper asserts in a `\cnote` and `lem:qld-global-setup` presents as a
+   hypothesis --- finding D of `reports/qld-stage5-blueprint-repairs.md`. Repairs that statement.
+4. **`thm:qld`.** Legalization (free: `one_sub_povmValue_legalizeStrat_le`,
+   `rdPauli_legalize_pauli`); a **Naimark descent** for general POVM strategies
+   (`exists_projective_dilation` + `extVec2`, `Anticomm.lean` the precedent), decided with the
+   maintainer over stating the theorem for projective strategies only, because `thm:qld` is about
+   to be consumed by answer reduction and a narrowed statement is the kind of thing a consumer
+   refutes three pull requests later; the `V -> phi` composition with the expansion and padding
+   embeddings (`ancillaEmbed_isometry`, `emb_isometry`); and the theorem. Closes ledger nodes
+   `1.2.2` and `1.2.2.17`.
+
+This session is pinned to one branch, so 1 and 2 land as one pull request with two separate
+commits, each self-contained.
+
+**Status, 2026-09-23 (end of day).** 1, 2 and 3 are in, as separate commits on one branch.
+
+* **1.** `MirrorSimul.swap_isometry` (`SwapItemTwo.lean`) is `lem:qld-swap`, both items, relative
+  to one auxiliary state; proof-level `\leanok` with guards for all 145 names. Two things the
+  plan did not anticipate. Bob's half needed no second auxiliary state: the mirror's product
+  state and its swapped physical state are this one's under `swapVec`
+  (`mirror_physSwap_mulVec`), so Bob's item 2 is Alice's at `M.mirror` relative to the *same*
+  `aux`. And the Schwartz--Zippel packaging reads its index through coefficient tables, so the
+  encoding needed a table of its own (`ancPoly`, faithful by `toMv_coeffTable` because the
+  encoding is multilinear and `1 <= d`). Item 1 is bounded by `etaItemOne`, item 2 by
+  `deltaItemTwo _ etaItemOne`; the statement's single `delta_qld` is their maximum.
+* **2.** `ErrorShape.lean`: `errShape`, the closure class `ErrSmall` (constants chosen before
+  the parameters), and the chain `deltaQ` ... `deltaSelfCons` and item 1's bound in the class.
+  `ErrSmall` is trivially satisfiable when `md` is bounded, because of the `2^{-bmd}` term;
+  that is a property of the paper's shape and is recorded under `thm:qld`.
+* **3.** `Regime.lean`: `4m | q` follows from `m | q`, `q = 2^n` and `48md <= q`, **not** from
+  admissibility alone (`m = q` is admissible and `4q` does not divide `q`); finding D is
+  resolved in that sense. `ErrSmall.of_regime` and `ErrSmall.of_cases` are the "enlarge the
+  constant and take the trivial bound outside the regime" move, stated once.
+
+Left for 4: `ErrSmall` for `deltaItemTwo _ etaItemOne` (the same combinators), legalization,
+the Naimark descent, the `V -> phi` composition, and the theorem.
