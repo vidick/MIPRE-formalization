@@ -497,7 +497,8 @@ theorem valAt_rmap (hd : 1 ≤ d) (hK : 1 ≤ K) (σ : Fin (Fintype.card F / m))
       | apolys g =>
         have hx0 : xr hr (xOf (Pi.single (chi hM s) (1 : F) : Point F (K + m))) = 0 := by
           rw [xOf_single_of_le h]; rfl
-        refine valAt_line_aux hr (D := d) ?_ hu (fun y => valAt hm _ y _) fun t => eval_lineAns_eq hr fun k' => ?_
+        refine valAt_line_aux hr (D := d) ?_ hu (fun y => valAt hm _ y _)
+          fun t => eval_lineAns_eq hr fun k' => ?_
         · rw [lineAns, hx0]
           exact natDegree_affPoly_le_of_zero fun k' => natDegree_toPoly_le _
         · simp only [polysOf, eval_toPoly, valAt, CL.Question.base, CL.Question.dir, hchi]
@@ -510,7 +511,8 @@ theorem valAt_rmap (hd : 1 ≤ d) (hK : 1 ≤ K) (σ : Fin (Fintype.card F / m))
       rw [hq] at hf ⊢
       cases a with
       | values b =>
-        refine valAt_line_aux hr (D := d) ?_ hu (fun y => valAt hm _ y _) fun t => eval_lineAns_eq hr fun k' => ?_
+        refine valAt_line_aux hr (D := d) ?_ hu (fun y => valAt hm _ y _)
+          fun t => eval_lineAns_eq hr fun k' => ?_
         · exact (natDegree_affPoly_le (natDegree_polysOf_values b)).trans hd
         · simp [polysOf, valAt]
       | apolys g => simp [CL.Question.fmtOk] at hf
