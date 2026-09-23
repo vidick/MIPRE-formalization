@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 import MIPRE.Background.AnswerReduction.SoundExtract
+import MIPRE.Foundations.Cost.Growth
 
 /-!
 # Soundness of answer reduction: the error assembly
@@ -206,6 +207,170 @@ theorem errE_le {q m m' Q : ℕ} (hm : 1 ≤ m) (hmm : m ≤ m') (hQm : Q ≤ m)
     linarith
   unfold errE
   linear_combination 11 * e6 + 11 * e1 + 32076 * hθb + 32076 * hKP + hSZ + hsmall
+
+/-! ## The threshold -/
+
+/-- **Past a threshold, `2^{clB Q}` beats every polynomial in `Q`**, and `Q ≥ 8064`. -/
+theorem exists_threshold_clB (c p : ℕ) : ∃ Q0 : ℕ, ∀ Q : ℕ, Q0 ≤ Q →
+    8064 ≤ Q ∧ 177408 * c * (Q : ℝ) ^ (p + 1) ≤ (2 : ℝ) ^ (clB * Q) := by
+  set A' := 177408 * c * 80000 ^ (p + 1) with hA'
+  refine ⟨40000 * (A' * (p + 2) ^ (p + 2) + 1) + 8064, fun Q hQ => ⟨by omega, ?_⟩⟩
+  set s := Q / 40000 with hs
+  have hs1 : A' * (p + 2) ^ (p + 2) + 1 ≤ s := by
+    rw [hs, Nat.le_div_iff_mul_le (by norm_num)]
+    omega
+  have hQs : Q ≤ 80000 * s := by
+    have := Nat.lt_mul_div_succ Q (show 0 < 40000 by norm_num)
+    rw [← hs] at this
+    omega
+  have hnat : 177408 * c * Q ^ (p + 1) ≤ 2 ^ s := by
+    have h1 : Q ^ (p + 1) ≤ 80000 ^ (p + 1) * s ^ (p + 1) := by
+      rw [← mul_pow]; exact Nat.pow_le_pow_left hQs _
+    have h2 := Cost.mul_pow_le_two_pow A' (p + 1) s (by
+      show A' * (p + 2) ^ (p + 2) ≤ s
+      omega)
+    calc 177408 * c * Q ^ (p + 1) ≤ 177408 * c * (80000 ^ (p + 1) * s ^ (p + 1)) :=
+          Nat.mul_le_mul_left _ h1
+      _ = A' * s ^ (p + 1) := by rw [hA']; ring
+      _ ≤ 2 ^ s := h2
+  have hreal : 177408 * c * (Q : ℝ) ^ (p + 1) ≤ (2 : ℝ) ^ (s : ℝ) := by
+    rw [Real.rpow_natCast]; exact_mod_cast hnat
+  refine hreal.trans (Real.rpow_le_rpow_of_exponent_le (by norm_num) ?_)
+  have h40 : 40000 * s ≤ Q := by rw [hs]; exact Nat.mul_div_le Q 40000
+  have : (40000 : ℝ) * s ≤ Q := by exact_mod_cast h40
+  rw [clB]
+  linarith
+
+/-! ## The soundness loss -/
+
+/-- **The exponent `a` of the soundness loss**, from the constants `c, p` of the polynomial bound
+`Z^{3A} ≤ c Q^p σ^p` and the detyping factor `K`. -/
+def aOf (c p K : ℕ) : ℕ := 4032 * 39204 * K * c + 2 * p + 1
+
+theorem one_le_aOf (c p K : ℕ) : 1 ≤ aOf c p K := by unfold aOf; omega
+
+/-- **The error is below the soundness loss**: with `N = λn`, `Q` between `N^μ` and `N^{2μ}` and
+past the threshold, the bound of `errE_le` gives `24 √(7 e) ≤ σ^a (N^{μa} ε^{clB/2} +
+N^{-μ clB/2})`. -/
+theorem sqrt_le_delta {N μ σ Q c p K : ℕ} (hN : 2 ≤ N) (hμ : 1 ≤ μ) (hσ : 1 ≤ σ)
+    (hQN : Q ≤ N ^ (2 * μ)) (hNQ : N ^ μ ≤ Q) (hQ8 : 8064 ≤ Q)
+    (hc : 177408 * c * (Q : ℝ) ^ (p + 1) ≤ (2 : ℝ) ^ (clB * Q)) {G e ε : ℝ}
+    (hG : G ≤ c * (Q : ℝ) ^ p * (σ : ℝ) ^ p) (hε0 : 0 ≤ ε)
+    (he : e ≤ 39204 * K * G * ε ^ clB + 1 / ((Q : ℝ) + 1) ^ 2
+      + 22 * G * (2 : ℝ) ^ (-(clB * Q))) :
+    24 * √(7 * e) ≤ (σ : ℝ) ^ (aOf c p K : ℝ) *
+      ((N : ℝ) ^ ((μ : ℝ) * aOf c p K) * ε ^ (clB / 2) + (N : ℝ) ^ (-((μ : ℝ) * (clB / 2)))) := by
+  set a := aOf c p K with ha
+  set D := 4032 * 39204 * K * c with hD
+  have hN1 : (1 : ℝ) ≤ N := by exact_mod_cast (by omega : 1 ≤ N)
+  have hσ1 : (1 : ℝ) ≤ σ := by exact_mod_cast hσ
+  have hQpos : (0 : ℝ) < Q := by exact_mod_cast (by omega : 0 < Q)
+  have hS : (σ : ℝ) ^ (a : ℝ) = (σ : ℝ) ^ a := Real.rpow_natCast _ _
+  have hM : (N : ℝ) ^ ((μ : ℝ) * a) = (N : ℝ) ^ (μ * a) := by
+    rw [← Real.rpow_natCast]; push_cast; rfl
+  rw [hS, hM]
+  set S := (σ : ℝ) ^ a with hSdef
+  set M := (N : ℝ) ^ (μ * a) with hMdef
+  set w := ε ^ (clB / 2) with hwdef
+  set v := (N : ℝ) ^ (-((μ : ℝ) * (clB / 2))) with hvdef
+  have hw2 : w ^ 2 = ε ^ clB := by
+    rw [hwdef, ← Real.rpow_natCast, ← Real.rpow_mul hε0]; norm_num
+  have hv2 : v ^ 2 = (N : ℝ) ^ (-((μ : ℝ) * clB)) := by
+    rw [hvdef, ← Real.rpow_natCast, ← Real.rpow_mul (by positivity)]; congr 1; push_cast; ring
+  have hS1 : 1 ≤ S := one_le_pow₀ hσ1
+  have hw0 : 0 ≤ w := Real.rpow_nonneg hε0 _
+  have hv0 : 0 ≤ v := Real.rpow_nonneg (by positivity) _
+  have hM0 : 0 ≤ M := by positivity
+  have hεb : 0 ≤ ε ^ clB := Real.rpow_nonneg hε0 _
+  -- `v² ≥ 1/Q`
+  have hvQ : 1 / (Q : ℝ) ≤ v ^ 2 := by
+    rw [hv2, Real.rpow_neg (by positivity), one_div]
+    refine inv_anti₀ (by positivity) ?_
+    have hμ1 : (1 : ℝ) ≤ μ := by exact_mod_cast hμ
+    have h1 : (N : ℝ) ^ ((μ : ℝ) * clB) ≤ (N : ℝ) ^ (μ : ℝ) :=
+      Real.rpow_le_rpow_of_exponent_le hN1
+        (mul_le_of_le_one_right (by positivity) clB_lt_one.le)
+    rw [Real.rpow_natCast] at h1
+    exact h1.trans (by exact_mod_cast hNQ)
+  -- the polynomial part, in `ℕ`
+  have h3 : σ ^ p ≤ (σ ^ a) ^ 2 := by
+    rw [← pow_mul]; exact Nat.pow_le_pow_right hσ (by rw [ha, aOf]; omega)
+  have hnat : D * Q ^ p * σ ^ p ≤ (N ^ (μ * a)) ^ 2 * (σ ^ a) ^ 2 := by
+    have h1 : D ≤ N ^ (μ * D) := Nat.lt_two_pow_self.le.trans
+      ((Nat.pow_le_pow_left hN _).trans (Nat.pow_le_pow_right (by omega)
+        (Nat.le_mul_of_pos_left _ hμ)))
+    have h2 : Q ^ p ≤ N ^ (2 * μ * p) := by rw [pow_mul]; exact Nat.pow_le_pow_left hQN _
+    have h4 : N ^ (μ * D) * N ^ (2 * μ * p) ≤ (N ^ (μ * a)) ^ 2 := by
+      rw [← pow_add, ← pow_mul]
+      refine Nat.pow_le_pow_right (by omega) ?_
+      have : μ * (D + 2 * p + 1) * 2 = μ * D + 2 * μ * p + (μ * D + 2 * μ * p + 2 * μ) := by
+        ring
+      rw [ha, aOf, ← hD, this]
+      omega
+    calc D * Q ^ p * σ ^ p ≤ N ^ (μ * D) * N ^ (2 * μ * p) * (σ ^ a) ^ 2 :=
+          Nat.mul_le_mul (Nat.mul_le_mul h1 h2) h3
+      _ ≤ (N ^ (μ * a)) ^ 2 * (σ ^ a) ^ 2 := Nat.mul_le_mul_right _ h4
+  have hreal : (D : ℝ) * (Q : ℝ) ^ p * (σ : ℝ) ^ p ≤ M ^ 2 * S ^ 2 := by
+    rw [hMdef, hSdef]; exact_mod_cast hnat
+  have h3r : (σ : ℝ) ^ p ≤ S ^ 2 := by rw [hSdef]; exact_mod_cast h3
+  -- (i) the main term
+  have hi : 4032 * (39204 * K * G * ε ^ clB) ≤ S ^ 2 * M ^ 2 * ε ^ clB := by
+    have hK : (0 : ℝ) ≤ 4032 * 39204 * K := by positivity
+    have h1 : 4032 * 39204 * (K : ℝ) * G ≤ 4032 * 39204 * K * (c * (Q : ℝ) ^ p * (σ : ℝ) ^ p) :=
+      mul_le_mul_of_nonneg_left hG hK
+    have h2 : 4032 * 39204 * (K : ℝ) * (c * (Q : ℝ) ^ p * (σ : ℝ) ^ p)
+        = (D : ℝ) * (Q : ℝ) ^ p * (σ : ℝ) ^ p := by rw [hD]; push_cast; ring
+    have h5 : 4032 * 39204 * (K : ℝ) * G ≤ S ^ 2 * M ^ 2 := by linarith
+    have := mul_le_mul_of_nonneg_right h5 hεb
+    linear_combination this
+  -- (ii) the field terms
+  have hii : 4032 * (1 / ((Q : ℝ) + 1) ^ 2) ≤ 1 / 2 * (1 / (Q : ℝ)) := by
+    have hQ8r : (8064 : ℝ) ≤ Q := by exact_mod_cast hQ8
+    rw [mul_one_div, mul_one_div, div_le_div_iff₀ (by positivity) (by positivity)]
+    nlinarith [hQ8r]
+  -- (iii) the exponential term
+  have hiii : 4032 * (22 * G * (2 : ℝ) ^ (-(clB * Q))) ≤ 1 / 2 * (1 / (Q : ℝ)) * S ^ 2 := by
+    set T2 := (2 : ℝ) ^ (clB * Q) with hT2
+    have hT2pos : 0 < T2 := by positivity
+    rw [Real.rpow_neg (by norm_num), ← hT2]
+    have hG' : G * T2⁻¹ ≤ c * (Q : ℝ) ^ p * (σ : ℝ) ^ p * T2⁻¹ :=
+      mul_le_mul_of_nonneg_right hG (by positivity)
+    have hkey : 177408 * c * (Q : ℝ) ^ (p + 1) * (σ : ℝ) ^ p ≤ T2 * S ^ 2 :=
+      mul_le_mul hc h3r (by positivity) hT2pos.le
+    have hgoal : 4032 * (22 * (c * (Q : ℝ) ^ p * (σ : ℝ) ^ p * T2⁻¹))
+        ≤ 1 / 2 * (1 / (Q : ℝ)) * S ^ 2 := by
+      have e1 : 4032 * (22 * (c * (Q : ℝ) ^ p * (σ : ℝ) ^ p * T2⁻¹))
+          = 177408 * c * (Q : ℝ) ^ (p + 1) * (σ : ℝ) ^ p / (2 * Q * T2) := by
+        field_simp; ring
+      rw [e1, div_le_iff₀ (by positivity)]
+      have e2 : 1 / 2 * (1 / (Q : ℝ)) * S ^ 2 * (2 * Q * T2) = T2 * S ^ 2 := by
+        field_simp
+      rw [e2]
+      exact hkey
+    have : 4032 * (22 * G * T2⁻¹) ≤ 4032 * (22 * (c * (Q : ℝ) ^ p * (σ : ℝ) ^ p * T2⁻¹)) := by
+      linear_combination (4032 * 22 : ℝ) * hG'
+    exact this.trans hgoal
+  -- assembling
+  have htot : 4032 * e ≤ (S * (M * w + v)) ^ 2 := by
+    have h1 : 4032 * e ≤ S ^ 2 * M ^ 2 * ε ^ clB + S ^ 2 * v ^ 2 := by
+      have hvQ' : 1 / 2 * (1 / (Q : ℝ)) * S ^ 2 ≤ 1 / 2 * v ^ 2 * S ^ 2 := by
+        have := mul_le_mul_of_nonneg_right hvQ (by positivity : (0 : ℝ) ≤ 1 / 2 * S ^ 2)
+        linear_combination this
+      have hS2 : 1 / 2 * (1 / (Q : ℝ)) ≤ 1 / 2 * (1 / (Q : ℝ)) * S ^ 2 :=
+        le_mul_of_one_le_right (by positivity) (one_le_pow₀ hS1)
+      linear_combination 4032 * he + hi + hii + hiii + hS2 + 2 * hvQ'
+    have h2 : S ^ 2 * M ^ 2 * ε ^ clB + S ^ 2 * v ^ 2 ≤ (S * (M * w + v)) ^ 2 := by
+      rw [← hw2]
+      have : 0 ≤ S ^ 2 * (2 * M * w * v) := by positivity
+      linear_combination this
+    linarith
+  have hsq : 24 * √(7 * e) = √(4032 * e) := by
+    rw [show (4032 : ℝ) * e = 24 ^ 2 * (7 * e) by ring]
+    conv_rhs => rw [Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 24 ^ 2),
+      Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 24)]
+  rw [hsq]
+  calc √(4032 * e) ≤ √((S * (M * w + v)) ^ 2) := Real.sqrt_le_sqrt htot
+    _ = S * (M * w + v) := Real.sqrt_sq (by positivity)
 
 end MIPRE.AnswerReduction
 
