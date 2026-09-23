@@ -7,8 +7,9 @@ the precedent `planning/repetition-verifier.md` — and before any verifier-leve
 analogue of that file for this item: what exists, what the target is, and the pieces in order.
 Tracked by issue #189.
 
-**Done:** O1 (#190, `Foundations/OracularTensor.lean`), O2 (#191, `Foundations/OracularTyped.lean`)
-and O3 (`Foundations/OracularSampler.lean`).
+**Done:** O1 (#190, `Foundations/OracularTensor.lean`), O2 (#191, `Foundations/OracularTyped.lean`),
+O3 (#192, `Foundations/OracularSampler.lean`) and the acceptance law of O4
+(`Foundations/OracularDecider.lean`); O4's running time is next.
 The rest of this file is the plan as written before the work; what changed on the way is recorded
 in the entries below.
 
@@ -134,6 +135,38 @@ otherwise, failures rejected), `L^𝖠 z` and `L^𝖡 z` by marginal queries at 
 decider on sanitized copies (the repetition precedent: its cost then needs no factor in `B`), and
 the checks of `fig:oracle-decider`. Its acceptance law is O2's predicate; its time bound
 `poly(TIME_S, B)` times the input decider's (`lem:oracle-effective-interface`, decider half).
+
+*As done, the acceptance law:* `lem:oracle-typed-decider`. What changed on the way:
+
+* **Totality needs a clock.** The input decider need not halt on the inputs it rejects, and the
+  detyping compiler needs a total typed decider. The paper gets both from the timeout-counter
+  form, which bounds the input decider's running time by `B_𝒟(n)` read off its description; the
+  ambient model has no such form. So the timeout is made explicit: an *index routine*
+  (`OracleDecider.Index`) supplies at index `n` a parse cut `B n` and a simulation budget `K n`,
+  and the decider (`oracleDecider`) runs an unclocked core under the clocked universal machine for
+  `K n` steps. It halts on every input whatever the input programs do (`oracleDecider_total`).
+* **The acceptance law is one-sided without a time bound.** The core accepts exactly what
+  `oraclePred` accepts at the cut `B n`, with no hypothesis (`core_accepts_iff`, both directions
+  through inversion lemmas of the programs, since the input decider may diverge). So the decider's
+  acceptance implies `oraclePred` unconditionally (`accepts_sound`), and the converse holds once
+  the core's accepting run fits in `K n` (`accepts_complete`). Soundness of the compiled typed game
+  therefore holds at every budget (`valStar_ge_of_typedPredicate`), and completeness needs the
+  budget to cover the core's runs on answers within the inner cut
+  (`exists_typedPredicate_perfectPCC`, whose inner cut must hold every honest encoding,
+  `8B + 3`). That hypothesis is the input verifier's running time at `n` in disguise — the role
+  the timeout bound plays in the paper's completeness — and the restated contract (O5) must carry
+  it. The present contract does not, which is one more sign that no construction inhabits it.
+* **No dimension query and no sanitized copies.** The acceptance law concerns well-formed inputs
+  only, and the clock makes every input halt, so the core never has to reject malformed data.
+* The marginal queries are at the input sampler's top level, where the marginal is the CL function
+  itself (`CLFun.truncate_self`). A run makes at most six calls: two marginals and one decision
+  for each of at most two oracles.
+* The program is `hardcode (shell j) (encode (S̄, D̄, Ī))`, so `deciderProgFun` is the s-m-n map.
+
+*Still to do (O4b):* the core's running time in terms of the input's time bounds — which
+discharges the budget hypothesis for an explicit `K` — and the decider's own running time: the
+index routine's plus a polynomial in `K n` and the input (the clocked universal machine's
+overhead).
 
 **O5 — assembly.** Restate `Oracularization ℓ` as the specification of the construction — typed
 output over `Role` on the complete graph, the oracle form of sampler and decider, the complexity

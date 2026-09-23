@@ -152,6 +152,7 @@ import MIPRE.Foundations.OracularSound
 import MIPRE.Foundations.OracularTensor
 import MIPRE.Foundations.OracularTyped
 import MIPRE.Foundations.OracularSampler
+import MIPRE.Foundations.OracularDecider
 import MIPRE.Foundations.LowDegree.SelfDualize
 import MIPRE.Foundations.LowDegree.NormalBasis
 import MIPRE.Foundations.SAT.AdmissibleField
@@ -599,6 +600,22 @@ tell you the guard is missing.
   MIPRE.OracleSampler.oracleSampler_timeBound,
   MIPRE.OracleSampler.samplerProgFun,
   MIPRE.OracleSampler.samplerProgFun_apply
+
+-- blueprint `lem:oracle-typed-decider`: the typed oracularized decider, total, its acceptance law
+-- `oraclePred` through the clock, and the two value transfers of the compiled typed game.
+#guard_sorry_free MIPRE.OracleDecider.oracleDecider,
+  MIPRE.OracleDecider.oracleDecider_total,
+  MIPRE.OracleDecider.oracleDecider_accepts_iff,
+  MIPRE.OracleDecider.gameProg_accepts_iff,
+  MIPRE.OracleDecider.core_accepts_iff,
+  MIPRE.OracleDecider.accepts_sound,
+  MIPRE.OracleDecider.accepts_complete,
+  MIPRE.OracleDecider.deciderProgFun,
+  MIPRE.OracleDecider.deciderProgFun_apply,
+  MIPRE.OracleDecider.typedPredicate_sound,
+  MIPRE.OracleDecider.typedPredicate_complete,
+  MIPRE.OracleDecider.valStar_ge_of_typedPredicate,
+  MIPRE.OracleDecider.exists_typedPredicate_perfectPCC
 
 -- blueprint `lem:pcp-zero-basis`: preserve the individual-degree bounds needed by the PCP.
 #guard_sorry_free MIPRE.SAT.ArrayProg.eqBits,
