@@ -742,11 +742,20 @@ narrowing the statement to projective strategies, are the last section of
 (`MIPRE/Background/QLD/Soundness.lean`) is the theorem at proof level, with universal constants
 `a >= 1`, `0 < b < 1`, for an arbitrary POVM strategy, under characteristic two, `m | q`,
 `m, d >= 1` only, and it depends on no axiom beyond Lean's three. Its shapes are the ones
-`quantumValue_ge_of_valid_isometric_images` (introspection) takes. **The one piece of glue left
-for the consumer**: item 2 is stated for the Pauli measurement read as cube data
-(`map rdPauliVec`, malformed answers at `h = 0`), while the consumer sums over valid answers
-only, so the bridge needs a bound on the malformed Pauli mass. That belongs with the
-introspection work, not here.
+`quantumValue_ge_of_valid_isometric_images` (introspection) takes.
+
+**And it is connected to introspection (2026-09-23).** The glue recorded here --- item 2 is about
+the cube-data reading, the consumer about the valid answers --- turned out to need no bound on the
+malformed mass: for a projective strategy the only differing outcome is `h = 0`, and the honest
+projector there has weight `q^{-M}` on the EPR state, so the valid sum is at most twice the coarse
+one plus `8/q` (`cor:qld-valid`, `QLD/ValidAnswers.lean`). `cor:qld-binary` (`QLD/BinaryForm.lean`)
+is the paper's `cor:pauli-binary`, the theorem on the qubit register through a self-dual basis.
+`Background/Introspection/PauliExtraction.lean` then supplies the consumer's `hstate`, `hX`, `hZ`
+for the actual binary (and field-register) introspection game from any projective strategy
+(`lem:intro-pauli-extraction`), and composes them into
+`1 - C root_{6l+2}(T) <= val*(G)` (`lem:intro-extracted-soundness`). What that does not yet cover
+is an original game whose CL functions are not exact on the whole `M log q`-coordinate register:
+the source padding still has to be composed with it.
 
 **H5, the assembly of `thm:compression` from the
 hypothesis structures, is done** (`MIPRE/Foundations/Pipeline/`): `Introspection ℓ`,

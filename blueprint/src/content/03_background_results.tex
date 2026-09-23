@@ -1550,6 +1550,79 @@ the stated form, not a defect of the formalization, but it is worth knowing when
 constants the proof produces.
 
 
+\begin{corollary}[Theorem~\ref{thm:qld} on the valid answers]
+\label{cor:qld-valid}
+\uses{thm:qld}
+\lean{MIPRE.QLD.trace_wX, MIPRE.QLD.trace_wZ, MIPRE.QLD.trace_proj, MIPRE.QLD.qform_epr_aOp,
+  MIPRE.QLD.snorm_registerState_aOp_aOp, MIPRE.QLD.snorm_registerState_bOp_aOp,
+  MIPRE.QLD.trace_weylOf, MIPRE.QLD.trace_proj_weylOf, MIPRE.QLD.snorm_epr_aOp_proj_sq,
+  MIPRE.QLD.snorm_epr_bOp_proj, MIPRE.QLD.snorm_registerState_aOp_proj_sq,
+  MIPRE.QLD.snorm_registerState_bOp_proj_sq, MIPRE.QLD.card_le_card_anc, MIPRE.QLD.div_card_anc_le,
+  MIPRE.QLD.snorm_aOp_isometricImage_sub_le, MIPRE.QLD.snorm_bOp_isometricImage_sub_le,
+  MIPRE.QLD.sq_le_two_mul_sq_add, MIPRE.QLD.mem_filter_rdPauliVec,
+  MIPRE.QLD.map_rdPauliVec_mats_of_ne, MIPRE.QLD.pauliAns_mul_map_rdPauliVec,
+  MIPRE.QLD.sum_sq_le_of_pointwise, MIPRE.QLD.sum_snorm_sq_valid_alice_le,
+  MIPRE.QLD.sum_snorm_sq_valid_bob_le, MIPRE.QLD.qld_soundness_valid}
+\leanok
+In the setting of Theorem~\ref{thm:qld}, suppose in addition that the strategy's two Pauli
+measurements $A^{(\pauli,W)}$ and $B^{(\pauli,W)}$ are projective. Then item~2 holds with the
+sum over $h \in \F_q^M$ taken over the answer $h$ itself rather than over every answer the game
+reads as $h$, at $2\delta_{qld} + 8/q$ in place of $\delta_{qld}$, with the same isometries and
+the same $\ket{\aux}$.
+\end{corollary}
+
+\begin{proof}
+\leanok
+For $h \neq 0$ the only answer read as $h$ is $h$ itself, so the two sums agree term by term. At
+$h = 0$ the answer $0$ is one element of a projective family, so its image is dominated by the
+image of everything read as $0$, and the triangle inequality costs twice the norm of $\tau^W_0$
+applied to $\ket{\EPR_q}^{\ot M} \ot \ket{\aux}$. That projector has rank one, so its weight on the
+maximally entangled state is $q^{-M} \leq 1/q$.
+\end{proof}
+
+\paragraph{Comments.} The paper's game has no other answers to a $(\pauli, W)$ question; the formal
+game has one answer type for all questions, and Theorem~\ref{thm:qld} reads every answer that is
+not a Pauli answer as the outcome $0$, as the game does. The introspection consumer
+(Lemma~\ref{lem:intro-valid-isometric-soundness}) sums over the valid answers only, and this
+corollary is the bridge. It needs no bound on how often the malformed answers occur: the rank-one
+projector at $0$ pays for them. \texttt{MIPRE/Background/QLD/ValidAnswers.lean}.
+
+\begin{corollary}[Theorem~\ref{thm:qld} on qubits]
+\label{cor:qld-binary}
+\uses{thm:qld,lem:pauli-binary}
+\lean{MIPRE.QLD.relabelParty, MIPRE.QLD.relabelFirst, MIPRE.QLD.relabelFirst_isometry,
+  MIPRE.QLD.isometricImage_relabelFirst, MIPRE.QLD.isometricState_relabelFirst,
+  MIPRE.QLD.registerState_relabel, MIPRE.QLD.norm_isometricState_relabelFirst_sub,
+  MIPRE.QLD.snorm_registerState_relabel_alice, MIPRE.QLD.snorm_registerState_relabel_bob,
+  MIPRE.QLD.binFirst, MIPRE.QLD.binFirst_eq_relabelFirst, MIPRE.QLD.binFirst_isometry,
+  MIPRE.QLD.registerState_binEquiv, MIPRE.QLD.norm_isometricState_binFirst_sub,
+  MIPRE.QLD.pauliXReadout_binEquiv, MIPRE.QLD.readout_some_binEquiv,
+  MIPRE.QLD.sum_snorm_sq_binFirst_alice_X, MIPRE.QLD.sum_snorm_sq_binFirst_alice_Z,
+  MIPRE.QLD.sum_snorm_sq_binFirst_bob_X, MIPRE.QLD.sum_snorm_sq_binFirst_bob_Z,
+  MIPRE.QLD.qld_soundness_binary}
+\leanok
+Let $q = 2^k$, let $\{e_1, \ldots, e_k\}$ be a self-dual basis of $\F_q$ over $\F_2$, and let
+$\phi : \F_q^M \to \F_2^{M \times k}$ be the relabelling of Lemma~\ref{lem:pauli-binary}. Then
+Theorem~\ref{thm:qld} holds with the same $\delta_{qld}$ and with the register
+$(\C^q)^{\ot M}$ read as $M k$ qubits: the isometries map into
+$(\C^2)^{\ot Mk} \ot \mH'$, item~1 compares with $\ket{\EPR_2}^{\ot Mk} \ot \ket{\aux}$, and in
+item~2 the honest measurement at the outcome $\phi(u)$ is the qubit Pauli measurement
+$\sigma^W_{\phi(u)}$, for both parties and both bases.
+\end{corollary}
+
+\begin{proof}
+\leanok
+The relabelling is a bijection of basis index sets, so the transport is a reindexing and no
+quantity changes: the maximally entangled state is preserved by any simultaneous relabelling of
+both halves, the $Z$ readouts are computational-basis projectors on both sides, and the $X$
+readouts correspond by Lemma~\ref{lem:pauli-binary}, which is where self-duality is used.
+\end{proof}
+
+\paragraph{Comments.} The paper's \texttt{cor:pauli-binary} (\texttt{ldt.tex}), and the form the
+binary introspection game consumes (Lemma~\ref{lem:intro-pauli-extraction}).
+\texttt{MIPRE/Background/QLD/BinaryForm.lean}; the transport is proved for an arbitrary relabelling
+of the register first (\texttt{relabelFirst}) and specialized to the self-dual one.
+
 \subsubsection{The shape of the soundness proof}
 
 \begin{remark}[How the soundness proof of Theorem~\ref{thm:qld} is organized]

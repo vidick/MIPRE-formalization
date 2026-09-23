@@ -33,6 +33,9 @@ import MIPRE.Background.QLD.SamplerQueryProgram
 import MIPRE.Background.QLD.CLExplicitTransport
 import MIPRE.Background.QLD.SwapItemTwo
 import MIPRE.Background.QLD.Soundness
+import MIPRE.Background.QLD.ValidAnswers
+import MIPRE.Background.QLD.BinaryForm
+import MIPRE.Background.Introspection.PauliExtraction
 
 /-!
 # Axiom audit for the Pauli basis test's orthonormalization step
@@ -1533,3 +1536,44 @@ Regime}.lean`. -/
   MIPRE.QLD.sum_snorm_sq_registerState_alice_le_two,
   MIPRE.QLD.sum_snorm_sq_registerState_bob_le_two, MIPRE.QLD.exists_le_qldErr,
   MIPRE.QLD.qld_soundness
+
+/-! `cor:qld-valid`: `thm:qld` on the valid answers (`MIPRE/Background/QLD/ValidAnswers.lean`). -/
+#guard_sorry_free MIPRE.QLD.trace_wX, MIPRE.QLD.trace_wZ, MIPRE.QLD.trace_proj,
+  MIPRE.QLD.qform_epr_aOp, MIPRE.QLD.snorm_registerState_aOp_aOp,
+  MIPRE.QLD.snorm_registerState_bOp_aOp, MIPRE.QLD.trace_weylOf, MIPRE.QLD.trace_proj_weylOf,
+  MIPRE.QLD.snorm_epr_aOp_proj_sq, MIPRE.QLD.snorm_epr_bOp_proj,
+  MIPRE.QLD.snorm_registerState_aOp_proj_sq, MIPRE.QLD.snorm_registerState_bOp_proj_sq,
+  MIPRE.QLD.card_le_card_anc, MIPRE.QLD.div_card_anc_le, MIPRE.QLD.snorm_aOp_isometricImage_sub_le,
+  MIPRE.QLD.snorm_bOp_isometricImage_sub_le, MIPRE.QLD.sq_le_two_mul_sq_add,
+  MIPRE.QLD.mem_filter_rdPauliVec, MIPRE.QLD.map_rdPauliVec_mats_of_ne,
+  MIPRE.QLD.pauliAns_mul_map_rdPauliVec, MIPRE.QLD.sum_sq_le_of_pointwise,
+  MIPRE.QLD.sum_snorm_sq_valid_alice_le, MIPRE.QLD.sum_snorm_sq_valid_bob_le,
+  MIPRE.QLD.qld_soundness_valid
+
+/-! `cor:qld-binary`: `thm:qld` on qubits, through a self-dual basis
+(`MIPRE/Background/QLD/BinaryForm.lean`). -/
+#guard_sorry_free MIPRE.QLD.relabelParty, MIPRE.QLD.relabelFirst, MIPRE.QLD.relabelFirst_isometry,
+  MIPRE.QLD.isometricImage_relabelFirst, MIPRE.QLD.isometricState_relabelFirst,
+  MIPRE.QLD.registerState_relabel, MIPRE.QLD.norm_isometricState_relabelFirst_sub,
+  MIPRE.QLD.snorm_registerState_relabel_alice, MIPRE.QLD.snorm_registerState_relabel_bob,
+  MIPRE.QLD.binFirst, MIPRE.QLD.binFirst_eq_relabelFirst, MIPRE.QLD.binFirst_isometry,
+  MIPRE.QLD.registerState_binEquiv, MIPRE.QLD.norm_isometricState_binFirst_sub,
+  MIPRE.QLD.pauliXReadout_binEquiv, MIPRE.QLD.readout_some_binEquiv,
+  MIPRE.QLD.sum_snorm_sq_binFirst_alice_X, MIPRE.QLD.sum_snorm_sq_binFirst_alice_Z,
+  MIPRE.QLD.sum_snorm_sq_binFirst_bob_X, MIPRE.QLD.sum_snorm_sq_binFirst_bob_Z,
+  MIPRE.QLD.qld_soundness_binary
+
+/-! `lem:intro-pauli-extraction` and `lem:intro-extracted-soundness`: the extraction data for the
+introspection consumer, and the composed soundness
+(`MIPRE/Background/Introspection/PauliExtraction.lean`). -/
+#guard_sorry_free MIPRE.Introspection.PauliExtraction.exists_valid_extraction,
+  MIPRE.Introspection.PauliExtraction.binaryGame_eq_fullGame,
+  MIPRE.Introspection.PauliExtraction.binaryToFull,
+  MIPRE.Introspection.PauliExtraction.binaryToFull_value,
+  MIPRE.Introspection.PauliExtraction.fieldGame_eq_fullGame,
+  MIPRE.Introspection.PauliExtraction.fieldToFull,
+  MIPRE.Introspection.PauliExtraction.fieldToFull_value,
+  MIPRE.Introspection.PauliExtraction.exists_binary_extraction,
+  MIPRE.Introspection.PauliExtraction.exists_quantumValue_ge_of_binary,
+  MIPRE.Introspection.PauliExtraction.exists_field_extraction,
+  MIPRE.Introspection.PauliExtraction.exists_quantumValue_ge_of_field
