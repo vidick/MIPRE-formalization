@@ -194,6 +194,7 @@ import MIPRE.Background.LIDT.Simultaneous
 import MIPRE.Background.AnswerReduction.ArSampler
 import MIPRE.Background.AnswerReduction.ArDecider
 import MIPRE.Background.AnswerReduction.Construction
+import MIPRE.Background.AnswerReduction.Complete
 import MIPRE.Foundations.Expanded
 import MIPRE.Foundations.WeylEPR
 import MIPRE.Foundations.Swap
@@ -1748,6 +1749,28 @@ tell you the guard is missing.
 -- blueprint `lem:ar-sampler-independence`: the output sampler depends only on the input sampler.
 #guard_sorry_free MIPRE.AnswerReduction.arVerifier_sampler,
   MIPRE.AnswerReduction.arSamplerProg_eq
+
+-- blueprint `lem:ar-completeness`: completeness of answer reduction, through the oracularized
+-- honest strategy read through a question map, honest low-degree answers, and detyping.
+#guard_sorry_free MIPRE.AnswerReduction.arVerifier_completeness,
+  MIPRE.AnswerReduction.arVerifier_hasPerfectPCC,
+  MIPRE.AnswerReduction.ShoupField,
+  MIPRE.AnswerReduction.exists_typedGame_perfectPCC,
+  MIPRE.AnswerReduction.hdata,
+  MIPRE.AnswerReduction.accepts_honestAns,
+  MIPRE.AnswerReduction.side_honest,
+  MIPRE.AnswerReduction.honestAns,
+  MIPRE.AnswerReduction.consistent_of_oaccepts,
+  MIPRE.AnswerReduction.exists_proofGood,
+  MIPRE.AnswerReduction.acceptsWithin_of_accepts,
+  MIPRE.AnswerReduction.valid_of,
+  MIPRE.AnswerReduction.length_enc_honestAns_le,
+  MIPRE.SyncStrategy.pushQ,
+  MIPRE.SyncStrategy.isPCC_pushQ,
+  MIPRE.SyncStrategy.value_pushQ_eq_one,
+  MIPRE.LIDT.CL.honest,
+  MIPRE.LIDT.CL.accepts_honest,
+  MIPRE.LIDT.CL.Regs.sampleOf_eval_question
 
 /-! ## Introspection mixing, conditioning, and graph rejection sampling -/
 
