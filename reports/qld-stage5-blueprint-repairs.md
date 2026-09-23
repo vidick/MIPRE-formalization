@@ -101,6 +101,17 @@ derivation presented as a hypothesis list. The step needs `q = 2^k`, whence `m |
 a power of two; the paper asserts that in a `\cnote` without proof, and `def:admissible` does not say
 it. A Lean formalization will need it as a lemma, so the blueprint should name it.
 
+**Resolved 2026-09-23, and the obvious reading turned out to be false.** The statement has since
+been rewritten to take `4m | q` as an explicit assumption, which is correct, and the discharge now
+lives in `MIPRE/Background/QLD/Regime.lean`. Two things came out of writing it. First, `m | q`
+together with `q` a power of two does **not** give `4m | q` --- take `m = q`. What it gives is that
+`m = 2^j`, and then `4m = 2^{j+2}` divides `2^n` exactly when `4m <= q`. So the size condition is
+load-bearing, and it is the regime `48 m d <= q` that supplies it (`four_mul_dvd_card_of_regime`);
+outside the regime the theorem takes the trivial bound and never needs the divisibility. Second,
+"admissible" is not what the step uses: the oddness of `t` in `q = 2^t` is for the self-dual basis,
+and a finite field of characteristic two is a power-of-two size for free (`FiniteField.card`), so the
+step costs no hypothesis the appendix does not already carry.
+
 ## What the Lean of this pull request does and does not claim
 
 Formalized, with no error terms and no game in sight:
@@ -121,18 +132,221 @@ Formalized, with no error terms and no game in sight:
   the discharge of the critical finding at node `1.2.2.15`, to the extent it can be discharged
   without the six-register state.
 
-Not formalized, and therefore no `leanok` mark on either statement:
+Since then the approximate half of `lem:qld-exact-paulis` has been carried through to its
+inequality, in `MIPRE/Background/QLD/{PauliBasis,Multilinear}.lean`:
 
-* the `delta`-closeness of `M~^{W,u}` to the strategy's `(Point,W)` measurements. Its hypothesis
-  lives on the four-register cut `A A' | B A''` that `MIPRE.QLD.hatVec` is, while `M~^{W,u}` needs
-  `A A' A''` on one party. That is a six-register state with two maximally entangled pairs and
-  transport between two cuts;
-* the embedding of the two ancilla halves into the four-party index, which is what turns
-  `twirl_mul_twirl` into a statement about the expanded state;
-* item 2 of `lem:qld-swap` in its entirety;
-* uniqueness of multilinear interpolation --- that a multilinear polynomial is the interpolant of its
-  own values on the cube. An independent fact about `MvPolynomial`, and the one ingredient of the
-  non-multilinear chain still taken as a hypothesis (`sum_sub_le_of_eq_on`).
+* the non-multilinear mass bound `delta_S + sqrt(688 eps) + md/q`
+  (`SimulPair.sum_bornProb_not_isInterp_le`), and
+* item 1's agreement in the form the appendix's chain produces,
+  `E_u sum_g <S^W_g (x) M^(Point,W),u_{coded(g).ind_m(u)}> >= 1 - delta_S - 2(delta_S +
+  sqrt(688 eps) + md/q)` (`SimulPair.sum_bornProb_cubeData_ge`).
 
-Stage 4, `lem:qld-simultaneous` and its ten sub-lemmas, is untouched and is a multi-PR job of its
-own; `planning/qld-campaign.md` records the sizing.
+Two findings came out of doing it.
+
+**Uniqueness of multilinear interpolation is not needed.** The chain was written with the good set
+"g is multilinear", and then agreement of the two labels on it *is* uniqueness of multilinear
+interpolation, which `sum_sub_le_of_eq_on` accordingly took as a hypothesis. Taking the good set to
+be "g is the low-degree encoding of its own cube data" (`IsInterp`) removes the dependency
+entirely: on it the two labels agree by definition, and off it `g` differs from the encoding of
+*every* cube datum, which is exactly what Schwartz--Zippel needs, uniformly in the datum.
+Uniqueness would say the two sets coincide; neither inclusion is used anywhere.
+
+**Only one entangled pair is needed per orientation.** The paper's expanded state
+`|psi> (x) EPR_{A'A''} (x) EPR_{B'B''}` carries two pairs and is read along two cuts,
+`A A' | B A''` and `B B' | A B''`, one per orientation of `lem:qld-4-7`. Each orientation uses one
+pair, and `MIPRE.QLD.hatVec` is exactly one such cut. In that cut the register the paper calls
+`A''` is the opposite party's ancilla half, so `sum_g (S^W_g)_{A A'} (x) tau_{...}` --- which in the
+paper's six-register picture is one operator `M~` on `A A' A''` --- is here an ordinary bipartite
+pairing of Alice's `S^W_g` against Bob's point measurement convolved with his own ancilla. That is
+why the inequality above needs no second pair.
+
+**A third finding, from doing that last step: the second pair was never needed.** The bullet that
+stood here said the remaining work was to adjoin the paper's second entangled pair and transport
+across it. That was wrong, and in an instructive way. The paper's `A''` is not a register one has
+to create --- it is already in `hatVec`, on the far side of the cut. Writing
+`M~^{W,u} = sum_g S-hat^W_g (x) tau^W_{...}` as a single matrix is a *regrouping* of the same six
+registers along a third cut, `A A' A'' | B`, and Born probabilities transport across it by one
+entry computation (`reindex_regroupEquiv`) plus one invariance of the quadratic form
+(`qform_comp_equiv`). `MIPRE/Background/QLD/MTilde.lean` does it, and
+`SimulPair.inconsistency_mTilde_le` is item 1 in the paper's own `simeq_delta` form, at
+`delta = delta_S + 2 (delta_S + sqrt(688 eps) + md/q)`. The instructive part is that the
+obstacle was an artifact of reading the paper's register names as a demand rather than as one
+choice of bipartition: `quadForm_reindex` reindexes the two parties separately and so cannot move
+a factor between them, and its absence read as an impossibility. The unary companion
+`qform_comp_equiv` is three lines.
+
+With that, `lem:qld-exact-paulis` carries `leanok` at both levels.
+
+**A fourth finding: the blueprint's paraphrase of `lem:qld-exact-paulis` dropped an item, and the
+dependency graph was missing a node.** The paper's `lem:qld-construct-the-paulis` has two items:
+consistency of `M~^{W,ind_m(u)}` with the point measurements, and *self-consistency* of the
+observables `W~^e(u-tilde)` at a **uniform** `u-tilde`. The blueprint's statement kept only the
+first. That looked harmless until item 1 of `lem:qld-swap` was assembled: the swap estimate needs
+the two Weyl twirls to be near-invariances of the state, and the only thing that supplies them is
+exactly the dropped item --- at a uniform `u-tilde`, not at `u-tilde = ind_m(u)`, which is all the
+first item gives. So the graph said `lem:qld-swap` rested on `lem:qld-exact-paulis` and
+`lem:qld-win`, and one of its real inputs appeared nowhere. Added as
+`lem:qld-pauli-selfcons`, with the paper's chain as its proof sketch, `\uses` on
+`lem:qld-exact-paulis`, `lem:qld-helper`, `lem:qld-win` and `lem:schwartz-zippel`, and no `leanok`.
+It is kept separate from `lem:qld-exact-paulis` rather than folded back in so that the latter's
+marks stay honest.
+
+`lem:qld-swap` therefore does not carry `leanok`:
+* item 1 is formalized *given* its hypothesis (`exists_auxVec_close`), and that hypothesis is
+  `lem:qld-pauli-selfcons`, which is not;
+* item 2 in its entirety.
+
+The tensor bookkeeping that stood here as the obstacle to item 1 is done
+(`MIPRE/Background/QLD/SwapState.lean`), and was smaller than billed: the twirl is a *projection*
+(`twirl_mul_self`, from the Weyl family's group law), so no operator-norm estimate is needed, and
+the range of `1 (x) |EPR><EPR|` consists of product vectors by inspection
+(`bOp_eprProj_mulVec`), so the auxiliary state needs no partial trace.
+
+Stage 4, `lem:qld-simultaneous` and its ten sub-lemmas, was untouched when this was written and
+has since been done (PRs #144, #147, #150); `planning/qld-campaign.md` records how it went.
+
+## The exact steps of `lem:qld-pauli-selfcons`, and one thing that looked out of reach
+
+Written 2026-09-22, after the node above was added.
+
+The chain's eleven displays are of two kinds: `approx_0` steps, which are identities, and
+`approx_delta` steps, which are estimates. All the identities are now formalized
+(`MIPRE/Background/QLD/AncTransport.lean`, with `syn_mul_syn` in `SwapState.lean`).
+
+One of them is worth recording because it looked impossible and was not. Display
+`eq:qld-pulling-3a` moves a generalized Pauli from one party's ancilla half to the other's, and the
+paper calls the move exact. `MIPRE/Foundations/WeylEPR.lean` has that for the bare entangled state,
+`stateVec_epr_syn`. But the chain runs on a `SimulPair`'s *padded* state `Phi`, and the structure
+does not say `Phi` **is** an expanded state --- only that it reproduces its expectations
+(`Phi_reduced`). A *vector* identity therefore seemed unavailable from the interface, which would
+have meant strengthening `SimulPair`, i.e. reopening merged work.
+
+It is available. The identity to be proved is `stateVec Phi A = stateVecB Phi B`, which is the
+vanishing of `xSqNorm Phi A B` --- and a squared norm is an expectation. So
+`SimulPair.xSqNorm_aOp`, which is already there, carries it from `hatVec psi` to `Phi` with no
+loss. `SimulPair.stateVec_ancSyn` is that, and `SimulPair.sum_ancSyn_mulVec`
+(display `eq:qld-pulling-4`) follows from it.
+
+The general lesson for the rest of the chain: an exact statement about `Phi` that can be written as
+a vanishing squared norm is reachable through `Phi_reduced`, and one that cannot is not. Every
+`approx_0` step of this chain is of the first kind.
+
+The estimates of the node are now formalized too: `eq:qld-pulling-1` (the near-identity is a
+projection), `-3` (inserting the other party's outcome), `-7` and `-11` (the helper in the chain's
+own indexing), `-12` (Schwartz--Zippel again), and `-10` end to end --- `fact:add-a-proj` at the
+top, the orthogonal expansion and the `2 sqrt(eps)` substitution in the middle, the helper at the
+bottom. What remains of the node is the assembly: the index bookkeeping that threads the eleven
+displays together, and `lem:qld-povm-to-obs` at the end.
+
+One thing found while doing the last of them is worth recording, because it is a general lesson
+about this library rather than about this proof. The final passage of the node --- Item 2 of
+`fact:agreement`, then `fact:data-processing`, then Item 1 of `fact:agreement` --- is
+`sum_xSqNorm_map_le` in `MIPRE/Foundations/Sandwich.lean`, written for the introspection
+induction and stated on bundled `POVM`s. Nothing in the QLD tree was reaching for it, because the
+QLD tree speaks `IsPVM` and matrices. The two are a `simpa` apart (`povmOfIsPVM`,
+`sum_xSqNorm_fibre_le`). The estimates of this appendix are not as specific as they look, and
+`Foundations/Sandwich.lean` and `Foundations/Expanded.lean` are worth reading before writing
+another one.
+
+## The second entangled pair, and where it is finally needed
+
+An earlier note in this report records that the paper's second entangled pair, `B' B''`, was not
+needed for item 1 of `lem:qld-exact-paulis`: the register `A''` is already on the far side of the
+`hatVec` cut, so `mTilde` as a single matrix is a regrouping of the same six registers and no new
+estimate. That is still true, and the same holds for `lem:qld-simultaneous` and `lem:qld-helper`,
+each of which uses one orientation at a time.
+
+Item 2 of `lem:qld-swap` is the first consumer for which it is **not** true, and the discrepancy is
+worth stating before anyone builds on the current interface.
+
+The paper's expanded state is `|psi>_{AB} (x) |EPR>_{A'A''} (x) |EPR>_{B'B''}`, with `V_A` acting on
+`A A' A''` and `V_B` on `B B' B''`, and item 1 concludes that `V_A (x) V_B |psi-hat>` is close to
+`|aux>_{A A' B B'} (x) |EPR>_{A'' B''}` --- a pair made of one half from *each* party. The padded
+state `SimulPair.Phi` of this formalization is on `((dA x Anc) x EA) x ((dB x Anc) x EB)`, which is
+the cut `A A' | B A''`: it carries the pair `A' A''` and has no `B' B''` at all.
+
+So item 2's threading cannot simply regroup `Phi`'s factors into item 1's cut, because the register
+it needs is not there. Either the interface gains the second pair --- which means a second
+`expVec`, and every statement about `Phi` re-examined for whether it survives --- or there is an
+argument that one pair suffices here as it did for the lemmas above, in which case item 1's
+statement as formalized (`exists_auxVec_close`, which is stated abstractly on `R x (T x T)` and so
+does not commit to which halves) should be instantiated at `A' A''` and the blueprint's description
+of its cut corrected.
+
+This was found by writing `endEquiv`, a four-factor regrouping intended to *be* item 1's cut, and
+then checking the register identification against `qld-isometry.tex` before building on it. The
+regrouping is correct and keeps its place; the identification was not, and the blueprint entry that
+asserted it has been repaired.
+
+### And `lem:qld-pauli-selfcons`'s assembly is blocked on the same thing
+
+The first version of this note said the obstacle was item 2's alone, and that the pulling chain's
+assembly was unblocked bookkeeping. That is wrong, and the reason is worth being precise about,
+because it is the same shortage of registers seen from the other side.
+
+The chain's *conclusion* is
+
+    (W~^e(u-tilde))_{A A' A''}  approx_{delta_qld}  (W~^e(u-tilde))_{B B' B''} ,
+
+a cross-party closeness of Alice's exact Pauli observable and Bob's. Each side needs its party's
+whole triple, so the statement needs all six registers at once. In this formalization `Phi` has
+four: `dA`, one `Anc`, `dB`, one `Anc`. Worse, the two readings pull in opposite directions ---
+`mTildeAt` lives on the regrouping that gives *Alice* both ancilla factors (`mVec`), and a Bob-side
+`mTilde` would need the regrouping that gives *Bob* both. No single bipartite cut of a four-factor
+state supports both, so the conclusion cannot even be *stated* here, let alone proved. There is no
+Bob-side `mTilde` in the tree, and that is why.
+
+What made the one-pair economy work up to now is that every earlier consumer compares an exact
+Pauli object on one party with a *point measurement* on the other, and a point measurement needs no
+ancilla: `inconsistency_mTilde_le` is `mTildeAt` against `(ptAtPOVM MB W u).aOp`, which lives on
+`dB x EB`. The moment two exact Pauli objects are compared, the economy runs out.
+
+### So: one blocker, two consumers
+
+Both remaining assemblies --- `lem:qld-pauli-selfcons`'s chain and `lem:qld-swap` item 2's
+threading --- wait on the same interface change: `SimulPair` carrying **both** entangled pairs,
+`A' A''` and `B' B''`, so that `Phi` has four ancilla factors and each party's exact Pauli object
+can be read with its own pair on its own side.
+
+That change is not local. `Phi`'s type changes, and with it `Phi_reduced`, `consA`, `consB`, and
+every statement in `Helper`, `Multilinear`, `MTilde`, `AncTransport`, `Pulling`, `SwapMeasure` and
+`ChainProbe` that reads `Phi` or `mVec`. The estimates themselves are untouched --- they are about
+operators and states in the abstract and do not care how many ancillas there are --- so this is a
+retyping and a re-derivation of the transports, not new mathematics. But it is the piece of work
+that has to come next, and neither assembly should be started before it.
+
+### Resolved, and not in the way this report predicted
+
+The section above said the change was a retyping of `Phi` and a re-derivation of every transport.
+It is neither, and the two attempts to guess it from the Lean types both failed before the paper
+was read carefully enough. What settled it were three passages:
+
+* `qld-commutation.tex`, `sec:expanding`: the six registers are partitioned into two parties in
+  **two** ways --- `A A'` against `B A''`, and `B B'` against `A B''` --- and every bipartite
+  relation derived for one holds for the other with the registers changed.
+* `lem:qld-4-7`: the pair measurement `S-hat` exists on `H (x) (C^q)^{(x) n}` for **each** of the
+  two players' spaces, with the displays `(S-hat)_{A A'} ~ (M-hat)_{B A''}` and
+  `(S-hat)_{B B'} ~ (M-hat)_{A B''}`.
+* `qld-separating.tex`: "If `S-hat^W_g` is viewed as an operator acting on registers `A A'` (resp.
+  `B B'`) then we view `M-tilde^{W,u-tilde}_a` as an operator acting on registers `A A' A''` (resp.
+  `B B' B''`)."
+
+So the pair measurement is supported on the party's own two registers, and the conclusion of
+`lem:qld-pauli-selfcons` is stated along a *third* grouping --- the physical one,
+`A A' A'' | B B' B''` --- which is neither of the two cuts the rest of the section works on.
+
+`MirrorSimul` (`MIPRE/Background/QLD/Mirror.lean`) follows from that directly. Each cut keeps the
+state it already sees, unchanged; the other pair is **appended**, one half to each party, with
+`expVec _ epr`; and the second cut is a second `SimulPair` at the swapped strategy with the two
+players' measurements exchanged, which is exactly what the symmetry paragraph licenses. Nothing in
+`Helper`, `Multilinear`, `MTilde`, `AncTransport`, `Pulling`, `SwapMeasure` or `ChainProbe` is
+touched, and Bob's `mTildeAnc`, `swapA`, projectivity and `eq:qld-unitary-6` are instantiations of
+Alice's rather than new proofs.
+
+The finding for the *formalization* --- not a defect in the paper --- is that
+`SimulPair.SB` is not the mirror of `SimulPair.SA`. `SB` is typed on `(dB x Anc F m) x EB` where
+that `Anc F m` is `A''`, so it sits on `B A''`: it is the second party of the **first** cut, the
+symmetric equivalent `M-hat_{A A'} ~ S-hat_{B A''}` of the first display. Bob's swap unitary is
+built from `S-hat` on `B B'`, which is the first party of the **second** cut and was not in the
+tree at all. A pull request description asserted the reuse before it was checked, and was corrected
+before merge; `planning/qld-two-pairs-scope.md` keeps that and both discarded designs.

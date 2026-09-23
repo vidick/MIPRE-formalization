@@ -685,10 +685,70 @@ since it is a different kind of claim from "H4 done". Chapter 7's corollaries (`
 
 **The mountain is chapter 6 and its chapter-3 inputs.** Coverage at `2f4cd53`: chapter 6 has 10
 of 37 statements with `\lean{}` (the CL foundations and the two hypothesis structures) and 6
-with a proof; chapter 3 has 10 of 44, and everything introspection needs — `thm:qld` and its
-fifteen lemmas, `thm:ms-rigidity`, the `lem:lidt-*` transfers — is at zero, as are
+with a proof; chapter 3 has 10 of 44, and `thm:ms-rigidity` and the `lem:lidt-*` transfers are at
+zero, as are
 `thm:succinct-sat` and the two universal-machine specifications (#17, #18) that answer
-reduction's Cook–Levin step rests on. **H5, the assembly of `thm:compression` from the
+reduction's Cook–Levin step rests on.
+
+**`thm:qld` is no longer at zero, and this paragraph's count for it is stale.** The QLD campaign
+has taken its appendix through stage 5; `planning/qld-campaign.md` is the current record, entry by
+entry, and the blueprint's `lem:qld-*` commentary says per lemma what is formalized and what is
+not. As of 2026-09-22 the position is: stages 1 to 4 are done; of stage 5,
+`lem:qld-exact-paulis` is complete, `lem:qld-pauli-selfcons` has every step of its pulling chain
+formalized and wants only the assembly, and `lem:qld-swap` has item 1 given its hypothesis and
+four of item 2's displays. **What `thm:qld` still needs, in order of distance to done:**
+
+1. ~~the two game consistencies `eq:qld-unitary-5` assumes~~ --- **done**: they are items 1 and 3
+   of `lem:qld-win`, carried into the triangle's vocabulary by `sum_content_pt` and
+   `inconsistency_eq_half_xPovmDist`, and `inconsistency_mTilde_pauli_le_of_win` is the display
+   from the game's soundness alone;
+2. ~~**Both entangled pairs in play.**~~ --- **done**: `MirrorSimul`
+   (`MIPRE/Background/QLD/Mirror.lean`). The paper's expanded state is
+   `|psi>_{AB} (x) |EPR>_{A'A''} (x) |EPR>_{B'B''}`; `Phi` carries only `A' A''`, read along the
+   cut `A A' | B A''`. That economy was right while every consumer compared an exact Pauli object
+   on one party with a *point* measurement on the other, which carries no ancilla. Both remaining
+   assemblies compare two exact Pauli objects, each needing its party's whole triple, so neither
+   could be *stated*. The resolution is neither a retyping of `Phi` nor hiding the second pair in
+   `EA` and `EB`: each cut keeps the state it already sees, the other pair is **appended** with
+   `expVec _ epr`, and the second cut is a second `SimulPair` at the swapped strategy --- so Bob's
+   `mTildeAnc`, `swapA` and `eq:qld-unitary-6` are instantiations of Alice's, with no mirror lemma
+   proved. `physVec` is the state on the physical cut and `bornProb_physVec` the bridge to it.
+   `planning/qld-two-pairs-scope.md` keeps the two discarded designs and why each fails;
+   `reports/qld-stage5-blueprint-repairs.md` records why the pair was needed at all;
+3. then the two assemblies, in either order: `lem:qld-swap` item 2's threading
+   (`eq:qld-unitary-7` through `-9` and `abs_qform_sub_qform_le` into the statement about
+   `V M^(Pauli,W)_h V†`), and `lem:qld-pauli-selfcons`'s chain at a uniform probe, plus
+   `lem:qld-povm-to-obs` at its end. The chain's **two ends** are in
+   (`MIPRE/Background/QLD/Chain.lean`): `mTildeAnc_eq_sum_chainIdx` is `eq:qld-pulling-2b`,
+   `endOpMirror_apply` is the symmetry of `eq:qld-pulling-12` that makes the lemma conclude, and
+   `sum_xSqNorm_le_of_endOp` is the triangle that closes it. What is left is the eight `approx`
+   steps between them --- every estimate in the tree, only the four-index bookkeeping missing;
+4. `thm:qld` itself from the two lemmas.
+
+Items 1 and 2 are done. **Neither of the remaining two needs a new estimate**: every estimate the
+appendix uses is in the library, and what is left is assembly.
+
+**Update 2026-09-23.** `lem:qld-pauli-selfcons` is done (#183) and item 1 of `lem:qld-swap` is
+unconditional (#184), `MirrorSimul` having been discharged from the game's own hypotheses (#179,
+`exists_mirrorSimul`). What is left is item 2's threading and `thm:qld`, and the second is *not*
+pure assembly: it needs the error arithmetic that turns the chain `deltaCL -> ... ->
+deltaSelfCons -> item 1` into the shape `a (md)^a (eps^b + q^{-b} + 2^{-bmd})`, the discharge of
+the regime `48 m d <= q`, the derivation of `4m | q` from admissibility, and a Naimark descent for
+general POVM strategies. The four pull requests that finish it, and why the descent was chosen over
+narrowing the statement to projective strategies, are the last section of
+`planning/qld-campaign.md`, "Finishing `thm:qld`".
+
+**`thm:qld` is proved (2026-09-23).** `MIPRE.QLD.qld_soundness`
+(`MIPRE/Background/QLD/Soundness.lean`) is the theorem at proof level, with universal constants
+`a >= 1`, `0 < b < 1`, for an arbitrary POVM strategy, under characteristic two, `m | q`,
+`m, d >= 1` only, and it depends on no axiom beyond Lean's three. Its shapes are the ones
+`quantumValue_ge_of_valid_isometric_images` (introspection) takes. **The one piece of glue left
+for the consumer**: item 2 is stated for the Pauli measurement read as cube data
+(`map rdPauliVec`, malformed answers at `h = 0`), while the consumer sums over valid answers
+only, so the bridge needs a bound on the malformed Pauli mass. That belongs with the
+introspection work, not here.
+
+**H5, the assembly of `thm:compression` from the
 hypothesis structures, is done** (`MIPRE/Foundations/Pipeline/`): `Introspection ℓ`,
 `Oracularization ℓ`, `AnswerReduction ℓ`, `Repetition ℓ`, each a `structure` in the vocabulary
 of `MIPRE.Verifier` with its time bounds stated as resource budgets (`Budget`,

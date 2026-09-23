@@ -1716,3 +1716,1278 @@ The six-register state `A A' B'' | B A'' B'` enters only here: `mTilde` acts on
 `B B' B''` while the point measurement acts on `A`, so the two cuts of the paper's
 `ψ̂` are needed at once, with `stateDist` transported between them. `SwapUnitary.lean` already has
 the two twirls and the maximally entangled state; the transport is the piece to write.
+
+### PR J-b, first piece: the point and Pauli-basis measurements on one party (2026-09-22)
+
+`MIPRE/Background/QLD/PauliBasis.lean` (fast regime). The repaired proof of
+`lem:qld-exact-paulis` needs the `(Point, W)` measurement to be close to the low-degree reading of
+the `(Pauli, W)` answer *on the same party*, because the Pauli basis answer does not depend on the
+sampled point and that is what lets Schwartz--Zippel see a uniform point independent of the
+operators. Both inputs are cross-party items of `lem:qld-win-implications` --- `item_consistency`
+at the type `(Point, W)` and `item_pauli_consistency` --- and they share Alice's point
+measurement, so Foundations' `normSq_stateVecB_sub_le` (the triangle
+`‖(1 ⊗ (N₁ − N₂))ψ‖ ≤ ‖(A ⊗ 1 − 1 ⊗ N₂)ψ‖ + ‖(A ⊗ 1 − 1 ⊗ N₁)ψ‖`, squared at the usual factor two,
+written for the pasting lemma and reused verbatim here) removes it: `sum_normSq_point_sub_pauli_le`, at `688 ε` on average over the verifier's content.
+This is on the bare strategy; carrying it to the expanded state, and from there to the mass
+argument, is the next step.
+
+**The ancilla transfer.** A second piece of the same module: `sum_normSq_stateVecB_conv_eq`. Every
+hatted measurement is a convolution `X̂_c = ∑_{a+b=c} X_a ⊗ T_b` of the party's own family with the
+ancilla's Weyl measurement, and for a *projective* `T` the cross terms of `X̂ᴴ X̂` vanish --- the
+ancilla outcome determines the other one (`conjTranspose_conv_mul_conv`) --- so the same-party
+deviation on the expanded state equals the one on the strategy's own state, with no loss at all.
+Summing a convolution over its outcome frees the ancilla factor (`sum_conv`), and
+`bornProb_expVec_kron` then peels the maximally entangled pair off, whose own weight is one. With
+this and the previous piece, what is left of the approximate half is the aggregation itself: the
+projective family indexed by cube data, and `nonMultilinear_mass_le` applied to it.
+
+**On the expanded state.** `sum_normSq_hat_point_sub_pauli_le` puts the two together: a hatted
+point measurement is `conv X T` for `X` the party's own reading and `T` the syndrome measurement
+(`hatPtPOVM_mats_eq_conv`, which is `POVM.map_mats` and nothing more), the Pauli basis reading at
+the point has the same shape against the same `T`, their difference is the convolution of the
+differences, and the transfer removes `T`. So the constant on the expanded state is the bare one,
+`688 ε`.
+
+### PR J, the rest: the mass at bad outcomes, and item 1's agreement (2026-09-22)
+
+`MIPRE/Background/QLD/Multilinear.lean` (fast regime). With the closeness of the previous piece in
+hand, the aggregation goes through, and then so does item 1.
+
+**The point-independent family.** `hatPauli MB W` is the strategy's `(Pauli, W)` measurement
+convolved with the ancilla's Weyl measurement --- projective (`isPVM_hatPauli`), indexed by cube
+data, and crucially not a function of any sampled point. `hatPauli_map` says that reading it at
+`u` gives the hatted Pauli measurement there, because the pairing is additive and coarse-graining
+therefore commutes with the convolution. `POVM.map_kron_map` is the small general fact that makes
+that one rewrite.
+
+**The substitution.** `abs_sum_weighted_bornProb_le` is Cauchy--Schwarz against a projective
+family at each question followed by Jensen for the average; against Alice's evaluated marginal it
+replaces Bob's point measurement by the hatted Pauli family at cost the root of their average
+squared distance, `√(688 ε)` (`SimulPair.sum_bornProb_hatPauli_ge`).
+
+**The aggregation.** `sum_mass_off_le` is `nonMultilinear_mass_le` in operator form: a projective
+`S` on one party, a projective `N` on the other, two labellings, an agreement lower bound and a
+uniform bound on how often a bad outcome matches any one label. `SimulPair.sum_bornProb_off_le`
+instantiates it, and the marginal it uses is `polyMarg` --- indexed by *polynomials*, not by their
+value at the point, which is the whole point: the outcome operator must not depend on the point
+Schwartz--Zippel then samples. The result is `δ_S + √(688 ε) + md/q`.
+
+**Item 1.** Expanding `mTilde` and contracting the generalized Pauli on the opposite party's
+ancilla against the strategy's point measurement turns item 1's left-hand side into the outcome
+sum with the label `coded(g) · ind_m(u)`, which differs from the helper's `g(u)` only off the good
+set. `sum_sub_le_of_eq_on` pays twice the mass, and `SimulPair.sum_bornProb_cubeData_ge` is
+
+    E_u ∑_g ⟨Ŝ^W_g ⊗ M̂^(Point,W),u_{coded(g)·ind_m(u)}⟩ ≥ 1 − δ_S − 2(δ_S + √(688 ε) + md/q).
+
+**Two things this found**, both in `reports/qld-stage5-blueprint-repairs.md`. Uniqueness of
+multilinear interpolation, listed here as the chain's one outstanding ingredient, is not needed:
+take the good set to be `IsInterp`, "g is the encoding of its own cube data", and agreement on it
+is definitional while Schwartz--Zippel off it is immediate and uniform in the datum. And the
+six-register state is not needed for item 1: each orientation of `lem:qld-4-7` reads one of the
+paper's two pairs, `hatVec` is one such cut, and in it the paper's `A''` is the opposite party's
+ancilla half --- so the pairing is bipartite. The second pair is still needed to read the display
+*as* `mTilde`, one operator on one party, which is what stands between this and a statement-level
+`\leanok`.
+
+### PR K, first piece: `mTilde` as one operator on one party (2026-09-22)
+
+`MIPRE/Background/QLD/MTilde.lean` (fast regime). The merged stage 5a left item 1 of
+`lem:qld-exact-paulis` as a sum over the simultaneous measurement's outcomes; the paper states it
+as a closeness of two measurements, and this reads it that way. It is a reindexing, not an
+estimate, and the reason is worth recording because the campaign carried the opposite belief for
+three PRs.
+
+**The obstacle was not real.** The note said `mTilde` needs `S-hat^W` and the generalized Pauli on
+disjoint registers of one party, `A A'` and `A''`, while `SimulPair.SA` acts on all of
+`A A' A''` --- so the paper's second entangled pair had to be adjoined and the operators
+transported between two cuts. The first half is true; the conclusion is not. In `hatVec`'s cut the
+register `A''` is the *opposite party's* ancilla half: it is already present, on the far side. So
+writing `M~` as one matrix regroups the same six registers along a third cut,
+`A A' A'' | B`, and that is `bornProb_regroupVec` --- one entry computation
+(`reindex_regroupEquiv`) plus one invariance of the quadratic form (`qform_comp_equiv`). What made
+it look impossible was that Foundations only had `quadForm_reindex`, which reindexes the two
+parties *separately* and therefore cannot move a factor between them; the unary companion is three
+lines and was simply missing.
+
+**What it took.** `isPVM_mTilde` (through `sTensor_mul`, so through projectivity of the pair
+measurement and nothing else); `sum_kron_syn_eq_hatMats`, the characteristic-two shift that turns
+`mTilde`'s defining sum into the hatted point measurement --- `c + a` is the partner of `a` in the
+fibre of the sum, so summing along `a` is summing over the fibre; and then
+`SimulPair.sum_bornProb_mTilde_ge` and `SimulPair.inconsistency_mTilde_le`, the latter in the
+paper's own `simeq_delta` form at `delta = delta_S + 2(delta_S + sqrt(688 eps) + md/q)`.
+
+**And the exact half moved onto the same objects.** `wTilde`'s three relations were proved for an
+abstract projective pair measurement; `SimulPair.wTildeAt` instantiates them at the simultaneous
+one, and `wTilde_mul_add` adds the fourth relation the lemma asserts and the file did not have,
+linearity in the argument (both tensor factors are additive, so it is exact). With that,
+`lem:qld-exact-paulis` carries `\leanok` at both levels, 94 guarded declarations.
+
+One small infrastructure note: the index of `mTilde`'s matrices is a four-fold product whose
+`DecidableEq` runs past the default `synthInstance.maxSize` --- each half alone is found, the
+product is not. Raised in that file and nowhere else.
+
+### PR K, second piece: the swap isometry's state estimate (2026-09-22)
+
+`MIPRE/Background/QLD/SwapState.lean` (fast regime). `SwapUnitary.lean` had item 1 of
+`lem:qld-swap` in three separate pieces --- the exact conjugation, `twirl_mul_twirl`, and the
+repaired arithmetic chain --- and not the assembly, because `twirl_mul_twirl` lives on the two
+ancilla halves alone while the state lives on all four registers. The assembly is
+`exists_auxVec_close`, and it was smaller than the note here predicted.
+
+Two reasons. First, **the twirl is a projection**, not merely a contraction: the Weyl family is a
+homomorphism, so `(sum_u w_u (x) w_u)^2` collapses --- for each `s` there are exactly `q^n` pairs
+`(u,v)` with `u + v = s`. That is `twirl_mul_self`, and it lets `snorm_le_one_of_proj` supply the
+`||x|| <= 1` hypothesis of `norm_sub_sq_le_of_re_inner_ge` with no operator-norm estimate anywhere
+(the alternative, lifting a `Bnd` through `bOp`, would have needed a fibrewise decomposition that
+Foundations does not have). Second, **the range of `1 (x) |EPR><EPR|` consists of product
+vectors** by inspection (`bOp_eprProj_mulVec`), so the auxiliary state of item 1 is read off
+directly --- no partial trace, no Schmidt decomposition.
+
+**And the graph was wrong.** Assembling item 1 made it visible that its real input --- the
+self-consistency of `W~^e(u-tilde)` at a *uniform* `u-tilde` --- is nowhere in the blueprint. It is
+the paper's second item of `lem:qld-construct-the-paulis`, and the blueprint's paraphrase of
+`lem:qld-exact-paulis` kept only the first. Added as `lem:qld-pauli-selfcons` and recorded in
+`reports/qld-stage5-blueprint-repairs.md`. It is the substantial piece of stage 5 that remains, and
+it is what `thm:qld` is now waiting on: item 2 of `lem:qld-swap` and the assembly both run through
+it.
+
+### PR L, first piece: the exact steps of `lem:qld-pauli-selfcons` (2026-09-22)
+
+`MIPRE/Background/QLD/AncTransport.lean` (fast regime). The node added in the previous PR is the
+blocker for everything left in stage 5, so this starts on it. Its chain splits cleanly: the
+`approx_0` displays are identities and the `approx_delta` ones are estimates. All the identities
+are now in (`syn_mul_syn` landed with the previous PR; `stateVec_ancSyn` and `sum_ancSyn_mulVec`
+here).
+
+**The one that looked blocked.** `eq:qld-pulling-3a` moves a generalized Pauli between the two
+ancilla halves, exactly. Foundations has that for the bare entangled state, but the chain runs on
+a `SimulPair`'s padded state `Phi`, and `SimulPair` does not say `Phi` *is* an expanded state ---
+only `Phi_reduced`, that it reproduces expectations. A vector identity looked out of reach, which
+would have meant strengthening the merged stage-4 interface. It is not out of reach: the identity
+is the vanishing of `xSqNorm Phi A B`, and a squared norm is an expectation, so the existing
+`SimulPair.xSqNorm_aOp` carries it. Worth remembering for the rest of the chain: an exact statement
+about `Phi` expressible as a vanishing squared norm is reachable through `Phi_reduced`; one that is
+not, is not. Every `approx_0` step here is of the first kind, so no interface change is needed.
+
+**Sizing what is left.** The estimates are `eq:qld-pulling-1`, `-3`, `-7` and `-10` through `-12`,
+then the passage through `fact:agreement`, `fact:data-processing` and `lem:qld-povm-to-obs`. Their
+tools are in place (`fact:add-a-proj` in `MIPRE/Foundations/Commutation.lean`, item 2 of
+`lem:qld-helper`). On stage 4's evidence that is about three pull requests, after which
+`lem:qld-swap` item 2 and the `thm:qld` assembly follow.
+
+### PR L, second piece: what the estimates of `lem:qld-pauli-selfcons` consume (2026-09-22)
+
+`MIPRE/Background/QLD/Pulling.lean` (fast regime). With the identities closed, this takes the two
+inputs the `approx_delta` displays need and puts them in the form the chain asks for.
+
+**The helper, re-indexed.** Displays `eq:qld-pulling-7` and `eq:qld-pulling-11` are item 2 of
+`lem:qld-helper`, but the helper is stated at an outcome `a` in `F_q` --- what the expansion stage
+produces --- and the chain sums over the *polynomial* outcomes `g`, because the label
+`coded(g) . u-tilde` it carries depends on `g` and not on `g(u)`. The two sums are **equal**, not
+merely comparable: within a fibre of the evaluation the pair measurement's outcomes are orthogonal
+projectors, so every cross term of the squared norm vanishes (`snorm_sq_sum_orthogonal`), and the
+fibres partition the outcomes. So `SimulPair.sum_snorm_sq_polyMarg_one_sub_le` holds at the
+helper's own constant, with nothing lost.
+
+**Schwartz--Zippel again.** `eq:qld-pulling-12` is `sum_uniform_agree_mass_le`: restricting a
+weighted sum to the tuples where two distinct outcome polynomials agree at the sampled point costs
+`md/q`. A small thing worth noting --- the linter caught it --- is that no `1 <= d` hypothesis is
+needed here, unlike at `prob_agree_ldEnc_le_of_not_multilinear`, because both polynomials carry the
+same individual-degree bound and so the Schwartz--Zippel hypothesis is already met. The version in
+`NonMultilinear.lean` needs it only because one side there is an interpolant, of individual degree
+at most one, which has to be brought under the bound `d`.
+
+**A tactic note, since it cost a cycle.** `Finset.sum_fiberwise` will not close
+`sum_a sum_{g in fibre} f(g, a) = sum_g f(g, ev g)` directly: the summand on the left mentions `a`
+and only agrees with the right *inside* the fibre. Rewriting the right-hand side with
+`<- sum_fiberwise` first and then matching pointwise with the membership hypothesis is the pattern
+that works, and it is the same one `Multilinear.lean` uses. Applied the wrong way round it does not
+fail fast --- it spends the whole heartbeat budget on unification and reports a `whnf` timeout,
+which reads like a performance problem and is not one.
+
+What is left of the node: `eq:qld-pulling-1` and `-3` (inserting and moving a near-identity),
+`eq:qld-pulling-10`, the assembly, and the final passage through `fact:agreement`,
+`fact:data-processing` and `lem:qld-povm-to-obs`. The remaining tool is `fact:add-a-proj`, in
+`MIPRE/Foundations/Commutation.lean`.
+
+### PR L, third piece: the near-identity of `eq:qld-pulling-1` (2026-09-22)
+
+`MIPRE/Background/QLD/Pulling.lean`, continued (fast regime). The display right-multiplies by
+`sum_g (S-hat^W_g)_{A A'} (x) (M-hat^{(Point,W),u}_{g(u)})_{B A''}`, which item 1 of
+`lem:qld-helper` says is near the identity. The step is cheap for a reason worth naming: that
+operator is a **projection** (`agreeOp_mul_self`). The pair measurement's outcomes are orthogonal,
+so the cross terms of the square vanish, and the opposite party's factors are projectors. So its
+deficit from the identity is *linear* in it --- `snorm_sq_one_sub_agreeOp` gives exactly
+`1 - agreement`, with no Cauchy--Schwarz --- and a contraction on the left cannot amplify it
+(`snorm_sub_mul_agreeOp_le`).
+
+The package is stated for any family of projectors on the second party, not just a measurement:
+the cross-term cancellation needs only the *first* party's family to be projective. That is what
+lets it apply here, where the second-party factors are indexed by `g` through `g(u)` and so are
+not a measurement in `g`.
+
+Left on the node after this: `eq:qld-pulling-3`, `eq:qld-pulling-10`, the assembly, and the final
+passage through `fact:agreement`, `fact:data-processing` and `lem:qld-povm-to-obs`.
+
+### PR L, fourth piece: the two ends of `eq:qld-pulling-10` (2026-09-22)
+
+`MIPRE/Background/QLD/Pulling.lean`, continued. That display is argued by bounding the magnitude of
+a difference, and its justification runs from `fact:add-a-proj` at the top to the helper at the
+bottom. Both ends are now in.
+
+The top is `sum_kron_le_one`: a family of projectors on one factor tensored with a projective
+measurement on another sums to at most the identity, the complement `sum_x (1 - B_x) (x) T_x` being
+a sum of positive semidefinite terms. Against a positive operator on the other party that discards
+the index the sandwich runs over (`sum_bornProb_kron_le`), which is one line given
+`bornProb_sum_right` and `bornProb_mono_right`.
+
+The bottom is `eq:qld-pulling-14`, `SimulPair.sum_bornProb_polyMarg_one_sub_le`: the complement of
+the helper's agreement, read by polynomial outcome, is at most `delta_S`. It is the agreement
+itself subtracted from one, the marginal's outcomes summing to the identity.
+
+Left on the node: `eq:qld-pulling-3`; the middle of `-10` (the expansion of the squared norm and
+the `O(sqrt eps)` substitution at `eq:qld-pulling-13`); the assembly; and the final passage through
+`fact:agreement`, `fact:data-processing` and `lem:qld-povm-to-obs`.
+
+### PR L, fifth piece: the middle of `eq:qld-pulling-10`, `eq:qld-pulling-3`, and the final passage (2026-09-22)
+
+`MIPRE/Background/QLD/Pulling.lean`, continued. Three sections, and after them the only thing the
+node is missing is the assembly of the chain itself.
+
+**The middle of `eq:qld-pulling-10` (`section Substitute`).** Between the two ends already in
+place, the estimate expands a squared norm over the orthogonal outcomes of a projective family
+into a sum of sandwiches (`snorm_sq_sum_proj_sandwich`), drops the constraint on the outcomes
+(`sum_qform_sandwich_le_of_subset`, from the nonnegativity `qform_sandwich_nonneg`), and then
+*moves* the sandwiched measurement from one party to the other. That last step is
+`abs_sum_qform_swap_le`, and it is the only Cauchy--Schwarz in the whole chain: the difference of
+the two sandwiches is written as two terms each carrying the deviation `X - Y` on one side, and
+each is bounded by `sqrt(eps)` against a mass at most one. `snorm_sq_proj_mul_eq_qform` is how
+that mass is read off a sandwich.
+
+The `X` side needs no second half: `X S X = X S` there, because `X` is a projection commuting with
+what it sandwiches. The summed Cauchy--Schwarz is `Introspection.abs_sum_qform_mul_le`, already in
+Foundations for the introspection induction and the reason this file now imports
+`MIPRE/Foundations/Introspection/ValueStability.lean`. It wants the self-adjoint factor written
+first, which the deviation is and the half-sandwich is not; `qform_conjTranspose` turns the first
+term around so that both fit.
+
+**`eq:qld-pulling-3` (`section Insert`).** The expansion leaves one party's projector beside the
+*other* party's point measurement, and the chain inserts a copy of that measurement on the first
+party's side. Two things make the step cost the self-consistency of `lem:qld-win` and no more. The
+deficit of the insertion is the cross-party deviation itself (`snorm_one_sub_aOp_mul_bOp_le`):
+`(1 - A) B = B (B - A)` because `B` is a projection and the parties commute, and a projection in
+front costs nothing. And the projective family in front is indexed *through a map* to the
+measurement's own outcomes, so only the fibres of that map are summed over
+(`sum_snorm_sq_proj_comp_le`). Without the fibres this would be false --- the index of the family
+is far larger than the outcome set, and summing one deviation once per index would multiply the
+bound by the size of a fibre. `sum_snorm_sq_insert_le` is the display.
+
+**The final passage (`section Coarse`).** This turned out to be already available. Foundations has
+`sum_xSqNorm_map_le` --- coarse-graining two projective measurements the same way costs nothing,
+which is exactly `fact:agreement`, `fact:data-processing` and `fact:agreement` again --- stated on
+bundled POVMs, because that is what the expansion stage of the introspection tree speaks. The
+chain speaks `IsPVM`. `povmOfIsPVM` and `sum_xSqNorm_fibre_le` bridge the two, and the passage is
+then one `simpa`. Worth recording as a small lesson: before writing an estimate of this shape,
+look for it in `Foundations/Sandwich.lean` and `Foundations/Expanded.lean` first.
+
+Left on the node: the assembly of the chain itself, which is the index bookkeeping of the eleven
+displays plus `lem:qld-povm-to-obs` at the end. Every step it assembles is now formalized.
+
+### PR M: the exact steps of `lem:qld-swap` item 2 (2026-09-22)
+
+`MIPRE/Background/QLD/SwapMeasure.lean`, new. Item 2 of `lem:qld-swap` is the longer half of the
+swap lemma and none of it was formalized. Three of its displays are now, and they are the ones
+that are identities or that reuse a packaging already in the library.
+
+**`eq:qld-unitary-6`: conjugating the measurement, not the observable.** `SwapUnitary.lean`
+carries the observable version, `V W~^e(u) V^dagger = Id (x) tau^W(e . u)`. The measurement
+version needs one thing the observable version did not, and it is worth having on its own. The
+twisted commutation relation says conjugation by the ancilla factor multiplies each Weyl operator
+by a character; on the *spectral projectors* that is a **shift**, because a projector is the
+Fourier average of the family against a character and two characters compose by adding their
+labels (`conj_proj_of_sign`). A syndrome projector is a sum of spectral projectors over a level
+set of the pairing with the probe, so its outcome moves by the shift's own pairing
+(`conj_syn_of_sign`), the level sets being carried onto each other by adding the shift --- an
+involution of the index group in characteristic two.
+
+Then the cancellation is arithmetic. In `M~^{W,u}_a` the outcome carried at the pair outcome `p`
+is `cd(pi p) . u + a` and the shift conjugation applies is `cd(pi p)`, whose pairing with `u` is
+that same `cd(pi p) . u`; so every factor of the conjugated sum is the same syndrome projector,
+the pair outcome is gone, and the measurement in front sums to the identity
+(`swapU_conj_mTilde`, and `swapU_conj_mTilde_X` / `_Z` at the two bases). This is the paper's
+relabelling `h' = h + coded(g_W)`, the passage its `\cnote` records as repaired: the repair kept
+`coded(g_W) . ind_m(u)` rather than the false `g_W(u)`, and what makes the relabelling exact here
+is that the shift and the outcome are written with the same `cd(pi p) . u` by construction, so
+nothing has to be identified at all.
+
+At the interface this is `SimulPair.swapU_conj_mTildeAt`, with `SimulPair.swapA` Alice's swap
+unitary. `PolyPair.proj .X` is the first projection and `weylOf .X` is `wX`, and likewise for `Z`,
+so the two bases are the two cases of `Bas` and nothing else is needed.
+
+**`eq:qld-unitary-7`: the expansion.** `sum_snorm_sq_sub_eq_two_sub`. The two families compared in
+the endgame act on the *same* party, so `one_sub_sum_bornProb_eq` --- the bipartite version, which
+the rest of the appendix uses --- does not apply. The same three-term expansion does, with both
+diagonal sums exactly one because both families are projective, and with no real part left in the
+statement: `qform` is already the real part, and the flipped cross term has the same one.
+
+**`eq:qld-unitary-8`: the same Schwartz--Zippel.** The endgame's one estimate turned out to be
+`eq:qld-pulling-12` again, in the packaging already written for it. The only mismatch was
+bookkeeping: there the index set excludes the coinciding polynomials, here the index is a *pair*
+of Pauli outcomes and the diagonal is excluded by the weight. So `sum_uniform_agree_mass_le` now
+asks for the two polynomials to be distinct only where the weight is nonzero --- a weakening, so
+nothing that used it changes --- and `sum_uniform_agree_bornProb_le` is the display.
+
+Left on item 2: `eq:qld-unitary-5`, the triangle chain through `lem:qld-win` and
+`lem:qld-exact-paulis`; the transport of the estimate from the product state back to the padded
+state across item 1; and the assembly. Left on `lem:qld-pauli-selfcons`: its assembly, unchanged.
+
+**A note on what `eq:qld-unitary-5` still needs.** Looking for the triangle chain's engine turned
+up `agreeSum_triangle` in `MIPRE/Foundations/POVMMix.lean`: the POVM form of the paper's
+`fact:triangle-for-simeq` item 1, formalized earlier in the campaign for
+`lem:qld-global-success`, with `11 delta` in place of the paper's `9 delta` (the padding into a
+four-dimensional auxiliary space that buys the `9` is what the Lean proof does without, and the
+blueprint records the difference). So `eq:qld-unitary-5` is not a new estimate: what is left of it
+is stating the three consistencies --- `eq:qld-unitary-2`, `-3`, `-4` --- as `agreeSum` statements
+at this interface. That is the second time in two pull requests that an appendix estimate turned
+out to be already in Foundations under another name; the habit is now worth the two minutes it
+costs.
+
+### PR N: the triangle chain's adapter, and a duplicate of my own making (2026-09-22)
+
+Two things.
+
+**`inconsistency_triangle`.** `eq:qld-unitary-5`'s estimate is `agreeSum_triangle`, which speaks of
+the *agreement* of two POVM families; every consistency in the QLD interface --- `consA`, `consB`,
+`inconsistency_mTilde_le` --- is stated as an *inconsistency* instead. The two are the same number
+(`sum_bornProb_diag_eq`), so the adapter is five lines, and with it the display is the estimate
+applied to `eq:qld-unitary-2`, `-3` and `-4`. One Lean detail worth remembering: passing the
+constant as `(delta := delta)` was necessary, because `rw` closes its goal by `rfl` and would
+otherwise unify the triangle's implicit constant with the first hypothesis's left-hand side.
+
+**A duplicate, removed.** `povmOfIsPVM`, which PR #158 added to `Pulling.lean` to bridge `IsPVM` to
+`POVM`, already existed as `IsPVM.toPOVM` in `MIPRE/Foundations/Commutation.lean` --- and the QLD
+tree was already using it, in `inconsistency_mTilde_le` two files away. Removed, and
+`sum_xSqNorm_fibre_le` now goes through the existing one. This is the third time in three pull
+requests that something in this appendix was already in the library; the first two were finds, this
+one was a miss. The lesson is the same and it is now cheap to apply: `grep` the declaration name's
+shape before writing it.
+
+Left after this: putting `eq:qld-unitary-5`'s three consistencies on one cut (`consA` and `consB`
+are read along the padded state's cut, `inconsistency_mTilde_le` along the regrouped one, and
+`bornProb_regroupVec` carries a Born probability between them); the transport from the product
+state back to the padded state; item 2's assembly; and the pulling chain's assembly.
+
+### PR N, continued: `eq:qld-unitary-5` at the interface, and the endgame's transport (2026-09-22)
+
+Three more pieces, all in `SwapMeasure.lean`.
+
+**The cut.** The one real obstacle to `eq:qld-unitary-5` was that its three legs are not read along
+the same cut. `M~^{W,u}` wants the ancilla half with the first party, which is the regrouped cut
+`mVec`; the strategy's own point and Pauli measurements are local to the unpadded registers and
+are stated along the padded state's cut. `inconsistency_regroupVec` settles it: for operators that
+ignore the register the regrouping moves --- which the strategy's measurements do, being extended
+by the identity there --- the two readings are the *same number*, the regrouping being a
+reindexing of the whole space and `bornProb_regroupVec` the one entry computation. The proof is
+four lines and the statement is the general one, not an instance.
+
+**The display.** `SimulPair.inconsistency_mTilde_pauli_le` is `eq:qld-unitary-5`: the exact Pauli
+measurement agrees with the strategy's `(Pauli, W)` measurement read at the sampled point
+(`pauliAtPOVM`, which is `rdPauli` --- the paper's `g_h(u)` --- coarse-graining the Pauli answer),
+to within eleven times whatever bounds the three legs. Its own leg is item 1 of
+`lem:qld-exact-paulis`; the two middle legs are the game's point--point and point--Pauli
+consistencies and are hypotheses, in the same way `exists_auxVec_close` takes item 1's
+near-invariances. That is the honest shape: those two are `lem:qld-win`'s to supply, and supplying
+them is a separate piece of work.
+
+**The transport.** `abs_qform_sub_qform_le`: moving an expectation from the product state to the
+padded one costs twice the operator's bound times the distance between them, by splitting the
+difference into two terms with the deviation on one side each. Item 1 bounds the *squared*
+distance, so this is exactly where the fourth root in `delta_qld` comes from.
+
+What item 2 still needs: the two game consistencies that `inconsistency_mTilde_pauli_le` assumes,
+and the assembly --- threading `eq:qld-unitary-7` through `-9` and this transport into the
+statement about `V M^{(Pauli,W)}_h V^dagger`. What `lem:qld-pauli-selfcons` still needs is
+unchanged: the assembly of its chain.
+
+**And the padding transport.** `SimulPair.bornProb_padded` and `inconsistency_padded`: a
+consistency between the strategy's *own* measurements reads the same on the padded state as on the
+strategy's own state, both operators being extended by the identity on the expansion's ancillas and
+on the padding. The padded state's reduction carries them to the expanded state and
+`bornProb_expVec_kron` carries them down to `psi`, the entangled pair contributing its norm and
+nothing else. That is what lets `inconsistency_mTilde_pauli_le'` ask for its two middle legs in the
+form `agree_subtest_le` leaves them --- on `psi`, with nothing about the expansion or the padding in
+sight. What remains of those two legs is instantiating `agree_subtest_le` at the edges `adj_self'`
+and `adj_point_pauli` with the readings `rdVal` and `rdPauli`, averaging over contents into points
+with `sum_content_pt`, and halving the cross-deviation into an inconsistency (exact for projective
+families).
+
+### PR N, third piece: the two middle legs, discharged (2026-09-22)
+
+`eq:qld-unitary-5`'s two middle legs are no longer hypotheses. They are items 1 and 3 of
+`lem:qld-win` --- `item_consistency` at the point type and `item_pauli_consistency` --- both of
+which were already in `Win.lean`, and three steps carry each into the form the triangle wants.
+
+* The point question a content asks is the point the content carries (`Content.question` at
+  `.point W` is `.point W (c.pt W)`, by `rfl`), so the average over contents of a function of that
+  point is the uniform average over points: `sum_content_pt`, also already in.
+* For *projective* families a cross-party deviation is exactly twice the inconsistency
+  (`inconsistency_eq_half_xPovmDist`). Only `≤` holds for general POVMs
+  (`xSqNorm_sum_le_two_mul`); what makes it an equality is that both families' masses are exactly
+  one, which `one_sub_sum_bornProb_eq` already knew.
+
+`inconsistency_pt_pt_le` and `inconsistency_pt_pauli_le` are the two legs at `86 ε`, which is
+`agree_subtest_le`'s `172 ε` halved, and `inconsistency_mTilde_pauli_le_of_win` is
+`eq:qld-unitary-5` from the game's soundness and item 1 of `lem:qld-exact-paulis` alone.
+
+Two Lean notes. `linarith` compares atoms syntactically, so a hypothesis whose Born probability is
+written unfolded and a goal whose is not will not close: `simp only [bornProb]` on the hypothesis
+was the fix, twice. And a `rw` with the measurement arguments left as `_` unified them against the
+*proof terms* supplied for projectivity, producing `POVM.map _ (MA _)` where the goal had
+`ptAtPOVM MA W u`; naming the two families in `have`s first fixed it.
+
+That is item 1 of the four in `planning/formalization-plan.md`'s QLD list, done. Left: the assembly
+of item 2, the assembly of `lem:qld-pauli-selfcons`'s chain, and `thm:qld`.
+
+### PR O: the endgame of item 2, in bricks (2026-09-22)
+
+`MIPRE/Background/QLD/SwapEndgame.lean`, new. Item 1 leaves a product state
+`|aux> (x) |EPR_q>^M`, and what the endgame does to it turns out to be elementary once said
+plainly.
+
+* An operator on the entangled pair acts on the second factor and leaves the first
+  (`bOp_mulVec_auxVec`, one entry computation), so two operators that agree on the pair agree on
+  the whole product (`mulVec_auxVec_congr`). That is `eq:qld-unitary-7`'s last line, where a
+  generalized Pauli's spectral projector moves from one half of the pair to the other: the
+  projectors are symmetric, being real Fourier averages of a symmetric family, so the existing
+  `stateVec_epr_proj` moves them across the pair and `mulVec_auxVec_proj` carries that to the
+  product state. `mulVec_auxVec_syn` is the same for the syndrome projectors.
+* `sum_snorm_sq_sub_le_of_agree` is the display's first two lines read as a bound: everything after
+  them is a lower bound on one number, the agreement, and the deviation the lemma asks about is
+  twice its deficit.
+* `sum_uniform_bornProb_fibre_le` is `eq:qld-unitary-8` in the form the chain consumes. Reading the
+  two families at the *value* of the encoding at the sampled point rather than at the full outcome
+  can only add agreeing pairs, and the ones it adds are the distinct pairs whose encodings collide
+  there, which `sum_uniform_agree_bornProb_le` already bounds. The work is the regrouping: the
+  agreeing pairs at `u`, fibred by the common value, are exactly the products of the fibres, and
+  the diagonal of that is the fine agreement.
+
+With this, every step of item 2's endgame is formalized. What is left of item 2 is the threading:
+matching the registers of the conjugated Pauli measurement with item 1's, which is where
+`exists_auxVec_close`'s cut (the two parties' non-ancilla registers as one index, their two ancilla
+halves adjacent) has to be reconciled with the measurement's. That is bookkeeping, and it is the
+only thing between here and the lemma.
+
+**And a four-factor regrouping --- which is _not_ item 1's cut, and finding that out is the point.**
+`endEquiv` moves both ancilla factors of a two-party product out of the party grouping and puts
+them together; `qform_endVec` carries an expectation between the readings, by the same route
+`regroupEquiv` and `bornProb_regroupVec` take. It was written to be item 1's cut. It is not, and
+checking the claim before building on it turned up the real obstacle to item 2's threading.
+
+`exists_auxVec_close` concludes about `|EPR>_{A'' B''}` --- one half of *each* party's local pair;
+the paper's expanded state is `|psi>_{AB} (x) |EPR>_{A'A''} (x) |EPR>_{B'B''}`, and `V_A` acts on
+`A A' A''`, `V_B` on `B B' B''`. The padded state of this formalization carries only the pair
+`A' A''`, read along the cut `A A' | B A''`, with no `B' B''` in it at all. That was deliberate:
+`lem:qld-simultaneous` and `lem:qld-helper` each use one orientation at a time, and
+`reports/qld-stage5-blueprint-repairs.md` already records that the second pair was not needed for
+`lem:qld-exact-paulis`'s item 1. Item 2's threading is the first consumer that does need it.
+
+So the standing claim that "what remains is index bookkeeping with no missing mathematics" was
+right for `lem:qld-pauli-selfcons`'s chain and **wrong for item 2's threading**: before the
+endgame's steps can be pointed at one vector, the interface has to carry both entangled pairs, or
+there has to be an argument that one suffices here as it did there. That is an interface change,
+and it is the next real decision of the campaign. `endEquiv` and `qform_endVec` keep their place ---
+whatever the representation, the regrouping they do is the shape the threading needs --- but they do
+not by themselves reach item 1's conclusion.
+
+**And the chain's probe.** `lem:qld-pauli-selfcons` runs at a *uniform* `u-tilde` in `F_q^M`, which
+is not a point's low-degree encoding --- the encodings are a tiny subset of `F_q^M`, and confusing
+the two is the omission that created the node. `MIPRE/Background/QLD/ChainProbe.lean` keeps them
+apart by name: `SimulPair.mTildeAnc` is the exact Pauli measurement at an arbitrary probe (the
+generic `mTilde` already took the probe as an argument, so this is a naming, not a construction),
+`isPVM_mTildeAnc` says it is projective at every probe, `mTildeAt_eq_mTildeAnc` is the one place it
+meets `lem:qld-exact-paulis`'s, and `swapU_conj_mTildeAnc` is `eq:qld-unitary-6` there --- the
+conjugation's cancellation never used the probe's shape, only that the outcome's shift and the
+conjugation's are written with the same pairing.
+
+That is the first brick of the chain assembly: every display of the chain has to be available at
+this probe, and until now none of them were stateable there.
+
+**And the missing edge, made explicit.** Item 1 of `lem:qld-swap` asks for a near-invariance of the
+state under the Weyl twirl on its two ancilla halves; what `lem:qld-pauli-selfcons` supplies is an
+agreement of the two parties' exact Pauli observables averaged over a *uniform* probe. The twirl is
+by definition that average (`twirl w = E_u w(u) (x) w(u)`), so the two are one rewriting apart:
+`qform_bOp_twirl`. Worth recording that the edge is this short. The node was separated out from
+`lem:qld-exact-paulis` because the latter's `leanok` marks had to stay honest, and the worry was
+that the separation would cost a translation layer between them. It costs one line.
+
+### The correction to the correction (2026-09-22)
+
+The note above said item 2's threading was blocked on the second entangled pair while
+`lem:qld-pauli-selfcons`'s chain was unblocked bookkeeping. The second half is wrong, and checking
+it before starting the chain assembly is what turned it up.
+
+The chain's conclusion is a cross-party closeness of the two parties' *exact Pauli observables*:
+`(W~^e(u-tilde))_{A A' A''} approx (W~^e(u-tilde))_{B B' B''}`. Each side needs its party's whole
+triple, so six registers at once; `Phi` has four. And the two readings pull opposite ways ---
+`mTildeAt` lives on the regrouping that gives Alice both ancilla factors, a Bob-side `mTilde` would
+need the one that gives Bob both, and no bipartite cut of a four-factor state supports both. The
+conclusion cannot be stated in the present representation. That there is no Bob-side `mTilde` in
+the tree is the same fact from the other side.
+
+What kept the one-pair economy honest until now: every earlier consumer compares an exact Pauli
+object on one party with a *point measurement* on the other, and a point measurement carries no
+ancilla. `inconsistency_mTilde_le` is `mTildeAt` against `(ptAtPOVM MB W u).aOp` on `dB x EB`. Two
+exact Pauli objects is the first comparison the economy cannot serve.
+
+**So there is one blocker with two consumers**, and it is now the next piece of work: `SimulPair`
+carrying both pairs. `Phi`'s type changes and every statement reading `Phi` or `mVec` is re-derived
+--- `Helper`, `Multilinear`, `MTilde`, `AncTransport`, `Pulling`, `SwapMeasure`, `ChainProbe`. The
+estimates are untouched, being about operators and states in the abstract; this is a retyping and a
+re-derivation of the transports. Neither assembly should be started before it.
+
+### PR P: the two-pairs change is additive (2026-09-22)
+
+The scope written an hour ago said `SimulPair.Phi` had to be retyped to carry the paper's second
+entangled pair, at about 94 mentions of `Phi` and 19 of `mVec` across 135 declarations. That was
+wrong, and `MIPRE/Background/QLD/TwoPairs.lean` is the demonstration: it builds against the tree as
+it stands.
+
+`SimulPair`'s `EA` and `EB` are **arbitrary types**, constrained only by `Fintype` and
+`DecidableEq`. The second pair lives inside them --- `EA = Anc x EA'`, `EB = Anc x EB'` --- so
+`Phi` already is a state on the paper's six registers plus padding, and `Phi_reduced` is satisfiable
+unchanged, speaking as it does of `aOp X` and `aOp Y`, which put the identity on all of `EA` and
+`EB` whatever those are.
+
+With each pair split across the party cut the way `hatVec` already splits the first, Alice's side
+is `A A'` and `B'' EA'`, Bob's is `B A''` and `B' EB'`. Alice's `M~` wants `A A' A''` and Bob's
+wants `B B' B''`; each needs one register from the far side, and they are *different* registers.
+So one permutation serves both: `pairSwapEquiv` sends each party's far half home, after which
+Alice holds `A A' A''`, Bob holds `B B' B''`, and both exact Pauli objects are expressible on one
+bipartite cut. `pairSwapVec`, `pairSwapVec_unit`, `reindex_pairSwapEquiv` and `qform_pairSwapVec`
+come with it, in the pattern `regroupEquiv` and `bornProb_regroupVec` set.
+
+The lesson is worth keeping, because it is about reading an interface rather than about this proof:
+**when a structure carries an opaque type parameter, check what can be put into it before changing
+the fields around it.** The first estimate read `EA` and `EB` as fixed padding. They are free.
+
+Left: a structure beside `SimulPair` recording the shape and the mirror `Phi_reduced`; Bob's
+`mTilde` from `SB`; then the two assemblies.
+
+### PR Q: the mirror is a second `SimulPair` (2026-09-22)
+
+The scope written an hour before this one was wrong too, in the other direction, and the reason is
+worth recording because it is the same mistake twice: **both wrong turns came from reasoning about
+the Lean types instead of reading the paper's register assignments.**
+
+Putting the second pair inside `EA` and `EB` typechecks and needs nothing retyped. It also lets
+`SA : POVM (PolyPair) ((dA x Anc) x EA)` act on `B''`, which is Bob's. The paper's `S-hat` does
+not: `lem:qld-4-7` gives it on `H (x) (C^q)^{(x) n}` for each player's own space, and
+`qld-separating.tex` says in as many words that `M-tilde` then acts on `A A' A''` (resp.
+`B B' B''`). A measurement free to touch `B''` makes `M-tilde` and the swap unitary non-local, and
+then `lem:qld-pauli-selfcons` cannot be **stated**, its two sides not lying on opposite sides of
+any cut.
+
+The design that works appends the pair instead. A `SimulPair` stays exactly as stages 4a--4c
+produce it, carrying only the pair its own cut splits; the other pair is tensored on with
+`expVec _ epr`, one half to each party. Party registers then read `((X x Anc) x E) x Anc`, with the
+appended half outermost --- which is where `mTilde` writes its Pauli register, so `mTildeAnc` lands
+on Alice's physical register `A A' Ea A''` with nothing to reindex.
+
+And the second cut is not a new kind of data. `sec:expanding` partitions the six registers two ways
+and says every bipartite relation holds for both; `lem:qld-4-7` gives `S-hat` on `A A'` *and* on
+`B B'`. So **the mirror of a `SimulPair` is a `SimulPair`**, at the swapped strategy with the
+players exchanged. `MirrorSimul` in `MIPRE/Background/QLD/Mirror.lean` carries the two readings and
+`hmirror`, which says the two appendings give one state; `toFirst` and `toSecond` are the views.
+Bob's `mTildeAnc`, `swapA`, projectivity and `eq:qld-unitary-6` are then instantiations, with no
+mirror lemma proved.
+
+A claim that went out and had to be withdrawn: PR #163's description said Bob's `mTilde` could come
+from `SimulPair.SB`. It cannot --- `SB` is typed on `(dB x Anc) x EB` with that `Anc` being `A''`,
+so it sits on `B A''`, the second party of the *first* cut, not on `B B'`. The description was
+corrected before merge. Checking the premise before building on it has now caught four wrong claims
+in this campaign; the cost of the check has been minutes each time.
+
+Left: the two assemblies, now that both are expressible, and then `thm:qld` --- where the paper's
+"symmetric equivalents" remark has to be made good by running stage 4 on the second cut as well.
+
+### PR R: the pulling chain's two ends (2026-09-22)
+
+`MIPRE/Background/QLD/Chain.lean` is the chain's arithmetic frame, and it contains no estimate: it
+is the index algebra that the eleven displays are bookkeeping for.
+
+**The near end.** `mTildeAnc_eq_sum_chainIdx` is `eq:qld-pulling-2` and `eq:qld-pulling-2b`. The
+definition `eq:tilde_M` sums over pair outcomes `g` with a syndrome projector attached; the chain
+sums over pairs `(g, h)` cut out by `(cd(g) - h) . u-tilde = a`. Same sum: the syndrome projector
+is the fibre of the spectral family over that pairing, and in characteristic two the shift the
+definition carries is the sum the chain's label is written with.
+
+**The far end, and why the lemma holds at all.** `endOp` is display `eq:qld-pulling-12`. Both
+parties' derivations end there, and the two exact Pauli measurements are close to *each other* ---
+rather than each close to something --- only because that display is symmetric in the two pairs.
+That is not apparent: its index set is cut out by a coupling `g - g_h = g' - g_h'`, symmetric on
+its face, together with a pairing condition read off the *first* pair alone.
+
+`chainLabel_eq_of_coupled` is the reason, and the proof is one line: evaluate the coupling at a
+cube point, where the encoding of a cube datum is that datum. So coupled pairs carry the same
+label, the condition may be read off either pair, and the index set is invariant under exchanging
+them (`swap_mem_coupledIdx`). `endOpMirror_apply` is then the symmetry of the display itself.
+
+**And closing.** `sum_xSqNorm_le_of_endOp`: given the two chains, `sum_snorm_sq_triangle'` (already
+in Foundations) gives `eq:qld-pulling-cons` at twice the cost, the factor the paper absorbs into
+`delta_S`.
+
+What is left of `lem:qld-pauli-selfcons` is the eight `approx` steps between those two ends. Every
+estimate they consume is in the tree --- the blueprint's comment on the lemma lists them one by one
+--- and what is missing is the four-index bookkeeping that threads them. That is now the only thing
+missing, and it is bounded work with no mathematics left in it.
+
+### PR S: the chain's first estimate (2026-09-22)
+
+`eq:qld-pulling-1` right-multiplies the exact Pauli measurement by the helper's near-identity.
+`SimulPair.sum_uniform_snorm_sq_nearId_le` is that display, at item 1 of `lem:qld-helper`'s own
+constant, and two things make it cost that and no more.
+
+The insertion's deficit is *exactly* the near-identity's. A naive termwise bound would give
+`sum_a snorm(1 - N)^2 = q * snorm(1 - N)^2` and lose a factor of the field size; what saves it is
+that the measurement's outcomes are orthogonal, so `snorm_sq_sum_orthogonal` at the complete family
+collapses the sum. That is `sum_snorm_sq_sub_mul`, and it is worth having separately: the same
+shape recurs at `eq:qld-pulling-7` and `eq:qld-pulling-11`.
+
+The near-identity lives on `Phi`'s own cut, where `snorm_sq_one_sub_agreeOp` turns its deficit into
+the helper's Born probability; `mTilde` lives on the cut that has `A''` with Alice.
+`snorm_comp_equiv` moves between them --- a state-norm is carried by *any* reindexing of the whole
+space, `qform_comp_equiv` being the statement for the quadratic form. That generalises the
+`prodComm` case written for the endpoint's symmetry, and it is the lemma that lets each step of the
+chain be read along whichever of the paper's three groupings it is local in, instead of forcing one
+grouping on all of them. Having it settles a question that looked like an obstacle: the chain runs
+across three different cuts, and no one of them makes every step local.
+
+Seven `approx` steps left.
+
+### PR T: the chain's expansion, `eq:qld-pulling-2b` (2026-09-22)
+
+`SimulPair.aOp_mTildeAnc_mul_nearId` is the product the second and third displays carry out. It is
+an identity, not an estimate, and it runs in three moves.
+
+The near-identity expands because the hatted point measurement *is* the convolution
+`sum_{a'} M^{(Point,W),u}_{a'} (x) tau^{W,u}_{c-a'}` by construction --- that is
+`sum_kron_syn_eq_hatMats`, already in the tree --- and `reindex_regroupEquiv` sends each of its
+terms to the cut `mTilde` lives on, which puts `tau^{W,u}` beside Alice and the point measurement
+alone on Bob. That is `nearId_eq_sum`.
+
+Multiplying then kills all but one pair outcome (the family is projective) and fuses the two
+syndrome projectors into the Weyl outcomes meeting both conditions. That is `syn_mul_syn`, and it
+is where the chain's index set first appears: `mTildeAnc_mul_kron`.
+
+Finally the sum over Bob's point outcome collapses. For each Weyl outcome `h` exactly one `a'`
+survives --- in characteristic two `h . ind_m(u) = g(u) + a'` determines it --- and that one is
+`(g - g_h)(u)`, the paper's. What is left is a sum over `chainIdx` with `chainOp` as its summand,
+which is what those two definitions were introduced for in PR R.
+
+Three small general lemmas came out of it and are worth keeping: `kron_sum'` and `sum_kron'` (the
+Kronecker product distributes over a sum on either side, at arbitrary registers --- the existing
+`kron_sum` is typed to `ExactPauli.lean`'s own registers) and `reindex_sum`.
+
+Six `approx` steps left.
+
+### PR U: the chain's insertion, `eq:qld-pulling-3` (2026-09-22)
+
+The expansion of PR T leaves Bob's point measurement beside each term; this display inserts Alice's
+copy of it, spending the point measurements' self-consistency.
+`SimulPair.sum_snorm_sq_insert_chain` is that display. The packaging `sum_snorm_sq_insert_le`, in
+the tree since PR J, does the work once its hypotheses are supplied, and supplying them is the
+whole content.
+
+Both hypotheses are about the chain's terms being a **projective family in the pair `(g, h)`** ---
+`isPVM_chainOp`, a marginal of the pair measurement tensored with a Weyl spectral projector.
+Projectivity is what makes the outcomes not interfere, so that the squared norm of a sum over one
+outcome's fibre is the sum of the squared norms; and it is what makes the fibres of the outcome map
+`(g,h) |-> (g - g_h)(u)` be seen once rather than once per index. Without the second, the bound
+would be multiplied by the size of a fibre.
+
+Two small gaps in the toolkit turned up and are filled. `isPVM_proj` bundles three facts Foundations
+had only separately (`proj_conjTranspose`, `proj_mul_proj`, `sum_proj`) into the form `isPVM_kron`
+consumes. And `snorm_sq_sum_orthogonal'` is the varying-tail version of `snorm_sq_sum_orthogonal`:
+the existing one fixes a single `R` for all the blocks, while the chain's tail carries each term's
+own point measurement. Orthogonality kills the cross terms either way.
+
+Summing the display over the measurement outcome `a` recovers the whole index set --- the
+`chainIdx v a` are the fibres of the label map --- which is `Finset.sum_fiberwise`.
+
+Five `approx` steps left.
+
+### PR V: the chain's two transports, `eq:qld-pulling-3a` and `-4` (2026-09-22)
+
+Both are `approx_0` steps: identities on the state, not estimates.
+
+`SimulPair.stateVec_ancProj` moves a single Weyl projector from `A'` to `A''` at no cost --- the
+two halves of the pair are maximally entangled and the projectors are symmetric. `sum_ancProj_mulVec`
+is the consequence the chain uses: summing the matched pairs of them, one on each party, leaves the
+state alone, since by the transport each matched pair acts as the projector on one side and those
+sum to the identity.
+
+`AncTransport.lean` had both for the *syndrome* projector, which is a fibre of the spectral family.
+The chain moves one projector of that family, not a fibre, so it needs the single-projector version.
+`stateVec_epr_proj` --- already in Foundations and already used by the endgame --- is the ingredient,
+so this is four short lemmas mirroring four that were already there.
+
+The shape of the argument is worth restating, because it is what makes these steps available at all:
+`lem:qld-simultaneous` does not say the padded state *is* an expanded state, only that it reproduces
+its expectations, so a **vector** identity about it looks out of reach. It is not: the identity to be
+proved is the vanishing of a squared norm, and a squared norm is an expectation, so `xSqNorm_aOp`
+carries it across with no loss.
+
+Three `approx` steps left: `-3b`, `-5`/`-7`, `-10`/`-11`.
+
+### PR W: `eq:qld-pulling-3b`, a definition unfolded the other way (2026-09-22)
+
+`hatMats_mul_proj` says the chain's factor `(M^{Point,u}_r)_A (x) (tau_h)_{A'}` *is* the hatted
+point measurement cut down by the Weyl outcome: `M-hat^u_c` times the projector at `h` keeps exactly
+the point outcome `c - g_h(u)`. The reason is that the syndrome factor of the convolution selects
+the one term whose shift matches `h`, and `syn_mul_proj` is that fact on its own --- a syndrome
+projector meets a single spectral projector in that projector or in nothing, the syndrome being the
+fibre of the family over the pairing.
+
+Nine of the chain's eleven displays are now in. Two `approx` steps left: `-5`/`-7` (the helper's
+item 2 at polynomial indexing) and `-10`/`-11` (the Cauchy-Schwarz swap and Schwartz-Zippel).
+
+### PR X: the last two displays' common machinery (2026-09-22)
+
+`eq:qld-pulling-5` to `-7` and `-10` to `-12` are the chain's remaining estimates, and they are the
+first of its steps to live on all six registers: both compare operators on the **physical cut**,
+`A A' A''` against `B B' B''`, which is what `MirrorSimul` was built to make expressible. Displays
+`-1` through `-4` all lived on `Phi` or `mVec`, four registers and two indices; these carry a
+four-index sum. That is the size difference, and it is why they are last.
+
+They share two things, and both are now in.
+
+`sum_snorm_sq_fiber_sandwich_le` is the outer shape. Each display bounds the summed squared norm of
+the chain's terms grouped by the measurement outcome; projectivity turns each group into a sum of
+sandwiches (`snorm_sq_sum_proj_sandwich`, in the tree since PR J), the groups are the fibres of the
+outcome map, so the double sum is the single sum over the whole index, and what is left to bound
+carries no outcome in it at all.
+
+`sum_bornProb_sandwich_drop_le` is the discharge. Each sandwich carries, on the far party, a
+projector times a Weyl outcome; summed over that outcome these are at most the identity
+(`sum_kron_le_one`), so the whole sum is bounded by the near party's sandwiches alone. That is
+`fact:add-a-proj` in the form both displays consume it.
+
+`MirrorSimul.chainP` is the projective family they sum over --- Alice's pair and Weyl outcomes
+together, against Bob's Weyl outcome --- with `isPVM_chainP`, which is what both lemmas need of it.
+
+What is left of the two displays is the identification of their terms with that shape, and then the
+reduction of what remains to the helper's item 2 and to Schwartz-Zippel.
+
+### PR Y: `eq:qld-pulling-5` to `-9`, the first of the two remaining estimates (2026-09-22)
+
+The first step of the chain to compare operators on all six registers, and the first to run over a
+*triple* index: Alice's pair outcome `g`, her Weyl outcome `h`, and Bob's Weyl outcome `h'`.
+`sum_snorm_sq_chainP_le` is displays `-5` through `-8`, `sum_uniform_snorm_sq_chainP_le` is `-9`.
+The step costs item 2 of `lem:qld-helper` and nothing more.
+
+Three things had to be arranged, and each recurs at `-10`.
+
+*The tail.* `chainW` is Alice's gap `Id - M-hat^u_{g(u)}` against Bob's point measurement at
+`(g - g_h + g_h')(u)` --- shifted by **both** Weyl outcomes, which is why the index is a triple.
+`chainW_sandwich` is where it meets `sum_snorm_sq_fiber_sandwich_le`: conjugating the chain's
+projector by the tail splits across the cut, each party's factor local, so one rewrite turns the
+shape's quadratic form into a Born probability.
+
+*Bob discharges.* `bobHat_conj_bobWeyl` says his factor is a projector on `B B'` tensored with a
+Weyl outcome on `B''`; `sum_bornProb_chainW_drop_le` sums it away by `sum_bornProb_kron_le`. The
+projector **varies with** the Weyl outcome, so the discharge has to be stated with the two indices
+coupled --- `sum_bornProb_sandwich_drop_le` from PR X, which fixes the projector across the
+dropped index, does not cover it. That was worth finding before writing the proof rather than
+after.
+
+*Alice collapses and travels.* `sum_aliceChainOp` sums the Weyl outcome out of her summand, the
+spectral projectors being complete, and `sum_aliceChainOp_sandwich` carries that through the
+sandwich, her gap operator not depending on the Weyl index. What is left is on `A A'` alone, and
+`bornProb_physVec_aOp` carries it back to `Phi`, where
+`SimulPair.sum_snorm_sq_polyMarg_one_sub_le` bounds it.
+
+The transport is stated twice. `bornProb_physVec_aOp_kron` keeps the identity written as a
+fourfold tensor product and only `bornProb_physVec_aOp` collapses it, because the intermediate
+`mVec` carries Bob's padding under `toFirst`'s name for it and `rw` cannot abstract inside that
+application --- the motive is not type-correct at `implicit` transparency. The same spelling
+problem is why Alice's objects here (`aliceChainOp`, `aliceHat`) are named in her own spelling
+rather than reached through `toFirst`. This is the third time `toFirst.EA` versus `M.Ea` has cost
+a detour; the rule that has worked every time is to give a physical-cut object its own name and
+never to rewrite under a `toFirst` projection.
+
+Ten of the chain's eleven displays are in. One estimate left: `-10` to `-12`, the Cauchy--Schwarz
+swap (`abs_sum_qform_swap_le`) and Schwartz--Zippel (`sum_uniform_agree_mass_le`), both of which
+are already in the tree. Then the chain's assembly and `lem:qld-povm-to-obs` at its end.
+
+### PR Z: the mirror of a `MirrorSimul`, and the four-index family (2026-09-22)
+
+**The mirror of a `MirrorSimul` is a `MirrorSimul`** --- at the swapped strategy, with the two
+players' measurements exchanged and the two cuts exchanged. This is the same economy `toSecond`
+buys one level down, and it should have been noticed when `MirrorSimul` was introduced in PR Q.
+
+`toFirst` and `toSecond` give Bob's objects as a `SimulPair`, which is enough for anything stated
+on one cut's state --- `bobMTilde`, `bobSwap`, `bobSwap_conj_bobMTilde` all came that way. But the
+chain's last displays compare operators on the **physical** state, and nothing about that state was
+available for Bob: `physVec`, `bornProb_physVec`, `chainP`, `chainW` are all `MirrorSimul` methods.
+`mirror` supplies them. `mirror_sum_snorm_sq_chainP_le` is `-5` to `-8` for Bob, and its proof is
+`rw [← M.mirror_physVec]; exact M.mirror.sum_snorm_sq_chainP_le hprojA W v u`.
+
+What makes it go through is that `hmirror` survives the exchange, and that is `mirrorVec_mirrorVec`:
+`mirrorEquiv` composed with itself is the identity, **by `rfl`**. Exchanging the two parties and,
+within each, the party's own pair half with the other pair's, puts every register back where it
+started. The `Prod.swap`-twice and `Prod.mk.eta` definitional equalities carry the rest --- the
+whole `mirror` definition typechecks with `hmirror := by rw [M.hmirror, mirrorVec_mirrorVec]` and
+every other field a projection.
+
+This halves what is left of the chain. `sum_xSqNorm_le_of_endOp` takes both parties' chains as
+hypotheses; only one has to be built.
+
+*The four-index family.* From `-9a` on the chain runs over both parties' pairs. `chainQ` is that
+family; `endOp_eq_sum_chainQ` says the endpoint already in the tree is exactly its restriction to
+`coupledIdx`, so the displays leading there and the endpoint speak about one projective
+measurement. `sum_poly_chainQ` is `-9a`: left-multiplying by Bob's own pair measurement, which is
+the identity, refines the three-index family into the four-index one.
+
+*The spelling rule, for the third and fourth time.* `chainP` was defined through
+`M.toFirst.chainOp`; the moment a statement mentioned both it and `aliceChainOp`, the product's
+`HMul` instance failed to synthesize, because `toFirst.EA` and `M.Ea`, equal by definition, are not
+the same spelling. Retyping `chainP` through `aliceChainOp` fixed it, and `bobChainOp` was
+introduced for the same reason rather than using `mirror.aliceChainOp`. The rule, now applied
+consistently: **give every physical-cut object its own name in its own party's spelling, and never
+reach through `toFirst`, `toSecond` or `mirror` inside a statement.**
+
+What is left of the chain: `-10` to `-12`, then the assembly through `sum_xSqNorm_le_of_endOp`,
+then `lem:qld-povm-to-obs`.
+
+### PR AA: `eq:qld-pulling-10` down to its Cauchy--Schwarz step (2026-09-22)
+
+The chain's second remaining estimate runs over the four-index family and over the pairs whose
+outcomes **disagree** at the sampled point. Everything before the swap is now in.
+
+`sum_snorm_sq_fiber_sandwich_subset_le` is the outer shape on a subset of the index. The version
+PR X added fixes the index to `univ`, which the first display needs and this one does not; the
+general form is now the lemma and the old one is a one-line case of it.
+
+`bobTail_sandwich` splits the sandwich across the cut --- Alice's factor untouched, since this
+display's tail is Bob's alone --- and `bobHat_conj_bobChainOp` identifies Bob's factor as his
+sandwiched pair-measurement marginal `bobSand` tensored with his Weyl outcome.
+
+`sum_snorm_sq_chainQ_disagree_le` is the relaxation, which is where the paper's `<=` sits. Each
+disagreeing pair contributes one term of a sum over **all** outcomes the pair's own value excludes;
+the rest of that sum is nonnegative; and the constraint tying the outcome to the index may then be
+dropped. Worth recording what this step does *not* use: no Cauchy--Schwarz, and no measurement
+property beyond projectivity --- only `qform_sandwich_nonneg`, that a sandwich is nonnegative.
+`Finset.single_le_sum` and `Finset.sum_le_sum_of_subset_of_nonneg` are the whole argument.
+
+`sum_qform_bobTail_eq` closes the reduction at `eq:qld-pulling-13a`: Alice's whole family and Bob's
+Weyl outcome both sum to the identity, so what is left carries neither, and the bound is a
+statement about Bob's registers alone.
+
+What is left of `-10` is `eq:qld-pulling-13`, the swap --- `abs_sum_qform_swap_le`, already in the
+tree, applied on the *second* cut, so every transport it needs goes through `mirror`. Then `-11`
+(the helper's item 2 on Bob's side, with a constraint on the index set) and `-12`
+(Schwartz--Zippel, `sum_uniform_agree_mass_le`, also in the tree).
+
+### PR AB: `eq:qld-pulling-10` complete, and `-11` (2026-09-22)
+
+*The swap, and where the existing package did not fit.* `abs_sum_qform_swap_le` (PR J) measures the
+two placements' deviation **bare**: its hypothesis is `sum_i ||(X_i - Y_i) v||^2 <= eps`. Display
+`-13`'s index runs over pairs `(g, a)` of a pair outcome and a point outcome, and the deviation
+depends on `a` alone, so the bare form pays one deviation per polynomial --- a factor of
+`|LowIndDegPoly|`, which destroys the bound. The paper's own Cauchy--Schwarz is taken against the
+**sandwiched** quantities, both of which have the pair measurement inside, so summing it away is
+free.
+
+`abs_sum_qform_swap_proj_le` is that argument. It works because the operator being sandwiched is a
+projector, hence equal to `S^H S`, so `D^H S Y = (S D)^H (S Y)` with no square root anywhere ---
+the generalized Cauchy--Schwarz for a positive form, in the one case where it is elementary.
+`abs_sum_qform_conjTranspose_mul_le` is the summed Cauchy--Schwarz it needs; the existing
+`Introspection.abs_sum_qform_mul_le` assumes the first family self-adjoint, which `S * D` is not.
+
+The two are kept side by side rather than one derived from the other: the bare form's hypothesis is
+strictly stronger (a projector in front is a contraction), so the projector form implies it, but
+the bare form reads better where it applies and is already cited.
+
+*`-13` lives on a `SimulPair`, not on `MirrorSimul`.* Both placements of the point measurement are
+local **there**: the sandwiching one is the first party's own and the replacing one is the second
+party's. On the physical cut neither is. So the lemma is stated one level down and the mirror makes
+it Bob's --- which is the same economy again, and the reason to look for the right level before
+writing the statement.
+
+`sum_uniform_qform_ne_le` is `eq:qld-pulling-10` complete, at `delta_S + 2 sqrt(172 eps)`. The
+average over the sampled point goes inside the square root by `sum_weighted_sqrt_le`, Cauchy--
+Schwarz against the constant one.
+
+*`-11`, and the generalisation that paid.* `bobLift` is any operator of Bob's extended by the
+identity on the half of the pair he holds. Both remaining displays sandwich the four-index family
+with one of these and only which one differs, so `bobLift_sandwich_kron` and `sum_qform_bobLift_eq`
+serve both --- and `sum_qform_bobLift_eq` lands directly on `Phi'`, through
+`bornProb_physVec_bOp`, rather than stopping on the physical state as PR AA's specialised version
+did. `sum_snorm_sq_chainQ_agree_le` is the display; its cost is item 2 of `lem:qld-helper` at the
+second cut, which `mirror` supplies with no new proof, the swapped strategy's hypotheses coming
+from `swapVec_unit` and `povmValue_swapped_le`.
+
+Left on the chain: `-12` (Schwartz--Zippel), the assembly through `sum_xSqNorm_le_of_endOp`, and
+`lem:qld-povm-to-obs`.
+
+### PR AC: `eq:qld-pulling-12`, and all eleven displays (2026-09-22)
+
+Schwartz--Zippel, the chain's only step that is not about operators. The constraint the chain
+carries is an equality of polynomial *values* at the sampled point; passing to equality of the
+polynomials themselves discards only the tuples where distinct polynomials happen to agree there.
+
+Two things worth recording.
+
+The polynomials compared are **not** the chain's pair outcomes. They are those outcomes shifted by
+the Weyl outcomes' encodings --- `g + g_h` against `g' + g_h'` --- which is what `ChainCoupled`
+says, and `ldEnc h` is an `MvPolynomial`, not a `LowIndDegPoly`. So `sum_uniform_agree_mass_le`,
+which is stated for `LowIndDegPoly`s, does not apply; `sum_uniform_chainCoupled_agree_le` goes to
+`prob_agree_le_individualDegree` directly. The encoding is multilinear, so the sum keeps the
+individual-degree bound exactly when `d >= 1` --- the lemma's one hypothesis, and the only place in
+the chain where a lower bound on `d` is needed.
+
+`chainQShift_eq_iff` is characteristic two again: the chain writes the condition with the shift on
+one side, Schwartz--Zippel wants it split across, and `add_add_cancel` is the whole difference.
+
+The weights are the four-index family's own Born probabilities, which sum to exactly one
+(`sum_qform_chainQ`), so the mass lemma's `<= 1` is met with nothing to spare.
+
+**All eleven displays of the chain are formalized.** What is left of `lem:qld-pauli-selfcons` is
+the assembly: naming the eleven intermediate operator families, checking that each display's bound
+is the deviation between consecutive ones, and chaining them through `sum_snorm_sq_triangle'` into
+`sum_xSqNorm_le_of_endOp`'s two hypotheses. Several of the `approx_0` steps are identities *on the
+state* rather than on operators, which is fine --- a state-norm sees only the vector --- but it
+means the intermediate families are not related by operator equations and each step has to be
+stated at the level of `snorm physVec (T_k a - T_{k+1} a)`.
+
+### PR AD: the assembly's two joints (2026-09-22)
+
+`sum_snorm_sq_chain_le` is the triangle inequality along a **chain** rather than across one step.
+Iterating `sum_snorm_sq_triangle'` eleven times would cost `2^11 = 2048`; the chain form costs
+`11`, because the total deviation telescopes into the sum of the steps' and Cauchy--Schwarz against
+the constant one turns the squared norm of a sum of `n` terms into `n` times the sum of squares.
+The paper absorbs the constant into `delta_S` either way, but a factor of two thousand in a bound
+whose whole point is to be `poly(eps)` is not something to hand over silently.
+
+`physLift` is the other joint. Displays `-1` to `-4` are local in the first cut's grouping and
+everything from `-5` on is local in the physical one, so each of the first four has to be carried
+across. What carries it is `qform_kron_one_of_unit` --- the one-party form of
+`bornProb_expVec_kron`, saying the appended pair contributes its norm and nothing else --- together
+with the regrouping `physLiftEquiv`. `physLift` is a `*`-homomorphism (`physLift_mul`,
+`physLift_conjTranspose`, `physLift_sub`), so `snorm_physLift` follows from `qform_physLift` with
+no further work: a squared state-norm is a quadratic form of `U^H U`, and the lift commutes with
+both.
+
+What is left of `lem:qld-pauli-selfcons` is the chaining itself: naming the eleven intermediate
+operator families `T_0 = aOp aliceMTilde` through `T_11 = endOp`, and checking that each display's
+bound is `sum_a snorm physVec (T_k a - T_{k+1} a)^2`. Several of the `approx_0` steps are
+identities *on the state* rather than on operators, which a state-norm does not mind, but it does
+mean the families are not related by operator equations and each step has to be checked at the
+level of the norm.
+
+### PR AE: `eq:qld-pulling-4` on the physical cut (2026-09-22)
+
+The first of the chaining's eleven steps, and the one that had to be read off the paper rather than
+the Lean.
+
+`eq:qld-pulling-4` brings the second pair's outcome into the chain, and the pair it is about is the
+**appended** one: the paper writes `|psi-hat> = sum_h' (tau_h')_{B'} (x) (tau_h')_{B''} |psi-hat>`,
+and in the physical grouping both of those halves are Bob's. So the matched projectors are one
+operator of *his* (`bobPairProj`), not a cross-party pair, and the step is the statement that it
+fixes the physical state (`sum_bobPairProj_mulVec`).
+
+`SimulPair.sum_ancProj_mulVec`, which the blueprint's commentary previously called this display, is
+the same fact for the **first** pair and belongs to `eq:qld-pulling-3a`. The two are genuinely
+different steps about different pairs. That was worth checking against `qld-separating.tex` before
+writing the statement --- it is the fourth time in this campaign that a register assignment guessed
+from the Lean types would have been wrong, and the first three each cost a redesign.
+
+`sum_epr_proj_mulVec` is what makes it go: on a maximally entangled pair the matched Weyl
+projectors act as the projector on one half alone (the projectors being symmetric matrices, which
+is `weylOf_transpose` plus `stateVec_epr_proj`), and those sum to the identity.
+`reindex_bobPairProj` puts that on the physical grouping and `kron_one_mulVec` lets it act on the
+pair alone.
+
+Ten steps of the chaining left, then `lem:qld-povm-to-obs`.
+
+### PR AF: `MirrorSimul`, discharged (2026-09-22)
+
+`MirrorSimul` was introduced in PR Q as an interface, and nothing constructed one. Every result of
+PRs Q through AE was therefore conditional on a structure no strategy had been shown to have. This
+closes it: `exists_mirrorSimul` says a legal projective strategy of value `1 - eps` has both cuts,
+on one state.
+
+**The prediction that this was blocked on new mathematics was wrong, and the reason is worth
+keeping.** The argument for "blocked" was: `lem:qld-simultaneous` is an *existence* statement, so
+applying it to each cut gives two unrelated states and `hmirror` cannot follow. That reads the
+field as "the two cuts must come from one construction."
+
+It does not say that. It says the two cuts' **states** agree once each is given the pair the other
+carries --- and nothing about their measurements. The paper does not relate them either:
+`lem:qld-4-7` gives one pair measurement per player's space, and the chain's endpoint is symmetric
+in the two for a reason of its own (`swap_mem_coupledIdx`), not because they are the same object.
+
+And the states are not abstract. `GlobalPair.toSimulPair` is an explicit construction, so
+`padState` is the strategy tensored with one maximally entangled pair and four padding registers
+pinned at basis vectors (`padState_reindex_apply`, via the new `extVec2_apply`). Two runs of
+`exists_globalPair` --- one at the strategy, one at the swapped strategy, whose padded state
+carries the *other* pair --- give two cuts whose states are the same six-register product read two
+ways. `hmirror_padState` is then: expand both sides, and observe that swapping a pair's halves
+changes nothing (`epr_symm`). The whole file is under 150 lines.
+
+The lesson, which `planning/qld-two-pairs-scope.md` now also records: **look at what the structure
+demands before assuming its hard-looking field is hard.** Two designs were discarded in PR Q for
+reasoning about Lean types instead of the paper; this one cost a session of treating a provable
+field as blocked, for reasoning about the *construction* instead of the *statement*.
+
+Everything from PR Q on is now unconditional.
+
+### PR AG: the chain's first four terms (2026-09-22)
+
+The assembly proper begins. `SimulPair.chainS` names the terms displays `eq:qld-pulling-0` to `-3`
+run through --- the exact Pauli measurement, that measurement times the near-identity, the same
+written over the chain's index, and the same with Alice's copy of the point measurement inserted
+--- on the cut `Phi` lives on. The three lemmas after it are those displays read as bounds on
+**consecutive deviations**, which is the form `sum_snorm_sq_chain_le` consumes.
+
+Two of the three are the displays applied verbatim, which is the point of having named the terms:
+`chainS 0 a - chainS 1 a` is literally `sum_uniform_snorm_sq_nearId_le`'s expression, and
+`chainS 2 a - chainS 3 a` is `sum_snorm_sq_insert_chain`'s after one distribution
+(`chainS_two_sub_three`). The middle step is free, `-2` and `-2b` being identities
+(`chainS_one_eq_two`, which is `aOp_mTildeAnc_mul_nearId` plus `aOp_mul_bOp_eq`).
+
+Seven steps left: `-3a` onward, which is where the transport to the physical cut happens and where
+`physLift` and `sum_bobPairProj_mulVec` get used.
+
+### PR AH: the chain's four free steps, which are one step (2026-09-22)
+
+Displays `eq:qld-pulling-3a`, `-3b`, `-4` and `-5` are all "approx_0" or identities, so the chain
+pays nothing between `-3` and `-5`. That is a reason not to name the three terms in between:
+`MirrorSimul.physLift_chainU3b_mulVec` is the whole stretch at once, `chainU3b` being the only
+intermediate the proof needs.
+
+One fact runs through all four, used once on each of the two entangled pairs: **the projector on
+one half is the projector on the other, on the state.** `SimulPair.ancProj_mulVec_mVec` is that
+for the pair `A' A''`, and `MirrorSimul.bobPairProj_mulVec` for the appended pair `B' B''`, which
+the physical grouping gives to Bob entire. Given it, each half of the step is two lines: insert
+the projector on the half the chain does not carry, move it next to the one the chain does carry
+(it commutes with everything in between) where it is absorbed, and read the point measurement
+beside it as the *hatted* point measurement cut down by that projector --- `hatMats_mul_proj`,
+which is `eq:qld-pulling-3b` and was already in the tree from PR Z.
+
+Three things were worth the trouble:
+
+- **`stateVec_ancProj` is about `Phi`, and the chain runs on `mVec`.** The transport had to be
+  moved across the regrouping, and `qform_comp_equiv` does not do it: it carries the quadratic
+  form, not `mulVec`. `mulVec_comp_equiv` is the missing sibling, three lines, and with
+  `reindex_regroupEquiv` it turns the `Phi` statement into the `mVec` one.
+- **`physLift` carries a state identity, not just a norm.** `physLift_mulVec` says the lift acts
+  as the first cut's operator beside an untouched pair, so `physLift_mulVec_congr` lifts
+  `eq:qld-pulling-3a` and `-3b` --- which are local in the first cut's grouping --- to the
+  physical cut, where `-4` and `-5` live.
+- **The `toFirst.EA` / `M.Ea` spelling problem cost three rewrites.** `rw` fails on a term whose
+  two factors reach the same type by different paths, even though the types are definitionally
+  equal, because the `HMul` instances are not syntactically the same. The fix each time was to
+  state the object once, in the party's own spelling, as a `def` whose declared result type pins
+  everything from the outside (`chainU3b`, `bobPt`, `bobAnc`) --- which is the convention the
+  file already followed for `aliceChainOp` and `bobChainOp`, now with a sharper reason.
+
+Five steps left: `-7`, `-9a`, `-10`, `-11` and `-12` read as consecutive deviations. Every one of
+them is a display already in the tree; what is left is to name the terms and match the shapes.
+
+### PR AI: the chaining, complete (2026-09-22)
+
+`MIPRE/Background/QLD/ChainAssembly.lean`. `chainT` is the pulling chain on the physical cut: ten
+terms for nine steps, the four of `eq:qld-pulling-0` to `-3` entering lifted and everything from
+`-5` on entering directly. Three of the nine are free — `-2`/`-2b`, `-3a` to `-5`, and `-9a` — and
+the six that are not cost, in order: item 1 of `lem:qld-helper`, the game's point–point
+consistency, item 2 of `lem:qld-helper`, `eq:qld-pulling-10` complete, item 2 again at the second
+cut, and Schwartz–Zippel. `sum_uniform_snorm_sq_mTildeAnc_endOp_le` is `eq:qld-pulling-cons` for
+Alice.
+
+Two things about the shape of this file are worth keeping.
+
+**Naming the terms is the whole design.** Each of the nine steps is one already-proved display
+plus a line of `Finset` bookkeeping, and the bookkeeping is the only thing that could have gone
+wrong. Six of the nine differences are sums over a filtered index set, and each time the question
+was which of two filter nestings the display was stated at. `Finset.filter_comm` settles it, but
+`rw [Finset.filter_comm, Finset.filter_comm]` does **not**: the second rewrite finds the first's
+output and flips it back. Both splits here (`chainT_six_sub_seven`, `chainT_eight_sub_nine`) name
+the two set equalities as `have`s instead.
+
+**The last missing cost was the cheapest to state and the least obvious to find.**
+`eq:qld-pulling-3`'s hypothesis `∑ k, xSqNorm mVec (ptA k) (ptB k) ≤ ε` had been carried since PR
+Z with no supplier, and it is just the game's point–point consistency (`inconsistency_pt_pt_le`)
+read on the cut the chain runs on. Getting it there is what `SimulPair`'s `Phi_reduced` field is
+for, and `bornProb_mVec_ext` is the two-step reading: `bornProb_regroupVec` moves `A''` back to
+Bob, `Phi_reduced` drops the padding, and `bornProb_expVec_kron` drops the pair, which contributes
+only its norm.
+
+Left for the last piece: the mirror half of `eq:qld-pulling-cons` (this one at `M.mirror`, the
+endpoint being symmetric by `swap_mem_coupledIdx`), `lem:qld-povm-to-obs`, and then
+`lem:qld-swap` item 2 and `thm:qld`.
+
+### PR AJ: lem:qld-pauli-selfcons (2026-09-22)
+
+`MIPRE/Background/QLD/SelfCons.lean`. Two steps after the chain, and neither is a new derivation.
+
+**Bob's half is Alice's at the mirror.** `MirrorSimul.mirror` makes the mirror a `MirrorSimul`
+again, `mirror_physVec` says its physical state is this one with the parties written in the other
+order, and `endOp_swap_sum` says its endpoint is this one read from the other side — which is
+`swap_mem_coupledIdx`, the symmetry of the index set that is the whole reason the lemma holds.
+`snorm_swapVec_aOp_sub_kron_sum` carries the norm across the swap, and `sum_xSqNorm_le_of_endOp`,
+in the tree since the endpoint was named, puts the two halves together. That the mirror paid for
+itself here, as it did at `-5` to `-8` and at `-11`, is the third time in this campaign.
+
+**From the measurements to the observable, and the one wrong turn available.** The obvious route
+is `lem:qld-povm-to-obs` on the whole outcome set. It costs a factor `|F| = q`, which turns the
+chain's `md/q` into `md` and loses the lemma — the chain spends nine displays keeping `md/q` and
+one careless application would throw it away. The paper does not do that: it coarse-grains
+*first*, along the character the observable reads, and turns only the resulting **two**-outcome
+family into an observable. Coarse-graining is free for projective families and was already in the
+tree as `sum_xSqNorm_fibre_le`, put there when `Pulling.lean` was written and described in its own
+docstring as "the final passage". So the factor is two.
+
+This one was caught by reading the paper's sentence rather than the blueprint's: the blueprint
+cites `lem:qld-povm-to-obs` and says nothing about coarse-graining first, and the first Lean proof
+written here did apply it directly and got `q · (...)`. The paper's sentence — "by using Item 2 of
+Fact agreement, followed by Fact data-processing, and then followed by Item 1 of Fact agreement,
+we get ... where the answer summation is over `b ∈ F_2`" — is where the two-outcome family comes
+from. `CLAUDE.md`'s rule about reading the paper before formalizing a blueprint statement earned
+its keep again.
+
+**The blueprint statement was repaired.** It said `≈_{δ_qld}` on average over a uniform probe,
+with `δ_qld` defined in a *later* lemma. It now carries the explicit constant the Lean proves,
+`72(10 δ_S + 860 ε + 2√(172ε) + md/q)`, and says the bound holds at every probe, which is what the
+chain gives — it averages over the sampled point, never over the probe.
+
+Left: `lem:qld-swap` item 2 and `thm:qld`.
+
+### PR AK: item 1 of lem:qld-swap, unconditional (2026-09-23)
+
+`MIPRE/Background/QLD/SwapItemOne.lean`. `exists_auxVec_close` proved item 1 *given* the two
+near-invariances; `lem:qld-pauli-selfcons` supplies them, and `exists_aux_close` is item 1 with
+nothing assumed beyond the game's hypotheses and a smallness condition on the constant.
+
+The blueprint called this "one rewriting", and it is — the twirl is by definition the uniform
+average of the per-probe Weyl operators (`qform_bOp_twirl`), and at each probe that expectation is
+the two parties' exact Pauli observables agreeing. Three things had to be said to get there.
+
+- **The cut.** `endEquiv` regroups a four-fold product whose ancilla halves sit in the *middle*.
+  The physical cut of a `MirrorSimul` puts each party's half of the pair it holds at the *end*, so
+  `outerPairEquiv` is the regrouping this needs. The blueprint already recorded that `endEquiv`
+  "was written to be item 1's cut and it is not"; this is the cut it is.
+- **The conjugation, read backwards.** `swapU_conj_wTilde_X`/`_Z` strip the pair measurement off
+  the observable exactly; `conj_inv_of_unitary` reads that the other way, turning an expectation of
+  the honest Weyl operator on the swapped state into one of the two observables on the state
+  itself.
+- **The two involutions.** Each exact Pauli observable is self-adjoint and squares to one, so
+  `xSqNorm = 2 - 2·bornProb` exactly — no inequality anywhere in the passage from
+  `lem:qld-pauli-selfcons`'s deviation bound to item 1's expectation bound.
+
+Three association-and-spelling failures cost iterations, all the same shape as the ones recorded
+in PR AH: `dotProduct_mulVec_conj` concludes `Vᴴ * (Q * V)` and `conj_inv_of_unitary` was first
+written to conclude `(Vᴴ * Y) * V`; `aOp X * bOp Y = X ⊗ₖ Y` is a theorem and not `rfl`, so a `rw`
+with it inside a `have` breaks the later defeq check; and the conjugation identity had to be
+restated in each party's own spelling (`aliceSwap_conj_aliceWTilde`, `bobSwap_conj_bobWTilde`)
+before `rw` would find it. The rule that keeps working: **name the object once, in the party's own
+spelling, in a `def` whose declared result type pins it from the outside.**
+
+Left: item 2 of `lem:qld-swap` — the threading into `V M^{(Pauli,W)}_h V†` — and `thm:qld`.
+
+### Finishing `thm:qld`: the last four pull requests (2026-09-23)
+
+The previous agent stopped after PR AK with two things left: item 2 of `lem:qld-swap` and
+`thm:qld` itself. Everything from the game down to item 1 is unconditional --- `exists_mirrorSimul`
+builds the two-cut interface from the game's own hypotheses, and `MirrorSimul.exists_aux_close` is
+item 1 with nothing assumed. `lake build` is green at `a176a91` (9884 jobs) and there is no `sorry`
+anywhere under `MIPRE/Background/QLD/`. The plan, agreed with the maintainer:
+
+1. **Item 2's threading** (`MIPRE/Background/QLD/SwapItemTwo.lean`). No new estimate: every display
+   is in. For Alice, the chain is `eq:qld-unitary-7` (`sum_snorm_sq_sub_le_of_agree`, both families
+   projective, on the product state), then `mulVec_auxVec_syn`/`_proj` to move `tau^W` from `A''`
+   to `B''`, then `eq:qld-unitary-8` (`sum_uniform_bornProb_fibre_le`, the `md/q`), then
+   `eq:qld-unitary-6` on **Bob's** side (`bobSwap_conj_bobMTilde`) to turn the syndrome projector
+   back into Bob's exact Pauli measurement, then the transport from the product state to
+   `endState` across item 1 (`abs_qform_sub_qform_le`, where `delta_S^{1/4}` comes from), then
+   `eq:qld-unitary-5` at the **mirror** instance (`M.toSecond.inconsistency_mTilde_pauli_le_of_win`:
+   Bob's `M~` against Alice's `(Pauli, W)` reading), carried to the physical state by
+   `physVec_mirror`. Bob's half is Alice's at `M.mirror`. Stated for an arbitrary `aux` close to
+   `endState`, then combined with `exists_aux_close` into the joint `lem:qld-swap`. Closes
+   `lem:qld-swap` at proof level.
+2. **The error shape** (`MIPRE/Background/QLD/ErrorShape.lean`). A closure calculus for the
+   target form `a (md)^a (eps^b + q^{-b} + 2^{-bmd})`: sums, constant multiples, square roots and
+   real powers `t^B` (`0 < B <= 1`, by subadditivity), monotonicity, and the base cases `eps`,
+   `sqrt eps`, `md/q`, `1/q`, `m^2`, `deltaCL`. Then every link of the existing chain ---
+   `deltaQ`, `kappaPairs`, `deltaPairsD`, `deltaPairs`, `deltaGS`, `deltaLD`, `deltaS`,
+   `deltaSelfCons`, and item 1's `2 - 2 sqrt(1 - eta)` (which is `<= 2 eta` for every `eta >= 0`)
+   --- is in the class. Independent of item 1, so it runs in parallel with it; item 2's own bound
+   is built from the same operations and joins the class in PR 4 by the same combinators.
+3. **The regime and admissibility.** Discharge `48 m d <= q` by enlarging the constant and taking
+   the trivial bound outside it (the paper's move); derive `4m | q` from `def:admissible` (`q =
+   2^k`, `m | q`), which the paper asserts in a `\cnote` and `lem:qld-global-setup` presents as a
+   hypothesis --- finding D of `reports/qld-stage5-blueprint-repairs.md`. Repairs that statement.
+4. **`thm:qld`.** Legalization (free: `one_sub_povmValue_legalizeStrat_le`,
+   `rdPauli_legalize_pauli`); a **Naimark descent** for general POVM strategies
+   (`exists_projective_dilation` + `extVec2`, `Anticomm.lean` the precedent), decided with the
+   maintainer over stating the theorem for projective strategies only, because `thm:qld` is about
+   to be consumed by answer reduction and a narrowed statement is the kind of thing a consumer
+   refutes three pull requests later; the `V -> phi` composition with the expansion and padding
+   embeddings (`ancillaEmbed_isometry`, `emb_isometry`); and the theorem. Closes ledger nodes
+   `1.2.2` and `1.2.2.17`.
+
+This session is pinned to one branch, so 1 and 2 land as one pull request with two separate
+commits, each self-contained.
+
+**Status, 2026-09-23 (end of day).** 1, 2 and 3 are in, as separate commits on one branch.
+
+* **1.** `MirrorSimul.swap_isometry` (`SwapItemTwo.lean`) is `lem:qld-swap`, both items, relative
+  to one auxiliary state; proof-level `\leanok` with guards for all 145 names. Two things the
+  plan did not anticipate. Bob's half needed no second auxiliary state: the mirror's product
+  state and its swapped physical state are this one's under `swapVec`
+  (`mirror_physSwap_mulVec`), so Bob's item 2 is Alice's at `M.mirror` relative to the *same*
+  `aux`. And the Schwartz--Zippel packaging reads its index through coefficient tables, so the
+  encoding needed a table of its own (`ancPoly`, faithful by `toMv_coeffTable` because the
+  encoding is multilinear and `1 <= d`). Item 1 is bounded by `etaItemOne`, item 2 by
+  `deltaItemTwo _ etaItemOne`; the statement's single `delta_qld` is their maximum.
+* **2.** `ErrorShape.lean`: `errShape`, the closure class `ErrSmall` (constants chosen before
+  the parameters), and the chain `deltaQ` ... `deltaSelfCons` and item 1's bound in the class.
+  `ErrSmall` is trivially satisfiable when `md` is bounded, because of the `2^{-bmd}` term;
+  that is a property of the paper's shape and is recorded under `thm:qld`.
+* **3.** `Regime.lean`: `4m | q` follows from `m | q`, `q = 2^n` and `48md <= q`, **not** from
+  admissibility alone (`m = q` is admissible and `4q` does not divide `q`); finding D is
+  resolved in that sense. `ErrSmall.of_regime` and `ErrSmall.of_cases` are the "enlarge the
+  constant and take the trivial bound outside the regime" move, stated once.
+
+Left for 4: `ErrSmall` for `deltaItemTwo _ etaItemOne` (the same combinators), legalization,
+the Naimark descent, the `V -> phi` composition, and the theorem.
+
+**4 is done, the same day.** `qld_soundness` in `Soundness.lean`, on four new modules, each
+written and adversarially reviewed on its own before the assembly used it:
+
+* `Descent.lean` --- generic. The paper passes from `V`-conjugation to `phi`-conjugation, and
+  from the dilated strategy to the original POVMs, through the *agreement* with `tau^W` on the
+  other half of the pair, because agreement is linear in each party's operators while closeness
+  is not. `sum_snorm_sq_descent_aOp` is that step once and for all: closeness of a PVM on the
+  product state becomes an agreement (`2 - 2 agree`, an equality for two PVMs), moves to the
+  image state and back (`2 ||Delta - Gamma||` each way, `bnd_sum_kronecker` being the contraction),
+  and becomes closeness of any sub-POVM with the same agreement on the image state (an
+  inequality). The cost is `8 r`; with `r = sqrt eta` that is the fourth root again.
+  `sum_snorm_sq_descent_isometry_aOp` packages it for `X_h = U A_h U^dagger`.
+* `PhysEmbed.lean` --- `physVec_mirrorOfGlobalPairs`: the state all of stage 5 works on is
+  `(physEmb ⊗ physEmb) psi`, `physEmb` appending the EPR pair on `A' A''` and the padding at its
+  basis vector. This is why the theorem uses `mirrorOfGlobalPairs` and not `exists_mirrorSimul`:
+  the latter's `Nonempty` forgets the state.
+* `QLDError.lean` --- `qldErr`, `min (qldBound) 4` in the regime and `4` outside, in the class.
+* `RegisterForm.lean` --- register first, `registerState`, and the consumer's honest readouts as
+  spectral projectors (`proj_weylOf_X`, `proj_weylOf_Z`).
+
+Legalization turned out free in the strongest sense: it does not change the cube data a Pauli
+answer carries (`rdPauliVec_legalize_pauli`), so the theorem is about the *original* strategy's
+Pauli measurement with no transfer at all. What is left for the consumer is the valid-answer
+bridge recorded in `planning/formalization-plan.md`.
+
+One repair on the way: `lem:qld-pauli-selfcons` was formalized in #183
+(`MirrorSimul.snorm_sq_wTilde_le`, exactly the blueprint's `72 (10 delta_S + 860 eps + ...)`)
+but never given its `\leanok` marks, so after #185 the graph showed `lem:qld-swap` proved on an
+unproved dependency. Both marks and the 283 guards went in with `thm:qld`.

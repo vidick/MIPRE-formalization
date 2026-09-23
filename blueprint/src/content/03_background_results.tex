@@ -1356,6 +1356,79 @@ bits too long is a statement about a different verifier.
 \label{thm:qld}
 \ledgernode{1.2.2, 1.2.2.17}
 \uses{def:qld-game,def:q-value,def:distance,lem:ms-direct-anticomm,thm:lidt-cl-soundness}
+\lean{MIPRE.QLD.errShape, MIPRE.QLD.ErrSmall, MIPRE.QLD.errSum, MIPRE.QLD.errShape_eq,
+  MIPRE.QLD.errSum_nonneg, MIPRE.QLD.one_le_md_real, MIPRE.QLD.one_le_q_real,
+  MIPRE.QLD.errSum_anti, MIPRE.QLD.errSum_le_three, MIPRE.QLD.errSum_rpow_le,
+  MIPRE.QLD.errShape_nonneg, MIPRE.QLD.md_rpow_mono, MIPRE.QLD.one_le_md_rpow,
+  MIPRE.QLD.errSum_le_errShape, MIPRE.QLD.errShape_mono, MIPRE.QLD.errShape_add,
+  MIPRE.QLD.errShape_const_mul, MIPRE.QLD.mdpow_mul_errShape, MIPRE.QLD.errShape_rpow_le,
+  MIPRE.QLD.errShape_mul, MIPRE.QLD.ErrSmall.mono, MIPRE.QLD.ErrSmall.congr,
+  MIPRE.QLD.ErrSmall.nonneg, MIPRE.QLD.ErrSmall.add, MIPRE.QLD.ErrSmall.const_mul,
+  MIPRE.QLD.ErrSmall.div_const, MIPRE.QLD.ErrSmall.mdpow_mul, MIPRE.QLD.ErrSmall.md_mul,
+  MIPRE.QLD.ErrSmall.rpow, MIPRE.QLD.ErrSmall.sqrt, MIPRE.QLD.ErrSmall.mul,
+  MIPRE.QLD.ErrSmall.of_le_errSum, MIPRE.QLD.not_errSmall_one, MIPRE.QLD.errSmall_eps,
+  MIPRE.QLD.errSmall_sqrt_eps, MIPRE.QLD.errSmall_q_rpow_neg, MIPRE.QLD.errSmall_inv_q,
+  MIPRE.QLD.errSmall_two_rpow_neg, MIPRE.QLD.errSmall_md_div_q, MIPRE.QLD.errSmall_const_div_q,
+  MIPRE.QLD.ErrSmall.m_mul_m_mul, MIPRE.QLD.errSmall_deltaQ, MIPRE.QLD.errSmall_kappaPairs,
+  MIPRE.QLD.errSmall_deltaPairsD, MIPRE.QLD.ErrSmall.deltaPairs_comp,
+  MIPRE.QLD.errSmall_deltaGS, MIPRE.QLD.deltaCL_four_mul_le, MIPRE.QLD.ErrSmall.deltaCL_comp,
+  MIPRE.QLD.errSmall_deltaLD, MIPRE.QLD.ErrSmall.deltaS_comp, MIPRE.QLD.errSmall_deltaS,
+  MIPRE.QLD.ErrSmall.deltaSelfCons_comp, MIPRE.QLD.errSmall_deltaSelfCons,
+  MIPRE.QLD.two_sub_two_sqrt_one_sub, MIPRE.QLD.ErrSmall.itemOne_comp,
+  MIPRE.QLD.errSmall_itemOneEta, MIPRE.QLD.errSmall_swapItemOne,
+  MIPRE.QLD.errSmall_swapItemOne_sqrt, MIPRE.QLD.ErrSmall.of_cases,
+  MIPRE.QLD.ErrSmall.of_regime, MIPRE.QLD.errShape_mono_eps,
+  MIPRE.QLD.ErrSmall.exists_le_min_one, MIPRE.QLD.exists_card_eq_two_pow,
+  MIPRE.QLD.exists_eq_two_pow_of_dvd_card, MIPRE.QLD.four_mul_dvd_card,
+  MIPRE.QLD.four_mul_dvd_card_of_regime,
+  MIPRE.QLD.bornProb_kronecker_mulVec, MIPRE.QLD.conjTranspose_mul_conj_mul,
+  MIPRE.QLD.bornProb_kronecker_mulVec_conj_left, MIPRE.QLD.bornProb_kronecker_mulVec_conj_right,
+  MIPRE.QLD.conj_isometry_subPOVM, MIPRE.QLD.le_one_of_sum_le_one,
+  MIPRE.QLD.sum_snorm_sq_aOp_sub_bOp_le, MIPRE.QLD.sum_snorm_sq_aOp_sub_bOp_eq,
+  MIPRE.QLD.bnd_sum_kronecker, MIPRE.QLD.abs_sum_bornProb_sub_le,
+  MIPRE.QLD.snorm_aOp_sub_aOp_eq_of_move, MIPRE.QLD.sum_snorm_sq_descent_aOp,
+  MIPRE.QLD.sum_snorm_sq_aOp_sub_aOp_le_two, MIPRE.QLD.snorm_swapVec_aOp_sub_aOp,
+  MIPRE.QLD.sum_snorm_sq_descent_bOp, MIPRE.QLD.sum_snorm_sq_bOp_sub_bOp_le_two,
+  MIPRE.QLD.norm_evec_kronecker_mulVec, MIPRE.QLD.sum_snorm_sq_descent_isometry_aOp,
+  MIPRE.QLD.sum_snorm_sq_descent_isometry_bOp, MIPRE.QLD.aOp_mul_bOp_mulVec_kronecker,
+  MIPRE.QLD.isometry_mul_of_isometry, MIPRE.QLD.physEmb, MIPRE.QLD.padWeight_eq_ite,
+  MIPRE.QLD.physEmb_apply, MIPRE.QLD.physEmb_isometry, MIPRE.QLD.aOp_mul_physEmb,
+  MIPRE.QLD.physEmb_conjTranspose_mul_aOp, MIPRE.QLD.physEmb_conj_aOp,
+  MIPRE.QLD.physEmb_mul_mul_conjTranspose, MIPRE.QLD.aOp_mul_physEmbProj_comm,
+  MIPRE.QLD.physEmbProj_idem, MIPRE.QLD.physEmb_kron_mulVec_apply, MIPRE.QLD.physEmb_kron_isometry,
+  MIPRE.QLD.physVec_mirrorOfGlobalPairs, MIPRE.QLD.physVec_mirrorOfGlobalPairs_eq_isometricState,
+  MIPRE.QLD.physSwap_mulVec_physVec_mirrorOfGlobalPairs, MIPRE.QLD.qldDelta, MIPRE.QLD.qldHlt,
+  MIPRE.QLD.qldEta, MIPRE.QLD.qldBound, MIPRE.QLD.qldErr, MIPRE.QLD.qldDelta_eq,
+  MIPRE.QLD.qldHlt_eq, MIPRE.QLD.qldEta_eq, MIPRE.QLD.deltaLD_nonneg, MIPRE.QLD.deltaS_nonneg,
+  MIPRE.QLD.qldDelta_nonneg, MIPRE.QLD.qldHlt_nonneg, MIPRE.QLD.qldEta_nonneg,
+  MIPRE.QLD.qldEta_le_two_mul_qldHlt, MIPRE.QLD.deltaLegs_nonneg, MIPRE.QLD.deltaItemTwo_nonneg,
+  MIPRE.QLD.qldItemTwo_nonneg, MIPRE.QLD.qldBound_nonneg, MIPRE.QLD.sqrt_qldEta_le_qldBound,
+  MIPRE.QLD.itemTwo_le_qldBound, MIPRE.QLD.qldErr_of_not, MIPRE.QLD.qldErr_of_regime,
+  MIPRE.QLD.qldErr_le_four, MIPRE.QLD.qldErr_le_qldBound, MIPRE.QLD.qldErr_nonneg,
+  MIPRE.QLD.le_qldErr, MIPRE.QLD.ErrSmall.deltaLegs_comp, MIPRE.QLD.ErrSmall.deltaItemTwo_comp,
+  MIPRE.QLD.errSmall_qldDelta, MIPRE.QLD.errSmall_qldHlt, MIPRE.QLD.errSmall_qldEta,
+  MIPRE.QLD.errSmall_deltaLegs, MIPRE.QLD.errSmall_deltaItemTwo, MIPRE.QLD.errSmall_qldBound,
+  MIPRE.QLD.errSmall_qldErr, MIPRE.QLD.exists_qldErr_le, MIPRE.QLD.regFirst,
+  MIPRE.QLD.regFirst_apply, MIPRE.QLD.regFirst_isometry, MIPRE.QLD.isometricImage_regFirst,
+  MIPRE.QLD.aOp_eq_registerOp_bOp, MIPRE.QLD.isometricImage_regFirst_sub_aOp, MIPRE.QLD.regSwap,
+  MIPRE.QLD.isometricState_regFirst, MIPRE.QLD.snorm_comp_registerOp,
+  MIPRE.QLD.aOp_registerOp_prodCongr, MIPRE.QLD.bOp_registerOp_prodCongr,
+  MIPRE.QLD.snorm_comp_regSwap_alice, MIPRE.QLD.snorm_comp_regSwap_bob,
+  MIPRE.QLD.registerState_eq_outerUnVec, MIPRE.QLD.norm_isometricState_sub_registerState,
+  MIPRE.QLD.snorm_registerState_alice, MIPRE.QLD.snorm_registerState_bob,
+  MIPRE.QLD.norm_evec_registerState, MIPRE.QLD.norm_evec_outerUnVec_auxVec,
+  MIPRE.QLD.norm_evec_auxVec, MIPRE.QLD.unit_of_norm_evec_auxVec, MIPRE.QLD.registerState_move,
+  MIPRE.QLD.proj_weylOf_X, MIPRE.QLD.proj_weylOf_Z, MIPRE.QLD.povmValue_nonneg,
+  MIPRE.QLD.isometry_mul_isometry, MIPRE.QLD.conj_mul_conj_unitary, MIPRE.QLD.norm_evec_sub_le_two,
+  MIPRE.QLD.rdPauliVec_legalize_pauli, MIPRE.QLD.two_le_card_field, MIPRE.QLD.exists_legal_dilation,
+  MIPRE.QLD.physEmb_mul_ancillaEmbed_isometry, MIPRE.QLD.physEmb_mul_ancillaEmbed_conj,
+  MIPRE.QLD.kronecker_mulVec_extVec2, MIPRE.QLD.MirrorSimul.isPVM_bobConjPauli,
+  MIPRE.QLD.MirrorSimul.exists_phys_descent, MIPRE.QLD.exists_phys_of_regime,
+  MIPRE.QLD.norm_isometricState_sub_registerState_le_two,
+  MIPRE.QLD.sum_snorm_sq_registerState_alice_le_two,
+  MIPRE.QLD.sum_snorm_sq_registerState_bob_le_two, MIPRE.QLD.exists_le_qldErr,
+  MIPRE.QLD.qld_soundness}
+\leanok
 There exists a function
 \begin{equation*}
   \delta_{qld}(\eps, m, d, q) = a (md)^a \bigl( \eps^b + q^{-b} + 2^{-bmd} \bigr)
@@ -1372,13 +1445,29 @@ $(\pauli, W)$ are $\delta_{qld}$-close to the Pauli basis measurements $\tau^W_u
 \in \F_q^M$, acting on $\ket{\EPR_q}^{\ot M}$.
 \end{theorem}
 
+\begin{proof}
+\uses{lem:qld-swap,lem:qld-global-setup,lem:naimark-dilation,lem:qld-axis-degree}
+\leanok
+Outside the regime $48md \leq q$, or where item~1 of Lemma~\ref{lem:qld-swap} has no content,
+take the trivial bounds, which the shape dominates once $a$ is large. Inside it, legalize the
+strategy's answers (Lemma~\ref{lem:qld-axis-degree}'s \texttt{legalizeStrat}, which does not
+change the Pauli measurements' cube data) and dilate it to a projective one
+(Lemma~\ref{lem:naimark-dilation}); apply Lemma~\ref{lem:qld-swap}; take for $\phi$ the swap
+unitary after the embedding $\ket{\theta} \mapsto \ket{\theta} \ot \ket{\EPR_q}^{\ot M}$ with
+the padding at a basis vector, after the dilation's embedding. The passage from the lemma's
+$V$-conjugation to $\phi$-conjugation, and from the dilated measurements down to the original
+POVMs, both go through the agreement with $\tau^W$ on the \emph{other} half of the entangled
+pair, which is linear in each party's operators; each state transfer costs twice item~1's
+distance, and item~1 bounds the squared norm, whence the fourth root.
+\end{proof}
+
 \paragraph{Source.} The pinned paper~\cite{AuditSync26}, \texttt{qld-appendix.tex}
 and its five proof files, states this Pauli theorem and its reduction to the seeded
 CL test. The reduction follows the architecture of~\cite[Section 7]{JNVWY20};
 the canonical-line soundness theorem of~\cite{JNVWY21qld} is related background.
 Lemma~\ref{lem:ms-direct-anticomm} supplies the base anticommutation directly.
 
-\paragraph{Comments.} This is a substantial remaining formalization target and the
+\paragraph{Comments.} This is the
 workhorse of question reduction: introspection certifies the players' sampling of
 their own questions against Pauli basis measurements. The reduction uses direct
 Magic Square anticommutation, linearity and orthonormalization, together with the
@@ -1391,8 +1480,74 @@ interface, so its uses require no additional synchronous-value transport. The ve
 campaign~\cite{Audit26} further reports three corrections in the tensor-code material the
 proof passes through --- $\kappa$-convexity requires $c_1 \leq 1$, the synchronicity
 defect obeys $\delta_{\mathrm{sync}} \leq 4\eps$ rather than $3\eps$, and one corner block
-pairs with a transpose --- none checked here, none affecting the statement above, all
-relevant to whoever writes its proof.
+pairs with a transpose --- none affecting the statement above. The formal proof below is
+checked end to end with no assumption beyond Lean's standard axioms, so it does not rest on the
+paper's account of that material.
+
+\emph{The formalization.} \texttt{MIPRE.QLD.qld\_soundness}
+(\texttt{MIPRE/Background/QLD/Soundness.lean}) is the theorem: there are $a \geq 1$ and
+$0 < b < 1$ such that for every field $\F_q$ of characteristic two, every $m \geq 1$ with
+$m \mid q$, every $d \geq 1$, and every POVM strategy for $\game^{\pauli}_{\qldparams}$ that
+fails with probability at most $\eps$, there are isometries $V_\alice$, $V_\bob$ into
+$(\C^q)^{\ot M} \ot \mH'$ and a unit $\ket{\aux}$ with both items at
+$\delta_{qld} = a(md)^a(\eps^b + q^{-b} + 2^{-bmd})$. Item 2 is stated for both parties and both
+bases, relative to the one state $\ket{\EPR_q}^{\ot M} \ot \ket{\aux}$, as the summed squared
+state-dependent distance. The shapes are those the introspection consumer takes
+(\texttt{quantumValue\_ge\_of\_valid\_isometric\_images} in
+\texttt{MIPRE/Foundations/Introspection/ValidPauliSoundness.lean}): register-first isometries,
+\texttt{isometricState}, \texttt{registerState}, \texttt{isometricImage}, and an unsquared
+distance in item~1. Three points of the statement are worth knowing.
+\begin{itemize}
+\item It asks less than admissibility: characteristic two, $m \mid q$ and $d \geq 1$. The
+  regime $48md \leq q$ and the divisibility $4m \mid q$ are discharged inside the proof, not
+  assumed (\texttt{MIPRE/Background/QLD/Regime.lean}).
+\item The strategy is arbitrary: not projective, not legal. Legalization is free because it
+  does not change the cube data a Pauli answer carries (\texttt{rdPauliVec\_legalize\_pauli}),
+  and the Naimark descent is \texttt{sum\_snorm\_sq\_descent\_isometry\_aOp} and its Bob
+  form in \texttt{MIPRE/Background/QLD/Descent.lean}: closeness on the product state is turned
+  into agreement with $\tau^W$ on the other half of the pair, which is linear in the measurement
+  and so reads the same on the dilated and the original strategy, then turned back, at a cost of
+  $8\sqrt{\eta}$ for item~1's bound $\eta$. This is the paper's argument, made exact.
+\item Item 2 is about the strategy's Pauli measurement read as cube data,
+  \texttt{(MA (.pauli W)).map rdPauliVec}, which puts every malformed Pauli answer at $h = 0$,
+  as the game's reading does. The introspection consumer sums over the \emph{valid} answers
+  only; passing between the two needs a bound on the malformed mass. That bridge belongs to
+  the consumer and is not part of this theorem.
+\end{itemize}
+The explicit isometry is \texttt{physEmb} (\texttt{MIPRE/Background/QLD/PhysEmbed.lean}):
+\texttt{physVec\_mirrorOfGlobalPairs} says the state the whole of stage~5 works on is the
+strategy's state under it. \texttt{MIPRE/Background/QLD/RegisterForm.lean} moves the register
+to the front, and also identifies the consumer's honest readouts with the spectral projectors
+(\texttt{proj\_weylOf\_X}, \texttt{proj\_weylOf\_Z}).
+
+\emph{The error.} \texttt{MIPRE/Background/QLD/QLDError.lean} names the bound the proof
+produces, \texttt{qldErr}: $\min(\texttt{qldBound}, 4)$ inside the regime and $4$ outside,
+with \texttt{qldBound} item~2's constant plus $9\sqrt{\eta}$, and shows it is in the class
+below. \texttt{MIPRE/Background/QLD/ErrorShape.lean} is the error shape:
+\texttt{ErrSmall} says a family of error terms is dominated by
+$a(md)^a(\eps^b + q^{-b} + 2^{-bmd})$ with $a \geq 1$ and $0 < b < 1$ chosen \emph{before} the
+parameters, on the range $0 \leq \eps \leq 1$, $m, d \geq 1$, $q \geq 2$. The class is closed
+under sums, constant multiples, products, square roots, real powers $t^B$ for $0 < B \leq 1$
+(by subadditivity) and polynomial prefactors in $md$, and every link of the chain the appendix
+produces is in it --- from $\delta_{\mathrm{CL}}$ at $(q, 4m, d)$ through $\delta_{\mathrm{ld}}$,
+$\delta_S$ and the constant of Lemma~\ref{lem:qld-pauli-selfcons} to item~1 of
+Lemma~\ref{lem:qld-swap}, whose bound $2 - 2\sqrt{1 - \eta}$ is at most $2\eta$ for every
+$\eta \geq 0$. \texttt{not\_errSmall\_one} guards the definition: a positive constant is not in
+the class. \texttt{ErrSmall.of\_regime} and \texttt{ErrSmall.of\_cases} are the paper's move of
+taking the trivial bound outside the regime, needed for $48md \leq q$ and for item~1's
+smallness hypothesis. \texttt{MIPRE/Background/QLD/Regime.lean} discharges $4m \mid q$ inside the
+regime; Lemma~\ref{lem:qld-global-setup}'s comments say why the size condition cannot be dropped.
+
+The ledger node $1.2.2$ also records completeness of the game. That is
+Lemma~\ref{lem:intro-honest-full-pauli}, formalized separately; this theorem is the soundness
+half, node $1.2.2.17$'s assembly.
+
+\emph{A property of the shape itself.} Because of the $2^{-bmd}$ term the right-hand side never
+falls below $a \cdot 2^{-bmd}$, so for any bound on $md$ the theorem is satisfied trivially by a
+large enough $a$, the conclusions being about unit vectors and projective measurements. The
+statement has content only as $md$ grows, with $\eps$ small and $q$ large. That is inherent in
+the stated form, not a defect of the formalization, but it is worth knowing when reading the
+constants the proof produces.
 
 
 \subsubsection{The shape of the soundness proof}
@@ -3216,6 +3371,13 @@ soundness for POVM strategies (\texttt{MIPRE.LIDT.CL.clSoundness\_ldc\_one\_delt
 on the twice-extended state the Born rule sees only compressions, so nothing has to be proved
 about the dilation beyond Naimark's theorem. The node's ``$16md > q$'' clause belongs to the
 assembly of Theorem~\ref{thm:qld}, where the trivial bound is used instead of the padded theorem.
+So does the assumption $4m \mid q$, and it is worth saying what discharges it, because the obvious
+reading is false: $m \mid q$ with $q$ a power of two gives only that $m$ is a power of two, and at
+$m = q$ the conclusion fails. What gives $4m \mid q$ is $m \mid q$ together with $4m \leq q$, which
+the regime $48md \leq q$ supplies (\texttt{MIPRE.QLD.four\_mul\_dvd\_card\_of\_regime}); outside
+it the trivial bound is used and the divisibility is never needed. Nor is admissibility what the
+step uses --- the oddness of the degree is for the self-dual basis --- since a finite field of
+characteristic two has power-of-two size already.
 
 \begin{lemma}[All padded subtests succeed]
 \label{lem:qld-global-success}
@@ -3843,7 +4005,38 @@ same sum, grouped differently, and the outcome form is what the Pauli constructi
   MIPRE.QLD.wTilde_mul_wTilde, MIPRE.QLD.dotF_smul_right, MIPRE.QLD.trDot_smul_smul,
   MIPRE.QLD.trDot_smul_right, MIPRE.QLD.sum_kron, MIPRE.QLD.kron_sum,
   MIPRE.QLD.prob_agree_ldEnc_le_of_not_multilinear, MIPRE.QLD.nonMultilinear_mass_le,
-  MIPRE.QLD.sum_sub_le_of_eq_on}
+  MIPRE.QLD.sum_sub_le_of_eq_on, MIPRE.QLD.sum_normSq_point_sub_pauli_le, MIPRE.conv,
+  MIPRE.conjTranspose_conv_mul_conv, MIPRE.sum_conv, MIPRE.sum_normSq_stateVecB_conv_eq,
+  MIPRE.QLD.hatPtPOVM_mats_eq_conv, MIPRE.QLD.hatPauliPOVM_mats_eq_conv,
+  MIPRE.QLD.sum_normSq_hat_point_sub_pauli_le, MIPRE.QLD.rdPauliVec,
+  MIPRE.QLD.rdPauli_eq_dotF, MIPRE.QLD.dotF_add_left, MIPRE.QLD.weylPOVM,
+  MIPRE.QLD.weylPOVM_mats, MIPRE.QLD.synOfPOVM_eq_map, MIPRE.QLD.hatPauli,
+  MIPRE.QLD.hatPauli_map, MIPRE.POVM.map_kron_map, MIPRE.QLD.abs_bornProb_le,
+  MIPRE.QLD.abs_sum_bornProb_le, MIPRE.abs_sum_weighted_bornProb_le,
+  MIPRE.sum_filter_bornProb_eq, MIPRE.sum_mass_off_le, MIPRE.QLD.IsML,
+  MIPRE.QLD.not_degreeOf_le_one_of_not_isML, MIPRE.QLD.sum_uniform_agree_ldEnc_le,
+  MIPRE.QLD.polyMarg, MIPRE.QLD.evalMarg_eq_map_polyMarg, MIPRE.QLD.isPVM_polyMarg,
+  MIPRE.QLD.isPVM_hatPauli, MIPRE.QLD.SimulPair.sum_bornProb_hatPauli_ge,
+  MIPRE.QLD.SimulPair.sum_bornProb_off_le, MIPRE.QLD.SimulPair.sum_bornProb_not_isML_le,
+  MIPRE.QLD.cubeData, MIPRE.QLD.IsInterp, MIPRE.QLD.cubeData_eq_of_eq_ldEnc,
+  MIPRE.QLD.isInterp_of_exists, MIPRE.QLD.ne_ldEnc_of_not_isInterp,
+  MIPRE.QLD.dotF_cubeData_indVec, MIPRE.QLD.sum_uniform_agree_ldEnc_le_of_not_isInterp,
+  MIPRE.QLD.SimulPair.sum_bornProb_not_isInterp_le, MIPRE.sum_bornProb_map_eq,
+  MIPRE.abs_sum_weighted_sub_le, MIPRE.QLD.SimulPair.sum_bornProb_polyMarg_ge,
+  MIPRE.QLD.SimulPair.sum_bornProb_cubeData_ge, MIPRE.regroupEquiv, MIPRE.regroupVec,
+  MIPRE.qform_comp_equiv, MIPRE.reindex_regroupEquiv, MIPRE.bornProb_regroupVec,
+  MIPRE.regroupVec_unit, MIPRE.QLD.mTilde_eq_sTensor, MIPRE.QLD.isPVM_mTilde,
+  MIPRE.QLD.dotF_add_right, MIPRE.QLD.cdPhase_add, MIPRE.QLD.wTilde_mul_add,
+  MIPRE.QLD.add_self_eq_zero', MIPRE.QLD.add_eq_iff_eq_add, MIPRE.QLD.ptAtPOVM,
+  MIPRE.QLD.hatPtPOVM_eq_kron, MIPRE.QLD.sum_kron_syn_eq_hatMats,
+  MIPRE.QLD.sCoarse_eq_polyMarg, MIPRE.QLD.SimulPair.mVec, MIPRE.QLD.SimulPair.mVec_unit,
+  MIPRE.QLD.SimulPair.mTildeAt, MIPRE.QLD.SimulPair.isPVM_mTildeAt,
+  MIPRE.QLD.SimulPair.mTildeAt_eq, MIPRE.QLD.SimulPair.bornProb_mTildeAt,
+  MIPRE.QLD.SimulPair.sum_bornProb_mTildeAt, MIPRE.QLD.SimulPair.sum_bornProb_mTilde_ge,
+  MIPRE.QLD.SimulPair.inconsistency_mTilde_le, MIPRE.QLD.SimulPair.wTildeAt,
+  MIPRE.QLD.SimulPair.wTildeAt_conjTranspose, MIPRE.QLD.SimulPair.wTildeAt_mul_self,
+  MIPRE.QLD.SimulPair.wTildeAt_mul_add, MIPRE.QLD.SimulPair.wTildeAt_mul_wTildeAt}
+\leanok
 From the simultaneous measurement one constructs, for $W \in \{X, Z\}$, measurements and
 binary observables on the expanded space which satisfy the Pauli group relations
 \emph{exactly} --- linearity in the argument, and $XZ$ commutation or anticommutation with the
@@ -3854,6 +4047,7 @@ state.
 
 \begin{proof}
 \uses{lem:schwartz-zippel}
+\leanok
 Exactness of the linearity comes from projectivity of the simultaneous measurement together
 with the group law of the Pauli basis; Theorem~\ref{thm:linearity} is \emph{not} used here.
 The remaining ingredient bounds the mass the simultaneous measurement places on
@@ -3863,8 +4057,75 @@ so it is the agreement and not the disagreement that the bound controls
 (Remark~\ref{rem:qld-admitted}).
 \end{proof}
 
-\paragraph{Comments.} The exact half is formalized and the approximate half is not, and the
-dividing line is the register count.
+\paragraph{Comments.} Both halves are formalized, for a simultaneous pair measurement
+(Lemma~\ref{lem:qld-simultaneous}) of a strategy of failure $\eps$, and both are about the
+\emph{same} objects: $\tilde{M}^{W,\ind_m(u)}$ and $\tilde{W}^e(\tilde{u})$ built from that
+measurement, on that party's registers. The closeness constant is explicit,
+\begin{equation*}
+  \delta \;=\; \delta_S + 2\Bigl( \delta_S + \sqrt{688\,\eps} + \frac{md}{q} \Bigr) ,
+\end{equation*}
+which is the $O(\delta_S + \sqrt{\eps} + md/q)$ the paper absorbs into $\delta_S$. The rest of
+this comment records how it was reached, because two of the obstacles it used to list turned out
+not to exist.
+
+Of the approximate half's ingredients, three were in place first:
+the agreement form of Schwartz--Zippel against every multilinear polynomial at once, the
+aggregation that turns it into a bound on the mass at non-multilinear outcomes, and the
+substitution error of two families agreeing off that mass
+(\texttt{MIPRE/Background/QLD/NonMultilinear.lean}). A fourth is now too: the strategy's
+$(\mathtt{Point}, W)$ measurement and the low-degree reading of its $(\mathtt{Pauli}, W)$ answer
+are close \emph{on one party}, at $688\,\eps$
+(\texttt{sum\_normSq\_point\_sub\_pauli\_le}), which is what lets the point be sampled
+independently of the operators. The two inputs are cross-party items of
+Lemma~\ref{lem:qld-win}, and they share Alice's point measurement, so one triangle inequality
+removes it. A fifth carries such a statement from the strategy's state to the expanded one: every
+hatted measurement is a convolution $\widehat X_c = \sum_{a + b = c} X_a \ot T_b$ with the
+ancilla's Weyl measurement, and for a \emph{projective} $T$ the cross terms of
+$\widehat X^\dagger \widehat X$ vanish, so the common ancilla factor drops out exactly:
+$\sum_c \|(\Id \ot \widehat X_c) \widehat\psi\|^2
+  = \sum_a \|(\Id \ot X_a) \psi\|^2$ (\texttt{sum\_normSq\_stateVecB\_conv\_eq}). The two
+together put the closeness on the expanded state with the same constant
+(\texttt{sum\_normSq\_hat\_point\_sub\_pauli\_le}). The aggregation has now been applied to the
+simultaneous measurement's outcomes, in \texttt{MIPRE/Background/QLD/Multilinear.lean}, and the
+bound the appendix's repair turns on is formalized: with $\widehat S^W$ a simultaneous pair
+measurement of error $\delta_S$ for a strategy of failure $\eps$,
+\begin{equation*}
+  \sum_{g \text{ not multilinear}} \bigl\langle \widehat S^W_g \ot \Id \bigr\rangle_\Phi
+  \;\leq\; \delta_S + \sqrt{688\,\eps} + \frac{md}{q}
+\end{equation*}
+(\texttt{SimulPair.sum\_bornProb\_not\_isML\_le}). Its three inputs are the
+point-independent family indexed by cube data (\texttt{hatPauli}, the strategy's
+$(\mathtt{Pauli}, W)$ measurement convolved with the ancilla's Weyl measurement, projective and
+independent of the sampled point, whose reading at a point is the hatted Pauli measurement there
+--- \texttt{hatPauli\_map}); the Cauchy--Schwarz that substitutes it for the point measurement at
+cost $\sqrt{688\,\eps}$ (\texttt{abs\_sum\_weighted\_bornProb\_le},
+\texttt{SimulPair.sum\_bornProb\_hatPauli\_ge}); and Lemma~\ref{lem:schwartz-zippel} per
+non-multilinear outcome, uniformly in the cube datum
+(\texttt{sum\_uniform\_agree\_ldEnc\_le}). The marginal is taken \emph{indexed by polynomials}
+rather than by their value at the point (\texttt{polyMarg}), which is what makes the outcome
+operator independent of the point that Schwartz--Zippel then samples.
+
+\emph{And the agreement itself is formalized}: expanding $\tilde{M}^{W,\ind_m(u)}_a$ and
+contracting the generalized Pauli against the strategy's point measurement turns the first item's
+left-hand side into the outcome sum with the label $\coded(g) \cdot \ind_m(u)$, and
+\begin{equation*}
+  \mathbb E_u \sum_g \bigl\langle \widehat S^W_g \ot
+    \widehat M^{(\mathtt{Point}, W), u}_{\coded(g) \cdot \ind_m(u)} \bigr\rangle_\Phi
+  \;\geq\; 1 - \delta_S - 2\Bigl( \delta_S + \sqrt{688\,\eps} + \frac{md}{q} \Bigr)
+\end{equation*}
+(\texttt{SimulPair.sum\_bornProb\_cubeData\_ge}), from the helper's agreement read by polynomial
+(\texttt{SimulPair.sum\_bornProb\_polyMarg\_ge}) and the mass bound, through
+\texttt{sum\_sub\_le\_of\_eq\_on}.
+
+\emph{One outstanding ingredient turned out not to be needed.} The chain was stated with the good
+set ``$g$ is multilinear'', and then agreement of the two labels on it is uniqueness of multilinear
+interpolation --- an independent fact about \texttt{MvPolynomial} that
+\texttt{sum\_sub\_le\_of\_eq\_on} took as a hypothesis. Taking the good set to be ``$g$
+\emph{is} the low-degree encoding of its own cube data'' (\texttt{IsInterp}) removes it: there the
+two labels agree by definition (\texttt{dotF\_cubeData\_indVec}), and off it $g$ differs from the
+encoding of \emph{every} cube datum (\texttt{ne\_ldEnc\_of\_not\_isInterp}), which is exactly
+the hypothesis Schwartz--Zippel wants, uniformly in the datum. Uniqueness of multilinear
+interpolation would say the two sets coincide; neither inclusion is used.
 
 \emph{Formalized, unconditionally}, in \texttt{MIPRE/Background/QLD/ExactPauli.lean}: the two
 marginals of a projective pair measurement (\texttt{sCoarse}, projective by
@@ -3873,9 +4134,14 @@ observable $\tilde{W}^e(\tilde{u})$ (\texttt{wTilde}), and the identity everythi
 \texttt{wTilde\_eq} says the observable \emph{factorizes} as a signed sum of the pair measurement
 tensor a bare generalized Pauli. Self-adjointness, squaring to the identity, and the twisted
 commutation relation are then three lines
-(\texttt{wTilde\_conjTranspose}, \texttt{wTilde\_mul\_self}, \texttt{wTilde\_mul\_wTilde}), with
+(\texttt{wTilde\_conjTranspose}, \texttt{wTilde\_mul\_self}, \texttt{wTilde\_mul\_wTilde}), and
+linearity in the argument a fourth (\texttt{wTilde\_mul\_add}: both tensor factors are additive,
+the sign because the pairing is and the generalized Pauli by the Weyl family's group law), with
 \texttt{IsPVM} and \texttt{MIPRE.Weyl.IsWeylFamily} the only hypotheses --- no game, no error term,
-and no appeal to Theorem~\ref{thm:linearity}, exactly as the proof above says.
+and no appeal to Theorem~\ref{thm:linearity}, exactly as the proof above says. All four are
+instantiated at a simultaneous pair measurement in \texttt{MIPRE/Background/QLD/MTilde.lean}
+(\texttt{SimulPair.wTildeAt} and its relations), which is what puts them on the same objects as
+the closeness below.
 
 \emph{The phase is the general one.} The pinned paper's display for the commutation relation used
 to split into $e \neq e'$, claiming exact commutation, and $e = e'$, carrying a phase. That split is
@@ -3891,18 +4157,40 @@ relation holds for every pair of field elements.
 agreement direction and uniformly in the interpolated data, which is what the sum over
 $\F_q^M$ needs; \texttt{nonMultilinear\_mass\_le} is the aggregation that turns it into the bound
 on the mass the simultaneous measurement places on non-multilinear outcomes; and
-\texttt{sum\_sub\_le\_of\_eq\_on} is the substitution error given that mass. One ingredient of that
-chain is outstanding and is an independent fact about \texttt{MvPolynomial}: that a multilinear
-polynomial is the interpolant of its own values on $\{0,1\}^m$, i.e.\ uniqueness of multilinear
-interpolation. \texttt{sum\_sub\_le\_of\_eq\_on} therefore takes agreement on the multilinear
-outcomes as a hypothesis rather than deriving it.
+\texttt{sum\_sub\_le\_of\_eq\_on} is the substitution error given that mass, taking agreement on
+the good set as a hypothesis --- which is why the choice of good set below matters.
 
-\emph{Not formalized}, and the reason there is no statement-level \texttt{leanok} mark:
-the $\delta$-closeness to the $(\mathtt{Point},W)$ measurements. Its hypothesis lives on the
-four-register cut $\alice \alice' \mid \bob \alice''$ that \texttt{MIPRE.QLD.hatVec} is, while
-$\tilde{M}^{W,\tilde{u}}$ needs $\alice \alice' \alice''$ on one party --- a six-register state
-with two maximally entangled pairs, and transport between two cuts. That bookkeeping, and the
-eleven-display chain above it, are what remains.
+\emph{And it is read as a closeness of two measurements}, which is how the paper states item 1.
+$\tilde{M}^{W,\ind_m(u)}$ is a projective measurement (\texttt{isPVM\_mTildeAt}, through
+\texttt{sTensor\_mul}, so through projectivity of the simultaneous measurement and nothing else),
+and
+\begin{equation*}
+  \mathbb E_u \sum_a \bigl\langle \tilde{M}^{W,\ind_m(u)}_a \ot
+    M^{(\mathtt{Point}, W), u}_a \bigr\rangle \;\geq\; 1 - \delta
+\end{equation*}
+(\texttt{SimulPair.sum\_bornProb\_mTilde\_ge}, and
+\texttt{SimulPair.inconsistency\_mTilde\_le} for the $\simeq_\delta$ form). The two are the same
+statement grouped differently: expanding $\tilde{M}$ and contracting the generalized Pauli against
+the point measurement is \texttt{sum\_kron\_syn\_eq\_hatMats}, one characteristic-two shift.
+
+\emph{The second entangled pair was never needed.} The obstacle recorded here until this point was
+that the paper's expanded state $\ket{\hat\psi} = \ket{\psi}_{\alice\bob} \ot
+\ket{\EPR}_{\alice'\alice''} \ot \ket{\EPR}_{\bob'\bob''}$ carries \emph{two} entangled
+pairs, each local to one party, and is read along two cuts ---
+$\alice\alice' \mid \bob\alice''$ for one orientation of Lemma~\ref{lem:qld-simultaneous} and
+$\bob\bob' \mid \alice\bob''$ for the other --- while \texttt{MIPRE.QLD.hatVec} is one such
+cut, with one pair. That is right, and it is all Lemmas~\ref{lem:qld-simultaneous}
+and~\ref{lem:qld-helper} need. What it does \emph{not} imply is that
+$\tilde{M}^{W,\tilde{u}} = \sum_g \widehat S^W_g \ot \tau^W_{\coded(g) \cdot \tilde{u} -
+a}(\tilde{u})$, which wants $\widehat S^W$ and the generalized Pauli on the disjoint registers
+$\alice\alice'$ and $\alice''$, needs a new pair: the register $\alice''$ is already there, on
+the far side of the cut, and writing $\tilde{M}$ as one matrix is a \emph{regrouping} of the same
+six registers along a third cut, $\alice\alice'\alice'' \mid \bob$. Every Born probability
+transports across it by \texttt{bornProb\_regroupVec}, which is one entry computation
+(\texttt{reindex\_regroupEquiv}) and one invariance of the quadratic form
+(\texttt{qform\_comp\_equiv}, the unary companion of \texttt{quadForm\_reindex}, which reindexes
+the two parties separately and so cannot move a factor between them). No second pair, no transport
+between cuts, and no new estimate.
 
 \emph{A ledger discrepancy worth recording.} Node $1.2.2.15$ declares its dependencies as
 $\{1.2.2.13, 1.2.2.14, 1.2.2.7\}$ --- the last being Theorem~\ref{thm:linearity} --- and does not
@@ -3913,10 +4201,728 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
 
 \effortHard
 
+\begin{lemma}[Self-consistency of the exact Pauli observables]
+\label{lem:qld-pauli-selfcons}
+\ledgernode{1.2.2.15}
+\uses{lem:qld-exact-paulis,lem:qld-helper,lem:qld-win,lem:schwartz-zippel,def:cross-distance}
+\lean{MIPRE.QLD.syn_mul_syn, MIPRE.QLD.stateVec_expVec_kron_one,
+  MIPRE.QLD.stateVecB_expVec_kron_one, MIPRE.QLD.stateVec_hatVec_syn,
+  MIPRE.QLD.xSqNorm_hatVec_syn, MIPRE.QLD.SimulPair.stateVec_ancSyn,
+  MIPRE.QLD.SimulPair.sum_ancSyn_mulVec, MIPRE.snorm_sq_sum_orthogonal,
+  MIPRE.QLD.SimulPair.snorm_sq_evalMarg_eq_sum_polyMarg,
+  MIPRE.QLD.SimulPair.sum_snorm_sq_polyMarg_one_sub_le, MIPRE.QLD.sum_uniform_agree_le,
+  MIPRE.QLD.sum_uniform_agree_mass_le, MIPRE.agreeOp, MIPRE.agreeOp_conjTranspose,
+  MIPRE.agreeOp_mul_self, MIPRE.qform_agreeOp, MIPRE.snorm_sq_one_sub_agreeOp,
+  MIPRE.snorm_sub_mul_agreeOp_le, MIPRE.sum_kron_le_one, MIPRE.sum_bornProb_kron_le,
+  MIPRE.QLD.SimulPair.sum_bornProb_polyMarg_one_sub_le, MIPRE.snorm_sq_proj_mul_eq_qform,
+  MIPRE.qform_sandwich_nonneg, MIPRE.snorm_sq_sum_proj_sandwich,
+  MIPRE.sum_qform_sandwich_le_of_subset, MIPRE.abs_sum_qform_swap_le,
+  MIPRE.sum_snorm_sq_proj_comp_le, MIPRE.snorm_one_sub_aOp_mul_bOp_le,
+  MIPRE.sum_snorm_sq_insert_le, MIPRE.sum_xSqNorm_fibre_le,
+  MIPRE.QLD.SimulPair.mTildeAnc, MIPRE.QLD.SimulPair.isPVM_mTildeAnc,
+  MIPRE.QLD.SimulPair.mTildeAt_eq_mTildeAnc, MIPRE.QLD.SimulPair.swapU_conj_mTildeAnc,
+  MIPRE.QLD.pairSwapEquiv, MIPRE.QLD.pairSwapVec, MIPRE.QLD.pairSwapVec_unit,
+  MIPRE.QLD.reindex_pairSwapEquiv, MIPRE.QLD.qform_pairSwapVec, MIPRE.QLD.mirrorEquiv,
+  MIPRE.QLD.mirrorVec, MIPRE.QLD.mirrorVec_unit, MIPRE.QLD.pairSwapVec_mirrorVec,
+  MIPRE.sndExtVec, MIPRE.sndExtVec_eq, MIPRE.reindex_prodPUnit, MIPRE.expVec_punit_unit,
+  MIPRE.bornProb_sndExtVec, MIPRE.sndExtVec_unit, MIPRE.sndPairEquiv,
+  MIPRE.reindex_sndPairEquiv, MIPRE.bornProb_sndPair, MIPRE.QLD.MirrorSimul,
+  MIPRE.QLD.MirrorSimul.toFirst, MIPRE.QLD.MirrorSimul.toSecond,
+  MIPRE.QLD.MirrorSimul.physVec, MIPRE.QLD.MirrorSimul.physVec_unit,
+  MIPRE.QLD.MirrorSimul.physVec_mirror, MIPRE.QLD.MirrorSimul.bornProb_expPair,
+  MIPRE.QLD.MirrorSimul.physVec_eq_sndPair, MIPRE.QLD.MirrorSimul.bornProb_physVec,
+  MIPRE.QLD.MirrorSimul.aliceMTilde, MIPRE.QLD.MirrorSimul.bobMTilde,
+  MIPRE.QLD.MirrorSimul.isPVM_bobMTilde, MIPRE.QLD.MirrorSimul.bobSwap,
+  MIPRE.QLD.MirrorSimul.bobSwap_mul_conjTranspose,
+  MIPRE.QLD.MirrorSimul.bobSwap_conjTranspose_mul,
+  MIPRE.QLD.MirrorSimul.bobSwap_conj_bobMTilde, MIPRE.QLD.MirrorSimul.selfConsGap,
+  MIPRE.QLD.chainLabel, MIPRE.QLD.ChainCoupled, MIPRE.QLD.chainCoupled_symm,
+  MIPRE.QLD.chainLabel_eq_of_coupled, MIPRE.QLD.dotF_chainLabel_eq_of_coupled,
+  MIPRE.QLD.chainIdx, MIPRE.QLD.mem_chainIdx, MIPRE.QLD.dotF_chainLabel_eq_iff,
+  MIPRE.QLD.SimulPair.chainOp, MIPRE.QLD.mTildeAnc_eq_sum_chainIdx, MIPRE.QLD.coupledIdx,
+  MIPRE.QLD.mem_coupledIdx, MIPRE.QLD.swap_mem_coupledIdx, MIPRE.QLD.MirrorSimul.endOp,
+  MIPRE.QLD.MirrorSimul.endOpMirror, MIPRE.QLD.reindex_prodComm_kron,
+  MIPRE.QLD.MirrorSimul.endOpMirror_apply, MIPRE.QLD.MirrorSimul.endOpMirror_eq,
+  MIPRE.QLD.snorm_reindex_prodComm, MIPRE.QLD.sum_xSqNorm_le_of_endOp,
+  MIPRE.QLD.snorm_comp_equiv, MIPRE.QLD.sum_snorm_sq_sub_mul, MIPRE.QLD.SimulPair.nearId,
+  MIPRE.QLD.SimulPair.sum_snorm_sq_nearId, MIPRE.QLD.SimulPair.sum_uniform_snorm_sq_nearId_le,
+  MIPRE.QLD.kron_sum', MIPRE.QLD.sum_kron', MIPRE.QLD.reindex_sum,
+  MIPRE.QLD.SimulPair.nearId_eq_sum, MIPRE.QLD.SimulPair.mTildeAnc_eq_sum,
+  MIPRE.QLD.SimulPair.mTildeAnc_mul_kron, MIPRE.QLD.SimulPair.aOp_mTildeAnc_mul_nearId,
+  MIPRE.QLD.snorm_sq_sum_orthogonal', MIPRE.QLD.isPVM_proj, MIPRE.QLD.isPVM_chainOp,
+  MIPRE.QLD.isPVM_ptAtPOVM, MIPRE.QLD.SimulPair.chainShift, MIPRE.QLD.SimulPair.ptA,
+  MIPRE.QLD.SimulPair.ptB, MIPRE.QLD.SimulPair.sum_snorm_sq_insert_chain,
+  MIPRE.QLD.stateVec_hatVec_proj, MIPRE.QLD.xSqNorm_hatVec_proj,
+  MIPRE.QLD.SimulPair.stateVec_ancProj, MIPRE.QLD.SimulPair.sum_ancProj_mulVec,
+  MIPRE.QLD.syn_mul_proj, MIPRE.QLD.hatMats_mul_proj,
+  MIPRE.QLD.sum_snorm_sq_fiber_sandwich_le, MIPRE.QLD.sum_bornProb_sandwich_drop_le,
+  MIPRE.QLD.MirrorSimul.bobWeyl, MIPRE.QLD.MirrorSimul.chainP,
+  MIPRE.QLD.MirrorSimul.isPVM_chainP, MIPRE.QLD.MirrorSimul.aliceChainOp,
+  MIPRE.QLD.MirrorSimul.aliceHat, MIPRE.QLD.MirrorSimul.bobHat,
+  MIPRE.QLD.MirrorSimul.chainW, MIPRE.QLD.MirrorSimul.chainW_sandwich,
+  MIPRE.QLD.MirrorSimul.sum_aliceChainOp, MIPRE.QLD.MirrorSimul.sum_aliceChainOp_sandwich,
+  MIPRE.QLD.MirrorSimul.bobHat_conj_bobWeyl, MIPRE.QLD.MirrorSimul.isPVM_aliceChainOp,
+  MIPRE.QLD.MirrorSimul.posSemidef_aliceSand,
+  MIPRE.QLD.MirrorSimul.sum_bornProb_chainW_drop_le,
+  MIPRE.QLD.MirrorSimul.bornProb_physVec_aOp_kron,
+  MIPRE.QLD.MirrorSimul.bornProb_physVec_aOp, MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainP_le,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainP_le, MIPRE.QLD.mirrorVec_mirrorVec,
+  MIPRE.QLD.MirrorSimul.mirror, MIPRE.QLD.MirrorSimul.mirror_toFirst,
+  MIPRE.QLD.MirrorSimul.mirror_toSecond, MIPRE.QLD.MirrorSimul.mirror_SA,
+  MIPRE.QLD.MirrorSimul.mirror_physVec, MIPRE.QLD.MirrorSimul.bobChainOp,
+  MIPRE.QLD.MirrorSimul.isPVM_bobChainOp, MIPRE.QLD.SimulPair.sum_poly_chainOp,
+  MIPRE.QLD.MirrorSimul.chainQ, MIPRE.QLD.MirrorSimul.isPVM_chainQ,
+  MIPRE.QLD.MirrorSimul.endOp_eq_sum_chainQ, MIPRE.QLD.MirrorSimul.sum_poly_chainQ,
+  MIPRE.QLD.MirrorSimul.mirror_sum_snorm_sq_chainP_le,
+  MIPRE.QLD.sum_snorm_sq_fiber_sandwich_subset_le, MIPRE.QLD.chainQShift,
+  MIPRE.QLD.MirrorSimul.bobTail, MIPRE.QLD.MirrorSimul.bobTail_sandwich,
+  MIPRE.QLD.MirrorSimul.bobSand, MIPRE.QLD.MirrorSimul.bobHat_conj_bobChainOp,
+  MIPRE.QLD.MirrorSimul.bobTail_sandwich_kron, MIPRE.QLD.MirrorSimul.chainV,
+  MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainQ_disagree_le,
+  MIPRE.QLD.MirrorSimul.sum_qform_bobTail_eq, MIPRE.abs_sum_qform_conjTranspose_mul_le,
+  MIPRE.abs_sum_qform_swap_proj_le, MIPRE.QLD.SimulPair.norm_evec_state,
+  MIPRE.QLD.SimulPair.abs_sum_qform_ne_swap_le, MIPRE.QLD.SimulPair.sum_qform_ne_eq,
+  MIPRE.QLD.SimulPair.sum_uniform_qform_ne_le, MIPRE.QLD.MirrorSimul.bornProb_physVec_bOp,
+  MIPRE.QLD.MirrorSimul.bobLift, MIPRE.QLD.MirrorSimul.bobLift_sandwich,
+  MIPRE.QLD.MirrorSimul.aOp_conj_bobChainOp, MIPRE.QLD.MirrorSimul.bobLift_sandwich_kron,
+  MIPRE.QLD.MirrorSimul.sum_qform_bobLift_eq,
+  MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainQ_agree_le,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainQ_agree_le,
+  MIPRE.QLD.sum_uniform_chainCoupled_agree_le, MIPRE.QLD.chainQShift_eq_iff,
+  MIPRE.QLD.sum_filter_and, MIPRE.QLD.sum_uniform_chainCoupled_mass_le,
+  MIPRE.QLD.MirrorSimul.norm_evec_physVec, MIPRE.QLD.MirrorSimul.sum_qform_chainQ,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainQ_notCoupled_le,
+  MIPRE.QLD.sum_snorm_sq_chain_le, MIPRE.QLD.qform_kron_one_of_unit,
+  MIPRE.QLD.MirrorSimul.physLiftEquiv, MIPRE.QLD.MirrorSimul.physVec_comp_physLiftEquiv,
+  MIPRE.QLD.MirrorSimul.physLift, MIPRE.QLD.MirrorSimul.physLift_sub,
+  MIPRE.QLD.MirrorSimul.physLift_mul, MIPRE.QLD.MirrorSimul.physLift_conjTranspose,
+  MIPRE.QLD.MirrorSimul.qform_physLift, MIPRE.QLD.MirrorSimul.snorm_physLift,
+  MIPRE.QLD.sum_epr_proj_mulVec, MIPRE.QLD.kron_one_mulVec,
+  MIPRE.QLD.MirrorSimul.bobPairProj, MIPRE.QLD.MirrorSimul.bobPairProj_eq,
+  MIPRE.QLD.MirrorSimul.reindex_bobPairProj,
+  MIPRE.QLD.MirrorSimul.sum_bobPairProj_mulVec, MIPRE.extVec2_apply, MIPRE.QLD.epr_symm,
+  MIPRE.QLD.padWeight, MIPRE.QLD.padState_reindex_apply, MIPRE.QLD.hmirror_padState,
+  MIPRE.QLD.mirrorOfGlobalPairs, MIPRE.QLD.exists_mirrorSimul,
+  MIPRE.QLD.SimulPair.chainS, MIPRE.QLD.SimulPair.chainS_one_eq_two,
+  MIPRE.QLD.SimulPair.chainS_two_sub_three,
+  MIPRE.QLD.SimulPair.sum_uniform_snorm_sq_chainS_zero_one,
+  MIPRE.QLD.SimulPair.sum_snorm_sq_chainS_one_two,
+  MIPRE.QLD.SimulPair.sum_snorm_sq_chainS_two_three, MIPRE.QLD.mulVec_comp_equiv,
+  MIPRE.QLD.sum_chainLabel_filter, MIPRE.QLD.SimulPair.ancA, MIPRE.QLD.SimulPair.ancB,
+  MIPRE.QLD.SimulPair.ancProj_mulVec_mVec, MIPRE.QLD.SimulPair.hatA,
+  MIPRE.QLD.SimulPair.ptA_mul_ancA, MIPRE.QLD.SimulPair.ancB_ptA_mulVec,
+  MIPRE.QLD.SimulPair.chainS3b, MIPRE.QLD.SimulPair.chainOp_eq_mul,
+  MIPRE.QLD.SimulPair.chainS_three_mulVec, MIPRE.QLD.epr_proj_pair_mulVec,
+  MIPRE.QLD.kron_mulVec_one, MIPRE.QLD.MirrorSimul.physLift_aOp,
+  MIPRE.QLD.MirrorSimul.physLift_bOp_aOp, MIPRE.QLD.MirrorSimul.reindex_bobWeyl,
+  MIPRE.QLD.MirrorSimul.bobPairProj_mulVec, MIPRE.QLD.MirrorSimul.physLift_sum,
+  MIPRE.QLD.MirrorSimul.bobPt, MIPRE.QLD.MirrorSimul.bobAnc,
+  MIPRE.QLD.MirrorSimul.bobPairProj_eq_mul, MIPRE.QLD.MirrorSimul.bobPt_mul_bobAnc,
+  MIPRE.QLD.MirrorSimul.bobPt_mul_bobPairProj, MIPRE.QLD.MirrorSimul.bobHat_mul_bobWeyl,
+  MIPRE.QLD.MirrorSimul.physLift_mulVec, MIPRE.QLD.MirrorSimul.physLift_mulVec_congr,
+  MIPRE.QLD.MirrorSimul.chainU3b, MIPRE.QLD.MirrorSimul.chainU3b_eq,
+  MIPRE.QLD.MirrorSimul.physLift_chainU3b, MIPRE.QLD.MirrorSimul.physLift_chainU3b_mulVec,
+  MIPRE.QLD.SimulPair.bornProb_mVec_ext, MIPRE.QLD.SimulPair.xSqNorm_mVec_ext,
+  MIPRE.QLD.SimulPair.sum_uniform_xSqNorm_pt_le, MIPRE.QLD.snorm_sub_eq_zero_of_mulVec,
+  MIPRE.QLD.MirrorSimul.chainT, MIPRE.QLD.MirrorSimul.snorm_physLift_sub,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_zero_one,
+  MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainT_one_two,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_two_three,
+  MIPRE.QLD.MirrorSimul.snorm_chainT_three_four,
+  MIPRE.QLD.MirrorSimul.chainT_five_sub_four,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_four_five,
+  MIPRE.QLD.MirrorSimul.chainT_five_eq_six, MIPRE.QLD.MirrorSimul.chainT_six_sub_seven,
+  MIPRE.QLD.MirrorSimul.bornProb_bobSand_eq,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_six_seven,
+  MIPRE.QLD.MirrorSimul.bobLift_one, MIPRE.QLD.MirrorSimul.bobLift_sub,
+  MIPRE.QLD.MirrorSimul.chainT_eight_sub_seven,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_seven_eight,
+  MIPRE.QLD.chainQShift_eq_of_coupled, MIPRE.QLD.MirrorSimul.chainT_eight_sub_nine,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_eight_nine,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_one_two,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_three_four,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_five_six,
+  MIPRE.QLD.sum_mul_const_mul_sum_range, MIPRE.QLD.MirrorSimul.chainT_zero_eq,
+  MIPRE.QLD.MirrorSimul.chainT_nine_eq, MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_le,
+  MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_mTildeAnc_endOp_le,
+  MIPRE.QLD.snorm_sq_obs_sub_le, MIPRE.QLD.sum_fibre_smul, MIPRE.QLD.swapVec_sum,
+  MIPRE.QLD.mulVec_kron_sum_swapVec, MIPRE.QLD.snorm_swapVec_aOp_sub_kron_sum,
+  MIPRE.QLD.MirrorSimul.aliceWTilde, MIPRE.QLD.MirrorSimul.bobWTilde,
+  MIPRE.QLD.MirrorSimul.endOp_swap_sum,
+  MIPRE.QLD.MirrorSimul.sum_snorm_sq_aliceMTilde_endOp_le,
+  MIPRE.QLD.MirrorSimul.snorm_endOp_bobMTilde_eq,
+  MIPRE.QLD.MirrorSimul.sum_snorm_sq_endOp_bobMTilde_le,
+  MIPRE.QLD.MirrorSimul.sum_selfConsGap_le, MIPRE.QLD.MirrorSimul.snorm_sq_wTilde_le}
+\leanok
+For every basis $W$, every $e \in \F_q$ and every probe $\tilde{u} \in \F_q^{M}$, $M = 2^m$, the
+exact Pauli observable of Lemma~\ref{lem:qld-exact-paulis} on one party agrees with the same
+observable on the other:
+\begin{equation*}
+  \norm{\Bigl( \bigl( \tilde{W}^e(\tilde{u}) \bigr)_{\alice \alice' \alice''}
+    - \bigl( \tilde{W}^e(\tilde{u}) \bigr)_{\bob \bob' \bob''} \Bigr)
+    \ket{\widehat{\psi}}}^2
+  \;\leq\; 72 \Bigl( 10 \delta_S + 860 \eps + 2\sqrt{172 \eps} + \frac{md}{q} \Bigr)
+  \;=\; O\Bigl( \delta_S + \sqrt{\eps} + \frac{md}{q} \Bigr) ,
+\end{equation*}
+which is the paper's $\bigl( \tilde{W}^e(\tilde{u}) \bigr)_{\alice \alice' \alice''}
+\approx_{\delta_{qld}} \bigl( \tilde{W}^e(\tilde{u}) \bigr)_{\bob \bob' \bob''}$ once the
+$O(\sqrt\eps)$ and $O(md/q)$ terms are absorbed into $\delta_S$, as the paper says it
+does. Two departures from the paper's phrasing, both in the direction of a stronger statement:
+the bound holds at \emph{every} probe rather than on average over a uniform one --- the chain
+never averages over the probe, only over the sampled point --- and the constant is explicit.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:qld-exact-paulis,lem:qld-helper,lem:qld-win,lem:schwartz-zippel}
+\leanok
+The paper's ``pulling'' chain. Right-multiplying $\tilde{M}^{W,\tilde{u}}_a$ on one party by the
+near-identity $\sum_g (\widehat S^W_g)_{\alice\alice'} \ot
+(\widehat M^{(\mathtt{Point},W),u}_{g(u)})_{\bob\alice''}$ of Lemma~\ref{lem:qld-helper} and
+expanding both definitions rewrites it as a sum over pairs $(g, h)$ with
+$(\coded(g) - h) \cdot \tilde{u} = a$ of $(\widehat S^W_g) \ot (\tau^W_h) \ot
+(M^{(\mathtt{Point},W),u}_{(g - g_h)(u)})$; the self-consistency of the point measurements
+(Lemma~\ref{lem:qld-win}) then moves the last factor across, and undoing the expansion on the
+other side gives the claim. Lemma~\ref{lem:schwartz-zippel} enters where $g$ is compared with
+$g_h$, and is where the $md/q$ of $\delta_{qld}$ comes from.
+\end{proof}
+
+\paragraph{Comments.} \emph{This statement is not in the pinned paper's
+Lemma~\ref{lem:qld-exact-paulis}; it is the second item of that lemma in the paper, and the
+blueprint's paraphrase of Lemma~\ref{lem:qld-exact-paulis} dropped it.} That was found by
+formalizing: Lemma~\ref{lem:qld-swap}'s item 1 needs the two twirls to be near-invariances of the
+state, and the only thing that supplies them is this self-consistency at a \emph{uniform}
+$\tilde{u}$ --- not at $\tilde{u} = \ind_m(u)$, which is all
+Lemma~\ref{lem:qld-exact-paulis} gives. So the dependency graph was missing an edge, and worse, a
+node. It is separated out here rather than folded back into
+Lemma~\ref{lem:qld-exact-paulis} so that the latter's \texttt{leanok} marks stay honest: what is
+formalized there is exactly what it states.
+
+\emph{The exact steps of the chain are formalized.} Its eleven displays are of two kinds: steps
+marked $\approx_0$, which are identities, and steps marked $\approx_\delta$, which are estimates.
+All the identities are in place.
+
+\texttt{syn\_mul\_syn} is display \texttt{eq:qld-pulling-2b}: the syndrome projectors of one Weyl
+family at two different probes multiply to the projector onto the outcomes satisfying both
+conditions --- off the diagonal the spectral projectors annihilate each other, so only the
+eigenvalue patterns in both level sets survive.
+
+\texttt{SimulPair.stateVec\_ancSyn} is \texttt{eq:qld-pulling-3a}: a generalized Pauli moves from
+one party's ancilla half to the other's at no cost, the two halves being maximally entangled and
+the syndrome projectors symmetric. The point worth recording is that this is available at all.
+Lemma~\ref{lem:qld-simultaneous} does not say that the padded state \emph{is} an expanded state,
+only that it reproduces its expectations, so a \emph{vector} identity about it looks out of reach.
+It is not: the identity to be proved is the vanishing of a squared norm, and a squared norm is an
+expectation, so \texttt{SimulPair.xSqNorm\_aOp} carries it across with no loss.
+
+\texttt{SimulPair.sum\_ancSyn\_mulVec} is \texttt{eq:qld-pulling-4}: summing the matched pairs of
+syndrome projectors, one on each party, leaves the state unchanged, since by the transport each
+matched pair acts as the projector on one side alone and those sum to the identity.
+
+\emph{And what the estimates consume is in place.} Two of the $\approx_\delta$ displays,
+\texttt{eq:qld-pulling-7} and \texttt{eq:qld-pulling-11}, are the second item of
+Lemma~\ref{lem:qld-helper} --- but not in the indexing that lemma is stated in. The helper is
+stated at an outcome $a \in \F_q$, which is what the expansion stage produces, while the chain
+sums over the \emph{polynomial} outcomes $g$, because the label $\coded(g) \cdot \tilde{u}$ it
+carries is a function of $g$ and not of $g(u)$. The two sums are \emph{equal}, not merely
+comparable: within a fibre of the evaluation the pair measurement's outcomes are orthogonal
+projectors, so every cross term of the squared norm vanishes
+(\texttt{snorm\_sq\_sum\_orthogonal}), and the fibres partition the outcomes. That gives
+\texttt{SimulPair.sum\_snorm\_sq\_polyMarg\_one\_sub\_le}, at the helper's own constant
+$4\delta_S + 344\,\eps$.
+
+Display \texttt{eq:qld-pulling-12} is Lemma~\ref{lem:schwartz-zippel} again, in the form
+\texttt{sum\_uniform\_agree\_mass\_le}: restricting a weighted sum to the tuples where two
+distinct outcome polynomials agree at the sampled point costs $md/q$, the weights being Born
+probabilities of a projective family and so summing to at most one. No lower bound on $d$ is needed
+here, unlike at \texttt{prob\_agree\_ldEnc\_le\_of\_not\_multilinear}: both polynomials carry
+the same degree bound, so the hypothesis is already met.
+
+\emph{And the near-identity is a projection.} Display \texttt{eq:qld-pulling-1} right-multiplies
+by $\sum_g (\widehat S^W_g)_{\alice\alice'} \ot
+(\widehat M^{(\mathtt{Point},W),u}_{g(u)})_{\bob\alice''}$, which the first item of
+Lemma~\ref{lem:qld-helper} says is close to the identity on the state. What makes the step cheap
+is that this operator is a \emph{projection} (\texttt{agreeOp\_mul\_self}): the pair
+measurement's outcomes are orthogonal, so the cross terms vanish, and the opposite party's factors
+are projectors. Its deficit from the identity is then exactly one minus the agreement
+(\texttt{snorm\_sq\_one\_sub\_agreeOp}) --- linear in the operator, with no Cauchy--Schwarz
+anywhere --- and a contraction on the left cannot amplify it
+(\texttt{snorm\_sub\_mul\_agreeOp\_le}). The package asks only the \emph{first} party's family
+to be projective, which is what lets it apply here, where the second party's factors are indexed
+by $g$ through $g(u)$ and so are not a measurement in $g$.
+
+\emph{And the two ends of \texttt{eq:qld-pulling-10}'s justification.} That display is argued by
+bounding the magnitude of a difference, and the argument runs from
+\texttt{fact:add-a-proj} at the top to the helper at the bottom. Both ends are in place. The top
+is \texttt{sum\_kron\_le\_one}: a family of projectors on one factor, tensored with a projective
+measurement on another, sums to at most the identity, because the complement
+$\sum_x (\Id - B_x) \ot T_x$ is a sum of positive semidefinite terms; against a positive
+operator on the other party that discards the index the sandwich runs over
+(\texttt{sum\_bornProb\_kron\_le}). The bottom is \texttt{eq:qld-pulling-14},
+\texttt{SimulPair.sum\_bornProb\_polyMarg\_one\_sub\_le}: the complement of the helper's
+agreement, read by polynomial outcome, is at most $\delta_S$, the marginal's outcomes summing to
+the identity.
+
+\emph{And the middle of that justification, which is the only Cauchy--Schwarz in the chain.}
+The estimate expands a squared norm over the orthogonal outcomes of a projective family into a sum
+of sandwiches, one per outcome (\texttt{snorm\_sq\_sum\_proj\_sandwich}); drops the constraint
+on the outcomes, every sandwich being nonnegative
+(\texttt{sum\_qform\_sandwich\_le\_of\_subset}); and then \emph{moves} the sandwiched
+measurement from one party to the other. That is \texttt{abs\_sum\_qform\_swap\_le}, display
+\texttt{eq:qld-pulling-13}: the difference of the two sandwiches is two terms each carrying the
+deviation on one side, and each is bounded by $\sqrt{\eps}$ against a mass at most one, so the
+substitution costs $2\sqrt{\eps}$. The side that is left as a single factor rather than a
+sandwich is the one whose measurement commutes with what it sandwiches, where $XSX = XS$.
+
+\emph{And \texttt{eq:qld-pulling-3}.} The expansion leaves one party's projector beside the
+\emph{other} party's point measurement, and the chain inserts a copy of that measurement on the
+first party's side, spending the self-consistency of Lemma~\ref{lem:qld-win}. Two things make the
+step cost that and no more. The deficit of the insertion is the cross-party deviation itself
+(\texttt{snorm\_one\_sub\_aOp\_mul\_bOp\_le}): $(\Id - A)B = B(B - A)$, the outcome inserted
+beside being a projection and the parties commuting, and a projection in front costs nothing. And
+the family in front is indexed \emph{through a map} to the measurement's own outcomes, so the sum
+sees only the fibres of that map (\texttt{sum\_snorm\_sq\_proj\_comp\_le}). Without the fibres
+the step would be false: the family's index is far larger than the outcome set, and paying one
+deviation per index would multiply the bound by the size of a fibre. The display is
+\texttt{sum\_snorm\_sq\_insert\_le}.
+
+\emph{And the final passage was already in the library.} Coarse-graining two projective
+measurements the same way costs nothing --- which is Item 2 of \texttt{fact:agreement}, then
+\texttt{fact:data-processing}, then Item 1 of \texttt{fact:agreement} --- and Foundations has it
+as \texttt{sum\_xSqNorm\_map\_le}, on bundled POVMs. The chain speaks \texttt{IsPVM};
+\texttt{IsPVM.toPOVM} and \texttt{sum\_xSqNorm\_fibre\_le} bridge the two.
+
+\emph{And the probe it runs at.} This chain is stated at a \emph{uniform} $\tilde{u} \in
+\F_q^{M}$, and that is not a point's low-degree encoding --- the encodings are a tiny subset of
+$\F_q^M$. Confusing the two is the omission that created this node, so the two probes are kept
+apart by name: \texttt{SimulPair.mTildeAnc} is the exact Pauli measurement at an arbitrary probe,
+\texttt{mTildeAt\_eq\_mTildeAnc} is the one place it meets
+Lemma~\ref{lem:qld-exact-paulis}'s, and \texttt{swapU\_conj\_mTildeAnc} says that conjugation by
+the swap unitary strips the pair measurement off it whatever the probe --- the cancellation is
+between the outcome's shift and the conjugation's, and both are written with the same pairing.
+
+\emph{And a strategy has one.} \texttt{MirrorSimul} was introduced as an interface, and for
+several steps of this campaign nothing constructed one --- so everything stated against it was
+conditional on a structure no strategy had been shown to have.
+\texttt{exists\_mirrorSimul} closes that: a legal projective strategy of value $1 - \eps$ has
+both cuts, on one state.
+
+The construction is two runs of Lemma~\ref{lem:qld-simultaneous}, one at the strategy and one at the
+\emph{swapped} strategy, whose padded state carries the other pair. What made this look hard, and
+is the thing to record, is a misreading of what the interface demands: it does \emph{not} ask the
+two cuts' pair measurements to be related --- the paper does not either, since its own
+simultaneous-measurement lemma gives one measurement per player's space --- but only that the two
+\emph{states} agree once each is given the pair the other carries. And those states are explicit:
+\texttt{padState} is the strategy tensored with one maximally entangled pair and four padding
+registers pinned at basis vectors (\texttt{padState\_reindex\_apply}), so both sides of
+\texttt{hmirror} are the same product of the same six factors and all that is left to check is
+that swapping a pair's halves changes nothing (\texttt{epr\_symm}). Reading the field as ``the
+two cuts must come from one construction'' rather than ``the two cuts' states must agree'' is what
+made it look like new mathematics.
+
+\emph{And the conclusion is now expressible, which it was not.} Both sides of this statement are
+exact Pauli objects, one per party, so writing it down at all needs each party's whole triple on
+its own side of one cut: Alice's $\alice \alice' \alice''$ against Bob's $\bob \bob' \bob''$. The
+formalization's padded state carried only the pair $\alice' \alice''$, so there was no such cut and
+no such statement. \texttt{MirrorSimul} supplies it, and the shape it takes was decided by three
+sentences of the paper rather than by the Lean types.
+
+The registers are partitioned two ways --- $\alice \alice'$ against $\bob \alice''$, and
+$\bob \bob'$ against $\alice \bob''$ --- and \texttt{qld-commutation.tex}'s
+\texttt{sec:expanding} records that every bipartite relation derived for one holds for the other
+with the registers changed. Lemma~\ref{lem:qld-simultaneous} gives $\widehat{S}$ on
+$\alice \alice'$ \emph{and} on $\bob \bob'$, one per player's space, and it is the second that
+$V_\bob$ conjugates by. So the second reading is not data of a new kind: \textbf{the mirror of a
+\texttt{SimulPair} is a \texttt{SimulPair}}, at the swapped strategy with the two players'
+measurements exchanged. \texttt{toFirst} and \texttt{toSecond} are the two views, and every lemma
+already proved about \texttt{SimulPair} --- \texttt{mVec}, \texttt{mTildeAnc}, \texttt{swapA},
+\texttt{swapU\_conj\_mTildeAnc} --- becomes Bob's by instantiation, with no mirror lemma to prove.
+\texttt{bobSwap\_conj\_bobMTilde} is the paper's ``an entirely analogous calculation shows''
+discharged that way.
+
+Where the second pair goes was the one real decision, and getting it wrong breaks the statement
+rather than merely lengthening the proof. It is \emph{appended}: each view keeps the state its own
+cut sees, with only its own pair in it, and the other pair is tensored on with \texttt{expVec \_
+epr}, one half to each party (\texttt{hmirror} says the two appendings agree). The alternative ---
+hiding the second pair inside \texttt{SimulPair}'s arbitrary padding registers, which typechecks
+and needs nothing retyped --- would let $\widehat{S}$ act on $\bob''$, which is Bob's, and the
+paper's does not. A non-local $\widehat{S}$ makes $\tilde{M}$ and the swap unitary non-local, and
+then the two sides of this lemma do not lie on opposite sides of any cut. Appending puts the pair
+halves outermost, which is also where \texttt{mTilde} writes its Pauli register, so
+\texttt{mTildeAnc} lands on Alice's physical register with nothing to reindex ---
+\texttt{aliceMTilde} and \texttt{bobMTilde} are the two sides, and \texttt{selfConsGap} is this
+lemma's left-hand side. \texttt{planning/qld-two-pairs-scope.md} keeps both discarded designs.
+
+The bridge from what is proved to where it has to be read is \texttt{bornProb\_physVec}: along the
+cut $\tilde{M}$ needs, $\alice''$ has already moved to Alice, so what the appending adds is
+entirely Bob's, and an operator that is the identity on it sees the state
+Lemma~\ref{lem:qld-simultaneous} already describes. \texttt{sndExtVec} is that one-sided appending
+(\texttt{expVec} puts one register on each party and does not cover it; it does cover it with a
+trivial register on the first party, which is all \texttt{sndExtVec} is), and
+\texttt{pairSwapVec\_mirrorVec} says the two cuts' physical readings are the same vector on the
+nose, with only the parties written in the other order.
+
+\emph{And the chain's two ends are formalized, which leaves only its middle.} The chain's
+arithmetic frame is \texttt{MIPRE/Background/QLD/Chain.lean}, and it holds no estimate at all: it
+is the index algebra the eleven displays are bookkeeping for.
+
+At the near end, \texttt{mTildeAnc\_eq\_sum\_chainIdx} is \texttt{eq:qld-pulling-2} and
+\texttt{eq:qld-pulling-2b}: the exact Pauli measurement, written not as `\texttt{eq:tilde\_M}`'s
+sum over pair outcomes $g$ with a syndrome projector attached, but as the chain's sum over pairs
+$(g,h)$ cut out by $(\coded(g) - h) \cdot \tilde{u} = a$. The two are the same sum, the syndrome
+projector being the fibre of the spectral family over that pairing; in characteristic two the shift
+the definition carries is the sum the chain's label is written with
+(\texttt{dotF\_chainLabel\_eq\_iff}).
+
+At the far end, \texttt{endOp} is display \texttt{eq:qld-pulling-12} and
+\texttt{endOpMirror\_apply} is the sentence that makes the whole lemma go through. Both parties'
+derivations end at that display, and the reason the two are then close to \emph{each other} rather
+than each close to something is that it is symmetric in the two pairs --- which is not apparent, its
+index set being cut out by a coupling that mentions both pairs and a pairing condition that mentions
+only the first. \texttt{chainLabel\_eq\_of\_coupled} is why: coupled pairs carry the same label, so
+the condition may be read off either, and the whole index set is invariant under exchanging them
+(\texttt{swap\_mem\_coupledIdx}). Evaluating the coupling at a cube point is the entire proof, the
+encoding of a cube datum being that datum on the cube.
+
+And \texttt{sum\_xSqNorm\_le\_of\_endOp} closes it: given the two chains, the triangle inequality
+for a family of deviations (\texttt{sum\_snorm\_sq\_triangle'}, already in Foundations) gives
+\texttt{eq:qld-pulling-cons} at twice the cost, which is the factor the paper absorbs into
+$\delta_S$.
+
+\emph{And the chain's first step.} Display \texttt{eq:qld-pulling-1} right-multiplies the exact
+Pauli measurement by the near-identity, and \texttt{SimulPair.sum\_uniform\_snorm\_sq\_nearId\_le}
+is that display at item 1 of Lemma~\ref{lem:qld-helper}'s own constant. Two things make it cost
+that and no more. The insertion's deficit is \emph{exactly} the near-identity's, because the
+measurement's outcomes are orthogonal, so summing the deviation over them leaves one copy rather
+than one per outcome (\texttt{sum\_snorm\_sq\_sub\_mul}) --- without that, the bound would carry a
+factor $q$. And the near-identity lives on $\Phi$'s own cut, where
+\texttt{snorm\_sq\_one\_sub\_agreeOp} turns its deficit into the helper's Born probability, while
+$\tilde{M}$ lives on the cut that has $\alice''$ with Alice; \texttt{snorm\_comp\_equiv} moves
+between them, a state-norm being carried by any reindexing of the whole space. That lemma is what
+lets each step of the chain be read along whichever of the paper's three groupings it is local in,
+rather than forcing one grouping on all of them.
+
+\emph{And the expansion that follows it.} Displays \texttt{eq:qld-pulling-2} and
+\texttt{eq:qld-pulling-2b} carry out the product, and
+\texttt{SimulPair.aOp\_mTildeAnc\_mul\_nearId} is that computation at the interface. It is an
+identity, not an estimate, and it runs in three moves. The near-identity expands because the hatted
+point measurement \emph{is} the convolution
+$\sum_{a'} M^{(\mathtt{Point},W),u}_{a'} \ot \tau^{W,u}_{c-a'}$
+by construction (\texttt{sum\_kron\_syn\_eq\_hatMats}), and \texttt{reindex\_regroupEquiv} sends
+each of its terms to the cut $\tilde{M}$ lives on, putting $\tau^{W,u}$ beside Alice and the point
+measurement alone on Bob (\texttt{SimulPair.nearId\_eq\_sum}). Multiplying then kills all but one
+pair outcome, the family being projective, and fuses the two syndrome projectors into the Weyl
+outcomes meeting both conditions --- \texttt{syn\_mul\_syn}, which is where the chain's index set
+first appears (\texttt{SimulPair.mTildeAnc\_mul\_kron}). Finally the sum over Bob's outcome
+collapses: for each Weyl outcome $h$ exactly one $a'$ survives, namely $(g - g_h)(u)$, because in
+characteristic two the condition $h \cdot \ind_m(u) = g(u) + a'$ determines $a'$. What is left is a
+sum over \texttt{chainIdx}, with \texttt{chainOp} as its summand --- which is what that definition
+was introduced for.
+
+\emph{And the insertion, \texttt{eq:qld-pulling-3}.} The expansion leaves Bob's point measurement
+beside each term, and the chain inserts Alice's copy of it, spending the point measurements'
+self-consistency. \texttt{SimulPair.sum\_snorm\_sq\_insert\_chain} is that display, and the
+packaging \texttt{sum\_snorm\_sq\_insert\_le} does the work once its two hypotheses are supplied.
+Both are about the chain's terms being a \emph{projective family in the pair} $(g,h)$
+(\texttt{isPVM\_chainOp}, a marginal of the pair measurement tensored with a Weyl spectral
+projector --- for which \texttt{isPVM\_proj} bundles three facts Foundations had only separately).
+Projectivity is what makes the outcomes not interfere, so the squared norm of the sum over an
+outcome's fibre is the sum of the squared norms
+(\texttt{snorm\_sq\_sum\_orthogonal'} --- the existing common-tail version does not cover the
+chain, whose tail carries each term's own point measurement), and it is also what makes the fibres
+of the outcome map $(g,h) \mapsto (g - g_h)(u)$ be seen once rather than once per index. Summing
+the display over the measurement outcome $a$ recovers the whole index set, the sets
+\texttt{chainIdx} being its fibres, which is \texttt{Finset.sum\_fiberwise}.
+
+\emph{And the two transports, \texttt{eq:qld-pulling-3a} and \texttt{eq:qld-pulling-4}.} Both are
+$\approx_0$ steps --- identities on the state, not estimates.
+\texttt{SimulPair.stateVec\_ancProj} moves a single Weyl projector from $\alice'$ to $\alice''$ at
+no cost, the two halves of the pair being maximally entangled and the projectors symmetric; and
+\texttt{SimulPair.sum\_ancProj\_mulVec} is the consequence the chain uses, that summing the matched
+pairs of them, one on each party, leaves the state alone. \texttt{AncTransport.lean} had both for
+the \emph{syndrome} projector, which is a fibre of the spectral family; the chain moves one
+projector of that family, so it needs the single-projector version, and
+\texttt{stateVec\_epr\_proj} --- already in Foundations, and already used by the endgame --- is the
+ingredient. The shape of the argument is worth restating because it is what makes these steps
+available at all: Lemma~\ref{lem:qld-simultaneous} does not say the padded state \emph{is} an
+expanded state, only that it reproduces its expectations, so a \emph{vector} identity about it
+looks out of reach. It is not, because the identity to be proved is the vanishing of a squared
+norm, and a squared norm is an expectation.
+
+\emph{And \texttt{eq:qld-pulling-3b}, which is a definition unfolded the other way.}
+\texttt{hatMats\_mul\_proj} says the chain's factor $(M^{(\mathtt{Point},W),u}_r)_\alice \ot
+(\tau_h)_{\alice'}$ \emph{is} the hatted point measurement cut down by the Weyl outcome:
+$\widehat{M}^{u}_{c}$ times the projector at $h$ keeps exactly the point outcome $c - g_h(u)$,
+because the syndrome factor selects the one term of the convolution whose shift matches $h$. The
+supporting fact is \texttt{syn\_mul\_proj} --- a syndrome projector meets a single spectral
+projector in that projector or in nothing, the syndrome being the fibre of the family over the
+pairing.
+
+\emph{And the last two displays' common machinery.} \texttt{eq:qld-pulling-5} to \texttt{-7} and
+\texttt{eq:qld-pulling-10} to \texttt{-12} are the chain's remaining estimates, and they are the
+first of its steps to live on all six registers: both compare operators on the physical cut,
+$\alice \alice' \alice''$ against $\bob \bob' \bob''$, which is what \texttt{MirrorSimul} was built
+to make expressible. They share an outer shape and a way of discharging the far party.
+
+\texttt{sum\_snorm\_sq\_fiber\_sandwich\_le} is the shape: each display bounds the summed squared
+norm of the chain's terms grouped by the measurement outcome, projectivity turns each group into a
+sum of sandwiches (\texttt{snorm\_sq\_sum\_proj\_sandwich}), the groups are the fibres of the
+outcome map --- so the double sum is the single one over the whole index --- and what is left to
+bound carries no outcome at all. \texttt{sum\_bornProb\_sandwich\_drop\_le} is the discharge: each
+sandwich carries, on the far party, a projector times a Weyl outcome, and summed over that outcome
+these are at most the identity, so the whole sum is bounded by the near party's sandwiches alone.
+That is \texttt{fact:add-a-proj} in the form the two displays consume it.
+\texttt{MirrorSimul.chainP} is the projective family they sum over --- Alice's pair and Weyl
+outcomes together, against Bob's Weyl outcome, on the physical cut.
+
+\emph{And the first of the two is done.} \texttt{sum\_snorm\_sq\_chainP\_le} is
+\texttt{eq:qld-pulling-5} to \texttt{-8} and
+\texttt{sum\_uniform\_snorm\_sq\_chainP\_le} is \texttt{eq:qld-pulling-9}: the step costs item
+2 of Lemma~\ref{lem:qld-helper} and nothing more. Three things had to be arranged, and each is
+worth recording because the same three recur at \texttt{eq:qld-pulling-10}.
+
+The chain's tail at this display is \texttt{chainW}, Alice's gap $\Id - \widehat{M}^u_{g(u)}$
+against Bob's point measurement at the shifted outcome $(g - g_h + g_{h'})(u)$ --- shifted by
+\emph{both} Weyl outcomes, which is what makes the display's index a triple rather than a pair.
+\texttt{chainW\_sandwich} is where that tail meets the outer shape: conjugating the chain's
+projector by it splits across the cut, each party's factor staying local, so a single rewrite
+turns the quadratic form the shape produces into a Born probability.
+
+Bob's side then discharges. \texttt{bobHat\_conj\_bobWeyl} says his factor is a projector on
+$\bob \bob'$ tensored with a Weyl outcome on $\bob''$, and
+\texttt{sum\_bornProb\_chainW\_drop\_le} sums it away by \texttt{sum\_bornProb\_kron\_le}
+--- the projector varying with the Weyl outcome, which is why the discharge has to be stated with
+the two indices coupled rather than at a fixed projector.
+
+Alice's side then collapses and travels. \texttt{sum\_aliceChainOp} sums the Weyl outcome out of
+her summand, the spectral projectors being complete, and
+\texttt{sum\_aliceChainOp\_sandwich} carries that through the sandwich, her gap operator not
+depending on the Weyl index. What is left is on $\alice \alice'$ alone, and
+\texttt{bornProb\_physVec\_aOp} carries it back to $\Phi$, where
+\texttt{SimulPair.sum\_snorm\_sq\_polyMarg\_one\_sub\_le} bounds it. That transport is
+stated twice --- \texttt{bornProb\_physVec\_aOp\_kron} keeps the identity written as a fourfold
+tensor product, and only the second collapses it --- because the intermediate \texttt{mVec}
+carries Bob's padding under \texttt{toFirst}'s name for it, and rewriting inside that application
+is not type-correct. The same spelling problem is why Alice's objects here
+(\texttt{aliceChainOp}, \texttt{aliceHat}) are named rather than reached through
+\texttt{toFirst}.
+
+\emph{And Bob's whole derivation is Alice's, instantiated.} \textbf{The mirror of a
+\texttt{MirrorSimul} is a \texttt{MirrorSimul}} --- at the swapped strategy, with the two
+players' measurements exchanged and the two cuts exchanged. \texttt{toFirst} and
+\texttt{toSecond} give Bob's objects as a \texttt{SimulPair}, which is enough for anything
+stated on one cut's state; \texttt{mirror} gives them on the \emph{physical} state, which is what
+the chain's last displays compare, so every lemma about the six-register cut becomes Bob's by
+instantiation. \texttt{mirror\_sum\_snorm\_sq\_chainP\_le} is
+\texttt{eq:qld-pulling-5} to \texttt{-8} for Bob, and its proof is one rewrite and one
+application. The paper's ``an analogous derivation shows'' for the second party is discharged that
+way for the whole chain rather than display by display, and
+\texttt{sum\_xSqNorm\_le\_of\_endOp}, which needs both parties' chains, will be fed from one.
+
+What makes it go through is that the state field survives the exchange:
+\texttt{mirrorVec\_mirrorVec} says \texttt{mirrorEquiv} composed with itself is the identity,
+by \texttt{rfl} --- exchanging the two parties and, within each, the party's own pair half with
+the other pair's, puts every register back where it started.
+
+\emph{And the four-index family.} From \texttt{eq:qld-pulling-9a} on, the chain runs over
+\emph{both} parties' pairs: \texttt{chainQ} is that family, projective by
+\texttt{isPVM\_chainQ}, and \texttt{endOp\_eq\_sum\_chainQ} says the chain's endpoint --- in
+place since the arithmetic frame was built --- is exactly its restriction to the coupled index set,
+so the displays leading there and the endpoint speak about one projective measurement.
+\texttt{sum\_poly\_chainQ} is \texttt{eq:qld-pulling-9a} itself: left-multiplying by Bob's own
+pair measurement, which is the identity, refines the three-index family into the four-index one,
+and \texttt{SimulPair.sum\_poly\_chainOp} is the completeness that makes it so.
+
+\emph{And \texttt{eq:qld-pulling-10} down to its Cauchy--Schwarz step.} That display runs over
+the four-index family and over the pairs whose outcomes \emph{disagree} at the sampled point, and
+everything before the swap is now in. \texttt{sum\_snorm\_sq\_fiber\_sandwich\_subset\_le}
+is the outer shape on a subset of the index --- the form the disagreeing pairs need, and the one
+the first display's version is now a case of. \texttt{bobTail\_sandwich} splits the sandwich
+across the cut and \texttt{bobHat\_conj\_bobChainOp} identifies Bob's factor as his sandwiched
+pair-measurement marginal \texttt{bobSand} tensored with his Weyl outcome.
+
+\texttt{sum\_snorm\_sq\_chainQ\_disagree\_le} is then the relaxation, which is where the
+paper's ``$\leq$'' sits: each disagreeing pair contributes one term of a sum over \emph{all}
+outcomes that the pair's own value excludes, the rest of that sum is nonnegative, and the
+constraint tying the outcome to the index may then be dropped. Note what is \emph{not} used: no
+Cauchy--Schwarz, no measurement property beyond projectivity --- only that a sandwich is
+nonnegative. \texttt{sum\_qform\_bobTail\_eq} closes the reduction at
+\texttt{eq:qld-pulling-13a}: Alice's whole family and Bob's Weyl outcome both sum to the identity,
+so what is left carries neither, and the bound is a statement about Bob's registers alone.
+
+\emph{And the swap, which completes \texttt{eq:qld-pulling-10}.} The chain's only
+Cauchy--Schwarz, and the one step where the existing package did not fit.
+\texttt{abs\_sum\_qform\_swap\_le} measures the two placements' deviation \emph{bare}; this
+display sandwiches a projector with the measurement it swaps, and the deviation has to be read
+\emph{through} that projector, because the index runs over pairs of a pair outcome and a point
+outcome and the bare form would pay one deviation per pair outcome --- a factor of the number of
+polynomials. \texttt{abs\_sum\_qform\_swap\_proj\_le} is the same argument with the
+Cauchy--Schwarz taken against the projector's own form, which is legitimate because a projector
+\emph{is} $S^*S$, so no square root is needed;
+\texttt{abs\_sum\_qform\_conjTranspose\_mul\_le} is the summed Cauchy--Schwarz it uses, the
+existing one assuming the first family self-adjoint.
+
+\texttt{SimulPair.abs\_sum\_qform\_ne\_swap\_le} is \texttt{eq:qld-pulling-13} itself,
+stated on a \texttt{SimulPair} because that is where both placements are local --- the one that
+sandwiches is the first party's own, the one that replaces it the second party's --- and the
+mirror then makes it Bob's. \texttt{sum\_qform\_ne\_eq} reads the swapped side back as a Born
+probability, the other party's point measurement summed over the outcomes its own value excludes
+being the complement of that value, and
+\texttt{sum\_uniform\_qform\_ne\_le} is \texttt{eq:qld-pulling-10} complete, at
+$\delta_S + 2\sqrt{172\eps}$. The average over the sampled point goes inside the square root by
+Cauchy--Schwarz against the constant one (\texttt{sum\_weighted\_sqrt\_le}).
+
+\emph{And \texttt{eq:qld-pulling-11}.} \texttt{bobLift} is any operator of Bob's extended by the
+identity on the half of the pair he holds --- both remaining displays sandwich the four-index
+family with one of these, and only which one differs, so
+\texttt{bobLift\_sandwich\_kron} and \texttt{sum\_qform\_bobLift\_eq} serve both.
+\texttt{sum\_snorm\_sq\_chainQ\_agree\_le} is the display and
+\texttt{sum\_uniform\_snorm\_sq\_chainQ\_agree\_le} its cost, which is item 2 of
+Lemma~\ref{lem:qld-helper} at the second cut --- available with no new proof, the mirror of a
+\texttt{MirrorSimul} being a \texttt{MirrorSimul}, and the swapped strategy's hypotheses coming
+from \texttt{swapVec\_unit} and \texttt{povmValue\_swapped\_le}.
+\texttt{bornProb\_physVec\_bOp} is the bridge those two run through: the mirror image of
+\texttt{bornProb\_physVec\_aOp}, carrying an operator that is Bob's alone back to the state the
+second cut describes.
+
+\emph{And \texttt{eq:qld-pulling-12}, which is the last of the eleven.} The chain's constraint
+is an equality of polynomial \emph{values} at the sampled point; passing to equality of the
+polynomials themselves discards only the tuples where distinct polynomials happen to agree there,
+and Schwartz--Zippel bounds that by $md/q$. \texttt{sum\_uniform\_chainCoupled\_agree\_le} is
+that bound at one pair of index pairs and \texttt{sum\_uniform\_chainCoupled\_mass\_le} the
+weighted form, with \texttt{sum\_uniform\_snorm\_sq\_chainQ\_notCoupled\_le} the display
+itself --- the weights being the four-index family's own Born probabilities, which sum to exactly
+one (\texttt{sum\_qform\_chainQ}).
+
+Two things are worth recording. The polynomials compared are not the chain's pair outcomes but
+those outcomes shifted by the Weyl outcomes' encodings, $g + g_h$ against $g' + g_{h'}$, and the
+encoding is multilinear --- so the sum keeps the individual-degree bound exactly when $d \geq 1$,
+which is the lemma's one hypothesis and the only place in the chain where a lower bound on $d$ is
+needed. And \texttt{chainQShift\_eq\_iff} is where characteristic two is spent again: the
+condition the chain carries the shift on one side of is the condition Schwartz--Zippel wants it
+split across.
+
+\emph{All eleven displays are now formalized, and so are the assembly's two joints.}
+
+\texttt{sum\_snorm\_sq\_chain\_le} is the triangle inequality along a \emph{chain} rather
+than across one step, and it is worth having rather than iterating
+\texttt{sum\_snorm\_sq\_triangle'}: a chain of $n$ steps costs a factor $n$, not $2^n$,
+because the total deviation telescopes into the sum of the steps' and Cauchy--Schwarz against the
+constant one turns the squared norm of a sum of $n$ terms into $n$ times the sum of their squares.
+For eleven displays that is the difference between eleven and two thousand.
+
+\texttt{physLift} is the other joint. Displays \texttt{eq:qld-pulling-1} to \texttt{-4} are
+local in the first cut's grouping and everything from \texttt{-5} on is local in the physical
+one, so each of the first four has to be carried across --- and what carries it is that the
+appended pair contributes its norm and nothing else (\texttt{qform\_kron\_one\_of\_unit}, the
+one-party form of \texttt{bornProb\_expVec\_kron}) together with a regrouping
+(\texttt{physLiftEquiv}). \texttt{physLift} is a $*$-homomorphism, so
+\texttt{snorm\_physLift} follows from \texttt{qform\_physLift} with no further work, and a
+deviation of two lifted operators is the lift of their deviation.
+
+\emph{And the first step of the chaining, which is the one that had to be read off the paper
+rather than the Lean.} \texttt{eq:qld-pulling-4} is the step that brings the second pair's outcome
+into the chain, and the pair it is about is the \emph{appended} one --- the paper writes
+$\ket{\hat\psi} = \sum_{h'} (\tau_{h'})_{\bob'} \ot (\tau_{h'})_{\bob''}
+\ket{\hat\psi}$, and in the physical grouping both of those halves are Bob's. So the matched
+projectors are one operator of \emph{his} (\texttt{bobPairProj}), not a cross-party pair, and the
+step is the statement that it fixes the physical state
+(\texttt{sum\_bobPairProj\_mulVec}). \texttt{SimulPair.sum\_ancProj\_mulVec}, which an
+earlier note here called this display, is the same fact for the \emph{first} pair and belongs to
+\texttt{eq:qld-pulling-3a}. The two are genuinely different steps about different pairs, and the
+registers had to be checked against \texttt{qld-separating.tex} to see it.
+
+What makes the new one go through is \texttt{sum\_epr\_proj\_mulVec}: on a maximally entangled
+pair the matched Weyl projectors act as the projector on one half alone --- the projectors being
+symmetric matrices --- and those sum to the identity. \texttt{reindex\_bobPairProj} puts that
+fact on the physical grouping and \texttt{kron\_one\_mulVec} lets it act on the pair alone.
+
+\emph{And the chaining has started.} \texttt{SimulPair.chainS} names the four terms displays
+\texttt{eq:qld-pulling-0} to \texttt{-3} run through, on the cut $\Phi$ lives on, and the three
+lemmas after it are those displays read as bounds on \emph{consecutive} deviations --- the form
+\texttt{sum\_snorm\_sq\_chain\_le} consumes. Two of the three are the displays applied
+verbatim; the middle one is free, \texttt{eq:qld-pulling-2} and \texttt{-2b} being identities
+(\texttt{chainS\_one\_eq\_two}).
+
+\emph{And the chain's four free steps, which are one step.} Displays \texttt{eq:qld-pulling-3a},
+\texttt{-3b}, \texttt{-4} and \texttt{-5} are all ``$\approx_0$'' or identities, so the chain pays
+nothing between \texttt{-3} and \texttt{-5} and there is no reason to name the three terms
+between them: \texttt{MirrorSimul.physLift\_chainU3b\_mulVec} is the whole stretch at once.
+
+What runs through all four is one fact about a maximally entangled pair, used on each of the
+two pairs in turn: \emph{the projector on one half is the projector on the other, on the state.}
+\texttt{SimulPair.ancProj\_mulVec\_mVec} is that for the pair $\alice'\alice''$, read on the cut
+$\Phi$ lives on rather than on $\Phi$ itself --- which is what \texttt{mulVec\_comp\_equiv} is
+for, the regrouping carrying \texttt{mulVec} the way \texttt{qform\_comp\_equiv} carries the
+quadratic form --- and \texttt{MirrorSimul.bobPairProj\_mulVec} is the same for the appended pair
+$\bob'\bob''$, which the physical grouping gives to Bob entire.
+
+Given that, both halves of the step are the same two lines. Insert the projector on the half
+the chain does not carry; it commutes with everything between it and the state, so it may be
+moved next to the one the chain does carry, where it is absorbed; and now the point measurement
+beside it is the \emph{hatted} point measurement cut down by that projector
+(\texttt{hatMats\_mul\_proj}, which is \texttt{eq:qld-pulling-3b} and was already in the tree).
+\texttt{SimulPair.ancB\_ptA\_mulVec} is Alice's half and
+\texttt{MirrorSimul.bobPt\_mul\_bobPairProj} is Bob's. The asymmetry between the two --- Alice's
+is an identity \emph{on the state} and Bob's an identity \emph{of operators} --- is only that
+Bob's matched pair is already there, \texttt{eq:qld-pulling-4} having put it there.
+
+\texttt{MirrorSimul.physLift\_mulVec\_congr} is what carries the first of the two across:
+\texttt{eq:qld-pulling-3a} and \texttt{-3b} are local in the first cut's grouping, and an
+identity on that cut's state lifts to one on the physical state because the lift acts on the
+appended pair as the identity.
+
+\emph{And the chaining, which is done.} \texttt{MirrorSimul.chainT} is the chain on the physical
+cut: ten terms for nine steps, the four of \texttt{eq:qld-pulling-0} to \texttt{-3} entering
+lifted and everything from \texttt{-5} on entering directly. Three of the nine steps are free
+--- \texttt{eq:qld-pulling-2} and \texttt{-2b}, then \texttt{-3a} to \texttt{-5}, then
+\texttt{-9a} --- and the six that are not cost, in order: item 1 of
+Lemma~\ref{lem:qld-helper}, the game's point--point consistency, item 2 of
+Lemma~\ref{lem:qld-helper}, \texttt{eq:qld-pulling-10} complete, item 2 again at the second cut,
+and Schwartz--Zippel. \texttt{sum\_uniform\_snorm\_sq\_chainT\_le} is their sum at the factor
+nine that \texttt{sum\_snorm\_sq\_chain\_le} charges, and
+\texttt{sum\_uniform\_snorm\_sq\_mTildeAnc\_endOp\_le} is \texttt{eq:qld-pulling-cons} for
+Alice: her exact Pauli measurement on $\alice \alice' \alice''$ is within
+$9(10 \delta_S + 860 \eps + 2\sqrt{172 \eps} + md/q)$, in summed squared state distance, of the
+chain's endpoint.
+
+The one cost the displays did not already supply is \texttt{eq:qld-pulling-3}'s.
+\texttt{SimulPair.sum\_uniform\_xSqNorm\_pt\_le} supplies it: the game's point--point
+consistency, read on the cut the chain runs on rather than on the strategy's own state. That
+reading is free, and for the reason the whole \texttt{SimulPair} interface exists ---
+\texttt{Phi\_reduced} says the padded state reproduces the expanded state's expectations, and
+the expanded state's pair contributes only its norm --- but it has to be done once
+(\texttt{bornProb\_mVec\_ext}, \texttt{xSqNorm\_mVec\_ext}).
+
+\emph{And the lemma, which is now proved.} Two steps after the chain, and neither is a new
+derivation.
+
+\emph{Bob's half is Alice's at the mirror.} \texttt{MirrorSimul.mirror} makes the mirror a
+\texttt{MirrorSimul} again, \texttt{mirror\_physVec} says its physical state is this one with the
+parties written in the other order, and \texttt{endOp\_swap\_sum} says its endpoint is this one
+read from the other side --- which is \texttt{swap\_mem\_coupledIdx}, the symmetry of the index
+set that is the whole reason this lemma holds.
+\texttt{snorm\_swapVec\_aOp\_sub\_kron\_sum} carries the norm across the swap, and
+\texttt{sum\_xSqNorm\_le\_of\_endOp}, in the tree since the endpoint was named, puts the two
+halves together: \texttt{sum\_selfConsGap\_le} is the two exact Pauli \emph{measurements}
+agreeing.
+
+\emph{From the measurements to the observable.} This is the one place where the obvious route is
+the wrong one. Lemma~\ref{lem:qld-povm-to-obs} applied to the whole outcome set costs a factor
+$q$, which would turn the chain's $md/q$ into $md$ and lose the lemma. The paper coarse-grains
+\emph{first}, along the character the observable reads --- free for projective families, and in
+the tree as \texttt{sum\_xSqNorm\_fibre\_le} --- and turns only the resulting \emph{two}-outcome
+family into an observable. So the factor is two, and \texttt{snorm\_sq\_obs\_sub\_le} is
+Lemma~\ref{lem:qld-povm-to-obs} in the state-norm form that step takes.
+\texttt{MirrorSimul.snorm\_sq\_wTilde\_le} is the lemma.
+\texttt{reports/qld-stage5-blueprint-repairs.md} records the omission that created this node.
+
+\effortHard
+
 \begin{lemma}[The swap isometry]
 \label{lem:qld-swap}
 \ledgernode{1.2.2.16}
-\uses{lem:qld-exact-paulis,lem:qld-win,lem:schwartz-zippel,def:state-distance,def:cross-distance}
+\uses{lem:qld-exact-paulis,lem:qld-pauli-selfcons,lem:qld-win,lem:schwartz-zippel,
+  def:state-distance,def:cross-distance}
 \lean{MIPRE.QLD.sTensor, MIPRE.QLD.sTensor_mul, MIPRE.QLD.sTensor_one,
   MIPRE.QLD.sTensor_conjTranspose, MIPRE.QLD.wTilde_eq_sTensor, MIPRE.QLD.uOf, MIPRE.QLD.swapU,
   MIPRE.QLD.uOf_conjTranspose, MIPRE.QLD.uOf_mul_conjTranspose,
@@ -3926,7 +4932,61 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
   MIPRE.QLD.eprProj, MIPRE.QLD.eprProj_apply, MIPRE.QLD.twirl, MIPRE.QLD.wX_mul_wZ_apply,
   MIPRE.QLD.twirl_mul_twirl_eq_sum, MIPRE.QLD.twirl_mul_twirl,
   MIPRE.QLD.norm_sub_sq_le_of_re_inner_ge, MIPRE.QLD.re_inner_ge_of_two_close,
-  MIPRE.QLD.norm_sub_normalize_sq_le}
+  MIPRE.QLD.norm_sub_normalize_sq_le, MIPRE.QLD.snorm_sum_le, MIPRE.QLD.kron_self_isometry,
+  MIPRE.QLD.twirl_conjTranspose, MIPRE.QLD.snorm_twirl_le, MIPRE.QLD.twirl_mul_self,
+  MIPRE.QLD.conj_epr, MIPRE.QLD.star_epr, MIPRE.QLD.eprProj_conjTranspose,
+  MIPRE.QLD.epr_dotProduct, MIPRE.QLD.eprProj_mul_self, MIPRE.QLD.auxVec,
+  MIPRE.QLD.bOp_eprProj_mulVec, MIPRE.QLD.exists_auxVec_close, MIPRE.QLD.conj_proj_of_sign,
+  MIPRE.QLD.conj_syn_of_sign, MIPRE.QLD.swapU_conj_mTilde, MIPRE.QLD.swapU_conj_mTilde_X,
+  MIPRE.QLD.swapU_conj_mTilde_Z, MIPRE.QLD.sum_snorm_sq_sub_eq_two_sub,
+  MIPRE.QLD.sum_uniform_agree_bornProb_le, MIPRE.QLD.SimulPair.swapA,
+  MIPRE.QLD.SimulPair.swapU_conj_mTildeAt, MIPRE.QLD.inconsistency_triangle,
+  MIPRE.QLD.inconsistency_regroupVec, MIPRE.QLD.pauliAtPOVM,
+  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le, MIPRE.QLD.abs_qform_sub_qform_le,
+  MIPRE.QLD.SimulPair.bornProb_padded, MIPRE.QLD.SimulPair.inconsistency_padded,
+  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le',
+  MIPRE.QLD.inconsistency_eq_half_xPovmDist, MIPRE.QLD.inconsistency_pt_pt_le,
+  MIPRE.QLD.inconsistency_pt_pauli_le,
+  MIPRE.QLD.SimulPair.inconsistency_mTilde_pauli_le_of_win, MIPRE.QLD.bOp_mulVec_auxVec,
+  MIPRE.QLD.mulVec_auxVec_congr, MIPRE.QLD.mulVec_auxVec_proj, MIPRE.QLD.mulVec_auxVec_syn,
+  MIPRE.QLD.sum_snorm_sq_sub_le_of_agree, MIPRE.QLD.sum_uniform_bornProb_fibre_le,
+  MIPRE.QLD.endEquiv, MIPRE.QLD.endVec, MIPRE.QLD.endVec_unit, MIPRE.QLD.reindex_endEquiv,
+  MIPRE.QLD.qform_endVec, MIPRE.QLD.qform_bOp_twirl, MIPRE.QLD.outerPairEquiv,
+  MIPRE.QLD.outerVec, MIPRE.QLD.outerVec_unit, MIPRE.QLD.reindex_outerPairEquiv,
+  MIPRE.QLD.qform_outerVec, MIPRE.QLD.SimulPair.swapA_conj_wTildeAt,
+  MIPRE.QLD.SimulPair.swapA_conj_wTildeAt_one, MIPRE.QLD.conj_inv_of_unitary,
+  MIPRE.QLD.MirrorSimul.aliceSwap, MIPRE.QLD.MirrorSimul.aliceSwap_conjTranspose_mul,
+  MIPRE.QLD.MirrorSimul.aliceSwap_conj_aliceWTilde,
+  MIPRE.QLD.MirrorSimul.bobSwap_conj_bobWTilde, MIPRE.QLD.MirrorSimul.physSwap,
+  MIPRE.QLD.MirrorSimul.physSwap_conjTranspose_mul, MIPRE.QLD.MirrorSimul.endState,
+  MIPRE.QLD.MirrorSimul.endState_unit, MIPRE.QLD.MirrorSimul.qform_endState_weyl,
+  MIPRE.QLD.deltaSelfCons, MIPRE.QLD.deltaSelfCons_nonneg,
+  MIPRE.QLD.MirrorSimul.aliceWTilde_conjTranspose, MIPRE.QLD.MirrorSimul.aliceWTilde_mul_self,
+  MIPRE.QLD.MirrorSimul.bobWTilde_conjTranspose, MIPRE.QLD.MirrorSimul.bobWTilde_mul_self,
+  MIPRE.QLD.MirrorSimul.bornProb_wTilde_ge, MIPRE.QLD.MirrorSimul.qform_endState_twirl_ge,
+  MIPRE.QLD.MirrorSimul.exists_aux_close,
+  MIPRE.QLD.toMv_coeffTable, MIPRE.QLD.ancPoly, MIPRE.QLD.ancPoly_toMv, MIPRE.QLD.ancPoly_eval,
+  MIPRE.QLD.ancPoly_toMv_ne, MIPRE.QLD.isPVM_conj_unitary, MIPRE.QLD.bnd_one_of_proj,
+  MIPRE.QLD.mulVec_swapVec_aOp, MIPRE.QLD.mulVec_swapVec_bOp, MIPRE.QLD.qform_conj_eq,
+  MIPRE.QLD.unit_of_norm_evec_eq_one, MIPRE.QLD.outerUnVec, MIPRE.QLD.outerVec_outerUnVec,
+  MIPRE.QLD.norm_evec_outerUnVec, MIPRE.QLD.norm_evec_sub_outerUnVec, MIPRE.QLD.mulVec_outerUnVec,
+  MIPRE.QLD.mulVec_outerUnVec_auxVec, MIPRE.QLD.deltaLegs, MIPRE.QLD.deltaItemTwo,
+  MIPRE.QLD.etaItemOne, MIPRE.QLD.MirrorSimul.alicePauli, MIPRE.QLD.MirrorSimul.bobPauli,
+  MIPRE.QLD.MirrorSimul.aliceConjPauli, MIPRE.QLD.MirrorSimul.bobConjPauli,
+  MIPRE.QLD.MirrorSimul.aliceTau, MIPRE.QLD.MirrorSimul.bobTau,
+  MIPRE.QLD.MirrorSimul.aliceSwap_mul_conjTranspose,
+  MIPRE.QLD.MirrorSimul.physSwap_mul_conjTranspose, MIPRE.QLD.MirrorSimul.isPVM_alicePauli,
+  MIPRE.QLD.MirrorSimul.isPVM_aliceConjPauli, MIPRE.QLD.MirrorSimul.isPVM_aliceTau,
+  MIPRE.QLD.MirrorSimul.isPVM_bobTau, MIPRE.QLD.MirrorSimul.sum_aliceConjPauli_fibre,
+  MIPRE.QLD.MirrorSimul.sum_bobTau_fibre, MIPRE.QLD.MirrorSimul.bornProb_physVec_pauli_bobMTilde,
+  MIPRE.QLD.MirrorSimul.sum_bornProb_physVec_ge,
+  MIPRE.QLD.MirrorSimul.sum_bornProb_conj_ge_of_close, MIPRE.QLD.MirrorSimul.sum_bornProb_fibre_ge,
+  MIPRE.QLD.MirrorSimul.sum_snorm_sq_aliceConjPauli_le, MIPRE.QLD.MirrorSimul.physAux,
+  MIPRE.QLD.MirrorSimul.norm_evec_physAux, MIPRE.QLD.MirrorSimul.norm_evec_physSwap_sub_physAux,
+  MIPRE.QLD.MirrorSimul.aliceTau_mulVec_physAux, MIPRE.QLD.MirrorSimul.sum_snorm_sq_alice_le,
+  MIPRE.QLD.MirrorSimul.mirror_physSwap_mulVec, MIPRE.QLD.MirrorSimul.sum_snorm_sq_bob_le,
+  MIPRE.QLD.MirrorSimul.swap_isometry}
+\leanok
 There is $\delta_{qld} = O\bigl( \delta_S^{1/4} + md/q \bigr)$ and local unitaries $V_\alice$,
 $V_\bob$ on the expanded spaces such that, writing $M = 2^m$:
 \begin{enumerate}
@@ -3945,6 +5005,7 @@ not a weaker form of it.
 \end{lemma}
 
 \begin{proof}
+\leanok
 The standard swap-isometry argument for item 1. It is standard \emph{because} the representation is
 exact: an approximate representation would not give a unitary, which is the whole reason
 Lemma~\ref{lem:qld-exact-paulis} is stated with exact relations. Item 2 is not exact and is the
@@ -3954,8 +5015,25 @@ $\delta_{qld}$ comes from, by Lemma~\ref{lem:schwartz-zippel}. Item 1 alone give
 $O(\sqrt{\delta_S})$.
 \end{proof}
 
-\paragraph{Comments.} What is formalized is the whole of item 1 except the tensor bookkeeping, and
-none of item 2. The exact pieces are in \texttt{MIPRE/Background/QLD/SwapUnitary.lean}.
+\paragraph{Comments.} Both items are formalized, relative to one auxiliary state, with nothing
+assumed beyond the game: \texttt{MirrorSimul.swap\_isometry} in
+\texttt{MIPRE/Background/QLD/SwapItemTwo.lean}. The history below is kept because it records where
+the obstacles were. The exact pieces are in \texttt{MIPRE/Background/QLD/SwapUnitary.lean}, item
+1's assembly in \texttt{MIPRE/Background/QLD/SwapState.lean} and
+\texttt{MIPRE/Background/QLD/SwapItemOne.lean}, and item 2's threading in
+\texttt{SwapItemTwo.lean}.
+
+The Lean statement has two constants where the statement above has one: item 1 is bounded by
+\texttt{etaItemOne}, which is $2 - 2\sqrt{1 - \eta}$ with $\eta = 2\sqrt{\delta_S} + 2\delta_S$,
+and item 2 by \texttt{deltaItemTwo} at that bound, which is
+$2\bigl( 11 \delta' + md/q + 2 \sqrt{\texttt{etaItemOne}} \bigr)$, where $\delta'$
+(\texttt{deltaLegs}) bounds each leg of \texttt{eq:qld-unitary-5}. Their maximum is
+$\delta_{qld}$. Item 2's distance is written out, as
+$\sum_h \norm{(V M^{(\pauli,W)}_h V^\dagger - \Id \ot \tau^W_h) \ket{\aux} \ot
+\ket{\EPR_q}^{\ot M}}^2$, rather than through \texttt{stateSqNorm}; the two are the same
+number. That the maximum has the shape Theorem~\ref{thm:qld} asks for is
+\texttt{errSmall\_swapItemOne} and its companions in
+\texttt{MIPRE/Background/QLD/ErrorShape.lean}.
 
 Every operator in the construction has the shape $\sum_p \widehat{S}_p \ot T_p$
 (\texttt{sTensor}), and because $\widehat{S}$ is projective these compose factorwise
@@ -3987,10 +5065,180 @@ $1 - 2\sqrt{\delta_S} - 2\delta_S$, and it carries a case split the paper does n
 no hidden ``for small enough $\delta_S$'' has to handle $\delta_S > 1$, where squaring
 $1 - \sqrt{\delta_S}$ would reverse the inequality and where the trivial bound is already stronger.
 
-\emph{Not formalized}: the embedding of the two ancilla halves into the four-party index, which is
-what turns \texttt{twirl\_mul\_twirl} into a statement about $\ket{\widehat{\psi}}$ and
-\texttt{norm\_sub\_normalize\_sq\_le} into the product state $\ket{\aux} \ot \ket{\EPR_q}^{\ot M}$;
-and the whole of item 2. Hence no \texttt{leanok} mark at either level.
+\emph{The assembly is done.} \texttt{exists\_auxVec\_close} is item 1: a unit state on
+$R \times (T \times T)$ --- the two parties' non-ancilla registers as one index, their two ancilla
+halves adjacent --- that is nearly invariant under both Weyl twirls is within
+$2 - 2\sqrt{1 - \eta}$ of a product $\ket{\aux} \ot \ket{\EPR_q}^{\ot M}$, with
+$\eta = 2\sqrt{\delta} + 2\delta$, which is $O(\sqrt{\delta})$ as the proof above says. Two
+things made it shorter than expected. The twirl is a \emph{projection}
+(\texttt{twirl\_mul\_self}), not merely a contraction: the Weyl family is a homomorphism, so the
+double average collapses, for each $s$ there being exactly $q^n$ pairs $(u,v)$ with $u + v = s$.
+That supplies the contraction hypothesis of \texttt{norm\_sub\_sq\_le\_of\_re\_inner\_ge}
+through \texttt{snorm\_le\_one\_of\_proj}, with no operator-norm estimate anywhere. And the
+range of $\Id \ot \ket{\EPR}\bra{\EPR}$ consists of product vectors by inspection
+(\texttt{bOp\_eprProj\_mulVec}), which is where $\ket{\aux}$ comes from --- no partial trace and
+no Schmidt decomposition.
+
+\emph{And three of item 2's displays.} Conjugation carries the exact Pauli \emph{measurement} to
+the bare syndrome projector exactly, not just the observable: that is \texttt{eq:qld-unitary-6},
+\texttt{swapU\_conj\_mTilde}, and at the interface
+\texttt{SimulPair.swapU\_conj\_mTildeAt}. What makes it work is one mechanism, recorded on its
+own because the observable's proof did not need it: the twisted commutation relation says
+conjugation multiplies each Weyl operator by a character, and on the \emph{projectors} that is a
+\emph{shift} --- a spectral projector is the Fourier average against a character, and two
+characters compose by adding their labels (\texttt{conj\_proj\_of\_sign}), so a syndrome
+projector's outcome moves by the shift's own pairing with the probe
+(\texttt{conj\_syn\_of\_sign}). In $\tilde{M}^{W,u}_a$ the outcome carried at the pair outcome
+$p$ is $\coded(g_{\pi p}) \cdot u + a$ and the shift is $\coded(g_{\pi p})$, so the two cancel in
+characteristic two and the pair outcome disappears. That cancellation is the paper's relabelling
+$h' = h + \coded(g_W)$, the passage its \texttt{cnote} records as repaired; what makes it exact
+here is that the shift and the outcome are written with the same $\coded(g_{\pi p}) \cdot u$ by
+construction.
+
+The endgame's opening expansion is \texttt{sum\_snorm\_sq\_sub\_eq\_two\_sub}
+(\texttt{eq:qld-unitary-7}): the two families compared there act on the \emph{same} party, so the
+bipartite \texttt{one\_sub\_sum\_bornProb\_eq} does not apply, but the same three-term
+expansion does. And its one estimate, \texttt{eq:qld-unitary-8}, is Schwartz--Zippel in the
+packaging \texttt{eq:qld-pulling-12} already used
+(\texttt{sum\_uniform\_agree\_bornProb\_le}): the index is a pair of Pauli outcomes and the
+diagonal is excluded by the weight rather than by the index set, which is why
+\texttt{sum\_uniform\_agree\_mass\_le} now asks for the two polynomials to be distinct only
+where the weight is nonzero.
+
+\emph{And the endgame's own steps, in \texttt{SwapEndgame.lean}.} Item 1 leaves a product state
+$\ket{\aux} \ot \ket{\EPR_q}^{\ot M}$, and what the endgame does to it is elementary once said
+plainly: an operator on the entangled pair acts on the second factor and leaves the first
+(\texttt{bOp\_mulVec\_auxVec}, one entry computation), so two operators that agree on
+$\ket{\EPR_q}^{\ot M}$ agree on the product (\texttt{mulVec\_auxVec\_congr}). That is
+\texttt{eq:qld-unitary-7}'s last line, where a generalized Pauli's spectral projector moves from
+one half of the pair to the other: the projectors are symmetric, being real Fourier averages of a
+symmetric family, so \texttt{stateVec\_epr\_proj} moves them across and
+\texttt{mulVec\_auxVec\_proj} carries that to the product state
+(\texttt{mulVec\_auxVec\_syn} for the syndrome projectors). The display's first two lines are
+\texttt{sum\_snorm\_sq\_sub\_le\_of\_agree}: everything after them is a lower bound on one
+number, the agreement, and the deviation is twice its deficit. And
+\texttt{sum\_uniform\_bornProb\_fibre\_le} is \texttt{eq:qld-unitary-8} in the form the chain
+consumes: reading the two families at the value of the encoding at the sampled point rather than at
+the full outcome raises the agreement by at most $md/q$, the pairs it adds being the distinct ones
+whose encodings collide there.
+
+\emph{And a four-factor regrouping, which is \emph{not} yet item 1's cut.}
+\texttt{endEquiv} moves both ancilla factors of a two-party product out of the party grouping and
+puts them together, and \texttt{qform\_endVec} carries an expectation between the two readings; it
+is the same pattern as \texttt{regroupEquiv}, which moves one across. It was written to be item
+1's cut and it is not, which is worth stating plainly because it locates the real obstacle.
+\texttt{exists\_auxVec\_close} concludes about $\ket{\EPR_q}^{\ot M}_{\alice'' \bob''}$ --- one
+half of \emph{each} party's local pair --- whereas the padded state of this formalization carries
+only the pair $\alice' \alice''$, read along the cut $\alice \alice' \mid \bob \alice''$, and
+has no $\bob' \bob''$ in it at all. That was deliberate and correct for
+Lemma~\ref{lem:qld-simultaneous} and Lemma~\ref{lem:qld-helper}, each of which uses one
+orientation at a time, and it is what \texttt{reports/qld-stage5-blueprint-repairs.md} records as
+the second entangled pair not being needed for Lemma~\ref{lem:qld-exact-paulis}'s item 1. Item 2's
+threading is the first consumer that does need it.
+
+\emph{And that obstacle is now removed.} \texttt{MirrorSimul}, described in the comments on
+Lemma~\ref{lem:qld-pauli-selfcons}, carries both pairs by appending each to the cut that does not
+already have it, and produces the two \texttt{SimulPair} views the two orientations need.
+\texttt{physVec} is the state on the physical grouping $\alice \alice' \alice''$ against
+$\bob \bob' \bob''$, which is the cut item 1 concludes along, \texttt{physVec\_mirror} says the
+mirrored view lands on it too, and \texttt{bornProb\_physVec} carries expectations from the cut
+everything was proved on. What stands between the endgame's steps and the lemma is now bookkeeping
+again.
+
+\emph{And the missing edge, made explicit.} Item 1 asks for a near-invariance of the state under
+the Weyl twirl on its two ancilla halves; what Lemma~\ref{lem:qld-pauli-selfcons} supplies is an
+agreement of the two parties' exact Pauli observables averaged over a \emph{uniform} probe. The
+twirl is by definition that average, so the two are one rewriting apart:
+\texttt{qform\_bOp\_twirl}. That this edge is short is not an accident --- it is why the missing
+node was worth separating out rather than folding into
+Lemma~\ref{lem:qld-exact-paulis}.
+
+\emph{And item 1 is now unconditional.} The near-invariances were hypotheses of
+\texttt{exists\_auxVec\_close}; Lemma~\ref{lem:qld-pauli-selfcons} supplies them, and
+\texttt{MirrorSimul.exists\_aux\_close} is item 1 with nothing assumed beyond the game's.
+Three things had to be said to make the blueprint's ``one rewriting'' go through, and each is
+worth naming.
+
+\emph{The cut.} \texttt{endEquiv} regroups a four-fold product whose ancilla halves sit in the
+middle. The physical cut of a \texttt{MirrorSimul} puts each party's half of the pair it holds at
+the \emph{end}, so \texttt{outerPairEquiv} is the regrouping this needs --- written once it was
+clear which cut the state actually has, which is the same point the paragraph above makes about
+\texttt{endEquiv} not being item 1's cut.
+
+\emph{The conjugation, read backwards.} \texttt{swapU\_conj\_wTilde\_X} and \texttt{\_Z} say
+the swap unitary strips the pair measurement off the exact Pauli observable exactly; read the
+other way (\texttt{conj\_inv\_of\_unitary}) that turns an expectation of the honest Weyl operator
+on the swapped state into an expectation of the two parties' observables on the state itself
+(\texttt{MirrorSimul.qform\_endState\_weyl}).
+
+\emph{And the two involutions.} Each party's exact Pauli observable is self-adjoint and squares
+to one, so its cross-party deviation and its joint expectation determine each other
+\emph{exactly}, the summed squared deviation being $2 - 2$ times the joint expectation, with no
+inequality anywhere
+(\texttt{MirrorSimul.bornProb\_wTilde\_ge}).
+
+\emph{And item 2 is threaded.} \texttt{MirrorSimul.sum\_snorm\_sq\_aliceConjPauli\_le} is
+the chain for Alice, on any unit state $\Delta$ that carries the pair on $\alice'' \bob''$ and is
+within $r$ of the swapped physical state. \texttt{eq:qld-unitary-7} makes the deviation twice the
+deficit of an agreement; on $\Delta$, $\tau^W_h$ on $\alice''$ is $\tau^W_h$ on $\bob''$, which
+makes that agreement a bipartite Born probability across the physical cut;
+\texttt{eq:qld-unitary-8} coarse-grains it along $g_h(u)$ at a cost of $md/q$; and
+\texttt{eq:qld-unitary-6} on \emph{Bob's} side turns the coarse honest projector into Bob's
+exact Pauli measurement conjugated by his swap unitary (\texttt{bobSwap\_conj\_bobMTilde}).
+The transport across item 1 (\texttt{sum\_bornProb\_conj\_ge\_of\_close}) moves the
+conjugation onto the state, where it undoes the swap, and costs $2r$; with $r$ the square root of
+item 1's bound this is where $\delta_S^{1/4}$ enters. The last step is
+\texttt{eq:qld-unitary-5} at the \emph{mirror} instance (\texttt{sum\_bornProb\_physVec\_ge}):
+Bob's exact Pauli measurement against Alice's $(\pauli, W)$ reading is the second cut's
+$\tilde{M}$ against the swapped strategy's Pauli reading. \texttt{sum\_snorm\_sq\_alice\_le}
+applies the chain at $\Delta = \ket{\aux} \ot \ket{\EPR_q}^{\ot M}$ read on the physical cut
+(\texttt{physAux}, through \texttt{outerUnVec}, the inverse of \texttt{outerVec}), for any
+$\ket{\aux}$ close to the swapped state. \texttt{sum\_snorm\_sq\_bob\_le} is Alice's at the
+mirror, relative to the \emph{same} $\ket{\aux}$: the mirror's product state and its swapped
+physical state are this one's with the parties exchanged (\texttt{mirror\_physSwap\_mulVec}), so
+no second auxiliary state is needed. One point of encoding: the Schwartz--Zippel packaging reads
+its index through coefficient tables of bounded individual degree, and \texttt{ancPoly} is the
+table of $\coded(h)$, faithful because the encoding is multilinear and $d \geq 1$
+(\texttt{toMv\_coeffTable}). 
+
+\emph{And \texttt{eq:qld-unitary-5}.} It needed no new estimate: its engine is the paper's
+\texttt{fact:triangle-for-simeq}, already in Foundations as \texttt{agreeSum\_triangle} (with
+$11\delta$ for the paper's $9\delta$, as Lemma~\ref{lem:qld-global-success} records). Two
+adapters put it to work. \texttt{inconsistency\_triangle} is the estimate in the vocabulary this
+interface states everything in --- an inconsistency rather than an agreement, the two being the
+same number. And \texttt{inconsistency\_regroupVec} settles the one real obstacle, that the three
+legs are not read along the same cut: $\tilde{M}^{W,u}$ needs the ancilla half with the first
+party, which is the regrouped cut, while the strategy's own measurements are stated along the
+padded state's. For operators that ignore the register the regrouping moves --- which the
+strategy's measurements do, being extended by the identity there --- the two readings are the same
+number, the regrouping being a reindexing of the whole space. \texttt{SimulPair
+.inconsistency\_mTilde\_pauli\_le} is then the display, with the two middle legs --- the game's
+point--point and point--Pauli consistencies, the latter read through
+\texttt{pauliAtPOVM} --- as hypotheses, in the same way
+\texttt{exists\_auxVec\_close} takes item 1's near-invariances. They are asked for in the form
+the game supplies them: \texttt{inconsistency\_padded} reads a consistency between the strategy's
+own measurements on the padded state and on the strategy's own state alike, both being extended by
+the identity on the expansion's ancillas and on the padding, so
+\texttt{inconsistency\_mTilde\_pauli\_le'} takes them on $\ket{\psi}$, where
+\texttt{agree\_subtest\_le} leaves them.
+
+\emph{And those two legs are discharged.} They are items 1 and 3 of Lemma~\ref{lem:qld-win} at the
+point and Pauli types --- \texttt{item\_consistency} and \texttt{item\_pauli\_consistency}, both
+already in --- and three steps carry each into the form the triangle wants. The point question a
+content asks is the point the content carries, so the average over contents of a function of that
+point is the uniform average over points (\texttt{sum\_content\_pt}); and for \emph{projective}
+families a cross-party deviation is exactly twice the inconsistency
+(\texttt{inconsistency\_eq\_half\_xPovmDist} --- only $\leq$ holds for general POVMs, and what
+makes it an equality is that both families' masses are exactly one). That gives
+\texttt{inconsistency\_pt\_pt\_le} and \texttt{inconsistency\_pt\_pauli\_le} at $86\eps$,
+which is \texttt{agree\_subtest\_le}'s $172\eps$ halved, and
+\texttt{inconsistency\_mTilde\_pauli\_le\_of\_win} is then \texttt{eq:qld-unitary-5} from the
+game's soundness and item 1 of Lemma~\ref{lem:qld-exact-paulis} alone.
+
+\emph{And the endgame's transport.} \texttt{abs\_qform\_sub\_qform\_le}: moving an expectation
+from the product state to the padded one costs twice the operator's bound times the distance
+between them. Item 1 bounds the \emph{squared} distance, which is exactly where the fourth root
+in $\delta_{qld}$ comes from.
 \texttt{reports/qld-stage5-blueprint-repairs.md} records the repairs above, including the
 ledger's declared dependencies for node $1.2.2.16$, which name $1.2.2.4$
 (Lemma~\ref{lem:qld-win}) and which the \texttt{uses} list did not.
