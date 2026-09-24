@@ -9,6 +9,7 @@ import MIPRE.Background.AnswerReduction.DecideSpec
 import MIPRE.Background.AnswerReduction.DeciderCost
 import MIPRE.Background.AnswerReduction.Family
 import MIPRE.Background.AnswerReduction.Honest
+import MIPRE.Background.AnswerReduction.Instance
 import MIPRE.Background.AnswerReduction.Layout
 import MIPRE.Background.AnswerReduction.Params
 import MIPRE.Background.AnswerReduction.ParamsCost
@@ -16,6 +17,17 @@ import MIPRE.Background.AnswerReduction.PcpPresentation
 import MIPRE.Background.AnswerReduction.PcpSampler
 import MIPRE.Background.AnswerReduction.Predicate
 import MIPRE.Background.AnswerReduction.SamplerCost
+import MIPRE.Background.AnswerReduction.SoundCopy
+import MIPRE.Background.AnswerReduction.SoundDecoded
+import MIPRE.Background.AnswerReduction.SoundError
+import MIPRE.Background.AnswerReduction.SoundExtract
+import MIPRE.Background.AnswerReduction.SoundFinal
+import MIPRE.Background.AnswerReduction.SoundGameCheck
+import MIPRE.Background.AnswerReduction.SoundIsolate
+import MIPRE.Background.AnswerReduction.SoundPcp
+import MIPRE.Background.AnswerReduction.SoundPoly
+import MIPRE.Background.AnswerReduction.SoundRelations
+import MIPRE.Background.AnswerReduction.SoundSetup
 import MIPRE.Background.AnswerReduction.StageCorrect
 import MIPRE.Background.AnswerReduction.StageLists
 import MIPRE.Background.AnswerReduction.StageProg
@@ -89,6 +101,7 @@ import MIPRE.Background.LIDT.Adapter.Strategy
 import MIPRE.Background.LIDT.Adapter.Value
 import MIPRE.Background.LIDT.Adapter.Weights
 import MIPRE.Background.LIDT.Axioms
+import MIPRE.Background.LIDT.BlockPoly
 import MIPRE.Background.LIDT.Bridge.Consistency
 import MIPRE.Background.LIDT.Bridge.Defect
 import MIPRE.Background.LIDT.Bridge.Field
@@ -426,6 +439,7 @@ import MIPRE.Background.LIDT.MIPStarRE.Quantum.Measurement
 import MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB
 import MIPRE.Background.LIDT.Padding
 import MIPRE.Background.LIDT.Presentation
+import MIPRE.Background.LIDT.PresentationEmbed
 import MIPRE.Background.LIDT.PresentationQueries
 import MIPRE.Background.LIDT.Simultaneous
 import MIPRE.Background.LIDT.Soundness
@@ -786,6 +800,7 @@ import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Cost.While
 import MIPRE.Foundations.CrossConsistency
 import MIPRE.Foundations.Dilation
+import MIPRE.Foundations.Disagreement
 import MIPRE.Foundations.Distances
 import MIPRE.Foundations.Expanded
 import MIPRE.Foundations.GameAdapt
@@ -1197,6 +1212,7 @@ import MIPRE.Foundations.Repeat.RepSampler
 import MIPRE.Foundations.Repeat.Sampler
 import MIPRE.Foundations.Repeat.SamplerCost
 import MIPRE.Foundations.SAT.AdmissibleField
+import MIPRE.Foundations.SAT.AnswerVec
 import MIPRE.Foundations.SAT.Arithmetization
 import MIPRE.Foundations.SAT.ArrayProg
 import MIPRE.Foundations.SAT.BasisTransport
@@ -1289,6 +1305,7 @@ import MIPRE.LCS.Strategy.ObservableStrategy
 import MIPRE.LCS.Strategy.ObservableToProjector
 import MIPRE.LCS.Strategy.ProjectorStrategy
 import MIPRE.LCS.WinningCondition
+import MIPRE.MainTheorem
 import MIPRE.TM.Code.Encoding.MachineCode
 import MIPRE.TM.Code.Encoding.Nat
 import MIPRE.TM.Code.Encoding.Total

@@ -24,11 +24,10 @@ file plugs all three in, so that every conditional consequence of chapter 7 — 
 `cor:main-quantum`, `cor:value-uncomputable`, `thm:mipstar-eq-re` — is stated with the single
 remaining hypothesis, an `AnswerReduction 5`.
 
-Two reasons to state it now, before answer reduction exists. It is the first time the pipeline
-is supplied from the supply side with the actual instances rather than hypotheses: the file
-compiling is the check that `ofPipeline` composes with `Introspection.seven` and `repetition 7`
-as they are. And it turns the last step into one line: an inhabitant of `AnswerReduction 5`
-closes the `sorry` of `HaltingGameValue.halting_reduces_to_gameValue` through
+The file compiling is the check that `ofPipeline` composes with `Introspection.seven` and
+`repetition 7` as they are. The last hypothesis is supplied by `AnswerReduction.answerReduction`
+(`MIPRE/Background/AnswerReduction/Instance.lean`), and `MIPRE/MainTheorem.lean` proves the main
+theorem, `HaltingGameValue.halting_reduces_to_gameValue`, through
 `halting_reduces_to_gameValue_of_answerReduction`.
 -/
 

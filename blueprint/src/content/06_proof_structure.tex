@@ -4629,19 +4629,24 @@ of Theorem~\ref{thm:pcp-decider}.
   MIPRE.TM.CookLevin.Pad.pcpParams_odd,
   MIPRE.TM.CookLevin.Pad.pcpParams_field_large,
   MIPRE.TM.CookLevin.Pad.pcpParams_inner_dvd,
-  MIPRE.TM.CookLevin.Pad.pcpParams_outer_dvd}
+  MIPRE.TM.CookLevin.Pad.pcpParams_outer_dvd,
+  MIPRE.TM.CookLevin.Pad.pcpParams_field_eventually_large,
+  MIPRE.TM.CookLevin.Pad.fieldDegree_le}
 \leanok
 The padded dimensions extend to ambient polynomial-time classical PCP parameters
-$(k,m,s)$ with $k$ odd, $q=2^k\geq 82m'$, and both $m\mid q$ and $m'\mid q$.
+$(k,m,s)$ with $k$ odd, $q=2^k\geq 82m'$, and both $m\mid q$ and $m'\mid q$. The field is
+moreover eventually larger than every fixed power of $8(Q+1)m'$: for every $e$, once
+$Q\geq2^e$, $q\geq(8(Q+1)m')^e$, while $k$ stays polylogarithmic in $Qm'$.
 \end{lemma}
 \begin{proof}
 \leanok
-Choose $k=2\mathrm{size}(m')+7$. Then
-$q=128(2^{\mathrm{size}(m')})^2\geq82m'$. Both dimensions are powers of
-two at most $q$, hence divide it. Compute the degree from the binary length of
-$m'$ and combine it with the already verified $(m,s)$ program. This supplies
-the field-size requirement for classical majority soundness; stronger
-low-degree-test field-size choices remain with their consumers.
+Choose $k=2(s_0^2+\mathrm{size}(m'))+7$ with $s_0=\mathrm{size}(Q)+\mathrm{size}(m')+3$. Then
+$q\geq128(2^{\mathrm{size}(m')})^2\geq82m'$. Both dimensions are powers of
+two at most $q$, hence divide it. Since $8(Q+1)m'<2^{s_0}$, for $s_0\geq e$ we get
+$(8(Q+1)m')^e<2^{s_0e}\leq2^{s_0^2}\leq q$, and $Q\geq2^e$ gives $s_0>e$; this is the field
+size answer reduction's low-degree test needs (\texttt{FieldLarge}), whose exponent this
+construction need not know. Compute the degree in unary from the binary lengths of $Q$ and $m'$
+and combine it with the already verified $(m,s)$ program.
 \end{proof}
 
 \begin{lemma}[Circuit arithmetization with bounded input use]
@@ -5468,13 +5473,26 @@ where the detyped decider's predicate is the typed game's; detyping completeness
 \label{lem:ar-soundness-setup}
 \ledgernode{1.3.4.3}
 \uses{lem:ar-construction,lem:detype-soundness}
+\lean{MIPRE.AnswerReduction.typedStrategy, MIPRE.AnswerReduction.typedStrategy_value_ge}
+\leanok
 An exterior strategy with deficit $\eps_{\mathrm{out}}$ gives a typed strategy
 with deficit $\theta=16^{|T^{\mathrm{ar}}|}\eps_{\mathrm{out}}$ on the same
 state. Symmetrize the typed strategy for its symmetric game; do not assume
 the detyped question law is symmetric. The soundness proof then works with
 projective, well-formatted measurements and a swap-invariant state.
 All type-pair conditioning costs are constants since $T^{\mathrm{ar}}$ is fixed.
+The Lean does not symmetrize: it keeps the two families of measurements of a tensor-product
+strategy and derives every relation for each ordered pair of players from the ordered type pair
+that carries it, the type graph being complete.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:detype-soundness}
+\leanok
+Detyping soundness (Lemma~\ref{lem:detype-soundness}) restricts the strategy to the typed game
+with the typed decider's predicate, which is the typed answer-reduced predicate at the answer
+cut, on the same state.
+\end{proof}
 
 \begin{definition}[Full-seed indexing for answer reduction]
 \label{def:ar-seed-index}
@@ -5491,6 +5509,9 @@ injectivity or specifying its conditional seed distribution.
 \label{lem:ar-global-tests}
 \ledgernode{1.3.4.4}
 \uses{def:ar-seed-index,def:cross-distance}
+\lean{MIPRE.AnswerReduction.sum_edges_le, MIPRE.AnswerReduction.sum_copyFail_le,
+  MIPRE.AnswerReduction.sum_copyFail6_le, MIPRE.AnswerReduction.sum_dis_edge_le}
+\leanok
 Conditioning the typed success estimate on each checked type pair gives the
 global PCP subtests with $O(\theta)$ failure, averaged over uniform $\xi$
 and the prescribed PCP seed. Retain the joint proof-tuple format, individual
@@ -5502,6 +5523,8 @@ low-degree theorem is applied to line--point success alone.
 \label{lem:ar-input-tests}
 \ledgernode{1.3.4.5}
 \uses{lem:ar-global-tests}
+\lean{MIPRE.AnswerReduction.sum_dis_MA1_MB6_le, MIPRE.AnswerReduction.sum_dis_MA6_MB1_le}
+\leanok
 The two input-codeword tests, conditioned on their respective typed questions,
 have $O(\theta)$ failure on the required seeded point/line laws. The
 distributions are conditioned before averaging over $\xi$, and include
@@ -5513,6 +5536,9 @@ relations consumed by the individual-polynomial extraction.
 \label{lem:ar-common-polynomials}
 \ledgernode{1.3.4.6}
 \uses{lem:ar-input-tests,thm:lidt-cl-soundness-one,lem:schwartz-zippel}
+\lean{MIPRE.AnswerReduction.exists_ext1, MIPRE.AnswerReduction.ext1_spec,
+  MIPRE.AnswerReduction.sum_deltaSim1_le, MIPRE.LIDT.Simul.sum_deltaSim_le}
+\leanok
 For each seed, extract the input and proof polynomial PVMs, averaged with
 the source's conditional question laws. One common family $G_i$ can be used
 on both copies, for $i=1,\ldots,5$. To derive this, choose one side's LDT
@@ -5522,12 +5548,19 @@ consistency; average the resulting errors using Jensen. Identical point
 operators alone do not make the two existential LDT outputs identical.
 The resulting evaluation and full-polynomial consistency error is denoted
 $\kappa=O(\sqrt E+\rho)$ with $E,\rho$ as below.
+The Lean keeps one extracted family per player, $G^A_i$ and $G^B_i$, with their consistency,
+rather than a single common family; the errors are averaged over the seed by concavity of
+$\eps\mapsto\eps^{b'}$.
 \end{lemma}
 
 \begin{lemma}[A simultaneous complete proof tuple]
 \label{lem:ar-simultaneous-proof}
 \ledgernode{1.3.4.7}
 \uses{lem:ar-common-polynomials,thm:lidt-cl-soundness}
+\lean{MIPRE.AnswerReduction.exists_ext6, MIPRE.AnswerReduction.ext6_spec,
+  MIPRE.AnswerReduction.sum_deltaSim6_le, MIPRE.AnswerReduction.sum_dis_JAe_GBe_le,
+  MIPRE.AnswerReduction.sum_dis_GAe_JBe_le}
+\leanok
 Use the simultaneous theorem at $(q,m',d,m'+6)$ to obtain a projective
 measurement $J$ of the entire tuple $(f_1,\ldots,f_5,c_0,\ldots,c_{m'})$.
 Write $M_i$ for individual point measurements, and $M_6$ for the complete
@@ -5558,6 +5591,12 @@ the evaluation point uniform independently of it. Reverse the six-index
 order so the constraint-tuple marginal of $J$ is innermost. The resulting
 giant sandwich has error
 $\delta_3=O(\sqrt{\kappa+\rho})=O((\sqrt E+\rho)^{1/2})$.
+The Lean proof does not use this lemma. The oracle there measures the complete $J$ itself, and
+what the sandwich provides is replaced by a Schwartz--Zippel comparison: the $i$-th component of
+$J$'s outcome agrees at a uniform point with the placement on its block of the other player's
+$G_i$ outcome, except with probability $O(E+\theta)$, and two distinct individual-degree-$d$
+polynomials agree there with probability at most $\rho$. So $J$'s outcome is placed on its
+blocks, and equal to the placed $G_i$ outcome, except with probability $O(E+\theta+\rho)$.
 \end{lemma}
 
 \begin{lemma}[Transferring to the polynomial strategy]
@@ -5569,12 +5608,19 @@ the same state. Transfer acceptance through the complete tuple $J$,
 including its constraint polynomials and tested formats, to obtain success
 $1-O(\sqrt{\delta_3})$. The proof uses the full-tuple relations of
 Lemma~\ref{lem:ar-simultaneous-proof}, not independently chosen evaluations.
+The Lean proof does not use this lemma: its decoded strategy
+(Lemma~\ref{lem:ar-decoding}) measures $J$ and the extracted $G_i$ directly.
 \end{lemma}
 
 \begin{lemma}[Decoding with the original answer cutoff]
 \label{lem:ar-decoding}
 \ledgernode{1.3.4.10}
-\uses{lem:ar-polynomial-strategy,lem:timeout-truncation-interface,thm:oracularization}
+\uses{lem:ar-simultaneous-proof,lem:schwartz-zippel,thm:pcp-decider,thm:oracularization}
+\lean{MIPRE.AnswerReduction.MAo, MIPRE.AnswerReduction.MBo, MIPRE.AnswerReduction.decAns,
+  MIPRE.AnswerReduction.pcpOf, MIPRE.AnswerReduction.pcpSound,
+  MIPRE.AnswerReduction.one_sub_povmValue_decoded_le,
+  MIPRE.AnswerReduction.valStar_ge_decoded, MIPRE.AnswerReduction.valStar_ge_of_typedGame}
+\leanok
 Decode the polynomial strategy to the oracle strategy, applying the
 length-$B_D(n)$ prefix cutoff to each original answer. It preserves the
 simulated decider's output both before and after the oracle construction,
@@ -5582,12 +5628,38 @@ and makes every decoded answer pass its bounded parser. Check all three
 oracle subtests. Group malformed or failed decodings into fixed legal
 outcomes so measurements remain complete. The final conversion to the
 input game yields deficit $O(\delta_3^{1/4})$.
+The Lean decodes without the sandwich and without a cutoff. An oracle measures the complete $J$
+and answers the pair decoded from its first two answer polynomials, read on their blocks; an
+isolated player measures its own copy's $G$ and answers the decoded polynomial. The decoder
+returns the answer of length at most $2^{(\lambda n+1)^\mu}$ whose answer vector the polynomial's
+Boolean values are. No truncation is needed: the PCP's soundness gives accepted answers of length
+at most $T$, and an input within its budget rejects answers longer than
+$2^{(\lambda n+1)^\mu}$, so accepted answers already fit its alphabet, where the answer vector
+determines them. The oracle's game check fails only where $J$'s outcome is not placed on its
+blocks, or the PCP check rejects it at half the points; each ordered pair of roles fails at most
+by a game check and the disagreement of the polynomials. The decoded POVM strategy fails the
+typed oracularized game with probability at most $6$ times the combined error; a Naimark
+dilation makes it projective, and oracularization soundness (one square root) gives
+$\val^*(\verifier_n)\geq 1-24\sqrt{7\,\mathrm{err}}$.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:ar-simultaneous-proof,lem:schwartz-zippel,thm:pcp-decider,thm:oracularization}
+\leanok
+As described: the nine ordered pairs of roles are bounded pair by pair, and the bounds summed
+over the seed with the averaged extraction errors of Lemmas~\ref{lem:ar-common-polynomials}
+and~\ref{lem:ar-simultaneous-proof}.
+\end{proof}
 
 \begin{lemma}[Answer-reduction quantitative assembly]
 \label{lem:ar-error-assembly}
 \ledgernode{1.3.4.11}
 \uses{lem:ar-decoding,lem:ar-soundness-setup,lem:ar-common-polynomials}
+\lean{MIPRE.AnswerReduction.arVerifier_soundness, MIPRE.AnswerReduction.FieldLarge,
+  MIPRE.AnswerReduction.errE, MIPRE.AnswerReduction.errE_le,
+  MIPRE.AnswerReduction.sqrt_le_delta, MIPRE.AnswerReduction.exists_threshold_clB,
+  MIPRE.AnswerReduction.z_le}
+\leanok
 Put $L=(\lambda n)^\mu$, $\rho=m'd/q$ and
 $E=\delta_{\mathrm{CL}}(\theta,q,m',d,m'+6)$ for the source parameter
 routine. The comparison with the smaller-$m$ LDT error uses its field-error
@@ -5607,7 +5679,28 @@ and enlarge the polynomial coefficient and threshold to absorb every
 constant. This gives the displayed error of Theorem~\ref{thm:answer-reduction}.
 When that error is at least one the value conclusion is trivial; the
 nontrivial regime also justifies the small-error inequalities above.
+
+In the Lean, without the sandwich, the chain has one square root, from oracularization, and the
+exponent is $b=b'/2$. The field term $q^{-b'}$ of the low-degree test has the prefactor
+$a'(7m'(m'+6))^{a'}$, polynomial in $m'$ of degree about $2a'$, and is controlled by a hypothesis
+on the PCP decider, \texttt{FieldLarge}: for every exponent $e$, past a threshold on $Q$, its
+field has at least $(8(Q+1)m')^{e}$ elements; it is used at $e=40000(3\lceil a'\rceil+4)$, and a
+field of $2^{O(\log^2(Qm'))}$ elements satisfies it. Theorem~\ref{thm:pcp-decider} does not carry the paper's lower
+bound on $q$ (\texttt{eq:pcp-q-choice}); this is it, beside \texttt{ParamsBound} and
+\texttt{ShoupField}. The term $2^{-b'md}$ uses $m\geq Q$, from $2^m\geq 2T$, and the threshold
+on $n$; $\mu=0$ and $\eps\geq 1$ are trivial, the loss being at least $1$ there.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:ar-decoding,lem:ar-soundness-setup}
+\leanok
+With $\theta\leq 16^{54}\eps$, the combined error is at most
+$39204\cdot16^{54}Z^{3A}\eps^{b'}+(Q+1)^{-2}+22Z^{3A}2^{-b'Q}$, $Z=8(Q+1)m'$, $A=\lceil
+a'\rceil$, over the large field. The parameters bound $Z$ by a polynomial in $Q\sigma$, and
+$N^\mu\leq Q\leq N^{2\mu}$ for $N=\lambda n\geq2$, so $24\sqrt{7\,\mathrm{err}}$ is at most
+$\sigma^a(N^{\mu a}\eps^{b'/2}+N^{-\mu b'/2})$ for a constant $a$ depending only on the
+parameter polynomial, past a threshold on $Q\geq n+1$.
+\end{proof}
 
 \begin{lemma}[Answer-reduction sampler independence]
 \label{lem:ar-sampler-independence}
@@ -5635,6 +5728,8 @@ the input sampler's program and $(\lambda,\mu,\sigma)$.
 \label{thm:answer-reduction}
 \ledgernode{1.3, 1.3.4}
 \uses{def:normal-verifier,def:pcc,lem:ar-construction,lem:ar-completeness,lem:ar-error-assembly,lem:ar-sampler-independence}
+\lean{MIPRE.AnswerReduction.answerReduction}
+\leanok
 In the source model there is a polynomial-time Turing machine $\ComputeAnsVerifier$ that on input
 $(\verifier, \lambda, \ell, \mu, \sigma)$, for $\verifier$ an $\ell$-level normal form
 verifier whose decider is in standard timeout-counter form, with
@@ -5654,6 +5749,13 @@ $C_{\mathrm{ar}}$, for all $n \geq C_{\mathrm{ar}}$:
   $\valstar(\verifier_n) \geq 1 - \delta(\eps, n)$.
 \end{enumerate}
 \end{theorem}
+
+\begin{proof}
+\uses{lem:answer-reduction-supply,def:answer-reduction-contract}
+\leanok
+In the ambient form of Definition~\ref{def:answer-reduction-contract}, at $\ell=5$, this is
+Lemma~\ref{lem:answer-reduction-supply}.
+\end{proof}
 
 \begin{definition}[Ambient answer-reduction contract]
 \label{def:answer-reduction-contract}
@@ -5690,8 +5792,8 @@ $1-\delta(\eps,n)$ at those cuts, with
 $\delta(\eps,n)=\sigma^a((\lambda n)^{\mu a}\eps^b+(\lambda n)^{-\mu b})$,
 $a\geq1$ and $0<b\leq1$. Sampler and decider descriptions are computable in
 polynomial time; the sampler depends only on the input sampler and the parameters.
-The composition consumes an instance at $\ell=5$. Defining this contract does not
-construct an inhabitant or prove its correspondence with the source.
+The composition consumes an instance at $\ell=5$, which
+Lemma~\ref{lem:answer-reduction-supply} constructs.
 \end{definition}
 
 \paragraph{Audit against the source (2026-09-23).} Oracularization's first ambient contract
@@ -5721,13 +5823,27 @@ of the time bounds against the construction.
 \begin{lemma}[Supplying ambient answer reduction]
 \label{lem:answer-reduction-supply}
 \uses{thm:answer-reduction,def:answer-reduction-contract,rem:runtime-normalization,rem:pcc-representation-bridge,rem:oracularization-contract}
+\lean{MIPRE.AnswerReduction.answerReduction, MIPRE.AnswerReduction.shoupField_classical,
+  MIPRE.AnswerReduction.exists_paramsBound_classical, MIPRE.AnswerReduction.fieldLarge_classical}
+\leanok
 The ambient contract \texttt{MIPRE.AnswerReduction 5} is inhabited.
-\emph{Open target.} A source-based proof must supply runtime and answer-cut
-normalization, both directions of the PCC representation bridge, and a typed oracle
-interface within answer reduction. It must recover the ambient budget and parameter
-clauses. This does not require a separate exterior application of the untyped oracle
-contract; its present definition is not a proof of the needed typed interface.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:ar-construction,lem:ar-completeness,lem:ar-error-assembly,lem:ar-sampler-independence,lem:pcp-effective-parameters}
+\leanok
+By the answer-reduced verifier over the classical PCP decider. The three hypotheses the
+construction and its analysis ask of the decider hold for it: its field is the Shoup field, by
+definition; its parameters are polynomial in $(\log n,\log T,Q,\sigma)$, the padded dimension
+being so and the field degree polylogarithmic in $Qm'$; and its field is eventually larger than
+every fixed power of $8(Q+1)m'$ (Lemma~\ref{lem:pcp-effective-parameters}). The complexity clause
+and the answer cut below the output bound are Lemma~\ref{lem:ar-construction}, completeness is
+Lemma~\ref{lem:ar-completeness} at the cut and hence at the bound, and soundness is
+Lemma~\ref{lem:ar-error-assembly} at the bound. Runtime and answer-cut normalization, the PCC
+bridge and the typed oracle interface are absorbed by the construction: the input's time bound
+is used semantically, the output rejects answers beyond its cut, and the typed oracularized
+game is the one Lemma~\ref{lem:ar-decoding} plays.
+\end{proof}
 
 This is the most technically heterogeneous section of the paper
 (\cite[Section 10]{JNVWY20}): half classical (tableaux, Tseitin encoding,
@@ -5963,15 +6079,18 @@ definitional identifications.
 \begin{theorem}[Ambient compression inhabitation target]
 \label{thm:compression-target}
 \uses{lem:introspection-supply,lem:answer-reduction-supply,thm:compression}
+\lean{MIPRE.gapCompression}
+\leanok
 The type \texttt{MIPRE.GapCompression} is inhabited.
-\emph{Open target.} Theorem~\ref{thm:compression} proves the assembly.
-Lemma~\ref{lem:introspection-supply} and the proved repetition construction
-supply two of its inputs; Lemma~\ref{lem:answer-reduction-supply} remains open.
-This target records unconditional inhabitation separately from that checked
-conditional theorem. Corollary~\ref{cor:compression-from-answer-reduction} plugs the two
-supplied inputs into the assembly, so an inhabitant of \texttt{MIPRE.AnswerReduction 5} is
-the only missing input.
 \end{theorem}
+
+\begin{proof}
+\uses{cor:compression-from-answer-reduction,lem:answer-reduction-supply}
+\leanok
+Corollary~\ref{cor:compression-from-answer-reduction} at the answer reduction of
+Lemma~\ref{lem:answer-reduction-supply}: Theorem~\ref{thm:compression} applied to the three
+supplied stages.
+\end{proof}
 
 \begin{corollary}[Compression, and $\MIPstar = \RE$, from answer reduction alone]
 \label{cor:compression-from-answer-reduction}

@@ -6,22 +6,25 @@ This repository hosts a collaborative Lean 4 formalization project for the theor
 **MIP\* = RE** (Ji, Natarajan, Vidick, Wright, Yuen,
 [arXiv:2001.04383](https://arxiv.org/abs/2001.04383)).
 
-A candidate Mathlib-only statement of the main theorem is in
-[`MIPRE/HaltingGameValue.lean`](MIPRE/HaltingGameValue.lean): there is a computable map
-from Turing machines to nonlocal games sending halting machines to games of synchronous
-value 1 and non-halting machines to games of value at most 1/2.
+A Mathlib-only statement of the main theorem is in
+[`MIPRE/HaltingGameValue.lean`](MIPRE/HaltingGameValue.lean)
+(`HaltingGameValue.HaltingReducesToGameValue`): there is a computable map from Turing machines
+to nonlocal games sending halting machines to games of synchronous value 1 and non-halting
+machines to games of value at most 1/2.
 
-**Status.** That statement is proved in Lean *conditionally on gap-preserving compression*
-(`MIPRE.GapCompression`, the blueprint's `thm:compression`, the theorem the pipeline of
-introspection, oracularization, answer reduction and parallel repetition is to establish):
-`MIPRE.Halting.halting_reduces_to_gameValue_of` takes that one structure and concludes the
-statement above with no `sorry`. The unconditional `halting_reduces_to_gameValue` keeps its
-`sorry` as the target, and the difference between the two is exactly that structure.
+**Status.** That statement is proved:
+[`HaltingGameValue.halting_reduces_to_gameValue`](MIPRE/MainTheorem.lean), with no `sorry` and
+no axiom beyond `propext`, `Classical.choice` and `Quot.sound`. The proof lives in
+[`MIPRE/MainTheorem.lean`](MIPRE/MainTheorem.lean), because it needs the whole development and
+the statement file imports Mathlib only. The same file proves the reduction to the quantum
+value, the uncomputability of both values, and `MIPRE.Halting.mipstar_eq_re : MIPStar = IsRE`.
 
-The ambient introspection stage is supplied by
-[`MIPRE.Introspection.seven`](MIPRE/Background/Introspection/Compiler.lean), with
-completeness, soundness from the proved QLD theorem, and all-index compiler budgets.
-Answer reduction remains an input to the compression pipeline.
+The proof is the compression pipeline (`MIPRE.GapCompression.ofPipeline`) with its three
+stages supplied:
+* introspection, [`MIPRE.Introspection.seven`](MIPRE/Background/Introspection/Compiler.lean);
+* answer reduction, [`MIPRE.AnswerReduction.answerReduction`](MIPRE/Background/AnswerReduction/Instance.lean),
+  over the classical PCP decider;
+* parallel repetition, [`repetition 7`](MIPRE/Background/Repetition/Verifier.lean).
 
 ## Project links
 

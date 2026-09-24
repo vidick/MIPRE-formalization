@@ -2174,8 +2174,7 @@
    "HaltingGameValue.GameData",
    "HaltingGameValue.GameData.equivTuple",
    "HaltingGameValue.GameData.toGame",
-   "HaltingGameValue.gameValue",
-   "HaltingGameValue.halting_reduces_to_gameValue"
+   "HaltingGameValue.gameValue"
   ],
   "MIPRE/LCS/Basic.lean": [
    "MIPRE.LCS.Game",

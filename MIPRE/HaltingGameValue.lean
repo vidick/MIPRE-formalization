@@ -187,12 +187,15 @@ games such that
 1. (completeness) if the machine halts on the empty input then the game has
    synchronous value `1`, and
 2. (soundness) if the machine does not halt on the empty input then the
-   synchronous value of the game is at most `1/2`. -/
-theorem halting_reduces_to_gameValue :
-    ∃ g : Nat.Partrec.Code → GameData, Computable g ∧
-      ∀ c : Nat.Partrec.Code,
-        (HaltsOnEmptyInput c → gameValue (g c).toGame = 1) ∧
-        (¬HaltsOnEmptyInput c → gameValue (g c).toGame ≤ 1 / 2) := by
-  sorry
+   synchronous value of the game is at most `1/2`.
+
+This is the statement. Its proof, `HaltingGameValue.halting_reduces_to_gameValue` in
+`MIPRE/MainTheorem.lean`, needs the whole formalization, so it cannot live in this file, which
+imports Mathlib only; that file proves exactly this proposition. -/
+def HaltingReducesToGameValue : Prop :=
+  ∃ g : Nat.Partrec.Code → GameData, Computable g ∧
+    ∀ c : Nat.Partrec.Code,
+      (HaltsOnEmptyInput c → gameValue (g c).toGame = 1) ∧
+      (¬HaltsOnEmptyInput c → gameValue (g c).toGame ≤ 1 / 2)
 
 end HaltingGameValue

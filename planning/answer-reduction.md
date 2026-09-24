@@ -1,6 +1,6 @@
 # Answer reduction: the construction (AR-3)
 
-Status 2026-09-23. **AR-3 and AR-4 are done.** **Done: AR-3a, AR-3b, AR-3c** (the mathematics of the construction):
+Status 2026-09-23. **AR-3 to AR-6 are done** (AR-5: see "AR-5 as formalized" below; AR-6: `answerReduction` in `Background/AnswerReduction/Instance.lean`, over the classical PCP decider with its field degree enlarged, and the main theorem in `MIPRE/MainTheorem.lean`). **Done: AR-3a, AR-3b, AR-3c** (the mathematics of the construction):
 `Background/LIDT/Presentation.lean`, `Background/AnswerReduction/{PcpPresentation,Predicate,
 Family,AnswerFormat,TypedGame}.lean`, `Foundations/CL/Product.lean`. One thing met on the way:
 with the 54 types, the kernel unfolds `Finset.univ` of the type pairs when checking the type
@@ -261,3 +261,114 @@ that call path.
 
 AR-3a and AR-3b are what AR-4 and AR-5 consume, and need no programs. AR-3c to AR-3f are the
 complexity half, and only they test the contract's time bounds.
+
+## AR-5: soundness, the plan
+
+Written after reading the paper's soundness proof (`ld_compiler.tex`, `sec:ar-soundness`: claims
+`claim:ar-1` to `claim:ar-5`, `lem:ar-ar`, `lem:ar-ora` and the error computation) and the Lean
+that exists for it. The target is the contract's `soundness` clause for `arVerifier`, with
+`δ(ε, n) = σ^a((λn)^{μa} ε^b + (λn)^{-μb})` for universal `a, b`.
+
+### The chain
+
+1. **Detyping** (exists): a strategy of value `≥ 1 - ε` for the output game at the answer cut
+   gives a typed strategy of value `≥ 1 - Kε`, `K = 16^{54}`, on the same state
+   (`CL.Detyping.DeciderProgram.restrictAmbient_value_ge`), for the typed game with the
+   decider's predicate, which is `typedPred` at the cut (`typedPredicate_eq`).
+2. **No symmetrization.** The paper symmetrizes so that one family serves both players. The
+   Lean keeps the two families `MA, MB` of a `TensorProductStrategy`: every relation the paper
+   derives for `M ⊗ I` versus `I ⊗ M` is derived for `MA` against `MB` and for `MB` against
+   `MA`, each from the ordered type pair that carries it (the type graph is complete, so both
+   orders are sampled). Projectivity comes from a Naimark dilation (`Foundations/Dilation`)
+   applied once, before anything else.
+3. **Conditioning** (`claim:ar-1` to `claim:ar-4`): the typed game samples a uniform ordered
+   pair of the 54 types and a uniform seed, so the failure conditioned on a type pair is at most
+   `54² θ`. Each subtest is a set of type pairs; the per-seed failure is then averaged. The
+   engine is `CrossConsistency.lean` (`condFail`, `sum_mul_condFail_le`).
+4. **Copy isolation** (the per-seed low-degree games): for a seed `x` of the input sampler and a
+   copy of the test, the AR strategy restricted to that copy's nine type pairs, at roles
+   `(v, v)` or `(oracle, oracle)` and oracle half `x`, is a strategy for `clGame` of the copy's
+   parameters. Two facts make this exact:
+   * the presentation's output is supported on the copy's own registers and is a bijective
+     function of the copy's sample (`Regs.sampleOf_eval_question` and its converse), so the CL
+     question determines the AR question;
+   * uniform content gives a uniform sample (`Regs.sum_sampleOf`), so the distributions agree;
+   and the AR predicate on those pairs implies `CL.accepts` of the parsed answers (format
+   preamble, step 1 for equal types, steps 3 and 4 for point against line).
+   Answers are pushed forward along `parse` then `ans1`/`ans6`, a question-dependent map.
+5. **Extraction** (`claim:ar-3`, `claim:ar-4`): `LIDT.Simul.clSoundness` per seed, with the
+   measurements chosen by `Classical.choose`; the errors `deltaSim q m d r ε_x` are averaged over
+   seeds by concavity of `ε ↦ ε^{clB}` (Jensen).
+6. **Cross relations** (`claim:ar-2`, the first item of `claim:ar-4`, and the input side of
+   `claim:ar-5`): consistency of the oracle's `Point_6` block with an isolated player's `Point_v`
+   and with the copy-`i` point, chained with the extraction's relations into the sandwich
+   lemma's hypothesis (`one_sub_sum_bornProb_ldSandwich_le`, `k = 6`, index = the full seed).
+7. **The sandwich** (`claim:ar-5`): `Λ`, the giant sandwich of the five `G`'s around `J`'s
+   constraint marginal; conclusion `Λ` consistent with `J` at a uniform point.
+8. **Decoding** (`lem:ar-ar`, `lem:ar-ora`): the typed oracularized strategy measures `Λ` (an
+   oracle) or `G_v` (an isolated player) and answers the decoded strings. No truncation is
+   needed: the PCP's soundness gives accepted answers of length at most `T`, and an input within
+   its budget rejects answers longer than `2^Q` (`RejectsLong`), so accepted answers already fit
+   the input's answer alphabet. The game check goes through the PCP's soundness at `p = 1/2`.
+   Then `Verifier.valStar_ge_of_typed` (oracularization soundness, one square root).
+9. **Error assembly** (`lem:ar-error-assembly`): explicit, with `clA`, `clB`, `simA`.
+
+### New hypothesis on the PCP decider
+
+The LDT error has a field term `q^{-clB}` with prefactor `simA (7 m'(m' + 6))^{simA}`, which must
+be at most `1/Q` for the error to have the contract's shape. `thm:pcp-decider` deliberately does
+not carry the paper's lower bound on `q` (`eq:pcp-q-choice`); AR-5 states it as a hypothesis on
+the decider (`FieldLarge`), beside `ParamsBound` and `ShoupField`, and AR-6 must make the
+classical decider's `pcpParams` choose `k` large enough.
+
+### Pieces
+
+* **AR-5a** detyping and conditioning at the typed game; the soundness statement as a target.
+* **AR-5b** copy isolation: the per-seed CL strategies and their values.
+* **AR-5c** extraction and averaging.
+* **AR-5d** cross relations and the sandwich hypothesis.
+* **AR-5e** the sandwich and the decoded oracularized strategy's value.
+* **AR-5f** error assembly, the contract clause, blueprint.
+
+### AR-5 as formalized: no sandwich
+
+Steps 1 to 6 are as planned (`SoundSetup`, `SoundIsolate`, `SoundExtract`, `SoundRelations`), with
+one family of extracted measurements per player (`GA1`, `GB1` for copies 1 to 5, `JA`, `JB` for
+the sixth) rather than a common one. Steps 7 and 8 changed: there is no sandwich.
+
+* **The oracle measures `J`.** The decoded strategy (`SoundDecoded`, `MAo`, `MBo`) answers an
+  oracle question with the pair decoded from the first two components of `J`'s outcome read on
+  their blocks, and an isolated question with the decoded outcome of that copy's `G`.
+* **Block locality by Schwartz--Zippel** (`SoundPoly`). The `i`-th component of `J`'s outcome
+  agrees at a uniform point of the sixth copy with the placement on block `i` (`liftBlk`) of the
+  other player's `G_i` outcome, except with probability `11 (E_6 + 2916 theta + E_1)` (the chains
+  of `SoundRelations`); two distinct individual-degree-7 polynomials agree there with probability
+  at most `m' d / q`. So `J`'s outcome equals the placed `G_i` outcome, hence is placed on its
+  blocks, except with probability `errD` (`disPolyA_le`, `sum_disPolyA_le`).
+* **The game check** (`SoundGameCheck`, `gcA_le`). An oracle's decoded pair fails the game check
+  only if `J`'s outcome is not placed on its blocks, or the PCP check rejects its evaluations at
+  half the points (`PcpSound`, the contrapositive of the PCP's soundness, discharged in `SoundPcp`
+  with the decoder `decAns` and the PCP proof `pcpOf` an outcome carries). The rejected weight is
+  at most twice the sixth copy's point-subtest failure.
+* **Nine pairs of roles** (`condFail_OO_le` ... `condFail_ba_le`), summed over the seed:
+  `1 - povmValue <= 6 errD` (`one_sub_povmValue_decoded_le`). A Naimark dilation makes it a
+  `TensorProductStrategy`, and `Verifier.valStar_ge_of_typed` gives
+  `val*(V_n) >= 1 - 24 sqrt(7 errD)` (`valStar_ge_decoded`).
+* **Error assembly** (`SoundError`, `SoundFinal`). With `theta <= 16^{54} eps`,
+  `errD <= 39204 K Z^{3A} eps^{clB} + (Q+1)^{-2} + 22 Z^{3A} 2^{-clB Q}`, `Z = 8 (Q + 1) m'`,
+  `A = ceil(simA)` (`errE_le`), using `FieldLarge` for both field terms and `m >= Q` (from
+  `2^m >= 2T`) for the last. `ParamsBound` gives `Z <= zC (Q sigma)^{zE}` (`z_le`), and
+  `sqrt_le_delta` compares with `delta` for `n` past a threshold (`exists_threshold_clB`). At
+  `mu = 0` or `eps >= 1` the loss is at least `1`.
+
+The sandwich lemma (AR-1, `lem:ar-sandwich-support`) is therefore not consumed by soundness. It
+stays, as the paper's statement. What the sandwich bought in the paper --- a single measurement
+consistent with every `G_i` --- is here `J` itself, which the simultaneous test already provides.
+
+`FieldLarge` is new: the prefactor of the field term `q^{-clB}` is `simA (7 m' (m'+6))^{simA}`, so
+`q` must be at least a fixed power of `m'` and `Q`, a power of about `80000 simA`. The constants are
+irreducible definitions (`simAN = ceil(simA)`, `fieldExp`), never evaluated. So that `MIPRE/TM`
+need not know them, the hypothesis is *eventual*: for every `e`, past a threshold on `Q`,
+`q >= (8 (Q + 1) m')^e`; soundness already has a threshold on `n`, and `Q >= n + 1`. A field
+degree `k = size(8 (Q + 1) m')^2 + O(log m')` satisfies it for every `e` (past `Q >= 2^e`) and
+keeps `ParamsBound`; that is AR-6's change to the classical decider.

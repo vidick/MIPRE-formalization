@@ -46,7 +46,8 @@ def clausePolynomial {F : Type*} [Field F] (D : Prog) (n T Q σ : ℕ) (x y : Bi
     (fixedCircuit_variables D n T Q σ x y hV)
 
 theorem pcpParams_degree_pos (n T Q σ : ℕ) : 1 ≤ (pcpParams n T Q σ).k := by
-  change 1 ≤ 2 * Nat.size (outerDim n T Q σ) + 7
+  change 1 ≤ fieldDegree n T Q σ
+  unfold fieldDegree
   omega
 
 def pcpModulus (n T Q σ : ℕ) : BitStr := shoupLowerCoeffs (unary (pcpParams n T Q σ).k)

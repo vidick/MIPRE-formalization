@@ -6,6 +6,7 @@ Authors: Thomas Vidick
 import MIPRE.Background.QLD.Separate
 import MIPRE.Background.QLD.Simul
 import MIPRE.Foundations.RegisterReindex
+import MIPRE.Background.LIDT.BlockPoly
 
 /-!
 # Completing the pair measurement and its evaluated marginals (`lem:qld-global-complete`,
@@ -42,79 +43,6 @@ instance itself are in `PaddedLIDT.lean`.
 -/
 
 noncomputable section
-
-/-! ## A polynomial on a block of the variables -/
-
-namespace MIPRE.LIDT
-
-open Finset
-
-variable {F : Type*} [Field F] {n n' d : ℕ}
-
-/-- The exponent vector on `Fin n` carried by the injection `idx` from one on `Fin n'`, zero off
-the range. -/
-def expandIdx (idx : Fin n' → Fin n) (e' : Fin n' → Fin (d + 1)) : Fin n → Fin (d + 1) :=
-  fun k => if h : ∃ j, idx j = k then e' h.choose else 0
-
-theorem expandIdx_apply_idx {idx : Fin n' → Fin n} (hinj : Function.Injective idx)
-    (e' : Fin n' → Fin (d + 1)) (j : Fin n') : expandIdx idx e' (idx j) = e' j := by
-  have h : ∃ j', idx j' = idx j := ⟨j, rfl⟩
-  rw [expandIdx, dif_pos h, hinj h.choose_spec]
-
-theorem expandIdx_apply_of_not {idx : Fin n' → Fin n} (e' : Fin n' → Fin (d + 1)) {k : Fin n}
-    (hk : ∀ j, idx j ≠ k) : expandIdx idx e' k = 0 := by
-  rw [expandIdx, dif_neg]
-  rintro ⟨j, hj⟩
-  exact hk j hj
-
-/-- The monomial of an expanded exponent vector is the monomial on the block. -/
-theorem prod_pow_expandIdx {idx : Fin n' → Fin n} (hinj : Function.Injective idx) (u : Point F n)
-    (e' : Fin n' → Fin (d + 1)) :
-    ∏ k, u k ^ ((expandIdx idx e' k : Fin (d + 1)) : ℕ)
-      = ∏ j, u (idx j) ^ ((e' j : Fin (d + 1)) : ℕ) := by
-  classical
-  rw [← Finset.prod_subset (Finset.subset_univ (univ.image idx)) (fun k _ hk => ?_)]
-  · rw [Finset.prod_image (fun x _ y _ h => hinj h)]
-    exact Finset.prod_congr rfl fun j _ => by rw [expandIdx_apply_idx hinj]
-  · rw [Finset.mem_image] at hk
-    push Not at hk
-    rw [expandIdx_apply_of_not _ fun j hj => hk j (mem_univ j) hj, Fin.val_zero, pow_zero]
-
-/-- **A coefficient vector read on a block of the variables**, as a coefficient vector on the
-block. -/
-def LowIndDegPoly.blockPoly (idx : Fin n' → Fin n) (H : LowIndDegPoly (F := F) (m := n) (d := d)) :
-    LowIndDegPoly (F := F) (m := n') (d := d) :=
-  fun e' => H (expandIdx idx e')
-
-/-- **A vector supported on the range of `idx` evaluates through the block.** -/
-theorem LowIndDegPoly.eval_blockPoly {idx : Fin n' → Fin n} (hinj : Function.Injective idx)
-    {H : LowIndDegPoly (F := F) (m := n) (d := d)}
-    (hsupp : ∀ e, H e ≠ 0 → ∀ k, (∀ j, idx j ≠ k) → e k = 0) (u : Point F n) :
-    (H.blockPoly idx).eval (fun j => u (idx j)) = H.eval u := by
-  classical
-  simp only [LowIndDegPoly.eval, LowIndDegPoly.blockPoly]
-  refine Finset.sum_bij_ne_zero (fun e' _ _ => expandIdx idx e') (fun _ _ _ => mem_univ _)
-    (fun e₁ _ _ e₂ _ _ h => ?_) (fun e _ hne => ?_) (fun e' _ _ => ?_)
-  · funext j
-    have := congrArg (fun e => e (idx j)) h
-    simpa only [expandIdx_apply_idx hinj] using this
-  · have hH : H e ≠ 0 := fun h0 => hne (by rw [h0, zero_mul])
-    have heq : expandIdx idx (fun j => e (idx j)) = e := by
-      funext k
-      by_cases hk : ∃ j, idx j = k
-      · obtain ⟨j, rfl⟩ := hk
-        rw [expandIdx_apply_idx hinj]
-      · push Not at hk
-        rw [expandIdx_apply_of_not _ hk, hsupp e hH k hk]
-    have hp := prod_pow_expandIdx hinj u (fun j => e (idx j))
-    rw [heq] at hp
-    refine ⟨fun j => e (idx j), mem_univ _, ?_, heq⟩
-    rw [heq, ← hp]
-    exact hne
-  · congr 1
-    exact (prod_pow_expandIdx hinj u e').symm
-
-end MIPRE.LIDT
 
 namespace MIPRE
 
