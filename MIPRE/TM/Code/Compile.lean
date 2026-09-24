@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 import MIPRE.TM.Code.Semantics
+import MIPRE.TM.MultiInput.Congr
 
 /-!
 # Compiling a finite machine to a machine code
@@ -185,6 +186,81 @@ theorem toTM_compile (tm : MultiInputTM i w (Fin σ) (Fin Q)) (hσ : 2 ≤ σ)
   congr 1
   funext q as bs
   exact htr q as bs
+
+/-! ## Machines over structured types -/
+
+/-- A finite coding of a machine's symbol and state types: equivalences with `Fin σ` and
+`Fin n`, with at least the two bit symbols. -/
+structure FinCoding (Symbol State : Type*) where
+  /-- The number of symbols. -/
+  σ : ℕ
+  /-- The number of states. -/
+  n : ℕ
+  /-- The coding of symbols. -/
+  sym : Symbol ≃ Fin σ
+  /-- The coding of states. -/
+  st : State ≃ Fin n
+  /-- There are at least the two bit symbols. -/
+  two_le : 2 ≤ σ
+
+variable {Symbol State : Type*}
+
+/-- The symbol that codes a bit: `0` for `false`, `1` for `true`. -/
+def FinCoding.bit (e : FinCoding Symbol State) (b : Bool) : Symbol :=
+  e.sym.symm ⟨if b then 1 else 0, by have := e.two_le; split_ifs <;> omega⟩
+
+/-- The machine relabelled along a finite coding. -/
+def relabel (tm : MultiInputTM i w Symbol State) (e : FinCoding Symbol State) :
+    MultiInputTM i w (Fin e.σ) (Fin e.n) :=
+  (tm.congrState e.st).congrSymbol e.sym
+
+theorem relabel_emitsBits (tm : MultiInputTM i w Symbol State) (e : FinCoding Symbol State)
+    (hout : ∀ q as bs s, (tm.tr q as bs).outS = some s → (e.sym s).val < 2) :
+    (tm.relabel e).EmitsBits := by
+  intro q as bs s hs
+  simp only [relabel, congrSymbol, congrState, Option.map_eq_some_iff] at hs
+  obtain ⟨s₀, hs₀, rfl⟩ := hs
+  exact hout _ _ _ s₀ hs₀
+
+/-- **The code of a machine over structured types**, along a finite coding, for a machine
+whose emitted symbols code bits. -/
+def toCode (tm : MultiInputTM i w Symbol State) (e : FinCoding Symbol State)
+    (_hout : ∀ q as bs s, (tm.tr q as bs).outS = some s → (e.sym s).val < 2) : Code i :=
+  compile (tm.relabel e) e.two_le
+
+theorem toTM_toCode (tm : MultiInputTM i w Symbol State) (e : FinCoding Symbol State)
+    (hout : ∀ q as bs s, (tm.tr q as bs).outS = some s → (e.sym s).val < 2) :
+    (tm.toCode e hout).toTM = tm.relabel e :=
+  toTM_compile _ _ (relabel_emitsBits tm e hout)
+
+/-- **The code computes what the machine computes**: on bit inputs and outputs, in the same
+time and space. -/
+theorem toCode_computes_iff (tm : MultiInputTM i w Symbol State) (e : FinCoding Symbol State)
+    (hout : ∀ q as bs s, (tm.tr q as bs).outS = some s → (e.sym s).val < 2)
+    (x : Fin i → List Bool) (y : List Bool) (t s : ℕ) :
+    (tm.toCode e hout).toTM.ComputesInTimeAndSpace ((tm.toCode e hout).bitInputs x)
+        (y.map fun b => (tm.toCode e hout).bitEmbedding b) t s ↔
+      tm.ComputesInTimeAndSpace (fun j => (x j).map e.bit) (y.map e.bit) t s := by
+  have hbit : ∀ b, e.sym (e.bit b) = (tm.toCode e hout).bitEmbedding b := by
+    intro b
+    simp [FinCoding.bit, Code.bitEmbedding]
+    rfl
+  have key : ∀ M : MultiInputTM i w (Fin e.σ) (Fin e.n), M = tm.relabel e →
+      (M.ComputesInTimeAndSpace (fun j => ((x j).map e.bit).map e.sym)
+          ((y.map e.bit).map e.sym) t s ↔
+        tm.ComputesInTimeAndSpace (fun j => (x j).map e.bit) (y.map e.bit) t s) := by
+    rintro M rfl
+    rw [relabel, computesInTimeAndSpace_congrSymbol_iff,
+      computesInTimeAndSpace_congrState_iff]
+  have hx : (tm.toCode e hout).bitInputs x = fun j => ((x j).map e.bit).map e.sym := by
+    funext j
+    simp only [Code.bitInputs, List.map_map]
+    exact List.map_congr_left fun b _ => (hbit b).symm
+  have hy : (y.map fun b => (tm.toCode e hout).bitEmbedding b) = (y.map e.bit).map e.sym := by
+    simp only [List.map_map]
+    exact List.map_congr_left fun b _ => (hbit b).symm
+  rw [hx, hy]
+  exact key _ (toTM_toCode tm e hout)
 
 end MultiInputTM
 

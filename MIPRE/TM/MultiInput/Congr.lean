@@ -157,6 +157,16 @@ lemma computesInTimeAndSpace_congrState (e : State ≃ State')
   · rw [initCfg_congrState, outputString_congrState, hout]
   · rw [initCfg_congrState, spaceUsed_congrState, hspace]
 
+/-- Relabeling the state type neither creates nor destroys computations. -/
+lemma computesInTimeAndSpace_congrState_iff (e : State ≃ State')
+    (tm : MultiInputTM i w Symbol State) (input : Fin i → List Symbol)
+    (output : List Symbol) (t s : ℕ) :
+    (tm.congrState e).ComputesInTimeAndSpace input output t s ↔
+      tm.ComputesInTimeAndSpace input output t s := by
+  simp only [ComputesInTimeAndSpace, initCfg_congrState, configs_congrState,
+    outputString_congrState, spaceUsed_congrState, Cfg.congrState_state,
+    Option.map_eq_none_iff]
+
 end CongrState
 
 /-! ## Relabeling the symbol type
@@ -338,6 +348,17 @@ lemma computesInTimeAndSpace_congrSymbol (e : Symbol ≃ Symbol')
     simpa using hhalt
   · rw [initCfg_congrSymbol, outputString_congrSymbol, hout]
   · rw [initCfg_congrSymbol, spaceUsed_congrSymbol, hspace]
+
+/-- Relabeling the tape alphabet neither creates nor destroys computations. -/
+lemma computesInTimeAndSpace_congrSymbol_iff (e : Symbol ≃ Symbol')
+    (tm : MultiInputTM i w Symbol State) (input : Fin i → List Symbol)
+    (output : List Symbol) (t s : ℕ) :
+    (tm.congrSymbol e).ComputesInTimeAndSpace (fun j => (input j).map e)
+        (output.map e) t s ↔
+      tm.ComputesInTimeAndSpace input output t s := by
+  simp only [ComputesInTimeAndSpace, initCfg_congrSymbol, configs_congrSymbol,
+    outputString_congrSymbol, spaceUsed_congrSymbol, Cfg.congrSymbol_state,
+    (List.map_injective_iff.mpr e.injective).eq_iff]
 
 end CongrSymbol
 
