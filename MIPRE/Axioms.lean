@@ -199,6 +199,7 @@ import MIPRE.Background.AnswerReduction.Complete
 import MIPRE.Background.AnswerReduction.SoundFinal
 import MIPRE.Background.AnswerReduction.Instance
 import MIPRE.MainTheorem
+import MIPRE.Foundations.Tsirelson.Conditional
 import MIPRE.Foundations.Expanded
 import MIPRE.Foundations.WeylEPR
 import MIPRE.Foundations.Swap
@@ -2597,3 +2598,23 @@ block decomposition then needs. -/
   MIPRE.Halting.quantumValue_uncomputable_of_answerReduction,
   MIPRE.Halting.re_subset_mipstar_of_answerReduction,
   MIPRE.Halting.mipstar_eq_re_of_answerReduction
+
+/-! `lem:correlation-sets-basic` and `lem:tsirelson-conditional`: the correlation sets and the
+separation from an upper semidecider (`MIPRE/Foundations/Correlations.lean`,
+`MIPRE/Foundations/Tsirelson/Conditional.lean`). -/
+#guard_sorry_free MIPRE.CommutingOperatorStrategy.correlation_nonneg,
+  MIPRE.CommutingOperatorStrategy.correlation_sum,
+  MIPRE.commutingOperatorValue_nonneg,
+  MIPRE.commutingOperatorValue_le_one,
+  MIPRE.TensorProductStrategy.correlation_toCommuting,
+  MIPRE.Cq_subset_Cqc,
+  MIPRE.quantumValue_le_commutingOperatorValue,
+  MIPRE.payoff_le_quantumValue_of_mem_Cqa,
+  MIPRE.payoff_le_commutingOperatorValue_of_mem_Cqc,
+  MIPRE.Cqa_subset_Cqc_of_isClosed,
+  MIPRE.HaltingReductionQuantum,
+  MIPRE.CommutingUpperRE,
+  MIPRE.exists_quantumValue_lt_commutingOperatorValue,
+  MIPRE.exists_mem_Cqc_not_mem_Cqa,
+  MIPRE.exists_Cqa_ne_Cqc,
+  MIPRE.tsirelson_of_upperRE_of_isClosed
