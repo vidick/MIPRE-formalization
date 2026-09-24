@@ -153,6 +153,9 @@ More precisely, the correlation of every tensor-product strategy of value $1 - \
 is approximated, on average over the game's questions, by a mixture of synchronous
 correlations. The mixture has average game value at least $1 - C(\eps/\kappa)^c$,
 so at least one component attains that bound; the bound is not asserted for every component.
+The Lean proof does not use this theorem: the pipeline is stated in $\valstar$ throughout
+(Remark~\ref{rem:bipartite-route}), and the one comparison it wants is
+Lemma~\ref{lem:sync-le-valstar}.
 \end{theorem}
 
 \paragraph{Source.} Vidick~\cite{Vid22}, building on~\cite{KPS18,PSSTW16}; the
@@ -360,6 +363,8 @@ $\ket{\EPR_2}^{\ot 2} \ot \ket{\aux}$ (and symmetrically for $\tilde B$). In
 particular the corresponding $\pm 1$-observables approximately anticommute:
 $\tilde A^{\Variable_1} \tilde A^{\Variable_5} \approx_{\sqrt\eps}
 - \tilde A^{\Variable_5} \tilde A^{\Variable_1}$.
+The Lean proof does not use this theorem: the Pauli basis test consumes only the direct
+anticommutation of Lemma~\ref{lem:ms-direct-anticomm}.
 \end{theorem}
 
 \paragraph{Source.} Wu, Bancal, McKague and Scarani~\cite{WBMS16}; the game is the
@@ -867,6 +872,8 @@ which lines they sample and how they label answers --- so a strategy for the for
 converted, and the converted strategy $\strategy'$ is well defined and projective: points by
 reversing the coordinate order, lines by choosing a seed in the fibre of size $q/m$ with
 answers relabelled through the parametrization of the line, pairs by restriction.
+The Lean proof does not use this lemma: it converts a seeded strategy to the canonical-line
+test instead (Lemmas~\ref{lem:lidt-cl-adapter-maps} and~\ref{lem:lidt-cl-adapter-weights}).
 \end{lemma}
 
 \effortHard
@@ -881,6 +888,8 @@ the tensor code test uses; and for two independent uniform points of a subcube f
 $j - 1$ coordinates, the pair (point, difference) is distributed as the diagonal-line test
 requires, the seed law $\Pr[\chi(s) = i] \propto q^{i-1}$ matching the conditional law of the
 seeded CL test.
+The Lean proof does not use this lemma: the transfer it needs is the mass bound of
+Lemma~\ref{lem:lidt-cl-adapter-weights}, against the canonical-line test.
 \end{lemma}
 
 \begin{proof}
@@ -899,6 +908,8 @@ Remark~\ref{rem:pcp-power-of-two} for the same reason.
 If the original seeded CL strategy fails with probability at most $\eps$, points
 synchronicity of $\strategy'$ fails with probability at most $9\eps$, and lines
 synchronicity with probability at most $81\eps + d/q$.
+The Lean proof does not use this lemma: the canonical-line test has no line--line subtest, so
+no line synchronicity is transferred.
 \end{lemma}
 
 \begin{proof}
@@ -923,6 +934,8 @@ hypothesis $k \geq 12mt$ for \emph{all} $m, d \geq 1$ while keeping $e^{-k/m^2} 
 $k = \poly(m, d)$. (The ledger writes this free parameter $r$ rather than $k$ at node
 $1.2.1.8$; it is the $k$ of Theorem~\ref{thm:tensor-codes}, and has nothing to do with the $k$
 of the field size $q = 2^k$.)
+The Lean proof does not use this lemma: seed averaging and the choice of $k$ are
+Theorem~\ref{thm:lidt-cl-soundness-one} and Lemma~\ref{lem:lidt-cl-adapter-params}.
 \end{lemma}
 
 \effortHard
@@ -943,6 +956,8 @@ $\{G_c\}_{c\in C^{\ot m}}$ in the same algebra with
   \geq 1-\eta,\qquad
   \eta=\poly(m,t,k)\cdot\poly\bigl(\eps',n^{-1},e^{-\Omega(k/m^2)}\bigr).
 \]
+The Lean proof does not use this theorem: it proves Theorem~\ref{thm:lidt-cl-soundness} from
+Theorem~\ref{thm:lidt-soundness} through the canonical-line adapter.
 \end{theorem}
 
 \begin{proof}
@@ -964,6 +979,8 @@ synchronous strategy passing the test yields a measurement over codewords of $C$
 claimed consistency. The step from $m$ to $m+1$ composes the two tools of
 Lemma~\ref{lem:tensor-codes-tools}, and the closing arithmetic propagates the error terms with
 universal constants.
+The Lean proof does not use this lemma, for the reason given at
+Theorem~\ref{thm:tensor-codes}.
 \end{lemma}
 
 \effortHard
@@ -978,6 +995,8 @@ approximately consistent, at controlled error. \emph{Pasting}: measurements for 
 coordinates and for coordinate $j+1$ that approximately commute on average --- which the
 subcube commutation test certifies --- can be pasted into a joint measurement over the
 restricted tensor code.
+The Lean proof does not use this lemma, for the reason given at
+Theorem~\ref{thm:tensor-codes}.
 \end{lemma}
 
 \effortHard
@@ -1018,6 +1037,8 @@ Schmidt form $\ket{\psi} = \sum_j \sqrt{r_j} \ket{j}\ket{j}$ with $r_j \geq 0$ a
 measurements the transposes of Alice's; swap symmetry alone is not a sufficient input. And the
 conclusion delivers a POVM: it asserts no projectivity, so a consumer needing projective
 operators must project separately, at its own cost.
+The Lean proof does not use this corollary, for the reason given at
+Theorem~\ref{thm:almost-sync}.
 \end{corollary}
 
 \begin{remark}[The printed transfer corollary is false without the marginal condition]
@@ -1064,6 +1085,8 @@ measurement; and $G^\alice,G^\bob$ are consistent as full codeword measurements.
 The last conclusion has no question average. The reverse point consistency follows
 from the first and third conclusions and the test's point self-consistency, with a
 change of universal constants.
+The Lean proof does not use this lemma: the two-prover conclusion it wants comes, for the
+canonical-line game, from Theorem~\ref{thm:lidt-soundness}.
 \end{lemma}
 
 \begin{proof}
@@ -1303,6 +1326,11 @@ Thus the full parsing bound is $O((m+r(md+1))\log q)$.
 The sampler and decider descriptions are constructed in time polynomial in
 the binary parameter lengths; runtime dependence on parameter values is a
 separate assertion. No question-length-only bound is asserted for the decider.
+The Lean proof does not use this lemma as a separate statement: the seeded test's sampler and
+decider are formalized only inside answer reduction --- the CL presentation in
+Definition~\ref{def:ar-pcp-sampler}, the line-versus-point check in
+Lemma~\ref{lem:ar-typed-decider}, and their running times in
+Lemmas~\ref{lem:ar-typed-sampler} and~\ref{lem:ar-typed-decider}.
 \end{lemma}
 
 \subsection{The quantum low individual degree test}

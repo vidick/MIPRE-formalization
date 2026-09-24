@@ -465,10 +465,16 @@ operators annihilate the EPR vector --- then the associated LCS game has a
 tensor-product strategy of value $1$.
 \end{theorem}
 \begin{proof}
-Take both players' spaces to be $\C^n$ with the normalized EPR state; Alice measures
-with the joint projective measurements of her equations and Bob with the binary
-measurements of his observables. The Born-rule value then equals the EPR expectation
-of the winning operator, which is $1$ by hypothesis.
+\leanok
+Take both players' spaces to be $\C^n$ with the normalized EPR state. The game is
+symmetric, so each player needs measurements at both kinds of question, and both use the
+same ones: at an equation, the joint projective measurement of its observables, answered
+as an assignment extended by zero; at a variable, the binary measurement of its
+observable. At an equation--variable incidence the accepted Born-rule weight is the EPR
+expectation of the local winning operator, which is $1$ because the local loss operator
+annihilates the EPR vector. The other orientation has the same weight, since
+$\langle \Omega, (A \otimes B) \Omega\rangle = \sum_{a,k} A_{ak} B_{ak}$ is symmetric in
+$A$ and $B$ and the decider is symmetric in the players. No transposes are needed.
 \end{proof}
 
 \subsection{Distance measures}
