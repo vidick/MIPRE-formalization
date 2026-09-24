@@ -77,9 +77,12 @@ Each is one pull request, sorry-free, in dependency order. Line counts are estim
 Total about 8.5k–10.5k lines. M1–M4 are independent of each other; M5 needs M3 and M4; M7
 needs M6; M9 needs everything but M10.
 
-**M1 is under way.** `Code/Compile.lean` has `MultiInputTM.compile` for machines over
-`Fin σ` and `Fin Q` and `toTM_compile`. What remains is the relabelled form for machines over
-structured types and the `ComputesInTimeAndSpace` transfer in both directions.
+**M1 and M2 are done.** `Code/Compile.lean` compiles a machine over `Fin σ` and `Fin Q`
+(`MultiInputTM.compile`, `toTM_compile`) and, along a `FinCoding`, a machine over structured
+types (`MultiInputTM.toCode`, `toCode_computes_iff`). `MultiInput/Truncate.lean` and
+`Code/Truncate.lean` prove that a run of `L` steps does not see past length `L` on its input
+tapes (`configs_agree_of_take_eq`, `Code.evalWithin_take`). The generic reachability layer
+listed under M2 is deferred to M6, where the interpreter's core is the first consumer.
 
 ## Risks worth knowing in advance
 
