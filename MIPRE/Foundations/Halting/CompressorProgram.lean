@@ -282,7 +282,8 @@ include G U in
 `GapCompression`, a computable map from machines to game descriptions whose *synchronous* game
 value is `1` when the machine halts on the empty input and at most `1/2` when it does not.
 This is `HaltingGameValue.halting_reduces_to_gameValue` with the compression theorem as a
-hypothesis; the unconditional statement keeps its `sorry` as the target of chapter 6. -/
+hypothesis; `MIPRE/MainTheorem.lean` supplies the compression and proves the unconditional
+statement. -/
 theorem halting_reduces_to_gameValue_of :
     ∃ g : Nat.Partrec.Code → HaltingGameValue.GameData, Computable g ∧
       ∀ pc : Nat.Partrec.Code,

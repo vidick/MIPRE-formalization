@@ -4962,11 +4962,23 @@ separately.
 \label{lem:pcp-format}
 \ledgernode{1.3.3.1}
 \uses{thm:pcp-decider,lem:decoupled-5sat}
+\lean{MIPRE.SAT.PcpProof, MIPRE.SAT.PcpProof.ev, MIPRE.SAT.PcpProof.rawView,
+  MIPRE.SAT.ViewFormat, MIPRE.SAT.viewFormat_rawView}
+\leanok
 The proof $\Pi$ that $\pcpverifier$ reads is well defined: it consists of the low-degree
 encodings $g_1, g_2$ of the two padded answer prefixes, together with the auxiliary
 polynomials the zero-test needs, in the stated input formats; and $\pcpverifier$'s queries and
 decision rule are determined by them.
 \end{lemma}
+
+\begin{proof}
+\leanok
+A proof is five $m$-variate and $m'+1$ $m'$-variate polynomials of individual degree at most
+$d$ (\texttt{PcpProof}); the verifier reads, at a point $z$, the five answer polynomials on
+their blocks and the constraint polynomials (\texttt{PcpProof.ev}), as $k$-bit blocks
+(\texttt{PcpProof.rawView}), and an honest view is well formatted
+(\texttt{viewFormat\_rawView}).
+\end{proof}
 
 \effortMedium
 
@@ -5016,11 +5028,23 @@ formalization should carry them rather than an asymptotic form.
 \label{lem:pcp-complexity}
 \ledgernode{1.3.3.4}
 \uses{lem:pcp-format}
+\lean{MIPRE.TM.CookLevin.Pad.verifyPcp_time_le, MIPRE.TM.CookLevin.Pad.pcpInput_size_polynomial,
+  MIPRE.TM.CookLevin.Pad.outerDim_polynomial, MIPRE.AnswerReduction.exists_paramsBound_classical}
+\leanok
 $\pcpverifier$ runs in time $\poly(\log T, \log n, Q, \sigma)$, with circuit-size and
 randomness bounds of the same form. These are the bounds the composition of
 Remark~\ref{rem:ar-composition} consumes; in particular the randomness bound is what makes the
 answer-reduced sampler conditionally linear.
 \end{lemma}
+
+\begin{proof}
+\leanok
+The verifier is a polynomial-time program, and its encoded input on a formatted view is
+polynomial in $\log n+\log T+Q+\sigma$ (\texttt{pcpInput\_size\_polynomial}), whence its running
+time (\texttt{verifyPcp\_time\_le}). The circuit has $m'$ coordinates, polynomial in the same
+quantity (\texttt{outerDim\_polynomial}), and the randomness, a point of $\mathbb F_q^{m'}$, is
+$km'$ bits, polynomial by the parameter bound (\texttt{exists\_paramsBound\_classical}).
+\end{proof}
 
 \begin{remark}[Why $m$ is a power of two]
 \label{rem:pcp-power-of-two}
@@ -5498,11 +5522,16 @@ cut, on the same state.
 \label{def:ar-seed-index}
 \ledgernode{1.3.4.3.1}
 \uses{lem:ar-soundness-setup}
+\lean{MIPRE.SeededGame.typedSeedEquiv, MIPRE.AnswerReduction.one_sub_povmValue_typed}
+\leanok
 The common index $\xi$ is the full uniform oracle seed. Both questions
 $(x_A,x_B)$ and every auxiliary oracle coordinate are functions of $\xi$.
 Indexed measurements and all subsequent averages retain $\xi$.
 The image pair $(x_A,x_B)$ is not substituted as an index without proving
 injectivity or specifying its conditional seed distribution.
+In the Lean the typed seed is an ordered pair of roles with one common uniform seed
+(\texttt{SeededGame.typedSeedEquiv}), and every average in the soundness proof is a sum over
+that seed (\texttt{one\_sub\_povmValue\_typed}).
 \end{definition}
 
 \begin{lemma}[Global PCP consistency tests]
@@ -5519,6 +5548,18 @@ proof-line formats, and all identical-question equality subtests. No
 low-degree theorem is applied to line--point success alone.
 \end{lemma}
 
+\begin{proof}
+\uses{def:ar-seed-index,def:cross-distance}
+\leanok
+The typed game samples a uniform ordered pair of the $54$ types and a uniform seed, so the
+failure conditioned on one type pair is at most $54^2\theta=2916\theta$
+(\texttt{sum\_edges\_le}). Restricted to one copy's type pairs at a fixed oracle half, the
+strategy is a strategy for that copy's seeded low-degree game, whose failure is at most the
+conditioned typed failure, averaged over the seed (\texttt{sum\_copyFail\_le},
+\texttt{sum\_copyFail6\_le}); an equality subtest between two players' answers gives their
+disagreement (\texttt{sum\_dis\_edge\_le}).
+\end{proof}
+
 \begin{lemma}[Input-codeword consistency tests]
 \label{lem:ar-input-tests}
 \ledgernode{1.3.4.5}
@@ -5531,6 +5572,15 @@ distributions are conditioned before averaging over $\xi$, and include
 answer formats and equality tests. These supply both input evaluation
 relations consumed by the individual-polynomial extraction.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:ar-global-tests}
+\leanok
+The two input-codeword tests are type pairs of the typed game: an isolated player's point of
+copy $i$ against the oracle's $\mathrm{Point}_6$, in both orders of the players. Each fails at
+most the conditioned typed failure, which bounds the disagreement of the two evaluations
+averaged over the seed.
+\end{proof}
 
 \begin{lemma}[Common individual polynomial measurements]
 \label{lem:ar-common-polynomials}
@@ -5553,6 +5603,16 @@ rather than a single common family; the errors are averaged over the seed by con
 $\eps\mapsto\eps^{b'}$.
 \end{lemma}
 
+\begin{proof}
+\uses{lem:ar-input-tests,thm:lidt-cl-soundness-one}
+\leanok
+For each seed and copy, the seeded low-degree test's soundness extracts the measurements
+(\texttt{exists\_ext1}, \texttt{ext1\_spec}), with error $\delta_{\mathrm{sim}}$ at the copy's
+failure; $\eps\mapsto\eps^{b'}$ is concave, so the errors average over the seed to
+$\delta_{\mathrm{sim}}$ at the average failure (\texttt{sum\_deltaSim\_le},
+\texttt{sum\_deltaSim1\_le}).
+\end{proof}
+
 \begin{lemma}[A simultaneous complete proof tuple]
 \label{lem:ar-simultaneous-proof}
 \ledgernode{1.3.4.7}
@@ -5574,6 +5634,17 @@ $O(\kappa)$. Include player mirrors of the first, second and fourth.
 Individual evaluations without a projective complete-tuple output do not
 suffice for the next lemma.
 \end{lemma}
+
+\begin{proof}
+\uses{lem:ar-common-polynomials,thm:lidt-cl-soundness}
+\leanok
+The simultaneous test at $(q,m',d,m'+6)$ extracts $J$ per seed (\texttt{exists\_ext6},
+\texttt{ext6\_spec}), averaged as for the single copies (\texttt{sum\_deltaSim6\_le}). The
+relations chain by the triangle inequality for disagreement: one player's evaluated $J$ against
+the other's point of the sixth copy, that point against the other's point of copy $i$, and that
+against the other's evaluated $G_i$ (\texttt{sum\_dis\_JAe\_GBe\_le},
+\texttt{sum\_dis\_GAe\_JBe\_le}).
+\end{proof}
 
 \begin{lemma}[The answer-reduction giant sandwich]
 \label{lem:ar-giant-sandwich}
