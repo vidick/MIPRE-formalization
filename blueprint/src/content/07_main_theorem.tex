@@ -12,9 +12,8 @@ definition for definition, the Lean file
 \begin{theorem}[Halting reduces to the game value; Theorem 12.2 of~\cite{JNVWY20},
 synchronous form]
 \label{thm:main}
-\uses{thm:compression-target,thm:halting,def:game-description,def:sync-value,def:re}
-\lean{HaltingGameValue.halting_reduces_to_gameValue, HaltingGameValue.HaltingReducesToGameValue,
-  MIPRE.Halting.halting_reduces_to_gameValue_of}
+\uses{thm:halting,def:game-description,def:sync-value,def:re}
+\lean{HaltingGameValue.halting_reduces_to_gameValue, HaltingGameValue.HaltingReducesToGameValue}
 \leanok
 There is a computable map $g$ from Turing machines to game descriptions such that for
 every Turing machine $\machine$:
@@ -27,7 +26,7 @@ every Turing machine $\machine$:
 \end{theorem}
 
 \begin{proof}
-\uses{thm:compression-target,thm:halting}
+\uses{thm:halting,cor:compression-from-answer-reduction,thm:answer-reduction}
 \leanok
 \texttt{MIPRE.Halting.halting\_reduces\_to\_gameValue\_of} takes a
 \texttt{MIPRE.GapCompression} and a universal machine and concludes exactly this statement;
@@ -106,9 +105,8 @@ $\synval \leq \valstar$ (Lemma~\ref{lem:sync-le-valstar}) in that vocabulary.
 
 \begin{corollary}[Halting reduces to the quantum value]
 \label{cor:main-quantum}
-\uses{thm:halting,thm:main,lem:sync-le-valstar,def:q-value,def:game-description}
-\lean{MIPRE.Halting.halting_reduction_quantum, MIPRE.Halting.halting_reduction_quantum_of,
-  MIPRE.Halting.halting_reduction_both_of}
+\uses{thm:halting,lem:sync-le-valstar,def:q-value,def:game-description}
+\lean{MIPRE.Halting.halting_reduction_quantum}
 \leanok
 With $g$ as in Theorem~\ref{thm:main}: if $\machine$ halts on the empty input then
 $\valstar(\game_{g(\machine)}) = 1$, and if $\machine$ does not halt on the empty input
@@ -116,6 +114,7 @@ then $\valstar(\game_{g(\machine)}) \leq \tfrac12$.
 \end{corollary}
 
 \begin{proof}
+\uses{cor:compression-from-answer-reduction,thm:answer-reduction}
 \leanok
 At the compression of Theorem~\ref{thm:compression-target}, as Theorem~\ref{thm:main} is:
 \texttt{MIPRE.Halting.halting\_reduction\_both\_of} produces one computable map with both
@@ -137,9 +136,8 @@ free comparison $\synval \leq \valstar$.
 \begin{corollary}[Uncomputability of the game value]
 \label{cor:value-uncomputable}
 \ledgernode{1.7}
-\uses{thm:main,cor:main-quantum,thm:halting-undecidable}
-\lean{MIPRE.Halting.gameValue_uncomputable, MIPRE.Halting.quantumValue_uncomputable,
-  MIPRE.Halting.gameValue_uncomputable_of, MIPRE.Halting.quantumValue_uncomputable_of}
+\uses{thm:halting-undecidable}
+\lean{MIPRE.Halting.gameValue_uncomputable, MIPRE.Halting.quantumValue_uncomputable}
 \leanok
 There is no algorithm that, given a game description $g$ with the promise that
 $\synval(\game_g) = 1$ or $\synval(\game_g) \leq \frac12$, decides which is the
@@ -148,6 +146,7 @@ case; the same holds with $\valstar$ in place of $\synval$
 \end{corollary}
 
 \begin{proof}
+\uses{cor:compression-from-answer-reduction,thm:answer-reduction}
 \leanok
 A computable $f$ answering \emph{true} on every description of value $1$ and \emph{false} on
 every description of value at most $\frac12$, composed with the map of
@@ -183,15 +182,15 @@ model.
 \begin{theorem}[$\MIPstar = \RE$]
 \label{thm:mipstar-eq-re}
 \ledgernode{1}
-\uses{def:mipstar,def:re,thm:halting,cor:main-quantum,thm:halting-undecidable,lem:value-lower-approx,lem:mipstar-sub-re}
-\lean{MIPRE.Halting.mipstar_eq_re, MIPRE.Halting.re_subset_mipstar,
-  MIPRE.Halting.mipstar_eq_re_of, MIPRE.Halting.re_subset_mipstar_of,
-  MIPRE.Halting.exists_code_halts_of_isRE}
+\uses{def:mipstar,def:re,thm:halting,thm:halting-undecidable,lem:value-lower-approx,
+  lem:mipstar-sub-re}
+\lean{MIPRE.Halting.mipstar_eq_re, MIPRE.Halting.re_subset_mipstar}
 \leanok
 $\MIPstar = \RE$.
 \end{theorem}
 
 \begin{proof}
+\uses{cor:compression-from-answer-reduction,thm:answer-reduction}
 \leanok
 For $\RE \subseteq \MIPstar$: the halting problem is $\RE$-complete
 (Theorem~\ref{thm:halting-undecidable}) and Theorem~\ref{thm:halting} provides a

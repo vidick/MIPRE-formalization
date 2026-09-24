@@ -350,13 +350,12 @@ tell you the guard is missing.
 #guard_sorry_free MIPRE.Pipeline.exists_eps2_lower,
   MIPRE.Pipeline.exists_tau
 
--- blueprint `cor:main-quantum`
-#guard_sorry_free MIPRE.Halting.halting_reduction_both_of,
-  MIPRE.Halting.halting_reduction_quantum_of
-
--- blueprint `cor:value-uncomputable`
-#guard_sorry_free MIPRE.Halting.gameValue_uncomputable_of,
-  MIPRE.Halting.quantumValue_uncomputable_of
+-- blueprint `cor:halting-consequences`: the chapter-7 consequences, from compression
+#guard_sorry_free MIPRE.Halting.halting_reduction_quantum_of,
+  MIPRE.Halting.gameValue_uncomputable_of,
+  MIPRE.Halting.quantumValue_uncomputable_of,
+  MIPRE.Halting.mipstar_eq_re_of,
+  MIPRE.Halting.re_subset_mipstar_of
 
 -- blueprint `thm:halting-undecidable`
 #guard_sorry_free MIPRE.Halting.exists_code_halts_of_isRE,
@@ -364,9 +363,7 @@ tell you the guard is missing.
   MIPRE.halting_undecidable
 
 -- blueprint `thm:mipstar-eq-re`
-#guard_sorry_free MIPRE.Halting.mipstar_eq_re_of,
-  MIPRE.Halting.re_subset_mipstar_of,
-  MIPRE.Halting.exists_code_halts_of_isRE
+#guard_sorry_free MIPRE.Halting.exists_code_halts_of_isRE
 
 -- blueprint `lem:halt-construction`
 #guard_sorry_free MIPRE.Cost.Prog.freezeBuildProg,
@@ -413,6 +410,7 @@ tell you the guard is missing.
 
 -- blueprint `thm:halting`
 #guard_sorry_free MIPRE.Halting.exists_obligations,
+  MIPRE.Halting.halting_reduction_both_of,
   MIPRE.Halting.halting_reduces_to_gameValue_of,
   MIPRE.Halting.halting_reduction,
   MIPRE.Halting.halting_reduction_of

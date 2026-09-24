@@ -187,7 +187,7 @@ exactness as the separate predicate that samplers are required to satisfy.
 
 \begin{lemma}[Closure of CL functions]
 \label{lem:cl-closure}
-\uses{def:cl-function,lem:cl-structure}
+\uses{def:cl-function}
 \lean{MIPRE.CL.CLFun.concat, MIPRE.CL.CLFun.directSum, MIPRE.CL.IsCLFun.succ,
   MIPRE.CL.IsCLFun.concat, MIPRE.CL.IsCLFun.directSum, MIPRE.CL.IsCLFun.directSum'}
 \leanok
@@ -215,7 +215,7 @@ lemmas identifying the function presented.
 
 \begin{lemma}[Direct sums of families, and their distributions]
 \label{lem:cl-famsum}
-\uses{lem:cl-closure,lem:cl-structure}
+\uses{lem:cl-structure}
 \lean{MIPRE.CL.CLFun.famSum, MIPRE.CL.IsCLFun.famSum, MIPRE.CL.CLFun.exactlyOn_famSum,
   MIPRE.CL.CLFun.eval_famSum, MIPRE.CL.CLFun.eval_truncate_famSum,
   MIPRE.CL.CLFun.factorOfPrefix_famSum, MIPRE.CL.CLFun.mapOfPrefix_famSum,
@@ -337,10 +337,8 @@ and timeout hypotheses of the current source~\cite{AuditSync26}.
 \begin{definition}[Typed sampler and its distribution]
 \label{def:typed-sampler-interface}
 \ledgernode{1.1.4.1}
-\uses{def:normal-verifier}
-\lean{MIPRE.CL.TypedSampler,
-  MIPRE.CL.TypedSampler.TimeBoundAt,
-  MIPRE.CL.Detyping.typedGame}
+\uses{def:sampler}
+\lean{MIPRE.CL.TypedSampler, MIPRE.CL.TypedSampler.TimeBoundAt}
 \leanok
 Let $G=(T,E)$ be a finite undirected type graph with $m_G\geq1$ edges and
 $k_G$ loops. Sample an ordered adjacent type pair uniformly from its
@@ -363,7 +361,6 @@ prefixes, as here.
 \begin{definition}[Typed decider and normal verifier]
 \label{def:typed-normal-interface}
 \ledgernode{1.1.4.2}
-\uses{def:typed-sampler-interface,def:normal-verifier}
 \lean{MIPRE.CL.Detyping.TypedDecider,
   MIPRE.CL.Detyping.TypedDecider.Accepts,
   MIPRE.CL.Detyping.TypedDecider.Total,
@@ -405,7 +402,7 @@ Definition~\ref{def:ar-pcp-sampler}.
 \begin{lemma}[Graph rejection sampling]
 \label{lem:detype-graph}
 \ledgernode{1.1.4.4}
-\uses{def:typed-sampler-interface}
+\uses{lem:cl-structure}
 \lean{MIPRE.CL.Graph.presentation,
   MIPRE.CL.Graph.presentation_exactlyOn,
   MIPRE.CL.Graph.presentation_eval,
@@ -446,7 +443,7 @@ Lemma~\ref{lem:detype-sampler}.
 \begin{lemma}[Detyped conditionally linear functions]
 \label{lem:detype-cl}
 \ledgernode{1.1.4.5}
-\uses{lem:detype-graph,def:typed-normal-interface}
+\uses{lem:detype-graph,lem:cl-closure}
 \lean{MIPRE.CL.Detyping.presentation,
   MIPRE.CL.Detyping.presentation_exactlyOn,
   MIPRE.CL.Detyping.presentation_eval,
@@ -520,7 +517,8 @@ semantic correctness targets for the ambient sampler implementation.
 
 \begin{lemma}[Executable fixed CL samplers]
 \label{lem:fixed-cl-sampler}
-\uses{def:sampler,lem:detype-graph}
+\uses{def:sampler,lem:detype-graph,lem:detype-queries,def:typed-sampler-interface,
+  lem:pcp-padding-programs}
 \lean{MIPRE.CL.FixedSampler.sampler,
   MIPRE.CL.FixedSampler.sampler_timeBound,
   MIPRE.CL.Graph.sampler,
@@ -548,7 +546,7 @@ every adapted raw query. The program evaluations and cost bounds are checked.
 
 \begin{lemma}[Finite-game detyping PCC completeness]
 \label{lem:detype-game-completeness}
-\uses{lem:detype-game-soundness,def:pcc}
+\uses{lem:detype-game-soundness,def:pcc,def:sync-value}
 \lean{MIPRE.CL.Detyping.decodeView_view,
   MIPRE.CL.Detyping.decodeQuestion_output,
   MIPRE.CL.Detyping.complete,
@@ -576,7 +574,7 @@ failure from the original perfect PCC witness.
 
 \begin{lemma}[Executable detyping sampler]
 \label{lem:detype-functional-sampler}
-\uses{lem:fixed-cl-sampler,lem:detype-cl}
+\uses{lem:detype-cl,lem:detype-queries,def:typed-sampler-interface,lem:pcp-padding-programs}
 \lean{MIPRE.CL.Detyping.sampler,
   MIPRE.CL.Detyping.sampler_dim,
   MIPRE.CL.Detyping.samplerProg_closed,
@@ -648,7 +646,7 @@ for a fixed type graph.
 
 \begin{lemma}[Executable detyping decider with two answer cuts]
 \label{lem:detype-executable-decider}
-\uses{lem:detype-functional-sampler,def:normal-verifier}
+\uses{lem:detype-functional-sampler,def:normal-verifier,def:typed-normal-interface}
 \lean{MIPRE.CL.Detyping.DeciderProgram.prog_closed,
   MIPRE.CL.Detyping.DeciderProgram.prog_halts,
   MIPRE.CL.Detyping.DeciderProgram.decider,
@@ -687,14 +685,12 @@ requirements when constructing a bounded compiler and transferring completeness.
 \uses{lem:detype-executable-decider,lem:detype-game-completeness,lem:detype-game-soundness}
 \lean{MIPRE.CL.Detyping.DeciderProgram.numbered_clDist,
   MIPRE.CL.Detyping.DeciderProgram.verifier_game_mu,
-  MIPRE.CL.Detyping.DeciderProgram.toFinite_state,
-  MIPRE.CL.Detyping.DeciderProgram.toFinite_value,
+  MIPRE.CL.Detyping.DeciderProgram.toFinite_state, MIPRE.CL.Detyping.DeciderProgram.toFinite_value,
   MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_state,
   MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_failure_le,
   MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_value_ge,
   MIPRE.CL.Detyping.DeciderProgram.fromFiniteSync_isPCC,
-  MIPRE.CL.Detyping.DeciderProgram.exists_ambientPerfectPCC,
-  MIPRE.CL.Detyping.DeciderProgram.verifier_hasPerfectPCC}
+  MIPRE.CL.Detyping.DeciderProgram.exists_ambientPerfectPCC}
 \leanok
 The actual program-defined detyped verifier has exactly the finite detyping
 distribution and predicate under the explicit coordinate-numbering equivalence.
@@ -716,7 +712,7 @@ commutation clauses, to the actual verifier.
 
 \begin{lemma}[Total clocking of arbitrary typed decision programs]
 \label{lem:detype-total-clock}
-\uses{lem:universal-tm,lem:detype-executable-decider}
+\uses{def:typed-normal-interface,lem:pcp-padding-programs}
 \lean{MIPRE.CL.Detyping.ClockProgram.constant,
   MIPRE.CL.Detyping.ClockProgram.ofPolyTimeFun,
   MIPRE.CL.Detyping.ClockProgram.clockedResult_eq_iff,
@@ -774,12 +770,8 @@ Lemma~\ref{lem:detype-total-clock}.
 \begin{lemma}[Detyping PCC completeness]
 \label{lem:detype-completeness}
 \ledgernode{1.1.4.8}
-\uses{lem:detype-sampler,lem:detype-decider,def:pcc}
-\lean{MIPRE.CL.Detyping.complete_state,
-  MIPRE.CL.Detyping.complete_player_independent,
-  MIPRE.CL.Detyping.complete_isPCC,
-  MIPRE.CL.Detyping.DeciderProgram.exists_ambientPerfectPCC,
-  MIPRE.CL.Detyping.DeciderProgram.verifier_hasPerfectPCC}
+\uses{def:pcc}
+\lean{MIPRE.CL.Detyping.DeciderProgram.verifier_hasPerfectPCC}
 \leanok
 A perfect PCC typed witness lifts on the same state to a perfect PCC detyped
 witness. Both players use the same combined rule: on an Alice-view pattern
@@ -791,6 +783,7 @@ required commutation follow, as does the identical-operator property.
 This does not assert symmetry of the detyped question distribution.
 \end{lemma}
 \begin{proof}
+\uses{lem:detype-program-strategies}
 \leanok
 This is Lemma~\ref{lem:detype-game-completeness} for the finite games, transported to the
 executable detyped verifier by Lemma~\ref{lem:detype-program-strategies}. The identity
@@ -799,7 +792,7 @@ measurement on invalid views is a fixed deterministic answer.
 
 \begin{lemma}[Finite-game detyping soundness]
 \label{lem:detype-game-soundness}
-\uses{lem:detype-cl,def:tensor-strategy}
+\uses{lem:detype-cl,def:tensor-strategy,def:q-value}
 \lean{MIPRE.SampledGame.game,
   MIPRE.SampledGame.sum_dist_mul,
   MIPRE.SampledGame.one_sub_value,
@@ -844,11 +837,7 @@ wrapper's answer cutoff, truncation, or runtime.
 \begin{lemma}[Same-state detyping soundness]
 \label{lem:detype-soundness}
 \ledgernode{1.1.4.9}
-\uses{lem:detype-decider,lem:detype-graph,lem:detype-game-soundness}
-\lean{MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_state,
-  MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_failure_le,
-  MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_value_ge,
-  MIPRE.CL.Detyping.restrictAnswers_value_ge}
+\uses{lem:detype-graph,lem:detype-game-soundness}
 \leanok
 Restrict any detyped strategy of success at least $1-\eps$ to the fixed
 graph views for typed questions and coarse-grain answers to length
@@ -990,7 +979,6 @@ answer-prefix invariance or malformed-input wrapper is asserted here.
 
 \begin{lemma}[Ambient sampler-cost absorption]
 \label{lem:ar-ambient-sampler-cost}
-\uses{def:answer-reduction-contract}
 \lean{MIPRE.AnswerReduction.sampler_cost_le_power}
 \leanok
 If $L\leq B$ and $s+1\leq B$, then $L(s+1)^\mu\leq B^{\mu+1}$.
@@ -1010,13 +998,13 @@ $\mu$ before choosing its final bound, so that bound is still polynomial.
 \begin{definition}[The introspective verifier]
 \label{def:intro-verifier}
 \ledgernode{1.2.3}
-\uses{def:normal-verifier,def:cl-function,rem:typed-detyping,lem:typed-downsize,thm:qld}
-\lean{MIPRE.Introspection.QuestionType,
-  MIPRE.Introspection.TypeGraph.adj,
-  MIPRE.Introspection.typedSampler,
-  MIPRE.Introspection.TypedEstimates.parsedGame,
-  MIPRE.Introspection.DecisionCompiler.typedDecider,
-  MIPRE.Introspection.DecisionCompiler.output}
+\uses{def:normal-verifier,def:cl-function,rem:typed-detyping,lem:binary-degree-decomposition,
+  lem:binary-uniform-irreducible,lem:effective-binary-field-arithmetic,
+  lem:effective-binary-linear-algebra,lem:effective-field-inverse-trace,
+  lem:effective-field-matrices,lem:self-dual-basis,lem:intro-dynamic-source-compiler,def:qld-game,
+  lem:detype-queries}
+\lean{MIPRE.Introspection.QuestionType, MIPRE.Introspection.TypeGraph.adj,
+  MIPRE.Introspection.DecisionCompiler.typedDecider, MIPRE.Introspection.DecisionCompiler.output}
 \leanok
 Fix $\ell$ and an $\ell$-level verifier $\verifier$ satisfying the paper's absolute
 $\lambda$-bound, as distinguished in Remark~\ref{rem:runtime-normalization}. The
@@ -1119,6 +1107,7 @@ in either orientation. This is the parsed semantic predicate; byte parsing,
 global cutoffs and clocked program calls remain separate construction work.
 \end{lemma}
 \begin{proof}
+\uses{lem:intro-subtest-estimates}
 \leanok
 Use a sum of the four answer formats. Dispatch by question constructors and
 check both orientations. Compute claimed-output prefixes by coordinate
@@ -1204,7 +1193,7 @@ algebra, and both are plausible early Lean targets.
 \begin{lemma}[Pauli operators against a linear-map measurement]
 \label{lem:pauli-linear-fourier}
 \ledgernode{1.2.3.2}
-\uses{def:cl-function}
+\uses{def:cl-canonical,def:weyl-epr}
 \lean{MIPRE.Introspection.subspaceTrace_eq_zero_iff,
   MIPRE.Introspection.sum_subspace_sign,
   MIPRE.Introspection.linear_measurement_fourier,
@@ -1227,6 +1216,7 @@ The choice of $u_a$ off the range of $L$ is immaterial, since there the projecto
 \end{lemma}
 
 \begin{proof}
+\uses{lem:cl-canonical}
 \leanok
 Each identity is the Fourier expansion of the other over the group $\ker(L)^\perp$: the
 character $v \mapsto \omega^{\fieldtr(u_a \cdot v)}$ depends only on $a = L(u_a)$, because two
@@ -1273,6 +1263,7 @@ $\ker(R)^\perp\subseteq\ker(L)$, the joint readout with projectors
 $\sigma^Z_{[L(\cdot)=a]}\sigma^X_{[R(\cdot)=b]}$ is also projective.
 \end{lemma}
 \begin{proof}
+\uses{def:expanded-state}
 \leanok
 The Weyl spectral projectors are self-adjoint idempotents summing to identity,
 and coarse-graining preserves these properties. By
@@ -1285,9 +1276,7 @@ readouts gives the identity.
 \label{lem:intro-completeness}
 \ledgernode{1.2.3.2}
 \uses{def:intro-verifier,def:pcc,lem:pauli-linear-fourier,lem:pauli-commute-criterion,lem:intro-honest-core,lem:intro-honest-adaptive,lem:intro-honest-hiding,lem:intro-honest-parsed}
-\lean{MIPRE.Introspection.Complete.exists_perfectPCC,
-  MIPRE.Introspection.BinaryComplete.exists_perfectPCC,
-  MIPRE.Introspection.CanonicalComplete.output_hasPerfectPCC}
+\lean{MIPRE.Introspection.CanonicalComplete.output_hasPerfectPCC}
 \leanok
 If $\verifier_{2^n}$ has a value-$1$ PCC strategy, then $\vint_n$ has one: the players
 measure their EPR halves in the bases the sampled question prescribes and then play the
@@ -1301,7 +1290,8 @@ rather than the Fourier and commutation argument below.
 
 \begin{proof}
 \leanok
-\uses{lem:pauli-linear-fourier,lem:pauli-commute-criterion}
+\uses{lem:pauli-linear-fourier,lem:pauli-commute-criterion,lem:intro-numbered-transport,
+  lem:intro-ambient-kernel}
 Lemma~\ref{lem:pauli-linear-fourier} identifies the honest sampling measurement with a Pauli
 measurement, which is what the Pauli test checks; Lemma~\ref{lem:pauli-commute-criterion}
 gives the commutation the hiding test needs, the hypothesis
@@ -1342,7 +1332,7 @@ on $K^\perp$, by Lemma~\ref{lem:pauli-linear-fourier}; all other character sums 
 \begin{lemma}[Linear-map blocks of the twirl]
 \label{lem:pauli-linear-mixing}
 \ledgernode{1.2.3.3.2}
-\uses{lem:pauli-twirl}
+\uses{def:weyl-epr}
 \lean{MIPRE.Introspection.linear_twirl_blocks,
   MIPRE.Introspection.averagedBlock_posSemidef,
   MIPRE.Introspection.sum_averagedBlock_eq_one,
@@ -1415,6 +1405,7 @@ Jensen and left-unitary invariance of the norm suffice; invariance of the
 state under $U$ is not a hypothesis.
 \end{lemma}
 \begin{proof}
+\uses{lem:qld-averaging}
 \leanok
 Write each conjugation error as $U[M,U^\dagger]$. Left multiplication by
 $U$ preserves the squared state norm, and convexity bounds the squared
@@ -1442,6 +1433,7 @@ Transfer $U_2$ across the bipartition and back; $\sum_a(M_a^x)^2\leq\Id$
 controls the summed transfer errors without an outcome-count factor.
 \end{lemma}
 \begin{proof}
+\uses{lem:commutation-analysis,lem:pauli-unitary-mixing}
 \leanok
 Transfer the second unitary to its commuting mirror on Bob's side, move
 the first unitary past the measurement, and transfer back. The four-link
@@ -1476,6 +1468,7 @@ asserted for this literal squared-distance convention.
 \end{lemma}
 
 \begin{proof}
+\uses{lem:qld-combined-points,lem:commutation-analysis}
 \leanok
 Using real parts and Cauchy--Schwarz in the outcome-summed state norm,
 $\mathbb E_x\langle\Id-\sum_aB_a^x\rangle\leq2\sqrt\delta$;
@@ -1521,6 +1514,7 @@ If the three averaged errors are at most $0\leq\eps\leq1$, the bound is
 $56\sqrt\eps$. Register dimensions and auxiliary spaces may vary with $x$.
 \end{lemma}
 \begin{proof}
+\uses{lem:cool-closeness-fact,lem:pasting-updated,lem:intro-linear-readout-projectivity}
 \leanok
 Twirl into ancillary POVM blocks, keep the matching fibre using the exact
 EPR mirror, and complete its submeasurement by summing over the discarded
@@ -1566,6 +1560,7 @@ consistency, not identically zero.
 \end{lemma}
 
 \begin{proof}
+\uses{lem:conditional-measurement}
 \leanok
 Split the actual finite coordinate registers by explicit basis equivalences.
 The ambient EPR state factors exactly, and adjoining or removing the untouched
@@ -1590,7 +1585,6 @@ is presumed.
 \begin{lemma}[Conditioning on part of a question]
 \label{lem:conditional-measurement}
 \ledgernode{1.2.3.4}
-\uses{def:distance,def:inconsistency}
 \lean{MIPRE.Introspection.stateSqNorm_expVec_kron,
   MIPRE.Introspection.conditional_sqNorm,
   MIPRE.Introspection.conditional_commutator,
@@ -1608,6 +1602,7 @@ $\{B_{x,y,z}\}$ projective, then
 $\Id \ot B_{x, y, z} \approx_\delta A^y_{x, z} \ot B_{x, y}$.
 \end{lemma}
 \begin{proof}
+\uses{lem:cool-closeness-fact,lem:pasting-updated}
 \leanok
 On a product state, the squared norm of a tensor-product operator factors.
 The question factor is exactly the probability weight. This gives exact
@@ -1651,7 +1646,7 @@ with its exact state and exact Pauli operators, is not formalized as such.
 
 \begin{lemma}[Sampling and hiding subtest estimates]
 \label{lem:intro-subtest-estimates}
-\uses{def:inconsistency,def:state-distance,def:cl-function}
+\uses{def:state-distance,def:cl-function,lem:cl-structure}
 \lean{MIPRE.CL.CLFun.SupportedOn.proj_eval_cons,
   MIPRE.CL.CLFun.SupportedOn.outputPrefix_eval,
   MIPRE.CL.CLFun.ExactlyOn.outputPrefix_self,
@@ -1681,6 +1676,7 @@ $4\eps/c_1+4\eps/c_2$. A chain of $k$ squared edge errors bounded by $\delta$
 costs at most $k^2\delta$, without an outcome-cardinality factor.
 \end{lemma}
 \begin{proof}
+\uses{lem:commutation-analysis,def:expanded-state}
 \leanok
 Coarse-grain the accepted-answer relations before converting consistency to
 distance. The opposite-party triangle inequality then gives the same-side
@@ -1781,7 +1777,8 @@ entanglement.
 
 \begin{lemma}[Exact final strategy extraction]
 \label{lem:intro-final-extraction}
-\uses{def:cl-function,def:tensor-strategy}
+\uses{def:cl-function,def:tensor-strategy,def:normal-verifier,def:q-value,def:weyl-epr,
+  def:expanded-state}
 \lean{MIPRE.Introspection.readout_isPVM,
   MIPRE.Introspection.bornProb_registerEPR_readout,
   MIPRE.Introspection.readout_eq_synOf,
@@ -1814,7 +1811,6 @@ strategy and compare with the supremum defining quantum value.
 
 \begin{lemma}[Absorbing fixed introspection error losses]
 \label{lem:intro-error-absorption}
-\uses{def:state-distance}
 \lean{MIPRE.Introspection.errorProfile_power,
   MIPRE.Introspection.exists_errorProfile_power,
   MIPRE.Introspection.iteratedRoot_eq_rpow,
@@ -1878,6 +1874,7 @@ This is the original-program simulation component, not the complete
 introspection predicate or its cutoff parser.
 \end{lemma}
 \begin{proof}
+\uses{lem:smn}
 \leanok
 Compose the checked unary arithmetic and exponentiation programs, hardwire
 the binary parameter using the actual specialization compiler, and bound the
@@ -1890,7 +1887,7 @@ complete execution cost into a fixed polynomial of the generated budget.
 
 \begin{lemma}[Executable answer parsing and guarded source calls]
 \label{lem:intro-answer-parser}
-\uses{lem:intro-growing-clock,lem:intro-parsed-predicate}
+\uses{def:decider,lem:pcp-padding-programs}
 \lean{MIPRE.Introspection.AnswerParser.field_append_injective,
   MIPRE.Introspection.AnswerParser.pairCheck_iff,
   MIPRE.Introspection.AnswerParser.tripleCheck_iff,
@@ -1987,7 +1984,7 @@ and specialization compiler establish the binary description bound.
 
 \begin{lemma}[Honest sampling core and first hiding test]
 \label{lem:intro-honest-core}
-\uses{lem:intro-parsed-predicate,lem:intro-final-extraction}
+\uses{lem:intro-parsed-predicate,lem:intro-final-extraction,def:pcc}
 \lean{MIPRE.Introspection.Honest.coreOp_isPVM,
   MIPRE.Introspection.Honest.coreOp_commute,
   MIPRE.Introspection.Honest.coreStrategy_dimension,
@@ -2009,6 +2006,7 @@ Lemma~\ref{lem:intro-honest-full-auxiliary}. The complete Pauli subgame
 remains a separate construction.
 \end{lemma}
 \begin{proof}
+\uses{lem:pauli-mixing,lem:perfect-rejects-nothing}
 \leanok
 Tensor the source measurements with diagonal seed-fibre projectors.
 Disjoint fibres annihilate, so source PCC is needed only for question pairs
@@ -2190,6 +2188,7 @@ prefix-normalizer error $\eta$, replacement by a commuting ideal prefix
 costs at most $6|E|\eps+3\eta+3\eps_f$.
 \end{lemma}
 \begin{proof}
+\uses{lem:intro-conditional-normalizer}
 \leanok
 Claimed prefixes nest even outside the image of the CL map. Equal preceding
 prefixes select the same next register, and the next dual readout and tail
@@ -2273,6 +2272,7 @@ Exact mirrors of the primitive prefix and fine families transfer this
 conclusion to the opposite-party ideal family.
 \end{lemma}
 \begin{proof}
+\uses{lem:intro-adjacent-hiding,lem:intro-linear-readout-projectivity}
 \leanok
 All keyed off-diagonal Born terms are nonnegative because the ideal prefix
 and fine projectors commute. The diagonal terms recover the original fine
@@ -2379,6 +2379,7 @@ where used for coarse-graining; malformed outcomes are included.
 Constancy of the two Pauli questions is stated explicitly.
 \end{lemma}
 \begin{proof}
+\uses{lem:intro-actual-hiding-rigidity-step,lem:intro-honest-full-auxiliary}
 \leanok
 Compute the exact Pauli/auxiliary edge masses. Transfer primitive ideal
 operators across their exact EPR mirrors before coarse-graining. Identify
@@ -2495,7 +2496,7 @@ registers and simplify $56\sqrt{16\eps}$.
 
 \begin{lemma}[Conditional projectivization on a common ancilla]
 \label{lem:intro-conditional-dilation}
-\uses{lem:intro-coarse-product-stage,def:state-distance}
+\uses{def:state-distance}
 \lean{MIPRE.Introspection.bornProb_extVecA,
   MIPRE.Introspection.stateSqNorm_extVecA_aOp,
   MIPRE.Introspection.dilated_pvm_distance,
@@ -2516,6 +2517,7 @@ transported states to vary with the prefix, while retaining the same ancilla
 alphabet and state. Explicit reassociation preserves the original EPR factor.
 \end{lemma}
 \begin{proof}
+\uses{lem:pauli-mixing}
 \leanok
 Apply simultaneous Naimark dilation only to the residual factor. Compression
 identifies the mixed quadratic forms, and PVM normalization plus
@@ -2527,7 +2529,8 @@ an obligation of the global induction.
 
 \begin{lemma}[Conditional estimate for the actual adjacent hiding test]
 \label{lem:intro-adjacent-hiding}
-\uses{lem:intro-parsed-predicate,lem:intro-type-presentation,lem:conditional-measurement}
+\uses{lem:intro-parsed-predicate,lem:intro-type-presentation,lem:conditional-measurement,
+  lem:intro-typed-estimates}
 \lean{MIPRE.Introspection.conditional_coarse_consistency,
   MIPRE.Introspection.CLChecks.prefixRegister_outputPrefix_succ,
   MIPRE.Introspection.CLChecks.dualReadout_outputPrefix,
@@ -2571,6 +2574,7 @@ statements require projectivity, so the mixing output must first undergo a
 quantitatively controlled common-ancilla dilation.
 \end{lemma}
 \begin{proof}
+\uses{lem:qld-combined-points,def:cross-distance}
 \leanok
 Apply two Cauchy--Schwarz bounds to the accepted outcomes of the joint PVM.
 Summing the unchanged party's outcomes removes it exactly from the distance.
@@ -2580,7 +2584,8 @@ quadratic-form difference and average with the normalized question law.
 
 \begin{lemma}[Quantitative extraction from the concrete typed game]
 \label{lem:intro-typed-final-extraction}
-\uses{lem:intro-final-extraction,lem:intro-parsed-predicate,lem:intro-type-presentation,lem:intro-value-stability}
+\uses{lem:intro-final-extraction,lem:intro-parsed-predicate,lem:intro-type-presentation,
+  lem:intro-value-stability,lem:intro-typed-estimates}
 \lean{MIPRE.Introspection.TypedExtraction.cross_check,
   MIPRE.Introspection.TypedExtraction.condWin_cross_eq,
   MIPRE.Introspection.TypedExtraction.cross_failure_le,
@@ -2602,6 +2607,7 @@ No separate conditional-acceptance premise is assumed. The Pauli extraction
 and hiding induction must still produce the state and terminal approximations.
 \end{lemma}
 \begin{proof}
+\uses{lem:pauli-mixing}
 \leanok
 Restrict the acceptance sum to the pair constructors using the parsed
 predicate, identify their Born law with the original CL distribution, and
@@ -2662,6 +2668,7 @@ Follow the existing recursive Hide PVM through its coarse marginal. Summing earl
 Residual projective measurements assemble into one ambient PVM even though their coordinate spaces depend on the prefix. Prefix branches are orthogonal, so reassembly preserves squared errors exactly and global commutators reduce to the corresponding weighted local commutators. A common ancillary extension commutes with this concrete embedding.
 \end{lemma}
 \begin{proof}
+\uses{lem:intro-adaptive-factorization}
 \leanok
 Each branch is supported by its actual honest prefix projector. Distinct projectors multiply to zero; summing the branch normalizers gives identity. The same orthogonality eliminates all cross terms in squared distances and commutators.
 \end{proof}
@@ -2686,7 +2693,7 @@ Apply the exact conditioning identities to ambient Pauli mixing. Dilate the cons
 
 \begin{lemma}[A concrete strategy after one adaptive replacement]
 \label{lem:intro-adaptive-strategy}
-\uses{lem:intro-adaptive-extraction}
+\uses{lem:intro-adaptive-extraction,lem:qld-global-setup}
 \lean{MIPRE.Introspection.testAcceptance_stability_map_left,
   MIPRE.Introspection.replaceExtended_other,
   MIPRE.Introspection.replaceExtended_value,
@@ -2697,6 +2704,7 @@ Apply the exact conditioning identities to ambient Pauli mixing. Dilate the cons
 If the selected measurement has the stated current prefix form and the three stage errors are bounded as above, an actual finite-dimensional tensor-product strategy is constructed. The new state retains the original EPR factor, all other measurements are extended by identity, and the selected measurement retains the prefix and newly extracted Z factor. The absolute game-value loss is at most $2\sqrt{2\sqrt{56\sqrt{\eps}}}$. Arbitrary answer relabelling is allowed. These are single-stage hypotheses, not a completed induction from game success.
 \end{lemma}
 \begin{proof}
+\uses{lem:intro-value-stability}
 \leanok
 Construct the residual Naimark projectors and the ambient joint PVM, replace the selected question, and reassociate the shared EPR-plus-auxiliary state exactly. Pull the acceptance predicate back through answer relabelling before applying value stability; no same-party coarse-distance contraction is used.
 \end{proof}
@@ -2744,7 +2752,7 @@ adaptive computational-readout factorization.
 
 \begin{lemma}[Exact reassembly of the next-prefix marginal error]
 \label{lem:intro-adaptive-marginal}
-\uses{lem:intro-adaptive-advance,lem:intro-adaptive-extraction}
+\uses{lem:intro-adaptive-advance}
 \lean{MIPRE.Introspection.advancePrefix_fibSum_sqNorm,
   MIPRE.Introspection.prefixStageMarginalError_reassembled}
 \leanok
@@ -2782,6 +2790,7 @@ malformed raw Introspect constructors by one fixed malformed constructor
 preserves the actual parsed-game value and projectivity exactly.
 \end{lemma}
 \begin{proof}
+\uses{lem:intro-adaptive-extraction}
 \leanok
 Embed outcomes in the graph of the selected-coordinate function. All
 off-graph operators are zero. The decoder identities follow from the
@@ -2791,7 +2800,7 @@ Introspect answer is rejected by the actual predicate's format check.
 
 \begin{lemma}[Constructing the next-prefix residual invariant]
 \label{lem:intro-next-invariant}
-\uses{lem:intro-adaptive-strategy,lem:intro-answer-refinement}
+\uses{lem:intro-adaptive-strategy}
 \lean{MIPRE.Introspection.adaptiveReplacementJointOp_next_factor,
   MIPRE.Introspection.nextPrefixResidual_isPVM,
   MIPRE.Introspection.adaptiveReplacementJointOp_next_reassembly,
@@ -2808,6 +2817,7 @@ and the three stage-error bounds, its value loss is at most
 $2\sqrt{2\sqrt{56\sqrt{\delta}}}$.
 \end{lemma}
 \begin{proof}
+\uses{lem:intro-adaptive-advance}
 \leanok
 Recover the unique old prefix and current label on attainable branches,
 transport the residual register by the proved coordinate-set equality,
@@ -2968,7 +2978,7 @@ of the fixed errors supplies the next stage's primitive inputs.
 
 \begin{lemma}[Terminal conditional readouts with malformed answers]
 \label{lem:intro-terminal-invariant}
-\uses{lem:intro-actual-iteration}
+\uses{lem:pauli-mixing}
 \lean{MIPRE.Introspection.terminalAuxPOVM_isPVM,
   MIPRE.Introspection.IntroPrefixInvariant.terminal_some,
   MIPRE.Introspection.IntroPrefixInvariant.terminal_none}
@@ -2981,6 +2991,7 @@ The malformed effect is the sum over $y$ of the question readout tensored
 with $T_y(\mathrm{none})$; it is not assumed to vanish.
 \end{lemma}
 \begin{proof}
+\uses{lem:intro-parsed-predicate}
 \leanok
 The remaining register is empty at the terminal level, so transport its
 unique basis vector away. The valid-answer support invariant fixes the
@@ -3147,7 +3158,7 @@ For $t>1$ the bound follows from nonnegative quantum value.
 
 \begin{lemma}[Local-isometry transport and image-complement completion]
 \label{lem:intro-isometric-strategy}
-\uses{def:tensor-strategy,lem:intro-extracted-state-soundness}
+\uses{def:tensor-strategy}
 \lean{MIPRE.Introspection.isometricPOVM_isPVM,
   MIPRE.Introspection.isometricEffect_intertwine,
   MIPRE.Introspection.isometricState_unit,
@@ -3171,6 +3182,7 @@ error $\delta$ becomes at most $2\delta+2\eta$ after completion, on either
 party and without an outcome-count factor.
 \end{lemma}
 \begin{proof}
+\uses{lem:qld-combined-points,lem:commutation-analysis}
 \leanok
 The image and its orthogonal complement are orthogonal projections.
 Complete one outcome, then use the isometry identity to prove compression
@@ -3182,7 +3194,7 @@ the two-term squared triangle inequality gives the error bound.
 
 \begin{lemma}[Honest Magic Square extension of an anticommuting pair]
 \label{lem:intro-honest-magic-square}
-\uses{def:magic-square,def:pcc}
+\uses{def:magic-square,def:pcc,def:lcs-game,lem:observable-projector}
 \lean{MIPRE.Introspection.HonestMagicSquare.grid_isObservable,
   MIPRE.Introspection.HonestMagicSquare.cells_commute,
   MIPRE.Introspection.HonestMagicSquare.row_product,
@@ -3208,6 +3220,7 @@ four, and give a value-one PCC strategy for the doubled game. Symmetric
 input matrices give symmetric grid and constraint matrices.
 \end{lemma}
 \begin{proof}
+\uses{lem:pauli-mixing,lem:perfect-rejects-nothing}
 \leanok
 Construct all nine observables by tensoring the original pair with the
 single-qubit Pauli pair. Verify the six commuting triples and their parity
@@ -3219,7 +3232,7 @@ cross-question commutation directly.
 
 \begin{lemma}[The actual three-level Pauli question sampler]
 \label{lem:intro-pauli-cl-content}
-\uses{def:cl-function}
+\uses{def:cl-function,def:qld-game,lem:detype-game-soundness,lem:cl-downsize}
 \lean{MIPRE.QLD.PauliCL.presentation_exactlyOn,
   MIPRE.QLD.PauliCL.questionOfVector_presentation,
   MIPRE.QLD.PauliCL.presentation_pauli_eval,
@@ -3289,6 +3302,7 @@ distinguished-variable edges have commuting effects and zero product on
 every rejected answer pair.
 \end{lemma}
 \begin{proof}
+\uses{lem:qld-global-setup,lem:intro-final-extraction}
 \leanok
 Coarse-grain a common Pauli PVM for all same-basis questions. Its
 multilinear encoding restricts to an affine polynomial on an axis line and
@@ -3354,6 +3368,7 @@ The final loss preserves the paper's two-term error profile with uniform
 constants and a positive exponent at most one.
 \end{lemma}
 \begin{proof}
+\uses{lem:intro-extracted-state-soundness}
 \leanok
 A positive submeasurement within squared distance $\delta$ of a PVM has
 missing mass at most $2\sqrt\delta$. Extending it inside the identity
@@ -3367,7 +3382,8 @@ nonnegative quantum value. No outcome-cardinality factor appears.
 
 \begin{lemma}[Executable canonical lines and explicit binary coordinates]
 \label{lem:intro-executable-lines}
-\uses{lem:intro-pauli-cl-content}
+\uses{lem:binary-uniform-irreducible,lem:effective-binary-field-arithmetic,
+  lem:effective-field-inverse-trace,thm:pcp-decider,def:qld-game,lem:cl-downsize}
 \lean{MIPRE.Introspection.LineProgram.lineRepresentativeProg_correct,
   MIPRE.Introspection.LineProgram.lineRepresentativeProg_runs,
   MIPRE.Introspection.LineProgram.lineRepresentativeProg_time_le,
@@ -3390,6 +3406,8 @@ explicitly in the order point-X, point-Z, seed, direction, scale-X, scale-Z,
 with each field coordinate followed by its basis bits.
 \end{lemma}
 \begin{proof}
+\uses{lem:effective-binary-linear-algebra,lem:effective-field-matrices,lem:pcp-circuit-evaluator,
+  lem:cl-canonical}
 \leanok
 Scan for the first nonzero direction coordinate, compute the scalar with
 the checked Shoup inverse and multiplication programs, and subtract that
@@ -3401,7 +3419,7 @@ equivalences; its value equations identify every block and bit.
 
 \begin{lemma}[Concrete completeness for the full typed introspection game]
 \label{lem:intro-full-typed-completeness}
-\uses{lem:intro-honest-full-pauli,lem:intro-pauli-cl-content,def:pcc}
+\uses{lem:intro-pauli-cl-content,def:pcc,lem:intro-typed-estimates,lem:pauli-binary}
 \lean{MIPRE.Introspection.Complete.pauliOp_X,
   MIPRE.Introspection.Complete.pauliOp_Z,
   MIPRE.Introspection.Complete.sampleOp_commute,
@@ -3424,6 +3442,7 @@ coordinates, with dimension $2\cdot2^{2^m t}D$. The binary source functions
 need not be linear over the larger field.
 \end{lemma}
 \begin{proof}
+\uses{lem:intro-honest-full-auxiliary,lem:intro-honest-pauli-measurements}
 \leanok
 Put the explicit Pauli PVMs, the auxiliary PVMs, the source strategy and
 one extra qubit on a common carrier. Check the X/Hide and Z/Sample anchor
@@ -3436,7 +3455,7 @@ through the self-dual basis before composing the auxiliary measurements.
 
 \begin{lemma}[Restriction to the actual Pauli game]
 \label{lem:intro-pauli-restriction}
-\uses{lem:intro-pauli-cl-content,lem:intro-valid-isometric-soundness}
+\uses{lem:intro-pauli-cl-content,lem:intro-typed-estimates}
 \lean{MIPRE.Introspection.completePauliPOVM_isPVM,
   MIPRE.Introspection.completePauliPOVM_mats_of_ne,
   MIPRE.Introspection.TypedEstimates.check_pauli_completed,
@@ -3573,7 +3592,8 @@ that permutation.
 
 \begin{lemma}[Executable binary Pauli queries]
 \label{lem:intro-executable-pauli-queries}
-\uses{lem:intro-executable-seeded-lines}
+\uses{lem:intro-executable-seeded-lines,lem:effective-normal-element,lem:self-dual-basis,
+  def:sampler}
 \lean{MIPRE.Introspection.BasisProgram.toSelfDualProg_correct,
   MIPRE.Introspection.BasisProgram.fromSelfDualProg_correct,
   MIPRE.QLD.PauliCL.linearBits_correct,
@@ -3594,6 +3614,7 @@ hold for arbitrary prefixes. A total router handles the four query kinds
 and the fixed twenty-six type labels.
 \end{lemma}
 \begin{proof}
+\uses{lem:effective-normal-selfdualization}
 \leanok
 Construct the self-dual basis effectively and convert field rows in both
 directions. Pack the point, seed, direction and scalar registers in the
@@ -3634,7 +3655,7 @@ Lemma~\ref{lem:intro-quotient-kernel}.
 
 \begin{lemma}[Output relabelling for the explicit selector]
 \label{lem:intro-explicit-selector-questions}
-\uses{lem:intro-executable-seeded-lines}
+\uses{def:qld-game,lem:cl-downsize}
 \lean{MIPRE.QLD.PauliCL.ExplicitSeed.binaryOutputPermutation_presentation,
   MIPRE.QLD.PauliCL.ExplicitSeed.binaryQuestion_outputPermutation}
 \leanok
@@ -3709,7 +3730,7 @@ dual labels to lie in the original source subspace.
 
 \begin{lemma}[The canonical sampler at every index]
 \label{lem:intro-canonical-sampler}
-\uses{lem:intro-executable-pauli-queries,lem:intro-binary-source-padding}
+\uses{lem:intro-executable-pauli-queries}
 \lean{MIPRE.Introspection.PauliSampler.sampler,
   MIPRE.Introspection.PauliSampler.fullCompiler_apply,
   MIPRE.Introspection.PauliSampler.finalCompiler_apply,
@@ -3724,6 +3745,7 @@ are bounded by $(\lambda n+1)^C$, at a fixed input-size degree $C$.
 When $\lambda n=0$, the final sampler has dimension zero.
 \end{lemma}
 \begin{proof}
+\uses{lem:detype-functional-sampler,lem:smn}
 \leanok
 Compute unary field and register parameters within the polynomial sampler
 budget, then compose the checked uniform Pauli query router with the typed
@@ -3734,7 +3756,7 @@ index supply the exact all-index bound.
 
 \begin{lemma}[The complete binary Pauli predicate]
 \label{lem:intro-binary-pauli-predicate}
-\uses{lem:intro-executable-pauli-queries}
+\uses{lem:intro-executable-pauli-queries,def:intro-verifier}
 \lean{MIPRE.QLD.PauliBinaryProgram.program_ofBits_iff,
   MIPRE.QLD.PauliBinaryProgram.program_canonical,
   MIPRE.QLD.PauliAnswerProgram.answerBits_decodeBits,
@@ -3773,6 +3795,7 @@ Conversely, accepted finite answers with the honest prefix, source-output
 and Pauli-format support conditions have accepted canonical encodings.
 \end{lemma}
 \begin{proof}
+\uses{lem:intro-adaptive-prefix,lem:intro-read-rigidity}
 \leanok
 Use row-space membership to express the hiding relation independently of
 the local coordinate enumeration. Decode dual labels blockwise; prefix
@@ -3784,7 +3807,7 @@ the raw soundness and honest encoding implications in both orientations.
 
 \begin{lemma}[Full question transport and actual QLD extraction]
 \label{lem:intro-numbered-transport}
-\uses{lem:intro-explicit-selector-questions,lem:intro-binary-source-padding,thm:qld}
+\uses{lem:intro-explicit-selector-questions,thm:qld}
 \lean{MIPRE.Introspection.ExplicitGame.game_mu,
   MIPRE.Introspection.ExplicitGame.game_D,
   MIPRE.Introspection.ExplicitGame.toLegacy_value,
@@ -3802,6 +3825,8 @@ with its field-size tails absorbed at the canonical parameters. Honest
 completeness retains PCC, exact dimension and the executable guards' support.
 \end{lemma}
 \begin{proof}
+\uses{lem:intro-valid-isometric-soundness,lem:intro-full-typed-completeness,
+  lem:intro-pauli-restriction}
 \leanok
 Transport the shared seed and each question's answer map explicitly.
 Relabel quotient coordinates before selecting local dual representatives.
@@ -3813,7 +3838,7 @@ then absorb the canonical field and register error terms.
 
 \begin{lemma}[The ambient compiler's resources and raw-game bridge]
 \label{lem:intro-ambient-kernel}
-\uses{lem:intro-canonical-sampler,lem:intro-quotient-kernel,lem:intro-numbered-transport}
+\uses{lem:intro-canonical-sampler,lem:intro-quotient-kernel,lem:intro-executable-sampler}
 \lean{MIPRE.Introspection.DecisionCompiler.resources_with_cutoff,
   MIPRE.Introspection.DecisionCompiler.raw_accepts_iff,
   MIPRE.Introspection.DecisionCompiler.output_hasPerfectPCC_of_raw,
@@ -3831,6 +3856,7 @@ graph loss. Total finite answer decoding then increases value and enforces
 the full Pauli support required by QLD soundness.
 \end{lemma}
 \begin{proof}
+\uses{lem:detype-completeness}
 \leanok
 Prepare the shared clock and canonical resources once, clamp source
 descriptions, and route every source call through the same bounded
@@ -3899,7 +3925,7 @@ entanglement clause are not formalized.
 
 \begin{definition}[Ambient introspection contract]
 \label{def:introspection-contract}
-\uses{def:normal-verifier,def:lambda-bounded,def:pcc}
+\uses{def:normal-verifier,def:lambda-bounded,def:pcc,def:sync-value,def:q-value}
 \lean{MIPRE.Introspection}
 \leanok
 The structure \texttt{MIPRE.Introspection} is an ambient contract,
@@ -3949,9 +3975,7 @@ equivalence follows from monotonicity of $2^n$ and its value at zero.
 \begin{lemma}[Supplying ambient introspection]
 \label{lem:introspection-supply}
 \uses{def:introspection-contract,lem:intro-ambient-kernel,lem:intro-numbered-transport,rem:runtime-normalization,rem:pcc-representation-bridge}
-\lean{MIPRE.Introspection.exists_seven,
-  MIPRE.Introspection.seven,
-  MIPRE.Introspection.CanonicalComplete.output_hasPerfectPCC,
+\lean{MIPRE.Introspection.exists_seven, MIPRE.Introspection.seven,
   MIPRE.Introspection.CompiledSoundness.output_soundness}
 \leanok
 The ambient contract \texttt{MIPRE.Introspection 7} is inhabited.
@@ -3963,6 +3987,7 @@ Theorem~\ref{thm:introspection} separately states the source-model result for
 arbitrary fixed depth.
 \end{lemma}
 \begin{proof}
+\uses{lem:intro-completeness}
 \leanok
 Choose one even canonical parameter constant that absorbs the QLD field-size
 tails, and use the proved clocked universal machine. Combine the sampler,
@@ -4020,8 +4045,8 @@ answers failing the parse are grouped into one distinguished outcome, so the ora
 families are projective measurements and not sub-measurements.
 \end{theorem}
 \begin{proof}
-\uses{def:oracularization-contract,lem:oracle-typed-sampler,lem:oracle-typed-decider,%
-lem:oracle-decider-time,lem:oracular-typed-transfers,lem:detype-compiler}
+\uses{def:oracularization-contract,lem:oracle-typed-sampler,lem:oracle-typed-decider,
+  lem:oracle-decider-time,lem:oracular-typed-transfers,lem:detype-completeness}
 \leanok
 The typed oracularized verifier is the pair of Lemma~\ref{lem:oracle-typed-sampler} and
 Lemma~\ref{lem:oracle-typed-decider}, and it inhabits the specification of
@@ -4104,6 +4129,7 @@ $\Sigma^\ora(T)$ is a synchronous strategy, it is PCC, and if $T$ has value $1$ 
 $\Sigma^\ora(T)$. Both players measure with this one family of operators.
 \end{lemma}
 \begin{proof}
+\uses{lem:perfect-rejects-nothing}
 \leanok
 That the oracle's operators are projections is where PCC is used: the seed $z$ always lands on
 a question pair of positive weight, so $M^{(\mathsf{false}, L^\alice(z))}_a$ and
@@ -4129,8 +4155,8 @@ has been commuted out of the way.
 
 \begin{lemma}[Soundness of oracularization, at the level of games]
 \label{lem:oracular-soundness}
-\uses{def:oracular-game,def:sync-strategy,def:sync-value,def:distance,lem:hs-closeness,%
-lem:close-measurements-close-values}
+\uses{def:oracular-game,def:sync-strategy,def:sync-value,lem:hs-closeness,
+  lem:close-measurements-close-values}
 \lean{MIPRE.SeededGame.soundStrategy, MIPRE.SeededGame.soundStrategy_value_ge}
 \leanok
 Let $S$ be a seeded game with nonempty seed space and nonempty answer alphabet, let
@@ -4141,6 +4167,7 @@ relabelled so that the oracle-shaped answers are grouped into one fixed answer. 
 $\Sigma(N)$ has value at least $1 - 24\sqrt{\eps}$.
 \end{lemma}
 \begin{proof}
+\uses{lem:perfect-rejects-nothing}
 \leanok
 Fix a seed $z$ and write $O_{(a,b)}$ for the oracle's measurement at $(\oracle, z)$ relabelled
 onto answer pairs, and $C_a$, $D_b$ for Alice's and Bob's at $(\alice, L^\alice(z))$ and
@@ -4166,8 +4193,7 @@ $\eps \leq \sqrt\eps$ for $\eps \leq 1$ and $2\sqrt{54} < 15$.
 
 \begin{lemma}[Soundness of oracularization, for bipartite strategies]
 \label{lem:oracular-soundness-tensor}
-\uses{def:oracular-game,def:tensor-strategy,def:q-value,def:cross-distance,%
-lem:close-measurements-close-values}
+\uses{def:oracular-game,def:tensor-strategy,def:q-value,def:cross-distance}
 \lean{MIPRE.SeededGame.tensorSound, MIPRE.SeededGame.tensorSound_value_ge,
   MIPRE.SeededGame.quantumValue_ge_of_oracular, MIPRE.sum_snorm_sq_ge_of_close,
   MIPRE.sum_snorm_sq_chain, MIPRE.SeededGame.sum_snorm_sq_joint_le,
@@ -4184,6 +4210,7 @@ every $\eps > 0$, if $\valstar$ of the oracularization of $S$ exceeds $1 - \eps$
 $\valstar$ of the game of $S$ is at least $1 - 24\sqrt{\eps}$.
 \end{lemma}
 \begin{proof}
+\uses{lem:cool-closeness-fact}
 \leanok
 A tensor-product strategy is projective, so no dilation is needed. Fix a seed $z$ and write, on
 the joint space, $O$ for the first player's measurement at $(\oracle, z)$, $O^\alice_u$ and
@@ -4248,7 +4275,7 @@ bipartite. Lemma~\ref{lem:oracular-soundness-tensor} is that form, with the same
 
 \begin{definition}[The typed oracularized game]
 \label{def:oracular-typed-game}
-\uses{def:oracular-game,def:normal-verifier,def:typed-sampler-interface}
+\uses{def:oracular-game,def:normal-verifier}
 \lean{MIPRE.CL.CLFun.ident, MIPRE.roleFamily, MIPRE.roleGraph, MIPRE.SeededGame.ofCL,
   MIPRE.Verifier.seeded, MIPRE.pairEnc, MIPRE.pairDec, MIPRE.parseAns, MIPRE.oraclePred,
   MIPRE.encAns, MIPRE.Verifier.oracleTypedPred}
@@ -4292,6 +4319,7 @@ reading of the answers, for soundness, and for any typed predicate that accepts 
 answer pair the oracularized predicate accepts, for completeness.
 \end{lemma}
 \begin{proof}
+\uses{def:ar-seed-index}
 \leanok
 The typed game samples a uniform ordered pair of types and one common uniform seed, and the
 identity gives the oracle the seed itself, so its question distribution is exactly that of the
@@ -4311,7 +4339,7 @@ source model that is what the truncation of Lemma~\ref{lem:oracle-timeout-pcc} p
 
 \begin{lemma}[The typed oracularized sampler]
 \label{lem:oracle-typed-sampler}
-\uses{def:oracular-typed-game,def:typed-sampler-interface,lem:universal-tm,lem:smn}
+\uses{def:oracular-typed-game,def:typed-sampler-interface,lem:smn,lem:pcp-padding-programs}
 \lean{MIPRE.oracleSampler, MIPRE.oracleSampler_cl, MIPRE.oracleSampler_dim,
   MIPRE.OracleSampler.core, MIPRE.OracleSampler.route_dimension,
   MIPRE.OracleSampler.route_alice, MIPRE.OracleSampler.route_bob,
@@ -4329,6 +4357,7 @@ inputs $(n, d)$ and $B$, $\abs{\sampler}$ and $n$ are at most $W$, the typed sam
 $c(W + 1)^m(\abs{d} + 1)^{e(k + 1)}$ on inputs $(n, d)$.
 \end{lemma}
 \begin{proof}
+\uses{lem:oracular-typed-transfers}
 \leanok
 The program is a fixed core run on the program of $\sampler$ through the s-m-n construction of
 Lemma~\ref{lem:smn}, as the repeated sampler is. The core answers a typed query with at most one
@@ -4345,8 +4374,7 @@ into the degree, so no term exponential in $k$ enters the coefficient.
 
 \begin{lemma}[The typed oracularized decider]
 \label{lem:oracle-typed-decider}
-\uses{def:oracular-typed-game,lem:oracular-typed-transfers,lem:oracle-typed-sampler,%
-lem:universal-tm,lem:smn,lem:detype-compiler}
+\uses{def:oracular-typed-game,lem:oracular-typed-transfers,lem:oracle-typed-sampler,lem:smn}
 \lean{MIPRE.OracleDecider.oracleDecider, MIPRE.OracleDecider.oracleDecider_total,
   MIPRE.OracleDecider.oracleDecider_accepts_iff, MIPRE.OracleDecider.gameProg_accepts_iff,
   MIPRE.OracleDecider.core_accepts_iff, MIPRE.OracleDecider.accepts_sound,
@@ -4372,6 +4400,7 @@ gives one of the doubled typed game, when the core's accepting runs on answers w
 cut take at most $K(n)$ steps.
 \end{lemma}
 \begin{proof}
+\uses{lem:detype-total-clock}
 \leanok
 The decider is a fixed shell run on the three programs through the s-m-n construction of
 Lemma~\ref{lem:smn}. The shell asks the index routine for $(K(n), B(n))$ and runs the core under
@@ -4388,7 +4417,7 @@ Lemma~\ref{lem:oracular-typed-transfers}, read through the acceptance law.
 
 \begin{lemma}[Running times of the typed oracularized decider]
 \label{lem:oracle-decider-time}
-\uses{lem:oracle-typed-decider,lem:universal-tm}
+\uses{lem:oracle-typed-decider}
 \lean{MIPRE.OracleDecider.gameProg_runs_within, MIPRE.OracleDecider.core_runs_within,
   MIPRE.OracleDecider.core_timeBound, MIPRE.OracleDecider.core_accepting_le,
   MIPRE.OracleDecider.budget_sufficient,
@@ -4422,7 +4451,7 @@ time of $\verifier$ enters only through the budget.
 
 \begin{definition}[Oracularization specification]
 \label{def:oracularization-contract}
-\uses{def:oracular-typed-game,lem:oracle-typed-sampler,def:pcc}
+\uses{def:oracular-typed-game,def:typed-normal-interface}
 \lean{MIPRE.Oracularization, MIPRE.Oracularization.inputSize}
 \leanok
 The structure \texttt{MIPRE.Oracularization}, parametrized by $\ell$, specifies the typed
@@ -4515,7 +4544,7 @@ become polylogarithmic in the original.
 \begin{lemma}[Succinct decoupled 5SAT]
 \label{lem:decoupled-5sat}
 \ledgernode{1.3.2, 1.3.2.1, 1.3.2.2, 1.3.2.3}
-\uses{thm:succinct-sat,def:succinct-3sat,def:decider}
+\uses{def:succinct-3sat,def:decider,def:multiinput-tm}
 \lean{MIPRE.SAT.DecoupledDescriber, MIPRE.SAT.decoupledDescriber}
 \leanok
 There is a polynomial-time algorithm that, on the inputs of
@@ -4532,7 +4561,7 @@ count a power of two, is the padding step of the PCP, Remark~\ref{rem:pcp-power-
 
 \begin{proof}
 \leanok
-\uses{thm:succinct-sat}
+
 Run the describer of Theorem~\ref{thm:succinct-sat} to get a circuit $C_3$ on
 $3 r_0 + 3$ inputs, $r_0$ being that theorem's index width, and set
 $\ell_0 = \lceil \log 2T \rceil$. Since $2^{r_0} \geq 4T$ and $2^{\ell_0} < 4T$ we have
@@ -4607,7 +4636,6 @@ the statements below, the same bijection appearing in the encoding and in the de
 
 \begin{definition}[Restriction to a line]
 \label{def:line-restriction}
-\uses{def:ld-encoding}
 \lean{MIPRE.LowDegree.lineRestrict, MIPRE.LowDegree.lineRestrict_zero,
   MIPRE.LowDegree.eval_lineRestrict, MIPRE.LowDegree.natDegree_lineRestrict_le,
   MIPRE.LowDegree.sum_coeff_lineRestrict}
@@ -4625,7 +4653,7 @@ Definition~\ref{def:lidt-cl} whenever $d \geq 1$.
 
 \begin{lemma}[Padding preserves the complete answer tapes]
 \label{lem:pcp-padding-semantics}
-\uses{lem:decoupled-5sat}
+\uses{def:succinct-3sat}
 \lean{MIPRE.SAT.Cnf5.sat_pad_iff, MIPRE.SAT.Circuit.DescribesDecider.of_pad}
 \leanok
 Embed the five blocks of a decoupled formula into larger blocks. Add every clause
@@ -4741,6 +4769,7 @@ and combine it with the already verified $(m,s)$ program.
 
 \begin{lemma}[Circuit arithmetization with bounded input use]
 \label{lem:pcp-circuit-arithmetization}
+\uses{def:ld-encoding}
 \lean{MIPRE.LowDegree.eval_killCompl, MIPRE.LowDegree.degreeOf_killCompl_le,
   MIPRE.SAT.Circuit.inputRef_injective, MIPRE.SAT.Circuit.routedConsistent_iff,
   MIPRE.SAT.Circuit.eval_iff_routedConsistent,
@@ -4881,6 +4910,7 @@ proof view. Apply Lemma~\ref{lem:pcp-view-size} to the assembled program.
 
 \begin{lemma}[Formula arithmetization and occurrence bounds]
 \label{lem:pcp-formula-arithmetization}
+\uses{def:ld-encoding}
 \ledgernode{1.3.3}
 \lean{MIPRE.SAT.Fml.eval_arith, MIPRE.SAT.Fml.degreeOf_arith_le}
 \leanok
@@ -4994,13 +5024,12 @@ Lemma~\ref{lem:pcp-executable-tests} supplies the raw verifier and its runtime.
 \label{thm:pcp-decider}
 \ledgernode{1.3.3}
 \uses{lem:decoupled-5sat,lem:schwartz-zippel,def:decider,def:ld-encoding,
-  lem:pcp-formula-arithmetization,lem:pcp-circuit-arithmetization,lem:pcp-circuit-evaluator,
-  lem:pcp-zero-basis,lem:pcp-algebra-tests,
-  lem:pcp-proof-algebra,prop:pcp-padded-describer,lem:pcp-effective-parameters,
-  lem:pcp-circuit-semantics,lem:pcp-view-size,lem:pcp-executable-tests,
+  lem:pcp-circuit-arithmetization,lem:pcp-circuit-evaluator,lem:pcp-zero-basis,
+  lem:pcp-algebra-tests,lem:pcp-proof-algebra,prop:pcp-padded-describer,
+  lem:pcp-effective-parameters,lem:pcp-circuit-semantics,lem:pcp-view-size,lem:pcp-executable-tests,
   lem:effective-binary-field-arithmetic}
-\lean{MIPRE.SAT.BinField, MIPRE.SAT.PcpParams, MIPRE.SAT.PcpProof, MIPRE.SAT.PcpProof.ev,
-  MIPRE.SAT.ViewFormat, MIPRE.SAT.PcpDecider, MIPRE.TM.CookLevin.Pad.classicalPcpDecider}
+\lean{MIPRE.SAT.BinField, MIPRE.SAT.PcpParams, MIPRE.SAT.PcpDecider,
+  MIPRE.TM.CookLevin.Pad.classicalPcpDecider}
 \leanok
 There is a verifier $\pcpverifier$ which, given a valid decider specification $(\decider,
 n, T, Q, \sigma, x, y)$ --- validity requiring $\abs{\decider} \leq \sigma$, $\max\{Q,
@@ -5075,7 +5104,7 @@ their blocks and the constraint polynomials (\texttt{PcpProof.ev}), as $k$-bit b
 \begin{lemma}[PCP completeness]
 \label{lem:pcp-completeness}
 \ledgernode{1.3.3.2}
-\uses{lem:pcp-format,thm:succinct-sat}
+\uses{lem:pcp-format}
 \lean{MIPRE.TM.CookLevin.Pad.classicalPcp_completeness}
 \leanok
 If $\abs{a},\abs{b}\leq T$ and the decider accepts $(n, x, y, a, b)$ within $T$ steps,
@@ -5117,9 +5146,8 @@ formalization should carry them rather than an asymptotic form.
 \begin{lemma}[PCP complexity]
 \label{lem:pcp-complexity}
 \ledgernode{1.3.3.4}
-\uses{lem:pcp-format}
-\lean{MIPRE.TM.CookLevin.Pad.verifyPcp_time_le, MIPRE.TM.CookLevin.Pad.pcpInput_size_polynomial,
-  MIPRE.TM.CookLevin.Pad.outerDim_polynomial, MIPRE.AnswerReduction.exists_paramsBound_classical}
+\uses{lem:pcp-format,lem:ar-typed-sampler}
+\lean{MIPRE.AnswerReduction.exists_paramsBound_classical}
 \leanok
 $\pcpverifier$ runs in time $\poly(\log T, \log n, Q, \sigma)$, with circuit-size and
 randomness bounds of the same form. These are the bounds the composition of
@@ -5155,7 +5183,7 @@ Theorem~\ref{thm:pcp-decider} does.
 \begin{lemma}[Low-degree sandwich support]
 \label{lem:ar-sandwich-support}
 \ledgernode{1.1.1.3}
-\uses{def:cross-distance}
+\uses{def:cross-distance,lem:cool-closeness-fact,lem:pasting-updated}
 \lean{MIPRE.one_sub_sum_bornProb_ldSandwich_le, MIPRE.sandK, MIPRE.sandK_zero,
   MIPRE.sandK_succ, MIPRE.sandK_snoc, MIPRE.sandK_nonneg, MIPRE.sum_sandK,
   MIPRE.sqrt_sum_xSqNorm_sandK_le, MIPRE.sqrt_sum_xSqNorm_sandStep_le,
@@ -5258,9 +5286,6 @@ answers beyond the cut are rejected by the decider itself
 \label{lem:oracle-effective-interface}
 \ledgernode{1.3.5.1}
 \uses{thm:oracularization,lem:oracle-typed-sampler,lem:oracle-decider-time}
-\lean{MIPRE.OracleSampler.samplerProgFun, MIPRE.OracleSampler.oracleSampler_timeBound,
-  MIPRE.OracleDecider.deciderProgFun, MIPRE.OracleDecider.oracleDecider_timeBound,
-  MIPRE.OracleDecider.core_timeBound}
 \leanok
 The typed oracle verifier is compiled in time polynomial in the input
 description. Its sampler preserves $\ell$ levels, depends only on the
@@ -5299,7 +5324,7 @@ $\delta_1$ or simultaneous $\delta_2$.
 
 \begin{definition}[The PCP sampler of answer reduction]
 \label{def:ar-pcp-sampler}
-\uses{def:lidt-cl,thm:pcp-decider}
+\uses{def:lidt-cl,thm:pcp-decider,lem:cl-structure}
 \lean{MIPRE.LIDT.CL.Regs, MIPRE.LIDT.CL.Regs.pres, MIPRE.LIDT.CL.Regs.pres_exactlyOn,
   MIPRE.LIDT.CL.Sel, MIPRE.LIDT.CL.Sel.canonical, MIPRE.LIDT.CL.Sel.exists_perm,
   MIPRE.LIDT.CL.Sel.ofSelector, MIPRE.LIDT.CL.Regs.questionOf_eval, MIPRE.LIDT.CL.Regs.sum_sampleOf,
@@ -5334,7 +5359,7 @@ the permutation is used only in the analysis, where a uniform seed stays uniform
 
 \begin{definition}[The answer-reduced decision predicate]
 \label{def:ar-decider-predicate}
-\uses{def:ar-pcp-sampler,def:oracular-typed-game}
+\uses{def:ar-pcp-sampler,def:oracular-game}
 \lean{MIPRE.AnswerReduction.Ans, MIPRE.AnswerReduction.ansFmt, MIPRE.AnswerReduction.side,
   MIPRE.AnswerReduction.accepts}
 \leanok
@@ -5359,7 +5384,9 @@ The PCP verifier's decision is a parameter of the predicate.
 
 \begin{definition}[The typed answer-reduced game]
 \label{def:ar-typed-game}
-\uses{def:ar-pcp-sampler,def:ar-decider-predicate,lem:cl-downsize,def:oracular-typed-game}
+\uses{def:ar-pcp-sampler,def:ar-decider-predicate,lem:cl-downsize,def:oracular-typed-game,
+  lem:binary-uniform-irreducible,lem:effective-binary-linear-algebra,lem:effective-field-matrices,
+  lem:detype-game-soundness,lem:detype-queries}
 \lean{MIPRE.CL.CLFun.castLevel, MIPRE.CL.CLFun.liftTo, MIPRE.CL.CLFun.ExactlyOn.liftTo,
   MIPRE.CL.CLFun.eval_liftTo, MIPRE.CL.CLFun.prod, MIPRE.CL.CLFun.ExactlyOn.prod,
   MIPRE.CL.CLFun.eval_prod, MIPRE.CL.CLFun.prodCL, MIPRE.CL.CLFun.ExactlyOn.prodCL,
@@ -5398,7 +5425,7 @@ the $\mathrm{Point}_6$ question and answer.
 
 \begin{lemma}[The typed answer-reduced sampler]
 \label{lem:ar-typed-sampler}
-\uses{def:ar-typed-game,lem:oracle-effective-interface,lem:typed-downsize}
+\uses{def:ar-typed-game,lem:oracle-effective-interface}
 \lean{MIPRE.CL.DirectSampler, MIPRE.CL.TypedSampler.prodDirect,
   MIPRE.CL.CLFun.toBits_eval_truncate_prodCL, MIPRE.CL.CLFun.toBits_mapOfPrefix_prodCL,
   MIPRE.CL.CLFun.indicatorBits_factorOfPrefix_prodCL, MIPRE.LIDT.CL.Regs.eval_pres,
@@ -5427,6 +5454,7 @@ $\sigma$, $n$ and $|S|$.
 \end{lemma}
 
 \begin{proof}
+\uses{lem:intro-executable-seeded-lines}
 \leanok
 The program first runs a routine computing the PCP parameters at the index: $\lambda$ and $n$ in
 unary ($\lambda$ replaced by $0$ at the index $0$), $Q$ by a power loop, $\mu$ in unary and
@@ -5449,7 +5477,7 @@ closed under sums, products, fixed polynomials and such calls, which is the whol
 
 \begin{lemma}[The typed answer-reduced decider]
 \label{lem:ar-typed-decider}
-\uses{def:ar-typed-game,lem:ar-typed-sampler,lem:lidt-effective}
+\uses{def:ar-typed-game,lem:ar-typed-sampler}
 \lean{MIPRE.AnswerReduction.ldB_aline, MIPRE.AnswerReduction.ldB_dline,
   MIPRE.AnswerReduction.sideB_eq, MIPRE.AnswerReduction.verdictB_eq,
   MIPRE.AnswerReduction.verdictP_apply, MIPRE.AnswerReduction.parseBP_apply,
@@ -5469,6 +5497,7 @@ length at most $W$ --- as the questions the detyping compiler hands it have.
 \end{lemma}
 
 \begin{proof}
+\uses{lem:intro-executable-seeded-lines}
 \leanok
 The decider runs the sampler's parameter routine, computes $Q$ and $T$, asks the input sampler
 for both players' full marginals at the oracle halves of the two questions through the universal
@@ -5489,8 +5518,8 @@ constant-size header, and everything else is polynomial-time work on the context
 \begin{lemma}[Answer-reduction construction]
 \label{lem:ar-construction}
 \ledgernode{1.3.4.1}
-\uses{lem:oracle-effective-interface,thm:pcp-decider,lem:typed-downsize,lem:detype-compiler,lem:lidt-effective,
-  lem:ar-typed-sampler,lem:ar-typed-decider,def:answer-reduction-contract}
+\uses{lem:oracle-effective-interface,thm:pcp-decider,lem:ar-typed-sampler,lem:ar-typed-decider,
+  lem:effective-field-inverse-trace}
 \lean{MIPRE.AnswerReduction.cutVal, MIPRE.AnswerReduction.arCut,
   MIPRE.AnswerReduction.arVerifier, MIPRE.AnswerReduction.arSamplerProg,
   MIPRE.AnswerReduction.arSamplerProg_eq, MIPRE.AnswerReduction.arCompute,
@@ -5533,7 +5562,7 @@ give $P$ and $d$.
 \begin{lemma}[Answer-reduction completeness]
 \label{lem:ar-completeness}
 \ledgernode{1.3.4.2}
-\uses{lem:ar-construction,lem:detype-completeness}
+\uses{lem:ar-construction,lem:detype-completeness,lem:pcp-format}
 \lean{MIPRE.AnswerReduction.arVerifier_completeness,
   MIPRE.AnswerReduction.arVerifier_hasPerfectPCC, MIPRE.AnswerReduction.ShoupField,
   MIPRE.AnswerReduction.exists_typedGame_perfectPCC, MIPRE.AnswerReduction.hdata,
@@ -5560,7 +5589,8 @@ $(\log n,\log T,Q,\sigma)$ (\texttt{ParamsBound}, as in Lemma~\ref{lem:ar-constr
 \end{lemma}
 
 \begin{proof}
-\uses{lem:ar-construction,lem:detype-completeness,lem:oracular-completeness,thm:pcp-decider,def:lidt-cl}
+\uses{lem:ar-construction,lem:detype-completeness,lem:oracular-completeness,thm:pcp-decider,
+  def:lidt-cl,lem:qld-axis-degree}
 \leanok
 Each player measures the oracularized game's honest strategy
 (Lemma~\ref{lem:oracular-completeness}) at the oracularized question its seed's oracle half
@@ -5616,7 +5646,7 @@ cut, on the same state.
 \begin{definition}[Full-seed indexing for answer reduction]
 \label{def:ar-seed-index}
 \ledgernode{1.3.4.3.1}
-\uses{lem:ar-soundness-setup}
+\uses{lem:detype-game-soundness,def:oracular-typed-game}
 \lean{MIPRE.SeededGame.typedSeedEquiv, MIPRE.AnswerReduction.one_sub_povmValue_typed}
 \leanok
 The common index $\xi$ is the full uniform oracle seed. Both questions
@@ -5632,7 +5662,7 @@ that seed (\texttt{one\_sub\_povmValue\_typed}).
 \begin{lemma}[Global PCP consistency tests]
 \label{lem:ar-global-tests}
 \ledgernode{1.3.4.4}
-\uses{def:ar-seed-index,def:cross-distance}
+\uses{def:ar-seed-index,def:cross-distance,def:ar-typed-game}
 \lean{MIPRE.AnswerReduction.sum_edges_le, MIPRE.AnswerReduction.sum_copyFail_le,
   MIPRE.AnswerReduction.sum_copyFail6_le, MIPRE.AnswerReduction.sum_dis_edge_le}
 \leanok
@@ -5644,7 +5674,7 @@ low-degree theorem is applied to line--point success alone.
 \end{lemma}
 
 \begin{proof}
-\uses{def:ar-seed-index,def:cross-distance}
+\uses{def:ar-seed-index,def:cross-distance,lem:oracular-typed-transfers}
 \leanok
 The typed game samples a uniform ordered pair of the $54$ types and a uniform seed, so the
 failure conditioned on one type pair is at most $54^2\theta=2916\theta$
@@ -5680,7 +5710,7 @@ averaged over the seed.
 \begin{lemma}[Common individual polynomial measurements]
 \label{lem:ar-common-polynomials}
 \ledgernode{1.3.4.6}
-\uses{lem:ar-input-tests,thm:lidt-cl-soundness-one,lem:schwartz-zippel}
+\uses{thm:lidt-cl-soundness-one,lem:schwartz-zippel}
 \lean{MIPRE.AnswerReduction.exists_ext1, MIPRE.AnswerReduction.ext1_spec,
   MIPRE.AnswerReduction.sum_deltaSim1_le, MIPRE.LIDT.Simul.sum_deltaSim_le}
 \leanok
@@ -5699,7 +5729,7 @@ $\eps\mapsto\eps^{b'}$.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:ar-input-tests,thm:lidt-cl-soundness-one}
+\uses{thm:lidt-cl-soundness-one,lem:ar-global-tests,thm:lidt-cl-soundness}
 \leanok
 For each seed and copy, the seeded low-degree test's soundness extracts the measurements
 (\texttt{exists\_ext1}, \texttt{ext1\_spec}), with error $\delta_{\mathrm{sim}}$ at the copy's
@@ -5731,7 +5761,7 @@ suffice for the next lemma.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:ar-common-polynomials,thm:lidt-cl-soundness}
+\uses{lem:ar-common-polynomials,thm:lidt-cl-soundness,lem:ar-input-tests}
 \leanok
 The simultaneous test at $(q,m',d,m'+6)$ extracts $J$ per seed (\texttt{exists\_ext6},
 \texttt{ext6\_spec}), averaged as for the single copies (\texttt{sum\_deltaSim6\_le}). The
@@ -5781,7 +5811,8 @@ The Lean proof does not use this lemma: its decoded strategy
 \begin{lemma}[Decoding with the original answer cutoff]
 \label{lem:ar-decoding}
 \ledgernode{1.3.4.10}
-\uses{lem:ar-simultaneous-proof,lem:schwartz-zippel,thm:pcp-decider,thm:oracularization}
+\uses{lem:ar-simultaneous-proof,lem:schwartz-zippel,thm:pcp-decider,lem:ar-completeness,
+  lem:qld-global-complete}
 \lean{MIPRE.AnswerReduction.MAo, MIPRE.AnswerReduction.MBo, MIPRE.AnswerReduction.decAns,
   MIPRE.AnswerReduction.pcpOf, MIPRE.AnswerReduction.pcpSound,
   MIPRE.AnswerReduction.one_sub_povmValue_decoded_le,
@@ -5810,7 +5841,7 @@ $\val^*(\verifier_n)\geq 1-24\sqrt{7\,\mathrm{err}}$.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:ar-simultaneous-proof,lem:schwartz-zippel,thm:pcp-decider,thm:oracularization}
+\uses{lem:ar-simultaneous-proof,lem:schwartz-zippel,thm:pcp-decider}
 \leanok
 As described: the nine ordered pairs of roles are bounded pair by pair, and the bounds summed
 over the seed with the averaged extraction errors of Lemmas~\ref{lem:ar-common-polynomials}
@@ -5871,8 +5902,8 @@ parameter polynomial, past a threshold on $Q\geq n+1$.
 \begin{lemma}[Answer-reduction sampler independence]
 \label{lem:ar-sampler-independence}
 \ledgernode{1.3.4.12}
-\uses{lem:ar-construction,lem:oracle-effective-interface,lem:detype-compiler}
-\lean{MIPRE.AnswerReduction.arVerifier_sampler, MIPRE.AnswerReduction.arSamplerProg_eq}
+\uses{lem:ar-construction,lem:oracle-effective-interface}
+\lean{MIPRE.AnswerReduction.arVerifier_sampler}
 \leanok
 The output sampler is determined by $(S,\lambda,\ell,\mu,\sigma)$, independent
 of the input decider's code. The typed oracle sampler uses only $S$; PCP
@@ -5893,7 +5924,7 @@ the input sampler's program and $(\lambda,\mu,\sigma)$.
 \begin{theorem}[Answer reduction]
 \label{thm:answer-reduction}
 \ledgernode{1.3, 1.3.4}
-\uses{def:normal-verifier,def:pcc,lem:ar-construction,lem:ar-completeness,lem:ar-error-assembly,lem:ar-sampler-independence}
+\uses{def:normal-verifier,def:pcc,lem:ar-construction,lem:ar-completeness,lem:ar-error-assembly}
 \lean{MIPRE.AnswerReduction.answerReduction}
 \leanok
 In the source model there is a polynomial-time Turing machine $\ComputeAnsVerifier$ that on input
@@ -5917,7 +5948,7 @@ $C_{\mathrm{ar}}$, for all $n \geq C_{\mathrm{ar}}$:
 \end{theorem}
 
 \begin{proof}
-\uses{lem:answer-reduction-supply,def:answer-reduction-contract}
+\uses{lem:answer-reduction-supply,def:answer-reduction-contract,lem:pcp-complexity}
 \leanok
 In the ambient form of Definition~\ref{def:answer-reduction-contract}, at $\ell=5$, this is
 Lemma~\ref{lem:answer-reduction-supply}.
@@ -5925,7 +5956,7 @@ Lemma~\ref{lem:answer-reduction-supply}.
 
 \begin{definition}[Ambient answer-reduction contract]
 \label{def:answer-reduction-contract}
-\uses{def:normal-verifier,def:pcc}
+\uses{def:normal-verifier,def:pcc,def:sync-value,def:q-value}
 \lean{MIPRE.AnswerReduction}
 \leanok
 The structure \texttt{MIPRE.AnswerReduction} is an ambient contract,
@@ -5988,15 +6019,14 @@ of the time bounds against the construction.
 
 \begin{lemma}[Supplying ambient answer reduction]
 \label{lem:answer-reduction-supply}
-\uses{thm:answer-reduction,def:answer-reduction-contract,rem:runtime-normalization,rem:pcc-representation-bridge,rem:oracularization-contract}
-\lean{MIPRE.AnswerReduction.answerReduction, MIPRE.AnswerReduction.shoupField_classical,
-  MIPRE.AnswerReduction.exists_paramsBound_classical, MIPRE.AnswerReduction.fieldLarge_classical}
+\uses{rem:runtime-normalization,rem:pcc-representation-bridge,rem:oracularization-contract}
+\lean{MIPRE.AnswerReduction.shoupField_classical, MIPRE.AnswerReduction.fieldLarge_classical}
 \leanok
 The ambient contract \texttt{MIPRE.AnswerReduction 5} is inhabited.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:ar-construction,lem:ar-completeness,lem:ar-error-assembly,lem:ar-sampler-independence,lem:pcp-effective-parameters}
+\uses{lem:ar-construction,lem:ar-completeness,lem:ar-error-assembly,lem:pcp-effective-parameters}
 \leanok
 By the answer-reduced verifier over the classical PCP decider. The three hypotheses the
 construction and its analysis ask of the decider hold for it: its field is the Shoup field, by
@@ -6044,7 +6074,8 @@ anchoring; the anchored, entanglement-form theorem used in~\cite{JNVWY20}
 \begin{theorem}[Parallel repetition of normal form verifiers]
 \label{thm:parallel-repetition}
 \ledgernode{1.4, 1.4.3, 1.4.3.1}
-\uses{def:normal-verifier,def:pcc,def:direct-repetition,thm:direct-repetition-q,def:mipstar,lem:tensor-power-pcc,lem:repetition-sound-bound}
+\uses{def:normal-verifier,def:pcc,def:direct-repetition,thm:direct-repetition-q,
+  lem:tensor-power-pcc,lem:repetition-sound-bound}
 \lean{MIPRE.Repetition, MIPRE.Repetition.soundBound, MIPRE.repetition}
 \leanok
 There are a universal constant $c > 0$ and a polynomial-time Turing machine
@@ -6071,7 +6102,8 @@ $\TIME_{\srep}(n) = \poly\bigl(k(n),
 \end{theorem}
 \begin{proof}
 \leanok
-\uses{def:direct-repetition,thm:direct-repetition-q,lem:tensor-power-pcc,lem:repetition-sound-bound,lem:cl-famsum}
+\uses{def:direct-repetition,thm:direct-repetition-q,lem:tensor-power-pcc,lem:repetition-sound-bound,
+  lem:cl-famsum,lem:smn}
 The game $\vrep_n$ is $\verifier_n^{k(n)}$ at the truncated alphabet: its sampler runs
 $k(n)$ independent copies of $\sampler$ (a product of conditionally linear functions of the
 same level) and its decider runs $\decider$ on every coordinate. Completeness: the
@@ -6140,7 +6172,8 @@ an entanglement bound (Remark~\ref{rem:entanglement-form}).
 \begin{theorem}[Gap-preserving compression from ambient stage contracts]
 \label{thm:compression}
 \ledgernode{1.5, 1.5.7}
-\uses{def:introspection-contract,def:answer-reduction-contract,thm:parallel-repetition,def:lambda-bounded,def:pcc,def:normal-verifier}
+\uses{def:introspection-contract,def:answer-reduction-contract,thm:parallel-repetition,
+  def:lambda-bounded,def:pcc,def:normal-verifier,lem:compress-sampler-indep}
 \lean{MIPRE.GapCompression, MIPRE.GapCompression.ofPipeline}
 \leanok
 Assume $I : \texttt{MIPRE.Introspection 7}$ and
@@ -6244,7 +6277,7 @@ definitional identifications.
 
 \begin{theorem}[Ambient compression inhabitation target]
 \label{thm:compression-target}
-\uses{lem:introspection-supply,lem:answer-reduction-supply,thm:compression}
+\uses{lem:introspection-supply,lem:answer-reduction-supply,thm:compression,thm:answer-reduction}
 \lean{MIPRE.gapCompression}
 \leanok
 The type \texttt{MIPRE.GapCompression} is inhabited.
@@ -6260,7 +6293,7 @@ supplied stages.
 
 \begin{corollary}[Compression, and $\MIPstar = \RE$, from answer reduction alone]
 \label{cor:compression-from-answer-reduction}
-\uses{thm:compression,lem:introspection-supply,thm:parallel-repetition,lem:universal-tm,thm:main,cor:main-quantum,cor:value-uncomputable,thm:mipstar-eq-re}
+\uses{thm:compression,lem:introspection-supply,thm:parallel-repetition,lem:universal-tm}
 \lean{MIPRE.GapCompression.ofAnswerReduction,
   MIPRE.Halting.halting_reduces_to_gameValue_of_answerReduction,
   MIPRE.Halting.halting_reduction_quantum_of_answerReduction,
@@ -6276,6 +6309,7 @@ Theorem~\ref{thm:mipstar-eq-re} hold with no other hypothesis.
 \end{corollary}
 
 \begin{proof}
+\uses{cor:halting-consequences}
 \leanok
 Theorem~\ref{thm:compression} applied to the introspection instance of
 Lemma~\ref{lem:introspection-supply}, the given answer reduction, and the repetition
@@ -6301,9 +6335,9 @@ name the corresponding nodes of the companion repository's ledger
 \begin{lemma}[The compressed sampler does not depend on the verifier]
 \label{lem:compress-sampler-indep}
 \ledgernode{1.5.1}
-\uses{thm:compression,def:normal-verifier,def:cl-function}
-\lean{MIPRE.GapCompression, MIPRE.Pipeline.sampler, MIPRE.Pipeline.samplerProg_eq,
-  MIPRE.Pipeline.output_sampler}
+\uses{def:normal-verifier,def:cl-function,thm:parallel-repetition,def:introspection-contract,
+  def:answer-reduction-contract}
+\lean{MIPRE.Pipeline.sampler, MIPRE.Pipeline.samplerProg_eq, MIPRE.Pipeline.output_sampler}
 \leanok
 For all inputs $(\verifier, \lambda)$ --- $\lambda$-bounded or not, well-formed or not
 --- the sampler $\scompr$ of $\Compress(\verifier, \lambda)$ depends only on $\lambda$,
@@ -6311,6 +6345,7 @@ and there is a Turing machine $\mathtt{ComputeSampler}$ that outputs its descrip
 $\lambda$ in time $\polylog(\lambda)$.
 \end{lemma}
 \begin{proof}
+\uses{lem:compress-tau}
 \leanok
 Chain the verifier-independence of the sampler through the three stages: introspection's
 sampler depends only on $(\lambda, \ell)$, answer reduction's only on its input sampler
@@ -6332,7 +6367,6 @@ claim for every input.
 \begin{lemma}[The margin claim]
 \label{lem:compress-margin}
 \ledgernode{1.5.3}
-\uses{def:introspection-contract,def:answer-reduction-contract}
 \lean{MIPRE.Pipeline.eps1, MIPRE.Pipeline.intro_margin, MIPRE.Pipeline.exists_mu,
   MIPRE.Pipeline.eps2, MIPRE.Pipeline.ar_margin}
 \leanok
@@ -6371,7 +6405,7 @@ universal $K$, and a threshold on $n$ that $C_0$ absorbs.
 \begin{lemma}[A universal repetition exponent]
 \label{lem:compress-tau}
 \ledgernode{1.5.5}
-\uses{thm:parallel-repetition,def:answer-reduction-contract,lem:compress-margin}
+\uses{lem:compress-margin}
 \lean{MIPRE.Pipeline.exists_eps2_lower, MIPRE.Pipeline.exists_tau}
 \leanok
 With $\eps_2$ as in Lemma~\ref{lem:compress-margin}, $1 / \eps_2 \leq x^P$ for a universal
@@ -6789,7 +6823,7 @@ instead, with $f = \Ent(\cdot, \frac12)$; it is not used by the main theorem.
 
 \begin{lemma}[A violated time bound is enumerable]
 \label{lem:bounded-violation-re}
-\uses{def:lambda-bounded,def:re,lem:cost-budget-decidable}
+\uses{def:lambda-bounded,lem:cost-budget-decidable}
 \lean{MIPRE.Verifier.ComputablyPresented, MIPRE.Verifier.boundBudget,
   MIPRE.Verifier.BoundViolation, MIPRE.Verifier.boundViolationB,
   MIPRE.Verifier.boundViolationB_iff, MIPRE.Verifier.not_isBounded_iff_exists,
@@ -6829,7 +6863,8 @@ serves both.
 
 \begin{lemma}[The semidecider of the halting reduction]
 \label{lem:halting-semidecider}
-\uses{lem:bounded-violation-re,lem:value-lower-approx,lem:semidecide-encoded,def:game-description}
+\uses{lem:bounded-violation-re,lem:value-lower-approx,lem:semidecide-encoded,def:game-description,
+  thm:compression}
 \lean{MIPRE.Halting.exists_sem_of_tab, MIPRE.REPred.or, MIPRE.Verifier.LongAcceptance,
   MIPRE.Verifier.longAcceptanceB, MIPRE.Verifier.longAcceptanceB_iff,
   MIPRE.Verifier.not_rejectsLong_iff_exists, MIPRE.Verifier.rePred_not_rejectsLong}
@@ -6932,12 +6967,11 @@ The ingredients, with provenance to the companion repository's ledger nodes.
 \begin{lemma}[The self-referential decider is well defined]
 \label{lem:halt-construction}
 \ledgernode{1.6.1}
-\uses{def:normal-verifier,lem:compress-sampler-indep,lem:kleene}
+\uses{def:normal-verifier,lem:compress-sampler-indep,thm:compression,def:succinct}
 \lean{MIPRE.Halting.haltProg, MIPRE.Halting.prepProg, MIPRE.Halting.prepProg_runs,
-  MIPRE.Halting.haltProg_runs, MIPRE.Halting.haltProg_runs_inv,
-  MIPRE.Halting.haltProg_accepts_iff, MIPRE.Halting.comprStr, MIPRE.Halting.comprStr_accepts,
-  MIPRE.Cost.Prog.readProg, MIPRE.Cost.Prog.readProg_runs, MIPRE.Cost.Prog.wrapBuildProg,
-  MIPRE.Cost.Prog.freezeBuildProg}
+  MIPRE.Halting.haltProg_runs, MIPRE.Halting.haltProg_runs_inv, MIPRE.Halting.haltProg_accepts_iff,
+  MIPRE.Halting.comprStr, MIPRE.Cost.Prog.readProg, MIPRE.Cost.Prog.readProg_runs,
+  MIPRE.Cost.Prog.wrapBuildProg, MIPRE.Cost.Prog.freezeBuildProg}
 \leanok
 There is a Turing machine $F$ and a decider $\dhalt = F$ carrying its own description,
 with a timeout bound $B_{\dhalt}(n)$, such that $\dhalt$ is total within its timeout and
@@ -7027,6 +7061,7 @@ $\TIME_{\dhalt}(n), \TIME_{\shalt}(n) = \poly(n, \abs{\machine})$.
 \end{lemma}
 
 \begin{proof}
+\uses{lem:dhalt-values}
 \leanok
 \texttt{MIPRE.Halting.isBounded\_comprStr}: the sampler clauses from the compression
 theorem's own bounds at $\lambda(n)$, the size clause from the criterion's slack
@@ -7064,9 +7099,8 @@ $\TIME_{\dhalt}$ to compute: totality within a bound is the accounting itself.
 \begin{lemma}[Values of the halting verifier]
 \label{lem:dhalt-values}
 \ledgernode{1.6.2, 1.6.3}
-\uses{lem:halt-construction,lem:lambda,lem:compress-sampler-indep,def:pcc,def:q-value}
-\lean{MIPRE.Halting.comprStr_accepts, MIPRE.Halting.haltProg_accepts_iff,
-  MIPRE.Halting.CompressorSpec.toObligations}
+\uses{lem:halt-construction,lem:compress-sampler-indep,def:pcc,def:q-value}
+\lean{MIPRE.Halting.comprStr_accepts, MIPRE.Halting.CompressorSpec.toObligations}
 \leanok
 For every $n$:
 \begin{enumerate}
@@ -7122,9 +7156,11 @@ revision of this chapter did state item 2 as the bound, and because the ledger n
 \begin{theorem}[Halting reduction]
 \label{thm:halting}
 \ledgernode{1.6, 1.6.6}
-\uses{thm:compression,rem:compression-abstract,lem:compressible-criterion,lem:value-lower-approx,lem:kleene,def:mipstar,def:game-description,lem:sync-le-valstar,lem:dhalt-values,lem:lambda}
+\uses{thm:compression,rem:compression-abstract,lem:compressible-criterion,lem:value-lower-approx,
+  lem:kleene,def:game-description,lem:sync-le-valstar,lem:dhalt-values,lem:lambda}
 \lean{MIPRE.Halting.halting_reduction, MIPRE.Halting.halting_reduction_of,
-  MIPRE.Halting.exists_obligations, MIPRE.Halting.halting_reduces_to_gameValue_of}
+  MIPRE.Halting.exists_obligations, MIPRE.Halting.halting_reduces_to_gameValue_of,
+  MIPRE.Halting.halting_reduction_both_of}
 \leanok
 Assume an ambient \texttt{MIPRE.GapCompression}. There is a computable map
 $\machine \mapsto \game_{\machine}$ from Turing machines
@@ -7140,6 +7176,7 @@ such that:
 \end{theorem}
 
 \begin{proof}
+\uses{lem:halting-semidecider}
 \leanok
 \texttt{MIPRE.Halting.halting\_reduction\_of} in $\valstar$ and
 \texttt{halting\_reduces\_to\_gameValue\_of} in $\synval$, from
@@ -7148,6 +7185,32 @@ at the classes of Remark~\ref{rem:compression-abstract}, whose four obligations 
 theorems named below, the last through \texttt{exists\_obligations}. This proves
 computability of the explicit tabulation. It does not assert polynomial-time
 enumeration of that table.
+\end{proof}
+
+\begin{corollary}[The consequences of Chapter~\ref{ch:main-theorem}, from compression]
+\label{cor:halting-consequences}
+\uses{thm:halting,thm:halting-undecidable,lem:mipstar-sub-re,def:q-value,def:mipstar,def:re}
+\lean{MIPRE.Halting.halting_reduction_quantum_of, MIPRE.Halting.gameValue_uncomputable_of, MIPRE.Halting.quantumValue_uncomputable_of,
+  MIPRE.Halting.re_subset_mipstar_of, MIPRE.Halting.mipstar_eq_re_of}
+\leanok
+Assume an ambient \texttt{MIPRE.GapCompression}. On the map of Theorem~\ref{thm:halting}, the
+quantum value of the game is also $1$ when the machine halts on the empty input and at most
+$\tfrac12$ when it does not. Consequently no computable function separates game
+descriptions of value $1$ from those of value at most $\tfrac12$, for the synchronous value
+or for the quantum value; every recursively enumerable language is in $\MIPstar$; and
+$\MIPstar = \RE$.
+\end{corollary}
+
+\begin{proof}
+\leanok
+The tabulation of Theorem~\ref{thm:halting} gives both values at once
+(\texttt{halting\_reduction\_both\_of}): at a halting machine the tabulated game has a value-$1$
+PCC strategy, and at a non-halting one its quantum value is at most $\tfrac12$. A separating function composed with
+the map would decide halting, against Theorem~\ref{thm:halting-undecidable}. An r.e. language
+reduces to the halting problem by a computable map, which composes with the quantum-value
+reduction; the converse inclusion is Lemma~\ref{lem:mipstar-sub-re}.
+These are the conditional forms of the results of Chapter~\ref{ch:main-theorem}, which
+Corollary~\ref{cor:compression-from-answer-reduction} instantiates.
 \end{proof}
 
 \paragraph{The efficient source presentation.}
