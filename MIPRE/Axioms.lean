@@ -2656,3 +2656,11 @@ separation from an upper semidecider (`MIPRE/Foundations/Correlations.lean`,
   MIPRE.tsirelson,
   MIPRE.tsirelson_of_haltingReduction,
   MIPRE.tsirelson_of_upperRE
+
+/-! `thm:separation`: the explicit separation through the recursion theorem
+(`MIPRE/Foundations/Tsirelson/Separation.lean`, `MIPRE/Tsirelson.lean`). -/
+#guard_sorry_free
+  MIPRE.separation,
+  MIPRE.separation_of_upperRE,
+  MIPRE.exists_quantumValue_le_half_commutingOperatorValue_eq_one,
+  MIPRE.exists_mem_Cqc_payoff_eq_commutingOperatorValue

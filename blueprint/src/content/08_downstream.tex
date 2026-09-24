@@ -330,9 +330,9 @@ that exact through the admitted real-closed-field decision of node $1.8.3$
 \texttt{scripts/ledger-sync.py}, which walks the ledger's declared dependencies, still lists
 $1.8.3$ among the imports reached from this lemma, as expected. The ledger statement is also
 broader: it covers games with rational data and rational $r$, and the dovetailed form that
-halts exactly when $\omegaco(\game) < 1$, on succinct descriptions. The explicit route of
-Remark~\ref{rem:separation-premises} consumes those forms; the non-explicit
-Corollary~\ref{cor:tsirelson} needs only the form above.
+halts exactly when $\omegaco(\game) < 1$, on succinct descriptions. The paper's construction
+of Remark~\ref{rem:separation-premises} consumes those forms; Corollary~\ref{cor:tsirelson} and
+Theorem~\ref{thm:separation} need only the form above.
 
 The value here is the \emph{bipartite} commuting-operator value of
 Definition~\ref{def:co-value-bipartite}, not the tracial $\valco$ of
@@ -342,86 +342,6 @@ Lemma~\ref{lem:tracial-le-co} gives $\valco \leq \omegaco$ and the reverse compa
 in general --- so this lemma yields a \emph{sound} semidecider for $\valco(\game) < r$ and not
 a complete one. That is all the arguments below need, since they consume the correlation sets
 rather than the tracial value.
-
-\subsection{Separation of quantum and commuting values}
-
-\begin{remark}[Additional premises for the source separation route]
-\label{rem:separation-premises}
-\uses{rem:entanglement-form,lem:valco-upper-re,rem:pcc-representation-bridge,
-  rem:runtime-contract-bridge}
-The explicit construction below follows the companion paper's
-\texttt{recursive.tex}, \texttt{thm:separation}~\cite{AuditSync26}. It requires the
-\emph{bipartite Schmidt-rank entanglement variant} of compression as an additional
-premise, together with its effective bounded self-reference construction. Write
-$\Ent_{\mathrm{bi}}(\game,\nu)$ for the least Schmidt rank of a finite-dimensional
-tensor-product strategy attaining value at least $\nu$, or $\infty$ if there is none.
-This is the paper's measure; it is distinct from the synchronous dimension requirement
-$\Ent$ of Definition~\ref{def:ent}. The extra compression clauses must force
-$\Ent_{\mathrm{bi}}$ to diverge along the recursive levels, and the construction must
-identify the game at a fixed $C_0\geq2$ with the game supplied to the upper semidecider,
-with all specialization and timeout bounds justified.
-
-These are pending formalization obligations. The value-form
-Theorem~\ref{thm:compression} and its current Lean interface do not supply the
-Schmidt-rank clauses. If the source completeness steps are implemented through the
-synchronous PCC interface, the relevant representation transfers from
-Remark~\ref{rem:pcc-representation-bridge} must also be supplied. An implementation
-through the ambient verifier interfaces additionally requires the runtime and answer-cut
-normalization of Remark~\ref{rem:runtime-contract-bridge}; the source construction's
-absolute bounds cannot simply be read as relative cost coefficients. The argument below
-records the resulting source proof plan, not an additional completed Lean result.
-\end{remark}
-
-\begin{theorem}[Separation]
-\label{thm:separation}
-\ledgernode{1.8.8, 1.8.9, 1.8.10, 1.8.11}
-\uses{def:co-value-bipartite,def:q-value,lem:valco-upper-re}
-Under the additional source-route premises of Remark~\ref{rem:separation-premises},
-there is an explicit finite bipartite game $\game^{\sep}$ with
-$\valstar(\game^{\sep}) \leq \frac12$ and $\omegaco(\game^{\sep}) = 1$.
-\end{theorem}
-
-\begin{remark}[Which commuting value this is, and why it is not the tracial one]
-\label{rem:separation-which-value}
-\uses{thm:separation,lem:valco-upper-re,lem:tracial-le-co,def:commuting-value,def:co-value-bipartite}
-Theorem~\ref{thm:separation} is stated for the \emph{bipartite} commuting-operator value
-$\omegaco$ (Definition~\ref{def:co-value-bipartite}), not for the tracial $\valco$
-(Definition~\ref{def:commuting-value}) that this blueprint otherwise carries. That is not a
-slip, and the distinction is forced by the proof rather than cosmetic.
-
-With the premises of Remark~\ref{rem:separation-premises}, the argument is a dichotomy
-against the semidecider of Lemma~\ref{lem:valco-upper-re}. If the commuting value is $1$,
-the semidecider never halts, the early-accept branch is absent, and the source entanglement
-clauses drive $\Ent_{\mathrm{bi}}(\verifier^{\sep}_n,\frac12)$ above every finite bound.
-This excludes every finite-dimensional tensor-product strategy attaining $\frac12$ and
-gives $\valstar\leq\frac12$. Divergence of the synchronous $\Ent$ would not suffice.
-If the commuting value is less than $1$, the semidecider halts. The early-accept branch
-then supplies a finite-dimensional value-$1$ PCC strategy at every sufficiently large
-level; ordinary PCC completeness propagates these strategies back to $C_0$. Thus
-$\valstar=1$, contradicting $\valstar\leq\omegaco<1$. The semidecision event is that
-the commuting value of this very game is below $1$. No search for a proof of non-halting,
-and no preservation theorem for arbitrary commuting-operator strategies, is used.
-This argument does not construct an explicit perfect commuting-operator strategy.
-
-The source theorem supplies a general bipartite verifier game; no synchronous decision
-predicate is asserted here. Even for synchronous games, Lemma~\ref{lem:tracial-le-co}
-only gives $\valco\leq\omegaco$, with the reverse comparison false in general. Thus this
-route provides neither a synchronous perfect correlation nor a tracial value-$1$ witness.
-Any such formulation would require additional representation and value-transport results.
-Corollary~\ref{cor:tsirelson} uses the resulting separation of the bipartite correlation
-sets $C_{qa}$ and $C_{qc}$ and does not need these stronger assertions.
-\end{remark}
-
-A separate, non-explicit route to a correlation-set separation uses only the value-form
-reduction: if $C_{qa}=C_{qc}$ in every finite scenario, the quantum and commuting-operator
-values agree on every game, and the upper procedure of Lemma~\ref{lem:valco-upper-re} alone
-makes non-halting recursively enumerable through the reduction of
-Corollary~\ref{cor:main-quantum} (Lemma~\ref{lem:tsirelson-conditional}). Combining it with the
-lower procedure of Lemma~\ref{lem:value-lower-approx} into a total decider, as the ledger's
-node $1.8.5$ does, needs overlapping thresholds (for instance $\valstar > \frac58$ against
-$\omegaco < \frac78$) to contradict Corollary~\ref{cor:value-uncomputable} in its
-total-function form. Neither variant identifies the source's explicit game or discharges the
-extra premises of Remark~\ref{rem:separation-premises}.
 
 \subsection{Correlation sets and the conditional separation}
 
@@ -544,11 +464,127 @@ and the closedness of $C_{qc}$ in every finite scenario (Lemma~\ref{lem:cqc-comp
 
 The Lean proof uses no lower semidecider, no real-closed-field decision and no NPA levels. The witness scenario has one
 question alphabet and one answer alphabet shared by the two players. This is the
-non-explicit route; it does not use Theorem~\ref{thm:separation}. The ledger's proof of
+non-explicit route; it does not use Theorem~\ref{thm:separation}, which follows from the same
+two inputs and the recursion theorem. The ledger's proof of
 node $1.8.5$ dovetails the lower semidecider of Lemma~\ref{lem:value-lower-approx} against
 the upper one into a promise decider. The argument here needs only the upper one, because
 $\valstar \leq \omegaco$ always holds. Non-closure of the unclosed set $C_q$ itself is
 Slofstra's earlier theorem~\cite{Slo19}, which is not formalized here.
+
+\subsection{Separation of quantum and commuting values}
+
+\begin{theorem}[Separation]
+\label{thm:separation}
+\ledgernode{1.8.8, 1.8.9, 1.8.10, 1.8.11}
+\uses{def:correlation-sets,lem:correlation-sets-basic,def:commuting-upper-re,
+  lem:tsirelson-conditional,lem:valco-upper-re,cor:main-quantum,lem:cqc-compact}
+\lean{MIPRE.separation, MIPRE.separation_of_upperRE,
+  MIPRE.exists_quantumValue_le_half_commutingOperatorValue_eq_one,
+  MIPRE.exists_mem_Cqc_payoff_eq_commutingOperatorValue}
+\leanok
+There is an explicit finite bipartite game $\game^{\sep}$, given by a game description, with
+$\valstar(\game^{\sep}) \leq \frac12$ and $\omegaco(\game^{\sep}) = 1$. Moreover, some
+correlation $p \in C_{qc}$ in the scenario of $\game^{\sep}$ has payoff $1$ in $\game^{\sep}$
+and lies outside $C_{qa}$.
+\end{theorem}
+
+\begin{proof}
+\leanok
+Let $g$ be the computable map of Corollary~\ref{cor:main-quantum}, from machines to game
+descriptions, with $\valstar(\game_{g(\machine)}) = 1$ when $\machine$ halts on the empty
+input and $\valstar(\game_{g(\machine)}) \leq \frac12$ otherwise. By
+Lemma~\ref{lem:valco-upper-re} at $p = q = 1$, the set of machines $\machine$ with
+$\omegaco(\game_{g(\machine)}) < 1$ is recursively enumerable. Kleene's recursion theorem
+therefore gives a machine $\machine_{\sep}$ that halts on the empty input exactly when
+$\omegaco(\game_{g(\machine_{\sep})}) < 1$. Put $\game^{\sep} = \game_{g(\machine_{\sep})}$.
+
+If $\machine_{\sep}$ halted, then $\valstar(\game^{\sep}) = 1$, so
+$\omegaco(\game^{\sep}) = 1$ by $\valstar \leq \omegaco$
+(Lemma~\ref{lem:correlation-sets-basic}), and $\machine_{\sep}$ would not halt. So
+$\machine_{\sep}$ does not halt. Hence $\valstar(\game^{\sep}) \leq \frac12$, and
+$\omegaco(\game^{\sep})$ is not below $1$, so it equals $1$.
+
+For the correlation: the payoff is continuous, and $C_{qc}$ is compact
+(Lemma~\ref{lem:cqc-compact}) and nonempty, so the payoff attains its maximum on $C_{qc}$ at
+some $p$. That maximum is $\omegaco(\game^{\sep}) = 1$, since every commuting-operator
+strategy has value equal to the payoff of its correlation. Payoffs on $C_{qa}$ are at most
+$\valstar(\game^{\sep}) \leq \frac12$ (Lemma~\ref{lem:correlation-sets-basic}), so
+$p \notin C_{qa}$.
+\end{proof}
+
+The recursion theorem used in Lean is the two-argument form of Mathlib's
+\texttt{Nat.Partrec.Code.fixed\_point}, for partial recursive codes. No running-time bound is
+needed, so the efficient form of Lemma~\ref{lem:kleene} is not used.
+
+\paragraph{Proof route.} The correspondence with nodes $1.8.8$--$1.8.11$ is at the level of the
+conclusion. The game here is not the paper's $\game^{\sep} = \verifier^{\sep}_{C_0}$: it is the
+halting-reduction game of a machine that runs the commuting-value semidecider on its own
+game. It is explicit in the same sense as the paper's. It is obtained from self-reference,
+uniformly from the codes of $g$ and of the semidecider, and neither proof exhibits a
+value-$1$ commuting-operator strategy. The paper's proof needs, in the case
+$\omegaco = 1$, that $\valstar \leq \frac12$ at a level of its recursion where no soundness is
+otherwise known, and gets it from divergence of a Schmidt-rank entanglement requirement
+(Remark~\ref{rem:separation-premises}). Here that case is the non-halting case of the
+halting reduction, whose soundness is already the value-form compression of the main theorem.
+The paper observes, in a footnote to its halting theorem, that the gap
+$\valstar < \omegaco$ holds for infinitely many non-halting machines~\cite{AuditSync26}; the
+fixed point picks one of them out.
+\texttt{scripts/ledger-sync.py}, which walks the ledger's declared dependencies, still lists
+the Schmidt-rank clauses of stage $1.5$ among the imports reached from this theorem, as
+expected.
+
+\begin{remark}[The paper's construction and its premises]
+\label{rem:separation-premises}
+\uses{rem:entanglement-form,lem:valco-upper-re,rem:pcc-representation-bridge,
+  rem:runtime-contract-bridge}
+The paper's proof builds $\game^{\sep}$ as the compressed verifier at a fixed level
+$C_0 \geq 2$ of a self-referential family: its decider runs the upper semidecider on its own
+succinct description, accepts early if the semidecider halts, and otherwise
+compresses~\cite{AuditSync26}. Formalizing \emph{that} game, rather than the one of
+Theorem~\ref{thm:separation}, needs the \emph{bipartite Schmidt-rank entanglement variant} of
+compression, together with its effective bounded self-reference construction. Write
+$\Ent_{\mathrm{bi}}(\game,\nu)$ for the least Schmidt rank of a finite-dimensional
+tensor-product strategy attaining value at least $\nu$, or $\infty$ if there is none. This is
+the paper's measure; it is distinct from the synchronous dimension requirement $\Ent$ of
+Definition~\ref{def:ent}. The extra compression clauses must force $\Ent_{\mathrm{bi}}$ to
+diverge along the recursive levels, and the construction must identify the game at $C_0$ with
+the game supplied to the upper semidecider, with all specialization and timeout bounds
+justified.
+
+These are premises of the paper's construction, not of Theorem~\ref{thm:separation}, and none
+of them is formalized. The value-form Theorem~\ref{thm:compression} and its current Lean
+interface do not supply the Schmidt-rank clauses. If the source completeness steps are
+implemented through the synchronous PCC interface, the representation transfers of
+Remark~\ref{rem:pcc-representation-bridge} must also be supplied. An implementation through
+the ambient verifier interfaces additionally requires the runtime and answer-cut normalization
+of Remark~\ref{rem:runtime-contract-bridge}; the source construction's absolute bounds cannot
+simply be read as relative cost coefficients. \texttt{planning/explicit-separation.md} records
+the cost.
+\end{remark}
+
+\begin{remark}[Which commuting value this is, and why it is not the tracial one]
+\label{rem:separation-which-value}
+\uses{thm:separation,lem:valco-upper-re,lem:tracial-le-co,def:commuting-value,def:co-value-bipartite}
+Theorem~\ref{thm:separation} is stated for the \emph{bipartite} commuting-operator value
+$\omegaco$ (Definition~\ref{def:co-value-bipartite}), not for the tracial $\valco$
+(Definition~\ref{def:commuting-value}) that this blueprint otherwise carries. That is not a
+slip, and the distinction is forced by the proof rather than cosmetic.
+
+The proof turns on the semidecider of Lemma~\ref{lem:valco-upper-re}, which is complete for
+the event $\omegaco < 1$. For the tracial value, Lemma~\ref{lem:tracial-le-co} gives only
+$\valco \leq \omegaco$, so the same procedure is a sound semidecider for $\valco < 1$ and not
+a complete one, and the fixed point would conclude nothing. The semidecision event is that
+the commuting value of the very game being defined is below $1$. No search for a proof of
+non-halting, and no preservation theorem for arbitrary commuting-operator strategies, is
+used, and the argument constructs no explicit perfect commuting-operator strategy: the
+correlation of payoff $1$ is obtained by compactness.
+
+No synchronous decision predicate is asserted: $\game^{\sep}$ is whatever game the halting
+reduction produces. Even for synchronous games, Lemma~\ref{lem:tracial-le-co} only gives
+$\valco\leq\omegaco$, with the reverse comparison false in general. Thus this route provides
+neither a synchronous perfect correlation nor a tracial value-$1$ witness. Any such
+formulation would require additional representation and value-transport results.
+\end{remark}
 
 \subsection{Refutation of Connes' Embedding Problem}
 
@@ -704,16 +740,17 @@ $1.8.3$: it proves Lemma~\ref{lem:valco-upper-re} through
 Theorem~\ref{thm:nc-positivstellensatz} instead. The ledger's own dependencies are unchanged,
 so \texttt{scripts/ledger-sync.py} keeps reporting $1.8.3$ as reached from these statements.
 
-Second, the additional source-route premises of Remark~\ref{rem:separation-premises}
-are essential. The construction needs effective bounded self-reference at a
-fixed $C_0 \geq 2$ through one canonical specialization-and-timeout compiler (node $1.8.8$);
-the commuting value is $1$ because halting of the upper semidecider would supply
-one-dimensional perfect PCC strategies at sufficiently large levels, and ordinary
-completeness would propagate perfect finite-dimensional strategies to the initial level
-(node $1.8.9$); and $\valstar\leq\frac12$ uses divergence of the \emph{bipartite
-Schmidt-rank} requirement along $n_{j+1}=2^{n_j}$ (node $1.8.10$). This is not a
-consequence of the synchronous $\Ent$ or of the current value-form compression interface.
-A formalization of the explicit source separator must discharge all three obligations.
+Second, the ledger's separation route needs more than the main theorem. The construction needs
+effective bounded self-reference at a fixed $C_0 \geq 2$ through one canonical
+specialization-and-timeout compiler (node $1.8.8$); the commuting value is $1$ because halting
+of the upper semidecider would supply one-dimensional perfect PCC strategies at sufficiently
+large levels, and ordinary completeness would propagate perfect finite-dimensional strategies
+to the initial level (node $1.8.9$); and $\valstar\leq\frac12$ uses divergence of the
+\emph{bipartite Schmidt-rank} requirement along $n_{j+1}=2^{n_j}$ (node $1.8.10$). The Lean
+proof of Theorem~\ref{thm:separation} needs none of this: it applies the recursion theorem to
+the halting reduction and the upper semidecider, and its correspondence with these nodes is at
+the level of the conclusion. The three obligations remain those of the paper's own game,
+recorded in Remark~\ref{rem:separation-premises}.
 
 Third, and this is the part to be honest about: these nodes have had far less adversarial
 scrutiny than the rest of the ledger. Two of the twenty-seven carry a challenge, against $85\%$
