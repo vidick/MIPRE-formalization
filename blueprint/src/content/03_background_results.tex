@@ -249,7 +249,6 @@ soundness in $\valstar$ throughout avoids this transport loss.
 \begin{theorem}[Orthonormalization]
 \label{thm:orthonormalization}
 \ledgernode{1.2.1.7.1, 1.2.1.7.1.1, 1.2.1.7.1.2, 1.2.1.7.1.3}
-\uses{def:distance}
 \lean{MIPRE.Orthonormalization.povm_orthogonalization_finDim}
 \leanok
 Let $\cal{M}$ be a von Neumann algebra on a finite-dimensional Hilbert space, let
@@ -375,7 +374,7 @@ Mermin--Peres magic square. The form above is~\cite[Section 8]{JNVWY20}.
 \begin{lemma}[Direct Magic Square anticommutation --- what the pipeline actually needs]
 \label{lem:ms-direct-anticomm}
 \ledgernode{1.2.2.4.1, 1.2.2.4.1.6, 1.2.2.4.1.7, 1.2.2.4.1.9}
-\uses{def:q-value,def:magic-square,def:lcs-game,def:state-distance}
+\uses{def:magic-square,def:lcs-game,def:state-distance}
 \lean{MIPRE.QLD.MS.anti, MIPRE.QLD.MS.ms_direct_anticomm,
 MIPRE.QLD.MS.ms_direct_anticomm', MIPRE.QLD.MS.ms_direct_anticomm_avg}
 \leanok
@@ -400,7 +399,7 @@ $\sum_\omega \nu_\omega \norm{(\{B_{1,\omega}, B_{5,\omega}\} \ot \Id)\ket{\psi_
 
 \begin{proof}
 \leanok
-\uses{thm:orthonormalization}
+\uses{def:generalized-pauli,lem:naimark-dilation}
 Dilate each constraint POVM, after repairing invalid outcomes to a fixed parity-valid triple,
 to a projective measurement on one ancilla; its outcome PVM gives commuting reflections
 $C_{c,j}$ whose product over a constraint is exactly that constraint's sign. Bob's original
@@ -509,7 +508,7 @@ parametrization.
 
 \begin{theorem}[Quantum soundness of the canonical-line low individual degree test]
 \label{thm:lidt-soundness}
-\uses{def:lidt,def:tensor-strategy,def:inconsistency}
+\uses{def:lidt,def:tensor-strategy,def:inconsistency,def:q-value}
 \lean{MIPRE.LIDT.lowIndividualDegree_soundness}
 \leanok
 Let
@@ -576,7 +575,7 @@ It certifies none of the paper's intermediate statements, and they certify none 
 
 \begin{definition}[Seeded CL low individual degree test]
 \label{def:lidt-cl}
-\uses{def:game,def:cl-canonical}
+\uses{def:game,def:cl-canonical,def:tensor-strategy}
 \lean{MIPRE.LIDT.CL.chi, MIPRE.LIDT.CL.zeroBelow, MIPRE.LIDT.CL.rep,
   MIPRE.LIDT.CL.lineParam, MIPRE.LIDT.CL.Ty, MIPRE.LIDT.CL.Question,
   MIPRE.LIDT.CL.Answer, MIPRE.LIDT.CL.Sample, MIPRE.LIDT.CL.Sample.question,
@@ -773,6 +772,7 @@ canonical-line mass of its preimage is at most $3m$ times the seeded mass of $(x
 \end{lemma}
 
 \begin{proof}
+\uses{lem:cl-canonical}
 \leanok
 Both distributions are sums over a sample type against an indicator, so the bound is a count of
 samples. Reordering the average puts it as a weight times a count of \emph{family members}, and
@@ -800,7 +800,6 @@ the canonical-line mass, and the wrong choice costs a factor $q^{m-1}$.
 
 \begin{lemma}[The parameter choice]
 \label{lem:lidt-cl-adapter-params}
-\uses{thm:lidt-soundness,def:lidt-cl}
 \lean{MIPRE.LIDT.clK, MIPRE.LIDT.deltaCL, MIPRE.LIDT.lidtError_le_deltaCL}
 \leanok
 Take $a=2\cdot10^{11}$, $b=1/40000$ and $k=400m^3d+400m$. Then for all $m,d\geq1$, all $q$ and all
@@ -1127,7 +1126,7 @@ almost-synchronicity at all.
 \begin{lemma}[Several codewords: the simultaneity reduction]
 \label{lem:lidt-ldc}
 \ledgernode{1.2.1.9,1.2.1.9.1}
-\uses{lem:lidt-ldc-adapter,lem:lidt-ldc-extraction,lem:lidt-ldc-error,thm:lidt-cl-soundness-one}
+\uses{lem:lidt-ldc-adapter,lem:lidt-ldc-extraction,thm:lidt-cl-soundness-one}
 \lean{MIPRE.LIDT.Simul.clSoundness_padded}
 \leanok
 For admissible $q$, $m,d,r\geq1$, $m\mid q$, and $r=\mathrm{ldc}$, the
@@ -1157,7 +1156,7 @@ and Lemma~\ref{lem:lidt-ldc-extraction} turns those into $G^\alice$, $G^\bob$.
 \begin{lemma}[The padded multi-codeword game adapter]
 \label{lem:lidt-ldc-adapter}
 \ledgernode{1.2.1.9.2}
-\uses{def:lidt-cl}
+\uses{def:lidt-cl,lem:lidt-ldc-extraction}
 \lean{MIPRE.LIDT.Simul.valAt, MIPRE.LIDT.Simul.IsCross, MIPRE.LIDT.Simul.SampleRel,
   MIPRE.LIDT.Simul.sample_mem_line, MIPRE.LIDT.Simul.accepts_sample_imp,
   MIPRE.LIDT.Simul.accepts_sample_of, MIPRE.LIDT.Simul.eq_rep_add_lineParam,
@@ -1270,7 +1269,7 @@ with error $\delta$. It does not select independent single-codeword measurements
 
 \begin{proof}
 \leanok
-\uses{lem:schwartz-zippel}
+\uses{lem:schwartz-zippel,lem:qld-global-linear}
 Fix $y$, the original answer $b$ and the outcome $g$, and average over $x$ alone: the Born
 probabilities do not depend on $x$, since the original point measurement is asked $y$ and $R$
 is asked nothing. If $g$ is exactly linear in $x$ and its tuple at $y$ is not $b$, then
@@ -1377,8 +1376,7 @@ bridge is the thing to state, not the exact identity it replaces.
 
 \begin{definition}[Pauli basis test]
 \label{def:qld-game}
-\uses{def:game,def:lidt-cl,def:ld-encoding,def:magic-square,def:lcs-game,
-  fact:omega-anticomm-prob}
+\uses{def:game,def:lidt-cl,def:ld-encoding,def:magic-square,fact:omega-anticomm-prob}
 \lean{MIPRE.QLD.Bas, MIPRE.QLD.Ty, MIPRE.QLD.adjRaw, MIPRE.QLD.adj,
   MIPRE.QLD.card_adj, MIPRE.QLD.adj_symm, MIPRE.QLD.Omega, MIPRE.QLD.Question,
   MIPRE.QLD.Answer, MIPRE.QLD.Question.ty, MIPRE.QLD.Content, MIPRE.QLD.TyEdge,
@@ -1520,7 +1518,7 @@ bits too long is a statement about a different verifier.
 \begin{theorem}[Pauli basis test / quantum low individual degree test]
 \label{thm:qld}
 \ledgernode{1.2.2, 1.2.2.17}
-\uses{def:qld-game,def:q-value,def:distance,lem:ms-direct-anticomm,thm:lidt-cl-soundness}
+\uses{def:qld-game,def:q-value,lem:ms-direct-anticomm}
 \lean{MIPRE.QLD.errShape, MIPRE.QLD.ErrSmall, MIPRE.QLD.errSum, MIPRE.QLD.errShape_eq,
   MIPRE.QLD.errSum_nonneg, MIPRE.QLD.one_le_md_real, MIPRE.QLD.one_le_q_real,
   MIPRE.QLD.errSum_anti, MIPRE.QLD.errSum_le_three, MIPRE.QLD.errSum_rpow_le,
@@ -1611,7 +1609,7 @@ $(\pauli, W)$ are $\delta_{qld}$-close to the Pauli basis measurements $\tau^W_u
 \end{theorem}
 
 \begin{proof}
-\uses{lem:qld-swap,lem:qld-global-setup,lem:naimark-dilation,lem:qld-axis-degree}
+\uses{lem:qld-swap,lem:qld-global-setup,lem:naimark-dilation,lem:qld-axis-degree,lem:pauli-mixing}
 \leanok
 Outside the regime $48md \leq q$, or where item~1 of Lemma~\ref{lem:qld-swap} has no content,
 take the trivial bounds, which the shape dominates once $a$ is large. Inside it, legalize the
@@ -1906,7 +1904,7 @@ $\mu$-probability case of \texttt{MIPRE.sum\_mul\_sqrt\_le}.
 \begin{lemma}[From POVM elements to generalized observables]
 \label{lem:qld-povm-to-obs}
 \ledgernode{1.2.2.2}
-\uses{def:state-distance,lem:qld-averaging}
+\uses{def:state-distance}
 \lean{MIPRE.obsOf, MIPRE.stateDist_obsOf_le}
 \leanok
 Let $\{A^x_a\}$ and $\{B^x_a\}$ be POVMs with a common outcome set $\mA$, and let $\alpha_a$
@@ -1928,7 +1926,7 @@ than an $O(\cdot)$.
 \begin{corollary}[Orthonormalization from consistency]
 \label{cor:ortho-from-consistency}
 \ledgernode{1.2.2.3, 1.2.2.3.1}
-\uses{thm:orthonormalization,def:inconsistency,def:state-distance}
+\uses{def:state-distance}
 \lean{MIPRE.QLD.exists_projective_of_consistent}
 \leanok
 Let $\delta > 0$, let $\{Q_a\}$ be a POVM on $\mH_\alice$ and $\{R_a\}$ a POVM on $\mH_\bob$
@@ -1944,7 +1942,7 @@ Theorem~\ref{thm:orthonormalization} permits.
 
 \begin{proof}
 \leanok
-\uses{thm:orthonormalization}
+
 This is not Theorem~\ref{thm:orthonormalization} restated: that theorem requires strict
 near-projectivity in a normal state, while what the appendix has is
 bipartite consistency. The bridge is a Cauchy--Schwarz step. Write
@@ -2138,8 +2136,8 @@ $2 \cdot 172\eps$.
 
 \begin{lemma}[Signed commutation of the point observables]
 \label{lem:qld-obs-commutation}
-\uses{lem:qld-win,lem:qld-obs-consistency,fact:omega-anticomm-prob,cor:ortho-from-consistency,
-  lem:commutation-analysis,def:cross-distance}
+\uses{lem:qld-win,fact:omega-anticomm-prob,cor:ortho-from-consistency,lem:commutation-analysis,
+  def:cross-distance}
 \lean{MIPRE.QLD.signed_commutation}
 \leanok
 Under the hypotheses of Lemma~\ref{lem:qld-win}, on average over uniformly random
@@ -2154,8 +2152,7 @@ $\omega = (u_X, u_Z, r_X, r_Z)$,
 
 \begin{proof}
 \leanok
-\uses{lem:qld-win,lem:qld-obs-consistency,lem:commutation-analysis,def:cross-distance,
-  cor:ortho-from-consistency}
+\uses{lem:qld-win,lem:commutation-analysis,def:cross-distance,cor:ortho-from-consistency}
 Two cases, and the sign is the branch. The content distribution is uniform and the two cases
 partition it, so the statement is the sum of the two restricted ones:
 Lemma~\ref{lem:qld-obs-commutation-comm} at $9519168\,\eps$ and
@@ -2233,7 +2230,7 @@ corollary's own file records.
 
 \begin{lemma}[Signed commutation, the anticommuting case]
 \label{lem:qld-obs-commutation-acomm}
-\uses{lem:qld-win,lem:qld-obs-consistency,fact:omega-anticomm-prob,def:cross-distance}
+\uses{lem:qld-win,fact:omega-anticomm-prob,def:cross-distance}
 \lean{MIPRE.QLD.ptObs, MIPRE.QLD.varObs, MIPRE.QLD.ptObs_mul_self_le_one,
   MIPRE.QLD.varObs_mul_self_le_one, MIPRE.QLD.acommWeight, MIPRE.QLD.acommWeight_nonneg,
   MIPRE.QLD.sum_acommWeight_mul, MIPRE.QLD.xStateDist_ptObs_varObs_X,
@@ -2304,8 +2301,8 @@ Lemma~\ref{lem:qld-expanded-points} cancels against the ancillas.
 \begin{lemma}[Expanded point measurements]
 \label{lem:qld-expanded-points}
 \ledgernode{1.2.2.5}
-\uses{lem:qld-win,cor:ortho-from-consistency,def:distance,def:expanded-state,
-  lem:qld-expanded-commutation,lem:qld-expanded-consistency}
+\uses{lem:qld-win,cor:ortho-from-consistency,def:expanded-state,lem:qld-expanded-commutation,
+  lem:qld-expanded-consistency}
 \lean{MIPRE.QLD.expanded_points}
 \leanok
 Adjoin EPR ancilla registers to $\ket{\psi}$. There are measurements
@@ -2427,8 +2424,7 @@ anything, which is also why it is stated there rather than here.
 \begin{lemma}[Expanded line measurements]
 \label{lem:qld-expanded-lines}
 \ledgernode{1.2.2.6}
-\uses{lem:qld-win,lem:qld-expanded-points,def:weyl-epr,def:expanded-state,def:line-restriction,
-  def:lidt-cl}
+\uses{lem:qld-win,def:weyl-epr,def:expanded-state,def:line-restriction,def:lidt-cl}
 \lean{MIPRE.QLD.lineCoeffs, MIPRE.QLD.eval_lineCoeffs, MIPRE.QLD.dotF_indVec,
   MIPRE.QLD.padLine, MIPRE.QLD.linePoly_eval_eq_range, MIPRE.QLD.eval_padLine,
   MIPRE.QLD.rdLine, MIPRE.QLD.synLinePOVM, MIPRE.QLD.synLinePOVM_map_eval,
@@ -2469,7 +2465,7 @@ strategy's own line measurement is, which is without loss of generality by Naima
 
 \begin{proof}
 \leanok
-\uses{lem:qld-win,lem:qld-expanded-points,def:weyl-epr,def:expanded-state,def:line-restriction}
+\uses{lem:qld-win,def:weyl-epr,def:expanded-state,def:line-restriction}
 Everything is exact except the strategy's own error, and the two items come out of the same
 three inputs as Lemma~\ref{lem:qld-expanded-consistency}.
 
@@ -2653,7 +2649,7 @@ Same-side operator comparisons use Definition~\ref{def:state-distance}.
 \begin{lemma}[Combined $XZ$ point measurements]
 \label{lem:qld-combined-points}
 \ledgernode{1.2.2.8}
-\uses{lem:qld-expanded-points,lem:naimark-dilation,def:expanded-state,def:distance}
+\uses{lem:naimark-dilation,def:expanded-state,def:qld-game,thm:linearity,def:weyl-epr}
 \lean{MIPRE.fourierVec, MIPRE.sum_norm_fourierVec_sq, MIPRE.trObs, MIPRE.trFourier,
   MIPRE.trFourier_trObs, MIPRE.trObs_map, MIPRE.pairVec, MIPRE.sum_prod_eq_sum_pairVec,
   MIPRE.fourierOf_pair_mul, MIPRE.sum_stateSqNorm_fourierOf, MIPRE.obs2_map,
@@ -2710,8 +2706,7 @@ claimed here; they are obtained in Lemma~\ref{lem:qld-pairs-of-lines}.
 
 \begin{proof}
 \leanok
-\uses{lem:qld-expanded-points,lem:naimark-dilation,def:expanded-state,def:distance,
-  def:generalized-pauli}
+\uses{lem:naimark-dilation,def:expanded-state,def:generalized-pauli,lem:commutation-analysis}
 The sandwich, its Naimark dilation, and one five-link chain.
 
 \textbf{The sandwich is a POVM, exactly.} With $\{\widehat{M}^{(\mathtt{Point}, Z), z}_b\}$
@@ -2810,7 +2805,8 @@ projectivity. Nothing in the chain is a per-outcome estimate, so no constant dep
 \begin{lemma}[Axis degree for expanded line measurements]
 \label{lem:qld-axis-degree}
 \ledgernode{1.2.2.6,1.2.2.9}
-\uses{lem:qld-expanded-lines,lem:qld-win}
+\uses{lem:qld-expanded-lines,lem:qld-win,lem:qld-padded-lines,lem:qld-obs-commutation-acomm,
+  lem:qld-obs-commutation-comm}
 \lean{MIPRE.LowDegree.natDegree_lineRestrict_single_le, MIPRE.QLD.DegLE.add,
   MIPRE.QLD.degLE_zero, MIPRE.QLD.degLE_padLine, MIPRE.QLD.degLE_rdLine,
   MIPRE.QLD.degLE_lineCoeffs_aline, MIPRE.QLD.degLE_hatLine_outcome,
@@ -2884,8 +2880,8 @@ the degree computation in \texttt{MIPRE/Background/QLD/PaddedLines.lean}.
 \begin{lemma}[Pairs of lines]
 \label{lem:qld-pairs-of-lines}
 \ledgernode{1.2.2.9}
-\uses{lem:qld-combined-points,lem:qld-expanded-lines,lem:pasting-updated,
-  lem:cool-closeness-fact,lem:schwartz-zippel}
+\uses{lem:qld-combined-points,lem:qld-expanded-lines,lem:pasting-updated,lem:cool-closeness-fact,
+  lem:schwartz-zippel,lem:qld-expanded-commutation}
 \lean{MIPRE.QLD.toPoly, MIPRE.QLD.natDegree_toPoly_le, MIPRE.QLD.eval_toPoly,
   MIPRE.QLD.coeff_toPoly, MIPRE.QLD.toPoly_injective, MIPRE.QLD.card_agree_linePoly_le,
   MIPRE.QLD.lineParam_add_smul, MIPRE.QLD.rep_add_smul, MIPRE.QLD.Content.shiftPt,
@@ -2937,8 +2933,8 @@ $X$-side evaluation map: $md/q$ for an axis-parallel line and $md/q + 1/q$ for a
 
 \begin{proof}
 \leanok
-\uses{lem:qld-combined-points,lem:qld-expanded-lines,lem:pasting-updated,
-  lem:cool-closeness-fact,lem:schwartz-zippel}
+\uses{lem:qld-combined-points,lem:qld-expanded-lines,lem:pasting-updated,lem:cool-closeness-fact,
+  lem:schwartz-zippel,lem:qld-expanded-consistency,lem:cl-canonical}
 This is the pasting lemma (Lemma~\ref{lem:pasting-updated}) at
 $G_1 = \widehat{M}^{(\mathtt{Line}, Z), \ell_Z}$, $G_2 = \widehat{M}^{(\mathtt{Line}, X),
 \ell_X}$ and $A = \widehat{Q}^{x,z}$, and what has to be supplied is its four hypotheses.
@@ -3023,7 +3019,7 @@ appears only when a caller wants the statement for the mixture.
 \begin{lemma}[Padded point measurements]
 \label{lem:qld-padded-points}
 \ledgernode{1.2.2.10}
-\uses{lem:qld-combined-points,def:generalized-pauli,def:distance}
+\uses{lem:qld-combined-points,def:generalized-pauli}
 \lean{MIPRE.sum_norm_fourierVecRaw_sq, MIPRE.trVecRaw, MIPRE.sum_norm_trVecRaw_sq,
   MIPRE.sum_norm_char_two_sq, MIPRE.sum_avg_norm_fibre_sq, MIPRE.sum_xSqNorm_map_le,
   MIPRE.sum_mulVec', MIPRE.xSqNorm_eq_norm_evec_sq, MIPRE.sum_fibre_dev,
@@ -3058,7 +3054,7 @@ $\{\widehat{Q}^{u}_c\}_{c \in \F_q}$ is \emph{projective}, and
 
 \begin{proof}
 \leanok
-\uses{lem:qld-combined-points,def:generalized-pauli,def:distance}
+\uses{lem:qld-combined-points,def:generalized-pauli}
 Both items are about the same coarse-graining and they are free for opposite reasons.
 
 \textbf{Item 1 is free because both families are projective.} The fibres
@@ -3176,7 +3172,7 @@ axis-parallel. This last clause is needed for the legal degree-$d$ answers.
 
 \begin{proof}
 \leanok
-\uses{def:lidt-cl}
+\uses{def:lidt-cl,lem:pasting-updated,lem:qld-expanded-lines}
 The distribution is a sampling procedure, and the procedure is forced by the first property it
 has to satisfy.
 
@@ -3253,70 +3249,63 @@ primes on $w_X, w_Z$, and the unspecified law of the coordinate registers $s_X, 
 \begin{lemma}[Padded line POVM]
 \label{lem:qld-padded-lines}
 \ledgernode{1.2.2.12}
-\uses{lem:qld-pairs-of-lines,lem:qld-sublines,lem:qld-padded-points,def:cross-distance,
-  lem:qld-axis-degree}
+\uses{lem:qld-pairs-of-lines,lem:qld-sublines,lem:qld-padded-points,def:cross-distance}
 \lean{MIPRE.avg_comp_equiv_fst, MIPRE.QLD.Content.lpX, MIPRE.QLD.Content.lpZ, MIPRE.QLD.ofLPX,
   MIPRE.QLD.ofLPZ, MIPRE.QLD.contentSplitX, MIPRE.QLD.pairSplitX, MIPRE.QLD.contentSplitZ,
   MIPRE.QLD.pairSplitZ, MIPRE.QLD.contentSplitPts, MIPRE.QLD.pairSplitPts,
   MIPRE.QLD.avg_content_eq_pair_X, MIPRE.QLD.avg_content_eq_pair_Z,
   MIPRE.QLD.avg_content_eq_pair_pts, MIPRE.QLD.avg_content_eq_pair_X',
-  MIPRE.QLD.avg_content_eq_pair_Z', MIPRE.QLD.bijective_shift, MIPRE.QLD.sum_shift_gen,
-  MIPRE.QLD.pairShift, MIPRE.QLD.pairDirX, MIPRE.QLD.ofLPX_pairShift,
-  MIPRE.QLD.ofLPZ_pairShift, MIPRE.QLD.pairShift_zero, MIPRE.QLD.pairShift_add,
-  MIPRE.QLD.pairDirX_shift, MIPRE.QLD.sum_pair_shift, MIPRE.QLD.pairCX, MIPRE.QLD.pairCZ,
-  MIPRE.QLD.pairDirX_eq, MIPRE.QLD.pairCX_pairShift, MIPRE.QLD.pairCZ_pairShift,
-  MIPRE.QLD.pairs_of_lines_prod,
-  MIPRE.QLD.affEval, MIPRE.QLD.affEval_of_snd_eq_zero, MIPRE.QLD.affPoly,
-  MIPRE.QLD.eval_affPoly, MIPRE.QLD.natDegree_affPoly_le, MIPRE.QLD.affPoly_of_snd_eq_zero,
-  MIPRE.QLD.natDegree_affPoly_eq_zero, MIPRE.QLD.ofPoly, MIPRE.QLD.eval_ofPoly, MIPRE.QLD.DegLE,
-  MIPRE.QLD.DegLE.mono, MIPRE.QLD.degLE_ofPoly, MIPRE.QLD.natDegree_toPoly_le_of_degLE,
-  MIPRE.QLD.combinePoly, MIPRE.QLD.natDegree_comp_affPoly_le,
-  MIPRE.QLD.natDegree_combinePoly_le, MIPRE.QLD.combine, MIPRE.QLD.eval_combine,
-  MIPRE.QLD.degLE_combine_of_blocks_const, MIPRE.QLD.degLE_combine_of_ab_const,
-  MIPRE.QLD.lineParam_dir_zero, MIPRE.QLD.lineParam_self, MIPRE.QLD.subAff,
-  MIPRE.QLD.subAff_snd_of_eq_zero, MIPRE.QLD.on_line_affEval, MIPRE.QLD.lineParam_affEval,
-  MIPRE.QLD.alph_single_of_ne, MIPRE.QLD.bet_single_of_ne, MIPRE.QLD.LPData.dir_congr,
-  MIPRE.QLD.padShift, MIPRE.QLD.padShift_pt, MIPRE.QLD.padShift_s, MIPRE.QLD.padShift_raw,
-  MIPRE.QLD.subX_padShift, MIPRE.QLD.subZ_padShift, MIPRE.QLD.subX_padShift_dir,
-  MIPRE.QLD.subZ_padShift_dir, MIPRE.QLD.rep_xBlk_padShift, MIPRE.QLD.rep_zBlk_padShift,
-  MIPRE.QLD.aAffOf, MIPRE.QLD.bAffOf, MIPRE.QLD.xAffOf, MIPRE.QLD.zAffOf,
-  MIPRE.QLD.affEval_aAffOf, MIPRE.QLD.affEval_bAffOf, MIPRE.QLD.aPres_base_eq,
+  MIPRE.QLD.avg_content_eq_pair_Z', MIPRE.QLD.pairShift, MIPRE.QLD.pairDirX,
+  MIPRE.QLD.ofLPX_pairShift, MIPRE.QLD.ofLPZ_pairShift, MIPRE.QLD.pairShift_zero,
+  MIPRE.QLD.pairShift_add, MIPRE.QLD.pairDirX_shift, MIPRE.QLD.sum_pair_shift, MIPRE.QLD.pairCX,
+  MIPRE.QLD.pairCZ, MIPRE.QLD.pairDirX_eq, MIPRE.QLD.pairCX_pairShift, MIPRE.QLD.pairCZ_pairShift,
+  MIPRE.QLD.pairs_of_lines_prod, MIPRE.QLD.affEval, MIPRE.QLD.affEval_of_snd_eq_zero,
+  MIPRE.QLD.affPoly, MIPRE.QLD.eval_affPoly, MIPRE.QLD.natDegree_affPoly_le,
+  MIPRE.QLD.affPoly_of_snd_eq_zero, MIPRE.QLD.natDegree_affPoly_eq_zero, MIPRE.QLD.ofPoly,
+  MIPRE.QLD.eval_ofPoly, MIPRE.QLD.DegLE, MIPRE.QLD.DegLE.mono, MIPRE.QLD.degLE_ofPoly,
+  MIPRE.QLD.natDegree_toPoly_le_of_degLE, MIPRE.QLD.combinePoly,
+  MIPRE.QLD.natDegree_comp_affPoly_le, MIPRE.QLD.natDegree_combinePoly_le, MIPRE.QLD.combine,
+  MIPRE.QLD.eval_combine, MIPRE.QLD.degLE_combine_of_blocks_const,
+  MIPRE.QLD.degLE_combine_of_ab_const, MIPRE.QLD.lineParam_dir_zero, MIPRE.QLD.lineParam_self,
+  MIPRE.QLD.subAff, MIPRE.QLD.subAff_snd_of_eq_zero, MIPRE.QLD.on_line_affEval,
+  MIPRE.QLD.lineParam_affEval, MIPRE.QLD.alph_single_of_ne, MIPRE.QLD.bet_single_of_ne,
+  MIPRE.QLD.LPData.dir_congr, MIPRE.QLD.padShift, MIPRE.QLD.padShift_pt, MIPRE.QLD.padShift_s,
+  MIPRE.QLD.padShift_raw, MIPRE.QLD.subX_padShift, MIPRE.QLD.subZ_padShift,
+  MIPRE.QLD.subX_padShift_dir, MIPRE.QLD.subZ_padShift_dir, MIPRE.QLD.rep_xBlk_padShift,
+  MIPRE.QLD.rep_zBlk_padShift, MIPRE.QLD.aAffOf, MIPRE.QLD.bAffOf, MIPRE.QLD.xAffOf,
+  MIPRE.QLD.zAffOf, MIPRE.QLD.affEval_aAffOf, MIPRE.QLD.affEval_bAffOf, MIPRE.QLD.aPres_base_eq,
   MIPRE.QLD.dPres_base_eq, MIPRE.QLD.aPres_dir_ofLPX, MIPRE.QLD.aPres_dir_ofLPZ,
   MIPRE.QLD.dPres_dir_ofLPX, MIPRE.QLD.dPres_dir_ofLPZ, MIPRE.QLD.param_subX_padShift,
   MIPRE.QLD.param_subZ_padShift, MIPRE.QLD.padCombine, MIPRE.QLD.eval_padCombine,
   MIPRE.QLD.degLE_padCombine_aline, MIPRE.QLD.sum_pasteLine, MIPRE.QLD.posSemidef_pasteLine,
   MIPRE.QLD.SubRand, MIPRE.QLD.subPair, MIPRE.QLD.padLineMats, MIPRE.QLD.sum_padLineMats,
-  MIPRE.QLD.posSemidef_padLineMats, MIPRE.QLD.sum_filter_fiber,
-  MIPRE.QLD.sum_filter_padLineMats,
+  MIPRE.QLD.posSemidef_padLineMats, MIPRE.QLD.sum_filter_fiber, MIPRE.QLD.sum_filter_padLineMats,
   MIPRE.QLD.sumAll_nonneg, MIPRE.QLD.sumAll_mono, MIPRE.QLD.sumRestr_nonneg,
   MIPRE.QLD.avgAll_nonneg, MIPRE.QLD.avgAll_mono, MIPRE.QLD.avgRestr_nonneg,
   MIPRE.QLD.avgAll_const_mul, MIPRE.QLD.sum_avgRestr, MIPRE.QLD.avgRestr_le_mul_avgAll,
-  MIPRE.QLD.avgRestr_prod_le_mul_avgAll, MIPRE.QLD.sum_uniform_pts,
-  MIPRE.QLD.avg_content_eq_pts, MIPRE.QLD.combined_points_pts, MIPRE.QLD.FactorsX,
-  MIPRE.QLD.FactorsZ, MIPRE.QLD.factorsX_aPres, MIPRE.QLD.factorsX_dPres,
-  MIPRE.QLD.factorsZ_aPres, MIPRE.QLD.factorsZ_dPres, MIPRE.QLD.lineMats_ofLPX,
-  MIPRE.QLD.param_ofLPX, MIPRE.QLD.lineEvalMats_ofLPX, MIPRE.QLD.collProb_ofLPX,
-  MIPRE.QLD.lineMats_ofLPZ, MIPRE.QLD.param_ofLPZ, MIPRE.QLD.lineEvalMats_ofLPZ,
-  MIPRE.QLD.avg_pair_eq_content_X, MIPRE.QLD.avg_pair_eq_content_Z,
+  MIPRE.QLD.avgRestr_prod_le_mul_avgAll, MIPRE.QLD.sum_uniform_pts, MIPRE.QLD.avg_content_eq_pts,
+  MIPRE.QLD.combined_points_pts, MIPRE.QLD.FactorsX, MIPRE.QLD.FactorsZ, MIPRE.QLD.factorsX_aPres,
+  MIPRE.QLD.factorsX_dPres, MIPRE.QLD.factorsZ_aPres, MIPRE.QLD.factorsZ_dPres,
+  MIPRE.QLD.lineMats_ofLPX, MIPRE.QLD.param_ofLPX, MIPRE.QLD.lineEvalMats_ofLPX,
+  MIPRE.QLD.collProb_ofLPX, MIPRE.QLD.lineMats_ofLPZ, MIPRE.QLD.param_ofLPZ,
+  MIPRE.QLD.lineEvalMats_ofLPZ, MIPRE.QLD.avg_pair_eq_content_X, MIPRE.QLD.avg_pair_eq_content_Z,
   MIPRE.QLD.avg_pair_eq_content_X_self, MIPRE.QLD.avg_pair_eq_content_X_collProb,
-  MIPRE.QLD.pairs_of_lines_prod_of_items,
-  MIPRE.QLD.lpEquiv, MIPRE.QLD.sumAll_eq_sum, MIPRE.QLD.card_lpData,
-  MIPRE.QLD.avgAll_eq_uniform, MIPRE.QLD.avgAll_prod_eq_uniform, MIPRE.QLD.avgAll_one,
-  MIPRE.QLD.avgAll_prod_one, MIPRE.QLD.avgAll_prod_nonneg, MIPRE.QLD.avgAll_avgRestr_le,
-  MIPRE.QLD.avgRestr_avgAll_le, MIPRE.QLD.avgSub_le_mul_avgAll, MIPRE.QLD.shiftAB,
-  MIPRE.QLD.xBlk_shiftAB, MIPRE.QLD.zBlk_shiftAB, MIPRE.QLD.alph_shiftAB, MIPRE.QLD.bet_shiftAB,
-  MIPRE.QLD.shiftAB_shiftAB, MIPRE.QLD.shiftAB_zero, MIPRE.QLD.bijective_shiftAB,
-  MIPRE.QLD.subX_shiftAB, MIPRE.QLD.subZ_shiftAB, MIPRE.QLD.sumSubAt,
+  MIPRE.QLD.pairs_of_lines_prod_of_items, MIPRE.QLD.lpEquiv, MIPRE.QLD.sumAll_eq_sum,
+  MIPRE.QLD.card_lpData, MIPRE.QLD.avgAll_eq_uniform, MIPRE.QLD.avgAll_prod_eq_uniform,
+  MIPRE.QLD.avgAll_one, MIPRE.QLD.avgAll_prod_one, MIPRE.QLD.avgAll_prod_nonneg,
+  MIPRE.QLD.avgAll_avgRestr_le, MIPRE.QLD.avgRestr_avgAll_le, MIPRE.QLD.avgSub_le_mul_avgAll,
+  MIPRE.QLD.shiftAB, MIPRE.QLD.xBlk_shiftAB, MIPRE.QLD.zBlk_shiftAB, MIPRE.QLD.alph_shiftAB,
+  MIPRE.QLD.bet_shiftAB, MIPRE.QLD.shiftAB_shiftAB, MIPRE.QLD.shiftAB_zero,
+  MIPRE.QLD.bijective_shiftAB, MIPRE.QLD.subX_shiftAB, MIPRE.QLD.subZ_shiftAB, MIPRE.QLD.sumSubAt,
   MIPRE.QLD.sumSub_eq_sum_sumSubAt, MIPRE.QLD.sumSubAt_shiftAB, MIPRE.QLD.sumSubAB,
-  MIPRE.QLD.avgSubAB, MIPRE.QLD.sumSubAB_eq, MIPRE.QLD.avgSubAB_le_of_forall,
-  MIPRE.QLD.avgAll_sub, MIPRE.QLD.sumSub_mono, MIPRE.QLD.avgSub_mono, MIPRE.QLD.sumSub_one,
-  MIPRE.QLD.avgSub_one, MIPRE.QLD.sumSubAt_sub, MIPRE.QLD.sumSubAB_sub, MIPRE.QLD.avgSubAB_sub,
-  MIPRE.QLD.avgSubAB_one, MIPRE.QLD.sum_bornProb_le_fibre, MIPRE.QLD.sum_bornProb_diag_le_one,
-  MIPRE.QLD.pasteEval, MIPRE.QLD.pasteFib, MIPRE.QLD.pasteFib_eq, MIPRE.QLD.posSemidef_pasteFib,
-  MIPRE.QLD.sum_pasteFib, MIPRE.QLD.ptComb, MIPRE.QLD.lineComb,
-  MIPRE.QLD.lineComb_eq_sum_pasteFib, MIPRE.QLD.padded_lines_consistency,
-  MIPRE.QLD.extVec2_swapVec, MIPRE.QLD.xSqNorm_swapVec, MIPRE.QLD.extHat_swapVec,
-  MIPRE.QLD.padded_lines_consistency_swap}
+  MIPRE.QLD.avgSubAB, MIPRE.QLD.sumSubAB_eq, MIPRE.QLD.avgSubAB_le_of_forall, MIPRE.QLD.avgAll_sub,
+  MIPRE.QLD.sumSub_mono, MIPRE.QLD.avgSub_mono, MIPRE.QLD.sumSub_one, MIPRE.QLD.avgSub_one,
+  MIPRE.QLD.sumSubAt_sub, MIPRE.QLD.sumSubAB_sub, MIPRE.QLD.avgSubAB_sub, MIPRE.QLD.avgSubAB_one,
+  MIPRE.QLD.sum_bornProb_le_fibre, MIPRE.QLD.sum_bornProb_diag_le_one, MIPRE.QLD.pasteEval,
+  MIPRE.QLD.pasteFib, MIPRE.QLD.pasteFib_eq, MIPRE.QLD.posSemidef_pasteFib, MIPRE.QLD.sum_pasteFib,
+  MIPRE.QLD.ptComb, MIPRE.QLD.lineComb, MIPRE.QLD.lineComb_eq_sum_pasteFib,
+  MIPRE.QLD.padded_lines_consistency, MIPRE.QLD.extVec2_swapVec, MIPRE.QLD.xSqNorm_swapVec,
+  MIPRE.QLD.extHat_swapVec, MIPRE.QLD.padded_lines_consistency_swap}
 \leanok
 For every padded line $\ell$, there is a POVM with polynomial outcomes of
 degree at most $md+1$, and --- given Lemma~\ref{lem:qld-axis-degree} --- at
@@ -3333,7 +3322,7 @@ make these legal answers for the seeded test at $(q,4m,d,1)$.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:qld-pairs-of-lines,lem:qld-sublines,lem:qld-padded-points,lem:qld-axis-degree}
+\uses{lem:qld-pairs-of-lines,lem:qld-sublines,lem:qld-padded-points}
 \leanok
 The measurement is the conditional average, over the sublines the construction of
 Lemma~\ref{lem:qld-sublines} draws for the given padded line, of the pasted line measurement
@@ -3925,7 +3914,7 @@ $\eps$; the sum over outcomes introduces no factor $q^2$.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:qld-global-pvm,lem:qld-global-products,lem:schwartz-zippel}
+\uses{lem:qld-global-pvm,lem:qld-global-products,lem:schwartz-zippel,lem:qld-global-dummy}
 \leanok
 Fix $g \notin L$, write $S = G_{A,g}$, and let $B_u(c)$ be the combination of the ordered
 products $\widehat M^X_a \widehat M^Z_b$ along $\alpha a + \beta b = c$, for the padded point
@@ -4176,7 +4165,7 @@ to the swapped state, which the inconsistency and the Born rule exchange.
 \begin{lemma}[The marginals track the point measurements]
 \label{lem:qld-helper}
 \ledgernode{1.2.2.14}
-\uses{lem:qld-simultaneous,lem:qld-expanded-points,def:state-distance,def:inconsistency}
+\uses{lem:qld-simultaneous,def:state-distance,def:inconsistency}
 \lean{  MIPRE.stateSqNorm_eq_bornProb_one, MIPRE.normSq_stateVecB_eq_one_bornProb,
   MIPRE.QLD.SimulPair.stateSqNorm_aOp, MIPRE.QLD.SimulPair.normSq_stateVecB_aOp,
   MIPRE.QLD.SimulPair.xSqNorm_aOp, MIPRE.aOp_mul_one_sub_eq, MIPRE.snorm_aOp_mul_one_sub_le,
@@ -4202,7 +4191,7 @@ in which \emph{both} factors sit on the same party. All symmetric equivalents ho
 \end{lemma}
 
 \begin{proof}
-\uses{lem:qld-simultaneous,lem:qld-expanded-points}
+\uses{lem:qld-simultaneous}
 \leanok
 The first display is the consistency of Lemma~\ref{lem:qld-simultaneous} read as an agreement:
 for two POVMs with the same outcomes on a unit state, the inconsistency is one minus the
@@ -5621,6 +5610,7 @@ Remark~\ref{rem:downstream-nodes} says what they carry there.
 
 \begin{definition}[Succinctly described 3SAT and decoupled 5SAT]
 \label{def:succinct-3sat}
+\uses{def:decider}
 \lean{MIPRE.SAT.Circuit.formula3, MIPRE.SAT.Circuit.formula5, MIPRE.SAT.Circuit.DescribesDecider}
 \leanok
 A Boolean circuit $C$ with three inputs of length $m$ and three single-bit inputs
@@ -5642,7 +5632,7 @@ two and a terminal output gate, and their size is the number of gates.
 \begin{theorem}[Explicit succinct Cook--Levin]
 \label{thm:succinct-sat}
 \ledgernode{1.3.1}
-\uses{def:succinct-3sat,def:decider,lem:correct-tableau}
+\uses{def:succinct-3sat,def:decider,def:multiinput-tm}
 \lean{MIPRE.SAT.SuccinctCookLevin, MIPRE.SAT.succinctCookLevin}
 \leanok
 There is a polynomial-time algorithm that, given a decider $\decider$, an index $n$, a
@@ -5665,7 +5655,7 @@ $\max\{Q, 2\lceil \log n \rceil\} \leq T$, $\abs{\decider} \leq \sigma$ and $\ab
 
 \begin{proof}
 \leanok
-\uses{lem:correct-tableau,def:succinct-3sat}
+\uses{def:succinct-3sat}
 Fix one interpreter machine $U$, a multi-input Turing machine that runs the small-step
 semantics of the ambient model on a serialized configuration, and put the five parameters
 $n, x, y$ and the two answers on its input tapes, the answers on the two tapes left free.
@@ -5863,7 +5853,9 @@ also what collapses the Pauli phase index $G_E \downsize(b)$ to $\downsize(b)$ a
 
 \begin{lemma}[Deterministic self-dual normal basis]
 \label{lem:self-dual-basis}
-\uses{def:self-dual-basis}
+\uses{def:self-dual-basis,lem:binary-uniform-irreducible,lem:effective-binary-field-arithmetic,
+  lem:effective-field-matrices,lem:effective-normal-element,lem:effective-normal-selfdualization,
+  thm:pcp-decider}
 \ledgernode{1.1.6, 1.1.6.1, 1.1.6.1.1}
 \lean{MIPRE.SAT.shoupSelfDualNormalBasis_selfDual,
   MIPRE.SAT.shoupSelfDualNormalBasis_normal,
@@ -5879,6 +5871,8 @@ $\poly(k)$ a self-dual normal basis of $\F_{2^k}$ over $\F_2$ together with its
 multiplication tables.
 \end{lemma}
 \begin{proof}
+\uses{lem:effective-binary-linear-algebra,lem:effective-field-inverse-trace,
+  lem:pcp-circuit-evaluator}
 \leanok
 Construct the normal basis by Lemma~\ref{lem:effective-normal-element}, apply
 Lemma~\ref{lem:effective-normal-selfdualization}, and transport the multiplication
@@ -5926,7 +5920,6 @@ discharge unrelated unfinished pipeline theorems.
 \begin{lemma}[Self-dualization in the group algebra]
 \label{lem:group-algebra-selfdualization}
 \ledgernode{1.1.6.1.7, 1.1.6.1.8}
-\uses{def:self-dual-basis}
 \lean{MIPRE.LowDegree.exists_mul_involute_eq, MIPRE.LowDegree.mul_self_bijective,
   MIPRE.LowDegree.exists_mul_involute_eq_of_charTwo,
   MIPRE.LowDegree.binarySquareRoot, MIPRE.LowDegree.coeff_binarySquareRoot,
@@ -5977,7 +5970,7 @@ is a separate matter again.
 \begin{lemma}[The binary square-root program]
 \label{lem:binary-square-root-program}
 \ledgernode{1.1.6.1.7,1.1.6.1.8}
-\uses{lem:group-algebra-selfdualization}
+\uses{lem:group-algebra-selfdualization,def:ld-encoding}
 \lean{MIPRE.LowDegree.rootBitsProg, MIPRE.LowDegree.rootBitsProg_time_le,
   MIPRE.LowDegree.groupOfBits_rootBits, MIPRE.LowDegree.rootBitsProg_square}
 \leanok
@@ -6052,6 +6045,7 @@ cyclicity, supplied locally.
 
 \begin{lemma}[Effective normalization of binary polynomials]
 \label{lem:binary-polynomial-normalization}
+\uses{def:ld-encoding}
 \lean{MIPRE.LowDegree.BinaryPolynomial.normalizeBitsProg,
   MIPRE.LowDegree.BinaryPolynomial.normalizeBitsProg_apply,
   MIPRE.LowDegree.BinaryPolynomial.length_normalizeBits_le,
@@ -6106,6 +6100,7 @@ gives the global polynomial bound.
 
 \begin{lemma}[Canonical coordinates in monic binary quotients]
 \label{lem:binary-monic-quotient}
+\uses{def:ld-encoding}
 \lean{MIPRE.LowDegree.BinaryQuotient.length_toBits,
   MIPRE.LowDegree.BinaryQuotient.ofBits_toBits,
   MIPRE.LowDegree.BinaryQuotient.toBits_ofBits,
@@ -6170,7 +6165,7 @@ zero branch.
 
 \begin{lemma}[Effective Frobenius fixed spaces in binary quotients]
 \label{lem:binary-quotient-fixed-space}
-\uses{lem:binary-monic-quotient}
+\uses{lem:binary-monic-quotient,lem:pcp-padding-programs}
 \lean{MIPRE.LowDegree.BinaryQuotient.frobeniusMatrixProg,
   MIPRE.LowDegree.BinaryQuotient.frobeniusMatrixProg_correct,
   MIPRE.LowDegree.BinaryQuotient.fixedGeneratorsProg,
@@ -6268,6 +6263,7 @@ $m=\mathrm{ord}_q(2)$, with $\mathrm{gcd}(q,m)=1$, such that the specified root 
 $f$ in $\F_2[X]/(f)$ has no $q$th root in that field.
 \end{lemma}
 \begin{proof}
+\uses{lem:pcp-padding-programs}
 \leanok
 Choose the first irreducible factor of the squarefree cyclotomic polynomial
 $\Phi_q$. Repeatedly factor $f(X^q)$. A singleton factor list certifies that the
@@ -6282,7 +6278,7 @@ the exact-degree invariant shows that clipping preserves valid executions.
 
 \begin{lemma}[Effective irreducibles of every power-of-two degree]
 \label{lem:binary-power-two-irreducible}
-\uses{lem:binary-orbit-polynomial}
+\uses{lem:binary-orbit-polynomial,lem:binary-polynomial-normalization}
 \lean{MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBitsProg,
   MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBits_correct,
   MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBits_length}
@@ -6350,6 +6346,7 @@ degree $ab$. Its inputs are the lower coefficient bits of $f$ and the full
 coefficient bits of $g$.
 \end{lemma}
 \begin{proof}
+\uses{def:ld-encoding}
 \leanok
 In the supplied quotient for $f$, form
 $H(X)=\prod_{i=0}^{a-1}g(X+\alpha^{2^i})$, where $\alpha$ is its specified root.
@@ -6442,6 +6439,7 @@ nonstandard axiom. The companion ledger's historical admission is unchanged.
 
 \begin{lemma}[Effective polynomial-basis field arithmetic]
 \label{lem:effective-binary-field-arithmetic}
+\uses{def:ld-encoding}
 \ledgernode{1.1.6.1.2}
 \lean{MIPRE.LowDegree.BinaryPolynomial.normalize_monic,
   MIPRE.LowDegree.BinaryPolynomial.evalBits_xor,
@@ -6525,6 +6523,7 @@ supplies the binary matrix operations, elimination and solves.
 
 \begin{lemma}[Effective binary matrix arithmetic and elimination]
 \label{lem:effective-binary-linear-algebra}
+\uses{def:ld-encoding,lem:pcp-padding-programs}
 \ledgernode{1.1.6.1.2,1.1.6.1.9}
 \lean{MIPRE.LowDegree.BinaryLinear.dotBits_vectorBits,
   MIPRE.LowDegree.BinaryLinear.applyBits_matrixBits,
@@ -6589,6 +6588,7 @@ The field-matrix applications are assembled in Lemma~\ref{lem:effective-field-ma
 
 \begin{lemma}[Effective Frobenius, trace Gram matrices and table transport]
 \label{lem:effective-field-matrices}
+\uses{def:ld-encoding,lem:pcp-padding-programs}
 \ledgernode{1.1.6.1.2,1.1.6.1.3,1.1.6.1.5,1.1.6.1.7,1.1.6.1.9}
 \lean{MIPRE.LowDegree.BinaryLinear.vectorBits_vectorValue,
   MIPRE.SAT.shoupCoordinateEquiv_encoding,
@@ -6639,6 +6639,7 @@ Lemma~\ref{lem:effective-normal-element} constructs the initial normal element.
 
 \begin{lemma}[Effective normal element by fixed-space projections]
 \label{lem:effective-normal-element}
+\uses{def:ld-encoding,def:self-dual-basis,lem:pcp-padding-programs}
 \ledgernode{1.1.6.1.6}
 \lean{MIPRE.LowDegree.PrimitiveBinaryComponent.exists_mul_eq,
   MIPRE.LowDegree.splitAllComponents_primitive,
@@ -6664,6 +6665,7 @@ input, outputs the polynomial-basis encodings of a normal basis of the Shoup fie
 Its runtime is polynomial in $k$.
 \end{lemma}
 \begin{proof}
+\uses{lem:group-algebra-selfdualization}
 \leanok
 In $\F_2[C_k]$, compute generators of the fixed space of squaring by binary
 elimination. Starting from $1$, split each component by a fixed generator $b$
@@ -6688,6 +6690,7 @@ squarefree-factorization algorithm is claimed.
 
 \begin{lemma}[Effective self-dualization of a supplied normal basis]
 \label{lem:effective-normal-selfdualization}
+\uses{lem:binary-square-root-program,def:self-dual-basis,lem:pcp-padding-programs}
 \ledgernode{1.1.6.1.7,1.1.6.1.8}
 \lean{MIPRE.Cost.recordIteratesProg,
   MIPRE.Cost.recordIteratesProg_apply,
@@ -6802,7 +6805,7 @@ than over Mathlib's $\mathbb{Q}_{\geq 0}$.
   MIPRE.Cost.exists_semidecider}
 \leanok
 \ledgernode{1.1.7.2, 1.1.7.2.1, 1.1.7.2.2, 1.1.7.2.5, 1.1.7.2.6, 1.8.1}
-\uses{def:game-description,def:q-value,def:re,lem:rational-strategies-suffice}
+\uses{def:game-description,def:q-value,lem:rational-strategies-suffice}
 Write $\game_g$ for the game described by a game description $g$
 (Definition~\ref{def:game-description}). The set
 \[
@@ -6990,7 +6993,6 @@ $\bra{x}(c\Id \pm M)\ket{x} = c\norm{x}^2 \pm \bra{x} M \ket{x}$.
 
 \begin{lemma}[The perturbation split]
 \label{lem:perturbation-split}
-\uses{def:q-value}
 \lean{MIPRE.ValueApprox.dotProduct_mulVec_perturb,
 MIPRE.ValueApprox.kronecker_sub_kronecker,
 MIPRE.ValueApprox.dotProduct_kronecker_perturb}

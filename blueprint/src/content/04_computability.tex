@@ -157,7 +157,6 @@ only handles configurations of polynomial size even when the simulated run does 
 
 \begin{lemma}[Efficient s-m-n]
 \label{lem:smn}
-\uses{lem:universal-tm}
 \lean{MIPRE.Cost.hardcode_time, MIPRE.Cost.hardcode_time_rev, MIPRE.Cost.hardcode_size, MIPRE.Cost.smn_polyTime}
 \leanok
 There is a polynomial-time computable $s$ such that $\phi_{s(e,x)}(y) = \phi_e(x, y)$
@@ -227,7 +226,7 @@ pipeline consumes only the present ambient version.
 
 \begin{lemma}[Recursive compression]
 \label{lem:recursive-compression}
-\uses{def:succinct,def:re,lem:universal-tm,lem:smn,lem:kleene}
+\uses{def:succinct,lem:universal-tm,lem:smn,lem:kleene}
 \lean{MIPRE.Cost.recursive_compression}
 \leanok
 Let $f : \{0,1\}^* \to \N \cup \{\infty\}$ be a function and $A \subseteq \{x : f(x) <
@@ -293,7 +292,7 @@ milestone.
 
 \begin{lemma}[Compressibility criterion]
 \label{lem:compressible-criterion}
-\uses{def:succinct,def:re,lem:universal-tm,lem:smn,lem:kleene}
+\uses{def:succinct,lem:universal-tm,lem:smn,lem:kleene}
 \lean{MIPRE.Cost.compressibility_criterion, MIPRE.Cost.compressibility_criterion_levels}
 \leanok
 Let $A, B \subseteq \{0,1\}^*$ be languages with distinguished elements
@@ -422,7 +421,7 @@ as stated. Nothing more is asked of it.
 
 \begin{lemma}[Halting form of the two reduction lemmas]
 \label{lem:halting-form}
-\uses{lem:recursive-compression,lem:compressible-criterion,def:re}
+\uses{lem:recursive-compression,lem:compressible-criterion}
 \lean{MIPRE.Cost.recursive_compression_halting,
 MIPRE.Cost.compressibility_criterion_halting}
 \leanok
@@ -467,7 +466,6 @@ $B$ being indexed by a level as well as a string.
 
 \begin{lemma}[Halting within a cost budget is decidable]
 \label{lem:cost-budget-decidable}
-\uses{def:decider}
 \lean{MIPRE.Cost.Machine.stepCostD, MIPRE.Cost.Machine.stepCostD_toData,
   MIPRE.Cost.Machine.costStep, MIPRE.Cost.Machine.costStep_iterate,
   MIPRE.Cost.Machine.evalForCostD, MIPRE.Cost.Machine.evalForCostD_eq_some,
@@ -512,7 +510,6 @@ family of verifiers can be built from.
 
 \begin{lemma}[Semideciders on encoded values]
 \label{lem:semidecide-encoded}
-\uses{def:re}
 \lean{MIPRE.Cost.Data.primrec_decode_prod_nat, MIPRE.Cost.exists_semidecider_of_decode,
   MIPRE.Cost.exists_semidecider_prod_nat}
 \leanok
@@ -523,6 +520,7 @@ $(x, n)$ of a bit string and a number.
 \end{lemma}
 
 \begin{proof}
+\uses{lem:value-lower-approx}
 \leanok
 Prefix the bit-string semidecider of Lemma~\ref{lem:value-lower-approx} with the program
 that writes the postorder serialization of its input (\texttt{Prog.serProg},
