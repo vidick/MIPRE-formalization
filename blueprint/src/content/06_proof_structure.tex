@@ -852,6 +852,16 @@ includes the source answer cut on the outer alphabet
 consumer of the bound.
 \end{lemma}
 
+\begin{proof}
+\leanok
+\uses{lem:detype-program-strategies}
+The restriction to the graph views, with the conditional bound on the same state, is
+Lemma~\ref{lem:detype-game-soundness} for the finite detyped game. On the executable verifier
+it is \texttt{MIPRE.CL.Detyping.DeciderProgram.restrictAmbient\_value\_ge}
+(Lemma~\ref{lem:detype-program-strategies}), which bounds the value of the restricted typed
+strategy from below by that of the detyped one.
+\end{proof}
+
 \begin{lemma}[Optional entanglement consequence of detyping]
 \label{lem:detype-entanglement}
 \ledgernode{1.1.4.10}
@@ -954,7 +964,7 @@ pinned by~\cite{AuditSync26}.
 
 \begin{lemma}[Absolute costs on the original legal answer cut]
 \label{lem:intro-ambient-runtime}
-\uses{def:lambda-bounded,rem:runtime-normalization}
+\uses{def:lambda-bounded}
 \lean{MIPRE.Introspection.legal_query_size_le,
   MIPRE.Introspection.legal_query_cost_le,
   MIPRE.Introspection.original_decider_haltsWithin,
@@ -974,7 +984,8 @@ The four encoded fields have size at most $16(2^n)^\lambda+7$.
 Insert that size into the actual boundedness clause and bound the resulting
 exponent by $(\lambda n+1)^5$. Bound program and input sizes by the same
 exponential, and absorb the universal machine's polynomial overhead. No
-answer-prefix invariance or malformed-input wrapper is asserted here.
+answer-prefix invariance or malformed-input wrapper is asserted here. This is the
+absolute legal-input bound of Remark~\ref{rem:runtime-normalization}.
 \end{proof}
 
 \begin{lemma}[Ambient sampler-cost absorption]
@@ -998,7 +1009,7 @@ $\mu$ before choosing its final bound, so that bound is still polynomial.
 \begin{definition}[The introspective verifier]
 \label{def:intro-verifier}
 \ledgernode{1.2.3}
-\uses{def:normal-verifier,def:cl-function,rem:typed-detyping,lem:binary-degree-decomposition,
+\uses{def:normal-verifier,def:cl-function,lem:binary-degree-decomposition,
   lem:binary-uniform-irreducible,lem:effective-binary-field-arithmetic,
   lem:effective-binary-linear-algebra,lem:effective-field-inverse-trace,
   lem:effective-field-matrices,lem:self-dual-basis,lem:intro-dynamic-source-compiler,def:qld-game,
@@ -1568,11 +1579,9 @@ complement preserves every squared state norm. Pull back the local operators,
 apply Lemma~\ref{lem:pauli-mixing-coordinates}, and transport its actual POVMs
 back to the residual register. With each hypothesis bounded by $\eps$, the
 conclusion has the explicit constant $56$.
-\end{proof}
 
-\begin{proof}
 \ledgernode{1.2.3.3.7.1,1.2.3.3.7.2,1.2.3.3.7.3}
-Twirl to blocks $B^z_{y,a}$, retain the matching blocks $B^y_{y,a}$ using
+The source's route: twirl to blocks $B^z_{y,a}$, retain the matching blocks $B^y_{y,a}$ using
 projectivity and EPR consistency, then complete with
 $N_a^{x,y}=\sum_z B^y_{z,a}$. Lemma~\ref{lem:close-submeasurement}
 accounts for the square-root loss. Transfers across EPR use matrix transpose,
@@ -3974,7 +3983,7 @@ equivalence follows from monotonicity of $2^n$ and its value at zero.
 
 \begin{lemma}[Supplying ambient introspection]
 \label{lem:introspection-supply}
-\uses{def:introspection-contract,lem:intro-ambient-kernel,lem:intro-numbered-transport,rem:runtime-normalization,rem:pcc-representation-bridge}
+\uses{def:introspection-contract,lem:intro-ambient-kernel,lem:intro-numbered-transport}
 \lean{MIPRE.Introspection.exists_seven, MIPRE.Introspection.seven,
   MIPRE.Introspection.CompiledSoundness.output_soundness}
 \leanok
@@ -3998,7 +4007,9 @@ soundness, restrict to the enforced answer cutoff, detype, decode finite
 answers and apply actual QLD extraction followed by the source-game bound.
 Absorb the fixed detyping loss into the profile constants. These constructions
 fill every field of the ambient contract; their axiom audit contains only
-\texttt{propext}, \texttt{Classical.choice} and \texttt{Quot.sound}.
+\texttt{propext}, \texttt{Classical.choice} and \texttt{Quot.sound}. For the cost model
+and the PCC representation they work in, see Remarks~\ref{rem:runtime-normalization}
+and~\ref{rem:pcc-representation-bridge}.
 \end{proof}
 
 The checked soundness analysis follows the rigidity argument of
@@ -4110,7 +4121,7 @@ obligations.
 
 \begin{lemma}[Completeness of oracularization, at the level of games]
 \label{lem:oracular-completeness}
-\uses{def:oracular-game,def:pcc,def:sync-strategy,def:sync-value,rem:identical-operators}
+\uses{def:oracular-game,def:pcc,def:sync-strategy,def:sync-value}
 \lean{MIPRE.SeededGame.oracleStrategy, MIPRE.SeededGame.isPCC_oracleStrategy,
   MIPRE.SeededGame.oracleStrategy_value_eq_one}
 \leanok
@@ -4126,7 +4137,8 @@ oracularization of $S$, on the same Hilbert space, by
 \end{equation*}
 and $N^{(v,\, x)}_u = 0$ when the shape of $u$ does not match the role $v$. Then
 $\Sigma^\ora(T)$ is a synchronous strategy, it is PCC, and if $T$ has value $1$ then so does
-$\Sigma^\ora(T)$. Both players measure with this one family of operators.
+$\Sigma^\ora(T)$. Both players measure with this one family of operators
+(Remark~\ref{rem:identical-operators}).
 \end{lemma}
 \begin{proof}
 \uses{lem:perfect-rejects-nothing}
@@ -5223,19 +5235,6 @@ $4\sqrt{2}\,k\,(\delta+\eps)^{1/2}$-close across the parties in the sense of
 Definition~\ref{def:cross-distance}.
 \end{lemma}
 
-\paragraph{Comments.} Both relations are the paper's consistency relation of \texttt{games.tex}
---- a disagreement probability --- and not the squared distance that $\simeq_\delta$ denotes here;
-this entry previously stated the hypothesis and the conclusion as squared distances with an
-unspecified constant, which is equivalent up to the factor of~\eqref{eq:cross-from-agreement} but
-is not how the source states it or how its consumer, Lemma~\ref{lem:ar-giant-sandwich}, uses it.
-The source defers the proof to NW19's Fact~4.34, whose import was audited \cite{AuditSync26};
-the formalization re-derives it, and the constant $2\sqrt{2}$ it produces is the universal
-constant the source leaves implicit. Two generalizations cost nothing and are kept: $y$ may be
-drawn from any distribution independent of $x$, with the collision bound stated against it; and
-the families are arbitrary finite sets with evaluation maps, so the consumer's alphabets extended
-by zero projectors are covered without comment. The collision bound is a hypothesis: for
-polynomial families it is Lemma~\ref{lem:schwartz-zippel}, applied by the consumer.
-
 \begin{proof}
 \leanok
 \uses{def:cross-distance,lem:commutation-analysis,lem:cool-closeness-fact,lem:pasting-updated,lem:qld-combined-points}
@@ -5267,11 +5266,24 @@ inside the root. Evaluating both sides at $y$ merges outcomes, and since every B
 involved is nonnegative, merging can only add agreement.
 \end{proof}
 
+\paragraph{Comments.} Both relations are the paper's consistency relation of \texttt{games.tex}
+--- a disagreement probability --- and not the squared distance that $\simeq_\delta$ denotes here;
+this entry previously stated the hypothesis and the conclusion as squared distances with an
+unspecified constant, which is equivalent up to the factor of~\eqref{eq:cross-from-agreement} but
+is not how the source states it or how its consumer, Lemma~\ref{lem:ar-giant-sandwich}, uses it.
+The source defers the proof to NW19's Fact~4.34, whose import was audited \cite{AuditSync26};
+the formalization re-derives it, and the constant $2\sqrt{2}$ it produces is the universal
+constant the source leaves implicit. Two generalizations cost nothing and are kept: $y$ may be
+drawn from any distribution independent of $x$, with the collision bound stated against it; and
+the families are arbitrary finite sets with evaluation maps, so the consumer's alphabets extended
+by zero projectors are covered without comment. The collision bound is a hypothesis: for
+polynomial families it is Lemma~\ref{lem:schwartz-zippel}, applied by the consumer.
+
 \begin{lemma}[Truncation at the timeout counter]
 \label{lem:timeout-truncation-interface}
 \ledgernode{1.4.1.4}
-\uses{rem:tm-conventions}
-For a source decider in standard timeout-counter form with $B=B_D(n)$,
+For a source decider in standard timeout-counter form
+(Remark~\ref{rem:tm-conventions}) with $B=B_D(n)$,
 simultaneously replacing its two answers by their length-$B$ prefixes
 preserves the result: accept, reject, or timeout. The counter depends only
 on $n$ and the underlying machine is simulated for at most $B$ steps, so
@@ -5296,6 +5308,17 @@ In the ambient model the decider's running time is polynomial in the budget of i
 routine, and a budget polynomial in the running times of the input verifier covers the core
 (Lemma~\ref{lem:oracle-decider-time}).
 \end{lemma}
+
+\begin{proof}
+\leanok
+\uses{lem:oracle-typed-decider}
+The sampler is that of Lemma~\ref{lem:oracle-typed-sampler}: its program is a polynomial-time
+function of the input sampler's (\texttt{MIPRE.OracleSampler.samplerProgFun}), within the time
+bound \texttt{oracleSampler\_timeBound}. The decider is that of
+Lemma~\ref{lem:oracle-typed-decider}, whose program is a polynomial-time function of the input
+programs (\texttt{MIPRE.OracleDecider.deciderProgFun}), and its running time is
+Lemma~\ref{lem:oracle-decider-time}.
+\end{proof}
 
 \begin{lemma}[Timeout-compatible oracle PCC completeness]
 \label{lem:oracle-timeout-pcc}
@@ -6019,7 +6042,6 @@ of the time bounds against the construction.
 
 \begin{lemma}[Supplying ambient answer reduction]
 \label{lem:answer-reduction-supply}
-\uses{rem:runtime-normalization,rem:pcc-representation-bridge,rem:oracularization-contract}
 \lean{MIPRE.AnswerReduction.shoupField_classical, MIPRE.AnswerReduction.fieldLarge_classical}
 \leanok
 The ambient contract \texttt{MIPRE.AnswerReduction 5} is inhabited.
@@ -6035,8 +6057,10 @@ being so and the field degree polylogarithmic in $Qm'$; and its field is eventua
 every fixed power of $8(Q+1)m'$ (Lemma~\ref{lem:pcp-effective-parameters}). The complexity clause
 and the answer cut below the output bound are Lemma~\ref{lem:ar-construction}, completeness is
 Lemma~\ref{lem:ar-completeness} at the cut and hence at the bound, and soundness is
-Lemma~\ref{lem:ar-error-assembly} at the bound. Runtime and answer-cut normalization, the PCC
-bridge and the typed oracle interface are absorbed by the construction: the input's time bound
+Lemma~\ref{lem:ar-error-assembly} at the bound. Runtime and answer-cut normalization
+(Remark~\ref{rem:runtime-normalization}), the PCC bridge
+(Remark~\ref{rem:pcc-representation-bridge}) and the typed oracle interface
+(Remark~\ref{rem:oracularization-contract}) are absorbed by the construction: the input's time bound
 is used semantically, the output rejects answers beyond its cut, and the typed oracularized
 game is the one Lemma~\ref{lem:ar-decoding} plays.
 \end{proof}
@@ -6197,7 +6221,7 @@ $\verifier$ is a $\lambda$-bounded $7$-level normal form verifier, then for all 
 \end{theorem}
 \begin{proof}
 \leanok
-\uses{def:introspection-contract,def:answer-reduction-contract,thm:parallel-repetition,lem:compress-margin,lem:compress-tau,rem:compression-chain}
+\uses{def:introspection-contract,def:answer-reduction-contract,thm:parallel-repetition,lem:compress-margin,lem:compress-tau}
 Let $\ComputeIntroVerifier$ and $\ComputeAnsVerifier$ denote the procedures provided
 by $I$ and $A$, respectively. These are assumed ambient procedures in this proof.
 $\Compress(\verifier, \lambda)$ is $\ComputeIntroVerifier(\verifier, \lambda, 7)$, then
@@ -7156,7 +7180,7 @@ revision of this chapter did state item 2 as the bound, and because the ledger n
 \begin{theorem}[Halting reduction]
 \label{thm:halting}
 \ledgernode{1.6, 1.6.6}
-\uses{thm:compression,rem:compression-abstract,lem:compressible-criterion,lem:value-lower-approx,
+\uses{thm:compression,lem:compressible-criterion,lem:value-lower-approx,
   lem:kleene,def:game-description,lem:sync-le-valstar,lem:dhalt-values,lem:lambda}
 \lean{MIPRE.Halting.halting_reduction, MIPRE.Halting.halting_reduction_of,
   MIPRE.Halting.exists_obligations, MIPRE.Halting.halting_reduces_to_gameValue_of,

@@ -2,11 +2,15 @@
 r"""Does the blueprint's dependency graph say what the Lean proofs use?
 
 leanblueprint draws its graph from hand-written `\uses{}` lists and colours it from
-hand-placed `\leanok` marks: a node is dark green when it and every ancestor is
-formalized, light green when it is formalized but some ancestor is not. Nothing checked
-that the edges are right, and after the main theorem was proved, 78 nodes --- the main
-theorem among them --- were light green only because twelve edges still pointed at
-paper-route lemmas that the Lean proof never used.
+hand-placed `\leanok` marks. A result (lemma, proposition, theorem, corollary) is *proved*
+when its proof environment carries `\leanok`, and is dark green when it and every ancestor
+is proved or a definition; a proved result with any other ancestor is a paler green, and
+so is a formalized definition, which is never dark green. Nothing checked that the edges
+are right, and after the main theorem was proved, 78 nodes --- the main theorem among
+them --- were pale only because twelve edges still pointed at paper-route lemmas that the
+Lean proof never used. (The rest of leanblueprint's rule --- which proof environment it
+attaches to a statement, and labels in `\uses` that the graph does not draw --- is checked
+by `scripts/blueprint-colours.py`, from leanblueprint's own parse.)
 
 This script compares the edges with the Lean. `scripts/blueprint-deps.lean` dumps, from
 the compiled modules, which constants each constant of this repository uses. A node's
@@ -20,9 +24,14 @@ shows (definition, lemma, proposition, theorem, corollary):
   later nodes without the definition depending on them.
 * **shared** --- a declaration is listed by two graph nodes. Each declaration has one home;
   a node that relies on it cites the home. Otherwise the Lean cannot say which way the two
-  nodes depend on each other. (Remarks are not drawn, and may list anything.)
-* **unformalized** --- a formalized node cites (`\uses`) a node that is not: either the
-  cited node's content is formalized and it lacks its marks, or the edge is stale.
+  nodes depend on each other. (Remarks are not drawn, and their `\lean{}` may list
+  anything; a graph node must not cite one in `\uses`, see `scripts/blueprint-colours.py`.)
+* **unformalized** --- a formalized node cites (`\uses`) a node whose statement is not:
+  either the cited node's content is formalized and it lacks its marks, or the edge is
+  stale.
+* **unproved** --- a formalized node cites a result whose statement carries `\leanok` and
+  whose proof does not, or which has no proof environment, so that nothing depending on it
+  can be dark green. When the Lean proves it, give it a proof environment with `\leanok`.
 * **stale** --- A cites B, both carry `\lean{}`, and no declaration of B is reachable
   from A's.
 * **missing** --- A uses B in Lean, but B is not reachable from A through `\uses`.
@@ -31,11 +40,14 @@ shows (definition, lemma, proposition, theorem, corollary):
   another's, so that the Lean does not order them. Edges between two such nodes are not
   required in either direction; the `\uses` graph must still not have a cycle.
 
-A node is *formalized* when its proof carries `\leanok` (its statement, if it has no
-proof). Edges are compared up to reachability, so a `\uses` list may cite an ancestor
-instead of a direct dependency; it may not cite what the Lean does not use, nor leave out
-what it does. `--fix` adds few edges: nodes are fixed dependencies first, and an edge is
-added only when the target is not already reachable.
+A definition is *formalized* when its statement carries `\leanok`, any other node when it
+is proved, by leanblueprint's rule above: a result with `\leanok` on its statement and no
+proof environment is not. When the check passes, every graph node that a proved result
+cites, directly or through others, is a proved result or a formalized definition. Edges are
+compared up to reachability, so a `\uses` list may cite an ancestor instead of a direct
+dependency; it may not cite what the Lean does not use, nor leave out what it does. `--fix`
+adds few edges: nodes are fixed dependencies first, and an edge is added only when the
+target is not already reachable.
 
 Usage:
   scripts/blueprint-edges.py                report (runs the Lean dump first)
@@ -44,7 +56,8 @@ Usage:
   scripts/blueprint-edges.py --fix          rewrite `\uses`: drop stale and unformalized
                                             edges, add missing ones, then re-check
   scripts/blueprint-edges.py --fix --only a,b    rewrite only the nodes labelled a and b
-A `shared` finding needs a person to choose the declaration's home; `--fix` does not.
+A `shared` finding needs a person to choose the declaration's home, and an `unproved` one a
+person to mark the proof; `--fix` does neither.
 The dump needs the modules compiled (`lake build`); `LAKE` overrides the `lake` binary.
 """
 import collections
@@ -130,7 +143,8 @@ def parse_blueprint():
                 proof_uses_spans=[(x.start(), x.end()) for x in proof_uses])
             n = nodes[label]
             n.stated = bool(re.search(r"\\(?:leanok|mathlibok)\b", strip(text, mask, lo, hi)))
-            n.formalized = n.proof_ok if n.proof else n.stated
+            # leanblueprint's rule: a result is proved only through its proof's \leanok
+            n.formalized = n.stated if n.kind == "definition" else n.proof_ok
     return {l: n for l, n in nodes.items() if n.kind in NODE_ENVS}, nodes
 
 
@@ -284,12 +298,14 @@ def audit(graph, groups):
     for l, n in graph.items():
         for u in uses[l]:
             b = graph[u]
-            if n.formalized and not b.formalized:
+            unused = (l in direct and u in direct and u not in lean_reach[l]
+                      and not set(n.lean) & set(b.lean) and (n.formalized or u in n.uses_stmt))
+            if n.formalized and not b.formalized and not b.stated:
                 findings["unformalized"].append((l, u))
-            elif (l in direct and u in direct and u not in lean_reach[l]
-                  and not set(n.lean) & set(b.lean)):
-                if n.formalized or u in n.uses_stmt:
-                    findings["stale"].append((l, u))
+            elif unused:
+                findings["stale"].append((l, u))
+            elif n.formalized and not b.formalized:
+                findings["unproved"].append((l, u))
     stale = set(findings["stale"]) | set(findings["unformalized"])
     kept = {l: [u for u in us if (l, u) not in stale] for l, us in uses.items()}
     for l in groups:
@@ -298,7 +314,9 @@ def audit(graph, groups):
             # within a cluster the Lean cannot say which way the blueprint should go
             if not g & reach and not g & comp.get(l, frozenset()):
                 findings["missing"].append((l, g))
-    findings["cycle"] = find_cycles(uses)
+    # a node citing itself is a cycle too, on which leanblueprint's graph recurses forever
+    findings["cycle"] = find_cycles({l: [u for u in n.uses if u in graph]
+                                     for l, n in graph.items()})
     # the Lean graph between nodes is acyclic unless a node's declarations are split badly
     findings["lean-cycle"] = find_cycles(direct)
     listed = collections.defaultdict(list)
@@ -316,7 +334,7 @@ def describe(graph, direct, findings):
                  f"{total} findings")
     lines.append("(lean-cycle is information, not a failure: nodes whose declarations use each "
                  "other's, so that the Lean cannot order them)")
-    for kind in ("shared", "lean-cycle", "unformalized", "stale", "missing", "cycle"):
+    for kind in ("shared", "lean-cycle", "unformalized", "unproved", "stale", "missing", "cycle"):
         items = findings.get(kind, [])
         lines.append(f"\n{kind}: {len(items)}")
         for it in items:
