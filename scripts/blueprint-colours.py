@@ -24,6 +24,10 @@ A proved result is dark green when every ancestor is proved or a definition. The
 * **pale** --- a proved result that is not a definition has an ancestor that is neither
   proved nor a definition. Reported by ancestor, with the number of results it holds back.
 
+It also fails when plasTeX cannot read part of the blueprint, or finds no graph node at
+all: plasTeX skips an `\input` it cannot resolve with a warning, and the checks above would
+then pass on what is left.
+
 Usage (needs `pip install leanblueprint`, which is what the blueprint deploy installs):
   scripts/blueprint-colours.py            report
   scripts/blueprint-colours.py --check    exit 1 on any finding
@@ -84,7 +88,11 @@ def parse_blueprint(src, verbose=False):
         text = log.read_text(encoding="utf-8", errors="replace")
     if verbose:
         print(text)
-    return tex.ownerDocument, text.count("WARNING:")
+    # plasTeX skips an \input it cannot read with a warning: the parse would then pass
+    # on part of the blueprint
+    unread = [line.strip() for line in text.splitlines()
+              if "WARNING:" in line and ("File not found" in line or "Errno" in line)]
+    return tex.ownerDocument, text.count("WARNING:"), unread
 
 
 @contextlib.contextmanager
@@ -170,14 +178,18 @@ def main(argv):
         sys.exit("blueprint-colours: needs leanblueprint (pip install leanblueprint)")
     sys.setrecursionlimit(10000)
     try:
-        doc, warnings = parse_blueprint(SRC, verbose="--verbose" in argv)
+        doc, warnings, unread = parse_blueprint(SRC, verbose="--verbose" in argv)
     except RecursionError:
         print("blueprint-colours: the \\uses graph has a cycle, on which leanblueprint recurses "
               "forever (as the deploy would); scripts/blueprint-edges.py names it")
         return 1
+    if unread:
+        print("blueprint-colours: plasTeX could not read part of the blueprint:")
+        for line in unread:
+            print("  " + line)
+        return 1
     nodes, findings = audit(doc)
     if not nodes:
-        # plasTeX skips an \input it cannot find with a warning, and an empty graph passes
         print("blueprint-colours: the parse found no graph nodes; --verbose shows plasTeX's log")
         return 1
     summary = f"{len(nodes)} graph nodes: {colours(doc, nodes)}"
