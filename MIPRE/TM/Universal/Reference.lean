@@ -4,16 +4,20 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 import MIPRE.TM.Code.Evaluator
+import MIPRE.TM.Code.Encoding.Total
 import MIPRE.TM.MultiInput.Truncate
 import Mathlib.Tactic.Ring
 
 /-!
-# A reference simulator for machine codes, over lists
+# A reference decoder and simulator for machine codes, over lists
 
 Milestone M3 of `planning/universal-machine.md`: a simulator for coded machines written over
 lists and natural numbers only — zipper tapes, head positions and states as numbers, the table
 as a list, the observation index by Horner's rule — and proved to agree with the operational
-semantics `Code.toTM` (`Universal.refEval_ofCode`). It is the function the universal machine's
+semantics `Code.toTM` (`Universal.refEval_ofCode`); and a decoder that parses the table
+greedily, entry by entry, and compares the count with the canonical one, proved to agree with
+the total decoding `decodeCode` (`Universal.refDecode_eq`). Together:
+`Universal.refEval_refDecode`. It is the function the universal machine's
 ambient program computes (milestone M5), so it is written the way that program is: every
 piece is a fold, a map, a lookup or a small arithmetic function.
 
@@ -53,9 +57,12 @@ structure RefCode where
   /-- The dense table, in the canonical order. -/
   table : List RefAction
 
+/-- A raw code as a list-based one. -/
+def RefCode.ofRaw {i : ℕ} (c : RawCode i) : RefCode :=
+  ⟨c.workTapeCount, c.alphabetSize, c.startState, c.table.toList.map RefAction.ofRaw⟩
+
 /-- A code as a list-based one. -/
-def RefCode.ofCode {i : ℕ} (c : Code i) : RefCode :=
-  ⟨c.workTapeCount, c.alphabetSize, c.startState, c.raw.table.toList.map RefAction.ofRaw⟩
+def RefCode.ofCode {i : ℕ} (c : Code i) : RefCode := RefCode.ofRaw c.raw
 
 /-! ## Tapes as zippers -/
 
@@ -375,7 +382,7 @@ theorem rel_init {i : ℕ} (c : Code i) (x : Fin i → List Bool) :
     Rel c x (c.toTM.initCfg (c.bitInputs x)) (refInit (RefCode.ofCode c) i) where
   state := rfl
   inPos := by simp [refInit, List.ofFn_const]
-  tapes := ⟨fun _ => Zip.blank, by simp [refInit, RefCode.ofCode, List.ofFn_const],
+  tapes := ⟨fun _ => Zip.blank, by simp [refInit, RefCode.ofCode, RefCode.ofRaw, List.ofFn_const],
     fun _ => Zip.rep_blank _⟩
 
 theorem table_getD {i : ℕ} (c : Code i) (q : c.State) (as : Fin i → Option c.Symbol)
@@ -384,8 +391,8 @@ theorem table_getD {i : ℕ} (c : Code i) (q : c.State) (as : Fin i → Option c
       RefAction.ofRaw (c.actionAt q as bs) := by
   have hlt : (transitionIndex q as bs).val < c.raw.table.size := by
     rw [c.wf.table_size]; exact (transitionIndex q as bs).isLt
-  simp only [RefCode.ofCode, Code.actionAt]
-  simp [List.getD_eq_getElem?_getD, hlt]
+  simp only [RefCode.ofCode, RefCode.ofRaw, Code.actionAt]
+  simp [List.getD_eq_getElem?_getD, Array.getElem?_eq_getElem hlt]
 
 /-- **One step of the reference simulator follows one step of the machine.** -/
 theorem rel_step {i : ℕ} (c : Code i) (x : Fin i → List Bool)
@@ -486,5 +493,207 @@ theorem refEval_ofCode {i : ℕ} (c : Code i) (x : Fin i → List Bool) (T : ℕ
   obtain ⟨h, ho⟩ := rel_runFor c x T
   unfold refEval Code.evalWithin
   simp only [List.length_ofFn, h.state, ho, Option.isNone_map]
+
+/-! ## Decoding greedily -/
+
+/-- Parse table entries until the string is exhausted or an entry fails to parse, for at most
+`n` entries. -/
+def greedyEntries (i w : ℕ) : ℕ → List Bool → List RawAction × List Bool
+  | 0, s => ([], s)
+  | n + 1, s =>
+    if s = [] then ([], [])
+    else
+      match parseAction i w s with
+      | some (a, s') => ((greedyEntries i w n s').1.cons a, (greedyEntries i w n s').2)
+      | none => ([], s)
+
+theorem parseAction_length_lt {i w : ℕ} {s : List Bool} {a : RawAction} {rest : List Bool}
+    (h : parseAction i w s = some (a, rest)) : rest.length < s.length := by
+  obtain ⟨hs, -, -⟩ := parseAction_sound h
+  rw [hs, List.length_append]
+  have : 0 < (encodeAction a).length := by
+    cases ho : a.output <;>
+      simp [encodeAction, encodeOutput, ho]
+  omega
+
+theorem parseCount_length_le {i w k : ℕ} {s : List Bool} {l : List RawAction} {rest : List Bool}
+    (h : parseCount (parseAction i w) k s = some (l, rest)) : k + rest.length ≤ s.length := by
+  induction k generalizing s l with
+  | zero =>
+    simp only [parseCount, Option.some.injEq, Prod.mk.injEq] at h
+    obtain ⟨-, rfl⟩ := h
+    simp
+  | succ k ih =>
+    cases hps : parseAction i w s with
+    | none => simp [parseCount, hps] at h
+    | some q =>
+      obtain ⟨a, s'⟩ := q
+      cases hpc : parseCount (parseAction i w) k s' with
+      | none => simp [parseCount, hps, hpc] at h
+      | some r =>
+        obtain ⟨l', s''⟩ := r
+        simp only [parseCount, hps, hpc, Option.some.injEq, Prod.mk.injEq] at h
+        obtain ⟨rfl, rfl⟩ := h
+        have := ih hpc
+        have := parseAction_length_lt hps
+        omega
+
+/-- **Parsing exactly `k` entries consuming everything is parsing greedily and counting.** -/
+theorem parseCount_eq_nil_iff {i w k : ℕ} {s : List Bool} {l : List RawAction} {n : ℕ}
+    (hn : s.length ≤ n) :
+    parseCount (parseAction i w) k s = some (l, []) ↔
+      greedyEntries i w n s = (l, []) ∧ l.length = k := by
+  constructor
+  · intro h
+    refine ⟨?_, (parseCount_sound (fun h => (parseAction_sound h).1) h).2⟩
+    induction k generalizing s l n with
+    | zero =>
+      simp only [parseCount, Option.some.injEq, Prod.mk.injEq] at h
+      obtain ⟨rfl, rfl⟩ := h
+      cases n <;> simp [greedyEntries]
+    | succ k ih =>
+      cases hps : parseAction i w s with
+      | none => simp [parseCount, hps] at h
+      | some q =>
+        obtain ⟨a, s'⟩ := q
+        cases hpc : parseCount (parseAction i w) k s' with
+        | none => simp [parseCount, hps, hpc] at h
+        | some r =>
+          obtain ⟨l', s''⟩ := r
+          simp only [parseCount, hps, hpc, Option.some.injEq, Prod.mk.injEq] at h
+          obtain ⟨rfl, rfl⟩ := h
+          have hlt := parseAction_length_lt hps
+          have hne : s ≠ [] := by rintro rfl; simp at hlt
+          obtain ⟨n, rfl⟩ : ∃ n', n = n' + 1 := ⟨n - 1, by omega⟩
+          have := ih (n := n) (by omega) hpc
+          simp [greedyEntries, hne, hps, this]
+  · rintro ⟨h, rfl⟩
+    induction n generalizing s l with
+    | zero =>
+      simp only [greedyEntries, Prod.mk.injEq] at h
+      obtain ⟨rfl, rfl⟩ := h
+      rfl
+    | succ n ih =>
+      by_cases hs : s = []
+      · subst hs
+        simp only [greedyEntries, if_pos, Prod.mk.injEq] at h
+        obtain ⟨rfl, -⟩ := h
+        rfl
+      · cases hps : parseAction i w s with
+        | none =>
+          simp only [greedyEntries, hs, hps, if_false, Prod.mk.injEq] at h
+          exact h.2.elim
+        | some q =>
+          obtain ⟨a, s'⟩ := q
+          simp only [greedyEntries, hs, hps, if_false, Prod.mk.injEq] at h
+          obtain ⟨hl, hr⟩ := h
+          subst hl
+          have hlt := parseAction_length_lt hps
+          have := ih (s := s') (by omega) (Prod.ext rfl hr)
+          simp [parseCount, hps, this]
+
+/-- The raw code of a description, parsed greedily: the header, then as many entries as parse,
+accepted when they consume everything and their number is the canonical one. -/
+def refParse (i : ℕ) (s : List Bool) : Option (RawCode i) :=
+  match parseNat s with
+  | some (v, s₀) =>
+    if v = 0 then
+      match parseNat s₀ with
+      | some (w, s₁) =>
+        match parseNat s₁ with
+        | some (σ, s₂) =>
+          match parseNat s₂ with
+          | some (Q, s₃) =>
+            match parseNat s₃ with
+            | some (q₀, s₄) =>
+              if (greedyEntries i w s.length s₄).2 = [] ∧
+                  (greedyEntries i w s.length s₄).1.length = Q * (σ + 1) ^ (i + w) then
+                some ⟨w, σ, Q, q₀, (greedyEntries i w s.length s₄).1.toArray⟩
+              else none
+            | none => none
+          | none => none
+        | none => none
+      | none => none
+    else none
+  | none => none
+
+theorem parseNat_length_le {s rest : List Bool} {n : ℕ} (h : parseNat s = some (n, rest)) :
+    rest.length ≤ s.length := by
+  rw [parseNat_sound h]
+  simp
+
+/-- **Greedy parsing is exact parsing.** -/
+theorem refParse_eq (i : ℕ) (s : List Bool) :
+    refParse i s = match parseRawCode i s with
+      | some (raw, []) => some raw
+      | _ => none := by
+  unfold refParse parseRawCode
+  rcases h₀ : parseNat s with _ | ⟨v, s₀⟩
+  · rfl
+  dsimp only
+  split_ifs with hv
+  swap
+  · rfl
+  rcases h₁ : parseNat s₀ with _ | ⟨w, s₁⟩
+  · rfl
+  dsimp only
+  rcases h₂ : parseNat s₁ with _ | ⟨σ, s₂⟩
+  · rfl
+  dsimp only
+  rcases h₃ : parseNat s₂ with _ | ⟨Q, s₃⟩
+  · rfl
+  dsimp only
+  rcases h₄ : parseNat s₃ with _ | ⟨q₀, s₄⟩
+  · rfl
+  dsimp only
+  have hlen : s₄.length ≤ s.length := by
+    have := parseNat_length_le h₀; have := parseNat_length_le h₁
+    have := parseNat_length_le h₂; have := parseNat_length_le h₃
+    have := parseNat_length_le h₄; omega
+  rcases hpc : parseCount (parseAction i w) (Q * (σ + 1) ^ (i + w)) s₄ with _ | ⟨l, r⟩
+  · dsimp only
+    rw [if_neg]
+    rintro ⟨hr, hl⟩
+    have := (parseCount_eq_nil_iff hlen).mpr ⟨Prod.ext rfl hr, hl⟩
+    rw [hpc] at this
+    exact absurd this (by simp)
+  · dsimp only
+    cases r with
+    | nil =>
+      obtain ⟨hg, hl⟩ := (parseCount_eq_nil_iff hlen).mp hpc
+      rw [if_pos (by rw [hg]; exact ⟨rfl, hl⟩), hg]
+    | cons b r =>
+      rw [if_neg]
+      rintro ⟨hr, hl⟩
+      have := (parseCount_eq_nil_iff hlen).mpr ⟨Prod.ext rfl hr, hl⟩
+      rw [hpc] at this
+      simp at this
+
+/-- The reference decoding: the greedily parsed code if it is well formed, the default
+reject code otherwise. -/
+def refDecode (i : ℕ) (s : List Bool) : RefCode :=
+  match refParse i s with
+  | some raw =>
+    if raw.wellFormedB then RefCode.ofRaw raw else RefCode.ofCode (Code.defaultRejectCode i)
+  | none => RefCode.ofCode (Code.defaultRejectCode i)
+
+/-- **The reference decoding is the total decoding.** -/
+theorem refDecode_eq (i : ℕ) (s : List Bool) :
+    refDecode i s = RefCode.ofCode (decodeCode i s) := by
+  unfold refDecode decodeCode decodeCodeExact
+  rw [refParse_eq]
+  rcases h : parseRawCode i s with _ | ⟨raw, _ | ⟨b, r⟩⟩
+  · rfl
+  · simp only
+    split_ifs with hwf
+    · rfl
+    · rfl
+  · rfl
+
+/-- **The reference simulator on the reference decoding is the budgeted evaluation of the
+described machine.** -/
+theorem refEval_refDecode {i : ℕ} (α : List Bool) (x : Fin i → List Bool) (T : ℕ) :
+    refEval (refDecode i α) (List.ofFn x) T = (decodeCode i α).evalWithin x T := by
+  rw [refDecode_eq, refEval_ofCode]
 
 end Turing.Universal
