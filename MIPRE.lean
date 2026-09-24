@@ -1315,6 +1315,7 @@ import MIPRE.TM.Code.Examples
 import MIPRE.TM.Code.Observation
 import MIPRE.TM.Code.Raw
 import MIPRE.TM.Code.Semantics
+import MIPRE.TM.Code.Truncate
 import MIPRE.TM.Code.WellFormed
 import MIPRE.TM.CookLevin.AnsEnd
 import MIPRE.TM.CookLevin.Assemble
@@ -1369,4 +1370,5 @@ import MIPRE.TM.MultiInput.Congr
 import MIPRE.TM.MultiInput.Deterministic
 import MIPRE.TM.MultiInput.OneInputEquiv
 import MIPRE.TM.MultiInput.TapeLemmas
+import MIPRE.TM.MultiInput.Truncate
 import MIPRE.TM.Universal.Spec
