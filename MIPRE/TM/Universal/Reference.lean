@@ -205,7 +205,8 @@ theorem Zip.rep_blank {σ : ℕ} (p : ℤ) : Zip.blank.Rep (fun _ => (none : Opt
   ⟨rfl, fun _ => by simp [Zip.blank], fun _ => by simp [Zip.blank]⟩
 
 theorem Zip.rep_update {σ : ℕ} {z : Zip} {f : ℤ → Option (Fin σ)} {p : ℤ} (h : z.Rep f p)
-    (o : Option (Fin σ)) : ({ z with cur := o.map Fin.val } : Zip).Rep (Function.update f p o) p := by
+    (o : Option (Fin σ)) :
+    ({ z with cur := o.map Fin.val } : Zip).Rep (Function.update f p o) p := by
   obtain ⟨_, hl, hr⟩ := h
   refine ⟨by simp, fun k => ?_, fun k => ?_⟩
   · rw [hl k, Function.update_of_ne (by omega)]
