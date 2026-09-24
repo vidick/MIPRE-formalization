@@ -762,6 +762,7 @@ import MIPRE.Foundations.Closeness
 import MIPRE.Foundations.Commutation
 import MIPRE.Foundations.CommutingOperator
 import MIPRE.Foundations.Compression
+import MIPRE.Foundations.Correlations
 import MIPRE.Foundations.Cost.Basic
 import MIPRE.Foundations.Cost.Binary
 import MIPRE.Foundations.Cost.BinaryArithmetic
@@ -1267,6 +1268,7 @@ import MIPRE.Foundations.SyncMergeByQuestion
 import MIPRE.Foundations.SyncPushQ
 import MIPRE.Foundations.SyncTransport
 import MIPRE.Foundations.TensorFamily
+import MIPRE.Foundations.Tsirelson.Conditional
 import MIPRE.Foundations.ValueApprox
 import MIPRE.Foundations.ValueApprox.Cayley
 import MIPRE.Foundations.ValueApprox.Dense
