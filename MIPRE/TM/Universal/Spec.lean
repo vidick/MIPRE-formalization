@@ -37,6 +37,12 @@ Milestones C and D: total decoding `decodeCode`, the relational semantics
 `encodeBoundedResult` (the output format of the bounded machine) is the one *defined*
 object here — computable, `sorry`-free — completing the Milestone F output interface
 deferred from `Code/Evaluator.lean` (decision D12).
+
+**Not planned.** Issues #17 and #18 were closed as not planned on 2026-09-24. The main
+theorem does not use these statements: the pipeline's universal machines are the ambient ones
+of `MIPRE/Foundations/Cost/Toolkit.lean` (blueprint `lem:universal-tm`), discharged by the
+`Prog` self-interpreter. The two `sorry`s below are deliberate, nothing depends on them, and
+`CONTRIBUTING.md` records them as the standing exception to its `sorry` policy.
 -/
 
 namespace Turing
@@ -68,7 +74,7 @@ theorem exists_universalCode (i : ℕ) :
           U.toTM.ComputesInTimeAndSpace (U.bitInputs (Fin.cons α x))
             (y.map fun b => U.bitEmbedding b) t' s' ∧
           t' ≤ P.eval (α.length + t) ∧ s' ≤ P.eval (α.length + t) := by
-  sorry -- blueprint `lem:universal-machine`; issue #17 (Milestones E–G)
+  sorry -- blueprint `lem:universal-machine`; not planned (issue #17 closed)
 
 /-- **Bounded universal machine** (blueprint `lem:bounded-universal-machine`;
 specification for Milestones E–G, tracked by issue #18).
@@ -87,7 +93,7 @@ theorem exists_boundedUniversalCode (i : ℕ) :
             ((encodeBoundedResult ((decodeCode i α).evalWithin x T)).map
               fun b => U.bitEmbedding b) t s ∧
           t ≤ P.eval (α.length + T) := by
-  sorry -- blueprint `lem:bounded-universal-machine`; issue #18 (Milestones E–G)
+  sorry -- blueprint `lem:bounded-universal-machine`; not planned (issue #18 closed)
 
 #eval encodeBoundedResult (Code.BoundedResult.halted [true])
 #eval encodeBoundedResult Code.BoundedResult.timeout

@@ -62,6 +62,8 @@ If your PR proves a statement that appears in the blueprint, also edit the corre
 
 There is one exception, for vendored trees. An upstream development may state its own targets up front — *signed statements*, stated so that each stage of the work can be compared against them — and leave them `sorry` until they are discharged. Such a statement may be vendored, provided all three hold: nothing in this repository depends on it; the blueprint says which results the tree does and does not prove (as `rem:orthonormalization-scope` does); and the tree's `Axioms.lean` asserts with `#guard_msgs` that the statement still carries `sorryAx`. The last is what keeps the exception from being a loophole: the build fails if such a statement is closed upstream without this repository noticing, and equally if anything here starts depending on one.
 
+There is also one standing exception outside the vendored trees: the two machine-level universal machines in `MIPRE/TM/Universal/Spec.lean` (blueprint `lem:universal-machine` and `lem:bounded-universal-machine`). Their issues, #17 and #18, were closed as not planned. Nothing depends on them, the main theorem uses the ambient universal machines of `lem:universal-tm` instead, and both the file and the blueprint nodes say so.
+
 ## Additional Guidelines and Notes
 
 1. Please adhere to the issue claiming process. If an issue is already assigned to another contributor, refrain from working on it without prior communication with the current claimant. This ensures a collaborative and respectful workflow that values each contributor's efforts.
