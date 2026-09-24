@@ -213,7 +213,7 @@ and the \emph{commuting value} of $\game$ is $\valco(\game) = \sup_\strategy
 
 \begin{lemma}[A perfect strategy rejects nothing on the support]
 \label{lem:perfect-rejects-nothing}
-\uses{def:commuting-value,def:sync-value}
+\uses{def:sync-value}
 \lean{MIPRE.sum_re_tracial, MIPRE.re_nonneg_tracial,
   MIPRE.re_eq_zero_of_tracialValue_eq_one, MIPRE.SyncStrategy.value_eq_tracialValue,
   MIPRE.SyncStrategy.re_eq_zero_of_value_eq_one}
@@ -377,7 +377,6 @@ system correspond to representations sending $J \mapsto -I$ (in Lean,
 
 \begin{definition}[Binary observables]
 \label{def:observable}
-\uses{def:lcs-instance}
 \lean{MIPRE.LCS.IsObservable, MIPRE.LCS.observableOfMeasurementSystem,
 MIPRE.LCS.binary_measurement_eq_projector}
 \leanok
@@ -407,7 +406,7 @@ computation from $O^* = O$ and $O^2 = 1$; commutation is inherited term by term.
 
 \begin{lemma}[From an observable strategy to a projective strategy]
 \label{lem:observable-strategy}
-\uses{def:observable,lem:observable-projector,def:tensor-strategy}
+\uses{def:observable,lem:observable-projector,def:lcs-instance}
 \lean{MIPRE.LCS.ObservableStrategy.toProjectorStrategy,
 MIPRE.LCS.ObservableStrategy.isMeasurementSystem_aliceMeasurement,
 MIPRE.LCS.ObservableStrategy.aliceMeasurement_commute_bobMeasurement}
@@ -428,7 +427,7 @@ players is inherited from commutation of the underlying observables.
 
 \begin{definition}[The Magic Square]
 \label{def:magic-square}
-\uses{def:lcs-instance,def:lcs-game,def:solution-group}
+\uses{def:lcs-instance,def:solution-group}
 \lean{MIPRE.LCS.MagicSquare.layout, MIPRE.LCS.MagicSquare.game,
 MIPRE.LCS.MagicSquare.solutionGroup}
 \leanok
@@ -439,7 +438,7 @@ $1$. It has no classical solution, since the six equations sum to $0 = 1$.
 
 \begin{lemma}[The Mermin--Peres strategy is perfect]
 \label{lem:mermin-peres}
-\uses{def:magic-square,def:observable,lem:observable-strategy}
+\uses{def:magic-square,def:observable}
 \lean{MIPRE.LCS.MagicSquare.grid, MIPRE.LCS.MagicSquare.isObservable_grid,
 MIPRE.LCS.MagicSquare.grid_sameEquation_comm, MIPRE.LCS.MagicSquare.merminPeresStrategy}
 \leanok
@@ -457,7 +456,7 @@ $4 \times 4$ matrices.
 
 \begin{theorem}[Perfect strategies from operator solutions]
 \label{thm:lcs-perfect}
-\uses{def:lcs-game,def:tensor-strategy,def:q-value}
+\uses{def:lcs-game,def:tensor-strategy,def:q-value,lem:observable-strategy}
 \lean{MIPRE.LCS.exists_tensorStrategy_value_eq_one_of_localLoss_annihilates_epr}
 \leanok
 If a bipartite observable strategy for an LCS instance is perfect --- its local loss
@@ -494,7 +493,7 @@ dimension-normalized trace.
 \begin{definition}[POVM distance]
 \label{def:distance}
 \ledgernode{1.1.1.1}
-\uses{def:game,def:hs-norm}
+\uses{def:hs-norm}
 \lean{MIPRE.povmDistance, MIPRE.IsPOVMClose}
 \leanok
 \qlib{}
@@ -508,7 +507,6 @@ $\tau((M^x_a - N^x_a)^2)$.
 
 \begin{definition}[State-dependent POVM distance]
 \label{def:state-distance}
-\uses{def:game}
 \lean{MIPRE.stateVec, MIPRE.stateNorm, MIPRE.stateSqNorm, MIPRE.stateDist,
   MIPRE.IsStateClose, MIPRE.povmStateDist, MIPRE.IsPOVMStateClose,
   MIPRE.quadForm_eq, MIPRE.stateSqNorm_eq}
@@ -544,7 +542,7 @@ comment; both are defined here.
 
 \begin{definition}[Cross-party state-dependent distance]
 \label{def:cross-distance}
-\uses{def:game,def:state-distance}
+\uses{def:game,def:state-distance,lem:qld-povm-to-obs,def:generalized-pauli}
 \lean{MIPRE.xSqNorm, MIPRE.xPovmDist, MIPRE.IsXPOVMClose, MIPRE.POVM.mul_self_le_self,
   MIPRE.sum_stateSqNorm_le_one, MIPRE.sum_stateSqNormB_le_one, MIPRE.sub_kronecker_right,
   MIPRE.xSqNorm_sum_le_two_mul, MIPRE.sum_bornProb_mapA, MIPRE.sum_bornProb_mapB,
@@ -660,7 +658,7 @@ observables and carried back; that swap is the bridge.
 
 \begin{definition}[The expanded state, and an inert ancilla]
 \label{def:expanded-state}
-\uses{def:cross-distance,def:state-distance}
+\uses{def:state-distance}
 \lean{MIPRE.expVec, MIPRE.expEquiv, MIPRE.sum_prod_mul, MIPRE.norm_evec_expVec,
   MIPRE.expVec_dotProduct, MIPRE.expVec_unit, MIPRE.mulVec_kron_expVec,
   MIPRE.norm_stateVec_kron_unitary, MIPRE.norm_stateVec_expVec_kron_one,
@@ -717,7 +715,6 @@ proving something false.
 
 \begin{lemma}[Naimark dilation of a question-indexed family]
 \label{lem:naimark-dilation}
-\uses{def:game}
 \lean{MIPRE.ancillaProj, MIPRE.ancillaProj_conjTranspose, MIPRE.ancillaProj_mul_self,
   MIPRE.sum_ancillaProj, MIPRE.exists_isometry_of_povm, MIPRE.ancillaEmbed,
   MIPRE.ancillaEmbed_isometry, MIPRE.exists_unitary_extending,
@@ -851,7 +848,7 @@ $\C^{d_\bob}$, then the $b$-marginal of $Q$ inherits $Q$'s consistency with the 
 
 \begin{proof}
 \leanok
-\uses{def:state-distance}
+\uses{def:state-distance,lem:qld-combined-points,lem:commutation-analysis}
 For~\eqref{eq:cool-closeness-bp}: projectivity gives $A_i - A_i B_i = A_i (A_i - B_i)$, and the
 cross terms of one fibre vanish because $A_i A_{i'} = 0$ for $i \neq i'$, so the fibre's squared
 norm is the sum of its terms' squared norms. Each term loses only $A_i \leq \Id$, and the fibres
@@ -874,7 +871,7 @@ and the single-subset form would cost a factor $q$ there.
 
 \begin{lemma}[Pasting, the two-measurement case]
 \label{lem:pasting-updated}
-\uses{def:cross-distance,lem:commutation-analysis,lem:cool-closeness-fact}
+\uses{def:cross-distance,lem:commutation-analysis}
 \lean{MIPRE.fibSum, MIPRE.isPVM_fibSum, MIPRE.sum_fiber, MIPRE.abs_sum_sum_le_sqrt,
   MIPRE.sum_comm4, MIPRE.sum_prod_eq, MIPRE.sum_prod_uniform, MIPRE.sum_prod_uniform_one,
   MIPRE.sum_weighted_add, MIPRE.sum_weighted_div, MIPRE.sum_weighted_const_mul,
@@ -933,7 +930,7 @@ lines are rare, not that the bound holds at every question.
 
 \begin{proof}
 \leanok
-\uses{lem:commutation-analysis,lem:cool-closeness-fact,def:cross-distance}
+\uses{lem:commutation-analysis,def:cross-distance,lem:qld-combined-points}
 The target is the agreement of $A$ with the sandwich. Two steps reach it. The ordered product
 $G_g R_b$ carries all but $\delta/2 + \sqrt{\delta/2}$: its outer factor sums away against
 Alice's second marginal by the second hypothesis, and what is left is Alice's first marginal
@@ -1157,7 +1154,7 @@ is symmetric).
 
 \begin{lemma}[Qudits are qubits, in characteristic two]
 \label{lem:pauli-binary}
-\uses{def:generalized-pauli,def:weyl-epr,lem:self-dual-basis}
+\uses{def:generalized-pauli,def:weyl-epr}
 \lean{MIPRE.Weyl.binEquiv, MIPRE.Weyl.binEquiv_apply, MIPRE.Weyl.binEquiv_add,
   MIPRE.Weyl.binEquiv_injective, MIPRE.Weyl.binEquiv_eq_iff, MIPRE.Weyl.trDot_binEquiv,
   MIPRE.Weyl.wX_binEquiv, MIPRE.Weyl.wZ_binEquiv, MIPRE.Weyl.card_binEquiv,
@@ -1180,7 +1177,7 @@ $\ket{\EPR_q}^{\ot L} \mapsto \ket{\EPR_2}^{\ot L k}$. Such a basis exists whene
 
 \begin{proof}
 \leanok
-\uses{def:generalized-pauli,def:weyl-epr,lem:self-dual-basis}
+\uses{def:generalized-pauli,def:weyl-epr,lem:self-dual-basis-exists,lem:downsize-field}
 Four steps, one per piece, and only the first uses self-duality. The form transports because
 $\fieldtr(x y) = \kappa(x) \cdot \kappa(y)$, which is item 2 of the paper's
 \texttt{lem:downsize\_field} and is exactly self-duality
@@ -1225,7 +1222,6 @@ paper's admissible sizes satisfy it.
 
 \begin{definition}[Inconsistency]
 \label{def:inconsistency}
-\uses{def:game}
 \lean{MIPRE.inconsistency}
 \leanok
 Let $\mu$ be a distribution on a finite set $\mX$, let
@@ -1261,7 +1257,7 @@ will need the state-dependent notion added rather than this one reused.
 
 \begin{lemma}[Closeness from two disagreements]
 \label{lem:hs-closeness}
-\uses{def:hs-norm,def:distance}
+\uses{def:hs-norm}
 \lean{MIPRE.sum_hsNormSq_sub_le}
 \leanok
 Let $\{O_i\}_{i \in I}$, $\{C_i\}_{i \in I}$, $\{D_i\}_{i \in I}$ be finite families of
@@ -1294,7 +1290,7 @@ $\bigl| \sum_i \langle Y_i, X_i \rangle_{hs} \bigr| \leq \sqrt{\alpha}\sqrt{\bet
 
 \begin{lemma}[Close measurements have close values]
 \label{lem:close-measurements-close-values}
-\uses{def:hs-norm,def:distance}
+\uses{def:hs-norm}
 \lean{MIPRE.sum_ntr_mul_ge}
 \leanok
 Let $\{O_i\}_{i \in I}$, $\{C_i\}_{i \in I}$, $\{D_i\}_{i \in I}$ be finite families of

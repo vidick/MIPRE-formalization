@@ -167,6 +167,14 @@ Two things to know about reading it:
   declaration depends on `sorryAx`. `planning/lean-coverage.md` records the hand audit this
   replaces, which was exact when written and had drifted 45 modules by the time it was
   mechanised.
+- **`\uses` edges are checked against the Lean**: the graph colours a node dark green only
+  when every ancestor is formalized, so an edge the Lean does not use, or a dependency it
+  leaves out, makes the graph lie. `scripts/blueprint-edges.py --check` (CI, after the build)
+  compares each node's `\uses` with what its `\lean{}` declarations use, up to reachability;
+  `--fix` drops the stale edges and adds the missing ones. Each declaration is listed by
+  exactly one graph node (remarks excepted), which the others cite. When the main theorem was
+  proved, 78 nodes, it among them, were light green because twelve edges still pointed at
+  paper-route lemmas that the Lean never used.
 - **`intentions / lifecycle`** was red on every PR for a long time, because its project-board
   token was rejected repository-wide — not a PR's fault, and not fixable from a PR. It passed
   on PR #39 on 2026-09-13, so the token may have been rotated. Read the run before concluding

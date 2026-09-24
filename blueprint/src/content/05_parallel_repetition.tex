@@ -59,7 +59,6 @@ related by Lemma~\ref{lem:tracial-le-co}.
 
 \begin{definition}[Commuting-operator strategy]
 \label{def:co-strategy-bipartite}
-\uses{def:game}
 \lean{MIPRE.CommutingOperatorStrategy}
 \leanok
 \qlib{}
@@ -74,7 +73,7 @@ probability $\bra{\psi} E^x_a F^y_b \ket{\psi}$.
 
 \begin{definition}[Commuting-operator value]
 \label{def:co-value-bipartite}
-\uses{def:co-strategy-bipartite}
+\uses{def:co-strategy-bipartite,def:game}
 \lean{MIPRE.CommutingOperatorStrategy.value, MIPRE.commutingOperatorValue}
 \leanok
 \qlib{}
@@ -194,6 +193,7 @@ all finite sets $S_\alice$, $S_\bob$, density matrices $\rho$ on $\C^{S_\alice} 
 Then $\valstar_{\mathrm{POVM}}(\game) = \valstar(\game)$.
 \end{lemma}
 \begin{proof}
+\uses{lem:naimark-dilation}
 \leanok
 A tensor-product strategy (Definition~\ref{def:tensor-strategy}) is a strategy of the
 second kind, with $S_\alice = \{1, \ldots, d_\alice\}$, $S_\bob = \{1, \ldots,
@@ -283,7 +283,6 @@ Theorem~\ref{thm:parallel-repetition} consumes the theorem.
 
 \begin{theorem}[Lin's tracial density theorem]
 \label{thm:tracial-density}
-\uses{def:co-strategy-bipartite}
 \lean{MIPRE.Repetition.tracialDensity}
 \leanok
 \qlib{}

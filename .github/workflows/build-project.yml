@@ -128,3 +128,11 @@ jobs:
             --notes "Compiled .lake/build for the modules of this repository, republished on every push to main. Consumed by .claude/cloud-setup.sh and .claude/hooks/lean-warm.sh; see docs/lean-cloud.md. The tag is a fixed anchor, not a version: only the attached asset moves." \
             || true
           gh release upload "$TAG" mipre-build.tar.zst --clobber
+
+      # The blueprint's `\uses` edges against what the Lean proofs actually use: the graph
+      # the blueprint draws colours a node dark green only when its ancestors are formalized,
+      # so a stale edge or a missing one makes the graph lie about what rests on what. It needs
+      # the compiled modules, hence after the build; it runs last, so that a failure here never
+      # holds back the bundle above. See scripts/blueprint-edges.py.
+      - name: Blueprint dependency edges against the Lean
+        run: LAKE=~/.elan/bin/lake python3 scripts/blueprint-edges.py --check
