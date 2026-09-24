@@ -1801,6 +1801,35 @@ tell you the guard is missing.
   MIPRE.AnswerReduction.exists_threshold_clB,
   MIPRE.AnswerReduction.z_le
 
+-- blueprint `lem:ar-global-tests`, `lem:ar-input-tests`, `lem:ar-common-polynomials`,
+-- `lem:ar-simultaneous-proof`: the tests, the extraction per seed, and the relations of `J`.
+#guard_sorry_free MIPRE.AnswerReduction.sum_edges_le,
+  MIPRE.AnswerReduction.sum_copyFail_le,
+  MIPRE.AnswerReduction.sum_copyFail6_le,
+  MIPRE.AnswerReduction.sum_dis_edge_le,
+  MIPRE.AnswerReduction.sum_dis_MA1_MB6_le,
+  MIPRE.AnswerReduction.sum_dis_MA6_MB1_le,
+  MIPRE.AnswerReduction.exists_ext1,
+  MIPRE.AnswerReduction.ext1_spec,
+  MIPRE.AnswerReduction.sum_deltaSim1_le,
+  MIPRE.LIDT.Simul.sum_deltaSim_le,
+  MIPRE.AnswerReduction.exists_ext6,
+  MIPRE.AnswerReduction.ext6_spec,
+  MIPRE.AnswerReduction.sum_deltaSim6_le,
+  MIPRE.AnswerReduction.sum_dis_JAe_GBe_le,
+  MIPRE.AnswerReduction.sum_dis_GAe_JBe_le
+
+-- blueprint `lem:pcp-format` and `lem:pcp-complexity`: the PCP's proof format and its bounds.
+#guard_sorry_free MIPRE.SAT.PcpProof,
+  MIPRE.SAT.PcpProof.ev,
+  MIPRE.SAT.PcpProof.rawView,
+  MIPRE.SAT.ViewFormat,
+  MIPRE.SAT.viewFormat_rawView,
+  MIPRE.TM.CookLevin.Pad.verifyPcp_time_le,
+  MIPRE.TM.CookLevin.Pad.pcpInput_size_polynomial,
+  MIPRE.TM.CookLevin.Pad.outerDim_polynomial,
+  MIPRE.AnswerReduction.exists_paramsBound_classical
+
 -- blueprint `lem:answer-reduction-supply` and `thm:answer-reduction`: the answer-reduction
 -- contract, inhabited over the classical PCP decider.
 #guard_sorry_free MIPRE.AnswerReduction.answerReduction,

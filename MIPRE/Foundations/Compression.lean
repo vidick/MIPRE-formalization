@@ -853,10 +853,11 @@ polynomial-time function of the model is Mathlib-computable on computably encode
 (`exists_compile`, `Cost/FromPartrec.lean`). Both work at the level of `Data`: no
 `Primcodable` instance for `Prog` is needed, since programs are their own descriptions. -/
 
-/-- The compression lemma, repackaged against Mathlib's halting problem — the form that
-will feed `MIPRE.HaltingGameValue.halting_reduces_to_gameValue` once `A` and `f` are
-instantiated with normal-form-verifier games and the entanglement requirement (blueprint
-`rem:compression-abstract` and `thm:halting`). -/
+/-- The compression lemma, repackaged against Mathlib's halting problem, in the abstract form
+of `rem:compression-abstract`: `A` and `f` stand for normal-form-verifier games and the
+entanglement requirement (blueprint `thm:halting`). The headline
+`HaltingGameValue.halting_reduces_to_gameValue` is proved through `GapCompression` instead
+(`MIPRE/MainTheorem.lean`). -/
 theorem recursive_compression_halting
     (f : BitStr → ℕ∞) (A : Set BitStr)
     (y₀ : BitStr) (hy₀ : y₀ ∈ A)
@@ -876,10 +877,11 @@ theorem recursive_compression_halting
     PolyTimeFun.computable_comp g compile hc Data.primrec_decode_bitStr.to_comp, fun pc => ?_⟩
   exact ⟨fun h => (hg _).1 ((hspec pc).2 h), fun h => (hg _).2 fun h' => h ((hspec pc).1 h')⟩
 
-/-- The compressibility criterion, repackaged against Mathlib's halting problem — the form
-that feeds `MIPRE.HaltingGameValue.halting_reduces_to_gameValue` once `A` and `B` are
-instantiated with normal-form-verifier games having a perfect PCC strategy, respectively
-value at most `1/2` (blueprint `rem:compression-abstract` and `thm:halting`). -/
+/-- The compressibility criterion, repackaged against Mathlib's halting problem, in the
+abstract form of `rem:compression-abstract`: `A` and `B` stand for normal-form-verifier games
+having a perfect PCC strategy, respectively value at most `1/2` (blueprint `thm:halting`). The
+headline `HaltingGameValue.halting_reduces_to_gameValue` is proved through `GapCompression`
+instead (`MIPRE/MainTheorem.lean`). -/
 theorem compressibility_criterion_halting
     (A B : Set BitStr)
     (yYes : BitStr) (hyes : yYes ∈ A) (yNo : BitStr) (hno : yNo ∈ B)
