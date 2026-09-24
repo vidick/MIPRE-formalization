@@ -326,17 +326,21 @@ $C_{qa} \subseteq C_{qc}$, and the inclusion is strict.
 \begin{corollary}[Tsirelson's problem, negative answer]
 \label{cor:tsirelson}
 \ledgernode{1.8.5}
-\uses{thm:separation,lem:value-lower-approx,lem:valco-upper-re,cor:value-uncomputable}
+\uses{def:correlation-sets,lem:tsirelson-conditional,cor:main-quantum,lem:valco-upper-re}
 There exist finite question and answer sets for which the closure $C_{qa}$ of the set
 of finite-dimensional quantum correlations is strictly contained in the set $C_{qc}$
 of commuting-operator correlations.
 \end{corollary}
 
-Immediate from Theorem~\ref{thm:separation}: the value gap is witnessed by a
-correlation in $C_{qc}$ at distance bounded away from $C_{qa}$. Requires only the
-definitions of the correlation sets. (Non-closure of the unclosed set $C_q$ itself is
-Slofstra's earlier theorem~\cite{Slo19}, which also follows, with quantitative bounds,
-from the machinery here.)
+Lemma~\ref{lem:tsirelson-conditional}, with the halting reduction of
+Corollary~\ref{cor:main-quantum}, the upper semidecider of Lemma~\ref{lem:valco-upper-re},
+and the closedness of $C_{qc}$ in every finite scenario. The witness scenario has one
+question alphabet and one answer alphabet shared by the two players. This is the
+non-explicit route; it does not use Theorem~\ref{thm:separation}. The ledger's proof of
+node $1.8.5$ dovetails the lower semidecider of Lemma~\ref{lem:value-lower-approx} against
+the upper one into a promise decider. The argument here needs only the upper one, because
+$\valstar \leq \omegaco$ always holds. Non-closure of the unclosed set $C_q$ itself is
+Slofstra's earlier theorem~\cite{Slo19}, which is not formalized here.
 
 \subsection{Refutation of Connes' Embedding Problem}
 
