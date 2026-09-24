@@ -920,6 +920,18 @@ the proposition `HaltingReducesToGameValue`, and `MainTheorem.lean` proves it. A
 would have to import the whole development, and `MIPRE/Foundations` imports the statement file,
 so the proof cannot live in it.
 
+**After AR-6 (2026-09-24): bookkeeping and the unused `sorry`s.** Chapter 6's paper-model
+nodes for detyping, introspection and the timeout interface now either carry the Lean that
+proves them (`def:typed-sampler-interface`, `def:typed-normal-interface`,
+`lem:detype-completeness`, `lem:detype-soundness`, `def:intro-verifier`,
+`lem:intro-completeness`) or say which ambient node the Lean uses instead. The chapter-3
+nodes of the tensor-code route (`thm:tensor-codes` and its lemmas, `lem:lidt-*` transfers,
+`thm:almost-sync`, `thm:ms-rigidity`) and `lem:tracial-le-co` say that the Lean proof does
+not use them, and what replaces them. `thm:lcs-perfect` is proved. Six `sorry`s remain, and
+the main theorem depends on none of them: the two universal-machine specifications (#17,
+#18) and the four vendored signed statements of `Orthonormalization`, which are open
+upstream.
+
 **The standing risk** is the one `planning/h4-assembly.md` §4 item 4 names: `GapCompression`
 has been consumed five times and supplied never — `TimeBoundAt` was refuted three times and
 `IsSynchronousAt` once (#77), each time by a consumer — and chapter 6 will read the structure

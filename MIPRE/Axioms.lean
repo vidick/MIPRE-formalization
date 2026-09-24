@@ -179,6 +179,7 @@ import MIPRE.TM.CookLevin.DecoupledProg
 import MIPRE.TM.CookLevin.PaddingParams
 import MIPRE.TM.CookLevin.PcpParameters
 import MIPRE.LCS.MagicSquare.Strategy
+import MIPRE.LCS.NonlocalGame
 import MIPRE.LCS.Strategy.Equivalence
 import MIPRE.LCS.Strategy.ObservableToProjector
 import MIPRE.TM.Code.Encoding.MachineCode
@@ -419,6 +420,9 @@ tell you the guard is missing.
   MIPRE.Halting.lambda_bound,
   MIPRE.Halting.log_lt_div,
   MIPRE.Halting.sq_le_two_pow_of_four_le
+
+-- blueprint `thm:lcs-perfect`
+#guard_sorry_free MIPRE.LCS.exists_tensorStrategy_value_eq_one_of_localLoss_annihilates_epr
 
 -- blueprint `lem:mermin-peres`
 #guard_sorry_free MIPRE.LCS.MagicSquare.grid,

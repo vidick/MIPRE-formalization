@@ -338,6 +338,10 @@ and timeout hypotheses of the current source~\cite{AuditSync26}.
 \label{def:typed-sampler-interface}
 \ledgernode{1.1.4.1}
 \uses{def:normal-verifier}
+\lean{MIPRE.CL.TypedSampler,
+  MIPRE.CL.TypedSampler.TimeBoundAt,
+  MIPRE.CL.Detyping.typedGame}
+\leanok
 Let $G=(T,E)$ be a finite undirected type graph with $m_G\geq1$ edges and
 $k_G$ loops. Sample an ordered adjacent type pair uniformly from its
 $2m_G-k_G$ possibilities, and independently a common uniform
@@ -350,18 +354,30 @@ and halts with a fixed default on malformed input. Computing the bounds is
 charged in its runtime. Linear and factor-query correctness is required only
 on valid prefix images; image membership is not a parsing obligation.
 No field-size query is implicit in this interface.
+In the ambient model a typed sampler is binary, and bounded-prefix parsing is replaced by
+halting on every input together with a polynomial budget
+(\texttt{TypedSampler.TimeBoundAt}); linear and factor correctness are required on valid
+prefixes, as here.
 \end{definition}
 
 \begin{definition}[Typed decider and normal verifier]
 \label{def:typed-normal-interface}
 \ledgernode{1.1.4.2}
 \uses{def:typed-sampler-interface,def:normal-verifier}
+\lean{MIPRE.CL.Detyping.TypedDecider,
+  MIPRE.CL.Detyping.TypedDecider.Accepts,
+  MIPRE.CL.Detyping.TypedDecider.Total,
+  MIPRE.CL.Detyping.CutoffProgram}
+\leanok
 A typed decider receives $(n,t,x,u,y,a,b)$; a timeout rejects regardless of
 the output tape. A typed normal verifier is over $\F_2$ and first uses the
 sampler's dimension query to check $t,u\in T$ and $|x|=|y|=s(n)$.
 In timeout-counter form, its bound dominates this preliminary computation.
 For finite decider runtime the answer alphabet consists of strings of length
 at most $\TIME_D(n)$, and the decision predicate is total.
+In the ambient model there is no timeout counter: totality is a hypothesis on the typed
+decider, supplied by the clock of Lemma~\ref{lem:detype-total-clock}, and the answer bound
+is the executable inner and outer cut of Lemma~\ref{lem:detype-executable-decider}.
 \end{definition}
 
 \begin{lemma}[Effective typed downsizing]
@@ -380,6 +396,10 @@ not to the coordinate representation of a field element.
 There is no assertion that $q(n)$ can be recovered from arbitrary sampler
 code. The introspection and PCP parameter routines separately supply this
 premise within their budgets; the binary case uses the constant routine.
+The Lean proof does not use this lemma: its samplers are presented directly over $\F_2$, in
+Shoup coordinates (Lemma~\ref{lem:cl-downsize}), as in
+Lemmas~\ref{lem:intro-canonical-sampler} and~\ref{lem:ar-typed-sampler} and
+Definition~\ref{def:ar-pcp-sampler}.
 \end{lemma}
 
 \begin{lemma}[Graph rejection sampling]
@@ -622,6 +642,8 @@ query semantics. On a zero-tail branch its first factor receives the whole
 remaining seed block and later factors are zero, so factors still partition
 the ambient space. Valid factor output gives $s(n)=O(\TIME_S(n))$.
 The implementation depends only on $S,G$.
+The Lean proof uses the ambient form of this lemma, Lemma~\ref{lem:detype-functional-sampler},
+for a fixed type graph.
 \end{lemma}
 
 \begin{lemma}[Executable detyping decider with two answer cuts]
@@ -744,12 +766,21 @@ original counter; no runtime supremum is computed.
 All original legal answers have length at most $K$. A valid edge and a
 length-$K+1$ answer force that scan before rejection, ensuring the new game's
 runtime-defined alphabet contains all original legal answers.
+The Lean proof does not use this source-model decider: it uses the executable decider with
+two answer cuts (Lemma~\ref{lem:detype-executable-decider}), made total by the clock of
+Lemma~\ref{lem:detype-total-clock}.
 \end{lemma}
 
 \begin{lemma}[Detyping PCC completeness]
 \label{lem:detype-completeness}
 \ledgernode{1.1.4.8}
 \uses{lem:detype-sampler,lem:detype-decider,def:pcc}
+\lean{MIPRE.CL.Detyping.complete_state,
+  MIPRE.CL.Detyping.complete_player_independent,
+  MIPRE.CL.Detyping.complete_isPCC,
+  MIPRE.CL.Detyping.DeciderProgram.exists_ambientPerfectPCC,
+  MIPRE.CL.Detyping.DeciderProgram.verifier_hasPerfectPCC}
+\leanok
 A perfect PCC typed witness lifts on the same state to a perfect PCC detyped
 witness. Both players use the same combined rule: on an Alice-view pattern
 use the original Alice operator, on a Bob-view pattern use the original Bob
@@ -759,6 +790,12 @@ edges one local measurement is trivial. Projectivity, consistency and the
 required commutation follow, as does the identical-operator property.
 This does not assert symmetry of the detyped question distribution.
 \end{lemma}
+\begin{proof}
+\leanok
+This is Lemma~\ref{lem:detype-game-completeness} for the finite games, transported to the
+executable detyped verifier by Lemma~\ref{lem:detype-program-strategies}. The identity
+measurement on invalid views is a fixed deterministic answer.
+\end{proof}
 
 \begin{lemma}[Finite-game detyping soundness]
 \label{lem:detype-game-soundness}
@@ -808,6 +845,11 @@ wrapper's answer cutoff, truncation, or runtime.
 \label{lem:detype-soundness}
 \ledgernode{1.1.4.9}
 \uses{lem:detype-decider,lem:detype-graph,lem:detype-game-soundness}
+\lean{MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_state,
+  MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_failure_le,
+  MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_value_ge,
+  MIPRE.CL.Detyping.restrictAnswers_value_ge}
+\leanok
 Restrict any detyped strategy of success at least $1-\eps$ to the fixed
 graph views for typed questions and coarse-grain answers to length
 $\TIME_D(n)$. Answer truncation leaves the typed computation unchanged.
@@ -815,6 +857,10 @@ Conditional detyped acceptance is no larger than acceptance of this legal
 typed strategy on the same state. Hence its failure is at most
 $\eps/p\leq16^{|T|}\eps$. Taking suprema uses near-optimal strategies and
 does not assume attainment of the value.
+In the ambient model nothing is truncated: the executable decider's typed predicate already
+includes the source answer cut on the outer alphabet
+(Lemma~\ref{lem:detype-executable-decider}), and the passage to suprema is made by each
+consumer of the bound.
 \end{lemma}
 
 \begin{lemma}[Optional entanglement consequence of detyping]
@@ -826,6 +872,8 @@ $\Ent(\mathrm{detype}(V)_n,1-\eps)\geq
 \Ent(V_n,1-16^{|T|}\eps)$, since the conversion keeps the state and its
 Schmidt rank. Outside that range use the ordinary value bound; no negative
 threshold is supplied to $\Ent$. This clause is separate from the value route.
+The Lean proof does not use this lemma: the value route needs only the same-state
+restriction of Lemma~\ref{lem:detype-program-strategies}.
 \end{lemma}
 
 \begin{lemma}[Effective detyping compiler]
@@ -838,6 +886,10 @@ polynomial sampler and timeout costs, PCC completeness, and same-state
 soundness loss $16^{|T|}$. The sampler depends only on $S,G$.
 Effective field access for any preceding nonbinary downsizing is the separate
 hypothesis of Lemma~\ref{lem:typed-downsize}.
+The Lean proof has no single detyping compiler. Each transformation builds its own from the
+pieces of Lemmas~\ref{lem:detype-functional-sampler}, \ref{lem:detype-executable-decider}
+and~\ref{lem:detype-program-strategies}, for its own fixed type graph
+(Lemmas~\ref{lem:introspection-supply} and~\ref{lem:ar-construction}).
 \end{lemma}
 
 \begin{remark}[Turing machine conventions and the ambient cost model]
@@ -959,6 +1011,13 @@ $\mu$ before choosing its final bound, so that bound is still polynomial.
 \label{def:intro-verifier}
 \ledgernode{1.2.3}
 \uses{def:normal-verifier,def:cl-function,rem:typed-detyping,lem:typed-downsize,thm:qld}
+\lean{MIPRE.Introspection.QuestionType,
+  MIPRE.Introspection.TypeGraph.adj,
+  MIPRE.Introspection.typedSampler,
+  MIPRE.Introspection.TypedEstimates.parsedGame,
+  MIPRE.Introspection.DecisionCompiler.typedDecider,
+  MIPRE.Introspection.DecisionCompiler.output}
+\leanok
 Fix $\ell$ and an $\ell$-level verifier $\verifier$ satisfying the paper's absolute
 $\lambda$-bound, as distinguished in Remark~\ref{rem:runtime-normalization}. The
 \emph{introspective verifier} $\vint$ is the typed verifier whose players sample the
@@ -979,6 +1038,9 @@ kinds of test.
 \end{enumerate}
 It is a $3$-level \emph{typed} verifier, hence $5$-level once detyped
 (Remark~\ref{rem:typed-detyping}), and that $5$ is what the compression pipeline consumes.
+The Lean verifier is the ambient one, built for $7$-level inputs
+(Definition~\ref{def:introspection-contract}); its question types include the
+\texttt{Introspect} and \texttt{Read} types of the source.
 \end{definition}
 
 \effortHard
@@ -1107,6 +1169,10 @@ which on input $(\verifier, \lambda, \ell)$ outputs the decider $\dint$ in stand
 timeout-counter form, in polynomial time, with $\abs{\dint} = \poly(\lambda, \ell)$ and
 timeout bound $B_{\dint}(n) = \poly(2^{\lambda n}, \ell)$. The sampler's description does not
 depend on $\verifier$ at all.
+The Lean proof uses the ambient bounds of Lemmas~\ref{lem:intro-canonical-sampler}
+and~\ref{lem:intro-ambient-kernel} instead: polynomial budgets, a clocked decider in place
+of the timeout-counter form, and bounds for the detyped output rather than for the two typed
+halves.
 \end{lemma}
 
 \begin{remark}[A false step in computing the hidden subspace]
@@ -1219,14 +1285,22 @@ readouts gives the identity.
 \label{lem:intro-completeness}
 \ledgernode{1.2.3.2}
 \uses{def:intro-verifier,def:pcc,lem:pauli-linear-fourier,lem:pauli-commute-criterion,lem:intro-honest-core,lem:intro-honest-adaptive,lem:intro-honest-hiding,lem:intro-honest-parsed}
+\lean{MIPRE.Introspection.Complete.exists_perfectPCC,
+  MIPRE.Introspection.BinaryComplete.exists_perfectPCC,
+  MIPRE.Introspection.CanonicalComplete.output_hasPerfectPCC}
+\leanok
 If $\verifier_{2^n}$ has a value-$1$ PCC strategy, then $\vint_n$ has one: the players
 measure their EPR halves in the bases the sampled question prescribes and then play the
 value-$1$ strategy of $\verifier_{2^n}$ on the question they have obtained. Every test of the
 decider accepts with certainty, and the resulting strategy is again projective, consistent
 and commuting.
+The Lean proof is that of Lemma~\ref{lem:intro-full-typed-completeness}, carried to the
+ambient output verifier: explicit Pauli and auxiliary measurements on a common carrier,
+rather than the Fourier and commutation argument below.
 \end{lemma}
 
 \begin{proof}
+\leanok
 \uses{lem:pauli-linear-fourier,lem:pauli-commute-criterion}
 Lemma~\ref{lem:pauli-linear-fourier} identifies the honest sampling measurement with a Pauli
 measurement, which is what the Pauli test checks; Lemma~\ref{lem:pauli-commute-criterion}
@@ -1662,6 +1736,10 @@ $k \in \{1, \ldots, \ell\}$, the player's reported question agrees with the $Z$-
 of the conditionally linear map at that level up to $\delta$, and the two players' reports
 agree with each other up to $\delta$. Consequently the reported $y$ is distributed as the
 conditionally linear distribution of $\verifier_{2^n}$, up to $\delta$.
+The Lean proof does not use this lemma as stated: the sampling estimates of
+Lemmas~\ref{lem:intro-subtest-estimates} and~\ref{lem:intro-typed-estimates} bound
+cross-party errors on the strategy itself, with no extraction, and feed the induction
+directly.
 \end{lemma}
 
 \effortHard
@@ -1676,6 +1754,9 @@ $j \leq k$ is stable: knowing the answer at level $j$ tells a player nothing abo
 conditionally sampled part at level $k$ beyond what it is entitled to. The rigidity form
 states this as closeness of the hiding measurement to an explicit product of $Z$- and
 $X$-measurements on the complements.
+The Lean proof does not use this lemma as stated: it uses the hiding and reading rigidity of
+Lemmas~\ref{lem:hide-rigidity}, \ref{lem:intro-read-rigidity}
+and~\ref{lem:intro-actual-hiding-rigidity-step}.
 \end{lemma}
 
 \effortHard
@@ -1691,6 +1772,11 @@ first $k$ levels have already fixed. Running the induction to $k = \ell + 1$ con
 strategy for $\vint_n$ of value $1 - \eps$ into a strategy for $\verifier_{2^n}$ of value
 $1 - \delta(\eps, n)$ on a state of comparable entanglement, which is the soundness and
 entanglement content of Theorem~\ref{thm:introspection}.
+The Lean proof does not use this lemma as stated: its induction is two-sided
+(Lemma~\ref{lem:intro-two-sided-iteration}), followed by the extraction of
+Lemma~\ref{lem:intro-terminal-option-extraction} and the soundness of
+Lemma~\ref{lem:intro-primitive-soundness}. It tracks the value only, not the
+entanglement.
 \end{lemma}
 
 \begin{lemma}[Exact final strategy extraction]
@@ -3805,6 +3891,10 @@ is a function $\delta(\eps, n) = a\bigl( (\lambda n)^a \eps^b + (\lambda n)^{-b}
 \item (\textbf{Soundness}) If $\valstar(\vint_n) > 1 - \eps$ then
   $\valstar(\verifier_{2^n}) \geq 1 - \delta(\eps, n)$.
 \end{enumerate}
+The Lean proof does not use this source-model theorem. It uses the ambient contract,
+Definition~\ref{def:introspection-contract}, supplied for $7$-level inputs by
+Lemma~\ref{lem:introspection-supply}. General depth, the timeout-counter form and the
+entanglement clause are not formalized.
 \end{theorem}
 
 \begin{definition}[Ambient introspection contract]
@@ -5159,6 +5249,9 @@ preserves the result: accept, reject, or timeout. The counter depends only
 on $n$ and the underlying machine is simulated for at most $B$ steps, so
 none of the changed cells can be read. This is not the false assertion
 $\TIME_D(n)\leq B$; wrapper runtime may be polynomial in $B$.
+The Lean proof does not use this lemma: ambient deciders have no timeout counter, and
+answers beyond the cut are rejected by the decider itself
+(Lemma~\ref{lem:detype-executable-decider}).
 \end{lemma}
 
 \begin{lemma}[Effective typed oracle construction]
@@ -5190,6 +5283,8 @@ The preceding truncation lemma preserves value one on the same state.
 These measurements supply the honest isolated-player and joint-oracle
 measurements with legal answer lengths and the same combined operator rule
 for both players.
+The Lean proof does not use this lemma: an honest witness already answers within the cut,
+so no truncation is needed (Lemma~\ref{lem:ar-completeness}).
 \end{lemma}
 
 The following answer-reduction obligations use the parameter routine and
