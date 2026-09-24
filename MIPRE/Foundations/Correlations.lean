@@ -315,7 +315,8 @@ end TensorProductStrategy
 /-- `C_q ⊆ C_qc`. -/
 theorem Cq_subset_Cqc : Cq X Y A B ⊆ Cqc X Y A B := by
   rintro p ⟨dA, dB, ψ, hψ, PA, PB, rfl⟩
-  exact ⟨TensorProductStrategy.ofTensor ψ hψ PA PB, TensorProductStrategy.correlation_ofTensor _ _ _ _⟩
+  exact ⟨TensorProductStrategy.ofTensor ψ hψ PA PB,
+    TensorProductStrategy.correlation_ofTensor _ _ _ _⟩
 
 /-- The quantum value is at most the commuting-operator value. -/
 theorem quantumValue_le_commutingOperatorValue (G : Game X Y A B) :

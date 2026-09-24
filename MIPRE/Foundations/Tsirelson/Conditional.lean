@@ -63,7 +63,8 @@ theorem exists_quantumValue_lt_commutingOperatorValue (hred : HaltingReductionQu
     le_antisymm (hne d) (quantumValue_le_commutingOperatorValue d.game)
   obtain ⟨g, hg, hgap⟩ := hred
   -- non-halting is the pullback of the upper semidecider at the threshold `3/4`
-  have hpull : REPred fun pc : Code => commutingOperatorValue (g pc).game < ((3 : ℕ) : ℝ) / (4 : ℕ) :=
+  have hpull : REPred fun pc : Code =>
+      commutingOperatorValue (g pc).game < ((3 : ℕ) : ℝ) / (4 : ℕ) :=
     Partrec.comp hU (hg.pair (Computable.const ((3, 4) : ℕ × ℕ)))
   have hiff : ∀ pc : Code,
       commutingOperatorValue (g pc).game < ((3 : ℕ) : ℝ) / (4 : ℕ) ↔ ¬ (pc.eval 0).Dom := by
