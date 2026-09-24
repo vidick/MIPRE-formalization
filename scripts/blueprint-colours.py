@@ -176,6 +176,10 @@ def main(argv):
               "forever (as the deploy would); scripts/blueprint-edges.py names it")
         return 1
     nodes, findings = audit(doc)
+    if not nodes:
+        # plasTeX skips an \input it cannot find with a warning, and an empty graph passes
+        print("blueprint-colours: the parse found no graph nodes; --verbose shows plasTeX's log")
+        return 1
     print(f"{len(nodes)} graph nodes: {colours(doc, nodes)}")
     print(f"(plasTeX: {warnings} warnings; --verbose shows its log)")
     for kind in ("detached", "pale"):
