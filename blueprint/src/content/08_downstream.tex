@@ -150,7 +150,7 @@ decision, no dilation to projections, and no semidefinite hierarchy is involved.
 
 \begin{definition}[The measurement algebra and its cone]
 \label{def:measurement-algebra}
-\uses{def:co-strategy-bipartite,def:correlation-sets}
+\uses{def:game}
 \lean{MIPRE.NCPoly, MIPRE.NCPoly.eval, MIPRE.NCPoly.relSpan, MIPRE.NCPoly.qmod,
   MIPRE.Tsirelson.Gen, MIPRE.Tsirelson.rels, MIPRE.Tsirelson.cone, MIPRE.Tsirelson.gamePoly,
   MIPRE.Tsirelson.IsConeState}
@@ -173,7 +173,7 @@ the conjugate-linear star from becoming a global instance on \texttt{MonoidAlgeb
 
 \begin{lemma}[The cone is Archimedean and positive on strategies]
 \label{lem:cone-archimedean}
-\uses{def:measurement-algebra}
+\uses{def:measurement-algebra,def:co-value-bipartite}
 \lean{MIPRE.NCPoly.star_mul_mul_mem_qmod_of_mem, MIPRE.NCPoly.archimedean_of_gen,
   MIPRE.Tsirelson.cone_archimedean, MIPRE.NCPoly.re_inner_eval_nonneg,
   MIPRE.Tsirelson.strategy_nonneg, MIPRE.Tsirelson.value_le_of_mem}
@@ -198,7 +198,7 @@ imaginary expectations.
 
 \begin{lemma}[Cone states are the states of commuting-operator strategies]
 \label{lem:cone-state-gns}
-\uses{lem:cone-archimedean}
+\uses{lem:cone-archimedean,def:correlation-sets}
 \lean{MIPRE.Tsirelson.isConeState_stateOf, MIPRE.GNS.GenData.strategy,
   MIPRE.GNS.GenData.strategy_correlation, MIPRE.Tsirelson.stateStrategy,
   MIPRE.Tsirelson.stateStrategy_correlation, MIPRE.Tsirelson.stateStrategy_value,
@@ -252,6 +252,7 @@ $\omegaco(\game) < r$ holds exactly when $r' \cdot 1 - W_\game \in M$ for some $
 \end{theorem}
 
 \begin{proof}
+\uses{lem:correlation-sets-basic}
 \leanok
 If $h = r \cdot 1 - W_\game \notin M$, the Riesz extension theorem applied to the cone
 $M + \R_{\geq 0}(-h)$, with the functional $t \cdot 1 \mapsto t$ on the span of $1$, gives a
@@ -298,8 +299,8 @@ $2N^2\varepsilon$.
 \begin{lemma}[Upper semidecision of the commuting-operator value]
 \label{lem:valco-upper-re}
 \ledgernode{1.8.4, 1.8.4.1}
-\uses{def:game-description,def:co-value-bipartite,def:re,lem:sos-certificates}
-\lean{MIPRE.CommutingUpperRE, MIPRE.commutingUpperRE, MIPRE.Tsirelson.Coded.CheckUpper,
+\uses{def:game-description,def:co-value-bipartite,lem:sos-certificates,def:commuting-upper-re}
+\lean{MIPRE.commutingUpperRE, MIPRE.Tsirelson.Coded.CheckUpper,
   MIPRE.Tsirelson.Coded.primrecRel_checkUpper, MIPRE.Tsirelson.checkUpper_iff}
 \leanok
 Write $\game_g$ for the game described by a game description $g$
@@ -311,6 +312,7 @@ is recursively enumerable, with $p/0 = 0$.
 \end{lemma}
 
 \begin{proof}
+\uses{lem:value-lower-approx}
 \leanok
 The certificates of Lemma~\ref{lem:sos-certificates} at $\kappa = q\, W_g$, where $W_g$ is
 the total weight of $g$, have integer data: $\kappa(p/q \cdot 1 - W_{\game_g}) = p W_g \cdot 1 -
@@ -476,10 +478,21 @@ projections with the same Born probabilities. The payoff is linear, hence contin
 the bound $\valstar(\game)$ on $C_q$ passes to its closure.
 \end{proof}
 
+\begin{definition}[Upper semidecision of the commuting-operator value]
+\label{def:commuting-upper-re}
+\uses{def:game-description,def:co-value-bipartite}
+\lean{MIPRE.CommutingUpperRE}
+\leanok
+The proposition that the set of triples $(d, p, q)$ of a game description $d$ and
+$p, q \in \N$ with $\omegaco(\game_d) < p/q$ is recursively enumerable, where $p/0 = 0$: the
+threshold encoding of Lemma~\ref{lem:value-lower-approx}. Lemma~\ref{lem:valco-upper-re}
+proves it; Lemma~\ref{lem:tsirelson-conditional} takes it as a hypothesis.
+\end{definition}
+
 \begin{lemma}[Conditional separation]
 \label{lem:tsirelson-conditional}
-\uses{lem:correlation-sets-basic,def:game-description}
-\lean{MIPRE.HaltingReductionQuantum, MIPRE.CommutingUpperRE,
+\uses{lem:correlation-sets-basic,def:game-description,def:commuting-upper-re}
+\lean{MIPRE.HaltingReductionQuantum,
   MIPRE.exists_quantumValue_lt_commutingOperatorValue, MIPRE.exists_mem_Cqc_not_mem_Cqa,
   MIPRE.exists_Cqa_ne_Cqc, MIPRE.tsirelson_of_upperRE_of_isClosed}
 \leanok
