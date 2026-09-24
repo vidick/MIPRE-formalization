@@ -30,6 +30,12 @@ value exceeds its quantum value has a commuting-operator strategy that beats the
 and its correlation lies outside `C_qa`, since payoffs on `C_qa` are bounded by the quantum value
 (`exists_mem_Cqc_not_mem_Cqa`). With `C_qc` closed, `C_qa ⊆ C_qc`, and the inclusion is strict
 (`tsirelson_of_upperRE_of_isClosed`).
+
+## Main declarations
+
+* `HaltingReductionQuantum`, `CommutingUpperRE`;
+* `exists_quantumValue_lt_commutingOperatorValue`, `exists_mem_Cqc_not_mem_Cqa`,
+  `exists_Cqa_ne_Cqc`, `tsirelson_of_upperRE_of_isClosed`.
 -/
 
 namespace MIPRE

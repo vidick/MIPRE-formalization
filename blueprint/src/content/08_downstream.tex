@@ -44,6 +44,13 @@ $C_{qa} \subseteq C_{qc}$. No finite-dimensional attainment and no convergence r
 asserted. The five lemmas below are its ingredients.
 \end{theorem}
 
+\paragraph{Comments.} Not formalized. The Lean proof of Corollary~\ref{cor:tsirelson} needs
+only two consequences of this theorem, compactness of $C_{qc}$ and upper semidecision of
+$\omegaco$, and obtains both without the hierarchy: Lemma~\ref{lem:cqc-compact} and
+Lemma~\ref{lem:valco-upper-re}, through the quadratic module of
+Definition~\ref{def:measurement-algebra}. The level presentation, the moment bound, the
+diagonal limit and the projective dilation stay open.
+
 \begin{lemma}[Common projective dilation of commuting POVMs]
 \label{lem:npa-dilation}
 \ledgernode{1.8.2.1}
@@ -113,7 +120,7 @@ PVM and cross-commutation identities extend from the dense polynomial quotient. 
 distinguished unit vector is the class of $1$.
 \end{lemma}
 
-\effortEasy
+\effortHard
 
 \begin{lemma}[Decidability of the first-order theory of real closed fields]
 \label{lem:rcf-decision}
@@ -129,33 +136,212 @@ of only three assumptions in the campaign (Remark~\ref{rem:admitted-nodes}), and
 two imports carried by this chapter rather than by the main theorem. The other is
 Lemma~\ref{lem:kirchberg-forward}.
 
+\subsection{Upper semidecision through a Positivstellensatz}
+\label{sec:ds-positivstellensatz}
+
+The Lean proof of Lemma~\ref{lem:valco-upper-re} does not go through the NPA levels. It works
+with one object: the quadratic module of the measurement relations in the free $*$-algebra,
+with POVM generators. Its Archimedean property and a Riesz extension give a noncommutative
+Positivstellensatz (Theorem~\ref{thm:nc-positivstellensatz}; compare~\cite{HM04}), which turns
+$\omegaco(\game) < r$ into the existence of an exact sum-of-squares certificate with
+Gaussian-integer coefficients (Lemma~\ref{lem:sos-certificates}). The same states and the same
+GNS construction give compactness of $C_{qc}$ (Lemma~\ref{lem:cqc-compact}). No real-closed-field
+decision, no dilation to projections, and no semidefinite hierarchy is involved.
+
+\begin{definition}[The measurement algebra and its cone]
+\label{def:measurement-algebra}
+\uses{def:game}
+\lean{MIPRE.NCPoly, MIPRE.NCPoly.eval, MIPRE.NCPoly.relSpan, MIPRE.NCPoly.qmod,
+  MIPRE.Tsirelson.Gen, MIPRE.Tsirelson.rels, MIPRE.Tsirelson.cone, MIPRE.Tsirelson.gamePoly,
+  MIPRE.Tsirelson.IsConeState}
+\leanok
+Let $P$ be the complex polynomials in noncommuting variables $e_{xa}$ ($x \in \mX$,
+$a \in \mA$) and $f_{yb}$ ($y \in \mY$, $b \in \mB$), with the involution that conjugates
+coefficients, reverses words and fixes the variables. The \emph{relations} are
+$\sum_a e_{xa} - 1$, $\sum_b f_{yb} - 1$ and $e_{xa} f_{yb} - f_{yb} e_{xa}$; $I$ is the
+complex span of $u \rho v$ over relations $\rho$ and $u, v \in P$. The \emph{cone} $M$ is the
+set of finite nonnegative real combinations of the elements $s^* s$, $s^* e_{xa} s$,
+$s^* f_{yb} s$ ($s \in P$), of the elements of $I$, and of the anti-hermitian elements of
+$P$. The game polynomial of $\game$ is $W_\game = \sum_{x,y,a,b} \mu(x,y) D(x,y,a,b)\,
+e_{xa} f_{yb}$. A \emph{cone state} is a complex-linear $L : P \to \C$ with $L(1) = 1$ and
+$\mathrm{Re}\, L(m) \geq 0$ for every $m \in M$.
+\end{definition}
+
+\paragraph{Comments.} The Lean $P$ is \texttt{MonoidAlgebra} over the free monoid, under a
+type synonym: Mathlib's star on \texttt{FreeAlgebra} is complex-linear, and the synonym keeps
+the conjugate-linear star from becoming a global instance on \texttt{MonoidAlgebra}.
+
+\begin{lemma}[The cone is Archimedean and positive on strategies]
+\label{lem:cone-archimedean}
+\uses{def:measurement-algebra,def:co-value-bipartite}
+\lean{MIPRE.NCPoly.star_mul_mul_mem_qmod_of_mem, MIPRE.NCPoly.archimedean_of_gen,
+  MIPRE.Tsirelson.cone_archimedean, MIPRE.NCPoly.re_inner_eval_nonneg,
+  MIPRE.Tsirelson.strategy_nonneg, MIPRE.Tsirelson.value_le_of_mem}
+\leanok
+$a^* M a \subseteq M$ for every $a \in P$, and for every $y \in P$ some real $N$ has
+$N \cdot 1 + y \in M$. Evaluating the variables at the effects of a commuting-operator
+strategy gives $\mathrm{Re} \langle \psi, m(E, F) \psi \rangle \geq 0$ for every $m \in M$;
+in particular $r \cdot 1 - W_\game \in M$ bounds the value of every strategy by $r$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+$1 - e_{xa} = \sum_{a' \neq a} e_{xa'} - (\sum_{a'} e_{xa'} - 1) \in M$, and
+$e - e^2 = e(1 - e)e + (1 - e)e(1 - e) \in M$, so $1 - g^2 \in M$ for every variable $g$ and,
+telescoping, $1 - w^* w \in M$ for every word $w$. Then
+$(1 + \abs{\alpha}^2) \cdot 1 + \alpha w + (\alpha w)^* = (1 + \alpha w)^*(1 + \alpha w) +
+\abs{\alpha}^2 (1 - w^* w)$, and the anti-hermitian part of a monomial lies in $M$. On a
+strategy the relations evaluate to $0$, $\langle \psi, s^* g s \psi \rangle =
+\langle s\psi, g\, s\psi \rangle \geq 0$ for positive $g$, and anti-hermitian operators have
+imaginary expectations.
+\end{proof}
+
+\begin{lemma}[Cone states are the states of commuting-operator strategies]
+\label{lem:cone-state-gns}
+\uses{lem:cone-archimedean,def:correlation-sets}
+\lean{MIPRE.Tsirelson.isConeState_stateOf, MIPRE.GNS.GenData.strategy,
+  MIPRE.GNS.GenData.strategy_correlation, MIPRE.Tsirelson.stateStrategy,
+  MIPRE.Tsirelson.stateStrategy_correlation, MIPRE.Tsirelson.stateStrategy_value,
+  MIPRE.Tsirelson.mem_Cqc_iff}
+\leanok
+For finite alphabets, the functional $z \mapsto \langle \psi, z(E, F) \psi \rangle$ of a
+commuting-operator strategy is a cone state; conversely every cone state $L$ is that of a
+commuting-operator strategy whose correlation is $\mathrm{Re}\, L(e_{xa} f_{yb})$. So $C_{qc}$
+is the set of the correlations $\mathrm{Re}\, L(e_{xa} f_{yb})$ over cone states $L$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+A cone state is hermitian (since $z - z^*$ and $i(z + z^*)$ are anti-hermitian), vanishes on
+$I$ (since $\pm j, \pm i j \in I \subseteq M$) and is positive on $s^* s$ and $s^* g s$. The
+GNS construction completes $P$ for the seminorm $\mathrm{Re}\, L(a^* a)^{1/2}$; left
+multiplication by a variable $g$ is a contraction because $a^*(1 - g^2) a \in M$, and extends
+to a positive operator on the completion. The normalizations and the cross-commutation hold
+because the corresponding vectors are null, and the class of $1$ is a unit vector.
+\end{proof}
+
+\begin{lemma}[$C_{qc}$ is compact]
+\label{lem:cqc-compact}
+\uses{lem:cone-state-gns,lem:correlation-sets-basic}
+\lean{MIPRE.Tsirelson.stateSpace, MIPRE.Tsirelson.isCompact_stateSpace,
+  MIPRE.Tsirelson.image_correlationOf_stateSpace, MIPRE.isCompact_Cqc, MIPRE.isClosed_Cqc,
+  MIPRE.Cqa_subset_Cqc}
+\leanok
+For finite alphabets $C_{qc}$ is compact, hence closed, and $C_{qa} \subseteq C_{qc}$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+A cone state is determined by its values on words. The set of those value families that are
+cone states is closed in the product topology, since each condition involves finitely many
+words, and lies in the product of closed unit disks, since $2 \cdot 1 + \alpha w +
+(\alpha w)^* \in M$ for $\abs{\alpha} = 1$ gives $\abs{L(w)} \leq 1$. By Tychonoff it is
+compact, and by Lemma~\ref{lem:cone-state-gns} its continuous image under
+$L \mapsto \mathrm{Re}\, L(e_{xa} f_{yb})$ is $C_{qc}$.
+\end{proof}
+
+\begin{theorem}[Positivstellensatz for the commuting-operator value]
+\label{thm:nc-positivstellensatz}
+\uses{lem:cone-state-gns}
+\lean{MIPRE.exists_separating_functional_of_archimedean,
+  MIPRE.Tsirelson.exists_isConeState_of_not_mem, MIPRE.Tsirelson.sub_gamePoly_mem_cone_of_lt,
+  MIPRE.Tsirelson.commutingOperatorValue_lt_iff}
+\leanok
+If $\omegaco(\game) < r$ then $r \cdot 1 - W_\game \in M$. With nonempty answer sets,
+$\omegaco(\game) < r$ holds exactly when $r' \cdot 1 - W_\game \in M$ for some $r' < r$.
+\end{theorem}
+
+\begin{proof}
+\uses{lem:correlation-sets-basic}
+\leanok
+If $h = r \cdot 1 - W_\game \notin M$, the Riesz extension theorem applied to the cone
+$M + \R_{\geq 0}(-h)$, with the functional $t \cdot 1 \mapsto t$ on the span of $1$, gives a
+real functional $L_0 \geq 0$ on $M$ with $L_0(1) = 1$ and $L_0(h) \leq 0$; the Archimedean
+property supplies both hypotheses. Its complexification $L_0(z) - i L_0(iz)$ is a cone state,
+and Lemma~\ref{lem:cone-state-gns} turns it into a strategy of value $L_0(W_\game) \geq r >
+\omegaco(\game)$, a contradiction. The converse is Lemma~\ref{lem:cone-archimedean}, with a
+strategy supplied by the deterministic one.
+\end{proof}
+
+\begin{lemma}[Exact sum-of-squares certificates]
+\label{lem:sos-certificates}
+\uses{thm:nc-positivstellensatz}
+\lean{MIPRE.Tsirelson.Dominant, MIPRE.Tsirelson.re_inner_eval_ge,
+  MIPRE.Tsirelson.commutingOperatorValue_lt_of_certificate,
+  MIPRE.Tsirelson.exists_certificate_of_lt, MIPRE.Tsirelson.exists_certificate_iff}
+\leanok
+Call $z \in P$ \emph{dominant} if the real part of its constant coefficient exceeds the sum of
+$\abs{\mathrm{Re}\, z_w} + \abs{\mathrm{Im}\, z_w}$ over the nonempty words $w$. Let
+$\kappa > 0$ and suppose the answer sets are nonempty. Then $\omegaco(\game) < r$ if and only
+if there are $N \geq 1$, finitely many pairs $(g_i, s_i)$ with $g_i \in \{1, e_{xa},
+f_{yb}\}$ and $s_i \in P$, and finitely many $(c_t, w_t, \rho_t, w'_t)$ with $c_t \in \C$,
+words $w_t, w'_t$ and relations $\rho_t$, all coefficients Gaussian integers, such that
+$T + T^*$ is dominant, where $T = N^2 \kappa (r \cdot 1 - W_\game) - \sum_i s_i^* g_i s_i -
+\sum_t c_t w_t \rho_t w'_t$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Soundness: every word acts as a contraction, so on every strategy
+$2 N^2 \kappa (r - \text{value}) \geq \mathrm{Re} \langle \psi, (T + T^*)\psi \rangle$ is at
+least the dominance margin of $T + T^*$, uniformly over strategies. Completeness: take
+$\omegaco(\game) < r' < r$; Theorem~\ref{thm:nc-positivstellensatz} writes
+$\kappa(r \cdot 1 - W_\game) = \varepsilon \cdot 1 + \sum_i \sigma_i^* g_i \sigma_i +
+\sum_t c_t w_t \rho_t w'_t + a$ with $\varepsilon = \kappa(r - r') > 0$ and $a$
+anti-hermitian, which symmetrization removes. Rounding the coefficients of the $\sigma_i$ at
+scale $N$ and the $c_t$ at scale $N^2$ changes $T + T^*$ by $O(N)$ in the $\ell^1$ norm of
+coefficients (submultiplicative and star-invariant), against a constant term
+$2N^2\varepsilon$.
+\end{proof}
+
 \effortMedium
 
 \begin{lemma}[Upper semidecision of the commuting-operator value]
 \label{lem:valco-upper-re}
 \ledgernode{1.8.4, 1.8.4.1}
-\uses{thm:npa-convergence,lem:rcf-decision,def:co-value-bipartite,lem:tracial-le-co}
-For a game $\game$ with rational data and rational $r$, the relation $\omegaco(\game) < r$ is
-recursively enumerable: at each full-word NPA level decide exact rational semialgebraic
-feasibility of payoff $\geq r$ using Lemma~\ref{lem:rcf-decision} --- positive semidefiniteness
-is the nonnegativity of the principal minors, so the constraint set is semialgebraic. Some level
-is infeasible exactly when $\omegaco(\game) < r$: one direction because $C_{qc}$ is feasible at
-every level, the other because the $K_k$ of Theorem~\ref{thm:npa-convergence} are compact and
-decreasing with intersection $C_{qc}$, so their payoff maxima decrease to the maximum over
-$C_{qc}$. Otherwise that theorem assembles a commuting-operator strategy of payoff $\geq r$.
-Dovetailing over rational $r < 1$ halts exactly when $\omegaco(\game) < 1$. No efficiency claim
-and no numerical SDP certificate is involved --- the decision is exact, and succinct
-descriptions are expanded first.
+\uses{def:game-description,def:co-value-bipartite,lem:sos-certificates,def:commuting-upper-re}
+\lean{MIPRE.commutingUpperRE, MIPRE.Tsirelson.Coded.CheckUpper,
+  MIPRE.Tsirelson.Coded.primrecRel_checkUpper, MIPRE.Tsirelson.checkUpper_iff}
+\leanok
+Write $\game_g$ for the game described by a game description $g$
+(Definition~\ref{def:game-description}). The set
+\[
+  \{ (g, p, q) : g \text{ a game description},\ p, q \in \N,\ \omegaco(\game_g) < p/q \}
+\]
+is recursively enumerable, with $p/0 = 0$.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:value-lower-approx}
+\leanok
+The certificates of Lemma~\ref{lem:sos-certificates} at $\kappa = q\, W_g$, where $W_g$ is
+the total weight of $g$, have integer data: $\kappa(p/q \cdot 1 - W_{\game_g}) = p W_g \cdot 1 -
+q \sum \mathrm{wt}(x,y)[D]\, e_{xa} f_{yb}$. The checker computes $T + T^*$ on lists of
+monomials with coded Gaussian-integer coefficients, merges equal words, tests dominance, and
+rejects $q = 0$ and malformed letters or relation indices; it is primitive recursive, and a
+certificate passes exactly when $\omegaco(\game_g) < p/q$. Enumerating certificates gives the
+semidecider.
+\end{proof}
+
+\paragraph{Proof route.} The correspondence with nodes $1.8.4$ and $1.8.4.1$ is at the level
+of the conclusion. The paper runs the semidefinite hierarchy for upper bounds; the ledger makes
+that exact through the admitted real-closed-field decision of node $1.8.3$
+(Lemma~\ref{lem:rcf-decision}). The proof here uses neither, and so does not rest on $1.8.3$;
+\texttt{scripts/ledger-sync.py}, which walks the ledger's declared dependencies, still lists
+$1.8.3$ among the imports reached from this lemma, as expected. The ledger statement is also
+broader: it covers games with rational data and rational $r$, and the dovetailed form that
+halts exactly when $\omegaco(\game) < 1$, on succinct descriptions. The explicit route of
+Remark~\ref{rem:separation-premises} consumes those forms; the non-explicit
+Corollary~\ref{cor:tsirelson} needs only the form above.
 
 The value here is the \emph{bipartite} commuting-operator value of
 Definition~\ref{def:co-value-bipartite}, not the tracial $\valco$ of
-Definition~\ref{def:commuting-value}: the NPA moment matrices are indexed by words in both
-players' generators and their limit is the bipartite set $C_{qc}$. The two must not be
-interchanged --- Lemma~\ref{lem:tracial-le-co} gives $\valco \leq \omegaco$ and the reverse
-comparison is false in general --- so this lemma yields a \emph{sound} semidecider for
-$\valco(\game) < r$ and not a complete one. That is all the arguments below need, since they
-consume the correlation sets rather than the tracial value.
-\end{lemma}
+Definition~\ref{def:commuting-value}: the polynomial algebra has both players' variables and
+its states give the bipartite set $C_{qc}$. The two must not be interchanged ---
+Lemma~\ref{lem:tracial-le-co} gives $\valco \leq \omegaco$ and the reverse comparison is false
+in general --- so this lemma yields a \emph{sound} semidecider for $\valco(\game) < r$ and not
+a complete one. That is all the arguments below need, since they consume the correlation sets
+rather than the tracial value.
 
 \subsection{Separation of quantum and commuting values}
 
@@ -227,12 +413,15 @@ sets $C_{qa}$ and $C_{qc}$ and does not need these stronger assertions.
 \end{remark}
 
 A separate, non-explicit route to a correlation-set separation uses only the value-form
-reduction: if $C_{qa}=C_{qc}$ in every finite scenario, the lower semidecision procedure
-of Lemma~\ref{lem:value-lower-approx} and the upper procedure of
-Lemma~\ref{lem:valco-upper-re} would decide the value-$1$ versus value-at-most-$\frac12$
-promise, contradicting Corollary~\ref{cor:value-uncomputable}. This does not identify the
-source's explicit game or discharge the extra premises of
-Remark~\ref{rem:separation-premises}.
+reduction: if $C_{qa}=C_{qc}$ in every finite scenario, the quantum and commuting-operator
+values agree on every game, and the upper procedure of Lemma~\ref{lem:valco-upper-re} alone
+makes non-halting recursively enumerable through the reduction of
+Corollary~\ref{cor:main-quantum} (Lemma~\ref{lem:tsirelson-conditional}). Combining it with the
+lower procedure of Lemma~\ref{lem:value-lower-approx} into a total decider, as the ledger's
+node $1.8.5$ does, needs overlapping thresholds (for instance $\valstar > \frac58$ against
+$\omegaco < \frac78$) to contradict Corollary~\ref{cor:value-uncomputable} in its
+total-function form. Neither variant identifies the source's explicit game or discharges the
+extra premises of Remark~\ref{rem:separation-premises}.
 
 \subsection{Correlation sets and the conditional separation}
 
@@ -289,10 +478,21 @@ projections with the same Born probabilities. The payoff is linear, hence contin
 the bound $\valstar(\game)$ on $C_q$ passes to its closure.
 \end{proof}
 
+\begin{definition}[Upper semidecision of the commuting-operator value]
+\label{def:commuting-upper-re}
+\uses{def:game-description,def:co-value-bipartite}
+\lean{MIPRE.CommutingUpperRE}
+\leanok
+The proposition that the set of triples $(d, p, q)$ of a game description $d$ and
+$p, q \in \N$ with $\omegaco(\game_d) < p/q$ is recursively enumerable, where $p/0 = 0$: the
+threshold encoding of Lemma~\ref{lem:value-lower-approx}. Lemma~\ref{lem:valco-upper-re}
+proves it; Lemma~\ref{lem:tsirelson-conditional} takes it as a hypothesis.
+\end{definition}
+
 \begin{lemma}[Conditional separation]
 \label{lem:tsirelson-conditional}
-\uses{lem:correlation-sets-basic,def:game-description}
-\lean{MIPRE.HaltingReductionQuantum, MIPRE.CommutingUpperRE,
+\uses{lem:correlation-sets-basic,def:game-description,def:commuting-upper-re}
+\lean{MIPRE.HaltingReductionQuantum,
   MIPRE.exists_quantumValue_lt_commutingOperatorValue, MIPRE.exists_mem_Cqc_not_mem_Cqa,
   MIPRE.exists_Cqa_ne_Cqc, MIPRE.tsirelson_of_upperRE_of_isClosed}
 \leanok
@@ -326,15 +526,23 @@ $C_{qa} \subseteq C_{qc}$, and the inclusion is strict.
 \begin{corollary}[Tsirelson's problem, negative answer]
 \label{cor:tsirelson}
 \ledgernode{1.8.5}
-\uses{def:correlation-sets,lem:tsirelson-conditional,cor:main-quantum,lem:valco-upper-re}
+\uses{def:correlation-sets,lem:tsirelson-conditional,cor:main-quantum,lem:valco-upper-re,
+  lem:cqc-compact}
+\lean{MIPRE.tsirelson, MIPRE.tsirelson_of_haltingReduction, MIPRE.tsirelson_of_upperRE}
+\leanok
 There exist finite question and answer sets for which the closure $C_{qa}$ of the set
 of finite-dimensional quantum correlations is strictly contained in the set $C_{qc}$
 of commuting-operator correlations.
 \end{corollary}
 
+\begin{proof}
+\leanok
 Lemma~\ref{lem:tsirelson-conditional}, with the halting reduction of
 Corollary~\ref{cor:main-quantum}, the upper semidecider of Lemma~\ref{lem:valco-upper-re},
-and the closedness of $C_{qc}$ in every finite scenario. The witness scenario has one
+and the closedness of $C_{qc}$ in every finite scenario (Lemma~\ref{lem:cqc-compact}).
+\end{proof}
+
+The Lean proof uses no lower semidecider, no real-closed-field decision and no NPA levels. The witness scenario has one
 question alphabet and one answer alphabet shared by the two players. This is the
 non-explicit route; it does not use Theorem~\ref{thm:separation}. The ledger's proof of
 node $1.8.5$ dovetails the lower semidecider of Lemma~\ref{lem:value-lower-approx} against
@@ -491,7 +699,10 @@ Lemma~\ref{lem:rcf-decision} (node $1.8.3$) and the forward Kirchberg implicatio
 Lemma~\ref{lem:cep-implies-equal} (node $1.8.6.1$). Neither is reached by the main theorem:
 they are assumptions of the \emph{corollaries}, which is the right place for them, and
 Remark~\ref{rem:admitted-nodes} keeps the main theorem's own surface to a single classical
-algorithmic result.
+algorithmic result. The Lean proof of Corollary~\ref{cor:tsirelson} does not rest on node
+$1.8.3$: it proves Lemma~\ref{lem:valco-upper-re} through
+Theorem~\ref{thm:nc-positivstellensatz} instead. The ledger's own dependencies are unchanged,
+so \texttt{scripts/ledger-sync.py} keeps reporting $1.8.3$ as reached from these statements.
 
 Second, the additional source-route premises of Remark~\ref{rem:separation-premises}
 are essential. The construction needs effective bounded self-reference at a

@@ -6,6 +6,10 @@ routes), a completeness critic, and a four-way check of the replacement route wi
 prototypes. The target is the negative answer to Tsirelson's problem, `Cqa ⊊ Cqc`, in a
 finite bipartite scenario (blueprint `cor:tsirelson`, ledger 1.8.5).
 
+**Status (2026-09-24): done.** `MIPRE.tsirelson` (`MIPRE/Tsirelson.lean`) proves it
+unconditionally, with only `propext`, `Classical.choice` and `Quot.sound`. Every milestone below
+is complete; §7 lists what remains in chapter 8.
+
 ## 1. What changed in the revision, and why
 
 - **Answer reduction is done.** `MIPRE.Halting.halting_reduction_quantum` is proved
@@ -142,8 +146,8 @@ If `commutingOperatorValue G < r` then `r·1 − W_G ∈ M`.
 4. GNS gives a strategy of value `L₀(W_G) ≥ r`, which contradicts
    `value ≤ commutingOperatorValue`.
 
-The prototype `Scratch/SosAlgebra.lean` compiles steps 1–2 (`exists_separating_functional`)
-and the Archimedean lemma, with no `sorry`.
+Steps 1–2 are `MIPRE.exists_separating_functional_of_archimedean` with the Archimedean lemma;
+the whole argument is `MIPRE.Tsirelson.sub_gamePoly_mem_cone_of_lt`.
 
 ### 3.5 Exact certificates
 
@@ -206,14 +210,14 @@ Each row is a PR. Every declaration a blueprint proof-level `\leanok` claims is 
 
 | ID | Deliverable | Module(s) | Lines | Status |
 |---|---|---|---|---|
-| R1 | Correlation sets, conditional consumer, blueprint nodes, guards, this plan | `Foundations/Correlations.lean`, `Foundations/Tsirelson/Conditional.lean` | 450 | done, PR for #214 |
-| R2 | `NCPoly` and star; evaluation; cone `M`; `a⋆Ma ⊆ M`; Archimedean; strategy positivity; `value ≤ r` from `r − W ∈ M` | `Foundations/NCPoly/{Basic,Cone}.lean`, `Foundations/Tsirelson/Algebra.lean` | 500–700 | prototype compiles |
-| R3 | States and GNS: a state gives a commuting strategy with correlation `Re L(e f)` | `Foundations/Tsirelson/GNS.lean` | 500–700 | prototype compiles |
-| R4a | Compact state space; `IsClosed Cqc`, `Cqa ⊆ Cqc`; `Cqa ⊊ Cqc` given upper RE alone | `Foundations/Tsirelson/Closed.lean` | 200–280 | |
-| R4b | Positivstellensatz (§3.4) | `Foundations/Tsirelson/Positivstellensatz.lean` | 120–200 | separation step prototyped |
-| R5 | Integer certificates: semantic checker, soundness, completeness by ℓ¹ approximation | `Foundations/Tsirelson/Certificate.lean` | 400–700 | |
-| R6 | Coded checker, primitive recursiveness, semantic equivalence, `CommutingUpperRE` | `Foundations/Tsirelson/{Coded,UpperRE}.lean` | 1200–2000 | |
-| R7 | Root `MIPRE/Tsirelson.lean`; `cor:tsirelson` repair; fidelity audit | `MIPRE/Tsirelson.lean` | 50–150 | |
+| R1 | Correlation sets, conditional consumer, blueprint nodes, guards, this plan | `Foundations/Correlations.lean`, `Foundations/Tsirelson/Conditional.lean` | 450 | done, #215 |
+| R2 | `NCPoly` and star; evaluation; cone `M`; `a⋆Ma ⊆ M`; Archimedean; strategy positivity; `value ≤ r` from `r − W ∈ M`; ℓ¹ norm | `Foundations/NCPoly/{Basic,Cone}.lean`, `Foundations/Tsirelson/Algebra.lean` | 1490 | done |
+| R3 | States and GNS: a state gives a commuting strategy with correlation `Re L(e f)` | `Foundations/GNS.lean` (generic), `Foundations/Tsirelson/Algebra.lean` | 520 | done |
+| R4a | Compact state space; `IsClosed Cqc`, `Cqa ⊆ Cqc`; `Cqa ⊊ Cqc` given upper RE alone | `Foundations/Tsirelson/Closed.lean` | 240 | done |
+| R4b | Positivstellensatz (§3.4) | `Foundations/Tsirelson/Positivstellensatz.lean` | 140 | done |
+| R5 | Integer certificates: semantic checker, soundness, completeness by ℓ¹ approximation | `Foundations/Tsirelson/Certificate.lean` | 700 | done |
+| R6 | Coded checker, primitive recursiveness, semantic equivalence, `CommutingUpperRE` | `Foundations/Tsirelson/{CodedPoly,UpperRE}.lean` | 1480 | done |
+| R7 | Root `MIPRE/Tsirelson.lean`; `cor:tsirelson` repair; fidelity audit | `MIPRE/Tsirelson.lean` | 40 | done |
 
 R6 carries the volume risk. The lower semidecider's coded side, for a simpler checker, is
 1468 lines. Total: 3.3k–4.7k new lines. R4a and R4b depend only on R2 and R3 and can go in

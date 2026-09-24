@@ -200,6 +200,7 @@ import MIPRE.Background.AnswerReduction.SoundFinal
 import MIPRE.Background.AnswerReduction.Instance
 import MIPRE.MainTheorem
 import MIPRE.Foundations.Tsirelson.Conditional
+import MIPRE.Tsirelson
 import MIPRE.Foundations.Expanded
 import MIPRE.Foundations.WeylEPR
 import MIPRE.Foundations.Swap
@@ -2611,8 +2612,47 @@ separation from an upper semidecider (`MIPRE/Foundations/Correlations.lean`,
   MIPRE.payoff_le_commutingOperatorValue_of_mem_Cqc,
   MIPRE.Cqa_subset_Cqc_of_isClosed,
   MIPRE.HaltingReductionQuantum,
-  MIPRE.CommutingUpperRE,
   MIPRE.exists_quantumValue_lt_commutingOperatorValue,
   MIPRE.exists_mem_Cqc_not_mem_Cqa,
   MIPRE.exists_Cqa_ne_Cqc,
   MIPRE.tsirelson_of_upperRE_of_isClosed
+
+/-! The Positivstellensatz route to `cor:tsirelson`: `lem:cone-archimedean`,
+`lem:cone-state-gns`, `lem:cqc-compact`, `thm:nc-positivstellensatz`, `lem:sos-certificates`,
+`lem:valco-upper-re` and `cor:tsirelson` (`MIPRE/Foundations/NCPoly/`,
+`MIPRE/Foundations/GNS.lean`, `MIPRE/Foundations/Tsirelson/`, `MIPRE/Tsirelson.lean`). -/
+#guard_sorry_free MIPRE.NCPoly.star_mul_mul_mem_qmod_of_mem,
+  MIPRE.NCPoly.archimedean_of_gen,
+  MIPRE.Tsirelson.cone_archimedean,
+  MIPRE.NCPoly.re_inner_eval_nonneg,
+  MIPRE.Tsirelson.strategy_nonneg,
+  MIPRE.Tsirelson.value_le_of_mem,
+  MIPRE.Tsirelson.isConeState_stateOf,
+  MIPRE.GNS.GenData.strategy,
+  MIPRE.GNS.GenData.strategy_correlation,
+  MIPRE.Tsirelson.stateStrategy,
+  MIPRE.Tsirelson.stateStrategy_correlation,
+  MIPRE.Tsirelson.stateStrategy_value,
+  MIPRE.Tsirelson.mem_Cqc_iff,
+  MIPRE.Tsirelson.stateSpace,
+  MIPRE.Tsirelson.isCompact_stateSpace,
+  MIPRE.Tsirelson.image_correlationOf_stateSpace,
+  MIPRE.isCompact_Cqc,
+  MIPRE.isClosed_Cqc,
+  MIPRE.Cqa_subset_Cqc,
+  MIPRE.exists_separating_functional_of_archimedean,
+  MIPRE.Tsirelson.exists_isConeState_of_not_mem,
+  MIPRE.Tsirelson.sub_gamePoly_mem_cone_of_lt,
+  MIPRE.Tsirelson.commutingOperatorValue_lt_iff,
+  MIPRE.Tsirelson.Dominant,
+  MIPRE.Tsirelson.re_inner_eval_ge,
+  MIPRE.Tsirelson.commutingOperatorValue_lt_of_certificate,
+  MIPRE.Tsirelson.exists_certificate_of_lt,
+  MIPRE.Tsirelson.exists_certificate_iff,
+  MIPRE.commutingUpperRE,
+  MIPRE.Tsirelson.Coded.CheckUpper,
+  MIPRE.Tsirelson.Coded.primrecRel_checkUpper,
+  MIPRE.Tsirelson.checkUpper_iff,
+  MIPRE.tsirelson,
+  MIPRE.tsirelson_of_haltingReduction,
+  MIPRE.tsirelson_of_upperRE

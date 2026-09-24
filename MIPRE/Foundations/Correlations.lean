@@ -88,6 +88,7 @@ variable (X Y A B) in
 /-- **`C_qa`**: the closure of `C_q`. -/
 def Cqa : Set (X → Y → A → B → ℝ) := closure (Cq X Y A B)
 
+/-- The correlation of a tensor-product strategy lies in `C_q`. -/
 theorem TensorProductStrategy.correlation_mem_Cq {G : Game X Y A B}
     (S : TensorProductStrategy G) : S.correlation ∈ Cq X Y A B :=
   ⟨S.dA, S.dB, S.ψ, S.ψ_unit, S.PA, S.PB, rfl⟩
@@ -102,6 +103,7 @@ theorem mem_Cq_iff (G : Game X Y A B) {p : X → Y → A → B → ℝ} :
     exact S.correlation_mem_Cq
 
 omit [Fintype X] [Fintype Y] in
+/-- `C_q ⊆ C_qa`. -/
 theorem Cq_subset_Cqa : Cq X Y A B ⊆ Cqa X Y A B := subset_closure
 
 /-- The payoff of a quantum correlation is at most the quantum value. -/
