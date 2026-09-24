@@ -23,7 +23,7 @@ finite bipartite scenario (blueprint `cor:tsirelson`, ledger 1.8.5).
   - Upper semidecision becomes an Archimedean Positivstellensatz with exact
     sum-of-squares certificates, proved with Mathlib's `riesz_extension`.
   - POVMs enter as generators, so no dilation is needed.
-  - The review estimated the NPA-level plan at 5.5k–10k lines; this route at about 3k.
+  - The review estimated the NPA-level plan at 5.5k–10k lines; this route at 3.3k–4.7k.
 - **Tooling is the cloud workflow** of `CLAUDE.md`, not the Windows scripts.
 - **Reuse the plan missed:** `TensorProductStrategy.copy`, the `GameData` payoff semantics
   `wt`/`W`/`Draw` with `game_μ_eq`/`game_D_eq` and their primitive recursiveness
@@ -69,9 +69,15 @@ space lives in the universe of the generators. Every consumer uses `Fin` alphabe
   - Mathlib's `FreeAlgebra` star is `ℂ`-linear, so it is unusable here, and `MonoidAlgebra`
     has no star.
   - At the pinned Mathlib, `MonoidAlgebra` is a structure (`ofCoeff`/`coeff`).
+  - `NCPoly` is a `def` with `Ring`/`Algebra ℂ` via `inferInstanceAs` and a small transport
+    API, not an `abbrev`: an `abbrev` would make the conjugate-reverse star a global instance
+    on Mathlib's `MonoidAlgebra`. On the `def`, `Module ℝ` is `Module.complexToReal`, so
+    there is no diamond.
 - Generators `Gen := (X × A) ⊕ (Y × B)` are self-adjoint.
 - Relations: `Σ_a e_xa − 1`, `Σ_b f_yb − 1`, `[e_xa, f_yb]`. `I` is the complex span of
-  `u ρ v`, a two-sided ideal. `Anti` is the anti-Hermitian elements.
+  `w ρ w'` over words `w, w'`, with two-sided absorption `u j v ∈ I` proved once; this also
+  gives the monomial decomposition the certificates encode. `Anti` is the anti-Hermitian
+  elements.
 - `M := PointedCone.hull ℝ ({s⋆ g s : g ∈ {1} ∪ gens} ∪ I ∪ Anti)`. Here
   `PointedCone.span` has been renamed `hull`.
 - **Facts about `M`:**
@@ -88,9 +94,13 @@ space lives in the universe of the generators. Every consumer uses `Fin` alphabe
 
 ### 3.2 States and GNS
 
-A *state* is a `ℂ`-linear `L` with `L 1 = 1`, `L(z⋆) = conj L(z)`, `0 ≤ Re L(s⋆ g s)` and
-`L(I) = 0`. From a state the construction produces a `CommutingOperatorStrategy` whose
-correlation is `Re L(e_xa f_yb)`:
+A *cone state* is a `ℂ`-linear `L` with `L 1 = 1` and `0 ≤ Re L m` for every `m ∈ M`. This
+single notion is what strategies give (`strategy_nonneg`), what the complexified Riesz
+functional is, and what the compact state set is cut out by. It implies conjugate symmetry
+(`z − z⋆` and `i(z + z⋆)` lie in `Anti`), `L(I) = 0` (`±j`, `±ij ∈ I ⊆ M`), positivity on
+`s⋆ g s`, and the contraction bound `Re L(a⋆(1 − g²)a) ≥ 0` (from `1 − g² ∈ M` and
+`a⋆ M a ⊆ M`). From a cone state the construction produces a `CommutingOperatorStrategy`
+whose correlation is `Re L(e_xa f_yb)`:
 
 - the pre-inner product is `⟨a, b⟩ := L(a⋆ b)` on a `def` synonym, through
   `PreInnerProductSpace.Core`, `InnerProductSpace.ofCore` and `UniformSpace.Completion`;
@@ -108,11 +118,13 @@ instance, because `correlation` elaborates through the C*-module instance.
 
 ### 3.3 Compactness: `Cqc` is closed
 
-- A state is determined by its values on words, `φ : FreeMonoid Gen → ℂ`.
-- Each state condition is closed in `φ`. Positivity is required for every polynomial `s`,
-  not only for words.
-- `|φ w| ≤ 1`, from `2 + αw + ᾱw⋆ ∈ M` with `|α| = 1`, or from the GNS contraction bound.
-- So the state set is closed in a product of closed disks, hence compact
+- A state is determined by its values on words, `φ : FreeMonoid Gen → ℂ`; write `Lφ` for
+  its linear extension (`Finsupp.linearCombination`), continuous in `φ`.
+- `K := {φ | Lφ φ is a cone state ∧ ∀ w, ‖φ w‖ ≤ 1}`. The bound is part of the definition:
+  the GNS direction ignores it, and the strategy direction needs only
+  `|⟨ψ, π_S(w)ψ⟩| ≤ 1`, which certificate soundness needs anyway. Positivity quantifies over
+  every `m ∈ M`, not only over words.
+- So `K` is closed in a product of closed disks, hence compact
   (`isCompact_univ_pi`, `IsCompact.of_isClosed_subset`).
 - `Cqc` is its image under `φ ↦ Re φ(e_xa f_yb)`: GNS gives one inclusion, `π_S` the
   other.
@@ -138,11 +150,13 @@ and the Archimedean lemma, with no `sorry`.
 **Certificate.** For `d : GameData` and `p q : ℕ`, a certificate consists of:
 
 - `D ≥ 1`;
-- terms `(c_i : ℕ, g_i ∈ {1} ∪ gens, s_i)` with Gaussian-integer coefficients;
-- ideal terms `(u_k, ρ_k, v_k)`, with `ρ_k` built from a validated index.
+- SOS terms `(g_i ∈ {1} ∪ gens, s_i)` with Gaussian-integer coefficients (no weights: `D = N²`
+  and weight one always suffice);
+- ideal monomials `(c_t, w_t, ρ_t, w'_t)`: a Gaussian integer, two words and a validated
+  relation index.
 
-**Test.** Let `R := D·(p·W_d·1 − q·Σ wt(x,y)[Draw] e_xa f_yb) − Σ c_i s_i⋆ g_i s_i −
-Σ u_k ρ_k v_k` and `R_h := R + R⋆`. Accept iff `q > 0` and
+**Test.** Let `R := D·(p·W_d·1 − q·Σ wt(x,y)[Draw] e_xa f_yb) − Σ s_i⋆ g_i s_i −
+Σ c_t w_t ρ_t w'_t` and `R_h := R + R⋆`. Accept iff `q > 0` and
 `Re(R_h)_∅ > Σ_{w ≠ ∅} (|Re (R_h)_w| + |Im (R_h)_w|)`, with coefficients merged per word.
 
 **Soundness.** Every word acts as a contraction (`0 ≤ E ≤ 1`), so every strategy satisfies
@@ -155,10 +169,14 @@ one-dimensional deterministic strategy supplies for `Fin (n+1)` alphabets.
 - Take `commutingOperatorValue < r' < p/q`. §3.4 at `r'` gives
   `r'·1 − W = Σ σ_i⋆ g_i σ_i + j + a'`.
 - Symmetrizing kills `a'` exactly.
-- Approximate the `σ_i`, `u_k`, `v_k` by Gaussian rationals, with an ℓ¹ estimate:
-  `‖z‖ := Σ_w (|Re z_w| + |Im z_w|)` is submultiplicative and star-invariant. No topology on
-  `NCPoly` is needed.
-- Clear denominators with `D = N²`, `c_i = 1`.
+- Round coefficientwise at one scale: the SOS vectors at `N`, the ideal coefficients at
+  `N²`, with taxicab error at most `1/N` per coefficient (`abs_sub_round`). The ℓ¹ norm
+  `‖z‖ := Σ_w (|Re z_w| + |Im z_w|)` is subadditive, submultiplicative and star-invariant,
+  so the total error is `O(1/N)`; pick `N` by `exists_nat_gt`. No topology on `NCPoly` is
+  needed.
+- Multiply through by `D = N²`.
+- Soundness and completeness are proved once over `NCPoly`; the coded layer only proves that
+  the checker computes this test on decoded data.
 
 **Pitfalls, both refuted-if-ignored:**
 
@@ -191,16 +209,22 @@ Each row is a PR. Every declaration a blueprint proof-level `\leanok` claims is 
 | R1 | Correlation sets, conditional consumer, blueprint nodes, guards, this plan | `Foundations/Correlations.lean`, `Foundations/Tsirelson/Conditional.lean` | 450 | done, PR for #214 |
 | R2 | `NCPoly` and star; evaluation; cone `M`; `a⋆Ma ⊆ M`; Archimedean; strategy positivity; `value ≤ r` from `r − W ∈ M` | `Foundations/NCPoly/{Basic,Cone}.lean`, `Foundations/Tsirelson/Algebra.lean` | 500–700 | prototype compiles |
 | R3 | States and GNS: a state gives a commuting strategy with correlation `Re L(e f)` | `Foundations/Tsirelson/GNS.lean` | 500–700 | prototype compiles |
-| R4 | Positivstellensatz (§3.4); compact state space; `IsClosed Cqc`, `Cqa ⊆ Cqc`, `Cqa ⊊ Cqc` given upper RE | `Foundations/Tsirelson/{Separation,Closed}.lean` | 300–500 | separation step prototyped |
+| R4a | Compact state space; `IsClosed Cqc`, `Cqa ⊆ Cqc`; `Cqa ⊊ Cqc` given upper RE alone | `Foundations/Tsirelson/Closed.lean` | 200–280 | |
+| R4b | Positivstellensatz (§3.4) | `Foundations/Tsirelson/Positivstellensatz.lean` | 120–200 | separation step prototyped |
 | R5 | Integer certificates: semantic checker, soundness, completeness by ℓ¹ approximation | `Foundations/Tsirelson/Certificate.lean` | 400–700 | |
 | R6 | Coded checker, primitive recursiveness, semantic equivalence, `CommutingUpperRE` | `Foundations/Tsirelson/{Coded,UpperRE}.lean` | 1200–2000 | |
 | R7 | Root `MIPRE/Tsirelson.lean`; `cor:tsirelson` repair; fidelity audit | `MIPRE/Tsirelson.lean` | 50–150 | |
 
 R6 carries the volume risk. The lower semidecider's coded side, for a simpler checker, is
-1468 lines.
+1468 lines. Total: 3.3k–4.7k new lines. R4a and R4b depend only on R2 and R3 and can go in
+parallel; the list-level definitions and primitive-recursiveness proofs of R6 need only R2.
 
 ## 5. Blueprint accounting
 
+- **References.** Public sources for the route, to be verified before they enter
+  `bibliography.tex`: Helton and McCullough, *A Positivstellensatz for non-commutative
+  polynomials* (Trans. AMS, 2004); Doherty, Liang, Toner and Wehner (CCC 2008); Navascués,
+  Pironio and Acín, arXiv:0803.4290.
 - **New nodes, each with `\lean{}` and marks together with its guard:**
   - the `NCPoly` cone and its Archimedean property;
   - states and GNS;
