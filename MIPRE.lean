@@ -796,6 +796,7 @@ import MIPRE.Foundations.Cost.Threshold
 import MIPRE.Foundations.Cost.Toolkit
 import MIPRE.Foundations.Cost.TreeBits
 import MIPRE.Foundations.Cost.Unary
+import MIPRE.Foundations.Cost.UnaryArith
 import MIPRE.Foundations.Cost.Universal
 import MIPRE.Foundations.Cost.While
 import MIPRE.Foundations.CrossConsistency
