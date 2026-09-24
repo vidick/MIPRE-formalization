@@ -234,22 +234,113 @@ promise, contradicting Corollary~\ref{cor:value-uncomputable}. This does not ide
 source's explicit game or discharge the extra premises of
 Remark~\ref{rem:separation-premises}.
 
+\subsection{Correlation sets and the conditional separation}
+
+\begin{definition}[Correlation sets]
+\label{def:correlation-sets}
+\uses{def:tensor-strategy,def:q-value,def:co-strategy-bipartite,def:co-value-bipartite}
+\lean{MIPRE.Game.payoff, MIPRE.TensorProductStrategy.correlation, MIPRE.Cq, MIPRE.Cqa,
+  MIPRE.Cqc}
+\leanok
+Fix finite sets $\mX, \mY, \mA, \mB$. A \emph{correlation} is a function
+$p : \mX \times \mY \times \mA \times \mB \to \R$, written $p(a,b|x,y)$, and its
+\emph{payoff} in a game $\game$ on these alphabets is
+$\sum_{x,y,a,b} \mu(x,y)\, D(x,y,a,b)\, p(a,b|x,y)$. The set $C_q$ consists of the
+correlations $\bra{\psi} A^x_a \ot B^y_b \ket{\psi}$ of finite-dimensional
+tensor-product strategies (Definition~\ref{def:tensor-strategy}); $C_{qa}$ is its closure
+in $\R^{\mX \times \mY \times \mA \times \mB}$; and $C_{qc}$ consists of the correlations
+$\bra{\psi} E^x_a F^y_b \ket{\psi}$ of commuting-operator strategies
+(Definition~\ref{def:co-strategy-bipartite}). The value of a strategy of either kind is
+the payoff of its correlation.
+\end{definition}
+
+\paragraph{Comments.} The Lean $C_q$ uses the projective measurements of
+Definition~\ref{def:tensor-strategy}, and $C_{qc}$ the POVMs of
+Definition~\ref{def:co-strategy-bipartite} on a Hilbert space of any dimension. The
+companion paper defines the finite-dimensional set both ways and $C_{qc}$ on separable
+spaces~\cite{AuditSync26}. The closures of the projective and POVM finite-dimensional sets
+agree by Naimark dilation, and a commuting-operator correlation is realized on the
+separable subspace generated cyclically by $\psi$; neither identification is used below.
+
+\begin{lemma}[Basic properties of the correlation sets]
+\label{lem:correlation-sets-basic}
+\uses{def:correlation-sets}
+\lean{MIPRE.CommutingOperatorStrategy.correlation_nonneg,
+  MIPRE.CommutingOperatorStrategy.correlation_sum,
+  MIPRE.commutingOperatorValue_nonneg, MIPRE.commutingOperatorValue_le_one,
+  MIPRE.TensorProductStrategy.correlation_toCommuting, MIPRE.Cq_subset_Cqc,
+  MIPRE.quantumValue_le_commutingOperatorValue, MIPRE.payoff_le_quantumValue_of_mem_Cqa,
+  MIPRE.payoff_le_commutingOperatorValue_of_mem_Cqc, MIPRE.Cqa_subset_Cqc_of_isClosed}
+\leanok
+Commuting-operator correlations are nonnegative and sum to one for each question pair, so
+$0 \leq \omegaco(\game) \leq 1$. A tensor-product strategy is a commuting-operator strategy
+with the same correlation, so $C_q \subseteq C_{qc}$ and
+$\valstar(\game) \leq \omegaco(\game)$. The payoff of every correlation in $C_{qa}$ is at
+most $\valstar(\game)$, and that of every correlation in $C_{qc}$ at most
+$\omegaco(\game)$. If $C_{qc}$ is closed then $C_{qa} \subseteq C_{qc}$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+$E^x_a F^y_b$ is the product of two commuting positive operators, hence positive, which
+gives nonnegativity; the sum over $a, b$ is $\langle \psi, \psi \rangle = 1$. On
+$\C^{d_A} \ot \C^{d_B}$ the operators $A^x_a \ot \Id$ and $\Id \ot B^y_b$ are commuting
+projections with the same Born probabilities. The payoff is linear, hence continuous, so
+the bound $\valstar(\game)$ on $C_q$ passes to its closure.
+\end{proof}
+
+\begin{lemma}[Conditional separation]
+\label{lem:tsirelson-conditional}
+\uses{lem:correlation-sets-basic,thm:halting-undecidable,def:game-description}
+\lean{MIPRE.HaltingReductionQuantum, MIPRE.CommutingUpperRE,
+  MIPRE.exists_quantumValue_lt_commutingOperatorValue, MIPRE.exists_mem_Cqc_not_mem_Cqa,
+  MIPRE.exists_Cqa_ne_Cqc, MIPRE.tsirelson_of_upperRE_of_isClosed}
+\leanok
+Suppose that there is a computable map $g$ from machines to game descriptions with
+$\valstar(\game_{g(\machine)}) = 1$ when $\machine$ halts on the empty input and
+$\valstar(\game_{g(\machine)}) \leq \frac12$ otherwise (the conclusion of
+Corollary~\ref{cor:main-quantum}), and that the relation $\omegaco(\game_d) < p/q$ on game
+descriptions $d$ and $p, q \in \N$ is recursively enumerable, with $p/0 = 0$ (the form of
+Lemma~\ref{lem:valco-upper-re} used here). Then some described game has
+$\valstar(\game_d) < \omegaco(\game_d)$, and in its scenario some correlation lies in
+$C_{qc}$ but not in $C_{qa}$. If moreover $C_{qc}$ is closed in every finite scenario, then
+$C_{qa} \subsetneq C_{qc}$ in that scenario, whose two players share the question alphabet
+and the answer alphabet.
+\end{lemma}
+
+\begin{proof}
+\leanok
+If $\omegaco(\game_d) \leq \valstar(\game_d)$ for every $d$, the two values agree on every
+described game, since $\valstar \leq \omegaco$. Then $\machine$ fails to halt exactly when
+$\omegaco(\game_{g(\machine)}) < \frac34$, so non-halting is the pullback of an r.e. relation
+along a computable map, hence r.e., which it is not
+(Theorem~\ref{thm:halting-undecidable}). So some $d$ has $\valstar(\game_d) <
+\omegaco(\game_d)$, and some commuting-operator strategy has value above $\valstar(\game_d)$;
+its correlation is in $C_{qc}$, and its payoff exceeds the bound $\valstar(\game_d)$ that
+holds on $C_{qa}$ (Lemma~\ref{lem:correlation-sets-basic}). With $C_{qc}$ closed,
+$C_{qa} \subseteq C_{qc}$, and the inclusion is strict.
+\end{proof}
+
 \subsection{Failure of Tsirelson's problem}
 
 \begin{corollary}[Tsirelson's problem, negative answer]
 \label{cor:tsirelson}
 \ledgernode{1.8.5}
-\uses{thm:separation,lem:value-lower-approx,lem:valco-upper-re,cor:value-uncomputable}
+\uses{def:correlation-sets,lem:tsirelson-conditional,cor:main-quantum,lem:valco-upper-re}
 There exist finite question and answer sets for which the closure $C_{qa}$ of the set
 of finite-dimensional quantum correlations is strictly contained in the set $C_{qc}$
 of commuting-operator correlations.
 \end{corollary}
 
-Immediate from Theorem~\ref{thm:separation}: the value gap is witnessed by a
-correlation in $C_{qc}$ at distance bounded away from $C_{qa}$. Requires only the
-definitions of the correlation sets. (Non-closure of the unclosed set $C_q$ itself is
-Slofstra's earlier theorem~\cite{Slo19}, which also follows, with quantitative bounds,
-from the machinery here.)
+Lemma~\ref{lem:tsirelson-conditional}, with the halting reduction of
+Corollary~\ref{cor:main-quantum}, the upper semidecider of Lemma~\ref{lem:valco-upper-re},
+and the closedness of $C_{qc}$ in every finite scenario. The witness scenario has one
+question alphabet and one answer alphabet shared by the two players. This is the
+non-explicit route; it does not use Theorem~\ref{thm:separation}. The ledger's proof of
+node $1.8.5$ dovetails the lower semidecider of Lemma~\ref{lem:value-lower-approx} against
+the upper one into a promise decider. The argument here needs only the upper one, because
+$\valstar \leq \omegaco$ always holds. Non-closure of the unclosed set $C_q$ itself is
+Slofstra's earlier theorem~\cite{Slo19}, which is not formalized here.
 
 \subsection{Refutation of Connes' Embedding Problem}
 

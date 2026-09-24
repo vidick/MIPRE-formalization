@@ -1,440 +1,299 @@
 # Tsirelson's problem: implementation plan
 
-Written 2026-09-23. Status: proposed implementation campaign; no new Lean proofs
-are claimed by this document. The target is the negative answer to Tsirelson's
-problem, `Cqa ⊊ Cqc`, in a finite bipartite scenario.
-
-## 1. Scope, provenance, and current position
-
-The first delivery is **existence of a separating correlation**, through the
-halting reduction. The paper's particular explicit separating game, its
-`quantumValue ≤ 1/2` versus `commutingOperatorValue = 1` gap, Connes embedding,
-and QWEP are separate campaigns. The classical CHSH Tsirelson bound is also a
-different target.
-
-This plan was checked against:
-
-- MIPRE local checkout `f71d43e` (introspection, PR #193) and upstream main
-  `867f4e2` (answer reduction AR-1, PR #199) for the interface audit. The
-  intervening PR #197 supplies the compression pipeline from a single
-  `AnswerReduction 5` hypothesis. At publication, upstream main is `c74b451`:
-  PR #200, answer reduction AR-2a, has also merged.
-- [Chapter 8](../blueprint/src/content/08_downstream.tex), especially
-  `thm:npa-convergence`, `lem:valco-upper-re`, and `cor:tsirelson`.
-- Companion `vidick/MIPRE-proof` at
-  `a459dee4413a256107fc2d227bab298eba04051c`: `paper/recursive.tex`, and the
-  September 13 `frontier-npa-proposal.md`, `frontier-npa-independent-review.md`,
-  and `frontier-npa-specs.json` under `proofs/mipre-undecidability/reviews/`.
-  Those are mathematical source/review records, not Lean certificates. Private
-  source text is not copied here.
-- The public NPA source, [arXiv:0803.4290v1](https://arxiv.org/abs/0803.4290v1),
-  especially Theorem 8, Corollary 9, and Appendix B.
-- Both upstream branches of `vidick/commuting-repetition`, including development
-  head `24a88239e55a3448074c061fbdac1abc347df23d`, and the local vendored tree.
-  No Lean NPA hierarchy/convergence development was found. Lin's tracial density
-  theorem and substantial operator infrastructure are present.
-- Lean 4.33.0 and the pinned Mathlib revision
-  `db584cd6d46c92f209a44c0f1c829460d327499d`.
-
-Refresh the upstream status before starting implementation. Work can proceed
-while answer reduction is being completed: the final integration theorem will
-carry that hypothesis explicitly until its actual inhabitant is available.
-
-## 2. Exact targets and the shortest consumer
-
-Use ordinary bipartite correlations on finite nonempty alphabets `X,Y,A,B`,
-with no synchrony constraint on correlations. Define `Cq` using arbitrary
-finite-dimensional tensor-product strategies, `Cqa := closure Cq` in the usual
-finite product topology, and `Cqc` using the existing
-`MIPRE.CommutingOperatorStrategy`. Keep the existing projective convention for
-finite tensor strategies, with a correlation-preserving POVM dilation bridge
-to justify the standard interpretation.
-
-The final theorem should supply natural numbers `nx,ny,na,nb` with
-
-```text
-Cqa (Fin (nx+1)) (Fin (ny+1)) (Fin (na+1)) (Fin (nb+1))
-  ⊊
-Cqc (Fin (nx+1)) (Fin (ny+1)) (Fin (na+1)) (Fin (nb+1)).
-```
-
-The construction through `GameData` actually supplies common question and
-answer alphabets (`nx = ny`, `na = nb`). That does not make its separating
-correlation synchronous or tracial. State the stronger common-alphabet witness
-if it comes for free, and derive the displayed general form.
-
-The main new computational interface, with a proposed name, is:
-
-```text
-CommutingUpperRE :=
-  REPred (fun x : HaltingGameValue.GameData × ℕ × ℕ =>
-    commutingOperatorValue x.1.game < (x.2.1 : ℝ) / (x.2.2 : ℝ)).
-```
-
-This deliberately matches the existing lower-approximation threshold encoding.
-The zero-denominator case denotes threshold zero and is false by value
-nonnegativity. Nonnegative rational thresholds suffice; `3/4` alone suffices
-for the final contradiction. A general signed-rational API is optional.
-
-Write the consumer before its analytic supplier:
-
-1. Obtain the computable reduction `g : Code → GameData` from
-   `Halting.halting_reduction_quantum_of G U`.
-2. Suppose quantum and commuting values agree on every game in its image.
-   Then `¬ HaltsOnEmptyInput c` is equivalent to
-   `commutingOperatorValue (g c).game < 3/4`: the two promised quantum values
-   are `1` and at most `1/2`.
-3. Pull `CommutingUpperRE` back along `g` to make non-halting recursively
-   enumerable. Combine with `MIPRE.halting_re` using Mathlib's
-   `ComputablePred.computable_iff_re_compl_re'`, contradicting
-   `MIPRE.halting_undecidable`.
-4. Conclude that some reduction game has unequal values. The tensor-to-commuting
-   embedding makes the inequality strict in the correct direction.
-5. A commuting strategy with payoff above the quantum supremum supplies a point
-   outside `Cqa`: the payoff is continuous, and its upper bound extends from
-   `Cq` to its closure. This step needs no maximizing finite-dimensional strategy.
-6. Closedness of `Cqc` and `Cq ⊆ Cqc` give `Cqa ⊆ Cqc`; together with the point
-   from step 5, obtain strict inclusion.
-
-This consumer uses the existing halting semidecider directly. The already
-proved quantum lower semidecider remains useful for a general two-sided
-approximation theorem, but need not be imported by the minimal contradiction.
-Do not construct a purported total decider on all games by a race that is only
-known to terminate on promised instances.
-
-Proposed milestones, all with honest explicit hypotheses:
-
-- `exists_value_gap_of_upperRE (G : GapCompression) (U : UniversalMachine)`.
-- `tsirelson_of_upperRE_of_closed (G) (U)`: additionally assumes closedness of
-  each finite-scenario `Cqc` and the effective upper procedure.
-- `tsirelson_of_compression (G) (U)`: the analytic/computability hypotheses
-  have been supplied by the new NPA development.
-- `tsirelson_of_answerReduction (A : AnswerReduction 5)`: use
-  `GapCompression.ofAnswerReduction A` and `Cost.selfUniversal`.
-- Unconditional `tsirelson`: only after a checked answer-reduction inhabitant
-  is available. Do not use a headline theorem that still carries `sorryAx`.
-
-Names and displayed signatures above are design targets, not compiled declarations.
-
-## 3. Reuse audit and module boundaries
-
-| Existing component | Reuse | Work still required |
-|---|---|---|
-| `Foundations/Games.lean` | `TensorProductStrategy`, projective measurements, Born-rule bounds, `quantumValue` | Game-independent correlation witnesses, value transport to a linear payoff, matrix-to-operator embedding |
-| `Foundations/CommutingOperator.lean` | Arbitrary-Hilbert-space POVM strategies, correlations, `commutingOperatorValue` | Probability/value bounds in Foundations, projective subclass, correlation-set topology |
-| `Foundations/Dilation.lean` | Finite-dimensional projective dilation and Born-rule transport | Common dilation on arbitrary Hilbert space preserving cross-player commutation |
-| `Foundations/GameDescription.lean`, `HaltingGameValue.lean` | Codable `GameData` and its exact interpretation | Computable NPA input generation, preserving weight normalization and acceptance semantics |
-| `Foundations/ValueApprox/{RawInt,Gaussian,RawPrimrec,RE}.lean` | Coded integer/Gaussian-integer arithmetic, rational-complex facts, bounded searches, `REPred.of_primrecRel_exists` | New upper-bound certificate checker and its semantic equivalence |
-| `Foundations/Halting/{CompressorProgram,Corollaries}.lean` | Computable halting reduction and undecidability | Small upper-RE consumer described above |
-| Upstream `Background/Pipeline.lean` (#197) | Actual introspection/repetition/universal-machine assembly | Supply `AnswerReduction 5` when its independent campaign finishes |
-| Mathlib `Analysis/CStarAlgebra/GelfandNaimarkSegal.lean` | GNS for a positive functional on an existing C*-algebra | NPA initially produces a functional on an algebraic measurement algebra; bounded representation must still be justified |
-| Mathlib `LinearAlgebra/Matrix/PosDef.lean` | `posSemidef_iff_dotProduct_mulVec` and Gram positivity | Dense rational/Gaussian-integer negative witnesses for failure of PSD |
-| `Background/Repetition/TracialDensity.lean` and its vendored implementation | Lin's theorem, separable compression, operator examples and supporting analysis | These do not supply moment hierarchies or effective upper bounds; use a Background bridge for any direct reuse |
-
-Keep the import direction in `CLAUDE.md`: Foundations and general Mathlib
-extensions cannot import Background. Proposed layout:
-
-```text
-MIPRE/Foundations/Correlations/{Basic,Tensor,Commuting,Value}.lean
-MIPRE/Foundations/NPA/{Words,Relations,Levels,Soundness,Bounds,Limit,
-                      Representation,Convergence}.lean
-MIPRE/Foundations/CommutingDilation/{Basic,Common,Correlation}.lean
-MIPRE/Foundations/ValueUpper/{Raw,Certificates,Soundness,Complete,Primrec,RE}.lean
-MIPRE/Foundations/Tsirelson/{Conditional,Main}.lean
-MIPRE/Background/Tsirelson.lean
-```
-
-Split files according to actual proof size. Generic bounded-operator, dense PSD
-witness, or compact-refutation lemmas belong under `MIPRE/Mathlib/` with
-Mathlib-shaped paths. Avoid reorganizing existing ValueApprox or strategy
-definitions solely to obtain attractive names. New correlation witnesses should
-have explicit conversions to/from the existing game-indexed strategy, with the
-Born probabilities and payoff proved equal.
-
-The current commuting-strategy universe is `Type 0`. Keep it consistent with
-the existing API, and document that the NPA reconstruction is separable. If
-an arbitrary-universe equivalence is advertised, it needs the cyclic separable
-restriction bridge; it must not be inferred from a comment alone.
-
-## 4. NPA design decisions
-
-### Full words and exact level conventions
-
-Use tagged Alice/Bob generators and finite lists of generators. Star reverses
-the word because generators are self-adjoint. Begin at level `k ≥ 1`; use an
-offset index internally if it removes repeated positivity side conditions.
-The matrix is indexed by words of length at most `k`, while moment coordinates
-range over words of length at most `2k`.
-
-Retain redundant words. Encode contextual instances of the finite projection,
-orthogonality, completeness, and cross-player commutation relations, with every
-monomial within the degree bound. Include normalization, conjugate symmetry,
-and explicit real/nonnegative/normalized probability coordinates. Restriction
-of a level `k+1` certificate must literally produce a level `k` certificate.
-
-The analytic API may use finite types and `Matrix.PosSemidef`; its computational
-API must use explicit finite lists, codes, and bounds. Prove the interpretations
-equivalent. `Fintype` finiteness or `classical` decidability alone does not prove
-that the constraint generator is computable uniformly in the scenario and level.
-
-Full-word convergence suffices for the target. The existing `lem:npa-levels`
-also promises equivalence with a standard reduced presentation. Track that as a
-separate clause: either prove the degree-preserving substitutions, or split the
-blueprint statement and leave that clause open. A proof of the full-word clause
-must not mark the entire stronger statement complete.
-
-### Common commuting dilation
-
-Extend the finite-dimensional pattern to bounded operators on a general Hilbert
-space, using finite Hilbert direct sums, not the default sup-norm product.
-Prove square-root commutation with arbitrary operators in the relevant
-commutant using continuous functional calculus. All Alice questions share one
-isometric embedding; after dilating Bob, both families remain projective and
-commute across players. Prove preservation of joint probabilities, not merely
-the individual effects. Zero outcomes are allowed; answer alphabets are nonempty.
-
-### Bounds, limit, and reconstruction
-
-- Establish the prefix diagonal bound from completeness and positivity; induct
-  on word length, then use PSD Cauchy-Schwarz to bound every moment by one.
-  Compactness applies to the entire finite certificate set before projection.
-- Extend each truncated certificate by zeros outside its domain into the
-  countable product of closed unit disks. Prefer existing compactness and
-  sequential-compactness APIs to a bespoke subsequence construction. Extract a
-  subsequence whose levels tend to infinity; fixed constraints are eventually
-  in range. Do not assume certificates chosen at different levels are compatible.
-- Represent word polynomials with finite-support coefficients. Prove that the
-  limiting sesquilinear form is positive and that the measurement relations
-  vanish in the required contextual sense. A full quotient-algebra API is
-  optional if direct forms on word polynomials prove exactly the same relations.
-- Use the seminormed pre-inner-product/completion infrastructure behind Mathlib's
-  GNS. Prove each generator acts contractively before extending it to the
-  completion; establish null-space invariance rather than assuming it.
-  Establish adjoints, projectivity, completeness, and commutation on a dense
-  subspace and extend by continuity. The distinguished vector has norm one.
-- Recover correlations, prove `Cqc = ⋂ k, K k`, compactness, and payoff
-  attainment. `Cqa ⊆ Cqc` is then a closure argument. No effective convergence
-  rate is needed or promised.
-
-## 5. Effective upper semidecision: proposed certificate route
-
-The reviewed source route uses exact real-closed-field decision, currently an
-admitted companion-ledger input (`1.8.3`). Do not turn that admission into a new
-Lean axiom. Full quantifier elimination would be a substantial independent
-project. The first implementation choice is a narrower **exact refutation
-procedure for bounded NPA feasibility**.
-
-The following is a proposed replacement argument requiring its own proof and
-review. It has not been established by the previous NPA review. It avoids both
-general real-closed-field decision and an unproved SDP duality/Slater assumption.
-
-### 5.1 Certificate and checker
-
-At a fixed level, put the real and imaginary parts of all moments in the
-explicit rational box `B = [-1,1]^d`. This bound loses no feasible point by the
-moment-bound theorem. All NPA identities, behavior constraints, and the payoff
-condition `payoff ≥ r` are rational affine constraints in these coordinates.
-Split an equality into two weak inequalities.
-
-For the PSD condition use the following separate density lemma: for a Hermitian
-finite matrix `M`, if it is not PSD, some Gaussian-rational vector `v` has
-`Re(v* M v) < 0`. Clear denominators to obtain a Gaussian-integer vector. For
-each fixed coded `v`, this quadratic form is **affine in the moment coordinates**.
-Hermitian constraints must also be checked; real quadratic forms alone do not
-detect a non-Hermitian matrix.
-
-A certificate consists of a dyadic grid depth `N` and, for every cell covering
-`B`, either a violated affine constraint or a Gaussian-integer PSD test vector.
-For its associated affine function `f(z) = a0 + Σ ai zi`, compute
-`L = Σ |ai|`. At the rational cell center `c`, of sup-norm radius `h`, require
-
-```text
-f(c) + L*h < 0.
-```
-
-This exact rational inequality excludes the whole cell. The checker validates
-every dimension, index, vector length, cell, and witness. The grid is generated
-canonically, so coverage is not a trusted certificate assertion. Clear only
-strictly positive denominators; implement the check with coded integers.
-
-### 5.2 Soundness and completeness obligations
-
-Soundness: a feasible moment assignment lies in a grid cell and satisfies every
-affine inequality and every PSD test, contradicting that cell's strict bound.
-
-Completeness: at every point of an infeasible box system, either a finite
-affine constraint fails or a Hermitian PSD condition has a Gaussian-integer
-negative witness. These strict failures form an open cover of the compact box.
-Choose a finite subcover. The minimum of its finitely many affine test functions
-is continuous and strictly negative throughout the box, hence has a uniform
-negative margin. Their Lipschitz constants have a finite maximum. A sufficiently
-fine dyadic grid therefore admits a refutation witness for every cell.
-
-The finite subcover and margin are used only to prove that a finite certificate
-exists. The algorithm enumerates all coded certificates and runs the checker;
-it is not asked to compute a compactness witness or an analytic modulus. If the
-system is feasible, including singular and boundary cases, it never accepts.
-
-This approach also avoids a missing all-principal-minors characterization or a
-general polynomial feasibility engine: PSD is tested through rational vectors,
-and each chosen test is affine in the unknown moments. It is potentially very
-inefficient, which is acceptable for `REPred`.
-
-### 5.3 Uniformity and NPA integration
-
-Prove uniformly, not separately for each fixed game or level:
-
-```text
-PrimrecRel CheckUpper
-(∃ cert, CheckUpper (g,p,q) cert)
-  ↔ commutingOperatorValue g.game < (p:ℝ)/(q:ℝ).
-```
-
-The certificate includes both the NPA level and the finite grid refutation.
-Enumerating whole certificates automatically dovetails levels and grids. Do
-not run a partial infeasibility search to completion at level one before trying
-level two; a feasible first level would block that algorithm forever.
-
-For the semantic equivalence, prove that the threshold-constrained level is
-infeasible at some finite level exactly when `commutingOperatorValue < r`.
-Use the nested compact correlation projections and attainment, taking care at
-`commutingOperatorValue = r`. Then apply the existing
-`REPred.of_primrecRel_exists` pattern.
-
-The `GameData` compiler must preserve its exact semantics: duplicate weights
-are summed, out-of-range weights do not enter the total, zero total weight
-becomes a point mass, and unequal answers on equal questions are rejected.
-Prove a single interpretation theorem relating the compiled payoff to
-`GameData.game`; all later proofs should use it.
-
-**Decision gate:** first prove the abstract finite-matrix/affine-box certificate
-theorem and prototype the coded checker. Only then adopt this route in the
-blueprint. If it fails, record the actual obstruction and compare the explicit
-RCF and other certified-refutation alternatives. Do not silently leave
-`CommutingUpperRE` as a final assumption. Under the certificate route,
-`lem:rcf-decision` remains an unproved, unused optional result; it receives no
-completion mark and leaves the Tsirelson dependency graph.
-
-## 6. Implementation sequence and PR acceptance criteria
-
-Each row is a proposed PR-sized milestone. Large rows may need more than one
-PR; the count is an organization estimate, not a commitment to a fixed amount
-of code. No row below is marked completed by writing this plan.
-
-| ID | Deliverable | Depends on | Acceptance criterion |
-|---|---|---|---|
-| T0 | Contract audit and scratch probes | Current baseline | Elaborate the final targets, inspect the GNS/completion path, and settle the exact certificate theorem. Record source/blueprint deviations and the initial import graph. Compile a scalar certificate example and the PSD-witness lemma before committing to the algorithm. |
-| T1 | Correlation sets and payoff bridges | T0 | Game-independent tensor witnesses, `Cq/Cqa/Cqc`, probability bounds, deterministic witnesses, tensor-to-commuting embedding, continuous payoff, equality with both existing value definitions, and payoff bounds on `Cqa`. Include equivalence/relabeling needed for finite alphabets. |
-| T2 | Conditional Tsirelson consumer | T1 | Prove the halting contradiction, existence of a strict value gap, and a correlation outside `Cqa`, with upper RE explicit. Derive strict inclusion with closedness explicit. Axiom guards must pass despite the visible mathematical hypotheses. |
-| T3 | Common commuting projective dilation | T1 | A complete arbitrary-Hilbert-space construction preserving both players' joint correlations and common embeddings. Reuse or prove the finite tensor POVM bridge as needed for the interpretation of `Cq`. |
-| T4 | Full-word hierarchy and strategy feasibility | T0, T1, T3 | Uniform word/relation enumeration, exact analytic/raw correspondence, Gram positivity, level restriction, and inclusion of every commuting POVM strategy. Audit the reduced-presentation clause separately. |
-| T5 | Moment bounds and finite-level compactness | T4 | All moment coordinates bounded, closedness and compactness of the full feasible set and its correlation projection. Normalization and the first nontrivial level covered explicitly. |
-| T6 | Infinite limiting moments | T5 | Positive normalized word functional satisfying all measurement relations and the desired correlation coordinates, extracted from arbitrary feasible certificates. No compatibility assumption. |
-| T7 | Hilbert-space reconstruction | T6 | Null quotient/completion, bounded self-adjoint projection generators, cross commutation, unit vector, correlation realization, and separability. No assumed representation theorem equivalent to the desired conclusion. |
-| T8 | NPA convergence and topological consequences | T3–T7 | `⋂ Kk = Cqc`, closedness, compactness, maximum attainment, `Cqa ⊆ Cqc`, and the finite-level threshold infeasibility equivalence. All analytic ingredients available without any computability or RCF premise. |
-| T9 | Exact compact-box refutation theory | T0 | Sound and complete affine/PSD grid certificates for arbitrary finite rational input. Density, finite open cover, uniform margin, exact cell bounds, and boundary behavior proved. This can be developed independently of T3–T8. |
-| T10 | Uniform executable NPA upper semidecider | T4, T5, T8, T9 | Coded generator/checker, primitive recursiveness, `GameData` payoff interpretation, certificate semantic equivalence, and the actual `CommutingUpperRE` theorem. Reject malformed certificates. |
-| T11 | Tsirelson assembly and audit | T2, T8, T10 | Supply every downstream hypothesis; prove `tsirelson_of_compression` and `tsirelson_of_answerReduction`; close the unconditional theorem if answer reduction is available. Synchronize the blueprint and axiom guards, run full validation, and audit the final statement against the standard correlation sets. |
-
-Recommended execution order: T0, T1, T2, then settle the T9 mathematical proof
-and coding prototype early. Complete T3–T8, finish T10, then T11. The analytic
-and computability branches have independent interfaces, so work can be split
-later if explicitly assigned; this plan does not create additional agents or tasks.
-
-The critical analytic chain is T3 → T4 → T5 → T6 → T7 → T8. The second major
-risk is T9 → T10. Answer reduction is an external dependency only for the
-unconditional final corollary. Useful reviewed milestones are a conditional
-separation theorem (T2), unconditional NPA convergence (T8), and unconditional
-commuting upper semidecision (T10).
-
-## 7. Blueprint accounting and proof acceptance
-
-| Blueprint/ledger | Planned discharge |
-|---|---|
-| `lem:npa-dilation`, `1.8.2.1` | T3 |
-| `lem:npa-levels`, `1.8.2.2` | T4; split off unproved reduced-presentation equivalence if necessary |
-| `lem:npa-moment-bound`, `1.8.2.3` | T5 |
-| `lem:npa-diagonal`, `1.8.2.4` | T6 |
-| `lem:npa-gns`, `1.8.2.5` | T7 |
-| `thm:npa-convergence`, `1.8.2` and `1.8.2.6` | T8 |
-| `lem:valco-upper-re`, `1.8.4` and `1.8.4.1` | T10; explain the exact-certificate proof route and its changed dependency on `1.8.3` |
-| `cor:tsirelson`, `1.8.5` | T11; use a separately labelled non-explicit separation lemma instead of claiming `thm:separation` |
-| `lem:rcf-decision`, `1.8.3` | Remains open if bypassed; no completion claim |
-| Explicit `thm:separation`, CEP and Kirchberg nodes | Remain outside this campaign |
-
-Add genuinely new compact-refutation and conditional-consumer blueprint nodes
-with their exact scope. Maintain source correspondence explicitly; a different
-proof is not evidence that a stronger ledger statement has been formalized.
-Do not assign new ledger IDs without the companion ledger process, and do not
-refresh its snapshot merely to make a local coverage check pass.
-
-Every proved result gets the appropriate `\lean{}` and statement/proof
-`\leanok` marks together with its axiom guard. Exact final guards should show
-only `propext`, `Classical.choice`, and `Quot.sound` (or a subset). Explicit
-conditional theorems must remain labelled conditional. No final theorem may
-depend on `sorryAx`, an assumed NPA theorem, an assumed certificate-completeness
-theorem, or an unexplained effective decision oracle.
-
-Semantic checks deserving concrete examples include a scalar deterministic
-strategy, zero POVM effects, a one-question/one-answer level, a singular PSD
-matrix with no strict feasibility, a feasible threshold attained exactly, an
-inconsistent pair of affine constraints, malformed codes, and `GameData` with
-zero total weight. These exercise boundary cases that a floating-point SDP
-check or a generic happy-path example would miss. Do not require a quantitative
-NPA convergence rate or numerical solver performance as a completion condition.
-
-## 8. Fast local feedback and final validation
-
-Use the established [Windows workflow](../docs/lean-local-windows.md). Preserve
-the existing warm toolchain and dependency pins; keep the Lake tree outside
-OneDrive. An isolated checkout needs its own writable Lake tree, seeded from a
-compatible cache if available. Do not let independently changing checkouts
-share the same writable build outputs.
-
-Before implementation, bring its working branch up to date with upstream.
-Publishing this plan does not establish that newly fetched Lean sources have
-been built in the local cache. Inspect the cache with `Doctor`, then build the small initial
-import closure. Use the persistent checker for edits and one Lake build at a
-time per cache. Do not run `lake update`, `lake clean`, or rebuild Mathlib from
-source. Scratch experiments import exact modules, never `MIPRE` or all Mathlib.
-
-Example commands once the proposed modules exist:
-
-```powershell
-./scripts/lean-local.ps1 Doctor
-./scripts/lean-local.ps1 Build -Targets MIPRE.Foundations.NPA.Bounds
-python scripts/lean-lsp-check.py start --session tsirelson
-python scripts/lean-lsp-check.py check Scratch/NPAProbe.lean --session tsirelson --timeout 300
-./scripts/lean-local.ps1 Check -File Scratch/NPAAxioms.lean
-./scripts/lean-local.ps1 Validate
-```
-
-Build new or changed imports explicitly before opening consumers in the
-persistent checker; close stale workers after dependency builds. Keep unrelated
-introspection and answer-reduction imports out of the NPA development. Only
-the final Background assembly needs the supplied compression pipeline.
-
-At each PR: targeted builds and semantic/axiom checks, regenerate the umbrella
-with the pinned `lake exe mk_all` when files change, run `Validate`, and check
-CI. `Validate` covers the full library, import coverage, blueprint references,
-ledger correspondence, and whitespace. Documentation-only planning edits need
-link/consistency and diff checks, not a new full Lean build.
-
-## 9. Effort and completion boundary
-
-Budget this as approximately twelve review milestones, with T3, T7, T9, and
-T10 the most likely to split. This is a scope estimate, not a calendar estimate.
-Existing GNS/dilation/arithmetic infrastructure and the reviewed NPA argument
-reduce invention and duplication, but do not discharge the new proofs.
-
-Re-estimate after T0/T2 and the T9 probe: by then the final theorem has an actual
-consumer, the reconstruction API has been exercised, and the computational
-route has a soundness/completeness argument with compiled examples. Until
-then, a precise line count or delivery date would obscure the main uncertainty.
-
-The downstream campaign is mathematically complete when T8 and T10 supply all
-inputs to T11 and the finite-scenario strict inclusion has no downstream
-hypotheses. If answer reduction is still in progress, report the exact final
-`AnswerReduction 5` parameter. Full unconditional Tsirelson completion requires
-that parameter to be replaced by its checked construction and the resulting
-root theorem to pass the same axiom audit.
+Tracking issue: #214. First written 2026-09-23 (PR #201); revised 2026-09-24 after a review of
+five independent passes (code interfaces, Mathlib, mathematics, paper and ledger, cheaper
+routes), a completeness critic, and a four-way check of the replacement route with compiled
+prototypes. The target is the negative answer to Tsirelson's problem, `Cqa ⊊ Cqc`, in a
+finite bipartite scenario (blueprint `cor:tsirelson`, ledger 1.8.5).
+
+## 1. What changed in the revision, and why
+
+- **Answer reduction is done.** `MIPRE.Halting.halting_reduction_quantum` is proved
+  unconditionally in `MIPRE/MainTheorem.lean`, so the ladder of conditional milestones
+  (`tsirelson_of_compression`, `tsirelson_of_answerReduction`, the `(G) (U)` parameters) is
+  gone. The final theorem is unconditional. It lives in a small root module next to
+  `MainTheorem.lean`, since `MIPRE/Foundations/` cannot import it.
+- **The route changed.** The first version built the NPA hierarchy level by level, took a
+  diagonal limit, reconstructed a projective representation, dilated commuting POVMs to
+  commuting projections on an arbitrary Hilbert space, and refuted each level by a dyadic grid
+  of affine and PSD witnesses. Tsirelson needs none of the level structure. The revision works
+  with a single object: the quadratic module `M` of the measurement relations in the free
+  `*`-algebra, with POVM generators. Every step follows from it.
+  - Closedness of `Cqc` becomes compactness of the state space.
+  - Upper semidecision becomes an Archimedean Positivstellensatz with exact
+    sum-of-squares certificates, proved with Mathlib's `riesz_extension`.
+  - POVMs enter as generators, so no dilation is needed.
+  - The review estimated the NPA-level plan at 5.5k–10k lines; this route at 3.3k–4.7k.
+- **Tooling is the cloud workflow** of `CLAUDE.md`, not the Windows scripts.
+- **Reuse the plan missed:** `TensorProductStrategy.copy`, the `GameData` payoff semantics
+  `wt`/`W`/`Draw` with `game_μ_eq`/`game_D_eq` and their primitive recursiveness
+  (`ValueApprox/RawStrategy.lean`, `RawSemantics.lean`, `RawPrimrec.lean`), `PInt`/`GInt`
+  (`RawInt.lean`), `MIPRE.REPred.of_computable_exists`, and Mathlib's
+  `ComputablePred.halting_problem_not_re`.
+
+The NPA-level material (`thm:npa-convergence` as stated, `lem:npa-dilation`, `lem:npa-levels`,
+`lem:npa-moment-bound`, `lem:npa-diagonal`) is not on the Tsirelson path. §7 lists it among the
+follow-ups, together with the review's corrections to its blueprint text.
+
+## 2. Targets, and what is already proved
+
+**Done** (`MIPRE/Foundations/Correlations.lean`, `MIPRE/Foundations/Tsirelson/Conditional.lean`,
+blueprint `def:correlation-sets`, `lem:correlation-sets-basic`, `lem:tsirelson-conditional`,
+all guarded):
+
+- `Cq`, `Cqa := closure Cq`, `Cqc`; `Game.payoff`, linear and continuous.
+- Commuting correlations are nonnegative and sum to one, so `0 ≤ commutingOperatorValue ≤ 1`.
+- `TensorProductStrategy.toCommuting` (via `ofTensor`, `Matrix.toEuclideanCLM`), with
+  `Cq ⊆ Cqc` and `quantumValue ≤ commutingOperatorValue`.
+- Payoffs on `Cqa` are bounded by `quantumValue`, and on `Cqc` by `commutingOperatorValue`.
+- `HaltingReductionQuantum`, which is the statement of `halting_reduction_quantum`.
+- `CommutingUpperRE`: `REPred` of `commutingOperatorValue d.game < p/q` over
+  `GameData × ℕ × ℕ`, with `p/0 = 0`, the encoding of `ValueApprox.rePred_lt_quantumValue`.
+- `exists_quantumValue_lt_commutingOperatorValue`, `exists_mem_Cqc_not_mem_Cqa`,
+  `exists_Cqa_ne_Cqc`, `tsirelson_of_upperRE_of_isClosed`.
+
+**Remaining inputs:** `CommutingUpperRE`, and `IsClosed (Cqc …)` for the `Fin (n+1)`
+scenarios. The headline is the strict inclusion `⊂`. `≠` is only an intermediate lemma, and
+`cor:tsirelson` is never marked on it. The witness scenario has common alphabets
+`Fin (nX+1)` and `Fin (nA+1)` for both players, which is the paper's `C(n,k)` form.
+
+## 3. The route
+
+All of it is stated for `X Y A B : Type`. `CommutingOperatorStrategy.H : Type`, and the GNS
+space lives in the universe of the generators. Every consumer uses `Fin` alphabets.
+
+### 3.1 Polynomials, relations, the cone
+
+- `NCPoly G := MonoidAlgebra ℂ (FreeMonoid G)`, with its own star: conjugate the
+  coefficients, reverse the words.
+  - Mathlib's `FreeAlgebra` star is `ℂ`-linear, so it is unusable here, and `MonoidAlgebra`
+    has no star.
+  - At the pinned Mathlib, `MonoidAlgebra` is a structure (`ofCoeff`/`coeff`).
+  - `NCPoly` is a `def` with `Ring`/`Algebra ℂ` via `inferInstanceAs` and a small transport
+    API, not an `abbrev`: an `abbrev` would make the conjugate-reverse star a global instance
+    on Mathlib's `MonoidAlgebra`. On the `def`, `Module ℝ` is `Module.complexToReal`, so
+    there is no diamond.
+- Generators `Gen := (X × A) ⊕ (Y × B)` are self-adjoint.
+- Relations: `Σ_a e_xa − 1`, `Σ_b f_yb − 1`, `[e_xa, f_yb]`. `I` is the complex span of
+  `w ρ w'` over words `w, w'`, with two-sided absorption `u j v ∈ I` proved once; this also
+  gives the monomial decomposition the certificates encode. `Anti` is the anti-Hermitian
+  elements.
+- `M := PointedCone.hull ℝ ({s⋆ g s : g ∈ {1} ∪ gens} ∪ I ∪ Anti)`. Here
+  `PointedCone.span` has been renamed `hull`.
+- **Facts about `M`:**
+  - `a⋆ M a ⊆ M`.
+  - `1 − g² ∈ M`, from `1 − e = Σ_{a'≠a} e_{a'} − (Σ e − 1)` and
+    `e − e² = e(1−e)e + (1−e)e(1−e)`.
+  - `1 − w⋆w ∈ M` for every word, by telescoping.
+  - **Archimedean:** `∀ y, ∃ N, N·1 + y ∈ M`, by monomial induction with
+    `(1 + |α|²)·1 + αw + (αw)⋆ = (1+αw)⋆(1+αw) + |α|²(1 − w⋆w)` and the anti-Hermitian part
+    in `Anti`.
+- **Evaluation:** a commuting strategy gives `π_S : NCPoly →⋆ₐ[ℂ] (H →L[ℂ] H)` that kills
+  `I`, with `0 ≤ Re⟨ψ, π_S(m) ψ⟩` for `m ∈ M`. As a corollary, `r·1 − W_G ∈ M` implies that
+  every strategy has value `≤ r`, where `W_G := Σ μ(x,y)[D] e_xa f_yb`.
+
+### 3.2 States and GNS
+
+A *cone state* is a `ℂ`-linear `L` with `L 1 = 1` and `0 ≤ Re L m` for every `m ∈ M`. This
+single notion is what strategies give (`strategy_nonneg`), what the complexified Riesz
+functional is, and what the compact state set is cut out by. It implies conjugate symmetry
+(`z − z⋆` and `i(z + z⋆)` lie in `Anti`), `L(I) = 0` (`±j`, `±ij ∈ I ⊆ M`), positivity on
+`s⋆ g s`, and the contraction bound `Re L(a⋆(1 − g²)a) ≥ 0` (from `1 − g² ∈ M` and
+`a⋆ M a ⊆ M`). From a cone state the construction produces a `CommutingOperatorStrategy`
+whose correlation is `Re L(e_xa f_yb)`:
+
+- the pre-inner product is `⟨a, b⟩ := L(a⋆ b)` on a `def` synonym, through
+  `PreInnerProductSpace.Core`, `InnerProductSpace.ofCore` and `UniformSpace.Completion`;
+- each generator acts by left multiplication, which is a contraction because
+  `Re L(a⋆(1 − g²)a) ≥ 0`; it is built with `LinearMap.mkContinuousOfExistsBound` and then
+  `ContinuousLinearMap.completion`;
+- positivity, `Σ = 1` and commutation are checked on the dense image, the last two through
+  null vectors (`‖coe x − coe y‖ = ‖x − y‖ = 0`). `Completion.coe_injective` needs `T0Space`,
+  which the synonym lacks;
+- `ψ := coe 1`, of norm 1;
+- extensions go through `Completion.induction_on`.
+
+When restating the correlation, unfold it with `change` to the standard inner-product
+instance, because `correlation` elaborates through the C*-module instance.
+
+### 3.3 Compactness: `Cqc` is closed
+
+- A state is determined by its values on words, `φ : FreeMonoid Gen → ℂ`; write `Lφ` for
+  its linear extension (`Finsupp.linearCombination`), continuous in `φ`.
+- `K := {φ | Lφ φ is a cone state ∧ ∀ w, ‖φ w‖ ≤ 1}`. The bound is part of the definition:
+  the GNS direction ignores it, and the strategy direction needs only
+  `|⟨ψ, π_S(w)ψ⟩| ≤ 1`, which certificate soundness needs anyway. Positivity quantifies over
+  every `m ∈ M`, not only over words.
+- So `K` is closed in a product of closed disks, hence compact
+  (`isCompact_univ_pi`, `IsCompact.of_isClosed_subset`).
+- `Cqc` is its image under `φ ↦ Re φ(e_xa f_yb)`: GNS gives one inclusion, `π_S` the
+  other.
+- Hence `Cqc` is compact, so closed, and `Cqa ⊆ Cqc`.
+
+### 3.4 Positivstellensatz
+
+If `commutingOperatorValue G < r` then `r·1 − W_G ∈ M`.
+
+1. Suppose `h := r·1 − W_G ∉ M`.
+2. `riesz_extension` applied to `M ⊔ hull{−h}` with `f(t·1) = t` gives `L₀ ≥ 0` on `M`,
+   with `L₀ 1 = 1` and `L₀ h ≤ 0`. Nonnegativity of `f` uses the Archimedean property and
+   `h ∉ M`; density uses Archimedean.
+3. Complexify: `L z := L₀ z − i L₀(i z)`. `L₀` vanishes on `Anti` and `I`, so `L` is a state.
+4. GNS gives a strategy of value `L₀(W_G) ≥ r`, which contradicts
+   `value ≤ commutingOperatorValue`.
+
+The prototype `Scratch/SosAlgebra.lean` compiles steps 1–2 (`exists_separating_functional`)
+and the Archimedean lemma, with no `sorry`.
+
+### 3.5 Exact certificates
+
+**Certificate.** For `d : GameData` and `p q : ℕ`, a certificate consists of:
+
+- `D ≥ 1`;
+- SOS terms `(g_i ∈ {1} ∪ gens, s_i)` with Gaussian-integer coefficients (no weights: `D = N²`
+  and weight one always suffice);
+- ideal monomials `(c_t, w_t, ρ_t, w'_t)`: a Gaussian integer, two words and a validated
+  relation index.
+
+**Test.** Let `R := D·(p·W_d·1 − q·Σ wt(x,y)[Draw] e_xa f_yb) − Σ s_i⋆ g_i s_i −
+Σ c_t w_t ρ_t w'_t` and `R_h := R + R⋆`. Accept iff `q > 0` and
+`Re(R_h)_∅ > Σ_{w ≠ ∅} (|Re (R_h)_w| + |Im (R_h)_w|)`, with coefficients merged per word.
+
+**Soundness.** Every word acts as a contraction (`0 ≤ E ≤ 1`), so every strategy satisfies
+`2DqW_d(p/q − value) ≥ δ ≥ 1`. This margin is uniform, so the supremum is `< p/q` by
+`ciSup_le`. That step needs `Nonempty (CommutingOperatorStrategy …)`, which the
+one-dimensional deterministic strategy supplies for `Fin (n+1)` alphabets.
+
+**Completeness.**
+
+- Take `commutingOperatorValue < r' < p/q`. §3.4 at `r'` gives
+  `r'·1 − W = Σ σ_i⋆ g_i σ_i + j + a'`.
+- Symmetrizing kills `a'` exactly.
+- Round coefficientwise at one scale: the SOS vectors at `N`, the ideal coefficients at
+  `N²`, with taxicab error at most `1/N` per coefficient (`abs_sub_round`). The ℓ¹ norm
+  `‖z‖ := Σ_w (|Re z_w| + |Im z_w|)` is subadditive, submultiplicative and star-invariant,
+  so the total error is `O(1/N)`; pick `N` by `exists_nat_gt`. No topology on `NCPoly` is
+  needed.
+- Multiply through by `D = N²`.
+- Soundness and completeness are proved once over `NCPoly`; the coded layer only proves that
+  the checker computes this test on decoded data.
+
+**Pitfalls, both refuted-if-ignored:**
+
+- the checker must reject `q = 0`: otherwise `(d, 1, 0)` is accepted, while `p/0 = 0` makes
+  the target false;
+- the test must run on per-word merged coefficients: unmerged it stays sound but is never
+  complete.
+
+### 3.6 The checker
+
+Coded polynomials are lists of `(List ℕ, GInt)`, built with `flatMap`, `map`, `append`,
+reverse, and conjugation. `W_d` comes from `wt`/`W`/`Draw`.
+
+- **Merged coefficients:** `coeff(l, w)` is the `GInt` sum over entries with word `w`. Iterate
+  over distinct words via `Primrec.list_idxOf` or a seen-list fold, and prove
+  `coeff(code z, w) = z.coeff (decode w)`.
+- **Letter validation:** relation and generator indices are range-checked. Alternatively,
+  letters decode through a monoid hom with out-of-range letters sent to `0`.
+
+The result is `PrimrecRel`, via `ValueApprox.REPred.of_primrecRel_exists`, or a computable
+`Bool` test via `MIPRE.REPred.of_computable_exists`.
+
+## 4. Milestones
+
+Each row is a PR. Every declaration a blueprint proof-level `\leanok` claims is guarded in
+`MIPRE/Axioms.lean` in the same PR; `scripts/lean-coverage.py` fails otherwise.
+
+| ID | Deliverable | Module(s) | Lines | Status |
+|---|---|---|---|---|
+| R1 | Correlation sets, conditional consumer, blueprint nodes, guards, this plan | `Foundations/Correlations.lean`, `Foundations/Tsirelson/Conditional.lean` | 450 | done, PR for #214 |
+| R2 | `NCPoly` and star; evaluation; cone `M`; `a⋆Ma ⊆ M`; Archimedean; strategy positivity; `value ≤ r` from `r − W ∈ M` | `Foundations/NCPoly/{Basic,Cone}.lean`, `Foundations/Tsirelson/Algebra.lean` | 500–700 | prototype compiles |
+| R3 | States and GNS: a state gives a commuting strategy with correlation `Re L(e f)` | `Foundations/Tsirelson/GNS.lean` | 500–700 | prototype compiles |
+| R4a | Compact state space; `IsClosed Cqc`, `Cqa ⊆ Cqc`; `Cqa ⊊ Cqc` given upper RE alone | `Foundations/Tsirelson/Closed.lean` | 200–280 | |
+| R4b | Positivstellensatz (§3.4) | `Foundations/Tsirelson/Positivstellensatz.lean` | 120–200 | separation step prototyped |
+| R5 | Integer certificates: semantic checker, soundness, completeness by ℓ¹ approximation | `Foundations/Tsirelson/Certificate.lean` | 400–700 | |
+| R6 | Coded checker, primitive recursiveness, semantic equivalence, `CommutingUpperRE` | `Foundations/Tsirelson/{Coded,UpperRE}.lean` | 1200–2000 | |
+| R7 | Root `MIPRE/Tsirelson.lean`; `cor:tsirelson` repair; fidelity audit | `MIPRE/Tsirelson.lean` | 50–150 | |
+
+R6 carries the volume risk. The lower semidecider's coded side, for a simpler checker, is
+1468 lines. Total: 3.3k–4.7k new lines. R4a and R4b depend only on R2 and R3 and can go in
+parallel; the list-level definitions and primitive-recursiveness proofs of R6 need only R2.
+
+## 5. Blueprint accounting
+
+- **References.** Public sources for the route, to be verified before they enter
+  `bibliography.tex`: Helton and McCullough, *A Positivstellensatz for non-commutative
+  polynomials* (Trans. AMS, 2004); Doherty, Liang, Toner and Wehner (CCC 2008); Navascués,
+  Pironio and Acín, arXiv:0803.4290.
+- **New nodes, each with `\lean{}` and marks together with its guard:**
+  - the `NCPoly` cone and its Archimedean property;
+  - states and GNS;
+  - the compact state space with `Cqc` closed;
+  - the Positivstellensatz;
+  - the certificates;
+  - none of these carries a `\ledgernode`.
+- **`lem:valco-upper-re`:**
+  - restate in the `lem:value-lower-approx` form (`GameData`, `p q : ℕ`, `p/0 = 0`);
+  - move the RCF method into a remark;
+  - drop `lem:rcf-decision` and `lem:tracial-le-co` from its `\uses`;
+  - keep `\ledgernode{1.8.4, 1.8.4.1}` with a proof-route note: the correspondence is at the
+    level of the conclusion; the ledger's proof rests on the admitted 1.8.3, this one on the
+    Positivstellensatz;
+  - move the `r < 1` dovetailing and the succinct-description clauses to where
+    `thm:separation` consumes them.
+- **`cor:tsirelson`:**
+  - set its `\uses` to `def:correlation-sets`, `lem:tsirelson-conditional`,
+    `cor:main-quantum`, `lem:valco-upper-re` and the closedness node;
+  - drop `thm:separation`, `lem:value-lower-approx` and `cor:value-uncomputable`;
+  - rewrite "Immediate from Theorem thm:separation";
+  - delete the unsupported claim that Slofstra's non-closure "also follows, with quantitative
+    bounds, from the machinery here";
+  - keep `\ledgernode{1.8.5}` with a note: the ledger's proof dovetails a lower and an upper
+    semidecider into a promise decider; the Lean proof uses only the upper one.
+- **Admitted node 1.8.3 in `rem:admitted-nodes`, `rem:downstream-nodes` and
+  `planning/paper-correspondence.md`:** the Lean Tsirelson does not rest on it, but
+  `scripts/ledger-sync.py`'s import reach will keep listing it, since ledger
+  1.8.5 → 1.8.4 → 1.8.3. That listing is expected, not an error. File an upstream proposal
+  for a reviewed ledger node for the certificate argument, rather than editing the snapshot.
+- **The paragraph on the non-explicit route after `rem:separation-which-value`:** it says the
+  semideciders contradict `cor:value-uncomputable`, which fails in the total-function Lean form
+  at a single threshold. Repair it with overlapping thresholds, or use the RE/co-RE argument.
+
+## 6. Workflow
+
+- Iterate with the lean-lsp MCP tools on `Scratch/` files that import exact modules.
+- Build with `lake build MIPRE.Foundations.Tsirelson.<Module>`.
+- After adding files, run `lake exe mk_all`.
+- Before pushing, run `python3 scripts/lean-coverage.py --check` and
+  `python3 scripts/ledger-sync.py`.
+- Everything except `MIPRE/Tsirelson.lean` stays in Foundations, out of the `MainTheorem`
+  import closure.
+
+Known API facts:
+
+- `ContinuousLinearMap.{add,mul,one,zero,sum}_apply` are deprecated in favour of the root
+  lemmas.
+- `push_neg` is deprecated in favour of `push Not`.
+- `PointedCone.smul_mem` takes `0 ≤ c`.
+- `noncomm_ring` closes the `NCPoly` identities.
+
+## 7. After Tsirelson
+
+1. **`thm:npa-convergence` as stated**, with its level presentation, the moment-bound
+   induction, the reduced-presentation clause (keeping the behaviour constraints on both
+   sides, as the independent review requires) and `lem:npa-dilation`.
+   - The dilation uses the block unitary `U = [[0, V*], [V, 1 − VV*]]`, with the first summand
+     absorbed into a fixed outcome `a₀` so that the projections form a PVM, and the ancilla
+     indexed by `Fin (card A)`.
+   - Square-root commutation is `Commute.cfc_nnreal`.
+   - It does *not* extend `Dilation.lean`'s finite-dimensional basis completion.
+   - The blueprint's `lem:npa-dilation` needs the `a₀` repair, and `lem:npa-levels` needs
+     `lem:npa-dilation` in its `\uses`.
+   - Most of the GNS and compactness work above carries over.
+2. **The full `lem:valco-upper-re` clauses:** rational `r < 1` dovetailing and succinct
+   descriptions.
+3. **The explicit `thm:separation`:** it needs the Schmidt-rank compression premises of
+   `rem:separation-premises`.
+4. **Connes' embedding problem (`cor:cep`)** and `cor:qwep`: they rest on the admitted
+   Kirchberg node 1.8.6.1.
+5. **Value uncomputability for every `c < 1/2`,** via repetition.

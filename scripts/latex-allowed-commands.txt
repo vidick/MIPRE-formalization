@@ -20,6 +20,6 @@ le leftarrow leq ln log mapsto mathbb mathrm mathsf mathtt max mid min mu neq
 newblock noindent notin nu omega oplus otimes overline paragraph perp phi pi
 simeq
 pm prod propto psi qquad quad rangle rceil ref rho section sigma sim small sqrt
-subsection subseteq subsubsection substack succeq sum sup tau text textbf theta
+subsection subseteq subsetneq subsubsection substack succeq sum sup tau text textbf theta
 textsubscript texttt tfrac tilde times to url uses varepsilon varphi verb
 widehat xi

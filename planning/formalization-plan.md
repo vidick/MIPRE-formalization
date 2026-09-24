@@ -947,17 +947,23 @@ now: a witness for the non-theorem clauses of `GapCompression` alone (`output_*`
 `sampler_time`, `decider_time`, `sampler_dim`, `output_rejects_long`), to confirm the shape is
 inhabitable; a full trivial instance is impossible, the structure asserting a genuine theorem.
 
-**Chapter 8 — implementation plan added 2026-09-23.**
-[tsirelson-campaign.md](tsirelson-campaign.md) scopes the non-explicit negative answer to
-Tsirelson's problem, with precise interfaces, twelve proposed review milestones, and local
-validation gates. Quantum lower semidecision and Lin's tracial density theorem are already
-formalized; the companion repository contains a reviewed mathematical NPA proof, and the
-pinned Mathlib has GNS infrastructure. NPA convergence and effective commuting upper
-semidecision still need Lean implementations. The plan proposes exact bounded-feasibility
-refutation certificates, subject to an early proof/implementation gate, to avoid making full
-real-closed-field decision a prerequisite. The explicit separating game and CEP remain
-separate. Upstream PR #197 supplies the main pipeline from answer reduction alone, so this
-downstream work can proceed against that explicit interface while answer reduction finishes.
+**Chapter 8 — Tsirelson's problem (#214), revised 2026-09-24.**
+[tsirelson-campaign.md](tsirelson-campaign.md) plans the non-explicit negative answer to
+Tsirelson's problem, `Cqa ⊊ Cqc`. Answer reduction is done, so the final theorem will be
+unconditional; it goes in a root module next to `MainTheorem.lean`.
+
+The correlation sets and the conditional separation are proved:
+`MIPRE/Foundations/Correlations.lean` and `MIPRE/Foundations/Tsirelson/Conditional.lean`. What
+remains is an upper semidecider for the commuting-operator value and the closedness of `Cqc`.
+The revised route gets both from one quadratic module in the free `*`-algebra with POVM
+generators:
+
+- closedness from a compact state space and GNS;
+- upper semidecision from an Archimedean Positivstellensatz (Mathlib's `riesz_extension`) with
+  exact sum-of-squares certificates.
+
+The route needs no NPA levels, no projective dilation and no real-closed-field decision.
+`thm:npa-convergence` as stated, the explicit separating game, and CEP are follow-ups.
 
 ## Working rules for this track
 
