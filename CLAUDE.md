@@ -175,6 +175,18 @@ Two things to know about reading it:
   exactly one graph node (remarks excepted), which the others cite. When the main theorem was
   proved, 78 nodes, it among them, were light green because twelve edges still pointed at
   paper-route lemmas that the Lean never used.
+- **The colours are leanblueprint's, and its rule has corners.** A result is proved only
+  through a `\leanok` inside the proof environment leanblueprint attaches to it: a mark on the
+  statement with no proof environment does not count, a second, unmarked proof after a marked
+  one replaces it, and a proof nested in its statement or separated from it by a `\paragraph`
+  attaches to nothing. Every label in `\uses` is an ancestor, drawn or not, so a remark cited
+  there is an ancestor that is never proved: cite remarks with `\ref` in the text. A
+  definition needs only the statement mark, and is never dark green. After the edges were
+  fixed, these corners still kept 102 proved results pale, the main theorem among them.
+  `scripts/blueprint-colours.py --check` (CI, before the build) runs leanblueprint's own parse
+  and fails on a marked proof it does not attach or a proved result that is not dark green.
+  In a session: `python3 -m venv /tmp/lb && /tmp/lb/bin/pip install leanblueprint`, then
+  `/tmp/lb/bin/python scripts/blueprint-colours.py`, about ten seconds.
 - **`intentions / lifecycle`** was red on every PR for a long time, because its project-board
   token was rejected repository-wide — not a PR's fault, and not fixable from a PR. It passed
   on PR #39 on 2026-09-13, so the token may have been rotated. Read the run before concluding

@@ -55,6 +55,17 @@ jobs:
           python3 scripts/ledger-sync.py
           python3 scripts/lean-coverage.py --check
 
+      # The graph's colours as leanblueprint itself computes them, from its own parse of the
+      # blueprint (plasTeX, nothing rendered, about ten seconds): a `\leanok` proof that it does
+      # not attach to its statement, or a proved result that is not dark green, fails here.
+      # `pip install leanblueprint` is what the blueprint deploy runs. See
+      # scripts/blueprint-colours.py.
+      - name: Blueprint graph colours, as leanblueprint computes them
+        run: |
+          python3 -m venv "$RUNNER_TEMP/leanblueprint"
+          "$RUNNER_TEMP/leanblueprint/bin/pip" install --quiet leanblueprint
+          "$RUNNER_TEMP/leanblueprint/bin/python" scripts/blueprint-colours.py --check
+
       - name: Install and configure Lean, and get mathlib cache
         uses: leanprover/lean-action@50fcf42d2e460296f1a34b402e990d1b24f8b596 # v1.6.0
         with:
