@@ -928,9 +928,10 @@ proves them (`def:typed-sampler-interface`, `def:typed-normal-interface`,
 nodes of the tensor-code route (`thm:tensor-codes` and its lemmas, `lem:lidt-*` transfers,
 `thm:almost-sync`, `thm:ms-rigidity`) and `lem:tracial-le-co` say that the Lean proof does
 not use them, and what replaces them. `thm:lcs-perfect` is proved. Six `sorry`s remain, and
-the main theorem depends on none of them: the two universal-machine specifications (#17,
-#18) and the four vendored signed statements of `Orthonormalization`, which are open
-upstream.
+the main theorem depends on none of them: the two universal-machine specifications, whose
+issues #17 and #18 were closed as not planned (the pipeline uses the ambient universal
+machines of `lem:universal-tm`), and the four vendored signed statements of
+`Orthonormalization`, which are open upstream.
 
 **The standing risk** is the one `planning/h4-assembly.md` §4 item 4 names: `GapCompression`
 has been consumed five times and supplied never — `TimeBoundAt` was refuted three times and
