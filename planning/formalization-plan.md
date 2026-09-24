@@ -956,11 +956,14 @@ state space and GNS; upper semidecision of the commuting-operator value
 (`MIPRE.commutingUpperRE`, `lem:valco-upper-re`) from an Archimedean Positivstellensatz with
 exact sum-of-squares certificates and a primitive-recursive checker. No NPA levels, no
 projective dilation and no real-closed-field decision: the Lean proof does not rest on the
-admitted ledger node 1.8.3. Still open in chapter 8: `thm:npa-convergence` as stated with its
-five lemmas, the rational-data and dovetailed clauses of `lem:valco-upper-re`, the explicit
-`thm:separation`, and CEP/QWEP. [explicit-separation.md](explicit-separation.md) plans
-`thm:separation` through Kleene's recursion theorem on the proved halting reduction and upper
-semidecider, with no entanglement clauses; the argument is already checked in scratch.
+admitted ledger node 1.8.3. **The explicit separation `thm:separation` (#222) is proved:**
+`MIPRE.separation` gives a described game with `val* ≤ 1/2` and `ω_co = 1`, and a correlation in
+`Cqc \ Cqa` of payoff 1. It comes from Kleene's recursion theorem applied to the halting
+reduction and the upper semidecider, with no entanglement clauses
+([explicit-separation.md](explicit-separation.md)). The game is not the paper's `G^sep`;
+[reports/separation-upstream.md](../reports/separation-upstream.md) has the findings for the
+paper. Still open in chapter 8: `thm:npa-convergence` as stated with its five lemmas, the
+rational-data and dovetailed clauses of `lem:valco-upper-re`, and CEP/QWEP.
 
 ## Working rules for this track
 

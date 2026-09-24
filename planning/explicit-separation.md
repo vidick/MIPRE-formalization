@@ -1,5 +1,9 @@
 # The explicit separation of quantum and commuting-operator values: plan
 
+**Status: done (#222).** E1–E4 below are in `MIPRE/Foundations/Tsirelson/Separation.lean`,
+`MIPRE.separation` in `MIPRE/Tsirelson.lean`, `thm:separation` in chapter 8 of the blueprint, and
+[reports/separation-upstream.md](../reports/separation-upstream.md).
+
 Written 2026-09-24, after Tsirelson's problem was closed (#214, #219). Target: blueprint
 `thm:separation` (ledger 1.8.8–1.8.11). An explicit finite bipartite game `G` with
 `val*(G) ≤ 1/2` and `ω_co(G) = 1`. Its correlation clause (1.8.11): some commuting-operator
@@ -60,8 +64,9 @@ The Lean statement is an `∃` over `GameData`, as `cor:tsirelson` is.
 **Why nothing about entanglement is needed.** The paper needs Schmidt-rank growth to get
 `val* ≤ 1/2` in the case `ω_co = 1`, where no level is known to be sound. Here that case is
 the non-halting case of the halting reduction, whose soundness is already the value-form
-(Lin) compression chain of the main theorem. The paper states this idea itself
-(`intro.tex`, and the footnote to the halting section of `recursive.tex`).
+(Lin) compression chain of the main theorem. The paper comes close: a footnote to the
+halting section of `recursive.tex` shows that the gap `val* < ω_co` holds for infinitely many
+non-halting machines. The fixed point picks one of them out.
 
 ## 3. The paper's route, for the record
 

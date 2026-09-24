@@ -1277,6 +1277,7 @@ import MIPRE.Foundations.Tsirelson.Closed
 import MIPRE.Foundations.Tsirelson.CodedPoly
 import MIPRE.Foundations.Tsirelson.Conditional
 import MIPRE.Foundations.Tsirelson.Positivstellensatz
+import MIPRE.Foundations.Tsirelson.Separation
 import MIPRE.Foundations.Tsirelson.UpperRE
 import MIPRE.Foundations.ValueApprox
 import MIPRE.Foundations.ValueApprox.Cayley
