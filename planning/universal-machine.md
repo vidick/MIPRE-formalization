@@ -77,12 +77,21 @@ Each is one pull request, sorry-free, in dependency order. Line counts are estim
 Total about 8.5k–10.5k lines. M1–M4 are independent of each other; M5 needs M3 and M4; M7
 needs M6; M9 needs everything but M10.
 
-**M1 and M2 are done.** `Code/Compile.lean` compiles a machine over `Fin σ` and `Fin Q`
-(`MultiInputTM.compile`, `toTM_compile`) and, along a `FinCoding`, a machine over structured
-types (`MultiInputTM.toCode`, `toCode_computes_iff`). `MultiInput/Truncate.lean` and
-`Code/Truncate.lean` prove that a run of `L` steps does not see past length `L` on its input
-tapes (`configs_agree_of_take_eq`, `Code.evalWithin_take`). The generic reachability layer
-listed under M2 is deferred to M6, where the interpreter's core is the first consumer.
+**M1, M2 and M3 are done.**
+
+* `Code/Compile.lean` compiles a machine over `Fin σ` and `Fin Q` (`MultiInputTM.compile`,
+  `toTM_compile`) and, along a `FinCoding`, a machine over structured types
+  (`MultiInputTM.toCode`, `toCode_computes_iff`).
+* `MultiInput/Truncate.lean` and `Code/Truncate.lean` prove that a run of `L` steps does not see
+  past length `L` on its input tapes (`configs_agree_of_take_eq`, `Code.evalWithin_take`).
+* `Universal/Reference.lean` is the reference: `refEval_ofCode` (the list simulator is
+  `evalWithin`) and `refDecode_eq` (greedy decoding is `decodeCode`), hence
+  `refEval_refDecode`. The greedy decoder parses entries until the description is exhausted and
+  compares the count with `Q (σ + 1)^(i + w)` only at the end, so no program ever counts to that
+  number.
+
+The generic reachability layer listed under M2 is deferred to M6, where the interpreter's core is
+its first consumer.
 
 ## Risks worth knowing in advance
 
