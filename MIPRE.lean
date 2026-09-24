@@ -1371,4 +1371,5 @@ import MIPRE.TM.MultiInput.Deterministic
 import MIPRE.TM.MultiInput.OneInputEquiv
 import MIPRE.TM.MultiInput.TapeLemmas
 import MIPRE.TM.MultiInput.Truncate
+import MIPRE.TM.Universal.Reference
 import MIPRE.TM.Universal.Spec
