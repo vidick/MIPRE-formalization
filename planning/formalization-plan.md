@@ -958,7 +958,9 @@ exact sum-of-squares certificates and a primitive-recursive checker. No NPA leve
 projective dilation and no real-closed-field decision: the Lean proof does not rest on the
 admitted ledger node 1.8.3. Still open in chapter 8: `thm:npa-convergence` as stated with its
 five lemmas, the rational-data and dovetailed clauses of `lem:valco-upper-re`, the explicit
-`thm:separation`, and CEP/QWEP.
+`thm:separation`, and CEP/QWEP. [explicit-separation.md](explicit-separation.md) plans
+`thm:separation` through Kleene's recursion theorem on the proved halting reduction and upper
+semidecider, with no entanglement clauses; the argument is already checked in scratch.
 
 ## Working rules for this track
 
