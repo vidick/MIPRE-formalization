@@ -804,6 +804,7 @@ import MIPRE.Foundations.Dilation
 import MIPRE.Foundations.Disagreement
 import MIPRE.Foundations.Distances
 import MIPRE.Foundations.Expanded
+import MIPRE.Foundations.GNS
 import MIPRE.Foundations.GameAdapt
 import MIPRE.Foundations.GameDescription
 import MIPRE.Foundations.GameDouble
@@ -1175,6 +1176,8 @@ import MIPRE.Foundations.LowDegree.UnaryPrimality
 import MIPRE.Foundations.LowDegree.UnaryPrimePower
 import MIPRE.Foundations.LowDegree.ZeroBasis
 import MIPRE.Foundations.LowDegreeSandwich
+import MIPRE.Foundations.NCPoly.Basic
+import MIPRE.Foundations.NCPoly.Cone
 import MIPRE.Foundations.OpBound
 import MIPRE.Foundations.OracularComplete
 import MIPRE.Foundations.OracularDecider
@@ -1268,7 +1271,13 @@ import MIPRE.Foundations.SyncMergeByQuestion
 import MIPRE.Foundations.SyncPushQ
 import MIPRE.Foundations.SyncTransport
 import MIPRE.Foundations.TensorFamily
+import MIPRE.Foundations.Tsirelson.Algebra
+import MIPRE.Foundations.Tsirelson.Certificate
+import MIPRE.Foundations.Tsirelson.Closed
+import MIPRE.Foundations.Tsirelson.CodedPoly
 import MIPRE.Foundations.Tsirelson.Conditional
+import MIPRE.Foundations.Tsirelson.Positivstellensatz
+import MIPRE.Foundations.Tsirelson.UpperRE
 import MIPRE.Foundations.ValueApprox
 import MIPRE.Foundations.ValueApprox.Cayley
 import MIPRE.Foundations.ValueApprox.Dense
@@ -1371,3 +1380,4 @@ import MIPRE.TM.MultiInput.Deterministic
 import MIPRE.TM.MultiInput.OneInputEquiv
 import MIPRE.TM.MultiInput.TapeLemmas
 import MIPRE.TM.Universal.Spec
+import MIPRE.Tsirelson

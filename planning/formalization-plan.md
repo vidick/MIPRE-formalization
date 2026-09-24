@@ -947,23 +947,18 @@ now: a witness for the non-theorem clauses of `GapCompression` alone (`output_*`
 `sampler_time`, `decider_time`, `sampler_dim`, `output_rejects_long`), to confirm the shape is
 inhabitable; a full trivial instance is impossible, the structure asserting a genuine theorem.
 
-**Chapter 8 — Tsirelson's problem (#214), revised 2026-09-24.**
-[tsirelson-campaign.md](tsirelson-campaign.md) plans the non-explicit negative answer to
-Tsirelson's problem, `Cqa ⊊ Cqc`. Answer reduction is done, so the final theorem will be
-unconditional; it goes in a root module next to `MainTheorem.lean`.
-
-The correlation sets and the conditional separation are proved:
-`MIPRE/Foundations/Correlations.lean` and `MIPRE/Foundations/Tsirelson/Conditional.lean`. What
-remains is an upper semidecider for the commuting-operator value and the closedness of `Cqc`.
-The revised route gets both from one quadratic module in the free `*`-algebra with POVM
-generators:
-
-- closedness from a compact state space and GNS;
-- upper semidecision from an Archimedean Positivstellensatz (Mathlib's `riesz_extension`) with
-  exact sum-of-squares certificates.
-
-The route needs no NPA levels, no projective dilation and no real-closed-field decision.
-`thm:npa-convergence` as stated, the explicit separating game, and CEP are follow-ups.
+**Chapter 8 — Tsirelson's problem (#214), proved 2026-09-24.** `MIPRE.tsirelson`
+(`MIPRE/Tsirelson.lean`) proves `Cqa ⊊ Cqc` in a finite scenario, unconditionally, with only the
+three standard axioms; [tsirelson-campaign.md](tsirelson-campaign.md) records the route. The
+correlation sets and the conditional separation are in `MIPRE/Foundations/Correlations.lean`
+and `MIPRE/Foundations/Tsirelson/Conditional.lean`. Closedness of `Cqc` comes from a compact
+state space and GNS; upper semidecision of the commuting-operator value
+(`MIPRE.commutingUpperRE`, `lem:valco-upper-re`) from an Archimedean Positivstellensatz with
+exact sum-of-squares certificates and a primitive-recursive checker. No NPA levels, no
+projective dilation and no real-closed-field decision: the Lean proof does not rest on the
+admitted ledger node 1.8.3. Still open in chapter 8: `thm:npa-convergence` as stated with its
+five lemmas, the rational-data and dovetailed clauses of `lem:valco-upper-re`, the explicit
+`thm:separation`, and CEP/QWEP.
 
 ## Working rules for this track
 
