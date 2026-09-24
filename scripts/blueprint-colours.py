@@ -180,7 +180,11 @@ def main(argv):
         # plasTeX skips an \input it cannot find with a warning, and an empty graph passes
         print("blueprint-colours: the parse found no graph nodes; --verbose shows plasTeX's log")
         return 1
-    print(f"{len(nodes)} graph nodes: {colours(doc, nodes)}")
+    summary = f"{len(nodes)} graph nodes: {colours(doc, nodes)}"
+    print(summary)
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        # an annotation on the check run: the colours show without opening the log
+        print(f"::notice title=Blueprint graph colours::{summary}")
     print(f"(plasTeX: {warnings} warnings; --verbose shows its log)")
     for kind in ("detached", "pale"):
         items = findings.get(kind, [])
