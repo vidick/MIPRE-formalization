@@ -238,7 +238,7 @@ Remark~\ref{rem:separation-premises}.
 
 \begin{definition}[Correlation sets]
 \label{def:correlation-sets}
-\uses{def:tensor-strategy,def:q-value,def:co-strategy-bipartite,def:co-value-bipartite}
+\uses{def:tensor-strategy,def:co-strategy-bipartite}
 \lean{MIPRE.Game.payoff, MIPRE.TensorProductStrategy.correlation, MIPRE.Cq, MIPRE.Cqa,
   MIPRE.Cqc}
 \leanok
@@ -264,7 +264,7 @@ separable subspace generated cyclically by $\psi$; neither identification is use
 
 \begin{lemma}[Basic properties of the correlation sets]
 \label{lem:correlation-sets-basic}
-\uses{def:correlation-sets}
+\uses{def:correlation-sets,def:co-value-bipartite,def:q-value}
 \lean{MIPRE.CommutingOperatorStrategy.correlation_nonneg,
   MIPRE.CommutingOperatorStrategy.correlation_sum,
   MIPRE.commutingOperatorValue_nonneg, MIPRE.commutingOperatorValue_le_one,
@@ -291,7 +291,7 @@ the bound $\valstar(\game)$ on $C_q$ passes to its closure.
 
 \begin{lemma}[Conditional separation]
 \label{lem:tsirelson-conditional}
-\uses{lem:correlation-sets-basic,thm:halting-undecidable,def:game-description}
+\uses{lem:correlation-sets-basic,def:game-description}
 \lean{MIPRE.HaltingReductionQuantum, MIPRE.CommutingUpperRE,
   MIPRE.exists_quantumValue_lt_commutingOperatorValue, MIPRE.exists_mem_Cqc_not_mem_Cqa,
   MIPRE.exists_Cqa_ne_Cqc, MIPRE.tsirelson_of_upperRE_of_isClosed}
