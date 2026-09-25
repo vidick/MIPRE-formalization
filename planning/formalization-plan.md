@@ -965,6 +965,14 @@ reduction and the upper semidecider, with no entanglement clauses
 paper. Still open in chapter 8: `thm:npa-convergence` as stated with its five lemmas, the
 rational-data and dovetailed clauses of `lem:valco-upper-re`, and CEP/QWEP.
 
+**Simplification survey (#225), 2026-09-25.** A `find-simplification` pass over every
+project-written tree: [simplification-2026-09-25.md](simplification-2026-09-25.md) records 750
+compiler-verified dead declarations (`scripts/lean-dead.py`, from Lean's `.ilean` reference
+index), two name collisions, and the area surveys' cluster finds — whole files and superseded
+routes, duplicates and Mathlib shadows, special cases kept beside their general form — plus the
+tagged leaves the Lean proof never uses, which are blueprint decisions. The maintainer's
+decision was record only; #225 tracks the implementing PRs.
+
 ## Working rules for this track
 
 - Every new Lean declaration that discharges a ledger node should say so, and the blueprint

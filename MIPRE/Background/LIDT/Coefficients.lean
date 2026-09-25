@@ -144,6 +144,11 @@ open Finset
 
 variable {F : Type*} [Field F] {n d : ℕ}
 
+/-- Evaluation of coefficient vectors is additive: `(p - q)(u) = p(u) - q(u)`. -/
+theorem LowIndDegPoly.eval_sub (p q : LowIndDegPoly (F := F) (m := n) (d := d)) (u : Point F n) :
+    (p - q).eval u = p.eval u - q.eval u := by
+  simp only [LowIndDegPoly.eval, Pi.sub_apply, sub_mul, Finset.sum_sub_distrib]
+
 /-- The exponent vector `e` with its coordinates in `T` replaced by those of the pattern `t`. -/
 def patch (T : Finset (Fin n)) (t e : Fin n → Fin (d + 1)) : Fin n → Fin (d + 1) :=
   fun k => if k ∈ T then t k else e k
