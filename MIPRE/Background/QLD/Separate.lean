@@ -47,10 +47,6 @@ theorem LowIndDegPoly.eval_zero (u : Point F n) :
     (0 : LowIndDegPoly (F := F) (m := n) (d := d)).eval u = 0 := by
   simp [LowIndDegPoly.eval]
 
-theorem LowIndDegPoly.eval_sub (p q : LowIndDegPoly (F := F) (m := n) (d := d)) (u : Point F n) :
-    (p - q).eval u = p.eval u - q.eval u := by
-  simp only [LowIndDegPoly.eval, Pi.sub_apply, sub_mul, Finset.sum_sub_distrib]
-
 /-- The constant coefficient vector. -/
 def LowIndDegPoly.const (c : F) : LowIndDegPoly (F := F) (m := n) (d := d) :=
   fun e => if e = 0 then c else 0

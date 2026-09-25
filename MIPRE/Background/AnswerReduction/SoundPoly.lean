@@ -33,11 +33,6 @@ open Finset
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {n d : ℕ}
 
-omit [Fintype F] [DecidableEq F] in
-theorem LowIndDegPoly.eval_sub (f g : LowIndDegPoly (F := F) (m := n) (d := d)) (u : Point F n) :
-    (f - g).eval u = f.eval u - g.eval u := by
-  simp only [LowIndDegPoly.eval, Pi.sub_apply, sub_mul, Finset.sum_sub_distrib]
-
 /-- **Schwartz--Zippel for coefficient vectors**: two distinct polynomials of individual degree `d`
 in `n` variables agree at a uniform point with probability at most `n d / q`. -/
 theorem sum_uniform_eval_eq_le {f g : LowIndDegPoly (F := F) (m := n) (d := d)} (hfg : f ≠ g) :
