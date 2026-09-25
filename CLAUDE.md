@@ -138,8 +138,9 @@ Two things to know about reading it:
 ## Things that will bite
 
 - **Vendored trees are read-only**: `MIPRE/Background/Repetition/TenProofs/`,
-  `MIPRE/Background/Repetition/CommutingRepetition/` and
-  `MIPRE/Background/LIDT/MIPStarRE/`. Change them only through
+  `MIPRE/Background/Repetition/CommutingRepetition/`,
+  `MIPRE/Background/LIDT/MIPStarRE/`, `MIPRE/Background/Orthonormalization/Orthogonalization/`
+  and `MIPRE/Background/LiehrTsirelson/Upstream/`. Change them only through
   `scripts/vendor-*.py`, which records each fix. Nothing outside
   `MIPRE/Background/` may name their namespaces.
 - **`backward.isDefEq.respectTransparency false`** appears at specific

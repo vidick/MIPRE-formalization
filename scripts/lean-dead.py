@@ -47,6 +47,7 @@ VENDORED = (
     "MIPRE/Background/Repetition/CommutingRepetition/",
     "MIPRE/Background/LIDT/MIPStarRE/",
     "MIPRE/Background/Orthonormalization/Orthogonalization/",
+    "MIPRE/Background/LiehrTsirelson/Upstream/",
 )
 GUARD_FILES = ["MIPRE/Axioms.lean"] + [
     f"MIPRE/Background/{d}/Axioms.lean"

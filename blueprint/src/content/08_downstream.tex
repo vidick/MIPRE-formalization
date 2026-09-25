@@ -586,6 +586,30 @@ neither a synchronous perfect correlation nor a tracial value-$1$ witness. Any s
 formulation would require additional representation and value-transport results.
 \end{remark}
 
+\begin{remark}[An independent Lean statement of the same results, proved]
+\label{rem:liehr-statements}
+\uses{thm:separation}
+\lean{MIPRE.Liehr.quantitativeSeparation, MIPRE.Liehr.negativeTsirelson,
+  MIPRE.Liehr.gameValueSeparation}
+\leanok
+The Lean 4 project \texttt{lukasliehr/MIPRE} states, in its own vocabulary and independently
+of this formalization, three terminal propositions: a game with $\valstar \leq \frac12$ and
+commuting value $1$; the strict inclusion $C_{qa} \subsetneq C_{qc}$ in some finite square
+scenario; and a square game with $\valstar < \omegaco = 1$. Its games live on
+\texttt{EuclideanSpace}, its tensor-product strategies carry POVMs rather than projective
+measurements on both sides, and its values are suprema of payoffs over correlation sets. The
+statement vocabulary is vendored under \texttt{MIPRE/Background/LiehrTsirelson/Upstream/},
+and all three propositions are proved there from Theorem~\ref{thm:separation}: the
+commuting-operator strategies of the two developments are the same data, so the two
+$C_{qc}$ coincide and the two commuting values agree; a POVM tensor-product strategy has the
+correlation of a projective one by Naimark dilation on both sides, so the vendored $C_{qa}$
+is contained in this one and the vendored finite-dimensional value is at most $\valstar$;
+and the two payoffs agree on every correlation. The proofs use only the three standard
+axioms (\texttt{MIPRE/Background/LiehrTsirelson/Axioms.lean}). This is a check on the
+statements of this chapter rather than a new result: a separation stated without reference
+to this repository's definitions follows from them.
+\end{remark}
+
 \subsection{Refutation of Connes' Embedding Problem}
 
 \effortHard
