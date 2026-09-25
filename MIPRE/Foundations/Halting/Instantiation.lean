@@ -6,7 +6,6 @@ Authors: Thomas Vidick
 import MIPRE.Foundations.Halting.Enumerate
 import MIPRE.Foundations.Halting.Tabulate
 import MIPRE.Foundations.SyncTransport
-import MIPRE.Foundations.Cost.ProgData
 import MIPRE.Foundations.Compression
 
 /-!
