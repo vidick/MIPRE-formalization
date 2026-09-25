@@ -973,6 +973,17 @@ routes, duplicates and Mathlib shadows, special cases kept beside their general 
 tagged leaves the Lean proof never uses, which are blueprint decisions. The maintainer's
 decision was record only; #225 tracks the implementing PRs.
 
+**An independent statement of Tsirelson's problem, proved (#228), 2026-09-25.** The Lean 4
+project `lukasliehr/MIPRE` states the quantitative separation, `Cqa ⊊ Cqc` and the strict
+game-value separation in its own vocabulary (games on `EuclideanSpace`, POVMs on both sides,
+`sSup` values) and proves none of them. Its statement core is vendored under
+`MIPRE/Background/LiehrTsirelson/Upstream/` (`scripts/vendor-liehr.py`) and all three
+propositions are proved from `MIPRE.separation` in `MIPRE/Background/LiehrTsirelson/Main.lean`,
+sorry-free, through an identification of the two vocabularies: the commuting-operator
+strategies are the same data, and a POVM tensor strategy is a projective one by Naimark
+dilation. [reports/liehr-tsirelson-bridge.md](../reports/liehr-tsirelson-bridge.md) records
+what the comparison showed; `rem:liehr-statements` cites it in the blueprint.
+
 ## Working rules for this track
 
 - Every new Lean declaration that discharges a ledger node should say so, and the blueprint
