@@ -34,9 +34,9 @@ counter is likewise not needed here, since a decider that fails to halt simply f
   verifier a pair denotes. The decider component is a *datum* run by the universal machine,
   not a program: a string carries data, a datum that is not the encoding of any program still
   has to name a verifier, and reading it as a program would need a decoder with a fallback
-  (`Cost.progNorm`) that the compressor's decider of obligation O4 would then have to
-  reimplement in the ambient model — the tree-grammar check of `Cost.progOk` as a worklist
-  program — only to reproduce a fallback nobody wanted. On the encoding of a program the two
+  (once `Cost.progNorm`, in a module since removed) that the compressor's decider of
+  obligation O4 would then have to reimplement in the ambient model — its tree-grammar check
+  as a worklist program — only to reproduce a fallback nobody wanted. On the encoding of a program the two
   readings agree (`wrap_accepts_prog`, by `UniversalMachine.time_le` and `halts_of`), and
   `Verifier.ofSamplerDecider` is that special case, which the two distinguished strings use.
 -/
