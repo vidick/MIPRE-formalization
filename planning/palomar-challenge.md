@@ -219,6 +219,13 @@ submission without changing parts 1–4.
 
 ## 4. Where the crisp definition differs from what the repository proves — questions
 
+**Decided 2026-09-28 (maintainer, on the recommendations below):** the tree-program model
+for polynomial time, with the divergence declared (questions 6, 8, 10); free-standing names
+in `MIPRE.Palomar`, the Solution bridging by transport (question 1); the four compared
+theorems and nothing else (questions 11, 13); the draft's modelling choices stand
+(questions 2, 3, 4, 5, 7, 9, 12, 14). Cobham's algebra is the later upgrade if machine
+independence is wanted.
+
 Each is answerable in one line.
 
 1. **Names.** The draft is free-standing in `MIPRE.Palomar`, so every definition is a new

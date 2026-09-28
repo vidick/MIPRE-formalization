@@ -59,12 +59,20 @@ LeanSearch available.
    ```text
    releases.lean-lang.org
    release.lean-lang.org
+   cache.mathlib.org
    lakecache.blob.core.windows.net
    loogle.lean-lang.org
    leansearch.net
    premise-search.com
    leanpremise.net
    ```
+
+   Since Mathlib v4.35 its cache tool downloads from `cache.mathlib.org`; the legacy
+   Azure host `lakecache.blob.core.windows.net` still serves the same archives, and
+   `MATHLIB_CACHE_DEBUG_USE_LEGACY=1` selects it. The setup script and the hook try the
+   legacy host first, then the default, so an environment created before this line was
+   added keeps working until the legacy host is retired (found on 2026-09-28, when the
+   bump to v4.35.0-rc3 stalled on 403s from the proxy for the new host).
 
    GitHub needs nothing added. `github.com`, `codeload.github.com`,
    `objects.githubusercontent.com` and `release-assets.githubusercontent.com` are

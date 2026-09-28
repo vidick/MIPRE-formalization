@@ -56,7 +56,10 @@ have_rev=$(sed -n 's/^mathlib: //p' "$STAMP" 2>/dev/null)
 if [ -n "$want_rev" ] && [ "$want_rev" = "$have_rev" ]; then
   mathlib_note=""
 else
-  ( cd "$HERE" && lake exe cache get >/dev/null 2>&1 ) || true
+  # The legacy host first, then the default (cache.mathlib.org since Mathlib
+  # v4.35); see .claude/cloud-setup.sh.
+  ( cd "$HERE" && ( MATHLIB_CACHE_DEBUG_USE_LEGACY=1 lake exe cache get \
+      || lake exe cache get ) >/dev/null 2>&1 ) || true
   mathlib_note=" Mathlib pin moved since the snapshot, so its oleans were refetched."
 fi
 
