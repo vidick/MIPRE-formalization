@@ -1594,12 +1594,45 @@ parameters. This is a pending bridge between the source and ambient interfaces; 
 existing conditional Lean results do not construct it.
 \end{remark}
 
-\begin{definition}[The computable class $\MIPstar$ used in Lean]
+\begin{definition}[The class $\MIPstar_{1,1/2}(2,1)$]
 \label{def:mipstar}
+\uses{def:q-value,def:normal-verifier}
+\lean{MIPRE.MIPStarPoly, MIPRE.PolyVerifier, MIPRE.PolyVerifier.Efficient,
+  MIPRE.PolyVerifier.game}
+\leanok
+A language $L\subseteq\{0,1\}^*$ is in $\MIPstar_{1,1/2}(2,1)$, written $\MIPstar$ here, if
+there are two machines, a sampler $\sampler$ and a decider $\decider$, and a polynomial $P$
+such that for every string $z$, writing $B = P(\abs{z})$:
+\begin{enumerate}
+\item \emph{Efficiency.} On input $z$ and a uniformly random seed $r\in\{0,1\}^B$, the
+  sampler halts within time $B$ with a pair $(x,y)$ of strings of length at most $B$; write
+  $\mu_z$ for the distribution of $(x,y)$. On input $(z,x,y,a,b)$, the decider halts within
+  time $P(\abs{z}+\abs{x}+\abs{y}+\abs{a}+\abs{b})$ with a bit $D_z(x,y,a,b)$, and this bit
+  is $0$ whenever one of $x,y,a,b$ is longer than $B$. The game $\game_z$ has the strings of
+  length at most $B$ as its question and answer alphabets, question distribution $\mu_z$ and
+  decision predicate $D_z$.
+\item \emph{Completeness.} If $z\in L$ then $\valstar(\game_z)=1$.
+\item \emph{Soundness.} If $z\notin L$ then $\valstar(\game_z)\leq\tfrac12$.
+\end{enumerate}
+\end{definition}
+
+The paper's definition (\texttt{games.tex}~\cite{AuditSync26}) has the decider run in time
+$\poly(\abs{z})$ ``even for long inputs $a,b$'', which its footnote makes precise by having the
+decider return $0$ whenever the four strings are too long. In the ambient model a program
+reads a list only by walking it (the discussion under Definition~\ref{def:decider}), so the
+time bound is stated in the total input length and the footnote's clause is a separate
+requirement; the game on the strings of length at most $B$ is then the paper's finite game, and
+the two readings define the same class. A randomized machine is a deterministic program with an
+explicit uniform seed of the length of its time bound. In Lean the verifier is a
+\texttt{PolyVerifier}, the clause is \texttt{PolyVerifier.Efficient}, the game is
+\texttt{PolyVerifier.game} and the class is \texttt{MIPRE.MIPStarPoly}.
+
+\begin{definition}[The computable class]
+\label{def:mipstar-computable}
 \uses{def:q-value,def:game-description}
 \lean{MIPRE.MIPStar}
 \leanok
-A language $L\subseteq\{0,1\}^*$ is in the class denoted $\MIPstar$ here if there exists
+A language $L\subseteq\{0,1\}^*$ is in the \emph{computable class} if there exists
 a computable map $g$ from bit strings to \texttt{HaltingGameValue.GameData}
 (Definition~\ref{def:game-description}) such that for every string $z$,
 \begin{equation*}
@@ -1609,21 +1642,49 @@ a computable map $g$ from bit strings to \texttt{HaltingGameValue.GameData}
 \end{equation*}
 The game $\game_{g(z)}$ is the explicit game \texttt{(g z).game}. Computability is the
 Mathlib \texttt{Computable} predicate; there is no polynomial-time bound on $g$ in this
-definition. This is exactly \texttt{MIPRE.MIPStar}, the class used by the checked
-inclusion in $\RE$ and the conditional main theorem.
+definition. This is \texttt{MIPRE.MIPStar}, the class used by the checked inclusion in $\RE$
+and by the main theorem in its current form (Theorem~\ref{thm:mipstar-eq-re}).
 \end{definition}
+
+\begin{lemma}[The class is contained in the computable one]
+\label{lem:mipstar-poly-sub}
+\uses{def:mipstar,def:mipstar-computable}
+\lean{MIPRE.MIPStarPoly.toMIPStar, MIPRE.MIPStarPoly.isRE, MIPRE.PolyVerifier.tab,
+  MIPRE.PolyVerifier.tab_computable, MIPRE.PolyVerifier.quantumValue_tab}
+\leanok
+Every language in $\MIPstar$ (Definition~\ref{def:mipstar}) is in the computable class of
+Definition~\ref{def:mipstar-computable}, hence recursively enumerable.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:mipstar-sub-re}
+\leanok
+Given $z$, run the sampler on every seed of length $B$ and the decider on every tuple of
+strings of length at most $B$, each under the budget the efficiency clause supplies; a run
+within a known budget is decidable, so the table of $\game_z$ is computable from $z$. It is
+written as a game description with Alice's questions and Bob's tagged apart (the description
+format forces unequal answers to equal questions to lose, and $\game_z$ is a general bipartite
+game), and the tagged game has the value of $\game_z$ (\texttt{quantumValue\_doubled}). In Lean:
+\texttt{PolyVerifier.tab}, \texttt{tab\_computable} and \texttt{quantumValue\_tab}. The
+inclusion in $\RE$ is then Lemma~\ref{lem:mipstar-sub-re}.
+\end{proof}
 
 \begin{remark}[Comparison with the source complexity class]
 \label{rem:source-mipstar}
 \ledgernode{1.1.7, 1.1.7.1}
-\uses{def:mipstar,rem:source-normal-verifier}
-The paper's $\MIP^*_{1,1/2}(2,1)$ uses a sampler and decider running in time polynomial
-in the input length, with the same perfect-completeness and $\frac12$-soundness gap
-(\texttt{games.tex}~\cite{AuditSync26}). That polynomial-time verifier convention is not
-part of the marked class above. Explicitly tabulating a finite game is a computable
-operation but may take much more than polynomial time. Moreover, general bipartite games
-must be represented in \texttt{GameData} with value-preserving transport; merely forcing
-unequal answers to equal questions to lose can destroy a perfect strategy. The checked
-halting reduction supplies its particular explicit descriptions, while the source
-polynomial-time complexity-class claim requires its own efficient verifier construction.
+\uses{def:mipstar,def:mipstar-computable,rem:source-normal-verifier}
+Definition~\ref{def:mipstar} is the paper's $\MIPstar_{1,1/2}(2,1)$ up to the reading of the
+time bound recorded after it. The checked halting reduction (Theorem~\ref{thm:halting}) supplies
+its game as an explicit description computed with no time bound, which is what the
+computable class of Definition~\ref{def:mipstar-computable} asks for and not what
+Definition~\ref{def:mipstar} asks for: the description is the tabulation of a verifier at a
+level exponential in the machine's size, whose questions no polynomial-time sampler can write
+down. So $\RE\subseteq\MIPstar$ for the class of Definition~\ref{def:mipstar} is not yet
+formalized, and Theorem~\ref{thm:mipstar-eq-re} is currently stated for the computable class.
+The paper's route --- the verifier $\vhalt$ at the fixed level $C_0$ with
+$\lambda=\poly(\abs{\machine})$, Lemma~\ref{lem:lambda} --- is the object of
+\texttt{planning/polytime-halting.md}. Moreover, general bipartite games must be represented in
+\texttt{GameData} with value-preserving transport; merely forcing unequal answers to equal
+questions to lose can destroy a perfect strategy, which is why both tabulations tag the two
+players' questions apart.
 \end{remark}

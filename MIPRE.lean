@@ -770,6 +770,8 @@ import MIPRE.Foundations.CL.Repeat
 import MIPRE.Foundations.CL.Sampler
 import MIPRE.Foundations.CL.TypedSampler
 import MIPRE.Foundations.ClassMIPStar
+import MIPRE.Foundations.ClassMIPStarPoly
+import MIPRE.Foundations.ClassMIPStarPolyTab
 import MIPRE.Foundations.Closeness
 import MIPRE.Foundations.Commutation
 import MIPRE.Foundations.CommutingOperator
@@ -797,6 +799,7 @@ import MIPRE.Foundations.Cost.Loops
 import MIPRE.Foundations.Cost.Machine
 import MIPRE.Foundations.Cost.MachineBound
 import MIPRE.Foundations.Cost.MachineData
+import MIPRE.Foundations.Cost.ManyOne
 import MIPRE.Foundations.Cost.Numeric
 import MIPRE.Foundations.Cost.Partrec
 import MIPRE.Foundations.Cost.PolyTime

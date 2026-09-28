@@ -140,6 +140,7 @@ import MIPRE.Foundations.CL.Closure
 import MIPRE.Foundations.CL.Downsize
 import MIPRE.Foundations.CL.Repeat
 import MIPRE.Foundations.ClassMIPStar
+import MIPRE.Foundations.ClassMIPStarPolyTab
 import MIPRE.Foundations.Compression
 import MIPRE.Foundations.Cost.Kleene
 import MIPRE.Foundations.Cost.Semidecide
@@ -389,7 +390,8 @@ tell you the guard is missing.
   MIPRE.Verifier.rePred_not_rejectsLong
 
 -- blueprint `lem:kleene`
-#guard_sorry_free MIPRE.Cost.efficient_fixed_point
+#guard_sorry_free MIPRE.Cost.efficient_fixed_point, MIPRE.Cost.kleeneFix,
+  MIPRE.Cost.kleeneFix_runs_of
 
 -- blueprint `lem:lambda`
 #guard_sorry_free MIPRE.Cost.PolyBounded.absorb,
@@ -433,6 +435,11 @@ tell you the guard is missing.
 -- blueprint `lem:mipstar-sub-re`
 #guard_sorry_free MIPRE.MIPStar.exists_semidecider,
   MIPRE.MIPStar.isRE
+
+/-! `lem:mipstar-poly-sub`: the paper's class is contained in the computable one
+(`MIPRE/Foundations/ClassMIPStarPolyTab.lean`). -/
+#guard_sorry_free MIPRE.MIPStarPoly.toMIPStar, MIPRE.MIPStarPoly.isRE, MIPRE.PolyVerifier.tab,
+  MIPRE.PolyVerifier.tab_computable, MIPRE.PolyVerifier.quantumValue_tab
 
 -- blueprint `lem:norm-two-psd`
 #guard_sorry_free MIPRE.ValueApprox.posSemidef_realSmul_one_add_and_sub_iff

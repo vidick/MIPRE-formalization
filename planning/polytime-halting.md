@@ -73,6 +73,12 @@ the paper's own construction, next to the existing one; the existing one stays a
 
 ### PR 1: the class, and its inclusion in the computable one
 
+**Done (PR after #231):** `MIPRE/Foundations/ClassMIPStarPoly.lean` (`PolyVerifier`, `Efficient`,
+`game`, `MIPStarPoly`), `ClassMIPStarPolyTab.lean` (`tab`, `tab_computable`, `quantumValue_tab`,
+`MIPStarPoly.toMIPStar`, `MIPStarPoly.isRE`), `Cost/Kleene.lean` (`kleeneFix`, `kleeneFix_runs_of`),
+`Cost/ManyOne.lean` (`haltingReduction`, `exists_polyTime_reduction`); blueprint `def:mipstar`,
+`def:mipstar-computable`, `lem:mipstar-poly-sub`, `rem:source-mipstar`.
+
 `MIPRE/Foundations/ClassMIPStarPoly.lean` (name indicative):
 
 - `PolyVerifier`: a closed sampler program, a closed decider program, one polynomial `P`.

@@ -145,14 +145,69 @@ theorem kleeneProg_halts_of (U : UniversalMachine) (F : PolyTimeFun Prog Prog) (
 
 end Prog
 
+/-! ## The fixed point, as data
+
+The construction is exposed (`kleeneFix`) with its overhead spelled out (`kleeneFix_runs_of`),
+because the polynomial-time halting reduction (`planning/polytime-halting.md`) needs the overhead
+of the fixed point of a *family* `F_M` of maps to be bounded uniformly in `M`: the existential
+polynomial of `efficient_fixed_point` below depends on `F`, and only the explicit form shows how. -/
+
+/-- The fixed point of `F` through the universal machine `U`: `hardcode G (encode G)` for the
+program `G = kleeneProg U.univ F`. -/
+def kleeneFix (U : UniversalMachine) (F : PolyTimeFun Prog Prog) : Prog :=
+  hardcode (Prog.kleeneProg U.univ F) (encode (Prog.kleeneProg U.univ F))
+
+theorem kleeneFix_wellScoped (U : UniversalMachine) (F : PolyTimeFun Prog Prog) :
+    (kleeneFix U F).WellScoped 1 :=
+  hardcode_wellScoped (Prog.kleeneProg_wellScoped U.closed F) _
+
+/-- The fixed point has the input/output behavior of `F` applied to it. -/
+theorem kleeneFix_halts_iff (U : UniversalMachine) (F : PolyTimeFun Prog Prog) (v r : Data) :
+    (∃ t, (kleeneFix U F).Runs v r t) ↔ ∃ t, (F (kleeneFix U F)).Runs v r t := by
+  have hGw : (Prog.kleeneProg U.univ F).WellScoped 1 := Prog.kleeneProg_wellScoped U.closed F
+  constructor
+  · rintro ⟨t', h⟩
+    obtain ⟨T, -, hT⟩ := hardcode_time_rev hGw h
+    exact Prog.kleeneProg_halts_of U F _ hT
+  · rintro ⟨t, h⟩
+    obtain ⟨T, -, hT⟩ := Prog.kleeneProg_runs U F _ h
+    exact ⟨_, hardcode_time hGw hT⟩
+
+/-- The fixed part of the overhead of the fixed point: the copies of the program, the
+computation of `F (kleeneFix U F)`, and constants. -/
+def kleeneOverhead (U : UniversalMachine) (F : PolyTimeFun Prog Prog) : ℕ :=
+  7 * esize (Prog.kleeneProg U.univ F) + esize (kleeneFix U F) +
+    F.timeBound.eval (esize (kleeneFix U F)) + 2 * esize (F (kleeneFix U F)) + 60
+
+/-- **The time transfer of the fixed point, explicitly**: a run of `F (kleeneFix U F)` on `v`
+in time `t` yields a run of `kleeneFix U F` within the universal machine's overhead at
+`v.size + t + esize (F (kleeneFix U F))`, plus `3 · v.size`, plus the fixed overhead. -/
+theorem kleeneFix_runs_of (U : UniversalMachine) (F : PolyTimeFun Prog Prog) {v r : Data}
+    {t : ℕ} (h : (F (kleeneFix U F)).Runs v r t) :
+    ∃ t' ≤ U.bound.eval (v.size + t + esize (F (kleeneFix U F))) + 3 * v.size +
+        kleeneOverhead U F,
+      (kleeneFix U F).Runs v r t' := by
+  have hGw : (Prog.kleeneProg U.univ F).WellScoped 1 := Prog.kleeneProg_wellScoped U.closed F
+  obtain ⟨T, hT, hrun⟩ := Prog.kleeneProg_runs U F _ h
+  refine ⟨_, ?_, hardcode_time hGw hrun⟩
+  have hT' : T ≤ 6 * esize (Prog.kleeneProg U.univ F) + esize (kleeneFix U F) +
+      F.timeBound.eval (esize (kleeneFix U F)) + 2 * esize (F (kleeneFix U F)) + 2 * v.size +
+      U.bound.eval (esize (F (kleeneFix U F)) + v.size + t) + 57 := hT
+  have e1 : (encode (Prog.kleeneProg U.univ F)).size = esize (Prog.kleeneProg U.univ F) := rfl
+  have hm := polynomial_eval_mono U.bound
+    (show esize (F (kleeneFix U F)) + v.size + t ≤ v.size + t + esize (F (kleeneFix U F)) by
+      omega)
+  rw [kleeneOverhead]
+  omega
+
 /-! ## The fixed-point theorem (blueprint `lem:kleene`; [MNY, Lemma 2.3]) -/
 
 /-- **Efficient Kleene fixed point**: for a polynomial-time map on programs, a closed
 program `e` with the same input/output behavior as `F e`, whose runs are bounded by the
-runs of `F e` at polynomial overhead. The construction is `e = hardcode G (encode G)` for
-the program `G = kleeneProg U.univ F`, and the polynomial `p` is the universal machine's
-`bound` shifted by the size of `F e`, plus a linear term and a constant covering the
-fixed computation of `F e` and the copies of the input.
+runs of `F e` at polynomial overhead. The construction is `kleeneFix U F`, and the polynomial
+`p` is the universal machine's `bound` shifted by the size of `F e`, plus a linear term and a
+constant covering the fixed computation of `F e` and the copies of the input
+(`kleeneFix_runs_of`).
 
 Departure from [MNY, Lemma 2.3], which states the runtimes of `e` and `F e` as
 *polynomially equivalent*: only the direction "runs of `F e` bound runs of `e`" is used by
@@ -167,33 +222,13 @@ theorem efficient_fixed_point (F : PolyTimeFun Prog Prog) :
       (∀ v r, (∃ t, e.Runs v r t) ↔ ∃ t, (F e).Runs v r t) ∧
       ∀ v r t, (F e).Runs v r t → ∃ t' ≤ p.eval (v.size + t), e.Runs v r t' := by
   obtain ⟨U⟩ := exists_efficient_universal
-  have hGw : (Prog.kleeneProg U.univ F).WellScoped 1 := Prog.kleeneProg_wellScoped U.closed F
-  refine ⟨hardcode (Prog.kleeneProg U.univ F) (encode (Prog.kleeneProg U.univ F)),
-    U.bound.comp (X + C (esize (F (hardcode (Prog.kleeneProg U.univ F)
-        (encode (Prog.kleeneProg U.univ F)))))) + C 3 * X +
-      C (7 * esize (Prog.kleeneProg U.univ F) +
-        esize (hardcode (Prog.kleeneProg U.univ F) (encode (Prog.kleeneProg U.univ F))) +
-        F.timeBound.eval (esize (hardcode (Prog.kleeneProg U.univ F)
-          (encode (Prog.kleeneProg U.univ F)))) +
-        2 * esize (F (hardcode (Prog.kleeneProg U.univ F)
-          (encode (Prog.kleeneProg U.univ F)))) + 60),
-    hardcode_wellScoped hGw _, fun v r => ⟨?_, ?_⟩, fun v r t h => ?_⟩
-  · rintro ⟨t', h⟩
-    obtain ⟨T, -, hT⟩ := hardcode_time_rev hGw h
-    exact Prog.kleeneProg_halts_of U F _ hT
-  · rintro ⟨t, h⟩
-    obtain ⟨T, -, hT⟩ := Prog.kleeneProg_runs U F _ h
-    exact ⟨_, hardcode_time hGw hT⟩
-  · obtain ⟨T, hT, hrun⟩ := Prog.kleeneProg_runs U F _ h
-    refine ⟨_, ?_, hardcode_time hGw hrun⟩
-    simp only [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_comp,
-      Polynomial.eval_X, Polynomial.eval_C]
-    have hm := polynomial_eval_mono U.bound
-      (show esize (F (hardcode (Prog.kleeneProg U.univ F) (encode (Prog.kleeneProg U.univ F)))) +
-          v.size + t ≤
-        v.size + t + esize (F (hardcode (Prog.kleeneProg U.univ F)
-          (encode (Prog.kleeneProg U.univ F)))) by omega)
-    have e1 : (encode (Prog.kleeneProg U.univ F)).size = esize (Prog.kleeneProg U.univ F) := rfl
-    omega
+  refine ⟨kleeneFix U F,
+    U.bound.comp (X + C (esize (F (kleeneFix U F)))) + C 3 * X + C (kleeneOverhead U F),
+    kleeneFix_wellScoped U F, kleeneFix_halts_iff U F, fun v r t h => ?_⟩
+  obtain ⟨t', ht', hrun⟩ := kleeneFix_runs_of U F h
+  refine ⟨t', ?_, hrun⟩
+  simp only [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_comp,
+    Polynomial.eval_X, Polynomial.eval_C]
+  omega
 
 end MIPRE.Cost

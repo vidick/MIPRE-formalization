@@ -990,7 +990,12 @@ what the comparison showed; `rem:liehr-statements` cites it in the blueprint.
 Lin's criterion outputs its game at a level exponential in the machine's size, so no time bound
 can be attached to the existing map. [polytime-halting.md](polytime-halting.md) has the route:
 the paper's own construction of `V^halt` at the fixed level `C_0` with `λ = poly(|M|)`, the
-class as the paper defines it, and three implementation pull requests.
+class as the paper defines it, and three implementation pull requests. The first is in:
+`MIPRE.MIPStarPoly` is the paper's class (`def:mipstar`, `MIPRE/Foundations/ClassMIPStarPoly.lean`),
+the former definition is `def:mipstar-computable`, and `lem:mipstar-poly-sub` is the inclusion by
+tabulation with doubled questions (`ClassMIPStarPolyTab.lean`); `Cost.kleeneFix_runs_of` exposes
+the fixed point's overhead and `Cost.exists_polyTime_reduction` is the costed many-one reduction
+to halting, both for the next step.
 
 ## Working rules for this track
 

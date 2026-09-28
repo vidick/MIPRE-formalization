@@ -16,7 +16,7 @@ transformation preserves the property ``value at most $1 - \eps$'' up to a quant
 loss, and compression preserves ``value at most $\frac12$''. The three inner
 transformations, repetition and compression all carry that property in $\valstar$, the
 bipartite tensor-product value: it is the class the compressibility criterion is
-instantiated with and the form Definition~\ref{def:mipstar} requires
+instantiated with and the form Definition~\ref{def:mipstar-computable} requires
 (Remark~\ref{rem:compression-abstract}), and no passage between the two values occurs
 anywhere on the path. The synchronous value is not used, and neither is the
 almost-synchronous transport of Theorem~\ref{thm:almost-sync}; see
@@ -6142,7 +6142,7 @@ exponent $13$ is the one of Theorem~\ref{thm:direct-repetition-q} itself, with n
 loss: carrying the hypothesis in $\valstar$ rather than $\synval$ removes both the
 transport's polynomial loss and the factor $\kappa^{13}$ that its diagonal-weight hypothesis
 used to contribute. The conclusion is in $\valstar$, as is the hypothesis: that is the form
-Definition~\ref{def:mipstar} asks of the final game, and it is available at every step
+Definition~\ref{def:mipstar-computable} asks of the final game, and it is available at every step
 because nothing in the chain ever leaves $\valstar$ (Remark~\ref{rem:bipartite-route}).
 In~\cite{JNVWY20} the answer length is the timeout bound $B_\decider(n)$ read off the
 decider and $\tau$ is chosen against it; the ambient model has no timeout-counter form, so
@@ -7213,7 +7213,7 @@ enumeration of that table.
 
 \begin{corollary}[The consequences of Chapter~\ref{ch:main-theorem}, from compression]
 \label{cor:halting-consequences}
-\uses{thm:halting,thm:halting-undecidable,lem:mipstar-sub-re,def:q-value,def:mipstar,def:re}
+\uses{thm:halting,thm:halting-undecidable,lem:mipstar-sub-re,def:q-value,def:mipstar-computable,def:re}
 \lean{MIPRE.Halting.halting_reduction_quantum_of, MIPRE.Halting.gameValue_uncomputable_of, MIPRE.Halting.quantumValue_uncomputable_of,
   MIPRE.Halting.re_subset_mipstar_of, MIPRE.Halting.mipstar_eq_re_of}
 \leanok
