@@ -40,20 +40,33 @@ def main (args : List String) : IO Unit := do
   initSearchPath (← findSysroot)
   let keep : NameSet := (← IO.FS.lines keepFile).foldl
     (fun s l => if l.trimAscii.isEmpty then s else s.insert l.trimAscii.toString.toName) {}
-  -- every `MIPRE` module, through the imports of `MIPRE.lean`
+  -- every `MIPRE` module, through the imports of `MIPRE.lean` (the module headers, read from
+  -- the exported part of each olean)
   let mut seen : NameSet := {}
+  let mut order : Array Name := #[]
   let mut stack : Array Name := #[`MIPRE]
-  let mut consts : Array (Name × ConstantInfo) := #[]
   while !stack.isEmpty do
     let m := stack.back!
     stack := stack.pop
     if seen.contains m then continue
     seen := seen.insert m
+    order := order.push m
     let (data, _) ← readModuleData (← findOLean m)
-    for c in data.constants do
-      consts := consts.push (m, c)
     for i in data.imports do
       if i.module.getRoot == `MIPRE then stack := stack.push i.module
+  -- Under the module system a module's `.olean` holds its exported interface only, in which
+  -- every theorem is an axiom; the proofs are in the `.olean.private` part, which only an
+  -- `import all` loads. So the modules are imported, all of them with `importAll`, rather than
+  -- read one olean at a time, and the constants are taken from the environment.
+  let env ← importModules (order.map fun m => { module := m, importAll := true : Import }) {}
+    (level := .private)
+  let modNames := env.header.moduleNames
+  let mut consts : Array (Name × ConstantInfo) := #[]
+  for (n, c) in env.constants.map₁ do
+    if let some idx := env.getModuleIdxFor? n then
+      let m := modNames[idx.toNat]!
+      if m.getRoot == `MIPRE then consts := consts.push (m, c)
+  consts := consts.qsort fun a b => Name.lt a.2.name b.2.name
   let mut ours : Std.HashMap Name ConstantInfo := {}
   for (_, c) in consts do
     ours := ours.insert c.name c

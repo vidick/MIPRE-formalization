@@ -24,12 +24,15 @@ result of size at most `t`, and a pointer machine simulates a run of cost `t` in
 the class of polynomial-time functions is the usual one. No other notion of machine appears.
 -/
 
-import Mathlib.Analysis.Matrix.Order
-import Mathlib.Computability.PartrecCode
-import Mathlib.LinearAlgebra.Matrix.Kronecker
-import Mathlib.Algebra.Polynomial.Eval.Defs
-import Mathlib.Data.Set.Finite.List
-import Mathlib.Data.Fintype.Vector
+module
+public import Mathlib.Analysis.Matrix.Order
+public import Mathlib.Computability.PartrecCode
+public import Mathlib.LinearAlgebra.Matrix.Kronecker
+public import Mathlib.Algebra.Polynomial.Eval.Defs
+public import Mathlib.Data.Set.Finite.List
+public import Mathlib.Data.Fintype.Vector
+
+@[expose] public section
 
 namespace MIPRE.Palomar
 
@@ -77,7 +80,8 @@ structure TensorStrategy (G : Game X Y A B) where
   PB : PVM Y B dB
 
 /-- The winning probability of a tensor-product strategy: by the Born rule the players answer
-`(a, b)` to `(x, y)` with probability `⟨ψ| A^x_a ⊗ B^y_b |ψ⟩`, the tensor product of matrices
+`(a, b)` to `(x, y)` with probability `⟨ψ| A^x_a ⊗ B^y_b |ψ⟩`, the tensor product of
+matrices
 being the Kronecker product. (The probability is a nonnegative real; `.re` makes the
 definition typecheck without a proof.) -/
 noncomputable def TensorStrategy.value {G : Game X Y A B} (S : TensorStrategy G) : ℝ :=
@@ -126,7 +130,8 @@ structure GameData where
 namespace GameData
 
 /-- A description is a tuple of naturals and lists; this is its Gödel numbering. -/
-def equivTuple : GameData ≃ ℕ × ℕ × List (ℕ × ℕ × ℕ) × List (ℕ × ℕ × ℕ × ℕ) where
+def equivTuple :
+    GameData ≃ ℕ × ℕ × List (ℕ × ℕ × ℕ) × List (ℕ × ℕ × ℕ × ℕ) where
   toFun g := (g.nX, g.nA, g.w, g.acc)
   invFun t := ⟨t.1, t.2.1, t.2.2.1, t.2.2.2⟩
 
@@ -328,7 +333,8 @@ inductive Eval : Env → Prog → Data → ℕ → Prop
 def Prog.Runs (p : Prog) (x r : Data) (t : ℕ) : Prop := Eval [x] p r t
 
 /-- `p` halts on the input `x` within cost `t`. -/
-def Prog.HaltsWithin (p : Prog) (x : Data) (t : ℕ) : Prop := ∃ r t', t' ≤ t ∧ Eval [x] p r t'
+def Prog.HaltsWithin (p : Prog) (x : Data) (t : ℕ) : Prop :=
+  ∃ r t', t' ≤ t ∧ Eval [x] p r t'
 
 /-! ### Verifiers -/
 
@@ -412,3 +418,5 @@ theorem mipstar_eq_re : MIPStar = IsRE := by
   sorry
 
 end MIPRE.Palomar
+
+end

@@ -139,6 +139,11 @@ Each phase is one pull request unless noted; the order is forced by the dependen
    its dependents until the next pass, so compiling a suspect file alone with
    `lake env lean` as soon as its imports are built, in parallel with the pass, is what
    keeps the count of passes down.
+   One more consequence for the tooling: a module's `.olean` holds only its exported
+   interface, in which every theorem is an axiom, and the proofs sit in the `.olean.private`
+   part; `scripts/blueprint-deps.lean` (behind `blueprint-edges.py`) read the `.olean` alone
+   and reported 374 stale and 854 missing edges, and now reads both parts. Anything else that
+   inspects oleans directly (rather than through `import`) needs the same.
 3. **Split the 71k-line module** in `scripts/vendor-repetition.py` into files under 10,000
    lines, deterministically, recorded like every other vendor fix.
 4. **The Challenge**: a self-contained, Mathlib-only statement file. `HaltingGameValue.lean`
@@ -146,6 +151,19 @@ Each phase is one pull request unless noted; the order is forced by the dependen
    `MIPStar = RE` needs a compact definition of a polynomial-time verifier that a reader can
    audit; the candidates and their cost (the bridge from `MIPRE.Cost` to the Challenge's model)
    are worked out in a separate draft and decided with the maintainer.
+
+   Done 2026-09-28. `Palomar/Challenge.lean` (419 lines, Mathlib-only, module form, four
+   `sorry`ed theorems) with the decisions of `planning/palomar-challenge.md` section 4;
+   `Palomar/Solution.lean` (846 lines) repeats every Challenge declaration verbatim (the
+   comparator matches by name, and a file cannot import the Challenge and declare its names
+   again) and proves the four theorems by transport, the structural identifications of the
+   Challenge's types with the library's sitting in two marked sections of the Solution and
+   the library's results restated in the Challenge's shape in `Palomar/Bridge.lean`
+   (188 lines). All four depend on `propext`, `Classical.choice` and `Quot.sound` only. The
+   `Palomar` library of `lakefile.toml` (roots `Challenge`, `Bridge`, `Solution`) is a
+   default target, so `lake build` and CI build them; `Palomar.lean` exists only because
+   `mk_all --check` wants an aggregator and is not a root, since it could not compile. The
+   Challenge is exempt from the `MIPRE.Tactics` bundle and imports what it uses.
 5. **Submission files**: `Solution.lean`, `comparator.json`, `formalization.yaml`, the
    `docbuild/` doc-gen4 project of the template, and the pre-submission scripts
    (`validate-formalization.rb`, `verify-comparator.sh`, `check-lean-sources.py`); then the

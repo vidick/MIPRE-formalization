@@ -81,6 +81,9 @@ def is_module(lines: list[str]) -> bool:
 
 BUNDLE = "MIPRE.Tactics"
 BUNDLE_LINE = f"public import {BUNDLE}"
+# The Palomar Challenge may import only Mathlib (`planning/palomar.md`), so it never gets the
+# bundle; it imports the tactic modules it uses itself.
+BUNDLE_EXEMPT = {"Palomar/Challenge.lean"}
 MATHLIB_PART_RE = re.compile(r"^public import Mathlib\.\S+\s*$")
 MATHLIB_ALL_RE = re.compile(r"^public import Mathlib\s*$")
 
@@ -121,12 +124,12 @@ def ensure_bundle(text: str) -> str | None:
     return "\n".join(lines)
 
 
-def modularize(text: str) -> str | None:
+def modularize(text: str, bundle: bool = True) -> str | None:
     """Return the rewritten text, or None if the file is already a module with the bundle."""
     lines = text.split("\n")
     if is_module(lines):
         t1 = ensure_meta_twins(text)
-        t2 = ensure_bundle(t1 if t1 is not None else text)
+        t2 = ensure_bundle(t1 if t1 is not None else text) if bundle else None
         return t2 if t2 is not None else t1
     first = next((i for i, l in enumerate(lines) if IMPORT_RE.match(l)), None)
     if first is None:
@@ -181,7 +184,7 @@ def modularize(text: str) -> str | None:
     out += ["", "end", ""]
     result = "\n".join(out)
     result = ensure_meta_twins(result) or result
-    return ensure_bundle(result) or result
+    return (ensure_bundle(result) or result) if bundle else result
 
 
 PRIVATE_DEF_RE = re.compile(
@@ -236,6 +239,13 @@ def private_def_names(paths: list[Path]) -> dict[str, list[Path]]:
 KNOWN_FLAGS = {"--check", "--unprivate-defs", "--clashes"}
 
 
+def is_bundle_exempt(p: Path) -> bool:
+    try:
+        return p.resolve().relative_to(ROOT).as_posix() in BUNDLE_EXEMPT
+    except ValueError:
+        return False
+
+
 def modularize_tree(dest: Path, unprivate: bool = True) -> int:
     """``modularize_paths`` over every ``.lean`` file under ``dest`` (for the vendor scripts)."""
     return modularize_paths(sorted(dest.rglob("*.lean")), unprivate)
@@ -247,7 +257,7 @@ def modularize_paths(paths: list[Path], unprivate: bool = True) -> int:
     n = 0
     for p in paths:
         text = p.read_text(encoding="utf-8")
-        new = modularize(text)
+        new = modularize(text, bundle=not is_bundle_exempt(p))
         if unprivate:
             new2, k = unprivate_defs(new if new is not None else text)
             if k:
@@ -268,7 +278,8 @@ def main() -> int:
     if args:
         paths = [Path(a) for a in args]
     else:
-        paths = sorted(ROOT.glob("MIPRE/**/*.lean")) + [ROOT / "MIPRE.lean"]
+        paths = (sorted(ROOT.glob("MIPRE/**/*.lean")) + [ROOT / "MIPRE.lean"]
+                 + sorted(ROOT.glob("Palomar/**/*.lean")) + [ROOT / "Palomar.lean"])
     paths = [p for p in paths if p.resolve() != (ROOT / "MIPRE" / "Tactics.lean").resolve()]
     if "--clashes" in sys.argv:
         clashes = {k: v for k, v in private_def_names(paths).items() if len(v) > 1}
@@ -279,7 +290,7 @@ def main() -> int:
     changed = []
     for p in paths:
         text = p.read_text(encoding="utf-8")
-        new = modularize(text)
+        new = modularize(text, bundle=not is_bundle_exempt(p))
         if "--unprivate-defs" in sys.argv:
             new2, n = unprivate_defs(new if new is not None else text)
             if n:
