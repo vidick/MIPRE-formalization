@@ -100,7 +100,9 @@ theorem measurable_ψψ : Measurable (Prod.map ψ ψ) := ψ_measurable.prodMap �
 noncomputable def νψ : Measure (ℝ × ℝ) := (νxy M x y).map (Prod.map ψ ψ)
 
 theorem νψ_prob : IsProbabilityMeasure (νψ M x y) :=
-  Measure.isProbabilityMeasure_map (measurable_ψψ).aemeasurable
+  -- Vendoring compile fix (Mathlib v4.35): `Measure.isProbabilityMeasure_map` became the
+  -- equivalence `isProbabilityMeasure_map_iff`. See README.md.
+  (Measure.isProbabilityMeasure_map_iff (measurable_ψψ).aemeasurable).mpr inferInstance
 
 theorem νψ_map_fst : (νψ M x y).map Prod.fst = μx M x := by
   rw [νψ, Measure.map_map measurable_fst measurable_ψψ,

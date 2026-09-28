@@ -113,8 +113,10 @@ theorem traceState_mul_comm {T S : M.H →L[ℂ] M.H}
     have hclosed : IsClosed {W : M.H →L[ℂ] M.H |
         M.traceState (W * M.L b) = M.traceState (M.L b * W)} := by
       apply isClosed_eq
-      · exact M.continuous_traceState.comp (continuous_mul_right _)
-      · exact M.continuous_traceState.comp (continuous_mul_left _)
+      -- Vendoring compile fix (Mathlib v4.35): `continuous_mul_right`/`_left` are now
+      -- `continuous_mul_const`/`continuous_const_mul`. See README.md.
+      · exact M.continuous_traceState.comp (continuous_mul_const _)
+      · exact M.continuous_traceState.comp (continuous_const_mul _)
     have hsub : (StarAlgHom.range M.L : Set (M.H →L[ℂ] M.H))
         ⊆ {W | M.traceState (W * M.L b) = M.traceState (M.L b * W)} := by
       rintro _ ⟨a, rfl⟩
@@ -129,8 +131,10 @@ theorem traceState_mul_comm {T S : M.H →L[ℂ] M.H}
   have hclosed2 : IsClosed {W : M.H →L[ℂ] M.H |
       M.traceState (T * W) = M.traceState (W * T)} := by
     apply isClosed_eq
-    · exact M.continuous_traceState.comp (continuous_mul_left _)
-    · exact M.continuous_traceState.comp (continuous_mul_right _)
+    -- Vendoring compile fix (Mathlib v4.35): `continuous_mul_left`/`_right` are now
+    -- `continuous_const_mul`/`continuous_mul_const`. See README.md.
+    · exact M.continuous_traceState.comp (continuous_const_mul _)
+    · exact M.continuous_traceState.comp (continuous_mul_const _)
   have hsub2 : (StarAlgHom.range M.L : Set (M.H →L[ℂ] M.H))
       ⊆ {W | M.traceState (T * W) = M.traceState (W * T)} := by
     rintro _ ⟨b, rfl⟩
@@ -181,7 +185,9 @@ theorem norm_mul_traceVector_le {U T : M.H →L[ℂ] M.H}
     norm_num
   have hZpos : (0 : M.H →L[ℂ] M.H) ≤ Z := by
     rw [hZdef, sub_nonneg, ← halg]
-    exact IsSelfAdjoint.le_algebraMap_norm_self hYsa
+    -- Vendoring compile fix (Mathlib v4.35): `IsSelfAdjoint.le_algebraMap_norm_self` takes
+    -- the element explicitly. See README.md.
+    exact IsSelfAdjoint.le_algebraMap_norm_self Y hYsa
   have hZmem : Z ∈ M.envAlg := by
     rw [hZdef]
     exact sub_mem (M.smul_one_mem_envAlg _) hY

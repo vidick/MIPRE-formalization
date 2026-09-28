@@ -228,7 +228,7 @@ theorem povm_orthogonalization_of_mem_all_general (M : VonNeumannAlgebra H)
   obtain ⟨p, hpM, hp, -, hsum, hlt⟩ := orthAtN_of_mem_all M hM ι φ.toLinearMap
     (NormalState.isNormalOn φ)
     φ.nonneg' φ.map_one' a ha.1
-    (fun i => (ContinuousLinearMap.nonneg_iff_isPositive _).mpr (ha.2.1 i)) ha.2.2 ε hε
+    (fun i => ContinuousLinearMap.nonneg_iff_isPositive.mpr (ha.2.1 i)) ha.2.2 ε hε
   exact ⟨p, ⟨hpM, hp, hsum⟩, hlt⟩
 
 /-- **Theorem 1.2** (`povm_orthogonalization`) for `M = B(H)`, `H` an arbitrary Hilbert

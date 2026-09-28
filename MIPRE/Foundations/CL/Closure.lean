@@ -275,10 +275,6 @@ theorem sum_clDist [Nonempty F] (L R : (ι → F) → (ι → F)) :
     rw [← Nat.cast_sum, ← Finset.card_univ, Finset.card_eq_sum_card_fiberwise
       (f := fun x => (L x, R x)) (t := Finset.univ) (fun _ _ => Finset.mem_univ _)]
     congr 1
-    refine Finset.sum_congr rfl fun p _ => ?_
-    congr 1
-    ext x
-    simp [Prod.ext_iff]
   rw [← Fintype.sum_prod_type' fun a b => clDist L R a b]
   simp only [clDist, div_eq_mul_inv, ← Finset.sum_mul, key, mul_inv_cancel₀ hcard.ne']
 

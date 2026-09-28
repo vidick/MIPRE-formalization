@@ -109,7 +109,9 @@ theorem coreW_nonneg (G : Game X Y A B) (D : Finset (Fin n)) (xw : Fin n → X) 
 theorem coreW_le_one (G : Game X Y A B) (D : Finset (Fin n)) (xw : Fin n → X) (yw : Fin n → Y)
     (zA : {j : Fin n // j ∈ D} → A) (zB : {j : Fin n // j ∈ D} → B) :
     coreW G D xw yw zA zB ≤ 1 :=
-  Finset.prod_le_one (fun j _ => G.payoff_nonneg _ _ _ _) (fun j _ => G.payoff_le_one _ _ _ _)
+  -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one₀` is the version with the
+  -- nonnegativity hypothesis. See README.md.
+  Finset.prod_le_one₀ (fun j _ => G.payoff_nonneg _ _ _ _) (fun j _ => G.payoff_le_one _ _ _ _)
 
 /-- The core weight reads the question words only on `D`. -/
 theorem coreW_agree (G : Game X Y A B) (D : Finset (Fin n)) :

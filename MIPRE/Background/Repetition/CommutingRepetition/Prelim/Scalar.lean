@@ -114,7 +114,9 @@ theorem abs_prod_sub_prod_le {ι : Type*} [DecidableEq ι] (s : Finset ι)
     have hjg1 := hg1 j (Finset.mem_insert_self j s)
     have hPf : |∏ i ∈ s, f i| ≤ 1 := by
       rw [abs_of_nonneg (Finset.prod_nonneg hfmem)]
-      exact Finset.prod_le_one hfmem hfmem1
+      -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one₀` is the version with
+      -- the nonnegativity hypothesis. See README.md.
+      exact Finset.prod_le_one₀ hfmem hfmem1
     have key : f j * (∏ i ∈ s, f i) - g j * (∏ i ∈ s, g i)
         = (f j - g j) * (∏ i ∈ s, f i) +
           g j * ((∏ i ∈ s, f i) - ∏ i ∈ s, g i) := by ring

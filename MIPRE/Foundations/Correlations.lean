@@ -133,8 +133,8 @@ theorem value_eq_payoff (G : Game X Y A B) : S.value G = G.payoff S.correlation 
 positive operators. -/
 theorem isPositive_mul (x : X) (y : Y) (a : A) (b : B) : (S.E x a * S.F y b).IsPositive := by
   rw [← ContinuousLinearMap.nonneg_iff_isPositive]
-  exact Commute.mul_nonneg ((ContinuousLinearMap.nonneg_iff_isPositive _).2 (S.E_pos x a))
-    ((ContinuousLinearMap.nonneg_iff_isPositive _).2 (S.F_pos y b)) (S.commutes x y a b)
+  exact Commute.mul_nonneg (ContinuousLinearMap.nonneg_iff_isPositive.2 (S.E_pos x a))
+    (ContinuousLinearMap.nonneg_iff_isPositive.2 (S.F_pos y b)) (S.commutes x y a b)
 
 /-- Commuting-operator correlations are nonnegative. -/
 theorem correlation_nonneg (x : X) (y : Y) (a : A) (b : B) : 0 ≤ S.correlation x y a b := by

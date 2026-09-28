@@ -62,7 +62,7 @@ theorem exists_sqrt_op {A : H →L[ℂ] H} (h0 : 0 ≤ A) :
 /-- POVM elements are contractions. -/
 theorem norm_povm_le_one {ι : Type*} [Fintype ι] [DecidableEq ι] (E : ι → H →L[ℂ] H)
     (hpos : ∀ i, (E i).IsPositive) (hsum : ∑ i, E i = 1) (i : ι) : ‖E i‖ ≤ 1 := by
-  have h0 : (0 : H →L[ℂ] H) ≤ E i := (ContinuousLinearMap.nonneg_iff_isPositive _).mpr (hpos i)
+  have h0 : (0 : H →L[ℂ] H) ≤ E i := ContinuousLinearMap.nonneg_iff_isPositive.mpr (hpos i)
   have h1 : E i ≤ 1 := by
     rw [ContinuousLinearMap.le_def]
     rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i)] at hsum
@@ -209,14 +209,14 @@ noncomputable def stdOf (S : CommutingStrategy.{0} X Y A B) [SeparableSpace S.H]
     Aop := fun x a => sfMap (aliceAlg S) g hg (S.E x a)
     Aop_mem := fun x a => sfMap_mem (aliceAlg S) g hg hfaith (E_mem_aliceAlg S x a)
     Aop_nonneg := fun x a => sfMap_nonneg (aliceAlg S) g hg
-      ((ContinuousLinearMap.nonneg_iff_isPositive _).mpr (S.E_pos x a))
+      (ContinuousLinearMap.nonneg_iff_isPositive.mpr (S.E_pos x a))
     Aop_sum := fun x => by
       rw [← sfMap_finset_sum (aliceAlg S) g hg, S.E_sum x, sfMap_one]
     Bop := fun y b => sfMap (aliceAlg S) g hg (S.F y b)
     Bop_mem := fun y b => sfMap_mem_commutant (aliceAlg S) g hg hfaith
       (F_mem_aliceAlg_commutant S y b)
     Bop_nonneg := fun y b => sfMap_nonneg (aliceAlg S) g hg
-      ((ContinuousLinearMap.nonneg_iff_isPositive _).mpr (S.F_pos y b))
+      (ContinuousLinearMap.nonneg_iff_isPositive.mpr (S.F_pos y b))
     Bop_sum := fun y => by
       rw [← sfMap_finset_sum (aliceAlg S) g hg, S.F_sum y, sfMap_one] }
 

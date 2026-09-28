@@ -109,7 +109,7 @@ theorem povm_orthogonalization_of_structure (hS : MvNStructureTheory.{u})
       (φ (∑ i, star (a i - p i) * (a i - p i))).re < 9 * ε := by
   obtain ⟨p, hpM, hp, -, hsum, hlt⟩ := orthAtN_one_of_structure hS M ι φ.toLinearMap
     (NormalState.isNormalOn φ) φ.nonneg' φ.map_one' a ha.1
-    (fun i => (ContinuousLinearMap.nonneg_iff_isPositive _).mpr (ha.2.1 i)) ha.2.2 ε hε
+    (fun i => ContinuousLinearMap.nonneg_iff_isPositive.mpr (ha.2.1 i)) ha.2.2 ε hε
   exact ⟨p, ⟨hpM, hp, hsum⟩, hlt⟩
 
 end Orthogonalization

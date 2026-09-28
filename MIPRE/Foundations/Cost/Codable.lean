@@ -5,7 +5,7 @@ Authors: Thomas Vidick
 -/
 import MIPRE.Foundations.Cost.Loops
 import Mathlib.Computability.Primrec.List
-import Mathlib.Logic.Denumerable
+import Mathlib.Basic.Denumerable
 
 /-!
 # `Data` as a primcodable type

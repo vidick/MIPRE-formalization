@@ -6,6 +6,7 @@ Authors: Thomas Vidick
 import Mathlib.Algebra.MvPolynomial.SchwartzZippel
 import Mathlib.Algebra.MvPolynomial.CommRing
 import Mathlib.Data.Rat.Cast.Order
+import Mathlib.Data.Rat.Cast.Lemmas
 import Mathlib.Algebra.Polynomial.Roots
 import Mathlib.Data.Real.Basic
 
@@ -77,7 +78,7 @@ theorem prob_agree_le_totalDegree {f g : MvPolynomial (Fin m) F} (hfg : f ≠ g)
   have hstep : ((f - g).totalDegree : ℚ≥0) / (Fintype.card F : ℚ≥0)
       ≤ (d : ℚ≥0) / (Fintype.card F : ℚ≥0) := by gcongr
   have h' := NNRat.cast_mono (K := ℝ) (h.trans hstep)
-  push_cast at h'
+  push_cast [NNRat.cast_pow] at h'
   exact h'
 
 /-- The individual-degree variant: if `f ≠ g` and both have degree at most `d` in each of
@@ -102,7 +103,7 @@ theorem prob_agree_le_individualDegree {f g : MvPolynomial (Fin m) F} (hfg : f �
           rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
             mul_div_assoc]
   have h' := NNRat.cast_mono (K := ℝ) (h.trans hstep)
-  push_cast at h'
+  push_cast [NNRat.cast_pow] at h'
   exact h'
 
 /-- **The majority test used by the classical PCP.** If the field has at least

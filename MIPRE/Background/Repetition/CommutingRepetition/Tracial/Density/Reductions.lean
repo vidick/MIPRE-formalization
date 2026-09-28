@@ -280,7 +280,7 @@ theorem corr_eq (x : X) (y : Y) (a : A) (b : B) :
 theorem norm_E_le_one (x : X) (a : A) : ‖P.S.E x a‖ ≤ 1 := by
   classical
   have h0 : (0 : P.S.H →L[ℂ] P.S.H) ≤ P.S.E x a :=
-    (ContinuousLinearMap.nonneg_iff_isPositive _).mpr (P.S.E_pos x a)
+    ContinuousLinearMap.nonneg_iff_isPositive.mpr (P.S.E_pos x a)
   have h1 : P.S.E x a ≤ 1 := by
     rw [ContinuousLinearMap.le_def]
     have hsum := P.S.E_sum x

@@ -142,7 +142,7 @@ theorem blockProj_nonneg {n : ℕ} {q : Fin n → H →L[ℂ] H} (h : ∀ i, 0 �
     exact (IsSelfAdjoint.of_nonneg (h i)).star_eq
   · simp only [PiLp.inner_apply, blockProj_apply_coord]
     exact Finset.sum_nonneg fun j _ =>
-      ((ContinuousLinearMap.nonneg_iff_isPositive _).mp (h j)).inner_nonneg_left _
+      (ContinuousLinearMap.nonneg_iff_isPositive.mp (h j)).inner_nonneg_left _
 
 theorem blockProj_le_blockProj {n : ℕ} {q q' : Fin n → H →L[ℂ] H} (h : ∀ i, q i ≤ q' i) :
     blockProj q ≤ blockProj q' := by

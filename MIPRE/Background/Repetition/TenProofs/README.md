@@ -36,8 +36,9 @@ repository. Every file carries a header saying so.
 ## Local deviations from upstream
 
 Compile fixes for the toolchain crossing (upstream builds with Lean v4.32.0, this
-repository with v4.33.0), applied by `scripts/vendor-repetition.py` from its recorded
-`fixes` table:
+repository with v4.33.0 and, since 2026-09-28, v4.35.0-rc3), applied by
+`scripts/vendor-repetition.py` from its recorded `fixes` table (`--apply-fixes` re-applies
+them to the tree as it is, finding each site in whichever part of the split it now lives):
 
 1. `exists_proofSchmidtDecomposition`: `set_option backward.isDefEq.respectTransparency
    false in` before the theorem. Under Lean v4.33's transparency check its closing `simpa`

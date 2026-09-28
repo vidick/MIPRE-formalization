@@ -97,10 +97,6 @@ theorem sum_dist [Nonempty V] : ∑ x, ∑ y, S.dist x y = 1 := by
     rw [← Nat.cast_sum, ← Finset.card_univ, Finset.card_eq_sum_card_fiberwise
       (f := fun z => (S.LA z, S.LB z)) (t := univ) (fun _ _ => mem_univ _)]
     congr 1
-    refine Finset.sum_congr rfl fun p _ => ?_
-    congr 1
-    ext z
-    simp [Prod.ext_iff]
   rw [← Fintype.sum_prod_type' fun x y => S.dist x y]
   simp only [dist, div_eq_mul_inv, ← Finset.sum_mul, key, mul_inv_cancel₀ hcard.ne']
 

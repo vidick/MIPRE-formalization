@@ -36,7 +36,44 @@ repository. `NOTICE`, copied from upstream, records the material it ports from
 
 ## Local deviations from upstream
 
-None yet (beyond the mechanical ones above).
+Compile fixes for the Mathlib crossing (this repository moved to Lean v4.35.0-rc3 and
+Mathlib `v4.35.0-rc3` on 2026-09-28, `planning/palomar.md`), applied by
+`scripts/vendor-repetition.py` from its recorded `Fix` list (`--apply-fixes` re-applies them
+to the tree as it is); each site carries a comment saying so:
+
+- `Game/Basic.lean` and `Statement.lean` (`Game.repeat`'s `payoff_le_one`),
+  `Game/Monotone.lean`, `Prerounding/Success.lean` and `Prelim/Scalar.lean` (product
+  bounds): `Finset.prod_le_one` lost its nonnegativity hypothesis in Mathlib v4.35; the
+  version with it is `Finset.prod_le_one₀`, which is what these call now.
+- `Tracial/CStarLayer.lean`: `continuous_mul_right`/`continuous_mul_left` are now
+  `continuous_mul_const`/`continuous_const_mul`; `IsSelfAdjoint.le_algebraMap_norm_self`
+  takes its element explicitly (also `VN/SubModel.lean`, through dot notation).
+- `Tracial/Density/ClosedSubalg.lean`, and a recorded *pattern* fix over the whole tree
+  (16 sites at the time of writing): the operator of
+  `ContinuousLinearMap.nonneg_iff_isPositive` is implicit, so the explicit argument
+  upstream passes (`_` or a name) is dropped.
+- `VN/Crossed/Space.lean`: the shortcut `ContinuousFunctionalCalculus` instance on
+  `B(ℓ²(ℚ, K))` names its algebra, without which the `Star` instance of the
+  `IsSelfAdjoint` predicate no longer unifies.
+- `VN/Crossed/AmpCalc.lean` (`amp_sub`): `neg_one_smul` is applied with its module element
+  named, since the scalar action produced by `amp_smul` no longer unifies with the bare
+  rewrite. `VN/JointModulus.lean`: `Measure.isProbabilityMeasure_map` became the
+  equivalence `isProbabilityMeasure_map_iff`.
+- `Resolver/EntropicArena.lean`: `Ame_isPos` and `Bme_isPos` get
+  `set_option maxHeartbeats 1600000 in`; their `map_sum` step exceeds the default budget
+  under Mathlib v4.35 (the instance search unfolds the arena's algebra) and elaborates
+  within the larger one.
+- `Resolver/EntropicArenaBudget.lean` and `VN/Crossed/Modular.lean`: on `H →L[ℂ] H` the
+  `Star` instance is `⟨adjoint⟩`, and on a `StarSubalgebra` of it `StarMemClass.instStar`;
+  the generic `star_sub`, `star_add` and `star_zero` are stated for the instance derived
+  from `StarAddMonoid`, which `rw` and `simp` no longer identify with these before
+  matching (the unfolding exceeds the budget). The lemmas are applied to their explicit
+  arguments, or `star 0` is rewritten through `ContinuousLinearMap.star_eq_adjoint`, so
+  the instance is resolved first.
+- `Tracial/Density/CrossedTracial.lean` (`Phi_zero`): the same kind of mismatch for the
+  `SMul` instance of `B(ℓ²(ℚ, K))` (`ContinuousLinearMap.instSMul` against the one
+  `zero_smul` and `smul_zero` are stated for), so `Phi 0 = 0` is derived from `Phi_add`
+  instead of `Phi_smul`.
 
 ## Provenance
 

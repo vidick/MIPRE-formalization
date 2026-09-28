@@ -63,6 +63,39 @@ HEADER = ("Vendored from `lukasliehr/MIPRE` ({url}), a Lean 4 formalization of T
 def header(**kw: str) -> str:
     return "/-\n" + textwrap.fill(HEADER.format(**kw), width=98) + "\n-/\n"
 
+
+# Recorded compile fixes, applied after copying: `old` must occur exactly once in the
+# vendored file (relative to the destination directory) and is replaced by `new`; a fix
+# whose `new` text is already present is skipped, so `--apply-fixes` can be re-run on the
+# tree as it is. Each is described in the README under "Local deviations from upstream".
+FIXES: list[tuple[str, str, str]] = [
+    ("Core/Measurement.lean",
+     """  exact h.mul_nonneg ((ContinuousLinearMap.nonneg_iff_isPositive _).2 hS)
+    ((ContinuousLinearMap.nonneg_iff_isPositive _).2 hT)
+""",
+     """  -- Vendoring compile fix (Mathlib v4.35): `nonneg_iff_isPositive` takes its operator
+  -- implicitly. See README.md.
+  exact h.mul_nonneg (ContinuousLinearMap.nonneg_iff_isPositive.2 hS)
+    (ContinuousLinearMap.nonneg_iff_isPositive.2 hT)
+"""),
+]
+
+
+def apply_fixes(dest: Path) -> int:
+    applied = 0
+    for rel, old, new in FIXES:
+        target = dest / rel
+        text = target.read_text(encoding="utf-8")
+        if text.count(new) == 1:
+            print(f"already applied: {rel}")
+        elif text.count(old) == 1:
+            target.write_text(text.replace(old, new), encoding="utf-8", newline="\n")
+            applied += 1
+            print(f"applied: {rel}")
+        else:
+            sys.exit(f"error: recorded fix for {rel} matched {text.count(old)} times, expected 1")
+    return applied
+
 README = """# Vendored `lukasliehr/MIPRE` core
 
 This directory is a **generated, read-only** copy of the statement vocabulary of
@@ -156,14 +189,23 @@ def refresh_readme(path: Path, generated: str) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
-    ap.add_argument("--source", required=True, type=Path,
+    ap.add_argument("--source", type=Path,
                     help="upstream checkout or unpacked archive (the directory holding "
                          "`Tsirelson/`)")
-    ap.add_argument("--date", required=True, help="date of the snapshot, YYYY-MM-DD")
+    ap.add_argument("--date", help="date of the snapshot, YYYY-MM-DD")
     ap.add_argument("--commit", default=None, help="upstream commit, if known")
+    ap.add_argument("--apply-fixes", action="store_true",
+                    help="only apply the recorded compile fixes to the vendored tree as it "
+                         "is (no source needed); fixes already applied are skipped")
     args = ap.parse_args()
 
     repo_root = Path(__file__).resolve().parent.parent
+    if args.apply_fixes:
+        n = apply_fixes(repo_root / DEST)
+        print(f"{n} fixes applied; next: lake build")
+        return
+    if not args.source or not args.date:
+        ap.error("--source and --date are required unless --apply-fixes is given")
     src_root = args.source.resolve()
     if not (src_root / "Tsirelson").is_dir():
         sys.exit(f"error: {src_root} has no Tsirelson/ directory")
@@ -196,6 +238,8 @@ def main() -> None:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(head + text, encoding="utf-8", newline="\n")
 
+    fixed = apply_fixes(dest)
+
     generated = "\n".join([
         BEGIN_MARK,
         f"- Upstream: {URL}",
@@ -205,6 +249,8 @@ def main() -> None:
         f"`{UPSTREAM_PREFIX}.` to `{LOCAL_PREFIX}.`, {substituted} redirected "
         + ", ".join(f"`{k}` to `{v}`" for k, v in IMPORT_SUBST.items()),
         "- `set_option autoImplicit true` inserted: no (not needed)",
+        f"- Recorded compile fixes applied: {fixed} (listed under \"Local deviations from "
+        "upstream\")",
         END_MARK,
     ])
     refresh_readme(readme, generated)

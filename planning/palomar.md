@@ -71,6 +71,27 @@ Each phase is one pull request unless noted; the order is forced by the dependen
    `lake exe cache get` fetches the oleans. The vendored trees are repaired only through
    `scripts/vendor-*.py`. The cloud setup script must be re-saved afterwards (it reads
    `lean-toolchain`).
+
+   Done 2026-09-28 (v4.33.0 to v4.35.0-rc3, Mathlib `db584cd` to `c55e6e7`). What it took,
+   for the next bump: Mathlib's cache moved to `cache.mathlib.org`, which the cloud
+   environment does not allow (`docs/lean-cloud.md` has the workaround); six full build
+   passes of about 25 minutes each, because a failed module hides its dependents until the
+   next pass (compiling a suspect file alone with `lake env lean` once its imports are
+   built, in parallel with the pass, saves a pass); some twenty distinct breakages in our own code, all mechanical (a `congr` or
+   `gcongr` that now closes the goal and leaves dead tactics behind, the deleted
+   `MvPolynomial.coeff`, renamed or re-argumented lemmas such as `nonneg_iff_isPositive`,
+   `Finset.prod_le_one₀`, `norm_le_norm_of_le_of_nonneg`, `NNRat.cast_pow` moved to another
+   module, and two `Primrec` lemmas that only needed a larger heartbeat budget); and about
+   forty in the vendored trees, recorded as `Fix` and `PatternFix` entries of the vendor
+   scripts, whose `--apply-fixes` re-applies them without a clone. One recurring and
+   non-obvious failure: rewriting with `map_sum` at a `MvPolynomial` ring homomorphism now
+   times out, because instance search tries `RingHomClass.toLinearMapClassNNRat` first and
+   asks for a `Module ℚ≥0` on the polynomial ring that never resolves when the coefficient
+   type is a class projection; supplying the `AddMonoidHomClass` instance with `haveI` is
+   the fix. Another: on `H →L[ℂ] H` the `Star` instance is `⟨adjoint⟩`, and `rw` and
+   `simp` no longer match the generic `star_sub`, `star_add`, `star_zero` (stated for the
+   `StarAddMonoid`-derived instance) against it; applying the lemma to its explicit
+   arguments, or rewriting `star 0` through `star_eq_adjoint`, resolves the instance first.
 2. **Module headers**: `module` at the top of every `.lean` file, with `public import` for
    re-exported imports and `@[expose] public section` where importers unfold definitions.
    Mechanical, scripted (`scripts/modularize.py`), one PR; vendored trees through their

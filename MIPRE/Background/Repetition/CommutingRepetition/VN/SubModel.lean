@@ -75,7 +75,9 @@ theorem norm_mul_traceVector_le {U T : M.H →L[ℂ] M.H}
     norm_num
   have hZpos : (0 : M.H →L[ℂ] M.H) ≤ Z := by
     rw [hZdef, sub_nonneg, ← halg]
-    exact IsSelfAdjoint.le_algebraMap_norm_self hYsa
+    -- Vendoring compile fix (Mathlib v4.35): `IsSelfAdjoint.le_algebraMap_norm_self` takes
+    -- the element explicitly; dot notation supplies it. See README.md.
+    exact hYsa.le_algebraMap_norm_self
   have hZmem : Z ∈ D.S := by
     rw [hZdef]
     exact sub_mem (D.smul_one_mem _) hY

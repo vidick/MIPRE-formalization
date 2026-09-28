@@ -53,7 +53,9 @@ theorem exists_isometry_completion (T : H →L[ℂ] K) (s : H →L[ℂ] H)
   have hτ : ∀ k, 0 ≤ τ k := by
     intro k
     have hpos : (s : H →ₗ[ℂ] H).IsPositive := (isPositive_toLinearMap_iff s).mpr
-      ((nonneg_iff_isPositive s).mp hs0)
+      -- Vendoring compile fix (Mathlib v4.35): `nonneg_iff_isPositive` takes its operator
+      -- implicitly. See README.md.
+      (nonneg_iff_isPositive.mp hs0)
     exact hpos.nonneg_eigenvalues rfl k
   -- `⟪T (b k), T (b l)⟫ = τ k ^ 2 δ_{kl}`
   have hTb : ∀ k l, ⟪T (b k), T (b l)⟫_ℂ = ((τ k : ℂ) * τ k) * ⟪b k, b l⟫_ℂ := by

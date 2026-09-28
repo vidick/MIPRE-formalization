@@ -639,6 +639,9 @@ def tabOf (sd pd : Data) (s T B k n : ℕ) : GameData where
   acc := Verifier.accListW s T (fun u => Verifier.bitsToIdx (false :: u))
           (fun v => Verifier.bitsToIdx (true :: v)) (accOf pd n)
 
+-- The `Primrec` composition below exceeds the default heartbeat budget under Mathlib
+-- v4.35 (the unifier unfolds the encodings); it elaborates in seconds with a larger one.
+set_option maxHeartbeats 1000000 in
 theorem primrec_dimOf {α : Type*} [Primcodable α] {sd : α → Data} {B lvl : α → ℕ} (k : ℕ)
     (hsd : Primrec sd) (hB : Primrec B) (hlvl : Primrec lvl) :
     Primrec fun a : α => dimOf (sd a) (B a) k (lvl a) := by
@@ -653,6 +656,9 @@ theorem primrec_dimOf {α : Type*} [Primcodable α] {sd : α → Data} {B lvl : 
       (Data.primrec_decode_nat.comp Primrec.snd).to₂)
     (Primrec.const 0)
 
+-- The `Primrec` composition below exceeds the default heartbeat budget under Mathlib
+-- v4.35 (the unifier unfolds the encodings); it elaborates in seconds with a larger one.
+set_option maxHeartbeats 1000000 in
 theorem primrec_margOf {α : Type*} [Primcodable α] {sd : α → Data} {B lvl : α → ℕ} (k : ℕ)
     (hsd : Primrec sd) (hB : Primrec B) (hlvl : Primrec lvl) (w : Player) :
     Primrec fun q : α × BitStr => margOf (sd q.1) (B q.1) k (lvl q.1) w q.2 := by

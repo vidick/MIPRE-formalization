@@ -43,7 +43,9 @@ abbrev L2Q (K : Type*) [NormedAddCommGroup K] [InnerProductSpace ℂ K] : Type _
 (instance search otherwise gives up on this type). -/
 noncomputable instance instCFC_L2Q :
     ContinuousFunctionalCalculus ℝ (L2Q K →L[ℂ] L2Q K) IsSelfAdjoint :=
-  IsSelfAdjoint.instContinuousFunctionalCalculus
+  -- Vendoring compile fix (Mathlib v4.35): the algebra must be named for the `IsSelfAdjoint`
+  -- predicate's `Star` instance to unify. See README.md.
+  IsSelfAdjoint.instContinuousFunctionalCalculus (A := L2Q K →L[ℂ] L2Q K)
 
 /-! ## ℓ² bookkeeping -/
 

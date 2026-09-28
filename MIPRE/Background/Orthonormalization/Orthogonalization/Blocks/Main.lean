@@ -52,7 +52,7 @@ theorem povm_orthogonalization_finDim_vn (M : VonNeumannAlgebra H) (φ : NormalS
     ∃ p : ι → H →L[ℂ] H, IsPVM M p ∧
       (φ (∑ i, star (a i - p i) * (a i - p i))).re < 9 * ε := by
   obtain ⟨p, hpM, hp, -, hsum, hlt⟩ := orthAt_one M ι φ.toLinearMap φ.nonneg' φ.map_one' a ha.1
-    (fun i => (ContinuousLinearMap.nonneg_iff_isPositive _).mpr (ha.2.1 i)) ha.2.2 ε hε
+    (fun i => ContinuousLinearMap.nonneg_iff_isPositive.mpr (ha.2.1 i)) ha.2.2 ε hε
   exact ⟨p, ⟨hpM, hp, hsum⟩, hlt⟩
 
 end Orthogonalization

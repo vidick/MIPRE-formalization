@@ -261,7 +261,7 @@ theorem povm_orthogonalization_II₁Factor (M : VonNeumannAlgebra H)
   set e := Fintype.equivFin ι with he
   have haM' : ∀ i, a (e.symm i) ∈ M := fun i => ha.1 _
   have ha0' : ∀ i, 0 ≤ a (e.symm i) := fun i =>
-    (ContinuousLinearMap.nonneg_iff_isPositive _).mpr (ha.2.1 _)
+    ContinuousLinearMap.nonneg_iff_isPositive.mpr (ha.2.1 _)
   have ha1' : ∑ i, a (e.symm i) = 1 := by rw [Equiv.sum_comp e.symm a]; exact ha.2.2
   have hε' : 1 - ε < (φ (∑ i, a (e.symm i) * a (e.symm i))).re := by
     rw [Equiv.sum_comp e.symm (fun i => a i * a i)]; exact hε

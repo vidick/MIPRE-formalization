@@ -29,6 +29,19 @@ shows.
   Docstrings cite upstream documents (`PLAN.md`, `FIDELITY.md`, `DIFFERENCES.md`, the
   manuscript); these resolve in the upstream repository at the commit below.
 
+## Local deviations from upstream
+
+Compile fixes for the Mathlib crossing (this repository moved to Lean v4.35.0-rc3 and
+Mathlib `v4.35.0-rc3` on 2026-09-28, `planning/palomar.md`), applied by
+`scripts/vendor-repetition.py` from its recorded `Fix` list (`--apply-fixes` re-applies them
+to the tree as it is); each site carries a comment saying so:
+
+- `FinDim/Isometry.lean` (the eigenvalue bound in the isometry lemma), `FinDim/JointDiag.lean`
+  (the eigenvalue bounds, also `le_def`), and a recorded *pattern* fix over the whole tree
+  (7 sites at the time of writing): Mathlib v4.35 makes the operator of
+  `nonneg_iff_isPositive` and of `le_def` implicit, so the explicit argument is dropped.
+- `MvN/Perturb.lean`: `IsSelfAdjoint.le_algebraMap_norm_self` takes its element explicitly.
+
 <!-- BEGIN GENERATED (scripts/vendor-repetition.py) -->
 - Upstream: https://github.com/vidick/commuting-repetition
 - Commit: `8ff85e29d24282297c328a11db4eabf1515948c3` (2026-09-10)

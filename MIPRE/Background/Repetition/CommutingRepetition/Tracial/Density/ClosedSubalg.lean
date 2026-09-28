@@ -101,7 +101,9 @@ end Order
 section States
 
 theorem inner_nonneg_of_nonneg {T : H →L[ℂ] H} (h0 : 0 ≤ T) (ξ : H) : 0 ≤ ⟪ξ, T ξ⟫_ℂ := by
-  have hp := (ContinuousLinearMap.nonneg_iff_isPositive T).mp h0
+  -- Vendoring compile fix (Mathlib v4.35): `nonneg_iff_isPositive` takes its operator
+  -- implicitly. See README.md.
+  have hp := ContinuousLinearMap.nonneg_iff_isPositive.mp h0
   have := hp.inner_nonneg_right ξ
   exact this
 

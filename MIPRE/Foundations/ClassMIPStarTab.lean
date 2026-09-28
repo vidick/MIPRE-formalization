@@ -293,6 +293,9 @@ theorem primrec_accC (pd : Data) (P : Polynomial ℕ) :
   exact (Primrec.ite hfin (Primrec.const true) (Primrec.const false)).of_eq fun q => by
     simp only [accC]; split <;> simp_all
 
+-- The `Primrec` composition below exceeds the default heartbeat budget under Mathlib
+-- v4.35 (the unifier unfolds the encodings); it elaborates in seconds with a larger one.
+set_option maxHeartbeats 1000000 in
 theorem primrec_tabOf (sd pd : Data) (P : Polynomial ℕ) : Primrec (tabOf sd pd P) := by
   have hT : Primrec fun z : BitStr => P.eval z.length :=
     (Cost.primrec_poly_eval P).comp Primrec.list_length

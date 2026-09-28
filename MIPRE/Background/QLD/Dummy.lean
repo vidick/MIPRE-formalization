@@ -336,7 +336,7 @@ theorem rename_toMv_ne {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)} (hg : 
       · rw [if_neg hD, hinl, Sum.inl.injEq] at hj
         subst hj
         exact hD hi
-    rw [Finsupp.mapDomain_of_notMem_range _ _ hnot, Finsupp.mapDomain_apply hinj,
+    rw [Finsupp.mapDomain_of_notMem_range _ _ hnot, Finsupp.mapDomain_apply_of_injective hinj,
       expFinsupp_apply] at hval
     exact hei (Fin.ext (by simpa using hval.symm))
   rw [heq, h2] at h1

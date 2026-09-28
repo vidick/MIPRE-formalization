@@ -264,9 +264,6 @@ theorem seedCount_eq (z : BitStr) (x y : (Vz G U UT Λ₀ R z).Questions (C G)) 
       (Finset.univ.filter fun v => decide (L v = x ∧ Rb v = y) = true).card from
       length_filter_bitStrsOfLen (s := d) (fun v => decide (L v = x ∧ Rb v = y))]
   congr 1
-  apply congrArg Finset.card
-  ext v
-  simp
 
 /-- The distribution of the class verifier's game, on the embedded questions, is the
 compressed sampler's. -/

@@ -119,24 +119,24 @@ instance instNonempty [Nonempty A] [Nonempty B] :
 theorem norm_E_le_one (S : CommutingOperatorStrategy X Y A B) (x : X) (a : A) :
     ‖S.E x a‖ ≤ 1 := by
   have h0 : ∀ a', 0 ≤ S.E x a' := fun a' =>
-    (ContinuousLinearMap.nonneg_iff_isPositive _).2 (S.E_pos x a')
+    ContinuousLinearMap.nonneg_iff_isPositive.2 (S.E_pos x a')
   have hle : S.E x a ≤ 1 := by
     rw [← S.E_sum x]
     exact Finset.single_le_sum (fun a' _ => h0 a') (Finset.mem_univ a)
   calc ‖S.E x a‖ ≤ ‖(1 : S.H →L[ℂ] S.H)‖ :=
-        CStarAlgebra.norm_le_norm_of_nonneg_of_le (h0 a) hle
+        CStarAlgebra.norm_le_norm_of_le_of_nonneg hle (h0 a)
     _ ≤ 1 := ContinuousLinearMap.norm_id_le
 
 /-- Every effect of the second player is a contraction: `0 ≤ F y b ≤ 1`. -/
 theorem norm_F_le_one (S : CommutingOperatorStrategy X Y A B) (y : Y) (b : B) :
     ‖S.F y b‖ ≤ 1 := by
   have h0 : ∀ b', 0 ≤ S.F y b' := fun b' =>
-    (ContinuousLinearMap.nonneg_iff_isPositive _).2 (S.F_pos y b')
+    ContinuousLinearMap.nonneg_iff_isPositive.2 (S.F_pos y b')
   have hle : S.F y b ≤ 1 := by
     rw [← S.F_sum y]
     exact Finset.single_le_sum (fun b' _ => h0 b') (Finset.mem_univ b)
   calc ‖S.F y b‖ ≤ ‖(1 : S.H →L[ℂ] S.H)‖ :=
-        CStarAlgebra.norm_le_norm_of_nonneg_of_le (h0 b) hle
+        CStarAlgebra.norm_le_norm_of_le_of_nonneg hle (h0 b)
     _ ≤ 1 := ContinuousLinearMap.norm_id_le
 
 end CommutingOperatorStrategy

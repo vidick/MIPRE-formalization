@@ -319,7 +319,9 @@ theorem le_one_of_lam_le_one (h : ∀ k, J.lam k ≤ 1) : x ≤ (1 : H →L[ℂ]
 /-- Conversely, `0 ≤ x` forces every eigenvalue of `x` to be nonnegative. -/
 theorem lam_nonneg_of_nonneg (h : (0 : H →L[ℂ] H) ≤ x) (k : Fin (finrank ℂ H)) :
     0 ≤ J.lam k := by
-  have hp := (ContinuousLinearMap.nonneg_iff_isPositive x).mp h
+  -- Vendoring compile fix (Mathlib v4.35): `nonneg_iff_isPositive` takes its operator
+  -- implicitly. See README.md.
+  have hp := ContinuousLinearMap.nonneg_iff_isPositive.mp h
   have h2 := hp.re_inner_nonneg_left (J.basis k)
   rw [J.apply_fst, inner_smul_left] at h2
   simpa using h2
@@ -327,7 +329,9 @@ theorem lam_nonneg_of_nonneg (h : (0 : H →L[ℂ] H) ≤ x) (k : Fin (finrank �
 /-- Conversely, `x ≤ 1` forces every eigenvalue of `x` to be at most `1`. -/
 theorem lam_le_one_of_le_one (h : x ≤ (1 : H →L[ℂ] H)) (k : Fin (finrank ℂ H)) :
     J.lam k ≤ 1 := by
-  have hp := (ContinuousLinearMap.le_def x 1).mp h
+  -- Vendoring compile fix (Mathlib v4.35): `le_def` takes its operators implicitly.
+  -- See README.md.
+  have hp := ContinuousLinearMap.le_def.mp h
   have h2 := hp.re_inner_nonneg_left (J.basis k)
   rw [sub_apply, one_apply_eq_self, J.apply_fst, inner_sub_left, inner_smul_left] at h2
   simp at h2

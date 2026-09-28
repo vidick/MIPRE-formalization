@@ -160,7 +160,106 @@ FIXES: list[tuple[str, str, str]] = [
         commuteGHalfSandwich_postMoveFlatLength, commuteGHalfSandwich_postMoveFlatFamily,
         commuteGHalfSandwich_moveChainFamily, izero] using
         htransport
-""")
+"""),
+    # Mathlib v4.35 (2026-09-28): `MvPolynomial.coeff` was deleted in favour of the
+    # `AddMonoidAlgebra` coefficient `p.coeff n`; and rewriting with `map_sum` times out,
+    # because the `AddMonoidHomClass` search now tries `RingHomClass.toLinearMapClassNNRat`
+    # first and the `Module ℚ≥0 (MvPolynomial _ (Scalar params))` it asks for never
+    # resolves (`Scalar params` is a class projection), so the instance is supplied by hand.
+    ('LDT/Basic/LowDegreePolynomial.lean',
+     """    rw [p.as_sum]
+    rw [map_sum
+      (g := MvPolynomial.eval₂Hom MvPolynomial.C (restrictAtHeightCoordinateMap params x))
+      (s := p.support)
+      (f := fun n => (MvPolynomial.monomial n) (MvPolynomial.coeff n p))]
+""",
+     """    -- Vendoring compile fix (Mathlib v4.35): `MvPolynomial.coeff n p` is now `p.coeff n`,
+    -- and the `AddMonoidHomClass` instance of `map_sum` is supplied by hand (its search
+    -- otherwise times out). See README.md.
+    haveI : AddMonoidHomClass
+        (MvPolynomial (Fin params.next.m) (Scalar params) →+* PolynomialModel params)
+        (MvPolynomial (Fin params.next.m) (Scalar params)) (PolynomialModel params) :=
+      RingHomClass.toAddMonoidHomClass
+    rw [p.as_sum]
+    rw [map_sum
+      (g := MvPolynomial.eval₂Hom MvPolynomial.C (restrictAtHeightCoordinateMap params x))
+      (s := p.support)
+      (f := fun n => (MvPolynomial.monomial n) (p.coeff n))]
+"""),
+    ('LDT/Basic/LowDegreePolynomial.lean',
+     """      g.poly).natDegree ≤ params.d := by
+    classical
+    rw [g.poly.as_sum, map_sum]
+""",
+     """      g.poly).natDegree ≤ params.d := by
+    classical
+    -- Vendoring compile fix (Mathlib v4.35): the `AddMonoidHomClass` instance of `map_sum`
+    -- is supplied by hand (its search otherwise times out). See README.md.
+    haveI : AddMonoidHomClass
+        (MvPolynomial (Fin params.m) (Scalar params) →+* _root_.Polynomial (Scalar params))
+        (MvPolynomial (Fin params.m) (Scalar params)) (_root_.Polynomial (Scalar params)) :=
+      RingHomClass.toAddMonoidHomClass
+    rw [g.poly.as_sum, map_sum]
+"""),
+    ('LDT/Pasting/ComparisonLemmas/LineInterpolation/Core.lean',
+     """  unfold interpolateCompletedSlicesFromSupport
+  simp only
+  trans ∑ idx ∈ σ.attach,
+""",
+     """  -- Vendoring compile fix (Mathlib v4.35): the `AddMonoidHomClass` instance of the
+  -- `map_sum` below is supplied by hand (its search otherwise times out). See README.md.
+  haveI : AddMonoidHomClass
+      (MvPolynomial (Fin params.next.m) (Scalar params) →+* PolynomialModel params)
+      (MvPolynomial (Fin params.next.m) (Scalar params)) (PolynomialModel params) :=
+    RingHomClass.toAddMonoidHomClass
+  unfold interpolateCompletedSlicesFromSupport
+  simp only
+  trans ∑ idx ∈ σ.attach,
+"""),
+    # Mathlib v4.35: `simp` now writes `id` as `fun x ↦ x`, so `cfc_id` no longer fires inside
+    # `simpa`; rewriting with it first is exact.
+    ('LDT/MakingMeasurementsProjective/SpectralTruncation/ProjectiveNonMeasurement.lean',
+     """    simpa [cfc_id ℝ (A.outcome a) (ha := hsa)] using A.outcome_pos a
+""",
+     """    -- Vendoring compile fix (Mathlib v4.35): `simp` eta-expands `id`, so `cfc_id` is used
+    -- by `rw` before it. See README.md.
+    rw [cfc_id ℝ (A.outcome a) (ha := hsa)]
+    exact A.outcome_pos a
+"""),
+    ('LDT/MakingMeasurementsProjective/SpectralTruncation/ProjectiveNonMeasurement.lean',
+     """    simpa [cfc_id ℝ (A.outcome a) (ha := hsa)] using A.outcome_le_one a
+""",
+     """    -- Vendoring compile fix (Mathlib v4.35): `simp` eta-expands `id`, so `cfc_id` is used
+    -- by `rw` before it. See README.md.
+    rw [cfc_id ℝ (A.outcome a) (ha := hsa)]
+    exact A.outcome_le_one a
+"""),
+    # Mathlib v4.35: `Finset.prod_le_prod` lost its nonnegativity hypothesis; the version with
+    # it is `Finset.prod_le_prod₀`.
+    ('LDT/Pasting/Core/DDistinct.lean',
+     """              exact Finset.prod_le_prod
+                (fun j hj => hfactor_nonneg j (Finset.mem_filter.mp hj).1)
+""",
+     """              -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_prod₀` is the version
+              -- with the nonnegativity hypothesis. See README.md.
+              exact Finset.prod_le_prod₀
+                (fun j hj => hfactor_nonneg j (Finset.mem_filter.mp hj).1)
+"""),
+    ('LDT/Basic/LowDegreePolynomial.lean',
+     """      g.poly).natDegree ≤ params.m * params.d := by
+    classical
+    rw [g.poly.as_sum, map_sum]
+""",
+     """      g.poly).natDegree ≤ params.m * params.d := by
+    classical
+    -- Vendoring compile fix (Mathlib v4.35): the `AddMonoidHomClass` instance of `map_sum`
+    -- is supplied by hand (its search otherwise times out). See README.md.
+    haveI : AddMonoidHomClass
+        (MvPolynomial (Fin params.m) (Scalar params) →+* _root_.Polynomial (Scalar params))
+        (MvPolynomial (Fin params.m) (Scalar params)) (_root_.Polynomial (Scalar params)) :=
+      RingHomClass.toAddMonoidHomClass
+    rw [g.poly.as_sum, map_sum]
+"""),
 ]
 
 
@@ -200,13 +299,20 @@ def insert_transparency_block(text: str) -> str:
 
 
 def apply_fixes(dest: Path) -> int:
+    """Apply the recorded fixes; one whose `new` text is already present is skipped, so
+    `--apply-fixes` can be re-run on the vendored tree as it is."""
+    applied = 0
     for rel, old, new in FIXES:
         target = dest / rel
         text = target.read_text(encoding="utf-8")
+        if text.count(new) == 1:
+            applied += 1
+            continue
         if text.count(old) != 1:
             sys.exit(f"error: recorded fix for {rel} matched {text.count(old)} times, expected 1")
         target.write_text(text.replace(old, new), encoding="utf-8", newline="\n")
-    return len(FIXES)
+        applied += 1
+    return applied
 
 
 def rewrite_imports(text: str) -> tuple[str, int]:
@@ -337,12 +443,21 @@ None yet.
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--source", required=True, type=Path, help="path to a MIPStarRE clone")
-    parser.add_argument("--commit", required=True, help="expected upstream commit (prefix ok)")
+    parser.add_argument("--source", type=Path, help="path to a MIPStarRE clone")
+    parser.add_argument("--commit", help="expected upstream commit (prefix ok)")
     parser.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parent.parent)
     parser.add_argument("--all", action="store_true",
                         help="copy every module instead of the import closure of ROOTS")
+    parser.add_argument("--apply-fixes", action="store_true",
+                        help="only apply the recorded compile fixes to the vendored tree as "
+                             "it is (no clone needed); fixes already applied are skipped")
     args = parser.parse_args()
+    if args.apply_fixes:
+        n = apply_fixes(args.repo_root.resolve() / DEST_REL)
+        print(f"{n} fixes in place; next: lake build")
+        return
+    if not args.source or not args.commit:
+        parser.error("--source and --commit are required unless --apply-fixes is given")
     vendor(args.source.resolve(), args.commit, args.repo_root.resolve(), args.all)
 
 

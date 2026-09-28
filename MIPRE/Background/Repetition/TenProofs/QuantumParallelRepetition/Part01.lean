@@ -395,9 +395,11 @@ theorem matrixEffectCLM_norm_le_one
   have h_positive := matrixEffectCLM_isPositive E hE
   have h_nonneg :
       0 ≤ Matrix.toEuclideanCLM (n := d) (𝕜 := ℂ) E :=
-    (ContinuousLinearMap.nonneg_iff_isPositive _).mpr h_positive
+    -- Vendoring compile fix (Mathlib v4.35): `nonneg_iff_isPositive` and `le_def` take
+    -- their operators implicitly. See README.md.
+    ContinuousLinearMap.nonneg_iff_isPositive.mpr h_positive
   apply (CStarAlgebra.norm_le_one_iff_of_nonneg _ h_nonneg).mpr
-  exact (ContinuousLinearMap.le_def _ _).mpr
+  exact ContinuousLinearMap.le_def.mpr
     (matrixEffectCLM_complement_isPositive E h_complement)
 
 namespace Strategy
@@ -2299,7 +2301,9 @@ theorem posSemidef_kernel_of_sub_posSemidef
     (hA : A.PosSemidef) (hsub : (F - A).PosSemidef)
     {x : d → ℂ} (hx : F *ᵥ x = 0) :
     A *ᵥ x = 0 := by
-  apply (hA.dotProduct_mulVec_zero_iff x).mp
+  -- Vendoring compile fix (Mathlib v4.35): `dotProduct_mulVec_zero_iff` takes the vector
+  -- implicitly. See README.md.
+  apply hA.dotProduct_mulVec_zero_iff.mp
   have hA_nonneg : 0 ≤ star x ⬝ᵥ (A *ᵥ x) :=
     hA.dotProduct_mulVec_nonneg x
   have hsub_nonneg : 0 ≤ star x ⬝ᵥ ((F - A) *ᵥ x) :=
@@ -4683,7 +4687,9 @@ theorem fullHistoryHiddenAliceWeight_sum_le_one
       fullHistoryHiddenAliceWeight G h hidden) ≤ 1 := by
   unfold fullHistoryHiddenAliceWeight
   rw [← Fintype.prod_sum]
-  apply Finset.prod_le_one
+  -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one₀` is the version with the
+  -- nonnegativity hypothesis. See README.md.
+  apply Finset.prod_le_one₀
   · intro i _
     exact Finset.sum_nonneg fun x _ =>
       G.conditionalXGivenY_nonneg (h.bobRemaining i) x
@@ -4698,7 +4704,9 @@ theorem fullHistoryHiddenBobWeight_sum_le_one
       fullHistoryHiddenBobWeight G h hidden) ≤ 1 := by
   unfold fullHistoryHiddenBobWeight
   rw [← Fintype.prod_sum]
-  apply Finset.prod_le_one
+  -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one₀` is the version with the
+  -- nonnegativity hypothesis. See README.md.
+  apply Finset.prod_le_one₀
   · intro i _
     exact Finset.sum_nonneg fun y _ =>
       G.conditionalYGivenX_nonneg (h.aliceRevealed i) y

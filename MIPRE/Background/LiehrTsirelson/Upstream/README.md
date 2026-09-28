@@ -33,7 +33,12 @@ upstream before the tree is relied on for anything else.
 
 ## Local deviations from upstream
 
-None beyond the mechanical ones above.
+One recorded compile fix for the Mathlib crossing (this repository moved to Lean
+v4.35.0-rc3 and Mathlib `v4.35.0-rc3` on 2026-09-28, `planning/palomar.md`), applied by
+`scripts/vendor-liehr.py` from its `FIXES` table (`--apply-fixes` re-applies it to the tree
+as it is) and marked by a comment at the site: in `Core/Measurement.lean`, the operator of
+`ContinuousLinearMap.nonneg_iff_isPositive` is implicit in Mathlib v4.35, so the explicit
+argument is dropped.
 
 ## Provenance
 

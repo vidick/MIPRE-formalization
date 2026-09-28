@@ -69,7 +69,7 @@ theorem natDegree_lineRestrict_le (u₀ w : Fin m → F) (p : MvPolynomial (Fin 
   rw [lineRestrict, MvPolynomial.aeval_def, MvPolynomial.eval₂_eq]
   refine Polynomial.natDegree_sum_le_of_forall_le _ _ fun d hd => ?_
   refine le_trans (Polynomial.natDegree_mul_le) ?_
-  have h0 : (algebraMap F (Polynomial F) (MvPolynomial.coeff d p)).natDegree = 0 := by
+  have h0 : (algebraMap F (Polynomial F) (p.coeff d)).natDegree = 0 := by
     simp [Polynomial.algebraMap_eq]
   rw [h0, zero_add]
   refine le_trans (Polynomial.natDegree_prod_le _ _) ?_
@@ -91,7 +91,7 @@ theorem natDegree_lineRestrict_single_le (u₀ : Fin m → F) (j : Fin m)
   rw [lineRestrict, MvPolynomial.aeval_def, MvPolynomial.eval₂_eq]
   refine Polynomial.natDegree_sum_le_of_forall_le _ _ fun dd hdd => ?_
   refine le_trans Polynomial.natDegree_mul_le ?_
-  have h0 : (algebraMap F (Polynomial F) (MvPolynomial.coeff dd p)).natDegree = 0 := by
+  have h0 : (algebraMap F (Polynomial F) (p.coeff dd)).natDegree = 0 := by
     simp [Polynomial.algebraMap_eq]
   rw [h0, zero_add]
   have hterm : ∀ i : Fin m,

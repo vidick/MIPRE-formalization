@@ -346,8 +346,10 @@ theorem isPositive_mul_of_commute {H : Type*} [NormedAddCommGroup H]
     [InnerProductSpace ℂ H] [CompleteSpace H] {S T : H →L[ℂ] H}
     (hS : S.IsPositive) (hT : T.IsPositive) (h : Commute S T) : (S * T).IsPositive := by
   rw [← ContinuousLinearMap.nonneg_iff_isPositive]
-  exact h.mul_nonneg ((ContinuousLinearMap.nonneg_iff_isPositive _).2 hS)
-    ((ContinuousLinearMap.nonneg_iff_isPositive _).2 hT)
+  -- Vendoring compile fix (Mathlib v4.35): `nonneg_iff_isPositive` takes its operator
+  -- implicitly. See README.md.
+  exact h.mul_nonneg (ContinuousLinearMap.nonneg_iff_isPositive.2 hS)
+    (ContinuousLinearMap.nonneg_iff_isPositive.2 hT)
 
 end
 

@@ -100,7 +100,7 @@ theorem LowIndDegPoly.eval_toMv (g : LowIndDegPoly (F := F) (m := n) (d := d)) (
 
 omit [Fintype F] [DecidableEq F] in
 theorem LowIndDegPoly.coeff_toMv (g : LowIndDegPoly (F := F) (m := n) (d := d))
-    (e : Fin n → Fin (d + 1)) : coeff (expFinsupp e) g.toMv = g e := by
+    (e : Fin n → Fin (d + 1)) : g.toMv.coeff (expFinsupp e) = g e := by
   simp only [LowIndDegPoly.toMv, coeff_sum, coeff_monomial]
   rw [Finset.sum_eq_single e (fun e' _ hne => if_neg (expFinsupp_injective.ne hne))
     (fun h => absurd (mem_univ e) h)]
@@ -129,7 +129,7 @@ theorem degreeOf_rename_le {σ τ : Type*} {p : MvPolynomial σ F} {f : σ → �
   obtain ⟨v, rfl, hv⟩ := coeff_rename_ne_zero f p s (mem_support_iff.mp hs)
   by_cases hj : j ∈ Set.range f
   · obtain ⟨i, rfl⟩ := hj
-    rw [Finsupp.mapDomain_apply hf]
+    rw [Finsupp.mapDomain_apply_of_injective hf]
     exact degreeOf_le_iff.mp (hp i) v (mem_support_iff.mpr hv)
   · rw [Finsupp.mapDomain_of_notMem_range _ _ hj]
     exact Nat.zero_le _

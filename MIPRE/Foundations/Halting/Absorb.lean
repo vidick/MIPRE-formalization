@@ -87,8 +87,9 @@ theorem PolyBounded.absorb {F : ℕ → ℕ} (hF : PolyBounded F) :
     _ = m ^ (A + k + Nat.size n * k) * y ^ n := by rw [← pow_add, ← pow_add, Nat.add_assoc]
     _ ≤ m ^ n * y ^ n := by
         gcongr
-        · omega
-        · rw [Nat.mul_comm] at hexp; exact hexp
+        all_goals first
+          | omega
+          | (rw [Nat.mul_comm] at hexp; exact hexp)
 
 /-- **A polynomial in the length of `n` is eventually half of `n`.** -/
 theorem PolyBounded.absorb_log {g : ℕ → ℕ} (hg : PolyBounded g) (a b : ℕ) :

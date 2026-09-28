@@ -557,7 +557,7 @@ theorem isSelfAdjoint_Phi (n : ℕ) {x : L2Q K →L[ℂ] L2Q K} (hx : IsSelfAdjo
 
 theorem nonneg_σ (n : ℕ) {x : L2Q K →L[ℂ] L2Q K} (hx : 0 ≤ x) (t : ℝ) :
     0 ≤ σ (crossed M Ω) (xin Ω n) t x := by
-  have hxp := (ContinuousLinearMap.nonneg_iff_isPositive x).mp hx
+  have hxp := ContinuousLinearMap.nonneg_iff_isPositive.mp hx
   refine Resolver.Douglas.nonneg_of_re_inner
     (isSelfAdjoint_σ M Ω n hxp.isSelfAdjoint t) fun ζ => ?_
   have h : ⟪σ (crossed M Ω) (xin Ω n) t x ζ, ζ⟫_ℂ =
@@ -571,7 +571,7 @@ theorem nonneg_σ (n : ℕ) {x : L2Q K →L[ℂ] L2Q K} (hx : 0 ≤ x) (t : ℝ)
 
 /-- **`Φ_n` is positive.** -/
 theorem Phi_nonneg (n : ℕ) {x : L2Q K →L[ℂ] L2Q K} (hx : 0 ≤ x) : 0 ≤ Phi M Ω n x := by
-  have hxp := (ContinuousLinearMap.nonneg_iff_isPositive x).mp hx
+  have hxp := ContinuousLinearMap.nonneg_iff_isPositive.mp hx
   refine Resolver.Douglas.nonneg_of_re_inner
     (isSelfAdjoint_Phi M Ω n hxp.isSelfAdjoint) fun ζ => ?_
   have hcont : Continuous fun t => ⟪ζ, σ (crossed M Ω) (xin Ω n) t x ζ⟫_ℂ :=

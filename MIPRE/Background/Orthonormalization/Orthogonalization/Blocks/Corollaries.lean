@@ -298,7 +298,7 @@ theorem sum_compress (hp : IsPVM M p) (hq : IsPVM M q) : ∑ i, compress p q i =
 
 theorem isPOVM_compress (hp : IsPVM M p) (hq : IsPVM M q) : IsPOVM M (compress p q) :=
   ⟨compress_mem hp hq, fun i =>
-    (ContinuousLinearMap.nonneg_iff_isPositive _).mp (compress_nonneg hp hq i),
+    ContinuousLinearMap.nonneg_iff_isPositive.mp (compress_nonneg hp hq i),
     sum_compress hp hq⟩
 
 omit [Fintype ι] in

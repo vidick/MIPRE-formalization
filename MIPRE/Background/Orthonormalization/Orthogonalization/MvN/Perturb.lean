@@ -464,7 +464,9 @@ theorem exists_selfAdjoint_not_central (M : VonNeumannAlgebra H) {p r a : H →L
 /-- A self-adjoint `b = r b r` satisfies `b ≤ ‖b‖ r`. -/
 theorem le_norm_smul_proj {b r : H →L[ℂ] H} (hr : IsStarProjection r) (hb : IsSelfAdjoint b)
     (hrb : r * b * r = b) : b ≤ (‖b‖ : ℂ) • r := by
-  have h := conj_le_conj (IsSelfAdjoint.le_algebraMap_norm_self hb) r
+  -- Vendoring compile fix (Mathlib v4.35): `IsSelfAdjoint.le_algebraMap_norm_self` takes
+  -- the element explicitly. See README.md.
+  have h := conj_le_conj (IsSelfAdjoint.le_algebraMap_norm_self b hb) r
   rwa [hr.isSelfAdjoint.star_eq, hrb, Algebra.algebraMap_eq_smul_one, ← Complex.coe_smul,
     mul_smul_comm, smul_mul_assoc, mul_one, hr.isIdempotentElem.eq] at h
 

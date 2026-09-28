@@ -81,7 +81,10 @@ private lemma outcome_spectrum_nonneg {Outcome : Type uOutcome}
   have hherm : (A.outcome a).IsHermitian := A.outcome_hermitian a
   have hsa : IsSelfAdjoint (A.outcome a) := hherm.isSelfAdjoint
   have hnonneg : 0 ≤ cfc (id : Error → Error) (A.outcome a) := by
-    simpa [cfc_id ℝ (A.outcome a) (ha := hsa)] using A.outcome_pos a
+    -- Vendoring compile fix (Mathlib v4.35): `simp` eta-expands `id`, so `cfc_id` is used
+    -- by `rw` before it. See README.md.
+    rw [cfc_id ℝ (A.outcome a) (ha := hsa)]
+    exact A.outcome_pos a
   exact (cfc_nonneg_iff (R := ℝ) (f := id) (a := A.outcome a) (ha := hsa)).mp hnonneg
 
 private lemma outcome_spectrum_le_one {Outcome : Type uOutcome}
@@ -92,7 +95,10 @@ private lemma outcome_spectrum_le_one {Outcome : Type uOutcome}
   have hherm : (A.outcome a).IsHermitian := A.outcome_hermitian a
   have hsa : IsSelfAdjoint (A.outcome a) := hherm.isSelfAdjoint
   have hle : cfc (id : Error → Error) (A.outcome a) ≤ 1 := by
-    simpa [cfc_id ℝ (A.outcome a) (ha := hsa)] using A.outcome_le_one a
+    -- Vendoring compile fix (Mathlib v4.35): `simp` eta-expands `id`, so `cfc_id` is used
+    -- by `rw` before it. See README.md.
+    rw [cfc_id ℝ (A.outcome a) (ha := hsa)]
+    exact A.outcome_le_one a
   exact (cfc_le_one_iff (f := id) (a := A.outcome a) (ha := hsa)).mp hle
 
 private lemma roundedProjectorFamily_projective {Outcome : Type uOutcome}

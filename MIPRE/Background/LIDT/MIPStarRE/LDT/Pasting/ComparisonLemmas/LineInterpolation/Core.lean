@@ -215,6 +215,12 @@ lemma interpolateCompletedSlicesFromSupport_restrictAtHeight_poly_eq_get_of_mem
           (MvPolynomial.X (lastCoord params)) =
         MvPolynomial.C (decodeScalar (xs i)) := by
     simp [Polynomial.restrictAtHeightCoordinateMap, lastCoord]
+  -- Vendoring compile fix (Mathlib v4.35): the `AddMonoidHomClass` instance of the
+  -- `map_sum` below is supplied by hand (its search otherwise times out). See README.md.
+  haveI : AddMonoidHomClass
+      (MvPolynomial (Fin params.next.m) (Scalar params) →+* PolynomialModel params)
+      (MvPolynomial (Fin params.next.m) (Scalar params)) (PolynomialModel params) :=
+    RingHomClass.toAddMonoidHomClass
   unfold interpolateCompletedSlicesFromSupport
   simp only
   trans ∑ idx ∈ σ.attach,

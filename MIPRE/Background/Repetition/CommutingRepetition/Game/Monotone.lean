@@ -497,8 +497,10 @@ theorem repeat_omegaCO_le [Nonempty X] [Nonempty Y] [Nonempty A] [Nonempty B]
     calc G.payoff (w i) (v i) (as i) (bs i) *
           ∏ j ∈ Finset.univ.erase i, G.payoff (w j) (v j) (as j) (bs j)
         ≤ G.payoff (w i) (v i) (as i) (bs i) * 1 :=
+          -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one₀` is the version with
+          -- the nonnegativity hypothesis. See README.md.
           mul_le_mul_of_nonneg_left
-            (Finset.prod_le_one
+            (Finset.prod_le_one₀
               (fun j _ => G.payoff_nonneg _ _ _ _)
               (fun j _ => G.payoff_le_one _ _ _ _))
             (G.payoff_nonneg _ _ _ _)

@@ -92,7 +92,7 @@ theorem povm_orthogonalization_of_mem_all (M : VonNeumannAlgebra H)
       (φ (∑ i, star (a i - p i) * (a i - p i))).re < 9 * ε := by
   obtain ⟨p, hp, hsum, hlt⟩ := povm_orthogonalization_finDim φ.toLinearMap
     (fun x => φ.nonneg' x (hM x)) φ.map_one' a
-    (fun i => (ContinuousLinearMap.nonneg_iff_isPositive _).mpr (ha.2.1 i)) ha.2.2 ε hε
+    (fun i => ContinuousLinearMap.nonneg_iff_isPositive.mpr (ha.2.1 i)) ha.2.2 ε hε
   exact ⟨p, ⟨fun i => hM _, hp, hsum⟩, hlt⟩
 
 /-- Theorem 1.2 (`povm_orthogonalization`) for `M = B(H)`, `H` finite-dimensional. -/

@@ -504,8 +504,6 @@ theorem mu_clause (x : BitStr) (n : ℕ)
           (fun v => decide (((Vof G U x).sampler.cl n .alice).eval v = (eXof G U x n i).2
             ∧ ((Vof G U x).sampler.cl n .bob).eval v = (eXof G U x n j).2))]
         congr 1
-        ext v
-        simp
       · refine List.filter_congr fun z hz => ?_
         have hz' : z.length = (Vof G U x).sampler.dim n :=
           (Data.mem_bitStrsOfLen _ _).1 hz

@@ -216,11 +216,18 @@ theorem degreeOf_eval₂Hom_restrictAtHeightCoordinateMap_le
     let p : MvPolynomial (Fin params.next.m) (Scalar params) := g.poly
     change MvPolynomial.degreeOf i
       (MvPolynomial.eval₂Hom MvPolynomial.C (restrictAtHeightCoordinateMap params x) p) ≤ params.d
+    -- Vendoring compile fix (Mathlib v4.35): `MvPolynomial.coeff n p` is now `p.coeff n`,
+    -- and the `AddMonoidHomClass` instance of `map_sum` is supplied by hand (its search
+    -- otherwise times out). See README.md.
+    haveI : AddMonoidHomClass
+        (MvPolynomial (Fin params.next.m) (Scalar params) →+* PolynomialModel params)
+        (MvPolynomial (Fin params.next.m) (Scalar params)) (PolynomialModel params) :=
+      RingHomClass.toAddMonoidHomClass
     rw [p.as_sum]
     rw [map_sum
       (g := MvPolynomial.eval₂Hom MvPolynomial.C (restrictAtHeightCoordinateMap params x))
       (s := p.support)
-      (f := fun n => (MvPolynomial.monomial n) (MvPolynomial.coeff n p))]
+      (f := fun n => (MvPolynomial.monomial n) (p.coeff n))]
     calc
       MvPolynomial.degreeOf i
           (∑ n ∈ p.support,
@@ -323,6 +330,12 @@ theorem natDegree_eval₂Hom_axisCoordinatePolynomial_le
     (MvPolynomial.eval₂Hom _root_.Polynomial.C (axisCoordinatePolynomial params ℓ)
       g.poly).natDegree ≤ params.d := by
     classical
+    -- Vendoring compile fix (Mathlib v4.35): the `AddMonoidHomClass` instance of `map_sum`
+    -- is supplied by hand (its search otherwise times out). See README.md.
+    haveI : AddMonoidHomClass
+        (MvPolynomial (Fin params.m) (Scalar params) →+* _root_.Polynomial (Scalar params))
+        (MvPolynomial (Fin params.m) (Scalar params)) (_root_.Polynomial (Scalar params)) :=
+      RingHomClass.toAddMonoidHomClass
     rw [g.poly.as_sum, map_sum]
     refine Polynomial.natDegree_sum_le_of_forall_le
       (s := g.poly.support)
@@ -449,6 +462,12 @@ theorem natDegree_eval₂Hom_diagonalCoordinatePolynomial_le
     (MvPolynomial.eval₂Hom _root_.Polynomial.C (diagonalCoordinatePolynomial params ℓ)
       g.poly).natDegree ≤ params.m * params.d := by
     classical
+    -- Vendoring compile fix (Mathlib v4.35): the `AddMonoidHomClass` instance of `map_sum`
+    -- is supplied by hand (its search otherwise times out). See README.md.
+    haveI : AddMonoidHomClass
+        (MvPolynomial (Fin params.m) (Scalar params) →+* _root_.Polynomial (Scalar params))
+        (MvPolynomial (Fin params.m) (Scalar params)) (_root_.Polynomial (Scalar params)) :=
+      RingHomClass.toAddMonoidHomClass
     rw [g.poly.as_sum, map_sum]
     refine Polynomial.natDegree_sum_le_of_forall_le
       (s := g.poly.support)
