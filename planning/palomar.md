@@ -127,6 +127,18 @@ Each phase is one pull request unless noted; the order is forced by the dependen
    into every module that imports part of Mathlib rather than the `Mathlib` umbrella
    (154 files). The vendor scripts call the modularizer on the trees they produce and on
    `--apply-fixes`, and CI runs `scripts/modularize.py --check`.
+
+   The second full build (the first was cut short once the bundle existed) found three more
+   things, fixed in the follow-up PR: a formerly private name can become *ambiguous* rather
+   than clash, when a file opens two namespaces that both define it (`andCheck` of the
+   source-compiler guard against the auxiliary program's, `basisIndex` of the Pauli CL
+   against the branch program's; renamed `guardAndCheck`, `basisFin`); and a file that runs
+   compiled code at elaboration time (`#eval`, `native_decide`: the four `TM/Code` demo
+   files) gets that code only through `meta import`, so the script twins every import of
+   such a file. Each full pass costs about 50 minutes on the cloud VM; a failed module hides
+   its dependents until the next pass, so compiling a suspect file alone with
+   `lake env lean` as soon as its imports are built, in parallel with the pass, is what
+   keeps the count of passes down.
 3. **Split the 71k-line module** in `scripts/vendor-repetition.py` into files under 10,000
    lines, deterministically, recorded like every other vendor fix.
 4. **The Challenge**: a self-contained, Mathlib-only statement file. `HaltingGameValue.lean`
