@@ -843,6 +843,12 @@ import MIPRE.Foundations.Halting.Freeze
 import MIPRE.Foundations.Halting.Instantiation
 import MIPRE.Foundations.Halting.LambdaBound
 import MIPRE.Foundations.Halting.Lists
+import MIPRE.Foundations.Halting.Paper.Cost
+import MIPRE.Foundations.Halting.Paper.Decider
+import MIPRE.Foundations.Halting.Paper.Induction
+import MIPRE.Foundations.Halting.Paper.Main
+import MIPRE.Foundations.Halting.Paper.Size
+import MIPRE.Foundations.Halting.Paper.TabulateL
 import MIPRE.Foundations.Halting.PolyBounded
 import MIPRE.Foundations.Halting.Reduction
 import MIPRE.Foundations.Halting.Semidecide

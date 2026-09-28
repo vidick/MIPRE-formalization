@@ -995,7 +995,13 @@ class as the paper defines it, and three implementation pull requests. The first
 the former definition is `def:mipstar-computable`, and `lem:mipstar-poly-sub` is the inclusion by
 tabulation with doubled questions (`ClassMIPStarPolyTab.lean`); `Cost.kleeneFix_runs_of` exposes
 the fixed point's overhead and `Cost.exists_polyTime_reduction` is the costed many-one reduction
-to halting, both for the next step.
+to halting, both for the next step. The second is in too (`MIPRE/Foundations/Halting/Paper/`):
+the paper's `V^halt M λ` as an efficient Kleene fixed point (`Halting.dec`, `Halting.Vhalt`),
+`lem:dhalt-values` as `accepts_iff`, the downward induction at the fixed level `C = max C_0 2`
+(`hasPerfectPCC_of_halts`, `valStar_le_of_not_halts`), and `lem:lambda` as `exists_lamBound`:
+`V^halt M λ` is `λ`-bounded for `λ ≥ Λ_0 + 4|M|`, with the decider's time in the fine form
+`Q(n + |M| + λ)(|d| + 1)^k` (`dec_cost_spec`); `halting_paper` is `thm:halting` at level `C`.
+What remains is the class verifier reading this game off a uniform program, `RE ⊆ MIPStarPoly`.
 
 ## Working rules for this track
 

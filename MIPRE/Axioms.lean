@@ -164,6 +164,7 @@ import MIPRE.Foundations.Halting.Corollaries
 import MIPRE.Foundations.Pipeline.Compress
 import MIPRE.Foundations.Halting.LambdaBound
 import MIPRE.Foundations.Halting.Semidecider
+import MIPRE.Foundations.Halting.Paper.Main
 import MIPRE.Foundations.ValueApprox
 import MIPRE.Foundations.ValueApprox.Cayley
 import MIPRE.Foundations.ValueApprox.Dense
@@ -378,7 +379,14 @@ tell you the guard is missing.
   MIPRE.Halting.haltProg_runs,
   MIPRE.Halting.haltProg_runs_inv,
   MIPRE.Halting.prepProg,
-  MIPRE.Halting.prepProg_runs
+  MIPRE.Halting.prepProg_runs,
+  MIPRE.Halting.prep,
+  MIPRE.Halting.body,
+  MIPRE.Halting.F,
+  MIPRE.Halting.dec,
+  MIPRE.Halting.Vhalt,
+  MIPRE.Halting.body_runs_iff,
+  MIPRE.Halting.dec_runs_iff
 
 -- blueprint `lem:halting-semidecider`
 #guard_sorry_free MIPRE.Halting.exists_sem_of_tab,
@@ -403,19 +411,42 @@ tell you the guard is missing.
   MIPRE.Halting.exists_compressorSpec,
   MIPRE.Halting.isBounded_comprStr,
   MIPRE.Halting.lamOf,
-  MIPRE.Halting.lamOf_ge
+  MIPRE.Halting.lamOf_ge,
+  MIPRE.Halting.exists_lamBound,
+  MIPRE.Halting.Lam0,
+  MIPRE.Halting.Lam0_spec,
+  MIPRE.Halting.esize_dec,
+  MIPRE.Halting.dec_cost,
+  MIPRE.Halting.exists_dec_cost_poly,
+  MIPRE.Halting.decCostPoly,
+  MIPRE.Halting.dec_cost_spec,
+  MIPRE.Halting.Vhalt_decider_cost,
+  MIPRE.Halting.wrapCoreCost_le_WZ
 
 -- blueprint `lem:dhalt-values`
 #guard_sorry_free MIPRE.Halting.CompressorSpec.toObligations,
   MIPRE.Halting.comprStr_accepts,
-  MIPRE.Halting.haltProg_accepts_iff
+  MIPRE.Halting.haltProg_accepts_iff,
+  MIPRE.Halting.accepts_iff,
+  MIPRE.Halting.accepts_iff_W,
+  MIPRE.Halting.A_of_branch1,
+  MIPRE.Halting.B_of_branch2,
+  MIPRE.Halting.rejectsLong_of_not_branch1,
+  MIPRE.Halting.A_step,
+  MIPRE.Halting.B_step
 
 -- blueprint `thm:halting`
 #guard_sorry_free MIPRE.Halting.exists_obligations,
   MIPRE.Halting.halting_reduction_both_of,
   MIPRE.Halting.halting_reduces_to_gameValue_of,
   MIPRE.Halting.halting_reduction,
-  MIPRE.Halting.halting_reduction_of
+  MIPRE.Halting.halting_reduction_of,
+  MIPRE.Halting.halting_paper,
+  MIPRE.Halting.halting_paper_valStar,
+  MIPRE.Halting.Vpaper,
+  MIPRE.Halting.semL,
+  MIPRE.Halting.hasPerfectPCC_of_halts,
+  MIPRE.Halting.valStar_le_of_not_halts
 
 -- blueprint `lem:lambda-bound`
 #guard_sorry_free MIPRE.Halting.four_mul_succ_lt_two_pow,

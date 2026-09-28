@@ -1579,7 +1579,6 @@ complement preserves every squared state norm. Pull back the local operators,
 apply Lemma~\ref{lem:pauli-mixing-coordinates}, and transport its actual POVMs
 back to the residual register. With each hypothesis bounded by $\eps$, the
 conclusion has the explicit constant $56$.
-
 \ledgernode{1.2.3.3.7.1,1.2.3.3.7.2,1.2.3.3.7.3}
 The source's route: twirl to blocks $B^z_{y,a}$, retain the matching blocks $B^y_{y,a}$ using
 projectivity and EPR consistency, then complete with
@@ -6991,11 +6990,13 @@ The ingredients, with provenance to the companion repository's ledger nodes.
 \begin{lemma}[The self-referential decider is well defined]
 \label{lem:halt-construction}
 \ledgernode{1.6.1}
-\uses{def:normal-verifier,lem:compress-sampler-indep,thm:compression,def:succinct}
+\uses{def:normal-verifier,lem:compress-sampler-indep,thm:compression,def:succinct,lem:kleene}
 \lean{MIPRE.Halting.haltProg, MIPRE.Halting.prepProg, MIPRE.Halting.prepProg_runs,
   MIPRE.Halting.haltProg_runs, MIPRE.Halting.haltProg_runs_inv, MIPRE.Halting.haltProg_accepts_iff,
   MIPRE.Halting.comprStr, MIPRE.Cost.Prog.readProg, MIPRE.Cost.Prog.readProg_runs,
-  MIPRE.Cost.Prog.wrapBuildProg, MIPRE.Cost.Prog.freezeBuildProg}
+  MIPRE.Cost.Prog.wrapBuildProg, MIPRE.Cost.Prog.freezeBuildProg,
+  MIPRE.Halting.prep, MIPRE.Halting.body, MIPRE.Halting.F, MIPRE.Halting.dec,
+  MIPRE.Halting.Vhalt, MIPRE.Halting.body_runs_iff, MIPRE.Halting.dec_runs_iff}
 \leanok
 There is a Turing machine $F$ and a decider $\dhalt = F$ carrying its own description,
 with a timeout bound $B_{\dhalt}(n)$, such that $\dhalt$ is total within its timeout and
@@ -7030,6 +7031,27 @@ the $n$-step simulation of $\machine$, is the compressibility criterion's busine
 counter: the decider is total on succinct descriptions because every stage halts
 (\texttt{haltProg\_runs}, \texttt{haltProg\_runs\_inv}), and its running time is the
 accounting of Lemma~\ref{lem:lambda}, which is what is still open.
+
+\paragraph{The paper's route.} The self-referential decider of the source, with the
+recursion theorem, is \texttt{MIPRE.Halting.dec} (\texttt{Halting/Paper/Decider.lean}): for a
+machine $\machine$ and a parameter $\lambda$, the efficient Kleene fixed point
+(Lemma~\ref{lem:kleene}, \texttt{Cost.kleeneFix}) of the polynomial-time map
+$\texttt{F}: d' \mapsto \mathtt{hardcode}\ \texttt{body}\ (\machine, (\lambda, d'))$,
+so that on $(n, x, y, a, b)$ it runs \texttt{body} on its own description and the input.
+\texttt{body} is the program of a polynomial-time function \texttt{prep} returning the
+program to run and its input --- the constant-true program if $\machine$ halts on the
+empty input within $\log n$ steps of the clocked universal machine, the constant-false one
+if the search program of the second branch (see Lemma~\ref{lem:dhalt-values}) halts within
+$\log n$ steps on the description of $\dhalt$'s own verifier, and otherwise the compressed
+decider $\Compress((\mathtt{ComputeSampler}(\lambda), \mathtt{wrap}\ \dhalt), \lambda)$
+on the input --- followed by one call of the universal machine
+(\texttt{body\_runs\_iff}, \texttt{dec\_runs\_iff}). The verifier is
+$\vhalt = \texttt{Vhalt}\ \machine\ \lambda =
+\mathtt{ofSamplerDecider}\ (\mathtt{ComputeSampler}(\lambda))\ \dhalt$, the wrapper of
+Definition~\ref{def:normal-verifier} around $\dhalt$. The budget $\log n$ in place of the
+source's $n$ is the criterion's reading and costs nothing: the levels of the recursion are
+$n, 2^n, \ldots$, along which $\log$ grows without bound. There is no timeout counter here
+either: totality within a bound is the accounting of Lemma~\ref{lem:lambda}.
 
 \effortMedium
 
@@ -7077,7 +7099,11 @@ exponential in it.
 \lean{MIPRE.Halting.lamOf, MIPRE.Halting.isBounded_comprStr, MIPRE.Halting.lamOf_ge,
   MIPRE.Halting.ansBound_le_lamOf, MIPRE.Halting.exists_compressorSpec,
   MIPRE.Halting.comprPoly, MIPRE.Cost.PolyBounded.absorb, MIPRE.Cost.PolyBounded.absorb_log,
-  MIPRE.Cost.Prog.wrapCoreCost, MIPRE.Cost.Prog.wrapCore_cost'}
+  MIPRE.Cost.Prog.wrapCoreCost, MIPRE.Cost.Prog.wrapCore_cost',
+  MIPRE.Halting.exists_lamBound, MIPRE.Halting.Lam0, MIPRE.Halting.Lam0_spec,
+  MIPRE.Halting.esize_dec, MIPRE.Halting.dec_cost, MIPRE.Halting.exists_dec_cost_poly,
+  MIPRE.Halting.decCostPoly, MIPRE.Halting.dec_cost_spec, MIPRE.Halting.Vhalt_decider_cost,
+  MIPRE.Halting.wrapCoreCost_le_WZ}
 \leanok
 There is a $\lambda$, computable from the description of $\machine$ in polynomial time and
 of size $\poly(\abs{\machine})$, such that $\vhalt$ is $\lambda$-bounded and
@@ -7118,13 +7144,39 @@ computing the output string, which \texttt{comprPoly}
 (\texttt{Halting/CompressorProgram.lean}) is. There is no timeout counter and no
 $\TIME_{\dhalt}$ to compute: totality within a bound is the accounting itself.
 
+\paragraph{The paper's route.} For the verifier $\texttt{Vhalt}\ \machine\ \lambda$ of
+Lemma~\ref{lem:halt-construction} the parameter is a function of the \emph{machine}, as in
+the source: \texttt{MIPRE.Halting.exists\_lamBound} (\texttt{Halting/Paper/Cost.lean})
+gives a threshold $\Lambda_0$, depending on the compressor, the universal machines and the
+search program alone, such that for every $\machine$ and every
+$\lambda \geq \Lambda_0 + 4\abs{\machine}$ the verifier is $\lambda$-bounded and the
+compressor's bound $\poly(n, \lambda)$ is below $n^\lambda$ at every level $n \geq 2$. So
+$\lambda(\machine) = \Lambda_0 + 4\abs{\machine}$ is affine in $\abs{\machine}$; the
+factor $4$ is the size of $\dhalt$, which carries its own description twice
+(\texttt{esize\_dec}: $2(\abs{\machine} + \abs{\lambda})$ plus a constant), absorbed
+by \texttt{PolyBounded.absorb\_log}. The running time of $\dhalt$ on $(n, d)$ is the
+source's $\poly(n, \abs{\machine})$ in the fine form
+$Q(n + \abs{\machine} + \lambda) \cdot (\abs{d} + 1)^k$ for a polynomial $Q$ and a degree
+$k$ depending on the same data (\texttt{dec\_cost}, \texttt{decCostPoly},
+\texttt{dec\_cost\_spec}), assembled along the fixed point's time transfer
+(\texttt{Cost.kleeneFix\_runs\_of}), the run of \texttt{prep} and the universal machine's
+overhead on the compressed decider; the wrapped decider's is
+\texttt{Prog.wrapCoreCost} around it (\texttt{Vhalt\_decider\_cost},
+\texttt{wrapCoreCost\_le\_WZ}), which the class verifier of Definition~\ref{def:mipstar}
+consumes at the fixed level of Theorem~\ref{thm:halting}. The computation of
+$\lambda(\machine)$ in polynomial time from $\machine$ is the class verifier's, with the
+class-level statement.
+
 \effortMedium
 
 \begin{lemma}[Values of the halting verifier]
 \label{lem:dhalt-values}
 \ledgernode{1.6.2, 1.6.3}
 \uses{lem:halt-construction,lem:compress-sampler-indep,def:pcc,def:q-value}
-\lean{MIPRE.Halting.comprStr_accepts, MIPRE.Halting.CompressorSpec.toObligations}
+\lean{MIPRE.Halting.comprStr_accepts, MIPRE.Halting.CompressorSpec.toObligations,
+  MIPRE.Halting.accepts_iff, MIPRE.Halting.accepts_iff_W, MIPRE.Halting.A_of_branch1,
+  MIPRE.Halting.B_of_branch2, MIPRE.Halting.rejectsLong_of_not_branch1,
+  MIPRE.Halting.A_step, MIPRE.Halting.B_step}
 \leanok
 For every $n$:
 \begin{enumerate}
@@ -7160,6 +7212,24 @@ halting case is the criterion's, through the distinguished string \texttt{yYes} 
 Lemma~\ref{lem:compressible-criterion}, and the $n$-step simulation of $\machine$ is the
 criterion's recursion, not the decider's.
 
+Along the paper's route (Lemma~\ref{lem:halt-construction}, \texttt{Halting/Paper/}) both
+items are the decider's: \texttt{MIPRE.Halting.accepts\_iff}
+(\texttt{Halting/Paper/Decider.lean}) says that $\dhalt$ at index $n$ accepts $(x, y, a, b)$
+exactly when the questions have the sampler's dimension and then: everything, if $\machine$
+halts within $\log n$ steps; nothing, if the search program halts within $\log n$ steps on
+the description of $\vhalt$; and otherwise exactly what the compressed decider of $\vhalt$
+itself accepts. Item 1 is the first clause with the diagonal strategy
+(\texttt{A\_of\_branch1}); item 2 is the third clause, the transfer of values and of
+value-$1$ PCC strategies along it being \texttt{A\_step} and \texttt{B\_step}
+(\texttt{Halting/Paper/Induction.lean}) with the answer alphabets identified through
+\texttt{rejectsLong\_of\_not\_branch1}, the compressed decider accepting no answer longer
+than its bound. The second clause is Lin's search branch, which the criterion route has too
+(\texttt{decFunV} of \texttt{Halting/Compression.lean}): the value form of the compression
+theorem has no base case for soundness, and the search --- the semidecider of
+``$\valstar > \frac12$ at the fixed level $C$ of the verifier this string describes'',
+\texttt{exists\_semL} on the tabulation \texttt{tabL} --- supplies it
+(\texttt{B\_of\_branch2}: value $0$ once it fires).
+
 \begin{remark}[Item 2 is a transfer, not a bound]
 \label{rem:dhalt-transfer}
 \uses{lem:dhalt-values,thm:halting,thm:compression}
@@ -7184,7 +7254,10 @@ revision of this chapter did state item 2 as the bound, and because the ledger n
   lem:kleene,def:game-description,lem:sync-le-valstar,lem:dhalt-values,lem:lambda}
 \lean{MIPRE.Halting.halting_reduction, MIPRE.Halting.halting_reduction_of,
   MIPRE.Halting.exists_obligations, MIPRE.Halting.halting_reduces_to_gameValue_of,
-  MIPRE.Halting.halting_reduction_both_of}
+  MIPRE.Halting.halting_reduction_both_of,
+  MIPRE.Halting.halting_paper, MIPRE.Halting.halting_paper_valStar, MIPRE.Halting.Vpaper,
+  MIPRE.Halting.semL, MIPRE.Halting.hasPerfectPCC_of_halts,
+  MIPRE.Halting.valStar_le_of_not_halts}
 \leanok
 Assume an ambient \texttt{MIPRE.GapCompression}. There is a computable map
 $\machine \mapsto \game_{\machine}$ from Turing machines
@@ -7246,6 +7319,30 @@ question distribution and accepted answer tuples yields the computable explicit
 description used here, but the number of entries can exceed a polynomial in the
 program size. The efficient verifier presentation and the explicit table are
 different codomains; the latter has no polynomial-time construction claim here.
+
+\paragraph{The paper's route, at a fixed level.} The source's statement is now formalized
+for the verifier itself: \texttt{MIPRE.Halting.halting\_paper}
+(\texttt{Halting/Paper/Main.lean}) says that for every machine $\machine$ and every
+$\lambda \geq \Lambda_0 + 4\abs{\machine}$ (Lemma~\ref{lem:lambda}), the verifier
+$\texttt{Vpaper}\ \machine\ \lambda = \texttt{Vhalt}\ \machine\ \lambda$ of
+Lemma~\ref{lem:halt-construction} with the search program \texttt{semL}, at the
+\emph{fixed} level $C = \max(C_0, 2)$ and with answers of length at most the compressor's
+bound $\poly(C, \lambda)$, has a value-$1$ PCC strategy if $\machine$ halts on the empty
+input and value at most $\frac12$ if it does not (\texttt{halting\_paper\_valStar} in
+$\valstar$). The proof is the downward induction of the source along the levels
+$C, 2^C, 2^{2^C}, \ldots$ (\texttt{Halting/Paper/Induction.lean}): a halting machine puts
+every level past its halting time in the class of value-$1$ PCC verifiers (item 1 of
+Lemma~\ref{lem:dhalt-values}), and the completeness clause of Theorem~\ref{thm:compression}
+carries the class down one level at a time (\texttt{A\_step}), the search branch never
+firing since it would put the start level below $\frac12$; for a non-halting machine, a
+value above $\frac12$ at level $C$ makes the search halt at some step, every level whose
+$\log$ exceeds it has value $0$, and the soundness clause carries $\leq \frac12$ down to
+$C$ (\texttt{B\_step}), a contradiction. This is the criterion's argument at a fixed level
+with the succinct description replaced by the hardcoded one. The game is the source's
+$\vhalt$ at index $C$: its sampler is $\mathtt{ComputeSampler}(\lambda(\machine))$ and its
+decider runs within the polynomial bound of Lemma~\ref{lem:lambda}, which is what makes the
+reduction polynomial-time once read off a uniform program, the class-level statement of
+Definition~\ref{def:mipstar}.
 
 The proof is Lemma~\ref{lem:compressible-criterion} applied to the instantiation of
 Remark~\ref{rem:compression-abstract}; the semidecidability hypothesis of the lemma is the
