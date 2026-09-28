@@ -1597,7 +1597,7 @@ existing conditional Lean results do not construct it.
 \begin{definition}[The class $\MIPstar_{1,1/2}(2,1)$]
 \label{def:mipstar}
 \uses{def:q-value,def:normal-verifier}
-\lean{MIPRE.MIPStarPoly, MIPRE.PolyVerifier, MIPRE.PolyVerifier.Efficient,
+\lean{MIPRE.MIPStar, MIPRE.PolyVerifier, MIPRE.PolyVerifier.Efficient,
   MIPRE.PolyVerifier.game}
 \leanok
 A language $L\subseteq\{0,1\}^*$ is in $\MIPstar_{1,1/2}(2,1)$, written $\MIPstar$ here, if
@@ -1628,12 +1628,12 @@ time is bounded by $P$ in its total input length $\abs{z} + \abs{r} = \abs{z} + 
 program cannot read a seed of length $B$ within time $B$, and with $B$ polynomial in $\abs{z}$
 the bound is still $\poly(\abs{z})$. In Lean the verifier is a
 \texttt{PolyVerifier}, the clause is \texttt{PolyVerifier.Efficient}, the game is
-\texttt{PolyVerifier.game} and the class is \texttt{MIPRE.MIPStarPoly}.
+\texttt{PolyVerifier.game} and the class is \texttt{MIPRE.MIPStar}.
 
 \begin{definition}[The computable class]
 \label{def:mipstar-computable}
 \uses{def:q-value,def:game-description}
-\lean{MIPRE.MIPStar}
+\lean{MIPRE.MIPStarComputable}
 \leanok
 A language $L\subseteq\{0,1\}^*$ is in the \emph{computable class} if there exists
 a computable map $g$ from bit strings to \texttt{HaltingGameValue.GameData}
@@ -1645,14 +1645,14 @@ a computable map $g$ from bit strings to \texttt{HaltingGameValue.GameData}
 \end{equation*}
 The game $\game_{g(z)}$ is the explicit game \texttt{(g z).game}. Computability is the
 Mathlib \texttt{Computable} predicate; there is no polynomial-time bound on $g$ in this
-definition. This is \texttt{MIPRE.MIPStar}, the class used by the checked inclusion in $\RE$
-and by the main theorem in its current form (Theorem~\ref{thm:mipstar-eq-re}).
+definition. This is \texttt{MIPRE.MIPStarComputable}, the class used by the checked inclusion
+in $\RE$ and by the main theorem in its current form (Theorem~\ref{thm:mipstar-eq-re}).
 \end{definition}
 
 \begin{lemma}[The class is contained in the computable one]
 \label{lem:mipstar-poly-sub}
 \uses{def:mipstar,def:mipstar-computable}
-\lean{MIPRE.MIPStarPoly.toMIPStar, MIPRE.MIPStarPoly.isRE, MIPRE.PolyVerifier.tab,
+\lean{MIPRE.MIPStar.toComputable, MIPRE.MIPStar.isRE, MIPRE.PolyVerifier.tab,
   MIPRE.PolyVerifier.tab_computable, MIPRE.PolyVerifier.quantumValue_tab}
 \leanok
 Every language in $\MIPstar$ (Definition~\ref{def:mipstar}) is in the computable class of
@@ -1685,7 +1685,7 @@ class of Definition~\ref{def:mipstar-computable} asks for. Along the paper's rou
 the verifier $\vhalt$ at the fixed level $C$ with $\lambda = \poly(\abs{\machine})$
 (Lemma~\ref{lem:lambda}), played on input $z$ by a polynomial-time sampler and decider, which is
 what Definition~\ref{def:mipstar} asks for; so Theorem~\ref{thm:mipstar-eq-re} holds for both
-classes (\texttt{MIPRE.Halting.mipstarPoly\_eq\_re}, \texttt{MIPRE.Halting.mipstar\_eq\_re}),
+classes (\texttt{MIPRE.Halting.mipstar\_eq\_re}, \texttt{MIPRE.Halting.mipstarComputable\_eq\_re}),
 and Lemma~\ref{lem:mipstar-poly-sub} is the inclusion of the first in the second. General
 bipartite games must be represented in
 \texttt{GameData} with value-preserving transport; merely forcing unequal answers to equal

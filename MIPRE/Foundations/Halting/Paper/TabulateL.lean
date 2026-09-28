@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 import MIPRE.Foundations.Halting.Instantiation
-import MIPRE.Foundations.ClassMIPStar
+import MIPRE.Foundations.ClassMIPStarComputable
 
 /-!
 # The tabulation of a string's verifier under its own parameter

@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 import MIPRE.Foundations.Halting.CompressorProgram
-import MIPRE.Foundations.ClassMIPStar
+import MIPRE.Foundations.ClassMIPStarComputable
 
 /-!
 # The consequences of the halting reduction, conditionally on compression
@@ -17,9 +17,10 @@ from a `GapCompression` (the hypothesis structure of `thm:compression`) and a un
 * `gameValue_uncomputable_of`, `quantumValue_uncomputable_of` (`cor:value-uncomputable`): no
   computable predicate decides, under the promise that the value is `1` or at most `1/2`, which
   it is — in either value.
-* `re_subset_mipstar_of` and `mipstar_eq_re_of` (`thm:mipstar-eq-re`): `RE ⊆ MIP*` by
-  reducing membership in an r.e. language to halting on the empty input (`Nat.Partrec.Code.curry`)
-  and composing with the reduction; with `MIPStar.isRE`, `MIP* = RE`.
+* `re_subset_mipstarComputable_of` and `mipstarComputable_eq_re_of` (`thm:mipstar-eq-re`):
+  `RE ⊆ MIP*` by reducing membership in an r.e. language to halting on the empty input
+  (`Nat.Partrec.Code.curry`) and composing with the reduction; with `MIPStarComputable.isRE`,
+  `MIP* = RE`.
 -/
 
 namespace MIPRE
@@ -111,7 +112,7 @@ theorem exists_code_halts_of_isRE {L : Set BitStr} (h : IsRE L) :
 include G U in
 /-- **`RE ⊆ MIP*`**, conditionally on compression: compose the many-one reduction of an r.e.
 language to the halting problem with the halting reduction of `cor:main-quantum`. -/
-theorem re_subset_mipstar_of {L : Set BitStr} (h : IsRE L) : MIPStar L := by
+theorem re_subset_mipstarComputable_of {L : Set BitStr} (h : IsRE L) : MIPStarComputable L := by
   obtain ⟨r, hr, hrL⟩ := exists_code_halts_of_isRE h
   obtain ⟨g, hg, hgap⟩ := halting_reduction_quantum_of G U
   refine ⟨fun x => g (r x), hg.comp hr, fun x => ⟨fun hx => ?_, fun hx => ?_⟩⟩
@@ -121,8 +122,8 @@ theorem re_subset_mipstar_of {L : Set BitStr} (h : IsRE L) : MIPStar L := by
 include G U in
 /-- **`MIP* = RE`** (blueprint `thm:mipstar-eq-re`), conditionally on compression: the two
 classes coincide, as predicates on languages. -/
-theorem mipstar_eq_re_of : MIPStar = IsRE :=
-  funext fun _ => propext ⟨MIPStar.isRE, re_subset_mipstar_of G U⟩
+theorem mipstarComputable_eq_re_of : MIPStarComputable = IsRE :=
+  funext fun _ => propext ⟨MIPStarComputable.isRE, re_subset_mipstarComputable_of G U⟩
 
 end Halting
 

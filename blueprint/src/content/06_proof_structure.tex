@@ -6322,8 +6322,8 @@ supplied stages.
   MIPRE.Halting.halting_reduction_quantum_of_answerReduction,
   MIPRE.Halting.gameValue_uncomputable_of_answerReduction,
   MIPRE.Halting.quantumValue_uncomputable_of_answerReduction,
-  MIPRE.Halting.re_subset_mipstar_of_answerReduction,
-  MIPRE.Halting.mipstar_eq_re_of_answerReduction}
+  MIPRE.Halting.re_subset_mipstarComputable_of_answerReduction,
+  MIPRE.Halting.mipstarComputable_eq_re_of_answerReduction}
 \leanok
 From an inhabitant of \texttt{MIPRE.AnswerReduction 5} alone there is a
 \texttt{MIPRE.GapCompression}, and consequently Theorem~\ref{thm:main},
@@ -7297,7 +7297,7 @@ enumeration of that table.
 \label{cor:halting-consequences}
 \uses{thm:halting,thm:halting-undecidable,lem:mipstar-sub-re,def:q-value,def:mipstar-computable,def:re}
 \lean{MIPRE.Halting.halting_reduction_quantum_of, MIPRE.Halting.gameValue_uncomputable_of, MIPRE.Halting.quantumValue_uncomputable_of,
-  MIPRE.Halting.re_subset_mipstar_of, MIPRE.Halting.mipstar_eq_re_of}
+  MIPRE.Halting.re_subset_mipstarComputable_of, MIPRE.Halting.mipstarComputable_eq_re_of}
 \leanok
 Assume an ambient \texttt{MIPRE.GapCompression}. On the map of Theorem~\ref{thm:halting}, the
 quantum value of the game is also $1$ when the machine halts on the empty input and at most

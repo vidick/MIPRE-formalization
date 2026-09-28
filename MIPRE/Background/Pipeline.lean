@@ -82,24 +82,25 @@ theorem quantumValue_uncomputable_of_answerReduction :
   quantumValue_uncomputable_of (GapCompression.ofAnswerReduction A) Cost.selfUniversal
 
 /-- **`RE ⊆ MIP*`**, conditionally on answer reduction only. -/
-theorem re_subset_mipstar_of_answerReduction {L : Set BitStr} (h : IsRE L) : MIPStar L :=
-  re_subset_mipstar_of (GapCompression.ofAnswerReduction A) Cost.selfUniversal h
+theorem re_subset_mipstarComputable_of_answerReduction {L : Set BitStr} (h : IsRE L) :
+    MIPStarComputable L :=
+  re_subset_mipstarComputable_of (GapCompression.ofAnswerReduction A) Cost.selfUniversal h
 
 /-- **`MIP* = RE`** (blueprint `thm:mipstar-eq-re`), conditionally on answer reduction only:
 introspection, parallel repetition and the universal machine are supplied. -/
-theorem mipstar_eq_re_of_answerReduction : MIPStar = IsRE :=
-  mipstar_eq_re_of (GapCompression.ofAnswerReduction A) Cost.selfUniversal
+theorem mipstarComputable_eq_re_of_answerReduction : MIPStarComputable = IsRE :=
+  mipstarComputable_eq_re_of (GapCompression.ofAnswerReduction A) Cost.selfUniversal
 
 /-- **`RE ⊆ MIP*_{1,1/2}(2,1)`**, the paper's class, conditionally on answer reduction only. -/
-theorem re_subset_mipstarPoly_of_answerReduction {L : Set BitStr} (h : IsRE L) :
-    MIPStarPoly L :=
-  re_subset_mipstarPoly_of (GapCompression.ofAnswerReduction A) Cost.selfUniversal
+theorem re_subset_mipstar_of_answerReduction {L : Set BitStr} (h : IsRE L) :
+    MIPStar L :=
+  re_subset_mipstar_of (GapCompression.ofAnswerReduction A) Cost.selfUniversal
     Cost.selfClockedUniversal h
 
 /-- **`MIP*_{1,1/2}(2,1) = RE`** (blueprint `thm:mipstar-eq-re`, the paper's class),
 conditionally on answer reduction only. -/
-theorem mipstarPoly_eq_re_of_answerReduction : MIPStarPoly = IsRE :=
-  mipstarPoly_eq_re_of (GapCompression.ofAnswerReduction A) Cost.selfUniversal
+theorem mipstar_eq_re_of_answerReduction : MIPStar = IsRE :=
+  mipstar_eq_re_of (GapCompression.ofAnswerReduction A) Cost.selfUniversal
     Cost.selfClockedUniversal
 
 end Halting

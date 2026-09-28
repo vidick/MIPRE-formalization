@@ -5,7 +5,7 @@ Authors: Thomas Vidick
 -/
 import MIPRE.Foundations.Halting.Paper.Main
 import MIPRE.Foundations.Halting.Paper.Build
-import MIPRE.Foundations.ClassMIPStarPoly
+import MIPRE.Foundations.ClassMIPStar
 
 /-!
 # The class verifier of the polynomial-time halting reduction
