@@ -5,6 +5,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.TM.Code.Examples
+public meta import MIPRE.TM.Code.Examples
 
 @[expose] public section
 
