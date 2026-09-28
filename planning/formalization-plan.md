@@ -1026,9 +1026,13 @@ proves `MIPCo = IsCoRE` from the single hypothesis
 `ω_co`; `MIPCo ⊆ coRE` (`MIPRE.MIPCo.isCoRE`) is unconditional. Blueprint chapter 8,
 `def:value-model` and `thm:mipco-eq-core`. What remains — the commuting-operator soundness of
 introspection, answer reduction and oracularization — is the plan's Phases 1–5, and is the
-largest item after the main theorem; the intent is to generalize the existing stage analyses
-to the commuting-operator model rather than to write them a second time, and the audit of what
-stands in the way of that is the next step of the track.
+largest item after the main theorem. The stage analyses are to be *generalized* over an
+abstract projective commuting-operator model, with the tensor-product strategies as an
+instance, rather than written a second time: `reports/co-generalization-audit.md` read the
+four soundness chains and found them bipartite and vector-state throughout, with finite
+dimension used only at identified, replaceable places — except in the vendored
+low-individual-degree test, which becomes the single remaining hypothesis of
+`MIPRE.mipco_eq_core` once Phases 1–5 of the plan are done, and is Phase 6.
 
 ## Working rules for this track
 

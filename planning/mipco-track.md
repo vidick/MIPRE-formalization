@@ -1,7 +1,9 @@
 # The commuting-operator class, `MIP^co = coRE`: plan
 
-**Status: Phase 0 in progress (#235).** The conditional theorem — `MIP^co = coRE` given
-the commuting-operator soundness of gap compression — with all of its plumbing.
+**Status: Phase 0 done (#235, #236), made generic in #239; Phases 1–6 planned around
+generalizing the existing analyses (`reports/co-generalization-audit.md`).** The conditional
+theorem — `MIP^co = coRE` given the commuting-operator soundness of gap compression — is in,
+with all of its plumbing, written once for both values.
 
 Written 2026-09-28, after the explicit separation (#222) and the paper's class (#230–#233).
 Target: Lin's theorem `MIP^co = coRE` (`Lin25`, arXiv:2510.07162, STOC 2026), proved by
@@ -31,14 +33,17 @@ layers, the trivially accepting and rejecting strings, and the upper semidecider
 commuting-operator value (`MIPRE.commutingUpperRE`, through Positivstellensatz certificates)
 in the role Lin gives to the NPA hierarchy. `MIP^co ⊆ coRE` is proved unconditionally.
 
-Everything else is the proof of that hypothesis, and it is new mathematics for this
-repository: the soundness analyses of introspection, answer reduction and oracularization
-for commuting-operator strategies (Lin's model `t = co`), carried out on *tracially
-embeddable* strategies. That re-proves most of the finite-dimensional analysis — about
-240k lines here, vendored trees included — over tracial von Neumann algebras, and none of
-the finite-dimensional lemma trees can be reused as they are, because the objects
-(operators on `L²(𝒜, τ)`, the commutant, the standard form) are different. It is the largest
-single item after the main theorem, and §5 sizes it phase by phase.
+Everything else is the proof of that hypothesis: the soundness analyses of introspection,
+answer reduction and oracularization for commuting-operator strategies (Lin's model
+`t = co`). Lin carries them out on *tracially embeddable* strategies and transfers by
+density; that is not what is planned here. The audit in `reports/co-generalization-audit.md`
+found the repository's own analyses to be bipartite and vector-state throughout, using no
+fact of finite dimension except at a few identified places, so they are **generalized** over
+an abstract projective commuting-operator model, with the tensor-product strategies as an
+instance and both clauses proved by one proof — except for the low-individual-degree test,
+whose only proof here is the vendored finite-dimensional one and which becomes the single
+remaining hypothesis. It is still the largest item after the main theorem, and §5 sizes it
+phase by phase, each phase ending with a sharper conditional theorem.
 
 Two things do *not* have to be done. Co-completeness — preservation of perfect
 commuting-operator strategies — is not needed at all (§3). Parallel repetition in the
@@ -83,15 +88,15 @@ Piece by piece:
 | accepting and rejecting games | `Halting.yYes`, `Halting.yNo` (`Halting/Strings.lean`) | done; `ω_co` reading in Phase 0 |
 | tabulation and semidecider plumbing | `tab`, `tab_computable`, `tab_match`; their `ω_co` readings | Phase 0 |
 | compression completeness, model `co` | not needed (§3): the tensor completeness `GapCompression.completeness` is what the criterion consumes | — |
-| compression soundness, model `co` | `GapCompression.Sound ValueModel.commuting`, a hypothesis | Phases 1–5 |
+| compression soundness, model `co` | `GapCompression.Sound ValueModel.commuting`, a hypothesis | Phases 1–6 |
 | parallel repetition, model `co` | `thm:direct-repetition-co`, vendored and sorry-free (`MIPRE.Repetition.commutingOperatorValue_repeat_le`); direct, not anchored (§6 item 8) | done |
-| tracial density | `thm:tracial-density`, vendored (`MIPRE.Repetition.tracialDensity`) | done |
-| rounding, model `co` | not formalized; `thm:almost-sync` is #22 (finite dimension) and #23 (commuting) | Phase 1 |
-| tracial value at most bipartite value | `lem:tracial-le-co`, #29 | Phase 1 |
-| Pauli basis rigidity, model `co` | not formalized | Phase 2 |
-| introspection soundness, model `co` | not formalized | Phase 3 |
-| low-individual-degree test soundness, model `co` | not formalized | Phase 4 |
-| oracularization soundness, model `co` | not formalized | Phase 5 |
+| tracial density | `thm:tracial-density`, vendored (`MIPRE.Repetition.tracialDensity`) | done; not needed on the route of §5 |
+| rounding, model `co` | not formalized; `thm:almost-sync` is #22 (finite dimension) and #23 (commuting) | not needed on the route of §5: the analyses assume nothing synchronous |
+| tracial value at most bipartite value | `lem:tracial-le-co`, #29 | not on the critical path (§5); open for the Tsirelson chapter |
+| Pauli basis rigidity, model `co` | `thm:qld`, finite-dimensional; generalized over the model | Phase 5 |
+| introspection soundness, model `co` | `Introspection.seven`, finite-dimensional; generalized over the model | Phase 4 |
+| low-individual-degree test soundness, model `co` | not formalized; the vendored proof is finite-dimensional through and through | Phase 6, the one new theorem |
+| oracularization soundness, model `co` | `OracularTensor.lean`, finite-dimensional in its carrier only; generalized over the model | Phase 2 |
 
 ## 3. The dual criterion, and why co-completeness is not needed
 
@@ -176,9 +181,9 @@ from above; that asymmetry is exactly what makes one class `RE` and the other `c
 
 The class is the computable one, as `MIPRE.MIPStar` is (`def:mipstar-computable`): a
 computable map from strings to game descriptions with `ω_co = 1` on the language and
-`ω_co ≤ 1/2` off it. The paper's polynomial-time class is Phase 6.
+`ω_co ≤ 1/2` off it. The paper's polynomial-time class is Phase 7.
 
-## 5. Phases 1–5: the commuting-operator soundness of compression
+## 5. Phases 1–6: the commuting-operator soundness of compression, by generalization
 
 The hypothesis to discharge, stated in the bipartite value of `Verifier.game`:
 
@@ -188,70 +193,142 @@ G.Sound ValueModel.commuting : ∀ V lam n, V.IsBounded lam → G.C₀ ≤ n →
   (G.output (V.sampler.prog, V.decider.prog) lam).val .commuting n (G.bound.eval (n + lam)) ≤ 1/2
 ```
 
-for `G = MIPRE.gapCompression`, i.e. the pipeline of `Background/Pipeline.lean` with the
-soundness clause of each stage read in `ω_co`. Lin proves each stage's `co` soundness on
-tracially embeddable strategies and transfers to all commuting-operator strategies by
-density. The phases follow his sections; each one is a campaign of the size of the
-finite-dimensional one it mirrors, and the line counts below are of the finite-dimensional
-Lean it would parallel, not estimates of the port, which cannot reuse them.
+for `G = MIPRE.gapCompression`, the pipeline of `Background/Pipeline.lean` with the soundness
+clause of each stage read in `ω_co`.
 
-**Phase 1 — the vocabulary and the value dictionary** (`Preliminary.tex` §§ tracially
-embeddable strategies, symmetric strategies, rounding). Tracially embeddable strategies
-(`L²(𝒜, τ)`, the standard form, `σ|τ⟩`, Alice in `𝒜`, Bob in the commutant `𝒜'`, the
-switching identity `A|τ⟩ = A^op|τ⟩`); their correlations and values; the density theorem
-in a usable form (a bound on the value over tracially embeddable strategies is a bound on
-`ω_co`, the value being `1`-Lipschitz in `ℓ¹`); the rounding theorem for the commuting
-model (`Lin23` Theorem 4.1 / de la Salle 2023), which every stage that assumes synchronous
-strategies needs through balancedness; and `lem:tracial-le-co` (#29). Mathlib has
-`VonNeumannAlgebra` as a definition and nothing of the standard form; the repository has a
-GNS construction for tracial states on `*`-algebras (`Foundations/GNS.lean`) and the
-vendored tracial density theorem. New: 3k–6k lines, and the foundation of everything
-after it.
+**The principle: generalize, do not duplicate.** `reports/co-generalization-audit.md` read
+the four soundness chains and found them bipartite and vector-state throughout — a unit
+vector on `ℂ^{dA} ⊗ ℂ^{dB}`, Alice's operators as `X ⊗ₖ 1`, Bob's as `1 ⊗ₖ Y`, estimates in
+`‖(M ⊗ 1)ψ‖` — using no fact of finite dimension except at a handful of identified places
+(the report's §4: the Kronecker carrier, Naimark dilation, one use of de la Salle's
+orthogonalization, `Fin` packaging, and the vendored low-individual-degree test). So the
+analyses are not re-proved for the commuting model; they are restated over an abstract model
+in which the tensor-product strategies are an instance, and then they prove both clauses at
+once. The one exception is the low-individual-degree test, whose only proof here is the
+vendored finite-dimensional `MIPStarRE.LDT.Test.mainFormal`; it becomes the single
+hypothesis of the conditional theorem until a commuting-operator proof exists (Phase 6).
+Lin's route — tracially embeddable strategies, rounding, density — is not followed: the
+repository's proofs never symmetrize and never use the tracial state, and every tool of
+that route (`thm:almost-sync` #22/#23, `lem:tracial-le-co` #29, the standard form
+`L²(𝒜, τ)`) drops off the critical path. Where a generic lemma is written, its matrix version
+is deleted or becomes the instance; nothing is kept in two copies.
 
-**Phase 2 — rigidity of the Pauli basis test** for tracially embeddable strategies
-(`Introspection.tex`, `thm:soundnessPaulibasis`; from `Lin23` Theorem 6.4). Lin's test is
-de la Salle's commutation/anticommutation test, not the low-degree test the main theorem's
-introspection uses, so the finite-dimensional `thm:qld` chain (`Background/QLD`, 35k lines;
-`Foundations/LowDegree`, 12.6k) is not what gets ported; what gets proved is a
-Gowers–Hatami-style stability statement over `L²(𝒜, τ)`, with the two isometries
-`V_A, V_B` and the auxiliary state of Lin's statement. Lin's paper derives it from `Lin23`
-by modifications described in prose ("a larger constant" in one inequality, two equations
-"changed to incorporate the extra question labels"), which is the thinnest paper trail on
-the introspection side. New: 15k–30k lines.
+**The model.** A *projective commuting-operator strategy*: a Hilbert space `H`, a unit
+vector `ψ`, Alice's PVMs `A x a : H →L[ℂ] H`, Bob's PVMs `B y b`, with
+`Commute (A x a) (B y b)`. `TensorProductStrategy.toCommuting` (`Foundations/Correlations.lean`)
+is the tensor instance; `ω_co` is the supremum over these by the dilation lemma of Phase 1;
+Lin's tracially embeddable strategies (vendored `TraciallyEmbeddableCorrelation`, Alice in
+the algebra, Bob in its commutant) are instances too, though nothing here needs them. Finite
+ancillas are `ι → H` with the `PiLp 2` structure, so the EPR register of introspection and
+of the Pauli basis test, and the Weyl operators on it, are unchanged.
 
-**Phase 3 — introspection soundness in the `co` model** (`prop:QuestionReduction`,
-`thm:Introspectgame`, `QRsoundnessproof.tex`). The finite-dimensional analysis is
-`Foundations/Introspection` (34.5k lines) and `Background/Introspection` (8.4k). The
-sampler and decider programs, the typed presentation and the running-time accounting are
-model-independent and reuse. New: 20k–40k lines.
+**Phase 1 — the model and its operator calculus** (foundation; report §4 items 1, 2, 5, 7).
+Three pieces.
 
-**Phase 4 — answer reduction in the `co` model** (`prop:AnswerReduction`,
-`ARsoundnessproof.tex`). The classical part — the PCP of proximity, the succinct 5-SAT
-encoding, the low-degree encoding — is model-independent (`Background/AnswerReduction`,
-10.6k lines; `Foundations/SAT`, `Foundations/CL`) and reuses. The quantum part needs the
-soundness of the quantum low-individual-degree test for synchronous tracial strategies
-(`thm:soundnessQLDT`) and its simultaneous version (`lem:simuQLID`). The vendored LIDT
-(`Background/LIDT`, 136k lines) is finite-dimensional. This is where Lin's paper trail is
-thinnest: the theorem is cited as JNVWY's tensor-code soundness "directly applied" to
-individual-degree polynomials, extended to tracially embeddable strategies by `Lin23`
-Corollary 4.4, and the appendix proving the simultaneous version is commented out in the
-source. It needs its own verification before any formalization. New: the largest item;
-40k–80k lines if it parallels the vendored proof, unknown otherwise.
+(a) `CommutingOperatorStrategy.exists_projective_dilation`: for a POVM family on `H` and a
+set `𝒞` of operators commuting with it, PVMs on `H ⊗ ℂ^A ⊗ ℂ²` commuting with `𝒞 ⊗ 1`, with a
+fixed ancilla vector and the compression identity `E_a` as an *operator* identity. Proof by
+the C*-algebraic square root (`CFC.sqrt`, commutation by `Commute.cfc`), the isometry
+`V = ∑ √E_a ⊗ |a⟩`, and the 2×2 unitary extension `[[w, 1 − ww*], [1 − w*w, w*]]` of the
+partial isometry `w = V ⊗ ⟨a₀|` — no von Neumann algebra theory, no comparison of
+projections (the report's §4 has the computation; check it in Lean first, it is the lemma
+everything else leans on). Corollary: `commutingOperatorValue G` is the supremum over
+projective strategies, so `ValueModel.commuting` is reached from the model.
 
-**Phase 5 — oracularization, repetition and assembly** (`lem:oratransformation`, the
-`co` clause of `prop:Parallelrepetition`, `Background/Pipeline.lean`). Oracularization
-soundness in the `co` model through balancedness and rounding; repetition through the
-vendored `commutingOperatorValue_repeat_le`, which is *direct* repetition — Lin's
-proposition is anchored, but the value-form pipeline here already uses direct repetition
-(D8 of `planning/repetition-port.md`), and the vendored theorem is sorry-free; then the
-composition of the three `co` clauses into `Sound ValueModel.commuting` for
-`MIPRE.gapCompression`, along the
-existing `GapCompression.ofPipeline`. New: 5k–10k lines, plus a vendoring of the `co`
-clause of the oracularization if it is done upstream.
+(b) The operator calculus restated over `H →L[ℂ] H` with two commuting families: `snorm`,
+`xSqNorm`, `bornProb`, `povmValue`, `condFail`, `dis`, `Bnd`, the Cauchy–Schwarz and
+`∑ F†F ≤ 1` lemmas, PVM fibres and coarse-grainings, the sandwich and pasting chains,
+`GameAdapt`'s `succAt`/`failAt`/`adapt` and the strategy transports — today `OpBound`,
+`StateDistance`, `CrossConsistency`, `POVMValue`, `PVM`, `Commutation`, `POVMMix`,
+`Disagreement`, `Sandwich`, `Pasting`, `Expanded`, `Swap`, `GameAdapt`, `GameTransport`
+(≈ 9–10k lines). The matrix layer becomes the instance
+`H = EuclideanSpace ℂ (Fin dA × Fin dB)`, `aOp X = toEuclideanCLM (X ⊗ₖ 1)`, so that
+consumers migrate file by file and the main theorem keeps building throughout; where a
+proof used matrix entries (the Cauchy–Schwarz of `Closeness.lean`, `PosSemidef.kronecker`)
+it is re-proved from positivity. `Dilation`, `StrategyDilation`, `RegisterReindex` and
+`LIDT/Adapter/Registers` are retired.
 
-**Phase 6 (optional) — the paper's class.** `MIP^co_{1,1/2}(2,1)` with a polynomial-time
-sampler and decider, mirroring `MIPStarPoly` (#230–#233), and Lin's `k-CLMIP^co`. About
-1k lines.
+(c) The interfaces: the four stage structures carry their soundness clause in
+`Verifier.val ω` for the two models — a `ValueModel`-indexed family, or two fields — and
+`Pipeline.output_val_le ω` composes them (the value chain of `Compress.lean` is generic given
+`val_eq_of_rejects ω`, already in #239).
+
+Risk: elaboration cost. `OpBound.lean` avoids Mathlib's operator norm for elaboration time;
+the generic layer must be profiled on the heaviest consumers (`QLD/Chain.lean`, 2.5k lines;
+`Pasting.lean`) before the migration is committed to. New: 3–5k lines; restated: ≈ 10k.
+
+**Phase 2 — oracularization, repetition and the composition** (validates the architecture;
+report §3.1). `OracularTensor.lean` (771 lines) restated in the model — its six projectivity
+uses are now legitimate by construction — with the detyping transports and
+`quantumValue_typedGame_le`; `typed_soundness`/`detyped_soundness` of
+`Pipeline/Oracularization.lean` in `Verifier.val ω`. Repetition: `val_repVerifier ω` (≈ 30
+lines; the verifier-to-game bridge is value-independent), the co bound from the vendored
+`commutingOperatorValue_repeat_le` (`ε^7 ≥ ε^13`), the `Repetition` interface with both
+clauses, `Background/Repetition/Verifier.lean` instantiated twice. Then
+`GapCompression.ofPipeline` yields `Sound ω` for both models from the three stage clauses in
+`ω`. **After this phase `MIPRE.mipco_eq_core` is conditional on the introspection and
+answer-reduction clauses in `ω_co`** instead of on the whole of `Sound .commuting`. No
+rounding, balancedness, density or tracial embedding anywhere. New: 2–3k lines.
+
+**Phase 3 — answer reduction, with the low-individual-degree test as a model hypothesis**
+(report §3.2). The `Sound*` chain (≈ 4k B lines), the LIDT adapter (`Reduction`, `Padding`,
+`Extraction`, `Simultaneous`, ≈ 3.8k), `Bridge/Measurement` and the Foundations chain
+restated; the one finite Naimark step (`povmValue_le_quantumValue`) disappears, since the
+decoded measurements are coarse-grainings of PVMs. The interface: a structure
+`LIDTSoundness` for the model, in the exact shape of `Simul.clSoundness` — a projective
+strategy passing the seeded `clGame` with probability `≥ 1 − ε` yields PVMs `GA` in Alice's
+algebra and `GB` in Bob's with the three inconsistency bounds and error `deltaSim`. Its
+tensor instance is the vendored `mainFormal` through the existing bridge; its commuting
+instance is Phase 6. **After: conditional on the introspection clause and the commuting
+LIDT soundness.** Touched: 8–10k lines.
+
+**Phase 4 — introspection, with `thm:qld` as a model hypothesis** (report §3.3). The 10.5k
+B lines restated; of the 9.6k C lines, the EPR register and the mirror, and the
+entry/block/readout identities, stay on the concrete register factor `M_{q^n}` with the
+ancilla abstract (which is how `PrimitiveSoundness` is already stated: PVMs on
+`(ι → F) × H` against `registerState ξ`, `ξ` arbitrary); the Naimark-against-a-fixed-state
+steps of the adaptive inductions become the Phase 1 lemma; the isometry layer
+(`FieldExtraction`, `isometricImage`, `isometricState`) is restated with isometries
+`H → ℂ^{register} ⊗ H'`. The interface: `QLDSoundness` for the model, in the shape of
+`qld_soundness`'s conclusion. **After: conditional on the Pauli basis test and the LIDT
+soundness in the commuting model.** Touched: ≈ 20k lines; check first that the inductions
+run at the same error rates with the new dilation (they should: the compression identity is
+the same).
+
+**Phase 5 — the Pauli basis test, with the LIDT soundness as the hypothesis** (report §3.4).
+The 23k B lines restated; M1 (the top-level `exists_legal_dilation`, the sandwich's joint
+measurement, `Anticomm`) become the Phase 1 lemma; M2, the one use of de la Salle's
+orthogonalization at `QLD/Commutation.lean:587`, is removed by threading projectivity to
+`hatObs_commutation` and `comm_signed_commutation` (the audit's inference — verify before
+relying on it; the fallback is the vendored `B(H)` tier, unconditional); M3:
+`PaddedLIDT.lean` consumes `LIDTSoundness`; M4: the statement shape. The ancilla-side EPR
+and Weyl material is unchanged. **After: `MIPRE.mipco_eq_core` is conditional on exactly one
+named theorem, `thm:lidt-cl-soundness-one` in the commuting-operator model.** Touched:
+≈ 25k lines.
+
+**Phase 6 — the low-individual-degree test in the commuting-operator model.** The only new
+mathematics, and the item on which the track can fail. What exists: the vendored
+finite-dimensional proof (126k lines: spectral truncation and SVD in
+`MakingMeasurementsProjective`, semidefinite duality in `SelfImprovement`, matrix Chernoff,
+SWAP symmetry, `Fintype.card` throughout) and Lin's paper trail, which cites JNVWY's
+tensor-code soundness as "directly applied" to individual-degree polynomials, extended to
+tracially embeddable strategies by `Lin23` Corollary 4.4, with the appendix proving the
+simultaneous version commented out in the source. Options, in order of preference: a
+commuting-operator proof produced upstream and vendored through `scripts/vendor-*.py`, as
+the finite-dimensional one was; a direct formalization on the model, after an audit of which
+of the vendored proof's mechanisms have tracial analogues (not done). No transfer principle
+applies: density approximates by tracially embeddable strategies, still
+infinite-dimensional, and approximation by finite-dimensional ones is what fails.
+Prerequisite: verify Lin's paper trail for `thm:soundnessQLDT` and `lem:simuQLID` before
+anything else. Size: unknown; 40k–130k lines by analogy with the vendored proof.
+
+**Phase 7 (optional) — the paper's class.** `MIP^co_{1,1/2}(2,1)` with a polynomial-time
+sampler and decider, mirroring `MIPStarPoly` (#230–#233), and Lin's `k-CLMIP^co`. About 1k
+lines.
+
+Order: 1, 2, then 3 and 4 in either order (both need only Phase 1), 5, 6. Phases 2–5 each
+end with a sharper conditional theorem, stated in `MIPRE/MIPCo.lean` and in blueprint
+`thm:mipco-eq-core`, so the track has a checkable deliverable at every step.
 
 ## 6. Delicate points
 
@@ -259,52 +336,80 @@ sampler and decider, mirroring `MIPStarPoly` (#230–#233), and Lin's `k-CLMIP^c
    (`MIPRE.commutingOperatorValue`: POVMs `E`, `F` on one Hilbert space, commuting) and the
    tracial `valco` (`MIPRE.commValue`: a `*`-algebra with a tracial state and one PVM family
    played by both players). The criterion, the classes, the semidecider,
-   `Sound ValueModel.commuting` and `MIPCo` are all in `ω_co`, so nothing is transferred at
-   the criterion. `valco ≤ ω_co` is
+   `Sound ValueModel.commuting`, `MIPCo` and the model of §5 are all in `ω_co`, so nothing
+   is transferred at the criterion and nothing in the track uses `valco`. `valco ≤ ω_co` is
    #29 and unproved; the reverse fails in general and holds up to rounding for synchronous
-   games with proportional diagonal weight (`thm:almost-sync`, #22/#23). The transfers
-   happen inside the stages' proofs, in Phases 1–5, where Lin makes them.
-2. **The nested criterion.** The search must semidecide the complement of the *larger*
+   games with proportional diagonal weight (`thm:almost-sync`, #22/#23). Neither is on the
+   critical path of §5; both stay open for the Tsirelson chapter.
+2. **Projective versus POVM.** The model is projective because the analyses are
+   (`OracularTensor` uses projectivity six times, `oracleView_mul` is false for POVMs, every
+   measurement on the answer-reduction chain is a PVM or a coarse-graining of one). `ω_co` is
+   defined with POVMs, and the vendored tracially embeddable correlations have POVMs too, so
+   density does not close the gap; the dilation lemma of Phase 1 does, and it is the single
+   lemma the whole architecture leans on. Its proof is elementary (a 2×2 unitary extension
+   of a partial isometry in a C*-algebra, report §4); get it into Lean before anything else.
+3. **Generic means replaced, not added.** A generic lemma replaces its matrix version, and
+   the tensor statement is derived as an instance; the main theorem keeps building through
+   the generic proof at every commit. If a phase leaves a matrix twin beside a generic
+   lemma, the phase is not done. The `valStar_*` names of #239 are the pattern: one-line
+   instances of the `val_*` lemmas.
+4. **What stays finite-dimensional on purpose.** The EPR register and the Weyl operators of
+   introspection and of the Pauli basis test (on a finite ancilla), the readouts and block
+   identities on the register factor, `HasPerfectPCC` and every completeness construction,
+   the tensor identification of repetition (`Entangled.lean`) and its 71k-line vendored
+   proof. None of these is a duplicate; each is an instance, or on a side the model leaves
+   concrete.
+5. **The nested criterion.** The search must semidecide the complement of the *larger*
    class, the compressor must preserve the *smaller* one, and the "no" string must lie in
    the smaller. The Lean of Phase 0 is the check.
-3. **The semidecider runs on the tabulation.** `tab x n` is total, and `tab_val` holds
+6. **The semidecider runs on the tabulation.** `tab x n` is total, and `tab_val` holds
    for `n`-bounded strings only, as `tab_value` does. `classOne` is defined on the
    tabulated game so that the non-halting conclusion needs no boundedness; the halting
    conclusion reads `ω_co(tab) ≤ 1/2` through `tab_val` from the boundedness that
    `classB ω_co` carries.
-4. **`ω_co = 1` without a strategy.** It is `¬ (ω_co < 1)` and `ω_co ≤ 1`. No perfect
+7. **`ω_co = 1` without a strategy.** It is `¬ (ω_co < 1)` and `ω_co ≤ 1`. No perfect
    commuting-operator strategy is constructed anywhere, consistent with `thm:separation`.
-5. **Density is approximate.** Tracial density is an `ℓ¹`-closure statement, so a
-   soundness bound proved for tracially embeddable strategies transfers to `ω_co` with an
-   arbitrarily small loss; each stage's soundness has to be stated with slack (it is, in
-   Lin's `1 − ε ⇒ 1 − s(ε)` form), and the final `1/2` comes from repetition.
-6. **Vendored orthonormalization is finite-dimensional.**
-   `Background/Orthonormalization/Orthogonalization` is de la Salle's orthogonalization
-   lemma in finite dimension; Lin's `lem:orthogonalizationlemma` is the general von Neumann
-   algebra version (de la Salle, Theorem 1.2), and `cor:orthogonalizationlemmasync` is
-   `Lin23` Corollary A.7.
-7. **Anchored versus direct repetition.** Lin's `prop:Parallelrepetition` is anchored and
-   proved in his appendices for both models; the repository's repetition is direct. The
-   value-form pipeline (D8) needs only direct repetition, and its `co` form is vendored.
-8. **Authority.** The companion proof repository has no `coRE` chapter, so for this track
-   the paper is Lin's, cited at its arXiv version; the blueprint nodes carry no
-   `\ledgernode`, and disagreements between Lin's statements and the Lean are findings to
-   report to Lin, not to the companion ledger.
-9. **The class is the computable one.** As for `MIP*`, the Lean class quantifies over
-   computable maps to game descriptions, and the polynomial-time class is a separate
-   inclusion (Phase 6), as `lem:mipstar-poly-sub` is.
+8. **Vendored orthonormalization is used at one site, in its finite-dimensional tier.**
+   `QLD/Commutation.lean:587` is the only consumer, and the audit's reading is that
+   projectivity, already available there, makes the call unnecessary; the vendored tree
+   also carries the `B(H)` and II₁-factor tiers unconditionally, and the general von
+   Neumann tier conditionally on the unproved `MvNStructureTheory`. Lin's
+   `lem:orthogonalizationlemma` is the general version (de la Salle, Theorem 1.2); it is
+   not needed on the route of §5.
+9. **The vendored trees are untouchable** except through `scripts/vendor-*.py`; the
+   commuting LIDT soundness therefore arrives either as a new vendored tree or as project
+   Lean, never as an edit of `MIPStarRE`.
+10. **Elaboration cost.** The finite-dimensional operator layer was tuned for it
+    (`OpBound.lean` avoids Mathlib's operator norm on purpose); profile the generic layer on
+    `QLD/Chain.lean` and `Pasting.lean` before migrating them.
+11. **Anchored versus direct repetition.** Lin's `prop:Parallelrepetition` is anchored and
+    proved in his appendices for both models; the repository's repetition is direct. The
+    value-form pipeline (D8) needs only direct repetition, and its `co` form is vendored.
+12. **Authority and the paper trail.** The companion proof repository has no `coRE`
+    chapter. For Phases 1–5 the mathematics is the repository's own, and the paper of
+    record is JNVWY through this blueprint; Lin's paper, cited at its arXiv version, is the
+    authority for Phase 6 only, which is where its thin spots (`thm:soundnessQLDT`,
+    `lem:simuQLID`) matter — the reason Phase 6 is last and its verification comes first.
+    Disagreements between Lin's statements and the Lean are findings to report to Lin, not
+    to the companion ledger.
+13. **The class is the computable one.** As for `MIP*`, the Lean class quantifies over
+    computable maps to game descriptions, and the polynomial-time class is a separate
+    inclusion (Phase 7), as `lem:mipstar-poly-sub` is.
 
 ## 7. Milestones
 
 | ID | Deliverable | Size | Status |
 |---|---|---|---|
-| C0 | Phase 0: the nested criterion, the `ω_co` transport, the value model and the generic halting layer, the conditional reduction, `MIPCo`, `MIPCo ⊆ coRE`, the blueprint | ~1k lines of Lean net | done: #236, then made generic |
-| C1 | tracially embeddable strategies, `L²(𝒜, τ)`, density and rounding in usable form, `lem:tracial-le-co` | 3k–6k | open |
-| C2 | Pauli basis test rigidity, model `co` | 15k–30k | open |
-| C3 | introspection soundness, model `co` | 20k–40k | open |
-| C4 | answer reduction soundness, model `co`, with the low-individual-degree test | 40k–80k | open; verify the paper trail first |
-| C5 | oracularization soundness, model `co`; `Sound ValueModel.commuting` for `MIPRE.gapCompression` | 5k–10k | open |
-| C6 | the paper's class `MIP^co_{1,1/2}(2,1)` | ~1k | open |
+| C0 | Phase 0: the nested criterion, the `ω_co` transport, the value model and the generic halting layer, the conditional reduction, `MIPCo`, `MIPCo ⊆ coRE`, the blueprint | ~1k lines of Lean net | done: #236, then made generic in #239 |
+| C1 | Phase 1: the projective commuting-operator model, the dilation lemma, the operator calculus restated with the matrix layer as its instance, the stage interfaces in `Verifier.val ω` | 3k–5k new, ≈ 10k restated | open; start with the dilation lemma |
+| C2 | Phase 2: oracularization, repetition and the composition in the model; `mipco_eq_core` conditional on the introspection and answer-reduction clauses in `ω_co` | 2k–3k | open |
+| C3 | Phase 3: answer reduction in the model with `LIDTSoundness` as the hypothesis | 8k–10k touched | open |
+| C4 | Phase 4: introspection in the model with `QLDSoundness` as the hypothesis | ≈ 20k touched | open |
+| C5 | Phase 5: the Pauli basis test in the model; `mipco_eq_core` conditional on the commuting LIDT soundness alone | ≈ 25k touched | open |
+| C6 | Phase 6: the low-individual-degree test in the commuting-operator model | unknown; 40k–130k by analogy | open; verify Lin's paper trail first |
+| C7 | Phase 7: the paper's class `MIP^co_{1,1/2}(2,1)` | ~1k | open |
 
-C1 is the prerequisite of C2–C5, which are otherwise independent of one another; C4
-should not start before its paper trail has been checked against JNVWY and `Lin23`.
+C1 is the prerequisite of everything after it; C3 and C4 need only C1 and are independent
+of each other; C5 needs C4's interface; C6 is independent of C3–C5 in its mathematics and is
+what they all wait for. Each of C2–C5 ends with a sharper conditional theorem, so progress
+is visible in `MIPRE/MIPCo.lean` at every milestone.
