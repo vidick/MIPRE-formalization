@@ -5,6 +5,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.TM.Code.Semantics
+public meta import MIPRE.TM.Code.Semantics
 
 @[expose] public section
 
