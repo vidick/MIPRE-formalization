@@ -1605,8 +1605,8 @@ there are two machines, a sampler $\sampler$ and a decider $\decider$, and a pol
 such that for every string $z$, writing $B = P(\abs{z})$:
 \begin{enumerate}
 \item \emph{Efficiency.} On input $z$ and a uniformly random seed $r\in\{0,1\}^B$, the
-  sampler halts within time $B$ with a pair $(x,y)$ of strings of length at most $B$; write
-  $\mu_z$ for the distribution of $(x,y)$. On input $(z,x,y,a,b)$, the decider halts within
+  sampler halts within time $P(\abs{z}+\abs{r})$ with a pair $(x,y)$ of strings of length at
+  most $B$; write $\mu_z$ for the distribution of $(x,y)$. On input $(z,x,y,a,b)$, the decider halts within
   time $P(\abs{z}+\abs{x}+\abs{y}+\abs{a}+\abs{b})$ with a bit $D_z(x,y,a,b)$, and this bit
   is $0$ whenever one of $x,y,a,b$ is longer than $B$. The game $\game_z$ has the strings of
   length at most $B$ as its question and answer alphabets, question distribution $\mu_z$ and
@@ -1623,7 +1623,10 @@ reads a list only by walking it (the discussion under Definition~\ref{def:decide
 time bound is stated in the total input length and the footnote's clause is a separate
 requirement; the game on the strings of length at most $B$ is then the paper's finite game, and
 the two readings define the same class. A randomized machine is a deterministic program with an
-explicit uniform seed of the length of its time bound. In Lean the verifier is a
+explicit uniform seed of the length $B$ of its time bound, and for the same reason the sampler's
+time is bounded by $P$ in its total input length $\abs{z} + \abs{r} = \abs{z} + B$: a
+program cannot read a seed of length $B$ within time $B$, and with $B$ polynomial in $\abs{z}$
+the bound is still $\poly(\abs{z})$. In Lean the verifier is a
 \texttt{PolyVerifier}, the clause is \texttt{PolyVerifier.Efficient}, the game is
 \texttt{PolyVerifier.game} and the class is \texttt{MIPRE.MIPStarPoly}.
 
@@ -1673,17 +1676,18 @@ inclusion in $\RE$ is then Lemma~\ref{lem:mipstar-sub-re}.
 \label{rem:source-mipstar}
 \ledgernode{1.1.7, 1.1.7.1}
 \uses{def:mipstar,def:mipstar-computable,rem:source-normal-verifier}
-Definition~\ref{def:mipstar} is the paper's $\MIPstar_{1,1/2}(2,1)$ up to the reading of the
-time bound recorded after it. The checked halting reduction (Theorem~\ref{thm:halting}) supplies
-its game as an explicit description computed with no time bound, which is what the
-computable class of Definition~\ref{def:mipstar-computable} asks for and not what
-Definition~\ref{def:mipstar} asks for: the description is the tabulation of a verifier at a
-level exponential in the machine's size, whose questions no polynomial-time sampler can write
-down. So $\RE\subseteq\MIPstar$ for the class of Definition~\ref{def:mipstar} is not yet
-formalized, and Theorem~\ref{thm:mipstar-eq-re} is currently stated for the computable class.
-The paper's route --- the verifier $\vhalt$ at the fixed level $C_0$ with
-$\lambda=\poly(\abs{\machine})$, Lemma~\ref{lem:lambda} --- is the object of
-\texttt{planning/polytime-halting.md}. Moreover, general bipartite games must be represented in
+Definition~\ref{def:mipstar} is the paper's $\MIPstar_{1,1/2}(2,1)$ up to the readings of the
+time bounds recorded after it. The checked halting reduction (Theorem~\ref{thm:halting}) has
+two forms. Along the criterion route it supplies its game as an explicit description computed
+with no time bound --- the tabulation of a verifier at a level exponential in the machine's
+size, whose questions no polynomial-time sampler can write down --- which is what the computable
+class of Definition~\ref{def:mipstar-computable} asks for. Along the paper's route it supplies
+the verifier $\vhalt$ at the fixed level $C$ with $\lambda = \poly(\abs{\machine})$
+(Lemma~\ref{lem:lambda}), played on input $z$ by a polynomial-time sampler and decider, which is
+what Definition~\ref{def:mipstar} asks for; so Theorem~\ref{thm:mipstar-eq-re} holds for both
+classes (\texttt{MIPRE.Halting.mipstarPoly\_eq\_re}, \texttt{MIPRE.Halting.mipstar\_eq\_re}),
+and Lemma~\ref{lem:mipstar-poly-sub} is the inclusion of the first in the second. General
+bipartite games must be represented in
 \texttt{GameData} with value-preserving transport; merely forcing unequal answers to equal
 questions to lose can destroy a perfect strategy, which is why both tabulations tag the two
 players' questions apart.

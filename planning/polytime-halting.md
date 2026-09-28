@@ -168,6 +168,22 @@ at `n = C`.
 
 ### PR 3: the class verifier, `RE ⊆ MIP*`, the blueprint
 
+**Done (on #232, third commit):** `Halting/Paper/Stages.lean` (sequencing and the universal
+calls as program stages), `Build.lean` (`decBuild`, `lamF`, `cutF`, `exists_cut_ge`),
+`ClassVerifier.lean` (`sampProg`, `decProg`, `sampProg_runs`, `decProg_accepts`,
+`decProg_runs`, with explicit costs `sampB`, `decB`), `Count.lean` (seeds counted by their
+prefix), `Foundations/GameRestrict.lean` (`quantumValue_restrictQuestions`),
+`ClassMain.lean` (`classV`, `classV_efficient`, `classV_value`, `re_subset_mipstarPoly_of`,
+`mipstarPoly_eq_re_of`); unconditional `re_subset_mipstarPoly`, `mipstarPoly_eq_re` in
+`MIPRE/MainTheorem.lean`. One repair to PR 1's definition, recorded in the blueprint after
+`def:mipstar`: the sampler's time is bounded by `P(|z| + |r|)`, not `B`, since a program reads
+its seed of length `B` only by walking it and so cannot halt within `B` on it (with `|r| = B`
+polynomial in `|z|` the bound is still `poly(|z|)`, and the class is unchanged in substance).
+The cutoff of the decider is `2^(K + deg |lambda|)` rather than the compressor's bound itself:
+a power of two is what the toolkit can compute from `|lambda|` in unary, and it is polynomial
+in `lambda`. The ledger nodes 1.1.7, 1.1.7.1 stay on `rem:source-mipstar`, whose text now
+records the two forms.
+
 - The two programs on input `z`: `S_univ (z, r)` computes `λ(z)` and runs `G.samplerProg` on
   it, then the sampler at index `C_0` on the first `s(C_0)` bits of `r` for each player;
   `D_univ (z, x, y, a, b)` computes `λ(z)` and the description `e_{z, λ(z)}` (the fixed point is

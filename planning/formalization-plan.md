@@ -1001,7 +1001,12 @@ the paper's `V^halt M λ` as an efficient Kleene fixed point (`Halting.dec`, `Ha
 (`hasPerfectPCC_of_halts`, `valStar_le_of_not_halts`), and `lem:lambda` as `exists_lamBound`:
 `V^halt M λ` is `λ`-bounded for `λ ≥ Λ_0 + 4|M|`, with the decider's time in the fine form
 `Q(n + |M| + λ)(|d| + 1)^k` (`dec_cost_spec`); `halting_paper` is `thm:halting` at level `C`.
-What remains is the class verifier reading this game off a uniform program, `RE ⊆ MIPStarPoly`.
+The third is in as well: the class verifier `Halting.classV` (`Halting/Paper/ClassVerifier.lean`,
+`ClassMain.lean`) plays `V^halt (R z) λ(z)` at level `C` on input `z` with a polynomial-time
+sampler and decider, is efficient on every input, and its game has that verifier's value; hence
+`re_subset_mipstarPoly` and `mipstarPoly_eq_re` (`MIPRE/MainTheorem.lean`): `thm:mipstar-eq-re`
+now holds for the paper's class. `def:mipstar`'s sampler clause was repaired on the way (time in
+the total input length, as the decider's).
 
 ## Working rules for this track
 

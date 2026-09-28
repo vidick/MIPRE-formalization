@@ -165,6 +165,7 @@ import MIPRE.Foundations.Pipeline.Compress
 import MIPRE.Foundations.Halting.LambdaBound
 import MIPRE.Foundations.Halting.Semidecider
 import MIPRE.Foundations.Halting.Paper.Main
+import MIPRE.Foundations.Halting.Paper.ClassMain
 import MIPRE.Foundations.ValueApprox
 import MIPRE.Foundations.ValueApprox.Cayley
 import MIPRE.Foundations.ValueApprox.Dense
@@ -421,7 +422,9 @@ tell you the guard is missing.
   MIPRE.Halting.decCostPoly,
   MIPRE.Halting.dec_cost_spec,
   MIPRE.Halting.Vhalt_decider_cost,
-  MIPRE.Halting.wrapCoreCost_le_WZ
+  MIPRE.Halting.wrapCoreCost_le_WZ,
+  MIPRE.Halting.lamF,
+  MIPRE.Halting.lamz
 
 -- blueprint `lem:dhalt-values`
 #guard_sorry_free MIPRE.Halting.CompressorSpec.toObligations,
@@ -446,7 +449,16 @@ tell you the guard is missing.
   MIPRE.Halting.Vpaper,
   MIPRE.Halting.semL,
   MIPRE.Halting.hasPerfectPCC_of_halts,
-  MIPRE.Halting.valStar_le_of_not_halts
+  MIPRE.Halting.valStar_le_of_not_halts,
+  MIPRE.Halting.classV,
+  MIPRE.Halting.classV_efficient,
+  MIPRE.Halting.classV_value,
+  MIPRE.Halting.classV_values,
+  MIPRE.Halting.sampProg,
+  MIPRE.Halting.decProg,
+  MIPRE.Halting.sampProg_runs,
+  MIPRE.Halting.decProg_accepts,
+  MIPRE.Halting.decProg_runs
 
 -- blueprint `lem:lambda-bound`
 #guard_sorry_free MIPRE.Halting.four_mul_succ_lt_two_pow,
@@ -1891,7 +1903,9 @@ tell you the guard is missing.
   MIPRE.Halting.gameValue_uncomputable,
   MIPRE.Halting.quantumValue_uncomputable,
   MIPRE.Halting.mipstar_eq_re,
-  MIPRE.Halting.re_subset_mipstar
+  MIPRE.Halting.re_subset_mipstar,
+  MIPRE.Halting.mipstarPoly_eq_re,
+  MIPRE.Halting.re_subset_mipstarPoly
 
 /-! ## Introspection mixing, conditioning, and graph rejection sampling -/
 
