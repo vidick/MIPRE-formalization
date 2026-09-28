@@ -984,6 +984,14 @@ strategies are the same data, and a POVM tensor strategy is a projective one by 
 dilation. [reports/liehr-tsirelson-bridge.md](../reports/liehr-tsirelson-bridge.md) records
 what the comparison showed; `rem:liehr-statements` cites it in the blueprint.
 
+**The polynomial-time halting reduction and the paper's class (#230), planned 2026-09-28.**
+`MIPStar = IsRE` is proved for the computable class (`def:mipstar`); the paper's
+`MIP*_{1,1/2}(2,1)` asks for a polynomial-time sampler and decider, and the Lean route through
+Lin's criterion outputs its game at a level exponential in the machine's size, so no time bound
+can be attached to the existing map. [polytime-halting.md](polytime-halting.md) has the route:
+the paper's own construction of `V^halt` at the fixed level `C_0` with `λ = poly(|M|)`, the
+class as the paper defines it, and three implementation pull requests.
+
 ## Working rules for this track
 
 - Every new Lean declaration that discharges a ledger node should say so, and the blueprint
