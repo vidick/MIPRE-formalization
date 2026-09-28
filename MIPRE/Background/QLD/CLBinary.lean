@@ -25,7 +25,7 @@ set_option linter.unusedSectionVars false
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F]
   [Algebra (ZMod 2) F] {m t : ℕ} [NeZero m]
 
-def basisIndex : Bas ≃ Fin 2 where
+def basisFin : Bas ≃ Fin 2 where
   toFun | .X => 0 | .Z => 1
   invFun i := if i = 0 then .X else .Z
   left_inv W := by cases W <;> rfl
@@ -41,20 +41,20 @@ def unitIndex : Unit ≃ Fin 1 where
 `rX`, `rZ`. The numbering contains no arbitrary finite-type enumeration. -/
 def coordNumbering (m : ℕ) : Coord m ≃ Fin (3 * m + 3) :=
   let points : Bas × Fin m ≃ Fin (2 * m) :=
-    (Equiv.prodCongr basisIndex (Equiv.refl _)).trans finProdFinEquiv
+    (Equiv.prodCongr basisFin (Equiv.refl _)).trans finProdFinEquiv
   let tail : Unit ⊕ (Fin m ⊕ Bas) ≃ Fin (1 + (m + 2)) :=
     (Equiv.sumCongr unitIndex
-      ((Equiv.sumCongr (Equiv.refl _) basisIndex).trans finSumFinEquiv)).trans finSumFinEquiv
+      ((Equiv.sumCongr (Equiv.refl _) basisFin).trans finSumFinEquiv)).trans finSumFinEquiv
   ((coordEquiv m).trans ((Equiv.sumCongr points tail).trans finSumFinEquiv)).trans
     (finCongr (by omega))
 
 @[simp] theorem coordNumbering_point_X (m : ℕ) (i : Fin m) :
     (coordNumbering m (.point .X i)).val = i.val := by
-  simp [coordNumbering, coordEquiv, basisIndex, finProdFinEquiv, finSumFinEquiv]
+  simp [coordNumbering, coordEquiv, basisFin, finProdFinEquiv, finSumFinEquiv]
 
 @[simp] theorem coordNumbering_point_Z (m : ℕ) (i : Fin m) :
     (coordNumbering m (.point .Z i)).val = m + i.val := by
-  simp [coordNumbering, coordEquiv, basisIndex, finProdFinEquiv, finSumFinEquiv]
+  simp [coordNumbering, coordEquiv, basisFin, finProdFinEquiv, finSumFinEquiv]
   omega
 
 @[simp] theorem coordNumbering_seed (m : ℕ) :
@@ -68,12 +68,12 @@ def coordNumbering (m : ℕ) : Coord m ≃ Fin (3 * m + 3) :=
 
 @[simp] theorem coordNumbering_scalar_X (m : ℕ) :
     (coordNumbering m (.scalar .X)).val = 3 * m + 1 := by
-  simp [coordNumbering, coordEquiv, basisIndex, finSumFinEquiv]
+  simp [coordNumbering, coordEquiv, basisFin, finSumFinEquiv]
   omega
 
 @[simp] theorem coordNumbering_scalar_Z (m : ℕ) :
     (coordNumbering m (.scalar .Z)).val = 3 * m + 2 := by
-  simp [coordNumbering, coordEquiv, basisIndex, finSumFinEquiv]
+  simp [coordNumbering, coordEquiv, basisFin, finSumFinEquiv]
   omega
 
 /-- Each field coordinate is followed by its `t` bits in basis order. -/
