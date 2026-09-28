@@ -453,57 +453,34 @@ theorem decFunV_apply (U : UniversalMachine) (UT : ClockedUniversalMachine) (S :
       else Compr (hardcode (Prog.bitQueryProg U.univ) (encode ((c', e), (m, 2 * n + 1))), n) :=
   rfl
 
-/-- **Compressibility criterion, per level** (Lin; blueprint `lem:compressible-criterion`),
-the value-form abstract compression lemma in the form an instantiation by gap-preserving
-compression can meet.
+/-- **Compressibility criterion, per level, with nested classes** (blueprint
+`lem:compressible-criterion-nested`): `compressibility_criterion_levels` with the class `B`
+split in two, `B₀ n ⊆ B₁ n`. The distinguished string `yNo` lies in the smaller class and the
+compressor preserves it, while the semidecision procedure `S` recognizes the complement of
+the *larger* one; the conclusion for a non-halting `e` is membership in the larger class.
 
-Data: two families of languages `A n`, `B n` indexed by the level `n` of the recursion, with
-distinguished elements `yYes ∈ A n` and `yNo ∈ B n` at every level `n ≥ n₀`; a semidecision
-procedure `S` for the complement of `B` (a closed program halting on `encode (x, n)` exactly
-when `x ∉ B n`); and a *polynomial-time* compression procedure `Compr` taking a (claimed)
-succinct description `c` with parameter `n` — the level — such that whenever `n ≥ n₀`, `c` is
-short (`2 · |c| ≤ n`) and genuinely describes `x` with parameter `n`:
-
-1. `x ∈ A (2n + 1) → Compr (c, n) ∈ A n`, and
-2. `x ∈ B (2n + 1) → Compr (c, n) ∈ B n`.
-
-Conclusion: a polynomial-time reduction `g` from the halting problem (of the ambient model,
-on the empty input `nil`) and a constant `K` such that, with `R e = 2 ^ (K + 1 + |e|)` (a level
-at least `n₀`), `g e ∈ A (R e)` on halting `e` and `g e ∈ B (R e)` on non-halting `e`.
-
-The level bookkeeping is what an instantiation needs. The compressor is polynomial-time in
-the *size* of its input `(c, n)`, that is, polylogarithmic in `n`, while a bit query to `c`
-costs up to `n` — so `Compr` cannot read the string `x` it is compressing, only embed `c` into
-its output for a later reader (a decider at index `n`, whose time budget is polynomial in
-`n`); the slack `2 · |c| ≤ n` is what lets that output stay short. And the hypothesis relates
-the class of `x` at level `2n + 1` to the class of the output at level `n`, which is exactly
-what the proof uses: at level `n` the self-referential decider compresses the string it
-itself computes at level `2n + 1`. See the module docstring for the reading of the levels
-in the instantiation. Nothing is demanded of `Compr` off short genuine descriptions above
-`n₀`, but it is total and fast everywhere.
-
-There is no measure and no growth hypothesis: the self-referential decider at level `n`
-compresses the next level `2n + 1`, unless `e` halts within `Nat.size n` steps (output
-`yYes`) or the semidecision procedure, run on the string at the start level of the
-recursion, halts within `Nat.size n` steps (output `yNo`). Non-halting `e`: if the start
-string were outside `B`, the search branch would eventually fire, and preservation of `B`
-down the levels would put the start string in `B`. Halting `e`: the search branch can never
-fire before `e` halts, by the same downward argument, so preservation of `A` down from the
-level where `e` halts applies. -/
-theorem compressibility_criterion_levels
-    (A B : ℕ → Set BitStr) (n₀ : ℕ)
+This is the form the `coRE` direction of `MIP^co = coRE` needs (`planning/mipco-track.md`
+§3): there `A` is the class of small commuting-operator value, `B₀` the class of the main
+theorem — a perfect PCC strategy, preserved by the tensor completeness of compression — and
+`B₁` the class of commuting-operator value `1`, whose complement the upper semidecider for
+that value recognizes and which no compression theorem preserves. The proof is that of
+`compressibility_criterion_levels` unchanged: the downward induction that puts every level
+of the recursion in `B` runs inside `B₀` from `yNo`, and a firing search contradicts
+membership in `B₀` through `B₀ ⊆ B₁`. -/
+theorem compressibility_criterion_nested
+    (A B₀ B₁ : ℕ → Set BitStr) (n₀ : ℕ) (hsub : ∀ n, B₀ n ⊆ B₁ n)
     (yYes : BitStr) (hyes : ∀ n, n₀ ≤ n → yYes ∈ A n)
-    (yNo : BitStr) (hno : ∀ n, n₀ ≤ n → yNo ∈ B n)
+    (yNo : BitStr) (hno : ∀ n, n₀ ≤ n → yNo ∈ B₀ n)
     (S : Prog) (hSws : S.WellScoped 1)
-    (hS : ∀ (x : BitStr) (n : ℕ), Halts S (encode (x, n)) ↔ x ∉ B n)
+    (hS : ∀ (x : BitStr) (n : ℕ), Halts S (encode (x, n)) ↔ x ∉ B₁ n)
     (Compr : PolyTimeFun (Prog × ℕ) BitStr)
     (hCompr : ∀ (c : Prog) (x : BitStr) (n : ℕ), n₀ ≤ n → 2 * esize c ≤ n →
       IsSuccinctDesc c n x → x.length ≤ n + 1 →
-        (x ∈ A (2 * n + 1) → Compr (c, n) ∈ A n) ∧ (x ∈ B (2 * n + 1) → Compr (c, n) ∈ B n)) :
+        (x ∈ A (2 * n + 1) → Compr (c, n) ∈ A n) ∧ (x ∈ B₀ (2 * n + 1) → Compr (c, n) ∈ B₀ n)) :
     ∃ (g : PolyTimeFun Prog BitStr) (K : ℕ),
       ∀ e : Prog, n₀ ≤ 2 ^ (K + 1 + esize e) ∧
         (Halts e .nil → g e ∈ A (2 ^ (K + 1 + esize e))) ∧
-        (¬ Halts e .nil → g e ∈ B (2 ^ (K + 1 + esize e))) := by
+        (¬ Halts e .nil → g e ∈ B₁ (2 ^ (K + 1 + esize e))) := by
   obtain ⟨U⟩ := exists_efficient_universal
   obtain ⟨UT⟩ := exists_clocked_universal
   -- the decider, kept opaque through its functional equation
@@ -644,17 +621,17 @@ theorem compressibility_criterion_levels
     intro q k k' hkk' h
     obtain ⟨r, t, ht, hr⟩ := (evalWithin_isSome_iff _ _ _).1 h
     exact (evalWithin_isSome_iff _ _ _).2 ⟨r, t, ht.trans hkk', hr⟩
-  -- the search branch, both ways: it fires only if the start string is outside `B R`, and it
-  -- eventually fires if the start string is outside `B R`
+  -- the search branch, both ways: it fires only if the start string is outside `B₁ R`, and it
+  -- eventually fires if the start string is outside `B₁ R`
   have hsearch_of : ∀ k, (evalWithin (hardcode (Prog.searchProg U.univ S)
-      (encode ((c, (e, (R, R))), R))) .nil k).isSome = true → dec (c, (e, (R, R))) ∉ B R := by
+      (encode ((c, (e, (R, R))), R))) .nil k).isSome = true → dec (c, (e, (R, R))) ∉ B₁ R := by
     intro k h
     obtain ⟨r, t, -, hrun⟩ := (evalWithin_isSome_iff _ _ _).1 h
     obtain ⟨x, tx, hx, hSx⟩ := Prog.searchProg_halts_of U hSws hrun
     obtain ⟨t', -, hc'⟩ := c_runs (e, (R, R))
     obtain ⟨rfl, -⟩ := Eval.deterministic hx hc'
     exact (hS _ _).1 hSx
-  have hsearch_fires : dec (c, (e, (R, R))) ∉ B R → ∃ T₀, ∀ k, T₀ ≤ k →
+  have hsearch_fires : dec (c, (e, (R, R))) ∉ B₁ R → ∃ T₀, ∀ k, T₀ ≤ k →
       (evalWithin (hardcode (Prog.searchProg U.univ S) (encode ((c, (e, (R, R))), R))) .nil
         k).isSome = true := by
     intro hnB
@@ -668,11 +645,11 @@ theorem compressibility_criterion_levels
     have htrue : ∀ n, T ≤ Nat.size n → (evalWithin e .nil (Nat.size n)).isSome = true :=
       fun n hn => (evalWithin_isSome_iff _ _ _).2 ⟨r₀, T, hn, hT⟩
     -- below a level where the search fires while `e` has not yet halted, every level of the
-    -- recursion is in `B`
+    -- recursion is in `B₀`
     have hB : ∀ j₀, (evalWithin e .nil (Nat.size (levels R j₀))).isSome = false →
         (evalWithin (hardcode (Prog.searchProg U.univ S) (encode ((c, (e, (R, R))), R))) .nil
           (Nat.size (levels R j₀))).isSome = true →
-        ∀ i j, j + i = j₀ → dec (c, (e, (R, levels R j))) ∈ B (levels R j) := by
+        ∀ i j, j + i = j₀ → dec (c, (e, (R, levels R j))) ∈ B₀ (levels R j) := by
       intro j₀ hnot hfire i
       induction i with
       | zero =>
@@ -732,7 +709,7 @@ theorem compressibility_criterion_levels
             exfalso
             have hRB := hB j hb₁ hb₂ j 0 (by omega)
             rw [levels_zero] at hRB
-            exact hsearch_of _ hb₂ hRB
+            exact hsearch_of _ hb₂ (hsub _ hRB)
           | false =>
             rw [hb₂, if_neg Bool.false_ne_true] at hd
             rw [hd]
@@ -756,9 +733,9 @@ theorem compressibility_criterion_levels
       exact hnh ⟨r, t, hr⟩
     by_contra hnB
     obtain ⟨T₀, hT₀⟩ := hsearch_fires hnB
-    -- from a level where the search fires, every level of the recursion is in `B`
+    -- from a level where the search fires, every level of the recursion is in `B₀`
     have hB : ∀ k j, T₀ ≤ Nat.size (levels R (j + k)) →
-        dec (c, (e, (R, levels R j))) ∈ B (levels R j) := by
+        dec (c, (e, (R, levels R j))) ∈ B₀ (levels R j) := by
       intro k
       induction k with
       | zero =>
@@ -790,7 +767,62 @@ theorem compressibility_criterion_levels
       omega
     have hfin := hB k 0 (by simpa using hk)
     rw [levels_zero] at hfin
-    exact hnB hfin
+    exact hnB (hsub _ hfin)
+
+/-- **Compressibility criterion, per level** (Lin; blueprint `lem:compressible-criterion`),
+the value-form abstract compression lemma in the form an instantiation by gap-preserving
+compression can meet. The case `B₀ = B₁ = B` of `compressibility_criterion_nested`, which is
+where the proof is.
+
+Data: two families of languages `A n`, `B n` indexed by the level `n` of the recursion, with
+distinguished elements `yYes ∈ A n` and `yNo ∈ B n` at every level `n ≥ n₀`; a semidecision
+procedure `S` for the complement of `B` (a closed program halting on `encode (x, n)` exactly
+when `x ∉ B n`); and a *polynomial-time* compression procedure `Compr` taking a (claimed)
+succinct description `c` with parameter `n` — the level — such that whenever `n ≥ n₀`, `c` is
+short (`2 · |c| ≤ n`) and genuinely describes `x` with parameter `n`:
+
+1. `x ∈ A (2n + 1) → Compr (c, n) ∈ A n`, and
+2. `x ∈ B (2n + 1) → Compr (c, n) ∈ B n`.
+
+Conclusion: a polynomial-time reduction `g` from the halting problem (of the ambient model,
+on the empty input `nil`) and a constant `K` such that, with `R e = 2 ^ (K + 1 + |e|)` (a level
+at least `n₀`), `g e ∈ A (R e)` on halting `e` and `g e ∈ B (R e)` on non-halting `e`.
+
+The level bookkeeping is what an instantiation needs. The compressor is polynomial-time in
+the *size* of its input `(c, n)`, that is, polylogarithmic in `n`, while a bit query to `c`
+costs up to `n` — so `Compr` cannot read the string `x` it is compressing, only embed `c` into
+its output for a later reader (a decider at index `n`, whose time budget is polynomial in
+`n`); the slack `2 · |c| ≤ n` is what lets that output stay short. And the hypothesis relates
+the class of `x` at level `2n + 1` to the class of the output at level `n`, which is exactly
+what the proof uses: at level `n` the self-referential decider compresses the string it
+itself computes at level `2n + 1`. See the module docstring for the reading of the levels
+in the instantiation. Nothing is demanded of `Compr` off short genuine descriptions above
+`n₀`, but it is total and fast everywhere.
+
+There is no measure and no growth hypothesis: the self-referential decider at level `n`
+compresses the next level `2n + 1`, unless `e` halts within `Nat.size n` steps (output
+`yYes`) or the semidecision procedure, run on the string at the start level of the
+recursion, halts within `Nat.size n` steps (output `yNo`). Non-halting `e`: if the start
+string were outside `B`, the search branch would eventually fire, and preservation of `B`
+down the levels would put the start string in `B`. Halting `e`: the search branch can never
+fire before `e` halts, by the same downward argument, so preservation of `A` down from the
+level where `e` halts applies. -/
+theorem compressibility_criterion_levels
+    (A B : ℕ → Set BitStr) (n₀ : ℕ)
+    (yYes : BitStr) (hyes : ∀ n, n₀ ≤ n → yYes ∈ A n)
+    (yNo : BitStr) (hno : ∀ n, n₀ ≤ n → yNo ∈ B n)
+    (S : Prog) (hSws : S.WellScoped 1)
+    (hS : ∀ (x : BitStr) (n : ℕ), Halts S (encode (x, n)) ↔ x ∉ B n)
+    (Compr : PolyTimeFun (Prog × ℕ) BitStr)
+    (hCompr : ∀ (c : Prog) (x : BitStr) (n : ℕ), n₀ ≤ n → 2 * esize c ≤ n →
+      IsSuccinctDesc c n x → x.length ≤ n + 1 →
+        (x ∈ A (2 * n + 1) → Compr (c, n) ∈ A n) ∧ (x ∈ B (2 * n + 1) → Compr (c, n) ∈ B n)) :
+    ∃ (g : PolyTimeFun Prog BitStr) (K : ℕ),
+      ∀ e : Prog, n₀ ≤ 2 ^ (K + 1 + esize e) ∧
+        (Halts e .nil → g e ∈ A (2 ^ (K + 1 + esize e))) ∧
+        (¬ Halts e .nil → g e ∈ B (2 ^ (K + 1 + esize e))) :=
+  compressibility_criterion_nested A B B n₀ (fun _ => subset_rfl) yYes hyes yNo hno S hSws hS
+    Compr hCompr
 
 /-- **Compressibility criterion** (Lin; blueprint `lem:compressible-criterion`), the
 value-form abstract compression lemma in its level-free form: the special case of

@@ -769,12 +769,14 @@ import MIPRE.Foundations.CL.Register
 import MIPRE.Foundations.CL.Repeat
 import MIPRE.Foundations.CL.Sampler
 import MIPRE.Foundations.CL.TypedSampler
+import MIPRE.Foundations.ClassMIPCo
 import MIPRE.Foundations.ClassMIPStar
 import MIPRE.Foundations.ClassMIPStarPoly
 import MIPRE.Foundations.ClassMIPStarPolyTab
 import MIPRE.Foundations.Closeness
 import MIPRE.Foundations.Commutation
 import MIPRE.Foundations.CommutingOperator
+import MIPRE.Foundations.CommutingTransport
 import MIPRE.Foundations.Compression
 import MIPRE.Foundations.Correlations
 import MIPRE.Foundations.Cost.Basic
@@ -833,15 +835,18 @@ import MIPRE.Foundations.Halting.Absorb
 import MIPRE.Foundations.Halting.Arith
 import MIPRE.Foundations.Halting.Bounded
 import MIPRE.Foundations.Halting.Classes
+import MIPRE.Foundations.Halting.ClassesCo
 import MIPRE.Foundations.Halting.Compressor
 import MIPRE.Foundations.Halting.CompressorCost
 import MIPRE.Foundations.Halting.CompressorProgram
 import MIPRE.Foundations.Halting.Corollaries
+import MIPRE.Foundations.Halting.CorollariesCo
 import MIPRE.Foundations.Halting.CostBudget
 import MIPRE.Foundations.Halting.Descriptions
 import MIPRE.Foundations.Halting.Enumerate
 import MIPRE.Foundations.Halting.Freeze
 import MIPRE.Foundations.Halting.Instantiation
+import MIPRE.Foundations.Halting.InstantiationCo
 import MIPRE.Foundations.Halting.LambdaBound
 import MIPRE.Foundations.Halting.Lists
 import MIPRE.Foundations.Halting.Paper.Build
@@ -857,6 +862,7 @@ import MIPRE.Foundations.Halting.Paper.Stages
 import MIPRE.Foundations.Halting.Paper.TabulateL
 import MIPRE.Foundations.Halting.PolyBounded
 import MIPRE.Foundations.Halting.Reduction
+import MIPRE.Foundations.Halting.ReductionCo
 import MIPRE.Foundations.Halting.Semidecide
 import MIPRE.Foundations.Halting.Semidecider
 import MIPRE.Foundations.Halting.Serial
@@ -1321,6 +1327,7 @@ import MIPRE.Foundations.ValueApprox.Strategy
 import MIPRE.Foundations.Verifier
 import MIPRE.Foundations.VerifierIndexTransport
 import MIPRE.Foundations.VerifierValue
+import MIPRE.Foundations.VerifierValueCo
 import MIPRE.Foundations.Weyl
 import MIPRE.Foundations.WeylBinary
 import MIPRE.Foundations.WeylEPR
@@ -1343,6 +1350,7 @@ import MIPRE.LCS.Strategy.ObservableStrategy
 import MIPRE.LCS.Strategy.ObservableToProjector
 import MIPRE.LCS.Strategy.ProjectorStrategy
 import MIPRE.LCS.WinningCondition
+import MIPRE.MIPCo
 import MIPRE.MainTheorem
 import MIPRE.TM.Code.Encoding.MachineCode
 import MIPRE.TM.Code.Encoding.Nat

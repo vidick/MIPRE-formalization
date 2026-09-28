@@ -1008,6 +1008,20 @@ sampler and decider, is efficient on every input, and its game has that verifier
 now holds for the paper's class. `def:mipstar`'s sampler clause was repaired on the way (time in
 the total input length, as the decider's).
 
+**The commuting-operator class, `MIP^co = coRE` (#235), planned 2026-09-28.** Lin's theorem
+(arXiv:2510.07162) by the value-form architecture: [mipco-track.md](mipco-track.md) has the
+plan. Phase 0 is in: the compressibility criterion generalized to nested classes
+(`Cost.compressibility_criterion_nested`, which is what lets the *tensor* completeness of
+compression be reused and makes co-completeness unnecessary), the commuting-operator value
+`Verifier.valCo` of a verifier's game with its transport lemmas, the co classes, the semidecider
+for `ω_co < 1` from `commutingUpperRE`, and the conditional theorem: `MIPRE.mipco_eq_core`
+(`MIPRE/MIPCo.lean`) proves `MIPCo = IsCoRE` from the single hypothesis
+`MIPRE.gapCompression.CoSound`, the soundness clause of compression read in `ω_co`;
+`MIPCo ⊆ coRE` (`MIPRE.MIPCo.isCoRE`) is unconditional. Blueprint chapter 8,
+`thm:mipco-eq-core`. What remains — the commuting-operator soundness of introspection, answer
+reduction and oracularization on tracially embeddable strategies — is the plan's Phases 1–5,
+and is the largest item after the main theorem.
+
 ## Working rules for this track
 
 - Every new Lean declaration that discharges a ledger node should say so, and the blueprint

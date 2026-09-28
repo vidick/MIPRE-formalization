@@ -723,6 +723,201 @@ Equivalent to CEP by Kirchberg's theorem (see~\cite{Oza13}); no new input from t
 project, but the equivalence itself is another substantial operator-algebra
 formalization.
 
+\subsection{The commuting-operator class, conditionally}
+\label{sec:ds-mipco}
+
+Lin proved that the commuting-operator analogue of $\MIPstar$ is $\coRE$~\cite{Lin25}, by
+the compression architecture of this blueprint with the soundness of every stage carried in
+the commuting-operator value. This section states his theorem in the vocabulary of
+Section~\ref{ch:foundations} and proves it from one hypothesis, the commuting-operator
+soundness of gap compression (Definition~\ref{def:compression-co-sound}); the inclusion
+$\MIPco \subseteq \coRE$ is proved outright. Everything else --- the criterion, the
+tabulation, the semidecider, the distinguished strings, the class transfer --- is reused
+from the halting reduction of Theorem~\ref{thm:halting}. The plan for discharging the
+hypothesis is \texttt{planning/mipco-track.md}. The companion proof repository has no
+$\coRE$ chapter: the paper of record for this section is Lin's, and its nodes carry no
+ledger correspondence.
+
+\begin{definition}[Co-recursively enumerable]
+\label{def:core}
+\uses{def:re}
+\lean{MIPRE.IsCoRE, MIPRE.isCoRE_iff}
+\leanok
+A language $L \subseteq \{0,1\}^*$ is in $\coRE$ if its complement is in $\RE$.
+\end{definition}
+
+\begin{definition}[The class $\MIPco$]
+\label{def:mipco}
+\uses{def:co-value-bipartite,def:game-description}
+\lean{MIPRE.MIPCo}
+\leanok
+A language $L \subseteq \{0,1\}^*$ is in $\MIPco$ if there is a computable map $g$ from bit
+strings to game descriptions (Definition~\ref{def:game-description}) such that for every
+string $z$,
+\begin{equation*}
+  z \in L\ \Longrightarrow\ \omegaco(\game_{g(z)}) = 1,
+  \qquad
+  z \notin L\ \Longrightarrow\ \omegaco(\game_{g(z)}) \leq \tfrac12,
+\end{equation*}
+in the bipartite commuting-operator value of Definition~\ref{def:co-value-bipartite}. As
+Definition~\ref{def:mipstar-computable}, this is the computable class, with no
+polynomial-time bound on $g$; the polynomial-time class of Lin's paper is contained in it, as
+Lemma~\ref{lem:mipstar-poly-sub} shows for $\MIPstar$, and is not formalized.
+\end{definition}
+
+\begin{lemma}[$\MIPco \subseteq \coRE$]
+\label{lem:mipco-sub-core}
+\uses{def:mipco,def:core,lem:valco-upper-re}
+\lean{MIPRE.MIPCo.isCoRE, MIPRE.MIPCo.exists_cosemidecider}
+\leanok
+Every language in $\MIPco$ is co-recursively enumerable.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Let $z \mapsto \game_z$ witness $L \in \MIPco$. Under the promise, $z \notin L$ if and only
+if $\omegaco(\game_z) < 1$. By Lemma~\ref{lem:valco-upper-re} at $p = q = 1$ the set of game
+descriptions $d$ with $\omegaco(\game_d) < 1$ is recursively enumerable, and the complement
+of $L$ is its preimage under the computable map $z \mapsto \game_z$. Lin's proof runs the
+NPA hierarchy here~\cite{Lin25}; the Lean runs the sum-of-squares certificates of
+Lemma~\ref{lem:sos-certificates}.
+\end{proof}
+
+\begin{definition}[Commuting-operator soundness of compression]
+\label{def:compression-co-sound}
+\uses{thm:compression,def:co-value-bipartite,def:lambda-bounded}
+\lean{MIPRE.GapCompression.CoSound, MIPRE.Verifier.valCo}
+\leanok
+Write $\omegaco(\verifier_n)$ for the commuting-operator value of the game of a normal form
+verifier at index $n$, with answers of length at most the same bound as in
+Theorem~\ref{thm:compression}. A gap compression (an inhabitant of
+\texttt{MIPRE.GapCompression}) is \emph{sound for the commuting-operator value} if for every
+$\lambda$-bounded verifier $\verifier$ and every $n \geq C_0$,
+\begin{equation*}
+  \omegaco(\verifier_{2^n}) \leq \tfrac12 \ \Longrightarrow\
+  \omegaco(\verifier^{\mathrm{compr}}_n) \leq \tfrac12 .
+\end{equation*}
+This is the soundness clause of Theorem~\ref{thm:compression} with $\valstar$ replaced by
+$\omegaco$, and the model-$co$ case of the soundness clause of Lin's gap compression
+theorem~\cite{Lin25}. No completeness clause in the commuting-operator model is asked for.
+\end{definition}
+
+\begin{theorem}[Halting reduces to the commuting-operator value, from co-soundness]
+\label{thm:halting-co}
+\uses{def:compression-co-sound,lem:compressible-criterion-nested,lem:valco-upper-re,
+  thm:halting,lem:dhalt-values,lem:halt-construction,def:game-description,
+  thm:compression-target}
+\lean{MIPRE.Halting.halting_reduction_co, MIPRE.Halting.halting_reduction_commuting_of,
+  MIPRE.halting_reduction_commuting, MIPRE.HaltingReductionCommuting,
+  MIPRE.Halting.ObligationsCo, MIPRE.Halting.CompressorSpec.toObligationsCo,
+  MIPRE.Halting.exists_semCo, MIPRE.Halting.classBCo, MIPRE.Halting.classOne,
+  MIPRE.Halting.classA_subset_classOne, MIPRE.Halting.tab_valCo, MIPRE.Halting.yNo_memCo,
+  MIPRE.Verifier.InClassBCo, MIPRE.Verifier.inClassBCo_of_rejects_all,
+  MIPRE.Verifier.freeze_valCo, MIPRE.Verifier.freeze_inClassBCo}
+\leanok
+Assume the gap compression of Theorem~\ref{thm:compression-target} is sound for the
+commuting-operator value (Definition~\ref{def:compression-co-sound}). Then there is a
+computable map $\machine \mapsto \game_\machine$ from machines to game descriptions such
+that $\omegaco(\game_\machine) \leq \frac12$ if $\machine$ halts on the empty input and
+$\omegaco(\game_\machine) = 1$ otherwise.
+\end{theorem}
+
+\begin{proof}
+\leanok
+Lemma~\ref{lem:compressible-criterion-nested} with three classes of strings, each read as a
+normal form verifier as in Theorem~\ref{thm:halting} and with the same answer bounds:
+\begin{itemize}
+\item $A(n)$: the verifier is $n$-bounded, rejects every answer longer than the bound, and
+  $\omegaco(\verifier_n) \leq \frac12$. It contains the trivially rejecting string
+  $y_{\mathrm{no}}$ of Theorem~\ref{thm:halting}, whose game has $\omegaco = 0$, and the
+  compressor of that theorem preserves it by the hypothesis, through the same class transfer
+  as for $\valstar$: the described verifier rejects beyond its answer bound, so raising the
+  bound keeps $\omegaco$; freezing keeps it; co-soundness carries it through compression;
+  and the output's decider accepts what the compressed decider accepts.
+\item $B_0(n)$: the class $A$ of Theorem~\ref{thm:halting} --- $n$-bounded, rejecting long
+  answers, with a perfect PCC strategy. It contains $y_{\mathrm{yes}}$, and the compressor
+  preserves it by the \emph{tensor} completeness of Theorem~\ref{thm:compression}.
+\item $B_1(n)$: the strings whose tabulated game at level $n$ (the game description of
+  Theorem~\ref{thm:halting}, item 2) does not have $\omegaco < 1$. It contains $B_0(n)$,
+  because a perfect PCC strategy gives $\valstar = 1 \leq \omegaco$; its complement is
+  recursively enumerable by Lemma~\ref{lem:valco-upper-re} at $p = q = 1$ composed with the
+  computable tabulation.
+\end{itemize}
+The criterion gives a polynomial-time $g$ with $g(\machine) \in A$ at the start level when
+$\machine$ halts and $g(\machine) \in B_1$ otherwise. The game of $\machine$ is the
+tabulation of $g(\machine)$ at that level. In the first case it has
+$\omegaco(\verifier_n) \leq \frac12$, the tabulation having the commuting-operator value of
+the verifier's game at every bounded string, which is item 2 of Theorem~\ref{thm:halting}
+read in $\omegaco$; in the second it does not have $\omegaco < 1$, so $\omegaco = 1$. No
+perfect commuting-operator strategy is constructed. This is Lin's verifier
+sequence~\cite{Lin25}, with the compressor's preservation of the accepting game read as
+tensor completeness, and with Lemma~\ref{lem:valco-upper-re} in place of the NPA hierarchy.
+\end{proof}
+
+\begin{theorem}[$\MIPco = \coRE$, from co-soundness]
+\label{thm:mipco-eq-core}
+\uses{thm:halting-co,lem:mipco-sub-core,def:mipco,def:core,thm:halting-undecidable,
+  thm:compression-target}
+\lean{MIPRE.mipco_eq_core, MIPRE.core_subset_mipco, MIPRE.Halting.mipco_eq_core_of,
+  MIPRE.Halting.core_subset_mipco_of, MIPRE.core_subset_mipco_of_reduction,
+  MIPRE.mipco_eq_core_of_reduction}
+\leanok
+Assume the gap compression of Theorem~\ref{thm:compression-target} is sound for the
+commuting-operator value. Then $\MIPco = \coRE$, for the class of
+Definition~\ref{def:mipco}. The inclusion $\MIPco \subseteq \coRE$ holds without the
+hypothesis.
+\end{theorem}
+
+\begin{proof}
+\leanok
+$\MIPco \subseteq \coRE$ is Lemma~\ref{lem:mipco-sub-core}. For the converse, the complement
+of a co-r.e.\ language many-one reduces to halting on the empty input
+(Theorem~\ref{thm:halting-undecidable}; in Lean
+\texttt{MIPRE.Halting.exists\_code\_halts\_of\_isRE}, applied to the complement), and
+composing with the map of Theorem~\ref{thm:halting-co} sends the members of $L$, whose
+machines do not halt, to games of commuting-operator value $1$ and the non-members to games
+of value at most $\frac12$.
+\end{proof}
+
+\begin{remark}[What is reused, what remains, and which commuting value this is]
+\label{rem:mipco-route}
+\lean{MIPRE.CommutingOperatorStrategy.relabel, MIPRE.CommutingOperatorStrategy.value_relabel,
+  MIPRE.CommutingOperatorStrategy.extendAnswers,
+  MIPRE.CommutingOperatorStrategy.value_extendAnswers,
+  MIPRE.CommutingOperatorStrategy.mergeAnswers,
+  MIPRE.CommutingOperatorStrategy.value_le_mergeAnswers,
+  MIPRE.commutingOperatorValue_eq_of_equiv, MIPRE.commutingOperatorValue_mono,
+  MIPRE.commutingOperatorValue_eq_zero_of_reject, MIPRE.commutingOperatorValue_extendAnswers,
+  MIPRE.commutingOperatorValue_doubled, MIPRE.Verifier.valStar_le_valCo,
+  MIPRE.Verifier.valCo_congr, MIPRE.Verifier.valCo_le_of_le,
+  MIPRE.Verifier.valCo_eq_of_rejects, MIPRE.Verifier.valCo_eq_zero_of_rejects_all,
+  MIPRE.Verifier.commutingOperatorValue_doubledGame,
+  MIPRE.Verifier.commutingOperatorValue_toGame_eq_valCo_doubled,
+  MIPRE.Verifier.InClassBCo.inClassB, MIPRE.Verifier.not_inClassBCo_of_inClassA,
+  MIPRE.Halting.classBCo_subset_classB,
+  MIPRE.Halting.commutingOperatorValue_tab_eq_one_of_mem_classOne}
+The value throughout this section is the bipartite $\omegaco$ of
+Definition~\ref{def:co-value-bipartite}, in which the upper semidecider of
+Lemma~\ref{lem:valco-upper-re} is complete, and not the tracial $\valco$ of
+Definition~\ref{def:commuting-value}; Remark~\ref{rem:separation-which-value} says why the
+two are not interchanged. The bookkeeping of Remark~\ref{rem:compression-abstract} is
+repeated in $\omegaco$: the value of a verifier's game under relabeling, answer padding,
+doubling and freezing, with commuting-operator strategies transported as POVMs, where merging
+answers is a sum of positive operators and needs no orthogonality.
+
+What remains is the hypothesis. Lin proves the commuting-operator soundness of question
+reduction, answer reduction and parallel repetition on tracially embeddable strategies, whose
+correlations are dense in $C_{qc}$ (Theorem~\ref{thm:tracial-density}), through the rounding
+of almost-synchronous correlations for balanced games, the rigidity of the Pauli basis test
+and the soundness of the low-individual-degree test in that setting~\cite{Lin23,Lin25};
+parallel repetition in the commuting-operator model is
+Theorem~\ref{thm:direct-repetition-co}, already formalized. The commuting-operator
+\emph{completeness} of compression is never needed: the nested criterion asks the
+compressor to preserve perfect PCC strategies, which the tensor completeness does, and the
+class of commuting-operator value $1$ is entered only through the semidecider. Sizes, phases
+and the delicate points are in \texttt{planning/mipco-track.md}.
+\end{remark}
+
 \subsection{Further directions}
 
 \begin{remark}
@@ -733,11 +928,11 @@ reformulations (via the synchronous algebra of a game); quantitative non-closure
 $C_q$ and rates for the NPA hierarchy; uncomputability results for entanglement
 requirements ($\Ent(\cdot, \frac12)$ grows faster than any computable function along
 the halting games), which need the entanglement form of the pipeline
-(Remark~\ref{rem:entanglement-form}) rather than the value form adopted here; the commuting-operator
-counterpart $\MIPco = \coRE$~\cite{Lin23,Lin25}, for which direct parallel repetition
-for commuting-operator strategies (Theorem~\ref{thm:direct-repetition-co}) and Lin's
-tracial density theorem (Theorem~\ref{thm:tracial-density}) are already formalized; and,
-more speculatively, connections
+(Remark~\ref{rem:entanglement-form}) rather than the value form adopted here; the
+commuting-operator counterpart $\MIPco = \coRE$~\cite{Lin23,Lin25}, stated and proved
+conditionally in Section~\ref{sec:ds-mipco} (Theorem~\ref{thm:mipco-eq-core}), where what
+remains is the commuting-operator soundness of compression; and, more speculatively,
+connections
 to the undecidability of the spectral gap and to the existence of non-hyperlinear
 groups, the latter being \emph{not} implied by CEP's failure and best recorded as an
 open problem.
