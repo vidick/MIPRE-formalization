@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.DecisionCompilerTime
-import MIPRE.Background.Introspection.PauliSamplerTotal
+module
+public import MIPRE.Background.Introspection.DecisionCompilerTime
+public import MIPRE.Background.Introspection.PauliSamplerTotal
+
+@[expose] public section
 
 /-! # The compiled five-level verifier and its complete resource contract -/
 
@@ -83,3 +86,5 @@ theorem resources (c : ℕ) (hc : 1 ≤ c) (he : Even c) (U : ClockedUniversalMa
   exact ⟨C,hw,hs⟩
 
 end MIPRE.Introspection.DecisionCompiler
+
+end

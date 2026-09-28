@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.NormalElementProg
-import MIPRE.Foundations.SAT.EffectiveSelfDual
+module
+public import MIPRE.Foundations.SAT.NormalElementProg
+public import MIPRE.Foundations.SAT.EffectiveSelfDual
+
+@[expose] public section
 
 /-!
 # The effective self-dual normal basis theorem
@@ -86,5 +89,7 @@ theorem effective_selfDualNormalBasis : ∃ R : Polynomial ℕ, ∀ k : ℕ, ∀
   exact ⟨t, ht, by simpa only [shoupSelfDualNormalDataProg_correct k hk hodd] using hr⟩
 
 end MIPRE.SAT
+
+end
 
 end

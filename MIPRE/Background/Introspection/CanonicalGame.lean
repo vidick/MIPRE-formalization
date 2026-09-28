@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.PauliSamplerTotal
-import MIPRE.Background.Introspection.NumberedComplete
-import MIPRE.Foundations.Introspection.VerifierSourceGame
+module
+public import MIPRE.Background.Introspection.PauliSamplerTotal
+public import MIPRE.Background.Introspection.NumberedComplete
+public import MIPRE.Foundations.Introspection.VerifierSourceGame
+
+@[expose] public section
 
 /-! # The finite game at the compiler's canonical parameters
 
@@ -76,3 +79,5 @@ theorem exists_perfectPCC (c : ℕ) (hc : 1 ≤ c) (he : Even c) (lam n : ℕ)
   exact ⟨S,hS,hvS,hg,hi,hp⟩
 
 end MIPRE.Introspection.CanonicalGame
+
+end

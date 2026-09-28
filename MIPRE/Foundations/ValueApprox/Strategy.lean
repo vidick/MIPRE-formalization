@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.ValueApprox
-import MIPRE.Foundations.ValueApprox.Dense
+module
+public import MIPRE.Foundations.ValueApprox
+public import MIPRE.Foundations.ValueApprox.Dense
+
+@[expose] public section
 
 /-!
 # Exact strategies, and the quantum value from below
@@ -393,3 +396,5 @@ theorem lt_quantumValue_iff [Nonempty A] [Nonempty B] (G : Game X Y A B) (t : â„
     exact hlt.trans_le (c.value_le_quantumValue G hc)
 
 end MIPRE.ValueApprox
+
+end

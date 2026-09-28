@@ -15,13 +15,17 @@ real sequence `⟪ξ, Tₙξ⟫` is monotone and bounded. The limit is a positiv
 contraction dominating every `Tₙ`. This is the analytic engine of the Borel
 functional calculus (stage C). Infrastructure only; no manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.Resolvent
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.Douglas
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.Resolvent
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.Douglas
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -219,3 +223,5 @@ theorem monotoneLimit_le_one : monotoneLimit T hmono h0 h1 ≤ 1 := by
 end StrongLimit
 
 end CommutingRepetition
+
+end

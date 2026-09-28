@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/PointConsistencyLiteral.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.BoundednessTransport.PointConsistency
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.BoundednessTransport.PointConsistency
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -364,3 +367,5 @@ theorem final_fields_point_consistency_totalGap_of_data_processing
     hhelperPoint hdata hTotalLe
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

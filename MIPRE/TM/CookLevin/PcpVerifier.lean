@@ -2,12 +2,15 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.ShoupCoefficients
-import MIPRE.TM.CookLevin.PcpPrepare
-import MIPRE.TM.CookLevin.PcpViewSize
-import MIPRE.Foundations.SAT.PcpFieldTests
-import MIPRE.Foundations.SAT.PcpFormat
-import MIPRE.Foundations.SAT.CircuitFieldCorrect
+module
+public import MIPRE.Foundations.LowDegree.ShoupCoefficients
+public import MIPRE.TM.CookLevin.PcpPrepare
+public import MIPRE.TM.CookLevin.PcpViewSize
+public import MIPRE.Foundations.SAT.PcpFieldTests
+public import MIPRE.Foundations.SAT.PcpFormat
+public import MIPRE.Foundations.SAT.CircuitFieldCorrect
+
+@[expose] public section
 
 /-!
 # The raw polynomial-time classical PCP verifier
@@ -157,3 +160,5 @@ theorem verifyPcp_time_le :
   pcpProgram_time_le verifyPcp
 
 end MIPRE.TM.CookLevin.Pad
+
+end

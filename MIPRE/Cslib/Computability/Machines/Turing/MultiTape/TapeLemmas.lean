@@ -23,7 +23,10 @@ Adaptations (the only differences from upstream):
 -/
 
 
-import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
+module
+public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
+
+@[expose] public section
 
 /-!
 # Tape head visitation and space-usage lemmas
@@ -166,3 +169,5 @@ lemma spaceUsed_mono (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State
   exact Finset.sum_le_sum (fun i _ => spaceUsedByTape_mono tm cfg i h)
 
 end Turing.MultiTapeTM
+
+end

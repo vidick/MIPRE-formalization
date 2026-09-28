@@ -5,14 +5,17 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUPointConsistency.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Defs.Families
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.DataProcessing
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Statements
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Residual
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.ScalarChain
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Transfer
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Defs.Families
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.DataProcessing
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Statements
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Residual
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.ScalarChain
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Transfer
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -63,7 +66,7 @@ noncomputable def pointConsistencyAddInUSelection (params : Parameters)
     [FieldModel params.q] : AddInUSelection params (Fq params) :=
   fun u => {ah | ah.2 u ≠ ah.1}
 
-private theorem pointConsistencyAddInUSelection_pairs_sum
+theorem pointConsistencyAddInUSelection_pairs_sum
     (params : Parameters) [FieldModel params.q]
     (u : Point params)
     (F : Fq params → Polynomial params → Error) :
@@ -511,3 +514,5 @@ theorem pointConsistencyAddInU_off_diagonal_avg_le_helper_error_of_transfer
   exact hoffdiag.trans habsorb
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

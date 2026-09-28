@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -33,7 +36,7 @@ open scoped MatrixOrder
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-private lemma k_ne_zero_of_mainInductionError_lt_one
+lemma k_ne_zero_of_mainInductionError_lt_one
     (params : Parameters)
     (k : ℕ) (eps delta gamma : Error)
     (hsmall : mainInductionError params k eps delta gamma < 1) :
@@ -105,7 +108,7 @@ lemma mainInductionNu_lt_one_of_mainInductionError_lt_one
     exact lt_of_le_of_lt hnu_le hsmall
   · linarith
 
-private lemma le_one_of_mainInductionError_lt_one_of_scaled_bound
+lemma le_one_of_mainInductionError_lt_one_of_scaled_bound
     (params : Parameters) {k : ℕ} {eps delta gamma x : Error}
     (hsmall : mainInductionError params.next k eps delta gamma < 1)
     (hscaled_le :
@@ -142,7 +145,7 @@ private lemma le_one_of_mainInductionError_lt_one_of_scaled_bound
     linarith
   exact le_one_of_rpow_le_one (by positivity) hroot_lt.le
 
-private lemma mainInductionNu_scaled_component_le
+lemma mainInductionNu_scaled_component_le
     (params : Parameters) {k : ℕ} {x y z w : Error}
     (hrest_nonneg : 0 ≤ y + z + w) :
     1000 * ((k : Error) ^ (2 : ℕ)) * ((params.next.m : Error) ^ (2 : ℕ)) * x ≤
@@ -713,3 +716,5 @@ theorem mainInductionSuccessorBound_pred
   exact le_trans hmul hk
 
 end MIPStarRE.LDT.MainInductionStep
+
+end

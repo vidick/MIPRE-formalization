@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.DecisionPreparationCost
+module
+public import MIPRE.Foundations.Introspection.DecisionPreparationCost
+
+@[expose] public section
 
 /-! # Ambient input-size bounds for the compiled introspection decision kernel
 
@@ -53,3 +56,5 @@ theorem compiler_ambient_time {c : ℕ} (hc : 1 ≤ c)
         (Nat.pow_le_pow_right (by omega) (le_max_right C d))
 
 end MIPRE.Introspection.DecisionPreparation
+
+end

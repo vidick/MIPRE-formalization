@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ValidOutcomeError
-import MIPRE.Foundations.Introspection.IsometricSoundness
+module
+public import MIPRE.Foundations.Introspection.ValidOutcomeError
+public import MIPRE.Foundations.Introspection.IsometricSoundness
+
+@[expose] public section
 
 /-! # Finite introspection soundness from valid-answer Pauli extraction
 
@@ -140,4 +143,6 @@ theorem quantumValue_ge_of_valid_isometric_images
 
 end TypedEstimates
 end MIPRE.Introspection
+end
+
 end

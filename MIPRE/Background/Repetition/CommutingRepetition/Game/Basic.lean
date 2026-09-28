@@ -16,11 +16,15 @@ The `Game.repeat` construction pattern follows QuantumParallelRepetition.lean
 (github.com/openai/ten-proofs, Apache-2.0; see lean/NOTICE), with the Bool
 predicate replaced by a [0,1]-valued payoff as the manuscript requires.
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -147,3 +151,5 @@ theorem repeat_isPredicate {G : Game X Y A B} (hG : G.IsPredicate) (n : ℕ) :
 end Game
 
 end CommutingRepetition
+
+end

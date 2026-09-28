@@ -5,10 +5,13 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/Common.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.GHatFacts
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Core.CompletePart
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Sandwich.PastedFamilies
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LowDegreePolynomial
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.GHatFacts
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Core.CompletePart
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Sandwich.PastedFamilies
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LowDegreePolynomial
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -373,3 +376,5 @@ lemma hAConsistency_error_le_nu_of_pos
           simp [MainInductionStep.ldPastingInInductionNu, S]
 
 end MIPStarRE.LDT.Pasting
+
+end

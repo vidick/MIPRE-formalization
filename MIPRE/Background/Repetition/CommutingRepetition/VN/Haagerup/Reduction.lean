@@ -13,14 +13,18 @@ of `ψ̂`), and `ξ_n := e^{−a_n/2}Ω̂`. The modular group of `ξ_n` is
 `σ^{ξ_n}_t = Ad(e^{−ita_n}) ∘ σ̂_t` on `ℛ`, and it is **`2^{-n}`-periodic**: at `t = 2^{-n}`
 one has `e^{−i2^{-n}a_n} = u_n*` while `σ̂_{2^{-n}} = Ad(u_n)`, so the two cancel.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Crossed.Modular
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Perturb
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.UnitaryLog
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Crossed.Modular
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Perturb
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.UnitaryLog
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -590,3 +594,5 @@ end Haagerup
 end VN
 
 end CommutingRepetition
+
+end

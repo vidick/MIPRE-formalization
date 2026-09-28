@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptivePrefixCommutator
-import MIPRE.Foundations.Introspection.ProductStageZTests
+module
+public import MIPRE.Foundations.Introspection.AdaptivePrefixCommutator
+public import MIPRE.Foundations.Introspection.ProductStageZTests
+
+@[expose] public section
 
 /-! # Actual Sample tests bound the conditional adaptive Z error
 
@@ -121,5 +124,7 @@ theorem introspect_adaptiveZ_commutator
 
 end TypedEstimates
 end MIPRE.Introspection
+
+end
 
 end

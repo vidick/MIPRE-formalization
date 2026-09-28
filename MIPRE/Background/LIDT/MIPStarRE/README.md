@@ -21,7 +21,7 @@ MIPStarRE contributors; every file carries a header saying so.
 ## Conventions
 
 - Do not edit files here by hand: re-run `scripts/vendor-lidt.py` instead. The only
-  differences from upstream are the header, the rewritten `import` prefix
+  differences from upstream are the header, the module-system lines (`module`, `public import`, `@[expose] public section`, no `private` definitions; added by `scripts/modularize.py`, 2026-09-28), the rewritten `import` prefix
   (`MIPStarRE.` becomes `MIPRE.Background.LIDT.MIPStarRE.`), and the compile fixes
   listed below. Lean *namespaces* are unchanged (`MIPStarRE.LDT`, `MIPStarRE.Quantum`).
 - Nothing outside `MIPRE/Background/LIDT/` may refer to the `MIPStarRE` namespace.
@@ -64,6 +64,11 @@ repository with v4.33.0), applied by `scripts/vendor-lidt.py`:
      `simp` now eta-expands `id`, so `cfc_id` is applied by `rw` before the `simpa`;
    - `LDT/Pasting/Core/DDistinct.lean`: `Finset.prod_le_prod` lost its nonnegativity
      hypothesis; the version with it is `Finset.prod_le_prod₀`.
+5. One recorded fix for the module system (`scripts/vendor-lidt.py --apply-fixes`, marked by
+   a comment at the site): in `LDT/Tactic/AvgCongr.lean` the tactic's elaborator
+   `evalAvgCongr` and the helper `evalAvgCongrCore` it calls are `meta` definitions, which a
+   module requires of anything carrying the `[tactic]` attribute, and the helper is no longer
+   `private`.
 
 ## Provenance
 
@@ -73,4 +78,5 @@ repository with v4.33.0), applied by `scripts/vendor-lidt.py`:
 - Vendored files: 322 Lean files, 122381 lines (the import closure of 10 root modules); 658 import lines rewritten from `MIPStarRE.` to `MIPRE.Background.LIDT.MIPStarRE.`
 - Audit aid: `Challenge.lean.expected` = upstream `scripts/comparator/expected/Challenge.lean.expected`
 - `set_option backward.isDefEq.respectTransparency false` inserted after the imports of every file; every bare `rfl` tactic line made `try rfl`; recorded compile fixes applied: 3 (listed under "Local deviations from upstream")
+- Module system: 322 files given the `module` header, `public import`s, an `@[expose] public section` and no `private` definitions by `scripts/modularize.py` (Palomar requires it; `planning/palomar.md`)
 <!-- END GENERATED -->

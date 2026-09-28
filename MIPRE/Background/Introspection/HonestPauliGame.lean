@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.HonestPauliLowDegree
-import MIPRE.Background.Introspection.HonestPauliEdges
-import MIPRE.Foundations.Introspection.HonestMagicSquareGame
+module
+public import MIPRE.Background.Introspection.HonestPauliLowDegree
+public import MIPRE.Background.Introspection.HonestPauliEdges
+public import MIPRE.Foundations.Introspection.HonestMagicSquareGame
+
+@[expose] public section
 
 /-! # Perfect PCC play of the full Pauli basis game
 
@@ -25,12 +28,12 @@ variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
 -- Keep this finite predicate calculation independent of QLD's analytical
 -- swap module, whose imports include the orthonormalization development.
 set_option maxHeartbeats 1000000 in
-private theorem pairTest_reverse (hm : m ∣ Fintype.card F)
+theorem pairTest_reverse (hm : m ∣ Fintype.card F)
     (x y : Question F m) (a b : Answer F m d) :
     pairTest hm x y a b = pairTest hm y x b a := by
   cases x <;> cases y <;> cases a <;> cases b <;> simp [pairTest]
 
-private theorem accepts_reverse (hm : m ∣ Fintype.card F)
+theorem accepts_reverse (hm : m ∣ Fintype.card F)
     (x y : Question F m) (a b : Answer F m d) :
     accepts hm x y a b = accepts hm y x b a := by
   have hs : subtests hm x y a b = subtests hm y x b a := by
@@ -85,7 +88,7 @@ theorem answerOp_self_reject (hm : m ∣ Fintype.card F)
     rw [answerOp_format_zero hm q a hf, zero_mul]
   · exact (answerOp_isPVM hm q).orthogonal hab
 
-private theorem adjRaw_cases (t u : Ty) (h : adjRaw t u = true) :
+theorem adjRaw_cases (t u : Ty) (h : adjRaw t u = true) :
     (∃ W, t = .aline W ∧ u = .point W) ∨
     (∃ W, t = .dline W ∧ u = .point W) ∨
     (∃ W, t = .point W ∧ u = .pauli W) ∨
@@ -181,7 +184,7 @@ def strategy (hm : m ∣ Fintype.card F) : SyncStrategy (qldGame (d := d) hm).do
       projective := fun q a => (registerOp_isPVM _ (answerOp_isPVM hm q.2)).idem a
       normalized := fun q => (registerOp_isPVM _ (answerOp_isPVM hm q.2)).sum_eq_one }
 
-private theorem doubled_positive (hm : m ∣ Fintype.card F)
+theorem doubled_positive (hm : m ∣ Fintype.card F)
     (p q : Bool × Question F m) (h : 0 < (qldGame (d := d) hm).doubled.μ p q) :
     (p.1 = false ∧ q.1 = true) ∧ 0 < (qldGame (d := d) hm).μ p.2 q.2 := by
   have ht : p.1 = false ∧ q.1 = true := by
@@ -224,4 +227,6 @@ theorem exists_perfectPCC (hm : m ∣ Fintype.card F) (hd : 1 ≤ d) :
   simp [strategy, Space, Fintype.card_prod, Nat.mul_comm]
 
 end MIPRE.QLD.Honest
+end
+
 end

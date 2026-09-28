@@ -2,8 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.Basic
-import Mathlib.Data.Finset.Image
+module
+public import MIPRE.Foundations.CL.Basic
+public import Mathlib.Data.Finset.Image
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Embedding conditionally linear presentations in a larger register
 
@@ -181,3 +185,5 @@ theorem mapOfPrefix_embed (e : ι ↪ κ) (P : CLFun F ι ℓ) (j : ℕ) (x y : 
 
 end CLFun
 end MIPRE.CL
+
+end

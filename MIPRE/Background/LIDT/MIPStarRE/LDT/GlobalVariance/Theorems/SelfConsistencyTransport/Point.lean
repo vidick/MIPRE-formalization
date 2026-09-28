@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/Point.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Utilities
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Utilities
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -383,3 +386,5 @@ lemma pointConditionedEventSelfConsistency_weighted_rightEdge_sum
 
 
 end MIPStarRE.LDT.GlobalVariance
+
+end

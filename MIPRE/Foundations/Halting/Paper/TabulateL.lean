@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Instantiation
-import MIPRE.Foundations.ClassMIPStarComputable
+module
+public import MIPRE.Foundations.Halting.Instantiation
+public import MIPRE.Foundations.ClassMIPStarComputable
+
+@[expose] public section
 
 /-!
 # The tabulation of a string's verifier under its own parameter
@@ -399,3 +402,5 @@ theorem Vof_descOf (lam : ℕ) (e : Prog) :
 end Halting
 
 end MIPRE
+
+end

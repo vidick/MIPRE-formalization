@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.Describer
-import MIPRE.TM.CookLevin.Correct
-import MIPRE.TM.CookLevin.Sound
+module
+public import MIPRE.TM.CookLevin.Describer
+public import MIPRE.TM.CookLevin.Correct
+public import MIPRE.TM.CookLevin.Sound
+
+@[expose] public section
 
 /-!
 # The described formula and the answers
@@ -343,3 +346,5 @@ theorem extendsAnswers_iff (hT : T ≤ Sof e) (hlen : FixedLen e 𝒟.prog n T x
 end Main
 
 end MIPRE.TM.CookLevin.Desc
+
+end

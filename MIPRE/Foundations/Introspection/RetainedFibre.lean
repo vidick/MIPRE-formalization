@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SubmeasurementCompletion
+module
+public import MIPRE.Foundations.Introspection.SubmeasurementCompletion
+
+@[expose] public section
 
 /-! # Retaining a classical fibre after twirling
 
@@ -75,5 +78,7 @@ theorem retained_fibre_dist (ψ : N → ℂ) (M T : Y × A → Matrix N N ℂ)
   linarith
 
 end MIPRE.Introspection
+
+end
 
 end

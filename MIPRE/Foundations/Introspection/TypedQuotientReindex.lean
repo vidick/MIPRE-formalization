@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryQuotientReindex
-import MIPRE.Foundations.Introspection.TypedQuotientGame
-import MIPRE.Foundations.Introspection.PrefixGuardGame
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryQuotientReindex
+public import MIPRE.Foundations.Introspection.TypedQuotientGame
+public import MIPRE.Foundations.Introspection.PrefixGuardGame
+
+@[expose] public section
 
 /-! # Exact game and PCC transport of quotient answers between coordinate types -/
 
@@ -158,4 +161,6 @@ theorem reindexedPCC_prefixGuard (S : SyncStrategy (game E X Z P L project D DP)
     Equiv.symm_apply_apply, SyncStrategy.relabel_d] using ha
 
 end MIPRE.Introspection.AuxiliaryQuotient
+end
+
 end

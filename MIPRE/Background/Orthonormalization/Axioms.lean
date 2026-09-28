@@ -3,13 +3,16 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Main
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Corollaries
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Fourier
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.FullAlgebra
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.II1Factor
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Main
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Corollaries
+module
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Main
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Corollaries
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Fourier
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.FullAlgebra
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.II1Factor
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Main
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Corollaries
+
+@[expose] public section
 
 /-!
 # Axiom audit for the orthonormalization theorem
@@ -88,3 +91,5 @@ proved in the development depends on them. -/
 /-- info: 'Orthogonalization.almost_commuting_unitaries' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound] -/
 #guard_msgs in
 #print axioms Orthogonalization.almost_commuting_unitaries
+
+end

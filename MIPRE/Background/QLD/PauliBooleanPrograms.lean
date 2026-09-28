@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.PauliAnswerCoding
-import MIPRE.Background.QLD.PauliBranchPrograms
-import MIPRE.Background.QLD.PauliArithmeticPrograms
-import MIPRE.Foundations.Introspection.FieldQuestionProg
+module
+public import MIPRE.Background.QLD.PauliAnswerCoding
+public import MIPRE.Background.QLD.PauliBranchPrograms
+public import MIPRE.Background.QLD.PauliArithmeticPrograms
+public import MIPRE.Foundations.Introspection.FieldQuestionProg
+
+@[expose] public section
 
 /-! # The uniform Boolean Pauli decision program
 
@@ -153,4 +156,6 @@ theorem program_rejects_right (input : Input) (h : (rightParser input).1 = false
   simp [program, PauliBranchProgram.formatGuard_apply, h]
 
 end MIPRE.QLD.PauliBooleanProgram
+end
+
 end

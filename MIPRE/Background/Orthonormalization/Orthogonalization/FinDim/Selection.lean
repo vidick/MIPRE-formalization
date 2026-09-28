@@ -28,12 +28,16 @@ commuting with it) with total trace `dim H` and the required inequality.
 
 Everything here is proof-side; no statement of the paper is encoded in this file.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.JointDiag
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.JointDiag
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.FinDim
 
@@ -258,3 +262,5 @@ theorem exists_commuting_projections (φ : (H →L[ℂ] H) →ₗ[ℂ] ℂ) (a :
     exact hle
 
 end Orthogonalization.FinDim
+
+end

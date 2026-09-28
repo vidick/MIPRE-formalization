@@ -2,9 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryPolynomial
-import Mathlib.Data.Matrix.Mul
-import MIPRE.Foundations.SAT.ArrayProg
+module
+public import MIPRE.Foundations.LowDegree.BinaryPolynomial
+public import Mathlib.Data.Matrix.Mul
+public import MIPRE.Foundations.SAT.ArrayProg
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Executable binary vector and matrix arithmetic -/
 
@@ -85,7 +89,7 @@ theorem applyBits_matrixBits {m n : ℕ} (A : Matrix (Fin m) (Fin n) (ZMod 2))
   funext i
   exact dotBits_vectorBits (A i) v
 
-private noncomputable def dotStepProg : PolyTimeFun (Bool × Bool × Bool) Bool :=
+noncomputable def dotStepProg : PolyTimeFun (Bool × Bool × Bool) Bool :=
   let t := ite (fst.comp snd) (snd.comp snd) (const false)
   congr (ite fst (ite t (const false) (const true)) t)
     (fun p => dotStep p.1 p.2) (by
@@ -164,7 +168,7 @@ theorem mulBits_matrixBits {m n r : ℕ}
   intro k _
   exact mul_comm _ _
 
-private noncomputable def columnProg : PolyTimeFun (ℕ × List BitStr) BitStr :=
+noncomputable def columnProg : PolyTimeFun (ℕ × List BitStr) BitStr :=
   (mapWith ((SAT.ArrayProg.getD false).comp (snd.pair fst))).comp (snd.pair fst)
 
 /-- Transposition is polynomial-time in the rows and the unary column count. -/
@@ -194,3 +198,4 @@ noncomputable def mulBitsProg :
 
 end MIPRE.LowDegree.BinaryLinear
 
+end

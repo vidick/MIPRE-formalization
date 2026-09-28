@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.ValueApprox.RawStrategy
+module
+public import MIPRE.Foundations.ValueApprox.RawStrategy
+
+@[expose] public section
 
 /-!
 # The certificate check is primitive recursive
@@ -486,3 +489,5 @@ theorem primrecPred_check :
   exact h.of_eq fun p => Iff.rfl
 
 end MIPRE.ValueApprox
+
+end

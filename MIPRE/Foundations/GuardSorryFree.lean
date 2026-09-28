@@ -3,7 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Lean
+module
+public import Lean
+public meta import Lean
+
+@[expose] public section
 
 /-!
 # The axiom guard
@@ -35,3 +39,5 @@ elab "#guard_sorry_free " ids:ident,* : command => do
     let ax ← liftCoreM <| collectAxioms n
     if ax.contains ``sorryAx then
       throwErrorAt id "{n} depends on sorryAx, but the blueprint marks its proof \\leanok"
+
+end

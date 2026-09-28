@@ -3,11 +3,15 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Analysis.CStarAlgebra.CStarMatrix
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Matrix.Order
-import Mathlib.Data.ENat.Lattice
-import Mathlib.LinearAlgebra.Matrix.Kronecker
+module
+public import Mathlib.Analysis.CStarAlgebra.CStarMatrix
+public import Mathlib.Analysis.CStarAlgebra.Classes
+public import Mathlib.Analysis.Matrix.Order
+public import Mathlib.Data.ENat.Lattice
+public import Mathlib.LinearAlgebra.Matrix.Kronecker
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Games, strategies, and values
@@ -845,3 +849,5 @@ theorem syncValue_le_commValue (G : SynchronousGame X A) :
   exact le_ciSup (CommutingStrategy.bddAbove_range_value G) S.toCommutingStrategy
 
 end MIPRE
+
+end

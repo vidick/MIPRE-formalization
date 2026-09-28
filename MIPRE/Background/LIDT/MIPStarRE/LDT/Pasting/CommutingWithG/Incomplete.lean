@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/CommutingWithG/Incomplete.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.CommutingWithG.Complete
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.CommutingWithG.Complete
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -207,3 +210,5 @@ theorem commutingWithGIncomplete
       hgamma_nonneg hgamma hzeta_nonneg hzeta hd_le_q hgood hcons hself hbound)
 
 end MIPStarRE.LDT.Pasting
+
+end

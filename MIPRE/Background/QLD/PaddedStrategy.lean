@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.PaddedLines
-import MIPRE.Foundations.POVMMix
-import MIPRE.Background.LIDT.Adapter.Value
+module
+public import MIPRE.Background.QLD.PaddedLines
+public import MIPRE.Foundations.POVMMix
+public import MIPRE.Background.LIDT.Adapter.Value
+
+@[expose] public section
 
 /-!
 # The padded strategy for the seeded low individual degree test
@@ -796,5 +799,7 @@ theorem one_sub_sum_bornProb_le_avg_eval {n : ℕ} {ψ : dA' × dB' → ℂ} (h�
 end Separation
 
 end MIPRE.QLD
+
+end
 
 end

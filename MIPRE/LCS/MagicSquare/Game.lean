@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.LCS.NonlocalGame
-import MIPRE.LCS.MagicSquare.Strategy
+module
+public import MIPRE.LCS.NonlocalGame
+public import MIPRE.LCS.MagicSquare.Strategy
+
+@[expose] public section
 
 /-!
 # The Magic Square as a nonlocal game
@@ -142,3 +145,5 @@ theorem cell_cellIdx {c : Fin layout.r} {j : Fin layout.s} (h : j ∈ layout.V c
   revert k; revert c; decide
 
 end MIPRE.LCS.MagicSquare
+
+end

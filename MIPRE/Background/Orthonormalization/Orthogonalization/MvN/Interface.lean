@@ -21,15 +21,19 @@ as an axiom, and each field is a candidate for later discharge (tier T4).
 Reviewed adversarially (review #3, R1 applied) for faithfulness *and
 satisfiability*: no field may be stronger than its source.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Normal
-import MIPRE.Background.Orthonormalization.Orthogonalization.Basic
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Local
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Defs
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Normal
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Basic
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Local
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Defs
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization
 
@@ -104,3 +108,5 @@ structure MvNStructureTheory : Prop where
       x = u * CFC.sqrt (star x * x)
 
 end Orthogonalization
+
+end

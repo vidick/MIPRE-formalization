@@ -3,9 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Data.Nat.Log
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
+module
+public import Mathlib.Data.Nat.Log
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The parameter inequality of the halting verifier
@@ -159,3 +163,5 @@ theorem lambda_bound {C C' lam n : ℕ} (hC : 1 ≤ C) (hn : 2 ≤ n)
   omega
 
 end MIPRE.Halting
+
+end

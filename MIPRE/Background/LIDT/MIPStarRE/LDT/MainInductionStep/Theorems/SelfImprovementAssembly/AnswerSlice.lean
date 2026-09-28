@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MainInductionStep/Theorems/SelfImprovementAssembly/AnswerSlice.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.SelfImprovementAssembly.Core
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.SelfImprovementAssembly.Core
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -96,7 +99,7 @@ noncomputable def restrictAnswerDiagonalAnswerMeasurement
 
 /-- Transport covariance for the answer-valued restricted diagonal-line
 measurement. -/
-private theorem restrictAnswerDiagonalAnswerMeasurement_transportInvariant
+theorem restrictAnswerDiagonalAnswerMeasurement_transportInvariant
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params.next ι)
@@ -794,3 +797,5 @@ noncomputable def AnswerSelfImprovementData.ofAnswerCarrier
         params strategy eps delta gamma k restrictionPkg inductionPkg)
 
 end MIPStarRE.LDT.MainInductionStep
+
+end

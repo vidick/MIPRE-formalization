@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryDecisionProgram
-import MIPRE.Foundations.Introspection.AuxiliaryPrefixGuardProgram
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryDecisionProgram
+public import MIPRE.Foundations.Introspection.AuxiliaryPrefixGuardProgram
+
+@[expose] public section
 
 /-! # Auxiliary decision with both local prefix guards
 
@@ -39,4 +42,6 @@ theorem check_of_guarded (U : ClockedUniversalMachine) (X Z : P)
   ((guarded_iff U X Z project x).mp h).2.2
 
 end MIPRE.Introspection.AuxiliaryDecision
+end
+
 end

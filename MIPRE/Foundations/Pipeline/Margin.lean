@@ -3,11 +3,15 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Pipeline.Introspection
-import MIPRE.Foundations.Pipeline.AnswerReduction
-import MIPRE.Foundations.Pipeline.Repetition
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
+module
+public import MIPRE.Foundations.Pipeline.Introspection
+public import MIPRE.Foundations.Pipeline.AnswerReduction
+public import MIPRE.Foundations.Pipeline.Repetition
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The parameter arithmetic of the compression theorem
@@ -320,3 +324,5 @@ theorem exists_tau {c : ℝ} (hc : 0 < c) (P beta : ℕ) :
   exact (Real.log_le_iff_le_exp (by norm_num)).1 hexp
 
 end MIPRE.Pipeline
+
+end

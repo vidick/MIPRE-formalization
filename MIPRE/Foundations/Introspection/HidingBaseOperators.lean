@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ConditionalNormalizerStepAux
-import MIPRE.Foundations.Introspection.HonestPauliRegister
+module
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerStepAux
+public import MIPRE.Foundations.Introspection.HonestPauliRegister
+
+@[expose] public section
 
 /-! # The ideal first hiding family is the full Pauli-X coarsening -/
 
@@ -85,3 +88,5 @@ theorem pauliXReadout_registerState_mirror
 end Honest
 
 end MIPRE.Introspection
+
+end

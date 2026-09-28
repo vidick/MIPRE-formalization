@@ -25,8 +25,12 @@ Adaptations (the only differences from upstream):
 -/
 
 
-import Mathlib.Data.Nat.Notation
-import Mathlib.Logic.Relation
+module
+public import Mathlib.Data.Nat.Notation
+public import Mathlib.Logic.Relation
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Relations Across Steps
 
@@ -239,3 +243,5 @@ lemma RelatesWithinSteps.map {α α' : Type*} {r : α → α → Prop} {r' : α'
   exact ⟨m, hm, RelatesInSteps.map g hg hevals⟩
 
 end Relation
+
+end

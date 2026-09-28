@@ -24,12 +24,16 @@ Proof layer of the von Neumann root `exists_modulusFamily` (node 1.3.1,
   manuscript's `‖hvec x − hvec y‖² ≤ 2‖x − y‖²`.
 Nothing here is a manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.LeftModulusData
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.LeftModulusData
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -456,3 +460,5 @@ theorem stability (y : M.H) : ‖hvec M x - hvec M y‖ ^ 2 ≤ 2 * ‖x - y‖ 
 end GraphMod
 
 end CommutingRepetition
+
+end

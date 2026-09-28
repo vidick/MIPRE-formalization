@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.CL.Closure
-import Mathlib.LinearAlgebra.Basis.Defs
+module
+public import MIPRE.Foundations.CL.Closure
+public import Mathlib.LinearAlgebra.Basis.Defs
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Downsizing conditionally linear functions, and reindexing
@@ -447,3 +451,5 @@ theorem clDist_downsize (b : Module.Basis κ K F) (L R : (ι → F) → (ι → 
 end Distribution
 
 end MIPRE.CL
+
+end

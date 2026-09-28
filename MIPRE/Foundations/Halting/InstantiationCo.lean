@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.ClassesCo
-import MIPRE.Foundations.Halting.Strings
+module
+public import MIPRE.Foundations.Halting.ClassesCo
+public import MIPRE.Foundations.Halting.Strings
+
+@[expose] public section
 
 /-!
 # The classes of the co reduction, on strings
@@ -91,3 +94,5 @@ theorem yNo_memCo : ∃ n₀, ∀ n, n₀ ≤ n → yNo ∈ classBCo G U n := by
   exact decNo_not_runs_true _ _ ht
 
 end MIPRE.Halting
+
+end

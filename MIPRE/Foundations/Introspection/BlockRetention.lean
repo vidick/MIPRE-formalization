@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.RetainedFibre
-import MIPRE.Foundations.Introspection.BlockPOVM
-import MIPRE.Foundations.Introspection.Measurements
+module
+public import MIPRE.Foundations.Introspection.RetainedFibre
+public import MIPRE.Foundations.Introspection.BlockPOVM
+public import MIPRE.Foundations.Introspection.Measurements
+
+@[expose] public section
 
 /-! # Completing the matching blocks of a twirled measurement -/
 
@@ -130,5 +133,7 @@ theorem block_retention_dist_avg {X : Type*} [Fintype X]
     Cc, controlledPOVM] using h
 
 end MIPRE.Introspection
+
+end
 
 end

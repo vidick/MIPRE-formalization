@@ -23,14 +23,18 @@ at `z` (`OrthAt M z ι`, `Blocks/Local.lean`) follows from the `B(L)` engine of 
 * the PVM `p'` produced on `L` lifts to the PVM `p i := liftOp (p' i)` of `M` supported in
   `z`, with the same value of the error functional.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Cutdown
-import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Main
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Local
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Cutdown
+public import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Main
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Local
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.Blocks
 
@@ -249,3 +253,5 @@ theorem orthAt_of_compress_bijective (M : VonNeumannAlgebra H) {z : H →L[ℂ] 
     exact hbound
 
 end Orthogonalization.Blocks
+
+end

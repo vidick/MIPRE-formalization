@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ProductStageZTests
-import MIPRE.Foundations.Introspection.AdaptivePrefixMarginal
+module
+public import MIPRE.Foundations.Introspection.ProductStageZTests
+public import MIPRE.Foundations.Introspection.AdaptivePrefixMarginal
+
+@[expose] public section
 
 /-! # The actual game controls Alice's next-prefix marginal
 
@@ -83,4 +86,6 @@ theorem introspect_prefix_register_rigidity_alice
   linarith only [ht, hloop, hBob]
 
 end MIPRE.Introspection.TypedEstimates
+end
+
 end

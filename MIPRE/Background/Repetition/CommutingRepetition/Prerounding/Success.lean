@@ -15,12 +15,16 @@ with `sum_flatQ_idealPayoff`, the `Q`-averaged ideal payoff is the greedy
 core's average conditional success `(1/m) ∑_{i∉D} P(W_{D∪{i}}) / P(W_D)`.
 Nothing here is a manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.IdealSuccess
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.IdealSuccess
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -235,3 +239,5 @@ theorem flatQ_idealPayoff_ge (hden : 0 < den) (hnum : ∀ x y a b, num x y a b �
 end TracialStrategy
 
 end CommutingRepetition
+
+end

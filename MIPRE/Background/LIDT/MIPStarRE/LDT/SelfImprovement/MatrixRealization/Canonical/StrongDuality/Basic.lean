@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Basic.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.Order
-import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical
+module
+public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.Order
+public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -474,3 +477,5 @@ theorem continuous_matrixSdpCanonicalPrimalObjective
   exact Complex.continuous_re.comp hmul.matrix_trace
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

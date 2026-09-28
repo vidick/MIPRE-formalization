@@ -21,7 +21,7 @@ shows.
 ## Conventions
 
 - Do not edit files here by hand: re-run `scripts/vendor-repetition.py` instead. The only
-  differences from upstream are the header, the two rewritten `import` prefixes and the
+  differences from upstream are the header, the module-system lines (`module`, `public import`, `@[expose] public section`, no `private` definitions; added by `scripts/modularize.py`, 2026-09-28), the two rewritten `import` prefixes and the
   `set_option autoImplicit true` line inserted after the imports. Lean *namespaces* are
   unchanged (`Orthogonalization`).
 - Nothing outside `MIPRE/Background/Orthonormalization/` may refer to that namespace.
@@ -48,4 +48,5 @@ to the tree as it is); each site carries a comment saying so:
 - Vendored files: 43 Lean files, 12838 lines (the import closure of 8 root modules); 111 import lines rewritten from `Orthogonalization.` to `MIPRE.Background.Orthonormalization.Orthogonalization.`
 - `set_option autoImplicit true` inserted after the imports: yes
 - Recorded compile fixes applied: 0 (listed under "Local deviations from upstream")
+- Module system: 43 files given the `module` header, `public import`s, an `@[expose] public section` and no `private` definitions by `scripts/modularize.py` (Palomar requires it; `planning/palomar.md`)
 <!-- END GENERATED -->

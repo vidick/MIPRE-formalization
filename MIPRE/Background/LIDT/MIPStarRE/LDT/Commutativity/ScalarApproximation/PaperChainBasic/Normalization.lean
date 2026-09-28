@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainBasic/Normalization.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Scaffold.Products
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Scaffold.Products
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -620,3 +623,5 @@ lemma leftTensor_prefix_total_normalization
     _ ≤ 1 := leftTensor_le_one (ι₂ := ι) hbase
 
 end MIPStarRE.LDT.Commutativity
+
+end

@@ -34,14 +34,18 @@ constant `9 = (3/2)·(2 + 2) + 3` arises here.
 Nothing in this file is a statement of the paper; it is proof-side machinery
 for `Orthogonalization/Basic.lean`.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Local
-import MIPRE.Background.Orthonormalization.Orthogonalization.Assembly
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.StateOnM
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Local
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Assembly
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.StateOnM
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.MvN
 
@@ -237,3 +241,5 @@ theorem assembled_bound_rel (M : VonNeumannAlgebra H) (φ : (H →L[ℂ] H) →�
   linarith
 
 end Orthogonalization.MvN
+
+end

@@ -5,12 +5,15 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MainInductionStep/Theorems/MainTheorems/Base.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LinePolynomialEmbedding
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.SelfImprovementAssembly.Core
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.PastingAssembly.Successor
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.StageDataConstructors
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.DegreeZero
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LinePolynomialEmbedding
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.SelfImprovementAssembly.Core
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.PastingAssembly.Successor
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.StageDataConstructors
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.DegreeZero
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -416,3 +419,5 @@ theorem answerMainInductionOfOneLeError
 
 
 end MIPStarRE.LDT.MainInductionStep
+
+end

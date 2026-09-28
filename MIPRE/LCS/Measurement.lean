@@ -3,7 +3,10 @@ Copyright (c) 2026 Sean Perazzolo. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sean Perazzolo
 -/
-import MIPRE.LCS.Basic
+module
+public import MIPRE.LCS.Basic
+
+@[expose] public section
 
 /-!
 # Projector Measurement Systems
@@ -139,3 +142,5 @@ lemma IsMeasurementSystem.sum_mul_single {I} [Fintype I] [DecidableEq I] {f : I 
     exact h.orthogonal y x (by rintro rfl; exact hx hy)
 
 end MIPRE.LCS
+
+end

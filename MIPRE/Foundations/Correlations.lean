@@ -3,12 +3,16 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Analysis.CStarAlgebra.Matrix
-import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Instances
-import Mathlib.Analysis.InnerProductSpace.StarOrder
-import MIPRE.Foundations.CommutingOperator
-import MIPRE.Foundations.GameTransport
-import MIPRE.Foundations.ValueApprox.Norms
+module
+public import Mathlib.Analysis.CStarAlgebra.Matrix
+public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Instances
+public import Mathlib.Analysis.InnerProductSpace.StarOrder
+public import MIPRE.Foundations.CommutingOperator
+public import MIPRE.Foundations.GameTransport
+public import MIPRE.Foundations.ValueApprox.Norms
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Bipartite correlation sets `C_q`, `C_qa`, `C_qc`
@@ -230,7 +234,7 @@ variable {G : Game X Y A B}
 
 /-- A projection on Euclidean space, as the image of a self-adjoint idempotent matrix, is a
 positive operator. -/
-private theorem isPositive_toEuclideanCLM {n : Type*} [Fintype n] [DecidableEq n]
+theorem isPositive_toEuclideanCLM {n : Type*} [Fintype n] [DecidableEq n]
     {P : Matrix n n ℂ} (hs : star P = P) (hp : P * P = P) :
     (toEuclideanCLM (𝕜 := ℂ) P).IsPositive := by
   rw [← ContinuousLinearMap.nonneg_iff_isPositive]
@@ -240,13 +244,13 @@ private theorem isPositive_toEuclideanCLM {n : Type*} [Fintype n] [DecidableEq n
   rw [h]
   exact star_mul_self_nonneg _
 
-private theorem kronecker_sum_left {m n : Type*} {ι : Type*} (s : Finset ι)
+theorem kronecker_sum_left {m n : Type*} {ι : Type*} (s : Finset ι)
     (P : ι → Matrix m m ℂ) (Q : Matrix n n ℂ) :
     (∑ i ∈ s, P i) ⊗ₖ Q = ∑ i ∈ s, P i ⊗ₖ Q := by
   ext p q
   simp [Matrix.sum_apply, Matrix.kroneckerMap_apply, Finset.sum_mul]
 
-private theorem kronecker_sum_right {m n : Type*} {ι : Type*} (s : Finset ι)
+theorem kronecker_sum_right {m n : Type*} {ι : Type*} (s : Finset ι)
     (P : Matrix m m ℂ) (Q : ι → Matrix n n ℂ) :
     P ⊗ₖ (∑ i ∈ s, Q i) = ∑ i ∈ s, P ⊗ₖ Q i := by
   ext p q
@@ -331,3 +335,5 @@ theorem Cqa_subset_Cqc_of_isClosed (h : IsClosed (Cqc X Y A B)) : Cqa X Y A B �
   closure_minimal Cq_subset_Cqc h
 
 end MIPRE
+
+end

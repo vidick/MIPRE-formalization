@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MakingMeasurementsProjective/Orthonormalization.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.LocalityPreservingRepair
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.Completion
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.ErrorBounds
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.LocalityPreservingRepair
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.Completion
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.ErrorBounds
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -69,7 +72,7 @@ lemma orthonormalizationMainLemma {Outcome : Type*}
 
 /-- For a complete measurement, bipartite SSC is exactly bipartite
 consistency of `A` with itself. -/
-private lemma bipartiteSSCRel_self_of_measurement {Outcome : Type*}
+lemma bipartiteSSCRel_self_of_measurement {Outcome : Type*}
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype Outcome]
     (ψ : QuantumState (ι × ι))
@@ -99,7 +102,7 @@ private lemma bipartiteSSCRel_self_of_measurement {Outcome : Type*}
 /-- A rounded-projective witness for `leftLiftedMeasurement A` coming from a
 left-lifted local projective submeasurement immediately yields the local lifted
 `≈`-statement. -/
-private lemma leftLiftedRoundedProjMeasStatement_to_local {Outcome : Type*}
+lemma leftLiftedRoundedProjMeasStatement_to_local {Outcome : Type*}
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype Outcome] [DecidableEq Outcome]
     {ψ : QuantumState (ι × ι)} {A : Measurement Outcome ι}
@@ -495,3 +498,5 @@ theorem orthonormalization {Outcome : Type*}
     (le_trans hPsomeq hcoeff)
 
 end MIPStarRE.LDT.MakingMeasurementsProjective
+
+end

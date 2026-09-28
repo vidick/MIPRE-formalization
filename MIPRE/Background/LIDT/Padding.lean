@@ -3,12 +3,15 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Extraction
-import MIPRE.Background.LIDT.CLGame
-import MIPRE.Background.LIDT.Adapter.Seeds
-import MIPRE.Background.LIDT.Adapter.Geometry
-import MIPRE.Background.LIDT.Adapter.Reparam
-import MIPRE.Foundations.GameAdapt
+module
+public import MIPRE.Background.LIDT.Extraction
+public import MIPRE.Background.LIDT.CLGame
+public import MIPRE.Background.LIDT.Adapter.Seeds
+public import MIPRE.Background.LIDT.Adapter.Geometry
+public import MIPRE.Background.LIDT.Adapter.Reparam
+public import MIPRE.Foundations.GameAdapt
+
+@[expose] public section
 
 /-!
 # The padded game adapter
@@ -910,5 +913,7 @@ theorem pointPOVMB_padded (hd : 1 ≤ d)
 end Strategy
 
 end MIPRE.LIDT.Simul
+
+end
 
 end

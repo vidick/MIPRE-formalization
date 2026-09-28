@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.SAT.Circuit
-import MIPRE.Foundations.SAT.Cnf
-import MIPRE.Foundations.Cost.PolyTime
-import MIPRE.Foundations.Verifier
+module
+public import MIPRE.Foundations.SAT.Circuit
+public import MIPRE.Foundations.SAT.Cnf
+public import MIPRE.Foundations.Cost.PolyTime
+public import MIPRE.Foundations.Verifier
+
+@[expose] public section
 
 /-!
 # The succinct Cook–Levin theorem: the statement
@@ -149,3 +152,5 @@ structure SuccinctCookLevin where
         a b ↔ EncodesAccepted D n x y T a b
 
 end MIPRE.SAT
+
+end

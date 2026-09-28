@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Weyl
-import MIPRE.Foundations.PVM
+module
+public import MIPRE.Foundations.Weyl
+public import MIPRE.Foundations.PVM
+
+@[expose] public section
 
 /-!
 # Exact Pauli observables from a simultaneous pair measurement
@@ -264,5 +267,7 @@ theorem wTilde_mul_wTilde (hS : IsPVM S) {pi pi' : G × G → G} (e e' : F) (u v
       (fun p => sgn (cdPhase pi' cd e' v p)), Matrix.kronecker_smul]
 
 end MIPRE.QLD
+
+end
 
 end

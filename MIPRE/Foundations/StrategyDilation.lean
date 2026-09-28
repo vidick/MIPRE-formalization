@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Sandwich
-import MIPRE.Foundations.Distances
+module
+public import MIPRE.Foundations.Sandwich
+public import MIPRE.Foundations.Distances
+
+@[expose] public section
 
 /-!
 # Dilating a POVM strategy to a projective one
@@ -150,3 +153,5 @@ theorem exists_projective_dilation_povm (M : X → POVM A d) (a₀ : A) :
 end Dilate
 
 end MIPRE
+
+end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.UnaryPrimePower
-import MIPRE.Foundations.LowDegree.BinaryDegreeFactors
+module
+public import MIPRE.Foundations.LowDegree.UnaryPrimePower
+public import MIPRE.Foundations.LowDegree.BinaryDegreeFactors
+
+@[expose] public section
 
 /-! # Executable prime-power decomposition of a unary requested degree -/
 
@@ -16,7 +19,7 @@ open Cost Cost.PolyTimeFun
 /-- Enumerate all candidate prime indices in ascending order. -/
 def ascendingUnary (u : Unary) : List Unary := (descendingUnary u).reverse
 
-private theorem descendingUnary_cons (u : Unary) :
+theorem descendingUnary_cons (u : Unary) :
     descendingUnary (() :: u) = (() :: u) :: descendingUnary u := by
   exact recordIterates_cons List.tail (() :: u) (() :: u)
 
@@ -85,5 +88,7 @@ theorem primePowerPairs_pairwise (n : ℕ) :
   exact BinaryDegreeFactors.degreeFactors_pairwise n
 
 end MIPRE.LowDegree.DegreeArithmetic
+
+end
 
 end

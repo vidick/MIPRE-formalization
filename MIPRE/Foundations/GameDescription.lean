@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.GameTransport
-import MIPRE.HaltingGameValue
+module
+public import MIPRE.Foundations.GameTransport
+public import MIPRE.HaltingGameValue
+
+@[expose] public section
 
 /-!
 # Game descriptions, read as games of the foundations
@@ -152,3 +155,5 @@ theorem gameValue_le_quantumValue (g : GameData) :
   exact MIPRE.syncValue_le_quantumValue g.syncGame
 
 end HaltingGameValue.GameData
+
+end

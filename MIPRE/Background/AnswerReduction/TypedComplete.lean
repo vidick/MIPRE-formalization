@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.Honest
-import MIPRE.Background.AnswerReduction.TypedGame
-import MIPRE.Foundations.SyncPushQ
-import MIPRE.Foundations.OracularComplete
+module
+public import MIPRE.Background.AnswerReduction.Honest
+public import MIPRE.Background.AnswerReduction.TypedGame
+public import MIPRE.Foundations.SyncPushQ
+public import MIPRE.Foundations.OracularComplete
+
+@[expose] public section
 
 /-!
 # Completeness of the typed answer-reduced game
@@ -366,5 +369,7 @@ theorem exists_typedGame_perfectPCC
 end Strategy
 
 end MIPRE.AnswerReduction
+
+end
 
 end

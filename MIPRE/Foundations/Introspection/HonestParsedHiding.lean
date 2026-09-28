@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestParsed
-import MIPRE.Foundations.Introspection.HonestHidingCommute
-import MIPRE.Foundations.Introspection.HonestHidingAcceptance
+module
+public import MIPRE.Foundations.Introspection.HonestParsed
+public import MIPRE.Foundations.Introspection.HonestHidingCommute
+public import MIPRE.Foundations.Introspection.HonestHidingAcceptance
+
+@[expose] public section
 
 /-! # Honest hiding checks on every parsed-answer label
 
@@ -54,7 +57,7 @@ theorem parsedRead_hide_commute (w : Bool) (k : ℕ) (hk : ℓ ≤ k + 1)
     Commute (parsedReadOp L D R w h a) (parsedHideOp L D R w k h b) :=
   (parsedHide_read_commute L D R w k hk h b a).symm
 
-private theorem aux_check_swap {P : Type*} (X Z : P) (projectPauli : PA → ι → F)
+theorem aux_check_swap {P : Type*} (X Z : P) (projectPauli : PA → ι → F)
     (DP : P → P → PA → PA → Bool) (t u : AuxType ℓ × Bool)
     (a b : ParsedAnswer (ι → F) A PA) :
     TypedPredicate.check L X Z projectPauli D DP (.inr t) (.inr u) a b =
@@ -63,7 +66,7 @@ private theorem aux_check_swap {P : Type*} (X Z : P) (projectPauli : PA → ι �
     simp [TypedPredicate.check, ht, hab, eq_comm, Bool.and_comm,
       Bool.and_left_comm]
 
-private theorem hide_next_check {P : Type*} (X Z : P) (projectPauli : PA → ι → F)
+theorem hide_next_check {P : Type*} (X Z : P) (projectPauli : PA → ι → F)
     (DP : P → P → PA → PA → Bool) (w : Bool) (k j : Fin ℓ) (hk : k.val + 1 = j.val)
     (a b : HideLabel F ι) :
     TypedPredicate.check L X Z projectPauli D DP (.inr (.hide k, w)) (.inr (.hide j, w))
@@ -73,7 +76,7 @@ private theorem hide_next_check {P : Type*} (X Z : P) (projectPauli : PA → ι 
   have hrev : ¬ j.val + 1 = k.val := by omega
   simp [TypedPredicate.check, TypedPredicate.fits, TypedPredicate.directed, hk, hne, hrev]
 
-private theorem hide_read_check {P : Type*} (X Z : P) (projectPauli : PA → ι → F)
+theorem hide_read_check {P : Type*} (X Z : P) (projectPauli : PA → ι → F)
     (DP : P → P → PA → PA → Bool) (w : Bool) (k : Fin ℓ) (hk : k.val + 1 = ℓ)
     (a : HideLabel F ι) (b : ReadLabel F ι × A) :
     TypedPredicate.check L X Z projectPauli D DP (.inr (.hide k, w)) (.inr (.read, w))
@@ -134,5 +137,7 @@ theorem parsedRead_hide_reject_zero {P : Type*} (X Z : P) (projectPauli : PA →
   exact hr
 
 end MIPRE.Introspection.Honest
+
+end
 
 end

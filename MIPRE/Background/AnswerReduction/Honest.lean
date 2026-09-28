@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.Predicate
-import MIPRE.Background.LIDT.CLHonest
+module
+public import MIPRE.Background.AnswerReduction.Predicate
+public import MIPRE.Background.LIDT.CLHonest
+
+@[expose] public section
 
 /-!
 # Honest answers of the answer-reduced verifier
@@ -316,5 +319,7 @@ theorem accepts_honestAns (tp tq : Role × PcpTy) (xp xq : X) (w : Coord P → F
   · rfl
 
 end MIPRE.AnswerReduction
+
+end
 
 end

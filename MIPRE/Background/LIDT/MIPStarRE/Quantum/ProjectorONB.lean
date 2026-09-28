@@ -5,8 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/Quantum/ProjectorONB.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
-import Mathlib.Analysis.Matrix.Spectrum
+module
+public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
+public import Mathlib.Analysis.Matrix.Spectrum
+public import MIPRE.Tactics
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -334,7 +338,7 @@ end ProjectorRangeONB
 
 /-- The nonzero-eigenvalue index set of a projector has cardinality equal to its
 matrix rank. -/
-private noncomputable def IsProj.nonzeroEigenEquivFinRank (P : Op ι) (hP : IsProj P) :
+noncomputable def IsProj.nonzeroEigenEquivFinRank (P : Op ι) (hP : IsProj P) :
     {i : ι // hP.isSelfAdjoint.isHermitian.eigenvalues i ≠ 0} ≃ Fin P.rank :=
   Fintype.equivFinOfCardEq hP.isSelfAdjoint.isHermitian.rank_eq_card_non_zero_eigs.symm
 
@@ -372,3 +376,5 @@ noncomputable def IsProj.rangeONB (P : Op ι) (hP : IsProj P) :
 end
 
 end MIPStarRE.Quantum
+
+end

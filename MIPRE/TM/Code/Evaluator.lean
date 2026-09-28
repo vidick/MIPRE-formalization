@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.Code.Examples
+module
+public import MIPRE.TM.Code.Examples
+
+@[expose] public section
 
 -- Lean v4.33's transparency check breaks several `rw`/`simp` steps in this file
 -- (the same failure Mathlib patches with this option on affected declarations).
@@ -221,3 +224,5 @@ example : Code.loopForever.evalWithin (fun _ => [true]) 100 = .timeout := by dec
 #eval Code.workTapeRoundTrip.evalWithin (fun _ => [true]) 5
 
 end Turing.Code
+
+end

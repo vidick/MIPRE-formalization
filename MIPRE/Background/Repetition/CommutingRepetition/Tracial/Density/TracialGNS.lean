@@ -15,12 +15,16 @@ theorem (PLAN-density.md, §1.2): the interface `TraciallyEmbeddableCorrelation`
 does not need a von Neumann algebra, only this. Proof-side infrastructure; no
 manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -253,3 +257,5 @@ end Model
 end Density
 
 end CommutingRepetition
+
+end

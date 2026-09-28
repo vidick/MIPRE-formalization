@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Pasting
+module
+public import MIPRE.Foundations.Pasting
+
+@[expose] public section
 
 /-!
 # The low-degree sandwich
@@ -791,3 +794,5 @@ theorem one_sub_sum_bornProb_ldSandwich_le {X Y : Type*} [Fintype X] [Fintype Y]
 end Main
 
 end MIPRE
+
+end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryCirculantProg
-import MIPRE.Foundations.LowDegree.BinaryKernel
+module
+public import MIPRE.Foundations.LowDegree.BinaryCirculantProg
+public import MIPRE.Foundations.LowDegree.BinaryKernel
+
+@[expose] public section
 
 /-! # Effective binary cyclic group algebra coordinates -/
 
@@ -173,5 +176,7 @@ theorem groupFixedGeneratorsProg_correct (k : ℕ) [NeZero k] :
   rw [groupFixedGenerator, LinearEquiv.apply_symm_apply]
 
 end MIPRE.LowDegree.BinaryLinear
+
+end
 
 end

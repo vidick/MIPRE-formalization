@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.CompressorProgram
-import MIPRE.Foundations.ClassMIPStarComputable
+module
+public import MIPRE.Foundations.Halting.CompressorProgram
+public import MIPRE.Foundations.ClassMIPStarComputable
+
+@[expose] public section
 
 /-!
 # The consequences of the halting reduction, conditionally on compression
@@ -48,7 +51,7 @@ variable (G : GapCompression) (U : UniversalMachine)
 
 /-- A computable predicate separating the two sides of a promise problem decides every problem
 that reduces to it: the shape both halves of `cor:value-uncomputable` use. -/
-private theorem not_decidable_of_reduction {P : GameData → Prop}
+theorem not_decidable_of_reduction {P : GameData → Prop}
     (h : ∃ g : Code → GameData, Computable g ∧
       ∀ pc, (HaltingGameValue.HaltsOnEmptyInput pc → P (g pc)) ∧
         (¬ HaltingGameValue.HaltsOnEmptyInput pc → ¬ P (g pc))) :
@@ -128,3 +131,5 @@ theorem mipstarComputable_eq_re_of : MIPStarComputable = IsRE :=
 end Halting
 
 end MIPRE
+
+end

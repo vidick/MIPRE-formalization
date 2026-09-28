@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Enumerate
-import MIPRE.Foundations.Halting.Tabulate
-import MIPRE.Foundations.SyncTransport
-import MIPRE.Foundations.Compression
+module
+public import MIPRE.Foundations.Halting.Enumerate
+public import MIPRE.Foundations.Halting.Tabulate
+public import MIPRE.Foundations.SyncTransport
+public import MIPRE.Foundations.Compression
+
+@[expose] public section
 
 /-!
 # The halting reduction, assembled
@@ -623,3 +626,5 @@ theorem gameValue_tab_eq_one (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded 
   exact Verifier.gameValue_toGame_eq_one_doubled _ _ _ _ eX eA hμ hD hV
 
 end MIPRE.Halting
+
+end

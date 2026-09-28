@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.Pcp
-import MIPRE.Foundations.SAT.FmlLib
-import MIPRE.Foundations.Cost.BinaryArithmetic
+module
+public import MIPRE.Foundations.SAT.Pcp
+public import MIPRE.Foundations.SAT.FmlLib
+public import MIPRE.Foundations.Cost.BinaryArithmetic
+
+@[expose] public section
 
 /-! # The executable seed enumeration for Pauli sampling
 
@@ -115,4 +118,6 @@ theorem selectorProg_runs (x : Unary × Unary × BitStr) :
   selectorProg.computes x
 
 end MIPRE.Introspection.SeedProgram
+end
+
 end

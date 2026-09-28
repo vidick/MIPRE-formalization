@@ -31,13 +31,17 @@ Proof-side toolkit for Lemma 3.2 of the paper applied inside `M_n(M)`
 
 No statement of the paper is made here.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Matrix
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.TypeIIINet
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Matrix
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.TypeIIINet
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 /- The real-algebra structure of `H^n →L[ℂ] H^n` (needed by `CFC.sqrt`) is found by instance
 search only after unfolding `PiLp`, which exceeds the default heartbeat budget. -/
@@ -504,3 +508,5 @@ theorem sum_entry_star_mul_self_eq_of_corner {M : VonNeumannAlgebra H} {n : ℕ}
   exact hE _ (star_mem (hV i k)) hc _ (hV i k) (hVp i k)
 
 end Orthogonalization.MvN
+
+end

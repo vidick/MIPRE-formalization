@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.StageProg
-import MIPRE.Background.QLD.LineRepresentative
-import MIPRE.Background.LIDT.Adapter.Geometry
+module
+public import MIPRE.Background.AnswerReduction.StageProg
+public import MIPRE.Background.QLD.LineRepresentative
+public import MIPRE.Background.LIDT.Adapter.Geometry
+
+@[expose] public section
 
 /-!
 # The stage programs are correct
@@ -365,5 +368,7 @@ theorem copyAnswer_factor (τ : LIDT.CL.Ty) {j : ℕ} (hj : 1 ≤ j) (u : Coord 
 end Copy
 
 end MIPRE.AnswerReduction.StageProg
+
+end
 
 end

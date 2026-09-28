@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Results.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -46,7 +49,7 @@ lemma avgOver_independentPointPair_eq_uniform_prod
       avgOver (uniformDistribution (Point params × Point params)) f := by
   try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
-private lemma matrixLocalVariance_eq_closedForm (params : Parameters)
+lemma matrixLocalVariance_eq_closedForm (params : Parameters)
     (model : MatrixOperatorFamilyRealization params) :
     matrixLocalVariance params model =
       (hypercubeVertexCount params : Error)⁻¹ *
@@ -170,7 +173,7 @@ private lemma matrixLocalVariance_eq_closedForm (params : Parameters)
               ev (matrixModelState model) ((model.family v)ᴴ * model.family u) := by
             simp [diagSum, corrSum, w, diag, corr]
 
-private lemma matrixTraceForm_localToGlobal (params : Parameters)
+lemma matrixTraceForm_localToGlobal (params : Parameters)
     (model : MatrixOperatorFamilyRealization params) :
     matrixGlobalVarianceTraceForm params model ≤
       (params.m : Error) * matrixLocalVarianceTraceForm params model := by
@@ -401,3 +404,5 @@ lemma globalRewrite (params : Parameters)
         (canonicalGlobalVarianceDecomposition params A)]
 
 end MIPStarRE.LDT.ExpansionHypercubeGraph
+
+end

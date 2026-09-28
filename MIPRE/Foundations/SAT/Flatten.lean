@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.SAT.Formula
+module
+public import MIPRE.Foundations.SAT.Formula
+
+@[expose] public section
 
 /-!
 # Flattening a formula to a circuit, in polynomial time
@@ -562,3 +565,5 @@ noncomputable def Fml.toCircuitF : PolyTimeFun (ℕ × Fml) Circuit :=
 @[simp] theorem Fml.toCircuitF_apply (p : ℕ × Fml) : Fml.toCircuitF p = p.2.toCircuit p.1 := rfl
 
 end MIPRE.SAT
+
+end

@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/ExpansionHypercubeGraph/MatrixRealization/TraceForms.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations
-import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.MatrixRealization.Core
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.MatrixRealization.Core
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -155,3 +158,5 @@ structure MatrixGlobalRewriteStatement (params : Parameters)
     matrixGlobalVariance params model = matrixGlobalVarianceTraceForm params model
 
 end MIPStarRE.LDT.ExpansionHypercubeGraph
+
+end

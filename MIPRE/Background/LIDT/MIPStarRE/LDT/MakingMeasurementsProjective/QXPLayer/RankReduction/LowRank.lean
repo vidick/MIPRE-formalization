@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/LowRank.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.Sigma
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.Sigma
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -181,7 +184,7 @@ lemma projectiveLowRankSum_of_rank_bound {Outcome : Type uOutcome}
 /-- Sum the rank-one spectral overlaps of all rounded projectors back into
 `ev ψ (∑_a R_a)`.  This isolates the dependent-sigma rewrite used in the
 `r > d` truncation branch of `projectiveLowRankSum`. -/
-private lemma projectiveLowRankSum_truncationOverlap_eq_ev_sum {Outcome : Type uOutcome}
+lemma projectiveLowRankSum_truncationOverlap_eq_ev_sum {Outcome : Type uOutcome}
     {ι : Type uι} [Fintype ι] [DecidableEq ι]
     [Fintype Outcome]
     (ψ : QuantumState ι)
@@ -210,7 +213,7 @@ private lemma projectiveLowRankSum_truncationOverlap_eq_ev_sum {Outcome : Type u
 
 /-- The squared-distance defect between the rounded family `R` and its truncated
 subprojector family is exactly the discarded rank-one overlap mass. -/
-private lemma projectiveLowRankSum_qSDD_truncation_eq_compl_overlap
+lemma projectiveLowRankSum_qSDD_truncation_eq_compl_overlap
     {Outcome : Type uOutcome} {ι : Type uι}
     [Fintype ι] [DecidableEq ι] [Fintype Outcome]
     (ψ : QuantumState ι)
@@ -513,3 +516,5 @@ lemma projectiveLowRankSum_of_roundingWitness {Outcome : Type uOutcome}
 end
 
 end MIPStarRE.LDT.MakingMeasurementsProjective
+
+end

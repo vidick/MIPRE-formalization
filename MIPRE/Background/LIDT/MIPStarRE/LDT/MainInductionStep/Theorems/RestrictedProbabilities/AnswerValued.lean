@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/AnswerValued.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Core
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.SelfImprovementAssembly.AnswerSlice
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.MainError
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Core
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.SelfImprovementAssembly.AnswerSlice
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.MainError
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -341,7 +344,7 @@ lemma answerSuccessor_selfConsistencyRestrictedAverage_eq
     _ = strategy.selfConsistencyFailureProbability := by
         try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
-private lemma answerSuccessorRestrictedDiagonalSampleError_eq
+lemma answerSuccessorRestrictedDiagonalSampleError_eq
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params.next ι)
@@ -385,7 +388,7 @@ private lemma answerSuccessorRestrictedDiagonalSampleError_eq
   simp [diagonalPointAnswerFamilyOf, diagonalLineAnswerFamilyOf, hline]
   try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
-private noncomputable def answerSuccessorDiagonalSliceIndexError
+noncomputable def answerSuccessorDiagonalSliceIndexError
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params.next ι)
@@ -398,7 +401,7 @@ private noncomputable def answerSuccessorDiagonalSliceIndexError
     (AnswerSymStrat.diagonalLineAnswerFamily
       (xRestrictedAnswerSymStratOfAnswer params strategy x) j)
 
-private noncomputable def answerSuccessorDiagonalIndexError
+noncomputable def answerSuccessorDiagonalIndexError
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params.next ι)
@@ -408,7 +411,7 @@ private noncomputable def answerSuccessorDiagonalIndexError
     (AnswerSymStrat.diagonalPointAnswerFamily strategy j)
     (AnswerSymStrat.diagonalLineAnswerFamily strategy j)
 
-private lemma answerSuccessorDiagonalSliceIndexErrorAverage_eq_diagonalIndexError
+lemma answerSuccessorDiagonalSliceIndexErrorAverage_eq_diagonalIndexError
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params.next ι)
@@ -446,7 +449,7 @@ private lemma answerSuccessorDiagonalSliceIndexErrorAverage_eq_diagonalIndexErro
     _ = answerSuccessorDiagonalIndexError params strategy (embedCoord params j) := by
             try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
-private lemma answerSuccessorAverageRestrictedDiagonalFailure_eq_embeddedDiagonalIndices
+lemma answerSuccessorAverageRestrictedDiagonalFailure_eq_embeddedDiagonalIndices
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params.next ι) :
@@ -687,3 +690,5 @@ theorem answerSuccessorRestrictedSliceConclusions
       k (profile.restrictedGood x) hk_pos hk_pred
 
 end MIPStarRE.LDT.MainInductionStep
+
+end

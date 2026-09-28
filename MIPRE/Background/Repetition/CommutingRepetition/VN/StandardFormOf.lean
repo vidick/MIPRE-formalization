@@ -15,13 +15,17 @@ separating for `M`, and `θ : x ↦ P (x ⊗ 1) ι` is a normal `*`-isomorphism
 `N → M` with normal inverse and `⟪Ξ, θ(T) Ξ⟫ = φ(T)`.  This is the standard
 form `(M, K, Ξ)` of `(N, φ)`, the input of Tomita–Takesaki theory (stage E4).
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Cutdown
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Amplification
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Cutdown
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Amplification
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -162,3 +166,5 @@ end StandardForm
 end VN
 
 end CommutingRepetition
+
+end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.LineRepresentativeProg
-import MIPRE.Background.LIDT.Adapter.Geometry
+module
+public import MIPRE.Foundations.Introspection.LineRepresentativeProg
+public import MIPRE.Background.LIDT.Adapter.Geometry
+
+@[expose] public section
 
 /-! # The executable representative is the Pauli sampler's canonical point
 
@@ -40,4 +43,6 @@ theorem lineRepresentativeProg_canonLin (k : ℕ) (hk : 1 ≤ k) {n : ℕ}
   rw [lineRepresentativeProg_correct, representative_eq_canonLin]
 
 end MIPRE.QLD.PauliCL
+end
+
 end

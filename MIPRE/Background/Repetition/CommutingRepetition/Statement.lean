@@ -40,11 +40,15 @@ verbatim; CI enforces both (`scripts/statement_copy_check.py`).
 To check this file on its own: `lake env lean CommutingRepetition/Statement.lean`
 from `lean/`, or from any project that has Mathlib.
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace MainStatement
 
@@ -303,3 +307,5 @@ def UniformParallelRepetition : Prop :=
             * (n : ℝ))
 
 end MainStatement
+
+end

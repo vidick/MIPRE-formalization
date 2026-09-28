@@ -16,12 +16,16 @@ master bound, and the two signed statements `grid_disagreement` (node
 `OTQCS/Grid.lean` for the per-file line cap; the signed definitions and
 the fixed-shift proof layers live there.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Grid
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Grid
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -797,3 +801,5 @@ theorem exists_common_shift :
 
 
 end CommutingRepetition
+
+end

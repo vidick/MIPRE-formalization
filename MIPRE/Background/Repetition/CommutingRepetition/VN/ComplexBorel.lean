@@ -15,14 +15,18 @@ do not edit by hand. Upstream path: lean/CommutingRepetition/VN/ComplexBorel.lea
 membership in a von Neumann algebra containing `E`.  Used for the modular
 group `Δ^{it} = ((2−R)/R)^{it}` of Rieffel–van Daele (`VN/Modular/ModularGroup.lean`).
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.JointSpectral
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Cutdown
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.JointSpectral
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Cutdown
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -318,3 +322,5 @@ theorem tendsto_cbfc {ι : Type*} {l : Filter ι} [l.IsCountablyGenerated] {G : 
 end BorelCalc
 
 end CommutingRepetition
+
+end

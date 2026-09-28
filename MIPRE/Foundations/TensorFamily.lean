@@ -3,13 +3,17 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.LinearAlgebra.Matrix.Trace
-import Mathlib.Data.Complex.Basic
-import Mathlib.Analysis.Complex.Basic
-import Mathlib.LinearAlgebra.Matrix.Reindex
-import Mathlib.LinearAlgebra.Matrix.Hermitian
-import Mathlib.Algebra.BigOperators.Pi
-import Mathlib.Algebra.Star.BigOperators
+module
+public import Mathlib.LinearAlgebra.Matrix.Trace
+public import Mathlib.Data.Complex.Basic
+public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.LinearAlgebra.Matrix.Reindex
+public import Mathlib.LinearAlgebra.Matrix.Hermitian
+public import Mathlib.Algebra.BigOperators.Pi
+public import Mathlib.Algebra.Star.BigOperators
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The Kronecker product of a family of matrices
@@ -83,3 +87,5 @@ theorem tensorFamily_star {M : Fin k → Matrix ι ι ℂ} (h : ∀ i, star (M i
   rw [← Matrix.star_eq_conjTranspose]; exact h i
 
 end MIPRE
+
+end

@@ -16,14 +16,18 @@ every operator commuting with `F_b^y` (in particular on Alice's algebra) and sum
 to `φ`. The correlation `re ω_b^y(E_a^x)` is `2ε`-close to the original one
 entrywise. This is the reduction of PLAN-density.md §1.3 / stage E1. Proof-side.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.Compress
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.FaithfulState
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.Compress
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.FaithfulState
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -359,3 +363,5 @@ theorem exists_perturbed [Nonempty B] (S : CommutingStrategy.{0} X Y A B) {δ : 
 end Density
 
 end CommutingRepetition
+
+end

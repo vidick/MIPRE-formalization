@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HidingRigidityOrientation
+module
+public import MIPRE.Foundations.Introspection.HidingRigidityOrientation
+
+@[expose] public section
 
 /-! # Finite iteration of the actual hiding rigidity step
 
@@ -161,5 +164,7 @@ theorem hiding_register_iteration_uniform (hℓ : 0 < ℓ) {δ β : ℝ}
   exact ⟨hj.1.trans hu,by linarith [hj.2]⟩
 
 end MIPRE.Introspection.TypedEstimates
+
+end
 
 end

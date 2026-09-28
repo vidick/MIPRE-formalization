@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.NormalElement
-import MIPRE.Foundations.SAT.FrobeniusActionProg
-import MIPRE.Foundations.LowDegree.BinaryFold
+module
+public import MIPRE.Foundations.SAT.NormalElement
+public import MIPRE.Foundations.SAT.FrobeniusActionProg
+public import MIPRE.Foundations.LowDegree.BinaryFold
+
+@[expose] public section
 
 /-! # A polynomial-time constructor of a normal basis -/
 
@@ -162,5 +165,7 @@ theorem shoupNormalBasisProg_correct (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd :
   simp only [shoupNormalBasis_apply]
 
 end MIPRE.SAT
+
+end
 
 end

@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Products
-import MIPRE.Background.LIDT.Coefficients
+module
+public import MIPRE.Background.QLD.Products
+public import MIPRE.Background.LIDT.Coefficients
+
+@[expose] public section
 
 /-!
 # Linearity in the two combining coefficients (`lem:qld-global-linear`)
@@ -743,5 +746,7 @@ theorem sum_bad_linear_mass_le (hd : 1 ≤ d) (Φ : RA × RB → ℂ)
 end Good
 
 end MIPRE.QLD
+
+end
 
 end

@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Growth
-import Mathlib.Tactic.Linarith
+module
+public import MIPRE.Foundations.Cost.Growth
+public import Mathlib.Tactic.Linarith
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Polynomially bounded functions
@@ -223,3 +227,5 @@ theorem Prog.hasPolyCost_of_polyCost {p : Prog} {B : ℕ → Data → ℕ} (hB :
   exact ⟨r, t, ht.trans (hb n d), hr⟩
 
 end MIPRE.Cost
+
+end

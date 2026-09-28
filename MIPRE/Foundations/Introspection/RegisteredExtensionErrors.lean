@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveDilationTransport
+module
+public import MIPRE.Foundations.Introspection.AdaptiveDilationTransport
+
+@[expose] public section
 
 /-! # Exact error transport through a registered auxiliary extension
 
@@ -145,4 +148,6 @@ theorem bornProb_registeredExtendOp (ξ : H × K → ℂ) (a₀ : T)
   exact h
 
 end MIPRE.Introspection
+end
+
 end

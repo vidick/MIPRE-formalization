@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.PauliMixing
+module
+public import MIPRE.Foundations.Introspection.PauliMixing
+
+@[expose] public section
 
 /-! # Pauli mixing in question-dependent coordinate presentations
 
@@ -88,5 +91,7 @@ theorem exists_pauli_mixing_sqrt
   exact ⟨Q, hQ.trans (mixing_error_sqrt_bound hε0 hε1)⟩
 
 end MIPRE.Introspection
+
+end
 
 end

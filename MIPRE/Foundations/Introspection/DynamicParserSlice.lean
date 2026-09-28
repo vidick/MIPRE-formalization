@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ParserAnswers
+module
+public import MIPRE.Foundations.Introspection.ParserAnswers
+
+@[expose] public section
 
 /-! # Polynomial-time slicing at binary offsets
 
@@ -17,21 +20,21 @@ namespace MIPRE.Introspection.DynamicParser
 
 open Cost Cost.PolyTimeFun Polynomial
 
-private def capStepFun (s : ℕ × Unary) (_ : Bool) : ℕ × Unary :=
+def capStepFun (s : ℕ × Unary) (_ : Bool) : ℕ × Unary :=
   if s.2.length + 1 ≤ s.1 then (s.1, () :: s.2) else s
 
-private def capStep : PolyTimeFun ((ℕ × Unary) × Bool) (ℕ × Unary) :=
+def capStep : PolyTimeFun ((ℕ × Unary) × Bool) (ℕ × Unary) :=
   let state : PolyTimeFun ((ℕ × Unary) × Bool) (ℕ × Unary) := fst
   let num := fst.comp state
   let acc := snd.comp state
   ite (ap₂ leNat (inc.comp (unaryToBin.comp acc)) num)
     (num.pair (cons (const ()) acc)) state
 
-private theorem capStep_apply (s : ℕ × Unary) (b : Bool) :
+theorem capStep_apply (s : ℕ × Unary) (b : Bool) :
     capStep (s, b) = capStepFun s b := by
   simp [capStep, capStepFun, PolyTimeFun.ite_apply]
 
-private theorem capStep_size (s : ℕ × Unary) (b : Bool) :
+theorem capStep_size (s : ℕ × Unary) (b : Bool) :
     esize (capStep (s, b)) ≤ esize s + (C 2).eval (esize b) := by
   rcases s with ⟨n, u⟩
   rw [capStep_apply]
@@ -39,7 +42,7 @@ private theorem capStep_size (s : ℕ × Unary) (b : Bool) :
   split_ifs <;> simp [esize_prod, show esize () = 1 from rfl]
   omega
 
-private theorem cap_fold (bs : BitStr) (n : ℕ) (u : Unary) (hu : u.length ≤ n) :
+theorem cap_fold (bs : BitStr) (n : ℕ) (u : Unary) (hu : u.length ≤ n) :
     bs.foldl capStepFun (n, u) = (n, unary (min n (u.length + bs.length))) := by
   induction bs generalizing u with
   | nil => simpa [Nat.min_eq_right hu] using congrArg (n, ·) (unary_length u).symm
@@ -89,5 +92,7 @@ def dropBits : PolyTimeFun (BitStr × ℕ) BitStr := ap₂ drop fst boundedOffse
   · rw [Nat.min_eq_right (by omega), List.drop_length, List.drop_eq_nil_of_le (by omega)]
 
 end MIPRE.Introspection.DynamicParser
+
+end
 
 end

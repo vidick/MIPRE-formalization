@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryBasis
+module
+public import MIPRE.Foundations.LowDegree.BinaryBasis
+
+@[expose] public section
 
 /-! # Solving binary linear systems with certified elimination -/
 
@@ -189,3 +192,5 @@ theorem basisSolveProg_correct
   rwa [typedBasis_span]
 
 end MIPRE.LowDegree.BinaryLinear
+
+end

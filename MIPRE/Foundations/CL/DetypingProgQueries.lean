@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingProgBits
+module
+public import MIPRE.Foundations.CL.DetypingProgBits
+
+@[expose] public section
 
 /-! # Bit-list query formulas for the numbered detyping sampler
 
@@ -106,10 +109,10 @@ theorem numbered_linear_content {s ℓ : ℕ} (E : T → T → Prop) [DecidableR
   rw [numbered, CLFun.mapOfPrefix_embed, linear_content, toBits_register_content,
     graph_part_ofBits u hu, content_part_ofBits u hu, content_part_ofBits y hy]
 
-private def indicatorVec {ι : Type*} [DecidableEq ι] (S : Finset ι) : ι → 𝔽₂ :=
+def indicatorVec {ι : Type*} [DecidableEq ι] (S : Finset ι) : ι → 𝔽₂ :=
   fun i => if i ∈ S then 1 else 0
 
-private theorem toBits_indicator_equiv {ι : Type*} [DecidableEq ι] {s : ℕ}
+theorem toBits_indicator_equiv {ι : Type*} [DecidableEq ι] {s : ℕ}
     (e : ι ≃ Fin s) (S : Finset ι) :
     toBits (push e.toEmbedding (indicatorVec S)) = indicatorBits (S.map e.toEmbedding) := by
   unfold toBits indicatorBits
@@ -171,11 +174,11 @@ theorem numbered_factor_content {s ℓ : ℕ} (E : T → T → Prop) [DecidableR
   rw [numbered, CLFun.factorOfPrefix_embed, factor_content, indicatorBits_register_content,
     graph_part_ofBits u hu, content_part_ofBits u hu]
 
-private theorem take_graph_append (g : Graph.Coord T → 𝔽₂) (v : Cost.BitStr) :
+theorem take_graph_append (g : Graph.Coord T → 𝔽₂) (v : Cost.BitStr) :
     (graphBits g ++ v).take (graphDim T) = graphBits g := by
   rw [← length_graphBits g, List.take_left]
 
-private theorem drop_graph_append (g : Graph.Coord T → 𝔽₂) (v : Cost.BitStr) :
+theorem drop_graph_append (g : Graph.Coord T → 𝔽₂) (v : Cost.BitStr) :
     (graphBits g ++ v).drop (graphDim T) = v := by
   rw [← length_graphBits g, List.drop_left]
 
@@ -197,3 +200,5 @@ theorem numbered_selected_prefix {s ℓ : ℕ} (E : T → T → Prop) [Decidable
   rfl
 
 end MIPRE.CL.Detyping
+
+end

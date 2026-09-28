@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.MirrorExists
-import MIPRE.Background.QLD.SwapItemOne
-import MIPRE.Foundations.Introspection.IsometricStrategy
+module
+public import MIPRE.Background.QLD.MirrorExists
+public import MIPRE.Background.QLD.SwapItemOne
+public import MIPRE.Foundations.Introspection.IsometricStrategy
+
+@[expose] public section
 
 /-!
 # The physical embedding `phi`, and why the physical state is its image
@@ -322,5 +325,7 @@ theorem physSwap_mulVec_physVec_mirrorOfGlobalPairs
 end Mirror
 
 end MIPRE.QLD
+
+end
 
 end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveInductionIteration
-import MIPRE.Foundations.Swap
+module
+public import MIPRE.Foundations.Introspection.AdaptiveInductionIteration
+public import MIPRE.Foundations.Swap
+
+@[expose] public section
 
 /-! # Exchanging players in the actual parsed introspection game
 
@@ -213,4 +216,6 @@ theorem hidingBobError_swap (L : Bool → CL.CLFun F ι ℓ) (w : Bool)
 
 end TypedEstimates
 end MIPRE.Introspection
+end
+
 end

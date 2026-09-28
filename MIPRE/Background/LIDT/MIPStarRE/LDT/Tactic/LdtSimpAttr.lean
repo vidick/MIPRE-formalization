@@ -5,7 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Tactic/LdtSimpAttr.lean
 -/
-import Mathlib.Tactic.Attr.Register
+module
+public import Mathlib.Tactic.Attr.Register
+public import MIPRE.Tactics
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -22,3 +26,5 @@ attribute in the same file that registers it.
 
 /-- Opt-in simplification set for stable LDT proof boilerplate. -/
 register_simp_attr ldt_simp
+
+end

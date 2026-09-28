@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Descriptions
-import MIPRE.Foundations.Cost.Numeric
+module
+public import MIPRE.Foundations.Halting.Descriptions
+public import MIPRE.Foundations.Cost.Numeric
+
+@[expose] public section
 
 /-!
 # Bounded walks over lists, in the ambient model
@@ -610,3 +613,5 @@ theorem normBinProg_runs (d : Data) :
 end Prog
 
 end MIPRE.Cost
+
+end

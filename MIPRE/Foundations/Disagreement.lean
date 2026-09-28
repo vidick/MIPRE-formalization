@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.POVMMix
+module
+public import MIPRE.Foundations.POVMMix
+
+@[expose] public section
 
 /-!
 # The disagreement of two parties' measurements
@@ -461,5 +464,7 @@ theorem condFail_le_of (hψ : star ψ ⬝ᵥ ψ = 1) {x : X} {y : Y} (EA : A →
 end Subtests
 
 end MIPRE
+
+end
 
 end

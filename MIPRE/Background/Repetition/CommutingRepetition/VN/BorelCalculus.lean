@@ -27,12 +27,16 @@ proved first for continuous `g` by transfer in `h`, then by transfer in `g` —
 **multiplicativity** `bfc (g h) = bfc g * bfc h`. Order properties follow from
 the quadratic form. Nothing here is a manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.SpectralMeasure
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.SpectralMeasure
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -643,3 +647,5 @@ end Bfc
 end BorelCalc
 
 end CommutingRepetition
+
+end

@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/HelperSSC/PostDeleteA.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.HelperSSC.Core
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.HelperSSC.Core
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -36,7 +39,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-! ### Post-`delete-an-A` transports -/
 
-private lemma helper_pair_sandwich_operator_sum_le
+lemma helper_pair_sandwich_operator_sum_le
     (params : Parameters) [FieldModel params.q]
     (H T : SubMeas (Polynomial params) ι)
     (X : Polynomial params → MIPStarRE.Quantum.Op ι)
@@ -69,7 +72,7 @@ private lemma helper_pair_sandwich_operator_sum_le
     _ = ∑ h : Polynomial params, opTensor (X h * X h) (T.outcome h) := by
           simp
 
-private lemma helper_pair_tensor_mass_le_one
+lemma helper_pair_tensor_mass_le_one
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι)
     (H T : SubMeas (Polynomial params) ι) :
@@ -109,7 +112,7 @@ private lemma helper_pair_tensor_mass_le_one
           ev_mono strategy.state _ _ hop_le_one
     _ = 1 := ev_one_of_isNormalized strategy.state strategy.isNormalized
 
-private lemma helperDeleteA_clone_variance_factor_le_globalVarianceDeviation_sum
+lemma helperDeleteA_clone_variance_factor_le_globalVarianceDeviation_sum
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι)
     (T : SubMeas (Polynomial params) ι) :
@@ -208,7 +211,7 @@ private lemma helperDeleteA_clone_variance_factor_le_globalVarianceDeviation_sum
     _ = ∑ g : Polynomial params,
           globalVarianceDeviationAtPolynomial params strategy strategy.state T g := hsquared_eq
 
-private lemma helperDeleteA_clone_mass_factor_le_one
+lemma helperDeleteA_clone_mass_factor_le_one
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι)
     (T : SubMeas (Polynomial params) ι) :
@@ -400,7 +403,7 @@ theorem helperDeleteAQuantity_abs_sub_clonedQuantity_le_sqrt
   have hbound := addInU_le_sqrt_of_factor_bounds_right hcs (le_trans hvariance hglobal) hmass
   simpa [hdiff_eq] using hbound
 
-private lemma helper_moveOverV_C_contraction
+lemma helper_moveOverV_C_contraction
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι)
     (T : SubMeas (Polynomial params) ι)
@@ -713,3 +716,5 @@ theorem helperDeleteAClonedQuantity_abs_sub_moveOverVQuantity_le_sqrt_two_delta
   exact hcs
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

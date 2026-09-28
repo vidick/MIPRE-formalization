@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Test/StrategyBiProjRoleAverage/Final.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProjRoleAverage.Core
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProjRoleAverage.Core
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -180,3 +183,5 @@ theorem roleRegisterSymmStrategy_is_good_three_mul
 end ProjStrat
 
 end MIPStarRE.LDT
+
+end

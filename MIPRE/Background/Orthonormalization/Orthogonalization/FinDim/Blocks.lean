@@ -14,11 +14,15 @@ coordinate maps, adjoint to each other, with `proj i ∘ embed j = δᵢⱼ` and
 vectors (cf. the sister project's `VN/BlockOperators`, which is specific to
 its tracial standard forms). Proof-side.
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.FinDim
 
@@ -146,3 +150,5 @@ theorem blockProj_blockMap (q X : ι → H →L[ℂ] H) (v : H) :
   rfl
 
 end Orthogonalization.FinDim
+
+end

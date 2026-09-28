@@ -53,9 +53,15 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from modularize import modularize_tree  # noqa: E402
+
 DEST_ROOT = Path("MIPRE/Background/Repetition")
 
 BEGIN_MARK = "<!-- BEGIN GENERATED (scripts/vendor-repetition.py) -->"
+MODULE_NOTE = ("- Module system: {n} files given the `module` header, `public import`s, an "
+               "`@[expose] public section` and no `private` definitions by "
+               "`scripts/modularize.py` (Palomar requires it; `planning/palomar.md`)")
 END_MARK = "<!-- END GENERATED -->"
 
 # The vendored commuting-repetition modules imported by the bridge in
@@ -755,6 +761,10 @@ def apply_fixes(repo_root: Path) -> int:
         for pf, n in apply_pattern_fixes(src, repo_root / src.dest):
             print(f"[{src.key}] pattern fix, {n} replacement(s): {pf.reason}")
             applied += n
+        n = modularize_tree(repo_root / src.dest)
+        if n:
+            print(f"[{src.key}] module headers added to {n} files")
+            applied += n
     return applied
 
 
@@ -1018,6 +1028,10 @@ def vendor(src: Source, clone: Path, commit: str, repo_root: Path, auto_implicit
     if src.key == "tp":
         parts = write_split(dest, SPLIT_FILE, src.local_prefix)
 
+    # Last, so that the split and the fixes see upstream's file shapes: every file becomes a
+    # module (`scripts/modularize.py`, the recorded mechanism for the whole repository).
+    modularized = modularize_tree(dest)
+
     details = [
         BEGIN_MARK,
         f"- Upstream: {src.url}",
@@ -1039,6 +1053,7 @@ def vendor(src: Source, clone: Path, commit: str, repo_root: Path, auto_implicit
         details += [f"- `{SPLIT_FILE}` split into {parts} parts of at most {SPLIT_MAX_LINES} "
                     f"lines (`{Path(SPLIT_FILE).stem}/PartNN.lean`), cut between its "
                     f"top-level `noncomputable section` blocks; the root module imports them"]
+    details += [MODULE_NOTE.format(n=modularized)]
     details += [END_MARK]
     refresh_readme(readme, src.readme, "\n".join(details))
     print(f"[{src.key}] vendored {len(files)} files ({lines} lines) from {src.url}@{short} "

@@ -31,12 +31,16 @@ This file proves what the entropic arena (node 1.2.6) needs from it:
 
 Nothing here is a manuscript statement (proof-side helpers for node 1.2.6).
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.CfcIntegral
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.CfcIntegral
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -432,3 +436,5 @@ theorem kern_mem {S : StarSubalgebra ℂ A} (hS : IsClosed (S : Set A)) {F G : A
 end Resolver
 
 end CommutingRepetition
+
+end

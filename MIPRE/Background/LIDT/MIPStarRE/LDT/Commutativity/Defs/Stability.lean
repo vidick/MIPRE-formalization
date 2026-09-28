@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/Defs/Stability.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Defs.Core
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Defs.Core
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -39,7 +42,7 @@ variable (params : Parameters) [FieldModel params.q]
 The outcome type `β` must retain every coordinate that still appears in
 `weight`; otherwise any later postprocessing would sum over an irrelevant fiber
 and change the operator by a multiplicity factor. -/
-private noncomputable def weightedReindexOpFamily
+noncomputable def weightedReindexOpFamily
     {α β : Type*} [Fintype α] [Fintype β]
     {κ : Type*} [Fintype κ] [DecidableEq κ]
     (base : OpFamily α κ)
@@ -217,3 +220,5 @@ lemma commDataProcessedGStabilityTwoRight_outcome
 
 
 end MIPStarRE.LDT.Commutativity
+
+end

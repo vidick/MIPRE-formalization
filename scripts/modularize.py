@@ -16,15 +16,24 @@ The Palomar registry requires every regular ``.lean`` file to use the module sys
 
 Two things the module system forbids that a plain file allowed, and what is done about them:
 
-* a ``private`` definition may not occur in the statement of a public theorem nor in the
-  body of an exposed public definition (a private *theorem* may be used in proofs, so those
-  are left alone). ``--unprivate-defs`` drops ``private`` from every non-theorem
-  declaration (``def``, ``abbrev``, ``structure``, ``instance``, ``inductive``, ``class``,
-  ``opaque``); the names must then be distinct across files, which
-  ``scripts/modularize.py --clashes`` checks by full name before anything is rewritten;
-* meta code (``syntax``, ``macro``, ``elab``, ...) needs ``public meta import`` of what it
-  uses (``Lean`` for the elaborator API) and must sit outside the public section; the ten
-  files defining such code are adjusted by hand after the script runs.
+* a ``private`` declaration may not occur in the statement of a public theorem nor in the
+  body of an exposed public definition, and the second case catches private *theorems* too
+  (a ``PolyTimeFun`` is a program with its cost proof, so a private cost lemma in a
+  definition's body is an "unknown identifier" in a module). ``--unprivate-defs`` therefore
+  drops ``private`` from every declaration; the full names must then be distinct across
+  files, which ``scripts/modularize.py --clashes`` checks before anything is rewritten
+  (a clash with a *public* name elsewhere shows up as "already declared" in the build);
+* Mathlib is itself a library of modules and imports its tactic modules privately where it
+  can, so a module sees a tactic only along a public import path (a non-module file saw
+  everything in its closure). Every module that imports part of Mathlib but not the
+  ``Mathlib`` umbrella gets ``public import MIPRE.Tactics``, the bundle of
+  ``MIPRE/Tactics.lean``, after its import block;
+* meta code (``elab``, ``elab_rules``, ...) uses the elaborator API at elaboration time,
+  which a module must import with ``meta``: every ``import Lean`` or ``import Lean.X`` line
+  gets a ``public meta import`` twin. Macros and elaborators may sit inside the exposed
+  public section and are visible to module importers there (checked on Lean v4.35.0-rc3
+  with `MIPRE/ModExp` experiments, 2026-09-28: a ``macro`` expanding to Mathlib tactics
+  needs no ``meta`` import at all).
 
 Usage: ``python3 scripts/modularize.py [--check] [--unprivate-defs] [--clashes] [paths...]``
 (default: every ``.lean`` file under ``MIPRE/`` and ``MIPRE.lean``). ``--check`` only
@@ -42,6 +51,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 IMPORT_RE = re.compile(r"^(public\s+|meta\s+|public\s+meta\s+|all\s+)?import\s+\S+")
 EXPOSE = "@[expose] public section"
+META_IMPORT_RE = re.compile(r"^import\s+Lean(?:\.\S+)?\s*$")
 
 
 def is_module(lines: list[str]) -> bool:
@@ -59,15 +69,39 @@ def is_module(lines: list[str]) -> bool:
             continue
         if not s or s.startswith("--"):
             continue
-        return s == "module"
+        # `lake exe mk_all` writes `module  -- shake: keep-all ...` on the root file.
+        return s == "module" or s.startswith("module ") and s[7:].lstrip().startswith("--")
     return False
 
 
+BUNDLE = "MIPRE.Tactics"
+BUNDLE_LINE = f"public import {BUNDLE}"
+MATHLIB_PART_RE = re.compile(r"^public import Mathlib\.\S+\s*$")
+MATHLIB_ALL_RE = re.compile(r"^public import Mathlib\s*$")
+
+
+def ensure_bundle(text: str) -> str | None:
+    """Insert ``public import MIPRE.Tactics`` after the import block of a module that
+    imports part of Mathlib but not the `Mathlib` umbrella (Mathlib imports its tactic
+    modules privately, so a module sees a tactic only along a public path; the bundle,
+    `MIPRE/Tactics.lean`, re-exports the common ones). Returns None if nothing changes."""
+    lines = text.split("\n")
+    if any(l.strip() == BUNDLE_LINE for l in lines):
+        return None
+    if any(MATHLIB_ALL_RE.match(l) for l in lines):
+        return None
+    if not any(MATHLIB_PART_RE.match(l) for l in lines):
+        return None
+    last = max(i for i, l in enumerate(lines) if IMPORT_RE.match(l))
+    lines.insert(last + 1, BUNDLE_LINE)
+    return "\n".join(lines)
+
+
 def modularize(text: str) -> str | None:
-    """Return the rewritten text, or None if the file is already a module."""
+    """Return the rewritten text, or None if the file is already a module with the bundle."""
     lines = text.split("\n")
     if is_module(lines):
-        return None
+        return ensure_bundle(text)
     first = next((i for i, l in enumerate(lines) if IMPORT_RE.match(l)), None)
     if first is None:
         # No imports at all (a file importing only the prelude): the module header goes
@@ -92,7 +126,16 @@ def modularize(text: str) -> str | None:
         end = first
         while end < len(lines) and (IMPORT_RE.match(lines[end]) or not lines[end].strip()):
             end += 1
-        block = [("public " + l if l.startswith("import ") else l) for l in lines[first:end]]
+        block = []
+        for l in lines[first:end]:
+            if l.startswith("import "):
+                block.append("public " + l)
+                # Meta code (`elab`, `elab_rules`, ...) uses the elaborator API of `Lean` at
+                # elaboration time, which a module must import with `meta`.
+                if META_IMPORT_RE.match(l):
+                    block.append("public meta " + l)
+            else:
+                block.append(l)
         while block and not block[-1].strip():
             block.pop()
         rest = lines[end:]
@@ -108,16 +151,18 @@ def modularize(text: str) -> str | None:
     while out and not out[-1].strip():
         out.pop()
     out += ["", "end", ""]
-    return "\n".join(out)
+    result = "\n".join(out)
+    return ensure_bundle(result) or result
 
 
 PRIVATE_DEF_RE = re.compile(
-    r"^(?P<attrs>(?:@\[[^\]]*\]\s*)?)(?P<nc>noncomputable\s+)?private\s+"
-    r"(?P<nc2>noncomputable\s+)?(?P<kind>def|abbrev|structure|instance|inductive|class|opaque)\b")
+    r"^(?P<attrs>(?:@\[[^\]]*\]\s*)?)(?P<nc>(?:noncomputable\s+|partial\s+)*)private\s+"
+    r"(?P<nc2>(?:noncomputable\s+|partial\s+)*)"
+    r"(?P<kind>def|abbrev|structure|instance|inductive|class|opaque|theorem|lemma)\b")
 
 
 def unprivate_defs(text: str) -> tuple[str, int]:
-    """Drop ``private`` from every non-theorem declaration. Returns the text and the count."""
+    """Drop ``private`` from every declaration. Returns the text and the count."""
     out = []
     n = 0
     for l in text.split("\n"):
@@ -132,7 +177,7 @@ def unprivate_defs(text: str) -> tuple[str, int]:
 
 def private_def_names(paths: list[Path]) -> dict[str, list[Path]]:
     """Full names (namespace-qualified, approximately: `namespace`/`section`/`end` are
-    tracked line by line) of every private non-theorem declaration, with their files."""
+    tracked line by line) of every private declaration, with their files."""
     name_re = re.compile(PRIVATE_DEF_RE.pattern + r"\s+(?P<name>[^\s(:{\[]+)")
     names: dict[str, list[Path]] = {}
     for p in paths:
@@ -159,13 +204,43 @@ def private_def_names(paths: list[Path]) -> dict[str, list[Path]]:
     return names
 
 
+KNOWN_FLAGS = {"--check", "--unprivate-defs", "--clashes"}
+
+
+def modularize_tree(dest: Path, unprivate: bool = True) -> int:
+    """``modularize_paths`` over every ``.lean`` file under ``dest`` (for the vendor scripts)."""
+    return modularize_paths(sorted(dest.rglob("*.lean")), unprivate)
+
+
+def modularize_paths(paths: list[Path], unprivate: bool = True) -> int:
+    """Rewrite every file of ``paths`` that is not yet a module (the vendor scripts call this
+    on the trees they produce). Returns the number of files rewritten."""
+    n = 0
+    for p in paths:
+        text = p.read_text(encoding="utf-8")
+        new = modularize(text)
+        if unprivate:
+            new2, k = unprivate_defs(new if new is not None else text)
+            if k:
+                new = new2
+        if new is not None:
+            p.write_text(new, encoding="utf-8", newline="\n")
+            n += 1
+    return n
+
+
 def main() -> int:
+    flags = [a for a in sys.argv[1:] if a.startswith("--")]
+    if "--help" in flags or "-h" in sys.argv[1:] or set(flags) - KNOWN_FLAGS:
+        print(__doc__)
+        return 0 if ("--help" in flags or "-h" in sys.argv[1:]) else 2
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     check = "--check" in sys.argv
     if args:
         paths = [Path(a) for a in args]
     else:
         paths = sorted(ROOT.glob("MIPRE/**/*.lean")) + [ROOT / "MIPRE.lean"]
+    paths = [p for p in paths if p.resolve() != (ROOT / "MIPRE" / "Tactics.lean").resolve()]
     if "--clashes" in sys.argv:
         clashes = {k: v for k, v in private_def_names(paths).items() if len(v) > 1}
         for k, v in sorted(clashes.items()):
@@ -186,7 +261,7 @@ def main() -> int:
         if not check:
             p.write_text(new, encoding="utf-8", newline="\n")
     for p in changed:
-        rel = p.relative_to(ROOT) if p.resolve().is_relative_to(ROOT) else p
+        rel = p.resolve().relative_to(ROOT) if p.resolve().is_relative_to(ROOT) else p
         print(("would rewrite " if check else "rewrote ") + str(rel))
     print(f"{len(changed)} files")
     return 1 if (check and changed) else 0

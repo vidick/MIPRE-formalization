@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Games
-import MIPRE.Foundations.RegisterReindex
-import MIPRE.LCS.EPR
+module
+public import MIPRE.Foundations.Games
+public import MIPRE.Foundations.RegisterReindex
+public import MIPRE.LCS.EPR
+
+@[expose] public section
 
 /-!
 # The nonlocal game of a linear constraint system
@@ -535,3 +538,5 @@ theorem exists_tensorStrategy_value_eq_one_of_localLoss_annihilates_epr
   exact Γ.μ_sum_one
 
 end MIPRE.LCS
+
+end

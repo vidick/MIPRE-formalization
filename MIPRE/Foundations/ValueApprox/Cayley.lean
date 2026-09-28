@@ -3,11 +3,15 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
-import Mathlib.LinearAlgebra.Matrix.DotProduct
-import Mathlib.LinearAlgebra.UnitaryGroup
-import Mathlib.Analysis.Complex.Basic
-import Mathlib.Algebra.Polynomial.Roots
+module
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+public import Mathlib.LinearAlgebra.Matrix.DotProduct
+public import Mathlib.LinearAlgebra.UnitaryGroup
+public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Algebra.Polynomial.Roots
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The Cayley transform
@@ -245,3 +249,5 @@ theorem exists_norm_eq_one_isUnit_one_add_smul (U : Matrix n n ℂ) :
   exact hroot
 
 end MIPRE.ValueApprox
+
+end

@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Encoding
-import Mathlib.Algebra.Polynomial.Eval.Defs
+module
+public import MIPRE.Foundations.Cost.Encoding
+public import Mathlib.Algebra.Polynomial.Eval.Defs
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Polynomial-time computable functions
@@ -115,3 +119,5 @@ Further combinators for the closure library (deferred to K2; the list is indicat
 end PolyTimeFun
 
 end MIPRE.Cost
+
+end

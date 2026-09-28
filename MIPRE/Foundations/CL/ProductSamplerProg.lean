@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.CL.ProductSampler
-import MIPRE.Foundations.CL.DetypingProgRoute
-import MIPRE.Foundations.Cost.Universal
-import MIPRE.Foundations.Cost.BinaryArithmetic
+module
+public import MIPRE.Foundations.CL.ProductSampler
+public import MIPRE.Foundations.CL.DetypingProgRoute
+public import MIPRE.Foundations.Cost.Universal
+public import MIPRE.Foundations.Cost.BinaryArithmetic
+
+@[expose] public section
 
 /-!
 # The product of a typed sampler and a directly answered one: the program
@@ -571,5 +574,7 @@ def prodDirect : TypedSampler L (Ta × Tb) where
 end TypedSampler
 
 end MIPRE.CL
+
+end
 
 end

@@ -20,13 +20,17 @@ homomorphism with `τ (lift T) = d⁻¹ ∑ᵣ φ(entry T r r)`. The corner copy
 "source corner" of the resolver construction (node 1.2.6). Infrastructure
 only; no manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.ConcreteVN
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Amplify
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.ConcreteVN
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Amplify
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -559,3 +563,5 @@ end Place
 end Block
 
 end CommutingRepetition
+
+end

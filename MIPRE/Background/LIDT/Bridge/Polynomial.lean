@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Bridge.Field
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LinePolynomials
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LowDegreePolynomial
+module
+public import MIPRE.Background.LIDT.Bridge.Field
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LinePolynomials
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LowDegreePolynomial
+
+@[expose] public section
 
 /-!
 # Bridge, part 2: polynomial answer alphabets
@@ -188,5 +191,7 @@ theorem lowIndDegEquiv_apply_encP (c : LowIndDegPoly (F := F) (m := m) (d := d))
   simp [evalPolynomialModel, eval_toMv]
 
 end MIPRE.LIDT.Bridge
+
+end
 
 end

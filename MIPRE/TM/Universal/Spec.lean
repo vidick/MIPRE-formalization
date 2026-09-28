@@ -3,10 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.Code.Encoding.Total
-import MIPRE.TM.Code.Evaluator
-import Mathlib.Data.Fin.Tuple.Basic
-import Mathlib.Algebra.Polynomial.Eval.Defs
+module
+public import MIPRE.TM.Code.Encoding.Total
+public import MIPRE.TM.Code.Evaluator
+public import Mathlib.Data.Fin.Tuple.Basic
+public import Mathlib.Algebra.Polynomial.Eval.Defs
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The machine-level universal simulation theorems (specification)
@@ -99,3 +103,5 @@ theorem exists_boundedUniversalCode (i : ℕ) :
 #eval encodeBoundedResult Code.BoundedResult.timeout
 
 end Turing
+
+end

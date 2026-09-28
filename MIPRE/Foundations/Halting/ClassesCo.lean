@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Classes
-import MIPRE.Foundations.VerifierValueCo
+module
+public import MIPRE.Foundations.Halting.Classes
+public import MIPRE.Foundations.VerifierValueCo
+
+@[expose] public section
 
 /-!
 # The class of small commuting-operator value, at the level of verifiers
@@ -71,3 +74,5 @@ theorem freeze_inClassBCo {k n T : ℕ} (hb : (V.freeze k).IsBounded n) (hrej : 
 end Verifier
 
 end MIPRE
+
+end

@@ -23,14 +23,18 @@ injectivity of `1 − E`, and the key formula for the Borel calculus of `E`:
 `C g(E) Ω = J ((1−t)g)(E) x` (`Cop_bfc_traceVector`). Nothing here is a
 manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.BlockOperators
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Commutation
-import MIPRE.Background.Repetition.CommutingRepetition.VN.SpectralProjection
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.BlockOperators
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Commutation
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.SpectralProjection
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -490,3 +494,5 @@ theorem PE_singleton_zero_apply : PE {0} x = 0 := by
 end GraphMod
 
 end CommutingRepetition
+
+end

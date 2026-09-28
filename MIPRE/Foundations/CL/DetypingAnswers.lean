@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingSoundness
+module
+public import MIPRE.Foundations.CL.DetypingSoundness
+
+@[expose] public section
 
 /-! # Detyping with different answer alphabets
 
@@ -92,3 +95,5 @@ theorem restrictAnswers_value_ge {ℓ : ℕ} (E : T → T → Prop) [DecidableRe
   nlinarith
 
 end MIPRE.CL.Detyping
+
+end

@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.GameTransport
+module
+public import MIPRE.Foundations.GameTransport
+
+@[expose] public section
 
 /-! # Projections of relabeled tensor-product strategies
 
@@ -63,3 +66,5 @@ theorem relabelPBEq (y' : Y') (b' : B') (y : Y) (b : B)
   rfl
 
 end MIPRE.TensorProductStrategy
+
+end

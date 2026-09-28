@@ -2,8 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryDivision
-import Mathlib.Algebra.Polynomial.Div
+module
+public import MIPRE.Foundations.LowDegree.BinaryDivision
+public import Mathlib.Algebra.Polynomial.Div
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Canonical binary polynomial degrees and monic division -/
 
@@ -101,3 +105,5 @@ theorem divModBits_eq_div_modByMonic (p a : BitStr) :
   exact Prod.ext h.1.symm h.2.symm
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

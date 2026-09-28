@@ -3,9 +3,13 @@ Copyright (c) 2026 Sean Perazzolo. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sean Perazzolo
 -/
-import MIPRE.LCS.Basic
-import MIPRE.LCS.Observable
-import Mathlib.Algebra.Star.Module
+module
+public import MIPRE.LCS.Basic
+public import MIPRE.LCS.Observable
+public import Mathlib.Algebra.Star.Module
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Observable-based Strategy for LCS Games
@@ -143,3 +147,5 @@ noncomputable def toObservableStrategy
 end BipartiteObservableStrategy
 
 end MIPRE.LCS
+
+end

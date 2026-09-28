@@ -23,13 +23,17 @@ The two telescoped budgets of `resolver_arena_entropic` for the arena of
 
 Nothing here is a manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.EntropicArena
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.EntropicBudget
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.EntropicArena
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.EntropicBudget
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -369,3 +373,5 @@ end
 end EntropicArena
 
 end CommutingRepetition
+
+end

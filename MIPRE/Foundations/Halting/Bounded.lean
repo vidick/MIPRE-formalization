@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.PolyBounded
-import MIPRE.Foundations.Halting.Wrapper
+module
+public import MIPRE.Foundations.Halting.PolyBounded
+public import MIPRE.Foundations.Halting.Wrapper
+
+@[expose] public section
 
 /-!
 # From polynomially bounded cost to `λ`-boundedness
@@ -146,3 +149,5 @@ theorem exists_isBounded (hdim : PolyBounded V.sampler.dim)
 end Verifier
 
 end MIPRE
+
+end

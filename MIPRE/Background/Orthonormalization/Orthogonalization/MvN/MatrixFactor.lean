@@ -24,13 +24,17 @@ extending the entry calculus of `Orthogonalization/MvN/Matrix.lean` and
 
 No statement of the paper is made here.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Matrix
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.BlockCalc
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Matrix
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.BlockCalc
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 /- The algebra structure of `H^n →L[ℂ] H^n` is found by instance search only after unfolding
 `PiLp`, which can exceed the default heartbeat budget (as in `MvN/BlockCalc.lean`). -/
@@ -192,3 +196,5 @@ theorem diagTrace_smul_one (τ : (H →L[ℂ] H) →ₗ[ℂ] ℂ) (n : ℕ) (c :
   rw [← amplify_one n, ← amplify_smul, diagTrace_amplify, map_smul, smul_eq_mul]
 
 end Orthogonalization.MvN
+
+end

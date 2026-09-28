@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.Family
-import MIPRE.Background.AnswerReduction.AnswerFormat
+module
+public import MIPRE.Background.AnswerReduction.Family
+public import MIPRE.Background.AnswerReduction.AnswerFormat
+
+@[expose] public section
 
 /-!
 # The typed answer-reduced game
@@ -124,5 +127,7 @@ theorem typedPred_enc {B : ℕ} {p q : Detyping.Question ArTy (Fin (dim V n P))}
   exact h
 
 end MIPRE.AnswerReduction
+
+end
 
 end

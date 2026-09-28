@@ -17,13 +17,17 @@ This is the only form of the bicommutant theorem the density programme needs: it
 identities proved for the generators `λ(g) π(y)` of a crossed product pass to the whole
 algebra (E5.3).
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Amplification
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Amplification
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -213,3 +217,5 @@ theorem inner_eq_zero_of_mem_wstar {S : Set (H →L[ℂ] H)} (𝔄 : StarSubalge
 end VN
 
 end CommutingRepetition
+
+end

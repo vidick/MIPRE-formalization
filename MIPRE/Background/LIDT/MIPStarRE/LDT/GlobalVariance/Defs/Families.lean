@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/GlobalVariance/Defs/Families.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Defs.Operators
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Defs.Operators
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -37,7 +40,7 @@ variable (params : Parameters) [FieldModel params.q]
 /-- `CFC.sqrt (G.outcome g) ≤ 1` when `G` is a submeasurement.
 Proved via the NNReal CFC spectrum API: `G.outcome g ≤ 1` means all
 spectral values satisfy `λ ≤ 1`, so `√λ ≤ 1` as well. -/
-private lemma cfc_sqrt_outcome_le_one (params : Parameters) [FieldModel params.q]
+lemma cfc_sqrt_outcome_le_one (params : Parameters) [FieldModel params.q]
     (G : SubMeas (Polynomial params) ι) (g : Polynomial params) :
     CFC.sqrt (G.outcome g) ≤ 1 := by
   have hspec_le : ∀ x, x ∈ spectrum NNReal (G.outcome g) → x ≤ 1 := by
@@ -54,7 +57,7 @@ private lemma cfc_sqrt_outcome_le_one (params : Parameters) [FieldModel params.q
   -- √x ≤ 1 follows from x ≤ 1 for NNReal (NNReal.sqrt_le_one)
   simpa using hspec_le x hx
 
-private theorem weightedPolynomialOperator_pos (params : Parameters)
+theorem weightedPolynomialOperator_pos (params : Parameters)
     [FieldModel params.q]
     (G : SubMeas (Polynomial params) ι)
     (g : Polynomial params)
@@ -63,7 +66,7 @@ private theorem weightedPolynomialOperator_pos (params : Parameters)
   simpa [polynomialWeightSqrtOperator] using
     (opTensor_nonneg hA (CFC.sqrt_nonneg (G.outcome g)))
 
-private theorem weightedPolynomialOperator_le_one (params : Parameters)
+theorem weightedPolynomialOperator_le_one (params : Parameters)
     [FieldModel params.q]
     (G : SubMeas (Polynomial params) ι)
     (g : Polynomial params)
@@ -76,7 +79,7 @@ private theorem weightedPolynomialOperator_le_one (params : Parameters)
         opTensor_le_leftTensor hA_pos (cfc_sqrt_outcome_le_one params G g)
     _ ≤ 1 := leftTensor_le_one hA_le_one
 
-private theorem weightedPointConditionedOperatorAtPolynomial_pos (params : Parameters)
+theorem weightedPointConditionedOperatorAtPolynomial_pos (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
     (G : SubMeas (Polynomial params) ι)
@@ -89,7 +92,7 @@ private theorem weightedPointConditionedOperatorAtPolynomial_pos (params : Param
         simpa [pointConditionedOutcomeOperatorAtPolynomial] using
           (strategy.pointMeasurement u).outcome_pos (g u)))
 
-private theorem weightedPointConditionedOperatorAtPolynomial_le_one (params : Parameters)
+theorem weightedPointConditionedOperatorAtPolynomial_le_one (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
     (G : SubMeas (Polynomial params) ι)
@@ -389,3 +392,5 @@ noncomputable def globalVarianceOfPointsError (params : Parameters)
   24 * (params.m : Error) * (eps + delta + generalizeBError params)
 
 end MIPStarRE.LDT.GlobalVariance
+
+end

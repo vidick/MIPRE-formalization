@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.CL.Closure
-import MIPRE.Foundations.CL.Embedding
+module
+public import MIPRE.Foundations.CL.Closure
+public import MIPRE.Foundations.CL.Embedding
+
+@[expose] public section
 
 /-!
 # Padding to a given level, and the product of two presentations
@@ -148,13 +151,13 @@ theorem SupportedOn.mapOfPrefix_proj {P : CLFun F ι ℓ} {T U : Finset ι} (hP 
       simp only [mapOfPrefix_cons_succ, proj_proj_of_subset (hS.trans h), proj_proj]
       rw [ih _ (hnext _) h₁, ih _ (hnext _) h₂]
 
-private theorem sdiff_subset_compl_union {S S' T T' : Finset ι} (hS' : S' ⊆ T')
+theorem sdiff_subset_compl_union {S S' T T' : Finset ι} (hS' : S' ⊆ T')
     (hTT' : Disjoint T T') : T \ S ⊆ (S ∪ S')ᶜ := fun i hi => by
   rw [Finset.mem_sdiff] at hi
   rw [Finset.mem_compl, Finset.mem_union]
   exact fun h => h.elim hi.2 fun h' => Finset.disjoint_left.mp hTT' hi.1 (hS' h')
 
-private theorem sdiff_subset_compl {S T : Finset ι} : T \ S ⊆ Sᶜ := fun _ hi =>
+theorem sdiff_subset_compl {S T : Finset ι} : T \ S ⊆ Sᶜ := fun _ hi =>
   Finset.mem_compl.mpr (Finset.mem_sdiff.mp hi).2
 
 theorem factorOfPrefix_directSum {P Q : CLFun F ι ℓ} {T T' : Finset ι} (hP : P.SupportedOn T)
@@ -342,5 +345,7 @@ theorem mapOfPrefix_prod (P : CLFun F ι ℓ) (Q : CLFun F κ ℓ) (hP : P.Exact
     rfl
 
 end MIPRE.CL.CLFun
+
+end
 
 end

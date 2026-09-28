@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryMatrixSolve
+module
+public import MIPRE.Foundations.LowDegree.BinaryMatrixSolve
+
+@[expose] public section
 
 /-! # Uniform binary matrix inversion -/
 
@@ -48,12 +51,12 @@ theorem inverseMatrix_mul {n : ℕ} (A : Matrix (Fin n) (Fin n) (ZMod 2))
     (hA : Function.Surjective A.mulVec) : inverseMatrix A * A = 1 :=
   mul_eq_one_comm.mp (mul_inverseMatrix A hA)
 
-private noncomputable def inverseColumnsProg : PolyTimeFun (Unary × List BitStr) (List BitStr) :=
+noncomputable def inverseColumnsProg : PolyTimeFun (Unary × List BitStr) (List BitStr) :=
   let solve : PolyTimeFun (BitStr × (Unary × List BitStr)) BitStr :=
     matrixSolveProg.comp ((fst.comp snd).pair ((snd.comp snd).pair fst))
   (mapWith solve).comp ((identityBitsProg.comp fst).pair (PolyTimeFun.id _))
 
-private theorem inverseColumnsProg_encoding {n : ℕ}
+theorem inverseColumnsProg_encoding {n : ℕ}
     (A : Matrix (Fin n) (Fin n) (ZMod 2)) :
     inverseColumnsProg (unary n, matrixBits A) = matrixBits (inverseMatrix A).transpose := by
   change (identityBits (unary n).length).map
@@ -90,3 +93,5 @@ theorem inverseMatrixProg_correct {n : ℕ} (A : Matrix (Fin n) (Fin n) (ZMod 2)
   exact ⟨rfl, rfl⟩
 
 end MIPRE.LowDegree.BinaryLinear
+
+end

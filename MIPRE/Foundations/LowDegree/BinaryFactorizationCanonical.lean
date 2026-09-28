@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryFactorization
+module
+public import MIPRE.Foundations.LowDegree.BinaryFactorization
+
+@[expose] public section
 
 /-! # Canonical factor outputs and the executable irreducibility test -/
 
@@ -89,3 +92,5 @@ theorem factor_dropLast_tail_isEmpty_iff (a : BitStr) (ha : a.getLastD false = t
       exact hci.not_isUnit (isUnit_of_dvd_unit (dvd_mul_right _ _) hu)
 
 end MIPRE.LowDegree.BinaryQuotient
+
+end

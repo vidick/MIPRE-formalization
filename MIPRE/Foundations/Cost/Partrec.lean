@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.MachineData
-import Mathlib.Computability.Partrec
+module
+public import MIPRE.Foundations.Cost.MachineData
+public import Mathlib.Computability.Partrec
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Ambient evaluation is partial recursive
@@ -272,3 +276,5 @@ theorem PolyTimeFun.computable_comp {α β γ : Type*} [SizedEncoding α] [Sized
 
 
 end MIPRE.Cost
+
+end

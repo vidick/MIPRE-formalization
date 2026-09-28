@@ -4,8 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE. Vendored fro
 https://github.com/openai/ten-proofs (commit 94bc0feb, 2026-08-01) by scripts/vendor-repetition.py;
 do not edit by hand. Upstream path: QuantumParallelRepetition.lean
 -/
-import Mathlib
-import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02
+
+@[expose] public section
 
 -- Part 3 of 8 of upstream's single module `QuantumParallelRepetition.lean`: its lines
 -- 17934-26827, cut between top-level `noncomputable section` blocks by
@@ -8915,3 +8918,5 @@ theorem exactSourcePushforward_sum
 end
 
 end QuantumParallelRepetition
+
+end

@@ -54,6 +54,7 @@ jobs:
         run: |
           python3 scripts/ledger-sync.py
           python3 scripts/lean-coverage.py --check
+          python3 scripts/modularize.py --check
 
       # The graph's colours as leanblueprint itself computes them, from its own parse of the
       # blueprint (plasTeX, nothing rendered, about ten seconds): a `\leanok` proof that it does

@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.DecideProg
-import MIPRE.Background.AnswerReduction.ArSampler
+module
+public import MIPRE.Background.AnswerReduction.DecideProg
+public import MIPRE.Background.AnswerReduction.ArSampler
+
+@[expose] public section
 
 /-!
 # The typed answer-reduced decider
@@ -684,3 +687,5 @@ theorem total : (typedDecider PD V lam mu sigma).Total := by
 end Law
 
 end MIPRE.AnswerReduction
+
+end

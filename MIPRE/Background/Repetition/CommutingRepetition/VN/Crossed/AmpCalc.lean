@@ -11,13 +11,17 @@ do not edit by hand. Upstream path: lean/CommutingRepetition/VN/Crossed/AmpCalc.
 calculus (as a `StarAlgHom`) and, through the identification of spectral measures
 `ν_{1⊗E}(ζ) = Σ_s ν_E(ζ s)`, with the bounded Borel calculi `bfc` and `cbfc`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Crossed.Space
-import MIPRE.Background.Repetition.CommutingRepetition.VN.ComplexBorel
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Crossed.Space
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.ComplexBorel
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -137,3 +141,5 @@ end Crossed
 end VN
 
 end CommutingRepetition
+
+end

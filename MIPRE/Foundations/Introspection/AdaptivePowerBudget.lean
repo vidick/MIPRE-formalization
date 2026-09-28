@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveIterationBudget
+module
+public import MIPRE.Foundations.Introspection.AdaptiveIterationBudget
+
+@[expose] public section
 
 /-! # Power bounds for the full finite adaptive recurrence
 
@@ -49,7 +52,7 @@ theorem iteratedRoot_add (m n : ℕ) (t : ℝ) :
   | zero => simp only [Nat.zero_add, iteratedRoot]
   | succ m ih => simp only [Nat.succ_add, iteratedRoot, ih]
 
-private theorem self_le_sqrt_of_unit {t : ℝ} (ht0 : 0 ≤ t) (ht1 : t ≤ 1) :
+theorem self_le_sqrt_of_unit {t : ℝ} (ht0 : 0 ≤ t) (ht1 : t ≤ 1) :
     t ≤ Real.sqrt t := by
   have hs := Real.sq_sqrt ht0
   have hr0 := Real.sqrt_nonneg t
@@ -64,7 +67,7 @@ theorem self_le_iteratedRoot (n : ℕ) {t : ℝ} (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
     exact ih.trans (self_le_sqrt_of_unit (iteratedRoot_nonneg n ht0)
       (iteratedRoot_le_one n ht1))
 
-private theorem sqrt_scale_le {c t : ℝ} (hc : 1 ≤ c) :
+theorem sqrt_scale_le {c t : ℝ} (hc : 1 ≤ c) :
     Real.sqrt (c * t) ≤ c * Real.sqrt t := by
   rw [Real.sqrt_mul (by linarith : 0 ≤ c)]
   exact mul_le_mul_of_nonneg_right
@@ -280,4 +283,6 @@ theorem exists_adaptiveSoundness_errorProfile (r n : ℕ) {edges a b : ℝ}
   exact adaptiveSoundness_power_le_errorProfile r n hE ha hx hε
 
 end MIPRE.Introspection
+end
+
 end

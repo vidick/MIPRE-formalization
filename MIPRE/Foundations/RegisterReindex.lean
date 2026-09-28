@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.POVMValue
-import MIPRE.Foundations.Distances
-import MIPRE.Foundations.PVM
+module
+public import MIPRE.Foundations.POVMValue
+public import MIPRE.Foundations.Distances
+public import MIPRE.Foundations.PVM
+
+@[expose] public section
 
 /-!
 # Reindexing the registers of a bipartite strategy
@@ -267,3 +270,5 @@ theorem TensorProductStrategy.value_ofPVM (G : Game X Y A B) (ψ : dA × dB → 
 end Strategy
 
 end MIPRE
+
+end

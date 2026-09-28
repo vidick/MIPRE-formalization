@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryQuotientFrobenius
-import MIPRE.Foundations.LowDegree.BinaryConstants
-import MIPRE.Foundations.Cost.Iterates
+module
+public import MIPRE.Foundations.LowDegree.BinaryQuotientFrobenius
+public import MIPRE.Foundations.LowDegree.BinaryConstants
+public import MIPRE.Foundations.Cost.Iterates
+
+@[expose] public section
 
 /-! # Polynomial products with coefficients in an explicit binary quotient -/
 
@@ -213,7 +216,7 @@ theorem coeffPolynomial_linearProductBits [CharP R 2] (z : R) (p : BitStr)
     (by intro c hc; obtain rfl := List.mem_singleton.mp hc; exact length_oneBits p)]
   simp [evalBits_oneBits z p hp]
 
-private def productStepProg : PolyTimeFun (ProductState × BitStr) ProductState :=
+def productStepProg : PolyTimeFun (ProductState × BitStr) ProductState :=
   congr ((fst.comp fst).pair (linearMulBitsProg.comp
     ((fst.comp fst).pair (snd.pair (snd.comp fst)))))
     (fun q => productStep q.1 q.2) (by
@@ -233,7 +236,7 @@ theorem esize_coefficients_le (cs : List BitStr) (N : ℕ)
     rw [esize_list_cons, List.length_cons, Nat.add_mul, Nat.one_mul]
     omega
 
-private theorem productStep_bounded : FoldBounded productStepProg (10 * X ^ 2 + 10 * X + 10) := by
+theorem productStep_bounded : FoldBounded productStepProg (10 * X ^ 2 + 10 * X + 10) := by
   intro bs s pre post heq
   rcases s with ⟨p, cs⟩
   let N := esize (bs, p, cs)
@@ -313,9 +316,9 @@ theorem evalBits_iterate_squareStep [CharP R 2] (z : R) (n : ℕ) (p a : BitStr)
     rw [ih _ (length_mulReduce p a a ha), evalBits_mulReduce z p a a ha hz]
     rw [← pow_two, ← pow_mul, pow_succ, Nat.mul_comm (2 ^ n) 2]
 
-private def squareStepProg : PolyTimeFun SquareState SquareState := fst.pair squareProg
+def squareStepProg : PolyTimeFun SquareState SquareState := fst.pair squareProg
 
-private theorem squareStep_bounded (n : ℕ) (s : SquareState) :
+theorem squareStep_bounded (n : ℕ) (s : SquareState) :
     esize ((squareStepProg : SquareState → SquareState)^[n] s) ≤
       (5 * X + 5 : Polynomial ℕ).eval (esize s) := by
   change esize (squareStep^[n] s) ≤ _
@@ -400,5 +403,7 @@ theorem orbitProductBits_width (u : Unary) (p a : BitStr) (ha : a.length = p.len
     Nat.add_comm 1 u.length] using h
 
 end MIPRE.LowDegree.BinaryQuotient
+
+end
 
 end

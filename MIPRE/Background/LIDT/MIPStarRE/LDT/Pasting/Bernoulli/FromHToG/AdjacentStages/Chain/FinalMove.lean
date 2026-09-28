@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/FinalMove.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.HalfSandwich
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.HalfSandwich
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -203,3 +206,5 @@ lemma fromHToGAdjacentStageM4_eq_finalRightShape
         fromHToGAdjacentStageM4_pointwise_finalRightShape params ψbi family ℓ n x xs))
 
 end MIPStarRE.LDT.Pasting
+
+end

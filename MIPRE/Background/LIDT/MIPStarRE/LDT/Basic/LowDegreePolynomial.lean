@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Basic/LowDegreePolynomial.lean
 -/
-import Mathlib
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LinePolynomials
+module
+public import Mathlib
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LinePolynomials
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -173,7 +176,7 @@ noncomputable def restrictAtHeightCoordinateMap (params : Parameters) [FieldMode
     else
       MvPolynomial.C (decodeScalar x)
 
-private theorem degreeOf_restrictAtHeightCoordinateMap_le
+theorem degreeOf_restrictAtHeightCoordinateMap_le
     (params : Parameters) [FieldModel params.q] (x : Fq params)
     (i : Fin params.m) (j : Fin params.next.m) :
     MvPolynomial.degreeOf i (restrictAtHeightCoordinateMap params x j) ≤
@@ -308,7 +311,7 @@ noncomputable def axisCoordinatePolynomial (params : Parameters) [FieldModel par
     else
       _root_.Polynomial.C (decodeScalar (ℓ.base i))
 
-private theorem natDegree_axisCoordinatePolynomial_le (params : Parameters) [FieldModel params.q]
+theorem natDegree_axisCoordinatePolynomial_le (params : Parameters) [FieldModel params.q]
     (ℓ : AxisParallelLine params) (i : Fin params.m) :
     (axisCoordinatePolynomial params ℓ i).natDegree ≤ if i = ℓ.direction then 1 else 0 := by
   classical
@@ -430,7 +433,7 @@ noncomputable def diagonalCoordinatePolynomial (params : Parameters) [FieldModel
     _root_.Polynomial.C (decodeScalar (ℓ.base i)) +
       _root_.Polynomial.C (decodeScalar (ℓ.direction i)) * _root_.Polynomial.X
 
-private theorem natDegree_diagonalCoordinatePolynomial_le (params : Parameters)
+theorem natDegree_diagonalCoordinatePolynomial_le (params : Parameters)
     [FieldModel params.q]
     (ℓ : DiagonalLine params) (i : Fin params.m) :
     (diagonalCoordinatePolynomial params ℓ i).natDegree ≤ 1 := by
@@ -513,3 +516,5 @@ end Polynomial
 
 
 end MIPStarRE.LDT
+
+end

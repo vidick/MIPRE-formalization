@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.CLGame
+module
+public import MIPRE.Background.LIDT.CLGame
+
+@[expose] public section
 
 /-!
 # The seeded-CL adapter, part 1: the two games describe the same lines
@@ -510,3 +513,5 @@ theorem through_eq_through_iff {u w z : Fin n → F} (hw : ∃ k, w k ≠ 0) (hz
 end Scale
 
 end MIPRE.LIDT.Adapter
+
+end

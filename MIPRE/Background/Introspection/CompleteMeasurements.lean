@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.HonestPauliMeasurements
-import MIPRE.Background.QLD.CLBinary
-import MIPRE.Foundations.Introspection.HonestCompleteGame
-import MIPRE.Foundations.Introspection.HonestPauliEdges
+module
+public import MIPRE.Background.Introspection.HonestPauliMeasurements
+public import MIPRE.Background.QLD.CLBinary
+public import MIPRE.Foundations.Introspection.HonestCompleteGame
+public import MIPRE.Foundations.Introspection.HonestPauliEdges
+
+@[expose] public section
 
 /-! # A common carrier for all honest introspection measurements
 
@@ -115,4 +118,6 @@ theorem pauliOp_Z (hm : m ∣ Fintype.card F) (x : Seed F m) :
     readout]
 
 end MIPRE.Introspection.Complete
+end
+
 end

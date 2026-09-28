@@ -3,11 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Repeat.DecLoop
-import MIPRE.Foundations.Halting.Serial
-import MIPRE.Foundations.Halting.Arith
-import MIPRE.Foundations.Repeat.Bits
-import MIPRE.Foundations.Repeat.Sampler
+module
+public import MIPRE.Foundations.Repeat.DecLoop
+public import MIPRE.Foundations.Halting.Serial
+public import MIPRE.Foundations.Halting.Arith
+public import MIPRE.Foundations.Repeat.Bits
+public import MIPRE.Foundations.Repeat.Sampler
+
+@[expose] public section
 
 /-!
 # The program of the repeated decider
@@ -638,3 +641,5 @@ theorem repDecCore_runs_malformed (univ : Prog) (sP dP lamD tauD betaD nD d : Da
 end Prog
 
 end MIPRE.Cost
+
+end

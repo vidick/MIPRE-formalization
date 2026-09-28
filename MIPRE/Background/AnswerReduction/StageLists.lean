@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.Stages
+module
+public import MIPRE.Background.AnswerReduction.Stages
+
+@[expose] public section
 
 /-!
 # Placing and slicing, on lists
@@ -85,3 +88,5 @@ theorem ofFn_zero (g : F → α) {N : ℕ} (l : List α) (hl : l.length = N) :
   apply List.ext_getElem <;> simp
 
 end MIPRE.AnswerReduction.Pcp
+
+end

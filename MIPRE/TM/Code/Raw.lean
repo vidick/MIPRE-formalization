@@ -3,7 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Data.Sign.Defs
+module
+public import Mathlib.Data.Sign.Defs
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Raw syntax for coded multi-input Turing machines
@@ -104,3 +108,5 @@ structure RawCode (i : ℕ) : Type where
 deriving DecidableEq, Repr
 
 end Turing
+
+end

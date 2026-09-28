@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestHidingStep
-import MIPRE.Foundations.Introspection.HonestHiding
+module
+public import MIPRE.Foundations.Introspection.HonestHidingStep
+public import MIPRE.Foundations.Introspection.HonestHiding
+
+@[expose] public section
 
 /-! # Commutation along the honest hiding chain
 
@@ -192,3 +195,5 @@ theorem hideOp_commute_read (P : CL.CLFun F ι ℓ) (k : ℕ) (hk : ℓ ≤ k + 
   registerOp_commute _ (hideRegister_commute_read P k hk _ h a b)
 
 end MIPRE.Introspection.Honest
+
+end

@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.LinearMeasurement
+module
+public import MIPRE.Foundations.Introspection.LinearMeasurement
+
+@[expose] public section
 
 /-! # Exact Pauli twirling on a field-linear subspace -/
 
@@ -55,5 +58,7 @@ theorem twirlZ_wX (K : Submodule F (Fin n → F)) (u : Fin n → F) :
   · rw [if_neg hu, zero_smul, smul_zero, if_neg hu]
 
 end MIPRE.Introspection
+
+end
 
 end

@@ -3,12 +3,15 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.StageCorrect
-import MIPRE.Background.AnswerReduction.Family
-import MIPRE.Foundations.CL.ProductSamplerProg
-import MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic
-import MIPRE.Foundations.SAT.ArrayProg
-import MIPRE.Foundations.Cost.FiniteEncoding
+module
+public import MIPRE.Background.AnswerReduction.StageCorrect
+public import MIPRE.Background.AnswerReduction.Family
+public import MIPRE.Foundations.CL.ProductSamplerProg
+public import MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic
+public import MIPRE.Foundations.SAT.ArrayProg
+public import MIPRE.Foundations.Cost.FiniteEncoding
+
+@[expose] public section
 
 /-!
 # The PCP sampler as a directly answered sampler
@@ -372,5 +375,7 @@ def directSampler (pp : Prog) (hpp : pp.WellScoped 1)
 end PcpFamily
 
 end MIPRE.AnswerReduction
+
+end
 
 end

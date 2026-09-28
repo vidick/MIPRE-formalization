@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ConditionalNormalizerIdeal
-import MIPRE.Foundations.Introspection.EPR
+module
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerIdeal
+public import MIPRE.Foundations.Introspection.EPR
+
+@[expose] public section
 
 /-! # Exact EPR mirrors of the concrete honest hiding operators
 
@@ -103,3 +106,5 @@ theorem hidingPrefixOp_epr_mirror (P : CL.CLFun F ι ℓ) (k : ℕ) (y : Option 
   exact congrArg WithLp.ofLp he
 
 end MIPRE.Introspection.Honest
+
+end

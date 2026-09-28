@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.RegisterEPR
+module
+public import MIPRE.Foundations.Introspection.RegisterEPR
+
+@[expose] public section
 
 /-! # Pauli mixing in the original local register
 
@@ -130,5 +133,7 @@ theorem exists_register_mixing_sqrt
 end Varying
 
 end MIPRE.Introspection
+
+end
 
 end

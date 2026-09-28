@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveMarginalTest
-import MIPRE.Foundations.Introspection.AdaptiveAnswerMarginal
+module
+public import MIPRE.Foundations.Introspection.AdaptiveMarginalTest
+public import MIPRE.Foundations.Introspection.AdaptiveAnswerMarginal
+
+@[expose] public section
 
 /-! # The actual game supplies the refined stage marginal bound
 
@@ -86,4 +89,6 @@ theorem introspect_adaptive_marginal
     _ = _ := by ring
 
 end MIPRE.Introspection.TypedEstimates
+end
+
 end

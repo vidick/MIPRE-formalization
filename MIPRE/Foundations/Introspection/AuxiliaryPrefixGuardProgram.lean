@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Cost.FiniteChoice
-import MIPRE.Foundations.Introspection.AuxiliarySourceScan
-import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
-import MIPRE.Foundations.Introspection.PrefixGuard
+module
+public import MIPRE.Foundations.Cost.FiniteChoice
+public import MIPRE.Foundations.Introspection.AuxiliarySourceScan
+public import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
+public import MIPRE.Foundations.Introspection.PrefixGuard
+
+@[expose] public section
 
 /-! # Executable local prefix guards
 
@@ -127,3 +130,5 @@ theorem program_read {PA : Type*} (U : ClockedUniversalMachine) {lam n Q : ℕ}
     (.inr (.read, w)) 6 (by omega)
 
 end MIPRE.Introspection.AuxiliaryPrefixGuard
+
+end

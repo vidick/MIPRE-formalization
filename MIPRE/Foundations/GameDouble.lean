@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.GameTransport
+module
+public import MIPRE.Foundations.GameTransport
+
+@[expose] public section
 
 /-!
 # The doubled question set
@@ -182,3 +185,5 @@ theorem exists_perfectPCC_doubled {G : SynchronousGame X A} {S : SyncStrategy G}
   ⟨S.double, SyncStrategy.isPCC_double hS, by rw [SyncStrategy.value_double, hval]⟩
 
 end MIPRE
+
+end

@@ -18,13 +18,17 @@ coordinate of the history. The refined effects are positive, sum to the
 revealed-set effects (`htotF`/`htotG`), and the totals are contractions, so
 `resolver_arena_entropic` applies. Nothing here is a manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Costs
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.EntropyBudget
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Costs
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.EntropyBudget
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -195,3 +199,5 @@ theorem exists_refined_arena (D : Finset (Fin n)) (μ : X → Y → ℝ) (hμ : 
 end TracialStrategy
 
 end CommutingRepetition
+
+end

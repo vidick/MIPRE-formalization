@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Cost.TreeBits
-import MIPRE.Foundations.SAT.ArrayProg
+module
+public import MIPRE.Foundations.Cost.TreeBits
+public import MIPRE.Foundations.SAT.ArrayProg
+
+@[expose] public section
 
 /-! # Total finite query programs
 
@@ -16,7 +19,7 @@ namespace MIPRE.Cost.PolyTimeFun
 
 open Polynomial
 
-private theorem bits_prefix_unique (a b : Data) (xs ys : BitStr)
+theorem bits_prefix_unique (a b : Data) (xs ys : BitStr)
     (h : a.toBits ++ xs = b.toBits ++ ys) : a = b ∧ xs = ys := by
   induction a generalizing b xs ys with
   | nil =>
@@ -136,3 +139,5 @@ noncomputable def finiteFunction {α β : Type*} [Fintype α]
     [SizedEncoding α] [SizedEncoding β] (f : α → β) (a : α) : finiteFunction f a = f a := rfl
 
 end MIPRE.Cost.PolyTimeFun
+
+end

@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Game
-import MIPRE.Foundations.LowDegree.SchwartzZippel
+module
+public import MIPRE.Background.LIDT.Game
+public import MIPRE.Foundations.LowDegree.SchwartzZippel
+
+@[expose] public section
 
 /-!
 # Coefficient vectors of low-individual-degree polynomials
@@ -322,5 +325,7 @@ theorem card_eval_eq_zero_le [Fintype F] [DecidableEq F]
   exact h
 
 end MIPRE.LIDT
+
+end
 
 end

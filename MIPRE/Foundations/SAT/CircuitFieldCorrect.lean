@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.CircuitFieldEval
-import MIPRE.Foundations.SAT.FiniteCircuitArithmetization
+module
+public import MIPRE.Foundations.SAT.CircuitFieldEval
+public import MIPRE.Foundations.SAT.FiniteCircuitArithmetization
+
+@[expose] public section
 
 /-!
 # Correctness of the executable circuit polynomial evaluator
@@ -47,13 +50,13 @@ theorem readInput_fieldHistory (C : Circuit) (p : BitStr) (x w : List BitStr) (k
       Sum.elim (fun j => x.getD j []) (fun j => w.getD j []) (C.inputRef k i) :=
   lastInputValue_range C k i (fun j => x.getD j []) (fun j => w.getD j [])
 
-private theorem width_getD (p : BitStr) (l : List BitStr)
+theorem width_getD (p : BitStr) (l : List BitStr)
     (h : ∀ b ∈ l, b.length = p.length) (i : ℕ) (hi : i < l.length) :
     (l.getD i []).length = p.length := by
   rw [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hi, Option.getD_some]
   exact h _ (List.getElem_mem hi)
 
-private theorem gate_ref_width (C : Circuit) (hC : C.WellFormed) (p : BitStr)
+theorem gate_ref_width (C : Circuit) (hC : C.WellFormed) (p : BitStr)
     (w : List BitStr) (hwlen : C.size ≤ w.length) (hw : ∀ b ∈ w, b.length = p.length)
     (k : ℕ) (hk : k < C.size) :
     ∀ j ∈ (C.gates.getD k (.const false)).refs, (w.getD j []).length = p.length := by
@@ -62,7 +65,7 @@ private theorem gate_ref_width (C : Circuit) (hC : C.WellFormed) (p : BitStr)
   rw [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hk, Option.getD_some] at hj
   exact width_getD p w hw j (lt_of_lt_of_le (lt_trans (hr j hj) hk) hwlen)
 
-private theorem gate_input_width (C : Circuit) (hC : C.WellFormed) (p : BitStr)
+theorem gate_input_width (C : Circuit) (hC : C.WellFormed) (p : BitStr)
     (x w : List BitStr) (hxlen : C.inputs ≤ x.length) (hwlen : C.size ≤ w.length)
     (hx : ∀ b ∈ x, b.length = p.length) (hw : ∀ b ∈ w, b.length = p.length)
     (k : ℕ) (hk : k < C.size) :
@@ -186,3 +189,5 @@ theorem evalBits_circuitBits_finite (C : Circuit) (hC : C.WellFormed) (z : F) (p
       simp [List.getD_eq_getElem?_getD, List.getElem?_eq_none (by omega : w.length ≤ j)]
 
 end MIPRE.SAT.Circuit
+
+end

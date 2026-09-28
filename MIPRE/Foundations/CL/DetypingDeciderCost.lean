@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.CL.DetypingDecider
-import MIPRE.Foundations.Pipeline.PowDomRun
+module
+public import MIPRE.Foundations.CL.DetypingDecider
+public import MIPRE.Foundations.Pipeline.PowDomRun
+
+@[expose] public section
 
 /-!
 # The running time of the detyped decider
@@ -199,3 +202,5 @@ theorem sampler_time (cS mS eS : ℕ) : ∃ c m d, ∀ {W K : ℕ} (S : TypedSam
         _ = R.natDegree * (eS + 1) * (P.natDegree + 1) * (K + 1) := by ring⟩
 
 end MIPRE.CL.Detyping
+
+end

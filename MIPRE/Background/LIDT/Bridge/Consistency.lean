@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Bridge.Strategy
-import MIPRE.Background.LIDT.Bridge.Defect
+module
+public import MIPRE.Background.LIDT.Bridge.Strategy
+public import MIPRE.Background.LIDT.Bridge.Defect
+
+@[expose] public section
 
 /-!
 # Bridge, part 7: consistency
@@ -55,5 +58,7 @@ theorem inconsistency_eq_bipartiteConsError (S : TensorProductStrategy (lidtGame
   rfl
 
 end MIPRE.LIDT.Bridge
+
+end
 
 end

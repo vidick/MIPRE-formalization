@@ -27,15 +27,19 @@ planned in `PLAN-resolver-entropic.md`:
 The entropy budgets are proved in `Resolver/EntropicArenaBudget.lean`.
 Nothing here is a manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.ArenaDef
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.ResolverKernel
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.Douglas
-import MIPRE.Background.Repetition.CommutingRepetition.VN.BlockOperators
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.ArenaDef
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.ResolverKernel
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.Douglas
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.BlockOperators
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -825,3 +829,5 @@ end
 end EntropicArena
 
 end CommutingRepetition
+
+end

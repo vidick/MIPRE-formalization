@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/EnvelopeBounds.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.Definitions
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.Definitions
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -501,3 +504,5 @@ theorem rpow_Z1_factor_le {params : Parameters} {k : ℕ}
 end Test
 
 end MIPStarRE.LDT
+
+end

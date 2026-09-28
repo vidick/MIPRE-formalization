@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SourceCompilerGuard
-import MIPRE.Foundations.Introspection.TypedPredicate
+module
+public import MIPRE.Foundations.Introspection.SourceCompilerGuard
+public import MIPRE.Foundations.Introspection.TypedPredicate
+
+@[expose] public section
 
 /-! # Executable full-register Introspect/Read comparison
 
@@ -153,4 +156,6 @@ theorem readingCheck_typed {PauliType PauliAnswer : Type*} {Q R ℓ : ℕ}
   simp [TypedPredicate.check,TypedPredicate.fits,TypedPredicate.directed]
 
 end MIPRE.Introspection.AuxiliaryProgram
+end
+
 end

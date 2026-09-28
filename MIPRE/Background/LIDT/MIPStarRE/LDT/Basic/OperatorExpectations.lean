@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Basic/OperatorExpectations.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -550,7 +553,7 @@ theorem ev_opTensor_sandwich_cauchy_schwarz
 
 /-- Diagonal sandwich expectation `ev ψ (opTensor (Xᴴ M X) T)` is nonneg
 when `M`, `T` are PSD. -/
-private theorem ev_opTensor_sandwich_diag_nonneg
+theorem ev_opTensor_sandwich_diag_nonneg
     {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]
     (ψ : QuantumState (ι₁ × ι₂))
     (X M : MIPStarRE.Quantum.Op ι₁)
@@ -589,3 +592,5 @@ theorem ev_opTensor_sandwich_abs_le_sqrt
           rw [Real.sq_sqrt hX_nonneg, Real.sq_sqrt hY_nonneg]
 
 end MIPStarRE.LDT
+
+end

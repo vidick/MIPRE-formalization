@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.CL.DetypingProgCall
-import MIPRE.Foundations.CL.DetypingProgParse
+module
+public import MIPRE.Foundations.CL.DetypingProgCall
+public import MIPRE.Foundations.CL.DetypingProgParse
+
+@[expose] public section
 
 /-!
 # Building programs in polynomial time
@@ -54,3 +57,5 @@ noncomputable def routeOneCallF (route : PolyTimeFun Data (Bool × Data))
     routeOneCallF route post p = Prog.routeOneCall route p post := rfl
 
 end MIPRE.CL.ProgBuild
+
+end

@@ -27,13 +27,17 @@ estimate `‖[y, x]‖_ψ ≤ (√c + ‖x‖)‖y‖_ψ`. The `‖·‖_ψ`-den
 left-bounded elements is the Gaussian smearing of E4.5 (`re_inner_xk_le`),
 which replaces HJX's analytic elements.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Haagerup.Reduction
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.HaarSpectrum
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Haagerup.Reduction
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.HaarSpectrum
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -750,3 +754,5 @@ end Haagerup
 end VN
 
 end CommutingRepetition
+
+end

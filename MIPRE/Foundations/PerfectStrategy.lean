@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Closeness
+module
+public import MIPRE.Foundations.Closeness
+
+@[expose] public section
 
 /-!
 # Perfect strategies reject nothing on the support
@@ -53,7 +56,7 @@ theorem re_nonneg_tracial (τ : TracialState 𝒜) (P : ProjectiveMeasurement X 
 
 omit [DecidableEq A] in
 /-- Flattening the fourfold sum of a value into one sum over a product type. -/
-private theorem sum_flat (F : X → X → A → A → ℝ) :
+theorem sum_flat (F : X → X → A → A → ℝ) :
     ∑ x, ∑ y, ∑ a, ∑ b, F x y a b
       = ∑ p : X × X × A × A, F p.1 p.2.1 p.2.2.1 p.2.2.2 := by
   simp [Fintype.sum_prod_type]
@@ -275,3 +278,5 @@ noncomputable def push (S : SyncStrategy G) {A' : Type*} [Fintype A'] [Decidable
 end SyncStrategy
 
 end MIPRE
+
+end

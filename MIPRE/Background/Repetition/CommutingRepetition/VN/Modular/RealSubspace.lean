@@ -16,12 +16,16 @@ Source: Rieffel–van Daele, *A bounded operator approach to Tomita–Takesaki
 theory*, Pacific J. Math. 69 (1977), Proposition 4.1 (`PLAN-tomita.md` §0.1).
 Proof-side infrastructure for the modular theory of stage E4.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Cutdown
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Cutdown
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -242,3 +246,5 @@ end Modular
 end VN
 
 end CommutingRepetition
+
+end

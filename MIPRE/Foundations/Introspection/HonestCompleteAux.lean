@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestCoreGame
-import MIPRE.Foundations.Introspection.HonestParsedHiding
+module
+public import MIPRE.Foundations.Introspection.HonestCoreGame
+public import MIPRE.Foundations.Introspection.HonestParsedHiding
+
+@[expose] public section
 
 /-! # The complete honest auxiliary measurement family
 
@@ -61,7 +64,7 @@ theorem parsedCore_core_reject_zero (hR : R.IsPCC) (hval : R.value = 1)
   apply coreOp_reject_zero L D R hR hval t u
   rwa [coreCheck_eq L D X Z projectPauli DP]
 
-private theorem auxCheck_swap (X Z : P) (projectPauli : PA → ι → F)
+theorem auxCheck_swap (X Z : P) (projectPauli : PA → ι → F)
     (DP : P → P → PA → PA → Bool) (t u : AuxQuestion ℓ)
     (a b : ParsedAnswer (ι → F) A PA) :
     TypedPredicate.check L X Z projectPauli D DP (.inr t) (.inr u) a b =
@@ -69,7 +72,7 @@ private theorem auxCheck_swap (X Z : P) (projectPauli : PA → ι → F)
   by_cases ht : t = u <;> by_cases hab : a = b <;>
     simp [TypedPredicate.check, ht, hab, eq_comm, Bool.and_comm, Bool.and_left_comm]
 
-private theorem auxOp_nonzero_fits (hL : ∀ w, (L w).SupportedOn Finset.univ)
+theorem auxOp_nonzero_fits (hL : ∀ w, (L w).SupportedOn Finset.univ)
     (t : AuxQuestion ℓ) (a : ParsedAnswer (ι → F) A PA)
     (ha : auxOp L D R hL t a ≠ 0) : TypedPredicate.fits (.inr t : QuestionType P ℓ) a = true := by
   rcases t with ⟨t, w⟩
@@ -77,7 +80,7 @@ private theorem auxOp_nonzero_fits (hL : ∀ w, (L w).SupportedOn Finset.univ)
     simp_all only [auxOp, parsedCoreOp, parsedReadOp, parsedHideOp, ne_eq,
       not_true_eq_false, TypedPredicate.fits]
 
-private theorem auxCheck_self (X Z : P) (projectPauli : PA → ι → F)
+theorem auxCheck_self (X Z : P) (projectPauli : PA → ι → F)
     (DP : P → P → PA → PA → Bool) (t : AuxQuestion ℓ)
     (a : ParsedAnswer (ι → F) A PA)
     (ha : TypedPredicate.fits (.inr t : QuestionType P ℓ) a = true) :
@@ -169,3 +172,5 @@ theorem auxOp_reject_zero (hL : ∀ w, (L w).SupportedOn Finset.univ)
     rwa [auxCheck_swap L D X Z projectPauli DP]
 
 end MIPRE.Introspection.Honest
+
+end

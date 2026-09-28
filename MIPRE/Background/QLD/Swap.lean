@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Expanded
-import MIPRE.Foundations.Swap
+module
+public import MIPRE.Background.QLD.Expanded
+public import MIPRE.Foundations.Swap
+
+@[expose] public section
 
 /-!
 # The Pauli basis test is symmetric in the two players
@@ -146,5 +149,7 @@ theorem hatPOVM_consistency_swap (hψ : star ψ ⬝ᵥ ψ = 1)
   hatPOVM_consistency (MB := MA) (swapVec_unit hψ) (povmValue_swapped_le hfail) W
 
 end MIPRE.QLD
+
+end
 
 end

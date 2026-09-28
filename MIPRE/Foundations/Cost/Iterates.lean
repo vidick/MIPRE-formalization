@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Cost.Reader
+module
+public import MIPRE.Foundations.Cost.Reader
+
+@[expose] public section
 
 /-! # Recording a polynomially bounded sequence of iterates -/
 
@@ -57,7 +60,7 @@ theorem esize_recordIterates (f : α → α) (B : Polynomial ℕ)
   obtain ⟨i, rfl⟩ := List.mem_ofFn.mp hx
   exact hB i a
 
-private noncomputable def recordStepProg (f : PolyTimeFun α α) :
+noncomputable def recordStepProg (f : PolyTimeFun α α) :
     PolyTimeFun ((α × List α) × Unit) (α × List α) :=
   (f.comp (fst.comp fst)).pair (cons (fst.comp fst) (snd.comp fst))
 
@@ -99,3 +102,5 @@ noncomputable def recordIteratesProg (f : PolyTimeFun α α) (B : Polynomial ℕ
     recordIteratesProg f B hB (u, a) = recordIterates f u a := rfl
 
 end MIPRE.Cost
+
+end

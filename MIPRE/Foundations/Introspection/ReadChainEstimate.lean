@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ReadChainMaps
+module
+public import MIPRE.Foundations.Introspection.ReadChainMaps
+
+@[expose] public section
 
 /-! # Quantitative transport of every dual readout from Hide to Read
 
@@ -92,5 +95,7 @@ theorem hiding_read_dual_chain_estimate (w : Bool) (hL : (L w).SupportedOn univ)
   simpa only [Fintype.sum_unique, one_mul, Q, prefixChainType_zero, prefixChainType_read] using hc
 
 end MIPRE.Introspection.TypedEstimates
+
+end
 
 end

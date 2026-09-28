@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Game
-import Mathlib.Algebra.Polynomial.Eval.Degree
+module
+public import MIPRE.Background.LIDT.Game
+public import Mathlib.Algebra.Polynomial.Eval.Degree
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The seeded-CL adapter, part 2: affine reparametrization of a line answer
@@ -144,3 +148,5 @@ noncomputable def reparamEquiv {a : F} (ha : a ≠ 0) (b : F) :
     rwa [inv_inv, show -(a * -(a⁻¹ * b)) = b by field_simp] at h
 
 end MIPRE.LIDT.Adapter
+
+end

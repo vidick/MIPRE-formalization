@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/Bernoulli/TruncatedSums.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Tuples
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Tuples
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -27,28 +30,28 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-! ### Bernoulli recurrence weights -/
 
-private lemma gHatTypeWeight_le {k : ℕ} (τ : GHatType k) :
+lemma gHatTypeWeight_le {k : ℕ} (τ : GHatType k) :
     gHatTypeWeight τ ≤ k := by
   unfold gHatTypeWeight
   simpa using (Finset.card_filter_le
     (s := (Finset.univ : Finset (Fin k)))
     (p := fun i : Fin k => τ i))
 
-private lemma gHatTypeWeight_prepend_true {k : ℕ} (τ : GHatType k) :
+lemma gHatTypeWeight_prepend_true {k : ℕ} (τ : GHatType k) :
     gHatTypeWeight (prependTypeBit true τ) = gHatTypeWeight τ + 1 := by
   unfold gHatTypeWeight
   simpa [prependTypeBit, Fin.cons_zero, Fin.cons_succ, add_comm] using
     (Fin.card_filter_univ_succ
       (n := k) (p := fun i : Fin (k + 1) => (Fin.cons true τ : GHatType (k + 1)) i = true))
 
-private lemma gHatTypeWeight_prepend_false {k : ℕ} (τ : GHatType k) :
+lemma gHatTypeWeight_prepend_false {k : ℕ} (τ : GHatType k) :
     gHatTypeWeight (prependTypeBit false τ) = gHatTypeWeight τ := by
   unfold gHatTypeWeight
   simpa [prependTypeBit, Fin.cons_zero, Fin.cons_succ] using
     (Fin.card_filter_univ_succ
       (n := k) (p := fun i : Fin (k + 1) => (Fin.cons false τ : GHatType (k + 1)) i = true))
 
-private lemma gHatTypeOperator_nonneg
+lemma gHatTypeOperator_nonneg
     (G : MIPStarRE.Quantum.Op ι)
     (hGpsd : 0 ≤ G)
     (hGleOne : G ≤ 1)
@@ -66,7 +69,7 @@ private lemma gHatTypeOperator_nonneg
     (hcomm.pow_left _).pow_right _
   exact Commute.mul_nonneg hGpow hIGpow hcommPow
 
-private lemma gHatTypeOperator_prepend_true
+lemma gHatTypeOperator_prepend_true
     (G : MIPStarRE.Quantum.Op ι)
     {k : ℕ} (τ : GHatType k) :
     gHatTypeOperator G (prependTypeBit true τ) = gHatTypeOperator G τ * G := by
@@ -86,7 +89,7 @@ private lemma gHatTypeOperator_prepend_true
     _ = (G ^ gHatTypeWeight τ * (1 - G) ^ (k - gHatTypeWeight τ)) * G := by
           simp [mul_assoc]
 
-private lemma gHatTypeOperator_prepend_false
+lemma gHatTypeOperator_prepend_false
     (G : MIPStarRE.Quantum.Op ι)
     {k : ℕ} (τ : GHatType k) :
     gHatTypeOperator G (prependTypeBit false τ) = gHatTypeOperator G τ * (1 - G) := by
@@ -146,7 +149,7 @@ lemma truncatedTypeSums_commute_one_sub_base
 
 This is the commuting binomial expansion
 `∑ τ : GHatType k, G ^ |τ| * (1 - G) ^ (k - |τ|) = (G + (1 - G))^k = 1`. -/
-private lemma full_gHatType_sum_eq_one
+lemma full_gHatType_sum_eq_one
     (G : MIPStarRE.Quantum.Op ι) :
     ∀ prefixLen : ℕ, ∑ τprefix : GHatType prefixLen, gHatTypeOperator G τprefix = 1
   | 0 => by
@@ -402,3 +405,5 @@ theorem truncatedTypeSumRecurrence
             rw [htrue, hfalse]
 
 end MIPStarRE.LDT.Pasting
+
+end

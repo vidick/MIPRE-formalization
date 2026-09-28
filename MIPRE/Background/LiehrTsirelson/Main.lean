@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LiehrTsirelson.Bridge
-import MIPRE.Background.LiehrTsirelson.Upstream.MainStatement
-import MIPRE.Tsirelson
+module
+public import MIPRE.Background.LiehrTsirelson.Bridge
+public import MIPRE.Background.LiehrTsirelson.Upstream.MainStatement
+public import MIPRE.Tsirelson
+
+@[expose] public section
 
 /-!
 # The three terminal propositions of `lukasliehr/MIPRE`, proved
@@ -72,3 +75,5 @@ theorem negativeTsirelson : Tsirelson.NegativeTsirelsonStatement := by
     exact hnot (tensorCorrelationClosure_subset_Cqa hp')
 
 end MIPRE.Liehr
+
+end

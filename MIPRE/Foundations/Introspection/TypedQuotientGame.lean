@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.TypedQuotientPredicate
-import MIPRE.Foundations.Introspection.TypedEstimates
-import MIPRE.Foundations.GameTransportByQuestion
-import MIPRE.Foundations.GameDouble
+module
+public import MIPRE.Foundations.Introspection.TypedQuotientPredicate
+public import MIPRE.Foundations.Introspection.TypedEstimates
+public import MIPRE.Foundations.GameTransportByQuestion
+public import MIPRE.Foundations.GameDouble
+
+@[expose] public section
 
 /-! # Finite-game transport for quotient hiding checks
 
@@ -147,3 +150,5 @@ def copiedPCC_dimension
   S.copy_d (game E X Z P L project D DP).doubled
 
 end MIPRE.Introspection.AuxiliaryQuotient
+
+end

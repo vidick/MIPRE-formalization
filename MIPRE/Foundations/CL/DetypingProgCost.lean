@@ -2,9 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingProgSampler
-import MIPRE.Foundations.Cost.Growth
-import Mathlib.Algebra.Polynomial.Degree.Lemmas
+module
+public import MIPRE.Foundations.CL.DetypingProgSampler
+public import MIPRE.Foundations.Cost.Growth
+public import Mathlib.Algebra.Polynomial.Degree.Lemmas
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Polynomial runtime transfer for the detyping sampler
 
@@ -231,3 +235,5 @@ theorem sampler_timeBound (hℓ : 0 < ℓ) (B : ℕ → ℕ) (k : ℕ)
       (samplerDegree E k) := fun n => sampler_timeBoundAt_uniform_degree E S hℓ n (B n) k (h n)
 
 end MIPRE.CL.Detyping
+
+end

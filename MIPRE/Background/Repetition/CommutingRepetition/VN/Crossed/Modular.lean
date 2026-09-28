@@ -17,15 +17,19 @@ Method: the bounded identity `T̂ Ĵ (aΩ̂) = (2 − R̂)(a*Ω̂)` is checked o
 the density theorem for vector functionals; then the uniqueness lemma
 `R_eq_of_proj` identifies `(R̂, T̂ Ĵ)` with the modular data of `(ℛ, Ω̂)`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Crossed.Product
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Uniqueness
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Density
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Crossed.AmpCalc
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Crossed.Product
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Uniqueness
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Density
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Crossed.AmpCalc
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -536,3 +540,5 @@ end Crossed
 end VN
 
 end CommutingRepetition
+
+end

@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.CLExplicitTransport
-import MIPRE.Background.Introspection.PauliRestriction
-import MIPRE.Foundations.GameDouble
-import MIPRE.Foundations.GameTransportProjection
+module
+public import MIPRE.Background.QLD.CLExplicitTransport
+public import MIPRE.Background.Introspection.PauliRestriction
+public import MIPRE.Foundations.GameDouble
+public import MIPRE.Foundations.GameTransportProjection
+
+@[expose] public section
 
 /-! # Full typed introspection under an explicit Pauli seed enumeration
 
@@ -106,7 +109,7 @@ theorem questionEquiv_family (u : QuestionType QLD.Ty ℓ)
   | inr u => rcases u with ⟨u,w⟩; simp
 
 /-- Simultaneous seed and output equivalences preserve the joint sampling law. -/
-private theorem dist_equiv {S X : Type*} [Fintype S] [Fintype X]
+theorem dist_equiv {S X : Type*} [Fintype S] [Fintype X]
     (a b c d : S → X) (e : S ≃ S) (f : X ≃ X)
     (ha : ∀ s, f (a s) = c (e s)) (hb : ∀ s, f (b s) = d (e s)) (x y : X) :
     SampledGame.dist a b x y = SampledGame.dist c d (f x) (f y) := by
@@ -266,3 +269,5 @@ def pccToExplicit_dimension
     (Equiv.prodCongr (.refl Bool) (questionEquiv π b)) (.refl _)
 
 end MIPRE.Introspection.ExplicitGame
+
+end

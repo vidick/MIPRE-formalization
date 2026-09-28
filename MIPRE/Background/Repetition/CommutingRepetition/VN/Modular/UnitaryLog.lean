@@ -18,12 +18,16 @@ inner symbol. The fix is to encode the angle in two commuting operators: its abs
 `F(x, q) = 2π + x(2q − 1) − 2πq` is then a polynomial in the clamped variables, hence
 continuous, and equals the angle on the joint spectrum (where `q ∈ {0,1}`).
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.CentralExp
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.CentralExp
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -564,3 +568,5 @@ end Modular
 end VN
 
 end CommutingRepetition
+
+end

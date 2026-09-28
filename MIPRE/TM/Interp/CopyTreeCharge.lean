@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.Interp.CopyTree
+module
+public import MIPRE.TM.Interp.CopyTree
+
+@[expose] public section
 
 /-!
 # The charged `copyTree`
@@ -450,3 +453,5 @@ theorem exec_copyTree_charge_fail {k : ProgId} {pc : Fin maxPc} {src t : WT}
   exact HaltsIn.after hr₁ this
 
 end MIPRE.TM.Interp
+
+end

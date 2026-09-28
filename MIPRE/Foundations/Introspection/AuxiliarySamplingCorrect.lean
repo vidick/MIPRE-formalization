@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliarySamplingProgram
-import MIPRE.Foundations.Introspection.AuxiliaryRegisterBits
+module
+public import MIPRE.Foundations.Introspection.AuxiliarySamplingProgram
+public import MIPRE.Foundations.Introspection.AuxiliaryRegisterBits
+
+@[expose] public section
 
 /-! # Bounded-source correctness of the full-register sampling program -/
 
@@ -26,7 +29,7 @@ theorem marginal_query_size_le (R : ℕ) (hR : 1 ≤ R) (w : Player) (j : ℕ) (
   rw [hone,hnil]
   omega
 
-private theorem size_cost_le {lam n : ℕ} (hl : 1 ≤ lam) (hn : 1 ≤ n) (b : ℕ)
+theorem size_cost_le {lam n : ℕ} (hl : 1 ≤ lam) (hn : 1 ≤ n) (b : ℕ)
     (hb : b ≤ 32 * (2^n)^lam) : (2^n)^lam * b^lam ≤ ansBound 5 lam n := by
   let u := lam*n
   have hlu : lam ≤ u := by dsimp [u]; nlinarith
@@ -143,4 +146,6 @@ theorem samplingProg_depthFamily {ℓ lam n Q R : ℕ} (U : ClockedUniversalMach
     exact ⟨⟨ha,hb,hys,hab⟩,he.symm⟩
 
 end MIPRE.Introspection.AuxiliaryProgram
+end
+
 end

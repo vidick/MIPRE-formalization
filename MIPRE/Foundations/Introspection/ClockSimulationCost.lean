@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ClockCompiler
+module
+public import MIPRE.Foundations.Introspection.ClockCompiler
+
+@[expose] public section
 
 /-! # Runtime of the complete clocked exponential-index simulation -/
 
@@ -232,3 +235,5 @@ theorem original_decider_ansBound_time (U : ClockedUniversalMachine) :
   exact (le_max_right V.sampler.size V.decider.size).trans hV.2
 
 end MIPRE.Introspection.ClockSimulation
+
+end

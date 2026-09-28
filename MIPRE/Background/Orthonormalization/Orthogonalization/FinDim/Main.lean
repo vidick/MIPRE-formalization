@@ -25,15 +25,19 @@ statement `povm_orthogonalization` (Theorem 1.2) for a von Neumann algebra
 containing every operator, resp. for `fullAlgebra H = B(H)` (encoding decision
 E6 of `PLAN.md`; FIDELITY.md, "Instances").
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.Basic
-import MIPRE.Background.Orthonormalization.Orthogonalization.Assembly
-import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Selection
-import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Completion
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Basic
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Assembly
+public import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Selection
+public import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Completion
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization
 
@@ -106,3 +110,5 @@ theorem povm_orthogonalization_fullAlgebra (φ : NormalState (fullAlgebra H))
 end FinDim
 
 end Orthogonalization
+
+end

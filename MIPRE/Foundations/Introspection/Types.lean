@@ -2,11 +2,15 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Mathlib.Data.Fintype.Option
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Data.Fintype.Sum
-import Mathlib.Tactic.DeriveFintype
-import MIPRE.Foundations.Cost.Encoding
+module
+public import Mathlib.Data.Fintype.Option
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Fintype.Sum
+public import Mathlib.Tactic.DeriveFintype
+public import MIPRE.Foundations.Cost.Encoding
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # The introspection question types
 
@@ -154,3 +158,5 @@ end Encoding
 
 end QuestionType
 end MIPRE.Introspection
+
+end

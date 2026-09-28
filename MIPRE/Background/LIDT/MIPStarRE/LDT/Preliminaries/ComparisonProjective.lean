@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Preliminaries/ComparisonProjective.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonCore
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ConsistencyBridges
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonCore
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ConsistencyBridges
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -35,7 +38,7 @@ namespace MIPStarRE.LDT.Preliminaries
 
 open MIPStarRE.LDT
 
-private lemma two_questionConsistency_eq_questionSDD_of_projective
+lemma two_questionConsistency_eq_questionSDD_of_projective
     {Outcome : Type*} {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype Outcome]
     (ψ : QuantumState (ι × ι)) (A B : ProjMeas Outcome ι) :
@@ -198,7 +201,7 @@ theorem approxToSimeq {Question Outcome : Type*}
 -- The heterogeneous proof expands the projective identity on the tensor-product
 -- space; the final algebra is the same as the same-space theorem above, but the
 -- generated matrix expressions are larger.
-private lemma two_questionConsistency_eq_questionSDD_of_projective_heterogeneous
+lemma two_questionConsistency_eq_questionSDD_of_projective_heterogeneous
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     [Fintype Outcome]
@@ -386,3 +389,5 @@ theorem approxToSimeq_heterogeneous {Question Outcome : Type*}
   linarith
 
 end MIPStarRE.LDT.Preliminaries
+
+end

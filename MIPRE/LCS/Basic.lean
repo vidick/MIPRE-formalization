@@ -3,19 +3,23 @@ Copyright (c) 2026 Sean Perazzolo. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sean Perazzolo
 -/
-import Mathlib.Algebra.Star.Basic
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Algebra.Algebra.Basic
-import Mathlib.Algebra.Module.Basic
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Data.Finset.Sum
-import Mathlib.Data.Complex.Basic
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Data.Matrix.Basic
-import Mathlib.LinearAlgebra.Matrix.Notation
-import Mathlib.LinearAlgebra.Matrix.Kronecker
-import Mathlib.Algebra.Star.Module
-import Mathlib.LinearAlgebra.Matrix.ConjTranspose
+module
+public import Mathlib.Algebra.Star.Basic
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Algebra.Algebra.Basic
+public import Mathlib.Algebra.Module.Basic
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Finset.Sum
+public import Mathlib.Data.Complex.Basic
+public import Mathlib.Data.ZMod.Basic
+public import Mathlib.Data.Matrix.Basic
+public import Mathlib.LinearAlgebra.Matrix.Notation
+public import Mathlib.LinearAlgebra.Matrix.Kronecker
+public import Mathlib.Algebra.Star.Module
+public import Mathlib.LinearAlgebra.Matrix.ConjTranspose
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Linear Constraint System (LCS) Game Layout
@@ -69,3 +73,5 @@ def toLinearSystem {G : Layout} (game : Game G) : LinearSystem where
 end Game
 
 end MIPRE.LCS
+
+end

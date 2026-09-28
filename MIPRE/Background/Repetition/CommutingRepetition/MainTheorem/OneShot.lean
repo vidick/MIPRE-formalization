@@ -16,17 +16,21 @@ load-bearing: sec 7.2's argument is `[0,1]`-agnostic (its F ∈ [0,1]), and
 node 1.6.2 re-consumes this machinery at `[0,1]` weights. Do not "restore"
 a predicate hypothesis here.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Strategy
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Value
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Main
-import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Main
-import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Scalar
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Mixture
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Strategy
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Value
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Main
+public import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Main
+public import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Scalar
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Mixture
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -456,3 +460,5 @@ theorem one_shot_strategy
   linarith [hsum1, h5, hQF]
 
 end CommutingRepetition
+
+end

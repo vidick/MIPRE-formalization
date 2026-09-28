@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ClockCompiler
-import MIPRE.Foundations.CL.DetypingDeciderRoute
-import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
+module
+public import MIPRE.Foundations.Introspection.ClockCompiler
+public import MIPRE.Foundations.CL.DetypingDeciderRoute
+public import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
+
+@[expose] public section
 
 /-! # Constant-resource branches of the introspection decider
 
@@ -125,3 +128,5 @@ theorem zeroWrap_zero_time_bound :
   exact ⟨t, by omega, hr⟩
 
 end MIPRE.Introspection.DecisionCompiler
+
+end

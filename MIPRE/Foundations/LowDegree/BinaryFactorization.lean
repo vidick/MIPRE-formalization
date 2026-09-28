@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryQuotientComponents
-import MIPRE.Foundations.LowDegree.BinaryQuotientFactors
-import MIPRE.Foundations.LowDegree.BinaryQuotientReduced
-import MIPRE.Foundations.LowDegree.BinaryGCD
+module
+public import MIPRE.Foundations.LowDegree.BinaryQuotientComponents
+public import MIPRE.Foundations.LowDegree.BinaryQuotientFactors
+public import MIPRE.Foundations.LowDegree.BinaryQuotientReduced
+public import MIPRE.Foundations.LowDegree.BinaryGCD
+
+@[expose] public section
 
 /-!
 # Deterministic squarefree factorization over the binary field
@@ -35,7 +38,7 @@ theorem polyOfBits_oneBits (p : BitStr) (hp : p ≠ []) : polyOfBits (oneBits p)
 def factorBits (p : BitStr) : List BitStr :=
   (quotientComponentsProg p).map (fun e => gcdBits (p ++ [true]) (xorBits e (oneBits p)))
 
-private def componentFactorBitsProg : PolyTimeFun (BitStr × BitStr) BitStr :=
+def componentFactorBitsProg : PolyTimeFun (BitStr × BitStr) BitStr :=
   gcdBitsProg.comp ((append.comp (snd.pair (const [true]))).pair
     (xorBitsProg.comp (fst.pair (oneBitsProg.comp snd))))
 
@@ -101,5 +104,7 @@ theorem factorBitsProg_prod (p : BitStr) (hp : p.length = f.natDegree)
     (components_family f hf) (components_primitive f hf)
 
 end MIPRE.LowDegree.BinaryQuotient
+
+end
 
 end

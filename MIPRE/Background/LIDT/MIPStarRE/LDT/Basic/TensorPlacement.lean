@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Basic/TensorPlacement.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementCore
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementCore
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -480,3 +483,5 @@ theorem sandwichTensor_residual_sum_le_one
     _ = 1 := ev_one_of_isNormalized ψ hnorm
 
 end MIPStarRE.LDT
+
+end

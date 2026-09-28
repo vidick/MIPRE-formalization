@@ -3,10 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.LowDegree.SchwartzZippel
-import MIPRE.Foundations.LowDegree.Encoding
-import Mathlib.FieldTheory.Finite.GaloisField
-import Mathlib.RingTheory.Trace.Basic
+module
+public import MIPRE.Foundations.LowDegree.SchwartzZippel
+public import MIPRE.Foundations.LowDegree.Encoding
+public import Mathlib.FieldTheory.Finite.GaloisField
+public import Mathlib.RingTheory.Trace.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # When is a Pauli-test question tuple anticommuting?
@@ -574,5 +578,7 @@ theorem prob_commuting_ge (hF : Fintype.card F = 2) (hm : 1 ≤ m) (hd : 1 ≤ d
 end Fact
 
 end MIPRE.LowDegree
+
+end
 
 end

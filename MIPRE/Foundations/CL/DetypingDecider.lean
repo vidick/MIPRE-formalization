@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingDeciderProg
-import MIPRE.Foundations.VerifierValue
+module
+public import MIPRE.Foundations.CL.DetypingDeciderProg
+public import MIPRE.Foundations.VerifierValue
+
+@[expose] public section
 
 /-! # Acceptance and global answer bounds for the detyping compiler -/
 
@@ -153,3 +156,5 @@ theorem verifier_rejectsLong (hℓ : 0 < ℓ) (hD : D.Total) (n : ℕ) :
   · exact (Nat.not_lt_of_ge h.2.2.2.1) hlong
 
 end MIPRE.CL.Detyping.DeciderProgram
+
+end

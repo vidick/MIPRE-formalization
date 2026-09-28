@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.SoundDecoded
-import MIPRE.Background.AnswerReduction.Complete
-import MIPRE.Foundations.SAT.AnswerVec
+module
+public import MIPRE.Background.AnswerReduction.SoundDecoded
+public import MIPRE.Background.AnswerReduction.Complete
+public import MIPRE.Foundations.SAT.AnswerVec
+
+@[expose] public section
 
 /-!
 # Soundness of answer reduction: the PCP's soundness
@@ -160,5 +163,7 @@ theorem valStar_ge_of_typedGame (hF : ShoupField PD) (hlam : 1 ≤ lam) (hmu : 1
 end Final
 
 end MIPRE.AnswerReduction
+
+end
 
 end

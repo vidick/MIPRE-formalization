@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryIrreducibleAssembly
+module
+public import MIPRE.Foundations.LowDegree.BinaryIrreducibleAssembly
+
+@[expose] public section
 
 /-! # A specified polynomial-time irreducible polynomial of every positive binary degree -/
 
@@ -87,5 +90,7 @@ theorem irreducibleBitsProg_time_le :
     Polynomial.eval_ofNat, Polynomial.eval_X, Polynomial.eval_one, esize_unary] using ht
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end
 
 end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.NormalGram
-import MIPRE.Foundations.LowDegree.BinaryComponents
+module
+public import MIPRE.Foundations.SAT.NormalGram
+public import MIPRE.Foundations.LowDegree.BinaryComponents
+
+@[expose] public section
 
 /-! # The faithful cyclic Frobenius representation -/
 
@@ -76,5 +79,7 @@ theorem shoupFrobeniusAction_exists_basis_image (k : ℕ) (hk : 1 ≤ k) [NeZero
   exact hz (shoupFrobeniusAction_injective k hk (he.trans (map_zero _).symm))
 
 end MIPRE.SAT
+
+end
 
 end

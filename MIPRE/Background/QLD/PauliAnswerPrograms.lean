@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.TypeEncoding
-import MIPRE.Foundations.Introspection.FieldAnswerParserProg
+module
+public import MIPRE.Background.QLD.TypeEncoding
+public import MIPRE.Foundations.Introspection.FieldAnswerParserProg
+
+@[expose] public section
 
 /-! # Faithful type-directed Pauli answer parsing
 
@@ -42,7 +45,7 @@ def width (T : Ty) (k : ℕ) : ℕ :=
   | .point _ | .aline _ | .dline _ | .pauli _ => k
   | _ => 1
 
-private def flattenUnary : PolyTimeFun (List Unary) Unary :=
+def flattenUnary : PolyTimeFun (List Unary) Unary :=
   congr ((foldlAdd append X (by
     intro l r
     have h := esize_list_append l r
@@ -52,10 +55,10 @@ private def flattenUnary : PolyTimeFun (List Unary) Unary :=
       change l.foldl (fun a b => a ++ b) [] = l.flatten
       simpa using (List.foldl_append_eq_append (l := l) (l' := []) (f := fun b => b)))
 
-private def productUnary : PolyTimeFun (Unary × Unary) Unary :=
+def productUnary : PolyTimeFun (Unary × Unary) Unary :=
   flattenUnary.comp (replicate.comp (fst.pair snd))
 
-private theorem productUnary_length (m d : Unary) :
+theorem productUnary_length (m d : Unary) :
     (productUnary (m, d)).length = m.length * d.length := by
   change (List.replicate m.length d).flatten.length = _
   induction m with
@@ -119,4 +122,6 @@ theorem parser_runs (input : Input) :
       parser.code.Runs (encode input) (encode (parser input)) t := parser.computes input
 
 end MIPRE.QLD.PauliAnswerProgram
+end
+
 end

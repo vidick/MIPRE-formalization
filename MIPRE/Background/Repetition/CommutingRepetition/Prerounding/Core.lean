@@ -16,12 +16,16 @@ from the ten-proofs artifact); `winEvent wins D` is the event `W_D` and
 `eventMass` its probability. The proof of 1.2.1 will go through the ported
 greedy engine `exists_conditioned_win_set`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prelim.FiniteProb
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prelim.FiniteProb
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -249,3 +253,5 @@ theorem core_parameters {ε γ ℓ θ p : ℝ} {n Dcard : ℕ}
   exact ⟨hD4, hD2, hm, hlogp, hη, hfinal⟩
 
 end CommutingRepetition
+
+end

@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Multilinear
-import MIPRE.Background.QLD.SwapUnitary
+module
+public import MIPRE.Background.QLD.Multilinear
+public import MIPRE.Background.QLD.SwapUnitary
+
+@[expose] public section
 
 /-!
 # Item 1 of `lem:qld-exact-paulis`, read as `M~` (the paper's `eq:tilde_M`)
@@ -376,5 +379,7 @@ end Item
 
 end MIPRE.QLD
 
+
+end
 
 end

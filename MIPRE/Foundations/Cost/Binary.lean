@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Fold
-import MIPRE.Foundations.Cost.Numeric
+module
+public import MIPRE.Foundations.Cost.Fold
+public import MIPRE.Foundations.Cost.Numeric
+
+@[expose] public section
 
 /-!
 # The closure library, part V: the binary successor, and unary to binary
@@ -356,3 +359,5 @@ noncomputable def PolyTimeFun.tagged {α β : Type*} [SizedEncoding α] [SizedEn
     PolyTimeFun.tagged k f h a = f a := rfl
 
 end MIPRE.Cost
+
+end

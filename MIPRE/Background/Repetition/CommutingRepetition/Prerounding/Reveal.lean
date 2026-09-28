@@ -23,11 +23,15 @@ equivalences, and the two uniform cuts. Orders-as-equivalences keep the
 datum a `Fintype` and make prefix extraction (`π^{≤k}`) an image of an
 initial segment of positions.
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -499,3 +503,5 @@ theorem prior_factorization [DecidableEq X] [DecidableEq Y]
 end PriorFactorization
 
 end CommutingRepetition
+
+end

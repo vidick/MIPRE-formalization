@@ -26,12 +26,16 @@ inequality `φ(X·Y) ≤ ‖Y‖·φ(X)` for commuting-side positives, which
 bounds the right regular representation and will make the envelope a
 `StdTracialAlgebra` (the second half of WP-B4).
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Interface
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Interface
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -618,3 +622,5 @@ theorem envModel_τ_L (a : M.A) :
 end StdTracialAlgebra
 
 end CommutingRepetition
+
+end

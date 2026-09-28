@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Variance.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Factored
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Factored
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -370,7 +373,7 @@ lemma add_in_u_cs_chain_q3_q4_le_sqrt_globalVarianceDeviation_sum
 bridges below: a real bounded by `Real.sqrt s` is bounded by `Real.sqrt ζ`
 whenever `s ≤ ζ`. Both `Q₂→Q₃` and `Q₃→Q₄` apply this fact with the same `s`
 (the summed `globalVarianceDeviationAtPolynomial`). -/
-private lemma le_sqrt_of_le_sqrt_of_le {a : ℝ} {s ζ : Error}
+lemma le_sqrt_of_le_sqrt_of_le {a : ℝ} {s ζ : Error}
     (hcs : a ≤ Real.sqrt s) (hsum : s ≤ ζ) : a ≤ Real.sqrt ζ :=
   le_trans hcs (Real.sqrt_le_sqrt hsum)
 
@@ -646,3 +649,5 @@ lemma add_in_u_cs_chain_global_variance_steps_of_local_sum_bound_from_factor_bou
   simpa [selfImprovementVarianceError] using hsteps
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

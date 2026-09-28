@@ -20,12 +20,16 @@ they are replaced by explicit Gaussian smearing (`PLAN-tomita.md` §3.5):
   `ψ(x_k* y x_k) ≤ ‖x_k^♭‖² ψ(y)` for `y ≥ 0`; and `x_k Ω → xΩ` as `k → ∞`
   (dominated convergence in the Borel calculus).
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Tomita
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Tomita
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -514,3 +518,5 @@ end Modular
 end VN
 
 end CommutingRepetition
+
+end

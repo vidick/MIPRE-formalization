@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Numeric
-import Mathlib.Tactic.Linarith
+module
+public import MIPRE.Foundations.Cost.Numeric
+public import Mathlib.Tactic.Linarith
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The bit-query program
@@ -225,3 +229,5 @@ theorem bitAtIter_le (sy L : ℕ) : bitAtIter sy L ≤ (sy + 534) * (L + 1) ^ 2 
 end Prog
 
 end MIPRE.Cost
+
+end

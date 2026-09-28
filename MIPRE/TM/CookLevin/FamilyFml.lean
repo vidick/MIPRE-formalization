@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.Window
+module
+public import MIPRE.TM.CookLevin.Window
+
+@[expose] public section
 
 /-!
 # The clause families as formulas
@@ -1774,3 +1777,5 @@ theorem InputsLt.tableauF {n : ℕ} (tabs : List (ℕ × Fml)) (htabs : ∀ jv �
   InputsLt.or' (InputsLt.mainF e tabs htabs frees hC) (InputsLt.windowN e G hC tpls)
 
 end MIPRE.TM.CookLevin.Desc
+
+end

@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Bridge.Value
-import MIPRE.Background.LIDT.Bridge.Consistency
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.MainFormal
+module
+public import MIPRE.Background.LIDT.Bridge.Value
+public import MIPRE.Background.LIDT.Bridge.Consistency
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.MainFormal
+
+@[expose] public section
 
 /-!
 # Bridge, part 8: the soundness theorem in our vocabulary
@@ -128,5 +131,7 @@ theorem soundness (S : TensorProductStrategy (lidtGame F m d)) (ε : ℝ) (hS : 
     exact h3.offDiagonalBound
 
 end MIPRE.LIDT.Bridge
+
+end
 
 end

@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.DynamicParserSlice
+module
+public import MIPRE.Foundations.Introspection.DynamicParserSlice
+
+@[expose] public section
 
 /-! # Uniform introspection tuple parsing with binary bounds
 
@@ -41,7 +44,7 @@ def tripleParts : PolyTimeFun (BitStr × ℕ) (BitStr × BitStr × BitStr) :=
     tripleParts (bs, Q) = AnswerParser.tripleParts Q bs := by
   simp [tripleParts, AnswerParser.tripleParts, AnswerParser.pairParts]
 
-private theorem decide_and_if (p q : Prop) [Decidable p] [Decidable q] :
+theorem decide_and_if (p q : Prop) [Decidable p] [Decidable q] :
     (if p then decide q else false) = decide (p ∧ q) := by
   by_cases h : p <;> simp [h]
 
@@ -117,5 +120,7 @@ def tripleParser (exactLast : Bool) :
   (tripleCheck exactLast).pair (tripleParts.comp (fst.pair (fst.comp snd)))
 
 end MIPRE.Introspection.DynamicParser
+
+end
 
 end

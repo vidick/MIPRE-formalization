@@ -17,15 +17,19 @@ the finite-dimensional bicommutant theorem give surjectivity). The transport
 theorem then gives Theorem 1.2 at `z` (`orthAt_of_isMinimalCentral`).
 Proof-side only.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Cutdown
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Minimal
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Bicommutant
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Transport
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Cutdown
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Minimal
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Bicommutant
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Transport
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.Blocks
 
@@ -273,3 +277,5 @@ theorem orthAt_of_isMinimalCentral (M : VonNeumannAlgebra H) {z : H →L[ℂ] H}
   exact orthAt_of_compress_bijective M hzc L hLz hLM hinj hsurj ι
 
 end Orthogonalization.Blocks
+
+end

@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ConditionalNormalizerStep
-import MIPRE.Foundations.Introspection.ConditionalNormalizerIdealMirror
-import MIPRE.Foundations.Introspection.HidingNormalizer
+module
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerStep
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerIdealMirror
+public import MIPRE.Foundations.Introspection.HidingNormalizer
+
+@[expose] public section
 
 /-! # An actual adjacent hiding rigidity step on the EPR seed
 
@@ -76,3 +79,5 @@ theorem hiding_next_seed_rigidity
   simpa only [hk] using hstep
 
 end MIPRE.Introspection.TypedEstimates
+
+end

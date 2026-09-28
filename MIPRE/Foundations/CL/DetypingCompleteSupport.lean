@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingGame
-import MIPRE.Foundations.GameDouble
+module
+public import MIPRE.Foundations.CL.DetypingGame
+public import MIPRE.Foundations.GameDouble
+
+@[expose] public section
 
 /-! # The common measurement rule and support of detyping
 
@@ -129,3 +132,5 @@ theorem selects_pairSeed (E : T → T → Prop) [DecidableRel E]
   simp_all
 
 end MIPRE.CL.Detyping
+
+end

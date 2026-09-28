@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ConditionalNormalizerIdeal
-import MIPRE.Foundations.Introspection.HonestCompleteAux
-import MIPRE.Foundations.Introspection.PrefixGuard
+module
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerIdeal
+public import MIPRE.Foundations.Introspection.HonestCompleteAux
+public import MIPRE.Foundations.Introspection.PrefixGuard
+
+@[expose] public section
 
 /-! # Attained prefixes of honest hiding and reading outcomes
 
@@ -137,3 +140,5 @@ theorem auxOp_eq_zero_of_prefixGuard {P : Type*}
   exact ha (auxOp_nonzero_prefixGuard L D R hL t a hn)
 
 end MIPRE.Introspection.Honest
+
+end

@@ -15,12 +15,16 @@ bookkeeping: coordinate embeddings `sgl g`, evaluations `ev g`, uniformly bounde
 algebra relating them (`shift_diag`, `shift_sgl`, ...). The vector `sgl 0 Ω` and the
 covariant representation are in `VN/Crossed/Product.lean`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -428,3 +432,5 @@ end Crossed
 end VN
 
 end CommutingRepetition
+
+end

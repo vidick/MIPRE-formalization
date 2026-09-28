@@ -7,13 +7,16 @@ commit recorded). The import prefix `Tsirelson.` is rewritten to
 nothing outside `MIPRE/Background/LiehrTsirelson/` may name it. Upstream carries no license file;
 see README.md.
 -/
-import MIPRE.Background.LiehrTsirelson.Upstream.Core.FiniteProbability
-import MIPRE.Background.LiehrTsirelson.Upstream.Core.Correlation
-import MIPRE.Background.LiehrTsirelson.Upstream.Core.Game
-import MIPRE.Background.LiehrTsirelson.Upstream.Core.Measurement
-import MIPRE.Background.LiehrTsirelson.Upstream.Core.Strategy
-import MIPRE.Background.LiehrTsirelson.Upstream.Core.Value
-import MIPRE.Background.LiehrTsirelson.Upstream.Core.Entanglement
+module
+public import MIPRE.Background.LiehrTsirelson.Upstream.Core.FiniteProbability
+public import MIPRE.Background.LiehrTsirelson.Upstream.Core.Correlation
+public import MIPRE.Background.LiehrTsirelson.Upstream.Core.Game
+public import MIPRE.Background.LiehrTsirelson.Upstream.Core.Measurement
+public import MIPRE.Background.LiehrTsirelson.Upstream.Core.Strategy
+public import MIPRE.Background.LiehrTsirelson.Upstream.Core.Value
+public import MIPRE.Background.LiehrTsirelson.Upstream.Core.Entanglement
+
+@[expose] public section
 
 /-!
 # Paper-facing core facade
@@ -25,3 +28,5 @@ predicates.
 
 This file declares nothing of its own.
 -/
+
+end

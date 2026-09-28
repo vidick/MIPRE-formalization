@@ -31,13 +31,17 @@ in `MainTheorem/Main.lean`, and `MainStatement.tracialDensity`
 (`StatementBridge.lean`) is the same theorem in the vocabulary of the
 standalone `Statement.lean`. Audit node 1.1.1.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.CrossedTracial
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.Reductions
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.CrossedTracial
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.Reductions
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -161,3 +165,5 @@ theorem tracialDensity : TracialDensityHypothesis := by
 end Density
 
 end CommutingRepetition
+
+end

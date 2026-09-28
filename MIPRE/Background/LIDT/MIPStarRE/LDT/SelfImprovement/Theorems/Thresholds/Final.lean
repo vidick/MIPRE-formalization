@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Final.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Helper
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Helper
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -91,7 +94,7 @@ theorem finalStagePowerSum_le_of_exponent_ge
   · exact Real.rpow_le_rpow_of_exponent_ge' hdq_nonneg hdq_le_one hpSmall_nonneg
       hpSmall_le_pLarge
 
-private theorem sqrt_rpow_eq_rpow_half {x p : Error} (hx : 0 ≤ x) :
+theorem sqrt_rpow_eq_rpow_half {x p : Error} (hx : 0 ≤ x) :
     Real.sqrt (Real.rpow x p) = Real.rpow x (p / 2) := by
   rw [Real.sqrt_eq_rpow]
   calc
@@ -147,7 +150,7 @@ theorem selfImprovementError_eq_finalStagePowerSum
       3000 * (params.m : Error) * finalStagePowerSum params eps delta (1 / (32 : Error)) := by
   try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
-private theorem sqrt_selfImprovementHelperError_le_ten_m_powerSum_quarter
+theorem sqrt_selfImprovementHelperError_le_ten_m_powerSum_quarter
     (params : Parameters) [FieldModel params.q]
     (eps delta : Error)
     (heps : 0 ≤ eps) (hdelta : 0 ≤ delta) :
@@ -203,7 +206,7 @@ theorem selfImprovementOrthogonalizationError_eq
       exact Real.rpow_mul (selfImprovementHelperError_nonneg params eps delta)
         (1 / (2 : Error)) (1 / (2 : Error))
 
-private theorem selfImprovementOrthogonalizationError_le_four_hundred_m_powerSum_eighth
+theorem selfImprovementOrthogonalizationError_le_four_hundred_m_powerSum_eighth
     (params : Parameters) [FieldModel params.q]
     (eps delta : Error)
     (heps : 0 ≤ eps) (hdelta : 0 ≤ delta) :
@@ -250,7 +253,7 @@ private theorem selfImprovementOrthogonalizationError_le_four_hundred_m_powerSum
     _ = 400 * (params.m : Error) *
           finalStagePowerSum params eps delta (1 / (8 : Error)) := by ring
 
-private theorem sqrt_selfImprovementOrthogonalizationError_le_twenty_m_powerSum_sixteenth
+theorem sqrt_selfImprovementOrthogonalizationError_le_twenty_m_powerSum_sixteenth
     (params : Parameters) [FieldModel params.q]
     (eps delta : Error)
     (heps : 0 ≤ eps) (hdelta : 0 ≤ delta) :
@@ -336,7 +339,7 @@ theorem sqrt_card_mul_eight_helperError_le_sqrt_card_mul_dataProcessingError
         params eps delta)
       (by positivity))
 
-private theorem selfImprovementDataProcessingError_le_nine_sixty_m_powerSum_sixteenth
+theorem selfImprovementDataProcessingError_le_nine_sixty_m_powerSum_sixteenth
     (params : Parameters) [FieldModel params.q]
     (eps delta : Error)
     (heps : 0 ≤ eps) (heps_le_one : eps ≤ 1)
@@ -369,7 +372,7 @@ private theorem selfImprovementDataProcessingError_le_nine_sixty_m_powerSum_sixt
     _ = 960 * (params.m : Error) *
           finalStagePowerSum params eps delta (1 / (16 : Error)) := by ring
 
-private theorem sqrt_selfImprovementDataProcessingError_le_thirty_one_m_powerSum_thirtysecond
+theorem sqrt_selfImprovementDataProcessingError_le_thirty_one_m_powerSum_thirtysecond
     (params : Parameters) [FieldModel params.q]
     (eps delta : Error)
     (heps : 0 ≤ eps) (heps_le_one : eps ≤ 1)
@@ -406,7 +409,7 @@ private theorem sqrt_selfImprovementDataProcessingError_le_thirty_one_m_powerSum
                   rw [show (1 / (32 : Error)) = (1 / (16 : Error)) / 2 by norm_num]
                   exact mul_le_mul_of_nonneg_left hsqrt_sum h31m_nn
 
-private theorem final_fields_projective_residual_error_le_131_times_finalStagePowerSum
+theorem final_fields_projective_residual_error_le_131_times_finalStagePowerSum
     (params : Parameters) [FieldModel params.q]
     (eps delta : Error)
     (heps : 0 ≤ eps) (heps_le_one : eps ≤ 1)
@@ -671,3 +674,5 @@ theorem final_fields_self_closeness_error_le_selfImprovementError
       rw [selfImprovementError_eq_finalStagePowerSum]
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

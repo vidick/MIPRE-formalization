@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.Semantics
+module
+public import MIPRE.TM.CookLevin.Semantics
+
+@[expose] public section
 
 /-!
 # Correctness of the Cook–Levin tableau
@@ -505,3 +508,5 @@ theorem tableau_sat_of_acceptsIn (hchk : IsCheckCircuit M acc chk) (hC : chk.Ref
 end
 
 end MIPRE.TM.CookLevin
+
+end

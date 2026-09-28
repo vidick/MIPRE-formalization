@@ -198,6 +198,12 @@ Two things to know about reading it:
 - Editing files with a script: use exact-string replacement with a `--check`
   mode that asserts each anchor occurs exactly once. A patch script that appends
   instead of replacing has corrupted `planning/next-steps.md` once already.
+- Every `.lean` file is a Lean module (`module`, `public import`, one
+  `@[expose] public section` closed by a final `end`; no `private` definitions, only private
+  theorems), which the Palomar registry requires. `scripts/modularize.py` rewrites a new file
+  that lacks the header, `--check` (CI) lists the files that still do, and the vendor scripts
+  apply it to the trees they produce. `planning/palomar.md` records what the module system
+  forbids and how the library was adapted.
 - Pull requests: `Closes #N`, label `awaiting-review`, squash merge. Commit
   messages name the tracking issue. Squash merge deletes the branch, so restart
   it from `origin/main` before the next piece of work.

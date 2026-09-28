@@ -3,11 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Commutation
-import MIPRE.Background.LIDT.Adapter.Geometry
-import MIPRE.Foundations.Expanded
-import MIPRE.Foundations.LowDegree.LineRestrict
-import MIPRE.Foundations.WeylEPR
+module
+public import MIPRE.Background.QLD.Commutation
+public import MIPRE.Background.LIDT.Adapter.Geometry
+public import MIPRE.Foundations.Expanded
+public import MIPRE.Foundations.LowDegree.LineRestrict
+public import MIPRE.Foundations.WeylEPR
+
+@[expose] public section
 
 /-!
 # The expansion stage: the hatted point observables
@@ -871,5 +874,7 @@ end Lines
 end Expansion
 
 end MIPRE.QLD
+
+end
 
 end

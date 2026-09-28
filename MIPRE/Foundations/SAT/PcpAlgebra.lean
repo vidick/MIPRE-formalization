@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.ZeroBasis
-import MIPRE.Foundations.LowDegree.SchwartzZippel
+module
+public import MIPRE.Foundations.LowDegree.ZeroBasis
+public import MIPRE.Foundations.LowDegree.SchwartzZippel
+
+@[expose] public section
 
 /-!
 # The algebraic tests of the classical PCP
@@ -133,5 +136,7 @@ theorem clause_decoded_of_identities [DecidableEq F]
   exact ⟨i, coded_eq_of_eval_eq_ofBool (g i) y _ hi⟩
 
 end MIPRE.SAT.PcpAlgebra
+
+end
 
 end

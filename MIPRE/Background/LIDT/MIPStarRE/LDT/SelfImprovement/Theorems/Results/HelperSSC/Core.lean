@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/HelperSSC/Core.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Transfer
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Transfer
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -255,7 +258,7 @@ noncomputable def helperOffDiagonalVarianceSwapSelection
     AddInUSelection params (Polynomial params) :=
   fun u => {hh | hh.1 ≠ hh.2 ∧ hh.2 u = hh.1 u}
 
-private theorem helperOffDiagonalVarianceSwapSelection_pairs_sum
+theorem helperOffDiagonalVarianceSwapSelection_pairs_sum
     (params : Parameters) [FieldModel params.q]
     (u : Point params)
     (F : Polynomial params → Polynomial params → Error) :
@@ -509,3 +512,5 @@ theorem helperOffDiagonalOneSidedSwappedIndicator_abs_sub_swappedIndicator_le_sq
 
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

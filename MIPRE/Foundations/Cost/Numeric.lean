@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Unary
-import Mathlib.Tactic.Ring
+module
+public import MIPRE.Foundations.Cost.Unary
+public import Mathlib.Tactic.Ring
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The closure library, part IV: binary numbers
@@ -357,3 +361,5 @@ noncomputable def PolyTimeFun.next : PolyTimeFun ℕ ℕ where
 @[simp] theorem PolyTimeFun.next_apply (n : ℕ) : PolyTimeFun.next n = 2 * n + 1 := rfl
 
 end MIPRE.Cost
+
+end

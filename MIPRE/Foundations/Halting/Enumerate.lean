@@ -3,10 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Wrapper
-import MIPRE.Foundations.GameDescription
-import Mathlib.Data.List.NodupEquivFin
-import Mathlib.Algebra.BigOperators.Fin
+module
+public import MIPRE.Foundations.Halting.Wrapper
+public import MIPRE.Foundations.GameDescription
+public import Mathlib.Data.List.NodupEquivFin
+public import Mathlib.Algebra.BigOperators.Fin
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Enumerating the questions and the answers of `𝒱_n`
@@ -242,3 +246,5 @@ theorem not_inClassB_iff_of_isBounded {ℓ : ℕ} (V : Verifier ℓ) {n T : ℕ}
 end Verifier
 
 end MIPRE
+
+end

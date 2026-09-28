@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Pipeline.Budget
-import MIPRE.Foundations.GapCompression
+module
+public import MIPRE.Foundations.Pipeline.Budget
+public import MIPRE.Foundations.GapCompression
+
+@[expose] public section
 
 /-!
 # Introspection, as a hypothesis
@@ -126,3 +129,5 @@ structure Introspection (ℓ : ℕ) where
     1 - Introspection.delta a b lam n ε ≤ V.valStar (2 ^ n) ((2 ^ n) ^ lam)
 
 end MIPRE
+
+end

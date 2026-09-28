@@ -7,7 +7,10 @@ Tsirelson/Core/Entanglement.lean, from a snapshot of the `main` branch supplied 
 nothing outside `MIPRE/Background/LiehrTsirelson/` may name it. Upstream carries no license file;
 see README.md.
 -/
-import MIPRE.Background.LiehrTsirelson.Upstream.Core.Value
+module
+public import MIPRE.Background.LiehrTsirelson.Upstream.Core.Value
+
+@[expose] public section
 
 /-!
 # Schmidt rank and the entanglement requirement `Ent`
@@ -194,3 +197,5 @@ theorem Ent_eq_top_of_one_lt (G : NonlocalGame X Y A B) {ν : ℝ} (hν : 1 < ν
 end
 
 end Tsirelson
+
+end

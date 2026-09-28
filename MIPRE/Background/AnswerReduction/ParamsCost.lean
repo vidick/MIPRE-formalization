@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.Params
-import MIPRE.Foundations.Pipeline.PowDomRun
+module
+public import MIPRE.Background.AnswerReduction.Params
+public import MIPRE.Foundations.Pipeline.PowDomRun
+
+@[expose] public section
 
 /-!
 # The running time of the parameter routine
@@ -288,5 +291,7 @@ theorem parProg_time (PD : PcpDecider) (R : Polynomial ℕ) : ∃ c m e, ∀ {W 
       (pdLin hX (by change esize n ≤ _; omega))⟩
 
 end MIPRE.AnswerReduction
+
+end
 
 end

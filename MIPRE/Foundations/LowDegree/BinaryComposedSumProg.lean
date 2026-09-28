@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryComposedSumPolynomial
+module
+public import MIPRE.Foundations.LowDegree.BinaryComposedSumPolynomial
+
+@[expose] public section
 
 /-! # Uniform polynomial-time products of Frobenius translates -/
 
@@ -19,7 +22,7 @@ abbrev NormState := BitStr × BitStr × List BitStr
 def normStep (s : NormState) (a : BitStr) : NormState :=
   (s.1, s.2.1, mulCoeffLists s.1 (translateBits s.1 a s.2.1) s.2.2)
 
-private theorem fold_normStep_shape (pre : List BitStr) (p g : BitStr) (cs : List BitStr) :
+theorem fold_normStep_shape (pre : List BitStr) (p g : BitStr) (cs : List BitStr) :
     (pre.foldl normStep (p, g, cs)).1 = p ∧ (pre.foldl normStep (p, g, cs)).2.1 = g ∧
       (pre.foldl normStep (p, g, cs)).2.2.length ≤ cs.length + pre.length * g.length := by
   induction pre generalizing cs with
@@ -33,7 +36,7 @@ private theorem fold_normStep_shape (pre : List BitStr) (p g : BitStr) (cs : Lis
     simp only [List.length_cons, Nat.add_mul, Nat.one_mul]
     omega
 
-private theorem fold_normStep_width_le (pre : List BitStr) (p g : BitStr) (cs : List BitStr) (N : ℕ)
+theorem fold_normStep_width_le (pre : List BitStr) (p g : BitStr) (cs : List BitStr) (N : ℕ)
     (hp : p.length ≤ N) (hc : ∀ c ∈ cs, c.length ≤ N) :
     ∀ c ∈ (pre.foldl normStep (p, g, cs)).2.2, c.length ≤ N := by
   induction pre generalizing cs with
@@ -83,7 +86,7 @@ theorem coeffPolynomial_normProductBits (z : R) (p g : BitStr) (as : List BitStr
   rw [normProductBits, coeffPolynomial_fold_normStep z as p g _ hp hz ha]
   simp [evalBits_oneBits z p hp]
 
-private def normStepProg : PolyTimeFun (NormState × BitStr) NormState :=
+def normStepProg : PolyTimeFun (NormState × BitStr) NormState :=
   let p := fst.comp fst
   let g := fst.comp (snd.comp fst)
   let cs := snd.comp (snd.comp fst)
@@ -91,7 +94,7 @@ private def normStepProg : PolyTimeFun (NormState × BitStr) NormState :=
     (p.pair ((translateBitsProg.comp (p.pair (snd.pair g))).pair cs)))))
     (fun q => normStep q.1 q.2) (by rintro ⟨⟨p, g, cs⟩, a⟩; rfl)
 
-private theorem normStep_bounded :
+theorem normStep_bounded :
     FoldBounded normStepProg (30 * X ^ 3 + 30 * X ^ 2 + 30 * X + 30) := by
   intro as s pre post heq
   rcases s with ⟨p, g, cs⟩
@@ -159,5 +162,7 @@ def composedSumBitsProg : PolyTimeFun (BitStr × BitStr) BitStr :=
     composedSumBitsProg (p, g) = composedSumBits p g := rfl
 
 end MIPRE.LowDegree.BinaryQuotient
+
+end
 
 end

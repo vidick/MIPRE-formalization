@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/Core/CompletePart.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Statements
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.Extensions
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Statements
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.Extensions
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -439,3 +442,5 @@ theorem gBotSelfConsistency
     (gCompleteSelfConsistency params ψbi family zeta hperm hself)
 
 end MIPStarRE.LDT.Pasting
+
+end

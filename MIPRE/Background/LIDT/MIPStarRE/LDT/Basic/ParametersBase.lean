@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Basic/ParametersBase.lean
 -/
-import Mathlib
+module
+public import Mathlib
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -431,3 +434,5 @@ noncomputable def evalLinePolynomialModel (params : Parameters) [FieldModel para
   encodeScalar (_root_.Polynomial.eval (decodeScalar t) p)
 
 end MIPStarRE.LDT
+
+end

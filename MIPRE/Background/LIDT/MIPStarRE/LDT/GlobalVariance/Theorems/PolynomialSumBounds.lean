@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/GlobalVariance/Theorems/PolynomialSumBounds.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -43,7 +46,7 @@ Combines the line-measurement total `B^ℓ.total ≤ 1`, the polynomial-submeasu
 total `G.total ≤ 1`, and the strategy state's normalization to bound the joint
 sum `∑_g ∑_f ⟨ψ| B^ℓ_f ⊗ G_g |ψ⟩` by `1`, without any cardinality factor in the
 polynomial index. -/
-private lemma generalizeBLineCollisionTensorMass_polysum_le_one
+lemma generalizeBLineCollisionTensorMass_polysum_le_one
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -314,3 +317,5 @@ lemma generalizeBDeviationAtPolynomial_polysum_le_error
         generalizeBCollisionResidual_polysum_le_error params strategy G
 
 end MIPStarRE.LDT.GlobalVariance
+
+end

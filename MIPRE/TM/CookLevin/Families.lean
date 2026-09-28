@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.Kinds
+module
+public import MIPRE.TM.CookLevin.Kinds
+
+@[expose] public section
 
 /-!
 # The clause families of the tableau, on decoded fields
@@ -1014,3 +1017,5 @@ theorem mainPred_iff (c : Cand) :
   tauto
 
 end MIPRE.TM.CookLevin.Desc
+
+end

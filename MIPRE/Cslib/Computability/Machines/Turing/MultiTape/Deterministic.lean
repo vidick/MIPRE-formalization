@@ -24,14 +24,18 @@ Adaptations (the only differences from upstream):
 -/
 
 
-import Mathlib.Data.Finset.Max
-import Mathlib.Data.Int.Interval
-import Mathlib.Algebra.Order.Group.Abs
-import Mathlib.Algebra.Order.Group.Int
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Computability.Language
-import Mathlib.Data.Sign.Defs
-import MIPRE.Cslib.Foundations.Data.RelatesInSteps
+module
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Data.Int.Interval
+public import Mathlib.Algebra.Order.Group.Abs
+public import Mathlib.Algebra.Order.Group.Int
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Computability.Language
+public import Mathlib.Data.Sign.Defs
+public import MIPRE.Cslib.Foundations.Data.RelatesInSteps
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Deterministic Multi-Tape Turing Machines
@@ -548,3 +552,5 @@ lemma not_halts_of_repeat_nonhalt
 end MultiTapeTM
 
 end Turing
+
+end

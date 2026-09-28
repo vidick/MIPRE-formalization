@@ -17,12 +17,16 @@ candidates, and the alignment defect is the posterior-weighted candidate
 distance bounded by `posterior_alignment_A/B` and `prior_alignment_bound`:
 `Δ ≤ 16 (t₀ + s₀)/m`. Nothing here is a manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.IdealSuccess
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.IdealSuccess
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -253,3 +257,5 @@ theorem sum_flatQ_alignTerm_le (hμ : ∀ x y, 0 ≤ μ x y)
 end TracialStrategy
 
 end CommutingRepetition
+
+end

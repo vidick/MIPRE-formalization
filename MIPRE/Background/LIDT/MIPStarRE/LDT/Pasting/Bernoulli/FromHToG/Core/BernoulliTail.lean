@@ -5,11 +5,15 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/BernoulliTail.lean
 -/
-import Mathlib.Data.Nat.Choose.Sum
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Statements
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.Weights
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.Scalar
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.TruncatedSums
+module
+public import Mathlib.Data.Nat.Choose.Sum
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Statements
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.Weights
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.Scalar
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.TruncatedSums
+public import MIPRE.Tactics
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -161,3 +165,5 @@ lemma fromHToG_truncatedTypeSums_zero_eq_indicator
   simp [truncatedTypeSums, gHatTypeOperator, gHatTypeWeight]
 
 end MIPStarRE.LDT.Pasting
+
+end

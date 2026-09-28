@@ -61,19 +61,23 @@ Encoding notes (for the fidelity review):
   proof consumes the signed entropy budgets (batch #13) through the
   signed reverse experiments (batch #11).
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Alignment
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.CostsLemmas
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.PriorAlignment
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.PriorAlignmentB
-import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Vector
-import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Entropy
-import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Information
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.EntropyBudget
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Alignment
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.CostsLemmas
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.PriorAlignment
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.PriorAlignmentB
+public import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Vector
+public import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Entropy
+public import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Information
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.EntropyBudget
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -1350,3 +1354,5 @@ noncomputable def flatJB
 end TracialStrategy
 
 end CommutingRepetition
+
+end

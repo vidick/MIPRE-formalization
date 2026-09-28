@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.Code.Encoding.MachineCode
-import MIPRE.TM.Code.Examples
+module
+public import MIPRE.TM.Code.Encoding.MachineCode
+public import MIPRE.TM.Code.Examples
+
+@[expose] public section
 
 /-!
 # Total decoding, description size, and the Milestone C test battery
@@ -153,33 +156,33 @@ One raw description per failure mode; each must be rejected by `decodeCodeExact`
 decode totally to the default reject machine. -/
 
 /-- A syntactically plausible one-input entry. -/
-private def dummyEntry : RawAction :=
+def dummyEntry : RawAction :=
   { inputMoves := #[.stay], workActions := #[], output := some false, nextState := none }
 
 /-- Zero states (the empty table has the canonical size `0 · 3¹`, so this parses and is
 rejected by the checker alone). -/
-private def badZeroStates : RawCode 1 :=
+def badZeroStates : RawCode 1 :=
   { workTapeCount := 0, alphabetSize := 2, stateCount := 0, startState := 0, table := #[] }
 
 /-- Alphabet of size one (table of the canonical size `1 · 2¹`). -/
-private def badAlphabet : RawCode 1 :=
+def badAlphabet : RawCode 1 :=
   { workTapeCount := 0, alphabetSize := 1, stateCount := 1, startState := 0,
     table := #[dummyEntry, dummyEntry] }
 
 /-- Wrong table length: the header demands `1 · 3¹ = 3` entries, only two are present,
 so parsing itself fails. -/
-private def badTableLength : RawCode 1 :=
+def badTableLength : RawCode 1 :=
   { workTapeCount := 0, alphabetSize := 2, stateCount := 1, startState := 0,
     table := #[dummyEntry, dummyEntry] }
 
 /-- Out-of-range successor state. -/
-private def badNextState : RawCode 1 :=
+def badNextState : RawCode 1 :=
   { workTapeCount := 0, alphabetSize := 2, stateCount := 1, startState := 0,
     table := #[{ inputMoves := #[.stay], workActions := #[], output := none,
                  nextState := some 5 }, dummyEntry, dummyEntry] }
 
 /-- Out-of-range work symbol (one work tape, so `1 · 3² = 9` entries). -/
-private def badWorkSymbol : RawCode 1 :=
+def badWorkSymbol : RawCode 1 :=
   { workTapeCount := 1, alphabetSize := 2, stateCount := 1, startState := 0,
     table := Array.replicate 9
       { inputMoves := #[.stay], workActions := #[⟨.symbol 7, .stay⟩], output := none,
@@ -216,3 +219,5 @@ example : decodeCode 1 (encodeCode Code.copyBit ++ [true]) = Code.defaultRejectC
 #eval (encodeCode (Code.defaultRejectCode 1)).map fun b => if b then 1 else 0
 
 end Turing
+
+end

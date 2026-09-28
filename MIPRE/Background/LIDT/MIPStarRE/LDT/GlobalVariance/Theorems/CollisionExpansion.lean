@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/GlobalVariance/Theorems/CollisionExpansion.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -29,7 +32,7 @@ and distribution bookkeeping, and the Schwartz-Zippel collision expansion that
 bounds the line-collision residual.
 -/
 
-private lemma generalizeB_of_pointwise
+lemma generalizeB_of_pointwise
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -84,7 +87,7 @@ lemma generalizeB
 
 /-- The finite reparametrization of incident axis-parallel line questions by a
 line `ℓ` and affine parameter `t`, sending `(ℓ,t)` to `(ℓ, ℓ(t))`. -/
-private noncomputable def axisParallelLineQuestionParameterEquiv (params : Parameters)
+noncomputable def axisParallelLineQuestionParameterEquiv (params : Parameters)
     [FieldModel params.q] :
     AxisParallelLine params × Fq params ≃
       {qu : AxisParallelLineQuestion params // pointOnLine (params := params) qu} where
@@ -152,7 +155,7 @@ noncomputable def axisParallelLinePointParamEquiv (params : Parameters)
 
 /-- Marginalizing the uniform line/parameter presentation to the sampled point
 and direction gives the native axis-parallel base-point test distribution. -/
-private lemma avgOver_axisParallelLinePointParam
+lemma avgOver_axisParallelLinePointParam
     (params : Parameters) [FieldModel params.q]
     (f : AxisParallelTestSample params → Error) :
     avgOver (uniformDistribution (AxisParallelLine params × Fq params))
@@ -189,7 +192,7 @@ lemma avgOver_axisParallelLineQuestionDistribution_to_axisParallelTestSample
 
 /-- Expanding the postprocessed collision event at the seeded question
 `(ℓ, ℓ(t))` gives the line-answer sum from `expansion.tex`, lines 283--286. -/
-private lemma generalizeBCollisionSeed_integrand
+lemma generalizeBCollisionSeed_integrand
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι)
     (ψbi : QuantumState (ι × ι))
@@ -236,7 +239,7 @@ This is the normalization half of `expansion.tex`, lines 286--288: the
 left-register line measurement sums to its total operator, the right-register
 operator is the single submeasurement outcome `G_g ≤ 1`, and the strategy state
 is normalized. -/
-private lemma generalizeBLineCollisionTensorMass_sum_le_one
+lemma generalizeBLineCollisionTensorMass_sum_le_one
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -557,3 +560,5 @@ lemma generalizeBFromSchwartzZippel
   exact generalizeBPointwiseSchwartzZippel params strategy G g
 
 end MIPStarRE.LDT.GlobalVariance
+
+end

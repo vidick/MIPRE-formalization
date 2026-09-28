@@ -2,11 +2,15 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Mathlib.Analysis.MeanInequalitiesPow
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Positivity
-import Mathlib.Tactic.Ring
+module
+public import Mathlib.Analysis.MeanInequalitiesPow
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Positivity
+public import Mathlib.Tactic.Ring
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Normalizing the final introspection error
 
@@ -171,5 +175,7 @@ theorem power_exponent_lt_one {b r : ℝ} (hb1 : b ≤ 1) (hr0 : 0 ≤ r) (hr1 :
   exact (mul_le_mul_of_nonneg_right hb1 hr0).trans_lt (by simpa using hr1)
 
 end MIPRE.Introspection
+
+end
 
 end

@@ -34,14 +34,18 @@ Encoding decisions (DIFFERENCES.md D18):
   fallback corners). Eq finite-bad then bounds `1 − commonMass`
   by `2Γ + 2 e^{−R/(2Z)}` scalar-side.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Selected
-import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.PairLaw
-import MIPRE.Background.Repetition.CommutingRepetition.VN.TensorPower
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Selected
+public import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.PairLaw
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.TensorPower
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -1269,3 +1273,5 @@ theorem compile_decomposition {N : StdTracialAlgebra.{0}}
   · intro a b; ring
 
 end CommutingRepetition
+
+end

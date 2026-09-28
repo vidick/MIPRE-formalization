@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.Predicate
-import MIPRE.Foundations.OracularTyped
+module
+public import MIPRE.Background.AnswerReduction.Predicate
+public import MIPRE.Foundations.OracularTyped
+
+@[expose] public section
 
 /-!
 # The answers of the answer-reduced verifier, as bit strings
@@ -153,5 +156,7 @@ theorem length_enc_le (a : Ans P E.carrier) :
   exact h _
 
 end MIPRE.AnswerReduction
+
+end
 
 end

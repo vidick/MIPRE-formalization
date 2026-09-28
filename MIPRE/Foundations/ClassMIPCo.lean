@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.ClassMIPStar
-import MIPRE.Foundations.Tsirelson.UpperRE
+module
+public import MIPRE.Foundations.ClassMIPStar
+public import MIPRE.Foundations.Tsirelson.UpperRE
+
+@[expose] public section
 
 /-!
 # The classes `coRE` and `MIP^co`, and the inclusion `MIP^co ⊆ coRE`
@@ -81,3 +84,5 @@ theorem MIPCo.exists_cosemidecider {L : Set BitStr} (h : MIPCo L) :
   Cost.exists_semidecider h.isCoRE
 
 end MIPRE
+
+end

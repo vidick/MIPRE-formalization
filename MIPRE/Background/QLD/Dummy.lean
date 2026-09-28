@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.PaddedStrategy
-import MIPRE.Foundations.LowDegree.SchwartzZippel
-import MIPRE.Background.LIDT.Coefficients
-import MIPRE.Foundations.StrategyDilation
+module
+public import MIPRE.Background.QLD.PaddedStrategy
+public import MIPRE.Foundations.LowDegree.SchwartzZippel
+public import MIPRE.Background.LIDT.Coefficients
+public import MIPRE.Foundations.StrategyDilation
+
+@[expose] public section
 
 /-!
 # Removing the dummy coordinates (`lem:qld-global-dummy`)
@@ -555,5 +558,7 @@ end Weight
 end Dummy
 
 end MIPRE.QLD
+
+end
 
 end

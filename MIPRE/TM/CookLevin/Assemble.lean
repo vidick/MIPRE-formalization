@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.DescProg
-import MIPRE.TM.CookLevin.Sat
-import MIPRE.Foundations.Cost.Growth
+module
+public import MIPRE.TM.CookLevin.DescProg
+public import MIPRE.TM.CookLevin.Sat
+public import MIPRE.Foundations.Cost.Growth
+
+@[expose] public section
 
 /-!
 # Assembling the succinct Cook–Levin theorem
@@ -378,3 +381,5 @@ noncomputable def succinctCookLevin : SuccinctCookLevin where
       (four_T_le_m T σ) a b
 
 end MIPRE.SAT
+
+end

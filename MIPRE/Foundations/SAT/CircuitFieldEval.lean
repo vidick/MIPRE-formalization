@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.GateFieldEval
+module
+public import MIPRE.Foundations.SAT.GateFieldEval
+
+@[expose] public section
 
 /-!
 # Effective evaluation of the routed circuit polynomial
@@ -80,7 +83,7 @@ noncomputable def fieldStepProg : PolyTimeFun (FieldState × (Gate × BitStr)) F
 @[simp] theorem fieldStepProg_apply (s : FieldState) (a : Gate × BitStr) :
     fieldStepProg (s, a) = fieldStep s a := rfl
 
-private theorem fieldStep_bounded : FoldBounded fieldStepProg (5 * X + 5) := by
+theorem fieldStep_bounded : FoldBounded fieldStepProg (5 * X + 5) := by
   intro l s pre post hl
   change esize (pre.foldl fieldStep s) ≤ _
   obtain ⟨he, hw⟩ := fold_fieldStep pre s
@@ -145,3 +148,5 @@ noncomputable def circuitBitsProg :
 end Programs
 
 end MIPRE.SAT.Circuit
+
+end

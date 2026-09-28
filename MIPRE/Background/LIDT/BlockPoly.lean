@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Game
+module
+public import MIPRE.Background.LIDT.Game
+
+@[expose] public section
 
 /-!
 # A polynomial on a block of the variables
@@ -120,5 +123,7 @@ theorem LowIndDegPoly.eval_liftIdx {idx : Fin n' → Fin n} (hinj : Function.Inj
   rw [← LowIndDegPoly.eval_blockPoly hinj hsupp u, LowIndDegPoly.blockPoly_liftIdx hinj]
 
 end MIPRE.LIDT
+
+end
 
 end

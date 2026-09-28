@@ -5,10 +5,13 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/CommutativityPoints/Approximation.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg
-import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Defs
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonCore
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Defs
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonCore
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -31,7 +34,7 @@ open scoped Matrix MatrixOrder ComplexOrder BigOperators
 
 /-- The final restriction index, corresponding to the paper's `m`-restricted
 diagonal-lines test. -/
-private def lastRestrictionIndex (params : Parameters) : Fin params.m :=
+def lastRestrictionIndex (params : Parameters) : Fin params.m :=
   ⟨params.m - 1, Nat.sub_lt params.hm Nat.zero_lt_one⟩
 
 /-- Decompose a point in `Point params.next` into its truncated point and final coordinate. -/
@@ -88,7 +91,7 @@ abbrev pointPairOutcomeSwapEquiv (params : Parameters) :
     PointPairOutcome params ≃ PointPairOutcome params :=
   Equiv.prodComm _ _
 
-private lemma lastRestrictionIndex_val_succ
+lemma lastRestrictionIndex_val_succ
     (params : Parameters) :
     (lastRestrictionIndex params).val + 1 = params.m := by
   have hm := params.hm
@@ -97,7 +100,7 @@ private lemma lastRestrictionIndex_val_succ
 
 /-- At the final restriction index, a restricted diagonal direction records all
 `m` coordinates, so it is equivalent to an unrestricted point of `Point params`. -/
-private noncomputable def lastRestrictedDirectionEquiv
+noncomputable def lastRestrictedDirectionEquiv
     (params : Parameters)
     [FieldModel params.q] :
     (Fin ((lastRestrictionIndex params).val + 1) → Fq params) ≃ Point params where
@@ -137,7 +140,7 @@ private noncomputable def lastRestrictedDirectionEquiv
 /-- At the final restriction index, a restricted diagonal sample is exactly a
 full diagonal line: the sample point becomes the base point and the restricted
 direction determines all line coefficients. -/
-private noncomputable def lastRestrictedSampleEquivDiagonalLine
+noncomputable def lastRestrictedSampleEquivDiagonalLine
     (params : Parameters)
     [FieldModel params.q] :
     RestrictedDiagonalSample params (lastRestrictionIndex params) ≃ DiagonalLine params where
@@ -187,7 +190,7 @@ private noncomputable def lastRestrictedSampleEquivDiagonalLine
 point appears at the queried parameter. This identifies the corrected diagonal
 test sample space with the shared point-with-diagonal-line questions used in
 the commutativity-at-points argument. -/
-private noncomputable def rebasedLastRestrictedQuestionEquiv
+noncomputable def rebasedLastRestrictedQuestionEquiv
     (params : Parameters)
     [FieldModel params.q] :
     (RestrictedDiagonalSample params (lastRestrictionIndex params) × Fq params) ≃
@@ -206,7 +209,7 @@ private noncomputable def rebasedLastRestrictedQuestionEquiv
 /-- Evaluate each restricted diagonal measurement at the distinguished base
 parameter `zeroCoord`, matching the corrected paper definition of the diagonal
 branch. -/
-private noncomputable def rawDiagonalLineAnswerFamily
+noncomputable def rawDiagonalLineAnswerFamily
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -225,7 +228,7 @@ The corrected test samples a restricted diagonal line and compares the point
 measurement at its distinguished base point with the diagonal measurement
 postprocessed by evaluation at `zeroCoord`. The global diagonal-line test bound
 therefore controls this last restricted slice in particular. -/
-private lemma sampledDiagonalLineConsistency
+lemma sampledDiagonalLineConsistency
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -277,7 +280,7 @@ corresponding SDD approximation bound.
 This is the final-slice version of the diagonal branch that feeds the
 commutativity-at-points argument. It packages the consistency estimate through
 `Preliminaries.simeqToApprox`. -/
-private lemma sampledDiagonalLineApproximation
+lemma sampledDiagonalLineApproximation
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -489,7 +492,7 @@ lemma sampledDiagonalLineApproximation_pointWithDiagonalLine
 
 /-- Evaluate each answer-valued restricted diagonal measurement at the
 distinguished base parameter `zeroCoord`. -/
-private noncomputable def rawAnswerDiagonalLineAnswerFamily
+noncomputable def rawAnswerDiagonalLineAnswerFamily
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params ι)
@@ -503,7 +506,7 @@ private noncomputable def rawAnswerDiagonalLineAnswerFamily
 
 /-- The answer-valued diagonal-line test controls the final restricted
 diagonal slice. -/
-private lemma answer_sampledDiagonalLineConsistency
+lemma answer_sampledDiagonalLineConsistency
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params ι)
@@ -551,7 +554,7 @@ private lemma answer_sampledDiagonalLineConsistency
 
 /-- The answer-valued restricted diagonal test gives the same SDD
 approximation at the final restriction index as the ordinary diagonal test. -/
-private lemma answer_sampledDiagonalLineApproximation
+lemma answer_sampledDiagonalLineApproximation
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params ι)
@@ -815,3 +818,5 @@ lemma answer_sampledDiagonalLineApproximation_pointWithDiagonalLine
     _ ≤ pointDiagonalLineApproxError params gamma := hbase
 
 end MIPStarRE.LDT.CommutativityPoints
+
+end

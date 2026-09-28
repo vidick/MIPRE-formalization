@@ -2,7 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Mathlib.FieldTheory.Finite.Extension
+module
+public import Mathlib.FieldTheory.Finite.Extension
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Finite-field membership and exact degree in power-of-two extensions -/
 
@@ -54,5 +58,7 @@ theorem minpoly_natDegree_of_not_mem_range {K L : Type*} [Field K] [Field L]
   exact False.elim (hx ((mem_range_iff_pow_card x).2 hfix))
 
 end MIPRE.LowDegree.BinaryFiniteField
+
+end
 
 end

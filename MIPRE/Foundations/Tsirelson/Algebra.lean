@@ -3,10 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
-import MIPRE.Foundations.Correlations
-import MIPRE.Foundations.GNS
-import MIPRE.Foundations.NCPoly.Cone
+module
+public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
+public import MIPRE.Foundations.Correlations
+public import MIPRE.Foundations.GNS
+public import MIPRE.Foundations.NCPoly.Cone
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The game algebra of Tsirelson's problem
@@ -599,3 +603,5 @@ end GNS
 end Tsirelson
 
 end MIPRE
+
+end

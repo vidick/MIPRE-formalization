@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.Formula
-import MIPRE.Foundations.LowDegree.Encoding
+module
+public import MIPRE.Foundations.SAT.Formula
+public import MIPRE.Foundations.LowDegree.Encoding
+
+@[expose] public section
 
 /-!
 # Arithmetization of Boolean formulas
@@ -80,5 +83,7 @@ theorem degreeOf_arith_le_of_occurrences [Nontrivial F] (ρ : ℕ → σ) (f : F
   fun j => (degreeOf_arith_le ρ f j).trans (h j)
 
 end MIPRE.SAT.Fml
+
+end
 
 end

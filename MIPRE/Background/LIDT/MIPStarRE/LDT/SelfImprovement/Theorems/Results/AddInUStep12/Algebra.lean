@@ -5,13 +5,16 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep12/Algebra.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.DataProcessing
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Statements
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.CommonHelpers
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Residual
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.ScalarChain
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.DataProcessing
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Statements
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.CommonHelpers
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Residual
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.ScalarChain
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -74,7 +77,7 @@ expression, plus (b) the two square-root inputs available via
 Names are deliberately suffixed `_diff_eq` to keep them honest as intermediate
 algebraic identities rather than as the final scalar bounds. -/
 
-private lemma addInU_step1_pointwise_op_eq
+lemma addInU_step1_pointwise_op_eq
     {κ : Type*} [Fintype κ] [DecidableEq κ]
     (M Av Th : MIPStarRE.Quantum.Op κ) :
     opTensor (Av * M) (Th * Av) - opTensor M (Av * Th * Av) =
@@ -96,7 +99,7 @@ private lemma addInU_step1_pointwise_op_eq
     simp [Matrix.mul_assoc]
   rw [sub_mul, hLeft, hRight]
 
-private lemma addInU_step2_pointwise_op_eq
+lemma addInU_step2_pointwise_op_eq
     {κ : Type*} [Fintype κ] [DecidableEq κ]
     (M Av Th : MIPStarRE.Quantum.Op κ) :
     opTensor (Av * M * Av) Th - opTensor (Av * M) (Th * Av) =
@@ -124,7 +127,7 @@ The operator difference of the bipartite-tensor expectations of
 `A^v · H^u_h · A^v` and `A^u · H^u_h · A^v` (with shared right factor `T_h`)
 factors as `(A^v − A^u) · H^u_h · A^v` on the left tensor factor, leaving the
 right factor `T_h` untouched. -/
-private lemma addInU_step3_pointwise_op_eq
+lemma addInU_step3_pointwise_op_eq
     {κ : Type*} [Fintype κ] [DecidableEq κ]
     (Au Av Mh Th : MIPStarRE.Quantum.Op κ) :
     opTensor (Av * Mh * Av) Th - opTensor (Au * Mh * Av) Th =
@@ -139,7 +142,7 @@ The operator difference of the bipartite-tensor expectations of
 `A^u · H^u_h · A^v` and `A^u · H^u_h · A^u` (with shared right factor `T_h`)
 factors as `A^u · H^u_h · (A^v − A^u)` on the left tensor factor, leaving the
 right factor `T_h` untouched. -/
-private lemma addInU_step4_pointwise_op_eq
+lemma addInU_step4_pointwise_op_eq
     {κ : Type*} [Fintype κ] [DecidableEq κ]
     (Au Av Mh Th : MIPStarRE.Quantum.Op κ) :
     opTensor (Au * Mh * Av) Th - opTensor (Au * Mh * Au) Th =
@@ -569,3 +572,5 @@ lemma addInU_cs_chain_step4_diff_eq
   exact addInU_step4_pointwise_op_eq Au Av Mh (T.outcome h)
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

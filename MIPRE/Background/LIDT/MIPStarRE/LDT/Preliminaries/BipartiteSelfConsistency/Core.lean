@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Preliminaries/BipartiteSelfConsistency/Core.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichMain.Completeness
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichMain.Completeness
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -89,7 +92,7 @@ lemma qSDDCore_rightTensor_eq_leftTensor_of_permInv
     _ = ev ψ ((leftTensor (ι₂ := ι) D)ᴴ * leftTensor (ι₂ := ι) D) := by
           rw [leftTensor_conjTranspose, leftTensor_mul_leftTensor]
 
-private lemma qSDD_liftLeft_liftRight_le_two_qBipartiteSSCDefect
+lemma qSDD_liftLeft_liftRight_le_two_qBipartiteSSCDefect
     {Outcome : Type*} {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype Outcome]
     (ψ : QuantumState (ι × ι)) (hψ : PermInvState ψ)
@@ -331,3 +334,5 @@ theorem twoNotionsOfSelfConsistency {Question Outcome : Type*}
           exact mul_le_mul_of_nonneg_left hssc' (by norm_num)
 
 end MIPStarRE.LDT.Preliminaries
+
+end

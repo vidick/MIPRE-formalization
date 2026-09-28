@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Game
-import Mathlib.Analysis.Complex.ExponentialBounds
+module
+public import MIPRE.Background.LIDT.Game
+public import Mathlib.Analysis.Complex.ExponentialBounds
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The seeded-CL adapter, part 7: the parameter corollary
@@ -222,3 +226,5 @@ theorem lidtError_le_deltaCL (m d q : ℕ) (hm : 1 ≤ m) (hd : 1 ≤ d) (ε : �
         mul_le_mul_of_nonneg_right (prefactor_le m d hm hd) hSnn
 
 end MIPRE.LIDT
+
+end

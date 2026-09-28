@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.SoundFinal
-import MIPRE.TM.CookLevin.ClassicalPcp
+module
+public import MIPRE.Background.AnswerReduction.SoundFinal
+public import MIPRE.TM.CookLevin.ClassicalPcp
+
+@[expose] public section
 
 /-!
 # Answer reduction, supplied
@@ -148,5 +151,7 @@ def answerReduction : MIPRE.AnswerReduction 5 where
       (arBounds_spec.2 lam mu sigma n) h
 
 end MIPRE.AnswerReduction
+
+end
 
 end

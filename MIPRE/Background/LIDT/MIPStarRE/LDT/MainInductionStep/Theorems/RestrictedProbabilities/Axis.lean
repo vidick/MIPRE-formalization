@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/Axis.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Base
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Base
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -30,7 +33,7 @@ open scoped MatrixOrder
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-private lemma restrictedAxisSampleError_eq
+lemma restrictedAxisSampleError_eq
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι)
@@ -97,7 +100,7 @@ private lemma restrictedAxisSampleError_eq
 /-- Per-direction axis-parallel consistency defect of the restricted `x`-slice
 strategy at embedded direction `i`, averaged over the slice point space
 `Point params`. -/
-private noncomputable def sliceAxisDirectionError
+noncomputable def sliceAxisDirectionError
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι)
@@ -112,7 +115,7 @@ private noncomputable def sliceAxisDirectionError
 
 /-- Per-direction axis-parallel consistency defect of the ambient `(m+1)`-dimensional
 strategy at direction `i`, averaged over the ambient point space `Point params.next`. -/
-private noncomputable def axisDirectionError
+noncomputable def axisDirectionError
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι)
@@ -122,7 +125,7 @@ private noncomputable def axisDirectionError
       (axisParallelPointAnswerFamily strategy (u, i))
       (axisParallelLineAnswerFamily strategy (u, i))
 
-private lemma sliceAxisDirectionErrorAverage_eq_axisDirectionError
+lemma sliceAxisDirectionErrorAverage_eq_axisDirectionError
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι)
@@ -148,7 +151,7 @@ private lemma sliceAxisDirectionErrorAverage_eq_axisDirectionError
     _ = axisDirectionError params strategy (embedCoord params i) := by
           try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
-private lemma averageRestrictedAxisFailure_eq_embeddedAxisDirections
+lemma averageRestrictedAxisFailure_eq_embeddedAxisDirections
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι) :
@@ -258,3 +261,5 @@ lemma weighted_axisParallel_bound
     _ ≤ eps := hgood.axisParallelTest
 
 end MIPStarRE.LDT.MainInductionStep
+
+end

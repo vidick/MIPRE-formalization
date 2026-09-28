@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptivePlayerSwap
+module
+public import MIPRE.Foundations.Introspection.AdaptivePlayerSwap
+
+@[expose] public section
 
 /-! # Actual Bob iteration and the error transport between the two blocks
 
@@ -190,4 +193,6 @@ theorem exists_intro_bob_iteration
 end Iteration
 end TypedEstimates
 end MIPRE.Introspection
+end
+
 end

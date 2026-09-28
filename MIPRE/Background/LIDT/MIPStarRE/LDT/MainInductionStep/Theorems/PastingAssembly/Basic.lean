@@ -5,14 +5,18 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MainInductionStep/Theorems/PastingAssembly/Basic.lean
 -/
-import Mathlib.Analysis.Convex.SpecificFunctions.Pow
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.MainError
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.StageDataConstructors
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.AvgSliceErrors.Successor
-import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Approximation
-import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.AnswerTheorems
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.DegreeZero
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Tactic.AvgCongr
+module
+public import Mathlib.Analysis.Convex.SpecificFunctions.Pow
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.MainError
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.StageDataConstructors
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.AvgSliceErrors.Successor
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Approximation
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.AnswerTheorems
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.DegreeZero
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Tactic.AvgCongr
+public import MIPRE.Tactics
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -782,3 +786,5 @@ lemma idxPolyFamily_sliceBoundednessInput_of_slice_bounds
       _ ≤ zeta := havg
 
 end MIPStarRE.LDT.MainInductionStep
+
+end

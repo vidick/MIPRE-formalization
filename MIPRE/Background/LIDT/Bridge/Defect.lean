@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution
+
+@[expose] public section
 
 /-!
 # Bridge, part 5: consistency defects of complete measurements
@@ -132,3 +135,5 @@ theorem bipartiteConsError_uniform {X : Type*} [Fintype X] [DecidableEq X] [None
     Finset.mem_univ, if_true, Finset.card_univ, Finset.mul_sum]
 
 end MIPRE.LIDT.Bridge
+
+end

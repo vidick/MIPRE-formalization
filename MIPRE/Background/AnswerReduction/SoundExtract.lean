@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.SoundIsolate
-import MIPRE.Background.LIDT.Simultaneous
+module
+public import MIPRE.Background.AnswerReduction.SoundIsolate
+public import MIPRE.Background.LIDT.Simultaneous
+
+@[expose] public section
 
 /-!
 # Soundness of answer reduction: the extracted low-degree measurements
@@ -230,5 +233,7 @@ theorem sum_deltaSim6_le :
     (sum_one_sub_value_copyStrategy6_le V n P hk S S' check B T)
 
 end MIPRE.AnswerReduction
+
+end
 
 end

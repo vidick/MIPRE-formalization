@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.PolyBounded
-import MIPRE.Foundations.Halting.LambdaBound
+module
+public import MIPRE.Foundations.Halting.PolyBounded
+public import MIPRE.Foundations.Halting.LambdaBound
+
+@[expose] public section
 
 /-!
 # Absorbing polynomial costs into `n ^ λ`
@@ -104,3 +107,5 @@ theorem PolyBounded.absorb_log {g : ℕ → ℕ} (hg : PolyBounded g) (a b : ℕ
   omega
 
 end MIPRE.Cost
+
+end

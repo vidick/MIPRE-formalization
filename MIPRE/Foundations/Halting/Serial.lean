@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Lists
-import Mathlib.Tactic.Linarith
+module
+public import MIPRE.Foundations.Halting.Lists
+public import Mathlib.Tactic.Linarith
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Reading and writing descriptions, in the ambient model
@@ -380,3 +384,5 @@ theorem serProg_runs (d : Data) :
 end Prog
 
 end MIPRE.Cost
+
+end

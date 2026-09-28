@@ -5,8 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Tactic/AvgCongr.lean
 -/
-import Lean.Elab.Tactic
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg
+module
+public import Lean.Elab.Tactic
+public meta import Lean.Elab.Tactic
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -51,7 +55,7 @@ open MIPStarRE.LDT
 /-- Recursively peel `avgOver` equality goals with optional leaf tactics. -/
 syntax (name := avgCongr) "avg_congr" (" with " ident,+)? (" using " tactic)? : tactic
 
-private inductive AvgCongrPeelKind where
+inductive AvgCongrPeelKind where
   | plain
   | onSupport
 
@@ -61,7 +65,10 @@ When `requireClosed` is true, an unclosed leaf is treated as failure so the call
 can retry the whole linear pass with the support-restricted theorem.  When it is
 false, an unclosed leaf after at least one peel is left for the next tactic,
 matching the original prototype behavior. -/
-private partial def evalAvgCongrCore
+-- Vendoring compile fix (module system): the tactic's elaborator and everything it calls
+-- must be `meta` in a module, and its helper may not stay `private` once the elaborator is
+-- public; see README.md.
+meta partial def evalAvgCongrCore
     (kind : AvgCongrPeelKind) (names : List (TSyntax `ident))
     (fallback? : Option (TSyntax `tactic)) (mayStop requireClosed : Bool) :
     TacticM Unit := do
@@ -128,7 +135,7 @@ private partial def evalAvgCongrCore
 
 /-- Elaborator for the `avg_congr` tactic syntax. -/
 @[tactic avgCongr]
-def evalAvgCongr : Tactic := fun stx => do
+meta def evalAvgCongr : Tactic := fun stx => do
   match stx with
   | `(tactic| avg_congr $[with $names:ident,*]? $[using $fallback:tactic]?) =>
       let names := match names with
@@ -194,3 +201,5 @@ example (h : (1 : Nat) = 2) : (1 : Nat) = 2 := by
   exact h
 
 end Examples
+
+end

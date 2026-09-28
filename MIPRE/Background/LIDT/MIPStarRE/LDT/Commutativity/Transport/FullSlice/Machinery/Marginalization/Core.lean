@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Marginalization/Core.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Averages
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Averages
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -42,7 +45,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 After expanding the first evaluated family in paper `eq:gcom4-diff`, the remaining
 error is this nonnegative sum over pairs of distinct polynomial outcomes whose
 values collide at the sampled point `u`. -/
-private noncomputable def fullSliceBABAxCollisionFactored
+noncomputable def fullSliceBABAxCollisionFactored
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)
     (xy : FullSliceQuestion params) : Error :=
@@ -61,7 +64,7 @@ private noncomputable def fullSliceBABAxCollisionFactored
 This is the proved hard estimate used by the staged x-marginalization tensor
 lemma below.  The algebraic expansion identifies the x-evaluated tensor-average
 difference with this residual averaged over `x,y`. -/
-private lemma fullSliceBABAxCollisionFactored_le_mdq
+lemma fullSliceBABAxCollisionFactored_le_mdq
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)
     (hnorm : strategy.state.IsNormalized)
@@ -98,7 +101,7 @@ noncomputable def fullSliceABAByCollisionFactored
 This is the proved hard estimate used by the staged y-marginalization tensor
 lemma below; the postprocessing expansion identifies the data-ordered evaluated
 tensor-average difference with `fullSliceABAByCollisionFactored`. -/
-private lemma fullSliceABAByCollisionFactored_le_mdq
+lemma fullSliceABAByCollisionFactored_le_mdq
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)
     (hnorm : strategy.state.IsNormalized)
@@ -153,7 +156,7 @@ lemma fullSliceABAB_tensor_marginalize_y_collision_bound
 
 /-- Expand the expectation of a tensor sandwich whose inner/right family is an
 indicator-restricted finite sum. -/
-private lemma ev_sandwichTensor_indicator_expand
+lemma ev_sandwichTensor_indicator_expand
     {α : Type*} [Fintype α]
     (ψ : QuantumState (ι × ι))
     (B : MIPStarRE.Quantum.Op ι) (A : α → MIPStarRE.Quantum.Op ι)
@@ -247,7 +250,7 @@ private lemma ev_sandwichTensor_indicator_expand
                   rightTensor (ι₁ := ι) (A a₂)))).symm
 
 /-- Sum over the postprocessed outcome label of two matching indicators. -/
-private lemma postprocess_collision_coeff_sum
+lemma postprocess_collision_coeff_sum
     {α κ : Type*} [Fintype κ] [DecidableEq κ]
     (f : α → κ) (a₁ a₂ : α) :
     (∑ k : κ,
@@ -285,7 +288,7 @@ private lemma postprocess_collision_coeff_sum
 
 /-- Expand a postprocessed tensor sandwich into the pair-collision expression for
 one fixed sample. -/
-private lemma postprocess_sandwichTensor_expand
+lemma postprocess_sandwichTensor_expand
     {α β κ : Type*} [Fintype α] [Fintype β] [Fintype κ] [DecidableEq κ]
     (ψ : QuantumState (ι × ι))
     (A : SubMeas α ι) (B : SubMeas β ι) (f : α → κ) :
@@ -379,7 +382,7 @@ private lemma postprocess_sandwichTensor_expand
 
 /-- Summing a pair-indexed expression against the diagonal indicator leaves the
 ordinary diagonal sum. -/
-private lemma diagonal_pair_sum
+lemma diagonal_pair_sum
     {α β : Type*} [Fintype α] [DecidableEq α] [Fintype β]
     (T : α × α → β → Error) :
     (∑ aa : α × α, ∑ b : β,
@@ -503,7 +506,7 @@ lemma avg_postprocess_sandwichTensor_eq_diag_add_collision
           try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The x-collision residual is nonnegative term-by-term. -/
-private lemma fullSliceBABAxCollisionFactored_nonneg
+lemma fullSliceBABAxCollisionFactored_nonneg
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)
     (xy : FullSliceQuestion params) :
@@ -581,7 +584,7 @@ lemma fullSliceABAByCollisionFactored_nonneg
 
 /-- Exact x-side postprocessing identity: the x-evaluated `BAB ⊗ A` tensor
 average is the full tensor average plus the x-collision residual. -/
-private lemma fullSliceBABAtensor_xEvaluation_eq_full_add_collision
+lemma fullSliceBABAtensor_xEvaluation_eq_full_add_collision
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι) :
     xEvaluatedSliceBABAtensorAvg params strategy family =
@@ -688,3 +691,5 @@ lemma fullSliceBABA_tensor_marginalize_x
   exact fullSliceBABA_tensor_marginalize_x_collision_bound params strategy family hnorm
 
 end MIPStarRE.LDT.Commutativity
+
+end

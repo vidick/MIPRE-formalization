@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.TM.CookLevin.PcpParameters
+module
+public import MIPRE.TM.CookLevin.PcpParameters
+
+@[expose] public section
 
 /-!
 # The source runtime bound for formatted PCP views
@@ -84,3 +87,5 @@ theorem pcpProgram_time_le (verify : PolyTimeFun PcpInput Bool) :
     polynomial_eval_mono verify.timeBound (hB D n T Q σ x y z ev hV hf)
 
 end MIPRE.TM.CookLevin.Pad
+
+end

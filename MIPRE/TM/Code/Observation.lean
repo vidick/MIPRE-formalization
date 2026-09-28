@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Data.List.OfFn
-import Mathlib.Data.Fin.Basic
+module
+public import Mathlib.Data.List.OfFn
+public import Mathlib.Data.Fin.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Canonical observation indexing for coded machines
@@ -295,3 +299,5 @@ theorem transitionIndex_inj {q q' : Fin Q} {as as' : Fin i → Option (Fin σ)}
   simpa [Prod.ext_iff] using h'
 
 end Turing
+
+end

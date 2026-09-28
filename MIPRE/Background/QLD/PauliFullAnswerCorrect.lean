@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.PauliFullAnswerPrograms
-import MIPRE.Background.QLD.PauliAnswerRoundtrip
+module
+public import MIPRE.Background.QLD.PauliFullAnswerPrograms
+public import MIPRE.Background.QLD.PauliAnswerRoundtrip
+
+@[expose] public section
 
 /-! # Full-register projection of every valid raw Pauli answer -/
 
@@ -37,4 +40,6 @@ theorem program_output_length (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k)
   exact List.length_ofFn
 
 end MIPRE.QLD.PauliFullAnswerProgram
+end
+
 end

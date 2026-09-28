@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.CrossConsistency
-import MIPRE.Foundations.PVM
+module
+public import MIPRE.Foundations.CrossConsistency
+public import MIPRE.Foundations.PVM
+
+@[expose] public section
 
 /-!
 # The expanded state, and an inert ancilla
@@ -327,5 +330,7 @@ theorem isPVM_povm_kron {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fintype �
   isPVM_kron hP hQ
 
 end MIPRE
+
+end
 
 end

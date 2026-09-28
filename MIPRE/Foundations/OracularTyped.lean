@@ -3,11 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.OracularTensor
-import MIPRE.Foundations.OracularComplete
-import MIPRE.Foundations.CL.DetypingGame
-import MIPRE.Foundations.GapCompression
-import MIPRE.Foundations.Halting.Descriptions
+module
+public import MIPRE.Foundations.OracularTensor
+public import MIPRE.Foundations.OracularComplete
+public import MIPRE.Foundations.CL.DetypingGame
+public import MIPRE.Foundations.GapCompression
+public import MIPRE.Foundations.Halting.Descriptions
+
+@[expose] public section
 
 /-!
 # The typed oracularized game
@@ -451,3 +454,5 @@ theorem exists_oraclePred_perfectPCC (n B T : ℕ) (hT : 8 * B + 3 ≤ T)
 end Verifier
 
 end MIPRE
+
+end

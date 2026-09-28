@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.AmbientVerifierTransport
-import MIPRE.Background.Introspection.DecisionKernelCanonical
+module
+public import MIPRE.Background.Introspection.AmbientVerifierTransport
+public import MIPRE.Background.Introspection.DecisionKernelCanonical
+
+@[expose] public section
 
 /-! # Restricting the output verifier to its actual typed kernel
 
@@ -113,3 +116,5 @@ theorem exists_raw_failure_le (c : ℕ) (hc : 1 ≤ c) (he : Even c)
   exact hr.trans (mul_le_mul_of_nonneg_left (by linarith) detypingLoss_nonneg)
 
 end MIPRE.Introspection.DecisionCompiler
+
+end

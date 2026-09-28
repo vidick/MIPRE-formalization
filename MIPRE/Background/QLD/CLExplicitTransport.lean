@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.CLExplicitSeed
+module
+public import MIPRE.Background.QLD.CLExplicitSeed
+
+@[expose] public section
 
 /-! # Equivalences between explicit and legacy Pauli question contents
 
@@ -111,3 +114,5 @@ theorem binaryOutputPermutation_presentation (hm : m ∣ Fintype.card F)
 
 end Binary
 end MIPRE.QLD.PauliCL.ExplicitSeed
+
+end

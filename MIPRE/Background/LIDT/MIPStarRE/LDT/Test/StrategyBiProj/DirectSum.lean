@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyRole.Core
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyRole.Core
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -614,14 +617,14 @@ theorem localDirectSumBlock_finset_sum {α ιA ιB : Type*} (s : Finset α)
       rw [Finset.sum_insert ha, Finset.sum_insert ha, Finset.sum_insert ha, ih]
       rw [localDirectSumBlock_add]
 
-private def roleBlockFamily {ιA ιB : Type*}
+def roleBlockFamily {ιA ιB : Type*}
     (A B : MIPStarRE.Quantum.Op (LocalCarrierSum ιA ιB)) :
     Role → MIPStarRE.Quantum.Op (LocalCarrierSum ιA ιB)
   | Role.A => A
   | Role.B => B
 
 /-- The role-register block diagonal as a ring homomorphism. -/
-private noncomputable def roleBlockRingHom {ιA ιB : Type*}
+noncomputable def roleBlockRingHom {ιA ιB : Type*}
     [Fintype ιA] [Fintype ιB] [DecidableEq ιA] [DecidableEq ιB] :
     (Role → MIPStarRE.Quantum.Op (LocalCarrierSum ιA ιB)) →+*
       MIPStarRE.Quantum.Op (RoleRegisterLocal ιA ιB) := by
@@ -748,3 +751,5 @@ theorem roleBlock_finset_sum {α ιA ιB : Type*} (s : Finset α)
 end ProjStrat
 
 end MIPStarRE.LDT
+
+end

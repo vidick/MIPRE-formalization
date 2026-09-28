@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/Transport/EvaluationSpecialization.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.OverlapTwo
-import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.Core
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.OverlapTwo
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.Core
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -37,7 +40,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 /-- Postprocessing a `leftPlacedOpFamily` of a bilinear product equals
 the `leftPlacedOpFamily` of the product of postprocessed submeasurements,
 for any binary operation `g` that factors over finite sums. -/
-private lemma postprocess_leftPlacedOpFamily_product_outcome
+lemma postprocess_leftPlacedOpFamily_product_outcome
     {α₁ α₂ β₁ β₂ : Type*}
     [Fintype α₁] [Fintype α₂] [Fintype β₁] [Fintype β₂]
     (A : SubMeas α₁ ι) (B : SubMeas α₂ ι)
@@ -75,7 +78,7 @@ private lemma postprocess_leftPlacedOpFamily_product_outcome
 
 /-- The evaluated-from-full-slice ordered product equals the
 evaluated-slice ordered product at each question-outcome pair. -/
-private lemma evaluatedFromFullSliceProductLeft_outcome_eq
+lemma evaluatedFromFullSliceProductLeft_outcome_eq
     (params : Parameters) [FieldModel params.q] (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι)
     (q : EvaluatedSliceQuestion params)
@@ -104,7 +107,7 @@ private lemma evaluatedFromFullSliceProductLeft_outcome_eq
 
 /-- The evaluated-from-full-slice reversed product equals the
 evaluated-slice reversed product at each question-outcome pair. -/
-private lemma evaluatedFromFullSliceProductRight_outcome_eq
+lemma evaluatedFromFullSliceProductRight_outcome_eq
     (params : Parameters) [FieldModel params.q] (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι)
     (q : EvaluatedSliceQuestion params)
@@ -184,3 +187,5 @@ lemma evaluatedSliceCommutation_of_evaluationSpecialization
       hEval
 
 end MIPStarRE.LDT.Commutativity
+
+end

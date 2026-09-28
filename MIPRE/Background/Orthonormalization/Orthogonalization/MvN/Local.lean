@@ -16,16 +16,20 @@ on `M` (which replaces Cauchy–Schwarz in the limiting arguments), and
 Lemma 4.1 of the paper in the form "`φ` of bounded strongly convergent nets of
 `M` converges" (`TendstoStrongBdd` and `IsNormalOn`). Proof-side only.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Normal
-import MIPRE.Background.Orthonormalization.Orthogonalization.Basic
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Glue
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.StateOnM
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Defs
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Normal
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Basic
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Glue
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.StateOnM
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Defs
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.MvN
 
@@ -146,3 +150,5 @@ theorem finset_sum {γ : Type*} (s : Finset γ) {T : γ → κ → H →L[ℂ] H
     exact (h j (Finset.mem_insert_self j s)).add (ih fun k hk => h k (Finset.mem_insert_of_mem hk))
 
 end CommutingRepetition.VN.TendstoStrongBdd
+
+end

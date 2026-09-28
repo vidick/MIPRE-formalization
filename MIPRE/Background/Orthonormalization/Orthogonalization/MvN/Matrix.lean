@@ -19,14 +19,18 @@ membership criterion `X ∈ M_n(M) ↔ ∀ i j, X_{ij} ∈ M` for the matrix alg
 (`IsCenterValuedTrace.equiv_of_eq_matrix`) consumes. No statement of the
 paper is made here.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
-import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Blocks
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Defs
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
+public import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Blocks
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Defs
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.MvN
 
@@ -329,3 +333,5 @@ theorem sum_entry_star_mul_self_eq {M : VonNeumannAlgebra H} {n : ℕ}
   sum_entry_mul_eq E hE (fun i j => by rw [entry_star]; exact star_mem (hV j i)) hV
 
 end Orthogonalization.MvN
+
+end

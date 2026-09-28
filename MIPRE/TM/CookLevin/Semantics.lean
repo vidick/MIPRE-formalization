@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.Tableau
+module
+public import MIPRE.TM.CookLevin.Tableau
+
+@[expose] public section
 
 /-!
 # The windows of a run are locally consistent
@@ -473,3 +476,5 @@ theorem locallyConsistent_localCfgOf (c : Cfg i w Symbol State input) (js : Tape
 end
 
 end MIPRE.TM.CookLevin
+
+end

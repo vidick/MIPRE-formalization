@@ -2,10 +2,14 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Cost.Encoding
-import MIPRE.Foundations.LowDegree.Encoding
-import Mathlib.Algebra.Polynomial.Monic
-import Mathlib.Data.ZMod.Basic
+module
+public import MIPRE.Foundations.Cost.Encoding
+public import MIPRE.Foundations.LowDegree.Encoding
+public import Mathlib.Algebra.Polynomial.Monic
+public import Mathlib.Data.ZMod.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Binary coefficient representations
@@ -78,3 +82,5 @@ theorem normalize_monic (l : BitStr) (h : (polyOfBits l).Monic) :
 end BinaryPolynomial
 
 end MIPRE.LowDegree
+
+end

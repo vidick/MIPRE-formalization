@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.Honest
-import MIPRE.Background.LIDT.PresentationEmbed
+module
+public import MIPRE.Background.AnswerReduction.Honest
+public import MIPRE.Background.LIDT.PresentationEmbed
+
+@[expose] public section
 
 /-!
 # Soundness of answer reduction: the low-degree test inside the predicate
@@ -161,5 +164,7 @@ theorem cl_accepts_of_accepts6 {i : Fin 6} (hi : (i : ℕ) = 5) (τ τ' : Ty) {x
         cases τ <;> cases τ' <;> simp_all [q6, Regs.sampleOf, Sample.question, subtests]
 
 end MIPRE.AnswerReduction
+
+end
 
 end

@@ -12,11 +12,15 @@ development: absolute values of nested sums, and the telescoping product
 perturbation used by the payoff-approximation arguments
 (07_main_theorem.tex, eq payoff-rational-approximation).
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -139,3 +143,5 @@ theorem abs_prod_sub_prod_le {ι : Type*} [DecidableEq ι] (s : Finset ι)
       _ = |f j - g j| + ∑ i ∈ s, |f i - g i| := by ring
 
 end CommutingRepetition
+
+end

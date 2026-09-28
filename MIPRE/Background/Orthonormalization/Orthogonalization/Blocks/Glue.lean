@@ -18,13 +18,17 @@ mass zero get an arbitrary PVM (their contribution vanishes by the zero-mass
 lemma), and the pieces recombine to `< 9 ε` because the cross terms of
 `∑_j (a_i z_j − p^j_i)` vanish. Proof-side only.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Local
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.StateOnM
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Local
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.StateOnM
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.Blocks
 
@@ -258,3 +262,5 @@ theorem orthAt_one_of_blocks (M : VonNeumannAlgebra H) {κ : Type*} [Fintype κ]
     (fun _ _ _ _ => trivial) fun j => (orthAtP_true_iff M (z j) ι).mpr (h j))
 
 end Orthogonalization.Blocks
+
+end

@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Repeat.Sampler
-import MIPRE.Foundations.Repeat.Bits
-import MIPRE.Foundations.Cost.Universal
-import MIPRE.Foundations.Pipeline.Repetition
+module
+public import MIPRE.Foundations.Repeat.Sampler
+public import MIPRE.Foundations.Repeat.Bits
+public import MIPRE.Foundations.Cost.Universal
+public import MIPRE.Foundations.Pipeline.Repetition
+
+@[expose] public section
 
 /-!
 # The repeated sampler
@@ -523,3 +526,5 @@ theorem repSampler_cl (lam tau n : ℕ) (w : Player) :
       CLFun.famSum finProdFinEquiv ℓ fun _ : Fin (Repetition.reps lam tau n) => S.cl n w := rfl
 
 end MIPRE.Repeat
+
+end

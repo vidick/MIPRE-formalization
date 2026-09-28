@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Product
+module
+public import MIPRE.Background.QLD.Product
+
+@[expose] public section
 
 /-!
 # The combining map and the padded line measurement
@@ -653,3 +656,5 @@ theorem sum_filter_padLineMats (hm4 : 4 * m ∣ Fintype.card F) (ty : CL.Ty)
 end POVM
 
 end MIPRE.QLD
+
+end

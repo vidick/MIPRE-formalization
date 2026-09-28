@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SourcePaddingQueryProg
-import MIPRE.Foundations.Introspection.AuxiliarySourceBudget
-import MIPRE.Foundations.Introspection.SourceCompilerCorrect
+module
+public import MIPRE.Foundations.Introspection.SourcePaddingQueryProg
+public import MIPRE.Foundations.Introspection.AuxiliarySourceBudget
+public import MIPRE.Foundations.Introspection.SourceCompilerCorrect
+
+@[expose] public section
 
 /-! # Legal source calls implement the padded query interface
 
@@ -99,4 +102,6 @@ theorem matrixFromContext_legal (U : ClockedUniversalMachine) {ℓ lam n Q : ℕ
   exact linear_legal U V hV hn hQ w j hj hjR u y hu
 
 end MIPRE.Introspection.SourcePadding.Program
+end
+
 end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestHidingProducts
-import MIPRE.Foundations.Introspection.HonestHidingChecks
+module
+public import MIPRE.Foundations.Introspection.HonestHidingProducts
+public import MIPRE.Foundations.Introspection.HonestHidingChecks
+
+@[expose] public section
 
 /-! # Perfect acceptance along the honest adaptive hiding chain
 
@@ -23,7 +26,7 @@ set_option linter.unusedSectionVars false
 variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
   [Fintype ι] [DecidableEq ι] {ℓ : ℕ}
 
-private theorem exists_entry_ne_zero {I : Type*} (M : Matrix I I ℂ) (h : M ≠ 0) :
+theorem exists_entry_ne_zero {I : Type*} (M : Matrix I I ℂ) (h : M ≠ 0) :
     ∃ i j, M i j ≠ 0 := by
   by_contra hn
   push Not at hn
@@ -165,3 +168,5 @@ theorem hideOp_reject_read_zero {A : Type*} (P : CL.CLFun F ι ℓ) (k : ℕ) (h
     (by simpa only [hideOp, readOp, registerOp_mul] using hn)
 
 end MIPRE.Introspection.Honest
+
+end

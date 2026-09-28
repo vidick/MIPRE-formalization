@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Game
-import MIPRE.Foundations.CrossConsistency
+module
+public import MIPRE.Background.QLD.Game
+public import MIPRE.Foundations.CrossConsistency
+
+@[expose] public section
 
 /-!
 # What winning the Pauli basis test implies
@@ -505,5 +508,7 @@ theorem item_ms_consistency_Z (hψ : star ψ ⬝ᵥ ψ = 1)
 end Items
 
 end MIPRE.QLD
+
+end
 
 end

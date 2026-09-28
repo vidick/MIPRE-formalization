@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ValueStability
+module
+public import MIPRE.Foundations.Introspection.ValueStability
+
+@[expose] public section
 
 /-! # Transporting a strategy through local isometries
 
@@ -244,4 +247,6 @@ theorem isometricState_map_bob_deviation {C : Type*} [Fintype C]
 
 end Bipartite
 end MIPRE.Introspection
+end
+
 end

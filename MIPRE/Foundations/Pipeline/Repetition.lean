@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Pipeline.Budget
-import MIPRE.Foundations.GapCompression
+module
+public import MIPRE.Foundations.Pipeline.Budget
+public import MIPRE.Foundations.GapCompression
+
+@[expose] public section
 
 /-!
 # Parallel repetition of normal form verifiers, as a hypothesis
@@ -131,3 +134,5 @@ structure Repetition (ℓ : ℕ) where
       Repetition.soundBound c ε (Repetition.reps lam tau n) (Repetition.parseBound lam beta n)
 
 end MIPRE
+
+end

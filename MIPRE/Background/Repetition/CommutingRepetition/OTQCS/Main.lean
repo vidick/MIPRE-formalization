@@ -27,13 +27,17 @@ description "obtained from N by finitely many normalized matrix
 amplifications and tensor powers" is a property of the construction that
 nothing downstream consumes; recorded in DIFFERENCES.md).
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.PairLaw
-import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Assembly
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.PairLaw
+public import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Assembly
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -354,3 +358,5 @@ theorem otqcs_sampling :
     _ ≤ C * (δ + ξ) := by rw [hCdef]; nlinarith
 
 end CommutingRepetition
+
+end

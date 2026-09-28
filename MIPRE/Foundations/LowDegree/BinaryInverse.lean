@@ -2,10 +2,14 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Cost.Reader
-import MIPRE.Foundations.LowDegree.BinaryPower
-import MIPRE.Foundations.SAT.QuotientField
-import Mathlib.FieldTheory.Finite.Basic
+module
+public import MIPRE.Foundations.Cost.Reader
+public import MIPRE.Foundations.LowDegree.BinaryPower
+public import MIPRE.Foundations.SAT.QuotientField
+public import Mathlib.FieldTheory.Finite.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Uniform inversion in the Shoup polynomial-basis field -/
 
@@ -117,3 +121,5 @@ theorem shoupInvProg_time_le : ∃ R : Polynomial ℕ, ∀ k : ℕ, ∀ a : BitS
   simpa using polynomial_eval_mono shoupInvProg.timeBound hsize
 
 end MIPRE.SAT
+
+end

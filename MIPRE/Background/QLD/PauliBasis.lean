@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Win
-import MIPRE.Foundations.Pasting
-import MIPRE.Background.QLD.Simul
+module
+public import MIPRE.Background.QLD.Win
+public import MIPRE.Foundations.Pasting
+public import MIPRE.Background.QLD.Simul
+
+@[expose] public section
 
 /-!
 # The point measurement and the Pauli basis reading, on one party
@@ -353,5 +356,7 @@ theorem sum_normSq_hat_point_sub_pauli_le (hψ : star ψ ⬝ᵥ ψ = 1)
   exact hbare
 
 end MIPRE.QLD
+
+end
 
 end

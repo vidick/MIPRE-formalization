@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ValueStability
-import MIPRE.Foundations.POVMMix
+module
+public import MIPRE.Foundations.Introspection.ValueStability
+public import MIPRE.Foundations.POVMMix
+
+@[expose] public section
 
 /-! # Game-value bounds for actual question-indexed replacements
 
@@ -119,4 +122,6 @@ theorem povmValue_stability_at [DecidableEq X]
       _ = δ := by simp only [← Finset.sum_mul, G.μ_sum_one, one_mul]
 
 end MIPRE.Introspection
+end
+
 end

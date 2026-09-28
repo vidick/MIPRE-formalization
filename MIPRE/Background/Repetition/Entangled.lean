@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition
-import MIPRE.Background.Repetition.Direct
-import MIPRE.Foundations.Dilation
+module
+public import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition
+public import MIPRE.Background.Repetition.Direct
+public import MIPRE.Foundations.Dilation
+
+@[expose] public section
 
 /-!
 # Direct parallel repetition for entangled strategies
@@ -459,3 +462,5 @@ theorem quantumValue_repeat_le :
   exact h (toTP G) hA hB hε n hn
 
 end MIPRE.Repetition
+
+end

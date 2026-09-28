@@ -2,9 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.CircuitArithmetization
-import MIPRE.Foundations.LowDegree.FiniteVariables
-import Mathlib.Logic.Equiv.Fin.Basic
+module
+public import MIPRE.Foundations.SAT.CircuitArithmetization
+public import MIPRE.Foundations.LowDegree.FiniteVariables
+public import Mathlib.Logic.Equiv.Fin.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Circuit arithmetization on exactly the input and gate variables
@@ -131,5 +135,7 @@ theorem eval_iff_exists_finiteArith (C : Circuit) (hC : C.WellFormed) (x : â„• â
     exact hv
 
 end MIPRE.SAT.Circuit
+
+end
 
 end

@@ -5,10 +5,13 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MakingMeasurementsProjective/Orthonormalization/Completion.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Tactic.LdtSimp
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.RestrictSome
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Tactic.LdtSimp
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.RestrictSome
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -207,3 +210,5 @@ end Completion
 end Orthonormalization
 
 end MIPStarRE.LDT.MakingMeasurementsProjective
+
+end

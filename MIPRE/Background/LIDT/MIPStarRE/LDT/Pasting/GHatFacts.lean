@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/GHatFacts.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.CommutingWithG.Incomplete
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.CommutingWithG.Incomplete
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -29,7 +32,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- The pointwise `\widehat G` pair product splits into the complete-complete,
 complete-incomplete, incomplete-complete, and incomplete-incomplete quadrants. -/
-private lemma gHatPairProduct_qSDDOp_decompose
+lemma gHatPairProduct_qSDDOp_decompose
     (params : Parameters)
     [FieldModel params.q]
     (ψbi : QuantumState (ι × ι))
@@ -570,3 +573,5 @@ theorem gHatFacts_ofComMainAndSelfConsistency
     hselfComplete hselfIncomplete hcommComplete hcommIncomplete
 
 end MIPStarRE.LDT.Pasting
+
+end

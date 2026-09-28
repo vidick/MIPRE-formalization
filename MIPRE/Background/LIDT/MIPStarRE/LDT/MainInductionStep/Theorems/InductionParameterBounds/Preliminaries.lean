@@ -5,9 +5,13 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/Preliminaries.lean
 -/
-import Mathlib.Analysis.Convex.SpecificFunctions.Pow
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Statements
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures
+module
+public import Mathlib.Analysis.Convex.SpecificFunctions.Pow
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Statements
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures
+public import MIPRE.Tactics
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -174,3 +178,5 @@ lemma min_eps_one_le_mainInductionError_of_m_eq_one
             simp [mainInductionError, mainInductionNu, hm1]
 
 end MIPStarRE.LDT.MainInductionStep
+
+end

@@ -3,11 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.OracularSampler
-import MIPRE.Foundations.CL.DetypingClock
-import MIPRE.Foundations.CL.DetypingDeciderGame
-import MIPRE.Foundations.Halting.Serial
-import MIPRE.Foundations.Cost.Kleene
+module
+public import MIPRE.Foundations.OracularSampler
+public import MIPRE.Foundations.CL.DetypingClock
+public import MIPRE.Foundations.CL.DetypingDeciderGame
+public import MIPRE.Foundations.Halting.Serial
+public import MIPRE.Foundations.Cost.Kleene
+
+@[expose] public section
 
 /-!
 # The typed oracularized decider
@@ -1126,3 +1129,5 @@ end Typed
 end OracleDecider
 
 end MIPRE
+
+end

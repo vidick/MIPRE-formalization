@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Tsirelson.Algebra
+module
+public import MIPRE.Foundations.Tsirelson.Algebra
+
+@[expose] public section
 
 /-!
 # The Positivstellensatz for the commuting-operator value
@@ -59,7 +62,7 @@ namespace Tsirelson
 variable {X Y A B : Type} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 
 /-- A cone state takes the value `r - Re L (W_G)` at `r·1 - W_G`, in real part. -/
-private theorem re_map_smul_one_sub_gamePoly {L : NCPoly (Gen X Y A B) →ₗ[ℂ] ℂ}
+theorem re_map_smul_one_sub_gamePoly {L : NCPoly (Gen X Y A B) →ₗ[ℂ] ℂ}
     (hL : IsConeState L) (G : Game X Y A B) (r : ℝ) :
     (L (r • (1 : NCPoly (Gen X Y A B)) - gamePoly G)).re = r - (L (gamePoly G)).re := by
   have hr : r • (1 : NCPoly (Gen X Y A B)) = ((r : ℝ) : ℂ) • 1 := rfl
@@ -139,3 +142,5 @@ theorem isGLB_commutingOperatorValue [Nonempty A] [Nonempty B] (G : Game X Y A B
 end Tsirelson
 
 end MIPRE
+
+end

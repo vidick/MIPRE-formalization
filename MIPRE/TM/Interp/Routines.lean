@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.Interp.Reach
+module
+public import MIPRE.TM.Interp.Reach
+
+@[expose] public section
 
 /-!
 # The routines: specifications of the instructions
@@ -1055,3 +1058,5 @@ theorem exec_rewindInput {k : ProgId} {pc : Fin maxPc} {j : IT}
     hst, (hu.trans hu').mono (by simp) (by simp), hpos'⟩
 
 end MIPRE.TM.Interp
+
+end

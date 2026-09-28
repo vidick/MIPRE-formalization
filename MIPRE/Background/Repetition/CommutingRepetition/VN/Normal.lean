@@ -16,12 +16,16 @@ that the Haagerup expectations `Φ_n(x) → x` are fed into.)  Functionals of
 trace-class form (`Density.IsTraceClassFunctional`, stage E1) are normal by
 dominated convergence.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.FaithfulState
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.FaithfulState
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -174,3 +178,5 @@ theorem isNormalFun_of_traceClass {φ : (H →L[ℂ] H) →ₗ[ℂ] ℂ}
 end VN
 
 end CommutingRepetition
+
+end

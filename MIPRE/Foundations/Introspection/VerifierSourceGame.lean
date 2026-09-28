@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryDecisionSoundness
-import MIPRE.Foundations.Introspection.SourcePaddingValue
-import MIPRE.Foundations.Introspection.PauliSamplerParams
-import MIPRE.Foundations.VerifierValue
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryDecisionSoundness
+public import MIPRE.Foundations.Introspection.SourcePaddingValue
+public import MIPRE.Foundations.Introspection.PauliSamplerParams
+public import MIPRE.Foundations.VerifierValue
+
+@[expose] public section
 
 /-! # The bounded verifier as the source of introspection
 
@@ -78,3 +81,5 @@ theorem padded_quantumValue_le {n Q B : ℕ} (V : Verifier 7)
   exact h
 
 end MIPRE.Introspection.VerifierSource
+
+end

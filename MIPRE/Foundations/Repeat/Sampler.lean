@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Repeat.MapLoop
-import MIPRE.Foundations.Cost.Toolkit
-import MIPRE.Foundations.CL.Sampler
+module
+public import MIPRE.Foundations.Repeat.MapLoop
+public import MIPRE.Foundations.Cost.Toolkit
+public import MIPRE.Foundations.CL.Sampler
+
+@[expose] public section
 
 /-!
 # The program of the repeated sampler
@@ -382,3 +385,5 @@ theorem coreDispatch_lock {univ : Prog} (hU : univ.WellScoped 1) (sD lD tD nD kâ
 end Prog
 
 end MIPRE.Cost
+
+end

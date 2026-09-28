@@ -30,15 +30,19 @@ node statements of slabs α–δ, following the proof of thm otqcs in
 
 All declarations here are proof-side helpers; none is a manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Compile
-import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Bands
-import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.PairLaw
-import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Vector
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Compile
+public import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Bands
+public import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.PairLaw
+public import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Vector
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -553,3 +557,5 @@ noncomputable def trivialResource (S T A B : Type) [Fintype A] [Fintype B]
   F_sum := by intro t; simp [Finset.sum_ite_eq']
 
 end CommutingRepetition
+
+end

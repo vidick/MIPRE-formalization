@@ -18,14 +18,18 @@ probability, both marginals, the rectangle identity
 product formula `∫ ψₙ(s) ψₙ(t) dν = ⟪ψₙ(Eₓ) Ω, ψₙ(E_y) Ω⟫`). The structures
 themselves are assembled in OTQCS/JointMeasure.lean, which imports this file.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.ModulusStability
-import MIPRE.Background.Repetition.CommutingRepetition.VN.JointSpectral
-import MIPRE.Background.Repetition.CommutingRepetition.VN.ConjJCalc
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.ModulusStability
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.JointSpectral
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.ConjJCalc
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -211,3 +215,5 @@ theorem crossMoment :
 end GraphMod
 
 end CommutingRepetition
+
+end

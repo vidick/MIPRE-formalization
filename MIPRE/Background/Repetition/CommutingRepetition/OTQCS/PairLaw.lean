@@ -15,12 +15,16 @@ answer law `q_{st}(a,b) = ⟪u, L(E) R(F) u⟫` with its probability-law facts, 
 `SamplingResource`. Anchors: 06_otqcs.tex, thm otqcs items 1–3, the displays
 defining `q_{st}`, `q̂_{st}` and `Δ`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Interface
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Interface
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -141,3 +145,5 @@ noncomputable def answerLaw (R : SamplingResource S T A B) :
 end SamplingResource
 
 end CommutingRepetition
+
+end

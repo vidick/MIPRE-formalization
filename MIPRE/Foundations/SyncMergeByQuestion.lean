@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.GameTransportByQuestion
+module
+public import MIPRE.Foundations.GameTransportByQuestion
+
+@[expose] public section
 
 /-! # Perfect PCC strategies under question-dependent answer encoding
 
@@ -66,3 +69,5 @@ theorem perfect_mergeAnswersByQuestion (S : SyncStrategy G) (H : SynchronousGame
   exact S.re_eq_zero_of_value_eq_one hv hxy hd
 
 end MIPRE.SyncStrategy
+
+end

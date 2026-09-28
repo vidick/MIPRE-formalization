@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.OracularDecider
+module
+public import MIPRE.Foundations.OracularDecider
+
+@[expose] public section
 
 /-!
 # The running times of the typed oracularized decider
@@ -735,3 +738,5 @@ theorem exists_typedPredicate_perfectPCC_within (ℓ : ℕ) : ∃ c m e, ∀ (V 
 end OracleDecider
 
 end MIPRE
+
+end

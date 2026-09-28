@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.Commutation
-import MIPRE.Foundations.PVM
+module
+public import MIPRE.Foundations.Introspection.Commutation
+public import MIPRE.Foundations.PVM
+
+@[expose] public section
 
 /-! # Projective sampling and joint hiding measurements -/
 
@@ -53,5 +56,7 @@ theorem sampling_hiding_isPVM
     (linear_measurement_isPVM wX isWeylFamily_wX R) (linear_measurements_commute L R hLR)
 
 end MIPRE.Introspection
+
+end
 
 end

@@ -42,12 +42,16 @@ Encoding decisions (for the fidelity review):
   hermitian traces), so this is the strong form of the manuscript's
   numerical displays.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Interface
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Interface
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -83,3 +87,5 @@ structure ResolverArena (M : StdTracialAlgebra.{0})
 
 
 end CommutingRepetition
+
+end

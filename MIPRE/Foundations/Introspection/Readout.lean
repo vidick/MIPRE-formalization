@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.RegisterEPR
-import MIPRE.Foundations.SampledGame
-import MIPRE.Foundations.CL.Closure
+module
+public import MIPRE.Foundations.Introspection.RegisterEPR
+public import MIPRE.Foundations.SampledGame
+public import MIPRE.Foundations.CL.Closure
+
+@[expose] public section
 
 /-! # Exact classical readout of an EPR register
 
@@ -114,5 +117,7 @@ theorem sampled_dist_eq_clDist {F ι : Type*} [Fintype F] [DecidableEq F]
   simp
 
 end MIPRE.Introspection
+
+end
 
 end

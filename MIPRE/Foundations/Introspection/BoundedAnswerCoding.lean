@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ParsedPauliTransport
-import MIPRE.Foundations.Introspection.AuxiliaryAnswerCoding
-import MIPRE.Foundations.Verifier
+module
+public import MIPRE.Foundations.Introspection.ParsedPauliTransport
+public import MIPRE.Foundations.Introspection.AuxiliaryAnswerCoding
+public import MIPRE.Foundations.Verifier
+
+@[expose] public section
 
 /-! # Finite original-answer payloads for the compiled introspection game -/
 
@@ -66,3 +69,5 @@ theorem payloadBound_mapAnswer_val (R : ℕ) (a : ParsedAnswer V (Verifier.Answe
   | pair y a | read y yp a => exact a.property
 
 end MIPRE.Introspection.AuxiliaryAnswer
+
+end

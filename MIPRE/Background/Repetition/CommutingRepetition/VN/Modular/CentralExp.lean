@@ -13,15 +13,19 @@ separating), the transport of the standard subspace `𝒦(M, ξ) = e^{-a'/2} �
 unitary groups `e^{itE}` with the factorization `e^{it(b-a)} = e^{itb} e^{-ita}` for commuting
 `a, b` (via the joint Borel calculus).
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.FourierConverse
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Smearing
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Uniqueness
-import MIPRE.Background.Repetition.CommutingRepetition.VN.JointBorel
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.FourierConverse
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Smearing
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Uniqueness
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.JointBorel
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -573,3 +577,5 @@ end Modular
 end VN
 
 end CommutingRepetition
+
+end

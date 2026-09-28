@@ -5,11 +5,15 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Rows.lean
 -/
-import Mathlib.Data.Fintype.EquivFin
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.Core
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.LowRank
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.QCompleteness
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.AlmostProjective
+module
+public import Mathlib.Data.Fintype.EquivFin
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.Core
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.LowRank
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.QCompleteness
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.AlmostProjective
+public import MIPRE.Tactics
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -147,7 +151,7 @@ theorem orthonormal_normalized_matrix_image_of_gram_eigenvectors
 
 /-- The eigenvector basis of a Hermitian Gram operator remains an eigenvector
 family after the Gram operator is written as `Xᴴ * X`. -/
-private theorem toEuclideanLin_gram_eigenvectorBasis
+theorem toEuclideanLin_gram_eigenvectorBasis
     {μ ι : Type*}
     [Fintype μ] [Fintype ι] [DecidableEq ι]
     (X : Matrix μ ι ℂ) (Q : Matrix ι ι ℂ)
@@ -565,3 +569,5 @@ theorem positive_gram_spectrum_card_le_rows
 end
 
 end MIPStarRE.LDT.MakingMeasurementsProjective
+
+end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Cost.Reader
-import MIPRE.Foundations.Cost.Unary
+module
+public import MIPRE.Foundations.Cost.Reader
+public import MIPRE.Foundations.Cost.Unary
+
+@[expose] public section
 
 /-! # Encoded size as an ambient polynomial-time program -/
 
@@ -29,3 +32,5 @@ noncomputable def encodedSizeU (α : Type*) [SizedEncoding α] : PolyTimeFun α 
     encodedSizeU α a = unary (esize a) := rfl
 
 end MIPRE.Cost.PolyTimeFun
+
+end

@@ -5,8 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/Quantum/FiniteConicDuality.lean
 -/
-import Mathlib.Analysis.Convex.Cone.Dual
-import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.PiProd
+module
+public import Mathlib.Analysis.Convex.Cone.Dual
+public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.PiProd
+public import MIPRE.Tactics
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -242,3 +246,5 @@ theorem conic_primalValue_eq_dualValue_of_fiber_max_dual_min
   exact le_antisymm hweak hd_le_p
 
 end MIPStarRE.Quantum
+
+end

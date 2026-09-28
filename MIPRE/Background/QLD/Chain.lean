@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Mirror
-import MIPRE.Background.QLD.SwapState
+module
+public import MIPRE.Background.QLD.Mirror
+public import MIPRE.Background.QLD.SwapState
+
+@[expose] public section
 
 /-!
 # The pulling chain's index algebra
@@ -2504,5 +2507,7 @@ end MirrorSimul
 end Physical
 
 end MIPRE.QLD
+
+end
 
 end

@@ -41,6 +41,9 @@ import sys
 import textwrap
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from modularize import modularize_tree  # noqa: E402
+
 URL = "https://github.com/lukasliehr/MIPRE"
 DEST = Path("MIPRE/Background/LiehrTsirelson/Upstream")
 UPSTREAM_PREFIX = "Tsirelson"
@@ -202,7 +205,8 @@ def main() -> None:
     repo_root = Path(__file__).resolve().parent.parent
     if args.apply_fixes:
         n = apply_fixes(repo_root / DEST)
-        print(f"{n} fixes applied; next: lake build")
+        m = modularize_tree(repo_root / DEST)
+        print(f"{n} fixes applied, module headers added to {m} files; next: lake build")
         return
     if not args.source or not args.date:
         ap.error("--source and --date are required unless --apply-fixes is given")
@@ -239,6 +243,9 @@ def main() -> None:
         target.write_text(head + text, encoding="utf-8", newline="\n")
 
     fixed = apply_fixes(dest)
+    # Last, so that the fixes see upstream's file shapes: every file becomes a module
+    # (`scripts/modularize.py`, the recorded mechanism for the whole repository).
+    modularized = modularize_tree(dest)
 
     generated = "\n".join([
         BEGIN_MARK,
@@ -251,6 +258,9 @@ def main() -> None:
         "- `set_option autoImplicit true` inserted: no (not needed)",
         f"- Recorded compile fixes applied: {fixed} (listed under \"Local deviations from "
         "upstream\")",
+        f"- Module system: {modularized} files given the `module` header, `public import`s, an "
+        "`@[expose] public section` and no `private` definitions by `scripts/modularize.py` "
+        "(Palomar requires it; `planning/palomar.md`)",
         END_MARK,
     ])
     refresh_readme(readme, generated)

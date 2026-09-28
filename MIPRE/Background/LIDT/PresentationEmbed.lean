@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Presentation
-import MIPRE.Background.LIDT.CLHonest
+module
+public import MIPRE.Background.LIDT.Presentation
+public import MIPRE.Background.LIDT.CLHonest
+
+@[expose] public section
 
 /-!
 # The presentation's output is a function of its question
@@ -160,5 +163,7 @@ theorem sum_sampleOf_retype {M : Type*} [AddCommMonoid M] (g : Sample F n → M)
   rfl
 
 end MIPRE.LIDT.CL.Regs
+
+end
 
 end

@@ -22,12 +22,16 @@ other direction: `tracialDensity` discharges the standalone file's own
 hypothesis. The axiom gate (`scripts/AxiomGate.lean`) checks both theorems
 here together with the roots. Nothing here is a manuscript statement.
 -/
-import MIPRE.Background.Repetition.CommutingRepetition.Statement
-import MIPRE.Background.Repetition.CommutingRepetition.MainTheorem.Main
+module
+public import MIPRE.Background.Repetition.CommutingRepetition.Statement
+public import MIPRE.Background.Repetition.CommutingRepetition.MainTheorem.Main
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace MainStatement
 
@@ -35,7 +39,7 @@ section Bridge
 
 variable {X Y A B : Type} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 
-private def toGame (G : Game X Y A B) : CommutingRepetition.Game X Y A B where
+def toGame (G : Game X Y A B) : CommutingRepetition.Game X Y A B where
   questionWeight := G.questionWeight
   weight_nonneg := G.weight_nonneg
   weight_normalized := G.weight_normalized
@@ -43,7 +47,7 @@ private def toGame (G : Game X Y A B) : CommutingRepetition.Game X Y A B where
   payoff_nonneg := G.payoff_nonneg
   payoff_le_one := G.payoff_le_one
 
-private def toStrategy (S : CommutingStrategy.{0} X Y A B) :
+def toStrategy (S : CommutingStrategy.{0} X Y A B) :
     CommutingRepetition.CommutingStrategy.{0} X Y A B where
   H := S.H
   ψ := S.ψ
@@ -56,7 +60,7 @@ private def toStrategy (S : CommutingStrategy.{0} X Y A B) :
   F_sum := S.F_sum
   commutes := S.commutes
 
-private def ofStrategy (S : CommutingRepetition.CommutingStrategy.{0} X Y A B) :
+def ofStrategy (S : CommutingRepetition.CommutingStrategy.{0} X Y A B) :
     CommutingStrategy.{0} X Y A B where
   H := S.H
   ψ := S.ψ
@@ -70,7 +74,7 @@ private def ofStrategy (S : CommutingRepetition.CommutingStrategy.{0} X Y A B) :
   commutes := S.commutes
 
 /-- The two suprema defining `ω^co` range over the same set. -/
-private theorem omegaCO_eq (G : Game X Y A B) :
+theorem omegaCO_eq (G : Game X Y A B) :
     G.omegaCO = (toGame G).omegaCO := by
   unfold Game.omegaCO CommutingRepetition.Game.omegaCO
   congr 1
@@ -81,7 +85,7 @@ private theorem omegaCO_eq (G : Game X Y A B) :
   · rintro ⟨S, rfl⟩
     exact ⟨ofStrategy S, rfl⟩
 
-private def ofAlgebra (M : CommutingRepetition.StdTracialAlgebra.{0}) :
+def ofAlgebra (M : CommutingRepetition.StdTracialAlgebra.{0}) :
     StdTracialAlgebra.{0} where
   A := M.A
   τ := M.τ
@@ -98,7 +102,7 @@ private def ofAlgebra (M : CommutingRepetition.StdTracialAlgebra.{0}) :
   R_apply := M.R_apply
   LR_commute := M.LR_commute
 
-private def ofEmbeddable {Xc Ac : Type} [Fintype Xc] [Fintype Ac]
+def ofEmbeddable {Xc Ac : Type} [Fintype Xc] [Fintype Ac]
     (q : CommutingRepetition.TraciallyEmbeddableCorrelation Xc Ac) :
     TraciallyEmbeddableCorrelation Xc Ac where
   M := ofAlgebra q.M
@@ -139,3 +143,5 @@ theorem uniform_parallel_repetition : UniformParallelRepetition := by
   exact h X Y A B (toGame G) n hn
 
 end MainStatement
+
+end

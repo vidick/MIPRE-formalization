@@ -3,13 +3,17 @@ Copyright (c) 2026 Sean Perazzolo. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sean Perazzolo
 -/
-import MIPRE.LCS.Basic
-import MIPRE.LCS.Observable
-import MIPRE.LCS.Common
-import MIPRE.LCS.Strategy.ProjectorStrategy
-import Mathlib.Order.Fin.Basic
-import Mathlib.Tactic.Abel
-import Mathlib.Tactic.Module
+module
+public import MIPRE.LCS.Basic
+public import MIPRE.LCS.Observable
+public import MIPRE.LCS.Common
+public import MIPRE.LCS.Strategy.ProjectorStrategy
+public import Mathlib.Order.Fin.Basic
+public import Mathlib.Tactic.Abel
+public import Mathlib.Tactic.Module
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Winning Condition and Loss Operators
@@ -142,7 +146,7 @@ end WinningProjectorIdentities
 
 -- Helper: Alice row product is involutive (RP² = 1)
 omit [StarModule ℂ R] in
-private lemma aliceRowProd_mul_self (i : Fin G.r) :
+lemma aliceRowProd_mul_self (i : Fin G.r) :
     ∏ₐ[i] * ∏ₐ[i] = 1 := by
   have hsum := (strat.alice_ms i).sum_one
   have hcomm :
@@ -184,7 +188,7 @@ of private rewriting lemmas.
 -/
 
 omit [Algebra ℂ R] [StarModule ℂ R] in
-private lemma local_loss_sos_step1 (i : Fin G.r) (j : G.V i) :
+lemma local_loss_sos_step1 (i : Fin G.r) (j : G.V i) :
   localLossOperator game strat i j =
     1 - ∑ y : ZMod 2, F[j, y] * (∑ x ∈ S[i].filter (fun x ↦ x j = y), E[i, x]) := by
   unfold localLossOperator localWinningOperator
@@ -203,7 +207,7 @@ private lemma local_loss_sos_step1 (i : Fin G.r) (j : G.V i) :
   rw [hx.2]
 
 omit [StarModule ℂ R] in
-private lemma local_loss_sos_step2 (i : Fin G.r) (j : G.V i) :
+lemma local_loss_sos_step2 (i : Fin G.r) (j : G.V i) :
     1 - ∑ y : ZMod 2, F[j, y] * (∑ x ∈ S[i].filter (fun x ↦ x j = y), E[i, x]) =
     1 - (1 / 4 : ℂ) • ∑ y : ZMod 2,
       F[j, y] * ((1 + (-1 : ℂ) ^ (b[i]).val • ∏ₐ[i]) *
@@ -227,7 +231,7 @@ private lemma local_loss_sos_step2 (i : Fin G.r) (j : G.V i) :
   norm_num [mul_assoc]
 
 omit [StarModule ℂ R] in
-private lemma local_loss_sos_step3 (i : Fin G.r) (j : G.V i) :
+lemma local_loss_sos_step3 (i : Fin G.r) (j : G.V i) :
     1 - (1 / 4 : ℂ) • ∑ y : ZMod 2,
       F[j, y] * ((1 + (-1 : ℂ) ^ (b[i]).val • ∏ₐ[i]) *
                  (1 + (-1 : ℂ) ^ y.val • A[i, j])) =
@@ -249,7 +253,7 @@ private lemma local_loss_sos_step3 (i : Fin G.r) (j : G.V i) :
   abel
 
 omit [StarModule ℂ R] in
-private lemma local_loss_sos_step4 (i : Fin G.r) (j : G.V i) :
+lemma local_loss_sos_step4 (i : Fin G.r) (j : G.V i) :
     1 - (1 / 4 : ℂ) • ∑ y : ZMod 2,
       F[j, y] * (1 + (-1 : ℂ) ^ y.val • A[i, j] +
                  (-1 : ℂ) ^ (b[i]).val • ∏ₐ[i] +
@@ -294,7 +298,7 @@ private lemma local_loss_sos_step4 (i : Fin G.r) (j : G.V i) :
         rw [h1, h2, h3, h4]
 
 omit [StarModule ℂ R] in
-private lemma local_loss_sos_step5 (i : Fin G.r) (j : G.V i) :
+lemma local_loss_sos_step5 (i : Fin G.r) (j : G.V i) :
     1 - (1 / 4 : ℂ) • (1 + B[j] * A[i, j] + (-1 : ℂ) ^ (b[i]).val • ∏ₐ[i] +
       B[j] * ((-1 : ℂ) ^ (b[i]).val • (∏ₐ[i] * A[i, j]))) =
     (1 / 8 : ℂ) • (
@@ -384,3 +388,5 @@ noncomputable def lossOperator : R :=
 end GlobalOperators
 
 end MIPRE.LCS
+
+end

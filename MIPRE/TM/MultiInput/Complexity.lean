@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.MultiInput.TapeLemmas
+module
+public import MIPRE.TM.MultiInput.TapeLemmas
+
+@[expose] public section
 
 /-!
 # Time and space bounds for multi-input machines
@@ -51,3 +54,5 @@ def ComputesFunWithBounds
       tm.ComputesInTimeAndSpace (fun j => (x j).map emb) ((f x).map emb) t s
 
 end Turing.MultiInputTM
+
+end

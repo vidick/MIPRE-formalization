@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.BoundedEval
-import MIPRE.Foundations.Halting.Enumerate
-import MIPRE.Foundations.Cost.Semidecide
+module
+public import MIPRE.Foundations.Cost.BoundedEval
+public import MIPRE.Foundations.Halting.Enumerate
+public import MIPRE.Foundations.Cost.Semidecide
+
+@[expose] public section
 
 /-!
 # Deciding acceptance under a time bound
@@ -189,7 +192,7 @@ theorem bitsToIdx_ofFn {s : ℕ} (f : Fin s → Bool) :
 
 /-- The `Fin 2` form, where `finFunctionFinEquiv` is literally applicable: `CL.𝔽₂` is `ZMod 2`,
 which reduces to `Fin 2` but does not unify with it at the transparency `rw` uses. -/
-private theorem bitsToIdx_ofFn_fin2 {s : ℕ} (w : Fin s → Fin 2) :
+theorem bitsToIdx_ofFn_fin2 {s : ℕ} (w : Fin s → Fin 2) :
     bitsToIdx (List.ofFn fun i => decide (w i = 1)) = (finFunctionFinEquiv w : ℕ) := by
   rw [bitsToIdx_ofFn, finFunctionFinEquiv_apply]
   refine Finset.sum_congr rfl fun i _ => congrArg₂ (· * ·) ?_ rfl
@@ -761,3 +764,5 @@ theorem primrec_tabOf {α : Type*} [Primcodable α] {sd pd : α → Data} {s T B
 end Halting
 
 end MIPRE
+
+end

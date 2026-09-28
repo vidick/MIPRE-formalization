@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.BlockTwirl
-import MIPRE.Foundations.Games
+module
+public import MIPRE.Foundations.Introspection.BlockTwirl
+public import MIPRE.Foundations.Games
+
+@[expose] public section
 
 /-! # The ancillary blocks of a twirled POVM are POVMs -/
 
@@ -88,5 +91,7 @@ theorem linear_twirl_povm {A : Type*} [Fintype A]
   exact linear_twirl_blocks (H := H) L (P.mats a)
 
 end MIPRE.Introspection
+
+end
 
 end

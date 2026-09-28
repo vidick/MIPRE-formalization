@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/CommutingWithG/Complete.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Results
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooCompletion
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CompletionTransfer
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Results
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooCompletion
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CompletionTransfer
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -34,7 +37,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 switcheroo error. The proof uses `firstSwitcherooError_le_eighth_stage` to bound
 `θ₁` by `36m · eighthSum`, then a sqrt/rpow chain to land on
 `ν₂ = commutingWithGCompleteError`. -/
-private lemma secondSwitcherooError_le_commutingWithGCompleteError
+lemma secondSwitcherooError_le_commutingWithGCompleteError
     (params : Parameters) [FieldModel params.q]
     (gamma zeta : Error)
     (hgamma_nonneg : 0 ≤ gamma)
@@ -354,3 +357,5 @@ theorem commutingWithGComplete
     hgamma_nonneg hgamma hzeta_nonneg hzeta hd_le_q hcom hselfComplete
 
 end MIPStarRE.LDT.Pasting
+
+end

@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryChecks
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryChecks
+
+@[expose] public section
 
 /-! # The parsed typed introspection predicate
 
@@ -209,3 +212,5 @@ theorem check_hiding_pauli_reversed (w : Bool) (k : Fin ℓ) (hk : k.val = 0)
 end TypedPredicate
 end
 end MIPRE.Introspection
+
+end

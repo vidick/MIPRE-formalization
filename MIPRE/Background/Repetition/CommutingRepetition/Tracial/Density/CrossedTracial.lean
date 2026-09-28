@@ -24,15 +24,19 @@ off a tracially embeddable correlation:
 `exists_tracial_approx` is the output: a tracially embeddable correlation entrywise
 `η`-close to the correlation of the standard-form strategy. Proof-side.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.StandardStrategy
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.ClosedSubalg
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.RadonNikodym
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Haagerup.Density
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.StandardStrategy
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.ClosedSubalg
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.RadonNikodym
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Haagerup.Density
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -376,3 +380,5 @@ end StdStrategy
 end Density
 
 end CommutingRepetition
+
+end

@@ -14,12 +14,16 @@ the identity on `𝒦` and vanishes on `𝒦^⊥` must be `(R, A)`: this is the 
 the modular operator of the dual state on a crossed product (E5.3) and of a perturbed vector
 (E6.2) without computing projections onto graphs.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.PolarJ
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.PolarJ
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -104,3 +108,5 @@ end Modular
 end VN
 
 end CommutingRepetition
+
+end

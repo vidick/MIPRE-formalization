@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestCompleteAux
+module
+public import MIPRE.Foundations.Introspection.HonestCompleteAux
+
+@[expose] public section
 
 /-! # Attained outputs of honest Introspect measurements
 
@@ -62,3 +65,5 @@ theorem auxOp_introspect_nonzero (hL : ∀ w, (L w).SupportedOn univ)
     exact ⟨y,b,x,rfl,hx⟩
 
 end MIPRE.Introspection.Honest
+
+end

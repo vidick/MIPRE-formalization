@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.MTilde
+module
+public import MIPRE.Background.QLD.MTilde
+
+@[expose] public section
 
 /-!
 # Both entangled pairs, without changing the interface
@@ -182,5 +185,7 @@ theorem mirrorVec_mirrorVec (ψ : (((A × T1) × E) × T2) × (((B × S1) × E')
 end Swap
 
 end MIPRE.QLD
+
+end
 
 end

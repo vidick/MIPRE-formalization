@@ -23,11 +23,15 @@ horizontal edges contribute `O(N e^{-(π-|φ|)N})`),
 `∫ (G(1/2+it)/(1/2+it) − G(-1/2+it)/(-1/2+it)) dt = G 0 · ∫ (1/4 + t²)⁻¹ dt = 2π f 0`,
 and `G(±1/2 + it)/(±1/2 + it) = ± e^{±iφ/2} e^{-φt} π f(±1/2+it) / cosh(πt)`.
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -629,3 +633,5 @@ end Main
 end StripCauchy
 
 end CommutingRepetition
+
+end

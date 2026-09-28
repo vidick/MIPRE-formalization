@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/Transport/FullSlice/Bridges/QSDD.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Averages
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Averages
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -38,7 +41,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- Expand the averaged full-slice `qSDDOp` into the four projector terms
 `BAB + ABA - BABA - ABAB`. -/
-private lemma fullSliceCommutation_qSDDOp_avg_expand_full
+lemma fullSliceCommutation_qSDDOp_avg_expand_full
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι) :
     avgOver (uniformDistribution (FullSliceQuestion params))
@@ -188,3 +191,5 @@ lemma fullSliceCommutation_qSDDOp_avg_eq
           try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 end MIPStarRE.LDT.Commutativity
+
+end

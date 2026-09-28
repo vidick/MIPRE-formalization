@@ -16,11 +16,15 @@ definition `commuting_strategy`.
 
 A strategy depends only on the alphabets, not on a particular game.
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -174,3 +178,5 @@ noncomputable def trivial [Nonempty A] [Nonempty B] :
 end CommutingStrategy
 
 end CommutingRepetition
+
+end

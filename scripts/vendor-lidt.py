@@ -33,6 +33,9 @@ import subprocess
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from modularize import modularize_tree  # noqa: E402
+
 UPSTREAM_URL = "https://github.com/LionSR/MIPStarRE"
 UPSTREAM_PREFIX = "MIPStarRE"
 LOCAL_PREFIX = "MIPRE.Background.LIDT.MIPStarRE"
@@ -236,6 +239,21 @@ FIXES: list[tuple[str, str, str]] = [
 """),
     # Mathlib v4.35: `Finset.prod_le_prod` lost its nonnegativity hypothesis; the version with
     # it is `Finset.prod_le_prod₀`.
+    ('LDT/Tactic/AvgCongr.lean',
+     """private partial def evalAvgCongrCore
+""",
+     """-- Vendoring compile fix (module system): the tactic's elaborator and everything it calls
+-- must be `meta` in a module, and its helper may not stay `private` once the elaborator is
+-- public; see README.md.
+meta partial def evalAvgCongrCore
+"""),
+    ('LDT/Tactic/AvgCongr.lean',
+     """@[tactic avgCongr]
+def evalAvgCongr : Tactic := fun stx => do
+""",
+     """@[tactic avgCongr]
+meta def evalAvgCongr : Tactic := fun stx => do
+"""),
     ('LDT/Pasting/Core/DDistinct.lean',
      """              exact Finset.prod_le_prod
                 (fun j hj => hfactor_nonneg j (Finset.mem_filter.mp hj).1)
@@ -372,6 +390,9 @@ def vendor(source: Path, commit: str, repo_root: Path, everything: bool) -> None
         target.write_text(header + text, encoding="utf-8", newline="\n")
 
     fixed = apply_fixes(dest)
+    # Last, so that the fixes see upstream's file shapes: every file becomes a module
+    # (`scripts/modularize.py`, the recorded mechanism for the whole repository).
+    modularized = modularize_tree(dest)
 
     challenge_src = source / CHALLENGE_REL
     if challenge_src.exists():
@@ -388,6 +409,9 @@ def vendor(source: Path, commit: str, repo_root: Path, everything: bool) -> None
         "- `set_option backward.isDefEq.respectTransparency false` inserted after the imports of "
         "every file; every bare `rfl` tactic line made `try rfl`; recorded compile fixes "
         f"applied: {fixed} (listed under \"Local deviations from upstream\")",
+        f"- Module system: {modularized} files given the `module` header, `public import`s, an "
+        "`@[expose] public section` and no `private` definitions by `scripts/modularize.py` "
+        "(Palomar requires it; `planning/palomar.md`)",
         END_MARK,
     ])
     if readme_text is None:
@@ -454,7 +478,8 @@ def main() -> None:
     args = parser.parse_args()
     if args.apply_fixes:
         n = apply_fixes(args.repo_root.resolve() / DEST_REL)
-        print(f"{n} fixes in place; next: lake build")
+        m = modularize_tree(args.repo_root.resolve() / DEST_REL)
+        print(f"{n} fixes in place, module headers added to {m} files; next: lake build")
         return
     if not args.source or not args.commit:
         parser.error("--source and --commit are required unless --apply-fixes is given")

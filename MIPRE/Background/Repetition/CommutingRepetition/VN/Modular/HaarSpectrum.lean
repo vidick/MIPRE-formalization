@@ -26,13 +26,17 @@ factor `‖ζ‖`).
 Combined with `‖·‖`-approximation of the identity function by trigonometric polynomials
 away from the cut, this gives `‖Eζ − P(u)ζ‖` small with `P` independent of `E`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.CentralExp
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.UnitaryLog
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.CentralExp
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.UnitaryLog
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -728,3 +732,5 @@ end Modular
 end VN
 
 end CommutingRepetition
+
+end

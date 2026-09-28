@@ -2,13 +2,16 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Cost.FiniteChoice
-import MIPRE.Foundations.Cost.FiniteEncoding
-import MIPRE.Foundations.Introspection.ClockedSourceChecks
-import MIPRE.Foundations.Introspection.AuxiliaryHidingNextProgram
-import MIPRE.Foundations.Introspection.AuxiliaryHidingBoundaryProgram
-import MIPRE.Foundations.Introspection.SourcePaddingQueryProg
-import MIPRE.Foundations.Introspection.Types
+module
+public import MIPRE.Foundations.Cost.FiniteChoice
+public import MIPRE.Foundations.Cost.FiniteEncoding
+public import MIPRE.Foundations.Introspection.ClockedSourceChecks
+public import MIPRE.Foundations.Introspection.AuxiliaryHidingNextProgram
+public import MIPRE.Foundations.Introspection.AuxiliaryHidingBoundaryProgram
+public import MIPRE.Foundations.Introspection.SourcePaddingQueryProg
+public import MIPRE.Foundations.Introspection.Types
+
+@[expose] public section
 
 /-! # The uniform auxiliary decision kernel
 
@@ -178,4 +181,6 @@ theorem check_iff (U : ClockedUniversalMachine) (X Z : P)
   by_cases h : leftType x = rightType x <;> simp [h]
 
 end MIPRE.Introspection.AuxiliaryDecision
+end
+
 end

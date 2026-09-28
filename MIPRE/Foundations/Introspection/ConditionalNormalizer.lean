@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ConditionalConsistency
-import MIPRE.Foundations.Introspection.Measurements
+module
+public import MIPRE.Foundations.Introspection.ConditionalConsistency
+public import MIPRE.Foundations.Introspection.Measurements
+
+@[expose] public section
 
 /-! # Replacing a conditional hiding normalizer by its ideal prefix
 
@@ -183,3 +186,5 @@ theorem conditional_coarse_ideal_replacement (ψ : H × K → ℂ) (hψ : ‖eve
   linarith
 
 end MIPRE.Introspection
+
+end

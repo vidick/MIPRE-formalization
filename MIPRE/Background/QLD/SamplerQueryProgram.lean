@@ -2,11 +2,14 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.PauliRowPrograms
-import MIPRE.Background.QLD.TypeEncoding
-import MIPRE.Foundations.Introspection.PauliFactorProg
-import MIPRE.Foundations.CL.TypedSampler
-import MIPRE.Foundations.CL.DetypingProgRoute
+module
+public import MIPRE.Background.QLD.PauliRowPrograms
+public import MIPRE.Background.QLD.TypeEncoding
+public import MIPRE.Foundations.Introspection.PauliFactorProg
+public import MIPRE.Foundations.CL.TypedSampler
+public import MIPRE.Foundations.CL.DetypingProgRoute
+
+@[expose] public section
 
 /-! # The actual uniform Pauli query router
 
@@ -103,4 +106,6 @@ theorem query_runs (p : Parameters) (d : Data) :
       query.code.Runs (encode (p, d)) (query (p, d)) t := query.computes (p, d)
 
 end MIPRE.QLD.PauliCL.SamplerProgram
+end
+
 end

@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.PauliRestriction
-import MIPRE.Background.Introspection.BinaryMeasurements
-import MIPRE.Foundations.Introspection.ValidPauliSoundness
+module
+public import MIPRE.Background.Introspection.PauliRestriction
+public import MIPRE.Background.Introspection.BinaryMeasurements
+public import MIPRE.Foundations.Introspection.ValidPauliSoundness
+
+@[expose] public section
 
 /-! # Source-game soundness from the restricted QLD strategy
 
@@ -139,4 +142,6 @@ theorem quantumValue_ge_of_qld_extraction
     w.VA_isometry w.VB_isometry hδ hfail w.state_error w.X_error w.Z_error
 
 end MIPRE.Introspection.RestrictedSoundness
+end
+
 end

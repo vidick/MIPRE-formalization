@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.CLBinary
-import MIPRE.Foundations.Introspection.SeedSelectorProg
+module
+public import MIPRE.Background.QLD.CLBinary
+public import MIPRE.Foundations.Introspection.SeedSelectorProg
+
+@[expose] public section
 
 /-! # Pauli sampling with the explicit binary seed enumeration
 
@@ -237,4 +240,6 @@ theorem qldGame_mu_selector_binary {k j : ℕ} (E : SAT.BinField k) (hj : j ≤ 
     (seedPermutation E) (chi_seedPermutation E j hj _) b x y
 
 end MIPRE.QLD.PauliCL.ExplicitSeed
+end
+
 end

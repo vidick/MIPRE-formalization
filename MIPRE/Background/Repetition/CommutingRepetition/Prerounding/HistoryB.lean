@@ -16,12 +16,16 @@ as an Alice base and an interior cut in the Bob block, Alice's revealed set
 growing along the Bob-block order, Bob's fixed at `S_B`). Nothing here is a
 manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.HistoryA
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.HistoryA
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -983,3 +987,5 @@ theorem klB_le (μ : X → Y → ℝ) (hμ : ∀ x y, 0 ≤ μ x y)
 end TracialStrategy
 
 end CommutingRepetition
+
+end

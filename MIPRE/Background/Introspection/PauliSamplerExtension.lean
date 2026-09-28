@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.PauliSamplerCost
-import MIPRE.Foundations.Introspection.SamplerCost
+module
+public import MIPRE.Background.Introspection.PauliSamplerCost
+public import MIPRE.Foundations.Introspection.SamplerCost
+
+@[expose] public section
 
 /-! # The executable five-level introspection sampler
 
@@ -55,7 +58,7 @@ theorem fullSampler_timeBoundAt (c : ℕ) (hc : 1 ≤ c) (he : Even c) (ℓ lam 
     (Introspection.typedSampler_timeBoundAt ℓ (sampler c hc he lam) n
       (coefficient c lam n) degree (sampler_timeBoundAt c hc he lam n))
 
-private theorem routeCost_eval_mono (r : PolyTimeFun Data (Bool × Data))
+theorem routeCost_eval_mono (r : PolyTimeFun Data (Bool × Data))
     (p : PolyTimeFun (Data × Data) Data) (k : ℕ) {B B' x x' : ℕ}
     (hB : B ≤ B') (hx : x ≤ x') :
     (routeCost r p B k).eval x ≤ (routeCost r p B' k).eval x' := by
@@ -68,7 +71,7 @@ private theorem routeCost_eval_mono (r : PolyTimeFun Data (Bool × Data))
   simp only [routeCost, eval_mul, eval_add, eval_C, eval_pow, eval_one, eval_comp]
   omega
 
-private theorem routeCost_polyBounded (r : PolyTimeFun Data (Bool × Data))
+theorem routeCost_polyBounded (r : PolyTimeFun Data (Bool × Data))
     (p : PolyTimeFun (Data × Data) Data) (k : ℕ) {B : ℕ → ℕ} (hB : PolyBounded B) :
     PolyBounded (fun v => (routeCost r p (B v) k).eval (4 * v + 3)) := by
   simp only [routeCost, eval_mul, eval_add, eval_C, eval_pow, eval_one, eval_comp]
@@ -94,7 +97,7 @@ theorem fullMajorant_polyBounded (c ℓ : ℕ) : PolyBounded (fullMajorant c ℓ
   routeCost_polyBounded _ _ _
     (routeCost_polyBounded _ _ _ (coefficientMajorant_polyBounded c))
 
-private theorem sum_coeff_eq_eval_one (P : Polynomial ℕ) :
+theorem sum_coeff_eq_eval_one (P : Polynomial ℕ) :
     (∑ i ∈ Finset.range (P.natDegree + 1), P.coeff i) = P.eval 1 := by
   simp only [eval_eq_sum_range, one_pow, mul_one]
 
@@ -154,4 +157,6 @@ theorem fullSampler_uniform_bound (c : ℕ) (hc : 1 ≤ c) (he : Even c) (ℓ : 
     omega
 
 end MIPRE.Introspection.PauliSampler
+end
+
 end

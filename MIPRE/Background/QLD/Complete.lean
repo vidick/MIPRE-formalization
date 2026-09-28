@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Separate
-import MIPRE.Background.QLD.Simul
-import MIPRE.Foundations.RegisterReindex
-import MIPRE.Background.LIDT.BlockPoly
+module
+public import MIPRE.Background.QLD.Separate
+public import MIPRE.Background.QLD.Simul
+public import MIPRE.Foundations.RegisterReindex
+public import MIPRE.Background.LIDT.BlockPoly
+
+@[expose] public section
 
 /-!
 # Completing the pair measurement and its evaluated marginals (`lem:qld-global-complete`,
@@ -607,5 +610,7 @@ theorem inconsistency_evalMarg_X_le (hd : 1 ≤ d) {Φ : RA × RB → ℂ} (hΦ 
 end Marginals
 
 end MIPRE.QLD
+
+end
 
 end

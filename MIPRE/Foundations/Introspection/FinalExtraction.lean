@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.Readout
-import MIPRE.Foundations.Verifier
+module
+public import MIPRE.Foundations.Introspection.Readout
+public import MIPRE.Foundations.Verifier
+
+@[expose] public section
 
 /-! # Extracting the original strategy from introspective readouts
 
@@ -144,5 +147,7 @@ theorem verifier_readoutAcceptance_eq_value {ℓ : ℕ} (V : Verifier ℓ) (n T 
   exact (sampled_dist_eq_clDist _ _ x y).symm
 
 end MIPRE.Introspection
+
+end
 
 end

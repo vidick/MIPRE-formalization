@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Complete
+module
+public import MIPRE.Background.QLD.Complete
+
+@[expose] public section
 
 /-!
 # The marginals track the point measurements (`lem:qld-helper`)
@@ -296,5 +299,7 @@ theorem sum_snorm_sq_evalMarg_one_sub_le {hm : m ∣ Fintype.card F} {ε : ℝ}
 end SimulPair
 
 end MIPRE.QLD
+
+end
 
 end

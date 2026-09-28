@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.StrategyReplacement
+module
+public import MIPRE.Foundations.Introspection.StrategyReplacement
+
+@[expose] public section
 
 /-! # Reassembly in the original EPR-register ordering
 
@@ -130,4 +133,6 @@ theorem registeredReplacementStrategy_value_loss (G : Game X Y A B) (ξ : H × K
     hselected hM hR hMB hd
 
 end MIPRE.Introspection
+end
+
 end

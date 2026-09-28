@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingCompleteSupport
+module
+public import MIPRE.Foundations.CL.DetypingCompleteSupport
+
+@[expose] public section
 
 /-! # PCC completeness of finite-game detyping
 
@@ -18,14 +21,14 @@ namespace MIPRE.CL.Detyping
 
 open Finset Classical Matrix Kronecker
 
-private theorem sample_dist_pos_iff {S X Y : Type*} [Fintype S] [Nonempty S]
+theorem sample_dist_pos_iff {S X Y : Type*} [Fintype S] [Nonempty S]
     [Fintype X] [Fintype Y] (qA : S → X) (qB : S → Y) (x : X) (y : Y) :
     0 < SampledGame.dist qA qB x y ↔ ∃ s, qA s = x ∧ qB s = y := by
   rw [SampledGame.dist_eq_card, div_pos_iff_of_pos_right (by exact_mod_cast Fintype.card_pos)]
   simp only [Nat.cast_pos, Finset.card_pos, Finset.nonempty_def, Finset.mem_filter,
     Finset.mem_univ, true_and]
 
-private theorem sample_failAt_zero {U X Y A B : Type*} [Fintype U] [Nonempty U]
+theorem sample_failAt_zero {U X Y A B : Type*} [Fintype U] [Nonempty U]
     [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
     (qA : U → X) (qB : U → Y) (D : X → Y → A → B → Bool)
     (S : TensorProductStrategy (SampledGame.game qA qB D)) (hS : S.value = 1) (u : U) :
@@ -36,7 +39,7 @@ private theorem sample_failAt_zero {U X Y A B : Type*} [Fintype U] [Nonempty U]
   exact (Finset.sum_eq_zero_iff_of_nonneg (fun v _ => S.failAt_nonneg (qA v) (qB v))).mp
     (h.resolve_right hz) u (Finset.mem_univ u)
 
-private theorem failAt_zero_of_accepts {X Y A B : Type*} [Fintype X] [Fintype Y]
+theorem failAt_zero_of_accepts {X Y A B : Type*} [Fintype X] [Fintype Y]
     [Fintype A] [Fintype B] {G : Game X Y A B} (S : TensorProductStrategy G)
     (x : X) (y : Y) (h : ∀ a b, G.D x y a b = true) : S.failAt x y = 0 := by
   simp only [TensorProductStrategy.failAt, TensorProductStrategy.succAt, h,
@@ -270,3 +273,5 @@ theorem exists_perfectPCC {ℓ : ℕ} (E : T → T → Prop) [DecidableRel E]
     complete_value E hE hne P hP hℓ D S hval a₀, rfl⟩
 
 end MIPRE.CL.Detyping
+
+end

@@ -3,9 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Loops
-import Mathlib.Computability.Primrec.List
-import Mathlib.Basic.Denumerable
+module
+public import MIPRE.Foundations.Cost.Loops
+public import Mathlib.Computability.Primrec.List
+public import Mathlib.Basic.Denumerable
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # `Data` as a primcodable type
@@ -155,7 +159,7 @@ def recD {σ : Type*} (base : σ) (step : Data → Data → σ → σ → σ) : 
     (a b : Data) : recD base step (cons a b) = step a b (recD base step a) (recD base step b) :=
   rfl
 
-private theorem getD_range_map {σ : Type*} [Inhabited σ] (F : ℕ → σ) {n i : ℕ} (hi : i < n) :
+theorem getD_range_map {σ : Type*} [Inhabited σ] (F : ℕ → σ) {n i : ℕ} (hi : i < n) :
     ((List.range n).map F).getD i default = F i := by
   simp [List.getD_eq_getElem?_getD, hi]
 
@@ -389,3 +393,5 @@ theorem primrec_idxOf_bitStr :
   Primrec.list_idxOf.of_eq fun a l => List.idxOf_congr_inst instBEqOfDecidableEq List.instBEq a l
 
 end MIPRE.Cost
+
+end

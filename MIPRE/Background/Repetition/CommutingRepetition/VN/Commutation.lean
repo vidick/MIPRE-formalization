@@ -22,13 +22,17 @@ identity `J x Ω = x* Ω` on `R(N)′`:
 concrete von Neumann model on the same Hilbert space (`U = id`).
 Infrastructure only; no manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.CommutantPullback
-import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Modulus
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.CommutantPullback
+public import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Modulus
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -126,3 +130,5 @@ noncomputable def vnExtension : TracialExtension M where
 end StdTracialAlgebra
 
 end CommutingRepetition
+
+end

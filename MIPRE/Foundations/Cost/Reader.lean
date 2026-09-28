@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Fold
+module
+public import MIPRE.Foundations.Cost.Fold
+
+@[expose] public section
 
 /-!
 # Programs as readers of a shared input
@@ -165,3 +168,5 @@ noncomputable def nthD (d : α) : ℕ → PolyTimeFun (List α) α
     simp [List.getD_eq_getElem?_getD]
 
 end MIPRE.Cost.PolyTimeFun
+
+end

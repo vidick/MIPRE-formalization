@@ -12,14 +12,18 @@ reduction of Section 3. Anchors: 03_tracial_reduction.tex (eqs
 lin-density-vector, left-right-actions, tracial-correlation-formula);
 audit def `tracially_embeddable`, node 1.1.4.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Interface
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Strategy
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Value
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Interface
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Strategy
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Value
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -105,3 +109,5 @@ theorem toCommutingStrategy_correlation (T : TracialStrategy.{u} X Y A B) :
 end TracialStrategy
 
 end CommutingRepetition
+
+end

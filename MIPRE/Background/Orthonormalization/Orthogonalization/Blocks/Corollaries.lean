@@ -33,18 +33,22 @@ Both theorems are literal *instances* of the signed statements
 their own. The proof-side helpers live in the namespace
 `Orthogonalization.Corollaries` and hold on any complete `H`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
-import MIPRE.Background.Orthonormalization.Orthogonalization.Basic
-import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
-import MIPRE.Background.Orthonormalization.Orthogonalization.PhiNorm
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.StateOnM
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Bicommutant
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Main
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Basic
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
+public import MIPRE.Background.Orthonormalization.Orthogonalization.PhiNorm
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.StateOnM
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Bicommutant
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Main
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization
 
@@ -498,3 +502,5 @@ theorem pvm_almost_commute_finDim (M : VonNeumannAlgebra H) (φ : NormalState M)
       _ < 10 * ε := by linarith
 
 end Orthogonalization
+
+end

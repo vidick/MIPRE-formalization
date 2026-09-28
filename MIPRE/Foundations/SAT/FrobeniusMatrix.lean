@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.FieldCoordinates
+module
+public import MIPRE.Foundations.SAT.FieldCoordinates
+
+@[expose] public section
 
 /-! # Computing binary matrices of field maps and of Frobenius -/
 
@@ -115,5 +118,7 @@ theorem shoupFrobeniusMatrixProg_time_le : ∃ R : Polynomial ℕ, ∀ k : ℕ,
   simpa [esize_unary] using ht
 
 end MIPRE.SAT
+
+end
 
 end

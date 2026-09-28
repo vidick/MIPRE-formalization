@@ -5,11 +5,15 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Preliminaries/PolynomialAgreement.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.ParametersFiniteAnswers
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Polynomials
-import Mathlib.Algebra.Polynomial.Roots
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.ParametersFiniteAnswers
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Polynomials
+public import Mathlib.Algebra.Polynomial.Roots
+public import MIPRE.Tactics
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -428,3 +432,5 @@ lemma polynomialCollisionMass_le_mdq
   simpa [polynomialCollisionMass, One, leftTensor_mul_rightTensor_eq_opTensor] using h
 
 end MIPStarRE.LDT.Preliminaries
+
+end

@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/Quantum/Measurement.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
+module
+public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -176,3 +179,5 @@ noncomputable def diagOverlap (M N : α → Op d) : ℂ :=
 end Overlap
 
 end MIPStarRE.Quantum
+
+end

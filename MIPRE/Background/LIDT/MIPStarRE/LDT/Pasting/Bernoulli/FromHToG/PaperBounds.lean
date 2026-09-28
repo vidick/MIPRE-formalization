@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/PaperBounds.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.PaperBounds.SandwichContext
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.PaperBounds.SandwichContext
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -477,3 +480,5 @@ lemma fromHToG_headTail_adjoint_qSDDCore_bound
                   (gHatIdxMeas params family q.1).outcome ogs.1))) := hrev
     _ ≤ commuteGHalfSandwichError params gamma zeta k := hbase_reindexed
 end MIPStarRE.LDT.Pasting
+
+end

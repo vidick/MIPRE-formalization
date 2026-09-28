@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.ClassMIPStar
-import MIPRE.Foundations.Halting.Tabulate
-import MIPRE.Foundations.Halting.Arith
+module
+public import MIPRE.Foundations.ClassMIPStar
+public import MIPRE.Foundations.Halting.Tabulate
+public import MIPRE.Foundations.Halting.Arith
+
+@[expose] public section
 
 /-!
 # The paper's class is contained in the computable one: tabulation
@@ -544,3 +547,5 @@ theorem MIPStar.isRE {L : Set BitStr} (h : MIPStar L) : IsRE L :=
   h.toComputable.isRE
 
 end MIPRE
+
+end

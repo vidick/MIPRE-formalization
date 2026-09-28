@@ -2,11 +2,14 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.FinalExtraction
-import MIPRE.Foundations.Introspection.TypedPredicate
-import MIPRE.Foundations.Introspection.TypeGraph
-import MIPRE.Foundations.PerfectStrategy
-import MIPRE.Foundations.GameDouble
+module
+public import MIPRE.Foundations.Introspection.FinalExtraction
+public import MIPRE.Foundations.Introspection.TypedPredicate
+public import MIPRE.Foundations.Introspection.TypeGraph
+public import MIPRE.Foundations.PerfectStrategy
+public import MIPRE.Foundations.GameDouble
+
+@[expose] public section
 
 /-! # The honest Introspect and Sample measurements
 
@@ -127,3 +130,5 @@ theorem coreOp_commute (hR : R.IsPCC) (t u : CoreType) (ya zb : (ι → F) × A)
   · rw [if_neg h, if_neg (by tauto)]
 
 end MIPRE.Introspection.Honest
+
+end

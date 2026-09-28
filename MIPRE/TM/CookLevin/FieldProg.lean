@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.LayoutProg
+module
+public import MIPRE.TM.CookLevin.LayoutProg
+
+@[expose] public section
 
 /-!
 # The fields of a literal, as programs
@@ -272,3 +275,5 @@ theorem litFieldsR_ev (i : ι) :
 end Lit
 
 end MIPRE.TM.CookLevin.Desc
+
+end

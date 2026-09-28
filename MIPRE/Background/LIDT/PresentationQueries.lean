@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Presentation
-import MIPRE.Foundations.CL.ProductSampler
+module
+public import MIPRE.Background.LIDT.Presentation
+public import MIPRE.Foundations.CL.ProductSampler
+
+@[expose] public section
 
 /-!
 # The queries of the three-level presentation of the seeded test
@@ -157,5 +160,7 @@ theorem factorOfPrefix_three_le (t : Ty) {j : ℕ} (hj : 3 ≤ j) (u : ι → F)
   factorOfPrefix_of_le _ hj u
 
 end MIPRE.LIDT.CL.Regs
+
+end
 
 end

@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/HAConsistency.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.HBConsistency
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.CommutingWithG.Incomplete
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.HBConsistency
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.CommutingWithG.Incomplete
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -258,7 +261,7 @@ theorem hAConsistency_submeas_from_lineConsistency
 
 /-- Specialization of `hAConsistency_submeas_from_lineConsistency` to the
 constructed pasted submeasurement. -/
-private lemma hAConsistency_submeas_core_of_axis_self
+lemma hAConsistency_submeas_core_of_axis_self
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι)
@@ -605,3 +608,5 @@ theorem hAConsistency_completed
       (constructedPastedSubMeas params family k) k hsubmeas hcomplete
 
 end MIPStarRE.LDT.Pasting
+
+end

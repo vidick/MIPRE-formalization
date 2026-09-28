@@ -24,12 +24,16 @@ combination is split into two positive finite measures.) This is the only
 uniqueness input of the Borel functional calculus in `VN/BorelCalculus.lean`.
 Nothing here is a manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.MonotoneLimit
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.MonotoneLimit
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -301,3 +305,5 @@ end Spectral
 end BorelCalc
 
 end CommutingRepetition
+
+end

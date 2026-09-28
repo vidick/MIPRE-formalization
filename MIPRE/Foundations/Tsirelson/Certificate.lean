@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Tsirelson.Positivstellensatz
+module
+public import MIPRE.Foundations.Tsirelson.Positivstellensatz
+
+@[expose] public section
 
 /-!
 # Exact certificates for upper bounds on the commuting-operator value
@@ -701,3 +704,5 @@ end Game
 end Tsirelson
 
 end MIPRE
+
+end

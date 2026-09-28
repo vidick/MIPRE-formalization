@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Corollaries
-import MIPRE.Foundations.Halting.ReductionCo
+module
+public import MIPRE.Foundations.Halting.Corollaries
+public import MIPRE.Foundations.Halting.ReductionCo
+
+@[expose] public section
 
 /-!
 # `coRE ⊆ MIP^co`, hence `MIP^co = coRE`, conditionally on co-soundness
@@ -61,3 +64,5 @@ theorem mipco_eq_core_of (hco : G.CoSound) : MIPCo = IsCoRE :=
 end Halting
 
 end MIPRE
+
+end

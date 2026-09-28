@@ -26,11 +26,15 @@ shifts (`shiftPair`, `shiftOne`).
 Everything here is elementary and internal to the proof; no result of this file
 is a statement of the paper, so it carries no fidelity-ledger entry.
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.FinDim
 
@@ -551,3 +555,5 @@ theorem shiftOne_mem_Icc_of (k : Fin (finrank ℂ H)) (δ : ℝ)
 end JointEigenbasis
 
 end Orthogonalization.FinDim
+
+end

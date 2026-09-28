@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.ArDecider
-import MIPRE.Background.AnswerReduction.ParamsCost
-import MIPRE.Foundations.CL.ProductSamplerCost
+module
+public import MIPRE.Background.AnswerReduction.ArDecider
+public import MIPRE.Background.AnswerReduction.ParamsCost
+public import MIPRE.Foundations.CL.ProductSamplerCost
+
+@[expose] public section
 
 /-!
 # The running time of the typed answer-reduced decider
@@ -311,5 +314,7 @@ theorem typedDecider_time (ℓ : ℕ) (PD : PcpDecider) (R : Polynomial ℕ) (cd
     exact ⟨_, t, ht, hr⟩⟩
 
 end MIPRE.AnswerReduction
+
+end
 
 end

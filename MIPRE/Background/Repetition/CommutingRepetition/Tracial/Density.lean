@@ -42,13 +42,17 @@ certifies `tracialDensity` itself.
 Audit anchor: node 1.1.1 (admitted in the natural-language audit, proved in
 Lean); AUDIT.md §1.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Interface
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Value
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Interface
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Value
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -134,3 +138,5 @@ def TracialDensityHypothesis : Prop :=
           l1Dist p q.toCorrelation < δ
 
 end CommutingRepetition
+
+end

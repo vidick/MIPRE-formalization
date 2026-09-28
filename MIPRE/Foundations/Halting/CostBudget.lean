@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.BoundedEval
-import MIPRE.Foundations.Halting.Descriptions
+module
+public import MIPRE.Foundations.Cost.BoundedEval
+public import MIPRE.Foundations.Halting.Descriptions
+
+@[expose] public section
 
 /-!
 # Deciding a cost budget
@@ -243,3 +246,5 @@ instance decidableHaltsWithin (p : Prog) (x : Data) (k : ℕ) : Decidable (Halts
   decidable_of_iff _ (Machine.haltsWithinB_iff p x k)
 
 end MIPRE.Cost
+
+end

@@ -2,8 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.SelfDualize
-import Mathlib.Tactic.Ring
+module
+public import MIPRE.Foundations.LowDegree.SelfDualize
+public import Mathlib.Tactic.Ring
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Primitive components of a finite ring with bijective squaring
@@ -80,3 +84,5 @@ theorem PrimitiveBinaryComponent.exists_mul_eq
   rw [← pow_succ', Nat.sub_add_cancel hn, hu]
 
 end MIPRE.LowDegree
+
+end

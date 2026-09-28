@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Games
+module
+public import MIPRE.Foundations.Games
+
+@[expose] public section
 
 /-!
 # Approximating the quantum value from below
@@ -138,3 +141,5 @@ theorem dotProduct_kronecker_perturb {dA dB : Type*} [Fintype dA] [Fintype dB]
     Matrix.add_mulVec, dotProduct_add]
 
 end MIPRE.ValueApprox
+
+end

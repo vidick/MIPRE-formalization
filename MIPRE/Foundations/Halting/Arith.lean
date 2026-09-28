@@ -3,11 +3,15 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Lists
-import MIPRE.Foundations.Cost.Unary
-import MIPRE.Foundations.Cost.PolyTime
-import MIPRE.Foundations.Cost.Growth
-import Mathlib.Tactic.Linarith
+module
+public import MIPRE.Foundations.Halting.Lists
+public import MIPRE.Foundations.Cost.Unary
+public import MIPRE.Foundations.Cost.PolyTime
+public import MIPRE.Foundations.Cost.Growth
+public import Mathlib.Tactic.Linarith
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Arithmetic in the ambient model: increment, unary conversion, multiplication, polynomials
@@ -677,3 +681,5 @@ theorem primrec_poly_eval (p : Polynomial ℕ) : Primrec fun m : ℕ => p.eval m
   (primrec_polyEval (hornerCoeffs p)).of_eq fun m => Data.polyEval_hornerCoeffs p m
 
 end MIPRE.Cost
+
+end

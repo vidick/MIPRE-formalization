@@ -17,12 +17,16 @@ concrete von Neumann model of `VN/ConcreteVN.lean` — the commutant of the
 right action, which is what the entropic resolver arena (node 1.2.6) needs
 — is an instance. Infrastructure only; no manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.CStarLayer
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.CStarLayer
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -519,3 +523,5 @@ end TracialSub
 end StdTracialAlgebra
 
 end CommutingRepetition
+
+end

@@ -13,13 +13,17 @@ the bounded Borel function `λ ↦ ((2−λ)/λ)^{it} = exp(i t log((2−λ)/λ)
 `2 − R` are injective).  It is a strongly continuous one-parameter unitary
 group fixing `Ω` and commuting with `R`.  Source: `PLAN-tomita.md` §0.1.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.ComplexBorel
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.ModularOperator
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.ComplexBorel
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.ModularOperator
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -149,3 +153,5 @@ end Modular
 end VN
 
 end CommutingRepetition
+
+end

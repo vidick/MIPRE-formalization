@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.TypedPredicate
+module
+public import MIPRE.Foundations.Introspection.TypedPredicate
+
+@[expose] public section
 
 /-! # Semantic prefix guards for executable introspection
 
@@ -56,3 +59,5 @@ theorem guarded_eq_of_holds (L : Bool → CL.CLFun F ι ℓ)
   simp [guarded, check, ha, hb]
 
 end MIPRE.Introspection.PrefixGuard
+
+end

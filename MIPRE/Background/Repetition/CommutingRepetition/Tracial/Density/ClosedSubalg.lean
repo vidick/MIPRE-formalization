@@ -23,12 +23,16 @@ functionals on it. This file supplies that layer for `𝒞 = ↥s`, `s` a norm-c
 
 Proof-side; nothing here is specific to the crossed product.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -165,3 +169,5 @@ end States
 end Density
 
 end CommutingRepetition
+
+end

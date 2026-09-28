@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.RegisterMixing
-import MIPRE.Foundations.CL.Register
+module
+public import MIPRE.Foundations.Introspection.RegisterMixing
+public import MIPRE.Foundations.CL.Register
+
+@[expose] public section
 
 /-! # The concrete coordinate splits for nested CL registers -/
 
@@ -101,5 +104,7 @@ theorem coordinateInsert_linear {U : Finset ι} (L : CL.RegLinear F U)
     CL.RegLinear.toLinearMap_apply, CL.RegLinear.proj_apply]
 
 end MIPRE.Introspection
+
+end
 
 end

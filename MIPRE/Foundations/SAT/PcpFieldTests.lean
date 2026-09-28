@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryFold
-import MIPRE.Foundations.SAT.GateFieldEval
+module
+public import MIPRE.Foundations.LowDegree.BinaryFold
+public import MIPRE.Foundations.SAT.GateFieldEval
+
+@[expose] public section
 
 /-!
 # Executable field arithmetic for the two PCP tests
@@ -180,3 +183,5 @@ theorem checksProg_true_iff (z : R) (p : BitStr) (hp : p ≠ [])
     eval_formulaValue z p hp hroot φ hφ lits hl, eval_certificateValue z p hp hroot certs hc]
 
 end MIPRE.SAT.PcpFieldTests
+
+end

@@ -5,16 +5,19 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MakingMeasurementsProjective/LocalityPreservingRepair.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Statements
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.SpectralTruncation.Conversion
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.SpectralTruncation.ProjectiveNonMeasurement
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.LayerAlgebra
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Sigma
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CompletionTransfer
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.DistanceBounds
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Statements
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.SpectralTruncation.Conversion
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.SpectralTruncation.ProjectiveNonMeasurement
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.LayerAlgebra
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Sigma
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CompletionTransfer
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.DistanceBounds
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -63,19 +66,19 @@ open MIPStarRE.LDT
 
 noncomputable section
 
-private def diagBlock {ιA ιB : Type*}
+def diagBlock {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (M : MIPStarRE.Quantum.Op (ιA × ιB)) (b : ιB) :
     MIPStarRE.Quantum.Op ιA :=
   M.submatrix (fun i => (i, b)) (fun j => (j, b))
 
-private def leftMarginalDensity {ιA ιB : Type*}
+def leftMarginalDensity {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Nonempty ιB]
     (ρ : MIPStarRE.Quantum.Op (ιA × ιB)) : MIPStarRE.Quantum.Op ιA :=
   ((((Fintype.card ιB : Error) : Error)⁻¹ : Error) : ℂ) •
     ∑ b : ιB, diagBlock ρ b
 
-private lemma leftMarginalDensity_nonneg {ιA ιB : Type*}
+lemma leftMarginalDensity_nonneg {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Nonempty ιB]
     {ρ : MIPStarRE.Quantum.Op (ιA × ιB)} (hρ : 0 ≤ ρ) :
     0 ≤ leftMarginalDensity ρ := by
@@ -88,13 +91,13 @@ private lemma leftMarginalDensity_nonneg {ιA ιB : Type*}
     positivity
   simpa [leftMarginalDensity] using smul_nonneg hcoeff hsum
 
-private def leftMarginalState {ιA ιB : Type*}
+def leftMarginalState {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Nonempty ιB]
     (ψ : QuantumState (ιA × ιB)) : QuantumState ιA where
   density := leftMarginalDensity ψ.density
   density_psd := leftMarginalDensity_nonneg ψ.density_psd
 
-private lemma leftTensor_eq_blockDiagonal_const {ιA ιB : Type*}
+lemma leftTensor_eq_blockDiagonal_const {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (X : MIPStarRE.Quantum.Op ιA) :
     leftTensor (ι₂ := ιB) X = Matrix.blockDiagonal (fun _ : ιB => X) := by
@@ -106,7 +109,7 @@ private lemma leftTensor_eq_blockDiagonal_const {ιA ιB : Type*}
     simp [leftTensor, Matrix.blockDiagonal_apply]
   · simp [leftTensor, Matrix.blockDiagonal_apply, h]
 
-private lemma trace_blockDiagonal_const_mul_eq_sum_trace_diagBlock
+lemma trace_blockDiagonal_const_mul_eq_sum_trace_diagBlock
     {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (X : MIPStarRE.Quantum.Op ιA)
@@ -124,7 +127,7 @@ private lemma trace_blockDiagonal_const_mul_eq_sum_trace_diagBlock
     (e.sum_comp (fun y : ιB × (ιA × ιA) =>
       X y.2.1 y.2.2 * M (y.2.2, y.1) (y.2.1, y.1)))
 
-private lemma normalizedTrace_leftMarginalDensity_mul_eq
+lemma normalizedTrace_leftMarginalDensity_mul_eq
     {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Nonempty ιB]
     (ρ : MIPStarRE.Quantum.Op (ιA × ιB)) (X : MIPStarRE.Quantum.Op ιA) :
@@ -147,7 +150,7 @@ private lemma normalizedTrace_leftMarginalDensity_mul_eq
   simp [Fintype.card_prod]
   ring
 
-private lemma leftMarginalState_isNormalized {ιA ιB : Type*}
+lemma leftMarginalState_isNormalized {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Nonempty ιB]
     {ψ : QuantumState (ιA × ιB)} (hψ : ψ.IsNormalized) :
     (leftMarginalState ψ).IsNormalized := by
@@ -160,7 +163,7 @@ private lemma leftMarginalState_isNormalized {ιA ιB : Type*}
         (X := (1 : MIPStarRE.Quantum.Op ιA))
   simpa [leftMarginalState] using hnorm.trans hψ
 
-private lemma leftMarginal_ev_eq {ιA ιB : Type*}
+lemma leftMarginal_ev_eq {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Nonempty ιB]
     (ψ : QuantumState (ιA × ιB)) (X : MIPStarRE.Quantum.Op ιA) :
     ev ψ (leftTensor (ι₂ := ιB) X) = ev (leftMarginalState ψ) X := by
@@ -169,19 +172,19 @@ private lemma leftMarginal_ev_eq {ιA ιB : Type*}
   simp [normalizedTrace_leftMarginalDensity_mul_eq (ρ := ψ.density) (X := X),
     leftMarginalState]
 
-private def rightDiagBlock {ιA ιB : Type*}
+def rightDiagBlock {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (M : MIPStarRE.Quantum.Op (ιA × ιB)) (a : ιA) :
     MIPStarRE.Quantum.Op ιB :=
   M.submatrix (fun i => (a, i)) (fun j => (a, j))
 
-private def rightMarginalDensity {ιA ιB : Type*}
+def rightMarginalDensity {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Nonempty ιA]
     (ρ : MIPStarRE.Quantum.Op (ιA × ιB)) : MIPStarRE.Quantum.Op ιB :=
   ((((Fintype.card ιA : Error) : Error)⁻¹ : Error) : ℂ) •
     ∑ a : ιA, rightDiagBlock ρ a
 
-private lemma rightMarginalDensity_nonneg {ιA ιB : Type*}
+lemma rightMarginalDensity_nonneg {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Nonempty ιA]
     {ρ : MIPStarRE.Quantum.Op (ιA × ιB)} (hρ : 0 ≤ ρ) :
     0 ≤ rightMarginalDensity ρ := by
@@ -194,13 +197,13 @@ private lemma rightMarginalDensity_nonneg {ιA ιB : Type*}
     positivity
   simpa [rightMarginalDensity] using smul_nonneg hcoeff hsum
 
-private def rightMarginalState {ιA ιB : Type*}
+def rightMarginalState {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Nonempty ιA]
     (ψ : QuantumState (ιA × ιB)) : QuantumState ιB where
   density := rightMarginalDensity ψ.density
   density_psd := rightMarginalDensity_nonneg ψ.density_psd
 
-private lemma trace_mul_rightTensor_eq_sum_trace_rightDiagBlock
+lemma trace_mul_rightTensor_eq_sum_trace_rightDiagBlock
     {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (M : MIPStarRE.Quantum.Op (ιA × ιB)) (X : MIPStarRE.Quantum.Op ιB) :
@@ -217,7 +220,7 @@ private lemma trace_mul_rightTensor_eq_sum_trace_rightDiagBlock
     (e.sum_comp (fun y : ιA × (ιB × ιB) =>
       M (y.1, y.2.1) (y.1, y.2.2) * X y.2.2 y.2.1))
 
-private lemma normalizedTrace_rightMarginalDensity_mul_eq
+lemma normalizedTrace_rightMarginalDensity_mul_eq
     {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Nonempty ιA]
     (ρ : MIPStarRE.Quantum.Op (ιA × ιB)) (X : MIPStarRE.Quantum.Op ιB) :
@@ -231,7 +234,7 @@ private lemma normalizedTrace_rightMarginalDensity_mul_eq
   simp [Fintype.card_prod]
   ring
 
-private lemma rightMarginalState_isNormalized {ιA ιB : Type*}
+lemma rightMarginalState_isNormalized {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Nonempty ιA]
     {ψ : QuantumState (ιA × ιB)} (hψ : ψ.IsNormalized) :
     (rightMarginalState ψ).IsNormalized := by
@@ -244,7 +247,7 @@ private lemma rightMarginalState_isNormalized {ιA ιB : Type*}
         (X := (1 : MIPStarRE.Quantum.Op ιB))
   simpa [rightMarginalState] using hnorm.trans hψ
 
-private lemma rightMarginal_ev_eq {ιA ιB : Type*}
+lemma rightMarginal_ev_eq {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Nonempty ιA]
     (ψ : QuantumState (ιA × ιB)) (X : MIPStarRE.Quantum.Op ιB) :
     ev ψ (rightTensor (ι₁ := ιA) X) = ev (rightMarginalState ψ) X := by
@@ -262,7 +265,7 @@ and then absorbed into the displayed \(84\zeta^{1/4}\) envelope.
 **Faithful encoding:** This is an internal scalar estimate for the proved
 locality-preserving construction, not an additional hypothesis of the source
 orthonormalization theorem. -/
-private lemma projectivizationRepair_small_error_bound {ζ : Error}
+lemma projectivizationRepair_small_error_bound {ζ : Error}
     (hζ : 0 ≤ ζ) (hζ_small : ζ ≤ 1 / (4 : Error)) :
     2 * (roundingToProjectiveError ζ + 30 * zetaQuarterRoot ζ) ≤
       orthonormalizationMainLemmaError ζ := by
@@ -280,7 +283,7 @@ private lemma projectivizationRepair_small_error_bound {ζ : Error}
           dsimp [orthonormalizationMainLemmaError, zetaQuarterRoot]
           ring
 
-private lemma roundingToProjectiveError_le_orthonormalizationMainLemmaError {ζ : Error}
+lemma roundingToProjectiveError_le_orthonormalizationMainLemmaError {ζ : Error}
     (hζ : 0 ≤ ζ) (hζ_small : ζ ≤ 1 / (4 : Error)) :
     roundingToProjectiveError ζ ≤ orthonormalizationMainLemmaError ζ := by
   have htrunc : spectralTruncationError ζ ≤ zetaQuarterRoot ζ :=
@@ -295,7 +298,7 @@ private lemma roundingToProjectiveError_le_orthonormalizationMainLemmaError {ζ 
       exact mul_le_mul_of_nonneg_right (by norm_num : (12 : Error) ≤ 84)
         (zetaQuarterRoot_nonneg hζ)
 
-private lemma one_le_orthonormalizationMainLemmaError_of_quarter_lt {ζ : Error}
+lemma one_le_orthonormalizationMainLemmaError_of_quarter_lt {ζ : Error}
     (hquarter_lt : (1 / (4 : Error)) < ζ) :
     1 ≤ orthonormalizationMainLemmaError ζ := by
   have hq_rpow_le :
@@ -318,7 +321,7 @@ private lemma one_le_orthonormalizationMainLemmaError_of_quarter_lt {ζ : Error}
   have hone : (1 : Error) ≤ (84 : Error) * (1 / (4 : Error)) := by norm_num
   exact hone.trans hscaled
 
-private lemma matrix_eq_zero_of_rank_eq_zero {m n : Type*}
+lemma matrix_eq_zero_of_rank_eq_zero {m n : Type*}
     [Finite m] [Fintype n] (A : Matrix m n ℂ) (hA : A.rank = 0) :
     A = 0 := by
   let _ : Fintype m := Fintype.ofFinite m
@@ -334,7 +337,7 @@ private lemma matrix_eq_zero_of_rank_eq_zero {m n : Type*}
   simpa [Matrix.mulVecLin_apply, Matrix.mulVec, dotProduct, Finset.sum_ite_eq,
     Pi.single_apply] using hentry
 
-private lemma sddRel_of_leftPlaced_sddOpRel {Outcome : Type*}
+lemma sddRel_of_leftPlaced_sddOpRel {Outcome : Type*}
     {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     [Fintype Outcome]
@@ -371,7 +374,7 @@ private lemma sddRel_of_leftPlaced_sddOpRel {Outcome : Type*}
   rw [herror]
   exact hclose.squaredDistanceBound
 
-private lemma sddOpRel_rightPlaced_of_ev_eq
+lemma sddOpRel_rightPlaced_of_ev_eq
     {Question Outcome : Type*} {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     [Fintype Outcome]
@@ -403,7 +406,7 @@ private lemma sddOpRel_rightPlaced_of_ev_eq
             rightTensor_mul_rightTensor, hev]
     _ ≤ δ := hAB
 
-private lemma sddRel_of_rightPlaced_sddOpRel {Outcome : Type*}
+lemma sddRel_of_rightPlaced_sddOpRel {Outcome : Type*}
     {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     [Fintype Outcome]
@@ -811,3 +814,5 @@ theorem leftLiftedProjectivizationRepair
 end
 
 end MIPStarRE.LDT.MakingMeasurementsProjective
+
+end

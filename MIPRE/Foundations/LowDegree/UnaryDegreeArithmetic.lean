@@ -2,9 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Cost.Iterates
-import Mathlib.Data.Nat.Factorization.Basic
-import Mathlib.Tactic.Linarith
+module
+public import MIPRE.Foundations.Cost.Iterates
+public import Mathlib.Data.Nat.Factorization.Basic
+public import Mathlib.Tactic.Linarith
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Polynomial-time unary arithmetic for degree decomposition -/
 
@@ -44,23 +48,23 @@ def eqUnaryProg : PolyTimeFun (Unary × Unary) Bool :=
 @[simp] theorem eqUnaryProg_apply (u v : Unary) :
     eqUnaryProg (u, v) = decide (u.length = v.length) := rfl
 
-private abbrev ModState := Unary × Unary
+abbrev ModState := Unary × Unary
 
 /-- Increment the remainder and reset it when the modulus is reached. -/
 def modStep (s : ModState) : ModState :=
   (s.1, if s.2.length + 1 = s.1.length then [] else () :: s.2)
 
-private def modStepProg : PolyTimeFun (ModState × Unit) ModState :=
+def modStepProg : PolyTimeFun (ModState × Unit) ModState :=
   let d := fst.comp fst
   let r := snd.comp fst
   d.pair (ite (eqUnaryProg.comp ((cons (const ()) r).pair d)) (const []) (cons (const ()) r))
 
-private theorem modStepProg_apply (s : ModState) (x : Unit) : modStepProg (s, x) = modStep s := by
+theorem modStepProg_apply (s : ModState) (x : Unit) : modStepProg (s, x) = modStep s := by
   rcases s with ⟨d, r⟩
   change (d, if decide ((() :: r).length = d.length) then [] else () :: r) = _
   simp only [List.length_cons, decide_eq_true_eq, modStep]
 
-private theorem modStep_growth (s : ModState) (x : Unit) :
+theorem modStep_growth (s : ModState) (x : Unit) :
     esize (modStepProg (s, x)) ≤ esize s + (2 : Polynomial ℕ).eval (esize x) := by
   rw [modStepProg_apply]
   rcases s with ⟨d, r⟩
@@ -82,13 +86,13 @@ theorem modStep_mod (d : Unary) (n : ℕ) :
       have hh : (n + 1) % d.length = n % d.length + 1 := by rw [← hm, Nat.mod_eq_of_lt hsmall]
       simp [modStep, he, hh, unary, List.replicate_succ]
 
-private theorem iterate_modStep (d : Unary) (n : ℕ) :
+theorem iterate_modStep (d : Unary) (n : ℕ) :
     modStep^[n] (d, []) = (d, unary (n % d.length)) := by
   induction n with
   | zero => simp [unary]
   | succ n ih => rw [Function.iterate_succ_apply', ih, modStep_mod]
 
-private theorem fold_modStep (u : Unary) (s : ModState) :
+theorem fold_modStep (u : Unary) (s : ModState) :
     u.foldl (fun s _ => modStep s) s = modStep^[u.length] s := by
   induction u generalizing s with
   | nil => rfl
@@ -121,7 +125,7 @@ def dvdUnaryProg : PolyTimeFun (Unary × Unary) Bool :=
 @[simp] theorem dvdUnaryProg_apply (d u : Unary) :
     dvdUnaryProg (d, u) = decide (d.length ∣ u.length) := rfl
 
-private theorem iterate_tail_size (n : ℕ) (u : Unary) :
+theorem iterate_tail_size (n : ℕ) (u : Unary) :
     esize (((tail : PolyTimeFun Unary Unary) : Unary → Unary)^[n] u) ≤ X.eval (esize u) := by
   rw [eval_X]
   change esize (List.tail^[n] u) ≤ esize u
@@ -166,11 +170,11 @@ theorem mem_descendingUnary_iff (u d : Unary) : d ∈ descendingUnary u ↔ d.le
 theorem esize_unary_list (u : Unary) : esize u = 2 * u.length + 1 := by
   rw [← unary_length u, esize_unary, length_unary]
 
-private abbrev MultiplyState := Unary × Unary
+abbrev MultiplyState := Unary × Unary
 
-private def multiplyStep (s : MultiplyState) (_ : Unit) : MultiplyState := (s.1, s.1 ++ s.2)
+def multiplyStep (s : MultiplyState) (_ : Unit) : MultiplyState := (s.1, s.1 ++ s.2)
 
-private theorem fold_multiplyStep (pre v acc : Unary) :
+theorem fold_multiplyStep (pre v acc : Unary) :
     (pre.foldl multiplyStep (v, acc)).1 = v ∧
       (pre.foldl multiplyStep (v, acc)).2.length = acc.length + pre.length * v.length := by
   induction pre generalizing acc with
@@ -181,10 +185,10 @@ private theorem fold_multiplyStep (pre v acc : Unary) :
     simpa only [List.foldl_cons, multiplyStep, List.length_append, List.length_cons,
       Nat.add_mul, Nat.one_mul, Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] using h.2
 
-private def multiplyStepProg : PolyTimeFun (MultiplyState × Unit) MultiplyState :=
+def multiplyStepProg : PolyTimeFun (MultiplyState × Unit) MultiplyState :=
   (fst.comp fst).pair (append.comp ((fst.comp fst).pair (snd.comp fst)))
 
-private theorem multiplyStep_bounded : FoldBounded multiplyStepProg (10 * X ^ 2 + 10 * X + 10) := by
+theorem multiplyStep_bounded : FoldBounded multiplyStepProg (10 * X ^ 2 + 10 * X + 10) := by
   intro u s pre post heq
   rcases s with ⟨v, acc⟩
   let N := esize (u, v, acc)
@@ -219,5 +223,7 @@ def mulUnaryProg : PolyTimeFun (Unary × Unary) Unary :=
     mulUnaryProg (u, v) = unary (u.length * v.length) := rfl
 
 end MIPRE.LowDegree.DegreeArithmetic
+
+end
 
 end

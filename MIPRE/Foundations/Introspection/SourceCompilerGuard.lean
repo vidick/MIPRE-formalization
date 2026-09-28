@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.DynamicParser
-import MIPRE.Foundations.Introspection.ClockSimulation
+module
+public import MIPRE.Foundations.Introspection.DynamicParser
+public import MIPRE.Foundations.Introspection.ClockSimulation
+
+@[expose] public section
 
 /-! # Dynamic source-question projection and internal answer cutoff
 
@@ -62,10 +65,10 @@ def eight : PolyTimeFun ℕ ℕ :=
 
 @[simp] theorem eight_apply (n : ℕ) : eight n = 8*n := by simp [eight, Nat.bit_val]; omega
 
-private def andCheck {α : Type*} [SizedEncoding α] (f g : PolyTimeFun α Bool) :
+def andCheck {α : Type*} [SizedEncoding α] (f g : PolyTimeFun α Bool) :
     PolyTimeFun α Bool := ite f g (const false)
 
-private theorem andCheck_iff {α : Type*} [SizedEncoding α] (f g : PolyTimeFun α Bool) (x : α) :
+theorem andCheck_iff {α : Type*} [SizedEncoding α] (f g : PolyTimeFun α Bool) (x : α) :
     andCheck f g x = true ↔ f x = true ∧ g x = true := by
   simp only [andCheck, PolyTimeFun.ite_apply, const_apply]
   cases f x <;> simp
@@ -213,5 +216,7 @@ theorem projectedProg_accepts_iff {source : Prog} (hs : source.WellScoped 1)
       exact (h ha).elim
 
 end MIPRE.Introspection.SourceCompiler
+
+end
 
 end

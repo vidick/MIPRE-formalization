@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryOrbitPolynomial
+module
+public import MIPRE.Foundations.LowDegree.BinaryOrbitPolynomial
+
+@[expose] public section
 
 /-! # Descending a closed orbit product to binary coefficient bits -/
 
@@ -158,5 +161,7 @@ theorem orbitPolynomialBits_irreducible [Fact (Irreducible f)]
   exact IsIntegral.of_finite (ZMod 2) _
 
 end MIPRE.LowDegree.BinaryQuotient
+
+end
 
 end

@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestCompleteAux
+module
+public import MIPRE.Foundations.Introspection.HonestCompleteAux
+
+@[expose] public section
 
 /-! # Perfect PCC completeness of the full auxiliary introspection game
 
@@ -78,7 +81,7 @@ theorem auxStrategy_dimension :
     (auxStrategy L D E X Z projectPauli DP R hL).d = Fintype.card (ι → F) * R.d := by
   simp [auxStrategy, Fintype.card_prod]
 
-private theorem doubled_adj (p q : Bool × AuxQuestion ℓ)
+theorem doubled_adj (p q : Bool × AuxQuestion ℓ)
     (hμ : 0 < (auxGame L D E X Z projectPauli DP).doubled.μ p q) :
     (p.1 = false ∧ q.1 = true) ∧ TypeGraph.Adj E X Z (.inr p.2) (.inr q.2) := by
   have ht : p.1 = false ∧ q.1 = true := by
@@ -129,3 +132,5 @@ theorem exists_auxPerfectPCC (hR : R.IsPCC) (hval : R.value = 1) :
     auxStrategy_dimension L D E X Z projectPauli DP R hL⟩
 
 end MIPRE.Introspection.Honest
+
+end

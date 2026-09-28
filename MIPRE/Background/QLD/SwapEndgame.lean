@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.SwapMeasure
-import MIPRE.Background.QLD.SwapState
+module
+public import MIPRE.Background.QLD.SwapMeasure
+public import MIPRE.Background.QLD.SwapState
+
+@[expose] public section
 
 /-!
 # The endgame of `lem:qld-swap` item 2
@@ -281,5 +284,7 @@ theorem qform_bOp_twirl (θ : R × ((n → F) × (n → F)) → ℂ)
 end Twirl
 
 end MIPRE.QLD
+
+end
 
 end

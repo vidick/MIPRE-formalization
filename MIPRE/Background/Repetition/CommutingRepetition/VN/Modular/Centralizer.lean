@@ -17,12 +17,16 @@ Lemma 4.5: for `x, y ∈ M`,
 and when `x` commutes with `R` both sides collapse (`(2−R)Ω = Ω`, `R(2−R)Ω = Ω`)
 to `⟪xΩ, y*Ω⟫ = ⟪yΩ, x*Ω⟫`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Tomita
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Tomita
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -147,3 +151,5 @@ end Modular
 end VN
 
 end CommutingRepetition
+
+end

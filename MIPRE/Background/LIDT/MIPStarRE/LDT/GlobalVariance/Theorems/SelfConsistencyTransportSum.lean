@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransportSum.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -36,7 +39,7 @@ polynomial sum, with no polynomial-cardinality loss.  These are the steps 2 and
 (`references/ldt-paper/expansion.tex:317--321`).
 -/
 
-private noncomputable def axisParallelPointAnswerMeasurement
+noncomputable def axisParallelPointAnswerMeasurement
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι) :
     IdxMeas (AxisParallelTestSample params) (Fq params) ι :=
@@ -44,7 +47,7 @@ private noncomputable def axisParallelPointAnswerMeasurement
     unfold axisParallelPointAnswerFamily
     exact (strategy.pointMeasurement s.1).total_eq_one)
 
-private noncomputable def axisParallelLineAnswerMeasurement
+noncomputable def axisParallelLineAnswerMeasurement
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι) :
     IdxMeas (AxisParallelTestSample params) (Fq params) ι :=
@@ -62,7 +65,7 @@ This is the operator identity bridging the un-postprocessed `Fq params`-valued
 line answer family to the per-`g` line operator used in
 `weightedGeneralizeBLeftOperatorAtPolynomial`.  The two sides differ only by
 rewriting `axisParallelLineQuestionParameter` at the diagonal sample point. -/
-private lemma liftLeft_lineAnswerMeasurement_outcome_at_g
+lemma liftLeft_lineAnswerMeasurement_outcome_at_g
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι)
     (g : Polynomial params)
@@ -88,7 +91,7 @@ private lemma liftLeft_lineAnswerMeasurement_outcome_at_g
 
 /-- The lifted point-answer family outcome at value `a = g(s.1)` reduces to the
 right-tensor of the `point-conditioned` operator at base point `s.1`. -/
-private lemma liftRight_pointAnswerMeasurement_outcome_at_g
+lemma liftRight_pointAnswerMeasurement_outcome_at_g
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι)
     (g : Polynomial params)
@@ -335,3 +338,5 @@ lemma axisParallelPointLineConsistency_weighted_rightToLeftLineQuestion_sum
           params strategy eps delta gamma hgood G
 
 end MIPStarRE.LDT.GlobalVariance
+
+end

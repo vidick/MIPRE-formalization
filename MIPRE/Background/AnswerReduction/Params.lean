@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.PcpSampler
-import MIPRE.Foundations.Pipeline.UnaryArith
-import MIPRE.Foundations.Pipeline.AnswerReduction
+module
+public import MIPRE.Background.AnswerReduction.PcpSampler
+public import MIPRE.Foundations.Pipeline.UnaryArith
+public import MIPRE.Foundations.Pipeline.AnswerReduction
+
+@[expose] public section
 
 /-!
 # The PCP parameters of answer reduction, and the routine computing them
@@ -335,5 +338,7 @@ theorem parProg_runs (n : ℕ) :
   exact ⟨_, hardcode_time (ParRoutine.core_closed PD) h⟩
 
 end MIPRE.AnswerReduction
+
+end
 
 end

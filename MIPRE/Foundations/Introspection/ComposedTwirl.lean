@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.TwirlDistance
-import MIPRE.Foundations.Introspection.TwoSidedCommutation
+module
+public import MIPRE.Foundations.Introspection.TwirlDistance
+public import MIPRE.Foundations.Introspection.TwoSidedCommutation
+
+@[expose] public section
 
 /-! # Composed twirling from two commutator estimates -/
 
@@ -72,5 +75,7 @@ theorem composed_twirl_dist_le (μ : I → ℝ) (ν : J → ℝ)
   simpa only [Fintype.sum_prod_type, mul_assoc, Finset.mul_sum] using hC
 
 end MIPRE.Introspection
+
+end
 
 end

@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.DecisionCompilerCutoff
-import MIPRE.Background.Introspection.DecisionKernel
-import MIPRE.Foundations.CL.DetypingDeciderRoute
+module
+public import MIPRE.Background.Introspection.DecisionCompilerCutoff
+public import MIPRE.Background.Introspection.DecisionKernel
+public import MIPRE.Foundations.CL.DetypingDeciderRoute
+
+@[expose] public section
 
 /-! # Detyping the prepared decision kernel
 
@@ -111,3 +114,5 @@ theorem untypedKernel_iff (U : ClockedUniversalMachine) (n : ℕ) (x y a b : Bit
     exact False.elim (h ⟨hx,hy,ha,hb⟩)
 
 end MIPRE.Introspection.DecisionCompiler
+
+end

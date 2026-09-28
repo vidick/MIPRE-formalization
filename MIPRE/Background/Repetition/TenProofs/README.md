@@ -17,7 +17,7 @@ repository. Every file carries a header saying so.
 ## Conventions
 
 - Do not edit files here by hand: re-run `scripts/vendor-repetition.py` instead. The
-  only differences from upstream are the header, the `set_option autoImplicit true`
+  only differences from upstream are the header, the module-system lines (`module`, `public import`, `@[expose] public section`, no `private` definitions; added by `scripts/modularize.py`, 2026-09-28), the `set_option autoImplicit true`
   line inserted after the imports, the compile fixes listed below, and the split. The
   Lean *namespace* is unchanged (`QuantumParallelRepetition`).
 - Upstream's one module is 71k lines, and the Palomar registry caps a Lean file at
@@ -54,4 +54,5 @@ them to the tree as it is, finding each site in whichever part of the split it n
 - Copied verbatim: `G_QuantumParallelRepetition.lean.expected` = upstream `ComparatorChallenges/G_QuantumParallelRepetition.lean`
 - `set_option autoImplicit true` inserted after the imports: yes
 - Recorded compile fixes applied: 1 (listed under "Local deviations from upstream")
+- Module system: 9 files given the `module` header, `public import`s, an `@[expose] public section` and no `private` definitions by `scripts/modularize.py` (Palomar requires it; `planning/palomar.md`)
 <!-- END GENERATED -->

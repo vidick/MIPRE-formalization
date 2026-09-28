@@ -2,11 +2,14 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.PauliBinaryInterface
-import MIPRE.Foundations.Introspection.DecisionPreparation
-import MIPRE.Foundations.Introspection.Types
-import MIPRE.Foundations.Cost.FiniteEncoding
-import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
+module
+public import MIPRE.Background.QLD.PauliBinaryInterface
+public import MIPRE.Foundations.Introspection.DecisionPreparation
+public import MIPRE.Foundations.Introspection.Types
+public import MIPRE.Foundations.Cost.FiniteEncoding
+public import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
+
+@[expose] public section
 
 /-! # Canonical raw input parsing for the introspection decision kernel
 
@@ -26,7 +29,7 @@ abbrev Input := DecisionPreparation.KernelInput
 def labelKeys : List Data := (Finset.univ.image (encode : Label → Data)).toList
 def labelOption (d : Data) : Option Label := if d ∈ labelKeys then decode d else none
 
-private theorem table_not_mem (f : Data → Data) (xs : List Data) (d : Data)
+theorem table_not_mem (f : Data → Data) (xs : List Data) (d : Data)
     (h : d ∉ xs) : finiteTable f xs d = .nil := by
   induction xs with
   | nil => rfl
@@ -135,4 +138,6 @@ theorem canonical_encode (M : DecisionPreparation.Metadata) (clock : Unary) (N Q
   simp [canonical, raw, readFields_encode, equal_iff]
 
 end MIPRE.Introspection.DecisionKernel
+end
+
 end

@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryOrbitDescent
+module
+public import MIPRE.Foundations.LowDegree.BinaryOrbitDescent
+
+@[expose] public section
 
 /-! # Polynomial arithmetic with supplied binary-quotient coefficient vectors -/
 
@@ -76,16 +79,16 @@ theorem coeffPolynomial_addCoeffLists [CharP R 2] (z : R) (as bs : List BitStr) 
       simp only [coeffPolynomial_cons, map_add]
       ring
 
-private abbrev AddState := List BitStr × List BitStr
+abbrev AddState := List BitStr × List BitStr
 
-private def addStep (s : AddState) (a : BitStr) : AddState :=
+def addStep (s : AddState) (a : BitStr) : AddState :=
   match s.1 with
   | [] => ([], a :: s.2)
   | b :: bs => (bs, xorBits a b :: s.2)
 
-private def finishAdd (s : AddState) : List BitStr := s.2.reverse ++ s.1
+def finishAdd (s : AddState) : List BitStr := s.2.reverse ++ s.1
 
-private theorem finishAdd_fold (as bs acc : List BitStr) :
+theorem finishAdd_fold (as bs acc : List BitStr) :
     finishAdd (as.foldl addStep (bs, acc)) = acc.reverse ++ addCoeffLists as bs := by
   induction as generalizing bs acc with
   | nil => rfl
@@ -102,7 +105,7 @@ private theorem finishAdd_fold (as bs acc : List BitStr) :
       rw [ih]
       simp [addCoeffLists, List.append_assoc]
 
-private def addStepProg : PolyTimeFun (AddState × BitStr) AddState :=
+def addStepProg : PolyTimeFun (AddState × BitStr) AddState :=
   let nilCase : PolyTimeFun (AddState × BitStr) AddState :=
     (const []).pair (cons snd (snd.comp fst))
   let consCase : PolyTimeFun ((AddState × BitStr) × (BitStr × List BitStr)) AddState :=
@@ -111,12 +114,12 @@ private def addStepProg : PolyTimeFun (AddState × BitStr) AddState :=
         (snd.comp (fst.comp fst)))
   (casesList nilCase consCase).comp ((PolyTimeFun.id _).pair (fst.comp fst))
 
-private theorem addStepProg_apply (s : AddState) (a : BitStr) :
+theorem addStepProg_apply (s : AddState) (a : BitStr) :
     addStepProg (s, a) = addStep s a := by
   rcases s with ⟨bs, acc⟩
   cases bs <;> rfl
 
-private theorem addStep_growth (s : AddState) (a : BitStr) :
+theorem addStep_growth (s : AddState) (a : BitStr) :
     esize (addStepProg (s, a)) ≤ esize s + (5 * X + 5 : Polynomial ℕ).eval (esize a) := by
   rw [addStepProg_apply]
   rcases s with ⟨bs, acc⟩
@@ -209,12 +212,12 @@ theorem coeffPolynomial_mulCoeffLists [CharP R 2] (z : R) (p : BitStr) (as bs : 
       · exact length_zeroBits p
       · exact mulCoeffLists_width p as bs ha₁ c hc
 
-private abbrev MulState := BitStr × List BitStr × List BitStr
+abbrev MulState := BitStr × List BitStr × List BitStr
 
-private def mulStep (s : MulState) (a : BitStr) : MulState :=
+def mulStep (s : MulState) (a : BitStr) : MulState :=
   (s.1, s.2.1, addCoeffLists (s.2.1.map (mulReduce s.1 a)) (zeroBits s.1 :: s.2.2))
 
-private theorem fold_mulStep_shape (pre : List BitStr) (p : BitStr) (bs cs : List BitStr) :
+theorem fold_mulStep_shape (pre : List BitStr) (p : BitStr) (bs cs : List BitStr) :
     (pre.foldl mulStep (p, bs, cs)).1 = p ∧ (pre.foldl mulStep (p, bs, cs)).2.1 = bs ∧
       (pre.foldl mulStep (p, bs, cs)).2.2.length ≤ max bs.length cs.length + pre.length := by
   induction pre generalizing cs with
@@ -228,7 +231,7 @@ private theorem fold_mulStep_shape (pre : List BitStr) (p : BitStr) (bs cs : Lis
     simp only [List.length_cons]
     omega
 
-private theorem fold_mulStep_width (pre : List BitStr) (p : BitStr) (bs cs : List BitStr) (N : ℕ)
+theorem fold_mulStep_width (pre : List BitStr) (p : BitStr) (bs cs : List BitStr) (N : ℕ)
     (hp : p.length ≤ N) (ha : ∀ a ∈ pre, a.length ≤ N) (hc : ∀ c ∈ cs, c.length ≤ N) :
     ∀ c ∈ (pre.foldl mulStep (p, bs, cs)).2.2, c.length ≤ N := by
   induction pre generalizing cs with
@@ -244,14 +247,14 @@ private theorem fold_mulStep_width (pre : List BitStr) (p : BitStr) (bs cs : Lis
       · simpa using hp
       · exact hc c hc'
 
-private theorem fold_mulStep_eq (as : List BitStr) (p : BitStr) (bs cs : List BitStr) :
+theorem fold_mulStep_eq (as : List BitStr) (p : BitStr) (bs cs : List BitStr) :
     as.foldl mulStep (p, bs, cs) =
       (p, bs, as.foldl (fun acc a => addCoeffLists (bs.map (mulReduce p a)) (zeroBits p :: acc)) cs) := by
   induction as generalizing cs with
   | nil => rfl
   | cons a as ih => exact ih _
 
-private def mulStepProg : PolyTimeFun (MulState × BitStr) MulState :=
+def mulStepProg : PolyTimeFun (MulState × BitStr) MulState :=
   let p := fst.comp fst
   let bs := fst.comp (snd.comp fst)
   let cs := snd.comp (snd.comp fst)
@@ -263,7 +266,7 @@ private def mulStepProg : PolyTimeFun (MulState × BitStr) MulState :=
       change (p, bs, addCoeffLists (scaleCoeffProg (bs, p, a)) (zeroBits p :: cs)) = _
       rfl)
 
-private theorem mulStep_bounded : FoldBounded mulStepProg (20 * X ^ 2 + 20 * X + 20) := by
+theorem mulStep_bounded : FoldBounded mulStepProg (20 * X ^ 2 + 20 * X + 20) := by
   intro as s pre post heq
   rcases s with ⟨p, bs, cs⟩
   let N := esize (as, p, bs, cs)
@@ -334,5 +337,7 @@ theorem mulCoeffLists_width_le (p : BitStr) (as bs : List BitStr) (N : ℕ)
       · exact ih (fun d hd => ha d (by simp [hd])) c hc
 
 end MIPRE.LowDegree.BinaryQuotient
+
+end
 
 end

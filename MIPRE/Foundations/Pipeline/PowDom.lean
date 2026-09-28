@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Repeat.Dom
-import MIPRE.Foundations.Cost.Growth
+module
+public import MIPRE.Foundations.Repeat.Dom
+public import MIPRE.Foundations.Cost.Growth
+
+@[expose] public section
 
 /-!
 # Domination by a power of a monomial
@@ -208,3 +211,5 @@ theorem ofLin (hX : 1 ≤ X) {a b c v : ℕ} (h : v ≤ a * W + b * (K + 1) + c)
 end PDom
 
 end MIPRE.Pipeline
+
+end

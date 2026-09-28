@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.OracularGame
-import MIPRE.Foundations.PerfectStrategy
-import MIPRE.Foundations.GameDouble
+module
+public import MIPRE.Foundations.OracularGame
+public import MIPRE.Foundations.PerfectStrategy
+public import MIPRE.Foundations.GameDouble
+
+@[expose] public section
 
 /-!
 # Completeness of oracularization
@@ -388,3 +391,5 @@ theorem isPCC_oracleStrategy (T : SyncStrategy S.toGame.doubled) (hT : T.IsPCC) 
 end SeededGame
 
 end MIPRE
+
+end

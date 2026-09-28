@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.ArrayProg
+module
+public import MIPRE.Foundations.SAT.ArrayProg
+
+@[expose] public section
 
 /-!
 # Power-of-two padding with unary output
@@ -41,19 +44,19 @@ theorem ceilPower_le_twice (n : ℕ) : ceilPower n ≤ 2 * n + 1 := by
     rw [ceilPower, he, pow_succ]
     omega
 
-private theorem unary_eq_length (u : Unary) : u = unary u.length := by
+theorem unary_eq_length (u : Unary) : u = unary u.length := by
   induction u with
   | nil => rfl
   | cons x u ih => cases x; simpa [unary, List.replicate_succ] using congrArg (List.cons ()) ih
 
-private theorem esize_unary_list (u : Unary) : esize u = 2 * u.length + 1 := by
+theorem esize_unary_list (u : Unary) : esize u = 2 * u.length + 1 := by
   conv_lhs => rw [unary_eq_length u]
   exact esize_unary _
 
-private def growStep (s : Unary × Unary) (_ : Bool) : Unary × Unary :=
+def growStep (s : Unary × Unary) (_ : Bool) : Unary × Unary :=
   (s.1, (s.2 ++ s.2).take s.1.length)
 
-private theorem grow_bound (fuel : BitStr) (cap acc : Unary) :
+theorem grow_bound (fuel : BitStr) (cap acc : Unary) :
     (fuel.foldl growStep (cap, acc)).1 = cap ∧
       (fuel.foldl growStep (cap, acc)).2.length ≤ max cap.length acc.length := by
   induction fuel generalizing acc with
@@ -64,7 +67,7 @@ private theorem grow_bound (fuel : BitStr) (cap acc : Unary) :
     simp only [List.length_take, List.length_append]
     omega
 
-private theorem min_mul_min (c p v : ℕ) (hp : 1 ≤ p) :
+theorem min_mul_min (c p v : ℕ) (hp : 1 ≤ p) :
     min c (p * min c v) = min c (p * v) := by
   by_cases h : c ≤ v
   · have hpc : c ≤ p * c := by nlinarith
@@ -72,7 +75,7 @@ private theorem min_mul_min (c p v : ℕ) (hp : 1 ≤ p) :
     rw [min_eq_left h, min_eq_left hpc, min_eq_left hpv]
   · rw [min_eq_right (by omega : v ≤ c)]
 
-private theorem grow_length (fuel : BitStr) (cap acc : Unary) (ha : acc.length ≤ cap.length) :
+theorem grow_length (fuel : BitStr) (cap acc : Unary) (ha : acc.length ≤ cap.length) :
     (fuel.foldl growStep (cap, acc)).2.length = min cap.length (2 ^ fuel.length * acc.length) := by
   induction fuel generalizing acc with
   | nil => simp [min_eq_right ha]
@@ -84,10 +87,10 @@ private theorem grow_length (fuel : BitStr) (cap acc : Unary) (ha : acc.length �
     congr 1
     ring
 
-private noncomputable def growStepProg : PolyTimeFun ((Unary × Unary) × Bool) (Unary × Unary) :=
+noncomputable def growStepProg : PolyTimeFun ((Unary × Unary) × Bool) (Unary × Unary) :=
   (fst.comp fst).pair (ap₂ take (ap₂ append (snd.comp fst) (snd.comp fst)) (fst.comp fst))
 
-private theorem growStep_bounded : FoldBounded growStepProg (2 * X + 4) := by
+theorem growStep_bounded : FoldBounded growStepProg (2 * X + 4) := by
   rintro fuel ⟨cap, acc⟩ pre post h
   have hb := grow_bound pre cap acc
   change esize (pre.foldl growStep (cap, acc)) ≤ _
@@ -119,3 +122,5 @@ noncomputable def ceilPowerProg : PolyTimeFun Unary Unary :=
     ceilPowerProg u = unary (ceilPower u.length) := rfl
 
 end MIPRE.SAT
+
+end

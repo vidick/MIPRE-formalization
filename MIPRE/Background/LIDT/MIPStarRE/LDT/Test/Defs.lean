@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Test/Defs.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.ParametersFiniteAnswers
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OpFamily
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.ParametersFiniteAnswers
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OpFamily
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -486,3 +489,5 @@ the bipartite form `Preliminaries.simeqDataProcessing`, not as a generic fact
 about `qConsDefect`. -/
 
 end MIPStarRE.LDT
+
+end

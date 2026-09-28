@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.TypedGame
-import MIPRE.Background.AnswerReduction.PcpSampler
-import MIPRE.Foundations.Introspection.FieldLineCheckProg
-import MIPRE.Foundations.Introspection.FieldQuestionProg
+module
+public import MIPRE.Background.AnswerReduction.TypedGame
+public import MIPRE.Background.AnswerReduction.PcpSampler
+public import MIPRE.Foundations.Introspection.FieldLineCheckProg
+public import MIPRE.Foundations.Introspection.FieldQuestionProg
+
+@[expose] public section
 
 /-!
 # The answer-reduced decision, on blocks of bits
@@ -656,5 +659,7 @@ theorem verdictB_eq (p q : Q (F.par n) (Fq (F.par n) (F.hk n)) X) (a b : BitStr)
 end VerdictEq
 
 end MIPRE.AnswerReduction
+
+end
 
 end

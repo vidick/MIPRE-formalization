@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.SAT.Decoupled
-import MIPRE.Foundations.Cost.Fold
-import MIPRE.Foundations.Cost.Numeric
-import MIPRE.Foundations.LowDegree.Encoding
+module
+public import MIPRE.Foundations.SAT.Decoupled
+public import MIPRE.Foundations.Cost.Fold
+public import MIPRE.Foundations.Cost.Numeric
+public import MIPRE.Foundations.LowDegree.Encoding
+
+@[expose] public section
 
 /-!
 # The bespoke PCP for deciders: the statement
@@ -282,5 +285,7 @@ structure PcpDecider where
           coded (pf.g 1) = answerVec _ (params n T Q σ).m bp
 
 end MIPRE.SAT
+
+end
 
 end

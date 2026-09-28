@@ -4,7 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE. Vendored fro
 https://github.com/openai/ten-proofs (commit 94bc0feb, 2026-08-01) by scripts/vendor-repetition.py;
 do not edit by hand. Upstream path: QuantumParallelRepetition.lean
 -/
-import Mathlib
+module
+public import Mathlib
+
+@[expose] public section
 
 -- Part 1 of 8 of upstream's single module `QuantumParallelRepetition.lean`: its lines
 -- 14-8995, cut between top-level `noncomputable section` blocks by
@@ -9007,3 +9010,5 @@ def dSVRankControlledTargetCatalystIndexEquiv
 end
 
 end QuantumParallelRepetition
+
+end

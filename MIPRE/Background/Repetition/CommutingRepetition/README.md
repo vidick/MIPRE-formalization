@@ -22,7 +22,7 @@ repository. `NOTICE`, copied from upstream, records the material it ports from
 ## Conventions
 
 - Do not edit files here by hand: re-run `scripts/vendor-repetition.py` instead. The
-  only differences from upstream are the header, the rewritten `import` prefix
+  only differences from upstream are the header, the module-system lines (`module`, `public import`, `@[expose] public section`, no `private` definitions; added by `scripts/modularize.py`, 2026-09-28), the rewritten `import` prefix
   (`CommutingRepetition.` becomes `MIPRE.Background.Repetition.CommutingRepetition.`),
   the `set_option autoImplicit true` line inserted after the imports, and the compile
   fixes listed below. Lean *namespaces* are unchanged (`CommutingRepetition`,
@@ -84,4 +84,5 @@ to the tree as it is); each site carries a comment saying so:
 - Copied verbatim: `NOTICE` = upstream `lean/NOTICE`
 - `set_option autoImplicit true` inserted after the imports: yes
 - Recorded compile fixes applied: 0 (listed under "Local deviations from upstream")
+- Module system: 130 files given the `module` header, `public import`s, an `@[expose] public section` and no `private` definitions by `scripts/modularize.py` (Palomar requires it; `planning/palomar.md`)
 <!-- END GENERATED -->

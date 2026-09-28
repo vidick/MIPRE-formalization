@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SamplingPrefix
-import MIPRE.Foundations.Commutation
+module
+public import MIPRE.Foundations.Introspection.SamplingPrefix
+public import MIPRE.Foundations.Commutation
+
+@[expose] public section
 
 /-! # The two sampling-test estimates
 
@@ -127,5 +130,7 @@ theorem off_range_weight_le (ψ : H × K → ℂ) (M : POVM C H) (N : POVM B K) 
       (fun z _ _ => xSqNorm_nonneg _ _ _)
 
 end MIPRE.Introspection
+
+end
 
 end

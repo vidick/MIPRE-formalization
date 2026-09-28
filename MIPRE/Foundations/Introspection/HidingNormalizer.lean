@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HidingMaps
-import MIPRE.Foundations.Introspection.ConditionalNormalizer
+module
+public import MIPRE.Foundations.Introspection.HidingMaps
+public import MIPRE.Foundations.Introspection.ConditionalNormalizer
+
+@[expose] public section
 
 /-! # Normalizer replacement on the parsed adjacent hiding edge
 
@@ -189,5 +192,7 @@ theorem hiding_next_normalizer_estimate
   exact h.trans_eq (by ring)
 
 end MIPRE.Introspection.TypedEstimates
+
+end
 
 end

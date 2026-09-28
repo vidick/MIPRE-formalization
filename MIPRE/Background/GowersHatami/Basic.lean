@@ -3,12 +3,16 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Distances
-import Mathlib.Analysis.Matrix.Order
-import Mathlib.Data.Fintype.EquivFin
-import Mathlib.LinearAlgebra.Matrix.Permutation
-import Mathlib.LinearAlgebra.Matrix.Reindex
-import Mathlib.LinearAlgebra.UnitaryGroup
+module
+public import MIPRE.Foundations.Distances
+public import Mathlib.Analysis.Matrix.Order
+public import Mathlib.Data.Fintype.EquivFin
+public import Mathlib.LinearAlgebra.Matrix.Permutation
+public import Mathlib.LinearAlgebra.Matrix.Reindex
+public import Mathlib.LinearAlgebra.UnitaryGroup
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The Gowers–Hatami theorem
@@ -827,3 +831,5 @@ theorem gowers_hatami
 end Main
 
 end MIPRE
+
+end

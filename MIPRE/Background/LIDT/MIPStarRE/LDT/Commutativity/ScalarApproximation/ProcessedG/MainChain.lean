@@ -5,12 +5,15 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/MainChain.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.Core
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainReverse
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainTail
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.EvaluatedSliceCommutation.Consequences
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.Scalar.RawSecond
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.PhaseTwo
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.Core
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainReverse
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainTail
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.EvaluatedSliceCommutation.Consequences
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.Scalar.RawSecond
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.PhaseTwo
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -38,7 +41,7 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-private noncomputable def evaluatedSlicePhaseFourInserted
+noncomputable def evaluatedSlicePhaseFourInserted
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (C : EvaluatedSliceQuestion params → EvaluatedSliceOutcome params →
@@ -51,7 +54,7 @@ private noncomputable def evaluatedSlicePhaseFourInserted
           (((evaluatedSlicePointMeas params strategy q.2).outcome ab.2) *
             ((evaluatedSlicePointMeas params strategy q.1).outcome ab.1)))
 
-private noncomputable def evaluatedSlicePhaseFourSwapped
+noncomputable def evaluatedSlicePhaseFourSwapped
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (C : EvaluatedSliceQuestion params → EvaluatedSliceOutcome params →
@@ -65,7 +68,7 @@ private noncomputable def evaluatedSlicePhaseFourSwapped
             ((evaluatedSlicePointMeas params strategy q.2).outcome ab.2)))
 
 /-- Shared left-register prefix for the ProcessedG right-register point-swap bounds. -/
-private noncomputable def evaluatedSlicePointSwapRightPrefix
+noncomputable def evaluatedSlicePointSwapRightPrefix
     (params : Parameters) [FieldModel params.q]
     (family : IdxPolyFamily params ι)
     (T : EvaluatedSliceQuestion params → MIPStarRE.Quantum.Op ι) :
@@ -77,7 +80,7 @@ private noncomputable def evaluatedSlicePointSwapRightPrefix
         T q)
 
 /-- Normalization for the shared ProcessedG right-register point-swap prefix. -/
-private lemma evaluatedSlice_pointSwap_right_prefix_normalization
+lemma evaluatedSlice_pointSwap_right_prefix_normalization
     (params : Parameters) [FieldModel params.q]
     (family : IdxPolyFamily params ι)
     (T : EvaluatedSliceQuestion params → MIPStarRE.Quantum.Op ι)
@@ -97,7 +100,7 @@ private lemma evaluatedSlice_pointSwap_right_prefix_normalization
       (hT_nonneg := hT_nonneg q)
       (hT_le_one := hT_le_one q))
 
-private lemma evaluatedSlice_pointSwap_right_bound_of_norms
+lemma evaluatedSlice_pointSwap_right_bound_of_norms
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (gamma : Error)
@@ -810,3 +813,5 @@ lemma evaluatedSlice_scalar_chain_bound
   simpa [𝒟, avgABA, avgABAB] using hassemble
 
 end MIPStarRE.LDT.Commutativity
+
+end

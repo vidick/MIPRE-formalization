@@ -3,7 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Tactic
+module
+public import Mathlib.Tactic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Domination by a monomial in the parameters and the input size
@@ -97,3 +101,5 @@ theorem powK1 : Dom W X K 1 0 1 (X ^ (K + 1)) := by
 end Dom
 
 end MIPRE.Repeat
+
+end

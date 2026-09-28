@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryOddPrimeConstructor
-import MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop
-import MIPRE.Foundations.LowDegree.BinaryDegreeDecomposition
+module
+public import MIPRE.Foundations.LowDegree.BinaryOddPrimeConstructor
+public import MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop
+public import MIPRE.Foundations.LowDegree.BinaryDegreeDecomposition
+
+@[expose] public section
 
 /-! # Uniform dispatch and prime-power polynomial decomposition -/
 
@@ -102,5 +105,7 @@ theorem degreePolynomials_degrees (n : ℕ) :
   exact (primePowerBits_factorization_correct n i).2.2.2
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end
 
 end

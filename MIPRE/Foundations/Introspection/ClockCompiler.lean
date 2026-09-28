@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ClockSimulation
+module
+public import MIPRE.Foundations.Introspection.ClockSimulation
+
+@[expose] public section
 
 /-! # A binary compiler for the complete clocked source decider
 
@@ -99,3 +102,5 @@ theorem compiler_binary_bounds (k : ℕ) (U : ClockedUniversalMachine) (source :
   exact ⟨(decider_size_le k U source lam).trans h, time, ht.trans h, hr⟩
 
 end MIPRE.Introspection.ClockSimulation
+
+end

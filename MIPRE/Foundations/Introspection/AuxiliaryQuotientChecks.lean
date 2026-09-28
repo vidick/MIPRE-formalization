@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryDualDecode
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryDualDecode
+
+@[expose] public section
 
 /-! # Hiding tests using coordinate-independent quotient comparisons
 
@@ -103,4 +106,6 @@ theorem hidingRead_sound {A : Type*} {P : CL.CLFun F (ι) ℓ} {T : Finset (ι)}
   rw [decodeDual_prefix_congr hP h.1, h.2]
 
 end MIPRE.Introspection.AuxiliaryQuotient
+end
+
 end

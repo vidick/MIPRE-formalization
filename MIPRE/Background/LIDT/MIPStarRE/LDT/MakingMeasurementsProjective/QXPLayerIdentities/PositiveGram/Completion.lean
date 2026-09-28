@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Completion.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Rows
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Rows
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -36,7 +39,7 @@ This is the finite-dimensional basis-extension step used in the rectangular
 polar-decomposition construction: after choosing distinct row indices for the
 prescribed vectors, the family can be completed to an orthonormal basis of the
 whole row space. -/
-private theorem exists_orthonormalBasis_extension_of_embedding
+theorem exists_orthonormalBasis_extension_of_embedding
     {κ μ : Type*} [Fintype μ]
     (row : κ → EuclideanSpace ℂ μ)
     (hrow : Orthonormal ℂ row)
@@ -424,3 +427,5 @@ theorem positive_gram_polar_extension_mixed_eq_sqrt_unitaryGroup
 end
 
 end MIPStarRE.LDT.MakingMeasurementsProjective
+
+end

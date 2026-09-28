@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.TypedPresentation
-import MIPRE.Foundations.CL.DetypingProgRoute
-import MIPRE.Foundations.CL.DetypingProgCost
+module
+public import MIPRE.Foundations.Introspection.TypedPresentation
+public import MIPRE.Foundations.CL.DetypingProgRoute
+public import MIPRE.Foundations.CL.DetypingProgCost
+
+@[expose] public section
 
 /-! # The executable typed introspection sampler router
 
@@ -125,3 +128,5 @@ theorem prog_run_direct {P : Type*} [SizedEncoding P] (S : TypedSampler 3 P)
     ∃ t, (prog S).Runs x (encode out) t := Prog.routeOneCall_direct route S.prog post x _ h
 
 end MIPRE.Introspection.SamplerProgram
+
+end

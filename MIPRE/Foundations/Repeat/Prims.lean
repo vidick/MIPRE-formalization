@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Lists
-import MIPRE.Foundations.Halting.Arith
+module
+public import MIPRE.Foundations.Halting.Lists
+public import MIPRE.Foundations.Halting.Arith
+
+@[expose] public section
 
 /-!
 # Primitives of the repeated sampler and decider
@@ -555,3 +558,5 @@ theorem takeLoop_runs (c : ℕ) (rem cur : List Data) (env : Env) :
 end Prog
 
 end MIPRE.Cost
+
+end

@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.SoundCopy
-import MIPRE.Background.AnswerReduction.TypedGame
-import MIPRE.Foundations.GameAdapt
-import MIPRE.Foundations.SampledGame
+module
+public import MIPRE.Background.AnswerReduction.SoundCopy
+public import MIPRE.Background.AnswerReduction.TypedGame
+public import MIPRE.Foundations.GameAdapt
+public import MIPRE.Foundations.SampledGame
+
+@[expose] public section
 
 /-!
 # Soundness of answer reduction: the per-seed low-degree games
@@ -423,5 +426,7 @@ theorem sum_one_sub_value_copyStrategy6_le
         linear_combination (324 * Xc * (1 - T.value)) * hK
 
 end MIPRE.AnswerReduction
+
+end
 
 end

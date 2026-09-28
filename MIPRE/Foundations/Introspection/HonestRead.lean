@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestAdaptive
-import MIPRE.Foundations.Introspection.HonestCore
+module
+public import MIPRE.Foundations.Introspection.HonestAdaptive
+public import MIPRE.Foundations.Introspection.HonestCore
+
+@[expose] public section
 
 /-! # Correctness of the adaptive honest Read measurement
 
@@ -157,3 +160,5 @@ theorem readOp_marginal {ℓ : ℕ} (P : CL.CLFun F ι ℓ)
   simp [readout, registerOp_apply, Matrix.diagonal_apply]
 
 end MIPRE.Introspection.Honest
+
+end

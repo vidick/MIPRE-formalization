@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.BitQuery
-import MIPRE.Foundations.Cost.Toolkit
+module
+public import MIPRE.Foundations.Cost.BitQuery
+public import MIPRE.Foundations.Cost.Toolkit
+
+@[expose] public section
 
 /-!
 # Succinct descriptions and the bit-query program
@@ -187,3 +190,5 @@ theorem isSuccinctDesc_hardcode (U : UniversalMachine) {α : Type*} [SizedEncodi
     omega
 
 end MIPRE.Cost
+
+end

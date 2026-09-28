@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ParserAnswers
-import MIPRE.Foundations.CL.DetypingProgCost
-import MIPRE.Foundations.Verifier
+module
+public import MIPRE.Foundations.Introspection.ParserAnswers
+public import MIPRE.Foundations.CL.DetypingProgCost
+public import MIPRE.Foundations.Verifier
+
+@[expose] public section
 
 /-! # Reject malformed introspection answers before a source call
 
@@ -55,7 +58,7 @@ def guardedRoute (Q R : ℕ) : PolyTimeFun Data (Bool × Data) :=
     (ite ((pairCheck Q R).comp guardLeft)
       (ite ((pairCheck Q R).comp guardRight) call reject) reject) reject
 
-private theorem nestedIf {α : Type*} (p q : Prop) [Decidable p] [Decidable q] (a b : α) :
+theorem nestedIf {α : Type*} (p q : Prop) [Decidable p] [Decidable q] (a b : α) :
     (if p then if q then a else b else b) = if p ∧ q then a else b := by
   by_cases hp : p <;> by_cases hq : q <;> simp [hp, hq]
 
@@ -164,5 +167,7 @@ theorem guardedProg_accepts_iff (Q R n : ℕ) (source : MIPRE.Decider)
       exact (h ((callReady_input Q R n a b).mpr ⟨ha, hb⟩)).elim
 
 end MIPRE.Introspection.AnswerParser
+
+end
 
 end

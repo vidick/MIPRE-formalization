@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.TypeEncoding
+module
+public import MIPRE.Background.QLD.TypeEncoding
+
+@[expose] public section
 
 /-! # Faithful finite routing of the Pauli decision rules
 
@@ -107,4 +110,6 @@ theorem formatGuard_apply (ha hb result : Bool) :
   cases ha <;> cases hb <;> rfl
 
 end MIPRE.QLD.PauliBranchProgram
+end
+
 end

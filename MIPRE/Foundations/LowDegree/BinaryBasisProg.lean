@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryElimination
+module
+public import MIPRE.Foundations.LowDegree.BinaryElimination
+
+@[expose] public section
 
 /-! # Uniform construction of a binary pivot basis -/
 
@@ -29,10 +32,10 @@ theorem firstOne_getD_iff (v : BitStr) :
   have he : firstOne v = v.length := by have := firstOne_le v; omega
   simp [he, List.getD_eq_getElem?_getD] at h
 
-private noncomputable def firstOneStep : PolyTimeFun (ℕ × Bool) ℕ :=
+noncomputable def firstOneStep : PolyTimeFun (ℕ × Bool) ℕ :=
   ite snd (const 0) (inc.comp fst)
 
-private theorem firstOne_fold (v : BitStr) :
+theorem firstOne_fold (v : BitStr) :
     v.reverse.foldl firstOneStep.step 0 = firstOne v := by
   rw [List.foldl_reverse]
   induction v with
@@ -113,3 +116,5 @@ noncomputable def basisRowsProg : PolyTimeFun (List RawRow) (List RawPivot) :=
 @[simp] theorem basisRowsProg_apply (rows : List RawRow) : basisRowsProg rows = basisRows rows := rfl
 
 end MIPRE.LowDegree.BinaryLinear
+
+end

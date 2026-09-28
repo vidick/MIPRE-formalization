@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryPolynomial
+module
+public import MIPRE.Foundations.LowDegree.BinaryPolynomial
+
+@[expose] public section
 
 /-!
 # Normalizing binary coefficient lists
@@ -84,20 +87,20 @@ theorem normalizeBits_getLast (a : BitStr) :
       | cons c a =>
         cases b <;> simpa [normalizeBits_cons, normalizeStep, ha, List.getLastD_cons] using h
 
-private noncomputable def normalizeStepProg : PolyTimeFun (BitStr × Bool) BitStr :=
+noncomputable def normalizeStepProg : PolyTimeFun (BitStr × Bool) BitStr :=
   congr (ite snd (cons (const true) fst)
     ((casesList (const []) (cons (const false) fst)).comp (fst.pair fst)))
     (fun p => normalizeStep p.1 p.2) (by rintro ⟨a, b⟩; cases b <;> cases a <;> rfl)
 
-private theorem normalizeStepProg_apply (a : BitStr) (b : Bool) :
+theorem normalizeStepProg_apply (a : BitStr) (b : Bool) :
     normalizeStepProg (a, b) = normalizeStep a b := by
   cases b <;> cases a <;> rfl
 
-private theorem normalizeStep_esize (a : BitStr) (b : Bool) :
+theorem normalizeStep_esize (a : BitStr) (b : Bool) :
     esize (normalizeStep a b) ≤ esize a + esize b + 1 := by
   cases b <;> cases a <;> simp [normalizeStep, esize_list_cons] <;> omega
 
-private theorem fold_normalizeStep_esize (l : BitStr) (a : BitStr) :
+theorem fold_normalizeStep_esize (l : BitStr) (a : BitStr) :
     esize (l.foldl normalizeStep a) ≤ esize a + esize l := by
   induction l generalizing a with
   | nil => simp
@@ -107,7 +110,7 @@ private theorem fold_normalizeStep_esize (l : BitStr) (a : BitStr) :
     simp only [List.foldl_cons, esize_list_cons]
     omega
 
-private theorem normalizeStep_bounded : FoldBounded normalizeStepProg X := by
+theorem normalizeStep_bounded : FoldBounded normalizeStepProg X := by
   intro l s pre post h
   change esize (pre.foldl normalizeStep s) ≤ _
   have hp := fold_normalizeStep_esize pre s
@@ -128,3 +131,5 @@ noncomputable def normalizeBitsProg : PolyTimeFun BitStr BitStr :=
     normalizeBitsProg a = normalizeBits a := rfl
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

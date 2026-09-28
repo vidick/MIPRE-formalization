@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Binary
+module
+public import MIPRE.Foundations.Cost.Binary
+
+@[expose] public section
 
 /-!
 # Iterating a polynomial-time step, and running programs in sequence
@@ -60,3 +63,5 @@ theorem seqProg_runs {p q : Prog} (hq : q.WellScoped 1) {x y r : Data} {s t : â„
   Eval.let_ hp (Eval.append_of_wellScoped hq' hq [x])
 
 end MIPRE.Cost
+
+end

@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.Tableau
-import MIPRE.TM.Interp.Machine
-import MIPRE.Foundations.SAT.FmlLib
+module
+public import MIPRE.TM.CookLevin.Tableau
+public import MIPRE.TM.Interp.Machine
+public import MIPRE.Foundations.SAT.FmlLib
+
+@[expose] public section
 
 /-!
 # The variable format of the describer
@@ -527,3 +530,5 @@ theorem decodeVar_encodeVar (T : ℕ) (v : TabVar 7 6 Sym Ctl S G) :
 end Encode
 
 end MIPRE.TM.CookLevin.Desc
+
+end

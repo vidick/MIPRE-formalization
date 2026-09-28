@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.SwapMeasure
+module
+public import MIPRE.Background.QLD.SwapMeasure
+
+@[expose] public section
 
 /-!
 # The exact Pauli measurement at an arbitrary probe
@@ -73,5 +76,7 @@ end SimulPair
 end Probe
 
 end MIPRE.QLD
+
+end
 
 end

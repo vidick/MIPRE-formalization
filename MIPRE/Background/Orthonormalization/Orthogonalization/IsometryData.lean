@@ -23,11 +23,15 @@ finite dimension by `FinDim/Isometry.lean` and in general from the comparison
 theory of the structure-theory interface (PLAN.md T3). Nothing here is a
 statement of the paper.
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization
 
@@ -43,3 +47,5 @@ structure IsometryData {ι : Type*} [Fintype ι] [DecidableEq ι]
   mul_sqrt : ∀ i, w i * CFC.sqrt (∑ j, q j * a j) = q i * CFC.sqrt (a i)
 
 end Orthogonalization
+
+end

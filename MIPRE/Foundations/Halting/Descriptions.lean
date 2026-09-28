@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Codable
-import Mathlib.Computability.Primrec.List
+module
+public import MIPRE.Foundations.Cost.Codable
+public import Mathlib.Computability.Primrec.List
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Descriptions as bit strings: the postorder serialization of data
@@ -382,3 +386,5 @@ theorem primrec_size : Primrec Data.size :=
     (Primrec.const 1))).of_eq fun d => (size_eq_recD d).symm
 
 end MIPRE.Cost.Data
+
+end

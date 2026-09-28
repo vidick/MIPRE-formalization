@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/Averaging.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionUniform
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.Common
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionUniform
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.Common
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -206,3 +209,5 @@ lemma qBipartiteConsDefect_averageIdxSubMeas_left_le
         simp [qBipartiteConsDefect]
 
 end MIPStarRE.LDT.Pasting
+
+end

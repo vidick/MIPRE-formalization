@@ -103,8 +103,30 @@ Each phase is one pull request unless noted; the order is forced by the dependen
    public theorem's statement or an exposed definition's body (private theorems in proofs
    are fine), so the 198 private non-theorem declarations lose `private`, after a check
    that their full names are distinct (one clash: `isEmptyProg` in three `LowDegree`
-   files); meta code (`elab`, `macro`, ten files) needs `public meta import Lean` and sits
-   outside the public section, and its users need only the ordinary import.
+   files).
+
+   Done 2026-09-28, on Lean v4.35.0-rc3, with the recipe corrected by experiments
+   (`MIPRE/ModExp`, kept in `Scratch/`): macros and elaborators are visible to module
+   importers whether inside or outside the public section, so they stay where they are; a
+   `macro` needs no `meta` import at all (its quotation must be a single tactic, so a
+   sequence `t₁; t₂` is parenthesised, which every macro of the library already is); an
+   `elab`, or a definition carrying `[tactic]`, needs `public meta import Lean` (the script
+   twins every `import Lean` line with a `meta` one), and a definition with such an attribute
+   must be `meta`, together with every definition it calls (one site, the vendored
+   `avg_congr`, recorded in `scripts/vendor-lidt.py`). The private-name clash became two after
+   the first rename (`isEmptyBitsProg` already existed in `BinaryDivision.lean`), so the three
+   are now `isEmptyDivProg`, `isEmptyRemProg` and `isEmptyListProg`. Two more things the
+   first build taught: a private *theorem* is also forbidden in the body of an exposed
+   definition, and a `PolyTimeFun` is a program with its cost proof, so the private cost
+   lemmas of the `LowDegree` programs were "unknown identifiers"; the script now drops
+   `private` from every declaration (791 theorems, one clash, `matrix_ite_entry`, renamed
+   per file). And Mathlib is itself a library of modules that imports its tactic modules
+   privately where it can, so a module sees `norm_num` only along a public import path
+   (a non-module file saw everything in its closure): `MIPRE/Tactics.lean` re-exports the
+   common tactics and the heavy ones, and the script inserts `public import MIPRE.Tactics`
+   into every module that imports part of Mathlib rather than the `Mathlib` umbrella
+   (154 files). The vendor scripts call the modularizer on the trees they produce and on
+   `--apply-fixes`, and CI runs `scripts/modularize.py --check`.
 3. **Split the 71k-line module** in `scripts/vendor-repetition.py` into files under 10,000
    lines, deterministically, recorded like every other vendor fix.
 4. **The Challenge**: a self-contained, Mathlib-only statement file. `HaltingGameValue.lean`

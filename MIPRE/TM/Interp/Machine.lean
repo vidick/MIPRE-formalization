@@ -3,9 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.Interp.Instr
-import MIPRE.TM.MultiInput.Deterministic
-import Mathlib.Data.Fintype.Sigma
+module
+public import MIPRE.TM.Interp.Instr
+public import MIPRE.TM.MultiInput.Deterministic
+public import Mathlib.Data.Fintype.Sigma
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The interpreter machine
@@ -291,3 +295,5 @@ def U : MultiInputTM 7 6 Sym Ctl where
     { inputMoves := a.inMoves, workActions := a.works, outS := a.out, q' := resolve q.k q.pc a.next }
 
 end MIPRE.TM.Interp
+
+end

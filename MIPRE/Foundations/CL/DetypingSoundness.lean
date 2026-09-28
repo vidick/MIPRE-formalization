@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingGame
+module
+public import MIPRE.Foundations.CL.DetypingGame
+
+@[expose] public section
 
 /-! # Same-state soundness of finite-game detyping
 
@@ -86,3 +89,5 @@ theorem restrict_value_ge {A B : Type*} [Fintype A] [Fintype B] {ℓ : ℕ}
   nlinarith
 
 end MIPRE.CL.Detyping
+
+end

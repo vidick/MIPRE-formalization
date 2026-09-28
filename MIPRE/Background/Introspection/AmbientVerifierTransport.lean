@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.DecisionCompilerVerifier
-import MIPRE.Foundations.CL.DetypingDeciderTransport
-import MIPRE.Foundations.VerifierIndexTransport
-import MIPRE.Foundations.Halting.Classes
+module
+public import MIPRE.Background.Introspection.DecisionCompilerVerifier
+public import MIPRE.Foundations.CL.DetypingDeciderTransport
+public import MIPRE.Foundations.VerifierIndexTransport
+public import MIPRE.Foundations.Halting.Classes
+
+@[expose] public section
 
 /-! # The compiled verifier and its finite detyping game
 
@@ -130,3 +133,5 @@ theorem hasPerfectPCC_zero (c : ℕ) (hc : 1 ≤ c) (he : Even c)
   exact ⟨List.length_eq_zero_iff.mp hx,List.length_eq_zero_iff.mp hy,by simp,by simp⟩
 
 end MIPRE.Introspection.DecisionCompiler
+
+end

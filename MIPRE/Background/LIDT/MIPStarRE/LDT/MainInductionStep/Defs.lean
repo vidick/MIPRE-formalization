@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MainInductionStep/Defs.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -204,7 +207,7 @@ noncomputable def restrictAxisParallelMeasurement (params : Parameters) [FieldMo
         total_eq_one := rfl }
       proj := fun f => lifted.proj (liftAxisAnswer params x f) }
 
-private theorem restrictAxisParallelMeasurement_transportInvariant
+theorem restrictAxisParallelMeasurement_transportInvariant
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) (x : Fq params) :
     MIPStarRE.LDT.AxisParallelMeasurementTransportInvariant params
@@ -252,7 +255,7 @@ private theorem restrictAxisParallelMeasurement_transportInvariant
 
 We use the constant polynomial because the restricted diagonal branch only reads
 line answers at `zeroCoord`. -/
-private noncomputable def diagonalValueRepresentative (params : Parameters)
+noncomputable def diagonalValueRepresentative (params : Parameters)
     [FieldModel params.q] (a : Fq params) :
     DiagonalLinePolynomial params where
   poly := _root_.Polynomial.C (decodeScalar a)
@@ -305,7 +308,7 @@ noncomputable def restrictDiagonalAnswerMeasurement (params : Parameters)
 
 /-- Transport covariance for the function-valued restricted diagonal-line
 measurement. -/
-private theorem restrictDiagonalAnswerMeasurement_transportInvariant (params : Parameters)
+theorem restrictDiagonalAnswerMeasurement_transportInvariant (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι) (x : Fq params) :
     DiagonalAnswerMeasurementTransportInvariant params
@@ -542,3 +545,5 @@ noncomputable def sliceConditioningLoss (params : Parameters) : Error :=
   (((params.m + 1 : ℕ) : Error) / (params.m : Error))
 
 end MIPStarRE.LDT.MainInductionStep
+
+end

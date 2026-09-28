@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.CLExplicitSeed
-import MIPRE.Foundations.Introspection.PauliFactorProg
-import MIPRE.Foundations.Repeat.Bits
+module
+public import MIPRE.Background.QLD.CLExplicitSeed
+public import MIPRE.Foundations.Introspection.PauliFactorProg
+public import MIPRE.Foundations.Repeat.Bits
+
+@[expose] public section
 
 /-! # Exact factor masks for the binary Pauli sampler
 
@@ -21,12 +24,12 @@ def factorFlag {m : ℕ} (r : ℕ) : Coord m → Bool
   | .seed => decide (r = 1)
   | .direction _ => decide (r = 2)
 
-private theorem bits_getD_append (a b : BitStr) (i : ℕ) :
+theorem bits_getD_append (a b : BitStr) (i : ℕ) :
     (a ++ b).getD i false = if i < a.length then a.getD i false else b.getD (i - a.length) false := by
   simp only [List.getD_eq_getElem?_getD, List.getElem?_append]
   split_ifs <;> rfl
 
-private theorem bits_getD_replicate (n : ℕ) (b : Bool) (i : ℕ) :
+theorem bits_getD_replicate (n : ℕ) (b : Bool) (i : ℕ) :
     (List.replicate n b).getD i false = if i < n then b else false := by
   simp only [List.getD_eq_getElem?_getD, List.getElem?_replicate]
   split_ifs <;> rfl
@@ -136,4 +139,6 @@ theorem factorBits_correct {F : Type*} [Field F] [Fintype F] [DecidableEq F]
   rw [factorFlag_mem χ T v r hr1 hr3]
 
 end MIPRE.QLD.PauliCL
+end
+
 end

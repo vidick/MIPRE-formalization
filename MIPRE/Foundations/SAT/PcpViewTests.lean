@@ -2,10 +2,14 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.FieldVectors
-import MIPRE.Foundations.SAT.PcpFieldTests
-import MIPRE.Foundations.SAT.PcpBlocks
-import Mathlib.Algebra.BigOperators.Fin
+module
+public import MIPRE.Foundations.SAT.FieldVectors
+public import MIPRE.Foundations.SAT.PcpFieldTests
+public import MIPRE.Foundations.SAT.PcpBlocks
+public import Mathlib.Algebra.BigOperators.Fin
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # The raw field tests on typed PCP views -/
 
@@ -80,3 +84,5 @@ theorem checks_typed_iff [CharP E.carrier 2] (root : E.carrier)
     PcpAlgebra.TypedAccepts]
 
 end MIPRE.SAT.PcpViewTests
+
+end

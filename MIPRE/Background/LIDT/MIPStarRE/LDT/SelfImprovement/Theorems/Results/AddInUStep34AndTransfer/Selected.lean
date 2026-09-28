@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Selected.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Factored
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Factored
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -43,7 +46,7 @@ summands are restricted to the selected pairs `S_u`, and are extended by zero
 outside this support.  This helper fixes the distribution and the selected
 support, leaving only the three summands and their pointwise estimates to be
 specified by the two applications. -/
-private theorem addInU_selected_weighted_cauchy_schwarz
+theorem addInU_selected_weighted_cauchy_schwarz
     {Outcome : Type*} [Fintype Outcome] [DecidableEq Outcome]
     (params : Parameters) [FieldModel params.q]
     (S : AddInUSelection params Outcome)
@@ -78,7 +81,7 @@ This is the selection-parametrized analogue of
 `(o,h)`, with the terms outside the selected set `S_u` set to zero; this form is
 convenient for the finite Cauchy--Schwarz lemma and is equivalent to the
 fiberwise selected sum appearing in the paper. -/
-private theorem addInU_selected_cs_chain_step3_factored_cs
+theorem addInU_selected_cs_chain_step3_factored_cs
     {Outcome : Type*} [Fintype Outcome] [DecidableEq Outcome]
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -189,7 +192,7 @@ This is the selection-parametrized analogue of
 `add_in_u_cs_chain_q3_q4_factored_cs`; as in
 `addInU_selected_cs_chain_step3_factored_cs`, terms outside the selected set
 are represented by zeros in the finite Cauchy--Schwarz sum. -/
-private theorem addInU_selected_cs_chain_step4_factored_cs
+theorem addInU_selected_cs_chain_step4_factored_cs
     {Outcome : Type*} [Fintype Outcome] [DecidableEq Outcome]
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -300,7 +303,7 @@ For a fixed point `u`, the selected pairs are a subcollection of
 `Outcome × Polynomial params`.  Summing over all pairs, the `Outcome`-mass
 collapses to `(M u).total`, and the submeasurement inequality
 `(M u).total ≤ I` gives the displayed upper bound. -/
-private lemma addInU_selected_sandwich_tensor_if_sum_le
+lemma addInU_selected_sandwich_tensor_if_sum_le
     {Outcome : Type*} [Fintype Outcome] [DecidableEq Outcome]
     (params : Parameters) [FieldModel params.q]
     (M : IdxSubMeas (Point params) Outcome ι)
@@ -388,7 +391,7 @@ private lemma addInU_selected_sandwich_tensor_if_sum_le
           opTensor (X h * (M u).total * X h) (T.outcome h) := huniv_eq
     _ ≤ ∑ h : Polynomial params, opTensor (X h * X h) (T.outcome h) := htotal_le
 
-private lemma addInU_selected_cs_chain_self_energy_factor_le_one_at
+lemma addInU_selected_cs_chain_self_energy_factor_le_one_at
     {Outcome : Type*} [Fintype Outcome] [DecidableEq Outcome]
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -488,7 +491,7 @@ The selected middle operators form a submeasurement after summing over their
 outcome coordinate, so the selected sandwich is dominated by the square of
 `A^v_{h(v)} - A^u_{h(u)}`.  Averaging over independent points identifies the
 result with the global-variance deviation sum. -/
-private lemma addInU_selected_cs_chain_step34_variance_factor_le_globalVarianceDeviation_sum
+lemma addInU_selected_cs_chain_step34_variance_factor_le_globalVarianceDeviation_sum
     {Outcome : Type*} [Fintype Outcome] [DecidableEq Outcome]
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -754,3 +757,5 @@ lemma addInU_selected_cs_chain_step34_abs_le_sqrt_of_globalVarianceDeviation_sum
       params strategy M T S hglobal⟩
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

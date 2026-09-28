@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SourcePaddingQueries
-import MIPRE.Foundations.Introspection.AuxiliarySourceQueries
-import MIPRE.Foundations.Introspection.AuxiliaryRegisterBits
+module
+public import MIPRE.Foundations.Introspection.SourcePaddingQueries
+public import MIPRE.Foundations.Introspection.AuxiliarySourceQueries
+public import MIPRE.Foundations.Introspection.AuxiliaryRegisterBits
+
+@[expose] public section
 
 /-! # Uniform programs for queries to a padded source
 
@@ -184,4 +187,6 @@ theorem matrixFromContext_correct (U : ClockedUniversalMachine)
   rw [matrixFromContext, comp_apply, adapt_correct U ctx s hs hd]
 
 end MIPRE.Introspection.SourcePadding.Program
+end
+
 end

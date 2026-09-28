@@ -17,11 +17,15 @@ which has the right dimension because `dim L = dim H`.
 
 Proof-side; nothing here is a statement of the paper.
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.FinDim
 
@@ -175,3 +179,5 @@ theorem exists_isometry_completion (T : H →L[ℂ] K) (s : H →L[ℂ] H)
       simp
 
 end Orthogonalization.FinDim
+
+end

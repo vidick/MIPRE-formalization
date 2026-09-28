@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptivePrefixFactor
-import MIPRE.Foundations.Introspection.AdaptiveResidual
-import MIPRE.Foundations.LowDegree.BinaryMatrixSolve
+module
+public import MIPRE.Foundations.Introspection.AdaptivePrefixFactor
+public import MIPRE.Foundations.Introspection.AdaptiveResidual
+public import MIPRE.Foundations.LowDegree.BinaryMatrixSolve
+
+@[expose] public section
 
 /-! # Witness-preserving attainable-prefix extension
 
@@ -95,4 +98,6 @@ theorem solveStage_correct {n : ℕ}
   simpa only [← Matrix.mulVecLin_apply, he, solveStage] using h
 
 end MIPRE.Introspection.AuxiliaryPrefix
+end
+
 end

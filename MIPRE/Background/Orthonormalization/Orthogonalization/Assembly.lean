@@ -38,14 +38,18 @@ the (long) inequality bookkeeping free of `CFC.sqrt`.
 Nothing in this file is a statement of the paper; it is proof-side machinery for
 `Orthogonalization/Basic.lean`.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
-import MIPRE.Background.Orthonormalization.Orthogonalization.PhiNorm
-import MIPRE.Background.Orthonormalization.Orthogonalization.IsometryData
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
+public import MIPRE.Background.Orthonormalization.Orthogonalization.PhiNorm
+public import MIPRE.Background.Orthonormalization.Orthogonalization.IsometryData
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization
 
@@ -368,3 +372,5 @@ theorem assembled_bound (φ : (H →L[ℂ] H) →ₗ[ℂ] ℂ)
 end Bound
 
 end Orthogonalization
+
+end

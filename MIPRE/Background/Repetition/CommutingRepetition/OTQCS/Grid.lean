@@ -22,11 +22,15 @@ these hypotheses, and the grid functionals below match the manuscript's
 `a_θ, b_θ, c_θ` by countable disjoint-bin regrouping (the finite
 retained-bin operator forms are bridged there, not here).
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -998,3 +1002,5 @@ theorem lintegral_gridF_le (hα0 : 0 < α) (hα2 : α ≤ 1 / 2)
 end ThetaAverage
 
 end CommutingRepetition
+
+end

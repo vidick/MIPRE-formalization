@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.CLExplicitSeed
-import MIPRE.Background.QLD.LineRepresentative
-import MIPRE.Foundations.Introspection.SeededLineProg
+module
+public import MIPRE.Background.QLD.CLExplicitSeed
+public import MIPRE.Background.QLD.LineRepresentative
+public import MIPRE.Foundations.Introspection.SeededLineProg
+
+@[expose] public section
 
 /-! # Correctness of the executable seeded Pauli line stages
 
@@ -72,4 +75,6 @@ theorem diagonalRepresentativeProg_legacy (k : ℕ) (hk : 1 ≤ k) (j : ℕ) (hj
   rfl
 
 end MIPRE.QLD.PauliCL
+end
+
 end

@@ -23,16 +23,20 @@ faithful near-vector state of `GVec.lean`. The standard form of `(N, φ)`
 
 The output is packaged as `StdStrategy`, the input of the crossed-product stage. Proof-side.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.GVec
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.Compress
-import MIPRE.Background.Repetition.CommutingRepetition.VN.StandardFormOf
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.GVec
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.Compress
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.StandardFormOf
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -233,3 +237,5 @@ end Build
 end Density
 
 end CommutingRepetition
+
+end

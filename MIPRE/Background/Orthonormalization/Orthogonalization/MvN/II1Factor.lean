@@ -29,16 +29,20 @@ summand is `0`, the type I part is `0`):
 of trace-class form (every such state is a `NormalState`; the converse is the
 direction of D3 not formalized).
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Finite
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.TypeIII
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.PolarDecomp
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Comparison
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.MatrixFactor
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Finite
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.TypeIII
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.PolarDecomp
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Comparison
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.MatrixFactor
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.MvN
 
@@ -275,3 +279,5 @@ theorem povm_orthogonalization_II₁Factor (M : VonNeumannAlgebra H)
     rw [hsum]; exact hlt
 
 end Orthogonalization
+
+end

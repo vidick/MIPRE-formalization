@@ -5,15 +5,18 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/GlobalVariance/Theorems/AlgebraicIdentity.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Results
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CompletionTransfer
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonCore
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.PolynomialAgreement
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.Extensions
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.Averaging
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.Statements
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Results
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CompletionTransfer
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonCore
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.PolynomialAgreement
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.Extensions
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.Averaging
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.Statements
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -134,7 +137,7 @@ lemma weightedPointConditionedOperator_sq
   rw [polynomialWeightSqrtOperator_conjTranspose,
     polynomialWeightSqrtOperator_mul_self]
 
-private lemma generalizeB_right_event_implies_left_event
+lemma generalizeB_right_event_implies_left_event
     (params : Parameters)
     [FieldModel params.q]
     (g : Polynomial params)
@@ -155,7 +158,7 @@ private lemma generalizeB_right_event_implies_left_event
   rw [hf_eq, hparam]
   simp [ht]
 
-private lemma generalizeBLeftOperator_eq_right_add_collision
+lemma generalizeBLeftOperator_eq_right_add_collision
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -183,7 +186,7 @@ private lemma generalizeBLeftOperator_eq_right_add_collision
         simp [hp, hq]
       · by_cases hp : x (axisParallelLineQuestionParameter (ℓ, u)) = g u <;> simp [hp, hq]
 
-private lemma generalizeBLineDifference_sq_eq_collision
+lemma generalizeBLineDifference_sq_eq_collision
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -241,7 +244,7 @@ lemma generalizeBDeviationAtPolynomial_eq_collisionResidual
 
 /-- Move a left-register observable from the polynomial-weighted state
 `(I ⊗ √G_g) ρ (I ⊗ √G_g)ᴴ` back to the original bipartite state. -/
-private lemma weightedPolynomialState_ev_leftTensor
+lemma weightedPolynomialState_ev_leftTensor
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -290,7 +293,7 @@ private lemma weightedPolynomialState_ev_leftTensor
     _ = MIPStarRE.Quantum.normalizedTrace (strategy.state.density * opTensor X (G.outcome g)) := by
         rw [htarget]
 
-private lemma weightedNormDeviation_eq_pointConditionedDifferenceAvg
+lemma weightedNormDeviation_eq_pointConditionedDifferenceAvg
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -420,3 +423,5 @@ lemma globalVarianceDeviationAtPolynomial_le_m_localVarianceDeviationAtPolynomia
         rw [hlocal]
 
 end MIPStarRE.LDT.GlobalVariance
+
+end

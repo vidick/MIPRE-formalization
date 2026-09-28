@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptivePrefixMixing
+module
+public import MIPRE.Foundations.Introspection.AdaptivePrefixMixing
+
+@[expose] public section
 
 /-! # Initializing the adaptive residual measurement
 
@@ -141,4 +144,6 @@ theorem exists_initial_residual (P : CL.CLFun F ι ℓ)
     initialResidualPOVM_reassembly P N, initialResidualPOVM_some_support P N⟩
 
 end MIPRE.Introspection
+end
+
 end

@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainBasic/Reindexing.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Scaffold.Products
-import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Approximation
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Scaffold.Products
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Approximation
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -106,3 +109,5 @@ lemma evaluatedPointFamily_appendPoint_outcome
     postprocess, hG, truncatePoint_appendPoint, pointHeight_appendPoint]
 
 end MIPStarRE.LDT.Commutativity
+
+end

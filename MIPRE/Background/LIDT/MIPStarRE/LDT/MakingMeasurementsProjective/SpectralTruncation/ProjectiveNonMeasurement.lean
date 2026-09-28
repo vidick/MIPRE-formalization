@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MakingMeasurementsProjective/SpectralTruncation/ProjectiveNonMeasurement.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.Core
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CompletionTransfer
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.Core
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CompletionTransfer
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -36,10 +39,10 @@ open MIPStarRE.LDT
 
 universe uOutcome uι
 
-private noncomputable def truncationCutoff (δ : Error) : Error → Error :=
+noncomputable def truncationCutoff (δ : Error) : Error → Error :=
   fun x => if 1 - δ ≤ x then 1 else 0
 
-private lemma truncationCutoff_le_inv_one_sub_mul
+lemma truncationCutoff_le_inv_one_sub_mul
     (δ x : Error) (hδ : 0 < δ) (hδhalf : δ ≤ 1 / 2) (hx0 : 0 ≤ x) :
     truncationCutoff δ x ≤ (1 / (1 - δ)) * x := by
   by_cases h : 1 - δ ≤ x
@@ -54,7 +57,7 @@ private lemma truncationCutoff_le_inv_one_sub_mul
     have hmul : 0 ≤ (1 - δ)⁻¹ * x := mul_nonneg hfac hx0
     simpa [truncationCutoff, h] using hmul
 
-private lemma continuousOn_outcome_spectrum {Outcome : Type uOutcome}
+lemma continuousOn_outcome_spectrum {Outcome : Type uOutcome}
     [Fintype Outcome]
     {ι : Type uι} [Fintype ι] [DecidableEq ι]
     (A : Measurement Outcome ι) (a : Outcome) (f : Error → Error) :
@@ -66,14 +69,14 @@ private lemma continuousOn_outcome_spectrum {Outcome : Type uOutcome}
     exact Set.finite_range _
   exact hs.continuousOn _
 
-private noncomputable def roundedProjectorFamily {Outcome : Type uOutcome}
+noncomputable def roundedProjectorFamily {Outcome : Type uOutcome}
     [Fintype Outcome] [DecidableEq Outcome]
     {ι : Type uι} [Fintype ι] [DecidableEq ι]
     (A : Measurement Outcome ι) (δ : Error) : OpFamily Outcome ι where
   outcome := fun a => cfc (truncationCutoff δ) (A.outcome a)
   total := ∑ a, cfc (truncationCutoff δ) (A.outcome a)
 
-private lemma outcome_spectrum_nonneg {Outcome : Type uOutcome}
+lemma outcome_spectrum_nonneg {Outcome : Type uOutcome}
     [Fintype Outcome]
     {ι : Type uι} [Fintype ι] [DecidableEq ι]
     (A : Measurement Outcome ι) (a : Outcome) :
@@ -87,7 +90,7 @@ private lemma outcome_spectrum_nonneg {Outcome : Type uOutcome}
     exact A.outcome_pos a
   exact (cfc_nonneg_iff (R := ℝ) (f := id) (a := A.outcome a) (ha := hsa)).mp hnonneg
 
-private lemma outcome_spectrum_le_one {Outcome : Type uOutcome}
+lemma outcome_spectrum_le_one {Outcome : Type uOutcome}
     [Fintype Outcome]
     {ι : Type uι} [Fintype ι] [DecidableEq ι]
     (A : Measurement Outcome ι) (a : Outcome) :
@@ -101,7 +104,7 @@ private lemma outcome_spectrum_le_one {Outcome : Type uOutcome}
     exact A.outcome_le_one a
   exact (cfc_le_one_iff (f := id) (a := A.outcome a) (ha := hsa)).mp hle
 
-private lemma roundedProjectorFamily_projective {Outcome : Type uOutcome}
+lemma roundedProjectorFamily_projective {Outcome : Type uOutcome}
     [Fintype Outcome] [DecidableEq Outcome]
     {ι : Type uι} [Fintype ι] [DecidableEq ι]
     (A : Measurement Outcome ι) (δ : Error) (a : Outcome) :
@@ -122,7 +125,7 @@ private lemma roundedProjectorFamily_projective {Outcome : Type uOutcome}
             by_cases h : 1 - δ ≤ x <;> simp [truncationCutoff, h]
   · exact cfc_predicate (R := ℝ) (truncationCutoff δ) (A.outcome a)
 
-private lemma roundedProjectorFamily_outcome_le_scale {Outcome : Type uOutcome}
+lemma roundedProjectorFamily_outcome_le_scale {Outcome : Type uOutcome}
     [Fintype Outcome] [DecidableEq Outcome]
     {ι : Type uι} [Fintype ι] [DecidableEq ι]
     (A : Measurement Outcome ι) (δ : Error) (hδ : 0 < δ) (hδhalf : δ ≤ 1 / 2)
@@ -147,7 +150,7 @@ private lemma roundedProjectorFamily_outcome_le_scale {Outcome : Type uOutcome}
             (cfc_const_mul_id (R := ℝ) ((1 / (1 - δ)) : Error) (A.outcome a)
               (ha := hsa))
 
-private lemma roundedProjectorFamily_total_le_scale {Outcome : Type uOutcome}
+lemma roundedProjectorFamily_total_le_scale {Outcome : Type uOutcome}
     [Fintype Outcome] [DecidableEq Outcome]
     {ι : Type uι} [Fintype ι] [DecidableEq ι]
     (A : Measurement Outcome ι) (δ : Error) (hδ : 0 < δ) (hδhalf : δ ≤ 1 / 2) :
@@ -165,7 +168,7 @@ private lemma roundedProjectorFamily_total_le_scale {Outcome : Type uOutcome}
     _ = (((1 / (1 - δ)) : Error) : ℂ) • (1 : MIPStarRE.Quantum.Op ι) := by
           simp [A.sum_eq_total, A.total_eq_one]
 
-private lemma roundedProjectorFamily_outcome_qSDD_bound {Outcome : Type uOutcome}
+lemma roundedProjectorFamily_outcome_qSDD_bound {Outcome : Type uOutcome}
     [Fintype Outcome] [DecidableEq Outcome]
     {ι : Type uι} [Fintype ι] [DecidableEq ι]
     (ψ : QuantumState ι) (A : Measurement Outcome ι) (δ : Error)
@@ -270,7 +273,7 @@ private lemma roundedProjectorFamily_outcome_qSDD_bound {Outcome : Type uOutcome
     _ = (1 / δ) * ev ψ (A.outcome a - A.outcome a * A.outcome a) := by
           simpa using ev_scale ψ (1 / δ) (A.outcome a - A.outcome a * A.outcome a)
 
-private lemma roundedProjectorFamily_closeness {Outcome : Type uOutcome}
+lemma roundedProjectorFamily_closeness {Outcome : Type uOutcome}
     [Fintype Outcome] [DecidableEq Outcome]
     {ι : Type uι} [Fintype ι] [DecidableEq ι]
     (ψ : QuantumState ι) (A : Measurement Outcome ι) (ζ δ : Error)
@@ -301,7 +304,7 @@ private lemma roundedProjectorFamily_closeness {Outcome : Type uOutcome}
             exact mul_le_mul_of_nonneg_left hsource hδinv_nonneg
   simpa [sddErrorOp, avgOver, uniformDistribution, constOpFamily] using hq
 
-private lemma roundedProjectorFamily_total_le_one_zero {Outcome : Type uOutcome}
+lemma roundedProjectorFamily_total_le_one_zero {Outcome : Type uOutcome}
     [Fintype Outcome] [DecidableEq Outcome]
     {ι : Type uι} [Fintype ι] [DecidableEq ι]
     (A : Measurement Outcome ι) :
@@ -337,7 +340,7 @@ private lemma roundedProjectorFamily_total_le_one_zero {Outcome : Type uOutcome}
           exact houtcome_le a
     _ = 1 := by simpa [A.sum_eq_total] using A.total_eq_one
 
-private lemma sourceAlmostProjective_eq_zero_per_outcome {Outcome : Type uOutcome}
+lemma sourceAlmostProjective_eq_zero_per_outcome {Outcome : Type uOutcome}
     [Fintype Outcome]
     {ι : Type uι} [Fintype ι] [DecidableEq ι]
     (ψ : QuantumState ι) (A : Measurement Outcome ι)
@@ -763,3 +766,5 @@ noncomputable def spectralTruncationStatement_of_sourceAlmostProjective
   exact ⟨R, hR.projective, hR.closeness, hR.sum_eq_total, hR.total_le⟩
 
 end MIPStarRE.LDT.MakingMeasurementsProjective
+
+end

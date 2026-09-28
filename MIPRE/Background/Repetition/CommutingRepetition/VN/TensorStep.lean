@@ -24,12 +24,16 @@ Infrastructure for the tensor-power interface of Section 6
 
 No manuscript anchor of its own (like VN/Amplify.lean).
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Interface
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Interface
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -658,3 +662,5 @@ noncomputable def tensorStep : StdTracialAlgebra.{u} where
 end StdTracialAlgebra
 
 end CommutingRepetition
+
+end

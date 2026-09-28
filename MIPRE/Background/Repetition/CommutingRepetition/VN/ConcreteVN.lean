@@ -20,12 +20,16 @@ theorem and no weak topology is used.
 the algebra in which the entropic resolver arena (node 1.2.6) is built.
 Infrastructure only; no manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.SubModel
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.SubModel
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -222,3 +226,5 @@ theorem vnModel_τ_L (a : M.A) : M.vnModel.τ ⟨M.L a, M.L_mem_vnAlg a⟩ = M.�
 end StdTracialAlgebra
 
 end CommutingRepetition
+
+end

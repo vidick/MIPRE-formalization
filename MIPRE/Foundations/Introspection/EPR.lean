@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Expanded
-import MIPRE.Foundations.WeylEPR
+module
+public import MIPRE.Foundations.Expanded
+public import MIPRE.Foundations.WeylEPR
+
+@[expose] public section
 
 /-! # Exactly consistent Pauli readouts with arbitrary ancillary states -/
 
@@ -63,5 +66,7 @@ theorem eprWithAux_readout_mirror (ξ : H × K → ℂ)
     (mirror_expVec (epr (F := F) (n := Fin n)) ξ _ _ (stateVec_epr_synOf wZ_transpose L y))
 
 end MIPRE.Introspection
+
+end
 
 end

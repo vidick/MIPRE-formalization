@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.SoundGameCheck
-import MIPRE.Foundations.OracularTyped
-import MIPRE.Foundations.StrategyDilation
+module
+public import MIPRE.Background.AnswerReduction.SoundGameCheck
+public import MIPRE.Foundations.OracularTyped
+public import MIPRE.Foundations.StrategyDilation
+
+@[expose] public section
 
 /-!
 # Soundness of answer reduction: the decoded strategy
@@ -956,5 +959,7 @@ theorem valStar_ge_decoded (hgc : PcpSound V n P hk check B' dec) :
   linarith
 
 end MIPRE.AnswerReduction
+
+end
 
 end

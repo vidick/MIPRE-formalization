@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.TypedEstimates
-import MIPRE.Foundations.RegisterReindex
+module
+public import MIPRE.Foundations.Introspection.TypedEstimates
+public import MIPRE.Foundations.RegisterReindex
+
+@[expose] public section
 
 /-! # Restricting a parsed introspection strategy to its Pauli tests
 
@@ -157,4 +160,6 @@ theorem typed_edge_mean_failure_le {B : Type*} [Fintype B]
 
 end TypedEstimates
 end MIPRE.Introspection
+end
+
 end

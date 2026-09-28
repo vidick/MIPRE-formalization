@@ -27,11 +27,15 @@ manuscript's singular-safe POVMs `𝖠ᵃ = ∑_{k ∈ a} zₖ* zₖ + [a = a₀
 (04_resolver_corner.tex, eqs alice-corner-povm / bob-corner-povm), with
 `c* 𝖠ᵃ c = ∑_{k ∈ a} xₖ* xₖ`. Nothing here is a manuscript statement.
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -371,3 +375,5 @@ end Douglas
 end Resolver
 
 end CommutingRepetition
+
+end

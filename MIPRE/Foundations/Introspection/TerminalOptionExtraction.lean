@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveTerminalInvariant
-import MIPRE.Foundations.Introspection.TypedExtraction
+module
+public import MIPRE.Foundations.Introspection.AdaptiveTerminalInvariant
+public import MIPRE.Foundations.Introspection.TypedExtraction
+
+@[expose] public section
 
 /-! # Extracting ordinary answers from terminal option-valued measurements
 
@@ -236,4 +239,6 @@ theorem exists_strategy_of_terminal_invariants
 
 end TypedExtraction
 end MIPRE.Introspection
+end
+
 end

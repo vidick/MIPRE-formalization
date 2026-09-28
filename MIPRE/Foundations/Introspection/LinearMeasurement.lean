@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Weyl
-import MIPRE.Foundations.CL.Canonical
+module
+public import MIPRE.Foundations.Weyl
+public import MIPRE.Foundations.CL.Canonical
+
+@[expose] public section
 
 /-!
 # Fourier formulas for a linear-map measurement
@@ -134,5 +137,7 @@ theorem linear_measurement_fourier_inverse
   · rw [if_neg hz, zero_smul, smul_zero, if_neg hz]
 
 end MIPRE.Introspection
+
+end
 
 end

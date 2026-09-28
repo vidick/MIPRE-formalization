@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/GlobalVariance/Theorems/Averaging.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Defs.Families
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Defs.Families
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -23,7 +26,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-! ## Uniform averaging infrastructure -/
 
-private lemma ev_uniformAverage_sq_le_avg
+lemma ev_uniformAverage_sq_le_avg
     {α : Type*} [Fintype α] [DecidableEq α] [Nonempty α]
     (ψ : QuantumState ι)
     (D : α → MIPStarRE.Quantum.Op ι) :
@@ -167,7 +170,7 @@ private lemma ev_uniformAverage_sq_le_avg
     _ ≤ avgOver (uniformDistribution α) x := by
           nlinarith [hs_nonneg, hs_le, Real.sq_sqrt havg_nonneg]
 
-private lemma qSDD_unit_family_of_average_le_avg
+lemma qSDD_unit_family_of_average_le_avg
     {α : Type*} [Fintype α] [DecidableEq α] [Nonempty α]
     (ψ : QuantumState ι)
     (MA MB : SubMeas Unit ι)
@@ -266,3 +269,5 @@ lemma avgOver_polynomialDistribution_le_of_pointwise
       simp [polynomialDistribution, avgOver, uniformDistribution]
 
 end MIPStarRE.LDT.GlobalVariance
+
+end

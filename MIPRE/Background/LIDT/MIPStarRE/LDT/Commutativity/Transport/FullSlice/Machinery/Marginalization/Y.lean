@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Marginalization/Y.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Core
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Core
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -37,7 +40,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- The evaluated `ABA ⊗ B` tensor summand block reindexed as
 `((u, (x, y)), v)` and with the outcome sum in y-first order. -/
-private noncomputable def evaluatedSliceABABtensorYDataTerm
+noncomputable def evaluatedSliceABABtensorYDataTerm
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)
     (r : (Point params × FullSliceQuestion params) × Point params) : Error :=
@@ -52,7 +55,7 @@ private noncomputable def evaluatedSliceABABtensorYDataTerm
 
 /-- The evaluated `ABA ⊗ B` tensor average reindexed as `((u, (x, y)), v)`
 and with the outcome sum in y-first order. -/
-private noncomputable def evaluatedSliceABABtensorYDataAvg
+noncomputable def evaluatedSliceABABtensorYDataAvg
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι) : Error :=
   avgOver (uniformDistribution ((Point params × FullSliceQuestion params) × Point params))
@@ -60,7 +63,7 @@ private noncomputable def evaluatedSliceABABtensorYDataAvg
 
 /-- Pointwise form of `evaluatedSliceABABtensorAvg_eq_yData`, after expanding the
 question reindexing equivalence. -/
-private lemma evaluatedSliceABABtensorYData_point
+lemma evaluatedSliceABABtensorYData_point
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)
     (u : Point params) (x y : Fq params) (v : Point params) :
@@ -119,7 +122,7 @@ private lemma evaluatedSliceABABtensorYData_point
 /-- Reindex the evaluated `ABA ⊗ B` tensor average by `((u, (x, y)), v)`
 and write the outcome sum in the y-first order used by the generic postprocessing
 expansion. -/
-private lemma evaluatedSliceABABtensorAvg_eq_yData
+lemma evaluatedSliceABABtensorAvg_eq_yData
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι) :
     evaluatedSliceABABtensorAvg params strategy family =
@@ -158,7 +161,7 @@ private lemma evaluatedSliceABABtensorAvg_eq_yData
 
 /-- Exact y-side postprocessing identity: the fully evaluated `ABA ⊗ B` tensor
 average is the x-evaluated/y-full tensor average plus the y-collision residual. -/
-private lemma evaluatedSliceABABtensor_yEvaluation_eq_xFull_add_collision
+lemma evaluatedSliceABABtensor_yEvaluation_eq_xFull_add_collision
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι) :
     evaluatedSliceABABtensorAvg params strategy family =
@@ -311,3 +314,5 @@ lemma fullSliceABAB_tensor_marginalize_y
   exact fullSliceABAB_tensor_marginalize_y_collision_bound params strategy family hnorm
 
 end MIPStarRE.LDT.Commutativity
+
+end

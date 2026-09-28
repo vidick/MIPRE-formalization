@@ -3,13 +3,17 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.MultiInput.Deterministic
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Data.Fintype.Option
-import Mathlib.Data.Fintype.Sigma
-import Mathlib.Data.Fintype.Sum
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Data.Fintype.Pi
+module
+public import MIPRE.TM.MultiInput.Deterministic
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Data.Fintype.Option
+public import Mathlib.Data.Fintype.Sigma
+public import Mathlib.Data.Fintype.Sum
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Fintype.Pi
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The local check of the Cook–Levin tableau
@@ -200,3 +204,5 @@ def checkPred (win : WinVar i w Symbol State → Bool) : Prop :=
 end Consistent
 
 end MIPRE.TM.CookLevin
+
+end

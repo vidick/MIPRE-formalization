@@ -24,15 +24,19 @@ Rieffel–van Daele §4, Lemmas 4.7–4.9 and Theorem 4.2, for a von Neumann alg
 * **Theorem 4.2**: `J M J = M′` and `Δ^{it} M Δ^{-it} = M`; the modular
   automorphism group `σ_t(x) = Δ^{it} x Δ^{-it}` and its basic properties.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.LinearRN
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.StripCauchy
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.AnalyticFamily
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.LaplaceUniqueness
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.LinearRN
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.StripCauchy
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.AnalyticFamily
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.LaplaceUniqueness
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -740,3 +744,5 @@ end Modular
 end VN
 
 end CommutingRepetition
+
+end

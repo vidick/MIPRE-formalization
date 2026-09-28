@@ -7,7 +7,10 @@ commit recorded). The import prefix `Tsirelson.` is rewritten to
 nothing outside `MIPRE/Background/LiehrTsirelson/` may name it. Upstream carries no license file;
 see README.md.
 -/
-import MIPRE.Background.LiehrTsirelson.Upstream.Core.Correlation
+module
+public import MIPRE.Background.LiehrTsirelson.Upstream.Core.Correlation
+
+@[expose] public section
 
 /-!
 # Generic nonlocal games, finite / square aliases, and bundled signatures
@@ -134,3 +137,5 @@ def ofGame {n k : ℕ} (G : Game n k) : GameSig where
 end GameSig
 
 end Tsirelson
+
+end

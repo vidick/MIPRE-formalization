@@ -2,8 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.Twirl
-import Mathlib.LinearAlgebra.Matrix.Kronecker
+module
+public import MIPRE.Foundations.Introspection.Twirl
+public import Mathlib.LinearAlgebra.Matrix.Kronecker
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Entry formulas for Pauli twirls with an ancillary space -/
 
@@ -163,5 +167,7 @@ theorem linear_twirl_blocks (L : (Fin n → F) →ₗ[F] (Fin n → F))
   · simp [hxy]
 
 end MIPRE.Introspection
+
+end
 
 end

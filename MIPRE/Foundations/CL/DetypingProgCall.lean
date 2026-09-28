@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingProgFinite
+module
+public import MIPRE.Foundations.CL.DetypingProgFinite
+
+@[expose] public section
 
 /-! # A total query router with at most one sampler call
 
@@ -96,3 +99,5 @@ theorem routeOneCall_halts (route : PolyTimeFun Data (Bool × Data))
 
 end Prog
 end MIPRE.Cost
+
+end

@@ -7,7 +7,10 @@ Tsirelson/Core/Measurement.lean, from a snapshot of the `main` branch supplied o
 nothing outside `MIPRE/Background/LiehrTsirelson/` may name it. Upstream carries no license file;
 see README.md.
 -/
-import MIPRE.Background.LiehrTsirelson.Upstream.Core.Game
+module
+public import MIPRE.Background.LiehrTsirelson.Upstream.Core.Game
+
+@[expose] public section
 
 /-!
 # POVMs, PVMs, outcome maps, coarse-graining, and the canonical Born probability
@@ -354,3 +357,5 @@ theorem isPositive_mul_of_commute {H : Type*} [NormedAddCommGroup H]
 end
 
 end Tsirelson
+
+end

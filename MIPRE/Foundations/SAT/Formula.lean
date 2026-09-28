@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.SAT.Circuit
-import MIPRE.Foundations.Cost.Binary
+module
+public import MIPRE.Foundations.SAT.Circuit
+public import MIPRE.Foundations.Cost.Binary
+
+@[expose] public section
 
 /-!
 # Boolean formulas and their circuits
@@ -633,3 +636,5 @@ theorem evalBits_toCircuit (n : ℕ) (f : Fml) (l : List Bool) :
 end Fml
 
 end MIPRE.SAT
+
+end

@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/Bernoulli/DegreeZero.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.ScalarBounds
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.HAConsistency
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.ScalarBounds
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.HAConsistency
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -34,7 +37,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- Evaluating the degree-zero appended-slice candidate is the height average of
 the original evaluated slice family at the same old point. -/
-private theorem polynomialEvaluation_averagedSliceAppendedSubMeas_eq_average
+theorem polynomialEvaluation_averagedSliceAppendedSubMeas_eq_average
     (params : Parameters)
     [FieldModel params.q]
     (family : IdxPolyFamily params ι)
@@ -71,7 +74,7 @@ private theorem polynomialEvaluation_averagedSliceAppendedSubMeas_eq_average
           pointHeight_appendPoint]
 
 /-- The point-consistency hypothesis may be truncated at the trivial unit bound. -/
-private theorem consistentWithPoints_min_one
+theorem consistentWithPoints_min_one
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι) (zeta : Error)
@@ -85,7 +88,7 @@ private theorem consistentWithPoints_min_one
       family.evaluatedAtNextPoint)
 
 /-- Scalar absorption for the degree-zero submeasurement consistency error. -/
-private theorem degreeZero_submeas_error_le_two_nu
+theorem degreeZero_submeas_error_le_two_nu
     (params : Parameters) [FieldModel params.q]
     (eps delta gamma zeta : Error) (k : ℕ)
     (hk_pos : 1 ≤ k)
@@ -184,7 +187,7 @@ private theorem degreeZero_submeas_error_le_two_nu
 
 /-- The averaged degree-zero pasted submeasurement is consistent with the lifted
 vertical-line answers. -/
-private theorem degreeZero_averagedSlice_liftedVerticalLineConsistency
+theorem degreeZero_averagedSlice_liftedVerticalLineConsistency
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (eps delta gamma zeta : Error)
@@ -310,7 +313,7 @@ private theorem degreeZero_averagedSlice_liftedVerticalLineConsistency
 
 /-- The averaged degree-zero pasted submeasurement is point-consistent before
 completion. -/
-private theorem degreeZero_averagedSlice_pointConsistency
+theorem degreeZero_averagedSlice_pointConsistency
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (eps delta gamma zeta : Error)
@@ -425,7 +428,7 @@ estimate.
 
 The degree-zero averaging argument uses the axis-parallel test and
 self-consistency, but not the diagonal-line test. -/
-private theorem degreeZero_averagedSlice_liftedVerticalLineConsistency_of_axis_self
+theorem degreeZero_averagedSlice_liftedVerticalLineConsistency_of_axis_self
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (eps delta zeta : Error)
@@ -552,7 +555,7 @@ private theorem degreeZero_averagedSlice_liftedVerticalLineConsistency_of_axis_s
 
 /-- Axis/self-consistency form of the degree-zero point-consistency estimate
 before completion. -/
-private theorem degreeZero_averagedSlice_pointConsistency_of_axis_self
+theorem degreeZero_averagedSlice_pointConsistency_of_axis_self
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (eps delta zeta : Error)
@@ -962,3 +965,5 @@ theorem degreeZeroPastedPointConsistency_of_axis_self
         (polynomialEvaluationFamily params.next H.toSubMeas)⟩
 
 end MIPStarRE.LDT.Pasting
+
+end

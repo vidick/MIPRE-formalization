@@ -21,7 +21,7 @@ upstream before the tree is relied on for anything else.
 ## Conventions
 
 - Do not edit files here by hand: re-run `scripts/vendor-liehr.py` instead. The only
-  differences from upstream are the header, the rewritten `import` prefix (`Tsirelson.`
+  differences from upstream are the header, the module-system lines (`module`, `public import`, `@[expose] public section`, no `private` definitions; added by `scripts/modularize.py`, 2026-09-28), the rewritten `import` prefix (`Tsirelson.`
   becomes `MIPRE.Background.LiehrTsirelson.Upstream.`) and one redirected import:
   `MainStatement.lean` imports upstream's facade `Tsirelson.Operational`, which re-exports
   the core together with a bridge tree the statements do not use, and the import is
@@ -47,4 +47,5 @@ argument is dropped.
 - Snapshot: a snapshot of the `main` branch supplied on 2026-09-25 (archive, no commit recorded)
 - Vendored files: 9 Lean files, 1628 lines (the import closure of `Tsirelson.MainStatement` after the redirection); 14 import lines rewritten from `Tsirelson.` to `MIPRE.Background.LiehrTsirelson.Upstream.`, 1 redirected `Tsirelson.Operational` to `Tsirelson.Core`
 - `set_option autoImplicit true` inserted: no (not needed)
+- Module system: 9 files given the `module` header, `public import`s, an `@[expose] public section` and no `private` definitions by `scripts/modularize.py` (Palomar requires it; `planning/palomar.md`)
 <!-- END GENERATED -->

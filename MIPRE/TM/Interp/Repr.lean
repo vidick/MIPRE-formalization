@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.Interp.Tape
-import MIPRE.Foundations.Cost.MachineBound
+module
+public import MIPRE.TM.Interp.Tape
+public import MIPRE.Foundations.Cost.MachineBound
+
+@[expose] public section
 
 /-!
 # The tape representation of configurations
@@ -188,3 +191,5 @@ theorem length_frameRepr_le {V L P : ℕ} {f : Frame} (h : FrameBound V L P f) :
     omega
 
 end MIPRE.TM.Interp
+
+end

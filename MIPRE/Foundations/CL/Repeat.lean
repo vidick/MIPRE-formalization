@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.CL.Closure
+module
+public import MIPRE.Foundations.CL.Closure
+
+@[expose] public section
 
 /-!
 # Direct sums of families of CL functions: the repeated sampler's functions
@@ -329,3 +332,5 @@ theorem clDist_famSum [Fintype F] [DecidableEq F] (e : Fin k × ι ≃ κ) {ℓ 
       ← Fintype.card_congr e, Fintype.card_prod, Fintype.card_fin, ← pow_mul, Nat.mul_comm]
 
 end MIPRE.CL
+
+end

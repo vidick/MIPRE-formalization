@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryPrimePowerLift
+module
+public import MIPRE.Foundations.LowDegree.BinaryPrimePowerLift
+
+@[expose] public section
 
 /-! # Finite-field bounds that certify auxiliary root-lifting termination -/
 
@@ -42,3 +45,5 @@ theorem prime_power_lift_bound (f : Polynomial (ZMod 2)) (hf : f.Monic)
   exact (Nat.pow_lt_pow_iff_right (by decide : 1 < 2)).mp hlt |>.le
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.DecisionPreparationCost
-import MIPRE.Foundations.Cost.BinaryArithmetic
+module
+public import MIPRE.Foundations.Introspection.DecisionPreparationCost
+public import MIPRE.Foundations.Cost.BinaryArithmetic
+
+@[expose] public section
 
 /-! # A binary answer cutoff for the compiled introspection decider
 
@@ -85,3 +88,5 @@ theorem answerBound_ansBound {c : ℕ} (hc : 1 ≤ c) :
       simpa only [eval_mul, eval_ofNat, eval_pow, eval_X] using hK lam n hl hn
 
 end MIPRE.Introspection.DecisionCompiler
+
+end

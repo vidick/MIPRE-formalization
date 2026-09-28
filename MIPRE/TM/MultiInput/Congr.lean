@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.MultiInput.Complexity
+module
+public import MIPRE.TM.MultiInput.Complexity
+
+@[expose] public section
 
 /-!
 # Relabeling multi-input machines along equivalences
@@ -342,3 +345,5 @@ lemma computesInTimeAndSpace_congrSymbol (e : Symbol ≃ Symbol')
 end CongrSymbol
 
 end Turing.MultiInputTM
+
+end

@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.Interp.Desc
+module
+public import MIPRE.TM.Interp.Desc
+
+@[expose] public section
 
 /-!
 # One step of the evaluation machine
@@ -2037,3 +2040,5 @@ theorem step_fail {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispat
           simp only [stepBound, sz, ctrlRepr_ret, List.length_cons, length_S] at hfb ⊢; omega
 
 end MIPRE.TM.Interp
+
+end

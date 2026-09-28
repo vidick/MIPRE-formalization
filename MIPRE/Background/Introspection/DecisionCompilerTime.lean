@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.DecisionCompiler
+module
+public import MIPRE.Background.Introspection.DecisionCompiler
+
+@[expose] public section
 
 /-! # All-index ambient time bounds for the actual decision compiler -/
 
@@ -106,3 +109,5 @@ theorem time_bound {c : ℕ} (hc : 1 ≤ c) (U : ClockedUniversalMachine) :
         (Nat.pow_le_pow_right (by omega) hpC)
 
 end MIPRE.Introspection.DecisionCompiler
+
+end

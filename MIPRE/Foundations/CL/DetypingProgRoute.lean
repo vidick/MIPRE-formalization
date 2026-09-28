@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingProgParse
-import MIPRE.Foundations.CL.DetypingProgBits
-import MIPRE.Foundations.CL.DetypingProgCall
-import MIPRE.Foundations.Cost.BinaryCompare
+module
+public import MIPRE.Foundations.CL.DetypingProgParse
+public import MIPRE.Foundations.CL.DetypingProgBits
+public import MIPRE.Foundations.CL.DetypingProgCall
+public import MIPRE.Foundations.Cost.BinaryCompare
+
+@[expose] public section
 
 /-! # Executable routing of detyped queries
 
@@ -90,13 +93,13 @@ def routeResult (g : ℕ) (p : Parsed) (a : GraphResult) : Bool × Data :=
     else directResult (zeros ++ pad (decide (j = 3)) u)
   else (false, .nil)
 
-private def directP (u : PolyTimeFun Context BitStr) : PolyTimeFun Context (Bool × Data) :=
+def directP (u : PolyTimeFun Context BitStr) : PolyTimeFun Context (Bool × Data) :=
   (const false).pair (encoded.comp u)
 
-private def callP (arg ctx : PolyTimeFun Context Data) : PolyTimeFun Context (Bool × Data) :=
+def callP (arg ctx : PolyTimeFun Context Data) : PolyTimeFun Context (Bool × Data) :=
   (const true).pair (ap₂ treePair arg ctx)
 
-private def prefixP (u : PolyTimeFun Context BitStr) : PolyTimeFun Context Data :=
+def prefixP (u : PolyTimeFun Context BitStr) : PolyTimeFun Context Data :=
   ap₂ treePair (const Data.nil) (encoded.comp u)
 
 def routeParsed (g : ℕ) : PolyTimeFun Context (Bool × Data) :=
@@ -180,3 +183,5 @@ theorem route_preserves (E : T → T → Prop) [DecidableRel E] (n : ℕ) (q pay
   exact routeResult_preserves _ _ _ _ h
 
 end MIPRE.CL.Detyping.Program
+
+end

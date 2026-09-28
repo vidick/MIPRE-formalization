@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.DecisionKernelInput
-import MIPRE.Foundations.Introspection.GuardedAuxiliaryProgram
+module
+public import MIPRE.Background.Introspection.DecisionKernelInput
+public import MIPRE.Foundations.Introspection.GuardedAuxiliaryProgram
+
+@[expose] public section
 
 /-! # The actual introspection decision kernel
 
@@ -145,4 +148,6 @@ theorem program_runs (U : ClockedUniversalMachine) (z : Input) :
       (program U).code.Runs (encode z) (encode (program U z)) t := (program U).computes z
 
 end MIPRE.Introspection.DecisionKernel
+end
+
 end
