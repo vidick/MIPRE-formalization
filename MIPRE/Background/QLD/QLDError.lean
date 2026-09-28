@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.ErrorShape
-import MIPRE.Background.QLD.SwapItemTwo
+module
+public import MIPRE.Background.QLD.ErrorShape
+public import MIPRE.Background.QLD.SwapItemTwo
+
+@[expose] public section
 
 /-!
 # The error of `thm:qld`, named once
@@ -305,5 +308,7 @@ theorem exists_qldErr_le :
   exact ⟨a, b, ha, hb0, hb1, fun ε m d q hε hm hd hq => (h ε m d q hε hm hd hq).2⟩
 
 end MIPRE.QLD
+
+end
 
 end

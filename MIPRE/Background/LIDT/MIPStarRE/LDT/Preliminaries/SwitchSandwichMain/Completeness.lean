@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Preliminaries/SwitchSandwichMain/Completeness.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichMain.LeftTransfer
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichMain.RightTransfer
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.ApproxDelta
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichMain.LeftTransfer
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichMain.RightTransfer
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.ApproxDelta
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -57,7 +60,7 @@ theorem switchSandwich {Question Outcome : Type*}
       switchSandwich_rightTransfer ψ 𝒟 hψ h𝒟 A B hB δ happrox
   }
 
-private lemma completenessTransfer_core {Question Outcome : Type*}
+lemma completenessTransfer_core {Question Outcome : Type*}
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype Outcome]
     (ψ : QuantumState ι) (𝒟 : Distribution Question)
@@ -215,3 +218,5 @@ theorem completenessTransferProjectiveP {Question Outcome : Type*}
   }
 
 end MIPStarRE.LDT.Preliminaries
+
+end

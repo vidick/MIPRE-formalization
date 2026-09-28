@@ -3,11 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Dilation
-import MIPRE.Foundations.Parseval
-import MIPRE.Foundations.PVM
-import MIPRE.Foundations.StateDistance
-import MIPRE.Foundations.Weyl
+module
+public import MIPRE.Foundations.Dilation
+public import MIPRE.Foundations.Parseval
+public import MIPRE.Foundations.PVM
+public import MIPRE.Foundations.StateDistance
+public import MIPRE.Foundations.Weyl
+
+@[expose] public section
 
 /-!
 # Approximate linearity gives exact linearity
@@ -504,5 +507,7 @@ theorem exists_exactly_linear_close {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖
 end Main
 
 end MIPRE
+
+end
 
 end

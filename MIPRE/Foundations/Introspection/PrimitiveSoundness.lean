@@ -2,11 +2,14 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveTwoSidedIteration
-import MIPRE.Foundations.Introspection.AdaptivePowerBudget
-import MIPRE.Foundations.Introspection.PrimitivePauliTransfer
-import MIPRE.Foundations.Introspection.TerminalOptionExtraction
-import MIPRE.Foundations.Introspection.HidingRigidityGame
+module
+public import MIPRE.Foundations.Introspection.AdaptiveTwoSidedIteration
+public import MIPRE.Foundations.Introspection.AdaptivePowerBudget
+public import MIPRE.Foundations.Introspection.PrimitivePauliTransfer
+public import MIPRE.Foundations.Introspection.TerminalOptionExtraction
+public import MIPRE.Foundations.Introspection.HidingRigidityGame
+
+@[expose] public section
 
 /-! # Finite-game introspection soundness from primitive Pauli estimates
 
@@ -242,4 +245,6 @@ theorem quantumValue_ge_of_primitive_profile
 
 end TypedEstimates
 end MIPRE.Introspection
+end
+
 end

@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Enumerate
-import MIPRE.Foundations.Halting.Tabulate
-import MIPRE.Foundations.SyncTransport
-import MIPRE.Foundations.Compression
+module
+public import MIPRE.Foundations.Halting.Enumerate
+public import MIPRE.Foundations.Halting.Tabulate
+public import MIPRE.Foundations.SyncTransport
+public import MIPRE.Foundations.Compression
+
+@[expose] public section
 
 /-!
 # The halting reduction, assembled
@@ -507,8 +510,6 @@ theorem mu_clause (x : BitStr) (n : ℕ)
           (fun v => decide (((Vof G U x).sampler.cl n .alice).eval v = (eXof G U x n i).2
             ∧ ((Vof G U x).sampler.cl n .bob).eval v = (eXof G U x n j).2))]
         congr 1
-        ext v
-        simp
       · refine List.filter_congr fun z hz => ?_
         have hz' : z.length = (Vof G U x).sampler.dim n :=
           (Data.mem_bitStrsOfLen _ _).1 hz
@@ -660,3 +661,5 @@ theorem gameValue_tab_eq_one (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded 
   exact Verifier.gameValue_toGame_eq_one_doubled _ _ _ _ eX eA hμ hD hV
 
 end MIPRE.Halting
+
+end

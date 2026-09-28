@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ClockedQueryProgram
-import MIPRE.Foundations.LowDegree.BinaryMatrixSolve
-import MIPRE.Foundations.CL.DetypingProgParse
+module
+public import MIPRE.Foundations.Introspection.ClockedQueryProgram
+public import MIPRE.Foundations.LowDegree.BinaryMatrixSolve
+public import MIPRE.Foundations.CL.DetypingProgParse
+
+@[expose] public section
 
 /-! # Executable source queries and matrix reconstruction
 
@@ -100,4 +103,6 @@ theorem matrix_correct (U : ClockedUniversalMachine) (ctx : Context) {n : ℕ}
   rw [hc, transposeBits_matrixBits, Matrix.transpose_transpose]
 
 end MIPRE.Introspection.AuxiliarySource
+end
+
 end

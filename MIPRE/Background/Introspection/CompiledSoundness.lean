@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.NumberedSoundness
-import MIPRE.Background.Introspection.CanonicalDecodedStrategy
+module
+public import MIPRE.Background.Introspection.NumberedSoundness
+public import MIPRE.Background.Introspection.CanonicalDecodedStrategy
+
+@[expose] public section
 
 /-! # Soundness of the actual compiled introspection verifier
 
@@ -42,7 +45,7 @@ theorem exists_parameter_constant :
     ∃ c : ℕ, 2 ≤ c ∧ Even c ∧ 2 * qldCoefficient + 2 ≤ (c : ℝ) * qldExponent :=
   PauliErrorParameters.exists_even_constant qldCoefficient qldExponent_pos
 
-private theorem scale_error {x ε : ℝ} (c : ℕ) (hx : 1 ≤ x) (hε : 0 ≤ ε) :
+theorem scale_error {x ε : ℝ} (c : ℕ) (hx : 1 ≤ x) (hε : 0 ≤ ε) :
     errorProfile (sourceCoefficient c) exponent x (detypingLoss * ε) ≤
       errorProfile (coefficient c) exponent x ε := by
   have h := errorProfile_scaled_power (C := 1) (a := sourceCoefficient c)
@@ -109,4 +112,6 @@ theorem output_soundness (c : ℕ) (hc : 2 ≤ c) (he : Even c)
   exact hh
 
 end MIPRE.Introspection.CompiledSoundness
+end
+
 end

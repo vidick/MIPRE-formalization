@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ConditionalNormalizerStepAux
-import MIPRE.Foundations.Introspection.TypedPrefixChain
-import MIPRE.Foundations.Introspection.PauliAuxEstimates
+module
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerStepAux
+public import MIPRE.Foundations.Introspection.TypedPrefixChain
+public import MIPRE.Foundations.Introspection.PauliAuxEstimates
+
+@[expose] public section
 
 /-! # The actual sampling outcomes and their ideal prefix readouts
 
@@ -107,5 +110,7 @@ theorem idealZ_prefix_fibSum (P : CL.CLFun F ι ℓ) (j : ℕ) (y : Option (ι �
 
 end TypedEstimates
 end MIPRE.Introspection
+
+end
 
 end

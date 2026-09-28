@@ -7,7 +7,10 @@ Tsirelson/Core/FiniteProbability.lean, from a snapshot of the `main` branch supp
 nothing outside `MIPRE/Background/LiehrTsirelson/` may name it. Upstream carries no license file;
 see README.md.
 -/
-import Mathlib
+module
+public import Mathlib
+
+@[expose] public section
 
 /-!
 # Finite probability distributions on finite types
@@ -290,3 +293,5 @@ theorem finProbOfPMF_uniformOfFintype {Ω : Type u} [Fintype Ω] [Nonempty Ω] :
     rw [finProbOfPMF_uniformOfFintype_prob, FiniteProbability.uniform_prob]
 
 end Tsirelson
+
+end

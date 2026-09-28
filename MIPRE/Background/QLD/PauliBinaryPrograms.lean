@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.PauliBooleanPrograms
-import MIPRE.Background.QLD.PauliRowPrograms
+module
+public import MIPRE.Background.QLD.PauliBooleanPrograms
+public import MIPRE.Background.QLD.PauliRowPrograms
+
+@[expose] public section
 
 /-! # From raw self-dual Pauli question bits to the actual decision program
 
@@ -86,4 +89,6 @@ theorem program_runs (input : Input) :
       program.code.Runs (encode input) (encode (program input)) t := program.computes input
 
 end MIPRE.QLD.PauliBinaryProgram
+end
+
 end

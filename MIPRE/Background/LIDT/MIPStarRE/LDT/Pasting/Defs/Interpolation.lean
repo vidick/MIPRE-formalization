@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/Defs/Interpolation.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LinePolynomialEmbedding
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Tuples
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LinePolynomialEmbedding
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Tuples
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -60,7 +63,7 @@ def extractSlicePoly {params : Parameters} {k : ℕ}
 
 /-- Each Lagrange basis polynomial has degree at most one less than the size of the
 interpolation support, without requiring distinct interpolation nodes. -/
-private theorem natDegree_lagrangeBasis_le_card_sub_one {K ρ : Type*} [Field K] [DecidableEq ρ]
+theorem natDegree_lagrangeBasis_le_card_sub_one {K ρ : Type*} [Field K] [DecidableEq ρ]
     {s : Finset ρ} {v : ρ → K} {i : ρ} (hi : i ∈ s) :
     (Lagrange.basis s v i).natDegree ≤ s.card - 1 := by
   rw [Lagrange.basis]
@@ -120,7 +123,7 @@ noncomputable def interpolationSupportWitness {params : Parameters} {k : ℕ}
     card_eq := (Classical.choose_spec hs).2 }
 
 /-- The Lagrange interpolation expression has individual degree at most `d`. -/
-private theorem interpolateCompletedSlicesFromSupport_degree
+theorem interpolateCompletedSlicesFromSupport_degree
     (params : Parameters) [FieldModel params.q] {k : ℕ} (xs : PointTuple params k)
     (gs : GHatTupleOutcome params k) (σ : Finset (Fin k))
     (hσsupport : σ ⊆ gHatTupleSupport gs) (hσcard : σ.card = params.d + 1)
@@ -237,3 +240,5 @@ noncomputable def interpolateCompletedSlicesFromSupport (params : Parameters)
     interpolateCompletedSlicesFromSupport_degree params xs gs σ hσsupport hσcard
 
 end MIPStarRE.LDT.Pasting
+
+end

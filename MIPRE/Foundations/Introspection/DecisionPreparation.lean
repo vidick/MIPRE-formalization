@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.PauliSamplerParamsCost
-import MIPRE.Foundations.Introspection.SourceCompilerCost
+module
+public import MIPRE.Foundations.Introspection.PauliSamplerParamsCost
+public import MIPRE.Foundations.Introspection.SourceCompilerCost
+
+@[expose] public section
 
 /-! # Preparing shared resources for the introspection decision kernel
 
@@ -217,3 +220,5 @@ theorem compiler_runs (c : ℕ) (kernel : PolyTimeFun KernelInput Bool) (M : Met
   exact ⟨_, hardcode_time (kernelProg_closed c kernel) ht⟩
 
 end MIPRE.Introspection.DecisionPreparation
+
+end

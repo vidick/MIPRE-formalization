@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.GapCompression
-import MIPRE.Foundations.GameTransport
-import MIPRE.Foundations.ValueModel
+module
+public import MIPRE.Foundations.GapCompression
+public import MIPRE.Foundations.GameTransport
+public import MIPRE.Foundations.ValueModel
+
+@[expose] public section
 
 /-!
 # The games of a verifier: congruence, answer padding, perfect PCC strategies
@@ -240,3 +243,5 @@ theorem GapCompression.sound_tensor (G : GapCompression) : G.Sound .tensor :=
   fun V lam n hb hn h => G.soundness V lam n hb hn h
 
 end MIPRE
+
+end

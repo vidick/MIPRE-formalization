@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SourceCompilerParams
-import MIPRE.Foundations.Introspection.SourceCompilerGuard
-import MIPRE.Foundations.Introspection.ParserGuard
-import MIPRE.Foundations.Introspection.ClockCompiler
+module
+public import MIPRE.Foundations.Introspection.SourceCompilerParams
+public import MIPRE.Foundations.Introspection.SourceCompilerGuard
+public import MIPRE.Foundations.Introspection.ParserGuard
+public import MIPRE.Foundations.Introspection.ClockCompiler
+
+@[expose] public section
 
 /-! # Actual cross-introspection source compiler
 
@@ -145,5 +148,7 @@ theorem crossProg_halts (c k lam : ℕ) (U : ClockedUniversalMachine) (S D : Pro
     ⟨dimensionStage_closed k lam U S,(finalStage_closed k lam U D).mono (by omega) _⟩ _)⟩
 
 end MIPRE.Introspection.SourceCompiler
+
+end
 
 end

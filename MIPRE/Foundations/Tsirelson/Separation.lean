@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Computability.PartrecCode
-import MIPRE.Foundations.Tsirelson.Closed
+module
+public import Mathlib.Computability.PartrecCode
+public import MIPRE.Foundations.Tsirelson.Closed
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # An explicit separation of the quantum and commuting-operator values
@@ -103,3 +107,5 @@ theorem separation_of_upperRE (hred : HaltingReductionQuantum) (hU : CommutingUp
   linarith
 
 end MIPRE
+
+end

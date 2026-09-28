@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LiehrTsirelson.Main
+module
+public import MIPRE.Background.LiehrTsirelson.Main
+
+@[expose] public section
 
 /-!
 # Axiom audit for the `lukasliehr/MIPRE` bridge
@@ -33,3 +36,5 @@ info: 'MIPRE.Liehr.gameValueSeparation' depends on axioms: [propext, Classical.c
 -/
 #guard_msgs in
 #print axioms MIPRE.Liehr.gameValueSeparation
+
+end

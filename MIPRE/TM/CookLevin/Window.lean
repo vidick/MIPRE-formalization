@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.Families
+module
+public import MIPRE.TM.CookLevin.Families
+
+@[expose] public section
 
 /-!
 # The window family, on decoded fields
@@ -266,3 +269,5 @@ theorem tableau_dec_iff (fixed : Fin 7 → Option (List Sym)) (chk : Circuit) (h
   rw [exists_mem_union, ← mainPred_iff, ← windowPred_iff e chk hC hin hinp hne]
 
 end MIPRE.TM.CookLevin.Desc
+
+end

@@ -5,10 +5,13 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainPhaseFive.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainBasic.Normalization
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainBasic.PointSwap
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainBasic.Reindexing
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.Scalar.RawSecond
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainBasic.Normalization
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainBasic.PointSwap
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainBasic.Reindexing
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.Scalar.RawSecond
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -153,7 +156,7 @@ noncomputable def evaluatedSlicePhaseFivePaperSwappedDefect
 The swapped phase-four endpoint contains the left factor
 `A_a B_b G^x.total`; subtracting the line-87 removed endpoint gives the negative
 of the ordered defect `A_a B_b (1-G^x.total)`. -/
-private lemma evaluatedSlice_phaseFivePaper_term_diff
+lemma evaluatedSlice_phaseFivePaper_term_diff
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι)
@@ -336,7 +339,7 @@ lemma evaluatedSlice_phaseFivePaper_avg_diff_eq_neg_orderedDefect
 
 For fixed `(u,x)` and right prefix `P₂`, summing over evaluated outcomes `a`
 expands `G^{u,x}_a = ∑_{g : g(u)=a} G^x_g` and collapses to a polynomial sum. -/
-private lemma phaseFivePaper_fiber_sum_ev
+lemma phaseFivePaper_fiber_sum_ev
     (params : Parameters) [FieldModel params.q]
     (ψ : QuantumState (ι × ι))
     (u : Point params)
@@ -406,7 +409,7 @@ private lemma phaseFivePaper_fiber_sum_ev
 The statement keeps point measurements in the local `evaluatedSlicePointMeas`
 notation; the final reindexing lemma rewrites those to `strategy.pointMeasurement`
 when matching `gCommStabilityTwoRawScalarDefect`. -/
-private lemma evaluatedSlicePhaseFivePaperSwappedDefect_appendPoint_expansion
+lemma evaluatedSlicePhaseFivePaperSwappedDefect_appendPoint_expansion
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι)
@@ -562,3 +565,5 @@ lemma evaluatedSlice_phaseFivePaper_reindex_to_raw_defect
           simp [evaluatedSlicePointMeas, Parameters.next]
 
 end MIPStarRE.LDT.Commutativity
+
+end

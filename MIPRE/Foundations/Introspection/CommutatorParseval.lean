@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.Commutation
-import MIPRE.Foundations.Parseval
+module
+public import MIPRE.Foundations.Introspection.Commutation
+public import MIPRE.Foundations.Parseval
+
+@[expose] public section
 
 /-! # Parseval for commutators with linear-map readouts
 
@@ -158,5 +161,7 @@ theorem linear_measurement_commutator_parseval_avg
   rw [← Finset.mul_sum, Finset.sum_comm]
 
 end MIPRE.Introspection
+
+end
 
 end

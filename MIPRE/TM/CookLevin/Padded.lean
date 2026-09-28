@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.TM.CookLevin.DecoupledProg
-import MIPRE.Foundations.SAT.Padding
-import MIPRE.Foundations.SAT.Rename
-import MIPRE.Foundations.SAT.PowerPadding
+module
+public import MIPRE.TM.CookLevin.DecoupledProg
+public import MIPRE.Foundations.SAT.Padding
+public import MIPRE.Foundations.SAT.Rename
+public import MIPRE.Foundations.SAT.PowerPadding
+
+@[expose] public section
 
 /-!
 # The padded five-block clause describer
@@ -55,13 +58,13 @@ def formula (ℓ r m : ℕ) (f : Fml) : Fml :=
 /-- The padded circuit, before padding its number of gates to the exact PCP count. -/
 def circuit (ℓ r m : ℕ) (f : Fml) : Circuit := (formula ℓ r m f).toCircuit (5 * m + 5)
 
-private theorem take_bitsOfNat (n m j : ℕ) (h : n ≤ m) :
+theorem take_bitsOfNat (n m j : ℕ) (h : n ≤ m) :
     (bitsOfNat m j).take n = bitsOfNat n j := by
   apply List.ext_getElem (by simp [h])
   intro k hk hk'
   simp only [bitsOfNat, List.getElem_take, List.getElem_ofFn]
 
-private theorem slice_index (pre post : BitStr) (m n j : ℕ) (hn : n ≤ m) :
+theorem slice_index (pre post : BitStr) (m n j : ℕ) (hn : n ≤ m) :
     ibOf pre.length n (fun i => (pre ++ bitsOfNat m j ++ post).getD i false) = bitsOfNat n j := by
   rw [ibOf_getD _ _ _ (by simp; omega), List.append_assoc,
     List.drop_left' rfl, List.take_append]
@@ -233,7 +236,7 @@ theorem describes {ℓ r m n T : ℕ} {D : Decider} {x y : BitStr}
     (circuit ℓ r m f).DescribesDecider m m D n x y T :=
   hC.of_pad hℓ hr hT (formula5_circuit hℓ hr hm f hf)
 
-private theorem mem_layout_lt {ℓ r m j : ℕ} (hℓ : ℓ ≤ m) (hr : r ≤ m)
+theorem mem_layout_lt {ℓ r m j : ℕ} (hℓ : ℓ ≤ m) (hr : r ≤ m)
     (hj : j ∈ layout ℓ r m) : j < 5 * m + 5 := by
   simp only [layout, List.mem_append, List.mem_range'_1] at hj
   omega
@@ -275,10 +278,10 @@ section Programs
 
 variable {ι : Type*} [SizedEncoding ι]
 
-private noncomputable def baseR (mu : PolyTimeFun ι Unary) (k : ℕ) : PolyTimeFun ι ℕ :=
+noncomputable def baseR (mu : PolyTimeFun ι Unary) (k : ℕ) : PolyTimeFun ι ℕ :=
   ap₁ unaryToBin (ap₁ (nsmulU k) mu)
 
-private theorem baseR_apply (mu : PolyTimeFun ι Unary) (k : ℕ) (i : ι) :
+theorem baseR_apply (mu : PolyTimeFun ι Unary) (k : ℕ) (i : ι) :
     baseR mu k i = k * (mu i).length := by simp [baseR]
 
 /-- The five-block offset table as an ambient program. -/
@@ -308,10 +311,10 @@ theorem lowR_apply (base : PolyTimeFun ι ℕ) (old mu : PolyTimeFun ι Unary) (
     exact getD_bits _ j)]
   simp [low]
 
-private noncomputable def blankSignR (base sign : PolyTimeFun ι ℕ) : PolyTimeFun ι Fml :=
+noncomputable def blankSignR (base sign : PolyTimeFun ι ℕ) : PolyTimeFun ι Fml :=
   xnorR (ap₁ Fml.inpF sign) (notR (ap₁ Fml.inpF base))
 
-private theorem blankSignR_apply (base sign : PolyTimeFun ι ℕ) (i : ι) :
+theorem blankSignR_apply (base sign : PolyTimeFun ι ℕ) (i : ι) :
     blankSignR base sign i = blankSign (base i) (sign i) := rfl
 
 /-- The padded clause formula, constructed uniformly in polynomial time. -/
@@ -430,3 +433,5 @@ theorem describe_size_le (D : Prog) (n T Q σ : ℕ) (x y : BitStr)
   exact ((h₁.trans h₂).trans (le_of_eq he)).trans (le_roundUp gatePoly n T Q σ)
 
 end MIPRE.TM.CookLevin.Pad
+
+end

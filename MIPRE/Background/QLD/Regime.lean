@@ -3,7 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.FieldTheory.Finite.Basic
+module
+public import Mathlib.FieldTheory.Finite.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The parameter regime of `thm:qld`
@@ -70,3 +74,5 @@ theorem four_mul_dvd_card_of_regime {m d : ℕ} (hm : m ∣ Fintype.card F) (hd 
     _ ≤ Fintype.card F := hq
 
 end MIPRE.QLD
+
+end

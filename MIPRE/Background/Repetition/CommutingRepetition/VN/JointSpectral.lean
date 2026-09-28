@@ -17,12 +17,16 @@ continuous `g, h`, then for bounded Borel `g, h` by the transfer principle of
 `VN/BorelCalculus` in each variable separately. Consequences: rectangle masses
 `νP(I × J) = ⟪ξ, 1_I(E₁) 1_J(E₂) ξ⟫` and the two marginals.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.SpectralProjection
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.SpectralProjection
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -432,3 +436,5 @@ end Pair
 end BorelCalc
 
 end CommutingRepetition
+
+end

@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.DecisionPreparation
+module
+public import MIPRE.Foundations.Introspection.DecisionPreparation
+
+@[expose] public section
 
 /-! # Uniform costs for one shared introspection resource preparation -/
 
@@ -271,3 +274,5 @@ theorem compiler_ansBound_time {c : ℕ} (hc : 1 ≤ c)
   exact ⟨t, ht.trans (hC _ _ hl hn), hr⟩
 
 end MIPRE.Introspection.DecisionPreparation
+
+end

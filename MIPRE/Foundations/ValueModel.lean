@@ -3,9 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Computability.Halting
-import MIPRE.Foundations.CommutingTransport
-import MIPRE.Foundations.GameDescription
+module
+public import Mathlib.Computability.Halting
+public import MIPRE.Foundations.CommutingTransport
+public import MIPRE.Foundations.GameDescription
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Value models: one interface for the tensor-product and the commuting-operator value
@@ -29,7 +33,7 @@ once against it:
 * `ValueModel.LowerRE`, `ValueModel.UpperRE`: the value is recursively enumerable from below,
   respectively from above, in the threshold encoding of `lem:value-lower-approx` (a pair
   `(p, q)` stands for `p / q`, with `p / 0 = 0`). `ValueModel.tensor_lowerRE`
-  (`ClassMIPStar.lean`) and `ValueModel.commuting_upperRE` (`Tsirelson/UpperRE.lean`) are the
+  (`ClassMIPStarComputable.lean`) and `ValueModel.commuting_upperRE` (`Tsirelson/UpperRE.lean`) are the
   two facts; neither model has the other direction, by the two theorems themselves.
 * `ValueModel.HaltingReductionRE`, `ValueModel.HaltingReductionCoRE`: the two shapes of a
   halting reduction to the value — `1` on halting machines and at most `1/2` on the others,
@@ -192,3 +196,5 @@ def HaltingReductionCoRE (ω : ValueModel) : Prop :=
 end ValueModel
 
 end MIPRE
+
+end

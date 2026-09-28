@@ -3,9 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.ValueApprox.RawComplete
-import MIPRE.Foundations.ValueApprox.RawPrimrec
-import Mathlib.Computability.RE
+module
+public import MIPRE.Foundations.ValueApprox.RawComplete
+public import MIPRE.Foundations.ValueApprox.RawPrimrec
+public import Mathlib.Computability.RE
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The quantum value is approximable from below: the `val*` half of `lem:value-lower-approx`
@@ -71,3 +75,5 @@ theorem rePred_lt_quantumValue :
   exact (REPred.of_primrecRel_exists h).of_eq fun x => exists_check_iff x.1 x.2.1 x.2.2
 
 end MIPRE.ValueApprox
+
+end

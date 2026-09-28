@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.OracularDeciderCost
-import MIPRE.Foundations.CL.DetypingDeciderTransport
+module
+public import MIPRE.Foundations.OracularDeciderCost
+public import MIPRE.Foundations.CL.DetypingDeciderTransport
+
+@[expose] public section
 
 /-!
 # Oracularization
@@ -259,3 +262,5 @@ noncomputable def construction (ℓ : ℕ) : Oracularization ℓ where
 end Oracularization
 
 end MIPRE
+
+end

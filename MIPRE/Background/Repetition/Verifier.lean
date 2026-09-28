@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Repeat.SamplerCost
-import MIPRE.Foundations.Repeat.DeciderCost
-import MIPRE.Background.Repetition.TensorPower
-import MIPRE.Background.Repetition.Soundness
+module
+public import MIPRE.Foundations.Repeat.SamplerCost
+public import MIPRE.Foundations.Repeat.DeciderCost
+public import MIPRE.Background.Repetition.TensorPower
+public import MIPRE.Background.Repetition.Soundness
+
+@[expose] public section
 
 /-!
 # Parallel repetition of normal form verifiers: the assembly
@@ -373,3 +376,5 @@ noncomputable def repetition (ℓ : ℕ) : Repetition ℓ where
     valStar_repVerifier_le V lam tau beta n _ (ansArg_bound lam tau beta n) hε h
 
 end MIPRE
+
+end

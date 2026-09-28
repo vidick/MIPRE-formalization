@@ -2,11 +2,15 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryQuotient
-import MIPRE.Foundations.LowDegree.IdempotentSplit
-import Mathlib.Algebra.Squarefree.Basic
-import Mathlib.Algebra.Polynomial.FieldDivision
-import Mathlib.RingTheory.Coprime.Lemmas
+module
+public import MIPRE.Foundations.LowDegree.BinaryQuotient
+public import MIPRE.Foundations.LowDegree.IdempotentSplit
+public import Mathlib.Algebra.Squarefree.Basic
+public import Mathlib.Algebra.Polynomial.FieldDivision
+public import Mathlib.RingTheory.Coprime.Lemmas
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Extracting polynomial factors from primitive quotient components
@@ -199,5 +203,7 @@ theorem componentFactors_toBits_prod (f : Polynomial (ZMod 2)) (hf : f.Monic)
   simpa only [List.map_map, Function.comp_def] using hp
 
 end MIPRE.LowDegree.BinaryQuotient
+
+end
 
 end

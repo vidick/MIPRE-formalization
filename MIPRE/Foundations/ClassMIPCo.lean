@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Corollaries
-import MIPRE.Foundations.Tsirelson.UpperRE
+module
+public import MIPRE.Foundations.Halting.Corollaries
+public import MIPRE.Foundations.Tsirelson.UpperRE
+
+@[expose] public section
 
 /-!
 # The commuting-operator instances: `MIP^co ⊆ coRE`, and `MIP^co = coRE` from co-soundness
@@ -70,3 +73,5 @@ theorem mipco_eq_core_of (hco : G.Sound .commuting) : MIPCo = IsCoRE :=
 end Halting
 
 end MIPRE
+
+end

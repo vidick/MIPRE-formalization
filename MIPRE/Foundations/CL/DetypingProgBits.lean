@@ -2,10 +2,14 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingQueries
-import MIPRE.Foundations.CL.Sampler
-import Mathlib.Data.List.OfFn
-import Mathlib.Logic.Equiv.Fin.Basic
+module
+public import MIPRE.Foundations.CL.DetypingQueries
+public import MIPRE.Foundations.CL.Sampler
+public import Mathlib.Data.List.OfFn
+public import Mathlib.Logic.Equiv.Fin.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Contiguous graph and content encodings for detyping
 
@@ -120,3 +124,5 @@ theorem numbered_exactlyOn {s ℓ : ℕ} (E : T → T → Prop) [DecidableRel E]
   simpa [numbered] using h
 
 end MIPRE.CL.Detyping
+
+end

@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptivePrefixMeasurement
+module
+public import MIPRE.Foundations.Introspection.AdaptivePrefixMeasurement
+
+@[expose] public section
 
 /-! # Prefix reassembly commutes with adjoining a fixed ancillary register
 
@@ -50,5 +53,7 @@ theorem prefixResidualOp_extend (P : CL.CLFun F ι ℓ) (k : ℕ) (y : ι → F)
   registerParty_extend _ _ _
 
 end MIPRE.Introspection
+
+end
 
 end

@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/SwitcherooCompletion.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooCompletion.CompletePart
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooCompletion.Utilities
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooCompletion.FourthTermChain
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooCompletion.CompletePart
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooCompletion.Utilities
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooCompletion.FourthTermChain
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -29,7 +32,7 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-private lemma switcherooCompletePartCenter_eq_target
+lemma switcherooCompletePartCenter_eq_target
     {Outcome : Type*} [Fintype Outcome]
     (params : Parameters) [FieldModel params.q]
     (ψbi : QuantumState (ι × ι))
@@ -297,3 +300,5 @@ lemma commutativitySwitcheroo {Outcome : Type*} [Fintype Outcome]
     strategy.isNormalized strategy.densityFixed family M zeta omega chi hselfG hselfM hcomm
 
 end MIPStarRE.LDT.Pasting
+
+end

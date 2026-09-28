@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryQuotient
-import MIPRE.Foundations.LowDegree.BinaryCanonical
-import MIPRE.Foundations.LowDegree.BinaryComponentsProg
-import MIPRE.Foundations.LowDegree.BinaryQuotientFrobenius
+module
+public import MIPRE.Foundations.LowDegree.BinaryQuotient
+public import MIPRE.Foundations.LowDegree.BinaryCanonical
+public import MIPRE.Foundations.LowDegree.BinaryComponentsProg
+public import MIPRE.Foundations.LowDegree.BinaryQuotientFrobenius
+
+@[expose] public section
 
 /-!
 # Bounded component separation in binary polynomial quotients
@@ -189,11 +192,11 @@ def splitBitsCappedProg : PolyTimeFun (BitStr × List BitStr × BitStr) (List Bi
 @[simp] theorem splitBitsCappedProg_apply (p : BitStr) (l : List BitStr) (b : BitStr) :
     splitBitsCappedProg (p, l, b) = splitBitsCapped p l b := rfl
 
-private def componentStepProg : PolyTimeFun (ComponentState × BitStr) ComponentState :=
+def componentStepProg : PolyTimeFun (ComponentState × BitStr) ComponentState :=
   (fst.comp fst).pair (splitBitsCappedProg.comp
     ((fst.comp fst).pair ((snd.comp fst).pair snd)))
 
-private theorem componentStep_bounded : FoldBounded componentStepProg (5 * X ^ 2 + 5 * X + 5) := by
+theorem componentStep_bounded : FoldBounded componentStepProg (5 * X ^ 2 + 5 * X + 5) := by
   intro bs s pre post _
   rcases s with ⟨p, l⟩
   let N := esize (bs, p, l)
@@ -314,5 +317,7 @@ theorem quotientComponentsProg_correct (p : BitStr) (hp : p.length = f.natDegree
   rfl
 
 end MIPRE.LowDegree.BinaryQuotient
+
+end
 
 end

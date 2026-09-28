@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.FieldIndicatorProg
+module
+public import MIPRE.Foundations.Introspection.FieldIndicatorProg
+
+@[expose] public section
 
 /-! # Computing the Pauli commutation bit
 
@@ -120,4 +123,6 @@ theorem probeProg_correct (k : ℕ) (hk : 1 ≤ k)
   rw [shoupMulProg_encoding, shoupTraceBitProg_correct]
 
 end MIPRE.Introspection.FieldGammaProgram
+end
+
 end

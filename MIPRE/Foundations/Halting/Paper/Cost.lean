@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Paper.Size
-import MIPRE.Foundations.Halting.WrapperCost
-import MIPRE.Foundations.Halting.Absorb
+module
+public import MIPRE.Foundations.Halting.Paper.Size
+public import MIPRE.Foundations.Halting.WrapperCost
+public import MIPRE.Foundations.Halting.Absorb
+
+@[expose] public section
 
 /-!
 # The halting verifier along the paper's route: the accounting
@@ -521,3 +524,5 @@ theorem Lam0_spec (S' M : Prog) (lam : â„•) (h : Lam0 G U UT S' + 4 * esize M â‰
   (exists_lamBound G U UT S').choose_spec M lam h
 
 end MIPRE.Halting
+
+end

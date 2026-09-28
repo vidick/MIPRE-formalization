@@ -2,213 +2,216 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.GuardSorryFree
-import MIPRE.Foundations.Introspection.BasisProg
-import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
-import MIPRE.Foundations.Introspection.AuxiliarySamplingCorrect
-import MIPRE.Foundations.Introspection.AuxiliaryCanonicalProgram
-import MIPRE.Background.Introspection.DecisionKernelComplete
-import MIPRE.Background.Introspection.CanonicalDecodedStrategy
-import MIPRE.Background.Introspection.NumberedSoundness
-import MIPRE.Background.Introspection.Compiler
-import MIPRE.Background.Pipeline
-import MIPRE.Foundations.Blocks
-import MIPRE.Foundations.CL.Basic
-import MIPRE.Foundations.LowDegree.SchwartzZippel
-import MIPRE.Foundations.LowDegree.ZeroBasis
-import MIPRE.Foundations.LowDegree.BinarySquareRoot
-import MIPRE.Foundations.LowDegree.BinaryInverse
-import MIPRE.Foundations.LowDegree.BinaryNormalize
-import MIPRE.Foundations.LowDegree.BinaryDivision
-import MIPRE.Foundations.LowDegree.BinaryQuotient
-import MIPRE.Foundations.LowDegree.BinaryExactDivision
-import MIPRE.Foundations.LowDegree.BinaryQuotientReduced
-import MIPRE.Foundations.LowDegree.BinaryFactorization
-import MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop
-import MIPRE.Foundations.LowDegree.BinaryOrbitDescent
-import MIPRE.Foundations.LowDegree.BinaryNonresidueCorrectness
-import MIPRE.Foundations.LowDegree.BinaryOddPrimeConstructor
-import MIPRE.Foundations.LowDegree.BinaryComposedSum
-import MIPRE.Foundations.LowDegree.BinaryDegreeDecomposition
-import MIPRE.Foundations.LowDegree.Shoup
-import MIPRE.Foundations.LowDegree.BinaryMatrixInverse
-import MIPRE.Foundations.LowDegree.BinaryKernel
-import MIPRE.Foundations.SAT.FieldTrace
-import MIPRE.Foundations.SAT.FrobeniusMatrix
-import MIPRE.Foundations.SAT.TraceGram
-import MIPRE.Foundations.SAT.BasisTransport
-import MIPRE.Foundations.SAT.EffectiveSelfDual
-import MIPRE.Foundations.SAT.EffectiveNormalBasis
-import MIPRE.Foundations.Introspection.Commutation
-import MIPRE.Foundations.Introspection.Twirl
-import MIPRE.Foundations.Introspection.Measurements
-import MIPRE.Foundations.Introspection.BlockPOVM
-import MIPRE.Foundations.Introspection.TwirlDistance
-import MIPRE.Foundations.Introspection.VaryingPauliMixing
-import MIPRE.Foundations.Introspection.Conditioning
-import MIPRE.Foundations.Introspection.ConditionalConsistency
-import MIPRE.Foundations.CL.Graph
-import MIPRE.Foundations.CL.DetypingQueries
-import MIPRE.Foundations.CL.DetypingSoundness
-import MIPRE.Foundations.CL.DetypingComplete
-import MIPRE.Foundations.CL.DetypingAnswers
-import MIPRE.Foundations.CL.DetypingProgGraph
-import MIPRE.Foundations.CL.DetypingProgTyped
-import MIPRE.Foundations.CL.DetypingProgSampler
-import MIPRE.Foundations.CL.DetypingProgCost
-import MIPRE.Foundations.Introspection.TypedPresentation
-import MIPRE.Foundations.Introspection.TypedPredicate
-import MIPRE.Foundations.Introspection.AmbientMixing
-import MIPRE.Foundations.Introspection.ErrorBounds
-import MIPRE.Foundations.Introspection.HidingTests
-import MIPRE.Foundations.Introspection.FinalExtraction
-import MIPRE.Foundations.Introspection.Runtime
-import MIPRE.Foundations.CL.DetypingDeciderGame
-import MIPRE.Foundations.CL.DetypingDeciderTransport
-import MIPRE.Foundations.CL.DetypingClock
-import MIPRE.Foundations.Introspection.TypedEstimates
-import MIPRE.Foundations.Introspection.SamplerCost
-import MIPRE.Foundations.Introspection.ClockCost
-import MIPRE.Foundations.Introspection.ClockSimulation
-import MIPRE.Foundations.Introspection.ClockCompiler
-import MIPRE.Foundations.Introspection.ClockSimulationCost
-import MIPRE.Foundations.Introspection.ParserGuard
-import MIPRE.Foundations.Introspection.HonestCoreGame
-import MIPRE.Foundations.Introspection.HonestSampling
-import MIPRE.Foundations.Introspection.HonestFirstHide
-import MIPRE.Foundations.Introspection.HonestReading
-import MIPRE.Foundations.Introspection.HonestParsed
-import MIPRE.Foundations.Introspection.HonestParsedHiding
-import MIPRE.Foundations.Introspection.HonestHidingCommute
-import MIPRE.Foundations.Introspection.HonestHidingAcceptance
-import MIPRE.Foundations.Introspection.HidingInductionDilation
-import MIPRE.Foundations.Introspection.HidingInduction
-import MIPRE.Foundations.Introspection.HidingRigidity
-import MIPRE.Foundations.Introspection.TypedExtraction
-import MIPRE.Foundations.Introspection.HidingNormalizer
-import MIPRE.Foundations.Introspection.ConditionalNormalizerMirror
-import MIPRE.Foundations.Introspection.ConditionalNormalizerIdeal
-import MIPRE.Foundations.Introspection.HonestCompleteGame
-import MIPRE.Foundations.Introspection.HonestPauliEdges
-import MIPRE.Foundations.Introspection.TypedPrefixChainEstimate
-import MIPRE.Foundations.Introspection.HidingNormalizerPrefix
-import MIPRE.Foundations.Introspection.SourceCompilerBinary
-import MIPRE.Foundations.Introspection.SourceCompilerCost
-import MIPRE.Foundations.Introspection.ConditionalNormalizerStepGame
-import MIPRE.Foundations.Introspection.ConditionalNormalizerStepSeed
-import MIPRE.Foundations.Introspection.ReadRigidityGame
-import MIPRE.Foundations.Introspection.ProductStageReadTests
-import MIPRE.Foundations.Introspection.ProductStageZTests
-import MIPRE.Foundations.Introspection.AdaptivePrefixAdvance
-import MIPRE.Foundations.Introspection.AdaptivePrefixCommutator
-import MIPRE.Foundations.Introspection.AdaptiveDualLocal
-import MIPRE.Foundations.Introspection.AdaptivePrefixStrategy
-import MIPRE.Foundations.Introspection.StrategyReplacementDilation
-import MIPRE.Foundations.Introspection.AdaptiveXTest
-import MIPRE.Foundations.Introspection.AdaptiveZTest
-import MIPRE.Foundations.Introspection.AdaptivePrefixMarginal
-import MIPRE.Foundations.Introspection.AdaptiveGameStage
-import MIPRE.Foundations.Introspection.AdaptiveNextStrategy
-import MIPRE.Foundations.Introspection.IntrospectCanonicalization
-import MIPRE.Foundations.Introspection.StrategyReplacementErrors
-import MIPRE.Foundations.Introspection.AdaptiveInductionIteration
-import MIPRE.Foundations.Introspection.AdaptiveTerminalInvariant
-import MIPRE.Foundations.Introspection.PrimitiveSoundness
-import MIPRE.Foundations.Introspection.ExtractedStateSoundness
-import MIPRE.Foundations.Introspection.HonestMagicSquareGame
-import MIPRE.Foundations.Introspection.IsometricCompletionError
-import MIPRE.Foundations.Introspection.ValidPauliSoundness
-import MIPRE.Foundations.Introspection.LineRepresentativeProg
-import MIPRE.Foundations.Introspection.PauliRestriction
-import MIPRE.Foundations.Introspection.SeededLineProg
-import MIPRE.Foundations.Introspection.SourcePaddingValue
-import MIPRE.Foundations.SAT.Arithmetization
-import MIPRE.Foundations.SAT.FiniteCircuitArithmetization
-import MIPRE.Foundations.SAT.CircuitFieldCorrect
-import MIPRE.TM.CookLevin.PcpCircuit
-import MIPRE.TM.CookLevin.PcpViewSize
-import MIPRE.TM.CookLevin.ClassicalPcp
-import MIPRE.Foundations.SAT.Padding
-import MIPRE.Foundations.SAT.PcpAlgebra
-import MIPRE.Foundations.SAT.PcpBlocks
-import MIPRE.Foundations.SAT.QuotientField
-import MIPRE.Foundations.LowDegree.Anticomm
-import MIPRE.Foundations.LowDegree.Shoup
-import MIPRE.Foundations.LowDegree.SelfDual
-import MIPRE.Foundations.CL.Canonical
-import MIPRE.Foundations.CL.Closure
-import MIPRE.Foundations.CL.Downsize
-import MIPRE.Foundations.CL.Repeat
-import MIPRE.Foundations.ClassMIPStar
-import MIPRE.Foundations.ClassMIPStarPolyTab
-import MIPRE.Foundations.Compression
-import MIPRE.Foundations.Cost.Kleene
-import MIPRE.Foundations.Cost.Semidecide
-import MIPRE.Foundations.Cost.Toolkit
-import MIPRE.Foundations.Cost.Universal
-import MIPRE.Foundations.Games
-import MIPRE.Foundations.StateDistance
-import MIPRE.Foundations.PerfectStrategy
-import MIPRE.Foundations.OracularComplete
-import MIPRE.Foundations.OracularSound
-import MIPRE.Foundations.OracularTensor
-import MIPRE.Foundations.OracularTyped
-import MIPRE.Foundations.OracularSampler
-import MIPRE.Foundations.OracularDecider
-import MIPRE.Foundations.OracularDeciderCost
-import MIPRE.Foundations.Pipeline.Oracularization
-import MIPRE.Foundations.LowDegree.SelfDualize
-import MIPRE.Foundations.LowDegree.NormalBasis
-import MIPRE.Foundations.SAT.AdmissibleField
-import MIPRE.Foundations.Halting.Corollaries
-import MIPRE.Foundations.Pipeline.Compress
-import MIPRE.Foundations.Halting.LambdaBound
-import MIPRE.Foundations.Halting.Semidecider
-import MIPRE.Foundations.Halting.Paper.Main
-import MIPRE.Foundations.Halting.Paper.ClassMain
-import MIPRE.Foundations.ValueApprox
-import MIPRE.Foundations.ValueApprox.Cayley
-import MIPRE.Foundations.ValueApprox.Dense
-import MIPRE.Foundations.ValueApprox.Gaussian
-import MIPRE.Foundations.ValueApprox.Norms
-import MIPRE.Foundations.ValueApprox.Projective
-import MIPRE.Foundations.ValueApprox.RE
-import MIPRE.Foundations.ValueApprox.RawComplete
-import MIPRE.Foundations.ValueApprox.RawPrimrec
-import MIPRE.Foundations.ValueApprox.RawSemantics
-import MIPRE.Foundations.ValueApprox.RawStrategy
-import MIPRE.Foundations.ValueApprox.Strategy
-import MIPRE.TM.CookLevin.DecoupledProg
-import MIPRE.TM.CookLevin.PaddingParams
-import MIPRE.TM.CookLevin.PcpParameters
-import MIPRE.LCS.MagicSquare.Strategy
-import MIPRE.LCS.NonlocalGame
-import MIPRE.LCS.Strategy.Equivalence
-import MIPRE.LCS.Strategy.ObservableToProjector
-import MIPRE.TM.Code.Encoding.MachineCode
-import MIPRE.Foundations.WeylBinary
-import MIPRE.Foundations.Commutation
-import MIPRE.Foundations.Linearity
-import MIPRE.Foundations.Sandwich
-import MIPRE.Foundations.Pasting
-import MIPRE.Foundations.LowDegreeSandwich
-import MIPRE.Background.LIDT.Extraction
-import MIPRE.Background.LIDT.Padding
-import MIPRE.Background.LIDT.Simultaneous
-import MIPRE.Background.AnswerReduction.ArSampler
-import MIPRE.Background.AnswerReduction.ArDecider
-import MIPRE.Background.AnswerReduction.Construction
-import MIPRE.Background.AnswerReduction.Complete
-import MIPRE.Background.AnswerReduction.SoundFinal
-import MIPRE.Background.AnswerReduction.Instance
-import MIPRE.MainTheorem
-import MIPRE.Foundations.Tsirelson.Conditional
-import MIPRE.Tsirelson
-import MIPRE.MIPCo
-import MIPRE.Foundations.Expanded
-import MIPRE.Foundations.WeylEPR
-import MIPRE.Foundations.Swap
-import MIPRE.Background.GowersHatami.Basic
+module
+public import MIPRE.Foundations.GuardSorryFree
+public import MIPRE.Foundations.Introspection.BasisProg
+public import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
+public import MIPRE.Foundations.Introspection.AuxiliarySamplingCorrect
+public import MIPRE.Foundations.Introspection.AuxiliaryCanonicalProgram
+public import MIPRE.Background.Introspection.DecisionKernelComplete
+public import MIPRE.Background.Introspection.CanonicalDecodedStrategy
+public import MIPRE.Background.Introspection.NumberedSoundness
+public import MIPRE.Background.Introspection.Compiler
+public import MIPRE.Background.Pipeline
+public import MIPRE.Foundations.Blocks
+public import MIPRE.Foundations.CL.Basic
+public import MIPRE.Foundations.LowDegree.SchwartzZippel
+public import MIPRE.Foundations.LowDegree.ZeroBasis
+public import MIPRE.Foundations.LowDegree.BinarySquareRoot
+public import MIPRE.Foundations.LowDegree.BinaryInverse
+public import MIPRE.Foundations.LowDegree.BinaryNormalize
+public import MIPRE.Foundations.LowDegree.BinaryDivision
+public import MIPRE.Foundations.LowDegree.BinaryQuotient
+public import MIPRE.Foundations.LowDegree.BinaryExactDivision
+public import MIPRE.Foundations.LowDegree.BinaryQuotientReduced
+public import MIPRE.Foundations.LowDegree.BinaryFactorization
+public import MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop
+public import MIPRE.Foundations.LowDegree.BinaryOrbitDescent
+public import MIPRE.Foundations.LowDegree.BinaryNonresidueCorrectness
+public import MIPRE.Foundations.LowDegree.BinaryOddPrimeConstructor
+public import MIPRE.Foundations.LowDegree.BinaryComposedSum
+public import MIPRE.Foundations.LowDegree.BinaryDegreeDecomposition
+public import MIPRE.Foundations.LowDegree.Shoup
+public import MIPRE.Foundations.LowDegree.BinaryMatrixInverse
+public import MIPRE.Foundations.LowDegree.BinaryKernel
+public import MIPRE.Foundations.SAT.FieldTrace
+public import MIPRE.Foundations.SAT.FrobeniusMatrix
+public import MIPRE.Foundations.SAT.TraceGram
+public import MIPRE.Foundations.SAT.BasisTransport
+public import MIPRE.Foundations.SAT.EffectiveSelfDual
+public import MIPRE.Foundations.SAT.EffectiveNormalBasis
+public import MIPRE.Foundations.Introspection.Commutation
+public import MIPRE.Foundations.Introspection.Twirl
+public import MIPRE.Foundations.Introspection.Measurements
+public import MIPRE.Foundations.Introspection.BlockPOVM
+public import MIPRE.Foundations.Introspection.TwirlDistance
+public import MIPRE.Foundations.Introspection.VaryingPauliMixing
+public import MIPRE.Foundations.Introspection.Conditioning
+public import MIPRE.Foundations.Introspection.ConditionalConsistency
+public import MIPRE.Foundations.CL.Graph
+public import MIPRE.Foundations.CL.DetypingQueries
+public import MIPRE.Foundations.CL.DetypingSoundness
+public import MIPRE.Foundations.CL.DetypingComplete
+public import MIPRE.Foundations.CL.DetypingAnswers
+public import MIPRE.Foundations.CL.DetypingProgGraph
+public import MIPRE.Foundations.CL.DetypingProgTyped
+public import MIPRE.Foundations.CL.DetypingProgSampler
+public import MIPRE.Foundations.CL.DetypingProgCost
+public import MIPRE.Foundations.Introspection.TypedPresentation
+public import MIPRE.Foundations.Introspection.TypedPredicate
+public import MIPRE.Foundations.Introspection.AmbientMixing
+public import MIPRE.Foundations.Introspection.ErrorBounds
+public import MIPRE.Foundations.Introspection.HidingTests
+public import MIPRE.Foundations.Introspection.FinalExtraction
+public import MIPRE.Foundations.Introspection.Runtime
+public import MIPRE.Foundations.CL.DetypingDeciderGame
+public import MIPRE.Foundations.CL.DetypingDeciderTransport
+public import MIPRE.Foundations.CL.DetypingClock
+public import MIPRE.Foundations.Introspection.TypedEstimates
+public import MIPRE.Foundations.Introspection.SamplerCost
+public import MIPRE.Foundations.Introspection.ClockCost
+public import MIPRE.Foundations.Introspection.ClockSimulation
+public import MIPRE.Foundations.Introspection.ClockCompiler
+public import MIPRE.Foundations.Introspection.ClockSimulationCost
+public import MIPRE.Foundations.Introspection.ParserGuard
+public import MIPRE.Foundations.Introspection.HonestCoreGame
+public import MIPRE.Foundations.Introspection.HonestSampling
+public import MIPRE.Foundations.Introspection.HonestFirstHide
+public import MIPRE.Foundations.Introspection.HonestReading
+public import MIPRE.Foundations.Introspection.HonestParsed
+public import MIPRE.Foundations.Introspection.HonestParsedHiding
+public import MIPRE.Foundations.Introspection.HonestHidingCommute
+public import MIPRE.Foundations.Introspection.HonestHidingAcceptance
+public import MIPRE.Foundations.Introspection.HidingInductionDilation
+public import MIPRE.Foundations.Introspection.HidingInduction
+public import MIPRE.Foundations.Introspection.HidingRigidity
+public import MIPRE.Foundations.Introspection.TypedExtraction
+public import MIPRE.Foundations.Introspection.HidingNormalizer
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerMirror
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerIdeal
+public import MIPRE.Foundations.Introspection.HonestCompleteGame
+public import MIPRE.Foundations.Introspection.HonestPauliEdges
+public import MIPRE.Foundations.Introspection.TypedPrefixChainEstimate
+public import MIPRE.Foundations.Introspection.HidingNormalizerPrefix
+public import MIPRE.Foundations.Introspection.SourceCompilerBinary
+public import MIPRE.Foundations.Introspection.SourceCompilerCost
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerStepGame
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerStepSeed
+public import MIPRE.Foundations.Introspection.ReadRigidityGame
+public import MIPRE.Foundations.Introspection.ProductStageReadTests
+public import MIPRE.Foundations.Introspection.ProductStageZTests
+public import MIPRE.Foundations.Introspection.AdaptivePrefixAdvance
+public import MIPRE.Foundations.Introspection.AdaptivePrefixCommutator
+public import MIPRE.Foundations.Introspection.AdaptiveDualLocal
+public import MIPRE.Foundations.Introspection.AdaptivePrefixStrategy
+public import MIPRE.Foundations.Introspection.StrategyReplacementDilation
+public import MIPRE.Foundations.Introspection.AdaptiveXTest
+public import MIPRE.Foundations.Introspection.AdaptiveZTest
+public import MIPRE.Foundations.Introspection.AdaptivePrefixMarginal
+public import MIPRE.Foundations.Introspection.AdaptiveGameStage
+public import MIPRE.Foundations.Introspection.AdaptiveNextStrategy
+public import MIPRE.Foundations.Introspection.IntrospectCanonicalization
+public import MIPRE.Foundations.Introspection.StrategyReplacementErrors
+public import MIPRE.Foundations.Introspection.AdaptiveInductionIteration
+public import MIPRE.Foundations.Introspection.AdaptiveTerminalInvariant
+public import MIPRE.Foundations.Introspection.PrimitiveSoundness
+public import MIPRE.Foundations.Introspection.ExtractedStateSoundness
+public import MIPRE.Foundations.Introspection.HonestMagicSquareGame
+public import MIPRE.Foundations.Introspection.IsometricCompletionError
+public import MIPRE.Foundations.Introspection.ValidPauliSoundness
+public import MIPRE.Foundations.Introspection.LineRepresentativeProg
+public import MIPRE.Foundations.Introspection.PauliRestriction
+public import MIPRE.Foundations.Introspection.SeededLineProg
+public import MIPRE.Foundations.Introspection.SourcePaddingValue
+public import MIPRE.Foundations.SAT.Arithmetization
+public import MIPRE.Foundations.SAT.FiniteCircuitArithmetization
+public import MIPRE.Foundations.SAT.CircuitFieldCorrect
+public import MIPRE.TM.CookLevin.PcpCircuit
+public import MIPRE.TM.CookLevin.PcpViewSize
+public import MIPRE.TM.CookLevin.ClassicalPcp
+public import MIPRE.Foundations.SAT.Padding
+public import MIPRE.Foundations.SAT.PcpAlgebra
+public import MIPRE.Foundations.SAT.PcpBlocks
+public import MIPRE.Foundations.SAT.QuotientField
+public import MIPRE.Foundations.LowDegree.Anticomm
+public import MIPRE.Foundations.LowDegree.Shoup
+public import MIPRE.Foundations.LowDegree.SelfDual
+public import MIPRE.Foundations.CL.Canonical
+public import MIPRE.Foundations.CL.Closure
+public import MIPRE.Foundations.CL.Downsize
+public import MIPRE.Foundations.CL.Repeat
+public import MIPRE.Foundations.ClassMIPStarComputable
+public import MIPRE.Foundations.ClassMIPStarTab
+public import MIPRE.Foundations.Compression
+public import MIPRE.Foundations.Cost.Kleene
+public import MIPRE.Foundations.Cost.Semidecide
+public import MIPRE.Foundations.Cost.Toolkit
+public import MIPRE.Foundations.Cost.Universal
+public import MIPRE.Foundations.Games
+public import MIPRE.Foundations.StateDistance
+public import MIPRE.Foundations.PerfectStrategy
+public import MIPRE.Foundations.OracularComplete
+public import MIPRE.Foundations.OracularSound
+public import MIPRE.Foundations.OracularTensor
+public import MIPRE.Foundations.OracularTyped
+public import MIPRE.Foundations.OracularSampler
+public import MIPRE.Foundations.OracularDecider
+public import MIPRE.Foundations.OracularDeciderCost
+public import MIPRE.Foundations.Pipeline.Oracularization
+public import MIPRE.Foundations.LowDegree.SelfDualize
+public import MIPRE.Foundations.LowDegree.NormalBasis
+public import MIPRE.Foundations.SAT.AdmissibleField
+public import MIPRE.Foundations.Halting.Corollaries
+public import MIPRE.Foundations.Pipeline.Compress
+public import MIPRE.Foundations.Halting.LambdaBound
+public import MIPRE.Foundations.Halting.Semidecider
+public import MIPRE.Foundations.Halting.Paper.Main
+public import MIPRE.Foundations.Halting.Paper.ClassMain
+public import MIPRE.Foundations.ValueApprox
+public import MIPRE.Foundations.ValueApprox.Cayley
+public import MIPRE.Foundations.ValueApprox.Dense
+public import MIPRE.Foundations.ValueApprox.Gaussian
+public import MIPRE.Foundations.ValueApprox.Norms
+public import MIPRE.Foundations.ValueApprox.Projective
+public import MIPRE.Foundations.ValueApprox.RE
+public import MIPRE.Foundations.ValueApprox.RawComplete
+public import MIPRE.Foundations.ValueApprox.RawPrimrec
+public import MIPRE.Foundations.ValueApprox.RawSemantics
+public import MIPRE.Foundations.ValueApprox.RawStrategy
+public import MIPRE.Foundations.ValueApprox.Strategy
+public import MIPRE.TM.CookLevin.DecoupledProg
+public import MIPRE.TM.CookLevin.PaddingParams
+public import MIPRE.TM.CookLevin.PcpParameters
+public import MIPRE.LCS.MagicSquare.Strategy
+public import MIPRE.LCS.NonlocalGame
+public import MIPRE.LCS.Strategy.Equivalence
+public import MIPRE.LCS.Strategy.ObservableToProjector
+public import MIPRE.TM.Code.Encoding.MachineCode
+public import MIPRE.Foundations.WeylBinary
+public import MIPRE.Foundations.Commutation
+public import MIPRE.Foundations.Linearity
+public import MIPRE.Foundations.Sandwich
+public import MIPRE.Foundations.Pasting
+public import MIPRE.Foundations.LowDegreeSandwich
+public import MIPRE.Background.LIDT.Extraction
+public import MIPRE.Background.LIDT.Padding
+public import MIPRE.Background.LIDT.Simultaneous
+public import MIPRE.Background.AnswerReduction.ArSampler
+public import MIPRE.Background.AnswerReduction.ArDecider
+public import MIPRE.Background.AnswerReduction.Construction
+public import MIPRE.Background.AnswerReduction.Complete
+public import MIPRE.Background.AnswerReduction.SoundFinal
+public import MIPRE.Background.AnswerReduction.Instance
+public import MIPRE.MainTheorem
+public import MIPRE.Foundations.Tsirelson.Conditional
+public import MIPRE.Tsirelson
+public import MIPRE.MIPCo
+public import MIPRE.Foundations.Expanded
+public import MIPRE.Foundations.WeylEPR
+public import MIPRE.Foundations.Swap
+public import MIPRE.Background.GowersHatami.Basic
+
+@[expose] public section
 
 /-!
 # The blueprint's proof-level `\leanok` claims, guarded
@@ -358,8 +361,8 @@ tell you the guard is missing.
 #guard_sorry_free MIPRE.Halting.halting_reduction_quantum_of,
   MIPRE.Halting.gameValue_uncomputable_of,
   MIPRE.Halting.quantumValue_uncomputable_of,
-  MIPRE.Halting.mipstar_eq_re_of,
-  MIPRE.Halting.re_subset_mipstar_of
+  MIPRE.Halting.mipstarComputable_eq_re_of,
+  MIPRE.Halting.re_subset_mipstarComputable_of
 
 -- blueprint `thm:halting-undecidable`
 #guard_sorry_free MIPRE.Halting.exists_code_halts_of_isRE,
@@ -484,15 +487,15 @@ tell you the guard is missing.
   MIPRE.LCS.MagicSquare.merminPeresStrategy
 
 -- blueprint `lem:mipstar-sub-re`
-#guard_sorry_free MIPRE.MIPStar.exists_semidecider,
-  MIPRE.MIPStar.isRE,
+#guard_sorry_free MIPRE.MIPStarComputable.exists_semidecider,
+  MIPRE.MIPStarComputable.isRE,
   MIPRE.MIPClass.isRE,
   MIPRE.MIPClass.exists_semidecider,
   MIPRE.ValueModel.tensor_lowerRE
 
 /-! `lem:mipstar-poly-sub`: the paper's class is contained in the computable one
-(`MIPRE/Foundations/ClassMIPStarPolyTab.lean`). -/
-#guard_sorry_free MIPRE.MIPStarPoly.toMIPStar, MIPRE.MIPStarPoly.isRE, MIPRE.PolyVerifier.tab,
+(`MIPRE/Foundations/ClassMIPStarTab.lean`). -/
+#guard_sorry_free MIPRE.MIPStar.toComputable, MIPRE.MIPStar.isRE, MIPRE.PolyVerifier.tab,
   MIPRE.PolyVerifier.tab_computable, MIPRE.PolyVerifier.quantumValue_tab
 
 -- blueprint `lem:norm-two-psd`
@@ -1913,10 +1916,10 @@ tell you the guard is missing.
   MIPRE.Halting.halting_reduction_quantum,
   MIPRE.Halting.gameValue_uncomputable,
   MIPRE.Halting.quantumValue_uncomputable,
+  MIPRE.Halting.mipstarComputable_eq_re,
+  MIPRE.Halting.re_subset_mipstarComputable,
   MIPRE.Halting.mipstar_eq_re,
-  MIPRE.Halting.re_subset_mipstar,
-  MIPRE.Halting.mipstarPoly_eq_re,
-  MIPRE.Halting.re_subset_mipstarPoly
+  MIPRE.Halting.re_subset_mipstar
 
 /-! ## Introspection mixing, conditioning, and graph rejection sampling -/
 
@@ -2658,8 +2661,8 @@ block decomposition then needs. -/
   MIPRE.Halting.halting_reduction_quantum_of_answerReduction,
   MIPRE.Halting.gameValue_uncomputable_of_answerReduction,
   MIPRE.Halting.quantumValue_uncomputable_of_answerReduction,
-  MIPRE.Halting.re_subset_mipstar_of_answerReduction,
-  MIPRE.Halting.mipstar_eq_re_of_answerReduction
+  MIPRE.Halting.re_subset_mipstarComputable_of_answerReduction,
+  MIPRE.Halting.mipstarComputable_eq_re_of_answerReduction
 
 /-! `lem:correlation-sets-basic` and `lem:tsirelson-conditional`: the correlation sets and the
 separation from an upper semidecider (`MIPRE/Foundations/Correlations.lean`,
@@ -2732,7 +2735,7 @@ separation from an upper semidecider (`MIPRE/Foundations/Correlations.lean`,
 `lem:compressible-criterion-nested`, `lem:mipco-sub-core`, `thm:halting-co` and
 `thm:mipco-eq-core`, the last two conditional on `MIPRE.GapCompression.Sound
 ValueModel.commuting`. The reduction and the classes are generic in a value model
-(`MIPRE/Foundations/ValueModel.lean`, the `Halting/` modules and `Foundations/ClassMIPStar.lean`);
+(`MIPRE/Foundations/ValueModel.lean`, the `Halting/` modules and `Foundations/ClassMIPStarComputable.lean`);
 the commuting-operator instances are `MIPRE/Foundations/ClassMIPCo.lean` and
 `MIPRE/MIPCo.lean`. -/
 #guard_sorry_free MIPRE.Cost.compressibility_criterion_nested
@@ -2758,3 +2761,5 @@ the commuting-operator instances are `MIPRE/Foundations/ClassMIPCo.lean` and
   MIPRE.Halting.core_subset_mipco_of,
   MIPRE.Halting.core_subset_mipclass_of_reduction,
   MIPRE.Halting.mipclass_eq_core_of_reduction
+
+end

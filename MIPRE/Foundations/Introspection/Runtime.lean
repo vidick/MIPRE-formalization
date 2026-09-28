@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Pipeline.Introspection
-import MIPRE.Foundations.Halting.PolyBounded
-import MIPRE.Foundations.Cost.Toolkit
+module
+public import MIPRE.Foundations.Pipeline.Introspection
+public import MIPRE.Foundations.Halting.PolyBounded
+public import MIPRE.Foundations.Cost.Toolkit
+
+@[expose] public section
 
 /-! # Absolute simulation bounds on the original legal answer cut
 
@@ -141,3 +144,5 @@ theorem original_simulation_haltsWithin (U : UniversalMachine) :
         Polynomial.eval_X] using hC lam n hl hn
 
 end MIPRE.Introspection
+
+end

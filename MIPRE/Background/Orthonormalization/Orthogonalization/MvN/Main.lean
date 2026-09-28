@@ -22,13 +22,17 @@ The conditional statement of Theorem 1.2 itself, `povm_orthogonalization_of_stru
 `povm_orthogonalization` with the binder `hS`), is proved at the end from
 `orthAtN_one_of_structure`.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Finite
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.TypeIII
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Finite
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.TypeIII
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.MvN
 
@@ -109,7 +113,9 @@ theorem povm_orthogonalization_of_structure (hS : MvNStructureTheory.{u})
       (φ (∑ i, star (a i - p i) * (a i - p i))).re < 9 * ε := by
   obtain ⟨p, hpM, hp, -, hsum, hlt⟩ := orthAtN_one_of_structure hS M ι φ.toLinearMap
     (NormalState.isNormalOn φ) φ.nonneg' φ.map_one' a ha.1
-    (fun i => (ContinuousLinearMap.nonneg_iff_isPositive _).mpr (ha.2.1 i)) ha.2.2 ε hε
+    (fun i => ContinuousLinearMap.nonneg_iff_isPositive.mpr (ha.2.1 i)) ha.2.2 ε hε
   exact ⟨p, ⟨hpM, hp, hsum⟩, hlt⟩
 
 end Orthogonalization
+
+end

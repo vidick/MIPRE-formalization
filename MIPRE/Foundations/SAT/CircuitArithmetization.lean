@@ -2,9 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.InputRouting
-import MIPRE.Foundations.LowDegree.Encoding
-import Mathlib.Algebra.CharP.Two
+module
+public import MIPRE.Foundations.SAT.InputRouting
+public import MIPRE.Foundations.LowDegree.Encoding
+public import Mathlib.Algebra.CharP.Two
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Bounded-degree circuit consistency polynomials
@@ -49,11 +53,11 @@ def refWeight (g : Gate) : ℕ ⊕ ℕ → ℕ
   | .inl _ => 0
   | .inr j => g.refs.count j
 
-private theorem count_pair (u w j : ℕ) :
+theorem count_pair (u w j : ℕ) :
     [u, w].count j = (if j = u then 1 else 0) + (if j = w then 1 else 0) := by
   by_cases hu : u = j <;> by_cases hw : w = j <;> simp [hu, hw, eq_comm]
 
-private theorem degree_one_sub (p : MvPolynomial (ℕ ⊕ ℕ) F) (v : ℕ ⊕ ℕ) :
+theorem degree_one_sub (p : MvPolynomial (ℕ ⊕ ℕ) F) (v : ℕ ⊕ ℕ) :
     (1 - p).degreeOf v ≤ p.degreeOf v := by simpa using degreeOf_sub_le v 1 p
 
 theorem degreeOf_gateArith (C : Circuit) (k : ℕ) (v : ℕ ⊕ ℕ) :
@@ -111,7 +115,7 @@ theorem sum_inputWeight_le (C : Circuit) (v : ℕ ⊕ ℕ) :
   refine ⟨inputRef_injective C hi hj (hv.symm.trans hv'), ?_⟩
   simp only [inputWeight, hi, if_pos hv]
 
-private theorem sum_getD (l : List Gate) (f : Gate → ℕ) :
+theorem sum_getD (l : List Gate) (f : Gate → ℕ) :
     ∑ k ∈ range l.length, f (l.getD k (.const false)) = (l.map f).sum := by
   induction l with
   | nil => simp
@@ -228,7 +232,7 @@ theorem eval_routedArith_iff (C : Circuit) (hC : C.WellFormed) (x w : ℕ → Bo
     simp [hp, hc]
 
 omit [CharP F 2] in
-private theorem prod_zero_or_one {ι : Type*} (s : Finset ι) (f : ι → F)
+theorem prod_zero_or_one {ι : Type*} (s : Finset ι) (f : ι → F)
     (h : ∀ i ∈ s, f i = 0 ∨ f i = 1) : (∏ i ∈ s, f i) = 0 ∨ (∏ i ∈ s, f i) = 1 := by
   classical
   induction s using Finset.induction_on with
@@ -267,5 +271,7 @@ theorem eval_iff_exists_routedArith (C : Circuit) (hC : C.WellFormed) (x : ℕ �
   exact eval_iff_routedConsistent C hC.nonempty x
 
 end MIPRE.SAT.Circuit
+
+end
 
 end

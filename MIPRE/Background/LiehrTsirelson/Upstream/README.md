@@ -21,7 +21,7 @@ upstream before the tree is relied on for anything else.
 ## Conventions
 
 - Do not edit files here by hand: re-run `scripts/vendor-liehr.py` instead. The only
-  differences from upstream are the header, the rewritten `import` prefix (`Tsirelson.`
+  differences from upstream are the header, the module-system lines (`module`, `public import`, `@[expose] public section`, no `private` definitions; added by `scripts/modularize.py`, 2026-09-28), the rewritten `import` prefix (`Tsirelson.`
   becomes `MIPRE.Background.LiehrTsirelson.Upstream.`) and one redirected import:
   `MainStatement.lean` imports upstream's facade `Tsirelson.Operational`, which re-exports
   the core together with a bridge tree the statements do not use, and the import is
@@ -33,7 +33,12 @@ upstream before the tree is relied on for anything else.
 
 ## Local deviations from upstream
 
-None beyond the mechanical ones above.
+One recorded compile fix for the Mathlib crossing (this repository moved to Lean
+v4.35.0-rc3 and Mathlib `v4.35.0-rc3` on 2026-09-28, `planning/palomar.md`), applied by
+`scripts/vendor-liehr.py` from its `FIXES` table (`--apply-fixes` re-applies it to the tree
+as it is) and marked by a comment at the site: in `Core/Measurement.lean`, the operator of
+`ContinuousLinearMap.nonneg_iff_isPositive` is implicit in Mathlib v4.35, so the explicit
+argument is dropped.
 
 ## Provenance
 
@@ -42,4 +47,5 @@ None beyond the mechanical ones above.
 - Snapshot: a snapshot of the `main` branch supplied on 2026-09-25 (archive, no commit recorded)
 - Vendored files: 9 Lean files, 1628 lines (the import closure of `Tsirelson.MainStatement` after the redirection); 14 import lines rewritten from `Tsirelson.` to `MIPRE.Background.LiehrTsirelson.Upstream.`, 1 redirected `Tsirelson.Operational` to `Tsirelson.Core`
 - `set_option autoImplicit true` inserted: no (not needed)
+- Module system: 9 files given the `module` header, `public import`s, an `@[expose] public section` and no `private` definitions by `scripts/modularize.py` (Palomar requires it; `planning/palomar.md`)
 <!-- END GENERATED -->

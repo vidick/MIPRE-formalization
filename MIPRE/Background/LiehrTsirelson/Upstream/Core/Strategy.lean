@@ -7,7 +7,10 @@ Tsirelson/Core/Strategy.lean, from a snapshot of the `main` branch supplied on 2
 nothing outside `MIPRE/Background/LiehrTsirelson/` may name it. Upstream carries no license file;
 see README.md.
 -/
-import MIPRE.Background.LiehrTsirelson.Upstream.Core.Measurement
+module
+public import MIPRE.Background.LiehrTsirelson.Upstream.Core.Measurement
+
+@[expose] public section
 
 /-!
 # Strategies, the three generic correlation sets, and the B23 strategy predicates
@@ -362,3 +365,5 @@ end CommonTensorStrategy
 end
 
 end Tsirelson
+
+end

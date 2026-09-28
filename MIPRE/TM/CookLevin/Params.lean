@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.FamilyFml
-import MIPRE.TM.Interp.Run
-import MIPRE.Foundations.SAT.Table
+module
+public import MIPRE.TM.CookLevin.FamilyFml
+public import MIPRE.TM.Interp.Run
+public import MIPRE.Foundations.SAT.Table
+
+@[expose] public section
 
 /-!
 # The parameters of the describer: the check circuit and the tableau length
@@ -253,3 +256,5 @@ theorem runBound_le_two_pow (D : Prog) (n T Q σ : ℕ) (x y a b : BitStr)
     _ = Sof (eOf T σ) := by rw [Sof, eOf]
 
 end MIPRE.TM.CookLevin.Desc
+
+end

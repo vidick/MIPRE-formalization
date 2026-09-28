@@ -30,7 +30,10 @@
 #
 #   releases.lean-lang.org            Lean toolchain tarballs
 #   release.lean-lang.org             Lean release index
-#   lakecache.blob.core.windows.net   Mathlib olean cache (~7 GB unpacked)
+#   cache.mathlib.org                 Mathlib olean cache (~7 GB unpacked), the
+#                                     default host since Mathlib v4.35
+#   lakecache.blob.core.windows.net   the same cache on its legacy host, used with
+#                                     MATHLIB_CACHE_DEBUG_USE_LEGACY=1 (tried first)
 #   loogle.lean-lang.org              \
 #   leansearch.net                     | lean-lsp-mcp search tools
 #   premise-search.com                 |
@@ -164,8 +167,13 @@ log "installed $(lean --version 2>&1 | head -1)"
 #    built here is Mathlib's own `cache` executable.
 cd "$WARM" || bail "cannot enter $WARM"
 log "fetching dependencies and the Mathlib olean cache"
-lake exe cache get \
-  || bail "lake exe cache get failed — allow lakecache.blob.core.windows.net"
+#    Mathlib's cache tool downloads from cache.mathlib.org since v4.35; the legacy
+#    Azure host still serves the same archives and is tried first because it is
+#    the one this environment has allowed the longest. A blocked host fails with
+#    403 from the proxy on every file, so the wrong order costs the whole budget.
+MATHLIB_CACHE_DEBUG_USE_LEGACY=1 lake exe cache get \
+  || lake exe cache get \
+  || bail "lake exe cache get failed — allow cache.mathlib.org (or lakecache.blob.core.windows.net)"
 log "Mathlib in place: $(find .lake/packages/mathlib/.lake/build/lib -name '*.olean' 2>/dev/null | wc -l) oleans, $(du -sh .lake 2>/dev/null | cut -f1) on disk, $(left)s of the deadline left"
 
 # 4. This repository's own compiled modules, as a bundle. Lake's traces are

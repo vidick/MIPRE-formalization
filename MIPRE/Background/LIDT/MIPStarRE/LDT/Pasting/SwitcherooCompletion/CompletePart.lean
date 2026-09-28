@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/SwitcherooCompletion/CompletePart.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.Core
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooCompletion.SecondTerm
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.Core
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooCompletion.SecondTerm
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -295,3 +298,5 @@ lemma firstSwitcherooError_le_commutingWithGCompleteError
           simp [commutingWithGCompleteError, sixteenthSum]
 
 end MIPStarRE.LDT.Pasting
+
+end

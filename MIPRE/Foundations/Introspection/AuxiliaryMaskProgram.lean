@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryPrefixSolve
-import MIPRE.Foundations.CL.DetypingProgParse
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryPrefixSolve
+public import MIPRE.Foundations.CL.DetypingProgParse
+
+@[expose] public section
 
 /-! # Fixed-width register operations for the executable hiding scan -/
 
@@ -65,4 +68,6 @@ theorem matrixSolve_encoding {m n : ℕ} (A : Matrix (Fin m) (Fin n) CL.𝔽₂)
   rw [vectorValue_vectorBits]
 
 end MIPRE.Introspection.AuxiliaryBits
+end
+
 end

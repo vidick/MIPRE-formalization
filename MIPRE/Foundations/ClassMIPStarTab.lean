@@ -3,15 +3,18 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.ClassMIPStarPoly
-import MIPRE.Foundations.Halting.Tabulate
-import MIPRE.Foundations.Halting.Arith
+module
+public import MIPRE.Foundations.ClassMIPStar
+public import MIPRE.Foundations.Halting.Tabulate
+public import MIPRE.Foundations.Halting.Arith
+
+@[expose] public section
 
 /-!
 # The paper's class is contained in the computable one: tabulation
 
-Blueprint `lem:mipstar-poly-sub`: `MIPStarPoly L → MIPStar L`, hence `MIPStarPoly L → IsRE L`
-through `MIPStar.isRE`. A polynomial-time verifier is in particular a computable map from
+Blueprint `lem:mipstar-poly-sub`: `MIPStar L → MIPStarComputable L`, hence `MIPStar L → IsRE L`
+through `MIPStarComputable.isRE`. A polynomial-time verifier is in particular a computable map from
 strings to explicit games: on the input `z`, run the sampler on every seed of length `B z` and
 the decider on every tuple of strings of length at most `B z`, each under the budget the
 efficiency clause supplies, and write the result down as a `GameData`.
@@ -293,6 +296,9 @@ theorem primrec_accC (pd : Data) (P : Polynomial ℕ) :
   exact (Primrec.ite hfin (Primrec.const true) (Primrec.const false)).of_eq fun q => by
     simp only [accC]; split <;> simp_all
 
+-- The `Primrec` composition below exceeds the default heartbeat budget under Mathlib
+-- v4.35 (the unifier unfolds the encodings); it elaborates in seconds with a larger one.
+set_option maxHeartbeats 1000000 in
 theorem primrec_tabOf (sd pd : Data) (P : Polynomial ℕ) : Primrec (tabOf sd pd P) := by
   have hT : Primrec fun z : BitStr => P.eval z.length :=
     (Cost.primrec_poly_eval P).comp Primrec.list_length
@@ -530,14 +536,16 @@ theorem quantumValue_tab {z : BitStr} (h : V.Efficient z) :
 end PolyVerifier
 
 /-- **`lem:mipstar-poly-sub`: the paper's class is contained in the computable one.** -/
-theorem MIPStarPoly.toMIPStar {L : Set BitStr} (h : MIPStarPoly L) : MIPStar L := by
+theorem MIPStar.toComputable {L : Set BitStr} (h : MIPStar L) : MIPStarComputable L := by
   obtain ⟨V, heff, hgap⟩ := h
   refine ⟨V.tab, V.tab_computable, fun z => ?_⟩
   rw [ValueModel.tensor_val, V.quantumValue_tab (heff z)]
   exact hgap z
 
 /-- The paper's class is contained in `RE`. -/
-theorem MIPStarPoly.isRE {L : Set BitStr} (h : MIPStarPoly L) : IsRE L :=
-  h.toMIPStar.isRE
+theorem MIPStar.isRE {L : Set BitStr} (h : MIPStar L) : IsRE L :=
+  h.toComputable.isRE
 
 end MIPRE
+
+end

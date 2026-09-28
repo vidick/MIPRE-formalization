@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.MainTheorem
-import MIPRE.Foundations.ClassMIPCo
+module
+public import MIPRE.MainTheorem
+public import MIPRE.Foundations.ClassMIPCo
+
+@[expose] public section
 
 /-!
 # `MIP^co = coRE`, conditionally on the commuting-operator soundness of compression
@@ -43,3 +46,5 @@ theorem mipco_eq_core (hco : gapCompression.Sound .commuting) : MIPCo = IsCoRE :
     (halting_reduction_commuting hco)
 
 end MIPRE
+
+end

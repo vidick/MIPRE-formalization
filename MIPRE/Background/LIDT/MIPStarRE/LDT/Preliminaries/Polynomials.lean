@@ -5,9 +5,13 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Preliminaries/Polynomials.lean
 -/
-import Mathlib.Algebra.MvPolynomial.SchwartzZippel
-import Mathlib.Algebra.MvPolynomial.CommRing
-import Mathlib.RingTheory.MvPolynomial.Basic
+module
+public import Mathlib.Algebra.MvPolynomial.SchwartzZippel
+public import Mathlib.Algebra.MvPolynomial.CommRing
+public import Mathlib.RingTheory.MvPolynomial.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -131,3 +135,5 @@ theorem schwartzZippel_individualDegree {m d : ℕ} {K : Type*} [Field K] [Finty
     (totalDegree_le_mul_of_degreeOf_le hh_degOf)
 
 end MIPStarRE.LDT.Preliminaries
+
+end

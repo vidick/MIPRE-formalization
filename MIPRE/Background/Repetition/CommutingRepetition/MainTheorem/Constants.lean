@@ -13,16 +13,20 @@ gamma-xi-choice, gamma-greedy-condition, alleged-repeated-counterexample,
 main-q-eta-delta, explicit-one-shot-lower-bound,
 strict-one-shot-contradiction.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Basic
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Value
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Reduction
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Main
-import MIPRE.Background.Repetition.CommutingRepetition.MainTheorem.OneShot
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Basic
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Value
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Reduction
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Main
+public import MIPRE.Background.Repetition.CommutingRepetition.MainTheorem.OneShot
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -257,3 +261,5 @@ theorem predicate_case :
     linarith [hwin_le, hcontra, hε0]
 
 end CommutingRepetition
+
+end

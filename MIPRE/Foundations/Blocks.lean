@@ -3,15 +3,19 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Data.Fintype.Sum
-import Mathlib.Data.Real.Basic
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.Ring
-import Mathlib.Logic.Equiv.Basic
+module
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Fintype.Sum
+public import Mathlib.Data.Real.Basic
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.Ring
+public import Mathlib.Logic.Equiv.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Summing over assignments to a block-decomposed index type
@@ -188,3 +192,5 @@ theorem avg_comp_equiv_fst (e : α ≃ β × γ) (f : β → ℝ) :
 end Marginal
 
 end MIPRE
+
+end

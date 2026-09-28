@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Cost.Reader
-import MIPRE.Foundations.Cost.Numeric
+module
+public import MIPRE.Foundations.Cost.Reader
+public import MIPRE.Foundations.Cost.Numeric
+
+@[expose] public section
 
 /-!
 # Polynomial-time comparison of binary natural numbers
@@ -16,10 +19,10 @@ namespace MIPRE.Cost
 
 open Polynomial PolyTimeFun
 
-private def compareStep (acc : Bool) (p : Bool × Bool) : Bool :=
+def compareStep (acc : Bool) (p : Bool × Bool) : Bool :=
   if p.1 then (if p.2 then acc else false) else (if p.2 then true else acc)
 
-private theorem compare_fold (a b : BitStr) (acc : Bool) (h : a.length = b.length) :
+theorem compare_fold (a b : BitStr) (acc : Bool) (h : a.length = b.length) :
     (a.zip b).foldl compareStep acc = true ↔
       bitsVal a < bitsVal b ∨ (bitsVal a = bitsVal b ∧ acc = true) := by
   induction a generalizing b acc with
@@ -36,7 +39,7 @@ private theorem compare_fold (a b : BitStr) (acc : Bool) (h : a.length = b.lengt
       cases a <;> cases b <;> cases acc <;>
         simp [compareStep, bitsVal_cons, Nat.bit] <;> omega
 
-private theorem bitsVal_append_false (a : BitStr) (n : ℕ) :
+theorem bitsVal_append_false (a : BitStr) (n : ℕ) :
     bitsVal (a ++ List.replicate n false) = bitsVal a := by
   induction a with
   | nil =>
@@ -45,13 +48,13 @@ private theorem bitsVal_append_false (a : BitStr) (n : ℕ) :
     | succ n ih => simpa [List.replicate_succ, bitsVal_cons, Nat.bit] using ih
   | cons b a ih => simp only [List.cons_append, bitsVal_cons, ih]
 
-private theorem esize_bool_le (b : Bool) : esize b ≤ 3 := by cases b <;> decide
+theorem esize_bool_le (b : Bool) : esize b ≤ 3 := by cases b <;> decide
 
-private noncomputable def compareStepProg : PolyTimeFun (Bool × (Bool × Bool)) Bool :=
+noncomputable def compareStepProg : PolyTimeFun (Bool × (Bool × Bool)) Bool :=
   ite (fst.comp snd) (ite (snd.comp snd) fst (const false))
     (ite (snd.comp snd) (const true) fst)
 
-private theorem compareStepProg_apply (b : Bool) (p : Bool × Bool) :
+theorem compareStepProg_apply (b : Bool) (p : Bool × Bool) :
     compareStepProg (b, p) = compareStep b p := rfl
 
 /-- Compare arbitrary little-endian strings, allowing leading zeroes. -/
@@ -89,3 +92,5 @@ noncomputable def PolyTimeFun.leNat : PolyTimeFun (ℕ × ℕ) Bool :=
 @[simp] theorem PolyTimeFun.leNat_apply (p : ℕ × ℕ) : leNat p = decide (p.1 ≤ p.2) := rfl
 
 end MIPRE.Cost
+
+end

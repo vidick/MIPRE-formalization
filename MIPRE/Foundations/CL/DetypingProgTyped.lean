@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.TypedSampler
-import MIPRE.Foundations.CL.DetypingProgFinite
-import MIPRE.Foundations.Cost.Growth
+module
+public import MIPRE.Foundations.CL.TypedSampler
+public import MIPRE.Foundations.CL.DetypingProgFinite
+public import MIPRE.Foundations.Cost.Growth
+
+@[expose] public section
 
 /-! # Executable specialization of a typed sampler
 
@@ -143,3 +146,5 @@ theorem specialize_timeBoundAt (S : TypedSampler ℓ T) (t : T) (n B k : ℕ)
     (polynomial_eval_le_sum_coeff_mul_pow Q (by omega))
 
 end MIPRE.CL.TypedSampler
+
+end

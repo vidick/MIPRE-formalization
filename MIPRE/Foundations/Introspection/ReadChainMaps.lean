@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.TypedPrefixChain
-import MIPRE.Foundations.Introspection.HidingMaps
+module
+public import MIPRE.Foundations.Introspection.TypedPrefixChain
+public import MIPRE.Foundations.Introspection.HidingMaps
+
+@[expose] public section
 
 /-! # The dual readout retained along the actual hiding-to-Read chain
 
@@ -139,5 +142,7 @@ theorem prefixChainType_check_dual (w : Bool) (hL : (L w).SupportedOn univ)
 
 end TypedEstimates
 end MIPRE.Introspection
+
+end
 
 end

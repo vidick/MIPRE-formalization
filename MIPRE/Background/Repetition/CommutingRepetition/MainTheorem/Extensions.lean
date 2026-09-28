@@ -14,13 +14,17 @@ limit and the power-13 corollary are assembled in MainTheorem/Main.lean.
 Anchors: 07_main_theorem.tex sec 7.4, eqs private-coin-core-weight,
 weighted-accepted-word-entropy, payoff-rational-approximation.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.MainTheorem.Constants
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Monotone
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.MainTheorem.Constants
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Monotone
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -136,3 +140,5 @@ theorem rational_case :
     linarith [hwin_le, hcontra, hε0]
 
 end CommutingRepetition
+
+end

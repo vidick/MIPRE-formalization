@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Adapter.Reduction
-import MIPRE.Background.LIDT.Soundness
+module
+public import MIPRE.Background.LIDT.Adapter.Reduction
+public import MIPRE.Background.LIDT.Soundness
+
+@[expose] public section
 
 /-!
 # Axiom audit for the low individual degree test
@@ -85,3 +88,5 @@ info: 'MIPRE.LIDT.clK' depends on axioms: [propext]
 -/
 #guard_msgs in
 #print axioms MIPRE.LIDT.clK
+
+end

@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.Assemble
-import MIPRE.Foundations.SAT.Decoupled
+module
+public import MIPRE.TM.CookLevin.Assemble
+public import MIPRE.Foundations.SAT.Decoupled
+
+@[expose] public section
 
 /-!
 # The link clauses of the decoupled describer
@@ -308,3 +311,5 @@ theorem eval_linkFml {ℓ r T : ℕ} (hℓr : ℓ ≤ r) (hr : 1 ≤ r) (hT : 2 
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨a, b⟩))))))
 
 end MIPRE.TM.CookLevin.Desc
+
+end

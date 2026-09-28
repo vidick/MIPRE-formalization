@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.Repetition.Entangled
-import MIPRE.Foundations.Pipeline.Repetition
+module
+public import MIPRE.Background.Repetition.Entangled
+public import MIPRE.Foundations.Pipeline.Repetition
+
+@[expose] public section
 
 /-!
 # The repetition bound in the form the pipeline consumes
@@ -119,3 +122,5 @@ theorem quantumValue_repeat_le_soundBound {X : Type} [Fintype X] {B : ℕ}
     _ = -(repConst * ε ^ 13 * (k : ℝ) / ((B : ℝ) + 1)) := by ring
 
 end MIPRE.Repetition
+
+end

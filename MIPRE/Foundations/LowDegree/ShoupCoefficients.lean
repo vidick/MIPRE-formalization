@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.Shoup
-import MIPRE.Foundations.LowDegree.BinaryPolynomial
+module
+public import MIPRE.Foundations.LowDegree.Shoup
+public import MIPRE.Foundations.LowDegree.BinaryPolynomial
+
+@[expose] public section
 
 /-!
 # Coefficient interface to Shoup's construction
@@ -35,3 +38,5 @@ theorem shoupLowerCoeffs_poly (k : ℕ) (hk : 1 ≤ k) :
   simpa [shoupLowerCoeffs] using h
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

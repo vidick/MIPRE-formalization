@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/CommutativityPoints/SharedHelpers/SharedLine.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionMapAverages
-import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.Core
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionMapAverages
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.Core
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -32,7 +35,7 @@ open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 open scoped Matrix MatrixOrder ComplexOrder BigOperators
-private theorem sharedDiagonalLineQuestionOfPointPair_sampledPointPair
+theorem sharedDiagonalLineQuestionOfPointPair_sampledPointPair
     (params : Parameters)
     [FieldModel params.q]
     (s : PointPairQuestion params × Fq params) :
@@ -56,7 +59,7 @@ private theorem sharedDiagonalLineQuestionOfPointPair_sampledPointPair
     ring_nf
     simp
 
-private theorem sharedDiagonalLineQuestionOfPointPair_of_line
+theorem sharedDiagonalLineQuestionOfPointPair_of_line
     (params : Parameters)
     [FieldModel params.q]
     (ℓ : DiagonalLine params)
@@ -98,7 +101,7 @@ private theorem sharedDiagonalLineQuestionOfPointPair_of_line
         ring_nf
         simp
 
-private noncomputable def pointPairSharedDiagonalLine_ignore_first_equiv
+noncomputable def pointPairSharedDiagonalLine_ignore_first_equiv
     (params : Parameters)
     [FieldModel params.q] :
     (PointPairQuestion params × Fq params) ≃ PointDiagonalLineQuestion params where
@@ -122,7 +125,7 @@ private noncomputable def pointPairSharedDiagonalLine_ignore_first_equiv
         (sharedDiagonalLineQuestionOfPointPair_of_line params ℓ
           (subCoord tv (encodeScalar 1)))
 
-private noncomputable def pointPairSharedDiagonalLine_ignore_second_equiv
+noncomputable def pointPairSharedDiagonalLine_ignore_second_equiv
     (params : Parameters)
     [FieldModel params.q] :
     (PointPairQuestion params × Fq params) ≃ PointDiagonalLineQuestion params where
@@ -419,3 +422,5 @@ lemma sampledDiagonalLineApproximation_ignore_second
     _ ≤ pointDiagonalLineApproxError params gamma := happrox
 
 end MIPStarRE.LDT.CommutativityPoints
+
+end

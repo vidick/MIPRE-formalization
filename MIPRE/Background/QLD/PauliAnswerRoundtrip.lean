@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.PauliAnswerCoding
-import MIPRE.Foundations.SAT.QuotientField
+module
+public import MIPRE.Background.QLD.PauliAnswerCoding
+public import MIPRE.Foundations.SAT.QuotientField
+
+@[expose] public section
 
 /-! # Exact re-encoding of arbitrary valid Pauli payloads
 
@@ -16,17 +19,17 @@ noncomputable section
 namespace MIPRE.QLD.PauliAnswerProgram
 open Cost SAT LowDegree LowDegree.BinaryLinear Introspection.FieldTableProgram
 
-private theorem rows_getD {n : ℕ} (rows : List BitStr) (hn : rows.length = n) :
+theorem rows_getD {n : ℕ} (rows : List BitStr) (hn : rows.length = n) :
     List.ofFn (fun i : Fin n => rows.getD i.val []) = rows := by
   subst n
   simp [List.getD_eq_getElem?_getD]
 
-private theorem row_getD_mem {n : ℕ} (rows : List BitStr) (hn : rows.length = n) (i : Fin n) :
+theorem row_getD_mem {n : ℕ} (rows : List BitStr) (hn : rows.length = n) (i : Fin n) :
     rows.getD i.val [] ∈ rows := by
   have hi : i.val < rows.length := by omega
   simp [List.getD_eq_getElem?_getD, hi]
 
-private theorem fieldRows_roundtrip {k n : ℕ} (E : BinField k)
+theorem fieldRows_roundtrip {k n : ℕ} (E : BinField k)
     (hE : ∀ bs : BitStr, bs.length = k → E.toBits (E.ofBits bs) = bs)
     (rows : List BitStr) (hn : rows.length = n) (hw : ∀ row ∈ rows, row.length = k) :
     E.vecBits (fun i : Fin n => E.ofBits (rows.getD i.val [])) = rows := by
@@ -36,7 +39,7 @@ private theorem fieldRows_roundtrip {k n : ℕ} (E : BinField k)
   funext i
   exact hE _ (hw _ (row_getD_mem rows hn i))
 
-private theorem bitRows_roundtrip {n : ℕ} (rows : List BitStr) (hn : rows.length = n)
+theorem bitRows_roundtrip {n : ℕ} (rows : List BitStr) (hn : rows.length = n)
     (hw : ∀ row ∈ rows, row.length = 1) :
     List.ofFn (fun i : Fin n => [(rows.getD i.val []).getD 0 false]) = rows := by
   apply Eq.trans _ (rows_getD rows hn)
@@ -98,4 +101,6 @@ theorem answerBits_decodeBits (k : ℕ) (hk : 1 ≤ k) (m d : ℕ) (T : Ty) (bs 
   exact hb
 
 end MIPRE.QLD.PauliAnswerProgram
+end
+
 end

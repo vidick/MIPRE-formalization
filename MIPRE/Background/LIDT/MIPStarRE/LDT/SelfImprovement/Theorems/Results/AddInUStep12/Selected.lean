@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep12/Selected.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep12.Algebra
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep12.Algebra
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -34,7 +37,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 For fixed points `u, v` and a value `a`, the selected sum over pairs
 `(o,h) ∈ S_u` with `h(v)=a` is bounded by the full product
 `M^u_{\mathrm{tot}} ⊗ T_{\mathrm{tot}}`, hence by the identity. -/
-private lemma addInU_selected_filtered_tensor_sum_le_one
+lemma addInU_selected_filtered_tensor_sum_le_one
     {Outcome : Type*} [Fintype Outcome]
     (params : Parameters) [FieldModel params.q]
     (M : IdxSubMeas (Point params) Outcome ι)
@@ -97,7 +100,7 @@ For a fixed `(u, v)`, the selected fiber sum
 `K_a = ∑_{(o,h) ∈ S_u, h(v)=a} M^u_o ⊗ T_h` is a contraction.  Sandwiching
 by the right-register point projector `A^v_a` and summing over `a` is therefore
 bounded by the identity. -/
-private lemma addInU_selected_step1_C_contraction
+lemma addInU_selected_step1_C_contraction
     {Outcome : Type*} [Fintype Outcome]
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -218,7 +221,7 @@ This is the left-register analogue of `addInU_selected_step1_C_contraction`:
 for each fixed `(u,v)`, the operators
 `C_a = A^v_a \otimes I · K_a`, with `K_a` the selected fiber tensor mass,
 have `∑_a C_a C_aᴴ ≤ I`. -/
-private lemma addInU_selected_step2_C_contraction
+lemma addInU_selected_step2_C_contraction
     {Outcome : Type*} [Fintype Outcome]
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -797,3 +800,5 @@ lemma addInU_selected_cs_chain_step2_abs_le_sqrt_two_delta
 
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

@@ -30,13 +30,17 @@ the corner `p M p` with `√y p'ᵢ √y = qᵢ aᵢ`, `y = ∑ⱼ qⱼ aⱼ`.
 Everything is stated on the ambient space `H`; no statement of the paper is
 made here.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.BlockCalc
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Isometries
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.BlockCalc
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Isometries
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 /- The real-algebra structure of `H^n →L[ℂ] H^n` (needed by `CFC.sqrt`) is found by instance
 search only after unfolding `PiLp`, which exceeds the default heartbeat budget. -/
@@ -419,3 +423,5 @@ theorem exists_pvm_of_selection (M : VonNeumannAlgebra H) {p : H →L[ℂ] H}
       hq hqM hqp hqa hqE
 
 end Orthogonalization.MvN
+
+end

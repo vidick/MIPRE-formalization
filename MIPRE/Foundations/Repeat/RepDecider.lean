@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Repeat.DecMain
-import MIPRE.Foundations.Repeat.RepSampler
+module
+public import MIPRE.Foundations.Repeat.DecMain
+public import MIPRE.Foundations.Repeat.RepSampler
+
+@[expose] public section
 
 /-!
 # The repeated decider
@@ -245,3 +248,5 @@ theorem repDecider_rejectsLong (lam tau beta n : â„•) (x y a b : BitStr) (T : â„
     exact (length_toBitsPost_list_le _ _ bb fun i => (hall i).2.1).trans hT
 
 end MIPRE.Repeat
+
+end

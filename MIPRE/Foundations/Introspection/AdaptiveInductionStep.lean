@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveInductionInvariant
-import MIPRE.Foundations.Introspection.AdaptiveSelectedMeasurement
-import MIPRE.Foundations.Introspection.AdaptiveGameStage
-import MIPRE.Foundations.Introspection.StrategyReplacementErrors
+module
+public import MIPRE.Foundations.Introspection.AdaptiveInductionInvariant
+public import MIPRE.Foundations.Introspection.AdaptiveSelectedMeasurement
+public import MIPRE.Foundations.Introspection.AdaptiveGameStage
+public import MIPRE.Foundations.Introspection.StrategyReplacementErrors
+
+@[expose] public section
 
 /-! # A successor of the actual Introspect induction
 
@@ -167,4 +170,6 @@ theorem exists_intro_successor
 
 end TypedEstimates
 end MIPRE.Introspection
+end
+
 end

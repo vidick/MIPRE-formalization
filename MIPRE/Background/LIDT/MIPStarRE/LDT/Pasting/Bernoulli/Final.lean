@@ -5,17 +5,20 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/Bernoulli/Final.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.MatrixChernoff
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.ScalarBounds
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.DegreeZero
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Tuples
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Sandwich.PastedFamilies
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.CommutingWithG.Complete
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.CommutingWithG.Incomplete
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.HAConsistency
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.OverAllOutcomes.Final
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.MatrixChernoff
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.ScalarBounds
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.DegreeZero
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Tuples
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Sandwich.PastedFamilies
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.CommutingWithG.Complete
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.CommutingWithG.Incomplete
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.HAConsistency
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.OverAllOutcomes.Final
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -43,7 +46,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 The proof uses that the corrected `fromHToGError` tail sum is a sub-sum of the
 full `overAllOutcomesError` sum and the slack `46 + 46 ≤ 100`. -/
-private lemma overAllOutcomesError_add_fromHToGError_le_ldPastingNu
+lemma overAllOutcomesError_add_fromHToGError_le_ldPastingNu
     (params : Parameters)
     [FieldModel params.q]
     (eps delta gamma zeta : Error) (k : ℕ)
@@ -114,7 +117,7 @@ private lemma overAllOutcomesError_add_fromHToGError_le_ldPastingNu
 
 /-- Paper arithmetic: for `θ = 1/(200m)`,
 `1/(1-θ) ≤ 1 + 1/(100m)`. -/
-private lemma ldPasting_theta_inv_le (params : Parameters) :
+lemma ldPasting_theta_inv_le (params : Parameters) :
     (1 / (1 - 1 / (200 * (params.m : Error))) : Error) ≤
       1 + 1 / (100 * (params.m : Error)) := by
   have hm_pos : (0 : Error) < (params.m : Error) := by exact_mod_cast params.hm
@@ -137,7 +140,7 @@ private lemma ldPasting_theta_inv_le (params : Parameters) :
 
 /-- Paper arithmetic: the matrix-Chernoff exponential at `θ = 1/(200m)` is the
 stated `exp(-k/(80000m²))` term. -/
-private lemma ldPasting_chernoff_exponent_eq (params : Parameters) (k : ℕ) :
+lemma ldPasting_chernoff_exponent_eq (params : Parameters) (k : ℕ) :
     -(((1 / (200 * (params.m : Error))) ^ (2 : ℕ)) * (k : Error)) / 2 =
       -((k : Error) / (80000 * ((params.m : Error) ^ (2 : ℕ)))) := by
   have hm_pos : (0 : Error) < (params.m : Error) := by exact_mod_cast params.hm
@@ -148,7 +151,7 @@ private lemma ldPasting_chernoff_exponent_eq (params : Parameters) (k : ℕ) :
 
 /-- The public size assumption `k ≥ 400md` implies the matrix-Chernoff size
 condition `k ≥ 2d/θ` at `θ = 1/(200m)`. -/
-private lemma ldPasting_chernoff_size (params : Parameters) (k : ℕ)
+lemma ldPasting_chernoff_size (params : Parameters) (k : ℕ)
     (hk : 400 * params.m * params.d ≤ k) :
     (2 * (params.d : Error)) / (1 / (200 * (params.m : Error))) ≤ (k : Error) := by
   have hm_pos : (0 : Error) < (params.m : Error) := by exact_mod_cast params.hm
@@ -165,7 +168,7 @@ This is the previously residual Bernoulli-tail lower-bound step in
 register to `G ⊗ I`, then `bernoulliTailOperator_leftTensor` identifies its
 conclusion and swap-invariance transfers it to the paper-shaped right-register
 `fromHToGBernoulliTailMass`. -/
-private lemma fromHToGBernoulliTailMass_lower_bound
+lemma fromHToGBernoulliTailMass_lower_bound
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι)
@@ -812,3 +815,5 @@ theorem ldPasting
       hgood family hcomplete hcons hself hbound k hk hgamma
 
 end MIPStarRE.LDT.Pasting
+
+end

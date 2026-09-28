@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.TM.CookLevin.PaddingParams
-import MIPRE.Foundations.SAT.Pcp
-import MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic
+module
+public import MIPRE.TM.CookLevin.PaddingParams
+public import MIPRE.Foundations.SAT.Pcp
+public import MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic
+
+@[expose] public section
 
 /-!
 # Effective parameters for the classical PCP
@@ -60,7 +63,7 @@ theorem pcpParams_field_large (n T Q σ : ℕ) :
   change outerDim n T Q σ < 2 ^ e at h
   nlinarith
 
-private theorem power_dvd_of_le {j k : ℕ} (h : 2 ^ j ≤ 2 ^ k) : 2 ^ j ∣ 2 ^ k := by
+theorem power_dvd_of_le {j k : ℕ} (h : 2 ^ j ≤ 2 ^ k) : 2 ^ j ∣ 2 ^ k := by
   have hj : j ≤ k := (Nat.pow_le_pow_iff_right (by decide : 1 < 2)).mp h
   exact pow_dvd_pow 2 hj
 
@@ -162,3 +165,5 @@ theorem pcpParamsProg_apply (n T Q σ : ℕ) :
   simp [pcpParamsProg, fieldDegreeProg_apply, paddingParams_apply, pcpParams]
 
 end MIPRE.TM.CookLevin.Pad
+
+end

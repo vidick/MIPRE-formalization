@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryNonresidueCorrectness
+module
+public import MIPRE.Foundations.LowDegree.BinaryNonresidueCorrectness
+
+@[expose] public section
 
 /-! # Exact root degrees in the flat odd-prime-power extension -/
 
@@ -58,3 +61,5 @@ theorem flat_prime_power_root_pow_all_minpoly {F : Type*} [Field F]
   exact (minpoly.eq_of_irreducible_of_monic hi hz hf).symm
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

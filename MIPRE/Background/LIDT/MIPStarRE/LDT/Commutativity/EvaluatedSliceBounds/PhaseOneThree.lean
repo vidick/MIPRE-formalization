@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/EvaluatedSliceBounds/PhaseOneThree.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Scaffold.Products
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Scaffold.Products
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -37,7 +40,7 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-private lemma leftTensor_normalizationConditionSquare_le_one
+lemma leftTensor_normalizationConditionSquare_le_one
     {OutcomeA OutcomeB : Type*} [Fintype OutcomeA] [Fintype OutcomeB]
     (P : SubMeas OutcomeA ι) (Q : ProjSubMeas OutcomeB ι) :
     ∑ a : OutcomeA,
@@ -241,3 +244,5 @@ lemma evaluatedSlice_phaseOne_insert_bound
           norm_num
 
 end MIPStarRE.LDT.Commutativity
+
+end

@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.SamplerCost
-import MIPRE.Background.AnswerReduction.DeciderCost
-import MIPRE.Foundations.CL.DetypingDeciderCost
-import MIPRE.Foundations.CL.ProgBuild
+module
+public import MIPRE.Background.AnswerReduction.SamplerCost
+public import MIPRE.Background.AnswerReduction.DeciderCost
+public import MIPRE.Foundations.CL.DetypingDeciderCost
+public import MIPRE.Foundations.CL.ProgBuild
+
+@[expose] public section
 
 /-!
 # The answer-reduced verifier
@@ -345,5 +348,7 @@ theorem arVerifier_within (ℓ : ℕ) (hR : ParamsBound PD R) : ∃ (bound : Pol
 end Within
 
 end MIPRE.AnswerReduction
+
+end
 
 end

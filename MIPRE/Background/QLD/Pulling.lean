@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.MTilde
-import MIPRE.Background.QLD.AncTransport
-import MIPRE.Foundations.Introspection.ValueStability
+module
+public import MIPRE.Background.QLD.MTilde
+public import MIPRE.Background.QLD.AncTransport
+public import MIPRE.Foundations.Introspection.ValueStability
+
+@[expose] public section
 
 /-!
 # The estimates of `lem:qld-pauli-selfcons`, by polynomial outcome
@@ -673,5 +676,7 @@ theorem sum_uniform_agree_mass_le {ι : Type*} [Fintype ι] [DecidableEq ι]
 end Agree
 
 end MIPRE.QLD
+
+end
 
 end

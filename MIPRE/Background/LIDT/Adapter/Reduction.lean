@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Adapter.Parameters
-import MIPRE.Background.LIDT.Adapter.Weights
-import MIPRE.Background.LIDT.Soundness
+module
+public import MIPRE.Background.LIDT.Adapter.Parameters
+public import MIPRE.Background.LIDT.Adapter.Weights
+public import MIPRE.Background.LIDT.Soundness
+
+@[expose] public section
 
 /-!
 # The seeded-CL adapter, part 6: the reduction
@@ -300,3 +303,5 @@ theorem clSoundness_ldc_one_deltaCL
   exact ⟨GA, GB, h1.trans hle, h2.trans hle, h3.trans hle⟩
 
 end MIPRE.LIDT.Adapter
+
+end

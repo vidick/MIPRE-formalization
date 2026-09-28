@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Game
-import MIPRE.Background.LIDT.Bridge.Main
+module
+public import MIPRE.Background.LIDT.Game
+public import MIPRE.Background.LIDT.Bridge.Main
+
+@[expose] public section
 
 /-!
 # Quantum soundness of the classical low individual degree test
@@ -57,3 +60,5 @@ theorem lowIndividualDegree_soundness
   Bridge.soundness S ε hS k hk hk0
 
 end MIPRE.LIDT
+
+end

@@ -3,10 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.ValueApprox.Cayley
-import MIPRE.Foundations.ValueApprox.Projective
-import Mathlib.Analysis.CStarAlgebra.Matrix
-import Mathlib.Algebra.Order.Chebyshev
+module
+public import MIPRE.Foundations.ValueApprox.Cayley
+public import MIPRE.Foundations.ValueApprox.Projective
+public import Mathlib.Analysis.CStarAlgebra.Matrix
+public import Mathlib.Algebra.Order.Chebyshev
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Operator-norm estimates for the enumeration of strategies
@@ -375,3 +379,5 @@ theorem norm_le_one (hM : IsPVM M) (a : A) : ‖M a‖ ≤ 1 :=
 end IsPVM
 
 end MIPRE.ValueApprox
+
+end

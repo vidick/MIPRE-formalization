@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryHidingCoreProgram
-import MIPRE.Foundations.Introspection.AuxiliaryRegisterProgram
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryHidingCoreProgram
+public import MIPRE.Foundations.Introspection.AuxiliaryRegisterProgram
+
+@[expose] public section
 
 /-! # The complete executable interior hiding edge
 
@@ -114,4 +117,6 @@ theorem check_correct (f : PolyTimeFun AuxiliarySource.Context BitStr)
     exact hc
 
 end MIPRE.Introspection.AuxiliaryHiding
+end
+
 end

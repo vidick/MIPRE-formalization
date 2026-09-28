@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.CompleteMeasurements
+module
+public import MIPRE.Background.Introspection.CompleteMeasurements
+
+@[expose] public section
 
 /-! # The actual QLD Pauli answers pass the introspection anchor tests -/
 
@@ -51,7 +54,7 @@ theorem anchor_check (p : QLD.Ty) (q : Honest.AuxQuestion ℓ)
   cases q <;> cases b <;>
     simp [TypedPredicate.check, TypedPredicate.fits, TypedPredicate.directed,
       seedAnswer, project] <;> congr 1
-  by_cases hp : p = .pauli .Z <;> simp [hp]
+  all_goals by_cases hp : p = .pauli .Z <;> simp [hp]
 
 theorem anchor_check_swap (p : QLD.Ty) (q : Honest.AuxQuestion ℓ)
     (DP : QLD.Ty → QLD.Ty → QLD.Answer F m d → QLD.Answer F m d → Bool)
@@ -121,4 +124,6 @@ theorem anchor_Z_reject (hm : m ∣ Fintype.card F)
   exact (congrArg (aOp (HB := Fin 2)) hz).trans aOp_zero
 
 end MIPRE.Introspection.Complete
+end
+
 end

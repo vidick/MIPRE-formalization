@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/Defs/Normalization.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Defs.Stability
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Defs.Stability
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -45,7 +48,7 @@ noncomputable def normalizationConditionSandwichedOperator {OutcomeA OutcomeB : 
   Q.outcome b * P.outcome a * Q.outcome b
 
 /-- The sandwiched operators sum to at most the identity. -/
-private theorem normalizationConditionSandwichedOperator_sum_le_one
+theorem normalizationConditionSandwichedOperator_sum_le_one
     {OutcomeA OutcomeB : Type*} [Fintype OutcomeA] [Fintype OutcomeB]
     (P : SubMeas OutcomeA ι) (Q : ProjSubMeas OutcomeB ι) (a : OutcomeA) :
     ∑ b : OutcomeB, normalizationConditionSandwichedOperator P Q a b ≤ 1 := by
@@ -95,7 +98,7 @@ noncomputable def normalizationConditionSandwichedTotalOperator {OutcomeA Outcom
     (a : OutcomeA) : MIPStarRE.Quantum.Op ι :=
   (normalizationConditionSandwichedTotalFamily P Q a).total
 
-private theorem normalizationConditionSandwichedTotalSum_le_one
+theorem normalizationConditionSandwichedTotalSum_le_one
     {OutcomeA OutcomeB : Type*} [Fintype OutcomeA] [Fintype OutcomeB]
     (P : SubMeas OutcomeA ι) (Q : ProjSubMeas OutcomeB ι)
     {F : OutcomeA → MIPStarRE.Quantum.Op ι}
@@ -137,7 +140,7 @@ private theorem normalizationConditionSandwichedTotalSum_le_one
           rw [Q.sum_eq_total]
     _ ≤ 1 := Q.total_le_one
 
-private theorem normalizationConditionSandwichedTotalOperator_hermitian
+theorem normalizationConditionSandwichedTotalOperator_hermitian
     {OutcomeA OutcomeB : Type*} [Fintype OutcomeA] [Fintype OutcomeB]
     (P : SubMeas OutcomeA ι) (Q : ProjSubMeas OutcomeB ι) (a : OutcomeA) :
     (normalizationConditionSandwichedTotalOperator P Q a)ᴴ =
@@ -147,7 +150,7 @@ private theorem normalizationConditionSandwichedTotalOperator_hermitian
       simpa [normalizationConditionSandwichedTotalOperator] using
         SubMeas.total_nonneg (normalizationConditionSandwichedTotalFamily P Q a))).isHermitian.eq
 
-private theorem normCondSandwichedTotal_sq_le
+theorem normCondSandwichedTotal_sq_le
     {OutcomeA OutcomeB : Type*} [Fintype OutcomeA] [Fintype OutcomeB]
     (P : SubMeas OutcomeA ι) (Q : ProjSubMeas OutcomeB ι) (a : OutcomeA) :
     normalizationConditionSandwichedTotalOperator P Q a *
@@ -223,3 +226,5 @@ def normalizationConditionIdentityBound {OutcomeA OutcomeB : Type*}
 
 
 end MIPStarRE.LDT.Commutativity
+
+end

@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Distances
+module
+public import MIPRE.Foundations.Distances
+
+@[expose] public section
 
 /-!
 # The Hilbert--Schmidt closeness calculus
@@ -141,13 +144,13 @@ theorem hsNormSq_sub (A B : Matrix n n ℂ) :
 /-! ## Cauchy--Schwarz -/
 
 /-- The trace of `Aᴴ B`, entrywise. -/
-private theorem trace_conjTranspose_mul_eq (A B : Matrix n n ℂ) :
+theorem trace_conjTranspose_mul_eq (A B : Matrix n n ℂ) :
     (Aᴴ * B).trace = ∑ p : n × n, star (A p.1 p.2) * B p.1 p.2 := by
   rw [Matrix.trace]
   simp only [Matrix.diag_apply, Matrix.mul_apply, Matrix.conjTranspose_apply]
   rw [Fintype.sum_prod_type_right]
 
-private theorem re_trace_self_eq (A : Matrix n n ℂ) :
+theorem re_trace_self_eq (A : Matrix n n ℂ) :
     (Aᴴ * A).trace.re = ∑ p : n × n, ‖A p.1 p.2‖ ^ 2 := by
   rw [trace_conjTranspose_mul_eq, Complex.re_sum]
   refine Finset.sum_congr rfl fun p _ => ?_
@@ -155,11 +158,11 @@ private theorem re_trace_self_eq (A : Matrix n n ℂ) :
     Complex.norm_eq_sqrt_sq_add_sq, Real.sq_sqrt (by positivity)]
   ring
 
-private theorem re_trace_self_nonneg (A : Matrix n n ℂ) : 0 ≤ (Aᴴ * A).trace.re := by
+theorem re_trace_self_nonneg (A : Matrix n n ℂ) : 0 ≤ (Aᴴ * A).trace.re := by
   rw [re_trace_self_eq]
   positivity
 
-private theorem re_trace_mul_le (A B : Matrix n n ℂ) :
+theorem re_trace_mul_le (A B : Matrix n n ℂ) :
     (Aᴴ * B).trace.re ≤ √((Aᴴ * A).trace.re) * √((Bᴴ * B).trace.re) := by
   calc (Aᴴ * B).trace.re
       ≤ ∑ p : n × n, ‖A p.1 p.2‖ * ‖B p.1 p.2‖ := by
@@ -449,3 +452,5 @@ theorem sq_sum_le_card_mul_sum_sq {ι : Type*} [Fintype ι] (t : ι → ℝ) (ht
         rw [mul_pow, Real.sq_sqrt (Nat.cast_nonneg _), Real.sq_sqrt hs]
 
 end MIPRE
+
+end

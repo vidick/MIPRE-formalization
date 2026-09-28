@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ConditionalNormalizerMirror
-import MIPRE.Foundations.Introspection.ConditionalNormalizerIdeal
+module
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerMirror
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerIdeal
+
+@[expose] public section
 
 /-! # Retaining the next hiding label without an alphabet-size loss
 
@@ -130,3 +133,5 @@ theorem hideCoarseOp_step_of_normalizer (P : CL.CLFun F ι ℓ) (k : ℕ)
 end Honest
 
 end MIPRE.Introspection
+
+end

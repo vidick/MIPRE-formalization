@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/ScalarApproximation/Pointwise.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.Core
-import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Approximation
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.Extensions
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.Core
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Approximation
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.Extensions
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -327,7 +330,7 @@ lemma gCommStability_pointwise_sum_bound_core
 
 /-- A single stability-one summand is controlled by replacing the inner
 evaluated slice sandwich with the corresponding evaluated point outcome. -/
-private lemma gCommStability_pointwise_summand_bound
+lemma gCommStability_pointwise_summand_bound
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι)
@@ -546,3 +549,5 @@ lemma gCommStability_ssc_point
 
 
 end MIPStarRE.LDT.Commutativity
+
+end

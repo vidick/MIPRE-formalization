@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryNonresidueLoop
-import MIPRE.Foundations.LowDegree.BinaryFactorizationCanonical
-import MIPRE.Foundations.LowDegree.BinaryPrimePowerBounds
-import MIPRE.Foundations.LowDegree.BinaryKummerComposition
+module
+public import MIPRE.Foundations.LowDegree.BinaryNonresidueLoop
+public import MIPRE.Foundations.LowDegree.BinaryFactorizationCanonical
+public import MIPRE.Foundations.LowDegree.BinaryPrimePowerBounds
+public import MIPRE.Foundations.LowDegree.BinaryKummerComposition
+
+@[expose] public section
 
 /-! # Correctness of the bounded odd-prime auxiliary construction -/
 
@@ -261,3 +264,5 @@ theorem nonresidueLiftBits_degree_coprime (q : ℕ) (hq : q.Prime) (hq2 : q ≠ 
   exact (cyclotomicSeedBits_degree_coprime q hq hq2).symm
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

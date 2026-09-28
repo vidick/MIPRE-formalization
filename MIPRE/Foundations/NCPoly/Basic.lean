@@ -3,13 +3,17 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Algebra.MonoidAlgebra.Basic
-import Mathlib.Algebra.MonoidAlgebra.Module
-import Mathlib.Algebra.FreeMonoid.Basic
-import Mathlib.Algebra.Star.SelfAdjoint
-import Mathlib.Algebra.Star.StarAlgHom
-import Mathlib.Data.Complex.Basic
-import Mathlib.LinearAlgebra.Complex.Module
+module
+public import Mathlib.Algebra.MonoidAlgebra.Basic
+public import Mathlib.Algebra.MonoidAlgebra.Module
+public import Mathlib.Algebra.FreeMonoid.Basic
+public import Mathlib.Algebra.Star.SelfAdjoint
+public import Mathlib.Algebra.Star.StarAlgHom
+public import Mathlib.Data.Complex.Basic
+public import Mathlib.LinearAlgebra.Complex.Module
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Noncommutative polynomials with the conjugate-linear star
@@ -282,16 +286,16 @@ theorem star_single (w : FreeMonoid G) (c : ℂ) :
   change starCoeff (Finsupp.single w c) = Finsupp.single w.reverse (conj c)
   simp [starCoeff, Finsupp.mapRange_single, Finsupp.equivMapDomain_single]
 
-private theorem star_add' (x y : NCPoly G) : star (x + y) = star x + star y := by
+theorem star_add' (x y : NCPoly G) : star (x + y) = star x + star y := by
   ext w; simp
 
-private theorem star_zero' : star (0 : NCPoly G) = 0 := by
+theorem star_zero' : star (0 : NCPoly G) = 0 := by
   ext w; simp
 
-private theorem star_star' (x : NCPoly G) : star (star x) = x := by
+theorem star_star' (x : NCPoly G) : star (star x) = x := by
   ext w; simp
 
-private theorem star_mul' (x y : NCPoly G) : star (x * y) = star y * star x := by
+theorem star_mul' (x y : NCPoly G) : star (x * y) = star y * star x := by
   induction x using induction_linear with
   | zero => simp [star_zero']
   | add a b ha hb => rw [add_mul, star_add', ha, hb, star_add', mul_add]
@@ -391,3 +395,5 @@ end Eval
 end NCPoly
 
 end MIPRE
+
+end

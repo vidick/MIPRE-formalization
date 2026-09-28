@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.HonestPauliMeasurements
+module
+public import MIPRE.Background.Introspection.HonestPauliMeasurements
+
+@[expose] public section
 
 /-! # Exact coarse-measurement algebra for honest Pauli edges -/
 
@@ -106,3 +109,5 @@ theorem probeLift_eq_fibSum (ω : Omega F m) (W : Bas) :
   exact liftOp_fibSum _ _ b
 
 end MIPRE.QLD.Honest
+
+end

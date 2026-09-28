@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.Code.Raw
-import MIPRE.TM.Code.Observation
+module
+public import MIPRE.TM.Code.Raw
+public import MIPRE.TM.Code.Observation
+
+@[expose] public section
 
 /-!
 # Well-formed machine codes
@@ -198,3 +201,5 @@ theorem actionAt_nextState_lt {q' : ℕ} (hq' : q' ∈ (c.actionAt q as bs).next
 end Code
 
 end Turing
+
+end

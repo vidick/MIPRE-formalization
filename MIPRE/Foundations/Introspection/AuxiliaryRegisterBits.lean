@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
-import MIPRE.Foundations.Introspection.SourcePadding
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
+public import MIPRE.Foundations.Introspection.SourcePadding
+
+@[expose] public section
 
 /-! # Exact binary projection for the full-register auxiliary checks -/
 
@@ -65,4 +68,6 @@ theorem source_bits_iff {s Q : ℕ} (h : s ≤ Q) (y : Fin Q → CL.𝔽₂) (x 
     simp [SourceCompiler.InSource,CL.length_toBits]
 
 end MIPRE.Introspection.AuxiliaryProgram
+end
+
 end

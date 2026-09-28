@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.PauliAnswerCoding
-import MIPRE.Background.QLD.BinaryBlocks
-import MIPRE.Foundations.WeylBinary
+module
+public import MIPRE.Background.QLD.PauliAnswerCoding
+public import MIPRE.Background.QLD.BinaryBlocks
+public import MIPRE.Foundations.WeylBinary
+
+@[expose] public section
 
 /-! # Executable full Pauli answers in the self-dual register coordinates
 
@@ -76,4 +79,6 @@ theorem program_runs (input : Input) :
       program.code.Runs (encode input) (encode (program input)) t := program.computes input
 
 end MIPRE.QLD.PauliFullAnswerProgram
+end
+
 end

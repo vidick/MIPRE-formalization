@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.SeededLinePrograms
-import MIPRE.Foundations.Introspection.PauliStageProg
+module
+public import MIPRE.Background.QLD.SeededLinePrograms
+public import MIPRE.Foundations.Introspection.PauliStageProg
+
+@[expose] public section
 
 /-! # Correctness of every executable Pauli stage
 
@@ -206,4 +209,6 @@ theorem marginal_correct (k : ℕ) (hk : 1 ≤ k) (j : ℕ) (hj : j ≤ k) (T : 
     exact allThree_correct k hk j hj T u x
 
 end MIPRE.QLD.PauliCL
+end
+
 end

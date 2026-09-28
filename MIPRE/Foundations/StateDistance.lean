@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Closeness
-import MIPRE.Foundations.OpBound
+module
+public import MIPRE.Foundations.Closeness
+public import MIPRE.Foundations.OpBound
+
+@[expose] public section
 
 /-!
 # The state-dependent distance on a bipartite state
@@ -342,3 +345,5 @@ theorem stateSqNorm_avg_le {μ : X → ℝ} (hμ0 : ∀ x, 0 ≤ μ x) (hμ1 : �
     _ = stateDist μ ψ A B := Real.sq_sqrt hd
 
 end MIPRE
+
+end

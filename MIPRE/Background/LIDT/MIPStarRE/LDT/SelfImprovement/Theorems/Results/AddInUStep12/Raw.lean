@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep12/Raw.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep12.Algebra
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep12.Algebra
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -53,7 +56,7 @@ For a fixed `(u, v)`, the right-tensor-sandwiched sum
 `Σ_a (rightTensor A^v_a · K_{u,v,a})ᴴ · (rightTensor A^v_a · K_{u,v,a}) ≤ 1`
 where `K_{u,v,a} = Σ_{h: h(v)=a} (M^u_h ⊗ T_h)`.  This is the C side condition
 fed to `closenessOfInnerProduct_right` in the Step 1 raw bound proof. -/
-private lemma addInU_step1_C_contraction
+lemma addInU_step1_C_contraction
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι)
     (T : SubMeas (Polynomial params) ι)
@@ -384,7 +387,7 @@ For a fixed `(u, v)`, the left-tensor-sandwiched sum
 `Σ_a (leftTensor A^v_a · K_{u,v,a}) · (leftTensor A^v_a · K_{u,v,a})ᴴ ≤ 1`
 where `K_{u,v,a} = Σ_{h: h(v)=a} (M^u_h ⊗ T_h)`.  This is the C side condition
 fed to `closenessOfInnerProduct_left` in the Step 2 raw bound proof. -/
-private lemma addInU_step2_C_contraction
+lemma addInU_step2_C_contraction
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι)
     (T : SubMeas (Polynomial params) ι)
@@ -656,3 +659,5 @@ lemma addInU_cs_chain_step2_abs_le_sqrt_two_delta
   exact hcs
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

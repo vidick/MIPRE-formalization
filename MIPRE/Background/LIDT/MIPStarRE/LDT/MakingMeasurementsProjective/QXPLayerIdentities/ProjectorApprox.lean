@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/ProjectorApprox.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.LayerAlgebra
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.RectangularSvd
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.LayerAlgebra
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.RectangularSvd
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -30,7 +33,7 @@ universe uOutcome uι
 
 noncomputable section
 
-private lemma pa_nonneg {Outcome : Type*}
+lemma pa_nonneg {Outcome : Type*}
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype Outcome]
     (data : QXPLayerData Outcome ι) (a : Outcome) :
@@ -38,14 +41,14 @@ private lemma pa_nonneg {Outcome : Type*}
   rcases pProjectivity data with ⟨P, hP⟩
   simpa [hP a] using P.outcome_pos a
 
-private lemma pa_hermitian {Outcome : Type*}
+lemma pa_hermitian {Outcome : Type*}
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype Outcome]
     (data : QXPLayerData Outcome ι) (a : Outcome) :
     (Pa data a)ᴴ = Pa data a :=
   (Matrix.nonneg_iff_posSemidef.mp (pa_nonneg data a)).isHermitian.eq
 
-private lemma pa_idempotent {Outcome : Type*}
+lemma pa_idempotent {Outcome : Type*}
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype Outcome]
     (data : QXPLayerData Outcome ι) (a : Outcome) :
@@ -53,7 +56,7 @@ private lemma pa_idempotent {Outcome : Type*}
   rcases pProjectivity data with ⟨P, hP⟩
   simpa [hP a] using P.proj a
 
-private lemma pa_mass_le_one {Outcome : Type*}
+lemma pa_mass_le_one {Outcome : Type*}
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype Outcome]
     (data : QXPLayerData Outcome ι) (ψ : QuantumState ι)
@@ -72,7 +75,7 @@ private lemma pa_mass_le_one {Outcome : Type*}
     _ ≤ ev ψ (1 : MIPStarRE.Quantum.Op ι) := ev_mono ψ _ _ P.total_le_one
     _ = 1 := ev_one_of_isNormalized ψ hψ
 
-private lemma xHat_cross_sum_eq_sqrt {Outcome : Type*}
+lemma xHat_cross_sum_eq_sqrt {Outcome : Type*}
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype Outcome]
     (data : QXPLayerData Outcome ι) :
@@ -134,7 +137,7 @@ lemma qxpMixedCrossSum_eq_sqrt {Outcome : Type*}
       CFC.sqrt (QTotal data.qLayer) :=
   xHat_cross_sum_eq_sqrt data
 
-private lemma q_p_cross_close {Outcome : Type*}
+lemma q_p_cross_close {Outcome : Type*}
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype Outcome]
     (ψ : QuantumState ι)
@@ -614,3 +617,5 @@ lemma pQApprox_ofRankReductionSigmaRangeAndRectangularSvdSquareRootUnitaryGroup
 end
 
 end MIPStarRE.LDT.MakingMeasurementsProjective
+
+end

@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Presentation
-import MIPRE.Foundations.SAT.Pcp
+module
+public import MIPRE.Background.LIDT.Presentation
+public import MIPRE.Foundations.SAT.Pcp
+
+@[expose] public section
 
 /-!
 # The PCP sampler of answer reduction, over `F_q`
@@ -216,5 +219,7 @@ theorem question_eval (t : PcpTy) (x : Coord P → F) :
   · rw [Regs.questionOf_eval]
 
 end MIPRE.AnswerReduction.Pcp
+
+end
 
 end

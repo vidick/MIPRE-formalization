@@ -215,9 +215,10 @@ decisions, items with a done criterion, risks. Update the status column as items
   after an ambient loop shifts the bits up by one (a `ToPartrec` code cannot see trailing
   zeros of its input, and `false` encodes as `nil = ofNat 0`) — with the converse
   `rePred_halts`, so `MIPRE.isRE_iff` identifies `def:re` with the halting sets of the model.
-  `Foundations/ClassMIPStar.lean` has `IsRE`, `MIPStar` (the computable version, on game
-  descriptions; the blueprint's `def:mipstar` records the difference and its limits) and
-  `MIPStar.isRE`, the `⊆` half of `thm:mipstar-eq-re`, now the blueprint's
+  `Foundations/ClassMIPStarComputable.lean` has `IsRE`, `MIPStarComputable` (the computable
+  version, on game descriptions; the blueprint's `def:mipstar` records the difference and its
+  limits) and
+  `MIPStarComputable.isRE`, the `⊆` half of `thm:mipstar-eq-re`, now the blueprint's
   `lem:mipstar-sub-re`; `exists_semidecider_lt_quantumValue` is the criterion's `hS` for any
   computable family of game descriptions. Not done here: the passage from a normal form
   verifier to a game description (a computable tabulation), which is H4's.

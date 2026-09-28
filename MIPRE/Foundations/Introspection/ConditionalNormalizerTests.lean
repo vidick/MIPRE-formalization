@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ConditionalNormalizer
-import MIPRE.Foundations.Introspection.HidingRigidity
+module
+public import MIPRE.Foundations.Introspection.ConditionalNormalizer
+public import MIPRE.Foundations.Introspection.HidingRigidity
+
+@[expose] public section
 
 /-! # Conditional ideal replacement from an actual tested relation
 
@@ -53,3 +56,5 @@ theorem conditional_coarse_ideal_of_test (ψ : H × K → ℂ) (hψ : ‖evec ψ
   linarith
 
 end MIPRE.Introspection
+
+end

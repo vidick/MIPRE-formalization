@@ -3,14 +3,17 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Kleene
-import MIPRE.Foundations.Cost.Binary
-import MIPRE.Foundations.Cost.BinaryArithmetic
-import MIPRE.Foundations.Cost.BinaryCompare
-import MIPRE.Foundations.Cost.Reader
-import MIPRE.Foundations.Cost.SizeProgram
-import MIPRE.Foundations.Cost.Threshold
-import MIPRE.Foundations.Halting.Arith
+module
+public import MIPRE.Foundations.Cost.Kleene
+public import MIPRE.Foundations.Cost.Binary
+public import MIPRE.Foundations.Cost.BinaryArithmetic
+public import MIPRE.Foundations.Cost.BinaryCompare
+public import MIPRE.Foundations.Cost.Reader
+public import MIPRE.Foundations.Cost.SizeProgram
+public import MIPRE.Foundations.Cost.Threshold
+public import MIPRE.Foundations.Halting.Arith
+
+@[expose] public section
 
 /-!
 # Stages of the class verifier's programs
@@ -184,3 +187,5 @@ noncomputable def lenBin {α : Type*} [SizedEncoding α] : PolyTimeFun (List α)
 end PolyTimeFun
 
 end MIPRE.Cost
+
+end

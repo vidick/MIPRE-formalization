@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Freeze
+module
+public import MIPRE.Foundations.Halting.Freeze
+
+@[expose] public section
 
 /-!
 # The classes of the compressibility criterion, at the level of verifiers
@@ -138,3 +141,5 @@ theorem freeze_inClassB (ω : ValueModel) {k n T : ℕ} (hb : (V.freeze k).IsBou
 end Verifier
 
 end MIPRE
+
+end

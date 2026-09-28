@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HidingPrefix
+module
+public import MIPRE.Foundations.Introspection.HidingPrefix
+
+@[expose] public section
 
 /-! # Guarded coarse maps for the actual adjacent hiding test
 
@@ -94,5 +97,7 @@ theorem hiding_next_accepts_guarded
       exact hiding_next_accepts_conditional L X Z projectPauli D DP w k j hk hL h
 
 end MIPRE.Introspection.TypedEstimates
+
+end
 
 end

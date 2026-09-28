@@ -2,8 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryNonresidueAlgebra
-import Mathlib.FieldTheory.KummerExtension
+module
+public import MIPRE.Foundations.LowDegree.BinaryNonresidueAlgebra
+public import Mathlib.FieldTheory.KummerExtension
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Irreducibility of the flat odd-prime-power extension -/
 
@@ -43,3 +47,5 @@ theorem residue_of_not_irreducible_comp {F : Type*} [Field F]
   simpa only [pow_one] using irreducible_comp_prime_pow_of_nonresidue f hf hi q 1 hq hq2 hn
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

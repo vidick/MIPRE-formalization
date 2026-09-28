@@ -22,12 +22,16 @@ the bound `R_F(u)² ≼ u⁻¹ R_F(u)`; and the **pointwise expectation bound**
 
 Nothing here is a manuscript statement (proof layer of node 1.2.6).
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Entropy
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Entropy
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -295,3 +299,5 @@ theorem pointwise_expectation_bound {ι : Type*} [Fintype ι] (w : ι → ℝ) (
 end Resolver
 
 end CommutingRepetition
+
+end

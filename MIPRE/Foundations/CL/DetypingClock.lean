@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingDeciderProg
-import MIPRE.Foundations.CL.DetypingProgCost
-import MIPRE.Foundations.Cost.Universal
+module
+public import MIPRE.Foundations.CL.DetypingDeciderProg
+public import MIPRE.Foundations.CL.DetypingProgCost
+public import MIPRE.Foundations.Cost.Universal
+
+@[expose] public section
 
 /-! # Total clocking of arbitrary typed decision programs
 
@@ -241,3 +244,5 @@ theorem decider_accepts_iff {T : Type*} [SizedEncoding T] (C : ClockProgram) (so
 
 end ClockProgram
 end MIPRE.CL.Detyping
+
+end

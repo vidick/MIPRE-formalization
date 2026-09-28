@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.ExactPauli
-import MIPRE.Foundations.WeylEPR
-import MIPRE.Foundations.Sandwich
+module
+public import MIPRE.Background.QLD.ExactPauli
+public import MIPRE.Foundations.WeylEPR
+public import MIPRE.Foundations.Sandwich
+
+@[expose] public section
 
 /-!
 # The swap unitary, and why two twirls force an EPR pair
@@ -442,5 +445,7 @@ theorem norm_sub_normalize_sq_le {θ x : E} {η : ℝ} (hθ : ‖θ‖ = 1)
 end TwoClose
 
 end MIPRE.QLD
+
+end
 
 end

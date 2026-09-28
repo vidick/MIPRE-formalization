@@ -3,7 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Data.Set.Basic
+module
+public import Mathlib.Data.Set.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # 3SAT and decoupled 5SAT formulas
@@ -66,3 +70,5 @@ def Cnf5.Sat {V₁ V₂ V₃ V₄ V₅ : Type*} (φ : Cnf5 V₁ V₂ V₃ V₄ V
   ∀ c ∈ φ, c.eval w₁ w₂ w₃ w₄ w₅ = true
 
 end MIPRE.SAT
+
+end

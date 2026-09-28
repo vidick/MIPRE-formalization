@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.TM.CookLevin.PcpParameters
-import MIPRE.Foundations.SAT.Pcp
+module
+public import MIPRE.TM.CookLevin.PcpParameters
+public import MIPRE.Foundations.SAT.Pcp
+
+@[expose] public section
 
 /-!
 # Preparing the exact circuit from a PCP view
@@ -104,3 +107,5 @@ theorem fieldDegreeU_apply (p : ParamInput) :
     exact Subsingleton.elim _ _
 
 end MIPRE.TM.CookLevin.Pad
+
+end

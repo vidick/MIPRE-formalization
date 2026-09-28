@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.BinaryExtraction
-import MIPRE.Foundations.Introspection.PauliErrorParameters
+module
+public import MIPRE.Background.Introspection.BinaryExtraction
+public import MIPRE.Foundations.Introspection.PauliErrorParameters
+
+@[expose] public section
 
 /-! # Conditional soundness with the actual canonical QLD parameters
 
@@ -62,4 +65,6 @@ theorem canonical_quantumValue_ge_of_field_extraction
   exact PauliErrorParameters.canonical_qldError_le_profile ha hβ0 hβ1 c hc hcb lam n hx η hη
 
 end MIPRE.Introspection.RestrictedSoundness
+end
+
 end

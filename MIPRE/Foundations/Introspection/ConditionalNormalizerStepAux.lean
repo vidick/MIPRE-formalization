@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ConditionalNormalizerStep
-import MIPRE.Foundations.Introspection.ConditionalNormalizerIdealMirror
+module
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerStep
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerIdealMirror
+
+@[expose] public section
 
 /-! # The next hiding step on an EPR seed with arbitrary auxiliaries -/
 
@@ -117,3 +120,5 @@ theorem hideCoarseOp_aux_step_of_normalizer (P : CL.CLFun F ι ℓ) (k : ℕ)
 end Honest
 
 end MIPRE.Introspection
+
+end

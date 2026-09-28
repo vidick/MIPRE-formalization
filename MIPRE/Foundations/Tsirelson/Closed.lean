@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Tsirelson.Algebra
-import MIPRE.Foundations.Tsirelson.Conditional
+module
+public import MIPRE.Foundations.Tsirelson.Algebra
+public import MIPRE.Foundations.Tsirelson.Conditional
+
+@[expose] public section
 
 /-!
 # `C_qc` is closed, and `C_qa ⊆ C_qc`
@@ -239,3 +242,5 @@ theorem tsirelson_of_upperRE (hred : HaltingReductionQuantum) (hU : CommutingUpp
   tsirelson_of_upperRE_of_isClosed hred hU fun _ _ => isClosed_Cqc
 
 end MIPRE
+
+end

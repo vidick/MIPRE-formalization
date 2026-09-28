@@ -3,13 +3,17 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Algebra.MvPolynomial.Eval
-import Mathlib.Algebra.Polynomial.Eval.Degree
-import Mathlib.Algebra.Polynomial.AlgebraMap
-import Mathlib.Algebra.Polynomial.BigOperators
-import Mathlib.Algebra.Polynomial.Degree.Lemmas
-import Mathlib.Algebra.MvPolynomial.Degrees
-import MIPRE.Foundations.LowDegree.Encoding
+module
+public import Mathlib.Algebra.MvPolynomial.Eval
+public import Mathlib.Algebra.Polynomial.Eval.Degree
+public import Mathlib.Algebra.Polynomial.AlgebraMap
+public import Mathlib.Algebra.Polynomial.BigOperators
+public import Mathlib.Algebra.Polynomial.Degree.Lemmas
+public import Mathlib.Algebra.MvPolynomial.Degrees
+public import MIPRE.Foundations.LowDegree.Encoding
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Restricting a polynomial to a line
@@ -69,7 +73,7 @@ theorem natDegree_lineRestrict_le (u₀ w : Fin m → F) (p : MvPolynomial (Fin 
   rw [lineRestrict, MvPolynomial.aeval_def, MvPolynomial.eval₂_eq]
   refine Polynomial.natDegree_sum_le_of_forall_le _ _ fun d hd => ?_
   refine le_trans (Polynomial.natDegree_mul_le) ?_
-  have h0 : (algebraMap F (Polynomial F) (MvPolynomial.coeff d p)).natDegree = 0 := by
+  have h0 : (algebraMap F (Polynomial F) (p.coeff d)).natDegree = 0 := by
     simp [Polynomial.algebraMap_eq]
   rw [h0, zero_add]
   refine le_trans (Polynomial.natDegree_prod_le _ _) ?_
@@ -91,7 +95,7 @@ theorem natDegree_lineRestrict_single_le (u₀ : Fin m → F) (j : Fin m)
   rw [lineRestrict, MvPolynomial.aeval_def, MvPolynomial.eval₂_eq]
   refine Polynomial.natDegree_sum_le_of_forall_le _ _ fun dd hdd => ?_
   refine le_trans Polynomial.natDegree_mul_le ?_
-  have h0 : (algebraMap F (Polynomial F) (MvPolynomial.coeff dd p)).natDegree = 0 := by
+  have h0 : (algebraMap F (Polynomial F) (p.coeff dd)).natDegree = 0 := by
     simp [Polynomial.algebraMap_eq]
   rw [h0, zero_add]
   have hterm : ∀ i : Fin m,
@@ -130,5 +134,7 @@ theorem sum_coeff_lineRestrict {n : ℕ} {p : MvPolynomial (Fin m) F} (hp : p.to
     (Nat.lt_succ_of_le ((natDegree_lineRestrict_le u₀ w p).trans hp)) t).symm
 
 end MIPRE.LowDegree
+
+end
 
 end

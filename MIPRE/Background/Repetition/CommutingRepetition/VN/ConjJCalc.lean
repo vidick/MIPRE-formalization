@@ -14,13 +14,17 @@ calculus and the spectral projections of `VN/BorelCalculus`,
 `VN/SpectralProjection`. Used in stage G to identify the right modulus
 `J E_y J` with the left one: `g(J E J) = J g(E) J`, `1_I(J E J) = J 1_I(E) J`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.SpectralProjection
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Commutation
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.SpectralProjection
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Commutation
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -137,3 +141,5 @@ theorem conjJ_apply_traceVector_of_sa {T : M.H →L[ℂ] M.H} (hT : T ∈ M.vnAl
 end StdTracialAlgebra
 
 end CommutingRepetition
+
+end

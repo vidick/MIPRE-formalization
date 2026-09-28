@@ -40,11 +40,15 @@ verbatim; CI enforces both (`scripts/statement_copy_check.py`).
 To check this file on its own: `lake env lean CommutingRepetition/Statement.lean`
 from `lean/`, or from any project that has Mathlib.
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace MainStatement
 
@@ -106,7 +110,9 @@ def «repeat» (G : Game X Y A B) (n : ℕ) :
   payoff_nonneg xs ys as bs :=
     Finset.prod_nonneg fun i _ => G.payoff_nonneg (xs i) (ys i) (as i) (bs i)
   payoff_le_one xs ys as bs :=
-    Finset.prod_le_one
+    -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one` lost its nonnegativity
+    -- hypothesis; the version with it is `Finset.prod_le_one₀`. See README.md.
+    Finset.prod_le_one₀
       (fun i _ => G.payoff_nonneg (xs i) (ys i) (as i) (bs i))
       (fun i _ => G.payoff_le_one (xs i) (ys i) (as i) (bs i))
 
@@ -301,3 +307,5 @@ def UniformParallelRepetition : Prop :=
             * (n : ℝ))
 
 end MainStatement
+
+end

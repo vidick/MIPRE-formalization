@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestCore
-import MIPRE.Foundations.CL.Downsize
-import MIPRE.Foundations.GameTransport
+module
+public import MIPRE.Foundations.Introspection.HonestCore
+public import MIPRE.Foundations.CL.Downsize
+public import MIPRE.Foundations.GameTransport
+
+@[expose] public section
 
 /-! # Source-game transport along a concrete coordinate bijection -/
 
@@ -67,4 +70,6 @@ theorem strategy_value (R : SyncStrategy (Honest.sourceGame L D).doubled) :
     (strategy e L D R).d = R.d := rfl
 
 end MIPRE.Introspection.SourceReindex
+end
+
 end

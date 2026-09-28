@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/Core/DDistinct.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionUniform
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Statements
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionUniform
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Statements
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -92,7 +95,9 @@ theorem ldDnoteq
       calc
         ∏ j ∈ Finset.range k with j < i, (1 - (j : Error) / params.q)
           ≤ ∏ j ∈ Finset.range k with j < i, (1 : Error) := by
-              exact Finset.prod_le_prod
+              -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_prod₀` is the version
+              -- with the nonnegativity hypothesis. See README.md.
+              exact Finset.prod_le_prod₀
                 (fun j hj => hfactor_nonneg j (Finset.mem_filter.mp hj).1)
                 (fun j hj => hfactor_le_one j (Finset.mem_filter.mp hj).1)
         _ = 1 := by simp
@@ -170,3 +175,5 @@ theorem ldDnoteq
     nlinarith [hbound_ge_one]
 
 end MIPStarRE.LDT.Pasting
+
+end

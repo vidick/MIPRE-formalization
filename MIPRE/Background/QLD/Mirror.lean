@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.ChainProbe
-import MIPRE.Background.QLD.TwoPairs
+module
+public import MIPRE.Background.QLD.ChainProbe
+public import MIPRE.Background.QLD.TwoPairs
+
+@[expose] public section
 
 /-!
 # The second cut, and why it is a second `SimulPair`
@@ -439,5 +442,7 @@ end Bob
 end MirrorSimul
 
 end MIPRE.QLD
+
+end
 
 end

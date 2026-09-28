@@ -5,12 +5,15 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/PhaseTwo.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.Core
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainBasic.Normalization
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainBasic.PointSwap
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainBasic.Reindexing
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.EvaluatedSliceBounds.PhaseOneThree
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.Scalar.First
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.Core
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainBasic.Normalization
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainBasic.PointSwap
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainBasic.Reindexing
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.EvaluatedSliceBounds.PhaseOneThree
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.Scalar.First
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -697,3 +700,5 @@ lemma evaluatedSlice_phaseTwo_questionDefect_avg_eq_stabilityDefect
   exact hbody y
 
 end MIPStarRE.LDT.Commutativity
+
+end

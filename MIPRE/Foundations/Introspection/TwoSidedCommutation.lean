@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Commutation
+module
+public import MIPRE.Foundations.Commutation
+
+@[expose] public section
 
 /-! # Combining approximate commutations across a bipartite state
 
@@ -136,5 +139,7 @@ theorem two_sided_commutation_avg {X I J : Type*} [Fintype X] [Fintype I] [Finty
         ← Finset.mul_sum]
 
 end MIPRE.Introspection
+
+end
 
 end

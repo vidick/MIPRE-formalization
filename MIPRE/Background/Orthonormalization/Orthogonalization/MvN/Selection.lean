@@ -35,14 +35,18 @@ weak-operator convergent nets by Tannery's theorem
 
 Nothing in this file is a statement of the paper.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Defs
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.WOTCompact
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.StateOnM
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Defs
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.WOTCompact
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.StateOnM
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.MvN
 
@@ -544,3 +548,5 @@ theorem exists_extreme_maximizer (M : VonNeumannAlgebra H) {p : H →L[ℂ] H}
     · exact h
 
 end Orthogonalization.MvN
+
+end

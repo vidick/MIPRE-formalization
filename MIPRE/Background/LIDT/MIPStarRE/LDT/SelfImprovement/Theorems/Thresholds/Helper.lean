@@ -5,9 +5,13 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean
 -/
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SqrtBounds
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Defs
+module
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SqrtBounds
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Defs
+public import MIPRE.Tactics
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -524,3 +528,5 @@ theorem helper_completeness_error_le_selfImprovementHelperError
 
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

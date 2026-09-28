@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptivePrefixAdvance
-import MIPRE.Foundations.Introspection.AdaptivePrefixReplacement
+module
+public import MIPRE.Foundations.Introspection.AdaptivePrefixAdvance
+public import MIPRE.Foundations.Introspection.AdaptivePrefixReplacement
+
+@[expose] public section
 
 /-! # Exact next-prefix factorization of the adaptive replacement
 
@@ -176,4 +179,6 @@ theorem adaptiveReplacementJointOp_next_factor (P : CL.CLFun F ι ℓ)
   exact if_congr hc.symm rfl rfl
 
 end MIPRE.Introspection
+end
+
 end

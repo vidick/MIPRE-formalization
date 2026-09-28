@@ -15,12 +15,16 @@ commuting with the matrix units `e_j e_k*` is diagonal with constant entry
 state `⟪Ξ, (T ⊗ 1) Ξ⟫`, and is separating for `B(H) ⊗ 1` when that state is
 faithful.  Used (E3.6) to put `(N, φ)` in standard form.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Cyclic
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Cyclic
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -321,3 +325,5 @@ theorem isSeparating_mkVec (g : ℕ → H) (hg : Summable fun i => ‖g i‖ ^ 2
 end VN
 
 end CommutingRepetition
+
+end

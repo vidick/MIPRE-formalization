@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Repeat.RepSampler
-import MIPRE.Foundations.Repeat.Dom
-import MIPRE.Foundations.Cost.Growth
+module
+public import MIPRE.Foundations.Repeat.RepSampler
+public import MIPRE.Foundations.Repeat.Dom
+public import MIPRE.Foundations.Cost.Growth
+
+@[expose] public section
 
 /-!
 # The running time of the repeated sampler
@@ -294,3 +297,5 @@ theorem repSampler_timeBound : ∃ c m e, ∀ {ℓ : ℕ} (S : CL.Sampler ℓ) (
     exact (h2.of_le ht).le⟩
 
 end MIPRE.Repeat
+
+end

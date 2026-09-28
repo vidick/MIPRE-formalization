@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.DecisionKernel
-import MIPRE.Foundations.Introspection.AuxiliaryDecisionCorrect
+module
+public import MIPRE.Background.Introspection.DecisionKernel
+public import MIPRE.Foundations.Introspection.AuxiliaryDecisionCorrect
+
+@[expose] public section
 
 /-! # The decision kernel on canonical verifier inputs
 
@@ -64,4 +67,6 @@ theorem auxiliaryInput_canonical (W : ClockedUniversalMachine) {lam n : ℕ}
     rightLabelField_encode, leftAnswerField_encode, rightAnswerField_encode]
 
 end MIPRE.Introspection.DecisionKernel
+end
+
 end

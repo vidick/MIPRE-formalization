@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.FieldCoordinates
-import MIPRE.Foundations.LowDegree.BinaryMatrixInverse
+module
+public import MIPRE.Foundations.SAT.FieldCoordinates
+public import MIPRE.Foundations.LowDegree.BinaryMatrixInverse
+
+@[expose] public section
 
 /-! # Polynomial-time transport to any supplied binary field basis -/
 
@@ -145,5 +148,7 @@ theorem shoupMultiplicationTableProg_time_le : ∃ R : Polynomial ℕ, ∀ k : �
   simpa using polynomial_eval_mono shoupMultiplicationTableProg.timeBound hs
 
 end MIPRE.SAT
+
+end
 
 end

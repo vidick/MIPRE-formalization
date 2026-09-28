@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Main
+module
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Main
+
+@[expose] public section
 
 /-!
 # The orthonormalization theorem, in this repository's vocabulary
@@ -46,3 +49,5 @@ theorem povm_orthogonalization_finDim (M : VonNeumannAlgebra H)
   Orthogonalization.povm_orthogonalization_finDim_vn M φ a ha ε hε
 
 end MIPRE.Orthonormalization
+
+end

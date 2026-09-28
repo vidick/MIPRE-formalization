@@ -20,12 +20,16 @@ Proof: the coefficient functions `(ζ, ξ) ↦ ⟪T ζ, ξ⟫` lie in the produc
 coefficient functions is sesquilinear, bounded, symmetric and commutes with
 `N′` (all closed conditions), hence is `⟪L ζ, ξ⟫` for a unique `L ∈ N`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -214,3 +218,5 @@ end WOT
 end VN
 
 end CommutingRepetition
+
+end

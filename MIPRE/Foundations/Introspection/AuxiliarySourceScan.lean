@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SourcePaddingQueryCorrect
-import MIPRE.Foundations.Introspection.AuxiliaryScanCorrect
+module
+public import MIPRE.Foundations.Introspection.SourcePaddingQueryCorrect
+public import MIPRE.Foundations.Introspection.AuxiliaryScanCorrect
+
+@[expose] public section
 
 /-! # The actual bounded source supplies every hiding-scan query
 
@@ -58,4 +61,6 @@ theorem queriesCorrectBelow (U : ClockedUniversalMachine) {lam n Q : ℕ}
   exact queriesCorrectAt U V hV hn hQ w initialLevel initial j (by omega)
 
 end MIPRE.Introspection.AuxiliarySourceScan
+end
+
 end

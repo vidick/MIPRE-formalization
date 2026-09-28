@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.TypedQuotientPredicate
+module
+public import MIPRE.Foundations.Introspection.TypedQuotientPredicate
+
+@[expose] public section
 
 /-! # Changing only the Pauli payload in a parsed answer
 
@@ -173,4 +176,6 @@ theorem check_mapAnswer (DP : P → P → PA → PA → Bool)
 
 end AuxiliaryQuotient
 end MIPRE.Introspection
+end
+
 end

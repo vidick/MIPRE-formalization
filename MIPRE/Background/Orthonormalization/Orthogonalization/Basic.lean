@@ -24,12 +24,16 @@ projections. States are `ℂ`-linear functionals on `B(H)` whose defining
 properties (positivity, normalization, normality) are required on `M` only,
 so they are exactly the normal states of `M` (DIFFERENCES.md D1).
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Normal
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Normal
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization
 
@@ -315,3 +319,5 @@ theorem almost_commuting_unitaries (M : VonNeumannAlgebra H) (φ : NormalState M
   sorry
 
 end Orthogonalization
+
+end

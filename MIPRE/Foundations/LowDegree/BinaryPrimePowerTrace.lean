@@ -2,9 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryCoprimeDegree
-import MIPRE.Foundations.LowDegree.BinaryOddPrimeExtension
-import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
+module
+public import MIPRE.Foundations.LowDegree.BinaryCoprimeDegree
+public import MIPRE.Foundations.LowDegree.BinaryOddPrimeExtension
+public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Exact degree of the odd-prime Shoup trace -/
 
@@ -194,5 +198,7 @@ theorem flat_trace_natDegree (f : (ZMod 2)[X]) (hf : f.Monic) (hi : Irreducible 
       natDegree_comp, natDegree_X_pow]
 
 end MIPRE.LowDegree.BinaryPrimePowerTrace
+
+end
 
 end

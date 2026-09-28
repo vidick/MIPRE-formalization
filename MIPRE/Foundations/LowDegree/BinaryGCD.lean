@@ -2,10 +2,14 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryCanonical
-import Mathlib.Algebra.Polynomial.FieldDivision
-import Mathlib.Algebra.Field.ZMod
-import Mathlib.RingTheory.Polynomial.Content
+module
+public import MIPRE.Foundations.LowDegree.BinaryCanonical
+public import Mathlib.Algebra.Polynomial.FieldDivision
+public import Mathlib.Algebra.Field.ZMod
+public import Mathlib.RingTheory.Polynomial.Content
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Deterministic binary polynomial gcd
@@ -150,11 +154,11 @@ theorem gcdBits_width (a b : BitStr) : (gcdBits a b).length ≤ max a.length b.l
   exact (le_max_left _ _).trans (h.trans (max_le_max
     (length_normalizeBits_le a) (length_normalizeBits_le b)))
 
-private noncomputable def isEmptyProg : PolyTimeFun BitStr Bool :=
+noncomputable def isEmptyRemProg : PolyTimeFun BitStr Bool :=
   congr ((casesList (const true) (const false)).comp ((const ()).pair (PolyTimeFun.id _)))
     List.isEmpty (by intro a; cases a <;> rfl)
 
-private noncomputable def tailBitsProg : PolyTimeFun BitStr BitStr :=
+noncomputable def tailBitsProg : PolyTimeFun BitStr BitStr :=
   congr ((casesList (const []) (snd.comp snd)).comp ((const ()).pair (PolyTimeFun.id _)))
     List.tail (by intro a; cases a <;> rfl)
 
@@ -167,15 +171,15 @@ noncomputable def dropLastBitsProg : PolyTimeFun BitStr BitStr :=
 
 @[simp] theorem dropLastBitsProg_apply (a : BitStr) : dropLastBitsProg a = a.dropLast := rfl
 
-private noncomputable def gcdStepProg : PolyTimeFun (GCDState × Bool) GCDState :=
-  ite (isEmptyProg.comp (snd.comp fst)) fst
+noncomputable def gcdStepProg : PolyTimeFun (GCDState × Bool) GCDState :=
+  ite (isEmptyRemProg.comp (snd.comp fst)) fst
     ((snd.comp fst).pair (snd.comp (divModBitsProg.comp
       ((dropLastBitsProg.comp (snd.comp fst)).pair (fst.comp fst)))))
 
-private theorem gcdStepProg_apply (s : GCDState) (b : Bool) :
+theorem gcdStepProg_apply (s : GCDState) (b : Bool) :
     gcdStepProg (s, b) = gcdStep s b := rfl
 
-private theorem gcdStep_bounded : FoldBounded gcdStepProg (10 * X + 10) := by
+theorem gcdStep_bounded : FoldBounded gcdStepProg (10 * X + 10) := by
   intro l s pre post _
   change esize (pre.foldl gcdStep s) ≤ _
   have hw := fold_gcdStep_width pre s
@@ -198,3 +202,5 @@ noncomputable def gcdBitsProg : PolyTimeFun (BitStr × BitStr) BitStr :=
 @[simp] theorem gcdBitsProg_apply (a b : BitStr) : gcdBitsProg (a, b) = gcdBits a b := rfl
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

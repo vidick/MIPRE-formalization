@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Compressor
-import MIPRE.Foundations.Halting.WrapperCost
-import MIPRE.Foundations.Halting.Absorb
+module
+public import MIPRE.Foundations.Halting.Compressor
+public import MIPRE.Foundations.Halting.WrapperCost
+public import MIPRE.Foundations.Halting.Absorb
+
+@[expose] public section
 
 /-!
 # The compressor's output is bounded: the accounting
@@ -530,3 +533,5 @@ theorem exists_compressorSpec (compr : PolyTimeFun (Prog × ℕ) BitStr)
     rfl, rfl⟩
 
 end MIPRE.Halting
+
+end

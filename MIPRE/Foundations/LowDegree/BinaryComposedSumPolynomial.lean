@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryQuotientTranslation
-import MIPRE.Foundations.LowDegree.BinaryCoprimeDegree
+module
+public import MIPRE.Foundations.LowDegree.BinaryQuotientTranslation
+public import MIPRE.Foundations.LowDegree.BinaryCoprimeDegree
+
+@[expose] public section
 
 /-! # Binary composed-sum polynomials as products of Frobenius translates -/
 
@@ -153,5 +156,7 @@ theorem map_composedSumPolynomial (φ : R →ₐ[ZMod 2] S) (g : Polynomial (ZMo
       map_pow, composedSumPolynomial_succ]
 
 end MIPRE.LowDegree.BinaryQuotient
+
+end
 
 end

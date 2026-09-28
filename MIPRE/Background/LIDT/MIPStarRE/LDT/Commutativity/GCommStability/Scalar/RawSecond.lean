@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/GCommStability/Scalar/RawSecond.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.Scalar.Common
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.Scalar.Common
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -28,7 +31,7 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-private lemma avgOver_right_linear
+lemma avgOver_right_linear
     {U Γ Aidx : Type*} [Fintype Γ] [Fintype Aidx]
     (𝒟U : Distribution U)
     (ψ : QuantumState (ι × ι))
@@ -90,7 +93,7 @@ private lemma avgOver_right_linear
           rw [ev_real_smul]
           ring
 
-private lemma sum_ev_leftTensor_mul_rightTensor_const
+lemma sum_ev_leftTensor_mul_rightTensor_const
     {α : Type*} (s : Finset α)
     (ψ : QuantumState (ι × ι))
     (L : α → MIPStarRE.Quantum.Op ι)
@@ -131,7 +134,7 @@ noncomputable def gCommStabilityTwoRawScalarDefect
               (((strategy.pointMeasurement vy).toSubMeas.outcome b) *
                 ((strategy.pointMeasurement (appendPoint params u x)).toSubMeas.outcome (g u))))
 
-private lemma gCommStabilityTwo_raw_left_sum_le
+lemma gCommStabilityTwo_raw_left_sum_le
     (params : Parameters) [FieldModel params.q]
     (family : IdxPolyFamily params ι)
     (G : Fq params → SubMeas (Polynomial params) ι)
@@ -216,7 +219,7 @@ private lemma gCommStabilityTwo_raw_left_sum_le
           _ = 1 - T - T + T * T := by noncomm_ring
           _ = 1 - T := by simp [hT_proj]
 
-private lemma gCommStabilityTwo_raw_scalar_pointwise_bound
+lemma gCommStabilityTwo_raw_scalar_pointwise_bound
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι)
@@ -682,3 +685,5 @@ theorem gCommStabilityTwo_raw_scalar
             hbound.storedBoundedResidualBound G hG
 
 end MIPStarRE.LDT.Commutativity
+
+end

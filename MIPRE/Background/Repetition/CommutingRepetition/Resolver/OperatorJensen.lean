@@ -16,11 +16,15 @@ at `x̄ = ω(F)/ω(1)` (the tangent inequality is the scalar
 `m · negMulLog(y/m) ≤ negMulLog y` for `m ≤ 1`, and tangents at `ε → 0`
 when `ω(F) = 0`. Nothing here is a manuscript statement.
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -157,3 +161,5 @@ theorem jensen_negMulLog (ω : A →ₗ[ℝ] ℝ) (hmono : ∀ {a b : A}, a ≤ 
 end Resolver
 
 end CommutingRepetition
+
+end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.Pcp
-import MIPRE.Foundations.SAT.CircuitFieldCorrect
+module
+public import MIPRE.Foundations.SAT.Pcp
+public import MIPRE.Foundations.SAT.CircuitFieldCorrect
+
+@[expose] public section
 
 /-! # Encoded field vectors and their circuit-coordinate slices -/
 
@@ -86,3 +89,5 @@ theorem eval_circuitBits_vecBits (C : Circuit) (hC : C.WellFormed)
     rw [hg, hencode]
 
 end MIPRE.SAT.BinField
+
+end

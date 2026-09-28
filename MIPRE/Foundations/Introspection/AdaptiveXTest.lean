@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveDualLocal
-import MIPRE.Foundations.Introspection.AdaptivePrefixCommutator
-import MIPRE.Foundations.Introspection.ProductStageReadTests
+module
+public import MIPRE.Foundations.Introspection.AdaptiveDualLocal
+public import MIPRE.Foundations.Introspection.AdaptivePrefixCommutator
+public import MIPRE.Foundations.Introspection.ProductStageReadTests
+
+@[expose] public section
 
 /-! # Actual Read tests bound the conditional adaptive dual-X error
 
@@ -136,5 +139,7 @@ theorem introspect_adaptiveX_commutator
 
 end TypedEstimates
 end MIPRE.Introspection
+
+end
 
 end

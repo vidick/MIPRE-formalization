@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.GateProg
-import MIPRE.Foundations.SAT.ArrayProg
-import MIPRE.Foundations.SAT.InputRouting
+module
+public import MIPRE.Foundations.SAT.GateProg
+public import MIPRE.Foundations.SAT.ArrayProg
+public import MIPRE.Foundations.SAT.InputRouting
+
+@[expose] public section
 
 /-!
 # Effective lookup of the preceding input copy
@@ -61,15 +64,15 @@ theorem lastInputValue_range (C : Circuit) (k i : ℕ) (x w : ℕ → α) :
     · simp only [inputRef, inputOwner]; simp only [h, if_true]; simp
     · simp only [inputRef, inputOwner]; simp only [h, if_false]
 
-private def inputStep (s : ℕ × α) (p : Gate × α) : ℕ × α :=
+def inputStep (s : ℕ × α) (p : Gate × α) : ℕ × α :=
   (s.1, if p.1 = .input s.1 then p.2 else s.2)
 
-private noncomputable def inputStepProg : PolyTimeFun ((ℕ × α) × (Gate × α)) (ℕ × α) :=
+noncomputable def inputStepProg : PolyTimeFun ((ℕ × α) × (Gate × α)) (ℕ × α) :=
   congr ((fst.comp fst).pair
     (ite (ap₂ matchesInputProg (fst.comp fst) (fst.comp snd)) (snd.comp snd) (snd.comp fst)))
     (fun p => inputStep p.1 p.2) (by intro p; simp [inputStep])
 
-private theorem fold_inputStep (l : List (Gate × α)) (i : ℕ) (initial : α) :
+theorem fold_inputStep (l : List (Gate × α)) (i : ℕ) (initial : α) :
     l.foldl inputStep (i, initial) = (i, lastInputValue l i initial) := by
   induction l generalizing initial with
   | nil => rfl
@@ -93,3 +96,5 @@ noncomputable def lastInputValueProg : PolyTimeFun ((ℕ × α) × List (Gate ×
     lastInputValueProg p = lastInputValue p.2 p.1.1 p.1.2 := rfl
 
 end MIPRE.SAT.Circuit
+
+end

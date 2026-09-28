@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.TM.CookLevin.ExactPadding
-import MIPRE.Foundations.Cost.BinaryArithmetic
+module
+public import MIPRE.TM.CookLevin.ExactPadding
+public import MIPRE.Foundations.Cost.BinaryArithmetic
+
+@[expose] public section
 
 /-!
 # Effective parameters for exact succinct padding
@@ -59,3 +62,5 @@ theorem paddingParams_apply (p : ParamInput) :
   simp [paddingParams, innerDimParamsU_length, gateCountProg_apply]
 
 end MIPRE.TM.CookLevin.Pad
+
+end

@@ -3,16 +3,20 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Succinct
-import MIPRE.Foundations.Cost.Clocked
-import MIPRE.Foundations.Cost.Threshold
-import MIPRE.Foundations.Cost.Growth
-import MIPRE.Foundations.Cost.Kleene
-import MIPRE.Foundations.Cost.Partrec
-import MIPRE.Foundations.Cost.FromPartrec
-import MIPRE.Foundations.Cost.Universal
-import Mathlib.Computability.Halting
-import Mathlib.Data.ENat.Lattice
+module
+public import MIPRE.Foundations.Cost.Succinct
+public import MIPRE.Foundations.Cost.Clocked
+public import MIPRE.Foundations.Cost.Threshold
+public import MIPRE.Foundations.Cost.Growth
+public import MIPRE.Foundations.Cost.Kleene
+public import MIPRE.Foundations.Cost.Partrec
+public import MIPRE.Foundations.Cost.FromPartrec
+public import MIPRE.Foundations.Cost.Universal
+public import Mathlib.Computability.Halting
+public import Mathlib.Data.ENat.Lattice
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The abstract compression lemmas
@@ -933,3 +937,5 @@ theorem compressibility_criterion_halting
   exact ⟨fun h => (hg _).1 ((hspec pc).2 h), fun h => (hg _).2 fun h' => h ((hspec pc).1 h')⟩
 
 end MIPRE.Cost
+
+end

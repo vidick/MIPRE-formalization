@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/Core.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Axis
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Diagonal
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Axis
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Diagonal
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -90,3 +93,5 @@ lemma restrictedProbabilities
     (weighted_diagonal_bound params strategy eps delta gamma hgood)
 
 end MIPStarRE.LDT.MainInductionStep
+
+end

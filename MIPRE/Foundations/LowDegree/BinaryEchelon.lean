@@ -2,10 +2,14 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryElimination
-import Mathlib.LinearAlgebra.LinearIndependent.Lemmas
-import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
-import Mathlib.Algebra.Field.ZMod
+module
+public import MIPRE.Foundations.LowDegree.BinaryElimination
+public import Mathlib.LinearAlgebra.LinearIndependent.Lemmas
+public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
+public import Mathlib.Algebra.Field.ZMod
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Triangular pivot bases and certified binary reduction -/
 
@@ -111,3 +115,5 @@ theorem IsPivotBasis.length_le {b : List (Pivot n t)} (hb : IsPivotBasis b) :
   simpa using h
 
 end MIPRE.LowDegree.BinaryLinear
+
+end

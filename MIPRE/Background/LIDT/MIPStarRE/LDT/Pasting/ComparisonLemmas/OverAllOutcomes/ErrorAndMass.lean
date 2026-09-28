@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/OverAllOutcomes/ErrorAndMass.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.HAConsistency
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.HAConsistency
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -35,7 +38,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- The common nonnegative error-sum with exponent `1/32` used by the
 Section 12 displayed error terms. -/
-private lemma oneThirtySecondErrorSum_nonneg
+lemma oneThirtySecondErrorSum_nonneg
     (params : Parameters) [FieldModel params.q]
     (eps delta gamma zeta : Error)
     (heps_nonneg : 0 ≤ eps)
@@ -59,7 +62,7 @@ private lemma oneThirtySecondErrorSum_nonneg
     (Real.rpow_nonneg hratio_nonneg _)
 
 /-- If `k < d+1`, the interpolation-eligible sandwich total vanishes. -/
-private lemma interpolationEligibleSandwich_total_eq_zero_of_not_d_add_one_le
+lemma interpolationEligibleSandwich_total_eq_zero_of_not_d_add_one_le
     (params : Parameters) [FieldModel params.q]
     (family : IdxPolyFamily params ι) {k : ℕ}
     (hnot : ¬ params.d + 1 ≤ k) (xs : PointTuple params k) :
@@ -76,7 +79,7 @@ private lemma interpolationEligibleSandwich_total_eq_zero_of_not_d_add_one_le
   simp [hempty]
 
 /-- Eligible interpolation mass is nonnegative for every point tuple. -/
-private lemma eligibleMass_nonneg
+lemma eligibleMass_nonneg
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι) {k : ℕ} (xs : PointTuple params k) :
@@ -105,7 +108,7 @@ lemma eligibleMass_le_one
     ev_mono strategy.state _ _ hle
 
 /-- Distinct tuple averaging is bounded by uniform averaging plus `ldDnoteq`. -/
-private lemma avgOver_distinct_eligibleMass_le_uniform_add_dnoteq
+lemma avgOver_distinct_eligibleMass_le_uniform_add_dnoteq
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι) (k : ℕ) :
@@ -522,3 +525,5 @@ lemma tupleInterpolatedVerticalLine_eq_of_no_supported_mismatch
   exact hNoMismatch ⟨i, hiSome, hmismatch⟩
 
 end MIPStarRE.LDT.Pasting
+
+end

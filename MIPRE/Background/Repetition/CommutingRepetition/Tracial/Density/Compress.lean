@@ -13,12 +13,16 @@ of a commuting strategy, is separable, invariant under every effect, and contain
 replaces Lin's appeal to Fritz's separability reduction (Lin §3.2, first
 paragraph of the proof of Theorem 3.2). Proof-side infrastructure.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Strategy
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Strategy
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -177,3 +181,5 @@ instance separableSpace_compress : SeparableSpace (compress S).H := separableSpa
 end Density
 
 end CommutingRepetition
+
+end

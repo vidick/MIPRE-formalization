@@ -2,9 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryCirculant
-import MIPRE.Foundations.Cost.Iterates
-import Mathlib.Data.List.Rotate
+module
+public import MIPRE.Foundations.LowDegree.BinaryCirculant
+public import MIPRE.Foundations.Cost.Iterates
+public import Mathlib.Data.List.Rotate
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Executable circulant matrices and their inverse square roots -/
 
@@ -48,7 +52,7 @@ theorem iterate_rotateRightBits (n : ℕ) (l : BitStr) :
     rw [Function.iterate_succ_apply', ih]
     simp only [rotateRightBits, List.reverse_reverse, rotateLeftBits_eq_rotate, List.rotate_rotate]
 
-private theorem rotateRightBitsProg_iterate_size (n : ℕ) (l : BitStr) :
+theorem rotateRightBitsProg_iterate_size (n : ℕ) (l : BitStr) :
     esize ((rotateRightBitsProg : BitStr → BitStr)^[n] l) ≤ Polynomial.X.eval (esize l) := by
   have hf : (rotateRightBitsProg : BitStr → BitStr) = rotateRightBits := by funext l; rfl
   rw [hf, Polynomial.eval_X]
@@ -143,3 +147,5 @@ theorem inverseRootMatrixProg_correct {k : ℕ} [NeZero k] (hk : Odd k)
   rfl
 
 end MIPRE.LowDegree.BinaryLinear
+
+end

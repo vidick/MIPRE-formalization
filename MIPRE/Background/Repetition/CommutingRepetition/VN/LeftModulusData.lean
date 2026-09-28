@@ -22,12 +22,16 @@ polar element `v = W*` of `VN/LeftModulus.lean`, we assemble the consumed
   `⟪hvec, Rop (P(ψ⁻¹I)) hvec⟫ = ∫_I b² dμ` by monotone convergence along `ψₙ`.
 Nothing here is a manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.LeftModulus
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.LeftModulus
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -377,3 +381,5 @@ theorem spectralData_proj (I : Set ℝ) : ((spectralData M x).proj I).1 = PE (ψ
 end GraphMod
 
 end CommutingRepetition
+
+end

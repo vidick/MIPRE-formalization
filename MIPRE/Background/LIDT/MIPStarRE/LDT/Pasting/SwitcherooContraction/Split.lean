@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/SwitcherooContraction/Split.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooSetup.Terms
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooSetup.Terms
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -183,7 +186,7 @@ lemma switcherooAggregateFourthTerm_middle_sum_le_one
     (switcherooCompletePartTotal_le_one params family q)
 
 /-- Contraction witness for the first `sqrt chi` switcheroo transfer. -/
-private lemma switcherooAggregateFourthTerm_split_contraction
+lemma switcherooAggregateFourthTerm_split_contraction
     {Outcome : Type*} [Fintype Outcome]
     (params : Parameters) [FieldModel params.q]
     (family : IdxPolyFamily params ι)
@@ -584,3 +587,5 @@ lemma switcherooAggregateFourthTerm_once_commuted_close_mixed
     leftTensor_mul_rightTensor_eq_opTensor, mul_assoc] using hclose
 
 end MIPStarRE.LDT.Pasting
+
+end

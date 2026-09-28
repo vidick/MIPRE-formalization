@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Chain
+module
+public import MIPRE.Background.QLD.Chain
+
+@[expose] public section
 
 /-!
 # The pulling chain, assembled
@@ -642,3 +645,5 @@ end Physical
 
 
 end MIPRE.QLD
+
+end

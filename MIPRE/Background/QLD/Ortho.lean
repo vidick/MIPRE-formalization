@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.StateDistance
-import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Main
+module
+public import MIPRE.Foundations.StateDistance
+public import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Main
+
+@[expose] public section
 
 /-!
 # Orthonormalization in the vocabulary of the Pauli basis test
@@ -191,3 +194,5 @@ theorem exists_projective_of_nearProjective {ψ : dA × dB → ℂ} (hψ : star 
     rw [redState_star_mul_self, Complex.ofReal_re, ofCLM_sub, ofCLM_toCLM]
 
 end MIPRE.QLD
+
+end

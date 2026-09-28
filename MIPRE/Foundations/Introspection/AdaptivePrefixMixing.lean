@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveResidual
-import MIPRE.Foundations.Introspection.PrefixConditioning
-import MIPRE.Foundations.Introspection.AmbientMixing
+module
+public import MIPRE.Foundations.Introspection.AdaptiveResidual
+public import MIPRE.Foundations.Introspection.PrefixConditioning
+public import MIPRE.Foundations.Introspection.AmbientMixing
+
+@[expose] public section
 
 /-! # Mixing on the actual adaptive continuation
 
@@ -133,5 +136,7 @@ theorem exists_adaptive_prefix_mixing (P : CL.CLFun F ι ℓ) (hP : P.SupportedO
     ← registerExtend_sub, stateSqNorm_registerExtend, stageSplit] using hQ
 
 end MIPRE.Introspection
+
+end
 
 end

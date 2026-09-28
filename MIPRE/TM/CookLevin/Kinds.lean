@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.FieldFml
+module
+public import MIPRE.TM.CookLevin.FieldFml
+
+@[expose] public section
 
 /-!
 # The kinds of variables, on fields and as formulas
@@ -509,3 +512,5 @@ end KindFormulas
 end Kinds
 
 end MIPRE.TM.CookLevin.Desc
+
+end

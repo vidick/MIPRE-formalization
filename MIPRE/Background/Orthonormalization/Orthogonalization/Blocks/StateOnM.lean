@@ -14,13 +14,17 @@ real on positive elements of `M`, monotone on `M`, and vanishes on `star b * b`
 for `b ∈ M` supported in a projection `z ∈ M` of `φ`-mass zero (the "zero-mass"
 lemma, needed for the blocks the state does not see). Proof-side only.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
-import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.Blocks
 
@@ -96,3 +100,5 @@ theorem re_map_star_mul_self_eq_zero (hφ : ∀ x ∈ M, 0 ≤ φ (star x * x)) 
   linarith
 
 end Orthogonalization.Blocks
+
+end

@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryComponents
+module
+public import MIPRE.Foundations.LowDegree.BinaryComponents
+
+@[expose] public section
 
 /-! # Polynomial-time fixed-space component separation -/
 
@@ -182,5 +185,7 @@ theorem groupComponentsProg_correct (k : ℕ) [NeZero k] :
   rfl
 
 end MIPRE.LowDegree.BinaryLinear
+
+end
 
 end

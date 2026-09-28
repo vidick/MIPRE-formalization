@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.SAT.Succinct
+module
+public import MIPRE.Foundations.SAT.Succinct
+
+@[expose] public section
 
 /-!
 # Succinct decoupled 5SAT descriptions of deciders: the statement
@@ -90,3 +93,5 @@ structure DecoupledDescriber where
     (describe ((D.prog, n, T, Q, σ), x, y)).DescribesDecider (ℓ₀ T) (r₀ T σ) D n x y T
 
 end MIPRE.SAT
+
+end

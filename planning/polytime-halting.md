@@ -8,18 +8,18 @@ for the computable class the Lean currently uses. Ledger nodes 1.1.7, 1.1.7.1 (t
 
 ## 1. What is proved today, and what the paper says
 
-`HaltingReducesToGameValue` (`MIPRE/HaltingGameValue.lean`) and `MIPStar`
-(`MIPRE/Foundations/ClassMIPStar.lean`) ask for a Mathlib-`Computable` map from machines, or
-strings, to explicit `GameData`. The blueprint records this in `def:mipstar` ("there is no
-polynomial-time bound on `g` in this definition"), in `rem:source-mipstar`, and in the
-introduction's paragraph "Computable rather than polynomial-time, where possible".
+`HaltingReducesToGameValue` (`MIPRE/HaltingGameValue.lean`) and `MIPStarComputable`
+(`MIPRE/Foundations/ClassMIPStarComputable.lean`) ask for a Mathlib-`Computable` map from
+machines, or strings, to explicit `GameData`. The blueprint records this in `def:mipstar`
+("there is no polynomial-time bound on `g` in this definition"), in `rem:source-mipstar`, and
+in the introduction's paragraph "Computable rather than polynomial-time, where possible".
 
 The paper's `def:mipstar` asks for two Turing machines `S` and `D` such that on input `z` the
 sampler runs in time `poly(|z|)` and returns a question pair distributed as `μ_z`, and the
 decider on `(z, x, y, a, b)` runs in time `poly(|z|)` and returns `D_z(x, y, a, b)`, with a
 footnote: the decider returns `0` whenever `x, y, a, b` are too long. Its `thm:halting` is a
 polynomial-time map from machines to games "that satisfies the efficiency requirement". So the
-Lean's `MIPStar = IsRE` is a theorem about a class that contains the paper's, and the
+Lean's `MIPStarComputable = IsRE` is a theorem about a class that contains the paper's, and the
 inclusion of the paper's class in it, the paper's `RE ⊆ MIP*`, has not been formalized.
 
 ## 2. Why a time bound cannot simply be added to the existing map
@@ -73,13 +73,13 @@ the paper's own construction, next to the existing one; the existing one stays a
 
 ### PR 1: the class, and its inclusion in the computable one
 
-**Done (PR after #231):** `MIPRE/Foundations/ClassMIPStarPoly.lean` (`PolyVerifier`, `Efficient`,
-`game`, `MIPStarPoly`), `ClassMIPStarPolyTab.lean` (`tab`, `tab_computable`, `quantumValue_tab`,
-`MIPStarPoly.toMIPStar`, `MIPStarPoly.isRE`), `Cost/Kleene.lean` (`kleeneFix`, `kleeneFix_runs_of`),
+**Done (PR after #231):** `MIPRE/Foundations/ClassMIPStar.lean` (`PolyVerifier`, `Efficient`,
+`game`, `MIPStar`), `ClassMIPStarTab.lean` (`tab`, `tab_computable`, `quantumValue_tab`,
+`MIPStar.toComputable`, `MIPStar.isRE`), `Cost/Kleene.lean` (`kleeneFix`, `kleeneFix_runs_of`),
 `Cost/ManyOne.lean` (`haltingReduction`, `exists_polyTime_reduction`); blueprint `def:mipstar`,
 `def:mipstar-computable`, `lem:mipstar-poly-sub`, `rem:source-mipstar`.
 
-`MIPRE/Foundations/ClassMIPStarPoly.lean` (name indicative):
+`MIPRE/Foundations/ClassMIPStar.lean` (name indicative):
 
 - `PolyVerifier`: a closed sampler program, a closed decider program, one polynomial `P`.
   Write `B z = P.eval |z|`. On input `z`:
@@ -92,13 +92,13 @@ the paper's own construction, next to the existing one; the existing one stays a
     most `B z` (the paper's footnote).
 - `PolyVerifier.game z : Game (Answers (B z)) (Answers (B z)) (Answers (B z)) (Answers (B z))`,
   with `μ_z (x, y)` the fraction of seeds mapped to `(x, y)` and `D_z` acceptance.
-- `MIPStarPoly L`: some `PolyVerifier` with both clauses at every `z`, `val*(game z) = 1` on
+- `MIPStar L`: some `PolyVerifier` with both clauses at every `z`, `val*(game z) = 1` on
   `L` and `≤ 1/2` off it.
-- `MIPStarPoly.toMIPStar : MIPStarPoly L → MIPStar L`: the map `z ↦ tab z : GameData` is
+- `MIPStar.toComputable : MIPStar L → MIPStarComputable L`: the map `z ↦ tab z : GameData` is
   computable, with questions doubled by a tag bit and indexed among the strings of length at
   most `B z`, weights one per seed, and the acceptance table by budgeted runs;
   `quantumValue (tab z).game = quantumValue (game z)` by `quantumValue_doubled` and
-  `quantumValue_eq_of_equiv`. Hence `MIPStarPoly L → IsRE L` from `MIPStar.isRE`.
+  `quantumValue_eq_of_equiv`. Hence `MIPStar L → IsRE L` from `MIPStarComputable.isRE`.
 - Two pieces of infrastructure the next PR needs and that stand alone: a version of
   `efficient_fixed_point` with an explicit overhead polynomial in `esize (F e)` (the current
   statement is existential in the polynomial; its proof already exhibits it), and a costed
@@ -106,7 +106,7 @@ the paper's own construction, next to the existing one; the existing one stays a
   `z ↦ hardcode S_L (encode z)` for the semidecider `S_L` of `Cost.exists_semidecider`, which
   is linear time where `Halting.exists_code_halts_of_isRE` goes through Mathlib's `curry` with
   no time tracked.
-- Blueprint: `def:mipstar` becomes the paper's class, marked with `MIPStarPoly`; the computable
+- Blueprint: `def:mipstar` becomes the paper's class, marked with `MIPStar`; the computable
   class becomes `def:mipstar-computable` (the current text, relabelled), with
   `lem:mipstar-poly-sub` for the inclusion; `rem:source-mipstar` rewritten to record the one
   deviation (§5).
@@ -173,8 +173,8 @@ calls as program stages), `Build.lean` (`decBuild`, `lamF`, `cutF`, `exists_cut_
 `ClassVerifier.lean` (`sampProg`, `decProg`, `sampProg_runs`, `decProg_accepts`,
 `decProg_runs`, with explicit costs `sampB`, `decB`), `Count.lean` (seeds counted by their
 prefix), `Foundations/GameRestrict.lean` (`quantumValue_restrictQuestions`),
-`ClassMain.lean` (`classV`, `classV_efficient`, `classV_value`, `re_subset_mipstarPoly_of`,
-`mipstarPoly_eq_re_of`); unconditional `re_subset_mipstarPoly`, `mipstarPoly_eq_re` in
+`ClassMain.lean` (`classV`, `classV_efficient`, `classV_value`, `re_subset_mipstar_of`,
+`mipstar_eq_re_of`); unconditional `re_subset_mipstar`, `mipstar_eq_re` in
 `MIPRE/MainTheorem.lean`. One repair to PR 1's definition, recorded in the blueprint after
 `def:mipstar`: the sampler's time is bounded by `P(|z| + |r|)`, not `B`, since a program reads
 its seed of length `B` only by walking it and so cannot halt within `B` on it (with `|r| = B`
@@ -192,9 +192,9 @@ records the two forms.
   polynomial, with the bounds of PR 2 at `n = C_0`. The game they define at `z` is
   `V^halt_{z,λ(z)}` at index `C_0` up to the identification of alphabets
   (`quantumValue_eq_of_equiv`; the seed-prefix pushforward is `clDist`).
-- `re_subset_mipstarPoly`: `z ∈ L ↔ M_z` halts on the empty input, with `M_z` the costed
+- `re_subset_mipstar`: `z ∈ L ↔ M_z` halts on the empty input, with `M_z` the costed
   reduction of PR 1, composed with the verifier above (`hardcode` of `M_z` into `F`).
-- `mipstarPoly_eq_re : MIPStarPoly = IsRE`, and the polynomial-time `thm:halting` as a
+- `mipstar_eq_re : MIPStar = IsRE`, and the polynomial-time `thm:halting` as a
   statement about `Nat.Partrec.Code` through `compile`, if a corollary in that form is wanted.
 - Blueprint: `thm:halting` recovers its efficiency clause with the new declarations beside
   the old; `lem:lambda`'s statement is the paper's again, with the level-tied version moved to
@@ -225,8 +225,8 @@ construction with `lem:dhalt-values`, and the accounting with the induction.
 
 ## 6. Done when
 
-`MIPRE.MIPStarPoly` is `def:mipstar` in the blueprint with the inclusion in the computable
-class checked; `MIPRE.mipstarPoly_eq_re` carries `thm:mipstar-eq-re` with a proof-level
+`MIPRE.MIPStar` is `def:mipstar` in the blueprint with the inclusion in the computable
+class checked; `MIPRE.mipstar_eq_re` carries `thm:mipstar-eq-re` with a proof-level
 `\leanok` and a guard in `MIPRE/Axioms.lean`; `thm:halting` and `lem:lambda` are marked with the
 paper-route declarations; `scripts/lean-coverage.py --check`, `ledger-sync.py`,
 `blueprint-edges.py --check` and `blueprint-colours.py --check` report no problems; and

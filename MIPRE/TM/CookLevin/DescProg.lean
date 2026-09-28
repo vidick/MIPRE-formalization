@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.FamilyProg
-import MIPRE.Foundations.Cost.TreeBits
+module
+public import MIPRE.TM.CookLevin.FamilyProg
+public import MIPRE.Foundations.Cost.TreeBits
+
+@[expose] public section
 
 /-!
 # The describer as a program
@@ -223,3 +226,5 @@ noncomputable def describeM : PolyTimeFun (ℕ × ℕ) ℕ := mP.comp eP
   rw [describeM, comp_apply, mP_apply, length_eP]
 
 end MIPRE.TM.CookLevin.Desc
+
+end

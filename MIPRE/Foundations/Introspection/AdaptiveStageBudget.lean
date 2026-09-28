@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ErrorBounds
+module
+public import MIPRE.Foundations.Introspection.ErrorBounds
+
+@[expose] public section
 
 /-! # One common quantitative budget for the adaptive stage
 
@@ -103,3 +106,5 @@ theorem adaptiveFailureBudget_mono (r : ℕ) (edges z h initial : ℝ) :
   exact le_add_of_nonneg_right (adaptiveStepLoss_nonneg _)
 
 end MIPRE.Introspection
+
+end

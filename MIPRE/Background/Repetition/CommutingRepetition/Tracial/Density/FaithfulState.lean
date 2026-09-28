@@ -13,11 +13,15 @@ is faithful (`φ(T*T) = 0 ⇒ T = 0`) and of trace-class form
 `∑ ⟪aₖ, T bₖ⟫` with `∑ ‖aₖ‖‖bₖ‖ < ∞` (the normal functionals). It is the
 ingredient of the faithful perturbation of PLAN-density.md §1.3. Proof-side.
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -225,3 +229,5 @@ end Faithful
 end Density
 
 end CommutingRepetition
+
+end

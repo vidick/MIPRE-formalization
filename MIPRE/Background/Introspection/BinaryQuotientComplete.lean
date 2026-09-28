@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.ExplicitStrategy
-import MIPRE.Foundations.Introspection.TypedQuotientGame
-import MIPRE.Foundations.Introspection.HonestPrefixSupport
-import MIPRE.Foundations.Introspection.HonestIntrospectSupport
+module
+public import MIPRE.Background.Introspection.ExplicitStrategy
+public import MIPRE.Foundations.Introspection.TypedQuotientGame
+public import MIPRE.Foundations.Introspection.HonestPrefixSupport
+public import MIPRE.Foundations.Introspection.HonestIntrospectSupport
+
+@[expose] public section
 
 /-! # Honest binary completeness with the supports required by executable guards -/
 
@@ -114,4 +117,6 @@ theorem quotientHonest_dimension :
   ring
 
 end MIPRE.Introspection.BinaryComplete
+end
+
 end

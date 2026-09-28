@@ -23,13 +23,17 @@ functions give the one-variable Borel calculus), linearity, `jbfc_mul`, self-adj
 `F` and bounded Borel `g` (`g(F(E₁,E₂)) = (g ∘ F)(E₁, E₂)`), and the complex version
 `cjbfc`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.JointSpectral
-import MIPRE.Background.Repetition.CommutingRepetition.VN.ComplexBorel
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.JointSpectral
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.ComplexBorel
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -999,3 +1003,5 @@ end Pair2
 end BorelCalc
 
 end CommutingRepetition
+
+end

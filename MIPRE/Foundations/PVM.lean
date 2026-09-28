@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Analysis.Matrix.Order
-import Mathlib.Analysis.Matrix.PosDef
+module
+public import Mathlib.Analysis.Matrix.Order
+public import Mathlib.Analysis.Matrix.PosDef
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Observables of a projective measurement
@@ -196,5 +200,7 @@ theorem pvmObs_mul_mul (h : IsPVM P) {ε δ η : Λ → ℂ} {s : ℂ}
   exact pvmObs_const h s
 
 end MIPRE
+
+end
 
 end

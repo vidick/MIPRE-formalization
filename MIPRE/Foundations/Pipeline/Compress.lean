@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Pipeline.Margin
-import MIPRE.Foundations.Halting.CompressorProgram
-import MIPRE.Foundations.Halting.Absorb
+module
+public import MIPRE.Foundations.Pipeline.Margin
+public import MIPRE.Foundations.Halting.CompressorProgram
+public import MIPRE.Foundations.Halting.Absorb
+
+@[expose] public section
 
 /-!
 # The compression theorem from its three stages
@@ -653,3 +656,5 @@ noncomputable def GapCompression.ofPipeline (I : Introspection 7) (A : AnswerRed
     exact Pipeline.output_valStar_le I A R V lam n hB hn h
 
 end MIPRE
+
+end

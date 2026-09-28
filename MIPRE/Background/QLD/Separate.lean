@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Linear
+module
+public import MIPRE.Background.QLD.Linear
+
+@[expose] public section
 
 /-!
 # Separating the two point variables (`lem:qld-global-separate`)
@@ -896,5 +899,7 @@ theorem sum_not_isGood_mass_le (hd : 1 ≤ d) (Φ : RA × RB → ℂ)
 end Blocks
 
 end MIPRE.QLD
+
+end
 
 end

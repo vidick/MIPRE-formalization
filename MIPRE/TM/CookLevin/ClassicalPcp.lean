@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.TM.CookLevin.PcpBridge
+module
+public import MIPRE.TM.CookLevin.PcpBridge
+
+@[expose] public section
 
 /-!
 # The effective classical PCP for deciders
@@ -109,5 +112,7 @@ def classicalPcpDecider : PcpDecider where
   soundness := classicalPcp_soundness
 
 end MIPRE.TM.CookLevin.Pad
+
+end
 
 end

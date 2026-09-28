@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Bridge.Measurement
+module
+public import MIPRE.Background.LIDT.Bridge.Measurement
+
+@[expose] public section
 
 /-!
 # Bridge, part 4: strategies
@@ -62,5 +65,7 @@ theorem ev_toProjStrat (S : TensorProductStrategy (lidtGame F m d))
   (pureState S).ev_eq_re_inner X
 
 end MIPRE.LIDT.Bridge
+
+end
 
 end

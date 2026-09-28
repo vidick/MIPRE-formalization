@@ -5,10 +5,13 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Preliminaries/SelfConsistency/DataProcessing.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.SimEq
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichMain.Completeness
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.Extensions
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.SimEq
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichMain.Completeness
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.Extensions
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -46,7 +49,7 @@ Proof:
    `A_[f_q] ⊗ I ≈_{2δ} I ⊗ A_[f_q]`.
 3. Use the `SDDRel` triangle inequality to conclude
    `P_[f_q] ⊗ I ≈_{8δ + 8√ε} A_[f_q] ⊗ I`. -/
-private lemma wrongSideEstimate
+lemma wrongSideEstimate
     {Question α β : Type*} {ι : Type*}
     [Fintype ι] [DecidableEq ι] [Fintype α] [Fintype β]
     (ψ : QuantumState (ι × ι))
@@ -351,3 +354,5 @@ theorem selfConsistencyImpliesDataProcessing
       htri
 
 end MIPStarRE.LDT.Preliminaries
+
+end

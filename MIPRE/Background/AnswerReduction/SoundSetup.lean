@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.Complete
+module
+public import MIPRE.Background.AnswerReduction.Complete
+
+@[expose] public section
 
 /-!
 # Soundness of answer reduction: the setup
@@ -77,5 +80,7 @@ theorem typedStrategy_value_ge (R : TensorProductStrategy
   exact h
 
 end MIPRE.AnswerReduction
+
+end
 
 end

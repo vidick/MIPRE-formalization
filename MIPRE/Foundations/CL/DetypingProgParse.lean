@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingProgFinite
-import MIPRE.Foundations.CL.Sampler
-import MIPRE.Foundations.Cost.BinaryArithmetic
+module
+public import MIPRE.Foundations.CL.DetypingProgFinite
+public import MIPRE.Foundations.CL.Sampler
+public import MIPRE.Foundations.Cost.BinaryArithmetic
+
+@[expose] public section
 
 /-! # Total parsing for the detyping sampler
 
@@ -115,3 +118,5 @@ noncomputable def readVector (d : ℕ) : PolyTimeFun BitStr (Fin d → 𝔽₂) 
 @[simp] theorem readVector_apply (d : ℕ) (l : BitStr) : readVector d l = ofBits d l := rfl
 
 end MIPRE.CL.Detyping.Program
+
+end

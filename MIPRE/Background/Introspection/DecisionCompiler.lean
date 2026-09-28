@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.DecisionCompilerRoute
-import MIPRE.Background.Introspection.DecisionCompilerZero
-import MIPRE.Foundations.Introspection.SourceDescriptionCompiler
-import MIPRE.Foundations.Introspection.DecisionPreparationBound
+module
+public import MIPRE.Background.Introspection.DecisionCompilerRoute
+public import MIPRE.Background.Introspection.DecisionCompilerZero
+public import MIPRE.Foundations.Introspection.SourceDescriptionCompiler
+public import MIPRE.Foundations.Introspection.DecisionPreparationBound
+
+@[expose] public section
 
 /-! # The actual compiled introspection decider
 
@@ -188,3 +191,5 @@ theorem compute_size (c : ℕ) (U : ClockedUniversalMachine) :
   SourceDescriptionCompiler.exists_compiler_size (selectedCompiler c U)
 
 end MIPRE.Introspection.DecisionCompiler
+
+end

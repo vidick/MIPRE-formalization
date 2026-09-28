@@ -3,12 +3,16 @@ Copyright (c) 2026 Sean Perazzolo. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sean Perazzolo
 -/
-import MIPRE.LCS.Basic
-import MIPRE.LCS.Common
-import MIPRE.LCS.Measurement
-import Mathlib.Algebra.Star.Module
-import Mathlib.Tactic.Abel
-import Mathlib.Tactic.Ring
+module
+public import MIPRE.LCS.Basic
+public import MIPRE.LCS.Common
+public import MIPRE.LCS.Measurement
+public import Mathlib.Algebra.Star.Module
+public import Mathlib.Tactic.Abel
+public import Mathlib.Tactic.Ring
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Observables in LCS Games
@@ -78,3 +82,5 @@ lemma binary_measurement_eq_projector (f : ZMod 2 → R) (h : IsMeasurementSyste
     rw [smul_smul, h2, one_smul]
 
 end MIPRE.LCS
+
+end

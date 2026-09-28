@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryPolynomial
+module
+public import MIPRE.Foundations.LowDegree.BinaryPolynomial
+
+@[expose] public section
 
 /-! # Uniform sums and products of coefficient vectors -/
 
@@ -81,16 +84,16 @@ theorem evalBits_arithmeticFold_add (z : R) (p a : BitStr) (l : List BitStr)
       (fun c hc => hl c (by simp [hc])), evalBits_xor z a b (ha.trans hb.symm)]
     simp only [List.map_cons, List.sum_cons, add_assoc]
 
-private noncomputable def arithmeticStepProg (mul : Bool) :
+noncomputable def arithmeticStepProg (mul : Bool) :
     PolyTimeFun ((BitStr × BitStr) × BitStr) (BitStr × BitStr) :=
   (fst.comp fst).pair (ite (const mul)
     (mulReduceProg.comp ((fst.comp fst).pair ((snd.comp fst).pair snd)))
     (xorBitsProg.comp ((snd.comp fst).pair snd)))
 
-private theorem arithmeticStepProg_apply (mul : Bool) (s : BitStr × BitStr) (b : BitStr) :
+theorem arithmeticStepProg_apply (mul : Bool) (s : BitStr × BitStr) (b : BitStr) :
     arithmeticStepProg mul (s, b) = arithmeticStep mul s b := rfl
 
-private theorem arithmeticStep_bounded (mul : Bool) :
+theorem arithmeticStep_bounded (mul : Bool) :
     FoldBounded (arithmeticStepProg mul) (5 * X + 5) := by
   intro l s pre post _
   change esize (pre.foldl (arithmeticStep mul) s) ≤ _
@@ -116,3 +119,5 @@ noncomputable def arithmeticFoldProg (mul : Bool) :
     arithmeticFoldProg mul (p, a, l) = arithmeticFold mul p a l := rfl
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

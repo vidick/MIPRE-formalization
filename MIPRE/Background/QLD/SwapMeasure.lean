@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Pulling
+module
+public import MIPRE.Background.QLD.Pulling
+
+@[expose] public section
 
 /-!
 # Conjugating the exact Pauli *measurement* by the swap unitary
@@ -538,5 +541,7 @@ end SimulPair
 end Interface
 
 end MIPRE.QLD
+
+end
 
 end

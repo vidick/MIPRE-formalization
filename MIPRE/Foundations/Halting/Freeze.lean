@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.GapCompression
-import MIPRE.Foundations.VerifierValue
-import MIPRE.Foundations.Cost.Closure
+module
+public import MIPRE.Foundations.GapCompression
+public import MIPRE.Foundations.VerifierValue
+public import MIPRE.Foundations.Cost.Closure
+
+@[expose] public section
 
 /-!
 # Freezing a verifier at an index
@@ -261,3 +264,5 @@ theorem freeze_isBounded (k lam TS TD jS jD : ℕ) (hS : V.sampler.TimeBoundAt k
 end Verifier
 
 end MIPRE
+
+end

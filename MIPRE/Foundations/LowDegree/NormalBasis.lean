@@ -3,10 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.LowDegree.SelfDual
-import MIPRE.Foundations.LowDegree.SelfDualize
-import Mathlib.FieldTheory.Galois.NormalBasis
-import Mathlib.FieldTheory.Finite.Trace
+module
+public import MIPRE.Foundations.LowDegree.SelfDual
+public import MIPRE.Foundations.LowDegree.SelfDualize
+public import Mathlib.FieldTheory.Galois.NormalBasis
+public import Mathlib.FieldTheory.Finite.Trace
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # A self-dual normal basis exists in characteristic two and odd degree
@@ -58,7 +62,7 @@ theorem mul_self_injective (hG : Odd (Fintype.card G)) :
   exact div_eq_one.mp (orderOf_eq_one_iff.mp (Nat.dvd_one.mp hdvd))
 
 omit [Fintype G] [DecidableEq G] [Fintype F] in
-private theorem two_eq_zero' (hF : CharP F 2) : (2 : MonoidAlgebra F G) = 0 := by
+theorem two_eq_zero' (hF : CharP F 2) : (2 : MonoidAlgebra F G) = 0 := by
   have h : ((2 : ℕ) : F) = 0 := by
     have := hF
     exact CharP.cast_eq_zero F 2
@@ -316,7 +320,7 @@ theorem exists_gramPair_eq_one (hF : CharP F 2) (hodd : Odd (Module.finrank F K)
 
 variable {F K}
 
-private theorem trace_frobOrbit_eq (β : K) (i j : ℕ) :
+theorem trace_frobOrbit_eq (β : K) (i j : ℕ) :
     Algebra.trace F K (β ^ (Fintype.card F ^ i) * β ^ (Fintype.card F ^ j))
       = (gramPair F K β β).coeff
           (((FiniteField.frobeniusAlgEquivOfAlgebraic F K) ^ i)⁻¹ *
@@ -409,3 +413,5 @@ theorem exists_selfDualNormalBasis_two (k : ℕ) (hk : Odd k) :
 end Existence
 
 end MIPRE.LowDegree
+
+end

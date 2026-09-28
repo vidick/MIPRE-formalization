@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryResidueFactors
+module
+public import MIPRE.Foundations.LowDegree.BinaryResidueFactors
+
+@[expose] public section
 
 /-! # Primitive-root progress and squarefreeness in auxiliary lifting -/
 
@@ -72,3 +75,5 @@ theorem squarefree_comp_power_of_dvd_cyclotomic (f : Polynomial (ZMod 2)) (q s :
     (oddPrimePower_cast_ne_zero q (s + 1) hq hq2)).of_dvd hdiv).squarefree
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

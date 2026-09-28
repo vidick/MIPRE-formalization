@@ -2,10 +2,14 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryPolynomial
-import Mathlib.Algebra.Field.ZMod
-import Mathlib.Algebra.CharP.Algebra
-import Mathlib.RingTheory.AdjoinRoot
+module
+public import MIPRE.Foundations.LowDegree.BinaryPolynomial
+public import Mathlib.Algebra.Field.ZMod
+public import Mathlib.Algebra.CharP.Algebra
+public import Mathlib.RingTheory.AdjoinRoot
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Coordinates for arbitrary monic binary polynomial quotients
@@ -22,13 +26,13 @@ namespace MIPRE.LowDegree.BinaryQuotient
 
 open Cost BinaryPolynomial
 
-private def coeffBit (z : ZMod 2) : Bool := decide (z = 1)
+def coeffBit (z : ZMod 2) : Bool := decide (z = 1)
 
-private theorem ofBool_coeffBit (z : ZMod 2) : ofBool (coeffBit z) = z := by
+theorem ofBool_coeffBit (z : ZMod 2) : ofBool (coeffBit z) = z := by
   revert z
   decide
 
-private theorem coeffBit_ofBool (b : Bool) : coeffBit (ofBool b) = b := by
+theorem coeffBit_ofBool (b : Bool) : coeffBit (ofBool b) = b := by
   cases b <;> decide
 
 variable (f : Polynomial (ZMod 2)) (hf : f.Monic)
@@ -145,5 +149,7 @@ theorem ofBits_mulReduce (p a b : BitStr)
   exact evalBits_mulReduce _ p a b (ha.trans hp.symm) (root_eq f p hpoly)
 
 end MIPRE.LowDegree.BinaryQuotient
+
+end
 
 end

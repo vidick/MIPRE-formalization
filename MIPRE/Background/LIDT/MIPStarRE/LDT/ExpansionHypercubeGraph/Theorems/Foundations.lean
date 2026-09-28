@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Foundations.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.MatrixRealization.TraceForms
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.MatrixRealization.TraceForms
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -124,7 +127,7 @@ lemma globalVarianceTraceForm_eq_zero_of_isEmpty (hι : ¬ Nonempty ι)
 
 /-! ## Finite-sum helper lemmas -/
 
-private lemma sum_reorder_four {α β γ δ : Type*}
+lemma sum_reorder_four {α β γ δ : Type*}
     [Fintype α] [Fintype β] [Fintype γ] [Fintype δ]
     (h : α → β → γ → δ → ℂ) :
     ∑ a, ∑ b, ∑ c, ∑ d, h a b c d = ∑ c, ∑ a, ∑ d, ∑ b, h a b c d := by
@@ -188,7 +191,7 @@ def matrixModelState {params : Parameters}
   density := model.state.matrix
   density_psd := model.state.positive
 
-private lemma trace_combined_tensor_eq (params : Parameters)
+lemma trace_combined_tensor_eq (params : Parameters)
     (model : MatrixOperatorFamilyRealization params)
     (P : MatrixOperator (pointHilbertSpace params)) :
     (((matrixCombinedOperator params model)ᴴ *
@@ -476,3 +479,5 @@ lemma globalVarianceTraceForm_eq_closedForm (params : Parameters)
           simp [c, diag, mul_assoc]
 
 end MIPStarRE.LDT.ExpansionHypercubeGraph
+
+end

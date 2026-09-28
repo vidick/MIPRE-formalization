@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.RegisteredExtensionErrors
-import MIPRE.Foundations.Introspection.ReadRigidityGame
+module
+public import MIPRE.Foundations.Introspection.RegisteredExtensionErrors
+public import MIPRE.Foundations.Introspection.ReadRigidityGame
+
+@[expose] public section
 
 /-! # The errors at unchanged questions survive adaptive replacement exactly
 
@@ -220,4 +223,6 @@ theorem pauliBobError_registeredExtension
 
 end TypedEstimates
 end MIPRE.Introspection
+end
+
 end

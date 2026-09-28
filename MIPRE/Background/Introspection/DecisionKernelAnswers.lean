@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.DecisionKernelPauli
-import MIPRE.Foundations.Introspection.BoundedAnswerCoding
+module
+public import MIPRE.Background.Introspection.DecisionKernelPauli
+public import MIPRE.Foundations.Introspection.BoundedAnswerCoding
+
+@[expose] public section
 
 /-! # The finite answer decoder for the actual decision kernel -/
 
@@ -99,4 +102,6 @@ theorem program_rightPauli_valid (W : ClockedUniversalMachine) (V : Verifier 7)
   rwa [rightPauliFormat_canonicalInput] at hf
 
 end MIPRE.Introspection.DecisionKernel
+end
+
 end

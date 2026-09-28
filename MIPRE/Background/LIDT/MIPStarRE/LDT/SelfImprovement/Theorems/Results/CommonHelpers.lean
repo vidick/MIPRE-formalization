@@ -5,11 +5,14 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/CommonHelpers.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Defs.Families
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.DataProcessing
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Statements
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Defs.Families
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.DataProcessing
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Statements
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -159,3 +162,5 @@ lemma cons_rel_uniform_full_total_match_mass_lower_bound
 
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

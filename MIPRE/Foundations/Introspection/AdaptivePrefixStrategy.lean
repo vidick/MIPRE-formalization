@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptivePrefixReplacement
+module
+public import MIPRE.Foundations.Introspection.AdaptivePrefixReplacement
+
+@[expose] public section
 
 /-! # A legal strategy after one adaptive product-form step
 
@@ -90,4 +93,6 @@ theorem exists_adaptive_replacement_strategy (P : CL.CLFun F ι ℓ)
     (adaptiveReplacementPOVM_isPVM P hP k D hD) hglobal
 
 end MIPRE.Introspection
+end
+
 end

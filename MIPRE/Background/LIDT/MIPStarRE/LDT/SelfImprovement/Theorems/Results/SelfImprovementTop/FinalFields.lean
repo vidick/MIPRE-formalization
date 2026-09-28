@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/SelfImprovementTop/FinalFields.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.BoundednessTransport.BoundednessGap
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.SelfImprovementTop.Completeness
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.SelfImprovementTop.SelfCloseness
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.BoundednessTransport.BoundednessGap
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.SelfImprovementTop.Completeness
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.SelfImprovementTop.SelfCloseness
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -125,3 +128,5 @@ theorem final_fields_of_helper_outputs_of_total_difference
         hhelper hpointSSC hslack htransfer hdata
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Halting.Arith
-import MIPRE.Foundations.Introspection.Runtime
-import MIPRE.Foundations.CL.DetypingClock
+module
+public import MIPRE.Foundations.Halting.Arith
+public import MIPRE.Foundations.Introspection.Runtime
+public import MIPRE.Foundations.CL.DetypingClock
+
+@[expose] public section
 
 /-! # Executable arithmetic for the introspection clock
 
@@ -117,3 +120,5 @@ theorem uniformProg_runs (k lam n : ℕ) :
   omega
 
 end MIPRE.Introspection.ClockArithmetic
+
+end

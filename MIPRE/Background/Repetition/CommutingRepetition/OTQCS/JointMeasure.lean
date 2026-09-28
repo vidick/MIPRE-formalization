@@ -23,13 +23,17 @@ OTQCS/Modulus.lean) and, over it, the per-vector spectral packages,
 the pairwise couplings, and the modulus stability bound of eq
 modulus-stability.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Modulus
-import MIPRE.Background.Repetition.CommutingRepetition.VN.JointModulus
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Modulus
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.JointModulus
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -106,3 +110,5 @@ theorem exists_modulusFamily (N : StdTracialAlgebra.{u}) {S : Type v}
       stability := fun s t => GraphMod.stability N (x s) (y t) }
 
 end CommutingRepetition
+
+end

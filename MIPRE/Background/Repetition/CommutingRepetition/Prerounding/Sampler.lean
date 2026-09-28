@@ -18,14 +18,18 @@ the ideal one by at most `log(1/(1−ρ))`; the shared uniform permutation of
 and its disagreement probability is at most twice the total variation of the
 two rounded laws. Nothing here is a manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Information
-import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Entropy
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.HistoryKL
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Information
+public import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Entropy
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.HistoryKL
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -432,3 +436,5 @@ theorem sum_law_B [Nonempty ι] (dens : ℕ) (hdens : 0 < dens) (num : Y → ι 
 end RoundedSampler
 
 end CommutingRepetition
+
+end

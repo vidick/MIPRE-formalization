@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/PaperBounds/SandwichContext.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.FinalMove
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.FinalMove
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -539,3 +542,5 @@ lemma fromHToG_SUS_context_avg_le_one
     _ = 1 := by simpa [leftTensor] using ev_one_of_isNormalized ψbi hnorm
 
 end MIPStarRE.LDT.Pasting
+
+end

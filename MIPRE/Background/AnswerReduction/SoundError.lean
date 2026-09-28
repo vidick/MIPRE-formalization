@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.SoundExtract
-import MIPRE.Foundations.Cost.Growth
+module
+public import MIPRE.Background.AnswerReduction.SoundExtract
+public import MIPRE.Foundations.Cost.Growth
+
+@[expose] public section
 
 /-!
 # Soundness of answer reduction: the error assembly
@@ -373,5 +376,7 @@ theorem sqrt_le_delta {N μ σ Q c p K : ℕ} (hN : 2 ≤ N) (hμ : 1 ≤ μ) (h
     _ = S * (M * w + v) := Real.sqrt_sq (by positivity)
 
 end MIPRE.AnswerReduction
+
+end
 
 end

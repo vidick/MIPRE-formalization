@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Test/StrategyBiProjRoleAverage/Core.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProj.Measurements
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProj.Measurements
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -72,7 +75,7 @@ theorem ev_roleRegisterSymmState_rolePairDirectSumCond_BB {ιA ιB : Type*}
       (localPairBABlock (heterogeneousSwapDensity ψ.density)) X (by decide)]
   simp
 
-private lemma opTensor_roleBlock_eq_rolePairDirectSumCond_sum {ιA ιB : Type*}
+lemma opTensor_roleBlock_eq_rolePairDirectSumCond_sum {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (A B C D : MIPStarRE.Quantum.Op (LocalCarrierSum ιA ιB)) :
     opTensor (roleBlock A B) (roleBlock C D) =
@@ -87,7 +90,7 @@ private lemma opTensor_roleBlock_eq_rolePairDirectSumCond_sum {ιA ιB : Type*}
     simp [opTensor, rolePairDirectSumCond, rolePairProj, roleProj,
       roleRegisterPairLocalEquiv]
 
-private lemma localPairABBlock_mul_opTensor_localDirectSumBlocks {ιA ιB : Type*}
+lemma localPairABBlock_mul_opTensor_localDirectSumBlocks {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (X : MIPStarRE.Quantum.Op (ιA × ιB))
     (A : MIPStarRE.Quantum.Op ιA) (Bfill : MIPStarRE.Quantum.Op ιB)
@@ -126,7 +129,7 @@ private lemma localPairABBlock_mul_opTensor_localDirectSumBlocks {ιA ιB : Type
       cases x₂ <;> cases y₁ <;> cases y₂ <;>
         simp [localPairABBlock, Matrix.mul_apply]
 
-private lemma localPairBABlock_mul_opTensor_localDirectSumBlocks {ιA ιB : Type*}
+lemma localPairBABlock_mul_opTensor_localDirectSumBlocks {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (X : MIPStarRE.Quantum.Op (ιB × ιA))
     (B : MIPStarRE.Quantum.Op ιB) (Afill : MIPStarRE.Quantum.Op ιA)
@@ -165,7 +168,7 @@ private lemma localPairBABlock_mul_opTensor_localDirectSumBlocks {ιA ιB : Type
       | inr j =>
           cases y₁ <;> cases y₂ <;> simp [localPairBABlock, Matrix.mul_apply]
 
-private lemma ev_roleRegisterSymmState_rolePair_AB_localDirectSumBlocks
+lemma ev_roleRegisterSymmState_rolePair_AB_localDirectSumBlocks
     {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Nonempty ιA]
     [Fintype ιB] [DecidableEq ιB] [Nonempty ιB]
@@ -217,7 +220,7 @@ private lemma ev_roleRegisterSymmState_rolePair_AB_localDirectSumBlocks
   rw [hscalar]
   norm_num [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im]
 
-private lemma ev_roleRegisterSymmState_rolePair_BA_localDirectSumBlocks
+lemma ev_roleRegisterSymmState_rolePair_BA_localDirectSumBlocks
     {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Nonempty ιA]
     [Fintype ιB] [DecidableEq ιB] [Nonempty ιB]
@@ -272,7 +275,7 @@ private lemma ev_roleRegisterSymmState_rolePair_BA_localDirectSumBlocks
   rw [hscalar]
   norm_num [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im]
 
-private lemma ev_roleRegisterSymmState_roleBlock_localDirectSumBlocks
+lemma ev_roleRegisterSymmState_roleBlock_localDirectSumBlocks
     {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Nonempty ιA]
     [Fintype ιB] [DecidableEq ιB] [Nonempty ιB]
@@ -326,7 +329,7 @@ private lemma ev_roleRegisterSymmState_roleBlock_localDirectSumBlocks
         (1 / 2 : Error) * ev ψ (opTensor C B) := by
           ring
 
-private lemma ev_roleRegisterSymmState_roleRegisterProjMeas_outcome
+lemma ev_roleRegisterSymmState_roleRegisterProjMeas_outcome
     {Outcome ιA ιB : Type*}
     [Inhabited Outcome] [Fintype Outcome]
     [Fintype ιA] [DecidableEq ιA] [Nonempty ιA]
@@ -399,7 +402,7 @@ private lemma ev_roleRegisterSymmState_roleRegisterProjMeas_outcome
         (1 / 2 : Error) * ev ψ (opTensor (NA.outcome a) (MB.outcome a)) := by
           ring
 
-private lemma postprocess_roleRegisterProjMeas_outcome
+lemma postprocess_roleRegisterProjMeas_outcome
     {α β ιA ιB : Type*}
     [Inhabited α] [Fintype α] [Fintype β]
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
@@ -421,7 +424,7 @@ private lemma postprocess_roleRegisterProjMeas_outcome
   rw [roleBlock_finset_sum]
   rw [localDirectSumBlock_finset_sum, localDirectSumBlock_finset_sum]
 
-private lemma ev_roleRegisterSymmState_point_postprocessedLine_outcome
+lemma ev_roleRegisterSymmState_point_postprocessedLine_outcome
     {α β ιA ιB : Type*}
     [Inhabited α] [Inhabited β] [Fintype α] [Fintype β]
     [Fintype ιA] [DecidableEq ιA] [Nonempty ιA]
@@ -466,7 +469,7 @@ private lemma ev_roleRegisterSymmState_point_postprocessedLine_outcome
     ((ProjMeas.postprocess
       (ProjMeas.trivialDistinguishedOutcome (ι := ιB) (default : α)) f).outcome b)
 
-private lemma qBipartiteMatchMass_roleRegister_point_postprocessedLine_eq_average
+lemma qBipartiteMatchMass_roleRegister_point_postprocessedLine_eq_average
     {α β ιA ιB : Type*}
     [Inhabited α] [Inhabited β] [Fintype α] [Fintype β]
     [Fintype ιA] [DecidableEq ιA] [Nonempty ιA]
@@ -505,7 +508,7 @@ private lemma qBipartiteMatchMass_roleRegister_point_postprocessedLine_eq_averag
             (PB.outcome b))) / 2 := by
           ring
 
-private lemma qBipartiteConsDefect_roleRegister_point_postprocessedLine_eq_average
+lemma qBipartiteConsDefect_roleRegister_point_postprocessedLine_eq_average
     {α β ιA ιB : Type*}
     [Inhabited α] [Inhabited β] [Fintype α] [Fintype β]
     [Fintype ιA] [DecidableEq ιA] [Nonempty ιA]
@@ -559,7 +562,7 @@ private lemma qBipartiteConsDefect_roleRegister_point_postprocessedLine_eq_avera
             rw [← qBipartiteConsDefect_of_measurements ψ
               (ProjMeas.postprocess LA f).toMeasurement PB.toMeasurement]
 
-private lemma qBipartiteMatchMass_roleRegisterProjMeas_eq_average
+lemma qBipartiteMatchMass_roleRegisterProjMeas_eq_average
     {Outcome ιA ιB : Type*}
     [Inhabited Outcome] [Fintype Outcome]
     [Fintype ιA] [DecidableEq ιA] [Nonempty ιA]
@@ -593,7 +596,7 @@ private lemma qBipartiteMatchMass_roleRegisterProjMeas_eq_average
           ∑ a : Outcome, ev ψ (opTensor (NA.outcome a) (MB.outcome a))) / 2 := by
           ring
 
-private lemma qBipartiteConsDefect_roleRegisterProjMeas_eq_average
+lemma qBipartiteConsDefect_roleRegisterProjMeas_eq_average
     {Outcome ιA ιB : Type*}
     [Inhabited Outcome] [Fintype Outcome]
     [Fintype ιA] [DecidableEq ιA] [Nonempty ιA]
@@ -638,7 +641,7 @@ private lemma qBipartiteConsDefect_roleRegisterProjMeas_eq_average
             rw [← qBipartiteConsDefect_of_measurements ψ MA.toMeasurement NB.toMeasurement]
             rw [← qBipartiteConsDefect_of_measurements ψ NA.toMeasurement MB.toMeasurement]
 
-private lemma qBipartiteSSCDefect_roleRegisterProjMeas_eq_cons
+lemma qBipartiteSSCDefect_roleRegisterProjMeas_eq_cons
     {Outcome ιA ιB : Type*}
     [Inhabited Outcome] [Fintype Outcome]
     [Fintype ιA] [DecidableEq ιA] [Nonempty ιA]
@@ -681,7 +684,7 @@ theorem roleRegisterSymmStrategy_selfConsistency_eq_pointAgreement
     (qBipartiteSSCDefect_roleRegisterProjMeas_eq_cons strategy.state strategy.isNormalized
       (strategy.pointMeasurementA u) (strategy.pointMeasurementB u))
 
-private lemma axisParallel_roleRegister_sample_eq_average
+lemma axisParallel_roleRegister_sample_eq_average
     {params : Parameters} [FieldModel params.q]
     {ιA : Type*} [Fintype ιA] [DecidableEq ιA] [Nonempty ιA]
     {ιB : Type*} [Fintype ιB] [DecidableEq ιB] [Nonempty ιB]
@@ -763,7 +766,7 @@ theorem roleRegisterSymmStrategy_axisParallel_eq_roleAverage
               avgOver axParDist pointLeftLineRight) / 2
           ring
 
-private lemma diagonal_roleRegister_sample_eq_average
+lemma diagonal_roleRegister_sample_eq_average
     {params : Parameters} [FieldModel params.q]
     {ιA : Type*} [Fintype ιA] [DecidableEq ιA] [Nonempty ιA]
     {ιB : Type*} [Fintype ιB] [DecidableEq ιB] [Nonempty ιB]
@@ -906,3 +909,5 @@ theorem roleRegisterSymmStrategy_diagonal_eq_roleAverage
 end ProjStrat
 
 end MIPStarRE.LDT
+
+end

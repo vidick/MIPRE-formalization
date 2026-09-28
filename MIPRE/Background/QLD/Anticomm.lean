@@ -3,14 +3,17 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Sign
-import MIPRE.Foundations.Dilation
-import MIPRE.Foundations.StateDistance
-import MIPRE.Foundations.Swap
-import MIPRE.Foundations.PVM
-import MIPRE.Foundations.POVMValue
-import MIPRE.Foundations.OpBound
-import MIPRE.LCS.MagicSquare.Game
+module
+public import MIPRE.Foundations.Sign
+public import MIPRE.Foundations.Dilation
+public import MIPRE.Foundations.StateDistance
+public import MIPRE.Foundations.Swap
+public import MIPRE.Foundations.PVM
+public import MIPRE.Foundations.POVMValue
+public import MIPRE.Foundations.OpBound
+public import MIPRE.LCS.MagicSquare.Game
+
+@[expose] public section
 
 /-!
 # Direct Magic Square anticommutation
@@ -1104,5 +1107,7 @@ theorem ms_direct_anticomm_avg {Ω : Type*} [Fintype Ω] (ν : Ω → ℝ) (hν 
 end Swap
 
 end MIPRE.QLD.MS
+
+end
 
 end

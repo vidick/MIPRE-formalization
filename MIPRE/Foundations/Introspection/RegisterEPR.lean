@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.RegisterTransport
+module
+public import MIPRE.Foundations.Introspection.RegisterTransport
+
+@[expose] public section
 
 /-! # Splitting the maximally entangled state along computational registers -/
 
@@ -143,5 +146,7 @@ theorem stateSqNorm_registerExtend [Nonempty R] (e : I ≃ J × R)
     registerEPR_norm, one_pow, mul_one]
 
 end MIPRE.Introspection
+
+end
 
 end

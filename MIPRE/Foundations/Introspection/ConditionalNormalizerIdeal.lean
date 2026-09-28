@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ConditionalNormalizerExact
-import MIPRE.Foundations.Introspection.HonestHidingCommute
-import MIPRE.Foundations.Introspection.HonestHidingAcceptance
-import MIPRE.Foundations.Introspection.HidingMaps
+module
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerExact
+public import MIPRE.Foundations.Introspection.HonestHidingCommute
+public import MIPRE.Foundations.Introspection.HonestHidingAcceptance
+public import MIPRE.Foundations.Introspection.HidingMaps
+
+@[expose] public section
 
 /-! # Concrete ideal prefixes for honest hiding
 
@@ -219,3 +222,5 @@ theorem hideCoarseOp_conditionalIdeal_step (P : CL.CLFun F ι ℓ) (k : ℕ)
   exact coarseOp_comp (hideLabelNext P k) hideNextRetain (hideOp P (k + 1) h) z
 
 end MIPRE.Introspection.Honest
+
+end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.FieldCoordinates
-import MIPRE.Foundations.LowDegree.BinaryMatrixInverse
+module
+public import MIPRE.Foundations.SAT.FieldCoordinates
+public import MIPRE.Foundations.LowDegree.BinaryMatrixInverse
+
+@[expose] public section
 
 /-! # Effective trace Gram matrices -/
 
@@ -134,5 +137,7 @@ theorem shoupInverseGramProg_correct (k : ℕ) (hk : 1 ≤ k)
   exact inverseMatrixProg_correct _ (shoupTraceGram_surjective k hk b)
 
 end MIPRE.SAT
+
+end
 
 end

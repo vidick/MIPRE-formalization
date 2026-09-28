@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ConditionalNormalizerTests
+module
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerTests
+
+@[expose] public section
 
 /-! # Exact mirror transfer for the conditional ideal family
 
@@ -82,3 +85,5 @@ theorem conditional_coarse_ideal_replacement_mirror (ψ : H × K → ℂ)
     (conditionalIdeal_mirror ψ P R Q S f hP hQ hc _)] using h
 
 end MIPRE.Introspection
+
+end

@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryQuotientProgram
-import MIPRE.Foundations.Introspection.AuxiliaryQuotientChecks
-import MIPRE.Foundations.Introspection.AuxiliaryScanCorrect
-import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryQuotientProgram
+public import MIPRE.Foundations.Introspection.AuxiliaryQuotientChecks
+public import MIPRE.Foundations.Introspection.AuxiliaryScanCorrect
+public import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
+
+@[expose] public section
 
 /-! # Executable boundary edges of the hiding chain
 
@@ -128,4 +131,6 @@ theorem last_correct (f : PolyTimeFun AuxiliarySource.Context BitStr)
     exact congrArg CL.toBits he
 
 end MIPRE.Introspection.AuxiliaryBoundary
+end
+
 end

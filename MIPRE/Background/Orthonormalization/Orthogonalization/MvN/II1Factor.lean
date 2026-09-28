@@ -29,16 +29,20 @@ summand is `0`, the type I part is `0`):
 of trace-class form (every such state is a `NormalState`; the converse is the
 direction of D3 not formalized).
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Finite
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.TypeIII
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.PolarDecomp
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Comparison
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.MatrixFactor
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Finite
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.TypeIII
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.PolarDecomp
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Comparison
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.MatrixFactor
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.MvN
 
@@ -261,7 +265,7 @@ theorem povm_orthogonalization_II₁Factor (M : VonNeumannAlgebra H)
   set e := Fintype.equivFin ι with he
   have haM' : ∀ i, a (e.symm i) ∈ M := fun i => ha.1 _
   have ha0' : ∀ i, 0 ≤ a (e.symm i) := fun i =>
-    (ContinuousLinearMap.nonneg_iff_isPositive _).mpr (ha.2.1 _)
+    ContinuousLinearMap.nonneg_iff_isPositive.mpr (ha.2.1 _)
   have ha1' : ∑ i, a (e.symm i) = 1 := by rw [Equiv.sum_comp e.symm a]; exact ha.2.2
   have hε' : 1 - ε < (φ (∑ i, a (e.symm i) * a (e.symm i))).re := by
     rw [Equiv.sum_comp e.symm (fun i => a i * a i)]; exact hε
@@ -275,3 +279,5 @@ theorem povm_orthogonalization_II₁Factor (M : VonNeumannAlgebra H)
     rw [hsum]; exact hlt
 
 end Orthogonalization
+
+end

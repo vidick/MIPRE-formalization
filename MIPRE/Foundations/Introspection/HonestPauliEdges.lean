@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestPauliRegister
-import MIPRE.Foundations.Introspection.HonestParsedHiding
-import MIPRE.Foundations.Introspection.HonestSampling
+module
+public import MIPRE.Foundations.Introspection.HonestPauliRegister
+public import MIPRE.Foundations.Introspection.HonestParsedHiding
+public import MIPRE.Foundations.Introspection.HonestSampling
+
+@[expose] public section
 
 /-! # Honest Pauli anchor edges on every parsed answer
 
@@ -102,7 +105,7 @@ theorem parsedPauliZ_sample_commute (w : Bool) (a b : ParsedAnswer (ι → F) A 
     Commute.zero_left, Commute.zero_right]
   exact pauliZ_sample_commute L D R w _ _
 
-private theorem check_pauli_aux_swap {P : Type*} (X Z : P)
+theorem check_pauli_aux_swap {P : Type*} (X Z : P)
     (DP : P → P → (ι → F) → (ι → F) → Bool) (p : P) (t : AuxType ℓ × Bool)
     (a b : ParsedAnswer (ι → F) A (ι → F)) :
     TypedPredicate.check L X Z id D DP (.inl p) (.inr t) a b =
@@ -149,3 +152,5 @@ theorem parsedSample_pauliZ_reject_zero {P : Type*} (X Z : P)
     (by rwa [check_pauli_aux_swap L D X Z DP])
 
 end MIPRE.Introspection.Honest
+
+end

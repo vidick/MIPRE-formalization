@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.Params
-import MIPRE.Background.AnswerReduction.TypedGame
-import MIPRE.Foundations.OracularSampler
+module
+public import MIPRE.Background.AnswerReduction.Params
+public import MIPRE.Background.AnswerReduction.TypedGame
+public import MIPRE.Foundations.OracularSampler
+
+@[expose] public section
 
 /-!
 # The typed answer-reduced sampler
@@ -56,5 +59,7 @@ theorem typedSampler_prog :
         (parProg PD lam mu sigma) := rfl
 
 end MIPRE.AnswerReduction
+
+end
 
 end

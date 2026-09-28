@@ -3,11 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Commutation
-import MIPRE.Foundations.CrossConsistency
-import MIPRE.Foundations.Dilation
-import MIPRE.Foundations.Expanded
-import MIPRE.Foundations.Linearity
+module
+public import MIPRE.Foundations.Commutation
+public import MIPRE.Foundations.CrossConsistency
+public import MIPRE.Foundations.Dilation
+public import MIPRE.Foundations.Expanded
+public import MIPRE.Foundations.Linearity
+
+@[expose] public section
 
 /-!
 # The sandwich of two approximately commuting projective measurements
@@ -1128,5 +1131,7 @@ theorem sum_fibre_dev {ι : Type*} (ψ : dA × dB → ℂ) (s : Finset ι) (A : 
 end Vector
 
 end MIPRE
+
+end
 
 end

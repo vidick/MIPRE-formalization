@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingDeciderRoute
+module
+public import MIPRE.Foundations.CL.DetypingDeciderRoute
+
+@[expose] public section
 
 /-! # The paper's binary tuple encoding
 
@@ -49,14 +52,14 @@ theorem field_append_injective (a b c d : BitStr)
       obtain ⟨hab, hcd⟩ := ih bs h.2
       exact ⟨by rw [h.1, hab], hcd⟩
 
-private def doubleStep : PolyTimeFun (BitStr × Bool) BitStr :=
+def doubleStep : PolyTimeFun (BitStr × Bool) BitStr :=
   cons snd (cons (const false) fst)
 
-private theorem doubleStep_size (s : BitStr) (b : Bool) :
+theorem doubleStep_size (s : BitStr) (b : Bool) :
     esize (doubleStep (s, b)) ≤ esize s + (C 6).eval (esize b) := by
   cases b <;> simp [doubleStep] <;> omega
 
-private theorem double_fold (bs acc : BitStr) :
+theorem double_fold (bs acc : BitStr) :
     (bs.foldl (fun s b => doubleStep (s, b)) acc).reverse =
       acc.reverse ++ doubleBits bs := by
   induction bs generalizing acc with
@@ -79,20 +82,20 @@ def fieldProg : PolyTimeFun BitStr BitStr :=
 
 @[simp] theorem fieldProg_apply (bs : BitStr) : fieldProg bs = field bs := rfl
 
-private def readStepFun (s : Bool × BitStr) (b : Bool) : Bool × BitStr :=
+def readStepFun (s : Bool × BitStr) (b : Bool) : Bool × BitStr :=
   if s.1 then (false, b :: s.2) else (true, s.2)
 
-private def readStep : PolyTimeFun ((Bool × BitStr) × Bool) (Bool × BitStr) :=
+def readStep : PolyTimeFun ((Bool × BitStr) × Bool) (Bool × BitStr) :=
   PolyTimeFun.ite (fst.comp fst)
     ((const false).pair (cons snd (snd.comp fst)))
     ((const true).pair (snd.comp fst))
 
-private theorem readStep_apply (s : Bool × BitStr) (b : Bool) :
+theorem readStep_apply (s : Bool × BitStr) (b : Bool) :
     readStep (s, b) = readStepFun s b := by
   rcases s with ⟨p, bs⟩
   cases p <;> simp [readStep, readStepFun, PolyTimeFun.ite_apply]
 
-private theorem readStep_size (s : Bool × BitStr) (b : Bool) :
+theorem readStep_size (s : Bool × BitStr) (b : Bool) :
     esize (readStep (s, b)) ≤ esize s + (C 6).eval (esize b) := by
   rcases s with ⟨p, bs⟩
   cases p <;> cases b <;>
@@ -102,7 +105,7 @@ private theorem readStep_size (s : Bool × BitStr) (b : Bool) :
 def undouble (bs : BitStr) : BitStr :=
   (bs.foldl readStepFun (false, [])).2.reverse
 
-private theorem read_double_fold (bs acc : BitStr) :
+theorem read_double_fold (bs acc : BitStr) :
     (doubleBits bs).foldl readStepFun (false, acc) = (false, bs.reverse ++ acc) := by
   induction bs generalizing acc with
   | nil => simp [doubleBits]
@@ -135,5 +138,7 @@ def payloadProg : PolyTimeFun BitStr BitStr :=
   exact undouble_doubleBits bs
 
 end MIPRE.Introspection.AnswerParser
+
+end
 
 end

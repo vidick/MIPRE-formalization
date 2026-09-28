@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Paper.Cost
-import MIPRE.Foundations.Halting.Paper.Induction
-import MIPRE.Foundations.Halting.Paper.Stages
+module
+public import MIPRE.Foundations.Halting.Paper.Cost
+public import MIPRE.Foundations.Halting.Paper.Induction
+public import MIPRE.Foundations.Halting.Paper.Stages
+
+@[expose] public section
 
 /-!
 # Building the decider `𝒟^halt` from `(M, λ)`, in polynomial time
@@ -190,3 +193,5 @@ theorem exists_cut_ge : ∃ K, ∀ lam : ℕ,
     _ = 2 ^ (K + D * esize lam) := by rw [← pow_add]
 
 end MIPRE.Halting
+
+end

@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.StateDistance
-import MIPRE.Foundations.POVMValue
+module
+public import MIPRE.Foundations.StateDistance
+public import MIPRE.Foundations.POVMValue
+
+@[expose] public section
 
 /-!
 # Exchanging the two players
@@ -90,5 +93,7 @@ theorem povmValue_swapVec_of_symm {G : Game X X A A} (ψ : dA × dB → ℂ)
   exact Finset.sum_comm
 
 end MIPRE
+
+end
 
 end

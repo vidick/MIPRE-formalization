@@ -540,7 +540,7 @@
   "MIPRE.Halting.margOf_eq": [
    "rem:compression-abstract"
   ],
-  "MIPRE.Halting.mipstar_eq_re_of": [
+  "MIPRE.Halting.mipstarComputable_eq_re_of": [
    "thm:mipstar-eq-re"
   ],
   "MIPRE.Halting.mu_clause": [
@@ -560,7 +560,7 @@
   "MIPRE.Halting.quantumValue_uncomputable_of": [
    "cor:value-uncomputable"
   ],
-  "MIPRE.Halting.re_subset_mipstar_of": [
+  "MIPRE.Halting.re_subset_mipstarComputable_of": [
    "thm:mipstar-eq-re"
   ],
   "MIPRE.Halting.sampData": [
@@ -683,13 +683,13 @@
   "MIPRE.LIDT.lowIndividualDegree_soundness": [
    "thm:lidt-soundness"
   ],
-  "MIPRE.MIPStar": [
+  "MIPRE.MIPStarComputable": [
    "def:mipstar"
   ],
-  "MIPRE.MIPStar.exists_semidecider": [
+  "MIPRE.MIPStarComputable.exists_semidecider": [
    "lem:mipstar-sub-re"
   ],
-  "MIPRE.MIPStar.isRE": [
+  "MIPRE.MIPStarComputable.isRE": [
    "lem:mipstar-sub-re"
   ],
   "MIPRE.Oracularization": [
@@ -1412,13 +1412,13 @@
   "MIPRE.Halting.log_lt_div",
   "MIPRE.Halting.margOf",
   "MIPRE.Halting.margOf_eq",
-  "MIPRE.Halting.mipstar_eq_re_of",
+  "MIPRE.Halting.mipstarComputable_eq_re_of",
   "MIPRE.Halting.mu_clause",
   "MIPRE.Halting.prepProg",
   "MIPRE.Halting.prepProg_runs",
   "MIPRE.Halting.primrec_tabOf",
   "MIPRE.Halting.quantumValue_uncomputable_of",
-  "MIPRE.Halting.re_subset_mipstar_of",
+  "MIPRE.Halting.re_subset_mipstarComputable_of",
   "MIPRE.Halting.sampData",
   "MIPRE.Halting.sampData_eq",
   "MIPRE.Halting.sampler_timeBound",
@@ -1459,9 +1459,9 @@
   "MIPRE.LCS.observableToProjector",
   "MIPRE.LIDT.lidtGame",
   "MIPRE.LIDT.lowIndividualDegree_soundness",
-  "MIPRE.MIPStar",
-  "MIPRE.MIPStar.exists_semidecider",
-  "MIPRE.MIPStar.isRE",
+  "MIPRE.MIPStarComputable",
+  "MIPRE.MIPStarComputable.exists_semidecider",
+  "MIPRE.MIPStarComputable.isRE",
   "MIPRE.Oracularization",
   "MIPRE.Orthonormalization.povm_orthogonalization_finDim",
   "MIPRE.Pipeline.ar_margin",
@@ -1743,11 +1743,11 @@
    "MIPRE.CL.Sampler.TimeBound",
    "MIPRE.CL.Sampler.dist"
   ],
-  "MIPRE/Foundations/ClassMIPStar.lean": [
+  "MIPRE/Foundations/ClassMIPStarComputable.lean": [
    "MIPRE.IsRE",
-   "MIPRE.MIPStar",
-   "MIPRE.MIPStar.exists_semidecider",
-   "MIPRE.MIPStar.isRE",
+   "MIPRE.MIPStarComputable",
+   "MIPRE.MIPStarComputable.exists_semidecider",
+   "MIPRE.MIPStarComputable.isRE",
    "MIPRE.exists_semidecider_lt_quantumValue",
    "MIPRE.isRE_iff",
    "MIPRE.rePred_lt_quantumValue_comp"
@@ -1895,9 +1895,9 @@
   "MIPRE/Foundations/Halting/Corollaries.lean": [
    "MIPRE.Halting.exists_code_halts_of_isRE",
    "MIPRE.Halting.gameValue_uncomputable_of",
-   "MIPRE.Halting.mipstar_eq_re_of",
+   "MIPRE.Halting.mipstarComputable_eq_re_of",
    "MIPRE.Halting.quantumValue_uncomputable_of",
-   "MIPRE.Halting.re_subset_mipstar_of",
+   "MIPRE.Halting.re_subset_mipstarComputable_of",
    "MIPRE.halting_re",
    "MIPRE.halting_undecidable"
   ],
@@ -2281,7 +2281,7 @@
   "MIPRE/Foundations/CL/Register.lean": 42,
   "MIPRE/Foundations/CL/Repeat.lean": 36,
   "MIPRE/Foundations/CL/Sampler.lean": 23,
-  "MIPRE/Foundations/ClassMIPStar.lean": 8,
+  "MIPRE/Foundations/ClassMIPStarComputable.lean": 8,
   "MIPRE/Foundations/CommutingOperator.lean": 4,
   "MIPRE/Foundations/Compression.lean": 20,
   "MIPRE/Foundations/Cost/Basic.lean": 31,

@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/GlobalVariance/Theorems/TransportChain/SumForm.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.Core
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransportSum
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.PolynomialSumBounds
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.Core
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransportSum
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.PolynomialSumBounds
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -463,3 +466,5 @@ lemma localVarianceDeviation_sum_le_localVarianceOfPointsError
     (localVarianceTransportChainError_le_localVarianceOfPointsError params strategy hgood)
 
 end MIPStarRE.LDT.GlobalVariance
+
+end

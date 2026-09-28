@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Cost.Reader
-import MIPRE.Foundations.Cost.Binary
+module
+public import MIPRE.Foundations.Cost.Reader
+public import MIPRE.Foundations.Cost.Binary
+
+@[expose] public section
 
 /-!
 # Canonical binary arithmetic
@@ -75,7 +78,7 @@ theorem decBits_split (j : ℕ) (rest : BitStr) :
   | zero => rfl
   | succ j ih => simp [List.replicate_succ, decBits, ih]
 
-private theorem split_bits_of_ne_zero (n : ℕ) (hn : n ≠ 0) :
+theorem split_bits_of_ne_zero (n : ℕ) (hn : n ≠ 0) :
     ∃ j rest, n.bits = List.replicate j false ++ true :: rest := by
   apply exists_split_of_any
   by_contra h
@@ -139,7 +142,7 @@ noncomputable def PolyTimeFun.predN : PolyTimeFun ℕ ℕ :=
 
 @[simp] theorem PolyTimeFun.predN_apply (n : ℕ) : predN n = n - 1 := rfl
 
-private theorem fold_addUnary (u : Unary) (n : ℕ) :
+theorem fold_addUnary (u : Unary) (n : ℕ) :
     u.foldl (fun k _ => k + 1) n = n + u.length := by
   induction u generalizing n with
   | nil => simp
@@ -155,7 +158,7 @@ noncomputable def PolyTimeFun.addUnary : PolyTimeFun (ℕ × Unary) ℕ :=
 @[simp] theorem PolyTimeFun.addUnary_apply (p : ℕ × Unary) :
     addUnary p = p.1 + p.2.length := rfl
 
-private theorem fold_subUnary (u : Unary) (n : ℕ) :
+theorem fold_subUnary (u : Unary) (n : ℕ) :
     u.foldl (fun k _ => k - 1) n = n - u.length := by
   induction u generalizing n with
   | nil => simp
@@ -181,3 +184,5 @@ noncomputable def PolyTimeFun.subUnary : PolyTimeFun (ℕ × Unary) ℕ :=
     subUnary p = p.1 - p.2.length := rfl
 
 end MIPRE.Cost
+
+end

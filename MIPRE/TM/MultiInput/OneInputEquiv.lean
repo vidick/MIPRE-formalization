@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.MultiInput.Complexity
+module
+public import MIPRE.TM.MultiInput.Complexity
+
+@[expose] public section
 
 /-!
 # One-input machines are exactly CSLib's multi-tape machines
@@ -202,3 +205,5 @@ theorem toCSLib_computesInTimeAndSpace (M : MultiInputTM 1 w Symbol State)
 end Transfer
 
 end Turing.MultiInputTM
+
+end

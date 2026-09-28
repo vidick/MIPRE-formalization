@@ -33,12 +33,16 @@ and the two-cutoff limits, as explicit norm bounds for `0 ≤ F ≤ 1`:
 
 Nothing here is a manuscript statement (proof-side helpers for node 1.2.6).
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.Resolvent
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.Resolvent
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -368,3 +372,5 @@ theorem norm_Ecorr_add_le {F : A} (hF0 : 0 ≤ F) (hF1 : F ≤ 1) {α T : ℝ} (
 end Resolver
 
 end CommutingRepetition
+
+end

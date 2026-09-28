@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.RingTheory.Trace.Basic
-import Mathlib.FieldTheory.Finite.Basic
+module
+public import Mathlib.RingTheory.Trace.Basic
+public import Mathlib.FieldTheory.Finite.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Self-dual and normal bases, and the downsize identities
@@ -69,3 +73,5 @@ theorem trace_mul_eq_dot {b : Module.Basis ι F K} (hb : IsSelfDualBasis b) (x y
   rw [smul_mul_assoc, map_smul, smul_eq_mul, mul_comm (b i) y, ← coord_eq_trace hb y i]
 
 end MIPRE.LowDegree
+
+end

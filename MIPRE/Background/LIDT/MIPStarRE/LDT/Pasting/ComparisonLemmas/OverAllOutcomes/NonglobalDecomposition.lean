@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/OverAllOutcomes/NonglobalDecomposition.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.OverAllOutcomes.ErrorAndMass
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.OverAllOutcomes.ErrorAndMass
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -50,7 +53,7 @@ noncomputable def overAllOutcomesDistinctNonglobalMass
         (fun gs => ¬ IsGloballyConsistent params xs gs)).liftLeft))
 
 /-- Scalar mass splits into globally consistent and nonglobal parts. -/
-private lemma subMeasMass_restrict_add_not
+lemma subMeasMass_restrict_add_not
     {α : Type*} [Fintype α] (ψ : QuantumState (ι × ι))
     (A : SubMeas α ι) (p : α → Prop) [DecidablePred p] :
     subMeasMass ψ A.liftLeft =
@@ -155,7 +158,7 @@ lemma overAllOutcomes_distinct_bad_line_mass_le_hBConsistencyError
 /-- The vertical-line measurement is a genuine measurement, so its total is `1`.
 This is the formal counterpart of the line `because B is a measurement` at
 `ld-pasting.tex` lines 1178--1180. -/
-private lemma verticalLineMeasurementFamily_total_eq_one
+lemma verticalLineMeasurementFamily_total_eq_one
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) (u : Point params) :
     (verticalLineMeasurementFamily params strategy u).total = 1 := by
@@ -169,7 +172,7 @@ private lemma verticalLineMeasurementFamily_total_eq_one
 one vertical-line question `u`.
 
 It inserts the vertical-line measurement into the nonglobal eligible mass. -/
-private noncomputable def overAllOutcomesNonglobalInsertedMassLocal
+noncomputable def overAllOutcomesNonglobalInsertedMassLocal
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι) {k : ℕ}
@@ -190,7 +193,7 @@ This is the formal version of the `consistent indicator` term in
 Schwartz--Zippel.  It keeps the inserted vertical-line measurement explicit: for
 each line answer `f`, we retain exactly the nonglobal eligible outcomes for which
 no supported slice disagrees with `f` along the sampled vertical line. -/
-private noncomputable def overAllOutcomesLineConsistentNonglobalLocal
+noncomputable def overAllOutcomesLineConsistentNonglobalLocal
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι) {k : ℕ}
@@ -211,7 +214,7 @@ private noncomputable def overAllOutcomesLineConsistentNonglobalLocal
 Paper anchor: this is the explicit line-answer term just before the
 `Consistent_τ(g,y,u)` indicator in `ld-pasting.tex` lines 1204--1232.  The next
 lemmas sum out the inserted measurement and reduce it to that indicator. -/
-private noncomputable def overAllOutcomesDistinctLineConsistentNonglobalMass
+noncomputable def overAllOutcomesDistinctLineConsistentNonglobalMass
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι) (k : ℕ) : Error :=
@@ -249,7 +252,7 @@ noncomputable def overAllOutcomesDistinctLineConsistentIndicatorMass
 
 /-- Inserting the vertical-line measurement leaves the local nonglobal mass
 unchanged. -/
-private lemma nonglobal_mass_eq_inserted_vertical_measurement
+lemma nonglobal_mass_eq_inserted_vertical_measurement
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι) {k : ℕ}
@@ -294,7 +297,7 @@ private lemma nonglobal_mass_eq_inserted_vertical_measurement
 /-- Pointwise split: after inserting the vertical-line measurement, every nonglobal
 outcome either contributes to the already-paid bad-line event or to the
 line-consistent residual. -/
-private lemma nonglobal_insertedMass_le_badLineMass_add_lineConsistentLocal
+lemma nonglobal_insertedMass_le_badLineMass_add_lineConsistentLocal
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι) {k : ℕ}
@@ -332,7 +335,7 @@ private lemma nonglobal_insertedMass_le_badLineMass_add_lineConsistentLocal
 /-- The explicit line-answer version of the line-consistent residual is bounded by
 its consistency-indicator version, after summing out the vertical-line
 measurement. -/
-private lemma lineConsistentLocal_le_indicatorLocal
+lemma lineConsistentLocal_le_indicatorLocal
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι) {k : ℕ}
@@ -503,3 +506,5 @@ lemma overAllOutcomes_distinct_nonglobal_mass_le_bad_line_mass_add_lineConsisten
           try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 end MIPStarRE.LDT.Pasting
+
+end

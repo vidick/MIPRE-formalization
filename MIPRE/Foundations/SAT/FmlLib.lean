@@ -3,9 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.SAT.Formula
-import MIPRE.Foundations.Cost.Binary
-import Mathlib.Tactic.Linarith
+module
+public import MIPRE.Foundations.SAT.Formula
+public import MIPRE.Foundations.Cost.Binary
+public import Mathlib.Tactic.Linarith
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Formulas on bit vectors
@@ -594,3 +598,5 @@ theorem InputsLt.subConstBits {n : ℕ} {fs : List Fml} (c : BitStr) (h : ∀ f 
 end Fml
 
 end MIPRE.SAT
+
+end

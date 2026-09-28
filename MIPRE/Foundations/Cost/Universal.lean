@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Interpreter
-import MIPRE.Foundations.Cost.MachineBound
-import MIPRE.Foundations.Cost.Unary
-import MIPRE.Foundations.Cost.Toolkit
+module
+public import MIPRE.Foundations.Cost.Interpreter
+public import MIPRE.Foundations.Cost.MachineBound
+public import MIPRE.Foundations.Cost.Unary
+public import MIPRE.Foundations.Cost.Toolkit
+
+@[expose] public section
 
 /-!
 # The self-interpreter, II: the universal machines
@@ -1550,3 +1553,5 @@ noncomputable def selfClockedUniversal : ClockedUniversalMachine where
 theorem exists_clocked_universal : Nonempty ClockedUniversalMachine := ⟨selfClockedUniversal⟩
 
 end MIPRE.Cost
+
+end

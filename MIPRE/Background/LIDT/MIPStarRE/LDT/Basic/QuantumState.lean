@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Basic/QuantumState.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.ParametersBase
-import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.ParametersBase
+public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -81,7 +84,7 @@ structure PureState (ι : Type*) [Fintype ι] [DecidableEq ι] [Nonempty ι] whe
 namespace PureState
 
 /-- The coordinate-basis vector has unit self-dot product. -/
-private theorem basis_unit {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]
+theorem basis_unit {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]
     (i : ι) :
     star (fun j => if j = i then (1 : ℂ) else 0) ⬝ᵥ
         (fun j => if j = i then (1 : ℂ) else 0) = 1 := by
@@ -582,3 +585,5 @@ theorem opTensor_sum_right_univ
 
 
 end MIPStarRE.LDT
+
+end

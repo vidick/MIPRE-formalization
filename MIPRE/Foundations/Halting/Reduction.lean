@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Semidecider
-import MIPRE.Foundations.Halting.Strings
+module
+public import MIPRE.Foundations.Halting.Semidecider
+public import MIPRE.Foundations.Halting.Strings
+
+@[expose] public section
 
 /-!
 # The halting reduction, assembled, in any value model
@@ -428,3 +431,5 @@ theorem halting_reduction_upper (ω : ValueModel) (hup : ω.UpperRE) (O : Obliga
   · exact val_tab_eq_one_of_mem_classOne G U ((hcls pc).2 hdom)
 
 end MIPRE.Halting
+
+end

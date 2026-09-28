@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Bridge.Strategy
-import MIPRE.Background.LIDT.Bridge.Defect
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProj.Measurements
+module
+public import MIPRE.Background.LIDT.Bridge.Strategy
+public import MIPRE.Background.LIDT.Bridge.Defect
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProj.Measurements
+
+@[expose] public section
 
 /-!
 # Bridge, part 6: the value of a strategy bounds the MIPStarRE failure probability
@@ -337,5 +340,7 @@ theorem failure_le (S : TensorProductStrategy (lidtGame F m d)) :
   exact Finset.sum_le_sum fun s _ => mul_le_mul_of_nonneg_left (mdef_le S s) s.weight_nonneg
 
 end MIPRE.LIDT.Bridge
+
+end
 
 end

@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Encoding
+module
+public import MIPRE.Foundations.Cost.Encoding
+
+@[expose] public section
 
 /-!
 # Boolean circuits as data
@@ -151,3 +154,5 @@ def bitsOfNat (m i : ℕ) : List Bool := List.ofFn fun k : Fin m => i.testBit k
   simp [bitsOfNat]
 
 end MIPRE.SAT
+
+end

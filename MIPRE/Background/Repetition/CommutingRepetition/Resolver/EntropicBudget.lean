@@ -25,13 +25,17 @@ telescoping over time, dropping the nonnegative terminal entropy, and the
 operator Jensen inequality (`Resolver/OperatorJensen.lean`) at the start.
 Nothing here is a manuscript statement (proof-side helper for node 1.2.6).
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.ResolverKernel
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.OperatorJensen
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.ResolverKernel
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.OperatorJensen
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -151,3 +155,5 @@ theorem entropy_budget {I : Type} [Fintype I] [DecidableEq I]
 end Resolver
 
 end CommutingRepetition
+
+end

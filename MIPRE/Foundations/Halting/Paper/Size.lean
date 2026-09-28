@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Paper.Decider
+module
+public import MIPRE.Foundations.Halting.Paper.Decider
+
+@[expose] public section
 
 /-!
 # The halting verifier along the paper's route: sizes
@@ -114,3 +117,5 @@ theorem kleeneOverhead_eq (S' M : Prog) (lam : ℕ) :
   omega
 
 end MIPRE.Halting
+
+end

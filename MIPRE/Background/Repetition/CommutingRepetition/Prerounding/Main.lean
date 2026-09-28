@@ -28,19 +28,23 @@ Encoding notes (recorded in DIFFERENCES.md):
 - `d_TV` is the halved total variation (`Pinsker.finiteTotalVariation`),
   matching the manuscript's Pinsker form `κ = √(3η/2)`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Basic
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Strategy
-import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Main
-import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Entropy
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.History
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Success
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.PackageAlignment
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Sampler
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Basic
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Strategy
+public import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Main
+public import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Entropy
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.History
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Success
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.PackageAlignment
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Sampler
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -760,3 +764,5 @@ theorem tracial_prerounding
   · exact ⟨1, by simp [h]⟩
 
 end CommutingRepetition
+
+end

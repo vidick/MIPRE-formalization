@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.Basic
+module
+public import MIPRE.Foundations.CL.Basic
+
+@[expose] public section
 
 /-! # Reading prefixes from arbitrary claimed CL outputs
 
@@ -76,3 +79,5 @@ theorem ExactlyOn.outputPrefix_univ {P : CLFun F ι ℓ} (hP : P.ExactlyOn univ)
   simpa only [proj_univ] using hP.outputPrefix_self y
 
 end MIPRE.CL.CLFun
+
+end

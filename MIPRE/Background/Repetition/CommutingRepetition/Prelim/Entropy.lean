@@ -11,12 +11,16 @@ Ported from `QuantumParallelRepetition.lean` (github.com/openai/ten-proofs,
 Apache-2.0; see lean/NOTICE), lines 1183-1388 and 10226-10613, with the outer namespace renamed.
 Classical/scalar material only; no quantum layer is imported.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prelim.FiniteProb
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prelim.FiniteProb
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -625,3 +629,5 @@ end Pinsker
 end
 
 end CommutingRepetition
+
+end

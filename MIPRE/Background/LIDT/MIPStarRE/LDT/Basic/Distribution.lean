@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Basic/Distribution.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.ParametersBase
-import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix
-import Mathlib
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.ParametersBase
+public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix
+public import Mathlib
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -564,3 +567,5 @@ theorem totalVariationDistance_eq_toPMF_sum {α : Type*} [Fintype α] [Decidable
   rw [Distribution.toPMF_apply_toReal, Distribution.toPMF_apply_toReal]
 
 end MIPStarRE.LDT
+
+end

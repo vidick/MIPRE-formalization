@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Preliminaries/BipartiteSelfConsistency/Local.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Core
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Core
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -182,3 +185,5 @@ lemma bipartiteSSC_implies_localSSC_liftLeft {Question Outcome : Type*}
     _ ≤ δ := hssc
 
 end MIPStarRE.LDT.Preliminaries
+
+end

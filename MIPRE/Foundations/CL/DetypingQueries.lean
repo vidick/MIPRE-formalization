@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.Detyping
+module
+public import MIPRE.Foundations.CL.Detyping
+
+@[expose] public section
 
 /-! # Query routing for the detyped CL presentation
 
@@ -58,13 +61,13 @@ variable {T ι : Type*} [Fintype T] [DecidableEq T] [Fintype ι] [DecidableEq ι
 
 set_option linter.unusedSectionVars false
 
-private theorem content_proj_graph_compl (S : Finset (Graph.Coord T))
+theorem content_proj_graph_compl (S : Finset (Graph.Coord T))
     (x : Coord T ι → ZMod 2) :
     pull .inr (proj (S.map Function.Embedding.inl)ᶜ x) = pull .inr x := by
   funext i
   simp [pull]
 
-private theorem graph_prefix (S : Finset (Graph.Coord T)) (x : Coord T ι → ZMod 2) :
+theorem graph_prefix (S : Finset (Graph.Coord T)) (x : Coord T ι → ZMod 2) :
     pull .inl (proj (S.map Function.Embedding.inl) x +
       proj (Sᶜ.map Function.Embedding.inl) (proj (S.map Function.Embedding.inl)ᶜ x)) =
       pull .inl x := by
@@ -152,3 +155,5 @@ theorem linear_content {ℓ : ℕ} (E : T → T → Prop) [DecidableRel E] (w : 
 
 end Detyping
 end MIPRE.CL
+
+end

@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Dummy
-import MIPRE.Foundations.Parseval
+module
+public import MIPRE.Background.QLD.Dummy
+public import MIPRE.Foundations.Parseval
+
+@[expose] public section
 
 /-!
 # Ordered products with global outcome multipliers (`lem:qld-global-products`)
@@ -614,5 +617,7 @@ theorem sum_snorm_sq_ordXZ_le {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ =
 end Products
 
 end MIPRE.QLD
+
+end
 
 end

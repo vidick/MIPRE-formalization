@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.SwapMeasure
+module
+public import MIPRE.Background.QLD.SwapMeasure
+
+@[expose] public section
 
 /-!
 # The descent: from the projective dilation to the strategy, through agreement
@@ -378,5 +381,7 @@ theorem sum_snorm_sq_descent_isometry_bOp [DecidableEq Λ] {H H' : Type*} [Finty
 end Descent
 
 end MIPRE.QLD
+
+end
 
 end

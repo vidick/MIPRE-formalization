@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.CompressorProgram
-import MIPRE.Foundations.ClassMIPStar
+module
+public import MIPRE.Foundations.Halting.CompressorProgram
+public import MIPRE.Foundations.ClassMIPStarComputable
+
+@[expose] public section
 
 /-!
 # The consequences of the halting reduction, conditionally on compression
@@ -17,9 +20,10 @@ from a `GapCompression` (the hypothesis structure of `thm:compression`) and a un
 * `gameValue_uncomputable_of`, `quantumValue_uncomputable_of` (`cor:value-uncomputable`): no
   computable predicate decides, under the promise that the value is `1` or at most `1/2`, which
   it is — in either value.
-* `re_subset_mipstar_of` and `mipstar_eq_re_of` (`thm:mipstar-eq-re`): `RE ⊆ MIP*` by
-  reducing membership in an r.e. language to halting on the empty input (`Nat.Partrec.Code.curry`)
-  and composing with the reduction; with `MIPStar.isRE`, `MIP* = RE`.
+* `re_subset_mipstarComputable_of` and `mipstarComputable_eq_re_of` (`thm:mipstar-eq-re`):
+  `RE ⊆ MIP*` by reducing membership in an r.e. language to halting on the empty input
+  (`Nat.Partrec.Code.curry`) and composing with the reduction; with `MIPStarComputable.isRE`,
+  `MIP* = RE`.
 -/
 
 namespace MIPRE
@@ -47,7 +51,7 @@ variable (G : GapCompression) (U : UniversalMachine)
 
 /-- A computable predicate separating the two sides of a promise problem decides every problem
 that reduces to it: the shape both halves of `cor:value-uncomputable` use. -/
-private theorem not_decidable_of_reduction {P : GameData → Prop}
+theorem not_decidable_of_reduction {P : GameData → Prop}
     (h : ∃ g : Code → GameData, Computable g ∧
       ∀ pc, (HaltingGameValue.HaltsOnEmptyInput pc → P (g pc)) ∧
         (¬ HaltingGameValue.HaltsOnEmptyInput pc → ¬ P (g pc))) :
@@ -144,15 +148,18 @@ theorem mipclass_eq_core_of_reduction (ω : ValueModel) (hup : ω.UpperRE)
 include G U in
 /-- **`RE ⊆ MIP*`**, conditionally on compression: the `RE` inclusion at the tensor-product
 model, with the halting reduction of `cor:main-quantum`. -/
-theorem re_subset_mipstar_of {L : Set BitStr} (h : IsRE L) : MIPStar L :=
+theorem re_subset_mipstarComputable_of {L : Set BitStr} (h : IsRE L) :
+    MIPStarComputable L :=
   re_subset_mipclass_of_reduction .tensor (halting_reduction_quantum_of G U) h
 
 include G U in
 /-- **`MIP* = RE`** (blueprint `thm:mipstar-eq-re`), conditionally on compression: the two
 classes coincide, as predicates on languages. -/
-theorem mipstar_eq_re_of : MIPStar = IsRE :=
+theorem mipstarComputable_eq_re_of : MIPStarComputable = IsRE :=
   mipclass_eq_re_of_reduction .tensor ValueModel.tensor_lowerRE (halting_reduction_quantum_of G U)
 
 end Halting
 
 end MIPRE
+
+end

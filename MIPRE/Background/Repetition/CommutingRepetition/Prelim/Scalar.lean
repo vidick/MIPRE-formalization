@@ -12,11 +12,15 @@ development: absolute values of nested sums, and the telescoping product
 perturbation used by the payoff-approximation arguments
 (07_main_theorem.tex, eq payoff-rational-approximation).
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -114,7 +118,9 @@ theorem abs_prod_sub_prod_le {ι : Type*} [DecidableEq ι] (s : Finset ι)
     have hjg1 := hg1 j (Finset.mem_insert_self j s)
     have hPf : |∏ i ∈ s, f i| ≤ 1 := by
       rw [abs_of_nonneg (Finset.prod_nonneg hfmem)]
-      exact Finset.prod_le_one hfmem hfmem1
+      -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one₀` is the version with
+      -- the nonnegativity hypothesis. See README.md.
+      exact Finset.prod_le_one₀ hfmem hfmem1
     have key : f j * (∏ i ∈ s, f i) - g j * (∏ i ∈ s, g i)
         = (f j - g j) * (∏ i ∈ s, f i) +
           g j * ((∏ i ∈ s, f i) - ∏ i ∈ s, g i) := by ring
@@ -137,3 +143,5 @@ theorem abs_prod_sub_prod_le {ι : Type*} [DecidableEq ι] (s : Finset ι)
       _ = |f j - g j| + ∑ i ∈ s, |f i - g i| := by ring
 
 end CommutingRepetition
+
+end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.IsometricCompletionError
-import MIPRE.Foundations.Introspection.ExtractedStateSoundness
+module
+public import MIPRE.Foundations.Introspection.IsometricCompletionError
+public import MIPRE.Foundations.Introspection.ExtractedStateSoundness
+
+@[expose] public section
 
 /-! # Introspection soundness from local-isometry image estimates
 
@@ -145,4 +148,6 @@ theorem quantumValue_ge_of_isometric_images
       (quantumValue_nonneg G)
 
 end MIPRE.Introspection.TypedEstimates
+end
+
 end

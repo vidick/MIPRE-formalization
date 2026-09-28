@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryScanStage
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryScanStage
+
+@[expose] public section
 
 /-! # The fixed-depth polynomial-time Gaussian scan program
 
@@ -64,4 +67,6 @@ theorem program_succ (f : PolyTimeFun AuxiliarySource.Context BitStr)
     program f m (k + 1) (ctx, y) = advance f m k ((ctx, y), program f m k (ctx, y)) := rfl
 
 end MIPRE.Introspection.AuxiliaryScan
+end
+
 end

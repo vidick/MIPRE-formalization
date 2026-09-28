@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.LCS.MagicSquare.Game
-import MIPRE.LCS.Strategy.ObservableToProjector
-import MIPRE.Foundations.Introspection.Measurements
+module
+public import MIPRE.LCS.MagicSquare.Game
+public import MIPRE.LCS.Strategy.ObservableToProjector
+public import MIPRE.Foundations.Introspection.Measurements
+
+@[expose] public section
 
 /-! # The Magic Square extension of an arbitrary anticommuting pair
 
@@ -26,7 +29,7 @@ def cellIndex (c : Fin layout.r) (j : Fin 3) : Fin 9 := cell c j
 
 variable {I : Type*} [Fintype I] [DecidableEq I]
 
-private theorem observable_kronecker {J : Type*} [Fintype J] [DecidableEq J]
+theorem observable_kronecker {J : Type*} [Fintype J] [DecidableEq J]
     {A : Matrix I I ℂ} {B : Matrix J J ℂ}
     (hA : IsObservable A) (hB : IsObservable B) : IsObservable (A ⊗ₖ B) where
   involutive := by rw [← mul_kronecker_mul, hA.involutive, hB.involutive, one_kronecker_one]
@@ -35,10 +38,10 @@ private theorem observable_kronecker {J : Type*} [Fintype J] [DecidableEq J]
     rw [conjTranspose_kronecker]
     exact congrArg₂ (fun A B => A ⊗ₖ B) hA.self_adjoint hB.self_adjoint
 
-private theorem observable_one : IsObservable (1 : Matrix I I ℂ) :=
+theorem observable_one : IsObservable (1 : Matrix I I ℂ) :=
   ⟨one_mul _, star_one _⟩
 
-private theorem observable_mul {A B : Matrix I I ℂ}
+theorem observable_mul {A B : Matrix I I ℂ}
     (hA : IsObservable A) (hB : IsObservable B) (hc : Commute A B) :
     IsObservable (A * B) where
   involutive := by
@@ -49,14 +52,14 @@ private theorem observable_mul {A B : Matrix I I ℂ}
   self_adjoint := by rw [star_mul, hA.self_adjoint, hB.self_adjoint, hc.eq]
 
 omit [DecidableEq I] in
-private theorem tensor_commute {A B : Matrix I I ℂ}
+theorem tensor_commute {A B : Matrix I I ℂ}
     {C D : Matrix (Fin 2) (Fin 2) ℂ} (hAB : Commute A B) (hCD : Commute C D) :
     Commute (A ⊗ₖ C) (B ⊗ₖ D) := by
   change (A ⊗ₖ C) * (B ⊗ₖ D) = (B ⊗ₖ D) * (A ⊗ₖ C)
   rw [← mul_kronecker_mul, ← mul_kronecker_mul, hAB.eq, hCD.eq]
 
 omit [DecidableEq I] in
-private theorem tensor_anticommute {A B : Matrix I I ℂ}
+theorem tensor_anticommute {A B : Matrix I I ℂ}
     {C D : Matrix (Fin 2) (Fin 2) ℂ}
     (hAB : A * B = -(B * A)) (hCD : C * D = -(D * C)) :
     Commute (A ⊗ₖ C) (B ⊗ₖ D) := by
@@ -80,7 +83,7 @@ def grid (A B : Matrix I I ℂ) : Fin 9 → Matrix (I × Fin 2) (I × Fin 2) ℂ
 @[simp] theorem grid_zero (A B : Matrix I I ℂ) : grid A B 0 = A ⊗ₖ 1 := rfl
 @[simp] theorem grid_four (A B : Matrix I I ℂ) : grid A B 4 = B ⊗ₖ 1 := rfl
 
-private theorem ZX_anticomm : Pauli.Z * Pauli.X = -(Pauli.X * Pauli.Z) := by
+theorem ZX_anticomm : Pauli.Z * Pauli.X = -(Pauli.X * Pauli.Z) := by
   rw [Pauli.X_anticomm_Z]
   simp
 
@@ -187,7 +190,7 @@ def constraintOp (A B : Matrix I I ℂ) (c : Fin layout.r) (a : Fin 3 → ZMod 2
   variableOp A B (cellIndex c 0) (a 0) * variableOp A B (cellIndex c 1) (a 1) *
     variableOp A B (cellIndex c 2) (a 2)
 
-private def tripleEquiv : (Fin 3 → ZMod 2) ≃ (ZMod 2 × ZMod 2) × ZMod 2 where
+def tripleEquiv : (Fin 3 → ZMod 2) ≃ (ZMod 2 × ZMod 2) × ZMod 2 where
   toFun a := ((a 0, a 1), a 2)
   invFun a := ![a.1.1, a.1.2, a.2]
   left_inv a := by funext j; fin_cases j <;> rfl
@@ -212,7 +215,7 @@ theorem constraintOp_isPVM {A B : Matrix I I ℂ}
       Fintype.sum_equiv tripleEquiv _ _ (fun _ => rfl)
     _ = 1 := h012.sum_eq_one
 
-private theorem observable_commute_projector {A B : Matrix I I ℂ} (h : Commute A B)
+theorem observable_commute_projector {A B : Matrix I I ℂ} (h : Commute A B)
     (b : ZMod 2) : Commute A (observableToProjector B b) := by
   unfold observableToProjector
   exact ((Commute.one_right _).add_right (h.smul_right _)).smul_right _
@@ -253,7 +256,7 @@ theorem constraint_eigen {A B : Matrix I I ℂ}
       _ = _ := by rw [he 1, mul_smul_comm, smul_mul_assoc]
   · rw [← mul_assoc, (hc 2 0 |>.mul_right (hc 2 1)).eq, mul_assoc, he 2, mul_smul_comm]
 
-private theorem sign_injective : Function.Injective (fun b : ZMod 2 => (-1 : ℂ) ^ b.val) := by
+theorem sign_injective : Function.Injective (fun b : ZMod 2 => (-1 : ℂ) ^ b.val) := by
   intro x y h
   rcases zmod_two_eq_zero_or_one x with rfl | rfl <;>
     rcases zmod_two_eq_zero_or_one y with rfl | rfl <;>
@@ -340,7 +343,7 @@ theorem variableOp_four (A B : Matrix I I ℂ) (b : ZMod 2) :
     variableOp A B 4 b = observableToProjector B b ⊗ₖ (1 : Matrix (Fin 2) (Fin 2) ℂ) := by
   simp [variableOp, grid, observableToProjector, smul_kronecker, add_kronecker]
 
-private theorem projector_measurement (P : ZMod 2 → Matrix I I ℂ)
+theorem projector_measurement (P : ZMod 2 → Matrix I I ℂ)
     (hP : IsMeasurementSystem P) (b : ZMod 2) :
     observableToProjector (observableOfMeasurementSystem P) b = P b := by
   rw [binary_measurement_eq_projector P hP b]
@@ -359,10 +362,10 @@ theorem variableOp_embeds_second (P Q : ZMod 2 → Matrix I I ℂ)
       Q b ⊗ₖ (1 : Matrix (Fin 2) (Fin 2) ℂ) := by
   rw [variableOp_four, projector_measurement Q hQ]
 
-private theorem transpose_X : Pauli.Xᵀ = Pauli.X := by
+theorem transpose_X : Pauli.Xᵀ = Pauli.X := by
   ext i j; fin_cases i <;> fin_cases j <;> rfl
 
-private theorem transpose_Z : Pauli.Zᵀ = Pauli.Z := by
+theorem transpose_Z : Pauli.Zᵀ = Pauli.Z := by
   ext i j; fin_cases i <;> fin_cases j <;> rfl
 
 /-- Symmetric input observables give symmetric operators throughout the extension. -/
@@ -391,3 +394,5 @@ theorem constraintOp_transpose {A B : Matrix I I ℂ}
   rw [(hc 1 0).eq, ((hc 2 0).mul_right (hc 2 1)).eq]
 
 end MIPRE.Introspection.HonestMagicSquare
+
+end

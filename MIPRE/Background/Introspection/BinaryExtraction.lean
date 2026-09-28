@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.RestrictedProfileSoundness
+module
+public import MIPRE.Background.Introspection.RestrictedProfileSoundness
+
+@[expose] public section
 
 /-! # Transporting field-register extraction into binary coordinates
 
@@ -23,12 +26,12 @@ variable {I J H K R S R' S' : Type*}
   [Fintype R] [DecidableEq R] [Fintype S] [DecidableEq S]
   [Fintype R'] [DecidableEq R'] [Fintype S'] [DecidableEq S']
 
-private theorem pull_isometry (e : R' ≃ R) (V : Matrix R H ℂ) (hV : Vᴴ * V = 1) :
+theorem pull_isometry (e : R' ≃ R) (V : Matrix R H ℂ) (hV : Vᴴ * V = 1) :
     (V.submatrix e id)ᴴ * V.submatrix e id = 1 := by
   rw [Matrix.conjTranspose_submatrix, Matrix.submatrix_mul_equiv, hV]
   rfl
 
-private theorem image_pull (e : R' ≃ R) (V : Matrix R H ℂ) (M : Matrix H H ℂ) :
+theorem image_pull (e : R' ≃ R) (V : Matrix R H ℂ) (M : Matrix H H ℂ) :
     isometricImage (V.submatrix e id) M = registerOp e (isometricImage V M) := by
   unfold isometricImage registerOp
   rw [Matrix.conjTranspose_submatrix]
@@ -36,28 +39,28 @@ private theorem image_pull (e : R' ≃ R) (V : Matrix R H ℂ) (M : Matrix H H �
     Vᴴ.submatrix (Equiv.refl H) e = _
   rw [Matrix.submatrix_mul_equiv, Matrix.submatrix_mul_equiv]
 
-private theorem state_pull (e : R' ≃ R) (f : S' ≃ S)
+theorem state_pull (e : R' ≃ R) (f : S' ≃ S)
     (V : Matrix R H ℂ) (W : Matrix S K ℂ) (ψ : H × K → ℂ) :
     isometricState (V.submatrix e id) (W.submatrix f id) ψ =
       isometricState V W ψ ∘ e.prodCongr f := rfl
 
-private theorem registerState_pull (e : J ≃ I) (ξ : H × K → ℂ) :
+theorem registerState_pull (e : J ≃ I) (ξ : H × K → ℂ) :
     registerState I ξ ∘ (e.prodCongr (Equiv.refl H)).prodCongr (e.prodCongr (Equiv.refl K)) =
       registerState J ξ := by
   funext p
   exact congrArg (fun z => z * ξ (p.1.2, p.2.2))
     (congrFun (registerEPR_equiv e) (p.1.1, p.2.1))
 
-private theorem snorm_pull (e : R' ≃ R) (ψ : R → ℂ) (M : Matrix R R ℂ) :
+theorem snorm_pull (e : R' ≃ R) (ψ : R → ℂ) (M : Matrix R R ℂ) :
     snorm (ψ ∘ e) (registerOp e M) = snorm ψ M := by
   unfold snorm
   rw [registerOp_mulVec, norm_evec_comp_equiv]
 
-private theorem registerOp_aOp (e : R' ≃ R) (f : S' ≃ S) (M : Matrix R R ℂ) :
+theorem registerOp_aOp (e : R' ≃ R) (f : S' ≃ S) (M : Matrix R R ℂ) :
     registerOp (e.prodCongr f) (aOp M) = aOp (registerOp e M) := by
   simp only [aOp, registerOp_kronecker, registerOp_one]
 
-private theorem registerOp_bOp (e : R' ≃ R) (f : S' ≃ S) (M : Matrix S S ℂ) :
+theorem registerOp_bOp (e : R' ≃ R) (f : S' ≃ S) (M : Matrix S S ℂ) :
     registerOp (e.prodCongr f) (bOp M) = bOp (registerOp f M) := by
   simp only [bOp, registerOp_kronecker, registerOp_one]
 
@@ -105,7 +108,7 @@ def FieldExtraction.mono {hm : m ∣ Fintype.card F}
   X_error := w.X_error.trans h
   Z_error := w.Z_error.trans h
 
-private theorem binaryX (b : Module.Basis (Fin t) (ZMod 2) F)
+theorem binaryX (b : Module.Basis (Fin t) (ZMod 2) F)
     (hb : LowDegree.IsSelfDualBasis b) (x : Seed m t) :
     registerOp (Weyl.binEquiv b).symm
       (Weyl.proj Weyl.wX ((Weyl.binEquiv b).symm x)) = Honest.pauliXReadout (some x) := by
@@ -114,7 +117,7 @@ private theorem binaryX (b : Module.Basis (Fin t) (ZMod 2) F)
   rw [← h, Honest.pauliXReadout_some]
   exact registerOp_inv (Weyl.binEquiv b) _
 
-private theorem binaryZ (b : Module.Basis (Fin t) (ZMod 2) F)
+theorem binaryZ (b : Module.Basis (Fin t) (ZMod 2) F)
     (hb : LowDegree.IsSelfDualBasis b) (x : Seed m t) :
     registerOp (Weyl.binEquiv b).symm
       (Weyl.proj Weyl.wZ ((Weyl.binEquiv b).symm x)) =
@@ -134,7 +137,7 @@ variable {H K H₀ K₀ : Type*}
   (b : Module.Basis (Fin t) (ZMod 2) F) (hb : LowDegree.IsSelfDualBasis b)
   (ξ : H × K → ℂ)
 
-private theorem binary_state_error
+theorem binary_state_error
     (V : Matrix (QLD.Honest.Register F m × H) H₀ ℂ)
     (W : Matrix (QLD.Honest.Register F m × K) K₀ ℂ) (ψ : H₀ × K₀ → ℂ) :
     ‖evec (isometricState
@@ -149,7 +152,7 @@ private theorem binary_state_error
     (isometricState V W ψ - registerState (QLD.Honest.Register F m) ξ)
 
 include hb in
-private theorem binary_alice_error
+theorem binary_alice_error
     (V : Matrix (QLD.Honest.Register F m × H) H₀ ℂ) (M : Matrix H₀ H₀ ℂ) (x : Seed m t) :
     snorm (registerState (Seed m t) ξ) (aOp
       (isometricImage (V.submatrix ((Weyl.binEquiv b).symm.prodCongr (Equiv.refl H)) id) M -
@@ -164,7 +167,7 @@ private theorem binary_alice_error
     ← registerOp_aOp _ ((Weyl.binEquiv b).symm.prodCongr (Equiv.refl K)), snorm_pull]
 
 include hb in
-private theorem binary_bob_error
+theorem binary_bob_error
     (V : Matrix (QLD.Honest.Register F m × K) K₀ ℂ) (M : Matrix K₀ K₀ ℂ) (x : Seed m t) :
     snorm (registerState (Seed m t) ξ) (bOp
       (isometricImage (V.submatrix ((Weyl.binEquiv b).symm.prodCongr (Equiv.refl K)) id) M -
@@ -243,4 +246,6 @@ theorem padded_quantumValue_ge_of_field_extraction
 end SourceSoundness
 
 end MIPRE.Introspection.RestrictedSoundness
+end
+
 end

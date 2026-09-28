@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.FieldTrace
-import MIPRE.Foundations.LowDegree.BinaryMatrixSolve
+module
+public import MIPRE.Foundations.SAT.FieldTrace
+public import MIPRE.Foundations.LowDegree.BinaryMatrixSolve
+
+@[expose] public section
 
 /-! # Canonical binary linear coordinates for the effective field -/
 
@@ -107,5 +110,7 @@ theorem shoupMulProg_encoding (k : ℕ) (hk : 1 ≤ k)
     shoupRoot_eval_toBits, shoupRoot_eval_toBits]
 
 end MIPRE.SAT
+
+end
 
 end

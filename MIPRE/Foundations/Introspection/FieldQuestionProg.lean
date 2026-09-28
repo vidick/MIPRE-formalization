@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.PauliStageProg
-import MIPRE.Foundations.SAT.TraceGram
+module
+public import MIPRE.Foundations.Introspection.PauliStageProg
+public import MIPRE.Foundations.SAT.TraceGram
+
+@[expose] public section
 
 /-! # Extracting arithmetic inputs from Pauli questions
 
@@ -32,7 +35,7 @@ def selectedScalar : PolyTimeFun (ℕ × Fields) BitStr :=
 @[simp] theorem selectedScalar_one (fields : Fields) :
     selectedScalar (1, fields) = fields.2.2.2.2.2 := rfl
 
-private def unitEntryProg : PolyTimeFun (ℕ × Unary × ℕ) BitStr :=
+def unitEntryProg : PolyTimeFun (ℕ × Unary × ℕ) BitStr :=
   let zero := shoupZeroProg.comp (fst.comp snd)
   ite (ArrayProg.eqNat.comp (fst.pair (snd.comp snd))) (oneBitsProg.comp zero) zero
 
@@ -83,4 +86,6 @@ theorem axisDirectionProg_runs (input : (Unary × Unary × Unary) × BitStr) :
   axisDirectionProg.computes input
 
 end MIPRE.Introspection.FieldQuestionProgram
+end
+
 end

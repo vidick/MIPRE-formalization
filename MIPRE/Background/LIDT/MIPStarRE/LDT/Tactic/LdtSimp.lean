@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Tactic/LdtSimp.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Tactic.LdtSimpAttr
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Tactic.LdtSimpAttr
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -62,3 +65,5 @@ example {α : Type*} [Fintype α] [DecidableEq α] [Nonempty α] (f : α → Err
 end Examples
 
 end MIPStarRE.LDT
+
+end

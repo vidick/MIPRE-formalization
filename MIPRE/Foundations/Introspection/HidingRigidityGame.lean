@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HidingRigidityIteration
-import MIPRE.Foundations.Introspection.HidingBaseRigidity
-import MIPRE.Foundations.Introspection.SamplingRigidity
+module
+public import MIPRE.Foundations.Introspection.HidingRigidityIteration
+public import MIPRE.Foundations.Introspection.HidingBaseRigidity
+public import MIPRE.Foundations.Introspection.SamplingRigidity
+
+@[expose] public section
 
 /-! # Full hiding rigidity from the actual game and extracted Pauli bounds
 
@@ -97,5 +100,7 @@ theorem hiding_register_rigidity_of_pauli
   simpa only [hidingPauliBudget_eq_uniform, mul_assoc] using h
 
 end MIPRE.Introspection.TypedEstimates
+
+end
 
 end

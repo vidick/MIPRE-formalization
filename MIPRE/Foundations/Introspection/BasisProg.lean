@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.EffectiveNormalBasis
-import MIPRE.Foundations.SAT.BasisTransport
+module
+public import MIPRE.Foundations.SAT.EffectiveNormalBasis
+public import MIPRE.Foundations.SAT.BasisTransport
+
+@[expose] public section
 
 /-! # Executable conversion to the introspection field basis
 
@@ -165,4 +168,6 @@ theorem basisProg_time_le : ∃ R : Polynomial ℕ, ∀ (k : ℕ) (v : BitStr), 
     omega
 
 end MIPRE.Introspection.BasisProgram
+end
+
 end

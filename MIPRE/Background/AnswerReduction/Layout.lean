@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.PcpPresentation
-import MIPRE.Background.LIDT.PresentationQueries
-import MIPRE.Foundations.CL.Downsize
-import MIPRE.Foundations.SAT.FieldCoordinates
+module
+public import MIPRE.Background.AnswerReduction.PcpPresentation
+public import MIPRE.Background.LIDT.PresentationQueries
+public import MIPRE.Foundations.CL.Downsize
+public import MIPRE.Foundations.SAT.FieldCoordinates
+
+@[expose] public section
 
 /-!
 # The layout of the PCP coordinates
@@ -263,5 +266,7 @@ theorem exists_flatBits {z : BitStr} (hz : z.length = pcpDim P * k) :
   rw [← toBits_pcp, LinearEquiv.apply_symm_apply, LinearEquiv.apply_symm_apply, toBits_ofBits hz]
 
 end MIPRE.AnswerReduction.Pcp
+
+end
 
 end

@@ -38,11 +38,15 @@ directions of the identity) and proves:
 
 Nothing in this file is a statement of the paper.
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.MvN
 
@@ -414,3 +418,5 @@ theorem convex_setOf_norm_le (r : ℝ) : Convex ℝ {T : H →WOT[ℂ] H | ‖to
     _ = r := by rw [← add_mul, hst, one_mul]
 
 end Orthogonalization.MvN
+
+end

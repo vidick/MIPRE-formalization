@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SubmeasurementCompletion
-import MIPRE.Foundations.Introspection.IsometricCompletionError
+module
+public import MIPRE.Foundations.Introspection.SubmeasurementCompletion
+public import MIPRE.Foundations.Introspection.IsometricCompletionError
+
+@[expose] public section
 
 /-! # Recovering all outcomes from valid-outcome extraction estimates
 
@@ -153,4 +156,6 @@ theorem isometric_valid_outcome_bob_error_le (V : Matrix S H ℂ) (hV : Vᴴ * V
 
 end Isometric
 end MIPRE.Introspection
+end
+
 end

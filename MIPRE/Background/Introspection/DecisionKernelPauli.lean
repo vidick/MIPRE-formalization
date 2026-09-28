@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.DecisionKernelCanonical
+module
+public import MIPRE.Background.Introspection.DecisionKernelCanonical
+
+@[expose] public section
 
 /-! # Pauli semantics of the actual prepared decision kernel -/
 
@@ -95,4 +98,6 @@ theorem project_canonicalInput (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k
     QLD.PauliFullAnswerProgram.program_raw k hk hodd m W a ha]
 
 end MIPRE.Introspection.DecisionKernel
+end
+
 end

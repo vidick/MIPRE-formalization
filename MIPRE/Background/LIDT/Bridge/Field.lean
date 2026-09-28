@@ -3,10 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Game
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DiagonalLine
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.AxisParallelLine
-import Mathlib.FieldTheory.Finite.Basic
+module
+public import MIPRE.Background.LIDT.Game
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DiagonalLine
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.AxisParallelLine
+public import Mathlib.FieldTheory.Finite.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Bridge, part 1: parameters and the field coding
@@ -154,5 +158,7 @@ theorem decP_diag_pointAt (ℓ : DiagonalLine (lidtParams F m d)) (t : Fq (lidtP
   rw [decP_addPoint, decP_smulPoint]
 
 end MIPRE.LIDT.Bridge
+
+end
 
 end

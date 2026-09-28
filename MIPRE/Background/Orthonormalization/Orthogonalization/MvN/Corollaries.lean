@@ -35,14 +35,18 @@ the triangle inequality for `‖·‖_φ`) and the Fourier dictionary of
 lemmas of `Blocks/Fourier.lean` that were stated with `[FiniteDimensional ℂ H]`
 without needing it are re-proved here on any complete `H` under primed names.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Main
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Corollaries
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Fourier
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Main
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Corollaries
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Fourier
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization
 
@@ -358,3 +362,5 @@ theorem almost_commuting_unitaries_of_structure (hS : MvNStructureTheory.{u})
     exact hclose
 
 end Orthogonalization
+
+end

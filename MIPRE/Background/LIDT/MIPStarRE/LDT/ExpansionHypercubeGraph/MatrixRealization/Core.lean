@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/ExpansionHypercubeGraph/MatrixRealization/Core.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Fourier
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Fourier
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -71,7 +74,7 @@ noncomputable def orthogonalModeProjectorMatrix (params : Parameters) :
     MatrixOperator (pointHilbertSpace params) :=
   1 - constantModeProjectorMatrix params
 
-private lemma fourierBasisState_apply_comm (params : Parameters) (α u : Point params) :
+lemma fourierBasisState_apply_comm (params : Parameters) (α u : Point params) :
     fourierBasisState params α u = fourierBasisState params u α := by
   unfold fourierBasisState
   have hdot : dotProductZMod params u α = dotProductZMod params α u := by
@@ -82,7 +85,7 @@ private lemma fourierBasisState_apply_comm (params : Parameters) (α u : Point p
   rw [addCharFq_dotProduct_eq_stdAddChar_dotProductZMod,
     addCharFq_dotProduct_eq_stdAddChar_dotProductZMod, hdot]
 
-private lemma fourierBasisState_inner_product_dual (params : Parameters) (u v : Point params) :
+lemma fourierBasisState_inner_product_dual (params : Parameters) (u v : Point params) :
     ∑ α : Point params,
       star (fourierBasisState params α u) * fourierBasisState params α v =
         if u = v then 1 else 0 := by
@@ -91,7 +94,7 @@ private lemma fourierBasisState_inner_product_dual (params : Parameters) (u v : 
     rw [fourierBasisState_apply_comm params α u, fourierBasisState_apply_comm params α v]
   exact fourierBasisState_inner_product params u v
 
-private lemma sum_fourierBasisProjector_eq_one (params : Parameters) :
+lemma sum_fourierBasisProjector_eq_one (params : Parameters) :
     (∑ α : Point params, fourierBasisProjector params α) =
       (1 : MatrixOperator (pointHilbertSpace params)) := by
   ext u v
@@ -117,11 +120,11 @@ private lemma sum_fourierBasisProjector_eq_one (params : Parameters) :
   · change (if v = u then (1 : ℂ) else 0) = (if u = v then 1 else 0)
     simp [h, show u ≠ v by intro huv; exact h huv.symm]
 
-private lemma frequencyWeight_zero (params : Parameters) :
+lemma frequencyWeight_zero (params : Parameters) :
     frequencyWeight params (0 : Point params) = 0 := by
   simp [frequencyWeight]
 
-private lemma frequencyWeight_pos_of_ne_zero (params : Parameters) {α : Point params}
+lemma frequencyWeight_pos_of_ne_zero (params : Parameters) {α : Point params}
     (hα : α ≠ 0) : 0 < frequencyWeight params α := by
   rw [frequencyWeight, Finset.card_pos]
   by_contra hempty
@@ -133,7 +136,7 @@ private lemma frequencyWeight_pos_of_ne_zero (params : Parameters) {α : Point p
     exact hi
   exact hempty ⟨i, hi_mem⟩
 
-private lemma exists_frequencyWeight_one (params : Parameters) :
+lemma exists_frequencyWeight_one (params : Parameters) :
     ∃ α : Point params, frequencyWeight params α = 1 := by
   classical
   let i : Fin params.m := ⟨0, params.hm⟩
@@ -164,7 +167,7 @@ lemma hypercubeVertexCount_one_lt (params : Parameters) :
   rw [hypercubeVertexCount]
   exact Nat.one_lt_pow params.hm.ne' params.one_lt_q
 
-private lemma fourierBasis_norm_sq (params : Parameters) :
+lemma fourierBasis_norm_sq (params : Parameters) :
     (((Real.sqrt (hypercubeVertexCount params : ℝ))⁻¹ : ℂ) *
       star (((Real.sqrt (hypercubeVertexCount params : ℝ))⁻¹ : ℂ))) =
         (hypercubeVertexCount params : ℂ)⁻¹ := by
@@ -184,7 +187,7 @@ private lemma fourierBasis_norm_sq (params : Parameters) :
   simpa [Complex.ofReal_inv, Complex.ofReal_mul] using
     congrArg (fun x : ℝ => (x : ℂ)) hnormR
 
-private lemma constantModeProjectorMatrix_eq_fourierBasisProjector_zero (params : Parameters) :
+lemma constantModeProjectorMatrix_eq_fourierBasisProjector_zero (params : Parameters) :
     constantModeProjectorMatrix params = fourierBasisProjector params 0 := by
   ext u v
   simp only [constantModeProjectorMatrix, fourierBasisProjector, fourierBasisState,
@@ -197,7 +200,7 @@ private lemma constantModeProjectorMatrix_eq_fourierBasisProjector_zero (params 
   rw [hzero u, hzero v]
   simpa [mul_assoc] using (fourierBasis_norm_sq params).symm
 
-private lemma orthogonalModeProjectorMatrix_eq_sum (params : Parameters) :
+lemma orthogonalModeProjectorMatrix_eq_sum (params : Parameters) :
     orthogonalModeProjectorMatrix params =
       ∑ α ∈ (Finset.univ.erase (0 : Point params)), fourierBasisProjector params α := by
   have hsplit :
@@ -218,7 +221,7 @@ private lemma orthogonalModeProjectorMatrix_eq_sum (params : Parameters) :
           rw [← hsplit]
           simp [sub_eq_add_neg, add_left_comm]
 
-private lemma matrixAdjacencyOperator_spectral_decomp (params : Parameters) :
+lemma matrixAdjacencyOperator_spectral_decomp (params : Parameters) :
     matrixAdjacencyOperator params =
       ∑ α : Point params,
         (((adjacencyEigenvalue params α : Error) : ℂ) • fourierBasisProjector params α) := by
@@ -295,7 +298,7 @@ private lemma matrixAdjacencyOperator_spectral_decomp (params : Parameters) :
           simp only [Pi.smul_apply] at hα
           simp [fourierBasisProjector, Matrix.vecMulVec_apply, hα, mul_assoc, mul_comm]
 
-private lemma matrixLaplacianOperator_spectral_decomp (params : Parameters) :
+lemma matrixLaplacianOperator_spectral_decomp (params : Parameters) :
     matrixLaplacianOperator params =
       ∑ α : Point params,
         (((laplacianEigenvalue params α : Error) : ℂ) • fourierBasisProjector params α) := by
@@ -335,11 +338,11 @@ private lemma matrixLaplacianOperator_spectral_decomp (params : Parameters) :
           rw [hrel α]
 
 /-- The Fourier change-of-basis matrix whose columns are the basis states `|φ_α⟩`. -/
-private noncomputable def fourierBasisChangeMatrix (params : Parameters) :
+noncomputable def fourierBasisChangeMatrix (params : Parameters) :
     MatrixOperator (pointHilbertSpace params) :=
   fun u α => fourierBasisState params α u
 
-private lemma fourierBasisChangeMatrix_star_mul_self (params : Parameters) :
+lemma fourierBasisChangeMatrix_star_mul_self (params : Parameters) :
     star (fourierBasisChangeMatrix params) * fourierBasisChangeMatrix params =
       (1 : MatrixOperator (pointHilbertSpace params)) := by
   ext α β
@@ -349,13 +352,13 @@ private lemma fourierBasisChangeMatrix_star_mul_self (params : Parameters) :
         if α = β then 1 else 0
   exact fourierBasisState_inner_product params α β
 
-private noncomputable def fourierBasisChangeUnitary (params : Parameters) :
+noncomputable def fourierBasisChangeUnitary (params : Parameters) :
     Matrix.unitaryGroup (Point params) ℂ :=
   ⟨fourierBasisChangeMatrix params, by
     rw [Matrix.mem_unitaryGroup_iff']
     exact fourierBasisChangeMatrix_star_mul_self params⟩
 
-private lemma matrixLaplacianOperator_mul_fourierBasisState (params : Parameters)
+lemma matrixLaplacianOperator_mul_fourierBasisState (params : Parameters)
     (α : Point params) :
     (matrixLaplacianOperator params).mulVec (fourierBasisState params α) =
       (((laplacianEigenvalue params α : Error) : ℂ) • fourierBasisState params α) := by
@@ -381,7 +384,7 @@ private lemma matrixLaplacianOperator_mul_fourierBasisState (params : Parameters
     _ = (((laplacianEigenvalue params α : Error) : ℂ) • fourierBasisState params α) := by
             rw [hscalar]
 
-private lemma fourierBasisChange_conj_laplacian (params : Parameters) :
+lemma fourierBasisChange_conj_laplacian (params : Parameters) :
     star (fourierBasisChangeMatrix params) * matrixLaplacianOperator params *
         fourierBasisChangeMatrix params =
       Matrix.diagonal (fun α => ((laplacianEigenvalue params α : Error) : ℂ)) := by
@@ -438,7 +441,7 @@ private lemma fourierBasisChange_conj_laplacian (params : Parameters) :
               exact (Matrix.diagonal_apply_ne
                 (fun γ => ((laplacianEigenvalue params γ : Error) : ℂ)) hαβ).symm
 
-private lemma matrixLaplacianOperator_charpoly_roots_eq_fourier (params : Parameters) :
+lemma matrixLaplacianOperator_charpoly_roots_eq_fourier (params : Parameters) :
     (matrixLaplacianOperator params).charpoly.roots.map Complex.re =
       (Finset.univ : Finset (Point params)).val.map (laplacianEigenvalue params) := by
   let d : Point params → ℂ := fun α => ((laplacianEigenvalue params α : Error) : ℂ)
@@ -480,11 +483,11 @@ private lemma matrixLaplacianOperator_charpoly_roots_eq_fourier (params : Parame
           · simp [d]
           · exact Finset.prod_ne_zero_iff.mpr fun i _ => Polynomial.X_sub_C_ne_zero (d i)
 
-private lemma laplacianEigenvalue_zero (params : Parameters) :
+lemma laplacianEigenvalue_zero (params : Parameters) :
     laplacianEigenvalue params (0 : Point params) = 0 := by
   simp [laplacianEigenvalue, frequencyWeight_zero]
 
-private lemma hypercubeSpectralGap_operator_posSemidef (params : Parameters) :
+lemma hypercubeSpectralGap_operator_posSemidef (params : Parameters) :
     (matrixLaplacianOperator params -
       ((hypercubeSpectralGap params : ℂ) • orthogonalModeProjectorMatrix params)).PosSemidef := by
   have hlap0 := laplacianEigenvalue_zero params
@@ -617,7 +620,7 @@ lemma laplacianSpectralGap (params : Parameters) :
       laplacianEigenvalue_of_weight_one params α hα_weight⟩
   gap_eq := rfl
 
-private lemma laplacianEigenvalue_eq_zero_iff (params : Parameters) {α : Point params} :
+lemma laplacianEigenvalue_eq_zero_iff (params : Parameters) {α : Point params} :
     (laplacianEigenvalue params α = 0) ↔ α = 0 := by
   constructor
   · intro hlambda
@@ -640,7 +643,7 @@ private lemma laplacianEigenvalue_eq_zero_iff (params : Parameters) {α : Point 
   · intro halpha
     simp [halpha, laplacianEigenvalue, frequencyWeight_zero]
 
-private lemma orderedSpectrum_first_of_nonneg_zero
+lemma orderedSpectrum_first_of_nonneg_zero
     {N : ℕ} (hNpos : 0 < N)
     (lambda : Fin N → Error)
     (hordered : ∀ i j : Fin N, (i : ℕ) ≤ (j : ℕ) → lambda i ≤ lambda j)
@@ -659,7 +662,7 @@ This is the finite-ordering argument in `cor:laplacian-spectral-gap`: once
 the spectrum is ordered, the first value is forced by existence and
 nonnegativity of the zero mode, while the second value is forced by uniqueness
 of that zero mode, the lower bound on every other mode, and gap attainment. -/
-private lemma orderedSpectrum_first_two_of_gap_bounds
+lemma orderedSpectrum_first_two_of_gap_bounds
     {N : ℕ} (hNpos : 0 < N) (hNtwo : 1 < N)
     (lambda : Fin N → Error)
     (gap : Error)
@@ -957,3 +960,5 @@ theorem laplacianSpectralGapOrdered (params : Parameters)
   exact ⟨hzero_eq.trans hmu_gap.1, hone_eq.trans hmu_gap.2⟩
 
 end MIPStarRE.LDT.ExpansionHypercubeGraph
+
+end

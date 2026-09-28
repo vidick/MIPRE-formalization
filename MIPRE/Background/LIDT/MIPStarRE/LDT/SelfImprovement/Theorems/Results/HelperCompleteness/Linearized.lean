@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/HelperCompleteness/Linearized.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.HelperCompleteness.InputSdp
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.HelperCompleteness.FiberBounds
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.HelperCompleteness.InputSdp
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.HelperCompleteness.FiberBounds
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -497,3 +500,5 @@ theorem helper_completeness_of_cauchy_schwarz_input_consistency
     helper_hhat_vs_z_of_cauchy_schwarz_and_complementary_slackness
       params strategy eps delta hhelper hmove_left hremove_right hslack
 end MIPStarRE.LDT.SelfImprovement
+
+end

@@ -3,10 +3,14 @@ Copyright (c) 2026 Sean Perazzolo. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sean Perazzolo
 -/
-import Mathlib.Analysis.Complex.Basic
-import Mathlib.Analysis.Complex.Order
-import Mathlib.Analysis.RCLike.Basic
-import Mathlib.LinearAlgebra.Matrix.DotProduct
+module
+public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Analysis.Complex.Order
+public import Mathlib.Analysis.RCLike.Basic
+public import Mathlib.LinearAlgebra.Matrix.DotProduct
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Matrix Sum-of-Squares Helpers
@@ -26,7 +30,7 @@ section VectorNormSOS
 
 variable {m : Type*} [Fintype m]
 
-private lemma three_nonneg_add_eq_zero
+lemma three_nonneg_add_eq_zero
     {α : Type*} [AddCommMonoid α] [PartialOrder α] [IsOrderedAddMonoid α]
     {a b c : α} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
     (h : a + b + c = 0) :
@@ -36,7 +40,7 @@ private lemma three_nonneg_add_eq_zero
   obtain ⟨ha_zero, hb_zero⟩ := (add_eq_zero_iff_of_nonneg ha hb).mp hab
   exact ⟨ha_zero, hb_zero, hc_zero⟩
 
-private lemma dotProduct_square_mulVec_eq_dotProduct_mulVec_self
+lemma dotProduct_square_mulVec_eq_dotProduct_mulVec_self
     [DecidableEq m]
     (T : Matrix m m ℂ) (v : m → ℂ)
     (hT : Tᴴ = T) :
@@ -81,3 +85,5 @@ lemma three_selfAdjoint_squares_mulVec_eq_zero
 end VectorNormSOS
 
 end MIPRE.LCS
+
+end

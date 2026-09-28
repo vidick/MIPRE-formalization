@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.DecideSpec
-import MIPRE.Foundations.SAT.PcpFormat
-import MIPRE.Foundations.Cost.FiniteChoice
-import MIPRE.Foundations.OracularDecider
+module
+public import MIPRE.Background.AnswerReduction.DecideSpec
+public import MIPRE.Foundations.SAT.PcpFormat
+public import MIPRE.Foundations.Cost.FiniteChoice
+public import MIPRE.Foundations.OracularDecider
+
+@[expose] public section
 
 /-!
 # The answer-reduced decision, as a program
@@ -28,15 +31,15 @@ open Cost Cost.PolyTimeFun StageProg Pcp Introspection.FieldLineCheck
 
 /-! ## Cutting a list into runs -/
 
-private def chunkStep :
+def chunkStep :
     PolyTimeFun ((List BitStr × List (List BitStr)) × Unary) (List BitStr × List (List BitStr)) :=
   (drop.comp ((fst.comp fst).pair snd)).pair
     (cons (take.comp ((fst.comp fst).pair snd)) (snd.comp fst))
 
-private theorem chunkStep_apply (v : List BitStr) (vs : List (List BitStr)) (w : Unary) :
+theorem chunkStep_apply (v : List BitStr) (vs : List (List BitStr)) (w : Unary) :
     chunkStep ((v, vs), w) = (v.drop w.length, v.take w.length :: vs) := rfl
 
-private theorem chunkStep_fold (n : ℕ) (w : Unary) (v : List BitStr) (vs : List (List BitStr)) :
+theorem chunkStep_fold (n : ℕ) (w : Unary) (v : List BitStr) (vs : List (List BitStr)) :
     ((List.replicate n w).foldl chunkStep.step (v, vs)).2 =
       (chunks w.length n v).reverse ++ vs := by
   induction n generalizing v vs with
@@ -407,5 +410,7 @@ theorem verdictP_apply (kU m'U : Unary) (descs : List Desc) (chkP chkQ : Bool) (
 end Verdict
 
 end MIPRE.AnswerReduction
+
+end
 
 end

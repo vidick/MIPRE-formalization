@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HidingRigidityGame
-import MIPRE.Foundations.Introspection.ReadRigidity
+module
+public import MIPRE.Foundations.Introspection.HidingRigidityGame
+public import MIPRE.Foundations.Introspection.ReadRigidity
+
+@[expose] public section
 
 /-! # Full Read rigidity from game success and primitive Pauli estimates
 
@@ -108,5 +111,7 @@ theorem read_register_rigidity_of_pauli
   constructor <;> nlinarith
 
 end MIPRE.Introspection.TypedEstimates
+
+end
 
 end

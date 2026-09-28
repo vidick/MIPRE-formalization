@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.Embedding
-import MIPRE.Foundations.CL.Closure
-import MIPRE.Foundations.CL.Graph
+module
+public import MIPRE.Foundations.CL.Embedding
+public import MIPRE.Foundations.CL.Closure
+public import MIPRE.Foundations.CL.Graph
+
+@[expose] public section
 
 /-! # Detyped conditionally linear functions
 
@@ -217,3 +220,5 @@ theorem card_coord : Fintype.card (Coord T ι) = 4 * Fintype.card T + Fintype.ca
 
 end Detyping
 end MIPRE.CL
+
+end

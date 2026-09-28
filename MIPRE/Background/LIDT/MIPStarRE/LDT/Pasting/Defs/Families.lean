@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/Defs/Families.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Interpolation
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyPolynomialFamilies
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Interpolation
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyPolynomialFamilies
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -187,3 +190,5 @@ noncomputable def incompletePartRightFamily (params : Parameters) [FieldModel pa
   fun x => rightPlacedSubMeas (ιA := ι) (incompletePartSubMeas params family x)
 
 end MIPStarRE.LDT.Pasting
+
+end

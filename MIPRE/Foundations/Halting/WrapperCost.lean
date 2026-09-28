@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Wrapper
-import MIPRE.Foundations.Halting.PolyBounded
-import MIPRE.Foundations.Halting.Bounded
+module
+public import MIPRE.Foundations.Halting.Wrapper
+public import MIPRE.Foundations.Halting.PolyBounded
+public import MIPRE.Foundations.Halting.Bounded
+
+@[expose] public section
 
 /-!
 # The running time of the wrapper
@@ -215,7 +218,7 @@ theorem wrapCheckEnv_eq (l : BitStr) (m : ℕ) (env : Env) :
 number it is compared with. -/
 def checkCost (E m : ℕ) : ℕ := 60 * (E + m + 30) ^ 2
 
-private theorem eq_runB (p q : ℕ) :
+theorem eq_runB (p q : ℕ) :
     ∃ t ≤ (p + 1) * (2 * p + 2 * q + 23),
       eqBitsProg.Runs (.cons (Data.ofNat p) (Data.ofNat q)) (encode (decide (p = q))) t := by
   obtain ⟨t, ht, h⟩ := eqBitsProg_runs (Data.ofNat p) (Data.ofNat q) []
@@ -226,7 +229,7 @@ private theorem eq_runB (p q : ℕ) :
   exact Nat.mul_le_mul_left _ (by omega)
 
 /-- Every factor appearing in the check's cost is at most three times `E + m + 30`. -/
-private theorem check_mul_le {E m a b : ℕ} (ha : a ≤ E + m + 30) (hb : b ≤ 3 * (E + m + 30)) :
+theorem check_mul_le {E m a b : ℕ} (ha : a ≤ E + m + 30) (hb : b ≤ 3 * (E + m + 30)) :
     a * b ≤ 3 * (E + m + 30) ^ 2 :=
   (Nat.mul_le_mul ha hb).trans (le_of_eq (by ring))
 
@@ -508,3 +511,5 @@ theorem ofSamplerDecider_isBounded {ℓ : ℕ} (U : UniversalMachine) (S : CL.Sa
 end Verifier
 
 end MIPRE
+
+end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.PauliAnswerPrograms
-import MIPRE.Foundations.Introspection.FieldTableProg
+module
+public import MIPRE.Background.QLD.PauliAnswerPrograms
+public import MIPRE.Foundations.Introspection.FieldTableProg
+
+@[expose] public section
 
 /-! # Canonical Pauli answer payloads and their semantic decoding
 
@@ -57,7 +60,7 @@ theorem answerRows_width {k m d : ℕ} (E : BinField k) (q : Question E.carrier 
     | exact E.length_toBits _
     | exact fun row hrow => E.width_vecBits _ hrow
 
-private theorem fieldRow {k n : ℕ} (E : BinField k) (v : Fin n → E.carrier) (i : Fin n) :
+theorem fieldRow {k n : ℕ} (E : BinField k) (v : Fin n → E.carrier) (i : Fin n) :
     (E.vecBits v).getD i.val [] = E.toBits (v i) := by
   simp [BinField.vecBits, List.getD_eq_getElem?_getD]
 
@@ -121,4 +124,6 @@ theorem answerBits_injective_of_format {k m d : ℕ} (E : BinField k) (hk : 0 < 
   · exact congrArg (answerBits E)
 
 end MIPRE.QLD.PauliAnswerProgram
+end
+
 end

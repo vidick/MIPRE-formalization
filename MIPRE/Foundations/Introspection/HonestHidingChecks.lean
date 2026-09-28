@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestLabelSupport
-import MIPRE.Foundations.Introspection.HonestHidingStep
-import MIPRE.Foundations.Introspection.HidingRigidity
+module
+public import MIPRE.Foundations.Introspection.HonestLabelSupport
+public import MIPRE.Foundations.Introspection.HonestHidingStep
+public import MIPRE.Foundations.Introspection.HidingRigidity
+
+@[expose] public section
 
 /-! # Exact recursion of the honest hiding checks
 
@@ -23,7 +26,7 @@ set_option linter.unusedSectionVars false
 variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
   [Fintype ι] [DecidableEq ι] {ℓ : ℕ}
 
-private theorem supported_zero {V : Finset ι} {y : ι → F}
+theorem supported_zero {V : Finset ι} {y : ι → F}
     (hy : CL.proj V y = y) {i : ι} (hi : i ∉ V) : y i = 0 := by
   have hh := congrFun hy i
   simpa only [CL.proj_apply, if_neg hi] using hh.symm
@@ -43,7 +46,7 @@ theorem proj_local_add {S V : Finset ι} (z : Fin (Fintype.card S) → F)
       simp [CL.proj_apply, coordinateInsert, hi, hz]
     · simp [CL.proj_apply, coordinateInsert, hi]
 
-private theorem proj_tail_local_add {S V T : Finset ι} (hT : T ⊆ V \ S)
+theorem proj_tail_local_add {S V T : Finset ι} (hT : T ⊆ V \ S)
     (z : Fin (Fintype.card S) → F) (y : ι → F) :
     CL.proj T (coordinateInsert S z + y) = CL.proj T y := by
   funext i
@@ -52,7 +55,7 @@ private theorem proj_tail_local_add {S V T : Finset ι} (hT : T ⊆ V \ S)
     simp [CL.proj_apply, coordinateInsert, hi, hn]
   · simp [CL.proj_apply, hi]
 
-private theorem proj_union_local_add {S V T : Finset ι} (hT : T ⊆ V \ S)
+theorem proj_union_local_add {S V T : Finset ι} (hT : T ⊆ V \ S)
     (z : Fin (Fintype.card S) → F) (y : ι → F) (hy : CL.proj (V \ S) y = y) :
     CL.proj (S ∪ T) (coordinateInsert S z + y) = coordinateInsert S z + CL.proj T y := by
   funext i
@@ -62,7 +65,7 @@ private theorem proj_union_local_add {S V T : Finset ι} (hT : T ⊆ V \ S)
     simp [CL.proj_apply, coordinateInsert, hi, hn, hz]
   · by_cases ht : i ∈ T <;> simp [CL.proj_apply, coordinateInsert, hi, ht]
 
-private theorem proj_union_compl_tail {S V T : Finset ι}
+theorem proj_union_compl_tail {S V T : Finset ι}
     (y : ι → F) (hy : CL.proj (V \ S) y = y) :
     CL.proj (S ∪ T)ᶜ y = CL.proj Tᶜ y := by
   funext i
@@ -71,7 +74,7 @@ private theorem proj_union_compl_tail {S V T : Finset ι}
     simp [CL.proj_apply, hi, hz]
   · simp [CL.proj_apply, hi]
 
-private theorem factorOfPrefix_subset {P : CL.CLFun F ι ℓ} {V : Finset ι}
+theorem factorOfPrefix_subset {P : CL.CLFun F ι ℓ} {V : Finset ι}
     (h : P.SupportedOn V) (k : ℕ) (y : ι → F) : P.factorOfPrefix k y ⊆ V := by
   induction P generalizing V k y with
   | zero => simp
@@ -88,7 +91,7 @@ theorem outputPrefix_local_add {S V : Finset ι} (L : CL.RegLinear F S)
       coordinateInsert S z + (next (coordinateInsert S z)).outputPrefix k y := by
   rw [CL.CLFun.outputPrefix_cons, (proj_local_add z y hy).1, (proj_local_add z y hy).2]
 
-private theorem prefixRegister_local_add {S V : Finset ι} (L : CL.RegLinear F S)
+theorem prefixRegister_local_add {S V : Finset ι} (L : CL.RegLinear F S)
     (next : (ι → F) → CL.CLFun F ι ℓ) (k : ℕ)
     (z : Fin (Fintype.card S) → F) (y : ι → F) (hy : CL.proj (V \ S) y = y) :
     CLChecks.prefixRegister (.cons S L next) (k + 1) (coordinateInsert S z + y) =
@@ -189,3 +192,5 @@ theorem hidingNext_stop_join {S V : Finset ι} (L : CL.RegLinear F S)
     rw [proj_tail_local_add hT z.2 d, hdT]
 
 end MIPRE.Introspection.Honest
+
+end

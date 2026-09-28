@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.Game
-import MIPRE.Foundations.Introspection.HonestMagicSquare
-import MIPRE.Foundations.Pasting
+module
+public import MIPRE.Background.QLD.Game
+public import MIPRE.Foundations.Introspection.HonestMagicSquare
+public import MIPRE.Foundations.Pasting
+
+@[expose] public section
 
 /-! # The concrete Pauli probes of the honest QLD strategy
 
@@ -68,7 +71,7 @@ def probeOp (ω : Omega F m) (W : Bas) : ZMod 2 → Matrix (Register F m) (Regis
 theorem probeOp_isPVM (ω : Omega F m) (W : Bas) : IsPVM (probeOp ω W) :=
   isPVM_fibSum (pauliOp_isPVM W) _
 
-private theorem signed_fibre {X I : Type*} [Fintype X] [Fintype I] [DecidableEq I]
+theorem signed_fibre {X I : Type*} [Fintype X] [Fintype I] [DecidableEq I]
     (P : X → Matrix I I ℂ) (f : X → ZMod 2) :
     ∑ b : ZMod 2, sgn b • fibSum P f b = ∑ x, sgn (f x) • P x := by
   unfold fibSum
@@ -129,3 +132,5 @@ theorem probe_basis_anticommute (ω : Omega F m) (h : gam ω ≠ 0) :
   · exact h1
 
 end MIPRE.QLD.Honest
+
+end

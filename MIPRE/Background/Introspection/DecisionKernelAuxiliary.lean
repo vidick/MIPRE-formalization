@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.DecisionKernelAnswers
-import MIPRE.Foundations.Introspection.AuxiliaryDecisionSoundness
+module
+public import MIPRE.Background.Introspection.DecisionKernelAnswers
+public import MIPRE.Foundations.Introspection.AuxiliaryDecisionSoundness
+
+@[expose] public section
 
 /-! # Raw auxiliary soundness of the complete decision kernel -/
 
@@ -13,7 +16,7 @@ open Cost Cost.PolyTimeFun SAT AuxiliaryAnswer
 set_option backward.isDefEq.respectTransparency false
 set_option maxRecDepth 4096
 
-private theorem format_iff_valid (z : AuxiliaryDecision.Input QLD.Ty 7) :
+theorem format_iff_valid (z : AuxiliaryDecision.Input QLD.Ty 7) :
     AuxiliaryDecision.format z = true ↔
       Valid (AuxiliaryDecision.width z) (AuxiliaryDecision.originalBound z)
         (AuxiliaryDecision.leftType z) (AuxiliaryDecision.leftBits z) := by
@@ -146,4 +149,6 @@ theorem program_raw_quotient_sound (W : ClockedUniversalMachine) {lam n : ℕ}
   · exact hcap (by have := valid_aux_length R t w a hf.1; omega)
 
 end MIPRE.Introspection.DecisionKernel
+end
+
 end

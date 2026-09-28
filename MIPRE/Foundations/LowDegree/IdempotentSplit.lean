@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.FiniteReducedComponents
-import MIPRE.Foundations.LowDegree.BinaryEchelon
+module
+public import MIPRE.Foundations.LowDegree.FiniteReducedComponents
+public import MIPRE.Foundations.LowDegree.BinaryEchelon
+
+@[expose] public section
 
 /-! # Deterministic refinement by binary idempotents -/
 
@@ -221,5 +224,7 @@ theorem ComponentFamily.length_le_finrank [Module.Finite (ZMod 2) R]
 end BinarySpan
 
 end MIPRE.LowDegree
+
+end
 
 end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryPrimePowerDispatch
-import MIPRE.Foundations.LowDegree.BinaryComposedSum
+module
+public import MIPRE.Foundations.LowDegree.BinaryPrimePowerDispatch
+public import MIPRE.Foundations.LowDegree.BinaryComposedSum
+
+@[expose] public section
 
 /-! # A globally bounded assembly of coprime prime-power irreducibles -/
 
@@ -72,7 +75,7 @@ theorem fold_assemblyStep_shape (l : List BitStr) (s : AssemblyState) :
     change max ((composedLowerBits s.2 g).take s.1.length).length s.1.length ≤ _
     exact max_le ((List.length_take_le _ _).trans (le_max_right _ _)) (le_max_right _ _)
 
-private theorem degree_prod_pos (l : List BitStr)
+theorem degree_prod_pos (l : List BitStr)
     (h : ∀ g ∈ l, Irreducible (polyOfBits g)) :
     0 < (l.map (fun g => (polyOfBits g).natDegree)).prod := by
   induction l with
@@ -123,19 +126,19 @@ theorem fold_assemblyStep_correct (l : List BitStr) (u : Unary) (p : BitStr)
     rw [hs.2]
     simp only [List.map_cons, List.prod_cons, Nat.mul_assoc]
 
-private def assemblyStepProg : PolyTimeFun (AssemblyState × BitStr) AssemblyState :=
+def assemblyStepProg : PolyTimeFun (AssemblyState × BitStr) AssemblyState :=
   let cap := fst.comp fst
   let p := snd.comp fst
   cap.pair (take.comp ((dropLastBitsProg.comp (normalizeBitsProg.comp
     (composedSumBitsProg.comp (p.pair snd)))).pair cap))
 
-private theorem assemblyStepProg_apply (s : AssemblyState) (g : BitStr) :
+theorem assemblyStepProg_apply (s : AssemblyState) (g : BitStr) :
     assemblyStepProg (s, g) = assemblyStep s g := by
   simp only [assemblyStepProg, comp_apply, pair_apply, fst_apply, snd_apply, take_apply,
     dropLastBitsProg_apply, normalizeBitsProg_apply, composedSumBitsProg_apply]
   rfl
 
-private theorem assemblyStep_bounded : FoldBounded assemblyStepProg (5 * X + 5) := by
+theorem assemblyStep_bounded : FoldBounded assemblyStepProg (5 * X + 5) := by
   intro l s pre post _
   have hstep : assemblyStepProg.step = assemblyStep := by
     funext a g
@@ -165,5 +168,7 @@ theorem assembleBitsProg_apply (l : List BitStr) (u : Unary) (p : BitStr) :
   rw [hstep]
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end
 
 end

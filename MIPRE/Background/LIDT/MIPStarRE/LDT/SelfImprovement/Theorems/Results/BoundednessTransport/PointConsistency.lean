@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/PointConsistency.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.ProjectivizationChain.Basic
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.BoundednessTransport.Decomposition
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.ProjectivizationChain.Basic
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.BoundednessTransport.Decomposition
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -541,3 +544,5 @@ theorem final_fields_point_consistency_totalGap_natural_of_data_processing
         params strategy (selfImprovementDataProcessingError params eps delta) hdata)
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

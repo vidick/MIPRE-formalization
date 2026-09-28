@@ -3,11 +3,16 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Algebra.MvPolynomial.SchwartzZippel
-import Mathlib.Algebra.MvPolynomial.CommRing
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Algebra.Polynomial.Roots
-import Mathlib.Data.Real.Basic
+module
+public import Mathlib.Algebra.MvPolynomial.SchwartzZippel
+public import Mathlib.Algebra.MvPolynomial.CommRing
+public import Mathlib.Data.Rat.Cast.Order
+public import Mathlib.Data.Rat.Cast.Lemmas
+public import Mathlib.Algebra.Polynomial.Roots
+public import Mathlib.Data.Real.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The Schwartz–Zippel lemma, in the form the low-degree machinery uses
@@ -53,13 +58,13 @@ def agree (f g : MvPolynomial (Fin m) F) : Finset (Fin m → F) :=
   simp [agree]
 
 /-- `agree f g` is the zero set of `f - g`, in the shape Mathlib's lemma states. -/
-private theorem agree_eq_filter (f g : MvPolynomial (Fin m) F) :
+theorem agree_eq_filter (f g : MvPolynomial (Fin m) F) :
     agree f g = {x ∈ Fintype.piFinset fun _ : Fin m => (univ : Finset F) | eval x (f - g) = 0} := by
   ext x
   simp [agree, sub_eq_zero]
 
 /-- The `ℚ≥0`-valued bound, straight from Mathlib, with the denominators evaluated. -/
-private theorem nnrat_prob_agree_le {f g : MvPolynomial (Fin m) F} (hfg : f ≠ g) :
+theorem nnrat_prob_agree_le {f g : MvPolynomial (Fin m) F} (hfg : f ≠ g) :
     ((agree f g).card : ℚ≥0) / (Fintype.card F : ℚ≥0) ^ m
       ≤ ((f - g).totalDegree : ℚ≥0) / (Fintype.card F : ℚ≥0) := by
   have h := MvPolynomial.schwartz_zippel_totalDegree (sub_ne_zero.mpr hfg) (univ : Finset F)
@@ -77,7 +82,7 @@ theorem prob_agree_le_totalDegree {f g : MvPolynomial (Fin m) F} (hfg : f ≠ g)
   have hstep : ((f - g).totalDegree : ℚ≥0) / (Fintype.card F : ℚ≥0)
       ≤ (d : ℚ≥0) / (Fintype.card F : ℚ≥0) := by gcongr
   have h' := NNRat.cast_mono (K := ℝ) (h.trans hstep)
-  push_cast at h'
+  push_cast [NNRat.cast_pow] at h'
   exact h'
 
 /-- The individual-degree variant: if `f ≠ g` and both have degree at most `d` in each of
@@ -102,7 +107,7 @@ theorem prob_agree_le_individualDegree {f g : MvPolynomial (Fin m) F} (hfg : f �
           rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
             mul_div_assoc]
   have h' := NNRat.cast_mono (K := ℝ) (h.trans hstep)
-  push_cast at h'
+  push_cast [NNRat.cast_pow] at h'
   exact h'
 
 /-- **The majority test used by the classical PCP.** If the field has at least
@@ -155,5 +160,7 @@ theorem card_agree_le_of_natDegree {p q : Polynomial F} (hpq : p ≠ q) {d : ℕ
     ((Polynomial.natDegree_sub_le p q).trans (max_le hp hq))
 
 end MIPRE.LowDegree
+
+end
 
 end

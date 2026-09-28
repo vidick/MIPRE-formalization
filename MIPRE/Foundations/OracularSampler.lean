@@ -3,12 +3,15 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.OracularTyped
-import MIPRE.Foundations.CL.TypedSampler
-import MIPRE.Foundations.CL.DetypingProgRoute
-import MIPRE.Foundations.Cost.Universal
-import MIPRE.Foundations.Repeat.SamplerCost
-import MIPRE.Foundations.CL.DetypingProgCost
+module
+public import MIPRE.Foundations.OracularTyped
+public import MIPRE.Foundations.CL.TypedSampler
+public import MIPRE.Foundations.CL.DetypingProgRoute
+public import MIPRE.Foundations.Cost.Universal
+public import MIPRE.Foundations.Repeat.SamplerCost
+public import MIPRE.Foundations.CL.DetypingProgCost
+
+@[expose] public section
 
 /-!
 # The typed oracularized sampler
@@ -622,3 +625,5 @@ theorem samplerProgFun_apply (sp : Prog) : samplerProgFun sp = prog sp := rfl
 end OracleSampler
 
 end MIPRE
+
+end

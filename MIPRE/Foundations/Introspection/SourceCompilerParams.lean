@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ClockArithmetic
-import MIPRE.Foundations.Introspection.DynamicParser
+module
+public import MIPRE.Foundations.Introspection.ClockArithmetic
+public import MIPRE.Foundations.Introspection.DynamicParser
+
+@[expose] public section
 
 /-! # Executable canonical register and answer bounds
 
@@ -97,7 +100,7 @@ def registerSizeProg : PolyTimeFun Data ℕ :=
       (readUnary.comp treeHead))
     (natBits.comp (unaryToBin.comp (readUnary.comp treeTail))))
 
-private theorem bitsVal_zeros (j : ℕ) (bs : BitStr) :
+theorem bitsVal_zeros (j : ℕ) (bs : BitStr) :
     bitsVal (List.replicate j false ++ bs) = 2 ^ j * bitsVal bs := by
   induction j with
   | zero => simp
@@ -164,5 +167,7 @@ theorem boundsProg_runs (c lam n : ℕ) : ∃ time,
       (callWithContext_closed expBitsProg_wellScoped boundsPost).mono (by omega) _⟩ _)⟩
 
 end MIPRE.Introspection.SourceCompiler
+
+end
 
 end

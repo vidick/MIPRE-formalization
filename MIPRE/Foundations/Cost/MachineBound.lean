@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.MachineData
-import MIPRE.Foundations.Cost.Unary
+module
+public import MIPRE.Foundations.Cost.MachineData
+public import MIPRE.Foundations.Cost.Unary
+
+@[expose] public section
 
 /-!
 # Size bounds along machine runs
@@ -551,3 +554,5 @@ theorem costSum_final (r : Data) (e : Env) (n : ℕ) : costSum ⟨.ret r, e, []�
 end Machine
 
 end MIPRE.Cost
+
+end

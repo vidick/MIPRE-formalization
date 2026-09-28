@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.DecisionKernelGameInterface
-import MIPRE.Background.Introspection.CanonicalGame
-import MIPRE.Background.Introspection.AmbientRawGame
+module
+public import MIPRE.Background.Introspection.DecisionKernelGameInterface
+public import MIPRE.Background.Introspection.CanonicalGame
+public import MIPRE.Background.Introspection.AmbientRawGame
+
+@[expose] public section
 
 /-! # Decoding the actual compiled strategy into the canonical finite game -/
 
@@ -67,7 +70,7 @@ theorem failure_le (c : ℕ) (hc : 1 ≤ c) (he : Even c) (U : ClockedUniversalM
     1-(strategy c hc he U lam n V hs S).value ≤ ε :=
   (sub_le_sub_left (value_le c hc he U V hV hn hc2 hs S) 1).trans hS
 
-private theorem measurement_supported (c lam n : ℕ) {H : Type*}
+theorem measurement_supported (c lam n : ℕ) {H : Type*}
     [Fintype H] [DecidableEq H]
     (P : ProjectiveMeasurement (Question c lam n) (Verifier.Answers (outerBound c lam n))
       (Matrix H H ℂ)) :
@@ -99,3 +102,5 @@ theorem supported_B (c : ℕ) (hc : 1 ≤ c) (he : Even c) (U : ClockedUniversal
   measurement_supported c lam n S.PB
 
 end MIPRE.Introspection.CanonicalDecoded
+
+end

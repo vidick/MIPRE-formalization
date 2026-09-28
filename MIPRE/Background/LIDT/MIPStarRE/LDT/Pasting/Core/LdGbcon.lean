@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/Core/LdGbcon.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Statements
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.Extensions
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.SimEq
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Statements
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.Extensions
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.SimEq
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -31,7 +34,7 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-private noncomputable def ldGbconAxisLineMeasurement
+noncomputable def ldGbconAxisLineMeasurement
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) :
     IdxMeas (Point params.next) (Fq params) ι := fun u =>
@@ -40,7 +43,7 @@ private noncomputable def ldGbconAxisLineMeasurement
   { toSubMeas := postprocess ((strategy.axisParallelMeasurement ℓ).toSubMeas) (· zeroCoord)
     total_eq_one := (strategy.axisParallelMeasurement ℓ).total_eq_one }
 
-private noncomputable def ldGbconVerticalLineMeasurement
+noncomputable def ldGbconVerticalLineMeasurement
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) :
     IdxMeas (Point params.next) (Fq params) ι := fun u =>
@@ -54,7 +57,7 @@ private noncomputable def ldGbconVerticalLineMeasurement
           direction := lastCoord params }
       (strategy.axisParallelMeasurement ℓ).total_eq_one }
 
-private lemma ldGbconAxisLineMeasurement_eq_verticalLineMeasurement
+lemma ldGbconAxisLineMeasurement_eq_verticalLineMeasurement
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) :
     IdxMeas.toIdxSubMeas (ldGbconAxisLineMeasurement params strategy) =
@@ -123,7 +126,7 @@ private lemma ldGbconAxisLineMeasurement_eq_verticalLineMeasurement
         exact hB'
     rw [hA, hB]
 
-private lemma ldGbcon_axis_last_direction_consistency
+lemma ldGbcon_axis_last_direction_consistency
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (eps : Error)
@@ -635,3 +638,5 @@ theorem ldGbcon_liftedVerticalLine
     hgood.axisParallelTest hgood.selfConsistencyTest family hcons
 
 end MIPStarRE.LDT.Pasting
+
+end

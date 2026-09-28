@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.ClassMIPStar
-import MIPRE.Foundations.Halting.CostBudget
-import MIPRE.Foundations.Halting.Instantiation
-import MIPRE.Foundations.Halting.Semidecide
+module
+public import MIPRE.Foundations.ClassMIPStarComputable
+public import MIPRE.Foundations.Halting.CostBudget
+public import MIPRE.Foundations.Halting.Instantiation
+public import MIPRE.Foundations.Halting.Semidecide
+
+@[expose] public section
 
 /-!
 # The semidecider of the halting reduction (obligation O3)
@@ -281,9 +284,9 @@ section
 variable {α : Type*} [Primcodable α] {ℓ : ℕ} {V : α → Verifier ℓ}
 
 /-- The search space of `rePred_not_rejectsLong`: a witness paired with the parameters. -/
-private abbrev LongZ (α : Type*) := (α × ℕ) × ((BitStr × BitStr × BitStr × BitStr) × ℕ)
+abbrev LongZ (α : Type*) := (α × ℕ) × ((BitStr × BitStr × BitStr × BitStr) × ℕ)
 
-private theorem computable_longInput :
+theorem computable_longInput :
     Computable fun z : LongZ α =>
       (encode (z.1.2, z.2.1.1, z.2.1.2.1, z.2.1.2.2.1, z.2.1.2.2.2) : Data) := by
   have hw : Computable fun z : LongZ α => z.2.1 := Computable.fst.comp Computable.snd
@@ -301,7 +304,7 @@ private theorem computable_longInput :
       (Data.primrec_cons.to_comp.comp (hebs.comp hy)
         (Data.primrec_cons.to_comp.comp (hebs.comp ha) (hebs.comp hb))))
 
-private theorem computable_longRun (hV : ComputablyPresented V) :
+theorem computable_longRun (hV : ComputablyPresented V) :
     Computable fun z : LongZ α =>
       Machine.runForD (encode (V z.1.1).decider.prog)
         (encode (z.1.2, z.2.1.1, z.2.1.2.1, z.2.1.2.2.1, z.2.1.2.2.2)) z.2.2 :=
@@ -313,7 +316,7 @@ private theorem computable_longRun (hV : ComputablyPresented V) :
     (((hV.deciderProg.comp (Computable.fst.comp Computable.fst)).pair computable_longInput).pair
       (Computable.snd.comp Computable.snd))
 
-private theorem computable_longRunB (hV : ComputablyPresented V) :
+theorem computable_longRunB (hV : ComputablyPresented V) :
     Computable fun z : LongZ α =>
       decide (Machine.runForD (encode (V z.1.1).decider.prog)
         (encode (z.1.2, z.2.1.1, z.2.1.2.1, z.2.1.2.2.1, z.2.1.2.2.2)) z.2.2
@@ -327,7 +330,7 @@ private theorem computable_longRunB (hV : ComputablyPresented V) :
     (Cost.primrec_optionDataEqB.comp (Primrec.id.pair (Primrec.const (some (encode true))))).to_comp
     (computable_longRun hV)
 
-private theorem computable_longLen {T : α → ℕ → ℕ}
+theorem computable_longLen {T : α → ℕ → ℕ}
     (hT : Computable fun q : α × ℕ => T q.1 q.2) :
     Computable fun z : LongZ α =>
       (decide (T z.1.1 z.1.2 + 1 ≤ z.2.1.2.2.1.length)
@@ -350,7 +353,7 @@ private theorem computable_longLen {T : α → ℕ → ℕ}
       Cost.primrec_natLeB.to_comp (hTq.pair (Primrec.list_length.to_comp.comp hb))
   exact Primrec.or.to_comp.comp hA hB
 
-private theorem computable_longAcceptanceB (hV : ComputablyPresented V) {T : α → ℕ → ℕ}
+theorem computable_longAcceptanceB (hV : ComputablyPresented V) {T : α → ℕ → ℕ}
     (hT : Computable fun q : α × ℕ => T q.1 q.2) :
     Computable fun z : LongZ α => (V z.1.1).longAcceptanceB z.1.2 (T z.1.1 z.1.2) z.2 := by
   unfold longAcceptanceB
@@ -552,3 +555,5 @@ theorem exists_sem_upper (G : GapCompression) (U : UniversalMachine) (ω : Value
 end Halting
 
 end MIPRE
+
+end

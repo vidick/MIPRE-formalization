@@ -5,8 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/ExpansionHypercubeGraph/Defs/Fourier.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Core
-import Mathlib.Analysis.Fourier.ZMod
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Core
+public import Mathlib.Analysis.Fourier.ZMod
+public import MIPRE.Tactics
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -226,7 +230,7 @@ lemma GlobalVarianceDecomposition.orthogonalComponent_eq_sub_average
   simpa [add_comm, add_left_comm, add_assoc] using (decomp.decomposition u).symm
 
 omit [Fintype ι] [DecidableEq ι] in
-private lemma centered_sum_eq_zero (params : Parameters)
+lemma centered_sum_eq_zero (params : Parameters)
     (A : Point params → MIPStarRE.Quantum.Op ι) :
     ∑ u, (A u - ((hypercubeVertexCount params : ℂ)⁻¹) • ∑ v, A v) = 0 := by
   classical
@@ -649,3 +653,5 @@ theorem laplacianEigenvalue_of_weight_one (params : Parameters) (α : Point para
   norm_cast
 
 end MIPStarRE.LDT.ExpansionHypercubeGraph
+
+end

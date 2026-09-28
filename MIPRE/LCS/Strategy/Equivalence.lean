@@ -3,8 +3,11 @@ Copyright (c) 2026 Sean Perazzolo. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sean Perazzolo
 -/
-import MIPRE.LCS.Strategy.ProjectorStrategy
-import MIPRE.LCS.Strategy.ObservableStrategy
+module
+public import MIPRE.LCS.Strategy.ProjectorStrategy
+public import MIPRE.LCS.Strategy.ObservableStrategy
+
+@[expose] public section
 
 /-!
 # Equivalence between Observable-based and Projector-based Strategies
@@ -207,7 +210,7 @@ lemma ObservableStrategy.aliceMeasurement_sum_one
 
 omit [StarModule ℂ R] in
 /-- Two distinct outcomes for the projector associated to a single observable are orthogonal. -/
-private lemma projector_orthogonal_of_ne
+lemma projector_orthogonal_of_ne
   (O : R) (hO : IsObservable O) (a b : ZMod 2) (hab : a ≠ b) :
   observableToProjector O a * observableToProjector O b = 0 := by
   rcases zmod_two_eq_zero_or_one a with rfl | rfl <;>
@@ -222,7 +225,7 @@ private lemma projector_orthogonal_of_ne
 
 omit [StarModule ℂ R] in
 /-- The partial Alice measurement over $s$ is idempotent. -/
-private lemma alice_partial_idempotent
+lemma alice_partial_idempotent
   (S : ObservableStrategy R G) (i : Fin G.r)
   (s : Finset (G.V i)) (assignment : Layout.Assignment G i) :
   let f : G.V i → R := fun j ↦ observableToProjector (S.aliceObs j.1) (assignment j)
@@ -258,7 +261,7 @@ private lemma alice_partial_idempotent
 
 set_option backward.isDefEq.respectTransparency false in
 /-- The partial Alice measurement over $s$ is self-adjoint. -/
-private lemma alice_partial_selfAdjoint
+lemma alice_partial_selfAdjoint
   (S : ObservableStrategy R G) (i : Fin G.r)
   (s : Finset (G.V i)) (assignment : Layout.Assignment G i) :
   let f : G.V i → R := fun j ↦ observableToProjector (S.aliceObs j.1) (assignment j)
@@ -297,7 +300,7 @@ private lemma alice_partial_selfAdjoint
 omit [StarModule ℂ R] in
 /-- If two assignments differ at some $j₀ \in s$, then the corresponding partial Alice
 projectors are orthogonal. -/
-private lemma alice_partial_orthogonal
+lemma alice_partial_orthogonal
   (S : ObservableStrategy R G) (i : Fin G.r)
   (s : Finset (G.V i)) (α β : Layout.Assignment G i) (j0 : G.V i) (hj0 : j0 ∈ s)
   (hneq : α j0 ≠ β j0) :
@@ -529,3 +532,5 @@ noncomputable def toProjectorStrategy
 end BipartiteObservableStrategy
 
 end MIPRE.LCS
+
+end

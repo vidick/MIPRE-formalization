@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptivePrefixMeasurement
-import MIPRE.Foundations.Introspection.AdaptiveZFactor
+module
+public import MIPRE.Foundations.Introspection.AdaptivePrefixMeasurement
+public import MIPRE.Foundations.Introspection.AdaptiveZFactor
+
+@[expose] public section
 
 /-! # Global commutators are the actual weighted residual commutators
 
@@ -96,5 +99,7 @@ theorem adaptiveZ_reassembled_commutator_sum (P : CL.CLFun F ι ℓ)
     (fun y z => registerReadout (H := H) (stageSplit P hP k y) wZ LinearMap.id z)
 
 end MIPRE.Introspection
+
+end
 
 end

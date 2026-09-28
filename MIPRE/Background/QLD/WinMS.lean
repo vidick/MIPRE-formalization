@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Win
-import MIPRE.Background.QLD.Anticomm
+module
+public import MIPRE.Background.QLD.Win
+public import MIPRE.Background.QLD.Anticomm
+
+@[expose] public section
 
 /-!
 # The Magic Square item of the win implications
@@ -337,5 +340,7 @@ theorem item_magicSquare (hψ : star ψ ⬝ᵥ ψ = 1) {ε : ℝ}
 end Transfer
 
 end MIPRE.QLD
+
+end
 
 end

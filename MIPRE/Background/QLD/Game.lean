@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.CLGame
-import MIPRE.Foundations.LowDegree.Anticomm
-import MIPRE.LCS.MagicSquare.Game
+module
+public import MIPRE.Background.LIDT.CLGame
+public import MIPRE.Foundations.LowDegree.Anticomm
+public import MIPRE.LCS.MagicSquare.Game
+
+@[expose] public section
 
 /-!
 # The Pauli basis test
@@ -593,5 +596,7 @@ def qldGame (hm : m ∣ Fintype.card F) :
 end GameDef
 
 end MIPRE.QLD
+
+end
 
 end

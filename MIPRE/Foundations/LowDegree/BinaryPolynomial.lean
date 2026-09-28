@@ -2,9 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Cost.Fold
-import MIPRE.Foundations.LowDegree.BinaryRepresentation
-import Mathlib.Algebra.CharP.Two
+module
+public import MIPRE.Foundations.Cost.Fold
+public import MIPRE.Foundations.LowDegree.BinaryRepresentation
+public import Mathlib.Algebra.CharP.Two
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Binary polynomial arithmetic on coefficient lists
@@ -195,17 +199,17 @@ noncomputable def xorBitsProg : PolyTimeFun (BitStr × BitStr) BitStr :=
 @[simp] theorem xorBitsProg_apply (p : BitStr × BitStr) :
     xorBitsProg p = xorBits p.1 p.2 := rfl
 
-private noncomputable def headProg : PolyTimeFun BitStr Bool :=
+noncomputable def headProg : PolyTimeFun BitStr Bool :=
   PolyTimeFun.congr
     ((casesList (const false) (fst.comp snd)).comp ((const ()).pair (PolyTimeFun.id _)))
     (fun a => a.headD false) (by intro a; cases a <;> rfl)
 
-private noncomputable def tailProg : PolyTimeFun BitStr BitStr :=
+noncomputable def tailProg : PolyTimeFun BitStr BitStr :=
   PolyTimeFun.congr
     ((casesList (const []) (snd.comp snd)).comp ((const ()).pair (PolyTimeFun.id _)))
     List.tail (by intro a; cases a <;> rfl)
 
-private noncomputable def shiftLowProg : PolyTimeFun BitStr BitStr :=
+noncomputable def shiftLowProg : PolyTimeFun BitStr BitStr :=
   PolyTimeFun.congr
     (reverse.comp (tailProg.comp (reverse.comp (cons (const false) (PolyTimeFun.id _)))))
     shiftLow (by
@@ -228,23 +232,23 @@ noncomputable def shiftReduceProg : PolyTimeFun (BitStr × BitStr) BitStr :=
 @[simp] theorem shiftReduceProg_apply (p : BitStr × BitStr) :
     shiftReduceProg p = shiftReduce p.1 p.2 := rfl
 
-private abbrev MulState := BitStr × BitStr × BitStr
+abbrev MulState := BitStr × BitStr × BitStr
 
-private def mulStep (s : MulState) (bit : Bool) : MulState :=
+def mulStep (s : MulState) (bit : Bool) : MulState :=
   (s.1, s.2.1, if bit then xorBits (shiftReduce s.1 s.2.2) s.2.1
     else shiftReduce s.1 s.2.2)
 
-private noncomputable def mulStepProg : PolyTimeFun (MulState × Bool) MulState :=
+noncomputable def mulStepProg : PolyTimeFun (MulState × Bool) MulState :=
   let p := fst.comp fst
   let a := fst.comp (snd.comp fst)
   let acc := snd.comp (snd.comp fst)
   let shifted := shiftReduceProg.comp (p.pair acc)
   p.pair (a.pair (ite snd (xorBitsProg.comp (shifted.pair a)) shifted))
 
-private theorem mulStepProg_apply (s : MulState) (bit : Bool) :
+theorem mulStepProg_apply (s : MulState) (bit : Bool) :
     mulStepProg (s, bit) = mulStep s bit := rfl
 
-private theorem mulStep_length (s : MulState) (bit : Bool) :
+theorem mulStep_length (s : MulState) (bit : Bool) :
     (mulStep s bit).2.2.length ≤ s.2.2.length := by
   unfold mulStep
   split
@@ -253,7 +257,7 @@ private theorem mulStep_length (s : MulState) (bit : Bool) :
     exact (min_le_left _ _).trans (length_shiftReduce_le _ _)
   · exact length_shiftReduce_le _ _
 
-private theorem foldl_mulStep (l : BitStr) (s : MulState) :
+theorem foldl_mulStep (l : BitStr) (s : MulState) :
     (l.foldl mulStep s).1 = s.1 ∧
       (l.foldl mulStep s).2.1 = s.2.1 ∧
       (l.foldl mulStep s).2.2.length ≤ s.2.2.length := by
@@ -263,7 +267,7 @@ private theorem foldl_mulStep (l : BitStr) (s : MulState) :
     obtain ⟨hp, ha, hacc⟩ := ih (mulStep s bit)
     exact ⟨hp, ha, hacc.trans (mulStep_length s bit)⟩
 
-private theorem mulStepProg_bounded :
+theorem mulStepProg_bounded :
     PolyTimeFun.FoldBounded mulStepProg (4 * Polynomial.X + 4) := by
   intro l s pre xs _
   change esize (pre.foldl mulStep s) ≤ _
@@ -278,7 +282,7 @@ private theorem mulStepProg_bounded :
     Polynomial.eval_ofNat, Polynomial.eval_X]
   omega
 
-private theorem foldr_mulStep (l : BitStr) (p a acc : BitStr) :
+theorem foldr_mulStep (l : BitStr) (p a acc : BitStr) :
     l.foldr (fun bit s => mulStep s bit) (p, a, acc) =
       (p, a, l.foldr (fun bit v =>
         if bit then xorBits (shiftReduce p v) a else shiftReduce p v) acc) := by
@@ -313,3 +317,5 @@ noncomputable def mulReduceProg : PolyTimeFun (BitStr × BitStr × BitStr) BitSt
 end Programs
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

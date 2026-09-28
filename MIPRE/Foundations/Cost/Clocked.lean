@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Toolkit
-import MIPRE.Foundations.Cost.Numeric
+module
+public import MIPRE.Foundations.Cost.Toolkit
+public import MIPRE.Foundations.Cost.Numeric
+
+@[expose] public section
 
 /-!
 # Clocked simulation as a polynomial-time predicate
@@ -126,3 +129,5 @@ noncomputable def PolyTimeFun.haltsWithin (UT : ClockedUniversalMachine) :
     PolyTimeFun.haltsWithin UT (e, n) = (evalWithin e .nil (Nat.size n)).isSome := rfl
 
 end MIPRE.Cost
+
+end

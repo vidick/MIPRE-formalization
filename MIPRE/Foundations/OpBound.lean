@@ -3,9 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Analysis.Matrix.Order
-import Mathlib.Analysis.Matrix.PosDef
-import Mathlib.Analysis.InnerProductSpace.PiL2
+module
+public import Mathlib.Analysis.Matrix.Order
+public import Mathlib.Analysis.Matrix.PosDef
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Operator bounds on matrices, by hand
@@ -396,5 +400,7 @@ theorem isometry_bOp {Y : Matrix HB HB ℂ} (h : Yᴴ * Y = 1) :
 end Bipartite
 
 end MIPRE
+
+end
 
 end

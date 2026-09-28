@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/GCommStability/OverlapTwo.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.OverlapOne
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CompletionTransfer
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.OverlapOne
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CompletionTransfer
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -35,7 +38,7 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 /-- Summing the stability-two comparison family leaves only the overlap term
 for `G^x`. -/
-private lemma gCommStabilityTwo_pointwise_sum_bound
+lemma gCommStabilityTwo_pointwise_sum_bound
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι)
@@ -89,7 +92,7 @@ private lemma gCommStabilityTwo_pointwise_sum_bound
 
 /-- A single stability-two summand is controlled by replacing the inner ordered
 product square by the corresponding evaluated point outcome. -/
-private lemma gCommStabilityTwo_pointwise_summand_bound
+lemma gCommStabilityTwo_pointwise_summand_bound
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι)
@@ -172,7 +175,7 @@ private lemma gCommStabilityTwo_pointwise_summand_bound
 
 /-- The full stability-two defect is bounded by the overlap term for the
 target slice measurement `G^x`. -/
-private lemma gCommStabilityTwo_pointwise_bound
+lemma gCommStabilityTwo_pointwise_bound
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι)
@@ -303,3 +306,5 @@ reindexing lemmas, and large/small parameter case split used in the proof of
 
 
 end MIPStarRE.LDT.Commutativity
+
+end

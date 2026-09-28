@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/MatrixRealization/Base.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix
-import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.MatrixRealization.TraceForms
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Defs
+module
+public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.MatrixRealization.TraceForms
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Defs
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -43,7 +46,7 @@ structure MatrixSdpRealization (params : Parameters) [FieldModel params.q] where
 
 /-- The constant strict primal effects have total mass `(1/2)I` in the concrete
 matrix realization. -/
-private theorem matrixSdpStrictPrimalConstantSum (params : Parameters)
+theorem matrixSdpStrictPrimalConstantSum (params : Parameters)
     [FieldModel params.q]
     (model : MatrixSdpRealization params) :
     ∑ _ : Polynomial params, sdpStrictPrimalWeight params •
@@ -51,12 +54,12 @@ private theorem matrixSdpStrictPrimalConstantSum (params : Parameters)
       ((1 / 2 : Error) • (1 : MatrixOperator model.space)) := by
   exact sdpStrictPrimalConstantSum (ι := model.space.carrier) params
 
-private theorem sdpStrictPrimalEffect_nonneg (params : Parameters)
+theorem sdpStrictPrimalEffect_nonneg (params : Parameters)
     [FieldModel params.q] (space : FiniteHilbertSpace.{u}) :
     0 ≤ sdpStrictPrimalWeight params • (1 : MatrixOperator space) := by
   unfold sdpStrictPrimalWeight; positivity
 
-private theorem errorHalf_smul_one_le_one (space : FiniteHilbertSpace.{u}) :
+theorem errorHalf_smul_one_le_one (space : FiniteHilbertSpace.{u}) :
     (1 / 2 : Error) • (1 : MatrixOperator space) ≤ 1 := by
   have hhalf : (1 / 2 : Error) ≤ 1 := by norm_num
   simpa using smul_le_smul_of_nonneg_right hhalf
@@ -278,3 +281,5 @@ theorem matrixSdpFeasibleBounds_canonical (params : Parameters) [FieldModel para
 
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

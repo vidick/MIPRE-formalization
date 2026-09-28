@@ -27,15 +27,19 @@ planned in `PLAN-resolver-entropic.md`:
 The entropy budgets are proved in `Resolver/EntropicArenaBudget.lean`.
 Nothing here is a manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.ArenaDef
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.ResolverKernel
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.Douglas
-import MIPRE.Background.Repetition.CommutingRepetition.VN.BlockOperators
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.ArenaDef
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.ResolverKernel
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.Douglas
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.BlockOperators
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -653,6 +657,10 @@ theorem isPosElem_lft_ite {P : Prop} [Decidable P] (x : ↥(𝔑 M I J)) :
   · exact isPosElem_lft_zero M
 
 include hxA in
+-- Vendoring compile fix (Mathlib v4.35): the `map_sum` step of this proof exceeds the default
+-- heartbeat budget (its instance search unfolds the arena's algebra); it elaborates within
+-- a larger one. See README.md.
+set_option maxHeartbeats 1600000 in
 theorem Ame_isPos (i : I) (a : A) : IsPosElem (lft M (Ame M h kA xA hxA i a)) := by
   -- the defect and its square root
   have hZ1 : Douglas.Z (hxeA M h kA xA hxA i) ≤ 1 := Douglas.Z_le_one _
@@ -689,6 +697,8 @@ theorem Ame_isPos (i : I) (a : A) : IsPosElem (lft M (Ame M h kA xA hxA i a)) :=
     (isPosElem_lft_ite M _)
 
 include hyB in
+-- Vendoring compile fix (Mathlib v4.35): as for `Ame_isPos`. See README.md.
+set_option maxHeartbeats 1600000 in
 theorem Bme_isPos (j : J) (b : B) : IsPosElem (lft M (Bme M h kB yB hyB j b)) := by
   have hZ1 : Douglas.Z (hyeB M h kB yB hyB j) ≤ 1 := Douglas.Z_le_one _
   have hQ0 : (0 : 𝓑 M I J →L[ℂ] 𝓑 M I J) ≤ 1 - Douglas.Z (hyeB M h kB yB hyB j) :=
@@ -819,3 +829,5 @@ end
 end EntropicArena
 
 end CommutingRepetition
+
+end

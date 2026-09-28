@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestHiding
+module
+public import MIPRE.Foundations.Introspection.HonestHiding
+
+@[expose] public section
 
 /-! # Support of the actual honest Read and Hide answers
 
@@ -22,7 +25,7 @@ set_option linter.unusedSectionVars false
 variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
   [Fintype ι] [DecidableEq ι]
 
-private theorem support_mono {S V : Finset ι} (h : S ⊆ V) {x : ι → F}
+theorem support_mono {S V : Finset ι} (h : S ⊆ V) {x : ι → F}
     (hx : CL.proj S x = x) : CL.proj V x = x := by
   calc
     CL.proj V x = CL.proj V (CL.proj S x) := congrArg (CL.proj V) hx.symm
@@ -131,3 +134,5 @@ theorem hideRegister_entry_supported {ℓ : ℕ} (P : CL.CLFun F ι ℓ) (k : �
             rfl
 
 end MIPRE.Introspection.Honest
+
+end

@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Games
+module
+public import MIPRE.Foundations.Games
+
+@[expose] public section
 
 /-!
 # The value of a POVM strategy, and its conditional failures
@@ -230,5 +233,7 @@ theorem condFail_le_div (hψ : star ψ ⬝ᵥ ψ = 1) {ε : ℝ} (hfail : 1 - po
   exact le_trans hterm hfail
 
 end MIPRE
+
+end
 
 end

@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/Sandwich/Switcheroo.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Families
-import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Defs
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Families
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Defs
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -323,3 +326,5 @@ lemma gHatHalfProduct_sum_eq_total (params : Parameters) [FieldModel params.q]
               simp [gHatHalfProductTotalOperator]
 
 end MIPStarRE.LDT.Pasting
+
+end

@@ -5,10 +5,13 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/Base.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Statements
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures
-import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Approximation
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Tactic.AvgCongr
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Statements
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Approximation
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Tactic.AvgCongr
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -215,3 +218,5 @@ lemma weighted_bound_to_average
     _ ≤ sliceConditioningLoss params * b := hmul
 
 end MIPStarRE.LDT.MainInductionStep
+
+end

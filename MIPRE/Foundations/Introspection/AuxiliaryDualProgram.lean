@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryCanonicalProgram
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryCanonicalProgram
+
+@[expose] public section
 
 /-! # Executable canonical dual of a binary linear map
 
@@ -106,4 +109,6 @@ theorem rowSpaceCheck_matrix (A : Matrix (Fin m) (Fin n) (ZMod 2))
   rw [hb, rowSpaceCheck_correct, hr, span_rows_eq_perp_ker]
 
 end MIPRE.Introspection.AuxiliaryDual
+end
+
 end

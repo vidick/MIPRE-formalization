@@ -30,6 +30,14 @@ The script
   ``--no-auto-implicit`` is given, inserts ``set_option autoImplicit true`` after the
   import block (both upstreams compile with Lean's default ``autoImplicit = true``,
   which this repository turns off in ``lakefile.toml``);
+* splits ``QuantumParallelRepetition.lean`` (71k lines upstream) into a chain of parts
+  of at most ``SPLIT_MAX_LINES`` lines each, ``QuantumParallelRepetition/Part01.lean``,
+  ``Part02.lean``, ..., cut only between the top-level ``noncomputable section`` blocks
+  of its one namespace, and leaves ``QuantumParallelRepetition.lean`` as the module that
+  imports every part (so its module name, which the bridge imports, is unchanged). The
+  Palomar registry caps every Lean file at 10,000 physical lines
+  (``planning/palomar.md``). ``--resplit`` redoes the split on the vendored copy
+  without a clone;
 * refreshes the generated block of each destination's ``README.md``.
 
 Afterwards run ``lake exe mk_all`` to refresh ``MIPRE.lean``, then ``lake build``.
@@ -45,9 +53,15 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from modularize import modularize_tree  # noqa: E402
+
 DEST_ROOT = Path("MIPRE/Background/Repetition")
 
 BEGIN_MARK = "<!-- BEGIN GENERATED (scripts/vendor-repetition.py) -->"
+MODULE_NOTE = ("- Module system: {n} files given the `module` header, `public import`s, an "
+               "`@[expose] public section` and no `private` definitions by "
+               "`scripts/modularize.py` (Palomar requires it; `planning/palomar.md`)")
 END_MARK = "<!-- END GENERATED -->"
 
 # The vendored commuting-repetition modules imported by the bridge in
@@ -83,6 +97,301 @@ theorem exists_proofSchmidtDecomposition
 """
 
 
+CR_FIX_PROD_LE_ONE_OLD = """    Finset.prod_le_one
+      (fun i _ => G.payoff_nonneg (xs i) (ys i) (as i) (bs i))
+      (fun i _ => G.payoff_le_one (xs i) (ys i) (as i) (bs i))
+"""
+
+CR_FIX_PROD_LE_ONE_NEW = """    -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one` lost its nonnegativity
+    -- hypothesis; the version with it is `Finset.prod_le_one₀`. See README.md.
+    Finset.prod_le_one₀
+      (fun i _ => G.payoff_nonneg (xs i) (ys i) (as i) (bs i))
+      (fun i _ => G.payoff_le_one (xs i) (ys i) (as i) (bs i))
+"""
+
+CR_FIX_MONOTONE_OLD = """          mul_le_mul_of_nonneg_left
+            (Finset.prod_le_one
+              (fun j _ => G.payoff_nonneg _ _ _ _)
+              (fun j _ => G.payoff_le_one _ _ _ _))
+"""
+
+CR_FIX_MONOTONE_NEW = """          -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one₀` is the version with
+          -- the nonnegativity hypothesis. See README.md.
+          mul_le_mul_of_nonneg_left
+            (Finset.prod_le_one₀
+              (fun j _ => G.payoff_nonneg _ _ _ _)
+              (fun j _ => G.payoff_le_one _ _ _ _))
+"""
+
+CR_FIX_SCALAR_OLD = """      exact Finset.prod_le_one hfmem hfmem1
+"""
+
+CR_FIX_SCALAR_NEW = """      -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one₀` is the version with
+      -- the nonnegativity hypothesis. See README.md.
+      exact Finset.prod_le_one₀ hfmem hfmem1
+"""
+
+CR_FIX_CSTAR_CONT1_OLD = """      · exact M.continuous_traceState.comp (continuous_mul_right _)
+      · exact M.continuous_traceState.comp (continuous_mul_left _)
+"""
+
+CR_FIX_CSTAR_CONT1_NEW = """      -- Vendoring compile fix (Mathlib v4.35): `continuous_mul_right`/`_left` are now
+      -- `continuous_mul_const`/`continuous_const_mul`. See README.md.
+      · exact M.continuous_traceState.comp (continuous_mul_const _)
+      · exact M.continuous_traceState.comp (continuous_const_mul _)
+"""
+
+CR_FIX_CSTAR_CONT2_OLD = """    · exact M.continuous_traceState.comp (continuous_mul_left _)
+    · exact M.continuous_traceState.comp (continuous_mul_right _)
+"""
+
+CR_FIX_CSTAR_CONT2_NEW = """    -- Vendoring compile fix (Mathlib v4.35): `continuous_mul_left`/`_right` are now
+    -- `continuous_const_mul`/`continuous_mul_const`. See README.md.
+    · exact M.continuous_traceState.comp (continuous_const_mul _)
+    · exact M.continuous_traceState.comp (continuous_mul_const _)
+"""
+
+CR_FIX_CSTAR_NORM_OLD = """    exact IsSelfAdjoint.le_algebraMap_norm_self hYsa
+"""
+
+CR_FIX_CSTAR_NORM_NEW = """    -- Vendoring compile fix (Mathlib v4.35): `IsSelfAdjoint.le_algebraMap_norm_self` takes
+    -- the element explicitly. See README.md.
+    exact IsSelfAdjoint.le_algebraMap_norm_self Y hYsa
+"""
+
+CR_FIX_CLOSED_OLD = """  have hp := (ContinuousLinearMap.nonneg_iff_isPositive T).mp h0
+"""
+
+CR_FIX_CLOSED_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `nonneg_iff_isPositive` takes its operator
+  -- implicitly. See README.md.
+  have hp := ContinuousLinearMap.nonneg_iff_isPositive.mp h0
+"""
+
+OR_FIX_JOINT1_OLD = """  have hp := (ContinuousLinearMap.nonneg_iff_isPositive x).mp h
+"""
+
+OR_FIX_JOINT1_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `nonneg_iff_isPositive` takes its operator
+  -- implicitly. See README.md.
+  have hp := ContinuousLinearMap.nonneg_iff_isPositive.mp h
+"""
+
+OR_FIX_JOINT2_OLD = """  have hp := (ContinuousLinearMap.le_def x 1).mp h
+"""
+
+OR_FIX_JOINT2_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `le_def` takes its operators implicitly.
+  -- See README.md.
+  have hp := ContinuousLinearMap.le_def.mp h
+"""
+
+OR_FIX_PERTURB_OLD = """  have h := conj_le_conj (IsSelfAdjoint.le_algebraMap_norm_self hb) r
+"""
+
+OR_FIX_PERTURB_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `IsSelfAdjoint.le_algebraMap_norm_self` takes
+  -- the element explicitly. See README.md.
+  have h := conj_le_conj (IsSelfAdjoint.le_algebraMap_norm_self b hb) r
+"""
+
+TP_FIX_NONNEG_OLD = """    (ContinuousLinearMap.nonneg_iff_isPositive _).mpr h_positive
+  apply (CStarAlgebra.norm_le_one_iff_of_nonneg _ h_nonneg).mpr
+  exact (ContinuousLinearMap.le_def _ _).mpr
+"""
+
+TP_FIX_NONNEG_NEW = """    -- Vendoring compile fix (Mathlib v4.35): `nonneg_iff_isPositive` and `le_def` take
+    -- their operators implicitly. See README.md.
+    ContinuousLinearMap.nonneg_iff_isPositive.mpr h_positive
+  apply (CStarAlgebra.norm_le_one_iff_of_nonneg _ h_nonneg).mpr
+  exact ContinuousLinearMap.le_def.mpr
+"""
+
+TP_FIX_MULVEC_OLD = """  apply (hA.dotProduct_mulVec_zero_iff x).mp
+"""
+
+TP_FIX_MULVEC_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `dotProduct_mulVec_zero_iff` takes the vector
+  -- implicitly. See README.md.
+  apply hA.dotProduct_mulVec_zero_iff.mp
+"""
+
+TP_FIX_PROD_A_OLD = """  unfold fullHistoryHiddenAliceWeight
+  rw [← Fintype.prod_sum]
+  apply Finset.prod_le_one
+"""
+
+TP_FIX_PROD_A_NEW = """  unfold fullHistoryHiddenAliceWeight
+  rw [← Fintype.prod_sum]
+  -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one₀` is the version with the
+  -- nonnegativity hypothesis. See README.md.
+  apply Finset.prod_le_one₀
+"""
+
+TP_FIX_PROD_B_OLD = """  unfold fullHistoryHiddenBobWeight
+  rw [← Fintype.prod_sum]
+  apply Finset.prod_le_one
+"""
+
+TP_FIX_PROD_B_NEW = """  unfold fullHistoryHiddenBobWeight
+  rw [← Fintype.prod_sum]
+  -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one₀` is the version with the
+  -- nonnegativity hypothesis. See README.md.
+  apply Finset.prod_le_one₀
+"""
+
+OR_FIX_POSITIVE_OLD = """      ((nonneg_iff_isPositive s).mp hs0)
+"""
+
+OR_FIX_POSITIVE_NEW = """      -- Vendoring compile fix (Mathlib v4.35): `nonneg_iff_isPositive` takes its operator
+      -- implicitly. See README.md.
+      (nonneg_iff_isPositive.mp hs0)
+"""
+
+
+CR_FIX_SUBMODEL_OLD = """    exact IsSelfAdjoint.le_algebraMap_norm_self hYsa
+"""
+
+CR_FIX_SUBMODEL_NEW = """    -- Vendoring compile fix (Mathlib v4.35): `IsSelfAdjoint.le_algebraMap_norm_self` takes
+    -- the element explicitly; dot notation supplies it. See README.md.
+    exact hYsa.le_algebraMap_norm_self
+"""
+
+CR_FIX_CFC_OLD = """    ContinuousFunctionalCalculus ℝ (L2Q K →L[ℂ] L2Q K) IsSelfAdjoint :=
+  IsSelfAdjoint.instContinuousFunctionalCalculus
+"""
+
+CR_FIX_CFC_NEW = """    ContinuousFunctionalCalculus ℝ (L2Q K →L[ℂ] L2Q K) IsSelfAdjoint :=
+  -- Vendoring compile fix (Mathlib v4.35): the algebra must be named for the `IsSelfAdjoint`
+  -- predicate's `Star` instance to unify. See README.md.
+  IsSelfAdjoint.instContinuousFunctionalCalculus (A := L2Q K →L[ℂ] L2Q K)
+"""
+
+CR_FIX_ARENA_A_OLD = """include hxA in
+theorem Ame_isPos (i : I) (a : A) : IsPosElem (lft M (Ame M h kA xA hxA i a)) := by
+"""
+
+CR_FIX_ARENA_A_NEW = """include hxA in
+-- Vendoring compile fix (Mathlib v4.35): the `map_sum` step of this proof exceeds the default
+-- heartbeat budget (its instance search unfolds the arena's algebra); it elaborates within
+-- a larger one. See README.md.
+set_option maxHeartbeats 1600000 in
+theorem Ame_isPos (i : I) (a : A) : IsPosElem (lft M (Ame M h kA xA hxA i a)) := by
+"""
+
+CR_FIX_ARENA_B_OLD = """include hyB in
+theorem Bme_isPos (j : J) (b : B) : IsPosElem (lft M (Bme M h kB yB hyB j b)) := by
+"""
+
+CR_FIX_ARENA_B_NEW = """include hyB in
+-- Vendoring compile fix (Mathlib v4.35): as for `Ame_isPos`. See README.md.
+set_option maxHeartbeats 1600000 in
+theorem Bme_isPos (j : J) (b : B) : IsPosElem (lft M (Bme M h kB yB hyB j b)) := by
+"""
+
+CR_FIX_AMP_OLD = """  rw [sub_eq_add_neg, amp_add, ← neg_one_smul ℂ z, amp_smul, neg_one_smul, sub_eq_add_neg]
+"""
+
+CR_FIX_AMP_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `neg_one_smul` needs its module element named to
+  -- unify with the scalar action `amp_smul` produces. See README.md.
+  rw [sub_eq_add_neg, amp_add, ← neg_one_smul ℂ z, amp_smul, neg_one_smul ℂ (amp z),
+    sub_eq_add_neg]
+"""
+
+CR_FIX_PROB_OLD = """  Measure.isProbabilityMeasure_map (measurable_ψψ).aemeasurable
+"""
+
+CR_FIX_PROB_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `Measure.isProbabilityMeasure_map` became the
+  -- equivalence `isProbabilityMeasure_map_iff`. See README.md.
+  (Measure.isProbabilityMeasure_map_iff (measurable_ψψ).aemeasurable).mpr inferInstance
+"""
+
+# Mathlib v4.35: on `H →L[ℂ] H` the `Star` instance is `⟨adjoint⟩` (`instStarId`), and the
+# `Star` of a `StarSubalgebra` of it is `StarMemClass.instStar`; the generic `star_sub`,
+# `star_add` and `star_zero` are stated for the `StarAddMonoid`-derived instance, which
+# `rw`/`simp` no longer identify with these (the unfolding times out). Applying the lemma to
+# its explicit arguments (or going through `adjoint`) resolves the instance before matching.
+CR_FIX_BUDGET_A_OLD = """  rw [star_sub, sub_mul, mul_sub, mul_sub, star_cA_mul_cA, star_cA_mul_cA, star_cA_mul_cA,
+    star_cA_mul_cA]
+"""
+
+CR_FIX_BUDGET_A_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `star_sub` applied to its arguments, so that the
+  -- `Star` instance of the corner algebra is resolved before the rewrite. See README.md.
+  rw [star_sub (cA M h i) (cA M h i'), sub_mul, mul_sub, mul_sub, star_cA_mul_cA,
+    star_cA_mul_cA, star_cA_mul_cA, star_cA_mul_cA]
+"""
+
+CR_FIX_BUDGET_B_OLD = """  rw [star_sub, sub_mul, mul_sub, mul_sub, dB_mul_star_dB, dB_mul_star_dB, dB_mul_star_dB,
+    dB_mul_star_dB]
+"""
+
+CR_FIX_BUDGET_B_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `star_sub` applied to its arguments (as above).
+  -- See README.md.
+  rw [star_sub (dB M h j) (dB M h j'), sub_mul, mul_sub, mul_sub, dB_mul_star_dB,
+    dB_mul_star_dB, dB_mul_star_dB, dB_mul_star_dB]
+"""
+
+CR_FIX_MODULAR_A_OLD = """    · rw [star_zero]; exact zero_mem _
+    · intro x y _ _ hx hy; rw [star_add]; exact add_mem hx hy
+"""
+
+CR_FIX_MODULAR_A_NEW = """    -- Vendoring compile fix (Mathlib v4.35): `star` on `B(ℓ²(ℚ, K))` is `adjoint`, and the
+    -- generic `star_zero`/`star_add` no longer rewrite it unapplied. See README.md.
+    · rw [ContinuousLinearMap.star_eq_adjoint, map_zero]; exact zero_mem _
+    · intro x y _ _ hx hy; rw [star_add x y]; exact add_mem hx hy
+"""
+
+CR_FIX_MODULAR_B_OLD = """  · simp only [_root_.zero_apply, map_zero, star_zero]
+  · intro x y _ _ hx hy
+    simp only [_root_.add_apply, map_add, star_add, hx, hy]
+"""
+
+CR_FIX_MODULAR_B_NEW = """  -- Vendoring compile fix (Mathlib v4.35): as in `spanAlg`, `star 0` through `adjoint` and
+  -- `star_add` applied to its arguments. See README.md.
+  · simp only [_root_.zero_apply, map_zero, ContinuousLinearMap.star_eq_adjoint]
+  · intro x y _ _ hx hy
+    rw [star_add x y]
+    simp only [_root_.add_apply, map_add, hx, hy]
+"""
+
+CR_FIX_PHI_ZERO_OLD = """  have := Phi_smul M Ω n 0 (0 : L2Q K →L[ℂ] L2Q K)
+  simpa using this
+"""
+
+CR_FIX_PHI_ZERO_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `simp` no longer sees `zero_smul`/`smul_zero`
+  -- through the `SMul` instance of `B(ℓ²(ℚ, K))` (`ContinuousLinearMap.instSMul`), so
+  -- `Phi 0 = 0` is read off additivity instead. See README.md.
+  have := Phi_add M Ω n (0 : L2Q K →L[ℂ] L2Q K) 0
+  rw [add_zero] at this
+  exact add_left_cancel (this.symm.trans (add_zero _).symm)
+"""
+
+CR_FIX_SUCCESS_OLD = """  Finset.prod_le_one (fun j _ => G.payoff_nonneg _ _ _ _) (fun j _ => G.payoff_le_one _ _ _ _)
+"""
+
+CR_FIX_SUCCESS_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one₀` is the version with the
+  -- nonnegativity hypothesis. See README.md.
+  Finset.prod_le_one₀ (fun j _ => G.payoff_nonneg _ _ _ _) (fun j _ => G.payoff_le_one _ _ _ _)
+"""
+
+
+@dataclass(frozen=True)
+class PatternFix:
+    """A recorded compile fix applied to every vendored Lean file of a source: each match of
+    ``pattern`` (a regular expression, matched with ``re.DOTALL``) is replaced by ``repl``.
+    Unlike ``Fix`` it may match any number of times, including zero, and no comment is
+    inserted at the sites; the README lists the pattern and the count."""
+
+    pattern: str
+    repl: str
+    reason: str
+
+
+# Mathlib v4.35 made the operator of `ContinuousLinearMap.nonneg_iff_isPositive` implicit;
+# upstream passes it explicitly (`_`, or a name) at many sites.
+NONNEG_IMPLICIT = PatternFix(
+    pattern=r"\(\s*ContinuousLinearMap\.nonneg_iff_isPositive\s+(?:_|[A-Za-z][\w.']*)\s*\)",
+    repl="ContinuousLinearMap.nonneg_iff_isPositive",
+    reason="Mathlib v4.35: the operator of `ContinuousLinearMap.nonneg_iff_isPositive` is "
+           "implicit; the explicit argument is dropped",
+)
+
+
 @dataclass
 class Source:
     key: str
@@ -102,6 +411,7 @@ class Source:
     audit_aids: tuple[tuple[str, str], ...] = ()    # (relative to clone, dest name)
     readme: str = ""
     fixes: tuple[Fix, ...] = ()
+    pattern_fixes: tuple[PatternFix, ...] = ()
     header: str = ""
 
 
@@ -117,6 +427,25 @@ AUTO_IMPLICIT = (
     "-- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it\n"
     "-- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.\n"
     "set_option autoImplicit true\n"
+)
+
+# The one upstream module that exceeds the 10,000-line cap, and the cap the parts are
+# kept under (a margin for the part header and the repeated namespace-level lines).
+SPLIT_FILE = "QuantumParallelRepetition.lean"
+SPLIT_NAMESPACE = "QuantumParallelRepetition"
+SPLIT_MAX_LINES = 9000
+
+SPLIT_NOTE = (
+    "-- Part {k} of {n} of upstream's single module `{file}`: its lines\n"
+    "-- {first}-{last}, cut between top-level `noncomputable section` blocks by\n"
+    "-- scripts/vendor-repetition.py (the Palomar registry caps a Lean file at 10,000 lines).\n"
+)
+
+SPLIT_ROOT_NOTE = (
+    "-- Upstream's single module `{file}` ({lines} lines) is vendored as\n"
+    "-- the chain of parts imported above, cut by scripts/vendor-repetition.py between its\n"
+    "-- top-level `noncomputable section` blocks; this module re-exports it under its\n"
+    "-- upstream name.\n"
 )
 
 CR_README = """# Vendored commuting-repetition sources
@@ -184,8 +513,16 @@ repository. Every file carries a header saying so.
 
 - Do not edit files here by hand: re-run `scripts/vendor-repetition.py` instead. The
   only differences from upstream are the header, the `set_option autoImplicit true`
-  line inserted after the imports, and the compile fixes listed below. The Lean
-  *namespace* is unchanged (`QuantumParallelRepetition`).
+  line inserted after the imports, the compile fixes listed below, and the split. The
+  Lean *namespace* is unchanged (`QuantumParallelRepetition`).
+- Upstream's one module is 71k lines, and the Palomar registry caps a Lean file at
+  10,000 (`planning/palomar.md`), so the script cuts it between its top-level
+  `noncomputable section` blocks into `QuantumParallelRepetition/Part01.lean`,
+  `Part02.lean`, ... (each importing the previous one, each under 9,000 lines, each
+  repeating the two namespace-level `open` lines that upstream places mid-file) and
+  leaves `QuantumParallelRepetition.lean` as the module importing all of them, so the
+  module name the bridge imports is unchanged. Each part's header says which upstream
+  lines it holds. `--resplit` redoes the split on an unsplit vendored copy.
 - Nothing outside `MIPRE/Background/Repetition/` may refer to that namespace.
 - `G_QuantumParallelRepetition.lean.expected` is upstream's Mathlib-only statement file
   (the definitions and the two root statements, with `sorry` proofs), kept as a reading
@@ -262,6 +599,58 @@ SOURCES = {
         roots=CR_ROOTS,
         extra_files=(("lean/NOTICE", "NOTICE"),),
         readme=CR_README,
+        fixes=(
+            Fix(path="Game/Basic.lean", old=CR_FIX_PROD_LE_ONE_OLD, new=CR_FIX_PROD_LE_ONE_NEW,
+                reason="Mathlib v4.35 `Finset.prod_le_one₀`: `Game.repeat`"),
+            Fix(path="Statement.lean", old=CR_FIX_PROD_LE_ONE_OLD, new=CR_FIX_PROD_LE_ONE_NEW,
+                reason="Mathlib v4.35 `Finset.prod_le_one₀`: `MainStatement.Game.repeat`"),
+            Fix(path="Prelim/Scalar.lean", old=CR_FIX_SCALAR_OLD, new=CR_FIX_SCALAR_NEW,
+                reason="Mathlib v4.35 `Finset.prod_le_one₀`: the product telescoping bound"),
+            Fix(path="Game/Monotone.lean", old=CR_FIX_MONOTONE_OLD, new=CR_FIX_MONOTONE_NEW,
+                reason="Mathlib v4.35 `Finset.prod_le_one₀`: the monotonicity bound"),
+            Fix(path="Tracial/CStarLayer.lean", old=CR_FIX_CSTAR_CONT1_OLD,
+                new=CR_FIX_CSTAR_CONT1_NEW,
+                reason="Mathlib v4.35 `continuous_mul_const`/`continuous_const_mul` (1)"),
+            Fix(path="Tracial/CStarLayer.lean", old=CR_FIX_CSTAR_CONT2_OLD,
+                new=CR_FIX_CSTAR_CONT2_NEW,
+                reason="Mathlib v4.35 `continuous_mul_const`/`continuous_const_mul` (2)"),
+            Fix(path="Tracial/CStarLayer.lean", old=CR_FIX_CSTAR_NORM_OLD,
+                new=CR_FIX_CSTAR_NORM_NEW,
+                reason="Mathlib v4.35 `IsSelfAdjoint.le_algebraMap_norm_self` explicit element"),
+            Fix(path="Tracial/Density/ClosedSubalg.lean", old=CR_FIX_CLOSED_OLD,
+                new=CR_FIX_CLOSED_NEW,
+                reason="Mathlib v4.35 `nonneg_iff_isPositive` implicit argument"),
+            Fix(path="VN/SubModel.lean", old=CR_FIX_SUBMODEL_OLD, new=CR_FIX_SUBMODEL_NEW,
+                reason="Mathlib v4.35 `IsSelfAdjoint.le_algebraMap_norm_self` explicit element"),
+            Fix(path="Prerounding/Success.lean", old=CR_FIX_SUCCESS_OLD, new=CR_FIX_SUCCESS_NEW,
+                reason="Mathlib v4.35 `Finset.prod_le_one₀`: the success probability bound"),
+            Fix(path="VN/Crossed/Space.lean", old=CR_FIX_CFC_OLD, new=CR_FIX_CFC_NEW,
+                reason="Mathlib v4.35: the shortcut CFC instance on `B(ℓ²(ℚ, K))` names its algebra"),
+            Fix(path="Resolver/EntropicArena.lean", old=CR_FIX_ARENA_A_OLD, new=CR_FIX_ARENA_A_NEW,
+                reason="Mathlib v4.35: heartbeat budget of `Ame_isPos`"),
+            Fix(path="Resolver/EntropicArena.lean", old=CR_FIX_ARENA_B_OLD, new=CR_FIX_ARENA_B_NEW,
+                reason="Mathlib v4.35: heartbeat budget of `Bme_isPos`"),
+            Fix(path="VN/Crossed/AmpCalc.lean", old=CR_FIX_AMP_OLD, new=CR_FIX_AMP_NEW,
+                reason="Mathlib v4.35: `neg_one_smul` with its element named (`amp_sub`)"),
+            Fix(path="VN/JointModulus.lean", old=CR_FIX_PROB_OLD, new=CR_FIX_PROB_NEW,
+                reason="Mathlib v4.35: `Measure.isProbabilityMeasure_map_iff`"),
+            Fix(path="Resolver/EntropicArenaBudget.lean", old=CR_FIX_BUDGET_A_OLD,
+                new=CR_FIX_BUDGET_A_NEW,
+                reason="Mathlib v4.35: `star_sub` with its arguments (`star_diffA_mul_diffA`)"),
+            Fix(path="Resolver/EntropicArenaBudget.lean", old=CR_FIX_BUDGET_B_OLD,
+                new=CR_FIX_BUDGET_B_NEW,
+                reason="Mathlib v4.35: `star_sub` with its arguments (`diffB_mul_star_diffB`)"),
+            Fix(path="VN/Crossed/Modular.lean", old=CR_FIX_MODULAR_A_OLD,
+                new=CR_FIX_MODULAR_A_NEW,
+                reason="Mathlib v4.35: `star` of `B(ℓ²(ℚ, K))` in `spanAlg.star_mem'`"),
+            Fix(path="VN/Crossed/Modular.lean", old=CR_FIX_MODULAR_B_OLD,
+                new=CR_FIX_MODULAR_B_NEW,
+                reason="Mathlib v4.35: `star` of `B(ℓ²(ℚ, K))` in `Th_Jh_spanAlg`"),
+            Fix(path="Tracial/Density/CrossedTracial.lean", old=CR_FIX_PHI_ZERO_OLD,
+                new=CR_FIX_PHI_ZERO_NEW,
+                reason="Mathlib v4.35: `Phi_zero` from additivity (the `SMul` instance)"),
+        ),
+        pattern_fixes=(NONNEG_IMPLICIT,),
     ),
     "tp": Source(
         key="tp",
@@ -283,6 +672,18 @@ SOURCES = {
                 new=TP_FIX_SCHMIDT_NEW,
                 reason="Lean v4.33 transparency check: `exists_proofSchmidtDecomposition`",
             ),
+            Fix(path="QuantumParallelRepetition.lean", old=TP_FIX_NONNEG_OLD,
+                new=TP_FIX_NONNEG_NEW,
+                reason="Mathlib v4.35 `nonneg_iff_isPositive`/`le_def` implicit arguments"),
+            Fix(path="QuantumParallelRepetition.lean", old=TP_FIX_MULVEC_OLD,
+                new=TP_FIX_MULVEC_NEW,
+                reason="Mathlib v4.35 `dotProduct_mulVec_zero_iff` implicit vector"),
+            Fix(path="QuantumParallelRepetition.lean", old=TP_FIX_PROD_A_OLD,
+                new=TP_FIX_PROD_A_NEW,
+                reason="Mathlib v4.35 `Finset.prod_le_one₀`: the hidden Alice weight"),
+            Fix(path="QuantumParallelRepetition.lean", old=TP_FIX_PROD_B_OLD,
+                new=TP_FIX_PROD_B_NEW,
+                reason="Mathlib v4.35 `Finset.prod_le_one₀`: the hidden Bob weight"),
         ),
     ),
     "or": Source(
@@ -298,8 +699,73 @@ SOURCES = {
         extra_prefixes=(("CommutingRepetition",
                          "MIPRE.Background.Repetition.CommutingRepetition"),),
         readme=OR_README,
+        fixes=(
+            Fix(path="FinDim/Isometry.lean", old=OR_FIX_POSITIVE_OLD, new=OR_FIX_POSITIVE_NEW,
+                reason="Mathlib v4.35 `nonneg_iff_isPositive` implicit argument"),
+            Fix(path="FinDim/JointDiag.lean", old=OR_FIX_JOINT1_OLD, new=OR_FIX_JOINT1_NEW,
+                reason="Mathlib v4.35 `nonneg_iff_isPositive` implicit argument (eigenvalues)"),
+            Fix(path="FinDim/JointDiag.lean", old=OR_FIX_JOINT2_OLD, new=OR_FIX_JOINT2_NEW,
+                reason="Mathlib v4.35 `le_def` implicit arguments (eigenvalues)"),
+            Fix(path="MvN/Perturb.lean", old=OR_FIX_PERTURB_OLD, new=OR_FIX_PERTURB_NEW,
+                reason="Mathlib v4.35 `IsSelfAdjoint.le_algebraMap_norm_self` explicit element"),
+        ),
+        pattern_fixes=(NONNEG_IMPLICIT,),
     ),
 }
+
+
+def apply_pattern_fixes(src: Source, dest: Path) -> list[tuple[PatternFix, int]]:
+    """Apply the source's pattern fixes to every Lean file under ``dest``; returns the
+    number of replacements per pattern."""
+    counts = []
+    for pf in src.pattern_fixes:
+        rx = re.compile(pf.pattern, re.DOTALL)
+        n = 0
+        for path in sorted(dest.rglob("*.lean")):
+            text = path.read_text(encoding="utf-8")
+            new, k = rx.subn(pf.repl, text)
+            if k:
+                path.write_text(new, encoding="utf-8", newline="\n")
+                n += k
+        counts.append((pf, n))
+    return counts
+
+
+def apply_fixes(repo_root: Path) -> int:
+    """Apply every recorded fix to the vendored trees as they are (no clone needed): a fix
+    whose ``old`` text occurs exactly once is applied, one whose ``new`` text is already
+    present is skipped, anything else is an error. Returns the number applied."""
+    applied = 0
+    for src in SOURCES.values():
+        for fix in src.fixes:
+            target = repo_root / src.dest / fix.path
+            # After the split, a fix recorded against the single upstream module lives in
+            # one of its parts.
+            candidates = [target] + sorted((target.parent / target.stem).glob("Part*.lean"))
+            target = next((c for c in candidates
+                           if fix.old in c.read_text(encoding="utf-8")
+                           or fix.new in c.read_text(encoding="utf-8")), target)
+            text = target.read_text(encoding="utf-8")
+            # `new` may contain `old` (a fix that prepends to a declaration), so the
+            # already-applied check comes first.
+            if text.count(fix.new) == 1:
+                print(f"[{src.key}] already applied to {fix.path}: {fix.reason}")
+            elif text.count(fix.old) == 1:
+                target.write_text(text.replace(fix.old, fix.new), encoding="utf-8",
+                                  newline="\n")
+                applied += 1
+                print(f"[{src.key}] applied to {fix.path}: {fix.reason}")
+            else:
+                sys.exit(f"error: fix for {src.key}/{fix.path} ({fix.reason}) matched "
+                         f"{text.count(fix.old)} times, expected 1")
+        for pf, n in apply_pattern_fixes(src, repo_root / src.dest):
+            print(f"[{src.key}] pattern fix, {n} replacement(s): {pf.reason}")
+            applied += n
+        n = modularize_tree(repo_root / src.dest)
+        if n:
+            print(f"[{src.key}] module headers added to {n} files")
+            applied += n
+    return applied
 
 
 def git(source: Path, *args: str) -> str:
@@ -353,6 +819,137 @@ def insert_auto_implicit(text: str) -> str:
     while block and block[-1].strip() == "":
         block.pop()
     return "\n".join(lines[:first] + block + ["", AUTO_IMPLICIT.rstrip("\n")] + [""] + lines[end:])
+
+
+_BLOCK_OPEN = re.compile(r"^(noncomputable\s+)?section\b|^namespace\b")
+_BLOCK_END = re.compile(r"^end\b")
+
+
+def split_module(text: str, max_lines: int, namespace: str) -> tuple[list[str], list[str],
+                                                                      list[list[str]],
+                                                                      list[tuple[int, int]]]:
+    """Cut the body of ``text`` (one ``namespace .. end`` at the top level) between its
+    top-level blocks into parts of at most ``max_lines`` lines.
+
+    Returns ``(prologue, epilogue, parts, spans)``: the lines before ``namespace`` and
+    after ``end namespace``, the parts (lists of body lines), and each part's line span in
+    ``text`` (1-based, inclusive). Namespace-level lines that are not blocks (``open``,
+    ``set_option`` and the like) are repeated at the start of every later part, since a
+    part is its own file. Block comments and line comments are skipped when tracking the
+    nesting, so an ``end`` inside a comment does not count."""
+    lines = text.split("\n")
+    ns_line = next(i for i, l in enumerate(lines) if l.strip() == f"namespace {namespace}")
+    end_line = max(i for i, l in enumerate(lines) if l.strip() == f"end {namespace}")
+    prologue, epilogue = lines[:ns_line], lines[end_line + 1:]
+    body = lines[ns_line + 1:end_line]
+
+    # Top-level units of the body: a block (a section/namespace and everything to its
+    # matching end) or a single namespace-level line, each with its trailing blank lines.
+    units: list[tuple[int, int, bool]] = []      # (start, stop, is_block) as body indices
+    depth = 0
+    in_comment = 0
+    start: int | None = None
+    for i, l in enumerate(body):
+        s = l.strip()
+        if in_comment:
+            if "-/" in s:
+                in_comment -= 1
+            continue
+        if s.startswith("/-"):
+            if "-/" not in s:
+                in_comment += 1
+            if depth == 0 and s:
+                units.append((i, i + 1, False))
+            continue
+        if s.startswith("--"):
+            if depth == 0:
+                units.append((i, i + 1, False))
+            continue
+        if _BLOCK_OPEN.match(s):
+            if depth == 0:
+                start = i
+            depth += 1
+        elif _BLOCK_END.match(s):
+            depth -= 1
+            if depth < 0:
+                sys.exit(f"error: unbalanced `end` at body line {i + 1}")
+            if depth == 0:
+                assert start is not None
+                units.append((start, i + 1, True))
+                start = None
+        elif depth == 0 and s:
+            units.append((i, i + 1, False))
+    if depth != 0 or in_comment:
+        sys.exit("error: the body's sections do not balance; cannot split")
+
+    parts: list[list[str]] = []
+    spans: list[tuple[int, int]] = []
+    carried: list[str] = []          # namespace-level lines seen so far, repeated per part
+    current: list[str] = []
+    current_start: int | None = None
+    prev_stop = 0
+    for u_start, u_stop, is_block in units:
+        chunk = body[prev_stop:u_stop]          # the unit with the blank lines before it
+        prev_stop = u_stop
+        if current and len(current) + len(chunk) > max_lines:
+            parts.append(current)
+            spans.append((ns_line + 2 + current_start, ns_line + 1 + prev_stop - len(chunk)))
+            current, current_start = [], None
+        if current_start is None:
+            current_start = u_stop - len(chunk)
+            current = list(carried)
+            if carried:
+                current.append("")
+        current.extend(chunk)
+        if not is_block:
+            carried.extend(l for l in body[u_start:u_stop] if l.strip())
+    if current:
+        parts.append(current)
+        spans.append((ns_line + 2 + current_start, ns_line + 1 + prev_stop))
+    return prologue, epilogue, parts, spans
+
+
+def write_split(dest: Path, filename: str, local_prefix: str,
+                max_lines: int = SPLIT_MAX_LINES, namespace: str = SPLIT_NAMESPACE) -> int:
+    """Split ``dest/filename`` (a vendored file: provenance header, imports, the inserted
+    ``set_option`` block, one namespace) into ``dest/<stem>/PartNN.lean`` and rewrite it as
+    the module importing the parts. Returns the number of parts."""
+    path = dest / filename
+    stem = Path(filename).stem
+    text = path.read_text(encoding="utf-8")
+    prologue, epilogue, parts, spans = split_module(text, max_lines, namespace)
+    if any(l.strip() for l in epilogue):
+        sys.exit(f"error: {filename} has code after `end {namespace}`; cannot split")
+    if not prologue or prologue[0] != "/-":
+        sys.exit(f"error: {filename} does not start with the provenance header")
+    close = next(i for i, l in enumerate(prologue) if l.strip() == "-/")
+    header = "\n".join(prologue[:close + 1]) + "\n"
+    imports = [l for l in prologue[close + 1:] if l.startswith("import ")]
+    rest = [l for l in prologue[close + 1:] if not l.startswith("import ")]
+    part_dir = dest / stem
+    if part_dir.exists():
+        shutil.rmtree(part_dir)
+    part_dir.mkdir()
+    n = len(parts)
+    for k, (part, (first, last)) in enumerate(zip(parts, spans), 1):
+        module = f"{local_prefix}.{stem}.Part{k:02d}"
+        chain = imports + ([f"import {local_prefix}.{stem}.Part{k - 1:02d}"] if k > 1 else [])
+        out = [header.rstrip("\n")] + chain + [""]
+        out += [SPLIT_NOTE.format(k=k, n=n, file=filename, first=first, last=last).rstrip("\n")]
+        out += [l for l in rest if l.strip()] + ["", f"namespace {namespace}", ""]
+        out += part
+        while out and out[-1].strip() == "":
+            out.pop()
+        out += ["", f"end {namespace}", ""]
+        (part_dir / f"Part{k:02d}.lean").write_text("\n".join(out), encoding="utf-8",
+                                                    newline="\n")
+        if len(out) > 10000:
+            sys.exit(f"error: {module} has {len(out)} lines")
+    root = [header.rstrip("\n")]
+    root += [f"import {local_prefix}.{stem}.Part{k:02d}" for k in range(1, n + 1)]
+    root += ["", SPLIT_ROOT_NOTE.format(file=filename, lines=text.count("\n")).rstrip("\n"), ""]
+    path.write_text("\n".join(root), encoding="utf-8", newline="\n")
+    return n
 
 
 def refresh_readme(path: Path, default: str, generated: str) -> None:
@@ -425,6 +1022,16 @@ def vendor(src: Source, clone: Path, commit: str, repo_root: Path, auto_implicit
                      f"{text.count(fix.old)} times, expected 1")
         target.write_text(text.replace(fix.old, fix.new), encoding="utf-8", newline="\n")
 
+    pattern_counts = apply_pattern_fixes(src, dest)
+
+    parts = 0
+    if src.key == "tp":
+        parts = write_split(dest, SPLIT_FILE, src.local_prefix)
+
+    # Last, so that the split and the fixes see upstream's file shapes: every file becomes a
+    # module (`scripts/modularize.py`, the recorded mechanism for the whole repository).
+    modularized = modularize_tree(dest)
+
     details = [
         BEGIN_MARK,
         f"- Upstream: {src.url}",
@@ -439,7 +1046,15 @@ def vendor(src: Source, clone: Path, commit: str, repo_root: Path, auto_implicit
     details += [f"- `set_option autoImplicit true` inserted after the imports: "
                 f"{'yes' if auto_implicit else 'no'}"]
     details += [f"- Recorded compile fixes applied: {len(src.fixes)} "
-                f"(listed under \"Local deviations from upstream\")", END_MARK]
+                f"(listed under \"Local deviations from upstream\")"]
+    details += [f"- Recorded pattern fix, {n} replacement(s): {pf.reason}"
+                for pf, n in pattern_counts]
+    if parts:
+        details += [f"- `{SPLIT_FILE}` split into {parts} parts of at most {SPLIT_MAX_LINES} "
+                    f"lines (`{Path(SPLIT_FILE).stem}/PartNN.lean`), cut between its "
+                    f"top-level `noncomputable section` blocks; the root module imports them"]
+    details += [MODULE_NOTE.format(n=modularized)]
+    details += [END_MARK]
     refresh_readme(readme, src.readme, "\n".join(details))
     print(f"[{src.key}] vendored {len(files)} files ({lines} lines) from {src.url}@{short} "
           f"into {src.dest.as_posix()}; {rewritten} imports rewritten")
@@ -458,7 +1073,28 @@ def main() -> None:
     parser.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parent.parent)
     parser.add_argument("--no-auto-implicit", action="store_true",
                         help="do not insert `set_option autoImplicit true`")
+    parser.add_argument("--resplit", action="store_true",
+                        help=f"only redo the split of the vendored {SPLIT_FILE} (no clone "
+                             "needed): the parts are regenerated from the root module's "
+                             "current parts, joined back together first")
+    parser.add_argument("--apply-fixes", action="store_true",
+                        help="apply the recorded compile fixes to the vendored trees as they "
+                             "are (no clone needed); fixes already applied are skipped")
     args = parser.parse_args()
+    if args.apply_fixes:
+        n = apply_fixes(args.repo_root.resolve())
+        print(f"{n} fixes applied; next: lake build")
+        return
+    if args.resplit:
+        dest = args.repo_root.resolve() / SOURCES["tp"].dest
+        root = dest / SPLIT_FILE
+        if f"namespace {SPLIT_NAMESPACE}" not in root.read_text(encoding="utf-8"):
+            sys.exit(f"error: {root} is already the import-only root of a split; --resplit "
+                     "needs the unsplit vendored module (re-vendor from a clone, or restore "
+                     "the file from the commit before the split)")
+        n = write_split(dest, SPLIT_FILE, SOURCES["tp"].local_prefix)
+        print(f"[tp] split {SPLIT_FILE} into {n} parts; next: lake exe mk_all && lake build")
+        return
     done = 0
     if args.cr_source:
         if not args.cr_commit:

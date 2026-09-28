@@ -17,12 +17,16 @@ is the ν-mixture of the component correlations.
 classical flag"; sec 7.4 "Presample the other n−1 question pairs using
 shared classical randomness"]
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Strategy
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Strategy
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -209,3 +213,5 @@ theorem CommutingStrategy.seedMixture_correlation
   exact RCLike.re_ofReal_mul _ _
 
 end CommutingRepetition
+
+end

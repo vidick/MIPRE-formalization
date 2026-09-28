@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.PauliRestriction
-import MIPRE.Background.QLD.CLTransport
+module
+public import MIPRE.Foundations.Introspection.PauliRestriction
+public import MIPRE.Background.QLD.CLTransport
+
+@[expose] public section
 
 /-! # Actual Pauli strategies extracted by restricting introspection
 
@@ -166,4 +169,6 @@ theorem strategy_pauliAns_B (W : QLD.Bas) (a : (Fin m → Bool) → F) :
   rfl
 
 end MIPRE.Introspection.PauliRestriction
+end
+
 end

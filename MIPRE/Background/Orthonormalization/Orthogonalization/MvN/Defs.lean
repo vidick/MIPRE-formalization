@@ -20,14 +20,18 @@ Conventions: "projection" means `IsStarProjection` (self-adjoint idempotent);
 `q ≤ p` for projections is written `q * p = q`; `p M p` is described through
 its elements `x ∈ M` with `p * x * p = x`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Normal
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Local
-import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Blocks
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Normal
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Local
+public import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Blocks
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.MvN
 
@@ -197,3 +201,5 @@ structure IsCenterValuedTrace (M : VonNeumannAlgebra H) (p : H →L[ℂ] H)
     ∑ i, E (entry P i i) = ∑ i, E (entry Q i i) → MvNEquiv (matrixAlgebra M n) P Q
 
 end Orthogonalization.MvN
+
+end

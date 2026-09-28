@@ -3,7 +3,10 @@ Copyright (c) 2026 Sean Perazzolo. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sean Perazzolo
 -/
-import MIPRE.LCS.Basic
+module
+public import MIPRE.LCS.Basic
+
+@[expose] public section
 
 /-!
 # Common Utilities for LCS Games
@@ -79,3 +82,5 @@ lemma finset_filter_eq_inter_univ_filter {α : Type*} [Fintype α] [DecidableEq 
   ext x; simp
 
 end MIPRE.LCS
+
+end

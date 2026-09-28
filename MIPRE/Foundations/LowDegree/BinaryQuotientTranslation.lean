@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial
+module
+public import MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial
+
+@[expose] public section
 
 /-! # Translating binary polynomials in a supplied polynomial quotient -/
 
@@ -54,12 +57,12 @@ theorem coeffPolynomial_translateBits (z : R) (p a g : BitStr) (hp : p ≠ [])
     cases b <;> simp [ofBool, evalBits_oneBits z p hp, Polynomial.map_add,
       Polynomial.map_mul, add_comp, mul_comp]
 
-private abbrev TranslateState := BitStr × BitStr × List BitStr
+abbrev TranslateState := BitStr × BitStr × List BitStr
 
-private def translateStep (s : TranslateState) (b : Bool) : TranslateState :=
+def translateStep (s : TranslateState) (b : Bool) : TranslateState :=
   (s.1, s.2.1, linearMulCarry s.1 s.2.1 (if b then oneBits s.1 else zeroBits s.1) s.2.2)
 
-private theorem fold_translateStep_shape (pre : BitStr) (p a : BitStr) (cs : List BitStr) :
+theorem fold_translateStep_shape (pre : BitStr) (p a : BitStr) (cs : List BitStr) :
     (pre.foldl translateStep (p, a, cs)).1 = p ∧
       (pre.foldl translateStep (p, a, cs)).2.1 = a ∧
       (pre.foldl translateStep (p, a, cs)).2.2.length = cs.length + pre.length := by
@@ -71,7 +74,7 @@ private theorem fold_translateStep_shape (pre : BitStr) (p a : BitStr) (cs : Lis
     simpa only [List.foldl_cons, translateStep, length_linearMulCarry, List.length_cons,
       Nat.add_assoc, Nat.add_comm 1 pre.length] using h.2.2
 
-private theorem fold_translateStep_width (pre : BitStr) (p a : BitStr) (cs : List BitStr) (N : ℕ)
+theorem fold_translateStep_width (pre : BitStr) (p a : BitStr) (cs : List BitStr) (N : ℕ)
     (hp : p.length ≤ N) (hc : ∀ c ∈ cs, c.length ≤ N) :
     ∀ c ∈ (pre.foldl translateStep (p, a, cs)).2.2, c.length ≤ N := by
   induction pre generalizing cs with
@@ -81,7 +84,7 @@ private theorem fold_translateStep_width (pre : BitStr) (p a : BitStr) (cs : Lis
     apply linearMulCarry_width_le _ _ _ _ N _ hc
     cases b <;> simpa using hp
 
-private theorem fold_translateStep_eq (bs : BitStr) (p a : BitStr) (cs : List BitStr) :
+theorem fold_translateStep_eq (bs : BitStr) (p a : BitStr) (cs : List BitStr) :
     bs.foldl translateStep (p, a, cs) =
       (p, a, bs.foldl (fun acc b => linearMulCarry p a
         (if b then oneBits p else zeroBits p) acc) cs) := by
@@ -89,7 +92,7 @@ private theorem fold_translateStep_eq (bs : BitStr) (p a : BitStr) (cs : List Bi
   | nil => rfl
   | cons b bs ih => exact ih _
 
-private def translateStepProg : PolyTimeFun (TranslateState × Bool) TranslateState :=
+def translateStepProg : PolyTimeFun (TranslateState × Bool) TranslateState :=
   let p := fst.comp fst
   let a := fst.comp (snd.comp fst)
   let cs := snd.comp (snd.comp fst)
@@ -101,7 +104,7 @@ private def translateStepProg : PolyTimeFun (TranslateState × Bool) TranslateSt
       rw [linearMulCarryProg_apply]
       rfl)
 
-private theorem translateStep_bounded :
+theorem translateStep_bounded :
     FoldBounded translateStepProg (20 * X ^ 2 + 20 * X + 20) := by
   intro bs s pre post heq
   rcases s with ⟨p, a, cs⟩
@@ -149,5 +152,7 @@ def translateBitsProg : PolyTimeFun (BitStr × BitStr × BitStr) (List BitStr) :
     translateBitsProg (p, a, g) = translateBits p a g := rfl
 
 end MIPRE.LowDegree.BinaryQuotient
+
+end
 
 end

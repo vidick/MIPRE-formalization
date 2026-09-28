@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Algebra.MvPolynomial.Degrees
-import Mathlib.Algebra.MvPolynomial.CommRing
+module
+public import Mathlib.Algebra.MvPolynomial.Degrees
+public import Mathlib.Algebra.MvPolynomial.CommRing
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The low-degree code
@@ -164,5 +168,7 @@ theorem coded_ldEnc_ofBool (a : (Fin m → Bool) → Bool) :
   codedOn_ldEnc fun y => by cases h : a y <;> simp [ofBool]
 
 end MIPRE.LowDegree
+
+end
 
 end

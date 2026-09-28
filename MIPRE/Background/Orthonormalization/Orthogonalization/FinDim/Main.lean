@@ -25,15 +25,19 @@ statement `povm_orthogonalization` (Theorem 1.2) for a von Neumann algebra
 containing every operator, resp. for `fullAlgebra H = B(H)` (encoding decision
 E6 of `PLAN.md`; FIDELITY.md, "Instances").
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.Basic
-import MIPRE.Background.Orthonormalization.Orthogonalization.Assembly
-import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Selection
-import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Completion
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Basic
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Assembly
+public import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Selection
+public import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Completion
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization
 
@@ -92,7 +96,7 @@ theorem povm_orthogonalization_of_mem_all (M : VonNeumannAlgebra H)
       (φ (∑ i, star (a i - p i) * (a i - p i))).re < 9 * ε := by
   obtain ⟨p, hp, hsum, hlt⟩ := povm_orthogonalization_finDim φ.toLinearMap
     (fun x => φ.nonneg' x (hM x)) φ.map_one' a
-    (fun i => (ContinuousLinearMap.nonneg_iff_isPositive _).mpr (ha.2.1 i)) ha.2.2 ε hε
+    (fun i => ContinuousLinearMap.nonneg_iff_isPositive.mpr (ha.2.1 i)) ha.2.2 ε hε
   exact ⟨p, ⟨fun i => hM _, hp, hsum⟩, hlt⟩
 
 /-- Theorem 1.2 (`povm_orthogonalization`) for `M = B(H)`, `H` finite-dimensional. -/
@@ -106,3 +110,5 @@ theorem povm_orthogonalization_fullAlgebra (φ : NormalState (fullAlgebra H))
 end FinDim
 
 end Orthogonalization
+
+end

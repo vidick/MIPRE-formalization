@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Basic/DistributionUniformSums.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.PMFUniformAverages
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.PMFUniformAverages
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -475,3 +478,5 @@ theorem uniformOnFinset_filter_sum_smul_equiv {α β M : Type*}
               (f := fun a : {a : α // p a} => f a.1))
 
 end MIPStarRE.LDT
+
+end

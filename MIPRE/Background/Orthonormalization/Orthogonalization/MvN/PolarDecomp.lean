@@ -30,14 +30,18 @@ from `|x| (1 − u* u) |x| = x* x − x* x = 0` (hence `u* u |x| = |x|`, `x u* u
 
 No statement of the paper is made here.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.BlockCalc
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
-import MIPRE.Background.Repetition.CommutingRepetition.VN.MonotoneLimit
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.BlockCalc
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.MonotoneLimit
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.MvN
 
@@ -344,3 +348,5 @@ theorem exists_polar (M : VonNeumannAlgebra H) (x : H →L[ℂ] H) (hx : x ∈ M
   exact ⟨u, huM, huu, huu', hus.symm⟩
 
 end Orthogonalization.MvN
+
+end

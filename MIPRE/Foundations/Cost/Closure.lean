@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.PolyTime
+module
+public import MIPRE.Foundations.Cost.PolyTime
+
+@[expose] public section
 
 /-!
 # The closure library, part I: calls, projections, pairing, branching
@@ -175,3 +178,5 @@ noncomputable def ite (c : PolyTimeFun α Bool) (F G : PolyTimeFun α β) : Poly
 end PolyTimeFun
 
 end MIPRE.Cost
+
+end

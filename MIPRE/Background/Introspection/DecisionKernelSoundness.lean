@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.DecisionKernelAuxiliary
+module
+public import MIPRE.Background.Introspection.DecisionKernelAuxiliary
+
+@[expose] public section
 
 /-! # Kernel soundness in the finite semantic answer alphabet -/
 
@@ -89,4 +92,6 @@ theorem program_sound (W : ClockedUniversalMachine) {lam n : ℕ}
     exact hD
 
 end MIPRE.Introspection.DecisionKernel
+end
+
 end

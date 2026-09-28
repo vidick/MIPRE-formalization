@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryTrace
-import MIPRE.Foundations.SAT.QuotientField
+module
+public import MIPRE.Foundations.LowDegree.BinaryTrace
+public import MIPRE.Foundations.SAT.QuotientField
+
+@[expose] public section
 
 /-! # Frobenius and trace in the effective Shoup field -/
 
@@ -92,5 +95,7 @@ theorem shoupTraceProg_time_le : ∃ R : Polynomial ℕ, ∀ k : ℕ, ∀ a : Bi
   simpa using polynomial_eval_mono shoupTraceProg.timeBound hsize
 
 end MIPRE.SAT
+
+end
 
 end

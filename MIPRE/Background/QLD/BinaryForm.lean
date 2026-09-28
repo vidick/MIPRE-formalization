@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Soundness
-import MIPRE.Foundations.WeylBinary
+module
+public import MIPRE.Background.QLD.Soundness
+public import MIPRE.Foundations.WeylBinary
+
+@[expose] public section
 
 /-!
 # `cor:qld-binary`: `thm:qld` on qubits
@@ -371,5 +374,7 @@ theorem qld_soundness_binary :
       (fun h => (((MB (.pauli .Z)).map rdPauliVec).mats h).val) aux).trans_le (h2 .Z).2
 
 end MIPRE.QLD
+
+end
 
 end

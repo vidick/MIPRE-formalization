@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/Averaging.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionPMF
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionPMF
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -118,3 +121,5 @@ lemma m_sq_mul_sliceConditioningLoss_rpow_le_next_sq_mul_rpow
           simpa [mul_assoc] using (mul_le_mul_of_nonneg_right hcoef hrpow_nonneg)
 
 end MIPStarRE.LDT.MainInductionStep
+
+end

@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.Construction
-import MIPRE.Background.AnswerReduction.TypedComplete
-import MIPRE.Foundations.CL.DetypingDeciderTransport
+module
+public import MIPRE.Background.AnswerReduction.Construction
+public import MIPRE.Background.AnswerReduction.TypedComplete
+public import MIPRE.Foundations.CL.DetypingDeciderTransport
+
+@[expose] public section
 
 /-!
 # Completeness of answer reduction
@@ -248,5 +251,7 @@ theorem arVerifier_completeness (R : Polynomial ℕ) (hF : ShoupField PD) (hR : 
 end Final
 
 end MIPRE.AnswerReduction
+
+end
 
 end

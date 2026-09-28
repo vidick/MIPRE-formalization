@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.Layout
+module
+public import MIPRE.Background.AnswerReduction.Layout
+
+@[expose] public section
 
 /-!
 # The queries of a copy of the PCP sampler, run by run
@@ -297,5 +300,7 @@ theorem comps_map_two (t : Ty) (u y : Coord P → F) :
   rfl
 
 end MIPRE.AnswerReduction.Pcp
+
+end
 
 end

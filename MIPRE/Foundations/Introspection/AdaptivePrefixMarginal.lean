@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptivePrefixAdvance
+module
+public import MIPRE.Foundations.Introspection.AdaptivePrefixAdvance
+
+@[expose] public section
 
 /-! # Exact marginal error at the next adaptive prefix
 
@@ -19,7 +22,7 @@ namespace MIPRE.Introspection
 open Finset Matrix Weyl Classical
 set_option linter.unusedSectionVars false
 
-private theorem fibSum_sqNorm_of_injective_support
+theorem fibSum_sqNorm_of_injective_support
     {I J D K : Type*} [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J]
     [Fintype D] [DecidableEq D] [Fintype K] [DecidableEq K]
     (ψ : D × K → ℂ) (X : I → Matrix D D ℂ) (f : I → J) (good : I → Prop)
@@ -105,5 +108,7 @@ theorem prefixStageMarginalError_reassembled (P : CL.CLFun F ι ℓ)
   rfl
 
 end MIPRE.Introspection
+
+end
 
 end

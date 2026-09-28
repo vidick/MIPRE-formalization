@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.PauliBinaryPrograms
-import MIPRE.Background.QLD.PauliBooleanRaw
-import MIPRE.Background.QLD.PauliFullAnswerCorrect
+module
+public import MIPRE.Background.QLD.PauliBinaryPrograms
+public import MIPRE.Background.QLD.PauliBooleanRaw
+public import MIPRE.Background.QLD.PauliFullAnswerCorrect
+
+@[expose] public section
 
 /-! # Raw Pauli programs for the final introspection compiler -/
 
@@ -71,4 +74,6 @@ theorem program_canonical (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k)
   exact PauliBooleanProgram.program_correct_formatted k hk j hj hm T U x y a b ha hb
 
 end MIPRE.QLD.PauliBinaryProgram
+end
+
 end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.TM.CookLevin.PcpClauses
-import MIPRE.Foundations.SAT.FiniteCircuitArithmetization
+module
+public import MIPRE.TM.CookLevin.PcpClauses
+public import MIPRE.Foundations.SAT.FiniteCircuitArithmetization
+
+@[expose] public section
 
 /-!
 # The circuit polynomial in the PCP clause coordinates
@@ -57,7 +60,7 @@ theorem eval_iff_exists_circuitArith (P : PcpParams) (C : Circuit) (hC : C.WellF
     refine ⟨y ∘ Fin.cast h, hy, ?_⟩
     simpa [eval_circuitArith, Function.comp_def, pt] using he
 
-private theorem inputSlice_getD (P : PcpParams) (y : Fin P.m' → Bool)
+theorem inputSlice_getD (P : PcpParams) (y : Fin P.m' → Bool)
     (j : ℕ) (hj : j < 5 * P.m + 5) :
     (P.inputSlice y).getD j false = y ⟨j, by unfold m'; omega⟩ := by
   simp only [inputSlice, List.getD_eq_getElem?_getD, List.getElem?_ofFn, dif_pos hj,
@@ -133,7 +136,7 @@ theorem ofBool_decodedAssignment [DecidableEq F] {P : PcpParams} (pf : PcpProof 
   rcases coded_eq (pf.g i) (indexCube j) with h | h <;>
     simp [decodedAssignment, h, ofBool]
 
-private theorem ofBool_injective : Function.Injective (ofBool : Bool → F) := by
+theorem ofBool_injective : Function.Injective (ofBool : Bool → F) := by
   intro a b h
   cases a <;> cases b <;> simp_all [ofBool]
 
@@ -211,5 +214,7 @@ theorem soundness_of_describes [Fintype F] [DecidableEq F]
     exact he.symm
 
 end MIPRE.SAT.PcpParams
+
+end
 
 end

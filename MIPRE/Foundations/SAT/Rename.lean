@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.ArrayProg
+module
+public import MIPRE.Foundations.SAT.ArrayProg
+
+@[expose] public section
 
 /-!
 # Renaming formula inputs in polynomial time
@@ -65,13 +68,13 @@ theorem rpn_rename (ρ : ℕ → ℕ) (f : Fml) :
 
 variable {α : Type*} [SizedEncoding α]
 
-private noncomputable def renameNodeProg (R : PolyTimeFun (α × ℕ) ℕ) :
+noncomputable def renameNodeProg (R : PolyTimeFun (α × ℕ) ℕ) :
     PolyTimeFun (α × Node) Node :=
   MIPRE.SAT.PolyTimeFun.casesNode ((tagged 0 Node.inp Node.encode_inp).comp R)
     ((tagged 1 Node.const Node.encode_const).comp snd)
     (PolyTimeFun.const Node.and) (PolyTimeFun.const Node.or) (PolyTimeFun.const Node.not)
 
-private theorem renameNodeProg_apply (R : PolyTimeFun (α × ℕ) ℕ) (a : α) (nd : Node) :
+theorem renameNodeProg_apply (R : PolyTimeFun (α × ℕ) ℕ) (a : α) (nd : Node) :
     renameNodeProg R (a, nd) = Node.rename (fun i => R (a, i)) nd := by
   cases nd <;> rfl
 
@@ -94,3 +97,5 @@ noncomputable def renameBy : PolyTimeFun (List ℕ × Fml) Fml :=
     renameBy (ρ, f) = rename (fun i => ρ.getD i 0) f := rfl
 
 end MIPRE.SAT.Fml
+
+end

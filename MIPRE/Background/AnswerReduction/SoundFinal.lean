@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.SoundPcp
-import MIPRE.Background.AnswerReduction.SoundSetup
-import MIPRE.Background.AnswerReduction.SoundError
+module
+public import MIPRE.Background.AnswerReduction.SoundPcp
+public import MIPRE.Background.AnswerReduction.SoundSetup
+public import MIPRE.Background.AnswerReduction.SoundError
+
+@[expose] public section
 
 /-!
 # Soundness of answer reduction
@@ -258,5 +261,7 @@ theorem arVerifier_soundness (R : Polynomial ℕ) (hF : ShoupField PD) (hR : Par
 end Final
 
 end MIPRE.AnswerReduction
+
+end
 
 end

@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/Core.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.Common
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.Common
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -215,6 +218,12 @@ lemma interpolateCompletedSlicesFromSupport_restrictAtHeight_poly_eq_get_of_mem
           (MvPolynomial.X (lastCoord params)) =
         MvPolynomial.C (decodeScalar (xs i)) := by
     simp [Polynomial.restrictAtHeightCoordinateMap, lastCoord]
+  -- Vendoring compile fix (Mathlib v4.35): the `AddMonoidHomClass` instance of the
+  -- `map_sum` below is supplied by hand (its search otherwise times out). See README.md.
+  haveI : AddMonoidHomClass
+      (MvPolynomial (Fin params.next.m) (Scalar params) →+* PolynomialModel params)
+      (MvPolynomial (Fin params.next.m) (Scalar params)) (PolynomialModel params) :=
+    RingHomClass.toAddMonoidHomClass
   unfold interpolateCompletedSlicesFromSupport
   simp only
   trans ∑ idx ∈ σ.attach,
@@ -443,3 +452,5 @@ lemma interpolateCompletedSlices_restrictAtHeight_eq_get_of_mem_supportSubset
           (interpolationSupportSubset_subset gs hEligible) hσcard hi
 
 end MIPStarRE.LDT.Pasting
+
+end

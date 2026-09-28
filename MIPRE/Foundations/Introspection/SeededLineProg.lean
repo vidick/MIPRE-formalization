@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SeedSelectorProg
-import MIPRE.Foundations.Introspection.LineRepresentativeProg
-import MIPRE.Foundations.Cost.BinaryCompare
-import MIPRE.Foundations.SAT.ArrayProg
+module
+public import MIPRE.Foundations.Introspection.SeedSelectorProg
+public import MIPRE.Foundations.Introspection.LineRepresentativeProg
+public import MIPRE.Foundations.Cost.BinaryCompare
+public import MIPRE.Foundations.SAT.ArrayProg
+
+@[expose] public section
 
 /-! # Uniform programs for the seeded axis and diagonal stages
 
@@ -19,14 +22,14 @@ noncomputable section
 namespace MIPRE.Introspection.SeededLineProgram
 open Cost Cost.PolyTimeFun SAT SeedProgram LineProgram
 
-private def indexedRows : PolyTimeFun (List BitStr) (List (ℕ × BitStr)) :=
+def indexedRows : PolyTimeFun (List BitStr) (List (ℕ × BitStr)) :=
   zip.comp ((range'P.comp ((const 0).pair length)).pair (PolyTimeFun.id _))
 
-private theorem indexedRows_apply (l : List BitStr) :
+theorem indexedRows_apply (l : List BitStr) :
     indexedRows l = (List.range' 0 l.length).zip l := by
   simp [indexedRows]
 
-private def maskBeforeStep : PolyTimeFun ((ℕ × BitStr) × (Unary × ℕ)) BitStr :=
+def maskBeforeStep : PolyTimeFun ((ℕ × BitStr) × (Unary × ℕ)) BitStr :=
   ite (leNat.comp ((snd.comp snd).pair (fst.comp fst)))
     (snd.comp fst) (shoupZeroProg.comp (fst.comp snd))
 
@@ -55,7 +58,7 @@ theorem maskBeforeProg_correct (k : ℕ) (hk : 1 ≤ k) {n : ℕ} (i : ℕ)
     · simp [h, Nat.not_lt.mpr h]
     · simp [h, Nat.lt_of_not_ge h]
 
-private def zeroCoordinateStep : PolyTimeFun ((ℕ × BitStr) × (Unary × ℕ)) BitStr :=
+def zeroCoordinateStep : PolyTimeFun ((ℕ × BitStr) × (Unary × ℕ)) BitStr :=
   ite (ArrayProg.eqNat.comp ((snd.comp snd).pair (fst.comp fst)))
     (shoupZeroProg.comp (fst.comp snd)) (snd.comp fst)
 
@@ -152,4 +155,6 @@ theorem diagonalRepresentativeProg_runs
   diagonalRepresentativeProg.computes x
 
 end MIPRE.Introspection.SeededLineProgram
+end
+
 end

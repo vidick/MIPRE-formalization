@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingLaw
-import MIPRE.Foundations.SampledGame
+module
+public import MIPRE.Foundations.CL.DetypingLaw
+public import MIPRE.Foundations.SampledGame
+
+@[expose] public section
 
 /-! # The finite typed and detyped games
 
@@ -19,7 +22,7 @@ namespace MIPRE.CL.Detyping
 
 open Finset Classical
 
-private theorem sampled_dist_cl {J : Type*} [Fintype J] [DecidableEq J]
+theorem sampled_dist_cl {J : Type*} [Fintype J] [DecidableEq J]
     (L R : (J → ZMod 2) → (J → ZMod 2)) (x y : J → ZMod 2) :
     SampledGame.dist L R x y = clDist L R x y := by
   rw [SampledGame.dist_eq_card]
@@ -184,3 +187,5 @@ theorem failure {ℓ : ℕ} (E : T → T → Prop) [DecidableRel E]
     ((presentation E false (P false)).eval z) ((presentation E true (P true)).eval z))).symm
 
 end MIPRE.CL.Detyping
+
+end

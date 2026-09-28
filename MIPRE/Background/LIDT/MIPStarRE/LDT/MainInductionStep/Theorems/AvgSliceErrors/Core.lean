@@ -5,9 +5,13 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MainInductionStep/Theorems/AvgSliceErrors/Core.lean
 -/
-import Mathlib.Analysis.Convex.SpecificFunctions.Pow
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Averaging
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.StageDataConstructors
+module
+public import Mathlib.Analysis.Convex.SpecificFunctions.Pow
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Averaging
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.StageDataConstructors
+public import MIPRE.Tactics
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -30,7 +34,7 @@ universe uι uF
 
 variable {ι : Type uι} [Fintype ι] [DecidableEq ι]
 
-private lemma avgOver_uniform_fq_rpow_le_rpow_avg
+lemma avgOver_uniform_fq_rpow_le_rpow_avg
     (params : Parameters) [FieldModel params.q]
     (f : Fq params → Error)
     (n : ℕ)
@@ -43,14 +47,14 @@ private lemma avgOver_uniform_fq_rpow_le_rpow_avg
     avgOver_uniform_rpow_one_div_le_rpow_avg
       (α := Fq params) (f := f) (n := n) hn hf
 
-private lemma avgOver_uniform_fq_nonneg
+lemma avgOver_uniform_fq_nonneg
     (params : Parameters) [FieldModel params.q]
     (f : Fq params → Error)
     (hf : ∀ a, 0 ≤ f a) :
     0 ≤ avgOver (uniformDistribution (Fq params)) f :=
   avgOver_nonneg (uniformDistribution (Fq params)) f hf
 
-private lemma restricted_axis_nonneg
+lemma restricted_axis_nonneg
     (params : Parameters)
     [FieldModel params.q]
     {strategy : SymStrat params.next ι}
@@ -67,7 +71,7 @@ private lemma restricted_axis_nonneg
         (RestrictedSymStrat.axisParallelLineAnswerFamily restricted))
     (profile.restrictedGood x).axisParallelTest
 
-private lemma restricted_self_nonneg
+lemma restricted_self_nonneg
     (params : Parameters)
     [FieldModel params.q]
     {strategy : SymStrat params.next ι}
@@ -83,7 +87,7 @@ private lemma restricted_self_nonneg
         (IdxProjMeas.toIdxSubMeas restricted.pointMeasurement))
     (profile.restrictedGood x).selfConsistencyTest
 
-private lemma restricted_diag_nonneg
+lemma restricted_diag_nonneg
     (params : Parameters)
     [FieldModel params.q]
     {strategy : SymStrat params.next ι}
@@ -104,7 +108,7 @@ private lemma restricted_diag_nonneg
           (RestrictedSymStrat.restrictedDiagonalLineAnswerFamily restricted j))
     (profile.restrictedGood x).diagonalLineTest
 
-private lemma answerSuccessor_restricted_axis_nonneg
+lemma answerSuccessor_restricted_axis_nonneg
     (params : Parameters)
     [FieldModel params.q]
     {strategy : AnswerSymStrat params.next ι}
@@ -115,7 +119,7 @@ private lemma answerSuccessor_restricted_axis_nonneg
     (xRestrictedAnswerSymStratOfAnswer params strategy x)
     (profile.restrictedGood x)
 
-private lemma answerSuccessor_restricted_self_nonneg
+lemma answerSuccessor_restricted_self_nonneg
     (params : Parameters)
     [FieldModel params.q]
     {strategy : AnswerSymStrat params.next ι}
@@ -126,7 +130,7 @@ private lemma answerSuccessor_restricted_self_nonneg
     (xRestrictedAnswerSymStratOfAnswer params strategy x)
     (profile.restrictedGood x)
 
-private lemma answerSuccessor_restricted_diag_nonneg
+lemma answerSuccessor_restricted_diag_nonneg
     (params : Parameters)
     [FieldModel params.q]
     {strategy : AnswerSymStrat params.next ι}
@@ -253,7 +257,7 @@ lemma average_sliceSelfImprovementError_le
 /-- Jensen/conditioning estimate controlling the averaged slice induction
 parameter `\mathbb{E}_x[\nu_x]` by the next-stage `\nu`, corresponding to the
 second displayed inequality in `inductive_step.tex:555-567`. -/
-private lemma average_sliceMainInductionNu_le
+lemma average_sliceMainInductionNu_le
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι)
@@ -811,3 +815,5 @@ lemma average_answerSuccessorSliceMainInductionError_le
 
 
 end MIPStarRE.LDT.MainInductionStep
+
+end

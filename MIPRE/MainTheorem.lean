@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.HaltingGameValue
-import MIPRE.Background.Pipeline
-import MIPRE.Background.AnswerReduction.Instance
+module
+public import MIPRE.HaltingGameValue
+public import MIPRE.Background.Pipeline
+public import MIPRE.Background.AnswerReduction.Instance
+
+@[expose] public section
 
 /-!
 # `MIP* = RE`
@@ -63,19 +66,21 @@ theorem quantumValue_uncomputable :
   quantumValue_uncomputable_of_answerReduction AnswerReduction.answerReduction
 
 /-- **`RE ⊆ MIP*`.** -/
+theorem re_subset_mipstarComputable {L : Set BitStr} (h : IsRE L) : MIPStarComputable L :=
+  re_subset_mipstarComputable_of_answerReduction AnswerReduction.answerReduction h
+
+/-- **`MIP* = RE`** (blueprint `thm:mipstar-eq-re`). -/
+theorem mipstarComputable_eq_re : MIPStarComputable = IsRE :=
+  mipstarComputable_eq_re_of_answerReduction AnswerReduction.answerReduction
+
+/-- **`RE ⊆ MIP*_{1,1/2}(2,1)`**, the paper's class: a polynomial-time sampler and decider. -/
 theorem re_subset_mipstar {L : Set BitStr} (h : IsRE L) : MIPStar L :=
   re_subset_mipstar_of_answerReduction AnswerReduction.answerReduction h
 
-/-- **`MIP* = RE`** (blueprint `thm:mipstar-eq-re`). -/
+/-- **`MIP*_{1,1/2}(2,1) = RE`** (blueprint `thm:mipstar-eq-re`), for the paper's class. -/
 theorem mipstar_eq_re : MIPStar = IsRE :=
   mipstar_eq_re_of_answerReduction AnswerReduction.answerReduction
 
-/-- **`RE ⊆ MIP*_{1,1/2}(2,1)`**, the paper's class: a polynomial-time sampler and decider. -/
-theorem re_subset_mipstarPoly {L : Set BitStr} (h : IsRE L) : MIPStarPoly L :=
-  re_subset_mipstarPoly_of_answerReduction AnswerReduction.answerReduction h
-
-/-- **`MIP*_{1,1/2}(2,1) = RE`** (blueprint `thm:mipstar-eq-re`), for the paper's class. -/
-theorem mipstarPoly_eq_re : MIPStarPoly = IsRE :=
-  mipstarPoly_eq_re_of_answerReduction AnswerReduction.answerReduction
-
 end MIPRE.Halting
+
+end

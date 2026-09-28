@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.Sampler
+module
+public import MIPRE.Foundations.CL.Sampler
+
+@[expose] public section
 
 /-! # Typed samplers with an ambient program
 
@@ -83,3 +86,5 @@ theorem TimeBoundAt.mono {S : TypedSampler ℓ T} {n B k B' k' : ℕ}
 
 end TypedSampler
 end MIPRE.CL
+
+end

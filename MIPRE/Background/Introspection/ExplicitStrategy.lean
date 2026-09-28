@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.ExplicitGame
-import MIPRE.Background.Introspection.BinaryGame
+module
+public import MIPRE.Background.Introspection.ExplicitGame
+public import MIPRE.Background.Introspection.BinaryGame
+
+@[expose] public section
 
 /-! # Explicit-selector completeness and actual QLD restriction
 
@@ -194,3 +197,5 @@ theorem selector_exists_perfectPCC {k j t d ℓ : ℕ} (E : SAT.BinField k) (hj 
   exists_perfectPCC L D R _ _ _ (chi_seedPermutation E j hj _) b hb hd hL hR hv
 
 end MIPRE.Introspection.ExplicitGame
+
+end

@@ -15,13 +15,17 @@ representation on `ℓ²(ℚ, K)`: `π(y) = ⊕_s σ_{-s}(y)`, `λ(g) = shift g`
 vector state is the dual state: `⟪Ω̂, λ(g) π(y) Ω̂⟫ = δ_{g,0} ⟪Ω, yΩ⟫`. The compression
 `E(X) = ev₀ X sgl₀` satisfies `E(π y) = y` and `⟪Ω̂, X Ω̂⟫ = ⟪Ω, E(X) Ω⟫`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Crossed.Space
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Smearing
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Crossed.Space
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Smearing
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -287,3 +291,5 @@ end Crossed
 end VN
 
 end CommutingRepetition
+
+end

@@ -24,12 +24,16 @@ summand), with the vocabulary of `Orthogonalization/MvN/Defs.lean`.
 
 No statement of the paper. Proof-side only.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.TypeIIINet
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.TypeIIINet
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.MvN
 
@@ -208,3 +212,5 @@ theorem exists_isometries_of_halving (M : VonNeumannAlgebra H) {z : H →L[ℂ] 
       abel
 
 end Orthogonalization.MvN
+
+end

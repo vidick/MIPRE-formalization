@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.OracularSound
-import MIPRE.Foundations.POVMMix
-import MIPRE.Foundations.GameAdapt
-import MIPRE.Foundations.RegisterReindex
+module
+public import MIPRE.Foundations.OracularSound
+public import MIPRE.Foundations.POVMMix
+public import MIPRE.Foundations.GameAdapt
+public import MIPRE.Foundations.RegisterReindex
+
+@[expose] public section
 
 /-!
 # Soundness of oracularization, for bipartite strategies
@@ -769,3 +772,5 @@ theorem quantumValue_ge_of_oracular {ε : ℝ} (hε : 0 < ε)
 end SeededGame
 
 end MIPRE
+
+end

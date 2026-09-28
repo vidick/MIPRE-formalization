@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.ValueApprox.RawSemantics
-import Mathlib.Data.List.GetD
+module
+public import MIPRE.Foundations.ValueApprox.RawSemantics
+public import Mathlib.Data.List.GetD
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Every Gaussian-rational exact strategy is a raw candidate
@@ -171,3 +175,5 @@ theorem exists_check_iff (g : GameData) (p q : ℕ) :
     exact ⟨hc, hlt⟩
 
 end MIPRE.ValueApprox
+
+end

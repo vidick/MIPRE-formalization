@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Helper
-import MIPRE.Background.QLD.PauliBasis
-import MIPRE.Background.QLD.NonMultilinear
+module
+public import MIPRE.Background.QLD.Helper
+public import MIPRE.Background.QLD.PauliBasis
+public import MIPRE.Background.QLD.NonMultilinear
+
+@[expose] public section
 
 /-!
 # The mass at non-multilinear outcomes (`lem:qld-exact-paulis`, the approximate half)
@@ -553,5 +556,7 @@ end SimulPair
 end Bad
 
 end MIPRE.QLD
+
+end
 
 end

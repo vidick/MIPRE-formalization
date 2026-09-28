@@ -5,9 +5,13 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/Bernoulli/Scalar.lean
 -/
-import Mathlib.Probability.Moments.SubGaussian
-import Mathlib.Probability.Distributions.Binomial
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.TruncatedSums
+module
+public import Mathlib.Probability.Moments.SubGaussian
+public import Mathlib.Probability.Distributions.Binomial
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.TruncatedSums
+public import MIPRE.Tactics
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -34,7 +38,7 @@ noncomputable def scalarBernoulliTail (k degree : ℕ) (p : Error) : Error :=
     (Nat.choose k r : Error) * (p ^ r * (1 - p) ^ (k - r))
 
 /-- The complementary lower-tail sum `∑_{r=0}^d C(k,r) p^r (1-p)^(k-r)`. -/
-private noncomputable def scalarBernoulliLowerTail (k degree : ℕ) (p : Error) : Error :=
+noncomputable def scalarBernoulliLowerTail (k degree : ℕ) (p : Error) : Error :=
   ∑ r ∈ Finset.range (degree + 1),
     (Nat.choose k r : Error) * (p ^ r * (1 - p) ^ (k - r))
 
@@ -43,7 +47,7 @@ noncomputable def bernoulliTailLowerAffine (theta c : Error) (p : Error) : Error
   (1 - c) - ((1 / (1 - theta)) * (1 - p))
 
 /-- Hoeffding's lemma for a centered Bernoulli random variable. -/
-private lemma bernoulli_centered_mgf_le {p t : Error}
+lemma bernoulli_centered_mgf_le {p t : Error}
     (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
     (1 - p) * Real.exp (t * p) + p * Real.exp (t * (p - 1)) ≤
       Real.exp (t ^ (2 : ℕ) / 8) := by
@@ -80,7 +84,7 @@ private lemma bernoulli_centered_mgf_le {p t : Error}
 
 /-- The centered moment-generating function of the binomial law is the binomial expansion of the
 corresponding one-step Bernoulli moment-generating function. -/
-private lemma binomial_centered_mgf_eq
+lemma binomial_centered_mgf_eq
     (k : ℕ) {p t : Error} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
     ProbabilityTheory.mgf (fun i : ℕ => p * k - i)
       (ProbabilityTheory.binomial k (⟨p, hp0, hp1⟩ : unitInterval)) t =
@@ -107,7 +111,7 @@ private lemma binomial_centered_mgf_eq
           rw [Nat.range_succ_eq_Iic]
 
 /-- A Hoeffding bound for the centered binomial moment-generating function. -/
-private lemma binomial_centered_mgf_le
+lemma binomial_centered_mgf_le
     (k : ℕ) {p t : Error} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
     ProbabilityTheory.mgf (fun i : ℕ => p * k - i)
       (ProbabilityTheory.binomial k (⟨p, hp0, hp1⟩ : unitInterval)) t ≤
@@ -184,7 +188,7 @@ private lemma binomial_centered_mgf_le
           ring
 
 /-- The lower tail of the binomial law is the lower partial sum of the Bernoulli polynomial. -/
-private lemma binomial_lowerTail_eq
+lemma binomial_lowerTail_eq
     (k degree : ℕ) {p : Error} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
     (ProbabilityTheory.binomial k (⟨p, hp0, hp1⟩ : unitInterval)).real
         {i : ℕ | (i : Error) ≤ degree} =
@@ -275,7 +279,7 @@ private lemma binomial_lowerTail_eq
           try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
 /-- The binomial lower tail obeys the additive Hoeffding bound. -/
-private lemma scalarBernoulliLowerTail_le_exp
+lemma scalarBernoulliLowerTail_le_exp
     (k degree : ℕ) {p : Error} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     (hpd : (degree : Error) / (k : Error) ≤ p) :
     scalarBernoulliLowerTail k degree p ≤
@@ -343,7 +347,7 @@ private lemma scalarBernoulliLowerTail_le_exp
             ring_nf
 
 /-- The lower and upper binomial tails partition the full Bernoulli polynomial. -/
-private lemma scalarBernoulliLowerTail_add_scalarBernoulliTail
+lemma scalarBernoulliLowerTail_add_scalarBernoulliTail
     (k degree : ℕ) (p : Error) :
     scalarBernoulliLowerTail k degree p + scalarBernoulliTail k degree p = 1 := by
   let f : ℕ → Error := fun r =>
@@ -417,7 +421,7 @@ theorem scalarBernoulliTail_hoeffding_lower_bound
   linarith
 
 /-- The paper's size condition `k ≥ 2d/θ` implies `d/k ≤ θ/2`. -/
-private lemma degree_div_le_theta_half
+lemma degree_div_le_theta_half
     (theta : Error) (k degree : ℕ)
     (hθ0 : 0 < theta) (hk : (2 * (degree : Error)) / theta ≤ (k : Error)) :
     (degree : Error) / (k : Error) ≤ theta / 2 := by
@@ -519,3 +523,5 @@ theorem bernoulliTailLowerAffine_le_scalarBernoulliTail
     exact hLowerConst.trans (hConst.trans hScalar)
 
 end MIPStarRE.LDT.Pasting
+
+end

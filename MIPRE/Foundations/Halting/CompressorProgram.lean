@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.CompressorCost
+module
+public import MIPRE.Foundations.Halting.CompressorCost
+
+@[expose] public section
 
 /-!
 # The compressor as a program, and the halting reduction from compression alone
@@ -314,3 +317,5 @@ theorem halting_reduction_quantum_of :
 end Halting
 
 end MIPRE
+
+end

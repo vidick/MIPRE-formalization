@@ -5,9 +5,13 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Basic/PMFAverages.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution
-import Mathlib.Analysis.MeanInequalitiesPow
-import Mathlib.Probability.ProbabilityMassFunction.Monad
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution
+public import Mathlib.Analysis.MeanInequalitiesPow
+public import Mathlib.Probability.ProbabilityMassFunction.Monad
+public import MIPRE.Tactics
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -782,3 +786,5 @@ theorem realWeightedSum_rpow_one_div_le_rpow {α : Type*}
       (p := p) (f := f) (n := n) hn hf
 
 end PMF
+
+end

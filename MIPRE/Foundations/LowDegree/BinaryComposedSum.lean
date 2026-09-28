@@ -2,8 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryComposedSumProg
-import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
+module
+public import MIPRE.Foundations.LowDegree.BinaryComposedSumProg
+public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Correctness of the effective coprime-degree composed-sum construction -/
 
@@ -117,5 +121,7 @@ theorem composedSumBits_correct (p g : BitStr) (hp : p.length = f.natDegree)
   exact minpoly.irreducible (hix.add hiy)
 
 end MIPRE.LowDegree.BinaryQuotient
+
+end
 
 end

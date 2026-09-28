@@ -3,10 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Kleene
-import MIPRE.Foundations.Cost.Codable
-import Mathlib.Computability.TuringMachine.Config
-import Mathlib.Computability.PartrecCode
+module
+public import MIPRE.Foundations.Cost.Kleene
+public import MIPRE.Foundations.Cost.Codable
+public import Mathlib.Computability.TuringMachine.Config
+public import Mathlib.Computability.PartrecCode
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # From Mathlib's partial recursive functions into the ambient model
@@ -426,3 +430,5 @@ theorem exists_compile :
       exact ⟨r, _, hardcode_time (Prog.ofCode_wellScoped cu) h⟩
 
 end MIPRE.Cost
+
+end

@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.WeylEPR
-import MIPRE.Foundations.LowDegree.NormalBasis
+module
+public import MIPRE.Foundations.WeylEPR
+public import MIPRE.Foundations.LowDegree.NormalBasis
+
+@[expose] public section
 
 /-!
 # From qudits to qubits: the generalized Pauli system is a qubit Pauli system
@@ -228,5 +231,7 @@ theorem wX_two_apply (a j i : m → ZMod 2) :
 end Qubits
 
 end MIPRE.Weyl
+
+end
 
 end

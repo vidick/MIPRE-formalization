@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Verifier
-import MIPRE.Foundations.GameDouble
+module
+public import MIPRE.Foundations.Verifier
+public import MIPRE.Foundations.GameDouble
+
+@[expose] public section
 
 /-!
 # Gap-preserving compression, as a hypothesis
@@ -133,3 +136,5 @@ structure GapCompression where
     (output (V.sampler.prog, V.decider.prog) lam).valStar n (bound.eval (n + lam)) ≤ 1 / 2
 
 end MIPRE
+
+end

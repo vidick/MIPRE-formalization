@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.Types
-import MIPRE.Foundations.CL.Graph
+module
+public import MIPRE.Foundations.Introspection.Types
+public import MIPRE.Foundations.CL.Graph
+
+@[expose] public section
 
 /-! # The introspection type graph
 
@@ -152,3 +155,5 @@ theorem detyping_factor_of_pauli_card (h : Fintype.card PauliType = 26) (â„“ : â
   rw [QuestionType.card_of_pauli_card h]
 
 end MIPRE.Introspection.TypeGraph
+
+end

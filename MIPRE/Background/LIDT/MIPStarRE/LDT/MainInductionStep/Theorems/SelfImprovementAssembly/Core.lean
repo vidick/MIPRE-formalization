@@ -5,13 +5,16 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MainInductionStep/Theorems/SelfImprovementAssembly/Core.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Statements
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Defs
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.Core
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.Final
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Statements
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.SelfImprovementTop.Core
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Statements
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Defs
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.Core
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.Final
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Statements
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.SelfImprovementTop.Core
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -74,7 +77,7 @@ theorem mainInductionOfWitness
 
 /-- Convert same-register closeness of a projective submeasurement into bipartite strong
 self-consistency. -/
-private theorem strongSelfConsistency_of_sddRel
+theorem strongSelfConsistency_of_sddRel
     (params : Parameters) [FieldModel params.q] (strategy : SymStrat params ι)
     (eps delta gamma : Error) (H : ProjSubMeas (Polynomial params) ι)
     (hclose : SDDRel strategy.state (uniformDistribution Unit)
@@ -645,3 +648,5 @@ theorem ldPastingInInductionSection
 
 
 end MIPStarRE.LDT.MainInductionStep
+
+end

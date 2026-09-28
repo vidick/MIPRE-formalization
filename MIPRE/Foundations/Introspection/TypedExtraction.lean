@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.TypedEstimates
-import MIPRE.Foundations.Introspection.FinalExtraction
-import MIPRE.Foundations.Introspection.ValueStability
-import MIPRE.Foundations.Introspection.StateStability
+module
+public import MIPRE.Foundations.Introspection.TypedEstimates
+public import MIPRE.Foundations.Introspection.FinalExtraction
+public import MIPRE.Foundations.Introspection.ValueStability
+public import MIPRE.Foundations.Introspection.StateStability
+
+@[expose] public section
 
 /-! # Final extraction from the actual typed introspection game
 
@@ -316,5 +319,7 @@ theorem exists_strategy_of_state_and_terminal_approx
     G hμ hD ξ hξ QA QB hQA hQB MA MB (hMA _) (hMB _) hfail' hA hB
 
 end MIPRE.Introspection.TypedExtraction
+
+end
 
 end

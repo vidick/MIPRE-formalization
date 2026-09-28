@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/Main/EvaluatedQuestions.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.HEvalTransport
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.HEvalTransport
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -507,3 +510,5 @@ lemma fullSliceCommutation_of_evaluated_on_evaluated_questions
       4 (comMainError params gamma zeta) hcom_ge_four hfour
 
 end MIPStarRE.LDT.Commutativity
+
+end

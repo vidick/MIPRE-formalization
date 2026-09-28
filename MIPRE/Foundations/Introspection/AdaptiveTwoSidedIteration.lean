@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveBobIteration
+module
+public import MIPRE.Foundations.Introspection.AdaptiveBobIteration
+
+@[expose] public section
 
 /-! # Both actual introspection measurements reach terminal form
 
@@ -132,4 +135,6 @@ theorem exists_intro_two_sided_iteration
 
 end TypedEstimates
 end MIPRE.Introspection
+end
+
 end

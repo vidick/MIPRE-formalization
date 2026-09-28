@@ -3,39 +3,42 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Anticomm
-import MIPRE.Background.QLD.Consistency
-import MIPRE.Background.QLD.Expanded
-import MIPRE.Background.QLD.Combined
-import MIPRE.Background.QLD.Lines
-import MIPRE.Background.QLD.Padded
-import MIPRE.Background.QLD.PaddedLines
-import MIPRE.Background.QLD.Legalize
-import MIPRE.Background.QLD.PaddedValue
-import MIPRE.Background.QLD.PaddedLIDT
-import MIPRE.Background.QLD.Helper
-import MIPRE.Background.QLD.MTilde
-import MIPRE.Background.QLD.CLTransport
-import MIPRE.Background.Introspection.HonestPauliLowDegree
-import MIPRE.Background.Introspection.HonestPauliEdges
-import MIPRE.Background.Introspection.HonestPauliGame
-import MIPRE.Background.Introspection.CompleteGame
-import MIPRE.Background.Introspection.BinaryGame
-import MIPRE.Background.Introspection.BinaryPadding
-import MIPRE.Background.Introspection.PauliRestriction
-import MIPRE.Background.QLD.LineRepresentative
-import MIPRE.Background.QLD.CLExplicitSeed
-import MIPRE.Background.QLD.SeededLinePrograms
-import MIPRE.Foundations.GuardSorryFree
-import MIPRE.Background.QLD.PauliRowPrograms
-import MIPRE.Background.QLD.PauliFactorPrograms
-import MIPRE.Background.QLD.SamplerQueryProgram
-import MIPRE.Background.QLD.CLExplicitTransport
-import MIPRE.Background.QLD.SwapItemTwo
-import MIPRE.Background.QLD.Soundness
-import MIPRE.Background.QLD.ValidAnswers
-import MIPRE.Background.QLD.BinaryForm
-import MIPRE.Background.Introspection.PauliExtraction
+module
+public import MIPRE.Background.QLD.Anticomm
+public import MIPRE.Background.QLD.Consistency
+public import MIPRE.Background.QLD.Expanded
+public import MIPRE.Background.QLD.Combined
+public import MIPRE.Background.QLD.Lines
+public import MIPRE.Background.QLD.Padded
+public import MIPRE.Background.QLD.PaddedLines
+public import MIPRE.Background.QLD.Legalize
+public import MIPRE.Background.QLD.PaddedValue
+public import MIPRE.Background.QLD.PaddedLIDT
+public import MIPRE.Background.QLD.Helper
+public import MIPRE.Background.QLD.MTilde
+public import MIPRE.Background.QLD.CLTransport
+public import MIPRE.Background.Introspection.HonestPauliLowDegree
+public import MIPRE.Background.Introspection.HonestPauliEdges
+public import MIPRE.Background.Introspection.HonestPauliGame
+public import MIPRE.Background.Introspection.CompleteGame
+public import MIPRE.Background.Introspection.BinaryGame
+public import MIPRE.Background.Introspection.BinaryPadding
+public import MIPRE.Background.Introspection.PauliRestriction
+public import MIPRE.Background.QLD.LineRepresentative
+public import MIPRE.Background.QLD.CLExplicitSeed
+public import MIPRE.Background.QLD.SeededLinePrograms
+public import MIPRE.Foundations.GuardSorryFree
+public import MIPRE.Background.QLD.PauliRowPrograms
+public import MIPRE.Background.QLD.PauliFactorPrograms
+public import MIPRE.Background.QLD.SamplerQueryProgram
+public import MIPRE.Background.QLD.CLExplicitTransport
+public import MIPRE.Background.QLD.SwapItemTwo
+public import MIPRE.Background.QLD.Soundness
+public import MIPRE.Background.QLD.ValidAnswers
+public import MIPRE.Background.QLD.BinaryForm
+public import MIPRE.Background.Introspection.PauliExtraction
+
+@[expose] public section
 
 /-!
 # Axiom audit for the Pauli basis test's orthonormalization step
@@ -1577,3 +1580,5 @@ introspection consumer, and the composed soundness
   MIPRE.Introspection.PauliExtraction.exists_quantumValue_ge_of_binary,
   MIPRE.Introspection.PauliExtraction.exists_field_extraction,
   MIPRE.Introspection.PauliExtraction.exists_quantumValue_ge_of_field
+
+end

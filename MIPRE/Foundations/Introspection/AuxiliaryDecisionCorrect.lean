@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryDecisionProgram
-import MIPRE.Foundations.Introspection.AuxiliarySourceScan
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryDecisionProgram
+public import MIPRE.Foundations.Introspection.AuxiliarySourceScan
+
+@[expose] public section
 
 /-! # Source semantics of the assembled auxiliary branches
 
@@ -205,4 +208,6 @@ theorem directed_default (U : ClockedUniversalMachine) (X Z : P)
   rfl
 
 end MIPRE.Introspection.AuxiliaryDecision
+end
+
 end

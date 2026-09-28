@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.TraceGram
-import MIPRE.Foundations.LowDegree.BinaryCirculant
-import MIPRE.Foundations.LowDegree.NormalBasis
+module
+public import MIPRE.Foundations.SAT.TraceGram
+public import MIPRE.Foundations.LowDegree.BinaryCirculant
+public import MIPRE.Foundations.LowDegree.NormalBasis
+
+@[expose] public section
 
 /-! # The circulant Gram matrix of a supplied normal basis -/
 
@@ -100,5 +103,7 @@ theorem shoupNormalGram_selfDualize (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : 
   exact shoupTraceGram_surjective k hk b
 
 end MIPRE.SAT
+
+end
 
 end

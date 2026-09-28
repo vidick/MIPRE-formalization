@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.SoundRelations
-import MIPRE.Background.AnswerReduction.TypedComplete
-import MIPRE.Background.LIDT.BlockPoly
-import MIPRE.Background.LIDT.Coefficients
+module
+public import MIPRE.Background.AnswerReduction.SoundRelations
+public import MIPRE.Background.AnswerReduction.TypedComplete
+public import MIPRE.Background.LIDT.BlockPoly
+public import MIPRE.Background.LIDT.Coefficients
+
+@[expose] public section
 
 /-!
 # Soundness of answer reduction: from evaluations to polynomials
@@ -236,5 +239,7 @@ theorem sum_disPolyB_le (i : Fin 5) :
         linarith
 
 end MIPRE.AnswerReduction
+
+end
 
 end

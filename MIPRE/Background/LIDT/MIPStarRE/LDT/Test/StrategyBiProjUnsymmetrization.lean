@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Test/StrategyBiProjUnsymmetrization.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProjRoleAverage.Final
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProjRoleAverage.Final
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -328,7 +331,7 @@ namespace ProjStrat
 
 /-! ### Trace compression for occupied role-register sectors -/
 
-private lemma trace_single_tensor_mul_eq_trace_submatrix {β α : Type*}
+lemma trace_single_tensor_mul_eq_trace_submatrix {β α : Type*}
     [Fintype β] [DecidableEq β] [Fintype α] [DecidableEq α]
     (b : β) (X : MIPStarRE.Quantum.Op α)
     (Y : MIPStarRE.Quantum.Op (β × α)) :
@@ -360,7 +363,7 @@ private lemma trace_single_tensor_mul_eq_trace_submatrix {β α : Type*}
           simp [Matrix.single]
     _ = ∑ y : α, ∑ y_1 : α, X y y_1 * Y (b, y_1) (b, y) := rfl
 
-private lemma rolePairProj_eq_single_pair (rL rR : Role) :
+lemma rolePairProj_eq_single_pair (rL rR : Role) :
     rolePairProj rL rR = Matrix.single (rL, rR) (rL, rR) (1 : ℂ) := by
   ext p q
   rcases p with ⟨pL, pR⟩
@@ -369,24 +372,24 @@ private lemma rolePairProj_eq_single_pair (rL rR : Role) :
     simp [rolePairProj, roleProj, opTensor]
 
 /-- The local-sector embedding selecting the Alice--Bob tensor summand. -/
-private def localPairABEmbedding {ιA ιB : Type*} :
+def localPairABEmbedding {ιA ιB : Type*} :
     ιA × ιB → LocalCarrierSum ιA ιB × LocalCarrierSum ιA ιB :=
   fun z => (Sum.inl z.1, Sum.inr z.2)
 
 /-- The local-sector embedding selecting the Bob--Alice tensor summand. -/
-private def localPairBAEmbedding {ιA ιB : Type*} :
+def localPairBAEmbedding {ιA ιB : Type*} :
     ιB × ιA → LocalCarrierSum ιA ιB × LocalCarrierSum ιA ιB :=
   fun z => (Sum.inr z.1, Sum.inl z.2)
 
 /-- The role-sector embedding selecting the `rL,rR` block. -/
-private def rolePairSectorEmbedding {ιA ιB : Type*} (rL rR : Role) :
+def rolePairSectorEmbedding {ιA ιB : Type*} (rL rR : Role) :
     LocalCarrierSum ιA ιB × LocalCarrierSum ιA ιB →
       RoleRegisterLocal ιA ιB × RoleRegisterLocal ιA ιB :=
   fun z => ((rL, z.1), (rR, z.2))
 
 /-- Submatrices of a tensor product along product embeddings are tensor products
 of the corresponding submatrices. -/
-private lemma opTensor_submatrix_prod {ιL ιR κL κR : Type*}
+lemma opTensor_submatrix_prod {ιL ιR κL κR : Type*}
     [Fintype ιL] [DecidableEq ιL] [Fintype ιR] [DecidableEq ιR]
     [Fintype κL] [DecidableEq κL] [Fintype κR] [DecidableEq κR]
     (A : MIPStarRE.Quantum.Op ιL) (B : MIPStarRE.Quantum.Op ιR)
@@ -398,7 +401,7 @@ private lemma opTensor_submatrix_prod {ιL ιR κL κR : Type*}
   ext x y
   try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
-private lemma trace_rolePairDirectSumCond_mul {ιA ιB : Type*}
+lemma trace_rolePairDirectSumCond_mul {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (rL rR : Role)
     (X : MIPStarRE.Quantum.Op (LocalCarrierSum ιA ιB × LocalCarrierSum ιA ιB))
@@ -425,7 +428,7 @@ private lemma trace_rolePairDirectSumCond_mul {ιA ιB : Type*}
   rw [trace_single_tensor_mul_eq_trace_submatrix]
   try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
-private lemma trace_localPairABBlock_mul_arbitrary {ιA ιB : Type*}
+lemma trace_localPairABBlock_mul_arbitrary {ιA ιB : Type*}
     [Fintype ιA] [Fintype ιB]
     (X : MIPStarRE.Quantum.Op (ιA × ιB))
     (Y : MIPStarRE.Quantum.Op (LocalCarrierSum ιA ιB × LocalCarrierSum ιA ιB)) :
@@ -438,7 +441,7 @@ private lemma trace_localPairABBlock_mul_arbitrary {ιA ιB : Type*}
   simp_rw [Fintype.sum_prod_type]
   simp [localPairABBlock, localPairABEmbedding]
 
-private lemma trace_localPairBABlock_mul_arbitrary {ιA ιB : Type*}
+lemma trace_localPairBABlock_mul_arbitrary {ιA ιB : Type*}
     [Fintype ιA] [Fintype ιB]
     (X : MIPStarRE.Quantum.Op (ιB × ιA))
     (Y : MIPStarRE.Quantum.Op (LocalCarrierSum ιA ιB × LocalCarrierSum ιA ιB)) :
@@ -451,12 +454,12 @@ private lemma trace_localPairBABlock_mul_arbitrary {ιA ιB : Type*}
   simp_rw [Fintype.sum_prod_type]
   simp [localPairBABlock, localPairBAEmbedding]
 
-private noncomputable def roleRegisterRoleLocalBlock {ιA ιB : Type*}
+noncomputable def roleRegisterRoleLocalBlock {ιA ιB : Type*}
     (r : Role) (Y : MIPStarRE.Quantum.Op (RoleRegisterLocal ιA ιB)) :
     MIPStarRE.Quantum.Op (LocalCarrierSum ιA ιB) :=
   Y.submatrix (fun i => (r, i)) (fun i => (r, i))
 
-private lemma opTensor_localDirectSum_roleLocalBlock_AB_submatrix
+lemma opTensor_localDirectSum_roleLocalBlock_AB_submatrix
     {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (A : MIPStarRE.Quantum.Op ιA) (Bfill : MIPStarRE.Quantum.Op ιB)
     (Y : MIPStarRE.Quantum.Op (RoleRegisterLocal ιA ιB)) :
@@ -467,7 +470,7 @@ private lemma opTensor_localDirectSum_roleLocalBlock_AB_submatrix
   simp [localPairABEmbedding, roleRegisterRoleLocalBlock,
     extractRoleRegisterBobBlock, opTensor]
 
-private lemma opTensor_localDirectSum_roleLocalBlock_BA_submatrix
+lemma opTensor_localDirectSum_roleLocalBlock_BA_submatrix
     {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (Afill : MIPStarRE.Quantum.Op ιA) (B : MIPStarRE.Quantum.Op ιB)
     (Y : MIPStarRE.Quantum.Op (RoleRegisterLocal ιA ιB)) :
@@ -478,7 +481,7 @@ private lemma opTensor_localDirectSum_roleLocalBlock_BA_submatrix
   simp [localPairBAEmbedding, roleRegisterRoleLocalBlock,
     extractRoleRegisterAliceBlock, opTensor]
 
-private lemma opTensor_roleBlock_roleRegister_AB_submatrix
+lemma opTensor_roleBlock_roleRegister_AB_submatrix
     {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (A Afill : MIPStarRE.Quantum.Op ιA) (B Bfill : MIPStarRE.Quantum.Op ιB)
     (Y : MIPStarRE.Quantum.Op (RoleRegisterLocal ιA ιB)) :
@@ -490,7 +493,7 @@ private lemma opTensor_roleBlock_roleRegister_AB_submatrix
   ext z w
   simp [rolePairSectorEmbedding, roleRegisterRoleLocalBlock, opTensor]
 
-private lemma opTensor_roleBlock_roleRegister_BA_submatrix
+lemma opTensor_roleBlock_roleRegister_BA_submatrix
     {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (A Afill : MIPStarRE.Quantum.Op ιA) (B Bfill : MIPStarRE.Quantum.Op ιB)
     (Y : MIPStarRE.Quantum.Op (RoleRegisterLocal ιA ιB)) :
@@ -502,7 +505,7 @@ private lemma opTensor_roleBlock_roleRegister_BA_submatrix
   ext z w
   simp [rolePairSectorEmbedding, roleRegisterRoleLocalBlock, opTensor]
 
-private lemma trace_heterogeneousSwapDensity_mul_opTensor {ιA ιB : Type*}
+lemma trace_heterogeneousSwapDensity_mul_opTensor {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (X : MIPStarRE.Quantum.Op (ιA × ιB))
     (A : MIPStarRE.Quantum.Op ιA) (B : MIPStarRE.Quantum.Op ιB) :
@@ -513,7 +516,7 @@ private lemma trace_heterogeneousSwapDensity_mul_opTensor {ιA ιB : Type*}
   unfold heterogeneousSwapDensity
   rw [Matrix.trace_reindex]
 
-private lemma ev_roleRegisterSymmState_roleBlock_arbitrary
+lemma ev_roleRegisterSymmState_roleBlock_arbitrary
     {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Nonempty ιA]
     [Fintype ιB] [DecidableEq ιB] [Nonempty ιB]
@@ -597,7 +600,7 @@ private lemma ev_roleRegisterSymmState_roleBlock_arbitrary
     exact hscale (Matrix.trace (ψ.density * opTensor (extractRoleRegisterAliceBlock Y) B))]
   norm_num [Complex.add_re, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im]
 
-private lemma ev_roleRegisterSymmState_roleRegisterProjMeas_arbitrary_outcome
+lemma ev_roleRegisterSymmState_roleRegisterProjMeas_arbitrary_outcome
     {Outcome ιA ιB : Type*}
     [Inhabited Outcome] [Fintype Outcome]
     [Fintype ιA] [DecidableEq ιA] [Nonempty ιA]
@@ -802,3 +805,5 @@ theorem polynomialEvaluationFamily_measurement_extractRoleRegisterBob
 end ProjStrat
 
 end MIPStarRE.LDT
+
+end

@@ -21,15 +21,19 @@ signed statement `povm_orthogonalization` for a von Neumann algebra containing
 every operator, resp. for `fullAlgebra H`, on an arbitrary Hilbert space
 (FIDELITY.md, "Instances"). Unconditional.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Cutdown
-import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Main
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Semifinite
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.TypeIIINet
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Cutdown
+public import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Main
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Semifinite
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.TypeIIINet
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.MvN
 
@@ -228,7 +232,7 @@ theorem povm_orthogonalization_of_mem_all_general (M : VonNeumannAlgebra H)
   obtain ⟨p, hpM, hp, -, hsum, hlt⟩ := orthAtN_of_mem_all M hM ι φ.toLinearMap
     (NormalState.isNormalOn φ)
     φ.nonneg' φ.map_one' a ha.1
-    (fun i => (ContinuousLinearMap.nonneg_iff_isPositive _).mpr (ha.2.1 i)) ha.2.2 ε hε
+    (fun i => ContinuousLinearMap.nonneg_iff_isPositive.mpr (ha.2.1 i)) ha.2.2 ε hε
   exact ⟨p, ⟨hpM, hp, hsum⟩, hlt⟩
 
 /-- **Theorem 1.2** (`povm_orthogonalization`) for `M = B(H)`, `H` an arbitrary Hilbert
@@ -241,3 +245,5 @@ theorem povm_orthogonalization_fullAlgebra_general (φ : NormalState (fullAlgebr
   povm_orthogonalization_of_mem_all_general (fullAlgebra H) mem_fullAlgebra φ a ha ε hε
 
 end Orthogonalization
+
+end

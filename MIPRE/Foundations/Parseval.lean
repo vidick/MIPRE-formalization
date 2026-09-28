@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.StateDistance
-import MIPRE.Foundations.Weyl
+module
+public import MIPRE.Foundations.StateDistance
+public import MIPRE.Foundations.Weyl
+
+@[expose] public section
 
 /-!
 # Parseval for the character transform
@@ -462,5 +465,7 @@ theorem sum_avg_norm_fibre_sq (U : F × F → (N → ℂ)) (hU : ∑ p : F × F,
   field_simp
 
 end MIPRE
+
+end
 
 end

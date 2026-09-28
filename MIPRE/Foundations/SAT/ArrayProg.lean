@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.FmlProg
+module
+public import MIPRE.Foundations.SAT.FmlProg
+
+@[expose] public section
 
 /-!
 # Equality and binary-indexed array access as ambient programs
@@ -17,16 +20,16 @@ namespace MIPRE.SAT.ArrayProg
 
 open Cost Cost.PolyTimeFun Polynomial
 
-private def eqStep (s : BitStr × Bool) (b : Bool) : BitStr × Bool :=
+def eqStep (s : BitStr × Bool) (b : Bool) : BitStr × Bool :=
   match s.1 with
   | [] => ([], false)
   | a :: as => (as, s.2 && (a == b))
 
-private def finishEq (s : BitStr × Bool) : Bool := s.2 && s.1.isEmpty
+def finishEq (s : BitStr × Bool) : Bool := s.2 && s.1.isEmpty
 
-private theorem esize_bool_le (b : Bool) : esize b ≤ 3 := by cases b <;> decide
+theorem esize_bool_le (b : Bool) : esize b ≤ 3 := by cases b <;> decide
 
-private theorem fold_eqStep (a b : BitStr) (ok : Bool) :
+theorem fold_eqStep (a b : BitStr) (ok : Bool) :
     finishEq (b.foldl eqStep (a, ok)) = (ok && decide (a = b)) := by
   induction b generalizing a ok with
   | nil => cases a <;> simp [finishEq]
@@ -38,7 +41,7 @@ private theorem fold_eqStep (a b : BitStr) (ok : Bool) :
       simp only [eqStep, ih, List.cons.injEq]
       cases a <;> cases b <;> cases ok <;> simp
 
-private noncomputable def eqStepP : PolyTimeFun ((BitStr × Bool) × Bool) (BitStr × Bool) :=
+noncomputable def eqStepP : PolyTimeFun ((BitStr × Bool) × Bool) (BitStr × Bool) :=
   congr ((casesList (const ([], false))
     ((snd.comp snd).pair
       (ite (fst.comp fst)
@@ -51,7 +54,7 @@ private noncomputable def eqStepP : PolyTimeFun ((BitStr × Bool) × Bool) (BitS
       | nil => rfl
       | cons a as => cases ok <;> cases a <;> cases b <;> rfl)
 
-private theorem fold_eqStep_size (bs a : BitStr) (ok : Bool) :
+theorem fold_eqStep_size (bs a : BitStr) (ok : Bool) :
     esize (bs.foldl eqStep (a, ok)) ≤ esize a + 4 := by
   induction bs generalizing a ok with
   | nil =>
@@ -107,10 +110,10 @@ section Lookup
 
 variable {α : Type*} [SizedEncoding α]
 
-private def lookupStep (s : ℕ × α) (a : ℕ × α) : ℕ × α :=
+def lookupStep (s : ℕ × α) (a : ℕ × α) : ℕ × α :=
   (s.1, if a.1 = s.1 then a.2 else s.2)
 
-private noncomputable def lookupStepP : PolyTimeFun ((ℕ × α) × (ℕ × α)) (ℕ × α) :=
+noncomputable def lookupStepP : PolyTimeFun ((ℕ × α) × (ℕ × α)) (ℕ × α) :=
   congr ((fst.comp fst).pair (ite (ap₂ eqNat (fst.comp snd) (fst.comp fst))
     (snd.comp snd) (snd.comp fst))) (fun p => lookupStep p.1 p.2) (by
       intro p
@@ -118,7 +121,7 @@ private noncomputable def lookupStepP : PolyTimeFun ((ℕ × α) × (ℕ × α))
         snd_apply, decide_eq_true_eq, lookupStep])
 
 omit [SizedEncoding α] in
-private theorem fold_lookupStep (l : List (ℕ × α)) (k : ℕ) (d : α) :
+theorem fold_lookupStep (l : List (ℕ × α)) (k : ℕ) (d : α) :
     l.reverse.foldl lookupStep (k, d) =
       (k, l.foldr (fun a acc => if a.1 = k then a.2 else acc) d) := by
   rw [List.foldl_reverse]
@@ -130,7 +133,7 @@ private theorem fold_lookupStep (l : List (ℕ × α)) (k : ℕ) (d : α) :
     rfl
 
 omit [SizedEncoding α] in
-private theorem indexed_lookup (l : List α) (base t : ℕ) (d : α) :
+theorem indexed_lookup (l : List α) (base t : ℕ) (d : α) :
     ((List.range' base l.length).zip l).foldr
       (fun a acc => if a.1 = base + t then a.2 else acc) d = l.getD t d := by
   induction l generalizing base t with
@@ -169,3 +172,5 @@ noncomputable def getD (d : α) : PolyTimeFun (ℕ × List α) α :=
 end Lookup
 
 end MIPRE.SAT.ArrayProg
+
+end

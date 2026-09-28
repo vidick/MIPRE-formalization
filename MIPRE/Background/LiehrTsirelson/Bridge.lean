@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LiehrTsirelson.Upstream.Core
-import MIPRE.Foundations.Tsirelson.Closed
-import MIPRE.Foundations.StrategyDilation
-import MIPRE.Foundations.RegisterReindex
+module
+public import MIPRE.Background.LiehrTsirelson.Upstream.Core
+public import MIPRE.Foundations.Tsirelson.Closed
+public import MIPRE.Foundations.StrategyDilation
+public import MIPRE.Foundations.RegisterReindex
+
+@[expose] public section
 
 /-!
 # The bridge to the `lukasliehr/MIPRE` core
@@ -195,3 +198,5 @@ theorem valStar_toLiehr_le [Nonempty X] [Nonempty Y] [Nonempty A] [Nonempty B]
     exact payoff_le_quantumValue_of_mem_Cq G (tensorCorrelations_subset_Cq hp)
 
 end MIPRE.Liehr
+
+end

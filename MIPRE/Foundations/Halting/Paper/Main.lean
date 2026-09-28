@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Paper.Induction
-import MIPRE.Foundations.Halting.Paper.Cost
+module
+public import MIPRE.Foundations.Halting.Paper.Induction
+public import MIPRE.Foundations.Halting.Paper.Cost
+
+@[expose] public section
 
 /-!
 # The halting verifier along the paper's route: `thm:halting` at a fixed level
@@ -79,3 +82,5 @@ theorem halting_paper_valStar (M : Prog) (lam : ℕ)
   exact ⟨fun hM => Verifier.valStar_eq_one_of_hasPerfectPCC _ (h1 hM), h2⟩
 
 end MIPRE.Halting
+
+end

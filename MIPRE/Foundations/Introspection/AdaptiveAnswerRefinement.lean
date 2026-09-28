@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AnswerRefinement
-import MIPRE.Foundations.Introspection.AdaptivePrefixAdvance
-import MIPRE.Foundations.Introspection.AdaptivePrefixReplacement
+module
+public import MIPRE.Foundations.Introspection.AnswerRefinement
+public import MIPRE.Foundations.Introspection.AdaptivePrefixAdvance
+public import MIPRE.Foundations.Introspection.AdaptivePrefixReplacement
+
+@[expose] public section
 
 /-! # Refining actual Introspect answers for the adaptive stage
 
@@ -106,4 +109,6 @@ theorem stageAnswerRefinement_reassemble (P : CL.CLFun F ι ℓ) (k : ℕ)
   exact graphRefinement_sum_coordinate _ _ _
 
 end MIPRE.Introspection
+end
+
 end

@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/Quantum/FiniteMatrix/Basic.lean
 -/
-import Mathlib
+module
+public import Mathlib
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -123,3 +126,5 @@ theorem kronecker_sub_left
           simpa [sub_eq_add_neg] using (Matrix.add_kronecker A₁ (-A₂) B).symm
 
 end MIPStarRE.Quantum
+
+end

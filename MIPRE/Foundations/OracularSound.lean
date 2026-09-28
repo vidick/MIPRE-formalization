@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.OracularGame
-import MIPRE.Foundations.PerfectStrategy
-import MIPRE.Foundations.GameDouble
-import MIPRE.Foundations.Closeness
+module
+public import MIPRE.Foundations.OracularGame
+public import MIPRE.Foundations.PerfectStrategy
+public import MIPRE.Foundations.GameDouble
+public import MIPRE.Foundations.Closeness
+
+@[expose] public section
 
 /-!
 # Soundness of oracularization
@@ -422,22 +425,22 @@ Each budget is now a statement about the relabelled families `oFam`, `cFam`, `dF
 oracle's own answer is accepted, and each isolated player agrees with the oracle's component,
 all but `9ε` of the time. -/
 
-private def EAliceAgree : Finset ((A × A) × A) := univ.image fun p : A × A => (p, p.1)
+def EAliceAgree : Finset ((A × A) × A) := univ.image fun p : A × A => (p, p.1)
 
-private def EBobAgree : Finset ((A × A) × A) := univ.image fun p : A × A => (p, p.2)
+def EBobAgree : Finset ((A × A) × A) := univ.image fun p : A × A => (p, p.2)
 
 omit [Inhabited A] in
-private theorem mem_EAliceAgree (bc : (A × A) × A) :
+theorem mem_EAliceAgree (bc : (A × A) × A) :
     bc ∈ (EAliceAgree : Finset ((A × A) × A)) ↔ bc.1.1 = bc.2 := by
   simp [EAliceAgree, Prod.ext_iff]
 
 omit [Inhabited A] in
-private theorem mem_EBobAgree (bc : (A × A) × A) :
+theorem mem_EBobAgree (bc : (A × A) × A) :
     bc ∈ (EBobAgree : Finset ((A × A) × A)) ↔ bc.1.2 = bc.2 := by
   simp [EBobAgree, Prod.ext_iff, eq_comm]
 
 omit [Inhabited A] in
-private theorem sum_ntr_pair_eq_one (N : SyncStrategy S.oracular) (p q : Role × V) :
+theorem sum_ntr_pair_eq_one (N : SyncStrategy S.oracular) (p q : Role × V) :
     ∑ uv : OAns A × OAns A, ntr (N.P.M p uv.1 * N.P.M q uv.2) = 1 := by
   rw [Fintype.sum_prod_type' fun u v => ntr (N.P.M p u * N.P.M q v)]
   exact N.sum_ntr_eq_one p q
@@ -719,3 +722,5 @@ theorem soundStrategy_value_ge (N : SyncStrategy S.oracular) {ε : ℝ}
 end SeededGame
 
 end MIPRE
+
+end

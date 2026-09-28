@@ -3,12 +3,16 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.Fintype.Sum
-import Mathlib.Data.Fintype.Option
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Data.Sign.Defs
+module
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Fintype.Sum
+public import Mathlib.Data.Fintype.Option
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Data.Sign.Defs
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The interpreter machine: alphabet, tapes, instructions and programs
@@ -380,3 +384,5 @@ theorem length_prog_le (k : ProgId) : (prog k).length ≤ maxPc := by
   cases k <;> decide
 
 end MIPRE.TM.Interp
+
+end

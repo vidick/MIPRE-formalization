@@ -18,11 +18,15 @@ Anchors: 02_preliminaries.tex "Finite tracial standard form"; audit defs
 `tracial_standard_form`, `tracially_embeddable`; consumption inventory
 items 1, 10-11, 16 of the plan.
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -218,3 +222,5 @@ theorem pairing_nonneg (σ : M.A) {u w : M.A}
 end StdTracialAlgebra
 
 end CommutingRepetition
+
+end

@@ -2,9 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryMatrixInverse
-import MIPRE.Foundations.LowDegree.BinarySquareRoot
-import Mathlib.LinearAlgebra.Matrix.Circulant
+module
+public import MIPRE.Foundations.LowDegree.BinaryMatrixInverse
+public import MIPRE.Foundations.LowDegree.BinarySquareRoot
+public import Mathlib.LinearAlgebra.Matrix.Circulant
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Binary cyclic group algebras as circulant matrices -/
 
@@ -148,5 +152,7 @@ theorem inverseRootMatrix_gram {k : ℕ} [NeZero k] (hk : Odd k)
   rw [hc, Matrix.mul_assoc, inverseRootMatrix_square hk z hz, mul_inverseMatrix _ hz]
 
 end MIPRE.LowDegree.BinaryLinear
+
+end
 
 end

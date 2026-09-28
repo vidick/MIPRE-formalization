@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.CLGame
+module
+public import MIPRE.Background.LIDT.CLGame
+
+@[expose] public section
 
 /-!
 # The seeded-CL adapter, part 3: choosing a seed
@@ -80,3 +83,5 @@ theorem exists_seedOf (hm : m ∣ Fintype.card F) (s : F) :
   exact Nat.div_add_mod _ _
 
 end MIPRE.LIDT.Adapter
+
+end

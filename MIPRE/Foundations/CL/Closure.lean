@@ -3,11 +3,15 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.CL.Basic
-import Mathlib.Algebra.BigOperators.Ring.Finset
-import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Data.Real.Basic
+module
+public import MIPRE.Foundations.CL.Basic
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Real.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Closure properties of conditionally linear functions, and CL distributions
@@ -108,7 +112,7 @@ def directSum : {ℓ : ℕ} → CLFun F ι ℓ → CLFun F ι ℓ → CLFun F ι
         (next (proj S v)).directSum (next' (proj S' v)) := rfl
 
 /-- The remainders of a direct sum of presentations on disjoint `V_T`, `V_{T'}`. -/
-private theorem union_sdiff_union {S S' T T' : Finset ι} (hS : S ⊆ T) (hS' : S' ⊆ T')
+theorem union_sdiff_union {S S' T T' : Finset ι} (hS : S ⊆ T) (hS' : S' ⊆ T')
     (hTT' : Disjoint T T') : (T ∪ T') \ (S ∪ S') = (T \ S) ∪ (T' \ S') := by
   ext i
   have hTS' : i ∈ T → i ∉ S' := fun hi hi' => Finset.disjoint_left.mp hTT' hi (hS' hi')
@@ -275,13 +279,11 @@ theorem sum_clDist [Nonempty F] (L R : (ι → F) → (ι → F)) :
     rw [← Nat.cast_sum, ← Finset.card_univ, Finset.card_eq_sum_card_fiberwise
       (f := fun x => (L x, R x)) (t := Finset.univ) (fun _ _ => Finset.mem_univ _)]
     congr 1
-    refine Finset.sum_congr rfl fun p _ => ?_
-    congr 1
-    ext x
-    simp [Prod.ext_iff]
   rw [← Fintype.sum_prod_type' fun a b => clDist L R a b]
   simp only [clDist, div_eq_mul_inv, ← Finset.sum_mul, key, mul_inv_cancel₀ hcard.ne']
 
 end Distribution
 
 end MIPRE.CL
+
+end

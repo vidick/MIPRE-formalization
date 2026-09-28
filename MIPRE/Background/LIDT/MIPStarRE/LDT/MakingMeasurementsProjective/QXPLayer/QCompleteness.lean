@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/QCompleteness.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.LowRank
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.LowRank
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -298,7 +301,7 @@ lemma qCompleteness {Outcome : Type*}
             exact Real.rpow_nonneg hζ _
           linarith
 
-private lemma one_sub_spectralTruncationError_smul_le_sqrt
+lemma one_sub_spectralTruncationError_smul_le_sqrt
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     (Q : MIPStarRE.Quantum.Op ι) (ζ : Error)
     (hQ_nonneg : 0 ≤ Q)
@@ -418,3 +421,5 @@ lemma sqrtQCompleteness {Outcome : Type*}
 end
 
 end MIPStarRE.LDT.MakingMeasurementsProjective
+
+end

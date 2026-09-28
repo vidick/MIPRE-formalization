@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.BinaryAnchors
-import MIPRE.Background.Introspection.HonestPauliGame
+module
+public import MIPRE.Background.Introspection.BinaryAnchors
+public import MIPRE.Background.Introspection.HonestPauliGame
+
+@[expose] public section
 
 /-! # Every edge of the full introspection graph has perfect honest play -/
 
@@ -29,7 +32,7 @@ def sampleCheck (hm : m ∣ Fintype.card F) (c : QLD.Content F m) :=
   TypedPredicate.check L (.pauli .X : QLD.Ty) (.pauli .Z) (project β) D
     (fun p q => QLD.accepts hm (c.question hm p) (c.question hm q) (d := d))
 
-private theorem pauli_adj (p q : QLD.Ty)
+theorem pauli_adj (p q : QLD.Ty)
     (h : TypeGraph.Adj (ℓ := ℓ) QLD.adj (.pauli .X) (.pauli .Z) (.inl p) (.inl q)) :
     QLD.adj p q = true := by
   change TypeGraph.adj QLD.adj (.pauli .X) (.pauli .Z) (.inl p) (.inl q) = true at h
@@ -128,4 +131,6 @@ theorem sampleOp_reject (hβ : LowDegree.IsSelfDualBasis β) (hm : m ∣ Fintype
           (project β) _ p q h a b hr)).trans aOp_zero
 
 end MIPRE.Introspection.BinaryComplete
+end
+
 end

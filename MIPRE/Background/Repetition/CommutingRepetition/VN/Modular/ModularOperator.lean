@@ -16,12 +16,16 @@ complex-linear, self-adjoint, `0 ≤ R ≤ 2`, and `R`, `2 − R` are injective
 `Δ^{it} = (2 − R)^{it} R^{-it}` is a bounded Borel function of `R`
 (`VN/Modular/ModularGroup.lean`).  Source: `PLAN-tomita.md` §0.1.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.RealSubspace
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.RealSubspace
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -296,3 +300,5 @@ end Modular
 end VN
 
 end CommutingRepetition
+
+end

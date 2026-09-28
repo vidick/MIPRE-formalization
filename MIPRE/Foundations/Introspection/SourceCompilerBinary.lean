@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SourceCompiler
+module
+public import MIPRE.Foundations.Introspection.SourceCompiler
+
+@[expose] public section
 
 /-! # Binary-uniform compilation of the cross-Introspect component -/
 
@@ -46,5 +49,7 @@ theorem crossCompiler_binary_bounds (c k lam : ℕ) (U : ClockedUniversalMachine
   exact ⟨((crossCompiler c k U).esize_apply_le (S,D,lam)).trans hb,t,ht.trans hb,hr⟩
 
 end MIPRE.Introspection.SourceCompiler
+
+end
 
 end

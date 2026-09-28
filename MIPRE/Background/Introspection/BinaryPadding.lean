@@ -2,9 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.BinaryGame
-import MIPRE.Foundations.Introspection.SourcePadding
-import Mathlib.Algebra.BigOperators.Fin
+module
+public import MIPRE.Background.Introspection.BinaryGame
+public import MIPRE.Foundations.Introspection.SourcePadding
+public import Mathlib.Algebra.BigOperators.Fin
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Full typed introspection completeness for arbitrary binary source lengths
 
@@ -138,4 +142,6 @@ theorem exists_depthPadded_perfectPCC
   rw [hDim, card_seed, hdim, pow_succ, Nat.mul_comm 2]
 
 end MIPRE.Introspection.BinaryComplete
+end
+
 end

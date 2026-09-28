@@ -7,7 +7,10 @@ Tsirelson/Core/Correlation.lean, from a snapshot of the `main` branch supplied o
 nothing outside `MIPRE/Background/LiehrTsirelson/` may name it. Upstream carries no license file;
 see README.md.
 -/
-import MIPRE.Background.LiehrTsirelson.Upstream.Core.FiniteProbability
+module
+public import MIPRE.Background.LiehrTsirelson.Upstream.Core.FiniteProbability
+
+@[expose] public section
 
 /-!
 # Generic correlations and their finite / square aliases
@@ -82,3 +85,5 @@ noncomputable def correlationHomeomorphEuclidean
 end Topology
 
 end Tsirelson
+
+end

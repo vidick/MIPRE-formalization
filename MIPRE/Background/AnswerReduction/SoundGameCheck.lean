@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.SoundPoly
+module
+public import MIPRE.Background.AnswerReduction.SoundPoly
+
+@[expose] public section
 
 /-!
 # Soundness of answer reduction: the game check under the extracted measurement
@@ -331,5 +334,7 @@ theorem sum_gcEvB_le :
         linarith
 
 end MIPRE.AnswerReduction
+
+end
 
 end

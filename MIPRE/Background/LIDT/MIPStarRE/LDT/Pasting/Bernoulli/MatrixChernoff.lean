@@ -5,10 +5,14 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/Bernoulli/MatrixChernoff.lean
 -/
-import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
-import Mathlib.Analysis.Matrix.HermitianFunctionalCalculus
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.Scalar
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Statements
+module
+public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
+public import Mathlib.Analysis.Matrix.HermitianFunctionalCalculus
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.Scalar
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Statements
+public import MIPRE.Tactics
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -32,7 +36,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- The scalar Bernoulli tail polynomial lifted through continuous functional
 calculus is exactly the matrix Bernoulli tail operator. -/
-private lemma cfc_scalarBernoulliTail_eq_bernoulliTailOperator
+lemma cfc_scalarBernoulliTail_eq_bernoulliTailOperator
     (A : MIPStarRE.Quantum.Op ι) (hA : IsSelfAdjoint A) (k degree : ℕ) :
     cfc (scalarBernoulliTail k degree) A = bernoulliTailOperator k degree A := by
   let s := Finset.Icc (degree + 1) k
@@ -65,7 +69,7 @@ private lemma cfc_scalarBernoulliTail_eq_bernoulliTailOperator
 
 /-- Continuous functional calculus sends the affine lower envelope to the
 expected affine operator expression. -/
-private lemma cfc_bernoulliTailLowerAffine_eq
+lemma cfc_bernoulliTailLowerAffine_eq
     (A : MIPStarRE.Quantum.Op ι) (hA : IsSelfAdjoint A) (theta c : Error) :
     cfc (bernoulliTailLowerAffine theta c) A =
       ((1 - c : Error) • (1 : MIPStarRE.Quantum.Op ι)) -
@@ -162,3 +166,5 @@ lemma chernoffBernoulliMatrix {ι : Type*} [Fintype ι] [DecidableEq ι]
   exact le_trans hEvLower hEvLe
 
 end MIPStarRE.LDT.Pasting
+
+end

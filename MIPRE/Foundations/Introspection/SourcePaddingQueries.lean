@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SourcePadding
+module
+public import MIPRE.Foundations.Introspection.SourcePadding
+
+@[expose] public section
 
 /-! # Queries for source padding at unchanged depth
 
@@ -18,7 +21,7 @@ open Finset Classical CL
 variable {F I J : Type*} [Field F]
   [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J]
 
-private theorem pull_proj_union_compl (e : I ↪ J) (S : Finset I) (O : Finset J)
+theorem pull_proj_union_compl (e : I ↪ J) (S : Finset I) (O : Finset J)
     (hO : Disjoint (univ.map e) O) (x : J → F) :
     pull e (proj (S.map e ∪ O)ᶜ x) = proj Sᶜ (pull e x) := by
   funext i
@@ -108,4 +111,6 @@ theorem depthFamily_factorOfPrefix {ℓ : ℕ} (e : I ↪ J) (L : Bool → CLFun
   by_cases hj : j = 0 <;> simp [hj, Nat.ne_of_gt hℓ]
 
 end MIPRE.Introspection.SourcePadding
+end
+
 end

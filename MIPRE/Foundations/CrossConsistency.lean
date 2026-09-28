@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.StateDistance
-import MIPRE.Foundations.POVMValue
-import MIPRE.Foundations.Sign
+module
+public import MIPRE.Foundations.StateDistance
+public import MIPRE.Foundations.POVMValue
+public import MIPRE.Foundations.Sign
+
+@[expose] public section
 
 /-!
 # Cross-party consistency, and what winning a subtest buys
@@ -773,5 +776,7 @@ theorem norm_stateVec_comm_le (A B : Matrix dA dA ℂ) (A' B' : Matrix dB dB ℂ
 end Reversal
 
 end MIPRE
+
+end
 
 end

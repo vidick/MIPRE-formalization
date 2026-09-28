@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Adapter.Strategy
-import MIPRE.Foundations.POVMValue
+module
+public import MIPRE.Background.LIDT.Adapter.Strategy
+public import MIPRE.Foundations.POVMValue
+
+@[expose] public section
 
 /-!
 # The value of a strategy for the seeded test, sample by sample
@@ -161,3 +164,5 @@ theorem one_sub_povmValue_clGame {dA dB : Type*} [Fintype dA] [DecidableEq dA] [
     Finset.mem_univ, if_true]
 
 end MIPRE.LIDT.CL
+
+end

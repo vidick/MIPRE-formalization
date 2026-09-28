@@ -5,13 +5,16 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/Main/Auxiliary/ScalarMarginalization.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.Closeness
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.ClosenessXEval
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.QSDD
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.ZeroBounds
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.EvaluationSpecialization
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.EvaluatedSliceCommutation.Averages
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.Closeness
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.ClosenessXEval
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.QSDD
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.ZeroBounds
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.EvaluationSpecialization
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.EvaluatedSliceCommutation.Averages
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -47,7 +50,7 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- The evaluated point family viewed as a projective submeasurement family. -/
-private noncomputable def evaluatedPointProj
+noncomputable def evaluatedPointProj
     (params : Parameters) [FieldModel params.q]
     (family : IdxPolyFamily params ι) :
     IdxProjSubMeas (Point params.next) (Fq params) ι :=
@@ -56,7 +59,7 @@ private noncomputable def evaluatedPointProj
       proj := evaluatedPointFamily_outcome_proj params family u }
 
 /-- Triangle inequality with explicit bounds for an intermediate point. -/
-private lemma abs_sub_le_of_two_step
+lemma abs_sub_le_of_two_step
     {a b c e₁ e₂ : Error}
     (hab : |a - b| ≤ e₁) (hbc : |b - c| ≤ e₂) :
     |a - c| ≤ e₁ + e₂ :=
@@ -64,7 +67,7 @@ private lemma abs_sub_le_of_two_step
 
 /-- Summing the inner outcome in an `ABA` expectation turns it into the
 submeasurement total. -/
-private lemma sum_ev_leftTensor_sandwich_total
+lemma sum_ev_leftTensor_sandwich_total
     {α : Type*} [Fintype α]
     (ψ : QuantumState (ι × ι)) (A : MIPStarRE.Quantum.Op ι) (B : SubMeas α ι) :
     (∑ b : α, ev ψ (leftTensor (ι₂ := ι) (A * B.outcome b * A))) =
@@ -78,7 +81,7 @@ private lemma sum_ev_leftTensor_sandwich_total
 
 /-- Summing the right-register outcome in the middle switch-sandwich term turns
 it into the submeasurement total. -/
-private lemma sum_ev_middle_total
+lemma sum_ev_middle_total
     {α : Type*} [Fintype α]
     (ψ : QuantumState (ι × ι)) (G : MIPStarRE.Quantum.Op ι) (A : SubMeas α ι) :
     (∑ a : α, ev ψ (leftTensor (ι₂ := ι) G * rightTensor (ι₁ := ι) (A.outcome a))) =
@@ -92,7 +95,7 @@ private lemma sum_ev_middle_total
 
 /-- Averaging the middle total in an `ABA` sandwich produces the averaged
 slice operator `G = E_y Gʸ`. -/
-private lemma avgOver_slice_total_left_sandwich_eq
+lemma avgOver_slice_total_left_sandwich_eq
     (params : Parameters) [FieldModel params.q]
     (ψ : QuantumState (ι × ι)) (family : IdxPolyFamily params ι)
     (A : MIPStarRE.Quantum.Op ι) :
@@ -108,7 +111,7 @@ private lemma avgOver_slice_total_left_sandwich_eq
     leftTensor_mul_leftTensor, mul_assoc]
 
 /-- Full-slice cubic first term as the left switch-sandwich expectation. -/
-private lemma fullSliceABAAvg_eq_leftSandwichExpectation
+lemma fullSliceABAAvg_eq_leftSandwichExpectation
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι) :
     fullSliceABAAvg params strategy family =
@@ -151,7 +154,7 @@ private lemma fullSliceABAAvg_eq_leftSandwichExpectation
               ((family.meas x).outcome g)
 
 /-- Evaluated-slice cubic first term as the evaluated left switch-sandwich expectation. -/
-private lemma evaluatedSliceABAAvg_eq_leftSandwichExpectation
+lemma evaluatedSliceABAAvg_eq_leftSandwichExpectation
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι) :
     evaluatedSliceABAAvg params strategy family =
@@ -221,7 +224,7 @@ private lemma evaluatedSliceABAAvg_eq_leftSandwichExpectation
               ((evaluatedPointFamily params family u).outcome a)
 
 /-- The full and evaluated switch-sandwich middle terms are the same `G ⊗ G` average. -/
-private lemma fullSlice_middleSandwichExpectation_eq_evaluated
+lemma fullSlice_middleSandwichExpectation_eq_evaluated
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι) :
     MIPStarRE.LDT.Preliminaries.middleSandwichExpectation strategy.state
@@ -421,3 +424,5 @@ lemma fullSlice_scalar_marginalize_y
           4 * Real.sqrt zeta := by ring
 
 end MIPStarRE.LDT.Commutativity
+
+end

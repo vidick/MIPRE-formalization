@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.VerifierValue
+module
+public import MIPRE.Foundations.VerifierValue
+
+@[expose] public section
 
 /-! # Verifier transport at a single index
 
@@ -99,3 +102,5 @@ theorem hasPerfectPCC_congr_at (h : SamplerAgreement V W n)
     hasPerfectPCC_of_congr_at h.symm fun x y a b => (hD x y a b).symm⟩
 
 end MIPRE.Verifier
+
+end

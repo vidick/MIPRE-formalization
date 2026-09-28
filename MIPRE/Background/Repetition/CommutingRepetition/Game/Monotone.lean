@@ -11,16 +11,20 @@ Statement skeleton for audit nodes 1.6.1 and 1.6.3 (perturbation half).
 Anchors: 07_main_theorem.tex, sec 7.4, eqs marginal-monotonicity and
 payoff-rational-approximation.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Basic
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Value
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Strategy
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Mixture
-import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Scalar
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Basic
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Value
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Strategy
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Mixture
+public import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Scalar
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -36,7 +40,7 @@ section Presample
 variable {n : ℕ}
 
 /-- The product question law over any finite index set is normalized. -/
-private theorem prod_law_sum {ι : Type} [Fintype ι] [DecidableEq ι]
+theorem prod_law_sum {ι : Type} [Fintype ι] [DecidableEq ι]
     (G : Game X Y A B) :
     (∑ xs : ι → X, ∑ ys : ι → Y,
       ∏ j : ι, G.questionWeight (xs j) (ys j)) = 1 := by
@@ -54,7 +58,7 @@ private theorem prod_law_sum {ι : Type} [Fintype ι] [DecidableEq ι]
 
 /-- Collapsing the one-shot answer pair against the coordinate-`i`
 indicator of the marginalized effects. -/
-private theorem answer_collapse [DecidableEq A] [DecidableEq B]
+theorem answer_collapse [DecidableEq A] [DecidableEq B]
     (G : Game X Y A B) (i : Fin n) (x : X) (y : Y)
     (c : (Fin n → A) → (Fin n → B) → ℝ) :
     (∑ a : A, ∑ b : B, G.payoff x y a b *
@@ -100,7 +104,7 @@ private theorem answer_collapse [DecidableEq A] [DecidableEq B]
 /-- Presampling change of variables: sampling the off-`i` coordinates from
 the product law and the live pair from `μ` reproduces the full product
 law. -/
-private theorem presample_change_of_variables (i : Fin n)
+theorem presample_change_of_variables (i : Fin n)
     (G : Game X Y A B) (g : (Fin n → X) → (Fin n → Y) → ℝ) :
     (∑ rx : {j : Fin n // j ≠ i} → X, ∑ ry : {j : Fin n // j ≠ i} → Y,
       ∑ x : X, ∑ y : Y,
@@ -497,8 +501,10 @@ theorem repeat_omegaCO_le [Nonempty X] [Nonempty Y] [Nonempty A] [Nonempty B]
     calc G.payoff (w i) (v i) (as i) (bs i) *
           ∏ j ∈ Finset.univ.erase i, G.payoff (w j) (v j) (as j) (bs j)
         ≤ G.payoff (w i) (v i) (as i) (bs i) * 1 :=
+          -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one₀` is the version with
+          -- the nonnegativity hypothesis. See README.md.
           mul_le_mul_of_nonneg_left
-            (Finset.prod_le_one
+            (Finset.prod_le_one₀
               (fun j _ => G.payoff_nonneg _ _ _ _)
               (fun j _ => G.payoff_le_one _ _ _ _))
             (G.payoff_nonneg _ _ _ _)
@@ -650,3 +656,5 @@ theorem abs_repeat_omegaCO_sub_le [Nonempty A] [Nonempty B]
 end Game
 
 end CommutingRepetition
+
+end

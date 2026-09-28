@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.PauliAuxEstimates
-import MIPRE.Foundations.Introspection.HidingBaseOperators
+module
+public import MIPRE.Foundations.Introspection.PauliAuxEstimates
+public import MIPRE.Foundations.Introspection.HidingBaseOperators
+
+@[expose] public section
 
 /-! # The actual Pauli-X/first-hiding test -/
 
@@ -83,3 +86,5 @@ theorem hiding_first_agreement_estimate
     (hiding_first_accepts L X Z projectPauli D (fun p r => DP p r qX 0) w k hk)
 
 end MIPRE.Introspection.TypedEstimates
+
+end

@@ -2,8 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryCyclotomicSeed
-import Mathlib.FieldTheory.Minpoly.Finite
+module
+public import MIPRE.Foundations.LowDegree.BinaryCyclotomicSeed
+public import Mathlib.FieldTheory.Minpoly.Finite
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Algebraic progress and stopping criteria for auxiliary root lifting -/
 
@@ -52,3 +56,5 @@ theorem nonresidue_of_irreducible_comp {F K : Type*} [Field F] [Field K] [Algebr
   simpa only [eval₂_pow, eval₂_X, hb, ← aeval_def] using ha
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

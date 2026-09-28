@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/LayerAlgebra.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Sigma
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Sigma
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -355,7 +358,7 @@ lemma fresh_outcome_le_of_xHatA_eq_xa {Outcome : Type*}
     data.qLayer.q.outcome none ≤ Pa data none :=
   le_of_eq (qa_eq_pa_of_xHatA_eq_xa data none hrow)
 
-private lemma xHat_mixed_adjoint {Outcome : Type*}
+lemma xHat_mixed_adjoint {Outcome : Type*}
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype Outcome]
     (data : QXPLayerData Outcome ι) :
@@ -700,7 +703,7 @@ lemma qxpProjSubMeas_total_le_of_outcome_le {Outcome : Type*}
     _ = A.total := A.sum_eq_total
 
 /-- Right-register expectation form of a supplied QXP total-operator comparison. -/
-private lemma qxpProjSubMeas_rightTensor_total_ev_le_of_total_le {Outcome : Type*}
+lemma qxpProjSubMeas_rightTensor_total_ev_le_of_total_le {Outcome : Type*}
     {ιLeft ι : Type*} [Fintype ιLeft] [DecidableEq ιLeft]
     [Fintype ι] [DecidableEq ι] [Fintype Outcome]
     (ψ : QuantumState (ιLeft × ι))
@@ -754,3 +757,5 @@ end QXPLayerTotalDomination
 end
 
 end MIPStarRE.LDT.MakingMeasurementsProjective
+
+end

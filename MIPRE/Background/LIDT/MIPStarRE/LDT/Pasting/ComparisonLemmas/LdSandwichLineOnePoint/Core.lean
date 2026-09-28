@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Core.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.CauchySchwarz
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.CauchySchwarz
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -395,3 +398,5 @@ lemma ldSandwichLineOnePoint
     hgood hgamma_le hzeta_le hdq_le family hcons hself hbound hfacts k i hi
 
 end MIPStarRE.LDT.Pasting
+
+end

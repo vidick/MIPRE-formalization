@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptivePlayerSwap
-import MIPRE.Foundations.Introspection.ProductStageZTests
+module
+public import MIPRE.Foundations.Introspection.AdaptivePlayerSwap
+public import MIPRE.Foundations.Introspection.ProductStageZTests
+
+@[expose] public section
 
 /-! # The tested Pauli loop supplies the second primitive Z estimate
 
@@ -77,4 +80,6 @@ theorem introAliceZError_le_of_bob
   linarith
 
 end MIPRE.Introspection.TypedEstimates
+end
+
 end

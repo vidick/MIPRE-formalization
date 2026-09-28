@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.Params
+module
+public import MIPRE.TM.CookLevin.Params
+
+@[expose] public section
 
 /-!
 # The answer tapes end at `T`
@@ -108,3 +111,5 @@ theorem InputsLt.tableauPlusF {n : ℕ} (tabs : List (ℕ × Fml)) (htabs : ∀ 
   InputsLt.or' (InputsLt.tableauF e G tabs htabs frees tpls hC) (InputsLt.ansEndF e T hC)
 
 end MIPRE.TM.CookLevin.Desc
+
+end

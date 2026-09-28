@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Repeat.Prims
-import MIPRE.Foundations.Cost.Closure
+module
+public import MIPRE.Foundations.Repeat.Prims
+public import MIPRE.Foundations.Cost.Closure
+
+@[expose] public section
 
 /-!
 # The block loop of the repeated sampler
@@ -408,3 +411,5 @@ theorem mapLoop_runs {univ : Prog} (hU : univ.WellScoped 1) {s : ℕ} (hs : 0 < 
 end Prog
 
 end MIPRE.Cost
+
+end

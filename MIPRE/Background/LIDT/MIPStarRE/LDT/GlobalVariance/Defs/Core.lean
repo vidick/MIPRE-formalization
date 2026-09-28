@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/GlobalVariance/Defs/Core.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.ParametersFiniteAnswers
-import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Core
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.ParametersFiniteAnswers
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Core
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -172,3 +175,5 @@ theorem polynomialDistribution_toPMF (params : Parameters) [FieldModel params.q]
     uniformDistribution_toPMF (Polynomial params)
 
 end MIPStarRE.LDT.GlobalVariance
+
+end

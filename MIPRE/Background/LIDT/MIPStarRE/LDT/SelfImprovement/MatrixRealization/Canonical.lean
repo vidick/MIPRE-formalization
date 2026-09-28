@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.CanonicalPrimal
+module
+public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.CanonicalPrimal
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -788,3 +791,5 @@ theorem matrixSdpPrimalTotalEqOne_of_canonicalSlackOperator_eq_zero
   exact (sub_eq_zero.mp hsub).symm
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

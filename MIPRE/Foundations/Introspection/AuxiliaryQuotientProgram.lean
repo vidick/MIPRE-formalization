@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryMaskProgram
-import MIPRE.Foundations.Introspection.AuxiliaryDualKernel
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryMaskProgram
+public import MIPRE.Foundations.Introspection.AuxiliaryDualKernel
+
+@[expose] public section
 
 /-! # The executable coordinate-independent hiding comparison -/
 
@@ -36,4 +39,6 @@ theorem quotient_correct {n : ‚Ñï} (S : Finset (Fin n)) (L : CL.RegLinear CL.ùî
   rw [AuxiliaryDual.rowSpaceCheck_matrix, hm]
 
 end MIPRE.Introspection.AuxiliaryBits
+end
+
 end

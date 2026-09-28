@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Preliminaries/CauchySchwarz.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.InnerProduct
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.InnerProduct
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -64,7 +67,7 @@ lemma sum_ev_mul_le_sqrt
                 simpa using ev_adjoint_self_nonneg ψ ((X a)ᴴ))
               (fun a => ev_adjoint_self_nonneg ψ (Y a))
 
-private lemma question_easyApproxFromApproxDelta
+lemma question_easyApproxFromApproxDelta
     {Outcome : Type*} {ι : Type*}
     [Fintype Outcome] [Fintype ι] [DecidableEq ι]
     (ψ : QuantumState ι) (hψ : ψ.IsNormalized)
@@ -267,3 +270,5 @@ theorem cabApproxDelta
   simpa [sddErrorOp, qSDDOp, AOp, BOp] using hcab.squaredDistanceBound
 
 end MIPStarRE.LDT.Preliminaries
+
+end

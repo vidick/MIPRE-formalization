@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.BinarySampled
-import MIPRE.Foundations.Introspection.TypedEstimates
+module
+public import MIPRE.Background.Introspection.BinarySampled
+public import MIPRE.Foundations.Introspection.TypedEstimates
+
+@[expose] public section
 
 /-! # Perfect PCC completeness of the concrete full typed introspection game
 
@@ -146,7 +149,7 @@ def strategy (hm : m ∣ Fintype.card F) (b : Module.Basis (Fin t) (ZMod 2) F)
       projective := fun q a => (registerOp_isPVM _ (op_isPVM L D R hm b hL q.2)).idem a
       normalized := fun q => (registerOp_isPVM _ (op_isPVM L D R hm b hL q.2)).sum_eq_one }
 
-private theorem doubled_positive (hm : m ∣ Fintype.card F)
+theorem doubled_positive (hm : m ∣ Fintype.card F)
     (b : Module.Basis (Fin t) (ZMod 2) F) (p q : Bool × Question m t ℓ)
     (h : 0 < (game (d := d) L D hm b).doubled.μ p q) :
     (p.1 = false ∧ q.1 = true) ∧ 0 < (game (d := d) L D hm b).μ p.2 q.2 := by
@@ -195,4 +198,6 @@ theorem exists_perfectPCC (hm : m ∣ Fintype.card F) (b : Module.Basis (Fin t) 
   ring
 
 end MIPRE.Introspection.BinaryComplete
+end
+
 end

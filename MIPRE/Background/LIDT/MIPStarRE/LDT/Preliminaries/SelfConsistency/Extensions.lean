@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Preliminaries/SelfConsistency/Extensions.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Local
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.Core
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Local
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.Core
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -361,3 +364,5 @@ theorem completenessTransferSelfConsistentA
   linarith
 
 end MIPStarRE.LDT.Preliminaries
+
+end

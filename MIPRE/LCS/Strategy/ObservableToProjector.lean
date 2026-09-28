@@ -3,12 +3,16 @@ Copyright (c) 2026 Sean Perazzolo. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sean Perazzolo
 -/
-import MIPRE.LCS.Basic
-import MIPRE.LCS.Common
-import MIPRE.LCS.Observable
-import MIPRE.LCS.Measurement
-import Mathlib.Tactic.Abel
-import Mathlib.Tactic.Ring
+module
+public import MIPRE.LCS.Basic
+public import MIPRE.LCS.Common
+public import MIPRE.LCS.Observable
+public import MIPRE.LCS.Measurement
+public import Mathlib.Tactic.Abel
+public import Mathlib.Tactic.Ring
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Conversion from Observables to Projectors
@@ -153,3 +157,5 @@ lemma isMeasurementSystem_observableToProjector (O : R) (hO : IsObservable O) :
   self_adjoint a := star_observableToProjector O hO a
 
 end MIPRE.LCS
+
+end

@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliarySourceQueries
-import MIPRE.Foundations.Introspection.AuxiliaryMaskProgram
-import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
+module
+public import MIPRE.Foundations.Introspection.AuxiliarySourceQueries
+public import MIPRE.Foundations.Introspection.AuxiliaryMaskProgram
+public import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
+
+@[expose] public section
 
 /-! # One executable Gaussian stage of the hiding prefix scan
 
@@ -83,4 +86,6 @@ theorem stage_correct (f : PolyTimeFun AuxiliarySource.Context BitStr) (m : Poly
   simp only [encode_injective.eq_iff, AuxiliaryProgram.toBits_injective.eq_iff]
 
 end MIPRE.Introspection.AuxiliaryScan
+end
+
 end

@@ -5,15 +5,19 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Separation.lean
 -/
-import Mathlib.Analysis.Complex.Basic
-import Mathlib.Analysis.LocallyConvex.WithSeminorms
-import Mathlib.Analysis.Matrix.Normed
-import Mathlib.Topology.Bases
-import Mathlib.Topology.Instances.Matrix
-import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteConicDuality
-import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.Order
-import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical.StrongDuality.Basic
+module
+public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Analysis.LocallyConvex.WithSeminorms
+public import Mathlib.Analysis.Matrix.Normed
+public import Mathlib.Topology.Bases
+public import Mathlib.Topology.Instances.Matrix
+public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteConicDuality
+public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.Order
+public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical.StrongDuality.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -581,3 +585,5 @@ theorem matrixSdpCanonicalStrongDuality
   simpa [p, d] using hp_eq_d
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

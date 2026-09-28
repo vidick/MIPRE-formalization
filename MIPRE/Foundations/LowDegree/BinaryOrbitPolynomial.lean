@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryQuotientOrbit
+module
+public import MIPRE.Foundations.LowDegree.BinaryQuotientOrbit
+
+@[expose] public section
 
 /-! # Algebra of closed binary Frobenius-orbit polynomials -/
 
@@ -92,5 +95,7 @@ theorem eval_orbitPolynomial [CharP R 2] (x : R) (n : ℕ) (hn : 0 < n) :
     CharTwo.add_self_eq_zero, zero_mul]
 
 end MIPRE.LowDegree.BinaryQuotient
+
+end
 
 end

@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.StrategyReplacementRegister
+module
+public import MIPRE.Foundations.Introspection.StrategyReplacementRegister
+
+@[expose] public section
 
 /-! # Conditional residual POVMs produce an actual replacement strategy
 
@@ -61,4 +64,6 @@ theorem exists_conditional_replacement_strategy
   simpa only [Fintype.sum_unique, one_mul, IsPVM.toPOVM_mats] using hdist
 
 end MIPRE.Introspection
+end
+
 end

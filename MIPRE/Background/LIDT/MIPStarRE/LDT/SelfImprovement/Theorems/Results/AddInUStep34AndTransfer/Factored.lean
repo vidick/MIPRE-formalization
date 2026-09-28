@@ -5,17 +5,20 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Factored.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Defs.Families
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.DataProcessing
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Statements
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.CommonHelpers
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Residual
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.ScalarChain
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep12.Raw
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep12.Selected
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.HelperCompleteness.Bracketed
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Defs.Families
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.DataProcessing
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Statements
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.CommonHelpers
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Residual
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.ScalarChain
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep12.Raw
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep12.Selected
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.HelperCompleteness.Bracketed
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -147,7 +150,7 @@ The non-selected Step 3 and Step 4 estimates use the same finite inequality
 over independent point pairs and polynomial outcomes.  This helper fixes that
 common summation structure, leaving the two applications to supply only their
 step-specific summands and pointwise operator Cauchy--Schwarz estimates. -/
-private theorem addInU_weighted_cauchy_schwarz
+theorem addInU_weighted_cauchy_schwarz
     (params : Parameters) [FieldModel params.q]
     (t x y : Point params × Point params → Polynomial params → Error)
     (ht : ∀ uv h, |t uv h| ≤ Real.sqrt (x uv h) * Real.sqrt (y uv h))
@@ -391,3 +394,5 @@ theorem add_in_u_cs_chain_q3_q4_factored_cs
     exact ev_nonneg_of_psd strategy.state _ (opTensor_nonneg hYMhY_pos hTh_pos)
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

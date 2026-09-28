@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Combine
-import MIPRE.Background.QLD.Legalize
+module
+public import MIPRE.Background.QLD.Combine
+public import MIPRE.Background.QLD.Legalize
+
+@[expose] public section
 
 /-!
 # The padded line measurement's consistency
@@ -552,3 +555,5 @@ theorem padded_lines_consistency_swap (hm4 : 4 * m ∣ Fintype.card F) (hψ : st
 end Main
 
 end MIPRE.QLD
+
+end

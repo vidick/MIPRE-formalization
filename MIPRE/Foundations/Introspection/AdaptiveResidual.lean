@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ReadChainMaps
+module
+public import MIPRE.Foundations.Introspection.ReadChainMaps
+
+@[expose] public section
 
 /-! # The actual CL continuation on the unvisited registers
 
@@ -172,5 +175,7 @@ theorem dualReadout_stageLinear {P : CL.CLFun F ι ℓ} {T : Finset ι}
     | succ k => exact ih _ (hP.2 _) k _ x
 
 end MIPRE.Introspection.CLChecks
+
+end
 
 end

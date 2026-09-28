@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.While
-import MIPRE.Foundations.CL.DetypingProgParse
-import MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic
-import MIPRE.Foundations.CL.DetypingProgCall
+module
+public import MIPRE.Foundations.Cost.While
+public import MIPRE.Foundations.CL.DetypingProgParse
+public import MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic
+public import MIPRE.Foundations.CL.DetypingProgCall
+
+@[expose] public section
 
 /-!
 # Unary arithmetic by loops
@@ -140,3 +143,5 @@ theorem stageProg_runs (pre : PolyTimeFun Data Data) {p : Prog} (hp : p.WellScop
   exact ⟨_, seqProg_runs (Prog.callWithContext_closed hp post) h₀ h₁⟩
 
 end MIPRE.Pipeline
+
+end

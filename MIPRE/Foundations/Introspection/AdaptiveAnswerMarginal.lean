@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveAnswerDecode
-import MIPRE.Foundations.Introspection.AdaptivePrefixMarginal
+module
+public import MIPRE.Foundations.Introspection.AdaptiveAnswerDecode
+public import MIPRE.Foundations.Introspection.AdaptivePrefixMarginal
+
+@[expose] public section
 
 /-! # The stage marginal with its actual malformed-answer mass
 
@@ -28,7 +31,7 @@ def fullAnswerPrefix (P : CL.CLFun F ι ℓ) (k : ℕ) :
     Option ((ι → F) × A) → Option (ι → F) :=
   Option.map (fun a => P.outputPrefix k a.1)
 
-private theorem prefixResidualOp_zero (P : CL.CLFun F ι ℓ) (k : ℕ) (y : ι → F) :
+theorem prefixResidualOp_zero (P : CL.CLFun F ι ℓ) (k : ℕ) (y : ι → F) :
     prefixResidualOp (H := H) P k y 0 = 0 := by
   ext i j
   simp [prefixResidualOp, registerOp_apply]
@@ -151,4 +154,6 @@ theorem stageAnswerRefinement_marginal_le_reported (P : CL.CLFun F ι ℓ)
   exact hd ▸ htri
 
 end MIPRE.Introspection
+end
+
 end

@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.PcpPresentation
-import MIPRE.Foundations.OracularGame
+module
+public import MIPRE.Background.AnswerReduction.PcpPresentation
+public import MIPRE.Foundations.OracularGame
+
+@[expose] public section
 
 /-!
 # The answer-reduced decision predicate
@@ -162,5 +165,7 @@ def accepts (check : X → (Fin P.m' → F) → (Fin (P.m' + 6) → F) → Bool)
   side S S' check p q a b && side S S' check q p b a
 
 end MIPRE.AnswerReduction
+
+end
 
 end

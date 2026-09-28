@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.PrefixLaw
-import MIPRE.Foundations.Introspection.AdaptivePrefixFactor
+module
+public import MIPRE.Foundations.Introspection.PrefixLaw
+public import MIPRE.Foundations.Introspection.AdaptivePrefixFactor
+
+@[expose] public section
 
 /-! # Concrete adaptive prefix conditioning
 
@@ -188,5 +191,7 @@ theorem prefixResidual_commutator_sum (P : CL.CLFun F ι ℓ) (hP : P.SupportedO
   simp_rw [prefixResidual_commutator P hP, Finset.mul_sum]
 
 end MIPRE.Introspection
+
+end
 
 end

@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ConditionalNormalizerStepGame
+module
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerStepGame
+
+@[expose] public section
 
 /-! # Transferring honest hiding rigidity through the actual consistency loop
 
@@ -112,5 +115,7 @@ theorem hiding_register_orientation
 
 end TypedEstimates
 end MIPRE.Introspection
+
+end
 
 end

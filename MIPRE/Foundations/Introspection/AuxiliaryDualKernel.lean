@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryDualProgram
-import MIPRE.Foundations.Introspection.RegisterCoordinates
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryDualProgram
+public import MIPRE.Foundations.Introspection.RegisterCoordinates
+
+@[expose] public section
 
 /-! # Coordinate-independent kernel tests for auxiliary dual answers
 
@@ -102,4 +105,6 @@ theorem registerDual_eq_iff (L : CL.RegLinear F T) (x y : Fin n → F) :
 
 end FiniteCoordinates
 end MIPRE.Introspection.AuxiliaryDual
+end
+
 end

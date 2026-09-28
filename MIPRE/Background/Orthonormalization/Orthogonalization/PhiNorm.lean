@@ -34,12 +34,16 @@ Positivity of `φ` is kept as a bare hypothesis
 than bundled, so that the lemmas apply verbatim to the functional underlying a
 normal state.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization
 
@@ -244,3 +248,5 @@ theorem phiNormSq_add_add_lt (hφ : ∀ z : H →L[ℂ] H, 0 ≤ φ (star z * z)
     Real.sqrt_nonneg ε]
 
 end Orthogonalization
+
+end

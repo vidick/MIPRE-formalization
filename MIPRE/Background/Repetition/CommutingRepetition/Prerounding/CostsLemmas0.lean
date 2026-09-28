@@ -18,15 +18,19 @@ here is proof-side: no statement of the frozen batch is restated. The
 scenario martingales and the budget consumption are the second layer,
 `Prerounding/CostsLemmas.lean`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Alignment
-import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Entropy
-import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Information
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.EntropyBudget
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Alignment
+public import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Entropy
+public import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Information
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.EntropyBudget
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 set_option linter.unusedSectionVars false
 
@@ -1048,3 +1052,5 @@ theorem sum_prod_pi_subtype {α : Type} [Fintype α] (L : Finset (Fin n))
   exact hps.symm
 
 end CommutingRepetition
+
+end

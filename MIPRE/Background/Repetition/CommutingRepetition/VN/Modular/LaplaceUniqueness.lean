@@ -17,13 +17,17 @@ it vanishes on the real segment `(-π, π)`, hence on the whole strip by the
 identity theorem, in particular on the imaginary axis, where it is the Fourier
 transform of `G`. Fourier inversion gives `G = 0`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.StripCauchy
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.AnalyticFamily
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.StripCauchy
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.AnalyticFamily
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -247,3 +251,5 @@ end Main
 end LaplaceUniq
 
 end CommutingRepetition
+
+end

@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Test/MainTheorem/SourceRoleRegister/Completion.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceRoleRegister.Core
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceRoleRegister.Core
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -33,7 +36,7 @@ after completing the local submeasurement.
 This is the bookkeeping needed to apply the standard completion-distance
 identity on the product Hilbert space while returning the local completed
 projective measurement appearing in the paper. -/
-private lemma qSDD_leftPlaced_completeAtOutcome_eq
+lemma qSDD_leftPlaced_completeAtOutcome_eq
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA]
     [Fintype ιB] [DecidableEq ιB]
@@ -71,7 +74,7 @@ private lemma qSDD_leftPlaced_completeAtOutcome_eq
 
 /-- Completing after right tensor placement agrees with right tensor placement
 after completing the local submeasurement. -/
-private lemma qSDD_rightPlaced_completeAtOutcome_eq
+lemma qSDD_rightPlaced_completeAtOutcome_eq
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA]
     [Fintype ιB] [DecidableEq ιB]
@@ -110,7 +113,7 @@ private lemma qSDD_rightPlaced_completeAtOutcome_eq
 /-- If the missing left total of a projective submeasurement is small on the
 state, then the canonical completion is close to the submeasurement after left
 tensor placement. -/
-private lemma qSDD_completeAtOutcomeProj_leftPlaced_le_of_total_gap
+lemma qSDD_completeAtOutcomeProj_leftPlaced_le_of_total_gap
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA]
     [Fintype ιB] [DecidableEq ιB]
@@ -166,7 +169,7 @@ private lemma qSDD_completeAtOutcomeProj_leftPlaced_le_of_total_gap
 
 /-- Right tensor-factor counterpart of
 `qSDD_completeAtOutcomeProj_leftPlaced_le_of_total_gap`. -/
-private lemma qSDD_completeAtOutcomeProj_rightPlaced_le_of_total_gap
+lemma qSDD_completeAtOutcomeProj_rightPlaced_le_of_total_gap
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA]
     [Fintype ιB] [DecidableEq ιB]
@@ -222,7 +225,7 @@ private lemma qSDD_completeAtOutcomeProj_rightPlaced_le_of_total_gap
 
 /-- A left-factor SDD estimate controls the loss in bipartite matching mass
 against a complete measurement on the right factor. -/
-private lemma qBipartiteMatchMass_ge_sub_sqrt_of_left_sdd_heterogeneous
+lemma qBipartiteMatchMass_ge_sub_sqrt_of_left_sdd_heterogeneous
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype Outcome]
     [Fintype ιA] [DecidableEq ιA]
@@ -259,7 +262,7 @@ private lemma qBipartiteMatchMass_ge_sub_sqrt_of_left_sdd_heterogeneous
 
 /-- A right-factor SDD estimate controls the loss in bipartite matching mass
 against a complete measurement on the left factor. -/
-private lemma qBipartiteMatchMass_ge_sub_sqrt_of_right_sdd_heterogeneous
+lemma qBipartiteMatchMass_ge_sub_sqrt_of_right_sdd_heterogeneous
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype Outcome]
     [Fintype ιA] [DecidableEq ιA]
@@ -296,7 +299,7 @@ private lemma qBipartiteMatchMass_ge_sub_sqrt_of_right_sdd_heterogeneous
 
 /-- The bipartite matching mass against a complete right measurement is bounded
 by the left total of the other submeasurement. -/
-private lemma qBipartiteMatchMass_le_left_total_of_measurement_heterogeneous
+lemma qBipartiteMatchMass_le_left_total_of_measurement_heterogeneous
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype Outcome]
     [Fintype ιA] [DecidableEq ιA]
@@ -321,7 +324,7 @@ private lemma qBipartiteMatchMass_le_left_total_of_measurement_heterogeneous
 
 /-- The bipartite matching mass against a complete left measurement is bounded
 by the right total of the other submeasurement. -/
-private lemma qBipartiteMatchMass_le_right_total_of_measurement_heterogeneous
+lemma qBipartiteMatchMass_le_right_total_of_measurement_heterogeneous
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype Outcome]
     [Fintype ιA] [DecidableEq ιA]
@@ -350,7 +353,7 @@ private lemma qBipartiteMatchMass_le_right_total_of_measurement_heterogeneous
 
 /-- Completing a projective submeasurement on Alice's side can only increase
 its bipartite matching mass against a fixed Bob-side submeasurement. -/
-private lemma completeAtOutcomeProj_left_matchMass_ge_heterogeneous
+lemma completeAtOutcomeProj_left_matchMass_ge_heterogeneous
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype Outcome]
     [Fintype ιA] [DecidableEq ιA]
@@ -377,7 +380,7 @@ private lemma completeAtOutcomeProj_left_matchMass_ge_heterogeneous
 
 /-- Completing a projective submeasurement on Bob's side can only increase its
 bipartite matching mass against a fixed Alice-side submeasurement. -/
-private lemma completeAtOutcomeProj_right_matchMass_ge_heterogeneous
+lemma completeAtOutcomeProj_right_matchMass_ge_heterogeneous
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype Outcome]
     [Fintype ιA] [DecidableEq ιA]
@@ -404,7 +407,7 @@ private lemma completeAtOutcomeProj_right_matchMass_ge_heterogeneous
 
 /-- Combine cross consistency and Alice-side orthonormalization closeness into
 the completion estimate for the left tensor factor. -/
-private lemma completedCloseness_left_of_consistency_and_sdd
+lemma completedCloseness_left_of_consistency_and_sdd
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype Outcome]
     [Fintype ιA] [DecidableEq ιA]
@@ -489,7 +492,7 @@ private lemma completedCloseness_left_of_consistency_and_sdd
 
 /-- Bob/right-factor counterpart of
 `completedCloseness_left_of_consistency_and_sdd`. -/
-private lemma completedCloseness_right_of_consistency_and_sdd
+lemma completedCloseness_right_of_consistency_and_sdd
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype Outcome]
     [Fintype ιA] [DecidableEq ιA]
@@ -578,7 +581,7 @@ submeasurement.
 This proves the heterogeneous analogue of the paper's
 `Q^A_g \otimes I \simeq I \otimes G^B_g` step, with the checked repaired loss
 `ζ + sqrt (orthonormalizationError ζ)`. -/
-private lemma completedLeftConsistency_of_consistency_and_sdd
+lemma completedLeftConsistency_of_consistency_and_sdd
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype Outcome]
     [Fintype ιA] [DecidableEq ιA]
@@ -651,7 +654,7 @@ submeasurement.
 
 This is the heterogeneous analogue of the role-reversed line-169 relation
 `G^A_g \otimes I \simeq I \otimes Q^B_g`. -/
-private lemma completedRightConsistency_of_consistency_and_sdd
+lemma completedRightConsistency_of_consistency_and_sdd
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype Outcome]
     [Fintype ιA] [DecidableEq ιA]
@@ -977,3 +980,5 @@ theorem completedProjectiveConsistency_ofFullConsistency
 end ProjStrat
 
 end MIPStarRE.LDT
+
+end

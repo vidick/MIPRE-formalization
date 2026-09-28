@@ -3,12 +3,16 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Algebra.Star.Module
-import Mathlib.Analysis.Convex.Cone.Extension
-import Mathlib.Analysis.InnerProductSpace.Adjoint
-import Mathlib.Analysis.InnerProductSpace.Positive
-import Mathlib.Tactic.NoncommRing
-import MIPRE.Foundations.NCPoly.Basic
+module
+public import Mathlib.Algebra.Star.Module
+public import Mathlib.Analysis.Convex.Cone.Extension
+public import Mathlib.Analysis.InnerProductSpace.Adjoint
+public import Mathlib.Analysis.InnerProductSpace.Positive
+public import Mathlib.Tactic.NoncommRing
+public import MIPRE.Foundations.NCPoly.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The quadratic module of a set of relations, Archimedean separation, and the `ℓ¹` norm
@@ -302,13 +306,13 @@ end Archimedean
 section L1
 
 /-- The taxicab norm of a complex number is subadditive. -/
-private theorem taxicab_add_le (a b : ℂ) :
+theorem taxicab_add_le (a b : ℂ) :
     |(a + b).re| + |(a + b).im| ≤ (|a.re| + |a.im|) + (|b.re| + |b.im|) := by
   rw [Complex.add_re, Complex.add_im]
   linarith [abs_add_le a.re b.re, abs_add_le a.im b.im]
 
 /-- The taxicab norm of a complex number is submultiplicative. -/
-private theorem taxicab_mul_le (a b : ℂ) :
+theorem taxicab_mul_le (a b : ℂ) :
     |(a * b).re| + |(a * b).im| ≤ (|a.re| + |a.im|) * (|b.re| + |b.im|) := by
   rw [Complex.mul_re, Complex.mul_im]
   have h1 := abs_sub (a.re * b.re) (a.im * b.im)
@@ -497,3 +501,5 @@ theorem exists_separating_functional_of_archimedean (M : PointedCone ℝ E) (u :
 end Separation
 
 end MIPRE
+
+end

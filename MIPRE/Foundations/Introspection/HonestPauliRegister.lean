@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestXCoordinates
-import MIPRE.Foundations.Introspection.HonestHiding
+module
+public import MIPRE.Foundations.Introspection.HonestXCoordinates
+public import MIPRE.Foundations.Introspection.HonestHiding
+
+@[expose] public section
 
 /-! # The first honest Hide measurement in the full Pauli register
 
@@ -71,3 +74,5 @@ theorem pauliX_hideOp_zero_reject (P : CL.CLFun F ι ℓ)
   exact firstHide_reject_zero P x a hr
 
 end MIPRE.Introspection.Honest
+
+end

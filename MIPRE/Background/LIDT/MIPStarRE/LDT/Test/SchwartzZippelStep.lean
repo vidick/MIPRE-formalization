@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Test/SchwartzZippelStep.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.PolynomialAgreement
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.PolynomialAgreement
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -31,7 +34,7 @@ namespace MIPStarRE.LDT
 namespace Test
 
 open Classical in
-private lemma qBipartiteMatchMass_postprocess_eq_pair_sum
+lemma qBipartiteMatchMass_postprocess_eq_pair_sum
     {α β ιA ιB : Type*} [Fintype α] [Fintype β]
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (ψ : QuantumState (ιA × ιB)) (A : SubMeas α ιA) (B : SubMeas α ιB)
@@ -97,7 +100,7 @@ private lemma qBipartiteMatchMass_postprocess_eq_pair_sum
               simp [h, hzero]
 
 open Classical in
-private noncomputable def localCollisionMass
+noncomputable def localCollisionMass
     {α β ιA ιB : Type*} [Fintype α]
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (ψ : QuantumState (ιA × ιB)) (A : SubMeas α ιA) (B : SubMeas α ιB)
@@ -106,7 +109,7 @@ private noncomputable def localCollisionMass
     (if aa.1 = aa.2 then 0 else if f aa.1 = f aa.2 then (1 : Error) else 0) *
       ev ψ (opTensor (A.outcome aa.1) (B.outcome aa.2))
 
-private lemma qBipartiteMatchMass_postprocess_eq_add_localCollision
+lemma qBipartiteMatchMass_postprocess_eq_add_localCollision
     {α β ιA ιB : Type*} [Fintype α] [Fintype β]
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (ψ : QuantumState (ιA × ιB)) (A : SubMeas α ιA) (B : SubMeas α ιB)
@@ -143,7 +146,7 @@ private lemma qBipartiteMatchMass_postprocess_eq_add_localCollision
   · simp [hEq]
   · by_cases hf : f aa.1 = f aa.2 <;> simp [hEq, hf]
 
-private lemma qBipartiteConsDefect_le_postprocess_add_localCollision
+lemma qBipartiteConsDefect_le_postprocess_add_localCollision
     {α β ιA ιB : Type*} [Fintype α] [Fintype β]
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (ψ : QuantumState (ιA × ιB)) (A : SubMeas α ιA) (B : SubMeas α ιB)
@@ -186,7 +189,7 @@ private lemma qBipartiteConsDefect_le_postprocess_add_localCollision
       exact le_max_right 0 _
     linarith
 
-private lemma avg_localCollisionMass_eval_eq_polynomialCollisionMass
+lemma avg_localCollisionMass_eval_eq_polynomialCollisionMass
     {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (params : Parameters) [FieldModel params.q]
     (ψ : QuantumState (ιA × ιB))
@@ -347,3 +350,5 @@ theorem mainFormalStep5_selfConsistency_ofExpansionBound
 end Test
 
 end MIPStarRE.LDT
+
+end

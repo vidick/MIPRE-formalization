@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Analysis.InnerProductSpace.Positive
-import MIPRE.Foundations.Games
+module
+public import Mathlib.Analysis.InnerProductSpace.Positive
+public import MIPRE.Foundations.Games
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Bipartite commuting-operator strategies and the commuting-operator value
@@ -91,3 +95,5 @@ noncomputable def commutingOperatorValue (G : Game X Y A B) : ℝ :=
   ⨆ S : CommutingOperatorStrategy X Y A B, S.value G
 
 end MIPRE
+
+end

@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/CommutativityPoints/Defs.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Defs.Core
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Defs.Core
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -323,3 +326,5 @@ def commutativityPointsError (params : Parameters) (gamma : Error) : Error :=
   32 * gamma * (params.m : Error)
 
 end MIPStarRE.LDT.CommutativityPoints
+
+end

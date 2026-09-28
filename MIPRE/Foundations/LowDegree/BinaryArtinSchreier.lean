@@ -2,13 +2,17 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryFiniteFieldDegree
-import Mathlib.RingTheory.AdjoinRoot
-import Mathlib.Algebra.Polynomial.SpecificDegree
-import Mathlib.Algebra.Polynomial.Degree.SmallDegree
-import Mathlib.Algebra.CharP.Algebra
-import Mathlib.Algebra.CharP.Two
-import Mathlib.Algebra.Field.ZMod
+module
+public import MIPRE.Foundations.LowDegree.BinaryFiniteFieldDegree
+public import Mathlib.RingTheory.AdjoinRoot
+public import Mathlib.Algebra.Polynomial.SpecificDegree
+public import Mathlib.Algebra.Polynomial.Degree.SmallDegree
+public import Mathlib.Algebra.CharP.Algebra
+public import Mathlib.Algebra.CharP.Two
+public import Mathlib.Algebra.Field.ZMod
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The characteristic-two Artin–Schreier tower step
@@ -247,5 +251,7 @@ theorem cubic_irreducible_congr {f g : (ZMod 2)[X]} (hfg : f = g)
   exact hc
 
 end MIPRE.LowDegree.BinaryArtinSchreier
+
+end
 
 end

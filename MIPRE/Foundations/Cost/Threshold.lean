@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Unary
-import Mathlib.Tactic.Linarith
+module
+public import MIPRE.Foundations.Cost.Unary
+public import Mathlib.Tactic.Linarith
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The threshold function of the compression argument
@@ -87,3 +91,5 @@ noncomputable def PolyTimeFun.threshold (K : ℕ) : PolyTimeFun Prog ℕ where
     PolyTimeFun.threshold K e = 2 ^ (K + 1 + esize e) := rfl
 
 end MIPRE.Cost
+
+end

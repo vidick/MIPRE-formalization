@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.StrategyReplacementValue
-import MIPRE.Foundations.Introspection.HidingInductionDilation
-import MIPRE.Foundations.StrategyDilation
-import MIPRE.Foundations.RegisterReindex
+module
+public import MIPRE.Foundations.Introspection.StrategyReplacementValue
+public import MIPRE.Foundations.Introspection.HidingInductionDilation
+public import MIPRE.Foundations.StrategyDilation
+public import MIPRE.Foundations.RegisterReindex
+
+@[expose] public section
 
 /-! # Replacing one measurement on a common ancillary extension
 
@@ -111,4 +114,6 @@ theorem replacementStrategy_value (G : Game X Y A B) (ψ : H × K → ℂ)
   TensorProductStrategy.value_ofPVM _ _ _ _ _ _ _
 
 end MIPRE.Introspection
+end
+
 end

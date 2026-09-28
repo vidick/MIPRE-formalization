@@ -17,12 +17,16 @@ The functional-calculus intertwining `A f(S) = f(S′) A` for real-linear `A`
 with `A S = S′ A` is proved by Weierstrass approximation.
 Source: `PLAN-tomita.md` §0.1.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.ModularGroup
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.ModularGroup
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -687,3 +691,5 @@ end Modular
 end VN
 
 end CommutingRepetition
+
+end

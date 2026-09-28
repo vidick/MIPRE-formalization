@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.ValueApprox.Gaussian
-import MIPRE.Foundations.ValueApprox.Norms
+module
+public import MIPRE.Foundations.ValueApprox.Gaussian
+public import MIPRE.Foundations.ValueApprox.Norms
+
+@[expose] public section
 
 /-!
 # Gaussian-rational unitaries and projective measurements are dense
@@ -80,3 +83,5 @@ theorem IsPVM.exists_entriesIn_norm_sub_le {M : A → Matrix n n ℂ} (hM : IsPV
     _ = η := by ring
 
 end MIPRE.ValueApprox
+
+end

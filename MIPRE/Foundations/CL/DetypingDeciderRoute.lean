@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingProgRoute
-import MIPRE.Foundations.CL.DetypingGame
+module
+public import MIPRE.Foundations.CL.DetypingProgRoute
+public import MIPRE.Foundations.CL.DetypingGame
+
+@[expose] public section
 
 /-! # The executable detyping decision router
 
@@ -169,3 +172,5 @@ def post : PolyTimeFun (Data × Data) Data :=
 theorem post_apply (ctx out : Data) : post (ctx, out) = encode (decide (out = encode true)) := rfl
 
 end MIPRE.CL.Detyping.DeciderProgram
+
+end

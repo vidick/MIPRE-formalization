@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.FrobeniusAction
-import MIPRE.Foundations.SAT.FrobeniusMatrix
-import MIPRE.Foundations.LowDegree.BinaryComponentsProg
+module
+public import MIPRE.Foundations.SAT.FrobeniusAction
+public import MIPRE.Foundations.SAT.FrobeniusMatrix
+public import MIPRE.Foundations.LowDegree.BinaryComponentsProg
+
+@[expose] public section
 
 /-! # Uniform programs for Frobenius orbits and cyclic operators -/
 
@@ -100,5 +103,7 @@ theorem shoupActionProg_correct (k : ℕ) (hk : 1 ≤ k) [NeZero k]
   exact mul_comm _ _
 
 end MIPRE.SAT
+
+end
 
 end

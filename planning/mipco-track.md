@@ -13,7 +13,7 @@ Sources read: Lin's LaTeX source (supplied by the maintainer; `Seqandcompression
 `CompressionCond.tex`, `Introspection.tex`, `Answerreduction.tex`, `ARsoundnessproof.tex`,
 `QRsoundnessproof.tex`, `CondLineardist.tex`, `Parallelrepetition*.tex`, `Preliminary.tex`),
 the statements of `Lin23` (arXiv:2304.01940) as Lin's paper cites them, and, here,
-`Foundations/Compression.lean`, `Halting/*`, `ClassMIPStar.lean`, `Tsirelson/*`,
+`Foundations/Compression.lean`, `Halting/*`, `ClassMIPStarComputable.lean`, `Tsirelson/*`,
 `GapCompression.lean`, `GameTransport.lean`, chapters 5, 7 and 8 of the blueprint,
 `planning/repetition-port.md` (D8) and `planning/next-steps.md` (items 5 and 6). The
 companion `MIPRE-proof` repository has no `coRE` chapter: for this track the authority on the
@@ -168,7 +168,7 @@ the other, and `thm:separation` says the two values differ.
 | the classes | `Halting/Classes.lean`, `Halting/Instantiation.lean`, `Halting/Strings.lean` | `Verifier.InClassB ω`, `freeze_val`, `freeze_inClassB`, `inClassB_of_rejects_all`; `classB ω`, `classOne ω` (the strings with `¬ ω(tab x n) < 1`), `classA_subset_classOne`, `tab_val`, `val_tab_eq_one_of_mem_classOne`, `yNo_mem` |
 | the semideciders | `Halting/Semidecider.lean` | `exists_sem_of_tab ω hlow` and `exists_sem_lower`, off `classB ω` from `ω.LowerRE`; `exists_sem_upper`, off `classOne ω` from `ω.UpperRE`; `exists_sem` is the tensor instance |
 | the reduction | `Halting/Reduction.lean`, `Halting/CompressorProgram.lean` | `Obligations ω`, `CompressorSpec.toObligations ω (hs : G.Sound ω)`; `halting_reduction_lower` (the `RE` shape, from `ω.LowerRE`) and `halting_reduction_upper` (the `coRE` shape, from `ω.UpperRE`, by the nested criterion), each with a `_strings` form and an `_of` form on the compressor program; `halting_reduction` is the tensor instance |
-| the class | `Foundations/ClassMIPStar.lean`, `Halting/Corollaries.lean` | `IsRE`, `IsCoRE`, `MIPClass ω`; `MIPStar := MIPClass .tensor`, `MIPCo := MIPClass .commuting`; `MIPClass.isRE` from `LowerRE`, `MIPClass.isCoRE` from `UpperRE`; `re_subset_mipclass_of_reduction`, `mipclass_eq_re_of_reduction`, `core_subset_mipclass_of_reduction`, `mipclass_eq_core_of_reduction` |
+| the class | `Foundations/ClassMIPStarComputable.lean`, `Halting/Corollaries.lean` | `IsRE`, `IsCoRE`, `MIPClass ω`; `MIPStarComputable := MIPClass .tensor`, `MIPCo := MIPClass .commuting`; `MIPClass.isRE` from `LowerRE`, `MIPClass.isCoRE` from `UpperRE`; `re_subset_mipclass_of_reduction`, `mipclass_eq_re_of_reduction`, `core_subset_mipclass_of_reduction`, `mipclass_eq_core_of_reduction` |
 | the co instances | `Foundations/ClassMIPCo.lean`, `MIPRE/MIPCo.lean` | `MIPCo.isCoRE` (unconditional), `halting_reduction_commuting_of`, `core_subset_mipco_of`, `mipco_eq_core_of`; `halting_reduction_commuting`, `core_subset_mipco`, `mipco_eq_core`, each with the single hypothesis `MIPRE.gapCompression.Sound ValueModel.commuting` |
 | the Tsirelson chapter | `Foundations/Tsirelson/Conditional.lean` | `HaltingReductionQuantum` and `CommutingUpperRE` are `ValueModel.tensor.HaltingReductionRE` and `ValueModel.commuting.UpperRE` |
 | blueprint | chapter 8 | `def:value-model`, `def:core`, `def:mipco`, `lem:mipco-sub-core`, `lem:compressible-criterion-nested` (chapter 4), `def:compression-co-sound`, `thm:halting-co`, `thm:mipco-eq-core`, `rem:mipco-route`; `thm:halting`, `lem:halting-semidecider`, `def:mipstar-computable`, `lem:mipstar-sub-re` and `thm:mipstar-eq-re` cite the generic declarations |
@@ -179,7 +179,7 @@ The two semideciders are different programs, because `val*` is r.e. from below a
 from above; that asymmetry is exactly what makes one class `RE` and the other `coRE`, and
 `Halting.exists_sem_upper` needs `tab` made locally irreducible or elaboration times out.
 
-The class is the computable one, as `MIPRE.MIPStar` is (`def:mipstar-computable`): a
+The class is the computable one, as `MIPRE.MIPStarComputable` is (`def:mipstar-computable`): a
 computable map from strings to game descriptions with `ω_co = 1` on the language and
 `ω_co ≤ 1/2` off it. The paper's polynomial-time class is Phase 7.
 

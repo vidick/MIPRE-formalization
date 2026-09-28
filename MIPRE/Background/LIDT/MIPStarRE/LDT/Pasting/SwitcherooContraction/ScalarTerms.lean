@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/SwitcherooContraction/ScalarTerms.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooContraction.Commuted
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooContraction.Commuted
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -195,3 +198,5 @@ lemma switcherooAggregateFourthTerm_mixed_close_left_front_scalar
     (Preliminaries.closenessOfInnerProduct_right ψbi hnorm 𝒟q h𝒟q A B C zeta hAB hC)
 
 end MIPStarRE.LDT.Pasting
+
+end

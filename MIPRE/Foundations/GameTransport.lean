@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Games
+module
+public import MIPRE.Foundations.Games
+
+@[expose] public section
 
 /-!
 # Transport of games and strategies
@@ -571,3 +574,5 @@ theorem syncValue_eq_of_equiv [DecidableEq A] {X' A' : Type*} [Fintype X'] [Fint
     rwa [S.value_relabel G' eX eA hμ hD] at h
 
 end MIPRE
+
+end
