@@ -3,7 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Lean
+module
+public import Lean
+public meta import Lean
+
+@[expose] public section
 
 /-!
 # The dependency graph of this repository's declarations, for `scripts/blueprint-edges.py`
@@ -90,3 +94,5 @@ def main (args : List String) : IO Unit := do
       h.putStrLn (Json.compress (Json.mkObj [("n", toJson c.name), ("k", kindOf c),
         ("m", toJson m), ("t", toJson ty), ("v", toJson val)]))
   IO.eprintln s!"blueprint-deps: {seen.size} modules, {consts.size} constants"
+
+end

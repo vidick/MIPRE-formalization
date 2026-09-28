@@ -1,0 +1,13 @@
+{
+  "challenge_module": "Palomar.Challenge",
+  "solution_module": "Palomar.Solution",
+  "theorem_names": [
+    "MIPRE.Palomar.halting_reduces_to_value",
+    "MIPRE.Palomar.syncValue_uncomputable",
+    "MIPRE.Palomar.quantumValue_uncomputable",
+    "MIPRE.Palomar.mipstar_eq_re"
+  ],
+  "definition_names": [],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
+  "enable_nanoda": true
+}
