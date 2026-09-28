@@ -220,10 +220,11 @@ theorem exists_compressorSpec' : Nonempty (CompressorSpec G U) :=
   let ⟨S, _⟩ := exists_compressorSpec G U (comprPoly G U) fun _ _ => rfl
   ⟨S⟩
 
-/-- **Obligation O4 is discharged**: `Obligations G U` is inhabited. -/
-theorem exists_obligations : Nonempty (Obligations G U) :=
+/-- **Obligation O4 is discharged**, in every value model in which compression is sound:
+`Obligations ω G U` is inhabited. -/
+theorem exists_obligations (ω : ValueModel) (hs : G.Sound ω) : Nonempty (Obligations ω G U) :=
   let ⟨S⟩ := exists_compressorSpec' G U
-  ⟨S.toObligations⟩
+  ⟨S.toObligations ω hs⟩
 
 include G U in
 /-- **The halting reduction from gap-preserving compression alone**, in `val*`. -/
@@ -232,8 +233,25 @@ theorem halting_reduction_of :
       ∀ pc : Nat.Partrec.Code,
         ((pc.eval 0).Dom → quantumValue (g pc).game = 1) ∧
         (¬ (pc.eval 0).Dom → quantumValue (g pc).game ≤ 1 / 2) :=
-  let ⟨O⟩ := exists_obligations G U
+  let ⟨O⟩ := exists_obligations G U .tensor G.sound_tensor
   halting_reduction G U O
+
+include G U in
+/-- **The halting reduction in a value model, `RE` shape**, from soundness of compression in the
+model and a lower semidecider for its value. -/
+theorem halting_reduction_lower_of (ω : ValueModel) (hlow : ω.LowerRE) (hs : G.Sound ω) :
+    ω.HaltingReductionRE :=
+  let ⟨O⟩ := exists_obligations G U ω hs
+  halting_reduction_lower G U ω hlow O
+
+include G U in
+/-- **The halting reduction in a value model, `coRE` shape**, from soundness of compression in
+the model and an upper semidecider for its value. At `ValueModel.commuting` this is
+`thm:halting-co`, with `commutingUpperRE` as the semidecider. -/
+theorem halting_reduction_upper_of (ω : ValueModel) (hup : ω.UpperRE) (hs : G.Sound ω) :
+    ω.HaltingReductionCoRE :=
+  let ⟨O⟩ := exists_obligations G U ω hs
+  halting_reduction_upper G U ω hup O
 
 -- The tabulation is opaque here as in `halting_reduction`, and for the same reason.
 attribute [local irreducible] tab
@@ -243,7 +261,8 @@ include G U in
 from machines to game descriptions whose game has *synchronous* value `1` and quantum value
 `1` when the machine halts on the empty input, and both values at most `1/2` when it does not.
 `halting_reduces_to_gameValue_of` (blueprint `thm:main`) and `halting_reduction_quantum_of`
-(`cor:main-quantum`) are its two halves, on the same map. -/
+(`cor:main-quantum`) are its two halves, on the same map: the strings form of the reduction
+(`halting_reduction_lower_strings`), tabulated, read in each value. -/
 theorem halting_reduction_both_of :
     ∃ g : Nat.Partrec.Code → HaltingGameValue.GameData, Computable g ∧
       ∀ pc : Nat.Partrec.Code,
@@ -251,28 +270,15 @@ theorem halting_reduction_both_of :
           HaltingGameValue.gameValue (g pc).toGame = 1 ∧ quantumValue (g pc).game = 1) ∧
         (¬ HaltingGameValue.HaltsOnEmptyInput pc →
           HaltingGameValue.gameValue (g pc).toGame ≤ 1 / 2 ∧ quantumValue (g pc).game ≤ 1 / 2) := by
-  obtain ⟨O⟩ := exists_obligations G U
-  obtain ⟨nY, hyes⟩ := yYes_mem G U
-  obtain ⟨nN, hno⟩ := yNo_mem G U
-  obtain ⟨sem, hsem_closed, hsem⟩ := exists_sem G U
-  obtain ⟨g, K, hg⟩ := Cost.compressibility_criterion_levels
-    (classA G U) (classB G U) (max (max nY nN) O.n₀)
-    yYes (fun n hn => hyes n (by omega)) yNo (fun n hn => hno n (by omega))
-    sem hsem_closed hsem O.compr (fun c x n hn => O.compr_spec c x n (by omega))
-  obtain ⟨compile, hc, hspec⟩ := exists_compile
-  have hsize : Computable fun pc : Nat.Partrec.Code => esize (compile pc) :=
-    Data.primrec_size.to_comp.comp hc
-  have hlevel : Computable fun pc : Nat.Partrec.Code => 2 ^ (K + 1 + esize (compile pc)) :=
-    (primrec_two_pow.comp (Primrec.nat_add.comp (Primrec.const (K + 1)) Primrec.id)).to_comp.comp
-      hsize
-  refine ⟨fun pc => tab G U (g (compile pc)) (2 ^ (K + 1 + esize (compile pc))),
-    (tab_computable G U).comp
-      ((PolyTimeFun.computable_comp g compile hc Data.primrec_decode_bitStr.to_comp).pair hlevel),
+  obtain ⟨O⟩ := exists_obligations G U .tensor G.sound_tensor
+  obtain ⟨s, lvl, hs, hlvl, hcls⟩ :=
+    halting_reduction_lower_strings G U .tensor ValueModel.tensor_lowerRE O
+  refine ⟨fun pc => tab G U (s pc) (lvl pc), (tab_computable G U).comp (hs.pair hlvl),
     fun pc => ⟨fun hdom => ?_, fun hdom => ?_⟩⟩
-  · have hx := (hg (compile pc)).2.1 ((hspec pc).2 hdom)
+  · have hx := (hcls pc).1 hdom
     refine ⟨gameValue_tab_eq_one G U _ _ hx.1 hx.2.2, ?_⟩
     rw [tab_value G U _ _ hx.1, (Vof G U _).valStar_eq_one_of_hasPerfectPCC hx.2.2]
-  · have hx := (hg (compile pc)).2.2 fun h => hdom ((hspec pc).1 h)
+  · have hx := (hcls pc).2 hdom
     obtain ⟨eX, eA, hμ, hD⟩ := tab_match G U _ _ hx.1
     exact ⟨Verifier.gameValue_toGame_le_of_valStar_le_doubled _ _ _ _ eX eA hμ hD hx.2.2,
       (tab_value G U _ _ hx.1).le.trans hx.2.2⟩

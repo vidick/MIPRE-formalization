@@ -3864,7 +3864,7 @@ graph loss. Total finite answer decoding then increases value and enforces
 the full Pauli support required by QLD soundness.
 \end{lemma}
 \begin{proof}
-\uses{lem:detype-completeness}
+\uses{lem:detype-completeness,def:value-model}
 \leanok
 Prepare the shared clock and canonical resources once, clamp source
 descriptions, and route every source call through the same bounded
@@ -5911,7 +5911,7 @@ on $n$; $\mu=0$ and $\eps\geq 1$ are trivial, the loss being at least $1$ there.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:ar-decoding,lem:ar-soundness-setup}
+\uses{lem:ar-decoding,lem:ar-soundness-setup,def:value-model}
 \leanok
 With $\theta\leq 16^{54}\eps$, the combined error is at most
 $39204\cdot16^{54}Z^{3A}\eps^{b'}+(Q+1)^{-2}+22Z^{3A}2^{-b'Q}$, $Z=8(Q+1)m'$, $A=\lceil
@@ -6220,7 +6220,8 @@ $\verifier$ is a $\lambda$-bounded $7$-level normal form verifier, then for all 
 \end{theorem}
 \begin{proof}
 \leanok
-\uses{def:introspection-contract,def:answer-reduction-contract,thm:parallel-repetition,lem:compress-margin,lem:compress-tau}
+\uses{def:introspection-contract,def:answer-reduction-contract,thm:parallel-repetition,
+  lem:compress-margin,lem:compress-tau,def:value-model}
 Let $\ComputeIntroVerifier$ and $\ComputeAnsVerifier$ denote the procedures provided
 by $I$ and $A$, respectively. These are assumed ambient procedures in this proof.
 $\Compress(\verifier, \lambda)$ is $\ComputeIntroVerifier(\verifier, \lambda, 7)$, then
@@ -6492,7 +6493,12 @@ lower bound has to be tracked anywhere in this chapter.
   MIPRE.Verifier.freeze_rejectsLong, MIPRE.Verifier.hasPerfectPCC_of_le,
   MIPRE.Verifier.valStar_eq_one_of_hasPerfectPCC, MIPRE.Verifier.freeze,
   MIPRE.Verifier.freeze_valStar, MIPRE.Verifier.freeze_hasPerfectPCC,
-  MIPRE.Verifier.freeze_isBounded, MIPRE.Cost.Data.toBitsPost, MIPRE.Cost.Data.parse,
+  MIPRE.Verifier.freeze_isBounded, MIPRE.Verifier.val_congr, MIPRE.Verifier.val_eq_of_rejects,
+  MIPRE.Verifier.val_le_of_le, MIPRE.Verifier.val_eq_zero_of_rejects_all,
+  MIPRE.Verifier.val_eq_one_of_hasPerfectPCC, MIPRE.Verifier.val_doubledGame,
+  MIPRE.Verifier.valStar_le_val, MIPRE.Verifier.val_toGame_eq_doubled, MIPRE.Verifier.freeze_val,
+  MIPRE.Verifier.freeze_inClassB, MIPRE.Verifier.inClassB_of_rejects_all, MIPRE.Halting.tab_val,
+  MIPRE.Halting.notMem_classB_of_mem_classA, MIPRE.Cost.Data.toBitsPost, MIPRE.Cost.Data.parse,
   MIPRE.Cost.Data.parse_toBitsPost, MIPRE.Cost.Data.natOf, MIPRE.Cost.Prog.parseProg_runs,
   MIPRE.Cost.Prog.serProg_runs, MIPRE.Cost.PolyBounded, MIPRE.Verifier.InClassA,
   MIPRE.Verifier.InClassB, MIPRE.Verifier.not_inClassB_of_inClassA,
@@ -6887,8 +6893,9 @@ serves both.
 \begin{lemma}[The semidecider of the halting reduction]
 \label{lem:halting-semidecider}
 \uses{lem:bounded-violation-re,lem:value-lower-approx,lem:semidecide-encoded,def:game-description,
-  thm:compression}
-\lean{MIPRE.Halting.exists_sem_of_tab, MIPRE.REPred.or, MIPRE.Verifier.LongAcceptance,
+  thm:compression,def:value-model}
+\lean{MIPRE.Halting.exists_sem_of_tab, MIPRE.Halting.exists_sem_lower,
+  MIPRE.Halting.exists_sem_upper, MIPRE.REPred.or, MIPRE.Verifier.LongAcceptance,
   MIPRE.Verifier.longAcceptanceB, MIPRE.Verifier.longAcceptanceB_iff,
   MIPRE.Verifier.not_rejectsLong_iff_exists, MIPRE.Verifier.rePred_not_rejectsLong}
 \leanok
@@ -7173,7 +7180,7 @@ Theorem~\ref{thm:halting} runs on $\machine_z$ (\texttt{lamz}).
 \begin{lemma}[Values of the halting verifier]
 \label{lem:dhalt-values}
 \ledgernode{1.6.2, 1.6.3}
-\uses{lem:halt-construction,lem:compress-sampler-indep,def:pcc,def:q-value}
+\uses{lem:halt-construction,lem:compress-sampler-indep,def:pcc,def:q-value,def:compression-co-sound}
 \lean{MIPRE.Halting.comprStr_accepts, MIPRE.Halting.CompressorSpec.toObligations,
   MIPRE.Halting.accepts_iff, MIPRE.Halting.accepts_iff_W, MIPRE.Halting.A_of_branch1,
   MIPRE.Halting.B_of_branch2, MIPRE.Halting.rejectsLong_of_not_branch1,
@@ -7252,8 +7259,11 @@ revision of this chapter did state item 2 as the bound, and because the ledger n
 \label{thm:halting}
 \ledgernode{1.6, 1.6.6}
 \uses{thm:compression,lem:compressible-criterion,lem:value-lower-approx,lem:kleene,
-  def:game-description,lem:sync-le-valstar,lem:dhalt-values,lem:lambda,def:mipstar}
+  def:game-description,lem:sync-le-valstar,lem:dhalt-values,lem:lambda,def:mipstar,
+  def:value-model}
 \lean{MIPRE.Halting.halting_reduction, MIPRE.Halting.halting_reduction_of,
+  MIPRE.Halting.halting_reduction_lower, MIPRE.Halting.halting_reduction_lower_strings,
+  MIPRE.Halting.halting_reduction_lower_of,
   MIPRE.Halting.exists_obligations, MIPRE.Halting.halting_reduces_to_gameValue_of,
   MIPRE.Halting.halting_reduction_both_of,
   MIPRE.Halting.halting_paper, MIPRE.Halting.halting_paper_valStar, MIPRE.Halting.Vpaper,
@@ -7282,7 +7292,7 @@ does not.
 \end{theorem}
 
 \begin{proof}
-\uses{lem:halting-semidecider}
+\uses{lem:halting-semidecider,lem:mipstar-sub-re}
 \leanok
 \texttt{MIPRE.Halting.halting\_reduction\_of} in $\valstar$ and
 \texttt{halting\_reduces\_to\_gameValue\_of} in $\synval$, from

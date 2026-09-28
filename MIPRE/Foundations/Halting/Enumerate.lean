@@ -226,16 +226,16 @@ the verifier is not `n`-bounded — witnessed by a single input whose run exceed
 a search — or its value at index `n` exceeds `1/2`, which is the `val*` half of
 `lem:value-lower-approx` on the tabulation. Neither disjunct decides `n`-boundedness, which is
 `Π₁`; the point of the disjunction is that it does not have to. -/
-theorem not_inClassB_iff {ℓ : ℕ} (V : Verifier ℓ) (n T : ℕ) :
-    ¬ V.InClassB n T ↔
-      (¬ V.IsBounded n ∨ ¬ V.RejectsLong n T ∨ 1 / 2 < V.valStar n T) := by
+theorem not_inClassB_iff {ℓ : ℕ} (V : Verifier ℓ) (ω : ValueModel) (n T : ℕ) :
+    ¬ V.InClassB ω n T ↔
+      (¬ V.IsBounded n ∨ ¬ V.RejectsLong n T ∨ 1 / 2 < V.val ω n T) := by
   rw [InClassB, not_and_or, not_and_or, not_le]
 
 /-- A verifier that *is* `n`-bounded lies outside `B` exactly when it accepts a long answer
 or its value exceeds `1/2`. -/
-theorem not_inClassB_iff_of_isBounded {ℓ : ℕ} (V : Verifier ℓ) {n T : ℕ}
+theorem not_inClassB_iff_of_isBounded {ℓ : ℕ} (V : Verifier ℓ) (ω : ValueModel) {n T : ℕ}
     (hb : V.IsBounded n) :
-    ¬ V.InClassB n T ↔ (¬ V.RejectsLong n T ∨ 1 / 2 < V.valStar n T) := by
+    ¬ V.InClassB ω n T ↔ (¬ V.RejectsLong n T ∨ 1 / 2 < V.val ω n T) := by
   rw [not_inClassB_iff]
   simp [hb]
 

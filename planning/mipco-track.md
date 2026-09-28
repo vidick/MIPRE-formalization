@@ -20,10 +20,13 @@ here; his statements are paraphrased only where they are formalized.
 
 ## 1. Short answer
 
-The *logical* architecture transfers almost unchanged, and Phase 0 (§4) proves
-`MIP^co = coRE` conditionally on **one** hypothesis, the commuting-operator soundness of gap
-compression (`MIPRE.GapCompression.CoSound`), in about a thousand lines on top of what exists:
-the compressibility criterion generalized to nested classes, the tabulation, the classical
+The *logical* architecture transfers unchanged, and it is written once: the halting
+reduction, the classes and the class `MIP(ω)` are generic in a *value model* `ω`
+(`MIPRE.ValueModel`, §4), of which `val*` and `ω_co` are the two instances, so `MIP* = RE`
+and `MIP^co = coRE` are two readings of one proof. Phase 0 (§4) proves `MIP^co = coRE`
+conditionally on **one** hypothesis, the commuting-operator soundness of gap compression
+(`MIPRE.GapCompression.Sound ValueModel.commuting`), on top of what exists: the
+compressibility criterion generalized to nested classes, the tabulation, the classical
 layers, the trivially accepting and rejecting strings, and the upper semidecider for the
 commuting-operator value (`MIPRE.commutingUpperRE`, through Positivstellensatz certificates)
 in the role Lin gives to the NPA hierarchy. `MIP^co ⊆ coRE` is proved unconditionally.
@@ -80,7 +83,7 @@ Piece by piece:
 | accepting and rejecting games | `Halting.yYes`, `Halting.yNo` (`Halting/Strings.lean`) | done; `ω_co` reading in Phase 0 |
 | tabulation and semidecider plumbing | `tab`, `tab_computable`, `tab_match`; their `ω_co` readings | Phase 0 |
 | compression completeness, model `co` | not needed (§3): the tensor completeness `GapCompression.completeness` is what the criterion consumes | — |
-| compression soundness, model `co` | `GapCompression.CoSound`, a hypothesis | Phases 1–5 |
+| compression soundness, model `co` | `GapCompression.Sound ValueModel.commuting`, a hypothesis | Phases 1–5 |
 | parallel repetition, model `co` | `thm:direct-repetition-co`, vendored and sorry-free (`MIPRE.Repetition.commutingOperatorValue_repeat_le`); direct, not anchored (§6 item 8) | done |
 | tracial density | `thm:tracial-density`, vendored (`MIPRE.Repetition.tracialDensity`) | done |
 | rounding, model `co` | not formalized; `thm:almost-sync` is #22 (finite dimension) and #23 (commuting) | Phase 1 |
@@ -117,8 +120,8 @@ contradiction with a firing search uses `B₀ ⊆ B₁`. The old theorem is the 
 
 The instantiation:
 
-* `A := classBCo n` — `n`-bounded, rejects long answers, `ω_co(𝒱_n) ≤ 1/2`; preserved by
-  the hypothesis `CoSound`; contains `yNo` (its verifier accepts nothing, so `ω_co = 0`).
+* `A := classB ω_co n` — `n`-bounded, rejects long answers, `ω_co(𝒱_n) ≤ 1/2`; preserved by
+  the hypothesis `Sound ω_co`; contains `yNo` (its verifier accepts nothing, so `ω_co = 0`).
 * `B₀ := classA n` — `n`-bounded, rejects long answers, has a perfect PCC strategy on the
   doubled game: **the tensor class of the main theorem**, preserved by the existing
   `GapCompression.completeness`; contains `yYes`.
@@ -131,19 +134,45 @@ So the only hypothesis that is new is co-soundness. Lin's construction uses the 
 without naming it: his accepting game has a perfect strategy in both models, and his
 completeness clause is the tensor-style one.
 
-## 4. Phase 0: the conditional theorem (this pull request)
+## 4. Phase 0: the conditional theorem, on a generic value model
+
+Phase 0 was first written as a twin of the tensor-product halting layer (five `Co` modules,
+#236). It was then folded back into that layer, so that there is one halting reduction and
+one class, parametrized by the value functional, and nothing in the halting layer is written
+twice.
+
+**The value model.** `MIPRE.ValueModel` (`Foundations/ValueModel.lean`) is a value functional
+`val` on finite games together with the properties the halting reduction consumes: at most
+`1`, dominating `val*`, invariant under relabeling, monotone in the decision predicate, `0`
+on a game that rejects everything, unchanged by padding with always-rejected answers and by
+the doubling of the question set. Its two instances are `ValueModel.tensor` (`val*`) and
+`ValueModel.commuting` (`ω_co`), both definitional. Two shapes of computability are defined
+on it — `LowerRE`, the set `{(G, p/q) | p/q < ω(G)}` is r.e.; `UpperRE`, the set
+`{(G, p/q) | ω(G) < p/q}` is r.e. — and two shapes of reduction — `HaltingReductionRE`,
+halting ↦ `ω = 1` and non-halting ↦ `ω ≤ 1/2`; `HaltingReductionCoRE`, the reverse. `val*`
+is `LowerRE` (`ValueModel.tensor_lowerRE`, from `lem:value-lower-approx`) and `ω_co` is
+`UpperRE` (`ValueModel.commuting_upperRE`, from `commutingUpperRE`); neither is known to be
+the other, and `thm:separation` says the two values differ.
 
 | piece | where | what |
 |---|---|---|
-| nested criterion | `Foundations/Compression.lean` | `Cost.compressibility_criterion_nested`; `compressibility_criterion_levels` becomes its special case |
-| `ω_co` under transport | `Foundations/CommutingTransport.lean` | `CommutingOperatorStrategy.relabel`, `extendAnswers`, `mergeAnswers`; `commutingOperatorValue_eq_of_equiv`, `_mono`, `_eq_zero_of_reject`, `_extendAnswers`, `_doubled` — the POVM counterparts of `GameTransport.lean` and `GameDouble.lean` (merging POVMs needs no orthogonality) |
-| `ω_co` of a verifier's game | `Foundations/VerifierValueCo.lean` | `Verifier.valCo n T := commutingOperatorValue (V.game n T)`; `valCo_congr`, `valCo_eq_of_rejects`, `valCo_le_of_le`, `valStar_le_valCo`, `commutingOperatorValue_toGame_eq_valCo_doubled` |
-| the hypothesis | `Foundations/VerifierValueCo.lean` | `GapCompression.CoSound`: the soundness clause of `GapCompression` with `valCo` in place of `valStar` |
-| the co class | `Halting/ClassesCo.lean`, `Halting/InstantiationCo.lean` | `Verifier.InClassBCo`, `freeze_valCo`, `freeze_inClassBCo`, `inClassBCo_of_rejects_all`; `classBCo`, `classOne`, `classA_subset_classOne`, `tab_valCo`, `yNo_memCo` |
-| the semidecider and the reduction | `Halting/ReductionCo.lean` | `exists_semCo` (from `commutingUpperRE`); `ObligationsCo`, `CompressorSpec.toObligationsCo`; `halting_reduction_co`, `halting_reduction_commuting_of` |
-| the class | `Foundations/ClassMIPCo.lean`, `Halting/CorollariesCo.lean` | `IsCoRE`, `MIPCo`, `HaltingReductionCommuting`; `MIPCo.isCoRE` (unconditional); `core_subset_mipco_of_reduction`, `mipco_eq_core_of_reduction`, `core_subset_mipco_of`, `mipco_eq_core_of` |
-| the root module | `MIPRE/MIPCo.lean` | `halting_reduction_commuting`, `core_subset_mipco`, `mipco_eq_core`, each with the single hypothesis `MIPRE.gapCompression.CoSound` |
-| blueprint | chapter 8, new subsection | `def:core`, `def:mipco`, `lem:mipco-sub-core`, `lem:compressible-criterion-nested` (chapter 4), `def:compression-co-sound`, `thm:halting-co`, `thm:mipco-eq-core`, `rem:mipco-route`; `rem:further` updated |
+| nested criterion | `Foundations/Compression.lean` | `Cost.compressibility_criterion_nested`; `compressibility_criterion_levels` is its special case `B₀ = B₁` |
+| `ω_co` under transport | `Foundations/CommutingTransport.lean` | `CommutingOperatorStrategy.relabel`, `extendAnswers`, `mergeAnswers`; `commutingOperatorValue_eq_of_equiv`, `_mono`, `_eq_zero_of_reject`, `_le_extendAnswers`, `_doubled` — the POVM counterparts of `GameTransport.lean` and `GameDouble.lean` (merging POVMs needs no orthogonality), and what `ValueModel.commuting` is built from |
+| the value of a verifier's game | `Foundations/VerifierValue.lean` | `Verifier.val ω n T := ω.val (V.game n T)`, with `val_tensor : V.val .tensor n T = V.valStar n T` by `rfl`; `val_congr`, `val_le_of_le`, `val_eq_of_rejects`, `val_eq_zero_of_rejects_all`, `val_eq_one_of_hasPerfectPCC`, `val_doubledGame`, `valStar_le_val`; the `valStar_*` names are kept as the tensor instances |
+| the hypothesis | `Foundations/VerifierValue.lean` | `GapCompression.Sound ω`: the soundness clause of `GapCompression` read in the value `ω`; `GapCompression.sound_tensor : G.Sound .tensor` is the structure's own field |
+| the classes | `Halting/Classes.lean`, `Halting/Instantiation.lean`, `Halting/Strings.lean` | `Verifier.InClassB ω`, `freeze_val`, `freeze_inClassB`, `inClassB_of_rejects_all`; `classB ω`, `classOne ω` (the strings with `¬ ω(tab x n) < 1`), `classA_subset_classOne`, `tab_val`, `val_tab_eq_one_of_mem_classOne`, `yNo_mem` |
+| the semideciders | `Halting/Semidecider.lean` | `exists_sem_of_tab ω hlow` and `exists_sem_lower`, off `classB ω` from `ω.LowerRE`; `exists_sem_upper`, off `classOne ω` from `ω.UpperRE`; `exists_sem` is the tensor instance |
+| the reduction | `Halting/Reduction.lean`, `Halting/CompressorProgram.lean` | `Obligations ω`, `CompressorSpec.toObligations ω (hs : G.Sound ω)`; `halting_reduction_lower` (the `RE` shape, from `ω.LowerRE`) and `halting_reduction_upper` (the `coRE` shape, from `ω.UpperRE`, by the nested criterion), each with a `_strings` form and an `_of` form on the compressor program; `halting_reduction` is the tensor instance |
+| the class | `Foundations/ClassMIPStar.lean`, `Halting/Corollaries.lean` | `IsRE`, `IsCoRE`, `MIPClass ω`; `MIPStar := MIPClass .tensor`, `MIPCo := MIPClass .commuting`; `MIPClass.isRE` from `LowerRE`, `MIPClass.isCoRE` from `UpperRE`; `re_subset_mipclass_of_reduction`, `mipclass_eq_re_of_reduction`, `core_subset_mipclass_of_reduction`, `mipclass_eq_core_of_reduction` |
+| the co instances | `Foundations/ClassMIPCo.lean`, `MIPRE/MIPCo.lean` | `MIPCo.isCoRE` (unconditional), `halting_reduction_commuting_of`, `core_subset_mipco_of`, `mipco_eq_core_of`; `halting_reduction_commuting`, `core_subset_mipco`, `mipco_eq_core`, each with the single hypothesis `MIPRE.gapCompression.Sound ValueModel.commuting` |
+| the Tsirelson chapter | `Foundations/Tsirelson/Conditional.lean` | `HaltingReductionQuantum` and `CommutingUpperRE` are `ValueModel.tensor.HaltingReductionRE` and `ValueModel.commuting.UpperRE` |
+| blueprint | chapter 8 | `def:value-model`, `def:core`, `def:mipco`, `lem:mipco-sub-core`, `lem:compressible-criterion-nested` (chapter 4), `def:compression-co-sound`, `thm:halting-co`, `thm:mipco-eq-core`, `rem:mipco-route`; `thm:halting`, `lem:halting-semidecider`, `def:mipstar-computable`, `lem:mipstar-sub-re` and `thm:mipstar-eq-re` cite the generic declarations |
+
+What is *not* generic, and why. `classA`, the perfect-PCC class, is the tensor class in
+every instance, because the criterion consumes the tensor completeness of compression (§3).
+The two semideciders are different programs, because `val*` is r.e. from below and `ω_co`
+from above; that asymmetry is exactly what makes one class `RE` and the other `coRE`, and
+`Halting.exists_sem_upper` needs `tab` made locally irreducible or elaboration times out.
 
 The class is the computable one, as `MIPRE.MIPStar` is (`def:mipstar-computable`): a
 computable map from strings to game descriptions with `ω_co = 1` on the language and
@@ -154,9 +183,9 @@ computable map from strings to game descriptions with `ω_co = 1` on the languag
 The hypothesis to discharge, stated in the bipartite value of `Verifier.game`:
 
 ```text
-CoSound G : ∀ V lam n, V.IsBounded lam → G.C₀ ≤ n →
-  V.valCo (2 ^ n) ((2 ^ n) ^ lam) ≤ 1/2 →
-  (G.output (V.sampler.prog, V.decider.prog) lam).valCo n (G.bound.eval (n + lam)) ≤ 1/2
+G.Sound ValueModel.commuting : ∀ V lam n, V.IsBounded lam → G.C₀ ≤ n →
+  V.val .commuting (2 ^ n) ((2 ^ n) ^ lam) ≤ 1/2 →
+  (G.output (V.sampler.prog, V.decider.prog) lam).val .commuting n (G.bound.eval (n + lam)) ≤ 1/2
 ```
 
 for `G = MIPRE.gapCompression`, i.e. the pipeline of `Background/Pipeline.lean` with the
@@ -215,7 +244,8 @@ soundness in the `co` model through balancedness and rounding; repetition throug
 vendored `commutingOperatorValue_repeat_le`, which is *direct* repetition — Lin's
 proposition is anchored, but the value-form pipeline here already uses direct repetition
 (D8 of `planning/repetition-port.md`), and the vendored theorem is sorry-free; then the
-composition of the three `co` clauses into `CoSound` for `MIPRE.gapCompression`, along the
+composition of the three `co` clauses into `Sound ValueModel.commuting` for
+`MIPRE.gapCompression`, along the
 existing `GapCompression.ofPipeline`. New: 5k–10k lines, plus a vendoring of the `co`
 clause of the oracularization if it is done upstream.
 
@@ -228,19 +258,20 @@ sampler and decider, mirroring `MIPStarPoly` (#230–#233), and Lin's `k-CLMIP^c
 1. **Two commuting values, never interchanged.** The bipartite `ω_co`
    (`MIPRE.commutingOperatorValue`: POVMs `E`, `F` on one Hilbert space, commuting) and the
    tracial `valco` (`MIPRE.commValue`: a `*`-algebra with a tracial state and one PVM family
-   played by both players). The criterion, the classes, the semidecider, `CoSound` and
-   `MIPCo` are all in `ω_co`, so nothing is transferred at the criterion. `valco ≤ ω_co` is
+   played by both players). The criterion, the classes, the semidecider,
+   `Sound ValueModel.commuting` and `MIPCo` are all in `ω_co`, so nothing is transferred at
+   the criterion. `valco ≤ ω_co` is
    #29 and unproved; the reverse fails in general and holds up to rounding for synchronous
    games with proportional diagonal weight (`thm:almost-sync`, #22/#23). The transfers
    happen inside the stages' proofs, in Phases 1–5, where Lin makes them.
 2. **The nested criterion.** The search must semidecide the complement of the *larger*
    class, the compressor must preserve the *smaller* one, and the "no" string must lie in
    the smaller. The Lean of Phase 0 is the check.
-3. **The semidecider runs on the tabulation.** `tab x n` is total, and `tab_valCo` holds
+3. **The semidecider runs on the tabulation.** `tab x n` is total, and `tab_val` holds
    for `n`-bounded strings only, as `tab_value` does. `classOne` is defined on the
    tabulated game so that the non-halting conclusion needs no boundedness; the halting
-   conclusion reads `ω_co(tab) ≤ 1/2` through `tab_valCo` from the boundedness that
-   `classBCo` carries.
+   conclusion reads `ω_co(tab) ≤ 1/2` through `tab_val` from the boundedness that
+   `classB ω_co` carries.
 4. **`ω_co = 1` without a strategy.** It is `¬ (ω_co < 1)` and `ω_co ≤ 1`. No perfect
    commuting-operator strategy is constructed anywhere, consistent with `thm:separation`.
 5. **Density is approximate.** Tracial density is an `ℓ¹`-closure statement, so a
@@ -267,12 +298,12 @@ sampler and decider, mirroring `MIPStarPoly` (#230–#233), and Lin's `k-CLMIP^c
 
 | ID | Deliverable | Size | Status |
 |---|---|---|---|
-| C0 | Phase 0: the nested criterion, the `ω_co` transport, the co classes and semidecider, the conditional reduction, `MIPCo`, `MIPCo ⊆ coRE`, the blueprint | 1.1k lines of Lean, eight modules | this pull request |
+| C0 | Phase 0: the nested criterion, the `ω_co` transport, the value model and the generic halting layer, the conditional reduction, `MIPCo`, `MIPCo ⊆ coRE`, the blueprint | ~1k lines of Lean net | done: #236, then made generic |
 | C1 | tracially embeddable strategies, `L²(𝒜, τ)`, density and rounding in usable form, `lem:tracial-le-co` | 3k–6k | open |
 | C2 | Pauli basis test rigidity, model `co` | 15k–30k | open |
 | C3 | introspection soundness, model `co` | 20k–40k | open |
 | C4 | answer reduction soundness, model `co`, with the low-individual-degree test | 40k–80k | open; verify the paper trail first |
-| C5 | oracularization soundness, model `co`; `CoSound` for `MIPRE.gapCompression` | 5k–10k | open |
+| C5 | oracularization soundness, model `co`; `Sound ValueModel.commuting` for `MIPRE.gapCompression` | 5k–10k | open |
 | C6 | the paper's class `MIP^co_{1,1/2}(2,1)` | ~1k | open |
 
 C1 is the prerequisite of C2–C5, which are otherwise independent of one another; C4

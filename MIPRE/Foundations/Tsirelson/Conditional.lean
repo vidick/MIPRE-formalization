@@ -6,6 +6,7 @@ Authors: Thomas Vidick
 import Mathlib.Computability.Halting
 import MIPRE.Foundations.Correlations
 import MIPRE.Foundations.GameDescription
+import MIPRE.Foundations.ValueModel
 
 /-!
 # Tsirelson's problem from an upper semidecider for the commuting-operator value
@@ -46,17 +47,12 @@ open Nat.Partrec (Code)
 /-- The halting reduction of `cor:main-quantum`, as a proposition: a computable map from codes
 to game descriptions whose quantum value is `1` on halting codes and at most `1/2` on the
 others. `MIPRE.Halting.halting_reduction_quantum` proves it. -/
-def HaltingReductionQuantum : Prop :=
-  ∃ g : Code → GameData, Computable g ∧
-    ∀ pc : Code,
-      (HaltsOnEmptyInput pc → quantumValue (g pc).game = 1) ∧
-      (¬ HaltsOnEmptyInput pc → quantumValue (g pc).game ≤ 1 / 2)
+abbrev HaltingReductionQuantum : Prop := ValueModel.tensor.HaltingReductionRE
 
 /-- **The commuting-operator value is r.e. from above** (blueprint `lem:valco-upper-re`): the
 pairs `(d, p, q)` with `valco(G_d) < p / q` form an r.e. set. The threshold encoding is that of
 the lower semidecider `MIPRE.ValueApprox.rePred_lt_quantumValue`. -/
-def CommutingUpperRE : Prop :=
-  REPred fun x : GameData × ℕ × ℕ => commutingOperatorValue x.1.game < (x.2.1 : ℝ) / x.2.2
+abbrev CommutingUpperRE : Prop := ValueModel.commuting.UpperRE
 
 /-- **The two values differ on some described game**, given the halting reduction and an upper
 semidecider for the commuting-operator value. -/
@@ -79,10 +75,12 @@ theorem exists_quantumValue_lt_commutingOperatorValue (hred : HaltingReductionQu
     constructor
     · intro hlt hd
       have h1 := (hgap pc).1 hd
+      rw [ValueModel.tensor_val] at h1
       rw [h1] at hlt
       norm_num at hlt
     · intro hd
       have h2 := (hgap pc).2 hd
+      rw [ValueModel.tensor_val] at h2
       push_cast
       linarith
   exact ComputablePred.halting_problem_not_re 0 (hpull.of_eq hiff)

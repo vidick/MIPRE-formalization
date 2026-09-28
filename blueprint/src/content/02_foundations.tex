@@ -1632,7 +1632,7 @@ the bound is still $\poly(\abs{z})$. In Lean the verifier is a
 
 \begin{definition}[The computable class]
 \label{def:mipstar-computable}
-\uses{def:q-value,def:game-description}
+\uses{def:q-value,def:game-description,def:value-model}
 \lean{MIPRE.MIPStar}
 \leanok
 A language $L\subseteq\{0,1\}^*$ is in the \emph{computable class} if there exists
@@ -1646,7 +1646,9 @@ a computable map $g$ from bit strings to \texttt{HaltingGameValue.GameData}
 The game $\game_{g(z)}$ is the explicit game \texttt{(g z).game}. Computability is the
 Mathlib \texttt{Computable} predicate; there is no polynomial-time bound on $g$ in this
 definition. This is \texttt{MIPRE.MIPStar}, the class used by the checked inclusion in $\RE$
-and by the main theorem in its current form (Theorem~\ref{thm:mipstar-eq-re}).
+and by the main theorem in its current form (Theorem~\ref{thm:mipstar-eq-re}); in Lean it is
+the class \texttt{MIPRE.MIPClass} of Definition~\ref{def:value-model} at the tensor-product
+value model.
 \end{definition}
 
 \begin{lemma}[The class is contained in the computable one]

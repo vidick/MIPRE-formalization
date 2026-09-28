@@ -6,6 +6,7 @@ Authors: Thomas Vidick
 import MIPRE.Foundations.GapCompression
 import MIPRE.Foundations.GameDescription
 import MIPRE.Foundations.GameDouble
+import MIPRE.Foundations.VerifierValue
 
 /-!
 # A verifier's game and its tabulation, in the synchronous value
@@ -72,6 +73,18 @@ theorem gameValue_toGame_le_of_valStar_le {c : ℝ}
 
 /-! ## The bridges against the doubled game -/
 
+/-- **The value bridge, doubled, in any model.** A game description matching `𝒱_n`'s doubled
+game along relabelings of the two alphabets has the value of `𝒱_n` in every value model
+(`ValueModel`): the value transports along the relabelings (`ValueModel.eq_of_equiv`) and the
+doubling keeps it (`Verifier.val_doubledGame`). -/
+theorem val_toGame_eq_doubled (ω : ValueModel)
+    (eX : Fin (g.nX + 1) ≃ Bool × V.Questions n) (eA : Fin (g.nA + 1) ≃ Answers T)
+    (hμ : ∀ i j, g.game.μ i j = (V.doubledGame n T).μ (eX i) (eX j))
+    (hD : ∀ i j k l, g.game.D i j k l = (V.doubledGame n T).D (eX i) (eX j) (eA k) (eA l)) :
+    ω.val g.game = V.val ω n T := by
+  rw [← V.val_doubledGame ω n T]
+  exact ω.eq_of_equiv (V.doubledGame n T).toGame g.game eX eX eA eA hμ hD
+
 /-- **The value bridge, doubled.** A game description matching `𝒱_n`'s *doubled* game along
 relabelings of the two alphabets has the value of `𝒱_n` — the doubled replacement of
 `quantumValue_toGame_eq_valStar`, and unlike it free of any synchronicity hypothesis. Note
@@ -82,9 +95,8 @@ theorem quantumValue_toGame_eq_valStar_doubled
     (eX : Fin (g.nX + 1) ≃ Bool × V.Questions n) (eA : Fin (g.nA + 1) ≃ Answers T)
     (hμ : ∀ i j, g.game.μ i j = (V.doubledGame n T).μ (eX i) (eX j))
     (hD : ∀ i j k l, g.game.D i j k l = (V.doubledGame n T).D (eX i) (eX j) (eA k) (eA l)) :
-    quantumValue g.game = V.valStar n T := by
-  rw [← V.quantumValue_doubledGame n T]
-  exact quantumValue_eq_of_equiv (V.doubledGame n T).toGame g.game eX eX eA eA hμ hD
+    quantumValue g.game = V.valStar n T :=
+  V.val_toGame_eq_doubled n T g .tensor eX eA hμ hD
 
 /-- **The completeness bridge, doubled.** `HasPerfectPCC` is a strategy of the doubled game
 already, so it is relabeled along the equivalences by `SyncStrategy.relabel` and nothing

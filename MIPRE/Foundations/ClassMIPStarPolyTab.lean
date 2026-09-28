@@ -533,7 +533,7 @@ end PolyVerifier
 theorem MIPStarPoly.toMIPStar {L : Set BitStr} (h : MIPStarPoly L) : MIPStar L := by
   obtain ⟨V, heff, hgap⟩ := h
   refine ⟨V.tab, V.tab_computable, fun z => ?_⟩
-  rw [V.quantumValue_tab (heff z)]
+  rw [ValueModel.tensor_val, V.quantumValue_tab (heff z)]
   exact hgap z
 
 /-- The paper's class is contained in `RE`. -/

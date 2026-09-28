@@ -209,12 +209,17 @@ theorem freeze_rejectsLong (k n T : ℕ) :
     (V.freeze k).RejectsLong n T ↔ V.RejectsLong k T := by
   simp only [RejectsLong, freeze_decider, Decider.freeze_accepts]
 
-/-- The value of the frozen verifier at any index is the value of `V` at the frozen index. -/
-theorem freeze_valStar (k n T : ℕ) : (V.freeze k).valStar n T = V.valStar k T := by
-  unfold valStar
-  refine quantumValue_eq_of_equiv (V.game k T) ((V.freeze k).game n T) (Equiv.refl _)
+/-- The value of the frozen verifier at any index is the value of `V` at the frozen index, in
+every value model. -/
+theorem freeze_val (ω : ValueModel) (k n T : ℕ) : (V.freeze k).val ω n T = V.val ω k T := by
+  unfold val
+  refine ω.eq_of_equiv (V.game k T) ((V.freeze k).game n T) (Equiv.refl _)
     (Equiv.refl _) (Equiv.refl _) (Equiv.refl _) (fun _ _ => rfl) fun x y a b => ?_
   exact decide_eq_decide.2 (V.decider.freeze_accepts k n _ _ _ _)
+
+/-- The value of the frozen verifier at any index is the value of `V` at the frozen index. -/
+theorem freeze_valStar (k n T : ℕ) : (V.freeze k).valStar n T = V.valStar k T :=
+  V.freeze_val .tensor k n T
 
 /-- The frozen verifier has a perfect PCC strategy at any index exactly when `V` has one at
 the frozen index. -/

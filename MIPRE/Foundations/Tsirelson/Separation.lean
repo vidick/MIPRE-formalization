@@ -80,6 +80,7 @@ theorem exists_quantumValue_le_half_commutingOperatorValue_eq_one
   have hnot : ¬ HaltsOnEmptyInput e := by
     intro h
     have h1 := (hgap e).1 h
+    rw [ValueModel.tensor_val] at h1
     have h2 := hdom.1 h
     have := quantumValue_le_commutingOperatorValue (g e).game
     linarith

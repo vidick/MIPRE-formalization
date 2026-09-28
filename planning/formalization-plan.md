@@ -1010,17 +1010,25 @@ the total input length, as the decider's).
 
 **The commuting-operator class, `MIP^co = coRE` (#235), planned 2026-09-28.** Lin's theorem
 (arXiv:2510.07162) by the value-form architecture: [mipco-track.md](mipco-track.md) has the
-plan. Phase 0 is in: the compressibility criterion generalized to nested classes
-(`Cost.compressibility_criterion_nested`, which is what lets the *tensor* completeness of
-compression be reused and makes co-completeness unnecessary), the commuting-operator value
-`Verifier.valCo` of a verifier's game with its transport lemmas, the co classes, the semidecider
-for `ω_co < 1` from `commutingUpperRE`, and the conditional theorem: `MIPRE.mipco_eq_core`
-(`MIPRE/MIPCo.lean`) proves `MIPCo = IsCoRE` from the single hypothesis
-`MIPRE.gapCompression.CoSound`, the soundness clause of compression read in `ω_co`;
-`MIPCo ⊆ coRE` (`MIPRE.MIPCo.isCoRE`) is unconditional. Blueprint chapter 8,
-`thm:mipco-eq-core`. What remains — the commuting-operator soundness of introspection, answer
-reduction and oracularization on tracially embeddable strategies — is the plan's Phases 1–5,
-and is the largest item after the main theorem.
+plan. Phase 0 is in (#236), and has since been folded into the tensor-product halting layer
+rather than kept beside it: the halting reduction, the classes, the semideciders and the class
+`MIPClass ω` are generic in a *value model* `ω` (`MIPRE.ValueModel`,
+`Foundations/ValueModel.lean` — a value functional with the properties the reduction uses),
+with `ValueModel.tensor` (`val*`) and `ValueModel.commuting` (`ω_co`) as its two instances, so
+`MIP* = RE` and `MIP^co = coRE` are two readings of one proof. They differ in which
+semidecider exists — `val*` is r.e. from below (`lem:value-lower-approx`), `ω_co` from above
+(`commutingUpperRE`) — and so in which class soundness must preserve; the compressibility
+criterion generalized to nested classes (`Cost.compressibility_criterion_nested`) is what lets
+the *tensor* completeness of compression be reused in the `coRE` shape and makes
+co-completeness unnecessary. The conditional theorem `MIPRE.mipco_eq_core` (`MIPRE/MIPCo.lean`)
+proves `MIPCo = IsCoRE` from the single hypothesis
+`MIPRE.gapCompression.Sound ValueModel.commuting`, the soundness clause of compression read in
+`ω_co`; `MIPCo ⊆ coRE` (`MIPRE.MIPCo.isCoRE`) is unconditional. Blueprint chapter 8,
+`def:value-model` and `thm:mipco-eq-core`. What remains — the commuting-operator soundness of
+introspection, answer reduction and oracularization — is the plan's Phases 1–5, and is the
+largest item after the main theorem; the intent is to generalize the existing stage analyses
+to the commuting-operator model rather than to write them a second time, and the audit of what
+stands in the way of that is the next step of the track.
 
 ## Working rules for this track
 
