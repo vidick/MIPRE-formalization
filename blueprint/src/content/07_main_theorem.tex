@@ -127,7 +127,7 @@ Both forms come from the two items of Theorem~\ref{thm:halting} directly: the va
 witness is an ambient synchronous PCC strategy, so it gives value $1$ in both senses; and
 the soundness conclusion is $\valstar(\game_\machine) \leq \frac12$, which gives
 $\synval(\game_\machine) \leq \frac12$ by Lemma~\ref{lem:sync-le-valstar}. The quantum
-form is the one Definition~\ref{def:mipstar} asks for, and it is the primary one: no
+form is the one Definition~\ref{def:mipstar-computable} asks for, and it is the primary one: no
 transport from $\synval$ to $\valstar$ is involved anywhere, the pipeline's soundness being
 carried in $\valstar$ at every step (Remark~\ref{rem:bipartite-route}). The synchronous
 reading of Theorem~\ref{thm:main} is the derived one, obtained from this corollary by the
@@ -159,7 +159,7 @@ Theorem~\ref{thm:compression-target}.
 
 \begin{lemma}[$\MIPstar \subseteq \RE$]
 \label{lem:mipstar-sub-re}
-\uses{def:mipstar,def:re,lem:value-lower-approx}
+\uses{def:mipstar-computable,def:re,lem:value-lower-approx}
 \lean{MIPRE.MIPStar.isRE, MIPRE.MIPStar.exists_semidecider}
 \leanok
 Every language in $\MIPstar$ is recursively enumerable.
@@ -174,7 +174,7 @@ $\valstar(\game_g) > \frac12$ is recursively enumerable, and $L$ is its preimage
 computable map $z \mapsto \game_z$; the preimage of an r.e.\ set under a computable map is
 r.e. Concretely: given $z$, compute $\game_z$, enumerate tensor-product strategies and accept
 upon finding one of value greater than $\frac12$; this semi-decides $L$. In Lean the class
-is the computable one (Definition~\ref{def:mipstar}), and
+is the computable one (Definition~\ref{def:mipstar-computable}), and
 \texttt{MIPStar.exists\_semidecider} gives the semidecider as a program of the ambient
 model.
 \end{proof}
@@ -182,7 +182,7 @@ model.
 \begin{theorem}[$\MIPstar = \RE$]
 \label{thm:mipstar-eq-re}
 \ledgernode{1}
-\uses{def:mipstar,def:re,thm:halting,thm:halting-undecidable,lem:value-lower-approx,
+\uses{def:mipstar-computable,def:re,thm:halting,thm:halting-undecidable,lem:value-lower-approx,
   lem:mipstar-sub-re}
 \lean{MIPRE.Halting.mipstar_eq_re, MIPRE.Halting.re_subset_mipstar}
 \leanok
@@ -195,13 +195,13 @@ $\MIPstar = \RE$.
 For $\RE \subseteq \MIPstar$: the halting problem is $\RE$-complete
 (Theorem~\ref{thm:halting-undecidable}) and Theorem~\ref{thm:halting} provides a
 computable map to explicit games, whose completeness--soundness gap is already in the
-form the computable class of Definition~\ref{def:mipstar} requires
+form the computable class of Definition~\ref{def:mipstar-computable} requires
 (Corollary~\ref{cor:main-quantum}); no transport between the two values is needed.
 $\MIPstar \subseteq \RE$ is
 Lemma~\ref{lem:mipstar-sub-re}. In Lean the many-one reduction of an r.e.\ language to
 halting on the empty input is \texttt{MIPRE.IsRE.exists\_code\_halts}, from Mathlib's
 \texttt{Nat.Partrec.Code.curry}, and the class $\MIPstar$ is the computable one of
-Definition~\ref{def:mipstar}; the equality holds at the compression of
+Definition~\ref{def:mipstar-computable}; the equality holds at the compression of
 Theorem~\ref{thm:compression-target}, as Theorem~\ref{thm:main} does.
 \end{proof}
 

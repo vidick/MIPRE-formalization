@@ -176,7 +176,7 @@ itself is computed in linear time by a fixed program assembling the description
 \begin{lemma}[Efficient Kleene recursion theorem]
 \label{lem:kleene}
 \uses{lem:universal-tm,lem:smn}
-\lean{MIPRE.Cost.efficient_fixed_point}
+\lean{MIPRE.Cost.efficient_fixed_point, MIPRE.Cost.kleeneFix, MIPRE.Cost.kleeneFix_runs_of}
 \leanok
 For every polynomial-time computable $f : \{0,1\}^* \to \{0,1\}^*$ there is a program
 $e$ with $\phi_e = \phi_{f(e)}$ and the runtime of $e$ polynomially bounded in terms

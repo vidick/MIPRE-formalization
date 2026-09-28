@@ -73,6 +73,12 @@ the paper's own construction, next to the existing one; the existing one stays a
 
 ### PR 1: the class, and its inclusion in the computable one
 
+**Done (PR after #231):** `MIPRE/Foundations/ClassMIPStarPoly.lean` (`PolyVerifier`, `Efficient`,
+`game`, `MIPStarPoly`), `ClassMIPStarPolyTab.lean` (`tab`, `tab_computable`, `quantumValue_tab`,
+`MIPStarPoly.toMIPStar`, `MIPStarPoly.isRE`), `Cost/Kleene.lean` (`kleeneFix`, `kleeneFix_runs_of`),
+`Cost/ManyOne.lean` (`haltingReduction`, `exists_polyTime_reduction`); blueprint `def:mipstar`,
+`def:mipstar-computable`, `lem:mipstar-poly-sub`, `rem:source-mipstar`.
+
 `MIPRE/Foundations/ClassMIPStarPoly.lean` (name indicative):
 
 - `PolyVerifier`: a closed sampler program, a closed decider program, one polynomial `P`.
@@ -106,6 +112,24 @@ the paper's own construction, next to the existing one; the existing one stays a
   deviation (§5).
 
 ### PR 2: the halting verifier along the paper's route
+
+**Done (on #231, second commit):** `MIPRE/Foundations/Halting/Paper/` -- `TabulateL.lean`
+(the tabulation of `Vof G U x` at a fixed level and its semidecider `exists_semL`),
+`Decider.lean` (`prep`, `body`, `F`, `dec = kleeneFix U F`, `Vhalt`, `accepts_iff`),
+`Induction.lean` (the downward induction at level `C = max C_0 2`: `hasPerfectPCC_of_halts`,
+`valStar_le_of_not_halts`, under `IsBounded lam` and `poly(n, lam) <= n^lam`), `Size.lean`
+(`esize_dec = 2(|M| + |lam|) + const`), `Cost.lean` (`dec_cost`, the polynomial form
+`decCostPoly`/`dec_cost_spec`, the wrapped decider's `Vhalt_decider_cost`, and `lem:lambda`
+as `exists_lamBound`: `IsBounded lam` for `lam >= Lam0 + 4|M|`), `Main.lean`
+(`halting_paper`). Three deviations from the text below, all recorded in the module
+docstrings and the blueprint: the budgets of branches 1 and 2 are `Nat.size n` rather than
+`n` (the criterion's reading; the levels `n, 2^n, ...` make `Nat.size` unbounded, and it
+saves the unary-to-binary conversion); the search branch is present, since the value form of
+compression has no base case for soundness; and `lambda(M) = Lam0 + 4|M|` with `Lam0`
+existential (from `PolyBounded.absorb`, not `lambda_bound`), which is affine and so
+trivially polynomial-time -- its computation by a program is PR 3's, where it is needed.
+The fine bound `Q(n + |M| + lam) (|d| + 1)^k` on `dec` is `dec_cost_spec`; PR 3 consumes it
+at `n = C`.
 
 `MIPRE/Foundations/Halting/Paper/` (name indicative):
 

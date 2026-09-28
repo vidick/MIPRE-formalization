@@ -770,6 +770,8 @@ import MIPRE.Foundations.CL.Repeat
 import MIPRE.Foundations.CL.Sampler
 import MIPRE.Foundations.CL.TypedSampler
 import MIPRE.Foundations.ClassMIPStar
+import MIPRE.Foundations.ClassMIPStarPoly
+import MIPRE.Foundations.ClassMIPStarPolyTab
 import MIPRE.Foundations.Closeness
 import MIPRE.Foundations.Commutation
 import MIPRE.Foundations.CommutingOperator
@@ -797,6 +799,7 @@ import MIPRE.Foundations.Cost.Loops
 import MIPRE.Foundations.Cost.Machine
 import MIPRE.Foundations.Cost.MachineBound
 import MIPRE.Foundations.Cost.MachineData
+import MIPRE.Foundations.Cost.ManyOne
 import MIPRE.Foundations.Cost.Numeric
 import MIPRE.Foundations.Cost.Partrec
 import MIPRE.Foundations.Cost.PolyTime
@@ -840,6 +843,12 @@ import MIPRE.Foundations.Halting.Freeze
 import MIPRE.Foundations.Halting.Instantiation
 import MIPRE.Foundations.Halting.LambdaBound
 import MIPRE.Foundations.Halting.Lists
+import MIPRE.Foundations.Halting.Paper.Cost
+import MIPRE.Foundations.Halting.Paper.Decider
+import MIPRE.Foundations.Halting.Paper.Induction
+import MIPRE.Foundations.Halting.Paper.Main
+import MIPRE.Foundations.Halting.Paper.Size
+import MIPRE.Foundations.Halting.Paper.TabulateL
 import MIPRE.Foundations.Halting.PolyBounded
 import MIPRE.Foundations.Halting.Reduction
 import MIPRE.Foundations.Halting.Semidecide

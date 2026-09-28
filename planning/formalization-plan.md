@@ -990,7 +990,18 @@ what the comparison showed; `rem:liehr-statements` cites it in the blueprint.
 Lin's criterion outputs its game at a level exponential in the machine's size, so no time bound
 can be attached to the existing map. [polytime-halting.md](polytime-halting.md) has the route:
 the paper's own construction of `V^halt` at the fixed level `C_0` with `λ = poly(|M|)`, the
-class as the paper defines it, and three implementation pull requests.
+class as the paper defines it, and three implementation pull requests. The first is in:
+`MIPRE.MIPStarPoly` is the paper's class (`def:mipstar`, `MIPRE/Foundations/ClassMIPStarPoly.lean`),
+the former definition is `def:mipstar-computable`, and `lem:mipstar-poly-sub` is the inclusion by
+tabulation with doubled questions (`ClassMIPStarPolyTab.lean`); `Cost.kleeneFix_runs_of` exposes
+the fixed point's overhead and `Cost.exists_polyTime_reduction` is the costed many-one reduction
+to halting, both for the next step. The second is in too (`MIPRE/Foundations/Halting/Paper/`):
+the paper's `V^halt M λ` as an efficient Kleene fixed point (`Halting.dec`, `Halting.Vhalt`),
+`lem:dhalt-values` as `accepts_iff`, the downward induction at the fixed level `C = max C_0 2`
+(`hasPerfectPCC_of_halts`, `valStar_le_of_not_halts`), and `lem:lambda` as `exists_lamBound`:
+`V^halt M λ` is `λ`-bounded for `λ ≥ Λ_0 + 4|M|`, with the decider's time in the fine form
+`Q(n + |M| + λ)(|d| + 1)^k` (`dec_cost_spec`); `halting_paper` is `thm:halting` at level `C`.
+What remains is the class verifier reading this game off a uniform program, `RE ⊆ MIPStarPoly`.
 
 ## Working rules for this track
 
