@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Preliminaries/ConsistencyBridges.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.DistanceBounds
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.DistanceBounds
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -28,7 +31,7 @@ open MIPStarRE.LDT
 
 /-! ### Consistency controls for `prop:cons-sub-meas` -/
 
-private lemma consSubMeas_controlHelper
+lemma consSubMeas_controlHelper
     {Outcome : Type*} {κ : Type*} [Fintype κ] [DecidableEq κ]
     [Fintype Outcome]
     (ψ : QuantumState κ)
@@ -78,7 +81,7 @@ private lemma consSubMeas_controlHelper
           exact Finset.sum_le_sum fun a _ => hsummand a
     _ = ev ψ (P.total * Q.total) - qMatchMass ψ P Q := hSum
 
-private lemma consSubMeas_diagonalControl
+lemma consSubMeas_diagonalControl
     {Question Outcome : Type*} {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype Outcome]
     (ψ : QuantumState (ι × ι)) (𝒟 : Distribution Question)
@@ -182,7 +185,7 @@ private lemma consSubMeas_diagonalControl
         IdxSubMeas.placeRight, leftPlacedSubMeas, rightPlacedSubMeas,
         IdxMeas.toIdxSubMeas] using hcons
 
-private lemma consSubMeas_sandwichControl
+lemma consSubMeas_sandwichControl
     {Question Outcome : Type*} {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype Outcome]
     (ψ : QuantumState (ι × ι)) (𝒟 : Distribution Question)
@@ -314,7 +317,7 @@ private lemma consSubMeas_sandwichControl
         IdxSubMeas.placeRight, leftPlacedSubMeas, rightPlacedSubMeas,
         IdxMeas.toIdxSubMeas] using hcons
 
-private lemma consSubMeas_diagonalControl_heterogeneous
+lemma consSubMeas_diagonalControl_heterogeneous
     {Question Outcome : Type*}
     {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     [Fintype Outcome]
@@ -419,7 +422,7 @@ private lemma consSubMeas_diagonalControl_heterogeneous
                         rw [htotalOverlap]
     _ ≤ γ := hcons
 
-private lemma consSubMeas_sandwichControl_heterogeneous
+lemma consSubMeas_sandwichControl_heterogeneous
     {Question Outcome : Type*}
     {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     [Fintype Outcome]
@@ -614,3 +617,5 @@ theorem consSubMeas {Question Outcome : Type*}
 
 
 end MIPStarRE.LDT.Preliminaries
+
+end

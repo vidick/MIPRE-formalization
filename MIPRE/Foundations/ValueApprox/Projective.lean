@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Games
-import Mathlib.Analysis.Matrix.Spectrum
+module
+public import MIPRE.Foundations.Games
+public import Mathlib.Analysis.Matrix.Spectrum
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Projective measurements on `ℂ^n` are coordinate patterns in a unitary frame
@@ -246,3 +250,5 @@ theorem exists_unitary_pattern (hM : IsPVM M) :
 end IsPVM
 
 end MIPRE.ValueApprox
+
+end

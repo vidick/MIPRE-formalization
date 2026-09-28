@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.PauliStagePrograms
-import MIPRE.Background.QLD.PauliBranchPrograms
-import MIPRE.Background.QLD.PauliArithmeticPrograms
-import MIPRE.Foundations.Introspection.FieldQuestionProg
+module
+public import MIPRE.Background.QLD.PauliStagePrograms
+public import MIPRE.Background.QLD.PauliBranchPrograms
+public import MIPRE.Background.QLD.PauliArithmeticPrograms
+public import MIPRE.Foundations.Introspection.FieldQuestionProg
+
+@[expose] public section
 
 /-! # Faithful extraction of the Pauli question's arithmetic fields
 
@@ -63,4 +66,6 @@ theorem gammaProg_fieldEncoding (k : ℕ) (hk : 1 ≤ k) {m : ℕ}
   exact PauliArithmeticProgram.gammaProg_eq_gam k hk (vectorContent x).omega
 
 end MIPRE.QLD.PauliQuestionProgram
+end
+
 end

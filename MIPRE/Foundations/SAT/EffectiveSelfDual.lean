@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.NormalGram
-import MIPRE.Foundations.SAT.BasisTransport
-import MIPRE.Foundations.LowDegree.BinaryCirculantProg
+module
+public import MIPRE.Foundations.SAT.NormalGram
+public import MIPRE.Foundations.SAT.BasisTransport
+public import MIPRE.Foundations.LowDegree.BinaryCirculantProg
+
+@[expose] public section
 
 /-! # Effective self-dualization of a supplied normal basis -/
 
@@ -177,5 +180,7 @@ theorem shoupSelfDualizeProg_time_le : ∃ R : Polynomial ℕ, ∀ k : ℕ, ∀ 
   simpa using polynomial_eval_mono shoupSelfDualizeProg.timeBound hs
 
 end MIPRE.SAT
+
+end
 
 end

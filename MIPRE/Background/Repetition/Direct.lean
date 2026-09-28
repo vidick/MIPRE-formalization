@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib
-import MIPRE.Foundations.Games
+module
+public import Mathlib
+public import MIPRE.Foundations.Games
+
+@[expose] public section
 
 /-!
 # Direct parallel repetition of a game
@@ -80,3 +83,5 @@ theorem SynchronousGame.repeat_toGame [DecidableEq A] (G : SynchronousGame X A) 
   rfl
 
 end MIPRE
+
+end

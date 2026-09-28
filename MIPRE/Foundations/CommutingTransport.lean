@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Correlations
-import MIPRE.Foundations.GameDouble
+module
+public import MIPRE.Foundations.Correlations
+public import MIPRE.Foundations.GameDouble
+
+@[expose] public section
 
 /-!
 # Transport of commuting-operator strategies
@@ -413,3 +416,5 @@ theorem commutingOperatorValue_doubled [DecidableEq A] (G : Game X X A A) :
     exact S.double.value_le_commutingOperatorValue G.doubled.toGame
 
 end MIPRE
+
+end

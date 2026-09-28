@@ -21,13 +21,17 @@ The boundary identities need the spectral measures of `R` to have no atoms at
 `0` and `2` (`R` and `2−R` are injective); the general fact "no atom at a
 non-eigenvalue" is proved here for the Borel calculus of `VN/BorelCalculus`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.LinearRN
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.StripCauchy
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.LinearRN
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.StripCauchy
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -547,3 +551,5 @@ end Modular
 end VN
 
 end CommutingRepetition
+
+end

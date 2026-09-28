@@ -24,12 +24,16 @@ Proof layer of the von Neumann root `exists_modulusFamily` (node 1.3.1,
   manuscript's `‖hvec x − hvec y‖² ≤ 2‖x − y‖²`.
 Nothing here is a manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.LeftModulusData
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.LeftModulusData
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -226,9 +230,9 @@ theorem re_τ₂_mul_nonneg {A B : BH M (Fin 2) →L[ℂ] BH M (Fin 2)} (hA : 0 
   have hsqm : sqrtOp A ∈ blockAlg M (Fin 2) :=
     BorelCalc.cfc_mem A (IsSelfAdjoint.of_nonneg hA) _ (blockAlg_strong_closed M) hAm _
   have hpos : 0 ≤ sqrtOp A * B * sqrtOp A := by
-    have := ((ContinuousLinearMap.nonneg_iff_isPositive B).mp hB).conj_adjoint (sqrtOp A)
+    have := (ContinuousLinearMap.nonneg_iff_isPositive.mp hB).conj_adjoint (sqrtOp A)
     rw [ContinuousLinearMap.isSelfAdjoint_iff'.mp hsa] at this
-    exact (ContinuousLinearMap.nonneg_iff_isPositive _).mpr this
+    exact ContinuousLinearMap.nonneg_iff_isPositive.mpr this
   calc (0 : ℝ) ≤ (τ₂ M (sqrtOp A * B * sqrtOp A)).re := τ₂_re_nonneg M hpos
     _ = (τ₂ M (A * B)).re := by
         rw [τ₂_mul_comm M (mul_mem hsqm hBm) hsqm, ← mul_assoc, hsq]
@@ -456,3 +460,5 @@ theorem stability (y : M.H) : ‖hvec M x - hvec M y‖ ^ 2 ≤ 2 * ‖x - y‖ 
 end GraphMod
 
 end CommutingRepetition
+
+end

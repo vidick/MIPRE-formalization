@@ -28,13 +28,17 @@ Contents (all proof-side, no manuscript statements):
 * the tail cutoff: one `H > L` with every high squared tail of a finite family
   of second-moment-one probability measures at most `ρ`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Trial
-import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.GridAverage
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Trial
+public import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.GridAverage
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -478,3 +482,5 @@ theorem exists_tail_cutoff {ι : Type*} [Fintype ι] (μ : ι → Measure ℝ)
   exact ⟨n, hn1, hn2⟩
 
 end CommutingRepetition
+
+end

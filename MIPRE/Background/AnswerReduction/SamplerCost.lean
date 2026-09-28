@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.ArSampler
-import MIPRE.Background.AnswerReduction.ParamsCost
-import MIPRE.Foundations.CL.ProductSamplerCost
+module
+public import MIPRE.Background.AnswerReduction.ArSampler
+public import MIPRE.Background.AnswerReduction.ParamsCost
+public import MIPRE.Foundations.CL.ProductSamplerCost
+
+@[expose] public section
 
 /-!
 # The running time of the typed answer-reduced sampler
@@ -69,5 +72,7 @@ theorem typedSampler_time (ℓ : ℕ) (PD : PcpDecider) (R : Polynomial ℕ) : �
     exact ⟨r, t, hPD.le_final, hrun⟩⟩
 
 end MIPRE.AnswerReduction
+
+end
 
 end

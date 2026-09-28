@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.PrefixGuard
-import MIPRE.Foundations.GameTransport
-import MIPRE.Foundations.GameDouble
+module
+public import MIPRE.Foundations.Introspection.PrefixGuard
+public import MIPRE.Foundations.GameTransport
+public import MIPRE.Foundations.GameDouble
+
+@[expose] public section
 
 /-! # Adding honest prefix guards preserves completeness
 
@@ -94,3 +97,5 @@ theorem copied_isPCC (S : SyncStrategy G.doubled) (hS : S.IsPCC) :
 
 end Introspection.PrefixGuard
 end MIPRE
+
+end

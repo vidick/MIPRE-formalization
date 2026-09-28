@@ -2,8 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinarySolve
-import Mathlib.LinearAlgebra.Matrix.ToLin
+module
+public import MIPRE.Foundations.LowDegree.BinarySolve
+public import Mathlib.LinearAlgebra.Matrix.ToLin
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # A uniform solver for binary matrices -/
 
@@ -135,3 +139,5 @@ theorem addMatrixBitsProg_correct {m n : ℕ}
     exact xorBits_vectorBits _ _
 
 end MIPRE.LowDegree.BinaryLinear
+
+end

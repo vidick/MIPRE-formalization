@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryNormalize
-import MIPRE.Foundations.LowDegree.BinaryComponentsProg
+module
+public import MIPRE.Foundations.LowDegree.BinaryNormalize
+public import MIPRE.Foundations.LowDegree.BinaryComponentsProg
+
+@[expose] public section
 
 /-! # Polynomial-time substitution of a unary-specified positive power -/
 
@@ -43,10 +46,10 @@ theorem substitutePowerBits_width (a : BitStr) (u : Unary) :
     | cons b a ih => simp [ih, Nat.add_mul, Nat.add_comm]; omega
   exact h.le
 
-private noncomputable def coefficientBlockProg : PolyTimeFun (Bool × Unary) BitStr :=
+noncomputable def coefficientBlockProg : PolyTimeFun (Bool × Unary) BitStr :=
   cons fst (replicate.comp (snd.pair (const false)))
 
-private noncomputable def flattenCoefficientsProg : PolyTimeFun (List BitStr) BitStr :=
+noncomputable def flattenCoefficientsProg : PolyTimeFun (List BitStr) BitStr :=
   congr ((foldlAdd append X (by
     intro l r
     have h := esize_list_append l r
@@ -69,3 +72,5 @@ noncomputable def substitutePowerBitsProg : PolyTimeFun (BitStr × Unary) BitStr
     substitutePowerBitsProg (a, u) = substitutePowerBits a u := rfl
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

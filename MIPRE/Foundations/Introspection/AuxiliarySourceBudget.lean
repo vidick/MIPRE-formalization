@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliarySamplingCorrect
+module
+public import MIPRE.Foundations.Introspection.AuxiliarySamplingCorrect
+
+@[expose] public section
 
 /-! # The common source clock covers legal factor and linear queries -/
 
@@ -101,4 +104,6 @@ theorem bounded_factor_result {ℓ lam n : ℕ} (V : Verifier ℓ) (hV : V.IsBou
   · exact V.sampler.runs_factor _ w j u hj hjℓ hu
 
 end MIPRE.Introspection.AuxiliarySource
+end
+
 end

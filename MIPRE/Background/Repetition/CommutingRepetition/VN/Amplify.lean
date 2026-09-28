@@ -23,12 +23,16 @@ normalization of `ResolverArena.Cornered` (`emb_trace`, with
 `t_Q = d` for a single matrix unit) is visible here as
 `τ_d(e₀₀ ⊗ m) = d⁻¹ τ(m)`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Interface
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Interface
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -478,3 +482,5 @@ noncomputable def amplify [NeZero d] : StdTracialAlgebra.{u} where
 end StdTracialAlgebra
 
 end CommutingRepetition
+
+end

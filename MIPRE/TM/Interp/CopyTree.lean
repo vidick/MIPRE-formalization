@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.Interp.Routines
-import MIPRE.TM.Interp.Repr
+module
+public import MIPRE.TM.Interp.Routines
+public import MIPRE.TM.Interp.Repr
+
+@[expose] public section
 
 /-!
 # The `copyTree` routine
@@ -422,3 +425,5 @@ theorem exec_skipTree {k : ProgId} {pc : Fin maxPc} {src : WT}
   · rw [hsrcp', hu₁.pos (d := src) (by simp [hsc])]
 
 end MIPRE.TM.Interp
+
+end

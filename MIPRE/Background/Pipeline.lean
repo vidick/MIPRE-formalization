@@ -3,11 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.Introspection.Compiler
-import MIPRE.Background.Repetition.Verifier
-import MIPRE.Foundations.Halting.Corollaries
-import MIPRE.Foundations.Halting.Paper.ClassMain
-import MIPRE.Foundations.Pipeline.Compress
+module
+public import MIPRE.Background.Introspection.Compiler
+public import MIPRE.Background.Repetition.Verifier
+public import MIPRE.Foundations.Halting.Corollaries
+public import MIPRE.Foundations.Halting.Paper.ClassMain
+public import MIPRE.Foundations.Pipeline.Compress
+
+@[expose] public section
 
 /-!
 # The pipeline with its supplied stages: `MIP* = RE` from answer reduction alone
@@ -106,3 +109,5 @@ theorem mipstar_eq_re_of_answerReduction : MIPStar = IsRE :=
 end Halting
 
 end MIPRE
+
+end

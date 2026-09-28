@@ -11,13 +11,17 @@ do not edit by hand. Upstream path: lean/CommutingRepetition/VN/Crossed/AmpCalc.
 calculus (as a `StarAlgHom`) and, through the identification of spectral measures
 `ν_{1⊗E}(ζ) = Σ_s ν_E(ζ s)`, with the bounded Borel calculi `bfc` and `cbfc`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Crossed.Space
-import MIPRE.Background.Repetition.CommutingRepetition.VN.ComplexBorel
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Crossed.Space
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.ComplexBorel
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -37,7 +41,10 @@ variable {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteS
 theorem amp_zero : amp (0 : K →L[ℂ] K) = 0 := diag_zero
 
 theorem amp_sub (y z : K →L[ℂ] K) : amp (y - z) = amp y - amp z := by
-  rw [sub_eq_add_neg, amp_add, ← neg_one_smul ℂ z, amp_smul, neg_one_smul, sub_eq_add_neg]
+  -- Vendoring compile fix (Mathlib v4.35): `neg_one_smul` needs its module element named to
+  -- unify with the scalar action `amp_smul` produces. See README.md.
+  rw [sub_eq_add_neg, amp_add, ← neg_one_smul ℂ z, amp_smul, neg_one_smul ℂ (amp z),
+    sub_eq_add_neg]
 
 theorem amp_isSelfAdjoint {E : K →L[ℂ] K} (hE : IsSelfAdjoint E) :
     IsSelfAdjoint (amp E : L2Q K →L[ℂ] L2Q K) := by
@@ -134,3 +141,5 @@ end Crossed
 end VN
 
 end CommutingRepetition
+
+end

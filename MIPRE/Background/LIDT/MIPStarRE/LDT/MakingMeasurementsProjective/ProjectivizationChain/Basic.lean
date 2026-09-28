@@ -5,13 +5,16 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MakingMeasurementsProjective/ProjectivizationChain/Basic.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Tactic.LdtSimp
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Defs
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Completion
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CompletionTransfer
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.DistanceBounds
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.SimEq
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Tactic.LdtSimp
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Defs
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Completion
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CompletionTransfer
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.DistanceBounds
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.SimEq
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -230,3 +233,5 @@ structure ProjectivizationSelfConsistencyHandoff
       (constSubMeasFamily Q_B.toSubMeas.liftRight) ζ₂
 
 end MIPStarRE.LDT.MakingMeasurementsProjective
+
+end

@@ -17,7 +17,7 @@ repository. Every file carries a header saying so.
 ## Conventions
 
 - Do not edit files here by hand: re-run `scripts/vendor-repetition.py` instead. The
-  only differences from upstream are the header, the `set_option autoImplicit true`
+  only differences from upstream are the header, the module-system lines (`module`, `public import`, `@[expose] public section`, no `private` definitions; added by `scripts/modularize.py`, 2026-09-28), the `set_option autoImplicit true`
   line inserted after the imports, the compile fixes listed below, and the split. The
   Lean *namespace* is unchanged (`QuantumParallelRepetition`).
 - Upstream's one module is 71k lines, and the Palomar registry caps a Lean file at
@@ -36,8 +36,9 @@ repository. Every file carries a header saying so.
 ## Local deviations from upstream
 
 Compile fixes for the toolchain crossing (upstream builds with Lean v4.32.0, this
-repository with v4.33.0), applied by `scripts/vendor-repetition.py` from its recorded
-`fixes` table:
+repository with v4.33.0 and, since 2026-09-28, v4.35.0-rc3), applied by
+`scripts/vendor-repetition.py` from its recorded `fixes` table (`--apply-fixes` re-applies
+them to the tree as it is, finding each site in whichever part of the split it now lives):
 
 1. `exists_proofSchmidtDecomposition`: `set_option backward.isDefEq.respectTransparency
    false in` before the theorem. Under Lean v4.33's transparency check its closing `simpa`
@@ -53,4 +54,5 @@ repository with v4.33.0), applied by `scripts/vendor-repetition.py` from its rec
 - Copied verbatim: `G_QuantumParallelRepetition.lean.expected` = upstream `ComparatorChallenges/G_QuantumParallelRepetition.lean`
 - `set_option autoImplicit true` inserted after the imports: yes
 - Recorded compile fixes applied: 1 (listed under "Local deviations from upstream")
+- Module system: 9 files given the `module` header, `public import`s, an `@[expose] public section` and no `private` definitions by `scripts/modularize.py` (Palomar requires it; `planning/palomar.md`)
 <!-- END GENERATED -->

@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Semidecider
-import MIPRE.Foundations.Halting.Strings
+module
+public import MIPRE.Foundations.Halting.Semidecider
+public import MIPRE.Foundations.Halting.Strings
+
+@[expose] public section
 
 /-!
 # The halting reduction, assembled, and what it still owes
@@ -322,3 +325,5 @@ theorem halting_reduction (O : Obligations G U) :
     exact (tab_value G U _ _ hx.1).le.trans hx.2.2
 
 end MIPRE.Halting
+
+end

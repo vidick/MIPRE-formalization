@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Loops
+module
+public import MIPRE.Foundations.Cost.Loops
+
+@[expose] public section
 
 /-!
 # The closure library, part III: unary arithmetic and tree size
@@ -254,3 +257,5 @@ theorem sizeProg_runs (d : Data) :
 end Prog
 
 end MIPRE.Cost
+
+end

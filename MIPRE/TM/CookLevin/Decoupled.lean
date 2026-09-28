@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.Link
+module
+public import MIPRE.TM.CookLevin.Link
+
+@[expose] public section
 
 /-!
 # The decoupled describer, and the clauses it describes
@@ -454,3 +457,5 @@ theorem describes5 (𝒟 : Decider) (ℓ T e : ℕ) (n : ℕ) (x y : BitStr)
     · exact congrArg w (Fin.ext hij)
 
 end MIPRE.TM.CookLevin.Desc
+
+end

@@ -33,12 +33,16 @@ Second proof-side layer for `TracialStrategy.prior_alignment_bound`
 Everything here is proof-side: no statement of a frozen batch is
 restated.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.CostsLemmas0
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.CostsLemmas0
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 set_option linter.unusedSectionVars false
 
@@ -1008,3 +1012,5 @@ theorem scenMartB_rowBudget_mkBLabel
 end TracialStrategy
 
 end CommutingRepetition
+
+end

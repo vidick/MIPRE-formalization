@@ -5,10 +5,13 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Preliminaries/CompletionTransfer.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Completion
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Local
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.ApproxDelta
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.MeasurementLift
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Completion
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Local
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.ApproxDelta
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.MeasurementLift
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -30,7 +33,7 @@ open MIPStarRE.LDT
 /-- Local (single-register) version of the completion bound.
 This is the original proof, preserved verbatim so it can be called
 by the bipartite wrapper below. -/
-private lemma closenessAfterCompletion_core_local {Outcome : Type*}
+lemma closenessAfterCompletion_core_local {Outcome : Type*}
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype Outcome]
     (ψ : QuantumState ι)
@@ -170,7 +173,7 @@ invoke `closenessAfterCompletion_core_local` instantiated at `ι × ι`.
 The wrapper builds the lifted measurement directly and rewrites the
 completed lifted submeasurement back to the statement's
 `(completeAtOutcome B a0).toSubMeas.liftLeft` form outcomewise. -/
-private lemma closenessAfterCompletion_core {Outcome : Type*}
+lemma closenessAfterCompletion_core {Outcome : Type*}
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype Outcome]
     (ψ : QuantumState (ι × ι))
@@ -289,7 +292,7 @@ lemma sddOpRel_mono
 /-- Questionwise n-step chain bound: the squared distance between the
 first and last operator family telescopes and is bounded by
 `n * ∑ individual squared distances` via `ev_sum_conjTranspose_mul_sum_le`. -/
-private lemma questionSDDOp_chain
+lemma questionSDDOp_chain
     {Outcome : Type*} {ι : Type*}
     [Fintype ι] [DecidableEq ι] [Fintype Outcome]
     (ψ : QuantumState ι) (n : ℕ)
@@ -387,3 +390,5 @@ lemma sddOpRel_chain
 
 
 end MIPStarRE.LDT.Preliminaries
+
+end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ConditionalNormalizerIdeal
-import MIPRE.Foundations.Introspection.Readout
+module
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerIdeal
+public import MIPRE.Foundations.Introspection.Readout
+
+@[expose] public section
 
 /-! # The actual probability law of a CL prefix
 
@@ -137,5 +140,7 @@ theorem hidingPrefixOp_born [Algebra (ZMod 2) F]
   rfl
 
 end MIPRE.Introspection
+
+end
 
 end

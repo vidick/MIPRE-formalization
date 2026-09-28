@@ -2,11 +2,14 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.CanonicalGame
-import MIPRE.Background.Introspection.AmbientRawGame
-import MIPRE.Background.Introspection.DecisionKernelComplete
-import MIPRE.Background.Introspection.DecisionKernelGameInterface
-import MIPRE.Foundations.SyncMergeByQuestion
+module
+public import MIPRE.Background.Introspection.CanonicalGame
+public import MIPRE.Background.Introspection.AmbientRawGame
+public import MIPRE.Background.Introspection.DecisionKernelComplete
+public import MIPRE.Background.Introspection.DecisionKernelGameInterface
+public import MIPRE.Foundations.SyncMergeByQuestion
+
+@[expose] public section
 
 /-! # Completeness of the actual compiled introspection verifier
 
@@ -143,3 +146,5 @@ theorem output_hasPerfectPCC (c : ℕ) (hc : 2 ≤ c) (he : Even c) (U : Clocked
   simpa only [cutoffAt, show ¬(lam = 0 ∨ n = 0) by omega, ↓reduceIte] using hcut lam n
 
 end MIPRE.Introspection.CanonicalComplete
+
+end

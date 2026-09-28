@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SamplingRegister
+module
+public import MIPRE.Foundations.Introspection.SamplingRegister
+
+@[expose] public section
 
 /-! # Sampling supplies the Introspect-prefix rigidity input
 
@@ -132,5 +135,7 @@ theorem introspect_prefix_register_rigidity_bob
   exact ht.trans_eq (by ring)
 
 end MIPRE.Introspection.TypedEstimates
+
+end
 
 end

@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.HonestPauliObservables
-import MIPRE.Foundations.LowDegree.LineRestrict
-import MIPRE.Foundations.Introspection.Readout
+module
+public import MIPRE.Background.Introspection.HonestPauliObservables
+public import MIPRE.Foundations.LowDegree.LineRestrict
+public import MIPRE.Foundations.Introspection.Readout
+
+@[expose] public section
 
 /-! # The honest measurements for all twenty-six Pauli question types
 
@@ -149,7 +152,7 @@ theorem answerOp_isPVM [NeZero m] (hm : m ∣ Fintype.card F) (q : Question F m)
   | var j ω => exact isPVM_fibSum (variableBranch_isPVM ω j) _
 
 omit [Field F] [Fintype F] [Algebra (ZMod 2) F] in
-private theorem fibre_format_zero {X : Type*} [Fintype X]
+theorem fibre_format_zero {X : Type*} [Fintype X]
     (P : X → Matrix (Space F m) (Space F m) ℂ) (f : X → Answer F m d)
     (q : Question F m) (hf : ∀ x, q.fmtOk (f x) = true) (a : Answer F m d)
     (ha : q.fmtOk a = false) : fibSum P f a = 0 := by
@@ -185,3 +188,5 @@ theorem variableBranch_Z (ω : Omega F m) (h : gam ω ≠ 0) (b : ZMod 2) :
     probeOp_eq_projector]
 
 end MIPRE.QLD.Honest
+
+end

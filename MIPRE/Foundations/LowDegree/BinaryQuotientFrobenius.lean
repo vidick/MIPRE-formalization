@@ -2,9 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryQuotient
-import MIPRE.Foundations.LowDegree.BinaryKernel
-import Mathlib.FieldTheory.Finite.Basic
+module
+public import MIPRE.Foundations.LowDegree.BinaryQuotient
+public import MIPRE.Foundations.LowDegree.BinaryKernel
+public import Mathlib.FieldTheory.Finite.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Computing Frobenius matrices in arbitrary monic binary quotients -/
 
@@ -178,5 +182,7 @@ theorem fixedGeneratorsProg_correct (p : BitStr)
   rw [toBits_eq_vectorBits, fixedGenerator, LinearEquiv.apply_symm_apply]
 
 end MIPRE.LowDegree.BinaryQuotient
+
+end
 
 end

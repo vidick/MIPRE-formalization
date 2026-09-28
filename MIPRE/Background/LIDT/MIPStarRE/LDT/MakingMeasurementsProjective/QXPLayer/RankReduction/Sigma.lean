@@ -5,12 +5,16 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/Sigma.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.Core
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.TruncationCombinatorics
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CompletionTransfer
-import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteHilbert
-import MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB
-import Mathlib.Analysis.Matrix.Spectrum
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.Core
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.TruncationCombinatorics
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CompletionTransfer
+public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteHilbert
+public import MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB
+public import Mathlib.Analysis.Matrix.Spectrum
+public import MIPRE.Tactics
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -125,7 +129,7 @@ noncomputable abbrev sigmaRangeCarrier
 
 /-- A finite-enumeration carrier is equivalent to the paper's literal sigma type
 `Σ a, Fin (m a)`. -/
-private noncomputable def sigmaFinCarrierEquiv {Outcome : Type*} [Fintype Outcome]
+noncomputable def sigmaFinCarrierEquiv {Outcome : Type*} [Fintype Outcome]
     (m : Outcome → ℕ) :
     (Σ a : Outcome, Fin (m a)) ≃ FiniteHilbertSpace.sigmaFinCarrier m := by
   classical
@@ -142,7 +146,7 @@ private noncomputable def sigmaFinCarrierEquiv {Outcome : Type*} [Fintype Outcom
 
 /-- The canonical block projective measurement on the lifted sigma carrier
 indexed by `Fin n`. -/
-private noncomputable def finSigmaProjMeas (n : ℕ) (m : Fin n → ℕ) :
+noncomputable def finSigmaProjMeas (n : ℕ) (m : Fin n → ℕ) :
     ProjMeas (Fin n) (ULift.{uι} (Σ i : Fin n, Fin (m i))) where
   outcome := fun i =>
     Matrix.diagonal fun x : ULift.{uι} (Σ i : Fin n, Fin (m i)) => if x.down.1 = i then 1 else 0
@@ -779,3 +783,5 @@ lemma sigmaFinXHatCoisometry_spec
 end
 
 end MIPStarRE.LDT.MakingMeasurementsProjective
+
+end

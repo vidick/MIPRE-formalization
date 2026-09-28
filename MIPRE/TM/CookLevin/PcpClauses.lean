@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.TM.CookLevin.Layout
-import MIPRE.Foundations.SAT.PcpBlocks
+module
+public import MIPRE.TM.CookLevin.Layout
+public import MIPRE.Foundations.SAT.PcpBlocks
+
+@[expose] public section
 
 /-!
 # Clause indices and the five Boolean PCP blocks
@@ -91,7 +94,7 @@ def ofLiterals (l : Fin 5 → Lit V) : Clause5 V V V V V :=
   cases c
   rfl
 
-private theorem lit_true_iff (l : Lit V) (a : V → Bool) : l.eval a = true ↔ a l.var = l.pos := by
+theorem lit_true_iff (l : Lit V) (a : V → Bool) : l.eval a = true ↔ a l.var = l.pos := by
   cases h : l.pos <;> cases ha : a l.var <;> simp [Lit.eval, h, ha]
 
 /-- The five Boolean disjuncts are precisely the satisfying-literal condition
@@ -184,3 +187,5 @@ theorem block_pointFromClause (P : PcpParams)
 end PcpParams
 
 end MIPRE.SAT
+
+end

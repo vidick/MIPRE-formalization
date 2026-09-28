@@ -3,11 +3,15 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.FromPartrec
-import MIPRE.Foundations.Cost.Loops
-import MIPRE.Foundations.Cost.Partrec
-import Mathlib.Computability.PartrecBasis
-import Mathlib.Computability.RE
+module
+public import MIPRE.Foundations.Cost.FromPartrec
+public import MIPRE.Foundations.Cost.Loops
+public import MIPRE.Foundations.Cost.Partrec
+public import Mathlib.Computability.PartrecBasis
+public import Mathlib.Computability.RE
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Recursively enumerable sets of bit strings are halting sets of the ambient model
@@ -300,3 +304,5 @@ theorem rePred_halts (S : Prog) : REPred fun x : BitStr => Halts S (encode x) :=
     primrec_encode_bitStr.to_comp).dom_re.of_eq fun x => (halts_iff_evalData_dom S (encode x)).symm
 
 end MIPRE.Cost
+
+end

@@ -2,8 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryPower
-import Mathlib.FieldTheory.Finite.Trace
+module
+public import MIPRE.Foundations.LowDegree.BinaryPower
+public import Mathlib.FieldTheory.Finite.Trace
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Effective Frobenius iteration and trace
@@ -111,16 +115,16 @@ theorem evalBits_frobeniusTrace_trace {F : Type*} [Field F] [Finite F] [CharP F 
     FiniteField.algebraMap_trace_eq_sum_pow, hdegree, length_unary]
   simp
 
-private noncomputable def traceStepProg : PolyTimeFun (PowerState × Unit) PowerState :=
+noncomputable def traceStepProg : PolyTimeFun (PowerState × Unit) PowerState :=
   let p := fst.comp fst
   let a := fst.comp (snd.comp fst)
   let c := snd.comp (snd.comp fst)
   p.pair ((mulReduceProg.comp (p.pair (a.pair a))).pair (xorBitsProg.comp (c.pair a)))
 
-private theorem traceStepProg_apply (s : PowerState) (u : Unit) :
+theorem traceStepProg_apply (s : PowerState) (u : Unit) :
     traceStepProg (s, u) = traceStep s u := rfl
 
-private theorem traceStep_bounded : FoldBounded traceStepProg (9 * X + 9) := by
+theorem traceStep_bounded : FoldBounded traceStepProg (9 * X + 9) := by
   intro l s pre post _
   change esize (pre.foldl traceStep s) ≤ _
   obtain ⟨hp, ha, hc⟩ := fold_traceStep_width pre s
@@ -146,3 +150,5 @@ noncomputable def frobeniusTraceProg :
     frobeniusTraceProg (p, a, u) = frobeniusTrace p a u := rfl
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

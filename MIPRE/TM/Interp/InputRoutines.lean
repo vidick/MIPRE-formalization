@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.Interp.Routines
-import MIPRE.TM.Interp.Repr
+module
+public import MIPRE.TM.Interp.Routines
+public import MIPRE.TM.Interp.Repr
+
+@[expose] public section
 
 /-!
 # The input-tape routines
@@ -334,3 +337,5 @@ theorem exec_buildAnswer {k : ProgId} {pc : Fin maxPc} {j : IT} {dst : WT}
         exact ((((hw₁.trans hw₂).trans hw₃).trans hw₄).trans hw').cast (by simp)
 
 end MIPRE.TM.Interp
+
+end

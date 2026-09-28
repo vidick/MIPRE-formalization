@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Cost.Numeric
-import MIPRE.Foundations.LowDegree.BinaryConstants
+module
+public import MIPRE.Foundations.Cost.Numeric
+public import MIPRE.Foundations.LowDegree.BinaryConstants
+
+@[expose] public section
 
 /-!
 # Binary exponentiation in a polynomial-basis field
@@ -94,17 +97,17 @@ theorem evalBits_powerBits (z : R) (p a e : BitStr) (hp : p ≠ [])
   rw [powerBits, evalBits_fold_powerStep z p a _ e hroot ha (length_oneBits p),
     evalBits_oneBits z p hp, one_mul]
 
-private noncomputable def powerStepProg : PolyTimeFun (PowerState × Bool) PowerState :=
+noncomputable def powerStepProg : PolyTimeFun (PowerState × Bool) PowerState :=
   let p := fst.comp fst
   let a := fst.comp (snd.comp fst)
   let c := snd.comp (snd.comp fst)
   p.pair ((mulReduceProg.comp (p.pair (a.pair a))).pair
     (ite snd (mulReduceProg.comp (p.pair (c.pair a))) c))
 
-private theorem powerStepProg_apply (s : PowerState) (b : Bool) :
+theorem powerStepProg_apply (s : PowerState) (b : Bool) :
     powerStepProg (s, b) = powerStep s b := rfl
 
-private theorem powerStep_bounded : FoldBounded powerStepProg (9 * X + 9) := by
+theorem powerStep_bounded : FoldBounded powerStepProg (9 * X + 9) := by
   intro l s pre post _
   change esize (pre.foldl powerStep s) ≤ _
   obtain ⟨hp, ha, hc⟩ := fold_powerStep_width pre s
@@ -131,3 +134,5 @@ noncomputable def powerBitsProg : PolyTimeFun (BitStr × BitStr × BitStr) BitSt
     powerBitsProg (p, a, e) = powerBits p a e := rfl
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

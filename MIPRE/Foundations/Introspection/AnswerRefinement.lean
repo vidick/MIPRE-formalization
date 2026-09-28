@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Pasting
+module
+public import MIPRE.Foundations.Pasting
+
+@[expose] public section
 
 /-! # Deterministic graph refinement of measurement answers
 
@@ -127,4 +130,6 @@ theorem graphRefinement_commutator_sum (ψ : D × K → ℂ) (M : A → Matrix D
   simp [stateSqNorm, stateNorm, stateVec]
 
 end MIPRE.Introspection
+end
+
 end

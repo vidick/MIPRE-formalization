@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Instantiation
-import MIPRE.Foundations.ClassMIPStarComputable
+module
+public import MIPRE.Foundations.Halting.Instantiation
+public import MIPRE.Foundations.ClassMIPStarComputable
+
+@[expose] public section
 
 /-!
 # The tabulation of a string's verifier under its own parameter
@@ -264,8 +267,6 @@ theorem mu_clauseL (x : BitStr) (n : ℕ)
           (fun v => decide (((Vof G U x).sampler.cl n .alice).eval v = (eXofL G U x n i).2
             ∧ ((Vof G U x).sampler.cl n .bob).eval v = (eXofL G U x n j).2))]
         congr 1
-        ext v
-        simp
       · refine List.filter_congr fun z hz => ?_
         have hz' : z.length = (Vof G U x).sampler.dim n :=
           (Data.mem_bitStrsOfLen _ _).1 hz
@@ -401,3 +402,5 @@ theorem Vof_descOf (lam : ℕ) (e : Prog) :
 end Halting
 
 end MIPRE
+
+end

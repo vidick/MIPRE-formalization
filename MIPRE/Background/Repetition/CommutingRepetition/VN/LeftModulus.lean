@@ -23,12 +23,16 @@ The key identities are pointwise algebra: with `gₙ = 1_{[0,aₙ]}/(1−t)` and
 `v := W*` satisfies the polar relations `Rop v hvec = x`, `Rop (v v*) hvec = hvec`
 of `SpectralData`. Nothing here is a manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.GraphModulus
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.GraphModulus
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -616,3 +620,5 @@ theorem vEl_mul_star_vEl_val : (vEl M x * star (vEl M x)).1 = PE (Set.Ioo 0 1) :
 end GraphMod
 
 end CommutingRepetition
+
+end

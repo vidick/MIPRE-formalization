@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/Statements.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Scaffold.Core
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Defs
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Sandwich.PastedFamilies
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Scaffold.Core
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Defs
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Sandwich.PastedFamilies
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -533,3 +536,5 @@ structure LdPastingNCompletenessStatement (params : Parameters)
       (ldPastingCompletenessLowerBound params kappa nu k)
 
 end MIPStarRE.LDT.Pasting
+
+end

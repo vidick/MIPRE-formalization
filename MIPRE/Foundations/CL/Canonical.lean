@@ -3,9 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.CL.Register
-import Mathlib.LinearAlgebra.BilinearForm.Orthogonal
-import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
+module
+public import MIPRE.Foundations.CL.Register
+public import Mathlib.LinearAlgebra.BilinearForm.Orthogonal
+public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Canonical complements and canonical linear maps
@@ -177,7 +181,7 @@ Stated for a *variable* `Finset`, and with no `if`, on purpose: `pivots S` is a
 `Finset.filter` over a `Nat` inequality between `finrank`s, so it carries a `Decidable`
 instance that cannot be evaluated, and either letting `simp` see through it or asking `rw` to
 unify it against a `Classical` instance costs a `whnf` timeout. -/
-private theorem card_filter_lt_succ_of_mem (P : Finset (Fin n)) {j : ℕ} (hj : j < n)
+theorem card_filter_lt_succ_of_mem (P : Finset (Fin n)) {j : ℕ} (hj : j < n)
     (hp : (⟨j, hj⟩ : Fin n) ∈ P) :
     (P.filter fun i : Fin n => i.val < j + 1).card
       = (P.filter fun i : Fin n => i.val < j).card + 1 := by
@@ -196,7 +200,7 @@ private theorem card_filter_lt_succ_of_mem (P : Finset (Fin n)) {j : ℕ} (hj : 
       · exact ⟨h.1, by omega⟩
   rw [hfil, Finset.card_insert_of_notMem (by simp)]
 
-private theorem card_filter_lt_succ_of_notMem (P : Finset (Fin n)) {j : ℕ} (hj : j < n)
+theorem card_filter_lt_succ_of_notMem (P : Finset (Fin n)) {j : ℕ} (hj : j < n)
     (hp : (⟨j, hj⟩ : Fin n) ∉ P) :
     (P.filter fun i : Fin n => i.val < j + 1)
       = (P.filter fun i : Fin n => i.val < j) := by
@@ -208,7 +212,7 @@ private theorem card_filter_lt_succ_of_notMem (P : Finset (Fin n)) {j : ℕ} (hj
   · exact h'
   · exact absurd ((Fin.ext h' : i = (⟨j, hj⟩ : Fin n)) ▸ h.1) hp
 
-private theorem filter_lt_of_le (P : Finset (Fin n)) {j : ℕ} (hj : n ≤ j) :
+theorem filter_lt_of_le (P : Finset (Fin n)) {j : ℕ} (hj : n ≤ j) :
     (P.filter fun i : Fin n => i.val < j) = P := by
   classical
   exact Finset.filter_true_of_mem fun i _ => lt_of_lt_of_le i.isLt hj
@@ -392,3 +396,5 @@ noncomputable def lperp (L : (Fin n → F) →ₗ[F] (Fin n → F)) : (Fin n →
   ker_canonLin _
 
 end MIPRE.CL
+
+end

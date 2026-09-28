@@ -28,12 +28,16 @@ Encoding decisions (DIFFERENCES.md D17):
   produces the extension and the data together. Work package B7 proves
   it; nothing downstream sees an unbounded operator.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Interface
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Interface
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -99,3 +103,5 @@ structure SpectralData (N : StdTracialAlgebra.{u}) (x : N.H) where
     ⟪hvec, N.Rop (proj I) hvec⟫_ℂ = ((∫ b in I, b ^ 2 ∂μ : ℝ) : ℂ)
 
 end CommutingRepetition
+
+end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryDualKernel
-import MIPRE.Foundations.Introspection.AdaptiveResidual
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryDualKernel
+public import MIPRE.Foundations.Introspection.AdaptiveResidual
+
+@[expose] public section
 
 /-! # Decoding quotient-valued hiding answers
 
@@ -136,4 +139,6 @@ theorem decodeDual_prefix_congr {P : CL.CLFun F (ι) ℓ} {T : Finset (ι)}
   exact outputPrefix_congr_le hP (by have := mem_range.mp hj; omega) h
 
 end MIPRE.Introspection.AuxiliaryDual
+end
+
 end

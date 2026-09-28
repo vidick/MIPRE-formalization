@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.GameTransport
-import MIPRE.Foundations.PerfectStrategy
+module
+public import MIPRE.Foundations.GameTransport
+public import MIPRE.Foundations.PerfectStrategy
+
+@[expose] public section
 
 /-!
 # Playing a synchronous strategy through a reading of the questions
@@ -128,3 +131,5 @@ theorem value_pushQ_eq_one (S : SyncStrategy G) {X' A' : Type*} [Fintype X'] [Fi
 end SyncStrategy
 
 end MIPRE
+
+end

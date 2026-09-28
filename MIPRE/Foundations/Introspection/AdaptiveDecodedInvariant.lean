@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveAnswerDecode
-import MIPRE.Foundations.Introspection.AdaptiveNextStrategy
-import MIPRE.Foundations.Introspection.IntrospectCanonicalization
+module
+public import MIPRE.Foundations.Introspection.AdaptiveAnswerDecode
+public import MIPRE.Foundations.Introspection.AdaptiveNextStrategy
+public import MIPRE.Foundations.Introspection.IntrospectCanonicalization
+
+@[expose] public section
 
 /-! # The decoded next-prefix invariant
 
@@ -149,4 +152,6 @@ theorem registeredReplacement_nextOption_isPVM (P : CL.CLFun F ι ℓ)
   exact isPVM_povm_map _ (nextPrefixJoint_isPVM P hP k none D hD) (nextOptionDecoder P k)
 
 end MIPRE.Introspection
+end
+
 end

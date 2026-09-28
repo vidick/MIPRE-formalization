@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ConditionalConsistency
-import MIPRE.Foundations.Introspection.TypedEstimates
+module
+public import MIPRE.Foundations.Introspection.ConditionalConsistency
+public import MIPRE.Foundations.Introspection.TypedEstimates
+
+@[expose] public section
 
 /-! # The conditional estimate for the actual adjacent hiding test
 
@@ -294,5 +297,7 @@ end Parsed
 end TypedEstimates
 
 end MIPRE.Introspection
+
+end
 
 end

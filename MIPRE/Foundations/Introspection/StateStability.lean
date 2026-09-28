@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ValueStability
+module
+public import MIPRE.Foundations.Introspection.ValueStability
+
+@[expose] public section
 
 /-! # Replacing the state after Pauli extraction
 
@@ -133,5 +136,7 @@ theorem povmValue_failure_transfer (G : Game X Y A B) (ψ φ : H × K → ℂ)
 end Game
 
 end MIPRE.Introspection
+
+end
 
 end

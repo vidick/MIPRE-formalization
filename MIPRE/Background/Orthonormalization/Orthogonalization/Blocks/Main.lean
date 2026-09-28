@@ -19,15 +19,19 @@ bicommutant theorem `Blocks/Bicommutant.lean`), and the gluing
 `povm_orthogonalization` (Theorem 1.2) with `[FiniteDimensional ℂ H]` added
 (FIDELITY.md, "Instances").
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.Basic
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Minimal
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Glue
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Factor
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Basic
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Minimal
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Glue
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Factor
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization
 
@@ -52,7 +56,9 @@ theorem povm_orthogonalization_finDim_vn (M : VonNeumannAlgebra H) (φ : NormalS
     ∃ p : ι → H →L[ℂ] H, IsPVM M p ∧
       (φ (∑ i, star (a i - p i) * (a i - p i))).re < 9 * ε := by
   obtain ⟨p, hpM, hp, -, hsum, hlt⟩ := orthAt_one M ι φ.toLinearMap φ.nonneg' φ.map_one' a ha.1
-    (fun i => (ContinuousLinearMap.nonneg_iff_isPositive _).mpr (ha.2.1 i)) ha.2.2 ε hε
+    (fun i => ContinuousLinearMap.nonneg_iff_isPositive.mpr (ha.2.1 i)) ha.2.2 ε hε
   exact ⟨p, ⟨hpM, hp, hsum⟩, hlt⟩
 
 end Orthogonalization
+
+end

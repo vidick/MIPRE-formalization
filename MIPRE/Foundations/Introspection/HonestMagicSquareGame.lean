@@ -2,11 +2,14 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestMagicSquare
-import MIPRE.Foundations.Introspection.RegisterTransport
-import MIPRE.Foundations.GameDouble
-import MIPRE.Foundations.Pasting
-import MIPRE.Foundations.PerfectStrategy
+module
+public import MIPRE.Foundations.Introspection.HonestMagicSquare
+public import MIPRE.Foundations.Introspection.RegisterTransport
+public import MIPRE.Foundations.GameDouble
+public import MIPRE.Foundations.Pasting
+public import MIPRE.Foundations.PerfectStrategy
+
+@[expose] public section
 
 /-! # Perfect PCC play of the actual Magic Square game
 
@@ -59,7 +62,7 @@ theorem questionOp_isPVM {A B : Matrix I I ℂ}
   | inr j => exact isPVM_fibSum (variableOp_isPVM hA hB hAB j) _
 
 omit [DecidableEq I] in
-private theorem coarse_commute {X Y : Type*} [Fintype X] [Fintype Y]
+theorem coarse_commute {X Y : Type*} [Fintype X] [Fintype Y]
     {U V : Type*} [DecidableEq U] [DecidableEq V]
     (M : X → Matrix I I ℂ) (N : Y → Matrix I I ℂ)
     (f : X → U) (g : Y → V) (hc : ∀ x y, Commute (M x) (N y)) (u : U) (v : V) :
@@ -76,7 +79,7 @@ theorem questionOp_incidence_commute {A B : Matrix I I ℂ}
   have h := (variable_constraint_commute hAB c (cellIdx c j) x y).symm
   simpa only [cellIndex, cell_cellIdx hj] using h
 
-private theorem constraint_incidence_reject {A B : Matrix I I ℂ}
+theorem constraint_incidence_reject {A B : Matrix I I ℂ}
     (hA : IsObservable A) (hB : IsObservable B) (hAB : A * B = -(B * A))
     (c : Fin layout.r) (j : Fin layout.s) (hj : j ∈ layout.V c)
     (a : Fin 3 → ZMod 2) (b : ZMod 2)
@@ -109,7 +112,7 @@ theorem questionOp_incidence_reject {A B : Matrix I I ℂ}
   apply constraint_incidence_reject hA hB hAB c j hj x y
   simpa only [hx', hy'] using hr
 
-private theorem positive_incidence (p q : layout.Question)
+theorem positive_incidence (p q : layout.Question)
     (h : 0 < nonlocalGame.μ p q) :
     (∃ c j, p = .inl c ∧ q = .inr j ∧ j ∈ layout.V c) ∨
       (∃ c j, p = .inr j ∧ q = .inl c ∧ j ∈ layout.V c) := by
@@ -166,7 +169,7 @@ def strategy {A B : Matrix I I ℂ}
       projective := fun q a => (registerOp_isPVM _ (questionOp_isPVM hA hB hAB q.2)).idem a
       normalized := fun q => (registerOp_isPVM _ (questionOp_isPVM hA hB hAB q.2)).sum_eq_one }
 
-private theorem doubled_positive (p q : Bool × layout.Question)
+theorem doubled_positive (p q : Bool × layout.Question)
     (h : 0 < nonlocalGame.doubled.μ p q) :
     (p.1 = false ∧ q.1 = true) ∧ 0 < nonlocalGame.μ p.2 q.2 := by
   have ht : p.1 = false ∧ q.1 = true := by
@@ -212,3 +215,5 @@ theorem exists_perfectPCC {A B : Matrix I I ℂ}
   simp [strategy, Fintype.card_prod, Nat.mul_comm]
 
 end MIPRE.Introspection.HonestMagicSquare
+
+end

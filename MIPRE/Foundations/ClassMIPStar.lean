@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.ClassMIPStarComputable
-import MIPRE.Foundations.GameDouble
-import MIPRE.Foundations.Halting.Enumerate
+module
+public import MIPRE.Foundations.ClassMIPStarComputable
+public import MIPRE.Foundations.GameDouble
+public import MIPRE.Foundations.Halting.Enumerate
+
+@[expose] public section
 
 /-!
 # The class `MIP*_{1,1/2}(2,1)` as the paper defines it
@@ -211,3 +214,5 @@ def MIPStar (L : Set BitStr) : Prop :=
       (z ∉ L → quantumValue (V.game z) ≤ 1 / 2)
 
 end MIPRE
+
+end

@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Adapter.Strategy
+module
+public import MIPRE.Background.LIDT.Adapter.Strategy
+
+@[expose] public section
 
 /-!
 # The seeded-CL adapter, part 5: both tests' distributions, as counts
@@ -1857,3 +1860,5 @@ theorem pushforward_le (hm : m ∣ Fintype.card F) (x y : CL.Question F m) :
       exact pushforward_line_line hm _ _ (fun u => by simp) (fun u => by simp)
 
 end MIPRE.LIDT.Adapter
+
+end

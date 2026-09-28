@@ -14,13 +14,17 @@ dense) and *separating* (`x ξ = 0 ⇒ x = 0` on `N`), the equivalence
 `N = N″` is used), and the upgrade from convergence at a separating vector to
 bounded strong convergence, used for the Haagerup expectations `Φ_n(x) → x`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Normal
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Normal
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -250,3 +254,5 @@ theorem tendstoStrongBdd_of_tendsto_separating (N : VonNeumannAlgebra H) {ξ : H
 end VN
 
 end CommutingRepetition
+
+end

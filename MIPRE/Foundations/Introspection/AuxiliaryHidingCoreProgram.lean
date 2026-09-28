@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryQuotientProgram
-import MIPRE.Foundations.Introspection.AuxiliaryQuotientChecks
-import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryQuotientProgram
+public import MIPRE.Foundations.Introspection.AuxiliaryQuotientChecks
+public import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
+
+@[expose] public section
 
 /-! # Executable comparisons for an interior hiding edge
 
@@ -59,4 +62,6 @@ theorem core_correct {n ℓ : ℕ} (P : CL.CLFun CL.𝔽₂ (Fin n) ℓ) (k : �
   rfl
 
 end MIPRE.Introspection.AuxiliaryHiding
+end
+
 end

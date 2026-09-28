@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.PauliBooleanDispatch
-import MIPRE.Background.QLD.PauliAnswerRoundtrip
+module
+public import MIPRE.Background.QLD.PauliBooleanDispatch
+public import MIPRE.Background.QLD.PauliAnswerRoundtrip
+
+@[expose] public section
 
 /-! # Exact raw-answer semantics of the executable Pauli predicate -/
 
@@ -72,4 +75,6 @@ theorem program_raw_iff (k : ℕ) (hk : 1 ≤ k) (j : ℕ) (hj : j ≤ k)
     exact (program_raw_correct_valid k hk j hj hm T U x y a b ha hb).trans h
 
 end MIPRE.QLD.PauliBooleanProgram
+end
+
 end

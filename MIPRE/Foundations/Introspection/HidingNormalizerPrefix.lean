@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HidingMaps
-import MIPRE.Foundations.Introspection.TypedPrefixChainBob
+module
+public import MIPRE.Foundations.Introspection.HidingMaps
+public import MIPRE.Foundations.Introspection.TypedPrefixChainBob
+
+@[expose] public section
 
 /-! # The actual hiding normalizer is the propagated question prefix -/
 
@@ -96,5 +99,7 @@ theorem hidingNormalizer_estimate
     (mul_le_mul_of_nonneg_left hintro (by norm_num)))
 
 end MIPRE.Introspection.TypedEstimates
+
+end
 
 end

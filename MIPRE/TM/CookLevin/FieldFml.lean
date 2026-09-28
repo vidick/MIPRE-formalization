@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.Layout
+module
+public import MIPRE.TM.CookLevin.Layout
+
+@[expose] public section
 
 /-!
 # The fields of a literal, as formulas
@@ -322,3 +325,5 @@ theorem evalFields_litFields (hT : T ≤ Sof e) :
 end Lit
 
 end MIPRE.TM.CookLevin.Desc
+
+end

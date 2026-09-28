@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.Code.Semantics
+module
+public import MIPRE.TM.Code.Semantics
+
+@[expose] public section
 
 /-!
 # Executable test machines
@@ -240,3 +243,5 @@ example : outBitsAt loopForever (fun _ => [true]) 50 = [] := by decide
 #eval spaceAt workTapeRoundTrip (fun _ => [true]) 3       -- 2
 
 end Turing.Code
+
+end

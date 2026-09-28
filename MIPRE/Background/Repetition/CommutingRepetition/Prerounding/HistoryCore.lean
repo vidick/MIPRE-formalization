@@ -18,13 +18,17 @@ effects are the conditional averages of the core effects over the fiber
 probability over words (`HistoryKL`). Nothing here is a manuscript
 statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Costs
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.HistoryKL
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Costs
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.HistoryKL
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -1146,3 +1150,5 @@ theorem revealLaw_sum_fiber (i₀ : Fin n) (hi₀ : i₀ ∉ D) :
 end RevealDatum
 
 end CommutingRepetition
+
+end

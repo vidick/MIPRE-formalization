@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveNextInvariant
-import MIPRE.Foundations.Introspection.AdaptivePrefixStrategy
+module
+public import MIPRE.Foundations.Introspection.AdaptiveNextInvariant
+public import MIPRE.Foundations.Introspection.AdaptivePrefixStrategy
+
+@[expose] public section
 
 /-! # A returned strategy with its constructed next-prefix invariant
 
@@ -181,4 +184,6 @@ theorem exists_adaptive_next_strategy (P : CL.CLFun F ι ℓ)
     adaptiveReplacementStrategy_next_at P hP k G ξ hξ a₀ MA MB q g hMA hMB D hD, hv⟩
 
 end MIPRE.Introspection
+end
+
 end

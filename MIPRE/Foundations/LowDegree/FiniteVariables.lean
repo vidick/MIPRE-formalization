@@ -2,8 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.Encoding
-import Mathlib.Algebra.MvPolynomial.Rename
+module
+public import MIPRE.Foundations.LowDegree.Encoding
+public import Mathlib.Algebra.MvPolynomial.Rename
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Restricting polynomials to an embedded set of variables
@@ -68,5 +72,7 @@ theorem degreeOf_killCompl_le_of_bound (p : MvPolynomial τ F) {d : ℕ}
   fun i => (degreeOf_killCompl_le hf p i).trans (h (f i))
 
 end MIPRE.LowDegree
+
+end
 
 end

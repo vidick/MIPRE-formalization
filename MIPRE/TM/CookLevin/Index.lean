@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.AnsEnd
-import Mathlib.Data.Nat.Bitwise
+module
+public import MIPRE.TM.CookLevin.AnsEnd
+public import Mathlib.Data.Nat.Bitwise
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The canonical index of a tableau variable
@@ -272,3 +276,5 @@ theorem idxOf_ans (hT : T ≤ Sof e) {j : ℕ} (hj : j < 4 * T) {jt : Fin 7} {p 
       omega
 
 end MIPRE.TM.CookLevin.Desc
+
+end

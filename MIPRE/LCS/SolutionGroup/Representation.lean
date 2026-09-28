@@ -3,9 +3,13 @@ Copyright (c) 2026 Sean Perazzolo. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sean Perazzolo
 -/
-import MIPRE.LCS.EPR
-import MIPRE.LCS.SolutionGroup
-import Mathlib.Algebra.Star.Unitary
+module
+public import MIPRE.LCS.EPR
+public import MIPRE.LCS.SolutionGroup
+public import Mathlib.Algebra.Star.Unitary
+public import MIPRE.Tactics
+
+@[expose] public section
 
 -- Lean v4.33's transparency check breaks several `rw`/`simp` steps in this file
 -- (the same failure Mathlib patches with this option on affected declarations).
@@ -359,7 +363,7 @@ This is the monoid-level support-product lemma.  The sorted list fixes the same
 canonical order used by `equationWord`, while `noncommProd` is convenient for
 strategy row products.  Pairwise commutation makes the two presentations agree.
 -/
-private lemma orderedSupportProduct_eq_noncommProd
+lemma orderedSupportProduct_eq_noncommProd
     {M : Type*} [Monoid M]
     (f : Fin G.s → M)
     (i : Fin G.r)
@@ -423,7 +427,7 @@ $$
 This converts the generic presentation's commutation hypothesis into the
 row-wise commutation data carried by an LCS observable strategy.
 -/
-private lemma sameEquation_toLinearSystem_iff
+lemma sameEquation_toLinearSystem_iff
     (j k : Fin G.s) :
     SameEquation game.toLinearSystem j k ↔
       ∃ i : Fin G.r, j ∈ G.V i ∧ k ∈ G.V i := by
@@ -436,7 +440,7 @@ $$
 This rewrite aligns the generic `equationWord` construction with the LCS row
 support used in observable products.
 -/
-private lemma eqSupport_toLinearSystem
+lemma eqSupport_toLinearSystem
     (i : Fin G.r) :
     eqSupport game.toLinearSystem i = G.V i := by
   ext j
@@ -451,7 +455,7 @@ $$
 This list-level calculation is the basic evaluator for equation words before
 the support list is specialized to a row.
 -/
-private lemma lift_genVar_list_prod_val {S : LinearSystem}
+lemma lift_genVar_list_prod_val {S : LinearSystem}
     (obs : Fin S.layout.s → Matrix n n ℂ)
     (obs_is_observable : ∀ j, IsObservable (obs j))
     (l : List (Fin S.layout.s)) :
@@ -475,7 +479,7 @@ $$
 This identifies the group word appearing in the equation relator with the
 matrix product whose value is extracted from the EPR/local-loss argument.
 -/
-private lemma lift_equationWord_toLinearSystem_val
+lemma lift_equationWord_toLinearSystem_val
     (obs : Fin G.s → Matrix n n ℂ)
     (obs_is_observable : ∀ j, IsObservable (obs j))
     (i : Fin G.r) :
@@ -538,7 +542,7 @@ $$
 This supplies the generic constructor with the commutation hypothesis required
 for every pair of variables that appears together in some equation.
 -/
-private lemma sameEquation_comm_of_row_comm
+lemma sameEquation_comm_of_row_comm
     (obs : Fin G.s → Matrix n n ℂ)
     (sameEquation_comm :
       ∀ i, Pairwise (fun j k : G.V i ↦ Commute (obs j.1) (obs k.1)))
@@ -636,3 +640,5 @@ end RepresentationData
 end SolutionGroup
 
 end MIPRE.LCS
+
+end

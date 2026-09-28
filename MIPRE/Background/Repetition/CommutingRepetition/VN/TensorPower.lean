@@ -21,12 +21,16 @@ Convention: `tensorPow N 0 = N` (a junk value — the interface at
 `R+1` factors is the right slot of the outermost step and factors
 `< k` embed through the left slot.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.TensorStep
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.TensorStep
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -167,3 +171,5 @@ theorem tensorPow_trace_prod : ∀ (R : ℕ) (f : Fin R → N.A),
 end StdTracialAlgebra
 
 end CommutingRepetition
+
+end

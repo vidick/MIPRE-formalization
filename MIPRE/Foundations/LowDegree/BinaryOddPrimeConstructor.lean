@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryOddPrimeProgram
-import MIPRE.Foundations.LowDegree.BinaryPrimePowerTrace
+module
+public import MIPRE.Foundations.LowDegree.BinaryOddPrimeProgram
+public import MIPRE.Foundations.LowDegree.BinaryPrimePowerTrace
+
+@[expose] public section
 
 /-! # Certified polynomial-time irreducibles of every odd-prime-power degree -/
 
@@ -100,5 +103,7 @@ theorem oddPrimePowerBits_length (q e : ℕ) (hq : q.Prime) (hq2 : q ≠ 2) :
   rw [← natDegree_add_one_of_getLast _ h.1, h.2.2.2]
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end
 
 end

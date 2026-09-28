@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.FieldPolynomialProg
-import MIPRE.Foundations.Introspection.LineRepresentativeProg
-import MIPRE.Foundations.CL.DetypingProgParse
+module
+public import MIPRE.Foundations.Introspection.FieldPolynomialProg
+public import MIPRE.Foundations.Introspection.LineRepresentativeProg
+public import MIPRE.Foundations.CL.DetypingProgParse
+
+@[expose] public section
 
 /-! # Executable line-versus-point arithmetic
 
@@ -18,7 +21,7 @@ namespace MIPRE.Introspection.FieldLineCheck
 open Cost Cost.PolyTimeFun SAT LowDegree.BinaryPolynomial
   LineProgram FieldPolynomialProgram CL.Detyping.Program
 
-private theorem firstPair_zero {F : Type*} [Zero F] [DecidableEq F]
+theorem firstPair_zero {F : Type*} [Zero F] [DecidableEq F]
     (l : List (F × F)) (h : ∀ p ∈ l, p.2 = 0) : firstPair l = (0, 0) := by
   induction l with
   | nil => rfl
@@ -107,7 +110,7 @@ theorem parameterProg_correct (k : ℕ) (hk : 1 ≤ k) {m : ℕ}
   simp only [parameterProg, comp_apply, pair_apply, fst_apply, snd_apply,
     subtractProg_correct, zip_apply, hz, coefficientBitsProg_correct, parameter]
 
-private def affineEntryProg : PolyTimeFun ((BitStr × BitStr) × Unary × BitStr) BitStr :=
+def affineEntryProg : PolyTimeFun ((BitStr × BitStr) × Unary × BitStr) BitStr :=
   xorBitsProg.comp ((fst.comp fst).pair
     (shoupMulProg.comp ((fst.comp snd).pair ((snd.comp snd).pair (snd.comp fst)))))
 
@@ -136,7 +139,7 @@ theorem affineProg_correct (k : ℕ) (hk : 1 ≤ k) {m : ℕ}
   rw [shoupMulProg_encoding, shoupXorBits_correct]
   rfl
 
-private theorem vecBits_injective {k m : ℕ} (E : BinField k) :
+theorem vecBits_injective {k m : ℕ} (E : BinField k) :
     Function.Injective (E.vecBits : (Fin m → E.carrier) → List BitStr) := by
   intro x y h
   simp only [BinField.vecBits, List.map_ofFn] at h
@@ -192,4 +195,6 @@ theorem lineCheckProg_runs (input :
   lineCheckProg.computes input
 
 end MIPRE.Introspection.FieldLineCheck
+end
+
 end

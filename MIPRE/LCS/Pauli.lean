@@ -3,8 +3,12 @@ Copyright (c) 2026 Sean Perazzolo. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sean Perazzolo
 -/
-import MIPRE.LCS.Observable
-import Mathlib.LinearAlgebra.Matrix.Kronecker
+module
+public import MIPRE.LCS.Observable
+public import Mathlib.LinearAlgebra.Matrix.Kronecker
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Pauli Matrices
@@ -196,3 +200,5 @@ lemma IsObservable.kronecker {A B : Matrix (Fin 2) (Fin 2) ℂ}
     simp [conjTranspose_kronecker, hA_ct, hB_ct, star_eq_conjTranspose]
 
 end MIPRE.LCS
+
+end

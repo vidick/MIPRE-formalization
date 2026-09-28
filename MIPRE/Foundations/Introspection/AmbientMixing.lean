@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.RegisterCoordinates
+module
+public import MIPRE.Foundations.Introspection.RegisterCoordinates
+
+@[expose] public section
 
 /-! # Pauli mixing for nested registers in one ambient EPR state
 
@@ -112,5 +115,7 @@ theorem exists_ambient_pauli_mixing {X : Type*} [Fintype X]
   simpa only [← registerExtend_sub, stateSqNorm_registerExtend] using hQ
 
 end MIPRE.Introspection
+
+end
 
 end

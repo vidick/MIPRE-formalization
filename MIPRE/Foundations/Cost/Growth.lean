@@ -3,9 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.PolyTime
-import Mathlib.Algebra.Polynomial.Eval.Degree
-import Mathlib.Data.Nat.Size
+module
+public import MIPRE.Foundations.Cost.PolyTime
+public import Mathlib.Algebra.Polynomial.Eval.Degree
+public import Mathlib.Data.Nat.Size
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Polynomial versus exponential growth
@@ -98,3 +102,5 @@ theorem exists_threshold (Q : Polynomial ℕ) :
     _ ≤ n + 1 := Nat.le_succ n
 
 end MIPRE.Cost
+
+end

@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.MultiInput.Deterministic
+module
+public import MIPRE.TM.MultiInput.Deterministic
+
+@[expose] public section
 
 /-!
 # Tape head visitation and space-usage lemmas for multi-input machines
@@ -153,3 +156,5 @@ lemma spaceUsed_mono (tm : MultiInputTM i w Symbol State) (cfg : Cfg i w Symbol 
   exact Finset.sum_le_sum (fun d _ => spaceUsedByTape_mono tm cfg d h)
 
 end Turing.MultiInputTM
+
+end

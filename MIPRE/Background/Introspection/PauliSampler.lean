@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.SamplerQueryProgram
-import MIPRE.Background.QLD.PauliFactorPrograms
-import MIPRE.Foundations.Introspection.PauliSamplerParams
-import MIPRE.Foundations.Introspection.ClockCompiler
+module
+public import MIPRE.Background.QLD.SamplerQueryProgram
+public import MIPRE.Background.QLD.PauliFactorPrograms
+public import MIPRE.Foundations.Introspection.PauliSamplerParams
+public import MIPRE.Foundations.Introspection.ClockCompiler
+
+@[expose] public section
 
 /-! # The canonical index-dependent executable Pauli sampler
 
@@ -184,4 +187,6 @@ def compiler (c : ℕ) : PolyTimeFun ℕ Prog :=
 theorem compiler_apply (c lam : ℕ) : compiler c lam = prog c lam := rfl
 
 end MIPRE.Introspection.PauliSampler
+end
+
 end

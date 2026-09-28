@@ -3,9 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Analysis.SpecialFunctions.Complex.Circle
-import Mathlib.Tactic.IntervalCases
+module
+public import Mathlib.Data.ZMod.Basic
+public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
+public import Mathlib.Tactic.IntervalCases
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The sign of a bit
@@ -73,5 +77,7 @@ theorem sum_sgn : ∑ x : ZMod 2, sgn x = 0 := by
   ring
 
 end MIPRE
+
+end
 
 end

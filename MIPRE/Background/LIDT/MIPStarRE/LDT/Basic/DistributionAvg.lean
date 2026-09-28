@@ -5,8 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Basic/DistributionAvg.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionUniformSums
-import Mathlib.Probability.ProbabilityMassFunction.Integrals
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionUniformSums
+public import Mathlib.Probability.ProbabilityMassFunction.Integrals
+public import MIPRE.Tactics
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -770,3 +774,5 @@ theorem avgOver_uniform_snd {α β : Type*}
   simpa using (avgOver_uniform_equiv_snd (e := Equiv.refl (α × β)) (f := f))
 
 end MIPStarRE.LDT
+
+end

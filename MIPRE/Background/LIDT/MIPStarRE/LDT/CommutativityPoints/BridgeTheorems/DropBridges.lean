@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/CommutativityPoints/BridgeTheorems/DropBridges.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.BridgeTheorems.LiftBridges
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.BridgeTheorems.LiftBridges
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -33,7 +36,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 open scoped Matrix MatrixOrder ComplexOrder BigOperators
 
-private lemma reversedDropFromLineComparison
+lemma reversedDropFromLineComparison
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -158,7 +161,7 @@ private lemma reversedDropFromLineComparison
               exact pointDiagonalLineMixedProductRight_outcome params strategy q a b)
     hreindexed
 
-private lemma orderedDropFromLineComparison
+lemma orderedDropFromLineComparison
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -188,7 +191,7 @@ private lemma orderedDropFromLineComparison
     (by intro q ab; rfl)
     (reversedDropFromLineComparison params strategy eps delta gamma hgood)
 
-private lemma reversedDropToPointsComparison
+lemma reversedDropToPointsComparison
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -401,3 +404,5 @@ theorem commutativityPoints
     _ ≤ commutativityPointsError params gamma := hshared'
 
 end MIPStarRE.LDT.CommutativityPoints
+
+end

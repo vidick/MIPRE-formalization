@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Adapter.Reduction
-import MIPRE.Foundations.RegisterReindex
-import MIPRE.Foundations.StrategyDilation
+module
+public import MIPRE.Background.LIDT.Adapter.Reduction
+public import MIPRE.Foundations.RegisterReindex
+public import MIPRE.Foundations.StrategyDilation
+
+@[expose] public section
 
 /-!
 # The seeded-CL adapter, part 7: strategies on arbitrary registers
@@ -222,3 +225,5 @@ theorem clSoundness_ldc_one_deltaCL_of_povm {dA dB : Type*} [Fintype dA] [Decida
   exact ⟨PA, PB, GA, GB, hPA, hPB, h1, h2, h3⟩
 
 end MIPRE.LIDT.Adapter
+
+end

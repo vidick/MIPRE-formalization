@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveDualMarginal
-import MIPRE.Foundations.Introspection.AdaptiveXSplit
-import MIPRE.Foundations.Introspection.HonestPauliRegister
+module
+public import MIPRE.Foundations.Introspection.AdaptiveDualMarginal
+public import MIPRE.Foundations.Introspection.AdaptiveXSplit
+public import MIPRE.Foundations.Introspection.HonestPauliRegister
+
+@[expose] public section
 
 /-! # Exact prefix/dual factorization at every adaptive CL stage -/
 
@@ -149,3 +152,5 @@ theorem readDualOp_prefix_factor (P : CL.CLFun F ι ℓ) (h : P.SupportedOn univ
   rfl
 
 end MIPRE.Introspection.Honest
+
+end

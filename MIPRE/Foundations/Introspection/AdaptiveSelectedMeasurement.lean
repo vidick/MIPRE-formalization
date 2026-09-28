@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveDecodedInvariant
-import MIPRE.Foundations.Introspection.IntrospectCanonicalization
+module
+public import MIPRE.Foundations.Introspection.AdaptiveDecodedInvariant
+public import MIPRE.Foundations.Introspection.IntrospectCanonicalization
+
+@[expose] public section
 
 /-! # The actual selected measurement before an adaptive replacement
 
@@ -153,4 +156,6 @@ theorem registeredReplacement_canonicalizeIntro
       registeredReplacement_other MA _ q R hq, canonicalizeIntro_other MA w q hq]
 
 end MIPRE.Introspection
+end
+
 end

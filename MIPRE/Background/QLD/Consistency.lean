@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Ortho
-import MIPRE.Foundations.POVMValue
+module
+public import MIPRE.Background.QLD.Ortho
+public import MIPRE.Foundations.POVMValue
+
+@[expose] public section
 
 /-!
 # From bipartite consistency to near-projectivity
@@ -206,3 +209,5 @@ theorem exists_projective_of_consistent {ψ : dA × dB → ℂ} (hψ : star ψ �
   exact ⟨P, hsa, hidem, hsum, by linarith⟩
 
 end MIPRE.QLD
+
+end

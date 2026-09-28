@@ -3,10 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.CL.Product
-import MIPRE.Foundations.CL.Downsize
-import MIPRE.Foundations.CL.TypedSampler
-import Mathlib.Algebra.Field.ZMod
+module
+public import MIPRE.Foundations.CL.Product
+public import MIPRE.Foundations.CL.Downsize
+public import MIPRE.Foundations.CL.TypedSampler
+public import Mathlib.Algebra.Field.ZMod
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The product of a typed sampler and a directly answered one: the presentations
@@ -136,12 +140,12 @@ theorem ExactlyOn.prodCL : (prodCL L P Q ha hb).ExactlyOn univ := by
   have h := (ExactlyOn.prod (hP.liftTo L ha) (hQ.liftTo L hb)).reindex finSumFinEquiv
   rwa [Finset.map_univ_equiv] at h
 
-private theorem sumElim_reindex (v : Fin a → 𝔽₂) (w : Fin b → 𝔽₂) :
+theorem sumElim_reindex (v : Fin a → 𝔽₂) (w : Fin b → 𝔽₂) :
     reindexEquiv finSumFinEquiv (Sum.elim v w) = Fin.append v w := by
   funext i
   refine Fin.addCases (fun i => ?_) (fun i => ?_) i <;> simp
 
-private theorem split_symm (x : Fin (a + b) → 𝔽₂) :
+theorem split_symm (x : Fin (a + b) → 𝔽₂) :
     (reindexEquiv finSumFinEquiv).symm x = Sum.elim (leftPart x) (rightPart x) := by
   funext p
   rcases p with i | i <;> rfl
@@ -228,5 +232,7 @@ theorem indicatorBits_factorOfPrefix_prodCL (k : ℕ) (u : Fin (a + b) → 𝔽�
 end CLFun
 
 end MIPRE.CL
+
+end
 
 end

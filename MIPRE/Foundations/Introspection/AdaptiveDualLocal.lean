@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveDualFactor
-import MIPRE.Foundations.Introspection.AdaptivePrefixMixing
+module
+public import MIPRE.Foundations.Introspection.AdaptiveDualFactor
+public import MIPRE.Foundations.Introspection.AdaptivePrefixMixing
+
+@[expose] public section
 
 /-! # The honest dual marginal in the selected mixing coordinates -/
 
@@ -80,3 +83,5 @@ theorem readDualOp_stage_factor (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ
   rfl
 
 end MIPRE.Introspection
+
+end

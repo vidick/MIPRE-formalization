@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.SelfDualize
-import MIPRE.Foundations.LowDegree.Encoding
-import MIPRE.Foundations.Cost.Fold
+module
+public import MIPRE.Foundations.LowDegree.SelfDualize
+public import MIPRE.Foundations.LowDegree.Encoding
+public import MIPRE.Foundations.Cost.Fold
+
+@[expose] public section
 
 /-!
 # A polynomial-time square root in the binary cyclic group algebra
@@ -90,12 +93,12 @@ section Programs
 
 variable [SizedEncoding α]
 
-private noncomputable def splitParityStep :
+noncomputable def splitParityStep :
     PolyTimeFun ((List α × List α) × α) (List α × List α) :=
   (PolyTimeFun.cons PolyTimeFun.snd (PolyTimeFun.snd.comp PolyTimeFun.fst)).pair
     (PolyTimeFun.fst.comp PolyTimeFun.fst)
 
-private theorem splitParityStep_size (s : List α × List α) (a : α) :
+theorem splitParityStep_size (s : List α × List α) (a : α) :
     esize (splitParityStep (s, a)) ≤ esize s +
       (Polynomial.X + 1 : Polynomial ℕ).eval (esize a) := by
   rcases s with ⟨e, o⟩
@@ -165,3 +168,5 @@ theorem rootBitsProg_square (l : BitStr) (hlen : l.length = k) (hk : Odd k) :
 end GroupAlgebra
 
 end MIPRE.LowDegree
+
+end

@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestCore
-import MIPRE.Foundations.CL.Embedding
-import MIPRE.Foundations.CL.Detyping
+module
+public import MIPRE.Foundations.Introspection.HonestCore
+public import MIPRE.Foundations.CL.Embedding
+public import MIPRE.Foundations.CL.Detyping
+
+@[expose] public section
 
 /-! # Padding the original CL source game without changing its strategy
 
@@ -106,7 +109,7 @@ def strategy : SyncStrategy (Honest.sourceGame (family e L) (decider e D)).doubl
       normalized := fun q => R.P.normalized (q.1, CL.pull e q.2) }
 
 set_option backward.isDefEq.respectTransparency false in
-private theorem positive_seed (q r : Bool × (J → F))
+theorem positive_seed (q r : Bool × (J → F))
     (h : 0 < (Honest.sourceGame (family e L) (decider e D)).doubled.μ q r) :
     ∃ x : J → F, q = (false,(family e L false).eval x) ∧
       r = (true,(family e L true).eval x) := by
@@ -154,4 +157,6 @@ theorem exists_perfectPCC (hR : R.IsPCC) (hv : R.value = 1) :
   ⟨strategy e L D R, strategy_isPCC e L D R hR, strategy_value e L D R hR hv, rfl⟩
 
 end MIPRE.Introspection.SourcePadding
+end
+
 end

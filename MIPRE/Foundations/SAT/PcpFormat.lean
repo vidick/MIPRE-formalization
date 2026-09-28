@@ -2,11 +2,14 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.Pcp
-import MIPRE.Foundations.SAT.ArrayProg
-import MIPRE.Foundations.Cost.BinaryCompare
-import MIPRE.Foundations.Cost.BinaryArithmetic
-import MIPRE.Foundations.Cost.SizeProgram
+module
+public import MIPRE.Foundations.SAT.Pcp
+public import MIPRE.Foundations.SAT.ArrayProg
+public import MIPRE.Foundations.Cost.BinaryCompare
+public import MIPRE.Foundations.Cost.BinaryArithmetic
+public import MIPRE.Foundations.Cost.SizeProgram
+
+@[expose] public section
 
 /-! # Executable specification and view checks for the classical PCP -/
 
@@ -14,17 +17,17 @@ namespace MIPRE.SAT
 
 open Cost Cost.PolyTimeFun Polynomial
 
-private noncomputable def andProg : PolyTimeFun (Bool × Bool) Bool :=
+noncomputable def andProg : PolyTimeFun (Bool × Bool) Bool :=
   congr (ite fst snd (const false)) (fun p => p.1 && p.2)
     (by rintro ⟨a, b⟩; cases a <;> rfl)
 
-private theorem fold_and (l : List Bool) (a : Bool) :
+theorem fold_and (l : List Bool) (a : Bool) :
     l.foldl (fun b c => b && c) a = (a && l.all id) := by
   induction l generalizing a with
   | nil => simp
   | cons b l ih => simp only [List.foldl_cons, ih, List.all_cons, id_eq, Bool.and_assoc]
 
-private theorem esize_bool_le (b : Bool) : esize b ≤ 3 := by cases b <;> decide
+theorem esize_bool_le (b : Bool) : esize b ≤ 3 := by cases b <;> decide
 
 /-- Test all supplied bits without interpreting their number as a binary magnitude. -/
 noncomputable def allBoolProg : PolyTimeFun (List Bool) Bool :=
@@ -122,3 +125,5 @@ theorem viewFormatProg_true_iff (P : PcpParams) (z ev : List BitStr) :
     exact ⟨⟨⟨h.length_z, by rw [h.length_ev]; omega⟩, h.width_z⟩, h.width_ev⟩
 
 end MIPRE.SAT
+
+end

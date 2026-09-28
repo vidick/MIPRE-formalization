@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SourceCompilerParams
+module
+public import MIPRE.Foundations.Introspection.SourceCompilerParams
+
+@[expose] public section
 
 /-! # Canonical parameters for the executable Pauli sampler
 
@@ -174,4 +177,6 @@ theorem prog_runs (c lam n : ℕ) : ∃ time,
       (callWithContext_closed powerUnaryProg_closed powerPost).mono (by omega) _⟩ _)⟩
 
 end MIPRE.Introspection.PauliSamplerParameters
+end
+
 end

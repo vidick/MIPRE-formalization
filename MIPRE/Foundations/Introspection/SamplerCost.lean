@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.Sampler
+module
+public import MIPRE.Foundations.Introspection.Sampler
+
+@[expose] public section
 
 /-! # Runtime transfer for the actual introspection sampler
 
@@ -84,3 +87,5 @@ theorem detypedSampler_timeBound (E : P → P → Bool) (X Z : P) (ℓ : ℕ)
 
 end Detyped
 end MIPRE.Introspection
+
+end

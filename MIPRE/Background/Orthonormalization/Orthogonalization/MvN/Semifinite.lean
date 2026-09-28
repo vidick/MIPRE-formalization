@@ -19,12 +19,16 @@ the hypothesis of the finite case with a slightly smaller `ε − δ`; the PVM
 controlled by the weighted triangle inequality
 `‖Y + W‖² ≤ (1 + s)‖Y‖² + (1 + s⁻¹)‖W‖²` with `‖W‖² → 0`. Proof-side only.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Local
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Local
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.MvN
 
@@ -257,3 +261,5 @@ theorem orthAtN_of_net (M : VonNeumannAlgebra H) {z : H →L[ℂ] H} (hz : IsCen
           nlinarith
 
 end Orthogonalization.MvN
+
+end

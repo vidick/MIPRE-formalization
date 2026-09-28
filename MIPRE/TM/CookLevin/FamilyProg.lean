@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.FieldProg
+module
+public import MIPRE.TM.CookLevin.FieldProg
+
+@[expose] public section
 
 /-!
 # The family formulas as programs
@@ -851,3 +854,5 @@ noncomputable def tableauPlusR (eu : PolyTimeFun ι Unary) (TR : PolyTimeFun ι 
   simp [tableauPlusR, tableauPlusF]
 
 end MIPRE.TM.CookLevin.Desc
+
+end

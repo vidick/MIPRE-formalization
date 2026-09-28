@@ -2,8 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryQuotientFrobenius
-import Mathlib.Algebra.Squarefree.Basic
+module
+public import MIPRE.Foundations.LowDegree.BinaryQuotientFrobenius
+public import Mathlib.Algebra.Squarefree.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Squarefree binary quotients have bijective squaring -/
 
@@ -36,3 +40,5 @@ theorem square_bijective (hf : f.Monic) (hs : Squarefree f) :
   exact ⟨square_injective f hs, Finite.surjective_of_injective (square_injective f hs)⟩
 
 end MIPRE.LowDegree.BinaryQuotient
+
+end

@@ -2,10 +2,14 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.Encoding
-import Mathlib.Algebra.MvPolynomial.Division
-import Mathlib.Combinatorics.Nullstellensatz
-import Mathlib.Tactic.Ring
+module
+public import MIPRE.Foundations.LowDegree.Encoding
+public import Mathlib.Algebra.MvPolynomial.Division
+public import Mathlib.Combinatorics.Nullstellensatz
+public import Mathlib.Tactic.Ring
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Certificates for polynomials vanishing on the Boolean cube
@@ -30,7 +34,7 @@ def cubeZero (i : Fin m) : MvPolynomial (Fin m) F := X i * (1 - X i)
     eval (pt y) (cubeZero i : MvPolynomial (Fin m) F) = 0 := by
   cases h : y i <;> simp [cubeZero, pt, ofBool, h]
 
-private theorem degreeOf_divMonomial_le (f : MvPolynomial (Fin m) F)
+theorem degreeOf_divMonomial_le (f : MvPolynomial (Fin m) F)
     (s : Fin m →₀ ℕ) (j : Fin m) :
     (f.divMonomial s).degreeOf j ≤ f.degreeOf j - s j := by
   apply degreeOf_le_iff.mpr
@@ -41,7 +45,7 @@ private theorem degreeOf_divMonomial_le (f : MvPolynomial (Fin m) F)
   simp only [Finsupp.add_apply] at h
   omega
 
-private theorem degreeOf_modMonomial_le (f : MvPolynomial (Fin m) F)
+theorem degreeOf_modMonomial_le (f : MvPolynomial (Fin m) F)
     (s : Fin m →₀ ℕ) (j : Fin m) :
     (f.modMonomial s).degreeOf j ≤ f.degreeOf j := by
   apply degreeOf_le_iff.mpr
@@ -54,7 +58,7 @@ private theorem degreeOf_modMonomial_le (f : MvPolynomial (Fin m) F)
     simpa only [mem_support_iff, coeff_modMonomial_of_not_le f hn] using he
   exact degreeOf_le_iff.mp (le_refl (f.degreeOf j)) e he'
 
-private theorem degreeOf_mod_square_le_one (f : MvPolynomial (Fin m) F) (i : Fin m) :
+theorem degreeOf_mod_square_le_one (f : MvPolynomial (Fin m) F) (i : Fin m) :
     (f.modMonomial (Finsupp.single i 2)).degreeOf i ≤ 1 := by
   apply degreeOf_le_iff.mpr
   intro e he
@@ -110,7 +114,7 @@ theorem exists_cubeZero_division (f : MvPolynomial (Fin m) F) (i : Fin m) :
         (max_le (by simpa using hq' j) ((hc j).trans (hr₀ j)))
 
 /-- Simultaneous reduction in a finite set of coordinates. -/
-private theorem exists_cube_remainder (f : MvPolynomial (Fin m) F) (S : Finset (Fin m)) :
+theorem exists_cube_remainder (f : MvPolynomial (Fin m) F) (S : Finset (Fin m)) :
     ∃ (c : Fin m → MvPolynomial (Fin m) F) (r : MvPolynomial (Fin m) F),
       f = (∑ i, c i * cubeZero i) + r ∧
       (∀ i j, (c i).degreeOf j ≤ f.degreeOf j) ∧
@@ -164,5 +168,7 @@ theorem exists_zero_basis (f : MvPolynomial (Fin m) F) {d : ℕ}
   exact ⟨c, by simpa [hz] using hfr, fun i j => (hc i j).trans (hd j)⟩
 
 end MIPRE.LowDegree
+
+end
 
 end

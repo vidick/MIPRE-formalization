@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
-import MIPRE.Foundations.Introspection.SourceCompilerCost
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
+public import MIPRE.Foundations.Introspection.SourceCompilerCost
+
+@[expose] public section
 
 /-! # A total clocked full-register sampling check
 
@@ -181,4 +184,6 @@ theorem samplingProg_haltsWithin (k lam : ℕ) (U : ClockedUniversalMachine) (S 
     omega
 
 end MIPRE.Introspection.AuxiliaryProgram
+end
+
 end

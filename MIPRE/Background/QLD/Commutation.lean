@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.WinMS
-import MIPRE.Background.QLD.Consistency
-import MIPRE.Foundations.Commutation
+module
+public import MIPRE.Background.QLD.WinMS
+public import MIPRE.Background.QLD.Consistency
+public import MIPRE.Foundations.Commutation
+
+@[expose] public section
 
 /-!
 # Signed commutation of the point observables, on the anticommuting tuples
@@ -795,5 +798,7 @@ theorem signed_commutation (hψ : star ψ ⬝ᵥ ψ = 1)
 end Commuting
 
 end MIPRE.QLD
+
+end
 
 end

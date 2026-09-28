@@ -7,7 +7,10 @@ no commit recorded). The import prefix `Tsirelson.` is rewritten to
 nothing outside `MIPRE/Background/LiehrTsirelson/` may name it. Upstream carries no license file;
 see README.md.
 -/
-import MIPRE.Background.LiehrTsirelson.Upstream.Core.Strategy
+module
+public import MIPRE.Background.LiehrTsirelson.Upstream.Core.Strategy
+
+@[expose] public section
 
 /-!
 # Payoff, the two game values, and their bounds
@@ -206,3 +209,5 @@ theorem valCo_square (n k : ℕ) (G : Game n k) :
 end
 
 end Tsirelson
+
+end

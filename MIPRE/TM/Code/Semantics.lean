@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.Code.WellFormed
-import MIPRE.TM.MultiInput.Complexity
+module
+public import MIPRE.TM.Code.WellFormed
+public import MIPRE.TM.MultiInput.Complexity
+
+@[expose] public section
 
 /-!
 # Interpretation of machine codes
@@ -164,3 +167,5 @@ theorem decodeBitOutput_map_bitEmbedding (c : Code i) (l : List Bool) :
   simp [decodeBitOutput, List.map_map, Function.comp_def, h]
 
 end Turing.Code
+
+end

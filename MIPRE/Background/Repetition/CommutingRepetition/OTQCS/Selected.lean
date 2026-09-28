@@ -23,12 +23,16 @@ selected-state-preopt (via the proved normalization inequality of
 Prelim/Vector.lean, eq normalization-inequality) is proof-layer of
 node 1.3.9.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Trial
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.Trial
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -718,3 +722,5 @@ theorem selState_pairing (hB : IsBandFamily B t) (A B' : N.A) :
 end Selected
 
 end CommutingRepetition
+
+end

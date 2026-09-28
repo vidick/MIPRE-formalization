@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.ClassMIPCo
-import MIPRE.Foundations.Halting.CompressorProgram
-import MIPRE.Foundations.Halting.InstantiationCo
+module
+public import MIPRE.Foundations.ClassMIPCo
+public import MIPRE.Foundations.Halting.CompressorProgram
+public import MIPRE.Foundations.Halting.InstantiationCo
+
+@[expose] public section
 
 /-!
 # The halting reduction to the commuting-operator value, from co-soundness
@@ -173,3 +176,5 @@ theorem halting_reduction_commuting_of (hco : G.CoSound) : HaltingReductionCommu
   halting_reduction_co G U (S.toObligationsCo hco)
 
 end MIPRE.Halting
+
+end

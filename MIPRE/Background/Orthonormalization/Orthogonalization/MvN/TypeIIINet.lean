@@ -18,13 +18,17 @@ and `q_(α,k) := q_{k + |α|, ψ_α}`: for a unit vector `ξ ∈ α`,
 `‖(1 − q_(α,k)) ξ‖² ≤ ψ_α(1 − q_(α,k)) ≤ 2⁻ᵏ⁻|α| |α| ≤ 2⁻ᵏ`. Everything is
 relative to a central projection `z` (the type III summand). Proof-side only.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Corollaries
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Local
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Corollaries
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Local
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.MvN
 
@@ -342,3 +346,5 @@ theorem exists_typeIII_net (M : VonNeumannAlgebra H) {z : H →L[ℂ] H} (hz : I
       rwa [sub_zero] at this
 
 end Orthogonalization.MvN
+
+end

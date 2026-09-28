@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.Flatten
+module
+public import MIPRE.Foundations.SAT.Flatten
+
+@[expose] public section
 
 /-!
 # Polynomial-time case analysis on circuit gates
@@ -17,13 +20,13 @@ open Cost Polynomial
 
 namespace GateDispatch
 
-private def callPayload (d : ℕ) (F : Prog) : Prog :=
+def callPayload (d : ℕ) (F : Prog) : Prog :=
   .let_ (.cons (.var (d + 2)) (.var (d + 1))) F
-private def rest4 (Fn : Prog) : Prog := .elim 1 (callPayload 8 Fn) .nil
-private def rest3 (Fo Fn : Prog) : Prog := .elim 1 (callPayload 6 Fo) (rest4 Fn)
-private def rest2 (Fa Fo Fn : Prog) : Prog := .elim 1 (callPayload 4 Fa) (rest3 Fo Fn)
-private def rest1 (Fc Fa Fo Fn : Prog) : Prog := .elim 1 (callPayload 2 Fc) (rest2 Fa Fo Fn)
-private def tag (Fi Fc Fa Fo Fn : Prog) : Prog := .elim 0 (callPayload 0 Fi) (rest1 Fc Fa Fo Fn)
+def rest4 (Fn : Prog) : Prog := .elim 1 (callPayload 8 Fn) .nil
+def rest3 (Fo Fn : Prog) : Prog := .elim 1 (callPayload 6 Fo) (rest4 Fn)
+def rest2 (Fa Fo Fn : Prog) : Prog := .elim 1 (callPayload 4 Fa) (rest3 Fo Fn)
+def rest1 (Fc Fa Fo Fn : Prog) : Prog := .elim 1 (callPayload 2 Fc) (rest2 Fa Fo Fn)
+def tag (Fi Fc Fa Fo Fn : Prog) : Prog := .elim 0 (callPayload 0 Fi) (rest1 Fc Fa Fo Fn)
 
 def program (Fi Fc Fa Fo Fn : Prog) : Prog :=
   .elim 0 .nil (.elim 1 .nil (tag Fi Fc Fa Fo Fn))
@@ -219,3 +222,4 @@ end PolyTimeFun
 
 end MIPRE.SAT
 
+end

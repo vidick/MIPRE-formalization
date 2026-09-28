@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/GlobalVariance/Theorems/TransportChain/Core.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Point
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Point
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -34,13 +37,13 @@ on the hypercube-edge distribution, producing the main transport estimate
 abbrev TransportQuestion (params : Parameters) [FieldModel params.q] :=
   (AxisParallelLine params × Fq params) × Fq params
 
-private noncomputable def singletonOpFamily {Question κ : Type*}
+noncomputable def singletonOpFamily {Question κ : Type*}
     [Fintype κ] [DecidableEq κ]
     (X : Question → MIPStarRE.Quantum.Op κ) :
     IdxOpFamily Question Unit κ :=
   fun q => { outcome := fun _ => X q, total := X q }
 
-private lemma sddOpRel_singleton_of_bound {Question κ : Type*}
+lemma sddOpRel_singleton_of_bound {Question κ : Type*}
     [Fintype κ] [DecidableEq κ]
     (ψ : QuantumState κ) (𝒟 : Distribution Question)
     (X Y : Question → MIPStarRE.Quantum.Op κ) (δ : Error)
@@ -138,7 +141,7 @@ lemma avgOver_transport_rightPoint
     _ = avgOver (uniformDistribution (Point params)) f := by
           exact avgOver_uniform_fst (α := Point params) (β := Fin params.m) f
 
-private noncomputable def addCoordLeftEquiv (params : Parameters) [FieldModel params.q]
+noncomputable def addCoordLeftEquiv (params : Parameters) [FieldModel params.q]
     (c : Fq params) : Fq params ≃ Fq params where
   toFun := fun x => addCoord c x
   invFun := fun y => subCoord y c
@@ -146,7 +149,7 @@ private noncomputable def addCoordLeftEquiv (params : Parameters) [FieldModel pa
     simp [addCoord, subCoord, decode_encodeScalar]
   right_inv := fun y => addCoord_subCoord_right y c
 
-private lemma transportQuestionEquiv_symm_pair
+lemma transportQuestionEquiv_symm_pair
     (params : Parameters) [FieldModel params.q]
     (stx : (AxisParallelTestSample params × Fq params) × Fq params) :
     let e : TransportQuestion params ≃
@@ -271,7 +274,7 @@ lemma weightedGeneralizeBRightOperatorAtPolynomial_point_eq
   simp [weightedGeneralizeBRightOperatorAtPolynomial,
     generalizeBRightOperatorAtPolynomial, generalizeBRightEventSubMeasAtPolynomial]
 
-private lemma localVarianceTransportLinePairBound
+lemma localVarianceTransportLinePairBound
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -513,3 +516,5 @@ lemma localVarianceTransportChainError_le_localVarianceOfPointsError
   linarith
 
 end MIPStarRE.LDT.GlobalVariance
+
+end

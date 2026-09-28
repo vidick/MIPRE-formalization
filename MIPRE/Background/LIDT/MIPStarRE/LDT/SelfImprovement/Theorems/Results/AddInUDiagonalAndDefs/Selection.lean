@@ -5,13 +5,16 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/Selection.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.PolynomialAgreement
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.DataProcessing
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Statements
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.CommonHelpers
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.PolynomialAgreement
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.DataProcessing
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Statements
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.CommonHelpers
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -50,7 +53,7 @@ noncomputable def selfConsistencyAddInUSelection (params : Parameters)
     [FieldModel params.q] : AddInUSelection params (Polynomial params) :=
   fun _ => {hh | hh.1 = hh.2}
 
-private lemma addInULeftOperatorAtPoint_selfConsistencySelection
+lemma addInULeftOperatorAtPoint_selfConsistencySelection
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι)
     (M : IdxSubMeas (Point params) (Polynomial params) ι)
@@ -73,7 +76,7 @@ private lemma addInULeftOperatorAtPoint_selfConsistencySelection
   · intro h _
     simp
 
-private lemma addInURightOperatorAtPoint_selfConsistencySelection
+lemma addInURightOperatorAtPoint_selfConsistencySelection
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι)
     (M : IdxSubMeas (Point params) (Polynomial params) ι)
@@ -650,7 +653,7 @@ Combining `addInURightOperatorAtPoint_selfConsistencySelection` with the
 projectivity of `strategy.pointMeasurement` (each `A^u_a * A^u_a = A^u_a`),
 the at-point operator collapses to the simpler tensor sum
 `Σ_h H^u_h ⊗ T_h` where `H^u_h = sandwichedPolynomialSubMeasAt T u h`. -/
-private lemma addInURightOperatorAtPoint_selfConsistencySelection_proj_eq
+lemma addInURightOperatorAtPoint_selfConsistencySelection_proj_eq
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι)
     (T : SubMeas (Polynomial params) ι)
@@ -724,3 +727,5 @@ lemma addInURightQuantity_selfConsistencySelection_eq_simplified
 
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

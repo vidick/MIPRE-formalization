@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.TypeGraph
-import MIPRE.Foundations.CL.DetypingGame
+module
+public import MIPRE.Foundations.Introspection.TypeGraph
+public import MIPRE.Foundations.CL.DetypingGame
+
+@[expose] public section
 
 /-! # The typed introspection CL presentation
 
@@ -160,3 +163,5 @@ theorem failAt_cross_introspect_le (E : PauliType → PauliType → Bool) (X Z :
 
 end Game
 end MIPRE.Introspection.TypedPresentation
+
+end

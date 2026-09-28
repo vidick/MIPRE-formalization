@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ClockArithmetic
+module
+public import MIPRE.Foundations.Introspection.ClockArithmetic
+
+@[expose] public section
 
 /-! # The actual growing introspection clock
 
@@ -68,3 +71,5 @@ theorem growingClockCompiler_runs (k lam : ℕ) :
   (growingClockCompiler k).computes lam
 
 end MIPRE.Introspection
+
+end

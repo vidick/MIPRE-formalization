@@ -26,13 +26,17 @@ tautological in the factor indices. Nothing here is a manuscript statement;
 the manuscript's resolver-integral columns (needed for the entropy budget of
 node 1.2.6) are not used.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.ArenaDef
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Amplify
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.ArenaDef
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Amplify
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -362,3 +366,5 @@ noncomputable def arena
 end BlockArena
 
 end CommutingRepetition
+
+end

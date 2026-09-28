@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.NumberedComplete
-import MIPRE.Background.Introspection.QLDExtractionAdapter
+module
+public import MIPRE.Background.Introspection.NumberedComplete
+public import MIPRE.Background.Introspection.QLDExtractionAdapter
+
+@[expose] public section
 
 /-! # Source soundness with the actual finite register numbering
 
@@ -25,7 +28,7 @@ variable {F A I : Type} [Field F] [Fintype F] [DecidableEq F]
   (hm : m ∣ Fintype.card F) (b : Module.Basis (Fin t) (ZMod 2) F)
   (χ : F → Fin m) (π : F ≃ F)
 
-private theorem reindexedGame_eq :
+theorem reindexedGame_eq :
     AuxiliaryQuotient.reindexedGame e QLD.adj (.pauli .X) (.pauli .Z)
       (QLD.PauliCL.ExplicitSeed.binaryPresentation χ b) L
       (NumberedComplete.project (d := d) e b) D (ExplicitGame.pauliCheck hm π b) =
@@ -276,4 +279,6 @@ theorem canonical_quantumValue_ge
 end Canonical
 
 end MIPRE.Introspection.NumberedSoundness
+end
+
 end

@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.SAT.Circuit
-import MIPRE.Foundations.SAT.Cnf
+module
+public import MIPRE.Foundations.SAT.Circuit
+public import MIPRE.Foundations.SAT.Cnf
+
+@[expose] public section
 
 /-!
 # The circuit-to-3SAT reduction
@@ -223,3 +226,5 @@ theorem tseitin_sat_iff (C : Circuit) (hC : C.RefsLt) (hin : C.InputsLt) (hne : 
 end Circuit
 
 end MIPRE.SAT
+
+end

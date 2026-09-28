@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SamplingTests
+module
+public import MIPRE.Foundations.Introspection.SamplingTests
+
+@[expose] public section
 
 /-! # Hiding-test chains after coarse-graining consistency
 
@@ -127,5 +130,7 @@ theorem hiding_chain_uniform (ψ : H × K → ℂ) (D : J → ℝ) (hD : ∀ j, 
   simpa only [Finset.sum_const, Finset.card_range, nsmul_eq_mul, pow_two, mul_assoc] using h
 
 end MIPRE.Introspection
+
+end
 
 end

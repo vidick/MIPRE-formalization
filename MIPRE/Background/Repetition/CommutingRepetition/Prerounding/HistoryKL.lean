@@ -16,13 +16,17 @@ marginals of a law dominated by a product (05_prerounding.tex, eqs
 conditioning-divergence, first-history-chain-term, bob-block-chain-rule).
 Nothing here is a manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Entropy
-import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Information
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Entropy
+public import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Information
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -303,3 +307,5 @@ end Tensorization
 end HistoryKL
 
 end CommutingRepetition
+
+end

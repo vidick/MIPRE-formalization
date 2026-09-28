@@ -2,9 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.Pcp
-import MIPRE.Foundations.SAT.PcpAlgebra
-import Mathlib.Algebra.MvPolynomial.Variables
+module
+public import MIPRE.Foundations.SAT.Pcp
+public import MIPRE.Foundations.SAT.PcpAlgebra
+public import Mathlib.Algebra.MvPolynomial.Variables
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The five disjoint answer blocks of the classical PCP
@@ -100,7 +104,7 @@ theorem degreeOf_liftAnswer_le (i : Fin 5) (g : MvPolynomial (Fin P.m) F)
     rw [hz]
     exact Nat.zero_le _
 
-private theorem factor_degree_pos (i : Fin 5) (g : MvPolynomial (Fin P.m) F)
+theorem factor_degree_pos (i : Fin 5) (g : MvPolynomial (Fin P.m) F)
     (j : Fin P.m') (h : 0 < (liftAnswer i g - X (P.signIndex i)).degreeOf j) :
     (∃ k, P.blockIndex i k = j) ∨ P.signIndex i = j := by
   by_contra hn
@@ -233,5 +237,7 @@ theorem decoded_clause_of_majority [Fintype F] [DecidableEq F]
 end PcpAlgebra
 
 end MIPRE.SAT
+
+end
 
 end

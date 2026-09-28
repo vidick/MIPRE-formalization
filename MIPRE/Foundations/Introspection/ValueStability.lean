@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Pasting
-import MIPRE.Foundations.Swap
+module
+public import MIPRE.Foundations.Pasting
+public import MIPRE.Foundations.Swap
+
+@[expose] public section
 
 /-! # Value stability for the introspection induction
 
@@ -177,5 +180,7 @@ theorem testAcceptance_stability (ψ : H × K → ℂ) (hψ : ‖evec ψ‖ = 1)
 end Bipartite
 
 end MIPRE.Introspection
+
+end
 
 end

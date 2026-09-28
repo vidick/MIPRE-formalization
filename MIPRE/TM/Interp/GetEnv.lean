@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.Interp.CopyTree
+module
+public import MIPRE.TM.Interp.CopyTree
+
+@[expose] public section
 
 /-!
 # The `getEnv` routine
@@ -706,3 +709,5 @@ theorem exec_getEnv {k : ProgId} {pc : Fin maxPc} (hins : instrAt k pc = .getEnv
     · rw [hde.pos, hu₁.pos (d := X) (by decide)]
 
 end MIPRE.TM.Interp
+
+end

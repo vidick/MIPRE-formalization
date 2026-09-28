@@ -23,13 +23,17 @@ The two telescoped budgets of `resolver_arena_entropic` for the arena of
 
 Nothing here is a manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.EntropicArena
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.EntropicBudget
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.EntropicArena
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.EntropicBudget
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -181,15 +185,19 @@ theorem ΔB_val (j j' : J) : (ΔB M h j j').1
 
 theorem star_diffA_mul_diffA (i i' : I) :
     star (cA M h i - cA M h i') * (cA M h i - cA M h i') = Ecor M (ΔA M h i i') := by
-  rw [star_sub, sub_mul, mul_sub, mul_sub, star_cA_mul_cA, star_cA_mul_cA, star_cA_mul_cA,
-    star_cA_mul_cA]
+  -- Vendoring compile fix (Mathlib v4.35): `star_sub` applied to its arguments, so that the
+  -- `Star` instance of the corner algebra is resolved before the rewrite. See README.md.
+  rw [star_sub (cA M h i) (cA M h i'), sub_mul, mul_sub, mul_sub, star_cA_mul_cA,
+    star_cA_mul_cA, star_cA_mul_cA, star_cA_mul_cA]
   unfold ΔA
   rw [← E_sub, ← E_sub, ← E_sub]
 
 theorem diffB_mul_star_diffB (j j' : J) :
     (dB M h j - dB M h j') * star (dB M h j - dB M h j') = Ecor M (ΔB M h j j') := by
-  rw [star_sub, sub_mul, mul_sub, mul_sub, dB_mul_star_dB, dB_mul_star_dB, dB_mul_star_dB,
-    dB_mul_star_dB]
+  -- Vendoring compile fix (Mathlib v4.35): `star_sub` applied to its arguments (as above).
+  -- See README.md.
+  rw [star_sub (dB M h j) (dB M h j'), sub_mul, mul_sub, mul_sub, dB_mul_star_dB,
+    dB_mul_star_dB, dB_mul_star_dB, dB_mul_star_dB]
   unfold ΔB
   rw [← E_sub, ← E_sub, ← E_sub]
 
@@ -365,3 +373,5 @@ end
 end EntropicArena
 
 end CommutingRepetition
+
+end

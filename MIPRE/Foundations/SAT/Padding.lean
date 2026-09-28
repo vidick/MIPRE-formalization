@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.Decoupled
+module
+public import MIPRE.Foundations.SAT.Decoupled
+
+@[expose] public section
 
 /-!
 # Padding decoupled descriptions
@@ -61,14 +64,14 @@ def pad {ℓ r ℓ' r' : ℕ} (hℓ : ℓ ≤ ℓ') (hr : r ≤ r')
   {c | (2 ^ ℓ ≤ (c.l₁.var : ℕ) ∧ c.l₁.pos = decide ((c.l₁.var : ℕ) % 2 = 0)) ∨
     (2 ^ ℓ ≤ (c.l₂.var : ℕ) ∧ c.l₂.pos = decide ((c.l₂.var : ℕ) % 2 = 0))}
 
-private def falseLit {n : ℕ} (w : Fin (2 ^ n) → Bool) : Lit (Fin (2 ^ n)) :=
+def falseLit {n : ℕ} (w : Fin (2 ^ n) → Bool) : Lit (Fin (2 ^ n)) :=
   ⟨0, !(w 0)⟩
 
-private theorem eval_falseLit {n : ℕ} (w : Fin (2 ^ n) → Bool) :
+theorem eval_falseLit {n : ℕ} (w : Fin (2 ^ n) → Bool) :
     (falseLit w).eval w = false := by
   cases h : w 0 <;> simp [falseLit, Lit.eval, h]
 
-private theorem lit_true_iff {A : Type*} (w : A → Bool) (i : A) (o : Bool) :
+theorem lit_true_iff {A : Type*} (w : A → Bool) (i : A) (o : Bool) :
     (⟨i, o⟩ : Lit A).eval w = true ↔ w i = o := by
   cases o <;> cases hw : w i <;> simp [Lit.eval, hw]
 
@@ -153,3 +156,5 @@ theorem DescribesDecider.of_pad {C C' : Circuit} {ℓ r ℓ' r' : ℕ}
 end Circuit
 
 end MIPRE.SAT
+
+end

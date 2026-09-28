@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Expanded
+module
+public import MIPRE.Foundations.Expanded
+
+@[expose] public section
 
 /-! # Conditioning on a classical question register
 
@@ -122,5 +125,7 @@ theorem conditional_commutator_sum
 end VaryingRegisters
 
 end MIPRE.Introspection
+
+end
 
 end

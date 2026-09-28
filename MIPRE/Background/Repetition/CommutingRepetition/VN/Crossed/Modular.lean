@@ -17,15 +17,19 @@ Method: the bounded identity `T̂ Ĵ (aΩ̂) = (2 − R̂)(a*Ω̂)` is checked o
 the density theorem for vector functionals; then the uniqueness lemma
 `R_eq_of_proj` identifies `(R̂, T̂ Ĵ)` with the modular data of `(ℛ, Ω̂)`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Crossed.Product
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Uniqueness
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Density
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Crossed.AmpCalc
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Crossed.Product
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Uniqueness
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Density
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Crossed.AmpCalc
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -216,8 +220,10 @@ noncomputable def spanAlg : StarSubalgebra ℂ (L2Q K →L[ℂ] L2Q K) where
     refine Submodule.span_induction (p := fun a _ => star a ∈ Submodule.span ℂ (genSet M Ω))
       ?_ ?_ ?_ ?_ ha
     · intro a ha; exact Submodule.subset_span (genSet_star M Ω hs hc ha)
-    · rw [star_zero]; exact zero_mem _
-    · intro x y _ _ hx hy; rw [star_add]; exact add_mem hx hy
+    -- Vendoring compile fix (Mathlib v4.35): `star` on `B(ℓ²(ℚ, K))` is `adjoint`, and the
+    -- generic `star_zero`/`star_add` no longer rewrite it unapplied. See README.md.
+    · rw [ContinuousLinearMap.star_eq_adjoint, map_zero]; exact zero_mem _
+    · intro x y _ _ hx hy; rw [star_add x y]; exact add_mem hx hy
     · intro c x _ hx; rw [star_smul]; exact Submodule.smul_mem _ _ hx
 
 theorem mem_spanAlg_iff {a : L2Q K →L[ℂ] L2Q K} :
@@ -240,9 +246,12 @@ theorem Th_Jh_spanAlg {a : L2Q K →L[ℂ] L2Q K} (ha : a ∈ spanAlg M Ω hs hc
     amp (Tm M Ω) (Jh M Ω hs hc (a (Ωh Ω))) =
       amp (2 - R M Ω) ((star a : L2Q K →L[ℂ] L2Q K) (Ωh Ω))) ?_ ?_ ?_ ?_ ha
   · rintro _ ⟨g, y, hy, rfl⟩; exact Th_Jh_gen M Ω hs hc g hy
-  · simp only [_root_.zero_apply, map_zero, star_zero]
+  -- Vendoring compile fix (Mathlib v4.35): as in `spanAlg`, `star 0` through `adjoint` and
+  -- `star_add` applied to its arguments. See README.md.
+  · simp only [_root_.zero_apply, map_zero, ContinuousLinearMap.star_eq_adjoint]
   · intro x y _ _ hx hy
-    simp only [_root_.add_apply, map_add, star_add, hx, hy]
+    rw [star_add x y]
+    simp only [_root_.add_apply, map_add, hx, hy]
   · intro c x _ hx
     simp only [_root_.smul_apply, map_smulₛₗ, star_smul, hx, Complex.star_def]
 
@@ -531,3 +540,5 @@ end Crossed
 end VN
 
 end CommutingRepetition
+
+end

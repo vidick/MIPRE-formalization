@@ -16,18 +16,22 @@ The common-alphabet objects use the sum types `X ⊕ Y`, `A ⊕ B` for the
 manuscript's tagged disjoint unions ({A-tag}×X) ⊔ ({B-tag}×Y): `Sum.inl`
 is the Alice tag, `Sum.inr` the Bob tag.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Basic
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Value
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Strategy
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.Main
-import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Scalar
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.CommutantPullback
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Basic
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Value
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Strategy
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.Main
+public import MIPRE.Background.Repetition.CommutingRepetition.Prelim.Scalar
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.CommutantPullback
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -353,3 +357,5 @@ theorem strict_tracial_reduction
   linarith
 
 end CommutingRepetition
+
+end

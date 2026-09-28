@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SourceCompilerCorrect
-import MIPRE.Foundations.Introspection.SourceCompilerParamsCost
+module
+public import MIPRE.Foundations.Introspection.SourceCompilerCorrect
+public import MIPRE.Foundations.Introspection.SourceCompilerParamsCost
+
+@[expose] public section
 
 /-! # Composed execution cost of the actual source component
 
@@ -148,5 +151,7 @@ theorem crossProg_haltsWithin (c k lam : ℕ) (U : ClockedUniversalMachine) (S D
   omega
 
 end MIPRE.Introspection.SourceCompiler
+
+end
 
 end

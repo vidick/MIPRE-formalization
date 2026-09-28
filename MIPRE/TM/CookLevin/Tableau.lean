@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.Local
-import MIPRE.Foundations.SAT.Tseitin
+module
+public import MIPRE.TM.CookLevin.Local
+public import MIPRE.Foundations.SAT.Tseitin
+
+@[expose] public section
 
 /-!
 # The Cook–Levin tableau of a multi-input machine
@@ -253,3 +256,5 @@ noncomputable def runAssign (chk : Circuit) : TabVar i w Symbol State S chk.gate
 end Run
 
 end MIPRE.TM.CookLevin
+
+end

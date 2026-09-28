@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.DecisionKernelAnswers
-import MIPRE.Background.Introspection.DecisionCompilerCutoff
-import MIPRE.Foundations.Introspection.AuxiliaryDecisionCompleteness
+module
+public import MIPRE.Background.Introspection.DecisionKernelAnswers
+public import MIPRE.Background.Introspection.DecisionCompilerCutoff
+public import MIPRE.Foundations.Introspection.AuxiliaryDecisionCompleteness
+
+@[expose] public section
 
 /-! # Encoding finite honest answers for the actual decision kernel -/
 
@@ -89,7 +92,7 @@ theorem valid_bits {k m Q R : ℕ} (E : BinField k) (T : Label)
     (ha : TypedPredicate.fits T a = true) : AuxiliaryAnswer.Valid Q R T (bits E a) :=
   AuxiliaryDecision.valid_bits T (toRaw E a) (by simpa using ha) (answerBound_toRaw E a)
 
-private theorem flatten_vecBits_length {k m : ℕ} (E : BinField k) (v : Fin m → E.carrier) :
+theorem flatten_vecBits_length {k m : ℕ} (E : BinField k) (v : Fin m → E.carrier) :
     (E.vecBits v).flatten.length = m*k := by
   have hf (rows : List BitStr) (h : ∀ row ∈ rows, row.length = k) :
       rows.flatten.length = rows.length*k := by
@@ -156,4 +159,6 @@ theorem bits_length_le_cutoff {k m R : ℕ} (E : BinField k) (hm : 1 ≤ m)
       (CL.length_toBits _) (CL.length_toBits _) (CL.length_toBits _)).le
 
 end MIPRE.Introspection.DecisionKernel.Answer
+end
+
 end

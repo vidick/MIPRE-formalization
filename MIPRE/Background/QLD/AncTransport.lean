@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Simul
+module
+public import MIPRE.Background.QLD.Simul
+
+@[expose] public section
 
 /-!
 # The ancilla transports across the padded state (`lem:qld-pauli-selfcons`, the exact steps)
@@ -151,5 +154,7 @@ theorem sum_ancSyn_mulVec (W : Bas) (v : Anc F m) :
 end SimulPair
 
 end MIPRE.QLD
+
+end
 
 end

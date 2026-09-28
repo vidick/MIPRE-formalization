@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryLinear
+module
+public import MIPRE.Foundations.LowDegree.BinaryLinear
+
+@[expose] public section
 
 /-!
 # Binary elimination with coefficient certificates
@@ -115,7 +118,7 @@ theorem typedReduce_certificate_mem_ker {n t : ℕ}
     (typedReduce b r).2 ∈ L.ker := by
   rw [LinearMap.mem_ker, represents_typedReduce L b r hr hb, hzero]
 
-private noncomputable def reduceStepProg : PolyTimeFun (RawRow × RawPivot) RawRow :=
+noncomputable def reduceStepProg : PolyTimeFun (RawRow × RawPivot) RawRow :=
   let pivot := fst.comp snd
   let v := fst.comp fst
   let w := snd.comp fst
@@ -126,7 +129,7 @@ private noncomputable def reduceStepProg : PolyTimeFun (RawRow × RawPivot) RawR
       (BinaryPolynomial.xorBitsProg.comp (w.pair bw))) fst)
     (fun p => reduceStep p.1 p.2) (by intro p; rfl)
 
-private theorem reduceStep_bounded : FoldBounded reduceStepProg (5 * X + 5) := by
+theorem reduceStep_bounded : FoldBounded reduceStepProg (5 * X + 5) := by
   intro l r pre post _
   change esize (reduceRows pre r) ≤ _
   obtain ⟨hv, hw⟩ := reduceRows_width pre r
@@ -150,3 +153,5 @@ noncomputable def reduceRowsProg : PolyTimeFun (List RawPivot × RawRow) RawRow 
     reduceRowsProg (b, r) = reduceRows b r := rfl
 
 end MIPRE.LowDegree.BinaryLinear
+
+end

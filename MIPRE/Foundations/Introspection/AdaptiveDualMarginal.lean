@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptivePrefixFactor
-import MIPRE.Foundations.Introspection.ReadRigidity
+module
+public import MIPRE.Foundations.Introspection.AdaptivePrefixFactor
+public import MIPRE.Foundations.Introspection.ReadRigidity
+
+@[expose] public section
 
 /-! # The actual adaptive hiding marginal retaining one dual register -/
 
@@ -17,7 +20,7 @@ set_option linter.unusedSectionVars false
 variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
   [Fintype ι] [DecidableEq ι] {ℓ : ℕ}
 
-private theorem matrix_ite_entry {I J : Type*} (p : Prop) [Decidable p]
+theorem matrix_ite_entry_dual {I J : Type*} (p : Prop) [Decidable p]
     (M N : Matrix I J ℂ) (i : I) (j : J) :
     (if p then M else N) i j = if p then M i j else N i j := by
   by_cases h : p <;> simp [h]
@@ -39,7 +42,7 @@ theorem readDualOp_eq_registerDual (P : CL.CLFun F ι ℓ) (k : ℕ)
     coarseOp_comp _ _ _ _]
   unfold dualRegister fibSum
   ext x x'
-  simp only [registerOp_apply, Matrix.sum_apply, Finset.sum_filter, matrix_ite_entry, Matrix.zero_apply]
+  simp only [registerOp_apply, Matrix.sum_apply, Finset.sum_filter, matrix_ite_entry_dual, Matrix.zero_apply]
   apply Finset.sum_congr rfl
   intro a _
   change (if (TypedEstimates.hidingForgetTail ∘ hideLabelCoarse P k) a = some p then
@@ -153,7 +156,7 @@ theorem dualRegister_cons_succ {S V : Finset ι} (L : CL.RegLinear F S)
     ext x x'
     simp only [coarseOp, dualRegister, fibSum, Matrix.sum_apply, Finset.sum_filter,
       Fintype.sum_prod_type, adaptiveTensor, Matrix.kroneckerMap_apply, Function.comp_apply,
-      matrix_ite_entry, Matrix.zero_apply]
+      matrix_ite_entry_dual, Matrix.zero_apply]
     have ht (a b : Fin (Fintype.card S) → F) (u : HideLabel F ι) :
         (if dualLabel (.cons S L next) (k+1) (joinHide S ((a,b),u)) = (y,yp) then
           localRead L (a,b) x.1 x'.1 *
@@ -174,3 +177,5 @@ theorem dualRegister_cons_succ {S V : Finset ι} (L : CL.RegLinear F S)
   rw [hm, ← sum_kronecker_left, localRead_sum_dual]
 
 end MIPRE.Introspection.Honest
+
+end

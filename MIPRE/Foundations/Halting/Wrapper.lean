@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Classes
-import MIPRE.Foundations.Halting.Arith
-import MIPRE.Foundations.Cost.Kleene
+module
+public import MIPRE.Foundations.Halting.Classes
+public import MIPRE.Foundations.Halting.Arith
+public import MIPRE.Foundations.Cost.Kleene
+
+@[expose] public section
 
 /-!
 # Reading a string as a normal form verifier: the wrapper decider
@@ -121,14 +124,14 @@ section Check
 
 variable {i j : ℕ} {c : Prog} {env : Env} {l : BitStr} {m : ℕ}
 
-private theorem len_run (z : BitStr) :
+theorem len_run (z : BitStr) :
     ∃ t, lenProg.Runs (encode z) (Data.ofNat z.length) t := by
   obtain ⟨t, -, h⟩ := lenProg_runs (z.map Data.ofBool)
   refine ⟨t, ?_⟩
   rw [encode_bitStr_eq_list]
   simpa using h
 
-private theorem eq_run (p q : ℕ) :
+theorem eq_run (p q : ℕ) :
     ∃ t, eqBitsProg.Runs (.cons (Data.ofNat p) (Data.ofNat q)) (encode (decide (p = q))) t := by
   obtain ⟨t, -, h⟩ := eqBitsProg_runs (Data.ofNat p) (Data.ofNat q) []
     ((Data.ofNat p).size + (Data.ofNat q).size) le_rfl
@@ -222,18 +225,18 @@ def wrapPreEnv : Env :=
     .cons (encode S.prog) (Data.cons (encode n) (encode CL.Sampler.Query.dimension)), encode n,
     .cons (encode x) (.cons (encode y) (.cons (encode a) (encode b))), encode (n, x, y, a, b)]
 
-private theorem dim_run :
+theorem dim_run :
     ∃ t, U.univ.Runs (.cons (encode S.prog) (Data.cons (encode n) (encode CL.Sampler.Query.dimension)))
       (encode (S.dim n)) t := by
   obtain ⟨t, ht⟩ := S.runs_dimension n
   obtain ⟨t', -, h⟩ := U.time_le S.prog _ _ t ht
   exact ⟨t', h⟩
 
-private theorem toUnary_run (k : ℕ) : ∃ t, toUnaryProg.Runs (encode k) (Data.ofNat k) t := by
+theorem toUnary_run (k : ℕ) : ∃ t, toUnaryProg.Runs (encode k) (Data.ofNat k) t := by
   obtain ⟨t, -, h⟩ := toUnaryProg_runs k
   exact ⟨t, h⟩
 
-private theorem input_cons :
+theorem input_cons :
     (encode (n, x, y, a, b) : Data) =
       .cons (encode n) (.cons (encode x) (.cons (encode y) (.cons (encode a) (encode b)))) := rfl
 
@@ -573,3 +576,5 @@ end ProgD
 end Cost.Prog
 
 end MIPRE
+
+end

@@ -3,9 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Basic
-import Mathlib.Data.Nat.Bits
-import Mathlib.Data.Nat.Size
+module
+public import MIPRE.Foundations.Cost.Basic
+public import Mathlib.Data.Nat.Bits
+public import Mathlib.Data.Nat.Size
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Size-aware encodings
@@ -233,3 +237,5 @@ theorem two_le_esize (p : Prog) : 2 ≤ esize p := by
 end Prog
 
 end MIPRE.Cost
+
+end

@@ -35,11 +35,15 @@ The order on `H →L[ℂ] H` is the Loewner order
 (`ContinuousLinearMap.le_def : f ≤ g ↔ (g - f).IsPositive`), for which Mathlib
 provides a `StarOrderedRing` structure and the continuous functional calculus.
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization
 
@@ -212,3 +216,5 @@ theorem toPositiveLinearMap_apply (hφ : ∀ z : H →L[ℂ] H, 0 ≤ φ (star z
 end Functional
 
 end Orthogonalization
+
+end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.CompleteGame
-import MIPRE.Foundations.WeylBinary
+module
+public import MIPRE.Background.Introspection.CompleteGame
+public import MIPRE.Foundations.WeylBinary
+
+@[expose] public section
 
 /-! # The honest Pauli measurements on the binary source register
 
@@ -122,4 +125,6 @@ theorem pauliOp_Z (hb : LowDegree.IsSelfDualBasis b) (hm : m ∣ Fintype.card F)
   by_cases hij : i = j <;> simp [hij, proj_wZ, zProj_apply, readout]
 
 end MIPRE.Introspection.BinaryComplete
+end
+
 end

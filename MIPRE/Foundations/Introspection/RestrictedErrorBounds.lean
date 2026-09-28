@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptivePowerBudget
+module
+public import MIPRE.Foundations.Introspection.AdaptivePowerBudget
+
+@[expose] public section
 
 /-! # Absorbing restriction loss into the introspection error profile
 
@@ -72,4 +75,6 @@ theorem errorProfile_of_restricted_bound {C a b c x ε δ v : ℝ} (k : ℕ)
     linarith
 
 end MIPRE.Introspection
+end
+
 end

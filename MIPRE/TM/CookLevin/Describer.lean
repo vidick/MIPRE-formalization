@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.Index
+module
+public import MIPRE.TM.CookLevin.Index
+
+@[expose] public section
 
 /-!
 # The describer circuit and the clauses it describes
@@ -241,3 +244,5 @@ theorem mem_formula3_iff (D : Prog) (n : ℕ) (x y : BitStr) (hT : T ≤ Sof e)
 end Eval
 
 end MIPRE.TM.CookLevin.Desc
+
+end

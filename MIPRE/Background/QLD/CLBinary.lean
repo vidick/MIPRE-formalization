@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.CLPresentation
-import MIPRE.Foundations.CL.Downsize
+module
+public import MIPRE.Background.QLD.CLPresentation
+public import MIPRE.Foundations.CL.Downsize
+
+@[expose] public section
 
 /-! # Binary coordinates for the concrete Pauli CL family
 
@@ -22,13 +25,13 @@ set_option linter.unusedSectionVars false
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F]
   [Algebra (ZMod 2) F] {m t : ℕ} [NeZero m]
 
-private def basisIndex : Bas ≃ Fin 2 where
+def basisIndex : Bas ≃ Fin 2 where
   toFun | .X => 0 | .Z => 1
   invFun i := if i = 0 then .X else .Z
   left_inv W := by cases W <;> rfl
   right_inv i := by fin_cases i <;> rfl
 
-private def unitIndex : Unit ≃ Fin 1 where
+def unitIndex : Unit ≃ Fin 1 where
   toFun _ := 0
   invFun _ := ()
   left_inv u := by cases u; rfl
@@ -160,4 +163,6 @@ theorem qldGame_mu_binaryPresentation {d : ℕ} (hm : m ∣ Fintype.card F)
     LinearEquiv.coe_toEquiv, binaryQuestion_presentation]
 
 end MIPRE.QLD.PauliCL
+end
+
 end

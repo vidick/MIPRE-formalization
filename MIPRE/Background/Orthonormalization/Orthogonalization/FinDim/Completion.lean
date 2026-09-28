@@ -15,15 +15,19 @@ with `y = ∑ q i a i`, its range lies in the range of the block projection
 `Q = ∑ embed i ∘ q i ∘ proj i`, whose dimension is `∑ tr(q i) = dim H`; the
 isometric completion `u` of `T` then gives `w i := proj i ∘ u`. Proof-side.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
-import MIPRE.Background.Orthonormalization.Orthogonalization.IsometryData
-import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Blocks
-import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Isometry
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
+public import MIPRE.Background.Orthonormalization.Orthogonalization.IsometryData
+public import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Blocks
+public import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Isometry
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.FinDim
 
@@ -160,3 +164,5 @@ theorem exists_isometryData (a q : ι → H →L[ℂ] H) (ha0 : ∀ i, 0 ≤ a i
     rw [mul_def, comp_assoc, hu3, hT_def, proj_comp_blockMap]
 
 end Orthogonalization.FinDim
+
+end

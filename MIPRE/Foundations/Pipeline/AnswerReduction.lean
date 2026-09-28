@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Pipeline.Budget
-import MIPRE.Foundations.GapCompression
+module
+public import MIPRE.Foundations.Pipeline.Budget
+public import MIPRE.Foundations.GapCompression
+
+@[expose] public section
 
 /-!
 # Answer reduction, as a hypothesis
@@ -160,3 +163,5 @@ structure AnswerReduction (ℓ : ℕ) where
     1 - AnswerReduction.delta a b lam mu sigma n ε ≤ V.valStar n (AnswerReduction.inAns lam mu n)
 
 end MIPRE
+
+end

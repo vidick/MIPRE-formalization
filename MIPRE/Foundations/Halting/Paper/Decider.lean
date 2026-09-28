@@ -3,11 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Paper.TabulateL
-import MIPRE.Foundations.Halting.Compressor
-import MIPRE.Foundations.Cost.ManyOne
-import MIPRE.Foundations.Cost.Clocked
-import MIPRE.Foundations.Cost.Binary
+module
+public import MIPRE.Foundations.Halting.Paper.TabulateL
+public import MIPRE.Foundations.Halting.Compressor
+public import MIPRE.Foundations.Cost.ManyOne
+public import MIPRE.Foundations.Cost.Clocked
+public import MIPRE.Foundations.Cost.Binary
+
+@[expose] public section
 
 /-!
 # The halting verifier along the paper's route: the decider
@@ -271,3 +274,5 @@ theorem accepts_iff (S' M : Prog) (lam n : ℕ) (x y a b : BitStr) :
     exact Iff.rfl
 
 end MIPRE.Halting
+
+end

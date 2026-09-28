@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/GCommStability/OverlapOne.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.Pointwise
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.Pointwise
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -35,7 +38,7 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 /-- Averaging the common overlap term over `Point params.next` depends only on
 the final coordinate `x : F_q`. -/
-private lemma gCommOverlap_avgOver_point
+lemma gCommOverlap_avgOver_point
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι)
@@ -70,7 +73,7 @@ lemma gCommOverlap_avgOver_fst
           gCommOverlap_avgOver_point params strategy G
 
 /-- The common overlap term is always at most `1`. -/
-private lemma gCommOverlapTerm_le_one
+lemma gCommOverlapTerm_le_one
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι)
@@ -264,3 +267,5 @@ theorem gCommStability_overlap
 
 
 end MIPStarRE.LDT.Commutativity
+
+end

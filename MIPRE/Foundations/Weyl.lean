@@ -3,10 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Sign
-import MIPRE.Foundations.LowDegree.Anticomm
-import Mathlib.Analysis.Matrix.Order
-import Mathlib.Analysis.CStarAlgebra.Matrix
+module
+public import MIPRE.Foundations.Sign
+public import MIPRE.Foundations.LowDegree.Anticomm
+public import Mathlib.Analysis.Matrix.Order
+public import Mathlib.Analysis.CStarAlgebra.Matrix
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Generalized Pauli operators over a field of characteristic two
@@ -690,5 +694,7 @@ theorem sum_sgn_smul_line (v : n → F) (a : F) :
 end Operators
 
 end MIPRE.Weyl
+
+end
 
 end

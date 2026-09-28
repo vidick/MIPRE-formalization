@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.Layout
-import MIPRE.Foundations.CL.ProductSampler
-import MIPRE.Foundations.OracularTyped
+module
+public import MIPRE.Background.AnswerReduction.Layout
+public import MIPRE.Foundations.CL.ProductSampler
+public import MIPRE.Foundations.OracularTyped
+
+@[expose] public section
 
 /-!
 # The binary CL family of the answer-reduced sampler
@@ -119,5 +122,7 @@ theorem pcpPart_eval (rt : Role × PcpTy) (y : Fin (dim V n P) → 𝔽₂) :
   simp only [LinearEquiv.symm_apply_apply]
 
 end MIPRE.AnswerReduction
+
+end
 
 end

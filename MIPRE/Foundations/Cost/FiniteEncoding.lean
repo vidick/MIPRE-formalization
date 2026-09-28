@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Cost.Encoding
+module
+public import MIPRE.Foundations.Cost.Encoding
+
+@[expose] public section
 
 /-! # Encodings for bounded and optional control labels -/
 
@@ -26,3 +29,5 @@ instance {α : Type*} [SizedEncoding α] : SizedEncoding (Option α) where
   decode_encode a := by cases a <;> simp [SizedEncoding.decode_encode]
 
 end MIPRE.Cost
+
+end

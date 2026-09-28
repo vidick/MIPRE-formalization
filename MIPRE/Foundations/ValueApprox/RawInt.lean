@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Computability.Primrec.List
-import Mathlib.Data.Complex.Basic
+module
+public import Mathlib.Computability.Primrec.List
+public import Mathlib.Data.Complex.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Integers and Gaussian integers as pairs of naturals
@@ -165,3 +169,5 @@ theorem primrecRel_eq' : PrimrecRel Eq' :=
 end GInt
 
 end MIPRE.ValueApprox
+
+end

@@ -2,8 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryNonresidueAlgebra
-import Mathlib.FieldTheory.Finite.Extension
+module
+public import MIPRE.Foundations.LowDegree.BinaryNonresidueAlgebra
+public import Mathlib.FieldTheory.Finite.Extension
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # Equal-degree factors in a successful auxiliary root lift -/
 
@@ -73,3 +77,5 @@ theorem residue_factor_natDegree {F K : Type*} [Field F] [Finite F] [Field K]
     (natDegree_le_of_dvd_comp_power f g hf hi hg q hd)
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

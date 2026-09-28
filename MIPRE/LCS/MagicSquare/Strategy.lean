@@ -3,10 +3,13 @@ Copyright (c) 2026 Sean Perazzolo. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sean Perazzolo
 -/
-import MIPRE.LCS.Basic
-import MIPRE.LCS.Observable
-import MIPRE.LCS.Strategy.ObservableStrategy
-import MIPRE.LCS.Pauli
+module
+public import MIPRE.LCS.Basic
+public import MIPRE.LCS.Observable
+public import MIPRE.LCS.Strategy.ObservableStrategy
+public import MIPRE.LCS.Pauli
+
+@[expose] public section
 
 /-!
 # Mermin-Peres Magic Square Game Strategy
@@ -118,37 +121,37 @@ macro "solve_line_comm" : tactic => `(tactic| {
 })
 
 /-- Helper lemmas establishing pairwise commutativity for each row and column. -/
-private lemma row1_comm :
+lemma row1_comm :
     Pairwise
       (fun j k : layout.V (0 : Fin 6) ↦
         Commute (grid j.1) (grid k.1)) := by
   solve_line_comm
 
-private lemma row2_comm :
+lemma row2_comm :
     Pairwise
       (fun j k : layout.V (1 : Fin 6) ↦
         Commute (grid j.1) (grid k.1)) := by
   solve_line_comm
 
-private lemma row3_comm :
+lemma row3_comm :
     Pairwise
       (fun j k : layout.V (2 : Fin 6) ↦
         Commute (grid j.1) (grid k.1)) := by
   solve_line_comm
 
-private lemma col1_comm :
+lemma col1_comm :
     Pairwise
       (fun j k : layout.V (3 : Fin 6) ↦
         Commute (grid j.1) (grid k.1)) := by
   solve_line_comm
 
-private lemma col2_comm :
+lemma col2_comm :
     Pairwise
       (fun j k : layout.V (4 : Fin 6) ↦
         Commute (grid j.1) (grid k.1)) := by
   solve_line_comm
 
-private lemma col3_comm :
+lemma col3_comm :
     Pairwise
       (fun j k : layout.V (5 : Fin 6) ↦
         Commute (grid j.1) (grid k.1)) := by
@@ -189,3 +192,5 @@ noncomputable def merminPeresStrategy :
 end Strategy
 
 end MIPRE.LCS.MagicSquare
+
+end

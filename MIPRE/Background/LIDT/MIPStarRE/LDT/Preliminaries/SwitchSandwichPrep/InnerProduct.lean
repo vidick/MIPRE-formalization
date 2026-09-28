@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/InnerProduct.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -66,7 +69,7 @@ lemma avgOver_abs_le_sqrt_of_pointwise
     _ = Real.sqrt (avgOver 𝒟 g) := by ring
 
 /-- `ev` is invariant under taking adjoints. -/
-private lemma ev_adjoint_eq
+lemma ev_adjoint_eq
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     (ψ : QuantumState ι) (X : MIPStarRE.Quantum.Op ι) :
     ev ψ Xᴴ = ev ψ X := by
@@ -287,3 +290,5 @@ theorem closenessOfInnerProduct_right
   simpa [hA, hB] using hleft
 
 end MIPStarRE.LDT.Preliminaries
+
+end

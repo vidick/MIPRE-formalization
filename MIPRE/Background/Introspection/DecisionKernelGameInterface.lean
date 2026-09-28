@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.DecisionKernelSoundness
-import MIPRE.Background.Introspection.NumberedComplete
+module
+public import MIPRE.Background.Introspection.DecisionKernelSoundness
+public import MIPRE.Background.Introspection.NumberedComplete
+
+@[expose] public section
 
 /-! # Identification of the kernel's finite semantics with the explicit game -/
 
@@ -67,4 +70,6 @@ theorem program_sound_numbered (W : ClockedUniversalMachine) {lam n : ℕ}
   exact hh
 
 end MIPRE.Introspection.DecisionKernel
+end
+
 end

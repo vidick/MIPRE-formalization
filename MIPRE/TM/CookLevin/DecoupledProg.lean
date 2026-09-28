@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.Decoupled
+module
+public import MIPRE.TM.CookLevin.Decoupled
+
+@[expose] public section
 
 /-!
 # The decoupled describer as a program, and `ℓ₀`
@@ -440,3 +443,5 @@ noncomputable def decoupledDescriber : DecoupledDescriber where
       (fun ap bp hap hbp => runBound_le_two_pow 𝒟.prog n T Q σ x y ap bp hV hap hbp)
 
 end MIPRE.SAT
+
+end

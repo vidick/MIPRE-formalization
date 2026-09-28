@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.Detyping
+module
+public import MIPRE.Foundations.CL.Detyping
+
+@[expose] public section
 
 /-! # The joint law of detyped questions
 
@@ -117,3 +120,5 @@ theorem conditional_average {ℓ : ℕ}
   rw [sum_valid_questions E hE P hP hℓ, Graph.card_validSeeds]
 
 end MIPRE.CL.Detyping
+
+end

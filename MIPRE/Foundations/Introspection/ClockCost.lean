@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.Clock
+module
+public import MIPRE.Foundations.Introspection.Clock
+
+@[expose] public section
 
 /-! # Uniform runtime bounds for the growing introspection clock
 
@@ -98,3 +101,5 @@ theorem growingClock_ansBound_time {k : ℕ} (hk : 1 ≤ k) :
   exact ⟨r, time, ht.trans ((growingClock_cost_le hk hl hn).trans (hC lam n hl hn)), hr⟩
 
 end MIPRE.Introspection
+
+end

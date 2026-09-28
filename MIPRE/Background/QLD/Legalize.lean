@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Combined
+module
+public import MIPRE.Background.QLD.Combined
+
+@[expose] public section
 
 /-!
 # Legalizing a strategy for the Pauli basis test
@@ -239,5 +242,7 @@ theorem one_sub_povmValue_legalizeStrat_le (hm : m ∣ Fintype.card F) (ψ : dA 
 end Value
 
 end MIPRE.QLD
+
+end
 
 end

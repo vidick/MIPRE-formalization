@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Preliminaries/ComparisonCore.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Defs
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.MeasurementLift
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Defs
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.MeasurementLift
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -71,7 +74,7 @@ theorem simeqForMeasurements {Question Outcome : Type*}
 
 /-- Atomic mathematical fact: for a full measurement, the squared-distance defect
 is at most `2 * qConsDefect`. -/
-private lemma questionSDD_le_two_questionConsistency {Outcome : Type*}
+lemma questionSDD_le_two_questionConsistency {Outcome : Type*}
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype Outcome]
     (ψ : QuantumState ι) (A B : Measurement Outcome ι) :
@@ -426,7 +429,7 @@ lemma qBipartiteSSCDefect_postprocess_le {α β : Type*}
   rw [hmass_post]
   exact max_le_max le_rfl hsub'
 
-private lemma qConsDefect_leftRight_postprocess_le {α β : Type*}
+lemma qConsDefect_leftRight_postprocess_le {α β : Type*}
     {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     [Fintype α] [Fintype β]
     (ψ : QuantumState (ιA × ιB)) (A : SubMeas α ιA) (B : SubMeas α ιB)
@@ -669,3 +672,5 @@ lemma conjTranspose_mul_mono
 
 
 end MIPStarRE.LDT.Preliminaries
+
+end

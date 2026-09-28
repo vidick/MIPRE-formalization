@@ -3,11 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Paper.ClassVerifier
-import MIPRE.Foundations.Halting.Paper.Count
-import MIPRE.Foundations.GameRestrict
-import MIPRE.Foundations.ClassMIPStarTab
-import MIPRE.Foundations.Cost.Growth
+module
+public import MIPRE.Foundations.Halting.Paper.ClassVerifier
+public import MIPRE.Foundations.Halting.Paper.Count
+public import MIPRE.Foundations.GameRestrict
+public import MIPRE.Foundations.ClassMIPStarTab
+public import MIPRE.Foundations.Cost.Growth
+
+@[expose] public section
 
 /-!
 # `RE ⊆ MIP*_{1,1/2}(2,1)`, and `MIP*_{1,1/2}(2,1) = RE`
@@ -264,9 +267,6 @@ theorem seedCount_eq (z : BitStr) (x y : (Vz G U UT Λ₀ R z).Questions (C G)) 
       (Finset.univ.filter fun v => decide (L v = x ∧ Rb v = y) = true).card from
       length_filter_bitStrsOfLen (s := d) (fun v => decide (L v = x ∧ Rb v = y))]
   congr 1
-  apply congrArg Finset.card
-  ext v
-  simp
 
 /-- The distribution of the class verifier's game, on the embedded questions, is the
 compressed sampler's. -/
@@ -396,3 +396,5 @@ theorem mipstar_eq_re_of : MIPStar = IsRE :=
   funext fun _ => propext ⟨MIPStar.isRE, re_subset_mipstar_of G U UT⟩
 
 end MIPRE.Halting
+
+end

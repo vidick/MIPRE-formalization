@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SourcePadding
+module
+public import MIPRE.Foundations.Introspection.SourcePadding
+
+@[expose] public section
 
 /-! # Removing padding from arbitrary source-game strategies
 
@@ -104,4 +107,6 @@ theorem quantumValue_depthFamily_le (hℓ : 0 < ℓ) (hL : ∀ w, (L w).Supporte
   exact quantumValue_le e L D
 
 end MIPRE.Introspection.SourcePadding
+end
+
 end

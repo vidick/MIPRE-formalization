@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/PointLine.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Utilities
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Utilities
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -71,7 +74,7 @@ lemma axisParallelBaseEventConsistency
       haxis)
 
 /-- Point-event measurement used by the base-point point-line consistency step. -/
-private noncomputable def axisParallelBasePointEventMeasurement
+noncomputable def axisParallelBasePointEventMeasurement
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -83,7 +86,7 @@ private noncomputable def axisParallelBasePointEventMeasurement
     exact (strategy.pointMeasurement s.1).total_eq_one)
 
 /-- Line-event measurement used by the base-point point-line consistency step. -/
-private noncomputable def axisParallelBaseLineEventMeasurement
+noncomputable def axisParallelBaseLineEventMeasurement
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -374,3 +377,5 @@ lemma axisParallelPointLineConsistency_weighted_rightToLeftLineQuestion
       params strategy eps delta gamma hgood G g
 
 end MIPStarRE.LDT.GlobalVariance
+
+end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryKernel
-import MIPRE.Foundations.CL.Canonical
+module
+public import MIPRE.Foundations.LowDegree.BinaryKernel
+public import MIPRE.Foundations.CL.Canonical
+
+@[expose] public section
 
 /-! # Verified canonical binary elimination for auxiliary dual checks
 
@@ -19,7 +22,7 @@ open Cost Cost.PolyTimeFun LowDegree.BinaryLinear
 open Finset Submodule Module
 variable {n t : ℕ}
 
-private theorem firstOne_before (bs : BitStr) (j : ℕ) (hj : j < firstOne bs) :
+theorem firstOne_before (bs : BitStr) (j : ℕ) (hj : j < firstOne bs) :
     bs.getD j false = false := by
   induction bs generalizing j with
   | nil => simp [firstOne] at hj
@@ -33,7 +36,7 @@ private theorem firstOne_before (bs : BitStr) (j : ℕ) (hj : j < firstOne bs) :
         simpa [firstOne,List.findIdx_cons] using hj
     | true => simp [firstOne,List.findIdx_cons] at hj
 
-private theorem firstOne_vector_before (v : Fin n → ZMod 2) (i : Fin n)
+theorem firstOne_vector_before (v : Fin n → ZMod 2) (i : Fin n)
     (hi : i.val < firstOne (vectorBits v)) : v i = 0 := by
   have h := firstOne_before (vectorBits v) i hi
   rw [getD_vectorBits] at h
@@ -127,7 +130,7 @@ theorem pivot_set_canonical {b : List (Pivot n t)} (hb : IsPivotBasis b) (hl : L
   · rw [CL.card_pivots,finrank_pivotSpan hb,List.toFinset_card_of_nodup (pivot_nodup hb),
       List.length_map]
 
-private theorem reduce_sub_mem (S : Submodule (ZMod 2) (Fin n → ZMod 2))
+theorem reduce_sub_mem (S : Submodule (ZMod 2) (Fin n → ZMod 2))
     (b : List (Pivot n t)) (hb : ∀ p ∈ b, p.2.1 ∈ S) (r : Row n t) :
     r.1 - (typedReduce b r).1 ∈ S := by
   induction b generalizing r with
@@ -188,4 +191,6 @@ theorem canonicalProg_correct (vs : List (Fin n → ZMod 2)) (v : Fin n → ZMod
   simp
 
 end MIPRE.Introspection.AuxiliaryCanonical
+end
+
 end

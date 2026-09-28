@@ -3,11 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.SwapItemTwo
-import MIPRE.Foundations.Introspection.RegisterEPR
-import MIPRE.Foundations.Introspection.IsometricStrategy
-import MIPRE.Foundations.Introspection.HidingBaseOperators
-import MIPRE.Foundations.Introspection.Readout
+module
+public import MIPRE.Background.QLD.SwapItemTwo
+public import MIPRE.Foundations.Introspection.RegisterEPR
+public import MIPRE.Foundations.Introspection.IsometricStrategy
+public import MIPRE.Foundations.Introspection.HidingBaseOperators
+public import MIPRE.Foundations.Introspection.Readout
+
+@[expose] public section
 
 /-!
 # `thm:qld` in the register-first form its consumer reads
@@ -281,5 +284,7 @@ theorem proj_weylOf_Z (h : Anc F m) :
 end Readouts
 
 end MIPRE.QLD
+
+end
 
 end

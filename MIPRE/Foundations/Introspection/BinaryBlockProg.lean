@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.BasisProg
+module
+public import MIPRE.Foundations.Introspection.BasisProg
+
+@[expose] public section
 
 /-! # Executable binary field blocks
 
@@ -26,14 +29,14 @@ theorem splitBlocks_length (n k : ℕ) (v : BitStr) : (splitBlocks n k v).length
   | zero => rfl
   | succ n ih => simp [splitBlocks, ih]
 
-private def splitStep : PolyTimeFun ((BitStr × List BitStr) × Unary) (BitStr × List BitStr) :=
+def splitStep : PolyTimeFun ((BitStr × List BitStr) × Unary) (BitStr × List BitStr) :=
   (drop.comp ((fst.comp fst).pair snd)).pair
     (cons (take.comp ((fst.comp fst).pair snd)) (snd.comp fst))
 
-private theorem splitStep_apply (v : BitStr) (vs : List BitStr) (k : Unary) :
+theorem splitStep_apply (v : BitStr) (vs : List BitStr) (k : Unary) :
     splitStep ((v, vs), k) = (v.drop k.length, v.take k.length :: vs) := rfl
 
-private theorem splitStep_fold (n : ℕ) (k : Unary) (v : BitStr) (vs : List BitStr) :
+theorem splitStep_fold (n : ℕ) (k : Unary) (v : BitStr) (vs : List BitStr) :
     ((List.replicate n k).foldl splitStep.step (v, vs)).2 =
       (splitBlocks n k.length v).reverse ++ vs := by
   induction n generalizing v vs with
@@ -149,4 +152,6 @@ theorem encodeBlocksProg_runs (x : Unary × List BitStr) :
   encodeBlocksProg.computes x
 
 end MIPRE.Introspection.BinaryBlock
+end
+
 end

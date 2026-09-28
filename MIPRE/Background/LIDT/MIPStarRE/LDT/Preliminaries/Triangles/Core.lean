@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Preliminaries/Triangles/Core.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -141,7 +144,7 @@ lemma max_zero_add_le (x y : Error) :
     have hy : y ≤ |y| := le_abs_self y
     linarith
 
-private lemma avgOver_abs_le_sqrt_of_pointwise_nonneg
+lemma avgOver_abs_le_sqrt_of_pointwise_nonneg
     {Question : Type*}
     (𝒟 : Distribution Question)
     (h𝒟 : ∑ q ∈ 𝒟.support, 𝒟.weight q ≤ 1)
@@ -466,7 +469,7 @@ theorem triangleSub_heterogeneous
 
 /-! ### Right-register variant of `triangleSub` -/
 
-private lemma right_match_gap_abs_le_sqrt_qSDD
+lemma right_match_gap_abs_le_sqrt_qSDD
     {Outcome : Type*} {ι : Type*}
     [Fintype ι] [DecidableEq ι] [Fintype Outcome]
     (ψ : QuantumState ι) (hψ : ψ.IsNormalized)
@@ -923,3 +926,5 @@ theorem triangleSub_right_subMeas_total_le
 
 
 end MIPStarRE.LDT.Preliminaries
+
+end

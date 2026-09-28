@@ -3,9 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Algebra.MonoidAlgebra.Basic
-import Mathlib.Algebra.CharP.Algebra
-import Mathlib.FieldTheory.Finite.Basic
+module
+public import Mathlib.Algebra.MonoidAlgebra.Basic
+public import Mathlib.Algebra.CharP.Algebra
+public import Mathlib.FieldTheory.Finite.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Self-dualization in characteristic two
@@ -76,7 +80,7 @@ theorem add_self_bijective (hG : Odd (Fintype.card G)) :
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq G]
 
 omit [Fintype G] [Fintype F] [DecidableEq G] in
-private theorem two_eq_zero (hF : CharP F 2) : (2 : AddMonoidAlgebra F G) = 0 := by
+theorem two_eq_zero (hF : CharP F 2) : (2 : AddMonoidAlgebra F G) = 0 := by
   have : ((2 : ℕ) : F) = 0 := by
     have := hF
     exact CharP.cast_eq_zero F 2
@@ -173,3 +177,5 @@ theorem binarySquareRoot_mul_involute (hG : Odd (Fintype.card G))
   rw [hτ, binarySquareRoot_mul_self hG]
 
 end MIPRE.LowDegree
+
+end

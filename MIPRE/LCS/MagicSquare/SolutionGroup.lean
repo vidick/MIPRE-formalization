@@ -3,8 +3,11 @@ Copyright (c) 2026 Sean Perazzolo. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sean Perazzolo
 -/
-import MIPRE.LCS.MagicSquare.Strategy
-import MIPRE.LCS.SolutionGroup
+module
+public import MIPRE.LCS.MagicSquare.Strategy
+public import MIPRE.LCS.SolutionGroup
+
+@[expose] public section
 
 /-!
 # Magic Square Solution Group
@@ -53,3 +56,5 @@ def equationPresentation : List (List Nat × Nat) :=
     (equationSupportIndices i, (linearSystem.b i).val)
 
 end MIPRE.LCS.MagicSquare
+
+end

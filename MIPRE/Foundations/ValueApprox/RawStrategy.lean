@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.ValueApprox.RawInt
-import MIPRE.Foundations.ValueApprox.Strategy
-import MIPRE.Foundations.GameDescription
+module
+public import MIPRE.Foundations.ValueApprox.RawInt
+public import MIPRE.Foundations.ValueApprox.Strategy
+public import MIPRE.Foundations.GameDescription
+
+@[expose] public section
 
 /-!
 # Raw candidates and the certificate check
@@ -198,3 +201,5 @@ instance (g : GameData) (p q : ℕ) (r : RawStrategy) : Decidable (Check g p q r
   unfold Check; infer_instance
 
 end MIPRE.ValueApprox
+
+end

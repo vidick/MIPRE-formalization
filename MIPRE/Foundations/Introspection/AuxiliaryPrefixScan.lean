@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryPrefixSolve
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryPrefixSolve
+
+@[expose] public section
 
 /-! # The Gaussian scan invariant for source sampler queries
 
@@ -70,4 +73,6 @@ theorem scan_legal_query {P : CL.CLFun CL.𝔽₂ (Fin n) ℓ} {T : Finset (Fin 
   ⟨x, congrArg CL.toBits (scan_sound hP y k x hx).symm⟩
 
 end MIPRE.Introspection.AuxiliaryPrefix
+end
+
 end

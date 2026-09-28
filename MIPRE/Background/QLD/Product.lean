@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Padded
+module
+public import MIPRE.Background.QLD.Padded
+
+@[expose] public section
 
 /-!
 # A content, and a product of two independent line-point pairs
@@ -663,3 +666,5 @@ theorem pairs_of_lines_prod_of_items (hψ : star ψ ⬝ᵥ ψ = 1)
 end Game
 
 end MIPRE.QLD
+
+end

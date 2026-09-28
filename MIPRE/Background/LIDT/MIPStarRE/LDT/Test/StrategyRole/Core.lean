@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Test/StrategyRole/Core.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -161,13 +164,13 @@ noncomputable def rolePairCond {ι : Type*} [Fintype ι] [DecidableEq ι]
 lemma rolePairProj_nonneg (rL rR : Role) : 0 ≤ rolePairProj rL rR :=
   opTensor_nonneg (roleProj_nonneg rL) (roleProj_nonneg rR)
 
-private lemma rolePairCond_nonneg {ι : Type*} [Fintype ι] [DecidableEq ι]
+lemma rolePairCond_nonneg {ι : Type*} [Fintype ι] [DecidableEq ι]
     (rL rR : Role) {X : MIPStarRE.Quantum.Op (ι × ι)} (hX : 0 ≤ X) :
     0 ≤ rolePairCond rL rR X :=
   MIPStarRE.Quantum.reindex_nonneg (roleRegisterPairLocalEquiv ι)
     (opTensor_nonneg (rolePairProj_nonneg rL rR) hX)
 
-@[simp] private lemma swapDensity_leftTensor {ι : Type*} [Fintype ι] [DecidableEq ι]
+@[simp] lemma swapDensity_leftTensor {ι : Type*} [Fintype ι] [DecidableEq ι]
     (M : MIPStarRE.Quantum.Op ι) :
     swapDensity (leftTensor (ι₂ := ι) M) = rightTensor (ι₁ := ι) M := by
   simpa [leftTensor, rightTensor, opTensor, Matrix.kronecker] using
@@ -183,7 +186,7 @@ lemma swapDensity_pureDensity {ι : Type*} [Fintype ι] [DecidableEq ι]
   rcases y with ⟨j₁, j₂⟩
   simp [pureDensity, swapVector, swapDensity, Matrix.vecMulVec]
 
-private lemma swapDensity_nonneg {ι : Type*} [Finite ι]
+lemma swapDensity_nonneg {ι : Type*} [Finite ι]
     {X : MIPStarRE.Quantum.Op (ι × ι)} (hX : 0 ≤ X) :
     0 ≤ swapDensity X := by
   simpa [swapDensity_eq_reindex] using
@@ -248,7 +251,7 @@ lemma normalizedTrace_rolePairProj (rL rR : Role) :
             simp [MIPStarRE.Quantum.normalizedTrace, roleProj, hRole]
     _ = (1 / 4 : ℂ) := by norm_num
 
-private lemma normalizedTrace_rolePairCond {ι : Type*} [Fintype ι] [DecidableEq ι]
+lemma normalizedTrace_rolePairCond {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Nonempty ι]
     (rL rR : Role) (X : MIPStarRE.Quantum.Op (ι × ι)) :
     MIPStarRE.Quantum.normalizedTrace (rolePairCond rL rR X) =
@@ -396,3 +399,5 @@ lemma ev_swapQuantumState {ι : Type*} [Fintype ι] [DecidableEq ι]
           normalizedTrace_swapDensity _
 
 end MIPStarRE.LDT
+
+end

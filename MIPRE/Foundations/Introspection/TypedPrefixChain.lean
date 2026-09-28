@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HidingPrefix
+module
+public import MIPRE.Foundations.Introspection.HidingPrefix
+
+@[expose] public section
 
 /-! # Propagating reported question prefixes through the actual hiding chain
 
@@ -143,5 +146,7 @@ theorem prefixChainType_check (w : Bool) (hL : (L w).SupportedOn univ)
       exact check_read_introspect_prefix L X Z projectPauli D DP w m h
 
 end MIPRE.Introspection.TypedEstimates
+
+end
 
 end

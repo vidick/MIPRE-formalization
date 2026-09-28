@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/HBConsistency.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.Core
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.HBError
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.Core
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.HBError
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -44,7 +47,7 @@ Steps:
 2. Switch from independent to distinct samples (`prop:ld-dnoteq`, cost `k²/q`)
 3. Union bound over `k` indices, each contributing `ν₅`
 4. Total: `k·ν₅ + k²/q ≤ 44k²m(...)` -/
-private lemma hBConsistency_core_of_axis_self
+lemma hBConsistency_core_of_axis_self
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι)
@@ -199,3 +202,5 @@ lemma hBConsistency
     hgood hd family hcons hself hbound k hline
 
 end MIPStarRE.LDT.Pasting
+
+end

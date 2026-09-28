@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveAnswerRefinement
+module
+public import MIPRE.Foundations.Introspection.AdaptiveAnswerRefinement
+
+@[expose] public section
 
 /-! # Updating the full answer after an adaptive stage
 
@@ -149,4 +152,6 @@ theorem stageAnswerRefinementPOVM_decode_recover {P : CL.CLFun F ι ℓ} {T : Fi
   exact ha (hsupport x b h)
 
 end MIPRE.Introspection
+end
+
 end

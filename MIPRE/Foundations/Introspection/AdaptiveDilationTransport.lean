@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.StrategyReplacementRegister
+module
+public import MIPRE.Foundations.Introspection.StrategyReplacementRegister
+
+@[expose] public section
 
 /-! # Conditional Naimark projectors in adaptive register coordinates
 
@@ -96,4 +99,6 @@ theorem stateSqNorm_reassociated_extVecA (ξ : H × K → ℂ) (a₀ : A)
   rw [← hs, stateSqNorm_registerOp]
 
 end MIPRE.Introspection
+end
+
 end

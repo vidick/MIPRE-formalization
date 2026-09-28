@@ -30,17 +30,21 @@ with `a` and not of the form `z r` with `z ∈ Z(p M p)`
 
 Proof-side only: no statement of the paper is made here.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.SpectralProjection
-import MIPRE.Background.Repetition.CommutingRepetition.VN.JointSpectral
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Defs
-import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.StateOnM
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.SpectralProjection
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.JointSpectral
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Defs
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.StateOnM
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.MvN
 
@@ -464,7 +468,9 @@ theorem exists_selfAdjoint_not_central (M : VonNeumannAlgebra H) {p r a : H →L
 /-- A self-adjoint `b = r b r` satisfies `b ≤ ‖b‖ r`. -/
 theorem le_norm_smul_proj {b r : H →L[ℂ] H} (hr : IsStarProjection r) (hb : IsSelfAdjoint b)
     (hrb : r * b * r = b) : b ≤ (‖b‖ : ℂ) • r := by
-  have h := conj_le_conj (IsSelfAdjoint.le_algebraMap_norm_self hb) r
+  -- Vendoring compile fix (Mathlib v4.35): `IsSelfAdjoint.le_algebraMap_norm_self` takes
+  -- the element explicitly. See README.md.
+  have h := conj_le_conj (IsSelfAdjoint.le_algebraMap_norm_self b hb) r
   rwa [hr.isSelfAdjoint.star_eq, hrb, Algebra.algebraMap_eq_smul_one, ← Complex.coe_smul,
     mul_smul_comm, smul_mul_assoc, mul_one, hr.isIdempotentElem.eq] at h
 
@@ -634,3 +640,5 @@ theorem exists_perturbation (M : VonNeumannAlgebra H) {p : H →L[ℂ] H}
   rw [map_sub, hEz, hE.center_mul z hz r hrM hprp, sub_self]
 
 end Orthogonalization.MvN
+
+end

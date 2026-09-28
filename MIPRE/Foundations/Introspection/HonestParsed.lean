@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestReading
-import MIPRE.Foundations.Introspection.HonestHiding
+module
+public import MIPRE.Foundations.Introspection.HonestReading
+public import MIPRE.Foundations.Introspection.HonestHiding
+
+@[expose] public section
 
 /-! # Honest measurements on the complete parsed-answer alphabet
 
@@ -28,7 +31,7 @@ variable {F ι A PA : Type*} [Field F] [Fintype F] [DecidableEq F]
   (L : Bool → CL.CLFun F ι ℓ) (D : (ι → F) → (ι → F) → A → A → Bool)
   (R : SyncStrategy (sourceGame L D).doubled)
 
-private theorem sum_supported {B C M : Type*} [Fintype B] [Fintype C] [AddCommMonoid M]
+theorem sum_supported {B C M : Type*} [Fintype B] [Fintype C] [AddCommMonoid M]
     (f : B → C) (hf : Function.Injective f) (g : C → M)
     (hz : ∀ c, c ∉ Set.range f → g c = 0) : (∑ c, g c) = ∑ b, g (f b) := by
   symm
@@ -164,5 +167,7 @@ theorem parsedRead_core_reject_zero {P : Type*} (X Z : P) (projectPauli : PA →
   exact hr
 
 end MIPRE.Introspection.Honest
+
+end
 
 end

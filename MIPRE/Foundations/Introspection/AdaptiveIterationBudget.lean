@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveStageBudget
+module
+public import MIPRE.Foundations.Introspection.AdaptiveStageBudget
+
+@[expose] public section
 
 /-! # A positive small-error threshold for every adaptive stage
 
@@ -196,4 +199,6 @@ theorem exists_adaptive_small_threshold (r N : ℕ) {edges : ℝ} (hE : 0 ≤ ed
   exact adaptiveStageBudget_le_one_of_threshold r N hE hi hz hh n hn
 
 end MIPRE.Introspection
+end
+
 end

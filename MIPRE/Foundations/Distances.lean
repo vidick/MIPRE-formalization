@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Games
+module
+public import MIPRE.Foundations.Games
+
+@[expose] public section
 
 /-!
 # Distance measures
@@ -203,3 +206,5 @@ theorem inconsistency_congr {X X' A A' dA dB : Type*} [Fintype X] [Fintype X'] [
   · rw [if_neg h, if_neg (fun hc => h (eA.injective hc)), hM, hN]
 
 end MIPRE
+
+end

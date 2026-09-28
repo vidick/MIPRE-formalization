@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.PauliSampler
-import MIPRE.Foundations.Introspection.PauliSamplerParamsCost
+module
+public import MIPRE.Background.Introspection.PauliSampler
+public import MIPRE.Foundations.Introspection.PauliSamplerParamsCost
+
+@[expose] public section
 
 /-! # Polynomial query time of the canonical Pauli sampler
 
@@ -28,7 +31,7 @@ def costPolynomial (c lam n : ℕ) : Polynomial ℕ :=
 def degree : ℕ := max route.timeBound.natDegree
   (max post.timeBound.natDegree (max QLD.PauliCL.SamplerProgram.query.timeBound.natDegree 1))
 
-private theorem shifted_degree (P : Polynomial ℕ) (a : ℕ) :
+theorem shifted_degree (P : Polynomial ℕ) (a : ℕ) :
     (P.comp (X + Polynomial.C a)).natDegree ≤ P.natDegree := by
   have h : (X + Polynomial.C a : Polynomial ℕ).natDegree ≤ 1 :=
     natDegree_add_le_of_degree_le (by simp) (by simp)
@@ -184,4 +187,6 @@ theorem sampler_uniform_bound (c : ℕ) (hc : 1 ≤ c) (he : Even c) :
   · exact hdim.trans (by omega)
 
 end MIPRE.Introspection.PauliSampler
+end
+
 end

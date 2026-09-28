@@ -3,14 +3,17 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.PaddedValue
-import MIPRE.Background.QLD.Simul
-import MIPRE.Background.QLD.Dummy
-import MIPRE.Background.QLD.Products
-import MIPRE.Background.QLD.Linear
-import MIPRE.Background.QLD.Separate
-import MIPRE.Background.QLD.Complete
-import MIPRE.Background.LIDT.Adapter.Registers
+module
+public import MIPRE.Background.QLD.PaddedValue
+public import MIPRE.Background.QLD.Simul
+public import MIPRE.Background.QLD.Dummy
+public import MIPRE.Background.QLD.Products
+public import MIPRE.Background.QLD.Linear
+public import MIPRE.Background.QLD.Separate
+public import MIPRE.Background.QLD.Complete
+public import MIPRE.Background.LIDT.Adapter.Registers
+
+@[expose] public section
 
 /-!
 # The global polynomial measurements: applying the seeded soundness theorem
@@ -765,5 +768,7 @@ theorem exists_simulPair (hψ : star ψ ⬝ᵥ ψ = 1)
 end Exists
 
 end MIPRE.QLD
+
+end
 
 end

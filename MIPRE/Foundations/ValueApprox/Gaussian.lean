@@ -3,9 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.ValueApprox.Cayley
-import MIPRE.Foundations.ValueApprox.Projective
-import Mathlib.LinearAlgebra.Matrix.Kronecker
+module
+public import MIPRE.Foundations.ValueApprox.Cayley
+public import MIPRE.Foundations.ValueApprox.Projective
+public import Mathlib.LinearAlgebra.Matrix.Kronecker
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Gaussian rationals, and matrices with entries in a subfield
@@ -236,3 +240,5 @@ theorem IsSkewHermitian.exists_entriesIn_norm_sub_le {n : Type*} {S : Matrix n n
       _ = η := by ring
 
 end MIPRE.ValueApprox
+
+end

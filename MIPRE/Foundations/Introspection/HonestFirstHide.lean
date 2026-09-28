@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryChecks
-import MIPRE.Foundations.Introspection.Measurements
-import MIPRE.Foundations.Introspection.TypedPredicate
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryChecks
+public import MIPRE.Foundations.Introspection.Measurements
+public import MIPRE.Foundations.Introspection.TypedPredicate
+
+@[expose] public section
 
 /-! # The honest first hiding measurement
 
@@ -116,3 +119,5 @@ theorem firstHide_typed_reject_zero {P A : Type*} (L : Bool → CL.CLFun F ι �
   exact firstHide_reject_zero (L w) x v (of_decide_eq_false h)
 
 end MIPRE.Introspection.Honest
+
+end

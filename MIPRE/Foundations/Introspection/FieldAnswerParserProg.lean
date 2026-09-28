@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.BinaryBlockProg
-import MIPRE.Foundations.Introspection.DynamicParserSlice
-import MIPRE.Foundations.SAT.PcpFormat
+module
+public import MIPRE.Foundations.Introspection.BinaryBlockProg
+public import MIPRE.Foundations.Introspection.DynamicParserSlice
+public import MIPRE.Foundations.SAT.PcpFormat
+
+@[expose] public section
 
 /-! # Exact, bounded parsing of field-valued answer tables
 
@@ -114,7 +117,7 @@ theorem parserProg_vecBits {n k : ℕ} (E : BinField k) (hk : 0 < k)
     parserProg (n, unary k, (E.vecBits v).flatten) = (true, E.vecBits v) := by
   simpa using parserProg_flatten (E.vecBits v) k hk (fun _ h => E.width_vecBits v h)
 
-private theorem fold_double (u : Unary) (a : ℕ) :
+theorem fold_double (u : Unary) (a : ℕ) :
     u.foldl (fun n _ => Nat.bit false n) a = a * 2 ^ u.length := by
   induction u generalizing a with
   | nil => simp
@@ -156,4 +159,6 @@ theorem fullPauliParserProg_runs (input : Unary × Unary × BitStr) :
   fullPauliParserProg.computes input
 
 end MIPRE.Introspection.FieldAnswerParser
+end
+
 end

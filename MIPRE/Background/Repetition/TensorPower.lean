@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.Repetition.Direct
-import MIPRE.Foundations.TensorFamily
-import MIPRE.Foundations.GameDouble
+module
+public import MIPRE.Background.Repetition.Direct
+public import MIPRE.Foundations.TensorFamily
+public import MIPRE.Foundations.GameDouble
+
+@[expose] public section
 
 /-!
 # Tensor powers of synchronous strategies
@@ -308,3 +311,5 @@ theorem exists_perfectPCC_repeat_doubled {G : Game X X A A} (k : ℕ)
     rw [SyncStrategy.value_tensorPowDoubled, hv, one_pow]⟩
 
 end MIPRE
+
+end

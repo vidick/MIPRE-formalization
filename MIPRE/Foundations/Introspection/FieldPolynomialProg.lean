@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.NormalElementProg
+module
+public import MIPRE.Foundations.SAT.NormalElementProg
+
+@[expose] public section
 
 /-! # Uniform evaluation of field coefficient vectors
 
@@ -40,17 +43,17 @@ theorem evalCoeffs_ofFn {R : Type*} [CommSemiring R] (x : R) {n : ℕ}
       Finset.sum_mul, mul_assoc]
     exact add_comm _ _
 
-private def hornerStep (s : BitStr × BitStr × BitStr) (c : BitStr) :
+def hornerStep (s : BitStr × BitStr × BitStr) (c : BitStr) :
     BitStr × BitStr × BitStr :=
   (s.1, s.2.1, xorBits (mulReduce s.1 s.2.2 s.2.1) c)
 
-private theorem hornerStep_width (s : BitStr × BitStr × BitStr) (c : BitStr) :
+theorem hornerStep_width (s : BitStr × BitStr × BitStr) (c : BitStr) :
     (hornerStep s c).2.2.length ≤ s.2.2.length := by
   change (xorBits (mulReduce s.1 s.2.2 s.2.1) c).length ≤ _
   rw [length_xorBits]
   exact (min_le_left _ _).trans (length_mulReduce_le _ _ _)
 
-private theorem fold_hornerStep (l : List BitStr) (s : BitStr × BitStr × BitStr) :
+theorem fold_hornerStep (l : List BitStr) (s : BitStr × BitStr × BitStr) :
     (l.foldl hornerStep s).1 = s.1 ∧
     (l.foldl hornerStep s).2.1 = s.2.1 ∧
     (l.foldl hornerStep s).2.2.length ≤ s.2.2.length := by
@@ -60,14 +63,14 @@ private theorem fold_hornerStep (l : List BitStr) (s : BitStr × BitStr × BitSt
     obtain ⟨hp, hx, ha⟩ := ih (hornerStep s c)
     exact ⟨hp, hx, ha.trans (hornerStep_width s c)⟩
 
-private theorem fold_hornerStep_acc (l : List BitStr) (p x a : BitStr) :
+theorem fold_hornerStep_acc (l : List BitStr) (p x a : BitStr) :
     (l.foldl hornerStep (p, x, a)).2.2 =
       l.foldl (fun a c => xorBits (mulReduce p a x) c) a := by
   induction l generalizing a with
   | nil => rfl
   | cons c l ih => exact ih _
 
-private def hornerStepProg :
+def hornerStepProg :
     PolyTimeFun ((BitStr × BitStr × BitStr) × BitStr) (BitStr × BitStr × BitStr) :=
   let p := fst.comp fst
   let x := fst.comp (snd.comp fst)
@@ -75,7 +78,7 @@ private def hornerStepProg :
   p.pair (x.pair (xorBitsProg.comp
     ((mulReduceProg.comp (p.pair (a.pair x))).pair snd)))
 
-private theorem hornerStep_bounded : FoldBounded hornerStepProg (5 * X + 5) := by
+theorem hornerStep_bounded : FoldBounded hornerStepProg (5 * X + 5) := by
   intro l s pre post _
   change esize (pre.foldl hornerStep s) ≤ _
   obtain ⟨hp, hx, ha⟩ := fold_hornerStep pre s
@@ -145,4 +148,6 @@ theorem shoupHornerProg_runs (input : Unary × BitStr × List BitStr) :
   shoupHornerProg.computes input
 
 end MIPRE.Introspection.FieldPolynomialProgram
+end
+
 end

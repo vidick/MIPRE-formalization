@@ -24,15 +24,19 @@ onto the core posterior law along the flattening fibers), and
 `Prerounding/HistoryA.lean` / `HistoryB.lean` (the two conjuncts: log split,
 tensorized first chain term, reverse-experiment second chain term).
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Costs
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.HistoryCore
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.HistoryA
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.HistoryB
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Costs
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.HistoryCore
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.HistoryA
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.HistoryB
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -102,3 +106,5 @@ theorem history_relative_entropy
 end TracialStrategy
 
 end CommutingRepetition
+
+end

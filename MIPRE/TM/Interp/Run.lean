@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.Interp.Step
-import MIPRE.TM.Interp.InputRoutines
-import MIPRE.Foundations.SAT.Succinct
+module
+public import MIPRE.TM.Interp.Step
+public import MIPRE.TM.Interp.InputRoutines
+public import MIPRE.Foundations.SAT.Succinct
+
+@[expose] public section
 
 /-!
 # The run of the interpreter
@@ -663,3 +666,5 @@ theorem acceptsWithin_of_accepts (D : Decider) (n : ℕ) (x y a b : BitStr) (Tb 
     exact hS.1
 
 end MIPRE.TM.Interp
+
+end

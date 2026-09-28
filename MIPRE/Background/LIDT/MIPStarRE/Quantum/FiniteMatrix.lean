@@ -5,11 +5,14 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/Quantum/FiniteMatrix.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.Basic
-import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.Order
-import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing
-import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.BlockDiagonal
-import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
+module
+public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.Basic
+public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.Order
+public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing
+public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.BlockDiagonal
+public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
+
+@[expose] public section
 
 /-!
 # Finite-dimensional matrix layer for the MIP*=RE project
@@ -31,3 +34,5 @@ The declarations re-exported here collect the finite-dimensional matrix and PSD
 facts from Mathlib for the project's quantum layer and the LDT development
 formalizing `references/ldt-paper/`.
 -/
+
+end

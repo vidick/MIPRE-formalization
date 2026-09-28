@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.PauliStageProg
-import MIPRE.Foundations.Introspection.BinaryBlockProg
+module
+public import MIPRE.Foundations.Introspection.PauliStageProg
+public import MIPRE.Foundations.Introspection.BinaryBlockProg
+
+@[expose] public section
 
 /-! # Packing the Pauli register into consecutive field rows -/
 
@@ -79,4 +82,6 @@ theorem marginalBits_runs (x : BinaryInput) :
       marginalBits.code.Runs (encode x) (encode (marginalBits x)) t := marginalBits.computes x
 
 end MIPRE.Introspection.PauliStageProgram
+end
+
 end

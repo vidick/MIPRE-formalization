@@ -15,12 +15,16 @@ bookkeeping: coordinate embeddings `sgl g`, evaluations `ev g`, uniformly bounde
 algebra relating them (`shift_diag`, `shift_sgl`, ...). The vector `sgl 0 Ω` and the
 covariant representation are in `VN/Crossed/Product.lean`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -43,7 +47,9 @@ abbrev L2Q (K : Type*) [NormedAddCommGroup K] [InnerProductSpace ℂ K] : Type _
 (instance search otherwise gives up on this type). -/
 noncomputable instance instCFC_L2Q :
     ContinuousFunctionalCalculus ℝ (L2Q K →L[ℂ] L2Q K) IsSelfAdjoint :=
-  IsSelfAdjoint.instContinuousFunctionalCalculus
+  -- Vendoring compile fix (Mathlib v4.35): the algebra must be named for the `IsSelfAdjoint`
+  -- predicate's `Star` instance to unify. See README.md.
+  IsSelfAdjoint.instContinuousFunctionalCalculus (A := L2Q K →L[ℂ] L2Q K)
 
 /-! ## ℓ² bookkeeping -/
 
@@ -426,3 +432,5 @@ end Crossed
 end VN
 
 end CommutingRepetition
+
+end

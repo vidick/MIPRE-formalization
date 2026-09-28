@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.Interp.Machine
-import MIPRE.TM.Interp.Tape
+module
+public import MIPRE.TM.Interp.Machine
+public import MIPRE.TM.Interp.Tape
+
+@[expose] public section
 
 /-!
 # Runs of the interpreter
@@ -196,3 +199,5 @@ theorem ww_works_of_ne (a : Act) {t t' : WT} (h : t' ≠ t) (s : Option Sym) :
 end Act
 
 end MIPRE.TM.Interp
+
+end

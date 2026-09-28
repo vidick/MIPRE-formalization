@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.StateDistance
+module
+public import MIPRE.Foundations.StateDistance
+
+@[expose] public section
 
 /-! # Approximate commutation controls twirling in the state-dependent norm
 
@@ -81,5 +84,7 @@ theorem unitaryTwirl_outcome_dist_le {X A : Type*} [Fintype X] [Fintype A]
       exact Finset.sum_congr rfl fun u _ => (Finset.mul_sum _ _ _).symm
 
 end MIPRE.Introspection
+
+end
 
 end

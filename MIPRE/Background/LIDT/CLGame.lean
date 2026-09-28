@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Game
-import MIPRE.Foundations.CL.Canonical
+module
+public import MIPRE.Background.LIDT.Game
+public import MIPRE.Foundations.CL.Canonical
+
+@[expose] public section
 
 /-!
 # The seeded CL low individual degree test
@@ -385,5 +388,7 @@ noncomputable def pointPOVMB [NeZero m] {hm : m ∣ Fintype.card F}
   (S.PB.toPOVM (.point u)).map Answer.toValue
 
 end MIPRE.LIDT.CL
+
+end
 
 end

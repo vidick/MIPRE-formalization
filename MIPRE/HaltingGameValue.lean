@@ -31,8 +31,12 @@ halts on the empty input" is `(c.eval 0).Dom`, and computability of the
 reduction is Mathlib's `Computable`.
 -/
 
-import Mathlib.Analysis.Matrix.Order
-import Mathlib.Computability.PartrecCode
+module
+public import Mathlib.Analysis.Matrix.Order
+public import Mathlib.Computability.PartrecCode
+public import MIPRE.Tactics
+
+@[expose] public section
 
 namespace HaltingGameValue
 
@@ -199,3 +203,5 @@ def HaltingReducesToGameValue : Prop :=
       (¬HaltsOnEmptyInput c → gameValue (g c).toGame ≤ 1 / 2)
 
 end HaltingGameValue
+
+end

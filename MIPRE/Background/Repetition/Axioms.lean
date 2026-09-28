@@ -3,12 +3,15 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.Repetition.Commuting
-import MIPRE.Background.Repetition.Entangled
-import MIPRE.Background.Repetition.TracialDensity
-import MIPRE.Background.Repetition.TensorPower
-import MIPRE.Background.Repetition.Soundness
-import MIPRE.Background.Repetition.Verifier
+module
+public import MIPRE.Background.Repetition.Commuting
+public import MIPRE.Background.Repetition.Entangled
+public import MIPRE.Background.Repetition.TracialDensity
+public import MIPRE.Background.Repetition.TensorPower
+public import MIPRE.Background.Repetition.Soundness
+public import MIPRE.Background.Repetition.Verifier
+
+@[expose] public section
 
 /-!
 # Axiom audit for the direct parallel repetition theorems
@@ -107,3 +110,5 @@ info: 'MIPRE.repetition' depends on axioms: [propext, Classical.choice, Quot.sou
 -/
 #guard_msgs in
 #print axioms MIPRE.repetition
+
+end

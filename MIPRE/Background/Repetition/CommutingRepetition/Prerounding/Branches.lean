@@ -39,14 +39,18 @@ Encoding notes (for the fidelity review):
   `CStarLayer` fact, deferred to Stage B. Only algebraic positivity is
   claimed here.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Reveal
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Strategy
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.Arena
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Reveal
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Strategy
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.Arena
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -669,3 +673,5 @@ theorem effectiveHBar_sub_isPosElem (d : RevealDatum n D)
 end TracialStrategy
 
 end CommutingRepetition
+
+end

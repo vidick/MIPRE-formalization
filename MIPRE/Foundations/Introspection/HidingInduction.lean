@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AmbientMixing
-import MIPRE.Foundations.Introspection.HidingTests
+module
+public import MIPRE.Foundations.Introspection.AmbientMixing
+public import MIPRE.Foundations.Introspection.HidingTests
+
+@[expose] public section
 
 /-! # One product-form induction step from the coarse joint measurements
 
@@ -251,5 +254,7 @@ theorem exists_product_stage_of_coarse_tests {J : Type*} [Fintype J]
 end Ambient
 
 end MIPRE.Introspection
+
+end
 
 end

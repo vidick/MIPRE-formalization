@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryNormalize
+module
+public import MIPRE.Foundations.LowDegree.BinaryNormalize
+
+@[expose] public section
 
 /-! # Effective substitution by the Artin–Schreier polynomial -/
 
@@ -46,7 +49,7 @@ theorem polyOfBits_substituteArtinSchreierBits (a : BitStr) :
   rw [polyOfBits_eq_evalBits, evalBits_substituteArtinSchreierBits]
   exact (eval₂_polyOfBits Polynomial.C (X ^ 2 + X) a).symm
 
-private theorem fold_artinSchreierStep_length (l a : BitStr) :
+theorem fold_artinSchreierStep_length (l a : BitStr) :
     (l.foldl artinSchreierStep a).length = a.length + 2 * l.length := by
   induction l generalizing a with
   | nil => simp
@@ -61,11 +64,11 @@ theorem substituteArtinSchreierBits_width (a : BitStr) :
   rw [← List.foldl_reverse, fold_artinSchreierStep_length]
   simp
 
-private noncomputable def artinSchreierStepProg : PolyTimeFun (BitStr × Bool) BitStr :=
+noncomputable def artinSchreierStepProg : PolyTimeFun (BitStr × Bool) BitStr :=
   cons snd (xorBitsProg.comp ((cons (const false) fst).pair
     (append.comp (fst.pair (const [false])))))
 
-private theorem artinSchreierStep_bounded : FoldBounded artinSchreierStepProg (12 * X + 1) := by
+theorem artinSchreierStep_bounded : FoldBounded artinSchreierStepProg (12 * X + 1) := by
   intro l s pre post h
   change esize (pre.foldl artinSchreierStep s) ≤ _
   have hw := fold_artinSchreierStep_length pre s
@@ -90,3 +93,5 @@ noncomputable def substituteArtinSchreierBitsProg : PolyTimeFun BitStr BitStr :=
     substituteArtinSchreierBitsProg a = substituteArtinSchreierBits a := rfl
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

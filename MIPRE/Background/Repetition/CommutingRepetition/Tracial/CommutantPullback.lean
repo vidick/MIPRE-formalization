@@ -23,14 +23,18 @@ strategy lives in `vnModel M` with density `L(σ)`, Alice's effects `L(E)` and
 Bob's effects `J G J`. No bicommutant theorem is used. Infrastructure only;
 no manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.ConcreteVN
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Strategy
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.ConcreteVN
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Strategy
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -260,3 +264,5 @@ theorem pullback_correlation : q.pullback.correlation = q.toCorrelation := by
 end TraciallyEmbeddableCorrelation
 
 end CommutingRepetition
+
+end

@@ -13,13 +13,17 @@ construction of `Resolver/BlockArena.lean` can be imported here); this file
 keeps the frozen existence statement `resolver_arena` and proves it from that
 construction.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.ArenaDef
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.BlockArena
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.ArenaDef
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.BlockArena
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -53,3 +57,5 @@ theorem resolver_arena (M : StdTracialAlgebra.{0})
     (Classical.arbitrary A) (Classical.arbitrary B) (fun i a => hA i a) (fun j b => hB j b)⟩
 
 end CommutingRepetition
+
+end

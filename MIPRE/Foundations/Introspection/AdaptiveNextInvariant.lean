@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveNextFactor
+module
+public import MIPRE.Foundations.Introspection.AdaptiveNextFactor
+
+@[expose] public section
 
 /-! # Closing the next-prefix measurement invariant
 
@@ -187,4 +190,6 @@ theorem nextPrefixJoint_isPVM (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
   rwa [he] at h
 
 end MIPRE.Introspection
+end
+
 end

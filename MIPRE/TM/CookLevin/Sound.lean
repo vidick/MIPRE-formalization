@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.Correct
+module
+public import MIPRE.TM.CookLevin.Correct
+
+@[expose] public section
 
 /-!
 # Soundness of the Cook–Levin tableau
@@ -762,3 +765,5 @@ theorem tableau_sat_iff (hchk : IsCheckCircuit M acc chk) (hC : chk.RefsLt) (hin
 end Iff
 
 end MIPRE.TM.CookLevin
+
+end

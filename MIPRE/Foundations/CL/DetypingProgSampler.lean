@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingProgBranches
-import MIPRE.Foundations.CL.DetypingProgQueries
+module
+public import MIPRE.Foundations.CL.DetypingProgBranches
+public import MIPRE.Foundations.CL.DetypingProgQueries
+
+@[expose] public section
 
 /-! # The actual detyping sampler
 
@@ -30,12 +33,12 @@ theorem samplerProg_halts (n : ℕ) (q : Data) :
     Halts (samplerProg E S) (.cons (encode n) q) :=
   Prog.routeOneCall_halts _ S.closed _ n q (S.halts n) (route_preserves E n q)
 
-private theorem run_direct (n : ℕ) (q : Sampler.Query) (out : BitStr)
+theorem run_direct (n : ℕ) (q : Sampler.Query) (out : BitStr)
     (h : route E (encode (n, q)) = directResult out) :
     ∃ time, (samplerProg E S).Runs (encode (n, q)) (encode out) time :=
   Prog.routeOneCall_direct _ _ _ _ _ h
 
-private theorem run_call (n : ℕ) (q : Sampler.Query) (sub : TypedSampler.Query T)
+theorem run_call (n : ℕ) (q : Sampler.Query) (sub : TypedSampler.Query T)
     (preBits out : BitStr) (time : ℕ)
     (h : route E (encode (n, q)) = callResult (encode (n, sub)) (withPrefix preBits))
     (hr : S.prog.Runs (encode (n, sub)) (encode out) time) :
@@ -171,3 +174,5 @@ theorem sampler_dim (hℓ : 0 < ℓ) (n : ℕ) :
   omega
 
 end MIPRE.CL.Detyping
+
+end

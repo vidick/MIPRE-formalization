@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.Code.Encoding.Nat
-import MIPRE.TM.Code.WellFormed
+module
+public import MIPRE.TM.Code.Encoding.Nat
+public import MIPRE.TM.Code.WellFormed
+
+@[expose] public section
 
 /-!
 # Binary serialization of machine codes
@@ -497,3 +500,5 @@ theorem encodeCode_injective {i : ℕ} : Function.Injective (encodeCode (i := i)
   simpa using ha.symm
 
 end Turing
+
+end

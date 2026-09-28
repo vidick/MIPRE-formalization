@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.FrobeniusAction
+module
+public import MIPRE.Foundations.SAT.FrobeniusAction
+
+@[expose] public section
 
 /-! # A normal element from primitive Frobenius projections -/
 
@@ -158,5 +161,7 @@ theorem shoupNormalBasis_normal (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd 
   simp
 
 end MIPRE.SAT
+
+end
 
 end

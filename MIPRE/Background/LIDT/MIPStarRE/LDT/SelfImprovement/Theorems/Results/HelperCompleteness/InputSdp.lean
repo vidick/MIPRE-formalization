@@ -5,12 +5,15 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/HelperCompleteness/InputSdp.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Defs.Families
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.DataProcessing
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Statements
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.CommonHelpers
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Defs.Families
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.DataProcessing
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Statements
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.CommonHelpers
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -78,7 +81,7 @@ theorem input_consistency_match_mass_lower_bound
 This is the finite fiber decomposition used in the input-mass SDP bridge. The
 lemma keeps the `Finset.sum_fiberwise` invocation separate from the tensor
 algebra in `input_match_mass_eq_sdp_overlap`. -/
-private lemma input_sdp_overlap_fiberwise_sum_eq
+lemma input_sdp_overlap_fiberwise_sum_eq
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -102,7 +105,7 @@ private lemma input_sdp_overlap_fiberwise_sum_eq
 
 /-- The bracketed fiber expression is exactly the bipartite matching mass of
 the point measurement against the polynomial measurement evaluated at `u`. -/
-private lemma input_sdp_bracketed_sum_eq_match_mass
+lemma input_sdp_bracketed_sum_eq_match_mass
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
@@ -332,3 +335,5 @@ theorem sdp_complementary_slackness_sum_eq_dual_mass
     _ = ev strategy.state (leftTensor (ι₂ := ι) Z) := by
         rw [hT_total, Matrix.one_mul]
 end MIPStarRE.LDT.SelfImprovement
+
+end

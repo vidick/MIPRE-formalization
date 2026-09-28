@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.SAT.Formula
+module
+public import MIPRE.Foundations.SAT.Formula
+
+@[expose] public section
 
 /-!
 # Every Boolean function has a circuit
@@ -79,3 +82,5 @@ theorem exists_circuit (N : ℕ) (f : (Fin N → Bool) → Bool) :
 end Fml
 
 end MIPRE.SAT
+
+end

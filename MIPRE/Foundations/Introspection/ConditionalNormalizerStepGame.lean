@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ConditionalNormalizerStepAux
-import MIPRE.Foundations.Introspection.HidingNormalizer
-import MIPRE.Foundations.Introspection.HidingNormalizerPrefix
+module
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerStepAux
+public import MIPRE.Foundations.Introspection.HidingNormalizer
+public import MIPRE.Foundations.Introspection.HidingNormalizerPrefix
+
+@[expose] public section
 
 /-! # A concrete adjacent hiding rigidity step in the actual parsed game
 
@@ -89,3 +92,5 @@ theorem hiding_next_register_rigidity
   exact hs.trans_eq (by ring)
 
 end MIPRE.Introspection.TypedEstimates
+
+end

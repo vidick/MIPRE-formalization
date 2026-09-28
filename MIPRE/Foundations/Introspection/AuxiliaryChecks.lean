@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SamplingPrefix
-import MIPRE.Foundations.Introspection.RegisterCoordinates
-import MIPRE.Foundations.Introspection.Types
+module
+public import MIPRE.Foundations.Introspection.SamplingPrefix
+public import MIPRE.Foundations.Introspection.RegisterCoordinates
+public import MIPRE.Foundations.Introspection.Types
+
+@[expose] public section
 
 /-! # The concrete auxiliary introspection checks
 
@@ -138,5 +141,7 @@ theorem hidingNext_coarse {P : CL.CLFun F ι ℓ} {k : ℕ}
 end CLChecks
 
 end MIPRE.Introspection
+
+end
 
 end

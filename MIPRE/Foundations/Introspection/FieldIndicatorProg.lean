@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.NormalElementProg
-import MIPRE.Foundations.SAT.TraceGram
-import MIPRE.Foundations.LowDegree.Anticomm
+module
+public import MIPRE.Foundations.SAT.NormalElementProg
+public import MIPRE.Foundations.SAT.TraceGram
+public import MIPRE.Foundations.LowDegree.Anticomm
+
+@[expose] public section
 
 /-! # Executable multilinear indicator weights
 
@@ -89,4 +92,6 @@ theorem indicatorProg_runs (input : Unary × List (BitStr × Bool)) :
   indicatorProg.computes input
 
 end MIPRE.Introspection.FieldIndicatorProgram
+end
+
 end

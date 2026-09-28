@@ -19,12 +19,16 @@ commutant after adding the deficit `1 − e′` (the projection onto the cyclic
 subspace of `ι σ`) to one outcome. The assembly theorem
 `exists_traciallyEmbeddable` packages everything. Proof-side infrastructure.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.TracialGNS
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.TracialGNS
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -348,3 +352,5 @@ end Sum
 end Density
 
 end CommutingRepetition
+
+end

@@ -5,10 +5,13 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/SelfImprovementTop/Completeness.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.DataProcessing
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Statements
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.DataProcessing
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Statements
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -67,7 +70,7 @@ Paper anchors:
   and the orthonormalization SDD bound.
 -/
 
-private lemma idx_sub_meas_mass_uniform_unit_const_sub_meas_family_lift_left
+lemma idx_sub_meas_mass_uniform_unit_const_sub_meas_family_lift_left
     {α : Type*} [Fintype α]
     (ψ : QuantumState (ι × ι)) (A : SubMeas α ι) :
     idxSubMeasMass ψ (uniformDistribution Unit)
@@ -273,3 +276,5 @@ theorem final_fields_completeness_of_helper_completeness_of_small_errors
 
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

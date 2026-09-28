@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveInductionStep
-import MIPRE.Foundations.Introspection.AdaptiveIterationBudget
+module
+public import MIPRE.Foundations.Introspection.AdaptiveInductionStep
+public import MIPRE.Foundations.Introspection.AdaptiveIterationBudget
+
+@[expose] public section
 
 /-! # Finite iteration of the actual Alice Introspect replacement
 
@@ -199,4 +202,6 @@ theorem exists_intro_iteration
 
 end TypedEstimates
 end MIPRE.Introspection
+end
+
 end

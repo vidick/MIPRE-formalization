@@ -5,10 +5,13 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/Transport/FullSlice/Averages.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.EvaluatedSliceCommutation.Averages
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Scaffold.Products
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.Pullback
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.PolynomialAgreement
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.EvaluatedSliceCommutation.Averages
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Scaffold.Products
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.Pullback
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.PolynomialAgreement
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -338,7 +341,7 @@ noncomputable def xEvaluatedFullSliceABABtensorAvg
             rightTensor (ι₁ := ι) (B.outcome ah.2)))
 
 /-- Reindex mixed x-evaluated data `(u, x, y)` as `(appendPoint u x, y)`. -/
-private def xEvaluatedQuestionPointNextEquiv
+def xEvaluatedQuestionPointNextEquiv
     (params : Parameters) [FieldModel params.q] :
     Point params × FullSliceQuestion params ≃ Point params.next × Fq params where
   toFun := fun ux => (appendPoint params ux.1 ux.2.1, ux.2.2)
@@ -420,3 +423,5 @@ def evaluatedSliceQuestionYDataEquiv
       (truncatePoint_appendPoint params v y)
 
 end MIPStarRE.LDT.Commutativity
+
+end

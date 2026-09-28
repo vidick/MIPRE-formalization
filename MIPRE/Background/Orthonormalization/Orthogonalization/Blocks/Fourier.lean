@@ -27,14 +27,18 @@ Theorem 1.4 (`pvm_almost_commute_finDim`, applied with the PVM of `v` in the
 perturbed slot) into those of Corollary 1.5. Finite-dimensionality enters
 only through Theorem 1.4.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.Basic
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Corollaries
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.StateOnM
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Basic
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Corollaries
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.StateOnM
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization
 open scoped BigOperators ComplexOrder
@@ -643,3 +647,5 @@ theorem almost_commuting_unitaries_finDim (M : VonNeumannAlgebra H) (φ : Normal
     exact hclose
 
 end Orthogonalization
+
+end

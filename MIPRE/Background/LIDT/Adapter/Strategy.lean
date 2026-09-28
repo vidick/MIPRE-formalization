@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Adapter.Geometry
-import MIPRE.Background.LIDT.Adapter.Reparam
-import MIPRE.Background.LIDT.Adapter.Seeds
-import MIPRE.Foundations.GameAdapt
+module
+public import MIPRE.Background.LIDT.Adapter.Geometry
+public import MIPRE.Background.LIDT.Adapter.Reparam
+public import MIPRE.Background.LIDT.Adapter.Seeds
+public import MIPRE.Foundations.GameAdapt
+
+@[expose] public section
 
 /-!
 # The seeded-CL adapter, part 4: the question and answer maps
@@ -589,3 +592,5 @@ theorem hD_qmap (hc : c ≠ 0) (x' y' : Question F m) (hμ : (lidtGame F m d).μ
       exact hD_diag' hm σ hc u j v a b hacc
 
 end MIPRE.LIDT.Adapter
+
+end

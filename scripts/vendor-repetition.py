@@ -53,9 +53,15 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from modularize import modularize_tree  # noqa: E402
+
 DEST_ROOT = Path("MIPRE/Background/Repetition")
 
 BEGIN_MARK = "<!-- BEGIN GENERATED (scripts/vendor-repetition.py) -->"
+MODULE_NOTE = ("- Module system: {n} files given the `module` header, `public import`s, an "
+               "`@[expose] public section` and no `private` definitions by "
+               "`scripts/modularize.py` (Palomar requires it; `planning/palomar.md`)")
 END_MARK = "<!-- END GENERATED -->"
 
 # The vendored commuting-repetition modules imported by the bridge in
@@ -91,6 +97,301 @@ theorem exists_proofSchmidtDecomposition
 """
 
 
+CR_FIX_PROD_LE_ONE_OLD = """    Finset.prod_le_one
+      (fun i _ => G.payoff_nonneg (xs i) (ys i) (as i) (bs i))
+      (fun i _ => G.payoff_le_one (xs i) (ys i) (as i) (bs i))
+"""
+
+CR_FIX_PROD_LE_ONE_NEW = """    -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one` lost its nonnegativity
+    -- hypothesis; the version with it is `Finset.prod_le_one₀`. See README.md.
+    Finset.prod_le_one₀
+      (fun i _ => G.payoff_nonneg (xs i) (ys i) (as i) (bs i))
+      (fun i _ => G.payoff_le_one (xs i) (ys i) (as i) (bs i))
+"""
+
+CR_FIX_MONOTONE_OLD = """          mul_le_mul_of_nonneg_left
+            (Finset.prod_le_one
+              (fun j _ => G.payoff_nonneg _ _ _ _)
+              (fun j _ => G.payoff_le_one _ _ _ _))
+"""
+
+CR_FIX_MONOTONE_NEW = """          -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one₀` is the version with
+          -- the nonnegativity hypothesis. See README.md.
+          mul_le_mul_of_nonneg_left
+            (Finset.prod_le_one₀
+              (fun j _ => G.payoff_nonneg _ _ _ _)
+              (fun j _ => G.payoff_le_one _ _ _ _))
+"""
+
+CR_FIX_SCALAR_OLD = """      exact Finset.prod_le_one hfmem hfmem1
+"""
+
+CR_FIX_SCALAR_NEW = """      -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one₀` is the version with
+      -- the nonnegativity hypothesis. See README.md.
+      exact Finset.prod_le_one₀ hfmem hfmem1
+"""
+
+CR_FIX_CSTAR_CONT1_OLD = """      · exact M.continuous_traceState.comp (continuous_mul_right _)
+      · exact M.continuous_traceState.comp (continuous_mul_left _)
+"""
+
+CR_FIX_CSTAR_CONT1_NEW = """      -- Vendoring compile fix (Mathlib v4.35): `continuous_mul_right`/`_left` are now
+      -- `continuous_mul_const`/`continuous_const_mul`. See README.md.
+      · exact M.continuous_traceState.comp (continuous_mul_const _)
+      · exact M.continuous_traceState.comp (continuous_const_mul _)
+"""
+
+CR_FIX_CSTAR_CONT2_OLD = """    · exact M.continuous_traceState.comp (continuous_mul_left _)
+    · exact M.continuous_traceState.comp (continuous_mul_right _)
+"""
+
+CR_FIX_CSTAR_CONT2_NEW = """    -- Vendoring compile fix (Mathlib v4.35): `continuous_mul_left`/`_right` are now
+    -- `continuous_const_mul`/`continuous_mul_const`. See README.md.
+    · exact M.continuous_traceState.comp (continuous_const_mul _)
+    · exact M.continuous_traceState.comp (continuous_mul_const _)
+"""
+
+CR_FIX_CSTAR_NORM_OLD = """    exact IsSelfAdjoint.le_algebraMap_norm_self hYsa
+"""
+
+CR_FIX_CSTAR_NORM_NEW = """    -- Vendoring compile fix (Mathlib v4.35): `IsSelfAdjoint.le_algebraMap_norm_self` takes
+    -- the element explicitly. See README.md.
+    exact IsSelfAdjoint.le_algebraMap_norm_self Y hYsa
+"""
+
+CR_FIX_CLOSED_OLD = """  have hp := (ContinuousLinearMap.nonneg_iff_isPositive T).mp h0
+"""
+
+CR_FIX_CLOSED_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `nonneg_iff_isPositive` takes its operator
+  -- implicitly. See README.md.
+  have hp := ContinuousLinearMap.nonneg_iff_isPositive.mp h0
+"""
+
+OR_FIX_JOINT1_OLD = """  have hp := (ContinuousLinearMap.nonneg_iff_isPositive x).mp h
+"""
+
+OR_FIX_JOINT1_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `nonneg_iff_isPositive` takes its operator
+  -- implicitly. See README.md.
+  have hp := ContinuousLinearMap.nonneg_iff_isPositive.mp h
+"""
+
+OR_FIX_JOINT2_OLD = """  have hp := (ContinuousLinearMap.le_def x 1).mp h
+"""
+
+OR_FIX_JOINT2_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `le_def` takes its operators implicitly.
+  -- See README.md.
+  have hp := ContinuousLinearMap.le_def.mp h
+"""
+
+OR_FIX_PERTURB_OLD = """  have h := conj_le_conj (IsSelfAdjoint.le_algebraMap_norm_self hb) r
+"""
+
+OR_FIX_PERTURB_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `IsSelfAdjoint.le_algebraMap_norm_self` takes
+  -- the element explicitly. See README.md.
+  have h := conj_le_conj (IsSelfAdjoint.le_algebraMap_norm_self b hb) r
+"""
+
+TP_FIX_NONNEG_OLD = """    (ContinuousLinearMap.nonneg_iff_isPositive _).mpr h_positive
+  apply (CStarAlgebra.norm_le_one_iff_of_nonneg _ h_nonneg).mpr
+  exact (ContinuousLinearMap.le_def _ _).mpr
+"""
+
+TP_FIX_NONNEG_NEW = """    -- Vendoring compile fix (Mathlib v4.35): `nonneg_iff_isPositive` and `le_def` take
+    -- their operators implicitly. See README.md.
+    ContinuousLinearMap.nonneg_iff_isPositive.mpr h_positive
+  apply (CStarAlgebra.norm_le_one_iff_of_nonneg _ h_nonneg).mpr
+  exact ContinuousLinearMap.le_def.mpr
+"""
+
+TP_FIX_MULVEC_OLD = """  apply (hA.dotProduct_mulVec_zero_iff x).mp
+"""
+
+TP_FIX_MULVEC_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `dotProduct_mulVec_zero_iff` takes the vector
+  -- implicitly. See README.md.
+  apply hA.dotProduct_mulVec_zero_iff.mp
+"""
+
+TP_FIX_PROD_A_OLD = """  unfold fullHistoryHiddenAliceWeight
+  rw [← Fintype.prod_sum]
+  apply Finset.prod_le_one
+"""
+
+TP_FIX_PROD_A_NEW = """  unfold fullHistoryHiddenAliceWeight
+  rw [← Fintype.prod_sum]
+  -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one₀` is the version with the
+  -- nonnegativity hypothesis. See README.md.
+  apply Finset.prod_le_one₀
+"""
+
+TP_FIX_PROD_B_OLD = """  unfold fullHistoryHiddenBobWeight
+  rw [← Fintype.prod_sum]
+  apply Finset.prod_le_one
+"""
+
+TP_FIX_PROD_B_NEW = """  unfold fullHistoryHiddenBobWeight
+  rw [← Fintype.prod_sum]
+  -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one₀` is the version with the
+  -- nonnegativity hypothesis. See README.md.
+  apply Finset.prod_le_one₀
+"""
+
+OR_FIX_POSITIVE_OLD = """      ((nonneg_iff_isPositive s).mp hs0)
+"""
+
+OR_FIX_POSITIVE_NEW = """      -- Vendoring compile fix (Mathlib v4.35): `nonneg_iff_isPositive` takes its operator
+      -- implicitly. See README.md.
+      (nonneg_iff_isPositive.mp hs0)
+"""
+
+
+CR_FIX_SUBMODEL_OLD = """    exact IsSelfAdjoint.le_algebraMap_norm_self hYsa
+"""
+
+CR_FIX_SUBMODEL_NEW = """    -- Vendoring compile fix (Mathlib v4.35): `IsSelfAdjoint.le_algebraMap_norm_self` takes
+    -- the element explicitly; dot notation supplies it. See README.md.
+    exact hYsa.le_algebraMap_norm_self
+"""
+
+CR_FIX_CFC_OLD = """    ContinuousFunctionalCalculus ℝ (L2Q K →L[ℂ] L2Q K) IsSelfAdjoint :=
+  IsSelfAdjoint.instContinuousFunctionalCalculus
+"""
+
+CR_FIX_CFC_NEW = """    ContinuousFunctionalCalculus ℝ (L2Q K →L[ℂ] L2Q K) IsSelfAdjoint :=
+  -- Vendoring compile fix (Mathlib v4.35): the algebra must be named for the `IsSelfAdjoint`
+  -- predicate's `Star` instance to unify. See README.md.
+  IsSelfAdjoint.instContinuousFunctionalCalculus (A := L2Q K →L[ℂ] L2Q K)
+"""
+
+CR_FIX_ARENA_A_OLD = """include hxA in
+theorem Ame_isPos (i : I) (a : A) : IsPosElem (lft M (Ame M h kA xA hxA i a)) := by
+"""
+
+CR_FIX_ARENA_A_NEW = """include hxA in
+-- Vendoring compile fix (Mathlib v4.35): the `map_sum` step of this proof exceeds the default
+-- heartbeat budget (its instance search unfolds the arena's algebra); it elaborates within
+-- a larger one. See README.md.
+set_option maxHeartbeats 1600000 in
+theorem Ame_isPos (i : I) (a : A) : IsPosElem (lft M (Ame M h kA xA hxA i a)) := by
+"""
+
+CR_FIX_ARENA_B_OLD = """include hyB in
+theorem Bme_isPos (j : J) (b : B) : IsPosElem (lft M (Bme M h kB yB hyB j b)) := by
+"""
+
+CR_FIX_ARENA_B_NEW = """include hyB in
+-- Vendoring compile fix (Mathlib v4.35): as for `Ame_isPos`. See README.md.
+set_option maxHeartbeats 1600000 in
+theorem Bme_isPos (j : J) (b : B) : IsPosElem (lft M (Bme M h kB yB hyB j b)) := by
+"""
+
+CR_FIX_AMP_OLD = """  rw [sub_eq_add_neg, amp_add, ← neg_one_smul ℂ z, amp_smul, neg_one_smul, sub_eq_add_neg]
+"""
+
+CR_FIX_AMP_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `neg_one_smul` needs its module element named to
+  -- unify with the scalar action `amp_smul` produces. See README.md.
+  rw [sub_eq_add_neg, amp_add, ← neg_one_smul ℂ z, amp_smul, neg_one_smul ℂ (amp z),
+    sub_eq_add_neg]
+"""
+
+CR_FIX_PROB_OLD = """  Measure.isProbabilityMeasure_map (measurable_ψψ).aemeasurable
+"""
+
+CR_FIX_PROB_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `Measure.isProbabilityMeasure_map` became the
+  -- equivalence `isProbabilityMeasure_map_iff`. See README.md.
+  (Measure.isProbabilityMeasure_map_iff (measurable_ψψ).aemeasurable).mpr inferInstance
+"""
+
+# Mathlib v4.35: on `H →L[ℂ] H` the `Star` instance is `⟨adjoint⟩` (`instStarId`), and the
+# `Star` of a `StarSubalgebra` of it is `StarMemClass.instStar`; the generic `star_sub`,
+# `star_add` and `star_zero` are stated for the `StarAddMonoid`-derived instance, which
+# `rw`/`simp` no longer identify with these (the unfolding times out). Applying the lemma to
+# its explicit arguments (or going through `adjoint`) resolves the instance before matching.
+CR_FIX_BUDGET_A_OLD = """  rw [star_sub, sub_mul, mul_sub, mul_sub, star_cA_mul_cA, star_cA_mul_cA, star_cA_mul_cA,
+    star_cA_mul_cA]
+"""
+
+CR_FIX_BUDGET_A_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `star_sub` applied to its arguments, so that the
+  -- `Star` instance of the corner algebra is resolved before the rewrite. See README.md.
+  rw [star_sub (cA M h i) (cA M h i'), sub_mul, mul_sub, mul_sub, star_cA_mul_cA,
+    star_cA_mul_cA, star_cA_mul_cA, star_cA_mul_cA]
+"""
+
+CR_FIX_BUDGET_B_OLD = """  rw [star_sub, sub_mul, mul_sub, mul_sub, dB_mul_star_dB, dB_mul_star_dB, dB_mul_star_dB,
+    dB_mul_star_dB]
+"""
+
+CR_FIX_BUDGET_B_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `star_sub` applied to its arguments (as above).
+  -- See README.md.
+  rw [star_sub (dB M h j) (dB M h j'), sub_mul, mul_sub, mul_sub, dB_mul_star_dB,
+    dB_mul_star_dB, dB_mul_star_dB, dB_mul_star_dB]
+"""
+
+CR_FIX_MODULAR_A_OLD = """    · rw [star_zero]; exact zero_mem _
+    · intro x y _ _ hx hy; rw [star_add]; exact add_mem hx hy
+"""
+
+CR_FIX_MODULAR_A_NEW = """    -- Vendoring compile fix (Mathlib v4.35): `star` on `B(ℓ²(ℚ, K))` is `adjoint`, and the
+    -- generic `star_zero`/`star_add` no longer rewrite it unapplied. See README.md.
+    · rw [ContinuousLinearMap.star_eq_adjoint, map_zero]; exact zero_mem _
+    · intro x y _ _ hx hy; rw [star_add x y]; exact add_mem hx hy
+"""
+
+CR_FIX_MODULAR_B_OLD = """  · simp only [_root_.zero_apply, map_zero, star_zero]
+  · intro x y _ _ hx hy
+    simp only [_root_.add_apply, map_add, star_add, hx, hy]
+"""
+
+CR_FIX_MODULAR_B_NEW = """  -- Vendoring compile fix (Mathlib v4.35): as in `spanAlg`, `star 0` through `adjoint` and
+  -- `star_add` applied to its arguments. See README.md.
+  · simp only [_root_.zero_apply, map_zero, ContinuousLinearMap.star_eq_adjoint]
+  · intro x y _ _ hx hy
+    rw [star_add x y]
+    simp only [_root_.add_apply, map_add, hx, hy]
+"""
+
+CR_FIX_PHI_ZERO_OLD = """  have := Phi_smul M Ω n 0 (0 : L2Q K →L[ℂ] L2Q K)
+  simpa using this
+"""
+
+CR_FIX_PHI_ZERO_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `simp` no longer sees `zero_smul`/`smul_zero`
+  -- through the `SMul` instance of `B(ℓ²(ℚ, K))` (`ContinuousLinearMap.instSMul`), so
+  -- `Phi 0 = 0` is read off additivity instead. See README.md.
+  have := Phi_add M Ω n (0 : L2Q K →L[ℂ] L2Q K) 0
+  rw [add_zero] at this
+  exact add_left_cancel (this.symm.trans (add_zero _).symm)
+"""
+
+CR_FIX_SUCCESS_OLD = """  Finset.prod_le_one (fun j _ => G.payoff_nonneg _ _ _ _) (fun j _ => G.payoff_le_one _ _ _ _)
+"""
+
+CR_FIX_SUCCESS_NEW = """  -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one₀` is the version with the
+  -- nonnegativity hypothesis. See README.md.
+  Finset.prod_le_one₀ (fun j _ => G.payoff_nonneg _ _ _ _) (fun j _ => G.payoff_le_one _ _ _ _)
+"""
+
+
+@dataclass(frozen=True)
+class PatternFix:
+    """A recorded compile fix applied to every vendored Lean file of a source: each match of
+    ``pattern`` (a regular expression, matched with ``re.DOTALL``) is replaced by ``repl``.
+    Unlike ``Fix`` it may match any number of times, including zero, and no comment is
+    inserted at the sites; the README lists the pattern and the count."""
+
+    pattern: str
+    repl: str
+    reason: str
+
+
+# Mathlib v4.35 made the operator of `ContinuousLinearMap.nonneg_iff_isPositive` implicit;
+# upstream passes it explicitly (`_`, or a name) at many sites.
+NONNEG_IMPLICIT = PatternFix(
+    pattern=r"\(\s*ContinuousLinearMap\.nonneg_iff_isPositive\s+(?:_|[A-Za-z][\w.']*)\s*\)",
+    repl="ContinuousLinearMap.nonneg_iff_isPositive",
+    reason="Mathlib v4.35: the operator of `ContinuousLinearMap.nonneg_iff_isPositive` is "
+           "implicit; the explicit argument is dropped",
+)
+
+
 @dataclass
 class Source:
     key: str
@@ -110,6 +411,7 @@ class Source:
     audit_aids: tuple[tuple[str, str], ...] = ()    # (relative to clone, dest name)
     readme: str = ""
     fixes: tuple[Fix, ...] = ()
+    pattern_fixes: tuple[PatternFix, ...] = ()
     header: str = ""
 
 
@@ -297,6 +599,58 @@ SOURCES = {
         roots=CR_ROOTS,
         extra_files=(("lean/NOTICE", "NOTICE"),),
         readme=CR_README,
+        fixes=(
+            Fix(path="Game/Basic.lean", old=CR_FIX_PROD_LE_ONE_OLD, new=CR_FIX_PROD_LE_ONE_NEW,
+                reason="Mathlib v4.35 `Finset.prod_le_one₀`: `Game.repeat`"),
+            Fix(path="Statement.lean", old=CR_FIX_PROD_LE_ONE_OLD, new=CR_FIX_PROD_LE_ONE_NEW,
+                reason="Mathlib v4.35 `Finset.prod_le_one₀`: `MainStatement.Game.repeat`"),
+            Fix(path="Prelim/Scalar.lean", old=CR_FIX_SCALAR_OLD, new=CR_FIX_SCALAR_NEW,
+                reason="Mathlib v4.35 `Finset.prod_le_one₀`: the product telescoping bound"),
+            Fix(path="Game/Monotone.lean", old=CR_FIX_MONOTONE_OLD, new=CR_FIX_MONOTONE_NEW,
+                reason="Mathlib v4.35 `Finset.prod_le_one₀`: the monotonicity bound"),
+            Fix(path="Tracial/CStarLayer.lean", old=CR_FIX_CSTAR_CONT1_OLD,
+                new=CR_FIX_CSTAR_CONT1_NEW,
+                reason="Mathlib v4.35 `continuous_mul_const`/`continuous_const_mul` (1)"),
+            Fix(path="Tracial/CStarLayer.lean", old=CR_FIX_CSTAR_CONT2_OLD,
+                new=CR_FIX_CSTAR_CONT2_NEW,
+                reason="Mathlib v4.35 `continuous_mul_const`/`continuous_const_mul` (2)"),
+            Fix(path="Tracial/CStarLayer.lean", old=CR_FIX_CSTAR_NORM_OLD,
+                new=CR_FIX_CSTAR_NORM_NEW,
+                reason="Mathlib v4.35 `IsSelfAdjoint.le_algebraMap_norm_self` explicit element"),
+            Fix(path="Tracial/Density/ClosedSubalg.lean", old=CR_FIX_CLOSED_OLD,
+                new=CR_FIX_CLOSED_NEW,
+                reason="Mathlib v4.35 `nonneg_iff_isPositive` implicit argument"),
+            Fix(path="VN/SubModel.lean", old=CR_FIX_SUBMODEL_OLD, new=CR_FIX_SUBMODEL_NEW,
+                reason="Mathlib v4.35 `IsSelfAdjoint.le_algebraMap_norm_self` explicit element"),
+            Fix(path="Prerounding/Success.lean", old=CR_FIX_SUCCESS_OLD, new=CR_FIX_SUCCESS_NEW,
+                reason="Mathlib v4.35 `Finset.prod_le_one₀`: the success probability bound"),
+            Fix(path="VN/Crossed/Space.lean", old=CR_FIX_CFC_OLD, new=CR_FIX_CFC_NEW,
+                reason="Mathlib v4.35: the shortcut CFC instance on `B(ℓ²(ℚ, K))` names its algebra"),
+            Fix(path="Resolver/EntropicArena.lean", old=CR_FIX_ARENA_A_OLD, new=CR_FIX_ARENA_A_NEW,
+                reason="Mathlib v4.35: heartbeat budget of `Ame_isPos`"),
+            Fix(path="Resolver/EntropicArena.lean", old=CR_FIX_ARENA_B_OLD, new=CR_FIX_ARENA_B_NEW,
+                reason="Mathlib v4.35: heartbeat budget of `Bme_isPos`"),
+            Fix(path="VN/Crossed/AmpCalc.lean", old=CR_FIX_AMP_OLD, new=CR_FIX_AMP_NEW,
+                reason="Mathlib v4.35: `neg_one_smul` with its element named (`amp_sub`)"),
+            Fix(path="VN/JointModulus.lean", old=CR_FIX_PROB_OLD, new=CR_FIX_PROB_NEW,
+                reason="Mathlib v4.35: `Measure.isProbabilityMeasure_map_iff`"),
+            Fix(path="Resolver/EntropicArenaBudget.lean", old=CR_FIX_BUDGET_A_OLD,
+                new=CR_FIX_BUDGET_A_NEW,
+                reason="Mathlib v4.35: `star_sub` with its arguments (`star_diffA_mul_diffA`)"),
+            Fix(path="Resolver/EntropicArenaBudget.lean", old=CR_FIX_BUDGET_B_OLD,
+                new=CR_FIX_BUDGET_B_NEW,
+                reason="Mathlib v4.35: `star_sub` with its arguments (`diffB_mul_star_diffB`)"),
+            Fix(path="VN/Crossed/Modular.lean", old=CR_FIX_MODULAR_A_OLD,
+                new=CR_FIX_MODULAR_A_NEW,
+                reason="Mathlib v4.35: `star` of `B(ℓ²(ℚ, K))` in `spanAlg.star_mem'`"),
+            Fix(path="VN/Crossed/Modular.lean", old=CR_FIX_MODULAR_B_OLD,
+                new=CR_FIX_MODULAR_B_NEW,
+                reason="Mathlib v4.35: `star` of `B(ℓ²(ℚ, K))` in `Th_Jh_spanAlg`"),
+            Fix(path="Tracial/Density/CrossedTracial.lean", old=CR_FIX_PHI_ZERO_OLD,
+                new=CR_FIX_PHI_ZERO_NEW,
+                reason="Mathlib v4.35: `Phi_zero` from additivity (the `SMul` instance)"),
+        ),
+        pattern_fixes=(NONNEG_IMPLICIT,),
     ),
     "tp": Source(
         key="tp",
@@ -318,6 +672,18 @@ SOURCES = {
                 new=TP_FIX_SCHMIDT_NEW,
                 reason="Lean v4.33 transparency check: `exists_proofSchmidtDecomposition`",
             ),
+            Fix(path="QuantumParallelRepetition.lean", old=TP_FIX_NONNEG_OLD,
+                new=TP_FIX_NONNEG_NEW,
+                reason="Mathlib v4.35 `nonneg_iff_isPositive`/`le_def` implicit arguments"),
+            Fix(path="QuantumParallelRepetition.lean", old=TP_FIX_MULVEC_OLD,
+                new=TP_FIX_MULVEC_NEW,
+                reason="Mathlib v4.35 `dotProduct_mulVec_zero_iff` implicit vector"),
+            Fix(path="QuantumParallelRepetition.lean", old=TP_FIX_PROD_A_OLD,
+                new=TP_FIX_PROD_A_NEW,
+                reason="Mathlib v4.35 `Finset.prod_le_one₀`: the hidden Alice weight"),
+            Fix(path="QuantumParallelRepetition.lean", old=TP_FIX_PROD_B_OLD,
+                new=TP_FIX_PROD_B_NEW,
+                reason="Mathlib v4.35 `Finset.prod_le_one₀`: the hidden Bob weight"),
         ),
     ),
     "or": Source(
@@ -333,8 +699,73 @@ SOURCES = {
         extra_prefixes=(("CommutingRepetition",
                          "MIPRE.Background.Repetition.CommutingRepetition"),),
         readme=OR_README,
+        fixes=(
+            Fix(path="FinDim/Isometry.lean", old=OR_FIX_POSITIVE_OLD, new=OR_FIX_POSITIVE_NEW,
+                reason="Mathlib v4.35 `nonneg_iff_isPositive` implicit argument"),
+            Fix(path="FinDim/JointDiag.lean", old=OR_FIX_JOINT1_OLD, new=OR_FIX_JOINT1_NEW,
+                reason="Mathlib v4.35 `nonneg_iff_isPositive` implicit argument (eigenvalues)"),
+            Fix(path="FinDim/JointDiag.lean", old=OR_FIX_JOINT2_OLD, new=OR_FIX_JOINT2_NEW,
+                reason="Mathlib v4.35 `le_def` implicit arguments (eigenvalues)"),
+            Fix(path="MvN/Perturb.lean", old=OR_FIX_PERTURB_OLD, new=OR_FIX_PERTURB_NEW,
+                reason="Mathlib v4.35 `IsSelfAdjoint.le_algebraMap_norm_self` explicit element"),
+        ),
+        pattern_fixes=(NONNEG_IMPLICIT,),
     ),
 }
+
+
+def apply_pattern_fixes(src: Source, dest: Path) -> list[tuple[PatternFix, int]]:
+    """Apply the source's pattern fixes to every Lean file under ``dest``; returns the
+    number of replacements per pattern."""
+    counts = []
+    for pf in src.pattern_fixes:
+        rx = re.compile(pf.pattern, re.DOTALL)
+        n = 0
+        for path in sorted(dest.rglob("*.lean")):
+            text = path.read_text(encoding="utf-8")
+            new, k = rx.subn(pf.repl, text)
+            if k:
+                path.write_text(new, encoding="utf-8", newline="\n")
+                n += k
+        counts.append((pf, n))
+    return counts
+
+
+def apply_fixes(repo_root: Path) -> int:
+    """Apply every recorded fix to the vendored trees as they are (no clone needed): a fix
+    whose ``old`` text occurs exactly once is applied, one whose ``new`` text is already
+    present is skipped, anything else is an error. Returns the number applied."""
+    applied = 0
+    for src in SOURCES.values():
+        for fix in src.fixes:
+            target = repo_root / src.dest / fix.path
+            # After the split, a fix recorded against the single upstream module lives in
+            # one of its parts.
+            candidates = [target] + sorted((target.parent / target.stem).glob("Part*.lean"))
+            target = next((c for c in candidates
+                           if fix.old in c.read_text(encoding="utf-8")
+                           or fix.new in c.read_text(encoding="utf-8")), target)
+            text = target.read_text(encoding="utf-8")
+            # `new` may contain `old` (a fix that prepends to a declaration), so the
+            # already-applied check comes first.
+            if text.count(fix.new) == 1:
+                print(f"[{src.key}] already applied to {fix.path}: {fix.reason}")
+            elif text.count(fix.old) == 1:
+                target.write_text(text.replace(fix.old, fix.new), encoding="utf-8",
+                                  newline="\n")
+                applied += 1
+                print(f"[{src.key}] applied to {fix.path}: {fix.reason}")
+            else:
+                sys.exit(f"error: fix for {src.key}/{fix.path} ({fix.reason}) matched "
+                         f"{text.count(fix.old)} times, expected 1")
+        for pf, n in apply_pattern_fixes(src, repo_root / src.dest):
+            print(f"[{src.key}] pattern fix, {n} replacement(s): {pf.reason}")
+            applied += n
+        n = modularize_tree(repo_root / src.dest)
+        if n:
+            print(f"[{src.key}] module headers added to {n} files")
+            applied += n
+    return applied
 
 
 def git(source: Path, *args: str) -> str:
@@ -591,9 +1022,15 @@ def vendor(src: Source, clone: Path, commit: str, repo_root: Path, auto_implicit
                      f"{text.count(fix.old)} times, expected 1")
         target.write_text(text.replace(fix.old, fix.new), encoding="utf-8", newline="\n")
 
+    pattern_counts = apply_pattern_fixes(src, dest)
+
     parts = 0
     if src.key == "tp":
         parts = write_split(dest, SPLIT_FILE, src.local_prefix)
+
+    # Last, so that the split and the fixes see upstream's file shapes: every file becomes a
+    # module (`scripts/modularize.py`, the recorded mechanism for the whole repository).
+    modularized = modularize_tree(dest)
 
     details = [
         BEGIN_MARK,
@@ -610,10 +1047,13 @@ def vendor(src: Source, clone: Path, commit: str, repo_root: Path, auto_implicit
                 f"{'yes' if auto_implicit else 'no'}"]
     details += [f"- Recorded compile fixes applied: {len(src.fixes)} "
                 f"(listed under \"Local deviations from upstream\")"]
+    details += [f"- Recorded pattern fix, {n} replacement(s): {pf.reason}"
+                for pf, n in pattern_counts]
     if parts:
         details += [f"- `{SPLIT_FILE}` split into {parts} parts of at most {SPLIT_MAX_LINES} "
                     f"lines (`{Path(SPLIT_FILE).stem}/PartNN.lean`), cut between its "
                     f"top-level `noncomputable section` blocks; the root module imports them"]
+    details += [MODULE_NOTE.format(n=modularized)]
     details += [END_MARK]
     refresh_readme(readme, src.readme, "\n".join(details))
     print(f"[{src.key}] vendored {len(files)} files ({lines} lines) from {src.url}@{short} "
@@ -637,7 +1077,14 @@ def main() -> None:
                         help=f"only redo the split of the vendored {SPLIT_FILE} (no clone "
                              "needed): the parts are regenerated from the root module's "
                              "current parts, joined back together first")
+    parser.add_argument("--apply-fixes", action="store_true",
+                        help="apply the recorded compile fixes to the vendored trees as they "
+                             "are (no clone needed); fixes already applied are skipped")
     args = parser.parse_args()
+    if args.apply_fixes:
+        n = apply_fixes(args.repo_root.resolve())
+        print(f"{n} fixes applied; next: lake build")
+        return
     if args.resplit:
         dest = args.repo_root.resolve() / SOURCES["tp"].dest
         root = dest / SPLIT_FILE

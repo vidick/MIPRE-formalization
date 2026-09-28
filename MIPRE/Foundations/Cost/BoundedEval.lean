@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Partrec
-import MIPRE.Foundations.Cost.MachineBound
+module
+public import MIPRE.Foundations.Cost.Partrec
+public import MIPRE.Foundations.Cost.MachineBound
+
+@[expose] public section
 
 /-!
 # Running a program under a cost budget, computably
@@ -115,3 +118,5 @@ theorem primrec_runForD : Primrec fun q : (Data × Data) × ℕ => runForD q.1.1
 end Machine
 
 end MIPRE.Cost
+
+end

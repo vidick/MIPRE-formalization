@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.SwapUnitary
+module
+public import MIPRE.Background.QLD.SwapUnitary
+
+@[expose] public section
 
 /-!
 # The swap isometry's state estimate (`lem:qld-swap`, item 1)
@@ -318,5 +321,7 @@ theorem syn_mul_syn {w : (n → F) → Matrix (n → F) (n → F) ℂ} (hw : IsW
 end Joint
 
 end MIPRE.QLD
+
+end
 
 end

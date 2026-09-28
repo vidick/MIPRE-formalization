@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.TypedEstimates
+module
+public import MIPRE.Foundations.Introspection.TypedEstimates
+
+@[expose] public section
 
 /-! # Actual Pauli/auxiliary edge probabilities and agreement estimates
 
@@ -163,3 +166,5 @@ theorem aux_pauli_agreement_estimate (E : PauliType → PauliType → Bool) (X Z
 end TypedEstimates
 
 end MIPRE.Introspection
+
+end

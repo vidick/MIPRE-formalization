@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Tabulate
+module
+public import MIPRE.Foundations.Halting.Tabulate
+
+@[expose] public section
 
 /-!
 # Counting seeds by their prefix
@@ -52,3 +55,5 @@ theorem length_filter_take (Q : BitStr → Bool) (d e : ℕ) :
     rw [ih (fun s => Q (false :: s)), ih (fun s => Q (true :: s)), Nat.add_mul]
 
 end MIPRE.Cost.Data
+
+end

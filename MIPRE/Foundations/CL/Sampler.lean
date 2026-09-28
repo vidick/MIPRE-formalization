@@ -3,9 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.CL.Closure
-import MIPRE.Foundations.Cost.PolyTime
-import Mathlib.Data.ZMod.Basic
+module
+public import MIPRE.Foundations.CL.Closure
+public import MIPRE.Foundations.Cost.PolyTime
+public import Mathlib.Data.ZMod.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Samplers
@@ -110,7 +114,7 @@ def indicatorBits {s : ℕ} (S : Finset (Fin s)) : BitStr := List.ofFn fun i => 
     (indicatorBits S).length = s :=
   List.length_ofFn
 
-private theorem ite_decide_eq_one (a : 𝔽₂) : (if decide (a = 1) then (1 : 𝔽₂) else 0) = a := by
+theorem ite_decide_eq_one (a : 𝔽₂) : (if decide (a = 1) then (1 : 𝔽₂) else 0) = a := by
   revert a
   decide
 
@@ -252,3 +256,5 @@ end Sampler
 end CL
 
 end MIPRE
+
+end

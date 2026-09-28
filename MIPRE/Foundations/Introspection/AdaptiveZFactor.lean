@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptivePrefixMixing
+module
+public import MIPRE.Foundations.Introspection.AdaptivePrefixMixing
+
+@[expose] public section
 
 /-! # The actual adaptive computational readout
 
@@ -135,5 +138,7 @@ theorem adaptiveZ_readout_factor (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn uni
   · simp [hxx]
 
 end MIPRE.Introspection
+
+end
 
 end

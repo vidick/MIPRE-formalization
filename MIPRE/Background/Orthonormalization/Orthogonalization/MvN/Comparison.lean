@@ -34,17 +34,21 @@ hypotheses: the factor property (`Z(M) = ℂ·1`) and the polar decomposition in
 
 No statement of the paper is made here.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
-import MIPRE.Background.Repetition.CommutingRepetition.VN.MonotoneLimit
-import MIPRE.Background.Repetition.CommutingRepetition.VN.BorelCalculus
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Bicommutant
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.StateOnM
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Polar
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Generated
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.MonotoneLimit
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.BorelCalculus
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Bicommutant
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.StateOnM
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Polar
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.MvN
 
@@ -664,3 +668,5 @@ theorem mvNEquiv_of_trace_eq (M : VonNeumannAlgebra H)
     exact ⟨W, hWM, (sub_eq_zero.mp this).symm, hLq'⟩
 
 end Orthogonalization.MvN
+
+end

@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.BinaryQuotientCompleteSupport
-import MIPRE.Foundations.Introspection.SourceReindex
-import MIPRE.Foundations.Introspection.TypedQuotientReindex
-import MIPRE.Background.QLD.PauliFullAnswerPrograms
+module
+public import MIPRE.Background.Introspection.BinaryQuotientCompleteSupport
+public import MIPRE.Foundations.Introspection.SourceReindex
+public import MIPRE.Foundations.Introspection.TypedQuotientReindex
+public import MIPRE.Background.QLD.PauliFullAnswerPrograms
+
+@[expose] public section
 
 /-! # Honest guarded quotient completeness with the actual register numbering
 
@@ -160,4 +163,6 @@ theorem project_registerNumbering (a : QLD.Honest.Register F m) :
       (.pauliAns (d := d) a) = QLD.PauliFullAnswerProgram.registerVector b a := rfl
 
 end MIPRE.Introspection.NumberedComplete
+end
+
 end

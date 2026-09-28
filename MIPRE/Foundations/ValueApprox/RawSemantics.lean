@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.ValueApprox.RawStrategy
+module
+public import MIPRE.Foundations.ValueApprox.RawStrategy
+
+@[expose] public section
 
 /-!
 # The certificate check is correct
@@ -365,3 +368,5 @@ theorem check_iff_interp (g : GameData) (p q : ℕ) (r : RawStrategy) :
       (valueTest_iff g p q r hk' hu).mpr hlt⟩
 
 end MIPRE.ValueApprox
+
+end

@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.MainTheorem
-import MIPRE.Foundations.Tsirelson.UpperRE
-import MIPRE.Foundations.Tsirelson.Separation
+module
+public import MIPRE.MainTheorem
+public import MIPRE.Foundations.Tsirelson.UpperRE
+public import MIPRE.Foundations.Tsirelson.Separation
+
+@[expose] public section
 
 /-!
 # Tsirelson's problem has a negative answer
@@ -53,3 +56,5 @@ theorem separation :
   separation_of_upperRE Halting.halting_reduction_quantum commutingUpperRE
 
 end MIPRE
+
+end

@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestRead
+module
+public import MIPRE.Foundations.Introspection.HonestRead
+
+@[expose] public section
 
 /-! # The honest adaptive hiding prefixes
 
@@ -104,3 +107,5 @@ theorem hideOp_marginal {ℓ : ℕ} (P : CL.CLFun F ι ℓ) (k : ℕ)
   simp [readout, registerOp_apply, Matrix.diagonal_apply]
 
 end MIPRE.Introspection.Honest
+
+end

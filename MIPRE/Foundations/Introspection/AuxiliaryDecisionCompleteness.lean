@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryDecisionSoundness
-import MIPRE.Foundations.Introspection.GuardedAuxiliaryProgram
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryDecisionSoundness
+public import MIPRE.Foundations.Introspection.GuardedAuxiliaryProgram
+
+@[expose] public section
 
 /-! # Completeness of the executable auxiliary predicate
 
@@ -228,4 +231,6 @@ theorem guarded_complete (U : ClockedUniversalMachine) (X Z : P)
   · simp only [hab, decide_false, Bool.false_eq_true] at he
 
 end MIPRE.Introspection.AuxiliaryDecision
+end
+
 end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryReindex
-import MIPRE.Foundations.Introspection.TypedQuotientPredicate
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryReindex
+public import MIPRE.Foundations.Introspection.TypedQuotientPredicate
+
+@[expose] public section
 
 /-! # Quotient hiding checks commute with coordinate permutations
 
@@ -131,4 +134,6 @@ theorem check_reindex (DP : PT → PT → PA → PA → Bool)
   cases t <;> cases u <;> cases a <;> cases b <;> rfl
 
 end MIPRE.Introspection.AuxiliaryQuotient
+end
+
 end

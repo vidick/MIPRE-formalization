@@ -5,12 +5,15 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Test/MainTheorem/SourceRoleRegister/Core.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.MainTheorems.Successor
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.SchwartzZippelStep
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ProjectiveConsistency.Evaluation
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProjRoleAverage.Final
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProjUnsymmetrization
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.MainTheorems.Successor
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.SchwartzZippelStep
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ProjectiveConsistency.Evaluation
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProjRoleAverage.Final
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProjUnsymmetrization
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -548,3 +551,5 @@ theorem sourceRoleRegisterRightProjectiveSubmeasurement_ofFullConsistency
 end ProjStrat
 
 end MIPStarRE.LDT
+
+end

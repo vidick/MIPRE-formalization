@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.SAT.FmlLib
-import MIPRE.Foundations.SAT.Flatten
-import MIPRE.Foundations.Cost.Fold
-import MIPRE.Foundations.Cost.Reader
+module
+public import MIPRE.Foundations.SAT.FmlLib
+public import MIPRE.Foundations.SAT.Flatten
+public import MIPRE.Foundations.Cost.Fold
+public import MIPRE.Foundations.Cost.Reader
+
+@[expose] public section
 
 /-!
 # The formula builders as programs
@@ -601,3 +604,5 @@ noncomputable def subConstBitsP : PolyTimeFun (List Fml × BitStr) (List Fml) :=
     subConstBitsP p = Fml.subConstBits p.1 p.2 := rfl
 
 end MIPRE.SAT
+
+end

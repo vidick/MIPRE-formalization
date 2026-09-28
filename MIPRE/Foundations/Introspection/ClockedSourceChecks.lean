@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ClockedQueryProgram
-import MIPRE.Foundations.Introspection.AuxiliarySamplingCorrect
-import MIPRE.Foundations.Introspection.SourceCompilerCorrect
+module
+public import MIPRE.Foundations.Introspection.ClockedQueryProgram
+public import MIPRE.Foundations.Introspection.AuxiliarySamplingCorrect
+public import MIPRE.Foundations.Introspection.SourceCompilerCorrect
+
+@[expose] public section
 
 /-! # Source-game checks using the shared explicit clock
 
@@ -109,4 +112,6 @@ theorem cross_original {ℓ lam n Q : ℕ} (U : ClockedUniversalMachine)
     exact ⟨hg,t,(hout.deterministic hr).2 ▸ ht,hr⟩
 
 end MIPRE.Introspection.ClockedSourceChecks
+end
+
 end

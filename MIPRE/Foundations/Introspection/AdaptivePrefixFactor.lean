@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ConditionalNormalizerIdeal
+module
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerIdeal
+
+@[expose] public section
 
 /-! # Concrete tensor support of an adaptive CL prefix projector
 
@@ -124,3 +127,5 @@ theorem hidingPrefixOp_factor [Algebra (ZMod 2) F]
 
 end Honest
 end MIPRE.Introspection
+
+end

@@ -25,16 +25,20 @@ The glue of Section 3 of the paper, relative to a finite projection `p` of `M`
 
 Proof-side only; no statement of the paper.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Polar
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.AssemblyRel
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Selection
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Perturb
-import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Interface
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Polar
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.AssemblyRel
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Selection
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Perturb
+public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.Interface
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.MvN
 
@@ -335,3 +339,5 @@ theorem orthAtN_fin_of_isFiniteProj (hS : MvNStructureTheory.{u}) (M : VonNeuman
         (hS.normal_traceClass M φ hφ hφn)) n
 
 end Orthogonalization.MvN
+
+end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryNormalize
-import MIPRE.Foundations.LowDegree.BinaryConstants
+module
+public import MIPRE.Foundations.LowDegree.BinaryNormalize
+public import MIPRE.Foundations.LowDegree.BinaryConstants
+
+@[expose] public section
 
 /-!
 # Division by binary monic polynomials
@@ -188,19 +191,19 @@ theorem degree_divModBits_remainder_lt (p a : BitStr) :
   intro i hi
   exact coeff_polyOfBits_eq_zero _ _ ((divModBits_width p a).2.trans hi)
 
-private noncomputable def headBitProg : PolyTimeFun BitStr Bool :=
+noncomputable def headBitProg : PolyTimeFun BitStr Bool :=
   congr ((casesList (const false) (fst.comp snd)).comp
     ((const ()).pair (PolyTimeFun.id _)))
     (fun a => a.headD false) (by intro a; cases a <;> rfl)
 
-private noncomputable def lastBitProg : PolyTimeFun BitStr Bool :=
+noncomputable def lastBitProg : PolyTimeFun BitStr Bool :=
   congr (headBitProg.comp PolyTimeFun.reverse)
     (fun a => a.getLastD false) (by
       intro a
       change a.reverse.headD false = a.getLastD false
       simp only [List.headD_eq_head?_getD, List.head?_reverse, List.getLastD_eq_getLast?])
 
-private noncomputable def divisionStepProg : PolyTimeFun (DivisionState × Bool) DivisionState :=
+noncomputable def divisionStepProg : PolyTimeFun (DivisionState × Bool) DivisionState :=
   let p := fst.comp fst
   let q := fst.comp (snd.comp fst)
   let r := snd.comp (snd.comp fst)
@@ -208,10 +211,10 @@ private noncomputable def divisionStepProg : PolyTimeFun (DivisionState × Bool)
     (ite snd (xorBitsProg.comp ((shiftReduceProg.comp (p.pair r)).pair (oneBitsProg.comp p)))
       (shiftReduceProg.comp (p.pair r))))
 
-private theorem divisionStepProg_apply (s : DivisionState) (b : Bool) :
+theorem divisionStepProg_apply (s : DivisionState) (b : Bool) :
     divisionStepProg (s, b) = divisionStep s b := rfl
 
-private theorem divisionStep_bounded : FoldBounded divisionStepProg (12 * X + 12) := by
+theorem divisionStep_bounded : FoldBounded divisionStepProg (12 * X + 12) := by
   intro l s pre post h
   change esize (pre.foldl divisionStep s) ≤ _
   obtain ⟨hp, hq, hr⟩ := fold_divisionStep_width pre s
@@ -242,7 +245,7 @@ noncomputable def divisionFoldProg : PolyTimeFun (BitStr × BitStr) DivisionStat
 @[simp] theorem divisionFoldProg_apply (p a : BitStr) :
     divisionFoldProg (p, a) = divisionFold p a := rfl
 
-private noncomputable def isEmptyBitsProg : PolyTimeFun BitStr Bool :=
+noncomputable def isEmptyBitsProg : PolyTimeFun BitStr Bool :=
   congr ((casesList (const true) (const false)).comp ((const ()).pair (PolyTimeFun.id _)))
     List.isEmpty (by intro a; cases a <;> rfl)
 
@@ -257,3 +260,5 @@ noncomputable def divModBitsProg : PolyTimeFun (BitStr × BitStr) (BitStr × Bit
     divModBitsProg (p, a) = divModBits p a := rfl
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

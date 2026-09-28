@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.Downsize
-import MIPRE.Foundations.Introspection.AdaptiveResidual
+module
+public import MIPRE.Foundations.CL.Downsize
+public import MIPRE.Foundations.Introspection.AdaptiveResidual
+
+@[expose] public section
 
 /-! # Coordinate transport of adaptive auxiliary registers
 
@@ -50,4 +53,6 @@ theorem prefixRegister_reindex (e : ι ≃ κ) (P : CLFun F ι ℓ) (k : ℕ) (y
         LinearEquiv.symm_apply_apply, ih, map_union]
 
 end MIPRE.Introspection.CLChecks
+end
+
 end

@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/SelfImprovement.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -33,7 +36,7 @@ open scoped MatrixOrder
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-private lemma le_one_of_selfImprovementInInductionError_le_one_of_scaled_bound
+lemma le_one_of_selfImprovementInInductionError_le_one_of_scaled_bound
     (params : Parameters) {eps delta gamma x : Error}
     (hzeta_le : selfImprovementInInductionError params.next eps delta gamma ≤ 1)
     (hscaled_le :
@@ -52,7 +55,7 @@ private lemma le_one_of_selfImprovementInInductionError_le_one_of_scaled_bound
     linarith [hscaled_le, hzeta_le]
   exact le_one_of_rpow_le_one (by positivity) hroot_le_one
 
-private lemma selfImprovementInInduction_scaled_component_le
+lemma selfImprovementInInduction_scaled_component_le
     (params : Parameters) {x y z : Error}
     (hrest_nonneg : 0 ≤ y + z) :
     3000 * (params.next.m : Error) * x ≤
@@ -141,3 +144,5 @@ lemma delta_le_one_of_selfImprovementInInductionError_le_one
       params hzeta_le hdelta_scaled_le
 
 end MIPStarRE.LDT.MainInductionStep
+
+end

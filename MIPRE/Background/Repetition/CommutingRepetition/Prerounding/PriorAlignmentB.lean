@@ -18,12 +18,16 @@ block `L_X⁺`, `b.2.1` the forward order `π_Y`, `b.2.2.1` the reverse order
 `π_X`, `b.2.2.2` the forward cut `k_Y`; Bob's background is `b.SA = D ∪ L_Y` and
 Alice's fixed revealed set is `b.SB = D ∪ L_X⁺ ∪ π_Y^{≤ k_Y}`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.PriorAlignment
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.PriorAlignment
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -600,3 +604,5 @@ theorem alignSumB_le (μ : X → Y → ℝ) (hμ : ∀ x y, 0 ≤ μ x y)
 end TracialStrategy
 
 end CommutingRepetition
+
+end

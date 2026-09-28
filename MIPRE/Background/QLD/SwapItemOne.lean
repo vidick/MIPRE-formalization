@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.SelfCons
-import MIPRE.Background.QLD.SwapEndgame
+module
+public import MIPRE.Background.QLD.SelfCons
+public import MIPRE.Background.QLD.SwapEndgame
+
+@[expose] public section
 
 /-!
 # Item 1 of `lem:qld-swap`, unconditional
@@ -337,3 +340,5 @@ end MirrorSimul
 end Physical
 
 end MIPRE.QLD
+
+end

@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/Diagonal.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Base
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Base
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -30,7 +33,7 @@ open scoped MatrixOrder
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-private lemma restrictedDiagonalSampleError_eq
+lemma restrictedDiagonalSampleError_eq
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι)
@@ -77,7 +80,7 @@ private lemma restrictedDiagonalSampleError_eq
 
 /-- Per-index diagonal-line consistency defect of the restricted `x`-slice strategy
 at embedded index `j`, averaged over the restricted diagonal sample space. -/
-private noncomputable def diagonalSliceIndexError
+noncomputable def diagonalSliceIndexError
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι)
@@ -92,7 +95,7 @@ private noncomputable def diagonalSliceIndexError
 
 /-- Per-index diagonal-line consistency defect of the ambient `(m+1)`-dimensional
 strategy at index `j`, averaged over the ambient restricted diagonal sample space. -/
-private noncomputable def diagonalIndexError
+noncomputable def diagonalIndexError
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι)
@@ -102,7 +105,7 @@ private noncomputable def diagonalIndexError
     (diagonalPointAnswerFamily strategy j)
     (diagonalLineAnswerFamily strategy j)
 
-private lemma diagonalSliceIndexErrorAverage_eq_diagonalIndexError
+lemma diagonalSliceIndexErrorAverage_eq_diagonalIndexError
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι)
@@ -139,7 +142,7 @@ private lemma diagonalSliceIndexErrorAverage_eq_diagonalIndexError
     _ = diagonalIndexError params strategy (embedCoord params j) := by
             try rfl -- vendoring compile fix (Lean v4.33): the previous step may close the goal
 
-private lemma averageRestrictedDiagonalFailure_eq_embeddedDiagonalIndices
+lemma averageRestrictedDiagonalFailure_eq_embeddedDiagonalIndices
     (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params.next ι) :
@@ -252,3 +255,5 @@ lemma weighted_diagonal_bound
     _ ≤ gamma := hgood.diagonalLineTest
 
 end MIPStarRE.LDT.MainInductionStep
+
+end

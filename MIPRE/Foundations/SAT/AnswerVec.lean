@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.SAT.Pcp
-import MIPRE.Foundations.SAT.FmlLib
+module
+public import MIPRE.Foundations.SAT.Pcp
+public import MIPRE.Foundations.SAT.FmlLib
+
+@[expose] public section
 
 /-!
 # The answer vector of a short answer determines it
@@ -65,3 +68,5 @@ theorem answerVec_injective {F : Type*} [CommRing F] [Nontrivial F] (m : ℕ) {a
   · rw [List.getElem?_eq_none (by omega), List.getElem?_eq_none (by omega)]
 
 end MIPRE.SAT
+
+end

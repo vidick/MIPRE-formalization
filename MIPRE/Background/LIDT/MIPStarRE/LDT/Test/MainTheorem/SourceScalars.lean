@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Test/MainTheorem/SourceScalars.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Defs
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.CascadeBounds.Final
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.ProjectivizationChain.Basic
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Defs
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.CascadeBounds.Final
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.ProjectivizationChain.Basic
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -332,7 +335,7 @@ noncomputable def zeta4Repaired {params : Parameters} {eps : Error} {k : ℕ}
     (scalars : MainFormalScalarBounds params eps k) : Error :=
   cascadeZeta4Repaired scalars.sigma scalars.zeta1 scalars.zeta3
 
-private theorem cascadeBounds {params : Parameters} {eps : Error} {k : ℕ}
+theorem cascadeBounds {params : Parameters} {eps : Error} {k : ℕ}
     (scalars : MainFormalScalarBounds params eps k) :
     scalars.sigma ≤ mainFormalError params k eps ∧
       scalars.zeta1 ≤ mainFormalError params k eps ∧
@@ -424,3 +427,5 @@ end MainFormalScalarBounds
 end Test
 
 end MIPStarRE.LDT
+
+end

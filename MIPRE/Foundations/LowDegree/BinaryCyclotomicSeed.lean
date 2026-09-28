@@ -2,8 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryFactorization
-import Mathlib.RingTheory.Polynomial.Cyclotomic.Factorization
+module
+public import MIPRE.Foundations.LowDegree.BinaryFactorization
+public import Mathlib.RingTheory.Polynomial.Cyclotomic.Factorization
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The deterministic cyclotomic seed for odd prime-power construction
@@ -145,5 +149,7 @@ theorem cyclotomicSeedBits_root_primitive (q : ℕ) (hq : q.Prime) (hq2 : q ≠ 
   exact isRoot_cyclotomic_iff.mp ((AdjoinRoot.isRoot_root f).dvd hd)
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end
 
 end

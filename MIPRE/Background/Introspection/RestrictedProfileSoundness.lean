@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.RestrictedSoundness
-import MIPRE.Background.Introspection.ExplicitGame
-import MIPRE.Foundations.Introspection.RestrictedErrorBounds
-import MIPRE.Foundations.Introspection.SourcePaddingValue
+module
+public import MIPRE.Background.Introspection.RestrictedSoundness
+public import MIPRE.Background.Introspection.ExplicitGame
+public import MIPRE.Foundations.Introspection.RestrictedErrorBounds
+public import MIPRE.Foundations.Introspection.SourcePaddingValue
+
+@[expose] public section
 
 /-! # Uniform conditional soundness and return to the unpadded source
 
@@ -116,4 +119,6 @@ theorem padded_quantumValue_ge_of_qld_errorProfile
 end Padding
 
 end MIPRE.Introspection.RestrictedSoundness
+end
+
 end

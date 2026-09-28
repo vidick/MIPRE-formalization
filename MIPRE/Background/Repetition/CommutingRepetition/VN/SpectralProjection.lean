@@ -28,12 +28,16 @@ For the Borel functional calculus `bfc E hE` of `VN/BorelCalculus.lean`:
 
 Nothing here is a manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.BorelCalculus
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.BorelCalculus
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -552,3 +556,5 @@ theorem P_Icc_zero_one (h : spectrum ℝ E ⊆ Set.Icc 0 1) : P E hE (Set.Icc 0 
 end BorelCalc
 
 end CommutingRepetition
+
+end

@@ -17,15 +17,19 @@ the coin-free weighted sums `∑ Πμ · q(a,b∣x,y) · ∏_{j∈S} V_j`, so
 mass `p` of eq private-coin-core-weight. Nothing here is a manuscript
 statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Value
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Strategy
-import MIPRE.Background.Repetition.CommutingRepetition.Prelim.FiniteProb
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Core
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Value
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Strategy
+public import MIPRE.Background.Repetition.CommutingRepetition.Prelim.FiniteProb
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Core
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -279,3 +283,5 @@ theorem coinLaw_eventMass_univ (den : ℕ) (hden : 0 < den) (num : X → Y → A
   ring
 
 end CommutingRepetition
+
+end

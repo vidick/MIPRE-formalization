@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.GapCompression
-import MIPRE.Foundations.GameTransport
+module
+public import MIPRE.Foundations.GapCompression
+public import MIPRE.Foundations.GameTransport
+
+@[expose] public section
 
 /-!
 # The games of a verifier: congruence, answer padding, perfect PCC strategies
@@ -162,3 +165,5 @@ theorem valStar_eq_one_of_hasPerfectPCC {n T : ℕ} (h : V.HasPerfectPCC n T) :
 end Verifier
 
 end MIPRE
+
+end

@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.CL.ProductSamplerProg
-import MIPRE.Foundations.Pipeline.PowDomRun
+module
+public import MIPRE.Foundations.CL.ProductSamplerProg
+public import MIPRE.Foundations.Pipeline.PowDomRun
+
+@[expose] public section
 
 /-!
 # The running time of the product sampler
@@ -308,3 +311,5 @@ theorem prog_time (ℓa cp mp ep cs ms es cA mA eA : ℕ) : ∃ C M E, ∀ {W K 
     omega⟩
 
 end MIPRE.CL.ProductSampler
+
+end

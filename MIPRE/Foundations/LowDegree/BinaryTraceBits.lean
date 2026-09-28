@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryQuotientOrbit
+module
+public import MIPRE.Foundations.LowDegree.BinaryQuotientOrbit
+
+@[expose] public section
 
 /-! # Explicit polynomial-time Frobenius-stride traces -/
 
@@ -22,10 +25,10 @@ theorem fold_squareFuel (u : Unary) (s : SquareState) :
   | cons b u ih => simpa only [List.foldl_cons, List.length_cons,
       Function.iterate_succ_apply, squareFuel] using ih (squareStep s)
 
-private def squareFuelProg : PolyTimeFun (SquareState × Unit) SquareState :=
+def squareFuelProg : PolyTimeFun (SquareState × Unit) SquareState :=
   (fst.comp fst).pair (squareProg.comp fst)
 
-private theorem squareFuel_bounded : FoldBounded squareFuelProg (5 * X + 5) := by
+theorem squareFuel_bounded : FoldBounded squareFuelProg (5 * X + 5) := by
   intro l s pre post _
   change esize (pre.foldl squareFuel s) ≤ _
   rw [fold_squareFuel]
@@ -121,7 +124,7 @@ theorem evalBits_fold_traceStep {R : Type*} [CommRing R] [CharP R 2]
     simp only [Nat.mul_zero, pow_zero, pow_one]
     ring
 
-private def traceStepProg : PolyTimeFun (TraceState × Unit) TraceState :=
+def traceStepProg : PolyTimeFun (TraceState × Unit) TraceState :=
   let r := fst.comp fst
   let p := fst.comp (snd.comp fst)
   let c := fst.comp (snd.comp (snd.comp fst))
@@ -134,7 +137,7 @@ private def traceStepProg : PolyTimeFun (TraceState × Unit) TraceState :=
         xorBitsProg_apply, frobeniusBitsProg_apply]
       rfl)
 
-private theorem traceStep_bounded : FoldBounded traceStepProg (10 * X + 10) := by
+theorem traceStep_bounded : FoldBounded traceStepProg (10 * X + 10) := by
   intro l s pre post _
   change esize (pre.foldl traceStep s) ≤ _
   obtain ⟨hr, hp, hc, ha⟩ := fold_traceStep_shape pre s
@@ -184,5 +187,7 @@ theorem evalBits_traceBits {R : Type*} [CommRing R] [CharP R 2]
     evalBits_fold_traceStep z m r p (zeroBits p) a hz (length_zeroBits p) ha
 
 end MIPRE.LowDegree.BinaryQuotient
+
+end
 
 end

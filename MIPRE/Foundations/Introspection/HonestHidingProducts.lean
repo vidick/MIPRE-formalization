@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestHidingStep
+module
+public import MIPRE.Foundations.Introspection.HonestHidingStep
+
+@[expose] public section
 
 /-! # Exact products at an honest hiding transition -/
 
@@ -111,3 +114,5 @@ theorem stop_local_product (S V : Finset ι) (L : CL.RegLinear F S)
     simp [hb, ht]
 
 end MIPRE.Introspection.Honest
+
+end

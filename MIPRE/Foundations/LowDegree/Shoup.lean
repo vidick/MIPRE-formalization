@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.LowDegree.BinaryIrreducibleConstructor
+module
+public import MIPRE.Foundations.LowDegree.BinaryIrreducibleConstructor
+
+@[expose] public section
 
 /-!
 # Deterministic irreducible polynomials over the binary field
@@ -59,5 +62,7 @@ theorem shoupIrreducible_natDegree (k : ℕ) (hk : 1 ≤ k) :
   (BinaryPolynomial.irreducibleBits_correct k hk).2.2
 
 end MIPRE.LowDegree
+
+end
 
 end

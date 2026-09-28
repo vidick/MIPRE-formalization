@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.SAT.Pcp
-import Mathlib.FieldTheory.Finite.GaloisField
+module
+public import MIPRE.Foundations.SAT.Pcp
+public import Mathlib.FieldTheory.Finite.GaloisField
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Admissible fields exist
@@ -34,9 +38,9 @@ namespace MIPRE.SAT
 open Finset
 
 /-- The coordinate representation of a `ZMod 2`-vector as bits. -/
-private def bitOf (z : ZMod 2) : Bool := z = 1
+def bitOf (z : ZMod 2) : Bool := z = 1
 
-private theorem ite_bitOf (z : ZMod 2) : (if bitOf z then (1 : ZMod 2) else 0) = z := by
+theorem ite_bitOf (z : ZMod 2) : (if bitOf z then (1 : ZMod 2) else 0) = z := by
   revert z
   decide
 
@@ -68,5 +72,7 @@ theorem nonempty_binField (k : ℕ) (hk : k ≠ 0) : Nonempty (BinField k) :=
   ⟨binFieldGalois k hk⟩
 
 end MIPRE.SAT
+
+end
 
 end

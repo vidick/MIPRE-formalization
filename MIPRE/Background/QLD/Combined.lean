@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Expanded
-import MIPRE.Foundations.Linearity
-import MIPRE.Foundations.Sandwich
-import MIPRE.Background.QLD.Swap
+module
+public import MIPRE.Background.QLD.Expanded
+public import MIPRE.Foundations.Linearity
+public import MIPRE.Foundations.Sandwich
+public import MIPRE.Background.QLD.Swap
+
+@[expose] public section
 
 /-!
 # Combining the two bases: the joint point measurement
@@ -604,5 +607,7 @@ theorem padded_points (hψ : star ψ ⬝ᵥ ψ = 1)
 end Combined
 
 end MIPRE.QLD
+
+end
 
 end

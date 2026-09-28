@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryOddPrimeExtension
-import MIPRE.Foundations.LowDegree.BinaryTraceBits
-import MIPRE.Foundations.LowDegree.BinaryComposedSumProg
+module
+public import MIPRE.Foundations.LowDegree.BinaryOddPrimeExtension
+public import MIPRE.Foundations.LowDegree.BinaryTraceBits
+public import MIPRE.Foundations.LowDegree.BinaryComposedSumProg
+
+@[expose] public section
 
 /-! # The explicit odd-prime-power construction program -/
 
@@ -122,5 +125,7 @@ theorem evalBits_oddTraceBits_of_root {R : Type*} [CommRing R] [CharP R 2]
     BinaryQuotient.evalBits_rootBits z p hp.2.2 hz, length_unary, length_unary, hd]
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end
 
 end

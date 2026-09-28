@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.CLGame
-import MIPRE.Foundations.CL.Basic
+module
+public import MIPRE.Background.LIDT.CLGame
+public import MIPRE.Foundations.CL.Basic
+
+@[expose] public section
 
 /-!
 # The seeded low-degree questions as CL functions, on any registers
@@ -403,5 +406,7 @@ theorem sum_sampleOf {M : Type*} [AddCommMonoid M] (t : Ty) (g : Sample F n → 
 end Regs
 
 end MIPRE.LIDT.CL
+
+end
 
 end

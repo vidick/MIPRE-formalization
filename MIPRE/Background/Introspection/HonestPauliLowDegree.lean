@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.HonestPauliMeasurements
-import MIPRE.Background.Introspection.HonestPauliCoarse
-import MIPRE.Background.LIDT.Adapter.Value
+module
+public import MIPRE.Background.Introspection.HonestPauliMeasurements
+public import MIPRE.Background.Introspection.HonestPauliCoarse
+public import MIPRE.Background.LIDT.Adapter.Value
+
+@[expose] public section
 
 /-! # The honest Pauli strategy passes its actual low-degree edges
 
@@ -115,3 +118,5 @@ theorem answerOp_pauli_point_reject (hm : m ∣ Fintype.card F)
   simp [accepts, Content.question, Question.fmtOk, subtests, Question.ty, pairTest]
 
 end MIPRE.QLD.Honest
+
+end

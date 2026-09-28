@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ReadChainEstimate
-import MIPRE.Foundations.Introspection.ConditionalNormalizerStepAux
+module
+public import MIPRE.Foundations.Introspection.ReadChainEstimate
+public import MIPRE.Foundations.Introspection.ConditionalNormalizerStepAux
+
+@[expose] public section
 
 /-! # Read rigidity from the full hiding family
 
@@ -163,5 +166,7 @@ theorem read_register_rigidity_bob (w : Bool) (hL : (L w).SupportedOn univ)
 
 end TypedEstimates
 end MIPRE.Introspection
+
+end
 
 end

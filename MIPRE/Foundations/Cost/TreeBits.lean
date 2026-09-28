@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Binary
-import MIPRE.Foundations.Cost.Unary
+module
+public import MIPRE.Foundations.Cost.Binary
+public import MIPRE.Foundations.Cost.Unary
+
+@[expose] public section
 
 /-!
 # The closure library, part VI: the bits of a tree
@@ -182,3 +185,5 @@ noncomputable def PolyTimeFun.toBits : PolyTimeFun Data BitStr where
 @[simp] theorem PolyTimeFun.toBits_apply (d : Data) : PolyTimeFun.toBits d = d.toBits := rfl
 
 end MIPRE.Cost
+
+end

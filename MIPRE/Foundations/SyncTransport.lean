@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.GapCompression
-import MIPRE.Foundations.GameDescription
-import MIPRE.Foundations.GameDouble
+module
+public import MIPRE.Foundations.GapCompression
+public import MIPRE.Foundations.GameDescription
+public import MIPRE.Foundations.GameDouble
+
+@[expose] public section
 
 /-!
 # A verifier's game and its tabulation, in the synchronous value
@@ -140,3 +143,5 @@ theorem gameValue_toGame_le_of_valStar_le_doubled {c : ℝ}
 end Verifier
 
 end MIPRE
+
+end

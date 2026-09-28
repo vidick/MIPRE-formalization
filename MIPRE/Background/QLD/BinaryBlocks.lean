@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.CLBinary
-import MIPRE.Foundations.Introspection.BinaryBlockProg
-import MIPRE.Foundations.Repeat.Bits
+module
+public import MIPRE.Background.QLD.CLBinary
+public import MIPRE.Foundations.Introspection.BinaryBlockProg
+public import MIPRE.Foundations.Repeat.Bits
+
+@[expose] public section
 
 /-! # The sampler's actual numbered binary field blocks
 
@@ -127,4 +130,6 @@ theorem decodeBlocksProg_ofBits (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd 
   simpa only [LinearEquiv.apply_symm_apply, CL.toBits_ofBits hz] using he
 
 end MIPRE.QLD.PauliCL
+end
+
 end

@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.LowDegree.SchwartzZippel
-import MIPRE.Foundations.LowDegree.Encoding
+module
+public import MIPRE.Foundations.LowDegree.SchwartzZippel
+public import MIPRE.Foundations.LowDegree.Encoding
+
+@[expose] public section
 
 /-!
 # The non-multilinear mass, and Schwartz--Zippel in the agreement direction
@@ -138,5 +141,7 @@ theorem sum_sub_le_of_eq_on {A B S : G → ℝ} {ML : Finset G}
   exact ⟨by linarith [h1.1, h2.2], by linarith [h1.2, h2.1]⟩
 
 end MIPRE.QLD
+
+end
 
 end

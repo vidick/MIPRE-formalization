@@ -2,12 +2,15 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.PauliRestriction
-import MIPRE.Background.Introspection.BinaryGame
-import MIPRE.Background.Introspection.CompleteGame
-import MIPRE.Foundations.Introspection.ValidPauliSoundness
-import MIPRE.Background.QLD.ValidAnswers
-import MIPRE.Background.QLD.BinaryForm
+module
+public import MIPRE.Background.Introspection.PauliRestriction
+public import MIPRE.Background.Introspection.BinaryGame
+public import MIPRE.Background.Introspection.CompleteGame
+public import MIPRE.Foundations.Introspection.ValidPauliSoundness
+public import MIPRE.Background.QLD.ValidAnswers
+public import MIPRE.Background.QLD.BinaryForm
+
+@[expose] public section
 
 /-! # Actual Pauli extraction for introspection (`lem:intro-pauli-strat`)
 
@@ -494,4 +497,6 @@ theorem exists_quantumValue_ge_of_field :
     (QLD.PauliCL.binaryPresentation_pauli_eval hm bas .Z) (by positivity) h1 hfail hX hZ
 
 end MIPRE.Introspection.PauliExtraction
+end
+
 end

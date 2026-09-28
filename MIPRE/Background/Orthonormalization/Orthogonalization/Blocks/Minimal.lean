@@ -22,13 +22,17 @@ Hilbert space needed to cut Theorem 1.2 into blocks (`PLAN.md` §8, T1b):
 
 Everything here is proof-side; no statement of the paper is encoded.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.JointDiag
-import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Local
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.JointDiag
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Local
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.Blocks
 
@@ -309,3 +313,5 @@ theorem exists_minimal_central_decomposition (M : VonNeumannAlgebra H) :
 end Central
 
 end Orthogonalization.Blocks
+
+end

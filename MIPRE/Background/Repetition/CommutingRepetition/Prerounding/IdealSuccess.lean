@@ -18,14 +18,18 @@ the word-level payoff-weighted correlations (the tower property, as in
 `(1/(pm)) ∑_{i∉D} P(W_{D∪{i}})`, the greedy core's average conditional
 success. Nothing here is a manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Package
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.CoinLaw
-import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.PairLaw
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Package
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.CoinLaw
+public import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.PairLaw
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -519,3 +523,5 @@ theorem sum_revealLaw_mul (f : Fin n → ℝ) :
 end RevealDatum
 
 end CommutingRepetition
+
+end

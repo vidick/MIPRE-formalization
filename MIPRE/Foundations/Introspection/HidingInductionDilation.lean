@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.RegisterEPR
-import MIPRE.Foundations.Introspection.ValueStability
+module
+public import MIPRE.Foundations.Introspection.RegisterEPR
+public import MIPRE.Foundations.Introspection.ValueStability
+
+@[expose] public section
 
 /-! # Projectivizing a conditional residual measurement
 
@@ -293,5 +296,7 @@ theorem exists_varying_conditional_projective_dilation
 end Varying
 
 end MIPRE.Introspection
+
+end
 
 end

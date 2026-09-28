@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.ValueApprox.RawPrimrec
+module
+public import MIPRE.Foundations.ValueApprox.RawPrimrec
+
+@[expose] public section
 
 /-!
 # Coded polynomials and the upper-bound certificate check
@@ -918,3 +921,5 @@ theorem primrecRel_checkUpper : PrimrecRel CheckUpper := by
         (primrecPred_isDominant.comp primrec_certRh)))).of_eq fun _ => Iff.rfl
 
 end MIPRE.Tsirelson.Coded
+
+end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.TM.CookLevin.Padded
-import MIPRE.Foundations.SAT.GatePadding
+module
+public import MIPRE.TM.CookLevin.Padded
+public import MIPRE.Foundations.SAT.GatePadding
+
+@[expose] public section
 
 /-!
 # Exact-size padded succinct descriptions
@@ -129,3 +132,5 @@ theorem describeExact_variables (D : Prog) (n T Q σ : ℕ) (x y : BitStr)
   exact inputs_add_gateCount n T Q σ
 
 end MIPRE.TM.CookLevin.Pad
+
+end

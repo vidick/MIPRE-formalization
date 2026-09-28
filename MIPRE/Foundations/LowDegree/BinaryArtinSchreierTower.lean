@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryArtinSchreier
-import MIPRE.Foundations.LowDegree.BinaryArtinSchreierProg
-import MIPRE.Foundations.LowDegree.BinaryOrbitDescent
-import MIPRE.Foundations.LowDegree.BinaryCanonical
+module
+public import MIPRE.Foundations.LowDegree.BinaryArtinSchreier
+public import MIPRE.Foundations.LowDegree.BinaryArtinSchreierProg
+public import MIPRE.Foundations.LowDegree.BinaryOrbitDescent
+public import MIPRE.Foundations.LowDegree.BinaryCanonical
+
+@[expose] public section
 
 /-! # A uniform effective step of the binary Artin–Schreier tower -/
 
@@ -98,12 +101,12 @@ local instance quotientCharP (p : BitStr) [Fact (Irreducible (polyOfBits (p ++ [
     CharP (AdjoinRoot (polyOfBits (p ++ [true]))) 2 :=
   charP_of_injective_ringHom (AdjoinRoot.of _).injective 2
 
-private theorem quotient_finrank (p : BitStr) :
+theorem quotient_finrank (p : BitStr) :
     Module.finrank (ZMod 2) (AdjoinRoot (polyOfBits (p ++ [true]))) = p.length := by
   rw [(AdjoinRoot.powerBasis' (monic_polyOfBits_append_true p)).finrank]
   exact natDegree_polyOfBits_append_true p
 
-private theorem quotient_pow_card (p : BitStr) [Fact (Irreducible (polyOfBits (p ++ [true])))]
+theorem quotient_pow_card (p : BitStr) [Fact (Irreducible (polyOfBits (p ++ [true])))]
     (x : AdjoinRoot (polyOfBits (p ++ [true]))) : x ^ (2 ^ p.length) = x := by
   have hcard : Fintype.card (AdjoinRoot (polyOfBits (p ++ [true]))) = 2 ^ p.length := by
     rw [Module.card_eq_pow_finrank (K := ZMod 2), ZMod.card, quotient_finrank]
@@ -249,5 +252,7 @@ theorem towerStep_invariant (p : BitStr) (t : ℕ) (h : TowerInvariant p t) :
       (towerStepBits_cubic p (t + 1) h.width h.cubic)
 
 end MIPRE.LowDegree.BinaryArtinSchreier
+
+end
 
 end

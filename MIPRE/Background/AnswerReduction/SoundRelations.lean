@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.SoundExtract
-import MIPRE.Foundations.Disagreement
+module
+public import MIPRE.Background.AnswerReduction.SoundExtract
+public import MIPRE.Foundations.Disagreement
+
+@[expose] public section
 
 /-!
 # Soundness of answer reduction: the cross relations
@@ -551,5 +554,7 @@ theorem sum_dis_GAe_JBe_le (i : Fin 5) :
   nlinarith
 
 end MIPRE.AnswerReduction
+
+end
 
 end

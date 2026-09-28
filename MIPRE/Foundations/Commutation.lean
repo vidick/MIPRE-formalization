@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.CrossConsistency
-import MIPRE.Foundations.PVM
+module
+public import MIPRE.Foundations.CrossConsistency
+public import MIPRE.Foundations.PVM
+
+@[expose] public section
 
 /-!
 # The commutation analysis
@@ -648,5 +651,7 @@ theorem obs2_commutator_eq {d : Type*} [Fintype d] [DecidableEq d]
 end Instance
 
 end MIPRE
+
+end
 
 end

@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ComposedTwirl
-import MIPRE.Foundations.Introspection.CommutatorParseval
-import MIPRE.Foundations.Introspection.BlockPOVM
-import MIPRE.Foundations.Introspection.EPR
+module
+public import MIPRE.Foundations.Introspection.ComposedTwirl
+public import MIPRE.Foundations.Introspection.CommutatorParseval
+public import MIPRE.Foundations.Introspection.BlockPOVM
+public import MIPRE.Foundations.Introspection.EPR
+
+@[expose] public section
 
 /-! # Approximate Pauli mixing with explicit constants -/
 
@@ -122,5 +125,7 @@ theorem pauli_twirl_readout_dist_le (L : (Fin n → F) →ₗ[F] (Fin n → F))
   exact pauli_twirl_dist_le L ξ M
 
 end MIPRE.Introspection
+
+end
 
 end

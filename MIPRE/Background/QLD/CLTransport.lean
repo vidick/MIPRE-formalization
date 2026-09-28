@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.CLBinary
+module
+public import MIPRE.Background.QLD.CLBinary
+
+@[expose] public section
 
 /-! # Exact strategy transport between the Pauli game and its binary CL form
 
@@ -163,4 +166,6 @@ theorem pullbackStrategy_pauli_B (hm : m ∣ Fintype.card F)
     encodeQuestion, Question.ty, canonicalVector_pauli, map_zero]
 
 end MIPRE.QLD.PauliCL
+end
+
 end

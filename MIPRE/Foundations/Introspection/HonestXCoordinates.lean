@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestRead
+module
+public import MIPRE.Foundations.Introspection.HonestRead
+
+@[expose] public section
 
 /-! # Pauli-X projectors under the honest register split
 
@@ -93,3 +96,5 @@ theorem pauliX_coordinateSplit (S V : Finset ι) (h : S ⊆ V) (z : V → F) :
   pauliX_split (coordinateSplit S V h) (fun _ _ => rfl) (trDot_coordinateSplit S V h) z
 
 end MIPRE.Introspection.Honest
+
+end

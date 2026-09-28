@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryCyclotomicSeed
-import MIPRE.Foundations.LowDegree.BinarySubstitution
-import MIPRE.Foundations.LowDegree.BinaryExactDivision
+module
+public import MIPRE.Foundations.LowDegree.BinaryCyclotomicSeed
+public import MIPRE.Foundations.LowDegree.BinarySubstitution
+public import MIPRE.Foundations.LowDegree.BinaryExactDivision
+
+@[expose] public section
 
 /-!
 # Bounded auxiliary root lifting
@@ -62,32 +65,32 @@ theorem fold_nonresidueStep_width (l : BitStr) (s : NonresidueState) :
     rw [hc] at hfi
     exact hfi.trans (max_le hf (le_max_right _ _))
 
-private noncomputable def isEmptyProg : PolyTimeFun (List BitStr) Bool :=
+noncomputable def isEmptyListProg : PolyTimeFun (List BitStr) Bool :=
   congr ((casesList (const true) (const false)).comp ((const ()).pair (PolyTimeFun.id _)))
     List.isEmpty (by intro a; cases a <;> rfl)
 
-private noncomputable def liftCandidatesProg : PolyTimeFun NonresidueState (List BitStr) :=
+noncomputable def liftCandidatesProg : PolyTimeFun NonresidueState (List BitStr) :=
   congr (BinaryQuotient.factorBitsProg.comp (dropLastBitsProg.comp
     (substitutePowerBitsProg.comp ((snd.comp (snd.comp snd)).pair fst))))
     liftCandidates (by intro s; rfl)
 
 set_option maxHeartbeats 2000000 in
-private noncomputable def nonresidueStepProg : PolyTimeFun (NonresidueState × Bool) NonresidueState :=
+noncomputable def nonresidueStepProg : PolyTimeFun (NonresidueState × Bool) NonresidueState :=
   let q := fst.comp fst
   let cap := fst.comp (snd.comp fst)
   let done := fst.comp (snd.comp (snd.comp fst))
   let f := snd.comp (snd.comp (snd.comp fst))
   let candidates := liftCandidatesProg.comp fst
-  congr (ite done fst (ite (isEmptyProg.comp (PolyTimeFun.tail.comp candidates))
+  congr (ite done fst (ite (isEmptyListProg.comp (PolyTimeFun.tail.comp candidates))
     (q.pair (cap.pair ((const true).pair f)))
     (q.pair (cap.pair ((const false).pair
       (take.comp (((PolyTimeFun.headD []).comp candidates).pair cap)))))))
     (fun s => nonresidueStep s.1 s.2) (by intro s; rfl)
 
-private theorem nonresidueStepProg_apply (s : NonresidueState) (b : Bool) :
+theorem nonresidueStepProg_apply (s : NonresidueState) (b : Bool) :
     nonresidueStepProg (s, b) = nonresidueStep s b := rfl
 
-private theorem nonresidueStep_bounded : FoldBounded nonresidueStepProg (10 * X + 10) := by
+theorem nonresidueStep_bounded : FoldBounded nonresidueStepProg (10 * X + 10) := by
   intro l s pre post _
   change esize (pre.foldl nonresidueStep s) ≤ _
   obtain ⟨hq, hc, hf⟩ := fold_nonresidueStep_width pre s
@@ -123,3 +126,5 @@ noncomputable def nonresidueLiftBitsProg : PolyTimeFun Unary BitStr :=
   (snd.comp (snd.comp snd)).comp nonresidueLiftStateProg
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

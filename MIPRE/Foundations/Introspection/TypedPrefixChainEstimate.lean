@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.TypedPrefixChain
+module
+public import MIPRE.Foundations.Introspection.TypedPrefixChain
+
+@[expose] public section
 
 /-! # The quantitative hiding-prefix chain in the actual typed game
 
@@ -95,5 +98,7 @@ theorem hiding_introspect_prefix_estimate (w : Bool) (hL : (L w).SupportedOn uni
   simpa only [Fintype.sum_unique, one_mul, Q, prefixChainType_zero, prefixChainType_end] using hchain
 
 end MIPRE.Introspection.TypedEstimates
+
+end
 
 end

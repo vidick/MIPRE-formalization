@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Test/StrategyRole/Algebra.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyRole.Core
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyRole.Core
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -25,7 +28,7 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
 /-! ### Role-pair projection algebra -/
 
-private lemma rolePairCond_mul {ι : Type*} [Fintype ι] [DecidableEq ι]
+lemma rolePairCond_mul {ι : Type*} [Fintype ι] [DecidableEq ι]
     (rL₁ rR₁ rL₂ rR₂ : Role) (X Y : MIPStarRE.Quantum.Op (ι × ι)) :
     rolePairCond rL₁ rR₁ X * rolePairCond rL₂ rR₂ Y =
       Matrix.reindex (roleRegisterPairLocalEquiv ι) (roleRegisterPairLocalEquiv ι)
@@ -43,7 +46,7 @@ private lemma rolePairCond_mul {ι : Type*} [Fintype ι] [DecidableEq ι]
           (opTensor (rolePairProj rL₁ rR₁ * rolePairProj rL₂ rR₂) (X * Y)) := by
             rw [opTensor_mul]
 
-private lemma rolePairCond_mul_same {ι : Type*} [Fintype ι] [DecidableEq ι]
+lemma rolePairCond_mul_same {ι : Type*} [Fintype ι] [DecidableEq ι]
     (rL rR : Role) (X Y : MIPStarRE.Quantum.Op (ι × ι)) :
     rolePairCond rL rR X * rolePairCond rL rR Y = rolePairCond rL rR (X * Y) := by
   have hproj : rolePairProj rL rR * rolePairProj rL rR = rolePairProj rL rR := by
@@ -51,14 +54,14 @@ private lemma rolePairCond_mul_same {ι : Type*} [Fintype ι] [DecidableEq ι]
   simpa [rolePairCond, hproj] using
     rolePairCond_mul rL rR rL rR X Y
 
-private lemma rolePairCond_mul_eq_zero_of_ne {ι : Type*} [Fintype ι] [DecidableEq ι]
+lemma rolePairCond_mul_eq_zero_of_ne {ι : Type*} [Fintype ι] [DecidableEq ι]
     (rL₁ rR₁ rL₂ rR₂ : Role) (X Y : MIPStarRE.Quantum.Op (ι × ι))
     (h : (rL₁, rR₁) ≠ (rL₂, rR₂)) :
     rolePairCond rL₁ rR₁ X * rolePairCond rL₂ rR₂ Y = 0 := by
   rw [rolePairCond_mul, rolePairProj_mul_eq_zero_of_ne rL₁ rR₁ rL₂ rR₂ h]
   simp [opTensor]
 
-private lemma opTensor_roleCond {ι : Type*} [Fintype ι] [DecidableEq ι]
+lemma opTensor_roleCond {ι : Type*} [Fintype ι] [DecidableEq ι]
     (rL rR : Role) (X Y : MIPStarRE.Quantum.Op ι) :
     opTensor (roleCond rL X) (roleCond rR Y) =
       rolePairCond rL rR (opTensor X Y) := by
@@ -147,7 +150,7 @@ theorem qBipartiteConsDefect_of_measurements {Outcome : Type*} {ιA ιB : Type*}
 -- gives the analogous statement.  These are trace identities, not operator
 -- identities: arbitrary off-diagonal role blocks of `Y` need not vanish, but
 -- they do not contribute to the paper's expectation calculation.
-private lemma normalizedTrace_rolePairCond_mul_left_roleCond_same {ι : Type*}
+lemma normalizedTrace_rolePairCond_mul_left_roleCond_same {ι : Type*}
     [Fintype ι] [DecidableEq ι] [Nonempty ι]
     (rL rR : Role)
     (D : MIPStarRE.Quantum.Op (ι × ι))
@@ -169,7 +172,7 @@ private lemma normalizedTrace_rolePairCond_mul_left_roleCond_same {ι : Type*}
     simp_rw [sum_role_eq_add]
     simp
 
-private lemma normalizedTrace_rolePairCond_mul_left_roleCond_ne {ι : Type*}
+lemma normalizedTrace_rolePairCond_mul_left_roleCond_ne {ι : Type*}
     [Fintype ι] [DecidableEq ι] [Nonempty ι]
     {rL rR rX : Role} (hr : rL ≠ rX)
     (D : MIPStarRE.Quantum.Op (ι × ι))
@@ -269,7 +272,7 @@ lemma ev_classicalRoleSymmState_rolePair_BB {ι : Type*}
 
 -- The `Role.A` block of the left tensor only sees the `Role.B` principal block
 -- of the right tensor against the classically role-symmetrized state.
-private lemma ev_classicalRoleSymmState_opTensor_roleCond_A_ignore {ι : Type*}
+lemma ev_classicalRoleSymmState_opTensor_roleCond_A_ignore {ι : Type*}
     [Fintype ι] [DecidableEq ι] [Nonempty ι]
     (ψ : QuantumState (ι × ι))
     (X : MIPStarRE.Quantum.Op ι) (Y : MIPStarRE.Quantum.Op (Role × ι)) :
@@ -301,7 +304,7 @@ lemma ev_classicalRoleSymmState_opTensor_roleCond_A {ι : Type*}
 
 -- The `Role.B` block of the left tensor only sees the `Role.A` principal block
 -- of the right tensor against the classically role-symmetrized state.
-private lemma ev_classicalRoleSymmState_opTensor_roleCond_B_ignore {ι : Type*}
+lemma ev_classicalRoleSymmState_opTensor_roleCond_B_ignore {ι : Type*}
     [Fintype ι] [DecidableEq ι] [Nonempty ι]
     (ψ : QuantumState (ι × ι))
     (X : MIPStarRE.Quantum.Op ι) (Y : MIPStarRE.Quantum.Op (Role × ι)) :
@@ -333,3 +336,5 @@ lemma ev_classicalRoleSymmState_opTensor_roleCond_B {ι : Type*}
   rw [ev_swapQuantumState, swapDensity_opTensor]
 
 end MIPStarRE.LDT
+
+end

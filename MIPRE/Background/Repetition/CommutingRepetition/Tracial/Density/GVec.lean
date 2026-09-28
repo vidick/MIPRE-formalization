@@ -19,12 +19,16 @@ and `Z = ∑ₖ wₖ‖vₖ‖²`. Then `∑ₖ ‖gₖ‖² = 1`, the state is 
 is dense (`gvecState_faithful`), and it is `2ε/(1−ε)`-close to the vector state of
 `ψ` on the unit ball (`norm_gvecState_sub_le`). Proof-side.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.FaithfulState
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.FaithfulState
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -328,3 +332,5 @@ theorem norm_gvecState_sub_le (hψ : ‖ψ‖ = 1) {ε : ℝ} (hε0 : 0 < ε) (h
 end Density
 
 end CommutingRepetition
+
+end

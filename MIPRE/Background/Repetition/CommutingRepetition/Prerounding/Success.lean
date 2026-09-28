@@ -15,12 +15,16 @@ with `sum_flatQ_idealPayoff`, the `Q`-averaged ideal payoff is the greedy
 core's average conditional success `(1/m) ∑_{i∉D} P(W_{D∪{i}}) / P(W_D)`.
 Nothing here is a manuscript statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.IdealSuccess
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.IdealSuccess
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -109,7 +113,9 @@ theorem coreW_nonneg (G : Game X Y A B) (D : Finset (Fin n)) (xw : Fin n → X) 
 theorem coreW_le_one (G : Game X Y A B) (D : Finset (Fin n)) (xw : Fin n → X) (yw : Fin n → Y)
     (zA : {j : Fin n // j ∈ D} → A) (zB : {j : Fin n // j ∈ D} → B) :
     coreW G D xw yw zA zB ≤ 1 :=
-  Finset.prod_le_one (fun j _ => G.payoff_nonneg _ _ _ _) (fun j _ => G.payoff_le_one _ _ _ _)
+  -- Vendoring compile fix (Mathlib v4.35): `Finset.prod_le_one₀` is the version with the
+  -- nonnegativity hypothesis. See README.md.
+  Finset.prod_le_one₀ (fun j _ => G.payoff_nonneg _ _ _ _) (fun j _ => G.payoff_le_one _ _ _ _)
 
 /-- The core weight reads the question words only on `D`. -/
 theorem coreW_agree (G : Game X Y A B) (D : Finset (Fin n)) :
@@ -233,3 +239,5 @@ theorem flatQ_idealPayoff_ge (hden : 0 < den) (hnum : ∀ x y a b, num x y a b �
 end TracialStrategy
 
 end CommutingRepetition
+
+end

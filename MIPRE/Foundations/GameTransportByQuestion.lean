@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.GameTransport
-import MIPRE.Foundations.PerfectStrategy
+module
+public import MIPRE.Foundations.GameTransport
+public import MIPRE.Foundations.PerfectStrategy
+
+@[expose] public section
 
 /-! # Merging strategy answers separately at each question
 
@@ -186,3 +189,5 @@ theorem copy_value_eq_one (S : SyncStrategy G) (G' : SynchronousGame X A)
     (S.copy G').d = S.d := rfl
 end SyncStrategy
 end MIPRE
+
+end

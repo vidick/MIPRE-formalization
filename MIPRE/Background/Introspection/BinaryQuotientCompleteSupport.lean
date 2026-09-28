@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.BinaryQuotientComplete
+module
+public import MIPRE.Background.Introspection.BinaryQuotientComplete
+
+@[expose] public section
 
 /-! # Format support of the honest explicit Pauli measurements -/
 
@@ -41,4 +44,6 @@ theorem quotientHonest_pauli_format (χ : F → Fin m) (π : F ≃ F)
   rwa [QLD.PauliCL.ExplicitSeed.binaryQuestion_outputPermutation] at h
 
 end MIPRE.Introspection.BinaryComplete
+end
+
 end

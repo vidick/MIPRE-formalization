@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.TM.CookLevin.PcpVerifier
-import MIPRE.TM.CookLevin.PcpCircuit
-import MIPRE.Foundations.SAT.PcpViewTests
-import MIPRE.Foundations.SAT.QuotientField
+module
+public import MIPRE.TM.CookLevin.PcpVerifier
+public import MIPRE.TM.CookLevin.PcpCircuit
+public import MIPRE.Foundations.SAT.PcpViewTests
+public import MIPRE.Foundations.SAT.QuotientField
+
+@[expose] public section
 
 /-! # The raw verifier and its fixed typed clause polynomial -/
 
@@ -125,5 +128,7 @@ theorem verifierTests_typed_iff (D : Prog) (n T Q σ : ℕ) (x y : BitStr)
   · exact verifierCircuitValue_typed D n T Q σ x y hV E root hroot hencode z α β
 
 end MIPRE.TM.CookLevin.Pad
+
+end
 
 end

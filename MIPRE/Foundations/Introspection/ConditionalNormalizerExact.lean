@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ConditionalNormalizer
+module
+public import MIPRE.Foundations.Introspection.ConditionalNormalizer
+
+@[expose] public section
 
 /-! # Exact conditional products from rejected-outcome orthogonality -/
 
@@ -78,3 +81,5 @@ theorem conditionalIdeal_eq_coarse_of_reject
     _ = _ := by rw [fibSum, Finset.sum_filter]
 
 end MIPRE.Introspection
+
+end

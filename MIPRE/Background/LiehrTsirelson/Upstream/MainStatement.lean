@@ -7,7 +7,11 @@ Tsirelson/MainStatement.lean, from a snapshot of the `main` branch supplied on 2
 nothing outside `MIPRE/Background/LiehrTsirelson/` may name it. Upstream carries no license file;
 see README.md.
 -/
-import MIPRE.Background.LiehrTsirelson.Upstream.Core
+module
+public import MIPRE.Background.LiehrTsirelson.Upstream.Core
+
+@[expose] public section
+
 /-!
 # The three terminal propositions
 
@@ -46,3 +50,5 @@ def GameValueSeparationStatement : Prop :=
   ∃ (n k : ℕ) (G : Game n k), 1 ≤ n ∧ 1 ≤ k ∧ valStar G < valCo G ∧ valCo G = 1
 
 end Tsirelson
+
+end

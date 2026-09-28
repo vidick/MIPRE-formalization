@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryGroupAlgebra
-import MIPRE.Foundations.LowDegree.IdempotentSplit
+module
+public import MIPRE.Foundations.LowDegree.BinaryGroupAlgebra
+public import MIPRE.Foundations.LowDegree.IdempotentSplit
+
+@[expose] public section
 
 /-! # Primitive components computed by fixed-space separation -/
 
@@ -38,7 +41,7 @@ theorem groupFixedFamily_spans (k : ℕ) [NeZero k]
   rw [hs]
   exact groupFixedGenerator_spans k z hz
 
-private theorem unitComponentFamily (k : ℕ) [NeZero k] :
+theorem unitComponentFamily (k : ℕ) [NeZero k] :
     ComponentFamily ([1] : List (AddMonoidAlgebra (ZMod 2) (Fin k))) := by
   constructor <;> simp
 
@@ -145,5 +148,7 @@ theorem splitBitsCapped_encoding {k : ℕ} [NeZero k]
   simpa only [List.length_map, groupAlgebra_finrank] using (hl.split hb).length_le_finrank
 
 end MIPRE.LowDegree.BinaryLinear
+
+end
 
 end

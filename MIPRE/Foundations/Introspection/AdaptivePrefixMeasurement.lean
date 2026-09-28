@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.PrefixConditioning
+module
+public import MIPRE.Foundations.Introspection.PrefixConditioning
+
+@[expose] public section
 
 /-! # Reassembling measurements across actual adaptive CL prefixes
 
@@ -138,5 +141,7 @@ theorem prefixResidual_reassembled_distance (P : CL.CLFun F ι ℓ)
   simp only [Finset.mul_sum]
 
 end MIPRE.Introspection
+
+end
 
 end

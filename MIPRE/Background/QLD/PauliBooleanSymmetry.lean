@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.PauliBooleanPrograms
+module
+public import MIPRE.Background.QLD.PauliBooleanPrograms
+
+@[expose] public section
 
 /-! # Orientation symmetry of the actual Pauli decision program -/
 
@@ -98,4 +101,6 @@ theorem route_default_unhandled (T U : Ty) (h : (PauliBranchProgram.route T U).1
   decide
 
 end MIPRE.QLD.PauliBooleanProgram
+end
+
 end

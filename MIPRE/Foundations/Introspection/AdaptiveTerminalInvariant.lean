@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveInductionInvariant
-import MIPRE.Foundations.Introspection.FinalExtraction
+module
+public import MIPRE.Foundations.Introspection.AdaptiveInductionInvariant
+public import MIPRE.Foundations.Introspection.FinalExtraction
+
+@[expose] public section
 
 /-! # Terminal adaptive invariants are conditional readouts
 
@@ -188,4 +191,6 @@ theorem IntroPrefixInvariant.terminal_none
   rw [prefixResidualOp_terminal hP, terminalAuxPOVM_none]
 
 end MIPRE.Introspection
+end
+
 end

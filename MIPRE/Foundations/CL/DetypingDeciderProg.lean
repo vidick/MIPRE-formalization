@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingDeciderRoute
-import MIPRE.Foundations.CL.DetypingProgSampler
-import MIPRE.Foundations.Verifier
+module
+public import MIPRE.Foundations.CL.DetypingDeciderRoute
+public import MIPRE.Foundations.CL.DetypingProgSampler
+public import MIPRE.Foundations.Verifier
+
+@[expose] public section
 
 /-! # Executable detyping of the decision predicate
 
@@ -142,3 +145,5 @@ def decider : MIPRE.Decider where
 
 end DeciderProgram
 end MIPRE.CL.Detyping
+
+end

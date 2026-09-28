@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryBasisProg
-import MIPRE.Foundations.LowDegree.BinaryEchelon
+module
+public import MIPRE.Foundations.LowDegree.BinaryBasisProg
+public import MIPRE.Foundations.LowDegree.BinaryEchelon
+
+@[expose] public section
 
 /-! # Correctness of the effective binary basis construction -/
 
@@ -185,3 +188,5 @@ theorem typedBasis_span (rows : List (Row n t)) : pivotSpan (typedBasis rows) = 
     exact Submodule.subset_span ⟨p, hp, rfl⟩
 
 end MIPRE.LowDegree.BinaryLinear
+
+end

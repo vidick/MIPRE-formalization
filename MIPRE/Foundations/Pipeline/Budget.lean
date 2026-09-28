@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.VerifierValue
+module
+public import MIPRE.Foundations.VerifierValue
+
+@[expose] public section
 
 /-!
 # Resource budgets of a verifier at one index
@@ -109,3 +112,5 @@ theorem Within.valStar_eq {n : ℕ} {R : Budget} (h : V.Within n R) {T : ℕ} (h
 end Verifier
 
 end MIPRE
+
+end

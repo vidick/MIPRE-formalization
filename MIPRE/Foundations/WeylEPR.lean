@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Weyl
-import MIPRE.Foundations.StateDistance
-import MIPRE.Foundations.PVM
+module
+public import MIPRE.Foundations.Weyl
+public import MIPRE.Foundations.StateDistance
+public import MIPRE.Foundations.PVM
+
+@[expose] public section
 
 /-!
 # The maximally entangled state of the Weyl system
@@ -204,5 +207,7 @@ theorem stateVec_epr_syn (hw : ∀ a, (w a)ᵀ = w a) (v : n → F) (a : F) :
   rw [syn_eq_synOf]; exact stateVec_epr_synOf hw _ a
 
 end MIPRE.Weyl
+
+end
 
 end

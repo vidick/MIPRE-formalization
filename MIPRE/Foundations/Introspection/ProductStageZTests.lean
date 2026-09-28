@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SamplingRigidity
-import MIPRE.Foundations.Introspection.HidingInduction
-import MIPRE.Foundations.Introspection.HidingBaseOperators
+module
+public import MIPRE.Foundations.Introspection.SamplingRigidity
+public import MIPRE.Foundations.Introspection.HidingInduction
+public import MIPRE.Foundations.Introspection.HidingBaseOperators
+
+@[expose] public section
 
 /-! # Actual sampling tests imply coarse Z commutation
 
@@ -278,5 +281,7 @@ theorem introspect_coarseZ_commutator_alice
   linarith only [ht, hleft, hright]
 
 end MIPRE.Introspection.TypedEstimates
+
+end
 
 end

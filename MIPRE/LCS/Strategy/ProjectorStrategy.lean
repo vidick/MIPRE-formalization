@@ -3,11 +3,14 @@ Copyright (c) 2026 Sean Perazzolo. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sean Perazzolo
 -/
-import MIPRE.LCS.Basic
-import MIPRE.LCS.Common
-import MIPRE.LCS.Measurement
-import MIPRE.LCS.Observable
-import MIPRE.LCS.Strategy.ObservableToProjector
+module
+public import MIPRE.LCS.Basic
+public import MIPRE.LCS.Common
+public import MIPRE.LCS.Measurement
+public import MIPRE.LCS.Observable
+public import MIPRE.LCS.Strategy.ObservableToProjector
+
+@[expose] public section
 
 /-!
 # Projector-based Strategy for LCS Games
@@ -196,3 +199,5 @@ lemma ProjectorStrategy.F_eq_observableToProjector (j : Fin G.s) (y : ZMod 2) :
 end WithStrategy
 
 end MIPRE.LCS
+
+end

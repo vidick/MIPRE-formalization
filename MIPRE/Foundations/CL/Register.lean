@@ -3,7 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.LinearAlgebra.Pi
+module
+public import Mathlib.LinearAlgebra.Pi
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Register subspaces
@@ -226,3 +230,5 @@ def directSum (L : RegLinear F S) (M : RegLinear F T) : RegLinear F (S ∪ T) :=
 end RegLinear
 
 end MIPRE.CL
+
+end

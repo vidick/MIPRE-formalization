@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Basic/SubMeasurementCore.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -43,7 +46,7 @@ set_option linter.unusedFintypeInType false in
 open scoped Classical in
 /-- For a trivial distinguished-outcome measurement, every outcome operator is
 positive semidefinite: `0 ≤ if a = a₀ then 1 else 0`. -/
-private theorem Measurement.trivialDistinguishedOutcome_outcome_pos
+theorem Measurement.trivialDistinguishedOutcome_outcome_pos
     {α : Type*} {ι : Type*} [Fintype ι] [DecidableEq ι] (a₀ a : α) :
     (0 : MIPStarRE.Quantum.Op ι) ≤ if a = a₀ then 1 else 0 := by
   by_cases h : a = a₀ <;> simp [h]
@@ -89,7 +92,7 @@ structure ProjMeas (α : Type*) (ι : Type*) [Fintype α] [Fintype ι] [Decidabl
 
 /-- For a trivial distinguished-outcome projective measurement, every outcome operator
 is idempotent. -/
-private theorem ProjMeas.trivialDistinguishedOutcome_proj
+theorem ProjMeas.trivialDistinguishedOutcome_proj
     {α : Type*} {ι : Type*} [Fintype α] [Fintype ι] [DecidableEq ι] (a₀ a : α) :
     (Measurement.trivialDistinguishedOutcome (ι := ι) a₀).outcome a *
         (Measurement.trivialDistinguishedOutcome (ι := ι) a₀).outcome a =
@@ -459,3 +462,5 @@ theorem ProjMeas.outcome_commute {α : Type*}
 
 
 end MIPStarRE.LDT
+
+end

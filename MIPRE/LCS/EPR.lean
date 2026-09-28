@@ -3,9 +3,12 @@ Copyright (c) 2026 Sean Perazzolo. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sean Perazzolo
 -/
-import MIPRE.LCS.Strategy.Equivalence
-import MIPRE.LCS.WinningCondition
-import MIPRE.LCS.MatrixSOS
+module
+public import MIPRE.LCS.Strategy.Equivalence
+public import MIPRE.LCS.WinningCondition
+public import MIPRE.LCS.MatrixSOS
+
+@[expose] public section
 
 /-!
 # EPR Extraction for LCS Relation Terms
@@ -79,7 +82,7 @@ $$
   (M \otimes N)\Omega = \sum_k M_{\_,k} N_{\_,k}.
 $$
 -/
-private lemma sum_pair_diag
+lemma sum_pair_diag
     {n : Type*} [Fintype n] [DecidableEq n] (f : n → n → ℂ) :
     (∑ x : n × n, if x.1 = x.2 then f x.1 x.2 else 0) = ∑ k : n, f k k := by
   classical
@@ -364,7 +367,7 @@ This is the generic finite-product input used below to show that Alice's row pro
 self-adjoint, which is needed before the SOS square-sum can be split into individual
 annihilation relations.
 -/
-private lemma noncommProd_conjTranspose_eq_self
+lemma noncommProd_conjTranspose_eq_self
     {ι m : Type*} [Fintype m] [DecidableEq m]
     (s : Finset ι) (f : ι → Matrix m m ℂ)
     (comm : (s : Set ι).Pairwise fun x y ↦ Commute (f x) (f y))
@@ -401,7 +404,7 @@ It packages the observable self-adjointness of the individual row entries and th
 within-row commutativity.  This is useful for proving that the row SOS term
 $1 - (-1)^{b_i}\operatorname{Row}_i(A)$ is self-adjoint.
 -/
-private lemma alice_row_prod_conjTranspose_eq_self
+lemma alice_row_prod_conjTranspose_eq_self
     (i : Fin G.r) :
     (∏ₐ[i])ᴴ = ∏ₐ[i] := by
   unfold ProjectorStrategy.aliceRowProd
@@ -417,7 +420,7 @@ $$
 This small scalar fact is used when taking adjoints of signed relation terms such as
 $1 - (-1)^{b_i}T$ in the Stage 2 self-adjointness checks.
 -/
-private lemma sign_star_eq_self {G : Layout} (game : Game G) (i : Fin G.r) :
+lemma sign_star_eq_self {G : Layout} (game : Game G) (i : Fin G.r) :
     star ((-1 : ℂ) ^ (game.b i).val) = (-1 : ℂ) ^ (game.b i).val := by
   rcases zmod_two_eq_zero_or_one (game.b i) with hb | hb <;> simp [hb]
 
@@ -429,7 +432,7 @@ $$
 This avoids repeating the adjoint calculation for both signed SOS relation terms in
 Stage 2.
 -/
-private lemma one_sub_smul_conjTranspose_eq_self
+lemma one_sub_smul_conjTranspose_eq_self
     {m : Type*} [DecidableEq m]
     (c : ℂ) (T : Matrix m m ℂ)
     (hc : star c = c) (hT : Tᴴ = T) :
@@ -445,7 +448,7 @@ The proof uses that Alice and Bob observables are self-adjoint and commute.  Thi
 of the three self-adjointness hypotheses required to turn
 $(T_1^2 + T_2^2 + T_3^2)\Omega = 0$ into $T_1\Omega = 0$.
 -/
-private lemma sos_consistency_term_conjTranspose_eq_self
+lemma sos_consistency_term_conjTranspose_eq_self
     (i : Fin G.r) (j : G.V i) :
     (sosConsistencyTerm n strat i j)ᴴ =
       sosConsistencyTerm n strat i j := by
@@ -468,7 +471,7 @@ It combines self-adjointness of the row product, Alice entry, and Bob entry with
 commutation rules.  This is the key input for showing that the signed product SOS term
 $1 - (-1)^{b_i}\operatorname{Row}_i(A)A_{ij}B_j$ is self-adjoint.
 -/
-private lemma sos_product_core_conjTranspose_eq_self
+lemma sos_product_core_conjTranspose_eq_self
     (i : Fin G.r) (j : G.V i) :
     (∏ₐ[i] * A[i, j] * B[↑j])ᴴ = ∏ₐ[i] * A[i, j] * B[↑j] := by
   have hRow : (∏ₐ[i])ᴴ = ∏ₐ[i] := alice_row_prod_conjTranspose_eq_self n strat i
@@ -696,3 +699,5 @@ lemma local_matrix_identities_of_local_loss_annihilate_epr
 end LCSSOSTerms
 
 end MIPRE.LCS
+
+end

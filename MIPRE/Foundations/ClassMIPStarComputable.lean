@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.ValueApprox.RE
-import MIPRE.Foundations.Cost.Semidecide
+module
+public import MIPRE.Foundations.ValueApprox.RE
+public import MIPRE.Foundations.Cost.Semidecide
+
+@[expose] public section
 
 /-!
 # The classes `RE` and `MIP*`, and the inclusion `MIP* ⊆ RE`
@@ -96,3 +99,5 @@ theorem exists_semidecider_lt_quantumValue {g : BitStr → GameData} (hg : Compu
   Cost.exists_semidecider (rePred_lt_quantumValue_comp hg p q)
 
 end MIPRE
+
+end

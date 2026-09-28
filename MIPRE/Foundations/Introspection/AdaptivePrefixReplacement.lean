@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptivePrefixMixing
-import MIPRE.Foundations.Introspection.AdaptivePrefixMeasurement
-import MIPRE.Foundations.Introspection.AdaptivePrefixExtension
-import MIPRE.Foundations.Introspection.AdaptiveDilationTransport
+module
+public import MIPRE.Foundations.Introspection.AdaptivePrefixMixing
+public import MIPRE.Foundations.Introspection.AdaptivePrefixMeasurement
+public import MIPRE.Foundations.Introspection.AdaptivePrefixExtension
+public import MIPRE.Foundations.Introspection.AdaptiveDilationTransport
+
+@[expose] public section
 
 /-! # Actual adaptive residual projectors after mixing
 
@@ -190,4 +193,6 @@ theorem exists_adaptive_prefix_dilation (P : CL.CLFun F ι ℓ) (hP : P.Supporte
         (sum_prefixWeight P k) herr).trans (Real.sqrt_le_sqrt havg)) (by norm_num)
 
 end MIPRE.Introspection
+end
+
 end

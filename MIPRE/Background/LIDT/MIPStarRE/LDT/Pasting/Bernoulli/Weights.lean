@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/Bernoulli/Weights.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Statements
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.TruncatedSums
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Statements
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.TruncatedSums
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -30,7 +33,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- Bundle the four proved facts about the averaged total operator `G` used by
 `fromHToGRecurrenceWeight` into a single `truncatedTypeSumRecurrence` call. -/
-private lemma fromHToGRecurrenceWeight_recurrence
+lemma fromHToGRecurrenceWeight_recurrence
     (params : Parameters)
     [FieldModel params.q]
     (family : IdxPolyFamily params ι)
@@ -120,3 +123,5 @@ theorem fromHToGRecurrenceWeight_succ
   (fromHToGRecurrenceWeight_recurrence params family prefixLen τtail).2.2.2
 
 end MIPStarRE.LDT.Pasting
+
+end

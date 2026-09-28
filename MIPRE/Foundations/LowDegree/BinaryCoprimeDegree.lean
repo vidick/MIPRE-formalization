@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryFiniteFieldDegree
+module
+public import MIPRE.Foundations.LowDegree.BinaryFiniteFieldDegree
+
+@[expose] public section
 
 /-! # Exact degrees of sums with coprime binary field degrees -/
 
@@ -14,13 +17,13 @@ open Polynomial
 
 variable {R : Type*} [CommRing R] [CharP R 2]
 
-private theorem frobenius_comm (a b : ℕ) (x : R) :
+theorem frobenius_comm (a b : ℕ) (x : R) :
     iterateFrobenius R 2 a (iterateFrobenius R 2 b x) =
       iterateFrobenius R 2 b (iterateFrobenius R 2 a x) := by
   rw [← iterateFrobenius_add_apply, Nat.add_comm a b, iterateFrobenius_add_apply]
 
 omit [CharP R 2] in
-private theorem iterate_add_delta (F : R →+ R) (x d : R)
+theorem iterate_add_delta (F : R →+ R) (x d : R)
     (hx : F x = x + d) (hd : F d = d) (n : ℕ) : F^[n] x = x + n • d := by
   induction n with
   | zero => simp
@@ -29,7 +32,7 @@ private theorem iterate_add_delta (F : R →+ R) (x d : R)
     abel
 
 omit [CharP R 2] in
-private theorem nsmul_delta_eq_zero (F : R →+ R) (x : R) (n : ℕ)
+theorem nsmul_delta_eq_zero (F : R →+ R) (x : R) (n : ℕ)
     (hd : F (F x - x) = F x - x) (hx : F^[n] x = x) : n • (F x - x) = 0 := by
   have h := iterate_add_delta F x (F x - x) (by abel) hd n
   rw [hx] at h
@@ -134,5 +137,7 @@ theorem minpoly_natDegree_add_of_coprime (x y : L)
   exact Nat.dvd_antisymm h₂ h₁
 
 end MIPRE.LowDegree.BinaryFiniteField
+
+end
 
 end

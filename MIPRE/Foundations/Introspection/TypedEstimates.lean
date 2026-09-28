@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.TypedPresentation
-import MIPRE.Foundations.Introspection.TypedPredicate
-import MIPRE.Foundations.Introspection.HidingTests
+module
+public import MIPRE.Foundations.Introspection.TypedPresentation
+public import MIPRE.Foundations.Introspection.TypedPredicate
+public import MIPRE.Foundations.Introspection.HidingTests
+
+@[expose] public section
 
 /-! # Auxiliary estimates for the concrete typed introspection game
 
@@ -212,5 +215,7 @@ theorem hiding_read_same_side_estimate (w : Bool) (k : Fin ℓ) (hk : k.val + 1 
 
 end Parsed
 end MIPRE.Introspection.TypedEstimates
+
+end
 
 end

@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestRead
+module
+public import MIPRE.Foundations.Introspection.HonestRead
+
+@[expose] public section
 
 /-! # The full honest Read measurement and the reading edge
 
@@ -96,3 +99,5 @@ theorem read_typed_reject_zero {P PA : Type*} (X Z : P) (projectPauli : PA â†’ Î
   rw [introspect_read_mul, if_neg (of_decide_eq_false hr)]
 
 end MIPRE.Introspection.Honest
+
+end

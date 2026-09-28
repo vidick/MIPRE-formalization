@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryQuotientChecks
-import MIPRE.Foundations.Introspection.TypedPredicate
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryQuotientChecks
+public import MIPRE.Foundations.Introspection.TypedPredicate
+
+@[expose] public section
 
 /-! # Quotient hiding comparisons in the complete typed predicate
 
@@ -142,3 +145,5 @@ theorem check_sound (hL : ∀ w, (L w).SupportedOn Finset.univ)
       exact h.1.1.2
 
 end MIPRE.Introspection.AuxiliaryQuotient
+
+end

@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Cost.Toolkit
-import MIPRE.Foundations.Cost.Fold
-import MIPRE.Foundations.Cost.Binary
+module
+public import MIPRE.Foundations.Cost.Toolkit
+public import MIPRE.Foundations.Cost.Fold
+public import MIPRE.Foundations.Cost.Binary
+
+@[expose] public section
 
 /-! # Polynomial-time source calls with an explicit unary resource
 
@@ -42,4 +45,6 @@ def run (U : ClockedUniversalMachine) : PolyTimeFun (Unary × Prog × Data) Data
     run U (budget, source, input) = clockedResult source input budget.length := rfl
 
 end MIPRE.Introspection.ClockedQuery
+end
+
 end

@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.PrimitiveSoundness
-import MIPRE.Foundations.Introspection.PVMStateTransfer
-import MIPRE.Foundations.Introspection.StateStability
+module
+public import MIPRE.Foundations.Introspection.PrimitiveSoundness
+public import MIPRE.Foundations.Introspection.PVMStateTransfer
+public import MIPRE.Foundations.Introspection.StateStability
+
+@[expose] public section
 
 /-! # Soundness before replacing the extracted state
 
@@ -133,4 +136,6 @@ theorem quantumValue_ge_of_extracted_state
 
 end TypedEstimates
 end MIPRE.Introspection
+end
+
 end

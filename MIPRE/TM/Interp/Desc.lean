@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.Interp.GetEnv
-import MIPRE.TM.Interp.CopyTreeCharge
+module
+public import MIPRE.TM.Interp.GetEnv
+public import MIPRE.TM.Interp.CopyTreeCharge
+
+@[expose] public section
 
 /-!
 # Tape descriptions
@@ -679,3 +682,5 @@ theorem D_copyTree_charge_fail {src t : WT} (hins : instrAt k pc = .copyTree src
 end Routines
 
 end MIPRE.TM.Interp
+
+end

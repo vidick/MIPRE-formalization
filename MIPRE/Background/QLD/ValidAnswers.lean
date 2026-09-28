@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Soundness
+module
+public import MIPRE.Background.QLD.Soundness
+
+@[expose] public section
 
 /-!
 # `thm:qld` on the valid Pauli answers
@@ -445,5 +448,7 @@ theorem qld_soundness_valid :
     linarith [(h2 W).2]
 
 end MIPRE.QLD
+
+end
 
 end

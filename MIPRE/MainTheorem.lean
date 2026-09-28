@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.HaltingGameValue
-import MIPRE.Background.Pipeline
-import MIPRE.Background.AnswerReduction.Instance
+module
+public import MIPRE.HaltingGameValue
+public import MIPRE.Background.Pipeline
+public import MIPRE.Background.AnswerReduction.Instance
+
+@[expose] public section
 
 /-!
 # `MIP* = RE`
@@ -79,3 +82,5 @@ theorem mipstar_eq_re : MIPStar = IsRE :=
   mipstar_eq_re_of_answerReduction AnswerReduction.answerReduction
 
 end MIPRE.Halting
+
+end

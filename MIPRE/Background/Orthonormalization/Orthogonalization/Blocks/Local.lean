@@ -21,12 +21,16 @@ ambient space `H`, relative to a central projection `z` of `M`:
 `OrthAt M 1 ι` is Theorem 1.2 for `M` (with a functional positive on `M` and
 normalized, i.e. the functional of a `NormalState M`). Proof-side only.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.Positivity
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.Blocks
 
@@ -112,3 +116,5 @@ theorem mul_eq_self_of_sum_eq {ι : Type*} [Fintype ι] {a : ι → H →L[ℂ] 
   mul_eq_self_of_le_proj hz (ha0 i) (le_of_sum_eq ha0 haz i)
 
 end Orthogonalization.Blocks
+
+end

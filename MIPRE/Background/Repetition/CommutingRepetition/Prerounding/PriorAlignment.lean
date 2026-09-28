@@ -27,12 +27,16 @@ IA-size-bias-calculation, prior-alignment-bound). Following the manuscript:
 
 The Bob side (`I_B`) is the mirror. No manuscript statement lives here.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.CostsLemmas
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.CostsLemmas
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -877,3 +881,5 @@ theorem alignSumA_le (μ : X → Y → ℝ) (hμ : ∀ x y, 0 ≤ μ x y)
 end TracialStrategy
 
 end CommutingRepetition
+
+end

@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.PauliSamplerExtension
+module
+public import MIPRE.Background.Introspection.PauliSamplerExtension
+
+@[expose] public section
 
 /-! # A zero-dimensional sampler at the exceptional index
 
@@ -151,4 +154,6 @@ theorem atZero_timeBound_pos {ℓ n B k : ℕ} (S : CL.Sampler ℓ) (hn : n ≠ 
   nlinarith
 
 end MIPRE.Introspection.ZeroIndexSampler
+end
+
 end

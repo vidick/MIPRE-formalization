@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Preliminaries/DistanceBounds.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonCore
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonCore
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -281,7 +284,7 @@ theorem qSDDOp_nonneg
   exact Finset.sum_nonneg fun a _ => ev_adjoint_self_nonneg ψ _
 
 /-- Atomic mathematical fact: the parallelogram-style inequality for `qSDDOp`. -/
-private lemma questionSDDOp_triangle
+lemma questionSDDOp_triangle
     {Outcome : Type*} {ι : Type*} [Fintype ι] [DecidableEq ι] [Fintype Outcome]
     (ψ : QuantumState ι) (A B C : OpFamily Outcome ι) :
     qSDDOp ψ A C ≤ 2 * (qSDDOp ψ A B + qSDDOp ψ B C) := by
@@ -395,3 +398,5 @@ lemma sddOpRel_leftPlaced_of_ev_eq
 
 
 end MIPStarRE.LDT.Preliminaries
+
+end

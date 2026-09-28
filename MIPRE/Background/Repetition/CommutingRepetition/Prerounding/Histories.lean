@@ -39,12 +39,16 @@ Encoding notes (for the fidelity review):
   bob-live-increment) consume this layer together with the branch
   effects of node 1.2.4 and are stated with the alignment layer.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Reveal
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Reveal
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -137,12 +141,12 @@ end BobRevealDatum
 
 /-! ### Shared surgery helpers for the pushforward bijections -/
 
-private theorem pushHEqFin : ∀ {m m' : ℕ}, m = m' →
+theorem pushHEqFin : ∀ {m m' : ℕ}, m = m' →
     ∀ (a : Fin m) (b : Fin m'), (a : ℕ) = (b : ℕ) → HEq a b := by
   rintro m m' rfl a b h
   exact heq_of_eq (Fin.ext h)
 
-private theorem pushHEqEquiv : ∀ {n : ℕ} {S S' : Finset (Fin n)}, S = S' →
+theorem pushHEqEquiv : ∀ {n : ℕ} {S S' : Finset (Fin n)}, S = S' →
     ∀ (E : Fin S.card ≃ {j : Fin n // j ∈ S})
       (E' : Fin S'.card ≃ {j : Fin n // j ∈ S'}),
     (∀ (t : Fin S.card) (t' : Fin S'.card), (t : ℕ) = (t' : ℕ) →
@@ -150,7 +154,7 @@ private theorem pushHEqEquiv : ∀ {n : ℕ} {S S' : Finset (Fin n)}, S = S' →
   rintro n S S' rfl E E' h
   exact heq_of_eq (Equiv.ext fun t => Subtype.ext (h t t rfl))
 
-private theorem pushAliceExt : ∀ {n : ℕ} {D : Finset (Fin n)}
+theorem pushAliceExt : ∀ {n : ℕ} {D : Finset (Fin n)}
     (a b : AliceRevealDatum n D), a.LX = b.LX → a.LYp = b.LYp →
     HEq a.πX b.πX → HEq a.πY b.πY → HEq a.kX b.kX → HEq a.kY b.kY →
     a = b := by
@@ -162,7 +166,7 @@ private theorem pushAliceExt : ∀ {n : ℕ} {D : Finset (Fin n)}
   subst h3; subst h4; subst h5; subst h6
   rfl
 
-private theorem pushBobExt : ∀ {n : ℕ} {D : Finset (Fin n)}
+theorem pushBobExt : ∀ {n : ℕ} {D : Finset (Fin n)}
     (a b : BobRevealDatum n D), a.LXp = b.LXp → a.LY = b.LY →
     HEq a.πX b.πX → HEq a.πY b.πY → HEq a.kX b.kX → HEq a.kY b.kY →
     a = b := by
@@ -174,7 +178,7 @@ private theorem pushBobExt : ∀ {n : ℕ} {D : Finset (Fin n)}
   subst h3; subst h4; subst h5; subst h6
   rfl
 
-private theorem pushRevealExt : ∀ {n : ℕ} {D : Finset (Fin n)}
+theorem pushRevealExt : ∀ {n : ℕ} {D : Finset (Fin n)}
     (a b : RevealDatum n D), a.i = b.i → a.LX = b.LX →
     a.LY = b.LY → HEq a.πX b.πX → HEq a.πY b.πY → HEq a.kX b.kX →
     HEq a.kY b.kY → a = b := by
@@ -186,7 +190,7 @@ private theorem pushRevealExt : ∀ {n : ℕ} {D : Finset (Fin n)}
   subst h3; subst h4; subst h5; subst h6
   rfl
 
-private theorem pushInsEval : ∀ {n : ℕ} (S' : Finset (Fin n)) (i' : Fin n)
+theorem pushInsEval : ∀ {n : ℕ} (S' : Finset (Fin n)) (i' : Fin n)
     (h' : i' ∉ S') (π' : Fin S'.card ≃ {j : Fin n // j ∈ S'})
     (k' : Fin (S'.card + 1)) (hcc : (insert i' S').card = S'.card + 1)
     (z : Fin (insert i' S').card)
@@ -201,7 +205,7 @@ private theorem pushInsEval : ∀ {n : ℕ} (S' : Finset (Fin n)) (i' : Fin n)
     Equiv.optionCongr_apply, Option.map_some]
   rfl
 
-private theorem pushInsEvalCut : ∀ {n : ℕ} (S' : Finset (Fin n)) (i' : Fin n)
+theorem pushInsEvalCut : ∀ {n : ℕ} (S' : Finset (Fin n)) (i' : Fin n)
     (h' : i' ∉ S') (π' : Fin S'.card ≃ {j : Fin n // j ∈ S'})
     (k' : Fin (S'.card + 1)) (hcc : (insert i' S').card = S'.card + 1)
     (z : Fin (insert i' S').card),
@@ -216,7 +220,7 @@ private theorem pushInsEvalCut : ∀ {n : ℕ} (S' : Finset (Fin n)) (i' : Fin n
     Equiv.optionCongr_apply, Option.map_none]
   rfl
 
-private theorem pushDelEval : ∀ {n : ℕ} (S : Finset (Fin n)) (u : Fin n)
+theorem pushDelEval : ∀ {n : ℕ} (S : Finset (Fin n)) (u : Fin n)
     (π : Fin S.card ≃ {j : Fin n // j ∈ S})
     (hb : (S.erase u).card = S.card - 1) (hN : S.card - 1 + 1 = S.card)
     (P : Fin (S.card - 1 + 1))
@@ -234,7 +238,7 @@ private theorem pushDelEval : ∀ {n : ℕ} (S : Finset (Fin n)) (u : Fin n)
     Equiv.subtypeEquiv_apply, Equiv.subtypeEquivRight_apply]
   rfl
 
-private theorem pushSuccAboveVal : ∀ {m₁ m₂ : ℕ} (p₁ : Fin (m₁+1))
+theorem pushSuccAboveVal : ∀ {m₁ m₂ : ℕ} (p₁ : Fin (m₁+1))
     (p₂ : Fin (m₂+1)) (j₁ : Fin m₁) (j₂ : Fin m₂),
     (p₁ : ℕ) = (p₂ : ℕ) → (j₁ : ℕ) = (j₂ : ℕ) →
     ((p₁.succAbove j₁ : Fin (m₁+1)) : ℕ)
@@ -717,3 +721,5 @@ theorem bobReveal_pushforward_eq (n : ℕ) (D : Finset (Fin n)) :
     fun d => ⟨rfl, rfl, rfl, rfl, rfl⟩⟩
 
 end CommutingRepetition
+
+end

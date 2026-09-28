@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Pipeline.PowDom
-import MIPRE.Foundations.Pipeline.UnaryArith
-import MIPRE.Foundations.Cost.Universal
-import MIPRE.Foundations.CL.DetypingProgCost
+module
+public import MIPRE.Foundations.Pipeline.PowDom
+public import MIPRE.Foundations.Pipeline.UnaryArith
+public import MIPRE.Foundations.Cost.Universal
+public import MIPRE.Foundations.CL.DetypingProgCost
+
+@[expose] public section
 
 /-!
 # Runs within a powered monomial
@@ -283,3 +286,5 @@ theorem routeDirect (route : PolyTimeFun Data (Bool × Data)) (post : PolyTimeFu
 end PRuns
 
 end MIPRE.Pipeline
+
+end

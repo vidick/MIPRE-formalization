@@ -22,13 +22,17 @@ WP-B3 over the modulus family's algebra; everything is an algebra
 element, so left/right actions and the trial state come from the
 amplified standard form.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.JointMeasure
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Amplify
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.OTQCS.JointMeasure
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Amplify
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -1024,3 +1028,5 @@ theorem all_fail_bound (a Z : ℝ) (R : ℕ) (hZ : 0 < Z) (ha : 1 / 2 ≤ a)
         linarith
 
 end CommutingRepetition
+
+end

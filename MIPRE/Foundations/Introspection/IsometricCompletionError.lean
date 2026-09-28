@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.IsometricStrategy
-import MIPRE.Foundations.Commutation
+module
+public import MIPRE.Foundations.Introspection.IsometricStrategy
+public import MIPRE.Foundations.Commutation
+
+@[expose] public section
 
 /-! # The cost of completing isometric image measurements
 
@@ -148,4 +151,6 @@ theorem isometricEffect_bob_error_le (V : Matrix R H ℂ) (W : Matrix S K ℂ)
 
 end Bipartite
 end MIPRE.Introspection
+end
+
 end

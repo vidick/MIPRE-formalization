@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.DynamicParser
-import MIPRE.Foundations.Introspection.TypedPredicate
+module
+public import MIPRE.Foundations.Introspection.DynamicParser
+public import MIPRE.Foundations.Introspection.TypedPredicate
+
+@[expose] public section
 
 /-! # Canonical auxiliary answer coding
 
@@ -99,3 +102,5 @@ theorem bits_eq_iff (t : QuestionType P ℓ)
     rfl
 
 end MIPRE.Introspection.AuxiliaryAnswer
+
+end

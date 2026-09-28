@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.CL.Repeat
-import MIPRE.Foundations.CL.Sampler
-import MIPRE.Foundations.Repeat.Prims
+module
+public import MIPRE.Foundations.CL.Repeat
+public import MIPRE.Foundations.CL.Sampler
+public import MIPRE.Foundations.Repeat.Prims
+
+@[expose] public section
 
 /-!
 # Blocks of bit strings
@@ -128,3 +131,5 @@ theorem replicate_nil_eq_map (m : ℕ) :
 end Data
 
 end MIPRE.Cost
+
+end

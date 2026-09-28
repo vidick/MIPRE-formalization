@@ -18,12 +18,16 @@ root of `P y*y ι` (the `n = 1` case of the matrix trick of Kadison–Ringrose
 With `K = [N ξ]` this is the standard form of `N`, the input of
 Tomita–Takesaki theory (stage E4).
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Cyclic
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Cyclic
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -464,3 +468,5 @@ theorem isCyclic_cutdown_cyclicSpace :
 end VN
 
 end CommutingRepetition
+
+end

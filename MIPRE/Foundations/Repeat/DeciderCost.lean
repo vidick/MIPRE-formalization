@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Repeat.RepDecider
-import MIPRE.Foundations.Repeat.SamplerCost
+module
+public import MIPRE.Foundations.Repeat.RepDecider
+public import MIPRE.Foundations.Repeat.SamplerCost
+
+@[expose] public section
 
 /-!
 # The running time of the repeated decider
@@ -510,3 +513,5 @@ theorem repDecider_timeBound : ∃ c m e, ∀ {ℓ : ℕ} (S : CL.Sampler ℓ) (
     exact ⟨r, t, (Dom.mono hX ht (by omega) (le_max_right _ _) (le_max_right _ _)).le, run⟩
 
 end MIPRE.Repeat
+
+end

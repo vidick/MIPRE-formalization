@@ -3,9 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Distances
-import Mathlib.Data.Fin.Tuple.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+public import MIPRE.Foundations.Distances
+public import Mathlib.Data.Fin.Tuple.Basic
+public import Mathlib.Tactic.DeriveFintype
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The classical low individual degree test
@@ -242,3 +246,5 @@ noncomputable def lidtError (m d q k : ℕ) (ε : ℝ) : ℝ :=
       Real.exp (-(k : ℝ) / (2560000 * (m : ℝ) ^ 2)))
 
 end MIPRE.LIDT
+
+end

@@ -3,10 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.Analysis.Matrix.Order
-import Mathlib.Analysis.Matrix.PosDef
-import Mathlib.Analysis.CStarAlgebra.Matrix
+module
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Analysis.Matrix.Order
+public import Mathlib.Analysis.Matrix.PosDef
+public import Mathlib.Analysis.CStarAlgebra.Matrix
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Naimark dilation against a fixed state
@@ -256,3 +260,5 @@ theorem dotProduct_mulVec_conj {ι κ : Type*} [Fintype ι] [Fintype κ]
   rw [Matrix.mulVec_mulVec, Matrix.star_mulVec, ← Matrix.dotProduct_mulVec,
     Matrix.mulVec_mulVec]
 end MIPRE
+
+end

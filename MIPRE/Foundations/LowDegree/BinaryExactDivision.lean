@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryGCD
+module
+public import MIPRE.Foundations.LowDegree.BinaryGCD
+
+@[expose] public section
 
 /-! # Total polynomial quotient on binary coefficient lists -/
 
@@ -45,13 +48,13 @@ theorem quotientBits_width (a b : BitStr) : (quotientBits a b).length ≤ a.leng
   · exact Nat.zero_le _
   · exact (divModBits_width _ _).1
 
-private noncomputable def isEmptyProg : PolyTimeFun BitStr Bool :=
+noncomputable def isEmptyDivProg : PolyTimeFun BitStr Bool :=
   congr ((casesList (const true) (const false)).comp ((const ()).pair (PolyTimeFun.id _)))
     List.isEmpty (by intro a; cases a <;> rfl)
 
 /-- One uniform ambient program for polynomial quotient, hence for exact division. -/
 noncomputable def quotientBitsProg : PolyTimeFun (BitStr × BitStr) BitStr :=
-  ite (isEmptyProg.comp (normalizeBitsProg.comp snd)) (const [])
+  ite (isEmptyDivProg.comp (normalizeBitsProg.comp snd)) (const [])
     (fst.comp (divModBitsProg.comp
       ((dropLastBitsProg.comp (normalizeBitsProg.comp snd)).pair fst)))
 
@@ -59,3 +62,5 @@ noncomputable def quotientBitsProg : PolyTimeFun (BitStr × BitStr) BitStr :=
     quotientBitsProg (a, b) = quotientBits a b := rfl
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

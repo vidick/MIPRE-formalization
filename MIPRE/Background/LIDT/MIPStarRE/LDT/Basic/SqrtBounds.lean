@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Basic/SqrtBounds.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.ParametersBase
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.ParametersBase
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -38,3 +41,5 @@ theorem sqrt_add3_le_add3_sqrt {x y z : Error}
       nlinarith [sqrt_add_le_add_sqrt hx hy, Real.sqrt_nonneg z]
 
 end MIPStarRE.LDT
+
+end

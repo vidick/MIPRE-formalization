@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.PauliSamplerParams
-import MIPRE.Foundations.Introspection.ErrorBounds
+module
+public import MIPRE.Foundations.Introspection.PauliSamplerParams
+public import MIPRE.Foundations.Introspection.ErrorBounds
+
+@[expose] public section
 
 /-! # Canonical parameters absorb the actual QLD error tails
 
@@ -180,4 +183,6 @@ theorem exists_even_parameters {a b : ℝ} (ha : 1 ≤ a) (hb0 : 0 < b) (hb1 : b
   exact canonical_qldError_le_profile ha hb0 hb1 c hc hcb lam n hx ε hε
 
 end MIPRE.Introspection.PauliErrorParameters
+end
+
 end

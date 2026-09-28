@@ -5,10 +5,13 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MakingMeasurementsProjective/Projectivization.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Statements
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.MeasurementLift
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Completion
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Statements
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.MeasurementLift
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Completion
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -39,7 +42,7 @@ open MIPStarRE.LDT
 /-! ### Orthonormalization helper lemmas -/
 
 /-- `leftTensor (A_a) * (leftTensor (A_a))ᴴ = leftTensor (A_a * A_a)` for Hermitian outcomes. -/
-private lemma leftTensor_outcome_mul_conjTranspose_eq
+lemma leftTensor_outcome_mul_conjTranspose_eq
     {Outcome : Type*} {ιA ιB : Type*} [Fintype Outcome]
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (A : SubMeas Outcome ιA) (a : Outcome) :
@@ -50,7 +53,7 @@ private lemma leftTensor_outcome_mul_conjTranspose_eq
 
 /-- The right-tensor analogue of
 `leftTensor_outcome_mul_conjTranspose_eq`. -/
-private lemma rightTensor_outcome_conjTranspose_mul_eq
+lemma rightTensor_outcome_conjTranspose_mul_eq
     {Outcome : Type*} {ιA ιB : Type*} [Fintype Outcome]
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (B : SubMeas Outcome ιB) (a : Outcome) :
@@ -61,7 +64,7 @@ private lemma rightTensor_outcome_conjTranspose_mul_eq
 
 /-- Cauchy–Schwarz bound for the sum `∑_a ⟨ψ | A_a ⊗ B_a | ψ⟩`, expressed in
 terms of the left/right diagonal masses. -/
-private lemma abs_sum_ev_opTensor_le_sqrt_mul_sqrt
+lemma abs_sum_ev_opTensor_le_sqrt_mul_sqrt
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     [Fintype Outcome]
@@ -85,7 +88,7 @@ private lemma abs_sum_ev_opTensor_le_sqrt_mul_sqrt
       (fun a => rightTensor (ι₁ := ιA) (B.outcome a))
 
 /-- The `diagA` sum (in terms of `leftTensor (A_a * A_a)`) is nonnegative. -/
-private lemma sum_ev_leftTensor_outcome_sq_nonneg
+lemma sum_ev_leftTensor_outcome_sq_nonneg
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     [Fintype Outcome]
@@ -97,7 +100,7 @@ private lemma sum_ev_leftTensor_outcome_sq_nonneg
   rwa [leftTensor_conjTranspose, A.outcome_hermitian, leftTensor_mul_leftTensor] at h
 
 /-- The `diagB` sum (in terms of `rightTensor (B_a * B_a)`) is nonnegative. -/
-private lemma sum_ev_rightTensor_outcome_sq_nonneg
+lemma sum_ev_rightTensor_outcome_sq_nonneg
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     [Fintype Outcome]
@@ -110,7 +113,7 @@ private lemma sum_ev_rightTensor_outcome_sq_nonneg
 
 /-- Bound the overlap sum `∑_a ⟨ψ | A_a ⊗ B_a | ψ⟩` by the total mass
 `⟨ψ | 1 | ψ⟩` using `B.outcome a ≤ 1` and `A`'s completeness. -/
-private lemma sum_ev_opTensor_outcome_le_totalMass
+lemma sum_ev_opTensor_outcome_le_totalMass
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     [Fintype Outcome]
@@ -140,7 +143,7 @@ private lemma sum_ev_opTensor_outcome_le_totalMass
 
 /-- Lower bound for the `diagA` sum in terms of the overlap and the bipartite
 consistency defect, obtained from the Cauchy–Schwarz squared bound. -/
-private lemma totalMass_sub_two_defect_le_diagA
+lemma totalMass_sub_two_defect_le_diagA
     {diagA diagB totalMass defect overlap : Error}
     (hdiagA_nonneg : 0 ≤ diagA)
     (hdefect_nonneg : 0 ≤ defect)
@@ -164,7 +167,7 @@ of the left-placed version of `A`. The Cauchy–Schwarz chain and tensor
 hermitian identities have been factored out above, so the main proof is now a
 straightforward combination of those helpers.
 -/
-private lemma qSSCDefect_leftPlacedMeasurement_le_two_qBipartiteConsDefect
+lemma qSSCDefect_leftPlacedMeasurement_le_two_qBipartiteConsDefect
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     [Fintype Outcome]
@@ -281,7 +284,7 @@ defect of the right-placed version of `B`.  This is the right-register
 counterpart of `qSSCDefect_leftPlacedMeasurement_le_two_qBipartiteConsDefect`;
 it uses the same Cauchy--Schwarz calculation with the two diagonal terms
 interchanged. -/
-private lemma qSSCDefect_rightPlacedMeasurement_le_two_qBipartiteConsDefect
+lemma qSSCDefect_rightPlacedMeasurement_le_two_qBipartiteConsDefect
     {Outcome : Type*} {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     [Fintype Outcome]
@@ -396,7 +399,7 @@ private lemma qSSCDefect_rightPlacedMeasurement_le_two_qBipartiteConsDefect
   simpa [qSSCDefect, diagB, hrightPlaced_outcome, hrightPlaced_total,
     rightTensor_mul_rightTensor, B.total_eq_one] using hmax'
 
-private lemma sourceAlmostProjective_of_ssc {Outcome : Type*}
+lemma sourceAlmostProjective_of_ssc {Outcome : Type*}
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype Outcome]
     (ψ : QuantumState ι) (A : Measurement Outcome ι) (η : Error)
@@ -655,3 +658,5 @@ lemma qSDD_rightPlaced_zeroProjSubMeas_le_one {Outcome : Type*}
       (rightPlacedSubMeas (ιA := ιA) A)
 
 end MIPStarRE.LDT.MakingMeasurementsProjective
+
+end

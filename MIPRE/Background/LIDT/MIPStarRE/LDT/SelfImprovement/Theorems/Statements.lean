@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Statements.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Defs
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Defs
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -215,7 +218,7 @@ noncomputable def addInURightOperatorAtPoint {Outcome : Type*} [Fintype Outcome]
     let Au := pointConditionedOutcomeOperatorAtPolynomial params strategy ah.2 u
     opTensor (Au * (M u).outcome ah.1 * Au) (T.outcome ah.2)
 
-private noncomputable def addInUPointAverage (params : Parameters)
+noncomputable def addInUPointAverage (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
     (f : Point params → MIPStarRE.Quantum.Op (ι × ι)) : Error :=
@@ -486,3 +489,5 @@ structure SelfImprovementFinalFields (params : Parameters) [FieldModel params.q]
       selfImprovementError params eps delta
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.PauliSamplerParams
-import MIPRE.Foundations.Introspection.SourceCompilerParamsCost
+module
+public import MIPRE.Foundations.Introspection.PauliSamplerParams
+public import MIPRE.Foundations.Introspection.SourceCompilerParamsCost
+
+@[expose] public section
 
 /-! # Execution cost of the canonical Pauli parameters -/
 
@@ -158,4 +161,6 @@ theorem costMajorant_polyBounded (c : ℕ) : PolyBounded (costMajorant c) := by
     | exact PolyBounded.id
 
 end MIPRE.Introspection.PauliSamplerParameters
+end
+
 end

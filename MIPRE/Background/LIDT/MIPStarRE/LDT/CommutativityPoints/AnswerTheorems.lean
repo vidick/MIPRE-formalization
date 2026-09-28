@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/CommutativityPoints/AnswerTheorems.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.DistanceBounds
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.DistanceBounds
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -77,7 +80,7 @@ noncomputable def answerPointMeasurementProductRight
     OpFamily.leftPlacedOpFamily (ιB := ι) <|
       reversedProductOpFamily Au Av
 
-private noncomputable def answerPointMeasurementProductAlongSharedLine
+noncomputable def answerPointMeasurementProductAlongSharedLine
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params ι) :
@@ -86,7 +89,7 @@ private noncomputable def answerPointMeasurementProductAlongSharedLine
     answerPointMeasurementProductLeft params strategy
       (sampledPointPairFromSharedDiagonalQuestion params q)
 
-private noncomputable def answerPointMeasurementProductAlongSharedLineReversed
+noncomputable def answerPointMeasurementProductAlongSharedLineReversed
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params ι) :
@@ -95,7 +98,7 @@ private noncomputable def answerPointMeasurementProductAlongSharedLineReversed
     answerPointMeasurementProductRight params strategy
       (sampledPointPairFromSharedDiagonalQuestion params q)
 
-private noncomputable def answerPointDiagonalLineMixedProductLeft
+noncomputable def answerPointDiagonalLineMixedProductLeft
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params ι) :
@@ -108,7 +111,7 @@ private noncomputable def answerPointDiagonalLineMixedProductLeft
     let Lv := answerSampledDiagonalLineEvaluation params strategy (ℓ, tv)
     tensorProductSubMeas Au Lv
 
-private noncomputable def answerDiagonalLineProductOrdered
+noncomputable def answerDiagonalLineProductOrdered
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params ι) :
@@ -122,7 +125,7 @@ private noncomputable def answerDiagonalLineProductOrdered
     OpFamily.rightPlacedOpFamily (ιA := ι) <|
       reversedProductOpFamily Lu Lv
 
-private noncomputable def answerDiagonalLineProductReversed
+noncomputable def answerDiagonalLineProductReversed
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params ι) :
@@ -136,7 +139,7 @@ private noncomputable def answerDiagonalLineProductReversed
     OpFamily.rightPlacedOpFamily (ιA := ι) <|
       orderedProductOpFamily Lu Lv
 
-private noncomputable def answerPointDiagonalLineMixedProductRight
+noncomputable def answerPointDiagonalLineMixedProductRight
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params ι) :
@@ -149,7 +152,7 @@ private noncomputable def answerPointDiagonalLineMixedProductRight
     let Lu := answerSampledDiagonalLineEvaluation params strategy (ℓ, tu)
     postprocess (tensorProductSubMeas Av Lu) Prod.swap
 
-private lemma answerPointDiagonalLineMixedProductLeft_outcome
+lemma answerPointDiagonalLineMixedProductLeft_outcome
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params ι)
@@ -164,7 +167,7 @@ private lemma answerPointDiagonalLineMixedProductLeft_outcome
     answerSampledDiagonalLineEvaluation, IdxSubMeas.toIdxOpFamily, SubMeas.toOpFamily,
     leftTensor_mul_rightTensor_eq_opTensor]
 
-private lemma answerPointDiagonalLineMixedProductRight_outcome
+lemma answerPointDiagonalLineMixedProductRight_outcome
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params ι)
@@ -194,7 +197,7 @@ private lemma answerPointDiagonalLineMixedProductRight_outcome
   rw [hfilter]
   simp
 
-private lemma answerSampledDiagonalLineApproximation_ignore_first
+lemma answerSampledDiagonalLineApproximation_ignore_first
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params ι)
@@ -266,7 +269,7 @@ private lemma answerSampledDiagonalLineApproximation_ignore_first
                     (fun f => f q.2))) ≤ pointDiagonalLineApproxError params gamma
           exact happrox
 
-private lemma answerSampledDiagonalLineApproximation_ignore_second
+lemma answerSampledDiagonalLineApproximation_ignore_second
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params ι)
@@ -347,7 +350,7 @@ appearing in the paper.  It is internal to the answer-valued implementation
 tracked in issue #1507 and is not a source theorem.  Discharge: proved here from
 the already formalized point-to-diagonal-line approximation and tensor-ordering
 identities. -/
-private lemma answerOrderedLiftToMixedLine
+lemma answerOrderedLiftToMixedLine
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params ι)
@@ -465,7 +468,7 @@ internal reindexing and tensor-ordering step in the answer-valued
 point-commutativity route tracked in issue #1507.  Discharge: proved here by
 transporting the point-to-line comparison through the explicit ordered product
 identities. -/
-private lemma answerOrderedLiftToLineProduct
+lemma answerOrderedLiftToLineProduct
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params ι)
@@ -594,7 +597,7 @@ Paper origin: `references/ldt-paper/commutativity_points.tex`; this is an
 internal answer-valued implementation step for the point-commutativity argument
 tracked in issue #1507.  Discharge: proved here from the reversed
 point-to-line comparison and the explicit ordered/reversed product equality. -/
-private lemma answerOrderedDropFromLineComparison
+lemma answerOrderedDropFromLineComparison
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params ι)
@@ -749,7 +752,7 @@ Paper origin: `references/ldt-paper/commutativity_points.tex`; this is the last
 internal answer-valued transport step in the point-commutativity chain tracked
 in issue #1507.  Discharge: proved here from the line-to-point comparison and
 the explicit tensor-placement identities. -/
-private lemma answerReversedDropToPointsComparison
+lemma answerReversedDropToPointsComparison
     (params : Parameters)
     [FieldModel params.q]
     (strategy : AnswerSymStrat params ι)
@@ -965,3 +968,5 @@ theorem answerCommutativityPoints
     _ ≤ commutativityPointsError params gamma := hshared'
 
 end MIPStarRE.LDT.CommutativityPoints
+
+end

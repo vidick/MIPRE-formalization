@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.PauliBooleanPrograms
-import MIPRE.Background.QLD.PauliQuestionPrograms
+module
+public import MIPRE.Background.QLD.PauliBooleanPrograms
+public import MIPRE.Background.QLD.PauliQuestionPrograms
+
+@[expose] public section
 
 /-! # Correctness of the uniform Pauli decision program -/
 
@@ -93,10 +96,10 @@ theorem program_same_type {k m : ℕ} (E : BinField k) (hk : 0 < k) (j : ℕ)
   simpa using
     answerBits_injective_of_format E hk (ExplicitSeed.decode π T x) a b ha hb'
 
-private theorem seed_fieldEncoding {k m : ℕ} (E : BinField k) (x : Coord m → E.carrier) :
+theorem seed_fieldEncoding {k m : ℕ} (E : BinField k) (x : Coord m → E.carrier) :
     Introspection.PauliStageProgram.seed (fieldEncoding E x) = E.toBits (x .seed) := rfl
 
-private theorem direction_fieldEncoding {k m : ℕ} (E : BinField k) (x : Coord m → E.carrier) :
+theorem direction_fieldEncoding {k m : ℕ} (E : BinField k) (x : Coord m → E.carrier) :
     Introspection.PauliStageProgram.direction (fieldEncoding E x) =
       E.vecBits (fun i => x (.direction i)) := rfl
 
@@ -174,11 +177,11 @@ theorem program_table (k : ℕ) (hk : 1 ≤ k) (j m : ℕ) (W : Bas)
     PauliAnswerProgram.answerRows, List.getD_cons_zero, selectedPoint_fieldEncoding]
   exact fullAnswerCheckProg_correct k hk (fun i => x (.point W i)) h a
 
-private theorem bit_ne_zero (b : ZMod 2) : bit b = decide (b ≠ 0) := by
+theorem bit_ne_zero (b : ZMod 2) : bit b = decide (b ≠ 0) := by
   revert b
   decide
 
-private theorem boolEq_bits (a b : ZMod 2) : boolEq (bit a, bit b) = decide (a = b) := by
+theorem boolEq_bits (a b : ZMod 2) : boolEq (bit a, bit b) = decide (a = b) := by
   revert a b
   decide
 
@@ -232,15 +235,15 @@ theorem program_probe (k : ℕ) (hk : 1 ≤ k) (j m : ℕ) (W : Bas)
     probeProg_eq_prb k hk, boolEq_bits, boolOr, finiteFunction_apply]
   rw [bit_ne_zero]
 
-private theorem boolNot_bit (a : ZMod 2) : boolNot (bit a) = decide (a = 0) := by
+theorem boolNot_bit (a : ZMod 2) : boolNot (bit a) = decide (a = 0) := by
   revert a
   decide
 
-private theorem bitAt_ofFn {n : ℕ} (a : Fin n → ZMod 2) (i : Fin n) :
+theorem bitAt_ofFn {n : ℕ} (a : Fin n → ZMod 2) (i : Fin n) :
     bitAt (i.val, List.ofFn fun j => [bit (a j)]) = bit (a i) := by
   simp [bitAt, List.getD_eq_getElem?_getD]
 
-private theorem parity_bits (a : Fin 3 → ZMod 2) :
+theorem parity_bits (a : Fin 3 → ZMod 2) :
     parityProg (bit (a 0), bit (a 1), bit (a 2)) = bit (∑ i, a i) := by
   simp [parityProg, Fin.sum_univ_succ, add_assoc]
 
@@ -296,4 +299,6 @@ theorem program_magicProbe (k : ℕ) (hk : 1 ≤ k) (j m : ℕ) (W : Bas)
     boolNot_bit, boolEq_bits, boolOr, boolAnd, finiteFunction_apply]
 
 end MIPRE.QLD.PauliBooleanProgram
+end
+
 end

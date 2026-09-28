@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.Game
-import MIPRE.Foundations.Introspection.FieldLineCheckProg
-import MIPRE.Foundations.Introspection.FieldTableProg
-import MIPRE.Foundations.Introspection.FieldGammaProg
+module
+public import MIPRE.Background.QLD.Game
+public import MIPRE.Foundations.Introspection.FieldLineCheckProg
+public import MIPRE.Foundations.Introspection.FieldTableProg
+public import MIPRE.Foundations.Introspection.FieldGammaProg
+
+@[expose] public section
 
 /-! # Exact arithmetic programs for the Pauli decision rules
 
@@ -81,4 +84,6 @@ theorem gammaProg_eq_gam (k : ℕ) (hk : 1 ≤ k) {m : ℕ}
       bit (gam ω) := gammaProg_correct k hk ω.uX ω.uZ ω.rX ω.rZ
 
 end MIPRE.QLD.PauliArithmeticProgram
+end
+
 end

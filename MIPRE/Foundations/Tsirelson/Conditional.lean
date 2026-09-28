@@ -3,9 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Computability.Halting
-import MIPRE.Foundations.Correlations
-import MIPRE.Foundations.GameDescription
+module
+public import Mathlib.Computability.Halting
+public import MIPRE.Foundations.Correlations
+public import MIPRE.Foundations.GameDescription
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Tsirelson's problem from an upper semidecider for the commuting-operator value
@@ -128,3 +132,5 @@ theorem tsirelson_of_upperRE_of_isClosed (hred : HaltingReductionQuantum)
     ⟨Cqa_subset_Cqc_of_isClosed (hclosed nX nA), fun h => hnp (h ▸ hp)⟩⟩
 
 end MIPRE
+
+end

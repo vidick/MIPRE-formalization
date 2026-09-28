@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Repeat.MapLoop
-import MIPRE.Foundations.Halting.Lists
-import MIPRE.Foundations.Cost.Kleene
+module
+public import MIPRE.Foundations.Repeat.MapLoop
+public import MIPRE.Foundations.Halting.Lists
+public import MIPRE.Foundations.Cost.Kleene
+
+@[expose] public section
 
 /-!
 # The coordinate loop of the repeated decider
@@ -893,3 +896,5 @@ theorem coordLoop_runs_bounded {univ : Prog} (hU : univ.WellScoped 1) (dD nD : D
 end Prog
 
 end MIPRE.Cost
+
+end

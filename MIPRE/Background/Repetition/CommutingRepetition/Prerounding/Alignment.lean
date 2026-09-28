@@ -46,13 +46,17 @@ Encoding notes (for the fidelity review):
   instantiated at these martingales; the instantiation lives with the
   arena invocation (node 1.2.11).
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Histories
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Branches
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Histories
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Branches
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -779,3 +783,5 @@ theorem bobReveal_pushforward_strong (n : ℕ) (D : Finset (Fin n)) :
     exact ⟨⟨(s : ℕ), hb⟩, hs, d.toReveal_πX_of_lt ⟨(s : ℕ), hb⟩ s rfl hs⟩
 
 end CommutingRepetition
+
+end

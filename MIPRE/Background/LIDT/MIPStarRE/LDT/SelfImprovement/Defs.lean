@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Defs.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Defs.Families
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Defs
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.NaimarkCore
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Defs.Families
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Defs
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.NaimarkCore
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -233,7 +236,7 @@ noncomputable def sandwichedPolynomialOutcomeOperatorAt (params : Parameters)
   Au * (T.outcome h) * Au
 
 /-- The sum of the pointwise sandwiched operators is bounded above by the identity. -/
-private theorem sandwichedPolynomialOutcomeOperatorAt_sum_le_one (params : Parameters)
+theorem sandwichedPolynomialOutcomeOperatorAt_sum_le_one (params : Parameters)
     [FieldModel params.q] (strategy : SymStrat params ι)
     (T : SubMeas (Polynomial params) ι) (u : Point params) :
     ∑ h : Polynomial params, sandwichedPolynomialOutcomeOperatorAt params strategy T u h ≤ 1 := by
@@ -304,7 +307,7 @@ noncomputable def sandwichedPolynomialSubMeasAt (params : Parameters)
     total_le_one := sandwichedPolynomialOutcomeOperatorAt_sum_le_one params strategy T u }
 
 /-- The average of the total pointwise sandwiched operators is bounded by the identity. -/
-private theorem averagedSandwichedPolynomialSubMeas_total_le_one (params : Parameters)
+theorem averagedSandwichedPolynomialSubMeas_total_le_one (params : Parameters)
     [FieldModel params.q] (strategy : SymStrat params ι)
     (T : SubMeas (Polynomial params) ι) :
     ∑ h : Polynomial params,
@@ -390,3 +393,5 @@ noncomputable def selfImprovementError (params : Parameters)
   MainInductionStep.selfImprovementInInductionError params eps delta 0
 
 end MIPStarRE.LDT.SelfImprovement
+
+end

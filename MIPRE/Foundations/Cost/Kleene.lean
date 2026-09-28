@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Toolkit
-import MIPRE.Foundations.Cost.Universal
+module
+public import MIPRE.Foundations.Cost.Toolkit
+public import MIPRE.Foundations.Cost.Universal
+
+@[expose] public section
 
 /-!
 # Efficient Kleene recursion
@@ -232,3 +235,5 @@ theorem efficient_fixed_point (F : PolyTimeFun Prog Prog) :
   omega
 
 end MIPRE.Cost
+
+end

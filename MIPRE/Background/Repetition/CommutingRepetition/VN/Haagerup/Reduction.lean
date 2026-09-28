@@ -13,14 +13,18 @@ of `ψ̂`), and `ξ_n := e^{−a_n/2}Ω̂`. The modular group of `ξ_n` is
 `σ^{ξ_n}_t = Ad(e^{−ita_n}) ∘ σ̂_t` on `ℛ`, and it is **`2^{-n}`-periodic**: at `t = 2^{-n}`
 one has `e^{−i2^{-n}a_n} = u_n*` while `σ̂_{2^{-n}} = Ad(u_n)`, so the two cancel.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Crossed.Modular
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Perturb
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.UnitaryLog
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Crossed.Modular
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Perturb
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.UnitaryLog
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -557,7 +561,7 @@ theorem isSelfAdjoint_Phi (n : ℕ) {x : L2Q K →L[ℂ] L2Q K} (hx : IsSelfAdjo
 
 theorem nonneg_σ (n : ℕ) {x : L2Q K →L[ℂ] L2Q K} (hx : 0 ≤ x) (t : ℝ) :
     0 ≤ σ (crossed M Ω) (xin Ω n) t x := by
-  have hxp := (ContinuousLinearMap.nonneg_iff_isPositive x).mp hx
+  have hxp := ContinuousLinearMap.nonneg_iff_isPositive.mp hx
   refine Resolver.Douglas.nonneg_of_re_inner
     (isSelfAdjoint_σ M Ω n hxp.isSelfAdjoint t) fun ζ => ?_
   have h : ⟪σ (crossed M Ω) (xin Ω n) t x ζ, ζ⟫_ℂ =
@@ -571,7 +575,7 @@ theorem nonneg_σ (n : ℕ) {x : L2Q K →L[ℂ] L2Q K} (hx : 0 ≤ x) (t : ℝ)
 
 /-- **`Φ_n` is positive.** -/
 theorem Phi_nonneg (n : ℕ) {x : L2Q K →L[ℂ] L2Q K} (hx : 0 ≤ x) : 0 ≤ Phi M Ω n x := by
-  have hxp := (ContinuousLinearMap.nonneg_iff_isPositive x).mp hx
+  have hxp := ContinuousLinearMap.nonneg_iff_isPositive.mp hx
   refine Resolver.Douglas.nonneg_of_re_inner
     (isSelfAdjoint_Phi M Ω n hxp.isSelfAdjoint) fun ζ => ?_
   have hcont : Continuous fun t => ⟪ζ, σ (crossed M Ω) (xin Ω n) t x ζ⟫_ℂ :=
@@ -590,3 +594,5 @@ end Haagerup
 end VN
 
 end CommutingRepetition
+
+end

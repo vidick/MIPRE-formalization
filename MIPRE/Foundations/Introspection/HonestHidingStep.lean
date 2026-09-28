@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestXCoordinates
+module
+public import MIPRE.Foundations.Introspection.HonestXCoordinates
+
+@[expose] public section
 
 /-! # The local honest hiding step
 
@@ -102,3 +105,5 @@ theorem stopHide_split (S V : Finset ι) (h : S ⊆ V) (L : CL.RegLinear F S)
   · simp [hz, Function.comp_apply, f]
 
 end MIPRE.Introspection.Honest
+
+end

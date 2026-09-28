@@ -31,17 +31,21 @@ Conventions recorded for the fidelity ledger:
   enforces that the closed proofs depend on nothing beyond propext,
   Classical.choice, Quot.sound.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Basic
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Value
-import MIPRE.Background.Repetition.CommutingRepetition.Game.Monotone
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.Main
-import MIPRE.Background.Repetition.CommutingRepetition.MainTheorem.Extensions
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Basic
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Value
+public import MIPRE.Background.Repetition.CommutingRepetition.Game.Monotone
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.Main
+public import MIPRE.Background.Repetition.CommutingRepetition.MainTheorem.Extensions
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -246,3 +250,5 @@ theorem uniform_parallel_repetition_pow13 :
   linarith
 
 end CommutingRepetition
+
+end

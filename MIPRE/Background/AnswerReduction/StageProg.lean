@@ -3,12 +3,15 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.AnswerReduction.StageLists
-import MIPRE.Foundations.Introspection.SeededLineProg
-import MIPRE.Foundations.Introspection.LineRepresentativeProg
-import MIPRE.Foundations.SAT.NormalElementProg
-import MIPRE.Foundations.CL.DetypingProgParse
-import MIPRE.Foundations.Introspection.BinaryBlockProg
+module
+public import MIPRE.Background.AnswerReduction.StageLists
+public import MIPRE.Foundations.Introspection.SeededLineProg
+public import MIPRE.Foundations.Introspection.LineRepresentativeProg
+public import MIPRE.Foundations.SAT.NormalElementProg
+public import MIPRE.Foundations.CL.DetypingProgParse
+public import MIPRE.Foundations.Introspection.BinaryBlockProg
+
+@[expose] public section
 
 /-!
 # The stage programs of a copy of the PCP sampler
@@ -326,5 +329,7 @@ theorem copyProg_apply (k : Unary) (d : Desc) (τ : ℕ) (m' : Unary) (kind j : 
   rfl
 
 end MIPRE.AnswerReduction.StageProg
+
+end
 
 end

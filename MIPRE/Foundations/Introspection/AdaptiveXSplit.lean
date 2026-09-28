@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestXCoordinates
-import MIPRE.Foundations.Introspection.HidingPrefix
+module
+public import MIPRE.Foundations.Introspection.HonestXCoordinates
+public import MIPRE.Foundations.Introspection.HidingPrefix
+
+@[expose] public section
 
 /-! # Exact Pauli-X readouts under adaptive coordinate splits -/
 
@@ -17,7 +20,7 @@ variable {F I J K Y : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMo
   [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J] [Fintype K] [DecidableEq K]
   [Fintype Y] [DecidableEq Y]
 
-private theorem matrix_ite_entry {I J : Type*} (p : Prop) [Decidable p]
+theorem matrix_ite_entry_xsplit {I J : Type*} (p : Prop) [Decidable p]
     (M N : Matrix I J ℂ) (i : I) (j : J) :
     (if p then M else N) i j = if p then M i j else N i j := by
   by_cases h : p <;> simp [h]
@@ -32,7 +35,7 @@ theorem synX_split_second
       ((1 : Matrix (J → F) (J → F) ℂ) ⊗ₖ synOf wX f y) := by
   ext x x'
   simp only [synOf, Matrix.sum_apply, Finset.sum_filter, registerOp_apply,
-    Matrix.kroneckerMap_apply, matrix_ite_entry, Matrix.zero_apply]
+    Matrix.kroneckerMap_apply, matrix_ite_entry_xsplit, Matrix.zero_apply]
   calc
     _ = ∑ p : (J → F) × (K → F),
         if f p.2 = y then proj wX p.1 (e x).1 (e x').1 * proj wX p.2 (e x).2 (e x').2 else 0 := by
@@ -149,3 +152,5 @@ theorem dualReadout_tail_split {ℓ : ℕ} {S V : Finset ι} (L : CL.RegLinear F
       (insertRegister (V \ S) x)) yp
 
 end MIPRE.Introspection.Honest
+
+end

@@ -19,13 +19,17 @@ positivity order of eq candidate-positivity-order shows the bar branches do
 not vanish on positive posterior edges. Nothing here is a manuscript
 statement.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Family
-import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.HistoryCore
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.Family
+public import MIPRE.Background.Repetition.CommutingRepetition.Prerounding.HistoryCore
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -300,3 +304,5 @@ theorem candidate_pairing (s : ALabel n X Y A) (t : BLabel n X Y B) (i : Fin n) 
 end TracialStrategy
 
 end CommutingRepetition
+
+end

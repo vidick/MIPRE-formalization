@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/MainInductionStep/Theorems/StageDataConstructors.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.SelfImprovementAssembly.AnswerSlice
-import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.AnswerValued
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.SelfImprovementAssembly.AnswerSlice
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.AnswerValued
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -279,7 +282,7 @@ noncomputable def AnswerPerSliceInductionData.ofMainInductionHypothesis
         k (restrictionPkg.profile.restrictedGood x) hk_pos hk
 
 /-- Forgetting outcomes identifies the point measurements of the two restricted strategies. -/
-private theorem restrictedPointSubMeasurement_eq_answer
+theorem restrictedPointSubMeasurement_eq_answer
     (params : Parameters) [FieldModel params.q] (strategy : SymStrat params.next ι)
     (x : Fq params) :
     IdxProjMeas.toIdxSubMeas (xRestrictedStrategy params strategy x).pointMeasurement =
@@ -603,3 +606,5 @@ theorem mainInductionFromStageData.{uι', uF}
   exact mainInductionOfWitness params.next strategy eps delta gamma k hwitness
 
 end MIPStarRE.LDT.MainInductionStep
+
+end

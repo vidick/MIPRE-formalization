@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveZFactor
-import MIPRE.Foundations.Introspection.SamplingRegister
+module
+public import MIPRE.Foundations.Introspection.AdaptiveZFactor
+public import MIPRE.Foundations.Introspection.SamplingRegister
+
+@[expose] public section
 
 /-! # Advancing actual adaptive prefix labels
 
@@ -222,5 +225,7 @@ theorem advancePrefix_projector_assembly (P : CL.CLFun F ι ℓ) (hP : P.Support
   exact adaptiveLinear_readout_factor P hP k p.1 p.2
 
 end MIPRE.Introspection
+
+end
 
 end

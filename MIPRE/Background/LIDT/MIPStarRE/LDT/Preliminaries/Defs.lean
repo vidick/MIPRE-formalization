@@ -5,8 +5,11 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Preliminaries/Defs.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Tactic.QuantumNonneg
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Tactic.QuantumNonneg
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -77,7 +80,7 @@ structure ConsAgreement {Question Outcome : Type*} {ι : Type*} [Fintype ι] [De
   agreementLowerBound : agreementProbability ψ 𝒟 A B ≥ 1 - δ
 
 /-- A diagonal sandwich family has total operator at most the identity. -/
-private theorem diagonalSandwichFamily_total_le_one {Question Outcome : Type*}
+theorem diagonalSandwichFamily_total_le_one {Question Outcome : Type*}
     {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     [Fintype Outcome] (A : IdxSubMeas Question Outcome ιA)
     (B : IdxMeas Question Outcome ιB) (q : Question) :
@@ -100,7 +103,7 @@ private theorem diagonalSandwichFamily_total_le_one {Question Outcome : Type*}
     _ ≤ 1 := leftTensor_le_one (ι₂ := ιB) (A q).total_le_one
 
 /-- A total sandwich family has total operator at most the identity. -/
-private theorem totalSandwichFamily_total_le_one {Question Outcome : Type*}
+theorem totalSandwichFamily_total_le_one {Question Outcome : Type*}
     {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     [Fintype Outcome] (A : IdxSubMeas Question Outcome ιA)
     (B : IdxMeas Question Outcome ιB) (q : Question) :
@@ -324,7 +327,7 @@ structure CompTransferStmt {Question Outcome : Type*}
 /-! ## Completion -/
 
 /-- The completed outcomes sum to the identity. -/
-private theorem completeAtOutcome_sum_eq_one {Outcome : Type*}
+theorem completeAtOutcome_sum_eq_one {Outcome : Type*}
     {ι : Type*} [Fintype Outcome] [DecidableEq Outcome] [Fintype ι] [DecidableEq ι]
     (B : SubMeas Outcome ι) (a0 : Outcome) :
     (∑ a : Outcome,
@@ -385,3 +388,5 @@ structure CompletingToMeasStmt {Outcome : Type*} {ι : Type*} [Fintype ι] [Deci
       (2 * δ + 4 * Real.sqrt δ + 2 * ζ)
 
 end MIPStarRE.LDT.Preliminaries
+
+end

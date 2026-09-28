@@ -5,12 +5,15 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/Main/Auxiliary/HEvalTransport.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.Closeness
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.ClosenessXEval
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.QSDD
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.ZeroBounds
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.EvaluationSpecialization
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.EvaluatedSliceCommutation.Averages
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.Closeness
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.ClosenessXEval
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.QSDD
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.ZeroBounds
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.EvaluationSpecialization
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.EvaluatedSliceCommutation.Averages
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -43,13 +46,13 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-private noncomputable def zeroEvaluatedSliceOpFamily
+noncomputable def zeroEvaluatedSliceOpFamily
     (params : Parameters) [FieldModel params.q] :
     OpFamily (EvaluatedSliceOutcome params) (ι × ι) where
   outcome := fun _ => 0
   total := 0
 
-private lemma evaluatedSliceProductLeft_qSDDOp_zero_le_one
+lemma evaluatedSliceProductLeft_qSDDOp_zero_le_one
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι)
@@ -147,7 +150,7 @@ private lemma evaluatedSliceProductLeft_qSDDOp_zero_le_one
             leftTensor_le_one (ι₂ := ι) S.total_le_one
     _ = 1 := ev_one_of_isNormalized strategy.state hnorm
 
-private lemma zero_qSDDOp_evaluatedSliceProductRight_le_one
+lemma zero_qSDDOp_evaluatedSliceProductRight_le_one
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι)
@@ -394,3 +397,5 @@ lemma fullSlice_closenessOfIP_CAB_hEval
 
 
 end MIPStarRE.LDT.Commutativity
+
+end

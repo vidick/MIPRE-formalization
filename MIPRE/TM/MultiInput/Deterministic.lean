@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
+module
+public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
+
+@[expose] public section
 
 /-!
 # Deterministic multi-input multi-tape Turing machines
@@ -413,3 +416,5 @@ lemma not_halts_of_repeat_nonhalt
 end MultiInputTM
 
 end Turing
+
+end

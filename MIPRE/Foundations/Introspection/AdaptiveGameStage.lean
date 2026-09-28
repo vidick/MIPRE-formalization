@@ -2,10 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveMarginalGame
-import MIPRE.Foundations.Introspection.AdaptiveZTest
-import MIPRE.Foundations.Introspection.AdaptiveXTest
-import MIPRE.Foundations.Introspection.AdaptiveStageBudget
+module
+public import MIPRE.Foundations.Introspection.AdaptiveMarginalGame
+public import MIPRE.Foundations.Introspection.AdaptiveZTest
+public import MIPRE.Foundations.Introspection.AdaptiveXTest
+public import MIPRE.Foundations.Introspection.AdaptiveStageBudget
+
+@[expose] public section
 
 /-! # An adaptive dilation from the actual parsed game tests
 
@@ -125,4 +128,6 @@ theorem exists_game_adaptive_prefix_dilation
   exact ⟨R, hR, adaptiveReplacement_distance (L w) hL j.val ξ none _ _ R hR hd⟩
 
 end MIPRE.Introspection.TypedEstimates
+end
+
 end

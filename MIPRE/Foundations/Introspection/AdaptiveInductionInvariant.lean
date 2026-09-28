@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AdaptiveInitialInvariant
-import MIPRE.Foundations.Introspection.AdaptiveDecodedInvariant
+module
+public import MIPRE.Foundations.Introspection.AdaptiveInitialInvariant
+public import MIPRE.Foundations.Introspection.AdaptiveDecodedInvariant
+
+@[expose] public section
 
 /-! # The structural invariant used by the actual Introspect induction
 
@@ -44,4 +47,6 @@ def initialIntroPrefixInvariant (P : CL.CLFun F ι ℓ)
   support := initialResidualPOVM_some_support P N
 
 end MIPRE.Introspection
+end
+
 end

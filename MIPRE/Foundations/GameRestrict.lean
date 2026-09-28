@@ -3,7 +3,10 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.GameTransport
+module
+public import MIPRE.Foundations.GameTransport
+
+@[expose] public section
 
 /-!
 # Restricting a game to the support of its question distribution
@@ -137,3 +140,5 @@ noncomputable def Game.restrict {X' Y' : Type*} [Fintype X'] [Fintype Y'] (G : G
   D x' y' a b := G.D (eX x') (eY y') a b
 
 end MIPRE
+
+end

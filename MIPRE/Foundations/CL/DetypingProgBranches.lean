@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingProgRoute
-import MIPRE.Foundations.CL.TypedSampler
+module
+public import MIPRE.Foundations.CL.DetypingProgRoute
+public import MIPRE.Foundations.CL.TypedSampler
+
+@[expose] public section
 
 /-! # Correct query branches of the executable detyping router -/
 
@@ -127,3 +130,5 @@ theorem pad_content {g s : ℕ} (b : Bool) (z : BitStr) (hz : z.length = g + s) 
   simp [pad, content_length z hz]
 
 end MIPRE.CL.Detyping.Program
+
+end

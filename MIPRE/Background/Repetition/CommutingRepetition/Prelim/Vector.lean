@@ -16,11 +16,15 @@ displays of the manuscript, not audit nodes.
   `‖v/‖v‖ − w/‖w‖‖² ≤ 4‖v−w‖²/‖v‖²`. Stated with the `ℂ`-coerced
   real scalars used by the candidate layer (`ResolverArena.candidate`).
 -/
-import Mathlib
+module
+public import Mathlib
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -276,3 +280,5 @@ theorem sum_abs_re_inner_effect_sub_le {H : Type*}
       ring
 
 end CommutingRepetition
+
+end

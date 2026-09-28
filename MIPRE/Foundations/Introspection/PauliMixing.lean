@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.PauliTwirlDistance
-import MIPRE.Foundations.Introspection.BlockRetention
+module
+public import MIPRE.Foundations.Introspection.PauliTwirlDistance
+public import MIPRE.Foundations.Introspection.BlockRetention
+
+@[expose] public section
 
 /-! # Pauli mixing with a retained classical fibre
 
@@ -113,5 +116,7 @@ theorem exists_pauli_mixing_avg {X : Type*} [Fintype X]
   linarith
 
 end MIPRE.Introspection
+
+end
 
 end

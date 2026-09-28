@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ClockCost
+module
+public import MIPRE.Foundations.Introspection.ClockCost
+
+@[expose] public section
 
 /-! # Executable clocked simulation at the original exponential index
 
@@ -158,3 +161,5 @@ theorem original_decider_preserved {ℓ lam n : ℕ} (U : ClockedUniversalMachin
     exact ⟨time, (hout.deterministic hr).2 ▸ ht, hr⟩
 
 end MIPRE.Introspection.ClockSimulation
+
+end

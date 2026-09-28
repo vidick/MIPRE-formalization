@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.CommutingTransport
-import MIPRE.Foundations.SyncTransport
-import MIPRE.Foundations.VerifierValue
+module
+public import MIPRE.Foundations.CommutingTransport
+public import MIPRE.Foundations.SyncTransport
+public import MIPRE.Foundations.VerifierValue
+
+@[expose] public section
 
 /-!
 # The commuting-operator value of a verifier's game
@@ -137,3 +140,5 @@ def GapCompression.CoSound (G : GapCompression) : Prop :=
     (G.output (V.sampler.prog, V.decider.prog) lam).valCo n (G.bound.eval (n + lam)) ≤ 1 / 2
 
 end MIPRE
+
+end

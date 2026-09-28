@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Semidecide
-import MIPRE.Foundations.Cost.Kleene
+module
+public import MIPRE.Foundations.Cost.Semidecide
+public import MIPRE.Foundations.Cost.Kleene
+
+@[expose] public section
 
 /-!
 # The many-one reduction of an r.e. language to halting, in polynomial time
@@ -73,3 +76,5 @@ theorem exists_polyTime_reduction {p : BitStr → Prop} (hp : REPred p) :
     fun z => (halts_haltingReduction_iff hS z).trans (hSp z)⟩
 
 end MIPRE.Cost
+
+end

@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Pasting
+module
+public import MIPRE.Foundations.Pasting
+
+@[expose] public section
 
 /-! # Completing a nearby submeasurement
 
@@ -76,5 +79,7 @@ theorem submeasurement_completion_dist_avg {X : Type*} [Fintype X]
   linarith
 
 end MIPRE.Introspection
+
+end
 
 end

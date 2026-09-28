@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Matrix.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Foundations
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Foundations
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -59,7 +62,7 @@ lemma sqdiff_eq_corr (params : Parameters) (model : MatrixOperatorFamilyRealizat
     abel
   rw [hexpand, ev_sub, ev_sub, ev_add]
 
-private lemma orthogonalModeProjector_re_sum (params : Parameters)
+lemma orthogonalModeProjector_re_sum (params : Parameters)
     (z : Point params → Point params → ℂ) :
     Complex.re (∑ u, ∑ v, orthogonalModeProjectorMatrix params u v * z u v) =
       ∑ u, Complex.re (z u u) -
@@ -281,7 +284,7 @@ lemma rerandomizeCoordWeight_rowSum (params : Parameters) (u : Point params) :
           rw [Nat.cast_mul, Nat.cast_mul]
           ring
 
-private lemma update_eq_fixed_count (params : Parameters)
+lemma update_eq_fixed_count (params : Parameters)
     (i : Fin params.m) (x : Fq params) (v : Point params) :
     (∑ u : Point params, if Function.update u i x = v then (1 : ℕ) else 0) =
       if x = v i then params.q else 0 := by
@@ -339,7 +342,7 @@ private lemma update_eq_fixed_count (params : Parameters)
       · simp [huv]
     simp [hx, hsum_zero]
 
-private lemma hypercubeAdjacencyWeight_eq_rerandomizeCoordWeight (params : Parameters)
+lemma hypercubeAdjacencyWeight_eq_rerandomizeCoordWeight (params : Parameters)
     (u v : Point params) :
     hypercubeAdjacencyWeight params u v = (rerandomizeCoordWeight params u v : ℂ) := by
   unfold hypercubeAdjacencyWeight rerandomizeCoordWeight
@@ -406,7 +409,7 @@ lemma rerandomizeCoordWeight_colSum (params : Parameters) (v : Point params) :
 /-! ## Symmetry of edge weights and the Laplacian edge-difference form -/
 
 /-- If `u[i↦x] = v`, then switching roles gives `v[i↦u_i] = u`. -/
-private lemma update_swap {params : Parameters} (u v : Point params) (i : Fin params.m)
+lemma update_swap {params : Parameters} (u v : Point params) (i : Fin params.m)
     (x : Fq params) (h : Function.update u i x = v) :
     Function.update v i (u i) = u := by
   ext j
@@ -420,7 +423,7 @@ private lemma update_swap {params : Parameters} (u v : Point params) (i : Fin pa
     rw [Function.update_of_ne hji, hvj]
 
 /-- If `u[i↦x] = v` then `x = v i`. -/
-private lemma update_value_eq {params : Parameters} (u v : Point params) (i : Fin params.m)
+lemma update_value_eq {params : Parameters} (u v : Point params) (i : Fin params.m)
     (x : Fq params) (h : Function.update u i x = v) : x = v i := by
   have hc : Function.update u i x i = v i :=
     congrArg (fun f : Point params => f i) h
@@ -802,3 +805,5 @@ lemma matrixLocalVarianceTraceForm_eq_closedForm (params : Parameters)
               rw [hadj, hdiag]
 
 end MIPStarRE.LDT.ExpansionHypercubeGraph
+
+end

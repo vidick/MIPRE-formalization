@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.NormalElementProg
-import MIPRE.Foundations.LowDegree.BinaryInverse
+module
+public import MIPRE.Foundations.SAT.NormalElementProg
+public import MIPRE.Foundations.LowDegree.BinaryInverse
+
+@[expose] public section
 
 /-! # Uniform executable line representatives
 
@@ -73,7 +76,7 @@ theorem representative_nonzero {F : Type*} [Field F] [DecidableEq F] {n : ℕ}
   simp only [representative, coefficient, firstPair_ofFn u v hv,
     if_pos (Fin.find_spec hv), div_eq_mul_inv]
 
-private def selectPairStep : PolyTimeFun ((BitStr × BitStr) × (BitStr × BitStr))
+def selectPairStep : PolyTimeFun ((BitStr × BitStr) × (BitStr × BitStr))
     (BitStr × BitStr) :=
   ite (nonzeroRowProg.comp (snd.comp snd)) snd fst
 
@@ -103,7 +106,7 @@ theorem firstPairBitsProg_correct (k : ℕ) (hk : 1 ≤ k)
     rw [List.map_cons, List.foldr_cons, shoupNonzeroRow_correct, ih]
     by_cases ha : a.2 = 0 <;> simp [firstPair, ha]
 
-private def coefficientOfPairProg : PolyTimeFun (Unary × BitStr × BitStr) BitStr :=
+def coefficientOfPairProg : PolyTimeFun (Unary × BitStr × BitStr) BitStr :=
   ite (nonzeroRowProg.comp (snd.comp snd))
     (shoupMulProg.comp (fst.pair ((fst.comp snd).pair
       (shoupInvProg.comp (fst.pair (snd.comp snd))))))
@@ -144,7 +147,7 @@ theorem coefficientBitsProg_correct (k : ℕ) (hk : 1 ≤ k)
     coefficientOfPairProg_correct]
   rfl
 
-private def subtractStepProg :
+def subtractStepProg :
     PolyTimeFun ((BitStr × BitStr) × (Unary × BitStr)) BitStr :=
   BinaryPolynomial.xorBitsProg.comp ((fst.comp fst).pair
     (shoupMulProg.comp ((fst.comp snd).pair ((snd.comp snd).pair (snd.comp fst)))))
@@ -218,4 +221,6 @@ theorem lineRepresentativeProg_time_le : ∃ R : Polynomial ℕ,
     polynomial_eval_mono lineRepresentativeProg.timeBound hsize
 
 end MIPRE.Introspection.LineProgram
+end
+
 end

@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.CL.Sampler
-import MIPRE.Foundations.Games
+module
+public import MIPRE.Foundations.CL.Sampler
+public import MIPRE.Foundations.Games
+
+@[expose] public section
 
 /-!
 # Deciders and normal form verifiers
@@ -231,3 +234,5 @@ theorem IsBounded.two_le {lam : ℕ} (h : V.IsBounded lam) : 2 ≤ lam :=
 end Verifier
 
 end MIPRE
+
+end

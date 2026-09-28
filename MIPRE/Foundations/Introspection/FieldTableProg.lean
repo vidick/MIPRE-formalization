@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.FieldIndicatorProg
-import MIPRE.Foundations.SAT.FmlProg
+module
+public import MIPRE.Foundations.Introspection.FieldIndicatorProg
+public import MIPRE.Foundations.SAT.FmlProg
+
+@[expose] public section
 
 /-! # Evaluating a faithfully ordered full Pauli answer
 
@@ -124,4 +127,6 @@ theorem tableProg_runs (input : Unary × List BitStr × List BitStr) :
   tableProg.computes input
 
 end MIPRE.Introspection.FieldTableProgram
+end
+
 end

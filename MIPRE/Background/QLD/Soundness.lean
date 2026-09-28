@@ -3,13 +3,16 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Descent
-import MIPRE.Background.QLD.PhysEmbed
-import MIPRE.Background.QLD.QLDError
-import MIPRE.Background.QLD.RegisterForm
-import MIPRE.Background.QLD.Regime
-import MIPRE.Background.QLD.Legalize
-import MIPRE.Foundations.StrategyDilation
+module
+public import MIPRE.Background.QLD.Descent
+public import MIPRE.Background.QLD.PhysEmbed
+public import MIPRE.Background.QLD.QLDError
+public import MIPRE.Background.QLD.RegisterForm
+public import MIPRE.Background.QLD.Regime
+public import MIPRE.Background.QLD.Legalize
+public import MIPRE.Foundations.StrategyDilation
+
+@[expose] public section
 
 /-!
 # `thm:qld`: soundness of the Pauli basis test
@@ -574,5 +577,7 @@ theorem qld_soundness :
     fun W => ⟨(h2 W).1.trans hle, (h2 W).2.trans hle⟩⟩
 
 end MIPRE.QLD
+
+end
 
 end

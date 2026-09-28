@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.CookLevin.Describer
-import MIPRE.Foundations.Cost.Reader
-import MIPRE.Foundations.SAT.FmlProg
+module
+public import MIPRE.TM.CookLevin.Describer
+public import MIPRE.Foundations.Cost.Reader
+public import MIPRE.Foundations.SAT.FmlProg
+
+@[expose] public section
 
 /-!
 # The layout arithmetic as programs
@@ -295,3 +298,5 @@ noncomputable def muxListP : PolyTimeFun (Fml × List Fml × List Fml) (List Fml
     muxListP p = muxList p.1 p.2.1 p.2.2 := rfl
 
 end MIPRE.TM.CookLevin.Desc
+
+end

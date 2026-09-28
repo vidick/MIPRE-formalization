@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Data.Nat.Notation
-import Mathlib.Data.List.Basic
+module
+public import Mathlib.Data.Nat.Notation
+public import Mathlib.Data.List.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The ambient cost model
@@ -523,3 +527,5 @@ def HaltsWithin (p : Prog) (x : Data) (t : ℕ) : Prop := ∃ r t', t' ≤ t ∧
 def TimeBound (p : Prog) (T : ℕ → ℕ) : Prop := ∀ x : Data, HaltsWithin p x (T x.size)
 
 end MIPRE.Cost
+
+end

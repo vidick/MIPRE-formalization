@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Reduction
-import MIPRE.Foundations.Halting.Serial
+module
+public import MIPRE.Foundations.Halting.Reduction
+public import MIPRE.Foundations.Halting.Serial
+
+@[expose] public section
 
 /-!
 # The compressor's decider: the program
@@ -115,10 +118,10 @@ def readState (x : BitStr) (i : ℕ) : Data :=
   .cons cD (.cons (encode i) (encode (x.take i).reverse))
 
 /-- The environment after the body has taken the state apart and queried the description. -/
-private def readEnv (iD acc ans : Data) : Env :=
+def readEnv (iD acc ans : Data) : Env :=
   [ans, .cons cD iD, iD, acc, cD, .cons iD acc, .cons cD (.cons iD acc)]
 
-private theorem readBody_pre (hU : univ.WellScoped 1) {iD acc ans : Data} {t : ℕ}
+theorem readBody_pre (hU : univ.WellScoped 1) {iD acc ans : Data} {t : ℕ}
     (h : univ.Runs (.cons cD iD) ans t) {r : Data} {t' : ℕ}
     (hc : Eval (readEnv cD iD acc ans) readTail r t') :
     Eval [.cons cD (.cons iD acc)] (readBody univ) r
@@ -759,7 +762,7 @@ theorem haltProg_wellScoped : (haltProg G U).WellScoped 1 :=
     ⟨⟨by simp [WellScoped], by simp [WellScoped]⟩, callVar_wellScoped (by decide) U.closed⟩⟩
 
 /-- The run of the preparation, as the decider calls it, with the size of what it produces. -/
-private theorem prep_call {c : Prog} {x : BitStr} {n : ℕ} (hsd : IsSuccinctDesc c n x) (lam : ℕ)
+theorem prep_call {c : Prog} {x : BitStr} {n : ℕ} (hsd : IsSuccinctDesc c n x) (lam : ℕ)
     (d : Data) : ∃ t ≤ prepBound G U (esize c) n x.length (esize lam),
       (compressedD G U x n lam).size ≤ t ∧
       Eval [encode (c, n, lam), d, .cons (encode (c, n, lam)) d] (callVar 0 (prepProg G U))
@@ -769,7 +772,7 @@ private theorem prep_call {c : Prog} {x : BitStr} {n : ℕ} (hsd : IsSuccinctDes
     (v := encode (c, n, lam)) (by simp) h⟩
 
 /-- The pairing step of the decider. -/
-private theorem pair_step (P d cmpD : Data) :
+theorem pair_step (P d cmpD : Data) :
     Eval [cmpD, P, d, .cons P d] (.cons (.var 0) (.var 2)) (.cons cmpD d)
       (cmpD.size + 1 + (d.size + 1) + 1) :=
   Eval.cons (Eval.var_of_get (i := 0) (v := cmpD) (by simp))
@@ -873,3 +876,5 @@ theorem comprStr_accepts {c : Prog} {x : BitStr} {n : ℕ} (hsd : IsSuccinctDesc
 end Halting
 
 end MIPRE
+
+end

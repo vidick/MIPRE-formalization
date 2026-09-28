@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Pasting/ComparisonLemmas/OverAllOutcomes/Final.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.OverAllOutcomes.NonglobalDecomposition
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.OverAllOutcomes.NonglobalDecomposition
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -41,7 +44,7 @@ This formalizes `ld-pasting.tex` lines 1256--1265: nonglobality gives a supporte
 slice where `gᵢ` differs from the interpolant `h*`; line consistency forces
 agreement at the sampled `u`, and `Preliminaries.polynomialAgreement_avg_le_mdq`
 bounds that agreement probability. -/
-private lemma lineConsistentIndicator_probability_le_mdq
+lemma lineConsistentIndicator_probability_le_mdq
     (params : Parameters) [FieldModel params.q]
     {k : ℕ}
     (xs : PointTuple params k)
@@ -132,7 +135,7 @@ private lemma lineConsistentIndicator_probability_le_mdq
 
 /-- Expand an averaged restricted lifted submeasurement into per-outcome masses
 weighted by the probability of the restricting predicate. -/
-private lemma avgOver_subMeasMass_restrict_liftLeft_eq_sum_coeff
+lemma avgOver_subMeasMass_restrict_liftLeft_eq_sum_coeff
     {Question Outcome : Type*} [Fintype Outcome]
     (ψ : QuantumState (ι × ι))
     (𝒟 : Distribution Question)
@@ -177,7 +180,7 @@ private lemma avgOver_subMeasMass_restrict_liftLeft_eq_sum_coeff
           rw [avgOver_mul_const]
 
 /-- Fixed-distinct-tuple form of the line-consistent Schwartz--Zippel bound. -/
-private lemma lineConsistentIndicatorLocal_avg_le_mdq
+lemma lineConsistentIndicatorLocal_avg_le_mdq
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι) {k : ℕ}
@@ -247,7 +250,7 @@ interpolation-eligible nonglobal outcome `gs`, and line-consistent answer `f`, t
 paper chooses the interpolant `h*`; nonglobality gives a supported coordinate
 where `gᵢ ≠ h*|_{xsᵢ}`, and Schwartz--Zippel bounds the probability over `u` that
 this disagreement vanishes by `md/q`. -/
-private lemma overAllOutcomes_distinct_lineConsistent_indicator_mass_le_mdq
+lemma overAllOutcomes_distinct_lineConsistent_indicator_mass_le_mdq
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι) (k : ℕ) :
@@ -296,7 +299,7 @@ proved by `overAllOutcomes_distinct_nonglobal_mass_le_bad_line_mass_add_lineCons
 The line-consistent remainder is exactly the Schwartz--Zippel aggregation proved
 by `overAllOutcomes_distinct_lineConsistent_indicator_mass_le_mdq`, corresponding
 to lines 1235--1275. -/
-private lemma overAllOutcomes_distinct_nonglobal_mass_le_bad_line_mass_add_mdq
+lemma overAllOutcomes_distinct_nonglobal_mass_le_bad_line_mass_add_mdq
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι) (k : ℕ) :
@@ -321,7 +324,7 @@ The remaining hypothesis is exactly the content of `ld-pasting.tex` lines
 1174--1275: insert the line measurement, pay the one-point line consistency
 bound to add the consistency indicator, and use Schwartz--Zippel for the
 indicator term. -/
-private lemma overAllOutcomes_reverse_mass_bound_of_nonglobal_mass_bound
+lemma overAllOutcomes_reverse_mass_bound_of_nonglobal_mass_bound
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι)
@@ -357,7 +360,7 @@ The one-point line-comparison aggregation from `ld-pasting.tex` lines 1186--1202
 is proved by `overAllOutcomes_distinct_bad_line_mass_le_hBConsistencyError`, and
 the remaining insertion/Schwartz--Zippel estimate is
 `overAllOutcomes_distinct_nonglobal_mass_le_bad_line_mass_add_mdq`. -/
-private lemma overAllOutcomes_distinct_nonglobal_mass_bound
+lemma overAllOutcomes_distinct_nonglobal_mass_bound
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι)
@@ -391,7 +394,7 @@ and paying only `ldDnoteq`.  The reverse loss
 `overAllOutcomesExpansionMass - overAllOutcomesPastedMass` is the part of
 `ld-pasting.tex` supplied below by the completed `ldSandwichLineOnePoint`
 aggregation. -/
-private lemma overAllOutcomes_of_reverse_mass_bound
+lemma overAllOutcomes_of_reverse_mass_bound
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι)
     (family : IdxPolyFamily params ι)
@@ -580,3 +583,5 @@ lemma overAllOutcomes
     hzeta_nonneg hreverse
 
 end MIPStarRE.LDT.Pasting
+
+end

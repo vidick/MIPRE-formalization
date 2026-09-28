@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/Quantum/FiniteMatrix/Order.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.Basic
+module
+public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.Basic
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -41,7 +44,7 @@ local instance : NonnegSpectrumClass ℝ (Op d) :=
 noncomputable local instance : NonUnitalContinuousFunctionalCalculus ℝ (Op d) IsSelfAdjoint :=
   ContinuousFunctionalCalculus.toNonUnital (R := ℝ) (A := Op d) (p := IsSelfAdjoint)
 
-private lemma col_norm_sq_le_trace_star_mul_self (Y : Op d) (i : d) :
+lemma col_norm_sq_le_trace_star_mul_self (Y : Op d) (i : d) :
     ‖toLp 2 (Y · i)‖ ^ 2 ≤ Complex.re (Yᴴ * Y).trace := by
   rw [show Complex.re (Yᴴ * Y).trace = ∑ k : d, ‖toLp 2 (Y · k)‖ ^ 2 by
     simp [Matrix.trace, Matrix.conjTranspose_apply, Matrix.mul_apply,
@@ -195,3 +198,5 @@ theorem sq_le_self [DecidableEq d] {X : Op d} (hX : 0 ≤ X) (hXle : X ≤ 1) :
     simpa [mul_sub] using hnonneg
 
 end MIPStarRE.Quantum
+
+end

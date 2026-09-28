@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Coefficients
-import MIPRE.Foundations.CrossConsistency
-import MIPRE.Foundations.Pasting
-import MIPRE.Foundations.RegisterReindex
+module
+public import MIPRE.Background.LIDT.Coefficients
+public import MIPRE.Foundations.CrossConsistency
+public import MIPRE.Foundations.Pasting
+public import MIPRE.Foundations.RegisterReindex
+
+@[expose] public section
 
 /-!
 # Extracting exactly linear combined codewords
@@ -759,5 +762,7 @@ theorem extracted_conclusions (hd : 1 ≤ d) (hr : r ≤ K) {ψ : dA × dB → �
 end Assembly
 
 end MIPRE.LIDT.Simul
+
+end
 
 end

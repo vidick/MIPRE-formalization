@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Presentation
-import MIPRE.Foundations.LowDegree.LineRestrict
+module
+public import MIPRE.Background.LIDT.Presentation
+public import MIPRE.Foundations.LowDegree.LineRestrict
+
+@[expose] public section
 
 /-!
 # Honest answers in the seeded CL low-degree test
@@ -180,5 +183,7 @@ theorem sampleOf_eval_question (τ : Ty) (x : ι → F) :
 end Regs
 
 end MIPRE.LIDT.CL
+
+end
 
 end

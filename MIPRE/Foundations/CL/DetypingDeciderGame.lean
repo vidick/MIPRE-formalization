@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingDecider
+module
+public import MIPRE.Foundations.CL.DetypingDecider
+
+@[expose] public section
 
 /-! # The executable detyped predicate agrees with the finite game
 
@@ -92,3 +95,5 @@ theorem verifier_game_D (hℓ : 0 < ℓ) (hD : D.Total) (n : ℕ)
   bounded_acceptance E S D C hD n x y a b
 
 end MIPRE.CL.Detyping.DeciderProgram
+
+end

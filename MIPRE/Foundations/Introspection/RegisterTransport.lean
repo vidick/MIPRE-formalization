@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.VaryingPauliMixing
-import MIPRE.Foundations.Introspection.Conditioning
+module
+public import MIPRE.Foundations.Introspection.VaryingPauliMixing
+public import MIPRE.Foundations.Introspection.Conditioning
+
+@[expose] public section
 
 /-! # Transporting finite register operators and their state distances
 
@@ -118,5 +121,7 @@ theorem stateSqNorm_registerOp (e : I ≃ J) (f : K ≃ L)
   rw [← registerOp_one f, ← registerOp_kronecker, registerOp_mulVec, norm_evec_comp_equiv]
 
 end MIPRE.Introspection
+
+end
 
 end

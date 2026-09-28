@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.ArrayProg
-import MIPRE.Foundations.SAT.Tseitin
+module
+public import MIPRE.Foundations.SAT.ArrayProg
+public import MIPRE.Foundations.SAT.Tseitin
+
+@[expose] public section
 
 /-!
 # Exact gate-count padding
@@ -23,7 +26,7 @@ open Cost Cost.PolyTimeFun
 def copyOutput (C : Circuit) : Circuit :=
   ⟨C.inputs, C.gates ++ [Gate.or (C.gates.length - 1) (C.gates.length - 1)]⟩
 
-private theorem terminal_of_refsLt (C : Circuit) (h : C.RefsLt) :
+theorem terminal_of_refsLt (C : Circuit) (h : C.RefsLt) :
     C.fanout (C.gates.length - 1) = 0 := by
   have hz : ∀ g ∈ C.gates, g.refs.count (C.gates.length - 1) = 0 := by
     intro g hg
@@ -98,7 +101,7 @@ def padGates (C : Circuit) (k : ℕ) : Circuit :=
 
 @[simp] theorem padGates_zero (C : Circuit) : padGates C 0 = C := by cases C; simp [padGates]
 
-private theorem padGates_succ (C : Circuit) (hne : C.gates ≠ []) (k : ℕ) :
+theorem padGates_succ (C : Circuit) (hne : C.gates ≠ []) (k : ℕ) :
     padGates C (k + 1) = copyOutput (padGates C k) := by
   have hlen : 0 < C.gates.length := List.length_pos_iff.mpr hne
   have he : C.gates.length - 1 + k = C.gates.length + k - 1 := by omega
@@ -144,3 +147,5 @@ noncomputable def padGatesProg : PolyTimeFun (Circuit × Unary) Circuit :=
     padGatesProg p = padGates p.1 p.2.length := rfl
 
 end MIPRE.SAT.Circuit
+
+end

@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Lines
-import MIPRE.Foundations.Blocks
+module
+public import MIPRE.Background.QLD.Lines
+public import MIPRE.Foundations.Blocks
+
+@[expose] public section
 
 /-!
 # The padded space, and the sublines of a padded line
@@ -1554,3 +1557,5 @@ theorem avgSubAB_le_of_forall (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Finty
 end AlphaBeta
 
 end MIPRE.QLD
+
+end

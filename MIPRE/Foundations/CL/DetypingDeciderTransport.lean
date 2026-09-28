@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingDeciderGame
-import MIPRE.Foundations.CL.DetypingSoundness
-import MIPRE.Foundations.CL.DetypingComplete
+module
+public import MIPRE.Foundations.CL.DetypingDeciderGame
+public import MIPRE.Foundations.CL.DetypingSoundness
+public import MIPRE.Foundations.CL.DetypingComplete
+
+@[expose] public section
 
 /-! # Same-state soundness for the actual detyped verifier
 
@@ -216,3 +219,5 @@ theorem verifier_hasPerfectPCC (hE : ∀ u v, E u v → E v u)
   exact ⟨Q, hQ, hv⟩
 
 end MIPRE.CL.Detyping.DeciderProgram
+
+end

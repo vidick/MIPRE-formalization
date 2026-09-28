@@ -2,10 +2,14 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.Basic
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Data.Real.Basic
+module
+public import MIPRE.Foundations.CL.Basic
+public import Mathlib.Data.ZMod.Basic
+public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.Data.Real.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-! # The two-level graph sampler
 
@@ -288,5 +292,7 @@ theorem conditional_average (E : T → T → Prop) [DecidableRel E]
   rw [sum_validSeeds, card_validSeeds]
 
 end MIPRE.CL.Graph
+
+end
 
 end

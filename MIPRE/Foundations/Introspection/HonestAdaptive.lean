@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestFirstHide
-import MIPRE.Foundations.Introspection.RegisterTransport
+module
+public import MIPRE.Foundations.Introspection.HonestFirstHide
+public import MIPRE.Foundations.Introspection.RegisterTransport
+
+@[expose] public section
 
 /-! # The adaptive honest Read and Hide measurements
 
@@ -153,3 +156,5 @@ theorem hideRegister_isPVM {ℓ : ℕ} (P : CL.CLFun F ι ℓ) (k : ℕ)
               (fun z => ih _ _ _ (h.2 _))).coarse (joinHide S))
 
 end MIPRE.Introspection.Honest
+
+end

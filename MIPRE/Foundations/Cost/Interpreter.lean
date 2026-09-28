@@ -3,10 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.MachineData
-import MIPRE.Foundations.Cost.Closure
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.Linarith
+module
+public import MIPRE.Foundations.Cost.MachineData
+public import MIPRE.Foundations.Cost.Closure
+public import Mathlib.Tactic.Ring
+public import Mathlib.Tactic.Linarith
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The self-interpreter, I: the step function as a program
@@ -907,3 +911,5 @@ theorem stepProg_runs (c : Cfg) :
 end Machine
 
 end MIPRE.Cost
+
+end

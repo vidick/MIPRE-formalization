@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HidingRigidity
+module
+public import MIPRE.Foundations.Introspection.HidingRigidity
+
+@[expose] public section
 
 /-! # The information retained by a hiding prefix
 
@@ -106,5 +109,7 @@ theorem tail_proj_tail (P : CL.CLFun F ι ℓ) (y x : ι → F)
   exact compl_subset_compl.mpr (prefixRegister_mono P y hkm)
 
 end MIPRE.Introspection.CLChecks
+
+end
 
 end

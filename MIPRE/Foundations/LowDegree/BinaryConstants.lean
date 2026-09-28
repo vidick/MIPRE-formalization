@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.LowDegree.BinaryPolynomial
+module
+public import MIPRE.Foundations.LowDegree.BinaryPolynomial
+
+@[expose] public section
 
 /-! # Fixed-width zero and one for binary polynomial quotients -/
 
@@ -45,3 +48,5 @@ noncomputable def oneBitsProg : PolyTimeFun BitStr BitStr :=
 @[simp] theorem oneBitsProg_apply (p : BitStr) : oneBitsProg p = oneBits p := rfl
 
 end MIPRE.LowDegree.BinaryPolynomial
+
+end

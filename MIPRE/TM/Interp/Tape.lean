@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.TM.Interp.Instr
-import Mathlib.Tactic
+module
+public import MIPRE.TM.Interp.Instr
+public import Mathlib.Tactic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Tape contents
@@ -137,3 +141,5 @@ def bits : List Bool → List Sym := List.map fun b => if b then Sym.one else Sy
 @[simp] theorem length_bits (l : List Bool) : (bits l).length = l.length := List.length_map ..
 
 end MIPRE.TM.Interp
+
+end

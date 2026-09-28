@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.Semidecide
-import MIPRE.Foundations.Halting.Serial
+module
+public import MIPRE.Foundations.Cost.Semidecide
+public import MIPRE.Foundations.Halting.Serial
+
+@[expose] public section
 
 /-!
 # Semideciders on encoded values, not only on bit strings
@@ -112,3 +115,5 @@ theorem exists_semidecider_prod_nat {p : BitStr → ℕ → Prop} (hp : REPred f
   ⟨S, hws, fun x n => hS (x, n)⟩
 
 end MIPRE.Cost
+
+end

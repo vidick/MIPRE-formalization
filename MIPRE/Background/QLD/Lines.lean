@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Combined
-import MIPRE.Foundations.Pasting
+module
+public import MIPRE.Background.QLD.Combined
+public import MIPRE.Foundations.Pasting
+
+@[expose] public section
 
 /-!
 # Pairs of lines
@@ -1261,5 +1264,7 @@ theorem qld_pairs_of_lines (hd : 1 ≤ d) (hψ : star ψ ⬝ᵥ ψ = 1)
 end Pairs
 
 end MIPRE.QLD
+
+end
 
 end

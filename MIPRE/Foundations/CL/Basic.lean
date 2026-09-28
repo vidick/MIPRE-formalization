@@ -3,8 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.CL.Register
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+module
+public import MIPRE.Foundations.CL.Register
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Conditionally linear functions
@@ -559,3 +563,5 @@ theorem isCLFun_one_iff {T : Finset ι} {f : (ι → F) → (ι → F)} :
       funext fun x => by simp⟩
 
 end MIPRE.CL
+
+end

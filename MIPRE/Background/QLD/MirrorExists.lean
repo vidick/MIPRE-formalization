@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.PaddedLIDT
-import MIPRE.Background.QLD.Mirror
+module
+public import MIPRE.Background.QLD.PaddedLIDT
+public import MIPRE.Background.QLD.Mirror
+
+@[expose] public section
 
 /-!
 # `MirrorSimul`, discharged
@@ -203,5 +206,7 @@ theorem exists_mirrorSimul (hm4 : 4 * m ∣ Fintype.card F) (hψ : star ψ ⬝�
   exact ⟨mirrorOfGlobalPairs hm P P' hd hψ hfail hq⟩
 
 end MIPRE.QLD
+
+end
 
 end

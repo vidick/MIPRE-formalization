@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.ParserBits
+module
+public import MIPRE.Foundations.Introspection.ParserBits
+
+@[expose] public section
 
 /-! # Executable introspection answer format and internal-cutoff checks
 
@@ -103,7 +106,7 @@ instance (Q R : ℕ) (bs : BitStr) : Decidable (pairValid Q R bs) :=
 instance (Q R : ℕ) (exactLast : Bool) (bs : BitStr) : Decidable (tripleValid Q R exactLast bs) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
 
-private theorem decide_and_if (p q : Prop) [Decidable p] [Decidable q] :
+theorem decide_and_if (p q : Prop) [Decidable p] [Decidable q] :
     (if p then decide q else false) = decide (p ∧ q) := by
   by_cases h : p <;> simp [h]
 
@@ -221,5 +224,7 @@ def tripleParser (Q R : ℕ) (exactLast : Bool) :
   (tripleCheck Q R exactLast).pair (triplePartsProg Q)
 
 end MIPRE.Introspection.AnswerParser
+
+end
 
 end

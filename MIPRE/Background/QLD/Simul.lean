@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.Combined
-import MIPRE.Foundations.POVMMix
-import MIPRE.Foundations.CrossConsistency
+module
+public import MIPRE.Background.QLD.Combined
+public import MIPRE.Foundations.POVMMix
+public import MIPRE.Foundations.CrossConsistency
+
+@[expose] public section
 
 /-!
 # The simultaneous pair measurement: the interface between stages 4 and 5
@@ -221,5 +224,7 @@ theorem bornProb_extVec2_aOp_aOp (φ : RA × RB → ℂ) (a₀ : EA) (b₀ : EB)
 end Reduced
 
 end MIPRE.QLD
+
+end
 
 end

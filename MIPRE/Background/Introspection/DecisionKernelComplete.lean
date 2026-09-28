@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.DecisionKernelEncoding
-import MIPRE.Background.Introspection.DecisionKernelGameInterface
+module
+public import MIPRE.Background.Introspection.DecisionKernelEncoding
+public import MIPRE.Background.Introspection.DecisionKernelGameInterface
+
+@[expose] public section
 
 /-! # Honest completeness of the actual decision kernel -/
 
@@ -13,12 +16,12 @@ open Cost Cost.PolyTimeFun SAT
 set_option backward.isDefEq.respectTransparency false
 set_option maxRecDepth 4096
 
-private theorem mapAnswer_pauli {V A B PA : Type*} (f : A → B)
+theorem mapAnswer_pauli {V A B PA : Type*} (f : A → B)
     (a : ParsedAnswer V A PA) (c : PA) :
     ParsedAnswer.mapAnswer f a = .pauli c ↔ a = .pauli c := by
   cases a <;> simp [ParsedAnswer.mapAnswer]
 
-private theorem toRaw_pauli_inv {k m Q R : ℕ} (E : BinField k)
+theorem toRaw_pauli_inv {k m Q R : ℕ} (E : BinField k)
     (a : ParsedAnswer (Fin Q → CL.𝔽₂) (Verifier.Answers R) (QLD.Answer E.carrier m 1))
     (c : BitStr) (h : Answer.toRaw E a = .pauli c) :
     ∃ d, a = .pauli d ∧ c = QLD.PauliAnswerProgram.answerBits E d := by
@@ -83,7 +86,7 @@ theorem encoded_quotient {lam n : ℕ} (V : Verifier 7)
     dsimp only [E] at hec hed
     simpa only [rawPauliCheck, E, hec, hed, finitePauliCheck] using hD
 
-private theorem guarded_pauli (W : ClockedUniversalMachine)
+theorem guarded_pauli (W : ClockedUniversalMachine)
     (ctx : AuxiliarySource.Context) (bounds : AuxiliaryDecision.Bounds)
     (t u : QLD.Ty) (a b : BitStr) (h : t = u → a = b) :
     AuxiliaryDecision.guarded W (.pauli .X) (.pauli .Z) project
@@ -319,4 +322,6 @@ theorem program_complete_numbered (W : ClockedUniversalMachine) {lam n : ℕ}
   exact h
 
 end MIPRE.Introspection.DecisionKernel
+end
+
 end

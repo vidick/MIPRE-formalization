@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.BinaryExtraction
-import MIPRE.Foundations.Introspection.PauliErrorParameters
-import MIPRE.Background.QLD.Soundness
+module
+public import MIPRE.Background.Introspection.BinaryExtraction
+public import MIPRE.Foundations.Introspection.PauliErrorParameters
+public import MIPRE.Background.QLD.Soundness
+
+@[expose] public section
 
 /-! # Actual QLD soundness witnesses in the introspection interface
 
@@ -27,12 +30,12 @@ variable {I H K H' K' R S : Type*}
   [Fintype H'] [DecidableEq H'] [Fintype K'] [DecidableEq K']
   [Fintype R] [DecidableEq R] [Fintype S] [DecidableEq S]
 
-private theorem aux_pull_isometry (e : H' ≃ H) (V : Matrix H R ℂ)
+theorem aux_pull_isometry (e : H' ≃ H) (V : Matrix H R ℂ)
     (hV : Vᴴ * V = 1) : (V.submatrix e id)ᴴ * V.submatrix e id = 1 := by
   rw [Matrix.conjTranspose_submatrix, Matrix.submatrix_mul_equiv, hV]
   rfl
 
-private theorem aux_image_pull (e : H' ≃ H) (V : Matrix H R ℂ) (M : Matrix R R ℂ) :
+theorem aux_image_pull (e : H' ≃ H) (V : Matrix H R ℂ) (M : Matrix R R ℂ) :
     isometricImage (V.submatrix e id) M = registerOp e (isometricImage V M) := by
   unfold isometricImage registerOp
   rw [Matrix.conjTranspose_submatrix]
@@ -40,24 +43,24 @@ private theorem aux_image_pull (e : H' ≃ H) (V : Matrix H R ℂ) (M : Matrix R
     Vᴴ.submatrix (Equiv.refl R) e = _
   rw [Matrix.submatrix_mul_equiv, Matrix.submatrix_mul_equiv]
 
-private theorem aux_snorm_pull (e : H' ≃ H) (ψ : H → ℂ) (M : Matrix H H ℂ) :
+theorem aux_snorm_pull (e : H' ≃ H) (ψ : H → ℂ) (M : Matrix H H ℂ) :
     snorm (ψ ∘ e) (registerOp e M) = snorm ψ M := by
   unfold snorm
   rw [registerOp_mulVec, norm_evec_comp_equiv]
 
-private theorem aux_registerOp_aOp (e : H' ≃ H) (f : K' ≃ K) (M : Matrix H H ℂ) :
+theorem aux_registerOp_aOp (e : H' ≃ H) (f : K' ≃ K) (M : Matrix H H ℂ) :
     registerOp (e.prodCongr f) (aOp M) = aOp (registerOp e M) := by
   simp only [aOp, registerOp_kronecker, registerOp_one]
 
-private theorem aux_registerOp_bOp (e : H' ≃ H) (f : K' ≃ K) (M : Matrix K K ℂ) :
+theorem aux_registerOp_bOp (e : H' ≃ H) (f : K' ≃ K) (M : Matrix K K ℂ) :
     registerOp (e.prodCongr f) (bOp M) = bOp (registerOp f M) := by
   simp only [bOp, registerOp_kronecker, registerOp_one]
 
-private theorem aux_registerState (e : H' ≃ H) (f : K' ≃ K) (ξ : H × K → ℂ) :
+theorem aux_registerState (e : H' ≃ H) (f : K' ≃ K) (ξ : H × K → ℂ) :
     registerState I (ξ ∘ e.prodCongr f) = registerState I ξ ∘
       ((Equiv.refl I).prodCongr e).prodCongr ((Equiv.refl I).prodCongr f) := rfl
 
-private theorem aux_state_error (e : H' ≃ H) (f : K' ≃ K)
+theorem aux_state_error (e : H' ≃ H) (f : K' ≃ K)
     (ξ : H × K → ℂ) (V : Matrix (I × H) R ℂ) (W : Matrix (I × K) S ℂ)
     (ψ : R × S → ℂ) :
     ‖evec (isometricState (V.submatrix ((Equiv.refl I).prodCongr e) id)
@@ -69,7 +72,7 @@ private theorem aux_state_error (e : H' ≃ H) (f : K' ≃ K)
     (((Equiv.refl I).prodCongr e).prodCongr ((Equiv.refl I).prodCongr f))
     (isometricState V W ψ - registerState I ξ)
 
-private theorem aux_alice_error (e : H' ≃ H) (f : K' ≃ K)
+theorem aux_alice_error (e : H' ≃ H) (f : K' ≃ K)
     (ξ : H × K → ℂ) (V : Matrix (I × H) R ℂ) (M : Matrix R R ℂ)
     (P : Matrix I I ℂ) :
     snorm (registerState I (ξ ∘ e.prodCongr f)) (aOp
@@ -84,7 +87,7 @@ private theorem aux_alice_error (e : H' ≃ H) (f : K' ≃ K)
   rw [aux_image_pull, hP, ← registerOp_sub, aux_registerState,
     ← aux_registerOp_aOp _ ((Equiv.refl I).prodCongr f), aux_snorm_pull]
 
-private theorem aux_bob_error (e : H' ≃ H) (f : K' ≃ K)
+theorem aux_bob_error (e : H' ≃ H) (f : K' ≃ K)
     (ξ : H × K → ℂ) (V : Matrix (I × K) S ℂ) (M : Matrix S S ℂ)
     (P : Matrix I I ℂ) :
     snorm (registerState I (ξ ∘ e.prodCongr f)) (bOp
@@ -151,7 +154,7 @@ theorem rdPauliVec_mats_of_supported {H : Type*} [Fintype H] [DecidableEq H]
   · intro hn
     exact (hn (Finset.mem_filter.mpr ⟨Finset.mem_univ _, rfl⟩)).elim
 
-private theorem projective_toPOVM_mats {X B H : Type*} [Fintype X] [Fintype B]
+theorem projective_toPOVM_mats {X B H : Type*} [Fintype X] [Fintype B]
     [Fintype H] [DecidableEq H] (P : ProjectiveMeasurement X B (Matrix H H ℂ))
     (q : X) (a : B) : ((P.toPOVM q).mats a).val = P.M q a := rfl
 
@@ -262,4 +265,6 @@ theorem degreeOne_fieldExtraction_exists (hm : m ∣ Fintype.card F)
     using fieldExtraction_exists hm le_rfl R hA hB hε hfail
 
 end MIPRE.Introspection.RestrictedSoundness
+end
+
 end

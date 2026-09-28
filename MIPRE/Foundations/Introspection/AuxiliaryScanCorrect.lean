@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryScanProgram
-import MIPRE.Foundations.Introspection.AuxiliaryPrefixScan
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryScanProgram
+public import MIPRE.Foundations.Introspection.AuxiliaryPrefixScan
+
+@[expose] public section
 
 /-! # Correctness of the actual attained-prefix scan
 
@@ -150,4 +153,6 @@ theorem program_complete (f : PolyTimeFun AuxiliarySource.Context BitStr)
     exact AuxiliaryPrefix.solveStage_correct _ _ ⟨x, stage_of_attained_next hP k y x hx⟩
 
 end MIPRE.Introspection.AuxiliaryScan
+end
+
 end

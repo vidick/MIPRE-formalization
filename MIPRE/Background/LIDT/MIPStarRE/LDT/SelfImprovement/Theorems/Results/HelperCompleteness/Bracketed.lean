@@ -5,9 +5,12 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/SelfImprovement/Theorems/Results/HelperCompleteness/Bracketed.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.HelperCompleteness.Linearized
-import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.SdpMatrixBridge
-import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.MainTheorems
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.HelperCompleteness.Linearized
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.SdpMatrixBridge
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.MainTheorems
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -123,7 +126,7 @@ operator. Inside each fiber `{h : h u = a}` the inner `A^u_{h(u)}` is constant
 (equal to `A^u_a`), and `Matrix.sum_mul`/`Matrix.mul_sum` pull this constant
 factor through the sum over `T_h`. Mirrors the operator-level computation in
 `sandwichedPolynomialSubMeasAt.total_le_one`. -/
-private lemma sandwichedPolynomialOutcomeOperatorAt_sum_eq_bracketed
+lemma sandwichedPolynomialOutcomeOperatorAt_sum_eq_bracketed
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params ι)
     (T : SubMeas (Polynomial params) ι) (u : Point params) :
@@ -573,3 +576,5 @@ lemma addInU
   simpa [selfImprovementVarianceError] using
     hglobalVariance.averagedGlobalVarianceBound
 end MIPStarRE.LDT.SelfImprovement
+
+end

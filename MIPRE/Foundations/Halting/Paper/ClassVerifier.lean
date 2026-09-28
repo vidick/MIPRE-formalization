@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Paper.Main
-import MIPRE.Foundations.Halting.Paper.Build
-import MIPRE.Foundations.ClassMIPStar
+module
+public import MIPRE.Foundations.Halting.Paper.Main
+public import MIPRE.Foundations.Halting.Paper.Build
+public import MIPRE.Foundations.ClassMIPStar
+
+@[expose] public section
 
 /-!
 # The class verifier of the polynomial-time halting reduction
@@ -546,3 +549,5 @@ theorem decProg_runs (z x y a b : BitStr) :
   · exact hrej e₀
 
 end MIPRE.Halting
+
+end

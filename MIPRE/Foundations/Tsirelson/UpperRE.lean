@@ -3,11 +3,14 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Tsirelson.Certificate
-import MIPRE.Foundations.Tsirelson.Closed
-import MIPRE.Foundations.Tsirelson.CodedPoly
-import MIPRE.Foundations.ValueApprox.RawSemantics
-import MIPRE.Foundations.ValueApprox.RE
+module
+public import MIPRE.Foundations.Tsirelson.Certificate
+public import MIPRE.Foundations.Tsirelson.Closed
+public import MIPRE.Foundations.Tsirelson.CodedPoly
+public import MIPRE.Foundations.ValueApprox.RawSemantics
+public import MIPRE.Foundations.ValueApprox.RE
+
+@[expose] public section
 
 /-!
 # The commuting-operator value is recursively enumerable from above
@@ -629,3 +632,5 @@ theorem tsirelson_of_haltingReduction (hred : HaltingReductionQuantum) :
   tsirelson_of_upperRE hred commutingUpperRE
 
 end MIPRE
+
+end

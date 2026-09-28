@@ -23,12 +23,16 @@ Proof-side machinery for tier T1b (`PLAN.md` §3, §8): for a unital `*`-subalge
 
 No statement of the paper is made here; this file only supplies tools.
 -/
-import Mathlib
-import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Blocks
+module
+public import Mathlib
+public import MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Blocks
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace Orthogonalization.Blocks
 
@@ -311,3 +315,5 @@ theorem eq_top_of_isIrreducible (A : StarSubalgebra ℂ (L →L[ℂ] L)) (hA : I
   eq_top_iff.mpr fun T _ => mem_of_isIrreducible A hA T
 
 end Orthogonalization.Blocks
+
+end

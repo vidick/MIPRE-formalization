@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.Game
-import MIPRE.Foundations.CL.Basic
-import MIPRE.Foundations.SampledGame
+module
+public import MIPRE.Background.QLD.Game
+public import MIPRE.Foundations.CL.Basic
+public import MIPRE.Foundations.SampledGame
+
+@[expose] public section
 
 /-! # The actual three-level Pauli question presentations
 
@@ -83,11 +86,11 @@ def directionSet (m : ℕ) : Finset (Coord m) :=
 
 def finalSet (m : ℕ) : Finset (Coord m) := (seedSet m ∪ directionSet m)ᶜ
 
-private theorem direction_subset (m : ℕ) : directionSet m ⊆ univ \ seedSet m := by
+theorem direction_subset (m : ℕ) : directionSet m ⊆ univ \ seedSet m := by
   intro c hc
   cases c <;> simp_all [seedSet, directionSet]
 
-private theorem remainder_eq (m : ℕ) :
+theorem remainder_eq (m : ℕ) :
     (univ \ seedSet m) \ directionSet m = finalSet m := by
   ext c
   simp [finalSet]
@@ -260,4 +263,6 @@ theorem qldGame_mu_presentation [Algebra (ZMod 2) F] {d : ℕ}
     contentEquiv, Equiv.coe_fn_mk, questionOfVector_presentation]
 
 end MIPRE.QLD.PauliCL
+end
+
 end

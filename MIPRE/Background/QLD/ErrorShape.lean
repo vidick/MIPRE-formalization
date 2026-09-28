@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.SwapItemOne
-import MIPRE.Background.QLD.PaddedLIDT
+module
+public import MIPRE.Background.QLD.SwapItemOne
+public import MIPRE.Background.QLD.PaddedLIDT
+
+@[expose] public section
 
 /-!
 # The error shape of `thm:qld`
@@ -775,3 +778,5 @@ theorem ErrSmall.exists_le_min_one {f : ℝ → ℕ → ℕ → ℕ → ℝ} (hf
     (min_le_left _ _))⟩
 
 end MIPRE.QLD
+
+end

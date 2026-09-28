@@ -55,13 +55,17 @@ The per-step normalization `1/N_A` of eq random-martingale-increment is
 the uniform live cut and stays in section 5: the budget here is the sum
 over all steps, which section 5 divides by the number of steps.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.Arena
-import MIPRE.Background.Repetition.CommutingRepetition.Resolver.EntropicArenaBudget
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.Arena
+public import MIPRE.Background.Repetition.CommutingRepetition.Resolver.EntropicArenaBudget
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -184,3 +188,5 @@ theorem resolver_arena_entropic (M : StdTracialAlgebra.{0})
       X.idx X.idx_zero hX σ hσ i ω₀
 
 end CommutingRepetition
+
+end

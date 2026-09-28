@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SourceCompiler
+module
+public import MIPRE.Foundations.Introspection.SourceCompiler
+
+@[expose] public section
 
 /-! # Exact acceptance of the cross-introspection compiler
 
@@ -128,5 +131,7 @@ theorem crossProg_original_iff {ℓ lam n : ℕ} (c : ℕ) (U : ClockedUniversal
     exact ⟨h,(ClockSimulation.original_decider_preserved U V hV hn _ _ _ _ hx hy ha' hb).mpr ha⟩
 
 end MIPRE.Introspection.SourceCompiler
+
+end
 
 end

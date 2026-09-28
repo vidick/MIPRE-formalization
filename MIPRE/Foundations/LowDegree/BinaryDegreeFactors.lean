@@ -2,9 +2,13 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Mathlib.Data.Nat.Factorization.Basic
-import Mathlib.Data.List.OfFn
-import Mathlib.Algebra.BigOperators.Fin
+module
+public import Mathlib.Data.Nat.Factorization.Basic
+public import Mathlib.Data.List.OfFn
+public import Mathlib.Algebra.BigOperators.Fin
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # Prime-power degree decomposition
@@ -70,3 +74,5 @@ theorem prefix_prod_dvd (n : ℕ) (hn : 0 < n) (pre post : List ℕ)
   exact dvd_mul_right _ _
 
 end MIPRE.LowDegree.BinaryDegreeFactors
+
+end

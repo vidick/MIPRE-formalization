@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.StateStability
+module
+public import MIPRE.Foundations.Introspection.StateStability
+
+@[expose] public section
 
 /-! # Transferring projective measurement errors between nearby states
 
@@ -118,3 +121,5 @@ theorem sum_bob_snorm_state_transfer_le (ψ φ : H × K → ℂ)
 
 end Bipartite
 end MIPRE.Introspection
+
+end

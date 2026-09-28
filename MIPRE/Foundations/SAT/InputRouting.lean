@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.SAT.Tseitin
+module
+public import MIPRE.Foundations.SAT.Tseitin
+
+@[expose] public section
 
 /-!
 # Routing repeated input reads through their preceding copies
@@ -56,7 +59,7 @@ theorem inputOwner_after (C : Circuit) {a b i : ℕ} (hab : a < b)
 def inputRef (C : Circuit) (k i : ℕ) : ℕ ⊕ ℕ :=
   if C.inputOwner k i = 0 then .inl i else .inr (C.inputOwner k i - 1)
 
-private theorem inputRef_ne_of_lt (C : Circuit) {a b i j : ℕ} (hab : a < b)
+theorem inputRef_ne_of_lt (C : Circuit) {a b i j : ℕ} (hab : a < b)
     (ha : C.gates.getD a (.const false) = .input i)
     (he : C.inputRef a i = C.inputRef b j) : False := by
   by_cases h₁ : C.inputOwner a i = 0 <;> by_cases h₂ : C.inputOwner b j = 0
@@ -102,7 +105,7 @@ def RoutedConsistent (C : Circuit) (x w : ℕ → Bool) : Prop :=
   ∀ k < C.size, w k = (C.gates.getD k (.const false)).eval
     (fun i => Sum.elim x w (C.inputRef k i)) (List.ofFn fun j : Fin k => w j)
 
-private theorem inputRef_value (C : Circuit) (x w : ℕ → Bool) (k i : ℕ)
+theorem inputRef_value (C : Circuit) (x w : ℕ → Bool) (k i : ℕ)
     (hw : ∀ u < k, w u = C.valueAt x u) : Sum.elim x w (C.inputRef k i) = x i := by
   rcases inputRef_cases C k i with he | ⟨u, hu, he, hg⟩
   · rw [he]; rfl
@@ -154,3 +157,5 @@ theorem eval_iff_routedConsistent (C : Circuit) (hne : C.gates ≠ []) (x : ℕ 
     simpa [Circuit.eval, hne, size] using ho
 
 end MIPRE.SAT.Circuit
+
+end

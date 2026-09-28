@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SamplerProgram
+module
+public import MIPRE.Foundations.Introspection.SamplerProgram
+
+@[expose] public section
 
 /-! # The actual typed introspection sampler
 
@@ -18,14 +21,14 @@ namespace MIPRE.Introspection
 
 open Cost CL CL.Detyping CL.Detyping.Program SamplerProgram
 
-private theorem pad_length (b : Bool) {l : BitStr} {s : ℕ} (h : l.length = s) :
+theorem pad_length (b : Bool) {l : BitStr} {s : ℕ} (h : l.length = s) :
     pad b l = List.replicate s b := by simp [pad, List.map_const', h]
 
-private theorem indicatorBits_univ (s : ℕ) :
+theorem indicatorBits_univ (s : ℕ) :
     indicatorBits (Finset.univ : Finset (Fin s)) = List.replicate s true := by
   simp [indicatorBits]
 
-private theorem indicatorBits_empty (s : ℕ) :
+theorem indicatorBits_empty (s : ℕ) :
     indicatorBits (∅ : Finset (Fin s)) = List.replicate s false := by
   simp [indicatorBits]
 
@@ -123,3 +126,5 @@ theorem detypedSampler_cl (E : P → P → Bool) (X Z : P) (ℓ : ℕ) (S : Type
 end Detyped
 
 end MIPRE.Introspection
+
+end

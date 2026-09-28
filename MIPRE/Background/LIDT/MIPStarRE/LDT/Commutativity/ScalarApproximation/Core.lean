@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/ScalarApproximation/Core.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Scaffold.Products
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Scaffold.Products
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -206,3 +209,5 @@ lemma qBipartiteSSCDefect_eq_half_qSDD_of_proj
           ring
 
 end MIPStarRE.LDT.Commutativity
+
+end

@@ -3,11 +3,14 @@ Copyright (c) 2026 Sean Perazzolo. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sean Perazzolo
 -/
-import MIPRE.LCS.Basic
-import Mathlib.Data.Finset.Sort
-import Mathlib.GroupTheory.FreeGroup.Reduce
-import Mathlib.GroupTheory.PresentedGroup
+module
+public import MIPRE.LCS.Basic
+public import Mathlib.Data.Finset.Sort
+public import Mathlib.GroupTheory.FreeGroup.Reduce
+public import Mathlib.GroupTheory.PresentedGroup
+public import MIPRE.Tactics
 
+@[expose] public section
 
 /-!
 # Solution Groups for Binary Linear Systems
@@ -281,3 +284,5 @@ end SolutionGroup
 end PresentedSolutionGroup
 
 end MIPRE.LCS
+
+end

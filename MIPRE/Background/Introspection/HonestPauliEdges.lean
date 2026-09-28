@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.HonestPauliCoarse
+module
+public import MIPRE.Background.Introspection.HonestPauliCoarse
+
+@[expose] public section
 
 /-! # The commuting and Magic Square edges of the honest Pauli strategy -/
 
@@ -16,7 +19,7 @@ open scoped Kronecker
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
   {m d : ℕ} [NeZero m]
 
-private theorem pvm_commute {I X : Type*} [Fintype I] [DecidableEq I] [Fintype X]
+theorem pvm_commute {I X : Type*} [Fintype I] [DecidableEq I] [Fintype X]
     {P : X → Matrix I I ℂ} (hP : IsPVM P) (x y : X) : Commute (P x) (P y) := by
   by_cases h : x = y
   · subst y; exact Commute.refl _
@@ -129,7 +132,7 @@ theorem answerOp_con_var_reject (hm : m ∣ Fintype.card F) (ω : Omega F m)
     simpa only [HonestMagicSquare.cellIndex, LCS.MagicSquare.cell_cellIdx hj] using hh
 
 omit [NeZero m] in
-private theorem probe_joint_commute (ω : Omega F m) (h : gam ω = 0)
+theorem probe_joint_commute (ω : Omega F m) (h : gam ω = 0)
     (W : Bas) (b : ZMod 2) (p : ZMod 2 × ZMod 2) :
     Commute (probeLift ω W b) (probeLift ω .X p.1 * probeLift ω .Z p.2) := by
   cases W
@@ -137,7 +140,7 @@ private theorem probe_joint_commute (ω : Omega F m) (h : gam ω = 0)
   · exact (probeLift_commute ω h p.1 b).symm.mul_right (pvm_commute (probeLift_isPVM ω .Z) b p.2)
 
 omit [NeZero m] in
-private theorem probe_joint_reject (ω : Omega F m) (h : gam ω = 0)
+theorem probe_joint_reject (ω : Omega F m) (h : gam ω = 0)
     (W : Bas) (b : ZMod 2) (p : ZMod 2 × ZMod 2) (hb : b ≠ pairLabel p W) :
     probeLift ω W b * (probeLift ω .X p.1 * probeLift ω .Z p.2) = 0 := by
   cases W <;> simp only [pairLabel] at hb
@@ -173,3 +176,5 @@ theorem answerOp_pairB_pair_reject (hm : m ∣ Fintype.card F)
     simp [accepts, subtests, Question.ty, Question.fmtOk, pairTest, h] at hxy
 
 end MIPRE.QLD.Honest
+
+end

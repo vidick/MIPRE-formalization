@@ -19,13 +19,17 @@ together with `θ(2l/(l + e^m(2−l))) = m + θ(l)` on `(0,2)`.
 The identification uses the uniqueness lemma `R_eq_of_proj`: on `𝒦(M, ξ) = e^{-a′/2}𝒦(M, Ω)`
 the candidate pair `(R', A')` is the identity of `(2 P_ξ)`, and it vanishes on `𝒦(M, ξ)ᗮ`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.CentralExp
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Uniqueness
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.CentralExp
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Uniqueness
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -578,3 +582,5 @@ end Modular
 end VN
 
 end CommutingRepetition
+
+end

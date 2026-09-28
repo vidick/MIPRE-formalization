@@ -2,11 +2,14 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Cost.SizeProgram
-import MIPRE.Foundations.Cost.Binary
-import MIPRE.Foundations.Cost.BinaryCompare
-import MIPRE.Foundations.Cost.Growth
-import MIPRE.Foundations.Verifier
+module
+public import MIPRE.Foundations.Cost.SizeProgram
+public import MIPRE.Foundations.Cost.Binary
+public import MIPRE.Foundations.Cost.BinaryCompare
+public import MIPRE.Foundations.Cost.Growth
+public import MIPRE.Foundations.Verifier
+
+@[expose] public section
 
 /-! # Uniformly bounded source descriptions for polynomial-time compilers
 
@@ -107,3 +110,5 @@ theorem exists_compiler_size (F : PolyTimeFun Input β) :
       (Nat.pow_le_pow_right (by omega) (by omega))
 
 end MIPRE.Introspection.SourceDescriptionCompiler
+
+end

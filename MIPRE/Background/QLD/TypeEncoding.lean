@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.QLD.PauliStagePrograms
-import MIPRE.Foundations.CL.DetypingProgParse
+module
+public import MIPRE.Background.QLD.PauliStagePrograms
+public import MIPRE.Foundations.CL.DetypingProgParse
+
+@[expose] public section
 
 /-! # Faithful type labels and the finite Pauli branch decoder
 
@@ -23,12 +26,12 @@ instance : SizedEncoding Ty where
 
 namespace PauliCL
 
-private def typeTable : PolyTimeFun Data Data :=
+def typeTable : PolyTimeFun Data Data :=
   finiteTable (fun d => ((decode d : Option Ty).map
     (fun t => encode (programTag t))).getD .nil)
     ((Finset.univ.image (encode : Ty → Data)).toList)
 
-private theorem typeTable_encode (t : Ty) : typeTable (encode t) = encode (programTag t) := by
+theorem typeTable_encode (t : Ty) : typeTable (encode t) = encode (programTag t) := by
   rw [typeTable, finiteTable_apply_of_mem _ _ _ (by simp)]
   simp [SizedEncoding.decode_encode]
 
@@ -43,4 +46,6 @@ theorem typeTag_encode (t : Ty) : typeTag (encode t) = programTag t := by
 
 end PauliCL
 end MIPRE.QLD
+end
+
 end

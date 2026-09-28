@@ -3,13 +3,17 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import Mathlib.Algebra.Algebra.Bilinear
-import Mathlib.Algebra.Star.Module
-import Mathlib.Analysis.InnerProductSpace.Completion
-import Mathlib.Analysis.InnerProductSpace.Positive
-import Mathlib.Tactic.NoncommRing
-import Mathlib.Topology.Algebra.LinearMapCompletion
-import MIPRE.Foundations.CommutingOperator
+module
+public import Mathlib.Algebra.Algebra.Bilinear
+public import Mathlib.Algebra.Star.Module
+public import Mathlib.Analysis.InnerProductSpace.Completion
+public import Mathlib.Analysis.InnerProductSpace.Positive
+public import Mathlib.Tactic.NoncommRing
+public import Mathlib.Topology.Algebra.LinearMapCompletion
+public import MIPRE.Foundations.CommutingOperator
+public import MIPRE.Tactics
+
+@[expose] public section
 
 /-!
 # The GNS construction: from a state on a `⋆`-algebra to a commuting-operator strategy
@@ -525,3 +529,5 @@ theorem GenData.strategy_correlation (x : X) (y : Y) (a : A) (b : B) :
 end Strategy
 
 end MIPRE.GNS
+
+end

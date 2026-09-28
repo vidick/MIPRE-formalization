@@ -15,13 +15,17 @@ onto `ℝ`. Pushing the (finitely many) spectral measures of the commutator func
 (`Measure.ext_of_charFun`), so the commutator functional vanishes on every bounded Borel
 function of `R`, in particular on `R` itself.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Centralizer
-import MIPRE.Background.Repetition.CommutingRepetition.VN.SpectralProjection
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.Centralizer
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.SpectralProjection
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -388,3 +392,5 @@ end Modular
 end VN
 
 end CommutingRepetition
+
+end

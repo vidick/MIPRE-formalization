@@ -25,13 +25,17 @@ algebra `M` with cyclic separating vector `Ω`, in the bounded formulation of
 * **Lemma 4.5**: for self-adjoint `x′ ∈ M′` and `Re λ > 0` there is `x ∈ M` with
   `T J x′ J T = λ (2 − R) x R + λ̄ R x (2 − R)`.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.PolarJ
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.WOTCompact
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.PolarJ
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Modular.WOTCompact
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -704,3 +708,5 @@ end Modular
 end VN
 
 end CommutingRepetition
+
+end

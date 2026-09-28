@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.CL.DetypingProgFinite
+module
+public import MIPRE.Foundations.CL.DetypingProgFinite
+
+@[expose] public section
 
 /-! # Finite choice of polynomial-time programs
 
@@ -46,4 +49,6 @@ def choose (select : PolyTimeFun α T) (branch : T → PolyTimeFun α β)
   chooseList_apply select branch fallback _ x (by simp)
 
 end MIPRE.Cost.PolyTimeFun
+end
+
 end

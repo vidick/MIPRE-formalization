@@ -3,10 +3,13 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.QLD.PaddedStrategy
-import MIPRE.Foundations.LowDegree.SchwartzZippel
-import MIPRE.Background.LIDT.Coefficients
-import MIPRE.Foundations.StrategyDilation
+module
+public import MIPRE.Background.QLD.PaddedStrategy
+public import MIPRE.Foundations.LowDegree.SchwartzZippel
+public import MIPRE.Background.LIDT.Coefficients
+public import MIPRE.Foundations.StrategyDilation
+
+@[expose] public section
 
 /-!
 # Removing the dummy coordinates (`lem:qld-global-dummy`)
@@ -336,7 +339,7 @@ theorem rename_toMv_ne {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)} (hg : 
       · rw [if_neg hD, hinl, Sum.inl.injEq] at hj
         subst hj
         exact hD hi
-    rw [Finsupp.mapDomain_of_notMem_range _ _ hnot, Finsupp.mapDomain_apply hinj,
+    rw [Finsupp.mapDomain_of_notMem_range _ _ hnot, Finsupp.mapDomain_apply_of_injective hinj,
       expFinsupp_apply] at hval
     exact hei (Fin.ext (by simpa using hval.symm))
   rw [heq, h2] at h1
@@ -555,5 +558,7 @@ end Weight
 end Dummy
 
 end MIPRE.QLD
+
+end
 
 end

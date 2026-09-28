@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.LinearMeasurement
+module
+public import MIPRE.Foundations.Introspection.LinearMeasurement
+
+@[expose] public section
 
 /-! # Commutation of the sampling and hiding measurements -/
 
@@ -56,5 +59,7 @@ theorem linear_measurements_commute
   exact (wX_mul_wZ_of_eq u.1 v.1 hp).symm
 
 end MIPRE.Introspection
+
+end
 
 end

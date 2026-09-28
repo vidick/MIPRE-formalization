@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Background.Introspection.CanonicalComplete
-import MIPRE.Background.Introspection.CompiledSoundness
+module
+public import MIPRE.Background.Introspection.CanonicalComplete
+public import MIPRE.Background.Introspection.CompiledSoundness
+
+@[expose] public section
 
 /-! # Supplying the ambient introspection contract
 
@@ -55,3 +58,5 @@ theorem exists_seven : Nonempty (MIPRE.Introspection 7) := by
 def seven : MIPRE.Introspection 7 := Classical.choice exists_seven
 
 end MIPRE.Introspection
+
+end

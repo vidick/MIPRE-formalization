@@ -2,9 +2,12 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.AuxiliaryDecisionCorrect
-import MIPRE.Foundations.Introspection.AuxiliaryAnswerCoding
-import MIPRE.Foundations.Introspection.TypedQuotientPredicate
+module
+public import MIPRE.Foundations.Introspection.AuxiliaryDecisionCorrect
+public import MIPRE.Foundations.Introspection.AuxiliaryAnswerCoding
+public import MIPRE.Foundations.Introspection.TypedQuotientPredicate
+
+@[expose] public section
 
 /-! # Semantic soundness of the executable auxiliary predicate
 
@@ -178,4 +181,6 @@ theorem check_raw_sound (U : ClockedUniversalMachine) (X Z : P)
   · simpa only [ha,hb] using h
 
 end MIPRE.Introspection.AuxiliaryDecision
+end
+
 end

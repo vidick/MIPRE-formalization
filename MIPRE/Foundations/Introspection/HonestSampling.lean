@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.HonestCore
+module
+public import MIPRE.Foundations.Introspection.HonestCore
+
+@[expose] public section
 
 /-! # Perfect honest Pauli-Z/Sample edges
 
@@ -72,3 +75,5 @@ theorem sample_typed_reject_zero {P : Type*} (X Z : P)
   rw [pauliZ_sample_mul, if_neg (of_decide_eq_false h)]
 
 end MIPRE.Introspection.Honest
+
+end

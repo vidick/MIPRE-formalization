@@ -2,7 +2,10 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SeededLineProg
+module
+public import MIPRE.Foundations.Introspection.SeededLineProg
+
+@[expose] public section
 
 /-! # Uniform programs for all three Pauli sampling stages
 
@@ -129,4 +132,6 @@ def marginal : PolyTimeFun (ℕ × Input) Fields :=
 @[simp] theorem marginal_three (x : Input) : marginal (3, x) = allThree x := rfl
 
 end MIPRE.Introspection.PauliStageProgram
+end
+
 end

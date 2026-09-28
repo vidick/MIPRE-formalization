@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Cost.BoundedEval
-import MIPRE.Foundations.Halting.Enumerate
-import MIPRE.Foundations.Cost.Semidecide
+module
+public import MIPRE.Foundations.Cost.BoundedEval
+public import MIPRE.Foundations.Halting.Enumerate
+public import MIPRE.Foundations.Cost.Semidecide
+
+@[expose] public section
 
 /-!
 # Deciding acceptance under a time bound
@@ -189,7 +192,7 @@ theorem bitsToIdx_ofFn {s : ℕ} (f : Fin s → Bool) :
 
 /-- The `Fin 2` form, where `finFunctionFinEquiv` is literally applicable: `CL.𝔽₂` is `ZMod 2`,
 which reduces to `Fin 2` but does not unify with it at the transparency `rw` uses. -/
-private theorem bitsToIdx_ofFn_fin2 {s : ℕ} (w : Fin s → Fin 2) :
+theorem bitsToIdx_ofFn_fin2 {s : ℕ} (w : Fin s → Fin 2) :
     bitsToIdx (List.ofFn fun i => decide (w i = 1)) = (finFunctionFinEquiv w : ℕ) := by
   rw [bitsToIdx_ofFn, finFunctionFinEquiv_apply]
   refine Finset.sum_congr rfl fun i _ => congrArg₂ (· * ·) ?_ rfl
@@ -639,6 +642,9 @@ def tabOf (sd pd : Data) (s T B k n : ℕ) : GameData where
   acc := Verifier.accListW s T (fun u => Verifier.bitsToIdx (false :: u))
           (fun v => Verifier.bitsToIdx (true :: v)) (accOf pd n)
 
+-- The `Primrec` composition below exceeds the default heartbeat budget under Mathlib
+-- v4.35 (the unifier unfolds the encodings); it elaborates in seconds with a larger one.
+set_option maxHeartbeats 1000000 in
 theorem primrec_dimOf {α : Type*} [Primcodable α] {sd : α → Data} {B lvl : α → ℕ} (k : ℕ)
     (hsd : Primrec sd) (hB : Primrec B) (hlvl : Primrec lvl) :
     Primrec fun a : α => dimOf (sd a) (B a) k (lvl a) := by
@@ -653,6 +659,9 @@ theorem primrec_dimOf {α : Type*} [Primcodable α] {sd : α → Data} {B lvl : 
       (Data.primrec_decode_nat.comp Primrec.snd).to₂)
     (Primrec.const 0)
 
+-- The `Primrec` composition below exceeds the default heartbeat budget under Mathlib
+-- v4.35 (the unifier unfolds the encodings); it elaborates in seconds with a larger one.
+set_option maxHeartbeats 1000000 in
 theorem primrec_margOf {α : Type*} [Primcodable α] {sd : α → Data} {B lvl : α → ℕ} (k : ℕ)
     (hsd : Primrec sd) (hB : Primrec B) (hlvl : Primrec lvl) (w : Player) :
     Primrec fun q : α × BitStr => margOf (sd q.1) (B q.1) k (lvl q.1) w q.2 := by
@@ -755,3 +764,5 @@ theorem primrec_tabOf {α : Type*} [Primcodable α] {sd pd : α → Data} {s T B
 end Halting
 
 end MIPRE
+
+end

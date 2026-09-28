@@ -3,9 +3,12 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Bridge.Polynomial
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore
+module
+public import MIPRE.Background.LIDT.Bridge.Polynomial
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore
+
+@[expose] public section
 
 -- Lean v4.33's transparency check breaks `dif_pos`/`dif_neg` rewrites in this file
 -- (the same failure Mathlib patches with this option on affected declarations).
@@ -344,5 +347,7 @@ def pointMeas (P : ProjectiveMeasurement (Question F m) (Answer F m d) (Matrix n
 end Bridge
 
 end MIPRE.LIDT
+
+end
 
 end

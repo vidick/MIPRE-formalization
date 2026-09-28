@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.Halting.Instantiation
-import MIPRE.Foundations.Halting.WrapperCost
+module
+public import MIPRE.Foundations.Halting.Instantiation
+public import MIPRE.Foundations.Halting.WrapperCost
+
+@[expose] public section
 
 /-!
 # The two distinguished strings
@@ -63,7 +66,7 @@ theorem decNo_not_runs_true (v : Data) (t : ℕ) : ¬ decNo.Runs v (encode true)
 /-- On an input with at least four nodes on its right spine — the shape of a well-formed tuple
 `(n, x, y, a, b)` — `decYes` returns `encode true` exactly when the last two components are
 both `nil`. -/
-private theorem decYes_run_deep (A B C D E : Data) :
+theorem decYes_run_deep (A B C D E : Data) :
     ∃ t ≤ 10, decYes.Runs (.cons A (.cons B (.cons C (.cons D E))))
       (if D = .nil ∧ E = .nil then encode true else .nil) t := by
   rcases D with _ | ⟨D₁, D₂⟩
@@ -188,3 +191,5 @@ theorem yYes_mem : ∃ n₀, ∀ n, n₀ ≤ n → yYes ∈ classA G U n := by
     exact ⟨CL.length_toBits p, CL.length_toBits q, (decYes_runs_true_iff n _ _ [] []).2 ⟨rfl, rfl⟩⟩
 
 end MIPRE.Halting
+
+end

@@ -5,10 +5,13 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/Transport/FullSlice/Bridges/Closeness.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Averages
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Y
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Normalization
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.ClosenessCore
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Averages
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Y
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Normalization
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.ClosenessCore
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -44,7 +47,7 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-private lemma leftTensor_sandwich_adjoint_normalization_family
+lemma leftTensor_sandwich_adjoint_normalization_family
     {Ω α β : Type*} [Fintype α] [Fintype β]
     (P : Ω → SubMeas α ι) (Q : Ω → ProjSubMeas β ι) :
     ∀ ω,
@@ -179,7 +182,7 @@ lemma xEvaluatedSliceBABAtensor_to_xEvaluatedFullSliceABABAvg
 /-- Evaluated-slice y-side scalar-to-tensor comparison: move the trailing
 `G^y_[h(v)=b]` in the scalar quartic to the right register, producing the tensor
 form in paper `commutativity-G.tex` line 360. -/
-private lemma evaluatedSliceABAB_scalar_to_ABABtensor
+lemma evaluatedSliceABAB_scalar_to_ABABtensor
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)
     (zeta : Error)
@@ -343,3 +346,5 @@ lemma xEvaluatedFullSliceABABtensor_to_evaluatedSliceABABAvg
   linarith
 
 end MIPStarRE.LDT.Commutativity
+
+end

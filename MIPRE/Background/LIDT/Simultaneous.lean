@@ -3,8 +3,11 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Background.LIDT.Padding
-import MIPRE.Background.LIDT.Adapter.Reduction
+module
+public import MIPRE.Background.LIDT.Padding
+public import MIPRE.Background.LIDT.Adapter.Reduction
+
+@[expose] public section
 
 /-!
 # Quantum soundness of the seeded CL test with several codewords
@@ -338,5 +341,7 @@ theorem clSoundness {k : ℕ} (hq : Fintype.card F = 2 ^ k) (hm : m ∣ Fintype.
       exact (inconsistency_le_one S.ψ_unit _ _).trans h1
 
 end MIPRE.LIDT.Simul
+
+end
 
 end

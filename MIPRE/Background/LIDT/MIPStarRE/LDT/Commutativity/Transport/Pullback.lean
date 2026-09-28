@@ -5,7 +5,10 @@ authors' permission. Vendored from https://github.com/LionSR/MIPStarRE
 (commit 507e8122, 2026-08-25) by scripts/vendor-lidt.py; do not edit by hand.
 Upstream path: MIPStarRE/LDT/Commutativity/Transport/Pullback.lean
 -/
-import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.EvaluationSpecialization
+module
+public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.EvaluationSpecialization
+
+@[expose] public section
 
 -- Vendoring compile fix (Lean v4.33): the vendored tree is built with the pre-v4.33
 -- transparency behaviour (`backward.isDefEq.respectTransparency false`), the option
@@ -35,7 +38,7 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 /-- Reindex an evaluated-slice question into its truncated points and
 underlying full-slice question. -/
-private def evaluatedSliceQuestionEquiv (params : Parameters) [FieldModel params.q] :
+def evaluatedSliceQuestionEquiv (params : Parameters) [FieldModel params.q] :
     EvaluatedSliceQuestion params ≃
       (Point params × Point params) × FullSliceQuestion params where
   toFun := fun q =>
@@ -100,3 +103,5 @@ lemma sddOpRel_of_pullback_fullSliceQuestion
 
 
 end MIPStarRE.LDT.Commutativity
+
+end

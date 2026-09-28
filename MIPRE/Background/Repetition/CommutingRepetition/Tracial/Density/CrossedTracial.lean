@@ -24,15 +24,19 @@ off a tracially embeddable correlation:
 `exists_tracial_approx` is the output: a tracially embeddable correlation entrywise
 `η`-close to the correlation of the standard-form strategy. Proof-side.
 -/
-import Mathlib
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.StandardStrategy
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.ClosedSubalg
-import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.RadonNikodym
-import MIPRE.Background.Repetition.CommutingRepetition.VN.Haagerup.Density
+module
+public import Mathlib
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.StandardStrategy
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.ClosedSubalg
+public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Density.RadonNikodym
+public import MIPRE.Background.Repetition.CommutingRepetition.VN.Haagerup.Density
 
 -- Upstream builds with Lean's default `autoImplicit = true`; this repository turns it
 -- off in `lakefile.toml`. Inserted by scripts/vendor-repetition.py.
 set_option autoImplicit true
+
+@[expose] public section
+
 
 namespace CommutingRepetition
 
@@ -98,8 +102,12 @@ theorem amp_nonneg {y : K →L[ℂ] K} (hy : 0 ≤ y) : 0 ≤ amp (K := K) y := 
   exact star_mul_self_nonneg _
 
 theorem Phi_zero (n : ℕ) : Phi M Ω n (0 : L2Q K →L[ℂ] L2Q K) = 0 := by
-  have := Phi_smul M Ω n 0 (0 : L2Q K →L[ℂ] L2Q K)
-  simpa using this
+  -- Vendoring compile fix (Mathlib v4.35): `simp` no longer sees `zero_smul`/`smul_zero`
+  -- through the `SMul` instance of `B(ℓ²(ℚ, K))` (`ContinuousLinearMap.instSMul`), so
+  -- `Phi 0 = 0` is read off additivity instead. See README.md.
+  have := Phi_add M Ω n (0 : L2Q K →L[ℂ] L2Q K) 0
+  rw [add_zero] at this
+  exact add_left_cancel (this.symm.trans (add_zero _).symm)
 
 theorem Phi_finset_sum (n : ℕ) {ι : Type*} (s : Finset ι) (f : ι → L2Q K →L[ℂ] L2Q K) :
     Phi M Ω n (∑ i ∈ s, f i) = ∑ i ∈ s, Phi M Ω n (f i) := by
@@ -175,7 +183,7 @@ theorem Bi_sum (y : Y) : ∑ b : B, q.Bi y b = 1 := by
 theorem norm_Bi_le [DecidableEq B] (y : Y) (b : B) : ‖q.Bi y b‖ ≤ 1 := by
   have h1 : ‖q.Bop y b‖ ≤ 1 :=
     norm_povm_le_one (fun b => q.Bop y b)
-      (fun b => (ContinuousLinearMap.nonneg_iff_isPositive _).mp (q.Bop_nonneg y b))
+      (fun b => ContinuousLinearMap.nonneg_iff_isPositive.mp (q.Bop_nonneg y b))
       (q.Bop_sum y) b
   exact (norm_amp_le _).trans h1
 
@@ -372,3 +380,5 @@ end StdStrategy
 end Density
 
 end CommutingRepetition
+
+end

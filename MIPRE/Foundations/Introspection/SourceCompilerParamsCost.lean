@@ -2,8 +2,11 @@
 Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import MIPRE.Foundations.Introspection.SourceCompilerParams
-import MIPRE.Foundations.Introspection.ClockSimulationCost
+module
+public import MIPRE.Foundations.Introspection.SourceCompilerParams
+public import MIPRE.Foundations.Introspection.ClockSimulationCost
+
+@[expose] public section
 
 /-! # Explicit runtime of canonical parameter generation -/
 
@@ -96,5 +99,7 @@ theorem boundsProg_runs_cost (c lam n : ℕ) : ∃ time ≤ boundsCost c lam n,
   omega
 
 end MIPRE.Introspection.SourceCompiler
+
+end
 
 end
