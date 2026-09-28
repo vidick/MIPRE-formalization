@@ -292,7 +292,7 @@ milestone.
 
 \begin{lemma}[Compressibility criterion]
 \label{lem:compressible-criterion}
-\uses{def:succinct,lem:universal-tm,lem:smn,lem:kleene}
+\uses{def:succinct,lem:universal-tm,lem:smn,lem:kleene,lem:compressible-criterion-nested}
 \lean{MIPRE.Cost.compressibility_criterion, MIPRE.Cost.compressibility_criterion_levels}
 \leanok
 Let $A, B \subseteq \{0,1\}^*$ be languages with distinguished elements
@@ -344,6 +344,47 @@ where the first has not. If it fired at such a level $n_1$, then $S$ halts on $x
 $x_e \notin B$; but the output $y_{\mathrm{no}} \in B$ at level $n_1$ and property 2, by
 downward induction along the levels between $r(e)$ and $n_1$ (at which the first branch
 does not fire either), give $x_e \in B$, a contradiction. Hence $g(e) = x_e \in A$.
+\end{proof}
+
+\begin{lemma}[Compressibility criterion, nested classes]
+\label{lem:compressible-criterion-nested}
+\uses{def:succinct,lem:universal-tm,lem:smn,lem:kleene}
+\lean{MIPRE.Cost.compressibility_criterion_nested}
+\leanok
+Let $A$ and $B_0 \subseteq B_1$ be families of languages indexed by the level $n$, with
+distinguished elements $y_{\mathrm{yes}} \in A(n)$ and $y_{\mathrm{no}} \in B_0(n)$ at every
+level $n \geq n_0$, and suppose that the complement of $B_1$ is recursively enumerable
+uniformly in the level: there is a program $S$ that halts on $(x, n)$ if and only if
+$x \notin B_1(n)$. Suppose there is a polynomial-time computable $\compr$ such that whenever
+$c$ is a succinct description with parameter $n \geq n_0$ of a string $x$ with
+$\abs{x} \leq n + 1$ and $2\abs{c} \leq n$, and $y = \compr(c, n)$:
+\begin{enumerate}
+\item if $x \in A(2n+1)$ then $y \in A(n)$, and
+\item if $x \in B_0(2n+1)$ then $y \in B_0(n)$.
+\end{enumerate}
+Then there are a polynomial-time computable $g$ and a constant $K$ such that, with
+$r(e) = 2^{K + 1 + \abs{e}} \geq n_0$, for every machine $e$: if $\phi_e$ halts on the
+empty input then $g(e) \in A(r(e))$, and otherwise $g(e) \in B_1(r(e))$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The proof of Lemma~\ref{lem:compressible-criterion} unchanged, with the two roles of $B$
+separated. The search branch of the self-referential decider runs $S$ on the string at the
+start level, so it fires only if that string is outside $B_1$, and eventually fires if it
+is. The downward induction that puts every level of the recursion in the class of
+$y_{\mathrm{no}}$ runs inside $B_0$, from $y_{\mathrm{no}} \in B_0$ by item 2. In the halting
+case the search cannot fire before $e$ halts, since firing at a level would put the start
+string in $B_0 \subseteq B_1$, against its firing at all; so preservation of $A$ applies from
+the level where $e$ halts. In the non-halting case, if the start string were outside $B_1$
+the search would fire, and the induction would put it in $B_0 \subseteq B_1$.
+Lemma~\ref{lem:compressible-criterion} is the case $B_0 = B_1$, and the Lean proves it that
+way.
+
+This is the form the $\coRE$ direction of $\MIPco = \coRE$ needs
+(Section~\ref{sec:ds-mipco}): the compressor is asked to preserve a class of perfect
+strategies that compression completeness supplies, while the search recognizes the
+complement of the larger class of value $1$, which no compression theorem preserves.
 \end{proof}
 
 \paragraph{Source.} Lin~\cite{Lin25}, the compression criterion for $\RE$-complete

@@ -204,6 +204,7 @@ import MIPRE.Background.AnswerReduction.Instance
 import MIPRE.MainTheorem
 import MIPRE.Foundations.Tsirelson.Conditional
 import MIPRE.Tsirelson
+import MIPRE.MIPCo
 import MIPRE.Foundations.Expanded
 import MIPRE.Foundations.WeylEPR
 import MIPRE.Foundations.Swap
@@ -2716,3 +2717,38 @@ separation from an upper semidecider (`MIPRE/Foundations/Correlations.lean`,
   MIPRE.separation_of_upperRE,
   MIPRE.exists_quantumValue_le_half_commutingOperatorValue_eq_one,
   MIPRE.exists_mem_Cqc_payoff_eq_commutingOperatorValue
+
+/-! The commuting-operator track (`planning/mipco-track.md`, Phase 0):
+`lem:compressible-criterion-nested`, `lem:mipco-sub-core`, `thm:halting-co` and
+`thm:mipco-eq-core`, the last two conditional on `MIPRE.GapCompression.CoSound`
+(`MIPRE/Foundations/Compression.lean`, `MIPRE/Foundations/ClassMIPCo.lean`,
+`MIPRE/Foundations/Halting/{ClassesCo,InstantiationCo,ReductionCo,CorollariesCo}.lean`,
+`MIPRE/MIPCo.lean`). -/
+#guard_sorry_free MIPRE.Cost.compressibility_criterion_nested
+
+#guard_sorry_free MIPRE.MIPCo.isCoRE,
+  MIPRE.MIPCo.exists_cosemidecider
+
+#guard_sorry_free MIPRE.Halting.halting_reduction_co,
+  MIPRE.Halting.halting_reduction_commuting_of,
+  MIPRE.halting_reduction_commuting,
+  MIPRE.HaltingReductionCommuting,
+  MIPRE.Halting.ObligationsCo,
+  MIPRE.Halting.CompressorSpec.toObligationsCo,
+  MIPRE.Halting.exists_semCo,
+  MIPRE.Halting.classBCo,
+  MIPRE.Halting.classOne,
+  MIPRE.Halting.classA_subset_classOne,
+  MIPRE.Halting.tab_valCo,
+  MIPRE.Halting.yNo_memCo,
+  MIPRE.Verifier.InClassBCo,
+  MIPRE.Verifier.inClassBCo_of_rejects_all,
+  MIPRE.Verifier.freeze_valCo,
+  MIPRE.Verifier.freeze_inClassBCo
+
+#guard_sorry_free MIPRE.mipco_eq_core,
+  MIPRE.core_subset_mipco,
+  MIPRE.Halting.mipco_eq_core_of,
+  MIPRE.Halting.core_subset_mipco_of,
+  MIPRE.core_subset_mipco_of_reduction,
+  MIPRE.mipco_eq_core_of_reduction

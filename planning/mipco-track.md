@@ -22,7 +22,7 @@ here; his statements are paraphrased only where they are formalized.
 
 The *logical* architecture transfers almost unchanged, and Phase 0 (§4) proves
 `MIP^co = coRE` conditionally on **one** hypothesis, the commuting-operator soundness of gap
-compression (`MIPRE.GapCompression.CoSound`), in a few hundred lines on top of what exists:
+compression (`MIPRE.GapCompression.CoSound`), in about a thousand lines on top of what exists:
 the compressibility criterion generalized to nested classes, the tabulation, the classical
 layers, the trivially accepting and rejecting strings, and the upper semidecider for the
 commuting-operator value (`MIPRE.commutingUpperRE`, through Positivstellensatz certificates)
@@ -138,9 +138,10 @@ completeness clause is the tensor-style one.
 | nested criterion | `Foundations/Compression.lean` | `Cost.compressibility_criterion_nested`; `compressibility_criterion_levels` becomes its special case |
 | `ω_co` under transport | `Foundations/CommutingTransport.lean` | `CommutingOperatorStrategy.relabel`, `extendAnswers`, `mergeAnswers`; `commutingOperatorValue_eq_of_equiv`, `_mono`, `_eq_zero_of_reject`, `_extendAnswers`, `_doubled` — the POVM counterparts of `GameTransport.lean` and `GameDouble.lean` (merging POVMs needs no orthogonality) |
 | `ω_co` of a verifier's game | `Foundations/VerifierValueCo.lean` | `Verifier.valCo n T := commutingOperatorValue (V.game n T)`; `valCo_congr`, `valCo_eq_of_rejects`, `valCo_le_of_le`, `valStar_le_valCo`, `commutingOperatorValue_toGame_eq_valCo_doubled` |
+| the hypothesis | `Foundations/VerifierValueCo.lean` | `GapCompression.CoSound`: the soundness clause of `GapCompression` with `valCo` in place of `valStar` |
 | the co class | `Halting/ClassesCo.lean`, `Halting/InstantiationCo.lean` | `Verifier.InClassBCo`, `freeze_valCo`, `freeze_inClassBCo`, `inClassBCo_of_rejects_all`; `classBCo`, `classOne`, `classA_subset_classOne`, `tab_valCo`, `yNo_memCo` |
-| the semidecider and the reduction | `Halting/ReductionCo.lean` | `exists_semCo` (from `commutingUpperRE`); `GapCompression.CoSound`; `ObligationsCo`, `CompressorSpec.toObligationsCo`; `halting_reduction_co`, `halting_reduction_commuting_of` |
-| the class | `Foundations/ClassMIPCo.lean` | `IsCoRE`, `MIPCo`, `HaltingReductionCommuting`; `MIPCo.isCoRE` (unconditional); `core_subset_mipco_of_reduction`, `mipco_eq_core_of_reduction` |
+| the semidecider and the reduction | `Halting/ReductionCo.lean` | `exists_semCo` (from `commutingUpperRE`); `ObligationsCo`, `CompressorSpec.toObligationsCo`; `halting_reduction_co`, `halting_reduction_commuting_of` |
+| the class | `Foundations/ClassMIPCo.lean`, `Halting/CorollariesCo.lean` | `IsCoRE`, `MIPCo`, `HaltingReductionCommuting`; `MIPCo.isCoRE` (unconditional); `core_subset_mipco_of_reduction`, `mipco_eq_core_of_reduction`, `core_subset_mipco_of`, `mipco_eq_core_of` |
 | the root module | `MIPRE/MIPCo.lean` | `halting_reduction_commuting`, `core_subset_mipco`, `mipco_eq_core`, each with the single hypothesis `MIPRE.gapCompression.CoSound` |
 | blueprint | chapter 8, new subsection | `def:core`, `def:mipco`, `lem:mipco-sub-core`, `lem:compressible-criterion-nested` (chapter 4), `def:compression-co-sound`, `thm:halting-co`, `thm:mipco-eq-core`, `rem:mipco-route`; `rem:further` updated |
 
@@ -266,7 +267,7 @@ sampler and decider, mirroring `MIPStarPoly` (#230–#233), and Lin's `k-CLMIP^c
 
 | ID | Deliverable | Size | Status |
 |---|---|---|---|
-| C0 | Phase 0: the nested criterion, the `ω_co` transport, the co classes and semidecider, the conditional reduction, `MIPCo`, `MIPCo ⊆ coRE`, the blueprint | ~1.5k lines | this pull request |
+| C0 | Phase 0: the nested criterion, the `ω_co` transport, the co classes and semidecider, the conditional reduction, `MIPCo`, `MIPCo ⊆ coRE`, the blueprint | 1.1k lines of Lean, eight modules | this pull request |
 | C1 | tracially embeddable strategies, `L²(𝒜, τ)`, density and rounding in usable form, `lem:tracial-le-co` | 3k–6k | open |
 | C2 | Pauli basis test rigidity, model `co` | 15k–30k | open |
 | C3 | introspection soundness, model `co` | 20k–40k | open |
