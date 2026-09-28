@@ -770,8 +770,8 @@ import MIPRE.Foundations.CL.Repeat
 import MIPRE.Foundations.CL.Sampler
 import MIPRE.Foundations.CL.TypedSampler
 import MIPRE.Foundations.ClassMIPStar
-import MIPRE.Foundations.ClassMIPStarPoly
-import MIPRE.Foundations.ClassMIPStarPolyTab
+import MIPRE.Foundations.ClassMIPStarComputable
+import MIPRE.Foundations.ClassMIPStarTab
 import MIPRE.Foundations.Closeness
 import MIPRE.Foundations.Commutation
 import MIPRE.Foundations.CommutingOperator

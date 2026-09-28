@@ -17,7 +17,9 @@ machines to games of value at most 1/2.
 no axiom beyond `propext`, `Classical.choice` and `Quot.sound`. The proof lives in
 [`MIPRE/MainTheorem.lean`](MIPRE/MainTheorem.lean), because it needs the whole development and
 the statement file imports Mathlib only. The same file proves the reduction to the quantum
-value, the uncomputability of both values, and `MIPRE.Halting.mipstar_eq_re : MIPStar = IsRE`.
+value, the uncomputability of both values, and `MIPRE.Halting.mipstar_eq_re : MIPStar = IsRE`
+for the paper's polynomial-time class (`MIPRE.MIPStar`; the computable relaxation is
+`MIPRE.MIPStarComputable`, with `mipstarComputable_eq_re`).
 
 The proof is the compression pipeline (`MIPRE.GapCompression.ofPipeline`) with its three
 stages supplied:

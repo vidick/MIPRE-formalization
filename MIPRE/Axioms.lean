@@ -139,8 +139,8 @@ import MIPRE.Foundations.CL.Canonical
 import MIPRE.Foundations.CL.Closure
 import MIPRE.Foundations.CL.Downsize
 import MIPRE.Foundations.CL.Repeat
-import MIPRE.Foundations.ClassMIPStar
-import MIPRE.Foundations.ClassMIPStarPolyTab
+import MIPRE.Foundations.ClassMIPStarComputable
+import MIPRE.Foundations.ClassMIPStarTab
 import MIPRE.Foundations.Compression
 import MIPRE.Foundations.Cost.Kleene
 import MIPRE.Foundations.Cost.Semidecide
@@ -357,8 +357,8 @@ tell you the guard is missing.
 #guard_sorry_free MIPRE.Halting.halting_reduction_quantum_of,
   MIPRE.Halting.gameValue_uncomputable_of,
   MIPRE.Halting.quantumValue_uncomputable_of,
-  MIPRE.Halting.mipstar_eq_re_of,
-  MIPRE.Halting.re_subset_mipstar_of
+  MIPRE.Halting.mipstarComputable_eq_re_of,
+  MIPRE.Halting.re_subset_mipstarComputable_of
 
 -- blueprint `thm:halting-undecidable`
 #guard_sorry_free MIPRE.Halting.exists_code_halts_of_isRE,
@@ -476,12 +476,12 @@ tell you the guard is missing.
   MIPRE.LCS.MagicSquare.merminPeresStrategy
 
 -- blueprint `lem:mipstar-sub-re`
-#guard_sorry_free MIPRE.MIPStar.exists_semidecider,
-  MIPRE.MIPStar.isRE
+#guard_sorry_free MIPRE.MIPStarComputable.exists_semidecider,
+  MIPRE.MIPStarComputable.isRE
 
 /-! `lem:mipstar-poly-sub`: the paper's class is contained in the computable one
-(`MIPRE/Foundations/ClassMIPStarPolyTab.lean`). -/
-#guard_sorry_free MIPRE.MIPStarPoly.toMIPStar, MIPRE.MIPStarPoly.isRE, MIPRE.PolyVerifier.tab,
+(`MIPRE/Foundations/ClassMIPStarTab.lean`). -/
+#guard_sorry_free MIPRE.MIPStar.toComputable, MIPRE.MIPStar.isRE, MIPRE.PolyVerifier.tab,
   MIPRE.PolyVerifier.tab_computable, MIPRE.PolyVerifier.quantumValue_tab
 
 -- blueprint `lem:norm-two-psd`
@@ -1902,10 +1902,10 @@ tell you the guard is missing.
   MIPRE.Halting.halting_reduction_quantum,
   MIPRE.Halting.gameValue_uncomputable,
   MIPRE.Halting.quantumValue_uncomputable,
+  MIPRE.Halting.mipstarComputable_eq_re,
+  MIPRE.Halting.re_subset_mipstarComputable,
   MIPRE.Halting.mipstar_eq_re,
-  MIPRE.Halting.re_subset_mipstar,
-  MIPRE.Halting.mipstarPoly_eq_re,
-  MIPRE.Halting.re_subset_mipstarPoly
+  MIPRE.Halting.re_subset_mipstar
 
 /-! ## Introspection mixing, conditioning, and graph rejection sampling -/
 
@@ -2647,8 +2647,8 @@ block decomposition then needs. -/
   MIPRE.Halting.halting_reduction_quantum_of_answerReduction,
   MIPRE.Halting.gameValue_uncomputable_of_answerReduction,
   MIPRE.Halting.quantumValue_uncomputable_of_answerReduction,
-  MIPRE.Halting.re_subset_mipstar_of_answerReduction,
-  MIPRE.Halting.mipstar_eq_re_of_answerReduction
+  MIPRE.Halting.re_subset_mipstarComputable_of_answerReduction,
+  MIPRE.Halting.mipstarComputable_eq_re_of_answerReduction
 
 /-! `lem:correlation-sets-basic` and `lem:tsirelson-conditional`: the correlation sets and the
 separation from an upper semidecider (`MIPRE/Foundations/Correlations.lean`,

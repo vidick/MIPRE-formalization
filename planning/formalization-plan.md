@@ -365,9 +365,10 @@ the same day: `MIPRE.Cost.exists_semidecider` (`Cost/Semidecide.lean`) turns any
 bit strings into a well-scoped `Prog` halting exactly on its members (a `ToPartrec` code for
 the predicate, translated by `Prog.ofCode`, after an ambient loop shifts the bits up by one —
 a `ToPartrec` code cannot see trailing zeros, and `false` encodes as `nil`), with the converse
-`rePred_halts`; `Foundations/ClassMIPStar.lean` defines `IsRE` and `MIPStar` (the computable
-version, on game descriptions — `def:mipstar` records the difference) and proves
-`MIPStar.isRE`, the blueprint's new `lem:mipstar-sub-re`, and
+`rePred_halts`; `Foundations/ClassMIPStarComputable.lean` defines `IsRE` and
+`MIPStarComputable` (the computable version, on game descriptions — `def:mipstar` records the
+difference) and proves
+`MIPStarComputable.isRE`, the blueprint's new `lem:mipstar-sub-re`, and
 `exists_semidecider_lt_quantumValue`, the criterion's `hS` for any computable family of game
 descriptions. **H3 is done.** What it does not include is the tabulation of a normal form
 verifier's game as a game description, which belongs to H4.
@@ -805,21 +806,20 @@ and their running times accounted for explicitly. Order by distance to done for 
 oracularization (one theorem, an input to answer reduction's proof), answer reduction (needs
 H2 and `thm:succinct-sat`), introspection last and deepest.
 
-**Update 2026-09-23: answer reduction is the only missing stage.** `Introspection 7` is
-inhabited (#193, `Introspection.seven`), and `MIPRE/Background/Pipeline.lean` instantiates
-`ofPipeline` with it, `repetition 7` and `Cost.selfUniversal`:
-`Halting.mipstar_eq_re_of_answerReduction : AnswerReduction 5 → MIPStar = IsRE`, sorry-free
-(`cor:compression-from-answer-reduction`). An inhabitant of `AnswerReduction 5` now closes
-`HaltingGameValue.halting_reduces_to_gameValue` in one line. Before starting its proof the
-contract was audited against `thm:ar` (`ld_compiler.tex`) for the failure #189 found in
-oracularization's: it is not vacuous (the complexity clause excludes the wrapper witness, and
-constant deciders fail one of the value clauses), and every difference from the source is a
-weakening a construction can absorb (no timeout-counter hypothesis, the time bound assumed
-semantically at the index; a larger decider bound whose logarithm is still polynomial; `a >= 1`,
-`b <= 1`; no Entanglement clause; `sigma = 0` excluded by `esize_pos`). The audit is recorded
+**Update 2026-09-23: answer reduction is the only missing stage.** `Introspection 7` is inhabited
+(#193, `Introspection.seven`), and `MIPRE/Background/Pipeline.lean` instantiates `ofPipeline` with
+it, `repetition 7` and `Cost.selfUniversal`: `Halting.mipstarComputable_eq_re_of_answerReduction :
+AnswerReduction 5 → MIPStarComputable = IsRE`, sorry-free (`cor:compression-from-answer-reduction`).
+An inhabitant of `AnswerReduction 5` now closes `HaltingGameValue.halting_reduces_to_gameValue` in
+one line. Before starting its proof the contract was audited against `thm:ar` (`ld_compiler.tex`)
+for the failure #189 found in oracularization's: it is not vacuous (the complexity clause excludes
+the wrapper witness, and constant deciders fail one of the value clauses), and every difference from
+the source is a weakening a construction can absorb (no timeout-counter hypothesis, the time bound
+assumed semantically at the index; a larger decider bound whose logarithm is still polynomial; `a >=
+1`, `b <= 1`; no Entanglement clause; `sigma = 0` excluded by `esize_pos`). The audit is recorded
 under `def:answer-reduction-contract`. What is left is the source proof: oracularization is
-inhabited (#196, `Oracularization.construction`, the typed construction with its value transfers
-as theorems), so the thirteen `lem:ar-*` nodes and `thm:answer-reduction`.
+inhabited (#196, `Oracularization.construction`, the typed construction with its value transfers as
+theorems), so the thirteen `lem:ar-*` nodes and `thm:answer-reduction`.
 
 The work is tracked in #198 as six packages (AR-1 to AR-6). **AR-1 is done:**
 `lem:ar-sandwich-support`, the paper's `lem:ld-sandwich` (NW19's Fact 4.34 with an index), is
@@ -912,8 +912,8 @@ decider:
 
 With it, `GapCompression.ofAnswerReduction` gives `MIPRE.gapCompression`. `MIPRE/MainTheorem.lean`
 proves `HaltingGameValue.halting_reduces_to_gameValue`, the quantum-value form, both
-uncomputability statements and `MIPRE.Halting.mipstar_eq_re : MIPStar = IsRE`. All of them use
-`propext`, `Classical.choice` and `Quot.sound` only.
+uncomputability statements and `MIPRE.Halting.mipstarComputable_eq_re : MIPStarComputable =
+IsRE`. All of them use `propext`, `Classical.choice` and `Quot.sound` only.
 
 The statement file `MIPRE/HaltingGameValue.lean` stays Mathlib-only. It now states the theorem as
 the proposition `HaltingReducesToGameValue`, and `MainTheorem.lean` proves it. A proof there
@@ -985,15 +985,15 @@ dilation. [reports/liehr-tsirelson-bridge.md](../reports/liehr-tsirelson-bridge.
 what the comparison showed; `rem:liehr-statements` cites it in the blueprint.
 
 **The polynomial-time halting reduction and the paper's class (#230), planned 2026-09-28.**
-`MIPStar = IsRE` is proved for the computable class (`def:mipstar`); the paper's
+`MIPStarComputable = IsRE` is proved for the computable class (`def:mipstar`); the paper's
 `MIP*_{1,1/2}(2,1)` asks for a polynomial-time sampler and decider, and the Lean route through
 Lin's criterion outputs its game at a level exponential in the machine's size, so no time bound
 can be attached to the existing map. [polytime-halting.md](polytime-halting.md) has the route:
 the paper's own construction of `V^halt` at the fixed level `C_0` with `λ = poly(|M|)`, the
 class as the paper defines it, and three implementation pull requests. The first is in:
-`MIPRE.MIPStarPoly` is the paper's class (`def:mipstar`, `MIPRE/Foundations/ClassMIPStarPoly.lean`),
+`MIPRE.MIPStar` is the paper's class (`def:mipstar`, `MIPRE/Foundations/ClassMIPStar.lean`),
 the former definition is `def:mipstar-computable`, and `lem:mipstar-poly-sub` is the inclusion by
-tabulation with doubled questions (`ClassMIPStarPolyTab.lean`); `Cost.kleeneFix_runs_of` exposes
+tabulation with doubled questions (`ClassMIPStarTab.lean`); `Cost.kleeneFix_runs_of` exposes
 the fixed point's overhead and `Cost.exists_polyTime_reduction` is the costed many-one reduction
 to halting, both for the next step. The second is in too (`MIPRE/Foundations/Halting/Paper/`):
 the paper's `V^halt M λ` as an efficient Kleene fixed point (`Halting.dec`, `Halting.Vhalt`),
@@ -1004,7 +1004,7 @@ the paper's `V^halt M λ` as an efficient Kleene fixed point (`Halting.dec`, `Ha
 The third is in as well: the class verifier `Halting.classV` (`Halting/Paper/ClassVerifier.lean`,
 `ClassMain.lean`) plays `V^halt (R z) λ(z)` at level `C` on input `z` with a polynomial-time
 sampler and decider, is efficient on every input, and its game has that verifier's value; hence
-`re_subset_mipstarPoly` and `mipstarPoly_eq_re` (`MIPRE/MainTheorem.lean`): `thm:mipstar-eq-re`
+`re_subset_mipstar` and `mipstar_eq_re` (`MIPRE/MainTheorem.lean`): `thm:mipstar-eq-re`
 now holds for the paper's class. `def:mipstar`'s sampler clause was repaired on the way (time in
 the total input length, as the decider's).
 

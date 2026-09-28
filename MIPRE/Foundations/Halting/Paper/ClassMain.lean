@@ -6,7 +6,7 @@ Authors: Thomas Vidick
 import MIPRE.Foundations.Halting.Paper.ClassVerifier
 import MIPRE.Foundations.Halting.Paper.Count
 import MIPRE.Foundations.GameRestrict
-import MIPRE.Foundations.ClassMIPStarPolyTab
+import MIPRE.Foundations.ClassMIPStarTab
 import MIPRE.Foundations.Cost.Growth
 
 /-!
@@ -30,7 +30,7 @@ bounded here), and:
   `halting_paper`): the cutoff is at least the compressor's answer bound, and below it the
   decider of `𝒱^halt` rejects overlong answers whenever `M` does not halt.
 
-Hence `re_subset_mipstarPoly_of` and `mipstarPoly_eq_re_of` (blueprint `thm:mipstar-eq-re`,
+Hence `re_subset_mipstar_of` and `mipstar_eq_re_of` (blueprint `thm:mipstar-eq-re`,
 for the paper's class), given a compressor and the two universal machines; the unconditional
 forms are in `MIPRE/Background/Pipeline.lean` and `MIPRE/MainTheorem.lean`.
 -/
@@ -381,7 +381,7 @@ theorem classV_values
 
 include G U UT in
 /-- **`RE ⊆ MIP*_{1,1/2}(2,1)`**, given a compressor and the two universal machines. -/
-theorem re_subset_mipstarPoly_of {L : Set BitStr} (hL : IsRE L) : MIPStarPoly L := by
+theorem re_subset_mipstar_of {L : Set BitStr} (hL : IsRE L) : MIPStar L := by
   obtain ⟨R, -, hR⟩ := Cost.exists_polyTime_reduction (p := (· ∈ L)) hL
   obtain ⟨K, hK⟩ := exists_cut_ge G
   refine ⟨classV G U UT (lamThreshold G U UT) K R,
@@ -392,7 +392,7 @@ theorem re_subset_mipstarPoly_of {L : Set BitStr} (hL : IsRE L) : MIPStarPoly L 
 include G U UT in
 /-- **`MIP*_{1,1/2}(2,1) = RE`** (blueprint `thm:mipstar-eq-re`, the paper's class), given a
 compressor and the two universal machines. -/
-theorem mipstarPoly_eq_re_of : MIPStarPoly = IsRE :=
-  funext fun _ => propext ⟨MIPStarPoly.isRE, re_subset_mipstarPoly_of G U UT⟩
+theorem mipstar_eq_re_of : MIPStar = IsRE :=
+  funext fun _ => propext ⟨MIPStar.isRE, re_subset_mipstar_of G U UT⟩
 
 end MIPRE.Halting

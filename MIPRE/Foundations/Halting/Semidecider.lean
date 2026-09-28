@@ -3,7 +3,7 @@ Copyright (c) 2026 Thomas Vidick. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
-import MIPRE.Foundations.ClassMIPStar
+import MIPRE.Foundations.ClassMIPStarComputable
 import MIPRE.Foundations.Halting.CostBudget
 import MIPRE.Foundations.Halting.Instantiation
 import MIPRE.Foundations.Halting.Semidecide
