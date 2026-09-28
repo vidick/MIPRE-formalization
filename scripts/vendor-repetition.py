@@ -30,6 +30,14 @@ The script
   ``--no-auto-implicit`` is given, inserts ``set_option autoImplicit true`` after the
   import block (both upstreams compile with Lean's default ``autoImplicit = true``,
   which this repository turns off in ``lakefile.toml``);
+* splits ``QuantumParallelRepetition.lean`` (71k lines upstream) into a chain of parts
+  of at most ``SPLIT_MAX_LINES`` lines each, ``QuantumParallelRepetition/Part01.lean``,
+  ``Part02.lean``, ..., cut only between the top-level ``noncomputable section`` blocks
+  of its one namespace, and leaves ``QuantumParallelRepetition.lean`` as the module that
+  imports every part (so its module name, which the bridge imports, is unchanged). The
+  Palomar registry caps every Lean file at 10,000 physical lines
+  (``planning/palomar.md``). ``--resplit`` redoes the split on the vendored copy
+  without a clone;
 * refreshes the generated block of each destination's ``README.md``.
 
 Afterwards run ``lake exe mk_all`` to refresh ``MIPRE.lean``, then ``lake build``.
@@ -119,6 +127,25 @@ AUTO_IMPLICIT = (
     "set_option autoImplicit true\n"
 )
 
+# The one upstream module that exceeds the 10,000-line cap, and the cap the parts are
+# kept under (a margin for the part header and the repeated namespace-level lines).
+SPLIT_FILE = "QuantumParallelRepetition.lean"
+SPLIT_NAMESPACE = "QuantumParallelRepetition"
+SPLIT_MAX_LINES = 9000
+
+SPLIT_NOTE = (
+    "-- Part {k} of {n} of upstream's single module `{file}`: its lines\n"
+    "-- {first}-{last}, cut between top-level `noncomputable section` blocks by\n"
+    "-- scripts/vendor-repetition.py (the Palomar registry caps a Lean file at 10,000 lines).\n"
+)
+
+SPLIT_ROOT_NOTE = (
+    "-- Upstream's single module `{file}` ({lines} lines) is vendored as\n"
+    "-- the chain of parts imported above, cut by scripts/vendor-repetition.py between its\n"
+    "-- top-level `noncomputable section` blocks; this module re-exports it under its\n"
+    "-- upstream name.\n"
+)
+
 CR_README = """# Vendored commuting-repetition sources
 
 This directory is a **generated, read-only** copy of Lean sources of
@@ -184,8 +211,16 @@ repository. Every file carries a header saying so.
 
 - Do not edit files here by hand: re-run `scripts/vendor-repetition.py` instead. The
   only differences from upstream are the header, the `set_option autoImplicit true`
-  line inserted after the imports, and the compile fixes listed below. The Lean
-  *namespace* is unchanged (`QuantumParallelRepetition`).
+  line inserted after the imports, the compile fixes listed below, and the split. The
+  Lean *namespace* is unchanged (`QuantumParallelRepetition`).
+- Upstream's one module is 71k lines, and the Palomar registry caps a Lean file at
+  10,000 (`planning/palomar.md`), so the script cuts it between its top-level
+  `noncomputable section` blocks into `QuantumParallelRepetition/Part01.lean`,
+  `Part02.lean`, ... (each importing the previous one, each under 9,000 lines, each
+  repeating the two namespace-level `open` lines that upstream places mid-file) and
+  leaves `QuantumParallelRepetition.lean` as the module importing all of them, so the
+  module name the bridge imports is unchanged. Each part's header says which upstream
+  lines it holds. `--resplit` redoes the split on an unsplit vendored copy.
 - Nothing outside `MIPRE/Background/Repetition/` may refer to that namespace.
 - `G_QuantumParallelRepetition.lean.expected` is upstream's Mathlib-only statement file
   (the definitions and the two root statements, with `sorry` proofs), kept as a reading
@@ -355,6 +390,137 @@ def insert_auto_implicit(text: str) -> str:
     return "\n".join(lines[:first] + block + ["", AUTO_IMPLICIT.rstrip("\n")] + [""] + lines[end:])
 
 
+_BLOCK_OPEN = re.compile(r"^(noncomputable\s+)?section\b|^namespace\b")
+_BLOCK_END = re.compile(r"^end\b")
+
+
+def split_module(text: str, max_lines: int, namespace: str) -> tuple[list[str], list[str],
+                                                                      list[list[str]],
+                                                                      list[tuple[int, int]]]:
+    """Cut the body of ``text`` (one ``namespace .. end`` at the top level) between its
+    top-level blocks into parts of at most ``max_lines`` lines.
+
+    Returns ``(prologue, epilogue, parts, spans)``: the lines before ``namespace`` and
+    after ``end namespace``, the parts (lists of body lines), and each part's line span in
+    ``text`` (1-based, inclusive). Namespace-level lines that are not blocks (``open``,
+    ``set_option`` and the like) are repeated at the start of every later part, since a
+    part is its own file. Block comments and line comments are skipped when tracking the
+    nesting, so an ``end`` inside a comment does not count."""
+    lines = text.split("\n")
+    ns_line = next(i for i, l in enumerate(lines) if l.strip() == f"namespace {namespace}")
+    end_line = max(i for i, l in enumerate(lines) if l.strip() == f"end {namespace}")
+    prologue, epilogue = lines[:ns_line], lines[end_line + 1:]
+    body = lines[ns_line + 1:end_line]
+
+    # Top-level units of the body: a block (a section/namespace and everything to its
+    # matching end) or a single namespace-level line, each with its trailing blank lines.
+    units: list[tuple[int, int, bool]] = []      # (start, stop, is_block) as body indices
+    depth = 0
+    in_comment = 0
+    start: int | None = None
+    for i, l in enumerate(body):
+        s = l.strip()
+        if in_comment:
+            if "-/" in s:
+                in_comment -= 1
+            continue
+        if s.startswith("/-"):
+            if "-/" not in s:
+                in_comment += 1
+            if depth == 0 and s:
+                units.append((i, i + 1, False))
+            continue
+        if s.startswith("--"):
+            if depth == 0:
+                units.append((i, i + 1, False))
+            continue
+        if _BLOCK_OPEN.match(s):
+            if depth == 0:
+                start = i
+            depth += 1
+        elif _BLOCK_END.match(s):
+            depth -= 1
+            if depth < 0:
+                sys.exit(f"error: unbalanced `end` at body line {i + 1}")
+            if depth == 0:
+                assert start is not None
+                units.append((start, i + 1, True))
+                start = None
+        elif depth == 0 and s:
+            units.append((i, i + 1, False))
+    if depth != 0 or in_comment:
+        sys.exit("error: the body's sections do not balance; cannot split")
+
+    parts: list[list[str]] = []
+    spans: list[tuple[int, int]] = []
+    carried: list[str] = []          # namespace-level lines seen so far, repeated per part
+    current: list[str] = []
+    current_start: int | None = None
+    prev_stop = 0
+    for u_start, u_stop, is_block in units:
+        chunk = body[prev_stop:u_stop]          # the unit with the blank lines before it
+        prev_stop = u_stop
+        if current and len(current) + len(chunk) > max_lines:
+            parts.append(current)
+            spans.append((ns_line + 2 + current_start, ns_line + 1 + prev_stop - len(chunk)))
+            current, current_start = [], None
+        if current_start is None:
+            current_start = u_stop - len(chunk)
+            current = list(carried)
+            if carried:
+                current.append("")
+        current.extend(chunk)
+        if not is_block:
+            carried.extend(l for l in body[u_start:u_stop] if l.strip())
+    if current:
+        parts.append(current)
+        spans.append((ns_line + 2 + current_start, ns_line + 1 + prev_stop))
+    return prologue, epilogue, parts, spans
+
+
+def write_split(dest: Path, filename: str, local_prefix: str,
+                max_lines: int = SPLIT_MAX_LINES, namespace: str = SPLIT_NAMESPACE) -> int:
+    """Split ``dest/filename`` (a vendored file: provenance header, imports, the inserted
+    ``set_option`` block, one namespace) into ``dest/<stem>/PartNN.lean`` and rewrite it as
+    the module importing the parts. Returns the number of parts."""
+    path = dest / filename
+    stem = Path(filename).stem
+    text = path.read_text(encoding="utf-8")
+    prologue, epilogue, parts, spans = split_module(text, max_lines, namespace)
+    if any(l.strip() for l in epilogue):
+        sys.exit(f"error: {filename} has code after `end {namespace}`; cannot split")
+    if not prologue or prologue[0] != "/-":
+        sys.exit(f"error: {filename} does not start with the provenance header")
+    close = next(i for i, l in enumerate(prologue) if l.strip() == "-/")
+    header = "\n".join(prologue[:close + 1]) + "\n"
+    imports = [l for l in prologue[close + 1:] if l.startswith("import ")]
+    rest = [l for l in prologue[close + 1:] if not l.startswith("import ")]
+    part_dir = dest / stem
+    if part_dir.exists():
+        shutil.rmtree(part_dir)
+    part_dir.mkdir()
+    n = len(parts)
+    for k, (part, (first, last)) in enumerate(zip(parts, spans), 1):
+        module = f"{local_prefix}.{stem}.Part{k:02d}"
+        chain = imports + ([f"import {local_prefix}.{stem}.Part{k - 1:02d}"] if k > 1 else [])
+        out = [header.rstrip("\n")] + chain + [""]
+        out += [SPLIT_NOTE.format(k=k, n=n, file=filename, first=first, last=last).rstrip("\n")]
+        out += [l for l in rest if l.strip()] + ["", f"namespace {namespace}", ""]
+        out += part
+        while out and out[-1].strip() == "":
+            out.pop()
+        out += ["", f"end {namespace}", ""]
+        (part_dir / f"Part{k:02d}.lean").write_text("\n".join(out), encoding="utf-8",
+                                                    newline="\n")
+        if len(out) > 10000:
+            sys.exit(f"error: {module} has {len(out)} lines")
+    root = [header.rstrip("\n")]
+    root += [f"import {local_prefix}.{stem}.Part{k:02d}" for k in range(1, n + 1)]
+    root += ["", SPLIT_ROOT_NOTE.format(file=filename, lines=text.count("\n")).rstrip("\n"), ""]
+    path.write_text("\n".join(root), encoding="utf-8", newline="\n")
+    return n
+
+
 def refresh_readme(path: Path, default: str, generated: str) -> None:
     text = path.read_text(encoding="utf-8") if path.exists() else None
     if text is None:
@@ -425,6 +591,10 @@ def vendor(src: Source, clone: Path, commit: str, repo_root: Path, auto_implicit
                      f"{text.count(fix.old)} times, expected 1")
         target.write_text(text.replace(fix.old, fix.new), encoding="utf-8", newline="\n")
 
+    parts = 0
+    if src.key == "tp":
+        parts = write_split(dest, SPLIT_FILE, src.local_prefix)
+
     details = [
         BEGIN_MARK,
         f"- Upstream: {src.url}",
@@ -439,7 +609,12 @@ def vendor(src: Source, clone: Path, commit: str, repo_root: Path, auto_implicit
     details += [f"- `set_option autoImplicit true` inserted after the imports: "
                 f"{'yes' if auto_implicit else 'no'}"]
     details += [f"- Recorded compile fixes applied: {len(src.fixes)} "
-                f"(listed under \"Local deviations from upstream\")", END_MARK]
+                f"(listed under \"Local deviations from upstream\")"]
+    if parts:
+        details += [f"- `{SPLIT_FILE}` split into {parts} parts of at most {SPLIT_MAX_LINES} "
+                    f"lines (`{Path(SPLIT_FILE).stem}/PartNN.lean`), cut between its "
+                    f"top-level `noncomputable section` blocks; the root module imports them"]
+    details += [END_MARK]
     refresh_readme(readme, src.readme, "\n".join(details))
     print(f"[{src.key}] vendored {len(files)} files ({lines} lines) from {src.url}@{short} "
           f"into {src.dest.as_posix()}; {rewritten} imports rewritten")
@@ -458,7 +633,21 @@ def main() -> None:
     parser.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parent.parent)
     parser.add_argument("--no-auto-implicit", action="store_true",
                         help="do not insert `set_option autoImplicit true`")
+    parser.add_argument("--resplit", action="store_true",
+                        help=f"only redo the split of the vendored {SPLIT_FILE} (no clone "
+                             "needed): the parts are regenerated from the root module's "
+                             "current parts, joined back together first")
     args = parser.parse_args()
+    if args.resplit:
+        dest = args.repo_root.resolve() / SOURCES["tp"].dest
+        root = dest / SPLIT_FILE
+        if f"namespace {SPLIT_NAMESPACE}" not in root.read_text(encoding="utf-8"):
+            sys.exit(f"error: {root} is already the import-only root of a split; --resplit "
+                     "needs the unsplit vendored module (re-vendor from a clone, or restore "
+                     "the file from the commit before the split)")
+        n = write_split(dest, SPLIT_FILE, SOURCES["tp"].local_prefix)
+        print(f"[tp] split {SPLIT_FILE} into {n} parts; next: lake exe mk_all && lake build")
+        return
     done = 0
     if args.cr_source:
         if not args.cr_commit:

@@ -18,8 +18,16 @@ repository. Every file carries a header saying so.
 
 - Do not edit files here by hand: re-run `scripts/vendor-repetition.py` instead. The
   only differences from upstream are the header, the `set_option autoImplicit true`
-  line inserted after the imports, and the compile fixes listed below. The Lean
-  *namespace* is unchanged (`QuantumParallelRepetition`).
+  line inserted after the imports, the compile fixes listed below, and the split. The
+  Lean *namespace* is unchanged (`QuantumParallelRepetition`).
+- Upstream's one module is 71k lines, and the Palomar registry caps a Lean file at
+  10,000 (`planning/palomar.md`), so the script cuts it between its top-level
+  `noncomputable section` blocks into `QuantumParallelRepetition/Part01.lean`,
+  `Part02.lean`, ... (each importing the previous one, each under 9,000 lines, each
+  repeating the two namespace-level `open` lines that upstream places mid-file) and
+  leaves `QuantumParallelRepetition.lean` as the module importing all of them, so the
+  module name the bridge imports is unchanged. Each part's header says which upstream
+  lines it holds. `--resplit` redoes the split on an unsplit vendored copy.
 - Nothing outside `MIPRE/Background/Repetition/` may refer to that namespace.
 - `G_QuantumParallelRepetition.lean.expected` is upstream's Mathlib-only statement file
   (the definitions and the two root statements, with `sorry` proofs), kept as a reading

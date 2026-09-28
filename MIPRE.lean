@@ -721,6 +721,14 @@ import MIPRE.Background.Repetition.Direct
 import MIPRE.Background.Repetition.Entangled
 import MIPRE.Background.Repetition.Soundness
 import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition
+import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01
+import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02
+import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part03
+import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part04
+import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part05
+import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06
+import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part07
+import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part08
 import MIPRE.Background.Repetition.TensorPower
 import MIPRE.Background.Repetition.TracialDensity
 import MIPRE.Background.Repetition.Verifier
