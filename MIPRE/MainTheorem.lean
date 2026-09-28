@@ -70,4 +70,12 @@ theorem re_subset_mipstar {L : Set BitStr} (h : IsRE L) : MIPStar L :=
 theorem mipstar_eq_re : MIPStar = IsRE :=
   mipstar_eq_re_of_answerReduction AnswerReduction.answerReduction
 
+/-- **`RE ⊆ MIP*_{1,1/2}(2,1)`**, the paper's class: a polynomial-time sampler and decider. -/
+theorem re_subset_mipstarPoly {L : Set BitStr} (h : IsRE L) : MIPStarPoly L :=
+  re_subset_mipstarPoly_of_answerReduction AnswerReduction.answerReduction h
+
+/-- **`MIP*_{1,1/2}(2,1) = RE`** (blueprint `thm:mipstar-eq-re`), for the paper's class. -/
+theorem mipstarPoly_eq_re : MIPStarPoly = IsRE :=
+  mipstarPoly_eq_re_of_answerReduction AnswerReduction.answerReduction
+
 end MIPRE.Halting

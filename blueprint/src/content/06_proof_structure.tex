@@ -7095,7 +7095,7 @@ exponential in it.
 \begin{lemma}[The parameter of the halting verifier]
 \label{lem:lambda}
 \ledgernode{1.6.5}
-\uses{lem:halt-construction,lem:lambda-bound,def:lambda-bounded}
+\uses{lem:halt-construction,lem:lambda-bound,def:lambda-bounded,lem:pcp-padding-programs}
 \lean{MIPRE.Halting.lamOf, MIPRE.Halting.isBounded_comprStr, MIPRE.Halting.lamOf_ge,
   MIPRE.Halting.ansBound_le_lamOf, MIPRE.Halting.exists_compressorSpec,
   MIPRE.Halting.comprPoly, MIPRE.Cost.PolyBounded.absorb, MIPRE.Cost.PolyBounded.absorb_log,
@@ -7103,7 +7103,7 @@ exponential in it.
   MIPRE.Halting.exists_lamBound, MIPRE.Halting.Lam0, MIPRE.Halting.Lam0_spec,
   MIPRE.Halting.esize_dec, MIPRE.Halting.dec_cost, MIPRE.Halting.exists_dec_cost_poly,
   MIPRE.Halting.decCostPoly, MIPRE.Halting.dec_cost_spec, MIPRE.Halting.Vhalt_decider_cost,
-  MIPRE.Halting.wrapCoreCost_le_WZ}
+  MIPRE.Halting.wrapCoreCost_le_WZ, MIPRE.Halting.lamF, MIPRE.Halting.lamz}
 \leanok
 There is a $\lambda$, computable from the description of $\machine$ in polynomial time and
 of size $\poly(\abs{\machine})$, such that $\vhalt$ is $\lambda$-bounded and
@@ -7163,9 +7163,10 @@ $k$ depending on the same data (\texttt{dec\_cost}, \texttt{decCostPoly},
 overhead on the compressed decider; the wrapped decider's is
 \texttt{Prog.wrapCoreCost} around it (\texttt{Vhalt\_decider\_cost},
 \texttt{wrapCoreCost\_le\_WZ}), which the class verifier of Definition~\ref{def:mipstar}
-consumes at the fixed level of Theorem~\ref{thm:halting}. The computation of
-$\lambda(\machine)$ in polynomial time from $\machine$ is the class verifier's, with the
-class-level statement.
+consumes at the fixed level of Theorem~\ref{thm:halting}. The parameter is computed from
+$\machine$ in polynomial time by \texttt{MIPRE.Halting.lamF} (the size of $\machine$ in
+unary, four copies, plus the constant, read in binary), which the class verifier of
+Theorem~\ref{thm:halting} runs on $\machine_z$ (\texttt{lamz}).
 
 \effortMedium
 
@@ -7250,14 +7251,17 @@ revision of this chapter did state item 2 as the bound, and because the ledger n
 \begin{theorem}[Halting reduction]
 \label{thm:halting}
 \ledgernode{1.6, 1.6.6}
-\uses{thm:compression,lem:compressible-criterion,lem:value-lower-approx,
-  lem:kleene,def:game-description,lem:sync-le-valstar,lem:dhalt-values,lem:lambda}
+\uses{thm:compression,lem:compressible-criterion,lem:value-lower-approx,lem:kleene,
+  def:game-description,lem:sync-le-valstar,lem:dhalt-values,lem:lambda,def:mipstar}
 \lean{MIPRE.Halting.halting_reduction, MIPRE.Halting.halting_reduction_of,
   MIPRE.Halting.exists_obligations, MIPRE.Halting.halting_reduces_to_gameValue_of,
   MIPRE.Halting.halting_reduction_both_of,
   MIPRE.Halting.halting_paper, MIPRE.Halting.halting_paper_valStar, MIPRE.Halting.Vpaper,
   MIPRE.Halting.semL, MIPRE.Halting.hasPerfectPCC_of_halts,
-  MIPRE.Halting.valStar_le_of_not_halts}
+  MIPRE.Halting.valStar_le_of_not_halts,
+  MIPRE.Halting.classV, MIPRE.Halting.classV_efficient, MIPRE.Halting.classV_value,
+  MIPRE.Halting.classV_values, MIPRE.Halting.sampProg, MIPRE.Halting.decProg,
+  MIPRE.Halting.sampProg_runs, MIPRE.Halting.decProg_accepts, MIPRE.Halting.decProg_runs}
 \leanok
 Assume an ambient \texttt{MIPRE.GapCompression}. There is a computable map
 $\machine \mapsto \game_{\machine}$ from Turing machines
@@ -7270,6 +7274,11 @@ such that:
   $\valstar(\game_\machine) \leq \tfrac12$, and hence also
   $\synval(\game_\machine) \leq \tfrac12$ (Lemma~\ref{lem:sync-le-valstar}).
 \end{enumerate}
+Moreover the reduction is polynomial-time: for every polynomial-time map $z \mapsto
+\machine_z$ from strings to machines there is a polynomial-time verifier in the sense of
+Definition~\ref{def:mipstar}, efficient on every input, whose game on $z$ has a value-$1$ PCC
+strategy if $\machine_z$ halts on the empty input and quantum value at most $\tfrac12$ if it
+does not.
 \end{theorem}
 
 \begin{proof}
@@ -7318,7 +7327,8 @@ $\abs{\machine}$. This is the source efficiency claim. Enumerating their finite
 question distribution and accepted answer tuples yields the computable explicit
 description used here, but the number of entries can exceed a polynomial in the
 program size. The efficient verifier presentation and the explicit table are
-different codomains; the latter has no polynomial-time construction claim here.
+different codomains; the second is the criterion route's, the first is now formalized too
+(\texttt{MIPRE.Halting.classV}, below).
 
 \paragraph{The paper's route, at a fixed level.} The source's statement is now formalized
 for the verifier itself: \texttt{MIPRE.Halting.halting\_paper}
@@ -7343,6 +7353,30 @@ $\vhalt$ at index $C$: its sampler is $\mathtt{ComputeSampler}(\lambda(\machine)
 decider runs within the polynomial bound of Lemma~\ref{lem:lambda}, which is what makes the
 reduction polynomial-time once read off a uniform program, the class-level statement of
 Definition~\ref{def:mipstar}.
+
+\paragraph{The class verifier.} That program is \texttt{MIPRE.Halting.classV}
+(\texttt{Halting/Paper/ClassVerifier.lean}, \texttt{ClassMain.lean}), a
+\texttt{PolyVerifier} for a polynomial-time map $R : z \mapsto \machine_z$. Its sampler
+\texttt{sampProg}, on $(z, r)$, computes $\machine_z$, $\lambda(z) = \Lambda_0 +
+4\abs{\machine_z}$ and the compressed sampler's program $\mathtt{ComputeSampler}(\lambda(z))$,
+asks it its dimension $s(C)$ through the universal machine, and returns its two marginals at
+the first $s(C)$ bits of the seed (\texttt{sampProg\_runs}); so the uniform seed of length
+$B \geq s(C)$ pushes forward to the compressed sampler's distribution. Its decider
+\texttt{decProg}, on $(z, x, y, a, b)$, computes the description of $\dhalt$
+(\texttt{decBuild}, the fixed tree around $\machine_z$ and $\lambda(z)$) and its wrapper,
+rejects if $a$ or $b$ exceeds the cutoff $2^{K + \deg \cdot \abs{\lambda(z)}}$ --- a power of
+two, computable from $\abs{\lambda(z)}$ in unary and above the compressor's answer bound for
+$K$ chosen from $G$ --- and otherwise runs the wrapper on $(C, x, y, a, b)$ through the
+universal machine (\texttt{decProg\_accepts}). Both run within an explicit polynomially
+bounded cost in their total input length (\texttt{sampProg\_runs}, \texttt{decProg\_runs}),
+so the verifier is efficient (\texttt{classV\_efficient}), and its game has the value of
+$\vhalt$ at level $C$ with the answers cut at the cutoff (\texttt{classV\_value}: the game
+is the restriction of $\vhalt$'s to the questions of length $s(C)$,
+\texttt{quantumValue\_restrictQuestions}, with the answers extended by always-rejected ones,
+\texttt{quantumValue\_extendAnswers}), which is $1$ or at most $\frac12$ by the previous
+paragraph (\texttt{classV\_values}). This is the polynomial-time clause of the theorem, and
+$\RE \subseteq \MIPstar$ for the class of Definition~\ref{def:mipstar} in
+Theorem~\ref{thm:mipstar-eq-re}.
 
 The proof is Lemma~\ref{lem:compressible-criterion} applied to the instantiation of
 Remark~\ref{rem:compression-abstract}; the semidecidability hypothesis of the lemma is the

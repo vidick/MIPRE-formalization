@@ -183,10 +183,12 @@ model.
 \label{thm:mipstar-eq-re}
 \ledgernode{1}
 \uses{def:mipstar-computable,def:re,thm:halting,thm:halting-undecidable,lem:value-lower-approx,
-  lem:mipstar-sub-re}
-\lean{MIPRE.Halting.mipstar_eq_re, MIPRE.Halting.re_subset_mipstar}
+  lem:mipstar-sub-re,def:mipstar,lem:mipstar-poly-sub}
+\lean{MIPRE.Halting.mipstar_eq_re, MIPRE.Halting.re_subset_mipstar,
+  MIPRE.Halting.mipstarPoly_eq_re, MIPRE.Halting.re_subset_mipstarPoly}
 \leanok
-$\MIPstar = \RE$.
+$\MIPstar = \RE$, for the class $\MIPstar_{1,1/2}(2,1)$ of Definition~\ref{def:mipstar} and
+for the computable class of Definition~\ref{def:mipstar-computable}.
 \end{theorem}
 
 \begin{proof}
@@ -200,15 +202,26 @@ form the computable class of Definition~\ref{def:mipstar-computable} requires
 $\MIPstar \subseteq \RE$ is
 Lemma~\ref{lem:mipstar-sub-re}. In Lean the many-one reduction of an r.e.\ language to
 halting on the empty input is \texttt{MIPRE.IsRE.exists\_code\_halts}, from Mathlib's
-\texttt{Nat.Partrec.Code.curry}, and the class $\MIPstar$ is the computable one of
-Definition~\ref{def:mipstar-computable}; the equality holds at the compression of
-Theorem~\ref{thm:compression-target}, as Theorem~\ref{thm:main} does.
+\texttt{Nat.Partrec.Code.curry}, for the computable class of
+Definition~\ref{def:mipstar-computable} (\texttt{MIPRE.Halting.mipstar\_eq\_re}); the equality
+holds at the compression of Theorem~\ref{thm:compression-target}, as Theorem~\ref{thm:main}
+does.
+
+For the class of Definition~\ref{def:mipstar}, \texttt{MIPRE.Halting.mipstarPoly\_eq\_re}:
+$\MIPstar \subseteq \RE$ is Lemma~\ref{lem:mipstar-poly-sub}, and $\RE \subseteq \MIPstar$
+(\texttt{re\_subset\_mipstarPoly}) is the polynomial-time form of Theorem~\ref{thm:halting}.
+An r.e.\ language many-one reduces to halting on the empty input by a polynomial-time map
+$z \mapsto \machine_z$ (\texttt{Cost.exists\_polyTime\_reduction}: the semidecider with
+$z$ hardcoded), and the class verifier of Theorem~\ref{thm:halting} on input $z$ plays the
+game of $\vhalt_{\machine_z, \lambda(\machine_z)}$ at the fixed level $C$, whose value is
+$1$ if $\machine_z$ halts and at most $\frac12$ if not.
 \end{proof}
 
 \begin{remark}
 The source polynomial-time reduction constructs efficient sampler and decider
 descriptions (Theorem 12.2 of~\cite{JNVWY20}), as distinguished after
-Theorem~\ref{thm:halting}. The computable explicit-table version above is what the
-Lean main statement asserts and is sufficient for every consequence in
-Section~\ref{ch:downstream}.
+Theorem~\ref{thm:halting}; it is what the class of Definition~\ref{def:mipstar} asks for,
+and the case of the theorem proved through \texttt{re\_subset\_mipstarPoly}. The computable
+explicit-table version is the case for the class of Definition~\ref{def:mipstar-computable},
+and is sufficient for every consequence in Section~\ref{ch:downstream}.
 \end{remark}

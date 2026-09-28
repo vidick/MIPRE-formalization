@@ -822,6 +822,7 @@ import MIPRE.Foundations.GNS
 import MIPRE.Foundations.GameAdapt
 import MIPRE.Foundations.GameDescription
 import MIPRE.Foundations.GameDouble
+import MIPRE.Foundations.GameRestrict
 import MIPRE.Foundations.GameTransport
 import MIPRE.Foundations.GameTransportByQuestion
 import MIPRE.Foundations.GameTransportProjection
@@ -843,11 +844,16 @@ import MIPRE.Foundations.Halting.Freeze
 import MIPRE.Foundations.Halting.Instantiation
 import MIPRE.Foundations.Halting.LambdaBound
 import MIPRE.Foundations.Halting.Lists
+import MIPRE.Foundations.Halting.Paper.Build
+import MIPRE.Foundations.Halting.Paper.ClassMain
+import MIPRE.Foundations.Halting.Paper.ClassVerifier
 import MIPRE.Foundations.Halting.Paper.Cost
+import MIPRE.Foundations.Halting.Paper.Count
 import MIPRE.Foundations.Halting.Paper.Decider
 import MIPRE.Foundations.Halting.Paper.Induction
 import MIPRE.Foundations.Halting.Paper.Main
 import MIPRE.Foundations.Halting.Paper.Size
+import MIPRE.Foundations.Halting.Paper.Stages
 import MIPRE.Foundations.Halting.Paper.TabulateL
 import MIPRE.Foundations.Halting.PolyBounded
 import MIPRE.Foundations.Halting.Reduction

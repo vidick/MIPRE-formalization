@@ -113,10 +113,13 @@ noncomputable def questions (z r : BitStr) : Answers (V.B z) × Answers (V.B z) 
 
 /-- **Efficiency** on the input `z` (`def:mipstar`, item 1). -/
 structure Efficient (z : BitStr) : Prop where
-  /-- The sampler, on every seed of length `B z`, halts within cost `B z` with a pair of strings
-  of length at most `B z`. -/
+  /-- The sampler, on every seed of length `B z`, halts within cost `P(|z| + |r|)` with a pair
+  of strings of length at most `B z`. The bound is in the total input length, as the decider's:
+  a program reads its seed only by walking it, so `B z` itself would leave no time to read a
+  seed of length `B z`; with `|r| = B z` polynomial in `|z|` the bound is still `poly(|z|)`. -/
   sampler_runs : ∀ r : BitStr, r.length = V.B z →
-    ∃ (x y : BitStr) (t : ℕ), t ≤ V.B z ∧ x.length ≤ V.B z ∧ y.length ≤ V.B z ∧
+    ∃ (x y : BitStr) (t : ℕ), t ≤ V.bound.eval (z.length + r.length) ∧
+      x.length ≤ V.B z ∧ y.length ≤ V.B z ∧
       V.sampler.Runs (encode (z, r)) (encode (x, y)) t
   /-- The decider halts within cost `P(|z| + |x| + |y| + |a| + |b|)` on every input. -/
   decider_time : ∀ x y a b : BitStr,
@@ -131,7 +134,8 @@ structure Efficient (z : BitStr) : Prop where
 question pair, with no fallback. -/
 theorem questions_eq_of_efficient {z : BitStr} (h : V.Efficient z) {r : BitStr}
     (hr : r.length = V.B z) :
-    ∃ (x y : BitStr) (t : ℕ), t ≤ V.B z ∧ V.sampler.Runs (encode (z, r)) (encode (x, y)) t ∧
+    ∃ (x y : BitStr) (t : ℕ), t ≤ V.bound.eval (z.length + r.length) ∧
+      V.sampler.Runs (encode (z, r)) (encode (x, y)) t ∧
       (V.questions z r).1.1 = x ∧ (V.questions z r).2.1 = y := by
   obtain ⟨x, y, t, ht, hx, hy, hrun⟩ := h.sampler_runs r hr
   refine ⟨x, y, t, ht, hrun, ?_⟩
@@ -202,6 +206,7 @@ polynomial-time verifier is efficient on every input, and its game has quantum v
 the members of `L` and at most `1/2` off them. -/
 def MIPStarPoly (L : Set BitStr) : Prop :=
   ∃ V : PolyVerifier, (∀ z, V.Efficient z) ∧
-    ∀ z, (z ∈ L → quantumValue (V.game z) = 1) ∧ (z ∉ L → quantumValue (V.game z) ≤ 1 / 2)
+    ∀ z, (z ∈ L → quantumValue (V.game z) = 1) ∧
+      (z ∉ L → quantumValue (V.game z) ≤ 1 / 2)
 
 end MIPRE

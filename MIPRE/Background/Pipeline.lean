@@ -6,6 +6,7 @@ Authors: Thomas Vidick
 import MIPRE.Background.Introspection.Compiler
 import MIPRE.Background.Repetition.Verifier
 import MIPRE.Foundations.Halting.Corollaries
+import MIPRE.Foundations.Halting.Paper.ClassMain
 import MIPRE.Foundations.Pipeline.Compress
 
 /-!
@@ -88,6 +89,18 @@ theorem re_subset_mipstar_of_answerReduction {L : Set BitStr} (h : IsRE L) : MIP
 introspection, parallel repetition and the universal machine are supplied. -/
 theorem mipstar_eq_re_of_answerReduction : MIPStar = IsRE :=
   mipstar_eq_re_of (GapCompression.ofAnswerReduction A) Cost.selfUniversal
+
+/-- **`RE ⊆ MIP*_{1,1/2}(2,1)`**, the paper's class, conditionally on answer reduction only. -/
+theorem re_subset_mipstarPoly_of_answerReduction {L : Set BitStr} (h : IsRE L) :
+    MIPStarPoly L :=
+  re_subset_mipstarPoly_of (GapCompression.ofAnswerReduction A) Cost.selfUniversal
+    Cost.selfClockedUniversal h
+
+/-- **`MIP*_{1,1/2}(2,1) = RE`** (blueprint `thm:mipstar-eq-re`, the paper's class),
+conditionally on answer reduction only. -/
+theorem mipstarPoly_eq_re_of_answerReduction : MIPStarPoly = IsRE :=
+  mipstarPoly_eq_re_of (GapCompression.ofAnswerReduction A) Cost.selfUniversal
+    Cost.selfClockedUniversal
 
 end Halting
 

@@ -69,7 +69,8 @@ theorem finTwoEquiv_ite (a : Fin 2) : (if finTwoEquiv a then 1 else 0) = (a : �
 
 theorem qEquiv_apply (T : ℕ) (i : Fin (2 * N T)) :
     qIdx T (qEquiv T i).1 (qEquiv T i).2.1 = (i : ℕ) := by
-  obtain ⟨⟨a, b⟩, h⟩ : ∃ p : Fin 2 × Fin (N T), finProdFinEquiv.symm i = p := ⟨_, rfl⟩
+  obtain ⟨⟨a, b⟩, h⟩ : ∃ p : Fin 2 × Fin (N T), finProdFinEquiv.symm i = p :=
+    ⟨_, rfl⟩
   have hi : i = finProdFinEquiv (a, b) := by rw [← h, Equiv.apply_symm_apply]
   have h1 : (qEquiv T i).1 = finTwoEquiv a := by
     simp only [qEquiv, Equiv.trans_apply, h, Equiv.prodCongr_apply, Prod.map_fst]
@@ -189,7 +190,8 @@ theorem accListLE_eq_filterMap (T : ℕ) (fA fB : BitStr → ℕ)
       else none := by
   simp only [accListLE, tuplesLE, List.filterMap_flatMap, List.filterMap_map, Function.comp_def]
 
-theorem primrec_accListLE {α : Type*} [Primcodable α] {T : α → ℕ} {fA fB : α → BitStr → ℕ}
+theorem primrec_accListLE {α : Type*} [Primcodable α] {T : α → ℕ}
+    {fA fB : α → BitStr → ℕ}
     {acc? : α → BitStr → BitStr → BitStr → BitStr → Bool}
     (hT : Primrec T) (hfA : Primrec₂ fA) (hfB : Primrec₂ fB)
     (hacc : Primrec fun q : α × BitStr × BitStr × BitStr × BitStr =>
@@ -220,8 +222,10 @@ def tabOf (sd pd : Data) (P : Polynomial ℕ) (z : BitStr) : GameData where
   nX := 2 * N (P.eval z.length) - 1
   nA := N (P.eval z.length) - 1
   w := weightList (P.eval z.length)
-        (fun r => qIdx (P.eval z.length) false (sampleC sd (P.eval z.length) z r).1)
-        (fun r => qIdx (P.eval z.length) true (sampleC sd (P.eval z.length) z r).2)
+        (fun r => qIdx (P.eval z.length) false
+          (sampleC sd (P.eval (z.length + P.eval z.length)) z r).1)
+        (fun r => qIdx (P.eval z.length) true
+          (sampleC sd (P.eval (z.length + P.eval z.length)) z r).2)
   acc := accListLE (P.eval z.length) (qIdx (P.eval z.length) false) (qIdx (P.eval z.length) true)
         (accC pd P z)
 
@@ -298,11 +302,16 @@ theorem primrec_tabOf (sd pd : Data) (P : Polynomial ℕ) : Primrec (tabOf sd pd
     Primrec.nat_sub.comp (Primrec.nat_mul.comp (Primrec.const 2) hN) (Primrec.const 1)
   have hnA : Primrec fun z : BitStr => N (P.eval z.length) - 1 :=
     Primrec.nat_sub.comp hN (Primrec.const 1)
-  have hsamp : Primrec fun q : BitStr × BitStr => sampleC sd (P.eval q.1.length) q.1 q.2 :=
-    (primrec_sampleC sd).comp (((hT.comp Primrec.fst).pair Primrec.fst).pair Primrec.snd)
+  have hT' : Primrec fun z : BitStr => P.eval (z.length + P.eval z.length) :=
+    (Cost.primrec_poly_eval P).comp (Primrec.nat_add.comp Primrec.list_length hT)
+  have hsamp : Primrec fun q : BitStr × BitStr =>
+      sampleC sd (P.eval (q.1.length + P.eval q.1.length)) q.1 q.2 :=
+    (primrec_sampleC sd).comp (((hT'.comp Primrec.fst).pair Primrec.fst).pair Primrec.snd)
   have hw : Primrec fun z : BitStr => weightList (P.eval z.length)
-      (fun r => qIdx (P.eval z.length) false (sampleC sd (P.eval z.length) z r).1)
-      (fun r => qIdx (P.eval z.length) true (sampleC sd (P.eval z.length) z r).2) := by
+      (fun r => qIdx (P.eval z.length) false
+        (sampleC sd (P.eval (z.length + P.eval z.length)) z r).1)
+      (fun r => qIdx (P.eval z.length) true
+        (sampleC sd (P.eval (z.length + P.eval z.length)) z r).2) := by
     refine Primrec.list_map (Data.primrec_bitStrsOfLen.comp hT) ?_
     exact (((primrec_qIdx false).comp (hT.comp Primrec.fst) (Primrec.fst.comp hsamp)).pair
       (((primrec_qIdx true).comp (hT.comp Primrec.fst) (Primrec.snd.comp hsamp)).pair
@@ -370,9 +379,12 @@ theorem qIdx_eq_iff' (z : BitStr) (tg : Bool) {x : BitStr} (hx : x ∈ Data.bitS
 /-- **The budgeted sample is the question pair**, on an efficient input and a seed of the right
 length. -/
 theorem sampleC_eq {z : BitStr} (h : V.Efficient z) {r : BitStr} (hr : r.length = V.B z) :
-    sampleC (encode V.sampler) (V.B z) z r = ((V.questions z r).1.1, (V.questions z r).2.1) := by
+    sampleC (encode V.sampler) (V.bound.eval (z.length + V.B z)) z r =
+      ((V.questions z r).1.1, (V.questions z r).2.1) := by
   obtain ⟨x, y, t, ht, hrun, hx, hy⟩ := V.questions_eq_of_efficient h hr
-  have hrf : Machine.runForD (encode V.sampler) (encode (z, r)) (V.B z) = some (encode (x, y)) :=
+  rw [hr] at ht
+  have hrf : Machine.runForD (encode V.sampler) (encode (z, r))
+      (V.bound.eval (z.length + V.B z)) = some (encode (x, y)) :=
     (Machine.runForD_eq_some_iff ⟨_, t, ht, hrun⟩).2 ⟨t, hrun⟩
   rw [hx, hy]
   simp only [sampleC, hrf, Option.bind_some]
@@ -390,13 +402,15 @@ theorem accC_eq {z : BitStr} (h : V.Efficient z) (x y a b : BitStr) :
 
 theorem sampleC_fst_mem {z : BitStr} (h : V.Efficient z) {r : BitStr}
     (hr : r ∈ Data.bitStrsOfLen (V.B z)) :
-    (sampleC (encode V.sampler) (V.B z) z r).1 ∈ Data.bitStrsLE (V.B z) := by
+    (sampleC (encode V.sampler) (V.bound.eval (z.length + V.B z)) z r).1 ∈
+      Data.bitStrsLE (V.B z) := by
   rw [V.sampleC_eq h ((Data.mem_bitStrsOfLen _ _).1 hr)]
   exact (Data.mem_bitStrsLE _ _).2 (V.questions z r).1.2
 
 theorem sampleC_snd_mem {z : BitStr} (h : V.Efficient z) {r : BitStr}
     (hr : r ∈ Data.bitStrsOfLen (V.B z)) :
-    (sampleC (encode V.sampler) (V.B z) z r).2 ∈ Data.bitStrsLE (V.B z) := by
+    (sampleC (encode V.sampler) (V.bound.eval (z.length + V.B z)) z r).2 ∈
+      Data.bitStrsLE (V.B z) := by
   rw [V.sampleC_eq h ((Data.mem_bitStrsOfLen _ _).1 hr)]
   exact (Data.mem_bitStrsLE _ _).2 (V.questions z r).2.2
 
@@ -407,9 +421,11 @@ theorem mu_clause {z : BitStr} (h : V.Efficient z) (i j : Fin ((V.tab z).nX + 1)
   classical
   set T := V.B z with hT
   have hrange : ∀ (tg : Bool) (f : BitStr × BitStr → BitStr),
-      (∀ r ∈ Data.bitStrsOfLen T, f (sampleC (encode V.sampler) T z r) ∈ Data.bitStrsLE T) →
+      (∀ r ∈ Data.bitStrsOfLen T,
+        f (sampleC (encode V.sampler) (V.bound.eval (z.length + T)) z r) ∈ Data.bitStrsLE T) →
       ∀ r ∈ Data.bitStrsOfLen T,
-        qIdx T tg (f (sampleC (encode V.sampler) T z r)) < (V.tab z).nX + 1 := by
+        qIdx T tg (f (sampleC (encode V.sampler) (V.bound.eval (z.length + T)) z r)) <
+          (V.tab z).nX + 1 := by
     intro tg f hf r hr
     rw [V.tab_nX z]
     exact qIdx_lt T tg (hf r hr)
@@ -419,8 +435,9 @@ theorem mu_clause {z : BitStr} (h : V.Efficient z) (i j : Fin ((V.tab z).nX + 1)
       (hrange true Prod.snd fun r hr => V.sampleC_snd_mem h hr)
   have hqw : ∀ a b : ℕ, (V.tab z).questionWeight a b
       = ((Data.bitStrsOfLen T).filter fun r =>
-          decide (qIdx T false (sampleC (encode V.sampler) T z r).1 = a
-            ∧ qIdx T true (sampleC (encode V.sampler) T z r).2 = b)).length :=
+          decide (qIdx T false (sampleC (encode V.sampler) (V.bound.eval (z.length + T)) z r).1 = a
+            ∧ qIdx T true (sampleC (encode V.sampler) (V.bound.eval (z.length + T)) z r).2
+              = b)).length :=
     fun a b => questionWeight_weightList _ _ _ _ _ _ a b
   rw [GameData.game_μ, htot, if_neg (Nat.two_pow_pos _).ne', hqw,
     show (V.game z).doubled.μ (V.eX z i) (V.eX z j)
@@ -443,8 +460,10 @@ theorem mu_clause {z : BitStr} (h : V.Efficient z) (i j : Fin ((V.tab z).nX + 1)
     exact and_congr Subtype.ext_iff.symm Subtype.ext_iff.symm
   · rw [if_neg htag]
     have hnil : ((Data.bitStrsOfLen T).filter fun r =>
-        decide (qIdx T false (sampleC (encode V.sampler) T z r).1 = (i : ℕ)
-          ∧ qIdx T true (sampleC (encode V.sampler) T z r).2 = (j : ℕ))) = [] := by
+        decide (qIdx T false (sampleC (encode V.sampler) (V.bound.eval (z.length + T)) z r).1
+            = (i : ℕ)
+          ∧ qIdx T true (sampleC (encode V.sampler) (V.bound.eval (z.length + T)) z r).2
+            = (j : ℕ))) = [] := by
       refine List.filter_eq_nil_iff.2 fun r hr => ?_
       simp only [decide_eq_true_eq, not_and]
       intro h1 h2
