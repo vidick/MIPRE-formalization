@@ -65,12 +65,12 @@ def eight : PolyTimeFun ℕ ℕ :=
 
 @[simp] theorem eight_apply (n : ℕ) : eight n = 8*n := by simp [eight, Nat.bit_val]; omega
 
-def andCheck {α : Type*} [SizedEncoding α] (f g : PolyTimeFun α Bool) :
+def guardAndCheck {α : Type*} [SizedEncoding α] (f g : PolyTimeFun α Bool) :
     PolyTimeFun α Bool := ite f g (const false)
 
-theorem andCheck_iff {α : Type*} [SizedEncoding α] (f g : PolyTimeFun α Bool) (x : α) :
-    andCheck f g x = true ↔ f x = true ∧ g x = true := by
-  simp only [andCheck, PolyTimeFun.ite_apply, const_apply]
+theorem guardAndCheck_iff {α : Type*} [SizedEncoding α] (f g : PolyTimeFun α Bool) (x : α) :
+    guardAndCheck f g x = true ↔ f x = true ∧ g x = true := by
+  simp only [guardAndCheck, PolyTimeFun.ite_apply, const_apply]
   cases f x <;> simp
 
 def GuardReady (x : GuardInput) : Prop :=
@@ -83,17 +83,17 @@ def GuardReady (x : GuardInput) : Prop :=
 instance (x : GuardInput) : Decidable (GuardReady x) := inferInstanceAs (Decidable (_ ∧ _))
 
 def guardCheck : PolyTimeFun GuardInput Bool :=
-  andCheck (ap₂ leNat inputDim inputQ) <|
-  andCheck (ap₂ leNat inputDim inputR) <|
-  andCheck (DynamicParser.pairCheck.comp (inputLeft.pair (inputQ.pair inputR))) <|
-  andCheck (DynamicParser.pairCheck.comp (inputRight.pair (inputQ.pair inputR))) <|
-  andCheck (sourceCheck.comp ((fst.comp leftParts).pair inputDim)) <|
-  andCheck (sourceCheck.comp ((fst.comp rightParts).pair inputDim)) <|
-  andCheck (ap₂ leNat (inc.comp (lengthNat.comp inputLeft)) (eight.comp inputQ))
+  guardAndCheck (ap₂ leNat inputDim inputQ) <|
+  guardAndCheck (ap₂ leNat inputDim inputR) <|
+  guardAndCheck (DynamicParser.pairCheck.comp (inputLeft.pair (inputQ.pair inputR))) <|
+  guardAndCheck (DynamicParser.pairCheck.comp (inputRight.pair (inputQ.pair inputR))) <|
+  guardAndCheck (sourceCheck.comp ((fst.comp leftParts).pair inputDim)) <|
+  guardAndCheck (sourceCheck.comp ((fst.comp rightParts).pair inputDim)) <|
+  guardAndCheck (ap₂ leNat (inc.comp (lengthNat.comp inputLeft)) (eight.comp inputQ))
     (ap₂ leNat (inc.comp (lengthNat.comp inputRight)) (eight.comp inputQ))
 
 theorem guardCheck_iff (x : GuardInput) : guardCheck x = true ↔ GuardReady x := by
-  simp only [guardCheck, andCheck_iff, ap₂_apply, comp_apply, pair_apply,
+  simp only [guardCheck, guardAndCheck_iff, ap₂_apply, comp_apply, pair_apply,
     leNat_apply, decide_eq_true_eq, DynamicParser.pairCheck_apply, fst_apply,
     sourceCheck_iff, inc_apply, lengthNat_apply, eight_apply, GuardReady, Nat.add_one_le_iff]
 
