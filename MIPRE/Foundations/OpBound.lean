@@ -7,6 +7,8 @@ module
 public import Mathlib.Analysis.Matrix.Order
 public import Mathlib.Analysis.Matrix.PosDef
 public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Analysis.CStarAlgebra.Matrix
+public import MIPRE.Foundations.OpCalculus
 public import MIPRE.Tactics
 
 @[expose] public section
@@ -27,6 +29,14 @@ costs enough instance search to time out the elaborator on a statement as small 
 `T * T ≤ 1 → ‖T‖ ≤ 1`. The order the arguments actually need is the one on *matrices*
 (`Matrix.nonneg_iff_posSemidef`, which is cheap), so the bridge here goes from a matrix
 inequality straight to a vector-norm inequality and never mentions an operator norm.
+
+**The instance of the Hilbert-space calculus.** A matrix acts on `EuclideanSpace ℂ N` as the
+bounded operator `Matrix.toEuclideanCLM M`, which sends `evec v` to `evec (M *ᵥ v)` by
+definition. The bound, the state norm and the quadratic form of this file are those of
+`MIPRE/Foundations/OpCalculus.lean` at that operator (`bnd_iff`, `snorm_eq_op`, `qform_eq_op`),
+and their rules are proved there once, for every Hilbert space (Phase 1(b) of
+`planning/mipco-track.md`). What this file adds is about matrices: the matrix order, and the
+Kronecker embeddings of the two factors.
 -/
 
 noncomputable section
@@ -93,38 +103,48 @@ theorem norm_evec_mulVec_eq {M : Type*} [Fintype M] {A : Matrix M N ℂ} [Decida
 /-- `‖M v‖ ≤ K ‖v‖` for every `v`: the `ℓ²` operator norm of `M` is at most `K`. -/
 def Bnd (M : Matrix N N ℂ) (K : ℝ) : Prop := ∀ v : N → ℂ, ‖evec (M *ᵥ v)‖ ≤ K * ‖evec v‖
 
-theorem Bnd.mono {M : Matrix N N ℂ} {K L : ℝ} (h : Bnd M K) (hKL : K ≤ L) : Bnd M L := fun v =>
-  le_trans (h v) (mul_le_mul_of_nonneg_right hKL (norm_nonneg _))
+/-- A matrix sends `evec v` to `evec (M *ᵥ v)` as an operator on `EuclideanSpace ℂ N`. -/
+theorem toEuclideanCLM_evec [DecidableEq N] (M : Matrix N N ℂ) (v : N → ℂ) :
+    Matrix.toEuclideanCLM (n := N) (𝕜 := ℂ) M (evec v) = evec (M *ᵥ v) :=
+  rfl
+
+/-- **The bound is that of the operator on `EuclideanSpace ℂ N`.** -/
+theorem bnd_iff [DecidableEq N] {M : Matrix N N ℂ} {K : ℝ} :
+    Bnd M K ↔ Op.Bnd (Matrix.toEuclideanCLM (n := N) (𝕜 := ℂ) M) K :=
+  ⟨fun h v => h (WithLp.ofLp v), fun h v => h (evec v)⟩
+
+theorem Bnd.mono {M : Matrix N N ℂ} {K L : ℝ} (h : Bnd M K) (hKL : K ≤ L) : Bnd M L := by
+  classical
+  exact bnd_iff.2 ((bnd_iff.1 h).mono hKL)
 
 theorem Bnd.add {M M' : Matrix N N ℂ} {K L : ℝ} (h : Bnd M K) (h' : Bnd M' L) :
-    Bnd (M + M') (K + L) := fun v => by
-  rw [Matrix.add_mulVec, evec_add]
-  refine le_trans (norm_add_le _ _) ?_
-  rw [add_mul]
-  exact add_le_add (h v) (h' v)
+    Bnd (M + M') (K + L) := by
+  classical
+  rw [bnd_iff, map_add]
+  exact (bnd_iff.1 h).add (bnd_iff.1 h')
 
 theorem Bnd.sub {M M' : Matrix N N ℂ} {K L : ℝ} (h : Bnd M K) (h' : Bnd M' L) :
-    Bnd (M - M') (K + L) := fun v => by
-  rw [Matrix.sub_mulVec, evec_sub]
-  refine le_trans (norm_sub_le _ _) ?_
-  rw [add_mul]
-  exact add_le_add (h v) (h' v)
+    Bnd (M - M') (K + L) := by
+  classical
+  rw [bnd_iff, map_sub]
+  exact (bnd_iff.1 h).sub (bnd_iff.1 h')
 
 theorem Bnd.mul {M M' : Matrix N N ℂ} {K L : ℝ} (hK : 0 ≤ K) (h : Bnd M K) (h' : Bnd M' L) :
-    Bnd (M * M') (K * L) := fun v => by
-  rw [← Matrix.mulVec_mulVec]
-  refine le_trans (h (M' *ᵥ v)) ?_
-  rw [mul_assoc]
-  exact mul_le_mul_of_nonneg_left (h' v) hK
+    Bnd (M * M') (K * L) := by
+  classical
+  rw [bnd_iff, map_mul]
+  exact (bnd_iff.1 h).mul hK (bnd_iff.1 h')
 
 theorem Bnd.smul {M : Matrix N N ℂ} {K : ℝ} (c : ℂ) (h : Bnd M K) :
-    Bnd (c • M) (‖c‖ * K) := fun v => by
-  rw [Matrix.smul_mulVec, evec_smul, norm_smul, mul_assoc]
-  exact mul_le_mul_of_nonneg_left (h v) (norm_nonneg c)
+    Bnd (c • M) (‖c‖ * K) := by
+  classical
+  rw [bnd_iff, map_smul]
+  exact (bnd_iff.1 h).smul c
 
-theorem bnd_zero (K : ℝ) (hK : 0 ≤ K) : Bnd (0 : Matrix N N ℂ) K := fun v => by
-  rw [Matrix.zero_mulVec, evec_zero, norm_zero]
-  positivity
+theorem bnd_zero (K : ℝ) (hK : 0 ≤ K) : Bnd (0 : Matrix N N ℂ) K := by
+  classical
+  rw [bnd_iff, map_zero]
+  exact Op.bnd_zero K hK
 
 /-! ## The norm on a fixed state
 
@@ -139,37 +159,60 @@ variable (v : N → ℂ)
 /-- `‖M v‖`, for a fixed state `v`. -/
 def snorm (M : Matrix N N ℂ) : ℝ := ‖evec (M *ᵥ v)‖
 
-theorem snorm_nonneg (M : Matrix N N ℂ) : 0 ≤ snorm v M := norm_nonneg _
+/-- **The state norm is that of the operator on `EuclideanSpace ℂ N`.** -/
+theorem snorm_eq_op [DecidableEq N] (M : Matrix N N ℂ) :
+    snorm v M = Op.snorm (evec v) (Matrix.toEuclideanCLM (n := N) (𝕜 := ℂ) M) :=
+  rfl
+
+theorem snorm_nonneg (M : Matrix N N ℂ) : 0 ≤ snorm v M := by
+  classical
+  rw [snorm_eq_op]
+  exact Op.snorm_nonneg _ _
 
 theorem snorm_add_le (M M' : Matrix N N ℂ) : snorm v (M + M') ≤ snorm v M + snorm v M' := by
-  rw [snorm, snorm, snorm, Matrix.add_mulVec, evec_add]
-  exact norm_add_le _ _
+  classical
+  rw [snorm_eq_op, snorm_eq_op, snorm_eq_op, map_add]
+  exact Op.snorm_add_le _ _ _
 
 theorem snorm_sub_le (M M' : Matrix N N ℂ) : snorm v (M - M') ≤ snorm v M + snorm v M' := by
-  rw [snorm, snorm, snorm, Matrix.sub_mulVec, evec_sub]
-  exact norm_sub_le _ _
+  classical
+  rw [snorm_eq_op, snorm_eq_op, snorm_eq_op, map_sub]
+  exact Op.snorm_sub_le _ _ _
 
 theorem snorm_sub_comm (M M' : Matrix N N ℂ) : snorm v (M - M') = snorm v (M' - M) := by
-  rw [snorm, snorm, Matrix.sub_mulVec, Matrix.sub_mulVec, evec_sub, evec_sub, norm_sub_rev]
+  classical
+  rw [snorm_eq_op, snorm_eq_op, map_sub, map_sub]
+  exact Op.snorm_sub_comm _ _ _
 
 theorem snorm_smul (c : ℂ) (M : Matrix N N ℂ) : snorm v (c • M) = ‖c‖ * snorm v M := by
-  rw [snorm, snorm, Matrix.smul_mulVec, evec_smul, norm_smul]
+  classical
+  rw [snorm_eq_op, snorm_eq_op, map_smul]
+  exact Op.snorm_smul _ _ _
 
 theorem snorm_one [DecidableEq N] (hv : ‖evec v‖ = 1) :
     snorm v (1 : Matrix N N ℂ) = 1 := by
-  rw [snorm, Matrix.one_mulVec, hv]
+  rw [snorm_eq_op, map_one]
+  exact Op.snorm_one _ hv
 
 /-- A bound in front of anything. -/
 theorem snorm_mul_le {M : Matrix N N ℂ} {K : ℝ} (h : Bnd M K) (M' : Matrix N N ℂ) :
     snorm v (M * M') ≤ K * snorm v M' := by
-  rw [snorm, snorm, ← Matrix.mulVec_mulVec]
-  exact h (M' *ᵥ v)
+  classical
+  rw [snorm_eq_op, snorm_eq_op, map_mul]
+  exact Op.snorm_mul_le _ (bnd_iff.1 h) _
+
+/-- An isometry of matrices is an isometry of `EuclideanSpace ℂ N`. -/
+theorem star_toEuclideanCLM_mul_self [DecidableEq N] {M : Matrix N N ℂ} (h : Mᴴ * M = 1) :
+    star (Matrix.toEuclideanCLM (n := N) (𝕜 := ℂ) M) *
+      Matrix.toEuclideanCLM (n := N) (𝕜 := ℂ) M = 1 := by
+  rw [← map_star, ← map_mul, Matrix.star_eq_conjTranspose, h, map_one]
 
 /-- An isometry in front changes nothing. -/
 theorem snorm_mul_of_isometry [DecidableEq N] {M : Matrix N N ℂ} (h : Mᴴ * M = 1)
     (M' : Matrix N N ℂ) :
     snorm v (M * M') = snorm v M' := by
-  rw [snorm, snorm, ← Matrix.mulVec_mulVec, norm_evec_mulVec_eq h]
+  rw [snorm_eq_op, snorm_eq_op, map_mul]
+  exact Op.snorm_mul_of_isometry _ (star_toEuclideanCLM_mul_self h) _
 
 /-- **Replacing an operator by an isometry it is close to, in front of anything.** If `W` and
 the isometry `WD` agree on the state to within `δ`, and `WD` commutes with `Z`, then `Z W` is
@@ -179,16 +222,11 @@ theorem snorm_mul_swap [DecidableEq N] {W WD Z : Matrix N N ℂ} {δ K : ℝ}
     (hWD : WDᴴ * WD = 1) (hcomm : WD * Z = Z * WD) (hZ : Bnd Z K) (hK : 0 ≤ K)
     (hd : snorm v (W - WD) ≤ δ) :
     snorm v (Z * W) ≤ snorm v Z + K * δ := by
-  have hsplit : Z * W = Z * (W - WD) + WD * Z := by
-    have h : Z * (W - WD) + WD * Z = Z * (W - WD) + Z * WD := by rw [hcomm]
-    rw [h]
-    noncomm_ring
-  calc snorm v (Z * W) ≤ snorm v (Z * (W - WD)) + snorm v (WD * Z) := by
-        rw [hsplit]; exact snorm_add_le v _ _
-    _ ≤ K * δ + snorm v Z := by
-        refine add_le_add ?_ (le_of_eq (snorm_mul_of_isometry v hWD Z))
-        exact le_trans (snorm_mul_le v hZ _) (mul_le_mul_of_nonneg_left hd hK)
-    _ = snorm v Z + K * δ := by ring
+  rw [snorm_eq_op, snorm_eq_op, map_mul]
+  refine Op.snorm_mul_swap _ (star_toEuclideanCLM_mul_self hWD) ?_ (bnd_iff.1 hZ) hK ?_
+  · rw [← map_mul, hcomm, map_mul]
+  · rw [← map_sub]
+    exact hd
 
 end SNorm
 
@@ -201,37 +239,51 @@ variable (v : N → ℂ)
 /-- `⟨v| M |v⟩`, as a real. -/
 def qform (M : Matrix N N ℂ) : ℝ := (star v ⬝ᵥ (M *ᵥ v)).re
 
+/-- **The quadratic form is that of the operator on `EuclideanSpace ℂ N`.** -/
+theorem qform_eq_op [DecidableEq N] (M : Matrix N N ℂ) :
+    qform v M = Op.qform (evec v) (Matrix.toEuclideanCLM (n := N) (𝕜 := ℂ) M) := by
+  show (star v ⬝ᵥ (M *ᵥ v)).re = ((M *ᵥ v) ⬝ᵥ star v).re
+  rw [dotProduct_comm]
+
 theorem qform_add (M M' : Matrix N N ℂ) : qform v (M + M') = qform v M + qform v M' := by
-  rw [qform, qform, qform, Matrix.add_mulVec, dotProduct_add, Complex.add_re]
+  classical
+  rw [qform_eq_op, qform_eq_op, qform_eq_op, map_add]
+  exact Op.qform_add _ _ _
 
 theorem qform_sub (M M' : Matrix N N ℂ) : qform v (M - M') = qform v M - qform v M' := by
-  rw [qform, qform, qform, Matrix.sub_mulVec, dotProduct_sub, Complex.sub_re]
+  classical
+  rw [qform_eq_op, qform_eq_op, qform_eq_op, map_sub]
+  exact Op.qform_sub _ _ _
 
 theorem qform_smul_real (r : ℝ) (M : Matrix N N ℂ) :
     qform v ((r : ℂ) • M) = r * qform v M := by
-  rw [qform, qform, Matrix.smul_mulVec, dotProduct_smul]
-  simp [Complex.ofReal_re]
+  classical
+  rw [qform_eq_op, qform_eq_op, map_smul]
+  exact Op.qform_smul_real _ _ _
 
 theorem qform_sum {ι : Type*} (s : Finset ι) (f : ι → Matrix N N ℂ) :
     qform v (∑ i ∈ s, f i) = ∑ i ∈ s, qform v (f i) := by
   classical
-  induction s using Finset.induction with
-  | empty => simp [qform]
-  | insert i s hi ih => rw [Finset.sum_insert hi, qform_add, ih, Finset.sum_insert hi]
+  rw [qform_eq_op, map_sum, Op.qform_sum]
+  exact Finset.sum_congr rfl fun i _ => (qform_eq_op v (f i)).symm
 
 theorem qform_one [DecidableEq N] (hv : ‖evec v‖ = 1) : qform v (1 : Matrix N N ℂ) = 1 := by
-  rw [qform, Matrix.one_mulVec, ← norm_evec_sq, hv, one_pow]
+  rw [qform_eq_op, map_one]
+  exact Op.qform_one _ hv
 
 /-- **The squared state norm is the quadratic form of `M† M`.** -/
 theorem snorm_sq_eq_qform (M : Matrix N N ℂ) : snorm v M ^ 2 = qform v (Mᴴ * M) := by
-  rw [snorm, norm_evec_mulVec_sq, qform]
+  classical
+  rw [snorm_eq_op, qform_eq_op, map_mul, ← Matrix.star_eq_conjTranspose, map_star]
+  exact Op.snorm_sq_eq_qform _ _
 
 end QForm
 
 variable [DecidableEq N]
 
-theorem bnd_one : Bnd (1 : Matrix N N ℂ) 1 := fun v => by
-  rw [Matrix.one_mulVec, one_mul]
+theorem bnd_one : Bnd (1 : Matrix N N ℂ) 1 := by
+  rw [bnd_iff, map_one]
+  exact Op.bnd_one
 
 /-- **A self-adjoint contraction is bounded by one.** The hypothesis is the *matrix*
 inequality `M† M ≤ 1`, which is `Matrix.PosSemidef` of the difference. -/
@@ -274,8 +326,9 @@ theorem norm_evec_mulVec_of_isometry {M : Matrix N N ℂ} (h : Mᴴ * M = 1) (v 
   have h2 : (0 : ℝ) ≤ ‖evec v‖ := norm_nonneg _
   nlinarith [hsq]
 
-theorem bnd_one_of_isometry {M : Matrix N N ℂ} (h : Mᴴ * M = 1) : Bnd M 1 := fun v => by
-  rw [norm_evec_mulVec_of_isometry h v, one_mul]
+theorem bnd_one_of_isometry {M : Matrix N N ℂ} (h : Mᴴ * M = 1) : Bnd M 1 := by
+  rw [bnd_iff]
+  exact Op.bnd_one_of_isometry (star_toEuclideanCLM_mul_self h)
 
 /-! ## The bipartite structure
 
