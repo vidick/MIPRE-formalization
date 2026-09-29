@@ -91,6 +91,100 @@ theorem coarse {Λ' : Type*} [Fintype Λ'] [DecidableEq Λ'] (h : IsPVMIn P) (f 
     rw [Finset.mem_filter] at ha ha'
     rw [← ha.2, ← ha'.2, haa']
 
+/-- **The image of a projective measurement under a unital `⋆`-ring homomorphism** is one. -/
+theorem map {S F : Type*} [Ring S] [StarRing S] [FunLike F R S] [RingHomClass F R S]
+    [StarHomClass F R S] (f : F) (h : IsPVMIn P) : IsPVMIn fun a => f (P a) where
+  star_eq a := by rw [← map_star, h.star_eq]
+  idem a := by rw [← map_mul, h.idem]
+  sum_eq_one := by rw [← map_sum, h.sum_eq_one, map_one]
+  orthogonal hab := by rw [← map_mul, h.orthogonal hab, map_zero]
+
+/-! ### The marginals of a projective measurement with a product outcome set -/
+
+section Marginals
+
+variable {B C : Type*} [Fintype B] [Fintype C] {Q : B × C → R}
+
+/-- **The two marginals of a projective measurement multiply to the joint element**: the
+off-diagonal terms of the product vanish by orthogonality, and the surviving one is
+idempotent. -/
+theorem marg_mul_marg (h : IsPVMIn Q) (b : B) (c : C) :
+    (∑ b', Q (b', c)) * (∑ c', Q (b, c')) = Q (b, c) := by
+  classical
+  rw [Finset.sum_mul]
+  rw [Finset.sum_eq_single b (fun b' _ hb' => ?_) fun hmem => absurd (Finset.mem_univ b) hmem]
+  · rw [Finset.mul_sum,
+      Finset.sum_eq_single c (fun c' _ hc' => ?_) fun hmem => absurd (Finset.mem_univ c) hmem]
+    · exact h.idem (b, c)
+    · exact h.orthogonal fun he => hc' (Prod.mk.injEq .. ▸ he).2.symm
+  · rw [Finset.mul_sum]
+    refine Finset.sum_eq_zero fun c' _ => ?_
+    exact h.orthogonal fun he => hb' (Prod.mk.injEq .. ▸ he).1
+
+/-- The other order. -/
+theorem marg_mul_marg' (h : IsPVMIn Q) (b : B) (c : C) :
+    (∑ c', Q (b, c')) * (∑ b', Q (b', c)) = Q (b, c) := by
+  classical
+  rw [Finset.sum_mul]
+  rw [Finset.sum_eq_single c (fun c' _ hc' => ?_) fun hmem => absurd (Finset.mem_univ c) hmem]
+  · rw [Finset.mul_sum,
+      Finset.sum_eq_single b (fun b' _ hb' => ?_) fun hmem => absurd (Finset.mem_univ b) hmem]
+    · exact h.idem (b, c)
+    · exact h.orthogonal fun he => hb' (Prod.mk.injEq .. ▸ he).1.symm
+  · rw [Finset.mul_sum]
+    refine Finset.sum_eq_zero fun b' _ => ?_
+    exact h.orthogonal fun he => hc' (Prod.mk.injEq .. ▸ he).2
+
+theorem sum_marg_left (h : IsPVMIn Q) : ∑ b, (∑ c, Q (b, c)) = 1 := by
+  rw [← Fintype.sum_prod_type]
+  exact h.sum_eq_one
+
+theorem sum_marg_right (h : IsPVMIn Q) : ∑ c, (∑ b, Q (b, c)) = 1 := by
+  rw [Finset.sum_comm, ← Fintype.sum_prod_type]
+  exact h.sum_eq_one
+
+/-- The marginal forgetting the second outcome is projective. -/
+theorem marg_left (h : IsPVMIn Q) : IsPVMIn fun b => ∑ c, Q (b, c) where
+  star_eq b := by
+    rw [star_sum]
+    exact Finset.sum_congr rfl fun c _ => h.star_eq (b, c)
+  idem b := by
+    classical
+    rw [Finset.sum_mul]
+    refine Finset.sum_congr rfl fun c _ => ?_
+    rw [Finset.mul_sum, Finset.sum_eq_single c (fun c' _ hc' => ?_)
+      fun hmem => absurd (Finset.mem_univ c) hmem]
+    · exact h.idem (b, c)
+    · exact h.orthogonal fun he => hc' (Prod.mk.injEq .. ▸ he).2.symm
+  sum_eq_one := h.sum_marg_left
+  orthogonal {b b'} hbb' := by
+    rw [Finset.sum_mul]
+    refine Finset.sum_eq_zero fun c _ => ?_
+    rw [Finset.mul_sum]
+    exact Finset.sum_eq_zero fun c' _ => h.orthogonal fun he => hbb' (Prod.mk.injEq .. ▸ he).1
+
+/-- The marginal forgetting the first outcome is projective. -/
+theorem marg_right (h : IsPVMIn Q) : IsPVMIn fun c => ∑ b, Q (b, c) where
+  star_eq c := by
+    rw [star_sum]
+    exact Finset.sum_congr rfl fun b _ => h.star_eq (b, c)
+  idem c := by
+    classical
+    rw [Finset.sum_mul]
+    refine Finset.sum_congr rfl fun b _ => ?_
+    rw [Finset.mul_sum, Finset.sum_eq_single b (fun b' _ hb' => ?_)
+      fun hmem => absurd (Finset.mem_univ b) hmem]
+    · exact h.idem (b, c)
+    · exact h.orthogonal fun he => hb' (Prod.mk.injEq .. ▸ he).1.symm
+  sum_eq_one := h.sum_marg_right
+  orthogonal {c c'} hcc' := by
+    rw [Finset.sum_mul]
+    refine Finset.sum_eq_zero fun b _ => ?_
+    rw [Finset.mul_sum]
+    exact Finset.sum_eq_zero fun b' _ => h.orthogonal fun he => hcc' (Prod.mk.injEq .. ▸ he).2
+
+end Marginals
+
 end IsPVMIn
 
 /-! ## The observable of a weighting -/
@@ -210,6 +304,37 @@ theorem map_op [StarOrderedRing R] {Y : Type*} [Fintype Y] [DecidableEq Y] (f : 
     (M : POVMIn X R) (y : Y) :
     (M.map f).op y = ∑ x ∈ Finset.univ.filter (fun x => f x = y), M.op x :=
   AddSubmonoidClass.coe_finsetSum _ _
+
+/-- **The marginal of a jointly coarse-grained POVM is the coarse-graining of one component**:
+the fibres of `(f, g)` over `{b} × C` partition the fibre of `f` over `b`. -/
+theorem sum_op_map_prod [StarOrderedRing R] {B C : Type*} [Fintype B] [DecidableEq B]
+    [Fintype C] [DecidableEq C] (M : POVMIn X R) (f : X → B) (g : X → C) (b : B) :
+    ∑ c, (M.map fun a => (f a, g a)).op (b, c) = (M.map f).op b := by
+  classical
+  simp only [map_op, Finset.sum_filter]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun a _ => ?_
+  by_cases h : f a = b
+  · rw [ite_eq_left h, Finset.sum_eq_single (g a) (fun c _ hc => ite_eq_right fun he => hc (by
+      rw [← (Prod.mk.injEq .. ▸ he : f a = b ∧ g a = c).2]))
+      fun hmem => absurd (Finset.mem_univ (g a)) hmem, ite_eq_left (by rw [h])]
+  · rw [ite_eq_right h]
+    exact Finset.sum_eq_zero fun c _ => ite_eq_right fun he => h (Prod.mk.injEq .. ▸ he).1
+
+/-- The other marginal. -/
+theorem sum_op_map_prod' [StarOrderedRing R] {B C : Type*} [Fintype B] [DecidableEq B]
+    [Fintype C] [DecidableEq C] (M : POVMIn X R) (f : X → B) (g : X → C) (c : C) :
+    ∑ b, (M.map fun a => (f a, g a)).op (b, c) = (M.map g).op c := by
+  classical
+  simp only [map_op, Finset.sum_filter]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun a _ => ?_
+  by_cases h : g a = c
+  · rw [ite_eq_left h, Finset.sum_eq_single (f a) (fun b _ hb => ite_eq_right fun he => hb (by
+      rw [← (Prod.mk.injEq .. ▸ he : f a = b ∧ g a = c).1]))
+      fun hmem => absurd (Finset.mem_univ (f a)) hmem, ite_eq_left (by rw [h])]
+  · rw [ite_eq_right h]
+    exact Finset.sum_eq_zero fun b _ => ite_eq_right fun he => h (Prod.mk.injEq .. ▸ he).2
 
 end POVMIn
 

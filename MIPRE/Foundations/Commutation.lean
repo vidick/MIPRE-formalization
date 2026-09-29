@@ -43,6 +43,15 @@ POVM that hypothesis is `A_b^2 <= A_b` and `sum_b A_b = Id`, with no projectivit
 The constant is `16 delta`: each side of the commutator reaches `Id (x) P_{b,c}` in two steps
 (`4 delta` after one triangle inequality), and the commutator is one more triangle
 (`2 * 4 + 2 * 4`). No square root anywhere.
+
+## In a model
+
+The steps are proved for a state model (`StateModel`), with the families in its algebra and the
+hypothesis `sum_i F_i^dag F_i <= Id` on the represented operators
+(`StateModel.IsColContraction`); the analysis for a bipartite model
+(`BipartiteModel.commutation_analysis`), two POVMs in the first player's algebra against a
+projective measurement in the second player's. The matrix statements are their instances in the
+matrix and tensor-product models.
 -/
 
 noncomputable section
@@ -57,6 +66,208 @@ open scoped ComplexOrder MatrixOrder
 -- dozen `omit` lines with no consumer.
 set_option linter.unusedSectionVars false
 
+/-! ## The steps in a state model -/
+
+namespace StateModel
+
+variable {𝒞 : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] (M : StateModel 𝒞)
+
+/-- **A projective measurement is a column contraction**, with equality. -/
+theorem isColContraction_of_isPVMIn {ι : Type*} [Fintype ι] {Q : ι → 𝒞} (h : IsPVMIn Q) :
+    M.IsColContraction Q := by
+  refine le_of_eq ?_
+  have hterm : ∀ i, star (M.π (Q i)) * M.π (Q i) = M.π (Q i) := fun i => by
+    rw [← map_star, ← map_mul, h.star_eq, h.idem]
+  rw [Finset.sum_congr rfl fun i _ => hterm i, ← map_sum, h.sum_eq_one, map_one]
+
+/-- **A sum of mutually orthogonal projections times arbitrary operators has orthogonal terms.**
+The cross terms carry `P i * P j = 0`, so the squared state norm is additive --- exactly, and with
+no appeal to the size of the index set. -/
+theorem snorm_sq_sum_proj_mul {ι : Type*} [DecidableEq ι] {P : ι → 𝒞}
+    (hPsa : ∀ i, star (P i) = P i) (horth : ∀ i j, i ≠ j → P i * P j = 0) (W : ι → 𝒞)
+    (s : Finset ι) :
+    M.snorm (∑ i ∈ s, P i * W i) ^ 2 = ∑ i ∈ s, M.snorm (P i * W i) ^ 2 := by
+  rw [M.snorm_sq_eq_qform, star_sum, Finset.sum_mul, M.qform_sum]
+  refine Finset.sum_congr rfl fun i hi => ?_
+  rw [Finset.mul_sum, M.qform_sum, Finset.sum_eq_single_of_mem i hi fun j _ hji => ?_,
+    M.snorm_sq_eq_qform]
+  rw [star_mul, hPsa,
+    show star (W i) * P i * (P j * W j) = star (W i) * (P i * P j) * W j by noncomm_ring,
+    horth i j (Ne.symm hji), mul_zero, zero_mul, M.qform_zero]
+
+/-- **`lem:cool-closeness-fact`, in its partition form.** A projective measurement `A` that is
+`δ`-close to a family `B` stays `δ`-close to it after multiplying each element by `A`'s own
+element and summing over the fibres of an outcome map, simultaneously over all the fibres:
+projectivity kills the cross terms inside a fibre (`snorm_sq_sum_proj_mul`), and each `A i` is a
+contraction. -/
+theorem sum_snorm_sq_cool {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
+    {A : ι → 𝒞} (hA : IsPVMIn A) (B : ι → 𝒞) (f : ι → κ) :
+    ∑ k : κ, M.snorm (∑ i ∈ univ.filter fun i => f i = k, (A i - A i * B i)) ^ 2
+      ≤ ∑ i, M.snorm (A i - B i) ^ 2 := by
+  have hterm : ∀ i, A i - A i * B i = A i * (A i - B i) := fun i => by
+    rw [mul_sub, hA.idem]
+  have hfib : ∀ k : κ, M.snorm (∑ i ∈ univ.filter fun i => f i = k, (A i - A i * B i)) ^ 2
+      = ∑ i ∈ univ.filter fun i => f i = k, M.snorm (A i * (A i - B i)) ^ 2 := by
+    intro k
+    rw [Finset.sum_congr rfl fun i (_ : i ∈ univ.filter fun i => f i = k) => hterm i]
+    exact M.snorm_sq_sum_proj_mul hA.star_eq (fun i j hij => hA.orthogonal hij) _ _
+  rw [Finset.sum_congr rfl fun k (_ : k ∈ univ) => hfib k]
+  refine le_trans (le_of_eq (Finset.sum_fiberwise (univ : Finset ι) f
+    fun i => M.snorm (A i * (A i - B i)) ^ 2)) (Finset.sum_le_sum fun i _ => ?_)
+  have h := M.snorm_mul_le (M.bnd_one_of_isStarProjection (hA.isStarProjection i)) (A i - B i)
+  rw [one_mul] at h
+  exact pow_le_pow_left₀ (M.snorm_nonneg _) h 2
+
+/-- The weighted three-term triangle inequality, over a set of questions: the shape every item
+of `lem:qld-win` is stated in. -/
+theorem sum_weighted_snorm_sq_triangle3 {ι κ : Type*} [Fintype κ] {w : ι → ℝ}
+    (hw : ∀ i, 0 ≤ w i) (S : Finset ι) (P Q R T : ι → κ → 𝒞) :
+    ∑ i ∈ S, w i * ∑ o, M.snorm (P i o - T i o) ^ 2
+      ≤ 3 * ∑ i ∈ S, w i * ∑ o, M.snorm (P i o - Q i o) ^ 2
+        + 3 * ∑ i ∈ S, w i * ∑ o, M.snorm (Q i o - R i o) ^ 2
+        + 3 * ∑ i ∈ S, w i * ∑ o, M.snorm (R i o - T i o) ^ 2 := by
+  have hstep : ∀ i ∈ S, w i * ∑ o, M.snorm (P i o - T i o) ^ 2
+      ≤ 3 * (w i * ∑ o, M.snorm (P i o - Q i o) ^ 2)
+        + 3 * (w i * ∑ o, M.snorm (Q i o - R i o) ^ 2)
+        + 3 * (w i * ∑ o, M.snorm (R i o - T i o) ^ 2) := by
+    intro i _
+    have h := M.sum_snorm_sq_triangle3 univ (P i) (Q i) (R i) (T i)
+    nlinarith [hw i]
+  refine le_trans (Finset.sum_le_sum hstep) (le_of_eq ?_)
+  rw [Finset.mul_sum, Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib,
+    ← Finset.sum_add_distrib]
+
+section Analysis
+
+variable {B C : Type*} [Fintype B] [Fintype C] {δ : ℝ}
+
+/-- Putting a family in front, with the front index in the first component of the pair. -/
+theorem sum_prod_snorm_sq_mul_le_fst (F : B → 𝒞) (hF : M.IsColContraction F) (T : C → 𝒞) :
+    ∑ p : B × C, M.snorm (F p.1 * T p.2) ^ 2 ≤ ∑ c, M.snorm (T c) ^ 2 := by
+  rw [Fintype.sum_prod_type, Finset.sum_comm]
+  exact Finset.sum_le_sum fun c _ => M.sum_snorm_sq_mul_le F hF (T c)
+
+/-- Putting a family in front, with the front index in the second component. -/
+theorem sum_prod_snorm_sq_mul_le_snd (F : C → 𝒞) (hF : M.IsColContraction F) (T : B → 𝒞) :
+    ∑ p : B × C, M.snorm (F p.2 * T p.1) ^ 2 ≤ ∑ b, M.snorm (T b) ^ 2 := by
+  rw [Fintype.sum_prod_type]
+  exact Finset.sum_le_sum fun b _ => M.sum_snorm_sq_mul_le F hF (T b)
+
+/-- **The commutation analysis, in one algebra.** `alpha` and `gamma` are the two families that
+are to commute; `betaB`, `betaC` are what they are respectively close to, and `betaBC` is the
+joint operator both products reach. -/
+theorem commutation_analysis_abstract (alpha : B → 𝒞) (gamma : C → 𝒞) (betaB : B → 𝒞)
+    (betaC : C → 𝒞) (betaBC : B × C → 𝒞)
+    (halpha : M.IsColContraction alpha) (hgamma : M.IsColContraction gamma)
+    (hbetaB : M.IsColContraction betaB) (hbetaC : M.IsColContraction betaC)
+    (hcomm : ∀ b c, alpha b * betaC c = betaC c * alpha b)
+    (hcomm' : ∀ b c, gamma c * betaB b = betaB b * gamma c)
+    (hmul : ∀ b c, betaC c * betaB b = betaBC (b, c))
+    (hmul' : ∀ b c, betaB b * betaC c = betaBC (b, c))
+    (hA : ∑ b, M.snorm (alpha b - betaB b) ^ 2 ≤ δ)
+    (hC : ∑ c, M.snorm (gamma c - betaC c) ^ 2 ≤ δ) :
+    ∑ p : B × C, M.snorm (alpha p.1 * gamma p.2 - gamma p.2 * alpha p.1) ^ 2 ≤ 16 * δ := by
+  -- `alpha_b gamma_c` reaches `betaBC` in two steps
+  have s1 : ∑ p : B × C, M.snorm (alpha p.1 * gamma p.2 - alpha p.1 * betaC p.2) ^ 2 ≤ δ := by
+    refine le_trans (le_of_eq (Finset.sum_congr rfl fun p _ => ?_))
+      (le_trans (M.sum_prod_snorm_sq_mul_le_fst alpha halpha
+        (fun c => gamma c - betaC c)) hC)
+    rw [mul_sub]
+  have s2 : ∑ p : B × C, M.snorm (alpha p.1 * betaC p.2 - betaBC p) ^ 2 ≤ δ := by
+    refine le_trans (le_of_eq (Finset.sum_congr rfl fun p _ => ?_))
+      (le_trans (M.sum_prod_snorm_sq_mul_le_snd betaC hbetaC
+        (fun b => alpha b - betaB b)) hA)
+    rw [mul_sub, ← hcomm p.1 p.2, hmul p.1 p.2]
+  have h1 : ∑ p : B × C, M.snorm (alpha p.1 * gamma p.2 - betaBC p) ^ 2 ≤ 4 * δ := by
+    refine le_trans (M.sum_snorm_sq_triangle univ _ (fun p => alpha p.1 * betaC p.2) _) ?_
+    linarith
+  -- `gamma_c alpha_b` reaches the same operator
+  have s3 : ∑ p : B × C, M.snorm (gamma p.2 * alpha p.1 - gamma p.2 * betaB p.1) ^ 2 ≤ δ := by
+    refine le_trans (le_of_eq (Finset.sum_congr rfl fun p _ => ?_))
+      (le_trans (M.sum_prod_snorm_sq_mul_le_snd gamma hgamma
+        (fun b => alpha b - betaB b)) hA)
+    rw [mul_sub]
+  have s4 : ∑ p : B × C, M.snorm (gamma p.2 * betaB p.1 - betaBC p) ^ 2 ≤ δ := by
+    refine le_trans (le_of_eq (Finset.sum_congr rfl fun p _ => ?_))
+      (le_trans (M.sum_prod_snorm_sq_mul_le_fst betaB hbetaB
+        (fun c => gamma c - betaC c)) hC)
+    rw [mul_sub, ← hcomm' p.1 p.2, hmul' p.1 p.2]
+  have h2 : ∑ p : B × C, M.snorm (gamma p.2 * alpha p.1 - betaBC p) ^ 2 ≤ 4 * δ := by
+    refine le_trans (M.sum_snorm_sq_triangle univ _ (fun p => gamma p.2 * betaB p.1) _) ?_
+    linarith
+  have h2' : ∑ p : B × C, M.snorm (betaBC p - gamma p.2 * alpha p.1) ^ 2 ≤ 4 * δ := by
+    refine le_trans (le_of_eq (Finset.sum_congr rfl fun p _ => ?_)) h2
+    rw [M.snorm_sub_comm]
+  refine le_trans (M.sum_snorm_sq_triangle univ _ betaBC _) ?_
+  linarith
+
+end Analysis
+
+end StateModel
+
+/-! ## The analysis in a bipartite model -/
+
+namespace BipartiteModel
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] (M : BipartiteModel 𝒞 𝒜 ℬ)
+
+/-- **Replacing the first player's operator by a nearby one on its own side**, inside a
+cross-party deviation: one triangle inequality, at the usual cost of a factor two. -/
+theorem sum_xSqNorm_le_of_two_step {κ : Type*} [Fintype κ] (Q Q' : κ → 𝒜) (R : κ → ℬ)
+    {a b : ℝ} (h1 : ∑ o, M.stateSqNorm (Q o - Q' o) ≤ a)
+    (h2 : ∑ o, M.xSqNorm (Q' o) (R o) ≤ b) :
+    ∑ o, M.xSqNorm (Q o) (R o) ≤ 2 * a + 2 * b := by
+  have hkey := M.sum_snorm_sq_triangle univ (fun o => M.πA (Q o)) (fun o => M.πA (Q' o))
+    (fun o => M.πB (R o))
+  have e2 : ∑ o, M.snorm (M.πA (Q o) - M.πA (Q' o)) ^ 2 = ∑ o, M.stateSqNorm (Q o - Q' o) :=
+    Finset.sum_congr rfl fun o _ => by
+      show _ = M.snorm (M.πA (Q o - Q' o)) ^ 2
+      rw [map_sub]
+  have h2' : ∑ o, M.snorm (M.πA (Q' o) - M.πB (R o)) ^ 2 ≤ b := h2
+  rw [e2] at hkey
+  show ∑ o, M.snorm (M.πA (Q o) - M.πB (R o)) ^ 2 ≤ 2 * a + 2 * b
+  linarith
+
+/-- **A POVM of the first player is a column contraction** on the Hilbert space: `t² ≤ t` for
+each element, on the represented operator, and the elements sum to one. No projectivity. -/
+theorem isColContraction_πA [PartialOrder 𝒜] [StarOrderedRing 𝒜] {ι : Type*} [Fintype ι]
+    (P : POVMIn ι 𝒜) : M.IsColContraction fun i => M.πA (P.op i) := by
+  have hterm : ∀ i, star (M.π (M.πA (P.op i))) * M.π (M.πA (P.op i)) ≤ M.π (M.πA (P.op i)) :=
+    fun i => by
+      rw [(IsSelfAdjoint.of_nonneg (M.π_πA_nonneg (P.op_nonneg i))).star_eq]
+      exact Op.mul_self_le_self (M.π_πA_nonneg (P.op_nonneg i)) (M.π_πA_le_one (P.op_le_one i))
+  refine (Finset.sum_le_sum fun i _ => hterm i).trans (le_of_eq ?_)
+  rw [← map_sum, ← map_sum, P.sum_op, map_one, map_one]
+
+/-- A POVM of the second player is a column contraction. -/
+theorem isColContraction_πB [PartialOrder ℬ] [StarOrderedRing ℬ] {ι : Type*} [Fintype ι]
+    (P : POVMIn ι ℬ) : M.IsColContraction fun i => M.πB (P.op i) :=
+  M.swap.isColContraction_πA P
+
+/-- **The commutation analysis** (`lem:commutation-analysis`) in a bipartite model: two POVMs of
+the first player, each cross-party close to the corresponding marginal of one **projective**
+measurement of the second player, commute on the state at `16 δ`. -/
+theorem commutation_analysis [PartialOrder 𝒜] [StarOrderedRing 𝒜] {B C : Type*} [Fintype B]
+    [Fintype C] {A : POVMIn B 𝒜} {Cm : POVMIn C 𝒜} {P : B × C → ℬ} (hP : IsPVMIn P) {δ : ℝ}
+    (hA : ∑ b, M.xSqNorm (A.op b) (∑ c, P (b, c)) ≤ δ)
+    (hC : ∑ c, M.xSqNorm (Cm.op c) (∑ b, P (b, c)) ≤ δ) :
+    ∑ p : B × C, M.stateSqNorm (A.op p.1 * Cm.op p.2 - Cm.op p.2 * A.op p.1) ≤ 16 * δ := by
+  have h := M.commutation_analysis_abstract (fun b => M.πA (A.op b)) (fun c => M.πA (Cm.op c))
+    (fun b => M.πB (∑ c, P (b, c))) (fun c => M.πB (∑ b, P (b, c))) (fun p => M.πB (P p))
+    (M.isColContraction_πA A) (M.isColContraction_πA Cm)
+    (M.isColContraction_of_isPVMIn (hP.marg_left.map M.πB))
+    (M.isColContraction_of_isPVMIn (hP.marg_right.map M.πB))
+    (fun b c => (M.commute _ _).eq) (fun b c => (M.commute _ _).eq)
+    (fun b c => by rw [← map_mul, hP.marg_mul_marg b c])
+    (fun b c => by rw [← map_mul, hP.marg_mul_marg' b c])
+    hA hC
+  refine le_trans (le_of_eq (Finset.sum_congr rfl fun p _ => ?_)) h
+  show M.snorm (M.πA (A.op p.1 * Cm.op p.2 - Cm.op p.2 * A.op p.1)) ^ 2 = _
+  rw [map_sub, map_mul, map_mul]
+
+end BipartiteModel
+
 /-! ## The quadratic form is monotone -/
 
 section Qform
@@ -65,14 +276,13 @@ variable {N : Type*} [Fintype N] [DecidableEq N]
 
 theorem qform_nonneg_of_nonneg (v : N → ℂ) {Z : Matrix N N ℂ}
     (hZ : (0 : Matrix N N ℂ) ≤ Z) : 0 ≤ qform v Z := by
-  have h := (Matrix.nonneg_iff_posSemidef.mp hZ).dotProduct_mulVec_nonneg v
-  exact (Complex.nonneg_iff.mp h).1
+  rw [qform_eq_mat]
+  exact (StateModel.mat v).qform_nonneg_of_nonneg hZ
 
 theorem qform_le_of_le (v : N → ℂ) {X Y : Matrix N N ℂ} (h : X ≤ Y) :
     qform v X ≤ qform v Y := by
-  have h0 : 0 ≤ qform v (Y - X) := qform_nonneg_of_nonneg v (sub_nonneg.mpr h)
-  rw [qform_sub] at h0
-  linarith
+  rw [qform_eq_mat, qform_eq_mat]
+  exact (StateModel.mat v).qform_mono h
 
 end Qform
 
@@ -90,38 +300,14 @@ variable {N : Type*} [Fintype N] [DecidableEq N]
 theorem sum_snorm_sq_mul_le {ι : Type*} [Fintype ι] (v : N → ℂ)
     (F : ι → Matrix N N ℂ) (hF : ∑ i, (F i)ᴴ * F i ≤ (1 : Matrix N N ℂ))
     (M : Matrix N N ℂ) :
-    ∑ i, snorm v (F i * M) ^ 2 ≤ snorm v M ^ 2 := by
-  have key : ∀ i : ι, snorm v (F i * M) ^ 2 = qform v (Mᴴ * ((F i)ᴴ * F i) * M) := by
-    intro i
-    rw [snorm_sq_eq_qform, Matrix.conjTranspose_mul]
-    congr 1
-    noncomm_ring
-  rw [Finset.sum_congr rfl fun i _ => key i, ← qform_sum]
-  have hsum : ∑ i : ι, Mᴴ * ((F i)ᴴ * F i) * M = Mᴴ * (∑ i, (F i)ᴴ * F i) * M := by
-    rw [Finset.mul_sum, Finset.sum_mul]
-  rw [hsum, snorm_sq_eq_qform]
-  refine qform_le_of_le v ?_
-  have hpsd : (0 : Matrix N N ℂ) ≤ Mᴴ * ((1 : Matrix N N ℂ) - ∑ i, (F i)ᴴ * F i) * M :=
-    Matrix.nonneg_iff_posSemidef.mpr
-      ((Matrix.nonneg_iff_posSemidef.mp (sub_nonneg.mpr hF)).conjTranspose_mul_mul_same M)
-  have hsplit : Mᴴ * ((1 : Matrix N N ℂ) - ∑ i, (F i)ᴴ * F i) * M
-      = Mᴴ * M - Mᴴ * (∑ i, (F i)ᴴ * F i) * M := by noncomm_ring
-  rw [hsplit] at hpsd
-  exact sub_nonneg.mp hpsd
+    ∑ i, snorm v (F i * M) ^ 2 ≤ snorm v M ^ 2 :=
+  (StateModel.mat v).sum_snorm_sq_mul_le_of_le F hF M
 
 /-- **A contraction in front costs nothing.** The one-operator case of `sum_snorm_sq_mul_le`. -/
 theorem snorm_sq_mul_le_of_contraction (v : N → ℂ) {P : Matrix N N ℂ}
     (hP : Pᴴ * P ≤ (1 : Matrix N N ℂ)) (M : Matrix N N ℂ) :
-    snorm v (P * M) ^ 2 ≤ snorm v M ^ 2 := by
-  rw [snorm_sq_eq_qform, snorm_sq_eq_qform, Matrix.conjTranspose_mul,
-    show Mᴴ * Pᴴ * (P * M) = Mᴴ * (Pᴴ * P) * M from by noncomm_ring]
-  refine qform_le_of_le v ?_
-  have hpsd : (0 : Matrix N N ℂ) ≤ Mᴴ * ((1 : Matrix N N ℂ) - Pᴴ * P) * M :=
-    Matrix.nonneg_iff_posSemidef.mpr
-      ((Matrix.nonneg_iff_posSemidef.mp (sub_nonneg.mpr hP)).conjTranspose_mul_mul_same M)
-  rw [show Mᴴ * ((1 : Matrix N N ℂ) - Pᴴ * P) * M = Mᴴ * M - Mᴴ * (Pᴴ * P) * M from by
-    noncomm_ring] at hpsd
-  exact sub_nonneg.mp hpsd
+    snorm v (P * M) ^ 2 ≤ snorm v M ^ 2 :=
+  (StateModel.mat v).snorm_sq_mul_le_of_contraction hP M
 
 /-- **A sum of mutually orthogonal projections times arbitrary operators has orthogonal terms.**
 The cross terms carry `P i * P j = 0`, so the squared state norm is additive --- exactly, and with
@@ -129,94 +315,34 @@ no appeal to the size of the index set. -/
 theorem snorm_sq_sum_proj_mul {ι : Type*} [Fintype ι] [DecidableEq ι] (v : N → ℂ)
     {P : ι → Matrix N N ℂ} (hPsa : ∀ i, (P i)ᴴ = P i)
     (horth : ∀ i j, i ≠ j → P i * P j = 0) (W : ι → Matrix N N ℂ) (s : Finset ι) :
-    snorm v (∑ i ∈ s, P i * W i) ^ 2 = ∑ i ∈ s, snorm v (P i * W i) ^ 2 := by
-  classical
-  rw [snorm_sq_eq_qform, Matrix.conjTranspose_sum, Finset.sum_mul, qform_sum]
-  refine Finset.sum_congr rfl fun i hi => ?_
-  rw [Matrix.mul_sum, qform_sum, Finset.sum_eq_single_of_mem i hi fun j _ hji => ?_,
-    snorm_sq_eq_qform]
-  rw [Matrix.conjTranspose_mul, hPsa,
-    show (W i)ᴴ * P i * (P j * W j) = (W i)ᴴ * (P i * P j) * W j from by noncomm_ring,
-    horth i j (Ne.symm hji), Matrix.mul_zero, Matrix.zero_mul]
-  show qform v 0 = 0
-  rw [qform, Matrix.zero_mulVec]
-  simp
+    snorm v (∑ i ∈ s, P i * W i) ^ 2 = ∑ i ∈ s, snorm v (P i * W i) ^ 2 :=
+  (StateModel.mat v).snorm_sq_sum_proj_mul hPsa horth W s
 
 /-- **`lem:cool-closeness-fact`, in its partition form.** A projective measurement `A` that is
 `delta`-close to a family `B` stays `delta`-close to it after multiplying each element by `A`'s own
 element and summing over the fibres of an outcome map --- *simultaneously* over all the fibres,
 which is what the consumers need: the single-subset form applied to the `q` fibres of an outcome
-map one at a time would cost a factor `q`.
-
-The two facts are that projectivity kills the cross terms inside a fibre, and that each `A i` is a
-contraction. The fibres being disjoint is what lets the outer sum be absorbed. -/
+map one at a time would cost a factor `q`. -/
 theorem sum_snorm_sq_cool {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
     (v : N → ℂ) {A : ι → Matrix N N ℂ} (hA : IsPVM A) (B : ι → Matrix N N ℂ) (f : ι → κ) :
     ∑ k : κ, snorm v (∑ i ∈ univ.filter fun i => f i = k, (A i - A i * B i)) ^ 2
-      ≤ ∑ i, snorm v (A i - B i) ^ 2 := by
-  classical
-  have hterm : ∀ i, A i - A i * B i = A i * (A i - B i) := fun i => by
-    rw [Matrix.mul_sub, hA.idem]
-  have horth : ∀ i j : ι, i ≠ j →
-      (A i * (A i - B i))ᴴ * (A j * (A j - B j)) = 0 := by
-    intro i j hij
-    rw [Matrix.conjTranspose_mul, hA.isSelfAdjoint,
-      show (A i - B i)ᴴ * A i * (A j * (A j - B j))
-          = (A i - B i)ᴴ * (A i * A j) * (A j - B j) from by noncomm_ring,
-      hA.orthogonal hij, Matrix.mul_zero, Matrix.zero_mul]
-  have hfib : ∀ k : κ, snorm v (∑ i ∈ univ.filter fun i => f i = k, (A i - A i * B i)) ^ 2
-      = ∑ i ∈ univ.filter fun i => f i = k, snorm v (A i * (A i - B i)) ^ 2 := by
-    intro k
-    rw [Finset.sum_congr rfl fun i (_ : i ∈ univ.filter fun i => f i = k) => hterm i,
-      snorm_sq_eq_qform, Matrix.conjTranspose_sum, Finset.sum_mul, qform_sum]
-    refine Finset.sum_congr rfl fun i hi => ?_
-    rw [Matrix.mul_sum, qform_sum, Finset.sum_eq_single_of_mem i hi fun j _ hji => ?_,
-      snorm_sq_eq_qform]
-    rw [horth i j (Ne.symm hji)]
-    show qform v 0 = 0
-    rw [qform, Matrix.zero_mulVec]
-    simp
-  rw [Finset.sum_congr rfl fun k (_ : k ∈ univ) => hfib k]
-  refine le_trans (le_of_eq (Finset.sum_fiberwise (univ : Finset ι) f
-    fun i => snorm v (A i * (A i - B i)) ^ 2)) (Finset.sum_le_sum fun i _ => ?_)
-  refine snorm_sq_mul_le_of_contraction v ?_ _
-  rw [hA.isSelfAdjoint, hA.idem]
-  exact le_trans (Finset.single_le_sum (fun j _ => hA.nonneg j) (mem_univ i))
-    (le_of_eq hA.sum_eq_one)
+      ≤ ∑ i, snorm v (A i - B i) ^ 2 :=
+  (StateModel.mat v).sum_snorm_sq_cool hA.toIn B f
 
 /-- The triangle inequality for a family of deviations, at the usual cost of a factor two. -/
 theorem sum_snorm_sq_triangle' {ι : Type*} [Fintype ι] (v : N → ℂ)
     (P Q R : ι → Matrix N N ℂ) :
     ∑ i, snorm v (P i - R i) ^ 2
-      ≤ 2 * ∑ i, snorm v (P i - Q i) ^ 2 + 2 * ∑ i, snorm v (Q i - R i) ^ 2 := by
-  rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
-  refine Finset.sum_le_sum fun i _ => ?_
-  have hsplit : P i - R i = (P i - Q i) + (Q i - R i) := by abel
-  have htri : snorm v (P i - R i) ≤ snorm v (P i - Q i) + snorm v (Q i - R i) := by
-    rw [hsplit]; exact snorm_add_le v _ _
-  nlinarith [snorm_nonneg v (P i - Q i), snorm_nonneg v (Q i - R i),
-    snorm_nonneg v (P i - R i), sq_nonneg (snorm v (P i - Q i) - snorm v (Q i - R i))]
+      ≤ 2 * ∑ i, snorm v (P i - Q i) ^ 2 + 2 * ∑ i, snorm v (Q i - R i) ^ 2 :=
+  (StateModel.mat v).sum_snorm_sq_triangle univ P Q R
 
 /-- The three-term triangle inequality for a family of deviations. -/
 theorem sum_snorm_sq_triangle3 {κ : Type*} [Fintype κ] (v : N → ℂ)
     (P Q R T : κ → Matrix N N ℂ) :
     ∑ o, snorm v (P o - T o) ^ 2
       ≤ 3 * ∑ o, snorm v (P o - Q o) ^ 2 + 3 * ∑ o, snorm v (Q o - R o) ^ 2
-        + 3 * ∑ o, snorm v (R o - T o) ^ 2 := by
-  rw [Finset.mul_sum, Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib,
-    ← Finset.sum_add_distrib]
-  refine Finset.sum_le_sum fun o _ => ?_
-  have hsplit : P o - T o = (P o - Q o) + ((Q o - R o) + (R o - T o)) := by abel
-  have htri : snorm v (P o - T o)
-      ≤ snorm v (P o - Q o) + (snorm v (Q o - R o) + snorm v (R o - T o)) := by
-    rw [hsplit]
-    exact le_trans (snorm_add_le v _ _) (by
-      have := snorm_add_le v (Q o - R o) (R o - T o)
-      linarith)
-  nlinarith [snorm_nonneg v (P o - Q o), snorm_nonneg v (Q o - R o), snorm_nonneg v (R o - T o),
-    snorm_nonneg v (P o - T o), sq_nonneg (snorm v (P o - Q o) - snorm v (Q o - R o)),
-    sq_nonneg (snorm v (P o - Q o) - snorm v (R o - T o)),
-    sq_nonneg (snorm v (Q o - R o) - snorm v (R o - T o))]
+        + 3 * ∑ o, snorm v (R o - T o) ^ 2 :=
+  (StateModel.mat v).sum_snorm_sq_triangle3 univ P Q R T
 
 /-- The weighted form, over a set of questions: the shape every item of `lem:qld-win` is stated
 in. -/
@@ -225,17 +351,8 @@ theorem sum_weighted_snorm_sq_triangle3 {ι κ : Type*} [Fintype κ] (v : N → 
     ∑ i ∈ S, w i * ∑ o, snorm v (P i o - T i o) ^ 2
       ≤ 3 * ∑ i ∈ S, w i * ∑ o, snorm v (P i o - Q i o) ^ 2
         + 3 * ∑ i ∈ S, w i * ∑ o, snorm v (Q i o - R i o) ^ 2
-        + 3 * ∑ i ∈ S, w i * ∑ o, snorm v (R i o - T i o) ^ 2 := by
-  have hstep : ∀ i ∈ S, w i * ∑ o, snorm v (P i o - T i o) ^ 2
-      ≤ 3 * (w i * ∑ o, snorm v (P i o - Q i o) ^ 2)
-        + 3 * (w i * ∑ o, snorm v (Q i o - R i o) ^ 2)
-        + 3 * (w i * ∑ o, snorm v (R i o - T i o) ^ 2) := by
-    intro i _
-    have h := sum_snorm_sq_triangle3 v (P i) (Q i) (R i) (T i)
-    nlinarith [hw i]
-  refine le_trans (Finset.sum_le_sum hstep) (le_of_eq ?_)
-  rw [Finset.mul_sum, Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib,
-    ← Finset.sum_add_distrib]
+        + 3 * ∑ i ∈ S, w i * ∑ o, snorm v (R i o - T i o) ^ 2 :=
+  (StateModel.mat v).sum_weighted_snorm_sq_triangle3 hw S P Q R T
 
 end AddInFront
 
@@ -270,23 +387,8 @@ theorem sum_xSqNorm_le_of_two_step {κ : Type*} [Fintype κ] {ψ : dA × dB → 
     (Q Q' : κ → Matrix dA dA ℂ) (R : κ → Matrix dB dB ℂ) {a b : ℝ}
     (h1 : ∑ o, stateSqNorm ψ (Q o - Q' o) ≤ a) (h2 : ∑ o, xSqNorm ψ (Q' o) (R o) ≤ b) :
     ∑ o, xSqNorm ψ (Q o) (R o) ≤ 2 * a + 2 * b := by
-  have hkey := sum_snorm_sq_triangle' ψ
-    (fun o => (aOp (Q o) : Matrix (dA × dB) (dA × dB) ℂ))
-    (fun o => (aOp (Q' o) : Matrix (dA × dB) (dA × dB) ℂ))
-    (fun o => (bOp (R o) : Matrix (dA × dB) (dA × dB) ℂ))
-  have e1 : ∑ o, xSqNorm ψ (Q o) (R o)
-      = ∑ o, snorm ψ ((aOp (Q o) : Matrix (dA × dB) (dA × dB) ℂ) - bOp (R o)) ^ 2 :=
-    Finset.sum_congr rfl fun o _ => xSqNorm_eq_snorm_sq ψ (Q o) (R o)
-  have e2 : ∑ o, snorm ψ ((aOp (Q o) : Matrix (dA × dB) (dA × dB) ℂ) - aOp (Q' o)) ^ 2
-      = ∑ o, stateSqNorm ψ (Q o - Q' o) :=
-    Finset.sum_congr rfl fun o _ => by
-      rw [← aOp_sub, stateSqNorm, stateNorm, norm_stateVec_eq_snorm]
-  have e3 : ∑ o, snorm ψ ((aOp (Q' o) : Matrix (dA × dB) (dA × dB) ℂ) - bOp (R o)) ^ 2
-      = ∑ o, xSqNorm ψ (Q' o) (R o) :=
-    (Finset.sum_congr rfl fun o _ => xSqNorm_eq_snorm_sq ψ (Q' o) (R o)).symm
-  rw [e1]
-  rw [e2, e3] at hkey
-  linarith
+  simp only [xSqNorm_eq_tensor] at h2 ⊢
+  exact (BipartiteModel.tensor ψ).sum_xSqNorm_le_of_two_step Q Q' R h1 h2
 
 end TwoStep
 
@@ -301,48 +403,14 @@ variable {d : Type*} [Fintype d] [DecidableEq d]
 fibre of `f` over `b`. -/
 theorem POVM.sum_mats_map_prod {ι B C : Type*} [Fintype ι] [DecidableEq ι] [Fintype B]
     [DecidableEq B] [Fintype C] [DecidableEq C] (M : POVM ι d) (f : ι → B) (g : ι → C) (b : B) :
-    ∑ c, (((M.map fun a => (f a, g a)).mats (b, c)).val) = (((M.map f).mats b).val) := by
-  classical
-  have hL : ∀ c : C, (((M.map fun a => (f a, g a)).mats (b, c)).val)
-      = ∑ a, if (f a, g a) = (b, c) then ((M.mats a).val) else 0 := by
-    intro c
-    show ((∑ a ∈ univ.filter fun a => (f a, g a) = (b, c), M.mats a : selfAdjoint _)).val = _
-    rw [AddSubmonoidClass.coe_finsetSum, Finset.sum_filter]
-  rw [Finset.sum_congr rfl fun c (_ : c ∈ univ) => hL c, Finset.sum_comm]
-  have hR : (((M.map f).mats b).val) = ∑ a, if f a = b then ((M.mats a).val) else 0 := by
-    show ((∑ a ∈ univ.filter fun a => f a = b, M.mats a : selfAdjoint _)).val = _
-    rw [AddSubmonoidClass.coe_finsetSum, Finset.sum_filter]
-  rw [hR]
-  refine Finset.sum_congr rfl fun a _ => ?_
-  by_cases h : f a = b
-  · rw [if_pos h, Finset.sum_eq_single (g a) (fun c _ hc => if_neg fun he => hc (by
-      rw [← (Prod.mk.injEq .. ▸ he : f a = b ∧ g a = c).2]))
-      fun hmem => absurd (Finset.mem_univ (g a)) hmem, if_pos (by rw [h])]
-  · rw [if_neg h]
-    exact Finset.sum_eq_zero fun c _ => if_neg fun he => h (Prod.mk.injEq .. ▸ he).1
+    ∑ c, (((M.map fun a => (f a, g a)).mats (b, c)).val) = (((M.map f).mats b).val) :=
+  M.toIn.sum_op_map_prod f g b
 
 /-- The other marginal. -/
 theorem POVM.sum_mats_map_prod' {ι B C : Type*} [Fintype ι] [DecidableEq ι] [Fintype B]
     [DecidableEq B] [Fintype C] [DecidableEq C] (M : POVM ι d) (f : ι → B) (g : ι → C) (c : C) :
-    ∑ b, (((M.map fun a => (f a, g a)).mats (b, c)).val) = (((M.map g).mats c).val) := by
-  classical
-  have hL : ∀ b : B, (((M.map fun a => (f a, g a)).mats (b, c)).val)
-      = ∑ a, if (f a, g a) = (b, c) then ((M.mats a).val) else 0 := by
-    intro b
-    show ((∑ a ∈ univ.filter fun a => (f a, g a) = (b, c), M.mats a : selfAdjoint _)).val = _
-    rw [AddSubmonoidClass.coe_finsetSum, Finset.sum_filter]
-  rw [Finset.sum_congr rfl fun b (_ : b ∈ univ) => hL b, Finset.sum_comm]
-  have hR : (((M.map g).mats c).val) = ∑ a, if g a = c then ((M.mats a).val) else 0 := by
-    show ((∑ a ∈ univ.filter fun a => g a = c, M.mats a : selfAdjoint _)).val = _
-    rw [AddSubmonoidClass.coe_finsetSum, Finset.sum_filter]
-  rw [hR]
-  refine Finset.sum_congr rfl fun a _ => ?_
-  by_cases h : g a = c
-  · rw [if_pos h, Finset.sum_eq_single (f a) (fun b _ hb => if_neg fun he => hb (by
-      rw [← (Prod.mk.injEq .. ▸ he : f a = b ∧ g a = c).1]))
-      fun hmem => absurd (Finset.mem_univ (f a)) hmem, if_pos (by rw [h])]
-  · rw [if_neg h]
-    exact Finset.sum_eq_zero fun b _ => if_neg fun he => h (Prod.mk.injEq .. ▸ he).2
+    ∑ b, (((M.map fun a => (f a, g a)).mats (b, c)).val) = (((M.map g).mats c).val) :=
+  M.toIn.sum_op_map_prod' f g c
 
 end MapMarginal
 
@@ -423,81 +491,41 @@ variable {N B C : Type*} [Fintype N] [DecidableEq N] [Fintype B] [DecidableEq B]
 whole use of projectivity in the commutation analysis: the off-diagonal terms of the product
 vanish by `IsPVM.orthogonal`, and the surviving one is idempotent. -/
 theorem IsPVM.marg_mul_marg {P : B × C → Matrix N N ℂ} (h : IsPVM P) (b : B) (c : C) :
-    (∑ b', P (b', c)) * (∑ c', P (b, c')) = P (b, c) := by
-  classical
-  rw [Finset.sum_mul]
-  rw [Finset.sum_eq_single b (fun b' _ hb' => ?_) fun hmem => absurd (Finset.mem_univ b) hmem]
-  · rw [Finset.mul_sum,
-      Finset.sum_eq_single c (fun c' _ hc' => ?_) fun hmem => absurd (Finset.mem_univ c) hmem]
-    · exact h.idem (b, c)
-    · exact h.orthogonal fun he => hc' (Prod.mk.injEq .. ▸ he).2.symm
-  · rw [Finset.mul_sum]
-    refine Finset.sum_eq_zero fun c' _ => ?_
-    exact h.orthogonal fun he => hb' (Prod.mk.injEq .. ▸ he).1
+    (∑ b', P (b', c)) * (∑ c', P (b, c')) = P (b, c) :=
+  h.toIn.marg_mul_marg b c
 
 /-- The marginal over `C`, as the coarse-graining of `P` that forgets the second outcome. -/
 theorem IsPVM.sum_marg_left {P : B × C → Matrix N N ℂ} (h : IsPVM P) :
-    ∑ b, (∑ c, P (b, c)) = 1 := by
-  rw [← Fintype.sum_prod_type]
-  exact h.sum_eq_one
+    ∑ b, (∑ c, P (b, c)) = 1 :=
+  h.toIn.sum_marg_left
 
 theorem IsPVM.sum_marg_right {P : B × C → Matrix N N ℂ} (h : IsPVM P) :
-    ∑ c, (∑ b, P (b, c)) = 1 := by
-  rw [Finset.sum_comm, ← Fintype.sum_prod_type]
-  exact h.sum_eq_one
+    ∑ c, (∑ b, P (b, c)) = 1 :=
+  h.toIn.sum_marg_right
 
 /-- The marginal of a projective measurement with a product outcome set is projective. -/
 theorem IsPVM.marg_left {P : B × C → Matrix N N ℂ} (h : IsPVM P) :
-    IsPVM fun b => ∑ c, P (b, c) where
-  isSelfAdjoint b := by
-    rw [Matrix.conjTranspose_sum]
-    exact Finset.sum_congr rfl fun c _ => h.isSelfAdjoint (b, c)
-  idem b := by
-    rw [Finset.sum_mul]
-    refine Finset.sum_congr rfl fun c _ => ?_
-    rw [Finset.mul_sum, Finset.sum_eq_single c (fun c' _ hc' => ?_)
-      fun hmem => absurd (Finset.mem_univ c) hmem]
-    · exact h.idem (b, c)
-    · exact h.orthogonal fun he => hc' (Prod.mk.injEq .. ▸ he).2.symm
-  sum_eq_one := h.sum_marg_left
+    IsPVM fun b => ∑ c, P (b, c) :=
+  h.toIn.marg_left.toIsPVM
 
 theorem IsPVM.marg_right {P : B × C → Matrix N N ℂ} (h : IsPVM P) :
-    IsPVM fun c => ∑ b, P (b, c) where
-  isSelfAdjoint c := by
-    rw [Matrix.conjTranspose_sum]
-    exact Finset.sum_congr rfl fun b _ => h.isSelfAdjoint (b, c)
-  idem c := by
-    rw [Finset.sum_mul]
-    refine Finset.sum_congr rfl fun b _ => ?_
-    rw [Finset.mul_sum, Finset.sum_eq_single b (fun b' _ hb' => ?_)
-      fun hmem => absurd (Finset.mem_univ b) hmem]
-    · exact h.idem (b, c)
-    · exact h.orthogonal fun he => hb' (Prod.mk.injEq .. ▸ he).1.symm
-  sum_eq_one := h.sum_marg_right
+    IsPVM fun c => ∑ b, P (b, c) :=
+  h.toIn.marg_right.toIsPVM
 
 /-- The other order. -/
 theorem IsPVM.marg_mul_marg' {P : B × C → Matrix N N ℂ} (h : IsPVM P) (b : B) (c : C) :
-    (∑ c', P (b, c')) * (∑ b', P (b', c)) = P (b, c) := by
-  classical
-  rw [Finset.sum_mul]
-  rw [Finset.sum_eq_single c (fun c' _ hc' => ?_) fun hmem => absurd (Finset.mem_univ c) hmem]
-  · rw [Finset.mul_sum,
-      Finset.sum_eq_single b (fun b' _ hb' => ?_) fun hmem => absurd (Finset.mem_univ b) hmem]
-    · exact h.idem (b, c)
-    · exact h.orthogonal fun he => hb' (Prod.mk.injEq .. ▸ he).1.symm
-  · rw [Finset.mul_sum]
-    refine Finset.sum_eq_zero fun b' _ => ?_
-    exact h.orthogonal fun he => hc' (Prod.mk.injEq .. ▸ he).2
+    (∑ c', P (b, c')) * (∑ b', P (b', c)) = P (b, c) :=
+  h.toIn.marg_mul_marg' b c
 
 end Marginals
 
 /-! ## The analysis
 
-Stated for abstract families in one matrix algebra --- the two parties enter only through the
+Stated for abstract families in one algebra --- the two parties enter only through the
 hypotheses `hcomm`, `hcomm'` (the factors commute) and `hmul`, `hmul'` (Bob's two marginals
 multiply to the joint element). That keeps the algebra in a single type, and `commutation_analysis`
 below is the instance where the families are `aOp` and `bOp` of a POVM and a projective
-measurement. -/
+measurement, through `BipartiteModel.commutation_analysis` in the tensor-product model. -/
 
 section Analysis
 
@@ -508,21 +536,20 @@ variable {N : Type*} [Fintype N] [DecidableEq N] {B C : Type*} [Fintype B] [Fint
 theorem sum_prod_snorm_sq_mul_le_fst (v : N → ℂ)
     (F : B → Matrix N N ℂ) (hF : ∑ b, (F b)ᴴ * F b ≤ (1 : Matrix N N ℂ))
     (M : C → Matrix N N ℂ) :
-    ∑ p : B × C, snorm v (F p.1 * M p.2) ^ 2 ≤ ∑ c, snorm v (M c) ^ 2 := by
-  rw [Fintype.sum_prod_type, Finset.sum_comm]
-  exact Finset.sum_le_sum fun c _ => sum_snorm_sq_mul_le v F hF (M c)
+    ∑ p : B × C, snorm v (F p.1 * M p.2) ^ 2 ≤ ∑ c, snorm v (M c) ^ 2 :=
+  (StateModel.mat v).sum_prod_snorm_sq_mul_le_fst F ((StateModel.mat v).isColContraction_of_le hF)
+    M
 
 /-- Putting a family in front, with the front index in the second component. -/
 theorem sum_prod_snorm_sq_mul_le_snd (v : N → ℂ)
     (F : C → Matrix N N ℂ) (hF : ∑ c, (F c)ᴴ * F c ≤ (1 : Matrix N N ℂ))
     (M : B → Matrix N N ℂ) :
-    ∑ p : B × C, snorm v (F p.2 * M p.1) ^ 2 ≤ ∑ b, snorm v (M b) ^ 2 := by
-  rw [Fintype.sum_prod_type]
-  exact Finset.sum_le_sum fun b _ => sum_snorm_sq_mul_le v F hF (M b)
+    ∑ p : B × C, snorm v (F p.2 * M p.1) ^ 2 ≤ ∑ b, snorm v (M b) ^ 2 :=
+  (StateModel.mat v).sum_prod_snorm_sq_mul_le_snd F ((StateModel.mat v).isColContraction_of_le hF)
+    M
 
-/-- **The commutation analysis, in one algebra.** `alpha` and `gamma` are the two families that
-are to commute; `betaB`, `betaC` are what they are respectively close to, and `betaBC` is the
-joint operator both products reach. -/
+/-- **The commutation analysis, in one algebra**: `StateModel.commutation_analysis_abstract` in
+the matrix model. -/
 theorem commutation_analysis_abstract (v : N → ℂ)
     (alpha : B → Matrix N N ℂ) (gamma : C → Matrix N N ℂ)
     (betaB : B → Matrix N N ℂ) (betaC : C → Matrix N N ℂ)
@@ -537,41 +564,12 @@ theorem commutation_analysis_abstract (v : N → ℂ)
     (hmul' : ∀ b c, betaB b * betaC c = betaBC (b, c))
     (hA : ∑ b, snorm v (alpha b - betaB b) ^ 2 ≤ δ)
     (hC : ∑ c, snorm v (gamma c - betaC c) ^ 2 ≤ δ) :
-    ∑ p : B × C, snorm v (alpha p.1 * gamma p.2 - gamma p.2 * alpha p.1) ^ 2 ≤ 16 * δ := by
-  classical
-  -- `alpha_b gamma_c` reaches `betaBC` in two steps
-  have s1 : ∑ p : B × C, snorm v (alpha p.1 * gamma p.2 - alpha p.1 * betaC p.2) ^ 2 ≤ δ := by
-    refine le_trans (le_of_eq (Finset.sum_congr rfl fun p _ => ?_))
-      (le_trans (sum_prod_snorm_sq_mul_le_fst v alpha halpha
-        (fun c => gamma c - betaC c)) hC)
-    rw [Matrix.mul_sub]
-  have s2 : ∑ p : B × C, snorm v (alpha p.1 * betaC p.2 - betaBC p) ^ 2 ≤ δ := by
-    refine le_trans (le_of_eq (Finset.sum_congr rfl fun p _ => ?_))
-      (le_trans (sum_prod_snorm_sq_mul_le_snd v betaC hbetaC
-        (fun b => alpha b - betaB b)) hA)
-    rw [Matrix.mul_sub, ← hcomm p.1 p.2, hmul p.1 p.2]
-  have h1 : ∑ p : B × C, snorm v (alpha p.1 * gamma p.2 - betaBC p) ^ 2 ≤ 4 * δ := by
-    refine le_trans (sum_snorm_sq_triangle' v _ (fun p => alpha p.1 * betaC p.2) _) ?_
-    linarith
-  -- `gamma_c alpha_b` reaches the same operator
-  have s3 : ∑ p : B × C, snorm v (gamma p.2 * alpha p.1 - gamma p.2 * betaB p.1) ^ 2 ≤ δ := by
-    refine le_trans (le_of_eq (Finset.sum_congr rfl fun p _ => ?_))
-      (le_trans (sum_prod_snorm_sq_mul_le_snd v gamma hgamma
-        (fun b => alpha b - betaB b)) hA)
-    rw [Matrix.mul_sub]
-  have s4 : ∑ p : B × C, snorm v (gamma p.2 * betaB p.1 - betaBC p) ^ 2 ≤ δ := by
-    refine le_trans (le_of_eq (Finset.sum_congr rfl fun p _ => ?_))
-      (le_trans (sum_prod_snorm_sq_mul_le_fst v betaB hbetaB
-        (fun c => gamma c - betaC c)) hC)
-    rw [Matrix.mul_sub, ← hcomm' p.1 p.2, hmul' p.1 p.2]
-  have h2 : ∑ p : B × C, snorm v (gamma p.2 * alpha p.1 - betaBC p) ^ 2 ≤ 4 * δ := by
-    refine le_trans (sum_snorm_sq_triangle' v _ (fun p => gamma p.2 * betaB p.1) _) ?_
-    linarith
-  have h2' : ∑ p : B × C, snorm v (betaBC p - gamma p.2 * alpha p.1) ^ 2 ≤ 4 * δ := by
-    refine le_trans (le_of_eq (Finset.sum_congr rfl fun p _ => ?_)) h2
-    rw [snorm_sub_comm]
-  refine le_trans (sum_snorm_sq_triangle' v _ betaBC _) ?_
-  linarith
+    ∑ p : B × C, snorm v (alpha p.1 * gamma p.2 - gamma p.2 * alpha p.1) ^ 2 ≤ 16 * δ :=
+  (StateModel.mat v).commutation_analysis_abstract alpha gamma betaB betaC betaBC
+    ((StateModel.mat v).isColContraction_of_le halpha)
+    ((StateModel.mat v).isColContraction_of_le hgamma)
+    ((StateModel.mat v).isColContraction_of_le hbetaB)
+    ((StateModel.mat v).isColContraction_of_le hbetaC) hcomm hcomm' hmul hmul' hA hC
 
 end Analysis
 
@@ -594,20 +592,13 @@ theorem commutation_analysis {ψ : dA × dB → ℂ} {A : POVM B dA} {Cm : POVM 
     ∑ p : B × C, snorm ψ ((aOp ((A.mats p.1).val) : Matrix (dA × dB) (dA × dB) ℂ)
           * aOp ((Cm.mats p.2).val)
         - (aOp ((Cm.mats p.2).val) : Matrix (dA × dB) (dA × dB) ℂ)
-          * aOp ((A.mats p.1).val)) ^ 2 ≤ 16 * δ :=
-  commutation_analysis_abstract ψ
-    (fun b => (aOp ((A.mats b).val) : Matrix (dA × dB) (dA × dB) ℂ))
-    (fun c => (aOp ((Cm.mats c).val) : Matrix (dA × dB) (dA × dB) ℂ))
-    (fun b => (bOp (∑ c, P (b, c)) : Matrix (dA × dB) (dA × dB) ℂ))
-    (fun c => (bOp (∑ b, P (b, c)) : Matrix (dA × dB) (dA × dB) ℂ))
-    (fun p => (bOp (P p) : Matrix (dA × dB) (dA × dB) ℂ))
-    (sum_aOp_conjTranspose_mul_self_le_one A) (sum_aOp_conjTranspose_mul_self_le_one Cm)
-    (le_of_eq (sum_bOp_conjTranspose_mul_self_of_isPVM hP.marg_left))
-    (le_of_eq (sum_bOp_conjTranspose_mul_self_of_isPVM hP.marg_right))
-    (fun b c => aOp_mul_bOp _ _) (fun b c => aOp_mul_bOp _ _)
-    (fun b c => by rw [← bOp_mul, hP.marg_mul_marg b c])
-    (fun b c => by rw [← bOp_mul, hP.marg_mul_marg' b c])
-    hA hC
+          * aOp ((A.mats p.1).val)) ^ 2 ≤ 16 * δ := by
+  have h := (BipartiteModel.tensor ψ).commutation_analysis (A := A.toIn) (Cm := Cm.toIn)
+    hP.toIn hA hC
+  refine le_trans (le_of_eq (Finset.sum_congr rfl fun p _ => ?_)) h
+  show _ = snorm ψ (aOp ((A.mats p.1).val * (Cm.mats p.2).val
+    - (Cm.mats p.2).val * (A.mats p.1).val) : Matrix (dA × dB) (dA × dB) ℂ) ^ 2
+  rw [aOp_sub, aOp_mul, aOp_mul]
 
 /-- The commutator form, with the difference inside a single `aOp`. -/
 theorem commutation_analysis_aOp {ψ : dA × dB → ℂ} {A : POVM B dA} {Cm : POVM C dA}

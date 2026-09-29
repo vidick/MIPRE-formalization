@@ -48,6 +48,15 @@ question pairs, with `c · ν i ≤ μ` at each, gives `∑_i ν i · condFail �
 blueprint's "each item is the value of the corresponding subtest, divided by the probability
 that the subtest is selected", with `c` the selection probability and `ν` the conditional
 question distribution.
+
+## In a bipartite model
+
+Everything above is proved once, for a bipartite model (`MIPRE/Foundations/BipartiteModel.lean`)
+with the players' POVMs in their ordered algebras (`BipartiteModel.xSqNorm_sum_le_two_mul`,
+`BipartiteModel.xSqNorm_sum_le_condFail`, `BipartiteModel.xNorm_mul_le`, ...), and the matrix
+statements are its instances in the tensor-product model. The one positivity fact, `t² ≤ t` for
+`0 ≤ t ≤ 1`, is used on the represented operator (`Op.mul_self_le_self`), where the functional
+calculus of `B(H)` is: a player's algebra need not have one.
 -/
 
 noncomputable section
@@ -56,6 +65,442 @@ namespace MIPRE
 
 open Finset Matrix Kronecker
 open scoped ComplexOrder MatrixOrder
+
+/-! ## In a bipartite model
+
+The cross-party calculus is stated for any bipartite model (`MIPRE/Foundations/BipartiteModel.lean`):
+the first player's operators in `𝒜`, the second player's in `ℬ`, and the deviation
+`‖(πA a - πB b) ψ‖` a state norm of the model's algebra. The matrix statements below are its
+instances in the tensor-product model (`xNorm_eq_tensor`, `xSqNorm_eq_tensor`,
+`xPovmDist_eq_tensor`). The second player's state norm is the first player's in the swapped
+model, `M.swap.stateNorm b = ‖πB b ψ‖`, so nothing is stated twice. -/
+
+namespace BipartiteModel
+
+open scoped InnerProductSpace
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] (M : BipartiteModel 𝒞 𝒜 ℬ)
+
+/-- `‖(πA a - πB b) ψ‖`, the unsquared cross-party deviation. -/
+def xNorm (a : 𝒜) (b : ℬ) : ℝ := M.snorm (M.πA a - M.πB b)
+
+/-- `‖(πA a - πB b) ψ‖²`, the appendix's `A ⊗ Id ≃ Id ⊗ B` at a single pair of operators. -/
+def xSqNorm (a : 𝒜) (b : ℬ) : ℝ := M.xNorm a b ^ 2
+
+theorem xNorm_nonneg (a : 𝒜) (b : ℬ) : 0 ≤ M.xNorm a b := M.snorm_nonneg _
+
+theorem xSqNorm_nonneg (a : 𝒜) (b : ℬ) : 0 ≤ M.xSqNorm a b := sq_nonneg _
+
+theorem xSqNorm_eq_sq (a : 𝒜) (b : ℬ) : M.xSqNorm a b = M.xNorm a b ^ 2 := rfl
+
+/-- **The swap exchanges the two sides of a deviation.** -/
+theorem xNorm_swap (a : 𝒜) (b : ℬ) : M.swap.xNorm b a = M.xNorm a b :=
+  M.snorm_sub_comm _ _
+
+theorem xSqNorm_swap (a : 𝒜) (b : ℬ) : M.swap.xSqNorm b a = M.xSqNorm a b := by
+  rw [xSqNorm, xSqNorm, M.xNorm_swap]
+
+theorem stateNorm_sub_comm (a a' : 𝒜) : M.stateNorm (a - a') = M.stateNorm (a' - a) := by
+  rw [stateNorm, stateNorm, map_sub, map_sub, M.snorm_sub_comm]
+
+theorem stateSqNorm_sub_comm (a a' : 𝒜) : M.stateSqNorm (a - a') = M.stateSqNorm (a' - a) := by
+  rw [stateSqNorm, stateSqNorm, M.stateNorm_sub_comm]
+
+/-- Pushing a sum inside a deviation costs the number of terms. -/
+theorem stateSqNorm_sum_le {κ : Type*} [Fintype κ] (f : κ → 𝒜) :
+    M.stateSqNorm (∑ k, f k) ≤ (Fintype.card κ : ℝ) * ∑ k, M.stateSqNorm (f k) := by
+  calc M.stateSqNorm (∑ k, f k) = M.stateNorm (∑ k, f k) ^ 2 := rfl
+    _ ≤ (∑ k, M.stateNorm (f k)) ^ 2 :=
+        pow_le_pow_left₀ (M.stateNorm_nonneg _) (M.stateNorm_sum_le _ _) 2
+    _ ≤ (Fintype.card κ : ℝ) * ∑ k, M.stateNorm (f k) ^ 2 :=
+        sq_sum_le_card_mul_sum_sq _ fun k => M.stateNorm_nonneg _
+    _ = (Fintype.card κ : ℝ) * ∑ k, M.stateSqNorm (f k) := rfl
+
+variable {X : Type*} [Fintype X]
+
+/-- **The cross-party distance** of two families of operators, one on each side. -/
+def xStateDist (μ : X → ℝ) (A : X → 𝒜) (B : X → ℬ) : ℝ :=
+  ∑ x, μ x * M.xSqNorm (A x) (B x)
+
+section POVMs
+
+variable [PartialOrder 𝒜] [PartialOrder ℬ] {C : Type*} [Fintype C]
+
+/-- **The cross-party distance** of two families of POVMs, one on each side, relative to a
+question distribution: the appendix's `M^x_a ⊗ Id ≃_δ Id ⊗ N^x_a`. -/
+def xPovmDist (μ : X → ℝ) (MA : X → POVMIn C 𝒜) (MB : X → POVMIn C ℬ) : ℝ :=
+  ∑ x, μ x * ∑ c, M.xSqNorm ((MA x).op c) ((MB x).op c)
+
+/-- `M^x_a ⊗ Id ≃_δ Id ⊗ N^x_a` on the state, relative to `μ`. -/
+def IsXPOVMClose (μ : X → ℝ) (δ : ℝ) (MA : X → POVMIn C 𝒜) (MB : X → POVMIn C ℬ) : Prop :=
+  M.xPovmDist μ MA MB ≤ δ
+
+theorem xPovmDist_nonneg {μ : X → ℝ} (hμ : ∀ x, 0 ≤ μ x) (MA : X → POVMIn C 𝒜)
+    (MB : X → POVMIn C ℬ) : 0 ≤ M.xPovmDist μ MA MB :=
+  Finset.sum_nonneg fun x _ =>
+    mul_nonneg (hμ x) (Finset.sum_nonneg fun _ _ => M.xSqNorm_nonneg _ _)
+
+/-- **From POVM elements to generalized observables, across the two parties**: the triangle
+inequality, then Cauchy--Schwarz over the outcome set, at the factor `|𝒜|`. -/
+theorem xStateDist_obsOf_le {μ : X → ℝ} (hμ0 : ∀ x, 0 ≤ μ x) (MA : X → POVMIn C 𝒜)
+    (MB : X → POVMIn C ℬ) (α : C → ℂ) (hα : ∀ a, ‖α a‖ ≤ 1) :
+    M.xStateDist μ (fun x => pvmObs (MA x).op α) (fun x => pvmObs (MB x).op α)
+      ≤ (Fintype.card C : ℝ) * M.xPovmDist μ MA MB := by
+  rw [xPovmDist, Finset.mul_sum, xStateDist]
+  refine Finset.sum_le_sum fun x _ => ?_
+  rw [← mul_assoc, mul_comm ((Fintype.card C : ℝ)) (μ x), mul_assoc]
+  refine mul_le_mul_of_nonneg_left ?_ (hμ0 x)
+  have hsub : M.πA (pvmObs (MA x).op α) - M.πB (pvmObs (MB x).op α)
+      = ∑ c, α c • (M.πA ((MA x).op c) - M.πB ((MB x).op c)) := by
+    rw [pvmObs, pvmObs, map_sum, map_sum, ← Finset.sum_sub_distrib]
+    exact Finset.sum_congr rfl fun c _ => by rw [map_smul, map_smul, smul_sub]
+  have htri : M.xNorm (pvmObs (MA x).op α) (pvmObs (MB x).op α)
+      ≤ ∑ c, M.xNorm ((MA x).op c) ((MB x).op c) := by
+    rw [xNorm, hsub]
+    refine (M.snorm_sum_le _ _).trans (Finset.sum_le_sum fun c _ => ?_)
+    rw [M.snorm_smul]
+    exact mul_le_of_le_one_left (M.snorm_nonneg _) (hα c)
+  calc M.xSqNorm (pvmObs (MA x).op α) (pvmObs (MB x).op α)
+      ≤ (∑ c, M.xNorm ((MA x).op c) ((MB x).op c)) ^ 2 :=
+        pow_le_pow_left₀ (M.xNorm_nonneg _ _) htri 2
+    _ ≤ (Fintype.card C : ℝ) * ∑ c, M.xNorm ((MA x).op c) ((MB x).op c) ^ 2 :=
+        sq_sum_le_card_mul_sum_sq _ fun c => M.xNorm_nonneg _ _
+    _ = (Fintype.card C : ℝ) * ∑ c, M.xSqNorm ((MA x).op c) ((MB x).op c) := rfl
+
+end POVMs
+
+/-! ### Products, and the order reversal -/
+
+/-- **The order-reversal rule.** If `πA a` is `K`-bounded and `πB b'` is `L`-bounded, then
+`a b` is close to `b' a'` across the parties: the second player's factors appear in the opposite
+order, and each deviation is paid for by the operator norm of the factor in front of it. -/
+theorem xNorm_mul_le {K L : ℝ} (a b : 𝒜) (a' b' : ℬ) (hA : M.Bnd (M.πA a) K)
+    (hB' : M.Bnd (M.πB b') L) :
+    M.xNorm (a * b) (b' * a') ≤ K * M.xNorm b b' + L * M.xNorm a a' := by
+  have hsplit : M.πA (a * b) - M.πB (b' * a')
+      = M.πA a * (M.πA b - M.πB b') + M.πB b' * (M.πA a - M.πB a') := by
+    rw [map_mul, map_mul, mul_sub, mul_sub, (M.commute a b').eq]
+    abel
+  rw [xNorm, hsplit]
+  exact (M.snorm_add_le _ _).trans (add_le_add (M.snorm_mul_le hA _) (M.snorm_mul_le hB' _))
+
+/-- The order reversal for contractions. -/
+theorem xNorm_mul_le_one (a b : 𝒜) (a' b' : ℬ) (hA : M.Bnd (M.πA a) 1)
+    (hB' : M.Bnd (M.πB b') 1) :
+    M.xNorm (a * b) (b' * a') ≤ M.xNorm b b' + M.xNorm a a' := by
+  have h := M.xNorm_mul_le a b a' b' hA hB'
+  rwa [one_mul, one_mul] at h
+
+/-- The squared form of the order reversal, at the usual cost of a factor two. -/
+theorem xSqNorm_mul_le_one (a b : 𝒜) (a' b' : ℬ) (hA : M.Bnd (M.πA a) 1)
+    (hB' : M.Bnd (M.πB b') 1) :
+    M.xSqNorm (a * b) (b' * a') ≤ 2 * M.xSqNorm b b' + 2 * M.xSqNorm a a' := by
+  have h := M.xNorm_mul_le_one a b a' b' hA hB'
+  have h0 : 0 ≤ M.xNorm b b' + M.xNorm a a' := add_nonneg (M.xNorm_nonneg _ _) (M.xNorm_nonneg _ _)
+  rw [xSqNorm_eq_sq, xSqNorm_eq_sq, xSqNorm_eq_sq]
+  nlinarith [sq_nonneg (M.xNorm b b' - M.xNorm a a'), M.xNorm_nonneg (a * b) (b' * a')]
+
+/-- **An anticommutation on the second player's side transfers to the first player's**, at the
+cost of the two cross-party deviations counted twice each. The split
+
+`ab + ba = [ab - b'a'] + [a'b' + b'a'] + [ba - a'b']`
+
+is an identity across the two sides, and its summands are an order reversal, the second
+player's anticommutator, and the other order reversal. -/
+theorem stateNorm_anticomm_le (a b : 𝒜) (a' b' : ℬ) (hA : M.Bnd (M.πA a) 1)
+    (hB : M.Bnd (M.πA b) 1) (hA' : M.Bnd (M.πB a') 1) (hB' : M.Bnd (M.πB b') 1) :
+    M.stateNorm (a * b + b * a)
+      ≤ 2 * M.xNorm a a' + 2 * M.xNorm b b' + M.swap.stateNorm (a' * b' + b' * a') := by
+  have hsplit : M.πA (a * b + b * a)
+      = (M.πA (a * b) - M.πB (b' * a')) + M.πB (a' * b' + b' * a')
+        + (M.πA (b * a) - M.πB (a' * b')) := by
+    rw [map_add, map_add]
+    abel
+  have h1 := M.xNorm_mul_le_one a b a' b' hA hB'
+  have h2 := M.xNorm_mul_le_one b a b' a' hB hA'
+  have e0 : M.stateNorm (a * b + b * a) = M.snorm (M.πA (a * b) - M.πB (b' * a')
+      + M.πB (a' * b' + b' * a') + (M.πA (b * a) - M.πB (a' * b'))) := congrArg M.snorm hsplit
+  have e : M.snorm (M.πA (a * b) - M.πB (b' * a') + M.πB (a' * b' + b' * a')
+        + (M.πA (b * a) - M.πB (a' * b')))
+      ≤ M.xNorm (a * b) (b' * a') + M.swap.stateNorm (a' * b' + b' * a')
+        + M.xNorm (b * a) (a' * b') :=
+    (M.snorm_add_le _ _).trans (add_le_add (M.snorm_add_le _ _) le_rfl)
+  linarith
+
+/-- **The commutator form of the transfer**: the same split, with the middle term a
+commutator. -/
+theorem stateNorm_comm_le (a b : 𝒜) (a' b' : ℬ) (hA : M.Bnd (M.πA a) 1)
+    (hB : M.Bnd (M.πA b) 1) (hA' : M.Bnd (M.πB a') 1) (hB' : M.Bnd (M.πB b') 1) :
+    M.stateNorm (a * b - b * a)
+      ≤ 2 * M.xNorm a a' + 2 * M.xNorm b b' + M.swap.stateNorm (b' * a' - a' * b') := by
+  have hsplit : M.πA (a * b - b * a)
+      = (M.πA (a * b) - M.πB (b' * a')) + M.πB (b' * a' - a' * b')
+        + (M.πB (a' * b') - M.πA (b * a)) := by
+    rw [map_sub, map_sub]
+    abel
+  have h1 := M.xNorm_mul_le_one a b a' b' hA hB'
+  have h2 := M.xNorm_mul_le_one b a b' a' hB hA'
+  have e4 : M.snorm (M.πB (a' * b') - M.πA (b * a)) = M.xNorm (b * a) (a' * b') :=
+    M.snorm_sub_comm _ _
+  have e0 : M.stateNorm (a * b - b * a) = M.snorm (M.πA (a * b) - M.πB (b' * a')
+      + M.πB (b' * a' - a' * b') + (M.πB (a' * b') - M.πA (b * a))) := congrArg M.snorm hsplit
+  have e : M.snorm (M.πA (a * b) - M.πB (b' * a') + M.πB (b' * a' - a' * b')
+        + (M.πB (a' * b') - M.πA (b * a)))
+      ≤ M.xNorm (a * b) (b' * a') + M.swap.stateNorm (b' * a' - a' * b')
+        + M.snorm (M.πB (a' * b') - M.πA (b * a)) :=
+    (M.snorm_add_le _ _).trans (add_le_add (M.snorm_add_le _ _) le_rfl)
+  linarith
+
+/-- **The expansion of a cross-party deviation**, for a self-adjoint first operator: the two
+players' squared norms, less twice the Born term. -/
+theorem xSqNorm_eq {a : 𝒜} (ha : star a = a) (b : ℬ) :
+    M.xSqNorm a b = M.stateSqNorm a + M.swap.stateSqNorm b - 2 * M.bornProb a b := by
+  have h := M.inner_πA_πB ha b
+  show ‖M.π (M.πA a - M.πB b) M.ψ‖ ^ 2
+      = ‖M.π (M.πA a) M.ψ‖ ^ 2 + ‖M.π (M.πB b) M.ψ‖ ^ 2
+        - 2 * (⟪M.ψ, M.π (M.πA a * M.πB b) M.ψ⟫_ℂ).re
+  rw [map_sub]
+  show ‖M.π (M.πA a) M.ψ - M.π (M.πB b) M.ψ‖ ^ 2 = _
+  rw [@norm_sub_sq ℂ, h, RCLike.re_to_complex]
+  ring
+
+/-! ### Measurements are contractions on the state -/
+
+section Order
+
+variable [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+
+/-- An element with `a* a ≤ 1` is represented by a contraction. -/
+theorem bnd_πA_of_star_mul_self_le {a : 𝒜} (h : star a * a ≤ 1) : M.Bnd (M.πA a) 1 := by
+  refine Op.bnd_one_of_star_mul_self_le ?_
+  have h' := OrderHomClass.mono (M.π.comp M.πA) h
+  rwa [map_mul, map_star, map_one] at h'
+
+/-- An element between `0` and `1` is represented by a positive operator at most one. -/
+theorem π_πA_le_one {t : 𝒜} (h1 : t ≤ 1) : M.π (M.πA t) ≤ 1 := by
+  have h' := OrderHomClass.mono (M.π.comp M.πA) h1
+  rwa [map_one] at h'
+
+/-- A POVM element is represented by a contraction. -/
+theorem bnd_πA_of_nonneg_of_le_one {t : 𝒜} (h0 : 0 ≤ t) (h1 : t ≤ 1) : M.Bnd (M.πA t) 1 :=
+  Op.bnd_one_of_nonneg_of_le_one (M.π_πA_nonneg h0) (M.π_πA_le_one h1)
+
+/-- **The difference of two POVM elements is represented by a contraction**, with no
+projectivity: this is what makes a two-outcome coarse-graining a `±1`-observable in every
+estimate. -/
+theorem bnd_πA_sub {C : Type*} [Fintype C] (P : POVMIn C 𝒜) (p q : C) :
+    M.Bnd (M.πA (P.op p - P.op q)) 1 := by
+  show Op.Bnd (M.π (M.πA (P.op p - P.op q))) 1
+  rw [map_sub, map_sub]
+  exact Op.bnd_one_of_sub (M.π_πA_nonneg (P.op_nonneg p)) (M.π_πA_le_one (P.op_le_one p))
+    (M.π_πA_nonneg (P.op_nonneg q)) (M.π_πA_le_one (P.op_le_one q))
+
+/-- **A POVM element is a contraction on the state**: `‖πA t ψ‖² ≤ ⟨ψ, πA t ψ⟩` for
+`0 ≤ t ≤ 1`, because `t² ≤ t`. -/
+theorem stateSqNorm_le_qform {t : 𝒜} (h0 : 0 ≤ t) (h1 : t ≤ 1) :
+    M.stateSqNorm t ≤ M.qform (M.πA t) := by
+  have hP0 := M.π_πA_nonneg h0
+  have hsa : star (M.π (M.πA t)) = M.π (M.πA t) := (IsSelfAdjoint.of_nonneg hP0).star_eq
+  have hq : 0 ≤ M.qform (M.πA t - star (M.πA t) * M.πA t) := by
+    refine M.qform_nonneg ?_
+    rw [map_sub, map_mul, map_star, hsa]
+    exact sub_nonneg.2 (Op.mul_self_le_self hP0 (M.π_πA_le_one h1))
+  rw [M.qform_sub] at hq
+  rw [M.stateSqNorm_eq, map_mul, map_star]
+  linarith
+
+/-- `∑_a ‖πA(A_a) ψ‖² ≤ 1` for a POVM on a unit vector. -/
+theorem sum_stateSqNorm_le_one (hψ : ‖M.ψ‖ = 1) {C : Type*} [Fintype C] (MA : POVMIn C 𝒜) :
+    ∑ c, M.stateSqNorm (MA.op c) ≤ 1 := by
+  calc ∑ c, M.stateSqNorm (MA.op c) ≤ ∑ c, M.qform (M.πA (MA.op c)) :=
+        Finset.sum_le_sum fun c _ => M.stateSqNorm_le_qform (MA.op_nonneg c) (MA.op_le_one c)
+    _ = 1 := by rw [← M.qform_sum, ← map_sum, MA.sum_op, map_one, M.qform_one hψ]
+
+end Order
+
+section Order2
+
+variable [PartialOrder 𝒜] [StarOrderedRing 𝒜] [PartialOrder ℬ] [StarOrderedRing ℬ]
+  {C : Type*} [Fintype C]
+
+/-- **From agreement to cross-party closeness.** For any two POVMs with the same outcome set,
+the summed cross-party squared deviation is at most twice the disagreement probability. Expand
+each square: the two diagonal sums are at most one (`sum_stateSqNorm_le_one`, on each side), and
+the cross term is the agreement probability. No projectivity. -/
+theorem xSqNorm_sum_le_two_mul (hψ : ‖M.ψ‖ = 1) (MA : POVMIn C 𝒜) (MB : POVMIn C ℬ) :
+    ∑ c, M.xSqNorm (MA.op c) (MB.op c)
+      ≤ 2 * (1 - ∑ c, M.bornProb (MA.op c) (MB.op c)) := by
+  rw [Finset.sum_congr rfl fun c _ => M.xSqNorm_eq (MA.star_op c) (MB.op c),
+    Finset.sum_sub_distrib, Finset.sum_add_distrib, ← Finset.mul_sum]
+  have h1 := M.sum_stateSqNorm_le_one hψ MA
+  have h2 := M.swap.sum_stateSqNorm_le_one hψ MB
+  linarith
+
+/-! ### The conditional failure of an agreement subtest -/
+
+variable {Y A B : Type*} [Fintype Y] [Fintype A] [Fintype B]
+
+omit [PartialOrder 𝒜] [StarOrderedRing 𝒜] in
+/-- Relabelling the second player's outcomes is data processing: a weighted sum over the
+relabelled outcomes is the same weighted sum over the original ones, with the weight pulled
+back. -/
+theorem sum_bornProb_mapB {B' : Type*} [Fintype B'] [DecidableEq B']
+    (a : 𝒜) (NB : POVMIn B ℬ) (φB : B → B') (w : B' → ℝ) :
+    ∑ b', w b' * M.bornProb a ((NB.map φB).op b') = ∑ b, w (φB b) * M.bornProb a (NB.op b) := by
+  classical
+  have hborn : ∀ b', M.bornProb a ((NB.map φB).op b')
+      = ∑ b ∈ univ.filter fun b => φB b = b', M.bornProb a (NB.op b) := fun b' => by
+    rw [POVMIn.map_op, M.bornProb_sum_right]
+  rw [Finset.sum_congr rfl fun b' (_ : b' ∈ univ) => by rw [hborn b', Finset.mul_sum]]
+  simp only [Finset.sum_filter]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun b _ => ?_
+  rw [Finset.sum_ite_eq univ (φB b) _]
+  simp only [mem_univ, ite_true]
+
+omit [PartialOrder ℬ] [StarOrderedRing ℬ] in
+/-- Relabelling the first player's outcomes is data processing. -/
+theorem sum_bornProb_mapA {A' : Type*} [Fintype A'] [DecidableEq A'] (NA : POVMIn A 𝒜)
+    (φA : A → A') (b : ℬ) (w : A' → ℝ) :
+    ∑ a', w a' * M.bornProb ((NA.map φA).op a') b = ∑ a, w (φA a) * M.bornProb (NA.op a) b := by
+  classical
+  have hborn : ∀ a', M.bornProb ((NA.map φA).op a') b
+      = ∑ a ∈ univ.filter fun a => φA a = a', M.bornProb (NA.op a) b := fun a' => by
+    rw [POVMIn.map_op, M.bornProb_sum_left]
+  rw [Finset.sum_congr rfl fun a' (_ : a' ∈ univ) => by rw [hborn a', Finset.mul_sum]]
+  simp only [Finset.sum_filter]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun a _ => ?_
+  rw [Finset.sum_ite_eq univ (φA a) _]
+  simp only [mem_univ, ite_true]
+
+/-- **Relabelling both players' outcomes is data processing on the Born distribution.** A
+weighted sum over the relabelled outcome pairs is the same weighted sum over the original pairs,
+with the weights pulled back. -/
+theorem sum_weight_bornProb_map {A' B' : Type*} [Fintype A'] [DecidableEq A'] [Fintype B']
+    [DecidableEq B'] (NA : POVMIn A 𝒜) (NB : POVMIn B ℬ) (φA : A → A') (φB : B → B')
+    (w : A' → B' → ℝ) :
+    ∑ a', ∑ b', w a' b' * M.bornProb ((NA.map φA).op a') ((NB.map φB).op b')
+      = ∑ a, ∑ b, w (φA a) (φB b) * M.bornProb (NA.op a) (NB.op b) := by
+  rw [Finset.sum_congr rfl fun a' (_ : a' ∈ univ) =>
+    M.sum_bornProb_mapB ((NA.map φA).op a') NB φB (w a')]
+  rw [Finset.sum_comm]
+  rw [Finset.sum_congr rfl fun b (_ : b ∈ univ) =>
+    M.sum_bornProb_mapA NA φA (NB.op b) fun a' => w a' (φB b)]
+  exact Finset.sum_comm
+
+/-- The agreement probability of two coarse-grained POVMs, as a sum over the original outcome
+pairs. -/
+theorem sum_bornProb_map [DecidableEq C] (NA : POVMIn A 𝒜) (NB : POVMIn B ℬ) (f : A → C)
+    (g : B → C) :
+    ∑ c, M.bornProb ((NA.map f).op c) ((NB.map g).op c)
+      = ∑ a, ∑ b, (if f a = g b then (1 : ℝ) else 0) * M.bornProb (NA.op a) (NB.op b) := by
+  have h := M.sum_weight_bornProb_map NA NB f g fun c c' => if c = c' then (1 : ℝ) else 0
+  rw [← h]
+  refine Finset.sum_congr rfl fun c _ => ?_
+  rw [Finset.sum_eq_single c (fun c' _ hc' => by rw [ite_eq_right (Ne.symm hc'), zero_mul])
+    (fun hc => absurd (Finset.mem_univ c) hc), ite_eq_left rfl, one_mul]
+
+variable {G : Game X Y A B} {MA : X → POVMIn A 𝒜} {MB : Y → POVMIn B ℬ}
+
+/-- **Accept implies agree bounds the disagreement of the coarse-grained POVMs by the
+conditional failure.** -/
+theorem one_sub_sum_bornProb_le_condFail [DecidableEq C] {x : X} {y : Y} (f : A → C)
+    (g : B → C) (hD : ∀ a b, G.D x y a b = true → f a = g b) :
+    1 - ∑ c, M.bornProb (((MA x).map f).op c) (((MB y).map g).op c)
+      ≤ M.condFail G MA MB x y := by
+  have hle : M.condWin G MA MB x y
+      ≤ ∑ a, ∑ b, (if f a = g b then (1 : ℝ) else 0) * M.bornProb ((MA x).op a) ((MB y).op b) := by
+    rw [condWin]
+    refine Finset.sum_le_sum fun a _ => Finset.sum_le_sum fun b _ => ?_
+    have h0 := M.bornProb_nonneg ((MA x).op_nonneg a) ((MB y).op_nonneg b)
+    by_cases h : G.D x y a b = true
+    · rw [ite_eq_left h, ite_eq_left (hD a b h)]
+    · rw [ite_eq_right h, zero_mul]
+      exact mul_nonneg (by split_ifs <;> norm_num) h0
+  rw [M.sum_bornProb_map, condFail]
+  linarith
+
+/-- **The master estimate.** A subtest that accepts only when two post-processings of the answers
+agree bounds the cross-party deviation of the coarse-grained POVMs by twice its conditional
+failure. -/
+theorem xSqNorm_sum_le_condFail [DecidableEq C] (hψ : ‖M.ψ‖ = 1) {x : X} {y : Y} (f : A → C)
+    (g : B → C) (hD : ∀ a b, G.D x y a b = true → f a = g b) :
+    ∑ c, M.xSqNorm (((MA x).map f).op c) (((MB y).map g).op c) ≤ 2 * M.condFail G MA MB x y :=
+  (M.xSqNorm_sum_le_two_mul hψ _ _).trans
+    (mul_le_mul_of_nonneg_left (M.one_sub_sum_bornProb_le_condFail f g hD) (by norm_num))
+
+/-! ### The weights of the subtests -/
+
+variable {ε : ℝ}
+
+/-- **The conditional failures of any set of question pairs, weighted by their probabilities,
+add up to at most `ε`.** -/
+theorem sum_mul_condFail_le (hψ : ‖M.ψ‖ = 1) (hfail : 1 - M.povmValue G MA MB ≤ ε)
+    (S : Finset (X × Y)) :
+    ∑ p ∈ S, G.μ p.1 p.2 * M.condFail G MA MB p.1 p.2 ≤ ε := by
+  have heq : ∑ p : X × Y, G.μ p.1 p.2 * M.condFail G MA MB p.1 p.2
+      = 1 - M.povmValue G MA MB := by
+    rw [Fintype.sum_prod_type, M.one_sub_povmValue_eq]
+  refine le_trans (Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ S)
+    fun p _ _ => mul_nonneg (G.μ_nonneg _ _) (M.condFail_nonneg hψ _ _)) ?_
+  rw [heq]
+  exact hfail
+
+/-- **The conditional error of a subtest, at the cost of its selection probability**: an
+auxiliary weighting `ν` and a map `q` to question pairs whose pushforward stays below `μ / c`
+gives `∑_i ν i · condFail (q i) ≤ ε / c`. -/
+theorem sum_condFail_le_of_pushforward {ι : Type*} [Fintype ι] [DecidableEq X] [DecidableEq Y]
+    (hψ : ‖M.ψ‖ = 1) (hfail : 1 - M.povmValue G MA MB ≤ ε) (ν : ι → ℝ) (q : ι → X × Y)
+    {c : ℝ} (hc : 0 < c)
+    (hpush : ∀ p : X × Y, c * ∑ i ∈ univ.filter fun i => q i = p, ν i ≤ G.μ p.1 p.2) :
+    ∑ i, ν i * M.condFail G MA MB (q i).1 (q i).2 ≤ ε / c := by
+  have hgroup : ∑ i, ν i * M.condFail G MA MB (q i).1 (q i).2
+      = ∑ p : X × Y, (∑ i ∈ univ.filter fun i => q i = p, ν i)
+          * M.condFail G MA MB p.1 p.2 := by
+    rw [← Finset.sum_fiberwise (g := q)
+      (f := fun i => ν i * M.condFail G MA MB (q i).1 (q i).2)]
+    refine Finset.sum_congr rfl fun p _ => ?_
+    rw [Finset.sum_mul]
+    refine Finset.sum_congr rfl fun i hi => ?_
+    rw [(Finset.mem_filter.mp hi).2]
+  rw [hgroup, le_div_iff₀ hc, Finset.sum_mul]
+  refine le_trans (Finset.sum_le_sum
+    (g := fun p : X × Y => G.μ p.1 p.2 * M.condFail G MA MB p.1 p.2) fun p _ => ?_) ?_
+  · have h0 := M.condFail_nonneg (G := G) (MA := MA) (MB := MB) hψ p.1 p.2
+    calc (∑ i ∈ univ.filter fun i => q i = p, ν i) * M.condFail G MA MB p.1 p.2 * c
+        = c * (∑ i ∈ univ.filter fun i => q i = p, ν i) * M.condFail G MA MB p.1 p.2 := by
+          ring
+      _ ≤ G.μ p.1 p.2 * M.condFail G MA MB p.1 p.2 := mul_le_mul_of_nonneg_right (hpush p) h0
+  · exact M.sum_mul_condFail_le hψ hfail _
+
+/-- The injective form: an auxiliary distribution on an index set that injects into the question
+pairs, with `c · ν i` below the question probability at each. -/
+theorem sum_condFail_le_of_le {ι : Type*} [Fintype ι] (hψ : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue G MA MB ≤ ε) (ν : ι → ℝ) (q : ι → X × Y)
+    (hq : Function.Injective q) {c : ℝ} (hc : 0 < c)
+    (hνμ : ∀ i, c * ν i ≤ G.μ (q i).1 (q i).2) :
+    ∑ i, ν i * M.condFail G MA MB (q i).1 (q i).2 ≤ ε / c := by
+  classical
+  have himg : ∑ i, G.μ (q i).1 (q i).2 * M.condFail G MA MB (q i).1 (q i).2
+      = ∑ p ∈ univ.image q, G.μ p.1 p.2 * M.condFail G MA MB p.1 p.2 :=
+    (Finset.sum_image (f := fun p : X × Y => G.μ p.1 p.2 * M.condFail G MA MB p.1 p.2)
+      (s := (univ : Finset ι)) (g := q) fun i _ j _ h => hq h).symm
+  rw [le_div_iff₀ hc, Finset.sum_mul]
+  refine le_trans (Finset.sum_le_sum
+    (g := fun i => G.μ (q i).1 (q i).2 * M.condFail G MA MB (q i).1 (q i).2) fun i _ => ?_) ?_
+  · have h0 := M.condFail_nonneg (G := G) (MA := MA) (MB := MB) hψ (q i).1 (q i).2
+    calc ν i * M.condFail G MA MB (q i).1 (q i).2 * c
+        = c * ν i * M.condFail G MA MB (q i).1 (q i).2 := by ring
+      _ ≤ G.μ (q i).1 (q i).2 * M.condFail G MA MB (q i).1 (q i).2 :=
+          mul_le_mul_of_nonneg_right (hνμ i) h0
+  · rw [himg]
+    exact M.sum_mul_condFail_le hψ hfail _
+
+end Order2
+
+end BipartiteModel
 
 variable {X Y A B C dA dB : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
   [Fintype C] [DecidableEq C] [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
@@ -67,8 +512,34 @@ operators. -/
 def xSqNorm (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B : Matrix dB dB ℂ) : ℝ :=
   ‖stateVec ψ A - stateVecB ψ B‖ ^ 2
 
+/-- `‖(A ⊗ Id - Id ⊗ B)|ψ⟩‖`, the unsquared cross-party deviation. -/
+def xNorm (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B : Matrix dB dB ℂ) : ℝ :=
+  ‖stateVec ψ A - stateVecB ψ B‖
+
+theorem xSqNorm_eq_sq (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B : Matrix dB dB ℂ) :
+    xSqNorm ψ A B = xNorm ψ A B ^ 2 := rfl
+
+/-- The deviation is the state-norm of the single operator `A ⊗ Id - Id ⊗ B` on the product
+space, which is what the operator-norm calculus of `MIPRE/Foundations/OpBound.lean` consumes. -/
+theorem xNorm_eq_snorm (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B : Matrix dB dB ℂ) :
+    xNorm ψ A B = snorm ψ ((aOp A : Matrix (dA × dB) _ ℂ) - bOp B) := by
+  rw [xNorm, snorm, Matrix.sub_mulVec, evec_sub]
+  rfl
+
+/-- **The matrix deviation is that of the tensor-product model.** -/
+theorem xNorm_eq_tensor (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B : Matrix dB dB ℂ) :
+    xNorm ψ A B = (BipartiteModel.tensor ψ).xNorm A B :=
+  xNorm_eq_snorm ψ A B
+
+theorem xSqNorm_eq_tensor (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B : Matrix dB dB ℂ) :
+    xSqNorm ψ A B = (BipartiteModel.tensor ψ).xSqNorm A B := by
+  rw [xSqNorm_eq_sq, xNorm_eq_tensor, BipartiteModel.xSqNorm_eq_sq]
+
+theorem xNorm_nonneg (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B : Matrix dB dB ℂ) :
+    0 ≤ xNorm ψ A B := norm_nonneg _
+
 theorem xSqNorm_nonneg (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B : Matrix dB dB ℂ) :
-    0 ≤ xSqNorm ψ A B := by rw [xSqNorm]; positivity
+    0 ≤ xSqNorm ψ A B := sq_nonneg _
 
 /-- **The cross-party distance** of two families of POVMs, one on each side, relative to a
 question distribution: the appendix's `M^x_a ⊗ Id ≃_δ Id ⊗ N^x_a`. -/
@@ -81,10 +552,17 @@ def IsXPOVMClose (μ : X → ℝ) (ψ : dA × dB → ℂ) (δ : ℝ) (M : X → 
   xPovmDist μ ψ M N ≤ δ
 
 omit [DecidableEq C] in
+theorem xPovmDist_eq_tensor (μ : X → ℝ) (ψ : dA × dB → ℂ) (M : X → POVM C dA)
+    (N : X → POVM C dB) :
+    xPovmDist μ ψ M N =
+      (BipartiteModel.tensor ψ).xPovmDist μ (fun x => (M x).toIn) (fun x => (N x).toIn) := by
+  simp only [xPovmDist, BipartiteModel.xPovmDist, xSqNorm_eq_tensor, POVM.toIn_op]
+
+omit [DecidableEq C] in
 theorem xPovmDist_nonneg {μ : X → ℝ} (hμ : ∀ x, 0 ≤ μ x) (ψ : dA × dB → ℂ)
-    (M : X → POVM C dA) (N : X → POVM C dB) : 0 ≤ xPovmDist μ ψ M N :=
-  Finset.sum_nonneg fun x _ =>
-    mul_nonneg (hμ x) (Finset.sum_nonneg fun _ _ => xSqNorm_nonneg _ _ _)
+    (M : X → POVM C dA) (N : X → POVM C dB) : 0 ≤ xPovmDist μ ψ M N := by
+  rw [xPovmDist_eq_tensor]
+  exact (BipartiteModel.tensor ψ).xPovmDist_nonneg hμ _ _
 
 /-! ## The cross-party distance of generalized observables
 
@@ -97,37 +575,21 @@ def xStateDist (μ : X → ℝ) (ψ : dA × dB → ℂ) (A : X → Matrix dA dA 
     (B : X → Matrix dB dB ℂ) : ℝ :=
   ∑ x, μ x * xSqNorm ψ (A x) (B x)
 
+theorem xStateDist_eq_tensor (μ : X → ℝ) (ψ : dA × dB → ℂ) (A : X → Matrix dA dA ℂ)
+    (B : X → Matrix dB dB ℂ) :
+    xStateDist μ ψ A B = (BipartiteModel.tensor ψ).xStateDist μ A B := by
+  simp only [xStateDist, BipartiteModel.xStateDist, xSqNorm_eq_tensor]
+
 omit [DecidableEq C] in
 /-- **From POVM elements to generalized observables, across the two parties**: the cross-party
-analogue of `stateDist_obsOf_le`. Same proof --- the triangle inequality, then Cauchy--Schwarz
-over the outcome set --- and the same factor `|𝒜|`. -/
+analogue of `stateDist_obsOf_le`, at the same factor `|𝒜|`. -/
 theorem xStateDist_obsOf_le {μ : X → ℝ} (hμ0 : ∀ x, 0 ≤ μ x) (ψ : dA × dB → ℂ)
     (M : X → POVM C dA) (N : X → POVM C dB) (α : C → ℂ) (hα : ∀ a, ‖α a‖ ≤ 1) :
     xStateDist μ ψ (obsOf α M) (obsOf α N)
       ≤ (Fintype.card C : ℝ) * xPovmDist μ ψ M N := by
-  classical
-  rw [xPovmDist, Finset.mul_sum, xStateDist]
-  refine Finset.sum_le_sum fun x _ => ?_
-  rw [← mul_assoc, mul_comm ((Fintype.card C : ℝ)) (μ x), mul_assoc]
-  refine mul_le_mul_of_nonneg_left ?_ (hμ0 x)
-  have hsub : stateVec ψ (obsOf α M x) - stateVecB ψ (obsOf α N x)
-      = ∑ a, α a • (stateVec ψ (((M x).mats a).val) - stateVecB ψ (((N x).mats a).val)) := by
-    rw [obsOf, obsOf, stateVec_sum, stateVecB_sum, ← Finset.sum_sub_distrib]
-    exact Finset.sum_congr rfl fun a _ => by
-      rw [stateVec_smul, stateVecB_smul, smul_sub]
-  have htri : ‖stateVec ψ (obsOf α M x) - stateVecB ψ (obsOf α N x)‖
-      ≤ ∑ a, ‖stateVec ψ (((M x).mats a).val) - stateVecB ψ (((N x).mats a).val)‖ := by
-    rw [hsub]
-    refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun a _ => ?_)
-    rw [norm_smul]
-    exact mul_le_of_le_one_left (norm_nonneg _) (hα a)
-  calc xSqNorm ψ (obsOf α M x) (obsOf α N x)
-      ≤ (∑ a, ‖stateVec ψ (((M x).mats a).val) - stateVecB ψ (((N x).mats a).val)‖) ^ 2 :=
-        pow_le_pow_left₀ (norm_nonneg _) htri 2
-    _ ≤ (Fintype.card C : ℝ)
-          * ∑ a, ‖stateVec ψ (((M x).mats a).val) - stateVecB ψ (((N x).mats a).val)‖ ^ 2 :=
-        sq_sum_le_card_mul_sum_sq _ fun a => norm_nonneg _
-    _ = (Fintype.card C : ℝ) * ∑ a, xSqNorm ψ (((M x).mats a).val) (((N x).mats a).val) := rfl
+  rw [xStateDist_eq_tensor, xPovmDist_eq_tensor]
+  exact (BipartiteModel.tensor ψ).xStateDist_obsOf_le hμ0 (fun x => (M x).toIn)
+    (fun x => (N x).toIn) α hα
 
 /-! ## A POVM element is a contraction on the state
 
@@ -158,72 +620,27 @@ theorem sub_kronecker_right (N P : Matrix dA dA ℂ) (R : Matrix dB dB ℂ) :
 
 /-- `∑_a ‖(A_a ⊗ Id)|ψ⟩‖² ≤ 1` for a POVM on a unit vector. -/
 theorem sum_stateSqNorm_le_one {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) (M : POVM A dA) :
-    ∑ a, stateSqNorm ψ (((M.mats a).val)) ≤ 1 := by
-  classical
-  have hterm : ∀ a, (stateSqNorm ψ (((M.mats a).val)) : ℝ)
-      ≤ (star ψ ⬝ᵥ ((((M.mats a).val) ⊗ₖ (1 : Matrix dB dB ℂ)) *ᵥ ψ)).re := by
-    intro a
-    have hsa : (((M.mats a).val))ᴴ = ((M.mats a).val) := by
-      rw [← Matrix.star_eq_conjTranspose, (M.mats a).2]
-    have hdiff : (0 : Matrix dA dA ℂ)
-        ≤ ((M.mats a).val) - (((M.mats a).val))ᴴ * ((M.mats a).val) := by
-      rw [hsa]; exact sub_nonneg.mpr (POVM.mul_self_le_self M a)
-    have hker : (0 : Matrix (dA × dB) (dA × dB) ℂ)
-        ≤ (((M.mats a).val) - (((M.mats a).val))ᴴ * ((M.mats a).val))
-            ⊗ₖ (1 : Matrix dB dB ℂ) :=
-      Matrix.nonneg_iff_posSemidef.mpr
-        ((Matrix.nonneg_iff_posSemidef.mp hdiff).kronecker
-          (Matrix.PosSemidef.one : (1 : Matrix dB dB ℂ).PosSemidef))
-    have hq := (Matrix.nonneg_iff_posSemidef.mp hker).dotProduct_mulVec_nonneg ψ
-    rw [sub_kronecker_right, Matrix.sub_mulVec, dotProduct_sub, quadForm_eq] at hq
-    have := (Complex.nonneg_iff.mp hq).1
-    simp only [Complex.sub_re, Complex.ofReal_re] at this
-    linarith
-  refine (Finset.sum_le_sum fun a _ => hterm a).trans ?_
-  have hsum : ∑ a, (star ψ ⬝ᵥ ((((M.mats a).val) ⊗ₖ (1 : Matrix dB dB ℂ)) *ᵥ ψ)).re
-      = (star ψ ⬝ᵥ ((∑ a, (((M.mats a).val) ⊗ₖ (1 : Matrix dB dB ℂ))) *ᵥ ψ)).re := by
-    rw [sum_quadForm ψ (univ : Finset A) fun a => (((M.mats a).val) ⊗ₖ
-      (1 : Matrix dB dB ℂ)), Complex.re_sum]
-  rw [hsum, ← sum_kronecker_left, POVM.sum_val, Matrix.one_kronecker_one, Matrix.one_mulVec,
-    hψ, Complex.one_re]
+    ∑ a, stateSqNorm ψ (((M.mats a).val)) ≤ 1 :=
+  (BipartiteModel.tensor ψ).sum_stateSqNorm_le_one (norm_evec_eq_one hψ) M.toIn
 
-/-- Bob's version, by the swap. -/
+/-- Bob's version: the first player's in the swapped model. -/
 theorem sum_stateSqNormB_le_one {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) (N : POVM B dB) :
-    ∑ b, ‖stateVecB ψ (((N.mats b).val))‖ ^ 2 ≤ 1 := by
-  have hψ' : star (swapVec ψ) ⬝ᵥ swapVec ψ = 1 := by rw [swapVec_dotProduct]; exact hψ
-  have h := sum_stateSqNorm_le_one (dA := dB) (dB := dA) (A := B) hψ' N
-  refine le_trans (le_of_eq (Finset.sum_congr rfl fun b _ => ?_)) h
-  rw [norm_stateVecB, stateSqNorm]
+    ∑ b, ‖stateVecB ψ (((N.mats b).val))‖ ^ 2 ≤ 1 :=
+  (BipartiteModel.tensor ψ).swap.sum_stateSqNorm_le_one (norm_evec_eq_one hψ) N.toIn
 
 /-! ## The engine -/
 
 omit [DecidableEq C] in
 /-- **From agreement to cross-party closeness.** For any two POVMs with the same outcome set,
-the summed cross-party squared deviation is at most twice the disagreement probability. Expand
-each square: the two diagonal sums are at most one (`sum_stateSqNorm_le_one`), and the cross
-term is the agreement probability.
-
-No projectivity, and no hypothesis beyond `ψ` being a unit vector. -/
+the summed cross-party squared deviation is at most twice the disagreement probability
+(`BipartiteModel.xSqNorm_sum_le_two_mul` in the tensor-product model). No projectivity, and no
+hypothesis beyond `ψ` being a unit vector. -/
 theorem xSqNorm_sum_le_two_mul {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)
     (M : POVM C dA) (N : POVM C dB) :
     ∑ c, xSqNorm ψ (((M.mats c).val)) (((N.mats c).val))
       ≤ 2 * (1 - ∑ c, bornProb ψ (((M.mats c).val)) (((N.mats c).val))) := by
-  classical
-  have hexp : ∀ c, xSqNorm ψ (((M.mats c).val)) (((N.mats c).val))
-      = stateSqNorm ψ (((M.mats c).val)) + ‖stateVecB ψ (((N.mats c).val))‖ ^ 2
-        - 2 * bornProb ψ (((M.mats c).val)) (((N.mats c).val)) := by
-    intro c
-    have hsa : (((M.mats c).val))ᴴ = ((M.mats c).val) := by
-      rw [← Matrix.star_eq_conjTranspose, (M.mats c).2]
-    rw [xSqNorm, norm_sub_sq (𝕜 := ℂ), inner_stateVec_stateVecB ψ hsa, stateSqNorm,
-      stateNorm, bornProb]
-    simp only [RCLike.re_to_complex]
-    ring
-  rw [Finset.sum_congr rfl fun c (_ : c ∈ univ) => hexp c]
-  rw [Finset.sum_sub_distrib, Finset.sum_add_distrib, ← Finset.mul_sum]
-  have h1 := sum_stateSqNorm_le_one (dB := dB) hψ M
-  have h2 := sum_stateSqNormB_le_one (dA := dA) hψ N
-  linarith
+  simp only [xSqNorm_eq_tensor, bornProb_eq_tensor]
+  exact (BipartiteModel.tensor ψ).xSqNorm_sum_le_two_mul (norm_evec_eq_one hψ) M.toIn N.toIn
 
 /-! ## The conditional failure of an agreement subtest
 
@@ -242,37 +659,8 @@ theorem sum_bornProb_map {x : X} {y : Y} (f : A → C) (g : B → C) :
     ∑ c, bornProb ψ ((((MA x).map f).mats c).val) ((((MB y).map g).mats c).val)
       = ∑ a, ∑ b, (if f a = g b then (1 : ℝ) else 0)
           * bornProb ψ (((MA x).mats a).val) (((MB y).mats b).val) := by
-  classical
-  have hvalA : ∀ c, ((((MA x).map f).mats c).val)
-      = ∑ a ∈ univ.filter fun a => f a = c, (((MA x).mats a).val) := fun c => by
-    rw [show (((MA x).map f).mats c) = ∑ a ∈ univ.filter fun a => f a = c, (MA x).mats a from
-      rfl]
-    exact AddSubmonoidClass.coe_finsetSum _ _
-  have hvalB : ∀ c, ((((MB y).map g).mats c).val)
-      = ∑ b ∈ univ.filter fun b => g b = c, (((MB y).mats b).val) := fun c => by
-    rw [show (((MB y).map g).mats c) = ∑ b ∈ univ.filter fun b => g b = c, (MB y).mats b from
-      rfl]
-    exact AddSubmonoidClass.coe_finsetSum _ _
-  -- the Born probability of a coarse-grained outcome is the sum over its fibre
-  have hborn : ∀ c, bornProb ψ ((((MA x).map f).mats c).val) ((((MB y).map g).mats c).val)
-      = ∑ a ∈ univ.filter fun a => f a = c, ∑ b ∈ univ.filter fun b => g b = c,
-          bornProb ψ (((MA x).mats a).val) (((MB y).mats b).val) := by
-    intro c
-    simp only [bornProb]
-    rw [hvalA c, hvalB c, sum_kronecker_left, sum_quadForm ψ _ _, Complex.re_sum]
-    refine Finset.sum_congr rfl fun a _ => ?_
-    rw [kronecker_sum_right, sum_quadForm ψ _ _, Complex.re_sum]
-  -- and the fibres of the two post-processings regroup into the agreement indicator
-  rw [Finset.sum_congr rfl fun c (_ : c ∈ univ) => hborn c]
-  simp only [Finset.sum_filter]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun a _ => ?_
-  rw [Finset.sum_ite_eq univ (f a) _]
-  simp only [mem_univ, if_true]
-  refine Finset.sum_congr rfl fun b _ => ?_
-  by_cases h : f a = g b
-  · rw [if_pos h.symm, if_pos h, one_mul]
-  · rw [if_neg fun hh : g b = f a => h hh.symm, if_neg h, zero_mul]
+  simp only [bornProb_eq_tensor]
+  exact (BipartiteModel.tensor ψ).sum_bornProb_map (MA x).toIn (MB y).toIn f g
 
 omit [Fintype X] [Fintype Y] [DecidableEq C] [DecidableEq dA] in
 /-- Relabelling Bob's outcomes is data processing: a weighted sum over the relabelled outcomes is
@@ -282,21 +670,8 @@ theorem sum_bornProb_mapB {B' : Type*} [Fintype B'] [DecidableEq B'] (EA : Matri
     ∑ b', w b' * bornProb ψ EA (((NB.map φB).mats b').val)
       = ∑ b, w (φB b) * bornProb ψ EA ((NB.mats b).val) := by
   classical
-  have hval : ∀ b', (((NB.map φB).mats b').val)
-      = ∑ b ∈ univ.filter fun b => φB b = b', ((NB.mats b).val) := fun b' => by
-    rw [show ((NB.map φB).mats b') = ∑ b ∈ univ.filter fun b => φB b = b', NB.mats b from rfl]
-    exact AddSubmonoidClass.coe_finsetSum _ _
-  have hborn : ∀ b', bornProb ψ EA (((NB.map φB).mats b').val)
-      = ∑ b ∈ univ.filter fun b => φB b = b', bornProb ψ EA ((NB.mats b).val) := by
-    intro b'
-    simp only [bornProb]
-    rw [hval b', kronecker_sum_right, sum_quadForm ψ _ _, Complex.re_sum]
-  rw [Finset.sum_congr rfl fun b' (_ : b' ∈ univ) => by rw [hborn b', Finset.mul_sum]]
-  simp only [Finset.sum_filter]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun b _ => ?_
-  rw [Finset.sum_ite_eq univ (φB b) _]
-  simp only [mem_univ, if_true]
+  simp only [bornProb_eq_tensor]
+  exact (BipartiteModel.tensor ψ).sum_bornProb_mapB EA NB.toIn φB w
 
 omit [Fintype X] [Fintype Y] [DecidableEq C] [DecidableEq dB] in
 /-- Relabelling Alice's outcomes is data processing. -/
@@ -305,21 +680,8 @@ theorem sum_bornProb_mapA {A' : Type*} [Fintype A'] [DecidableEq A'] (NA : POVM 
     ∑ a', w a' * bornProb ψ (((NA.map φA).mats a').val) EB
       = ∑ a, w (φA a) * bornProb ψ ((NA.mats a).val) EB := by
   classical
-  have hval : ∀ a', (((NA.map φA).mats a').val)
-      = ∑ a ∈ univ.filter fun a => φA a = a', ((NA.mats a).val) := fun a' => by
-    rw [show ((NA.map φA).mats a') = ∑ a ∈ univ.filter fun a => φA a = a', NA.mats a from rfl]
-    exact AddSubmonoidClass.coe_finsetSum _ _
-  have hborn : ∀ a', bornProb ψ (((NA.map φA).mats a').val) EB
-      = ∑ a ∈ univ.filter fun a => φA a = a', bornProb ψ ((NA.mats a).val) EB := by
-    intro a'
-    simp only [bornProb]
-    rw [hval a', sum_kronecker_left, sum_quadForm ψ _ _, Complex.re_sum]
-  rw [Finset.sum_congr rfl fun a' (_ : a' ∈ univ) => by rw [hborn a', Finset.mul_sum]]
-  simp only [Finset.sum_filter]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun a _ => ?_
-  rw [Finset.sum_ite_eq univ (φA a) _]
-  simp only [mem_univ, if_true]
+  simp only [bornProb_eq_tensor]
+  exact (BipartiteModel.tensor ψ).sum_bornProb_mapA NA.toIn φA EB w
 
 omit [Fintype X] [Fintype Y] [DecidableEq C] in
 /-- **Relabelling both players' outcomes is data processing on the Born distribution.** A
@@ -331,13 +693,8 @@ theorem sum_weight_bornProb_map {A' B' : Type*} [Fintype A'] [DecidableEq A'] [F
     (w : A' → B' → ℝ) :
     ∑ a', ∑ b', w a' b' * bornProb ψ (((NA.map φA).mats a').val) (((NB.map φB).mats b').val)
       = ∑ a, ∑ b, w (φA a) (φB b) * bornProb ψ ((NA.mats a).val) ((NB.mats b).val) := by
-  classical
-  rw [Finset.sum_congr rfl fun a' (_ : a' ∈ univ) =>
-    sum_bornProb_mapB (ψ := ψ) (((NA.map φA).mats a').val) NB φB (w a')]
-  rw [Finset.sum_comm]
-  rw [Finset.sum_congr rfl fun b (_ : b ∈ univ) =>
-    sum_bornProb_mapA (ψ := ψ) NA φA ((NB.mats b).val) fun a' => w a' (φB b)]
-  exact Finset.sum_comm
+  simp only [bornProb_eq_tensor]
+  exact (BipartiteModel.tensor ψ).sum_weight_bornProb_map NA.toIn NB.toIn φA φB w
 
 /-- **Accept implies agree bounds the disagreement of the coarse-grained POVMs by the
 conditional failure.** -/
@@ -345,20 +702,9 @@ theorem one_sub_sum_bornProb_le_condFail {x : X} {y : Y} (f : A → C) (g : B �
     (hD : ∀ a b, G.D x y a b = true → f a = g b) :
     1 - ∑ c, bornProb ψ ((((MA x).map f).mats c).val) ((((MB y).map g).mats c).val)
       ≤ condFail G ψ MA MB x y := by
-  classical
-  have hle : condWin G ψ MA MB x y
-      ≤ ∑ a, ∑ b, (if f a = g b then (1 : ℝ) else 0)
-          * bornProb ψ (((MA x).mats a).val) (((MB y).mats b).val) := by
-    rw [condWin]
-    refine Finset.sum_le_sum fun a _ => Finset.sum_le_sum fun b _ => ?_
-    have h0 : 0 ≤ bornProb ψ (((MA x).mats a).val) (((MB y).mats b).val) :=
-      bornProb_nonneg ψ ((MA x).posSemidef a) ((MB y).posSemidef b)
-    by_cases h : G.D x y a b = true
-    · rw [if_pos h, if_pos (hD a b h)]
-    · rw [if_neg h, zero_mul]
-      exact mul_nonneg (by split_ifs <;> norm_num) h0
-  rw [sum_bornProb_map, condFail]
-  linarith
+  simp only [bornProb_eq_tensor, condFail_eq_tensor]
+  exact (BipartiteModel.tensor ψ).one_sub_sum_bornProb_le_condFail
+    (MA := fun x => (MA x).toIn) (MB := fun y => (MB y).toIn) f g hD
 
 /-- **The master estimate.** A subtest that accepts only when two post-processings of the answers
 agree bounds the cross-party deviation of the coarse-grained POVMs by twice its conditional
@@ -368,8 +714,9 @@ theorem xSqNorm_sum_le_condFail (hψ : star ψ ⬝ᵥ ψ = 1) {x : X} {y : Y} (f
     (hD : ∀ a b, G.D x y a b = true → f a = g b) :
     ∑ c, xSqNorm ψ ((((MA x).map f).mats c).val) ((((MB y).map g).mats c).val)
       ≤ 2 * condFail G ψ MA MB x y := by
-  refine le_trans (xSqNorm_sum_le_two_mul hψ _ _) ?_
-  exact mul_le_mul_of_nonneg_left (one_sub_sum_bornProb_le_condFail f g hD) (by norm_num)
+  simp only [xSqNorm_eq_tensor, condFail_eq_tensor]
+  exact (BipartiteModel.tensor ψ).xSqNorm_sum_le_condFail (MA := fun x => (MA x).toIn)
+    (MB := fun y => (MB y).toIn) (norm_evec_eq_one hψ) f g hD
 
 /-! ## The weights of the subtests -/
 
@@ -380,14 +727,9 @@ add up to at most `ε`.** `condFail_le_div` is the one-pair case. -/
 theorem sum_mul_condFail_le (hψ : star ψ ⬝ᵥ ψ = 1)
     (hfail : 1 - povmValue G ψ MA MB ≤ ε) (S : Finset (X × Y)) :
     ∑ p ∈ S, G.μ p.1 p.2 * condFail G ψ MA MB p.1 p.2 ≤ ε := by
-  classical
-  have heq : ∑ p : X × Y, G.μ p.1 p.2 * condFail G ψ MA MB p.1 p.2
-      = 1 - povmValue G ψ MA MB := by
-    rw [Fintype.sum_prod_type, one_sub_povmValue_eq]
-  refine le_trans (Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ S)
-    fun p _ _ => mul_nonneg (G.μ_nonneg _ _) (condFail_nonneg hψ _ _)) ?_
-  rw [heq]
-  exact hfail
+  simp only [condFail_eq_tensor]
+  rw [povmValue_eq_tensor] at hfail
+  exact (BipartiteModel.tensor ψ).sum_mul_condFail_le (norm_evec_eq_one hψ) hfail S
 
 /-- **The blueprint's "divided by the probability that the subtest is selected", in the form the
 Pauli basis test needs.** An auxiliary weighting `ν` on an index set and a map `q` to question
@@ -401,26 +743,10 @@ theorem sum_condFail_le_of_pushforward {ι : Type*} [Fintype ι] [DecidableEq ι
     (q : ι → X × Y) {c : ℝ} (hc : 0 < c)
     (hpush : ∀ p : X × Y, c * ∑ i ∈ univ.filter fun i => q i = p, ν i ≤ G.μ p.1 p.2) :
     ∑ i, ν i * condFail G ψ MA MB (q i).1 (q i).2 ≤ ε / c := by
-  classical
-  -- group the index set by its image
-  have hgroup : ∑ i, ν i * condFail G ψ MA MB (q i).1 (q i).2
-      = ∑ p : X × Y, (∑ i ∈ univ.filter fun i => q i = p, ν i)
-          * condFail G ψ MA MB p.1 p.2 := by
-    rw [← Finset.sum_fiberwise (g := q) (f := fun i => ν i * condFail G ψ MA MB (q i).1 (q i).2)]
-    refine Finset.sum_congr rfl fun p _ => ?_
-    rw [Finset.sum_mul]
-    refine Finset.sum_congr rfl fun i hi => ?_
-    rw [(Finset.mem_filter.mp hi).2]
-  rw [hgroup, le_div_iff₀ hc, Finset.sum_mul]
-  refine le_trans (Finset.sum_le_sum
-    (g := fun p : X × Y => G.μ p.1 p.2 * condFail G ψ MA MB p.1 p.2) fun p _ => ?_) ?_
-  · have h0 : 0 ≤ condFail G ψ MA MB p.1 p.2 :=
-      condFail_nonneg (G := G) (ψ := ψ) (MA := MA) (MB := MB) hψ p.1 p.2
-    calc (∑ i ∈ univ.filter fun i => q i = p, ν i) * condFail G ψ MA MB p.1 p.2 * c
-        = c * (∑ i ∈ univ.filter fun i => q i = p, ν i) * condFail G ψ MA MB p.1 p.2 := by ring
-      _ ≤ G.μ p.1 p.2 * condFail G ψ MA MB p.1 p.2 :=
-          mul_le_mul_of_nonneg_right (hpush p) h0
-  · exact sum_mul_condFail_le hψ hfail _
+  simp only [condFail_eq_tensor]
+  rw [povmValue_eq_tensor] at hfail
+  exact (BipartiteModel.tensor ψ).sum_condFail_le_of_pushforward (norm_evec_eq_one hψ) hfail ν
+    q hc hpush
 
 /-- **The blueprint's "divided by the probability that the subtest is selected".** An auxiliary
 distribution `ν` on an index set that injects into the question pairs, with `c · ν i` below the
@@ -431,23 +757,10 @@ theorem sum_condFail_le_of_le {ι : Type*} [Fintype ι]
     (q : ι → X × Y) (hq : Function.Injective q) {c : ℝ} (hc : 0 < c)
     (hνμ : ∀ i, c * ν i ≤ G.μ (q i).1 (q i).2) :
     ∑ i, ν i * condFail G ψ MA MB (q i).1 (q i).2 ≤ ε / c := by
-  classical
-  have himg : ∑ i, G.μ (q i).1 (q i).2 * condFail G ψ MA MB (q i).1 (q i).2
-      = ∑ p ∈ univ.image q, G.μ p.1 p.2 * condFail G ψ MA MB p.1 p.2 :=
-    (Finset.sum_image (f := fun p : X × Y => G.μ p.1 p.2 * condFail G ψ MA MB p.1 p.2)
-      (s := (univ : Finset ι)) (g := q) fun i _ j _ h => hq h).symm
-  rw [le_div_iff₀ hc, Finset.sum_mul]
-  refine le_trans (Finset.sum_le_sum
-    (g := fun i => G.μ (q i).1 (q i).2 * condFail G ψ MA MB (q i).1 (q i).2)
-    fun i _ => ?_) ?_
-  · have h0 : 0 ≤ condFail G ψ MA MB (q i).1 (q i).2 :=
-      condFail_nonneg (G := G) (ψ := ψ) (MA := MA) (MB := MB) hψ (q i).1 (q i).2
-    calc ν i * condFail G ψ MA MB (q i).1 (q i).2 * c
-        = c * ν i * condFail G ψ MA MB (q i).1 (q i).2 := by ring
-      _ ≤ G.μ (q i).1 (q i).2 * condFail G ψ MA MB (q i).1 (q i).2 :=
-          mul_le_mul_of_nonneg_right (hνμ i) h0
-  · rw [himg]
-    exact sum_mul_condFail_le hψ hfail _
+  simp only [condFail_eq_tensor]
+  rw [povmValue_eq_tensor] at hfail
+  exact (BipartiteModel.tensor ψ).sum_condFail_le_of_le (norm_evec_eq_one hψ) hfail ν q hq hc
+    hνμ
 
 /-! ## Products, and the order reversal
 
@@ -462,7 +775,7 @@ AB ⊗ Id - Id ⊗ B'A' = (A ⊗ Id)(B ⊗ Id - Id ⊗ B') + (Id ⊗ B')(A ⊗ I
 
 --- the second step is legitimate because `A ⊗ Id` and `Id ⊗ B'` commute, and it is that commuting
 step that puts `B'` on the *left* of `A'`. Each summand then loses its front factor to a bound on
-its operator norm.
+its operator norm (`BipartiteModel.xNorm_mul_le`, here in the tensor-product model).
 
 This is stated on the unsquared deviation, because the triangle inequality is what the argument
 uses; `xSqNorm_mul_le` squares it at the cost of the usual factor two.
@@ -471,23 +784,6 @@ uses; `xSqNorm_mul_le` squares it at the cost of the usual factor two.
 section Reversal
 
 variable {ψ : dA × dB → ℂ}
-
-/-- `‖(A ⊗ Id - Id ⊗ B)|ψ⟩‖`, the unsquared cross-party deviation. -/
-def xNorm (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B : Matrix dB dB ℂ) : ℝ :=
-  ‖stateVec ψ A - stateVecB ψ B‖
-
-theorem xNorm_nonneg (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B : Matrix dB dB ℂ) :
-    0 ≤ xNorm ψ A B := norm_nonneg _
-
-theorem xSqNorm_eq_sq (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B : Matrix dB dB ℂ) :
-    xSqNorm ψ A B = xNorm ψ A B ^ 2 := rfl
-
-/-- The deviation is the state-norm of the single operator `A ⊗ Id - Id ⊗ B` on the product
-space, which is what the operator-norm calculus of `MIPRE/Foundations/OpBound.lean` consumes. -/
-theorem xNorm_eq_snorm (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) (B : Matrix dB dB ℂ) :
-    xNorm ψ A B = snorm ψ ((aOp A : Matrix (dA × dB) _ ℂ) - bOp B) := by
-  rw [xNorm, snorm, Matrix.sub_mulVec, evec_sub]
-  rfl
 
 /-- The squared cross-party deviation as a `snorm` on the joint space, which is the form the
 chains of the appendix are run in. -/
@@ -529,15 +825,9 @@ and each deviation is paid for by the operator norm of the factor in front of it
 theorem xNorm_mul_le {K L : ℝ} (A B : Matrix dA dA ℂ) (A' B' : Matrix dB dB ℂ)
     (hA : Bnd (aOp A : Matrix (dA × dB) _ ℂ) K) (hB' : Bnd (bOp B' : Matrix (dA × dB) _ ℂ) L) :
     xNorm ψ (A * B) (B' * A') ≤ K * xNorm ψ B B' + L * xNorm ψ A A' := by
-  have hsplit : (aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A')
-      = (aOp A : Matrix (dA × dB) _ ℂ) * ((aOp B : Matrix (dA × dB) _ ℂ) - bOp B')
-        + (bOp B' : Matrix (dA × dB) _ ℂ) * ((aOp A : Matrix (dA × dB) _ ℂ) - bOp A') := by
-    rw [aOp_mul, bOp_mul, Matrix.mul_sub, Matrix.mul_sub, aOp_mul_bOp A B']
-    abel
-  rw [xNorm_eq_snorm, xNorm_eq_snorm, xNorm_eq_snorm, hsplit]
-  refine le_trans (snorm_add_le ψ _ _) (add_le_add ?_ ?_)
-  · exact snorm_mul_le ψ hA _
-  · exact snorm_mul_le ψ hB' _
+  simp only [xNorm_eq_tensor]
+  exact (BipartiteModel.tensor ψ).xNorm_mul_le A B A' B' ((BipartiteModel.bnd_tensor ψ).2 hA)
+    ((BipartiteModel.bnd_tensor ψ).2 hB')
 
 /-- The order reversal for contractions, which is how every consumer uses it: POVM elements and
 generalized observables are bounded by one on either factor. -/
@@ -551,11 +841,9 @@ theorem xNorm_mul_le_one (A B : Matrix dA dA ℂ) (A' B' : Matrix dB dB ℂ)
 theorem xSqNorm_mul_le_one (A B : Matrix dA dA ℂ) (A' B' : Matrix dB dB ℂ)
     (hA : Aᴴ * A ≤ (1 : Matrix dA dA ℂ)) (hB' : B'ᴴ * B' ≤ (1 : Matrix dB dB ℂ)) :
     xSqNorm ψ (A * B) (B' * A') ≤ 2 * xSqNorm ψ B B' + 2 * xSqNorm ψ A A' := by
-  have h := xNorm_mul_le_one (ψ := ψ) A B A' B' hA hB'
-  have h0 : 0 ≤ xNorm ψ B B' + xNorm ψ A A' :=
-    add_nonneg (xNorm_nonneg _ _ _) (xNorm_nonneg _ _ _)
-  rw [xSqNorm_eq_sq, xSqNorm_eq_sq, xSqNorm_eq_sq]
-  nlinarith [sq_nonneg (xNorm ψ B B' - xNorm ψ A A'), xNorm_nonneg ψ (A * B) (B' * A')]
+  simp only [xSqNorm_eq_tensor]
+  exact (BipartiteModel.tensor ψ).xSqNorm_mul_le_one A B A' B'
+    ((BipartiteModel.bnd_tensor ψ).2 (bnd_aOp hA)) ((BipartiteModel.bnd_tensor ψ).2 (bnd_bOp hB'))
 
 /-! ### A sum inside a deviation
 
@@ -563,26 +851,19 @@ Pushing a sum inside a deviation costs the number of terms; the appendix's chain
 marginal of a joint measurement replaces the measurement itself. -/
 
 theorem stateSqNorm_sub_comm (ψ : dA × dB → ℂ) (M N : Matrix dA dA ℂ) :
-    stateSqNorm ψ (M - N) = stateSqNorm ψ (N - M) := by
-  rw [stateSqNorm, stateSqNorm, stateNorm, stateNorm, norm_stateVec_eq_snorm,
-    norm_stateVec_eq_snorm, aOp_sub, aOp_sub, snorm_sub_comm]
+    stateSqNorm ψ (M - N) = stateSqNorm ψ (N - M) :=
+  (BipartiteModel.tensor ψ).stateSqNorm_sub_comm M N
 
 theorem norm_stateVecB_sub_comm (ψ : dA × dB → ℂ) (M N : Matrix dB dB ℂ) :
-    ‖stateVecB ψ (M - N)‖ = ‖stateVecB ψ (N - M)‖ := by
-  rw [norm_stateVecB_eq_snorm, norm_stateVecB_eq_snorm, bOp_sub, bOp_sub, snorm_sub_comm]
+    ‖stateVecB ψ (M - N)‖ = ‖stateVecB ψ (N - M)‖ :=
+  (BipartiteModel.tensor ψ).swap.stateNorm_sub_comm M N
 
 omit [DecidableEq dA] in
 /-- Pushing a sum inside a deviation costs the number of terms. -/
 theorem stateSqNorm_sum_le {κ : Type*} [Fintype κ] (ψ : dA × dB → ℂ) (f : κ → Matrix dA dA ℂ) :
     stateSqNorm ψ (∑ k, f k) ≤ (Fintype.card κ : ℝ) * ∑ k, stateSqNorm ψ (f k) := by
-  have h1 : stateNorm ψ (∑ k, f k) ≤ ∑ k, stateNorm ψ (f k) := by
-    rw [stateNorm, stateVec_sum]
-    exact le_trans (norm_sum_le _ _) (le_of_eq rfl)
-  calc stateSqNorm ψ (∑ k, f k) = stateNorm ψ (∑ k, f k) ^ 2 := rfl
-    _ ≤ (∑ k, stateNorm ψ (f k)) ^ 2 := pow_le_pow_left₀ (stateNorm_nonneg ψ _) h1 2
-    _ ≤ (Fintype.card κ : ℝ) * ∑ k, stateNorm ψ (f k) ^ 2 :=
-        sq_sum_le_card_mul_sum_sq _ fun k => stateNorm_nonneg ψ _
-    _ = (Fintype.card κ : ℝ) * ∑ k, stateSqNorm ψ (f k) := rfl
+  classical
+  exact (BipartiteModel.tensor ψ).stateSqNorm_sum_le f
 
 /-! ### Transferring an anticommutation across the two factors
 
@@ -600,42 +881,20 @@ reversal on the way across and a second one on the way back, and the two reversa
 because the anticommutator in the middle is a sum, not a difference. -/
 
 /-- **An anticommutation on Bob's side transfers to Alice's**, at the cost of the two cross-party
-deviations counted twice each. Every operator in sight is assumed to be a contraction, which is
-what a `±1`-observable coming from a two-outcome POVM is. -/
+deviations counted twice each (`BipartiteModel.stateNorm_anticomm_le`). Every operator in sight
+is assumed to be a contraction, which is what a `±1`-observable coming from a two-outcome POVM
+is. -/
 theorem norm_stateVec_anticomm_le (A B : Matrix dA dA ℂ) (A' B' : Matrix dB dB ℂ)
     (hA : Aᴴ * A ≤ (1 : Matrix dA dA ℂ)) (hB : Bᴴ * B ≤ (1 : Matrix dA dA ℂ))
     (hA' : A'ᴴ * A' ≤ (1 : Matrix dB dB ℂ)) (hB' : B'ᴴ * B' ≤ (1 : Matrix dB dB ℂ)) :
     ‖stateVec ψ (A * B + B * A)‖
       ≤ 2 * xNorm ψ A A' + 2 * xNorm ψ B B' + ‖stateVecB ψ (A' * B' + B' * A')‖ := by
-  have hsplit : (aOp (A * B + B * A) : Matrix (dA × dB) _ ℂ)
-      = ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A'))
-        + (bOp (A' * B' + B' * A') : Matrix (dA × dB) _ ℂ)
-        + ((aOp (B * A) : Matrix (dA × dB) _ ℂ) - bOp (A' * B')) := by
-    rw [aOp_add, bOp_add]
-    abel
-  have e1 : snorm ψ (((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A')
-        + bOp (A' * B' + B' * A')) + ((aOp (B * A) : Matrix (dA × dB) _ ℂ) - bOp (A' * B')))
-      ≤ snorm ψ ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A')
-          + bOp (A' * B' + B' * A'))
-        + snorm ψ ((aOp (B * A) : Matrix (dA × dB) _ ℂ) - bOp (A' * B')) :=
-    snorm_add_le ψ _ _
-  have e2 : snorm ψ ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A')
-        + bOp (A' * B' + B' * A'))
-      ≤ snorm ψ ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A'))
-        + snorm ψ (bOp (A' * B' + B' * A') : Matrix (dA × dB) _ ℂ) :=
-    snorm_add_le ψ _ _
-  have e3 : snorm ψ ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A'))
-      = xNorm ψ (A * B) (B' * A') := (xNorm_eq_snorm ψ _ _).symm
-  have e4 : snorm ψ ((aOp (B * A) : Matrix (dA × dB) _ ℂ) - bOp (A' * B'))
-      = xNorm ψ (B * A) (A' * B') := (xNorm_eq_snorm ψ _ _).symm
-  have e5 : snorm ψ (bOp (A' * B' + B' * A') : Matrix (dA × dB) _ ℂ)
-      = ‖stateVecB ψ (A' * B' + B' * A')‖ := (norm_stateVecB_eq_snorm ψ _).symm
-  have h1 : xNorm ψ (A * B) (B' * A') ≤ xNorm ψ B B' + xNorm ψ A A' :=
-    xNorm_mul_le_one A B A' B' hA hB'
-  have h2 : xNorm ψ (B * A) (A' * B') ≤ xNorm ψ A A' + xNorm ψ B B' :=
-    xNorm_mul_le_one B A B' A' hB hA'
-  rw [norm_stateVec_eq_snorm, hsplit]
-  linarith
+  simp only [xNorm_eq_tensor]
+  exact (BipartiteModel.tensor ψ).stateNorm_anticomm_le A B A' B'
+    ((BipartiteModel.tensor ψ).bnd_πA_of_star_mul_self_le hA)
+    ((BipartiteModel.tensor ψ).bnd_πA_of_star_mul_self_le hB)
+    ((BipartiteModel.tensor ψ).swap.bnd_πA_of_star_mul_self_le hA')
+    ((BipartiteModel.tensor ψ).swap.bnd_πA_of_star_mul_self_le hB')
 
 /-! ### Two-outcome observables
 
@@ -741,37 +1000,12 @@ theorem norm_stateVec_comm_le (A B : Matrix dA dA ℂ) (A' B' : Matrix dB dB ℂ
     (hA' : A'ᴴ * A' ≤ (1 : Matrix dB dB ℂ)) (hB' : B'ᴴ * B' ≤ (1 : Matrix dB dB ℂ)) :
     ‖stateVec ψ (A * B - B * A)‖
       ≤ 2 * xNorm ψ A A' + 2 * xNorm ψ B B' + ‖stateVecB ψ (B' * A' - A' * B')‖ := by
-  have hsplit : (aOp (A * B - B * A) : Matrix (dA × dB) _ ℂ)
-      = ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A'))
-        + (bOp (B' * A' - A' * B') : Matrix (dA × dB) _ ℂ)
-        + (bOp (A' * B') - (aOp (B * A) : Matrix (dA × dB) _ ℂ)) := by
-    rw [aOp_sub, bOp_sub]
-    abel
-  have e1 : snorm ψ (((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A')
-        + bOp (B' * A' - A' * B')) + ((bOp (A' * B') : Matrix (dA × dB) _ ℂ)
-          - aOp (B * A)))
-      ≤ snorm ψ ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A')
-          + bOp (B' * A' - A' * B'))
-        + snorm ψ ((bOp (A' * B') : Matrix (dA × dB) _ ℂ) - aOp (B * A)) :=
-    snorm_add_le ψ _ _
-  have e2 : snorm ψ ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A')
-        + bOp (B' * A' - A' * B'))
-      ≤ snorm ψ ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A'))
-        + snorm ψ (bOp (B' * A' - A' * B') : Matrix (dA × dB) _ ℂ) :=
-    snorm_add_le ψ _ _
-  have e3 : snorm ψ ((aOp (A * B) : Matrix (dA × dB) _ ℂ) - bOp (B' * A'))
-      = xNorm ψ (A * B) (B' * A') := (xNorm_eq_snorm ψ _ _).symm
-  have e4 : snorm ψ ((bOp (A' * B') : Matrix (dA × dB) _ ℂ) - aOp (B * A))
-      = xNorm ψ (B * A) (A' * B') := by
-    rw [xNorm_eq_snorm, snorm_sub_comm]
-  have e5 : snorm ψ (bOp (B' * A' - A' * B') : Matrix (dA × dB) _ ℂ)
-      = ‖stateVecB ψ (B' * A' - A' * B')‖ := (norm_stateVecB_eq_snorm ψ _).symm
-  have h1 : xNorm ψ (A * B) (B' * A') ≤ xNorm ψ B B' + xNorm ψ A A' :=
-    xNorm_mul_le_one A B A' B' hA hB'
-  have h2 : xNorm ψ (B * A) (A' * B') ≤ xNorm ψ A A' + xNorm ψ B B' :=
-    xNorm_mul_le_one B A B' A' hB hA'
-  rw [norm_stateVec_eq_snorm, hsplit]
-  linarith
+  simp only [xNorm_eq_tensor]
+  exact (BipartiteModel.tensor ψ).stateNorm_comm_le A B A' B'
+    ((BipartiteModel.tensor ψ).bnd_πA_of_star_mul_self_le hA)
+    ((BipartiteModel.tensor ψ).bnd_πA_of_star_mul_self_le hB)
+    ((BipartiteModel.tensor ψ).swap.bnd_πA_of_star_mul_self_le hA')
+    ((BipartiteModel.tensor ψ).swap.bnd_πA_of_star_mul_self_le hB')
 
 end Reversal
 

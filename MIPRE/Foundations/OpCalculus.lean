@@ -165,6 +165,25 @@ theorem qform_one (hψ : ‖ψ‖ = 1) : qform ψ (1 : H →L[ℂ] H) = 1 := by
   show (⟪ψ, ψ⟫_ℂ).re = 1
   rw [← RCLike.re_to_complex, inner_self_eq_norm_sq, hψ, one_pow]
 
+/-- `Re ⟨ψ, ψ⟩ = ‖ψ‖²`. -/
+theorem qform_one_eq : qform ψ (1 : H →L[ℂ] H) = ‖ψ‖ ^ 2 := by
+  show (⟪ψ, ψ⟫_ℂ).re = _
+  rw [← RCLike.re_to_complex, inner_self_eq_norm_sq]
+
+/-- **The quadratic form of a positive operator is nonnegative.** -/
+theorem qform_nonneg_of_nonneg [CompleteSpace H] {T : H →L[ℂ] H} (h : 0 ≤ T) :
+    0 ≤ qform ψ T := by
+  have := (ContinuousLinearMap.nonneg_iff_isPositive.1 h).re_inner_nonneg_right ψ
+  unfold qform
+  rwa [← RCLike.re_to_complex]
+
+/-- **The quadratic form is monotone.** -/
+theorem qform_mono [CompleteSpace H] {T T' : H →L[ℂ] H} (h : T ≤ T') :
+    qform ψ T ≤ qform ψ T' := by
+  have h0 := qform_nonneg_of_nonneg ψ (sub_nonneg.2 h)
+  rw [qform_sub] at h0
+  linarith
+
 end QForm
 
 /-! ## Isometries and adjoints -/

@@ -177,6 +177,49 @@ end Tensor
 
 end BipartiteModel
 
+/-! ## Positive contractions
+
+The facts about an operator between `0` and `1` that the measurements of the analyses need. Each
+is a product of two commuting positive operators, which is where the functional calculus of
+`B(H)` enters; the players' algebras need not have one. -/
+
+namespace Op
+
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+
+/-- `P² ≤ P` for `0 ≤ P ≤ 1`: `P (1 - P)` is a product of commuting positive operators. -/
+theorem mul_self_le_self {P : H →L[ℂ] H} (h0 : 0 ≤ P) (h1 : P ≤ 1) : P * P ≤ P := by
+  have hprod : 0 ≤ P * (1 - P) :=
+    ((Commute.one_right P).sub_right (Commute.refl P)).mul_nonneg h0 (sub_nonneg.2 h1)
+  rw [mul_sub, mul_one] at hprod
+  exact sub_nonneg.1 hprod
+
+/-- An operator between `0` and `1` is a contraction. -/
+theorem bnd_one_of_nonneg_of_le_one {P : H →L[ℂ] H} (h0 : 0 ≤ P) (h1 : P ≤ 1) : Bnd P 1 := by
+  refine bnd_one_of_star_mul_self_le ?_
+  rw [(IsSelfAdjoint.of_nonneg h0).star_eq]
+  exact (mul_self_le_self h0 h1).trans h1
+
+/-- **The difference of two operators between `0` and `1` is a contraction**: `1 - (P - Q)` and
+`1 + (P - Q)` are commuting positive operators, and their product is `1 - (P - Q)²`. -/
+theorem bnd_one_of_sub {P Q : H →L[ℂ] H} (hP0 : 0 ≤ P) (hP1 : P ≤ 1) (hQ0 : 0 ≤ Q)
+    (hQ1 : Q ≤ 1) : Bnd (P - Q) 1 := by
+  refine bnd_one_of_star_mul_self_le ?_
+  rw [star_sub, (IsSelfAdjoint.of_nonneg hP0).star_eq, (IsSelfAdjoint.of_nonneg hQ0).star_eq]
+  have h1 : 0 ≤ 1 - (P - Q) := by
+    rw [show (1 : H →L[ℂ] H) - (P - Q) = (1 - P) + Q by abel]
+    exact add_nonneg (sub_nonneg.2 hP1) hQ0
+  have h2 : 0 ≤ 1 + (P - Q) := by
+    rw [show (1 : H →L[ℂ] H) + (P - Q) = (1 - Q) + P by abel]
+    exact add_nonneg (sub_nonneg.2 hQ1) hP0
+  have hc : Commute (1 - (P - Q)) (1 + (P - Q)) :=
+    (Commute.one_left _).sub_left ((Commute.one_right _).add_right (Commute.refl _))
+  have hprod := hc.mul_nonneg h1 h2
+  rw [show (1 - (P - Q)) * (1 + (P - Q)) = 1 - (P - Q) * (P - Q) by noncomm_ring] at hprod
+  exact sub_nonneg.1 hprod
+
+end Op
+
 /-! ## The commutant of a set of operators is ordered -/
 
 section Commutant
