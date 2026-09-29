@@ -1,0 +1,234 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+# formalization.yaml v0.4 for the Palomar registry (planning/palomar.md, phase 5).
+version: "v0.4"
+
+project:
+  name: "MIP* = RE"
+  description: >-
+    A Lean 4 formalization of MIP* = RE (Ji, Natarajan, Vidick, Wright and Yuen): the class of
+    languages decidable by a classical polynomial-time verifier interacting with two provers who
+    share entanglement, with completeness 1 and soundness 1/2, is exactly the class of
+    recursively enumerable languages. The development also contains the halting reduction
+    behind it (a computable map from Turing machines to nonlocal games whose synchronous and
+    quantum values are 1 if the machine halts and at most 1/2 otherwise) and its corollaries
+    that the synchronous and the quantum value of a game are uncomputable. It builds on three
+    other formalizations: the soundness of the classical low individual degree test
+    (MIPStarRE, Sirui Lu and contributors), the parallel repetition theorem for entangled
+    strategies (ten-proofs, OpenAI) and the direct parallel repetition theorem for
+    commuting-operator strategies (commuting-repetition), which are vendored with their
+    provenance recorded. Palomar/Challenge.lean states the four compared theorems on top of
+    Mathlib alone, in a tree-program model of polynomial time that the fidelity section
+    describes; Palomar/Solution.lean proves them from the library.
+  authors:
+    - "Thomas Vidick"
+  license: "Apache-2.0"
+  responsible_maintainers:
+    - "Thomas Vidick"
+
+classification:
+  arxiv: ["quant-ph", "cs.CC"]
+  msc2020: ["68Q15", "81P45", "03D35", "46L10"]
+
+sources:
+  - title: "MIP* = RE"
+    authors:
+      - "Zhengfeng Ji"
+      - "Anand Natarajan"
+      - "Thomas Vidick"
+      - "John Wright"
+      - "Henry Yuen"
+    id: "arXiv:2001.04383"
+    type: "article"
+    location: "https://arxiv.org/abs/2001.04383"
+    relationship: "formalizes"
+    author_endorsement: "participated"
+  - title: "MIP* = RE, the consolidated proof (companion manuscript of this formalization)"
+    authors:
+      - "Thomas Vidick"
+    type: "manuscript"
+    location: "https://github.com/vidick/MIPRE-proof (private repository)"
+    relationship: "formalizes"
+    note: >-
+      The rewritten and consolidated proof that the blueprint of this repository paraphrases
+      statement by statement; every constant and every proof of the formalization follows it.
+      It is private at the time of submission; its statements are quoted in the blueprint.
+    author_endorsement: "participated"
+  - title: "MIPStarRE: a formalization of the soundness of the classical low individual degree test"
+    authors:
+      - "Sirui Lu"
+    contributors:
+      - name: "the MIPStarRE contributors"
+        role: "co-developers of the formalization"
+    id: "https://github.com/LionSR/MIPStarRE"
+    type: "formalization"
+    location: "https://github.com/LionSR/MIPStarRE"
+    relationship: "adapts"
+    note: >-
+      Vendored under MIPRE/Background/LIDT/MIPStarRE (322 modules, the import closure of the
+      main theorem) with recorded compile fixes, and used through a bridge. The upstream
+      repository carries no license file; its authors agreed in September 2026, by
+      correspondence, to the inclusion of their code under this repository's Apache-2.0
+      license, and every vendored file carries a header saying so.
+    license: "unknown (no license file upstream; inclusion under Apache-2.0 by the authors' written consent)"
+    author_endorsement: "endorsed"
+  - title: "ten-proofs: quantum parallel repetition"
+    authors:
+      - "OpenAI"
+    id: "https://github.com/openai/ten-proofs"
+    type: "formalization"
+    location: "https://github.com/openai/ten-proofs"
+    relationship: "adapts"
+    note: >-
+      One module of 71,000 lines, vendored under MIPRE/Background/Repetition/TenProofs in
+      eight parts and used through a bridge for the parallel repetition theorem of entangled
+      strategies.
+    license: "Apache-2.0"
+    author_endorsement: "not-contacted"
+  - title: "commuting-repetition: uniform direct parallel repetition for two-player commuting-operator strategies"
+    authors:
+      - "Thomas Vidick"
+    id: "https://github.com/vidick/commuting-repetition"
+    type: "formalization"
+    location: "https://github.com/vidick/commuting-repetition"
+    relationship: "adapts"
+    note: >-
+      Vendored under MIPRE/Background/Repetition/CommutingRepetition and
+      MIPRE/Background/Orthonormalization/Orthogonalization with recorded compile fixes;
+      it also proves Lin's tracial density theorem.
+    license: "Apache-2.0"
+    author_endorsement: "participated"
+  - title: "Mathlib"
+    id: "https://github.com/leanprover-community/mathlib4"
+    type: "formalization"
+    location: "https://github.com/leanprover-community/mathlib4"
+    relationship: "background"
+    license: "Apache-2.0"
+    author_endorsement: "n/a"
+
+related_formalizations: []
+
+status:
+  scope: >-
+    Formalized in full: the class equality MIP*_{1,1/2}(2,1) = RE, the halting reduction of
+    Theorem 12.2 of the paper on one computable map and in both the synchronous and the
+    quantum value, and the uncomputability of the synchronous and of the quantum value of a
+    nonlocal game. Polynomial time is the tree-program cost model of the library (a program
+    over binary trees with an unbounded fan-in evaluation relation counting steps), not a
+    Turing machine; the fidelity section states this divergence. The quantum value is over
+    tensor-product strategies of finite dimension; the commuting-operator value enters only
+    through the separate MIP^co track, which is not among the compared theorems. Not
+    formalized: two lemmas of the blueprint about a universal Turing machine that the
+    development does not use (MIPRE/TM/Universal/Spec.lean, two sorry, tracked and closed as
+    not planned), and four lemmas of the vendored orthogonalization tree that the four
+    compared theorems do not depend on (MIPRE/Background/Orthonormalization/Orthogonalization/
+    Basic.lean, four sorry). Neither is in the axiom trail of any compared theorem.
+  sorry_count: 6
+  sorry_in_definitions: 0
+  axioms: []
+  main_results:
+    - "MIPRE.Palomar.mipstar_eq_re"
+    - "MIPRE.Palomar.halting_reduces_to_value"
+    - "MIPRE.Palomar.syncValue_uncomputable"
+    - "MIPRE.Palomar.quantumValue_uncomputable"
+
+automation:
+  methods:
+    - method: "agent"
+      models: ["Claude (Anthropic), several model versions over the project's lifetime"]
+      framework: "Claude Code"
+      tool_setup: >-
+        Agentic Lean development in cloud sessions driven by the blueprint: the agent
+        formalizes one blueprint statement at a time against the companion proof manuscript,
+        checks it with the Lean language server and lake, and keeps the blueprint marks, the
+        axiom guards and the planning notes current; the maintainer reviews every pull request
+        and decides the modelling questions.
+      cost:
+        wall_time: "not tracked"
+        spend_usd: "subscription-based"
+        hardware: "cloud sessions (Claude Code on the web)"
+      prompting_notes: >-
+        Prompts name a blueprint statement, its paper statement and proof, and the checks a
+        pull request must pass (lean-coverage, ledger correspondence, blueprint edges and
+        colours, a full lake build); the repository's CLAUDE.md and planning notes carry the
+        standing instructions.
+    - method: "manual"
+      models: []
+      framework: "n/a"
+      tool_setup: "Human review of every pull request, the modelling decisions, and the blueprint"
+      cost:
+        wall_time: "not tracked"
+        spend_usd: "not tracked"
+        hardware: "local machine"
+      prompting_notes: "n/a"
+  spend_usd: "subscription-based"
+  notes: >-
+    The mathematics comes from the companion manuscript; the blueprint (leanblueprint) is its
+    formalizable paraphrase and the plan of record; the Lean is written mostly by the agent
+    and reviewed by the maintainer. Three results are vendored from other formalizations
+    (see sources) and reached through bridges rather than reproved. Every proof-level
+    completion mark in the blueprint is backed by a machine-checked axiom guard
+    (#guard_sorry_free), and CI checks that the two sets agree.
+
+fidelity:
+  divergences: >-
+    Polynomial time: the paper's verifiers are polynomial-time Turing machines; the Challenge
+    (and the library) use a tree-program model, in which a verifier's sampler and decider are
+    programs over binary trees with a step-counting evaluation relation, polynomially bounded
+    in the total input length. The two models are polynomially equivalent by the standard
+    simulation, which is not formalized; every other notion of the Challenge (games,
+    tensor-product strategies, values, the synchronous value, recursive enumerability through
+    Goedel numbers) is the standard one. Recursive enumerability is stated as the halting set
+    of a partial recursive function on Goedel numbers of strings rather than through a Turing
+    machine. The synchronous value is taken over projective (PVM) strategies, which give the
+    same supremum as the paper's. The verifier's game is characterized (its distribution and
+    decision predicate pinned) rather than constructed. The uncomputability theorems are
+    stated for computable functions on a description type of games with rational weights,
+    as in the paper's corollaries.
+
+review:
+  status: "self-assessed, with mechanical audits"
+  reviewers:
+    - "none"
+  notes: >-
+    Statement audit: every blueprint statement is checked against the companion manuscript
+    and against an adversarial-verification ledger of its proof before formalization, and
+    discrepancies found while formalizing are reported and recorded rather than resolved by
+    weakening the Lean. Mechanical audits in CI: the set of declarations under a proof-level
+    completion mark equals the set guarded sorry-free; the blueprint's dependency edges match
+    what the Lean declarations use; the four compared theorems depend on propext,
+    Classical.choice and Quot.sound only. No independent human review of the Lean has been
+    performed.
+
+alignment:
+  namespace: "MIPRE"
+  statements:
+    - source: "Main theorem (MIP* = RE)"
+      lean: "MIPRE.Palomar.mipstar_eq_re"
+      module: "Palomar.Solution"
+      status: "proved"
+      note: >-
+        MIP*_{1,1/2}(2,1) = RE with polynomial time in the tree-program model (fidelity);
+        proved from MIPRE.Halting.mipstar_eq_re by transport.
+    - source: "Theorem 12.2 (the halting reduction)"
+      lean: "MIPRE.Palomar.halting_reduces_to_value"
+      module: "Palomar.Solution"
+      status: "proved"
+      note: >-
+        One computable map from Goedel numbers of partial recursive functions to game
+        descriptions, with both the synchronous and the quantum value equal to 1 on halting
+        and at most 1/2 otherwise; from MIPRE.Halting.halting_reduction_both_of.
+    - source: "Corollary (uncomputability of the synchronous value)"
+      lean: "MIPRE.Palomar.syncValue_uncomputable"
+      module: "Palomar.Solution"
+      status: "proved"
+      note: "From MIPRE.Halting.gameValue_uncomputable by transport."
+    - source: "Corollary (uncomputability of the quantum value)"
+      lean: "MIPRE.Palomar.quantumValue_uncomputable"
+      module: "Palomar.Solution"
+      status: "proved"
+      note: "From MIPRE.Halting.quantumValue_uncomputable by transport."
+
+acknowledgements: >-
+  Mathlib and the Lean FRO; the authors of MIPStarRE (Sirui Lu and contributors), of
+  ten-proofs (OpenAI) and of commuting-repetition, whose formalizations are vendored; the
+  authors of MIP* = RE.

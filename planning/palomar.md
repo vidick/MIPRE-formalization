@@ -127,6 +127,23 @@ Each phase is one pull request unless noted; the order is forced by the dependen
    into every module that imports part of Mathlib rather than the `Mathlib` umbrella
    (154 files). The vendor scripts call the modularizer on the trees they produce and on
    `--apply-fixes`, and CI runs `scripts/modularize.py --check`.
+
+   The second full build (the first was cut short once the bundle existed) found three more
+   things, fixed in the follow-up PR: a formerly private name can become *ambiguous* rather
+   than clash, when a file opens two namespaces that both define it (`andCheck` of the
+   source-compiler guard against the auxiliary program's, `basisIndex` of the Pauli CL
+   against the branch program's; renamed `guardAndCheck`, `basisFin`); and a file that runs
+   compiled code at elaboration time (`#eval`, `native_decide`: the four `TM/Code` demo
+   files) gets that code only through `meta import`, so the script twins every import of
+   such a file. Each full pass costs about 50 minutes on the cloud VM; a failed module hides
+   its dependents until the next pass, so compiling a suspect file alone with
+   `lake env lean` as soon as its imports are built, in parallel with the pass, is what
+   keeps the count of passes down.
+   One more consequence for the tooling: a module's `.olean` holds only its exported
+   interface, in which every theorem is an axiom, and the proofs sit in the `.olean.private`
+   part; `scripts/blueprint-deps.lean` (behind `blueprint-edges.py`) read the `.olean` alone
+   and reported 374 stale and 854 missing edges, and now reads both parts. Anything else that
+   inspects oleans directly (rather than through `import`) needs the same.
 3. **Split the 71k-line module** in `scripts/vendor-repetition.py` into files under 10,000
    lines, deterministically, recorded like every other vendor fix.
 4. **The Challenge**: a self-contained, Mathlib-only statement file. `HaltingGameValue.lean`
@@ -134,7 +151,44 @@ Each phase is one pull request unless noted; the order is forced by the dependen
    `MIPStar = RE` needs a compact definition of a polynomial-time verifier that a reader can
    audit; the candidates and their cost (the bridge from `MIPRE.Cost` to the Challenge's model)
    are worked out in a separate draft and decided with the maintainer.
+
+   Done 2026-09-28. `Palomar/Challenge.lean` (419 lines, Mathlib-only, module form, four
+   `sorry`ed theorems) with the decisions of `planning/palomar-challenge.md` section 4;
+   `Palomar/Solution.lean` (846 lines) repeats every Challenge declaration verbatim (the
+   comparator matches by name, and a file cannot import the Challenge and declare its names
+   again) and proves the four theorems by transport, the structural identifications of the
+   Challenge's types with the library's sitting in two marked sections of the Solution and
+   the library's results restated in the Challenge's shape in `Palomar/Bridge.lean`
+   (188 lines). All four depend on `propext`, `Classical.choice` and `Quot.sound` only. The
+   `Palomar` library of `lakefile.toml` (roots `Challenge`, `Bridge`, `Solution`) is a
+   default target, so `lake build` and CI build them; `Palomar.lean` exists only because
+   `mk_all --check` wants an aggregator and is not a root, since it could not compile. The
+   Challenge is exempt from the `MIPRE.Tactics` bundle and imports what it uses.
 5. **Submission files**: `Solution.lean`, `comparator.json`, `formalization.yaml`, the
    `docbuild/` doc-gen4 project of the template, and the pre-submission scripts
    (`validate-formalization.rb`, `verify-comparator.sh`, `check-lean-sources.py`); then the
    form at `submit.palomar-registry.org`.
+
+   Done 2026-09-28, except `docbuild/`: `comparator.json` (the four theorem names, no
+   definition holes, the three axioms), `formalization.yaml` (schema v0.4, validated by the
+   template's script; the fidelity section states the tree-program divergence, the sources
+   record the three vendored formalizations and the consent for MIPStarRE, the automation
+   section names the agent workflow), and the template's three pre-submission scripts under
+   `scripts/palomar/` (the source check skips the git-ignored `Scratch/`; the comparator
+   script needs `bwrap`, which the cloud container lacks, so `lake comparator` was run with
+   `--inadvisably-no-sandbox` here). `docbuild/` (added 2026-09-29) is the template's
+   nested doc-gen4 project: `docbuild/lakefile.toml` shares the parent's package directory
+   and pins doc-gen4 to the toolchain's tag, its manifest was written by `lake update`
+   there, and `cd docbuild && lake build @MIPRE/Palomar:docs` (the library is a target of
+   the `MIPRE` package, hence the `@MIPRE/` prefix, unlike the template's own
+   `PalomarTemplate:docs`) writes the API documentation of the submission under
+   `docbuild/.lake/build/doc/`; `@MIPRE/MIPRE:docs` does the whole library, which the
+   blueprint workflow already generates from the root project. Either target first
+   generates the doc data of the whole Mathlib closure (22,341 jobs): a run on the cloud
+   VM had done 14,006 of them after 65 minutes when the container restarted, so budget
+   about two hours, or run it where the blueprint workflow's doc-gen cache is. Open before
+   submitting: the
+   `LiehrTsirelson/Upstream` tree carries no license and is not in the Solution's closure,
+   so either its terms are settled or it leaves the submitted snapshot; the metadata's
+   review status is "self-assessed"; and `formalization.yaml` names the models used, which
+   the schema requires.
