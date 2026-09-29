@@ -408,6 +408,15 @@ theorem stateVecB_entry (ψ : dA × dB → ℂ) (N : Matrix dB dB ℂ) (i : dA) 
   simp [Matrix.mulVec, dotProduct, Fintype.sum_prod_type, Matrix.one_apply,
     Finset.sum_ite_eq, mul_comm]
 
+/-- **Bob's norm is the first player's norm in the swapped tensor-product model.** -/
+theorem norm_stateVecB_eq_tensor (ψ : dA × dB → ℂ) (N : Matrix dB dB ℂ) :
+    ‖stateVecB ψ N‖ = (BipartiteModel.tensor ψ).swap.stateNorm N :=
+  rfl
+
+theorem normSq_stateVecB_eq_tensor (ψ : dA × dB → ℂ) (N : Matrix dB dB ℂ) :
+    ‖stateVecB ψ N‖ ^ 2 = (BipartiteModel.tensor ψ).swap.stateSqNorm N :=
+  rfl
+
 omit [DecidableEq dB] in
 @[simp] theorem stateVecB_smul (ψ : dA × dB → ℂ) (c : ℂ) (N : Matrix dB dB ℂ) :
     stateVecB ψ (c • N) = c • stateVecB ψ N := by

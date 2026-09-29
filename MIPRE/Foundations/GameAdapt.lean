@@ -377,22 +377,22 @@ noncomputable def failAt (S : TensorProductStrategy G) (x : X) (y : Y) : ℝ :=
   1 - S.succAt x y
 
 /-- **The conditional success probability is that of the tensor-product model.** -/
-theorem succAt_eq_condWin (S : TensorProductStrategy G) (x : X) (y : Y) :
+theorem succAt_eq_tensor_condWin (S : TensorProductStrategy G) (x : X) (y : Y) :
     S.succAt x y = (BipartiteModel.tensor S.ψ).condWin G (fun x => (S.PA.toPOVM x).toIn)
       (fun y => (S.PB.toPOVM y).toIn) x y := by
   simp only [succAt, BipartiteModel.condWin, born_eq_bornProb]
 
-theorem failAt_eq_condFail (S : TensorProductStrategy G) (x : X) (y : Y) :
+theorem failAt_eq_tensor_condFail (S : TensorProductStrategy G) (x : X) (y : Y) :
     S.failAt x y = (BipartiteModel.tensor S.ψ).condFail G (fun x => (S.PA.toPOVM x).toIn)
       (fun y => (S.PB.toPOVM y).toIn) x y := by
-  rw [failAt, succAt_eq_condWin, BipartiteModel.condFail]
+  rw [failAt, succAt_eq_tensor_condWin, BipartiteModel.condFail]
 
 theorem succAt_nonneg (S : TensorProductStrategy G) (x : X) (y : Y) : 0 ≤ S.succAt x y := by
-  rw [succAt_eq_condWin]
+  rw [succAt_eq_tensor_condWin]
   exact (BipartiteModel.tensor S.ψ).condWin_nonneg x y
 
 theorem succAt_le_one (S : TensorProductStrategy G) (x : X) (y : Y) : S.succAt x y ≤ 1 := by
-  rw [succAt_eq_condWin]
+  rw [succAt_eq_tensor_condWin]
   exact (BipartiteModel.tensor S.ψ).condWin_le_one (norm_evec_eq_one S.ψ_unit) x y
 
 theorem failAt_nonneg (S : TensorProductStrategy G) (x : X) (y : Y) : 0 ≤ S.failAt x y :=
@@ -418,14 +418,14 @@ theorem value_eq_tensor_povmValue (S : TensorProductStrategy G) :
     S.value = (BipartiteModel.tensor S.ψ).povmValue G (fun x => (S.PA.toPOVM x).toIn)
       (fun y => (S.PB.toPOVM y).toIn) := by
   rw [value_eq_sum_succAt]
-  simp only [succAt_eq_condWin]
+  simp only [succAt_eq_tensor_condWin]
   rfl
 
 /-- **The failure probability, decomposed by question pair.** -/
 theorem one_sub_value_eq_sum_failAt (S : TensorProductStrategy G) :
     1 - S.value = ∑ x, ∑ y, G.μ x y * S.failAt x y := by
   rw [value_eq_tensor_povmValue, (BipartiteModel.tensor S.ψ).one_sub_povmValue_eq]
-  simp only [failAt_eq_condFail]
+  simp only [failAt_eq_tensor_condFail]
 
 /-! ## The adapted strategy -/
 
@@ -472,7 +472,7 @@ theorem succAt_adapt_eq_condWin (S : TensorProductStrategy G) (G' : Game X' Y' A
       = (BipartiteModel.tensor S.ψ).condWin G'
           (fun x' => (S.PA.toPOVM (qA x')).toIn.map (rA x'))
           (fun y' => (S.PB.toPOVM (qB y')).toIn.map (rB y')) x' y' := by
-  rw [succAt_eq_condWin]
+  rw [succAt_eq_tensor_condWin]
   show (BipartiteModel.tensor S.ψ).condWin G' (fun x' => ((S.PA.mergeAt qA rA).toPOVM x').toIn)
     (fun y' => ((S.PB.mergeAt qB rB).toPOVM y').toIn) x' y' = _
   rw [ProjectiveMeasurement.mergeAt_toIn, ProjectiveMeasurement.mergeAt_toIn]
@@ -512,7 +512,7 @@ theorem succAt_le_succAt_adapt (S : TensorProductStrategy G) (G' : Game X' Y' A'
     (qA : X' → X) (qB : Y' → Y) (rA : X' → A → A') (rB : Y' → B → B') (x' : X') (y' : Y')
     (hD : ∀ a b, G.D (qA x') (qB y') a b = true → G'.D x' y' (rA x' a) (rB y' b) = true) :
     S.succAt (qA x') (qB y') ≤ (S.adapt G' qA qB rA rB).succAt x' y' := by
-  rw [succAt_eq_condWin, succAt_adapt_eq_condWin]
+  rw [succAt_eq_tensor_condWin, succAt_adapt_eq_condWin]
   exact (BipartiteModel.tensor S.ψ).condWin_le_condWin_adapt (fun x => (S.PA.toPOVM x).toIn) (fun y => (S.PB.toPOVM y).toIn) G' qA qB rA rB x'
     y' hD
 
@@ -538,7 +538,7 @@ theorem one_sub_value_adapt_le_sum (S : TensorProductStrategy G) (G' : Game X' Y
       ≤ ∑ x, ∑ y, (∑ x' ∈ Finset.univ.filter (fun x' => qA x' = x),
           ∑ y' ∈ Finset.univ.filter (fun y' => qB y' = y), G'.μ x' y') * S.failAt x y := by
   rw [value_adapt]
-  simp only [failAt_eq_condFail]
+  simp only [failAt_eq_tensor_condFail]
   exact (BipartiteModel.tensor S.ψ).one_sub_povmValue_adapt_le_sum (fun x => (S.PA.toPOVM x).toIn) (fun y => (S.PB.toPOVM y).toIn)
     G' qA qB rA rB hD
 
