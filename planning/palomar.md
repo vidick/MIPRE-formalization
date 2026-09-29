@@ -176,9 +176,14 @@ Each phase is one pull request unless noted; the order is forced by the dependen
    section names the agent workflow), and the template's three pre-submission scripts under
    `scripts/palomar/` (the source check skips the git-ignored `Scratch/`; the comparator
    script needs `bwrap`, which the cloud container lacks, so `lake comparator` was run with
-   `--inadvisably-no-sandbox` here). `docbuild/` is the template's nested doc-gen4 project,
-   recommended rather than required, and this repository already depends on doc-gen4 at the
-   top level; it is left for the maintainer's decision. Open before submitting: the
+   `--inadvisably-no-sandbox` here). `docbuild/` (added 2026-09-29) is the template's
+   nested doc-gen4 project: `docbuild/lakefile.toml` shares the parent's package directory
+   and pins doc-gen4 to the toolchain's tag, its manifest was written by `lake update`
+   there, and `cd docbuild && lake build @MIPRE/Palomar:docs` (the library is a target of
+   the `MIPRE` package, hence the `@MIPRE/` prefix, unlike the template's own
+   `PalomarTemplate:docs`) writes the API documentation of the submission under
+   `docbuild/.lake/build/doc/`; `@MIPRE/MIPRE:docs` does the whole library, which the
+   blueprint workflow already generates from the root project. Open before submitting: the
    `LiehrTsirelson/Upstream` tree carries no license and is not in the Solution's closure,
    so either its terms are settled or it leaves the submitted snapshot; the metadata's
    review status is "self-assessed"; and `formalization.yaml` names the models used, which

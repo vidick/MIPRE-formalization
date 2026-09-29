@@ -20,3 +20,6 @@ __pycache__/
 
 # Scratch files for local Lean checks (see docs/lean-cloud.md)
 /Scratch/
+
+# The nested doc-gen4 project (Palomar template) builds into its own .lake
+docbuild/.lake/

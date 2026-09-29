@@ -1,0 +1,18 @@
+# The nested doc-gen4 project of the Palomar template (`planning/palomar.md`, phase 5):
+# `cd docbuild && lake build Palomar:docs` (or `MIPRE:docs`) writes the API documentation
+# under `docbuild/.lake/build/doc/`. It shares the parent's package directory, so nothing is
+# cloned twice, and pins doc-gen4 to the toolchain's tag like the parent lakefile does.
+name = "docbuild"
+version = "0.1.0"
+reservoir = false
+packagesDir = "../.lake/packages"
+
+[[require]]
+scope = "leanprover"
+name = "doc-gen4"
+git = "https://github.com/leanprover/doc-gen4"
+rev = "v4.35.0-rc3"
+
+[[require]]
+name = "MIPRE"
+path = "../"
