@@ -737,6 +737,7 @@ public import MIPRE.Background.Repetition.Verifier
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
 public import MIPRE.Cslib.Foundations.Data.RelatesInSteps
+public import MIPRE.Foundations.BipartiteModel
 public import MIPRE.Foundations.Blocks
 public import MIPRE.Foundations.CL.Basic
 public import MIPRE.Foundations.CL.Canonical
@@ -1219,6 +1220,7 @@ public import MIPRE.Foundations.LowDegreeSandwich
 public import MIPRE.Foundations.NCPoly.Basic
 public import MIPRE.Foundations.NCPoly.Cone
 public import MIPRE.Foundations.OpBound
+public import MIPRE.Foundations.OpCalculus
 public import MIPRE.Foundations.OperatorMatrix
 public import MIPRE.Foundations.OracularComplete
 public import MIPRE.Foundations.OracularDecider

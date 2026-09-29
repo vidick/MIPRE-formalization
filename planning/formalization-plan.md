@@ -1037,6 +1037,10 @@ by #240. Its first item is in (#241): `ω_co` is attained on projective strategi
 dilation that preserves commutation with the other player (`MIPRE.exists_isProjective_lt_value`,
 blueprint `thm:co-value-projective`), so the generalized analyses may assume projective
 measurements, as the tensor-product ones do.
+The model the analyses are generalized over is in too (`MIPRE.BipartiteModel`, blueprint
+`def:bipartite-model`): a state and two commuting representations of the players' algebras,
+with the tensor-product and commuting-operator strategies as instances, and the matrix state
+calculus of `OpBound` derived from the Hilbert-space one.
 
 ## Working rules for this track
 
