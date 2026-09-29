@@ -6,6 +6,7 @@ Authors: Thomas Vidick
 module
 public import Mathlib.Analysis.CStarAlgebra.Basic
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
+public import Mathlib.Analysis.InnerProductSpace.StarOrder
 public import MIPRE.Tactics
 
 @[expose] public section
@@ -183,6 +184,21 @@ theorem bnd_one_of_isometry {T : H →L[ℂ] H} (h : star T * T = 1) : Bnd T 1 :
 /-- **An orthogonal projection is bounded by one.** -/
 theorem bnd_one_of_isStarProjection {P : H →L[ℂ] H} (hP : IsStarProjection P) : Bnd P 1 :=
   bnd_of_norm_le hP.norm_le
+
+/-- **An operator with `T* T ≤ 1` is bounded by one**: `‖T v‖² = Re ⟨v, T* T v⟩ ≤ ‖v‖²`. -/
+theorem bnd_one_of_star_mul_self_le {T : H →L[ℂ] H} (h : star T * T ≤ 1) : Bnd T 1 := by
+  intro v
+  have hpos : (1 - star T * T).IsPositive := ContinuousLinearMap.le_def.1 h
+  have h1 := hpos.re_inner_nonneg_right v
+  have hsq : ‖T v‖ ^ 2 ≤ ‖v‖ ^ 2 := by
+    have e : (⟪v, (1 - star T * T) v⟫_ℂ) = ⟪v, v⟫_ℂ - ⟪T v, T v⟫_ℂ := by
+      show ⟪v, v - (star T) (T v)⟫_ℂ = _
+      rw [inner_sub_right, ContinuousLinearMap.star_eq_adjoint,
+        ContinuousLinearMap.adjoint_inner_right]
+    rw [e, map_sub, inner_self_eq_norm_sq, inner_self_eq_norm_sq] at h1
+    linarith
+  rw [one_mul]
+  nlinarith [norm_nonneg (T v), norm_nonneg v]
 
 /-- An isometry in front changes nothing. -/
 theorem snorm_mul_of_isometry {T : H →L[ℂ] H} (h : star T * T = 1) (T' : H →L[ℂ] H) :

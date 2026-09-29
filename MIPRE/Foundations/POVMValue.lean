@@ -147,6 +147,16 @@ variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] 
 /-- `⟨ψ| πA a πB b |ψ⟩`, the Born-rule probability of an outcome pair. -/
 def bornProb (a : 𝒜) (b : ℬ) : ℝ := M.qform (M.πA a * M.πB b)
 
+theorem bornProb_sum_left {ι : Type*} (s : Finset ι) (f : ι → 𝒜) (b : ℬ) :
+    M.bornProb (∑ i ∈ s, f i) b = ∑ i ∈ s, M.bornProb (f i) b := by
+  unfold bornProb
+  rw [map_sum, Finset.sum_mul, M.qform_sum]
+
+theorem bornProb_sum_right {ι : Type*} (a : 𝒜) (s : Finset ι) (g : ι → ℬ) :
+    M.bornProb a (∑ i ∈ s, g i) = ∑ i ∈ s, M.bornProb a (g i) := by
+  unfold bornProb
+  rw [map_sum, Finset.mul_sum, M.qform_sum]
+
 section Order
 
 variable [PartialOrder 𝒜] [StarOrderedRing 𝒜] [PartialOrder ℬ] [StarOrderedRing ℬ]

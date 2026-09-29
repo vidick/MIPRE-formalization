@@ -194,6 +194,23 @@ theorem op_le_one [StarOrderedRing R] (M : POVMIn X R) (x : X) : M.op x ≤ 1 :=
   rw [← M.sum_op]
   exact Finset.single_le_sum (fun y _ => M.op_nonneg y) (Finset.mem_univ x)
 
+/-- **The coarse-graining of a POVM along a map of outcomes**: each new outcome gets the sum of
+the operators of its fibre. -/
+def map [StarOrderedRing R] {Y : Type*} [Fintype Y] [DecidableEq Y] (f : X → Y)
+    (M : POVMIn X R) : POVMIn Y R where
+  mats y := ∑ x ∈ Finset.univ.filter (fun x => f x = y), M.mats x
+  nonneg y := by
+    have h : (0 : R) ≤ ∑ x ∈ Finset.univ.filter (fun x => f x = y), (M.mats x : R) :=
+      Finset.sum_nonneg fun x _ => M.op_nonneg x
+    rw [← AddSubmonoidClass.coe_finsetSum] at h
+    exact Subtype.coe_le_coe.mp h
+  normalized := (Finset.sum_fiberwise Finset.univ f M.mats).trans M.normalized
+
+theorem map_op [StarOrderedRing R] {Y : Type*} [Fintype Y] [DecidableEq Y] (f : X → Y)
+    (M : POVMIn X R) (y : Y) :
+    (M.map f).op y = ∑ x ∈ Finset.univ.filter (fun x => f x = y), M.op x :=
+  AddSubmonoidClass.coe_finsetSum _ _
+
 end POVMIn
 
 end MIPRE
