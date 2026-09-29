@@ -37,6 +37,12 @@ game under different answer-length bounds (blueprint `rem:compression-abstract`)
 The synchronous relabeling is what carries a value-`1` PCC strategy of a verifier's game to a
 tabulation of it as a game description, which is item 1 of blueprint `thm:halting`; the
 consumer is `MIPRE.Foundations.SyncTransport`.
+In a bipartite model (`MIPRE/Foundations/BipartiteModel.lean`) a strategy is a POVM family in each
+player's algebra, and its transports are the adapter of `MIPRE/Foundations/GameAdapt.lean` with
+answer maps that are equivalences (`BipartiteModel.povmValue_relabel`), embeddings or
+coarse-grainings; the value transports themselves are carried, for `val*` and for `ω_co` at once,
+by `MIPRE.ValueModel`, whose tensor fields are the lemmas here and whose commuting fields are
+those of `MIPRE/Foundations/CommutingTransport.lean`.
 -/
 
 namespace MIPRE
