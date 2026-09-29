@@ -1032,7 +1032,11 @@ instance, rather than written a second time: `reports/co-generalization-audit.md
 four soundness chains and found them bipartite and vector-state throughout, with finite
 dimension used only at identified, replaceable places — except in the vendored
 low-individual-degree test, which becomes the single remaining hypothesis of
-`MIPRE.mipco_eq_core` once Phases 1–5 of the plan are done, and is Phase 6.
+`MIPRE.mipco_eq_core` once Phases 1–5 of the plan are done, and is Phase 6. Phase 1 is tracked
+by #240. Its first item is in (#241): `ω_co` is attained on projective strategies, by a
+dilation that preserves commutation with the other player (`MIPRE.exists_isProjective_lt_value`,
+blueprint `thm:co-value-projective`), so the generalized analyses may assume projective
+measurements, as the tensor-product ones do.
 
 ## Working rules for this track
 

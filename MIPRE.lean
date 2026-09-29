@@ -785,6 +785,7 @@ public import MIPRE.Foundations.ClassMIPStarComputable
 public import MIPRE.Foundations.ClassMIPStarTab
 public import MIPRE.Foundations.Closeness
 public import MIPRE.Foundations.Commutation
+public import MIPRE.Foundations.CommutingDilation
 public import MIPRE.Foundations.CommutingOperator
 public import MIPRE.Foundations.CommutingTransport
 public import MIPRE.Foundations.Compression
@@ -841,6 +842,7 @@ public import MIPRE.Foundations.GameTransportProjection
 public import MIPRE.Foundations.Games
 public import MIPRE.Foundations.GapCompression
 public import MIPRE.Foundations.GuardSorryFree
+public import MIPRE.Foundations.HalmosDilation
 public import MIPRE.Foundations.Halting.Absorb
 public import MIPRE.Foundations.Halting.Arith
 public import MIPRE.Foundations.Halting.Bounded
@@ -1217,6 +1219,7 @@ public import MIPRE.Foundations.LowDegreeSandwich
 public import MIPRE.Foundations.NCPoly.Basic
 public import MIPRE.Foundations.NCPoly.Cone
 public import MIPRE.Foundations.OpBound
+public import MIPRE.Foundations.OperatorMatrix
 public import MIPRE.Foundations.OracularComplete
 public import MIPRE.Foundations.OracularDecider
 public import MIPRE.Foundations.OracularDeciderCost

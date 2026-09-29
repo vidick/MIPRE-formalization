@@ -956,9 +956,122 @@ Theorem~\ref{thm:direct-repetition-co}, already formalized. The commuting-operat
 \emph{completeness} of compression is never needed: the nested criterion asks the
 compressor to preserve perfect PCC strategies, which the tensor completeness does, and the
 class of value $1$ is entered only through the semidecider. The plan is to generalize the
-existing stage analyses over an abstract tracial algebra rather than to re-prove them; sizes,
-phases and the delicate points are in \texttt{planning/mipco-track.md}.
+existing stage analyses over the projective commuting-operator model of
+Section~\ref{sec:ds-mipco-projective} rather than to re-prove them, with the tensor-product
+strategies as an instance; sizes, phases and the delicate points are in
+\texttt{planning/mipco-track.md}, and the audit that fixed the model is
+\texttt{reports/co-generalization-audit.md}.
 \end{remark}
+
+\subsubsection{The projective commuting-operator model}
+\label{sec:ds-mipco-projective}
+
+The hypothesis of Theorem~\ref{thm:mipco-eq-core} is to be discharged by generalizing the
+stage analyses of compression, not by writing them a second time
+(\texttt{planning/mipco-track.md}, Phases 1--6). Those analyses are bipartite, vector-state and
+projective: a unit vector on a tensor product, the first player's operators acting on the first
+factor and the second's on the second, every measurement projective, and the tracial state never
+used (\texttt{reports/co-generalization-audit.md}). Their common generalization is a Hilbert
+space with a unit vector and two commuting families of projective measurements, of which a
+tensor-product strategy is an instance. That model reaches the whole commuting-operator value by
+the dilation below. The dilation is elementary: it compares no projections and uses no von
+Neumann algebra theory, where the finite-dimensional dilation extends an isometry to a unitary by
+counting dimensions.
+
+\begin{definition}[Projective commuting-operator strategy]
+\label{def:co-projective}
+\uses{def:co-strategy-bipartite}
+\lean{MIPRE.CommutingOperatorStrategy.IsProjective}
+\leanok
+A commuting-operator strategy $\strategy = (\mH, \psi, E, F)$ is \emph{projective} if every
+$E^x_a$ and every $F^y_b$ is idempotent. Being positive, they are then orthogonal projections,
+and every measurement of the strategy is projective.
+\end{definition}
+
+\begin{lemma}[Commutation-preserving dilation]
+\label{lem:co-dilation}
+\uses{def:co-strategy-bipartite}
+\lean{MIPRE.OperatorMatrix.toCLMStarAlgHom, MIPRE.OperatorMatrix.amplify, MIPRE.OperatorMatrix.emb,
+  MIPRE.OperatorMatrix.inner_emb_toCLM_emb, MIPRE.OperatorMatrix.toCLM_diagonal_emb,
+  MIPRE.Halmos.extension, MIPRE.Halmos.conjTranspose_mul_extension,
+  MIPRE.Halmos.extension_mul_conjTranspose, MIPRE.Halmos.naimark,
+  MIPRE.Halmos.naimark_mul_conjTranspose_mul, MIPRE.Halmos.proj, MIPRE.Halmos.isStarProjection_proj,
+  MIPRE.Halmos.sum_proj, MIPRE.Halmos.proj_naimark_inl_inl,
+  MIPRE.Halmos.commute_diagonal_proj_naimark, MIPRE.CommutingOperatorStrategy.dilateLeft,
+  MIPRE.CommutingOperatorStrategy.correlation_dilateLeft, MIPRE.CommutingOperatorStrategy.swap,
+  MIPRE.CommutingOperatorStrategy.correlation_swap, MIPRE.CommutingOperatorStrategy.dilateRight,
+  MIPRE.CommutingOperatorStrategy.correlation_dilateRight}
+\leanok
+Let $\{E_a\}_{a \in \mA}$ be a POVM on a Hilbert space $\mH$, let $a_0 \in \mA$, and let
+$\iota : \mH \to \mH \otimes (\C^{\mA} \oplus \C^{\mA})$ be the embedding $\xi \mapsto \xi \otimes
+e_{a_0}$ at the first copy of $a_0$. There is a projective measurement $\{P_a\}_{a \in \mA}$ on
+$\mH \otimes (\C^{\mA} \oplus \C^{\mA})$ such that
+\begin{enumerate}
+  \item $\iota^* P_a \iota = E_a$ for every $a$, and
+  \item $P_a$ commutes with $c \otimes \Id$ for every bounded operator $c$ on $\mH$ that commutes
+    with every $E_b$.
+\end{enumerate}
+Consequently, for a commuting-operator strategy $\strategy = (\mH, \psi, E, F)$ and a question
+$x$ of the first player, the strategy on $\mH \otimes (\C^{\mA} \oplus \C^{\mA})$ with state
+$\iota(\psi)$, in which the first player measures the $\{P_a\}$ of $\{E^x_a\}_a$ at $x$ and
+$E^{x'}_a \otimes \Id$ at $x' \neq x$ and the second player measures $F^y_b \otimes \Id$, is a
+commuting-operator strategy with the correlation of $\strategy$. Its measurement at $x$ is
+projective, and so is every measurement that was projective in $\strategy$. The same holds for a
+question of the second player.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Let $s_a = \sqrt{E_a}$, by the continuous functional calculus: it is self-adjoint, $\sum_a s_a^2
+= \Id$, and it commutes with every operator that commutes with $E_a$. Write operators on $\mH
+\otimes \C^n$ as $n \times n$ matrices of operators on $\mH$, so that composition and the adjoint
+are the matrix product and the conjugate transpose. Let $W$ be the $\mA \times \mA$ matrix whose
+column $a_0$ is $(s_a)_a$ and whose other columns vanish. Then $W^* W$ is the matrix unit at
+$(a_0, a_0)$, so $W W^* W = W$ and $W$ is a partial isometry. The block matrix
+\begin{equation*}
+  U = \begin{pmatrix} W & \Id - W W^* \\ \Id - W^* W & W^* \end{pmatrix}
+\end{equation*}
+is unitary, by the identities $W(\Id - W^* W) = 0$ and $(\Id - W W^*) W = 0$ and their adjoints.
+Let $Q_a$ be the diagonal projection onto the two copies of the coordinate $a$, and put $P_a =
+U^* Q_a U$. These are projections summing to $\Id$, and the entry of $P_a$ at the first copy of
+$(a_0, a_0)$ is $s_a s_a = E_a$, which is item~1. Every entry of $U$ is a polynomial in the
+$s_b$, and so commutes with $c$ as soon as $c$ commutes with every $E_b$, which is item~2.
+
+For the strategy, take $c = F^y_b$. The correlation at $(x, y)$ is $\bra{\iota\psi} P_a
+(F^y_b \otimes \Id) \ket{\iota\psi} = \bra{\psi} \iota^* P_a \iota F^y_b \ket{\psi}$, because
+$(F^y_b \otimes \Id) \iota = \iota F^y_b$, and item~1 makes it $\bra{\psi} E^x_a F^y_b
+\ket{\psi}$. At $x' \neq x$ both operators are amplified, and $\iota$ is an isometry. The
+amplification $c \mapsto c \otimes \Id$ is a unital $*$-homomorphism, so it preserves
+positivity, sums to $\Id$, commutation and idempotence. For the second player, exchange the
+players, which transposes the correlation because the two players' operators commute.
+\end{proof}
+
+\begin{theorem}[The commuting-operator value is attained on projective strategies]
+\label{thm:co-value-projective}
+\uses{lem:co-dilation,def:co-projective,def:co-value-bipartite,lem:correlation-sets-basic}
+\lean{MIPRE.CommutingOperatorStrategy.exists_isProjective_correlation_eq,
+  MIPRE.CommutingOperatorStrategy.exists_isProjective_value_eq,
+  MIPRE.commutingOperatorValue_eq_iSup_isProjective, MIPRE.exists_isProjective_lt_value,
+  MIPRE.TensorProductStrategy.isProjective_toCommuting}
+\leanok
+Every commuting-operator strategy for $\game$ has a projective commuting-operator strategy with
+the same correlation, hence the same value. Consequently $\omegaco(\game)$ is the supremum of the
+values of the projective commuting-operator strategies, and for every $t \geq 0$ with $t <
+\omegaco(\game)$ there is a projective commuting-operator strategy of value greater than $t$.
+Every tensor-product strategy is a projective commuting-operator strategy.
+\end{theorem}
+
+\begin{proof}
+\leanok
+Dilate the first player's questions one at a time by Lemma~\ref{lem:co-dilation}, then the
+second player's. Each step keeps the correlation and every projectivity already obtained, and
+makes one more measurement projective. A question has an answer, since its POVM sums to $\Id$ on
+a nonzero space, so the lemma applies. The value is the payoff of the correlation, and it
+lies in $[0, 1]$, as does $\omegaco(\game)$ (Lemma~\ref{lem:correlation-sets-basic}), which
+gives the supremum and the strategy of value greater than $t$. A tensor-product strategy
+(Definition~\ref{def:tensor-strategy}) measures $A^x_a \otimes \Id$ and $\Id \otimes B^y_b$ with
+$A^x_a$ and $B^y_b$ projections.
+\end{proof}
 
 \subsection{Further directions}
 
