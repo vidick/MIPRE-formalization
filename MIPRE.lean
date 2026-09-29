@@ -1308,6 +1308,7 @@ public import MIPRE.Foundations.SampledGame
 public import MIPRE.Foundations.Sandwich
 public import MIPRE.Foundations.Sign
 public import MIPRE.Foundations.StateDistance
+public import MIPRE.Foundations.StateModel
 public import MIPRE.Foundations.StrategyDilation
 public import MIPRE.Foundations.Swap
 public import MIPRE.Foundations.SyncMergeByQuestion
