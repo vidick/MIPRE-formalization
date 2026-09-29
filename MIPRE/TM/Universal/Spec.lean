@@ -5,9 +5,13 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.TM.Code.Encoding.Total
+public meta import MIPRE.TM.Code.Encoding.Total
 public import MIPRE.TM.Code.Evaluator
+public meta import MIPRE.TM.Code.Evaluator
 public import Mathlib.Data.Fin.Tuple.Basic
+public meta import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Algebra.Polynomial.Eval.Defs
+public meta import Mathlib.Algebra.Polynomial.Eval.Defs
 public import MIPRE.Tactics
 
 @[expose] public section

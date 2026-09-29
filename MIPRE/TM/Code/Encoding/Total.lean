@@ -5,7 +5,9 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.TM.Code.Encoding.MachineCode
+public meta import MIPRE.TM.Code.Encoding.MachineCode
 public import MIPRE.TM.Code.Examples
+public meta import MIPRE.TM.Code.Examples
 
 @[expose] public section
 

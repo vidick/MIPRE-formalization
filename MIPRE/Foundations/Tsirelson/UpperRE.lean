@@ -623,6 +623,11 @@ theorem commutingUpperRE : CommutingUpperRE :=
   (ValueApprox.REPred.of_primrecRel_exists Tsirelson.Coded.primrecRel_checkUpper).of_eq
     Tsirelson.checkUpper_iff
 
+/-- **The commuting-operator value is r.e. from above**, as a property of the value model
+`ValueModel.commuting`: `lem:valco-upper-re` in the vocabulary the halting reduction of
+`MIP^co = coRE` consumes. -/
+theorem ValueModel.commuting_upperRE : ValueModel.commuting.UpperRE := commutingUpperRE
+
 /-- **Tsirelson's problem, negative answer, given the halting reduction** (blueprint
 `cor:tsirelson`): `C_qa ⊊ C_qc` in some finite scenario with equal question alphabets
 `Fin (nX + 1)` and equal answer alphabets `Fin (nA + 1)` for both players. -/

@@ -155,16 +155,16 @@ def yYes : BitStr := descOf 0 decYes
 @[simp] theorem Vof_yYes : Vof G U yYes = Verifier.ofSamplerDecider U (G.sampler 0) decYes := by
   simp [Vof, yYes, Verifier.ofSamplerDecider]
 
-/-- **O1, the rejecting side.** `yNo` lies in the class `B` at every level from some `n₀` on:
-its verifier accepts nothing, hence is synchronous and has `val* = 0`, and it is `n`-bounded
-above the threshold of `Verifier.ofSamplerDecider_isBounded`. -/
-theorem yNo_mem : ∃ n₀, ∀ n, n₀ ≤ n → yNo ∈ classB G U n := by
+/-- **O1, the rejecting side.** `yNo` lies in the class `B` of every value model at every level
+from some `n₀` on: its verifier accepts nothing, hence is synchronous and has value `0`, and it
+is `n`-bounded above the threshold of `Verifier.ofSamplerDecider_isBounded`. -/
+theorem yNo_mem (ω : ValueModel) : ∃ n₀, ∀ n, n₀ ≤ n → yNo ∈ classB G U ω n := by
   obtain ⟨n₀, hn₀⟩ := Verifier.ofSamplerDecider_isBounded U (G.sampler 0) decNo
     (sampler_hasPolyCost G 0) (sampler_polyBounded_dim G 0) decNo_hasPolyCost
   refine ⟨n₀, fun n hn => ?_⟩
-  show (Vof G U yNo).InClassB n (ansBound G yNo n)
+  show (Vof G U yNo).InClassB ω n (ansBound G yNo n)
   rw [Vof_yNo]
-  refine Verifier.inClassB_of_rejects_all _ (hn₀ n hn) fun x y a b hacc => ?_
+  refine Verifier.inClassB_of_rejects_all _ ω (hn₀ n hn) fun x y a b hacc => ?_
   rw [Verifier.ofSamplerDecider_accepts] at hacc
   obtain ⟨-, -, t, ht⟩ := hacc
   exact decNo_not_runs_true _ _ ht

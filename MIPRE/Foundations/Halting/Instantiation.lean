@@ -200,20 +200,23 @@ theorem exists_ansBound_le (G : GapCompression) :
 game has a value-`1` PCC strategy. -/
 def classA (n : ℕ) : Set BitStr := {x | (Vof G U x).InClassA n (ansBound G x n)}
 
-/-- **The class `B` at level `n`**: the strings whose verifier is `n`-bounded and whose `n`-th
-game has quantum value at most `1/2`. -/
-def classB (n : ℕ) : Set BitStr := {x | (Vof G U x).InClassB n (ansBound G x n)}
+/-- **The class `B` at level `n`, in the value model `ω`**: the strings whose verifier is
+`n`-bounded, rejects long answers, and whose `n`-th game has value at most `1/2` in the model.
+At `ValueModel.tensor` this is the class of the halting reduction of `MIP* = RE`; at
+`ValueModel.commuting`, the one of `MIP^co = coRE`. -/
+def classB (ω : ValueModel) (n : ℕ) : Set BitStr :=
+  {x | (Vof G U x).InClassB ω n (ansBound G x n)}
 
 theorem mem_classA_iff {n : ℕ} {x : BitStr} :
     x ∈ classA G U n ↔ (Vof G U x).InClassA n (ansBound G x n) := Iff.rfl
 
-theorem mem_classB_iff {n : ℕ} {x : BitStr} :
-    x ∈ classB G U n ↔ (Vof G U x).InClassB n (ansBound G x n) := Iff.rfl
+theorem mem_classB_iff {ω : ValueModel} {n : ℕ} {x : BitStr} :
+    x ∈ classB G U ω n ↔ (Vof G U x).InClassB ω n (ansBound G x n) := Iff.rfl
 
-/-- The two classes are disjoint at every level: a perfect PCC strategy gives `val* = 1`. -/
-theorem notMem_classB_of_mem_classA {n : ℕ} {x : BitStr} (h : x ∈ classA G U n) :
-    x ∉ classB G U n :=
-  (Vof G U x).not_inClassB_of_inClassA h
+/-- The two classes are disjoint at every level: a perfect PCC strategy gives value `1`. -/
+theorem notMem_classB_of_mem_classA {ω : ValueModel} {n : ℕ} {x : BitStr}
+    (h : x ∈ classA G U n) : x ∉ classB G U ω n :=
+  (Vof G U x).not_inClassB_of_inClassA ω h
 
 /-! ## The tabulation of the verifier a string denotes
 
@@ -610,13 +613,45 @@ theorem tab_match (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n) :
       simp only [Bool.false_eq_true, iff_false]
       exact fun h => ht ⟨h.1, h.2.1⟩
 
-/-- **O2, the value — doubled**: the tabulated game has the value of `𝒱_n` at *every*
-`n`-bounded string, with no synchronicity hypothesis. This is `Halting.exists_sem_of_tab`'s
-`hval`. -/
-theorem tab_value (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n) :
-    quantumValue (tab G U x n).game = (Vof G U x).valStar n (ansBound G x n) := by
+/-- **O2, the value — doubled, in any model**: the tabulated game has the value of `𝒱_n` in
+every value model at *every* `n`-bounded string, with no synchronicity hypothesis. This is
+`Halting.exists_sem_of_tab`'s `hval`. -/
+theorem tab_val (ω : ValueModel) (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n) :
+    ω.val (tab G U x n).game = (Vof G U x).val ω n (ansBound G x n) := by
   obtain ⟨eX, eA, hμ, hD⟩ := tab_match G U x n hb
-  exact Verifier.quantumValue_toGame_eq_valStar_doubled _ _ _ _ eX eA hμ hD
+  exact Verifier.val_toGame_eq_doubled _ _ _ _ ω eX eA hμ hD
+
+/-- **O2, the value — doubled**: the tabulated game has the quantum value of `𝒱_n` at every
+`n`-bounded string. -/
+theorem tab_value (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n) :
+    quantumValue (tab G U x n).game = (Vof G U x).valStar n (ansBound G x n) :=
+  tab_val G U .tensor x n hb
+
+/-- **The class of value `1` at level `n`, in the value model `ω`**, read on the tabulation: the
+strings whose tabulated game at level `n` (`tab`, below) does not have value below `1`. The
+larger of the two nested classes of the `coRE` direction (`Cost.compressibility_criterion_nested`,
+`planning/mipco-track.md` §3): its complement is what an upper semidecider for the value
+recognizes, and it contains `classA` (`classA_subset_classOne`). It is read on the tabulation
+directly so that the non-halting conclusion of the criterion needs no boundedness. -/
+def classOne (ω : ValueModel) (n : ℕ) : Set BitStr :=
+  {x | ¬ ω.val (tab G U x n).game < 1}
+
+theorem mem_classOne_iff {ω : ValueModel} {n : ℕ} {x : BitStr} :
+    x ∈ classOne G U ω n ↔ ¬ ω.val (tab G U x n).game < 1 := Iff.rfl
+
+/-- In `classOne` the tabulated game has value exactly `1`. -/
+theorem val_tab_eq_one_of_mem_classOne {ω : ValueModel} {n : ℕ} {x : BitStr}
+    (h : x ∈ classOne G U ω n) : ω.val (tab G U x n).game = 1 :=
+  le_antisymm (ω.le_one _) (not_lt.1 h)
+
+/-- **The perfect-PCC class lies in the class of value `1`** of every model: a perfect PCC
+strategy gives `val* = 1`, and every model dominates `val*`. This is the nesting `B₀ ⊆ B₁` of
+`Cost.compressibility_criterion_nested`. -/
+theorem classA_subset_classOne (ω : ValueModel) (n : ℕ) :
+    classA G U n ⊆ classOne G U ω n := by
+  intro x hx
+  rw [mem_classOne_iff, not_lt, tab_val G U ω x n hx.1]
+  exact ((Vof G U x).val_eq_one_of_hasPerfectPCC ω hx.2.2).symm.le
 
 /-- The completeness branch, in the value of `HaltingGameValue`. -/
 theorem gameValue_tab_eq_one (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n)

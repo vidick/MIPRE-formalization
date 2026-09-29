@@ -30,7 +30,9 @@ Two things the module system forbids that a plain file allowed, and what is done
   ``MIPRE/Tactics.lean``, after its import block;
 * meta code (``elab``, ``elab_rules``, ...) uses the elaborator API at elaboration time,
   which a module must import with ``meta``: every ``import Lean`` or ``import Lean.X`` line
-  gets a ``public meta import`` twin. Macros and elaborators may sit inside the exposed
+  gets a ``public meta import`` twin, and in a file that runs compiled code at elaboration
+  time (``#eval``, ``native_decide``) every import does, since a module gets the code of
+  what it imports only through ``meta import``. Macros and elaborators may sit inside the exposed
   public section and are visible to module importers there (checked on Lean v4.35.0-rc3
   with `MIPRE/ModExp` experiments, 2026-09-28: a ``macro`` expanding to Mathlib tactics
   needs no ``meta`` import at all).
@@ -52,6 +54,9 @@ ROOT = Path(__file__).resolve().parent.parent
 IMPORT_RE = re.compile(r"^(public\s+|meta\s+|public\s+meta\s+|all\s+)?import\s+\S+")
 EXPOSE = "@[expose] public section"
 META_IMPORT_RE = re.compile(r"^import\s+Lean(?:\.\S+)?\s*$")
+# A file that runs compiled code at elaboration time (`#eval`, `native_decide`) needs the
+# code of every module it imports, which a module gets only through `meta import`.
+EVAL_RE = re.compile(r"^\s*#eval\b|\bnative_decide\b", re.MULTILINE)
 
 
 def is_module(lines: list[str]) -> bool:
@@ -80,6 +85,25 @@ MATHLIB_PART_RE = re.compile(r"^public import Mathlib\.\S+\s*$")
 MATHLIB_ALL_RE = re.compile(r"^public import Mathlib\s*$")
 
 
+def ensure_meta_twins(text: str) -> str | None:
+    """In a module that runs compiled code (`#eval`, `native_decide`), give every
+    ``public import X`` a ``public meta import X`` twin it lacks. Returns None if unchanged."""
+    if not EVAL_RE.search(text):
+        return None
+    lines = text.split("\n")
+    have = {l.strip() for l in lines}
+    out = []
+    changed = False
+    for l in lines:
+        out.append(l)
+        if l.startswith("public import ") and not l.startswith("public import MIPRE.Tactics"):
+            twin = "public meta import " + l[len("public import "):]
+            if twin not in have:
+                out.append(twin)
+                changed = True
+    return "\n".join(out) if changed else None
+
+
 def ensure_bundle(text: str) -> str | None:
     """Insert ``public import MIPRE.Tactics`` after the import block of a module that
     imports part of Mathlib but not the `Mathlib` umbrella (Mathlib imports its tactic
@@ -101,7 +125,9 @@ def modularize(text: str) -> str | None:
     """Return the rewritten text, or None if the file is already a module with the bundle."""
     lines = text.split("\n")
     if is_module(lines):
-        return ensure_bundle(text)
+        t1 = ensure_meta_twins(text)
+        t2 = ensure_bundle(t1 if t1 is not None else text)
+        return t2 if t2 is not None else t1
     first = next((i for i, l in enumerate(lines) if IMPORT_RE.match(l)), None)
     if first is None:
         # No imports at all (a file importing only the prelude): the module header goes
@@ -127,12 +153,14 @@ def modularize(text: str) -> str | None:
         while end < len(lines) and (IMPORT_RE.match(lines[end]) or not lines[end].strip()):
             end += 1
         block = []
+        runs_code = bool(EVAL_RE.search(text))
         for l in lines[first:end]:
             if l.startswith("import "):
                 block.append("public " + l)
                 # Meta code (`elab`, `elab_rules`, ...) uses the elaborator API of `Lean` at
-                # elaboration time, which a module must import with `meta`.
-                if META_IMPORT_RE.match(l):
+                # elaboration time, which a module must import with `meta`; `#eval` and
+                # `native_decide` run the compiled code of what they import.
+                if META_IMPORT_RE.match(l) or runs_code:
                     block.append("public meta " + l)
             else:
                 block.append(l)
@@ -152,6 +180,7 @@ def modularize(text: str) -> str | None:
         out.pop()
     out += ["", "end", ""]
     result = "\n".join(out)
+    result = ensure_meta_twins(result) or result
     return ensure_bundle(result) or result
 
 

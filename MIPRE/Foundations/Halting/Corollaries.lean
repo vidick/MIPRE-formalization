@@ -112,21 +112,51 @@ theorem exists_code_halts_of_isRE {L : Set BitStr} (h : IsRE L) :
   rw [Code.eval_curry, hc]
   simp [Part.assert]
 
-include G U in
-/-- **`RE ⊆ MIP*`**, conditionally on compression: compose the many-one reduction of an r.e.
-language to the halting problem with the halting reduction of `cor:main-quantum`. -/
-theorem re_subset_mipstarComputable_of {L : Set BitStr} (h : IsRE L) : MIPStarComputable L := by
+/-- **`RE ⊆ MIPClass ω`, given a halting reduction of `RE` shape to the value**: compose the
+many-one reduction of an r.e. language to the halting problem with the reduction. -/
+theorem re_subset_mipclass_of_reduction (ω : ValueModel) (hred : ω.HaltingReductionRE)
+    {L : Set BitStr} (h : IsRE L) : MIPClass ω L := by
   obtain ⟨r, hr, hrL⟩ := exists_code_halts_of_isRE h
-  obtain ⟨g, hg, hgap⟩ := halting_reduction_quantum_of G U
+  obtain ⟨g, hg, hgap⟩ := hred
   refine ⟨fun x => g (r x), hg.comp hr, fun x => ⟨fun hx => ?_, fun hx => ?_⟩⟩
   · exact (hgap (r x)).1 ((hrL x).2 hx)
   · exact (hgap (r x)).2 fun hd => hx ((hrL x).1 hd)
+
+/-- **`coRE ⊆ MIPClass ω`, given a halting reduction of `coRE` shape to the value**: the
+complement of a co-r.e. language reduces to halting on the empty input, and the reduction
+sends halting machines to value at most `1/2` and the others to value `1`. -/
+theorem core_subset_mipclass_of_reduction (ω : ValueModel) (hred : ω.HaltingReductionCoRE)
+    {L : Set BitStr} (h : IsCoRE L) : MIPClass ω L := by
+  obtain ⟨r, hr, hrL⟩ := exists_code_halts_of_isRE h
+  obtain ⟨g, hg, hgap⟩ := hred
+  refine ⟨fun x => g (r x), hg.comp hr, fun x => ⟨fun hx => ?_, fun hx => ?_⟩⟩
+  · exact (hgap (r x)).2 fun hd => absurd hx ((hrL x).1 hd)
+  · exact (hgap (r x)).1 ((hrL x).2 hx)
+
+/-- **`MIPClass ω = RE`**, given a lower semidecider for the value and a halting reduction of
+`RE` shape: the two classes coincide, as predicates on languages. -/
+theorem mipclass_eq_re_of_reduction (ω : ValueModel) (hlow : ω.LowerRE)
+    (hred : ω.HaltingReductionRE) : MIPClass ω = IsRE :=
+  funext fun _ => propext ⟨MIPClass.isRE hlow, re_subset_mipclass_of_reduction ω hred⟩
+
+/-- **`MIPClass ω = coRE`**, given an upper semidecider for the value and a halting reduction
+of `coRE` shape. -/
+theorem mipclass_eq_core_of_reduction (ω : ValueModel) (hup : ω.UpperRE)
+    (hred : ω.HaltingReductionCoRE) : MIPClass ω = IsCoRE :=
+  funext fun _ => propext ⟨MIPClass.isCoRE hup, core_subset_mipclass_of_reduction ω hred⟩
+
+include G U in
+/-- **`RE ⊆ MIP*`**, conditionally on compression: the `RE` inclusion at the tensor-product
+model, with the halting reduction of `cor:main-quantum`. -/
+theorem re_subset_mipstarComputable_of {L : Set BitStr} (h : IsRE L) :
+    MIPStarComputable L :=
+  re_subset_mipclass_of_reduction .tensor (halting_reduction_quantum_of G U) h
 
 include G U in
 /-- **`MIP* = RE`** (blueprint `thm:mipstar-eq-re`), conditionally on compression: the two
 classes coincide, as predicates on languages. -/
 theorem mipstarComputable_eq_re_of : MIPStarComputable = IsRE :=
-  funext fun _ => propext ⟨MIPStarComputable.isRE, re_subset_mipstarComputable_of G U⟩
+  mipclass_eq_re_of_reduction .tensor ValueModel.tensor_lowerRE (halting_reduction_quantum_of G U)
 
 end Halting
 
