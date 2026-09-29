@@ -103,11 +103,17 @@ theorem Within.decider_time {n : ℕ} {R : Budget} (h : V.Within n R) :
 theorem Within.rejectsLong {n : ℕ} {R : Budget} (h : V.Within n R) :
     V.RejectsLong n R.B := h.2.2.2
 
+/-- A verifier respecting a budget has, at any larger answer bound, the same value in every
+model as at the budget's answer bound. -/
+theorem Within.val_eq (ω : ValueModel) {n : ℕ} {R : Budget} (h : V.Within n R) {T : ℕ}
+    (hT : R.B ≤ T) : V.val ω n T = V.val ω n R.B :=
+  V.val_eq_of_rejects ω hT h.rejectsLong
+
 /-- A verifier respecting a budget has, at any larger answer bound, the same value as at the
 budget's answer bound. -/
 theorem Within.valStar_eq {n : ℕ} {R : Budget} (h : V.Within n R) {T : ℕ} (hT : R.B ≤ T) :
     V.valStar n T = V.valStar n R.B :=
-  V.valStar_eq_of_rejects hT h.rejectsLong
+  h.val_eq .tensor hT
 
 end Verifier
 

@@ -133,6 +133,20 @@ structure Repetition (ℓ : ℕ) where
     (output V lam tau beta).valStar n (ansBound.eval (Repetition.ansArg lam tau beta n)) ≤
       Repetition.soundBound c ε (Repetition.reps lam tau n) (Repetition.parseBound lam beta n)
 
+/-- **The soundness clause of parallel repetition in a value model**: the field `soundness` with
+the value `val*` replaced by the model's. The field is the tensor-product case
+(`Repetition.soundIn_tensor`); the commuting-operator case is what Phase 2 of
+`planning/mipco-track.md` proves, from the vendored `commutingOperatorValue_repeat_le`. -/
+def Repetition.SoundIn {ℓ : ℕ} (R : Repetition ℓ) (ω : ValueModel) : Prop :=
+  ∀ (V : Verifier ℓ) (lam tau beta n : ℕ) (ε : ℝ), 0 < ε → ε ≤ 1 →
+    V.val ω n (Repetition.parseBound lam beta n) ≤ 1 - ε →
+    (R.output V lam tau beta).val ω n (R.ansBound.eval (Repetition.ansArg lam tau beta n)) ≤
+      Repetition.soundBound R.c ε (Repetition.reps lam tau n) (Repetition.parseBound lam beta n)
+
+/-- The soundness clause of parallel repetition is soundness in the tensor-product model. -/
+theorem Repetition.soundIn_tensor {ℓ : ℕ} (R : Repetition ℓ) : R.SoundIn .tensor :=
+  R.soundness
+
 end MIPRE
 
 end

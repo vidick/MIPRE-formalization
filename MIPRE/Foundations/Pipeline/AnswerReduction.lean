@@ -162,6 +162,20 @@ structure AnswerReduction (ℓ : ℕ) where
     1 - ε < (output V lam mu sigma).valStar n (AnswerReduction.outBound bound lam mu sigma n) →
     1 - AnswerReduction.delta a b lam mu sigma n ε ≤ V.valStar n (AnswerReduction.inAns lam mu n)
 
+/-- **The soundness clause of answer reduction in a value model**: the field `soundness` with
+the value `val*` replaced by the model's. The field is the tensor-product case
+(`AnswerReduction.soundIn_tensor`); the commuting-operator case is what Phase 3 of
+`planning/mipco-track.md` proves. -/
+def AnswerReduction.SoundIn {ℓ : ℕ} (A : AnswerReduction ℓ) (ω : ValueModel) : Prop :=
+  ∀ (V : Verifier ℓ) (lam mu sigma n : ℕ) (ε : ℝ), A.C ≤ n → 2 ≤ n → 1 ≤ lam →
+    V.Within n (AnswerReduction.inBudget lam mu n) → V.decider.size ≤ sigma → 0 < ε →
+    1 - ε < (A.output V lam mu sigma).val ω n (AnswerReduction.outBound A.bound lam mu sigma n) →
+    1 - AnswerReduction.delta A.a A.b lam mu sigma n ε ≤ V.val ω n (AnswerReduction.inAns lam mu n)
+
+/-- The soundness clause of answer reduction is soundness in the tensor-product model. -/
+theorem AnswerReduction.soundIn_tensor {ℓ : ℕ} (A : AnswerReduction ℓ) : A.SoundIn .tensor :=
+  A.soundness
+
 end MIPRE
 
 end
