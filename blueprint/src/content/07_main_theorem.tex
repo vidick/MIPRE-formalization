@@ -159,8 +159,9 @@ Theorem~\ref{thm:compression-target}.
 
 \begin{lemma}[$\MIPstar \subseteq \RE$]
 \label{lem:mipstar-sub-re}
-\uses{def:mipstar-computable,def:re,lem:value-lower-approx}
-\lean{MIPRE.MIPStarComputable.isRE, MIPRE.MIPStarComputable.exists_semidecider}
+\uses{def:mipstar-computable,def:re,lem:value-lower-approx,def:value-model}
+\lean{MIPRE.MIPStarComputable.isRE, MIPRE.MIPStarComputable.exists_semidecider,
+  MIPRE.MIPClass.isRE, MIPRE.MIPClass.exists_semidecider, MIPRE.ValueModel.tensor_lowerRE}
 \leanok
 Every language in $\MIPstar$ is recursively enumerable.
 \end{lemma}
@@ -185,7 +186,8 @@ model.
 \uses{def:mipstar-computable,def:re,thm:halting,thm:halting-undecidable,lem:value-lower-approx,
   lem:mipstar-sub-re,def:mipstar,lem:mipstar-poly-sub}
 \lean{MIPRE.Halting.mipstarComputable_eq_re, MIPRE.Halting.re_subset_mipstarComputable,
-  MIPRE.Halting.mipstar_eq_re, MIPRE.Halting.re_subset_mipstar}
+  MIPRE.Halting.mipstar_eq_re, MIPRE.Halting.re_subset_mipstar,
+  MIPRE.Halting.re_subset_mipclass_of_reduction, MIPRE.Halting.mipclass_eq_re_of_reduction}
 \leanok
 $\MIPstar = \RE$, for the class $\MIPstar_{1,1/2}(2,1)$ of Definition~\ref{def:mipstar} and
 for the computable class of Definition~\ref{def:mipstar-computable}.

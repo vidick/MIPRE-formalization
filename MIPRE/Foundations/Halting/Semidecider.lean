@@ -465,31 +465,34 @@ namespace Halting
 
 variable {G : GapCompression} {U : UniversalMachine}
 
-/-- **Obligation O3 from the tabulation of O2.** For a computably presented family of
-verifiers and a computable tabulation whose game has the value of `𝒱_n` at every `n`-bounded
-string, a closed program halts on `encode (x, n)` exactly off the class `B` at level `n` —
-obligation O3 of the halting reduction, applied by `halting_reduction` through `exists_sem`.
+/-- **Obligation O3 from the tabulation of O2, in a value model r.e. from below.** For a
+computably presented family of verifiers, a computable tabulation whose game has the value of
+`𝒱_n` in the model at every `n`-bounded string, and a lower semidecider for the value, a closed
+program halts on `encode (x, n)` exactly off the class `B` of the model at level `n` —
+obligation O3 of the halting reduction, applied by `halting_reduction_lower` through
+`exists_sem_lower`.
 
 The three disjuncts of `Verifier.not_inClassB_iff` are enumerated separately — the
 boundedness violation by `Verifier.rePred_not_isBounded`, the acceptance of a long answer by
-`Verifier.rePred_not_rejectsLong`, the value by `lem:value-lower-approx` on the tabulation —
-and merged by dovetailing (`REPred.or`). -/
-theorem exists_sem_of_tab (hV : Verifier.ComputablyPresented (Vof G U))
+`Verifier.rePred_not_rejectsLong`, the value by the lower semidecider on the tabulation
+(`lem:value-lower-approx` at `ValueModel.tensor`) — and merged by dovetailing (`REPred.or`). -/
+theorem exists_sem_of_tab (ω : ValueModel) (hlow : ω.LowerRE)
+    (hV : Verifier.ComputablyPresented (Vof G U))
     (tab : BitStr → ℕ → GameData) (htab : Computable fun q : BitStr × ℕ => tab q.1 q.2)
     (hval : ∀ (x : BitStr) (n : ℕ), (Vof G U x).IsBounded n →
-      quantumValue (tab x n).game = (Vof G U x).valStar n (ansBound G x n)) :
+      ω.val (tab x n).game = (Vof G U x).val ω n (ansBound G x n)) :
     ∃ S : Prog, S.WellScoped 1 ∧
-      ∀ (x : BitStr) (n : ℕ), Halts S (encode (x, n)) ↔ x ∉ classB G U n := by
-  have hre : REPred fun q : BitStr × ℕ => q.1 ∉ classB G U q.2 := by
+      ∀ (x : BitStr) (n : ℕ), Halts S (encode (x, n)) ↔ x ∉ classB G U ω n := by
+  have hre : REPred fun q : BitStr × ℕ => q.1 ∉ classB G U ω q.2 := by
     refine (REPred.or (REPred.or (Verifier.rePred_not_isBounded hV)
       (Verifier.rePred_not_rejectsLong hV (computable_ansBound G)))
-      (rePred_lt_quantumValue_comp htab 1 2)).of_eq fun q => ?_
+      (hlow.comp htab 1 2)).of_eq fun q => ?_
     rw [Halting.mem_classB_iff, Verifier.not_inClassB_iff]
     simp only [Nat.cast_one, Nat.cast_ofNat]
     by_cases hb : (Vof G U q.1).IsBounded q.2
     · rw [hval q.1 q.2 hb, or_assoc]
     · simp [hb]
-  exact Cost.exists_semidecider_prod_nat (p := fun x n => x ∉ classB G U n) hre
+  exact Cost.exists_semidecider_prod_nat (p := fun x n => x ∉ classB G U ω n) hre
 
 /-- **The family `Vof` is computably presented.** All three fields, and all three are O2's:
 the two programs by `computable_sampData`/`sampData_eq` and
@@ -505,10 +508,11 @@ theorem computablyPresented_Vof (G : GapCompression) (U : UniversalMachine) :
   deciderProg := (computable_decProgData G U).of_eq fun x => decProgData_eq G U x
   dim := (computable_dimOf_fst G).of_eq fun q => dimOf_eq G U q.1 q.2
 
-/-- **Obligation O3, with no hypotheses left.** Both arguments of `exists_sem_of_tab` are
-discharged by O2: the computable presentation by the re-budgeted sampler runs, and `hval` —
-the value equality at every `n`-bounded string, in both directions and with no synchronicity
-— by the doubled question set of `Foundations/GameDouble.lean`.
+/-- **Obligation O3, with no hypotheses left but the lower semidecider.** Both arguments of
+`exists_sem_of_tab` are discharged by O2: the computable presentation by the re-budgeted
+sampler runs, and `hval` — the value equality at every `n`-bounded string, in both directions
+and with no synchronicity — by the doubled question set of `Foundations/GameDouble.lean`
+(`tab_val`).
 
 This is the repair blueprint `lem:halting-semidecider` records as the first of three, and the
 only one that changes nothing outside the tabulation: the two alternatives were to make
@@ -516,10 +520,37 @@ only one that changes nothing outside the tabulation: the two alternatives were 
 *denotes* and so reopens `accOf_iff`, the classes and `thm:compression`; or to put
 synchronicity into `classB`, which moves the cost into `compr_spec`, a field of the one
 obligation still open. -/
+theorem exists_sem_lower (G : GapCompression) (U : UniversalMachine) (ω : ValueModel)
+    (hlow : ω.LowerRE) :
+    ∃ S : Prog, S.WellScoped 1 ∧
+      ∀ (x : BitStr) (n : ℕ), Halts S (encode (x, n)) ↔ x ∉ classB G U ω n :=
+  exists_sem_of_tab ω hlow (computablyPresented_Vof G U) (tab G U) (tab_computable G U)
+    (tab_val G U ω)
+
+/-- **Obligation O3 for the tensor-product value, with no hypotheses.** -/
 theorem exists_sem (G : GapCompression) (U : UniversalMachine) :
     ∃ S : Prog, S.WellScoped 1 ∧
-      ∀ (x : BitStr) (n : ℕ), Halts S (encode (x, n)) ↔ x ∉ classB G U n :=
-  exists_sem_of_tab (computablyPresented_Vof G U) (tab G U) (tab_computable G U) (tab_value G U)
+      ∀ (x : BitStr) (n : ℕ), Halts S (encode (x, n)) ↔ x ∉ classB G U .tensor n :=
+  exists_sem_lower G U .tensor ValueModel.tensor_lowerRE
+
+-- The tabulation is opaque from here on, as in `halting_reduction`: the semidecider below only
+-- ever feeds it to `tab_computable`, and letting unification unfold it costs more heartbeats
+-- than any budget worth setting.
+attribute [local irreducible] tab
+
+/-- **Obligation O3 for the `coRE` direction, in a value model r.e. from above**: a closed
+program halting on `encode (x, n)` exactly off `classOne ω n`, that is, when the tabulated
+game at level `n` has value below `1` — the upper semidecider at the threshold `1/1`,
+composed with the computable tabulation. At `ValueModel.commuting` this is the role Lin's
+proof gives to the NPA hierarchy (`Lin25`). No boundedness is involved: `classOne` is read on
+the tabulation. -/
+theorem exists_sem_upper (G : GapCompression) (U : UniversalMachine) (ω : ValueModel)
+    (hup : ω.UpperRE) :
+    ∃ S : Prog, S.WellScoped 1 ∧
+      ∀ (x : BitStr) (n : ℕ), Halts S (encode (x, n)) ↔ x ∉ classOne G U ω n := by
+  refine Cost.exists_semidecider_prod_nat (p := fun x n => x ∉ classOne G U ω n)
+    ((hup.comp (tab_computable G U) 1 1).of_eq fun q => ?_)
+  simp only [Nat.cast_one, div_one, mem_classOne_iff, not_not]
 
 end Halting
 

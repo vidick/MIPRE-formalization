@@ -370,7 +370,9 @@ tell you the guard is missing.
   MIPRE.halting_undecidable
 
 -- blueprint `thm:mipstar-eq-re`
-#guard_sorry_free MIPRE.Halting.exists_code_halts_of_isRE
+#guard_sorry_free MIPRE.Halting.exists_code_halts_of_isRE,
+  MIPRE.Halting.re_subset_mipclass_of_reduction,
+  MIPRE.Halting.mipclass_eq_re_of_reduction
 
 -- blueprint `lem:halt-construction`
 #guard_sorry_free MIPRE.Cost.Prog.freezeBuildProg,
@@ -395,6 +397,8 @@ tell you the guard is missing.
 
 -- blueprint `lem:halting-semidecider`
 #guard_sorry_free MIPRE.Halting.exists_sem_of_tab,
+  MIPRE.Halting.exists_sem_lower,
+  MIPRE.Halting.exists_sem_upper,
   MIPRE.REPred.or,
   MIPRE.Verifier.LongAcceptance,
   MIPRE.Verifier.longAcceptanceB,
@@ -444,6 +448,9 @@ tell you the guard is missing.
 
 -- blueprint `thm:halting`
 #guard_sorry_free MIPRE.Halting.exists_obligations,
+  MIPRE.Halting.halting_reduction_lower,
+  MIPRE.Halting.halting_reduction_lower_strings,
+  MIPRE.Halting.halting_reduction_lower_of,
   MIPRE.Halting.halting_reduction_both_of,
   MIPRE.Halting.halting_reduces_to_gameValue_of,
   MIPRE.Halting.halting_reduction,
@@ -481,7 +488,10 @@ tell you the guard is missing.
 
 -- blueprint `lem:mipstar-sub-re`
 #guard_sorry_free MIPRE.MIPStarComputable.exists_semidecider,
-  MIPRE.MIPStarComputable.isRE
+  MIPRE.MIPStarComputable.isRE,
+  MIPRE.MIPClass.isRE,
+  MIPRE.MIPClass.exists_semidecider,
+  MIPRE.ValueModel.tensor_lowerRE
 
 /-! `lem:mipstar-poly-sub`: the paper's class is contained in the computable one
 (`MIPRE/Foundations/ClassMIPStarTab.lean`). -/
@@ -2723,37 +2733,33 @@ separation from an upper semidecider (`MIPRE/Foundations/Correlations.lean`,
 
 /-! The commuting-operator track (`planning/mipco-track.md`, Phase 0):
 `lem:compressible-criterion-nested`, `lem:mipco-sub-core`, `thm:halting-co` and
-`thm:mipco-eq-core`, the last two conditional on `MIPRE.GapCompression.CoSound`
-(`MIPRE/Foundations/Compression.lean`, `MIPRE/Foundations/ClassMIPCo.lean`,
-`MIPRE/Foundations/Halting/{ClassesCo,InstantiationCo,ReductionCo,CorollariesCo}.lean`,
-`MIPRE/MIPCo.lean`). -/
+`thm:mipco-eq-core`, the last two conditional on `MIPRE.GapCompression.Sound
+ValueModel.commuting`. The reduction and the classes are generic in a value model
+(`MIPRE/Foundations/ValueModel.lean`, the `Halting/` modules and `Foundations/ClassMIPStarComputable.lean`);
+the commuting-operator instances are `MIPRE/Foundations/ClassMIPCo.lean` and
+`MIPRE/MIPCo.lean`. -/
 #guard_sorry_free MIPRE.Cost.compressibility_criterion_nested
 
 #guard_sorry_free MIPRE.MIPCo.isCoRE,
-  MIPRE.MIPCo.exists_cosemidecider
+  MIPRE.MIPCo.exists_cosemidecider,
+  MIPRE.MIPClass.isCoRE,
+  MIPRE.MIPClass.exists_cosemidecider,
+  MIPRE.ValueModel.commuting_upperRE
 
-#guard_sorry_free MIPRE.Halting.halting_reduction_co,
+#guard_sorry_free MIPRE.Halting.halting_reduction_upper,
+  MIPRE.Halting.halting_reduction_upper_strings,
+  MIPRE.Halting.halting_reduction_upper_of,
   MIPRE.Halting.halting_reduction_commuting_of,
   MIPRE.halting_reduction_commuting,
-  MIPRE.HaltingReductionCommuting,
-  MIPRE.Halting.ObligationsCo,
-  MIPRE.Halting.CompressorSpec.toObligationsCo,
-  MIPRE.Halting.exists_semCo,
-  MIPRE.Halting.classBCo,
   MIPRE.Halting.classOne,
   MIPRE.Halting.classA_subset_classOne,
-  MIPRE.Halting.tab_valCo,
-  MIPRE.Halting.yNo_memCo,
-  MIPRE.Verifier.InClassBCo,
-  MIPRE.Verifier.inClassBCo_of_rejects_all,
-  MIPRE.Verifier.freeze_valCo,
-  MIPRE.Verifier.freeze_inClassBCo
+  MIPRE.Halting.val_tab_eq_one_of_mem_classOne
 
 #guard_sorry_free MIPRE.mipco_eq_core,
   MIPRE.core_subset_mipco,
   MIPRE.Halting.mipco_eq_core_of,
   MIPRE.Halting.core_subset_mipco_of,
-  MIPRE.core_subset_mipco_of_reduction,
-  MIPRE.mipco_eq_core_of_reduction
+  MIPRE.Halting.core_subset_mipclass_of_reduction,
+  MIPRE.Halting.mipclass_eq_core_of_reduction
 
 end
