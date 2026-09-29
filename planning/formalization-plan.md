@@ -1038,9 +1038,18 @@ dilation that preserves commutation with the other player (`MIPRE.exists_isProje
 blueprint `thm:co-value-projective`), so the generalized analyses may assume projective
 measurements, as the tensor-product ones do.
 The model the analyses are generalized over is in too (`MIPRE.BipartiteModel`, blueprint
-`def:bipartite-model`): a state and two commuting representations of the players' algebras,
-with the tensor-product and commuting-operator strategies as instances, and the matrix state
-calculus of `OpBound` derived from the Hilbert-space one.
+`def:bipartite-model`): a state, a represented algebra and two commuting representations of the
+players' algebras, with the tensor-product and commuting-operator strategies as instances.
+Phase 1 is done (#243, #245): the operator calculus of the stage analyses — the consistency
+and commutation analyses, the sandwich and pasting chains, coarse-graining, disagreement, the
+exchange of the players, strategies in a model and their adaptation, and the finite ancillas
+(`BipartiteModel.expand`, blueprint `lem:ancilla-extension`) — is proved once over the model,
+and each matrix statement of the same name is its instance at the tensor-product model, derived
+and not re-proved (blueprint `rem:model-calculus`). `ω_co` is a supremum of model values
+(`lem:co-value-model`), and each stage carries its soundness clause in a value model:
+`MIPRE.mipco_eq_core_of_stages` proves `MIP^co = coRE` from the introspection, answer-reduction
+and repetition clauses in `ω_co` (`cor:mipco-from-stages`), which Phases 2–5 discharge one at a
+time.
 
 ## Working rules for this track
 
