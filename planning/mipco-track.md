@@ -216,7 +216,8 @@ is deleted or becomes the instance; nothing is kept in two copies.
 **The model.** A *projective commuting-operator strategy*: a Hilbert space `H`, a unit
 vector `ψ`, Alice's PVMs `A x a : H →L[ℂ] H`, Bob's PVMs `B y b`, with
 `Commute (A x a) (B y b)`. `TensorProductStrategy.toCommuting` (`Foundations/Correlations.lean`)
-is the tensor instance; `ω_co` is the supremum over these by the dilation lemma of Phase 1;
+is the tensor instance; `ω_co` is the supremum over these by the dilation lemma of Phase 1
+(`commutingOperatorValue_eq_iSup_isProjective`);
 Lin's tracially embeddable strategies (vendored `TraciallyEmbeddableCorrelation`, Alice in
 the algebra, Bob in its commutant) are instances too, though nothing here needs them. Finite
 ancillas are `ι → H` with the `PiLp 2` structure, so the EPR register of introspection and
@@ -225,15 +226,22 @@ of the Pauli basis test, and the Weyl operators on it, are unchanged.
 **Phase 1 — the model and its operator calculus** (foundation; report §4 items 1, 2, 5, 7).
 Three pieces.
 
-(a) `CommutingOperatorStrategy.exists_projective_dilation`: for a POVM family on `H` and a
-set `𝒞` of operators commuting with it, PVMs on `H ⊗ ℂ^A ⊗ ℂ²` commuting with `𝒞 ⊗ 1`, with a
-fixed ancilla vector and the compression identity `E_a` as an *operator* identity. Proof by
-the C*-algebraic square root (`CFC.sqrt`, commutation by `Commute.cfc`), the isometry
-`V = ∑ √E_a ⊗ |a⟩`, and the 2×2 unitary extension `[[w, 1 − ww*], [1 − w*w, w*]]` of the
-partial isometry `w = V ⊗ ⟨a₀|` — no von Neumann algebra theory, no comparison of
-projections (the report's §4 has the computation; check it in Lean first, it is the lemma
-everything else leans on). Corollary: `commutingOperatorValue G` is the supremum over
-projective strategies, so `ValueModel.commuting` is reached from the model.
+(a) **Done (#241).** `Foundations/CommutingDilation.lean`, on `Foundations/HalmosDilation.lean`
+(the algebra, over any ring with an involution) and `Foundations/OperatorMatrix.lean` (matrices
+of operators acting on the ancilla `ι → H`, a unital `⋆`-homomorphism, and the embedding
+`ξ ↦ ξ ⊗ e_{i₀}`); blueprint `def:co-projective`, `lem:co-dilation`, `thm:co-value-projective`;
+940 lines. One question is dilated at a time and the others are amplified. For the first
+player's question `x`: the square roots `√E^x_a` (`CFC.sqrt`, commuting with every `F^y_b` by
+`Commute.cfcₙ_nnreal`); the Naimark matrix `w` whose column `a₀` is `(√E^x_a)_a`, a partial
+isometry in the ring of operator matrices; its Halmos unitary
+`U = [[w, 1 − ww*], [1 − w*w, w*]]`; and the projections `U* Q_a U` on `H ⊗ ℂ^(A ⊕ A)`, which
+compress to `E^x_a` at `ψ ⊗ e_{inl a₀}` as an identity of matrix entries and commute entrywise
+with `F^y_b ⊗ 1`. The second player's questions are dilated with the players exchanged. No von
+Neumann algebra theory, no comparison of projections. The results are
+`CommutingOperatorStrategy.exists_isProjective_correlation_eq`,
+`commutingOperatorValue_eq_iSup_isProjective`, and `exists_isProjective_lt_value`, the form a
+soundness proof consumes: a strategy beating `t` in `ω_co` may be taken projective.
+`TensorProductStrategy.isProjective_toCommuting` places the tensor model inside.
 
 (b) The operator calculus restated over `H →L[ℂ] H` with two commuting families: `snorm`,
 `xSqNorm`, `bornProb`, `povmValue`, `condFail`, `dis`, `Bnd`, the Cauchy–Schwarz and
@@ -347,7 +355,7 @@ end with a sharper conditional theorem, stated in `MIPRE/MIPCo.lean` and in blue
    defined with POVMs, and the vendored tracially embeddable correlations have POVMs too, so
    density does not close the gap; the dilation lemma of Phase 1 does, and it is the single
    lemma the whole architecture leans on. Its proof is elementary (a 2×2 unitary extension
-   of a partial isometry in a C*-algebra, report §4); get it into Lean before anything else.
+   of a partial isometry in a C*-algebra, report §4), and it is in Lean: Phase 1(a), #241.
 3. **Generic means replaced, not added.** A generic lemma replaces its matrix version, and
    the tensor statement is derived as an instance; the main theorem keeps building through
    the generic proof at every commit. If a phase leaves a matrix twin beside a generic
@@ -401,7 +409,7 @@ end with a sharper conditional theorem, stated in `MIPRE/MIPCo.lean` and in blue
 | ID | Deliverable | Size | Status |
 |---|---|---|---|
 | C0 | Phase 0: the nested criterion, the `ω_co` transport, the value model and the generic halting layer, the conditional reduction, `MIPCo`, `MIPCo ⊆ coRE`, the blueprint | ~1k lines of Lean net | done: #236, then made generic in #239 |
-| C1 | Phase 1: the projective commuting-operator model, the dilation lemma, the operator calculus restated with the matrix layer as its instance, the stage interfaces in `Verifier.val ω` | 3k–5k new, ≈ 10k restated | open; start with the dilation lemma |
+| C1 | Phase 1: the projective commuting-operator model, the dilation lemma, the operator calculus restated with the matrix layer as its instance, the stage interfaces in `Verifier.val ω` | 3k–5k new, ≈ 10k restated | open (#240); (a), the dilation lemma, done (#241); next (b) |
 | C2 | Phase 2: oracularization, repetition and the composition in the model; `mipco_eq_core` conditional on the introspection and answer-reduction clauses in `ω_co` | 2k–3k | open |
 | C3 | Phase 3: answer reduction in the model with `LIDTSoundness` as the hypothesis | 8k–10k touched | open |
 | C4 | Phase 4: introspection in the model with `QLDSoundness` as the hypothesis | ≈ 20k touched | open |

@@ -210,6 +210,7 @@ public import MIPRE.Foundations.Expanded
 public import MIPRE.Foundations.WeylEPR
 public import MIPRE.Foundations.Swap
 public import MIPRE.Background.GowersHatami.Basic
+public import MIPRE.Foundations.CommutingDilation
 
 @[expose] public section
 
@@ -2761,5 +2762,37 @@ the commuting-operator instances are `MIPRE/Foundations/ClassMIPCo.lean` and
   MIPRE.Halting.core_subset_mipco_of,
   MIPRE.Halting.core_subset_mipclass_of_reduction,
   MIPRE.Halting.mipclass_eq_core_of_reduction
+
+/-! The commuting-operator track, Phase 1(a) (`planning/mipco-track.md` §5): the
+commutation-preserving dilation, `lem:co-dilation`, and the attainment of `ω_co` on projective
+strategies, `thm:co-value-projective` (`MIPRE/Foundations/OperatorMatrix.lean`,
+`MIPRE/Foundations/HalmosDilation.lean`, `MIPRE/Foundations/CommutingDilation.lean`). -/
+#guard_sorry_free MIPRE.OperatorMatrix.toCLMStarAlgHom,
+  MIPRE.OperatorMatrix.amplify,
+  MIPRE.OperatorMatrix.emb,
+  MIPRE.OperatorMatrix.inner_emb_toCLM_emb,
+  MIPRE.OperatorMatrix.toCLM_diagonal_emb,
+  MIPRE.Halmos.extension,
+  MIPRE.Halmos.conjTranspose_mul_extension,
+  MIPRE.Halmos.extension_mul_conjTranspose,
+  MIPRE.Halmos.naimark,
+  MIPRE.Halmos.naimark_mul_conjTranspose_mul,
+  MIPRE.Halmos.proj,
+  MIPRE.Halmos.isStarProjection_proj,
+  MIPRE.Halmos.sum_proj,
+  MIPRE.Halmos.proj_naimark_inl_inl,
+  MIPRE.Halmos.commute_diagonal_proj_naimark,
+  MIPRE.CommutingOperatorStrategy.dilateLeft,
+  MIPRE.CommutingOperatorStrategy.correlation_dilateLeft,
+  MIPRE.CommutingOperatorStrategy.swap,
+  MIPRE.CommutingOperatorStrategy.correlation_swap,
+  MIPRE.CommutingOperatorStrategy.dilateRight,
+  MIPRE.CommutingOperatorStrategy.correlation_dilateRight
+
+#guard_sorry_free MIPRE.CommutingOperatorStrategy.exists_isProjective_correlation_eq,
+  MIPRE.CommutingOperatorStrategy.exists_isProjective_value_eq,
+  MIPRE.commutingOperatorValue_eq_iSup_isProjective,
+  MIPRE.exists_isProjective_lt_value,
+  MIPRE.TensorProductStrategy.isProjective_toCommuting
 
 end
