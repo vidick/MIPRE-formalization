@@ -5,6 +5,7 @@ Authors: Thomas Vidick
 -/
 module
 public import Mathlib.Analysis.CStarAlgebra.Matrix
+public import Mathlib.Analysis.InnerProductSpace.StarOrder
 public import MIPRE.Foundations.OpCalculus
 public import MIPRE.Tactics
 
@@ -108,6 +109,13 @@ theorem snorm_one (hψ : ‖M.ψ‖ = 1) : M.snorm 1 = 1 := by
   rw [map_one]
   exact Op.snorm_one _ hψ
 
+/-- The triangle inequality over a finite sum. -/
+theorem snorm_sum_le {ι : Type*} (s : Finset ι) (f : ι → 𝒞) :
+    M.snorm (∑ i ∈ s, f i) ≤ ∑ i ∈ s, M.snorm (f i) := by
+  unfold snorm
+  rw [map_sum]
+  exact Op.snorm_sum_le _ _ _
+
 /-- A bound in front of anything. -/
 theorem snorm_mul_le {T : 𝒞} {K : ℝ} (h : M.Bnd T K) (T' : 𝒞) :
     M.snorm (T * T') ≤ K * M.snorm T' := by
@@ -172,6 +180,13 @@ theorem snorm_sq_eq_qform (T : 𝒞) : M.snorm T ^ 2 = M.qform (star T * T) := b
   unfold snorm qform
   rw [map_mul, map_star]
   exact Op.snorm_sq_eq_qform _ _
+
+/-- **The quadratic form of an element represented by a positive operator is nonnegative.** -/
+theorem qform_nonneg {T : 𝒞} (h : 0 ≤ M.π T) : 0 ≤ M.qform T := by
+  have hpos : (M.π T).IsPositive := ContinuousLinearMap.nonneg_iff_isPositive.1 h
+  have := hpos.re_inner_nonneg_right M.ψ
+  unfold qform Op.qform
+  rwa [← RCLike.re_to_complex]
 
 theorem Bnd.mono {T : 𝒞} {K L : ℝ} (h : M.Bnd T K) (hKL : K ≤ L) : M.Bnd T L :=
   Op.Bnd.mono h hKL

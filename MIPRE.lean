@@ -1217,6 +1217,7 @@ public import MIPRE.Foundations.LowDegree.UnaryPrimality
 public import MIPRE.Foundations.LowDegree.UnaryPrimePower
 public import MIPRE.Foundations.LowDegree.ZeroBasis
 public import MIPRE.Foundations.LowDegreeSandwich
+public import MIPRE.Foundations.Measurement
 public import MIPRE.Foundations.NCPoly.Basic
 public import MIPRE.Foundations.NCPoly.Cone
 public import MIPRE.Foundations.OpBound

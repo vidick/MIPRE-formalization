@@ -6,6 +6,7 @@ Authors: Thomas Vidick
 module
 public import Mathlib.Analysis.Matrix.Order
 public import Mathlib.Analysis.Matrix.PosDef
+public import MIPRE.Foundations.Measurement
 public import MIPRE.Tactics
 
 @[expose] public section
@@ -28,6 +29,11 @@ pvmObs P η = s • 1` exactly.
 That last one is what a linear-constraint-system game's Alice-side dilation buys: the three
 reflections of one constraint commute and multiply to the constraint's sign, with no error
 term. Blueprint `lem:ms-direct-anticomm` is the consumer.
+
+The rules are those of a projective measurement in any `⋆`-algebra
+(`MIPRE/Foundations/Measurement.lean`, `IsPVMIn`), of which a matrix projective measurement is one
+(`IsPVM.toIn`): this file proves only what is about matrices, that the elements of a matrix
+projective measurement are mutually orthogonal (`IsPVM.orthogonal`), and derives the rest.
 -/
 
 noncomputable section
@@ -101,103 +107,77 @@ theorem orthogonal (h : IsPVM P) {a b : Λ} (hab : a ≠ b) : P a * P b = 0 := b
   rwa [Matrix.conjTranspose_mul, h.isSelfAdjoint, h.isSelfAdjoint,
     Matrix.conjTranspose_zero] at this
 
+/-- **A matrix projective measurement is a projective measurement in the matrix algebra**
+(`MIPRE/Foundations/Measurement.lean`), orthogonality included. -/
+theorem toIn (h : IsPVM P) : IsPVMIn P :=
+  ⟨h.isSelfAdjoint, h.idem, h.sum_eq_one, h.orthogonal⟩
+
+omit [DecidableEq Λ] in
+/-- Conversely, a projective measurement in the matrix algebra is a matrix projective
+measurement. -/
+theorem _root_.MIPRE.IsPVMIn.toIsPVM {P : Λ → Matrix n n ℂ} (h : IsPVMIn P) : IsPVM P :=
+  ⟨h.star_eq, h.idem, h.sum_eq_one⟩
+
 /-- **Coarse-graining a projective measurement gives a projective measurement.** Summing the
 elements over a level set of `f` preserves self-adjointness, and mutual orthogonality
 (`IsPVM.orthogonal`) makes the sum idempotent; the level sets partition the outcomes, so the sums
 still add to one. This is what makes the expansion stage's convolutions projective. -/
 theorem coarse {Λ' : Type*} [Fintype Λ'] [DecidableEq Λ'] (h : IsPVM P) (f : Λ → Λ') :
-    IsPVM (fun c => ∑ a ∈ univ.filter fun a => f a = c, P a) where
-  isSelfAdjoint c := by
-    rw [Matrix.conjTranspose_sum]
-    exact Finset.sum_congr rfl fun a _ => h.isSelfAdjoint a
-  idem c := by
-    rw [Finset.sum_mul]
-    refine Finset.sum_congr rfl fun a ha => ?_
-    rw [Finset.mul_sum, Finset.sum_eq_single_of_mem a ha
-      (fun a' _ ha' => h.orthogonal ha'.symm)]
-    exact h.idem a
-  sum_eq_one := by
-    rw [Finset.sum_fiberwise (univ : Finset Λ) f P]
-    exact h.sum_eq_one
+    IsPVM (fun c => ∑ a ∈ univ.filter fun a => f a = c, P a) :=
+  (h.toIn.coarse f).toIsPVM
 
 /-- `P a * P b` is `P a` on the diagonal and zero off it. -/
 theorem mul_eq_ite (h : IsPVM P) (a b : Λ) :
-    P a * P b = if a = b then P a else 0 := by
-  by_cases hab : a = b
-  · subst hab; rw [if_pos rfl, h.idem]
-  · rw [if_neg hab, h.orthogonal hab]
+    P a * P b = if a = b then P a else 0 :=
+  h.toIn.mul_eq_ite a b
 
 end IsPVM
 
-/-! ## The observable of a weighting -/
+/-! ## The observable of a weighting
 
-/-- `∑_a ε a • P a`, the operator a weighting of a projective measurement's outcomes
-defines. -/
-def pvmObs (P : Λ → Matrix n n ℂ) (ε : Λ → ℂ) : Matrix n n ℂ := ∑ a, ε a • P a
+`pvmObs P ε = ∑_a ε a • P a` is defined for any measurement in any `ℂ`-module
+(`MIPRE/Foundations/Measurement.lean`); these are its rules for a matrix projective measurement,
+the instances of `IsPVMIn.pvmObs_mul` and its companions. -/
 
 variable {P : Λ → Matrix n n ℂ}
 
 /-- **`pvmObs P` is multiplicative.** This is the whole content of the file. -/
 theorem pvmObs_mul (h : IsPVM P) (ε δ : Λ → ℂ) :
-    pvmObs P ε * pvmObs P δ = pvmObs P (ε * δ) := by
-  classical
-  have step : ∀ a : Λ, (ε a • P a) * pvmObs P δ = ((ε * δ) a) • P a := by
-    intro a
-    rw [pvmObs, Finset.mul_sum, Finset.sum_eq_single a]
-    · rw [Matrix.smul_mul, Matrix.mul_smul, smul_smul, h.idem]
-      rfl
-    · intro b _ hb
-      rw [Matrix.smul_mul, Matrix.mul_smul, smul_smul, h.orthogonal (Ne.symm hb), smul_zero]
-    · intro hna
-      exact absurd (Finset.mem_univ a) hna
-  rw [pvmObs, Finset.sum_mul, Finset.sum_congr rfl fun a (_ : a ∈ univ) => step a, pvmObs]
+    pvmObs P ε * pvmObs P δ = pvmObs P (ε * δ) :=
+  h.toIn.pvmObs_mul ε δ
 
-omit [DecidableEq Λ] in
 theorem pvmObs_const (h : IsPVM P) (c : ℂ) :
-    pvmObs P (fun _ => c) = c • (1 : Matrix n n ℂ) := by
-  rw [pvmObs, ← Finset.smul_sum, h.sum_eq_one]
+    pvmObs P (fun _ => c) = c • (1 : Matrix n n ℂ) :=
+  h.toIn.pvmObs_const c
 
-omit [DecidableEq Λ] in
-theorem pvmObs_one (h : IsPVM P) : pvmObs P 1 = (1 : Matrix n n ℂ) := by
-  rw [show (1 : Λ → ℂ) = fun _ => (1 : ℂ) from rfl, pvmObs_const h, one_smul]
+theorem pvmObs_one (h : IsPVM P) : pvmObs P 1 = (1 : Matrix n n ℂ) :=
+  h.toIn.pvmObs_one
 
-omit [DecidableEq Λ] in
 theorem pvmObs_conjTranspose (h : IsPVM P) (ε : Λ → ℂ) :
-    (pvmObs P ε)ᴴ = pvmObs P (star ε) := by
-  rw [pvmObs, pvmObs, Matrix.conjTranspose_sum]
-  exact Finset.sum_congr rfl fun a _ => by
-    rw [Matrix.conjTranspose_smul, h.isSelfAdjoint]
-    rfl
+    (pvmObs P ε)ᴴ = pvmObs P (star ε) :=
+  h.toIn.star_pvmObs ε
 
-omit [DecidableEq Λ] in
 /-- A real weighting gives a self-adjoint operator. -/
 theorem pvmObs_isSelfAdjoint (h : IsPVM P) {ε : Λ → ℂ} (hε : ∀ a, star (ε a) = ε a) :
-    (pvmObs P ε)ᴴ = pvmObs P ε := by
-  rw [pvmObs_conjTranspose h]
-  congr 1
-  funext a
-  exact hε a
+    (pvmObs P ε)ᴴ = pvmObs P ε :=
+  h.toIn.pvmObs_star_eq hε
 
 /-- A weighting squaring to one pointwise gives an operator squaring to one. -/
 theorem pvmObs_mul_self (h : IsPVM P) {ε : Λ → ℂ} (hε : ∀ a, ε a * ε a = 1) :
-    pvmObs P ε * pvmObs P ε = 1 := by
-  rw [pvmObs_mul h]
-  rw [show ε * ε = 1 from funext fun a => hε a]
-  exact pvmObs_one h
+    pvmObs P ε * pvmObs P ε = 1 :=
+  h.toIn.pvmObs_mul_self hε
 
 /-- Two weightings of the *same* measurement commute. -/
 theorem pvmObs_comm (h : IsPVM P) (ε δ : Λ → ℂ) :
-    pvmObs P ε * pvmObs P δ = pvmObs P δ * pvmObs P ε := by
-  rw [pvmObs_mul h, pvmObs_mul h, mul_comm]
+    pvmObs P ε * pvmObs P δ = pvmObs P δ * pvmObs P ε :=
+  h.toIn.pvmObs_comm ε δ
 
 /-- Three weightings whose pointwise product is the constant `s` multiply to `s • 1`
 **exactly**. -/
 theorem pvmObs_mul_mul (h : IsPVM P) {ε δ η : Λ → ℂ} {s : ℂ}
     (hs : ∀ a, ε a * δ a * η a = s) :
-    pvmObs P ε * pvmObs P δ * pvmObs P η = s • (1 : Matrix n n ℂ) := by
-  rw [pvmObs_mul h, pvmObs_mul h]
-  rw [show ε * δ * η = fun _ => s from funext fun a => hs a]
-  exact pvmObs_const h s
+    pvmObs P ε * pvmObs P δ * pvmObs P η = s • (1 : Matrix n n ℂ) :=
+  h.toIn.pvmObs_mul_mul hs
 
 end MIPRE
 

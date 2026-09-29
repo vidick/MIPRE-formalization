@@ -6,6 +6,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Foundations.Closeness
 public import MIPRE.Foundations.OpBound
+public import MIPRE.Foundations.POVMValue
 
 @[expose] public section
 
@@ -39,11 +40,171 @@ Two deliberate departures from the paper's `qld-prelim.tex`:
 inequality and `‖c • v‖ = ‖c‖‖v‖` are Mathlib's rather than rebuilt. The bridge to the
 blueprint's quadratic-form spelling is `stateSqNorm_eq`, which is the only place the Kronecker
 adjoint is used.
+
+## In a bipartite model
+
+The norm, the distances and the two closeness lemmas are stated for any bipartite model
+(`MIPRE/Foundations/BipartiteModel.lean`) with the first player's operators in its algebra, and
+the matrix ones are their instances in the tensor-product model (`stateNorm_eq_tensor`,
+`stateDist_eq_tensor`, `povmStateDist_eq_tensor`). What stays about matrices is the vector
+`stateVec` itself and the factor swap, which a model does not need: its second player's norm is
+`‖πB b ψ‖`, by the same definition.
 -/
 
 namespace MIPRE
 
 open Finset Matrix Kronecker
+
+/-! ## The state norm and distance in a bipartite model -/
+
+namespace BipartiteModel
+
+open scoped InnerProductSpace
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] (M : BipartiteModel 𝒞 𝒜 ℬ)
+
+/-- `‖πA a ψ‖`: the norm of the first player's operator on the state. -/
+def stateNorm (a : 𝒜) : ℝ := M.snorm (M.πA a)
+
+/-- `⟨ψ| πA(a† a) |ψ⟩`, the squared state-dependent norm. -/
+def stateSqNorm (a : 𝒜) : ℝ := M.stateNorm a ^ 2
+
+/-- **The squared norm is the quadratic form of `a† a`.** -/
+theorem stateSqNorm_eq (a : 𝒜) : M.stateSqNorm a = M.qform (M.πA (star a * a)) := by
+  rw [stateSqNorm, stateNorm, M.snorm_sq_eq_qform, map_mul, map_star]
+
+/-- **The squared norm is the quadratic form of `a† a`, as a complex number**: the inner product
+is real. -/
+theorem inner_stateSqNorm (a : 𝒜) :
+    ⟪M.ψ, M.π (M.πA (star a * a)) M.ψ⟫_ℂ = (M.stateSqNorm a : ℂ) := by
+  rw [map_mul, map_star, map_mul, map_star]
+  show ⟪M.ψ, (star (M.π (M.πA a))) (M.π (M.πA a) M.ψ)⟫_ℂ = _
+  rw [ContinuousLinearMap.star_eq_adjoint, ContinuousLinearMap.adjoint_inner_right,
+    inner_self_eq_norm_sq_to_K, stateSqNorm, stateNorm, StateModel.snorm, Op.snorm]
+  push_cast
+  rfl
+
+theorem stateNorm_nonneg (a : 𝒜) : 0 ≤ M.stateNorm a := M.snorm_nonneg _
+
+theorem stateSqNorm_nonneg (a : 𝒜) : 0 ≤ M.stateSqNorm a := sq_nonneg _
+
+theorem sqrt_stateSqNorm (a : 𝒜) : Real.sqrt (M.stateSqNorm a) = M.stateNorm a :=
+  Real.sqrt_sq (M.stateNorm_nonneg a)
+
+theorem stateNorm_smul (c : ℂ) (a : 𝒜) : M.stateNorm (c • a) = ‖c‖ * M.stateNorm a := by
+  rw [stateNorm, stateNorm, map_smul]
+  exact M.snorm_smul c _
+
+theorem stateNorm_sum_le {ι : Type*} (s : Finset ι) (f : ι → 𝒜) :
+    M.stateNorm (∑ i ∈ s, f i) ≤ ∑ i ∈ s, M.stateNorm (f i) := by
+  rw [stateNorm, map_sum]
+  exact M.snorm_sum_le s _
+
+/-- **The inner product of the two players' vectors** is the quadratic form of their product,
+for a self-adjoint first operator. -/
+theorem inner_πA_πB {q : 𝒜} (hq : star q = q) (r : ℬ) :
+    ⟪M.π (M.πA q) M.ψ, M.π (M.πB r) M.ψ⟫_ℂ = ⟪M.ψ, M.π (M.πA q * M.πB r) M.ψ⟫_ℂ := by
+  rw [← ContinuousLinearMap.adjoint_inner_right, ← ContinuousLinearMap.star_eq_adjoint,
+    ← map_star M.π, ← map_star M.πA, hq, map_mul]
+  rfl
+
+variable {X : Type*} [Fintype X]
+
+/-- **The state-dependent distance** of two families of the first player's operators, relative
+to a question distribution `μ`: blueprint `def:state-distance`. -/
+def stateDist (μ : X → ℝ) (A B : X → 𝒜) : ℝ :=
+  ∑ x, μ x * M.stateSqNorm (A x - B x)
+
+/-- `A ≈_δ B` on the state, relative to `μ`. -/
+def IsStateClose (μ : X → ℝ) (δ : ℝ) (A B : X → 𝒜) : Prop :=
+  M.stateDist μ A B ≤ δ
+
+theorem stateDist_nonneg {μ : X → ℝ} (hμ : ∀ x, 0 ≤ μ x) (A B : X → 𝒜) :
+    0 ≤ M.stateDist μ A B :=
+  Finset.sum_nonneg fun x _ => mul_nonneg (hμ x) (M.stateSqNorm_nonneg _)
+
+section POVMs
+
+variable [PartialOrder 𝒜] {A : Type*} [Fintype A]
+
+/-- **The same distance for families indexed by answers as well.** -/
+def povmStateDist (μ : X → ℝ) (MA NA : X → POVMIn A 𝒜) : ℝ :=
+  ∑ x, μ x * ∑ a, M.stateSqNorm ((MA x).op a - (NA x).op a)
+
+/-- `M_a ≈_δ N_a` on the state, relative to `μ`. -/
+def IsPOVMStateClose (μ : X → ℝ) (δ : ℝ) (MA NA : X → POVMIn A 𝒜) : Prop :=
+  M.povmStateDist μ MA NA ≤ δ
+
+theorem povmStateDist_nonneg {μ : X → ℝ} (hμ : ∀ x, 0 ≤ μ x) (MA NA : X → POVMIn A 𝒜) :
+    0 ≤ M.povmStateDist μ MA NA :=
+  Finset.sum_nonneg fun x _ =>
+    mul_nonneg (hμ x) (Finset.sum_nonneg fun _ _ => M.stateSqNorm_nonneg _)
+
+/-- **From POVM elements to generalized observables**, blueprint `lem:qld-povm-to-obs`: the
+weighting costs a factor `|𝒜|`, from Cauchy--Schwarz over the outcome set. -/
+theorem stateDist_obsOf_le {μ : X → ℝ} (hμ0 : ∀ x, 0 ≤ μ x) (MA NA : X → POVMIn A 𝒜)
+    (α : A → ℂ) (hα : ∀ a, ‖α a‖ ≤ 1) :
+    M.stateDist μ (fun x => pvmObs (MA x).op α) (fun x => pvmObs (NA x).op α)
+      ≤ (Fintype.card A : ℝ) * M.povmStateDist μ MA NA := by
+  classical
+  rw [povmStateDist, Finset.mul_sum]
+  refine Finset.sum_le_sum fun x _ => ?_
+  rw [← mul_assoc, mul_comm ((Fintype.card A : ℝ)) (μ x), mul_assoc]
+  refine mul_le_mul_of_nonneg_left ?_ (hμ0 x)
+  have hsub : pvmObs (MA x).op α - pvmObs (NA x).op α
+      = ∑ a, α a • ((MA x).op a - (NA x).op a) := by
+    rw [pvmObs, pvmObs, ← Finset.sum_sub_distrib]
+    exact Finset.sum_congr rfl fun a _ => (smul_sub _ _ _).symm
+  have htri : M.stateNorm (pvmObs (MA x).op α - pvmObs (NA x).op α)
+      ≤ ∑ a, M.stateNorm ((MA x).op a - (NA x).op a) := by
+    rw [hsub]
+    refine (M.stateNorm_sum_le Finset.univ _).trans (Finset.sum_le_sum fun a _ => ?_)
+    rw [M.stateNorm_smul]
+    calc ‖α a‖ * M.stateNorm _ ≤ 1 * M.stateNorm _ :=
+          mul_le_mul_of_nonneg_right (hα a) (M.stateNorm_nonneg _)
+      _ = M.stateNorm _ := one_mul _
+  calc M.stateSqNorm (pvmObs (MA x).op α - pvmObs (NA x).op α)
+      ≤ (∑ a, M.stateNorm ((MA x).op a - (NA x).op a)) ^ 2 :=
+        pow_le_pow_left₀ (M.stateNorm_nonneg _) htri 2
+    _ ≤ (Fintype.card A : ℝ) * ∑ a, M.stateNorm ((MA x).op a - (NA x).op a) ^ 2 :=
+        sq_sum_le_card_mul_sum_sq _ (fun a => M.stateNorm_nonneg _)
+    _ = (Fintype.card A : ℝ) * ∑ a, M.stateSqNorm ((MA x).op a - (NA x).op a) := rfl
+
+end POVMs
+
+/-- **Averaging preserves closeness**, blueprint `lem:qld-averaging`. -/
+theorem stateSqNorm_avg_le {μ : X → ℝ} (hμ0 : ∀ x, 0 ≤ μ x) (hμ1 : ∑ x, μ x = 1)
+    (A B : X → 𝒜) (α : X → ℂ) (hα : ∀ x, ‖α x‖ ≤ 1) :
+    M.stateSqNorm ((∑ x, ((μ x : ℂ) * α x) • A x) - ∑ x, ((μ x : ℂ) * α x) • B x)
+      ≤ M.stateDist μ A B := by
+  classical
+  have hsub : (∑ x, ((μ x : ℂ) * α x) • A x) - (∑ x, ((μ x : ℂ) * α x) • B x)
+      = ∑ x, ((μ x : ℂ) * α x) • (A x - B x) := by
+    rw [← Finset.sum_sub_distrib]
+    exact Finset.sum_congr rfl fun x _ => (smul_sub _ _ _).symm
+  have htri : M.stateNorm (∑ x, ((μ x : ℂ) * α x) • (A x - B x))
+      ≤ ∑ x, μ x * M.stateNorm (A x - B x) := by
+    refine (M.stateNorm_sum_le Finset.univ _).trans (Finset.sum_le_sum fun x _ => ?_)
+    rw [M.stateNorm_smul]
+    refine mul_le_mul_of_nonneg_right ?_ (M.stateNorm_nonneg _)
+    rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (hμ0 x)]
+    calc μ x * ‖α x‖ ≤ μ x * 1 := mul_le_mul_of_nonneg_left (hα x) (hμ0 x)
+      _ = μ x := mul_one _
+  have hjensen : ∑ x, μ x * M.stateNorm (A x - B x) ≤ Real.sqrt (M.stateDist μ A B) := by
+    have h := sum_mul_sqrt_le (Finset.univ : Finset X) μ
+      (fun x => M.stateSqNorm (A x - B x)) hμ0 (fun x => M.stateSqNorm_nonneg _)
+    rw [hμ1, Real.sqrt_one, one_mul] at h
+    refine le_trans (le_of_eq (Finset.sum_congr rfl fun x _ => ?_)) h
+    rw [M.sqrt_stateSqNorm]
+  have hd : 0 ≤ M.stateDist μ A B := M.stateDist_nonneg hμ0 A B
+  rw [hsub]
+  calc M.stateSqNorm (∑ x, ((μ x : ℂ) * α x) • (A x - B x))
+      ≤ Real.sqrt (M.stateDist μ A B) ^ 2 :=
+        pow_le_pow_left₀ (M.stateNorm_nonneg _) (htri.trans hjensen) 2
+    _ = M.stateDist μ A B := Real.sq_sqrt hd
+
+end BipartiteModel
 
 variable {X : Type*} [Fintype X]
 variable {dA dB : Type*} [Fintype dA] [Fintype dB] [DecidableEq dB]
@@ -98,29 +259,25 @@ noncomputable def stateNorm (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) : ℝ
 /-- `⟨ψ| M† M ⊗ Id |ψ⟩`, the squared state-dependent norm. -/
 noncomputable def stateSqNorm (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) : ℝ := stateNorm ψ M ^ 2
 
+/-- **The matrix state norm is that of the tensor-product model.** -/
+theorem stateNorm_eq_tensor [DecidableEq dA] (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) :
+    stateNorm ψ M = (BipartiteModel.tensor ψ).stateNorm M :=
+  rfl
+
+theorem stateSqNorm_eq_tensor [DecidableEq dA] (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) :
+    stateSqNorm ψ M = (BipartiteModel.tensor ψ).stateSqNorm M :=
+  rfl
+
 /-- **The squared norm is the blueprint's quadratic form**, as a complex number:
-`⟨ψ| M† M ⊗ Id |ψ⟩` is real and equal to `stateSqNorm ψ M`. This is the only place the Kronecker
-adjoint is needed, and it is what makes the Lean definition and `def:state-distance`'s spelling
-the same object rather than informally the same. The complex form is what a positivity
-hypothesis on a linear functional wants. -/
+`⟨ψ| M† M ⊗ Id |ψ⟩` is real and equal to `stateSqNorm ψ M`. It is what makes the Lean definition
+and `def:state-distance`'s spelling the same object rather than informally the same. The complex
+form is what a positivity hypothesis on a linear functional wants. -/
 theorem quadForm_eq (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) :
     star ψ ⬝ᵥ ((((Mᴴ * M) ⊗ₖ (1 : Matrix dB dB ℂ))) *ᵥ ψ) = (stateSqNorm ψ M : ℂ) := by
   classical
-  set A : Matrix (dA × dB) (dA × dB) ℂ := M ⊗ₖ (1 : Matrix dB dB ℂ) with hA
-  have hAdj : Aᴴ * A = (Mᴴ * M) ⊗ₖ (1 : Matrix dB dB ℂ) := by
-    rw [hA, Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one,
-      ← Matrix.mul_kronecker_mul, Matrix.one_mul]
-  have h1 : star (A *ᵥ ψ) ⬝ᵥ (A *ᵥ ψ) = star ψ ⬝ᵥ ((Aᴴ * A) *ᵥ ψ) :=
-    star_mulVec_dotProduct A A ψ
-  rw [← hAdj, ← h1, dotProduct]
-  have hentry : ∀ i, star (A *ᵥ ψ) i * (A *ᵥ ψ) i = ((‖(A *ᵥ ψ) i‖ ^ 2 : ℝ) : ℂ) := by
-    intro i
-    rw [Pi.star_apply, RCLike.star_def, RCLike.conj_mul]
-    norm_cast
-  rw [Finset.sum_congr rfl fun i (_ : i ∈ Finset.univ) => hentry i, ← Complex.ofReal_sum]
-  show _ = ((‖stateVec ψ M‖ ^ 2 : ℝ) : ℂ)
-  rw [EuclideanSpace.norm_eq, Real.sq_sqrt (Finset.sum_nonneg fun _ _ => sq_nonneg _)]
-  rfl
+  rw [stateSqNorm_eq_tensor, ← (BipartiteModel.tensor ψ).inner_stateSqNorm M]
+  show _ = (((Mᴴ * M) ⊗ₖ (1 : Matrix dB dB ℂ)) *ᵥ ψ) ⬝ᵥ star ψ
+  rw [dotProduct_comm]
 
 /-- The real form of `quadForm_eq`, which is how `def:state-distance` is written. -/
 theorem stateSqNorm_eq (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) :
@@ -128,25 +285,29 @@ theorem stateSqNorm_eq (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) :
       = (star ψ ⬝ᵥ ((((Mᴴ * M) ⊗ₖ (1 : Matrix dB dB ℂ))) *ᵥ ψ)).re := by
   rw [quadForm_eq, Complex.ofReal_re]
 
-theorem stateNorm_nonneg (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) : 0 ≤ stateNorm ψ M :=
-  norm_nonneg _
+theorem stateNorm_nonneg (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) : 0 ≤ stateNorm ψ M := by
+  classical
+  exact (BipartiteModel.tensor ψ).stateNorm_nonneg M
 
-theorem stateSqNorm_nonneg (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) : 0 ≤ stateSqNorm ψ M :=
-  sq_nonneg _
+theorem stateSqNorm_nonneg (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) : 0 ≤ stateSqNorm ψ M := by
+  classical
+  exact (BipartiteModel.tensor ψ).stateSqNorm_nonneg M
 
 theorem sqrt_stateSqNorm (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) :
-    Real.sqrt (stateSqNorm ψ M) = stateNorm ψ M :=
-  Real.sqrt_sq (stateNorm_nonneg ψ M)
+    Real.sqrt (stateSqNorm ψ M) = stateNorm ψ M := by
+  classical
+  exact (BipartiteModel.tensor ψ).sqrt_stateSqNorm M
 
 theorem stateNorm_smul (ψ : dA × dB → ℂ) (c : ℂ) (M : Matrix dA dA ℂ) :
     stateNorm ψ (c • M) = ‖c‖ * stateNorm ψ M := by
-  rw [stateNorm, stateNorm, stateVec_smul, norm_smul]
+  classical
+  exact (BipartiteModel.tensor ψ).stateNorm_smul c M
 
 theorem stateNorm_sum_le {ι : Type*} (ψ : dA × dB → ℂ) (s : Finset ι)
     (f : ι → Matrix dA dA ℂ) :
     stateNorm ψ (∑ i ∈ s, f i) ≤ ∑ i ∈ s, stateNorm ψ (f i) := by
-  rw [stateNorm, stateVec_sum]
-  exact norm_sum_le _ _
+  classical
+  exact (BipartiteModel.tensor ψ).stateNorm_sum_le s f
 
 /-- **The state-dependent distance** of two families of operators on Alice's factor, relative to
 a question distribution `μ` and the state `ψ`: blueprint `def:state-distance`. -/
@@ -157,11 +318,19 @@ noncomputable def stateDist (μ : X → ℝ) (ψ : dA × dB → ℂ) (A B : X �
 def IsStateClose (μ : X → ℝ) (ψ : dA × dB → ℂ) (δ : ℝ) (A B : X → Matrix dA dA ℂ) : Prop :=
   stateDist μ ψ A B ≤ δ
 
+theorem stateDist_eq_tensor [DecidableEq dA] (μ : X → ℝ) (ψ : dA × dB → ℂ)
+    (A B : X → Matrix dA dA ℂ) :
+    stateDist μ ψ A B = (BipartiteModel.tensor ψ).stateDist μ A B :=
+  rfl
+
 theorem stateDist_nonneg {μ : X → ℝ} (hμ : ∀ x, 0 ≤ μ x) (ψ : dA × dB → ℂ)
-    (A B : X → Matrix dA dA ℂ) : 0 ≤ stateDist μ ψ A B :=
-  Finset.sum_nonneg fun x _ => mul_nonneg (hμ x) (stateSqNorm_nonneg ψ _)
+    (A B : X → Matrix dA dA ℂ) : 0 ≤ stateDist μ ψ A B := by
+  classical
+  exact (BipartiteModel.tensor ψ).stateDist_nonneg hμ A B
 
 section POVMs
+
+open scoped MatrixOrder
 
 variable {A : Type*} [Fintype A] [DecidableEq A] [DecidableEq dA]
 
@@ -175,10 +344,15 @@ def IsPOVMStateClose (μ : X → ℝ) (ψ : dA × dB → ℂ) (δ : ℝ) (M N : 
   povmStateDist μ ψ M N ≤ δ
 
 omit [DecidableEq A] in
+theorem povmStateDist_eq_tensor (μ : X → ℝ) (ψ : dA × dB → ℂ) (M N : X → POVM A dA) :
+    povmStateDist μ ψ M N =
+      (BipartiteModel.tensor ψ).povmStateDist μ (fun x => (M x).toIn) (fun x => (N x).toIn) :=
+  rfl
+
+omit [DecidableEq A] in
 theorem povmStateDist_nonneg {μ : X → ℝ} (hμ : ∀ x, 0 ≤ μ x) (ψ : dA × dB → ℂ)
     (M N : X → POVM A dA) : 0 ≤ povmStateDist μ ψ M N :=
-  Finset.sum_nonneg fun x _ =>
-    mul_nonneg (hμ x) (Finset.sum_nonneg fun _ _ => stateSqNorm_nonneg ψ _)
+  (BipartiteModel.tensor ψ).povmStateDist_nonneg hμ (fun x => (M x).toIn) (fun x => (N x).toIn)
 
 /-! ## The two closeness lemmas of the appendix's preliminaries -/
 
@@ -187,6 +361,12 @@ theorem povmStateDist_nonneg {μ : X → ℝ} (hμ : ∀ x, 0 ≤ μ x) (ψ : dA
 noncomputable def obsOf (α : A → ℂ) (M : X → POVM A dA) (x : X) : Matrix dA dA ℂ :=
   ∑ a, α a • ((M x).mats a).val
 
+omit [DecidableEq A] [Fintype X] in
+/-- The generalized observable of a POVM is the observable of its weighting. -/
+theorem obsOf_eq_pvmObs (α : A → ℂ) (M : X → POVM A dA) (x : X) :
+    obsOf α M x = pvmObs (M x).toIn.op α :=
+  rfl
+
 omit [DecidableEq A] in
 /-- **From POVM elements to generalized observables**, blueprint `lem:qld-povm-to-obs`: the
 weighting costs a factor `|𝒜|`, from Cauchy--Schwarz over the outcome set. The paper asks the
@@ -194,33 +374,9 @@ weights to be of unit modulus; `‖α a‖ ≤ 1` is all the proof uses. -/
 theorem stateDist_obsOf_le {μ : X → ℝ} (hμ0 : ∀ x, 0 ≤ μ x) (ψ : dA × dB → ℂ)
     (M N : X → POVM A dA) (α : A → ℂ) (hα : ∀ a, ‖α a‖ ≤ 1) :
     stateDist μ ψ (obsOf α M) (obsOf α N)
-      ≤ (Fintype.card A : ℝ) * povmStateDist μ ψ M N := by
-  classical
-  rw [povmStateDist, Finset.mul_sum]
-  refine Finset.sum_le_sum fun x _ => ?_
-  rw [← mul_assoc, mul_comm ((Fintype.card A : ℝ)) (μ x), mul_assoc]
-  refine mul_le_mul_of_nonneg_left ?_ (hμ0 x)
-  -- pointwise in `x`: the triangle inequality, then Cauchy--Schwarz over the outcomes
-  have hsub : obsOf α M x - obsOf α N x
-      = ∑ a, α a • (((M x).mats a).val - ((N x).mats a).val) := by
-    rw [obsOf, obsOf, ← Finset.sum_sub_distrib]
-    exact Finset.sum_congr rfl fun a _ => (smul_sub _ _ _).symm
-  have htri : stateNorm ψ (obsOf α M x - obsOf α N x)
-      ≤ ∑ a, stateNorm ψ (((M x).mats a).val - ((N x).mats a).val) := by
-    rw [hsub]
-    refine (stateNorm_sum_le ψ Finset.univ _).trans (Finset.sum_le_sum fun a _ => ?_)
-    rw [stateNorm_smul]
-    calc ‖α a‖ * stateNorm ψ _ ≤ 1 * stateNorm ψ _ :=
-          mul_le_mul_of_nonneg_right (hα a) (stateNorm_nonneg ψ _)
-      _ = stateNorm ψ _ := one_mul _
-  calc stateSqNorm ψ (obsOf α M x - obsOf α N x)
-      ≤ (∑ a, stateNorm ψ (((M x).mats a).val - ((N x).mats a).val)) ^ 2 :=
-        pow_le_pow_left₀ (stateNorm_nonneg ψ _) htri 2
-    _ ≤ (Fintype.card A : ℝ)
-          * ∑ a, stateNorm ψ (((M x).mats a).val - ((N x).mats a).val) ^ 2 :=
-        sq_sum_le_card_mul_sum_sq _ (fun a => stateNorm_nonneg ψ _)
-    _ = (Fintype.card A : ℝ)
-          * ∑ a, stateSqNorm ψ (((M x).mats a).val - ((N x).mats a).val) := rfl
+      ≤ (Fintype.card A : ℝ) * povmStateDist μ ψ M N :=
+  (BipartiteModel.tensor ψ).stateDist_obsOf_le hμ0 (fun x => (M x).toIn) (fun x => (N x).toIn)
+    α hα
 
 end POVMs
 
@@ -291,17 +447,14 @@ theorem norm_stateVecB (ψ : dA × dB → ℂ) (N : Matrix dB dB ℂ) :
   rw [stateVecB_entry, stateVec_swapVec_entry]
 
 /-- The inner product of the two factors' vectors is the blueprint's `⟨ψ| Q ⊗ R |ψ⟩`, for
-self-adjoint `Q`. -/
+self-adjoint `Q`: the inner product of the two players' vectors in the tensor-product model. -/
 theorem inner_stateVec_stateVecB (ψ : dA × dB → ℂ) {Q : Matrix dA dA ℂ} (hQ : Qᴴ = Q)
     (R : Matrix dB dB ℂ) :
     inner ℂ (stateVec ψ Q) (stateVecB ψ R) = star ψ ⬝ᵥ ((Q ⊗ₖ R) *ᵥ ψ) := by
-  classical
-  have hadj : (Q ⊗ₖ (1 : Matrix dB dB ℂ))ᴴ * ((1 : Matrix dA dA ℂ) ⊗ₖ R) = Q ⊗ₖ R := by
-    rw [Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one, ← Matrix.mul_kronecker_mul,
-      Matrix.mul_one, Matrix.one_mul, hQ]
-  rw [EuclideanSpace.inner_eq_star_dotProduct]
-  show ((1 : Matrix dA dA ℂ) ⊗ₖ R) *ᵥ ψ ⬝ᵥ star ((Q ⊗ₖ (1 : Matrix dB dB ℂ)) *ᵥ ψ) = _
-  rw [dotProduct_comm, star_mulVec_dotProduct, hadj]
+  have h := (BipartiteModel.tensor ψ).inner_πA_πB (q := Q) hQ R
+  refine h.trans ?_
+  show ((aOp Q * bOp R) *ᵥ ψ) ⬝ᵥ star ψ = _
+  rw [aOp, bOp, ← Matrix.mul_kronecker_mul, Matrix.mul_one, Matrix.one_mul, dotProduct_comm]
 
 omit [DecidableEq dB] [DecidableEq dA] in
 /-- The swap is a reindexing, so it preserves the norm of the state. -/
@@ -319,30 +472,7 @@ theorem stateSqNorm_avg_le {μ : X → ℝ} (hμ0 : ∀ x, 0 ≤ μ x) (hμ1 : �
     stateSqNorm ψ ((∑ x, ((μ x : ℂ) * α x) • A x) - ∑ x, ((μ x : ℂ) * α x) • B x)
       ≤ stateDist μ ψ A B := by
   classical
-  have hsub : (∑ x, ((μ x : ℂ) * α x) • A x) - (∑ x, ((μ x : ℂ) * α x) • B x)
-      = ∑ x, ((μ x : ℂ) * α x) • (A x - B x) := by
-    rw [← Finset.sum_sub_distrib]
-    exact Finset.sum_congr rfl fun x _ => (smul_sub _ _ _).symm
-  have htri : stateNorm ψ (∑ x, ((μ x : ℂ) * α x) • (A x - B x))
-      ≤ ∑ x, μ x * stateNorm ψ (A x - B x) := by
-    refine (stateNorm_sum_le ψ Finset.univ _).trans (Finset.sum_le_sum fun x _ => ?_)
-    rw [stateNorm_smul]
-    refine mul_le_mul_of_nonneg_right ?_ (stateNorm_nonneg ψ _)
-    rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (hμ0 x)]
-    calc μ x * ‖α x‖ ≤ μ x * 1 := mul_le_mul_of_nonneg_left (hα x) (hμ0 x)
-      _ = μ x := mul_one _
-  have hjensen : ∑ x, μ x * stateNorm ψ (A x - B x) ≤ Real.sqrt (stateDist μ ψ A B) := by
-    have h := sum_mul_sqrt_le (Finset.univ : Finset X) μ
-      (fun x => stateSqNorm ψ (A x - B x)) hμ0 (fun x => stateSqNorm_nonneg ψ _)
-    rw [hμ1, Real.sqrt_one, one_mul] at h
-    refine le_trans (le_of_eq (Finset.sum_congr rfl fun x _ => ?_)) h
-    rw [sqrt_stateSqNorm]
-  have hd : 0 ≤ stateDist μ ψ A B := stateDist_nonneg hμ0 ψ A B
-  rw [hsub]
-  calc stateSqNorm ψ (∑ x, ((μ x : ℂ) * α x) • (A x - B x))
-      ≤ Real.sqrt (stateDist μ ψ A B) ^ 2 :=
-        pow_le_pow_left₀ (stateNorm_nonneg ψ _) (htri.trans hjensen) 2
-    _ = stateDist μ ψ A B := Real.sq_sqrt hd
+  exact (BipartiteModel.tensor ψ).stateSqNorm_avg_le hμ0 hμ1 A B α hα
 
 end MIPRE
 

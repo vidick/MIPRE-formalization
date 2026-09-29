@@ -116,6 +116,13 @@ theorem snorm_mul_le {T : H →L[ℂ] H} {K : ℝ} (h : Bnd T K) (T' : H →L[�
     snorm ψ (T * T') ≤ K * snorm ψ T' :=
   h (T' ψ)
 
+/-- The triangle inequality over a finite sum. -/
+theorem snorm_sum_le {ι : Type*} (s : Finset ι) (f : ι → H →L[ℂ] H) :
+    snorm ψ (∑ i ∈ s, f i) ≤ ∑ i ∈ s, snorm ψ (f i) := by
+  unfold snorm
+  rw [_root_.sum_apply]
+  exact norm_sum_le _ _
+
 end SNorm
 
 /-! ## The quadratic form -/
