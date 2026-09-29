@@ -157,6 +157,12 @@ theorem bornProb_sum_right {ι : Type*} (a : 𝒜) (s : Finset ι) (g : ι → �
   unfold bornProb
   rw [map_sum, Finset.mul_sum, M.qform_sum]
 
+/-- **Exchanging the players exchanges the two factors of a Born probability**, because the two
+players' operators commute. -/
+theorem bornProb_swap (a : 𝒜) (b : ℬ) : M.swap.bornProb b a = M.bornProb a b := by
+  show M.qform (M.πB b * M.πA a) = M.qform (M.πA a * M.πB b)
+  rw [(M.commute a b).eq]
+
 section Order
 
 variable [PartialOrder 𝒜] [StarOrderedRing 𝒜] [PartialOrder ℬ] [StarOrderedRing ℬ]
@@ -366,6 +372,78 @@ theorem condFail_le_div (hψ : star ψ ⬝ᵥ ψ = 1) {ε : ℝ} (hfail : 1 - po
   rw [condFail_eq_tensor]
   rw [povmValue_eq_tensor] at hfail
   exact (BipartiteModel.tensor ψ).condFail_le_div (norm_evec_eq_one hψ) hfail hμ
+
+/-! ## The value of a commuting-operator strategy is a value in its model
+
+A commuting-operator strategy's measurements are POVMs in the two players' algebras of its model
+(`CommutingOperatorStrategy.toModel`), and its value is the model's value of them. So `ω_co` is
+the supremum of `povmValue` over the models of commuting-operator strategies, which is how every
+statement about `povmValue` in a model becomes one about `ω_co`. -/
+
+namespace CommutingOperatorStrategy
+
+variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+
+/-- The first player's measurement at a question, as a POVM in the first player's algebra of the
+strategy's model. -/
+noncomputable def aliceMeas (S : CommutingOperatorStrategy X Y A B) (x : X) :
+    POVMIn A S.aliceAlg where
+  mats a := ⟨⟨S.E x a, S.E_mem_aliceAlg x a⟩,
+    selfAdjoint.mem_iff.mpr (Subtype.ext (S.E_pos x a).isSelfAdjoint.star_eq)⟩
+  nonneg a := Subtype.coe_le_coe.mp (Subtype.coe_le_coe.mp
+    (ContinuousLinearMap.nonneg_iff_isPositive.2 (S.E_pos x a)))
+  normalized := by
+    apply Subtype.ext
+    rw [AddSubmonoidClass.coe_finsetSum]
+    apply Subtype.ext
+    rw [AddSubmonoidClass.coe_finsetSum]
+    exact S.E_sum x
+
+/-- The second player's measurement at a question, as a POVM in the second player's algebra of
+the strategy's model. -/
+noncomputable def bobMeas (S : CommutingOperatorStrategy X Y A B) (y : Y) :
+    POVMIn B S.bobAlg where
+  mats b := ⟨⟨S.F y b, S.F_mem_bobAlg y b⟩,
+    selfAdjoint.mem_iff.mpr (Subtype.ext (S.F_pos y b).isSelfAdjoint.star_eq)⟩
+  nonneg b := Subtype.coe_le_coe.mp (Subtype.coe_le_coe.mp
+    (ContinuousLinearMap.nonneg_iff_isPositive.2 (S.F_pos y b)))
+  normalized := by
+    apply Subtype.ext
+    rw [AddSubmonoidClass.coe_finsetSum]
+    apply Subtype.ext
+    rw [AddSubmonoidClass.coe_finsetSum]
+    exact S.F_sum y
+
+@[simp]
+theorem aliceMeas_op (S : CommutingOperatorStrategy X Y A B) (x : X) (a : A) :
+    ((S.aliceMeas x).op a : S.H →L[ℂ] S.H) = S.E x a := rfl
+
+@[simp]
+theorem bobMeas_op (S : CommutingOperatorStrategy X Y A B) (y : Y) (b : B) :
+    ((S.bobMeas y).op b : S.H →L[ℂ] S.H) = S.F y b := rfl
+
+/-- **The correlation of a strategy is the Born probability of its model.** -/
+theorem correlation_eq_bornProb (S : CommutingOperatorStrategy X Y A B) (x : X) (y : Y) (a : A)
+    (b : B) :
+    S.correlation x y a b = S.toModel.bornProb ((S.aliceMeas x).op a) ((S.bobMeas y).op b) :=
+  rfl
+
+/-- **The value of a commuting-operator strategy is the value of its measurements in its
+model.** -/
+theorem value_eq_povmValue (S : CommutingOperatorStrategy X Y A B) (G : Game X Y A B) :
+    S.value G = S.toModel.povmValue G S.aliceMeas S.bobMeas := by
+  unfold value BipartiteModel.povmValue BipartiteModel.condWin
+  simp only [Finset.mul_sum, mul_assoc]
+  rfl
+
+end CommutingOperatorStrategy
+
+/-- **`ω_co` is the supremum of the model values of commuting-operator strategies.** -/
+theorem commutingOperatorValue_eq_iSup_povmValue {X Y A B : Type*} [Fintype X] [Fintype Y]
+    [Fintype A] [Fintype B] (G : Game X Y A B) :
+    commutingOperatorValue G
+      = ⨆ S : CommutingOperatorStrategy X Y A B, S.toModel.povmValue G S.aliceMeas S.bobMeas :=
+  congrArg iSup (funext fun S => S.value_eq_povmValue G)
 
 end MIPRE
 

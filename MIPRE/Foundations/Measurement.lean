@@ -274,6 +274,13 @@ def op (M : POVMIn X R) (x : X) : R := (M.mats x : R)
 
 theorem op_eq (M : POVMIn X R) (x : X) : M.op x = (M.mats x : R) := rfl
 
+/-- **A POVM is determined by its operators**; the other fields are propositions. -/
+theorem ext' {M N : POVMIn X R} (h : ∀ x, M.op x = N.op x) : M = N := by
+  obtain ⟨m, _, _⟩ := M
+  obtain ⟨n, _, _⟩ := N
+  obtain rfl : m = n := funext fun x => Subtype.ext (h x)
+  rfl
+
 theorem star_op (M : POVMIn X R) (x : X) : star (M.op x) = M.op x := (M.mats x).2
 
 theorem sum_op (M : POVMIn X R) : ∑ x, M.op x = 1 := by
