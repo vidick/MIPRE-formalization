@@ -39,6 +39,11 @@ either a sum that telescopes exactly, or one Cauchy--Schwarz over the whole outc
 The statement carries an index `iota` with weights, because that is how it is used: the two
 measurements come from a question and the bound is an average over questions, and averaging a
 square root would otherwise need a second Jensen step.
+
+The chain is proved once, for a bipartite model (`BipartiteModel.one_sub_sum_bornProb_sand_le`),
+and the matrix chain is its instance in the tensor-product model. The dilation that turns the
+sandwich into a projective joint measurement is a construction on the concrete registers here
+(`exists_projective_joint`).
 -/
 
 noncomputable section
@@ -119,558 +124,421 @@ theorem sum_prod_swap {M : Type*} [AddCommMonoid M] {α : Type*} [Fintype α] (f
   rw [sum_prod_id]
   exact Finset.sum_comm
 
-/-! ## Quadratic forms: Cauchy--Schwarz and the order -/
+/-! ## In a model
 
-section QForm
+The chain is proved once, for a bipartite model with the two parties' projective measurements in
+their algebras (`BipartiteModel.one_sub_sum_bornProb_sand_le`); the matrix statements further down
+are its instances in the tensor-product model. The sandwich itself is defined in any ring
+(`sand`), and is a POVM in any star-ordered one (`POVMIn.sand`). -/
 
-variable {N : Type*} [Fintype N]
-
-theorem inner_evec (u w : N → ℂ) : (inner ℂ (evec u) (evec w) : ℂ) = star u ⬝ᵥ w := by
-  rw [evec, evec, EuclideanSpace.inner_toLp_toLp, dotProduct]
-  exact Finset.sum_congr rfl fun i _ => mul_comm _ _
-
-/-- **Cauchy--Schwarz for a quadratic form.** The one estimate the chain uses, in the shape the
-chain needs: the form of a product, split onto the two vectors. -/
-theorem abs_qform_conjTranspose_mul_le (v : N → ℂ) (M P : Matrix N N ℂ) :
-    |qform v (Mᴴ * P)| ≤ snorm v M * snorm v P := by
-  have h : qform v (Mᴴ * P) = (inner ℂ (evec (M *ᵥ v)) (evec (P *ᵥ v)) : ℂ).re := by
-    rw [qform, ← star_mulVec_dotProduct, inner_evec]
-  rw [h]
-  exact le_trans (Complex.abs_re_le_norm _) (norm_inner_le_norm _ _)
-
-variable [DecidableEq N]
-
-/-- **A projection is bounded by the identity.** -/
-theorem proj_le_one {P : Matrix N N ℂ} (hsa : Pᴴ = P) (hidem : P * P = P) :
-    P ≤ (1 : Matrix N N ℂ) := by
-  refine sub_nonneg.mp (Matrix.nonneg_iff_posSemidef.mpr ?_)
-  have h : (1 : Matrix N N ℂ) - P = ((1 : Matrix N N ℂ) - P)ᴴ * ((1 : Matrix N N ℂ) - P) := by
-    rw [Matrix.conjTranspose_sub, Matrix.conjTranspose_one, hsa, Matrix.sub_mul, Matrix.mul_sub,
-      Matrix.mul_sub, Matrix.one_mul, Matrix.mul_one, Matrix.one_mul, hidem]
-    abel
-  rw [h]
-  exact Matrix.posSemidef_conjTranspose_mul_self _
-
-/-- **A projection is a contraction on a unit vector.** -/
-theorem snorm_le_one_of_proj {v : N → ℂ} (hv : ‖evec v‖ = 1) {P : Matrix N N ℂ}
-    (hsa : Pᴴ = P) (hidem : P * P = P) : snorm v P ≤ 1 := by
-  have hsq : snorm v P ^ 2 ≤ 1 := by
-    rw [snorm_sq_eq_qform, hsa, hidem]
-    refine le_trans (qform_le_of_le v (proj_le_one hsa hidem)) ?_
-    rw [qform_one v hv]
-  nlinarith [snorm_nonneg v P, hsq]
-
-end QForm
-
-/-! ## The two factors -/
-
-section Bipartite
-
-variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-
-theorem aOp_mul_bOp_eq (U : Matrix dA dA ℂ) (V : Matrix dB dB ℂ) :
-    (aOp U : Matrix (dA × dB) _ ℂ) * bOp V = U ⊗ₖ V := by
-  rw [aOp, bOp, ← Matrix.mul_kronecker_mul, Matrix.mul_one, Matrix.one_mul]
-
-theorem bornProb_eq_qform (ψ : dA × dB → ℂ) (U : Matrix dA dA ℂ) (V : Matrix dB dB ℂ) :
-    bornProb ψ U V = qform ψ ((aOp U : Matrix (dA × dB) _ ℂ) * bOp V) := by
-  rw [aOp_mul_bOp_eq, bornProb, qform]
-
-/-- Cauchy--Schwarz for a mixed product, with the deviation on **Alice's** side. -/
-theorem abs_qform_aOp_mul_bOp_le (ψ : dA × dB → ℂ) (U : Matrix dA dA ℂ) (V : Matrix dB dB ℂ) :
-    |qform ψ ((aOp U : Matrix (dA × dB) _ ℂ) * bOp V)|
-      ≤ ‖stateVecB ψ (Vᴴ)‖ * stateNorm ψ U := by
-  have h : (aOp U : Matrix (dA × dB) _ ℂ) * bOp V = (bOp (Vᴴ) : Matrix (dA × dB) _ ℂ)ᴴ * aOp U := by
-    rw [bOp_conjTranspose, Matrix.conjTranspose_conjTranspose, aOp_mul_bOp]
-  rw [h, stateNorm]
-  refine le_trans (abs_qform_conjTranspose_mul_le ψ _ _) (le_of_eq ?_)
-  rw [← norm_stateVecB_eq_snorm, ← norm_stateVec_eq_snorm]
-
-/-- Cauchy--Schwarz for a mixed product, with the deviation on **Bob's** side. -/
-theorem abs_qform_aOp_mul_bOp_le' (ψ : dA × dB → ℂ) (U : Matrix dA dA ℂ) (V : Matrix dB dB ℂ) :
-    |qform ψ ((aOp U : Matrix (dA × dB) _ ℂ) * bOp V)|
-      ≤ stateNorm ψ (Uᴴ) * ‖stateVecB ψ V‖ := by
-  have h : (aOp U : Matrix (dA × dB) _ ℂ) * bOp V = (aOp (Uᴴ) : Matrix (dA × dB) _ ℂ)ᴴ * bOp V := by
-    rw [aOp_conjTranspose, Matrix.conjTranspose_conjTranspose]
-  rw [h, stateNorm]
-  refine le_trans (abs_qform_conjTranspose_mul_le ψ _ _) (le_of_eq ?_)
-  rw [← norm_stateVecB_eq_snorm, ← norm_stateVec_eq_snorm]
-
-/-- **A contraction in front costs nothing**, on Alice's side. -/
-theorem stateNorm_mul_le (ψ : dA × dB → ℂ) {P : Matrix dA dA ℂ}
-    (hP : Pᴴ * P ≤ (1 : Matrix dA dA ℂ)) (N : Matrix dA dA ℂ) :
-    stateNorm ψ (P * N) ≤ stateNorm ψ N := by
-  rw [stateNorm, stateNorm, norm_stateVec_eq_snorm, norm_stateVec_eq_snorm, aOp_mul]
-  have h := snorm_mul_le ψ (bnd_aOp (HB := dB) hP) (aOp N : Matrix (dA × dB) _ ℂ)
-  rwa [one_mul] at h
-
-/-- **A contraction in front costs nothing**, on Bob's side. -/
-theorem norm_stateVecB_mul_le (ψ : dA × dB → ℂ) {P : Matrix dB dB ℂ}
-    (hP : Pᴴ * P ≤ (1 : Matrix dB dB ℂ)) (N : Matrix dB dB ℂ) :
-    ‖stateVecB ψ (P * N)‖ ≤ ‖stateVecB ψ N‖ := by
-  rw [norm_stateVecB_eq_snorm, norm_stateVecB_eq_snorm, bOp_mul]
-  have h := snorm_mul_le ψ (bnd_bOp (HA := dA) hP) (bOp N : Matrix (dA × dB) _ ℂ)
-  rwa [one_mul] at h
-
-end Bipartite
-
-/-! ## Sums of mutually orthogonal projections -/
-
-section Proj
-
-variable {N : Type*} [Fintype N] [DecidableEq N]
-
-/-- **A sum of mutually orthogonal projections is a projection.** -/
-theorem conjTranspose_sum_of_orth {ι : Type*} [Fintype ι] {P : ι → Matrix N N ℂ}
-    (hsa : ∀ i, (P i)ᴴ = P i) : (∑ i, P i)ᴴ = ∑ i, P i := by
-  rw [Matrix.conjTranspose_sum]
-  exact Finset.sum_congr rfl fun i _ => hsa i
-
-theorem mul_self_sum_of_orth {ι : Type*} [Fintype ι] [DecidableEq ι] {P : ι → Matrix N N ℂ}
-    (hidem : ∀ i, P i * P i = P i) (horth : ∀ i j, i ≠ j → P i * P j = 0) :
-    (∑ i, P i) * (∑ i, P i) = ∑ i, P i := by
-  classical
+/-- **A sum of mutually orthogonal idempotents is idempotent.** -/
+theorem isIdempotentElem_sum_of_orth {R ι : Type*} [Ring R] [Fintype ι] [DecidableEq ι]
+    {P : ι → R} (hidem : ∀ i, P i * P i = P i) (horth : ∀ i j, i ≠ j → P i * P j = 0) :
+    IsIdempotentElem (∑ i, P i) := by
+  show (∑ i, P i) * (∑ i, P i) = ∑ i, P i
   rw [Finset.sum_mul]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [Finset.mul_sum, Finset.sum_eq_single_of_mem i (mem_univ i)
+  rw [Finset.mul_sum, Finset.sum_eq_single_of_mem i (Finset.mem_univ i)
     fun j _ hj => horth i j (Ne.symm hj)]
   exact hidem i
 
-end Proj
+/-- **A sum of mutually orthogonal star projections is a star projection.** -/
+theorem isStarProjection_sum_of_orth {R ι : Type*} [Ring R] [StarRing R] [Fintype ι]
+    [DecidableEq ι] {P : ι → R} (hP : ∀ i, IsStarProjection (P i))
+    (horth : ∀ i j, i ≠ j → P i * P j = 0) : IsStarProjection (∑ i, P i) where
+  isIdempotentElem := isIdempotentElem_sum_of_orth (fun i => (hP i).isIdempotentElem.eq) horth
+  isSelfAdjoint := by
+    show star (∑ i, P i) = ∑ i, P i
+    rw [star_sum]
+    exact Finset.sum_congr rfl fun i _ => (hP i).isSelfAdjoint.star_eq
 
-/-! ## Products of the two factors -/
-
-section Bipartite2
-
-variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-
-theorem aOp_bOp_mul_aOp_bOp (U U' : Matrix dA dA ℂ) (V V' : Matrix dB dB ℂ) :
-    ((aOp U : Matrix (dA × dB) _ ℂ) * bOp V) * ((aOp U' : Matrix (dA × dB) _ ℂ) * bOp V')
-      = (aOp (U * U') : Matrix (dA × dB) _ ℂ) * bOp (V * V') := by
-  rw [aOp_mul_bOp_eq, aOp_mul_bOp_eq, aOp_mul_bOp_eq, ← Matrix.mul_kronecker_mul]
-
-theorem aOp_bOp_conjTranspose (U : Matrix dA dA ℂ) (V : Matrix dB dB ℂ) :
-    ((aOp U : Matrix (dA × dB) _ ℂ) * bOp V)ᴴ
-      = (aOp (Uᴴ) : Matrix (dA × dB) _ ℂ) * bOp (Vᴴ) := by
-  rw [aOp_mul_bOp_eq, aOp_mul_bOp_eq, Matrix.conjTranspose_kronecker]
-
-theorem stateSqNorm_eq_qform (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) :
-    stateSqNorm ψ M = qform ψ ((aOp (Mᴴ * M) : Matrix (dA × dB) _ ℂ)) := by
-  rw [stateSqNorm, stateNorm, norm_stateVec_eq_snorm, snorm_sq_eq_qform, aOp_conjTranspose,
-    ← aOp_mul]
-
-theorem normSq_stateVecB_eq_qform (ψ : dA × dB → ℂ) (M : Matrix dB dB ℂ) :
-    ‖stateVecB ψ M‖ ^ 2 = qform ψ ((bOp (Mᴴ * M) : Matrix (dA × dB) _ ℂ)) := by
-  rw [norm_stateVecB_eq_snorm, snorm_sq_eq_qform, bOp_conjTranspose, ← bOp_mul]
-
-/-- **Expanding a cross-party deviation.** -/
-theorem xSqNorm_eq_expand (ψ : dA × dB → ℂ) {A : Matrix dA dA ℂ} (hA : Aᴴ = A)
-    (B : Matrix dB dB ℂ) :
-    xSqNorm ψ A B = stateSqNorm ψ A + ‖stateVecB ψ B‖ ^ 2 - 2 * bornProb ψ A B := by
-  rw [xSqNorm, norm_sub_sq (𝕜 := ℂ), inner_stateVec_stateVecB ψ hA, stateSqNorm, stateNorm,
-    bornProb]
-  simp only [RCLike.re_to_complex]
-  ring
-
-/-- **The consistency of two projective measurements, as a defect from one.** With both families
-projective the two diagonal sums are exactly one, so the agreement probability and the summed
-cross-party deviation determine each other. -/
-theorem one_sub_sum_bornProb_eq {A : Type*} [Fintype A] [DecidableEq A] {ψ : dA × dB → ℂ}
-    (hψ : ‖evec ψ‖ = 1) {X : A → Matrix dA dA ℂ} {X' : A → Matrix dB dB ℂ}
-    (hX : IsPVM X) (hX' : IsPVM X') :
-    1 - ∑ a, bornProb ψ (X a) (X' a) = (∑ a, xSqNorm ψ (X a) (X' a)) / 2 := by
-  classical
-  have hA : ∑ a, stateSqNorm ψ (X a) = 1 := by
-    rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) => by
-      rw [stateSqNorm_eq_qform (dB := dB) ψ (X a), hX.isSelfAdjoint a, hX.idem a],
-      ← qform_sum, ← aOp_sum, hX.sum_eq_one, aOp_one, qform_one _ hψ]
-  have hB : ∑ a, ‖stateVecB ψ (X' a)‖ ^ 2 = 1 := by
-    rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) => by
-      rw [normSq_stateVecB_eq_qform (dA := dA) ψ (X' a), hX'.isSelfAdjoint a, hX'.idem a],
-      ← qform_sum, ← bOp_sum, hX'.sum_eq_one, bOp_one, qform_one _ hψ]
-  rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) =>
-    xSqNorm_eq_expand ψ (hX.isSelfAdjoint a) (X' a), Finset.sum_sub_distrib,
-    Finset.sum_add_distrib, hA, hB, ← Finset.mul_sum]
-  ring
-
-end Bipartite2
-
-/-! ## The sandwich -/
-
-section Sand
-
-variable {A : Type*} [Fintype A] [DecidableEq A]
-  {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-
-/-- **The sandwich** `R_{a,b} = Z_b X_a Z_b` of two projective measurements. -/
-def sand {d : Type*} [Fintype d] [DecidableEq d] (X Z : A → Matrix d d ℂ) (p : A × A) :
-    Matrix d d ℂ :=
+/-- **The sandwich** `R_{a,b} = Z_b X_a Z_b` of two measurements. -/
+def sand {A R : Type*} [Mul R] (X Z : A → R) (p : A × A) : R :=
   Z p.2 * X p.1 * Z p.2
 
-variable {d : Type*} [Fintype d] [DecidableEq d] {X Z : A → Matrix d d ℂ}
+namespace IsPVMIn
+
+variable {A R : Type*} [Fintype A] [Ring R] [StarRing R] {X Z : A → R}
 
 /-- The sandwich is the Gram operator of the ordered product, which is where its positivity and
 its normalization both come from. -/
-theorem sand_eq_gram (hX : IsPVM X) (hZ : IsPVM Z) (p : A × A) :
-    sand X Z p = (X p.1 * Z p.2)ᴴ * (X p.1 * Z p.2) := by
-  rw [Matrix.conjTranspose_mul, hX.isSelfAdjoint, hZ.isSelfAdjoint, sand]
+theorem sand_eq_gram (hX : IsPVMIn X) (hZ : IsPVMIn Z) (p : A × A) :
+    sand X Z p = star (X p.1 * Z p.2) * (X p.1 * Z p.2) := by
+  rw [star_mul, hX.star_eq, hZ.star_eq, sand]
   calc Z p.2 * X p.1 * Z p.2 = Z p.2 * (X p.1 * X p.1) * Z p.2 := by rw [hX.idem]
     _ = Z p.2 * X p.1 * (X p.1 * Z p.2) := by noncomm_ring
 
-theorem sand_conjTranspose (hX : IsPVM X) (hZ : IsPVM Z) (p : A × A) :
-    (sand X Z p)ᴴ = sand X Z p := by
-  rw [sand_eq_gram hX hZ, Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose]
-
-theorem sand_posSemidef (hX : IsPVM X) (hZ : IsPVM Z) (p : A × A) : (sand X Z p).PosSemidef := by
-  rw [sand_eq_gram hX hZ]
-  exact Matrix.posSemidef_conjTranspose_mul_self _
+theorem star_sand (hX : IsPVMIn X) (hZ : IsPVMIn Z) (p : A × A) :
+    star (sand X Z p) = sand X Z p := by
+  rw [hX.sand_eq_gram hZ, star_mul, star_star]
 
 /-- **The sandwich is a POVM**, exactly: only projectivity of `Z` and completeness of `X` are
 used, and no approximate commutation whatsoever. -/
-theorem sum_sand (hX : IsPVM X) (hZ : IsPVM Z) : ∑ p : A × A, sand X Z p = 1 := by
-  classical
-  rw [sum_prod_swap]
-  rw [Finset.sum_congr rfl fun b (_ : b ∈ univ) => show
+theorem sum_sand (hX : IsPVMIn X) (hZ : IsPVMIn Z) : ∑ p : A × A, sand X Z p = 1 := by
+  rw [Fintype.sum_prod_type_right]
+  rw [Finset.sum_congr rfl fun b (_ : b ∈ Finset.univ) => show
       (∑ a : A, sand X Z (a, b)) = Z b from by
     rw [show (∑ a : A, sand X Z (a, b)) = Z b * (∑ a : A, X a) * Z b from by
-        rw [Matrix.mul_sum, Finset.sum_mul]
+        rw [Finset.mul_sum, Finset.sum_mul]
         rfl,
-      hX.sum_eq_one, Matrix.mul_one, hZ.idem]]
+      hX.sum_eq_one, mul_one, hZ.idem]]
   exact hZ.sum_eq_one
 
-/-- The sandwich, as a bundled POVM. -/
-def sandPOVM (hX : IsPVM X) (hZ : IsPVM Z) : POVM (A × A) d where
-  mats p := ⟨sand X Z p, selfAdjoint.mem_iff.mpr (by
-    rw [Matrix.star_eq_conjTranspose]
-    exact sand_conjTranspose hX hZ p)⟩
-  nonneg p := Subtype.coe_le_coe.mp (Matrix.nonneg_iff_posSemidef.mpr (sand_posSemidef hX hZ p))
+end IsPVMIn
+
+/-- **The sandwich, as a POVM** in a star-ordered ring. -/
+def POVMIn.sand {A R : Type*} [Fintype A] [Ring R] [StarRing R] [PartialOrder R]
+    [StarOrderedRing R] {X Z : A → R} (hX : IsPVMIn X) (hZ : IsPVMIn Z) : POVMIn (A × A) R where
+  mats p := ⟨MIPRE.sand X Z p, selfAdjoint.mem_iff.mpr (hX.star_sand hZ p)⟩
+  nonneg p := Subtype.coe_le_coe.mp (by
+    show (0 : R) ≤ MIPRE.sand X Z p
+    rw [hX.sand_eq_gram hZ]
+    exact star_mul_self_nonneg _)
   normalized := by
     apply Subtype.ext
     rw [AddSubmonoidClass.coe_finsetSum]
-    exact sum_sand hX hZ
+    exact hX.sum_sand hZ
 
-@[simp] theorem sandPOVM_mats (hX : IsPVM X) (hZ : IsPVM Z) (p : A × A) :
-    (((sandPOVM hX hZ).mats p).val) = sand X Z p := rfl
+theorem POVMIn.sand_op {A R : Type*} [Fintype A] [Ring R] [StarRing R] [PartialOrder R]
+    [StarOrderedRing R] {X Z : A → R} (hX : IsPVMIn X) (hZ : IsPVMIn Z) (p : A × A) :
+    (POVMIn.sand hX hZ).op p = MIPRE.sand X Z p := rfl
 
-end Sand
+namespace StateModel
 
-/-! ## The chain
+open scoped InnerProductSpace
 
-Five links from the agreement of the two parties' sandwiches to one. The two middle links are the
-parties' commutators, each paid for by one Cauchy--Schwarz against a family of squared norms
-summing to at most one; the third collapses the `X`-outcome sum by completeness; the last is the
-`Z`-consistency. -/
+variable {𝒞 : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] (M : StateModel 𝒞)
+
+/-- **Cauchy--Schwarz for the quadratic form**: the form of a product, split onto the two
+vectors. -/
+theorem abs_qform_star_mul_le (T T' : 𝒞) : |M.qform (star T * T')| ≤ M.snorm T * M.snorm T' := by
+  have h : M.qform (star T * T') = (⟪M.π T M.ψ, M.π T' M.ψ⟫_ℂ).re := by
+    show (⟪M.ψ, M.π (star T * T') M.ψ⟫_ℂ).re = _
+    rw [map_mul, map_star]
+    show (⟪M.ψ, star (M.π T) (M.π T' M.ψ)⟫_ℂ).re = _
+    rw [ContinuousLinearMap.star_eq_adjoint, ContinuousLinearMap.adjoint_inner_right]
+  rw [h]
+  exact le_trans (Complex.abs_re_le_norm _) (norm_inner_le_norm _ _)
+
+/-- **A projection is a contraction on a unit vector.** -/
+theorem snorm_le_one_of_isStarProjection (hψ : ‖M.ψ‖ = 1) {P : 𝒞} (hP : IsStarProjection P) :
+    M.snorm P ≤ 1 := by
+  have h := M.snorm_mul_le (M.bnd_one_of_isStarProjection hP) 1
+  rwa [mul_one, one_mul, M.snorm_one hψ] at h
+
+end StateModel
+
+namespace BipartiteModel
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] (M : BipartiteModel 𝒞 𝒜 ℬ)
+
+/-- Products of the two players' operators multiply factorwise. -/
+theorem πA_mul_πB_mul (U U' : 𝒜) (V V' : ℬ) :
+    M.πA U * M.πB V * (M.πA U' * M.πB V') = M.πA (U * U') * M.πB (V * V') := by
+  calc M.πA U * M.πB V * (M.πA U' * M.πB V') = M.πA U * (M.πB V * M.πA U') * M.πB V' := by
+        noncomm_ring
+    _ = M.πA U * (M.πA U' * M.πB V) * M.πB V' := by rw [← (M.commute U' V).eq]
+    _ = M.πA (U * U') * M.πB (V * V') := by rw [map_mul, map_mul]; noncomm_ring
+
+/-- The adjoint of a mixed product is the mixed product of the adjoints. -/
+theorem star_πA_mul_πB (U : 𝒜) (V : ℬ) :
+    star (M.πA U * M.πB V) = M.πA (star U) * M.πB (star V) := by
+  rw [star_mul, ← map_star, ← map_star, (M.commute (star U) (star V)).eq]
+
+/-- A product of commuting star projections of the two players is a star projection. -/
+theorem isStarProjection_πA_mul_πB {U : 𝒜} {V : ℬ} (hU : IsStarProjection U)
+    (hV : IsStarProjection V) : IsStarProjection (M.πA U * M.πB V) where
+  isIdempotentElem := by
+    show M.πA U * M.πB V * (M.πA U * M.πB V) = M.πA U * M.πB V
+    rw [M.πA_mul_πB_mul, hU.isIdempotentElem.eq, hV.isIdempotentElem.eq]
+  isSelfAdjoint := by
+    show star (M.πA U * M.πB V) = M.πA U * M.πB V
+    rw [M.star_πA_mul_πB, hU.isSelfAdjoint.star_eq, hV.isSelfAdjoint.star_eq]
+
+/-- Cauchy--Schwarz for a mixed product, with the deviation on the first player's side. -/
+theorem abs_qform_πA_mul_πB_le (U : 𝒜) (V : ℬ) :
+    |M.qform (M.πA U * M.πB V)| ≤ M.swap.stateNorm (star V) * M.stateNorm U := by
+  have h : M.πA U * M.πB V = star (M.πB (star V)) * M.πA U := by
+    rw [map_star, star_star, (M.commute U V).eq]
+  rw [h]
+  exact M.abs_qform_star_mul_le _ _
+
+/-- Cauchy--Schwarz for a mixed product, with the deviation on the second player's side. -/
+theorem abs_qform_πA_mul_πB_le' (U : 𝒜) (V : ℬ) :
+    |M.qform (M.πA U * M.πB V)| ≤ M.stateNorm (star U) * M.swap.stateNorm V := by
+  have h : M.πA U * M.πB V = star (M.πA (star U)) * M.πB V := by
+    rw [map_star, star_star]
+  rw [h]
+  exact M.abs_qform_star_mul_le _ _
+
+/-- **A contraction in front costs nothing.** -/
+theorem stateNorm_mul_le {P : 𝒜} (hP : M.Bnd (M.πA P) 1) (N : 𝒜) :
+    M.stateNorm (P * N) ≤ M.stateNorm N := by
+  have h := M.snorm_mul_le hP (M.πA N)
+  rw [one_mul, ← map_mul] at h
+  exact h
+
+/-- The squared norms of a projective measurement's vectors sum to one. -/
+theorem sum_stateSqNorm_of_isPVMIn (hψ : ‖M.ψ‖ = 1) {A : Type*} [Fintype A] {X : A → 𝒜}
+    (hX : IsPVMIn X) : ∑ a, M.stateSqNorm (X a) = 1 := by
+  simp only [M.stateSqNorm_eq, hX.star_eq, hX.idem]
+  rw [← M.qform_sum, ← map_sum, hX.sum_eq_one, map_one, M.qform_one hψ]
+
+/-- **The consistency of two projective measurements, as a defect from one.** -/
+theorem one_sub_sum_bornProb_eq (hψ : ‖M.ψ‖ = 1) {A : Type*} [Fintype A] {X : A → 𝒜}
+    {X' : A → ℬ} (hX : IsPVMIn X) (hX' : IsPVMIn X') :
+    1 - ∑ a, M.bornProb (X a) (X' a) = (∑ a, M.xSqNorm (X a) (X' a)) / 2 := by
+  rw [Finset.sum_congr rfl fun a _ => M.xSqNorm_eq (hX.star_eq a) (X' a),
+    Finset.sum_sub_distrib, Finset.sum_add_distrib, M.sum_stateSqNorm_of_isPVMIn hψ hX,
+    M.swap.sum_stateSqNorm_of_isPVMIn hψ hX', ← Finset.mul_sum]
+  ring
+
+/-! ### The chain -/
 
 section Chain
 
-variable {A : Type*} [Fintype A] [DecidableEq A]
-  {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-  {ψ : dA × dB → ℂ} {X Z : A → Matrix dA dA ℂ} {X' Z' : A → Matrix dB dB ℂ}
-
-/-- A projective measurement's elements are contractions. -/
-theorem IsPVM.conjTranspose_mul_self_le_one {N : Type*} [Fintype N] [DecidableEq N]
-    {P : A → Matrix N N ℂ} (h : IsPVM P) (a : A) : (P a)ᴴ * P a ≤ (1 : Matrix N N ℂ) := by
-  rw [h.isSelfAdjoint a, h.idem a]
-  exact proj_le_one (h.isSelfAdjoint a) (h.idem a)
+variable {A : Type*} [Fintype A] {X Z : A → 𝒜} {X' Z' : A → ℬ}
 
 /-- The ordered products' squared norms sum to exactly one. -/
-theorem sum_stateSqNorm_ord (hψ : ‖evec ψ‖ = 1) (hX : IsPVM X) (hZ : IsPVM Z) :
-    ∑ p : A × A, stateSqNorm ψ (X p.1 * Z p.2) = (1 : ℝ) := by
-  classical
-  have hterm : ∀ p : A × A, stateSqNorm ψ (X p.1 * Z p.2)
-      = qform ψ ((aOp (sand X Z p) : Matrix (dA × dB) _ ℂ)) := by
+theorem sum_stateSqNorm_ord (hψ : ‖M.ψ‖ = 1) (hX : IsPVMIn X) (hZ : IsPVMIn Z) :
+    ∑ p : A × A, M.stateSqNorm (X p.1 * Z p.2) = 1 := by
+  have hterm : ∀ p : A × A, M.stateSqNorm (X p.1 * Z p.2) = M.qform (M.πA (sand X Z p)) := by
     intro p
-    rw [stateSqNorm_eq_qform (dB := dB) ψ, ← sand_eq_gram hX hZ]
-  rw [Finset.sum_congr rfl fun p (_ : p ∈ univ) => hterm p, ← qform_sum, ← aOp_sum,
-    sum_sand hX hZ, aOp_one, qform_one _ hψ]
+    rw [M.stateSqNorm_eq, ← hX.sand_eq_gram hZ]
+  rw [Finset.sum_congr rfl fun p _ => hterm p, ← M.qform_sum, ← map_sum, hX.sum_sand hZ, map_one,
+    M.qform_one hψ]
 
-/-- **Link 1**: replacing each sandwich by the ordered product costs Alice's commutator. -/
-theorem abs_link1_le (hZ : IsPVM Z) {S' : A × A → Matrix dB dB ℂ}
-    (hS' : ∀ p, (S' p)ᴴ = S' p) :
-    |(∑ p : A × A, qform ψ ((aOp (sand X Z p) : Matrix (dA × dB) _ ℂ) * bOp (S' p)))
-        - ∑ p : A × A, qform ψ ((aOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) * bOp (S' p))|
-      ≤ Real.sqrt (∑ p : A × A, stateSqNorm ψ (X p.1 * Z p.2 - Z p.2 * X p.1))
-        * Real.sqrt (∑ p : A × A, ‖stateVecB ψ (S' p)‖ ^ 2) := by
-  classical
-  have hdiff : ∀ p : A × A, sand X Z p - Z p.2 * X p.1
-      = Z p.2 * (X p.1 * Z p.2 - Z p.2 * X p.1) := by
-    intro p
-    calc sand X Z p - Z p.2 * X p.1
-        = Z p.2 * X p.1 * Z p.2 - Z p.2 * Z p.2 * X p.1 := by rw [hZ.idem]; rfl
-      _ = Z p.2 * (X p.1 * Z p.2 - Z p.2 * X p.1) := by noncomm_ring
-  have hstep : (∑ p : A × A, qform ψ ((aOp (sand X Z p) : Matrix (dA × dB) _ ℂ) * bOp (S' p)))
-        - ∑ p : A × A, qform ψ ((aOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) * bOp (S' p))
-      = ∑ p : A × A, qform ψ ((aOp (Z p.2 * (X p.1 * Z p.2 - Z p.2 * X p.1))
-          : Matrix (dA × dB) _ ℂ) * bOp (S' p)) := by
+private theorem sand_sub_ord (hZ : IsPVMIn Z) (p : A × A) :
+    sand X Z p - Z p.2 * X p.1 = Z p.2 * (X p.1 * Z p.2 - Z p.2 * X p.1) := by
+  calc sand X Z p - Z p.2 * X p.1 = Z p.2 * X p.1 * Z p.2 - Z p.2 * Z p.2 * X p.1 := by
+        rw [hZ.idem]; rfl
+    _ = Z p.2 * (X p.1 * Z p.2 - Z p.2 * X p.1) := by noncomm_ring
+
+/-- **Link 1**: replacing each sandwich by the ordered product costs the first player's
+commutator. -/
+theorem abs_link1_le (hZ : IsPVMIn Z) {S' : A × A → ℬ} (hS' : ∀ p, star (S' p) = S' p) :
+    |(∑ p : A × A, M.qform (M.πA (sand X Z p) * M.πB (S' p)))
+        - ∑ p : A × A, M.qform (M.πA (Z p.2 * X p.1) * M.πB (S' p))|
+      ≤ Real.sqrt (∑ p : A × A, M.stateSqNorm (X p.1 * Z p.2 - Z p.2 * X p.1))
+        * Real.sqrt (∑ p : A × A, M.swap.stateSqNorm (S' p)) := by
+  have hstep : (∑ p : A × A, M.qform (M.πA (sand X Z p) * M.πB (S' p)))
+        - ∑ p : A × A, M.qform (M.πA (Z p.2 * X p.1) * M.πB (S' p))
+      = ∑ p : A × A, M.qform (M.πA (Z p.2 * (X p.1 * Z p.2 - Z p.2 * X p.1)) * M.πB (S' p)) := by
     rw [← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun p _ => ?_
-    rw [← hdiff p, aOp_sub, Matrix.sub_mul, qform_sub]
+    rw [← sand_sub_ord hZ p, map_sub, sub_mul, M.qform_sub]
   rw [hstep]
   refine le_trans (Finset.abs_sum_le_sum_abs _ _) ?_
-  refine le_trans (Finset.sum_le_sum fun p (_ : p ∈ univ) => ?_)
-    (sum_mul_le_sqrt (fun p : A × A => stateNorm ψ (X p.1 * Z p.2 - Z p.2 * X p.1))
-      (fun p : A × A => ‖stateVecB ψ (S' p)‖))
-  refine le_trans (abs_qform_aOp_mul_bOp_le ψ _ _) (le_of_le_of_eq ?_ (mul_comm _ _))
+  refine le_trans (Finset.sum_le_sum fun p (_ : p ∈ Finset.univ) => ?_)
+    (sum_mul_le_sqrt (fun p : A × A => M.stateNorm (X p.1 * Z p.2 - Z p.2 * X p.1))
+      (fun p : A × A => M.swap.stateNorm (S' p)))
+  refine le_trans (M.abs_qform_πA_mul_πB_le _ _) (le_of_le_of_eq ?_ (mul_comm _ _))
   rw [hS' p]
   exact mul_le_mul_of_nonneg_left
-    (stateNorm_mul_le (dB := dB) ψ (hZ.conjTranspose_mul_self_le_one p.2) _) (norm_nonneg _)
+    (M.stateNorm_mul_le (M.bnd_πA_of_isStarProjection (hZ.isStarProjection p.2)) _)
+    (M.swap.stateNorm_nonneg _)
 
-/-- **Link 2**: replacing Bob's sandwich by his ordered product costs Bob's commutator. -/
-theorem abs_link2_le (hX : IsPVM X) (hZ : IsPVM Z) (hZ' : IsPVM Z') :
-    |(∑ p : A × A, qform ψ
-          ((aOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) * bOp (sand X' Z' p)))
-        - ∑ p : A × A, qform ψ
-          ((aOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) * bOp (Z' p.2 * X' p.1))|
-      ≤ Real.sqrt (∑ p : A × A, stateSqNorm ψ (X p.1 * Z p.2))
-        * Real.sqrt (∑ p : A × A, ‖stateVecB ψ (X' p.1 * Z' p.2 - Z' p.2 * X' p.1)‖ ^ 2) := by
-  classical
-  have hdiff : ∀ p : A × A, sand X' Z' p - Z' p.2 * X' p.1
-      = Z' p.2 * (X' p.1 * Z' p.2 - Z' p.2 * X' p.1) := by
-    intro p
-    calc sand X' Z' p - Z' p.2 * X' p.1
-        = Z' p.2 * X' p.1 * Z' p.2 - Z' p.2 * Z' p.2 * X' p.1 := by rw [hZ'.idem]; rfl
-      _ = Z' p.2 * (X' p.1 * Z' p.2 - Z' p.2 * X' p.1) := by noncomm_ring
-  have hstep : (∑ p : A × A, qform ψ
-          ((aOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) * bOp (sand X' Z' p)))
-        - ∑ p : A × A, qform ψ
-          ((aOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) * bOp (Z' p.2 * X' p.1))
-      = ∑ p : A × A, qform ψ ((aOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ)
-          * bOp (Z' p.2 * (X' p.1 * Z' p.2 - Z' p.2 * X' p.1))) := by
+/-- **Link 2**: replacing the second player's sandwich by the ordered product costs the second
+player's commutator. -/
+theorem abs_link2_le (hX : IsPVMIn X) (hZ : IsPVMIn Z) (hZ' : IsPVMIn Z') :
+    |(∑ p : A × A, M.qform (M.πA (Z p.2 * X p.1) * M.πB (sand X' Z' p)))
+        - ∑ p : A × A, M.qform (M.πA (Z p.2 * X p.1) * M.πB (Z' p.2 * X' p.1))|
+      ≤ Real.sqrt (∑ p : A × A, M.stateSqNorm (X p.1 * Z p.2))
+        * Real.sqrt (∑ p : A × A, M.swap.stateSqNorm (X' p.1 * Z' p.2 - Z' p.2 * X' p.1)) := by
+  have hstep : (∑ p : A × A, M.qform (M.πA (Z p.2 * X p.1) * M.πB (sand X' Z' p)))
+        - ∑ p : A × A, M.qform (M.πA (Z p.2 * X p.1) * M.πB (Z' p.2 * X' p.1))
+      = ∑ p : A × A, M.qform (M.πA (Z p.2 * X p.1)
+          * M.πB (Z' p.2 * (X' p.1 * Z' p.2 - Z' p.2 * X' p.1))) := by
     rw [← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun p _ => ?_
-    rw [← hdiff p, bOp_sub, Matrix.mul_sub, qform_sub]
+    rw [← sand_sub_ord hZ' p, map_sub, mul_sub, M.qform_sub]
   rw [hstep]
   refine le_trans (Finset.abs_sum_le_sum_abs _ _) ?_
-  refine le_trans (Finset.sum_le_sum fun p (_ : p ∈ univ) => ?_)
-    (sum_mul_le_sqrt (fun p : A × A => stateNorm ψ (X p.1 * Z p.2))
-      (fun p : A × A => ‖stateVecB ψ (X' p.1 * Z' p.2 - Z' p.2 * X' p.1)‖))
-  refine le_trans (abs_qform_aOp_mul_bOp_le' ψ _ _) ?_
-  rw [Matrix.conjTranspose_mul, hX.isSelfAdjoint, hZ.isSelfAdjoint]
+  refine le_trans (Finset.sum_le_sum fun p (_ : p ∈ Finset.univ) => ?_)
+    (sum_mul_le_sqrt (fun p : A × A => M.stateNorm (X p.1 * Z p.2))
+      (fun p : A × A => M.swap.stateNorm (X' p.1 * Z' p.2 - Z' p.2 * X' p.1)))
+  refine le_trans (M.abs_qform_πA_mul_πB_le' _ _) ?_
+  rw [star_mul, hX.star_eq, hZ.star_eq]
   exact mul_le_mul_of_nonneg_left
-    (norm_stateVecB_mul_le (dA := dA) ψ (hZ'.conjTranspose_mul_self_le_one p.2) _)
-    (stateNorm_nonneg _ _)
+    (M.swap.stateNorm_mul_le (M.swap.bnd_πA_of_isStarProjection (hZ'.isStarProjection p.2)) _)
+    (M.stateNorm_nonneg _)
 
-/-- The diagonal `Z`-agreement operator, and the `X`-disagreement operator: both projections,
-because their summands are mutually orthogonal projections. -/
-theorem isProj_diag (hZ : IsPVM Z) (hZ' : IsPVM Z') :
-    ((∑ b : A, (aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b))ᴴ
-        = ∑ b : A, (aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b))
-      ∧ (∑ b : A, (aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b))
-          * (∑ b : A, (aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b))
-        = ∑ b : A, (aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b) := by
-  refine ⟨conjTranspose_sum_of_orth fun b => ?_, mul_self_sum_of_orth (fun b => ?_) fun b b' hb => ?_⟩
-  · rw [aOp_bOp_conjTranspose, hZ.isSelfAdjoint, hZ'.isSelfAdjoint]
-  · rw [aOp_bOp_mul_aOp_bOp, hZ.idem, hZ'.idem]
-  · rw [aOp_bOp_mul_aOp_bOp, hZ'.orthogonal hb, bOp, Matrix.kronecker_zero, Matrix.mul_zero]
+variable [DecidableEq A]
 
-theorem isProj_disag (hX : IsPVM X) (hX' : IsPVM X') :
-    ((∑ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a))ᴴ
-        = ∑ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a))
-      ∧ (∑ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a))
-          * (∑ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a))
-        = ∑ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a) := by
-  have hsa : ∀ a : A, ((1 : Matrix dA dA ℂ) - X a)ᴴ = 1 - X a := fun a => by
-    rw [Matrix.conjTranspose_sub, Matrix.conjTranspose_one, hX.isSelfAdjoint]
-  have hid : ∀ a : A, ((1 : Matrix dA dA ℂ) - X a) * (1 - X a) = 1 - X a := fun a => by
-    rw [Matrix.sub_mul, Matrix.mul_sub, Matrix.mul_sub, Matrix.one_mul, Matrix.mul_one,
-      Matrix.one_mul, hX.idem]
-    abel
-  refine ⟨conjTranspose_sum_of_orth fun a => ?_, mul_self_sum_of_orth (fun a => ?_) fun a a' ha => ?_⟩
-  · rw [aOp_bOp_conjTranspose, hsa, hX'.isSelfAdjoint]
-  · rw [aOp_bOp_mul_aOp_bOp, hid, hX'.idem]
-  · rw [aOp_bOp_mul_aOp_bOp, hX'.orthogonal ha, bOp, Matrix.kronecker_zero, Matrix.mul_zero]
+/-- The diagonal agreement operator of two projective measurements is a star projection. -/
+theorem isStarProjection_diag (hZ : IsPVMIn Z) (hZ' : IsPVMIn Z') :
+    IsStarProjection (∑ b : A, M.πA (Z b) * M.πB (Z' b)) :=
+  isStarProjection_sum_of_orth
+    (fun b => M.isStarProjection_πA_mul_πB (hZ.isStarProjection b) (hZ'.isStarProjection b))
+    fun b b' hb => by rw [M.πA_mul_πB_mul, hZ'.orthogonal hb, map_zero, mul_zero]
 
-/-- The `X`-disagreement operator's expectation is the `X`-consistency defect. -/
-theorem qform_disag (hψ : ‖evec ψ‖ = 1) (hX : IsPVM X) (hX' : IsPVM X') :
-    qform ψ (∑ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a))
-      = (∑ a : A, xSqNorm ψ (X a) (X' a)) / 2 := by
-  classical
-  have hterm : ∀ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a)
-      = (bOp (X' a) : Matrix (dA × dB) _ ℂ) - (aOp (X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a) := by
+/-- The disagreement operator of two projective measurements is a star projection. -/
+theorem isStarProjection_disag (hX : IsPVMIn X) (hX' : IsPVMIn X') :
+    IsStarProjection (∑ a : A, M.πA (1 - X a) * M.πB (X' a)) :=
+  isStarProjection_sum_of_orth
+    (fun a => M.isStarProjection_πA_mul_πB (hX.isStarProjection a).one_sub
+      (hX'.isStarProjection a))
+    fun a a' ha => by rw [M.πA_mul_πB_mul, hX'.orthogonal ha, map_zero, mul_zero]
+
+/-- The disagreement operator's expectation is the consistency defect. -/
+theorem qform_disag (hψ : ‖M.ψ‖ = 1) (hX : IsPVMIn X) (hX' : IsPVMIn X') :
+    M.qform (∑ a : A, M.πA (1 - X a) * M.πB (X' a)) = (∑ a : A, M.xSqNorm (X a) (X' a)) / 2 := by
+  have hterm : ∀ a : A, M.πA (1 - X a) * M.πB (X' a) = M.πB (X' a) - M.πA (X a) * M.πB (X' a) := by
     intro a
-    rw [aOp_sub, aOp_one, Matrix.sub_mul, Matrix.one_mul]
-  have hone : ∑ a : A, qform ψ (bOp (X' a) : Matrix (dA × dB) _ ℂ) = 1 := by
-    rw [← qform_sum, ← bOp_sum, hX'.sum_eq_one, bOp_one, qform_one _ hψ]
-  rw [qform_sum, Finset.sum_congr rfl fun a (_ : a ∈ univ) => by
-      rw [hterm a, qform_sub, ← bornProb_eq_qform], Finset.sum_sub_distrib, hone,
-    ← one_sub_sum_bornProb_eq hψ hX hX']
+    rw [map_sub, map_one, sub_mul, one_mul]
+  have hone : ∑ a : A, M.qform (M.πB (X' a)) = 1 := by
+    rw [← M.qform_sum, ← map_sum, hX'.sum_eq_one, map_one, M.qform_one hψ]
+  rw [M.qform_sum, Finset.sum_congr rfl fun a (_ : a ∈ Finset.univ) => by
+      rw [hterm a, M.qform_sub], Finset.sum_sub_distrib, hone,
+    ← M.one_sub_sum_bornProb_eq hψ hX hX']
+  rfl
 
-/-- **Link 3**: dropping Alice's `X`-outcome costs her `X`-consistency with Bob, and nothing that
+/-- **Link 3**: dropping the first player's `X`-outcome costs the `X`-consistency, and nothing that
 depends on the number of outcomes: the whole outcome sum is one operator product. -/
-theorem abs_link3_le (hψ : ‖evec ψ‖ = 1) (hX : IsPVM X) (hZ : IsPVM Z)
-    (hX' : IsPVM X') (hZ' : IsPVM Z') :
-    |(∑ p : A × A, qform ψ
-          ((aOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) * bOp (Z' p.2 * X' p.1)))
-        - ∑ p : A × A, qform ψ
-          ((aOp (Z p.2) : Matrix (dA × dB) _ ℂ) * bOp (Z' p.2 * X' p.1))|
-      ≤ Real.sqrt ((∑ a : A, xSqNorm ψ (X a) (X' a)) / 2) := by
-  classical
-  set Pd : Matrix (dA × dB) (dA × dB) ℂ :=
-    ∑ b : A, (aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b) with hPd
-  set Dd : Matrix (dA × dB) (dA × dB) ℂ :=
-    ∑ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a) with hDd
-  have hprod : Pd * Dd = ∑ p : A × A, (aOp (Z p.2 * (1 - X p.1)) : Matrix (dA × dB) _ ℂ)
-      * bOp (Z' p.2 * X' p.1) := by
-    rw [sum_prod_swap (fun p : A × A => (aOp (Z p.2 * (1 - X p.1)) : Matrix (dA × dB) _ ℂ)
-      * bOp (Z' p.2 * X' p.1)), hPd, hDd, Finset.sum_mul]
+theorem abs_link3_le (hψ : ‖M.ψ‖ = 1) (hX : IsPVMIn X) (hZ : IsPVMIn Z) (hX' : IsPVMIn X')
+    (hZ' : IsPVMIn Z') :
+    |(∑ p : A × A, M.qform (M.πA (Z p.2 * X p.1) * M.πB (Z' p.2 * X' p.1)))
+        - ∑ p : A × A, M.qform (M.πA (Z p.2) * M.πB (Z' p.2 * X' p.1))|
+      ≤ Real.sqrt ((∑ a : A, M.xSqNorm (X a) (X' a)) / 2) := by
+  set Pd : 𝒞 := ∑ b : A, M.πA (Z b) * M.πB (Z' b) with hPd
+  set Dd : 𝒞 := ∑ a : A, M.πA (1 - X a) * M.πB (X' a) with hDd
+  have hprod : Pd * Dd = ∑ p : A × A, M.πA (Z p.2 * (1 - X p.1)) * M.πB (Z' p.2 * X' p.1) := by
+    rw [Fintype.sum_prod_type_right, hPd, hDd, Finset.sum_mul]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [Finset.mul_sum]
-    exact Finset.sum_congr rfl fun a _ => aOp_bOp_mul_aOp_bOp _ _ _ _
+    exact Finset.sum_congr rfl fun a _ => M.πA_mul_πB_mul _ _ _ _
   rw [abs_sub_comm]
-  have hstep : (∑ p : A × A, qform ψ
-          ((aOp (Z p.2) : Matrix (dA × dB) _ ℂ) * bOp (Z' p.2 * X' p.1)))
-        - ∑ p : A × A, qform ψ
-          ((aOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) * bOp (Z' p.2 * X' p.1))
-      = qform ψ (Pd * Dd) := by
-    rw [hprod, qform_sum, ← Finset.sum_sub_distrib]
+  have hstep : (∑ p : A × A, M.qform (M.πA (Z p.2) * M.πB (Z' p.2 * X' p.1)))
+        - ∑ p : A × A, M.qform (M.πA (Z p.2 * X p.1) * M.πB (Z' p.2 * X' p.1))
+      = M.qform (Pd * Dd) := by
+    rw [hprod, M.qform_sum, ← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun p _ => ?_
-    rw [← qform_sub]
+    rw [← M.qform_sub]
     congr 1
-    rw [Matrix.mul_sub, Matrix.mul_one, aOp_sub, Matrix.sub_mul]
+    rw [mul_sub, mul_one, map_sub, sub_mul]
   rw [hstep]
-  have hPsa := (isProj_diag (dB := dB) hZ hZ').1
-  have hPid := (isProj_diag (dB := dB) hZ hZ').2
-  have hDsa := (isProj_disag (dB := dB) hX hX').1
-  have hDid := (isProj_disag (dB := dB) hX hX').2
-  have hcs : |qform ψ (Pd * Dd)| ≤ snorm ψ Pd * snorm ψ Dd := by
-    have h := abs_qform_conjTranspose_mul_le ψ Pd Dd
-    rwa [hPsa] at h
-  have hP1 : snorm ψ Pd ≤ 1 := snorm_le_one_of_proj hψ hPsa hPid
-  have hDeq : snorm ψ Dd = Real.sqrt ((∑ a : A, xSqNorm ψ (X a) (X' a)) / 2) := by
-    rw [← qform_disag hψ hX hX', ← hDd,
-      show qform ψ Dd = snorm ψ Dd ^ 2 from by rw [snorm_sq_eq_qform, hDsa, hDid],
-      Real.sqrt_sq (snorm_nonneg ψ Dd)]
+  have hP := M.isStarProjection_diag hZ hZ'
+  have hD := M.isStarProjection_disag hX hX'
+  have hcs : |M.qform (Pd * Dd)| ≤ M.snorm Pd * M.snorm Dd := by
+    have h := M.abs_qform_star_mul_le Pd Dd
+    rwa [hP.isSelfAdjoint.star_eq] at h
+  have hP1 : M.snorm Pd ≤ 1 := M.snorm_le_one_of_isStarProjection hψ hP
+  have hDeq : M.snorm Dd = Real.sqrt ((∑ a : A, M.xSqNorm (X a) (X' a)) / 2) := by
+    rw [← M.qform_disag hψ hX hX', ← hDd,
+      show M.qform Dd = M.snorm Dd ^ 2 from by
+        rw [M.snorm_sq_eq_qform, hD.isSelfAdjoint.star_eq, hD.isIdempotentElem.eq],
+      Real.sqrt_sq (M.snorm_nonneg Dd)]
   rw [← hDeq]
-  calc |qform ψ (Pd * Dd)| ≤ snorm ψ Pd * snorm ψ Dd := hcs
-    _ ≤ 1 * snorm ψ Dd := mul_le_mul_of_nonneg_right hP1 (snorm_nonneg ψ Dd)
-    _ = snorm ψ Dd := one_mul _
+  calc |M.qform (Pd * Dd)| ≤ M.snorm Pd * M.snorm Dd := hcs
+    _ ≤ 1 * M.snorm Dd := mul_le_mul_of_nonneg_right hP1 (M.snorm_nonneg Dd)
+    _ = M.snorm Dd := one_mul _
 
-/-- **Link 4**: Bob's `X`-outcome sums away, exactly. -/
-theorem link4_eq (hX' : IsPVM X') :
-    ∑ p : A × A, qform ψ ((aOp (Z p.2) : Matrix (dA × dB) _ ℂ) * bOp (Z' p.2 * X' p.1))
-      = ∑ b : A, qform ψ ((aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b)) := by
-  classical
-  rw [sum_prod_swap (fun p : A × A => qform ψ
-    ((aOp (Z p.2) : Matrix (dA × dB) _ ℂ) * bOp (Z' p.2 * X' p.1)))]
+omit [DecidableEq A] in
+/-- **Link 4**: the second player's `X`-outcome sums away, exactly. -/
+theorem link4_eq (hX' : IsPVMIn X') :
+    ∑ p : A × A, M.qform (M.πA (Z p.2) * M.πB (Z' p.2 * X' p.1))
+      = ∑ b : A, M.qform (M.πA (Z b) * M.πB (Z' b)) := by
+  rw [Fintype.sum_prod_type_right]
   refine Finset.sum_congr rfl fun b _ => ?_
-  rw [← qform_sum]
+  rw [← M.qform_sum]
   congr 1
-  show (∑ a : A, (aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b * X' a))
-    = (aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b)
-  rw [← Matrix.mul_sum, ← bOp_sum, ← Matrix.mul_sum, hX'.sum_eq_one, Matrix.mul_one]
+  dsimp only
+  rw [← Finset.mul_sum, ← map_sum, ← Finset.mul_sum, hX'.sum_eq_one, mul_one]
 
+omit [DecidableEq A] in
 /-- **Link 5**: the `Z`-agreement is one minus half the `Z`-consistency defect. -/
-theorem link5_eq (hψ : ‖evec ψ‖ = 1) (hZ : IsPVM Z) (hZ' : IsPVM Z') :
-    ∑ b : A, qform ψ ((aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b))
-      = 1 - (∑ b : A, xSqNorm ψ (Z b) (Z' b)) / 2 := by
-  rw [Finset.sum_congr rfl fun b (_ : b ∈ univ) => (bornProb_eq_qform ψ (Z b) (Z' b)).symm,
-    ← one_sub_sum_bornProb_eq hψ hZ hZ']
-  ring
+theorem link5_eq (hψ : ‖M.ψ‖ = 1) (hZ : IsPVMIn Z) (hZ' : IsPVMIn Z') :
+    ∑ b : A, M.qform (M.πA (Z b) * M.πB (Z' b))
+      = 1 - (∑ b : A, M.xSqNorm (Z b) (Z' b)) / 2 := by
+  rw [← M.one_sub_sum_bornProb_eq hψ hZ hZ', sub_sub_cancel]
+  rfl
 
 end Chain
 
-/-! ## The chain, assembled -/
+/-! ### The chain, assembled -/
 
 section Assemble
 
-variable {A : Type*} [Fintype A] [DecidableEq A]
-  {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-
-theorem norm_evec_eq_one_of_unit {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) : ‖evec ψ‖ = 1 := by
-  have h : ‖evec ψ‖ ^ 2 = 1 := by rw [norm_evec_sq, hψ, Complex.one_re]
-  nlinarith [norm_nonneg (evec ψ), h]
+variable [PartialOrder ℬ] [StarOrderedRing ℬ] {A : Type*} [Fintype A] [DecidableEq A]
 
 /-- **The sandwich of two approximately commuting projective measurements is approximately
 self-consistent across the two parties.** The five links of the chain, added up. Every error term
 is `q`-independent: the two commutators enter under a square root through one Cauchy--Schwarz
 each, the `X`-consistency through a third, and the `Z`-consistency linearly. -/
 theorem one_sub_sum_bornProb_sand_le {ι : Type*} [Fintype ι] {w : ι → ℝ}
-    (hw0 : ∀ i, 0 ≤ w i) (hw1 : ∑ i, w i = 1)
-    {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)
-    {X Z : ι → A → Matrix dA dA ℂ} {X' Z' : ι → A → Matrix dB dB ℂ}
-    (hX : ∀ i, IsPVM (X i)) (hZ : ∀ i, IsPVM (Z i))
-    (hX' : ∀ i, IsPVM (X' i)) (hZ' : ∀ i, IsPVM (Z' i))
+    (hw0 : ∀ i, 0 ≤ w i) (hw1 : ∑ i, w i = 1) (hψ : ‖M.ψ‖ = 1)
+    {X Z : ι → A → 𝒜} {X' Z' : ι → A → ℬ}
+    (hX : ∀ i, IsPVMIn (X i)) (hZ : ∀ i, IsPVMIn (Z i))
+    (hX' : ∀ i, IsPVMIn (X' i)) (hZ' : ∀ i, IsPVMIn (Z' i))
     {cA cB α β : ℝ}
     (hcA : ∑ i, w i * ∑ p : A × A,
-        stateSqNorm ψ (X i p.1 * Z i p.2 - Z i p.2 * X i p.1) ≤ cA)
+        M.stateSqNorm (X i p.1 * Z i p.2 - Z i p.2 * X i p.1) ≤ cA)
     (hcB : ∑ i, w i * ∑ p : A × A,
-        ‖stateVecB ψ (X' i p.1 * Z' i p.2 - Z' i p.2 * X' i p.1)‖ ^ 2 ≤ cB)
-    (hα : ∑ i, w i * ∑ a : A, xSqNorm ψ (X i a) (X' i a) ≤ α)
-    (hβ : ∑ i, w i * ∑ b : A, xSqNorm ψ (Z i b) (Z' i b) ≤ β) :
-    1 - ∑ i, w i * ∑ p : A × A,
-          bornProb ψ (sand (X i) (Z i) p) (sand (X' i) (Z' i) p)
+        M.swap.stateSqNorm (X' i p.1 * Z' i p.2 - Z' i p.2 * X' i p.1) ≤ cB)
+    (hα : ∑ i, w i * ∑ a : A, M.xSqNorm (X i a) (X' i a) ≤ α)
+    (hβ : ∑ i, w i * ∑ b : A, M.xSqNorm (Z i b) (Z' i b) ≤ β) :
+    1 - ∑ i, w i * ∑ p : A × A, M.bornProb (sand (X i) (Z i) p) (sand (X' i) (Z' i) p)
       ≤ Real.sqrt cA + Real.sqrt cB + Real.sqrt (α / 2) + β / 2 := by
-  classical
-  have hψ' : ‖evec ψ‖ = 1 := norm_evec_eq_one_of_unit hψ
   set cAi : ι → ℝ := fun i => ∑ p : A × A,
-    stateSqNorm ψ (X i p.1 * Z i p.2 - Z i p.2 * X i p.1) with hcAi
+    M.stateSqNorm (X i p.1 * Z i p.2 - Z i p.2 * X i p.1) with hcAi
   set cBi : ι → ℝ := fun i => ∑ p : A × A,
-    ‖stateVecB ψ (X' i p.1 * Z' i p.2 - Z' i p.2 * X' i p.1)‖ ^ 2 with hcBi
-  set αi : ι → ℝ := fun i => ∑ a : A, xSqNorm ψ (X i a) (X' i a) with hαi
-  set βi : ι → ℝ := fun i => ∑ b : A, xSqNorm ψ (Z i b) (Z' i b) with hβi
+    M.swap.stateSqNorm (X' i p.1 * Z' i p.2 - Z' i p.2 * X' i p.1) with hcBi
+  set αi : ι → ℝ := fun i => ∑ a : A, M.xSqNorm (X i a) (X' i a) with hαi
+  set βi : ι → ℝ := fun i => ∑ b : A, M.xSqNorm (Z i b) (Z' i b) with hβi
   have hcAi0 : ∀ i, 0 ≤ cAi i := fun i =>
-    Finset.sum_nonneg fun p _ => stateSqNorm_nonneg _ _
-  have hcBi0 : ∀ i, 0 ≤ cBi i := fun i => Finset.sum_nonneg fun p _ => sq_nonneg _
-  have hαi0 : ∀ i, 0 ≤ αi i := fun i => Finset.sum_nonneg fun a _ => xSqNorm_nonneg _ _ _
+    Finset.sum_nonneg fun p _ => M.stateSqNorm_nonneg _
+  have hcBi0 : ∀ i, 0 ≤ cBi i := fun i =>
+    Finset.sum_nonneg fun p _ => M.swap.stateSqNorm_nonneg _
+  have hαi0 : ∀ i, 0 ≤ αi i := fun i => Finset.sum_nonneg fun a _ => M.xSqNorm_nonneg _ _
   -- the pointwise chain
-  have hpt : ∀ i, 1 - ∑ p : A × A,
-        bornProb ψ (sand (X i) (Z i) p) (sand (X' i) (Z' i) p)
+  have hpt : ∀ i, 1 - ∑ p : A × A, M.bornProb (sand (X i) (Z i) p) (sand (X' i) (Z' i) p)
       ≤ Real.sqrt (cAi i) + Real.sqrt (cBi i) + Real.sqrt (αi i / 2) + βi i / 2 := by
     intro i
-    have hborn : ∀ p : A × A,
-        bornProb ψ (sand (X i) (Z i) p) (sand (X' i) (Z' i) p)
-          = qform ψ ((aOp (sand (X i) (Z i) p) : Matrix (dA × dB) _ ℂ)
-              * bOp (sand (X' i) (Z' i) p)) := fun p => bornProb_eq_qform ψ _ _
-    rw [Finset.sum_congr rfl fun p (_ : p ∈ univ) => hborn p]
-    -- the four links
-    have h1 := abs_link1_le (ψ := ψ) (X := X i) (hZ i) (S' := sand (X' i) (Z' i))
-      fun p => sand_conjTranspose (hX' i) (hZ' i) p
-    have h2 := abs_link2_le (X := X i) (Z := Z i) (X' := X' i) (Z' := Z' i)
-      (ψ := ψ) (hX i) (hZ i) (hZ' i)
-    have h3 := abs_link3_le (ψ := ψ) hψ' (hX i) (hZ i) (hX' i) (hZ' i)
-    have h4 := link4_eq (ψ := ψ) (Z := Z i) (Z' := Z' i) (hX' i)
-    have h5 := link5_eq (ψ := ψ) hψ' (hZ i) (hZ' i)
-    -- the two normalizations
-    have hB1 : ∑ p : A × A, ‖stateVecB ψ (sand (X' i) (Z' i) p)‖ ^ 2 ≤ 1 := by
-      have h := sum_stateSqNormB_le_one (dA := dA) (B := A × A) hψ (sandPOVM (hX' i) (hZ' i))
-      simpa using h
-    have hA1 : ∑ p : A × A, stateSqNorm ψ (X i p.1 * Z i p.2) = 1 :=
-      sum_stateSqNorm_ord (dB := dB) hψ' (hX i) (hZ i)
-    -- link 1's second factor and link 2's first factor are at most one
-    have hs1 : Real.sqrt (∑ p : A × A, ‖stateVecB ψ (sand (X' i) (Z' i) p)‖ ^ 2) ≤ 1 := by
+    have h1 := M.abs_link1_le (X := X i) (hZ i) (S' := sand (X' i) (Z' i))
+      fun p => (hX' i).star_sand (hZ' i) p
+    have h2 := M.abs_link2_le (hX i) (hZ i) (hZ' i) (X' := X' i)
+    have h3 := M.abs_link3_le hψ (hX i) (hZ i) (hX' i) (hZ' i)
+    have h4 := M.link4_eq (Z := Z i) (Z' := Z' i) (hX' i)
+    have h5 := M.link5_eq hψ (hZ i) (hZ' i)
+    have hB1 : ∑ p : A × A, M.swap.stateSqNorm (sand (X' i) (Z' i) p) ≤ 1 :=
+      M.swap.sum_stateSqNorm_le_one hψ (POVMIn.sand (hX' i) (hZ' i))
+    have hA1 : ∑ p : A × A, M.stateSqNorm (X i p.1 * Z i p.2) = 1 :=
+      M.sum_stateSqNorm_ord hψ (hX i) (hZ i)
+    have hs1 : Real.sqrt (∑ p : A × A, M.swap.stateSqNorm (sand (X' i) (Z' i) p)) ≤ 1 := by
       rw [show (1 : ℝ) = Real.sqrt 1 from (Real.sqrt_one).symm]
       exact Real.sqrt_le_sqrt hB1
-    have hs2 : Real.sqrt (∑ p : A × A, stateSqNorm ψ (X i p.1 * Z i p.2)) = 1 := by
+    have hs2 : Real.sqrt (∑ p : A × A, M.stateSqNorm (X i p.1 * Z i p.2)) = 1 := by
       rw [hA1, Real.sqrt_one]
     have hsA0 : 0 ≤ Real.sqrt (cAi i) := Real.sqrt_nonneg _
-    have hsB0 : 0 ≤ Real.sqrt (cBi i) := Real.sqrt_nonneg _
-    have h1' : |(∑ p : A × A, qform ψ ((aOp (sand (X i) (Z i) p) : Matrix (dA × dB) _ ℂ)
-          * bOp (sand (X' i) (Z' i) p)))
-        - ∑ p : A × A, qform ψ ((aOp (Z i p.2 * X i p.1) : Matrix (dA × dB) _ ℂ)
-          * bOp (sand (X' i) (Z' i) p))| ≤ Real.sqrt (cAi i) := by
+    have h1' : |(∑ p : A × A, M.qform (M.πA (sand (X i) (Z i) p) * M.πB (sand (X' i) (Z' i) p)))
+        - ∑ p : A × A, M.qform (M.πA (Z i p.2 * X i p.1) * M.πB (sand (X' i) (Z' i) p))|
+        ≤ Real.sqrt (cAi i) := by
       refine le_trans h1 ?_
       calc Real.sqrt (cAi i)
-            * Real.sqrt (∑ p : A × A, ‖stateVecB ψ (sand (X' i) (Z' i) p)‖ ^ 2)
+            * Real.sqrt (∑ p : A × A, M.swap.stateSqNorm (sand (X' i) (Z' i) p))
           ≤ Real.sqrt (cAi i) * 1 := mul_le_mul_of_nonneg_left hs1 hsA0
         _ = Real.sqrt (cAi i) := mul_one _
-    have h2' : |(∑ p : A × A, qform ψ ((aOp (Z i p.2 * X i p.1) : Matrix (dA × dB) _ ℂ)
-          * bOp (sand (X' i) (Z' i) p)))
-        - ∑ p : A × A, qform ψ ((aOp (Z i p.2 * X i p.1) : Matrix (dA × dB) _ ℂ)
-          * bOp (Z' i p.2 * X' i p.1))| ≤ Real.sqrt (cBi i) := by
+    have h2' : |(∑ p : A × A, M.qform (M.πA (Z i p.2 * X i p.1) * M.πB (sand (X' i) (Z' i) p)))
+        - ∑ p : A × A, M.qform (M.πA (Z i p.2 * X i p.1) * M.πB (Z' i p.2 * X' i p.1))|
+        ≤ Real.sqrt (cBi i) := by
       refine le_trans h2 ?_
       rw [hs2, one_mul]
     have habs1 := abs_le.mp h1'
     have habs2 := abs_le.mp h2'
     have habs3 := abs_le.mp h3
     rw [h4, h5] at habs3
+    have hborn : ∑ p : A × A, M.bornProb (sand (X i) (Z i) p) (sand (X' i) (Z' i) p)
+        = ∑ p : A × A, M.qform (M.πA (sand (X i) (Z i) p) * M.πB (sand (X' i) (Z' i) p)) := rfl
+    rw [hborn]
     linarith [habs1.1, habs1.2, habs2.1, habs2.2, habs3.1, habs3.2]
   -- average
-  have hsum : 1 - ∑ i, w i * ∑ p : A × A,
-        bornProb ψ (sand (X i) (Z i) p) (sand (X' i) (Z' i) p)
+  have hsum : 1 - ∑ i, w i * ∑ p : A × A, M.bornProb (sand (X i) (Z i) p) (sand (X' i) (Z' i) p)
       = ∑ i, w i * (1 - ∑ p : A × A,
-          bornProb ψ (sand (X i) (Z i) p) (sand (X' i) (Z' i) p)) := by
-    rw [Finset.sum_congr rfl fun i (_ : i ∈ univ) => mul_sub (w i) 1 _, Finset.sum_sub_distrib,
-      Finset.sum_congr rfl fun i (_ : i ∈ univ) => mul_one (w i), hw1]
+          M.bornProb (sand (X i) (Z i) p) (sand (X' i) (Z' i) p)) := by
+    rw [Finset.sum_congr rfl fun i (_ : i ∈ Finset.univ) => mul_sub (w i) 1 _,
+      Finset.sum_sub_distrib, Finset.sum_congr rfl fun i (_ : i ∈ Finset.univ) => mul_one (w i),
+      hw1]
   rw [hsum]
   refine le_trans (Finset.sum_le_sum fun i _ => mul_le_mul_of_nonneg_left (hpt i) (hw0 i)) ?_
   have hsplit : ∑ i, w i * (Real.sqrt (cAi i) + Real.sqrt (cBi i)
@@ -697,6 +565,368 @@ theorem one_sub_sum_bornProb_sand_le {ι : Type*} [Fintype ι] {w : ι → ℝ}
       exact Finset.sum_congr rfl fun i _ => by ring]
     linarith
   linarith
+
+end Assemble
+
+/-- **Coarse-graining two projective measurements the same way costs nothing.** For projective
+families the summed deviation and the agreement determine each other exactly
+(`one_sub_sum_bornProb_eq`), and agreement can only increase under a common coarse-graining
+(`sum_bornProb_le_map`). -/
+theorem sum_xSqNorm_map_le [PartialOrder 𝒜] [StarOrderedRing 𝒜] [PartialOrder ℬ]
+    [StarOrderedRing ℬ] (hψ : ‖M.ψ‖ = 1) {A C : Type*} [Fintype A] [DecidableEq A] [Fintype C]
+    [DecidableEq C] (Q : POVMIn A 𝒜) (Q' : POVMIn A ℬ) (hQ : IsPVMIn Q.op) (hQ' : IsPVMIn Q'.op)
+    (f : A → C) :
+    ∑ v : C, M.xSqNorm ((Q.map f).op v) ((Q'.map f).op v)
+      ≤ ∑ a : A, M.xSqNorm (Q.op a) (Q'.op a) := by
+  have hQf : IsPVMIn (Q.map f).op := by
+    rw [show (Q.map f).op = _ from funext (POVMIn.map_op f Q)]
+    exact hQ.coarse f
+  have hQf' : IsPVMIn (Q'.map f).op := by
+    rw [show (Q'.map f).op = _ from funext (POVMIn.map_op f Q')]
+    exact hQ'.coarse f
+  have e1 := M.one_sub_sum_bornProb_eq hψ hQf hQf'
+  have e2 := M.one_sub_sum_bornProb_eq hψ hQ hQ'
+  have e3 := M.sum_bornProb_le_map Q Q' f
+  linarith
+
+end BipartiteModel
+
+/-! ## Quadratic forms: Cauchy--Schwarz and the order -/
+
+section QForm
+
+variable {N : Type*} [Fintype N]
+
+theorem inner_evec (u w : N → ℂ) : (inner ℂ (evec u) (evec w) : ℂ) = star u ⬝ᵥ w := by
+  rw [evec, evec, EuclideanSpace.inner_toLp_toLp, dotProduct]
+  exact Finset.sum_congr rfl fun i _ => mul_comm _ _
+
+/-- **Cauchy--Schwarz for a quadratic form.** The one estimate the chain uses, in the shape the
+chain needs: the form of a product, split onto the two vectors. -/
+theorem abs_qform_conjTranspose_mul_le (v : N → ℂ) (M P : Matrix N N ℂ) :
+    |qform v (Mᴴ * P)| ≤ snorm v M * snorm v P := by
+  classical
+  rw [qform_eq_mat]
+  exact (StateModel.mat v).abs_qform_star_mul_le M P
+
+variable [DecidableEq N]
+
+/-- **A projection is bounded by the identity.** -/
+theorem proj_le_one {P : Matrix N N ℂ} (hsa : Pᴴ = P) (hidem : P * P = P) :
+    P ≤ (1 : Matrix N N ℂ) := by
+  refine sub_nonneg.mp (Matrix.nonneg_iff_posSemidef.mpr ?_)
+  have h : (1 : Matrix N N ℂ) - P = ((1 : Matrix N N ℂ) - P)ᴴ * ((1 : Matrix N N ℂ) - P) := by
+    rw [Matrix.conjTranspose_sub, Matrix.conjTranspose_one, hsa, Matrix.sub_mul, Matrix.mul_sub,
+      Matrix.mul_sub, Matrix.one_mul, Matrix.mul_one, Matrix.one_mul, hidem]
+    abel
+  rw [h]
+  exact Matrix.posSemidef_conjTranspose_mul_self _
+
+/-- **A projection is a contraction on a unit vector.** -/
+theorem snorm_le_one_of_proj {v : N → ℂ} (hv : ‖evec v‖ = 1) {P : Matrix N N ℂ}
+    (hsa : Pᴴ = P) (hidem : P * P = P) : snorm v P ≤ 1 :=
+  (StateModel.mat v).snorm_le_one_of_isStarProjection hv ⟨hidem, hsa⟩
+
+end QForm
+
+/-! ## The two factors -/
+
+section Bipartite
+
+variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+
+theorem aOp_mul_bOp_eq (U : Matrix dA dA ℂ) (V : Matrix dB dB ℂ) :
+    (aOp U : Matrix (dA × dB) _ ℂ) * bOp V = U ⊗ₖ V := by
+  rw [aOp, bOp, ← Matrix.mul_kronecker_mul, Matrix.mul_one, Matrix.one_mul]
+
+theorem bornProb_eq_qform (ψ : dA × dB → ℂ) (U : Matrix dA dA ℂ) (V : Matrix dB dB ℂ) :
+    bornProb ψ U V = qform ψ ((aOp U : Matrix (dA × dB) _ ℂ) * bOp V) := by
+  rw [aOp_mul_bOp_eq, bornProb, qform]
+
+/-- Cauchy--Schwarz for a mixed product, with the deviation on **Alice's** side. -/
+theorem abs_qform_aOp_mul_bOp_le (ψ : dA × dB → ℂ) (U : Matrix dA dA ℂ) (V : Matrix dB dB ℂ) :
+    |qform ψ ((aOp U : Matrix (dA × dB) _ ℂ) * bOp V)|
+      ≤ ‖stateVecB ψ (Vᴴ)‖ * stateNorm ψ U := by
+  rw [← BipartiteModel.qform_tensor, norm_stateVecB_eq_tensor, stateNorm_eq_tensor]
+  exact (BipartiteModel.tensor ψ).abs_qform_πA_mul_πB_le U V
+
+/-- Cauchy--Schwarz for a mixed product, with the deviation on **Bob's** side. -/
+theorem abs_qform_aOp_mul_bOp_le' (ψ : dA × dB → ℂ) (U : Matrix dA dA ℂ) (V : Matrix dB dB ℂ) :
+    |qform ψ ((aOp U : Matrix (dA × dB) _ ℂ) * bOp V)|
+      ≤ stateNorm ψ (Uᴴ) * ‖stateVecB ψ V‖ := by
+  rw [← BipartiteModel.qform_tensor, norm_stateVecB_eq_tensor, stateNorm_eq_tensor]
+  exact (BipartiteModel.tensor ψ).abs_qform_πA_mul_πB_le' U V
+
+/-- **A contraction in front costs nothing**, on Alice's side. -/
+theorem stateNorm_mul_le (ψ : dA × dB → ℂ) {P : Matrix dA dA ℂ}
+    (hP : Pᴴ * P ≤ (1 : Matrix dA dA ℂ)) (N : Matrix dA dA ℂ) :
+    stateNorm ψ (P * N) ≤ stateNorm ψ N := by
+  rw [stateNorm_eq_tensor, stateNorm_eq_tensor]
+  exact (BipartiteModel.tensor ψ).stateNorm_mul_le
+    ((BipartiteModel.tensor ψ).bnd_πA_of_star_mul_self_le hP) N
+
+/-- **A contraction in front costs nothing**, on Bob's side. -/
+theorem norm_stateVecB_mul_le (ψ : dA × dB → ℂ) {P : Matrix dB dB ℂ}
+    (hP : Pᴴ * P ≤ (1 : Matrix dB dB ℂ)) (N : Matrix dB dB ℂ) :
+    ‖stateVecB ψ (P * N)‖ ≤ ‖stateVecB ψ N‖ := by
+  rw [norm_stateVecB_eq_tensor, norm_stateVecB_eq_tensor]
+  exact (BipartiteModel.tensor ψ).swap.stateNorm_mul_le
+    ((BipartiteModel.tensor ψ).swap.bnd_πA_of_star_mul_self_le hP) N
+
+end Bipartite
+
+/-! ## Sums of mutually orthogonal projections -/
+
+section Proj
+
+variable {N : Type*} [Fintype N] [DecidableEq N]
+
+/-- **A sum of mutually orthogonal projections is a projection.** -/
+theorem conjTranspose_sum_of_orth {ι : Type*} [Fintype ι] {P : ι → Matrix N N ℂ}
+    (hsa : ∀ i, (P i)ᴴ = P i) : (∑ i, P i)ᴴ = ∑ i, P i := by
+  rw [Matrix.conjTranspose_sum]
+  exact Finset.sum_congr rfl fun i _ => hsa i
+
+theorem mul_self_sum_of_orth {ι : Type*} [Fintype ι] [DecidableEq ι] {P : ι → Matrix N N ℂ}
+    (hidem : ∀ i, P i * P i = P i) (horth : ∀ i j, i ≠ j → P i * P j = 0) :
+    (∑ i, P i) * (∑ i, P i) = ∑ i, P i :=
+  (isIdempotentElem_sum_of_orth hidem horth).eq
+
+end Proj
+
+/-! ## Products of the two factors -/
+
+section Bipartite2
+
+variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+
+theorem aOp_bOp_mul_aOp_bOp (U U' : Matrix dA dA ℂ) (V V' : Matrix dB dB ℂ) :
+    ((aOp U : Matrix (dA × dB) _ ℂ) * bOp V) * ((aOp U' : Matrix (dA × dB) _ ℂ) * bOp V')
+      = (aOp (U * U') : Matrix (dA × dB) _ ℂ) * bOp (V * V') :=
+  (BipartiteModel.tensor (fun _ : dA × dB => (0 : ℂ))).πA_mul_πB_mul U U' V V'
+
+theorem aOp_bOp_conjTranspose (U : Matrix dA dA ℂ) (V : Matrix dB dB ℂ) :
+    ((aOp U : Matrix (dA × dB) _ ℂ) * bOp V)ᴴ
+      = (aOp (Uᴴ) : Matrix (dA × dB) _ ℂ) * bOp (Vᴴ) :=
+  (BipartiteModel.tensor (fun _ : dA × dB => (0 : ℂ))).star_πA_mul_πB U V
+
+theorem stateSqNorm_eq_qform (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) :
+    stateSqNorm ψ M = qform ψ ((aOp (Mᴴ * M) : Matrix (dA × dB) _ ℂ)) := by
+  rw [stateSqNorm_eq_tensor, (BipartiteModel.tensor ψ).stateSqNorm_eq, BipartiteModel.qform_tensor]
+  rfl
+
+theorem normSq_stateVecB_eq_qform (ψ : dA × dB → ℂ) (M : Matrix dB dB ℂ) :
+    ‖stateVecB ψ M‖ ^ 2 = qform ψ ((bOp (Mᴴ * M) : Matrix (dA × dB) _ ℂ)) := by
+  rw [normSq_stateVecB_eq_tensor, (BipartiteModel.tensor ψ).swap.stateSqNorm_eq,
+    ← BipartiteModel.qform_tensor]
+  rfl
+
+/-- **Expanding a cross-party deviation.** -/
+theorem xSqNorm_eq_expand (ψ : dA × dB → ℂ) {A : Matrix dA dA ℂ} (hA : Aᴴ = A)
+    (B : Matrix dB dB ℂ) :
+    xSqNorm ψ A B = stateSqNorm ψ A + ‖stateVecB ψ B‖ ^ 2 - 2 * bornProb ψ A B := by
+  rw [xSqNorm_eq_tensor, stateSqNorm_eq_tensor, normSq_stateVecB_eq_tensor, bornProb_eq_tensor]
+  exact (BipartiteModel.tensor ψ).xSqNorm_eq hA B
+
+/-- **The consistency of two projective measurements, as a defect from one.** With both families
+projective the two diagonal sums are exactly one, so the agreement probability and the summed
+cross-party deviation determine each other. -/
+theorem one_sub_sum_bornProb_eq {A : Type*} [Fintype A] [DecidableEq A] {ψ : dA × dB → ℂ}
+    (hψ : ‖evec ψ‖ = 1) {X : A → Matrix dA dA ℂ} {X' : A → Matrix dB dB ℂ}
+    (hX : IsPVM X) (hX' : IsPVM X') :
+    1 - ∑ a, bornProb ψ (X a) (X' a) = (∑ a, xSqNorm ψ (X a) (X' a)) / 2 := by
+  simp only [bornProb_eq_tensor, xSqNorm_eq_tensor]
+  exact (BipartiteModel.tensor ψ).one_sub_sum_bornProb_eq hψ hX.toIn hX'.toIn
+
+end Bipartite2
+
+/-! ## The sandwich -/
+
+section Sand
+
+variable {A : Type*} [Fintype A] [DecidableEq A]
+  {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+
+variable {d : Type*} [Fintype d] [DecidableEq d] {X Z : A → Matrix d d ℂ}
+
+/-- The sandwich is the Gram operator of the ordered product, which is where its positivity and
+its normalization both come from. -/
+theorem sand_eq_gram (hX : IsPVM X) (hZ : IsPVM Z) (p : A × A) :
+    sand X Z p = (X p.1 * Z p.2)ᴴ * (X p.1 * Z p.2) :=
+  hX.toIn.sand_eq_gram hZ.toIn p
+
+theorem sand_conjTranspose (hX : IsPVM X) (hZ : IsPVM Z) (p : A × A) :
+    (sand X Z p)ᴴ = sand X Z p :=
+  hX.toIn.star_sand hZ.toIn p
+
+theorem sand_posSemidef (hX : IsPVM X) (hZ : IsPVM Z) (p : A × A) : (sand X Z p).PosSemidef := by
+  rw [sand_eq_gram hX hZ]
+  exact Matrix.posSemidef_conjTranspose_mul_self _
+
+/-- **The sandwich is a POVM**, exactly: only projectivity of `Z` and completeness of `X` are
+used, and no approximate commutation whatsoever. -/
+theorem sum_sand (hX : IsPVM X) (hZ : IsPVM Z) : ∑ p : A × A, sand X Z p = 1 :=
+  hX.toIn.sum_sand hZ.toIn
+
+/-- The sandwich, as a bundled POVM. -/
+def sandPOVM (hX : IsPVM X) (hZ : IsPVM Z) : POVM (A × A) d where
+  mats p := ⟨sand X Z p, selfAdjoint.mem_iff.mpr (by
+    rw [Matrix.star_eq_conjTranspose]
+    exact sand_conjTranspose hX hZ p)⟩
+  nonneg p := Subtype.coe_le_coe.mp (Matrix.nonneg_iff_posSemidef.mpr (sand_posSemidef hX hZ p))
+  normalized := by
+    apply Subtype.ext
+    rw [AddSubmonoidClass.coe_finsetSum]
+    exact sum_sand hX hZ
+
+@[simp] theorem sandPOVM_mats (hX : IsPVM X) (hZ : IsPVM Z) (p : A × A) :
+    (((sandPOVM hX hZ).mats p).val) = sand X Z p := rfl
+
+/-- The matrix sandwich POVM is the sandwich POVM of the matrix algebra. -/
+theorem sandPOVM_toIn (hX : IsPVM X) (hZ : IsPVM Z) :
+    (sandPOVM hX hZ).toIn = POVMIn.sand hX.toIn hZ.toIn :=
+  POVMIn.ext' fun _ => rfl
+
+end Sand
+
+/-! ## The chain
+
+Five links from the agreement of the two parties' sandwiches to one. The two middle links are the
+parties' commutators, each paid for by one Cauchy--Schwarz against a family of squared norms
+summing to at most one; the third collapses the `X`-outcome sum by completeness; the last is the
+`Z`-consistency. -/
+
+section Chain
+
+variable {A : Type*} [Fintype A] [DecidableEq A]
+  {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+  {ψ : dA × dB → ℂ} {X Z : A → Matrix dA dA ℂ} {X' Z' : A → Matrix dB dB ℂ}
+
+/-- A projective measurement's elements are contractions. -/
+theorem IsPVM.conjTranspose_mul_self_le_one {N : Type*} [Fintype N] [DecidableEq N]
+    {P : A → Matrix N N ℂ} (h : IsPVM P) (a : A) : (P a)ᴴ * P a ≤ (1 : Matrix N N ℂ) := by
+  rw [h.isSelfAdjoint a, h.idem a]
+  exact proj_le_one (h.isSelfAdjoint a) (h.idem a)
+
+/-- The ordered products' squared norms sum to exactly one. -/
+theorem sum_stateSqNorm_ord (hψ : ‖evec ψ‖ = 1) (hX : IsPVM X) (hZ : IsPVM Z) :
+    ∑ p : A × A, stateSqNorm ψ (X p.1 * Z p.2) = (1 : ℝ) :=
+  (BipartiteModel.tensor ψ).sum_stateSqNorm_ord hψ hX.toIn hZ.toIn
+
+/-- **Link 1**: replacing each sandwich by the ordered product costs Alice's commutator. -/
+theorem abs_link1_le (hZ : IsPVM Z) {S' : A × A → Matrix dB dB ℂ}
+    (hS' : ∀ p, (S' p)ᴴ = S' p) :
+    |(∑ p : A × A, qform ψ ((aOp (sand X Z p) : Matrix (dA × dB) _ ℂ) * bOp (S' p)))
+        - ∑ p : A × A, qform ψ ((aOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) * bOp (S' p))|
+      ≤ Real.sqrt (∑ p : A × A, stateSqNorm ψ (X p.1 * Z p.2 - Z p.2 * X p.1))
+        * Real.sqrt (∑ p : A × A, ‖stateVecB ψ (S' p)‖ ^ 2) := by
+  simp only [← BipartiteModel.qform_tensor, stateSqNorm_eq_tensor, normSq_stateVecB_eq_tensor]
+  exact (BipartiteModel.tensor ψ).abs_link1_le hZ.toIn hS'
+
+/-- **Link 2**: replacing Bob's sandwich by his ordered product costs Bob's commutator. -/
+theorem abs_link2_le (hX : IsPVM X) (hZ : IsPVM Z) (hZ' : IsPVM Z') :
+    |(∑ p : A × A, qform ψ
+          ((aOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) * bOp (sand X' Z' p)))
+        - ∑ p : A × A, qform ψ
+          ((aOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) * bOp (Z' p.2 * X' p.1))|
+      ≤ Real.sqrt (∑ p : A × A, stateSqNorm ψ (X p.1 * Z p.2))
+        * Real.sqrt (∑ p : A × A, ‖stateVecB ψ (X' p.1 * Z' p.2 - Z' p.2 * X' p.1)‖ ^ 2) := by
+  simp only [← BipartiteModel.qform_tensor, stateSqNorm_eq_tensor, normSq_stateVecB_eq_tensor]
+  exact (BipartiteModel.tensor ψ).abs_link2_le hX.toIn hZ.toIn hZ'.toIn
+
+/-- The diagonal `Z`-agreement operator, and the `X`-disagreement operator: both projections,
+because their summands are mutually orthogonal projections. -/
+theorem isProj_diag (hZ : IsPVM Z) (hZ' : IsPVM Z') :
+    ((∑ b : A, (aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b))ᴴ
+        = ∑ b : A, (aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b))
+      ∧ (∑ b : A, (aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b))
+          * (∑ b : A, (aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b))
+        = ∑ b : A, (aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b) :=
+  have h := (BipartiteModel.tensor (fun _ : dA × dB => (0 : ℂ))).isStarProjection_diag hZ.toIn hZ'.toIn
+  ⟨h.isSelfAdjoint.star_eq, h.isIdempotentElem.eq⟩
+
+theorem isProj_disag (hX : IsPVM X) (hX' : IsPVM X') :
+    ((∑ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a))ᴴ
+        = ∑ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a))
+      ∧ (∑ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a))
+          * (∑ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a))
+        = ∑ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a) :=
+  have h := (BipartiteModel.tensor (fun _ : dA × dB => (0 : ℂ))).isStarProjection_disag hX.toIn hX'.toIn
+  ⟨h.isSelfAdjoint.star_eq, h.isIdempotentElem.eq⟩
+
+/-- The `X`-disagreement operator's expectation is the `X`-consistency defect. -/
+theorem qform_disag (hψ : ‖evec ψ‖ = 1) (hX : IsPVM X) (hX' : IsPVM X') :
+    qform ψ (∑ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a))
+      = (∑ a : A, xSqNorm ψ (X a) (X' a)) / 2 := by
+  rw [← BipartiteModel.qform_tensor]
+  simp only [xSqNorm_eq_tensor]
+  exact (BipartiteModel.tensor ψ).qform_disag hψ hX.toIn hX'.toIn
+
+/-- **Link 3**: dropping Alice's `X`-outcome costs her `X`-consistency with Bob, and nothing that
+depends on the number of outcomes: the whole outcome sum is one operator product. -/
+theorem abs_link3_le (hψ : ‖evec ψ‖ = 1) (hX : IsPVM X) (hZ : IsPVM Z)
+    (hX' : IsPVM X') (hZ' : IsPVM Z') :
+    |(∑ p : A × A, qform ψ
+          ((aOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) * bOp (Z' p.2 * X' p.1)))
+        - ∑ p : A × A, qform ψ
+          ((aOp (Z p.2) : Matrix (dA × dB) _ ℂ) * bOp (Z' p.2 * X' p.1))|
+      ≤ Real.sqrt ((∑ a : A, xSqNorm ψ (X a) (X' a)) / 2) := by
+  simp only [← BipartiteModel.qform_tensor, xSqNorm_eq_tensor]
+  exact (BipartiteModel.tensor ψ).abs_link3_le hψ hX.toIn hZ.toIn hX'.toIn hZ'.toIn
+
+/-- **Link 4**: Bob's `X`-outcome sums away, exactly. -/
+theorem link4_eq (hX' : IsPVM X') :
+    ∑ p : A × A, qform ψ ((aOp (Z p.2) : Matrix (dA × dB) _ ℂ) * bOp (Z' p.2 * X' p.1))
+      = ∑ b : A, qform ψ ((aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b)) := by
+  simp only [← BipartiteModel.qform_tensor]
+  exact (BipartiteModel.tensor ψ).link4_eq hX'.toIn
+
+/-- **Link 5**: the `Z`-agreement is one minus half the `Z`-consistency defect. -/
+theorem link5_eq (hψ : ‖evec ψ‖ = 1) (hZ : IsPVM Z) (hZ' : IsPVM Z') :
+    ∑ b : A, qform ψ ((aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b))
+      = 1 - (∑ b : A, xSqNorm ψ (Z b) (Z' b)) / 2 := by
+  simp only [← BipartiteModel.qform_tensor, xSqNorm_eq_tensor]
+  exact (BipartiteModel.tensor ψ).link5_eq hψ hZ.toIn hZ'.toIn
+
+end Chain
+
+/-! ## The chain, assembled -/
+
+section Assemble
+
+variable {A : Type*} [Fintype A] [DecidableEq A]
+  {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+
+theorem norm_evec_eq_one_of_unit {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) : ‖evec ψ‖ = 1 :=
+  norm_evec_eq_one hψ
+
+/-- **The sandwich of two approximately commuting projective measurements is approximately
+self-consistent across the two parties.** The five links of the chain, added up. Every error term
+is `q`-independent: the two commutators enter under a square root through one Cauchy--Schwarz
+each, the `X`-consistency through a third, and the `Z`-consistency linearly. -/
+theorem one_sub_sum_bornProb_sand_le {ι : Type*} [Fintype ι] {w : ι → ℝ}
+    (hw0 : ∀ i, 0 ≤ w i) (hw1 : ∑ i, w i = 1)
+    {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)
+    {X Z : ι → A → Matrix dA dA ℂ} {X' Z' : ι → A → Matrix dB dB ℂ}
+    (hX : ∀ i, IsPVM (X i)) (hZ : ∀ i, IsPVM (Z i))
+    (hX' : ∀ i, IsPVM (X' i)) (hZ' : ∀ i, IsPVM (Z' i))
+    {cA cB α β : ℝ}
+    (hcA : ∑ i, w i * ∑ p : A × A,
+        stateSqNorm ψ (X i p.1 * Z i p.2 - Z i p.2 * X i p.1) ≤ cA)
+    (hcB : ∑ i, w i * ∑ p : A × A,
+        ‖stateVecB ψ (X' i p.1 * Z' i p.2 - Z' i p.2 * X' i p.1)‖ ^ 2 ≤ cB)
+    (hα : ∑ i, w i * ∑ a : A, xSqNorm ψ (X i a) (X' i a) ≤ α)
+    (hβ : ∑ i, w i * ∑ b : A, xSqNorm ψ (Z i b) (Z' i b) ≤ β) :
+    1 - ∑ i, w i * ∑ p : A × A,
+          bornProb ψ (sand (X i) (Z i) p) (sand (X' i) (Z' i) p)
+      ≤ Real.sqrt cA + Real.sqrt cB + Real.sqrt (α / 2) + β / 2 := by
+  simp only [stateSqNorm_eq_tensor] at hcA
+  simp only [normSq_stateVecB_eq_tensor] at hcB
+  simp only [xSqNorm_eq_tensor] at hα hβ
+  simp only [bornProb_eq_tensor]
+  exact (BipartiteModel.tensor ψ).one_sub_sum_bornProb_sand_le hw0 hw1 (norm_evec_eq_one hψ)
+    (fun i => (hX i).toIn) (fun i => (hZ i).toIn) (fun i => (hX' i).toIn) (fun i => (hZ' i).toIn)
+    hcA hcB hα hβ
 
 end Assemble
 
@@ -1091,12 +1321,9 @@ theorem sum_xSqNorm_map_le {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)
     (f : A → C) :
     ∑ v : C, xSqNorm ψ (((Q.map f).mats v).val) (((Q'.map f).mats v).val)
       ≤ ∑ a : A, xSqNorm ψ ((Q.mats a).val) ((Q'.mats a).val) := by
-  have hψ' : ‖evec ψ‖ = 1 := norm_evec_eq_one_of_unit hψ
-  have e1 := one_sub_sum_bornProb_eq (dA := dA) (dB := dB) (A := C) hψ'
-    (isPVM_povm_map Q hQ f) (isPVM_povm_map Q' hQ' f)
-  have e2 := one_sub_sum_bornProb_eq (dA := dA) (dB := dB) (A := A) hψ' hQ hQ'
-  have e3 := sum_bornProb_le_map ψ Q Q' f
-  linarith
+  simp only [xSqNorm_eq_tensor]
+  exact (BipartiteModel.tensor ψ).sum_xSqNorm_map_le (norm_evec_eq_one hψ) Q.toIn Q'.toIn hQ.toIn
+    hQ'.toIn f
 
 end Coarse
 

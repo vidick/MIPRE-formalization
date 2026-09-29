@@ -40,6 +40,50 @@ namespace MIPRE
 open Finset Matrix
 open scoped Kronecker ComplexOrder MatrixOrder
 
+/-! ## In a model
+
+Two facts of this file are not about the ancilla at all, and are proved once for a bipartite model:
+a unitary in front is invisible to the state norm, and a common coarse-graining of both players
+can only increase their agreement. -/
+
+namespace BipartiteModel
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] (M : BipartiteModel 𝒞 𝒜 ℬ)
+
+/-- **A unitary in front is invisible to the state norm.** -/
+theorem stateNorm_mul_of_isometry {W : 𝒜} (h : star W * W = 1) (N : 𝒜) :
+    M.stateNorm (W * N) = M.stateNorm N := by
+  unfold stateNorm
+  rw [map_mul]
+  exact M.snorm_mul_of_isometry (by rw [← map_star, ← map_mul, h, map_one]) _
+
+theorem bornProb_sum_sum {ι : Type*} (s t : Finset ι) (a : ι → 𝒜) (b : ι → ℬ) :
+    M.bornProb (∑ i ∈ s, a i) (∑ j ∈ t, b j) = ∑ i ∈ s, ∑ j ∈ t, M.bornProb (a i) (b j) := by
+  rw [M.bornProb_sum_left]
+  exact Finset.sum_congr rfl fun i _ => M.bornProb_sum_right _ _ _
+
+/-- **Coarse-graining both players the same way can only increase agreement**: the terms the
+coarse-graining adds are Born probabilities of positive elements. -/
+theorem sum_bornProb_le_map [PartialOrder 𝒜] [StarOrderedRing 𝒜] [PartialOrder ℬ]
+    [StarOrderedRing ℬ] {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
+    (P : POVMIn ι 𝒜) (Q : POVMIn ι ℬ) (f : ι → κ) :
+    ∑ i, M.bornProb (P.op i) (Q.op i) ≤ ∑ k, M.bornProb ((P.map f).op k) ((Q.map f).op k) := by
+  have hfib : ∀ k : κ, M.bornProb ((P.map f).op k) ((Q.map f).op k)
+      = ∑ i ∈ univ.filter fun i => f i = k, ∑ j ∈ univ.filter fun j => f j = k,
+          M.bornProb (P.op i) (Q.op j) := fun k => by
+    rw [POVMIn.map_op, POVMIn.map_op, M.bornProb_sum_sum]
+  rw [Finset.sum_congr rfl fun k (_ : k ∈ univ) => hfib k]
+  have hdiag : ∀ k : κ, ∑ i ∈ univ.filter fun i => f i = k, M.bornProb (P.op i) (Q.op i)
+      ≤ ∑ i ∈ univ.filter fun i => f i = k, ∑ j ∈ univ.filter fun j => f j = k,
+          M.bornProb (P.op i) (Q.op j) := fun k =>
+    Finset.sum_le_sum fun i hi => Finset.single_le_sum
+      (fun j _ => M.bornProb_nonneg (P.op_nonneg i) (Q.op_nonneg j)) hi
+  refine le_trans (le_of_eq ?_) (Finset.sum_le_sum fun k (_ : k ∈ univ) => hdiag k)
+  exact (Finset.sum_fiberwise (univ : Finset ι) f fun i => M.bornProb (P.op i) (Q.op i)).symm
+
+end BipartiteModel
+
 variable {dA dB anc anc' : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
   [Fintype anc] [DecidableEq anc] [Fintype anc'] [DecidableEq anc']
 
@@ -129,12 +173,11 @@ theorem norm_stateVec_kron_unitary (v : (dA × anc) × (dB × anc') → ℂ) (D 
     ‖stateVec v (D ⊗ₖ U)‖ = ‖stateVec v (D ⊗ₖ (1 : Matrix anc anc ℂ))‖ := by
   have hfac : (D ⊗ₖ U) = ((1 : Matrix dA dA ℂ) ⊗ₖ U) * (D ⊗ₖ (1 : Matrix anc anc ℂ)) := by
     rw [← Matrix.mul_kronecker_mul, Matrix.one_mul, Matrix.mul_one]
-  have hiso : (((1 : Matrix dA dA ℂ) ⊗ₖ U))ᴴ * ((1 : Matrix dA dA ℂ) ⊗ₖ U) = 1 := by
-    rw [Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one, ← Matrix.mul_kronecker_mul,
-      Matrix.one_mul, hU, Matrix.one_kronecker_one]
-  rw [norm_stateVec_eq_snorm, norm_stateVec_eq_snorm, snorm, snorm, hfac, aOp_mul,
-    ← Matrix.mulVec_mulVec]
-  exact norm_evec_mulVec_of_isometry (isometry_aOp hiso) _
+  have hiso : star ((1 : Matrix dA dA ℂ) ⊗ₖ U) * ((1 : Matrix dA dA ℂ) ⊗ₖ U) = 1 := by
+    rw [Matrix.star_eq_conjTranspose, Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one,
+      ← Matrix.mul_kronecker_mul, Matrix.one_mul, hU, Matrix.one_kronecker_one]
+  rw [hfac]
+  exact (BipartiteModel.tensor v).stateNorm_mul_of_isometry hiso _
 
 /-- **An inert ancilla changes nothing**: a bound proved before the expansion survives it. -/
 theorem norm_stateVec_expVec_kron_one (ψ : dA × dB → ℂ) {e : anc × anc' → ℂ}
@@ -209,40 +252,16 @@ theorem bornProb_sum_sum {ι : Type*} (ψ : dA × dB → ℂ) (s t : Finset ι)
     (A : ι → Matrix dA dA ℂ) (B : ι → Matrix dB dB ℂ) :
     bornProb ψ (∑ i ∈ s, A i) (∑ j ∈ t, B j)
       = ∑ i ∈ s, ∑ j ∈ t, bornProb ψ (A i) (B j) := by
-  classical
-  simp only [bornProb]
-  rw [sum_kronecker_left, sum_quadForm ψ _ _, Complex.re_sum]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  rw [kronecker_sum_right, sum_quadForm ψ _ _, Complex.re_sum]
+  simp only [bornProb_eq_tensor]
+  exact (BipartiteModel.tensor ψ).bornProb_sum_sum s t A B
 
 /-- **Coarse-graining both players the same way can only increase agreement.** -/
 theorem sum_bornProb_le_map {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ]
     [DecidableEq κ] (ψ : dA × dB → ℂ) (P : POVM ι dA) (Q : POVM ι dB) (f : ι → κ) :
     ∑ i, bornProb ψ ((P.mats i).val) ((Q.mats i).val)
       ≤ ∑ k, bornProb ψ (((P.map f).mats k).val) (((Q.map f).mats k).val) := by
-  classical
-  have hfib : ∀ k : κ, bornProb ψ (((P.map f).mats k).val) (((Q.map f).mats k).val)
-      = ∑ i ∈ univ.filter fun i => f i = k, ∑ j ∈ univ.filter fun j => f j = k,
-          bornProb ψ ((P.mats i).val) ((Q.mats j).val) := by
-    intro k
-    rw [show (((P.map f).mats k).val)
-        = ∑ i ∈ univ.filter fun i => f i = k, ((P.mats i).val) from
-      AddSubmonoidClass.coe_finsetSum _ _,
-      show (((Q.map f).mats k).val)
-        = ∑ j ∈ univ.filter fun j => f j = k, ((Q.mats j).val) from
-      AddSubmonoidClass.coe_finsetSum _ _, bornProb_sum_sum]
-  rw [Finset.sum_congr rfl fun k (_ : k ∈ univ) => hfib k]
-  have hdiag : ∀ k : κ, ∑ i ∈ univ.filter fun i => f i = k,
-        bornProb ψ ((P.mats i).val) ((Q.mats i).val)
-      ≤ ∑ i ∈ univ.filter fun i => f i = k, ∑ j ∈ univ.filter fun j => f j = k,
-          bornProb ψ ((P.mats i).val) ((Q.mats j).val) := by
-    intro k
-    refine Finset.sum_le_sum fun i hi => ?_
-    exact Finset.single_le_sum
-      (fun j _ => bornProb_nonneg ψ (P.posSemidef i) (Q.posSemidef j)) hi
-  refine le_trans (le_of_eq ?_) (Finset.sum_le_sum fun k (_ : k ∈ univ) => hdiag k)
-  exact (Finset.sum_fiberwise (univ : Finset ι) f
-    (fun i => bornProb ψ ((P.mats i).val) ((Q.mats i).val))).symm
+  simp only [bornProb_eq_tensor]
+  exact (BipartiteModel.tensor ψ).sum_bornProb_le_map P.toIn Q.toIn f
 
 /-! ## The product measurement -/
 
