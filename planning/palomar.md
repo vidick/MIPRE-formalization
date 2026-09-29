@@ -183,7 +183,11 @@ Each phase is one pull request unless noted; the order is forced by the dependen
    the `MIPRE` package, hence the `@MIPRE/` prefix, unlike the template's own
    `PalomarTemplate:docs`) writes the API documentation of the submission under
    `docbuild/.lake/build/doc/`; `@MIPRE/MIPRE:docs` does the whole library, which the
-   blueprint workflow already generates from the root project. Open before submitting: the
+   blueprint workflow already generates from the root project. Either target first
+   generates the doc data of the whole Mathlib closure (22,341 jobs): a run on the cloud
+   VM had done 14,006 of them after 65 minutes when the container restarted, so budget
+   about two hours, or run it where the blueprint workflow's doc-gen cache is. Open before
+   submitting: the
    `LiehrTsirelson/Upstream` tree carries no license and is not in the Solution's closure,
    so either its terms are settled or it leaves the submitted snapshot; the metadata's
    review status is "self-assessed"; and `formalization.yaml` names the models used, which
