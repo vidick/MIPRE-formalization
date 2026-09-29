@@ -36,16 +36,18 @@ rare exactly when the outcome map separates the family, which for line polynomia
 Schwartz--Zippel.
 
 The argument is proved once, for a bipartite model (`MIPRE/Foundations/BipartiteModel.lean`) with
-the first player's joint measurement in `𝒜` and the second player's two families in `ℬ`: the
-pasting lemma is `BipartiteModel.one_sub_sum_bornProb_pasteJ_le`, and NW19's Fact 4.31 is
-`StateModel.qform_sum_ge_of_close`. The coarse-graining `fibSum` and the pasted family `pasteJ` are
-defined in any ring, and the sandwich identities they rest on are those of projective measurements
-in a `⋆`-ring (`IsPVMIn.conj_eq_gram`, `IsPVMIn.sum_pasteJ`). The matrix statements are the
-instances in the tensor-product model `BipartiteModel.tensor ψ`. Where the square of a positive
-contraction is bounded (`P² ≤ P` for `0 ≤ P ≤ 1`), the hypothesis is on the operators represented
-on the Hilbert space, where the functional calculus proves it, and the matrix instances discharge
-it from matrix positivity. Only the transport to a twice-extended state (`xSqNorm_extVec2_aOp`) is
-about matrices alone.
+the first player's joint measurement in `𝒜` and the second player's two families in `ℬ`: the pasting
+lemma is `BipartiteModel.one_sub_sum_bornProb_pasteJ_le`, and NW19's Fact 4.31 is
+`StateModel.qform_sum_ge_of_close`. The coarse-graining `fibSumIn` (of which the matrix `fibSum` is
+the instance) and the pasted family `pasteJ` are defined in any ring, and the sandwich identities
+they rest on are those of projective measurements in a `⋆`-ring (`IsPVMIn.conj_eq_gram`,
+`IsPVMIn.sum_pasteJ`). The matrix statements are the instances in the tensor-product model
+`BipartiteModel.tensor ψ`. Where the square of a positive contraction is bounded (`P² ≤ P` for
+`0 ≤ P ≤ 1`), the hypothesis is on the operators represented on the Hilbert space, where the
+functional calculus proves it, and the matrix instances discharge it from matrix positivity; the
+matrix inequality `sum_sq_le_one_of_sum_eq_one` is itself the instance of
+`sum_mul_self_le_one_of_sum_le_one`, stated in any ordered algebra with a functional calculus. Only
+the transport to a twice-extended state (`xSqNorm_extVec2_aOp`) is about matrices alone.
 -/
 
 noncomputable section
@@ -61,22 +63,33 @@ set_option linter.unusedSectionVars false
 
 section Setup
 
-/-- The fibre sum of a family along an outcome map --- its coarse-graining. It is defined in any
-additive monoid, so that the family may be matrices or elements of a player's algebra. -/
-def fibSum {α β N : Type*} [Fintype α] [DecidableEq β] [AddCommMonoid N] (G : α → N) (e : α → β)
-    (b : β) : N :=
+/-- The fibre sum of a family along an outcome map --- its coarse-graining --- in any additive
+monoid, so that the family may be matrices or elements of a player's algebra. -/
+def fibSumIn {α β M : Type*} [Fintype α] [DecidableEq β] [AddCommMonoid M] (G : α → M)
+    (e : α → β) (b : β) : M :=
   ∑ g ∈ univ.filter fun g => e g = b, G g
 
 /-- The coarse-graining of a projective measurement in a `⋆`-ring is projective. -/
-theorem isPVMIn_fibSum {S α β : Type*} [Ring S] [StarRing S] [Fintype α] [Fintype β]
-    [DecidableEq β] {G : α → S} (h : IsPVMIn G) (e : α → β) : IsPVMIn (fibSum G e) :=
+theorem isPVMIn_fibSumIn {S α β : Type*} [Ring S] [StarRing S] [Fintype α] [Fintype β]
+    [DecidableEq β] {G : α → S} (h : IsPVMIn G) (e : α → β) : IsPVMIn (fibSumIn G e) :=
   h.coarse e
+
+/-- The fibre sum of a family of operators along an outcome map --- its coarse-graining. It is
+`fibSumIn` in a matrix algebra (`fibSum_eq_fibSumIn`); the square matrix type stays in the
+signature, because consumers let it fix the dimension. -/
+def fibSum {α β N : Type*} [Fintype α] [DecidableEq β] (G : α → Matrix N N ℂ) (e : α → β)
+    (b : β) : Matrix N N ℂ :=
+  ∑ g ∈ univ.filter fun g => e g = b, G g
+
+theorem fibSum_eq_fibSumIn {α β N : Type*} [Fintype α] [DecidableEq β] (G : α → Matrix N N ℂ)
+    (e : α → β) (b : β) : fibSum G e b = fibSumIn G e b :=
+  rfl
 
 variable {N : Type*} [Fintype N] [DecidableEq N]
   {α β : Type*} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
 
 theorem isPVM_fibSum {G : α → Matrix N N ℂ} (h : IsPVM G) (e : α → β) : IsPVM (fibSum G e) :=
-  (isPVMIn_fibSum h.toIn e).toIsPVM
+  (isPVMIn_fibSumIn h.toIn e).toIsPVM
 
 /-- The question distribution of the pasting lemma: a weight on the part both measurements see,
 times the uniform distribution on the probe that separates the second family's outcomes. -/
@@ -249,30 +262,34 @@ theorem pasteJ_nonneg [PartialOrder S] [StarOrderedRing S] (hR : IsPVMIn R) (hG 
 
 end IsPVMIn
 
-/-! ## Positive contractions on a Hilbert space -/
+/-! ## Positive contractions -/
 
-namespace Op
-
-variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
-
-/-- **A family of operators between `0` and `1` summing to at most the identity has its squares
-summing to at most the identity**: `P² ≤ P` for each (`Op.mul_self_le_self`). -/
-theorem sum_mul_self_le_one {C : Type*} [Fintype C] {P : C → H →L[ℂ] H} (hP0 : ∀ c, 0 ≤ P c)
+/-- **A family of positive elements summing to at most one has its squares summing to at most
+one**, in any ordered algebra with a continuous functional calculus --- the matrices and the
+operators on a Hilbert space alike: `P² ≤ P` for each, because `P (1 - P)` is a product of
+commuting positive elements. -/
+theorem sum_mul_self_le_one_of_sum_le_one {A : Type*} [Ring A] [PartialOrder A] [StarRing A]
+    [StarOrderedRing A] [TopologicalSpace A] [Module ℝ A] [IsScalarTower ℝ A A]
+    [SMulCommClass ℝ A A] [NonUnitalContinuousFunctionalCalculus ℝ A IsSelfAdjoint]
+    [NonnegSpectrumClass ℝ A] {C : Type*} [Fintype C] {P : C → A} (hP0 : ∀ c, 0 ≤ P c)
     (hPsum : ∑ c, P c ≤ 1) : ∑ c, P c * P c ≤ 1 := by
   classical
-  have hP1 : ∀ c, P c ≤ 1 := fun c =>
-    (Finset.single_le_sum (fun c' _ => hP0 c') (mem_univ c)).trans hPsum
-  exact (Finset.sum_le_sum fun c _ => mul_self_le_self (hP0 c) (hP1 c)).trans hPsum
-
-end Op
+  have hsq : ∀ c, P c * P c ≤ P c := fun c => by
+    have hP1 : P c ≤ 1 := (Finset.single_le_sum (fun c' _ => hP0 c') (mem_univ c)).trans hPsum
+    have hprod : 0 ≤ P c * (1 - P c) :=
+      ((Commute.one_right (P c)).sub_right (Commute.refl (P c))).mul_nonneg (hP0 c)
+        (sub_nonneg.2 hP1)
+    rw [mul_sub, mul_one] at hprod
+    exact sub_nonneg.1 hprod
+  exact (Finset.sum_le_sum fun c _ => hsq c).trans hPsum
 
 /-! ## In a model
 
 The estimates are proved once. Those about a single represented algebra --- NW19's Fact 4.31, the
 two mass bounds, the commutator expansion --- are stated for a state model
 (`MIPRE/Foundations/StateModel.lean`); the pasting argument itself for a bipartite model, with the
-first player's joint measurement `A` and Alice's copy `Ga` in `𝒜` and the second player's families
-`R`, `G` in `ℬ`. The matrix statements further down are the instances in the tensor-product
+first player's joint measurement `A` and copy `Ga` of `G` in `𝒜`, and the second player's families
+`R` and `G` in `ℬ`. The matrix statements further down are the instances in the tensor-product
 model. -/
 
 namespace StateModel
@@ -464,8 +481,6 @@ end StateModel
 
 namespace BipartiteModel
 
-open scoped InnerProductSpace
-
 variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
   [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] (M : BipartiteModel 𝒞 𝒜 ℬ)
 
@@ -509,10 +524,10 @@ variable {α β : Type*} [Fintype α] [Fintype β] [DecidableEq β]
 /-- Coarse-graining adds the off-diagonal Born probabilities, which are nonnegative. -/
 theorem sum_bornProb_le_fibSum {X : α → 𝒜} {X' : α → ℬ} (hX : IsPVMIn X) (hX' : IsPVMIn X')
     (e : α → β) :
-    ∑ a, M.bornProb (X a) (X' a) ≤ ∑ b, M.bornProb (fibSum X e b) (fibSum X' e b) := by
-  have hfib : ∀ b : β, M.bornProb (fibSum X e b) (fibSum X' e b)
+    ∑ a, M.bornProb (X a) (X' a) ≤ ∑ b, M.bornProb (fibSumIn X e b) (fibSumIn X' e b) := by
+  have hfib : ∀ b : β, M.bornProb (fibSumIn X e b) (fibSumIn X' e b)
       = ∑ a ∈ univ.filter fun a => e a = b, ∑ a' ∈ univ.filter fun a' => e a' = b,
-          M.bornProb (X a) (X' a') := fun b => by rw [fibSum, fibSum, M.bornProb_sum_sum]
+          M.bornProb (X a) (X' a') := fun b => by rw [fibSumIn, fibSumIn, M.bornProb_sum_sum]
   rw [Finset.sum_congr rfl fun b (_ : b ∈ univ) => hfib b]
   have hdiag : ∀ b : β, ∑ a ∈ univ.filter fun a => e a = b, M.bornProb (X a) (X' a)
       ≤ ∑ a ∈ univ.filter fun a => e a = b, ∑ a' ∈ univ.filter fun a' => e a' = b,
@@ -522,12 +537,12 @@ theorem sum_bornProb_le_fibSum {X : α → 𝒜} {X' : α → ℬ} (hX : IsPVMIn
   refine le_trans (le_of_eq ?_) (Finset.sum_le_sum fun b (_ : b ∈ univ) => hdiag b)
   exact (Finset.sum_fiberwise (univ : Finset α) e fun a => M.bornProb (X a) (X' a)).symm
 
-/-- **Coarse-graining two projective families the same way costs nothing**, in the `fibSum` form
+/-- **Coarse-graining two projective families the same way costs nothing**, in the `fibSumIn` form
 that the pasting lemma needs. -/
 theorem sum_xSqNorm_fibSum_le (hψ : ‖M.ψ‖ = 1) {X : α → 𝒜} {X' : α → ℬ} (hX : IsPVMIn X)
     (hX' : IsPVMIn X') (e : α → β) :
-    ∑ b, M.xSqNorm (fibSum X e b) (fibSum X' e b) ≤ ∑ a, M.xSqNorm (X a) (X' a) := by
-  have e1 := M.one_sub_sum_bornProb_eq hψ (isPVMIn_fibSum hX e) (isPVMIn_fibSum hX' e)
+    ∑ b, M.xSqNorm (fibSumIn X e b) (fibSumIn X' e b) ≤ ∑ a, M.xSqNorm (X a) (X' a) := by
+  have e1 := M.one_sub_sum_bornProb_eq hψ (isPVMIn_fibSumIn hX e) (isPVMIn_fibSumIn hX' e)
   have e2 := M.one_sub_sum_bornProb_eq hψ hX hX'
   have e3 := M.sum_bornProb_le_fibSum hX hX' e
   linarith
@@ -702,7 +717,7 @@ what is left is the `R`-consistency, whose square root is the only one in the wh
 is not a commutator. -/
 theorem sum_bornProb_ord_ge (hψ : ‖M.ψ‖ = 1) {A : R1 × R2 → 𝒜} (hA : IsPVMIn A)
     (hR : IsPVMIn R) (hG : IsPVMIn G) (e : K → R2) :
-    1 - (∑ b : R2, M.xSqNorm (∑ a : R1, A (a, b)) (fibSum G e b)) / 2
+    1 - (∑ b : R2, M.xSqNorm (∑ a : R1, A (a, b)) (fibSumIn G e b)) / 2
         - Real.sqrt ((∑ a : R1, M.xSqNorm (∑ b : R2, A (a, b)) (R a)) / 2)
       ≤ ∑ a : R1, ∑ g : K, M.bornProb (A (a, e g)) (G g * R a) := by
   -- the split `G_g R_a = G_g - G_g (1 - R_a)`
@@ -713,44 +728,44 @@ theorem sum_bornProb_ord_ge (hψ : ‖M.ψ‖ = 1) {A : R1 × R2 → 𝒜} (hA :
       rw [mul_sub, mul_one]; abel]
   -- the first term is the `G`-consistency of the first player's second marginal
   have hterm1 : ∑ a : R1, ∑ g : K, M.bornProb (A (a, e g)) (G g)
-      = 1 - (∑ b : R2, M.xSqNorm (∑ a : R1, A (a, b)) (fibSum G e b)) / 2 := by
+      = 1 - (∑ b : R2, M.xSqNorm (∑ a : R1, A (a, b)) (fibSumIn G e b)) / 2 := by
     rw [Finset.sum_comm,
       Finset.sum_congr rfl fun g (_ : g ∈ univ) =>
         (M.bornProb_sum_left univ (fun a => A (a, e g)) (G g)).symm,
       sum_fiber e fun b g => M.bornProb (∑ a : R1, A (a, b)) (G g),
       Finset.sum_congr rfl fun b (_ : b ∈ univ) => show
         (∑ g ∈ univ.filter fun g => e g = b, M.bornProb (∑ a : R1, A (a, b)) (G g))
-          = M.bornProb (∑ a : R1, A (a, b)) (fibSum G e b) from
+          = M.bornProb (∑ a : R1, A (a, b)) (fibSumIn G e b) from
         (M.bornProb_sum_right (∑ a : R1, A (a, b)) (univ.filter fun g => e g = b) G).symm]
-    have h := M.one_sub_sum_bornProb_eq hψ hA.marg_right (isPVMIn_fibSum hG e)
+    have h := M.one_sub_sum_bornProb_eq hψ hA.marg_right (isPVMIn_fibSumIn hG e)
     linarith
   -- the second term is bounded by the square root of the `R`-consistency
   have hbar : ∀ a : R1, IsStarProjection (1 - R a) := fun a => (hR.isStarProjection a).one_sub
   -- regrouping the second term along the fibres of `e`
   have hterm2eq : ∀ a : R1, ∑ g : K, M.bornProb (A (a, e g)) (G g * (1 - R a))
-      = ∑ b : R2, M.bornProb (A (a, b)) (fibSum G e b * (1 - R a)) := by
+      = ∑ b : R2, M.bornProb (A (a, b)) (fibSumIn G e b * (1 - R a)) := by
     intro a
     rw [sum_fiber e fun b g => M.bornProb (A (a, b)) (G g * (1 - R a))]
     refine Finset.sum_congr rfl fun b _ => ?_
-    rw [fibSum, Finset.sum_mul, M.bornProb_sum_right]
+    rw [fibSumIn, Finset.sum_mul, M.bornProb_sum_right]
   have hCS : ∀ (a : R1) (b : R2),
-      |M.bornProb (A (a, b)) (fibSum G e b * (1 - R a))|
-        ≤ M.snorm (M.πA (A (a, b)) * M.πB (fibSum G e b))
+      |M.bornProb (A (a, b)) (fibSumIn G e b * (1 - R a))|
+        ≤ M.snorm (M.πA (A (a, b)) * M.πB (fibSumIn G e b))
           * M.snorm (M.πA (A (a, b)) * M.πB (1 - R a)) := by
     intro a b
-    have hM : star (M.πA (A (a, b)) * M.πB (fibSum G e b)) * (M.πA (A (a, b)) * M.πB (1 - R a))
-        = M.πA (A (a, b)) * M.πB (fibSum G e b * (1 - R a)) := by
-      rw [M.star_πA_mul_πB, hA.star_eq, (isPVMIn_fibSum hG e).star_eq, M.πA_mul_πB_mul,
+    have hM : star (M.πA (A (a, b)) * M.πB (fibSumIn G e b)) * (M.πA (A (a, b)) * M.πB (1 - R a))
+        = M.πA (A (a, b)) * M.πB (fibSumIn G e b * (1 - R a)) := by
+      rw [M.star_πA_mul_πB, hA.star_eq, (isPVMIn_fibSumIn hG e).star_eq, M.πA_mul_πB_mul,
         hA.idem]
-    have h := M.abs_qform_star_mul_le (M.πA (A (a, b)) * M.πB (fibSum G e b))
+    have h := M.abs_qform_star_mul_le (M.πA (A (a, b)) * M.πB (fibSumIn G e b))
       (M.πA (A (a, b)) * M.πB (1 - R a))
     rw [hM] at h
     exact h
-  have hmass1 : ∑ a : R1, ∑ b : R2, M.snorm (M.πA (A (a, b)) * M.πB (fibSum G e b)) ^ 2 ≤ 1 :=
-    M.sum_snorm_sq_prod_le_one hψ (fun a b => A (a, b)) (fibSum G e)
+  have hmass1 : ∑ a : R1, ∑ b : R2, M.snorm (M.πA (A (a, b)) * M.πB (fibSumIn G e b)) ^ 2 ≤ 1 :=
+    M.sum_snorm_sq_prod_le_one hψ (fun a b => A (a, b)) (fibSumIn G e)
       (fun a b => hA.star_eq _) (fun a b => hA.idem _)
       (fun a a' b hne => hA.orthogonal fun h => hne (Prod.ext_iff.mp h).1)
-      (isPVMIn_fibSum hG e)
+      (isPVMIn_fibSumIn hG e)
   have hmass2 : ∑ a : R1, ∑ b : R2, M.snorm (M.πA (A (a, b)) * M.πB (1 - R a)) ^ 2
       = (∑ a : R1, M.xSqNorm (∑ b : R2, A (a, b)) (R a)) / 2 := by
     have hone : ∑ a : R1, M.bornProb (∑ b : R2, A (a, b)) 1 = 1 := by
@@ -777,10 +792,10 @@ theorem sum_bornProb_ord_ge (hψ : ‖M.ψ‖ = 1) {A : R1 × R2 → 𝒜} (hA :
       ≤ Real.sqrt ((∑ a : R1, M.xSqNorm (∑ b : R2, A (a, b)) (R a)) / 2) := by
     rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) => hterm2eq a]
     refine le_trans (le_abs_self _) (le_trans (abs_sum_sum_le_sqrt _
-      (fun a b => M.snorm (M.πA (A (a, b)) * M.πB (fibSum G e b)))
+      (fun a b => M.snorm (M.πA (A (a, b)) * M.πB (fibSumIn G e b)))
       (fun a b => M.snorm (M.πA (A (a, b)) * M.πB (1 - R a))) fun a b => hCS a b) ?_)
     rw [hmass2]
-    calc Real.sqrt (∑ a : R1, ∑ b : R2, M.snorm (M.πA (A (a, b)) * M.πB (fibSum G e b)) ^ 2)
+    calc Real.sqrt (∑ a : R1, ∑ b : R2, M.snorm (M.πA (A (a, b)) * M.πB (fibSumIn G e b)) ^ 2)
           * Real.sqrt ((∑ a : R1, M.xSqNorm (∑ b : R2, A (a, b)) (R a)) / 2)
         ≤ Real.sqrt 1 * Real.sqrt ((∑ a : R1, M.xSqNorm (∑ b : R2, A (a, b)) (R a)) / 2) :=
           mul_le_mul_of_nonneg_right (Real.sqrt_le_sqrt hmass1) (Real.sqrt_nonneg _)
@@ -860,19 +875,19 @@ theorem collisionTerm_nonneg {Ga : K → 𝒜} (hR : IsPVMIn R) (hG : IsPVMIn G)
 probabilities; coarse-graining pairs each `G`-outcome with every other one the map identifies
 with it. -/
 theorem strife_sub_cloud_eq {Ga : K → 𝒜} (e : K → R2) :
-    (∑ a : R1, ∑ b : R2, M.bornProb (fibSum Ga e b) (R a * fibSum G e b * R a))
+    (∑ a : R1, ∑ b : R2, M.bornProb (fibSumIn Ga e b) (R a * fibSumIn G e b * R a))
         - ∑ a : R1, ∑ g : K, M.bornProb (Ga g) (R a * G g * R a)
       = M.collisionTerm R G Ga e := by
-  have key : ∀ a : R1, ∑ b : R2, M.bornProb (fibSum Ga e b) (R a * fibSum G e b * R a)
+  have key : ∀ a : R1, ∑ b : R2, M.bornProb (fibSumIn Ga e b) (R a * fibSumIn G e b * R a)
       = ∑ g : K, ∑ g' ∈ univ.filter fun g' => e g' = e g,
           M.bornProb (Ga g') (R a * G g * R a) := by
     intro a
     rw [sum_fiber e fun b g => ∑ g' ∈ univ.filter fun g' => e g' = b,
       M.bornProb (Ga g') (R a * G g * R a)]
     refine Finset.sum_congr rfl fun b _ => ?_
-    rw [show R a * fibSum G e b * R a
+    rw [show R a * fibSumIn G e b * R a
         = ∑ g ∈ univ.filter fun g => e g = b, R a * G g * R a from by
-      rw [fibSum, Finset.mul_sum, Finset.sum_mul], fibSum, M.bornProb_sum_sum]
+      rw [fibSumIn, Finset.mul_sum, Finset.sum_mul], fibSumIn, M.bornProb_sum_sum]
     exact Finset.sum_comm
   have hsplit : ∀ (a : R1) (g : K),
       (∑ g' ∈ univ.filter fun g' => e g' = e g, M.bornProb (Ga g') (R a * G g * R a))
@@ -900,18 +915,18 @@ and the cloud--strife comparison is the only place the first player's copy of `G
 theorem sum_snorm_sq_comm_fine_le (hψ : ‖M.ψ‖ = 1) {A : R1 × R2 → 𝒜} {Ga : K → 𝒜}
     (hA : IsPVMIn A) (hR : IsPVMIn R) (hG : IsPVMIn G) (hGa : IsPVMIn Ga) (e : K → R2)
     {δ₁ δ₂ : ℝ} (h1 : ∑ a : R1, M.xSqNorm (∑ b : R2, A (a, b)) (R a) ≤ δ₁)
-    (h2 : ∑ b : R2, M.xSqNorm (∑ a : R1, A (a, b)) (fibSum G e b) ≤ δ₂) :
+    (h2 : ∑ b : R2, M.xSqNorm (∑ a : R1, A (a, b)) (fibSumIn G e b) ≤ δ₂) :
     (∑ a : R1, ∑ g : K, M.swap.stateSqNorm (R a * G g - G g * R a))
       ≤ 16 * (δ₁ + δ₂) + 4 * Real.sqrt (∑ g : K, M.xSqNorm (Ga g) (G g))
         + 2 * M.collisionTerm R G Ga e := by
   have hfine := M.sum_snorm_sq_comm_eq hψ hR hG
-  have hcoarse := M.sum_snorm_sq_comm_eq hψ hR (isPVMIn_fibSum hG e)
-  have hcc := M.sum_snorm_sq_comm_coarse_le hA hR (isPVMIn_fibSum hG e) h1 h2
+  have hcoarse := M.sum_snorm_sq_comm_eq hψ hR (isPVMIn_fibSumIn hG e)
+  have hcc := M.sum_snorm_sq_comm_coarse_le hA hR (isPVMIn_fibSumIn hG e) h1 h2
   have hc1 := abs_le.mp (M.abs_sigma_sub_cloud_le hψ (Ga := Ga) hR hG)
-  have hc2 := abs_le.mp (M.abs_sigma_sub_cloud_le hψ (K := R2) (G := fibSum G e)
-    (Ga := fibSum Ga e) hR (isPVMIn_fibSum hG e))
+  have hc2 := abs_le.mp (M.abs_sigma_sub_cloud_le hψ (K := R2) (G := fibSumIn G e)
+    (Ga := fibSumIn Ga e) hR (isPVMIn_fibSumIn hG e))
   have hcol := M.strife_sub_cloud_eq (R := R) (G := G) (Ga := Ga) e
-  have hmono : Real.sqrt (∑ b : R2, M.xSqNorm (fibSum Ga e b) (fibSum G e b))
+  have hmono : Real.sqrt (∑ b : R2, M.xSqNorm (fibSumIn Ga e b) (fibSumIn G e b))
       ≤ Real.sqrt (∑ g : K, M.xSqNorm (Ga g) (G g)) :=
     Real.sqrt_le_sqrt (M.sum_xSqNorm_fibSum_le hψ hGa hG e)
   linarith [hc1.1, hc1.2, hc2.1, hc2.2]
@@ -921,7 +936,7 @@ theorem sum_snorm_sq_comm_fine_le (hψ : ‖M.ψ‖ = 1) {A : R1 × R2 → 𝒜}
 theorem one_sub_sum_bornProb_pasteJ_le' (hψ : ‖M.ψ‖ = 1) {A : R1 × R2 → 𝒜} (hA : IsPVMIn A)
     (hR : IsPVMIn R) (hG : IsPVMIn G) (e : K → R2) :
     1 - (∑ p : R1 × R2, M.bornProb (A p) (pasteJ R G e p))
-      ≤ (∑ b : R2, M.xSqNorm (∑ a : R1, A (a, b)) (fibSum G e b)) / 2
+      ≤ (∑ b : R2, M.xSqNorm (∑ a : R1, A (a, b)) (fibSumIn G e b)) / 2
         + Real.sqrt ((∑ a : R1, M.xSqNorm (∑ b : R2, A (a, b)) (R a)) / 2)
         + Real.sqrt (∑ a : R1, ∑ g : K, M.swap.stateSqNorm (R a * G g - G g * R a)) := by
   have hD : ∑ p : R1 × R2, M.bornProb (A p) (pasteJ R G e p)
@@ -1062,7 +1077,7 @@ theorem one_sub_sum_bornProb_pasteJ_le (hψ : ‖M.ψ‖ = 1) {w : ι → ℝ} (
     (hG : ∀ i, IsPVMIn (G i)) (hGa : ∀ i, IsPVMIn (Ga i)) {δ η ε : ℝ}
     (hP1 : ∑ i, w i * ∑ a : R1, M.xSqNorm (∑ b : R2, A i (a, b)) (R i a) ≤ δ)
     (hP2 : ∑ i, w i * ∑ b : R2,
-      M.xSqNorm (∑ a : R1, A i (a, b)) (fibSum (G i) (e i) b) ≤ δ)
+      M.xSqNorm (∑ a : R1, A i (a, b)) (fibSumIn (G i) (e i) b) ≤ δ)
     (hP4 : ∑ i, w i * ∑ g : K, M.xSqNorm (Ga i g) (G i g) ≤ η)
     (hcoll : ∑ i, w i * M.collisionTerm (R i) (G i) (Ga i) (e i) ≤ ε) :
     1 - ∑ i, w i * ∑ p : R1 × R2, M.bornProb (A i p) (pasteJ (R i) (G i) (e i) p)
@@ -1080,7 +1095,7 @@ theorem one_sub_sum_bornProb_pasteJ_le (hψ : ‖M.ψ‖ = 1) {w : ι → ℝ} (
       ≤ 32 * δ + 4 * Real.sqrt η + 2 * ε := by
     have hper : ∀ i, (∑ a : R1, ∑ g : K, M.swap.stateSqNorm (R i a * G i g - G i g * R i a))
         ≤ 16 * ((∑ a : R1, M.xSqNorm (∑ b : R2, A i (a, b)) (R i a))
-            + ∑ b : R2, M.xSqNorm (∑ a : R1, A i (a, b)) (fibSum (G i) (e i) b))
+            + ∑ b : R2, M.xSqNorm (∑ a : R1, A i (a, b)) (fibSumIn (G i) (e i) b))
           + 4 * Real.sqrt (∑ g : K, M.xSqNorm (Ga i g) (G i g))
           + 2 * M.collisionTerm (R i) (G i) (Ga i) (e i) := fun i =>
       M.sum_snorm_sq_comm_fine_le hψ (hA i) (hR i) (hG i) (hGa i) (e i) le_rfl le_rfl
@@ -1090,13 +1105,13 @@ theorem one_sub_sum_bornProb_pasteJ_le (hψ : ‖M.ψ‖ = 1) {w : ι → ℝ} (
         hEnn) (Real.sqrt_le_sqrt hP4)
     calc ∑ i, w i * (∑ a : R1, ∑ g : K, M.swap.stateSqNorm (R i a * G i g - G i g * R i a))
         ≤ ∑ i, w i * (16 * ((∑ a : R1, M.xSqNorm (∑ b : R2, A i (a, b)) (R i a))
-              + ∑ b : R2, M.xSqNorm (∑ a : R1, A i (a, b)) (fibSum (G i) (e i) b))
+              + ∑ b : R2, M.xSqNorm (∑ a : R1, A i (a, b)) (fibSumIn (G i) (e i) b))
             + 4 * Real.sqrt (∑ g : K, M.xSqNorm (Ga i g) (G i g))
             + 2 * M.collisionTerm (R i) (G i) (Ga i) (e i)) :=
           Finset.sum_le_sum fun i _ => mul_le_mul_of_nonneg_left (hper i) (hw0 i)
       _ = 16 * (∑ i, w i * ∑ a : R1, M.xSqNorm (∑ b : R2, A i (a, b)) (R i a))
             + 16 * (∑ i, w i * ∑ b : R2,
-              M.xSqNorm (∑ a : R1, A i (a, b)) (fibSum (G i) (e i) b))
+              M.xSqNorm (∑ a : R1, A i (a, b)) (fibSumIn (G i) (e i) b))
             + 4 * (∑ i, w i * Real.sqrt (∑ g : K, M.xSqNorm (Ga i g) (G i g)))
             + 2 * ∑ i, w i * M.collisionTerm (R i) (G i) (Ga i) (e i) := by
           rw [Finset.mul_sum, Finset.mul_sum, Finset.mul_sum, Finset.mul_sum,
@@ -1113,11 +1128,11 @@ theorem one_sub_sum_bornProb_pasteJ_le (hψ : ‖M.ψ‖ = 1) {w : ι → ℝ} (
   refine le_trans (Finset.sum_le_sum fun i _ => mul_le_mul_of_nonneg_left
     (M.one_sub_sum_bornProb_pasteJ_le' hψ (hA i) (hR i) (hG i) (e i)) (hw0 i)) ?_
   have hdist : ∑ i, w i * ((∑ b : R2,
-          M.xSqNorm (∑ a : R1, A i (a, b)) (fibSum (G i) (e i) b)) / 2
+          M.xSqNorm (∑ a : R1, A i (a, b)) (fibSumIn (G i) (e i) b)) / 2
         + Real.sqrt ((∑ a : R1, M.xSqNorm (∑ b : R2, A i (a, b)) (R i a)) / 2)
         + Real.sqrt (∑ a : R1, ∑ g : K, M.swap.stateSqNorm (R i a * G i g - G i g * R i a)))
       = (∑ i, w i * ∑ b : R2,
-            M.xSqNorm (∑ a : R1, A i (a, b)) (fibSum (G i) (e i) b)) / 2
+            M.xSqNorm (∑ a : R1, A i (a, b)) (fibSumIn (G i) (e i) b)) / 2
         + (∑ i, w i * Real.sqrt ((∑ a : R1, M.xSqNorm (∑ b : R2, A i (a, b)) (R i a)) / 2))
         + ∑ i, w i * Real.sqrt (∑ a : R1, ∑ g : K,
             M.swap.stateSqNorm (R i a * G i g - G i g * R i a)) := by
@@ -1250,11 +1265,8 @@ theorem qform_conjTranspose (v : N → ℂ) (M : Matrix N N ℂ) : qform v (Mᴴ
 summing to the identity has its squares summing to at most the identity. -/
 theorem sum_sq_le_one_of_sum_eq_one {C : Type*} [Fintype C] {P : C → Matrix N N ℂ}
     (hP0 : ∀ c, (0 : Matrix N N ℂ) ≤ P c) (hPsum : ∑ c, P c = 1) :
-    ∑ c, (P c) * (P c) ≤ (1 : Matrix N N ℂ) := by
-  have h := Op.sum_mul_self_le_one (P := fun c => Matrix.toEuclideanCLM (n := N) (𝕜 := ℂ) (P c))
-    (fun c => map_nonneg _ (hP0 c)) (by rw [← map_sum, hPsum, map_one])
-  have h' := OrderHomClass.mono (Matrix.toEuclideanCLM (n := N) (𝕜 := ℂ)).symm h
-  simpa only [map_sum, map_mul, map_one, StarAlgEquiv.symm_apply_apply] using h'
+    ∑ c, (P c) * (P c) ≤ (1 : Matrix N N ℂ) :=
+  sum_mul_self_le_one_of_sum_le_one hP0 hPsum.le
 
 end QF
 
@@ -1363,7 +1375,7 @@ variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq
 theorem sum_bornProb_le_fibSum (ψ : dA × dB → ℂ) {X : α → Matrix dA dA ℂ}
     {X' : α → Matrix dB dB ℂ} (hX : IsPVM X) (hX' : IsPVM X') (e : α → β) :
     ∑ a, bornProb ψ (X a) (X' a) ≤ ∑ b, bornProb ψ (fibSum X e b) (fibSum X' e b) := by
-  simp only [bornProb_eq_tensor]
+  simp only [bornProb_eq_tensor, fibSum_eq_fibSumIn]
   exact (BipartiteModel.tensor ψ).sum_bornProb_le_fibSum hX.toIn hX'.toIn e
 
 /-- **Coarse-graining two projective families the same way costs nothing**, in the `fibSum` form
@@ -1371,7 +1383,7 @@ that the pasting lemma needs. -/
 theorem sum_xSqNorm_fibSum_le {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖ = 1) {X : α → Matrix dA dA ℂ}
     {X' : α → Matrix dB dB ℂ} (hX : IsPVM X) (hX' : IsPVM X') (e : α → β) :
     ∑ b, xSqNorm ψ (fibSum X e b) (fibSum X' e b) ≤ ∑ a, xSqNorm ψ (X a) (X' a) := by
-  simp only [xSqNorm_eq_tensor]
+  simp only [xSqNorm_eq_tensor, fibSum_eq_fibSumIn]
   exact (BipartiteModel.tensor ψ).sum_xSqNorm_fibSum_le hψ hX.toIn hX'.toIn e
 
 end Coarse2
@@ -1475,7 +1487,7 @@ theorem sum_bornProb_ord_ge {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖ = 1)
     1 - (∑ b : R2, xSqNorm ψ (∑ a : R1, A (a, b)) (fibSum G e b)) / 2
         - Real.sqrt ((∑ a : R1, xSqNorm ψ (∑ b : R2, A (a, b)) (R a)) / 2)
       ≤ ∑ a : R1, ∑ g : K, bornProb ψ (A (a, e g)) (G g * R a) := by
-  simp only [xSqNorm_eq_tensor, bornProb_eq_tensor]
+  simp only [xSqNorm_eq_tensor, bornProb_eq_tensor, fibSum_eq_fibSumIn]
   exact (BipartiteModel.tensor ψ).sum_bornProb_ord_ge hψ hA.toIn hR.toIn hG.toIn e
 
 /-! ## The pasted POVM -/
@@ -1551,7 +1563,7 @@ theorem strife_sub_cloud_eq {ψ : dA × dB → ℂ} {Ga : K → Matrix dA dA ℂ
         - ∑ a : R1, ∑ g : K, bornProb ψ (Ga g) (R a * G g * R a)
       = collisionTerm ψ R G Ga e := by
   rw [collisionTerm_eq_tensor]
-  simp only [bornProb_eq_tensor]
+  simp only [bornProb_eq_tensor, fibSum_eq_fibSumIn]
   exact (BipartiteModel.tensor ψ).strife_sub_cloud_eq e
 
 /-! ## The two halves of the pasting lemma, at one question -/
@@ -1567,7 +1579,7 @@ theorem sum_snorm_sq_comm_fine_le {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖ =
     (∑ a : R1, ∑ g : K, snorm ψ (bOp (R a * G g - G g * R a) : Matrix (dA × dB) _ ℂ) ^ 2)
       ≤ 16 * (δ₁ + δ₂) + 4 * Real.sqrt (∑ g : K, xSqNorm ψ (Ga g) (G g))
         + 2 * collisionTerm ψ R G Ga e := by
-  simp only [xSqNorm_eq_tensor] at h1 h2
+  simp only [xSqNorm_eq_tensor, fibSum_eq_fibSumIn] at h1 h2
   simp only [snorm_bOp_sq_eq_tensor, xSqNorm_eq_tensor, collisionTerm_eq_tensor]
   exact (BipartiteModel.tensor ψ).sum_snorm_sq_comm_fine_le hψ hA.toIn hR.toIn hG.toIn hGa.toIn e
     h1 h2
@@ -1581,7 +1593,7 @@ theorem one_sub_sum_bornProb_pasteJ_le' {ψ : dA × dB → ℂ} (hψ : ‖evec �
         + Real.sqrt ((∑ a : R1, xSqNorm ψ (∑ b : R2, A (a, b)) (R a)) / 2)
         + Real.sqrt (∑ a : R1, ∑ g : K,
             snorm ψ (bOp (R a * G g - G g * R a) : Matrix (dA × dB) _ ℂ) ^ 2) := by
-  simp only [bornProb_eq_tensor, xSqNorm_eq_tensor, snorm_bOp_sq_eq_tensor]
+  simp only [bornProb_eq_tensor, xSqNorm_eq_tensor, snorm_bOp_sq_eq_tensor, fibSum_eq_fibSumIn]
   exact (BipartiteModel.tensor ψ).one_sub_sum_bornProb_pasteJ_le' hψ hA.toIn hR.toIn hG.toIn e
 
 end Sand2
@@ -1739,7 +1751,7 @@ theorem one_sub_sum_bornProb_pasteJ_le {ψ : dA × dB → ℂ} (hψ : ‖evec ψ
     (hcoll : ∑ i, w i * collisionTerm ψ (R i) (G i) (Ga i) (e i) ≤ ε) :
     1 - ∑ i, w i * ∑ p : R1 × R2, bornProb ψ (A i p) (pasteJ (R i) (G i) (e i) p)
       ≤ δ / 2 + Real.sqrt (δ / 2) + Real.sqrt (32 * δ + 4 * Real.sqrt η + 2 * ε) := by
-  simp only [xSqNorm_eq_tensor] at hP1 hP2 hP4
+  simp only [xSqNorm_eq_tensor, fibSum_eq_fibSumIn] at hP1 hP2 hP4
   simp only [collisionTerm_eq_tensor] at hcoll
   simp only [bornProb_eq_tensor]
   exact (BipartiteModel.tensor ψ).one_sub_sum_bornProb_pasteJ_le hψ hw0 hw1 e
