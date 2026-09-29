@@ -28,7 +28,7 @@ matrix `smulKron X P` with entries `P a b • X`. Three facts carry every use of
   which makes the ancilla's quadratic form real.
 * So an operator with an **inert ancilla**, `X ⊗ 1`, has the state norm it had before the
   expansion, scaled by the norm of `e` (`stateSqNorm_expand_smulKron_one`); and the norm of the
-  state is the product of the norms (`norm_expand_ψ`).
+  state is the product of the norms (`norm_expand_state`).
 * A product of projective measurements is projective (`IsPVMIn.smulKron`).
 
 The matrix expanded state `expVec` of `MIPRE/Foundations/Expanded.lean` is this construction at
@@ -357,7 +357,7 @@ theorem swap_stateSqNorm_expand_smulKron_one (Y : ℬ) :
     Matrix.one_kronecker_one, Matrix.one_mulVec]
 
 /-- **The norm of the extended state is the product of the norms.** -/
-theorem norm_expand_ψ : ‖(M.expand e).ψ‖ = ‖evec e‖ * ‖M.ψ‖ := by
+theorem norm_expand_state : ‖(M.expand e).ψ‖ = ‖evec e‖ * ‖M.ψ‖ := by
   have h3 := M.bornProb_expand_smulKron e 1 1 PosSemidef.one PosSemidef.one
   rw [smulKron_one_one, smulKron_one_one] at h3
   have h : ‖(M.expand e).ψ‖ ^ 2 = (‖evec e‖ * ‖M.ψ‖) ^ 2 := by

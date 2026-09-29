@@ -841,6 +841,60 @@ Theorems~\ref{thm:halting-co} and~\ref{thm:mipco-eq-core}. No completeness claus
 commuting-operator model is asked for.
 \end{definition}
 
+\begin{definition}[The stages' soundness clauses in a value model]
+\label{def:stage-sound-in}
+\uses{def:value-model,def:introspection-contract,def:answer-reduction-contract,
+  thm:parallel-repetition}
+\lean{MIPRE.Introspection.SoundIn, MIPRE.Introspection.soundIn_tensor,
+  MIPRE.AnswerReduction.SoundIn, MIPRE.AnswerReduction.soundIn_tensor,
+  MIPRE.Repetition.SoundIn, MIPRE.Repetition.soundIn_tensor}
+\leanok
+The soundness clause of introspection, of answer reduction or of parallel repetition \emph{in
+the value model $\omega$} is that stage's soundness clause
+(Definitions~\ref{def:introspection-contract} and~\ref{def:answer-reduction-contract},
+Theorem~\ref{thm:parallel-repetition}) with the value $\valstar$ replaced by $\omega$ on both
+sides, at the same parameters, error functions and answer bounds. In the model $\valstar$ it is
+the stage's own clause.
+\end{definition}
+
+\begin{lemma}[The soundness chain of compression, in a value model]
+\label{lem:compress-sound-in}
+\uses{def:stage-sound-in,lem:compress-margin,lem:compress-tau}
+\lean{MIPRE.Pipeline.output_val_le}
+\leanok
+If the three stages are sound in the value model $\omega$ (Definition~\ref{def:stage-sound-in}),
+then for every $\lambda$-bounded verifier $\verifier$ and every $n \geq C_0$,
+$\omega(\verifier_{2^n}) \leq \frac12$ implies $\omega(\vcompr_n) \leq \frac12$, for the verifier
+$\vcompr$ of Theorem~\ref{thm:compression} at its answer bounds.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The soundness chain of Theorem~\ref{thm:compression} (Remark~\ref{rem:compression-chain}), read
+in $\omega$: the three clauses, used contrapositively, through the same margins
+(Lemmas~\ref{lem:compress-margin} and~\ref{lem:compress-tau}). Nothing else in the chain depends
+on the model: between the stages' answer bounds it passes by the value of a verifier whose
+decider rejects every answer beyond a bound, which is the same at every larger bound in every
+model. The soundness clause of Theorem~\ref{thm:compression} is the case $\omega = \valstar$.
+\end{proof}
+
+\begin{theorem}[Compression is sound in every model in which its stages are]
+\label{thm:pipeline-sound-in}
+\uses{lem:compress-sound-in,def:compression-co-sound,thm:compression}
+\lean{MIPRE.GapCompression.ofPipeline_sound}
+\leanok
+If introspection, answer reduction and parallel repetition are sound in the value model $\omega$,
+the gap compression that Theorem~\ref{thm:compression} builds from them is sound in $\omega$
+(Definition~\ref{def:compression-co-sound}).
+\end{theorem}
+
+\begin{proof}
+\leanok
+The compressed verifier is within its budget, so its value at the answer bound of
+Definition~\ref{def:compression-co-sound} is its value at the bound of
+Lemma~\ref{lem:compress-sound-in}, which that lemma bounds.
+\end{proof}
+
 \begin{theorem}[Halting reduces to the commuting-operator value, from co-soundness]
 \label{thm:halting-co}
 \uses{def:compression-co-sound,lem:compressible-criterion-nested,lem:valco-upper-re,
@@ -922,6 +976,23 @@ $\frac12$. This is the argument of Theorem~\ref{thm:mipstar-eq-re} with the two 
 exchanged, and in Lean the two are the same theorem in the two shapes.
 \end{proof}
 
+\begin{corollary}[$\MIPco = \coRE$, from the co-soundness of the three stages]
+\label{cor:mipco-from-stages}
+\uses{thm:mipco-eq-core,thm:pipeline-sound-in,thm:compression-target}
+\lean{MIPRE.mipco_eq_core_of_stages}
+\leanok
+If the introspection, the answer reduction and the parallel repetition of
+Theorem~\ref{thm:compression-target} are sound in the model $\omegaco$
+(Definition~\ref{def:stage-sound-in}), then $\MIPco = \coRE$.
+\end{corollary}
+
+\begin{proof}
+\leanok
+The gap compression of Theorem~\ref{thm:compression-target} is built from those three stages, so
+it is sound in $\omegaco$ by Theorem~\ref{thm:pipeline-sound-in}, and
+Theorem~\ref{thm:mipco-eq-core} applies.
+\end{proof}
+
 \begin{remark}[What is shared, what remains, and which commuting value this is]
 \label{rem:mipco-route}
 \lean{MIPRE.CommutingOperatorStrategy.relabel, MIPRE.CommutingOperatorStrategy.value_relabel,
@@ -955,11 +1026,13 @@ parallel repetition in the commuting-operator model is
 Theorem~\ref{thm:direct-repetition-co}, already formalized. The commuting-operator
 \emph{completeness} of compression is never needed: the nested criterion asks the
 compressor to preserve perfect PCC strategies, which the tensor completeness does, and the
-class of value $1$ is entered only through the semidecider. The plan is to generalize the
-existing stage analyses over the projective commuting-operator model of
-Section~\ref{sec:ds-mipco-projective} rather than to re-prove them, with the tensor-product
-strategies as an instance; sizes, phases and the delicate points are in
-\texttt{planning/mipco-track.md}, and the audit that fixed the model is
+class of value $1$ is entered only through the semidecider. The hypothesis splits into the
+three stages' soundness clauses in $\omegaco$ (Corollary~\ref{cor:mipco-from-stages}), and the
+plan is to prove each by generalizing the existing stage analysis over the projective
+commuting-operator model of Section~\ref{sec:ds-mipco-projective} rather than to re-prove it,
+with the tensor-product strategies as an instance; the operator calculus those analyses use is
+already restated there (Remark~\ref{rem:model-calculus}). Sizes, phases and the delicate points
+are in \texttt{planning/mipco-track.md}, and the audit that fixed the model is
 \texttt{reports/co-generalization-audit.md}.
 \end{remark}
 
@@ -1073,36 +1146,149 @@ gives the supremum and the strategy of value greater than $t$. A tensor-product 
 $A^x_a$ and $B^y_b$ projections.
 \end{proof}
 
-The analyses themselves are to be restated over the following model, in which a tensor-product
-strategy and a commuting-operator strategy are both instances. The players' operators are
-elements of two abstract $*$-algebras rather than operators on $\mH$, so that a product, a sum or
-an adjoint of one player's operators is again one of that player's and commutes with the other
-player's: this is what the matrix analyses get from the two factors of a tensor product. The
-state calculus of the matrix analyses, $\|M\psi\|$, the bound $\|Mv\| \leq K\|v\|$ and
-$\mathrm{Re}\langle \psi, M\psi \rangle$, is the model's calculus in the tensor-product instance
-(\texttt{planning/mipco-track.md}, Phase 1(b)).
+The operator calculus of the analyses is restated over the following model, in which a
+tensor-product strategy and a commuting-operator strategy are both instances. The players'
+operators are elements of two abstract $*$-algebras rather than operators on $\mH$, so that a
+product, a sum or an adjoint of one player's operators is again one of that player's and commutes
+with the other player's: this is what the matrix analyses get from the two factors of a tensor
+product. The state calculus of the matrix analyses, $\|M\psi\|$, the bound $\|Mv\| \leq K\|v\|$
+and $\mathrm{Re}\langle \psi, M\psi \rangle$, and every estimate built on it --- the consistency
+and commutation analyses, the sandwich and pasting chains, coarse-graining, the adaptation of a
+strategy to another game --- is proved once in the model, and the matrix statements of the
+earlier chapters are its instances in the tensor-product model
+(\texttt{planning/mipco-track.md}, Phase 1(b); Remark~\ref{rem:model-calculus}).
 
 \begin{definition}[Bipartite model]
 \label{def:bipartite-model}
 \uses{def:co-strategy-bipartite}
-\lean{MIPRE.BipartiteModel, MIPRE.BipartiteModel.tensor,
+\lean{MIPRE.BipartiteModel, MIPRE.BipartiteModel.tensor, MIPRE.StateModel, MIPRE.StateModel.mat,
   MIPRE.CommutingOperatorStrategy.toModel, MIPRE.CommutingOperatorStrategy.commute_of_mem}
 \leanok
-A \emph{bipartite model} consists of a complex Hilbert space $\mH$, a vector $\psi \in \mH$, two
-unital $*$-algebras $\alg_A$ and $\alg_B$ over $\C$, and unital $*$-homomorphisms
-$\pi_A : \alg_A \to B(\mH)$ and $\pi_B : \alg_B \to B(\mH)$ such that $\pi_A(a)$ and
-$\pi_B(b)$ commute for all $a \in \alg_A$ and $b \in \alg_B$. The first player's operators are
-elements of $\alg_A$, the second player's elements of $\alg_B$. It has two instances.
+A \emph{bipartite model} consists of a complex Hilbert space $\mH$, a vector $\psi \in \mH$, a
+unital $*$-algebra $\alg$ over $\C$ represented on $\mH$ by a unital $*$-homomorphism
+$\pi : \alg \to B(\mH)$, and two unital $*$-algebras $\alg_A$ and $\alg_B$ over $\C$ with unital
+$*$-homomorphisms $\pi_A : \alg_A \to \alg$ and $\pi_B : \alg_B \to \alg$ such that $\pi_A(a)$
+and $\pi_B(b)$ commute for all $a \in \alg_A$ and $b \in \alg_B$. The first player's operators
+are elements of $\alg_A$, the second player's elements of $\alg_B$, and a state quantity of $a$
+is computed on the vector $\pi(\pi_A(a))\psi$. That $\psi$ is a unit vector is a hypothesis of
+each statement that needs it, not part of the model. It has two instances.
 \begin{enumerate}
   \item The \emph{tensor-product model} of a vector $\psi \in \C^{d_A} \otimes \C^{d_B}$ has
-    $\alg_A = M_{d_A}(\C)$, $\alg_B = M_{d_B}(\C)$, $\pi_A(X) = X \otimes \Id$ and
-    $\pi_B(Y) = \Id \otimes Y$.
+    $\alg = M_{d_A d_B}(\C)$ acting on $\C^{d_A} \otimes \C^{d_B}$, $\alg_A = M_{d_A}(\C)$,
+    $\alg_B = M_{d_B}(\C)$, $\pi_A(X) = X \otimes \Id$ and $\pi_B(Y) = \Id \otimes Y$. Its
+    products and sums are the matrix ones, so the matrix calculus is the model's with nothing to
+    translate.
   \item The \emph{commuting-operator model} of a commuting-operator strategy
-    $(\mH, \psi, E, F)$ has $\alg_A$ and $\alg_B$ the $*$-subalgebras of $B(\mH)$ generated by
-    the $E^x_a$ and by the $F^y_b$, and $\pi_A$, $\pi_B$ the inclusions. These algebras commute
-    because their generators are self-adjoint and commute.
+    $(\mH, \psi, E, F)$ has $\alg = B(\mH)$, $\alg_A$ the commutant of the $F^y_b$ and $\alg_B$
+    the commutant of $\alg_A$, with the inclusions. They commute by construction and contain the
+    $E^x_a$ and the $F^y_b$. A commutant contains the square roots of its positive elements, so
+    positivity in $\alg_A$ and in $\alg_B$ is positivity in $B(\mH)$, which is what the
+    measurements of the analyses need.
 \end{enumerate}
 \end{definition}
+
+\begin{lemma}[The commuting-operator value is a supremum of model values]
+\label{lem:co-value-model}
+\uses{def:bipartite-model,def:co-value-bipartite}
+\lean{MIPRE.CommutingOperatorStrategy.aliceMeas, MIPRE.CommutingOperatorStrategy.bobMeas,
+  MIPRE.CommutingOperatorStrategy.aliceMeas_op, MIPRE.CommutingOperatorStrategy.bobMeas_op,
+  MIPRE.CommutingOperatorStrategy.correlation_eq_bornProb,
+  MIPRE.CommutingOperatorStrategy.value_eq_povmValue,
+  MIPRE.commutingOperatorValue_eq_iSup_povmValue}
+\leanok
+The measurements of a commuting-operator strategy are POVMs in the two algebras of its
+commuting-operator model (Definition~\ref{def:bipartite-model}), its correlation is that model's
+Born rule, and its value is the model's value of those POVMs. So $\omegaco(\game)$ is the
+supremum, over commuting-operator strategies, of the value of their measurements in their own
+model.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The $E^x_a$ lie in the commutant of the $F^y_b$, and are positive and sum to $\Id$ there because
+they are and do in $B(\mH)$; the same holds for the $F^y_b$ in the commutant of that commutant.
+The model's Born probability at $(E^x_a, F^y_b)$ is
+$\mathrm{Re}\langle \psi, E^x_a F^y_b \psi\rangle$, the correlation, and the value is the same
+sum of payoffs against the same probabilities.
+\end{proof}
+
+A finite ancilla is adjoined to a model without leaving it: the space becomes the $\ell^2$-sum of
+finitely many copies of $\mH$, and the players' algebras become matrix algebras over theirs. This
+is the expanded state of the Pauli basis test (Definition~\ref{def:expanded-state}) in any model,
+and in the tensor-product model it is that expanded state.
+
+\begin{definition}[Ancilla extension of a bipartite model]
+\label{def:ancilla-extension}
+\uses{def:bipartite-model}
+\lean{MIPRE.BipartiteModel.expand, MIPRE.smulKron, MIPRE.liftLeft, MIPRE.liftRight,
+  MIPRE.mapMatrixStarAlgHom}
+\leanok
+Let $(\mH, \psi, \alg, \alg_A, \alg_B)$ be a bipartite model, $\alpha$ and $\beta$ finite sets
+and $e \in \C^{\alpha \times \beta}$. The \emph{ancilla extension} of the model by $e$ has the
+Hilbert space $\mH \otimes \C^{\alpha \times \beta}$, the $\ell^2$-sum of $\alpha \times \beta$
+copies of $\mH$; the state $\psi \otimes e$; the algebra $M_{\alpha \times \beta}(\alg)$, acting
+entrywise; the first player's algebra $M_\alpha(\alg_A)$, acting as $X \otimes \Id_\beta$; and
+the second player's algebra $M_\beta(\alg_B)$, acting as $\Id_\alpha \otimes Y$. For $X \in \alg_A$
+and $P \in M_\alpha(\C)$, $X \otimes P \in M_\alpha(\alg_A)$ is the matrix with entries
+$P_{ab} X$, and likewise for the second player.
+\end{definition}
+
+\begin{lemma}[The ancilla extension]
+\label{lem:ancilla-extension}
+\uses{def:ancilla-extension}
+\lean{MIPRE.BipartiteModel.bornProb_expand_smulKron,
+  MIPRE.BipartiteModel.stateSqNorm_expand_smulKron_one,
+  MIPRE.BipartiteModel.swap_stateSqNorm_expand_smulKron_one,
+  MIPRE.BipartiteModel.norm_expand_state, MIPRE.IsPVMIn.smulKron}
+\leanok
+In the ancilla extension by $e$ of a bipartite model:
+\begin{enumerate}
+  \item for $X \in \alg_A$, $Y \in \alg_B$ and positive semidefinite $P \in M_\alpha(\C)$ and
+    $Q \in M_\beta(\C)$, the Born probability of $(X \otimes P, Y \otimes Q)$ is the model's Born
+    probability of $(X, Y)$ times $\mathrm{Re}\langle e, (P \otimes Q) e\rangle$;
+  \item an operator with an \emph{inert} ancilla keeps its norm up to the norm of $e$:
+    $\|\pi(X \otimes \Id)(\psi \otimes e)\| = \|e\|\,\|\pi(X)\psi\|$, for either player;
+  \item $\|\psi \otimes e\| = \|\psi\|\,\|e\|$;
+  \item if $(P_i)_i$ is a projective measurement in $\alg_A$ and $(Q_k)_k$ one in
+    $M_\alpha(\C)$, then $(P_i \otimes Q_k)_{(i,k)}$ is a projective measurement in
+    $M_\alpha(\alg_A)$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\leanok
+The operator of $(X \otimes P)(Y \otimes Q)$ acts on $\psi \otimes e$ entrywise, as
+$\pi(XY)$ on $\psi$ and as $P \otimes Q$ on $e$, so its quadratic form is
+$\langle e, (P \otimes Q) e\rangle \langle \psi, \pi(XY) \psi\rangle$. The first factor is real
+when $P$ and $Q$ are positive semidefinite, and the real part of the product then splits: item 1.
+Items 2 and 3 are item 1 with $P = Q = \Id$, and item 4 is a computation in the entries.
+\end{proof}
+
+\begin{remark}[The operator calculus in a bipartite model]
+\label{rem:model-calculus}
+\lean{MIPRE.StateModel.snorm, MIPRE.StateModel.qform, MIPRE.StateModel.Bnd,
+  MIPRE.BipartiteModel.stateNorm, MIPRE.BipartiteModel.xSqNorm, MIPRE.BipartiteModel.bornProb,
+  MIPRE.BipartiteModel.povmValue, MIPRE.BipartiteModel.condFail, MIPRE.BipartiteModel.dis,
+  MIPRE.IsPVMIn, MIPRE.POVMIn, MIPRE.BipartiteModel.swap,
+  MIPRE.BipartiteModel.xSqNorm_sum_le_two_mul, MIPRE.BipartiteModel.commutation_analysis,
+  MIPRE.BipartiteModel.agreeSum_triangle, MIPRE.BipartiteModel.dis_map_le_condFail,
+  MIPRE.BipartiteModel.one_sub_sum_bornProb_sand_le, MIPRE.BipartiteModel.sum_xSqNorm_map_le,
+  MIPRE.BipartiteModel.sum_bornProb_le_map, MIPRE.BipartiteModel.stateNorm_mul_of_isometry,
+  MIPRE.BipartiteModel.povmValue_eq_of_bornProb_swap, MIPRE.BipartiteModel.condWin_adapt,
+  MIPRE.BipartiteModel.povmValue_relabel}
+Phase 1(b) of \texttt{planning/mipco-track.md} restated the operator calculus of the analyses
+over the bipartite model of Definition~\ref{def:bipartite-model}: the state norm, the quadratic
+form and the operator bound; the first player's state norm and the cross-party deviation; Born
+probabilities, the value of a pair of families of POVMs and conditional failure; POVMs and
+projective measurements in a $*$-ring; and on these, the consistency engine, the commutation
+analysis, the triangle inequalities for agreement, disagreement under coarse-graining, the
+sandwich and pasting chains, the invariance under exchanging the players and the adaptation of a
+strategy to another game. Each is proved once, in the model, and the matrix statement of the
+earlier chapters that carries the same name is its instance in the tensor-product model, derived
+and not re-proved. So a bound proved there for tensor-product strategies holds verbatim for the
+measurements of a commuting-operator strategy in its model (Lemma~\ref{lem:co-value-model}),
+which is what Phases 2 to 5 use to read each stage's soundness clause in $\omegaco$.
+\end{remark}
 
 \subsection{Further directions}
 

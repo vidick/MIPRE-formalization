@@ -39,7 +39,7 @@ The construction itself is the ancilla extension `BipartiteModel.expand` of any 
 (`MIPRE/Foundations/AncillaModel.lean`), and the expanded state is its instance at the
 tensor-product model: `bornProb_expVec_eq` identifies the Born probabilities of product operators,
 after which the norm of the expanded state, the inert ancilla and the factorization of Born
-probabilities are the model's (`norm_expand_ψ`, `stateSqNorm_expand_smulKron_one`,
+probabilities are the model's (`norm_expand_state`, `stateSqNorm_expand_smulKron_one`,
 `bornProb_expand_smulKron`), and the product of projective measurements is `IsPVMIn.smulKron`
 read through `kronEquiv`. What stays here is the coordinate computation that a product operator
 acts on the product vector factor by factor (`mulVec_kron_kron_expVec`).
@@ -177,7 +177,7 @@ theorem bornProb_expVec_eq (ψ : dA × dB → ℂ) (e : anc × anc' → ℂ) (X 
   show star ψ ⬝ᵥ ((X ⊗ₖ X') *ᵥ ψ) = ((aOp X * bOp X' : Matrix (dA × dB) _ ℂ) *ᵥ ψ) ⬝ᵥ star ψ
   rw [dotProduct_comm, aOp, bOp, ← Matrix.mul_kronecker_mul, Matrix.mul_one, Matrix.one_mul]
 
-/-- **The norm of a product state is the product of the norms**: `norm_expand_ψ` at the
+/-- **The norm of a product state is the product of the norms**: `norm_expand_state` at the
 tensor-product model. -/
 theorem norm_evec_expVec (u : dA × dB → ℂ) (v : anc × anc' → ℂ) :
     ‖evec (expVec u v)‖ = ‖evec u‖ * ‖evec v‖ := by
@@ -189,7 +189,7 @@ theorem norm_evec_expVec (u : dA × dB → ℂ) (v : anc × anc' → ℂ) :
           mul_one],
       ← bornProb_expVec_eq, bornProb, Matrix.one_kronecker_one, Matrix.one_kronecker_one,
       Matrix.one_kronecker_one, Matrix.one_mulVec]
-  rw [(sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).1 h, BipartiteModel.norm_expand_ψ, mul_comm]
+  rw [(sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).1 h, BipartiteModel.norm_expand_state, mul_comm]
   rfl
 
 /-- The expanded state's norm splits, so it is a unit vector when both factors are. -/
