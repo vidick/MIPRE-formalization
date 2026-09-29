@@ -823,6 +823,7 @@ constructed presentations. The two families of fixed player views are
 disjoint.
 \end{lemma}
 \begin{proof}
+\uses{def:bipartite-model}
 \leanok
 Restrict the measurements to the fixed graph view of each typed question.
 On every ordered edge the decision predicate and conditional failure
@@ -4221,7 +4222,7 @@ every $\eps > 0$, if $\valstar$ of the oracularization of $S$ exceeds $1 - \eps$
 $\valstar$ of the game of $S$ is at least $1 - 24\sqrt{\eps}$.
 \end{lemma}
 \begin{proof}
-\uses{lem:cool-closeness-fact}
+\uses{lem:cool-closeness-fact,lem:qld-combined-points}
 \leanok
 A tensor-product strategy is projective, so no dilation is needed. Fix a seed $z$ and write, on
 the joint space, $O$ for the first player's measurement at $(\oracle, z)$, $O^\alice_u$ and
@@ -6221,7 +6222,7 @@ $\verifier$ is a $\lambda$-bounded $7$-level normal form verifier, then for all 
 \begin{proof}
 \leanok
 \uses{def:introspection-contract,def:answer-reduction-contract,thm:parallel-repetition,
-  lem:compress-margin,lem:compress-tau,def:value-model}
+  lem:compress-margin,lem:compress-tau,def:value-model,lem:compress-sound-in}
 Let $\ComputeIntroVerifier$ and $\ComputeAnsVerifier$ denote the procedures provided
 by $I$ and $A$, respectively. These are assumed ambient procedures in this proof.
 $\Compress(\verifier, \lambda)$ is $\ComputeIntroVerifier(\verifier, \lambda, 7)$, then
