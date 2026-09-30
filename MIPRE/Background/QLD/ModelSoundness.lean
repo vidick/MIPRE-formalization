@@ -155,8 +155,8 @@ def SoundIn {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ �
 
 section Tensor
 
-variable {F : Type} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m : ℕ}
-  [NeZero m] {HA HB : Type} [Fintype HA] [DecidableEq HA] [Fintype HB] [DecidableEq HB]
+variable {I : Type} [Fintype I] [DecidableEq I] {HA HB : Type} [Fintype HA] [DecidableEq HA]
+  [Fintype HB] [DecidableEq HB]
 
 /-- The tensor-product model of a unit vector, as an ancilla model. -/
 def tensorAncilla (aux : HA × HB → ℂ) (haux : ‖evec aux‖ = 1) : AncillaModel where
@@ -168,54 +168,51 @@ def tensorAncilla (aux : HA × HB → ℂ) (haux : ‖evec aux‖ = 1) : Ancilla
 
 variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
 
-/-- The local isometry of the tensor-product instance: `V_A ⊗ V_B`, followed by the reading of the
-flat register state as the register model. -/
-def tensorPhi (ψ : dA × dB → ℂ) (aux : HA × HB → ℂ) (VA : Matrix (Anc F m × HA) dA ℂ)
-    (VB : Matrix (Anc F m × HB) dB ℂ) (hA : VAᴴ * VA = 1) (hB : VBᴴ * VB = 1) :
-    LocalIsometry (BipartiteModel.tensor ψ) ((BipartiteModel.tensor aux).reg (Anc F m)) :=
-  (tensorUnexpand aux (Introspection.registerEPR (Anc F m))).comp
-    (tensorIsometry ψ (Introspection.registerState (Anc F m) aux) VA VB hA hB)
+/-- The local isometry of the tensor-product instance, for any register `I`: `V_A ⊗ V_B`, followed
+by the reading of the flat register state as the register model. -/
+def tensorPhi (ψ : dA × dB → ℂ) (aux : HA × HB → ℂ) (VA : Matrix (I × HA) dA ℂ)
+    (VB : Matrix (I × HB) dB ℂ) (hA : VAᴴ * VA = 1) (hB : VBᴴ * VB = 1) :
+    LocalIsometry (BipartiteModel.tensor ψ) ((BipartiteModel.tensor aux).reg I) :=
+  (tensorUnexpand aux (Introspection.registerEPR I)).comp
+    (tensorIsometry ψ (Introspection.registerState I aux) VA VB hA hB)
 
-omit [Field F] [Algebra (ZMod 2) F] [NeZero m] in
-theorem tensorPhi_W_ψ (ψ : dA × dB → ℂ) (aux : HA × HB → ℂ) (VA : Matrix (Anc F m × HA) dA ℂ)
-    (VB : Matrix (Anc F m × HB) dB ℂ) (hA : VAᴴ * VA = 1) (hB : VBᴴ * VB = 1) :
+theorem tensorPhi_W_ψ (ψ : dA × dB → ℂ) (aux : HA × HB → ℂ) (VA : Matrix (I × HA) dA ℂ)
+    (VB : Matrix (I × HB) dB ℂ) (hA : VAᴴ * VA = 1) (hB : VBᴴ * VB = 1) :
     ‖(tensorPhi ψ aux VA VB hA hB).W (BipartiteModel.tensor ψ).ψ -
-        ((BipartiteModel.tensor aux).reg (Anc F m)).ψ‖ =
-      ‖evec (Introspection.isometricState VA VB ψ - Introspection.registerState (Anc F m) aux)‖ := by
-  rw [← tensorUnexpand_W_ψ aux (Introspection.registerEPR (Anc F m))]
+        ((BipartiteModel.tensor aux).reg I).ψ‖ =
+      ‖evec (Introspection.isometricState VA VB ψ - Introspection.registerState I aux)‖ := by
+  rw [← tensorUnexpand_W_ψ aux (Introspection.registerEPR I)]
   show ‖(tensorUnexpand aux _).W ((tensorIsometry ψ _ VA VB hA hB).W (BipartiteModel.tensor ψ).ψ) -
     (tensorUnexpand aux _).W (BipartiteModel.tensor (expVec _ aux)).ψ‖ = _
   rw [← map_sub, LinearIsometry.norm_map]
   rfl
 
-omit [Field F] [Algebra (ZMod 2) F] [NeZero m] in
 /-- The first player's error of the tensor-product instance is the matrix error. -/
-theorem tensorPhi_alice (ψ : dA × dB → ℂ) (aux : HA × HB → ℂ) (VA : Matrix (Anc F m × HA) dA ℂ)
-    (VB : Matrix (Anc F m × HB) dB ℂ) (hA : VAᴴ * VA = 1) (hB : VBᴴ * VB = 1)
-    (P : Matrix dA dA ℂ) (Q : Matrix (Anc F m) (Anc F m) ℂ) :
-    ((BipartiteModel.tensor aux).reg (Anc F m)).stateSqNorm
+theorem tensorPhi_alice (ψ : dA × dB → ℂ) (aux : HA × HB → ℂ) (VA : Matrix (I × HA) dA ℂ)
+    (VB : Matrix (I × HB) dB ℂ) (hA : VAᴴ * VA = 1) (hB : VBᴴ * VB = 1)
+    (P : Matrix dA dA ℂ) (Q : Matrix I I ℂ) :
+    ((BipartiteModel.tensor aux).reg I).stateSqNorm
         ((tensorPhi ψ aux VA VB hA hB).ΦA P - smulKron 1 Q) =
-      snorm (Introspection.registerState (Anc F m) aux)
+      snorm (Introspection.registerState I aux)
         (aOp (Introspection.isometricImage VA P - aOp Q)) ^ 2 := by
   have hX : (tensorPhi ψ aux VA VB hA hB).ΦA P - smulKron 1 Q =
-      (tensorUnexpand aux (Introspection.registerEPR (Anc F m))).ΦA
+      (tensorUnexpand aux (Introspection.registerEPR I)).ΦA
         (Introspection.isometricImage VA P - aOp Q) := by
     rw [map_sub, tensorUnexpand_ΦA, tensorUnexpand_ΦA, aOp, compSymmHom_kronecker_one]
     rfl
   rw [hX, LocalIsometry.stateSqNorm_of_W_ψ (tensorUnexpand_W_ψ _ _)]
   rfl
 
-omit [Field F] [Algebra (ZMod 2) F] [NeZero m] in
 /-- The second player's error of the tensor-product instance is the matrix error. -/
-theorem tensorPhi_bob (ψ : dA × dB → ℂ) (aux : HA × HB → ℂ) (VA : Matrix (Anc F m × HA) dA ℂ)
-    (VB : Matrix (Anc F m × HB) dB ℂ) (hA : VAᴴ * VA = 1) (hB : VBᴴ * VB = 1)
-    (P : Matrix dB dB ℂ) (Q : Matrix (Anc F m) (Anc F m) ℂ) :
-    ((BipartiteModel.tensor aux).reg (Anc F m)).swap.stateSqNorm
+theorem tensorPhi_bob (ψ : dA × dB → ℂ) (aux : HA × HB → ℂ) (VA : Matrix (I × HA) dA ℂ)
+    (VB : Matrix (I × HB) dB ℂ) (hA : VAᴴ * VA = 1) (hB : VBᴴ * VB = 1)
+    (P : Matrix dB dB ℂ) (Q : Matrix I I ℂ) :
+    ((BipartiteModel.tensor aux).reg I).swap.stateSqNorm
         ((tensorPhi ψ aux VA VB hA hB).ΦB P - smulKron 1 Q) =
-      snorm (Introspection.registerState (Anc F m) aux)
+      snorm (Introspection.registerState I aux)
         (bOp (Introspection.isometricImage VB P - aOp Q)) ^ 2 := by
   have hY : (tensorPhi ψ aux VA VB hA hB).ΦB P - smulKron 1 Q =
-      (tensorUnexpand aux (Introspection.registerEPR (Anc F m))).ΦB
+      (tensorUnexpand aux (Introspection.registerEPR I)).ΦB
         (Introspection.isometricImage VB P - aOp Q) := by
     rw [map_sub, tensorUnexpand_ΦB, tensorUnexpand_ΦB, aOp, compSymmHom_kronecker_one]
     rfl
