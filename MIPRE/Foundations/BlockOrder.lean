@@ -9,6 +9,7 @@ public import Mathlib.Analysis.CStarAlgebra.Basic
 public import Mathlib.Algebra.Star.Subalgebra
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.Analysis.Complex.Basic
+public import MIPRE.Tactics
 
 @[expose] public section
 
@@ -147,3 +148,5 @@ instance instStarProper : StarProper (Matrix n n R) :=
 end MatrixStar
 
 end MIPRE
+
+end

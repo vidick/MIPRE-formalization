@@ -104,3 +104,5 @@ theorem commuting_dominatesPOVM (M : BipartiteModel.{0} 𝒞 𝒜 ℬ) (hψ : �
 end ValueModel
 
 end MIPRE
+
+end
