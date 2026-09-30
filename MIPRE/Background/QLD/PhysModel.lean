@@ -100,6 +100,15 @@ abbrev PadAnc := DilationAncilla (LIDT.CL.Answer F (4 * m) d 1) K
 dilation compresses to the POVM it dilates (`exists_pvm_dilation_ge`). -/
 def t₀ : PadAnc F m d K := Sum.inl (ansZero, 0)
 
+variable [Fintype F] [DecidableEq F]
+
+instance instFintypePadAnc : Fintype (PadAnc F m d K) :=
+  inferInstanceAs (Fintype (DilationAncilla (LIDT.CL.Answer F (4 * m) d 1) K))
+
+/-- Decidable equality on the padding register, assembled once. -/
+instance instDecidableEqPadAnc : DecidableEq (PadAnc F m d K) :=
+  inferInstanceAs (DecidableEq (DilationAncilla (LIDT.CL.Answer F (4 * m) d 1) K))
+
 end Padding
 
 /-! ## The padded model, where the seeded test's soundness is applied -/
@@ -156,8 +165,9 @@ theorem soundIn_padModel
     (hL : ∀ {α β : Type} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
       (e : α × β → ℂ), ‖evec e‖ = 1 → LIDT.Simul.SoundIn (N.expand e)) (K : ℕ) :
     LIDT.Simul.SoundIn (padModel I F m d N K) :=
-  (hL (padE I F m d K) norm_padE).of_iso
+  LIDT.Simul.SoundIn.of_iso
     (N.assocIso (registerEPR I) (basisVec t₀ t₀) (padE I F m d K) padE_apply)
+    (@hL _ _ _ _ _ _ (padE I F m d K) norm_padE)
 
 /-- **The seeded test is sound in the padded model of the model with the players exchanged**, from
 its soundness in the extensions of `N`: the test is symmetric in the players
@@ -226,11 +236,11 @@ theorem physE_eq_comp {K : ℕ} : physE I F m d K =
 /-- **The physical state is a unit vector.** -/
 theorem norm_physE [Nonempty I] {K : ℕ} : ‖evec (physE I F m d K)‖ = 1 := by
   have h : ‖evec (physE I F m d K)‖ = ‖evec (expVec (expVec (registerEPR I) (registerEPR I))
-      (basisVec (t₀ : PadAnc F m d K) t₀))‖ := by
+      (basisVec (t₀ : PadAnc F m d K) (t₀ : PadAnc F m d K)))‖ := by
     rw [physE_eq_comp, evec, evec, EuclideanSpace.norm_eq, EuclideanSpace.norm_eq]
     congr 1
     exact Equiv.sum_comp (physSplit K) fun q => ‖expVec (expVec (registerEPR I) (registerEPR I))
-      (basisVec (t₀ : PadAnc F m d K) t₀) q‖ ^ 2
+      (basisVec (t₀ : PadAnc F m d K) (t₀ : PadAnc F m d K)) q‖ ^ 2
   rw [h, norm_evec_expVec, norm_evec_expVec, registerEPR_norm, norm_basisVec, one_mul, one_mul]
 
 /-! ### The mirror identities of the two pairs -/
@@ -267,13 +277,13 @@ private theorem one_kronecker_mulVec_apply {α β : Type*} [Fintype α] [Decidab
 private theorem sum_mul_registerEPR (P : Matrix I I ℂ) (a b : I) (z : ℂ) :
     ∑ c, P b c * (registerEPR I (a, c) * z) = ∑ c, Pᵀ a c * (registerEPR I (c, b) * z) := by
   rw [Finset.sum_eq_single a, Finset.sum_eq_single b]
-  · simp only [registerEPR, transpose_apply, if_pos rfl]
+  · simp only [registerEPR, transpose_apply]
   · intro c _ hc
-    simp only [registerEPR, if_neg hc, zero_mul, mul_zero]
+    simp only [registerEPR, ite_eq_right hc, zero_mul, mul_zero]
   · intro h
     exact absurd (Finset.mem_univ _) h
   · intro c _ hc
-    simp only [registerEPR, if_neg (Ne.symm hc), zero_mul, mul_zero]
+    simp only [registerEPR, ite_eq_right (Ne.symm hc), zero_mul, mul_zero]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -386,7 +396,8 @@ theorem physE_mirror_A (P : Matrix I I ℂ) :
       = (phys I F m d N K).π ((phys I F m d N K).πA
         (smulKron 1 (Pᵀ ⊗ₖ (1 : Matrix (PadAnc F m d K × I) (PadAnc F m d K × I) ℂ))))
         (phys I F m d N K).ψ := by
-  have h := physE_mirror_smulKron_A (N := N) (1 : 𝒜) (1 : ℬ) P 1
+  have h := physE_mirror_smulKron_A (N := N) (F := F) (m := m) (d := d) (K := K) (1 : 𝒜) (1 : ℬ)
+    P 1
   rwa [smulKron_one_one, map_one, mul_one, mul_one] at h
 
 /-- **The mirror identity of the second player's pair** (`reg_mirror` for the physical model): a
@@ -398,7 +409,8 @@ theorem physE_mirror_B (P : Matrix I I ℂ) :
       = (phys I F m d N K).π ((phys I F m d N K).πB
         (smulKron 1 (Pᵀ ⊗ₖ (1 : Matrix (PadAnc F m d K × I) (PadAnc F m d K × I) ℂ))))
         (phys I F m d N K).ψ := by
-  have h := physE_mirror_smulKron_B (N := N) (1 : 𝒜) (1 : ℬ) 1 P
+  have h := physE_mirror_smulKron_B (N := N) (F := F) (m := m) (d := d) (K := K) (1 : 𝒜) (1 : ℬ)
+    1 P
   rwa [smulKron_one_one, map_one, one_mul, one_mul] at h
 
 variable (I F m d N K) in
@@ -512,7 +524,9 @@ variable [Nonempty I] {N : BipartiteModel 𝒞 𝒜 ℬ} {K : ℕ}
 theorem j₁_ΦA (X : Matrix (PadAnc F m d K) (PadAnc F m d K) (Matrix I I 𝒜)) :
     (j₁ I F m d N K).ΦA X = compHom X := by
   ext p q
-  rfl
+  simp only [j₁, BipartiteModel.Embedding.comp_ΦA, BipartiteModel.inertEmb_ΦA,
+    BipartiteModel.assocEmb_ΦA, BipartiteModel.relabelEmb_ΦA, BipartiteModel.recutEmb_ΦA,
+    submatrix_apply, Equiv.punitProd_symm_apply, compHom_apply, diagonal_apply_eq]
 
 /-- **The first player's register operators, in the first cut**: an operator `Z` of `A'` acts as
 `1_{Ea} ⊗ Z`. -/
@@ -520,7 +534,9 @@ theorem j₁_ΦA (X : Matrix (PadAnc F m d K) (PadAnc F m d K) (Matrix I I 𝒜)
 theorem ι₁_ΦA (Z : Matrix I I 𝒜) :
     (ι₁ I F m d N K).ΦA Z = compHom (diagonal fun _ : PadAnc F m d K => Z) := by
   ext p q
-  rfl
+  simp only [ι₁, j₁, BipartiteModel.Embedding.comp_ΦA, BipartiteModel.inertEmb_ΦA,
+    BipartiteModel.assocEmb_ΦA, BipartiteModel.relabelEmb_ΦA, BipartiteModel.recutEmb_ΦA,
+    submatrix_apply, Equiv.punitProd_symm_apply, compHom_apply, diagonal_apply_eq]
 
 /-- **The second player's register operators, in the first cut**: an operator `Z` of `A''` acts
 as `Z ⊗ 1` on `(A'', (B'', (Eb, B')))`. -/
@@ -528,10 +544,10 @@ as `Z ⊗ 1` on `(A'', (B'', (Eb, B')))`. -/
 theorem ι₁_ΦB (Z : Matrix I I ℬ) :
     (ι₁ I F m d N K).ΦB Z = compHom (Z.map fun y => diagonal fun _ : PhysReg I F m d K => y) := by
   ext ⟨a, b, e, c⟩ ⟨a', b', e', c'⟩
-  show (diagonal fun _ : I × I => compHom (diagonal fun _ : PadAnc F m d K => Z)) (b, c) (b', c')
-      (e, a) (e', a') = diagonal (fun _ : PhysReg I F m d K => Z a a') (b, e, c) (b', e', c')
-  by_cases hb : b = b' <;> by_cases hc : c = c' <;> by_cases he : e = e' <;>
-    simp [diagonal_apply, compHom_apply, hb, hc, he]
+  simp only [ι₁, j₁, BipartiteModel.Embedding.comp_ΦB, BipartiteModel.inertEmb_ΦB,
+    BipartiteModel.assocEmb_ΦB, BipartiteModel.relabelEmb_ΦB, BipartiteModel.recutEmb_ΦB,
+    submatrix_apply, compHom_apply, cutRelabel, Equiv.coe_fn_mk, Matrix.map_apply]
+  by_cases hb : b = b' <;> by_cases hc : c = c' <;> by_cases he : e = e' <;> simp [hb, hc, he]
 
 -- `CutSimul N S K δ := SimulPair N S (cut1 I F m d N K) (ι₁ I F m d N K) δ`, the simultaneous
 -- pair measurement on the first cut, goes here once the model `SimulPair` of

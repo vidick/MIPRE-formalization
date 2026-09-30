@@ -564,6 +564,7 @@ public import MIPRE.Background.QLD.PauliQuestionPrograms
 public import MIPRE.Background.QLD.PauliRowPrograms
 public import MIPRE.Background.QLD.PauliStagePrograms
 public import MIPRE.Background.QLD.PhysEmbed
+public import MIPRE.Background.QLD.PhysModel
 public import MIPRE.Background.QLD.Product
 public import MIPRE.Background.QLD.Products
 public import MIPRE.Background.QLD.Pulling
@@ -1231,6 +1232,7 @@ public import MIPRE.Foundations.LowDegree.UnaryPrimePower
 public import MIPRE.Foundations.LowDegree.ZeroBasis
 public import MIPRE.Foundations.LowDegreeSandwich
 public import MIPRE.Foundations.Measurement
+public import MIPRE.Foundations.ModelCalculus
 public import MIPRE.Foundations.ModelEmbedding
 public import MIPRE.Foundations.ModelIso
 public import MIPRE.Foundations.ModelOver
