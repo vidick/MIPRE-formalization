@@ -16,6 +16,8 @@ sampling predicate supplies the accepted-answer relation, including malformed
 constructors, so its estimate has no abstract subtest or probability premise.
 The Pauli predicate is passed the actual question contents; constructing that
 predicate, and compiling the byte parser, remain separate obligations.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`).
 -/
 
 noncomputable section
@@ -24,10 +26,12 @@ namespace MIPRE.Introspection.TypedEstimates
 
 open Finset Matrix Classical
 
-variable {PauliType PauliAnswer F ι κ A B C H K : Type*}
+variable {PauliType PauliAnswer F ι κ A B C : Type*}
   [Fintype PauliType] [DecidableEq PauliType]
-  [Fintype κ] [DecidableEq κ] [Fintype A] [Fintype B] [Fintype C] [DecidableEq C]
-  [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K] {ℓ : ℕ}
+  [Fintype κ] [DecidableEq κ] [Fintype A] [Fintype B] [Fintype C] [DecidableEq C] {ℓ : ℕ}
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
 
 /-- On any auxiliary edge, the coarsened cross-party distance costs exactly twice
 the ordered-edge count times the game's failure. -/
@@ -35,33 +39,32 @@ theorem aux_agreement_estimate (E : PauliType → PauliType → Bool) (X Z : Pau
     (P : PauliType → CL.CLFun (ZMod 2) κ 3)
     (D : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
       CL.Detyping.Question (QuestionType PauliType ℓ) κ → A → B → Bool)
-    (ψ : H × K → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1)
-    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVM A H)
-    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVM B K)
-    {ε : ℝ} (hfail : 1 - povmValue (TypedPresentation.game E X Z ℓ P D) ψ MA MB ≤ ε)
+    (Ψ : BipartiteModel 𝒞 𝒜 ℬ) (hΨ : ‖Ψ.ψ‖ = 1)
+    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVMIn A 𝒜)
+    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVMIn B ℬ)
+    {ε : ℝ} (hfail : 1 - Ψ.povmValue (TypedPresentation.game E X Z ℓ P D) MA MB ≤ ε)
     (t u : AuxType ℓ) (w w' : Bool)
     (hedge : TypeGraph.Adj E X Z (.inr (t, w)) (.inr (u, w')))
     (f : A → C) (g : B → C)
     (hcheck : ∀ a b, D (.inr (t, w), 0) (.inr (u, w'), 0) a b = true → f a = g b) :
-    (∑ z, xSqNorm ψ ((((MA (.inr (t, w), 0)).map f).mats z).val)
-      ((((MB (.inr (u, w'), 0)).map g).mats z).val)) ≤
+    (∑ z, Ψ.xSqNorm (((MA (.inr (t, w), 0)).map f).op z)
+      (((MB (.inr (u, w'), 0)).map g).op z)) ≤
         2 * (TypeGraph.edges E X Z ℓ).card * ε := by
   let G := TypedPresentation.game E X Z ℓ P D
   let x : CL.Detyping.Question (QuestionType PauliType ℓ) κ := (.inr (t, w), 0)
   let y : CL.Detyping.Question (QuestionType PauliType ℓ) κ := (.inr (u, w'), 0)
-  have hterm := sum_mul_condFail_le (G := G) (ψ := ψ) (MA := MA) (MB := MB)
-    hψ hfail {(x, y)}
+  have hterm := Ψ.sum_mul_condFail_le (G := G) (MA := MA) (MB := MB) hΨ hfail {(x, y)}
   simp only [sum_singleton] at hterm
   change (TypedPresentation.game E X Z ℓ P D).μ (.inr (t, w), 0) (.inr (u, w'), 0) *
-    condFail G ψ MA MB x y ≤ ε at hterm
+    Ψ.condFail G MA MB x y ≤ ε at hterm
   rw [TypedPresentation.mu_aux E X Z P D t u w w' hedge, inv_mul_eq_div] at hterm
   have hc : (0 : ℝ) < (TypeGraph.edges E X Z ℓ).card := by
     exact_mod_cast (TypeGraph.edges_nonempty E X Z ℓ).card_pos
   have hcond := (div_le_iff₀ hc).mp hterm
-  have hdist := xSqNorm_sum_le_condFail (G := G) (ψ := ψ) (MA := MA) (MB := MB)
-    (x := x) (y := y) hψ f g hcheck
+  have hdist := Ψ.xSqNorm_sum_le_condFail (G := G) (MA := MA) (MB := MB)
+    (x := x) (y := y) hΨ f g hcheck
   change _ ≤ 2 * (TypeGraph.edges E X Z ℓ).card * ε
-  calc _ ≤ 2 * condFail G ψ MA MB x y := hdist
+  calc _ ≤ 2 * Ψ.condFail G MA MB x y := hdist
     _ ≤ 2 * (ε * (TypeGraph.edges E X Z ℓ).card) :=
       mul_le_mul_of_nonneg_left hcond (by norm_num)
     _ = _ := by ring
@@ -111,18 +114,18 @@ theorem sampling_prefix_estimate (E : PauliType → PauliType → Bool) (X Z : P
     (D : (ι → F) → (ι → F) → A → A → Bool)
     (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →
       PauliAnswer → PauliAnswer → Bool)
-    (ψ : H × K → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1)
+    (Ψ : BipartiteModel 𝒞 𝒜 ℬ) (hΨ : ‖Ψ.ψ‖ = 1)
     (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) H)
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) 𝒜)
     (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) K)
-    {ε : ℝ} (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP) ψ MA MB ≤ ε)
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) ℬ)
+    {ε : ℝ} (hfail : 1 - Ψ.povmValue (parsedGame E X Z P L projectPauli D DP) MA MB ≤ ε)
     (w : Bool) (hL : (L w).SupportedOn univ) (k : ℕ) :
-    (∑ z, xSqNorm ψ
-      ((((MA (QuestionType.introspect w, 0)).map (introspectPrefix (L w) k)).mats z).val)
-      ((((MB (QuestionType.sample w, 0)).map (samplePrefix (L w) k)).mats z).val)) ≤
+    (∑ z, Ψ.xSqNorm
+      (((MA (QuestionType.introspect w, 0)).map (introspectPrefix (L w) k)).op z)
+      (((MB (QuestionType.sample w, 0)).map (samplePrefix (L w) k)).op z)) ≤
         2 * (TypeGraph.edges E X Z ℓ).card * ε := by
-  apply aux_agreement_estimate E X Z P (questionCheck L X Z projectPauli D DP) ψ hψ MA MB
+  apply aux_agreement_estimate E X Z P (questionCheck L X Z projectPauli D DP) Ψ hΨ MA MB
     hfail .introspect .sample w w
     (TypeGraph.symmetric E X Z _ _ (TypeGraph.adj_sample_introspect E X Z w))
   intro a b h
@@ -159,23 +162,23 @@ variable (E : PauliType → PauliType → Bool) (X Z : PauliType)
   (D : (ι → F) → (ι → F) → A → A → Bool)
   (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →
     PauliAnswer → PauliAnswer → Bool)
-  (ψ : H × K → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1)
+  (Ψ : BipartiteModel 𝒞 𝒜 ℬ) (hΨ : ‖Ψ.ψ‖ = 1)
   (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-    POVM (ParsedAnswer (ι → F) A PauliAnswer) H)
+    POVMIn (ParsedAnswer (ι → F) A PauliAnswer) 𝒜)
   (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-    POVM (ParsedAnswer (ι → F) A PauliAnswer) K)
-  {ε : ℝ} (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP) ψ MA MB ≤ ε)
+    POVMIn (ParsedAnswer (ι → F) A PauliAnswer) ℬ)
+  {ε : ℝ} (hfail : 1 - Ψ.povmValue (parsedGame E X Z P L projectPauli D DP) MA MB ≤ ε)
 
-include hψ hfail
+include hΨ hfail
 
 /-- The concrete last-hiding/Read test bounds the tested coarse measurements,
 without a separate accepted-answer or selection-probability assumption. -/
 theorem hiding_read_estimate (w : Bool) (k : Fin ℓ) (hk : k.val + 1 = ℓ) :
-    (∑ z, xSqNorm ψ
-      ((((MA (QuestionType.hide w k, 0)).map (hidingReadout (L w))).mats z).val)
-      ((((MB (QuestionType.read w, 0)).map (readingReadout (L w))).mats z).val)) ≤
+    (∑ z, Ψ.xSqNorm
+      (((MA (QuestionType.hide w k, 0)).map (hidingReadout (L w))).op z)
+      (((MB (QuestionType.read w, 0)).map (readingReadout (L w))).op z)) ≤
         2 * (TypeGraph.edges E X Z ℓ).card * ε := by
-  apply aux_agreement_estimate E X Z P (questionCheck L X Z projectPauli D DP) ψ hψ MA MB
+  apply aux_agreement_estimate E X Z P (questionCheck L X Z projectPauli D DP) Ψ hΨ MA MB
     hfail (.hide k) .read w w (TypeGraph.adj_hide_read E X Z w k hk)
   intro a b h
   have hf := TypedPredicate.check_formats L X Z projectPauli D
@@ -197,20 +200,20 @@ theorem hiding_read_estimate (w : Bool) (k : Fin ℓ) (hk : k.val + 1 = ℓ) :
 /-- The terminal hiding test and Read consistency loop give a same-party estimate
 with loss `8 |E| ε`, after coarse-graining the actual accepted-answer relations. -/
 theorem hiding_read_same_side_estimate (w : Bool) (k : Fin ℓ) (hk : k.val + 1 = ℓ) :
-    (∑ z, stateSqNorm ψ
-      (((((MA (QuestionType.hide w k, 0)).map (hidingReadout (L w))).mats z).val) -
-        ((((MA (QuestionType.read w, 0)).map (readingReadout (L w))).mats z).val))) ≤
+    (∑ z, Ψ.stateSqNorm
+      ((((MA (QuestionType.hide w k, 0)).map (hidingReadout (L w))).op z) -
+        (((MA (QuestionType.read w, 0)).map (readingReadout (L w))).op z))) ≤
           8 * (TypeGraph.edges E X Z ℓ).card * ε := by
-  have h₁ := hiding_read_estimate E X Z P L projectPauli D DP ψ hψ MA MB hfail w k hk
+  have h₁ := hiding_read_estimate E X Z P L projectPauli D DP Ψ hΨ MA MB hfail w k hk
   have h₂ := aux_agreement_estimate E X Z P (questionCheck L X Z projectPauli D DP)
-    ψ hψ MA MB hfail .read .read w w (TypeGraph.adj_self E X Z (.inr (.read, w)))
+    Ψ hΨ MA MB hfail .read .read w w (TypeGraph.adj_self E X Z (.inr (.read, w)))
     (readingReadout (L w)) (readingReadout (L w)) (fun a b hab =>
       congrArg (readingReadout (L w))
         (TypedPredicate.check_consistency L X Z projectPauli D (fun p s => DP p s 0 0) hab))
-  have htriangle := same_side_via_common_other ψ
-    (fun z => ((((MA (QuestionType.hide w k, 0)).map (hidingReadout (L w))).mats z).val))
-    (fun z => ((((MA (QuestionType.read w, 0)).map (readingReadout (L w))).mats z).val))
-    (fun z => ((((MB (QuestionType.read w, 0)).map (readingReadout (L w))).mats z).val))
+  have htriangle := same_side_via_common_other Ψ
+    (fun z => (((MA (QuestionType.hide w k, 0)).map (hidingReadout (L w))).op z))
+    (fun z => (((MA (QuestionType.read w, 0)).map (readingReadout (L w))).op z))
+    (fun z => (((MB (QuestionType.read w, 0)).map (readingReadout (L w))).op z))
   linarith only [htriangle, h₁, h₂]
 
 end Parsed
