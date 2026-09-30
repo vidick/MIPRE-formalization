@@ -739,6 +739,7 @@ public import MIPRE.Background.Repetition.VerifierCo
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
 public import MIPRE.Cslib.Foundations.Data.RelatesInSteps
+public import MIPRE.Foundations.AncillaIsometry
 public import MIPRE.Foundations.AncillaModel
 public import MIPRE.Foundations.BipartiteModel
 public import MIPRE.Foundations.Blocks
@@ -1081,6 +1082,7 @@ public import MIPRE.Foundations.Introspection.Readout
 public import MIPRE.Foundations.Introspection.RegisterCoordinates
 public import MIPRE.Foundations.Introspection.RegisterEPR
 public import MIPRE.Foundations.Introspection.RegisterMixing
+public import MIPRE.Foundations.Introspection.RegisterModel
 public import MIPRE.Foundations.Introspection.RegisterTransport
 public import MIPRE.Foundations.Introspection.RegisteredExtensionErrors
 public import MIPRE.Foundations.Introspection.RestrictedErrorBounds
@@ -1138,6 +1140,7 @@ public import MIPRE.Foundations.Introspection.ValueStability
 public import MIPRE.Foundations.Introspection.VaryingPauliMixing
 public import MIPRE.Foundations.Introspection.VerifierSourceGame
 public import MIPRE.Foundations.Linearity
+public import MIPRE.Foundations.LocalIsometry
 public import MIPRE.Foundations.LowDegree.Anticomm
 public import MIPRE.Foundations.LowDegree.BinaryArtinSchreier
 public import MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop
