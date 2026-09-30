@@ -13,6 +13,10 @@ Advancing the old prefix and current-coordinate outcome preserves the
 squared error exactly: this label map is injective on attainable prefixes,
 and all other prefix-conditioned operators vanish. The ideal coarse
 marginal is the actual next-prefix measurement.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the state norms are those of an
+arbitrary model whose first player holds the matrices over `ι → F` with entries in an algebra `𝒜`,
+the register model `Ξ.reg (ι → F)` of the stage error among them; coarse-graining is `fibSumIn`.
 -/
 
 noncomputable section
@@ -22,17 +26,19 @@ namespace MIPRE.Introspection
 open Finset Matrix Weyl Classical
 set_option linter.unusedSectionVars false
 
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ]
+
 theorem fibSum_sqNorm_of_injective_support
-    {I J D K : Type*} [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J]
-    [Fintype D] [DecidableEq D] [Fintype K] [DecidableEq K]
-    (ψ : D × K → ℂ) (X : I → Matrix D D ℂ) (f : I → J) (good : I → Prop)
+    {I J : Type*} [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J]
+    (Ψ : BipartiteModel 𝒞 𝒜 ℬ) (X : I → 𝒜) (f : I → J) (good : I → Prop)
     (hzero : ∀ i, ¬ good i → X i = 0)
     (hinj : ∀ i j, good i → good j → f i = f j → i = j) :
-    (∑ b, stateSqNorm ψ (fibSum X f b)) = ∑ i, stateSqNorm ψ (X i) := by
-  have hz : stateSqNorm ψ (0 : Matrix D D ℂ) = 0 := by
-    simp [stateSqNorm, stateNorm, stateVec]
-  have hfib (b : J) : stateSqNorm ψ (fibSum X f b) =
-      ∑ i ∈ univ.filter (fun i => f i = b), stateSqNorm ψ (X i) := by
+    (∑ b, Ψ.stateSqNorm (fibSumIn X f b)) = ∑ i, Ψ.stateSqNorm (X i) := by
+  have hz : Ψ.stateSqNorm (0 : 𝒜) = 0 := by
+    simp [BipartiteModel.stateSqNorm, BipartiteModel.stateNorm, StateModel.snorm_zero]
+  have hfib (b : J) : Ψ.stateSqNorm (fibSumIn X f b) =
+      ∑ i ∈ univ.filter (fun i => f i = b), Ψ.stateSqNorm (X i) := by
     by_cases hex : ∃ i, good i ∧ f i = b
     · obtain ⟨i, hi, hfi⟩ := hex
       have him : i ∈ univ.filter (fun i => f i = b) := by simp [hfi]
@@ -41,34 +47,34 @@ theorem fibSum_sqNorm_of_injective_support
         apply hzero j
         intro hgj
         exact hji (hinj j i hgj hi ((mem_filter.mp hj).2.trans hfi.symm))
-      rw [fibSum, Finset.sum_eq_single_of_mem i him hother,
+      rw [fibSumIn, Finset.sum_eq_single_of_mem i him hother,
         Finset.sum_eq_single_of_mem i him (fun j hj hji => by rw [hother j hj hji, hz])]
     · have hother (i : I) (hi : i ∈ univ.filter (fun i => f i = b)) : X i = 0 := by
         apply hzero i
         intro hg
         exact hex ⟨i, hg, (mem_filter.mp hi).2⟩
-      have hsum : fibSum X f b = 0 := Finset.sum_eq_zero hother
+      have hsum : fibSumIn X f b = 0 := Finset.sum_eq_zero hother
       rw [hsum, hz]
       symm
       exact Finset.sum_eq_zero fun i hi => by rw [hother i hi, hz]
   rw [Finset.sum_congr rfl (fun b _ => hfib b)]
-  exact Finset.sum_fiberwise univ f (fun i => stateSqNorm ψ (X i))
+  exact Finset.sum_fiberwise univ f (fun i => Ψ.stateSqNorm (X i))
 
-variable {ι F H K A : Type*} [Fintype ι] [DecidableEq ι]
+variable {ι F A : Type*} [Fintype ι] [DecidableEq ι]
   [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
-  [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K]
   [Fintype A] [DecidableEq A] {ℓ : ℕ}
 
 /-- Advancing an arbitrary prefix-conditioned family preserves its total
 squared state norm, without a measurement or state normalization premise. -/
 theorem advancePrefix_fibSum_sqNorm (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
-    (k : ℕ) (ψ : ((ι → F) × H) × K → ℂ)
+    (k : ℕ) {ℬ' : Type*} [Ring ℬ'] [StarRing ℬ'] [Algebra ℂ ℬ']
+    (Ψ : BipartiteModel 𝒞 (Matrix (ι → F) (ι → F) 𝒜) ℬ')
     (M : (p : (y : ι → F) × (Fin (Fintype.card (P.factorOfPrefix k y)) → F)) →
-      Matrix ((stageRemaining P k p.1 → F) × H) ((stageRemaining P k p.1 → F) × H) ℂ) :
-    (∑ v, stateSqNorm ψ (fibSum (fun p => prefixResidualOp P k p.1 (M p))
+      Matrix (stageRemaining P k p.1 → F) (stageRemaining P k p.1 → F) 𝒜) :
+    (∑ v, Ψ.stateSqNorm (fibSumIn (fun p => prefixResidualOp P k p.1 (M p))
       (fun p => advancePrefix P k p.1 p.2) v)) =
-      ∑ p, stateSqNorm ψ (prefixResidualOp P k p.1 (M p)) := by
-  apply fibSum_sqNorm_of_injective_support _ _ _ (fun p => p.1 ∈ prefixOutcomes P k)
+      ∑ p, Ψ.stateSqNorm (prefixResidualOp P k p.1 (M p)) := by
+  apply fibSum_sqNorm_of_injective_support Ψ _ _ (fun p => p.1 ∈ prefixOutcomes P k)
   · intro p hp
     exact prefixResidualOp_eq_zero P k p.1 hp (M p)
   · intro p q hp hq he
@@ -83,22 +89,22 @@ theorem advancePrefix_fibSum_sqNorm (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn 
 /-- The current-stage marginal error is exactly the distance between its
 advanced coarse marginal and the actual next-prefix PVM. No coarse-graining
 contraction is assumed: the equality follows from attainable-label injectivity. -/
-theorem prefixStageMarginalError_reassembled (P : CL.CLFun F ι ℓ)
-    (hP : P.SupportedOn univ) (k : ℕ) (ξ : H × K → ℂ)
+theorem prefixStageMarginalError_reassembled [StarModule ℂ 𝒜] [StarModule ℂ ℬ]
+    (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ) (k : ℕ) (Ξ : BipartiteModel 𝒞 𝒜 ℬ)
     (M : (y : ι → F) → (Fin (Fintype.card (P.factorOfPrefix k y)) → F) × A →
-      Matrix ((stageRemaining P k y → F) × H) ((stageRemaining P k y → F) × H) ℂ) :
-    prefixStageMarginalError P hP k ξ M =
-      ∑ v, stateSqNorm (registerState (ι → F) ξ)
-        (fibSum
+      Matrix (stageRemaining P k y → F) (stageRemaining P k y → F) 𝒜) :
+    prefixStageMarginalError P hP k Ξ M =
+      ∑ v, (Ξ.reg (ι → F)).stateSqNorm
+        (fibSumIn
           (fun p : (y : ι → F) × (Fin (Fintype.card (P.factorOfPrefix k y)) → F) =>
             prefixResidualOp P k p.1 (∑ a, M p.1 (p.2, a)))
           (fun p => advancePrefix P k p.1 p.2) v -
-          aOp (Honest.hidingPrefixOp P (k + 1) (some v))) := by
-  have hh := advancePrefix_fibSum_sqNorm P hP k (registerState (ι → F) ξ)
+          smulKron 1 (Honest.hidingPrefixOp P (k + 1) (some v))) := by
+  have hh := advancePrefix_fibSum_sqNorm P hP k (Ξ.reg (ι → F))
     (fun p => (∑ a, M p.1 (p.2, a)) -
       registerReadout (stageSplit P hP k p.1) wZ
         (coordinateLinear (CLChecks.stageLinear P k p.1)) p.2)
-  simp only [prefixResidualOp_sub, fibSum, Finset.sum_sub_distrib,
+  simp only [prefixResidualOp_sub, fibSumIn, Finset.sum_sub_distrib,
     Fintype.sum_sigma] at hh
   unfold prefixStageMarginalError
   rw [← hh]
