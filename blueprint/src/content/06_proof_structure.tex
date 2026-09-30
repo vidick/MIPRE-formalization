@@ -685,8 +685,7 @@ requirements when constructing a bounded compiler and transferring completeness.
 \uses{lem:detype-executable-decider,lem:detype-game-completeness,lem:detype-game-soundness}
 \lean{MIPRE.CL.Detyping.DeciderProgram.numbered_clDist,
   MIPRE.CL.Detyping.DeciderProgram.verifier_game_mu,
-  MIPRE.CL.Detyping.DeciderProgram.toFinite_state, MIPRE.CL.Detyping.DeciderProgram.toFinite_value,
-  MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_state,
+  MIPRE.CL.Detyping.DeciderProgram.toFinite_value,
   MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_failure_le,
   MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_value_ge,
   MIPRE.CL.Detyping.DeciderProgram.fromFiniteSync_isPCC,
@@ -700,6 +699,9 @@ strategy for the typed game gives an actual ambient perfect PCC strategy
 with the same local dimension. Both sides use the outer answer alphabet and
 the typed predicate includes rejection beyond the source typed-answer cut;
 there is no implicit comparison of two different answer alphabets.
+The Lean restricts a projective strategy in a bipartite model
+(Definition~\ref{def:model-proj-strategy}), of which a tensor-product strategy is the case of its
+tensor-product model, to one in the same model.
 \end{lemma}
 \begin{proof}
 \leanok
@@ -1346,7 +1348,8 @@ on $K^\perp$, by Lemma~\ref{lem:pauli-linear-fourier}; all other character sums 
 \ledgernode{1.2.3.3.2}
 \uses{def:weyl-epr}
 \lean{MIPRE.Introspection.linear_twirl_blocks,
-  MIPRE.Introspection.averagedBlock_posSemidef,
+  MIPRE.Introspection.star_averagedBlock,
+  MIPRE.Introspection.averagedBlock_nonneg,
   MIPRE.Introspection.sum_averagedBlock_eq_one,
   MIPRE.Introspection.blockPOVM,
   MIPRE.Introspection.linear_twirl_povm}
@@ -1499,10 +1502,9 @@ The squared triangle bound gives $D_\psi(A,C)\leq2D_\psi(A,B)+2D_\psi(B,C)$.
   MIPRE.Introspection.retained_block_le_completion,
   MIPRE.Introspection.block_retention_precompletion,
   MIPRE.Introspection.block_retention_dist_avg,
-  MIPRE.Introspection.mirror_expVec,
-  MIPRE.Introspection.eprWithAux_norm,
-  MIPRE.Introspection.eprWithAux_wX_mirror,
-  MIPRE.Introspection.eprWithAux_readout_mirror,
+  MIPRE.Introspection.mirror_expand,
+  MIPRE.Introspection.reg_wX_mirror,
+  MIPRE.Introspection.reg_readout_mirror,
   MIPRE.Introspection.pauli_twirl_dist_le,
   MIPRE.Introspection.fine_commutator_parseval,
   MIPRE.Introspection.kernel_commutator_parseval,
@@ -1524,6 +1526,9 @@ $2\delta+4\sqrt\delta$, where
 $\delta=\mathbb E_x(2e_0+8e_Z+8e_X)$.
 If the three averaged errors are at most $0\leq\eps\leq1$, the bound is
 $56\sqrt\eps$. Register dimensions and auxiliary spaces may vary with $x$.
+The Lean states it in the register model on $\F^{n_x}$ (Definition~\ref{def:register-model}) of a
+normalized auxiliary model $\Xi_x$, of which $\mathrm{EPR}_{\F^{n_x}}\otimes\xi_x$ is the case of
+the tensor-product model of $\xi_x$, with the POVMs in the first player's algebra of $\Xi_x$.
 \end{lemma}
 \begin{proof}
 \uses{lem:cool-closeness-fact,lem:pasting-updated,lem:intro-linear-readout-projectivity}
@@ -1795,7 +1800,7 @@ entanglement.
   MIPRE.Introspection.conditionalReadout_isPVM,
   MIPRE.Introspection.bornProb_conditionalReadout,
   MIPRE.Introspection.readoutAcceptance_eq_value,
-  MIPRE.Introspection.quantumValue_ge_of_readoutAcceptance,
+  MIPRE.Introspection.val_ge_of_readoutAcceptance,
   MIPRE.Introspection.exists_strategy_of_readoutAcceptance,
   MIPRE.Introspection.verifier_readoutAcceptance_eq_value}
 \leanok
@@ -1808,6 +1813,10 @@ game. Discarding the question EPR register incurs no further error or dimension
 factor. The identity is specialized to the actual CL distribution of a verifier.
 This assumes the terminal tensor-product measurement form, which the soundness
 induction below derives from arbitrary high-value introspection play.
+The Lean states it in the register model (Definition~\ref{def:register-model}) of an auxiliary
+model: the auxiliary measurements form a projective strategy of the auxiliary model
+(Definition~\ref{def:model-proj-strategy}), and every value model dominating that model has value
+at least the accepted mass, of which the quantum value is the case of a tensor-product model.
 \end{lemma}
 \begin{proof}
 \leanok
@@ -2506,13 +2515,13 @@ registers and simplify $56\sqrt{16\eps}$.
 \begin{lemma}[Conditional projectivization on a common ancilla]
 \label{lem:intro-conditional-dilation}
 \uses{def:state-distance}
-\lean{MIPRE.Introspection.bornProb_extVecA,
-  MIPRE.Introspection.stateSqNorm_extVecA_aOp,
+\lean{MIPRE.Introspection.stateSqNorm_expandA_diagonal,
   MIPRE.Introspection.dilated_pvm_distance,
   MIPRE.Introspection.conditionalDilationOp_isPVM,
   MIPRE.Introspection.conditionalDilationOp_compress,
   MIPRE.Introspection.conditionalDilationOp_born,
-  MIPRE.Introspection.extVecA_registerState,
+  MIPRE.Introspection.regExchange,
+  MIPRE.Introspection.regExchange_W_ψ,
   MIPRE.Introspection.exists_conditional_projective_dilation,
   MIPRE.Introspection.exists_varying_conditional_projective_dilation}
 \leanok
@@ -2524,6 +2533,10 @@ squared distance at most $2\sqrt{\delta}$ from the dilated PVM on the enlarged
 state. A dependent-family version allows all local register carriers and
 transported states to vary with the prefix, while retaining the same ancilla
 alphabet and state. Explicit reassociation preserves the original EPR factor.
+The Lean states it in a bipartite model: the ancilla is a one-sided extension
+(Definition~\ref{def:one-sided-extension}) by the ancilla of a Kraus dilation in a fixed basis
+state (Lemma~\ref{lem:kraus-dilation}), whose size depends on the POVMs, and so on the question in
+the dependent-family version, and the reassociation exchanges the two layers of the register model.
 \end{lemma}
 \begin{proof}
 \uses{lem:pauli-mixing}
@@ -2962,9 +2975,7 @@ Induct on the number of replacements, using the decreasing thresholds.
 \begin{lemma}[Finite iteration of the actual Alice strategy]
 \label{lem:intro-actual-iteration}
 \uses{lem:intro-actual-successor,lem:intro-iteration-threshold}
-\lean{MIPRE.Introspection.introIterationState_unit,
-  MIPRE.Introspection.TypedEstimates.introBobZError_introIterationState,
-  MIPRE.Introspection.TypedEstimates.exists_intro_iteration}
+\lean{MIPRE.Introspection.TypedEstimates.exists_intro_iteration}
 \leanok
 In the actual parsed-game setup, suppose the starting measurements are
 projective, the primitive Bob-Z and every fixed Alice hiding error have the
@@ -2975,6 +2986,10 @@ numerical recurrence. Its auxiliary carrier and product ancilla state are
 constructed recursively. Bob's measurement family is retained, all other
 Alice questions have their exact iterated identity extensions, and the
 primitive Bob-Z and Alice hiding errors remain unchanged.
+The Lean states it in the register model (Definition~\ref{def:register-model}) of a normalized
+auxiliary model: each stage adjoins a one-sided ancilla whose size the dilation chooses, so the
+iteration returns a new normalized auxiliary model in place of the recursive carrier and state, and
+that model reduces to the original one (Definition~\ref{def:povm-reduction}).
 \end{lemma}
 \begin{proof}
 \leanok
@@ -3012,12 +3027,18 @@ option alphabet. Reassembling the residual effects gives both formulas.
 \begin{lemma}[Player exchange and the actual Bob iteration]
 \label{lem:intro-bob-iteration}
 \uses{lem:intro-actual-iteration}
-\lean{MIPRE.Introspection.swapVec_registerState,
-  MIPRE.Introspection.TypedPresentation.mu_swap,
+\lean{MIPRE.Introspection.TypedPresentation.mu_swap,
+  MIPRE.Introspection.TypedEstimates.parsedGame_transpose,
+  MIPRE.Introspection.TypedEstimates.swap_reg_bornProb,
+  MIPRE.Introspection.TypedEstimates.swap_reg_povmValue,
+  MIPRE.Introspection.TypedEstimates.swap_reg_stateSqNorm,
+  MIPRE.Introspection.TypedEstimates.swap_reg_swap_stateSqNorm,
+  MIPRE.Introspection.TypedEstimates.swap_reg_xSqNorm,
   MIPRE.Introspection.TypedEstimates.parsedGame_value_swap,
-  MIPRE.Introspection.introBobIterationState_unit,
-  MIPRE.Introspection.TypedEstimates.introAliceZError_of_iteration_other,
-  MIPRE.Introspection.TypedEstimates.hidingBobError_introIterationState,
+  MIPRE.Introspection.TypedEstimates.introBobZError_swap,
+  MIPRE.Introspection.TypedEstimates.introAliceZError_swap,
+  MIPRE.Introspection.TypedEstimates.hidingAliceError_swap,
+  MIPRE.Introspection.TypedEstimates.hidingBobError_swap,
   MIPRE.Introspection.TypedEstimates.exists_intro_bob_iteration}
 \leanok
 Exchanging the players in the actual parsed game preserves its value after
@@ -3026,6 +3047,11 @@ The finite Alice construction therefore gives an actual Bob construction,
 with its prefix invariant, projectivity, untouched questions, and the same
 failure recurrence. The primitive errors required by the second player
 are preserved by the first player's ancillary extension.
+The Lean exchanges the players by swapping the model, whose register model is the swapped register
+model along a local isometry with identity homomorphisms (Definition~\ref{def:register-model}),
+so the value and every primitive and hiding error move across with no loss, and the Bob iteration
+is the Alice iteration in the swapped model, returning a model that reduces to the original one
+(Definition~\ref{def:povm-reduction}).
 \end{lemma}
 \begin{proof}
 \leanok
@@ -3038,7 +3064,6 @@ Apply the proved Alice construction to the exchanged game and swap back.
 \label{lem:intro-two-sided-iteration}
 \uses{lem:intro-bob-iteration,lem:intro-iteration-threshold}
 \lean{MIPRE.Introspection.adaptiveFailureBudget_add,
-  MIPRE.Introspection.introTwoSidedState_unit,
   MIPRE.Introspection.TypedEstimates.exists_intro_two_sided_iteration}
 \leanok
 If the initial failure, both primitive Z errors, and the required hiding
@@ -3046,6 +3071,9 @@ errors are at most the explicit threshold for $2\ell$ replacements, there
 are concrete projective measurement families with Alice's false-role and
 Bob's true-role terminal invariants. The final state uses only fixed local
 ancillas, and failure is bounded by the single recurrence at $2\ell$.
+The Lean's final state is a model: Alice's block extends the auxiliary model on her side and Bob's
+block the result on his, and the final model reduces to the original one
+(Definition~\ref{def:povm-reduction}).
 \end{lemma}
 \begin{proof}
 \leanok
@@ -3123,6 +3151,11 @@ explicit coefficient depending only on depth and type-graph size.
 There is no assumed hiding estimate, future strategy, or smallness condition.
 If $t$ has the paper's two-term profile, the conclusion has that profile
 with uniform adjusted constants.
+The Lean's EPR register tensored with a normalized auxiliary state is the register model
+(Definition~\ref{def:register-model}) of a normalized auxiliary model, and it bounds the value of
+every value model dominating the POVM strategies of the auxiliary model
+(Definition~\ref{def:povm-domination}), of which the quantum value is the case of a tensor-product
+model.
 \end{lemma}
 \begin{proof}
 \leanok
@@ -3352,7 +3385,7 @@ value one under normalized trace, and the tested commutations give PCC.
 \begin{lemma}[Finite soundness from the valid-answer extraction interface]
 \label{lem:intro-valid-isometric-soundness}
 \uses{lem:intro-isometric-strategy,lem:intro-primitive-soundness}
-\lean{MIPRE.Introspection.isometricPOVM_map_mats_eq,
+\lean{MIPRE.Introspection.transportA_map_op,
   MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_isometric_images,
   MIPRE.Introspection.submeasurement_extension_mass,
   MIPRE.Introspection.submeasurement_extension_dist,
@@ -3375,6 +3408,11 @@ isometries and their estimates are inputs here; Lemma~\ref{lem:intro-pauli-extra
 supplies them for the actual game from Theorem~\ref{thm:qld}.
 The final loss preserves the paper's two-term error profile with uniform
 constants and a positive exponent at most one.
+The Lean states it for a strategy in any bipartite model, with one local isometry of models
+(Definition~\ref{def:local-isometry}) into the register model of a normalized auxiliary model
+(Definition~\ref{def:register-model}), and bounds the value of every value model dominating the
+POVM strategies of the auxiliary model (Definition~\ref{def:povm-domination}), of which the quantum
+value is the case of a tensor-product model.
 \end{lemma}
 \begin{proof}
 \uses{lem:intro-extracted-state-soundness}

@@ -1335,7 +1335,7 @@ tell you the guard is missing.
   MIPRE.Introspection.conditionalReadout_isPVM,
   MIPRE.Introspection.bornProb_conditionalReadout,
   MIPRE.Introspection.readoutAcceptance_eq_value,
-  MIPRE.Introspection.quantumValue_ge_of_readoutAcceptance,
+  MIPRE.Introspection.val_ge_of_readoutAcceptance,
   MIPRE.Introspection.exists_strategy_of_readoutAcceptance,
   MIPRE.Introspection.verifier_readoutAcceptance_eq_value,
   MIPRE.Introspection.errorProfile_power,
@@ -1408,9 +1408,7 @@ tell you the guard is missing.
 
 #guard_sorry_free MIPRE.CL.Detyping.DeciderProgram.numbered_clDist,
   MIPRE.CL.Detyping.DeciderProgram.verifier_game_mu,
-  MIPRE.CL.Detyping.DeciderProgram.toFinite_state,
   MIPRE.CL.Detyping.DeciderProgram.toFinite_value,
-  MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_state,
   MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_failure_le,
   MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_value_ge,
   MIPRE.CL.Detyping.DeciderProgram.fromFiniteSync_isPCC,
@@ -1445,7 +1443,8 @@ tell you the guard is missing.
   MIPRE.Introspection.sampling_hiding_isPVM
 
 #guard_sorry_free MIPRE.Introspection.linear_twirl_blocks,
-  MIPRE.Introspection.averagedBlock_posSemidef,
+  MIPRE.Introspection.star_averagedBlock,
+  MIPRE.Introspection.averagedBlock_nonneg,
   MIPRE.Introspection.sum_averagedBlock_eq_one,
   MIPRE.Introspection.blockPOVM,
   MIPRE.Introspection.linear_twirl_povm
@@ -1943,10 +1942,9 @@ tell you the guard is missing.
   MIPRE.Introspection.retained_block_le_completion,
   MIPRE.Introspection.block_retention_precompletion,
   MIPRE.Introspection.block_retention_dist_avg,
-  MIPRE.Introspection.mirror_expVec,
-  MIPRE.Introspection.eprWithAux_norm,
-  MIPRE.Introspection.eprWithAux_wX_mirror,
-  MIPRE.Introspection.eprWithAux_readout_mirror,
+  MIPRE.Introspection.mirror_expand,
+  MIPRE.Introspection.reg_wX_mirror,
+  MIPRE.Introspection.reg_readout_mirror,
   MIPRE.Introspection.pauli_twirl_dist_le,
   MIPRE.Introspection.fine_commutator_parseval,
   MIPRE.Introspection.kernel_commutator_parseval,
@@ -2153,13 +2151,13 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.Honest.parsedHide_read_reject_zero,
   MIPRE.Introspection.Honest.parsedRead_hide_reject_zero
 
-#guard_sorry_free MIPRE.Introspection.bornProb_extVecA,
-  MIPRE.Introspection.stateSqNorm_extVecA_aOp,
+#guard_sorry_free MIPRE.Introspection.stateSqNorm_expandA_diagonal,
   MIPRE.Introspection.dilated_pvm_distance,
   MIPRE.Introspection.conditionalDilationOp_isPVM,
   MIPRE.Introspection.conditionalDilationOp_compress,
   MIPRE.Introspection.conditionalDilationOp_born,
-  MIPRE.Introspection.extVecA_registerState,
+  MIPRE.Introspection.regExchange,
+  MIPRE.Introspection.regExchange_W_ψ,
   MIPRE.Introspection.exists_conditional_projective_dilation,
   MIPRE.Introspection.exists_varying_conditional_projective_dilation
 
@@ -2452,9 +2450,7 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.adaptiveFailureBudget_le_threshold,
   MIPRE.Introspection.adaptiveStageBudget_le_one_of_threshold
 
-#guard_sorry_free MIPRE.Introspection.introIterationState_unit,
-  MIPRE.Introspection.TypedEstimates.introBobZError_introIterationState,
-  MIPRE.Introspection.TypedEstimates.exists_intro_iteration
+#guard_sorry_free MIPRE.Introspection.TypedEstimates.exists_intro_iteration
 
 #print axioms MIPRE.Introspection.TypedEstimates.exists_intro_successor
 #print axioms MIPRE.Introspection.TypedEstimates.exists_intro_iteration
@@ -2463,16 +2459,21 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.IntroPrefixInvariant.terminal_some,
   MIPRE.Introspection.IntroPrefixInvariant.terminal_none
 
-#guard_sorry_free MIPRE.Introspection.swapVec_registerState,
-  MIPRE.Introspection.TypedPresentation.mu_swap,
+#guard_sorry_free MIPRE.Introspection.TypedPresentation.mu_swap,
+  MIPRE.Introspection.TypedEstimates.parsedGame_transpose,
+  MIPRE.Introspection.TypedEstimates.swap_reg_bornProb,
+  MIPRE.Introspection.TypedEstimates.swap_reg_povmValue,
+  MIPRE.Introspection.TypedEstimates.swap_reg_stateSqNorm,
+  MIPRE.Introspection.TypedEstimates.swap_reg_swap_stateSqNorm,
+  MIPRE.Introspection.TypedEstimates.swap_reg_xSqNorm,
   MIPRE.Introspection.TypedEstimates.parsedGame_value_swap,
-  MIPRE.Introspection.introBobIterationState_unit,
-  MIPRE.Introspection.TypedEstimates.introAliceZError_of_iteration_other,
-  MIPRE.Introspection.TypedEstimates.hidingBobError_introIterationState,
+  MIPRE.Introspection.TypedEstimates.introBobZError_swap,
+  MIPRE.Introspection.TypedEstimates.introAliceZError_swap,
+  MIPRE.Introspection.TypedEstimates.hidingAliceError_swap,
+  MIPRE.Introspection.TypedEstimates.hidingBobError_swap,
   MIPRE.Introspection.TypedEstimates.exists_intro_bob_iteration
 
 #guard_sorry_free MIPRE.Introspection.adaptiveFailureBudget_add,
-  MIPRE.Introspection.introTwoSidedState_unit,
   MIPRE.Introspection.TypedEstimates.exists_intro_two_sided_iteration
 
 #guard_sorry_free MIPRE.Introspection.completeOptionPOVM_isPVM,
@@ -2538,7 +2539,7 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.isometricEffect_alice_error_le,
   MIPRE.Introspection.isometricEffect_bob_error_le
 
-#guard_sorry_free MIPRE.Introspection.isometricPOVM_map_mats_eq,
+#guard_sorry_free MIPRE.Introspection.transportA_map_op,
   MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_isometric_images,
   MIPRE.Introspection.submeasurement_extension_mass,
   MIPRE.Introspection.submeasurement_extension_dist,
