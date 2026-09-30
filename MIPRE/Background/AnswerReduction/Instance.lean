@@ -25,7 +25,10 @@ ask of the PCP decider hold for it:
 
 The contract's clauses are then `arVerifier_bounds` (the complexity clause and the answer cut
 below the output bound), `arVerifier_hasPerfectPCC` (completeness at the cut, hence at the bound)
-and `arVerifier_soundness` (at the output bound).
+and `arVerifier_soundness_tensor` (at the output bound), at the explicit soundness constants
+`soundA`, `clB / 2`, `soundC`. At the same constants, the clause holds in the commuting-operator
+value once the low-individual-degree test is sound in the commuting-operator model
+(`answerReduction_soundIn_commuting`, Phase 3 of `planning/mipco-track.md`).
 -/
 
 noncomputable section
@@ -93,23 +96,14 @@ theorem arBounds_spec :
       ≤ outBound arBound lam mu sigma n :=
   exists_bounds.choose_spec.choose_spec
 
-theorem exists_sound : ∃ (a b : ℝ) (C : ℕ), 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
-    ∀ (V : Verifier (4 + 1)) (lam mu sigma n : ℕ) (ε : ℝ) (B : ℕ), C ≤ n → 2 ≤ n →
-      1 ≤ lam → V.Within n (inBudget lam mu n) → V.decider.size ≤ sigma → 0 < ε →
-      cutVal (arPar classicalPcpDecider lam mu sigma n) ≤ B →
-      1 - ε < (arVerifier classicalPcpDecider lam mu sigma V).valStar n B →
-      1 - delta a b lam mu sigma n ε ≤ V.valStar n (inAns lam mu n) :=
-  arVerifier_soundness (ℓ := 4) classicalPcpDecider classicalR shoupField_classical classicalR_spec
-    fieldLarge_classical
-
 /-- The constant `a` of the soundness loss. -/
-def arA : ℝ := exists_sound.choose
+def arA : ℝ := soundA classicalR
 
 /-- The exponent `b` of the soundness loss. -/
-def arB : ℝ := exists_sound.choose_spec.choose
+def arB : ℝ := LIDT.clB / 2
 
 /-- The threshold. -/
-def arC : ℕ := exists_sound.choose_spec.choose_spec.choose
+def arC : ℕ := soundC classicalPcpDecider classicalR fieldLarge_classical
 
 theorem arSound_spec : 1 ≤ arA ∧ 0 < arB ∧ arB ≤ 1 ∧
     ∀ (V : Verifier (4 + 1)) (lam mu sigma n : ℕ) (ε : ℝ) (B : ℕ), arC ≤ n → 2 ≤ n →
@@ -117,7 +111,10 @@ theorem arSound_spec : 1 ≤ arA ∧ 0 < arB ∧ arB ≤ 1 ∧
       cutVal (arPar classicalPcpDecider lam mu sigma n) ≤ B →
       1 - ε < (arVerifier classicalPcpDecider lam mu sigma V).valStar n B →
       1 - delta arA arB lam mu sigma n ε ≤ V.valStar n (inAns lam mu n) :=
-  exists_sound.choose_spec.choose_spec.choose_spec
+  ⟨by unfold arA; exact_mod_cast one_le_soundA classicalR,
+    by have := LIDT.clB_pos; unfold arB; linarith, by have := LIDT.clB_lt_one; unfold arB; linarith,
+    arVerifier_soundness_tensor classicalPcpDecider classicalR shoupField_classical
+      classicalR_spec fieldLarge_classical⟩
 
 /-! ## The instance -/
 
@@ -149,6 +146,22 @@ def answerReduction : MIPRE.AnswerReduction 5 where
   soundness V lam mu sigma n ε hC hn2 hlam hV hsz hε h :=
     arSound_spec.2.2.2 V lam mu sigma n ε _ hC hn2 hlam hV hsz hε
       (arBounds_spec.2 lam mu sigma n) h
+
+/-! ## Soundness in the commuting-operator value -/
+
+/-- **Answer reduction is sound in the commuting-operator value** (`lem:ar-sound-co`), at the
+constants of `answerReduction`, given the soundness of the low-individual-degree test in the
+commuting-operator model: `arVerifier_soundness_commuting` at the output bound, which is above the
+answer cut. -/
+theorem answerReduction_soundIn_commuting (hLD : LIDT.Simul.SoundCo) :
+    answerReduction.SoundIn .commuting := by
+  intro V lam mu sigma n ε hC hn2 hlam hV hsz hε h
+  have ha : answerReduction.a = (soundA classicalR : ℝ) := rfl
+  have hb : answerReduction.b = LIDT.clB / 2 := rfl
+  rw [ha, hb]
+  exact arVerifier_soundness_commuting classicalPcpDecider classicalR shoupField_classical
+    classicalR_spec fieldLarge_classical hLD V lam mu sigma n ε _ hC hn2 hlam hV hsz hε
+    (arBounds_spec.2 lam mu sigma n) h
 
 end MIPRE.AnswerReduction
 

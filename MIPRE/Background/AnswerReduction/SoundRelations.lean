@@ -13,22 +13,24 @@ public import MIPRE.Foundations.Disagreement
 # Soundness of answer reduction: the cross relations
 
 Piece AR-5d of `planning/answer-reduction.md` (`claim:ar-2`, the first item of `claim:ar-4`, and
-the input of `claim:ar-5`). Every relation is a disagreement (`MIPRE.dis`) between a family of
-Alice's measurements and a family of Bob's, on the common index `(x, w)` of an oracle half and a
-PCP vector, both uniform: the typed question of a type at `(x, w)` is `tq`, and a point answer is
-read by `rd1` (copies `1`–`5`) or `rd6` (a component of the sixth copy's answer).
+the input of `claim:ar-5`). Every relation is a disagreement (`BipartiteModel.dis`) between a
+family of Alice's measurements and a family of Bob's in the model, on the common index `(x, w)` of
+an oracle half and a PCP vector, both uniform: the typed question of a type at `(x, w)` is `tq`,
+and a point answer is read by `rd1` (copies `1`–`5`) or `rd6` (a component of the sixth copy's
+answer).
 
 The relations come from two sources:
 
 * **the typed game**, at one type pair (`sum_dis_edge_le`): a subtest whose acceptance forces two
   readings to agree bounds their disagreement by the failure on that pair, at most `54²` times
   the typed failure after summing;
-* **the extraction** (`sum_dis_ext1_le`, `sum_dis_ext6_le`, ...): `clSoundness`'s conclusions,
-  reindexed from a uniform point of the copy to the point the copy's registers carry in a uniform
-  PCP vector, and averaged over the oracle halves.
+* **the extraction** (`sum_dis_MA1_GBe_le`, `sum_dis_JAe_MB6_le`, ...): the conclusions of the
+  seeded test's soundness in the model, reindexed from a uniform point of the copy to the point
+  the copy's registers carry in a uniform PCP vector, and averaged over the oracle halves.
 
-They chain across the two players (`sum_dis_triangle`): Alice's evaluated `J` against Bob's
-evaluated `G` for each of the five copies (`sum_dis_JA_GB_le`), and the mirror image.
+They chain across the two players (`BipartiteModel.sum_dis_triangle`): Alice's evaluated `J`
+against Bob's evaluated `G` for each of the five copies (`sum_dis_JAe_GBe_le`), and the mirror
+image.
 -/
 
 noncomputable section
@@ -78,51 +80,13 @@ theorem sum_ptOf_le (g : (Fin n → F) → ℝ) {δ : ℝ}
 
 end MIPRE.LIDT.CL.Regs
 
-namespace MIPRE
-
-open Finset Matrix
-
-section Bridges
-
-variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B] {G : Game X Y A B}
-
-/-- A strategy's conditional failure is the conditional failure of its measurements, as POVMs. -/
-theorem TensorProductStrategy.failAt_eq_condFail (T : TensorProductStrategy G) (x : X) (y : Y) :
-    T.failAt x y = condFail G T.ψ (fun x => T.PA.toPOVM x) (fun y => T.PB.toPOVM y) x y := rfl
-
-variable {Λ : Type*} [Fintype Λ] [DecidableEq Λ] {dA dB : Type*} [Fintype dA] [DecidableEq dA]
-  [Fintype dB] [DecidableEq dB]
-
-/-- `inconsistency` on a uniform index is the average disagreement. -/
-theorem inconsistency_uniform {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) (M : X → POVM Λ dA)
-    (N : X → POVM Λ dB) :
-    inconsistency (uniform X) ψ M N = (∑ x, dis ψ (M x) (N x)) / Fintype.card X := by
-  rcases isEmpty_or_nonempty X with hX | hX
-  · simp [inconsistency]
-  have hc : (0 : ℝ) < Fintype.card X := by exact_mod_cast Fintype.card_pos
-  have hμ1 : ∑ x, uniform X x = 1 := by simp [uniform, Finset.card_univ]
-  rw [LIDT.Simul.inconsistency_eq_one_sub hμ1 hψ, ← one_sub_agreeSum_uniform]
-  rfl
-
-/-- **A bound on `inconsistency` is a bound on the summed disagreement.** -/
-theorem sum_dis_le_of_inconsistency {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)
-    (M : X → POVM Λ dA) (N : X → POVM Λ dB) {δ : ℝ}
-    (h : inconsistency (uniform X) ψ M N ≤ δ) :
-    ∑ x, dis ψ (M x) (N x) ≤ Fintype.card X * δ := by
-  rcases isEmpty_or_nonempty X with hX | hX
-  · simp
-  have hc : (0 : ℝ) < Fintype.card X := by exact_mod_cast Fintype.card_pos
-  rw [inconsistency_uniform hψ, div_le_iff₀ hc] at h
-  linarith
-
-end Bridges
-
-end MIPRE
-
 namespace MIPRE.AnswerReduction
 
 open Finset MIPRE.CL MIPRE.LIDT SAT Pcp
 
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] {M : BipartiteModel 𝒞 𝒜 ℬ}
 variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)
   [NeZero P.m] {hm : P.m ∣ Fintype.card (Fq P hk)} {hm' : P.m' ∣ Fintype.card (Fq P hk)}
   (S : LIDT.CL.Sel (Fq P hk) P.m hm) (S' : LIDT.CL.Sel (Fq P hk) P.m' hm')
@@ -229,47 +193,47 @@ theorem rd_eq_of_typedPred' (i : Fin 5) (x : Fin (V.sampler.dim n) → 𝔽₂) 
 
 /-! ## The measurement families on the index -/
 
-variable (T : TensorProductStrategy (typedGame V n P hk S S' check B))
+variable (T : M.ProjStrat (typedGame V n P hk S S' check B)) (hL : LIDT.Simul.SoundIn M)
 
 /-- The index of the relations: an oracle half and a PCP vector. -/
 abbrev Idx := (Fin (V.sampler.dim n) → 𝔽₂) × (Coord P → Fq P hk)
 
 /-- Alice's point measurement of copy `i ≤ 5` at the role that tests it, read. -/
-def MA1 (i : Fin 5) (p : Idx V n P hk) : POVM (Fq P hk) (Fin T.dA) :=
-  (T.PA.toPOVM (tq V n P hk S S' (roleOf i, (i.castSucc, .point)) p.1 p.2)).map (rd1 P hk B i)
+def MA1 (i : Fin 5) (p : Idx V n P hk) : POVMIn (Fq P hk) 𝒜 :=
+  (T.PA (tq V n P hk S S' (roleOf i, (i.castSucc, .point)) p.1 p.2)).map (rd1 P hk B i)
 
 /-- Bob's point measurement of copy `i ≤ 5` at the role that tests it, read. -/
-def MB1 (i : Fin 5) (p : Idx V n P hk) : POVM (Fq P hk) (Fin T.dB) :=
-  (T.PB.toPOVM (tq V n P hk S S' (roleOf i, (i.castSucc, .point)) p.1 p.2)).map (rd1 P hk B i)
+def MB1 (i : Fin 5) (p : Idx V n P hk) : POVMIn (Fq P hk) ℬ :=
+  (T.PB (tq V n P hk S S' (roleOf i, (i.castSucc, .point)) p.1 p.2)).map (rd1 P hk B i)
 
 /-- Alice's `Point_6` measurement, its `j`-th value read. -/
-def MA6 (j : Fin (P.m' + 6)) (p : Idx V n P hk) : POVM (Fq P hk) (Fin T.dA) :=
-  (T.PA.toPOVM (tq V n P hk S S' (.oracle, ((5 : Fin 6), .point)) p.1 p.2)).map (rd6 P hk B j)
+def MA6 (j : Fin (P.m' + 6)) (p : Idx V n P hk) : POVMIn (Fq P hk) 𝒜 :=
+  (T.PA (tq V n P hk S S' (.oracle, ((5 : Fin 6), .point)) p.1 p.2)).map (rd6 P hk B j)
 
 /-- Bob's `Point_6` measurement, its `j`-th value read. -/
-def MB6 (j : Fin (P.m' + 6)) (p : Idx V n P hk) : POVM (Fq P hk) (Fin T.dB) :=
-  (T.PB.toPOVM (tq V n P hk S S' (.oracle, ((5 : Fin 6), .point)) p.1 p.2)).map (rd6 P hk B j)
+def MB6 (j : Fin (P.m' + 6)) (p : Idx V n P hk) : POVMIn (Fq P hk) ℬ :=
+  (T.PB (tq V n P hk S S' (.oracle, ((5 : Fin 6), .point)) p.1 p.2)).map (rd6 P hk B j)
 
 /-- Alice's extracted polynomial of copy `i ≤ 5`, evaluated at the copy's point. -/
-def GAe (i : Fin 5) (p : Idx V n P hk) : POVM (Fq P hk) (Fin T.dA) :=
-  ((GA1 V n P hk S S' check B T (roleOf i) i
-      ((roleFamily (V.sampler.cl n) (roleOf i)).eval p.1)).toPOVM ()).map
+def GAe (i : Fin 5) (p : Idx V n P hk) : POVMIn (Fq P hk) 𝒜 :=
+  (GA1 V n P hk S S' check B T hL (roleOf i) i
+      ((roleFamily (V.sampler.cl n) (roleOf i)).eval p.1)).map
     fun g => (g 0).eval ((regs P i).ptOf p.2)
 
 /-- Bob's extracted polynomial of copy `i ≤ 5`, evaluated at the copy's point. -/
-def GBe (i : Fin 5) (p : Idx V n P hk) : POVM (Fq P hk) (Fin T.dB) :=
-  ((GB1 V n P hk S S' check B T (roleOf i) i
-      ((roleFamily (V.sampler.cl n) (roleOf i)).eval p.1)).toPOVM ()).map
+def GBe (i : Fin 5) (p : Idx V n P hk) : POVMIn (Fq P hk) ℬ :=
+  (GB1 V n P hk S S' check B T hL (roleOf i) i
+      ((roleFamily (V.sampler.cl n) (roleOf i)).eval p.1)).map
     fun g => (g 0).eval ((regs P i).ptOf p.2)
 
 /-- Alice's extracted `j`-th polynomial of the sixth copy, evaluated at its point. -/
-def JAe (j : Fin (P.m' + 6)) (p : Idx V n P hk) : POVM (Fq P hk) (Fin T.dA) :=
-  ((JA V n P hk S S' check B T ((roleFamily (V.sampler.cl n) .oracle).eval p.1)).toPOVM ()).map
+def JAe (j : Fin (P.m' + 6)) (p : Idx V n P hk) : POVMIn (Fq P hk) 𝒜 :=
+  (JA V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval p.1)).map
     fun f => (f j).eval ((regs6 P).ptOf p.2)
 
 /-- Bob's extracted `j`-th polynomial of the sixth copy, evaluated at its point. -/
-def JBe (j : Fin (P.m' + 6)) (p : Idx V n P hk) : POVM (Fq P hk) (Fin T.dB) :=
-  ((JB V n P hk S S' check B T ((roleFamily (V.sampler.cl n) .oracle).eval p.1)).toPOVM ()).map
+def JBe (j : Fin (P.m' + 6)) (p : Idx V n P hk) : POVMIn (Fq P hk) ℬ :=
+  (JB V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval p.1)).map
     fun f => (f j).eval ((regs6 P).ptOf p.2)
 
 /-! ## The relations from the typed game -/
@@ -285,8 +249,8 @@ theorem sum_dis_edge_le (uv : ArTy × ArTy) {C : Type*} [Fintype C] [DecidableEq
     (f g : Verifier.Answers B → C)
     (hD : ∀ x w a b, typedPred V n P hk S S' check B (tq V n P hk S S' uv.1 x w)
       (tq V n P hk S S' uv.2 x w) a b = true → f a = g b) :
-    ∑ p : Idx V n P hk, dis T.ψ ((T.PA.toPOVM (tq V n P hk S S' uv.1 p.1 p.2)).map f)
-        ((T.PB.toPOVM (tq V n P hk S S' uv.2 p.1 p.2)).map g)
+    ∑ p : Idx V n P hk, M.dis ((T.PA (tq V n P hk S S' uv.1 p.1 p.2)).map f)
+        ((T.PB (tq V n P hk S S' uv.2 p.1 p.2)).map g)
       ≤ 2916 * Fintype.card (Idx V n P hk) * (1 - T.value) := by
   have h := sum_edges_le V n P hk S S' check B T (fun _ : Unit => uv) (fun _ _ _ => rfl)
   rw [card_arTy_sq, card_idx V n P hk, Fintype.sum_unique] at h
@@ -294,12 +258,12 @@ theorem sum_dis_edge_le (uv : ArTy × ArTy) {C : Type*} [Fintype C] [DecidableEq
   refine le_trans ?_ h
   rw [Fintype.sum_prod_type]
   refine Finset.sum_le_sum fun x _ => Finset.sum_le_sum fun w _ => ?_
-  rw [edgeFail, TensorProductStrategy.failAt_eq_condFail]
-  exact dis_map_le_condFail f g fun a b h => hD x w a b h
+  rw [edgeFail, BipartiteModel.ProjStrat.failAt]
+  exact M.dis_map_le_condFail f g fun a b h => hD x w a b h
 
 /-- **Step 2 and step 4(a)**: Alice's point of copy `i` against Bob's `Point_6`. -/
 theorem sum_dis_MA1_MB6_le (i : Fin 5) :
-    ∑ p, dis T.ψ (MA1 V n P hk S S' check B T i p) (MB6 V n P hk S S' check B T (blk P i) p)
+    ∑ p, M.dis (MA1 V n P hk S S' check B T i p) (MB6 V n P hk S S' check B T (blk P i) p)
       ≤ 2916 * Fintype.card (Idx V n P hk) * (1 - T.value) :=
   sum_dis_edge_le V n P hk S S' check B T ((roleOf i, (i.castSucc, .point)),
     (.oracle, ((5 : Fin 6), .point))) _ _
@@ -307,7 +271,7 @@ theorem sum_dis_MA1_MB6_le (i : Fin 5) :
 
 /-- The mirror image: Alice's `Point_6` against Bob's point of copy `i`. -/
 theorem sum_dis_MA6_MB1_le (i : Fin 5) :
-    ∑ p, dis T.ψ (MA6 V n P hk S S' check B T (blk P i) p) (MB1 V n P hk S S' check B T i p)
+    ∑ p, M.dis (MA6 V n P hk S S' check B T (blk P i) p) (MB1 V n P hk S S' check B T i p)
       ≤ 2916 * Fintype.card (Idx V n P hk) * (1 - T.value) :=
   sum_dis_edge_le V n P hk S S' check B T ((.oracle, ((5 : Fin 6), .point)),
     (roleOf i, (i.castSucc, .point))) _ _
@@ -317,42 +281,43 @@ theorem sum_dis_MA6_MB1_le (i : Fin 5) :
 
 theorem tuplePOVMA_copy (r : Role) (i : Fin 5) (y : Fin (V.sampler.dim n) → 𝔽₂)
     (u : Fin P.m → Fq P hk) :
-    (Simul.tuplePOVMA hm (copyStrategy V n P hk S S' check B T r i y) u).map (fun v => v 0)
-      = (T.PA.toPOVM (arQ1 V n P hk S r i y (.point u))).map (rd1 P hk B i) := by
-  unfold Simul.tuplePOVMA copyStrategy TensorProductStrategy.adapt
-  rw [Simul.toPOVM_mergeAt, POVM.map_map, POVM.map_map]
-  exact congrArg (fun f => POVM.map f _) (funext fun a => valsOf_readAns1 P hk B i u a)
+    (Simul.tuplePOVMAIn hm (copyStrategy V n P hk S S' check B T r i y) u).map (fun v => v 0)
+      = (T.PA (arQ1 V n P hk S r i y (.point u))).map (rd1 P hk B i) := by
+  unfold Simul.tuplePOVMAIn copyStrategy BipartiteModel.ProjStrat.adapt
+  rw [POVMIn.map_map, POVMIn.map_map]
+  exact congrArg (fun f => POVMIn.map f _) (funext fun a => valsOf_readAns1 P hk B i u a)
 
 theorem tuplePOVMB_copy (r : Role) (i : Fin 5) (y : Fin (V.sampler.dim n) → 𝔽₂)
     (u : Fin P.m → Fq P hk) :
-    (Simul.tuplePOVMB hm (copyStrategy V n P hk S S' check B T r i y) u).map (fun v => v 0)
-      = (T.PB.toPOVM (arQ1 V n P hk S r i y (.point u))).map (rd1 P hk B i) := by
-  unfold Simul.tuplePOVMB copyStrategy TensorProductStrategy.adapt
-  rw [Simul.toPOVM_mergeAt, POVM.map_map, POVM.map_map]
-  exact congrArg (fun f => POVM.map f _) (funext fun a => valsOf_readAns1 P hk B i u a)
+    (Simul.tuplePOVMBIn hm (copyStrategy V n P hk S S' check B T r i y) u).map (fun v => v 0)
+      = (T.PB (arQ1 V n P hk S r i y (.point u))).map (rd1 P hk B i) := by
+  unfold Simul.tuplePOVMBIn copyStrategy BipartiteModel.ProjStrat.adapt
+  rw [POVMIn.map_map, POVMIn.map_map]
+  exact congrArg (fun f => POVMIn.map f _) (funext fun a => valsOf_readAns1 P hk B i u a)
 
 theorem tuplePOVMA_copy6 (y : Fin (V.sampler.dim n) → 𝔽₂) (u : Fin P.m' → Fq P hk)
     (j : Fin (P.m' + 6)) :
-    (Simul.tuplePOVMA hm' (copyStrategy6 V n P hk S S' check B T y) u).map (fun v => v j)
-      = (T.PA.toPOVM (arQ6 V n P hk S' .oracle y (.point u))).map (rd6 P hk B j) := by
-  unfold Simul.tuplePOVMA copyStrategy6 TensorProductStrategy.adapt
-  rw [Simul.toPOVM_mergeAt, POVM.map_map, POVM.map_map]
-  exact congrArg (fun f => POVM.map f _) (funext fun a => valsOf_readAns6 P hk B u a j)
+    (Simul.tuplePOVMAIn hm' (copyStrategy6 V n P hk S S' check B T y) u).map (fun v => v j)
+      = (T.PA (arQ6 V n P hk S' .oracle y (.point u))).map (rd6 P hk B j) := by
+  unfold Simul.tuplePOVMAIn copyStrategy6 BipartiteModel.ProjStrat.adapt
+  rw [POVMIn.map_map, POVMIn.map_map]
+  exact congrArg (fun f => POVMIn.map f _) (funext fun a => valsOf_readAns6 P hk B u a j)
 
 theorem tuplePOVMB_copy6 (y : Fin (V.sampler.dim n) → 𝔽₂) (u : Fin P.m' → Fq P hk)
     (j : Fin (P.m' + 6)) :
-    (Simul.tuplePOVMB hm' (copyStrategy6 V n P hk S S' check B T y) u).map (fun v => v j)
-      = (T.PB.toPOVM (arQ6 V n P hk S' .oracle y (.point u))).map (rd6 P hk B j) := by
-  unfold Simul.tuplePOVMB copyStrategy6 TensorProductStrategy.adapt
-  rw [Simul.toPOVM_mergeAt, POVM.map_map, POVM.map_map]
-  exact congrArg (fun f => POVM.map f _) (funext fun a => valsOf_readAns6 P hk B u a j)
+    (Simul.tuplePOVMBIn hm' (copyStrategy6 V n P hk S S' check B T y) u).map (fun v => v j)
+      = (T.PB (arQ6 V n P hk S' .oracle y (.point u))).map (rd6 P hk B j) := by
+  unfold Simul.tuplePOVMBIn copyStrategy6 BipartiteModel.ProjStrat.adapt
+  rw [POVMIn.map_map, POVMIn.map_map]
+  exact congrArg (fun f => POVMIn.map f _) (funext fun a => valsOf_readAns6 P hk B u a j)
 
 omit [NeZero P.m] in
-theorem evalTuplePOVM_map {M r : ℕ} {D : Type*} [Fintype D] [DecidableEq D]
-    (G : ProjectiveMeasurement Unit (Fin r → LowIndDegPoly (F := Fq P hk) (m := M) (d := dPcp))
-      (Matrix D D ℂ)) (u : Fin M → Fq P hk) (j : Fin r) :
-    (Simul.evalTuplePOVM G u).map (fun v => v j) = (G.toPOVM ()).map fun g => (g j).eval u := by
-  rw [Simul.evalTuplePOVM, POVM.map_map]
+theorem evalTuplePOVM_map {m' r : ℕ} {R : Type*} [Ring R] [StarRing R] [PartialOrder R]
+    [StarOrderedRing R]
+    (G : POVMIn (Fin r → LowIndDegPoly (F := Fq P hk) (m := m') (d := dPcp)) R)
+    (u : Fin m' → Fq P hk) (j : Fin r) :
+    (Simul.evalTuplePOVMIn G u).map (fun v => v j) = G.map fun g => (g j).eval u := by
+  rw [Simul.evalTuplePOVMIn, POVMIn.map_map]
 
 /-- The typed question of copy `i`'s point at `(x, w)` is the per-seed strategy's question of the
 point the copy's registers carry. -/
@@ -392,7 +357,7 @@ theorem sum_idx_le {F : Idx V n P hk → ℝ} (r : Role) (δ : (Fin (V.sampler.d
 
 /-- **Alice's point of copy `i` against Bob's extracted polynomial**, from the extraction. -/
 theorem sum_dis_MA1_GBe_le (i : Fin 5) :
-    ∑ p, dis T.ψ (MA1 V n P hk S S' check B T i p) (GBe V n P hk S S' check B T i p)
+    ∑ p, M.dis (MA1 V n P hk S S' check B T i p) (GBe V n P hk S S' check B T hL i p)
       ≤ Fintype.card (Idx V n P hk) *
         Simul.deltaSim (Fintype.card (Fq P hk)) P.m dPcp 1 (324 * (1 - T.value)) := by
   refine sum_idx_le V n P hk (roleOf i)
@@ -400,30 +365,30 @@ theorem sum_dis_MA1_GBe_le (i : Fin 5) :
       (eps1 V n P hk S S' check B T (roleOf i) i y)) (fun x => ?_)
     (sum_deltaSim1_le V n P hk S S' check B T (ldStep_roleOf i))
   set y := (roleFamily (V.sampler.cl n) (roleOf i)).eval x with hy
-  obtain ⟨h1, -, -⟩ := ext1_spec V n P hk S S' check B T (roleOf i) i y
-  have h1' := sum_dis_le_of_inconsistency T.ψ_unit _ _ h1
-  have key : ∀ w, dis T.ψ (MA1 V n P hk S S' check B T i (x, w))
-      (GBe V n P hk S S' check B T i (x, w)) = dis T.ψ
-      ((T.PA.toPOVM (arQ1 V n P hk S (roleOf i) i y (.point ((regs P i).ptOf w)))).map
+  obtain ⟨h1, -, -⟩ := ext1_spec V n P hk S S' check B T hL (roleOf i) i y
+  have h1' := M.sum_dis_le_of_inconsistency T.ψ_unit _ _ h1
+  have key : ∀ w, M.dis (MA1 V n P hk S S' check B T i (x, w))
+      (GBe V n P hk S S' check B T hL i (x, w)) = M.dis
+      ((T.PA (arQ1 V n P hk S (roleOf i) i y (.point ((regs P i).ptOf w)))).map
         (rd1 P hk B i))
-      (((GB1 V n P hk S S' check B T (roleOf i) i y).toPOVM ()).map
+      ((GB1 V n P hk S S' check B T hL (roleOf i) i y).map
         fun g => (g 0).eval ((regs P i).ptOf w)) := fun w => by
     simp only [MA1, GBe]
     rw [tq_point, ← hy]
   rw [Finset.sum_congr rfl fun w _ => key w]
-  have h2 : ∑ u : Fin P.m → Fq P hk, dis T.ψ
-      ((T.PA.toPOVM (arQ1 V n P hk S (roleOf i) i y (.point u))).map (rd1 P hk B i))
-      (((GB1 V n P hk S S' check B T (roleOf i) i y).toPOVM ()).map fun g => (g 0).eval u)
+  have h2 : ∑ u : Fin P.m → Fq P hk, M.dis
+      ((T.PA (arQ1 V n P hk S (roleOf i) i y (.point u))).map (rd1 P hk B i))
+      ((GB1 V n P hk S S' check B T hL (roleOf i) i y).map fun g => (g 0).eval u)
       ≤ (Fintype.card (Fin P.m → Fq P hk) : ℝ) * Simul.deltaSim (Fintype.card (Fq P hk)) P.m
         dPcp 1 (eps1 V n P hk S S' check B T (roleOf i) i y) := by
     refine le_trans (Finset.sum_le_sum fun u _ => ?_) h1'
     rw [← tuplePOVMA_copy, ← evalTuplePOVM_map]
-    exact dis_map_le _ _ _ _
+    exact M.dis_map_le _ _ _
   exact (regs P i).sum_ptOf_le _ h2
 
 /-- **Alice's extracted polynomial of copy `i` against Bob's point**, from the extraction. -/
 theorem sum_dis_GAe_MB1_le (i : Fin 5) :
-    ∑ p, dis T.ψ (GAe V n P hk S S' check B T i p) (MB1 V n P hk S S' check B T i p)
+    ∑ p, M.dis (GAe V n P hk S S' check B T hL i p) (MB1 V n P hk S S' check B T i p)
       ≤ Fintype.card (Idx V n P hk) *
         Simul.deltaSim (Fintype.card (Fq P hk)) P.m dPcp 1 (324 * (1 - T.value)) := by
   refine sum_idx_le V n P hk (roleOf i)
@@ -431,30 +396,30 @@ theorem sum_dis_GAe_MB1_le (i : Fin 5) :
       (eps1 V n P hk S S' check B T (roleOf i) i y)) (fun x => ?_)
     (sum_deltaSim1_le V n P hk S S' check B T (ldStep_roleOf i))
   set y := (roleFamily (V.sampler.cl n) (roleOf i)).eval x with hy
-  obtain ⟨-, h2, -⟩ := ext1_spec V n P hk S S' check B T (roleOf i) i y
-  have h2' := sum_dis_le_of_inconsistency T.ψ_unit _ _ h2
-  have key : ∀ w, dis T.ψ (GAe V n P hk S S' check B T i (x, w))
-      (MB1 V n P hk S S' check B T i (x, w)) = dis T.ψ
-      (((GA1 V n P hk S S' check B T (roleOf i) i y).toPOVM ()).map
+  obtain ⟨-, h2, -⟩ := ext1_spec V n P hk S S' check B T hL (roleOf i) i y
+  have h2' := M.sum_dis_le_of_inconsistency T.ψ_unit _ _ h2
+  have key : ∀ w, M.dis (GAe V n P hk S S' check B T hL i (x, w))
+      (MB1 V n P hk S S' check B T i (x, w)) = M.dis
+      ((GA1 V n P hk S S' check B T hL (roleOf i) i y).map
         fun g => (g 0).eval ((regs P i).ptOf w))
-      ((T.PB.toPOVM (arQ1 V n P hk S (roleOf i) i y (.point ((regs P i).ptOf w)))).map
+      ((T.PB (arQ1 V n P hk S (roleOf i) i y (.point ((regs P i).ptOf w)))).map
         (rd1 P hk B i)) := fun w => by
     simp only [MB1, GAe]
     rw [tq_point, ← hy]
   rw [Finset.sum_congr rfl fun w _ => key w]
-  have h3 : ∑ u : Fin P.m → Fq P hk, dis T.ψ
-      (((GA1 V n P hk S S' check B T (roleOf i) i y).toPOVM ()).map fun g => (g 0).eval u)
-      ((T.PB.toPOVM (arQ1 V n P hk S (roleOf i) i y (.point u))).map (rd1 P hk B i))
+  have h3 : ∑ u : Fin P.m → Fq P hk, M.dis
+      ((GA1 V n P hk S S' check B T hL (roleOf i) i y).map fun g => (g 0).eval u)
+      ((T.PB (arQ1 V n P hk S (roleOf i) i y (.point u))).map (rd1 P hk B i))
       ≤ (Fintype.card (Fin P.m → Fq P hk) : ℝ) * Simul.deltaSim (Fintype.card (Fq P hk)) P.m
         dPcp 1 (eps1 V n P hk S S' check B T (roleOf i) i y) := by
     refine le_trans (Finset.sum_le_sum fun u _ => ?_) h2'
     rw [← tuplePOVMB_copy, ← evalTuplePOVM_map]
-    exact dis_map_le _ _ _ _
+    exact M.dis_map_le _ _ _
   exact (regs P i).sum_ptOf_le _ h3
 
 /-- **Alice's extracted `j`-th polynomial of the sixth copy against Bob's `Point_6`.** -/
 theorem sum_dis_JAe_MB6_le (j : Fin (P.m' + 6)) :
-    ∑ p, dis T.ψ (JAe V n P hk S S' check B T j p) (MB6 V n P hk S S' check B T j p)
+    ∑ p, M.dis (JAe V n P hk S S' check B T hL j p) (MB6 V n P hk S S' check B T j p)
       ≤ Fintype.card (Idx V n P hk) *
         Simul.deltaSim (Fintype.card (Fq P hk)) P.m' dPcp (P.m' + 6) (324 * (1 - T.value)) := by
   refine sum_idx_le V n P hk .oracle
@@ -462,29 +427,29 @@ theorem sum_dis_JAe_MB6_le (j : Fin (P.m' + 6)) :
       (eps6 V n P hk S S' check B T y)) (fun x => ?_)
     (sum_deltaSim6_le V n P hk S S' check B T)
   set y := (roleFamily (V.sampler.cl n) .oracle).eval x with hy
-  obtain ⟨-, h2, -⟩ := ext6_spec V n P hk S S' check B T y
-  have h2' := sum_dis_le_of_inconsistency T.ψ_unit _ _ h2
-  have key : ∀ w, dis T.ψ (JAe V n P hk S S' check B T j (x, w))
-      (MB6 V n P hk S S' check B T j (x, w)) = dis T.ψ
-      (((JA V n P hk S S' check B T y).toPOVM ()).map fun f => (f j).eval ((regs6 P).ptOf w))
-      ((T.PB.toPOVM (arQ6 V n P hk S' .oracle y (.point ((regs6 P).ptOf w)))).map
+  obtain ⟨-, h2, -⟩ := ext6_spec V n P hk S S' check B T hL y
+  have h2' := M.sum_dis_le_of_inconsistency T.ψ_unit _ _ h2
+  have key : ∀ w, M.dis (JAe V n P hk S S' check B T hL j (x, w))
+      (MB6 V n P hk S S' check B T j (x, w)) = M.dis
+      ((JA V n P hk S S' check B T hL y).map fun f => (f j).eval ((regs6 P).ptOf w))
+      ((T.PB (arQ6 V n P hk S' .oracle y (.point ((regs6 P).ptOf w)))).map
         (rd6 P hk B j)) := fun w => by
     simp only [MB6, JAe]
     rw [tq_point6, ← hy]
   rw [Finset.sum_congr rfl fun w _ => key w]
-  have h3 : ∑ u : Fin P.m' → Fq P hk, dis T.ψ
-      (((JA V n P hk S S' check B T y).toPOVM ()).map fun f => (f j).eval u)
-      ((T.PB.toPOVM (arQ6 V n P hk S' .oracle y (.point u))).map (rd6 P hk B j))
+  have h3 : ∑ u : Fin P.m' → Fq P hk, M.dis
+      ((JA V n P hk S S' check B T hL y).map fun f => (f j).eval u)
+      ((T.PB (arQ6 V n P hk S' .oracle y (.point u))).map (rd6 P hk B j))
       ≤ (Fintype.card (Fin P.m' → Fq P hk) : ℝ) * Simul.deltaSim (Fintype.card (Fq P hk)) P.m'
         dPcp (P.m' + 6) (eps6 V n P hk S S' check B T y) := by
     refine le_trans (Finset.sum_le_sum fun u _ => ?_) h2'
     rw [← tuplePOVMB_copy6, ← evalTuplePOVM_map]
-    exact dis_map_le _ _ _ _
+    exact M.dis_map_le _ _ _
   exact (regs6 P).sum_ptOf_le _ h3
 
 /-- **Alice's `Point_6` against Bob's extracted `j`-th polynomial of the sixth copy.** -/
 theorem sum_dis_MA6_JBe_le (j : Fin (P.m' + 6)) :
-    ∑ p, dis T.ψ (MA6 V n P hk S S' check B T j p) (JBe V n P hk S S' check B T j p)
+    ∑ p, M.dis (MA6 V n P hk S S' check B T j p) (JBe V n P hk S S' check B T hL j p)
       ≤ Fintype.card (Idx V n P hk) *
         Simul.deltaSim (Fintype.card (Fq P hk)) P.m' dPcp (P.m' + 6) (324 * (1 - T.value)) := by
   refine sum_idx_le V n P hk .oracle
@@ -492,25 +457,25 @@ theorem sum_dis_MA6_JBe_le (j : Fin (P.m' + 6)) :
       (eps6 V n P hk S S' check B T y)) (fun x => ?_)
     (sum_deltaSim6_le V n P hk S S' check B T)
   set y := (roleFamily (V.sampler.cl n) .oracle).eval x with hy
-  obtain ⟨h1, -, -⟩ := ext6_spec V n P hk S S' check B T y
-  have h1' := sum_dis_le_of_inconsistency T.ψ_unit _ _ h1
-  have key : ∀ w, dis T.ψ (MA6 V n P hk S S' check B T j (x, w))
-      (JBe V n P hk S S' check B T j (x, w)) = dis T.ψ
-      ((T.PA.toPOVM (arQ6 V n P hk S' .oracle y (.point ((regs6 P).ptOf w)))).map
+  obtain ⟨h1, -, -⟩ := ext6_spec V n P hk S S' check B T hL y
+  have h1' := M.sum_dis_le_of_inconsistency T.ψ_unit _ _ h1
+  have key : ∀ w, M.dis (MA6 V n P hk S S' check B T j (x, w))
+      (JBe V n P hk S S' check B T hL j (x, w)) = M.dis
+      ((T.PA (arQ6 V n P hk S' .oracle y (.point ((regs6 P).ptOf w)))).map
         (rd6 P hk B j))
-      (((JB V n P hk S S' check B T y).toPOVM ()).map fun f => (f j).eval ((regs6 P).ptOf w)) :=
+      ((JB V n P hk S S' check B T hL y).map fun f => (f j).eval ((regs6 P).ptOf w)) :=
     fun w => by
     simp only [MA6, JBe]
     rw [tq_point6, ← hy]
   rw [Finset.sum_congr rfl fun w _ => key w]
-  have h3 : ∑ u : Fin P.m' → Fq P hk, dis T.ψ
-      ((T.PA.toPOVM (arQ6 V n P hk S' .oracle y (.point u))).map (rd6 P hk B j))
-      (((JB V n P hk S S' check B T y).toPOVM ()).map fun f => (f j).eval u)
+  have h3 : ∑ u : Fin P.m' → Fq P hk, M.dis
+      ((T.PA (arQ6 V n P hk S' .oracle y (.point u))).map (rd6 P hk B j))
+      ((JB V n P hk S S' check B T hL y).map fun f => (f j).eval u)
       ≤ (Fintype.card (Fin P.m' → Fq P hk) : ℝ) * Simul.deltaSim (Fintype.card (Fq P hk)) P.m'
         dPcp (P.m' + 6) (eps6 V n P hk S S' check B T y) := by
     refine le_trans (Finset.sum_le_sum fun u _ => ?_) h1'
     rw [← tuplePOVMA_copy6, ← evalTuplePOVM_map]
-    exact dis_map_le _ _ _ _
+    exact M.dis_map_le _ _ _
   exact (regs6 P).sum_ptOf_le _ h3
 
 /-! ## The chains -/
@@ -526,30 +491,30 @@ def err6 : ℝ :=
 /-- **Alice's evaluated `J` against Bob's evaluated `G`, on copy `i`**: through Bob's `Point_6`
 and Alice's point of copy `i`. -/
 theorem sum_dis_JAe_GBe_le (i : Fin 5) :
-    ∑ p, dis T.ψ (JAe V n P hk S S' check B T (blk P i) p) (GBe V n P hk S S' check B T i p)
+    ∑ p, M.dis (JAe V n P hk S S' check B T hL (blk P i) p) (GBe V n P hk S S' check B T hL i p)
       ≤ Fintype.card (Idx V n P hk) * (11 * (err6 V n P hk S S' check B T
         + 2916 * (1 - T.value) + err1 V n P hk S S' check B T)) := by
-  refine le_trans (sum_dis_triangle T.ψ_unit (JAe V n P hk S S' check B T (blk P i))
+  refine le_trans (M.sum_dis_triangle T.ψ_unit (JAe V n P hk S S' check B T hL (blk P i))
     (MA1 V n P hk S S' check B T i) (MB6 V n P hk S S' check B T (blk P i))
-    (GBe V n P hk S S' check B T i)) ?_
-  have h1 := sum_dis_JAe_MB6_le V n P hk S S' check B T (blk P i)
+    (GBe V n P hk S S' check B T hL i)) ?_
+  have h1 := sum_dis_JAe_MB6_le V n P hk S S' check B T hL (blk P i)
   have h2 := sum_dis_MA1_MB6_le V n P hk S S' check B T i
-  have h3 := sum_dis_MA1_GBe_le V n P hk S S' check B T i
+  have h3 := sum_dis_MA1_GBe_le V n P hk S S' check B T hL i
   rw [err1, err6]
   nlinarith
 
 /-- **Alice's evaluated `G` against Bob's evaluated `J`, on copy `i`**: through Bob's point of copy
 `i` and Alice's `Point_6`. -/
 theorem sum_dis_GAe_JBe_le (i : Fin 5) :
-    ∑ p, dis T.ψ (GAe V n P hk S S' check B T i p) (JBe V n P hk S S' check B T (blk P i) p)
+    ∑ p, M.dis (GAe V n P hk S S' check B T hL i p) (JBe V n P hk S S' check B T hL (blk P i) p)
       ≤ Fintype.card (Idx V n P hk) * (11 * (err1 V n P hk S S' check B T
         + 2916 * (1 - T.value) + err6 V n P hk S S' check B T)) := by
-  refine le_trans (sum_dis_triangle T.ψ_unit (GAe V n P hk S S' check B T i)
+  refine le_trans (M.sum_dis_triangle T.ψ_unit (GAe V n P hk S S' check B T hL i)
     (MA6 V n P hk S S' check B T (blk P i)) (MB1 V n P hk S S' check B T i)
-    (JBe V n P hk S S' check B T (blk P i))) ?_
-  have h1 := sum_dis_GAe_MB1_le V n P hk S S' check B T i
+    (JBe V n P hk S S' check B T hL (blk P i))) ?_
+  have h1 := sum_dis_GAe_MB1_le V n P hk S S' check B T hL i
   have h2 := sum_dis_MA6_MB1_le V n P hk S S' check B T i
-  have h3 := sum_dis_MA6_JBe_le V n P hk S S' check B T (blk P i)
+  have h3 := sum_dis_MA6_JBe_le V n P hk S S' check B T hL (blk P i)
   rw [err1, err6]
   nlinarith
 

@@ -976,19 +976,21 @@ $\frac12$. This is the argument of Theorem~\ref{thm:mipstar-eq-re} with the two 
 exchanged, and in Lean the two are the same theorem in the two shapes.
 \end{proof}
 
-\begin{corollary}[$\MIPco = \coRE$, from the co-soundness of introspection and answer reduction]
+\begin{corollary}[$\MIPco = \coRE$, from the co-soundness of introspection and of the low-individual-degree test]
 \label{cor:mipco-from-stages}
 \uses{thm:mipco-eq-core,thm:pipeline-sound-in,thm:compression-target,
-  thm:parallel-repetition-co}
+  thm:parallel-repetition-co,thm:ar-sound-co}
 \lean{MIPRE.mipco_eq_core_of_stages, MIPRE.gapCompressionCo}
 \leanok
-If the introspection and the answer reduction of Theorem~\ref{thm:compression-target} are sound
-in the model $\omegaco$ (Definition~\ref{def:stage-sound-in}), then $\MIPco = \coRE$.
+If the introspection of Theorem~\ref{thm:compression-target} is sound in the model $\omegaco$
+(Definition~\ref{def:stage-sound-in}) and the seeded CL test is sound in the commuting-operator
+model (Definition~\ref{def:lidt-sound-in}), then $\MIPco = \coRE$.
 \end{corollary}
 
 \begin{proof}
 \leanok
-Build the gap compression of Theorem~\ref{thm:compression} from those two stages and the parallel
+Build the gap compression of Theorem~\ref{thm:compression} from the introspection, the answer
+reduction, which is sound in $\omegaco$ by Theorem~\ref{thm:ar-sound-co}, and the parallel
 repetition of Theorem~\ref{thm:parallel-repetition-co}, which is sound in $\omegaco$: it is the
 compression of Theorem~\ref{thm:compression-target} with the number of repetitions chosen against
 the smaller of the two repetition constants. It is sound in $\omegaco$ by
@@ -1032,13 +1034,15 @@ Theorem~\ref{thm:parallel-repetition-co}. The commuting-operator
 \emph{completeness} of compression is never needed: the nested criterion asks the
 compressor to preserve perfect PCC strategies, which the tensor completeness does, and the
 class of value $1$ is entered only through the semidecider. The hypothesis splits into the
-stages' soundness clauses in $\omegaco$, of which parallel repetition's is proved, so what
-remains is introspection's and answer reduction's (Corollary~\ref{cor:mipco-from-stages}). The
-plan is to prove each by generalizing the existing stage analysis over the projective
-commuting-operator model of Section~\ref{sec:ds-mipco-projective} rather than to re-prove it,
-with the tensor-product strategies as an instance; the operator calculus those analyses use is
-already restated there (Remark~\ref{rem:model-calculus}), and so is oracularization, the step
-inside answer reduction (Section~\ref{sec:ds-mipco-phase2}). Sizes, phases and the delicate points
+stages' soundness clauses in $\omegaco$, of which parallel repetition's is proved, and answer
+reduction's is proved from the soundness of the low-individual-degree test in the
+commuting-operator model (Theorem~\ref{thm:ar-sound-co}), so what remains is introspection's and
+that soundness (Corollary~\ref{cor:mipco-from-stages}). The plan is to prove each by generalizing
+the existing analysis over the projective commuting-operator model of
+Section~\ref{sec:ds-mipco-projective} rather than to re-prove it, with the tensor-product
+strategies as an instance; the operator calculus those analyses use is already restated there
+(Remark~\ref{rem:model-calculus}), and so are oracularization (Section~\ref{sec:ds-mipco-phase2})
+and answer reduction (Section~\ref{sec:ds-mipco-phase3}). Sizes, phases and the delicate points
 are in \texttt{planning/mipco-track.md}, and the audit that fixed the model is
 \texttt{reports/co-generalization-audit.md}.
 \end{remark}
@@ -1555,6 +1559,168 @@ detyped verifier's game is the finite detyped game up to the numbering of its co
 (Lemma~\ref{lem:detype-program-strategies}), on which the detyping restriction gives the typed
 game at least $1 - 16^3\eps$. The tensor-product clauses of Theorem~\ref{thm:oracularization}
 are the case $\omega = \valstar$.
+\end{proof}
+
+\subsubsection{Answer reduction in the model}
+\label{sec:ds-mipco-phase3}
+
+Phase 3 of \texttt{planning/mipco-track.md} reads answer reduction in $\omegaco$. Its soundness
+analysis (Lemmas~\ref{lem:ar-soundness-setup} to~\ref{lem:ar-error-assembly}) works with a
+strategy: it restricts it to the copies of the low-individual-degree test, extracts polynomial
+measurements from the pieces, and decodes from them a strategy for the typed oracularized game of
+the input verifier. It is written once, for a projective strategy in a bipartite model, and the
+one fact about the low-individual-degree test it uses, the soundness of the seeded test
+(Theorem~\ref{thm:lidt-cl-soundness}), becomes a hypothesis on the model. That hypothesis holds in
+the tensor-product model, which gives back the soundness clause of
+Theorem~\ref{thm:answer-reduction}; in the commuting-operator model it is what
+Corollary~\ref{cor:mipco-from-stages} now assumes in place of answer reduction's clause. The
+analysis needs no dilation: its decoded measurements are coarse-grainings of the extracted
+projective ones, where the matrix proof dilated a POVM strategy.
+
+\begin{definition}[Projective strategy in a bipartite model]
+\label{def:model-proj-strategy}
+\uses{def:bipartite-model,def:value-model}
+\lean{MIPRE.BipartiteModel.ProjStrat, MIPRE.BipartiteModel.ProjStrat.value,
+  MIPRE.BipartiteModel.ProjStrat.failAt, MIPRE.BipartiteModel.ProjStrat.adapt,
+  MIPRE.BipartiteModel.ProjStrat.relabel, MIPRE.BipartiteModel.ProjStrat.restrict,
+  MIPRE.BipartiteModel.inconsistency, MIPRE.ValueModel.Dominates, MIPRE.POVMIn.toPOVM,
+  MIPRE.POVMIn.isPVMIn_map}
+\leanok
+A \emph{projective strategy} for a game $\game$ in a bipartite model $(\mH, \psi, \alg,
+\alg_A, \alg_B)$ with a unit state (Definition~\ref{def:bipartite-model}) is a projective
+measurement $\{A^x_a\}_a$ in $\alg_A$ for each question $x$ of the first player and a projective
+measurement $\{B^y_b\}_b$ in $\alg_B$ for each question $y$ of the second. Its value is the model's
+value of the two families, and its conditional failure at $(x, y)$ is the probability of rejection
+given the question pair. It is played on another game through a map of the questions and a
+question-dependent coarse-graining of the answers, relabelled along equivalences, or restricted to
+other questions; a coarse-graining of a projective measurement is projective, so these are
+projective strategies. The \emph{inconsistency} of a family $\{P^x\}$ in $\alg_A$ and a family
+$\{Q^x\}$ in $\alg_B$ with a common outcome set, on an index weighted by $\mu$, is
+$\sum_x \mu(x) \sum_{a \neq b} \mathrm{Re}\langle \psi, \pi(\pi_A(P^x_a)\pi_B(Q^x_b))\psi\rangle$,
+Definition~\ref{def:inconsistency} in the model. A value model $\omega$ \emph{dominates} the model
+if every projective strategy in it has value at most $\omega$ of its game.
+\end{definition}
+
+\begin{lemma}[Operations on projective strategies]
+\label{lem:model-proj-strategy}
+\uses{def:model-proj-strategy}
+\lean{MIPRE.BipartiteModel.ProjStrat.failAt_nonneg, MIPRE.BipartiteModel.ProjStrat.failAt_le_one,
+  MIPRE.BipartiteModel.ProjStrat.one_sub_value_eq_sum_failAt,
+  MIPRE.BipartiteModel.ProjStrat.value_le_one, MIPRE.BipartiteModel.ProjStrat.value_nonneg,
+  MIPRE.BipartiteModel.ProjStrat.failAt_adapt_le, MIPRE.BipartiteModel.ProjStrat.value_relabel,
+  MIPRE.BipartiteModel.povmValue_congr_game, MIPRE.POVMIn.map_map, MIPRE.POVMIn.map_id,
+  MIPRE.BipartiteModel.inconsistency_eq_sum_dis,
+  MIPRE.BipartiteModel.inconsistency_uniform, MIPRE.BipartiteModel.sum_dis_le_of_inconsistency,
+  MIPRE.BipartiteModel.inconsistency_uniform_unit, MIPRE.POVMIn.toPOVM_toIn,
+  MIPRE.POVM.toIn_map}
+\leanok
+The failure of a projective
+strategy is the average of its conditional failures, each in $[0, 1]$; its value is in $[0, 1]$;
+played through maps under which every accepted tuple stays accepted, it fails no more often at
+each question pair; relabelled along equivalences carrying one game onto the other, it keeps its
+value. On a uniform index the inconsistency is the average disagreement of the two families.
+\end{lemma}
+
+\begin{proof}
+\uses{def:expanded-state}
+\leanok
+Each statement is its matrix counterpart for tensor-product strategies, whose proof uses of a
+strategy only its Born probabilities, their nonnegativity and their normalization, which hold in
+the model (Lemma~\ref{lem:model-strategy-co}).
+\end{proof}
+
+\begin{lemma}[Projective strategies in the two models]
+\label{lem:model-proj-strategy-values}
+\uses{def:model-proj-strategy,def:tensor-strategy,lem:model-strategy-co,def:value-model,
+  def:inconsistency}
+\lean{MIPRE.TensorProductStrategy.toModel, MIPRE.TensorProductStrategy.value_toModel,
+  MIPRE.TensorProductStrategy.failAt_toModel, MIPRE.star_dotProduct_self_eq_one,
+  MIPRE.BipartiteModel.ProjStrat.toTensor, MIPRE.BipartiteModel.ProjStrat.value_toTensor,
+  MIPRE.BipartiteModel.ProjStrat.value_le_commutingOperatorValue,
+  MIPRE.exists_projStrat_lt_commutingOperatorValue, MIPRE.ValueModel.tensor_dominates,
+  MIPRE.ValueModel.commuting_dominates, MIPRE.inconsistency_eq_tensor}
+\leanok
+A tensor-product strategy is a projective strategy in its tensor-product model, of the same value
+and the same conditional failures, and conversely a projective strategy in the tensor-product
+model of a state on $\C^{d_A} \otimes \C^{d_B}$ is a tensor-product strategy of the same value, so
+$\valstar$ dominates that model. The value of a projective strategy in a model on a Hilbert space
+is at most $\omegaco$, so $\omegaco$ dominates every such model, and for every $t \geq 0$ with
+$t < \omegaco(\game)$ there is a commuting-operator strategy with a projective strategy of value
+greater than $t$ in its model. The matrix inconsistency of Definition~\ref{def:inconsistency} is
+the inconsistency in the tensor-product model.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The measurements of a tensor-product strategy are projective, the matrix algebras are the players'
+algebras of its model and the value is computed by the same Born rule. For $\omegaco$, both
+statements are Lemma~\ref{lem:model-strategy-co}.
+\end{proof}
+
+\begin{definition}[The low-individual-degree test is sound in a model]
+\label{def:lidt-sound-in}
+\uses{def:model-proj-strategy,def:lidt-cl,lem:lidt-ldc-adapter,lem:lidt-ldc-error}
+\lean{MIPRE.LIDT.Simul.SoundIn, MIPRE.LIDT.Simul.SoundCo, MIPRE.LIDT.Simul.tuplePOVMAIn,
+  MIPRE.LIDT.Simul.tuplePOVMBIn, MIPRE.LIDT.Simul.evalTuplePOVMIn}
+\leanok
+The seeded CL test is \emph{sound in the bipartite model} if the conclusion of
+Theorem~\ref{thm:lidt-cl-soundness} holds for the projective strategies in the model, with the
+extracted measurements in the players' algebras: for $q = 2^k$, $m \mid q$ and $d, \mathrm{ldc}
+\geq 1$, every projective strategy in the model passing the seeded test with $\mathrm{ldc}$
+codewords with probability at least $1 - \eps$ admits projective measurements $G^\alice$ in the
+first player's algebra and $G^\bob$ in the second's, of tuples of polynomials of individual degree
+at most $d$, whose evaluations at a uniform point are consistent with the other player's point
+measurement, and which are consistent with each other, all with error at most
+$\delta_{\mathrm{CL}}(\eps, q, m, d, \mathrm{ldc})$. It is \emph{sound in the commuting-operator
+model} if it is sound in the model of every commuting-operator strategy
+(Definition~\ref{def:bipartite-model}).
+\end{definition}
+
+\begin{lemma}[The low-individual-degree test is sound in the tensor-product model]
+\label{lem:lidt-sound-in-tensor}
+\uses{def:lidt-sound-in,thm:lidt-cl-soundness,lem:model-proj-strategy-values}
+\lean{MIPRE.LIDT.Simul.soundIn_tensor, MIPRE.LIDT.Simul.tuplePOVMA_toTensor,
+  MIPRE.LIDT.Simul.tuplePOVMB_toTensor, MIPRE.LIDT.Simul.evalTuplePOVM_toIn}
+\leanok
+The seeded CL test is sound in the tensor-product model of every state on
+$\C^{d_A} \otimes \C^{d_B}$.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:model-proj-strategy}
+\leanok
+A projective strategy in that model is a tensor-product strategy
+(Lemma~\ref{lem:model-proj-strategy-values}), to which Theorem~\ref{thm:lidt-cl-soundness}
+applies; its extracted measurements are projective measurements in the matrix algebras, and the
+matrix inconsistencies it bounds are the model's.
+\end{proof}
+
+\begin{theorem}[Answer reduction is sound in $\omegaco$, given the low-individual-degree test]
+\label{thm:ar-sound-co}
+\uses{lem:ar-error-assembly,def:lidt-sound-in,lem:model-proj-strategy-values,
+  thm:oracularization-in-model,def:stage-sound-in,thm:answer-reduction}
+\lean{MIPRE.AnswerReduction.arVerifier_soundness_commuting,
+  MIPRE.AnswerReduction.answerReduction_soundIn_commuting}
+\leanok
+If the seeded CL test is sound in the commuting-operator model
+(Definition~\ref{def:lidt-sound-in}), then the answer reduction of
+Theorem~\ref{thm:answer-reduction} is sound in the model $\omegaco$
+(Definition~\ref{def:stage-sound-in}), at the constants $a$, $b$ and threshold of its soundness
+clause in $\valstar$.
+\end{theorem}
+
+\begin{proof}
+\leanok
+Let $\omegaco$ of the answer-reduced verifier exceed $1 - \eps$, with $\mu \geq 1$ and
+$\eps < 1$; otherwise the loss is at least $1$. The output verifier rejects answers longer than
+the answer cut, so $\omegaco$ at the cut exceeds $1 - \eps$, and
+Lemma~\ref{lem:model-proj-strategy-values} gives a commuting-operator strategy with a projective
+strategy in its model of value at least $1 - \eps$ for the game at the cut. The test is sound in
+that model, oracularization is sound in $\omegaco$
+(Theorem~\ref{thm:oracularization-in-model}), and $\omegaco$ dominates the model, so the analysis
+of Lemma~\ref{lem:ar-error-assembly}, which is stated for a projective strategy in any such model,
+gives $\omegaco(\verifier_n) \geq 1 - \delta(\eps, n)$ at the constants of the clause in
+$\valstar$, which are explicit.
 \end{proof}
 
 \subsection{Further directions}

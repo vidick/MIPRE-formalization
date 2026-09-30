@@ -24,12 +24,15 @@ compressibility criterion, the tabulation and the semidecider, the class transfe
 discharging the hypothesis takes.
 
 `mipco_eq_core_of_stages` states it with the hypothesis split into the commuting-operator
-soundness clauses of the stages of the compression, of which parallel repetition's is proved
-(`repetitionCo_soundIn_commuting`, Phase 2): what remains are the clauses of introspection and
-answer reduction. It goes through `gapCompressionCo`, the main theorem's pipeline with the number
-of repetitions chosen against the smaller of the two repetition constants (`repetitionCo`), since
-the commuting-operator repetition theorem has a constant of its own; any gap compression sound
-in `ω_co` gives the theorem (`Halting.mipco_eq_core_of`).
+soundness clauses of the stages of the compression. Parallel repetition's is proved
+(`repetitionCo_soundIn_commuting`, Phase 2), and answer reduction's is proved from the soundness
+of the low-individual-degree test in the commuting-operator model
+(`AnswerReduction.answerReduction_soundIn_commuting`, Phase 3): what remains is the clause of
+introspection and that soundness, `LIDT.Simul.SoundCo`. It goes through `gapCompressionCo`, the
+main theorem's pipeline with the number of repetitions chosen against the smaller of the two
+repetition constants (`repetitionCo`), since the commuting-operator repetition theorem has a
+constant of its own; any gap compression sound in `ω_co` gives the theorem
+(`Halting.mipco_eq_core_of`).
 
 This module sits beside `MIPRE/MainTheorem.lean`, which `MIPRE/Foundations/` does not import,
 because the hypothesis is about its `gapCompression`.
@@ -62,15 +65,18 @@ for. -/
 noncomputable def gapCompressionCo : GapCompression :=
   GapCompression.ofPipeline Introspection.seven AnswerReduction.answerReduction (repetitionCo 7)
 
-/-- **`MIP^co = coRE` from the commuting-operator soundness of introspection and answer
-reduction** (blueprint `cor:mipco-from-stages`): `gapCompressionCo` is sound in `ω_co` as soon
-as each stage's soundness clause holds there (`GapCompression.ofPipeline_sound`), and parallel
-repetition's does (`repetitionCo_soundIn_commuting`). This is the form Phases 3 to 5 of
-`planning/mipco-track.md` discharge, one clause at a time. -/
+/-- **`MIP^co = coRE` from the commuting-operator soundness of introspection and of the
+low-individual-degree test** (blueprint `cor:mipco-from-stages`): `gapCompressionCo` is sound in
+`ω_co` as soon as each stage's soundness clause holds there (`GapCompression.ofPipeline_sound`);
+parallel repetition's does (`repetitionCo_soundIn_commuting`), and answer reduction's does once
+the low-individual-degree test is sound in the commuting-operator model
+(`AnswerReduction.answerReduction_soundIn_commuting`). This is the form Phases 4 to 6 of
+`planning/mipco-track.md` discharge. -/
 theorem mipco_eq_core_of_stages (hI : Introspection.seven.SoundIn .commuting)
-    (hA : AnswerReduction.answerReduction.SoundIn .commuting) : MIPCo = IsCoRE :=
+    (hL : LIDT.Simul.SoundCo) : MIPCo = IsCoRE :=
   Halting.mipco_eq_core_of gapCompressionCo Cost.selfUniversal
-    (GapCompression.ofPipeline_sound hI hA (repetitionCo_soundIn_commuting 7))
+    (GapCompression.ofPipeline_sound hI (AnswerReduction.answerReduction_soundIn_commuting hL)
+      (repetitionCo_soundIn_commuting 7))
 
 end MIPRE
 
