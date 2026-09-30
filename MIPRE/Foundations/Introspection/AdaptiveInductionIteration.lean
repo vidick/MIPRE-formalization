@@ -5,110 +5,50 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 public import MIPRE.Foundations.Introspection.AdaptiveInductionStep
 public import MIPRE.Foundations.Introspection.AdaptiveIterationBudget
+public import MIPRE.Foundations.ModelOver
 
 @[expose] public section
 
 /-! # Finite iteration of the actual Alice Introspect replacement
 
-The auxiliary carrier and state are explicit at every level. Starting with
-the original projective family, each successor is constructed from the
-current game's tests. The numerical inverse threshold discharges every
-smallness premise. All other questions retain their iterated identity
-extensions, and all fixed hiding errors are preserved exactly.
+Starting with the original projective family, each successor is constructed from the current
+game's tests. The numerical inverse threshold discharges every smallness premise. All other
+questions retain their extensions, and all fixed hiding errors and both primitive Z errors are
+preserved exactly.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`). Each stage adjoins to the
+first player an ancilla register whose size the Kraus–Halmos dilation chooses
+(`exists_intro_successor`), so the model changes type from one stage to the next: the iterated
+model is a model over the second player's algebra, packed with its algebras (`ModelOver`). Every
+POVM strategy of it reduces to one of the original model (`BipartiteModel.POVMReduces`), which is
+how a value model dominating the original model dominates it. The matrix version's explicit
+carrier `introIterationAux`, state `introIterationState` and repeated extension
+`introIterationExtend` have no counterpart: the iterated model carries them.
 -/
 
 noncomputable section
-namespace MIPRE.Introspection
+namespace MIPRE.Introspection.TypedEstimates
 open Finset Matrix Classical
 set_option linter.unusedSectionVars false
 
-universe u
+universe u v
 
-/-- The original auxiliary space with one fresh local register per step. -/
-def introIterationAux (H Ω : Type u) : ℕ → Type u
-  | 0 => H
-  | n + 1 => introIterationAux H Ω n × Ω
-
-instance introIterationAuxFintype (H Ω : Type u) [Fintype H] [Fintype Ω] :
-    (n : ℕ) → Fintype (introIterationAux H Ω n)
-  | 0 => inferInstanceAs (Fintype H)
-  | n + 1 =>
-      letI : Fintype (introIterationAux H Ω n) := introIterationAuxFintype H Ω n
-      inferInstanceAs (Fintype (introIterationAux H Ω n × Ω))
-
-instance introIterationAuxDecidableEq (H Ω : Type u) [DecidableEq H] [DecidableEq Ω] :
-    (n : ℕ) → DecidableEq (introIterationAux H Ω n)
-  | 0 => inferInstanceAs (DecidableEq H)
-  | n + 1 =>
-      letI : DecidableEq (introIterationAux H Ω n) := introIterationAuxDecidableEq H Ω n
-      inferInstanceAs (DecidableEq (introIterationAux H Ω n × Ω))
-
-variable {H Ω : Type u} {K : Type*}
-  [Fintype H] [DecidableEq H] [Fintype Ω] [DecidableEq Ω]
-  [Fintype K] [DecidableEq K]
-
-/-- Each added register is in the same fixed basis state on Alice's side. -/
-def introIterationState (ξ : H × K → ℂ) (a₀ : Ω) :
-    (n : ℕ) → introIterationAux H Ω n × K → ℂ
-  | 0 => ξ
-  | n + 1 => extVecA (introIterationState ξ a₀ n) a₀
-
-@[simp] theorem introIterationState_zero (ξ : H × K → ℂ) (a₀ : Ω) :
-    introIterationState ξ a₀ 0 = ξ := rfl
-
-theorem introIterationState_succ (ξ : H × K → ℂ) (a₀ : Ω) (n : ℕ) :
-    introIterationState ξ a₀ (n + 1) = extVecA (introIterationState ξ a₀ n) a₀ := rfl
-
-theorem introIterationState_unit (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)
-    (a₀ : Ω) (n : ℕ) :
-    star (introIterationState ξ a₀ n) ⬝ᵥ introIterationState ξ a₀ n = 1 := by
-  induction n with
-  | zero => exact hξ
-  | succ n ih => exact extVecA_unit (introIterationState ξ a₀ n) ih a₀
-
-variable {I B : Type*} [Fintype I] [DecidableEq I] [Fintype B] [DecidableEq B]
-
-/-- The exact repeated identity extension of an untouched measurement. -/
-def introIterationExtend (Ω : Type u) [Fintype Ω] [DecidableEq Ω]
-    (M : POVM B (I × H)) : (n : ℕ) → POVM B (I × introIterationAux H Ω n)
-  | 0 => M
-  | n + 1 => registeredExtendPOVM (introIterationExtend Ω M n)
-
-@[simp] theorem introIterationExtend_zero (M : POVM B (I × H)) :
-    introIterationExtend Ω M 0 = M := rfl
-
-theorem introIterationExtend_succ (M : POVM B (I × H)) (n : ℕ) :
-    introIterationExtend Ω M (n + 1) =
-      registeredExtendPOVM (introIterationExtend Ω M n) := rfl
-
-namespace TypedEstimates
-
-variable {PauliType PauliAnswer κ : Type*} {F ι A : Type u}
+variable {PauliType PauliAnswer κ : Type*} {F ι A : Type}
   [Fintype PauliType] [DecidableEq PauliType] [Fintype PauliAnswer]
   [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
   [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
   [Fintype A] {ℓ : ℕ}
+variable {𝒞 𝒜 ℬ : Type u} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [StarModule ℂ 𝒜] [PartialOrder 𝒜] [StarOrderedRing 𝒜] [StarProper 𝒜]
+  [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [StarModule ℂ ℬ] [PartialOrder ℬ] [StarOrderedRing ℬ]
+  [StarProper ℬ]
 
-/-- The primitive Bob-Z approximation is unchanged throughout the actual
-Alice iteration, on the original EPR register and extended auxiliary state. -/
-theorem introBobZError_introIterationState (projectPauli : PauliAnswer → ι → F)
-    (Z : PauliType) (q : κ → ZMod 2) (ξ : H × K → ℂ)
-    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K)) (n : ℕ) :
-    introBobZError projectPauli Z q
-      (introIterationState ξ (none : Option ((ι → F) × A)) n) MB =
-        introBobZError projectPauli Z q ξ MB := by
-  induction n with
-  | zero => rfl
-  | succ n ih =>
-      exact (introBobZError_extVecA projectPauli Z q
-        (introIterationState ξ (none : Option ((ι → F) × A)) n) MB).trans ih
-
-set_option backward.isDefEq.respectTransparency false in
+-- The dilation ancilla's instances exceed the default synthesis size (`AdaptiveGameStage`).
+set_option synthInstance.maxSize 512 in
 /-- A concrete projective strategy family exists after every finite Alice
-stage. The original primitive bounds and explicit positive threshold suffice;
-no future structural invariant, future error bound, or stage-smallness
-conclusion is assumed. The full option-valued invariant includes malformed
+stage, in a model reducing to the original one. The original primitive bounds and explicit
+positive threshold suffice; no future structural invariant, future error bound, or
+stage-smallness conclusion is assumed. The full option-valued invariant includes malformed
 answers and the support of all valid answers. -/
 theorem exists_intro_iteration
     (E : PauliType → PauliType → Bool) (X Z : PauliType)
@@ -117,52 +57,45 @@ theorem exists_intro_iteration
     (D : (ι → F) → (ι → F) → A → A → Bool)
     (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →
       PauliAnswer → PauliAnswer → Bool)
-    (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)
+    (Ξ : BipartiteModel.{v} 𝒞 𝒜 ℬ) (hΞ : ‖Ξ.ψ‖ = 1)
     (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H))
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) 𝒜))
     (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K))
-    (hMA : ∀ q, IsPVM (fun a => ((MA q).mats a).val))
-    (hMB : ∀ q, IsPVM (fun a => ((MB q).mats a).val))
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) ℬ))
+    (hMA : ∀ q, IsPVMIn (MA q).op) (hMB : ∀ q, IsPVMIn (MB q).op)
     (q : κ → ZMod 2) (hq : ∀ z, (P Z).eval z = q)
     (w : Bool) (hL : (L w).SupportedOn univ)
     {initial η δ : ℝ} (hi0 : 0 ≤ initial) (hη0 : 0 ≤ η) (hδ0 : 0 ≤ δ)
-    (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP)
-      (registerState (ι → F) ξ) MA MB ≤ initial)
-    (hZ : introBobZError projectPauli Z q ξ MB ≤ η)
-    (hhide : ∀ j : Fin ℓ, hidingAliceError L w hL ξ MA j ≤ δ)
+    (hfail : 1 - (Ξ.reg (ι → F)).povmValue (parsedGame E X Z P L projectPauli D DP) MA MB ≤
+      initial)
+    (hZ : introBobZError projectPauli Z q Ξ MB ≤ η)
+    (hhide : ∀ j : Fin ℓ, hidingAliceError L w hL Ξ MA j ≤ δ)
     (hi : initial ≤ adaptiveSmallThreshold ℓ (TypeGraph.edges E X Z ℓ).card ℓ)
     (hη : η ≤ adaptiveSmallThreshold ℓ (TypeGraph.edges E X Z ℓ).card ℓ)
     (hδ : δ ≤ adaptiveSmallThreshold ℓ (TypeGraph.edges E X Z ℓ).card ℓ)
     (n : ℕ) (hn : n ≤ ℓ) :
-    ∃ (MN : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-        POVM (ParsedAnswer (ι → F) A PauliAnswer)
-          ((ι → F) × introIterationAux H (Option ((ι → F) × A)) n))
+    ∃ (N : ModelOver.{u, v} ℬ)
+      (MN : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
+        POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) N.𝒜))
       (_ : IntroPrefixInvariant (L w) n
         ((MN (QuestionType.introspect w, 0)).map introspectPair)),
-      (∀ t, IsPVM (fun a => ((MN t).mats a).val)) ∧
-      1 - povmValue (parsedGame E X Z P L projectPauli D DP)
-        (registerState (ι → F)
-          (introIterationState ξ (none : Option ((ι → F) × A)) n)) MN MB ≤
-            adaptiveFailureBudget ℓ (TypeGraph.edges E X Z ℓ).card η δ initial n ∧
-      (∀ t, t ≠ (QuestionType.introspect w, 0) →
-        MN t = introIterationExtend (Option ((ι → F) × A)) (MA t) n) ∧
-      (∀ j : Fin ℓ, hidingAliceError L w hL
-        (introIterationState ξ (none : Option ((ι → F) × A)) n) MN j =
-          hidingAliceError L w hL ξ MA j) := by
+      ‖N.Ξ.ψ‖ = 1 ∧ (∀ t, IsPVMIn (MN t).op) ∧
+      1 - (N.Ξ.reg (ι → F)).povmValue (parsedGame E X Z P L projectPauli D DP) MN MB ≤
+        adaptiveFailureBudget ℓ (TypeGraph.edges E X Z ℓ).card η δ initial n ∧
+      introAliceZError projectPauli Z q N.Ξ MN = introAliceZError projectPauli Z q Ξ MA ∧
+      introBobZError projectPauli Z q N.Ξ MB = introBobZError projectPauli Z q Ξ MB ∧
+      (∀ j : Fin ℓ, hidingAliceError L w hL N.Ξ MN j = hidingAliceError L w hL Ξ MA j) ∧
+      (∀ j : Fin ℓ, hidingBobError L w hL N.Ξ MB j = hidingBobError L w hL Ξ MB j) ∧
+      N.Ξ.POVMReduces Ξ := by
   induction n with
   | zero =>
-      refine ⟨MA, initialIntroPrefixInvariant (L w)
+      exact ⟨ModelOver.of Ξ, MA, initialIntroPrefixInvariant (L w)
         ((MA (QuestionType.introspect w, 0)).map introspectPair)
-        (isPVM_povm_map _ (hMA _) introspectPair), hMA, ?_, ?_, ?_⟩
-      · exact hfail
-      · intro t _
-        rfl
-      · intro j
-        rfl
+        (POVMIn.isPVMIn_map (hMA _) _), hΞ, hMA, hfail, rfl, rfl, fun _ => rfl,
+        fun _ => rfl, BipartiteModel.POVMReduces.refl Ξ⟩
   | succ n ih =>
       have hn' : n ≤ ℓ := (Nat.le_succ n).trans hn
-      obtain ⟨MN, IN, hMN, hfailN, hotherN, hhideN⟩ := ih hn'
+      obtain ⟨N, MN, IN, hNψ, hMN, hfailN, hzAN, hzBN, hhideN, hhideBN, hredN⟩ := ih hn'
       let j : Fin ℓ := ⟨n, by omega⟩
       have he : (0 : ℝ) ≤ (TypeGraph.edges E X Z ℓ).card := Nat.cast_nonneg _
       have hb : 0 ≤ adaptiveFailureBudget ℓ (TypeGraph.edges E X Z ℓ).card
@@ -177,31 +110,18 @@ theorem exists_intro_iteration
         adaptiveStageBudget_mono_depth (Nat.sub_le ℓ j.val) (mul_nonneg he hb)
       have hsmall := hdepth.trans
         (adaptiveStageBudget_le_one_of_threshold ℓ ℓ he hi hη hδ n hn')
-      have hZn : introBobZError projectPauli Z q
-          (introIterationState ξ (none : Option ((ι → F) × A)) n) MB ≤ η := by
-        rw [introBobZError_introIterationState]
-        exact hZ
-      have hhn : hidingAliceError L w hL
-          (introIterationState ξ (none : Option ((ι → F) × A)) n) MN j ≤ δ := by
-        rw [hhideN j]
-        exact hhide j
-      obtain ⟨MS, IS, hMS, hfailS, hotherS, hhideS⟩ := exists_intro_successor
-        E X Z P L projectPauli D DP
-        (introIterationState ξ (none : Option ((ι → F) × A)) n)
-        (introIterationState_unit ξ hξ none n) MN MB hMN hMB q hq w hL j IN
-        hb hη0 hδ0 hfailN hZn hhn hsmall
-      refine ⟨MS, IS, hMS, ?_, ?_, ?_⟩
-      · exact hfailS.trans (by
-          rw [adaptiveFailureBudget_step]
-          exact add_le_add le_rfl (adaptiveStepLoss_mono hdepth))
-      · intro t ht
-        exact (hotherS t ht).trans (congrArg
-          (fun N => registeredExtendPOVM (T := Option ((ι → F) × A)) N) (hotherN t ht))
-      · intro i
-        exact (hhideS i).trans (hhideN i)
+      obtain ⟨K, MS, IS, hMS, hfailS, _, hhideS, hzAS, hzBS, hhideBS⟩ := exists_intro_successor
+        E X Z P L projectPauli D DP N.Ξ hNψ MN MB hMN hMB q hq w hL j IN
+        hb hη0 hδ0 hfailN (hzBN.trans_le hZ) ((hhideN j).trans_le (hhide j)) hsmall
+      let t₀ : DilationAncilla (Option ((ι → F) × A)) K := Sum.inl (none, 0)
+      refine ⟨N.expandA t₀, MS, IS, (N.norm_expandA_ψ t₀).trans hNψ, hMS, ?_,
+        hzAS.trans hzAN, hzBS.trans hzBN, fun i => (hhideS i).trans (hhideN i),
+        fun i => (hhideBS i).trans (hhideBN i), BipartiteModel.POVMReduces.trans (N.povmReduces_expandA t₀) hredN⟩
+      exact hfailS.trans (by
+        rw [adaptiveFailureBudget_step]
+        exact add_le_add le_rfl (adaptiveStepLoss_mono hdepth))
 
-end TypedEstimates
-end MIPRE.Introspection
+end MIPRE.Introspection.TypedEstimates
 end
 
 end
