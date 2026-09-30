@@ -2941,4 +2941,112 @@ chain itself is restated in a model under its existing guards. -/
 #guard_sorry_free MIPRE.AnswerReduction.arVerifier_soundness_commuting,
   MIPRE.AnswerReduction.answerReduction_soundIn_commuting
 
+/-! The commuting-operator track, Phase 4 (`planning/mipco-track.md` §5): local isometries of
+bipartite models, `lem:local-isometry` (`MIPRE/Foundations/LocalIsometry.lean`); moving registers
+along them, `lem:ancilla-isometries` (`MIPRE/Foundations/AncillaIsometry.lean`); the register
+model, `lem:register-model` (`MIPRE/Foundations/Introspection/RegisterModel.lean`); the ancilla
+extension of a tensor-product model, `lem:tensor-expand` (`MIPRE/Foundations/TensorExpand.lean`);
+the one-sided ancilla extension, `lem:one-sided-extension`
+(`MIPRE/Foundations/AncillaDilation.lean`); the projective dilation in a star-ordered ring,
+`lem:kraus-dilation` (`MIPRE/Foundations/KrausDilation.lean`); domination of POVM strategies and
+approximation by projective ones, `lem:povm-domination` (`MIPRE/Foundations/POVMDomination.lean`,
+`MIPRE/Foundations/Introspection/SourcePaddingValue.lean`); reductions of POVM strategies,
+`lem:povm-reduction` (`MIPRE/Foundations/POVMReduction.lean`, `MIPRE/Foundations/ModelOver.lean`);
+the Pauli basis test sound in the tensor-product model, `lem:qld-sound-in-tensor`
+(`MIPRE/Background/QLD/ModelSoundness.lean`); and introspection sound in every value model where
+that test is, `thm:intro-sound-co` (`MIPRE/Background/Introspection/Compiler.lean`). The
+introspection analysis itself is restated in a model under its existing guards. -/
+#guard_sorry_free MIPRE.BipartiteModel.LocalIsometry.intertwine,
+  MIPRE.BipartiteModel.LocalIsometry.bornProb_withState,
+  MIPRE.BipartiteModel.LocalIsometry.stateSqNorm_withState,
+  MIPRE.BipartiteModel.LocalIsometry.bornProb_of_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.stateSqNorm_of_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.swap_stateSqNorm_of_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.xSqNorm_of_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.comp_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.isPVMIn_transportA,
+  MIPRE.BipartiteModel.LocalIsometry.isPVMIn_transportB,
+  MIPRE.BipartiteModel.LocalIsometry.intertwine_transportOpA,
+  MIPRE.BipartiteModel.LocalIsometry.povmValue_transport,
+  MIPRE.BipartiteModel.LocalIsometry.povmValue_pushforward
+
+#guard_sorry_free MIPRE.BipartiteModel.inert,
+  MIPRE.BipartiteModel.inert_W_ψ,
+  MIPRE.BipartiteModel.relabel,
+  MIPRE.BipartiteModel.relabel_W_ψ,
+  MIPRE.BipartiteModel.assoc,
+  MIPRE.BipartiteModel.assoc_W_ψ,
+  MIPRE.BipartiteModel.swapExpand,
+  MIPRE.BipartiteModel.swapExpand_W_ψ,
+  MIPRE.BipartiteModel.expand_π_πA_apply,
+  MIPRE.BipartiteModel.expand_π_πB_apply
+
+#guard_sorry_free MIPRE.BipartiteModel.norm_reg_ψ,
+  MIPRE.BipartiteModel.reg_mirror,
+  MIPRE.BipartiteModel.reg_mirror_smulKron,
+  MIPRE.BipartiteModel.regRelabel_W_ψ,
+  MIPRE.BipartiteModel.regSplit_W_ψ,
+  MIPRE.BipartiteModel.regExtend_W_ψ,
+  MIPRE.BipartiteModel.regSwap_W_ψ,
+  MIPRE.Introspection.registerEPR_equiv,
+  MIPRE.Introspection.registerEPR_prod
+
+#guard_sorry_free MIPRE.BipartiteModel.tensorExpand,
+  MIPRE.BipartiteModel.tensorExpand_W_ψ,
+  MIPRE.BipartiteModel.tensorUnexpand,
+  MIPRE.BipartiteModel.tensorUnexpand_W_ψ,
+  MIPRE.BipartiteModel.tensorUnexpand_ΦA,
+  MIPRE.BipartiteModel.tensorUnexpand_ΦB,
+  MIPRE.BipartiteModel.tensorIsometry,
+  MIPRE.BipartiteModel.tensorIsometry_W,
+  MIPRE.BipartiteModel.compSymmHom,
+  MIPRE.BipartiteModel.compSymmHom_kronecker_one
+
+#guard_sorry_free MIPRE.BipartiteModel.norm_expandA_ψ,
+  MIPRE.BipartiteModel.qform_expandA,
+  MIPRE.BipartiteModel.bornProb_expandA,
+  MIPRE.BipartiteModel.stateSqNorm_expandA,
+  MIPRE.BipartiteModel.inertA_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.expand_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.expandA_W_ψ,
+  MIPRE.BipartiteModel.exchange_W_ψ
+
+#guard_sorry_free MIPRE.exists_sum_star_mul_self,
+  MIPRE.sum_star_mul_self_pad,
+  MIPRE.Halmos.isPVMIn_proj,
+  MIPRE.DilationAncilla,
+  MIPRE.exists_pvm_dilation_ge,
+  MIPRE.exists_pvm_dilation
+
+#guard_sorry_free MIPRE.ValueModel.DominatesPOVM.dominates,
+  MIPRE.ValueModel.tensor_dominatesPOVM,
+  MIPRE.ValueModel.commuting_dominatesPOVM,
+  MIPRE.ValueModel.tensor_projApprox,
+  MIPRE.ValueModel.commuting_projApprox,
+  MIPRE.povmValue_le_quantumValue
+
+#guard_sorry_free MIPRE.BipartiteModel.POVMReduces.refl,
+  MIPRE.BipartiteModel.POVMReduces.trans,
+  MIPRE.BipartiteModel.POVMReduces.swap,
+  MIPRE.BipartiteModel.LocalIsometry.povmReduces,
+  MIPRE.BipartiteModel.povmReduces_expandA,
+  MIPRE.BipartiteModel.povmReduces_expandB,
+  MIPRE.BipartiteModel.povmValue_swap_game,
+  MIPRE.ValueModel.DominatesPOVM.of_povmReduces,
+  MIPRE.ModelOver.povmReduces_expandA,
+  MIPRE.ModelOver.norm_expandA_ψ,
+  MIPRE.POVMIn.compress_op
+
+#guard_sorry_free MIPRE.QLD.soundIn_tensor,
+  MIPRE.QLD.tensorAncilla,
+  MIPRE.QLD.tensorPhi,
+  MIPRE.QLD.tensorPhi_W_ψ,
+  MIPRE.QLD.tensorPhi_alice,
+  MIPRE.QLD.tensorPhi_bob,
+  MIPRE.QLD.approxSoundIn_tensor,
+  MIPRE.QLD.approxSoundIn_commuting
+
+#guard_sorry_free MIPRE.Introspection.seven_soundIn,
+  MIPRE.Introspection.seven_soundIn_commuting
+
 end
