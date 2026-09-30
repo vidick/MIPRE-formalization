@@ -8,29 +8,36 @@ public import MIPRE.Foundations.Introspection.TypedPrefixChainBob
 
 @[expose] public section
 
-/-! # The actual hiding normalizer is the propagated question prefix -/
+/-! # The actual hiding normalizer is the propagated question prefix
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the normalizer is an element of
+the second player's algebra, and the estimate is in the second player's state norm of the model.
+-/
 
 noncomputable section
 
 namespace MIPRE.Introspection.TypedEstimates
 
-open Finset Matrix Classical
+open Finset Classical
 
-variable {PauliType PauliAnswer F ι κ A H K : Type*}
+variable {PauliType PauliAnswer F ι κ A : Type*}
   [Field F] [Fintype F] [DecidableEq F] [Fintype ι] [DecidableEq ι]
-  [Fintype PauliAnswer] [Fintype A] [Fintype K] [DecidableEq K] {ℓ : ℕ}
+  [Fintype PauliAnswer] [Fintype A] {ℓ : ℕ}
+
+section Normalizer
+
+variable {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R]
 
 /-- The actual conditional marginal, including its malformed-answer outcome. -/
 def hidingNormalizer (P : CL.CLFun F ι ℓ) (k : ℕ)
-    (N : POVM (ParsedAnswer (ι → F) A PauliAnswer) K) (y : Option (ι → F)) :
-    Matrix K K ℂ := ∑ z, ((N.map (hidingNextLater P k)).mats (y, z)).val
+    (N : POVMIn (ParsedAnswer (ι → F) A PauliAnswer) R) (y : Option (ι → F)) : R :=
+  ∑ z, (N.map (hidingNextLater P k)).op (y, z)
 
 /-- Summing the tested later outcomes gives exactly its reported prefix PVM;
 the dummy outcome is included on both sides of the identity. -/
 theorem hidingNormalizer_eq_reportedPrefix (P : CL.CLFun F ι ℓ) (k : ℕ) (j : Fin ℓ)
-    (N : POVM (ParsedAnswer (ι → F) A PauliAnswer) K) (y : Option (ι → F)) :
-    hidingNormalizer P k N y =
-      ((N.map (reportedPrefix P (k + 1) (.hide j))).mats y).val := by
+    (N : POVMIn (ParsedAnswer (ι → F) A PauliAnswer) R) (y : Option (ι → F)) :
+    hidingNormalizer P k N y = (N.map (reportedPrefix P (k + 1) (.hide j))).op y := by
   have hc : (hidingNextCondition P k : ParsedAnswer (ι → F) A PauliAnswer → _) =
       reportedPrefix P (k + 1) (.hide j) := by
     funext a
@@ -40,22 +47,18 @@ theorem hidingNormalizer_eq_reportedPrefix (P : CL.CLFun F ι ℓ) (k : ℕ) (j 
       (hidingNextCondition P k a, (hidingNextLater P k a).2)) = hidingNextLater P k := by
     funext a
     cases a <;> rfl
-  have hm := POVM.sum_mats_map_prod N (hidingNextCondition P k)
+  have hm := POVMIn.sum_op_map_prod N (hidingNextCondition P k)
     (fun a => (hidingNextLater P k a).2) y
   simp only [hg] at hm
-  convert hm using 1
   unfold hidingNormalizer
-  apply Finset.sum_congr rfl
-  intro z _
-  simp only [POVM.map_mats, Finset.sum_filter]
-  apply Finset.sum_congr rfl
-  intro a _
-  by_cases h : hidingNextLater P k a = (y, z)
-  · simp only [if_pos h]
-  · simp only [if_neg h]
+  convert hm
 
-variable [Fintype PauliType] [DecidableEq PauliType]
-  [Fintype κ] [DecidableEq κ] [Fintype H] [DecidableEq H]
+end Normalizer
+
+variable [Fintype PauliType] [DecidableEq PauliType] [Fintype κ] [DecidableEq κ]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
 
 /-- The actual prefix chain discharges the later hiding normalizer estimate
 from the single Introspect-prefix estimate. No assumption about later hiding
@@ -67,31 +70,31 @@ theorem hidingNormalizer_estimate
     (D : (ι → F) → (ι → F) → A → A → Bool)
     (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →
       PauliAnswer → PauliAnswer → Bool)
-    (ψ : H × K → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1)
+    (Ψ : BipartiteModel 𝒞 𝒜 ℬ) (hΨ : ‖Ψ.ψ‖ = 1)
     (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) H)
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) 𝒜)
     (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) K)
-    {ε δ : ℝ} (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP) ψ MA MB ≤ ε)
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) ℬ)
+    {ε δ : ℝ} (hfail : 1 - Ψ.povmValue (parsedGame E X Z P L projectPauli D DP) MA MB ≤ ε)
     (w : Bool) (k j : Fin ℓ) (hk : k.val + 1 = j.val)
-    (hL : (L w).SupportedOn univ) (Q : Option (ι → F) → Matrix K K ℂ)
-    (hintro : ∑ y, snorm ψ (bOp
-      ((((MB (QuestionType.introspect w, 0)).map
-        (reportedPrefix (L w) (k.val + 1) .introspect)).mats y).val - Q y)) ^ 2 ≤ δ) :
-    (∑ y, snorm ψ (bOp
+    (hL : (L w).SupportedOn univ) (Q : Option (ι → F) → ℬ)
+    (hintro : ∑ y, Ψ.snorm (Ψ.πB
+      (((MB (QuestionType.introspect w, 0)).map
+        (reportedPrefix (L w) (k.val + 1) .introspect)).op y - Q y)) ^ 2 ≤ δ) :
+    (∑ y, Ψ.snorm (Ψ.πB
       (hidingNormalizer (L w) k.val (MB (QuestionType.hide w j, 0)) y - Q y)) ^ 2) ≤
       2 * (((ℓ - j.val + 1 : ℕ) : ℝ) ^ 2 *
         (8 * (TypeGraph.edges E X Z ℓ).card * ε)) + 2 * δ := by
   have hchain := hiding_introspect_prefix_estimate_bob E X Z P L projectPauli D DP
-    ψ hψ MA MB hfail w hL j (k.val + 1) (by omega)
+    Ψ hΨ MA MB hfail w hL j (k.val + 1) (by omega)
   let R (y : Option (ι → F)) :=
-    (((MB (QuestionType.introspect w, 0)).map
-      (reportedPrefix (L w) (k.val + 1) .introspect)).mats y).val
-  have ht := sum_snorm_sq_triangle' ψ
-    (fun y => bOp (hidingNormalizer (L w) k.val (MB (QuestionType.hide w j, 0)) y))
-    (fun y => bOp (R y)) (fun y => bOp (Q y))
-  simp only [← bOp_sub] at ht
-  have hstep : (∑ y, snorm ψ (bOp
+    ((MB (QuestionType.introspect w, 0)).map
+      (reportedPrefix (L w) (k.val + 1) .introspect)).op y
+  have ht := Ψ.sum_snorm_sq_triangle univ
+    (fun y => Ψ.πB (hidingNormalizer (L w) k.val (MB (QuestionType.hide w j, 0)) y))
+    (fun y => Ψ.πB (R y)) (fun y => Ψ.πB (Q y))
+  simp only [← map_sub] at ht
+  have hstep : (∑ y, Ψ.snorm (Ψ.πB
       (hidingNormalizer (L w) k.val (MB (QuestionType.hide w j, 0)) y - R y)) ^ 2) ≤
       ((ℓ - j.val + 1 : ℕ) : ℝ) ^ 2 * (8 * (TypeGraph.edges E X Z ℓ).card * ε) := by
     simpa only [hidingNormalizer_eq_reportedPrefix (L w) k.val j, R] using hchain
