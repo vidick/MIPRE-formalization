@@ -737,6 +737,7 @@ public import MIPRE.Background.Repetition.Verifier
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
 public import MIPRE.Cslib.Foundations.Data.RelatesInSteps
+public import MIPRE.Foundations.AncillaModel
 public import MIPRE.Foundations.BipartiteModel
 public import MIPRE.Foundations.Blocks
 public import MIPRE.Foundations.CL.Basic
@@ -1217,6 +1218,7 @@ public import MIPRE.Foundations.LowDegree.UnaryPrimality
 public import MIPRE.Foundations.LowDegree.UnaryPrimePower
 public import MIPRE.Foundations.LowDegree.ZeroBasis
 public import MIPRE.Foundations.LowDegreeSandwich
+public import MIPRE.Foundations.Measurement
 public import MIPRE.Foundations.NCPoly.Basic
 public import MIPRE.Foundations.NCPoly.Cone
 public import MIPRE.Foundations.OpBound
@@ -1308,6 +1310,7 @@ public import MIPRE.Foundations.SampledGame
 public import MIPRE.Foundations.Sandwich
 public import MIPRE.Foundations.Sign
 public import MIPRE.Foundations.StateDistance
+public import MIPRE.Foundations.StateModel
 public import MIPRE.Foundations.StrategyDilation
 public import MIPRE.Foundations.Swap
 public import MIPRE.Foundations.SyncMergeByQuestion

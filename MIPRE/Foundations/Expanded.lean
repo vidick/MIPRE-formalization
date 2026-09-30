@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 module
+public import MIPRE.Foundations.AncillaModel
 public import MIPRE.Foundations.CrossConsistency
 public import MIPRE.Foundations.PVM
 
@@ -31,6 +32,17 @@ Together they say that an operator with an **inert ancilla**, `M (x) Id`, has th
 on the expanded state as `M` has on the original one, provided the ancilla state is a unit vector
 (`norm_stateVec_expVec_kron_one`). That is what lets a bound proved before the expansion be used
 after it, which is how the expansion stage consumes `lem:qld-obs-commutation`.
+
+## In a bipartite model
+
+The construction itself is the ancilla extension `BipartiteModel.expand` of any bipartite model
+(`MIPRE/Foundations/AncillaModel.lean`), and the expanded state is its instance at the
+tensor-product model: `bornProb_expVec_eq` identifies the Born probabilities of product operators,
+after which the norm of the expanded state, the inert ancilla and the factorization of Born
+probabilities are the model's (`norm_expand_state`, `stateSqNorm_expand_smulKron_one`,
+`bornProb_expand_smulKron`), and the product of projective measurements is `IsPVMIn.smulKron`
+read through `kronEquiv`. What stays here is the coordinate computation that a product operator
+acts on the product vector factor by factor (`mulVec_kron_kron_expVec`).
 -/
 
 noncomputable section
@@ -39,6 +51,50 @@ namespace MIPRE
 
 open Finset Matrix
 open scoped Kronecker ComplexOrder MatrixOrder
+
+/-! ## In a model
+
+Two facts of this file are not about the ancilla at all, and are proved once for a bipartite model:
+a unitary in front is invisible to the state norm, and a common coarse-graining of both players
+can only increase their agreement. -/
+
+namespace BipartiteModel
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] (M : BipartiteModel 𝒞 𝒜 ℬ)
+
+/-- **A unitary in front is invisible to the state norm.** -/
+theorem stateNorm_mul_of_isometry {W : 𝒜} (h : star W * W = 1) (N : 𝒜) :
+    M.stateNorm (W * N) = M.stateNorm N := by
+  unfold stateNorm
+  rw [map_mul]
+  exact M.snorm_mul_of_isometry (by rw [← map_star, ← map_mul, h, map_one]) _
+
+theorem bornProb_sum_sum {ι : Type*} (s t : Finset ι) (a : ι → 𝒜) (b : ι → ℬ) :
+    M.bornProb (∑ i ∈ s, a i) (∑ j ∈ t, b j) = ∑ i ∈ s, ∑ j ∈ t, M.bornProb (a i) (b j) := by
+  rw [M.bornProb_sum_left]
+  exact Finset.sum_congr rfl fun i _ => M.bornProb_sum_right _ _ _
+
+/-- **Coarse-graining both players the same way can only increase agreement**: the terms the
+coarse-graining adds are Born probabilities of positive elements. -/
+theorem sum_bornProb_le_map [PartialOrder 𝒜] [StarOrderedRing 𝒜] [PartialOrder ℬ]
+    [StarOrderedRing ℬ] {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
+    (P : POVMIn ι 𝒜) (Q : POVMIn ι ℬ) (f : ι → κ) :
+    ∑ i, M.bornProb (P.op i) (Q.op i) ≤ ∑ k, M.bornProb ((P.map f).op k) ((Q.map f).op k) := by
+  have hfib : ∀ k : κ, M.bornProb ((P.map f).op k) ((Q.map f).op k)
+      = ∑ i ∈ univ.filter fun i => f i = k, ∑ j ∈ univ.filter fun j => f j = k,
+          M.bornProb (P.op i) (Q.op j) := fun k => by
+    rw [POVMIn.map_op, POVMIn.map_op, M.bornProb_sum_sum]
+  rw [Finset.sum_congr rfl fun k (_ : k ∈ univ) => hfib k]
+  have hdiag : ∀ k : κ, ∑ i ∈ univ.filter fun i => f i = k, M.bornProb (P.op i) (Q.op i)
+      ≤ ∑ i ∈ univ.filter fun i => f i = k, ∑ j ∈ univ.filter fun j => f j = k,
+          M.bornProb (P.op i) (Q.op j) := fun k =>
+    Finset.sum_le_sum fun i hi => Finset.single_le_sum
+      (fun j _ => M.bornProb_nonneg (P.op_nonneg i) (Q.op_nonneg j)) hi
+  refine le_trans (le_of_eq ?_) (Finset.sum_le_sum fun k (_ : k ∈ univ) => hdiag k)
+  exact (Finset.sum_fiberwise (univ : Finset ι) f fun i => M.bornProb (P.op i) (Q.op i)).symm
+
+end BipartiteModel
 
 variable {dA dB anc anc' : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
   [Fintype anc] [DecidableEq anc] [Fintype anc'] [DecidableEq anc']
@@ -63,97 +119,7 @@ theorem sum_prod_mul {X Y M : Type*} [Fintype X] [Fintype Y] [CommRing M] (f : X
     (g : Y → M) : ∑ q : X × Y, f q.1 * g q.2 = (∑ x, f x) * ∑ y, g y := by
   rw [Finset.sum_mul_sum, Fintype.sum_prod_type]
 
-/-- **The norm of a product state is the product of the norms.** -/
-theorem norm_evec_expVec (u : dA × dB → ℂ) (v : anc × anc' → ℂ) :
-    ‖evec (expVec u v)‖ = ‖evec u‖ * ‖evec v‖ := by
-  classical
-  rw [evec, evec, evec, EuclideanSpace.norm_eq, EuclideanSpace.norm_eq, EuclideanSpace.norm_eq,
-    ← Real.sqrt_mul (Finset.sum_nonneg fun _ _ => by positivity)]
-  congr 1
-  rw [show (∑ p : (dA × anc) × (dB × anc'), ‖(WithLp.toLp 2 (expVec u v)).ofLp p‖ ^ 2)
-      = ∑ q : (dA × dB) × (anc × anc'),
-          (fun x : dA × dB => ‖u x‖ ^ 2) q.1 * (fun y : anc × anc' => ‖v y‖ ^ 2) q.2 from
-    Fintype.sum_equiv (expEquiv dA dB anc anc') _ _ fun p => by
-      show ‖expVec u v p‖ ^ 2 = ‖u (p.1.1, p.2.1)‖ ^ 2 * ‖v (p.1.2, p.2.2)‖ ^ 2
-      rw [expVec, norm_mul, mul_pow],
-    ]
-  exact sum_prod_mul (fun x : dA × dB => ‖u x‖ ^ 2) fun y : anc × anc' => ‖v y‖ ^ 2
-
-/-- The expanded state's norm splits, so it is a unit vector when both factors are. -/
-theorem expVec_dotProduct (ψ : dA × dB → ℂ) (e : anc × anc' → ℂ) :
-    star (expVec ψ e) ⬝ᵥ expVec ψ e = (star ψ ⬝ᵥ ψ) * (star e ⬝ᵥ e) := by
-  classical
-  rw [dotProduct, dotProduct, dotProduct, ← sum_prod_mul]
-  refine Fintype.sum_equiv (expEquiv dA dB anc anc') _ _ fun p => ?_
-  obtain ⟨⟨a, x⟩, ⟨b, y⟩⟩ := p
-  simp only [expEquiv, Equiv.coe_fn_mk, Pi.star_apply, expVec, star_mul']
-  ring
-
-theorem expVec_unit {ψ : dA × dB → ℂ} {e : anc × anc' → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)
-    (he : star e ⬝ᵥ e = 1) : star (expVec ψ e) ⬝ᵥ expVec ψ e = 1 := by
-  rw [expVec_dotProduct, hψ, he, mul_one]
-
-/-- **Exchanging the two parties of the expanded state exchanges both factors.** -/
-theorem swapVec_expVec (ψ : dA × dB → ℂ) (e : anc × anc' → ℂ) :
-    swapVec (expVec ψ e) = expVec (swapVec ψ) (swapVec e) := rfl
-
-/-- **An operator of product form acts on the expanded state factor by factor.** -/
-theorem mulVec_kron_expVec (ψ : dA × dB → ℂ) (e : anc × anc' → ℂ) (M : Matrix dA dA ℂ)
-    (N : Matrix anc anc ℂ) :
-    (((M ⊗ₖ N) ⊗ₖ (1 : Matrix (dB × anc') (dB × anc') ℂ)) *ᵥ expVec ψ e)
-      = expVec ((M ⊗ₖ (1 : Matrix dB dB ℂ)) *ᵥ ψ) ((N ⊗ₖ (1 : Matrix anc' anc' ℂ)) *ᵥ e) := by
-  classical
-  rw [show (1 : Matrix (dB × anc') (dB × anc') ℂ)
-      = (1 : Matrix dB dB ℂ) ⊗ₖ (1 : Matrix anc' anc' ℂ) from Matrix.one_kronecker_one.symm]
-  funext p
-  obtain ⟨⟨a, x⟩, ⟨b, y⟩⟩ := p
-  show ∑ q : (dA × anc) × (dB × anc'),
-      ((M ⊗ₖ N) ⊗ₖ ((1 : Matrix dB dB ℂ) ⊗ₖ (1 : Matrix anc' anc' ℂ)))
-        ((a, x), (b, y)) q * expVec ψ e q
-    = (∑ q : dA × dB, (M ⊗ₖ (1 : Matrix dB dB ℂ)) (a, b) q * ψ q)
-      * ∑ q : anc × anc', (N ⊗ₖ (1 : Matrix anc' anc' ℂ)) (x, y) q * e q
-  rw [← sum_prod_mul]
-  refine Fintype.sum_equiv (expEquiv dA dB anc anc') _ _ fun q => ?_
-  obtain ⟨⟨a₁, x₁⟩, ⟨b₁, y₁⟩⟩ := q
-  simp only [expEquiv, Equiv.coe_fn_mk]
-  show (M a a₁ * N x x₁) * ((1 : Matrix dB dB ℂ) b b₁ * (1 : Matrix anc' anc' ℂ) y y₁)
-      * (ψ (a₁, b₁) * e (x₁, y₁))
-    = (M a a₁ * (1 : Matrix dB dB ℂ) b b₁) * ψ (a₁, b₁)
-      * ((N x x₁ * (1 : Matrix anc' anc' ℂ) y y₁) * e (x₁, y₁))
-  ring
-
-/-- **A unitary on the ancilla is invisible to the state-norm.** `D (x) U = (Id (x) U)(D (x) Id)`
-and the front factor is unitary on the whole space. -/
-theorem norm_stateVec_kron_unitary (v : (dA × anc) × (dB × anc') → ℂ) (D : Matrix dA dA ℂ)
-    {U : Matrix anc anc ℂ} (hU : Uᴴ * U = 1) :
-    ‖stateVec v (D ⊗ₖ U)‖ = ‖stateVec v (D ⊗ₖ (1 : Matrix anc anc ℂ))‖ := by
-  have hfac : (D ⊗ₖ U) = ((1 : Matrix dA dA ℂ) ⊗ₖ U) * (D ⊗ₖ (1 : Matrix anc anc ℂ)) := by
-    rw [← Matrix.mul_kronecker_mul, Matrix.one_mul, Matrix.mul_one]
-  have hiso : (((1 : Matrix dA dA ℂ) ⊗ₖ U))ᴴ * ((1 : Matrix dA dA ℂ) ⊗ₖ U) = 1 := by
-    rw [Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one, ← Matrix.mul_kronecker_mul,
-      Matrix.one_mul, hU, Matrix.one_kronecker_one]
-  rw [norm_stateVec_eq_snorm, norm_stateVec_eq_snorm, snorm, snorm, hfac, aOp_mul,
-    ← Matrix.mulVec_mulVec]
-  exact norm_evec_mulVec_of_isometry (isometry_aOp hiso) _
-
-/-- **An inert ancilla changes nothing**: a bound proved before the expansion survives it. -/
-theorem norm_stateVec_expVec_kron_one (ψ : dA × dB → ℂ) {e : anc × anc' → ℂ}
-    (he : ‖evec e‖ = 1) (M : Matrix dA dA ℂ) :
-    ‖stateVec (expVec ψ e) (M ⊗ₖ (1 : Matrix anc anc ℂ))‖ = ‖stateVec ψ M‖ := by
-  rw [stateVec, show (WithLp.toLp 2 (((M ⊗ₖ (1 : Matrix anc anc ℂ))
-      ⊗ₖ (1 : Matrix (dB × anc') (dB × anc') ℂ)) *ᵥ expVec ψ e)
-      : EuclideanSpace ℂ ((dA × anc) × (dB × anc'))) = evec _ from rfl,
-    mulVec_kron_expVec, norm_evec_expVec]
-  rw [show ((1 : Matrix anc anc ℂ) ⊗ₖ (1 : Matrix anc' anc' ℂ)) *ᵥ e = e from by
-      rw [Matrix.one_kronecker_one, Matrix.one_mulVec], he, mul_one]
-  rfl
-
-/-! ## Born probabilities on the expanded state
-
-The expansion stage's consistency statements are about a measurement of product form, and what
-they need is that its Born probabilities *factorize*. That is the same computation as
-`mulVec_kron_expVec` with an operator on each party, plus the observation that both factors are
-real because both operators are positive. -/
+/-! ## Product operators on the expanded state, in coordinates -/
 
 theorem expVec_dotProduct_of_pair (u u' : dA × dB → ℂ) (v v' : anc × anc' → ℂ) :
     star (expVec u v) ⬝ᵥ expVec u' v' = (star u ⬝ᵥ u') * (star v ⬝ᵥ v') := by
@@ -184,6 +150,100 @@ theorem mulVec_kron_kron_expVec (ψ : dA × dB → ℂ) (e : anc × anc' → ℂ
     = (X a a₁ * X' b b₁) * ψ (a₁, b₁) * ((Y x x₁ * Y' y y₁) * e (x₁, y₁))
   ring
 
+/-- **An operator of product form acts on the expanded state factor by factor.** -/
+theorem mulVec_kron_expVec (ψ : dA × dB → ℂ) (e : anc × anc' → ℂ) (M : Matrix dA dA ℂ)
+    (N : Matrix anc anc ℂ) :
+    (((M ⊗ₖ N) ⊗ₖ (1 : Matrix (dB × anc') (dB × anc') ℂ)) *ᵥ expVec ψ e)
+      = expVec ((M ⊗ₖ (1 : Matrix dB dB ℂ)) *ᵥ ψ) ((N ⊗ₖ (1 : Matrix anc' anc' ℂ)) *ᵥ e) := by
+  rw [show (1 : Matrix (dB × anc') (dB × anc') ℂ)
+      = (1 : Matrix dB dB ℂ) ⊗ₖ (1 : Matrix anc' anc' ℂ) from Matrix.one_kronecker_one.symm]
+  exact mulVec_kron_kron_expVec ψ e M N 1 1
+
+/-- **Exchanging the two parties of the expanded state exchanges both factors.** -/
+theorem swapVec_expVec (ψ : dA × dB → ℂ) (e : anc × anc' → ℂ) :
+    swapVec (expVec ψ e) = expVec (swapVec ψ) (swapVec e) := rfl
+
+/-! ## The expanded state is the ancilla extension of the tensor-product model -/
+
+/-- **The bridge**: a product measurement's Born probability on the expanded state is its Born
+probability in the ancilla extension of the tensor-product model. -/
+theorem bornProb_expVec_eq (ψ : dA × dB → ℂ) (e : anc × anc' → ℂ) (X : Matrix dA dA ℂ)
+    (Y : Matrix anc anc ℂ) (X' : Matrix dB dB ℂ) (Y' : Matrix anc' anc' ℂ) :
+    bornProb (expVec ψ e) (X ⊗ₖ Y) (X' ⊗ₖ Y')
+      = ((BipartiteModel.tensor ψ).expand e).bornProb (smulKron X Y) (smulKron X' Y') := by
+  rw [BipartiteModel.bornProb_expand_smulKron_eq, bornProb, mulVec_kron_kron_expVec,
+    expVec_dotProduct_of_pair, mul_comm (star ψ ⬝ᵥ _)]
+  congr 2
+  show star ψ ⬝ᵥ ((X ⊗ₖ X') *ᵥ ψ) = ((aOp X * bOp X' : Matrix (dA × dB) _ ℂ) *ᵥ ψ) ⬝ᵥ star ψ
+  rw [dotProduct_comm, aOp, bOp, ← Matrix.mul_kronecker_mul, Matrix.mul_one, Matrix.one_mul]
+
+/-- **The norm of a product state is the product of the norms**: `norm_expand_state` at the
+tensor-product model. -/
+theorem norm_evec_expVec (u : dA × dB → ℂ) (v : anc × anc' → ℂ) :
+    ‖evec (expVec u v)‖ = ‖evec u‖ * ‖evec v‖ := by
+  have h : ‖evec (expVec u v)‖ ^ 2 = ‖((BipartiteModel.tensor u).expand v).ψ‖ ^ 2 := by
+    rw [norm_evec_sq, ← ((BipartiteModel.tensor u).expand v).qform_one_eq_norm_sq,
+      show ((BipartiteModel.tensor u).expand v).qform 1
+        = ((BipartiteModel.tensor u).expand v).bornProb (smulKron 1 1) (smulKron 1 1) by
+        rw [smulKron_one_one, smulKron_one_one, BipartiteModel.bornProb, map_one, map_one,
+          mul_one],
+      ← bornProb_expVec_eq, bornProb, Matrix.one_kronecker_one, Matrix.one_kronecker_one,
+      Matrix.one_kronecker_one, Matrix.one_mulVec]
+  rw [(sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).1 h, BipartiteModel.norm_expand_state, mul_comm]
+  rfl
+
+/-- The expanded state's norm splits, so it is a unit vector when both factors are. -/
+theorem expVec_dotProduct (ψ : dA × dB → ℂ) (e : anc × anc' → ℂ) :
+    star (expVec ψ e) ⬝ᵥ expVec ψ e = (star ψ ⬝ᵥ ψ) * (star e ⬝ᵥ e) :=
+  expVec_dotProduct_of_pair ψ ψ e e
+
+theorem expVec_unit {ψ : dA × dB → ℂ} {e : anc × anc' → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)
+    (he : star e ⬝ᵥ e = 1) : star (expVec ψ e) ⬝ᵥ expVec ψ e = 1 := by
+  rw [expVec_dotProduct, hψ, he, mul_one]
+
+/-- **A unitary on the ancilla is invisible to the state-norm.** `D (x) U = (Id (x) U)(D (x) Id)`
+and the front factor is unitary on the whole space (`stateNorm_mul_of_isometry`). -/
+theorem norm_stateVec_kron_unitary (v : (dA × anc) × (dB × anc') → ℂ) (D : Matrix dA dA ℂ)
+    {U : Matrix anc anc ℂ} (hU : Uᴴ * U = 1) :
+    ‖stateVec v (D ⊗ₖ U)‖ = ‖stateVec v (D ⊗ₖ (1 : Matrix anc anc ℂ))‖ := by
+  have hfac : (D ⊗ₖ U) = ((1 : Matrix dA dA ℂ) ⊗ₖ U) * (D ⊗ₖ (1 : Matrix anc anc ℂ)) := by
+    rw [← Matrix.mul_kronecker_mul, Matrix.one_mul, Matrix.mul_one]
+  have hiso : star ((1 : Matrix dA dA ℂ) ⊗ₖ U) * ((1 : Matrix dA dA ℂ) ⊗ₖ U) = 1 := by
+    rw [Matrix.star_eq_conjTranspose, Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one,
+      ← Matrix.mul_kronecker_mul, Matrix.one_mul, hU, Matrix.one_kronecker_one]
+  rw [hfac]
+  exact (BipartiteModel.tensor v).stateNorm_mul_of_isometry hiso _
+
+/-- The first player's operator with an inert ancilla, on the expanded state, is the ancilla
+extension's `M ⊗ 1`. -/
+theorem stateSqNorm_expVec_kron_one (ψ : dA × dB → ℂ) (e : anc × anc' → ℂ) (M : Matrix dA dA ℂ) :
+    stateSqNorm (expVec ψ e) (M ⊗ₖ (1 : Matrix anc anc ℂ))
+      = ((BipartiteModel.tensor ψ).expand e).stateSqNorm (smulKron M 1) := by
+  rw [stateSqNorm_eq_tensor, BipartiteModel.stateSqNorm_eq_bornProb_one,
+    BipartiteModel.stateSqNorm_eq_bornProb_one, star_smulKron_one, smulKron_mul, one_mul,
+    ← smulKron_one_one (R := Matrix dB dB ℂ), ← bornProb_expVec_eq, ← bornProb_eq_tensor]
+  congr 1
+  · rw [Matrix.star_eq_conjTranspose, Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one,
+      ← Matrix.mul_kronecker_mul, Matrix.one_mul]
+    rfl
+  · exact Matrix.one_kronecker_one.symm
+
+/-- **An inert ancilla changes nothing**: a bound proved before the expansion survives it. This is
+`stateSqNorm_expand_smulKron_one` at the tensor-product model. -/
+theorem norm_stateVec_expVec_kron_one (ψ : dA × dB → ℂ) {e : anc × anc' → ℂ}
+    (he : ‖evec e‖ = 1) (M : Matrix dA dA ℂ) :
+    ‖stateVec (expVec ψ e) (M ⊗ₖ (1 : Matrix anc anc ℂ))‖ = ‖stateVec ψ M‖ := by
+  have h : stateSqNorm (expVec ψ e) (M ⊗ₖ (1 : Matrix anc anc ℂ)) = stateSqNorm ψ M := by
+    rw [stateSqNorm_expVec_kron_one, BipartiteModel.stateSqNorm_expand_smulKron_one, he, one_pow,
+      one_mul]
+    rfl
+  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).1 h
+
+/-! ## Born probabilities on the expanded state
+
+The expansion stage's consistency statements are about a measurement of product form, and what
+they need is that its Born probabilities *factorize* (`bornProb_expand_smulKron`). -/
+
 /-- **The Born probability of a product measurement on the expanded state factorizes.** Only the
 ancilla's two operators need to be positive: that is what makes their quadratic form real, which is
 what lets the real part of the product split. -/
@@ -191,11 +251,8 @@ theorem bornProb_expVec_kron (ψ : dA × dB → ℂ) (e : anc × anc' → ℂ) {
     {Y : Matrix anc anc ℂ} {X' : Matrix dB dB ℂ} {Y' : Matrix anc' anc' ℂ}
     (hY : Y.PosSemidef) (hY' : Y'.PosSemidef) :
     bornProb (expVec ψ e) (X ⊗ₖ Y) (X' ⊗ₖ Y') = bornProb ψ X X' * bornProb e Y Y' := by
-  have hre : ∀ (Z : Matrix (anc × anc') (anc × anc') ℂ), Z.PosSemidef →
-      (star e ⬝ᵥ (Z *ᵥ e)).im = 0 :=
-    fun Z hZ => ((Complex.nonneg_iff.mp (hZ.dotProduct_mulVec_nonneg e)).2).symm
-  rw [bornProb, mulVec_kron_kron_expVec, expVec_dotProduct_of_pair, bornProb, bornProb,
-    Complex.mul_re, hre _ (hY.kronecker hY'), mul_zero, sub_zero]
+  rw [bornProb_expVec_eq, BipartiteModel.bornProb_expand_smulKron _ _ _ _ hY hY', mul_comm,
+    bornProb_eq_tensor ψ X X']
 
 /-! ## Data processing, at the Born level
 
@@ -209,40 +266,16 @@ theorem bornProb_sum_sum {ι : Type*} (ψ : dA × dB → ℂ) (s t : Finset ι)
     (A : ι → Matrix dA dA ℂ) (B : ι → Matrix dB dB ℂ) :
     bornProb ψ (∑ i ∈ s, A i) (∑ j ∈ t, B j)
       = ∑ i ∈ s, ∑ j ∈ t, bornProb ψ (A i) (B j) := by
-  classical
-  simp only [bornProb]
-  rw [sum_kronecker_left, sum_quadForm ψ _ _, Complex.re_sum]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  rw [kronecker_sum_right, sum_quadForm ψ _ _, Complex.re_sum]
+  simp only [bornProb_eq_tensor]
+  exact (BipartiteModel.tensor ψ).bornProb_sum_sum s t A B
 
 /-- **Coarse-graining both players the same way can only increase agreement.** -/
 theorem sum_bornProb_le_map {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ]
     [DecidableEq κ] (ψ : dA × dB → ℂ) (P : POVM ι dA) (Q : POVM ι dB) (f : ι → κ) :
     ∑ i, bornProb ψ ((P.mats i).val) ((Q.mats i).val)
       ≤ ∑ k, bornProb ψ (((P.map f).mats k).val) (((Q.map f).mats k).val) := by
-  classical
-  have hfib : ∀ k : κ, bornProb ψ (((P.map f).mats k).val) (((Q.map f).mats k).val)
-      = ∑ i ∈ univ.filter fun i => f i = k, ∑ j ∈ univ.filter fun j => f j = k,
-          bornProb ψ ((P.mats i).val) ((Q.mats j).val) := by
-    intro k
-    rw [show (((P.map f).mats k).val)
-        = ∑ i ∈ univ.filter fun i => f i = k, ((P.mats i).val) from
-      AddSubmonoidClass.coe_finsetSum _ _,
-      show (((Q.map f).mats k).val)
-        = ∑ j ∈ univ.filter fun j => f j = k, ((Q.mats j).val) from
-      AddSubmonoidClass.coe_finsetSum _ _, bornProb_sum_sum]
-  rw [Finset.sum_congr rfl fun k (_ : k ∈ univ) => hfib k]
-  have hdiag : ∀ k : κ, ∑ i ∈ univ.filter fun i => f i = k,
-        bornProb ψ ((P.mats i).val) ((Q.mats i).val)
-      ≤ ∑ i ∈ univ.filter fun i => f i = k, ∑ j ∈ univ.filter fun j => f j = k,
-          bornProb ψ ((P.mats i).val) ((Q.mats j).val) := by
-    intro k
-    refine Finset.sum_le_sum fun i hi => ?_
-    exact Finset.single_le_sum
-      (fun j _ => bornProb_nonneg ψ (P.posSemidef i) (Q.posSemidef j)) hi
-  refine le_trans (le_of_eq ?_) (Finset.sum_le_sum fun k (_ : k ∈ univ) => hdiag k)
-  exact (Finset.sum_fiberwise (univ : Finset ι) f
-    (fun i => bornProb ψ ((P.mats i).val) ((Q.mats i).val))).symm
+  simp only [bornProb_eq_tensor]
+  exact (BipartiteModel.tensor ψ).sum_bornProb_le_map P.toIn Q.toIn f
 
 /-! ## The product measurement -/
 
@@ -298,19 +331,27 @@ measurement, coarse-grained by adding the two outcomes, and the arguments downst
 be **projective**. Two closures give that: a product of projective measurements is projective, and
 so is any coarse-graining of one (`IsPVM.coarse`). -/
 
-/-- **A product of projective measurements is projective.** -/
+/-- The matrices over the first system's matrices, as matrices of the product of the first
+system with the register: the identification under which `smulKron X P` is `X ⊗ₖ P`. -/
+def kronEquiv : Matrix anc anc (Matrix dA dA ℂ) ≃⋆+* Matrix (dA × anc) (dA × anc) ℂ where
+  __ := (Matrix.compRingEquiv anc dA ℂ).trans
+    (Matrix.reindexAlgEquiv ℂ ℂ (Equiv.prodComm anc dA)).toRingEquiv
+  map_star' _ := rfl
+
+theorem kronEquiv_smulKron (X : Matrix dA dA ℂ) (P : Matrix anc anc ℂ) :
+    kronEquiv (smulKron X P) = X ⊗ₖ P := by
+  ext ⟨i, a⟩ ⟨j, b⟩
+  show P a b * X i j = X i j * P a b
+  exact mul_comm _ _
+
+/-- **A product of projective measurements is projective**: `IsPVMIn.smulKron`, read through
+`kronEquiv`. -/
 theorem isPVM_kron {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
     {P : ι → Matrix dA dA ℂ} {Q : κ → Matrix anc anc ℂ} (hP : IsPVM P) (hQ : IsPVM Q) :
-    IsPVM (fun p : ι × κ => P p.1 ⊗ₖ Q p.2) where
-  isSelfAdjoint p := by
-    rw [Matrix.conjTranspose_kronecker, hP.isSelfAdjoint, hQ.isSelfAdjoint]
-  idem p := by
-    rw [← Matrix.mul_kronecker_mul, hP.idem, hQ.idem]
-  sum_eq_one := by
-    rw [Fintype.sum_prod_type,
-      show (∑ i : ι, ∑ j : κ, P i ⊗ₖ Q j) = ∑ i : ι, P i ⊗ₖ (∑ j : κ, Q j) from
-        Finset.sum_congr rfl fun i _ => (kronecker_sum_right _ _ _).symm,
-      hQ.sum_eq_one, ← sum_kronecker_left, hP.sum_eq_one, Matrix.one_kronecker_one]
+    IsPVM (fun p : ι × κ => P p.1 ⊗ₖ Q p.2) := by
+  have h := (hP.toIn.smulKron hQ.toIn).map (kronEquiv (dA := dA) (anc := anc))
+  simp only [kronEquiv_smulKron] at h
+  exact h.toIsPVM
 
 /-- **A coarse-graining of a projective POVM is projective**, in the `POVM.map` form the games
 use. -/

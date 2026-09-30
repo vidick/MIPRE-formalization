@@ -2795,4 +2795,29 @@ strategies, `thm:co-value-projective` (`MIPRE/Foundations/OperatorMatrix.lean`,
   MIPRE.exists_isProjective_lt_value,
   MIPRE.TensorProductStrategy.isProjective_toCommuting
 
+/-! The commuting-operator track, Phase 1(b) and (c) (`planning/mipco-track.md` §5): the
+commuting-operator value as a supremum of model values, `lem:co-value-model`
+(`MIPRE/Foundations/POVMValue.lean`); the ancilla extension of a bipartite model,
+`lem:ancilla-extension` (`MIPRE/Foundations/AncillaModel.lean`); the soundness chain of
+compression in a value model, `lem:compress-sound-in`, and its composition,
+`thm:pipeline-sound-in` (`MIPRE/Foundations/Pipeline/Compress.lean`); and `MIP^co = coRE` from
+the three stages' clauses, `cor:mipco-from-stages` (`MIPRE/MIPCo.lean`). -/
+#guard_sorry_free MIPRE.CommutingOperatorStrategy.aliceMeas,
+  MIPRE.CommutingOperatorStrategy.bobMeas,
+  MIPRE.CommutingOperatorStrategy.aliceMeas_op,
+  MIPRE.CommutingOperatorStrategy.bobMeas_op,
+  MIPRE.CommutingOperatorStrategy.correlation_eq_bornProb,
+  MIPRE.CommutingOperatorStrategy.value_eq_povmValue,
+  MIPRE.commutingOperatorValue_eq_iSup_povmValue
+
+#guard_sorry_free MIPRE.BipartiteModel.bornProb_expand_smulKron,
+  MIPRE.BipartiteModel.stateSqNorm_expand_smulKron_one,
+  MIPRE.BipartiteModel.swap_stateSqNorm_expand_smulKron_one,
+  MIPRE.BipartiteModel.norm_expand_state,
+  MIPRE.IsPVMIn.smulKron
+
+#guard_sorry_free MIPRE.Pipeline.output_val_le,
+  MIPRE.GapCompression.ofPipeline_sound,
+  MIPRE.mipco_eq_core_of_stages
+
 end

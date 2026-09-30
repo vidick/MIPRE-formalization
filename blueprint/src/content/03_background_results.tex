@@ -399,7 +399,7 @@ $\sum_\omega \nu_\omega \norm{(\{B_{1,\omega}, B_{5,\omega}\} \ot \Id)\ket{\psi_
 
 \begin{proof}
 \leanok
-\uses{def:generalized-pauli,lem:naimark-dilation}
+\uses{def:generalized-pauli,lem:naimark-dilation,def:bipartite-model}
 Dilate each constraint POVM, after repairing invalid outcomes to a fixed parity-valid triple,
 to a projective measurement on one ancilla; its outcome PVM gives commuting reflections
 $C_{c,j}$ whose product over a constraint is exactly that constraint's sign. Bob's original
@@ -842,6 +842,7 @@ Lemma~\ref{lem:lidt-cl-adapter-params}.
 \end{theorem}
 
 \begin{proof}
+\uses{def:bipartite-model}
 \leanok
 Lemma~\ref{lem:lidt-cl-adapter-maps} gives, for each family member, a strategy for the
 canonical-line test built from the seeded one by reindexing the questions and coarse-graining the
@@ -1890,6 +1891,7 @@ with $\abs{\alpha_x} \leq 1$. Then $\E_x \alpha_x A^x \approx_\delta \E_x \alpha
 \end{lemma}
 
 \begin{proof}
+\uses{def:bipartite-model}
 \leanok
 Triangle inequality and Jensen. Note the hypothesis is $\abs{\alpha_x} \leq 1$, not
 $\abs{\alpha_x} = 1$: the lemma is used with genuinely contractive coefficients. The
@@ -1914,6 +1916,7 @@ $A^x \approx_{\abs{\mA} \delta} B^x$.
 \end{lemma}
 
 \begin{proof}
+\uses{def:bipartite-model}
 \leanok
 Triangle inequality over the outcomes, then Cauchy--Schwarz against the constant $1$:
 $(\sum_a t_a)^2 \leq \abs{\mA} \sum_a t_a^2$. Unit modulus is more than the proof uses; the
@@ -1941,6 +1944,7 @@ Theorem~\ref{thm:orthonormalization} permits.
 \end{corollary}
 
 \begin{proof}
+\uses{def:bipartite-model}
 \leanok
 
 This is not Theorem~\ref{thm:orthonormalization} restated: that theorem requires strict
@@ -2570,7 +2574,7 @@ exponent and no change of constant.
 
 \begin{proof}
 \leanok
-\uses{def:generalized-pauli,lem:naimark-dilation}
+\uses{def:generalized-pauli,lem:naimark-dilation,def:bipartite-model}
 The Fourier argument, in three exact steps and one identity.
 
 \textbf{Parseval.} Let $A_e = \abs{V}^{-1} \sum_a (-1)^{\fieldtr(a \cdot e)} O^a$ be the Fourier

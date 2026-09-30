@@ -535,11 +535,13 @@ theorem output_hasPerfectPCC (V : Verifier 7) (lam n : ℕ) (hB : V.IsBounded la
     Verifier.hasPerfectPCC_of_le _ (arBound_le_parseBound I A hlam (by omega)) h₂
   exact R.completeness _ lam (tau I A R) (beta I A) n h₂'
 
-/-- **Soundness of `Compress`**, value form: the three soundness clauses contrapositively,
-through the margins. -/
-theorem output_valStar_le (V : Verifier 7) (lam n : ℕ) (hB : V.IsBounded lam)
-    (hn : C₀ I A R ≤ n) (h : V.valStar (2 ^ n) ((2 ^ n) ^ lam) ≤ 1 / 2) :
-    (output I A R (V.sampler.prog, V.decider.prog) lam).valStar n (ansB I A R lam n) ≤ 1 / 2 := by
+/-- **Soundness of `Compress` in a value model**, value form: the three stages' soundness
+clauses in the model, contrapositively, through the margins. The margins and the parameters are
+the same in every model; only the clauses are the model's. -/
+theorem output_val_le (ω : ValueModel) (hI : I.SoundIn ω) (hA : A.SoundIn ω) (hR : R.SoundIn ω)
+    (V : Verifier 7) (lam n : ℕ) (hB : V.IsBounded lam) (hn : C₀ I A R ≤ n)
+    (h : V.val ω (2 ^ n) ((2 ^ n) ^ lam) ≤ 1 / 2) :
+    (output I A R (V.sampler.prog, V.decider.prog) lam).val ω n (ansB I A R lam n) ≤ 1 / 2 := by
   obtain ⟨h2, hC₁, hN₁, hN₂, hC, htau⟩ := C₀_spec I A R hn
   have hlam : 1 ≤ lam := by have := hB.two_le; omega
   -- the real parameters
@@ -561,11 +563,11 @@ theorem output_valStar_le (V : Verifier 7) (lam n : ℕ) (hB : V.IsBounded lam)
   have hε₂0 : 0 < ε₂ := eps2_pos I.one_le_a (by linarith) hx0
   have hε₂1 : ε₂ ≤ 1 := eps2_le_one I.one_le_a I.b_pos A.one_le_a A.b_pos hs1 hx1
   -- step 1: the introspective verifier has value at most `1 - ε₁`
-  have h₁ : (I.output (V.sampler.prog, V.decider.prog) lam).valStar n
+  have h₁ : (I.output (V.sampler.prog, V.decider.prog) lam).val ω n
       (Introspection.ansBound I.C lam n) ≤ 1 - ε₁ := by
     by_contra hc
     push Not at hc
-    have hsound := I.soundness V lam n ε₁ hB (by omega) hε₁0 hc
+    have hsound := hI V lam n ε₁ hB (by omega) hε₁0 hc
     have hC₁' : (4 * I.a) ^ (1 / I.b) ≤ x := by
       have := Nat.le_ceil ((4 * I.a) ^ (1 / I.b))
       have : ((C₁ I : ℕ) : ℝ) ≤ n := by exact_mod_cast hC₁
@@ -575,29 +577,29 @@ theorem output_valStar_le (V : Verifier 7) (lam n : ℕ) (hB : V.IsBounded lam)
     unfold Introspection.delta at hsound
     linarith
   -- step 2: the answer-reduced verifier has value at most `1 - ε₂`
-  have h₂ : (arOutput I A (I.output (V.sampler.prog, V.decider.prog) lam) lam).valStar n
+  have h₂ : (arOutput I A (I.output (V.sampler.prog, V.decider.prog) lam) lam).val ω n
       (arBound I A lam n) ≤ 1 - ε₂ := by
     by_contra hc
     push Not at hc
-    have hsound := A.soundness (I.output _ lam) lam (mu I A) (sigma I lam) n ε₂ hC h2 hlam
+    have hsound := hA (I.output _ lam) lam (mu I A) (sigma I lam) n ε₂ hC h2 hlam
       (introOutput_within I A _ lam n) (decider_size_le_sigma I _ lam) hε₂0 hc
     have hN₁' : (N₁ I A : ℝ) ≤ x := le_trans (by exact_mod_cast hN₁) hnx
     have hm := ar_margin I.one_le_a A.b_pos (by linarith : 0 < s) hx0
       (margin_spec I A x hN₁' s hs1 hsx)
-    have heq : (I.output (V.sampler.prog, V.decider.prog) lam).valStar n
+    have heq : (I.output (V.sampler.prog, V.decider.prog) lam).val ω n
         (AnswerReduction.inAns lam (mu I A) n) =
-        (I.output (V.sampler.prog, V.decider.prog) lam).valStar n
+        (I.output (V.sampler.prog, V.decider.prog) lam).val ω n
           (Introspection.ansBound I.C lam n) :=
-      (I.within _ lam n).valStar_eq (ansBound_le_inAns I A lam n)
+      (I.within _ lam n).val_eq ω (ansBound_le_inAns I A lam n)
     unfold AnswerReduction.delta at hsound
     rw [heq] at hsound
     linarith
   -- step 3: the same at the parse length
-  have h₃ : (arOutput I A (I.output (V.sampler.prog, V.decider.prog) lam) lam).valStar n
+  have h₃ : (arOutput I A (I.output (V.sampler.prog, V.decider.prog) lam) lam).val ω n
       (Repetition.parseBound lam (beta I A) n) ≤ 1 - ε₂ := by
-    rwa [(arOutput_within I A _ lam n).valStar_eq (arBound_le_parseBound I A hlam (by omega))]
+    rwa [(arOutput_within I A _ lam n).val_eq ω (arBound_le_parseBound I A hlam (by omega))]
   -- step 4: repetition
-  have h₄ := R.soundness _ lam (tau I A R) (beta I A) n ε₂ hε₂0 hε₂1 h₃
+  have h₄ := hR _ lam (tau I A R) (beta I A) n ε₂ hε₂0 hε₂1 h₃
   refine h₄.trans ?_
   have hz : (tau I A R : ℝ) ≤ ((lam * n + 1 : ℕ) : ℝ) := by
     have : tau I A R ≤ lam * n + 1 := by nlinarith
@@ -613,6 +615,13 @@ theorem output_valStar_le (V : Verifier 7) (lam n : ℕ) (hB : V.IsBounded lam)
       ((lam * n + 1 : ℕ) : ℝ) ^ (6 * beta I A) := by
     exact_mod_cast parseBound_le hlam (by omega) (beta I A)
   exact tau_spec I A R _ hz _ hk _ (by positivity) hBle ε₂ hε₂0 hlow
+
+/-- **Soundness of `Compress`**, value form: `output_val_le` in the tensor-product model, where
+the stages' own soundness fields are the clauses. -/
+theorem output_valStar_le (V : Verifier 7) (lam n : ℕ) (hB : V.IsBounded lam)
+    (hn : C₀ I A R ≤ n) (h : V.valStar (2 ^ n) ((2 ^ n) ^ lam) ≤ 1 / 2) :
+    (output I A R (V.sampler.prog, V.decider.prog) lam).valStar n (ansB I A R lam n) ≤ 1 / 2 :=
+  output_val_le I A R .tensor I.soundIn_tensor A.soundIn_tensor R.soundIn_tensor V lam n hB hn h
 
 end MIPRE.Pipeline
 
@@ -654,6 +663,20 @@ noncomputable def GapCompression.ofPipeline (I : Introspection 7) (A : AnswerRed
   soundness V lam n hB hn h := by
     rw [(Pipeline.output_within I A R _ lam n).valStar_eq (Pipeline.ansB_le_bound I A R lam n)]
     exact Pipeline.output_valStar_le I A R V lam n hB hn h
+
+/-- **The composed compression is sound in every value model in which its three stages are**
+(item (c) of Phase 1 of `planning/mipco-track.md`). In the tensor-product model the stages'
+own fields are the three clauses, and this is `GapCompression.sound_tensor`; in the
+commuting-operator model it reduces the one hypothesis of the conditional `MIP^co = coRE` to the
+three stages' clauses in `ω_co`. -/
+theorem GapCompression.ofPipeline_sound {I : Introspection 7} {A : AnswerReduction 5}
+    {R : Repetition 7} {ω : ValueModel} (hI : I.SoundIn ω) (hA : A.SoundIn ω)
+    (hR : R.SoundIn ω) : (GapCompression.ofPipeline I A R).Sound ω := by
+  intro V lam n hB hn h
+  show (Pipeline.output I A R (V.sampler.prog, V.decider.prog) lam).val ω n
+    ((Pipeline.bound I A R).eval (n + lam)) ≤ 1 / 2
+  rw [(Pipeline.output_within I A R _ lam n).val_eq ω (Pipeline.ansB_le_bound I A R lam n)]
+  exact Pipeline.output_val_le I A R ω hI hA hR V lam n hB hn h
 
 end MIPRE
 

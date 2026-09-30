@@ -7,8 +7,7 @@ module
 public import Mathlib.Analysis.Matrix.Order
 public import Mathlib.Analysis.Matrix.PosDef
 public import Mathlib.Analysis.InnerProductSpace.PiL2
-public import Mathlib.Analysis.CStarAlgebra.Matrix
-public import MIPRE.Foundations.OpCalculus
+public import MIPRE.Foundations.StateModel
 public import MIPRE.Tactics
 
 @[expose] public section
@@ -30,13 +29,13 @@ costs enough instance search to time out the elaborator on a statement as small 
 (`Matrix.nonneg_iff_posSemidef`, which is cheap), so the bridge here goes from a matrix
 inequality straight to a vector-norm inequality and never mentions an operator norm.
 
-**The instance of the Hilbert-space calculus.** A matrix acts on `EuclideanSpace ℂ N` as the
-bounded operator `Matrix.toEuclideanCLM M`, which sends `evec v` to `evec (M *ᵥ v)` by
-definition. The bound, the state norm and the quadratic form of this file are those of
-`MIPRE/Foundations/OpCalculus.lean` at that operator (`bnd_iff`, `snorm_eq_op`, `qform_eq_op`),
-and their rules are proved there once, for every Hilbert space (Phase 1(b) of
-`planning/mipco-track.md`). What this file adds is about matrices: the matrix order, and the
-Kronecker embeddings of the two factors.
+**The instance of the Hilbert-space calculus.** The bound, the state norm and the quadratic
+form of this file are those of the matrix state model `StateModel.mat v`
+(`MIPRE/Foundations/StateModel.lean`), where matrices act on `EuclideanSpace ℂ N` through
+`Matrix.toEuclideanCLM` (`bnd_iff`, `snorm_eq_mat`, `qform_eq_mat`), and their rules are proved
+there once, for every represented algebra (Phase 1(b) of `planning/mipco-track.md`). The state
+norm is the model's by definition, so its rules are the model's rules verbatim. What this file
+adds is about matrices: the matrix order, and the Kronecker embeddings of the two factors.
 -/
 
 noncomputable section
@@ -108,43 +107,38 @@ theorem toEuclideanCLM_evec [DecidableEq N] (M : Matrix N N ℂ) (v : N → ℂ)
     Matrix.toEuclideanCLM (n := N) (𝕜 := ℂ) M (evec v) = evec (M *ᵥ v) :=
   rfl
 
-/-- **The bound is that of the operator on `EuclideanSpace ℂ N`.** -/
-theorem bnd_iff [DecidableEq N] {M : Matrix N N ℂ} {K : ℝ} :
-    Bnd M K ↔ Op.Bnd (Matrix.toEuclideanCLM (n := N) (𝕜 := ℂ) M) K :=
+/-- **The bound is that of the matrix model**, whatever its state. -/
+theorem bnd_iff [DecidableEq N] {M : Matrix N N ℂ} {K : ℝ} (w : N → ℂ) :
+    Bnd M K ↔ (StateModel.mat w).Bnd M K :=
   ⟨fun h v => h (WithLp.ofLp v), fun h v => h (evec v)⟩
 
 theorem Bnd.mono {M : Matrix N N ℂ} {K L : ℝ} (h : Bnd M K) (hKL : K ≤ L) : Bnd M L := by
   classical
-  exact bnd_iff.2 ((bnd_iff.1 h).mono hKL)
+  exact (bnd_iff 0).2 (StateModel.Bnd.mono _ ((bnd_iff 0).1 h) hKL)
 
 theorem Bnd.add {M M' : Matrix N N ℂ} {K L : ℝ} (h : Bnd M K) (h' : Bnd M' L) :
     Bnd (M + M') (K + L) := by
   classical
-  rw [bnd_iff, map_add]
-  exact (bnd_iff.1 h).add (bnd_iff.1 h')
+  exact (bnd_iff 0).2 (StateModel.Bnd.add _ ((bnd_iff 0).1 h) ((bnd_iff 0).1 h'))
 
 theorem Bnd.sub {M M' : Matrix N N ℂ} {K L : ℝ} (h : Bnd M K) (h' : Bnd M' L) :
     Bnd (M - M') (K + L) := by
   classical
-  rw [bnd_iff, map_sub]
-  exact (bnd_iff.1 h).sub (bnd_iff.1 h')
+  exact (bnd_iff 0).2 (StateModel.Bnd.sub _ ((bnd_iff 0).1 h) ((bnd_iff 0).1 h'))
 
 theorem Bnd.mul {M M' : Matrix N N ℂ} {K L : ℝ} (hK : 0 ≤ K) (h : Bnd M K) (h' : Bnd M' L) :
     Bnd (M * M') (K * L) := by
   classical
-  rw [bnd_iff, map_mul]
-  exact (bnd_iff.1 h).mul hK (bnd_iff.1 h')
+  exact (bnd_iff 0).2 (StateModel.Bnd.mul _ hK ((bnd_iff 0).1 h) ((bnd_iff 0).1 h'))
 
 theorem Bnd.smul {M : Matrix N N ℂ} {K : ℝ} (c : ℂ) (h : Bnd M K) :
     Bnd (c • M) (‖c‖ * K) := by
   classical
-  rw [bnd_iff, map_smul]
-  exact (bnd_iff.1 h).smul c
+  exact (bnd_iff 0).2 (StateModel.Bnd.smul _ c ((bnd_iff 0).1 h))
 
 theorem bnd_zero (K : ℝ) (hK : 0 ≤ K) : Bnd (0 : Matrix N N ℂ) K := by
   classical
-  rw [bnd_iff, map_zero]
-  exact Op.bnd_zero K hK
+  exact (bnd_iff 0).2 ((StateModel.mat 0).bnd_zero K hK)
 
 /-! ## The norm on a fixed state
 
@@ -159,60 +153,46 @@ variable (v : N → ℂ)
 /-- `‖M v‖`, for a fixed state `v`. -/
 def snorm (M : Matrix N N ℂ) : ℝ := ‖evec (M *ᵥ v)‖
 
-/-- **The state norm is that of the operator on `EuclideanSpace ℂ N`.** -/
-theorem snorm_eq_op [DecidableEq N] (M : Matrix N N ℂ) :
-    snorm v M = Op.snorm (evec v) (Matrix.toEuclideanCLM (n := N) (𝕜 := ℂ) M) :=
+/-- **The state norm is that of the matrix model**, by definition. -/
+theorem snorm_eq_mat [DecidableEq N] (M : Matrix N N ℂ) :
+    snorm v M = (StateModel.mat v).snorm M :=
   rfl
 
 theorem snorm_nonneg (M : Matrix N N ℂ) : 0 ≤ snorm v M := by
   classical
-  rw [snorm_eq_op]
-  exact Op.snorm_nonneg _ _
+  exact (StateModel.mat v).snorm_nonneg M
 
 theorem snorm_add_le (M M' : Matrix N N ℂ) : snorm v (M + M') ≤ snorm v M + snorm v M' := by
   classical
-  rw [snorm_eq_op, snorm_eq_op, snorm_eq_op, map_add]
-  exact Op.snorm_add_le _ _ _
+  exact (StateModel.mat v).snorm_add_le M M'
 
 theorem snorm_sub_le (M M' : Matrix N N ℂ) : snorm v (M - M') ≤ snorm v M + snorm v M' := by
   classical
-  rw [snorm_eq_op, snorm_eq_op, snorm_eq_op, map_sub]
-  exact Op.snorm_sub_le _ _ _
+  exact (StateModel.mat v).snorm_sub_le M M'
 
 theorem snorm_sub_comm (M M' : Matrix N N ℂ) : snorm v (M - M') = snorm v (M' - M) := by
   classical
-  rw [snorm_eq_op, snorm_eq_op, map_sub, map_sub]
-  exact Op.snorm_sub_comm _ _ _
+  exact (StateModel.mat v).snorm_sub_comm M M'
 
 theorem snorm_smul (c : ℂ) (M : Matrix N N ℂ) : snorm v (c • M) = ‖c‖ * snorm v M := by
   classical
-  rw [snorm_eq_op, snorm_eq_op, map_smul]
-  exact Op.snorm_smul _ _ _
+  exact (StateModel.mat v).snorm_smul c M
 
 theorem snorm_one [DecidableEq N] (hv : ‖evec v‖ = 1) :
-    snorm v (1 : Matrix N N ℂ) = 1 := by
-  rw [snorm_eq_op, map_one]
-  exact Op.snorm_one _ hv
+    snorm v (1 : Matrix N N ℂ) = 1 :=
+  (StateModel.mat v).snorm_one hv
 
 /-- A bound in front of anything. -/
 theorem snorm_mul_le {M : Matrix N N ℂ} {K : ℝ} (h : Bnd M K) (M' : Matrix N N ℂ) :
     snorm v (M * M') ≤ K * snorm v M' := by
   classical
-  rw [snorm_eq_op, snorm_eq_op, map_mul]
-  exact Op.snorm_mul_le _ (bnd_iff.1 h) _
-
-/-- An isometry of matrices is an isometry of `EuclideanSpace ℂ N`. -/
-theorem star_toEuclideanCLM_mul_self [DecidableEq N] {M : Matrix N N ℂ} (h : Mᴴ * M = 1) :
-    star (Matrix.toEuclideanCLM (n := N) (𝕜 := ℂ) M) *
-      Matrix.toEuclideanCLM (n := N) (𝕜 := ℂ) M = 1 := by
-  rw [← map_star, ← map_mul, Matrix.star_eq_conjTranspose, h, map_one]
+  exact (StateModel.mat v).snorm_mul_le ((bnd_iff v).1 h) M'
 
 /-- An isometry in front changes nothing. -/
 theorem snorm_mul_of_isometry [DecidableEq N] {M : Matrix N N ℂ} (h : Mᴴ * M = 1)
     (M' : Matrix N N ℂ) :
-    snorm v (M * M') = snorm v M' := by
-  rw [snorm_eq_op, snorm_eq_op, map_mul]
-  exact Op.snorm_mul_of_isometry _ (star_toEuclideanCLM_mul_self h) _
+    snorm v (M * M') = snorm v M' :=
+  (StateModel.mat v).snorm_mul_of_isometry h M'
 
 /-- **Replacing an operator by an isometry it is close to, in front of anything.** If `W` and
 the isometry `WD` agree on the state to within `δ`, and `WD` commutes with `Z`, then `Z W` is
@@ -221,12 +201,8 @@ Square argument, and it is the only place the commutation of the two parties is 
 theorem snorm_mul_swap [DecidableEq N] {W WD Z : Matrix N N ℂ} {δ K : ℝ}
     (hWD : WDᴴ * WD = 1) (hcomm : WD * Z = Z * WD) (hZ : Bnd Z K) (hK : 0 ≤ K)
     (hd : snorm v (W - WD) ≤ δ) :
-    snorm v (Z * W) ≤ snorm v Z + K * δ := by
-  rw [snorm_eq_op, snorm_eq_op, map_mul]
-  refine Op.snorm_mul_swap _ (star_toEuclideanCLM_mul_self hWD) ?_ (bnd_iff.1 hZ) hK ?_
-  · rw [← map_mul, hcomm, map_mul]
-  · rw [← map_sub]
-    exact hd
+    snorm v (Z * W) ≤ snorm v Z + K * δ :=
+  (StateModel.mat v).snorm_mul_swap hWD hcomm ((bnd_iff v).1 hZ) hK hd
 
 end SNorm
 
@@ -239,51 +215,50 @@ variable (v : N → ℂ)
 /-- `⟨v| M |v⟩`, as a real. -/
 def qform (M : Matrix N N ℂ) : ℝ := (star v ⬝ᵥ (M *ᵥ v)).re
 
-/-- **The quadratic form is that of the operator on `EuclideanSpace ℂ N`.** -/
-theorem qform_eq_op [DecidableEq N] (M : Matrix N N ℂ) :
-    qform v M = Op.qform (evec v) (Matrix.toEuclideanCLM (n := N) (𝕜 := ℂ) M) := by
+/-- **The quadratic form is that of the matrix model.** -/
+theorem qform_eq_mat [DecidableEq N] (M : Matrix N N ℂ) :
+    qform v M = (StateModel.mat v).qform M := by
   show (star v ⬝ᵥ (M *ᵥ v)).re = ((M *ᵥ v) ⬝ᵥ star v).re
   rw [dotProduct_comm]
 
 theorem qform_add (M M' : Matrix N N ℂ) : qform v (M + M') = qform v M + qform v M' := by
   classical
-  rw [qform_eq_op, qform_eq_op, qform_eq_op, map_add]
-  exact Op.qform_add _ _ _
+  simp only [qform_eq_mat]
+  exact (StateModel.mat v).qform_add M M'
 
 theorem qform_sub (M M' : Matrix N N ℂ) : qform v (M - M') = qform v M - qform v M' := by
   classical
-  rw [qform_eq_op, qform_eq_op, qform_eq_op, map_sub]
-  exact Op.qform_sub _ _ _
+  simp only [qform_eq_mat]
+  exact (StateModel.mat v).qform_sub M M'
 
 theorem qform_smul_real (r : ℝ) (M : Matrix N N ℂ) :
     qform v ((r : ℂ) • M) = r * qform v M := by
   classical
-  rw [qform_eq_op, qform_eq_op, map_smul]
-  exact Op.qform_smul_real _ _ _
+  simp only [qform_eq_mat]
+  exact (StateModel.mat v).qform_smul_real r M
 
 theorem qform_sum {ι : Type*} (s : Finset ι) (f : ι → Matrix N N ℂ) :
     qform v (∑ i ∈ s, f i) = ∑ i ∈ s, qform v (f i) := by
   classical
-  rw [qform_eq_op, map_sum, Op.qform_sum]
-  exact Finset.sum_congr rfl fun i _ => (qform_eq_op v (f i)).symm
+  simp only [qform_eq_mat]
+  exact (StateModel.mat v).qform_sum s f
 
 theorem qform_one [DecidableEq N] (hv : ‖evec v‖ = 1) : qform v (1 : Matrix N N ℂ) = 1 := by
-  rw [qform_eq_op, map_one]
-  exact Op.qform_one _ hv
+  rw [qform_eq_mat]
+  exact (StateModel.mat v).qform_one hv
 
 /-- **The squared state norm is the quadratic form of `M† M`.** -/
 theorem snorm_sq_eq_qform (M : Matrix N N ℂ) : snorm v M ^ 2 = qform v (Mᴴ * M) := by
   classical
-  rw [snorm_eq_op, qform_eq_op, map_mul, ← Matrix.star_eq_conjTranspose, map_star]
-  exact Op.snorm_sq_eq_qform _ _
+  rw [qform_eq_mat]
+  exact (StateModel.mat v).snorm_sq_eq_qform M
 
 end QForm
 
 variable [DecidableEq N]
 
-theorem bnd_one : Bnd (1 : Matrix N N ℂ) 1 := by
-  rw [bnd_iff, map_one]
-  exact Op.bnd_one
+theorem bnd_one : Bnd (1 : Matrix N N ℂ) 1 :=
+  (bnd_iff 0).2 (StateModel.mat 0).bnd_one
 
 /-- **A self-adjoint contraction is bounded by one.** The hypothesis is the *matrix*
 inequality `M† M ≤ 1`, which is `Matrix.PosSemidef` of the difference. -/
@@ -326,9 +301,8 @@ theorem norm_evec_mulVec_of_isometry {M : Matrix N N ℂ} (h : Mᴴ * M = 1) (v 
   have h2 : (0 : ℝ) ≤ ‖evec v‖ := norm_nonneg _
   nlinarith [hsq]
 
-theorem bnd_one_of_isometry {M : Matrix N N ℂ} (h : Mᴴ * M = 1) : Bnd M 1 := by
-  rw [bnd_iff]
-  exact Op.bnd_one_of_isometry (star_toEuclideanCLM_mul_self h)
+theorem bnd_one_of_isometry {M : Matrix N N ℂ} (h : Mᴴ * M = 1) : Bnd M 1 :=
+  (bnd_iff 0).2 ((StateModel.mat 0).bnd_one_of_isometry h)
 
 /-! ## The bipartite structure
 

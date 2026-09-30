@@ -128,6 +128,20 @@ structure Introspection (ℓ : ℕ) where
     1 - ε < (output (V.sampler.prog, V.decider.prog) lam).valStar n (Introspection.ansBound C lam n) →
     1 - Introspection.delta a b lam n ε ≤ V.valStar (2 ^ n) ((2 ^ n) ^ lam)
 
+/-- **The soundness clause of introspection in a value model**: the field `soundness` with the
+value `val*` replaced by the model's. The field is the tensor-product case
+(`Introspection.soundIn_tensor`); the commuting-operator case is what Phase 4 of
+`planning/mipco-track.md` proves. -/
+def Introspection.SoundIn {ℓ : ℕ} (I : Introspection ℓ) (ω : ValueModel) : Prop :=
+  ∀ (V : Verifier ℓ) (lam n : ℕ) (ε : ℝ), V.IsBounded lam → 1 ≤ n → 0 < ε →
+    1 - ε < (I.output (V.sampler.prog, V.decider.prog) lam).val ω n
+      (Introspection.ansBound I.C lam n) →
+    1 - Introspection.delta I.a I.b lam n ε ≤ V.val ω (2 ^ n) ((2 ^ n) ^ lam)
+
+/-- The soundness clause of introspection is soundness in the tensor-product model. -/
+theorem Introspection.soundIn_tensor {ℓ : ℕ} (I : Introspection ℓ) : I.SoundIn .tensor :=
+  I.soundness
+
 end MIPRE
 
 end
