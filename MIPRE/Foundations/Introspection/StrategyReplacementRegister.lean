@@ -13,124 +13,124 @@ The added register belongs to Alice's auxiliary space. The shared state is
 exactly the original EPR factor tensored with that extended auxiliary state.
 These definitions construct the actual strategy on finite registers and
 preserve all nonselected measurements under the displayed reassociation.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the replacement lives on the
+one-sided extension `(Ξ.reg I).expandA t₀` of the register model, and the reassociation is the
+local isometry `regExchange` onto `(Ξ.expandA t₀).reg I`, which exchanges the fresh ancilla with
+the register on the first player's side (`BipartiteModel.exchange`).
 -/
 
 noncomputable section
 namespace MIPRE.Introspection
 
 open Finset Matrix Classical
-open scoped Kronecker
 set_option linter.unusedSectionVars false
 
-variable {X Y A B C I H K T : Type*}
+/-- Pushing a POVM forward along the identity changes nothing. -/
+theorem POVMIn.pushforward_id {X R : Type*} [Fintype X] [Ring R] [StarRing R] [Algebra ℂ R]
+    [PartialOrder R] [StarOrderedRing R] (M : POVMIn X R) :
+    M.pushforward (NonUnitalStarAlgHom.id ℂ R) rfl = M :=
+  POVMIn.ext' fun _ => rfl
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [StarModule ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜]
+  [StarOrderedRing 𝒜] [StarProper 𝒜] [PartialOrder ℬ] [StarOrderedRing ℬ] [StarModule ℂ ℬ]
+  [StarProper ℬ]
+  (Ξ : BipartiteModel 𝒞 𝒜 ℬ)
+variable {X Y A B C I T : Type*}
   [Fintype X] [DecidableEq X] [Fintype Y]
   [Fintype A] [DecidableEq A] [Fintype B] [DecidableEq B]
   [Fintype C] [DecidableEq C]
   [Fintype I] [DecidableEq I]
-  [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K]
   [Fintype T] [DecidableEq T]
 
-theorem povm_reindex_refl (M : POVM A H) : M.reindex (Equiv.refl H) = M :=
-  POVM.ext' fun _ => rfl
+/-- The reassociation: the fresh ancilla of the register model, exchanged with the register, is
+an ancilla of the auxiliary model. -/
+abbrev regExchange (t₀ : T) : BipartiteModel.LocalIsometry ((Ξ.reg I).expandA t₀) ((Ξ.expandA t₀).reg I) :=
+  Ξ.exchange t₀ (registerEPR I)
 
 /-- Reassociation places the fresh fixed ancilla entirely in the auxiliary
 state and leaves the EPR factor literally unchanged. -/
-theorem reindex_extVecA_registerState (ξ : H × K → ℂ) (a₀ : T) :
-    reindexVec (Equiv.prodAssoc I H T) (Equiv.refl (I × K))
-      (extVecA (registerState I ξ) a₀) = registerState I (extVecA ξ a₀) := by
-  rw [extVecA_registerState]
-  funext p
-  simp only [reindexVec, Function.comp_apply, Equiv.apply_symm_apply]
+theorem regExchange_W_ψ (t₀ : T) :
+    (regExchange (I := I) Ξ t₀).W ((Ξ.reg I).expandA t₀).ψ = ((Ξ.expandA t₀).reg I).ψ :=
+  Ξ.exchange_W_ψ t₀ (registerEPR I)
 
 /-- The new actual question-indexed family in the original register-first
 ordering. -/
-def registeredReplacement (MA : X → POVM A (I × H)) (q : X)
-    (R : POVM A ((I × H) × T)) : X → POVM A (I × (H × T)) :=
-  fun x => (replaceExtended MA q R x).reindex (Equiv.prodAssoc I H T)
+def registeredReplacement (MA : X → POVMIn A (Matrix I I 𝒜)) (q : X)
+    (R : POVMIn A (Matrix T T (Matrix I I 𝒜))) : X → POVMIn A (Matrix I I (Matrix T T 𝒜)) :=
+  fun x => (replaceExtended MA q R x).pushforward BipartiteModel.layerSwap BipartiteModel.layerSwap_one
 
-@[simp] theorem registeredReplacement_at (MA : X → POVM A (I × H)) (q : X)
-    (R : POVM A ((I × H) × T)) :
-    registeredReplacement MA q R q = R.reindex (Equiv.prodAssoc I H T) := by
+@[simp] theorem registeredReplacement_at (MA : X → POVMIn A (Matrix I I 𝒜)) (q : X)
+    (R : POVMIn A (Matrix T T (Matrix I I 𝒜))) :
+    registeredReplacement MA q R q = R.pushforward BipartiteModel.layerSwap BipartiteModel.layerSwap_one := by
   simp only [registeredReplacement, replaceExtended_at]
 
-theorem registeredReplacement_other (MA : X → POVM A (I × H)) (q x : X)
-    (R : POVM A ((I × H) × T)) (hx : x ≠ q) :
-    registeredReplacement MA q R x = ((MA x).aOp).reindex (Equiv.prodAssoc I H T) := by
+theorem registeredReplacement_other (MA : X → POVMIn A (Matrix I I 𝒜)) (q x : X)
+    (R : POVMIn A (Matrix T T (Matrix I I 𝒜))) (hx : x ≠ q) :
+    registeredReplacement MA q R x =
+      (POVMIn.ampA (T := T) (MA x)).pushforward BipartiteModel.layerSwap BipartiteModel.layerSwap_one := by
   simp only [registeredReplacement, replaceExtended_other MA q x R hx]
 
-theorem registeredReplacement_isPVM (MA : X → POVM A (I × H)) (q : X)
-    (R : POVM A ((I × H) × T))
-    (hMA : ∀ x, IsPVM fun a => ((MA x).mats a).val)
-    (hR : IsPVM fun a => (R.mats a).val) (x : X) :
-    IsPVM (fun a => ((registeredReplacement MA q R x).mats a).val) :=
-  registerOp_isPVM (Equiv.prodAssoc I H T).symm (replaceExtended_isPVM MA q R hMA hR x)
+theorem registeredReplacement_isPVM (MA : X → POVMIn A (Matrix I I 𝒜)) (q : X)
+    (R : POVMIn A (Matrix T T (Matrix I I 𝒜)))
+    (hMA : ∀ x, IsPVMIn (MA x).op) (hR : IsPVMIn R.op) (x : X) :
+    IsPVMIn (registeredReplacement MA q R x).op :=
+  POVMIn.isPVMIn_pushforward _ _ (replaceExtended_isPVM MA q R hMA hR x)
 
 /-- The registered replacement and its unreassociated version have exactly
 the same value, for every game. -/
-theorem registeredReplacement_value_eq (G : Game X Y A B) (ξ : H × K → ℂ) (a₀ : T)
-    (MA : X → POVM A (I × H)) (MB : Y → POVM B (I × K)) (q : X)
-    (R : POVM A ((I × H) × T)) :
-    povmValue G (registerState I (extVecA ξ a₀)) (registeredReplacement MA q R) MB =
-      povmValue G (extVecA (registerState I ξ) a₀) (replaceExtended MA q R) MB := by
-  have h := povmValue_reindex (Equiv.prodAssoc I H T) (Equiv.refl (I × K)) G
-    (extVecA (registerState I ξ) a₀) (replaceExtended MA q R) MB
-  change povmValue G (registerState I (extVecA ξ a₀))
-    (fun x => (replaceExtended MA q R x).reindex (Equiv.prodAssoc I H T)) MB = _
-  simpa only [reindex_extVecA_registerState, povm_reindex_refl] using h
+theorem registeredReplacement_value_eq (G : Game X Y A B) (t₀ : T)
+    (MA : X → POVMIn A (Matrix I I 𝒜)) (MB : Y → POVMIn B (Matrix I I ℬ)) (q : X)
+    (R : POVMIn A (Matrix T T (Matrix I I 𝒜))) :
+    ((Ξ.expandA t₀).reg I).povmValue G (registeredReplacement MA q R) MB =
+      ((Ξ.reg I).expandA t₀).povmValue G (replaceExtended MA q R) MB := by
+  have h := BipartiteModel.LocalIsometry.povmValue_pushforward (regExchange_W_ψ Ξ t₀)
+    BipartiteModel.layerSwap_one rfl G (replaceExtended MA q R) MB
+  refine Eq.trans ?_ h
+  congr 1
 
 variable [Nonempty I]
 
 /-- The fixed auxiliary extension is normalized, hence gives the actual
 normalized EPR-plus-auxiliary state of the next strategy. -/
-theorem registerState_extVecA_unit (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1) (a₀ : T) :
-    star (registerState I (extVecA ξ a₀)) ⬝ᵥ registerState I (extVecA ξ a₀) = 1 := by
-  rw [dotProduct_star_self, registerState_norm _ (by
-    rw [norm_evec_extVecA]; exact norm_evec_eq_one_of_unit hξ)]
-  norm_num
+theorem norm_reg_expandA_ψ (hΞ : ‖Ξ.ψ‖ = 1) (t₀ : T) : ‖((Ξ.expandA t₀).reg I).ψ‖ = 1 := by
+  rw [BipartiteModel.norm_reg_ψ, BipartiteModel.norm_expandA_ψ, hΞ]
 
 /-- A concrete legal strategy on the new register state. -/
-def registeredReplacementStrategy (G : Game X Y A B) (ξ : H × K → ℂ)
-    (hξ : star ξ ⬝ᵥ ξ = 1) (a₀ : T)
-    (MA : X → POVM A (I × H)) (MB : Y → POVM B (I × K)) (q : X)
-    (R : POVM A ((I × H) × T))
-    (hMA : ∀ x, IsPVM fun a => ((MA x).mats a).val)
-    (hMB : ∀ y, IsPVM fun b => ((MB y).mats b).val)
-    (hR : IsPVM fun a => (R.mats a).val) : TensorProductStrategy G :=
-  TensorProductStrategy.ofPVM G (registerState I (extVecA ξ a₀))
-    (registerState_extVecA_unit ξ hξ a₀) (registeredReplacement MA q R) MB
-    (registeredReplacement_isPVM MA q R hMA hR) hMB
+def registeredReplacementStrategy (G : Game X Y A B) (hΞ : ‖Ξ.ψ‖ = 1) (t₀ : T)
+    (MA : X → POVMIn A (Matrix I I 𝒜)) (MB : Y → POVMIn B (Matrix I I ℬ)) (q : X)
+    (R : POVMIn A (Matrix T T (Matrix I I 𝒜)))
+    (hMA : ∀ x, IsPVMIn (MA x).op) (hMB : ∀ y, IsPVMIn (MB y).op) (hR : IsPVMIn R.op) :
+    ((Ξ.expandA t₀).reg I).ProjStrat G where
+  PA := registeredReplacement MA q R
+  PB := MB
+  projA := registeredReplacement_isPVM MA q R hMA hR
+  projB := hMB
+  ψ_unit := norm_reg_expandA_ψ Ξ hΞ t₀
 
-theorem registeredReplacementStrategy_value (G : Game X Y A B) (ξ : H × K → ℂ)
-    (hξ : star ξ ⬝ᵥ ξ = 1) (a₀ : T)
-    (MA : X → POVM A (I × H)) (MB : Y → POVM B (I × K)) (q : X)
-    (R : POVM A ((I × H) × T))
-    (hMA : ∀ x, IsPVM fun a => ((MA x).mats a).val)
-    (hMB : ∀ y, IsPVM fun b => ((MB y).mats b).val)
-    (hR : IsPVM fun a => (R.mats a).val) :
-    (registeredReplacementStrategy G ξ hξ a₀ MA MB q R hMA hMB hR).value =
-      povmValue G (extVecA (registerState I ξ) a₀) (replaceExtended MA q R) MB := by
-  rw [registeredReplacementStrategy, TensorProductStrategy.value_ofPVM,
-    registeredReplacement_value_eq]
+theorem registeredReplacementStrategy_value (G : Game X Y A B) (hΞ : ‖Ξ.ψ‖ = 1) (t₀ : T)
+    (MA : X → POVMIn A (Matrix I I 𝒜)) (MB : Y → POVMIn B (Matrix I I ℬ)) (q : X)
+    (R : POVMIn A (Matrix T T (Matrix I I 𝒜)))
+    (hMA : ∀ x, IsPVMIn (MA x).op) (hMB : ∀ y, IsPVMIn (MB y).op) (hR : IsPVMIn R.op) :
+    (registeredReplacementStrategy Ξ G hΞ t₀ MA MB q R hMA hMB hR).value =
+      ((Ξ.reg I).expandA t₀).povmValue G (replaceExtended MA q R) MB :=
+  registeredReplacement_value_eq Ξ G t₀ MA MB q R
 
 /-- Quantitative value preservation of the actual registered strategy,
 including its finite-dimensional packaging. -/
-theorem registeredReplacementStrategy_value_loss (G : Game X Y A B) (ξ : H × K → ℂ)
-    (hξ : star ξ ⬝ᵥ ξ = 1) (a₀ : T)
-    (MA : X → POVM A (I × H)) (MB : Y → POVM B (I × K)) (q : X)
-    (M : POVM C (I × H)) (R : POVM C ((I × H) × T)) (f : C → A)
-    (hMA : ∀ x, IsPVM fun a => ((MA x).mats a).val)
-    (hMB : ∀ y, IsPVM fun b => ((MB y).mats b).val)
-    (hselected : MA q = M.map f) (hM : IsPVM fun c => (M.mats c).val)
-    (hR : IsPVM fun c => (R.mats c).val) {δ : ℝ}
-    (hd : ∑ c, stateSqNorm (extVecA (registerState I ξ) a₀)
-      (aOp (M.mats c).val - (R.mats c).val) ≤ δ) :
-    |povmValue G (registerState I ξ) MA MB -
-      (registeredReplacementStrategy G ξ hξ a₀ MA MB q (R.map f) hMA hMB
-        (isPVM_povm_map R hR f)).value| ≤ 2*Real.sqrt δ := by
+theorem registeredReplacementStrategy_value_loss (G : Game X Y A B) (hΞ : ‖Ξ.ψ‖ = 1) (t₀ : T)
+    (MA : X → POVMIn A (Matrix I I 𝒜)) (MB : Y → POVMIn B (Matrix I I ℬ)) (q : X)
+    (M : POVMIn C (Matrix I I 𝒜)) (R : POVMIn C (Matrix T T (Matrix I I 𝒜))) (f : C → A)
+    (hMA : ∀ x, IsPVMIn (MA x).op) (hMB : ∀ y, IsPVMIn (MB y).op)
+    (hselected : MA q = M.map f) (hM : IsPVMIn M.op) (hR : IsPVMIn R.op) {δ : ℝ}
+    (hd : ∑ c, ((Ξ.reg I).expandA t₀).stateSqNorm ((diagonal fun _ => M.op c) - R.op c) ≤ δ) :
+    |(Ξ.reg I).povmValue G MA MB -
+      (registeredReplacementStrategy Ξ G hΞ t₀ MA MB q (R.map f) hMA hMB
+        (POVMIn.isPVMIn_map hR f)).value| ≤ 2*Real.sqrt δ := by
   rw [registeredReplacementStrategy_value]
-  exact replaceExtended_value G (registerState I ξ)
-    (registerState_norm ξ (norm_evec_eq_one_of_unit hξ)) a₀ MA MB q M R f
-    hselected hM hR hMB hd
+  exact replaceExtended_value (Ξ.reg I) G (by rw [BipartiteModel.norm_reg_ψ, hΞ]) t₀ MA MB q
+    M R f hselected hM hR hMB hd
 
 end MIPRE.Introspection
 end
