@@ -976,21 +976,22 @@ $\frac12$. This is the argument of Theorem~\ref{thm:mipstar-eq-re} with the two 
 exchanged, and in Lean the two are the same theorem in the two shapes.
 \end{proof}
 
-\begin{corollary}[$\MIPco = \coRE$, from the co-soundness of introspection and of the low-individual-degree test]
+\begin{corollary}[$\MIPco = \coRE$, from the co-soundness of the Pauli basis test and of the low-individual-degree test]
 \label{cor:mipco-from-stages}
 \uses{thm:mipco-eq-core,thm:pipeline-sound-in,thm:compression-target,
-  thm:parallel-repetition-co,thm:ar-sound-co}
+  thm:parallel-repetition-co,thm:ar-sound-co,thm:intro-sound-co}
 \lean{MIPRE.mipco_eq_core_of_stages, MIPRE.gapCompressionCo}
 \leanok
-If the introspection of Theorem~\ref{thm:compression-target} is sound in the model $\omegaco$
-(Definition~\ref{def:stage-sound-in}) and the seeded CL test is sound in the commuting-operator
+If the Pauli basis test is sound in the commuting-operator model
+(Definition~\ref{def:qld-sound-in}) and the seeded CL test is sound in the commuting-operator
 model (Definition~\ref{def:lidt-sound-in}), then $\MIPco = \coRE$.
 \end{corollary}
 
 \begin{proof}
 \leanok
-Build the gap compression of Theorem~\ref{thm:compression} from the introspection, the answer
-reduction, which is sound in $\omegaco$ by Theorem~\ref{thm:ar-sound-co}, and the parallel
+Build the gap compression of Theorem~\ref{thm:compression} from the introspection, which is sound
+in $\omegaco$ by Theorem~\ref{thm:intro-sound-co}, the answer reduction, which is sound in
+$\omegaco$ by Theorem~\ref{thm:ar-sound-co}, and the parallel
 repetition of Theorem~\ref{thm:parallel-repetition-co}, which is sound in $\omegaco$: it is the
 compression of Theorem~\ref{thm:compression-target} with the number of repetitions chosen against
 the smaller of the two repetition constants. It is sound in $\omegaco$ by
@@ -1034,15 +1035,17 @@ Theorem~\ref{thm:parallel-repetition-co}. The commuting-operator
 \emph{completeness} of compression is never needed: the nested criterion asks the
 compressor to preserve perfect PCC strategies, which the tensor completeness does, and the
 class of value $1$ is entered only through the semidecider. The hypothesis splits into the
-stages' soundness clauses in $\omegaco$, of which parallel repetition's is proved, and answer
+stages' soundness clauses in $\omegaco$, of which parallel repetition's is proved, answer
 reduction's is proved from the soundness of the low-individual-degree test in the
-commuting-operator model (Theorem~\ref{thm:ar-sound-co}), so what remains is introspection's and
-that soundness (Corollary~\ref{cor:mipco-from-stages}). The plan is to prove each by generalizing
-the existing analysis over the projective commuting-operator model of
-Section~\ref{sec:ds-mipco-projective} rather than to re-prove it, with the tensor-product
-strategies as an instance; the operator calculus those analyses use is already restated there
-(Remark~\ref{rem:model-calculus}), and so are oracularization (Section~\ref{sec:ds-mipco-phase2})
-and answer reduction (Section~\ref{sec:ds-mipco-phase3}). Sizes, phases and the delicate points
+commuting-operator model (Theorem~\ref{thm:ar-sound-co}), and introspection's from the soundness
+of the Pauli basis test in the commuting-operator model (Theorem~\ref{thm:intro-sound-co}), so what
+remains is those two soundness statements (Corollary~\ref{cor:mipco-from-stages}). Each stage was
+proved by generalizing the existing analysis over the projective commuting-operator model of
+Section~\ref{sec:ds-mipco-projective} rather than by re-proving it, with the tensor-product
+strategies as an instance: the operator calculus (Remark~\ref{rem:model-calculus}),
+oracularization (Section~\ref{sec:ds-mipco-phase2}), answer reduction
+(Section~\ref{sec:ds-mipco-phase3}) and introspection (Section~\ref{sec:ds-mipco-phase4}). The
+two tests are Phases 5 and 6. Sizes, phases and the delicate points
 are in \texttt{planning/mipco-track.md}, and the audit that fixed the model is
 \texttt{reports/co-generalization-audit.md}.
 \end{remark}
@@ -1721,6 +1724,380 @@ that model, oracularization is sound in $\omegaco$
 of Lemma~\ref{lem:ar-error-assembly}, which is stated for a projective strategy in any such model,
 gives $\omegaco(\verifier_n) \geq 1 - \delta(\eps, n)$ at the constants of the clause in
 $\valstar$, which are explicit.
+\end{proof}
+
+\subsubsection{Introspection in the model, given the Pauli basis test}
+\label{sec:ds-mipco-phase4}
+
+Phase 4 of \texttt{planning/mipco-track.md} reads introspection in $\omegaco$. Its soundness
+analysis (Lemmas~\ref{lem:intro-pauli-restriction} to~\ref{lem:introspection-supply}) works with
+a strategy: it restricts it to the Pauli block, extracts from the Pauli basis test local
+isometries into an EPR register tensored with an auxiliary state, transports the strategy there,
+replaces its two Introspect measurements stage by stage by projective ones dilated on fresh
+ancillas, and reads a strategy for the original game off the result. It is written once, for a
+projective strategy in a bipartite model, and the one fact about the Pauli basis test it uses, the
+conclusion of Theorem~\ref{thm:qld}, becomes a hypothesis on the model. That hypothesis holds in
+the tensor-product model, which gives back the soundness clause of
+Theorem~\ref{thm:introspection}; in the commuting-operator model it is what
+Corollary~\ref{cor:mipco-from-stages} now assumes in place of introspection's clause. Four things
+change with the setting, each a definition below. The local isometries are one local isometry of
+models, whose homomorphisms are not unital, so a transported measurement is completed by the
+complement of the image. The EPR register tensored with an auxiliary state is the register model
+of an auxiliary model. The Naimark dilations of the adaptive stages are Halmos dilations of a
+Kraus family in the first player's algebra, whose ancilla has a size chosen along the way, so each
+stage returns a new model; every strategy of it reduces to one of the original model, which is how
+a value model dominating the auxiliary model dominates the model of the extracted strategy. And the
+extracted strategy is a POVM strategy there, which the value model has to dominate.
+
+\begin{definition}[The order of a matrix algebra over an ordered $*$-ring]
+\label{def:block-order}
+\uses{def:ancilla-extension}
+\lean{MIPRE.MatrixStar.cone, MIPRE.MatrixStar.instPartialOrderStar,
+  MIPRE.MatrixStar.instStarOrderedRing, MIPRE.MatrixStar.instStarProper,
+  MIPRE.MatrixStar.instStarProperComplex, MIPRE.StarProper.of_cstarRing,
+  MIPRE.StarSubalgebra.instStarProper}
+\leanok
+For a $*$-ring $R$ ordered by its cone of sums of elements $z^* z$, the $n \times n$ matrices over
+$R$ are ordered in the same way: $X \leq Y$ when $Y - X$ is a sum of matrices $Z^* Z$. When $R$ is
+\emph{proper}, $z^* z = 0$ only for $z = 0$, the relation is antisymmetric, since an element of the
+cone has nonnegative diagonal entries and a vanishing diagonal entry kills its row and its column,
+and the matrices over $R$ are proper again. $C^*$-algebras and their $*$-subalgebras are proper, and
+so are the complex matrices; on those the order used is the positive semidefinite one. This is what
+lets the players' algebras of an ancilla extension (Definition~\ref{def:ancilla-extension}) carry
+POVMs, over and over as registers are adjoined.
+\end{definition}
+
+\begin{definition}[Local isometries of bipartite models]
+\label{def:local-isometry}
+\uses{def:bipartite-model,def:model-proj-strategy}
+\lean{MIPRE.BipartiteModel.LocalIsometry, MIPRE.BipartiteModel.withState,
+  MIPRE.StateModel.withState, MIPRE.BipartiteModel.LocalIsometry.comp,
+  MIPRE.BipartiteModel.LocalIsometry.swap, MIPRE.BipartiteModel.LocalIsometry.transportOpA,
+  MIPRE.BipartiteModel.LocalIsometry.transportA, MIPRE.BipartiteModel.LocalIsometry.transportB,
+  MIPRE.POVMIn.pushforward, MIPRE.IsPVMIn.toPOVMIn}
+\leanok
+A \emph{local isometry} from a bipartite model $M$ to a bipartite model $M'$ is a linear isometry
+$W$ of their Hilbert spaces with, for each player, a non-unital $*$-homomorphism $\Phi$ of the
+player's algebra of $M$ into that of $M'$, such that $W$ intertwines the two representations:
+$\pi'(\pi'_A(\Phi_A(a)))\, W = W\, \pi(\pi_A(a))$, and likewise for the second player. In the
+tensor-product model, $X \mapsto V_A X V_A^\dagger$ for an isometry $V_A$ is such a $\Phi_A$, not
+unital since $\Phi_A(\Id) = V_A V_A^\dagger$. Local isometries compose and exchange with the
+players. A projective measurement $\{P_a\}$ of the first player is \emph{transported} to the
+projective measurement $\{\Phi_A(P_a) + [a = a_0](\Id - \Phi_A(\Id))\}$ of $M'$, the complement of
+the image added at one fixed outcome $a_0$, and likewise for the second player. The model $M$ with
+its state replaced by a vector $v$ of its Hilbert space is written $M^{v}$.
+\end{definition}
+
+\begin{lemma}[Local isometries carry the Born rule]
+\label{lem:local-isometry}
+\uses{def:local-isometry}
+\lean{MIPRE.BipartiteModel.LocalIsometry.intertwine,
+  MIPRE.BipartiteModel.LocalIsometry.bornProb_withState,
+  MIPRE.BipartiteModel.LocalIsometry.stateSqNorm_withState,
+  MIPRE.BipartiteModel.LocalIsometry.bornProb_of_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.stateSqNorm_of_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.swap_stateSqNorm_of_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.xSqNorm_of_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.comp_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.isPVMIn_transportA,
+  MIPRE.BipartiteModel.LocalIsometry.isPVMIn_transportB,
+  MIPRE.BipartiteModel.LocalIsometry.intertwine_transportOpA,
+  MIPRE.BipartiteModel.LocalIsometry.povmValue_transport,
+  MIPRE.BipartiteModel.LocalIsometry.povmValue_pushforward}
+\leanok
+Let $W, \Phi$ be a local isometry from $M$ to $M'$. On the transported state $W\psi$, the Born
+probability of $(\Phi_A(a), \Phi_B(b))$ in $M'^{W\psi}$ is that of $(a, b)$ in $M$, and so is every
+squared state norm and cross-party deviation; when $W\psi$ is the state of $M'$ these hold in $M'$.
+A transported projective measurement is projective, intertwined with the original by $W$, so a
+strategy and its transport have the same value on the transported state; when both homomorphisms
+are unital and $W$ carries the state to the state, the images of a POVM strategy have its value in
+$M'$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Every quantity is a quadratic form of a product of represented operators on the state, and
+intertwining moves $W$ past each factor; $W$ preserves inner products. The transported effects are
+the images of orthogonal projections summing to $\Phi_A(\Id)$, completed by the orthogonal
+projection $\Id - \Phi_A(\Id)$, and the complement annihilates the image of $W$.
+\end{proof}
+
+\begin{lemma}[Moving registers along local isometries]
+\label{lem:ancilla-isometries}
+\uses{def:local-isometry,def:ancilla-extension}
+\lean{MIPRE.BipartiteModel.inert, MIPRE.BipartiteModel.inert_W_ψ, MIPRE.BipartiteModel.relabel,
+  MIPRE.BipartiteModel.relabel_W_ψ, MIPRE.BipartiteModel.assoc, MIPRE.BipartiteModel.assoc_W_ψ,
+  MIPRE.BipartiteModel.swapExpand, MIPRE.BipartiteModel.swapExpand_W_ψ,
+  MIPRE.BipartiteModel.expand_π_πA_apply, MIPRE.BipartiteModel.expand_π_πB_apply}
+\leanok
+Adjoining an inert ancilla in a unit vector $e$, relabelling the registers of an ancilla extension
+along bijections, reading an extension of an extension as the extension by the product registers,
+and exchanging the players of an extension are local isometries between ancilla extensions of a
+model that carry the state exactly to the state.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Each is a permutation of the copies of $\mH$ in the $\ell^2$-sums, which acts on the players'
+operators entrywise.
+\end{proof}
+
+\begin{definition}[The register model]
+\label{def:register-model}
+\uses{def:ancilla-extension,def:local-isometry}
+\lean{MIPRE.Introspection.registerEPR, MIPRE.BipartiteModel.reg,
+  MIPRE.BipartiteModel.regRelabel, MIPRE.BipartiteModel.regSplit, MIPRE.BipartiteModel.regExtend,
+  MIPRE.BipartiteModel.regSwap, MIPRE.Introspection.regSplitHom,
+  MIPRE.Introspection.regExtendHom}
+\leanok
+The \emph{register model} of a bipartite model $N$ on a finite register $I$ is its ancilla
+extension by the maximally entangled vector $|\mathrm{EPR}_I\rangle$: each player holds a copy of
+$I$, and the state is $|\mathrm{EPR}_I\rangle \otimes \psi_N$. In the tensor-product model of a
+vector $\xi$ it is the tensor-product model of the register state
+$|\mathrm{EPR}_I\rangle \otimes |\xi\rangle$. Relabelling the register, splitting it as a product,
+extending it by a spectator factor and exchanging the players are local isometries between
+register models.
+\end{definition}
+
+\begin{lemma}[The register model]
+\label{lem:register-model}
+\uses{def:register-model,lem:ancilla-isometries,lem:ancilla-extension}
+\lean{MIPRE.BipartiteModel.norm_reg_ψ, MIPRE.BipartiteModel.reg_mirror,
+  MIPRE.BipartiteModel.reg_mirror_smulKron, MIPRE.BipartiteModel.regRelabel_W_ψ,
+  MIPRE.BipartiteModel.regSplit_W_ψ, MIPRE.BipartiteModel.regExtend_W_ψ,
+  MIPRE.BipartiteModel.regSwap_W_ψ, MIPRE.Introspection.registerEPR_equiv,
+  MIPRE.Introspection.registerEPR_prod}
+\leanok
+The state of the register model has the norm of the state of $N$. A matrix $P$ on the first
+player's register acts on the state as its transpose $P^{\mathsf T}$ on the second player's.
+Relabelling, splitting, extending and exchanging carry the state of one register model to the
+state of the other.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The mirror identity is $(P \otimes \Id)|\mathrm{EPR}_I\rangle = (\Id \otimes P^{\mathsf T})
+|\mathrm{EPR}_I\rangle$ in the ancilla factor. The others are the lemma on moving registers, with
+$|\mathrm{EPR}_{J \times R}\rangle = |\mathrm{EPR}_J\rangle \otimes |\mathrm{EPR}_R\rangle$ and the
+invariance of $|\mathrm{EPR}\rangle$ under relabelling.
+\end{proof}
+
+\begin{lemma}[The ancilla extension of a tensor-product model]
+\label{lem:tensor-expand}
+\uses{def:ancilla-extension,def:local-isometry,def:tensor-strategy}
+\lean{MIPRE.BipartiteModel.tensorExpand, MIPRE.BipartiteModel.tensorExpand_W_ψ,
+  MIPRE.BipartiteModel.tensorUnexpand, MIPRE.BipartiteModel.tensorUnexpand_W_ψ,
+  MIPRE.BipartiteModel.tensorUnexpand_ΦA, MIPRE.BipartiteModel.tensorUnexpand_ΦB,
+  MIPRE.BipartiteModel.tensorIsometry, MIPRE.BipartiteModel.tensorIsometry_W,
+  MIPRE.BipartiteModel.compSymmHom, MIPRE.BipartiteModel.compSymmHom_kronecker_one}
+\leanok
+The ancilla extension of the tensor-product model of $\xi$ by registers in the vector $e$ is, along
+unital local isometries in both directions carrying the state to the state, the tensor-product
+model of the expanded vector $e \otimes \xi$; and a pair of isometries $V_A, V_B$ is a local
+isometry between tensor-product models, $X \mapsto V_A X V_A^\dagger$ for the first player.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The $\ell^2$-sum of copies of $\C^{d_A \times d_B}$ is $\C^{(\alpha \times d_A) \times (\beta
+\times d_B)}$, and block matrices of matrices are matrices on the products of the indices.
+\end{proof}
+
+\begin{definition}[The one-sided ancilla extension]
+\label{def:one-sided-extension}
+\uses{def:ancilla-extension,def:local-isometry,def:block-order}
+\lean{MIPRE.BipartiteModel.expandA, MIPRE.BipartiteModel.inertA,
+  MIPRE.BipartiteModel.LocalIsometry.expand, MIPRE.BipartiteModel.LocalIsometry.expandA,
+  MIPRE.BipartiteModel.layerSwap, MIPRE.BipartiteModel.exchange}
+\leanok
+The \emph{one-sided extension} of a bipartite model $M$ by a finite register $T$ in a basis state
+$t_0$ adjoins $T$ to the first player only: the first player's algebra becomes $M_T(\alg_A)$, the
+second player's is unchanged, and the state is $\psi \otimes e_{t_0}$. The inert embedding of $M$
+into it carries $a$ to $a \otimes \Id$. Local isometries extend along registers, and extending a
+register model on one side is, up to exchanging the two layers of block matrices, the register
+model of the extension.
+\end{definition}
+
+\begin{lemma}[The one-sided ancilla extension]
+\label{lem:one-sided-extension}
+\uses{def:one-sided-extension,lem:local-isometry}
+\lean{MIPRE.BipartiteModel.norm_expandA_ψ, MIPRE.BipartiteModel.qform_expandA,
+  MIPRE.BipartiteModel.bornProb_expandA, MIPRE.BipartiteModel.stateSqNorm_expandA,
+  MIPRE.BipartiteModel.inertA_W_ψ, MIPRE.BipartiteModel.LocalIsometry.expand_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.expandA_W_ψ, MIPRE.BipartiteModel.exchange_W_ψ}
+\leanok
+On the one-sided extension, a quadratic form, a Born probability or a squared state norm is that of
+the $(t_0, t_0)$ entry, or of the $t_0$-th column, in $M$; the state keeps its norm; the inert
+embedding, the extensions of a local isometry and the exchange of layers carry the state to the
+state.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The state has one nonzero component, in the copy $t_0$, so every operator acts on it through its
+column $t_0$.
+\end{proof}
+
+\begin{lemma}[Projective dilation against a fixed state, in a star-ordered ring]
+\label{lem:kraus-dilation}
+\uses{def:block-order,def:model-proj-strategy}
+\lean{MIPRE.exists_sum_star_mul_self, MIPRE.sum_star_mul_self_pad, MIPRE.Halmos.isPVMIn_proj,
+  MIPRE.DilationAncilla, MIPRE.exists_pvm_dilation_ge, MIPRE.exists_pvm_dilation}
+\leanok
+Let $R$ be a star-ordered $*$-algebra and $\{Q^x_a\}_a$ a finite family of POVMs in $R$. There are
+a finite ancilla $T$, a basis state $t_0 \in T$ and projective measurements $\{P^x_{a}\}_a$ in
+$M_T(R)$ whose $(t_0, t_0)$ entries are $Q^x_a$, for every $x$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+In a star-ordered ring a nonnegative element is a finite sum of elements $z^* z$, so each POVM is a
+Kraus family $\{Z^x_{a,i}\}$ with $\sum_{a,i} (Z^x_{a,i})^* Z^x_{a,i} = \Id$; pad the number of terms
+to a common bound. The Halmos unitary of its Naimark column dilates it to orthogonal projections;
+coarse-grained over $i$, they compress at the fixed basis vector to $Q^x_a$. Neither finite
+dimension nor a square root is used; the matrix proof's unitary extension needed both.
+\end{proof}
+
+\begin{definition}[Domination of the POVM strategies, and approximation by projective strategies]
+\label{def:povm-domination}
+\uses{def:model-proj-strategy,def:value-model}
+\lean{MIPRE.ValueModel.DominatesPOVM, MIPRE.ValueModel.ProjApprox}
+\leanok
+A value model $\omega$ \emph{dominates the POVM strategies} of a bipartite model if every pair of
+families of POVMs in the players' algebras has value at most $\omega$ of the game. It is
+\emph{approached by projective strategies} if, for every game $\game$ and every $0 \leq t <
+\omega(\game)$, some projective strategy for $\game$ in a model on a Hilbert space that $\omega$
+dominates has value greater than $t$.
+\end{definition}
+
+\begin{lemma}[Domination and approximation in the two models]
+\label{lem:povm-domination}
+\uses{def:povm-domination,lem:model-proj-strategy-values,lem:co-value-model}
+\lean{MIPRE.ValueModel.DominatesPOVM.dominates, MIPRE.ValueModel.tensor_dominatesPOVM,
+  MIPRE.ValueModel.commuting_dominatesPOVM, MIPRE.ValueModel.tensor_projApprox,
+  MIPRE.ValueModel.commuting_projApprox, MIPRE.povmValue_le_quantumValue}
+\leanok
+A value model dominating the POVM strategies of a model dominates its projective strategies.
+$\valstar$ dominates the POVM strategies of the tensor-product model of every unit vector, and
+$\omegaco$ those of every model on a Hilbert space with a unit state; both are approached by
+projective strategies.
+\end{lemma}
+
+\begin{proof}
+\leanok
+In the tensor-product model, the Naimark dilation of each party's measurements makes the strategy
+projective on registers extended by the answer sets, at the same value. In a model on a Hilbert
+space a POVM strategy is a commuting-operator strategy. The approximations are
+Lemma~\ref{lem:model-proj-strategy-values}.
+\end{proof}
+
+\begin{definition}[Reduction of POVM strategies]
+\label{def:povm-reduction}
+\uses{def:povm-domination,def:one-sided-extension}
+\lean{MIPRE.BipartiteModel.POVMReduces, MIPRE.ModelOver, MIPRE.ModelOver.of,
+  MIPRE.ModelOver.expandA, MIPRE.Game.swap, MIPRE.POVMIn.compress}
+\leanok
+A bipartite model $M'$ \emph{reduces} to $M$ if every POVM strategy in $M'$, for every game, has
+value at most that of some POVM strategy in $M$. A \emph{model over} an algebra $\alg_B$ is a
+bipartite model whose second player's algebra is $\alg_B$, packed with its first player's algebra
+and its represented algebra, the former ordered and proper; its one-sided extension is again one.
+The game with the players exchanged asks the second player the first question.
+\end{definition}
+
+\begin{lemma}[Reductions]
+\label{lem:povm-reduction}
+\uses{def:povm-reduction,lem:local-isometry,lem:one-sided-extension}
+\lean{MIPRE.BipartiteModel.POVMReduces.refl, MIPRE.BipartiteModel.POVMReduces.trans,
+  MIPRE.BipartiteModel.POVMReduces.swap, MIPRE.BipartiteModel.LocalIsometry.povmReduces,
+  MIPRE.BipartiteModel.povmReduces_expandA, MIPRE.BipartiteModel.povmReduces_expandB,
+  MIPRE.BipartiteModel.povmValue_swap_game, MIPRE.ValueModel.DominatesPOVM.of_povmReduces,
+  MIPRE.ModelOver.povmReduces_expandA, MIPRE.ModelOver.norm_expandA_ψ,
+  MIPRE.POVMIn.compress_op}
+\leanok
+Reduction is reflexive and transitive and survives exchanging the players. A model reduces to any
+model it receives a unital local isometry from that carries the state to the state, and a one-sided
+extension, on either side, reduces to the model. A value model dominating the POVM strategies of
+$M$ dominates those of every model reducing to $M$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+On the one-sided extension, the Born probability of a pair of POVMs is that of the $(t_0, t_0)$
+entries (Lemma~\ref{lem:one-sided-extension}), and the diagonal blocks of a POVM in $M_T(\alg_A)$
+form a POVM in $\alg_A$. The rest is a composition.
+\end{proof}
+
+\begin{definition}[The Pauli basis test is sound in a model]
+\label{def:qld-sound-in}
+\uses{def:qld-game,def:register-model,def:local-isometry,def:povm-domination,
+  def:model-proj-strategy}
+\lean{MIPRE.QLD.AncillaModel, MIPRE.QLD.Extraction, MIPRE.QLD.SoundIn, MIPRE.QLD.SoundCo,
+  MIPRE.QLD.ApproxSoundIn}
+\leanok
+The Pauli basis test is \emph{sound in the bipartite model $M$, with the value model $\omega$}, if
+the conclusion of Theorem~\ref{thm:qld} holds for the projective strategies in $M$, in its shape
+and at its error: for every admissible $(q, m, d)$, a projective strategy in $M$ failing the test
+with probability at most $\eps$ admits an ancilla model $N$ on a Hilbert space, a unit state and
+proper ordered algebras, and a local isometry of $M$ into the register model of $N$ on
+$\F_q^{\{0,1\}^m}$, carrying the state of $M$ and each player's coarse Pauli measurements within
+the error of Theorem~\ref{thm:qld} of the state of the register model and of the honest Pauli
+projectors, with $\omega$ dominating the POVM strategies of $N$. It is \emph{sound in the
+commuting-operator model} if it is sound, with $\omegaco$, in the model of every
+commuting-operator strategy. A value model is \emph{approached in models where the test is sound}
+if, for every game $\game$ and every $0 \leq t < \omega(\game)$, some projective strategy for
+$\game$ in a model on a Hilbert space in which the test is sound with $\omega$ has value greater
+than $t$.
+\end{definition}
+
+\begin{lemma}[The Pauli basis test is sound in the tensor-product model]
+\label{lem:qld-sound-in-tensor}
+\uses{def:qld-sound-in,thm:qld,lem:tensor-expand,lem:povm-domination,
+  lem:model-proj-strategy-values}
+\lean{MIPRE.QLD.soundIn_tensor, MIPRE.QLD.tensorAncilla, MIPRE.QLD.tensorPhi,
+  MIPRE.QLD.tensorPhi_W_ψ, MIPRE.QLD.tensorPhi_alice, MIPRE.QLD.tensorPhi_bob,
+  MIPRE.QLD.approxSoundIn_tensor, MIPRE.QLD.approxSoundIn_commuting}
+\leanok
+The Pauli basis test is sound, with $\valstar$, in the tensor-product model of every state, and
+$\valstar$ is approached in models where the test is sound. If the test is sound in the
+commuting-operator model, then $\omegaco$ is approached in models where it is sound.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The ancilla model is the tensor-product model of $|\mathrm{aux}\rangle$ and the local isometry is
+$V_A \otimes V_B$ followed by the reading of the flat register state as the register model
+(Lemma~\ref{lem:tensor-expand}); every error of Theorem~\ref{thm:qld} is then the corresponding
+error in the model, and $\valstar$ dominates the POVM strategies of a tensor-product model
+(Lemma~\ref{lem:povm-domination}). The approximations are
+Lemma~\ref{lem:model-proj-strategy-values}.
+\end{proof}
+
+\begin{theorem}[Introspection is sound in $\omegaco$, given the Pauli basis test]
+\label{thm:intro-sound-co}
+\uses{lem:introspection-supply,def:qld-sound-in,lem:qld-sound-in-tensor,lem:povm-domination,
+  def:stage-sound-in}
+\lean{MIPRE.Introspection.seven_soundIn, MIPRE.Introspection.seven_soundIn_commuting}
+\leanok
+The introspection of Lemma~\ref{lem:introspection-supply} is sound
+(Definition~\ref{def:stage-sound-in}) in every value model approached in models where the Pauli
+basis test is sound and approached by projective strategies, at the constants $a$, $b$ of its
+soundness clause in $\valstar$. In particular, if the Pauli basis test is sound in the
+commuting-operator model, introspection is sound in $\omegaco$.
+\end{theorem}
+
+\begin{proof}
+\leanok
+Let the value of the output verifier exceed $1 - \eps$, with $\eps < 1$; otherwise the loss is at
+least $1$. The output rejects answers beyond its cutoff and agrees with the reference verifier, so
+the value of the reference game at the cutoff exceeds $1 - \eps$, and a projective strategy of
+value above $1 - \eps$ for it exists in a model where the Pauli basis test is sound. Restricted to
+the typed raw game, decoded to the canonical game and restricted to the Pauli block, it stays in
+that model, where the test supplies the extraction; the analysis of
+Lemma~\ref{lem:intro-valid-isometric-soundness}, stated for a strategy in any model, then bounds
+the value of the padded source game in every value model dominating the ancilla model, and removing
+the padding, which needs the approximation by projective strategies, bounds the source verifier's
+value. The constants are those of the clause in $\valstar$, which is the case of $\valstar$
+(Lemma~\ref{lem:qld-sound-in-tensor} and Lemma~\ref{lem:povm-domination}).
 \end{proof}
 
 \subsection{Further directions}
