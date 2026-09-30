@@ -14,6 +14,10 @@ Only the matching prefix branch contributes to a commutator against a
 prefix-supported ideal operator. This identifies the global coarse-readout
 error with the exact weighted error used by adaptive mixing. No projectivity
 or positivity hypothesis on the residual matrices is needed.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): residual matrices are block
+matrices over the remaining register with entries in the auxiliary algebra, and the errors are
+state norms of the register model.
 -/
 
 noncomputable section
@@ -21,19 +25,19 @@ noncomputable section
 namespace MIPRE.Introspection
 
 open Finset Matrix Classical Weyl
-open scoped Kronecker
 set_option linter.unusedSectionVars false
 
-variable {F ι H K : Type*} [Field F] [Fintype F] [DecidableEq F]
-  [Algebra (ZMod 2) F] [Fintype ι] [DecidableEq ι]
-  [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K] {ℓ : ℕ}
+variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F]
+  [Algebra (ZMod 2) F] [Fintype ι] [DecidableEq ι] {ℓ : ℕ}
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ]
 
 /-- A global sum commutes with one prefix-supported operator exactly as its
 own prefix branch does. All other products vanish by concrete prefix orthogonality. -/
 theorem prefixResidual_reassembled_commutator (P : CL.CLFun F ι ℓ)
     (hP : P.SupportedOn univ) (k : ℕ)
-    (M : (y : ι → F) → Matrix ((stageRemaining P k y → F) × H) _ ℂ)
-    (y : ι → F) (N : Matrix ((stageRemaining P k y → F) × H) _ ℂ) :
+    (M : (y : ι → F) → Matrix (stageRemaining P k y → F) (stageRemaining P k y → F) 𝒜)
+    (y : ι → F) (N : Matrix (stageRemaining P k y → F) (stageRemaining P k y → F) 𝒜) :
     (∑ z, prefixResidualOp P k z (M z)) * prefixResidualOp P k y N -
       prefixResidualOp P k y N * (∑ z, prefixResidualOp P k z (M z)) =
       prefixResidualOp P k y (M y * N - N * M y) := by
@@ -56,18 +60,18 @@ theorem prefixResidual_reassembled_commutator (P : CL.CLFun F ι ℓ)
 /-- The global commutation error equals the actual prefix-weighted local
 commutation error, even when ideal outcome types depend on the prefix. -/
 theorem prefixResidual_reassembled_commutator_sum (P : CL.CLFun F ι ℓ)
-    (hP : P.SupportedOn univ) (k : ℕ) (ξ : H × K → ℂ)
+    (hP : P.SupportedOn univ) (k : ℕ) [StarModule ℂ 𝒜] (Ξ : BipartiteModel 𝒞 𝒜 ℬ)
     {A : Type*} [Fintype A] {B : (ι → F) → Type*} [∀ y, Fintype (B y)]
-    (M : (y : ι → F) → A → Matrix ((stageRemaining P k y → F) × H) _ ℂ)
-    (N : (y : ι → F) → B y → Matrix ((stageRemaining P k y → F) × H) _ ℂ) :
-    (∑ a, ∑ p : (y : ι → F) × B y, stateSqNorm (registerState (ι → F) ξ)
+    (M : (y : ι → F) → A → Matrix (stageRemaining P k y → F) (stageRemaining P k y → F) 𝒜)
+    (N : (y : ι → F) → B y → Matrix (stageRemaining P k y → F) (stageRemaining P k y → F) 𝒜) :
+    (∑ a, ∑ p : (y : ι → F) × B y, (Ξ.reg (ι → F)).stateSqNorm
       ((∑ z, prefixResidualOp P k z (M z a)) * prefixResidualOp P k p.1 (N p.1 p.2) -
         prefixResidualOp P k p.1 (N p.1 p.2) * (∑ z, prefixResidualOp P k z (M z a)))) =
       ∑ y, prefixWeight P k y * ∑ a, ∑ b,
-        stateSqNorm (registerState (stageRemaining P k y → F) ξ)
+        (Ξ.reg (stageRemaining P k y → F)).stateSqNorm
           (M y a * N y b - N y b * M y a) := by
   simp only [Fintype.sum_sigma, prefixResidual_reassembled_commutator P hP,
-    stateSqNorm_prefixResidualOp P hP]
+    stateSqNorm_prefixResidualOp Ξ P hP]
   rw [Finset.sum_comm]
   simp only [Finset.mul_sum]
 
@@ -75,28 +79,28 @@ theorem prefixResidual_reassembled_commutator_sum (P : CL.CLFun F ι ℓ)
 prefix and its next Z coordinates. This is the tested global coarse Z family,
 not an independently supplied collection of prefix-local ideals. -/
 theorem adaptiveZ_reassembled_commutator_sum (P : CL.CLFun F ι ℓ)
-    (hP : P.SupportedOn univ) (k : ℕ) (ξ : H × K → ℂ)
+    (hP : P.SupportedOn univ) (k : ℕ) [StarModule ℂ 𝒜] (Ξ : BipartiteModel 𝒞 𝒜 ℬ)
     {A : Type*} [Fintype A]
-    (M : (y : ι → F) → A → Matrix ((stageRemaining P k y → F) × H) _ ℂ) :
+    (M : (y : ι → F) → A → Matrix (stageRemaining P k y → F) (stageRemaining P k y → F) 𝒜) :
     (∑ a, ∑ p : (y : ι → F) × (Fin (Fintype.card (P.factorOfPrefix k y)) → F),
-      stateSqNorm (registerState (ι → F) ξ)
+      (Ξ.reg (ι → F)).stateSqNorm
         ((∑ z, prefixResidualOp P k z (M z a)) *
-            (aOp (readout (adaptiveZOutcome P k) p) : Matrix ((ι → F) × H) _ ℂ) -
-          (aOp (readout (adaptiveZOutcome P k) p) : Matrix ((ι → F) × H) _ ℂ) *
+            smulKron (1 : 𝒜) (readout (adaptiveZOutcome P k) p) -
+          smulKron (1 : 𝒜) (readout (adaptiveZOutcome P k) p) *
             (∑ z, prefixResidualOp P k z (M z a)))) =
       ∑ y, prefixWeight P k y * ∑ a, ∑ z,
-        stateSqNorm (registerState (stageRemaining P k y → F) ξ)
+        (Ξ.reg (stageRemaining P k y → F)).stateSqNorm
           (M y a * registerReadout (stageSplit P hP k y) wZ LinearMap.id z -
             registerReadout (stageSplit P hP k y) wZ LinearMap.id z * M y a) := by
   have hf (p : (y : ι → F) × (Fin (Fintype.card (P.factorOfPrefix k y)) → F)) :
-      (aOp (readout (adaptiveZOutcome P k) p) : Matrix ((ι → F) × H) _ ℂ) =
+      smulKron (1 : 𝒜) (readout (adaptiveZOutcome P k) p) =
         prefixResidualOp P k p.1
           (registerReadout (stageSplit P hP k p.1) wZ LinearMap.id p.2) :=
     adaptiveZ_readout_factor P hP k p.1 p.2
   simp_rw [hf]
   exact prefixResidual_reassembled_commutator_sum
-    (B := fun y => Fin (Fintype.card (P.factorOfPrefix k y)) → F) P hP k ξ M
-    (fun y z => registerReadout (H := H) (stageSplit P hP k y) wZ LinearMap.id z)
+    (B := fun y => Fin (Fintype.card (P.factorOfPrefix k y)) → F) P hP k Ξ M
+    (fun y z => registerReadout (stageSplit P hP k y) wZ LinearMap.id z)
 
 end MIPRE.Introspection
 
