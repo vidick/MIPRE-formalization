@@ -1846,15 +1846,15 @@ tell you the guard is missing.
   MIPRE.AnswerReduction.typedStrategy_value_ge
 
 -- blueprint `lem:ar-decoding`: the decoded strategy for the typed oracularized game, the PCP's
--- soundness through the decoder, and `val*` of the input from a typed strategy.
+-- soundness through the decoder, and the input's value from a typed strategy, in a model.
 #guard_sorry_free MIPRE.AnswerReduction.MAo,
   MIPRE.AnswerReduction.MBo,
   MIPRE.AnswerReduction.decAns,
   MIPRE.AnswerReduction.pcpOf,
   MIPRE.AnswerReduction.pcpSound,
   MIPRE.AnswerReduction.one_sub_povmValue_decoded_le,
-  MIPRE.AnswerReduction.valStar_ge_decoded,
-  MIPRE.AnswerReduction.valStar_ge_of_typedGame
+  MIPRE.AnswerReduction.val_ge_decoded,
+  MIPRE.AnswerReduction.val_ge_of_typedGame
 
 -- blueprint `lem:ar-error-assembly`: soundness of answer reduction, under `FieldLarge`.
 #guard_sorry_free MIPRE.AnswerReduction.arVerifier_soundness,

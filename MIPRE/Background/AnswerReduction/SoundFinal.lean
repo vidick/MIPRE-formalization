@@ -32,6 +32,7 @@ noncomputable section
 namespace MIPRE.AnswerReduction
 
 open Finset MIPRE.CL MIPRE.LIDT SAT Pcp Cost
+open scoped MatrixOrder
 
 /-- **The PCP's field is eventually large**: for every exponent `e`, past a threshold on `Q`, at
 least `(8 (Q + 1) m')^e` elements. At `e = fieldExp` the low-degree test's field term `q^{-clB}`
@@ -130,10 +131,41 @@ variable (PD : PcpDecider) {ℓ : ℕ}
 /-- The detyping factor `16^{54}`, as a natural number. -/
 abbrev kDet : ℕ := 16 ^ Fintype.card ArTy
 
-/-- **The loss is trivial at least `1`**: then there is nothing to prove. -/
-theorem sub_delta_le_of_one_le {V : Verifier (ℓ + 1)} {n B : ℕ} {δ : ℝ} (h : 1 ≤ δ) :
-    1 - δ ≤ V.valStar n B :=
-  (sub_nonpos.mpr h).trans (quantumValue_nonneg _)
+/-- **The exponent `a` of the soundness loss**, which depends only on the parameter polynomial
+`R`. -/
+def soundA (R : Polynomial ℕ) : ℕ := aOf (zC R ^ (3 * simAN)) (3 * simAN * zE R) kDet
+
+theorem one_le_soundA (R : Polynomial ℕ) : 1 ≤ soundA R := one_le_aOf _ _ _
+
+/-- **The threshold `C` of the soundness clause**: past the threshold of the error comparison
+(`exists_threshold_clB`) and past the one from which the PCP's field is large enough
+(`FieldLarge` at `fieldExp`). Explicit, so that the clause holds in each value model at the same
+constants (`arVerifier_soundness_tensor`, `arVerifier_soundness_commuting`). -/
+def soundC (R : Polynomial ℕ) (hL : FieldLarge PD) : ℕ :=
+  max (exists_threshold_clB (zC R ^ (3 * simAN)) (3 * simAN * zE R)).choose (hL fieldExp).choose
+
+/-- **The loss is trivial at least `1`**: then there is nothing to prove, in any value model. -/
+theorem sub_delta_le_of_one_le (ω : ValueModel) {V : Verifier (ℓ + 1)} {n B : ℕ} {δ : ℝ}
+    (h : 1 ≤ δ) : 1 - δ ≤ V.val ω n B :=
+  (sub_nonpos.mpr h).trans (ω.nonneg _)
+
+/-- **The loss is at least `1` when `μ = 0` or `ε ≥ 1`.** -/
+theorem one_le_delta_of_trivial {a : ℕ} (ha : 1 ≤ a) {lam mu sigma n : ℕ} {ε : ℝ}
+    (hs1 : 1 ≤ sigma) (hN1 : (1 : ℝ) ≤ (lam : ℝ) * n) (hε : 0 < ε) (h : mu = 0 ∨ 1 ≤ ε) :
+    1 ≤ delta (a : ℝ) (clB / 2) lam mu sigma n ε := by
+  have hσ1 : (1 : ℝ) ≤ sigma := by exact_mod_cast hs1
+  have hSa : (1 : ℝ) ≤ (sigma : ℝ) ^ (a : ℝ) := Real.one_le_rpow hσ1 (by positivity)
+  rcases h with hmu0 | hε1
+  · simp only [delta, hmu0, Nat.cast_zero, zero_mul, neg_zero, Real.rpow_zero, one_mul]
+    have := Real.rpow_nonneg hε.le (clB / 2)
+    nlinarith
+  · have h1 : 1 ≤ ((lam : ℝ) * n) ^ ((mu : ℝ) * a) := Real.one_le_rpow hN1 (by positivity)
+    have h2 : 1 ≤ ε ^ (clB / 2) := Real.one_le_rpow hε1 (by have := clB_pos; linarith)
+    have h3 : 0 ≤ ((lam : ℝ) * n) ^ (-((mu : ℝ) * (clB / 2))) := by positivity
+    unfold delta
+    have : 1 ≤ ((lam : ℝ) * n) ^ ((mu : ℝ) * a) * ε ^ (clB / 2) :=
+      one_le_mul_of_one_le_of_one_le h1 h2
+    nlinarith
 
 /-- **A strategy above `1 - ε`**, from the value of a game above it. -/
 theorem exists_value_gt {X Y A₁ B₁ : Type*} [Fintype X] [Fintype Y] [Fintype A₁] [Fintype B₁]
@@ -144,60 +176,40 @@ theorem exists_value_gt {X Y A₁ B₁ : Type*} [Fintype X] [Fintype Y] [Fintype
   exact absurd h (not_lt.mpr (Real.iSup_le (fun R => (hno R).le) (by linarith)))
 
 set_option maxHeartbeats 1000000 in
-/-- **Soundness of answer reduction** (`lem:ar-soundness`, the `soundness` clause of the
-`AnswerReduction` contract, at any answer bound above the answer cut): `val*` of the
-answer-reduced verifier above `1 - ε` gives `val*(𝒱_n) ≥ 1 - δ(ε, n)`, for `n` past a threshold,
-with `a` depending only on `R` and `b = clB / 2`. -/
-theorem arVerifier_soundness (R : Polynomial ℕ) (hF : ShoupField PD) (hR : ParamsBound PD R)
-    (hL : FieldLarge PD) :
-    ∃ (a b : ℝ) (C : ℕ), 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
-      ∀ (V : Verifier (ℓ + 1)) (lam mu sigma n : ℕ) (ε : ℝ) (B : ℕ), C ≤ n → 2 ≤ n → 1 ≤ lam →
-        V.Within n (inBudget lam mu n) → V.decider.size ≤ sigma → 0 < ε →
-        cutVal (arPar PD lam mu sigma n) ≤ B →
-        1 - ε < (arVerifier PD lam mu sigma V).valStar n B →
-        1 - delta a b lam mu sigma n ε ≤ V.valStar n (inAns lam mu n) := by
+/-- **Soundness of answer reduction, for a projective strategy in a bipartite model**
+(`lem:ar-soundness-model`): in a model in which the low-individual-degree test is sound, a
+projective strategy of value at least `1 - ε` for the answer-reduced verifier's game at the answer
+cut puts `ω(𝒱_n)` at least `1 - δ(ε, n)`, past the threshold, for every value model `ω` in which
+oracularization is sound and which dominates the model. The typed strategy fails with probability
+`θ ≤ 16^{54} ε` (`typedStrategy_value_ge`), which gives `ω(𝒱_n) ≥ 1 - 24 √(7 errE(θ))`
+(`val_ge_of_typedGame`); the rest compares that with `δ(ε, n)`, and is the same in every model. -/
+theorem val_ge_of_arStrategy (R : Polynomial ℕ) (hF : ShoupField PD) (hR : ParamsBound PD R)
+    (hL : FieldLarge PD) {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜]
+    [StarRing 𝒜] [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜]
+    [StarOrderedRing 𝒜] [PartialOrder ℬ] [StarOrderedRing ℬ] {M : BipartiteModel 𝒞 𝒜 ℬ}
+    (hLD : LIDT.Simul.SoundIn M) {ω : ValueModel} (hω : ω.OracularSound) (hdom : ω.Dominates M)
+    {V : Verifier (ℓ + 1)} {lam mu sigma n : ℕ} {ε : ℝ} (hC : soundC PD R hL ≤ n) (hn2 : 2 ≤ n)
+    (hlam : 1 ≤ lam) (hV : V.Within n (inBudget lam mu n)) (hsz : V.decider.size ≤ sigma)
+    (hε : 0 < ε) (hmu : 1 ≤ mu) (hε1 : ε < 1)
+    (Rs : M.ProjStrat ((arVerifier PD lam mu sigma V).game n (cutVal (arPar PD lam mu sigma n))))
+    (hRs : 1 - ε ≤ Rs.value) :
+    1 - delta (soundA R : ℝ) (clB / 2) lam mu sigma n ε ≤ V.val ω n (inAns lam mu n) := by
   set c : ℕ := zC R ^ (3 * simAN) with hc
   set p : ℕ := 3 * simAN * zE R with hp
-  obtain ⟨Q0, hQ0⟩ := exists_threshold_clB c p
-  obtain ⟨Q1, hQ1⟩ := hL fieldExp
-  refine ⟨aOf c p kDet, clB / 2, max Q0 Q1, by exact_mod_cast one_le_aOf c p kDet,
-    by have := clB_pos; linarith, by have := clB_lt_one; linarith, ?_⟩
-  intro V lam mu sigma n ε B hC hn2 hlam hV hsz hε hcut hval
-  set a : ℕ := aOf c p kDet with ha
-  have ha1 : 1 ≤ a := one_le_aOf c p kDet
+  have hQ0 := (exists_threshold_clB c p).choose_spec
+  have hQ1 := (hL fieldExp).choose_spec
+  have hC0 : (exists_threshold_clB c p).choose ≤ n := le_trans (le_max_left _ _) hC
+  have hC1 : (hL fieldExp).choose ≤ n := le_trans (le_max_right _ _) hC
+  set a : ℕ := soundA R with ha
   have hs1 : 1 ≤ sigma := Nat.succ_le_of_lt ((esize_pos V.decider.prog).trans_le hsz)
-  have hσ1 : (1 : ℝ) ≤ sigma := by exact_mod_cast hs1
   have hN2 : 2 ≤ lam * n := le_trans hn2 (Nat.le_mul_of_pos_left _ hlam)
   have hNr : (lam : ℝ) * n = ((lam * n : ℕ) : ℝ) := by push_cast; ring
-  have hN1 : (1 : ℝ) ≤ (lam : ℝ) * n := by rw [hNr]; exact_mod_cast (by omega : 1 ≤ lam * n)
-  have hSa : (1 : ℝ) ≤ (sigma : ℝ) ^ (a : ℝ) := Real.one_le_rpow hσ1 (by positivity)
-  -- the trivial cases
-  rcases Nat.eq_zero_or_pos mu with hmu0 | hmu
-  · refine sub_delta_le_of_one_le ?_
-    simp only [delta, hmu0, Nat.cast_zero, zero_mul, neg_zero, Real.rpow_zero, one_mul]
-    have := Real.rpow_nonneg hε.le (clB / 2)
-    nlinarith
-  by_cases hε1 : 1 ≤ ε
-  · refine sub_delta_le_of_one_le ?_
-    have h1 : 1 ≤ ((lam : ℝ) * n) ^ ((mu : ℝ) * a) := Real.one_le_rpow hN1 (by positivity)
-    have h2 : 1 ≤ ε ^ (clB / 2) := Real.one_le_rpow hε1 (by have := clB_pos; linarith)
-    have h3 : 0 ≤ ((lam : ℝ) * n) ^ (-((mu : ℝ) * (clB / 2))) := by positivity
-    unfold delta
-    have : 1 ≤ ((lam : ℝ) * n) ^ ((mu : ℝ) * a) * ε ^ (clB / 2) :=
-      one_le_mul_of_one_le_of_one_le h1 h2
-    nlinarith
-  push Not at hε1
-  -- a strategy at the answer cut
-  have hrej := CL.Detyping.DeciderProgram.verifier_rejectsLong graph
-    (typedSampler V.sampler PD lam mu sigma) (typedDecider PD V lam mu sigma)
-    (arCut PD lam mu sigma) (by unfold level; omega) (total PD V lam mu sigma) n
-  rw [(arVerifier PD lam mu sigma V).valStar_eq_of_rejects hcut hrej] at hval
-  obtain ⟨Rs, hRs⟩ := exists_value_gt hε1 hval
+  -- the typed strategy
   set T := typedStrategy PD lam mu sigma V n Rs with hT
   have hTv := typedStrategy_value_ge PD lam mu sigma V n Rs hRs
   have hK : (kDet : ℝ) = (16 : ℝ) ^ Fintype.card ArTy := by push_cast; rfl
   rw [← hK] at hTv
-  have hmain := valStar_ge_of_typedGame PD lam mu sigma V n hF hlam hmu hV hsz _ T
+  have hmain := val_ge_of_typedGame PD lam mu sigma V n hLD hω hdom hF hlam hmu hV hsz _ T
   -- the parameters
   set P := arPar PD lam mu sigma n with hP
   set Q := arQ lam mu n with hQ
@@ -210,16 +222,15 @@ theorem arVerifier_soundness (R : Polynomial ℕ) (hF : ShoupField PD) (hR : Par
   have : NeZero P.m := ⟨by omega⟩
   have hmm : P.m ≤ P.m' :=
     (Nat.le_mul_of_pos_left _ (by norm_num)).trans (PcpParams.five_mul_m_le P)
+  have hnQ : n + 1 ≤ Q := by
+    have h1 : lam * n + 1 ≤ (lam * n + 1) ^ mu := Nat.le_self_pow (by omega) _
+    have h2 : n ≤ lam * n := Nat.le_mul_of_pos_left _ hlam
+    rw [hQ, arQ]; omega
   have hq : (8 * ((Q + 1) * P.m')) ^ fieldExp
       ≤ Fintype.card (Fq P (arPar_hk PD lam mu sigma n)) := by
     rw [card_fq]
-    refine hQ1 n (tPcp lam mu n) Q sigma ?_
-    have : n + 1 ≤ Q := by
-      have h1 : lam * n + 1 ≤ (lam * n + 1) ^ mu := Nat.le_self_pow (by omega) _
-      have h2 : n ≤ lam * n := Nat.le_mul_of_pos_left _ hlam
-      rw [hQ, arQ]; omega
-    omega
-  have hθ0 : 0 ≤ 1 - T.value := one_sub_value_nonneg V n P _ _ _ _ _ T
+    exact hQ1 n (tPcp lam mu n) Q sigma (by omega)
+  have hθ0 : 0 ≤ 1 - T.value := sub_nonneg.mpr T.value_le_one
   have herr := errE_le hm1 hmm hQm hq hθ0 (show 1 - T.value ≤ (kDet : ℝ) * ε by linarith)
     (by exact_mod_cast Nat.one_le_pow _ _ (by norm_num)) hε.le hε1.le
   -- the size of `Z`
@@ -237,13 +248,7 @@ theorem arVerifier_soundness (R : Polynomial ℕ) (hF : ShoupField PD) (hR : Par
     rw [hQ, arQ, pow_mul]
     exact Nat.pow_le_pow_left (by nlinarith) _
   have hNQ : (lam * n) ^ mu ≤ Q := Nat.pow_le_pow_left (by omega) _
-  have hQQ0 : Q0 ≤ Q := by
-    have : n + 1 ≤ Q := by
-      have h1 : lam * n + 1 ≤ (lam * n + 1) ^ mu := Nat.le_self_pow (by omega) _
-      have h2 : n ≤ lam * n := Nat.le_mul_of_pos_left _ hlam
-      rw [hQ, arQ]; omega
-    omega
-  obtain ⟨hQ8, hthr⟩ := hQ0 Q hQQ0
+  obtain ⟨hQ8, hthr⟩ := hQ0 Q (by omega)
   have hfin := sqrt_le_delta hN2 hmu hs1 hQN hNQ hQ8 hthr hG hε.le herr
   -- conclusion
   have hdel : delta (a : ℝ) (clB / 2) lam mu sigma n ε = (sigma : ℝ) ^ (a : ℝ) *
@@ -252,11 +257,91 @@ theorem arVerifier_soundness (R : Polynomial ℕ) (hF : ShoupField PD) (hR : Par
     rw [delta, hNr]
   rw [hdel]
   have hmain' : 1 - 24 * √(7 * errE (Fintype.card (Fq P (arPar_hk PD lam mu sigma n))) P.m P.m'
-      (1 - T.value)) ≤ V.valStar n (inAns lam mu n) := hmain
+      (1 - T.value)) ≤ V.val ω n (inAns lam mu n) := hmain
   have hfin' : 24 * √(7 * errE (Fintype.card (Fq P (arPar_hk PD lam mu sigma n))) P.m P.m'
       (1 - T.value)) ≤ (sigma : ℝ) ^ (a : ℝ) * (((lam * n : ℕ) : ℝ) ^ ((mu : ℝ) * a)
         * ε ^ (clB / 2) + ((lam * n : ℕ) : ℝ) ^ (-((mu : ℝ) * (clB / 2)))) := hfin
   linarith
+
+/-- **Soundness of answer reduction in the tensor-product value** (`lem:ar-soundness`, the
+`soundness` clause of the `AnswerReduction` contract, at any answer bound above the answer cut),
+at the explicit constants `soundA`, `clB / 2`, `soundC`: `val*` of the answer-reduced verifier
+above `1 - ε` gives `val*(𝒱_n) ≥ 1 - δ(ε, n)`, for `n` past the threshold. A tensor-product
+strategy is a projective strategy in its tensor-product model, where the low-individual-degree
+test is sound (`LIDT.Simul.soundIn_tensor`). -/
+theorem arVerifier_soundness_tensor (R : Polynomial ℕ) (hF : ShoupField PD)
+    (hR : ParamsBound PD R) (hL : FieldLarge PD) (V : Verifier (ℓ + 1)) (lam mu sigma n : ℕ)
+    (ε : ℝ) (B : ℕ) (hC : soundC PD R hL ≤ n) (hn2 : 2 ≤ n) (hlam : 1 ≤ lam)
+    (hV : V.Within n (inBudget lam mu n)) (hsz : V.decider.size ≤ sigma) (hε : 0 < ε)
+    (hcut : cutVal (arPar PD lam mu sigma n) ≤ B)
+    (hval : 1 - ε < (arVerifier PD lam mu sigma V).valStar n B) :
+    1 - delta (soundA R : ℝ) (clB / 2) lam mu sigma n ε ≤ V.valStar n (inAns lam mu n) := by
+  have hs1 : 1 ≤ sigma := Nat.succ_le_of_lt ((esize_pos V.decider.prog).trans_le hsz)
+  have hN1 : (1 : ℝ) ≤ (lam : ℝ) * n := by
+    have : 1 ≤ lam * n := le_trans (by omega) (Nat.le_mul_of_pos_left _ hlam)
+    exact_mod_cast this
+  by_cases htriv : mu = 0 ∨ 1 ≤ ε
+  · exact sub_delta_le_of_one_le .tensor
+      (one_le_delta_of_trivial (one_le_soundA R) hs1 hN1 hε htriv)
+  push Not at htriv
+  obtain ⟨hmu0, hε1⟩ := htriv
+  have hrej := CL.Detyping.DeciderProgram.verifier_rejectsLong graph
+    (typedSampler V.sampler PD lam mu sigma) (typedDecider PD V lam mu sigma)
+    (arCut PD lam mu sigma) (by unfold level; omega) (total PD V lam mu sigma) n
+  rw [(arVerifier PD lam mu sigma V).valStar_eq_of_rejects hcut hrej] at hval
+  obtain ⟨Rs, hRs⟩ := exists_value_gt hε1 hval
+  exact val_ge_of_arStrategy PD R hF hR hL (LIDT.Simul.soundIn_tensor Rs.ψ)
+    ValueModel.tensor_oracularSound (ValueModel.tensor_dominates Rs.ψ) hC hn2 hlam hV hsz hε
+    (Nat.one_le_iff_ne_zero.mpr hmu0) hε1 Rs.toModel (by rw [Rs.value_toModel]; exact hRs)
+
+/-- **Soundness of answer reduction in the commuting-operator value** (`lem:ar-soundness-co`),
+at the same constants as in the tensor-product value, given the soundness of the
+low-individual-degree test in the commuting-operator model (`LIDT.Simul.SoundCo`, Phase 6 of
+`planning/mipco-track.md`): `ω_co` of the answer-reduced verifier above `1 - ε` gives
+`ω_co(𝒱_n) ≥ 1 - δ(ε, n)`, for `n` past the threshold. `ω_co` is approached by projective
+strategies in the models of commuting-operator strategies
+(`exists_projStrat_lt_commutingOperatorValue`). -/
+theorem arVerifier_soundness_commuting (R : Polynomial ℕ) (hF : ShoupField PD)
+    (hR : ParamsBound PD R) (hL : FieldLarge PD) (hLD : LIDT.Simul.SoundCo)
+    (V : Verifier (ℓ + 1)) (lam mu sigma n : ℕ) (ε : ℝ) (B : ℕ) (hC : soundC PD R hL ≤ n)
+    (hn2 : 2 ≤ n) (hlam : 1 ≤ lam) (hV : V.Within n (inBudget lam mu n))
+    (hsz : V.decider.size ≤ sigma) (hε : 0 < ε) (hcut : cutVal (arPar PD lam mu sigma n) ≤ B)
+    (hval : 1 - ε < (arVerifier PD lam mu sigma V).val .commuting n B) :
+    1 - delta (soundA R : ℝ) (clB / 2) lam mu sigma n ε ≤ V.val .commuting n (inAns lam mu n) := by
+  have hs1 : 1 ≤ sigma := Nat.succ_le_of_lt ((esize_pos V.decider.prog).trans_le hsz)
+  have hN1 : (1 : ℝ) ≤ (lam : ℝ) * n := by
+    have : 1 ≤ lam * n := le_trans (by omega) (Nat.le_mul_of_pos_left _ hlam)
+    exact_mod_cast this
+  by_cases htriv : mu = 0 ∨ 1 ≤ ε
+  · exact sub_delta_le_of_one_le .commuting
+      (one_le_delta_of_trivial (one_le_soundA R) hs1 hN1 hε htriv)
+  push Not at htriv
+  obtain ⟨hmu0, hε1⟩ := htriv
+  have hrej := CL.Detyping.DeciderProgram.verifier_rejectsLong graph
+    (typedSampler V.sampler PD lam mu sigma) (typedDecider PD V lam mu sigma)
+    (arCut PD lam mu sigma) (by unfold level; omega) (total PD V lam mu sigma) n
+  rw [(arVerifier PD lam mu sigma V).val_eq_of_rejects .commuting hcut hrej] at hval
+  obtain ⟨S, Rs, hRs⟩ := exists_projStrat_lt_commutingOperatorValue (by linarith) hval
+  exact val_ge_of_arStrategy PD R hF hR hL (hLD S) ValueModel.commuting_oracularSound
+    (ValueModel.commuting_dominates S.toModel) hC hn2 hlam hV hsz hε
+    (Nat.one_le_iff_ne_zero.mpr hmu0) hε1 Rs hRs.le
+
+/-- **Soundness of answer reduction** (`lem:ar-soundness`, the `soundness` clause of the
+`AnswerReduction` contract, at any answer bound above the answer cut): `val*` of the
+answer-reduced verifier above `1 - ε` gives `val*(𝒱_n) ≥ 1 - δ(ε, n)`, for `n` past a threshold,
+with `a` depending only on `R` and `b = clB / 2` (`arVerifier_soundness_tensor`, at its explicit
+constants). -/
+theorem arVerifier_soundness (R : Polynomial ℕ) (hF : ShoupField PD) (hR : ParamsBound PD R)
+    (hL : FieldLarge PD) :
+    ∃ (a b : ℝ) (C : ℕ), 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
+      ∀ (V : Verifier (ℓ + 1)) (lam mu sigma n : ℕ) (ε : ℝ) (B : ℕ), C ≤ n → 2 ≤ n → 1 ≤ lam →
+        V.Within n (inBudget lam mu n) → V.decider.size ≤ sigma → 0 < ε →
+        cutVal (arPar PD lam mu sigma n) ≤ B →
+        1 - ε < (arVerifier PD lam mu sigma V).valStar n B →
+        1 - delta a b lam mu sigma n ε ≤ V.valStar n (inAns lam mu n) :=
+  ⟨soundA R, clB / 2, soundC PD R hL, by exact_mod_cast one_le_soundA R,
+    by have := clB_pos; linarith, by have := clB_lt_one; linarith,
+    fun V lam mu sigma n ε B => arVerifier_soundness_tensor PD R hF hR hL V lam mu sigma n ε B⟩
 
 end Final
 

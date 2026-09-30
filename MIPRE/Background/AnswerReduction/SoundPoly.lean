@@ -58,11 +58,14 @@ namespace MIPRE.AnswerReduction
 
 open Finset MIPRE.CL MIPRE.LIDT SAT Pcp
 
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] {M : BipartiteModel 𝒞 𝒜 ℬ}
 variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)
   [NeZero P.m] {hm : P.m ∣ Fintype.card (Fq P hk)} {hm' : P.m' ∣ Fintype.card (Fq P hk)}
   (S : LIDT.CL.Sel (Fq P hk) P.m hm) (S' : LIDT.CL.Sel (Fq P hk) P.m' hm')
   (check : (Fin (V.sampler.dim n) → 𝔽₂) → (Fin P.m' → Fq P hk) → (Fin (P.m' + 6) → Fq P hk) →
-    Bool) (B : ℕ) (T : TensorProductStrategy (typedGame V n P hk S S' check B))
+    Bool) (B : ℕ) (T : M.ProjStrat (typedGame V n P hk S S' check B)) (hL : LIDT.Simul.SoundIn M)
 
 /-- A polynomial of copy `i`, placed on its block of the sixth copy's variables. -/
 def liftBlk (i : Fin 5) (g : LowIndDegPoly (F := Fq P hk) (m := P.m) (d := dPcp)) :
@@ -95,117 +98,113 @@ theorem sum_ptOf6_div (D : (Fin P.m' → Fq P hk) → ℝ) :
 /-- The outcome-level disagreement of Alice's `J`, component `i`, against Bob's `G` of copy `i`
 placed on its block, at oracle half `x`. -/
 def disPolyA (i : Fin 5) (x : Fin (V.sampler.dim n) → 𝔽₂) : ℝ :=
-  dis T.ψ (((JA V n P hk S S' check B T ((roleFamily (V.sampler.cl n) .oracle).eval x)).toPOVM
-      ()).map fun f => f (blk P i))
-    (((GB1 V n P hk S S' check B T (roleOf i) i
-      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)).toPOVM ()).map
+  M.dis (((JA V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval x))).map fun f => f (blk P i))
+    (((GB1 V n P hk S S' check B T hL (roleOf i) i
+      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x))).map
       fun g => liftBlk P hk i (g 0))
 
 /-- The mirror image: Alice's `G` of copy `i` placed on its block against Bob's `J`, component
 `i`. -/
 def disPolyB (i : Fin 5) (x : Fin (V.sampler.dim n) → 𝔽₂) : ℝ :=
-  dis T.ψ (((GA1 V n P hk S S' check B T (roleOf i) i
-      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)).toPOVM ()).map
+  M.dis (((GA1 V n P hk S S' check B T hL (roleOf i) i
+      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x))).map
       fun g => liftBlk P hk i (g 0))
-    (((JB V n P hk S S' check B T ((roleFamily (V.sampler.cl n) .oracle).eval x)).toPOVM
-      ()).map fun f => f (blk P i))
+    (((JB V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval x))).map fun f => f (blk P i))
 
 /-- **From evaluations to polynomials, Alice's `J`**: at each oracle half, the outcome-level
 disagreement is at most the evaluated one, averaged over the PCP vectors, plus `m' d / q`. -/
 theorem disPolyA_le (i : Fin 5) (x : Fin (V.sampler.dim n) → 𝔽₂) :
-    disPolyA V n P hk S S' check B T i x
-      ≤ (∑ w, dis T.ψ (JAe V n P hk S S' check B T (blk P i) (x, w))
-          (GBe V n P hk S S' check B T i (x, w))) / Fintype.card (Coord P → Fq P hk)
+    disPolyA V n P hk S S' check B T hL i x
+      ≤ (∑ w, M.dis (JAe V n P hk S S' check B T hL (blk P i) (x, w))
+          (GBe V n P hk S S' check B T hL i (x, w))) / Fintype.card (Coord P → Fq P hk)
         + errSZ P hk := by
   have hν0 : ∀ z, 0 ≤ uniform (Fin P.m' → Fq P hk) z := fun z => by simp [uniform]
   have hν1 : ∑ z, uniform (Fin P.m' → Fq P hk) z = 1 := by simp [uniform, Finset.card_univ]
-  have h := dis_le_sum_dis_map_add T.ψ_unit
-    (((JA V n P hk S S' check B T ((roleFamily (V.sampler.cl n) .oracle).eval x)).toPOVM
-      ()).map fun f => f (blk P i))
-    (((GB1 V n P hk S S' check B T (roleOf i) i
-      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)).toPOVM ()).map
+  have h := M.dis_le_sum_dis_map_add T.ψ_unit
+    (((JA V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval x))).map fun f => f (blk P i))
+    (((GB1 V n P hk S S' check B T hL (roleOf i) i
+      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x))).map
       fun g => liftBlk P hk i (g 0))
     hν0 hν1 (fun z f => f.eval z) (errSZ_nonneg P hk)
     (fun f f' hff' => sum_uniform_eval_eq_le hff')
-  have hw : ∀ w, dis T.ψ (JAe V n P hk S S' check B T (blk P i) (x, w))
-      (GBe V n P hk S S' check B T i (x, w))
-      = dis T.ψ ((((JA V n P hk S S' check B T ((roleFamily (V.sampler.cl n) .oracle).eval
-          x)).toPOVM ()).map fun f => f (blk P i)).map fun f => f.eval ((regs6 P).ptOf w))
-        ((((GB1 V n P hk S S' check B T (roleOf i) i
-          ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)).toPOVM ()).map
+  have hw : ∀ w, M.dis (JAe V n P hk S S' check B T hL (blk P i) (x, w))
+      (GBe V n P hk S S' check B T hL i (x, w))
+      = M.dis ((((JA V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval
+          x))).map fun f => f (blk P i)).map fun f => f.eval ((regs6 P).ptOf w))
+        ((((GB1 V n P hk S S' check B T hL (roleOf i) i
+          ((roleFamily (V.sampler.cl n) (roleOf i)).eval x))).map
           fun g => liftBlk P hk i (g 0)).map fun f => f.eval ((regs6 P).ptOf w)) := fun w => by
-    rw [POVM.map_map, POVM.map_map]
+    rw [POVMIn.map_map, POVMIn.map_map]
     have hf : (fun g : Poly1 P hk => (liftBlk P hk i (g 0)).eval ((regs6 P).ptOf w))
         = fun g => (g 0).eval ((regs P i).ptOf w) :=
       funext fun g => by rw [eval_liftBlk, block_ptOf_regs6]
     rw [hf]
     rfl
-  rw [Finset.sum_congr rfl fun w _ => hw w, sum_ptOf6_div P hk (fun z => dis T.ψ
-    ((((JA V n P hk S S' check B T ((roleFamily (V.sampler.cl n) .oracle).eval
-      x)).toPOVM ()).map fun f => f (blk P i)).map fun f => f.eval z)
-    ((((GB1 V n P hk S S' check B T (roleOf i) i
-      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)).toPOVM ()).map
+  rw [Finset.sum_congr rfl fun w _ => hw w, sum_ptOf6_div P hk (fun z => M.dis
+    ((((JA V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval
+      x))).map fun f => f (blk P i)).map fun f => f.eval z)
+    ((((GB1 V n P hk S S' check B T hL (roleOf i) i
+      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x))).map
       fun g => liftBlk P hk i (g 0)).map fun f => f.eval z))]
   exact h
 
 /-- **From evaluations to polynomials, Bob's `J`.** -/
 theorem disPolyB_le (i : Fin 5) (x : Fin (V.sampler.dim n) → 𝔽₂) :
-    disPolyB V n P hk S S' check B T i x
-      ≤ (∑ w, dis T.ψ (GAe V n P hk S S' check B T i (x, w))
-          (JBe V n P hk S S' check B T (blk P i) (x, w))) / Fintype.card (Coord P → Fq P hk)
+    disPolyB V n P hk S S' check B T hL i x
+      ≤ (∑ w, M.dis (GAe V n P hk S S' check B T hL i (x, w))
+          (JBe V n P hk S S' check B T hL (blk P i) (x, w))) / Fintype.card (Coord P → Fq P hk)
         + errSZ P hk := by
   have hν0 : ∀ z, 0 ≤ uniform (Fin P.m' → Fq P hk) z := fun z => by simp [uniform]
   have hν1 : ∑ z, uniform (Fin P.m' → Fq P hk) z = 1 := by simp [uniform, Finset.card_univ]
-  have h := dis_le_sum_dis_map_add T.ψ_unit
-    (((GA1 V n P hk S S' check B T (roleOf i) i
-      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)).toPOVM ()).map
+  have h := M.dis_le_sum_dis_map_add T.ψ_unit
+    (((GA1 V n P hk S S' check B T hL (roleOf i) i
+      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x))).map
       fun g => liftBlk P hk i (g 0))
-    (((JB V n P hk S S' check B T ((roleFamily (V.sampler.cl n) .oracle).eval x)).toPOVM
-      ()).map fun f => f (blk P i))
+    (((JB V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval x))).map fun f => f (blk P i))
     hν0 hν1 (fun z f => f.eval z) (errSZ_nonneg P hk)
     (fun f f' hff' => sum_uniform_eval_eq_le hff')
-  have hw : ∀ w, dis T.ψ (GAe V n P hk S S' check B T i (x, w))
-      (JBe V n P hk S S' check B T (blk P i) (x, w))
-      = dis T.ψ ((((GA1 V n P hk S S' check B T (roleOf i) i
-          ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)).toPOVM ()).map
+  have hw : ∀ w, M.dis (GAe V n P hk S S' check B T hL i (x, w))
+      (JBe V n P hk S S' check B T hL (blk P i) (x, w))
+      = M.dis ((((GA1 V n P hk S S' check B T hL (roleOf i) i
+          ((roleFamily (V.sampler.cl n) (roleOf i)).eval x))).map
           fun g => liftBlk P hk i (g 0)).map fun f => f.eval ((regs6 P).ptOf w))
-        ((((JB V n P hk S S' check B T ((roleFamily (V.sampler.cl n) .oracle).eval
-          x)).toPOVM ()).map fun f => f (blk P i)).map fun f => f.eval ((regs6 P).ptOf w)) :=
+        ((((JB V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval
+          x))).map fun f => f (blk P i)).map fun f => f.eval ((regs6 P).ptOf w)) :=
       fun w => by
-    rw [POVM.map_map, POVM.map_map]
+    rw [POVMIn.map_map, POVMIn.map_map]
     have hf : (fun g : Poly1 P hk => (liftBlk P hk i (g 0)).eval ((regs6 P).ptOf w))
         = fun g => (g 0).eval ((regs P i).ptOf w) :=
       funext fun g => by rw [eval_liftBlk, block_ptOf_regs6]
     rw [hf]
     rfl
-  rw [Finset.sum_congr rfl fun w _ => hw w, sum_ptOf6_div P hk (fun z => dis T.ψ
-    ((((GA1 V n P hk S S' check B T (roleOf i) i
-      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)).toPOVM ()).map
+  rw [Finset.sum_congr rfl fun w _ => hw w, sum_ptOf6_div P hk (fun z => M.dis
+    ((((GA1 V n P hk S S' check B T hL (roleOf i) i
+      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x))).map
       fun g => liftBlk P hk i (g 0)).map fun f => f.eval z)
-    ((((JB V n P hk S S' check B T ((roleFamily (V.sampler.cl n) .oracle).eval
-      x)).toPOVM ()).map fun f => f (blk P i)).map fun f => f.eval z))]
+    ((((JB V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval
+      x))).map fun f => f (blk P i)).map fun f => f.eval z))]
   exact h
 
 /-- **Summed over the oracle halves**, Alice's `J` against Bob's placed `G`. -/
 theorem sum_disPolyA_le (i : Fin 5) :
-    ∑ x, disPolyA V n P hk S S' check B T i x
+    ∑ x, disPolyA V n P hk S S' check B T hL i x
       ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * (11 * (err6 V n P hk S S' check B T
         + 2916 * (1 - T.value) + err1 V n P hk S S' check B T) + errSZ P hk) := by
   have hW : (0 : ℝ) < Fintype.card (Coord P → Fq P hk) := by positivity
-  have h := sum_dis_JAe_GBe_le V n P hk S S' check B T i
+  have h := sum_dis_JAe_GBe_le V n P hk S S' check B T hL i
   rw [Fintype.sum_prod_type, card_idx_eq, mul_assoc] at h
-  calc ∑ x, disPolyA V n P hk S S' check B T i x
-      ≤ ∑ x, ((∑ w, dis T.ψ (JAe V n P hk S S' check B T (blk P i) (x, w))
-          (GBe V n P hk S S' check B T i (x, w))) / Fintype.card (Coord P → Fq P hk)
-        + errSZ P hk) := Finset.sum_le_sum fun x _ => disPolyA_le V n P hk S S' check B T i x
-    _ = (∑ x, ∑ w, dis T.ψ (JAe V n P hk S S' check B T (blk P i) (x, w))
-          (GBe V n P hk S S' check B T i (x, w))) / Fintype.card (Coord P → Fq P hk)
+  calc ∑ x, disPolyA V n P hk S S' check B T hL i x
+      ≤ ∑ x, ((∑ w, M.dis (JAe V n P hk S S' check B T hL (blk P i) (x, w))
+          (GBe V n P hk S S' check B T hL i (x, w))) / Fintype.card (Coord P → Fq P hk)
+        + errSZ P hk) := Finset.sum_le_sum fun x _ => disPolyA_le V n P hk S S' check B T hL i x
+    _ = (∑ x, ∑ w, M.dis (JAe V n P hk S S' check B T hL (blk P i) (x, w))
+          (GBe V n P hk S S' check B T hL i (x, w))) / Fintype.card (Coord P → Fq P hk)
         + Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * errSZ P hk := by
         rw [Finset.sum_add_distrib, Finset.sum_div, Finset.sum_const, Finset.card_univ,
           nsmul_eq_mul]
     _ ≤ _ := by
-        have : (∑ x, ∑ w, dis T.ψ (JAe V n P hk S S' check B T (blk P i) (x, w))
-            (GBe V n P hk S S' check B T i (x, w))) / Fintype.card (Coord P → Fq P hk)
+        have : (∑ x, ∑ w, M.dis (JAe V n P hk S S' check B T hL (blk P i) (x, w))
+            (GBe V n P hk S S' check B T hL i (x, w))) / Fintype.card (Coord P → Fq P hk)
             ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * (11 * (err6 V n P hk S S' check B T
               + 2916 * (1 - T.value) + err1 V n P hk S S' check B T)) := by
           rw [div_le_iff₀ hW]
@@ -214,24 +213,24 @@ theorem sum_disPolyA_le (i : Fin 5) :
 
 /-- **Summed over the oracle halves**, Alice's placed `G` against Bob's `J`. -/
 theorem sum_disPolyB_le (i : Fin 5) :
-    ∑ x, disPolyB V n P hk S S' check B T i x
+    ∑ x, disPolyB V n P hk S S' check B T hL i x
       ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * (11 * (err1 V n P hk S S' check B T
         + 2916 * (1 - T.value) + err6 V n P hk S S' check B T) + errSZ P hk) := by
   have hW : (0 : ℝ) < Fintype.card (Coord P → Fq P hk) := by positivity
-  have h := sum_dis_GAe_JBe_le V n P hk S S' check B T i
+  have h := sum_dis_GAe_JBe_le V n P hk S S' check B T hL i
   rw [Fintype.sum_prod_type, card_idx_eq, mul_assoc] at h
-  calc ∑ x, disPolyB V n P hk S S' check B T i x
-      ≤ ∑ x, ((∑ w, dis T.ψ (GAe V n P hk S S' check B T i (x, w))
-          (JBe V n P hk S S' check B T (blk P i) (x, w))) / Fintype.card (Coord P → Fq P hk)
-        + errSZ P hk) := Finset.sum_le_sum fun x _ => disPolyB_le V n P hk S S' check B T i x
-    _ = (∑ x, ∑ w, dis T.ψ (GAe V n P hk S S' check B T i (x, w))
-          (JBe V n P hk S S' check B T (blk P i) (x, w))) / Fintype.card (Coord P → Fq P hk)
+  calc ∑ x, disPolyB V n P hk S S' check B T hL i x
+      ≤ ∑ x, ((∑ w, M.dis (GAe V n P hk S S' check B T hL i (x, w))
+          (JBe V n P hk S S' check B T hL (blk P i) (x, w))) / Fintype.card (Coord P → Fq P hk)
+        + errSZ P hk) := Finset.sum_le_sum fun x _ => disPolyB_le V n P hk S S' check B T hL i x
+    _ = (∑ x, ∑ w, M.dis (GAe V n P hk S S' check B T hL i (x, w))
+          (JBe V n P hk S S' check B T hL (blk P i) (x, w))) / Fintype.card (Coord P → Fq P hk)
         + Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * errSZ P hk := by
         rw [Finset.sum_add_distrib, Finset.sum_div, Finset.sum_const, Finset.card_univ,
           nsmul_eq_mul]
     _ ≤ _ := by
-        have : (∑ x, ∑ w, dis T.ψ (GAe V n P hk S S' check B T i (x, w))
-            (JBe V n P hk S S' check B T (blk P i) (x, w))) / Fintype.card (Coord P → Fq P hk)
+        have : (∑ x, ∑ w, M.dis (GAe V n P hk S S' check B T hL i (x, w))
+            (JBe V n P hk S S' check B T hL (blk P i) (x, w))) / Fintype.card (Coord P → Fq P hk)
             ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * (11 * (err1 V n P hk S S' check B T
               + 2916 * (1 - T.value) + err6 V n P hk S S' check B T)) := by
           rw [div_le_iff₀ hW]

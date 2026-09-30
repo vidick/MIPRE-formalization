@@ -5,7 +5,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.AnswerReduction.SoundIsolate
-public import MIPRE.Background.LIDT.Simultaneous
+public import MIPRE.Background.LIDT.ModelSoundness
 
 @[expose] public section
 
@@ -87,11 +87,15 @@ namespace MIPRE.AnswerReduction
 
 open Finset MIPRE.CL MIPRE.LIDT SAT Pcp
 
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] {M : BipartiteModel 𝒞 𝒜 ℬ}
 variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)
   [NeZero P.m] {hm : P.m ∣ Fintype.card (Fq P hk)} {hm' : P.m' ∣ Fintype.card (Fq P hk)}
   (S : LIDT.CL.Sel (Fq P hk) P.m hm) (S' : LIDT.CL.Sel (Fq P hk) P.m' hm')
   (check : (Fin (V.sampler.dim n) → 𝔽₂) → (Fin P.m' → Fq P hk) → (Fin (P.m' + 6) → Fq P hk) →
-    Bool) (B : ℕ) (T : TensorProductStrategy (typedGame V n P hk S S' check B))
+    Bool) (B : ℕ) (T : M.ProjStrat (typedGame V n P hk S S' check B))
+  (hL : LIDT.Simul.SoundIn M)
 
 /-- The failure of the per-seed strategy of copy `i ≤ 5` at role `r` and oracle half `y`. -/
 def eps1 (r : Role) (i : Fin 5) (y : Fin (V.sampler.dim n) → 𝔽₂) : ℝ :=
@@ -103,10 +107,10 @@ def eps6 (y : Fin (V.sampler.dim n) → 𝔽₂) : ℝ :=
 
 theorem eps1_nonneg (r : Role) (i : Fin 5) (y : Fin (V.sampler.dim n) → 𝔽₂) :
     0 ≤ eps1 V n P hk S S' check B T r i y :=
-  sub_nonneg.mpr (TensorProductStrategy.value_le_one _)
+  sub_nonneg.mpr (BipartiteModel.ProjStrat.value_le_one _)
 
 theorem eps6_nonneg (y : Fin (V.sampler.dim n) → 𝔽₂) : 0 ≤ eps6 V n P hk S S' check B T y :=
-  sub_nonneg.mpr (TensorProductStrategy.value_le_one _)
+  sub_nonneg.mpr (BipartiteModel.ProjStrat.value_le_one _)
 
 /-- The polynomial measurements of copy `i ≤ 5`: tuples of one polynomial in `m` variables. -/
 abbrev Poly1 (P : PcpParams) (hk : 1 ≤ P.k) :=
@@ -124,95 +128,104 @@ theorem one_le_dPcp : 1 ≤ dPcp := by
   show 1 ≤ PcpParams.d
   simp [PcpParams.d]
 
+include hL in
 theorem exists_ext1 (r : Role) (i : Fin 5) (y : Fin (V.sampler.dim n) → 𝔽₂) :
-    ∃ GA : ProjectiveMeasurement Unit (Poly1 P hk) (Matrix (Fin T.dA) (Fin T.dA) ℂ),
-    ∃ GB : ProjectiveMeasurement Unit (Poly1 P hk) (Matrix (Fin T.dB) (Fin T.dB) ℂ),
-      inconsistency (uniform (Fin P.m → Fq P hk)) T.ψ
-          (Simul.tuplePOVMA hm (copyStrategy V n P hk S S' check B T r i y))
-          (Simul.evalTuplePOVM GB)
+    ∃ GA : POVMIn (Poly1 P hk) 𝒜, ∃ GB : POVMIn (Poly1 P hk) ℬ,
+      IsPVMIn GA.op ∧ IsPVMIn GB.op ∧
+      M.inconsistency (uniform (Fin P.m → Fq P hk))
+          (Simul.tuplePOVMAIn hm (copyStrategy V n P hk S S' check B T r i y))
+          (Simul.evalTuplePOVMIn GB)
           ≤ Simul.deltaSim (Fintype.card (Fq P hk)) P.m dPcp 1 (eps1 V n P hk S S' check B T r i y)
-        ∧ inconsistency (uniform (Fin P.m → Fq P hk)) T.ψ (Simul.evalTuplePOVM GA)
-          (Simul.tuplePOVMB hm (copyStrategy V n P hk S S' check B T r i y))
+        ∧ M.inconsistency (uniform (Fin P.m → Fq P hk)) (Simul.evalTuplePOVMIn GA)
+          (Simul.tuplePOVMBIn hm (copyStrategy V n P hk S S' check B T r i y))
           ≤ Simul.deltaSim (Fintype.card (Fq P hk)) P.m dPcp 1 (eps1 V n P hk S S' check B T r i y)
-        ∧ inconsistency (uniform Unit) T.ψ (fun _ => GA.toPOVM ()) (fun _ => GB.toPOVM ())
+        ∧ M.inconsistency (uniform Unit) (fun _ => GA) (fun _ => GB)
           ≤ Simul.deltaSim (Fintype.card (Fq P hk)) P.m dPcp 1
             (eps1 V n P hk S S' check B T r i y) :=
-  Simul.clSoundness (card_fq P hk) hm one_le_dPcp le_rfl
-    (copyStrategy V n P hk S S' check B T r i y) _ (eps1_nonneg V n P hk S S' check B T r i y)
-    (by rw [eps1]; linarith)
+  hL (card_fq P hk) hm one_le_dPcp le_rfl (copyStrategy V n P hk S S' check B T r i y) _
+    (eps1_nonneg V n P hk S S' check B T r i y) (by rw [eps1]; linarith)
 
+include hL in
 theorem exists_ext6 (y : Fin (V.sampler.dim n) → 𝔽₂) :
-    ∃ GA : ProjectiveMeasurement Unit (Poly6 P hk) (Matrix (Fin T.dA) (Fin T.dA) ℂ),
-    ∃ GB : ProjectiveMeasurement Unit (Poly6 P hk) (Matrix (Fin T.dB) (Fin T.dB) ℂ),
-      inconsistency (uniform (Fin P.m' → Fq P hk)) T.ψ
-          (Simul.tuplePOVMA hm' (copyStrategy6 V n P hk S S' check B T y))
-          (Simul.evalTuplePOVM GB)
+    ∃ GA : POVMIn (Poly6 P hk) 𝒜, ∃ GB : POVMIn (Poly6 P hk) ℬ,
+      IsPVMIn GA.op ∧ IsPVMIn GB.op ∧
+      M.inconsistency (uniform (Fin P.m' → Fq P hk))
+          (Simul.tuplePOVMAIn hm' (copyStrategy6 V n P hk S S' check B T y))
+          (Simul.evalTuplePOVMIn GB)
           ≤ Simul.deltaSim (Fintype.card (Fq P hk)) P.m' dPcp (P.m' + 6)
             (eps6 V n P hk S S' check B T y)
-        ∧ inconsistency (uniform (Fin P.m' → Fq P hk)) T.ψ (Simul.evalTuplePOVM GA)
-          (Simul.tuplePOVMB hm' (copyStrategy6 V n P hk S S' check B T y))
+        ∧ M.inconsistency (uniform (Fin P.m' → Fq P hk)) (Simul.evalTuplePOVMIn GA)
+          (Simul.tuplePOVMBIn hm' (copyStrategy6 V n P hk S S' check B T y))
           ≤ Simul.deltaSim (Fintype.card (Fq P hk)) P.m' dPcp (P.m' + 6)
             (eps6 V n P hk S S' check B T y)
-        ∧ inconsistency (uniform Unit) T.ψ (fun _ => GA.toPOVM ()) (fun _ => GB.toPOVM ())
+        ∧ M.inconsistency (uniform Unit) (fun _ => GA) (fun _ => GB)
           ≤ Simul.deltaSim (Fintype.card (Fq P hk)) P.m' dPcp (P.m' + 6)
             (eps6 V n P hk S S' check B T y) :=
-  Simul.clSoundness (card_fq P hk) hm' one_le_dPcp (by omega)
-    (copyStrategy6 V n P hk S S' check B T y) _ (eps6_nonneg V n P hk S S' check B T y)
-    (by rw [eps6]; linarith)
+  hL (card_fq P hk) hm' one_le_dPcp (by omega) (copyStrategy6 V n P hk S S' check B T y) _
+    (eps6_nonneg V n P hk S S' check B T y) (by rw [eps6]; linarith)
 
 /-- **Alice's polynomial measurement** of copy `i ≤ 5` at role `r` and oracle half `y`. -/
-def GA1 (r : Role) (i : Fin 5) (y : Fin (V.sampler.dim n) → 𝔽₂) :
-    ProjectiveMeasurement Unit (Poly1 P hk) (Matrix (Fin T.dA) (Fin T.dA) ℂ) :=
-  (exists_ext1 V n P hk S S' check B T r i y).choose
+def GA1 (r : Role) (i : Fin 5) (y : Fin (V.sampler.dim n) → 𝔽₂) : POVMIn (Poly1 P hk) 𝒜 :=
+  (exists_ext1 V n P hk S S' check B T hL r i y).choose
 
 /-- **Bob's polynomial measurement** of copy `i ≤ 5` at role `r` and oracle half `y`. -/
-def GB1 (r : Role) (i : Fin 5) (y : Fin (V.sampler.dim n) → 𝔽₂) :
-    ProjectiveMeasurement Unit (Poly1 P hk) (Matrix (Fin T.dB) (Fin T.dB) ℂ) :=
-  (exists_ext1 V n P hk S S' check B T r i y).choose_spec.choose
+def GB1 (r : Role) (i : Fin 5) (y : Fin (V.sampler.dim n) → 𝔽₂) : POVMIn (Poly1 P hk) ℬ :=
+  (exists_ext1 V n P hk S S' check B T hL r i y).choose_spec.choose
 
 /-- **Alice's simultaneous polynomial measurement** of the sixth copy at oracle half `y`. -/
-def JA (y : Fin (V.sampler.dim n) → 𝔽₂) :
-    ProjectiveMeasurement Unit (Poly6 P hk) (Matrix (Fin T.dA) (Fin T.dA) ℂ) :=
-  (exists_ext6 V n P hk S S' check B T y).choose
+def JA (y : Fin (V.sampler.dim n) → 𝔽₂) : POVMIn (Poly6 P hk) 𝒜 :=
+  (exists_ext6 V n P hk S S' check B T hL y).choose
 
 /-- **Bob's simultaneous polynomial measurement** of the sixth copy at oracle half `y`. -/
-def JB (y : Fin (V.sampler.dim n) → 𝔽₂) :
-    ProjectiveMeasurement Unit (Poly6 P hk) (Matrix (Fin T.dB) (Fin T.dB) ℂ) :=
-  (exists_ext6 V n P hk S S' check B T y).choose_spec.choose
+def JB (y : Fin (V.sampler.dim n) → 𝔽₂) : POVMIn (Poly6 P hk) ℬ :=
+  (exists_ext6 V n P hk S S' check B T hL y).choose_spec.choose
+
+/-- The polynomial measurements of copies `1`–`5` are projective. -/
+theorem ext1_proj (r : Role) (i : Fin 5) (y : Fin (V.sampler.dim n) → 𝔽₂) :
+    IsPVMIn (GA1 V n P hk S S' check B T hL r i y).op ∧
+      IsPVMIn (GB1 V n P hk S S' check B T hL r i y).op :=
+  ⟨(exists_ext1 V n P hk S S' check B T hL r i y).choose_spec.choose_spec.1,
+    (exists_ext1 V n P hk S S' check B T hL r i y).choose_spec.choose_spec.2.1⟩
+
+/-- The simultaneous polynomial measurements of the sixth copy are projective. -/
+theorem ext6_proj (y : Fin (V.sampler.dim n) → 𝔽₂) :
+    IsPVMIn (JA V n P hk S S' check B T hL y).op ∧ IsPVMIn (JB V n P hk S S' check B T hL y).op :=
+  ⟨(exists_ext6 V n P hk S S' check B T hL y).choose_spec.choose_spec.1,
+    (exists_ext6 V n P hk S S' check B T hL y).choose_spec.choose_spec.2.1⟩
 
 /-- The three conclusions for copies `1`–`5`. -/
 theorem ext1_spec (r : Role) (i : Fin 5) (y : Fin (V.sampler.dim n) → 𝔽₂) :
-    inconsistency (uniform (Fin P.m → Fq P hk)) T.ψ
-        (Simul.tuplePOVMA hm (copyStrategy V n P hk S S' check B T r i y))
-        (Simul.evalTuplePOVM (GB1 V n P hk S S' check B T r i y))
+    M.inconsistency (uniform (Fin P.m → Fq P hk))
+        (Simul.tuplePOVMAIn hm (copyStrategy V n P hk S S' check B T r i y))
+        (Simul.evalTuplePOVMIn (GB1 V n P hk S S' check B T hL r i y))
         ≤ Simul.deltaSim (Fintype.card (Fq P hk)) P.m dPcp 1 (eps1 V n P hk S S' check B T r i y)
-      ∧ inconsistency (uniform (Fin P.m → Fq P hk)) T.ψ
-        (Simul.evalTuplePOVM (GA1 V n P hk S S' check B T r i y))
-        (Simul.tuplePOVMB hm (copyStrategy V n P hk S S' check B T r i y))
+      ∧ M.inconsistency (uniform (Fin P.m → Fq P hk))
+        (Simul.evalTuplePOVMIn (GA1 V n P hk S S' check B T hL r i y))
+        (Simul.tuplePOVMBIn hm (copyStrategy V n P hk S S' check B T r i y))
         ≤ Simul.deltaSim (Fintype.card (Fq P hk)) P.m dPcp 1 (eps1 V n P hk S S' check B T r i y)
-      ∧ inconsistency (uniform Unit) T.ψ (fun _ => (GA1 V n P hk S S' check B T r i y).toPOVM ())
-          (fun _ => (GB1 V n P hk S S' check B T r i y).toPOVM ())
+      ∧ M.inconsistency (uniform Unit) (fun _ => GA1 V n P hk S S' check B T hL r i y)
+          (fun _ => GB1 V n P hk S S' check B T hL r i y)
         ≤ Simul.deltaSim (Fintype.card (Fq P hk)) P.m dPcp 1
           (eps1 V n P hk S S' check B T r i y) :=
-  (exists_ext1 V n P hk S S' check B T r i y).choose_spec.choose_spec
+  (exists_ext1 V n P hk S S' check B T hL r i y).choose_spec.choose_spec.2.2
 
 /-- The three conclusions for the sixth copy. -/
 theorem ext6_spec (y : Fin (V.sampler.dim n) → 𝔽₂) :
-    inconsistency (uniform (Fin P.m' → Fq P hk)) T.ψ
-        (Simul.tuplePOVMA hm' (copyStrategy6 V n P hk S S' check B T y))
-        (Simul.evalTuplePOVM (JB V n P hk S S' check B T y))
+    M.inconsistency (uniform (Fin P.m' → Fq P hk))
+        (Simul.tuplePOVMAIn hm' (copyStrategy6 V n P hk S S' check B T y))
+        (Simul.evalTuplePOVMIn (JB V n P hk S S' check B T hL y))
         ≤ Simul.deltaSim (Fintype.card (Fq P hk)) P.m' dPcp (P.m' + 6)
           (eps6 V n P hk S S' check B T y)
-      ∧ inconsistency (uniform (Fin P.m' → Fq P hk)) T.ψ
-        (Simul.evalTuplePOVM (JA V n P hk S S' check B T y))
-        (Simul.tuplePOVMB hm' (copyStrategy6 V n P hk S S' check B T y))
+      ∧ M.inconsistency (uniform (Fin P.m' → Fq P hk))
+        (Simul.evalTuplePOVMIn (JA V n P hk S S' check B T hL y))
+        (Simul.tuplePOVMBIn hm' (copyStrategy6 V n P hk S S' check B T y))
         ≤ Simul.deltaSim (Fintype.card (Fq P hk)) P.m' dPcp (P.m' + 6)
           (eps6 V n P hk S S' check B T y)
-      ∧ inconsistency (uniform Unit) T.ψ (fun _ => (JA V n P hk S S' check B T y).toPOVM ())
-          (fun _ => (JB V n P hk S S' check B T y).toPOVM ())
+      ∧ M.inconsistency (uniform Unit) (fun _ => JA V n P hk S S' check B T hL y)
+          (fun _ => JB V n P hk S S' check B T hL y)
         ≤ Simul.deltaSim (Fintype.card (Fq P hk)) P.m' dPcp (P.m' + 6)
           (eps6 V n P hk S S' check B T y) :=
-  (exists_ext6 V n P hk S S' check B T y).choose_spec.choose_spec
+  (exists_ext6 V n P hk S S' check B T hL y).choose_spec.choose_spec.2.2
 
 /-- **The averaged error of copies `1`–`5`**, at a role pair where the copy is tested. -/
 theorem sum_deltaSim1_le {r : Role} {i : Fin 5} (hr : LDStep r i) :

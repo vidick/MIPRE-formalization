@@ -147,17 +147,23 @@ theorem pcpSound (hF : ShoupField PD) (hlam : 1 ≤ lam) (hmu : 1 ≤ mu)
   rw [hd0, hd1]
   simpa [SeededGame.ofCL, Verifier.game] using hacc'
 
-/-- **The input verifier's value from a strategy for the answer-reduced typed game**: at least
-`1 - 24 √(7 errD)`, `errD` the combined error of the strategy's analysis. -/
-theorem valStar_ge_of_typedGame (hF : ShoupField PD) (hlam : 1 ≤ lam) (hmu : 1 ≤ mu)
+/-- **The input verifier's value from a projective strategy for the answer-reduced typed game**,
+in a bipartite model where the low-individual-degree test is sound and a value model where
+oracularization is sound that dominates it: at least `1 - 24 √(7 errD)`, `errD` the combined error
+of the strategy's analysis. -/
+theorem val_ge_of_typedGame {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜]
+    [StarRing 𝒜] [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜]
+    [StarOrderedRing 𝒜] [PartialOrder ℬ] [StarOrderedRing ℬ] {M : BipartiteModel 𝒞 𝒜 ℬ}
+    (hL : LIDT.Simul.SoundIn M) {ω : ValueModel} (hω : ω.OracularSound) (hdom : ω.Dominates M)
+    (hF : ShoupField PD) (hlam : 1 ≤ lam) (hmu : 1 ≤ mu)
     (hV : V.Within n (inBudget lam mu n)) (hsz : V.decider.size ≤ sigma) (B : ℕ)
-    (T : TensorProductStrategy (typedGame V n ((F).par n) ((F).hk n) ((F).sel n) ((F).sel' n)
+    (T : M.ProjStrat (typedGame V n ((F).par n) ((F).hk n) ((F).sel n) ((F).sel' n)
       (chk PD V lam mu sigma n) B)) :
     1 - 24 * √(7 * errD V n ((F).par n) ((F).hk n) ((F).sel n) ((F).sel' n)
-        (chk PD V lam mu sigma n) B T) ≤ V.valStar n (inAns lam mu n) :=
-  valStar_ge_decoded V n ((F).par n) ((F).hk n) ((F).sel n) ((F).sel' n)
-    (chk PD V lam mu sigma n) B T (inAns lam mu n)
-    (decAns ((F).par n) ((F).hk n) (inAns lam mu n))
+        (chk PD V lam mu sigma n) B T) ≤ V.val ω n (inAns lam mu n) :=
+  val_ge_decoded V n ((F).par n) ((F).hk n) ((F).sel n) ((F).sel' n)
+    (chk PD V lam mu sigma n) B T hL (inAns lam mu n)
+    (decAns ((F).par n) ((F).hk n) (inAns lam mu n)) hω hdom
     (pcpSound PD lam mu sigma V n hF hlam hmu hV hsz)
 
 end Final

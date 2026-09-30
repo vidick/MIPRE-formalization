@@ -6,7 +6,8 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.AnswerReduction.SoundCopy
 public import MIPRE.Background.AnswerReduction.TypedGame
-public import MIPRE.Foundations.GameAdapt
+public import MIPRE.Foundations.CL.DetypingModel
+public import MIPRE.Foundations.ModelStrategy
 public import MIPRE.Foundations.SampledGame
 
 @[expose] public section
@@ -33,6 +34,9 @@ noncomputable section
 
 namespace MIPRE.LIDT.CL
 
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] {M : BipartiteModel 𝒞 𝒜 ℬ}
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d ldc : ℕ} [NeZero m]
   (hm : m ∣ Fintype.card F)
 
@@ -46,8 +50,9 @@ theorem clGame_μ (x y : Question F m) :
   congr 1
   split_ifs <;> rfl
 
+omit [StarOrderedRing 𝒜] [StarOrderedRing ℬ] in
 /-- **The seeded test's failure is the average failure over samples.** -/
-theorem one_sub_value_clGame (T : TensorProductStrategy (clGame (d := d) (ldc := ldc) hm)) :
+theorem one_sub_value_clGame (T : M.ProjStrat (clGame (d := d) (ldc := ldc) hm)) :
     1 - T.value = (∑ sm : Sample F m, T.failAt (sm.question hm sm.tyA) (sm.question hm sm.tyB))
       / Fintype.card (Sample F m) := by
   rw [T.one_sub_value_eq_sum_failAt]
@@ -60,6 +65,9 @@ namespace MIPRE.AnswerReduction
 
 open Finset MIPRE.CL MIPRE.CL.CLFun MIPRE.LIDT SAT Pcp Cost
 
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] {M : BipartiteModel 𝒞 𝒜 ℬ}
 variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)
 
 /-- The bits of a vector of `V^pcp`, in the numbering of a question's PCP half. -/
@@ -94,9 +102,9 @@ def readAns1 (i : Fin 5) (q : LIDT.CL.Question (Fq P hk) P.m) (a : Verifier.Answ
 typed strategy played through `arQ1` and `readAns1`, both players at role `r`. At the seed `x₀` of
 the input sampler the oracle half is `(roleFamily L r).eval x₀`: the seed itself for an oracle,
 the original player's question for an isolated player, whose measurements see nothing else. -/
-def copyStrategy (T : TensorProductStrategy (typedGame V n P hk S S' check B)) (r : Role)
+def copyStrategy (T : M.ProjStrat (typedGame V n P hk S S' check B)) (r : Role)
     (i : Fin 5) (y : Fin (V.sampler.dim n) → 𝔽₂) :
-    TensorProductStrategy (LIDT.CL.clGame (d := dPcp) (ldc := 1) hm) :=
+    M.ProjStrat (LIDT.CL.clGame (d := dPcp) (ldc := 1) hm) :=
   T.adapt _ (arQ1 V n P hk S r i y) (arQ1 V n P hk S r i y) (readAns1 P hk B i)
     (readAns1 P hk B i)
 
@@ -120,21 +128,21 @@ theorem copy_accepts {r : Role} {i : Fin 5} (hr : LDStep r i) (x₀ : Fin (V.sam
   exact hc
 
 /-- `T`'s failure at the typed question pair of sample `sm` at oracle half `y`. -/
-def copyFail (T : TensorProductStrategy (typedGame V n P hk S S' check B)) (r : Role) (i : Fin 5)
+def copyFail (T : M.ProjStrat (typedGame V n P hk S S' check B)) (r : Role) (i : Fin 5)
     (y : Fin (V.sampler.dim n) → 𝔽₂) (sm : LIDT.CL.Sample (Fq P hk) P.m) : ℝ :=
   T.failAt (arQ1 V n P hk S r i y (sm.question hm sm.tyA))
     (arQ1 V n P hk S r i y (sm.question hm sm.tyB))
 
 /-- **The per-seed failure** is at most the average of `T`'s failures at the typed questions of
 the copy's samples. -/
-theorem one_sub_value_copyStrategy_le (T : TensorProductStrategy (typedGame V n P hk S S' check B))
+theorem one_sub_value_copyStrategy_le (T : M.ProjStrat (typedGame V n P hk S S' check B))
     {r : Role} {i : Fin 5} (hr : LDStep r i) (y : Fin (V.sampler.dim n) → 𝔽₂) :
     1 - (copyStrategy V n P hk S S' check B T r i y).value
       ≤ (∑ sm, copyFail V n P hk S S' check B T r i y sm)
         / Fintype.card (LIDT.CL.Sample (Fq P hk) P.m) := by
   rw [LIDT.CL.one_sub_value_clGame]
   refine div_le_div_of_nonneg_right (Finset.sum_le_sum fun sm _ => ?_) (by positivity)
-  exact TensorProductStrategy.failAt_adapt_le T _ _ _ _ _ _ _
+  exact BipartiteModel.ProjStrat.failAt_adapt_le T _ _ _ _ _ _ _
     fun a b h => copy_accepts V n P hk S S' check B hr _ sm h
 
 omit [NeZero P.m] in
@@ -159,12 +167,12 @@ theorem cl_eval_append (r : Role) (i : Fin 5) (τ : LIDT.CL.Ty) (x : Fin (V.samp
 
 /-- `T`'s failure at the typed question pair of the type pair `uv`, on the vector whose oracle half
 is `x` and whose PCP half is `w`. -/
-def edgeFail (T : TensorProductStrategy (typedGame V n P hk S S' check B)) (uv : ArTy × ArTy)
+def edgeFail (T : M.ProjStrat (typedGame V n P hk S S' check B)) (uv : ArTy × ArTy)
     (x : Fin (V.sampler.dim n) → 𝔽₂) (w : Coord P → Fq P hk) : ℝ :=
   T.failAt (uv.1, (cl V n P hk S S' uv.1).eval (Fin.append x (pcpBits P hk w)))
     (uv.2, (cl V n P hk S S' uv.2).eval (Fin.append x (pcpBits P hk w)))
 
-theorem edgeFail_nonneg (T : TensorProductStrategy (typedGame V n P hk S S' check B))
+theorem edgeFail_nonneg (T : M.ProjStrat (typedGame V n P hk S S' check B))
     (uv : ArTy × ArTy) (x : Fin (V.sampler.dim n) → 𝔽₂) (w : Coord P → Fq P hk) :
     0 ≤ edgeFail V n P hk S S' check B T uv x w :=
   T.failAt_nonneg _ _
@@ -173,7 +181,7 @@ set_option maxRecDepth 10000 in
 /-- **Any set of type pairs inside the typed failure**: the failures at an injective family of type
 pairs, summed over the oracle halves and the PCP vectors, add up to at most the number of type
 pairs times the number of vectors times the typed game's failure. -/
-theorem sum_edges_le (T : TensorProductStrategy (typedGame V n P hk S S' check B)) {ι : Type*}
+theorem sum_edges_le (T : M.ProjStrat (typedGame V n P hk S S' check B)) {ι : Type*}
     [Fintype ι] (e : ι → ArTy × ArTy) (he : Function.Injective e) :
     ∑ j, ∑ x, ∑ w, edgeFail V n P hk S S' check B T (e j) x w
       ≤ (Fintype.card (ArTy × ArTy) * Fintype.card (Fin (dim V n P) → 𝔽₂)) * (1 - T.value) := by
@@ -184,8 +192,8 @@ theorem sum_edges_le (T : TensorProductStrategy (typedGame V n P hk S S' check B
     T.failAt (uv.1, (cl V n P hk S S' uv.1).eval z) (uv.2, (cl V n P hk S S' uv.2).eval z)
   have hT : 1 - T.value = (∑ uv ∈ Graph.edges graph, ∑ z, f uv z) /
       ((Graph.edges graph).card * Fintype.card (Fin (dim V n P) → 𝔽₂)) :=
-    Detyping.typed_failure graph graph_nonempty (fun _ => cl V n P hk S S')
-      (typedPred V n P hk S S' check B) T
+    Detyping.typed_failure_povm M graph graph_nonempty (fun _ => cl V n P hk S S')
+      (typedPred V n P hk S S' check B) T.PA T.PB
   have hE : Graph.edges graph = Finset.univ := Finset.eq_univ_of_forall mem_graph_edges
   rw [hE, Finset.card_univ] at hT
   rw [hT, mul_div_cancel₀ _ hpos.ne']
@@ -205,7 +213,7 @@ theorem sum_edges_le (T : TensorProductStrategy (typedGame V n P hk S S' check B
 
 /-- **The copy's edges inside the typed failure**: the nine type pairs of copy `i` at role `r`,
 summed over the seeds and the samples, weigh at most the typed game's failure. -/
-theorem sum_copyFail_le (T : TensorProductStrategy (typedGame V n P hk S S' check B)) (r : Role)
+theorem sum_copyFail_le (T : M.ProjStrat (typedGame V n P hk S S' check B)) (r : Role)
     (i : Fin 5) :
     (Fintype.card (Fq P hk) ^ (Fintype.card (Coord P) - (2 * P.m + 1)) : ℝ) *
         ∑ x₀, ∑ sm,
@@ -243,7 +251,7 @@ theorem card_arTy_sq : Fintype.card (ArTy × ArTy) = 2916 := by
 where copy `i` is tested: the copy's nine type pairs are `9 / 54^2 = 1 / 324` of the typed game's
 edges, and on them the copy's registers of a uniform vector carry a uniform sample. -/
 theorem sum_one_sub_value_copyStrategy_le
-    (T : TensorProductStrategy (typedGame V n P hk S S' check B)) {r : Role} {i : Fin 5}
+    (T : M.ProjStrat (typedGame V n P hk S S' check B)) {r : Role} {i : Fin 5}
     (hr : LDStep r i) :
     ∑ x₀, (1 - (copyStrategy V n P hk S S' check B T r i
         ((roleFamily (V.sampler.cl n) r).eval x₀)).value)
@@ -299,9 +307,9 @@ def readAns6 (q : LIDT.CL.Question (Fq P hk) P.m') (a : Verifier.Answers B) :
 
 /-- **The per-seed simultaneous low-degree strategy** of the sixth copy at oracle half `y`: the
 typed strategy played through `arQ6` and `readAns6`, both players oracles. -/
-def copyStrategy6 (T : TensorProductStrategy (typedGame V n P hk S S' check B))
+def copyStrategy6 (T : M.ProjStrat (typedGame V n P hk S S' check B))
     (y : Fin (V.sampler.dim n) → 𝔽₂) :
-    TensorProductStrategy (LIDT.CL.clGame (d := dPcp) (ldc := P.m' + 6) hm') :=
+    M.ProjStrat (LIDT.CL.clGame (d := dPcp) (ldc := P.m' + 6) hm') :=
   T.adapt _ (arQ6 V n P hk S' .oracle y) (arQ6 V n P hk S' .oracle y) (readAns6 P hk B)
     (readAns6 P hk B)
 
@@ -324,7 +332,7 @@ theorem copy6_accepts (x₀ : Fin (V.sampler.dim n) → 𝔽₂) (sm : LIDT.CL.S
   exact hc
 
 /-- `T`'s failure at the typed question pair of sample `sm` of the sixth copy at oracle half `y`. -/
-def copyFail6 (T : TensorProductStrategy (typedGame V n P hk S S' check B))
+def copyFail6 (T : M.ProjStrat (typedGame V n P hk S S' check B))
     (y : Fin (V.sampler.dim n) → 𝔽₂) (sm : LIDT.CL.Sample (Fq P hk) P.m') : ℝ :=
   T.failAt (arQ6 V n P hk S' .oracle y (sm.question hm' sm.tyA))
     (arQ6 V n P hk S' .oracle y (sm.question hm' sm.tyB))
@@ -332,14 +340,14 @@ def copyFail6 (T : TensorProductStrategy (typedGame V n P hk S S' check B))
 /-- **The sixth copy's per-seed failure** is at most the average of `T`'s failures at the typed
 questions of the copy's samples. -/
 theorem one_sub_value_copyStrategy6_le
-    (T : TensorProductStrategy (typedGame V n P hk S S' check B))
+    (T : M.ProjStrat (typedGame V n P hk S S' check B))
     (y : Fin (V.sampler.dim n) → 𝔽₂) :
     1 - (copyStrategy6 V n P hk S S' check B T y).value
       ≤ (∑ sm, copyFail6 V n P hk S S' check B T y sm)
         / Fintype.card (LIDT.CL.Sample (Fq P hk) P.m') := by
   rw [LIDT.CL.one_sub_value_clGame]
   refine div_le_div_of_nonneg_right (Finset.sum_le_sum fun sm _ => ?_) (by positivity)
-  exact TensorProductStrategy.failAt_adapt_le T _ _ _ _ _ _ _
+  exact BipartiteModel.ProjStrat.failAt_adapt_le T _ _ _ _ _ _ _
     fun a b h => copy6_accepts V n P hk S S' check B _ sm h
 
 /-- **The typed question of the sixth copy at type `τ`**, on the vector whose oracle half is `x` and
@@ -355,7 +363,7 @@ theorem cl_eval_append6 (r : Role) (τ : LIDT.CL.Ty) (x : Fin (V.sampler.dim n) 
   rfl
 
 /-- **The sixth copy's edges inside the typed failure.** -/
-theorem sum_copyFail6_le (T : TensorProductStrategy (typedGame V n P hk S S' check B)) :
+theorem sum_copyFail6_le (T : M.ProjStrat (typedGame V n P hk S S' check B)) :
     (Fintype.card (Fq P hk) ^ (Fintype.card (Coord P) - (2 * P.m' + 1)) : ℝ) *
         ∑ x₀, ∑ sm,
           copyFail6 V n P hk S S' check B T ((roleFamily (V.sampler.cl n) .oracle).eval x₀) sm
@@ -385,7 +393,7 @@ theorem sum_copyFail6_le (T : TensorProductStrategy (typedGame V n P hk S S' che
 
 /-- **The sixth copy's per-seed failures average to at most `324` times the typed failure.** -/
 theorem sum_one_sub_value_copyStrategy6_le
-    (T : TensorProductStrategy (typedGame V n P hk S S' check B)) :
+    (T : M.ProjStrat (typedGame V n P hk S S' check B)) :
     ∑ x₀, (1 - (copyStrategy6 V n P hk S S' check B T
         ((roleFamily (V.sampler.cl n) .oracle).eval x₀)).value)
       ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * (324 * (1 - T.value)) := by
