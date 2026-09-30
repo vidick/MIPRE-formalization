@@ -127,10 +127,12 @@ across. -/
 def padE (K : ℕ) : (PadAnc F m d K × I) × (PadAnc F m d K × I) → ℂ :=
   fun q => basisVec t₀ t₀ (q.1.1, q.2.1) * registerEPR I (q.1.2, q.2.2)
 
+omit [Fintype F] in
 /-- The product condition of the associativity from the padded model (`padModel`). -/
 theorem padE_apply {K : ℕ} (q : (PadAnc F m d K × I) × (PadAnc F m d K × I)) :
     padE I F m d K q = basisVec t₀ t₀ (q.1.1, q.2.1) * registerEPR I (q.1.2, q.2.2) := rfl
 
+omit [Fintype F] in
 /-- The flattened padded state is the expanded vector of the two padding vectors and the pair. -/
 theorem padE_eq_expVec {K : ℕ} :
     padE I F m d K = expVec (basisVec (t₀ : PadAnc F m d K) t₀) (registerEPR I) := rfl
@@ -202,12 +204,16 @@ variable (I F m d) in
 /-- **The physical state of the registers**: each player's own EPR pair, `(A'', A')` and
 `(B'', B')`, and the two padding registers in `|t₀⟩ ⊗ |t₀⟩`. -/
 def physE (K : ℕ) : PhysReg I F m d K × PhysReg I F m d K → ℂ := fun p =>
-  registerEPR I (p.1.1, p.1.2.2) * registerEPR I (p.2.1, p.2.2.2) * basisVec t₀ t₀ (p.1.2.1, p.2.2.1)
+  registerEPR I (p.1.1, p.1.2.2) * registerEPR I (p.2.1, p.2.2.2) *
+    basisVec t₀ t₀ (p.1.2.1, p.2.2.1)
 
+omit [Fintype F] in
+/-- The physical state, entry by entry. -/
 theorem physE_apply {K : ℕ} (p : PhysReg I F m d K × PhysReg I F m d K) :
     physE I F m d K p = registerEPR I (p.1.1, p.1.2.2) * registerEPR I (p.2.1, p.2.2.2) *
       basisVec t₀ t₀ (p.1.2.1, p.2.2.1) := rfl
 
+omit [Fintype F] in
 /-- **The physical state is symmetric in the two players' blocks**: exchanging the blocks exchanges
 the two pairs and the two padding registers, which are in the same state. -/
 theorem physE_symm {K : ℕ} (p : PhysReg I F m d K × PhysReg I F m d K) :
@@ -219,14 +225,14 @@ theorem physE_symm {K : ℕ} (p : PhysReg I F m d K × PhysReg I F m d K) :
 
 /-- The regrouping of the physical registers as the three pairs `((A'', B''), Ea)` and
 `((A', B'), Eb)`, along which the physical state is a product. -/
-def physSplit (K : ℕ) :
-    PhysReg I F m d K × PhysReg I F m d K ≃ ((I × I) × PadAnc F m d K) × ((I × I) × PadAnc F m d K)
-    where
+def physSplit (K : ℕ) : PhysReg I F m d K × PhysReg I F m d K ≃
+    ((I × I) × PadAnc F m d K) × ((I × I) × PadAnc F m d K) where
   toFun p := (((p.1.1, p.2.1), p.1.2.1), ((p.1.2.2, p.2.2.2), p.2.2.1))
   invFun q := ((q.1.1.1, (q.1.2, q.2.1.1)), (q.1.1.2, (q.2.2, q.2.1.2)))
   left_inv _ := rfl
   right_inv _ := rfl
 
+omit [Fintype F] in
 /-- The physical state, read along `physSplit`, is the product of the two pairs and the padding
 vector. -/
 theorem physE_eq_comp {K : ℕ} : physE I F m d K =
@@ -245,10 +251,9 @@ theorem norm_physE [Nonempty I] {K : ℕ} : ‖evec (physE I F m d K)‖ = 1 := 
 
 /-! ### The mirror identities of the two pairs -/
 
-omit [DecidableEq I] in
 /-- A register operator of the first factor, on a vector of the pair of registers. -/
-private theorem kronecker_one_mulVec_apply {α β : Type*} [Fintype β] [DecidableEq β]
-    (L : Matrix α α ℂ) [Fintype α] (v : α × β → ℂ) (p : α × β) :
+private theorem kronecker_one_mulVec_apply {α β : Type*} [Fintype α] [Fintype β] [DecidableEq β]
+    (L : Matrix α α ℂ) (v : α × β → ℂ) (p : α × β) :
     ((L ⊗ₖ (1 : Matrix β β ℂ)) *ᵥ v) p = (L *ᵥ fun a => v (a, p.2)) p.1 := by
   rw [mulVec, dotProduct, Fintype.sum_prod_type, mulVec, dotProduct]
   refine Finset.sum_congr rfl fun a _ => ?_
@@ -259,7 +264,6 @@ private theorem kronecker_one_mulVec_apply {α β : Type*} [Fintype β] [Decidab
   · intro h
     exact absurd (Finset.mem_univ _) h
 
-omit [DecidableEq I] in
 /-- A register operator of the second factor, on a vector of the pair of registers. -/
 private theorem one_kronecker_mulVec_apply {α β : Type*} [Fintype α] [DecidableEq α] [Fintype β]
     (L : Matrix β β ℂ) (v : α × β → ℂ) (p : α × β) :
@@ -379,7 +383,8 @@ second player that acts as `P` on the near half `B'` acts on the state as the on
 theorem physE_mirror_smulKron_B (X : 𝒜) (Y : ℬ)
     (Q : Matrix (PhysReg I F m d K) (PhysReg I F m d K) ℂ) (P : Matrix I I ℂ) :
     (phys I F m d N K).π ((phys I F m d N K).πA (smulKron X Q) * (phys I F m d N K).πB
-        (smulKron Y ((1 : Matrix I I ℂ) ⊗ₖ ((1 : Matrix (PadAnc F m d K) (PadAnc F m d K) ℂ) ⊗ₖ P))))
+        (smulKron Y
+          ((1 : Matrix I I ℂ) ⊗ₖ ((1 : Matrix (PadAnc F m d K) (PadAnc F m d K) ℂ) ⊗ₖ P))))
         (phys I F m d N K).ψ
       = (phys I F m d N K).π ((phys I F m d N K).πA (smulKron X Q) * (phys I F m d N K).πB
         (smulKron Y (Pᵀ ⊗ₖ (1 : Matrix (PadAnc F m d K × I) (PadAnc F m d K × I) ℂ))))
@@ -391,7 +396,8 @@ theorem physE_mirror_smulKron_B (X : 𝒜) (Y : ℬ)
 matrix `P` on the near half `A'` acts on the state as its transpose on the far half `A''`. -/
 theorem physE_mirror_A (P : Matrix I I ℂ) :
     (phys I F m d N K).π ((phys I F m d N K).πA
-        (smulKron 1 ((1 : Matrix I I ℂ) ⊗ₖ ((1 : Matrix (PadAnc F m d K) (PadAnc F m d K) ℂ) ⊗ₖ P))))
+        (smulKron 1
+          ((1 : Matrix I I ℂ) ⊗ₖ ((1 : Matrix (PadAnc F m d K) (PadAnc F m d K) ℂ) ⊗ₖ P))))
         (phys I F m d N K).ψ
       = (phys I F m d N K).π ((phys I F m d N K).πA
         (smulKron 1 (Pᵀ ⊗ₖ (1 : Matrix (PadAnc F m d K × I) (PadAnc F m d K × I) ℂ))))
@@ -404,7 +410,8 @@ theorem physE_mirror_A (P : Matrix I I ℂ) :
 matrix `P` on the near half `B'` acts on the state as its transpose on the far half `B''`. -/
 theorem physE_mirror_B (P : Matrix I I ℂ) :
     (phys I F m d N K).π ((phys I F m d N K).πB
-        (smulKron 1 ((1 : Matrix I I ℂ) ⊗ₖ ((1 : Matrix (PadAnc F m d K) (PadAnc F m d K) ℂ) ⊗ₖ P))))
+        (smulKron 1
+          ((1 : Matrix I I ℂ) ⊗ₖ ((1 : Matrix (PadAnc F m d K) (PadAnc F m d K) ℂ) ⊗ₖ P))))
         (phys I F m d N K).ψ
       = (phys I F m d N K).π ((phys I F m d N K).πB
         (smulKron 1 (Pᵀ ⊗ₖ (1 : Matrix (PadAnc F m d K × I) (PadAnc F m d K × I) ℂ))))
@@ -467,6 +474,7 @@ def pairPadE (K : ℕ) :
     (Unit × (PadAnc F m d K × I)) × ((I × I) × (PadAnc F m d K × I)) → ℂ :=
   fun q => pair2 I (q.1.1, q.2.1) * padE I F m d K (q.1.2, q.2.2)
 
+omit [Fintype F] in
 /-- The product condition of the associativity adjoining the second player's pair. -/
 theorem pairPadE_apply {K : ℕ}
     (q : (Unit × (PadAnc F m d K × I)) × ((I × I) × (PadAnc F m d K × I))) :
@@ -481,6 +489,7 @@ def cutRelabel (K : ℕ) : I × PhysReg I F m d K ≃ (I × I) × (PadAnc F m d 
   left_inv _ := rfl
   right_inv _ := rfl
 
+omit [Fintype F] in
 /-- **The relabelling condition of the first cut**: the physical state, read along the first cut,
 is the adjoined pair times the flattened padded state, regrouped. -/
 theorem physE_comp_moveEquiv_symm {K : ℕ}

@@ -87,10 +87,6 @@ open scoped Kronecker ComplexOrder MatrixOrder
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
   [NeZero m]
 
-/-- The zero answer to the seeded test at `(q, 4m, d, 1)`: the ancilla vector of the projective
-dilation. -/
-def ansZero : CL.Answer F (4 * m) d 1 := CL.Answer.values fun _ => 0
-
 /-- A party's register after the projective dilation of the padded strategy: the expanded
 register, the combining ancilla `F × F`, and the answer ancilla. -/
 abbrev PadReg (F : Type*) (m d : ℕ) (dA : Type) :=
