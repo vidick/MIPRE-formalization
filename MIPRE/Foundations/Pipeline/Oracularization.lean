@@ -6,6 +6,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Foundations.OracularDeciderCost
 public import MIPRE.Foundations.CL.DetypingDeciderTransport
+public import MIPRE.Foundations.OracularValue
 
 @[expose] public section
 
@@ -44,6 +45,12 @@ The value transfers are theorems about every instance: for the typed game
 is not detyped on its own (finding 3): it is internal to answer reduction, whose single detyping
 is at its exterior. The composition `MIPRE.GapCompression.ofPipeline` does not consume this
 structure.
+
+The two soundness transfers hold in every value model in which oracularization is sound
+(`ValueModel.OracularSound`, `Foundations/OracularValue.lean`): `typed_soundness_val` and
+`detyped_soundness_val`, in `Verifier.val ω`, of which `typed_soundness` and `detyped_soundness`
+are the tensor-product cases; the commuting-operator model is the other instance
+(`ValueModel.commuting_oracularSound`).
 -/
 
 namespace MIPRE
@@ -120,14 +127,22 @@ noncomputable abbrev typedGame (n : ℕ) :=
   CL.Detyping.typedGame roleGraph roleGraph_nonempty (fun _ => roleFamily (V.sampler.cl n))
     (typedPredicate (oracleSampler V.sampler) (O.decider V.sampler.prog V.decider.prog I) C n)
 
-/-- **Soundness of the typed oracularized verifier**: its typed game's quantum value above `1 - ε`
-puts `val*(𝒱_n)` at the parse cut at least `1 - 24√ε`, whatever the budget. -/
-theorem typed_soundness (n : ℕ) {ε : ℝ} (hε : 0 < ε)
-    (h : 1 - ε < quantumValue (O.typedGame V I C n)) : 1 - 24 * √ε ≤ V.valStar n (I.cut n) :=
-  V.valStar_ge_of_typed n (I.cut n) _ (fun p a => (parseAns (I.cut n) p.1 a.1).getD default)
+/-- **Soundness of the typed oracularized verifier, in a value model** where oracularization is
+sound: its typed game's value above `1 - ε` puts `ω(𝒱_n)` at the parse cut at least `1 - 24√ε`,
+whatever the budget. -/
+theorem typed_soundness_val {ω : ValueModel} (hω : ω.OracularSound) (n : ℕ) {ε : ℝ} (hε : 0 < ε)
+    (h : 1 - ε < ω.val (O.typedGame V I C n)) : 1 - 24 * √ε ≤ V.val ω n (I.cut n) :=
+  V.val_ge_of_typed hω n (I.cut n) _ (fun p a => (parseAns (I.cut n) p.1 a.1).getD default)
     (fun p q a b hD => by
       simp only [typedPredicate, decide_eq_true_eq] at hD
       exact oaccepts_of_oraclePred (O.sound V I n p.1 q.1 p.2 q.2 a.1 b.1 hD.2.2)) hε h
+
+/-- **Soundness of the typed oracularized verifier**: its typed game's quantum value above `1 - ε`
+puts `val*(𝒱_n)` at the parse cut at least `1 - 24√ε`, whatever the budget —
+`typed_soundness_val` in the tensor-product model. -/
+theorem typed_soundness (n : ℕ) {ε : ℝ} (hε : 0 < ε)
+    (h : 1 - ε < quantumValue (O.typedGame V I C n)) : 1 - 24 * √ε ≤ V.valStar n (I.cut n) :=
+  O.typed_soundness_val V I C ValueModel.tensor_oracularSound n hε h
 
 /-- **Completeness of the typed oracularized verifier**: a value-`1` PCC strategy of `𝒱_n` at the
 parse cut gives one of the doubled typed game, with identical operators for the two players (the
@@ -178,49 +193,35 @@ theorem detyped_completeness (n TS TD k W : ℕ) (hS : V.sampler.TimeBoundAt n T
 
 theorem card_role : Fintype.card Role = 3 := rfl
 
-/-- **Soundness of the detyped oracularized verifier**: `val*` above `1 - ε` at the outer cut puts
-`val*(𝒱_n)` at the parse cut at least `1 - 1536√ε`, whatever the budget — the detyping factor
-`16³` on the three roles, under the square root, times the `24` of the typed game. -/
-theorem detyped_soundness (n : ℕ) {ε : ℝ} (hε : 0 < ε)
-    (h : 1 - ε < (O.detyped V I C).valStar n (C.outer n)) :
-    1 - 1536 * √ε ≤ V.valStar n (I.cut n) := by
-  by_contra hcon
-  rw [not_le] at hcon
+/-- **Soundness of the detyped oracularized verifier, in a value model** where oracularization is
+sound: `ω` above `1 - ε` at the outer cut puts `ω(𝒱_n)` at the parse cut at least `1 - 1536√ε`,
+whatever the budget — the detyping factor `16³` on the three roles, under the square root, times
+the `24` of the typed game. -/
+theorem detyped_soundness_val {ω : ValueModel} (hω : ω.OracularSound) (n : ℕ) {ε : ℝ}
+    (hε : 0 < ε) (h : 1 - ε < (O.detyped V I C).val ω n (C.outer n)) :
+    1 - 1536 * √ε ≤ V.val ω n (I.cut n) := by
   have hsq : √(4096 * ε) = 64 * √ε := by
     rw [Real.sqrt_mul (by norm_num), show (4096 : ℝ) = 64 ^ 2 by norm_num,
       Real.sqrt_sq (by norm_num)]
-  by_cases hε1 : ε ≤ 1
-  · have hall : ∀ R : TensorProductStrategy ((O.detyped V I C).game n (C.outer n)),
-        R.value ≤ 1 - ε := by
-      intro R
-      by_contra hR
-      rw [not_le] at hR
-      obtain ⟨δ, hδ⟩ : ∃ δ, δ = 1 - R.value := ⟨_, rfl⟩
-      have h1 := CL.Detyping.DeciderProgram.restrictAmbient_value_ge roleGraph
-        (oracleSampler V.sampler) (O.decider V.sampler.prog V.decider.prog I) C roleGraph_symm
-        roleGraph_nonempty (Nat.succ_pos ℓ) (O.total _ _ _) n R (ε := δ)
-        (by rw [hδ]; exact le_of_eq (sub_sub_cancel _ _))
-      rw [card_role] at h1
-      have h2 : (CL.Detyping.DeciderProgram.restrictAmbient roleGraph (oracleSampler V.sampler)
-          (O.decider V.sampler.prog V.decider.prog I) C roleGraph_nonempty (Nat.succ_pos ℓ)
-          (O.total _ _ _) n R).value ≤ quantumValue (O.typedGame V I C n) :=
-        le_ciSup (TensorProductStrategy.bddAbove_range_value _) _
-      have h3 : 1 - 4096 * ε < quantumValue (O.typedGame V I C n) := by
-        norm_num at h1
-        nlinarith
-      have h4 := O.typed_soundness V I C n (by positivity : 0 < 4096 * ε) h3
-      rw [hsq] at h4
-      linarith
-    have h5 : (O.detyped V I C).valStar n (C.outer n) ≤ 1 - ε :=
-      Real.iSup_le hall (by linarith)
-    linarith
-  · rw [not_le] at hε1
-    have h1 : 1 < √ε := by
-      rw [show (1 : ℝ) = √1 from Real.sqrt_one.symm]
-      exact Real.sqrt_lt_sqrt zero_le_one hε1
-    have h2 := quantumValue_nonneg (V.game n (I.cut n))
-    change quantumValue (V.game n (I.cut n)) < _ at hcon
-    linarith
+  have hdet := hω.typedGame_ge_ambient roleGraph (oracleSampler V.sampler)
+    (O.decider V.sampler.prog V.decider.prog I) C roleGraph_symm roleGraph_nonempty
+    (Nat.succ_pos ℓ) (O.total _ _ _) n
+  rw [card_role, show (16 : ℝ) ^ 3 = 4096 by norm_num] at hdet
+  have hdet' : 1 - 4096 * (1 - ω.val ((O.detyped V I C).game n (C.outer n)))
+      ≤ ω.val (O.typedGame V I C n) := hdet
+  have h' : 1 - ε < ω.val ((O.detyped V I C).game n (C.outer n)) := h
+  have h3 : 1 - 4096 * ε < ω.val (O.typedGame V I C n) := by linarith
+  have h4 := O.typed_soundness_val V I C hω n (by positivity : 0 < 4096 * ε) h3
+  rw [hsq] at h4
+  linarith
+
+/-- **Soundness of the detyped oracularized verifier**: `val*` above `1 - ε` at the outer cut puts
+`val*(𝒱_n)` at the parse cut at least `1 - 1536√ε`, whatever the budget —
+`detyped_soundness_val` in the tensor-product model. -/
+theorem detyped_soundness (n : ℕ) {ε : ℝ} (hε : 0 < ε)
+    (h : 1 - ε < (O.detyped V I C).valStar n (C.outer n)) :
+    1 - 1536 * √ε ≤ V.valStar n (I.cut n) :=
+  O.detyped_soundness_val V I C ValueModel.tensor_oracularSound n hε h
 
 end Detyped
 

@@ -734,6 +734,7 @@ public import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Pa
 public import MIPRE.Background.Repetition.TensorPower
 public import MIPRE.Background.Repetition.TracialDensity
 public import MIPRE.Background.Repetition.Verifier
+public import MIPRE.Background.Repetition.VerifierCo
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
 public import MIPRE.Cslib.Foundations.Data.RelatesInSteps
@@ -756,6 +757,7 @@ public import MIPRE.Foundations.CL.DetypingDeciderRoute
 public import MIPRE.Foundations.CL.DetypingDeciderTransport
 public import MIPRE.Foundations.CL.DetypingGame
 public import MIPRE.Foundations.CL.DetypingLaw
+public import MIPRE.Foundations.CL.DetypingModel
 public import MIPRE.Foundations.CL.DetypingProgBits
 public import MIPRE.Foundations.CL.DetypingProgBranches
 public import MIPRE.Foundations.CL.DetypingProgCall
@@ -788,6 +790,7 @@ public import MIPRE.Foundations.ClassMIPStarTab
 public import MIPRE.Foundations.Closeness
 public import MIPRE.Foundations.Commutation
 public import MIPRE.Foundations.CommutingDilation
+public import MIPRE.Foundations.CommutingModel
 public import MIPRE.Foundations.CommutingOperator
 public import MIPRE.Foundations.CommutingTransport
 public import MIPRE.Foundations.Compression
@@ -1228,10 +1231,12 @@ public import MIPRE.Foundations.OracularComplete
 public import MIPRE.Foundations.OracularDecider
 public import MIPRE.Foundations.OracularDeciderCost
 public import MIPRE.Foundations.OracularGame
+public import MIPRE.Foundations.OracularModel
 public import MIPRE.Foundations.OracularSampler
 public import MIPRE.Foundations.OracularSound
 public import MIPRE.Foundations.OracularTensor
 public import MIPRE.Foundations.OracularTyped
+public import MIPRE.Foundations.OracularValue
 public import MIPRE.Foundations.POVMMix
 public import MIPRE.Foundations.POVMValue
 public import MIPRE.Foundations.PVM

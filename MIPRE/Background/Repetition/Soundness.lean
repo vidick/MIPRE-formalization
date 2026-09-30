@@ -73,23 +73,20 @@ theorem log_card_answers_mul_le (T : ℕ) :
     _ = 2 * ((T : ℝ) + 1) * Real.log 3 := by
         rw [← pow_add, Real.log_pow]; push_cast; ring
 
-/-- **Game-level soundness of direct repetition**, in the form of `Repetition.soundness`: for a
-game with answers of length at most `B`, `val*(G) ≤ 1 - ε` gives
-`val*(G^{⊗k}) ≤ exp(-c' ε^{13} k / (B + 1))`. -/
-theorem quantumValue_repeat_le_soundBound {X : Type} [Fintype X] {B : ℕ}
-    (G : Game X X (Answers B) (Answers B)) {ε : ℝ} (hε : 0 < ε)
-    (hG : quantumValue G ≤ 1 - ε) {k : ℕ} (hk : 0 < k) :
-    quantumValue (G.repeat k) ≤ Repetition.soundBound repConst ε k B := by
-  set ε' := 1 - quantumValue G with hε'
-  have hεε' : ε ≤ ε' := by rw [hε']; linarith
-  have hε'0 : 0 < ε' := lt_of_lt_of_le hε hεε'
-  have hε'1 : ε' ≤ 1 := by rw [hε']; have := quantumValue_nonneg G; linarith
-  have h := quantumValue_repeat_le_spec X X (Answers B) (Answers B) G inferInstance inferInstance
-    hε'0 k hk
-  refine h.trans ?_
+/-- **The arithmetic of both repetition bounds.** For answers of length at most `B`, a gap
+`ε' ∈ [ε, 1]` and `ε^13 ≤ ε'^p`, the bound `exp(-c₀ (ε'^p / (ε' + log(|𝒜||ℬ|))) k)` of a
+direct repetition theorem is at most `soundBound (c₀ / (1 + 2 log 3)) ε k B`: the denominator is
+at most `(B + 1)(1 + 2 log 3)` (`log_card_answers_mul_le`). The tensor-product theorem has
+`p = 13`; the commuting-operator one has `p = 7`, and `ε^13 ≤ ε^7` for `ε ≤ 1`. -/
+theorem exp_le_soundBound {c₀ ε ε' : ℝ} (hc₀ : 0 < c₀) (hε : 0 < ε) (hεε' : ε ≤ ε')
+    (hε'1 : ε' ≤ 1) {p : ℕ} (hp : ε ^ 13 ≤ ε' ^ p) (B k : ℕ) :
+    Real.exp (-(c₀ * (ε' ^ p / (ε' + Real.log ((Fintype.card (Answers B) : ℝ) *
+      (Fintype.card (Answers B) : ℝ))))) * (k : ℝ)) ≤
+      Repetition.soundBound (c₀ / (1 + 2 * Real.log 3)) ε k B := by
   unfold Repetition.soundBound
   rw [Real.exp_le_exp]
   set L := Real.log ((Fintype.card (Answers B) : ℝ) * (Fintype.card (Answers B) : ℝ)) with hL
+  have hε'0 : 0 < ε' := lt_of_lt_of_le hε hεε'
   have hL0 : 0 ≤ L := by
     rw [hL]
     refine Real.log_nonneg ?_
@@ -100,26 +97,58 @@ theorem quantumValue_repeat_le_soundBound {X : Type} [Fintype X] {B : ℕ}
     have hB0 : (0 : ℝ) ≤ B := by positivity
     have : ε' ≤ (B : ℝ) + 1 := by linarith
     nlinarith [Real.log_nonneg (by norm_num : (1 : ℝ) ≤ 3)]
-  have hnum : ε ^ 13 ≤ ε' ^ 13 := pow_le_pow_left₀ hε.le hεε' 13
-  have hkey : repConst * ε ^ 13 / ((B : ℝ) + 1) ≤ repConst₀ * (ε' ^ 13 / (ε' + L)) := by
+  have hkey : c₀ / (1 + 2 * Real.log 3) * ε ^ 13 / ((B : ℝ) + 1) ≤
+      c₀ * (ε' ^ p / (ε' + L)) := by
     have h1 : 0 < ε' + L := by linarith
     have hpos3 := one_add_two_log_three_pos
     have hB1 : (0 : ℝ) < (B : ℝ) + 1 := by positivity
-    have e1 : repConst * ε ^ 13 / ((B : ℝ) + 1) =
-        repConst₀ * ε ^ 13 / (((B : ℝ) + 1) * (1 + 2 * Real.log 3)) := by
-      rw [repConst]; field_simp
-    have e2 : repConst₀ * (ε' ^ 13 / (ε' + L)) = repConst₀ * ε' ^ 13 / (ε' + L) := by ring
+    have e1 : c₀ / (1 + 2 * Real.log 3) * ε ^ 13 / ((B : ℝ) + 1) =
+        c₀ * ε ^ 13 / (((B : ℝ) + 1) * (1 + 2 * Real.log 3)) := by
+      field_simp
+    have e2 : c₀ * (ε' ^ p / (ε' + L)) = c₀ * ε' ^ p / (ε' + L) := by ring
     rw [e1, e2]
-    exact div_le_div₀ (mul_nonneg repConst₀_pos.le (pow_nonneg hε'0.le _))
-      (mul_le_mul_of_nonneg_left hnum repConst₀_pos.le) h1 hden
+    exact div_le_div₀ (mul_nonneg hc₀.le (pow_nonneg hε'0.le _))
+      (mul_le_mul_of_nonneg_left hp hc₀.le) h1 hden
   have hk0 : (0 : ℝ) ≤ k := by positivity
   have hmul := mul_le_mul_of_nonneg_right hkey hk0
-  rw [← hε']
-  calc -(repConst₀ * (ε' ^ 13 / (ε' + L))) * (k : ℝ)
-      = -(repConst₀ * (ε' ^ 13 / (ε' + L)) * (k : ℝ)) := by ring
-    _ ≤ -(repConst * ε ^ 13 / ((B : ℝ) + 1) * (k : ℝ)) := by
+  calc -(c₀ * (ε' ^ p / (ε' + L))) * (k : ℝ)
+      = -(c₀ * (ε' ^ p / (ε' + L)) * (k : ℝ)) := by ring
+    _ ≤ -(c₀ / (1 + 2 * Real.log 3) * ε ^ 13 / ((B : ℝ) + 1) * (k : ℝ)) := by
         rw [neg_le_neg_iff]; exact hmul
-    _ = -(repConst * ε ^ 13 * (k : ℝ) / ((B : ℝ) + 1)) := by ring
+    _ = -(c₀ / (1 + 2 * Real.log 3) * ε ^ 13 * (k : ℝ) / ((B : ℝ) + 1)) := by ring
+
+/-- **Game-level soundness of direct repetition**, in the form of `Repetition.soundness`: for a
+game with answers of length at most `B`, `val*(G) ≤ 1 - ε` gives
+`val*(G^{⊗k}) ≤ exp(-c' ε^{13} k / (B + 1))`. -/
+theorem quantumValue_repeat_le_soundBound {X : Type} [Fintype X] {B : ℕ}
+    (G : Game X X (Answers B) (Answers B)) {ε : ℝ} (hε : 0 < ε)
+    (hG : quantumValue G ≤ 1 - ε) {k : ℕ} (hk : 0 < k) :
+    quantumValue (G.repeat k) ≤ Repetition.soundBound repConst ε k B := by
+  have hεε' : ε ≤ 1 - quantumValue G := by linarith
+  have hε'1 : 1 - quantumValue G ≤ 1 := by linarith [quantumValue_nonneg G]
+  exact (quantumValue_repeat_le_spec X X (Answers B) (Answers B) G inferInstance inferInstance
+    (lt_of_lt_of_le hε hεε') k hk).trans
+    (exp_le_soundBound repConst₀_pos hε hεε' hε'1 (pow_le_pow_left₀ hε.le hεε' 13) B k)
+
+/-- **The direct repetition bound in a value model**, at the constant `c`: for every game on a
+nonempty question set with answers of length at most `B`, `ω(G) ≤ 1 - ε` gives
+`ω(G^{⊗k}) ≤ exp(-c ε^13 k / (B + 1))` for every `k ≥ 1`. The verifier-level soundness of
+parallel repetition in `ω` is this and nothing else (`MIPRE.val_repVerifier_le`). The
+tensor-product model has it at `repConst` (`gameSoundIn_tensor`), the commuting-operator model
+at `repConstCo` (`gameSoundIn_commuting`, in `VerifierCo.lean`). -/
+def GameSoundIn (ω : ValueModel) (c : ℝ) : Prop :=
+  ∀ (X : Type) [Fintype X] [Nonempty X] (B : ℕ) (G : Game X X (Answers B) (Answers B)) (ε : ℝ),
+    0 < ε → ω.val G ≤ 1 - ε → ∀ k : ℕ, 0 < k → ω.val (G.repeat k) ≤ soundBound c ε k B
+
+/-- The direct repetition bound survives lowering the constant. -/
+theorem GameSoundIn.mono {ω : ValueModel} {c c' : ℝ} (h : GameSoundIn ω c') (hc : c ≤ c') :
+    GameSoundIn ω c := by
+  intro X _ _ B G ε hε hG k hk
+  exact (h X B G ε hε hG k hk).trans (soundBound_anti hc hε.le k B)
+
+/-- The tensor-product model has the direct repetition bound at `repConst`. -/
+theorem gameSoundIn_tensor : GameSoundIn .tensor repConst :=
+  fun _ _ _ _ G _ hε hG _ hk => quantumValue_repeat_le_soundBound G hε hG hk
 
 end MIPRE.Repetition
 

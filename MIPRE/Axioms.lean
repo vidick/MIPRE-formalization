@@ -639,16 +639,11 @@ tell you the guard is missing.
   MIPRE.SeededGame.soundStrategy_value_ge
 
 -- blueprint `lem:oracular-soundness-tensor`: soundness of oracularization for arbitrary
--- tensor-product strategies, the form `Verifier.valStar` needs, with the synchronous constant.
+-- tensor-product strategies, the form `Verifier.valStar` needs, with the synchronous constant —
+-- the model-level `lem:oracular-soundness-model` in the tensor-product model.
 #guard_sorry_free MIPRE.SeededGame.tensorSound,
   MIPRE.SeededGame.tensorSound_value_ge,
-  MIPRE.SeededGame.quantumValue_ge_of_oracular,
-  MIPRE.sum_snorm_sq_ge_of_close,
-  MIPRE.sum_snorm_sq_chain,
-  MIPRE.SeededGame.sum_snorm_sq_joint_le,
-  MIPRE.SeededGame.succAt_oracle_le,
-  MIPRE.SeededGame.succAt_tensorSound_ge,
-  MIPRE.SeededGame.sum_failAt_four_le
+  MIPRE.SeededGame.quantumValue_ge_of_oracular
 
 -- blueprint `lem:oracular-typed-transfers`: the typed oracularized game of a normal form
 -- verifier, in the vocabulary of the detyping compiler, and its two value transfers.
@@ -2818,6 +2813,80 @@ the three stages' clauses, `cor:mipco-from-stages` (`MIPRE/MIPCo.lean`). -/
 
 #guard_sorry_free MIPRE.Pipeline.output_val_le,
   MIPRE.GapCompression.ofPipeline_sound,
-  MIPRE.mipco_eq_core_of_stages
+  MIPRE.mipco_eq_core_of_stages,
+  MIPRE.gapCompressionCo
+
+/-! The commuting-operator track, Phase 2 (`planning/mipco-track.md` §5): strategies in a model
+read in `ω_co`, `lem:model-strategy-co` (`MIPRE/Foundations/CommutingModel.lean`); the
+repetition bound in `ω_co` and parallel repetition sound there, `lem:repetition-sound-bound-co`
+and `thm:parallel-repetition-co` (`MIPRE/Background/Repetition/Soundness.lean`, `Verifier.lean`,
+`VerifierCo.lean`, `MIPRE/Foundations/Pipeline/Repetition.lean`); oracularization in a bipartite model and in
+`ω_co`, `lem:oracular-soundness-model` and `lem:oracular-soundness-co`
+(`MIPRE/Foundations/OracularModel.lean`); post-processing and detyping in a model,
+`lem:transports-model` (`MIPRE/Foundations/OracularModel.lean`,
+`MIPRE/Foundations/CL/DetypingModel.lean`); and oracularization sound in both value models,
+`thm:oracularization-in-model` (`MIPRE/Foundations/OracularValue.lean`,
+`MIPRE/Foundations/Pipeline/Oracularization.lean`). -/
+#guard_sorry_free MIPRE.BipartiteModel.toCommuting,
+  MIPRE.BipartiteModel.correlation_toCommuting,
+  MIPRE.BipartiteModel.value_toCommuting,
+  MIPRE.BipartiteModel.povmValue_le_commutingOperatorValue,
+  MIPRE.IsPVMIn.of_map,
+  MIPRE.IsPVMIn.of_isStarProjection,
+  MIPRE.CommutingOperatorStrategy.isPVMIn_aliceMeas,
+  MIPRE.CommutingOperatorStrategy.isPVMIn_bobMeas,
+  MIPRE.exists_isPVMIn_lt_povmValue
+
+#guard_sorry_free MIPRE.Repetition.exp_le_soundBound,
+  MIPRE.Repetition.repConstCo,
+  MIPRE.Repetition.commutingOperatorValue_repeat_le_soundBound,
+  MIPRE.Repetition.GameSoundIn,
+  MIPRE.Repetition.GameSoundIn.mono,
+  MIPRE.Repetition.gameSoundIn_tensor,
+  MIPRE.Repetition.gameSoundIn_commuting
+
+#guard_sorry_free MIPRE.val_repVerifier,
+  MIPRE.val_repVerifier_le,
+  MIPRE.Repetition.soundBound_anti,
+  MIPRE.Repetition.withConst,
+  MIPRE.Repetition.SoundIn.withConst,
+  MIPRE.repetition_withConst_soundIn,
+  MIPRE.Repetition.repConstBoth,
+  MIPRE.repetitionCo,
+  MIPRE.repetitionCo_soundIn_commuting
+
+#guard_sorry_free MIPRE.SeededGame.povmValue_sound_ge,
+  MIPRE.StateModel.sum_snorm_sq_ge_of_close,
+  MIPRE.StateModel.sum_snorm_sq_eq_one_of_isPVMIn,
+  MIPRE.BipartiteModel.sum_snorm_sq_chain,
+  MIPRE.SeededGame.oracleView,
+  MIPRE.SeededGame.isPVMIn_oracleJoint,
+  MIPRE.SeededGame.sum_snorm_sq_joint_le,
+  MIPRE.SeededGame.condWin_oracle_le,
+  MIPRE.SeededGame.condWin_sound_ge,
+  MIPRE.SeededGame.sum_condFail_four_le,
+  MIPRE.SeededGame.commutingOperatorValue_ge_of_oracular
+
+#guard_sorry_free MIPRE.BipartiteModel.povmValue_le_postprocess,
+  MIPRE.quantumValue_le_postprocess,
+  MIPRE.commutingOperatorValue_le_postprocess,
+  MIPRE.SampledGame.one_sub_povmValue,
+  MIPRE.CL.Detyping.restrict_condFail_eq,
+  MIPRE.CL.Detyping.typed_failure_povm,
+  MIPRE.CL.Detyping.failure_povm,
+  MIPRE.CL.Detyping.restrict_failure_eq_povm,
+  MIPRE.CL.Detyping.restrict_failure_le_povm,
+  MIPRE.CL.Detyping.restrict_povmValue_ge,
+  MIPRE.one_sub_mul_one_sub_iSup_le,
+  MIPRE.CL.Detyping.quantumValue_typedGame_ge,
+  MIPRE.CL.Detyping.commutingOperatorValue_typedGame_ge
+
+#guard_sorry_free MIPRE.ValueModel.tensor_oracularSound,
+  MIPRE.ValueModel.commuting_oracularSound,
+  MIPRE.ValueModel.OracularSound.typedGame_ge_ambient,
+  MIPRE.SeededGame.val_typedGame_le,
+  MIPRE.Verifier.val_ge_of_typed,
+  MIPRE.Oracularization.typed_soundness_val,
+  MIPRE.Oracularization.detyped_soundness_val
 
 end

@@ -1,12 +1,13 @@
 # The commuting-operator class, `MIP^co = coRE`: plan
 
 **Status: Phase 0 done (#235, #236), made generic in #239; Phase 1 done (#241, #243, #245);
-Phases 2–6 planned around generalizing the existing analyses
+Phase 2 done (#247); Phases 3–6 planned around generalizing the existing analyses
 (`reports/co-generalization-audit.md`).** The conditional theorem — `MIP^co = coRE` given the
 commuting-operator soundness of gap compression — is in, with all of its plumbing, written once
-for both values, and since Phase 1 it follows from the three stages' soundness clauses read in
-`ω_co` (`MIPRE.mipco_eq_core_of_stages`). The operator calculus of the stage analyses is proved
-once over a bipartite model, with the matrix layer as its tensor-product instance.
+for both values. Since Phase 2 it follows from the soundness clauses of introspection and answer
+reduction read in `ω_co` (`MIPRE.mipco_eq_core_of_stages`), parallel repetition's being proved.
+The operator calculus of the stage analyses is proved once over a bipartite model, with the
+matrix layer as its tensor-product instance, and so is the soundness of oracularization.
 
 Written 2026-09-28, after the explicit separation (#222) and the paper's class (#230–#233).
 Target: Lin's theorem `MIP^co = coRE` (`Lin25`, arXiv:2510.07162, STOC 2026), proved by
@@ -92,14 +93,14 @@ Piece by piece:
 | tabulation and semidecider plumbing | `tab`, `tab_computable`, `tab_match`; their `ω_co` readings | Phase 0 |
 | compression completeness, model `co` | not needed (§3): the tensor completeness `GapCompression.completeness` is what the criterion consumes | — |
 | compression soundness, model `co` | `GapCompression.Sound ValueModel.commuting`, a hypothesis | Phases 1–6 |
-| parallel repetition, model `co` | `thm:direct-repetition-co`, vendored and sorry-free (`MIPRE.Repetition.commutingOperatorValue_repeat_le`); direct, not anchored (§6 item 8) | done |
+| parallel repetition, model `co` | `thm:direct-repetition-co`, vendored and sorry-free (`MIPRE.Repetition.commutingOperatorValue_repeat_le`); direct, not anchored (§6 item 8); at the verifier level `MIPRE.repetitionCo_soundIn_commuting` (`thm:parallel-repetition-co`) | done (verifier level: Phase 2) |
 | tracial density | `thm:tracial-density`, vendored (`MIPRE.Repetition.tracialDensity`) | done; not needed on the route of §5 |
 | rounding, model `co` | not formalized; `thm:almost-sync` is #22 (finite dimension) and #23 (commuting) | not needed on the route of §5: the analyses assume nothing synchronous |
 | tracial value at most bipartite value | `lem:tracial-le-co`, #29 | not on the critical path (§5); open for the Tsirelson chapter |
 | Pauli basis rigidity, model `co` | `thm:qld`, finite-dimensional; generalized over the model | Phase 5 |
 | introspection soundness, model `co` | `Introspection.seven`, finite-dimensional; generalized over the model | Phase 4 |
 | low-individual-degree test soundness, model `co` | not formalized; the vendored proof is finite-dimensional through and through | Phase 6, the one new theorem |
-| oracularization soundness, model `co` | `OracularTensor.lean`, finite-dimensional in its carrier only; generalized over the model | Phase 2 |
+| oracularization soundness, model `co` | generalized over the model (`OracularModel.lean`, `SeededGame.povmValue_sound_ge`), with `OracularTensor.lean` its tensor instance; `SeededGame.commutingOperatorValue_ge_of_oracular` | done (Phase 2) |
 
 ## 3. The dual criterion, and why co-completeness is not needed
 
@@ -351,6 +352,56 @@ clauses, `Background/Repetition/Verifier.lean` instantiated twice. The compositi
 on the introspection and answer-reduction clauses in `ω_co`.** No rounding, balancedness,
 density or tracial embedding anywhere. New: 2–3k lines.
 
+**Done (#247).** *Repetition.* The output's game is the repeated game in every value model
+(`val_repVerifier ω`: the two relabelings are `ValueModel.extendAnswers` and `eq_of_equiv`), so
+soundness in `ω` is the game-level bound in `ω` (`Repetition.GameSoundIn ω c`,
+`val_repVerifier_le`). `ω_co` has it at `repConstCo`, from the vendored theorem through the
+arithmetic the tensor bound already used (`Repetition.exp_le_soundBound`), and `val*` at
+`repConst`. The structure `Repetition` has one constant, which the compression uses to choose
+`τ`, and the two constants are unrelated `choose`s. So the co reading is
+`repetitionCo := (repetition ℓ).withConst (min repConst repConstCo)`: the same verifier, sound in
+both models (`repetitionCo_soundIn_commuting`). `MIPRE.gapCompressionCo` is the main theorem's
+pipeline with `repetitionCo 7`. The main theorem keeps `repetition 7`, so `MIP* = RE` does not
+import `CommutingRepetition` (56k lines) or depend on its constant.
+`mipco_eq_core_of_stages hI hA` is the new statement. The "`Repetition` interface with both
+clauses" of the plan is the structure's tensor field together with `SoundIn .commuting` for
+`repetitionCo`. A model-indexed field would have forced every instance, `repetition` included,
+to supply the co clause.
+
+*Oracularization.* `OracularModel.lean` is `OracularTensor.lean` over a bipartite model with
+projective families (`SeededGame.povmValue_sound_ge`). The six projectivity uses are
+hypotheses: the front factors of the chain, the oracle's joint marginal, and the Born
+probabilities as squared masses. `OracularTensor.lean` keeps `tensorSound`,
+`tensorSound_value_ge` and `quantumValue_ge_of_oracular`, derived at `tensor N.ψ`; its matrix
+intermediates are gone. `CommutingModel.lean` is the bridge the later phases will also use. A
+POVM strategy in a model is a commuting-operator strategy of the same value
+(`BipartiteModel.toCommuting`, `povmValue_le_commutingOperatorValue`). `ω_co` is approached by
+strategies that are projective *in their own model* (`exists_isPVMIn_lt_povmValue`), because
+projections summing to one are orthogonal in a C⋆-ring (`IsPVMIn.of_isStarProjection`) and
+`IsPVMIn` pulls back along the injective inclusions (`IsPVMIn.of_map`). With it,
+`SeededGame.commutingOperatorValue_ge_of_oracular` takes ten lines.
+
+The two transports of the verifier-level statement are restated in a model as well:
+question-dependent post-processing (`BipartiteModel.povmValue_le_postprocess`, the content of
+`quantumValue_typedGame_le`), and the detyping restriction (`CL.Detyping.restrict_povmValue_ge`
+in `CL/DetypingModel.lean`, with the tensor originals left in place). Each is read in both values,
+the affine detyping bound passing through the supremum (`one_sub_mul_one_sub_iSup_le`).
+The verifier level is written once. `ValueModel.OracularSound ω` bundles the three facts
+(post-processing, game-level soundness, finite detyping), `tensor_oracularSound` and
+`commuting_oracularSound` prove them, and `Oracularization.typed_soundness_val` and
+`detyped_soundness_val` are the clauses in `Verifier.val ω`. The tensor clauses are the case
+`.tensor`, and the ambient detyping goes through `ValueModel.eq_of_equiv` along the coordinate
+numbering (`OracularSound.typedGame_ge_ambient`). `OracularSound` is a property of the model,
+proved for each, and not a new field of `ValueModel`: the fields are what the halting reduction
+uses, and adding one would rebuild every consumer of the class. Phase 3 consumes the
+model-level statements (`povmValue_sound_ge`, `povmValue_le_postprocess`,
+`restrict_povmValue_ge`), since the answer-reduction chain works at the level of strategies.
+
+Measured: the whole library rebuilt downstream of these files in about 3 minutes, and a
+replayed full build takes seconds. New: ≈ 1.4k lines of Lean in five files, most of it the model
+restatement of the oracularization argument, against ≈ 0.7k matrix lines retired from
+`OracularTensor.lean`; blueprint section `sec:ds-mipco-phase2`, 8 nodes.
+
 **Phase 3 — answer reduction, with the low-individual-degree test as a model hypothesis**
 (report §3.2). The `Sound*` chain (≈ 4k B lines), the LIDT adapter (`Reduction`, `Padding`,
 `Extraction`, `Simultaneous`, ≈ 3.8k), `Bridge/Measurement` and the Foundations chain
@@ -486,7 +537,7 @@ end with a sharper conditional theorem, stated in `MIPRE/MIPCo.lean` and in blue
 |---|---|---|---|
 | C0 | Phase 0: the nested criterion, the `ω_co` transport, the value model and the generic halting layer, the conditional reduction, `MIPCo`, `MIPCo ⊆ coRE`, the blueprint | ~1k lines of Lean net | done: #236, then made generic in #239 |
 | C1 | Phase 1: the projective commuting-operator model, the dilation lemma, the operator calculus restated with the matrix layer as its instance, the stage interfaces in `Verifier.val ω` | 3k–5k new, ≈ 10k restated | done (#240): (a) #241; (b) #243, #245; (c) #245 |
-| C2 | Phase 2: oracularization, repetition and the composition in the model; `mipco_eq_core` conditional on the introspection and answer-reduction clauses in `ω_co` | 2k–3k | open |
+| C2 | Phase 2: oracularization, repetition and the composition in the model; `mipco_eq_core` conditional on the introspection and answer-reduction clauses in `ω_co` | 2k–3k | done (#247) |
 | C3 | Phase 3: answer reduction in the model with `LIDTSoundness` as the hypothesis | 8k–10k touched | open |
 | C4 | Phase 4: introspection in the model with `QLDSoundness` as the hypothesis | ≈ 20k touched | open |
 | C5 | Phase 5: the Pauli basis test in the model; `mipco_eq_core` conditional on the commuting LIDT soundness alone | ≈ 25k touched | open |
