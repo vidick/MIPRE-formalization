@@ -50,7 +50,6 @@ public import MIPRE.Background.Introspection.BinarySampled
 public import MIPRE.Background.Introspection.CanonicalComplete
 public import MIPRE.Background.Introspection.CanonicalDecodedStrategy
 public import MIPRE.Background.Introspection.CanonicalGame
-public import MIPRE.Background.Introspection.CanonicalSoundness
 public import MIPRE.Background.Introspection.CompiledSoundness
 public import MIPRE.Background.Introspection.Compiler
 public import MIPRE.Background.Introspection.CompleteAnchors
