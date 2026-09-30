@@ -19,10 +19,17 @@ strategy's value, and the two corollaries at the end are what the combining stag
 the expansion stage's estimates, proved about **Alice's** measurements, hold for **Bob's** as
 well, with the same constants and no second proof.
 
-The device is `swapVec`: a statement about `stateVec (hatVec (swapVec psi))` is one about
-`stateVecB (hatVec psi)`, because the expanded state's two halves are exchanged by the swap
-(`hatVec_swapVec`, which needs the maximally entangled ancilla to be symmetric ---
-`MIPRE.Weyl.swapVec_epr`).
+## In a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). Exchanging the players is
+`BipartiteModel.swap`: the same state model with the two players' algebras exchanged, so a
+statement about the first player of `M.swap` is one about the second player of `M`, with no
+reindexing of vectors (the matrix route's `swapVec`). The expanded model of the swapped strategy
+is `M.swap.reg (Anc F m)`, whose first player holds the first half of the EPR register; the swap
+of the expanded model, `(M.reg (Anc F m)).swap`, gives the second player the second half. The two
+read one state, the EPR vector being symmetric, through the local isometry
+`BipartiteModel.regSwap` that exchanges the halves (`hatVec_swapVec` and its companions, the model
+form of `hatVec (swapVec ψ) = swapVec (hatVec ψ)`).
 -/
 
 noncomputable section
@@ -100,53 +107,76 @@ theorem qldGame_mu_symm (hm : m ∣ Fintype.card F) (x y : Question F m) :
 
 /-! ## The value of a swapped strategy -/
 
-variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
 
-/-- **Exchanging the two players leaves the value of a strategy unchanged.** -/
-theorem povmValue_qldGame_swapVec (hm : m ∣ Fintype.card F) (ψ : dA × dB → ℂ)
-    (MA : Question F m → POVM (Answer F m d) dA)
-    (MB : Question F m → POVM (Answer F m d) dB) :
-    povmValue (qldGame hm) (swapVec ψ) MB MA = povmValue (qldGame hm) ψ MA MB :=
-  povmValue_swapVec_of_symm ψ MA MB (qldGame_mu_symm hm) fun x y a b => accepts_symm hm x y a b
+/-- **Exchanging the two players leaves the value of a strategy unchanged**: the exchanged
+strategy in the swapped model has the value of the strategy in the model. -/
+theorem povmValue_qldGame_swapVec (hm : m ∣ Fintype.card F) (M : BipartiteModel 𝒞 𝒜 ℬ)
+    (PA : Question F m → POVMIn (Answer F m d) 𝒜)
+    (PB : Question F m → POVMIn (Answer F m d) ℬ) :
+    M.swap.povmValue (qldGame hm) PB PA = M.povmValue (qldGame hm) PA PB :=
+  M.povmValue_swap_of_symm PA PB (qldGame_mu_symm hm) fun x y a b => accepts_symm hm x y a b
 
-/-- The expanded state's two halves are exchanged by the swap. -/
-theorem hatVec_swapVec (ψ : dA × dB → ℂ) :
-    hatVec (F := F) (m := m) (swapVec ψ) = swapVec (hatVec (F := F) (m := m) ψ) := by
-  rw [hatVec, hatVec, swapVec_expVec, swapVec_epr]
+/-- **The expanded model of the swapped strategy reads the expanded state with the players
+exchanged**: a second-player operator on the register model of `M` has, as a first-player operator
+of the register model of `M.swap`, the same state norm. The model form of
+`hatVec (swapVec ψ) = swapVec (hatVec ψ)`: the local isometry exchanging the two halves of the
+EPR register carries the one state to the other exactly (`BipartiteModel.regSwap_W_ψ`). -/
+theorem hatVec_swapVec (M : BipartiteModel 𝒞 𝒜 ℬ) (Y : Matrix (Anc F m) (Anc F m) ℬ) :
+    (M.swap.reg (Anc F m)).stateSqNorm Y = (M.reg (Anc F m)).swap.stateSqNorm Y :=
+  M.regSwap.stateSqNorm_of_W_ψ M.regSwap_W_ψ Y
+
+/-- The same reading for a cross-party deviation. -/
+theorem hatVec_swapVec_xSqNorm (M : BipartiteModel 𝒞 𝒜 ℬ) (X : Matrix (Anc F m) (Anc F m) 𝒜)
+    (Y : Matrix (Anc F m) (Anc F m) ℬ) :
+    (M.swap.reg (Anc F m)).xSqNorm Y X = (M.reg (Anc F m)).xSqNorm X Y := by
+  rw [← (M.reg (Anc F m)).xSqNorm_swap]
+  exact M.regSwap.xSqNorm_of_W_ψ M.regSwap_W_ψ Y X
+
+/-- The same reading for a Born probability. -/
+theorem hatVec_swapVec_bornProb (M : BipartiteModel 𝒞 𝒜 ℬ) (X : Matrix (Anc F m) (Anc F m) 𝒜)
+    (Y : Matrix (Anc F m) (Anc F m) ℬ) :
+    (M.swap.reg (Anc F m)).bornProb Y X = (M.reg (Anc F m)).bornProb X Y := by
+  rw [← (M.reg (Anc F m)).bornProb_swap]
+  exact M.regSwap.bornProb_of_W_ψ M.regSwap_W_ψ Y X
 
 /-! ## The expansion stage, for the other player -/
 
-variable {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}
-  {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
+variable {hm : m ∣ Fintype.card F} {M : BipartiteModel 𝒞 𝒜 ℬ}
+  {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
   {ε : ℝ}
 
-theorem swapVec_unit (hψ : star ψ ⬝ᵥ ψ = 1) : star (swapVec ψ) ⬝ᵥ swapVec ψ = 1 := by
-  rw [swapVec_dotProduct]; exact hψ
+/-- The swapped model has the state of the model. -/
+theorem swapVec_unit (hM : ‖M.ψ‖ = 1) : ‖M.swap.ψ‖ = 1 := hM
 
-theorem povmValue_swapped_le (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
-    1 - povmValue (qldGame hm) (swapVec ψ) MB MA ≤ ε := by
+theorem povmValue_swapped_le (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) :
+    1 - M.swap.povmValue (qldGame hm) PB PA ≤ ε := by
   rw [povmValue_qldGame_swapVec]; exact hfail
 
 /-- **The commutation half of `lem:qld-expanded-points` for the other player.** Exactly
-`hatObs_commutation`, applied to the swapped strategy on the swapped state. -/
-theorem hatObs_commutation_swap (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
+`hatObs_commutation`, applied to the swapped strategy in the swapped model; the second player's
+measurements are the projective ones it needs. -/
+theorem hatObs_commutation_swap [StarModule ℂ ℬ] (hM : ‖M.ψ‖ = 1)
+    (hPB : ∀ q, IsPVMIn (PB q).op)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) :
     ∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *
-        ‖stateVec (hatVec (F := F) (m := m) (swapVec ψ))
-          (hatObs hm MB .X c * hatObs hm MB .Z c
-            - hatObs hm MB .Z c * hatObs hm MB .X c)‖ ^ 2
+        (M.swap.reg (Anc F m)).stateSqNorm
+          (hatObs hm PB .X c * hatObs hm PB .Z c - hatObs hm PB .Z c * hatObs hm PB .X c)
       ≤ 57676416 * ε :=
-  hatObs_commutation (MB := MA) (swapVec_unit hψ) (povmValue_swapped_le hfail)
+  hatObs_commutation (PB := PA) (swapVec_unit hM) hPB (povmValue_swapped_le hfail)
 
 /-- **The self-consistency half for the other player**, which is the same statement: the
 cross-party deviation is symmetric under exchanging the two parties. -/
-theorem hatPOVM_consistency_swap (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :
+theorem hatPOVM_consistency_swap [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ]
+    [StarProper ℬ] (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) (W : Bas) :
     ∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *
-        ∑ a : F, xSqNorm (hatVec (F := F) (m := m) (swapVec ψ))
-          (((hatPOVM hm MB W c).mats a).val) (((hatPOVM hm MA W c).mats a).val)
+        ∑ a : F, (M.swap.reg (Anc F m)).xSqNorm
+          ((hatPOVM hm PB W c).op a) ((hatPOVM hm PA W c).op a)
       ≤ 172 * ε :=
-  hatPOVM_consistency (MB := MA) (swapVec_unit hψ) (povmValue_swapped_le hfail) W
+  hatPOVM_consistency (PB := PA) (swapVec_unit hM) (povmValue_swapped_le hfail) W
 
 end MIPRE.QLD
 
