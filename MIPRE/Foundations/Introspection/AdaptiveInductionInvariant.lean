@@ -13,6 +13,10 @@ public import MIPRE.Foundations.Introspection.AdaptiveDecodedInvariant
 The invariant records a projective residual measurement on the actual
 remaining register, its exact ambient reconstruction, and support of every
 valid reported answer. Malformed answers remain part of the measurement.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the measurements are POVMs in
+the matrices over the registers with entries in an algebra `𝒜`, the first player's algebra of the
+auxiliary model, which grows by an ancilla from one stage to the next.
 -/
 
 noncomputable section
@@ -20,27 +24,26 @@ namespace MIPRE.Introspection
 open Finset Matrix Classical
 set_option linter.unusedSectionVars false
 
-variable {F ι A H : Type*} [Field F] [Fintype F] [DecidableEq F]
-  [Algebra (ZMod 2) F] [Fintype ι] [DecidableEq ι]
-  [Fintype A] [DecidableEq A] [Fintype H] [DecidableEq H] {ℓ : ℕ}
+variable {F ι A : Type*} [Field F] [Fintype F] [DecidableEq F]
+  [Algebra (ZMod 2) F] [Fintype ι] [DecidableEq ι] [Fintype A] [DecidableEq A] {ℓ : ℕ}
+variable {𝒜 : Type*} [Ring 𝒜] [StarRing 𝒜] [Algebra ℂ 𝒜] [StarModule ℂ 𝒜] [PartialOrder 𝒜]
+  [StarOrderedRing 𝒜] [StarProper 𝒜]
 
 /-- The concrete prefix invariant, including the support needed to recover
 the selected measurement after deterministic answer refinement. -/
 structure IntroPrefixInvariant (P : CL.CLFun F ι ℓ) (k : ℕ)
-    (N : POVM (Option ((ι → F) × A)) ((ι → F) × H)) where
+    (N : POVMIn (Option ((ι → F) × A)) (Matrix (ι → F) (ι → F) 𝒜)) where
   residual : (y : ι → F) →
-    POVM (Option ((ι → F) × A)) ((stageRemaining P k y → F) × H)
-  projective : ∀ y, IsPVM (fun a => ((residual y).mats a).val)
-  form : ∀ a, (N.mats a).val =
-    ∑ y, prefixResidualOp P k y ((residual y).mats a).val
-  support : ∀ y x a, P.outputPrefix k x ≠ y →
-    ((residual y).mats (some (x, a))).val = 0
+    POVMIn (Option ((ι → F) × A)) (Matrix (stageRemaining P k y → F) (stageRemaining P k y → F) 𝒜)
+  projective : ∀ y, IsPVMIn (residual y).op
+  form : ∀ a, N.op a = ∑ y, prefixResidualOp P k y ((residual y).op a)
+  support : ∀ y x a, P.outputPrefix k x ≠ y → (residual y).op (some (x, a)) = 0
 
 /-- Every projective full-answer measurement supplies the initial
 invariant on its original auxiliary space. -/
 def initialIntroPrefixInvariant (P : CL.CLFun F ι ℓ)
-    (N : POVM (Option ((ι → F) × A)) ((ι → F) × H))
-    (hN : IsPVM (fun a => (N.mats a).val)) : IntroPrefixInvariant P 0 N where
+    (N : POVMIn (Option ((ι → F) × A)) (Matrix (ι → F) (ι → F) 𝒜))
+    (hN : IsPVMIn N.op) : IntroPrefixInvariant P 0 N where
   residual := initialResidualPOVM P N
   projective := initialResidualPOVM_isPVM P N hN
   form := initialResidualPOVM_reassembly P N
