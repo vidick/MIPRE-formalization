@@ -439,6 +439,7 @@ public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing
 public import MIPRE.Background.LIDT.MIPStarRE.Quantum.Measurement
 public import MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB
 public import MIPRE.Background.LIDT.ModelSoundness
+public import MIPRE.Background.LIDT.ModelTransport
 public import MIPRE.Background.LIDT.Padding
 public import MIPRE.Background.LIDT.Presentation
 public import MIPRE.Background.LIDT.PresentationEmbed
@@ -1229,6 +1230,7 @@ public import MIPRE.Foundations.LowDegree.UnaryPrimePower
 public import MIPRE.Foundations.LowDegree.ZeroBasis
 public import MIPRE.Foundations.LowDegreeSandwich
 public import MIPRE.Foundations.Measurement
+public import MIPRE.Foundations.ModelIso
 public import MIPRE.Foundations.ModelOver
 public import MIPRE.Foundations.ModelStrategy
 public import MIPRE.Foundations.NCPoly.Basic
