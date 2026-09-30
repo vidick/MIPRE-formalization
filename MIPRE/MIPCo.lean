@@ -29,7 +29,7 @@ soundness clauses of the stages of the compression, of which parallel repetition
 answer reduction. It goes through `gapCompressionCo`, the main theorem's pipeline with the number
 of repetitions chosen against the smaller of the two repetition constants (`repetitionCo`), since
 the commuting-operator repetition theorem has a constant of its own; any gap compression sound
-in `ω_co` gives the theorem (`mipco_eq_core_of`).
+in `ω_co` gives the theorem (`Halting.mipco_eq_core_of`).
 
 This module sits beside `MIPRE/MainTheorem.lean`, which `MIPRE/Foundations/` does not import,
 because the hypothesis is about its `gapCompression`.
@@ -48,16 +48,11 @@ theorem core_subset_mipco (hco : gapCompression.Sound .commuting) {L : Set Cost.
     (h : IsCoRE L) : MIPCo L :=
   Halting.core_subset_mipclass_of_reduction .commuting (halting_reduction_commuting hco) h
 
-/-- **`MIP^co = coRE` from any gap compression sound in `ω_co`**: the halting reduction to the
-commuting-operator value and the upper semidecider. -/
-theorem mipco_eq_core_of (G : GapCompression) (hco : G.Sound .commuting) : MIPCo = IsCoRE :=
-  Halting.mipclass_eq_core_of_reduction .commuting ValueModel.commuting_upperRE
-    (Halting.halting_reduction_commuting_of G Cost.selfUniversal hco)
-
 /-- **`MIP^co = coRE`** (blueprint `thm:mipco-eq-core`), given the commuting-operator soundness
 of compression; `MIP^co ⊆ coRE` needs no hypothesis (`MIPCo.isCoRE`). -/
 theorem mipco_eq_core (hco : gapCompression.Sound .commuting) : MIPCo = IsCoRE :=
-  mipco_eq_core_of gapCompression hco
+  Halting.mipclass_eq_core_of_reduction .commuting ValueModel.commuting_upperRE
+    (halting_reduction_commuting hco)
 
 /-- **The compression of the commuting-operator theorem**: the pipeline of the main theorem's
 `gapCompression` — `Introspection.seven`, `AnswerReduction.answerReduction` — with the repetition
@@ -74,7 +69,7 @@ repetition's does (`repetitionCo_soundIn_commuting`). This is the form Phases 3 
 `planning/mipco-track.md` discharge, one clause at a time. -/
 theorem mipco_eq_core_of_stages (hI : Introspection.seven.SoundIn .commuting)
     (hA : AnswerReduction.answerReduction.SoundIn .commuting) : MIPCo = IsCoRE :=
-  mipco_eq_core_of gapCompressionCo
+  Halting.mipco_eq_core_of gapCompressionCo Cost.selfUniversal
     (GapCompression.ofPipeline_sound hI hA (repetitionCo_soundIn_commuting 7))
 
 end MIPRE

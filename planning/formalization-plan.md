@@ -1050,6 +1050,18 @@ and not re-proved (blueprint `rem:model-calculus`). `ω_co` is a supremum of mod
 `MIPRE.mipco_eq_core_of_stages` proves `MIP^co = coRE` from the introspection, answer-reduction
 and repetition clauses in `ω_co` (`cor:mipco-from-stages`), which Phases 2–5 discharge one at a
 time.
+Phase 2 is done (#247). Parallel repetition is sound in `ω_co`
+(`MIPRE.repetitionCo_soundIn_commuting`, blueprint `thm:parallel-repetition-co`), from the
+vendored `thm:direct-repetition-co` through a verifier-to-game bridge that is value-independent.
+The commuting-operator theorem has its own constant, so the compression of the co theorem is the
+main theorem's with the number of repetitions chosen against the smaller of the two constants
+(`MIPRE.gapCompressionCo`). `MIP* = RE` keeps its own constant and does not depend on the
+commuting-operator theorem. So `mipco_eq_core_of_stages` now assumes only the introspection and
+answer-reduction clauses. Oracularization is proved once for projective strategies in a
+bipartite model, the matrix analysis being its tensor-product instance
+(`lem:oracular-soundness-model`), and holds in `ω_co` (`lem:oracular-soundness-co`). Its
+verifier-level soundness clauses hold in every value model with `ValueModel.OracularSound`, which
+both models have (`thm:oracularization-in-model`): that is the input Phase 3 needs.
 
 ## Working rules for this track
 

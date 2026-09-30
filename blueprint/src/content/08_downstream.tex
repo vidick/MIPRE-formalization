@@ -976,21 +976,25 @@ $\frac12$. This is the argument of Theorem~\ref{thm:mipstar-eq-re} with the two 
 exchanged, and in Lean the two are the same theorem in the two shapes.
 \end{proof}
 
-\begin{corollary}[$\MIPco = \coRE$, from the co-soundness of the three stages]
+\begin{corollary}[$\MIPco = \coRE$, from the co-soundness of introspection and answer reduction]
 \label{cor:mipco-from-stages}
-\uses{thm:mipco-eq-core,thm:pipeline-sound-in,thm:compression-target}
-\lean{MIPRE.mipco_eq_core_of_stages}
+\uses{thm:mipco-eq-core,thm:pipeline-sound-in,thm:compression-target,
+  thm:parallel-repetition-co}
+\lean{MIPRE.mipco_eq_core_of_stages, MIPRE.gapCompressionCo}
 \leanok
-If the introspection, the answer reduction and the parallel repetition of
-Theorem~\ref{thm:compression-target} are sound in the model $\omegaco$
-(Definition~\ref{def:stage-sound-in}), then $\MIPco = \coRE$.
+If the introspection and the answer reduction of Theorem~\ref{thm:compression-target} are sound
+in the model $\omegaco$ (Definition~\ref{def:stage-sound-in}), then $\MIPco = \coRE$.
 \end{corollary}
 
 \begin{proof}
 \leanok
-The gap compression of Theorem~\ref{thm:compression-target} is built from those three stages, so
-it is sound in $\omegaco$ by Theorem~\ref{thm:pipeline-sound-in}, and
-Theorem~\ref{thm:mipco-eq-core} applies.
+Build the gap compression of Theorem~\ref{thm:compression} from those two stages and the parallel
+repetition of Theorem~\ref{thm:parallel-repetition-co}, which is sound in $\omegaco$: it is the
+compression of Theorem~\ref{thm:compression-target} with the number of repetitions chosen against
+the smaller of the two repetition constants. It is sound in $\omegaco$ by
+Theorem~\ref{thm:pipeline-sound-in}, and the argument of Theorem~\ref{thm:mipco-eq-core}, which
+uses of the compression only its soundness in $\omegaco$ and its tensor completeness, applies to
+it.
 \end{proof}
 
 \begin{remark}[What is shared, what remains, and which commuting value this is]
@@ -1023,15 +1027,18 @@ correlations are dense in $C_{qc}$ (Theorem~\ref{thm:tracial-density}), through 
 of almost-synchronous correlations for balanced games, the rigidity of the Pauli basis test
 and the soundness of the low-individual-degree test in that setting~\cite{Lin23,Lin25};
 parallel repetition in the commuting-operator model is
-Theorem~\ref{thm:direct-repetition-co}, already formalized. The commuting-operator
+Theorem~\ref{thm:direct-repetition-co}, and its verifier-level reading is
+Theorem~\ref{thm:parallel-repetition-co}. The commuting-operator
 \emph{completeness} of compression is never needed: the nested criterion asks the
 compressor to preserve perfect PCC strategies, which the tensor completeness does, and the
 class of value $1$ is entered only through the semidecider. The hypothesis splits into the
-three stages' soundness clauses in $\omegaco$ (Corollary~\ref{cor:mipco-from-stages}), and the
+stages' soundness clauses in $\omegaco$, of which parallel repetition's is proved, so what
+remains is introspection's and answer reduction's (Corollary~\ref{cor:mipco-from-stages}). The
 plan is to prove each by generalizing the existing stage analysis over the projective
 commuting-operator model of Section~\ref{sec:ds-mipco-projective} rather than to re-prove it,
 with the tensor-product strategies as an instance; the operator calculus those analyses use is
-already restated there (Remark~\ref{rem:model-calculus}). Sizes, phases and the delicate points
+already restated there (Remark~\ref{rem:model-calculus}), and so is oracularization, the step
+inside answer reduction (Section~\ref{sec:ds-mipco-phase2}). Sizes, phases and the delicate points
 are in \texttt{planning/mipco-track.md}, and the audit that fixed the model is
 \texttt{reports/co-generalization-audit.md}.
 \end{remark}
@@ -1290,6 +1297,265 @@ and not re-proved. So a bound proved there for tensor-product strategies holds v
 measurements of a commuting-operator strategy in its model (Lemma~\ref{lem:co-value-model}),
 which is what Phases 2 to 5 use to read each stage's soundness clause in $\omegaco$.
 \end{remark}
+
+\subsubsection{Parallel repetition and oracularization in the model}
+\label{sec:ds-mipco-phase2}
+
+Phase 2 of \texttt{planning/mipco-track.md} reads two stages in $\omegaco$. Parallel repetition
+is sound in $\omegaco$ (Theorem~\ref{thm:parallel-repetition-co}), so
+Corollary~\ref{cor:mipco-from-stages} is left with two hypotheses. Oracularization, the step
+inside answer reduction whose analysis the next phase consumes, is proved once for projective
+strategies in a bipartite model and read in both values
+(Lemmas~\ref{lem:oracular-soundness-model} and~\ref{lem:oracular-soundness-co},
+Theorem~\ref{thm:oracularization-in-model}). Both rest on one bridge between the model and
+$\omegaco$.
+
+\begin{lemma}[Strategies in a model, read in $\omegaco$]
+\label{lem:model-strategy-co}
+\uses{def:bipartite-model,lem:co-value-model,thm:co-value-projective,def:co-projective}
+\lean{MIPRE.BipartiteModel.toCommuting, MIPRE.BipartiteModel.correlation_toCommuting,
+  MIPRE.BipartiteModel.value_toCommuting,
+  MIPRE.BipartiteModel.povmValue_le_commutingOperatorValue, MIPRE.IsPVMIn.of_map,
+  MIPRE.IsPVMIn.of_isStarProjection, MIPRE.CommutingOperatorStrategy.isPVMIn_aliceMeas,
+  MIPRE.CommutingOperatorStrategy.isPVMIn_bobMeas, MIPRE.exists_isPVMIn_lt_povmValue}
+\leanok
+Let $(\mH, \psi, \alg, \alg_A, \alg_B)$ be a bipartite model with a unit state and star-ordered
+player algebras, and let $\{M^x_a\}$ and $\{N^y_b\}$ be families of POVMs in $\alg_A$ and
+$\alg_B$. The operators $\pi(\pi_A(M^x_a))$ and $\pi(\pi_B(N^y_b))$ form a commuting-operator
+strategy whose value in any game is the model's value of the two families, so that value is at
+most $\omegaco$. Conversely, for every $t \geq 0$ with $t < \omegaco(\game)$ there is a
+commuting-operator strategy whose measurements are projective measurements in the two algebras
+of its own model and whose value there exceeds $t$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+A $*$-homomorphism of star-ordered algebras preserves positivity, sums and commutation, and the
+model's Born probability of $(M^x_a, N^y_b)$ is the correlation of the strategy at
+$(x, y, a, b)$. For the converse, take a projective strategy of value above $t$
+(Theorem~\ref{thm:co-value-projective}) and read its measurements in its model
+(Lemma~\ref{lem:co-value-model}). Its operators are projections summing to $\Id$, hence
+mutually orthogonal: conjugating $\sum_c P_c = \Id$ by $P_a$ makes the compressions
+$P_a P_c P_a = (P_c P_a)^*(P_c P_a)$, $c \neq a$, positive operators summing to $0$, so each
+vanishes, and then $P_c P_a = 0$ by the C$^*$-identity. The equations of a projective
+measurement hold in the commutants because they hold in $B(\mH)$, which the inclusions reflect.
+\end{proof}
+
+\begin{lemma}[The repetition bound in $\omegaco$, for answers of bounded length]
+\label{lem:repetition-sound-bound-co}
+\uses{thm:direct-repetition-co,lem:repetition-sound-bound,def:value-model}
+\lean{MIPRE.Repetition.repConstCo, MIPRE.Repetition.commutingOperatorValue_repeat_le_soundBound,
+  MIPRE.Repetition.GameSoundIn, MIPRE.Repetition.GameSoundIn.mono,
+  MIPRE.Repetition.gameSoundIn_tensor, MIPRE.Repetition.gameSoundIn_commuting}
+\leanok
+There is a universal constant $c'' > 0$ such that for every game $\game$ on a nonempty question
+set whose answer alphabets are the strings of length at most $B$, every $\eps > 0$ with
+$\omegaco(\game) \leq 1 - \eps$ and every $k \geq 1$,
+\begin{equation*}
+  \omegaco\bigl( \game^{k} \bigr) \;\leq\; \exp\Bigl( - \frac{c''\, \eps^{13}\, k}{B + 1} \Bigr)\;.
+\end{equation*}
+Say that a value model has the \emph{repetition bound at the constant $c$} if this holds with
+$\omegaco$ replaced by the model and $c''$ by $c$. The model $\valstar$ has it at the constant
+$c'$ of Lemma~\ref{lem:repetition-sound-bound}, the model $\omegaco$ at $c''$, and a model that
+has it at $c$ has it at every smaller constant.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Theorem~\ref{thm:direct-repetition-co} at $\eps' = 1 - \omegaco(\game) \geq \eps$, through the
+arithmetic of Lemma~\ref{lem:repetition-sound-bound}: its exponent is $\eps'^7$, and
+$\eps^{13} \leq \eps^7 \leq \eps'^7$ because $\eps \leq \eps' \leq 1$. Take
+$c'' = c / (1 + 2 \log 3)$ for the constant $c$ of Theorem~\ref{thm:direct-repetition-co}. The
+bound decreases as the constant grows.
+\end{proof}
+
+\begin{theorem}[Parallel repetition is sound in $\omegaco$]
+\label{thm:parallel-repetition-co}
+\uses{thm:parallel-repetition,lem:repetition-sound-bound-co,def:stage-sound-in,def:value-model}
+\lean{MIPRE.val_repVerifier, MIPRE.val_repVerifier_le, MIPRE.Repetition.soundBound_anti,
+  MIPRE.Repetition.withConst, MIPRE.Repetition.SoundIn.withConst,
+  MIPRE.repetition_withConst_soundIn, MIPRE.Repetition.repConstBoth, MIPRE.repetitionCo,
+  MIPRE.repetitionCo_soundIn_commuting}
+\leanok
+The procedure of Theorem~\ref{thm:parallel-repetition}, at the constant
+$\min(c', c'')$ of the two repetition bounds (Lemma~\ref{lem:repetition-sound-bound-co}), is
+sound in the model $\valstar$ and in the model $\omegaco$ (Definition~\ref{def:stage-sound-in}):
+for all $0 < \eps \leq 1$, $\omegaco(\verifier_n) \leq 1 - \eps$ at the parse length gives
+$\omegaco(\vrep_n) \leq \exp(-\min(c', c'')\, \eps^{13} k(n) / (B(n) + 1))$. More generally, in
+every value model the value of $\vrep_n$ is that of the $k(n)$-fold direct repetition of
+$\verifier_n$ at the parse length, so the procedure is sound in every model with the repetition
+bound at a constant at least its own.
+\end{theorem}
+
+\begin{proof}
+\leanok
+The value of $\vrep_n$ is the value of the repeated game in every model: the proof of
+Theorem~\ref{thm:parallel-repetition} identifies the two games up to an equivalence of the
+questions and the padding of the answers by always-rejected ones, and a value model is invariant
+under both (Definition~\ref{def:value-model}). So soundness in a model is the repetition bound
+in that model. Lowering the constant of the procedure keeps every clause, the bound being
+antitone in the constant; the procedure at $\min(c', c'')$ is the same verifier. The main
+theorem keeps the constant $c'$, so $\MIPstar = \RE$ does not depend on
+Theorem~\ref{thm:direct-repetition-co}.
+\end{proof}
+
+\begin{lemma}[Soundness of oracularization, in a bipartite model]
+\label{lem:oracular-soundness-model}
+\uses{def:oracular-game,def:bipartite-model,def:cross-distance}
+\lean{MIPRE.SeededGame.povmValue_sound_ge, MIPRE.StateModel.sum_snorm_sq_ge_of_close,
+  MIPRE.StateModel.sum_snorm_sq_eq_one_of_isPVMIn, MIPRE.BipartiteModel.sum_snorm_sq_chain,
+  MIPRE.SeededGame.oracleView, MIPRE.SeededGame.isPVMIn_oracleJoint,
+  MIPRE.SeededGame.sum_snorm_sq_joint_le, MIPRE.SeededGame.condWin_oracle_le,
+  MIPRE.SeededGame.condWin_sound_ge, MIPRE.SeededGame.sum_condFail_four_le}
+\leanok
+Let $S$ be a seeded game with nonempty seed space and nonempty answer alphabet, let
+$0 \leq \eps \leq 1$, and let $\{N^q_u\}$ and $\{N'^q_u\}$, one for each question $q$ of the
+oracularization of $S$, be projective measurements in the first and the second player's algebra
+of a bipartite model with a unit state, of model value at least $1 - \eps$ in the
+oracularization of $S$. Then the families in which the first player measures
+$\{N^{(\alice,\, x)}_a\}$ and the second $\{N'^{(\bob,\, y)}_b\}$, each relabelled so that the
+oracle-shaped answers are grouped into one fixed answer, have model value at least
+$1 - 24\sqrt{\eps}$ in the game of $S$.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:qld-combined-points}
+\leanok
+Fix a seed $z$ and write $O$ for the first player's measurement at $(\oracle, z)$, $O^\alice_u$
+and $O^\bob_v$ for its sums over the answers whose Alice, respectively Bob, component is $u$,
+respectively $v$, $C$ for the first player's measurement at $(\alice, L^\alice(z))$, and $P$, $Q$
+for the second player's at $(\alice, L^\alice(z))$ and $(\bob, L^\bob(z))$. In the model's
+algebra, $\pi_A(C_u)\pi_B(Q_v) - \pi_A(O^\alice_u O^\bob_v) = X_1 + X_2 + X_3$, where
+\begin{equation*}
+  X_1 = \pi_B(Q_v)(\pi_A(C_u) - \pi_B(P_u)), \quad
+  X_2 = \pi_B(Q_v)(\pi_B(P_u) - \pi_A(O^\alice_u)), \quad
+  X_3 = \pi_A(O^\alice_u)(\pi_B(Q_v) - \pi_A(O^\bob_v)),
+\end{equation*}
+because the two players' operators commute. The front factors are projective measurements, so
+summed over their outcome they cost nothing, and each of the three deviations is the cross-party
+inconsistency of one role pair --- $(\alice, \alice)$, $(\oracle, \alice)$, $(\oracle, \bob)$ ---
+at which acceptance forces the two answers compared to agree, so by the estimate of
+Definition~\ref{def:cross-distance} each is at most twice that pair's conditional failure. So
+$\delta_z = \sum_{u,v} \|\pi(\pi_A(C_u)\pi_B(Q_v) - \pi_A(O^\alice_u O^\bob_v))\psi\|^2$ is at
+most $6$ times the sum of the three conditional failures. Both
+$\{\pi_A(C_u)\pi_B(Q_v)\}$ and $\{\pi_A(O^\alice_u O^\bob_v)\}$ are projective measurements
+indexed by pairs, the second because distinct outcomes of $O$ are orthogonal, and on the pairs of
+isolated answers the input predicate accepts at $(L^\alice(z), L^\bob(z))$ the second carries at
+least the oracle's acceptance probability at $(\oracle, \oracle)$. The vector form of
+Lemma~\ref{lem:close-measurements-close-values} then puts the conditional value of the extracted
+families at the seed at least one minus the conditional failure at $(\oracle, \oracle)$ minus
+$2\sqrt{\delta_z}$. The four role pairs used are distinct and each carries a ninth of the
+question weight, so their conditional failures average to at most $9\eps$ in total, and with
+Cauchy--Schwarz taking the average inside the square root the value is at least
+$1 - 9\eps - 2\sqrt{54\eps} \geq 1 - 24\sqrt\eps$. Nothing here uses a dimension: projectivity
+is a hypothesis, and in the commuting-operator model it is supplied by
+Lemma~\ref{lem:model-strategy-co}. The matrix analysis of
+Lemma~\ref{lem:oracular-soundness-tensor} is this one in the tensor-product model.
+\end{proof}
+
+\begin{lemma}[Soundness of oracularization, in $\omegaco$]
+\label{lem:oracular-soundness-co}
+\uses{lem:oracular-soundness-model,lem:model-strategy-co,def:oracular-game,
+  def:co-value-bipartite}
+\lean{MIPRE.SeededGame.commutingOperatorValue_ge_of_oracular}
+\leanok
+Let $S$ be a seeded game with nonempty seed space and nonempty answer alphabet. For every
+$\eps > 0$, if $\omegaco$ of the oracularization of $S$ exceeds $1 - \eps$, then $\omegaco$ of
+the game of $S$ is at least $1 - 24\sqrt{\eps}$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+For $\eps \leq 1$, Lemma~\ref{lem:model-strategy-co} gives a commuting-operator strategy whose
+measurements are projective in its model and whose model value exceeds $1 - \eps$.
+Lemma~\ref{lem:oracular-soundness-model} in that model gives families of value at least
+$1 - 24\sqrt\eps$ in the game of $S$, and those families are a commuting-operator strategy
+(Lemma~\ref{lem:model-strategy-co}). For $\eps > 1$ the bound is negative.
+\end{proof}
+
+\begin{lemma}[Post-processing and detyping, in a model]
+\label{lem:transports-model}
+\uses{def:bipartite-model,lem:model-strategy-co,lem:detype-game-soundness,
+  def:co-value-bipartite}
+\lean{MIPRE.BipartiteModel.povmValue_le_postprocess, MIPRE.quantumValue_le_postprocess,
+  MIPRE.commutingOperatorValue_le_postprocess, MIPRE.SampledGame.one_sub_povmValue,
+  MIPRE.CL.Detyping.restrict_condFail_eq, MIPRE.CL.Detyping.typed_failure_povm,
+  MIPRE.CL.Detyping.failure_povm, MIPRE.CL.Detyping.restrict_failure_eq_povm,
+  MIPRE.CL.Detyping.restrict_failure_le_povm, MIPRE.CL.Detyping.restrict_povmValue_ge,
+  MIPRE.one_sub_mul_one_sub_iSup_le, MIPRE.CL.Detyping.quantumValue_typedGame_ge,
+  MIPRE.CL.Detyping.commutingOperatorValue_typedGame_ge}
+\leanok
+In a bipartite model with a unit state:
+\begin{enumerate}
+\item for two games on the same questions with the same distribution and maps
+  $r_A(x, \cdot)$, $r_B(y, \cdot)$ of the answers under which every accepted tuple of the first
+  stays accepted in the second, the families coarse-grained along $r_A$, $r_B$ have at least the
+  value in the second game that the original families have in the first;
+\item in the setting of Lemma~\ref{lem:detype-game-soundness}, families of value at least
+  $1 - \eps$ in the detyped game, read at the fixed graph views, have value at least
+  $1 - 16^{|T|}\eps$ in the typed game.
+\end{enumerate}
+Consequently both inequalities hold between the values $\valstar$, and between the values
+$\omegaco$, of the games.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Item 1: at each question pair the coarse-grained families accept a superset of the outcome
+pairs, with the same Born probabilities summed over the fibres. Item 2 is the proof of
+Lemma~\ref{lem:detype-game-soundness}, which uses of a strategy only its conditional failures,
+their nonnegativity and the averaging identity of a sampled game, all of which hold for families
+in a model. For the values, apply each item in the model of every strategy of the first game and
+take the supremum; for item 2 the transfer is affine, $v \mapsto 1 - 16^{|T|}(1 - v)$, and
+passes to the supremum. In $\omegaco$ the model is the strategy's own and the output families
+are a commuting-operator strategy (Lemma~\ref{lem:model-strategy-co}).
+\end{proof}
+
+\begin{definition}[Oracularization is sound in a value model]
+\label{def:oracular-sound-in}
+\uses{def:value-model,def:oracular-game,lem:detype-game-soundness}
+\lean{MIPRE.ValueModel.OracularSound}
+\leanok
+Oracularization is \emph{sound in the value model $\omega$} if $\omega$ has three properties of
+$\valstar$ that the value transfers of Theorem~\ref{thm:oracularization} use: the monotonicity
+of item 1 of Lemma~\ref{lem:transports-model}; the game-level soundness of oracularization, that
+$\omega$ of the oracularization of a seeded game above $1 - \eps$ puts $\omega$ of its game at
+least $1 - 24\sqrt\eps$; and the detyping restriction of item 2 of
+Lemma~\ref{lem:transports-model}, between the values of the typed and the detyped finite games.
+\end{definition}
+
+\begin{theorem}[Oracularization is sound in both models]
+\label{thm:oracularization-in-model}
+\uses{def:oracular-sound-in,thm:oracularization,lem:oracular-soundness-tensor,
+  lem:oracular-soundness-co,lem:transports-model,lem:oracular-typed-transfers,
+  lem:detype-program-strategies}
+\lean{MIPRE.ValueModel.tensor_oracularSound, MIPRE.ValueModel.commuting_oracularSound,
+  MIPRE.ValueModel.OracularSound.typedGame_ge_ambient, MIPRE.SeededGame.val_typedGame_le,
+  MIPRE.Verifier.val_ge_of_typed, MIPRE.Oracularization.typed_soundness_val,
+  MIPRE.Oracularization.detyped_soundness_val}
+\leanok
+Oracularization is sound in the models $\valstar$ and $\omegaco$
+(Definition~\ref{def:oracular-sound-in}). In every value model $\omega$ in which it is sound, the
+two soundness clauses of Theorem~\ref{thm:oracularization} hold with $\valstar$ replaced by
+$\omega$: if $\omega$ of the typed oracularized game of $\verifier_n$ exceeds $1 - \eps$, then
+$\omega(\verifier_n) \geq 1 - 24\sqrt\eps$ at the parse cut, and if $\omega$ of the detyped
+oracularized verifier at index $n$ exceeds $1 - \eps$ at the outer cut, then
+$\omega(\verifier_n) \geq 1 - 1536\sqrt\eps$.
+\end{theorem}
+
+\begin{proof}
+\leanok
+In $\valstar$ the three properties are Lemma~\ref{lem:oracular-soundness-tensor} and the value
+forms of Lemma~\ref{lem:transports-model}; in $\omegaco$ they are
+Lemma~\ref{lem:oracular-soundness-co} and the same value forms. The two clauses are then the
+proofs of Lemma~\ref{lem:oracular-typed-transfers} and of Theorem~\ref{thm:oracularization}, read
+in $\omega$: the typed game's value is at most the oracularization's, by the monotonicity and the
+equality of the two distributions; the game-level soundness bounds the input verifier; and the
+detyped verifier's game is the finite detyped game up to the numbering of its coordinates
+(Lemma~\ref{lem:detype-program-strategies}), on which the detyping restriction gives the typed
+game at least $1 - 16^3\eps$. The tensor-product clauses of Theorem~\ref{thm:oracularization}
+are the case $\omega = \valstar$.
+\end{proof}
 
 \subsection{Further directions}
 

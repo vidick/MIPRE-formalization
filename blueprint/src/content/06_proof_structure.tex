@@ -4057,7 +4057,7 @@ families are projective measurements and not sub-measurements.
 \end{theorem}
 \begin{proof}
 \uses{def:oracularization-contract,lem:oracle-typed-sampler,lem:oracle-typed-decider,
-  lem:oracle-decider-time,lem:oracular-typed-transfers,lem:detype-completeness}
+  lem:oracle-decider-time,lem:oracular-typed-transfers,lem:detype-completeness,def:value-model}
 \leanok
 The typed oracularized verifier is the pair of Lemma~\ref{lem:oracle-typed-sampler} and
 Lemma~\ref{lem:oracle-typed-decider}, and it inhabits the specification of
@@ -4205,12 +4205,9 @@ $\eps \leq \sqrt\eps$ for $\eps \leq 1$ and $2\sqrt{54} < 15$.
 
 \begin{lemma}[Soundness of oracularization, for bipartite strategies]
 \label{lem:oracular-soundness-tensor}
-\uses{def:oracular-game,def:tensor-strategy,def:q-value,def:cross-distance}
+\uses{def:oracular-game,def:tensor-strategy,def:q-value,lem:oracular-soundness-model}
 \lean{MIPRE.SeededGame.tensorSound, MIPRE.SeededGame.tensorSound_value_ge,
-  MIPRE.SeededGame.quantumValue_ge_of_oracular, MIPRE.sum_snorm_sq_ge_of_close,
-  MIPRE.sum_snorm_sq_chain, MIPRE.SeededGame.sum_snorm_sq_joint_le,
-  MIPRE.SeededGame.succAt_oracle_le, MIPRE.SeededGame.succAt_tensorSound_ge,
-  MIPRE.SeededGame.sum_failAt_four_le}
+  MIPRE.SeededGame.quantumValue_ge_of_oracular}
 \leanok
 Let $S$ be a seeded game with nonempty seed space and nonempty answer alphabet, let
 $0 \leq \eps \leq 1$, and let $N$ be a tensor-product strategy for the oracularization of $S$
@@ -4222,43 +4219,24 @@ every $\eps > 0$, if $\valstar$ of the oracularization of $S$ exceeds $1 - \eps$
 $\valstar$ of the game of $S$ is at least $1 - 24\sqrt{\eps}$.
 \end{lemma}
 \begin{proof}
-\uses{lem:cool-closeness-fact,lem:qld-combined-points}
+\uses{lem:oracular-soundness-model}
 \leanok
-A tensor-product strategy is projective, so no dilation is needed. Fix a seed $z$ and write, on
-the joint space, $O$ for the first player's measurement at $(\oracle, z)$, $O^\alice_u$ and
-$O^\bob_v$ for its sums over the answers whose Alice, respectively Bob, component is $u$,
-respectively $v$, $C$ for the first player's measurement at $(\alice, L^\alice(z))$, and $P$,
-$Q$ for the second player's at $(\alice, L^\alice(z))$ and $(\bob, L^\bob(z))$. Then
-$C_u \ot Q_v - O^\alice_u O^\bob_v \ot \Id = X_1 + X_2 + X_3$, where
-\begin{equation*}
-  X_1 = (\Id \ot Q_v)(C_u \ot \Id - \Id \ot P_u), \quad
-  X_2 = (\Id \ot Q_v)(\Id \ot P_u - O^\alice_u \ot \Id), \quad
-  X_3 = (O^\alice_u \ot \Id)(\Id \ot Q_v - O^\bob_v \ot \Id).
-\end{equation*}
-The front factors are projective measurements, so summed over their outcome they cost nothing,
-and each of the three deviations is the cross-party inconsistency of one role pair ---
-$(\alice, \alice)$, $(\oracle, \alice)$, $(\oracle, \bob)$ --- at which acceptance forces the two
-answers compared to agree; by the estimate of Definition~\ref{def:cross-distance} each is at most
-twice that pair's conditional failure. So
-$\delta_z = \sum_{u,v} \norm{(C_u \ot Q_v - O^\alice_u O^\bob_v \ot \Id)\ket{\psi}}^2$ is at most
-$6$ times the sum of the three conditional failures, with no square root. Both
-$\{C_u \ot Q_v\}$ and $\{O^\alice_u O^\bob_v \ot \Id\}$ are projective measurements indexed by
-pairs, and on the pairs of isolated answers the input predicate accepts at
-$(L^\alice(z), L^\bob(z))$ the second carries at least the oracle's acceptance probability at
-$(\oracle, \oracle)$, since $O^\alice_u O^\bob_v$ is the sum of the oracle's outcomes with those
-two components. The measurement-level form of
-Lemma~\ref{lem:close-measurements-close-values} (the paper's
-\texttt{fact:approx-implies-close-value}) then puts the conditional value of $\Sigma(N)$ at the
-seed at least one minus the conditional failure at $(\oracle, \oracle)$ minus $2\sqrt{\delta_z}$.
-The four role pairs used are distinct and each carries a ninth of the question weight, so their
-conditional failures average to at most $9\eps$ in total, and with Cauchy--Schwarz taking the
-average inside the square root, $\valstar \geq 1 - 9\eps - 2\sqrt{54\eps} \geq 1 - 24\sqrt\eps$.
-The paper's chain \texttt{eq:oracle-1} to \texttt{eq:oracle-3} is not needed: the oracle's
-measurement enters only through its joint marginal, so there is no marginalization step inside a
-pair-indexed family, and the second player's two isolated measurements are multiplied in one
-order only, so there is no commutation step. For the second statement, when $\eps \leq 1$ a
-strategy of value above $1 - \eps$ exists and the first applies; when $\eps > 1$ the bound is
-negative.
+A tensor-product strategy is projective, so no dilation is needed, and its measurements are
+projective measurements in the two factors of its tensor-product model
+(Definition~\ref{def:bipartite-model}). The first statement is
+Lemma~\ref{lem:oracular-soundness-model} in that model: $\Sigma(N)$ is the strategy whose
+measurements are the extracted families, on the same state, and its value is their model value.
+The argument there is the matrix one, written once for a bipartite model: the chain of three
+cross-party deviations behind projective front factors, each bounded by one role pair's
+conditional failure, the oracle's joint marginal carrying its acceptance, the single square root
+of the measurement form of Lemma~\ref{lem:close-measurements-close-values}, and the average over
+the seed of the four role pairs used, which gives
+$\valstar \geq 1 - 9\eps - 2\sqrt{54\eps} \geq 1 - 24\sqrt\eps$. The paper's chain
+\texttt{eq:oracle-1} to \texttt{eq:oracle-3} is not needed: the oracle's measurement enters only
+through its joint marginal, so there is no marginalization step inside a pair-indexed family, and
+the second player's two isolated measurements are multiplied in one order only, so there is no
+commutation step. For the second statement, when $\eps \leq 1$ a strategy of value above
+$1 - \eps$ exists and the first applies; when $\eps > 1$ the bound is negative.
 \end{proof}
 
 \begin{remark}[What the game-level clauses leave to the verifier level]
@@ -6127,7 +6105,7 @@ $\TIME_{\srep}(n) = \poly\bigl(k(n),
 \begin{proof}
 \leanok
 \uses{def:direct-repetition,thm:direct-repetition-q,lem:tensor-power-pcc,lem:repetition-sound-bound,
-  lem:cl-famsum,lem:smn}
+  lem:cl-famsum,lem:smn,def:value-model}
 The game $\vrep_n$ is $\verifier_n^{k(n)}$ at the truncated alphabet: its sampler runs
 $k(n)$ independent copies of $\sampler$ (a product of conditionally linear functions of the
 same level) and its decider runs $\decider$ on every coordinate. Completeness: the
