@@ -104,12 +104,20 @@ theorem samplerAgreement_reference (c : ℕ) (hc : 1 ≤ c) (he : Even c)
   · exact PauliSampler.finalSampler_dim_pos c hc he 7 lam n (by omega) (by omega)
   · exact PauliSampler.finalSampler_cl_pos c hc he 7 lam n (by omega) (by omega) w
 
+/-- The output verifier and the reference verifier have the same value at a positive index, in
+every value model. -/
+theorem val_reference (ω : ValueModel) (c : ℕ) (hc : 1 ≤ c) (he : Even c)
+    (U : ClockedUniversalMachine) (source : Prog × Prog) {lam n : ℕ}
+    (hl : 1 ≤ lam) (hn : 1 ≤ n) (B : ℕ) :
+    (output c hc he U source lam).val ω n B = (reference c hc he U source lam n).val ω n B :=
+  Verifier.val_congr_at ω (samplerAgreement_reference c hc he U source hl hn)
+    (accepts_reference c hc he U source hl hn)
+
 theorem valStar_reference (c : ℕ) (hc : 1 ≤ c) (he : Even c)
     (U : ClockedUniversalMachine) (source : Prog × Prog) {lam n : ℕ}
     (hl : 1 ≤ lam) (hn : 1 ≤ n) (B : ℕ) :
     (output c hc he U source lam).valStar n B = (reference c hc he U source lam n).valStar n B :=
-  Verifier.valStar_congr_at (samplerAgreement_reference c hc he U source hl hn)
-    (accepts_reference c hc he U source hl hn)
+  val_reference .tensor c hc he U source hl hn B
 
 theorem hasPerfectPCC_reference (c : ℕ) (hc : 1 ≤ c) (he : Even c)
     (U : ClockedUniversalMachine) (source : Prog × Prog) {lam n : ℕ}

@@ -9,7 +9,12 @@ public import MIPRE.Background.Introspection.AmbientRawGame
 
 @[expose] public section
 
-/-! # Decoding the actual compiled strategy into the canonical finite game -/
+/-! # Decoding the actual compiled strategy into the canonical finite game
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): decoding is question-dependent
+answer merging of a projective strategy in any model (`ProjStrat.mergeAnswersByQuestion`), so the
+decoded strategy lives in the same model.
+-/
 
 noncomputable section
 namespace MIPRE.Introspection.CanonicalDecoded
@@ -26,9 +31,13 @@ def decode (c lam n : ℕ) (q : Question c lam n)
   DecisionKernel.Answer.decode (CanonicalGame.field c lam n) (registerPower c lam n)
     (registerBits c lam n) ((2^n)^lam) q.1 a.val
 
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] {M : BipartiteModel 𝒞 𝒜 ℬ}
+
 abbrev strategy (c : ℕ) (hc : 1 ≤ c) (he : Even c) (U : ClockedUniversalMachine)
     (lam n : ℕ) (V : Verifier 7) (hs : V.sampler.dim (2^n) ≤ registerBits c lam n)
-    (S : TensorProductStrategy (rawGame c hc he U (V.sampler.prog,V.decider.prog) lam n)) :=
+    (S : M.ProjStrat (rawGame c hc he U (V.sampler.prog,V.decider.prog) lam n)) :=
   S.mergeAnswersByQuestion (CanonicalGame.quotient c hc he lam n V hs)
     (decode c lam n) (decode c lam n)
 
@@ -54,7 +63,7 @@ theorem accepts (c : ℕ) (hc : 1 ≤ c) (he : Even c) (U : ClockedUniversalMach
 theorem value_le (c : ℕ) (hc : 1 ≤ c) (he : Even c) (U : ClockedUniversalMachine)
     {lam n : ℕ} (V : Verifier 7) (hV : V.IsBounded lam) (hn : 1 ≤ n)
     (hc2 : 2 ≤ c) (hs : V.sampler.dim (2^n) ≤ registerBits c lam n)
-    (S : TensorProductStrategy (rawGame c hc he U (V.sampler.prog,V.decider.prog) lam n)) :
+    (S : M.ProjStrat (rawGame c hc he U (V.sampler.prog,V.decider.prog) lam n)) :
     S.value ≤ (strategy c hc he U lam n V hs S).value := by
   apply S.value_le_mergeAnswersByQuestion
     (CanonicalGame.quotient c hc he lam n V hs) (decode c lam n) (decode c lam n)
@@ -65,21 +74,19 @@ theorem value_le (c : ℕ) (hc : 1 ≤ c) (he : Even c) (U : ClockedUniversalMac
 theorem failure_le (c : ℕ) (hc : 1 ≤ c) (he : Even c) (U : ClockedUniversalMachine)
     {lam n : ℕ} (V : Verifier 7) (hV : V.IsBounded lam) (hn : 1 ≤ n)
     (hc2 : 2 ≤ c) (hs : V.sampler.dim (2^n) ≤ registerBits c lam n)
-    (S : TensorProductStrategy (rawGame c hc he U (V.sampler.prog,V.decider.prog) lam n))
+    (S : M.ProjStrat (rawGame c hc he U (V.sampler.prog,V.decider.prog) lam n))
     {ε : ℝ} (hS : 1-S.value ≤ ε) :
     1-(strategy c hc he U lam n V hs S).value ≤ ε :=
   (sub_le_sub_left (value_le c hc he U V hV hn hc2 hs S) 1).trans hS
 
-theorem measurement_supported (c lam n : ℕ) {H : Type*}
-    [Fintype H] [DecidableEq H]
-    (P : ProjectiveMeasurement (Question c lam n) (Verifier.Answers (outerBound c lam n))
-      (Matrix H H ℂ)) :
-    ∀ W a, (P.mergeByQuestion (decode c lam n)).M (.inl (.pauli W),0) a ≠ 0 →
+theorem measurement_supported (c lam n : ℕ) {R : Type*} [Ring R] [StarRing R] [PartialOrder R]
+    [StarOrderedRing R] (P : Question c lam n → POVMIn (Verifier.Answers (outerBound c lam n)) R) :
+    ∀ W a, ((P (.inl (.pauli W),0)).map (decode c lam n (.inl (.pauli W),0))).op a ≠ 0 →
       ∃ x, a = .pauli (.pauliAns x) := by
   intro W a ha
   by_contra hn
   apply ha
-  rw [ProjectiveMeasurement.mergeByQuestion_M]
+  rw [POVMIn.map_op]
   apply Finset.sum_eq_zero
   intro b hb
   have heq := (Finset.mem_filter.mp hb).2
@@ -88,16 +95,16 @@ theorem measurement_supported (c lam n : ℕ) {H : Type*}
 /-- Full Pauli effects are supported on genuine full Pauli outcomes for Alice. -/
 theorem supported_A (c : ℕ) (hc : 1 ≤ c) (he : Even c) (U : ClockedUniversalMachine)
     (lam n : ℕ) (V : Verifier 7) (hs : V.sampler.dim (2^n) ≤ registerBits c lam n)
-    (S : TensorProductStrategy (rawGame c hc he U (V.sampler.prog,V.decider.prog) lam n)) :
-    ∀ W a, (strategy c hc he U lam n V hs S).PA.M (.inl (.pauli W),0) a ≠ 0 →
+    (S : M.ProjStrat (rawGame c hc he U (V.sampler.prog,V.decider.prog) lam n)) :
+    ∀ W a, ((strategy c hc he U lam n V hs S).PA (.inl (.pauli W),0)).op a ≠ 0 →
       ∃ x, a = .pauli (.pauliAns x) :=
   measurement_supported c lam n S.PA
 
 /-- Full Pauli effects are supported on genuine full Pauli outcomes for Bob. -/
 theorem supported_B (c : ℕ) (hc : 1 ≤ c) (he : Even c) (U : ClockedUniversalMachine)
     (lam n : ℕ) (V : Verifier 7) (hs : V.sampler.dim (2^n) ≤ registerBits c lam n)
-    (S : TensorProductStrategy (rawGame c hc he U (V.sampler.prog,V.decider.prog) lam n)) :
-    ∀ W a, (strategy c hc he U lam n V hs S).PB.M (.inl (.pauli W),0) a ≠ 0 →
+    (S : M.ProjStrat (rawGame c hc he U (V.sampler.prog,V.decider.prog) lam n)) :
+    ∀ W a, ((strategy c hc he U lam n V hs S).PB (.inl (.pauli W),0)).op a ≠ 0 →
       ∃ x, a = .pauli (.pauliAns x) :=
   measurement_supported c lam n S.PB
 
