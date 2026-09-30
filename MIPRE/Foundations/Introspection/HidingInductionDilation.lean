@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 public import MIPRE.Foundations.Introspection.RegisterEPR
 public import MIPRE.Foundations.Introspection.ValueStability
+public import MIPRE.Foundations.AncillaDilation
 
 @[expose] public section
 
@@ -13,6 +14,12 @@ public import MIPRE.Foundations.Introspection.ValueStability
 One fixed ancilla is added on the residual side of every prefix. The prefix
 projectors are unchanged. Squared distance to the old projective measurement
 costs `2 sqrt(delta)`; a dilation does not in general preserve that distance.
+
+In a bipartite model (Phase 4 of `planning/mipco-track.md`): the ancilla is the first player's
+one-sided extension `Ψ.expandA t₀` (`MIPRE/Foundations/AncillaDilation.lean`), an old operator
+`m` becomes `m ⊗ 1`, and the dilation of the residual POVMs is `MIPRE.exists_pvm_dilation`, in
+the first player's algebra and against the fixed basis vector `t₀ = inl (a₀, 0)` of the ancilla
+`DilationAncilla A K`, the number `K` of Kraus terms depending on the POVMs.
 -/
 
 noncomputable section
@@ -20,87 +27,82 @@ noncomputable section
 namespace MIPRE.Introspection
 
 open Finset Matrix Classical
-open scoped Kronecker ComplexOrder MatrixOrder
 
 set_option linter.unusedSectionVars false
 
 section Distance
 
-variable {H K A T : Type*}
-  [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K]
-  [Fintype A] [DecidableEq A] [Fintype T] [DecidableEq T]
-
-/-- The one-party fixed-ancilla embedding changes no Born probability after
-compressing the measured operator. -/
-theorem bornProb_extVecA (ψ : H × K → ℂ) (a₀ : T)
-    (P : Matrix (H × T) (H × T) ℂ) (B : Matrix K K ℂ) :
-    bornProb (extVecA ψ a₀) P B =
-      bornProb ψ ((ancillaEmbed H a₀)ᴴ * (P * ancillaEmbed H a₀)) B := by
-  rw [bornProb, bornProb, extVecA, dotProduct_mulVec_conj]
-  congr 2
-  rw [Matrix.conjTranspose_kronecker, Matrix.conjTranspose_one,
-    ← Matrix.mul_kronecker_mul, ← Matrix.mul_kronecker_mul,
-    Matrix.mul_one, Matrix.one_mul]
-
-/-- Coordinate formula for adding the same fixed ancilla to every question. -/
-theorem extVecA_apply (ψ : H × K → ℂ) (a₀ : T) (h : H) (a : T) (k : K) :
-    extVecA ψ a₀ ((h, a), k) = if a = a₀ then ψ (h, k) else 0 := by
-  classical
-  simp [extVecA, Matrix.mulVec, dotProduct, Fintype.sum_prod_type,
-    Matrix.kroneckerMap_apply, ancillaEmbed, Matrix.one_apply, Prod.mk.injEq]
-  by_cases ha : a = a₀ <;> simp [ha]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] (Ψ : BipartiteModel 𝒞 𝒜 ℬ)
+  {A T : Type*} [Fintype A] [DecidableEq A] [Fintype T] [DecidableEq T]
 
 /-- Extending an old operator by identity preserves its state norm exactly. -/
-theorem stateSqNorm_extVecA_aOp (ψ : H × K → ℂ) (a₀ : T) (M : Matrix H H ℂ) :
-    stateSqNorm (extVecA ψ a₀) (aOp M) = stateSqNorm ψ M := by
-  rw [stateSqNorm_eq_qform, aOp_conjTranspose, ← aOp_mul,
-    qform_extVecA, compress_aOp, ← stateSqNorm_eq_qform]
+theorem stateSqNorm_expandA_diagonal (t₀ : T) (m : 𝒜) :
+    (Ψ.expandA t₀).stateSqNorm (diagonal fun _ => m) = Ψ.stateSqNorm m :=
+  BipartiteModel.LocalIsometry.stateSqNorm_of_W_ψ (Ψ.inertA_W_ψ t₀) m
+
+/-- The first player's quadratic form on the one-sided extension is that of the `(t₀, t₀)`
+entry. -/
+theorem qform_πA_expandA (t₀ : T) (X : Matrix T T 𝒜) :
+    (Ψ.expandA t₀).qform ((Ψ.expandA t₀).πA X) = Ψ.qform (Ψ.πA (X t₀ t₀)) := by
+  rw [BipartiteModel.qform_expandA, BipartiteModel.expandA_πA, map_apply]
 
 /-- A fixed-state projective dilation remains close to an old PVM. The bound
 is uniform over every dilation with the displayed compression identity. -/
-theorem dilated_pvm_distance (ψ : H × K → ℂ) (hψ : ‖evec ψ‖ = 1) (a₀ : T)
-    (M R : A → Matrix H H ℂ) (P : A → Matrix (H × T) (H × T) ℂ)
-    (hM : IsPVM M) (hP : IsPVM P)
-    (hk : ∀ a, (ancillaEmbed H a₀)ᴴ * (P a * ancillaEmbed H a₀) = R a)
-    {δ : ℝ} (hd : ∑ a, stateSqNorm ψ (M a - R a) ≤ δ) :
-    (∑ a, stateSqNorm (extVecA ψ a₀) (aOp (M a) - P a)) ≤ 2 * Real.sqrt δ := by
+theorem dilated_pvm_distance (hΨ : ‖Ψ.ψ‖ = 1) (t₀ : T)
+    (M R : A → 𝒜) (P : A → Matrix T T 𝒜) (hM : IsPVMIn M) (hP : IsPVMIn P)
+    (hk : ∀ a, P a t₀ t₀ = R a)
+    {δ : ℝ} (hd : ∑ a, Ψ.stateSqNorm (M a - R a) ≤ δ) :
+    (∑ a, (Ψ.expandA t₀).stateSqNorm ((diagonal fun _ => M a) - P a)) ≤ 2 * Real.sqrt δ := by
+  let q : 𝒜 → ℝ := fun x => Ψ.qform (Ψ.πA x)
+  have hq_sub (x y : 𝒜) : q (x - y) = q x - q y := by
+    simp only [q, map_sub, Ψ.qform_sub]
+  have hq_add (x y : 𝒜) : q (x + y) = q x + q y := by
+    simp only [q, map_add, Ψ.qform_add]
+  have hq_sum (f : A → 𝒜) : q (∑ a, f a) = ∑ a, q (f a) := by
+    simp only [q, map_sum, Ψ.qform_sum]
   have hsumR : ∑ a, R a = 1 := by
-    simp_rw [← hk]
-    rw [← Matrix.mul_sum, ← Matrix.sum_mul, hP.sum_eq_one, Matrix.one_mul,
-      ancillaEmbed_isometry]
-  have hexp a : stateSqNorm (extVecA ψ a₀) (aOp (M a) - P a) =
-      qform ψ (aOp (M a)) + qform ψ (aOp (R a)) -
-        2 * qform ψ (aOp (M a * R a)) := by
-    have hsym : qform (extVecA ψ a₀) (aOp (P a * aOp (M a))) =
-        qform (extVecA ψ a₀) (aOp (aOp (M a) * P a)) := by
-      rw [← qform_conjTranspose _ (aOp (aOp (M a) * P a)),
-        aOp_conjTranspose, Matrix.conjTranspose_mul, hP.isSelfAdjoint,
-        aOp_conjTranspose, hM.isSelfAdjoint]
-    rw [stateSqNorm_eq_qform, Matrix.conjTranspose_sub, aOp_conjTranspose,
-      hM.isSelfAdjoint, hP.isSelfAdjoint, Matrix.sub_mul, Matrix.mul_sub,
-      Matrix.mul_sub, ← aOp_mul, hM.idem, hP.idem,
-      aOp_sub, aOp_sub, aOp_sub, qform_sub, qform_sub, qform_sub, hsym]
-    have hc : (ancillaEmbed H a₀)ᴴ * (aOp (M a) * P a * ancillaEmbed H a₀) = M a * R a := by
-      rw [aOp, compress_kron_one_mul, hk]
-    simp only [qform_extVecA, compress_aOp, hk, hc]
+    have h := congrFun (congrFun hP.sum_eq_one t₀) t₀
+    rw [Matrix.sum_apply, one_apply_eq] at h
+    simpa only [hk] using h
+  have hRsa a : star (R a) = R a := by
+    rw [← hk, ← Matrix.star_apply, hP.star_eq]
+  have hexp a : (Ψ.expandA t₀).stateSqNorm ((diagonal fun _ => M a) - P a) =
+      q (M a) + q (R a) - 2 * q (M a * R a) := by
+    have hsym : q (R a * M a) = q (M a * R a) := by
+      simp only [q]
+      rw [← Ψ.qform_star, ← map_star, star_mul, hM.star_eq, hRsa]
+    have hD : star (diagonal fun _ : T => M a) = diagonal fun _ => M a := by
+      rw [star_eq_conjTranspose, diagonal_conjTranspose, Pi.star_def]
+      simp only [hM.star_eq]
+    rw [BipartiteModel.stateSqNorm_eq, qform_πA_expandA, star_sub, hD, hP.star_eq, sub_mul,
+      mul_sub, mul_sub, hP.idem]
+    have e1 : ((diagonal fun _ : T => M a) * (diagonal fun _ : T => M a) : Matrix T T 𝒜) t₀ t₀ =
+        M a := by
+      rw [diagonal_mul_diagonal, diagonal_apply_eq, hM.idem]
+    have e2 : ((diagonal fun _ : T => M a) * P a : Matrix T T 𝒜) t₀ t₀ = M a * R a := by
+      rw [diagonal_mul, hk]
+    have e3 : (P a * (diagonal fun _ : T => M a) : Matrix T T 𝒜) t₀ t₀ = R a * M a := by
+      rw [mul_diagonal, hk]
+    rw [Matrix.sub_apply, Matrix.sub_apply, Matrix.sub_apply, e1, e2, e3, hk]
+    show q (M a - M a * R a - (R a * M a - R a)) = _
+    rw [hq_sub, hq_sub, hq_sub, hsym]
     ring
-  have hsum : (∑ a, stateSqNorm (extVecA ψ a₀) (aOp (M a) - P a)) =
-      2 * ∑ a, qform ψ (aOp (M a * (M a - R a))) := by
-    simp_rw [hexp, Matrix.mul_sub, hM.idem, aOp_sub, qform_sub]
+  have hsum : (∑ a, (Ψ.expandA t₀).stateSqNorm ((diagonal fun _ => M a) - P a)) =
+      2 * ∑ a, q (M a * (M a - R a)) := by
+    simp_rw [hexp, mul_sub, hM.idem, hq_sub]
     rw [Finset.sum_sub_distrib, Finset.sum_add_distrib, ← Finset.mul_sum,
-      Finset.sum_sub_distrib, ← qform_sum, ← qform_sum, ← aOp_sum,
-      ← aOp_sum, hM.sum_eq_one, hsumR]
+      Finset.sum_sub_distrib, ← hq_sum, ← hq_sum, hM.sum_eq_one, hsumR]
     ring
-  have hmass : (∑ a, snorm ψ (aOp (M a) : Matrix (H × K) _ ℂ) ^ 2) = 1 := by
-    simp_rw [snorm_sq_eq_qform, aOp_conjTranspose, ← aOp_mul, hM.isSelfAdjoint, hM.idem]
-    rw [← qform_sum, ← aOp_sum, hM.sum_eq_one, aOp_one, qform_one ψ hψ]
-  have hcs := abs_sum_qform_mul_le ψ univ
-    (fun a => (aOp (M a) : Matrix (H × K) _ ℂ))
-    (fun a => (aOp (M a - R a) : Matrix (H × K) _ ℂ))
-    (fun a => by rw [aOp_conjTranspose, hM.isSelfAdjoint])
+  have hmass : (∑ a, Ψ.snorm (Ψ.πA (M a)) ^ 2) = 1 := by
+    simp_rw [Ψ.snorm_sq_eq_qform, ← map_star, ← map_mul, hM.star_eq, hM.idem]
+    rw [← Ψ.qform_sum, ← map_sum, hM.sum_eq_one, map_one, Ψ.qform_one hΨ]
+  have hcs := abs_sum_qform_mul_le Ψ.toStateModel univ
+    (fun a => Ψ.πA (M a)) (fun a => Ψ.πA (M a - R a))
+    (fun a => by rw [← map_star, hM.star_eq])
   rw [hmass, Real.sqrt_one, one_mul] at hcs
-  simp only [← aOp_mul] at hcs
-  have hδ : (∑ a, snorm ψ (aOp (M a - R a) : Matrix (H × K) _ ℂ) ^ 2) ≤ δ := hd
+  simp only [← map_mul] at hcs
+  have hδ : (∑ a, Ψ.snorm (Ψ.πA (M a - R a)) ^ 2) ≤ δ := hd
   rw [hsum]
   exact mul_le_mul_of_nonneg_left
     ((le_abs_self _).trans (hcs.trans (Real.sqrt_le_sqrt hδ))) (by norm_num)
@@ -109,116 +111,115 @@ end Distance
 
 section Conditional
 
-variable {I H K Y A J : Type*}
-  [Fintype I] [DecidableEq I] [Fintype H] [DecidableEq H]
-  [Fintype K] [DecidableEq K] [Fintype Y] [DecidableEq Y]
-  [Fintype A] [DecidableEq A] [Fintype J]
+variable {𝒜 : Type*} [Ring 𝒜] [StarRing 𝒜] [Algebra ℂ 𝒜] [StarModule ℂ 𝒜]
+  {I Y A T : Type*} [Fintype I] [DecidableEq I] [Fintype Y] [DecidableEq Y]
+  [Fintype A] [DecidableEq A] [Fintype T] [DecidableEq T]
 
-/-- Compression to a fixed ancilla slice is literally the corresponding
-matrix subblock. -/
-theorem ancilla_compress_apply (a₀ : A) (M : Matrix (H × A) (H × A) ℂ) (i j : H) :
-    ((ancillaEmbed H a₀)ᴴ * (M * ancillaEmbed H a₀)) i j = M (i, a₀) (j, a₀) := by
-  simp [Matrix.mul_apply, ancillaEmbed, Matrix.conjTranspose_apply]
-
-/-- Keep the prefix register outside the new ancilla, in the original party
-ordering `(prefix × residual) × ancilla`. -/
-def conditionalDilationOp (Z : Y → Matrix I I ℂ)
-    (P : Y → A → Matrix (H × A) (H × A) ℂ) (p : Y × A) :
-    Matrix ((I × H) × A) ((I × H) × A) ℂ :=
-  registerOp (Equiv.prodAssoc I H A) (Z p.1 ⊗ₖ P p.1 p.2)
+/-- The joint operator: the prefix projector of the register times the dilated residual
+operator, with the fresh ancilla outermost, as the one-sided extension carries it. -/
+def conditionalDilationOp (Z : Y → Matrix I I ℂ) (P : Y → A → Matrix T T 𝒜) (p : Y × A) :
+    Matrix T T (Matrix I I 𝒜) :=
+  (P p.1 p.2).map fun x => smulKron x (Z p.1)
 
 /-- Conditional projective residual measurements keep the joint measurement
 projective while leaving every prefix projector untouched. -/
 theorem conditionalDilationOp_isPVM (Z : Y → Matrix I I ℂ) (hZ : IsPVM Z)
-    (P : Y → A → Matrix (H × A) (H × A) ℂ) (hP : ∀ y, IsPVM (P y)) :
-    IsPVM (conditionalDilationOp Z P) := by
-  apply registerOp_isPVM
-  refine ⟨fun p => ?_, fun p => ?_, ?_⟩
-  · rw [Matrix.conjTranspose_kronecker, hZ.isSelfAdjoint, (hP _).isSelfAdjoint]
-  · rw [← Matrix.mul_kronecker_mul, hZ.idem, (hP _).idem]
+    (P : Y → A → Matrix T T 𝒜) (hP : ∀ y, IsPVMIn (P y)) :
+    IsPVMIn (conditionalDilationOp Z P) := by
+  have hmul (y : Y) (X X' : Matrix T T 𝒜) :
+      (X * X').map (fun x => smulKron x (Z y)) =
+        X.map (fun x => smulKron x (Z y)) * X'.map (fun x => smulKron x (Z y)) := by
+    ext t t'
+    simp only [map_apply, Matrix.mul_apply, smulKron_mul, hZ.idem, ← smulKron_sum_left]
+  have hmul' {y y' : Y} (hy : y ≠ y') (X X' : Matrix T T 𝒜) :
+      X.map (fun x => smulKron x (Z y)) * X'.map (fun x => smulKron x (Z y')) = 0 := by
+    ext t t'
+    simp only [map_apply, Matrix.mul_apply, smulKron_mul, hZ.toIn.orthogonal hy,
+      smulKron_zero_right, Finset.sum_const_zero, Matrix.zero_apply]
+  refine ⟨fun p => ?_, fun p => ?_, ?_, fun {p p'} hpp' => ?_⟩
+  · have hf (x : 𝒜) : smulKron (star x) (Z p.1) = star (smulKron x (Z p.1)) := by
+      rw [star_smulKron, ← star_eq_conjTranspose, hZ.toIn.star_eq]
+    show star ((P p.1 p.2).map fun x => smulKron x (Z p.1)) =
+      (P p.1 p.2).map fun x => smulKron x (Z p.1)
+    rw [star_eq_conjTranspose, ← conjTranspose_map (fun x => smulKron x (Z p.1)) hf,
+      ← star_eq_conjTranspose,
+      (hP p.1).star_eq]
+  · rw [conditionalDilationOp, ← hmul, (hP p.1).idem]
   · rw [Fintype.sum_prod_type]
-    simp_rw [← kronecker_sum_right, (hP _).sum_eq_one]
-    rw [← sum_kronecker_left, hZ.sum_eq_one, Matrix.one_kronecker_one]
+    have h1 (y : Y) : ∑ a, conditionalDilationOp Z P (y, a) =
+        (1 : Matrix T T 𝒜).map fun x => smulKron x (Z y) := by
+      rw [← (hP y).sum_eq_one]
+      ext t t' : 2
+      simp only [conditionalDilationOp, Matrix.sum_apply, map_apply, smulKron_sum_left]
+    simp_rw [h1]
+    ext t t' : 2
+    rw [Matrix.sum_apply]
+    simp only [map_apply]
+    by_cases h : t = t'
+    · subst h
+      simp only [one_apply_eq]
+      rw [← smulKron_sum_right, hZ.sum_eq_one, smulKron_one_one]
+    · simp only [one_apply_ne h, smulKron_zero_left, Finset.sum_const_zero]
+  · by_cases hy : p.1 = p'.1
+    · have ha : p.2 ≠ p'.2 := fun ha => hpp' (Prod.ext hy ha)
+      rw [conditionalDilationOp, conditionalDilationOp, ← hy, ← hmul, (hP p.1).orthogonal ha]
+      ext t t'
+      simp only [map_apply, Matrix.zero_apply, smulKron_zero_left]
+    · exact hmul' hy _ _
 
-/-- The full conditional dilation compresses to the desired prefix times
-residual POVM, using the same embedding for every prefix and outcome. -/
-theorem conditionalDilationOp_compress (a₀ : A) (Z : Y → Matrix I I ℂ)
-    (P : Y → A → Matrix (H × A) (H × A) ℂ)
-    (R : Y → A → Matrix H H ℂ)
-    (hk : ∀ y a, (ancillaEmbed H a₀)ᴴ * (P y a * ancillaEmbed H a₀) = R y a)
-    (p : Y × A) :
-    (ancillaEmbed (I × H) a₀)ᴴ *
-      (conditionalDilationOp Z P p * ancillaEmbed (I × H) a₀) = Z p.1 ⊗ₖ R p.1 p.2 := by
-  ext i j
-  rw [ancilla_compress_apply]
-  change Z p.1 i.1 j.1 * P p.1 p.2 (i.2, a₀) (j.2, a₀) =
-    Z p.1 i.1 j.1 * R p.1 p.2 i.2 j.2
-  rw [← ancilla_compress_apply a₀ (P p.1 p.2) i.2 j.2, hk]
+/-- The full conditional dilation compresses to the desired prefix times residual POVM, using the
+same fixed vector for every prefix and outcome. -/
+theorem conditionalDilationOp_compress (t₀ : T) (Z : Y → Matrix I I ℂ)
+    (P : Y → A → Matrix T T 𝒜) (R : Y → A → 𝒜) (hk : ∀ y a, P y a t₀ t₀ = R y a)
+    (p : Y × A) : conditionalDilationOp Z P p t₀ t₀ = smulKron (R p.1 p.2) (Z p.1) := by
+  rw [conditionalDilationOp, map_apply, hk]
+
+variable {𝒞 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ]
 
 /-- The conditional product form has exactly the original outcome
 probabilities against every measurement on the other party. -/
-theorem conditionalDilationOp_born (ψ : (I × H) × K → ℂ) (a₀ : A)
-    (Z : Y → Matrix I I ℂ) (P : Y → A → Matrix (H × A) (H × A) ℂ)
-    (R : Y → A → Matrix H H ℂ)
-    (hk : ∀ y a, (ancillaEmbed H a₀)ᴴ * (P y a * ancillaEmbed H a₀) = R y a)
-    (p : Y × A) (B : Matrix K K ℂ) :
-    bornProb (extVecA ψ a₀) (conditionalDilationOp Z P p) B =
-      bornProb ψ (Z p.1 ⊗ₖ R p.1 p.2) B := by
-  rw [bornProb_extVecA, conditionalDilationOp_compress a₀ Z P R hk]
+theorem conditionalDilationOp_born (Ψ : BipartiteModel 𝒞 (Matrix I I 𝒜) ℬ) (t₀ : T)
+    (Z : Y → Matrix I I ℂ) (P : Y → A → Matrix T T 𝒜) (R : Y → A → 𝒜)
+    (hk : ∀ y a, P y a t₀ t₀ = R y a) (p : Y × A) (b : ℬ) :
+    (Ψ.expandA t₀).bornProb (conditionalDilationOp Z P p) b =
+      Ψ.bornProb (smulKron (R p.1 p.2) (Z p.1)) b := by
+  rw [BipartiteModel.bornProb_expandA, conditionalDilationOp_compress t₀ Z P R hk]
 
-/-- Dilation changes only the auxiliary state, after the explicit party
-reassociation. The original EPR factor is kept exactly. -/
-theorem extVecA_registerState (ξ : H × K → ℂ) (a₀ : A) :
-    extVecA (registerState I ξ) a₀ =
-      registerState I (extVecA ξ a₀) ∘
-        (Equiv.prodAssoc I H A).prodCongr (Equiv.refl (I × K)) := by
-  funext p
-  rcases p with ⟨⟨⟨i, h⟩, a⟩, j, k⟩
-  simp only [extVecA_apply, registerState, expVec, Function.comp_apply,
-    Equiv.prodCongr_apply, Equiv.prodAssoc_apply, Equiv.refl_apply, Prod.map_fst, Prod.map_snd]
-  split_ifs <;> simp
+variable {J : Type*} [Fintype J] [PartialOrder 𝒜] [StarOrderedRing 𝒜] [StarProper 𝒜]
 
 /-- **Common-ancilla conditional projectivization.** All residual POVMs in a
 question/prefix family are dilated with one fixed ancilla state. The resulting
 joint PVMs retain the displayed prefix projectors and are quantitatively close
 to the old projective family on the one extended state. -/
 theorem exists_conditional_projective_dilation
-    (ψ : (I × H) × K → ℂ) (hψ : ‖evec ψ‖ = 1) (a₀ : A)
+    (Ψ : BipartiteModel 𝒞 (Matrix I I 𝒜) ℬ) (hΨ : ‖Ψ.ψ‖ = 1) (a₀ : A)
     (D : J → ℝ) (hD0 : ∀ j, 0 ≤ D j) (hD1 : ∑ j, D j = 1)
     (Z : J → Y → Matrix I I ℂ) (hZ : ∀ j, IsPVM (Z j))
-    (Q : J → Y → POVM A H)
-    (M : J → Y × A → Matrix (I × H) (I × H) ℂ) (hM : ∀ j, IsPVM (M j))
+    (Q : J → Y → POVMIn A 𝒜)
+    (M : J → Y × A → Matrix I I 𝒜) (hM : ∀ j, IsPVMIn (M j))
     {δ : ℝ} (hd : ∑ j, D j * ∑ p : Y × A,
-      stateSqNorm ψ (M j p - Z j p.1 ⊗ₖ ((Q j p.1).mats p.2).val) ≤ δ) :
-    ∃ P : J → Y → A → Matrix (H × A) (H × A) ℂ,
-      (∀ j y, IsPVM (P j y)) ∧
-      (∀ j y a, (ancillaEmbed H a₀)ᴴ * (P j y a * ancillaEmbed H a₀) =
-        ((Q j y).mats a).val) ∧
-      (∀ j, IsPVM (conditionalDilationOp (Z j) (P j))) ∧
-      (∀ j p, (ancillaEmbed (I × H) a₀)ᴴ *
-        (conditionalDilationOp (Z j) (P j) p * ancillaEmbed (I × H) a₀) =
-          Z j p.1 ⊗ₖ ((Q j p.1).mats p.2).val) ∧
-      (∑ j, D j * ∑ p : Y × A,
-        stateSqNorm (extVecA ψ a₀) (aOp (M j p) - conditionalDilationOp (Z j) (P j) p)) ≤
+      Ψ.stateSqNorm (M j p - smulKron ((Q j p.1).op p.2) (Z j p.1)) ≤ δ) :
+    ∃ K : ℕ, ∃ P : J → Y → A → Matrix (DilationAncilla A K) (DilationAncilla A K) 𝒜,
+      (∀ j y, IsPVMIn (P j y)) ∧
+      (∀ j y a, P j y a (Sum.inl (a₀, 0)) (Sum.inl (a₀, 0)) = (Q j y).op a) ∧
+      (∀ j, IsPVMIn (conditionalDilationOp (Z j) (P j))) ∧
+      (∀ j p, conditionalDilationOp (Z j) (P j) p (Sum.inl (a₀, 0)) (Sum.inl (a₀, 0)) =
+        smulKron ((Q j p.1).op p.2) (Z j p.1)) ∧
+      (∑ j, D j * ∑ p : Y × A, (Ψ.expandA (Sum.inl (a₀, 0) : DilationAncilla A K)).stateSqNorm
+        ((diagonal fun _ => M j p) - conditionalDilationOp (Z j) (P j) p)) ≤
           2 * Real.sqrt δ := by
-  obtain ⟨P, hsa, hid, hsum, hk⟩ := exists_projective_dilation
-    (d := H) (A := A) (X := J × Y) a₀
-    (E := fun jy a => ((Q jy.1 jy.2).mats a).val)
-    (fun jy a => (Q jy.1 jy.2).posSemidef a) (fun jy => POVM.sum_val (Q jy.1 jy.2))
+  obtain ⟨K, P, hP, hk⟩ := exists_pvm_dilation (fun jy : J × Y => Q jy.1 jy.2) a₀
   let P' j y a := P (j, y) a
-  have hP' j y : IsPVM (P' j y) :=
-    ⟨fun a => by rw [← Matrix.star_eq_conjTranspose]; exact hsa (j, y) a,
-      hid (j, y), hsum (j, y)⟩
+  have hP' j y : IsPVMIn (P' j y) := hP (j, y)
   have hjoint j := conditionalDilationOp_isPVM (Z j) (hZ j) (P' j) (hP' j)
-  have hcompress j p := conditionalDilationOp_compress a₀ (Z j) (P' j)
-    (fun y a => ((Q j y).mats a).val) (fun y a => hk (j, y) a) p
-  refine ⟨P', hP', fun j y a => hk (j, y) a, hjoint, hcompress, ?_⟩
-  let err j := ∑ p : Y × A,
-    stateSqNorm ψ (M j p - Z j p.1 ⊗ₖ ((Q j p.1).mats p.2).val)
-  have herr j : 0 ≤ err j := Finset.sum_nonneg fun _ _ => stateSqNorm_nonneg _ _
-  have hpoint j := dilated_pvm_distance ψ hψ a₀ (M j)
-    (fun p => Z j p.1 ⊗ₖ ((Q j p.1).mats p.2).val)
-    (conditionalDilationOp (Z j) (P' j)) (hM j) (hjoint j) (hcompress j) (δ := err j) le_rfl
+  have hcompress j p := conditionalDilationOp_compress (Sum.inl (a₀, 0)) (Z j) (P' j)
+    (fun y a => (Q j y).op a) (fun y a => hk (j, y) a) p
+  refine ⟨K, P', hP', fun j y a => hk (j, y) a, hjoint, hcompress, ?_⟩
+  let err j := ∑ p : Y × A, Ψ.stateSqNorm (M j p - smulKron ((Q j p.1).op p.2) (Z j p.1))
+  have herr j : 0 ≤ err j := Finset.sum_nonneg fun _ _ => Ψ.stateSqNorm_nonneg _
+  have hpoint j := dilated_pvm_distance Ψ hΨ (Sum.inl (a₀, 0) : DilationAncilla A K) (M j)
+    (fun p => smulKron ((Q j p.1).op p.2) (Z j p.1)) (conditionalDilationOp (Z j) (P' j))
+    (hM j) (hjoint j) (hcompress j) (δ := err j) le_rfl
   calc
     _ ≤ ∑ j, D j * (2 * Real.sqrt (err j)) :=
       Finset.sum_le_sum fun j _ => mul_le_mul_of_nonneg_left (hpoint j) (hD0 j)
@@ -232,59 +233,59 @@ end Conditional
 section Varying
 
 variable {J A : Type*} [Fintype J] [Fintype A] [DecidableEq A]
-  {I H K Y : J → Type*}
-  [∀ j, Fintype (I j)] [∀ j, DecidableEq (I j)]
-  [∀ j, Fintype (H j)] [∀ j, DecidableEq (H j)]
-  [∀ j, Fintype (K j)] [∀ j, DecidableEq (K j)]
+  {I Y : J → Type*} [∀ j, Fintype (I j)] [∀ j, DecidableEq (I j)]
   [∀ j, Fintype (Y j)] [∀ j, DecidableEq (Y j)]
+  {𝒞 𝒜 ℬ : J → Type*} [∀ j, Ring (𝒞 j)] [∀ j, StarRing (𝒞 j)] [∀ j, Algebra ℂ (𝒞 j)]
+  [∀ j, Ring (𝒜 j)] [∀ j, StarRing (𝒜 j)] [∀ j, Algebra ℂ (𝒜 j)] [∀ j, StarModule ℂ (𝒜 j)]
+  [∀ j, PartialOrder (𝒜 j)] [∀ j, StarOrderedRing (𝒜 j)] [∀ j, StarProper (𝒜 j)]
+  [∀ j, Ring (ℬ j)] [∀ j, StarRing (ℬ j)] [∀ j, Algebra ℂ (ℬ j)]
 
 /-- **Conditional projectivization with varying local registers.** The prefix,
-residual and other-party carriers may all depend on the conditioned question.
-The added ancilla still has the single outcome type `A` and fixed state `a₀`.
-The caller supplies the local states arising from its register transports;
-there is no assumption that different prefixes have the same residual dimension. -/
+residual and other-party carriers may all depend on the conditioned question, and so may the
+models. Each question gets one fixed ancilla state, common to all its prefixes; its number of
+Kraus terms depends on the question. -/
 theorem exists_varying_conditional_projective_dilation
-    (ψ : (j : J) → (I j × H j) × K j → ℂ) (hψ : ∀ j, ‖evec (ψ j)‖ = 1) (a₀ : A)
+    (Ψ : (j : J) → BipartiteModel (𝒞 j) (Matrix (I j) (I j) (𝒜 j)) (ℬ j))
+    (hΨ : ∀ j, ‖(Ψ j).ψ‖ = 1) (a₀ : A)
     (D : J → ℝ) (hD0 : ∀ j, 0 ≤ D j) (hD1 : ∑ j, D j = 1)
     (Z : (j : J) → Y j → Matrix (I j) (I j) ℂ) (hZ : ∀ j, IsPVM (Z j))
-    (Q : (j : J) → Y j → POVM A (H j))
-    (M : (j : J) → Y j × A → Matrix (I j × H j) (I j × H j) ℂ)
-    (hM : ∀ j, IsPVM (M j))
+    (Q : (j : J) → Y j → POVMIn A (𝒜 j))
+    (M : (j : J) → Y j × A → Matrix (I j) (I j) (𝒜 j)) (hM : ∀ j, IsPVMIn (M j))
     {δ : ℝ} (hd : ∑ j, D j * ∑ p : Y j × A,
-      stateSqNorm (ψ j) (M j p - Z j p.1 ⊗ₖ ((Q j p.1).mats p.2).val) ≤ δ) :
-    ∃ P : (j : J) → Y j → A → Matrix (H j × A) (H j × A) ℂ,
-      (∀ j y, IsPVM (P j y)) ∧
-      (∀ j y a, (ancillaEmbed (H j) a₀)ᴴ * (P j y a * ancillaEmbed (H j) a₀) =
-        ((Q j y).mats a).val) ∧
-      (∀ j, IsPVM (conditionalDilationOp (Z j) (P j))) ∧
-      (∀ j p, (ancillaEmbed (I j × H j) a₀)ᴴ *
-        (conditionalDilationOp (Z j) (P j) p * ancillaEmbed (I j × H j) a₀) =
-          Z j p.1 ⊗ₖ ((Q j p.1).mats p.2).val) ∧
+      (Ψ j).stateSqNorm (M j p - smulKron ((Q j p.1).op p.2) (Z j p.1)) ≤ δ) :
+    ∃ K : J → ℕ, ∃ P : (j : J) → Y j → A →
+        Matrix (DilationAncilla A (K j)) (DilationAncilla A (K j)) (𝒜 j),
+      (∀ j y, IsPVMIn (P j y)) ∧
+      (∀ j y a, P j y a (Sum.inl (a₀, 0)) (Sum.inl (a₀, 0)) = (Q j y).op a) ∧
+      (∀ j, IsPVMIn (conditionalDilationOp (Z j) (P j))) ∧
+      (∀ j p, conditionalDilationOp (Z j) (P j) p (Sum.inl (a₀, 0)) (Sum.inl (a₀, 0)) =
+        smulKron ((Q j p.1).op p.2) (Z j p.1)) ∧
       (∑ j, D j * ∑ p : Y j × A,
-        stateSqNorm (extVecA (ψ j) a₀)
-          (aOp (M j p) - conditionalDilationOp (Z j) (P j) p)) ≤ 2 * Real.sqrt δ := by
+        ((Ψ j).expandA (Sum.inl (a₀, 0) : DilationAncilla A (K j))).stateSqNorm
+          ((diagonal fun _ => M j p) - conditionalDilationOp (Z j) (P j) p)) ≤
+        2 * Real.sqrt δ := by
   let err j := ∑ p : Y j × A,
-    stateSqNorm (ψ j) (M j p - Z j p.1 ⊗ₖ ((Q j p.1).mats p.2).val)
-  have herr j : 0 ≤ err j := Finset.sum_nonneg fun _ _ => stateSqNorm_nonneg _ _
-  have hlocal j : ∃ P : Y j → A → Matrix (H j × A) (H j × A) ℂ,
-      (∀ y, IsPVM (P y)) ∧
-      (∀ y a, (ancillaEmbed (H j) a₀)ᴴ * (P y a * ancillaEmbed (H j) a₀) =
-        ((Q j y).mats a).val) ∧
-      IsPVM (conditionalDilationOp (Z j) P) ∧
-      (∀ p, (ancillaEmbed (I j × H j) a₀)ᴴ *
-        (conditionalDilationOp (Z j) P p * ancillaEmbed (I j × H j) a₀) =
-          Z j p.1 ⊗ₖ ((Q j p.1).mats p.2).val) ∧
-      (∑ p : Y j × A, stateSqNorm (extVecA (ψ j) a₀)
-        (aOp (M j p) - conditionalDilationOp (Z j) P p)) ≤ 2 * Real.sqrt (err j) := by
-    obtain ⟨P, hp, hk, hjoint, hfull, hdist⟩ :=
-      exists_conditional_projective_dilation (J := Unit) (ψ j) (hψ j) a₀
+    (Ψ j).stateSqNorm (M j p - smulKron ((Q j p.1).op p.2) (Z j p.1))
+  have herr j : 0 ≤ err j := Finset.sum_nonneg fun _ _ => (Ψ j).stateSqNorm_nonneg _
+  have hlocal j : ∃ K : ℕ, ∃ P : Y j → A →
+      Matrix (DilationAncilla A K) (DilationAncilla A K) (𝒜 j),
+      (∀ y, IsPVMIn (P y)) ∧
+      (∀ y a, P y a (Sum.inl (a₀, 0)) (Sum.inl (a₀, 0)) = (Q j y).op a) ∧
+      IsPVMIn (conditionalDilationOp (Z j) P) ∧
+      (∀ p, conditionalDilationOp (Z j) P p (Sum.inl (a₀, 0)) (Sum.inl (a₀, 0)) =
+        smulKron ((Q j p.1).op p.2) (Z j p.1)) ∧
+      (∑ p : Y j × A, ((Ψ j).expandA (Sum.inl (a₀, 0) : DilationAncilla A K)).stateSqNorm
+        ((diagonal fun _ => M j p) - conditionalDilationOp (Z j) P p)) ≤
+          2 * Real.sqrt (err j) := by
+    obtain ⟨K, P, hp, hk, hjoint, hfull, hdist⟩ :=
+      exists_conditional_projective_dilation (J := Unit) (Ψ j) (hΨ j) a₀
         (fun _ => 1) (fun _ => zero_le_one) (by simp)
         (fun _ => Z j) (fun _ => hZ j) (fun _ => Q j)
         (fun _ => M j) (fun _ => hM j) (δ := err j) (by simp [err])
-    refine ⟨P (), hp (), hk (), hjoint (), hfull (), ?_⟩
+    refine ⟨K, P (), hp (), hk (), hjoint (), hfull (), ?_⟩
     simpa only [Fintype.sum_unique, one_mul] using hdist
-  choose P hp hk hjoint hfull hdist using hlocal
-  refine ⟨P, hp, hk, hjoint, hfull, ?_⟩
+  choose K P hp hk hjoint hfull hdist using hlocal
+  refine ⟨K, P, hp, hk, hjoint, hfull, ?_⟩
   calc
     _ ≤ ∑ j, D j * (2 * Real.sqrt (err j)) :=
       Finset.sum_le_sum fun j _ => mul_le_mul_of_nonneg_left (hdist j) (hD0 j)
