@@ -16,17 +16,22 @@ The honest dual marginal factors into the prefix projector and the current
 selected-register dual readout. Its local labels inject into the tested global
 alphabet, so discarding the remaining nonnegative commutator terms introduces
 no cardinality factor. No same-party distance is coarse-grained.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the extracted register state is
+the register model `Ξ.reg (ι → F)` of a normalized auxiliary model `Ξ`, the product form is one of
+matrices over the remaining registers with entries in its first algebra, and the honest dual
+readout enters as `smulKron 1 _`.
 -/
 
 noncomputable section
 namespace MIPRE.Introspection
 open Finset Matrix Weyl Classical
-open scoped Kronecker
 set_option linter.unusedSectionVars false
 
-variable {F ι H K : Type*} [Field F] [Fintype F] [DecidableEq F]
-  [Algebra (ZMod 2) F] [Fintype ι] [DecidableEq ι]
-  [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K] {ℓ : ℕ}
+variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F]
+  [Algebra (ZMod 2) F] [Fintype ι] [DecidableEq ι] {ℓ : ℕ}
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ]
 
 /-- The local dual outcome is embedded in the actual option-valued readout
 alphabet, retaining the prefix which selected its register. -/
@@ -60,33 +65,29 @@ theorem adaptiveDualLabel_sum_le (P : CL.CLFun F ι ℓ) (k : ℕ)
 
 /-- The actual global coarse dual commutator controls the concrete adaptive
 weighted dual-X commutator, with coefficient one. -/
-theorem adaptiveX_reassembled_commutator_le (P : CL.CLFun F ι ℓ)
-    (hP : P.SupportedOn univ) (k : ℕ) (ξ : H × K → ℂ)
+theorem adaptiveX_reassembled_commutator_le [StarModule ℂ 𝒜] (P : CL.CLFun F ι ℓ)
+    (hP : P.SupportedOn univ) (k : ℕ) (Ξ : BipartiteModel 𝒞 𝒜 ℬ)
     {A : Type*} [Fintype A]
-    (M : (y : ι → F) → A → Matrix ((stageRemaining P k y → F) × H) _ ℂ) :
+    (M : (y : ι → F) → A → Matrix (stageRemaining P k y → F) (stageRemaining P k y → F) 𝒜) :
     (∑ y, prefixWeight P k y * ∑ a, ∑ z,
-      stateSqNorm (registerState (stageRemaining P k y → F) ξ)
+      (Ξ.reg (stageRemaining P k y → F)).stateSqNorm
         (M y a * registerReadout (stageSplit P hP k y)
             wX (CL.lperp (coordinateLinear (CLChecks.stageLinear P k y))) z -
           registerReadout (stageSplit P hP k y)
             wX (CL.lperp (coordinateLinear (CLChecks.stageLinear P k y))) z * M y a)) ≤
-      ∑ a, ∑ z, stateSqNorm (registerState (ι → F) ξ)
-        ((∑ y, prefixResidualOp P k y (M y a)) *
-            (aOp (Honest.readDualOp P k hP z) : Matrix ((ι → F) × H) _ ℂ) -
-          (aOp (Honest.readDualOp P k hP z) : Matrix ((ι → F) × H) _ ℂ) *
-            (∑ y, prefixResidualOp P k y (M y a))) := by
-  rw [← prefixResidual_reassembled_commutator_sum P hP k ξ M
-    (fun y z => registerReadout (H := H) (stageSplit P hP k y)
+      ∑ a, ∑ z, (Ξ.reg (ι → F)).stateSqNorm
+        ((∑ y, prefixResidualOp P k y (M y a)) * smulKron 1 (Honest.readDualOp P k hP z) -
+          smulKron 1 (Honest.readDualOp P k hP z) * (∑ y, prefixResidualOp P k y (M y a))) := by
+  rw [← prefixResidual_reassembled_commutator_sum P hP k Ξ M
+    (fun y z => registerReadout (𝒜 := 𝒜) (stageSplit P hP k y)
       wX (CL.lperp (coordinateLinear (CLChecks.stageLinear P k y))) z)]
   apply Finset.sum_le_sum
   intro a _
   have hs := adaptiveDualLabel_sum_le P k
-    (fun z => stateSqNorm (registerState (ι → F) ξ)
-      ((∑ y, prefixResidualOp P k y (M y a)) *
-          (aOp (Honest.readDualOp P k hP z) : Matrix ((ι → F) × H) _ ℂ) -
-        (aOp (Honest.readDualOp P k hP z) : Matrix ((ι → F) × H) _ ℂ) *
-          (∑ y, prefixResidualOp P k y (M y a))))
-    (fun _ => stateSqNorm_nonneg _ _)
+    (fun z => (Ξ.reg (ι → F)).stateSqNorm
+      ((∑ y, prefixResidualOp P k y (M y a)) * smulKron 1 (Honest.readDualOp P k hP z) -
+        smulKron 1 (Honest.readDualOp P k hP z) * (∑ y, prefixResidualOp P k y (M y a))))
+    (fun _ => (Ξ.reg (ι → F)).stateSqNorm_nonneg _)
   simpa only [adaptiveDualLabel, readDualOp_stage_factor] using hs
 
 namespace TypedEstimates
@@ -99,33 +100,34 @@ variable {PauliType PauliAnswer κ A : Type*}
 set_option maxHeartbeats 800000 in
 /-- Actual parsed-game success and hiding rigidity supply the conditional
 dual-X commutator estimate for the current adaptive product form. -/
-theorem introspect_adaptiveX_commutator
+theorem introspect_adaptiveX_commutator [StarModule ℂ 𝒜] [PartialOrder 𝒜]
+    [StarOrderedRing 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ] [PartialOrder ℬ] [StarOrderedRing ℬ]
+    [StarProper ℬ]
     (E : PauliType → PauliType → Bool) (X Z : PauliType)
     (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)
     (projectPauli : PauliAnswer → ι → F)
     (D : (ι → F) → (ι → F) → A → A → Bool)
     (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →
       PauliAnswer → PauliAnswer → Bool)
-    (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)
+    (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (hΞ : ‖Ξ.ψ‖ = 1)
     (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H))
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) 𝒜))
     (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K))
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) ℬ))
     {ε δ : ℝ}
-    (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP)
-      (registerState (ι → F) ξ) MA MB ≤ ε)
+    (hfail : 1 - (Ξ.reg (ι → F)).povmValue (parsedGame E X Z P L projectPauli D DP) MA MB ≤ ε)
     (w : Bool) (hL : (L w).SupportedOn univ) (j : Fin ℓ)
-    (hMA : IsPVM (fun a => ((MA (QuestionType.hide w j, 0)).mats a).val))
-    (hMB : IsPVM (fun a => ((MB (QuestionType.read w, 0)).mats a).val))
-    (hfine : ∑ i, xSqNorm (registerState (ι → F) ξ)
-      ((((MA (QuestionType.hide w j, 0)).map (hidingCoarse (L w) j.val)).mats i).val)
-      (aOp (Honest.hideCoarseOp (L w) j.val hL i) : Matrix ((ι → F) × K) _ ℂ) ≤ δ)
+    (hMA : IsPVMIn (MA (QuestionType.hide w j, 0)).op)
+    (hMB : IsPVMIn (MB (QuestionType.read w, 0)).op)
+    (hfine : ∑ i, (Ξ.reg (ι → F)).xSqNorm
+      (((MA (QuestionType.hide w j, 0)).map (hidingCoarse (L w) j.val)).op i)
+      (smulKron 1 (Honest.hideCoarseOp (L w) j.val hL i)) ≤ δ)
     (M : (y : ι → F) → Option ((ι → F) × A) →
-      Matrix ((stageRemaining (L w) j.val y → F) × H) _ ℂ)
-    (hform : ∀ a, (((MA (QuestionType.introspect w, 0)).map introFullPair).mats a).val =
+      Matrix (stageRemaining (L w) j.val y → F) (stageRemaining (L w) j.val y → F) 𝒜)
+    (hform : ∀ a, ((MA (QuestionType.introspect w, 0)).map introFullPair).op a =
       ∑ y, prefixResidualOp (L w) j.val y (M y a)) :
     (∑ y, prefixWeight (L w) j.val y * ∑ a, ∑ z,
-      stateSqNorm (registerState (stageRemaining (L w) j.val y → F) ξ)
+      (Ξ.reg (stageRemaining (L w) j.val y → F)).stateSqNorm
         (M y a * registerReadout (stageSplit (L w) hL j.val y)
             wX (CL.lperp (coordinateLinear (CLChecks.stageLinear (L w) j.val y))) z -
           registerReadout (stageSplit (L w) hL j.val y)
@@ -133,8 +135,8 @@ theorem introspect_adaptiveX_commutator
       16 * ((32 * ((ℓ - j.val : ℕ) : ℝ) ^ 2 + 6) *
         (TypeGraph.edges E X Z ℓ).card * ε + 4 * δ) := by
   have ht := introspect_dual_commutator E X Z P L projectPauli D DP
-    ξ hξ MA MB hfail w hL j hMA hMB hfine
-  apply (adaptiveX_reassembled_commutator_le (L w) hL j.val ξ M).trans
+    Ξ hΞ MA MB hfail w hL j hMA hMB hfine
+  apply (adaptiveX_reassembled_commutator_le (L w) hL j.val Ξ M).trans
   simpa only [hform] using ht
 
 end TypedEstimates
