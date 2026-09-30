@@ -14,7 +14,8 @@ public import MIPRE.Background.AnswerReduction.SoundPoly
 Piece AR-5e of `planning/answer-reduction.md` (the game check of `lem:ar-ar`): the probability
 that the PCP check rejects the evaluations of Alice's simultaneous polynomial measurement `J`, at a
 uniform point, is at most its probability of rejecting Bob's `Point_6` answer plus their
-disagreement (`sum_ite_bornProb_one_le`): the first is bounded by the typed game's failure at the
+disagreement (`BipartiteModel.sum_ite_bornProb_one_le`): the first is bounded by the typed game's
+failure at the
 type pair of two `Point_6` questions, whose step 5 checks Bob's answer, and the second by the
 extraction (`sum_gcEvA_le`). The mirror image bounds Bob's `J` (`sum_gcEvB_le`).
 
@@ -172,10 +173,11 @@ theorem sum_gcEvA_le :
       (T.PB (arQ6 V n P hk S' .oracle y (.point z))).map (rd6all P hk B)
     set JAall := Simul.evalTuplePOVMIn (JA V n P hk S S' check B T hL y)
     -- per point: transfer to Bob's `Point_6` answer
-    have hz : ∀ z, ∑ f, (if E z (fun j => (f j).eval z) then M.bornProb ((JA V n P hk S S' check B T hL y).op f) 1 else 0)
+    have hz : ∀ z, ∑ f, (if E z (fun j => (f j).eval z) then
+          M.bornProb ((JA V n P hk S S' check B T hL y).op f) 1 else 0)
         ≤ ∑ α, (if E z α then M.bornProb 1 ((MB z).op α) else 0) + M.dis (JAall z) (MB z) := by
       intro z
-      have h1 := M.sum_ite_bornProb_one_map ((JA V n P hk S S' check B T hL y))
+      have h1 := M.sum_ite_bornProb_one_map (JA V n P hk S S' check B T hL y)
         (fun f j => (f j).eval z) (E z)
       rw [← h1]
       exact M.sum_ite_bornProb_one_le T.ψ_unit (JAall z) (MB z) (E z)
@@ -196,7 +198,8 @@ theorem sum_gcEvA_le :
       rw [inv_mul_le_iff₀ hU]
       exact hsum
     -- Bob's rejections, at the edge
-    have hB : ∑ z, uniform (Fin P.m' → Fq P hk) z * ∑ α, (if E z α then M.bornProb 1 ((MB z).op α) else 0)
+    have hB : ∑ z, uniform (Fin P.m' → Fq P hk) z *
+          ∑ α, (if E z α then M.bornProb 1 ((MB z).op α) else 0)
         ≤ (∑ w, edgeFail V n P hk S S' check B T ((.oracle, ((5 : Fin 6), .point)),
           (.oracle, ((5 : Fin 6), .point))) x w) / Fintype.card (Coord P → Fq P hk) := by
       rw [← sum_ptOf6_div P hk (fun z => ∑ α, (if E z α then M.bornProb 1 ((MB z).op α) else 0))]
@@ -210,7 +213,8 @@ theorem sum_gcEvA_le :
       simp only [E, Rej, Bool.not_eq_false]
       exact (check_of_typedPred V n P hk S S' check B x w h).2
     calc gcEvA V n P hk S S' check B T hL x
-        ≤ ∑ z, uniform (Fin P.m' → Fq P hk) z * (∑ α, (if E z α then M.bornProb 1 ((MB z).op α) else 0)
+        ≤ ∑ z, uniform (Fin P.m' → Fq P hk) z *
+            (∑ α, (if E z α then M.bornProb 1 ((MB z).op α) else 0)
             + M.dis (JAall z) (MB z)) :=
           Finset.sum_le_sum fun z _ => mul_le_mul_of_nonneg_left (hz z) (by simp [uniform])
       _ = _ := by simp only [mul_add, Finset.sum_add_distrib]
@@ -261,10 +265,11 @@ theorem sum_gcEvB_le :
       (T.PA (arQ6 V n P hk S' .oracle y (.point z))).map (rd6all P hk B)
     set JAall := Simul.evalTuplePOVMIn (JB V n P hk S S' check B T hL y)
     -- per point: transfer to Bob's `Point_6` answer
-    have hz : ∀ z, ∑ f, (if E z (fun j => (f j).eval z) then M.bornProb 1 ((JB V n P hk S S' check B T hL y).op f) else 0)
+    have hz : ∀ z, ∑ f, (if E z (fun j => (f j).eval z) then
+          M.bornProb 1 ((JB V n P hk S S' check B T hL y).op f) else 0)
         ≤ ∑ α, (if E z α then M.bornProb ((MB z).op α) 1 else 0) + M.dis (MB z) (JAall z) := by
       intro z
-      have h1 := M.sum_ite_bornProb_one_map' ((JB V n P hk S S' check B T hL y))
+      have h1 := M.sum_ite_bornProb_one_map' (JB V n P hk S S' check B T hL y)
         (fun f j => (f j).eval z) (E z)
       rw [← h1]
       exact M.sum_ite_bornProb_one_le' T.ψ_unit (MB z) (JAall z) (E z)
@@ -285,7 +290,8 @@ theorem sum_gcEvB_le :
       rw [inv_mul_le_iff₀ hU]
       exact hsum
     -- Bob's rejections, at the edge
-    have hB : ∑ z, uniform (Fin P.m' → Fq P hk) z * ∑ α, (if E z α then M.bornProb ((MB z).op α) 1 else 0)
+    have hB : ∑ z, uniform (Fin P.m' → Fq P hk) z *
+          ∑ α, (if E z α then M.bornProb ((MB z).op α) 1 else 0)
         ≤ (∑ w, edgeFail V n P hk S S' check B T ((.oracle, ((5 : Fin 6), .point)),
           (.oracle, ((5 : Fin 6), .point))) x w) / Fintype.card (Coord P → Fq P hk) := by
       rw [← sum_ptOf6_div P hk (fun z => ∑ α, (if E z α then M.bornProb ((MB z).op α) 1 else 0))]
@@ -299,7 +305,8 @@ theorem sum_gcEvB_le :
       simp only [E, Rej, Bool.not_eq_false]
       exact (check_of_typedPred V n P hk S S' check B x w h).1
     calc gcEvB V n P hk S S' check B T hL x
-        ≤ ∑ z, uniform (Fin P.m' → Fq P hk) z * (∑ α, (if E z α then M.bornProb ((MB z).op α) 1 else 0)
+        ≤ ∑ z, uniform (Fin P.m' → Fq P hk) z *
+            (∑ α, (if E z α then M.bornProb ((MB z).op α) 1 else 0)
             + M.dis (MB z) (JAall z)) :=
           Finset.sum_le_sum fun z _ => mul_le_mul_of_nonneg_left (hz z) (by simp [uniform])
       _ = _ := by simp only [mul_add, Finset.sum_add_distrib]

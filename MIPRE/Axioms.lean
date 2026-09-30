@@ -1856,14 +1856,20 @@ tell you the guard is missing.
   MIPRE.AnswerReduction.val_ge_decoded,
   MIPRE.AnswerReduction.val_ge_of_typedGame
 
--- blueprint `lem:ar-error-assembly`: soundness of answer reduction, under `FieldLarge`.
+-- blueprint `lem:ar-error-assembly`: soundness of answer reduction, under `FieldLarge`, for a
+-- projective strategy in a model and in `val*`, at explicit constants.
 #guard_sorry_free MIPRE.AnswerReduction.arVerifier_soundness,
   MIPRE.AnswerReduction.FieldLarge,
   MIPRE.AnswerReduction.errE,
   MIPRE.AnswerReduction.errE_le,
   MIPRE.AnswerReduction.sqrt_le_delta,
   MIPRE.AnswerReduction.exists_threshold_clB,
-  MIPRE.AnswerReduction.z_le
+  MIPRE.AnswerReduction.z_le,
+  MIPRE.AnswerReduction.soundA,
+  MIPRE.AnswerReduction.soundC,
+  MIPRE.AnswerReduction.one_le_delta_of_trivial,
+  MIPRE.AnswerReduction.val_ge_of_arStrategy,
+  MIPRE.AnswerReduction.arVerifier_soundness_tensor
 
 -- blueprint `lem:ar-global-tests`, `lem:ar-input-tests`, `lem:ar-common-polynomials`,
 -- `lem:ar-simultaneous-proof`: the tests, the extraction per seed, and the relations of `J`.
@@ -2888,5 +2894,50 @@ and `thm:parallel-repetition-co` (`MIPRE/Background/Repetition/Soundness.lean`, 
   MIPRE.Verifier.val_ge_of_typed,
   MIPRE.Oracularization.typed_soundness_val,
   MIPRE.Oracularization.detyped_soundness_val
+
+/-! The commuting-operator track, Phase 3 (`planning/mipco-track.md` §5): projective strategies in
+a bipartite model and their operations, `lem:model-proj-strategy`, and their reading in the two
+models, `lem:model-proj-strategy-values` (`MIPRE/Foundations/ModelStrategy.lean`); the seeded CL
+test sound in the tensor-product model, `lem:lidt-sound-in-tensor`
+(`MIPRE/Background/LIDT/ModelSoundness.lean`); and answer reduction sound in `ω_co` given that
+test's soundness in the commuting-operator model, `thm:ar-sound-co`
+(`MIPRE/Background/AnswerReduction/SoundFinal.lean`, `Instance.lean`). The answer-reduction
+chain itself is restated in a model under its existing guards. -/
+#guard_sorry_free MIPRE.BipartiteModel.ProjStrat.failAt_nonneg,
+  MIPRE.BipartiteModel.ProjStrat.failAt_le_one,
+  MIPRE.BipartiteModel.ProjStrat.one_sub_value_eq_sum_failAt,
+  MIPRE.BipartiteModel.ProjStrat.value_le_one,
+  MIPRE.BipartiteModel.ProjStrat.value_nonneg,
+  MIPRE.BipartiteModel.ProjStrat.failAt_adapt_le,
+  MIPRE.BipartiteModel.ProjStrat.value_relabel,
+  MIPRE.BipartiteModel.povmValue_congr_game,
+  MIPRE.POVMIn.map_map,
+  MIPRE.POVMIn.map_id,
+  MIPRE.BipartiteModel.inconsistency_eq_sum_dis,
+  MIPRE.BipartiteModel.inconsistency_uniform,
+  MIPRE.BipartiteModel.sum_dis_le_of_inconsistency,
+  MIPRE.BipartiteModel.inconsistency_uniform_unit,
+  MIPRE.POVMIn.toPOVM_toIn,
+  MIPRE.POVM.toIn_map
+
+#guard_sorry_free MIPRE.TensorProductStrategy.toModel,
+  MIPRE.TensorProductStrategy.value_toModel,
+  MIPRE.TensorProductStrategy.failAt_toModel,
+  MIPRE.star_dotProduct_self_eq_one,
+  MIPRE.BipartiteModel.ProjStrat.toTensor,
+  MIPRE.BipartiteModel.ProjStrat.value_toTensor,
+  MIPRE.BipartiteModel.ProjStrat.value_le_commutingOperatorValue,
+  MIPRE.exists_projStrat_lt_commutingOperatorValue,
+  MIPRE.ValueModel.tensor_dominates,
+  MIPRE.ValueModel.commuting_dominates,
+  MIPRE.inconsistency_eq_tensor
+
+#guard_sorry_free MIPRE.LIDT.Simul.soundIn_tensor,
+  MIPRE.LIDT.Simul.tuplePOVMA_toTensor,
+  MIPRE.LIDT.Simul.tuplePOVMB_toTensor,
+  MIPRE.LIDT.Simul.evalTuplePOVM_toIn
+
+#guard_sorry_free MIPRE.AnswerReduction.arVerifier_soundness_commuting,
+  MIPRE.AnswerReduction.answerReduction_soundIn_commuting
 
 end

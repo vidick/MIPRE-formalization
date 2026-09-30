@@ -351,9 +351,12 @@ the sixth) rather than a common one. Steps 7 and 8 changed: there is no sandwich
   with the decoder `decAns` and the PCP proof `pcpOf` an outcome carries). The rejected weight is
   at most twice the sixth copy's point-subtest failure.
 * **Nine pairs of roles** (`condFail_OO_le` ... `condFail_ba_le`), summed over the seed:
-  `1 - povmValue <= 6 errD` (`one_sub_povmValue_decoded_le`). A Naimark dilation makes it a
-  `TensorProductStrategy`, and `Verifier.valStar_ge_of_typed` gives
-  `val*(V_n) >= 1 - 24 sqrt(7 errD)` (`valStar_ge_decoded`).
+  `1 - povmValue <= 6 errD` (`one_sub_povmValue_decoded_le`). A Naimark dilation made it a
+  `TensorProductStrategy`, and `Verifier.valStar_ge_of_typed` gave
+  `val*(V_n) >= 1 - 24 sqrt(7 errD)`. Since MIP^co Phase 3 (#249) the chain is stated for a
+  projective strategy in a bipartite model: the decoded strategy is projective without a
+  dilation, and `val_ge_decoded` gives `ω(V_n) >= 1 - 24 sqrt(7 errD)` in every value model `ω`
+  where oracularization is sound and which dominates the model (`planning/mipco-track.md`).
 * **Error assembly** (`SoundError`, `SoundFinal`). With `theta <= 16^{54} eps`,
   `errD <= 39204 K Z^{3A} eps^{clB} + (Q+1)^{-2} + 22 Z^{3A} 2^{-clB Q}`, `Z = 8 (Q + 1) m'`,
   `A = ceil(simA)` (`errE_le`), using `FieldLarge` for both field terms and `m >= Q` (from

@@ -28,6 +28,12 @@ The per-seed failures average to at most a constant times the typed failure
 (`sum_one_sub_value_copyStrategy_le`): the copy's nine type pairs are a fixed fraction of the
 typed game's, and the copy's registers of a uniform PCP vector carry a uniform sample
 (`Regs.sum_sampleOf`).
+
+The strategies are projective strategies in a bipartite model (`BipartiteModel.ProjStrat`), as in
+every file of the soundness chain, so that the analysis holds in the tensor-product and in the
+commuting-operator model alike (Phase 3 of `planning/mipco-track.md`); a per-seed strategy is the
+typed strategy played through maps (`BipartiteModel.ProjStrat.adapt`), and so is projective in
+the same model.
 -/
 
 noncomputable section

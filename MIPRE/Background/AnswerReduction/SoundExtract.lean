@@ -13,11 +13,16 @@ public import MIPRE.Background.LIDT.ModelSoundness
 # Soundness of answer reduction: the extracted low-degree measurements
 
 Piece AR-5c of `planning/answer-reduction.md` (`claim:ar-3`, `claim:ar-4`): the quantum soundness
-of the seeded CL test (`LIDT.Simul.clSoundness`) applied to each per-seed strategy of
+of the seeded CL test applied to each per-seed strategy of
 `MIPRE/Background/AnswerReduction/SoundIsolate`, giving for each copy and each oracle half a pair of
-projective measurements of polynomials, one on each player's space (`GA1`, `GB1` for copies
+projective measurements of polynomials, one in each player's algebra (`GA1`, `GB1` for copies
 `1`–`5`, `JA`, `JB` for the sixth copy), each consistent with the other player's point
 measurements and with each other, at the error `δ_sim` of that seed's failure.
+
+The soundness of the seeded test is a hypothesis on the model, `hL : LIDT.Simul.SoundIn M`, in
+the shape of `LIDT.Simul.clSoundness`: that theorem is its tensor-product instance
+(`LIDT.Simul.soundIn_tensor`), and its commuting-operator form is Phase 6 of
+`planning/mipco-track.md`. The extracted measurements are the ones it provides, chosen per seed.
 
 The errors are averaged over the seeds by Jensen's inequality (`sum_deltaSim_le`): `δ_sim` is
 concave in the failure, so the average error is at most the error of the average failure, which

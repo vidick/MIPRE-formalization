@@ -22,7 +22,7 @@ in `m` variables, is placed on its block of the sixth copy's `m'` variables
 individual degree `d` agree at a uniform point with probability at most `m' d / q`
 (`sum_uniform_eval_eq_le`), so the polynomial outcomes of `J`'s `i`-th component and of the placed
 `G` disagree with probability at most their evaluated disagreement plus `m' d / q`
-(`sum_dis_poly_JA_le`, and its mirror image).
+(`disPolyA_le`, and its mirror image), in the model (`BipartiteModel.dis_le_sum_dis_map_add`).
 
 This replaces the paper's giant sandwich `Λ` of `claim:ar-5`: the oracle's measurement here is
 `J` itself, whose components are placed polynomials except with the probability this file bounds.
@@ -98,18 +98,20 @@ theorem sum_ptOf6_div (D : (Fin P.m' → Fq P hk) → ℝ) :
 /-- The outcome-level disagreement of Alice's `J`, component `i`, against Bob's `G` of copy `i`
 placed on its block, at oracle half `x`. -/
 def disPolyA (i : Fin 5) (x : Fin (V.sampler.dim n) → 𝔽₂) : ℝ :=
-  M.dis (((JA V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval x))).map fun f => f (blk P i))
-    (((GB1 V n P hk S S' check B T hL (roleOf i) i
-      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x))).map
+  M.dis ((JA V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval x)).map
+      fun f => f (blk P i))
+    ((GB1 V n P hk S S' check B T hL (roleOf i) i
+      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)).map
       fun g => liftBlk P hk i (g 0))
 
 /-- The mirror image: Alice's `G` of copy `i` placed on its block against Bob's `J`, component
 `i`. -/
 def disPolyB (i : Fin 5) (x : Fin (V.sampler.dim n) → 𝔽₂) : ℝ :=
-  M.dis (((GA1 V n P hk S S' check B T hL (roleOf i) i
-      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x))).map
+  M.dis ((GA1 V n P hk S S' check B T hL (roleOf i) i
+      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)).map
       fun g => liftBlk P hk i (g 0))
-    (((JB V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval x))).map fun f => f (blk P i))
+    ((JB V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval x)).map
+      fun f => f (blk P i))
 
 /-- **From evaluations to polynomials, Alice's `J`**: at each oracle half, the outcome-level
 disagreement is at most the evaluated one, averaged over the PCP vectors, plus `m' d / q`. -/
@@ -121,18 +123,19 @@ theorem disPolyA_le (i : Fin 5) (x : Fin (V.sampler.dim n) → 𝔽₂) :
   have hν0 : ∀ z, 0 ≤ uniform (Fin P.m' → Fq P hk) z := fun z => by simp [uniform]
   have hν1 : ∑ z, uniform (Fin P.m' → Fq P hk) z = 1 := by simp [uniform, Finset.card_univ]
   have h := M.dis_le_sum_dis_map_add T.ψ_unit
-    (((JA V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval x))).map fun f => f (blk P i))
-    (((GB1 V n P hk S S' check B T hL (roleOf i) i
-      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x))).map
+    ((JA V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval x)).map
+      fun f => f (blk P i))
+    ((GB1 V n P hk S S' check B T hL (roleOf i) i
+      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)).map
       fun g => liftBlk P hk i (g 0))
     hν0 hν1 (fun z f => f.eval z) (errSZ_nonneg P hk)
     (fun f f' hff' => sum_uniform_eval_eq_le hff')
   have hw : ∀ w, M.dis (JAe V n P hk S S' check B T hL (blk P i) (x, w))
       (GBe V n P hk S S' check B T hL i (x, w))
-      = M.dis ((((JA V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval
-          x))).map fun f => f (blk P i)).map fun f => f.eval ((regs6 P).ptOf w))
-        ((((GB1 V n P hk S S' check B T hL (roleOf i) i
-          ((roleFamily (V.sampler.cl n) (roleOf i)).eval x))).map
+      = M.dis (((JA V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval
+          x)).map fun f => f (blk P i)).map fun f => f.eval ((regs6 P).ptOf w))
+        (((GB1 V n P hk S S' check B T hL (roleOf i) i
+          ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)).map
           fun g => liftBlk P hk i (g 0)).map fun f => f.eval ((regs6 P).ptOf w)) := fun w => by
     rw [POVMIn.map_map, POVMIn.map_map]
     have hf : (fun g : Poly1 P hk => (liftBlk P hk i (g 0)).eval ((regs6 P).ptOf w))
@@ -141,10 +144,10 @@ theorem disPolyA_le (i : Fin 5) (x : Fin (V.sampler.dim n) → 𝔽₂) :
     rw [hf]
     rfl
   rw [Finset.sum_congr rfl fun w _ => hw w, sum_ptOf6_div P hk (fun z => M.dis
-    ((((JA V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval
-      x))).map fun f => f (blk P i)).map fun f => f.eval z)
-    ((((GB1 V n P hk S S' check B T hL (roleOf i) i
-      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x))).map
+    (((JA V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval
+      x)).map fun f => f (blk P i)).map fun f => f.eval z)
+    (((GB1 V n P hk S S' check B T hL (roleOf i) i
+      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)).map
       fun g => liftBlk P hk i (g 0)).map fun f => f.eval z))]
   exact h
 
@@ -157,19 +160,20 @@ theorem disPolyB_le (i : Fin 5) (x : Fin (V.sampler.dim n) → 𝔽₂) :
   have hν0 : ∀ z, 0 ≤ uniform (Fin P.m' → Fq P hk) z := fun z => by simp [uniform]
   have hν1 : ∑ z, uniform (Fin P.m' → Fq P hk) z = 1 := by simp [uniform, Finset.card_univ]
   have h := M.dis_le_sum_dis_map_add T.ψ_unit
-    (((GA1 V n P hk S S' check B T hL (roleOf i) i
-      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x))).map
+    ((GA1 V n P hk S S' check B T hL (roleOf i) i
+      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)).map
       fun g => liftBlk P hk i (g 0))
-    (((JB V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval x))).map fun f => f (blk P i))
+    ((JB V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval x)).map
+      fun f => f (blk P i))
     hν0 hν1 (fun z f => f.eval z) (errSZ_nonneg P hk)
     (fun f f' hff' => sum_uniform_eval_eq_le hff')
   have hw : ∀ w, M.dis (GAe V n P hk S S' check B T hL i (x, w))
       (JBe V n P hk S S' check B T hL (blk P i) (x, w))
-      = M.dis ((((GA1 V n P hk S S' check B T hL (roleOf i) i
-          ((roleFamily (V.sampler.cl n) (roleOf i)).eval x))).map
+      = M.dis (((GA1 V n P hk S S' check B T hL (roleOf i) i
+          ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)).map
           fun g => liftBlk P hk i (g 0)).map fun f => f.eval ((regs6 P).ptOf w))
-        ((((JB V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval
-          x))).map fun f => f (blk P i)).map fun f => f.eval ((regs6 P).ptOf w)) :=
+        (((JB V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval
+          x)).map fun f => f (blk P i)).map fun f => f.eval ((regs6 P).ptOf w)) :=
       fun w => by
     rw [POVMIn.map_map, POVMIn.map_map]
     have hf : (fun g : Poly1 P hk => (liftBlk P hk i (g 0)).eval ((regs6 P).ptOf w))
@@ -178,11 +182,11 @@ theorem disPolyB_le (i : Fin 5) (x : Fin (V.sampler.dim n) → 𝔽₂) :
     rw [hf]
     rfl
   rw [Finset.sum_congr rfl fun w _ => hw w, sum_ptOf6_div P hk (fun z => M.dis
-    ((((GA1 V n P hk S S' check B T hL (roleOf i) i
-      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x))).map
+    (((GA1 V n P hk S S' check B T hL (roleOf i) i
+      ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)).map
       fun g => liftBlk P hk i (g 0)).map fun f => f.eval z)
-    ((((JB V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval
-      x))).map fun f => f (blk P i)).map fun f => f.eval z))]
+    (((JB V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval
+      x)).map fun f => f (blk P i)).map fun f => f.eval z))]
   exact h
 
 /-- **Summed over the oracle halves**, Alice's `J` against Bob's placed `G`. -/

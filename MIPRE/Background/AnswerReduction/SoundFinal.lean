@@ -18,13 +18,22 @@ Piece AR-5f of `planning/answer-reduction.md`, concluded (`lem:ar-soundness`,
 `arVerifier` (`arVerifier_soundness`), under a new hypothesis on the PCP decider, `FieldLarge`:
 for every exponent `e`, its field eventually has at least `(8 (Q + 1) m')^e` elements.
 
-The chain: a strategy of value above `1 - ε` for the answer-reduced verifier at the answer cut
-(the output verifier rejects longer answers, so its value at any larger bound is the same) gives a
-typed strategy of failure `θ ≤ 16^{54} ε` (`typedStrategy_value_ge`), which gives
-`val*(𝒱_n) ≥ 1 - 24 √(7 errE(θ))` (`valStar_ge_of_typedGame`). The combined error is bounded over
-the large field by `errE_le`, the size of the parameters by `ParamsBound` (`z_le`), and the result
-compared with `δ(ε, n)` by `sqrt_le_delta`, past a threshold on `n` (`exists_threshold_clB`). At
-`μ = 0` or `ε ≥ 1` the loss is at least `1` and there is nothing to prove.
+The chain: a projective strategy of value at least `1 - ε` for the answer-reduced verifier at the
+answer cut, in a bipartite model where the seeded CL test is sound, gives a typed strategy of
+failure `θ ≤ 16^{54} ε` (`typedStrategy_value_ge`), which gives
+`ω(𝒱_n) ≥ 1 - 24 √(7 errE(θ))` (`val_ge_of_typedGame`) in every value model `ω` where
+oracularization is sound and which dominates the model. The combined error is bounded over the
+large field by `errE_le`, the size of the parameters by `ParamsBound` (`z_le`), and the result
+compared with `δ(ε, n)` by `sqrt_le_delta`, past a threshold on `n` (`exists_threshold_clB`):
+`val_ge_of_arStrategy`, at the explicit constants `soundA`, `clB / 2`, `soundC`.
+
+The clause then holds in each value model at the same constants: in `val*`
+(`arVerifier_soundness_tensor`), a tensor-product strategy being a projective strategy in its
+tensor-product model, where the seeded test is sound; and in `ω_co`
+(`arVerifier_soundness_commuting`) given the seeded test's soundness in the commuting-operator
+model, `ω_co` being approached by projective strategies in the models of commuting-operator
+strategies. The output verifier rejects answers longer than the cut, so its value at any larger
+bound is the same; at `μ = 0` or `ε ≥ 1` the loss is at least `1` and there is nothing to prove.
 -/
 
 noncomputable section

@@ -5631,13 +5631,15 @@ state. Symmetrize the typed strategy for its symmetric game; do not assume
 the detyped question law is symmetric. The soundness proof then works with
 projective, well-formatted measurements and a swap-invariant state.
 All type-pair conditioning costs are constants since $T^{\mathrm{ar}}$ is fixed.
-The Lean does not symmetrize: it keeps the two families of measurements of a tensor-product
-strategy and derives every relation for each ordered pair of players from the ordered type pair
-that carries it, the type graph being complete.
+The Lean does not symmetrize: it keeps the two families of measurements of a projective
+strategy in a bipartite model (Definition~\ref{def:model-proj-strategy}), of which a
+tensor-product strategy is the case of its tensor-product model, and derives every relation for
+each ordered pair of players from the ordered type pair that carries it, the type graph being
+complete.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:detype-soundness}
+\uses{lem:detype-soundness,lem:transports-model,lem:model-proj-strategy}
 \leanok
 Detyping soundness (Lemma~\ref{lem:detype-soundness}) restricts the strategy to the typed game
 with the typed decider's predicate, which is the typed answer-reduced predicate at the answer
@@ -5675,7 +5677,8 @@ low-degree theorem is applied to line--point success alone.
 \end{lemma}
 
 \begin{proof}
-\uses{def:ar-seed-index,def:cross-distance,lem:oracular-typed-transfers}
+\uses{def:ar-seed-index,def:cross-distance,lem:oracular-typed-transfers,lem:transports-model,
+  lem:model-proj-strategy}
 \leanok
 The typed game samples a uniform ordered pair of the $54$ types and a uniform seed, so the
 failure conditioned on one type pair is at most $54^2\theta=2916\theta$
@@ -5711,7 +5714,7 @@ averaged over the seed.
 \begin{lemma}[Common individual polynomial measurements]
 \label{lem:ar-common-polynomials}
 \ledgernode{1.3.4.6}
-\uses{thm:lidt-cl-soundness-one,lem:schwartz-zippel}
+\uses{thm:lidt-cl-soundness-one,lem:schwartz-zippel,def:lidt-sound-in}
 \lean{MIPRE.AnswerReduction.exists_ext1, MIPRE.AnswerReduction.ext1_spec,
   MIPRE.AnswerReduction.sum_deltaSim1_le, MIPRE.LIDT.Simul.sum_deltaSim_le}
 \leanok
@@ -5726,15 +5729,18 @@ The resulting evaluation and full-polynomial consistency error is denoted
 $\kappa=O(\sqrt E+\rho)$ with $E,\rho$ as below.
 The Lean keeps one extracted family per player, $G^A_i$ and $G^B_i$, with their consistency,
 rather than a single common family; the errors are averaged over the seed by concavity of
-$\eps\mapsto\eps^{b'}$.
+$\eps\mapsto\eps^{b'}$. It extracts in a bipartite model in which the seeded test is sound
+(Definition~\ref{def:lidt-sound-in}), a hypothesis the tensor-product model satisfies by the
+theorem itself (Lemma~\ref{lem:lidt-sound-in-tensor}).
 \end{lemma}
 
 \begin{proof}
-\uses{thm:lidt-cl-soundness-one,lem:ar-global-tests,thm:lidt-cl-soundness}
+\uses{thm:lidt-cl-soundness-one,lem:ar-global-tests}
 \leanok
 For each seed and copy, the seeded low-degree test's soundness extracts the measurements
 (\texttt{exists\_ext1}, \texttt{ext1\_spec}), with error $\delta_{\mathrm{sim}}$ at the copy's
-failure; $\eps\mapsto\eps^{b'}$ is concave, so the errors average over the seed to
+failure; in the Lean the restricted strategy is a projective strategy in the model, and the
+soundness is the model's (Definition~\ref{def:lidt-sound-in}); $\eps\mapsto\eps^{b'}$ is concave, so the errors average over the seed to
 $\delta_{\mathrm{sim}}$ at the average failure (\texttt{sum\_deltaSim\_le},
 \texttt{sum\_deltaSim1\_le}).
 \end{proof}
@@ -5742,7 +5748,7 @@ $\delta_{\mathrm{sim}}$ at the average failure (\texttt{sum\_deltaSim\_le},
 \begin{lemma}[A simultaneous complete proof tuple]
 \label{lem:ar-simultaneous-proof}
 \ledgernode{1.3.4.7}
-\uses{lem:ar-common-polynomials,thm:lidt-cl-soundness}
+\uses{lem:ar-common-polynomials}
 \lean{MIPRE.AnswerReduction.exists_ext6, MIPRE.AnswerReduction.ext6_spec,
   MIPRE.AnswerReduction.sum_deltaSim6_le, MIPRE.AnswerReduction.sum_dis_JAe_GBe_le,
   MIPRE.AnswerReduction.sum_dis_GAe_JBe_le}
@@ -5762,10 +5768,11 @@ suffice for the next lemma.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:ar-common-polynomials,thm:lidt-cl-soundness,lem:ar-input-tests}
+\uses{lem:ar-common-polynomials,lem:ar-input-tests}
 \leanok
 The simultaneous test at $(q,m',d,m'+6)$ extracts $J$ per seed (\texttt{exists\_ext6},
-\texttt{ext6\_spec}), averaged as for the single copies (\texttt{sum\_deltaSim6\_le}). The
+\texttt{ext6\_spec}), in the model as for the single copies, and averaged as for them
+(\texttt{sum\_deltaSim6\_le}). The
 relations chain by the triangle inequality for disagreement: one player's evaluated $J$ against
 the other's point of the sixth copy, that point against the other's point of copy $i$, and that
 against the other's evaluated $G_i$ (\texttt{sum\_dis\_JAe\_GBe\_le},
@@ -5836,13 +5843,16 @@ $2^{(\lambda n+1)^\mu}$, so accepted answers already fit its alphabet, where the
 determines them. The oracle's game check fails only where $J$'s outcome is not placed on its
 blocks, or the PCP check rejects it at half the points; each ordered pair of roles fails at most
 by a game check and the disagreement of the polynomials. The decoded POVM strategy fails the
-typed oracularized game with probability at most $6$ times the combined error; a Naimark
-dilation makes it projective, and oracularization soundness (one square root) gives
-$\val^*(\verifier_n)\geq 1-24\sqrt{7\,\mathrm{err}}$.
+typed oracularized game with probability at most $6$ times the combined error. Its measurements
+are coarse-grainings of the extracted projective ones, so it is a projective strategy in the
+model with no dilation, and oracularization soundness (one square root) gives
+$\omega(\verifier_n)\geq 1-24\sqrt{7\,\mathrm{err}}$ in every value model $\omega$ in which
+oracularization is sound (Definition~\ref{def:oracular-sound-in}) and which dominates the model
+(Definition~\ref{def:model-proj-strategy}); in particular $\val^*(\verifier_n)$.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:ar-simultaneous-proof,lem:schwartz-zippel,thm:pcp-decider}
+\uses{lem:ar-simultaneous-proof,lem:schwartz-zippel,thm:pcp-decider,thm:oracularization-in-model}
 \leanok
 As described: the nine ordered pairs of roles are bounded pair by pair, and the bounds summed
 over the seed with the averaged extraction errors of Lemmas~\ref{lem:ar-common-polynomials}
@@ -5856,7 +5866,9 @@ and~\ref{lem:ar-simultaneous-proof}.
 \lean{MIPRE.AnswerReduction.arVerifier_soundness, MIPRE.AnswerReduction.FieldLarge,
   MIPRE.AnswerReduction.errE, MIPRE.AnswerReduction.errE_le,
   MIPRE.AnswerReduction.sqrt_le_delta, MIPRE.AnswerReduction.exists_threshold_clB,
-  MIPRE.AnswerReduction.z_le}
+  MIPRE.AnswerReduction.z_le, MIPRE.AnswerReduction.soundA, MIPRE.AnswerReduction.soundC,
+  MIPRE.AnswerReduction.one_le_delta_of_trivial, MIPRE.AnswerReduction.val_ge_of_arStrategy,
+  MIPRE.AnswerReduction.arVerifier_soundness_tensor}
 \leanok
 Put $L=(\lambda n)^\mu$, $\rho=m'd/q$ and
 $E=\delta_{\mathrm{CL}}(\theta,q,m',d,m'+6)$ for the source parameter
@@ -5886,11 +5898,17 @@ field has at least $(8(Q+1)m')^{e}$ elements; it is used at $e=40000(3\lceil a'\
 field of $2^{O(\log^2(Qm'))}$ elements satisfies it. Theorem~\ref{thm:pcp-decider} does not carry the paper's lower
 bound on $q$ (\texttt{eq:pcp-q-choice}); this is it, beside \texttt{ParamsBound} and
 \texttt{ShoupField}. The term $2^{-b'md}$ uses $m\geq Q$, from $2^m\geq 2T$, and the threshold
-on $n$; $\mu=0$ and $\eps\geq 1$ are trivial, the loss being at least $1$ there.
+on $n$; $\mu=0$ and $\eps\geq 1$ are trivial, the loss being at least $1$ there. The constants
+are explicit, $a$ a function of the parameter polynomial alone and the threshold the larger of
+the two above, and the assembly is stated for a projective strategy in a bipartite model in which
+the seeded test is sound (\texttt{val\_ge\_of\_arStrategy}), for every value model in which
+oracularization is sound and which dominates the model; the clause in $\val^*$ is its
+tensor-product case, and the clause in $\omegaco$ (Theorem~\ref{thm:ar-sound-co}) the
+commuting-operator case, at the same constants.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:ar-decoding,lem:ar-soundness-setup,def:value-model}
+\uses{lem:ar-decoding,lem:ar-soundness-setup,def:value-model,lem:lidt-sound-in-tensor}
 \leanok
 With $\theta\leq 16^{54}\eps$, the combined error is at most
 $39204\cdot16^{54}Z^{3A}\eps^{b'}+(Q+1)^{-2}+22Z^{3A}2^{-b'Q}$, $Z=8(Q+1)m'$, $A=\lceil

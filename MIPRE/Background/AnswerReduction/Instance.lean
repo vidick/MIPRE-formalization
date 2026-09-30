@@ -25,7 +25,10 @@ ask of the PCP decider hold for it:
 
 The contract's clauses are then `arVerifier_bounds` (the complexity clause and the answer cut
 below the output bound), `arVerifier_hasPerfectPCC` (completeness at the cut, hence at the bound)
-and `arVerifier_soundness` (at the output bound).
+and `arVerifier_soundness_tensor` (at the output bound), at the explicit soundness constants
+`soundA`, `clB / 2`, `soundC`. At the same constants, the clause holds in the commuting-operator
+value once the low-individual-degree test is sound in the commuting-operator model
+(`answerReduction_soundIn_commuting`, Phase 3 of `planning/mipco-track.md`).
 -/
 
 noncomputable section

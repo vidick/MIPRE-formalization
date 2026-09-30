@@ -13,22 +13,24 @@ public import MIPRE.Foundations.Disagreement
 # Soundness of answer reduction: the cross relations
 
 Piece AR-5d of `planning/answer-reduction.md` (`claim:ar-2`, the first item of `claim:ar-4`, and
-the input of `claim:ar-5`). Every relation is a disagreement (`MIPRE.dis`) between a family of
-Alice's measurements and a family of Bob's, on the common index `(x, w)` of an oracle half and a
-PCP vector, both uniform: the typed question of a type at `(x, w)` is `tq`, and a point answer is
-read by `rd1` (copies `1`–`5`) or `rd6` (a component of the sixth copy's answer).
+the input of `claim:ar-5`). Every relation is a disagreement (`BipartiteModel.dis`) between a
+family of Alice's measurements and a family of Bob's in the model, on the common index `(x, w)` of
+an oracle half and a PCP vector, both uniform: the typed question of a type at `(x, w)` is `tq`,
+and a point answer is read by `rd1` (copies `1`–`5`) or `rd6` (a component of the sixth copy's
+answer).
 
 The relations come from two sources:
 
 * **the typed game**, at one type pair (`sum_dis_edge_le`): a subtest whose acceptance forces two
   readings to agree bounds their disagreement by the failure on that pair, at most `54²` times
   the typed failure after summing;
-* **the extraction** (`sum_dis_ext1_le`, `sum_dis_ext6_le`, ...): `clSoundness`'s conclusions,
-  reindexed from a uniform point of the copy to the point the copy's registers carry in a uniform
-  PCP vector, and averaged over the oracle halves.
+* **the extraction** (`sum_dis_MA1_GBe_le`, `sum_dis_JAe_MB6_le`, ...): the conclusions of the
+  seeded test's soundness in the model, reindexed from a uniform point of the copy to the point
+  the copy's registers carry in a uniform PCP vector, and averaged over the oracle halves.
 
-They chain across the two players (`sum_dis_triangle`): Alice's evaluated `J` against Bob's
-evaluated `G` for each of the five copies (`sum_dis_JA_GB_le`), and the mirror image.
+They chain across the two players (`BipartiteModel.sum_dis_triangle`): Alice's evaluated `J`
+against Bob's evaluated `G` for each of the five copies (`sum_dis_JAe_GBe_le`), and the mirror
+image.
 -/
 
 noncomputable section
@@ -214,24 +216,24 @@ def MB6 (j : Fin (P.m' + 6)) (p : Idx V n P hk) : POVMIn (Fq P hk) ℬ :=
 
 /-- Alice's extracted polynomial of copy `i ≤ 5`, evaluated at the copy's point. -/
 def GAe (i : Fin 5) (p : Idx V n P hk) : POVMIn (Fq P hk) 𝒜 :=
-  ((GA1 V n P hk S S' check B T hL (roleOf i) i
-      ((roleFamily (V.sampler.cl n) (roleOf i)).eval p.1))).map
+  (GA1 V n P hk S S' check B T hL (roleOf i) i
+      ((roleFamily (V.sampler.cl n) (roleOf i)).eval p.1)).map
     fun g => (g 0).eval ((regs P i).ptOf p.2)
 
 /-- Bob's extracted polynomial of copy `i ≤ 5`, evaluated at the copy's point. -/
 def GBe (i : Fin 5) (p : Idx V n P hk) : POVMIn (Fq P hk) ℬ :=
-  ((GB1 V n P hk S S' check B T hL (roleOf i) i
-      ((roleFamily (V.sampler.cl n) (roleOf i)).eval p.1))).map
+  (GB1 V n P hk S S' check B T hL (roleOf i) i
+      ((roleFamily (V.sampler.cl n) (roleOf i)).eval p.1)).map
     fun g => (g 0).eval ((regs P i).ptOf p.2)
 
 /-- Alice's extracted `j`-th polynomial of the sixth copy, evaluated at its point. -/
 def JAe (j : Fin (P.m' + 6)) (p : Idx V n P hk) : POVMIn (Fq P hk) 𝒜 :=
-  ((JA V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval p.1))).map
+  (JA V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval p.1)).map
     fun f => (f j).eval ((regs6 P).ptOf p.2)
 
 /-- Bob's extracted `j`-th polynomial of the sixth copy, evaluated at its point. -/
 def JBe (j : Fin (P.m' + 6)) (p : Idx V n P hk) : POVMIn (Fq P hk) ℬ :=
-  ((JB V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval p.1))).map
+  (JB V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval p.1)).map
     fun f => (f j).eval ((regs6 P).ptOf p.2)
 
 /-! ## The relations from the typed game -/
@@ -369,14 +371,14 @@ theorem sum_dis_MA1_GBe_le (i : Fin 5) :
       (GBe V n P hk S S' check B T hL i (x, w)) = M.dis
       ((T.PA (arQ1 V n P hk S (roleOf i) i y (.point ((regs P i).ptOf w)))).map
         (rd1 P hk B i))
-      (((GB1 V n P hk S S' check B T hL (roleOf i) i y)).map
+      ((GB1 V n P hk S S' check B T hL (roleOf i) i y).map
         fun g => (g 0).eval ((regs P i).ptOf w)) := fun w => by
     simp only [MA1, GBe]
     rw [tq_point, ← hy]
   rw [Finset.sum_congr rfl fun w _ => key w]
   have h2 : ∑ u : Fin P.m → Fq P hk, M.dis
       ((T.PA (arQ1 V n P hk S (roleOf i) i y (.point u))).map (rd1 P hk B i))
-      (((GB1 V n P hk S S' check B T hL (roleOf i) i y)).map fun g => (g 0).eval u)
+      ((GB1 V n P hk S S' check B T hL (roleOf i) i y).map fun g => (g 0).eval u)
       ≤ (Fintype.card (Fin P.m → Fq P hk) : ℝ) * Simul.deltaSim (Fintype.card (Fq P hk)) P.m
         dPcp 1 (eps1 V n P hk S S' check B T (roleOf i) i y) := by
     refine le_trans (Finset.sum_le_sum fun u _ => ?_) h1'
@@ -398,7 +400,7 @@ theorem sum_dis_GAe_MB1_le (i : Fin 5) :
   have h2' := M.sum_dis_le_of_inconsistency T.ψ_unit _ _ h2
   have key : ∀ w, M.dis (GAe V n P hk S S' check B T hL i (x, w))
       (MB1 V n P hk S S' check B T i (x, w)) = M.dis
-      (((GA1 V n P hk S S' check B T hL (roleOf i) i y)).map
+      ((GA1 V n P hk S S' check B T hL (roleOf i) i y).map
         fun g => (g 0).eval ((regs P i).ptOf w))
       ((T.PB (arQ1 V n P hk S (roleOf i) i y (.point ((regs P i).ptOf w)))).map
         (rd1 P hk B i)) := fun w => by
@@ -406,7 +408,7 @@ theorem sum_dis_GAe_MB1_le (i : Fin 5) :
     rw [tq_point, ← hy]
   rw [Finset.sum_congr rfl fun w _ => key w]
   have h3 : ∑ u : Fin P.m → Fq P hk, M.dis
-      (((GA1 V n P hk S S' check B T hL (roleOf i) i y)).map fun g => (g 0).eval u)
+      ((GA1 V n P hk S S' check B T hL (roleOf i) i y).map fun g => (g 0).eval u)
       ((T.PB (arQ1 V n P hk S (roleOf i) i y (.point u))).map (rd1 P hk B i))
       ≤ (Fintype.card (Fin P.m → Fq P hk) : ℝ) * Simul.deltaSim (Fintype.card (Fq P hk)) P.m
         dPcp 1 (eps1 V n P hk S S' check B T (roleOf i) i y) := by
@@ -429,14 +431,14 @@ theorem sum_dis_JAe_MB6_le (j : Fin (P.m' + 6)) :
   have h2' := M.sum_dis_le_of_inconsistency T.ψ_unit _ _ h2
   have key : ∀ w, M.dis (JAe V n P hk S S' check B T hL j (x, w))
       (MB6 V n P hk S S' check B T j (x, w)) = M.dis
-      (((JA V n P hk S S' check B T hL y)).map fun f => (f j).eval ((regs6 P).ptOf w))
+      ((JA V n P hk S S' check B T hL y).map fun f => (f j).eval ((regs6 P).ptOf w))
       ((T.PB (arQ6 V n P hk S' .oracle y (.point ((regs6 P).ptOf w)))).map
         (rd6 P hk B j)) := fun w => by
     simp only [MB6, JAe]
     rw [tq_point6, ← hy]
   rw [Finset.sum_congr rfl fun w _ => key w]
   have h3 : ∑ u : Fin P.m' → Fq P hk, M.dis
-      (((JA V n P hk S S' check B T hL y)).map fun f => (f j).eval u)
+      ((JA V n P hk S S' check B T hL y).map fun f => (f j).eval u)
       ((T.PB (arQ6 V n P hk S' .oracle y (.point u))).map (rd6 P hk B j))
       ≤ (Fintype.card (Fin P.m' → Fq P hk) : ℝ) * Simul.deltaSim (Fintype.card (Fq P hk)) P.m'
         dPcp (P.m' + 6) (eps6 V n P hk S S' check B T y) := by
@@ -461,14 +463,14 @@ theorem sum_dis_MA6_JBe_le (j : Fin (P.m' + 6)) :
       (JBe V n P hk S S' check B T hL j (x, w)) = M.dis
       ((T.PA (arQ6 V n P hk S' .oracle y (.point ((regs6 P).ptOf w)))).map
         (rd6 P hk B j))
-      (((JB V n P hk S S' check B T hL y)).map fun f => (f j).eval ((regs6 P).ptOf w)) :=
+      ((JB V n P hk S S' check B T hL y).map fun f => (f j).eval ((regs6 P).ptOf w)) :=
     fun w => by
     simp only [MA6, JBe]
     rw [tq_point6, ← hy]
   rw [Finset.sum_congr rfl fun w _ => key w]
   have h3 : ∑ u : Fin P.m' → Fq P hk, M.dis
       ((T.PA (arQ6 V n P hk S' .oracle y (.point u))).map (rd6 P hk B j))
-      (((JB V n P hk S S' check B T hL y)).map fun f => (f j).eval u)
+      ((JB V n P hk S S' check B T hL y).map fun f => (f j).eval u)
       ≤ (Fintype.card (Fin P.m' → Fq P hk) : ℝ) * Simul.deltaSim (Fintype.card (Fq P hk)) P.m'
         dPcp (P.m' + 6) (eps6 V n P hk S S' check B T y) := by
     refine le_trans (Finset.sum_le_sum fun u _ => ?_) h1'

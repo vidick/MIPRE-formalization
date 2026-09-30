@@ -12,7 +12,7 @@ public import MIPRE.Foundations.OracularValue
 /-!
 # Soundness of answer reduction: the decoded strategy
 
-Piece AR-5e of `planning/answer-reduction.md` (`lem:ar-ora`): a POVM strategy for the typed
+Piece AR-5e of `planning/answer-reduction.md` (`lem:ar-ora`): a strategy for the typed
 oracularized game of the input verifier, on the typed strategy's state. An oracle measures the
 extracted simultaneous measurement `J` and answers the pair decoded from the first two answer
 polynomials its outcome carries on their blocks (`decO`); an isolated player measures the
@@ -28,6 +28,12 @@ Each of the nine ordered pairs of roles fails at most (`condFail_OO_le`, `condFa
 
 The failure of the decoded strategy is then at most a constant times the errors of
 `SoundRelations`, `SoundPoly` and `SoundGameCheck` (`one_sub_povmValue_decoded_le`).
+
+The decoded measurements are coarse-grainings of the extracted projective ones, so the decoded
+strategy is a projective strategy in the same model (`decoded`), and no dilation is needed: its
+value is at most `ω` of the typed oracularized game in every value model `ω` that dominates the
+model (`ValueModel.Dominates`), and oracularization's soundness in `ω` bounds the input verifier
+(`val_ge_decoded`). The matrix proof dilated a POVM strategy here (Naimark); that step is gone.
 -/
 
 noncomputable section
@@ -144,8 +150,8 @@ theorem condFail_OO_le (y : Fin (V.sampler.dim n) → 𝔽₂) :
     M.condFail (oGame V n B') (MAo V n P hk S S' check B T hL B' dec)
         (MBo V n P hk S S' check B T hL B' dec) (.oracle, y) (.oracle, y)
       ≤ gcA V n P hk S S' check B T hL B' dec y + gcB V n P hk S S' check B T hL B' dec y
-        + M.dis ((JA V n P hk S S' check B T hL y))
-          ((JB V n P hk S S' check B T hL y)) := by
+        + M.dis (JA V n P hk S S' check B T hL y)
+          (JB V n P hk S S' check B T hL y) := by
   have h := M.condFail_le_of (G := oGame V n B') T.ψ_unit (x := (.oracle, y)) (y := (.oracle, y))
     (MA := MAo V n P hk S S' check B T hL B' dec) (MB := MBo V n P hk S S' check B T hL B' dec)
     (fun a => ¬(SeededGame.shapeOk .oracle a = true ∧
@@ -365,8 +371,8 @@ theorem condFail_bO_le (x : Fin (V.sampler.dim n) → 𝔽₂) :
 theorem condFail_aa_le (y : Fin (V.sampler.dim n) → 𝔽₂) :
     M.condFail (oGame V n B') (MAo V n P hk S S' check B T hL B' dec)
         (MBo V n P hk S S' check B T hL B' dec) (.alice, y) (.alice, y)
-      ≤ M.dis ((GA1 V n P hk S S' check B T hL (roleOf 0) 0 y))
-          ((GB1 V n P hk S S' check B T hL (roleOf 0) 0 y)) := by
+      ≤ M.dis (GA1 V n P hk S S' check B T hL (roleOf 0) 0 y)
+          (GB1 V n P hk S S' check B T hL (roleOf 0) 0 y) := by
   have h := M.condFail_le_of (G := oGame V n B') T.ψ_unit (x := (.alice, y)) (y := (.alice, y))
     (MA := MAo V n P hk S S' check B T hL B' dec) (MB := MBo V n P hk S S' check B T hL B' dec)
     (fun a => ¬SeededGame.shapeOk .alice a = true) (fun b => ¬SeededGame.shapeOk .alice b = true)
@@ -424,8 +430,8 @@ theorem condFail_ab_le (y y' : Fin (V.sampler.dim n) → 𝔽₂) :
 theorem condFail_bb_le (y : Fin (V.sampler.dim n) → 𝔽₂) :
     M.condFail (oGame V n B') (MAo V n P hk S S' check B T hL B' dec)
         (MBo V n P hk S S' check B T hL B' dec) (.bob, y) (.bob, y)
-      ≤ M.dis ((GA1 V n P hk S S' check B T hL (roleOf 1) 1 y))
-          ((GB1 V n P hk S S' check B T hL (roleOf 1) 1 y)) := by
+      ≤ M.dis (GA1 V n P hk S S' check B T hL (roleOf 1) 1 y)
+          (GB1 V n P hk S S' check B T hL (roleOf 1) 1 y) := by
   have h := M.condFail_le_of (G := oGame V n B') T.ψ_unit (x := (.bob, y)) (y := (.bob, y))
     (MA := MAo V n P hk S S' check B T hL B' dec) (MB := MBo V n P hk S S' check B T hL B' dec)
     (fun a => ¬SeededGame.shapeOk .bob a = true) (fun b => ¬SeededGame.shapeOk .bob b = true)
@@ -770,7 +776,8 @@ theorem sum_gcB_le (hgc : PcpSound V n P hk check B' dec) :
 
 /-- **The two oracles' `J` disagree** at most the sixth copy's extraction error, on average. -/
 theorem sum_dis_JA_JB_le :
-    ∑ x, M.dis ((JA V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval x))) ((JB V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval x)))
+    ∑ x, M.dis (JA V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval x))
+        (JB V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval x))
       ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * err6 V n P hk S S' check B T := by
   refine le_trans (Finset.sum_le_sum fun x _ => ?_) (sum_deltaSim6_le V n P hk S S' check B T)
   obtain ⟨-, -, h3⟩ := ext6_spec V n P hk S S' check B T hL
@@ -780,10 +787,10 @@ theorem sum_dis_JA_JB_le :
 
 /-- **Two isolated players' `G` disagree** at most copy `i`'s extraction error, on average. -/
 theorem sum_dis_GA_GB_le (i : Fin 5) :
-    ∑ x, M.dis ((GA1 V n P hk S S' check B T hL (roleOf i) i
-        ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)))
-        ((GB1 V n P hk S S' check B T hL (roleOf i) i
-          ((roleFamily (V.sampler.cl n) (roleOf i)).eval x)))
+    ∑ x, M.dis (GA1 V n P hk S S' check B T hL (roleOf i) i
+        ((roleFamily (V.sampler.cl n) (roleOf i)).eval x))
+        (GB1 V n P hk S S' check B T hL (roleOf i) i
+          ((roleFamily (V.sampler.cl n) (roleOf i)).eval x))
       ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * err1 V n P hk S S' check B T := by
   refine le_trans (Finset.sum_le_sum fun x _ => ?_)
     (sum_deltaSim1_le V n P hk S S' check B T (ldStep_roleOf i))
@@ -828,18 +835,18 @@ theorem sum_roles_condFail_le (hgc : PcpSound V n P hk check B' dec)
       ≤ 3 * gcA V n P hk S S' check B T hL B' dec ((roleFamily (V.sampler.cl n) .oracle).eval z)
         + 3 * gcB V n P hk S S' check B T hL B' dec ((roleFamily (V.sampler.cl n) .oracle).eval z)
         + M.dis
-            ((JA V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval z)))
-            ((JB V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval z)))
+            (JA V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval z))
+            (JB V n P hk S S' check B T hL ((roleFamily (V.sampler.cl n) .oracle).eval z))
         + (disPolyA V n P hk S S' check B T hL 0 z + disPolyA V n P hk S S' check B T hL 1 z
           + disPolyB V n P hk S S' check B T hL 0 z + disPolyB V n P hk S S' check B T hL 1 z)
-        + M.dis ((GA1 V n P hk S S' check B T hL (roleOf 0) 0
-            ((roleFamily (V.sampler.cl n) (roleOf 0)).eval z)))
-            ((GB1 V n P hk S S' check B T hL (roleOf 0) 0
-              ((roleFamily (V.sampler.cl n) (roleOf 0)).eval z)))
-        + M.dis ((GA1 V n P hk S S' check B T hL (roleOf 1) 1
-            ((roleFamily (V.sampler.cl n) (roleOf 1)).eval z)))
-            ((GB1 V n P hk S S' check B T hL (roleOf 1) 1
-              ((roleFamily (V.sampler.cl n) (roleOf 1)).eval z))) := by
+        + M.dis (GA1 V n P hk S S' check B T hL (roleOf 0) 0
+            ((roleFamily (V.sampler.cl n) (roleOf 0)).eval z))
+            (GB1 V n P hk S S' check B T hL (roleOf 0) 0
+              ((roleFamily (V.sampler.cl n) (roleOf 0)).eval z))
+        + M.dis (GA1 V n P hk S S' check B T hL (roleOf 1) 1
+            ((roleFamily (V.sampler.cl n) (roleOf 1)).eval z))
+            (GB1 V n P hk S S' check B T hL (roleOf 1) 1
+              ((roleFamily (V.sampler.cl n) (roleOf 1)).eval z)) := by
   have hgA := gcA_le V n P hk S S' check B T hL B' dec hgc z
   have hgB := gcB_le V n P hk S S' check B T hL B' dec hgc z
   simp only [Role.sum_eq]
@@ -851,11 +858,13 @@ theorem sum_roles_condFail_le (hgc : PcpSound V n P hk check B' dec)
   have := condFail_bO_le V n P hk S S' check B T hL B' dec z
   have := condFail_aa_le V n P hk S S' check B T hL B' dec
     ((roleFamily (V.sampler.cl n) .alice).eval z)
-  have := condFail_bb_le V n P hk S S' check B T hL B' dec ((roleFamily (V.sampler.cl n) .bob).eval z)
+  have := condFail_bb_le V n P hk S S' check B T hL B' dec
+    ((roleFamily (V.sampler.cl n) .bob).eval z)
   have := condFail_ab_le V n P hk S S' check B T hL B' dec
     ((roleFamily (V.sampler.cl n) .alice).eval z)
     ((roleFamily (V.sampler.cl n) .bob).eval z)
-  have := condFail_ba_le V n P hk S S' check B T hL B' dec ((roleFamily (V.sampler.cl n) .bob).eval z)
+  have := condFail_ba_le V n P hk S S' check B T hL B' dec
+    ((roleFamily (V.sampler.cl n) .bob).eval z)
     ((roleFamily (V.sampler.cl n) .alice).eval z)
   have hg0 :
       0 ≤ gcA V n P hk S S' check B T hL B' dec ((roleFamily (V.sampler.cl n) .oracle).eval z) :=
@@ -869,14 +878,14 @@ theorem sum_roles_condFail_le (hgc : PcpSound V n P hk check B' dec)
       split_ifs
       · exact le_refl 0
       · exact M.bornProb_nonneg zero_le_one ((JB V n P hk S S' check B T hL _).op_nonneg f)
-  change _ ≤ _ + M.dis ((GA1 V n P hk S S' check B T hL (roleOf 0) 0
-            ((roleFamily (V.sampler.cl n) .alice).eval z)))
-            ((GB1 V n P hk S S' check B T hL (roleOf 0) 0
-              ((roleFamily (V.sampler.cl n) .alice).eval z)))
-        + M.dis ((GA1 V n P hk S S' check B T hL (roleOf 1) 1
-            ((roleFamily (V.sampler.cl n) .bob).eval z)))
-            ((GB1 V n P hk S S' check B T hL (roleOf 1) 1
-              ((roleFamily (V.sampler.cl n) .bob).eval z)))
+  change _ ≤ _ + M.dis (GA1 V n P hk S S' check B T hL (roleOf 0) 0
+            ((roleFamily (V.sampler.cl n) .alice).eval z))
+            (GB1 V n P hk S S' check B T hL (roleOf 0) 0
+              ((roleFamily (V.sampler.cl n) .alice).eval z))
+        + M.dis (GA1 V n P hk S S' check B T hL (roleOf 1) 1
+            ((roleFamily (V.sampler.cl n) .bob).eval z))
+            (GB1 V n P hk S S' check B T hL (roleOf 1) 1
+              ((roleFamily (V.sampler.cl n) .bob).eval z))
   linarith
 
 /-- **The decoded strategy fails the typed oracularized game** with probability at most `6` times

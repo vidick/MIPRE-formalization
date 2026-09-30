@@ -16,13 +16,15 @@ public import MIPRE.Foundations.ModelStrategy
 Piece AR-5a of `planning/answer-reduction.md` (`lem:ar-soundness-setup`): a strategy for the
 answer-reduced verifier's game at the answer cut, of value at least `1 - ε`, gives a strategy for
 the typed answer-reduced game (`typedGame`, with the predicate `typedPred`) of value at least
-`1 - 16^{54} ε`, on the same state (`typedStrategy_value_ge`). This is the detyping compiler's
-soundness (`CL.Detyping.DeciderProgram.restrictAmbient_value_ge`), read through the typed
+`1 - 16^{54} ε`, on the same state (`typedStrategy_value_ge`). This is the detyping restriction in
+a bipartite model (`CL.Detyping.restrict_povmValue_ge`), after reading the compiled verifier's
+questions in the finite detyped game (`CL.Detyping.DeciderProgram.vectorEquiv`), through the typed
 decider's acceptance law (`typedPredicate_eq`).
 
-The strategy stays a `TensorProductStrategy`: two families of projective measurements, one per
-player. The paper symmetrizes it first (`lem:symmetric-strat`); the Lean does not, and derives
-every relation for each ordered pair of players from the ordered pair of types that carries it.
+The strategy stays a projective strategy in a bipartite model (`BipartiteModel.ProjStrat`): two
+families of projective measurements, one per player. The paper symmetrizes it first
+(`lem:symmetric-strat`); the Lean does not, and derives every relation for each ordered pair of
+players from the ordered pair of types that carries it.
 -/
 
 noncomputable section
