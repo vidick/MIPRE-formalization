@@ -58,7 +58,8 @@ open scoped Kronecker ComplexOrder MatrixOrder
 /-! ## The ancilla -/
 
 /-- **An ancilla model**: a bipartite model on a Hilbert space of `Type`, with ordered, proper
-algebras and a unit state, packed with its algebras. -/
+algebras compatible with the scalars (`StarModule ℂ`, which register measurements need) and a unit
+state, packed with its algebras. -/
 structure AncillaModel where
   /-- The algebra represented on the Hilbert space. -/
   𝒞 : Type
@@ -72,12 +73,14 @@ structure AncillaModel where
   [instRing𝒜 : Ring 𝒜]
   [instStarRing𝒜 : StarRing 𝒜]
   [instAlgebra𝒜 : Algebra ℂ 𝒜]
+  [instStarModule𝒜 : StarModule ℂ 𝒜]
   [instPartialOrder𝒜 : PartialOrder 𝒜]
   [instStarOrderedRing𝒜 : StarOrderedRing 𝒜]
   [instStarProper𝒜 : StarProper 𝒜]
   [instRingℬ : Ring ℬ]
   [instStarRingℬ : StarRing ℬ]
   [instAlgebraℬ : Algebra ℂ ℬ]
+  [instStarModuleℬ : StarModule ℂ ℬ]
   [instPartialOrderℬ : PartialOrder ℬ]
   [instStarOrderedRingℬ : StarOrderedRing ℬ]
   [instStarProperℬ : StarProper ℬ]
@@ -88,9 +91,9 @@ structure AncillaModel where
 
 attribute [instance] AncillaModel.instRing𝒞 AncillaModel.instStarRing𝒞 AncillaModel.instAlgebra𝒞
   AncillaModel.instRing𝒜 AncillaModel.instStarRing𝒜 AncillaModel.instAlgebra𝒜
-  AncillaModel.instPartialOrder𝒜 AncillaModel.instStarOrderedRing𝒜 AncillaModel.instStarProper𝒜
-  AncillaModel.instRingℬ AncillaModel.instStarRingℬ AncillaModel.instAlgebraℬ
-  AncillaModel.instPartialOrderℬ AncillaModel.instStarOrderedRingℬ AncillaModel.instStarProperℬ
+  AncillaModel.instStarModule𝒜 AncillaModel.instPartialOrder𝒜 AncillaModel.instStarOrderedRing𝒜
+  AncillaModel.instStarProper𝒜 AncillaModel.instRingℬ AncillaModel.instStarRingℬ
+  AncillaModel.instAlgebraℬ AncillaModel.instStarModuleℬ AncillaModel.instPartialOrderℬ AncillaModel.instStarOrderedRingℬ AncillaModel.instStarProperℬ
 
 /-! ## The conclusion of the Pauli basis test in a model -/
 

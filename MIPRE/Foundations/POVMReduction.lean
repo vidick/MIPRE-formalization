@@ -121,6 +121,55 @@ theorem povmReduces_expandB [StarProper ℬ] (M : BipartiteModel 𝒞 𝒜 ℬ) 
 
 end BipartiteModel
 
+/-! ## Exchanging the players -/
+
+namespace Game
+
+variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+
+/-- **The game with the players exchanged**: the second player is asked the first question and
+answers first. -/
+def swap (G : Game X Y A B) : Game Y X B A where
+  μ y x := G.μ x y
+  μ_nonneg y x := G.μ_nonneg x y
+  μ_sum_one := by rw [Finset.sum_comm]; exact G.μ_sum_one
+  D y x b a := G.D x y a b
+
+end Game
+
+namespace BipartiteModel
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
+variable {𝒞' 𝒜' ℬ' : Type*} [Ring 𝒞'] [StarRing 𝒞'] [Algebra ℂ 𝒞'] [Ring 𝒜'] [StarRing 𝒜']
+  [Algebra ℂ 𝒜'] [Ring ℬ'] [StarRing ℬ'] [Algebra ℂ ℬ'] [PartialOrder 𝒜'] [StarOrderedRing 𝒜']
+  [PartialOrder ℬ'] [StarOrderedRing ℬ']
+
+/-- **A strategy's value in the swapped model is that of the exchanged strategy for the exchanged
+game.** -/
+theorem povmValue_swap_game (M : BipartiteModel 𝒞 𝒜 ℬ) {X Y A B : Type*} [Fintype X] [Fintype Y]
+    [Fintype A] [Fintype B] (G : Game X Y A B) (PA : X → POVMIn A 𝒜) (PB : Y → POVMIn B ℬ) :
+    M.swap.povmValue G.swap PB PA = M.povmValue G PA PB := by
+  unfold povmValue condWin
+  rw [Finset.sum_comm]
+  refine sum_congr rfl fun x _ => sum_congr rfl fun y _ => ?_
+  congr 1
+  rw [Finset.sum_comm]
+  refine sum_congr rfl fun a _ => sum_congr rfl fun b _ => ?_
+  rw [bornProb_swap]
+  rfl
+
+/-- **A reduction survives exchanging the players.** -/
+theorem POVMReduces.swap {M' : BipartiteModel 𝒞' 𝒜' ℬ'} {M : BipartiteModel 𝒞 𝒜 ℬ}
+    (h : M'.POVMReduces M) : M'.swap.POVMReduces M.swap := fun G PA PB => by
+  obtain ⟨QB, QA, hQ⟩ := h G.swap PB PA
+  refine ⟨QA, QB, ?_⟩
+  rw [← M'.povmValue_swap_game G.swap PB PA, ← M.povmValue_swap_game G.swap QB QA] at hQ
+  exact hQ
+
+end BipartiteModel
+
 /-- **Domination passes along a reduction**: a value model dominating the POVM strategies of `M`
 dominates those of every model reducing to `M`. -/
 theorem ValueModel.DominatesPOVM.of_povmReduces {𝒞 𝒜 ℬ 𝒞' 𝒜' ℬ' : Type*} [Ring 𝒞] [StarRing 𝒞]

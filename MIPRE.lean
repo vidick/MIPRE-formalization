@@ -1230,6 +1230,7 @@ public import MIPRE.Foundations.LowDegree.UnaryPrimePower
 public import MIPRE.Foundations.LowDegree.ZeroBasis
 public import MIPRE.Foundations.LowDegreeSandwich
 public import MIPRE.Foundations.Measurement
+public import MIPRE.Foundations.ModelOver
 public import MIPRE.Foundations.ModelStrategy
 public import MIPRE.Foundations.NCPoly.Basic
 public import MIPRE.Foundations.NCPoly.Cone
