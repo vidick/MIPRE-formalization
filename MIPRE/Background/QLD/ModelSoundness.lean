@@ -260,6 +260,42 @@ def SoundCo : Prop :=
   ∀ {X Y A B : Type} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
     (S : CommutingOperatorStrategy X Y A B), SoundIn .commuting S.toModel
 
+/-! ## Values approached in models where the test is sound -/
+
+/-- **The value model is approached by projective strategies in models where the Pauli basis test
+is sound**: below the value of a game, and above `0`, lies the value of a projective strategy for
+it in a bipartite model on a Hilbert space of `Type` in which the test is sound with `ω`.
+Introspection applies the test inside the model of such a strategy. `val*` has it through the
+tensor-product models of tensor-product strategies (`approxSoundIn_tensor`), and `ω_co` whenever
+the test is sound in the model of every commuting-operator strategy (`approxSoundIn_commuting`). -/
+def ApproxSoundIn (ω : ValueModel) : Prop :=
+  ∀ {X Y A B : Type} [Fintype X] [Fintype Y] [Fintype A] [Fintype B] (G : Game X Y A B) {t : ℝ},
+    0 ≤ t → t < ω.val G →
+      ∃ (𝒞 𝒜 ℬ : Type) (_ : Ring 𝒞) (_ : StarRing 𝒞) (_ : Algebra ℂ 𝒞) (_ : Ring 𝒜)
+        (_ : StarRing 𝒜) (_ : Algebra ℂ 𝒜) (_ : Ring ℬ) (_ : StarRing ℬ) (_ : Algebra ℂ ℬ)
+        (_ : PartialOrder 𝒜) (_ : StarOrderedRing 𝒜) (_ : PartialOrder ℬ)
+        (_ : StarOrderedRing ℬ) (M : BipartiteModel.{0} 𝒞 𝒜 ℬ),
+        SoundIn ω M ∧ ∃ S : M.ProjStrat G, t < S.value
+
+/-- **`val*` is approached in tensor-product models**, where the test is sound
+(`soundIn_tensor`): a tensor-product strategy near the supremum is a projective strategy of its
+model, of the same value. -/
+theorem approxSoundIn_tensor : ApproxSoundIn .tensor := fun G t ht h => by
+  rw [ValueModel.tensor_val, quantumValue] at h
+  rcases isEmpty_or_nonempty (TensorProductStrategy G) with hG | hG
+  · rw [Real.iSup_of_isEmpty] at h
+    exact absurd ht (not_le.mpr h)
+  obtain ⟨T, hT⟩ := exists_lt_of_lt_ciSup h
+  exact ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, BipartiteModel.tensor T.ψ,
+    soundIn_tensor T.ψ, T.toModel, by rwa [T.value_toModel]⟩
+
+/-- **`ω_co` is approached in the models of commuting-operator strategies**
+(`exists_projStrat_lt_commutingOperatorValue`), where the test is sound if it is sound in every
+such model. -/
+theorem approxSoundIn_commuting (h : SoundCo) : ApproxSoundIn .commuting := fun G t ht hv => by
+  obtain ⟨S, R, hR⟩ := exists_projStrat_lt_commutingOperatorValue ht hv
+  exact ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, S.toModel, h S, R, hR⟩
+
 end MIPRE.QLD
 
 end
