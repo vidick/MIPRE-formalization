@@ -51,7 +51,7 @@ def regActHom : Matrix ι ι ℂ →⋆ₐ[ℂ] (Ampl ι H →L[ℂ] Ampl ι H) 
 
 /-- **A matrix of scalars acting on the register** of `ℂ^ι ⊗ H`: `R ⊗ 1_H`. -/
 def regAct (R : Matrix ι ι ℂ) : Ampl ι H →L[ℂ] Ampl ι H :=
-  regActHom R
+  regActHom (ι := ι) (H := H) R
 
 theorem regActHom_apply (R : Matrix ι ι ℂ) : regActHom (H := H) R = regAct R :=
   rfl
@@ -60,28 +60,26 @@ theorem regActHom_apply (R : Matrix ι ι ℂ) : regActHom (H := H) R = regAct R
 theorem regAct_eq_toCLM (R : Matrix ι ι ℂ) :
     regAct (H := H) R = toCLM (R.map fun r => r • (1 : H →L[ℂ] H)) := by
   show toCLM (R.map (algebraMap ℂ (H →L[ℂ] H))) = _
-  congr 1
-  ext i j
-  exact Algebra.algebraMap_eq_smul_one (R i j)
+  exact congrArg toCLM (Matrix.ext fun i j => Algebra.algebraMap_eq_smul_one (R i j))
 
 theorem regAct_mul (R S : Matrix ι ι ℂ) : regAct (H := H) (R * S) = regAct R * regAct S :=
-  map_mul regActHom R S
+  map_mul (regActHom (ι := ι) (H := H)) R S
 
 theorem regAct_one : regAct (H := H) (1 : Matrix ι ι ℂ) = 1 :=
-  map_one regActHom
+  map_one (regActHom (ι := ι) (H := H))
 
 theorem regAct_conjTranspose (R : Matrix ι ι ℂ) : regAct (H := H) Rᴴ = star (regAct R) :=
-  map_star regActHom R
+  map_star (regActHom (ι := ι) (H := H)) R
 
 theorem regAct_add (R S : Matrix ι ι ℂ) : regAct (H := H) (R + S) = regAct R + regAct S :=
-  map_add regActHom R S
+  map_add (regActHom (ι := ι) (H := H)) R S
 
 theorem regAct_smul (c : ℂ) (R : Matrix ι ι ℂ) : regAct (H := H) (c • R) = c • regAct R :=
-  map_smul regActHom c R
+  map_smul (regActHom (ι := ι) (H := H)) c R
 
 theorem regAct_sum {κ : Type*} (s : Finset κ) (R : κ → Matrix ι ι ℂ) :
     regAct (H := H) (∑ k ∈ s, R k) = ∑ k ∈ s, regAct (R k) :=
-  map_sum regActHom R s
+  map_sum (regActHom (ι := ι) (H := H)) R s
 
 /-- The register action of a self-adjoint idempotent is an orthogonal projection. -/
 theorem isStarProjection_regAct {P : Matrix ι ι ℂ} (hsa : Pᴴ = P) (hid : P * P = P) :
@@ -94,7 +92,7 @@ theorem regAct_apply (R : Matrix ι ι ℂ) (θ : Ampl ι H) (i : ι) :
     regAct R θ i = ∑ j, R i j • θ j := by
   rw [regAct_eq_toCLM, toCLM_apply]
   refine Finset.sum_congr rfl fun j _ => ?_
-  rw [map_apply, ContinuousLinearMap.smul_apply, ContinuousLinearMap.one_apply]
+  rw [map_apply, _root_.smul_apply, one_apply_eq_self]
 
 /-- **On a product vector a register matrix acts on the register's factor alone**:
 `(R ⊗ 1)(e ⊗ ξ) = (R e) ⊗ ξ`. -/
@@ -145,8 +143,8 @@ theorem expand_π_πA_smulKron_one (P : Matrix α α ℂ) :
   ext p q
   rw [map_apply, liftLeft_apply, map_apply, kronecker_apply, one_apply]
   by_cases h : p.2 = q.2
-  · rw [if_pos h, if_pos h, smulKron_apply, map_smul, map_one, mul_one]
-  · rw [if_neg h, if_neg h, map_zero, mul_zero, zero_smul]
+  · rw [ite_eq_left h, ite_eq_left h, smulKron_apply, map_smul, map_one, mul_one]
+  · rw [ite_eq_right h, ite_eq_right h, map_zero, mul_zero, zero_smul]
 
 /-- **A matrix of scalars on the second player's register of an extension** acts as the register
 matrix `1 ⊗ Q`. -/
@@ -157,8 +155,8 @@ theorem expand_π_πB_smulKron_one (Q : Matrix β β ℂ) :
   ext p q
   rw [map_apply, liftRight_apply, map_apply, kronecker_apply, one_apply]
   by_cases h : p.1 = q.1
-  · rw [if_pos h, if_pos h, smulKron_apply, map_smul, map_one, one_mul]
-  · rw [if_neg h, if_neg h, map_zero, zero_mul, zero_smul]
+  · rw [ite_eq_left h, ite_eq_left h, smulKron_apply, map_smul, map_one, one_mul]
+  · rw [ite_eq_right h, ite_eq_right h, map_zero, zero_mul, zero_smul]
 
 /-- **A product of matrices of scalars on the two players' registers of an extension** acts as
 the register matrix `P ⊗ Q`. -/
