@@ -9,9 +9,63 @@ public import MIPRE.Foundations.Introspection.PrefixGuardGame
 
 @[expose] public section
 
-/-! # Exact game and PCC transport of quotient answers between coordinate types -/
+/-! # Exact game and PCC transport of quotient answers between coordinate types
+
+The strategy transport of the soundness direction, `reindexedStrategy`, is stated in a bipartite
+model (Phase 4 of `planning/mipco-track.md`): it relabels the answers of a projective strategy of
+the quotient game along the answer equivalence (`BipartiteModel.ProjStrat.relabel`), in the same
+model, and keeps its value (`reindexedStrategy_value`). Each of its effects is the original effect
+at the pulled-back answer (`reindexedStrategy_PA_op`, `reindexedStrategy_PB_op`), through
+`POVMIn.map_equiv_op` and `BipartiteModel.ProjStrat.relabel_PA_op`/`relabel_PB_op`.
+-/
 
 noncomputable section
+
+namespace MIPRE
+
+/-! ## Effects of a relabelled strategy
+
+These belong with `POVMIn.map` (`MIPRE/Foundations/Measurement.lean`) and `ProjStrat.relabel`
+(`MIPRE/Foundations/ModelStrategy.lean`), and are here until those modules are next rebuilt. -/
+
+/-- **Relabelling a POVM along an equivalence of its outcomes**: the effect of an outcome is the
+original effect of its preimage. -/
+theorem POVMIn.map_equiv_op {R : Type*} [Ring R] [StarRing R] [PartialOrder R]
+    [StarOrderedRing R] {X Y : Type*} [Fintype X] [Fintype Y] [DecidableEq Y] (e : X ≃ Y)
+    (M : POVMIn X R) (y : Y) : (M.map e).op y = M.op (e.symm y) := by
+  have h : Finset.univ.filter (fun x => e x = y) = {e.symm y} := by
+    ext x
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton,
+      Equiv.eq_symm_apply]
+  rw [POVMIn.map_op, h, Finset.sum_singleton]
+
+namespace BipartiteModel.ProjStrat
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] {M : BipartiteModel 𝒞 𝒜 ℬ}
+variable {X Y A B X' Y' A' B' : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+  [Fintype X'] [Fintype Y'] [Fintype A'] [Fintype B'] [DecidableEq A'] [DecidableEq B']
+  {G : Game X Y A B}
+
+/-- A relabelled first-player effect is the original effect at the relabelled question and
+answer. -/
+theorem relabel_PA_op (S : M.ProjStrat G) (G' : Game X' Y' A' B') (eX : X' ≃ X) (eY : Y' ≃ Y)
+    (eA : A' ≃ A) (eB : B' ≃ B) (x' : X') (a' : A') :
+    ((S.relabel G' eX eY eA eB).PA x').op a' = (S.PA (eX x')).op (eA a') :=
+  POVMIn.map_equiv_op eA.symm (S.PA (eX x')) a'
+
+/-- A relabelled second-player effect is the original effect at the relabelled question and
+answer. -/
+theorem relabel_PB_op (S : M.ProjStrat G) (G' : Game X' Y' A' B') (eX : X' ≃ X) (eY : Y' ≃ Y)
+    (eA : A' ≃ A) (eB : B' ≃ B) (y' : Y') (b' : B') :
+    ((S.relabel G' eX eY eA eB).PB y').op b' = (S.PB (eY y')).op (eB b') :=
+  POVMIn.map_equiv_op eB.symm (S.PB (eY y')) b'
+
+end BipartiteModel.ProjStrat
+
+end MIPRE
+
 namespace MIPRE.Introspection.AuxiliaryQuotient
 open Finset CL CLChecks Classical
 set_option linter.unusedSectionVars false
@@ -79,12 +133,19 @@ theorem reindexedGame_quantumValue :
   intro q r a b
   exact (reindexedGame_D e E X Z P L project D DP q r a b).symm
 
-abbrev reindexedStrategy (S : TensorProductStrategy (game E X Z P L project D DP)) :
-    TensorProductStrategy (reindexedGame e E X Z P L project D DP) :=
+section Model
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] {Ψ : BipartiteModel 𝒞 𝒜 ℬ}
+
+/-- Carry a projective strategy to the concrete coordinate numbering, in the same model: its
+answers relabelled along the answer equivalence. -/
+abbrev reindexedStrategy (S : Ψ.ProjStrat (game E X Z P L project D DP)) :
+    Ψ.ProjStrat (reindexedGame e E X Z P L project D DP) :=
   S.relabel _ (Equiv.refl _) (Equiv.refl _) (answerEquiv e).symm (answerEquiv e).symm
 
-theorem reindexedStrategy_value
-    (S : TensorProductStrategy (game E X Z P L project D DP)) :
+theorem reindexedStrategy_value (S : Ψ.ProjStrat (game E X Z P L project D DP)) :
     (reindexedStrategy e E X Z P L project D DP S).value = S.value := by
   apply S.value_relabel _ (Equiv.refl _) (Equiv.refl _) (answerEquiv e).symm (answerEquiv e).symm
     (fun _ _ => rfl)
@@ -93,6 +154,22 @@ theorem reindexedStrategy_value
   obtain ⟨b,rfl⟩ := (answerEquiv (F := F) (A := A) (PA := PA) e).surjective b
   simpa only [Equiv.refl_apply, Equiv.symm_apply_apply] using
     reindexedGame_D e E X Z P L project D DP q r a b
+
+/-- A reindexed first-player effect is the original effect at the pulled-back answer. -/
+theorem reindexedStrategy_PA_op (S : Ψ.ProjStrat (game E X Z P L project D DP))
+    (q : CL.Detyping.Question (QuestionType PT ℓ) Q) (a : ParsedAnswer (κ → F) A PA) :
+    ((reindexedStrategy e E X Z P L project D DP S).PA q).op a =
+      (S.PA q).op ((answerEquiv e).symm a) :=
+  S.relabel_PA_op _ _ _ _ _ q a
+
+/-- A reindexed second-player effect is the original effect at the pulled-back answer. -/
+theorem reindexedStrategy_PB_op (S : Ψ.ProjStrat (game E X Z P L project D DP))
+    (q : CL.Detyping.Question (QuestionType PT ℓ) Q) (a : ParsedAnswer (κ → F) A PA) :
+    ((reindexedStrategy e E X Z P L project D DP S).PB q).op a =
+      (S.PB q).op ((answerEquiv e).symm a) :=
+  S.relabel_PB_op _ _ _ _ _ q a
+
+end Model
 
 variable [DecidableEq A] [DecidableEq PA]
 

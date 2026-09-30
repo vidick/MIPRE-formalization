@@ -9,12 +9,21 @@ public import MIPRE.Foundations.GameTransport
 
 @[expose] public section
 
-/-! # Source-game transport along a concrete coordinate bijection -/
+/-! # Source-game transport along a concrete coordinate bijection
+
+The value comparison is stated in a value model (Phase 4 of `planning/mipco-track.md`): the
+reindexed source game is related to the original one by the coordinate bijection on the
+questions, so the two have the same value in every value model (`quantumValue_eq`, through
+`ValueModel.eq_of_equiv`); the quantum-value statement is its instance at `ValueModel.tensor`.
+-/
 
 noncomputable section
 namespace MIPRE.Introspection.SourceReindex
 open Finset CL Classical
 set_option linter.unusedSectionVars false
+
+section Reindex
+
 variable {F ι κ A : Type*} [Field F] [Fintype F] [DecidableEq F]
   [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
   [Fintype A] [DecidableEq A] {ℓ : ℕ}
@@ -40,12 +49,6 @@ theorem game_mu (x y : κ → F) :
   simp only [family, CLFun.eval_reindex', Prod.mk.injEq, LinearEquiv.coe_toEquiv]
   simp only [LinearEquiv.eq_symm_apply]
 
-theorem quantumValue_eq :
-    quantumValue (Honest.sourceGame (family e L) (decider e D)) =
-      quantumValue (Honest.sourceGame L D) :=
-  quantumValue_eq_of_equiv _ _ (reindexEquiv e).symm.toEquiv (reindexEquiv e).symm.toEquiv
-    (.refl _) (.refl _) (game_mu e L D) (fun _ _ _ _ => rfl)
-
 abbrev strategy (R : SyncStrategy (Honest.sourceGame L D).doubled) :
     SyncStrategy (Honest.sourceGame (family e L) (decider e D)).doubled :=
   R.relabel _ ((Equiv.refl Bool).prodCongr (reindexEquiv e).symm.toEquiv) (.refl _)
@@ -68,6 +71,25 @@ theorem strategy_value (R : SyncStrategy (Honest.sourceGame L D).doubled) :
 
 @[simp] theorem strategy_dimension (R : SyncStrategy (Honest.sourceGame L D).doubled) :
     (strategy e L D R).d = R.d := rfl
+
+end Reindex
+
+section Value
+
+variable {F ι κ A : Type} [Field F] [Fintype F] [DecidableEq F]
+  [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
+  [Fintype A] [DecidableEq A] {ℓ : ℕ}
+  (ω : ValueModel) (e : ι ≃ κ) (L : Bool → CLFun F ι ℓ)
+  (D : (ι → F) → (ι → F) → A → A → Bool)
+
+/-- The reindexed source game has the value of the original one, in every value model: the
+coordinate bijection carries its question law and decision predicate onto the original ones. -/
+theorem quantumValue_eq :
+    ω.val (Honest.sourceGame (family e L) (decider e D)) = ω.val (Honest.sourceGame L D) :=
+  ω.eq_of_equiv _ _ (reindexEquiv e).symm.toEquiv (reindexEquiv e).symm.toEquiv
+    (.refl _) (.refl _) (game_mu e L D) (fun _ _ _ _ => rfl)
+
+end Value
 
 end MIPRE.Introspection.SourceReindex
 end
