@@ -1,7 +1,7 @@
 # The commuting-operator class, `MIP^co = coRE`: plan
 
 **Status: Phase 0 done (#235, #236), made generic in #239; Phase 1 done (#241, #243, #245);
-Phase 2 done (#247); Phase 3 done (#249); Phase 4 done (#PHASE4); Phases 5–6 planned around
+Phase 2 done (#247); Phase 3 done (#249); Phase 4 done (#251); Phases 5–6 planned around
 generalizing the existing analyses (`reports/co-generalization-audit.md`).** The conditional
 theorem — `MIP^co = coRE` given the commuting-operator soundness of gap compression — is in, with
 all of its plumbing, written once for both values. Since Phase 4 it follows from the soundness of
@@ -488,7 +488,7 @@ soundness in the commuting model.** Touched: ≈ 20k lines; check first that the
 run at the same error rates with the new dilation (they should: the compression identity is
 the same).
 
-*Done (#PHASE4).* The whole soundness analysis of introspection is stated for a strategy in a
+*Done (#251).* The whole soundness analysis of introspection is stated for a strategy in a
 bipartite model, and the matrix statements that remain (Pauli extraction, the quotient value) are
 its tensor-product instance. What the setting changed:
 
@@ -653,7 +653,7 @@ end with a sharper conditional theorem, stated in `MIPRE/MIPCo.lean` and in blue
 | C1 | Phase 1: the projective commuting-operator model, the dilation lemma, the operator calculus restated with the matrix layer as its instance, the stage interfaces in `Verifier.val ω` | 3k–5k new, ≈ 10k restated | done (#240): (a) #241; (b) #243, #245; (c) #245 |
 | C2 | Phase 2: oracularization, repetition and the composition in the model; `mipco_eq_core` conditional on the introspection and answer-reduction clauses in `ω_co` | 2k–3k | done (#247) |
 | C3 | Phase 3: answer reduction in the model with `LIDTSoundness` as the hypothesis | 8k–10k touched | done (#249): ≈ 0.55k new, the ≈ 4k-line chain restated; the LIDT adapter deferred to C6 |
-| C4 | Phase 4: introspection in the model with `QLDSoundness` as the hypothesis | ≈ 20k touched | done (#PHASE4): ≈ 3k new, ≈ 110 modules restated; `mipco_eq_core` conditional on the Pauli basis and LIDT tests in the commuting model |
+| C4 | Phase 4: introspection in the model with `QLDSoundness` as the hypothesis | ≈ 20k touched | done (#251): ≈ 3k new, ≈ 110 modules restated; `mipco_eq_core` conditional on the Pauli basis and LIDT tests in the commuting model |
 | C5 | Phase 5: the Pauli basis test in the model; `mipco_eq_core` conditional on the commuting LIDT soundness alone | ≈ 25k touched | open |
 | C6 | Phase 6: the low-individual-degree test in the commuting-operator model | unknown; 40k–130k by analogy | open; verify Lin's paper trail first |
 | C7 | Phase 7: the paper's class `MIP^co_{1,1/2}(2,1)` | ~1k | open |
