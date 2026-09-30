@@ -14,6 +14,10 @@ The deterministic graph assigns `none` to current coordinate zero. Its
 coarse marginal therefore equals the valid reported-prefix marginal plus
 the corresponding old-prefix malformed block. Orthogonality of those
 blocks charges their entire error to the single reported `none` outcome.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the families are of matrices
+over the registers with entries in any algebra `𝒜`, coarse-graining is `fibSumIn`, and the error is
+that of the register model `Ξ.reg (ι → F)` of an arbitrary auxiliary model.
 -/
 
 noncomputable section
@@ -21,10 +25,11 @@ namespace MIPRE.Introspection
 open Finset Matrix Classical Weyl
 set_option linter.unusedSectionVars false
 
-variable {ι F H K A : Type*} [Fintype ι] [DecidableEq ι]
+variable {ι F A : Type*} [Fintype ι] [DecidableEq ι]
   [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
-  [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K]
   [Fintype A] [DecidableEq A] {ℓ : ℕ}
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ]
 
 /-- The option-valued prefix actually reported by a full Introspect answer. -/
 def fullAnswerPrefix (P : CL.CLFun F ι ℓ) (k : ℕ) :
@@ -32,23 +37,22 @@ def fullAnswerPrefix (P : CL.CLFun F ι ℓ) (k : ℕ) :
   Option.map (fun a => P.outputPrefix k a.1)
 
 theorem prefixResidualOp_zero (P : CL.CLFun F ι ℓ) (k : ℕ) (y : ι → F) :
-    prefixResidualOp (H := H) P k y 0 = 0 := by
-  ext i j
-  simp [prefixResidualOp, registerOp_apply]
+    prefixResidualOp (𝒜 := 𝒜) P k y 0 = 0 := by
+  rw [prefixResidualOp, smulKron_zero_left, map_zero]
 
 theorem stageAnswerRefinement_coarse_marginal (P : CL.CLFun F ι ℓ)
     (hP : P.SupportedOn univ) (k : ℕ)
     (M : (y : ι → F) → Option ((ι → F) × A) →
-      Matrix ((stageRemaining P k y → F) × H) _ ℂ)
-    (N : Option ((ι → F) × A) → Matrix ((ι → F) × H) _ ℂ)
+      Matrix (stageRemaining P k y → F) (stageRemaining P k y → F) 𝒜)
+    (N : Option ((ι → F) × A) → Matrix (ι → F) (ι → F) 𝒜)
     (hform : ∀ a, N a = ∑ y, prefixResidualOp P k y (M y a))
     (hsupport : ∀ y x a, P.outputPrefix k x ≠ y → M y (some (x, a)) = 0)
     (v : ι → F) :
-    fibSum
+    fibSumIn
       (fun p : (y : ι → F) × (Fin (Fintype.card (P.factorOfPrefix k y)) → F) =>
         prefixResidualOp P k p.1 (∑ a, stageAnswerRefinement P k p.1 (M p.1) (p.2, a)))
       (fun p => advancePrefix P k p.1 p.2) v =
-      fibSum N (fullAnswerPrefix P (k + 1)) (some v) +
+      fibSumIn N (fullAnswerPrefix P (k + 1)) (some v) +
         prefixResidualOp P k v (M v none) := by
   let C (y : ι → F) (a : Option ((ι → F) × A)) := prefixResidualOp P k y (M y a)
   have hlift (y : ι → F) (p : (Fin (Fintype.card (P.factorOfPrefix k y)) → F) ×
@@ -68,16 +72,16 @@ theorem stageAnswerRefinement_coarse_marginal (P : CL.CLFun F ι ℓ)
         change prefixResidualOp P k y (M y (some a)) = 0
         rw [hsupport y a.1 a.2 ha, prefixResidualOp_zero]
       simp [hz]
-  have hreported : fibSum N (fullAnswerPrefix P (k + 1)) (some v) =
+  have hreported : fibSumIn N (fullAnswerPrefix P (k + 1)) (some v) =
       ∑ a : (ι → F) × A, if P.outputPrefix (k + 1) a.1 = v then N (some a) else 0 := by
-    unfold fibSum
+    unfold fibSumIn
     simp only [Finset.sum_filter, Fintype.sum_option]
     simp only [fullAnswerPrefix, Option.map_none, Option.map_some, Option.some.injEq,
       reduceCtorEq, if_false, zero_add]
   calc
-    _ = ∑ y, fibSum (graphRefinement (C y) (stageAnswerCoordinate P k y))
+    _ = ∑ y, fibSumIn (graphRefinement (C y) (stageAnswerCoordinate P k y))
         (fun p => advancePrefix P k y p.1) v := by
-      unfold fibSum
+      unfold fibSumIn
       simp only [Finset.sum_filter, Fintype.sum_sigma, Fintype.sum_prod_type,
         prefixResidualOp_sum, hlift]
       apply Finset.sum_congr rfl
@@ -87,12 +91,12 @@ theorem stageAnswerRefinement_coarse_marginal (P : CL.CLFun F ι ℓ)
       by_cases hz : advancePrefix P k y z = v
       · simp only [if_pos hz]
       · simp only [if_neg hz, Finset.sum_const_zero]
-    _ = ∑ y, fibSum (C y)
+    _ = ∑ y, fibSumIn (C y)
         (fun a => advancePrefix P k y (stageAnswerCoordinate P k y a)) v := by
       simp only [graphRefinement_fibSum]
     _ = (∑ y, ∑ a : (ι → F) × A,
         if P.outputPrefix (k + 1) a.1 = v then C y (some a) else 0) + C v none := by
-      unfold fibSum
+      unfold fibSumIn
       simp only [Finset.sum_filter, Fintype.sum_option]
       change (∑ y, ((if advancePrefix P k y 0 = v then C y none else 0) +
         ∑ a : (ι → F) × A,
@@ -112,44 +116,42 @@ theorem stageAnswerRefinement_coarse_marginal (P : CL.CLFun F ι ℓ)
         exact (hform (some a)).symm
       · simp only [if_neg ha, Finset.sum_const_zero]
 
-theorem fullAnswerPrefix_none (P : CL.CLFun F ι ℓ) (k : ℕ)
-    (N : Option ((ι → F) × A) → Matrix ((ι → F) × H) _ ℂ) :
-    fibSum N (fullAnswerPrefix P k) none = N none := by
-  simp [fibSum, fullAnswerPrefix, Finset.sum_filter]
+theorem fullAnswerPrefix_none {R : Type*} [AddCommMonoid R] (P : CL.CLFun F ι ℓ) (k : ℕ)
+    (N : Option ((ι → F) × A) → R) :
+    fibSumIn N (fullAnswerPrefix P k) none = N none := by
+  simp [fibSumIn, fullAnswerPrefix, Finset.sum_filter]
 
 /-- The true option-valued reported-prefix error controls the mixing
 marginal at cost two. The malformed mass is charged once, using exact
 orthogonality of its old-prefix blocks. -/
-theorem stageAnswerRefinement_marginal_le_reported (P : CL.CLFun F ι ℓ)
-    (hP : P.SupportedOn univ) (k : ℕ) (ξ : H × K → ℂ)
+theorem stageAnswerRefinement_marginal_le_reported [StarModule ℂ 𝒜] [StarModule ℂ ℬ]
+    (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ) (k : ℕ) (Ξ : BipartiteModel 𝒞 𝒜 ℬ)
     (M : (y : ι → F) → Option ((ι → F) × A) →
-      Matrix ((stageRemaining P k y → F) × H) _ ℂ)
-    (N : Option ((ι → F) × A) → Matrix ((ι → F) × H) _ ℂ)
+      Matrix (stageRemaining P k y → F) (stageRemaining P k y → F) 𝒜)
+    (N : Option ((ι → F) × A) → Matrix (ι → F) (ι → F) 𝒜)
     (hform : ∀ a, N a = ∑ y, prefixResidualOp P k y (M y a))
     (hsupport : ∀ y x a, P.outputPrefix k x ≠ y → M y (some (x, a)) = 0) :
-    prefixStageMarginalError P hP k ξ (fun y => stageAnswerRefinement P k y (M y)) ≤
-      2 * ∑ v, stateSqNorm (registerState (ι → F) ξ)
-        (fibSum N (fullAnswerPrefix P (k + 1)) v -
-          aOp (Honest.hidingPrefixOp P (k + 1) v)) := by
-  let ψ := registerState (ι → F) ξ
-  let R (v : ι → F) := fibSum N (fullAnswerPrefix P (k + 1)) (some v)
+    prefixStageMarginalError P hP k Ξ (fun y => stageAnswerRefinement P k y (M y)) ≤
+      2 * ∑ v, (Ξ.reg (ι → F)).stateSqNorm
+        (fibSumIn N (fullAnswerPrefix P (k + 1)) v -
+          smulKron 1 (Honest.hidingPrefixOp P (k + 1) v)) := by
+  let Ψ := Ξ.reg (ι → F)
+  let R (v : ι → F) := fibSumIn N (fullAnswerPrefix P (k + 1)) (some v)
   let D (v : ι → F) := prefixResidualOp P k v (M v none)
-  let J (v : ι → F) := (aOp (Honest.hidingPrefixOp P (k + 1) (some v)) :
-    Matrix ((ι → F) × H) _ ℂ)
-  have ht := sum_snorm_sq_triangle' ψ
-    (fun v => aOp (R v + D v)) (fun v => aOp (R v)) (fun v => aOp (J v))
-  have htri : (∑ v, stateSqNorm ψ (R v + D v - J v)) ≤
-      2 * ∑ v, stateSqNorm ψ (D v) + 2 * ∑ v, stateSqNorm ψ (R v - J v) := by
-    simpa only [stateSqNorm, stateNorm, norm_stateVec_eq_snorm, ← aOp_sub,
+  let J (v : ι → F) := smulKron (1 : 𝒜) (Honest.hidingPrefixOp P (k + 1) (some v))
+  have ht := Ψ.sum_snorm_sq_triangle univ
+    (fun v => Ψ.πA (R v + D v)) (fun v => Ψ.πA (R v)) (fun v => Ψ.πA (J v))
+  have htri : (∑ v, Ψ.stateSqNorm (R v + D v - J v)) ≤
+      2 * ∑ v, Ψ.stateSqNorm (D v) + 2 * ∑ v, Ψ.stateSqNorm (R v - J v) := by
+    simpa only [BipartiteModel.stateSqNorm, BipartiteModel.stateNorm, ← map_sub,
       add_sub_cancel_left] using ht
-  have hd : (∑ v, stateSqNorm ψ (D v)) = stateSqNorm ψ (N none) := by
-    rw [hform none, stateSqNorm_sum_prefixResidualOp P hP]
-  have hn : aOp (Honest.hidingPrefixOp P (k + 1) none) =
-      (0 : Matrix ((ι → F) × H) _ ℂ) := by
-    rw [Honest.hidingPrefixOp_none, aOp_zero]
+  have hd : (∑ v, Ψ.stateSqNorm (D v)) = Ψ.stateSqNorm (N none) := by
+    rw [hform none, stateSqNorm_sum_prefixResidualOp Ψ P hP]
+  have hn : smulKron (1 : 𝒜) (Honest.hidingPrefixOp P (k + 1) none) = 0 := by
+    rw [Honest.hidingPrefixOp_none, smulKron_zero_right]
   rw [prefixStageMarginalError_reassembled]
   simp_rw [stageAnswerRefinement_coarse_marginal P hP k M N hform hsupport]
-  change (∑ v, stateSqNorm ψ (R v + D v - J v)) ≤ _
+  change (∑ v, Ψ.stateSqNorm (R v + D v - J v)) ≤ _
   rw [Fintype.sum_option, fullAnswerPrefix_none, hn, sub_zero, mul_add]
   exact hd ▸ htri
 
