@@ -6,10 +6,17 @@ module
 public import MIPRE.Foundations.Introspection.Twirl
 public import Mathlib.LinearAlgebra.Matrix.Kronecker
 public import MIPRE.Tactics
+public import MIPRE.Foundations.AncillaModel
 
 @[expose] public section
 
-/-! # Entry formulas for Pauli twirls with an ancillary space -/
+/-! # Entry formulas for Pauli twirls with an ancillary space
+
+Stated for block matrices over an arbitrary algebra `𝒜` (Phase 4 of `planning/mipco-track.md`):
+the register is `Fin n → F`, the ancilla is abstract, an operator of register and ancilla is a
+matrix `Matrix (Fin n → F) (Fin n → F) 𝒜`, and a register operator `A` is `smulKron 1 A`. The
+matrix statements, on `(Fin n → F) × H`, are the case `𝒜 = Matrix H H ℂ`.
+-/
 
 noncomputable section
 
@@ -17,104 +24,89 @@ namespace MIPRE.Introspection
 
 open Finset Weyl Classical Matrix Kronecker
 
+set_option linter.unusedSectionVars false
+
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
-variable {n : ℕ} {H : Type*} [Fintype H] [DecidableEq H]
+variable {n : ℕ} {𝒜 : Type*} [Ring 𝒜] [Algebra ℂ 𝒜]
 
-def amplify (A : Matrix (Fin n → F) (Fin n → F) ℂ) :
-    Matrix ((Fin n → F) × H) ((Fin n → F) × H) ℂ := A ⊗ₖ (1 : Matrix H H ℂ)
+theorem smulKron_wZ_mul_entry (v x y : Fin n → F) (M : Matrix (Fin n → F) (Fin n → F) 𝒜) :
+    (smulKron (1 : 𝒜) (wZ v) * M) x y = sgn (trDot v x) • M x y := by
+  simp [Matrix.mul_apply, smulKron_apply, wZ_apply, ite_smul, ite_mul]
 
-theorem amplify_wZ_mul_entry (v x y : Fin n → F) (a b : H)
-    (M : Matrix ((Fin n → F) × H) ((Fin n → F) × H) ℂ) :
-    (amplify (H := H) (wZ v) * M) (x, a) (y, b) = sgn (trDot v x) * M (x, a) (y, b) := by
-  simp [amplify, Matrix.mul_apply, Matrix.kroneckerMap_apply, wZ_apply,
-    Fintype.sum_prod_type, Matrix.one_apply, mul_ite, ite_mul]
+theorem mul_smulKron_wZ_entry (v x y : Fin n → F) (M : Matrix (Fin n → F) (Fin n → F) 𝒜) :
+    (M * smulKron (1 : 𝒜) (wZ v)) x y = sgn (trDot v y) • M x y := by
+  simp [Matrix.mul_apply, smulKron_apply, wZ_apply, ite_smul, mul_ite]
 
-theorem mul_amplify_wZ_entry (v x y : Fin n → F) (a b : H)
-    (M : Matrix ((Fin n → F) × H) ((Fin n → F) × H) ℂ) :
-    (M * amplify (H := H) (wZ v)) (x, a) (y, b) = M (x, a) (y, b) * sgn (trDot v y) := by
-  simp [amplify, Matrix.mul_apply, Matrix.kroneckerMap_apply, wZ_apply,
-    Fintype.sum_prod_type, Matrix.one_apply, mul_ite, ite_mul]
+theorem smulKron_wZ_conjugate_entry (v x y : Fin n → F)
+    (M : Matrix (Fin n → F) (Fin n → F) 𝒜) :
+    (smulKron (1 : 𝒜) (wZ v) * M * smulKron (1 : 𝒜) (wZ v)) x y =
+      sgn (trDot v (x + y)) • M x y := by
+  rw [mul_smulKron_wZ_entry, smulKron_wZ_mul_entry, trDot_add_right, sgn_add, smul_smul,
+    mul_comm]
 
-theorem amplify_wZ_conjugate_entry (v x y : Fin n → F) (a b : H)
-    (M : Matrix ((Fin n → F) × H) ((Fin n → F) × H) ℂ) :
-    (amplify (H := H) (wZ v) * M * amplify (H := H) (wZ v)) (x, a) (y, b) =
-      sgn (trDot v (x + y)) * M (x, a) (y, b) := by
-  rw [mul_amplify_wZ_entry, amplify_wZ_mul_entry, trDot_add_right, sgn_add]
-  ring
-
-/-- Average over the full `Z` Pauli family on the first tensor factor. -/
-def dephaseZ (M : Matrix ((Fin n → F) × H) ((Fin n → F) × H) ℂ) :
-    Matrix ((Fin n → F) × H) ((Fin n → F) × H) ℂ :=
+/-- Average over the full `Z` Pauli family on the register. -/
+def dephaseZ (M : Matrix (Fin n → F) (Fin n → F) 𝒜) : Matrix (Fin n → F) (Fin n → F) 𝒜 :=
   (Fintype.card (Fin n → F) : ℂ)⁻¹ •
-    ∑ v : Fin n → F, amplify (H := H) (wZ v) * M * amplify (H := H) (wZ v)
+    ∑ v : Fin n → F, smulKron (1 : 𝒜) (wZ v) * M * smulKron (1 : 𝒜) (wZ v)
 
 /-- The full `Z` twirl removes precisely the off-diagonal blocks in the sampled register. -/
-theorem dephaseZ_entry (x y : Fin n → F) (a b : H)
-    (M : Matrix ((Fin n → F) × H) ((Fin n → F) × H) ℂ) :
-    dephaseZ M (x, a) (y, b) = if x = y then M (x, a) (y, b) else 0 := by
+theorem dephaseZ_entry (x y : Fin n → F) (M : Matrix (Fin n → F) (Fin n → F) 𝒜) :
+    dephaseZ M x y = if x = y then M x y else 0 := by
   rw [dephaseZ, Matrix.smul_apply, Matrix.sum_apply]
-  simp only [amplify_wZ_conjugate_entry, smul_eq_mul]
-  rw [← Finset.sum_mul]
+  simp only [smulKron_wZ_conjugate_entry]
+  rw [← Finset.sum_smul, smul_smul]
   by_cases hxy : x = y
   · subst y
-    rw [Weyl.add_self_vec, sum_sgn_trDot_zero, if_pos rfl, ← mul_assoc,
-      inv_mul_cancel₀ (Weyl.card_ne_zero (F := F) (n := Fin n)), one_mul]
+    rw [Weyl.add_self_vec, sum_sgn_trDot_zero, ite_eq_left rfl,
+      inv_mul_cancel₀ (Weyl.card_ne_zero (F := F) (n := Fin n)), one_smul]
   · have hne : x + y ≠ 0 := fun h => hxy ((Weyl.add_eq_zero_iff_vec x y).mp h)
-    rw [sum_sgn_trDot hne, zero_mul, mul_zero, if_neg hxy]
+    rw [sum_sgn_trDot hne, mul_zero, zero_smul, ite_eq_right hxy]
 
-theorem amplify_wX_mul_entry (v x y : Fin n → F) (a b : H)
-    (M : Matrix ((Fin n → F) × H) ((Fin n → F) × H) ℂ) :
-    (amplify (H := H) (wX v) * M) (x, a) (y, b) = M (x + v, a) (y, b) := by
+theorem smulKron_wX_mul_entry (v x y : Fin n → F) (M : Matrix (Fin n → F) (Fin n → F) 𝒜) :
+    (smulKron (1 : 𝒜) (wX v) * M) x y = M (x + v) y := by
   have hx (z : Fin n → F) : x = z + v ↔ z = x + v := by
     constructor
     · intro h
       rw [h, Weyl.add_add_cancel_vec]
     · intro h
       rw [h, Weyl.add_add_cancel_vec]
-  simp [amplify, Matrix.mul_apply, Matrix.kroneckerMap_apply, wX_apply,
-    Fintype.sum_prod_type, Matrix.one_apply, mul_ite, ite_mul, hx]
+  simp [Matrix.mul_apply, smulKron_apply, wX_apply, ite_smul, ite_mul, hx]
 
-theorem mul_amplify_wX_entry (v x y : Fin n → F) (a b : H)
-    (M : Matrix ((Fin n → F) × H) ((Fin n → F) × H) ℂ) :
-    (M * amplify (H := H) (wX v)) (x, a) (y, b) = M (x, a) (y + v, b) := by
-  simp [amplify, Matrix.mul_apply, Matrix.kroneckerMap_apply, wX_apply,
-    Fintype.sum_prod_type, Matrix.one_apply, mul_ite, ite_mul]
+theorem mul_smulKron_wX_entry (v x y : Fin n → F) (M : Matrix (Fin n → F) (Fin n → F) 𝒜) :
+    (M * smulKron (1 : 𝒜) (wX v)) x y = M x (y + v) := by
+  simp [Matrix.mul_apply, smulKron_apply, wX_apply, ite_smul, mul_ite]
 
-theorem amplify_wX_conjugate_entry (v x y : Fin n → F) (a b : H)
-    (M : Matrix ((Fin n → F) × H) ((Fin n → F) × H) ℂ) :
-    (amplify (H := H) (wX v) * M * amplify (H := H) (wX v)) (x, a) (y, b) =
-      M (x + v, a) (y + v, b) := by
-  rw [mul_amplify_wX_entry, amplify_wX_mul_entry]
+theorem smulKron_wX_conjugate_entry (v x y : Fin n → F)
+    (M : Matrix (Fin n → F) (Fin n → F) 𝒜) :
+    (smulKron (1 : 𝒜) (wX v) * M * smulKron (1 : 𝒜) (wX v)) x y = M (x + v) (y + v) := by
+  rw [mul_smulKron_wX_entry, smulKron_wX_mul_entry]
 
 /-- Average the `X` Pauli conjugations belonging to a subspace. -/
-def averageX (K : Submodule F (Fin n → F))
-    (M : Matrix ((Fin n → F) × H) ((Fin n → F) × H) ℂ) :
-    Matrix ((Fin n → F) × H) ((Fin n → F) × H) ℂ :=
-  (Fintype.card K : ℂ)⁻¹ • ∑ v : K, amplify (H := H) (wX v.1) * M * amplify (H := H) (wX v.1)
+def averageX (K : Submodule F (Fin n → F)) (M : Matrix (Fin n → F) (Fin n → F) 𝒜) :
+    Matrix (Fin n → F) (Fin n → F) 𝒜 :=
+  (Fintype.card K : ℂ)⁻¹ •
+    ∑ v : K, smulKron (1 : 𝒜) (wX v.1) * M * smulKron (1 : 𝒜) (wX v.1)
 
 /-- The diagonal ancillary block obtained by averaging the fiber through `x`. -/
-def averagedBlock (K : Submodule F (Fin n → F))
-    (M : Matrix ((Fin n → F) × H) ((Fin n → F) × H) ℂ) (x : Fin n → F) : Matrix H H ℂ :=
-  (Fintype.card K : ℂ)⁻¹ • ∑ v : K, M.submatrix (fun a => (x + v.1, a)) (fun a => (x + v.1, a))
+def averagedBlock (K : Submodule F (Fin n → F)) (M : Matrix (Fin n → F) (Fin n → F) 𝒜)
+    (x : Fin n → F) : 𝒜 :=
+  (Fintype.card K : ℂ)⁻¹ • ∑ v : K, M (x + v.1) (x + v.1)
 
 /-- First dephasing, then averaging `X(K)`, leaves only the averaged diagonal blocks. -/
 theorem averageX_dephaseZ_entry (K : Submodule F (Fin n → F))
-    (M : Matrix ((Fin n → F) × H) ((Fin n → F) × H) ℂ)
-    (x y : Fin n → F) (a b : H) :
-    averageX K (dephaseZ M) (x, a) (y, b) =
-      if x = y then averagedBlock K M x a b else 0 := by
+    (M : Matrix (Fin n → F) (Fin n → F) 𝒜) (x y : Fin n → F) :
+    averageX K (dephaseZ M) x y = if x = y then averagedBlock K M x else 0 := by
   rw [averageX, Matrix.smul_apply, Matrix.sum_apply]
-  simp only [amplify_wX_conjugate_entry, dephaseZ_entry, add_left_inj, add_right_inj]
+  simp only [smulKron_wX_conjugate_entry, dephaseZ_entry, add_left_inj]
   by_cases hxy : x = y
   · subst y
-    simp only [if_pos rfl]
-    rw [averagedBlock, Matrix.smul_apply, Matrix.sum_apply]
+    simp only [↓reduceIte]
     rfl
   · simp [hxy]
 
 /-- The averaged ancillary block is constant on each coset of the twirled subspace. -/
 theorem averagedBlock_eq_of_sub_mem (K : Submodule F (Fin n → F))
-    (M : Matrix ((Fin n → F) × H) ((Fin n → F) × H) ℂ)
+    (M : Matrix (Fin n → F) (Fin n → F) 𝒜)
     (x y : Fin n → F) (hxy : x - y ∈ K) : averagedBlock K M x = averagedBlock K M y := by
   let t : K := ⟨x - y, hxy⟩
   have hv (v : K) : y + (v + t).1 = x + v.1 := by
@@ -135,15 +127,15 @@ theorem synOf_wZ_entry (L : (Fin n → F) →ₗ[F] (Fin n → F))
   · subst y
     simp only [ite_true]
     by_cases ha : L x = a
-    · rw [if_pos ha]
+    · rw [ite_eq_left ha]
       rw [Finset.sum_eq_single_of_mem x (by simp [ha])]
       · simp
       · intro z hz hzx
-        exact if_neg (Ne.symm hzx)
-    · rw [if_neg ha]
+        exact ite_eq_right (Ne.symm hzx)
+    · rw [ite_eq_right ha]
       apply Finset.sum_eq_zero
       intro z hz
-      apply if_neg
+      apply ite_eq_right
       intro hxz
       subst z
       exact ha (Finset.mem_filter.mp hz).2
@@ -151,16 +143,16 @@ theorem synOf_wZ_entry (L : (Fin n → F) →ₗ[F] (Fin n → F))
 
 /-- The exact block decomposition used by the hiding argument, including an arbitrary ancilla. -/
 theorem linear_twirl_blocks (L : (Fin n → F) →ₗ[F] (Fin n → F))
-    (M : Matrix ((Fin n → F) × H) ((Fin n → F) × H) ℂ) :
+    (M : Matrix (Fin n → F) (Fin n → F) 𝒜) :
     averageX L.ker (dephaseZ M) =
-      ∑ a : Fin n → F, synOf wZ L a ⊗ₖ averagedBlock L.ker M (linearPreimage L a) := by
-  ext ⟨x, i⟩ ⟨y, j⟩
+      ∑ a : Fin n → F, smulKron (averagedBlock L.ker M (linearPreimage L a)) (synOf wZ L a) := by
+  ext x y
   rw [averageX_dephaseZ_entry, Matrix.sum_apply]
-  simp only [Matrix.kroneckerMap_apply, synOf_wZ_entry]
+  simp only [smulKron_apply, synOf_wZ_entry]
   by_cases hxy : x = y
   · subst y
-    simp only [if_pos rfl, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq,
-      Finset.mem_univ, if_true]
+    simp only [↓reduceIte, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq,
+      Finset.mem_univ, ↓reduceIte]
     have hker : x - linearPreimage L (L x) ∈ L.ker := by
       rw [LinearMap.mem_ker, map_sub, linearPreimage_image, sub_self]
     rw [averagedBlock_eq_of_sub_mem L.ker M _ _ hker]
