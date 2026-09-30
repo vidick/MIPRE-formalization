@@ -35,11 +35,11 @@ and the reason is that the strategy is **projective**, which the paper also assu
 * the compression identity of the dilation carries every estimate about the sandwich to the
   dilated measurement unchanged, so the estimates are proved once, about `R`.
 
-What remains is the analytic content: the sandwich is close to the ordered product
-(`hatSand_close`, one commutation), the ordered products are cross-party consistent, and the
-sandwich is therefore self-consistent. The commutation input arrives at the level of the
-**observables**, and Parseval is what moves it to the level of the measurement elements
-(`sum_stateSqNorm_hatComm`).
+What remains is the analytic content: the sandwich is close to the ordered product (one
+commutation), the ordered products are cross-party consistent, and the sandwich is therefore
+self-consistent (`BipartiteModel.one_sub_sum_bornProb_sand_le`). The commutation input arrives at
+the level of the **observables**, and Parseval is what moves it to the level of the measurement
+elements (`sum_stateSqNorm_hatComm`).
 
 ## In a bipartite model
 
@@ -78,6 +78,7 @@ section SandDilation
 variable {R : Type*} [Ring R] [StarRing R] {A : Type*} [Fintype A] [DecidableEq A]
   {X Z : A → R}
 
+omit [DecidableEq A] in
 /-- **The Kraus family of the sandwich**, `(a, b) ↦ X_a Z_b`: its Gram operators are the
 sandwiches `Z_b X_a Z_b`, and they sum to one. -/
 theorem sum_star_mul_sandKraus (hX : IsPVMIn X) (hZ : IsPVMIn Z) :
@@ -146,6 +147,23 @@ theorem jointModel_swap_stateSqNorm_smulKron_one (p₀ : A × A) (Y : ℬ) :
     (N.jointModel p₀).swap.stateSqNorm (smulKron Y 1) = N.swap.stateSqNorm Y := by
   rw [swap_stateSqNorm_expand_smulKron_one, norm_basisVec, one_pow, one_mul]
 
+/-- The state of the joint model has the norm of the state of `N`. -/
+theorem norm_jointModel_ψ (p₀ : A × A) : ‖(N.jointModel p₀).ψ‖ = ‖N.ψ‖ := by
+  rw [norm_expand_state, norm_basisVec, one_mul]
+
+/-- A first-player operator with an inert dilation register has the state norm it had. -/
+theorem jointModel_stateSqNorm_smulKron_one (p₀ : A × A) (X : 𝒜) :
+    (N.jointModel p₀).stateSqNorm (smulKron X 1) = N.stateSqNorm X := by
+  rw [stateSqNorm_expand_smulKron_one, norm_basisVec, one_pow, one_mul]
+
+/-- **Two operators with inert dilation registers have the cross-party deviation they had**: the
+model form of the matrix `xSqNorm_extVec2_aOp`. -/
+theorem jointModel_xSqNorm_smulKron_one (p₀ : A × A) {X : 𝒜} (hX : star X = X) (Y : ℬ) :
+    (N.jointModel p₀).xSqNorm (smulKron X 1) (smulKron Y 1) = N.xSqNorm X Y := by
+  rw [(N.jointModel p₀).xSqNorm_eq (by rw [star_smulKron_one, hX]), N.xSqNorm_eq hX,
+    N.jointModel_stateSqNorm_smulKron_one, N.jointModel_swap_stateSqNorm_smulKron_one,
+    N.jointModel_bornProb, smulKron_apply, smulKron_apply, one_apply_eq, one_smul, one_smul]
+
 /-- **The deviation of a dilated projective measurement from a second-player family with an inert
 register**, summed: the expectations of the compressions, the second player's squared norms, and
 twice the agreement of the compressions with the family. -/
@@ -162,7 +180,7 @@ theorem jointModel_sum_xSqNorm_smulKron (hψ : ‖N.ψ‖ = 1) (p₀ : A × A) {
       (hQ.isStarProjection k), N.jointModel_swap_stateSqNorm_smulKron_one, N.jointModel_bornProb,
       smulKron_apply, one_apply_eq, one_smul]
   have hone : ∑ k, N.bornProb (Q k (Sum.inl p₀) (Sum.inl p₀)) 1 = 1 := by
-    rw [← N.bornProb_sum_left, ← Matrix.sum_apply, ← Matrix.sum_apply, hQ.sum_eq_one,
+    rw [← N.bornProb_sum_left, ← Matrix.sum_apply, hQ.sum_eq_one,
       one_apply_eq, bornProb, map_one, map_one, mul_one, N.qform_one hψ]
   rw [Finset.sum_congr rfl fun k _ => hterm k, Finset.sum_sub_distrib, Finset.sum_add_distrib,
     hone, ← Finset.mul_sum]
@@ -298,12 +316,14 @@ theorem exists_projective_joint [PartialOrder ℬ] [StarOrderedRing ℬ] {ι : T
           - (X' i p.1 * Z' i p.2 - Z' i p.2 * X' i p.1) := by abel
     have htri : N.swap.stateNorm (sand (X' i) (Z' i) p - X' i p.1 * Z' i p.2)
         ≤ 2 * N.swap.stateNorm (X' i p.1 * Z' i p.2 - Z' i p.2 * X' i p.1) := by
-      rw [hsplit, stateNorm, map_sub]
-      refine le_trans (N.swap.snorm_sub_le _ _) ?_
       have h1 := hord1n i p
-      rw [stateNorm] at h1
-      rw [stateNorm]
-      linarith
+      have h2 : ∀ a b : ℬ, N.swap.stateNorm (a - b) ≤ N.swap.stateNorm a + N.swap.stateNorm b := by
+        intro a b
+        rw [stateNorm, stateNorm, stateNorm, map_sub]
+        exact N.swap.snorm_sub_le _ _
+      rw [hsplit]
+      linarith [h2 (sand (X' i) (Z' i) p - Z' i p.2 * X' i p.1)
+        (X' i p.1 * Z' i p.2 - Z' i p.2 * X' i p.1)]
     have h0 := N.swap.stateNorm_nonneg (sand (X' i) (Z' i) p - X' i p.1 * Z' i p.2)
     rw [stateSqNorm, stateSqNorm]
     nlinarith
@@ -313,9 +333,16 @@ theorem exists_projective_joint [PartialOrder ℬ] [StarOrderedRing ℬ] {ι : T
       ≤ 4 * γ i + 2 * ∑ p : A × A,
         N.swap.stateSqNorm (X' i p.1 * Z' i p.2 - Z' i p.2 * X' i p.1) := by
     intro i
-    refine le_trans (Finset.sum_le_sum fun p _ =>
-      (N.xSqNorm_smulKron_le p₀ _ (sand (X' i) (Z' i) p) _).trans
-        (add_le_add_left (mul_le_mul_of_nonneg_left (hord1 i p) (by norm_num)) _)) ?_
+    have hstep : ∀ p : A × A, (N.jointModel p₀).xSqNorm (QLD.sandDil (X i) (Z i) p₀ p)
+          (smulKron (Z' i p.2 * X' i p.1) 1)
+        ≤ 2 * (N.jointModel p₀).xSqNorm (QLD.sandDil (X i) (Z i) p₀ p)
+            (smulKron (sand (X' i) (Z' i) p) 1)
+          + 2 * N.swap.stateSqNorm (X' i p.1 * Z' i p.2 - Z' i p.2 * X' i p.1) := fun p => by
+      have h1 := N.xSqNorm_smulKron_le p₀ (QLD.sandDil (X i) (Z i) p₀ p) (sand (X' i) (Z' i) p)
+        (Z' i p.2 * X' i p.1)
+      have h2 := hord1 i p
+      linarith
+    refine le_trans (Finset.sum_le_sum fun p _ => hstep p) ?_
     rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum]
     linarith [hitem1' i]
   have hitem3 : ∀ i, ∑ p : A × A, (N.jointModel p₀).xSqNorm (QLD.sandDil (X i) (Z i) p₀ p)
@@ -323,15 +350,17 @@ theorem exists_projective_joint [PartialOrder ℬ] [StarOrderedRing ℬ] {ι : T
       ≤ 4 * γ i + 8 * ∑ p : A × A,
         N.swap.stateSqNorm (X' i p.1 * Z' i p.2 - Z' i p.2 * X' i p.1) := by
     intro i
-    refine le_trans (Finset.sum_le_sum fun p _ =>
-      (N.xSqNorm_smulKron_le p₀ _ (sand (X' i) (Z' i) p) _).trans
-        (add_le_add_left (mul_le_mul_of_nonneg_left (hord2 i p) (by norm_num)) _)) ?_
-    rw [Finset.sum_add_distrib, ← Finset.mul_sum, Finset.mul_sum (s := univ)
-      (f := fun p : A × A => 4 * N.swap.stateSqNorm (X' i p.1 * Z' i p.2 - Z' i p.2 * X' i p.1))]
-    have h8 : ∑ p : A × A, 2 * (4 * N.swap.stateSqNorm (X' i p.1 * Z' i p.2 - Z' i p.2 * X' i p.1))
-        = 8 * ∑ p : A × A, N.swap.stateSqNorm (X' i p.1 * Z' i p.2 - Z' i p.2 * X' i p.1) := by
-      rw [Finset.mul_sum]
-      exact Finset.sum_congr rfl fun p _ => by ring
+    have hstep : ∀ p : A × A, (N.jointModel p₀).xSqNorm (QLD.sandDil (X i) (Z i) p₀ p)
+          (smulKron (X' i p.1 * Z' i p.2) 1)
+        ≤ 2 * (N.jointModel p₀).xSqNorm (QLD.sandDil (X i) (Z i) p₀ p)
+            (smulKron (sand (X' i) (Z' i) p) 1)
+          + 8 * N.swap.stateSqNorm (X' i p.1 * Z' i p.2 - Z' i p.2 * X' i p.1) := fun p => by
+      have h1 := N.xSqNorm_smulKron_le p₀ (QLD.sandDil (X i) (Z i) p₀ p) (sand (X' i) (Z' i) p)
+        (X' i p.1 * Z' i p.2)
+      have h2 := hord2 i p
+      linarith
+    refine le_trans (Finset.sum_le_sum fun p _ => hstep p) ?_
+    rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum]
     linarith [hitem1' i]
   have hw2 : ∀ (f g : ι → ℝ) (a b : ℝ), ∑ i, w i * (a * f i + b * g i)
       = a * ∑ i, w i * f i + b * ∑ i, w i * g i := by
@@ -388,7 +417,8 @@ def hatPtPOVM (P : Question F m → POVMIn (Answer F m d) R) (W : Bas) (u : Poin
 
 theorem hatPOVM_eq (hm : m ∣ Fintype.card F) (P : Question F m → POVMIn (Answer F m d) R)
     (W : Bas) (c : Content F m) : hatPOVM hm P W c = hatPtPOVM P W (c.pt W) := by
-  rw [hatPOVM, ptValPOVM, Content.omega_pt, hatPtPOVM]
+  have hsyn : synPOVM W (c.omega.pt W) = synPOVM W (c.pt W) := by rw [Content.omega_pt]
+  rw [hatPOVM, kronIn_congr _ hsyn _ (isPVM_synPOVM W (c.pt W)), hatPtPOVM]
   rfl
 
 /-- The elements of the hatted point measurement. -/
@@ -547,20 +577,20 @@ theorem hatComm_eq_fourierOf (P : Question F m → POVMIn (Answer F m d) R) (x z
       = ((Fintype.card F : ℂ)⁻¹ * (Fintype.card F : ℂ)⁻¹) • ∑ p : F × F,
           sgn (Algebra.trace (ZMod 2) F (a * p.1) + Algebra.trace (ZMod 2) F (b * p.2))
             • hatObsComm P x z p.1 p.2 := by
-  set q : ℂ := (Fintype.card F : ℂ)⁻¹ with hq
   have hA := trFourier_hatObsAt P .X x a
   have hB := trFourier_hatObsAt P .Z z b
   rw [hatComm, ← hA, ← hB, smul_mul_smul_comm, smul_mul_smul_comm, ← smul_sub, Finset.sum_mul_sum,
-    Finset.sum_mul_sum, Fintype.sum_prod_type, ← Finset.sum_sub_distrib]
+    Finset.sum_mul_sum]
   rw [Finset.sum_comm (f := fun j i => (sgn (Algebra.trace (ZMod 2) F (b * j)) •
     hatObsAt P .Z z j) * (sgn (Algebra.trace (ZMod 2) F (a * i)) • hatObsAt P .X x i))]
-  rw [← Finset.sum_sub_distrib]
+  rw [← Finset.sum_sub_distrib, Fintype.sum_prod_type]
   congr 1
   refine Finset.sum_congr rfl fun r _ => ?_
   rw [← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun s _ => ?_
-  rw [smul_mul_smul_comm, smul_mul_smul_comm, hatObsComm, smul_sub, sgn_add, mul_comm
-    (sgn (Algebra.trace (ZMod 2) F (b * s)))]
+  simp only [hatObsComm]
+  rw [smul_mul_smul_comm, smul_mul_smul_comm, mul_comm (sgn (Algebra.trace (ZMod 2) F (b * s))),
+    ← smul_sub, sgn_add]
 
 end Hat3
 
@@ -578,10 +608,10 @@ theorem sum_stateSqNorm_hatComm [StarModule ℂ 𝒜] [StarProper 𝒜] (M : Bip
             • N.π (N.πA (hatObsComm P x z p.1 p.2)) N.ψ := by
     intro ab
     rw [hatComm_eq_fourierOf, map_smul, map_sum, map_smul, map_sum,
-      ContinuousLinearMap.smul_apply, ContinuousLinearMap.sum_apply]
+      _root_.smul_apply, _root_.sum_apply]
     congr 1
     refine Finset.sum_congr rfl fun p _ => ?_
-    rw [map_smul, map_smul, ContinuousLinearMap.smul_apply]
+    rw [map_smul, map_smul, _root_.smul_apply]
   have hnorm : ∀ X : Matrix (Anc F m) (Anc F m) 𝒜, N.stateSqNorm X = ‖N.π (N.πA X) N.ψ‖ ^ 2 :=
     fun X => rfl
   have hpar := sum_norm_trSum2_sq (fun p : F × F => N.π (N.πA (hatObsComm P x z p.1 p.2)) N.ψ)
@@ -686,13 +716,9 @@ theorem sum_content_hatComm_le [StarModule ℂ 𝒜] [StarProper 𝒜] (hM : ‖
       (M.reg (Anc F m)).stateSqNorm (hatObsComm PA x z r s)]
   refine le_trans (le_of_eq (Finset.sum_congr rfl fun c (_ : c ∈ univ) => ?_))
     (hatObs_commutation (PB := PB) hM hPA hfail)
-  congr 1
-  show (M.reg (Anc F m)).stateSqNorm (hatObsComm PA c.uX c.uZ c.rX c.rZ)
-    = (M.reg (Anc F m)).stateSqNorm (hatObs hm PA .X c * hatObs hm PA .Z c
-        - hatObs hm PA .Z c * hatObs hm PA .X c)
-  rw [hatObsComm,
-    show hatObsAt PA .X c.uX c.rX = hatObs hm PA .X c from hatObsAt_self hm PA .X c,
-    show hatObsAt PA .Z c.uZ c.rZ = hatObs hm PA .Z c from hatObsAt_self hm PA .Z c]
+  have hX : hatObsAt PA .X c.uX c.rX = hatObs hm PA .X c := hatObsAt_self hm PA .X c
+  have hZ : hatObsAt PA .Z c.uZ c.rZ = hatObs hm PA .Z c := hatObsAt_self hm PA .Z c
+  simp only [hatObsComm, hX, hZ]
 
 /-- The same for the other player, by the game's symmetry in the two players: the second player's
 state norm on the expanded model. -/
@@ -703,10 +729,8 @@ theorem sum_content_hatComm_le_B [StarModule ℂ ℬ] [StarProper ℬ] (hM : ‖
       ≤ 57676416 * ε := by
   have h := sum_content_hatComm_le (hm := hm) (M := M.swap) (PA := PB) (PB := PA)
     (swapVec_unit hM) hPB (povmValue_swapped_le hfail)
-  refine le_trans (le_of_eq (Finset.sum_congr rfl fun c _ => ?_)) h
-  congr 1
-  refine Finset.sum_congr rfl fun p _ => ?_
-  rw [hatVec_swapVec]
+  simp only [hatVec_swapVec] at h
+  exact h
 
 /-! ## The cross-party consistency, at the points -/
 
@@ -852,12 +876,18 @@ theorem combined_points [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ 
         = 2 * (1 - ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ p : F × F,
             N.bornProb (sand (hatMats PA .X c.uX) (hatMats PA .Z c.uZ) p) (S c p)) := by
     intro S hS
-    rw [Finset.sum_congr rfl fun c _ => by
-      rw [N.jointModel_sum_xSqNorm_smulKron hN1 _ (hQA c), hS c]]
-    simp only [hkA]
-    rw [mul_sub, mul_one, Finset.mul_sum, ← sum_uniform_content (F := F) (m := m), Finset.mul_sum,
-      ← Finset.sum_sub_distrib]
-    exact Finset.sum_congr rfl fun c _ => by ring
+    have hc : ∀ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ p : F × F,
+        (N.jointModel ((0 : F), (0 : F))).xSqNorm (QA c p) (smulKron (S c p) 1)
+        = 2 * (Fintype.card (Content F m) : ℝ)⁻¹ - 2 * ((Fintype.card (Content F m) : ℝ)⁻¹
+          * ∑ p : F × F,
+            N.bornProb (sand (hatMats PA .X c.uX) (hatMats PA .Z c.uZ) p) (S c p)) := by
+      intro c
+      rw [N.jointModel_sum_xSqNorm_smulKron hN1 _ (hQA c), hS c]
+      simp only [hkA]
+      ring
+    rw [Finset.sum_congr rfl fun c _ => hc c, Finset.sum_sub_distrib, ← Finset.mul_sum,
+      ← Finset.mul_sum, sum_uniform_content]
+    ring
   refine ⟨?_, ?_, ?_⟩
   · rw [← deltaQ_eq]
     exact N.one_sub_sum_bornProb_sand_le (A := F) (ι := Content F m)
@@ -991,7 +1021,7 @@ theorem padded_points [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ �
     combined_points_dilated (PA := PA) (PB := PB) hM hfail hPA hPB
   set N₃ := (M.reg (Anc F m)).jointModel ((0 : F), (0 : F)) with hN₃
   have hN₃1 : ‖N₃.ψ‖ = 1 := by
-    rw [hN₃, BipartiteModel.norm_expand_state, norm_basisVec, one_mul]
+    rw [hN₃, BipartiteModel.norm_jointModel_ψ]
     exact hatVec_unit hM
   have hq2 : (1 : ℝ) - (Fintype.card F : ℝ)⁻¹ ≤ 1 := by
     have : (0 : ℝ) ≤ (Fintype.card F : ℝ)⁻¹ := by positivity
