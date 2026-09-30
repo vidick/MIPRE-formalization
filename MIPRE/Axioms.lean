@@ -2577,8 +2577,8 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.SourcePadding.strategy_isPCC,
   MIPRE.Introspection.SourcePadding.strategy_value,
   MIPRE.Introspection.SourcePadding.average_pull,
-  MIPRE.Introspection.SourcePadding.restrictStrategy_state,
   MIPRE.Introspection.SourcePadding.restrictStrategy_value,
+  MIPRE.Introspection.SourcePadding.exists_projStrat_value_ge,
   MIPRE.Introspection.SourcePadding.quantumValue_le,
   MIPRE.Introspection.SourcePadding.quantumValue_depthFamily_le
 

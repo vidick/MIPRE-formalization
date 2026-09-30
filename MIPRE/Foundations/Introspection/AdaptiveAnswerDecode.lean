@@ -13,6 +13,9 @@ The decoder overwrites precisely the visited coordinates and retains the
 unvisited tail. Valid answers therefore report the new prefix even after
 mixing and dilation change their old coordinate label. The malformed
 outcome remains `none`; no assertion that its mass vanishes is used.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the recovered measurement is a
+POVM in any ordered `⋆`-ring.
 -/
 
 noncomputable section
@@ -132,15 +135,15 @@ theorem stageAnswerDecode_next {P : CL.CLFun F ι ℓ} {T : Finset ι}
         CL.proj (stageRemaining P (k + 1) (advancePrefix P k y z)) p.1, p.2)) := by
   cases a <;> simp [stageAnswerDecode, advancePrefix_remaining hP]
 
-variable {H : Type*} [Fintype H] [DecidableEq H]
+variable {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R]
 
 /-- The actual stage refinement followed by the updating decoder recovers
 the old residual measurement under its exact old-prefix support invariant.
 There is deliberately no vanishing hypothesis for the malformed effect. -/
 theorem stageAnswerRefinementPOVM_decode_recover {P : CL.CLFun F ι ℓ} {T : Finset ι}
     (hP : P.SupportedOn T) (k : ℕ) (y : ι → F)
-    (M : POVM (Option ((ι → F) × A)) ((stageRemaining P k y → F) × H))
-    (hsupport : ∀ x a, P.outputPrefix k x ≠ y → (M.mats (some (x, a))).val = 0) :
+    (M : POVMIn (Option ((ι → F) × A)) R)
+    (hsupport : ∀ x a, P.outputPrefix k x ≠ y → M.op (some (x, a)) = 0) :
     (stageAnswerRefinementPOVM P k y M).map
       (fun p => stageAnswerDecode P k y p.1 p.2) = M := by
   apply graphRefinementPOVM_decode

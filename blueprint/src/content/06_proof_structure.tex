@@ -3689,8 +3689,8 @@ is supplied by Lemma~\ref{lem:intro-numbered-transport}.
   MIPRE.Introspection.SourcePadding.strategy_isPCC,
   MIPRE.Introspection.SourcePadding.strategy_value,
   MIPRE.Introspection.SourcePadding.average_pull,
-  MIPRE.Introspection.SourcePadding.restrictStrategy_state,
   MIPRE.Introspection.SourcePadding.restrictStrategy_value,
+  MIPRE.Introspection.SourcePadding.exists_projStrat_value_ge,
   MIPRE.Introspection.SourcePadding.quantumValue_le,
   MIPRE.Introspection.SourcePadding.quantumValue_depthFamily_le,
   MIPRE.Introspection.BinaryComplete.paddingEmbedding_number,
@@ -3700,8 +3700,10 @@ is supplied by Lemma~\ref{lem:intro-numbered-transport}.
 \leanok
 For $s\leq2^m t$, explicitly embed an arbitrary $s$-bit source register
 into the Pauli qubit register. Padding preserves perfect PCC play and
-source dimension. Every strategy for the padded source game restricts
-to the original source game with exactly the same value and state.
+source dimension. Every projective strategy for the padded source game, in any bipartite
+model, restricts to one of the original source game in the same model with exactly the same
+value; so the padded game's value is at most the original's in every value model approached by
+the projective strategies of the models it dominates, $\val^*$ and $\omegaco$ among them.
 For positive depth and exact original partitions, unused coordinates
 can be consumed by a zero component of the first factor without changing
 depth or evaluation. The resulting full typed game has a perfect PCC
