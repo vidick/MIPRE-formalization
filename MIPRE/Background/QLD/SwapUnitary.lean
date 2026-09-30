@@ -23,7 +23,21 @@ The appendix builds, out of the simultaneous pair measurement `S`, a *local unit
 and shows that conjugation by it carries each exact Pauli observable `wTilde` of
 `MIPRE/Background/QLD/ExactPauli.lean` to a *bare* Weyl operator on the ancilla,
 `V W~^e(u) V^dagger = Id (x) tau^W(e . u)`. Both statements are identities, and both are here
-(`swapU_mul_conjTranspose`, `swapU_conj`).
+(`swapU_mul_conjTranspose`, `swapU_conj_wTilde_X`, `swapU_conj_wTilde_Z`).
+
+## Over a `⋆`-algebra
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`): as in `ExactPauli.lean`, the
+pair measurement is a projective measurement `S : G × G → R` in any `⋆`-algebra `R` (in use, a
+player's algebra of a model), and `sum_p S_p (x) T_p` is the `F_q^n × F_q^n` matrix over `R`
+`sum_p smulKron (S p) (T p)`, the register outer; `(x)` is `smulKron`, the adjoint `star`, and
+`Id (x) B` is `smulKron 1 B`. So the swap unitary is a unitary element of the matrix algebra over
+the player's algebra, `V V^* = V^* V = 1` proved both ways by the same algebra, with no finite
+dimension anywhere. The ancilla-side factors (`uOf`, the twirls, `eprProj`) are matrices of
+scalars on the finite register and are unchanged, and so are the three inner-product estimates at
+the end, which were already stated in any inner product space. The matrix statements of the
+earlier version are the instances `R = Matrix dA dA ℂ`, up to the register-outer layout of
+`smulKron`.
 
 ## The algebra of `sTensor`
 
@@ -70,7 +84,7 @@ open scoped Kronecker ComplexOrder MatrixOrder
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
 variable {n : Type*} [Fintype n] [DecidableEq n]
 variable {G : Type*} [Fintype G] [DecidableEq G]
-variable {dA : Type*} [Fintype dA] [DecidableEq dA]
+variable {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R]
 
 set_option linter.unusedSectionVars false
 
@@ -78,13 +92,13 @@ set_option linter.unusedSectionVars false
 
 /-- `sum_p S_p (x) T_p`: an ancilla-side family `T` read along the outcomes of `S`. The swap
 unitary, the exact Pauli observables and the identity are all of this shape. -/
-def sTensor (S : G × G → Matrix dA dA ℂ) (T : G × G → Matrix (n → F) (n → F) ℂ) :
-    Matrix (dA × (n → F)) (dA × (n → F)) ℂ :=
-  ∑ p, S p ⊗ₖ T p
+def sTensor (S : G × G → R) (T : G × G → Matrix (n → F) (n → F) ℂ) :
+    Matrix (n → F) (n → F) R :=
+  ∑ p, smulKron (S p) (T p)
 
 /-- **The composition law.** Projectivity of `S` makes these operators multiply factorwise: the
 cross terms `S_p S_q` with `p != q` vanish. This is the only place projectivity is used. -/
-theorem sTensor_mul {S : G × G → Matrix dA dA ℂ} (hS : IsPVM S)
+theorem sTensor_mul {S : G × G → R} (hS : IsPVMIn S)
     (T T' : G × G → Matrix (n → F) (n → F) ℂ) :
     sTensor S T * sTensor S T' = sTensor S fun p => T p * T' p := by
   classical
@@ -92,30 +106,30 @@ theorem sTensor_mul {S : G × G → Matrix dA dA ℂ} (hS : IsPVM S)
   refine Finset.sum_congr rfl fun p _ => ?_
   rw [Finset.mul_sum, Finset.sum_eq_single p (fun q _ hq => ?_) fun hmem =>
     absurd (Finset.mem_univ p) hmem]
-  · rw [← Matrix.mul_kronecker_mul, hS.idem]
-  · rw [← Matrix.mul_kronecker_mul, hS.orthogonal hq.symm, Matrix.zero_kronecker]
+  · rw [smulKron_mul, hS.idem]
+  · rw [smulKron_mul, hS.orthogonal hq.symm, smulKron_zero_left]
 
 /-- The constant family at the identity gives the identity. -/
-theorem sTensor_one {S : G × G → Matrix dA dA ℂ} (hS : IsPVM S) :
+theorem sTensor_one {S : G × G → R} (hS : IsPVMIn S) :
     sTensor S (fun _ => (1 : Matrix (n → F) (n → F) ℂ)) = 1 := by
-  show (∑ p, S p ⊗ₖ (1 : Matrix (n → F) (n → F) ℂ)) = 1
-  rw [← sum_kron, hS.sum_eq_one, Matrix.one_kronecker_one]
+  show (∑ p, smulKron (S p) (1 : Matrix (n → F) (n → F) ℂ)) = 1
+  rw [← sum_kron, hS.sum_eq_one, smulKron_one_one]
 
 /-- Adjoints are taken factorwise. -/
-theorem sTensor_conjTranspose {S : G × G → Matrix dA dA ℂ} (hS : IsPVM S)
+theorem sTensor_conjTranspose [StarModule ℂ R] {S : G × G → R} (hS : IsPVMIn S)
     (T : G × G → Matrix (n → F) (n → F) ℂ) :
-    (sTensor S T)ᴴ = sTensor S fun p => (T p)ᴴ := by
-  rw [sTensor, sTensor, Matrix.conjTranspose_sum]
+    star (sTensor S T) = sTensor S fun p => (T p)ᴴ := by
+  rw [sTensor, sTensor, star_sum]
   exact Finset.sum_congr rfl fun p _ => by
-    rw [Matrix.conjTranspose_kronecker, hS.isSelfAdjoint]
+    rw [star_smulKron, hS.star_eq]
 
 /-- **The exact Pauli observable is of this shape**, with the signed constant family: this is
 `wTilde_eq` rewritten so that `sTensor_mul` applies to it. -/
-theorem wTilde_eq_sTensor (S : G × G → Matrix dA dA ℂ) (pi : G × G → G) (cd : G → (n → F))
+theorem wTilde_eq_sTensor (S : G × G → R) (pi : G × G → G) (cd : G → (n → F))
     (w : (n → F) → Matrix (n → F) (n → F) ℂ) (e : F) (u : n → F) :
     wTilde S pi cd w e u = sTensor S fun p => sgn (cdPhase pi cd e u p) • w (e • u) := by
   rw [wTilde_eq, sTensor, pvmObs, sum_kron]
-  exact Finset.sum_congr rfl fun p _ => by rw [Matrix.smul_kronecker, Matrix.kronecker_smul]
+  exact Finset.sum_congr rfl fun p _ => by rw [smulKron_smul_left, smulKron_smul_right]
 
 /-! ## The swap unitary -/
 
@@ -125,8 +139,7 @@ def uOf (cd : G → (n → F)) (p : G × G) : Matrix (n → F) (n → F) ℂ :=
   wX (cd p.2) * wZ (cd p.1)
 
 /-- **The swap unitary** of the appendix's isometry construction. -/
-def swapU (S : G × G → Matrix dA dA ℂ) (cd : G → (n → F)) :
-    Matrix (dA × (n → F)) (dA × (n → F)) ℂ :=
+def swapU (S : G × G → R) (cd : G → (n → F)) : Matrix (n → F) (n → F) R :=
   sTensor S (uOf cd)
 
 theorem uOf_conjTranspose (cd : G → (n → F)) (p : G × G) :
@@ -149,16 +162,18 @@ theorem uOf_conjTranspose_mul (cd : G → (n → F)) (p : G × G) :
     _ = 1 := by
         rw [wX_mul_wX, add_self_vec, wX_zero, Matrix.mul_one, wZ_mul_wZ, add_self_vec, wZ_zero]
 
-variable {S : G × G → Matrix dA dA ℂ} {cd : G → (n → F)}
+variable {S : G × G → R} {cd : G → (n → F)}
 
 /-- **The swap map is unitary.** -/
-theorem swapU_mul_conjTranspose (hS : IsPVM S) : swapU S cd * (swapU S cd)ᴴ = 1 := by
+theorem swapU_mul_conjTranspose [StarModule ℂ R] (hS : IsPVMIn S) :
+    swapU S cd * star (swapU S cd) = 1 := by
   rw [swapU, sTensor_conjTranspose hS, sTensor_mul hS,
     show (fun p => uOf cd p * (uOf cd p)ᴴ) = fun _ => (1 : Matrix (n → F) (n → F) ℂ) from
       funext fun p => uOf_mul_conjTranspose cd p,
     sTensor_one hS]
 
-theorem swapU_conjTranspose_mul (hS : IsPVM S) : (swapU S cd)ᴴ * swapU S cd = 1 := by
+theorem swapU_conjTranspose_mul [StarModule ℂ R] (hS : IsPVMIn S) :
+    star (swapU S cd) * swapU S cd = 1 := by
   rw [swapU, sTensor_conjTranspose hS, sTensor_mul hS,
     show (fun p => (uOf cd p)ᴴ * uOf cd p) = fun _ => (1 : Matrix (n → F) (n → F) ℂ) from
       funext fun p => uOf_conjTranspose_mul cd p,
@@ -203,26 +218,26 @@ theorem uOf_conj_wZ (cd : G → (n → F)) (p : G × G) (b : n → F) :
 whose ancilla factor conjugates to itself up to the very sign the first factor carries, the two
 signs cancel and only the bare ancilla operator survives:
 `V W~^e(u) V^dagger = Id (x) tau^W(e . u)`. -/
-theorem swapU_conj_of_sign (hS : IsPVM S) {phi : G × G → ZMod 2}
+theorem swapU_conj_of_sign [StarModule ℂ R] (hS : IsPVMIn S) {phi : G × G → ZMod 2}
     {B : Matrix (n → F) (n → F) ℂ} (hB : ∀ p, uOf cd p * B * (uOf cd p)ᴴ = sgn (phi p) • B) :
-    swapU S cd * sTensor S (fun p => sgn (phi p) • B) * (swapU S cd)ᴴ = 1 ⊗ₖ B := by
+    swapU S cd * sTensor S (fun p => sgn (phi p) • B) * star (swapU S cd) = smulKron 1 B := by
   rw [swapU, sTensor_mul hS, sTensor_conjTranspose hS, sTensor_mul hS]
   rw [show (fun p => uOf cd p * (sgn (phi p) • B) * (uOf cd p)ᴴ) = fun _ => B from
     funext fun p => by
       rw [Matrix.mul_smul, Matrix.smul_mul, hB p, smul_smul, sgn_mul_self, one_smul]]
-  show (∑ p, S p ⊗ₖ B) = 1 ⊗ₖ B
+  show (∑ p, smulKron (S p) B) = smulKron 1 B
   rw [← sum_kron, hS.sum_eq_one]
 
 /-- **The `X`-side conjugation identity.** -/
-theorem swapU_conj_wTilde_X (hS : IsPVM S) (e : F) (u : n → F) :
-    swapU S cd * wTilde S Prod.fst cd wX e u * (swapU S cd)ᴴ = 1 ⊗ₖ wX (e • u) := by
+theorem swapU_conj_wTilde_X [StarModule ℂ R] (hS : IsPVMIn S) (e : F) (u : n → F) :
+    swapU S cd * wTilde S Prod.fst cd wX e u * star (swapU S cd) = smulKron 1 (wX (e • u)) := by
   rw [wTilde_eq_sTensor]
   refine swapU_conj_of_sign hS fun p => ?_
   rw [uOf_conj_wX, cdPhase, trDot_smul, dotF_comm]
 
 /-- **The `Z`-side conjugation identity.** -/
-theorem swapU_conj_wTilde_Z (hS : IsPVM S) (e : F) (u : n → F) :
-    swapU S cd * wTilde S Prod.snd cd wZ e u * (swapU S cd)ᴴ = 1 ⊗ₖ wZ (e • u) := by
+theorem swapU_conj_wTilde_Z [StarModule ℂ R] (hS : IsPVMIn S) (e : F) (u : n → F) :
+    swapU S cd * wTilde S Prod.snd cd wZ e u * star (swapU S cd) = smulKron 1 (wZ (e • u)) := by
   rw [wTilde_eq_sTensor]
   refine swapU_conj_of_sign hS fun p => ?_
   rw [uOf_conj_wZ, cdPhase, trDot_smul_right]

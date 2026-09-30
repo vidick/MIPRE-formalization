@@ -521,7 +521,6 @@ public import MIPRE.Background.QLD.Combine
 public import MIPRE.Background.QLD.Combined
 public import MIPRE.Background.QLD.Commutation
 public import MIPRE.Background.QLD.Complete
-public import MIPRE.Background.QLD.Consistency
 public import MIPRE.Background.QLD.Descent
 public import MIPRE.Background.QLD.Dummy
 public import MIPRE.Background.QLD.ErrorShape
@@ -539,7 +538,6 @@ public import MIPRE.Background.QLD.MirrorExists
 public import MIPRE.Background.QLD.ModelSoundness
 public import MIPRE.Background.QLD.Multilinear
 public import MIPRE.Background.QLD.NonMultilinear
-public import MIPRE.Background.QLD.Ortho
 public import MIPRE.Background.QLD.Padded
 public import MIPRE.Background.QLD.PaddedLIDT
 public import MIPRE.Background.QLD.PaddedLines
@@ -1232,6 +1230,7 @@ public import MIPRE.Foundations.LowDegreeSandwich
 public import MIPRE.Foundations.Measurement
 public import MIPRE.Foundations.ModelIso
 public import MIPRE.Foundations.ModelOver
+public import MIPRE.Foundations.ModelReading
 public import MIPRE.Foundations.ModelStrategy
 public import MIPRE.Foundations.NCPoly.Basic
 public import MIPRE.Foundations.NCPoly.Cone
