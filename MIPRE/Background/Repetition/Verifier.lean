@@ -190,20 +190,32 @@ theorem game_D_range (T : ℕ) (hT : Repetition.reps lam tau n *
   exact ⟨⟨fun i => ⟨aa i, (hall i).1⟩, Subtype.ext ha.symm⟩,
     ⟨fun i => ⟨bb i, (hall i).2.1⟩, Subtype.ext hb.symm⟩⟩
 
-/-- **The value of the output's game is that of the repeated game**, at any answer bound past
-the length of an encoded tuple. -/
-theorem valStar_repVerifier (T : ℕ) (hT : Repetition.reps lam tau n *
+/-- **The value of the output's game is that of the repeated game**, in every value model, at
+any answer bound past the length of an encoded tuple: the two relabelings are transports every
+model has (`ValueModel.extendAnswers`, `ValueModel.eq_of_equiv`), so the bridge from the verifier
+to the game does not depend on the value. -/
+theorem val_repVerifier (ω : ValueModel) (T : ℕ) (hT : Repetition.reps lam tau n *
       (4 * Repetition.parseBound lam beta n + 2) + 1 ≤ T) :
-    (repVerifier V lam tau beta).valStar n T =
-      quantumValue ((V.game n (Repetition.parseBound lam beta n)).repeat
+    (repVerifier V lam tau beta).val ω n T =
+      ω.val ((V.game n (Repetition.parseBound lam beta n)).repeat
         (Repetition.reps lam tau n)) := by
   classical
   have : Nonempty (Fin (Repetition.reps lam tau n) → Answers (Repetition.parseBound lam beta n)) :=
     ⟨fun _ => ⟨[], by simp⟩⟩
-  rw [← quantumValue_midGame]
-  exact quantumValue_extendAnswers (midGame V lam tau beta n) _ (tupleEmbed _ _ T hT)
+  refine (ω.extendAnswers (midGame V lam tau beta n) _ (tupleEmbed _ _ T hT)
     (tupleEmbed _ _ T hT) (game_μ_eq V lam tau beta n T) (game_D_tuple V lam tau beta n T hT)
-    (game_D_range V lam tau beta n T hT)
+    (game_D_range V lam tau beta n T hT)).trans ?_
+  exact ω.eq_of_equiv _ _ (questionsEquiv V lam tau beta n) (questionsEquiv V lam tau beta n)
+    (Equiv.refl _) (Equiv.refl _) (fun _ _ => rfl) (fun _ _ _ _ => rfl)
+
+/-- The value of the output's game is that of the repeated game: `val_repVerifier` in the
+tensor-product model. -/
+theorem valStar_repVerifier (T : ℕ) (hT : Repetition.reps lam tau n *
+      (4 * Repetition.parseBound lam beta n + 2) + 1 ≤ T) :
+    (repVerifier V lam tau beta).valStar n T =
+      quantumValue ((V.game n (Repetition.parseBound lam beta n)).repeat
+        (Repetition.reps lam tau n)) :=
+  val_repVerifier V lam tau beta n .tensor T hT
 
 /-- **Completeness**: a value-`1` PCC strategy for `𝒱_n` at the parse length gives one for the
 output's game, the tensor power relabeled and extended to the output's answers. -/
@@ -239,15 +251,25 @@ theorem hasPerfectPCC_repVerifier (T : ℕ) (hT : Repetition.reps lam tau n *
   show S₃.value = 1
   rw [SyncStrategy.value_extend _ _ _ hμ₃ hD₃, SyncStrategy.value_relabel _ _ _ _ hμ₂ hD₂, hv]
 
-/-- **Soundness**: `val*(𝒱_n) ≤ 1 - ε` at the parse length gives the direct repetition bound
+/-- **Soundness in a value model**: in a model with the direct repetition bound at the
+constant `c` (`Repetition.GameSoundIn`), `ω(𝒱_n) ≤ 1 - ε` at the parse length gives that bound
 for the output's game. -/
+theorem val_repVerifier_le {ω : ValueModel} {c : ℝ} (hω : Repetition.GameSoundIn ω c) (T : ℕ)
+    (hT : Repetition.reps lam tau n * (4 * Repetition.parseBound lam beta n + 2) + 1 ≤ T)
+    {ε : ℝ} (hε : 0 < ε) (h : V.val ω n (Repetition.parseBound lam beta n) ≤ 1 - ε) :
+    (repVerifier V lam tau beta).val ω n T ≤ Repetition.soundBound c ε
+      (Repetition.reps lam tau n) (Repetition.parseBound lam beta n) := by
+  rw [val_repVerifier V lam tau beta n ω T hT]
+  exact hω _ _ _ ε hε h _ (Nat.two_pow_pos _)
+
+/-- **Soundness**: `val*(𝒱_n) ≤ 1 - ε` at the parse length gives the direct repetition bound
+for the output's game — `val_repVerifier_le` in the tensor-product model. -/
 theorem valStar_repVerifier_le (T : ℕ) (hT : Repetition.reps lam tau n *
       (4 * Repetition.parseBound lam beta n + 2) + 1 ≤ T) {ε : ℝ} (hε : 0 < ε)
     (h : V.valStar n (Repetition.parseBound lam beta n) ≤ 1 - ε) :
     (repVerifier V lam tau beta).valStar n T ≤ Repetition.soundBound Repetition.repConst ε
-      (Repetition.reps lam tau n) (Repetition.parseBound lam beta n) := by
-  rw [valStar_repVerifier V lam tau beta n T hT]
-  exact Repetition.quantumValue_repeat_le_soundBound _ hε h (Nat.two_pow_pos _)
+      (Repetition.reps lam tau n) (Repetition.parseBound lam beta n) :=
+  val_repVerifier_le V lam tau beta n Repetition.gameSoundIn_tensor T hT hε h
 
 end Game
 
@@ -374,6 +396,16 @@ noncomputable def repetition (ℓ : ℕ) : Repetition ℓ where
     hasPerfectPCC_repVerifier V lam tau beta n _ (ansArg_bound lam tau beta n) h
   soundness V lam tau beta n _ hε _ h :=
     valStar_repVerifier_le V lam tau beta n _ (ansArg_bound lam tau beta n) hε h
+
+/-- **Parallel repetition is sound in every value model with the direct repetition bound** at a
+constant at least the procedure's, whatever that constant was lowered to
+(`Repetition.withConst`): the procedure's soundness clause read in `ω`
+(`Repetition.SoundIn`). -/
+theorem repetition_withConst_soundIn {ℓ : ℕ} {ω : ValueModel} {c : ℝ}
+    (hω : Repetition.GameSoundIn ω c) (c' : ℝ) (hc' : 0 < c') (hle : c' ≤ Repetition.repConst)
+    (hc : c' ≤ c) : ((repetition ℓ).withConst c' hc' hle).SoundIn ω :=
+  fun V lam tau beta n _ hε _ h =>
+    val_repVerifier_le V lam tau beta n (hω.mono hc) _ (ansArg_bound lam tau beta n) hε h
 
 end MIPRE
 

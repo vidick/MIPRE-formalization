@@ -81,6 +81,16 @@ abbrev ansArg (lam tau beta n : ℕ) : ℕ := reps lam tau n + parseBound lam be
 noncomputable def soundBound (c ε : ℝ) (k B : ℕ) : ℝ :=
   Real.exp (-(c * ε ^ 13 * (k : ℝ) / ((B : ℝ) + 1)))
 
+/-- The soundness bound is antitone in the constant. -/
+theorem soundBound_anti {c c' ε : ℝ} (hc : c ≤ c') (hε : 0 ≤ ε) (k B : ℕ) :
+    soundBound c' ε k B ≤ soundBound c ε k B := by
+  unfold soundBound
+  rw [Real.exp_le_exp, neg_le_neg_iff]
+  have hB : (0 : ℝ) < (B : ℝ) + 1 := by positivity
+  refine div_le_div_of_nonneg_right ?_ hB.le
+  exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hc (pow_nonneg hε _))
+    (Nat.cast_nonneg _)
+
 end Repetition
 
 /-- **Parallel repetition of normal form verifiers** (blueprint `thm:parallel-repetition`) for
@@ -146,6 +156,24 @@ def Repetition.SoundIn {ℓ : ℕ} (R : Repetition ℓ) (ω : ValueModel) : Prop
 /-- The soundness clause of parallel repetition is soundness in the tensor-product model. -/
 theorem Repetition.soundIn_tensor {ℓ : ℕ} (R : Repetition ℓ) : R.SoundIn .tensor :=
   R.soundness
+
+/-- **The same procedure with a smaller soundness constant.** Every clause survives: soundness
+because the bound is antitone in the constant (`Repetition.soundBound_anti`). This is how one
+procedure serves two value models whose repetition theorems have different constants: the
+exponent `τ` of the compression is chosen against the smaller one. -/
+def Repetition.withConst {ℓ : ℕ} (R : Repetition ℓ) (c : ℝ) (hc : 0 < c) (hle : c ≤ R.c) :
+    Repetition ℓ :=
+  { R with
+    c := c
+    c_pos := hc
+    soundness := fun V lam tau beta n ε hε hε1 h =>
+      (R.soundness V lam tau beta n ε hε hε1 h).trans (Repetition.soundBound_anti hle hε.le _ _) }
+
+/-- Lowering the constant keeps soundness in every value model. -/
+theorem Repetition.SoundIn.withConst {ℓ : ℕ} {R : Repetition ℓ} {ω : ValueModel}
+    (h : R.SoundIn ω) (c : ℝ) (hc : 0 < c) (hle : c ≤ R.c) : (R.withConst c hc hle).SoundIn ω :=
+  fun V lam tau beta n ε hε hε1 hV =>
+    (h V lam tau beta n ε hε hε1 hV).trans (Repetition.soundBound_anti hle hε.le _ _)
 
 end MIPRE
 

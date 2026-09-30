@@ -734,6 +734,7 @@ public import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Pa
 public import MIPRE.Background.Repetition.TensorPower
 public import MIPRE.Background.Repetition.TracialDensity
 public import MIPRE.Background.Repetition.Verifier
+public import MIPRE.Background.Repetition.VerifierCo
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
 public import MIPRE.Cslib.Foundations.Data.RelatesInSteps
