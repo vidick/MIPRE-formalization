@@ -1248,6 +1248,7 @@ public import MIPRE.Foundations.OracularTyped
 public import MIPRE.Foundations.OracularValue
 public import MIPRE.Foundations.POVMDomination
 public import MIPRE.Foundations.POVMMix
+public import MIPRE.Foundations.POVMReduction
 public import MIPRE.Foundations.POVMValue
 public import MIPRE.Foundations.PVM
 public import MIPRE.Foundations.Parseval
