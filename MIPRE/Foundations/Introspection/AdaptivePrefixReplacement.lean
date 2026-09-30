@@ -29,42 +29,6 @@ namespace MIPRE
 
 open Finset Matrix Classical
 
-/-- **Fixed-state dilation with any large enough padding**: the dilation of
-`exists_pvm_dilation` exists on `DilationAncilla A K` for every `K` beyond a threshold, so that
-finitely many families, even in different rings, can share one ancilla. -/
-theorem exists_pvm_dilation_ge {R : Type*} [Ring R] [StarRing R] [PartialOrder R]
-    [StarOrderedRing R] {Y A : Type*} [Fintype Y] [Fintype A] [DecidableEq A]
-    (Q : Y → POVMIn A R) (a₀ : A) :
-    ∃ K₀ : ℕ, ∀ K, K₀ ≤ K → ∃ P : Y → A → Matrix (DilationAncilla A K) (DilationAncilla A K) R,
-      (∀ y, IsPVMIn (P y)) ∧ ∀ y a, P y a (Sum.inl (a₀, 0)) (Sum.inl (a₀, 0)) = (Q y).op a := by
-  choose k Z hZ using fun (p : Y × A) => exists_sum_star_mul_self ((Q p.1).op_nonneg p.2)
-  refine ⟨Finset.univ.sup fun p : Y × A => k p, fun K hK => ?_⟩
-  have hk p : k p ≤ K + 1 :=
-    ((Finset.le_sup (f := fun p : Y × A => k p) (mem_univ p)).trans hK).trans (Nat.le_succ K)
-  let z : Y → A × Fin (K + 1) → R := fun y q =>
-    if h : q.2.val < k (y, q.1) then Z (y, q.1) ⟨q.2.val, h⟩ else 0
-  have hrow y a : ∑ i : Fin (K + 1), star (z y (a, i)) * z y (a, i) = (Q y).op a := by
-    rw [hZ (y, a)]
-    exact sum_star_mul_self_pad (hk (y, a)) (Z (y, a))
-  have hsum y : ∑ q, star (z y q) * z y q = 1 := by
-    rw [Fintype.sum_prod_type]
-    simp_rw [hrow y]
-    exact (Q y).sum_op
-  have hw y : Halmos.naimark (z y) (a₀, 0) * (Halmos.naimark (z y) (a₀, 0))ᴴ *
-      Halmos.naimark (z y) (a₀, 0) = Halmos.naimark (z y) (a₀, 0) :=
-    Halmos.naimark_mul_conjTranspose_mul' (hsum y) _
-  have hcomp y a : (∑ c ∈ univ.filter (fun c : A × Fin (K + 1) => c.1 = a),
-      Halmos.proj (Halmos.naimark (z y) (a₀, 0)) c) (Sum.inl (a₀, 0)) (Sum.inl (a₀, 0)) =
-      (Q y).op a := by
-    rw [Matrix.sum_apply]
-    simp_rw [Halmos.proj_naimark_inl_inl' (hsum y)]
-    rw [← hrow y a, Finset.sum_filter, Fintype.sum_prod_type]
-    refine (Finset.sum_eq_single a (fun b _ hb => ?_) (fun h => absurd (mem_univ a) h)).trans ?_
-    · exact Finset.sum_eq_zero fun i _ => ite_eq_right hb
-    · exact Finset.sum_congr rfl fun i _ => ite_eq_left rfl
-  exact ⟨fun y => fibSumIn (Halmos.proj (Halmos.naimark (z y) (a₀, 0))) Prod.fst, fun y =>
-    isPVMIn_fibSumIn (Halmos.isPVMIn_proj (hw y)) Prod.fst, hcomp⟩
-
 namespace Introspection
 
 open Weyl

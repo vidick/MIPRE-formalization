@@ -287,6 +287,56 @@ theorem LocalIsometry.expand_W_ψ {Φ : LocalIsometry M M'} (h : Φ.W M.ψ = M'.
   show Φ.W (M.ampl e (M.expand e).ψ p) = M'.ampl e (M'.expand e).ψ p
   rw [expand_ψ_apply, expand_ψ_apply, map_smul, h]
 
+/-! ### Local isometries extend along a one-sided ancilla -/
+
+section ExtendAlongA
+
+/-- The isometry of the one-sided extensions, componentwise. -/
+def LocalIsometry.expandAW (Φ : LocalIsometry M M') (t₀ : T) :
+    (M.expandA t₀).H →ₗᵢ[ℂ] (M'.expandA t₀).H :=
+  (M'.amplA t₀).symm.toLinearIsometry.comp ((amplMap Φ.W).comp (M.amplA t₀).toLinearIsometry)
+
+theorem LocalIsometry.amplA_expandAW (Φ : LocalIsometry M M') (t₀ : T)
+    (v : (M.expandA t₀).H) (t : T) : M'.amplA t₀ (Φ.expandAW t₀ v) t = Φ.W (M.amplA t₀ v t) :=
+  rfl
+
+/-- **A local isometry extends along a one-sided ancilla**: the first player's block matrices are
+mapped entrywise, the second player's operators as before. -/
+def LocalIsometry.expandA (Φ : LocalIsometry M M') (t₀ : T) :
+    LocalIsometry (M.expandA t₀) (M'.expandA t₀) where
+  W := Φ.expandAW t₀
+  ΦA := mapMatrixHom Φ.ΦA
+  ΦB := Φ.ΦB
+  intertwineA X v := by
+    refine M'.expandA_ext t₀ fun t => ?_
+    rw [expandA_π_πA_apply, Φ.amplA_expandAW, expandA_π_πA_apply, map_sum]
+    refine Finset.sum_congr rfl fun s _ => ?_
+    rw [mapMatrixHom_apply, map_apply, Φ.amplA_expandAW, Φ.intertwineA]
+  intertwineB b v := by
+    refine M'.expandA_ext t₀ fun t => ?_
+    rw [expandA_π_πB_apply, Φ.amplA_expandAW, Φ.amplA_expandAW, expandA_π_πB_apply,
+      Φ.intertwineB]
+
+@[simp]
+theorem LocalIsometry.expandA_ΦA (Φ : LocalIsometry M M') (t₀ : T) (X : Matrix T T 𝒜) :
+    (Φ.expandA t₀).ΦA X = X.map Φ.ΦA := rfl
+
+@[simp]
+theorem LocalIsometry.expandA_ΦB (Φ : LocalIsometry M M') (t₀ : T) (b : ℬ) :
+    (Φ.expandA t₀).ΦB b = Φ.ΦB b := rfl
+
+/-- The extension carries the state to the state when the local isometry does. -/
+theorem LocalIsometry.expandA_W_ψ {Φ : LocalIsometry M M'} (h : Φ.W M.ψ = M'.ψ) (t₀ : T) :
+    (Φ.expandA t₀).W (M.expandA t₀).ψ = (M'.expandA t₀).ψ := by
+  refine M'.expandA_ext t₀ fun t => ?_
+  show Φ.W (M.amplA t₀ (M.expandA t₀).ψ t) = M'.amplA t₀ (M'.expandA t₀).ψ t
+  rw [expandA_ψ_apply, expandA_ψ_apply]
+  split_ifs
+  · exact h
+  · exact map_zero _
+
+end ExtendAlongA
+
 end ExtendAlong
 
 /-! ## Exchanging an ancilla with a register -/

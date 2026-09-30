@@ -8,28 +8,33 @@ public import MIPRE.Foundations.Introspection.HonestPauliRegister
 
 @[expose] public section
 
-/-! # The ideal first hiding family is the full Pauli-X coarsening -/
+/-! # The ideal first hiding family is the full Pauli-X coarsening
+
+The two statements about a state are made in a bipartite model (Phase 4 of
+`planning/mipco-track.md`): an ideal mirror is a vector identity, and the register mirror is
+`BipartiteModel.reg_mirror`. The honest register operators stay concrete.
+-/
 
 noncomputable section
 
 namespace MIPRE.Introspection
 
 open Finset Matrix Classical Weyl
-open scoped Kronecker
 
 set_option linter.unusedSectionVars false
 
 /-- An ideal mirror identifies same-side replacement error with fine
 cross-party consistency, before any coarse-graining is performed. -/
 theorem xSqNorm_eq_stateSqNorm_of_mirror
-    {H K : Type*} [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K]
-    (ψ : H × K → ℂ) (M P : Matrix H H ℂ) (Q : Matrix K K ℂ)
-    (hmirror : aOp P *ᵥ ψ = bOp Q *ᵥ ψ) :
-    xSqNorm ψ M Q = stateSqNorm ψ (P - M) := by
-  calc
-    _ = snorm ψ (bOp Q - aOp M) ^ 2 := by rw [xSqNorm_eq_snorm_sq, snorm_sub_comm]
-    _ = snorm ψ (aOp P - aOp M) ^ 2 := by simp only [snorm, Matrix.sub_mulVec, hmirror]
-    _ = _ := by rw [stateSqNorm, stateNorm, norm_stateVec_eq_snorm, aOp_sub]
+    {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+    [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] (Ψ : BipartiteModel 𝒞 𝒜 ℬ)
+    (M P : 𝒜) (Q : ℬ) (hmirror : Ψ.π (Ψ.πA P) Ψ.ψ = Ψ.π (Ψ.πB Q) Ψ.ψ) :
+    Ψ.xSqNorm M Q = Ψ.stateSqNorm (P - M) := by
+  unfold BipartiteModel.xSqNorm BipartiteModel.xNorm BipartiteModel.stateSqNorm
+    BipartiteModel.stateNorm
+  rw [Ψ.snorm_sub_comm]
+  congr 1
+  simp only [StateModel.snorm, Op.snorm, map_sub, ContinuousLinearMap.sub_apply, hmirror]
 
 namespace Honest
 
@@ -76,14 +81,14 @@ theorem pauliXReadout_firstHide (P : CL.CLFun F ι ℓ) (h : P.SupportedOn univ)
     _ = _ := by rw [hideCoarseOp, hfirst]
 
 theorem pauliXReadout_registerState_mirror
-    {H K : Type*} [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K]
-    (ξ : H × K → ℂ) (x : Option (ι → F)) :
-    aOp (aOp (pauliXReadout x) : Matrix ((ι → F) × H) _ ℂ) *ᵥ registerState (ι → F) ξ =
-      bOp (aOp (pauliXReadout x) : Matrix ((ι → F) × K) _ ℂ) *ᵥ registerState (ι → F) ξ := by
-  have hseed : stateVec (registerEPR (ι → F)) (pauliXReadout x) =
-      stateVecB (registerEPR (ι → F)) (pauliXReadout x) :=
-    stateVec_epr_synOf wX_transpose some x
-  exact congrArg WithLp.ofLp (mirror_expVec _ ξ _ _ hseed)
+    {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+    [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] (Ξ : BipartiteModel 𝒞 𝒜 ℬ)
+    (x : Option (ι → F)) :
+    (Ξ.reg (ι → F)).π ((Ξ.reg (ι → F)).πA (smulKron 1 (pauliXReadout x))) (Ξ.reg (ι → F)).ψ =
+      (Ξ.reg (ι → F)).π ((Ξ.reg (ι → F)).πB (smulKron 1 (pauliXReadout x)))
+        (Ξ.reg (ι → F)).ψ := by
+  have he := Ξ.reg_mirror (pauliXReadout x)
+  rwa [pauliXReadout, synOf_transpose_of_symmetric _ wX_transpose] at he
 
 end Honest
 

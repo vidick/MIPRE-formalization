@@ -6,7 +6,6 @@ module
 public import MIPRE.Background.QLD.CLExplicitTransport
 public import MIPRE.Background.Introspection.PauliRestriction
 public import MIPRE.Foundations.GameDouble
-public import MIPRE.Foundations.GameTransportProjection
 
 @[expose] public section
 
@@ -17,6 +16,12 @@ auxiliary questions and both distinguished Pauli measurements. A permutation
 of the common random content proves equality of the full question-pair law,
 including mixed Pauli/auxiliary edges. The parsed predicate is intertwined on
 every question and every answer, including malformed answers and loops.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the soundness transports
+`toExplicit` and `toLegacy` relabel a projective strategy of one model `M` along the question
+equivalence (`BipartiteModel.ProjStrat.relabel`), so the transported strategy lives in the same
+model and the state is unchanged by construction. The Pauli lemmas are equalities of POVMs. The
+completeness transports (`pccToExplicit*`) stay on synchronous matrix strategies.
 -/
 
 noncomputable section
@@ -153,26 +158,39 @@ theorem game_D (q r : Question m t ℓ)
 
 set_option backward.isDefEq.respectTransparency true
 
-/-- Transport any legacy tensor strategy to the explicit full game. -/
-def toExplicit (S : TensorProductStrategy (PauliRestriction.fullGame hm b L project D)) :
-    TensorProductStrategy (game hm χ π b L project D) :=
+include hχ in
+/-- The two full typed presentations have the same quantum value. -/
+theorem quantumValue_eq : quantumValue (game hm χ π b L project D) =
+    quantumValue (PauliRestriction.fullGame hm b L project D) :=
+  quantumValue_eq_of_equiv _ _ (questionEquiv π b) (questionEquiv π b) (.refl _) (.refl _)
+    (game_mu hm χ π hχ b L project D) (game_D hm χ π b L project D)
+
+section Model
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] {M : BipartiteModel 𝒞 𝒜 ℬ}
+
+/-- Transport any projective strategy of the legacy full game to the explicit full game, in the
+same model. -/
+def toExplicit (S : M.ProjStrat (PauliRestriction.fullGame hm b L project D)) :
+    M.ProjStrat (game hm χ π b L project D) :=
   S.relabel _ (questionEquiv π b) (questionEquiv π b) (.refl _) (.refl _)
 
 include hχ in
 /-- Transport to the explicit game preserves the strategy value. -/
-theorem toExplicit_value (S : TensorProductStrategy (PauliRestriction.fullGame hm b L project D)) :
+theorem toExplicit_value (S : M.ProjStrat (PauliRestriction.fullGame hm b L project D)) :
     (toExplicit hm χ π b L project D S).value = S.value :=
   S.value_relabel _ (questionEquiv π b) (questionEquiv π b) (.refl _) (.refl _)
     (game_mu hm χ π hχ b L project D) (game_D hm χ π b L project D)
 
-/-- Transport an explicit strategy back to the legacy full game, with its literal state. -/
-abbrev toLegacy (S : TensorProductStrategy (game hm χ π b L project D)) :
-    TensorProductStrategy (PauliRestriction.fullGame hm b L project D) :=
+/-- Transport an explicit strategy back to the legacy full game, in the same model. -/
+abbrev toLegacy (S : M.ProjStrat (game hm χ π b L project D)) :
+    M.ProjStrat (PauliRestriction.fullGame hm b L project D) :=
   S.relabel _ (questionEquiv π b).symm (questionEquiv π b).symm (.refl _) (.refl _)
 
 include hχ in
 /-- Transport to the legacy game preserves the strategy value. -/
-theorem toLegacy_value (S : TensorProductStrategy (game hm χ π b L project D)) :
+theorem toLegacy_value (S : M.ProjStrat (game hm χ π b L project D)) :
     (toLegacy hm χ π b L project D S).value = S.value := by
   apply S.value_relabel _ (questionEquiv π b).symm (questionEquiv π b).symm (.refl _) (.refl _)
   · intro q r
@@ -184,51 +202,39 @@ theorem toLegacy_value (S : TensorProductStrategy (game hm χ π b L project D))
       (game_D hm χ π b L project D ((questionEquiv π b).symm q)
         ((questionEquiv π b).symm r) a a').symm
 
-/-- Legacy transport preserves the literal shared state. -/
-theorem toLegacy_state (S : TensorProductStrategy (game hm χ π b L project D)) :
-    S.RelabelStateEq (PauliRestriction.fullGame hm b L project D)
-      (questionEquiv π b).symm (questionEquiv π b).symm (.refl _) (.refl _) :=
-  S.relabelStateEq (PauliRestriction.fullGame hm b L project D)
-    (questionEquiv π b).symm (questionEquiv π b).symm (.refl _) (.refl _)
+/-- The legacy transport keeps every measurement: relabelling along the identity of the answers
+is the restriction to the relabelled questions (`POVMIn.map_id`). -/
+theorem toLegacy_eq_restrict (S : M.ProjStrat (game hm χ π b L project D)) :
+    toLegacy hm χ π b L project D S =
+      S.restrict (PauliRestriction.fullGame hm b L project D) (questionEquiv π b).symm
+        (questionEquiv π b).symm := by
+  have hA : (toLegacy hm χ π b L project D S).PA =
+      fun q => S.PA ((questionEquiv π b).symm q) :=
+    funext fun _ => POVMIn.map_id _
+  have hB : (toLegacy hm χ π b L project D S).PB =
+      fun q => S.PB ((questionEquiv π b).symm q) :=
+    funext fun _ => POVMIn.map_id _
+  revert hA hB
+  generalize toLegacy hm χ π b L project D S = T
+  rcases T with ⟨PA, PB, _, _, _⟩
+  rintro rfl rfl
+  rfl
 
-set_option linter.defProp false in
-/-- Legacy transport preserves both register dimensions. The proof's inferred
-type avoids reducing the concrete games when comparing strategy projections. -/
-def toLegacy_dimensions (S : TensorProductStrategy (game hm χ π b L project D)) :=
-  And.intro
-    (S.relabel_dA (PauliRestriction.fullGame hm b L project D)
-      (questionEquiv π b).symm (questionEquiv π b).symm (.refl _) (.refl _))
-    (S.relabel_dB (PauliRestriction.fullGame hm b L project D)
-      (questionEquiv π b).symm (questionEquiv π b).symm (.refl _) (.refl _))
+/-- Legacy transport preserves Alice's distinguished Pauli measurements. -/
+theorem toLegacy_pauli_A (S : M.ProjStrat (game hm χ π b L project D)) (W : QLD.Bas) :
+    (toLegacy hm χ π b L project D S).PA (.inl (.pauli W),0) = S.PA (.inl (.pauli W),0) := by
+  rw [toLegacy_eq_restrict]
+  show S.PA ((questionEquiv π b).symm (.inl (.pauli W),0)) = _
+  rw [questionEquiv_symm_pauli]
 
-include hχ in
-/-- The two full typed presentations have the same quantum value. -/
-theorem quantumValue_eq : quantumValue (game hm χ π b L project D) =
-    quantumValue (PauliRestriction.fullGame hm b L project D) :=
-  quantumValue_eq_of_equiv _ _ (questionEquiv π b) (questionEquiv π b) (.refl _) (.refl _)
-    (game_mu hm χ π hχ b L project D) (game_D hm χ π b L project D)
+/-- Legacy transport preserves Bob's distinguished Pauli measurements. -/
+theorem toLegacy_pauli_B (S : M.ProjStrat (game hm χ π b L project D)) (W : QLD.Bas) :
+    (toLegacy hm χ π b L project D S).PB (.inl (.pauli W),0) = S.PB (.inl (.pauli W),0) := by
+  rw [toLegacy_eq_restrict]
+  show S.PB ((questionEquiv π b).symm (.inl (.pauli W),0)) = _
+  rw [questionEquiv_symm_pauli]
 
-/-- Legacy transport preserves Alice's distinguished Pauli effects. -/
-theorem toLegacy_pauli_A (S : TensorProductStrategy (game hm χ π b L project D))
-    (W : QLD.Bas) (a : ParsedAnswer (ι → F₀) A (QLD.Answer F m d)) :
-    S.RelabelPAEq (PauliRestriction.fullGame hm b L project D)
-      (questionEquiv π b).symm (questionEquiv π b).symm (.refl _) (.refl _)
-      (.inl (.pauli W),0) a (.inl (.pauli W),0) a :=
-  S.relabelPAEq (PauliRestriction.fullGame hm b L project D)
-    (questionEquiv π b).symm (questionEquiv π b).symm (.refl _) (.refl _)
-    (.inl (.pauli W),0) a (.inl (.pauli W),0) a
-    (questionEquiv_symm_pauli π b W 0) rfl
-
-/-- Legacy transport preserves Bob's distinguished Pauli effects. -/
-theorem toLegacy_pauli_B (S : TensorProductStrategy (game hm χ π b L project D))
-    (W : QLD.Bas) (a : ParsedAnswer (ι → F₀) A (QLD.Answer F m d)) :
-    S.RelabelPBEq (PauliRestriction.fullGame hm b L project D)
-      (questionEquiv π b).symm (questionEquiv π b).symm (.refl _) (.refl _)
-      (.inl (.pauli W),0) a (.inl (.pauli W),0) a :=
-  S.relabelPBEq (PauliRestriction.fullGame hm b L project D)
-    (questionEquiv π b).symm (questionEquiv π b).symm (.refl _) (.refl _)
-    (.inl (.pauli W),0) a (.inl (.pauli W),0) a
-    (questionEquiv_symm_pauli π b W 0) rfl
+end Model
 
 variable [DecidableEq A]
 
