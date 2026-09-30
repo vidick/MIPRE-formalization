@@ -3470,13 +3470,12 @@ through the self-dual basis before composing the auxiliary measurements.
   MIPRE.Introspection.TypedEstimates.check_pauli_completed,
   MIPRE.Introspection.TypedEstimates.completed_pauli_condFail_le,
   MIPRE.Introspection.TypedEstimates.typed_edge_mean_failure_le,
-  MIPRE.Introspection.PauliRestriction.strategy_state,
   MIPRE.Introspection.PauliRestriction.strategy_failure_le,
   MIPRE.Introspection.PauliRestriction.strategy_pauliAns_A,
   MIPRE.Introspection.PauliRestriction.strategy_pauliAns_B}
 \leanok
 Any actual projective strategy for the full parsed game restricts to a
-strategy for the actual QLD game with the same state and dimensions.
+strategy for the actual QLD game in the same model, hence with the same state.
 If the original failure is at most $\varepsilon$, the restricted failure
 is at most the full ordered-edge count times $\varepsilon$. Completing
 malformed outer constructors at a scalar answer leaves every valid

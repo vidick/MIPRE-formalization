@@ -1127,8 +1127,7 @@ padded state in `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
 
 #print axioms MIPRE.Introspection.BinaryComplete.exists_perfectPCC
 
-#guard_sorry_free MIPRE.Introspection.PauliRestriction.strategy_state,
-  MIPRE.Introspection.PauliRestriction.strategy_failure_le,
+#guard_sorry_free MIPRE.Introspection.PauliRestriction.strategy_failure_le,
   MIPRE.Introspection.PauliRestriction.strategy_pauliAns_A,
   MIPRE.Introspection.PauliRestriction.strategy_pauliAns_B
 
