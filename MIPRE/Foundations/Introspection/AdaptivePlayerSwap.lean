@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 public import MIPRE.Foundations.Introspection.AdaptiveInductionIteration
-public import MIPRE.Foundations.Swap
+
 
 @[expose] public section
 
@@ -13,33 +13,17 @@ public import MIPRE.Foundations.Swap
 The Pauli predicate is transposed explicitly; no symmetry of that predicate
 is assumed. The directed auxiliary checks already include both orientations,
 so the original decision predicate and role-indexed CL maps stay unchanged.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): exchanging the players is the
+swapped model `Ξ.swap`, whose register model is the swapped register model
+(`BipartiteModel.regSwap`, with both homomorphisms the identity), so the value, the primitive Z
+errors and the hiding errors move between the two players with no loss.
 -/
 
 noncomputable section
 namespace MIPRE.Introspection
 open Finset Matrix Classical
 set_option linter.unusedSectionVars false
-
-variable {I H K : Type*} [Fintype I] [DecidableEq I]
-  [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K]
-
-/-- Swapping the parties swaps only the auxiliary state behind the common
-EPR register. -/
-theorem swapVec_registerState (ξ : H × K → ℂ) :
-    swapVec (registerState I ξ) = registerState I (swapVec ξ) := by
-  funext p
-  rcases p with ⟨⟨i, k⟩, j, h⟩
-  simp [swapVec, registerState, expVec, registerEPR, eq_comm]
-
-theorem xSqNorm_swapVec (ψ : H × K → ℂ)
-    (M : Matrix H H ℂ) (N : Matrix K K ℂ) :
-    xSqNorm (swapVec ψ) N M = xSqNorm ψ M N := by
-  rw [xSqNorm_eq_snorm_sq, snorm_swapVec_aOp_sub_bOp, xSqNorm_eq_sq]
-
-theorem snorm_swapVec_bOp (ψ : H × K → ℂ) (M : Matrix H H ℂ) :
-    snorm (swapVec ψ) (bOp M) = snorm ψ (aOp M) := by
-  have h := snorm_swapVec_aOp (swapVec ψ) M
-  simpa only [swapVec_swapVec, norm_stateVecB_eq_snorm] using h.symm
 
 /-- A uniform seed involution exchanging the question maps gives a symmetric law. -/
 theorem sampled_dist_swap_of_equiv {S Q : Type*} [Fintype S] [Fintype Q]
@@ -140,6 +124,61 @@ theorem questionCheck_transpose (L : Bool → CL.CLFun F ι ℓ) (X Z : PauliTyp
       rcases r with ⟨r, y⟩
       cases q <;> cases r <;> cases a <;> cases b <;> exact hp
 
+/-- Transposing the Pauli predicate exchanges the players of the parsed game. -/
+theorem parsedGame_transpose (E : PauliType → PauliType → Bool) (X Z : PauliType)
+    (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)
+    (projectPauli : PauliAnswer → ι → F)
+    (D : (ι → F) → (ι → F) → A → A → Bool)
+    (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →
+      PauliAnswer → PauliAnswer → Bool) :
+    parsedGame E X Z P L projectPauli D (transposePauliPredicate DP) =
+      (parsedGame E X Z P L projectPauli D DP).swap := by
+  have hμ : (parsedGame E X Z P L projectPauli D (transposePauliPredicate DP)).μ =
+      (parsedGame E X Z P L projectPauli D DP).swap.μ :=
+    funext fun x => funext fun y => TypedPresentation.mu_swap E X Z ℓ P
+      (questionCheck L X Z projectPauli D DP)
+      (questionCheck L X Z projectPauli D (transposePauliPredicate DP)) x y
+  have hD : (parsedGame E X Z P L projectPauli D (transposePauliPredicate DP)).D =
+      (parsedGame E X Z P L projectPauli D DP).swap.D :=
+    funext fun x => funext fun y => funext fun a => funext fun b =>
+      questionCheck_transpose L X Z projectPauli D DP x y a b
+  generalize parsedGame E X Z P L projectPauli D (transposePauliPredicate DP) = G at hμ hD
+  cases G
+  cases hμ
+  cases hD
+  rfl
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [StarModule ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [StarModule ℂ ℬ]
+  [PartialOrder 𝒜] [StarOrderedRing 𝒜] [StarProper 𝒜] [PartialOrder ℬ] [StarOrderedRing ℬ]
+  [StarProper ℬ] (Ξ : BipartiteModel 𝒞 𝒜 ℬ)
+variable {I : Type*} [Fintype I] [DecidableEq I]
+
+/-- The register model of the swapped model is the swapped register model: Born probabilities
+agree, along `regSwap`. -/
+theorem swap_reg_bornProb (Y : Matrix I I ℬ) (X : Matrix I I 𝒜) :
+    (Ξ.swap.reg I).bornProb Y X = (Ξ.reg I).swap.bornProb Y X :=
+  BipartiteModel.LocalIsometry.bornProb_of_W_ψ Ξ.regSwap_W_ψ Y X
+
+theorem swap_reg_povmValue {X' Y' A' B' : Type*} [Fintype X'] [Fintype Y'] [Fintype A']
+    [Fintype B'] (G : Game X' Y' A' B') (PA : X' → POVMIn A' (Matrix I I ℬ))
+    (PB : Y' → POVMIn B' (Matrix I I 𝒜)) :
+    (Ξ.swap.reg I).povmValue G PA PB = (Ξ.reg I).swap.povmValue G PA PB := by
+  unfold BipartiteModel.povmValue BipartiteModel.condWin
+  simp only [swap_reg_bornProb]
+
+theorem swap_reg_stateSqNorm (Y : Matrix I I ℬ) :
+    (Ξ.swap.reg I).stateSqNorm Y = (Ξ.reg I).swap.stateSqNorm Y :=
+  BipartiteModel.LocalIsometry.stateSqNorm_of_W_ψ Ξ.regSwap_W_ψ Y
+
+theorem swap_reg_swap_stateSqNorm (X : Matrix I I 𝒜) :
+    (Ξ.swap.reg I).swap.stateSqNorm X = (Ξ.reg I).stateSqNorm X :=
+  BipartiteModel.LocalIsometry.swap_stateSqNorm_of_W_ψ Ξ.regSwap_W_ψ X
+
+theorem swap_reg_xSqNorm (Y : Matrix I I ℬ) (X : Matrix I I 𝒜) :
+    (Ξ.swap.reg I).xSqNorm Y X = (Ξ.reg I).xSqNorm X Y :=
+  (BipartiteModel.LocalIsometry.xSqNorm_of_W_ψ Ξ.regSwap_W_ψ Y X).trans ((Ξ.reg I).xSqNorm_swap X Y)
+
 /-- The original game's value is preserved by exchanging players and
 transposing only the supplied Pauli predicate. -/
 theorem parsedGame_value_swap (E : PauliType → PauliType → Bool) (X Z : PauliType)
@@ -148,71 +187,42 @@ theorem parsedGame_value_swap (E : PauliType → PauliType → Bool) (X Z : Paul
     (D : (ι → F) → (ι → F) → A → A → Bool)
     (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →
       PauliAnswer → PauliAnswer → Bool)
-    (ξ : H × K → ℂ)
     (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H))
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) 𝒜))
     (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K)) :
-    povmValue (parsedGame E X Z P L projectPauli D (transposePauliPredicate DP))
-      (registerState (ι → F) (swapVec ξ)) MB MA =
-        povmValue (parsedGame E X Z P L projectPauli D DP)
-          (registerState (ι → F) ξ) MA MB := by
-  rw [← swapVec_registerState]
-  have hc (x y : CL.Detyping.Question (QuestionType PauliType ℓ) κ) :
-      condWin (parsedGame E X Z P L projectPauli D (transposePauliPredicate DP))
-        (swapVec (registerState (ι → F) ξ)) MB MA x y =
-      condWin (parsedGame E X Z P L projectPauli D DP)
-        (registerState (ι → F) ξ) MA MB y x := by
-    unfold condWin
-    change (∑ a, ∑ b, (if questionCheck L X Z projectPauli D
-      (transposePauliPredicate DP) x y a b then (1 : ℝ) else 0) *
-      bornProb (swapVec (registerState (ι → F) ξ)) ((MB x).mats a).val ((MA y).mats b).val) = _
-    simp only [questionCheck_transpose, bornProb_swapVec]
-    exact Finset.sum_comm
-  unfold povmValue
-  simp_rw [hc, show ∀ x y,
-    (parsedGame E X Z P L projectPauli D (transposePauliPredicate DP)).μ x y =
-      (parsedGame E X Z P L projectPauli D DP).μ y x from
-        TypedPresentation.mu_swap E X Z ℓ P _ _]
-  exact Finset.sum_comm
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) ℬ)) :
+    (Ξ.swap.reg (ι → F)).povmValue
+        (parsedGame E X Z P L projectPauli D (transposePauliPredicate DP)) MB MA =
+      (Ξ.reg (ι → F)).povmValue (parsedGame E X Z P L projectPauli D DP) MA MB := by
+  rw [swap_reg_povmValue, parsedGame_transpose, BipartiteModel.povmValue_swap_game]
 
-/-- Alice's primitive computational-basis error, with malformed Pauli
-answers kept as the separate option outcome. -/
-def introAliceZError (projectPauli : PauliAnswer → ι → F) (Z : PauliType)
-    (q : κ → ZMod 2) (ξ : H × K → ℂ)
+theorem introBobZError_swap (projectPauli : PauliAnswer → ι → F)
+    (Z : PauliType) (q : κ → ZMod 2)
     (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H)) : ℝ :=
-  ∑ z, stateSqNorm (registerState (ι → F) ξ)
-    ((((MA (QuestionType.pauli Z, q)).map (pauliProjection projectPauli)).mats z).val -
-      (aOp (readout (some : (ι → F) → Option (ι → F)) z) :
-        Matrix ((ι → F) × H) _ ℂ))
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) 𝒜)) :
+    introBobZError projectPauli Z q Ξ.swap MA = introAliceZError projectPauli Z q Ξ MA :=
+  Finset.sum_congr rfl fun _ _ => swap_reg_swap_stateSqNorm Ξ _
 
-theorem introBobZError_swap (projectPauli : PauliAnswer → ι → F) (Z : PauliType)
-    (q : κ → ZMod 2) (ξ : H × K → ℂ)
-    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H)) :
-    introBobZError projectPauli Z q (swapVec ξ) MA =
-      introAliceZError projectPauli Z q ξ MA := by
-  unfold introBobZError introAliceZError
-  rw [← swapVec_registerState]
-  simp only [snorm_swapVec_bOp, stateSqNorm, stateNorm, norm_stateVec_eq_snorm]
+theorem introAliceZError_swap (projectPauli : PauliAnswer → ι → F)
+    (Z : PauliType) (q : κ → ZMod 2)
+    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) ℬ)) :
+    introAliceZError projectPauli Z q Ξ.swap MB = introBobZError projectPauli Z q Ξ MB :=
+  Finset.sum_congr rfl fun _ _ => swap_reg_stateSqNorm Ξ _
 
 theorem hidingAliceError_swap (L : Bool → CL.CLFun F ι ℓ) (w : Bool)
-    (hL : (L w).SupportedOn univ) (ξ : H × K → ℂ)
+    (hL : (L w).SupportedOn univ)
     (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K)) (j : Fin ℓ) :
-    hidingAliceError L w hL (swapVec ξ) MB j = hidingBobError L w hL ξ MB j := by
-  unfold hidingAliceError hidingBobError
-  rw [← swapVec_registerState]
-  simp only [xSqNorm_swapVec]
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) ℬ)) (j : Fin ℓ) :
+    hidingAliceError L w hL Ξ.swap MB j = hidingBobError L w hL Ξ MB j :=
+  Finset.sum_congr rfl fun _ _ => swap_reg_xSqNorm Ξ _ _
 
 theorem hidingBobError_swap (L : Bool → CL.CLFun F ι ℓ) (w : Bool)
-    (hL : (L w).SupportedOn univ) (ξ : H × K → ℂ)
+    (hL : (L w).SupportedOn univ)
     (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H)) (j : Fin ℓ) :
-    hidingBobError L w hL (swapVec ξ) MA j = hidingAliceError L w hL ξ MA j := by
-  have h := hidingAliceError_swap L w hL (swapVec ξ) MA j
-  simpa only [swapVec_swapVec] using h.symm
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) 𝒜)) (j : Fin ℓ) :
+    hidingBobError L w hL Ξ.swap MA j = hidingAliceError L w hL Ξ MA j :=
+  Finset.sum_congr rfl fun _ _ => swap_reg_xSqNorm Ξ _ _
 
 end TypedEstimates
 end MIPRE.Introspection
