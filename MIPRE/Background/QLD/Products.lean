@@ -370,40 +370,6 @@ theorem sum_uniform_pad4 (f : Point F m → Point F m → F → F → ℝ) :
 
 end Pad
 
-/-! ## The verifier's content, read through its two points -/
-
-section ContentBlocks
-
-variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m : ℕ} [NeZero m]
-
-/-- The uniform content, read through `(uX, uZ)`, is a pair of independent uniform points. -/
-theorem sum_content_blocks (g : Point F m → Point F m → ℝ) :
-    ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * g c.uX c.uZ
-      = ∑ x, ∑ z, (uniform (Point F m) x * uniform (Point F m) z) * g x z := by
-  have hq : (Fintype.card F : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
-  have hcard : (Fintype.card (Content F m) : ℝ)
-      = (Fintype.card F : ℝ) ^ m * (Fintype.card F : ℝ) ^ m * Fintype.card F
-        * (Fintype.card F : ℝ) ^ m * (Fintype.card F * Fintype.card F) := by
-    rw [Fintype.card_congr contentEquiv]
-    simp only [Fintype.card_prod, Fintype.card_fun, Fintype.card_fin]
-    push_cast
-    ring
-  have hsplit : ∑ c : Content F m, g c.uX c.uZ
-      = (Fintype.card F : ℝ) * (Fintype.card F : ℝ) ^ m * (Fintype.card F * Fintype.card F)
-        * ∑ x, ∑ z, g x z := by
-    rw [sum_content_split (fun c => g c.uX c.uZ)]
-    simp only [Fintype.sum_prod_type, Finset.sum_const, Finset.card_univ, nsmul_eq_mul,
-      Finset.mul_sum]
-    refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun z _ => ?_
-    simp only [Fintype.card_prod, Fintype.card_fun, Fintype.card_fin]
-    push_cast
-    ring
-  simp only [uniform, Fintype.card_fun, Fintype.card_fin, Nat.cast_pow, ← Finset.mul_sum]
-  rw [hsplit, hcard]
-  field_simp
-
-end ContentBlocks
-
 /-! ## The lemma -/
 
 section Products

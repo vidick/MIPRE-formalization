@@ -64,13 +64,6 @@ theorem bornProb_add_right (ψ : dA × dB → ℂ) (X : Matrix dA dA ℂ) (Y Z :
   rw [add_sub_cancel_right] at h
   linarith
 
-/-- The Born probability is monotone in Bob's operator when Alice's is positive. -/
-theorem bornProb_mono_right (ψ : dA × dB → ℂ) {X : Matrix dA dA ℂ} (hX : X.PosSemidef)
-    {Y Y' : Matrix dB dB ℂ} (h : Y ≤ Y') : bornProb ψ X Y ≤ bornProb ψ X Y' := by
-  have h0 := bornProb_nonneg ψ hX (Matrix.nonneg_iff_posSemidef.mp (sub_nonneg.mpr h))
-  rw [bornProb_sub_right] at h0
-  linarith
-
 /-- Two distinct elements of a POVM sum to at most the identity. -/
 theorem POVM.add_le_one {A : Type*} [Fintype A] [DecidableEq A] (M : POVM A dB) {b b' : A}
     (h : b ≠ b') : ((M.mats b).val) + ((M.mats b').val) ≤ (1 : Matrix dB dB ℂ) := by
@@ -92,10 +85,6 @@ theorem inconsistency_swapVec {X A : Type*} [Fintype X] [Fintype A] [DecidableEq
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   exact if_congr eq_comm rfl rfl
-
-theorem sum_uniform_eq_one (X : Type*) [Fintype X] [Nonempty X] : ∑ x, uniform X x = 1 := by
-  simp only [uniform, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-  exact mul_inv_cancel₀ (Nat.cast_ne_zero.mpr Fintype.card_ne_zero)
 
 theorem sum_ite_eq_zero_sub {α β : Type*} [Fintype α] [DecidableEq α] [AddCommGroup β] (a : α)
     (x : α → β) : (∑ b, if a = b then 0 else x b) = (∑ b, x b) - x a := by

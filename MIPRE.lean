@@ -586,6 +586,7 @@ public import MIPRE.Background.QLD.SwapState
 public import MIPRE.Background.QLD.SwapUnitary
 public import MIPRE.Background.QLD.TwoPairs
 public import MIPRE.Background.QLD.TypeEncoding
+public import MIPRE.Background.QLD.Uniform
 public import MIPRE.Background.QLD.ValidAnswers
 public import MIPRE.Background.QLD.Win
 public import MIPRE.Background.QLD.WinMS

@@ -5,8 +5,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.QLD.Combined
-public import MIPRE.Foundations.POVMMix
-public import MIPRE.Foundations.CrossConsistency
+public import MIPRE.Background.QLD.PhysModel
 
 @[expose] public section
 
@@ -24,28 +23,40 @@ stage 4 fills it in, with no `sorry` in the tree at any point.
 
 ## The registers
 
-The Lean padded strategy does not live on the paper's registers `A A' | B A''`:
-`lem:qld-padded-points` dilates its sandwich with an `F × F` ancilla per party, and the seeded
-soundness theorem is applied to a projective dilation of the padded strategy, which adds one
-more. So the measurement stage 4 produces acts on `(dA × Anc F m) × EA` for an ancilla type `EA`
-that stage 5 has no reason to know, and the state it is consistent on is a product of the
-expanded state `hatVec ψ` with fixed ancilla vectors. The structure carries the ancilla types
-`EA`, `EB` and the state `Φ` abstractly, and records the one property of `Φ` every transfer from
-stages 2 and 3 needs: an operator on the two hat registers, extended by the identity, has the
-expectation it has on `hatVec ψ` (`Φ_reduced`). Every `extVec2 (hatVec ψ) a₀ b₀`, nested or
-reindexed, satisfies it.
+The padded strategy does not live on the paper's registers `A A' | B A''`: the seeded soundness
+theorem is applied to a projective dilation of the padded strategy, which adjoins a padding
+register to each party, and stage 5 reads the result on the first cut of a physical state that
+holds more registers still. So the measurement stage 4 produces lives in a model `K` that stage 5
+has no reason to know. What every transfer from stages 2 and 3 needs is that an operator of the
+expanded model `M.reg (Anc F m)`, carried to `K`, has there the expectation it had: the structure
+is parameterized by `K` and an embedding `ι : (M.reg (Anc F m)).Embedding K` --- a local isometry
+carrying the state to the state and keeping both units (`BipartiteModel.Embedding`) --- along
+which every such quantity transfers exactly (`SimulPair.bornProb_aOp_aOp`,
+`SimulPair.stateSqNorm_aOp`, `SimulPair.normSq_stateVecB_aOp`, `SimulPair.xSqNorm_aOp`). A
+`SimulPair` moves along any further embedding of `K` (`SimulPair.transport`); stage 5 uses it on
+the first cut of the physical state, `CutSimul`.
 
 ## The consistency
 
 `consA` says that Alice's pair measurement, read through the `W`-component evaluated at a
-uniformly random point `u`, agrees with Bob's expanded `(Point, W)` measurement at `u` up to
-`δ` --- the paper's `eq:qld-s-point-con-alice`; `consB` is `eq:qld-s-point-con-bob`. Both are
-required, and no symmetry of the strategy is assumed.
+uniformly random point `u`, agrees with Bob's expanded `(Point, W)` measurement at `u`, carried to
+`K` along `ι`, up to `δ` --- the paper's `eq:qld-s-point-con-alice`; `consB` is
+`eq:qld-s-point-con-bob`. Both are required, and no symmetry of the strategy is assumed.
+
+## Stated in a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The strategy is a projective
+strategy `S : M.ProjStrat (qldGame hm)` of a bipartite model `M`, and the expanded state is the
+register model `M.reg (Anc F m)` (`MIPRE/Background/QLD/Expanded.lean`). The matrix structure
+carried the padded registers `EA`, `EB` and the padded state `Φ` as fields, with the one property
+`Φ_reduced` (an operator on the two hat registers, extended by the identity, has the expectation
+it has on `hatVec ψ`); here the model `K` and the embedding `ι` are parameters, `Φ_reduced` is
+`ι.W_ψ`, and the pair measurements are POVMs in `K`'s algebras. The matrix reduction of a product
+with fixed ancilla vectors (`bornProb_extVec2_aOp_aOp`) is the embedding
+`BipartiteModel.inertEmb`.
 -/
 
 noncomputable section
-
-universe u
 
 namespace MIPRE
 
@@ -56,15 +67,20 @@ section Norms
 
 variable {R S : Type*} [Fintype R] [DecidableEq R] [Fintype S] [DecidableEq S]
 
-/-- Alice's squared state norm as a Born probability against the identity. -/
+/-- Alice's squared state norm as a Born probability against the identity: the tensor-product
+instance of `BipartiteModel.stateSqNorm_eq_bornProb_one`. -/
 theorem stateSqNorm_eq_bornProb_one (φ : R × S → ℂ) (M : Matrix R R ℂ) :
     stateSqNorm φ M = bornProb φ (Mᴴ * M) 1 := by
-  rw [stateSqNorm_eq_qform, bornProb_eq_qform, bOp_one, Matrix.mul_one]
+  rw [stateSqNorm_eq_tensor, bornProb_eq_tensor,
+    BipartiteModel.stateSqNorm_eq_bornProb_one, Matrix.star_eq_conjTranspose]
 
-/-- Bob's squared state norm as a Born probability against the identity. -/
+/-- Bob's squared state norm as a Born probability against the identity: the tensor-product
+instance of `BipartiteModel.stateSqNorm_eq_bornProb_one` for the exchanged players. -/
 theorem normSq_stateVecB_eq_one_bornProb (φ : R × S → ℂ) (M : Matrix S S ℂ) :
     ‖stateVecB φ M‖ ^ 2 = bornProb φ 1 (Mᴴ * M) := by
-  rw [normSq_stateVecB_eq_qform, bornProb_eq_qform, aOp_one, Matrix.one_mul]
+  rw [normSq_stateVecB_eq_tensor, bornProb_eq_tensor,
+    BipartiteModel.stateSqNorm_eq_bornProb_one, BipartiteModel.bornProb_swap,
+    Matrix.star_eq_conjTranspose]
 
 end Norms
 
@@ -75,12 +91,12 @@ namespace MIPRE.QLD
 open Finset Matrix MIPRE MIPRE.LIDT
 open scoped Kronecker ComplexOrder MatrixOrder
 
-variable {F : Type u} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
+variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
   [NeZero m]
 
 /-- Pairs of polynomials in `m` variables of individual degree at most `d`: the outcomes of the
 simultaneous measurement. -/
-abbrev PolyPair (F : Type u) (m d : ℕ) :=
+abbrev PolyPair (F : Type*) (m d : ℕ) :=
   LowIndDegPoly (F := F) (m := m) (d := d) × LowIndDegPoly (F := F) (m := m) (d := d)
 
 /-- The component of a pair a basis reads: `g_X` for `X`, `g_Z` for `Z`. -/
@@ -95,133 +111,165 @@ omit [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] [NeZero m] in
 omit [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] [NeZero m] in
 @[simp] theorem PolyPair.proj_Z (p : PolyPair F m d) : PolyPair.proj .Z p = p.2 := rfl
 
-variable {R : Type*} [Fintype R] [DecidableEq R]
+section EvalMarg
+
+variable {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R]
 
 /-- **The evaluated `W`-marginal** of a pair measurement at the point `u`: the paper's
 `S-hat_{[eval_u(·_W) = a]}`, the POVM with outcomes in `F` that sums the pair operators whose
 `W`-component takes the value `a` at `u`. -/
-def evalMarg (S : POVM (PolyPair F m d) R) (W : Bas) (u : Point F m) : POVM F R :=
+def evalMarg (S : POVMIn (PolyPair F m d) R) (W : Bas) (u : Point F m) : POVMIn F R :=
   S.map fun p => (PolyPair.proj W p).eval u
 
 omit [Algebra (ZMod 2) F] [NeZero m] in
-theorem evalMarg_mats (S : POVM (PolyPair F m d) R) (W : Bas) (u : Point F m) (a : F) :
-    ((evalMarg S W u).mats a).val
-      = ∑ p ∈ univ.filter fun p : PolyPair F m d => (PolyPair.proj W p).eval u = a,
-          ((S.mats p).val) :=
-  POVM.map_mats _ _ _
+theorem evalMarg_mats (S : POVMIn (PolyPair F m d) R) (W : Bas) (u : Point F m) (a : F) :
+    (evalMarg S W u).op a
+      = ∑ p ∈ univ.filter fun p : PolyPair F m d => (PolyPair.proj W p).eval u = a, S.op p :=
+  POVMIn.map_op _ _ _
 
 omit [Algebra (ZMod 2) F] [NeZero m] in
 /-- The evaluated marginal of a projective pair measurement is projective. -/
-theorem isPVM_evalMarg {S : POVM (PolyPair F m d) R} (hS : IsPVM fun p => ((S.mats p).val))
-    (W : Bas) (u : Point F m) : IsPVM fun a => (((evalMarg S W u).mats a).val) := by
-  have hfun : (fun a => (((evalMarg S W u).mats a).val))
-      = fun c => ∑ p ∈ univ.filter fun p : PolyPair F m d => (PolyPair.proj W p).eval u = c,
-          ((S.mats p).val) :=
-    funext fun a => POVM.map_mats _ _ _
-  rw [hfun]
-  exact hS.coarse _
+theorem isPVM_evalMarg {S : POVMIn (PolyPair F m d) R} (hS : IsPVMIn S.op) (W : Bas)
+    (u : Point F m) : IsPVMIn (evalMarg S W u).op :=
+  POVMIn.isPVMIn_map hS _
 
-variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+omit [Algebra (ZMod 2) F] [NeZero m] in
+/-- The evaluated marginal of a pushed-forward pair measurement is the pushed-forward evaluated
+marginal. -/
+theorem evalMarg_pushforward {R' : Type*} [Ring R'] [StarRing R'] [PartialOrder R']
+    [StarOrderedRing R'] [Algebra ℂ R] [Algebra ℂ R'] (f : R →⋆ₙₐ[ℂ] R') (hf : f 1 = 1)
+    (S : POVMIn (PolyPair F m d) R) (W : Bas) (u : Point F m) :
+    evalMarg (S.pushforward f hf) W u = (evalMarg S W u).pushforward f hf :=
+  POVMIn.ext' fun a => by
+    rw [POVMIn.pushforward_op, evalMarg_mats, evalMarg_mats, map_sum]
+    rfl
+
+end EvalMarg
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ]
+  [StarProper ℬ]
+variable {𝒞' 𝒜' ℬ' : Type*} [Ring 𝒞'] [StarRing 𝒞'] [Algebra ℂ 𝒞'] [Ring 𝒜'] [StarRing 𝒜']
+  [Algebra ℂ 𝒜'] [Ring ℬ'] [StarRing ℬ'] [Algebra ℂ ℬ'] [PartialOrder 𝒜'] [StarOrderedRing 𝒜']
+  [PartialOrder ℬ'] [StarOrderedRing ℬ']
 
 /-- **The simultaneous pair measurement** (`lem:qld-simultaneous`, the paper's `lem:qld-4-7`),
-for a strategy `(ψ, MA, MB)` of the Pauli basis test, with error `δ`: on each party's padded
-local space `(dA × Anc F m) × EA` a projective measurement with outcomes pairs of polynomials,
-whose evaluated marginals are consistent with the opposite party's expanded point measurements
-on the padded state `Φ`, in both register versions. -/
-structure SimulPair (ψ : dA × dB → ℂ) (MA : Question F m → POVM (Answer F m d) dA)
-    (MB : Question F m → POVM (Answer F m d) dB) (δ : ℝ) where
-  /-- Alice's ancilla beyond the expansion. -/
-  EA : Type u
-  [instFintypeEA : Fintype EA]
-  [instDecEqEA : DecidableEq EA]
-  /-- Bob's ancilla beyond the expansion. -/
-  EB : Type u
-  [instFintypeEB : Fintype EB]
-  [instDecEqEB : DecidableEq EB]
-  /-- The padded state. -/
-  Φ : ((dA × Anc F m) × EA) × ((dB × Anc F m) × EB) → ℂ
-  Φ_unit : star Φ ⬝ᵥ Φ = 1
-  /-- The padded state reduces to the expanded state on the two hat registers. -/
-  Φ_reduced : ∀ (X : Matrix (dA × Anc F m) (dA × Anc F m) ℂ)
-    (Y : Matrix (dB × Anc F m) (dB × Anc F m) ℂ),
-    bornProb Φ (aOp X) (aOp Y) = bornProb (hatVec (F := F) (m := m) ψ) X Y
+for a projective strategy `S` of the Pauli basis test in a bipartite model `M`, with error `δ`: in
+each player's algebra of a model `K` into which the expanded model `M.reg (Anc F m)` embeds along
+`ι`, a projective measurement with outcomes pairs of polynomials, whose evaluated marginals are
+consistent on `K`'s state with the opposite party's expanded point measurements carried along
+`ι`. -/
+structure SimulPair {hm : m ∣ Fintype.card F} (M : BipartiteModel 𝒞 𝒜 ℬ)
+    (S : M.ProjStrat (qldGame (d := d) hm)) (K : BipartiteModel 𝒞' 𝒜' ℬ')
+    (ι : (M.reg (Anc F m)).Embedding K) (δ : ℝ) where
   /-- Alice's pair measurement. -/
-  SA : POVM (PolyPair F m d) ((dA × Anc F m) × EA)
-  SA_proj : IsPVM fun p => ((SA.mats p).val)
-  /-- Bob's pair measurement. -/
-  SB : POVM (PolyPair F m d) ((dB × Anc F m) × EB)
-  SB_proj : IsPVM fun p => ((SB.mats p).val)
+  SA : POVMIn (PolyPair F m d) 𝒜'
+  SA_proj : IsPVMIn SA.op
+  /-- Bob's pair measurement (unused by stage 5, kept for `lem:qld-simultaneous`). -/
+  SB : POVMIn (PolyPair F m d) ℬ'
+  SB_proj : IsPVMIn SB.op
   /-- Alice's evaluated marginals track Bob's expanded point measurements. -/
-  consA : ∀ W : Bas, inconsistency (uniform (Point F m)) Φ (fun u => evalMarg SA W u)
-    (fun u => (hatPtPOVM MB W u).aOp) ≤ δ
+  consA : ∀ W : Bas, K.inconsistency (uniform (Point F m)) (fun u => evalMarg SA W u)
+    (fun u => (hatPtPOVM S.PB W u).pushforward ι.ΦB ι.ΦB_one) ≤ δ
   /-- Bob's evaluated marginals track Alice's expanded point measurements. -/
-  consB : ∀ W : Bas, inconsistency (uniform (Point F m)) Φ (fun u => (hatPtPOVM MA W u).aOp)
-    (fun u => evalMarg SB W u) ≤ δ
-
-attribute [instance] SimulPair.instFintypeEA SimulPair.instDecEqEA SimulPair.instFintypeEB
-  SimulPair.instDecEqEB
+  consB : ∀ W : Bas, K.inconsistency (uniform (Point F m))
+    (fun u => (hatPtPOVM S.PA W u).pushforward ι.ΦA ι.ΦA_one) (fun u => evalMarg SB W u) ≤ δ
 
 namespace SimulPair
 
-variable {ψ : dA × dB → ℂ} {MA : Question F m → POVM (Answer F m d) dA}
-  {MB : Question F m → POVM (Answer F m d) dB} {δ : ℝ}
+variable {hm : m ∣ Fintype.card F} {M : BipartiteModel 𝒞 𝒜 ℬ}
+  {S : M.ProjStrat (qldGame (d := d) hm)} {K : BipartiteModel 𝒞' 𝒜' ℬ'}
+  {ι : (M.reg (Anc F m)).Embedding K} {δ : ℝ}
 
 /-- The error can only be weakened. -/
-def mono (P : SimulPair ψ MA MB δ) {δ' : ℝ} (h : δ ≤ δ') : SimulPair ψ MA MB δ' :=
+def mono (P : SimulPair M S K ι δ) {δ' : ℝ} (h : δ ≤ δ') : SimulPair M S K ι δ' :=
   { P with consA := fun W => le_trans (P.consA W) h, consB := fun W => le_trans (P.consB W) h }
 
-/-- **The padded state reproduces every expectation of the expanded state**, so every
-conclusion of stages 2 and 3 about `hatVec ψ` transfers to `Φ` for operators extended by the
-identity. -/
-theorem bornProb_aOp_aOp (P : SimulPair ψ MA MB δ) (X : Matrix (dA × Anc F m) (dA × Anc F m) ℂ)
-    (Y : Matrix (dB × Anc F m) (dB × Anc F m) ℂ) :
-    bornProb P.Φ (aOp X) (aOp Y) = bornProb (hatVec (F := F) (m := m) ψ) X Y :=
-  P.Φ_reduced X Y
+/-- **The state of `K` is a unit vector**, the strategy's being one: the matrix structure's
+`Φ_unit`. -/
+theorem ψ_unit (_P : SimulPair M S K ι δ) : ‖K.ψ‖ = 1 := by
+  rw [ι.norm_ψ]
+  exact hatVec_unit S.ψ_unit
 
-/-- Alice's squared state norm transfers too: it is a Born probability against the identity. -/
-theorem stateSqNorm_aOp (P : SimulPair ψ MA MB δ) (X : Matrix (dA × Anc F m) (dA × Anc F m) ℂ) :
-    stateSqNorm P.Φ (aOp X) = stateSqNorm (hatVec (F := F) (m := m) ψ) X := by
-  rw [stateSqNorm_eq_bornProb_one, stateSqNorm_eq_bornProb_one, aOp_conjTranspose, ← aOp_mul]
-  have h := P.bornProb_aOp_aOp (Xᴴ * X) 1
-  rw [aOp_one] at h
-  exact h
+/-- **`K` reproduces every expectation of the expanded model**, so every conclusion of stages 2
+and 3 about `M.reg (Anc F m)` transfers to `K` for operators carried along `ι`. -/
+theorem bornProb_aOp_aOp (_P : SimulPair M S K ι δ) (X : Matrix (Anc F m) (Anc F m) 𝒜)
+    (Y : Matrix (Anc F m) (Anc F m) ℬ) :
+    K.bornProb (ι.ΦA X) (ι.ΦB Y) = (M.reg (Anc F m)).bornProb X Y :=
+  ι.bornProb X Y
+
+/-- Alice's squared state norm transfers too. -/
+theorem stateSqNorm_aOp (_P : SimulPair M S K ι δ) (X : Matrix (Anc F m) (Anc F m) 𝒜) :
+    K.stateSqNorm (ι.ΦA X) = (M.reg (Anc F m)).stateSqNorm X :=
+  ι.stateSqNorm X
 
 /-- Bob's squared state norm transfers. -/
-theorem normSq_stateVecB_aOp (P : SimulPair ψ MA MB δ)
-    (Y : Matrix (dB × Anc F m) (dB × Anc F m) ℂ) :
-    ‖stateVecB P.Φ (aOp Y)‖ ^ 2 = ‖stateVecB (hatVec (F := F) (m := m) ψ) Y‖ ^ 2 := by
-  rw [normSq_stateVecB_eq_one_bornProb, normSq_stateVecB_eq_one_bornProb, aOp_conjTranspose,
-    ← aOp_mul]
-  have h := P.bornProb_aOp_aOp 1 (Yᴴ * Y)
-  rw [aOp_one] at h
-  exact h
+theorem normSq_stateVecB_aOp (_P : SimulPair M S K ι δ) (Y : Matrix (Anc F m) (Anc F m) ℬ) :
+    K.swap.stateSqNorm (ι.ΦB Y) = (M.reg (Anc F m)).swap.stateSqNorm Y :=
+  ι.swap_stateSqNorm Y
 
-/-- **The cross-party deviation of two doubly extended operators** is the one they have on the
-expanded state: all three terms of its expansion are expectations the padded state reproduces. -/
-theorem xSqNorm_aOp (P : SimulPair ψ MA MB δ) {X : Matrix (dA × Anc F m) (dA × Anc F m) ℂ}
-    (hX : Xᴴ = X) (Y : Matrix (dB × Anc F m) (dB × Anc F m) ℂ) :
-    xSqNorm P.Φ (aOp X) (aOp Y) = xSqNorm (hatVec (F := F) (m := m) ψ) X Y := by
-  rw [xSqNorm_eq_expand _ (by rw [aOp_conjTranspose, hX]), xSqNorm_eq_expand _ hX,
-    P.stateSqNorm_aOp, P.normSq_stateVecB_aOp, P.bornProb_aOp_aOp]
+/-- **The cross-party deviation of two carried operators** is the one they have on the expanded
+model. -/
+theorem xSqNorm_aOp (_P : SimulPair M S K ι δ) (X : Matrix (Anc F m) (Anc F m) 𝒜)
+    (Y : Matrix (Anc F m) (Anc F m) ℬ) :
+    K.xSqNorm (ι.ΦA X) (ι.ΦB Y) = (M.reg (Anc F m)).xSqNorm X Y :=
+  ι.xSqNorm X Y
+
+section Transport
+
+variable {𝒞'' 𝒜'' ℬ'' : Type*} [Ring 𝒞''] [StarRing 𝒞''] [Algebra ℂ 𝒞''] [Ring 𝒜'']
+  [StarRing 𝒜''] [Algebra ℂ 𝒜''] [Ring ℬ''] [StarRing ℬ''] [Algebra ℂ ℬ''] [PartialOrder 𝒜'']
+  [StarOrderedRing 𝒜''] [PartialOrder ℬ''] [StarOrderedRing ℬ''] {K' : BipartiteModel 𝒞'' 𝒜'' ℬ''}
+
+/-- **A simultaneous pair measurement moves along an embedding** of its model: the two pair
+measurements are pushed forward, and the consistencies are carried unchanged. -/
+def transport (P : SimulPair M S K ι δ) (j : K.Embedding K') : SimulPair M S K' (j.comp ι) δ where
+  SA := P.SA.pushforward j.ΦA j.ΦA_one
+  SA_proj := POVMIn.isPVMIn_pushforward _ _ P.SA_proj
+  SB := P.SB.pushforward j.ΦB j.ΦB_one
+  SB_proj := POVMIn.isPVMIn_pushforward _ _ P.SB_proj
+  consA W := by
+    have hA : (fun u => evalMarg (P.SA.pushforward j.ΦA j.ΦA_one) W u)
+        = fun u => (evalMarg P.SA W u).pushforward j.ΦA j.ΦA_one :=
+      funext fun u => evalMarg_pushforward _ _ _ W u
+    have hB : (fun u => (hatPtPOVM S.PB W u).pushforward (j.comp ι).ΦB (j.comp ι).ΦB_one)
+        = fun u => ((hatPtPOVM S.PB W u).pushforward ι.ΦB ι.ΦB_one).pushforward j.ΦB j.ΦB_one :=
+      funext fun u => POVMIn.ext' fun _ => rfl
+    rw [hA, hB, j.inconsistency_pushforward]
+    exact P.consA W
+  consB W := by
+    have hA : (fun u => (hatPtPOVM S.PA W u).pushforward (j.comp ι).ΦA (j.comp ι).ΦA_one)
+        = fun u => ((hatPtPOVM S.PA W u).pushforward ι.ΦA ι.ΦA_one).pushforward j.ΦA j.ΦA_one :=
+      funext fun u => POVMIn.ext' fun _ => rfl
+    have hB : (fun u => evalMarg (P.SB.pushforward j.ΦB j.ΦB_one) W u)
+        = fun u => (evalMarg P.SB W u).pushforward j.ΦB j.ΦB_one :=
+      funext fun u => evalMarg_pushforward _ _ _ W u
+    rw [hA, hB, j.inconsistency_pushforward]
+    exact P.consB W
+
+@[simp]
+theorem transport_SA (P : SimulPair M S K ι δ) (j : K.Embedding K') :
+    (P.transport j).SA = P.SA.pushforward j.ΦA j.ΦA_one := rfl
+
+@[simp]
+theorem transport_SB (P : SimulPair M S K ι δ) (j : K.Embedding K') :
+    (P.transport j).SB = P.SB.pushforward j.ΦB j.ΦB_one := rfl
+
+end Transport
 
 end SimulPair
 
-/-! ## Products with fixed ancilla vectors reduce to the expanded state -/
+/-! ## The simultaneous pair measurement on the first cut of the physical state -/
 
-section Reduced
-
-variable {RA RB EA EB : Type*} [Fintype RA] [DecidableEq RA] [Fintype RB] [DecidableEq RB]
-  [Fintype EA] [DecidableEq EA] [Fintype EB] [DecidableEq EB]
-
-/-- **An extension by fixed ancilla vectors has the reduced-state property**, on any registers:
-operators extended by the identity on the ancillas have on `extVec2 φ a₀ b₀` the expectation they
-have on `φ`. Applied twice, it takes the twice-padded state of `lem:qld-global-pvm` back to the
-expanded state. -/
-theorem bornProb_extVec2_aOp_aOp (φ : RA × RB → ℂ) (a₀ : EA) (b₀ : EB) (X : Matrix RA RA ℂ)
-    (Y : Matrix RB RB ℂ) : bornProb (extVec2 φ a₀ b₀) (aOp X) (aOp Y) = bornProb φ X Y := by
-  rw [bornProb_extVec2, compress_aOp, compress_aOp]
-
-end Reduced
+/-- **A simultaneous pair measurement on the first cut of the physical state** (padding size `K`):
+the model is the first cut `cut1` of the physical model, `A A' Ea | B A'' Eb (B' B'')`, into which
+the register model embeds along `ι₁` (`MIPRE/Background/QLD/PhysModel.lean`). Stage 5 runs on two
+of them, one for each player (the second at the exchanged players, `N := M.swap`), reading one
+physical state. -/
+abbrev CutSimul {hm : m ∣ Fintype.card F} (N : BipartiteModel 𝒞 𝒜 ℬ)
+    (S : N.ProjStrat (qldGame (d := d) hm)) (K : ℕ) (δ : ℝ) :=
+  SimulPair N S (cut1 (Anc F m) F m d N K) (ι₁ (Anc F m) F m d N K) δ
 
 end MIPRE.QLD
 

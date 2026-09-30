@@ -54,16 +54,6 @@ namespace MIPRE
 open Matrix
 open scoped ComplexOrder MatrixOrder
 
-/-- A self-adjoint idempotent is positive semidefinite. -/
-theorem posSemidef_of_proj {N : Type*} [Fintype N] {P : Matrix N N ℂ} (hsa : Pᴴ = P)
-    (hidem : P * P = P) : P.PosSemidef := by
-  have : P = Pᴴ * P := by rw [hsa, hidem]
-  rw [this]
-  exact Matrix.posSemidef_conjTranspose_mul_self _
-
-theorem uniform_nonneg (X : Type*) [Fintype X] (x : X) : 0 ≤ uniform X x :=
-  inv_nonneg.mpr (Nat.cast_nonneg _)
-
 end MIPRE
 
 namespace MIPRE.QLD
