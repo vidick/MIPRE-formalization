@@ -113,6 +113,7 @@ public import MIPRE.Background.LIDT.Bridge.Strategy
 public import MIPRE.Background.LIDT.Bridge.Value
 public import MIPRE.Background.LIDT.CLGame
 public import MIPRE.Background.LIDT.CLHonest
+public import MIPRE.Background.LIDT.CoExpand
 public import MIPRE.Background.LIDT.Coefficients
 public import MIPRE.Background.LIDT.Extraction
 public import MIPRE.Background.LIDT.Game
@@ -738,6 +739,7 @@ public import MIPRE.Background.Repetition.VerifierCo
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
 public import MIPRE.Cslib.Foundations.Data.RelatesInSteps
+public import MIPRE.Foundations.AmplCommutant
 public import MIPRE.Foundations.AncillaDilation
 public import MIPRE.Foundations.AncillaIsometry
 public import MIPRE.Foundations.AncillaModel
@@ -838,6 +840,7 @@ public import MIPRE.Foundations.CrossConsistency
 public import MIPRE.Foundations.Dilation
 public import MIPRE.Foundations.Disagreement
 public import MIPRE.Foundations.Distances
+public import MIPRE.Foundations.EPRContraction
 public import MIPRE.Foundations.Expanded
 public import MIPRE.Foundations.GNS
 public import MIPRE.Foundations.GameAdapt
@@ -1228,6 +1231,7 @@ public import MIPRE.Foundations.LowDegree.UnaryPrimePower
 public import MIPRE.Foundations.LowDegree.ZeroBasis
 public import MIPRE.Foundations.LowDegreeSandwich
 public import MIPRE.Foundations.Measurement
+public import MIPRE.Foundations.ModelEmbedding
 public import MIPRE.Foundations.ModelIso
 public import MIPRE.Foundations.ModelOver
 public import MIPRE.Foundations.ModelReading
