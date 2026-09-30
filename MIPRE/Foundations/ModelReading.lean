@@ -134,7 +134,7 @@ theorem basisVec_swap (a₀ : α) (b₀ : β) (p : β × α) : basisVec a₀ b�
   simp only [basisVec_apply, Prod.swap_eq_iff_eq_swap, Prod.swap_prod_mk]
 
 /-- A product basis vector is a unit vector. -/
-theorem norm_basisVec [Fintype α] [Fintype β] (a₀ : α) (b₀ : β) : ‖evec (basisVec a₀ b₀)‖ = 1 := by
+theorem norm_basisVec [Fintype α] [Fintype β] {a₀ : α} {b₀ : β} : ‖evec (basisVec a₀ b₀)‖ = 1 := by
   rw [evec, EuclideanSpace.norm_eq, Finset.sum_eq_single (a₀, b₀)]
   · simp [basisVec_apply]
   · intro p _ hp
