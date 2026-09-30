@@ -13,6 +13,10 @@ public import MIPRE.Background.Introspection.QLDExtractionAdapter
 Coordinate relabeling is performed on the intrinsic quotient predicate. Dual
 answers are only canonicalized afterwards in binary coordinates. Thus no
 equivariance of the chosen canonical complement is used.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the strategy is a projective
+strategy of any model `M`, every transport keeps it in `M`, and the Pauli basis test enters as its
+soundness in `M` (`QLD.SoundIn ω M`); the value is that of the value model `ω`.
 -/
 
 noncomputable section
@@ -42,33 +46,34 @@ theorem reindexedGame_eq :
   rw [hproj]
   rfl
 
-/-- Relabel all answer coordinates, retaining the original shared state. -/
-abbrev coordinateStrategy
-    (S : TensorProductStrategy (NumberedComplete.game (d := d) e L D hm b χ π)) :=
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] {M : BipartiteModel 𝒞 𝒜 ℬ}
+
+/-- Relabel all answer coordinates, in the same model. -/
+abbrev coordinateStrategy (S : M.ProjStrat (NumberedComplete.game (d := d) e L D hm b χ π)) :=
   (AuxiliaryQuotient.reindexedStrategy e QLD.adj (.pauli .X) (.pauli .Z)
     (QLD.PauliCL.ExplicitSeed.binaryPresentation χ b) L
-    (NumberedComplete.project e b) D (ExplicitGame.pauliCheck hm π b) S).copy
+    (NumberedComplete.project e b) D (ExplicitGame.pauliCheck hm π b) S).restrict
       (BinaryComplete.explicitQuotientGame (SourceReindex.family e L)
-        (SourceReindex.decider e D) hm b χ π)
+        (SourceReindex.decider e D) hm b χ π) id id
 
 theorem coordinateStrategy_failure_le
-    (S : TensorProductStrategy (NumberedComplete.game (d := d) e L D hm b χ π))
+    (S : M.ProjStrat (NumberedComplete.game (d := d) e L D hm b χ π))
     {ε : ℝ} (hS : 1 - S.value ≤ ε) :
     1 - (coordinateStrategy e L D hm b χ π S).value ≤ ε := by
-  have hv := (AuxiliaryQuotient.reindexedStrategy e QLD.adj (.pauli .X) (.pauli .Z)
-    (QLD.PauliCL.ExplicitSeed.binaryPresentation χ b) L
-    (NumberedComplete.project e b) D (ExplicitGame.pauliCheck hm π b) S).value_copy_le
-      (BinaryComplete.explicitQuotientGame (SourceReindex.family e L)
-        (SourceReindex.decider e D) hm b χ π)
-      (fun _ _ => by rw [reindexedGame_eq e L D hm b χ π])
-      (fun _ _ _ _ h => by rwa [reindexedGame_eq e L D hm b χ π] at h)
-  rw [AuxiliaryQuotient.reindexedStrategy_value] at hv
-  exact (sub_le_sub_left hv 1).trans hS
+  have hv : (coordinateStrategy e L D hm b χ π S).value =
+      (AuxiliaryQuotient.reindexedStrategy e QLD.adj (.pauli .X) (.pauli .Z)
+        (QLD.PauliCL.ExplicitSeed.binaryPresentation χ b) L
+        (NumberedComplete.project e b) D (ExplicitGame.pauliCheck hm π b) S).value :=
+    (M.povmValue_congr_game (fun _ _ => by rw [reindexedGame_eq e L D hm b χ π])
+      (fun _ _ _ _ => by rw [reindexedGame_eq e L D hm b χ π]) _ _).symm
+  rw [hv, AuxiliaryQuotient.reindexedStrategy_value]
+  exact hS
 
 /-- Decode quotient duals in binary coordinates. -/
-abbrev explicitStrategy
-    (S : TensorProductStrategy (NumberedComplete.game (d := d) e L D hm b χ π)) :
-    TensorProductStrategy (ExplicitGame.game hm χ π b (SourceReindex.family e L)
+abbrev explicitStrategy (S : M.ProjStrat (NumberedComplete.game (d := d) e L D hm b χ π)) :
+    M.ProjStrat (ExplicitGame.game hm χ π b (SourceReindex.family e L)
       (BinaryComplete.project (d := d) b) (SourceReindex.decider e D)) :=
   AuxiliaryQuotient.decodedStrategy QLD.adj (.pauli .X) (.pauli .Z)
       (QLD.PauliCL.ExplicitSeed.binaryPresentation χ b) (SourceReindex.family e L)
@@ -76,13 +81,12 @@ abbrev explicitStrategy
       (coordinateStrategy e L D hm b χ π S)
 
 /-- Undo the explicit seed selector after decoding the quotient duals. -/
-abbrev legacyStrategy
-    (S : TensorProductStrategy (NumberedComplete.game (d := d) e L D hm b χ π)) :=
+abbrev legacyStrategy (S : M.ProjStrat (NumberedComplete.game (d := d) e L D hm b χ π)) :=
   ExplicitGame.toLegacy hm χ π b (SourceReindex.family e L) (BinaryComplete.project b)
     (SourceReindex.decider e D) (explicitStrategy e L D hm b χ π S)
 
 theorem legacyStrategy_failure_le
-    (S : TensorProductStrategy (NumberedComplete.game (d := d) e L D hm b χ π))
+    (S : M.ProjStrat (NumberedComplete.game (d := d) e L D hm b χ π))
     (hL : ∀ w, (L w).SupportedOn univ) (hχ : ∀ s, LIDT.CL.chi hm (π s) = χ s)
     {ε : ℝ} (hS : 1 - S.value ≤ ε) :
     1 - (legacyStrategy e L D hm b χ π S).value ≤ ε := by
@@ -94,117 +98,115 @@ theorem legacyStrategy_failure_le
     simpa only [SourceReindex.family, map_univ_equiv] using (hL w).reindex e
   · exact coordinateStrategy_failure_le e L D hm b χ π S hS
 
-set_option backward.isDefEq.respectTransparency false in
 theorem legacyStrategy_supported_A
-    (S : TensorProductStrategy (NumberedComplete.game (d := d) e L D hm b χ π))
-    (hS : ParsedPauliSupported S.PA.toPOVM) :
-    ParsedPauliSupported (legacyStrategy e L D hm b χ π S).PA.toPOVM := by
+    (S : M.ProjStrat (NumberedComplete.game (d := d) e L D hm b χ π))
+    (hS : ParsedPauliSupported S.PA) :
+    ParsedPauliSupported (legacyStrategy e L D hm b χ π S).PA := by
   intro W a ha
-  change (legacyStrategy e L D hm b χ π S).PA.M (.inl (.pauli W),0) a ≠ 0 at ha
   have he := ExplicitGame.toLegacy_pauli_A hm χ π b (SourceReindex.family e L)
     (BinaryComplete.project b) (SourceReindex.decider e D)
-    (explicitStrategy e L D hm b χ π S) W a
+    (explicitStrategy e L D hm b χ π S) W
   have hd := AuxiliaryQuotient.decodedStrategy_pauli_A QLD.adj (.pauli .X) (.pauli .Z)
     (QLD.PauliCL.ExplicitSeed.binaryPresentation χ b) (SourceReindex.family e L)
     (BinaryComplete.project b) (SourceReindex.decider e D) (ExplicitGame.pauliCheck hm π b)
     (coordinateStrategy e L D hm b χ π S) (.pauli W) 0 a
-  have hc : (coordinateStrategy e L D hm b χ π S).PA.M (.inl (.pauli W),0) a ≠ 0 := by
+  have hc : (S.PA (.inl (.pauli W),0)).op ((AuxiliaryQuotient.answerEquiv e).symm a) ≠ 0 := by
     intro hz
-    exact ha (he.trans (hd.trans hz))
-  change S.PA.M (.inl (.pauli W),0) ((AuxiliaryQuotient.answerEquiv e).symm a) ≠ 0 at hc
+    apply ha
+    rw [he, hd]
+    exact (AuxiliaryQuotient.reindexedStrategy_PA_op e QLD.adj (.pauli .X) (.pauli .Z)
+      (QLD.PauliCL.ExplicitSeed.binaryPresentation χ b) L
+      (NumberedComplete.project e b) D (ExplicitGame.pauliCheck hm π b) S _ a).trans hz
   obtain ⟨x,hx⟩ := hS W _ hc
-  refine ⟨x, ?_⟩
-  exact (Equiv.symm_apply_eq (e := AuxiliaryQuotient.answerEquiv e)).mp hx
+  exact ⟨x, (Equiv.symm_apply_eq (e := AuxiliaryQuotient.answerEquiv e)).mp hx⟩
 
-set_option backward.isDefEq.respectTransparency false in
 theorem legacyStrategy_supported_B
-    (S : TensorProductStrategy (NumberedComplete.game (d := d) e L D hm b χ π))
-    (hS : ParsedPauliSupported S.PB.toPOVM) :
-    ParsedPauliSupported (legacyStrategy e L D hm b χ π S).PB.toPOVM := by
+    (S : M.ProjStrat (NumberedComplete.game (d := d) e L D hm b χ π))
+    (hS : ParsedPauliSupported S.PB) :
+    ParsedPauliSupported (legacyStrategy e L D hm b χ π S).PB := by
   intro W a ha
-  change (legacyStrategy e L D hm b χ π S).PB.M (.inl (.pauli W),0) a ≠ 0 at ha
   have he := ExplicitGame.toLegacy_pauli_B hm χ π b (SourceReindex.family e L)
     (BinaryComplete.project b) (SourceReindex.decider e D)
-    (explicitStrategy e L D hm b χ π S) W a
+    (explicitStrategy e L D hm b χ π S) W
   have hd := AuxiliaryQuotient.decodedStrategy_pauli_B QLD.adj (.pauli .X) (.pauli .Z)
     (QLD.PauliCL.ExplicitSeed.binaryPresentation χ b) (SourceReindex.family e L)
     (BinaryComplete.project b) (SourceReindex.decider e D) (ExplicitGame.pauliCheck hm π b)
     (coordinateStrategy e L D hm b χ π S) (.pauli W) 0 a
-  have hc : (coordinateStrategy e L D hm b χ π S).PB.M (.inl (.pauli W),0) a ≠ 0 := by
+  have hc : (S.PB (.inl (.pauli W),0)).op ((AuxiliaryQuotient.answerEquiv e).symm a) ≠ 0 := by
     intro hz
-    exact ha (he.trans (hd.trans hz))
-  change S.PB.M (.inl (.pauli W),0) ((AuxiliaryQuotient.answerEquiv e).symm a) ≠ 0 at hc
+    apply ha
+    rw [he, hd]
+    exact (AuxiliaryQuotient.reindexedStrategy_PB_op e QLD.adj (.pauli .X) (.pauli .Z)
+      (QLD.PauliCL.ExplicitSeed.binaryPresentation χ b) L
+      (NumberedComplete.project e b) D (ExplicitGame.pauliCheck hm π b) S _ a).trans hz
   obtain ⟨x,hx⟩ := hS W _ hc
-  refine ⟨x, ?_⟩
-  exact (Equiv.symm_apply_eq (e := AuxiliaryQuotient.answerEquiv e)).mp hx
+  exact ⟨x, (Equiv.symm_apply_eq (e := AuxiliaryQuotient.answerEquiv e)).mp hx⟩
 
 /-- The precise actual QLD strategy used by the numbered source-game theorem. -/
-abbrev qldStrategy
-    (S : TensorProductStrategy (NumberedComplete.game (d := d) e L D hm b χ π)) :=
+abbrev qldStrategy (S : M.ProjStrat (NumberedComplete.game (d := d) e L D hm b χ π)) :=
   restriction hm b (SourceReindex.family e L) (SourceReindex.decider e D)
     (legacyStrategy e L D hm b χ π S)
 
 theorem qldStrategy_supported_A
-    (S : TensorProductStrategy (NumberedComplete.game (d := d) e L D hm b χ π))
-    (hS : ParsedPauliSupported S.PA.toPOVM) :
-    PauliSupported (qldStrategy e L D hm b χ π S).PA.toPOVM := by
+    (S : M.ProjStrat (NumberedComplete.game (d := d) e L D hm b χ π))
+    (hS : ParsedPauliSupported S.PA) :
+    PauliSupported (qldStrategy e L D hm b χ π S).PA := by
   intro W a ha
-  change (qldStrategy e L D hm b χ π S).PA.M (.pauli W) a = 0
   rw [PauliRestriction.strategy_pauli_A]
   exact completePauliPOVM_invalid_of_supported _
     (legacyStrategy_supported_A e L D hm b χ π S hS W) W a ha
 
 theorem qldStrategy_supported_B
-    (S : TensorProductStrategy (NumberedComplete.game (d := d) e L D hm b χ π))
-    (hS : ParsedPauliSupported S.PB.toPOVM) :
-    PauliSupported (qldStrategy e L D hm b χ π S).PB.toPOVM := by
+    (S : M.ProjStrat (NumberedComplete.game (d := d) e L D hm b χ π))
+    (hS : ParsedPauliSupported S.PB) :
+    PauliSupported (qldStrategy e L D hm b χ π S).PB := by
   intro W a ha
-  change (qldStrategy e L D hm b χ π S).PB.M (.pauli W) a = 0
   rw [PauliRestriction.strategy_pauli_B]
   exact completePauliPOVM_invalid_of_supported _
     (legacyStrategy_supported_B e L D hm b χ π S hS W) W a ha
 
 /-- A witness about the actual restricted strategy gives the source bound in
-the original finite coordinates, with no coordinate or quotient penalty. -/
-theorem quantumValue_ge_of_extraction
-    (S : TensorProductStrategy (NumberedComplete.game (d := d) e L D hm b χ π))
+the original finite coordinates, with no coordinate or quotient penalty, in every value model
+dominating the witness's ancilla model. -/
+theorem quantumValue_ge_of_extraction (ω : ValueModel)
+    (S : M.ProjStrat (NumberedComplete.game (d := d) e L D hm b χ π))
     (hb : LowDegree.IsSelfDualBasis b) (hL : ∀ w, (L w).ExactlyOn univ)
     (hχ : ∀ s, LIDT.CL.chi hm (π s) = χ s) {ε δ : ℝ}
     (hδ : 0 ≤ δ) (hS : 1 - S.value ≤ ε)
-    (w : FieldExtraction hm (qldStrategy e L D hm b χ π S) δ) :
+    (w : FieldExtraction M hm (qldStrategy e L D hm b χ π S) δ)
+    (hω : ω.DominatesPOVM w.N.N) :
     1 - validSoundnessCoefficient ℓ (edgeCount ℓ) *
-      iteratedRoot (6 * ℓ + 2) (max ε δ) ≤ quantumValue (Honest.sourceGame L D) := by
-  let wb := w.toBinary b hb
+      iteratedRoot (6 * ℓ + 2) (max ε δ) ≤ ω.val (Honest.sourceGame L D) := by
   have hv := RestrictedSoundness.quantumValue_ge_of_extraction hm b
     (SourceReindex.family e L) (SourceReindex.decider e D)
-    (legacyStrategy e L D hm b χ π S) (SourceReindex.exactlyOn e L hL)
-    wb.ξ wb.ξ_unit wb.VA wb.VB wb.VA_isometry wb.VB_isometry hδ
+    (legacyStrategy e L D hm b χ π S) (SourceReindex.exactlyOn e L hL) ω hδ
     (legacyStrategy_failure_le e L D hm b χ π S (fun w => (hL w).supportedOn) hχ hS)
-    wb.state_error wb.X_error wb.Z_error
-  exact hv.trans_eq (SourceReindex.quantumValue_eq e L D)
+    (w.toBinary b hb) hω
+  exact hv.trans_eq (SourceReindex.quantumValue_eq ω e L D)
 
 /-- Uniform profile absorption only needs a witness for this restriction,
 rather than an extraction hypothesis quantified over arbitrary strategies. -/
-theorem quantumValue_ge_of_errorProfile
-    (S : TensorProductStrategy (NumberedComplete.game (d := d) e L D hm b χ π))
+theorem quantumValue_ge_of_errorProfile (ω : ValueModel)
+    (S : M.ProjStrat (NumberedComplete.game (d := d) e L D hm b χ π))
     (hb : LowDegree.IsSelfDualBasis b) (hL : ∀ w, (L w).ExactlyOn univ)
     (hχ : ∀ s, LIDT.CL.chi hm (π s) = χ s)
     {a β x ε : ℝ} (ha : 1 ≤ a) (hβ0 : 0 < β) (hβ1 : β ≤ 1)
     (hx : 1 ≤ x) (hε : 0 ≤ ε) (hS : 1 - S.value ≤ ε)
-    (w : FieldExtraction hm (qldStrategy e L D hm b χ π S)
-      (errorProfile a β x (edgeCount ℓ * ε))) :
+    (w : FieldExtraction M hm (qldStrategy e L D hm b χ π S)
+      (errorProfile a β x (edgeCount ℓ * ε)))
+    (hω : ω.DominatesPOVM w.N.N) :
     1 - errorProfile (profileCoefficient ℓ a β) (β * rootExponent (6 * ℓ + 2)) x ε ≤
-      quantumValue (Honest.sourceGame L D) := by
+      ω.val (Honest.sourceGame L D) := by
   have he0 : 0 ≤ edgeCount ℓ := (by norm_num : (0 : ℝ) ≤ 1).trans (edgeCount_one_le ℓ)
   have hδ := errorProfile_nonneg (a := a) (b := β) (x := x)
     (by linarith) (by linarith) (mul_nonneg he0 hε)
-  have hv := quantumValue_ge_of_extraction e L D hm b χ π S hb hL hχ hδ hS w
+  have hv := quantumValue_ge_of_extraction e L D hm b χ π ω S hb hL hχ hδ hS w hω
   exact errorProfile_of_restricted_bound (6 * ℓ + 2)
     (by linarith [validSoundnessCoefficient_one_le ℓ he0]) ha hβ0 hβ1
-    (edgeCount_one_le ℓ) hx hε le_rfl (quantumValue_nonneg _) hv
+    (edgeCount_one_le ℓ) hx hε le_rfl (ω.nonneg _) hv
 
 theorem qldStrategy_failure_le
-    (S : TensorProductStrategy (NumberedComplete.game (d := d) e L D hm b χ π))
+    (S : M.ProjStrat (NumberedComplete.game (d := d) e L D hm b χ π))
     (hL : ∀ w, (L w).SupportedOn univ) (hχ : ∀ s, LIDT.CL.chi hm (π s) = χ s)
     {ε : ℝ} (hS : 1 - S.value ≤ ε) :
     1 - (qldStrategy e L D hm b χ π S).value ≤ edgeCount ℓ * ε :=
@@ -213,25 +215,25 @@ theorem qldStrategy_failure_le
     (legacyStrategy e L D hm b χ π S) (.val 0) (.val 0)
     (legacyStrategy_failure_le e L D hm b χ π S hL hχ hS)
 
-/-- Actual QLD soundness supplies the extraction witness; no external
-extraction hypothesis remains. Only decoder-enforced Pauli support is used. -/
-theorem quantumValue_ge_of_qld
-    (S : TensorProductStrategy (NumberedComplete.game (d := d) e L D hm b χ π))
+/-- The Pauli basis test, sound in the model of the strategy, supplies the extraction witness; no
+external extraction hypothesis remains. Only decoder-enforced Pauli support is used. -/
+theorem quantumValue_ge_of_qld {ω : ValueModel} (hQ : QLD.SoundIn ω M)
+    (S : M.ProjStrat (NumberedComplete.game (d := d) e L D hm b χ π))
     (hd : 1 ≤ d) (hb : LowDegree.IsSelfDualBasis b)
     (hL : ∀ w, (L w).ExactlyOn univ) (hχ : ∀ s, LIDT.CL.chi hm (π s) = χ s)
-    (hA : ParsedPauliSupported S.PA.toPOVM) (hB : ParsedPauliSupported S.PB.toPOVM)
+    (hA : ParsedPauliSupported S.PA) (hB : ParsedPauliSupported S.PB)
     {ε : ℝ} (hε : 0 ≤ ε) (hS : 1 - S.value ≤ ε) :
     1 - validSoundnessCoefficient ℓ (edgeCount ℓ) * iteratedRoot (6 * ℓ + 2)
       (max ε (QLD.errShape qldCoefficient qldExponent (edgeCount ℓ * ε)
-        m d (Fintype.card F))) ≤ quantumValue (Honest.sourceGame L D) := by
+        m d (Fintype.card F))) ≤ ω.val (Honest.sourceGame L D) := by
   have hη : 0 ≤ edgeCount ℓ * ε := mul_nonneg
     ((by norm_num : (0 : ℝ) ≤ 1).trans (edgeCount_one_le ℓ)) hε
-  obtain ⟨w⟩ := fieldExtraction_exists hm hd (qldStrategy e L D hm b χ π S)
+  obtain ⟨w, hw⟩ := fieldExtraction_exists hQ hm hd (qldStrategy e L D hm b χ π S)
     (qldStrategy_supported_A e L D hm b χ π S hA)
     (qldStrategy_supported_B e L D hm b χ π S hB) hη
     (qldStrategy_failure_le e L D hm b χ π S (fun w => (hL w).supportedOn) hχ hS)
-  exact quantumValue_ge_of_extraction e L D hm b χ π S hb hL hχ
-    (QLD.errShape_nonneg (by linarith [qldCoefficient_one_le]) hη) hS w
+  exact quantumValue_ge_of_extraction e L D hm b χ π ω S hb hL hχ
+    (QLD.errShape_nonneg (by linarith [qldCoefficient_one_le]) hη) hS w hw
 
 section Canonical
 open SourceCompiler PauliSamplerParameters
@@ -254,24 +256,24 @@ theorem canonical_quantumValue_ge
     (hL : ∀ w, (L w).ExactlyOn univ)
     (χ : F → Fin (registerPower c lam n)) (π : F ≃ F)
     (hχ : ∀ s, LIDT.CL.chi hm (π s) = χ s)
-    (S : TensorProductStrategy (NumberedComplete.game (d := 1) e L D hm b χ π))
-    (hA : ParsedPauliSupported S.PA.toPOVM) (hB : ParsedPauliSupported S.PB.toPOVM)
+    {ω : ValueModel} (hQ : QLD.SoundIn ω M)
+    (S : M.ProjStrat (NumberedComplete.game (d := 1) e L D hm b χ π))
+    (hA : ParsedPauliSupported S.PA) (hB : ParsedPauliSupported S.PB)
     {ε : ℝ} (hε : 0 ≤ ε) (hS : 1 - S.value ≤ ε) :
     1 - errorProfile
       (profileCoefficient ℓ (PauliErrorParameters.profileCoefficient qldCoefficient c) qldExponent)
       (qldExponent * rootExponent (6 * ℓ + 2)) (lam * n) ε ≤
-      quantumValue (Honest.sourceGame L D) := by
+      ω.val (Honest.sourceGame L D) := by
   have hη : 0 ≤ edgeCount ℓ * ε := mul_nonneg
     ((by norm_num : (0 : ℝ) ≤ 1).trans (edgeCount_one_le ℓ)) hε
-  obtain ⟨w⟩ := degreeOne_fieldExtraction_exists hm (qldStrategy e L D hm b χ π S)
+  obtain ⟨w, hw⟩ := degreeOne_fieldExtraction_exists hQ hm (qldStrategy e L D hm b χ π S)
     (qldStrategy_supported_A e L D hm b χ π S hA)
     (qldStrategy_supported_B e L D hm b χ π S hB) hη
     (qldStrategy_failure_le e L D hm b χ π S (fun w => (hL w).supportedOn) hχ hS)
-  apply quantumValue_ge_of_errorProfile e L D hm b χ π S hb hL hχ
+  refine quantumValue_ge_of_errorProfile e L D hm b χ π ω S hb hL hχ
     (PauliErrorParameters.profileCoefficient_one_le qldCoefficient c)
     qldExponent_pos qldExponent_lt_one.le
-    (by exact_mod_cast (show 1 ≤ lam * n by omega)) hε hS
-  refine w.mono ?_
+    (by exact_mod_cast (show 1 ≤ lam * n by omega)) hε hS (w.mono ?_) hw
   rw [hq]
   exact PauliErrorParameters.canonical_qldError_le_profile qldCoefficient_one_le
     qldExponent_pos qldExponent_lt_one.le c hc hcb lam n hx (edgeCount ℓ * ε) hη
