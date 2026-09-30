@@ -53,7 +53,9 @@ section Reindex
 variable {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] {n n' : Type*} [Fintype n]
   [DecidableEq n] [Fintype n'] [DecidableEq n']
 
-/-- `Matrix.reindex` over a `⋆`-algebra, as a unital `⋆`-algebra homomorphism. -/
+/-- `Matrix.reindex` over a `⋆`-algebra, as a unital `⋆`-algebra homomorphism: the homomorphism
+underlying `submatrixStarAlgEquiv σ.symm` (`MIPRE/Foundations/ModelIso.lean`), as `πA` and `πB`
+of a model are unital. -/
 def reindexStarAlgHomR (σ : n ≃ n') : Matrix n n R →⋆ₐ[ℂ] Matrix n' n' R where
   toAlgHom := (Matrix.reindexAlgEquiv ℂ R σ).toAlgHom
   map_star' X := by
