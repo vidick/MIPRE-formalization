@@ -536,6 +536,7 @@ public import MIPRE.Background.QLD.Lines
 public import MIPRE.Background.QLD.MTilde
 public import MIPRE.Background.QLD.Mirror
 public import MIPRE.Background.QLD.MirrorExists
+public import MIPRE.Background.QLD.ModelSoundness
 public import MIPRE.Background.QLD.Multilinear
 public import MIPRE.Background.QLD.NonMultilinear
 public import MIPRE.Background.QLD.Ortho
@@ -742,6 +743,7 @@ public import MIPRE.Cslib.Foundations.Data.RelatesInSteps
 public import MIPRE.Foundations.AncillaIsometry
 public import MIPRE.Foundations.AncillaModel
 public import MIPRE.Foundations.BipartiteModel
+public import MIPRE.Foundations.BlockOrder
 public import MIPRE.Foundations.Blocks
 public import MIPRE.Foundations.CL.Basic
 public import MIPRE.Foundations.CL.Canonical
@@ -1242,6 +1244,7 @@ public import MIPRE.Foundations.OracularSound
 public import MIPRE.Foundations.OracularTensor
 public import MIPRE.Foundations.OracularTyped
 public import MIPRE.Foundations.OracularValue
+public import MIPRE.Foundations.POVMDomination
 public import MIPRE.Foundations.POVMMix
 public import MIPRE.Foundations.POVMValue
 public import MIPRE.Foundations.PVM
@@ -1326,6 +1329,7 @@ public import MIPRE.Foundations.Swap
 public import MIPRE.Foundations.SyncMergeByQuestion
 public import MIPRE.Foundations.SyncPushQ
 public import MIPRE.Foundations.SyncTransport
+public import MIPRE.Foundations.TensorExpand
 public import MIPRE.Foundations.TensorFamily
 public import MIPRE.Foundations.Tsirelson.Algebra
 public import MIPRE.Foundations.Tsirelson.Certificate

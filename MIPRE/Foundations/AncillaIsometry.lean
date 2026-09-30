@@ -77,6 +77,26 @@ def amplUncurry : Ampl ι (Ampl κ H) →ₗᵢ[ℂ] Ampl (ι × κ) H where
 theorem amplUncurry_apply (v : Ampl ι (Ampl κ H)) (q : ι × κ) :
     amplUncurry v q = v q.1 q.2 := rfl
 
+/-- One `ℓ²` sum over the pairs of indices, as the `ℓ²` sum of `ℓ²` sums. -/
+def amplCurry : Ampl (ι × κ) H →ₗᵢ[ℂ] Ampl ι (Ampl κ H) where
+  toFun v := WithLp.toLp 2 fun i => WithLp.toLp 2 fun k => v (i, k)
+  map_add' v w := by
+    ext i k
+    simp only [PiLp.add_apply]
+  map_smul' c v := by
+    ext i k
+    simp only [PiLp.smul_apply, RingHom.id_apply]
+  norm_map' v := by
+    have h : ‖(WithLp.toLp 2 fun i => WithLp.toLp 2 fun k => v (i, k) :
+        Ampl ι (Ampl κ H))‖ ^ 2 = ‖v‖ ^ 2 := by
+      rw [PiLp.norm_sq_eq_of_L2, PiLp.norm_sq_eq_of_L2, Fintype.sum_prod_type]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [PiLp.norm_sq_eq_of_L2]
+    exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).1 h
+
+@[simp]
+theorem amplCurry_apply (v : Ampl (ι × κ) H) (i : ι) (k : κ) : amplCurry v i k = v (i, k) := rfl
+
 end OperatorMatrix
 
 /-! ## Matrices over a star ring as `⋆`-homomorphisms -/
