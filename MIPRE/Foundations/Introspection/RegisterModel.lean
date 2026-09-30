@@ -138,6 +138,23 @@ theorem regSplitHom_one (e : I ≃ J × R) : regSplitHom e (1 : Matrix J J (Matr
 theorem regSplitInvHom_one (e : I ≃ J × R) : regSplitInvHom e (1 : Matrix I I A) = 1 := by
   rw [← regSplitHom_one e, regSplitInvHom_hom]
 
+/-- **Extending a register of block matrices** along `e : I ≃ J × R` by a register `R` on which
+nothing acts: `X ↦ X ⊗ 1_R`, read along `e`. It is the players' homomorphism of the register
+extension `BipartiteModel.regExtend`, and depends on nothing else. -/
+def regExtendHom (e : I ≃ J × R) : Matrix J J A →⋆ₙₐ[ℂ] Matrix I I A :=
+  (submatrixHom (e.trans (Equiv.prodComm J R))).comp (compHom.comp diagHom)
+
+theorem regExtendHom_apply (e : I ≃ J × R) (X : Matrix J J A) (i i' : I) :
+    regExtendHom e X i i' = if (e i).2 = (e i').2 then X (e i).1 (e i').1 else 0 := by
+  show (diagonal fun _ : R => X) (e i).2 (e i').2 (e i).1 (e i').1 = _
+  by_cases h : (e i).2 = (e i').2
+  · rw [h, diagonal_apply_eq, ite_eq_left rfl]
+  · rw [diagonal_apply_ne _ h, ite_eq_right h, Matrix.zero_apply]
+
+theorem regExtendHom_one (e : I ≃ J × R) : regExtendHom e (1 : Matrix J J A) = 1 := by
+  simp only [regExtendHom, NonUnitalStarAlgHom.comp_apply, diagHom_one, compHom_one,
+    submatrixHom_one]
+
 end Split
 
 end MIPRE.Introspection
@@ -236,6 +253,12 @@ theorem regExtend_W_ψ [Nonempty R] (e : I ≃ J × R) :
       (N.assoc_W_ψ _ _ _ fun q => by rw [registerEPR_prod]; rfl))
     (N.relabel_W_ψ _ _ _ _ fun p =>
       (congrFun (registerEPR_equiv (e.trans (Equiv.prodComm J R))) p).symm)
+
+theorem regExtend_ΦA_eq [Nonempty R] (e : I ≃ J × R) : (N.regExtend e).ΦA = regExtendHom e :=
+  rfl
+
+theorem regExtend_ΦB_eq [Nonempty R] (e : I ≃ J × R) : (N.regExtend e).ΦB = regExtendHom e :=
+  rfl
 
 theorem regExtend_ΦA [Nonempty R] (e : I ≃ J × R) (X : Matrix J J 𝒜) (i i' : I) :
     (N.regExtend e).ΦA X i i' = if (e i).2 = (e i').2 then X (e i).1 (e i').1 else 0 := by

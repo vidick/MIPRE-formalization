@@ -7,6 +7,7 @@ public import MIPRE.Foundations.Introspection.StrategyReplacementValue
 public import MIPRE.Foundations.Introspection.HidingInductionDilation
 public import MIPRE.Foundations.StrategyDilation
 public import MIPRE.Foundations.RegisterReindex
+public import MIPRE.Foundations.ModelStrategy
 
 @[expose] public section
 
@@ -16,102 +17,115 @@ The new family is a function of the actual question. The selected question
 uses the supplied projective dilation; every other measurement is the old
 measurement tensored with identity. The state extension is independent of
 the question and the opposite player is unchanged.
+
+In a bipartite model (Phase 4 of `planning/mipco-track.md`) the common extension is the first
+player's one-sided ancilla `Ψ.expandA t₀`, and an old measurement tensored with the identity is
+pushed forward along `a ↦ a ⊗ 1` (`MIPRE.diagHom`).
 -/
 
 noncomputable section
 namespace MIPRE.Introspection
 
 open Finset Matrix Classical
-open scoped Kronecker
 set_option linter.unusedSectionVars false
 
-variable {X Y A B C H K T : Type*}
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [StarModule ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜]
+  [StarOrderedRing 𝒜] [StarProper 𝒜] [PartialOrder ℬ] [StarOrderedRing ℬ]
+  (Ψ : BipartiteModel 𝒞 𝒜 ℬ)
+variable {X Y A B C T : Type*}
   [Fintype X] [DecidableEq X] [Fintype Y]
   [Fintype A] [DecidableEq A] [Fintype B] [DecidableEq B]
-  [Fintype C] [DecidableEq C]
-  [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K]
-  [Fintype T] [DecidableEq T]
+  [Fintype C] [DecidableEq C] [Fintype T] [DecidableEq T]
+
+/-- An old measurement tensored with the identity of the fresh ancilla. -/
+def POVMIn.ampA (M : POVMIn A 𝒜) : POVMIn A (Matrix T T 𝒜) :=
+  M.pushforward diagHom diagHom_one
+
+@[simp]
+theorem POVMIn.ampA_op (M : POVMIn A 𝒜) (a : A) :
+    (POVMIn.ampA (T := T) M).op a = diagonal fun _ => M.op a := rfl
+
+theorem POVMIn.isPVMIn_ampA {M : POVMIn A 𝒜} (hM : IsPVMIn M.op) :
+    IsPVMIn (POVMIn.ampA (T := T) M).op :=
+  POVMIn.isPVMIn_pushforward _ _ hM
+
+theorem POVMIn.map_ampA (M : POVMIn C 𝒜) (f : C → A) :
+    (POVMIn.ampA (T := T) M).map f = POVMIn.ampA (M.map f) := by
+  refine POVMIn.ext' fun a => ?_
+  rw [POVMIn.ampA_op, POVMIn.map_op, POVMIn.map_op]
+  simp only [POVMIn.ampA_op]
+  ext t t'
+  by_cases h : t = t'
+  · subst h
+    simp only [Matrix.sum_apply, diagonal_apply_eq]
+  · simp only [Matrix.sum_apply, diagonal_apply_ne _ h, Finset.sum_const_zero]
 
 /-- Actual replacement on one common enlarged register. -/
-def replaceExtended (MA : X → POVM A H) (q : X) (R : POVM A (H × T)) :
-    X → POVM A (H × T) := fun x => if x = q then R else (MA x).aOp
+def replaceExtended (MA : X → POVMIn A 𝒜) (q : X) (R : POVMIn A (Matrix T T 𝒜)) :
+    X → POVMIn A (Matrix T T 𝒜) := fun x => if x = q then R else POVMIn.ampA (MA x)
 
-@[simp] theorem replaceExtended_at (MA : X → POVM A H) (q : X) (R : POVM A (H × T)) :
-    replaceExtended MA q R q = R := by simp [replaceExtended]
+@[simp] theorem replaceExtended_at (MA : X → POVMIn A 𝒜) (q : X)
+    (R : POVMIn A (Matrix T T 𝒜)) : replaceExtended MA q R q = R := by simp [replaceExtended]
 
-theorem replaceExtended_other (MA : X → POVM A H) (q x : X) (R : POVM A (H × T))
-    (hx : x ≠ q) : replaceExtended MA q R x = (MA x).aOp := by
+theorem replaceExtended_other (MA : X → POVMIn A 𝒜) (q x : X) (R : POVMIn A (Matrix T T 𝒜))
+    (hx : x ≠ q) : replaceExtended MA q R x = POVMIn.ampA (MA x) := by
   simp [replaceExtended, hx]
 
-theorem replaceExtended_isPVM (MA : X → POVM A H) (q : X) (R : POVM A (H × T))
-    (hMA : ∀ x, IsPVM fun a => ((MA x).mats a).val)
-    (hR : IsPVM fun a => (R.mats a).val) (x : X) :
-    IsPVM (fun a => ((replaceExtended MA q R x).mats a).val) := by
+theorem replaceExtended_isPVM (MA : X → POVMIn A 𝒜) (q : X) (R : POVMIn A (Matrix T T 𝒜))
+    (hMA : ∀ x, IsPVMIn (MA x).op) (hR : IsPVMIn R.op) (x : X) :
+    IsPVMIn (replaceExtended MA q R x).op := by
   by_cases hx : x = q
   · simpa only [hx, replaceExtended_at] using hR
-  · simpa only [replaceExtended_other MA q x R hx, POVM.aOp_mats] using (hMA x).aOp
+  · rw [replaceExtended_other MA q x R hx]
+    exact POVMIn.isPVMIn_ampA (hMA x)
 
 /-- Adding an inert Alice ancilla preserves the whole game's value exactly. -/
-theorem povmValue_extVecA (G : Game X Y A B) (ψ : H × K → ℂ) (a₀ : T)
-    (MA : X → POVM A H) (MB : Y → POVM B K) :
-    povmValue G (extVecA ψ a₀) (fun x => (MA x).aOp) MB = povmValue G ψ MA MB := by
-  unfold povmValue condWin
-  simp only [POVM.aOp_mats, bornProb_extVecA, compress_aOp]
-
-/-- Unit normalization of the actual one-sided ancillary extension. -/
-theorem extVecA_unit (ψ : H × K → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1) (a₀ : T) :
-    star (extVecA ψ a₀) ⬝ᵥ extVecA ψ a₀ = 1 := by
-  rw [dotProduct_star_self, norm_evec_extVecA, norm_evec_eq_one_of_unit hψ]
-  norm_num
+theorem povmValue_expandA (G : Game X Y A B) (t₀ : T) (MA : X → POVMIn A 𝒜)
+    (MB : Y → POVMIn B ℬ) :
+    (Ψ.expandA t₀).povmValue G (fun x => POVMIn.ampA (MA x)) MB = Ψ.povmValue G MA MB := by
+  unfold BipartiteModel.povmValue BipartiteModel.condWin
+  simp only [POVMIn.ampA_op, BipartiteModel.bornProb_expandA, diagonal_apply_eq]
 
 /-- Quantitative value preservation for the actual replacement family.
 The fine outcomes may be relabelled by any function, including a constructor
 in the common parsed-answer alphabet. -/
-theorem replaceExtended_value (G : Game X Y A B) (ψ : H × K → ℂ)
-    (hψ : ‖evec ψ‖ = 1) (a₀ : T)
-    (MA : X → POVM A H) (MB : Y → POVM B K)
-    (q : X) (M : POVM C H) (R : POVM C (H × T)) (f : C → A)
-    (hMA : MA q = M.map f) (hM : IsPVM fun c => (M.mats c).val)
-    (hR : IsPVM fun c => (R.mats c).val)
-    (hMB : ∀ y, IsPVM fun b => ((MB y).mats b).val) {δ : ℝ}
-    (hd : ∑ c, stateSqNorm (extVecA ψ a₀)
-      (aOp (M.mats c).val - (R.mats c).val) ≤ δ) :
-    |povmValue G ψ MA MB -
-      povmValue G (extVecA ψ a₀) (replaceExtended MA q (R.map f)) MB| ≤ 2*Real.sqrt δ := by
-  rw [← povmValue_extVecA G ψ a₀ MA MB]
-  apply povmValue_stability_at G (extVecA ψ a₀) (by rwa [norm_evec_extVecA])
-    (fun x => (MA x).aOp) (replaceExtended MA q (R.map f)) MB q M.aOp R f
-  · rw [hMA, POVM.map_aOp]
+theorem replaceExtended_value (G : Game X Y A B) (hΨ : ‖Ψ.ψ‖ = 1) (t₀ : T)
+    (MA : X → POVMIn A 𝒜) (MB : Y → POVMIn B ℬ)
+    (q : X) (M : POVMIn C 𝒜) (R : POVMIn C (Matrix T T 𝒜)) (f : C → A)
+    (hMA : MA q = M.map f) (hM : IsPVMIn M.op) (hR : IsPVMIn R.op)
+    (hMB : ∀ y, IsPVMIn (MB y).op) {δ : ℝ}
+    (hd : ∑ c, (Ψ.expandA t₀).stateSqNorm ((diagonal fun _ => M.op c) - R.op c) ≤ δ) :
+    |Ψ.povmValue G MA MB -
+      (Ψ.expandA t₀).povmValue G (replaceExtended MA q (R.map f)) MB| ≤ 2*Real.sqrt δ := by
+  rw [← povmValue_expandA Ψ G t₀ MA MB]
+  apply povmValue_stability_at (Ψ.expandA t₀) G (by rw [BipartiteModel.norm_expandA_ψ, hΨ])
+    (fun x => POVMIn.ampA (MA x)) (replaceExtended MA q (R.map f)) MB q (POVMIn.ampA M) R f
+  · rw [hMA, POVMIn.map_ampA]
   · exact replaceExtended_at MA q (R.map f)
   · intro x hx
     exact (replaceExtended_other MA q x (R.map f) hx).symm
-  · exact hM.aOp
+  · exact POVMIn.isPVMIn_ampA hM
   · exact hR
   · exact hMB
   · exact hd
 
-/-- The replacement is a concrete legal tensor-product strategy, with local
-dimension multiplied by the chosen ancilla cardinality. -/
-def replacementStrategy (G : Game X Y A B) (ψ : H × K → ℂ)
-    (hψ : star ψ ⬝ᵥ ψ = 1) (a₀ : T)
-    (MA : X → POVM A H) (MB : Y → POVM B K)
-    (q : X) (R : POVM A (H × T))
-    (hMA : ∀ x, IsPVM fun a => ((MA x).mats a).val)
-    (hMB : ∀ y, IsPVM fun b => ((MB y).mats b).val)
-    (hR : IsPVM fun a => (R.mats a).val) : TensorProductStrategy G :=
-  TensorProductStrategy.ofPVM G (extVecA ψ a₀) (extVecA_unit ψ hψ a₀)
-    (replaceExtended MA q R) MB (replaceExtended_isPVM MA q R hMA hR) hMB
+/-- The replacement is a projective strategy of the one-sided extension. -/
+def replacementStrategy (G : Game X Y A B) (hΨ : ‖Ψ.ψ‖ = 1) (t₀ : T)
+    (MA : X → POVMIn A 𝒜) (MB : Y → POVMIn B ℬ) (q : X) (R : POVMIn A (Matrix T T 𝒜))
+    (hMA : ∀ x, IsPVMIn (MA x).op) (hMB : ∀ y, IsPVMIn (MB y).op) (hR : IsPVMIn R.op) :
+    (Ψ.expandA t₀).ProjStrat G where
+  PA := replaceExtended MA q R
+  PB := MB
+  projA := replaceExtended_isPVM MA q R hMA hR
+  projB := hMB
+  ψ_unit := by rw [BipartiteModel.norm_expandA_ψ, hΨ]
 
-theorem replacementStrategy_value (G : Game X Y A B) (ψ : H × K → ℂ)
-    (hψ : star ψ ⬝ᵥ ψ = 1) (a₀ : T)
-    (MA : X → POVM A H) (MB : Y → POVM B K)
-    (q : X) (R : POVM A (H × T))
-    (hMA : ∀ x, IsPVM fun a => ((MA x).mats a).val)
-    (hMB : ∀ y, IsPVM fun b => ((MB y).mats b).val)
-    (hR : IsPVM fun a => (R.mats a).val) :
-    (replacementStrategy G ψ hψ a₀ MA MB q R hMA hMB hR).value =
-      povmValue G (extVecA ψ a₀) (replaceExtended MA q R) MB :=
-  TensorProductStrategy.value_ofPVM _ _ _ _ _ _ _
+theorem replacementStrategy_value (G : Game X Y A B) (hΨ : ‖Ψ.ψ‖ = 1) (t₀ : T)
+    (MA : X → POVMIn A 𝒜) (MB : Y → POVMIn B ℬ) (q : X) (R : POVMIn A (Matrix T T 𝒜))
+    (hMA : ∀ x, IsPVMIn (MA x).op) (hMB : ∀ y, IsPVMIn (MB y).op) (hR : IsPVMIn R.op) :
+    (replacementStrategy Ψ G hΨ t₀ MA MB q R hMA hMB hR).value =
+      (Ψ.expandA t₀).povmValue G (replaceExtended MA q R) MB := rfl
 
 end MIPRE.Introspection
 end

@@ -147,6 +147,19 @@ theorem POVMIn.isPVMIn_pushforward (f : R →⋆ₙₐ[ℂ] S) (hf : f 1 = 1) {P
     (hP : IsPVMIn P.op) : IsPVMIn (P.pushforward f hf).op :=
   hP.pushforward hf
 
+/-- **A projective measurement, as a POVM**: its elements are nonnegative, being star
+projections. -/
+def IsPVMIn.toPOVMIn {P : X → R} (hP : IsPVMIn P) : POVMIn X R where
+  mats x := ⟨P x, hP.star_eq x⟩
+  nonneg x := Subtype.coe_le_coe.mp (hP.nonneg x)
+  normalized := Subtype.ext (by
+    rw [AddSubmonoidClass.coe_finsetSum]
+    exact hP.sum_eq_one)
+
+omit [Algebra ℂ R] in
+@[simp]
+theorem IsPVMIn.toPOVMIn_op {P : X → R} (hP : IsPVMIn P) (x : X) : hP.toPOVMIn.op x = P x := rfl
+
 end Pushforward
 
 /-! ## Local isometries -/
