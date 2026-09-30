@@ -14,7 +14,7 @@ public import MIPRE.Foundations.ModelOver
 Starting with the original projective family, each successor is constructed from the current
 game's tests. The numerical inverse threshold discharges every smallness premise. All other
 questions retain their extensions, and all fixed hiding errors and both primitive Z errors are
-preserved exactly.
+preserved exactly; the second player's hiding errors in both roles.
 
 Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`). Each stage adjoins to the
 first player an ancilla register whose size the Kraus–Halmos dilation chooses
@@ -85,14 +85,15 @@ theorem exists_intro_iteration
       introAliceZError projectPauli Z q N.Ξ MN = introAliceZError projectPauli Z q Ξ MA ∧
       introBobZError projectPauli Z q N.Ξ MB = introBobZError projectPauli Z q Ξ MB ∧
       (∀ j : Fin ℓ, hidingAliceError L w hL N.Ξ MN j = hidingAliceError L w hL Ξ MA j) ∧
-      (∀ j : Fin ℓ, hidingBobError L w hL N.Ξ MB j = hidingBobError L w hL Ξ MB j) ∧
+      (∀ (w' : Bool) (hL' : (L w').SupportedOn univ) (j : Fin ℓ),
+        hidingBobError L w' hL' N.Ξ MB j = hidingBobError L w' hL' Ξ MB j) ∧
       N.Ξ.POVMReduces Ξ := by
   induction n with
   | zero =>
       exact ⟨ModelOver.of Ξ, MA, initialIntroPrefixInvariant (L w)
         ((MA (QuestionType.introspect w, 0)).map introspectPair)
         (POVMIn.isPVMIn_map (hMA _) _), hΞ, hMA, hfail, rfl, rfl, fun _ => rfl,
-        fun _ => rfl, BipartiteModel.POVMReduces.refl Ξ⟩
+        fun _ _ _ => rfl, BipartiteModel.POVMReduces.refl Ξ⟩
   | succ n ih =>
       have hn' : n ≤ ℓ := (Nat.le_succ n).trans hn
       obtain ⟨N, MN, IN, hNψ, hMN, hfailN, hzAN, hzBN, hhideN, hhideBN, hredN⟩ := ih hn'
@@ -110,13 +111,14 @@ theorem exists_intro_iteration
         adaptiveStageBudget_mono_depth (Nat.sub_le ℓ j.val) (mul_nonneg he hb)
       have hsmall := hdepth.trans
         (adaptiveStageBudget_le_one_of_threshold ℓ ℓ he hi hη hδ n hn')
-      obtain ⟨K, MS, IS, hMS, hfailS, _, hhideS, hzAS, hzBS, hhideBS⟩ := exists_intro_successor
+      obtain ⟨K, MS, IS, hMS, hfailS, _, hhideS, hzAS, hzBS, _⟩ := exists_intro_successor
         E X Z P L projectPauli D DP N.Ξ hNψ MN MB hMN hMB q hq w hL j IN
         hb hη0 hδ0 hfailN (hzBN.trans_le hZ) ((hhideN j).trans_le (hhide j)) hsmall
       let t₀ : DilationAncilla (Option ((ι → F) × A)) K := Sum.inl (none, 0)
       refine ⟨N.expandA t₀, MS, IS, (N.norm_expandA_ψ t₀).trans hNψ, hMS, ?_,
         hzAS.trans hzAN, hzBS.trans hzBN, fun i => (hhideS i).trans (hhideN i),
-        fun i => (hhideBS i).trans (hhideBN i), BipartiteModel.POVMReduces.trans (N.povmReduces_expandA t₀) hredN⟩
+        fun w' hL' i => (hidingBobError_registeredExtension L w' hL' N.Ξ t₀ MB i).trans
+          (hhideBN w' hL' i), BipartiteModel.POVMReduces.trans (N.povmReduces_expandA t₀) hredN⟩
       exact hfailS.trans (by
         rw [adaptiveFailureBudget_step]
         exact add_le_add le_rfl (adaptiveStepLoss_mono hdepth))
