@@ -127,16 +127,6 @@ section Model
 variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
   [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ]
 
-theorem smulKron_add_right {R α : Type*} [Ring R] [Algebra ℂ R] (X : R) (P Q : Matrix α α ℂ) :
-    smulKron X (P + Q) = smulKron X P + smulKron X Q := by
-  ext i j
-  simp only [smulKron_apply, Matrix.add_apply, add_smul]
-
-theorem smulKron_smul_right {R α : Type*} [Ring R] [Algebra ℂ R] (X : R) (c : ℂ)
-    (P : Matrix α α ℂ) : smulKron X (c • P) = c • smulKron X P := by
-  ext i j
-  simp only [smulKron_apply, Matrix.smul_apply, smul_eq_mul, mul_smul]
-
 /-- Commute a register operator with `M` and apply the result to the state of a model whose
 first player's algebra carries the register, `Matrix (Fin n → F) (Fin n → F) 𝒜`: a register
 operator `P` is `smulKron 1 P`. -/

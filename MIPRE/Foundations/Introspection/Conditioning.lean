@@ -56,11 +56,6 @@ theorem stateSqNorm_expand_smulKron (ψ : V × W → ℂ) (Q : Matrix V V ℂ) (
 theorem stateSqNorm_one_of_norm (hΞ : ‖Ξ.ψ‖ = 1) : Ξ.stateSqNorm 1 = 1 := by
   rw [BipartiteModel.stateSqNorm, BipartiteModel.stateNorm, map_one, Ξ.snorm_one hΞ, one_pow]
 
-theorem smulKron_sub_left (A B : 𝒜) (P : Matrix V V ℂ) :
-    smulKron A P - smulKron B P = smulKron (A - B) P := by
-  ext i j
-  simp only [Matrix.sub_apply, smulKron_apply, smul_sub]
-
 /-- Selecting a question fibre is exactly averaging with its Born weight. -/
 theorem conditional_sqNorm (ψ : V × W → ℂ) (hψ : ‖evec ψ‖ = 1) (hΞ : ‖Ξ.ψ‖ = 1)
     (Q : Matrix V V ℂ) (A B : 𝒜) :

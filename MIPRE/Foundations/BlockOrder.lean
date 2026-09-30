@@ -134,6 +134,11 @@ instance instPartialOrderStar : PartialOrder (Matrix n n R) where
 instance instStarOrderedRing : StarOrderedRing (Matrix n n R) where
   le_iff _ _ := Iff.rfl
 
+/-- **A nonnegative matrix has nonnegative diagonal entries.** -/
+theorem diag_nonneg {M : Matrix n n R} (h : 0 ≤ M) (i : n) : 0 ≤ M i i := by
+  obtain ⟨p, hp, rfl⟩ := h
+  simpa only [zero_add] using (diag_of_mem_cone hp i).1
+
 /-- **The matrices over a proper ordered `⋆`-ring are proper.** -/
 instance instStarProper : StarProper (Matrix n n R) :=
   ⟨fun Z h => by
@@ -146,6 +151,22 @@ instance instStarProper : StarProper (Matrix n n R) :=
       ((sum_eq_zero_iff_of_nonneg fun k _ => hterm k).mp hdiag.symm k (mem_univ k))⟩
 
 end MatrixStar
+
+/-- **A nonnegative real multiple of a nonnegative element is nonnegative**, in a star-ordered
+complex `⋆`-algebra: `r • z⋆ z = (√r • z)⋆ (√r • z)`. -/
+theorem real_smul_nonneg {A : Type*} [Ring A] [StarRing A] [Algebra ℂ A] [StarModule ℂ A]
+    [PartialOrder A] [StarOrderedRing A] {r : ℝ} (hr : 0 ≤ r) {a : A} (ha : 0 ≤ a) :
+    0 ≤ (r : ℂ) • a := by
+  rw [StarOrderedRing.nonneg_iff] at ha ⊢
+  induction ha using AddSubmonoid.closure_induction with
+  | mem x hx =>
+    obtain ⟨z, rfl⟩ := hx
+    refine AddSubmonoid.subset_closure ⟨((Real.sqrt r : ℝ) : ℂ) • z, ?_⟩
+    dsimp only
+    rw [star_smul, show star ((Real.sqrt r : ℝ) : ℂ) = ((Real.sqrt r : ℝ) : ℂ) from
+      Complex.conj_ofReal _, smul_mul_smul_comm, ← Complex.ofReal_mul, Real.mul_self_sqrt hr]
+  | zero => simp
+  | add x y _ _ hx hy => rw [smul_add]; exact add_mem hx hy
 
 end MIPRE
 
