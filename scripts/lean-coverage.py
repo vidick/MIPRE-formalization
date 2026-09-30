@@ -47,14 +47,18 @@ VENDORED = (
 
 DECL_KINDS = ("theorem", "lemma", "def", "abbrev", "structure", "inductive", "class",
                "instance")
+# A Lean name is `[^\W\d][\w.']*` here, and in every other pattern below that reads one: `\w` is
+# Unicode-aware, so it takes the Greek letters of names such as `norm_reg_ψ`,
+# `tensorUnexpand_ΦA` or `expand_π_πA_apply`, and subscript digits. An ASCII-only class cut
+# such names short, so that no `\lean{}` tag or guard naming one could ever match.
 DECL_RE = re.compile(
     r"^(?:@\[[^\]]*\]\s*)?"
     r"(?:private\s+|protected\s+|noncomputable\s+|partial\s+|unsafe\s+|scoped\s+)*"
     r"(" + "|".join(DECL_KINDS) + r")\s+"
-    r"([A-Za-z_][A-Za-z0-9_.'!?\u2080-\u2089]*)"
+    r"([^\W\d][\w.'!?]*)"
 )
-NS_OPEN = re.compile(r"^namespace\s+([A-Za-z_][A-Za-z0-9_.']*)\s*$")
-NS_END = re.compile(r"^end\s+([A-Za-z_][A-Za-z0-9_.']*)\s*$")
+NS_OPEN = re.compile(r"^namespace\s+([^\W\d][\w.']*)\s*$")
+NS_END = re.compile(r"^end\s+([^\W\d][\w.']*)\s*$")
 # `\lean{...}` possibly wrapped across lines; also used for `\label`.
 LEAN_RE = re.compile(r"\\lean\{([^}]*)\}", re.S)
 LABEL_RE = re.compile(r"\\label\{([^}]*)\}")
@@ -312,12 +316,12 @@ AXIOM_GUARDS = [ROOT / "MIPRE" / "Axioms.lean",
                 ROOT / "MIPRE" / "Background" / "QLD" / "Axioms.lean",
                 ROOT / "MIPRE" / "Background" / "Repetition" / "Axioms.lean"]
 
-AXIOM_DECL_RE = re.compile(r"^(?:public\s+)?axiom\s+([A-Za-z_][A-Za-z0-9_.']*)", re.M)
-NAMESPACE_RE = re.compile(r"^namespace\s+([A-Za-z_][A-Za-z0-9_.']*)", re.M)
+AXIOM_DECL_RE = re.compile(r"^(?:public\s+)?axiom\s+([^\W\d][\w.']*)", re.M)
+NAMESPACE_RE = re.compile(r"^namespace\s+([^\W\d][\w.']*)", re.M)
 
 PROOF_ENV_RE = re.compile(r"\\begin\{proof\}(.*?)\\end\{proof\}", re.S)
-PRINT_AX_RE = re.compile(r"^#print axioms\s+([A-Za-z0-9_.']+)", re.M)
-NAME_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_.']*")
+PRINT_AX_RE = re.compile(r"^#print axioms\s+([\w.']+)", re.M)
+NAME_RE = re.compile(r"[^\W\d][\w.']*")
 
 
 def axiom_problems():

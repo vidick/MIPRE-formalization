@@ -2151,7 +2151,8 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.Honest.parsedHide_read_reject_zero,
   MIPRE.Introspection.Honest.parsedRead_hide_reject_zero
 
-#guard_sorry_free MIPRE.Introspection.stateSqNorm_expandA_diagonal,
+#guard_sorry_free MIPRE.Introspection.qform_πA_expandA,
+  MIPRE.Introspection.stateSqNorm_expandA_diagonal,
   MIPRE.Introspection.dilated_pvm_distance,
   MIPRE.Introspection.conditionalDilationOp_isPVM,
   MIPRE.Introspection.conditionalDilationOp_compress,
@@ -2442,6 +2443,8 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.registeredReplacement_canonicalizeIntro,
   MIPRE.Introspection.introSuccessorFamily_isPVM,
   MIPRE.Introspection.introSuccessorInvariant,
+  MIPRE.Introspection.TypedEstimates.introBobZError,
+  MIPRE.Introspection.TypedEstimates.introAliceZError,
   MIPRE.Introspection.TypedEstimates.exists_intro_successor
 
 #guard_sorry_free MIPRE.Introspection.adaptiveStageBudget_mono_depth,
@@ -2623,6 +2626,9 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.DecisionCompiler.raw_accepts_iff,
   MIPRE.Introspection.DecisionCompiler.output_hasPerfectPCC_of_raw,
   MIPRE.Introspection.DecisionCompiler.exists_raw_failure_le,
+  MIPRE.Introspection.DecisionCompiler.val_reference,
+  MIPRE.Introspection.DecisionCompiler.output_val_cutoff,
+  MIPRE.Introspection.DecisionCompiler.output_val_eq_reference,
   MIPRE.Introspection.CanonicalDecoded.value_le,
   MIPRE.Introspection.CanonicalDecoded.supported_A,
   MIPRE.Introspection.CanonicalDecoded.supported_B
@@ -2630,7 +2636,13 @@ historical admission remains unchanged; these guards describe the Lean proof.
 #guard_sorry_free MIPRE.Introspection.exists_seven,
   MIPRE.Introspection.seven,
   MIPRE.Introspection.CanonicalComplete.output_hasPerfectPCC,
-  MIPRE.Introspection.CompiledSoundness.output_soundness
+  MIPRE.Introspection.CompiledSoundness.output_soundness,
+  MIPRE.Introspection.sevenConstant,
+  MIPRE.Introspection.sevenConstant_spec,
+  MIPRE.Introspection.one_le_sevenConstant,
+  MIPRE.Introspection.sevenC,
+  MIPRE.Introspection.sevenC_spec,
+  MIPRE.Introspection.sevenOutput_soundness
 
 /-! ## Blocks of an index type
 
